@@ -1,148 +1,269 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63B207A3B;
-	Mon,  7 Apr 2025 19:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744055071; cv=none; b=PbHJusP+Xtb6SDvqKP2Kp7TJJrTHbpIDZR1epNvMjA+q7vkVRfbhZDje8XesS5Raczf4zHj6BCmkaoVe4LUR948UBX7Txebtz+077jn5gjeF8uyn6O7m0yqzawBsA8kKohnLK6i2lT/HzijR90RfKurHucSoVaSUpyBjOc3n1wQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744055071; c=relaxed/simple;
-	bh=ykdXOXYPhfXKcuSe927Li4LYTVxGhqdkJW/S09fMzMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVaXJxiMDZ+0cbDDst+n8XMXqIXWNYCkscbTCZRNtsEns5WWSOdadwlVvD1XNDjrEDL4YMCLSMS3BXbcPSlnxwCjMICoAnxS00fvRKPntkORU2rQTZ7U+s0K3mf0ChFnGX1sB0XQbOM3ZxtmJR5DZXD8ZayVjFE/wsh7Ivep2Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RVfK8XZc; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A581F582C;
+	Mon,  7 Apr 2025 20:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744057184; cv=fail; b=dej5E+3/Xc3FaEXnI+UUE5GmJbwD0GwGOjIEfU2rJRoT9rwRyQMtmSEUSX06cUKIDHYSs5LtCUCBdemmaz0sH5Bxwky14tbEqYi94WDe9MZjN0Ic43tVqSiHucIN9aaJeqSHxQ1SU/0+qUt8/LPgBWdScq3emdm0ph9mkMdhSTI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744057184; c=relaxed/simple;
+	bh=8nSlrlckgZjQwYfQBH8bfdwCCOUHlxRZ/ggOoW6b2ug=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MuDvedpIwHHyFbDqdDKDqiWIGUPi/ppBlA/bJzeztYg4fA43ClMV54LQjhNtJ2ZzyPv44cHKMHDttjWP8/orQ+DIHgJFTjyBHJBaf2goDFiO0zndfqCItfdGPAMG13TWgCxDVmFmH/zdTRVHl9jpJgaxfuj9gfrsI0alhVxkcxA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KMoLTM9H; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RVfK8XZc"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 1sNCu3YszXgNw1sNFuRDWl; Mon, 07 Apr 2025 21:43:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1744054995;
-	bh=jYI/aBTguCV58Oiva5TkpgZBIYz/I1yQfCxZjQNaaJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=RVfK8XZcSAc05YwVfXANfr4txDIjG/KG59ddrbaveVFvpWHnGzM3OR+7jKE7REvua
-	 4RP7pSrlc7u3WsdGEfb6HFaMcHQpe6mFQRu/FhBIDtJbug91fs4Pt3ZvKlPOwMDO8D
-	 QTduYoSEdrkDAv0BdWDSD4VI55omDBHHXVOsw0hiMworRuoNhr24nev9eutogvTldA
-	 b7ulBfKchtGrf9+zm9kvDTj0FhJ/K8YMPq8UO63ta8MuQ7RyErwbEGpbZ6wK+s1LiV
-	 b8KxQFd/NDS+UIF5SFRakaF1cTfLWXxHoUlqrbX5DAfn7xzGH5bLaYtqHGHSRquEXh
-	 Gw9x+tr09MnFw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 07 Apr 2025 21:43:15 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <580c1b6a-ba32-48ea-9fd8-59884d0dbcbf@wanadoo.fr>
-Date: Mon, 7 Apr 2025 21:43:10 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KMoLTM9H"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IiMOLNZoV3k0yuVJr8ZsQFNnwNuhLjy++oatVArvFzO2K56oYUT7ObiXlTigd0O7kycsaUdHP4U4yjrazhj8eLxxvjIEIot0ye/euqtTJcSednysRTJFWqGxeNTjTku22Nh/qdGvYbXOSVC2oSvOpgucDBQEQ+vdbncqo8Iq7sGQvZZCEQ5bPtBsroGZcVDt6KRuECAfMr/mLZ1kg1mTCo5qEsD4Dj5Vj5FhubmSzN8xwNtH11FpTv19NrWLtIueiS4MunitgnjGVVReEq5mLVFcG+xW0ACWGgUOW+nwD3YNYLGQEJuK/p28ioqWxPiXzF7ZLjQz652S1QSsHekArw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qbg6Qd3xCJluU1cV8mntruaMRsjUzROwzRL/buEXd9s=;
+ b=hUDh5ziqTiZzoW6/LhP8VzMsjzWYRLlY9bpxhbdHCTfzxDfnUxjjo3z97mtZ/CIy+SZY5jCMklLw6c6MsYDPbm9fvICFN+emH071VQp/RDUwKISSqhODCf0r1xBjbmBbplPTRi6v7gZm2eA2KCp2LVjHlq+3MDy4vJ6oI9t+xLhRIHomHXtK2veiW2DXpGM/o+RbEBZL/hyzeJSP9+3Mrl6JoWj5LO72VEtrmt88p03VTlMjp0Ww/RBlCyzryjkjirCI5SSrZbXlhzIARmlsOXk1KnTYrcLpY2ohBaMBhBojQzCatuiVPoMuUoZENogxzAeuykaulu5hKxRAQv0Kew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qbg6Qd3xCJluU1cV8mntruaMRsjUzROwzRL/buEXd9s=;
+ b=KMoLTM9HLDlbq3/dCRQ8PTvOrutn5w4tT4So+uJj2z0GSo95WVTMYsua2CI8Fksl+M/LQ2z7q95I2jagTTD0lkdTOigcKw1E/rxn3aHZqSwF4whAFFCt0hcO9rzryzS6N4WqFu5zs9654DHWnu4i3PrFSsfdTkrQJJO56RbhKqRZQcaPuyyomUY8g3+56CJkHKygFa5emqflF2zYYyj4g+z8iATj/tfkxNZjXdMzrDFm57IhuUJ8wQFBuwF2MCDfKwJweqf8xABYl10UxX+Myqi71M5Sb33FrA18ubf8vtH8Sfls12Q47T/ydKsFODM5EU20F2tL1L5Ayvl/4J2daA==
+Received: from DM6PR01CA0027.prod.exchangelabs.com (2603:10b6:5:296::32) by
+ PH0PR12MB5630.namprd12.prod.outlook.com (2603:10b6:510:146::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.27; Mon, 7 Apr
+ 2025 20:19:37 +0000
+Received: from DS3PEPF000099D3.namprd04.prod.outlook.com
+ (2603:10b6:5:296:cafe::b1) by DM6PR01CA0027.outlook.office365.com
+ (2603:10b6:5:296::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Mon,
+ 7 Apr 2025 20:19:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF000099D3.mail.protection.outlook.com (10.167.17.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8606.22 via Frontend Transport; Mon, 7 Apr 2025 20:19:36 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Apr 2025
+ 13:19:18 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 7 Apr
+ 2025 13:19:18 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 7 Apr 2025 13:19:17 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>, <jgg@nvidia.com>
+CC: <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH rc v2] iommu/tegra241-cmdqv: Fix warnings due to dmam_free_coherent()
+Date: Mon, 7 Apr 2025 13:19:08 -0700
+Message-ID: <20250407201908.172225-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] PCI: tegra194: Fix debugfs directory creation when
- CONFIG_PCIEASPM is disabled
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org
-Cc: manivannan.sadhasivam@linaro.org, thierry.reding@gmail.com, kw@linux.com,
- robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20250407124331.69459-1-18255117159@163.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250407124331.69459-1-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D3:EE_|PH0PR12MB5630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70b8e63e-b884-4be9-d844-08dd7611849a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?retCluH7arx1ZeObrJa7k3rB4T3dOzaaLMKwr6xKptZgBWntoZXiQ5iUgX9O?=
+ =?us-ascii?Q?KUsXylsaXjNtPJ1su3DrE4rGgIZEjlTgyp5KoejpXZ8HWM7UAezh0rJF3RaP?=
+ =?us-ascii?Q?RfjYTjrK5Go5/E+hbcWAdGoABy1py1SrkaUndVsMROjTHyzNm5LcYtzocKML?=
+ =?us-ascii?Q?3UecWCi1bgk+vZF11JaDksG5uEIQaVxDnZsJPQ1qmZe+Fiu4xCp8z40+OhRk?=
+ =?us-ascii?Q?0eo/VLUh3l5FghjhWeYojJRJY/DKsIS99Dzm+l1A8Cvj2U446DMFdxlqMSuH?=
+ =?us-ascii?Q?rHfkrr3KSQedKSUjnPk+RHXA2mMZHNO3nyngBEHAQyP6sheiisYy9zIuXtua?=
+ =?us-ascii?Q?vFXFAfMi2pF3TeuELtC6UDTPv3pooSZHRTDAb4eE3dZ4ZSMlEZi56YLEuDIh?=
+ =?us-ascii?Q?Op5dgSpk0CunjY1BnPBePTiM9m8g2dLzW33cnE/fedqbbv+J9sSKQJVnYE+k?=
+ =?us-ascii?Q?m5CdUodaXmhFnLaqPldpFiWq+tO4DK+4BOyi8sysAjL1RiUaAtbY1W6w0ZaO?=
+ =?us-ascii?Q?PFHnKFVuqYH/ptm6NS1dfAEXkEQDLe4AOBeuwsGefjyumnYMpC8EYIaicB4I?=
+ =?us-ascii?Q?jzNpjJ7imIMtQ9N4qpiXdP/yxWrfabjPrB1U9YyX6ZW/lIanYOyga8RWdGVo?=
+ =?us-ascii?Q?8DDVC7AwRHWRY1zSnDscRIxIJkibHHqDOip4ErJSYTr8FmCME2HaT8/C3iqR?=
+ =?us-ascii?Q?EoesosReW0eAnspfjVGS2ikgqHzu6SdZYXZGkiSxPv1ZY8tfKhTG4rUJPalj?=
+ =?us-ascii?Q?sPpk5t6L7xuTMcj9huzUA1sYpC6STbsBKrr6qhT01Nk3cOi/PZpZeBbzru9r?=
+ =?us-ascii?Q?/qNWYPfhpxHUfBwxYkDq8wqP61UVfwHv/XuO/GSGuYzYPtUW1WLJEq571PDf?=
+ =?us-ascii?Q?gz2y4g0YRuW/R+wjkdFhjelbzS6sp3D3FlxBFkL+Kzdcbrj9ovQKELm7kx6R?=
+ =?us-ascii?Q?+mUroFEHWA7B+/lzw9Bu8xFkgc2jCJ9JLj2h9SXLm46CgIN6aBwElk5lV7eC?=
+ =?us-ascii?Q?BFIIwG6xg7tSL04TgFFM+P3sNuP7Q6345cDq7STT+cVJj3Z0Nt2pe82ounUz?=
+ =?us-ascii?Q?FfhBoH3Hgx4UqHkopdWYkhkH+rwAEjH5FNYm5VQEZqAhC3kFvcnXpHTMhv4Z?=
+ =?us-ascii?Q?RxrUUAn9bpGsUgZQtEaCZw/BaGICl4O3rRCYyMHV/zmEph8LlRR8HvqpQyIb?=
+ =?us-ascii?Q?NveBEea69uw8wEbDhQtzjNfVzv0gfhFG4REPioBshlUrDfFVm3f+yLYwWLoD?=
+ =?us-ascii?Q?ImLP91a58eVhPFZzr/vn6R3ajEfjAmm99FimfKYN/ZXCcTaNJnsMzspX1glT?=
+ =?us-ascii?Q?0Tcm8AeNQkEeL7bFGOkYvS8pQdjsRQsRDLDH+gr4z+7N7gaE202dX92TjKlu?=
+ =?us-ascii?Q?uEye2neOiH1dxEUIbYxiGDKWvmR8Zcfio6OdAP5+Z7WKIMCKb6Y9LqSAafq4?=
+ =?us-ascii?Q?vF+9Db58UnXyMc/PCdkOv9bhFwZXLLoZnKv+oMa8IN6VrGErwoL6gL9V2z4g?=
+ =?us-ascii?Q?//u4YK994r7aBxE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 20:19:36.6334
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70b8e63e-b884-4be9-d844-08dd7611849a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D3.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5630
 
-Hi,
+Two WARNINGs are observed when SMMU driver rolls back upon failure:
+ arm-smmu-v3.9.auto: Failed to register iommu
+ arm-smmu-v3.9.auto: probe with driver arm-smmu-v3 failed with error -22
+ ------------[ cut here ]------------
+ WARNING: CPU: 5 PID: 1 at kernel/dma/mapping.c:74 dmam_free_coherent+0xc0/0xd8
+ Call trace:
+  dmam_free_coherent+0xc0/0xd8 (P)
+  tegra241_vintf_free_lvcmdq+0x74/0x188
+  tegra241_cmdqv_remove_vintf+0x60/0x148
+  tegra241_cmdqv_remove+0x48/0xc8
+  arm_smmu_impl_remove+0x28/0x60
+  devm_action_release+0x1c/0x40
+ ------------[ cut here ]------------
+ 128 pages are still in use!
+ WARNING: CPU: 16 PID: 1 at mm/page_alloc.c:6902 free_contig_range+0x18c/0x1c8
+ Call trace:
+  free_contig_range+0x18c/0x1c8 (P)
+  cma_release+0x154/0x2f0
+  dma_free_contiguous+0x38/0xa0
+  dma_direct_free+0x10c/0x248
+  dma_free_attrs+0x100/0x290
+  dmam_free_coherent+0x78/0xd8
+  tegra241_vintf_free_lvcmdq+0x74/0x160
+  tegra241_cmdqv_remove+0x98/0x198
+  arm_smmu_impl_remove+0x28/0x60
+  devm_action_release+0x1c/0x40
 
-Nitpick: PATCH is missing within the [] in the subject.
+This is because the LVCMDQ queue memory are managed by devres, while that
+dmam_free_coherent() is called in the context of devm_action_release().
 
+Jason pointed out that "arm_smmu_impl_probe() has mis-ordered the devres
+callbacks if ops->device_remove() is going to be manually freeing things
+that probe allocated":
+https://lore.kernel.org/linux-iommu/20250407174408.GB1722458@nvidia.com/
 
-Le 07/04/2025 à 14:43, Hans Zhang a écrit :
-> Previously, the debugfs directory was unconditionally created in
-> tegra_pcie_config_rp() regardless of the CONFIG_PCIEASPM setting.
-> This led to unnecessary directory creation when ASPM support was disabled.
-> 
-> Move the debugfs directory creation into init_debugfs() which is
-> conditionally compiled based on CONFIG_PCIEASPM. This ensures:
-> - The directory is only created when ASPM-related debugfs entries are
->    needed.
-> - Proper error handling for directory creation failures.
-> - Avoids cluttering debugfs with empty directories when ASPM is disabled.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
-> Changes since v2:
-> https://lore.kernel.org/linux-pci/20250406134355.49036-1-18255117159@163.com/
-> 
-> - Maintainer recommends ignoring the devm_kasprintf return value. The
->    module should still work correctly. So just a return;
+In fact, tegra241_cmdqv_init_structures() only allocates memory resources
+which means any failure that it generates would be similar to -ENOMEM, so
+there is no point in having that "falling back to standard SMMU" routine,
+as the standard SMMU would likely fail to allocate memory too.
 
-Note, that I'm not a maintainer ;-)
+Remove the unwind part in tegra241_cmdqv_init_structures(), and return a
+proper error code to ask SMMU driver to call tegra241_cmdqv_remove() via
+impl_ops->device_remove(). Then, drop tegra241_vintf_free_lvcmdq() since
+devres will take care of that.
 
-For what it worth:
+Fixes: 483e0bd8883a ("iommu/tegra241-cmdqv: Do not allocate vcmdq until dma_set_mask_and_coherent")
+Cc: stable@vger.kernel.org
+Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+Changelog
+v2
+ * Fail tegra241_cmdqv_init_structures() and let devres take care of the
+   lvcmdq queue memory space
+v1
+ https://lore.kernel.org/all/cover.1744014481.git.nicolinc@nvidia.com/
 
-Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 32 +++----------------
+ 1 file changed, 5 insertions(+), 27 deletions(-)
 
-
-CJ
-> 
-> Changes since v1:
-> https://lore.kernel.org/linux-pci/20250405145459.26800-1-18255117159@163.com/
-> 
-> - The first version was committed incorrectly because the judgment
->    parameter in "debugfs_remove_recursive" was not noticed.
-> ---
->   drivers/pci/controller/dwc/pcie-tegra194.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 5103995cd6c7..bc419688527a 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -713,7 +713,16 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
->   
->   static void init_debugfs(struct tegra_pcie_dw *pcie)
->   {
-> -	debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", pcie->debugfs,
-> +	struct device *dev = pcie->dev;
-> +	char *name;
-> +
-> +	name = devm_kasprintf(dev, GFP_KERNEL, "%pOFP", dev->of_node);
-> +	if (!name)
-> +		return;
-> +
-> +	pcie->debugfs = debugfs_create_dir(name, NULL);
-> +
-> +	debugfs_create_devm_seqfile(dev, "aspm_state_cnt", pcie->debugfs,
->   				    aspm_state_cnt);
->   }
->   #else
-> @@ -1634,7 +1643,6 @@ static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
->   static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->   {
->   	struct device *dev = pcie->dev;
-> -	char *name;
->   	int ret;
->   
->   	pm_runtime_enable(dev);
-> @@ -1664,13 +1672,6 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->   		goto fail_host_init;
->   	}
->   
-> -	name = devm_kasprintf(dev, GFP_KERNEL, "%pOFP", dev->of_node);
-> -	if (!name) {
-> -		ret = -ENOMEM;
-> -		goto fail_host_init;
-> -	}
-> -
-> -	pcie->debugfs = debugfs_create_dir(name, NULL);
->   	init_debugfs(pcie);
->   
->   	return ret;
-> 
-> base-commit: a8662bcd2ff152bfbc751cab20f33053d74d0963
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index d525ab43a4ae..dd7d030d2e89 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -487,17 +487,6 @@ static int tegra241_cmdqv_hw_reset(struct arm_smmu_device *smmu)
+ 
+ /* VCMDQ Resource Helpers */
+ 
+-static void tegra241_vcmdq_free_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
+-{
+-	struct arm_smmu_queue *q = &vcmdq->cmdq.q;
+-	size_t nents = 1 << q->llq.max_n_shift;
+-	size_t qsz = nents << CMDQ_ENT_SZ_SHIFT;
+-
+-	if (!q->base)
+-		return;
+-	dmam_free_coherent(vcmdq->cmdqv->smmu.dev, qsz, q->base, q->base_dma);
+-}
+-
+ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
+ {
+ 	struct arm_smmu_device *smmu = &vcmdq->cmdqv->smmu;
+@@ -560,7 +549,8 @@ static void tegra241_vintf_free_lvcmdq(struct tegra241_vintf *vintf, u16 lidx)
+ 	struct tegra241_vcmdq *vcmdq = vintf->lvcmdqs[lidx];
+ 	char header[64];
+ 
+-	tegra241_vcmdq_free_smmu_cmdq(vcmdq);
++	/* Note that the lvcmdq queue memory space is managed by devres */
++
+ 	tegra241_vintf_deinit_lvcmdq(vintf, lidx);
+ 
+ 	dev_dbg(vintf->cmdqv->dev,
+@@ -768,13 +758,13 @@ static int tegra241_cmdqv_init_structures(struct arm_smmu_device *smmu)
+ 
+ 	vintf = kzalloc(sizeof(*vintf), GFP_KERNEL);
+ 	if (!vintf)
+-		goto out_fallback;
++		return -ENOMEM;
+ 
+ 	/* Init VINTF0 for in-kernel use */
+ 	ret = tegra241_cmdqv_init_vintf(cmdqv, 0, vintf);
+ 	if (ret) {
+ 		dev_err(cmdqv->dev, "failed to init vintf0: %d\n", ret);
+-		goto free_vintf;
++		return ret;
+ 	}
+ 
+ 	/* Preallocate logical VCMDQs to VINTF0 */
+@@ -783,24 +773,12 @@ static int tegra241_cmdqv_init_structures(struct arm_smmu_device *smmu)
+ 
+ 		vcmdq = tegra241_vintf_alloc_lvcmdq(vintf, lidx);
+ 		if (IS_ERR(vcmdq))
+-			goto free_lvcmdq;
++			return PTR_ERR(vcmdq);
+ 	}
+ 
+ 	/* Now, we are ready to run all the impl ops */
+ 	smmu->impl_ops = &tegra241_cmdqv_impl_ops;
+ 	return 0;
+-
+-free_lvcmdq:
+-	for (lidx--; lidx >= 0; lidx--)
+-		tegra241_vintf_free_lvcmdq(vintf, lidx);
+-	tegra241_cmdqv_deinit_vintf(cmdqv, vintf->idx);
+-free_vintf:
+-	kfree(vintf);
+-out_fallback:
+-	dev_info(smmu->impl_dev, "Falling back to standard SMMU CMDQ\n");
+-	smmu->options &= ~ARM_SMMU_OPT_TEGRA241_CMDQV;
+-	tegra241_cmdqv_remove(smmu);
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_IOMMU_DEBUGFS
+-- 
+2.43.0
 
