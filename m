@@ -1,76 +1,78 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2053.outbound.protection.outlook.com [40.107.220.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908DE233730;
-	Mon,  7 Apr 2025 10:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744021450; cv=fail; b=J5CbniIO1BWfGF7oOHk9VHvTuBCXipL5agB0OcZg9EQEIszUAClYKz3VW/zWsCBMZoqSPw34u5wrWWQQ3s30GIt+NqR3zqSzOELj/3UL4pMsBXClRWYaxbWRLilV7I7QQowOAWi1JsUw5gyK2X3Y5tuU6hUKXIQCr+Y5oZjjnfI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744021450; c=relaxed/simple;
-	bh=EttJqp/e5JurXYTPuFdoQMmvND/9SEJkV21NBttkBa8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=It1y3IqtCoElbeq4Mh3QZnY+37wdJ1nvNOQ+Ylz9K8L1UQhEPspyoUd7qYy2zWVVho64HD7fqY1FqZ0vqkD+N3OpUlAiQeesQtvTD5ItcfcPbZ3ORawwLF1VMPvLsGR5cYfMPvCg8ZQWm0Y3tTbGwwqBFnBCQvVlnI8NCsPY6PY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P64U1GKw; arc=fail smtp.client-ip=40.107.220.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32B924E4A8;
+	Mon,  7 Apr 2025 12:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744029443; cv=none; b=PaqI5tlQPeKUv3LmZ0dSb7tdCGVIwGZDWWnT8l+3LrCnd9ACnm/ZFMxos/Qc2MlyeRilurZIWkPk4O05hncL4HHo55RAkC4JWo+Q4VEdzAgn8rRD32fJii1vhMvIAog//gOnM1oJ6qHkQO0g0tr6yLCsxnXD6SJhrohDLMW5VR0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744029443; c=relaxed/simple;
+	bh=sg0cvB5ctoBdLyPSk10rrJPwZxp79Q6IByN4TnHAN74=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Th8aIPUBKS22Rg8XtqufH8HRwlEkazlZZdUHQWnL35T2JSzVeVwuwQZ8F0MNwk6IsoDRNgoQ9d9YzqEkQzC4VAnivttfmcF5zyMzWztuIrzdm9hYwXtlYCyjT3YNUVrEgUdh/ymJAy32KVA6NVG4wksNKeXd6s8Mj6GNWsy2ou0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZn7qQrn; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P64U1GKw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VOL+Kbezyl+xrElzIE7cy7IJxVXEMQSSo7P9TJtt69ALg3WzMfbhVAVlf4ZVQ4M5jnXm3vaZo9j43ETW6eP/AaBZvH5sZpZLKuUzdr0aG9GFtV2nw/XWSjtmlMlN3MEK9d8PjR1aJBXi1635SL1skZ/eQjx3ls1JtJl5QfZBNLXTRn3a/vCdqZxmifgz7cU+Dzp4E3wd6QUh1DVDHcWGFAtWFZopWZ6UjmQLaPKHika3BVMstVNfK7taM0DrAXqBd0T8GoDUzjEaeVTPUXvUyYjuZW7QEvc553kn7XvWo8yEVPzIkMwe19VGL+fC8HpuOFbLBp9Uba2bDtgDHZO4mQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tEXer9qEocgF6pPmTBSmoQdvud/P64iLVVHXAV89238=;
- b=XGKTH/kkw6T/YSMy4rvRLVpKWDTJdaMSEviEC9rEDOaoMHqvUJtH9DBXbgna6VbHUNJgh6soLpKezm1f8+4DA79psrxHJa8lGa+sds3PQshc0iI3pcdWscNCTN4u+NvmnegWfdIdT1TUja9/knXQS1D/KBaZySc4sOnNZ40ryEvz1QbGkR9Z91q2vClEJxYO7xlDh8Utxeg3lx5ZYwf8zcp2WR7envkAp4NJcMycSaXuBTs1wOYNyLfLXSEo870zMGqwagyeZUipENejHzpq20cqQvdgmPcM3XymBGf+Wegksa1tOFdmemAwRQl1Xt1EsGc/7nRoJ10iwmhD/E/jcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tEXer9qEocgF6pPmTBSmoQdvud/P64iLVVHXAV89238=;
- b=P64U1GKwMzb4dfKMgWl2oRI2o7LzMDXHzg8o0fmkN9OjgHTXqQDHq+Zpk+hjc3fsSDZ0T2znzBjrId8vV2QX7UDbW5Qxiffw8K/LMrDbLriM0ZEfBntVOAVfBR1aO6Bam7/N/xN4GrLJKnz1bAXdIyrEE62eVY7qgfSQ4P7XObit/lYuQ5YKLvxxvnYki6loZTUxO/xIfcsnIZc+XVyky0ADe5rIsJZRU4M1dGf7mLDB8BlWl5cqeMtXBRwNi8XC8xY+WvcKOM2D1AN3lOTklPQGA9PDP6Rf9NAlT5BxRmJXeirww0Ew9Xmf6On/Cofe4jCkj7yIb8WEOhIz30e2Lg==
-Received: from DS7PR03CA0073.namprd03.prod.outlook.com (2603:10b6:5:3bb::18)
- by CH1PR12MB9599.namprd12.prod.outlook.com (2603:10b6:610:2ae::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
- 2025 10:24:05 +0000
-Received: from DS1PEPF00017091.namprd03.prod.outlook.com
- (2603:10b6:5:3bb:cafe::3f) by DS7PR03CA0073.outlook.office365.com
- (2603:10b6:5:3bb::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.33 via Frontend Transport; Mon,
- 7 Apr 2025 10:24:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF00017091.mail.protection.outlook.com (10.167.17.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8606.22 via Frontend Transport; Mon, 7 Apr 2025 10:24:05 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Apr 2025
- 03:23:49 -0700
-Received: from robelin-Precision-3660.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 7 Apr 2025 03:23:47 -0700
-From: Robert Lin <robelin@nvidia.com>
-To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
-	<jonathanh@nvidia.com>, <tglx@linutronix.de>, <pohsuns@nvidia.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<sumitg@nvidia.com>, robelin <robelin@nvidia.com>
-Subject: [PATCH v3 3/3] clocksource/drivers/timer-tegra186: Remove unused bits
-Date: Mon, 7 Apr 2025 18:23:23 +0800
-Message-ID: <20250407102323.2690911-4-robelin@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250407102323.2690911-1-robelin@nvidia.com>
-References: <20250407102323.2690911-1-robelin@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZn7qQrn"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c1efc4577so2291384f8f.0;
+        Mon, 07 Apr 2025 05:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744029440; x=1744634240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FfWnLdfANaqdQSj+h+q53Jo6tygA2YrUlTN092Bn+P0=;
+        b=MZn7qQrn8YUbIcX6V1iL3YsBe9D5SfgyJ4oXhQBprbbhvRBQcI6ZgC1xmzX4xHHEaC
+         BgPDrgpPS/ERYQAFgtfSNz/0cztUFtQvv9Y4AyK4b8+z5isYQDRS+K+0BPCIQH4Blne8
+         ZfgSpJv2JhDlfXlZlKcQ1j8GDXf8ljKnxySuzNrBQJt/tHu1oyvdeU8sw8FODvJjeFA5
+         bwbN7l3ymMeRYcslyAQIjb79oKN5YHfn/dk67qzHFRDbUf8IZ4w7J8cldB9lOSRs3kr3
+         JniAqdOC2ALAqvvWdPylSCCSeM4fagSYb4sS6xDPLFmsyrxUCxwoCjE+U0uqU92jTAiq
+         uOhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744029440; x=1744634240;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FfWnLdfANaqdQSj+h+q53Jo6tygA2YrUlTN092Bn+P0=;
+        b=lU+nn7v8ug9beLkwsT/X3GeZnKpl2kWA5omcZpGrwZ38J1cS2G9uXldSJtIdPq34Tl
+         GhS+h/tEYzNoJE5sTf65Hy6amruSJ3BRdNblbmEglxtlY9XaZk5TmLA/Xdr4ByIBj61u
+         HQVpJkX5WCV3y7a827h8/Gml1178dfSwo72eC3j6f9weKj45UxLbxJTkxe1uNNF4MD7g
+         QSzIbai77zKsfRgn1kRl1NQPdVOgKXFyVUHcLyBKRJG6fn4MWu1SsApSdjV4v66iaLCX
+         lpiYlfHcdzRwLj19RmeSnISL8mT1+JWr5xxME5m5Jyt56UOexBKZCmKWCzc4kmiKGj3y
+         Ic0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUx8zvWLYiZ0MDjsTuH7mZgdjrMOHIWb39i08kVQZ2pqUoRCqccrtrxT8uxjwfvSN3i9KhVntzrrvvoAik=@vger.kernel.org, AJvYcCXDQPpjRZxAoErefC0NBjmVWr64sQEbR0JZLVMtX5T6purjrxHF/s0SJpn6CYNHYMosGvaFi0Id2pKQ+Ww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4i24VjSzAZss8DvuvJhnT+tbZ7hH12dAOK2nb/ELPxBjHRH8i
+	lKoQCWx3jBHESlZDjX2d+wU5e46aAiN6zkPj82nrjR9of3BUW0pmPwp3YQ==
+X-Gm-Gg: ASbGnctX2bAlfyAjuPGqKsNGjXRtMmBySfCYVU2fuZprPIP71netQkcaLQ9wQGoh3mx
+	hzjyvG9pm3oR+kiiE6bYavKvH8rPaD2Dl4uLOM0y8rKF3xN1dFJOdOuUSNaF9hJAyB1CxFB4yxP
+	0HNP5nZjWUpSIuv4aXV40YPQCuW4TPZefPlQyX2w9NhpqZYjGqqF10rOpO3mNNDSlRJoj2MOsbS
+	/oGrEXCtdvaYOF7UQBKqeUrAnP+i4nqsFby8u195Uz4tYN07STsHJ1PVtnBh7eLDWHxGiEBEGCj
+	d2kJ0slD42OxowNLsFdZlHnTRUIcLXyOw90EhGhNGoa0jwBxrFNHDppHbbzKYBPVD9FfO9NO
+X-Google-Smtp-Source: AGHT+IEHnAR7JxfNzMoB/DN5jUIucYjOoQpUgj5aPi18JnL9jSaicvC3fEnhePc6RSQppmdiZItLtQ==
+X-Received: by 2002:a5d:5c84:0:b0:397:3900:ef8c with SMTP id ffacd0b85a97d-39cba9332a5mr10735755f8f.35.1744029440054;
+        Mon, 07 Apr 2025 05:37:20 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:2f0e:c50a:8800:cf9e:ee0b:4a01:37f6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301b76f2sm12065198f8f.53.2025.04.07.05.37.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 05:37:19 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au
+Cc: davem@davemloft.net,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+	Akhil R <akhilrajeev@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 4/4] crypto: tegra - use API helpers to setup fallback request
+Date: Mon,  7 Apr 2025 15:36:04 +0300
+Message-ID: <20250407123604.2109561-4-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250407123604.2109561-1-ovidiu.panait.oss@gmail.com>
+References: <20250407123604.2109561-1-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,88 +80,126 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017091:EE_|CH1PR12MB9599:EE_
-X-MS-Office365-Filtering-Correlation-Id: dff6fbb2-d6a8-46cc-c1c8-08dd75be5307
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6KomiLYS4LAuCLb9ighSt4jyK32zqhlRD049lrVuPg8wdBctCjUQOuMXSBSK?=
- =?us-ascii?Q?wJHsfeLdXstiCXcqoPGaXSzQkpxbN+tMUeayquIHbf+j4f4T01frKhnZTPWp?=
- =?us-ascii?Q?6pzZO91QB7IYhN23Jj7FdkgFIgwHkBNEzVkP35H/0qTCgHxmCCkUZH2HY7bl?=
- =?us-ascii?Q?8UF5MZOxTMZ++uAWH/pug3K3DHNiWf79hsAGdgA7mkVnZJ5lSdl347TD50T5?=
- =?us-ascii?Q?ow2aTd0aI4aGw7kN3z+XNG6x2JATqXNKkZGVBzQL+TcBvG75QIx9fNSiJSW2?=
- =?us-ascii?Q?SBWPXB93RINlgTE1WsB1AUVwzqmoTdYhzBU/MvzpPm+UtgAZiD6PEV32G8zr?=
- =?us-ascii?Q?U7XKm8S+OqmWWcZ6o7qk8nO36bj0NkK6cXmsLvynWY6Bt8oORseUcAjOy0pp?=
- =?us-ascii?Q?Utwp7Fc0L6EfZT4WEgHFKV8BG5A8vvT7rvZOqpvTUMcZc1rujzBuBvSAQpel?=
- =?us-ascii?Q?F8QiOnVs6qKMhSVMHbrJJ3jCJYbSPhZW8zBGHiRjxzBhYq5LwDuoL1xtS2z0?=
- =?us-ascii?Q?geXNfnEjcHfYAcH4YXohJcwxKZhzLvkMv9orOHxR+OQnp2E1pglNXUZlZ48K?=
- =?us-ascii?Q?eo0n2NrQ5DF2yUuv/Emhkth6Wb4qBgltfCONSnCyniWwUkBWHW1iC/1JZd4i?=
- =?us-ascii?Q?aVduD74wMI17402WgyYKQfxlV73Qlj8MXUdHFCiiN4lNZ1DJ748jJFH6qv7Z?=
- =?us-ascii?Q?Ebx3OGRQOExF5tPwFljtOsb78VOwZGbd2EFGHJ14wcQjz5WxyqEz9HJSzH+P?=
- =?us-ascii?Q?27uYis6LLXW4MACELcUTIQKYZmzyQ1usdxwtQrKpWBC1uNEePw1ysC9LWgzx?=
- =?us-ascii?Q?LIUgKtCU2T32nENFsw7kTEMfqRe9YxjDFE9y+BGgJvWHi4YyoM/PfRr4z9Eo?=
- =?us-ascii?Q?Bdfz9xdaml3vcyxx7pYfY2tg3WfrnG/ss7u+QV+cxVb4L8kNJx3uw10TBqnC?=
- =?us-ascii?Q?B08ak2uPYY66B4TUvEBh6GgcT1wQ+tlVNR5mJAwFfdiXEe7bBOc5NdMVV9MM?=
- =?us-ascii?Q?2oUeRQ1Qp7727AH+TLMZSrPX0eu+sESIPENeuXCdw/SQOovJSvo5Ai462CsD?=
- =?us-ascii?Q?EtvIbC+91aTW3Zar75hxcdm3i9e0I0tdo7W1rlGoyN1rUneV3d2dXvUgnn8w?=
- =?us-ascii?Q?fvhiBwtGfi1W4FM4M2kUaG565AWO5eGuexYFQEpwBPy7TsjxxkzRboSJU1LE?=
- =?us-ascii?Q?88owTEau5xNuchJQfYwHKifN6kaO4F7Eipiw4FYQbQj3ZST0XCBgiNNG9DOl?=
- =?us-ascii?Q?sML+SmSMcu6HjW7H83vrGPZU4ieedLqvh2HRRNNzVrHrZUAfFSpyiefMNgZg?=
- =?us-ascii?Q?LcOrpEl4JEpYKet5JtM9IC1DgNfltYV+KKdIZRqzFgpzi4fMypMrkg8i9CB/?=
- =?us-ascii?Q?y1/9qWcTqtC4Yb1VMb3UQIg+kcGhX59UBfHk/hmooQ3BclsBmGFKng1G/9mp?=
- =?us-ascii?Q?7kiktu3FamRsEDgiUVyy/soekNRhx+auBEohSf/14AjPUUNJXHzWR45UWJYa?=
- =?us-ascii?Q?7K46ixwwquTpvGI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 10:24:05.2325
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dff6fbb2-d6a8-46cc-c1c8-08dd75be5307
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017091.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9599
 
-From: robelin <robelin@nvidia.com>
+Rather than setting up the fallback request by hand, use
+ahash_request_set_callback() and ahash_request_set_crypt() API helpers
+to properly setup the new request.
 
-The intention to keep the unsed if(0) block is gone now. Remove
-them for clean codes.
-
-Signed-off-by: robelin <robelin@nvidia.com>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
 ---
- drivers/clocksource/timer-tegra186.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Cc: Akhil R <akhilrajeev@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
 
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index 3967d023781b..2c1a30291226 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -175,15 +175,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
- 		value &= ~WDTCR_PERIOD_MASK;
- 		value |= WDTCR_PERIOD(1);
+ drivers/crypto/tegra/tegra-se-hash.c | 52 +++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/crypto/tegra/tegra-se-hash.c b/drivers/crypto/tegra/tegra-se-hash.c
+index 42d007b7af45..d09b4aaeecef 100644
+--- a/drivers/crypto/tegra/tegra-se-hash.c
++++ b/drivers/crypto/tegra/tegra-se-hash.c
+@@ -117,8 +117,9 @@ static int tegra_sha_fallback_init(struct ahash_request *req)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
  
--		/* enable local FIQ and remote interrupt for debug dump */
--		if (0)
--			value |= WDTCR_REMOTE_INT_ENABLE |
--				 WDTCR_LOCAL_FIQ_ENABLE;
--
--		/* enable system debug reset (doesn't properly reboot) */
--		if (0)
--			value |= WDTCR_SYSTEM_DEBUG_RESET_ENABLE;
--
- 		/* enable system POR reset */
- 		value |= WDTCR_SYSTEM_POR_RESET_ENABLE;
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
  
+ 	return crypto_ahash_init(&rctx->fallback_req);
+ }
+@@ -130,10 +131,10 @@ static int tegra_sha_fallback_update(struct ahash_request *req)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
+-	rctx->fallback_req.nbytes = req->nbytes;
+-	rctx->fallback_req.src = req->src;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, req->src, NULL, req->nbytes);
+ 
+ 	return crypto_ahash_update(&rctx->fallback_req);
+ }
+@@ -145,9 +146,10 @@ static int tegra_sha_fallback_final(struct ahash_request *req)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
+-	rctx->fallback_req.result = req->result;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, NULL, req->result, 0);
+ 
+ 	return crypto_ahash_final(&rctx->fallback_req);
+ }
+@@ -159,12 +161,11 @@ static int tegra_sha_fallback_finup(struct ahash_request *req)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
+-
+-	rctx->fallback_req.nbytes = req->nbytes;
+-	rctx->fallback_req.src = req->src;
+-	rctx->fallback_req.result = req->result;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, req->src, req->result,
++				req->nbytes);
+ 
+ 	return crypto_ahash_finup(&rctx->fallback_req);
+ }
+@@ -176,12 +177,11 @@ static int tegra_sha_fallback_digest(struct ahash_request *req)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
+-
+-	rctx->fallback_req.nbytes = req->nbytes;
+-	rctx->fallback_req.src = req->src;
+-	rctx->fallback_req.result = req->result;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, req->src, req->result,
++				req->nbytes);
+ 
+ 	return crypto_ahash_digest(&rctx->fallback_req);
+ }
+@@ -193,8 +193,9 @@ static int tegra_sha_fallback_import(struct ahash_request *req, const void *in)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
+ 
+ 	return crypto_ahash_import(&rctx->fallback_req, in);
+ }
+@@ -206,8 +207,9 @@ static int tegra_sha_fallback_export(struct ahash_request *req, void *out)
+ 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback_tfm);
+-	rctx->fallback_req.base.flags = req->base.flags &
+-					CRYPTO_TFM_REQ_MAY_SLEEP;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
+ 
+ 	return crypto_ahash_export(&rctx->fallback_req, out);
+ }
 -- 
-2.34.1
+2.48.1
 
