@@ -1,156 +1,105 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995D92080F1;
-	Mon,  7 Apr 2025 16:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A712139CB;
+	Mon,  7 Apr 2025 16:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744041646; cv=none; b=Nc+YtQaAcyDeMzZBj9bUM1IuRlwl7rmX1CAdSXGz8NGqoczXc3rAMUf5AcU+bzEvPLseJrChdFI2Vgjfw2eRHNtV8cZdvDitc2E5smEm8e3RbFue2PIlpoatPoya3llP3VLNF4XUdlsfYi+YwAajWqhb70Yictt9lc9NT1nGUcc=
+	t=1744044940; cv=none; b=PJBEqKpXIQoD6+NYCr4MfnEsK5qTTWesE/+FSK4QxApuRdDkAjakS46JwWPjkwcv3wVMiOkcY/q/LAKyyn/g0n+F7hhqwBepnOf0A1XBE+6+t+BnsqdyFjE9PRLL236nFkPUS1bjqF3qSGDqKVm3p0lKeC/4m7lDo+Vg7c/rO+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744041646; c=relaxed/simple;
-	bh=lg3cSbzvrK/T/urDtbB3CSVmlQ8cKNzboRehv+MXEaI=;
+	s=arc-20240116; t=1744044940; c=relaxed/simple;
+	bh=c2MKD/XKzSiKwW1/i7FUqEHwziXv/iFw3B4sgnw+bVs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kqP7DY5n1XUMvOREPuFaq2ZCJl1vSDmTZJuDwTL89/pw/U8Jloe0d0tI1j9NCfiuAIO3BdDJgeAV3h1DXOFsBljl/N82v3HRUmaU0GFePhpgDCGwi3A2xTwYY7hLK23UwyZUbfua6rG1if1H8U1CPpPOYNc7ThgZfMYwepF0vPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXYmxvTw; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=rGvwC1iWRdpDdxAiQqISWK2Pf1eZPnT0iHKTunFhzqvobsNTLHZxiVb6rK/Qf+GX9D0unhSQfIdEHcVqbTVJoLAhwfoFXPB4t2vywz9tsx7jaMVNCmK0H3VpUqokoSViN4hgPL9cHqZ/WW4Xg2DCeV4tu0h1wrRI6SQCSWCQItM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQVL1rTf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXYmxvTw"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54b10956398so5298805e87.0;
-        Mon, 07 Apr 2025 09:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744041643; x=1744646443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jqd/F8I+kjZgKXTtOk1uv6CuQQZlQwvT3i64alSUGLw=;
-        b=gXYmxvTwqmoTawKxR7TID8Qr2cxTwIP0C6DaerrMfd0dqMIIJOZL0RTris83F+ly2c
-         QHeEkRLYvhXwXTRj4tbtmQ6hhwBi0xh/BeoZkYoCcMf5ZJp/bZrRKq5RQt5dRK3fyd3f
-         I+QJulZQSvF/hEIR4XvSzzZFFJbL/zAH1j7PhLfSB4O6a2jyyLoWIgc0uYPrOHZhWdB+
-         cZ+kyv0PImptIDFt3tDvhu6CeCvs9x8GC6FzfnXhpl1j05CK1LzdIwrmszAT6ZcKow+C
-         WKcuNEt4rTeOWCogoenz7LhqBDw3erLZJ4ElJJ3SZYG2Mi+a4n2cVxO1Fgz6VFndJyZh
-         J8XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744041643; x=1744646443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jqd/F8I+kjZgKXTtOk1uv6CuQQZlQwvT3i64alSUGLw=;
-        b=nyKMUOMX/7KUYmrUl68VikPZcWFjw1SoX08PMdJMWw6HHKt6KKEwDqb9qgJMEo9far
-         ONy5/IWEB9l+xxIFFg5CH8NrJAs7KcWCIg3/wbHRSUC9KL2G7VMQ2JhbaVrN3BT1n94p
-         hsVkAK76R9D/8U2Pd9Th2zkkuGc+Q9MoXVHAcqKnkZf0mcDlBC6VI81RdlEK/TUrtH87
-         hVqG/jCBbrehn7UDIeVUfK8DMfa5BNSPMIOdq339CmLY9UOjK+zxB6Nr//7qOrYhUKyl
-         8WlDxqhZRuW7iIsSTId30v70IQvy9ojEG7MbZFEB6N5PghEGhPneMfh6gXLX//S14esj
-         430g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Fx7tfOY+01catBr3ojsEFwUOgBHF66tUaTU35MTN44yX2MMyEf2TjtPXTgWbp/WNzpYVdBg2dgvv@vger.kernel.org, AJvYcCVhWiRX3WISiCkjVNtWFwYGHJBvoUHDRzFEp5UhKxmVGNQhwVjii5ukDAWiFlzoRHhL+zumKMNJSBQJ2g1D3Ubo@vger.kernel.org, AJvYcCWAa8EAGaKzABtgn0sovNuhCBhi5M29s0gzVxzwZLgQZgnCVzcOw4xqur6ZeXk5kfpLmrFGofy6jCFWR8Ya@vger.kernel.org, AJvYcCWa2dPSmneMqs9skGeBo9l5sMU8RtrQbmUnO2mTj1w2pB1RQYwB9bFgCgbqjvsl887IrPopn4zFvNSc3zE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxP2oX6JK2iCurTG1JyDuITNunzAdpCsj2WW2lrfaoVXa/xwp/
-	PVaKgyBa08uGoOb5sLPZHFQo4deFKmujdaMz6+cfibYOLHPa76j+UxPx0/6YBgx8UK5Ok3zZQ1j
-	nQJi7CCkglk2Lk5k3wqpg1myYDYs=
-X-Gm-Gg: ASbGncvVFcxlILIEOpJTxSI6oDUjJViaesFpebpfCVj79AvyGpiEQ65RSXwKMUbg40u
-	32jU/E4kj59pxUAGqdRvxBhPDIxtYtGwjnsFnqYvoCNI+Ur5hRYTnHwVbqN0vFt6MUdSwW88aB5
-	mHIQvcDKsgQ55lBZs6Ev6g+Btsrg==
-X-Google-Smtp-Source: AGHT+IEVrNVcwklMERTdBeYNy+sQv1Qhef78D7qd4L4zddSsRfl28NNMUq3bgprXEFJQvPG//aGTthRP2n9RzHntEyE=
-X-Received: by 2002:a05:6512:3697:b0:549:91bd:2d86 with SMTP id
- 2adb3069b0e04-54c1ca8c075mr4841164e87.26.1744041642153; Mon, 07 Apr 2025
- 09:00:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQVL1rTf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 711ACC4CEDD;
+	Mon,  7 Apr 2025 16:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744044940;
+	bh=c2MKD/XKzSiKwW1/i7FUqEHwziXv/iFw3B4sgnw+bVs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KQVL1rTftG/IrWL4PFKeSt7oXv+clC6wbH1FSt6Bj77JqHtLrM/hnt7aWZmW4wXon
+	 HLJRMDdpXpLLwDKLl5UmTY4SGrRs47B77ktvFr5gDteoMJ9uNcFaUYQiaJkJDAi7MB
+	 zQPS/cg3YmSmHJZ1saJtvolhumMVX4njdRpx/JGlN5XJ4uOQwPD5EhQIZfK3RiLS70
+	 2bWFDwAhmT4wHItUiPJqIX4PRsgTPgR33opXSGJzH2ki2V3lewuHLDt4E/pmtwQjee
+	 Mbc82pPT5RNDvOWbjufOcRjlS5i6OdcS5N3Fjv+E3fhlkDsXoNlFS563wCLkudZ+px
+	 2d81T/08DtAIw==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2c663a3daso870057166b.2;
+        Mon, 07 Apr 2025 09:55:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5lTIA3t7z/hmjvTQXKrkrrxPMsxtswK5bNrNUKH40XPPwyHUQnzKU8w6iFheZ1HzMvTGlDK6dklmen/s=@vger.kernel.org, AJvYcCUFXTi5moF+eSUr9Om5pt7NOcYPBx26Ye9Z3R8z82B++Do66MFTAVdnUldvrvKPyUa2zbbjhhWUlv9Q@vger.kernel.org, AJvYcCVYnNiiuqALmXyBCL7C4AYWx2Mhtt1O5zGFSsk+0aD9VKhcLehPM8J/Bns7d4JC75vrUFL997WHBRY+za7c@vger.kernel.org, AJvYcCVmfvcII28cpv57NN7ejB3RBU3nWATfnHFx8ju22qEP/gxyPEQ2lUKmqg16Cu/z6iy9LGY7LpQAX6PS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRp2YXTNz1yA8uBTLrJRss6lKPS3uN/0x8XSI9FPcPwOvaMamb
+	BfFvdq/ypvZN1grqtaqjj0rEBt9ygs8+NhYc7iHFxFR2whL+apSZJXKKq2FFg+h9KGsDQ9ukGNr
+	w1V7Cquw1T1dwTWYNDQiIDzV/1Q==
+X-Google-Smtp-Source: AGHT+IEd0KrgFqiXEguYCKaGod1w87MoHOUslXzG8mwe6sn3+lvNHY/R8wCVUd9TUz9Kf+cBq/nGYese5yv4O8hDda0=
+X-Received: by 2002:a17:907:a4d:b0:ac7:3456:7ece with SMTP id
+ a640c23a62f3a-ac7d1b28752mr1313800366b.46.1744044939101; Mon, 07 Apr 2025
+ 09:55:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250406-tegra-pstore-v1-1-bf5b57f12293@gmail.com> <6920a557-9181-4c9c-98f4-a9be4e796a13@kernel.org>
-In-Reply-To: <6920a557-9181-4c9c-98f4-a9be4e796a13@kernel.org>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 7 Apr 2025 11:00:29 -0500
-X-Gm-Features: ATxdqUFNsatT5UhJzB5tzRpz10S4ukxDMe0vOi53IWYyOQIORz0IaHECah3vQ8s
-Message-ID: <CALHNRZ--to8B3zhg6zV90siL0x78BAjhS04DgfLwmnXEiOMe3g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
+References: <20250404221559.552201-1-robh@kernel.org> <174380891321.749968.3085053836966154334.robh@kernel.org>
+In-Reply-To: <174380891321.749968.3085053836966154334.robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 7 Apr 2025 11:55:26 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL+i012pE2vrSWc-Tro58aAEZY4xe5n-LcoqN1RWES6RQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFAzIqfYAmbp0OPypTNYKPyZk-fHySvRwAg51LjL3xBt7FwP5p8N5-z_nU
+Message-ID: <CAL_JsqL+i012pE2vrSWc-Tro58aAEZY4xe5n-LcoqN1RWES6RQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: PCI: Remove obsolete .txt docs
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Vidya Sagar <vidyas@nvidia.com>, Frank Li <Frank.li@nxp.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-pci@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 7, 2025 at 7:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Fri, Apr 4, 2025 at 6:21=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org> =
+wrote:
 >
-> On 06/04/2025 23:12, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
+>
+> On Fri, 04 Apr 2025 17:15:57 -0500, Rob Herring (Arm) wrote:
+> > The content in these files has been moved to the schemas in dtschema.
+> > pci.txt is covered by pci-bus-common.yaml and pci-host-bridge.yaml.
+> > pci-iommu.txt is covered by pci-iommu.yaml. pci-msi.txt is covered in
+> > msi-map property in pci-host-bridge.yaml.
 > >
-> > This allows using pstore on all such platforms. There are some
-> > differences per arch:
-> >
-> > * Tegra132: Flounder does not appear to enumerate pstore and I do not
-> >   have access to norrin, thus Tegra132 is left out of this commit.
-> > * Tegra210: Does not support ramoops carveouts in the bootloader, inste=
-ad
-> >   relying on a dowstream driver to allocate the carveout, hence this
-> >   hardcodes a location matching what the downstream driver picks.
-> > * Tegra186 and Tegra194 on cboot: Bootloader fills in the address and
-> >   size in a node specifically named /reserved-memory/ramoops_carveout,
-> >   thus these cannot be renamed.
-> > * Tegra194 and Tegra234 on edk2: Bootloader looks up the node based on
-> >   compatible, however the dt still does not know the address, so keepin=
-g
-> >   the node name consistent on Tegra186 and newer.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > Cc: Frank Li <Frank.li@nxp.com>
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > > ---
-> >  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
-> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++++++++++
-> >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 13 +++++++++++++
-> >  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 16 ++++++++++++++++
-> >  4 files changed, 61 insertions(+)
+> >  .../bindings/pci/nvidia,tegra194-pcie-ep.yaml |   2 +-
+> >  .../devicetree/bindings/pci/pci-iommu.txt     | 171 --------------
+> >  .../devicetree/bindings/pci/pci-msi.txt       | 220 ------------------
+> >  Documentation/devicetree/bindings/pci/pci.txt |  84 -------
+> >  4 files changed, 1 insertion(+), 476 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/pci/pci-iommu.txt
+> >  delete mode 100644 Documentation/devicetree/bindings/pci/pci-msi.txt
+> >  delete mode 100644 Documentation/devicetree/bindings/pci/pci.txt
 > >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra186.dtsi
-> > index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..2e2b27deb957dfd754e42dd=
-03f5a1da5079971dc 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> > @@ -2051,6 +2051,22 @@ pmu-denver {
-> >               interrupt-affinity =3D <&denver_0 &denver_1>;
-> >       };
-> >
-> > +     reserved-memory {
-> > +             #address-cells =3D <2>;
-> > +             #size-cells =3D <2>;
-> > +             ranges;
-> > +
-> > +             ramoops_carveout {
 >
-> Please follow DTS coding style for name, so this is probably only ramoops=
-.
-
-As per the commit message regarding tegra186: bootloader fills in the
-address and size in a node specifically named
-/reserved-memory/ramoops_carveout, thus these cannot be renamed.
-
+> My bot found errors running 'make dt_binding_check' on your patch:
 >
-> It does not look like you tested the DTS against bindings. Please run
-> `make dtbs_check W=3D1` (see
-> Documentation/devicetree/bindings/writing-schema.rst or
-> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sou=
-rces-with-the-devicetree-schema/
-> for instructions).
-> Maybe you need to update your dtschema and yamllint. Don't rely on
-> distro packages for dtschema and be sure you are using the latest
-> released dtschema.
-
-The bot is reporting that the reg field is missing from the added
-ramoops nodes on t186, t194, and t234. However, as also mentioned in
-the commit message, this is intentional because it is expected for the
-bootloader to fill that in. It is not known at dt compile time. Is
-there a way to mark this as intentional, so dtschema doesn't flag it?
-
+> yamllint warnings/errors:
 >
-> Best regards,
-> Krzysztof
+> dtschema/dtc warnings/errors:
+>
+>
+> doc reference errors (make refcheckdocs):
+> Warning: Documentation/devicetree/bindings/virtio/pci-iommu.yaml referenc=
+es a file that doesn't exist: Documentation/devicetree/bindings/pci/pci.txt
+> Documentation/devicetree/bindings/virtio/pci-iommu.yaml: Documentation/de=
+vicetree/bindings/pci/pci.txt
 
-Sincerely,
-Aaron
+I've fixed this with this[1] patch.
+
+Rob
+
+[1] https://lore.kernel.org/r/20250407165341.2934499-1-robh@kernel.org
