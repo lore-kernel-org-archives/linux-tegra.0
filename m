@@ -1,189 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B84226170;
-	Tue,  8 Apr 2025 04:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8012063FA;
+	Tue,  8 Apr 2025 05:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744087205; cv=none; b=lk+Pj5QAnnCcyDaCJETH0V+/mjXjcgLYNCoFksY1ZTkzUI0YxH4NI5TQWu1NRyvTevZqSETF3gBRtRYd3py05Myev/O79yy+RaPgnzy7y1PQDF5lCwDocbfF5lWzz4W/P65pKvRgdxXtQKa2ULIoT0iyPvkImm/V10EJyhTgKig=
+	t=1744091030; cv=none; b=QW6nKXywgxV9KwcBIKNIKjDPE0Ao69pn+5pIsQPuiRI8YXERDbxWab2JcFfkijtybUeFllPoL/DWLeSs6NVOcdm4PoNklw6FGQQ3Pxz5iNDeP900z4h5X1DCBT0h1LGmxAN3t3aCeitbaYFc4ZXFkKh3QRk2m9GHEToRSaKSnZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744087205; c=relaxed/simple;
-	bh=VLSMlFX8MHlSUtQUTu5mk0CYrZpnr3KFN4CqZqLwFhk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Sb8gTCPzPumassnIZZzayl6VWcZI95orNQrpaF5/9Mqs4SrNm0sjXNN1Wj/lkyEHeTEFne6Vb0UzlwsFNMdKVVbak8bfmQNkkaQ7XQNRGATrzz4jlnSil5Wa1/DXheNMOsMnOvBpMFBZPPGZOMtGqhN1MSXnSd38bxrQ0hAEv4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2QS5Hbv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744091030; c=relaxed/simple;
+	bh=sCHT8GHC31TuiceCAaOvubizgy6yRJ5sEi7ftPp0xPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fKbqIennghA6HsrNVQVQKpy4+JPrDx0mKR8uzfp3IH5JZOJgydNoz990kZleBDWL4b4OhielS5ST2EaioAOq3bSYRni6i43mTGhuQCtGbgnXwqm9JMtJLTIqFvSGYFK5XT3zg4e/672Gj7SXYfbfuqRNo3D7QZAKlXCjtOAzPsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFDLXr2J; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2QS5Hbv"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D4C8BC4CEF0;
-	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744087204;
-	bh=VLSMlFX8MHlSUtQUTu5mk0CYrZpnr3KFN4CqZqLwFhk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=l2QS5HbvKqA6r+NCxeIvD2Ox+NfBuDEl6BuWSekuePq+YfASOZo543ODPZo4zmPRc
-	 dlQ01Hs/oaptTuMFBo32xd05MQl2ML/vpicd8+z1HC7Pg/wSTGDYJCZmfNMp5UBEvW
-	 BFmKWXi+IKDoYNds7mW8tLitc4P/qyft78eZpApghZ9hgTcxOLAPE3Vto+rMfuMMaY
-	 ZDV5wDFIDWdCjyqL8tVT+IY/G8acFh947XPbqDzi3185Z66HDJcdmppTjru2CS9PDA
-	 a9ikKq8NuxHWyPqiWtTv9hMW+CcDFjdmKVQ/Rwjtoer5sF9ILE7ng2f+Bux6VRpKKu
-	 GxqMLIIVOnGJw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C392AC36010;
-	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 07 Apr 2025 23:39:51 -0500
-Subject: [PATCH 4/4] arm64: tegra: Wire up cec to devkits
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFDLXr2J"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so50486185e9.3;
+        Mon, 07 Apr 2025 22:43:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744091027; x=1744695827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kAuwdSEHLwB691PFl03qxzJ1K9Zrc8A7QXS5gXOWExk=;
+        b=jFDLXr2JTcGrwXknM7GoG5IwPaQ7P2uxXIAQl55ZKvoCEE8Vp1Ompr7tjtWqvyDT/N
+         y8MPaGwHwpGvCRqxRUH0CQ7GLJtbwktK6GQR+N1TnBimOSko0zBiPBLw4ZZDSy6E6fuQ
+         FZu6vnCMY+pfaICNZilFn1rAyHLA9LxwW6A11/uj7Wf3Xpv8/2P1aBqdYGiarlg+8+R4
+         wcpADjO/BQvwFXQWT0q2CPc6PJWLaOlEoDSvUUNZSocyVu05Rz9V85qspZKdlWdLuy/i
+         uaVaXhdeJFtSFMYqgOtjYhmquEJ0J2mIpxfqI5v5J8zxbUibEd3N4w/ICOFLH8HOufrb
+         73fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744091027; x=1744695827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kAuwdSEHLwB691PFl03qxzJ1K9Zrc8A7QXS5gXOWExk=;
+        b=KUGaZmjmoLLnaajoIncWrHfObgnJMLw+T0so1BLWRaC1sgv6LSmt+ax1x6aBy7/8gh
+         /lZXw0121sqoczsq4DEmUHojs1Lld/TvOdE0V7qGvJ6uJxqtjS5aeYd6JB42V+GAbQif
+         zxDo4i29Q3YUKnwkPkZKLGZ0Cvz+qYJhCFfKmzqd0tpsSFwd9c6TkO62uIGjP3StYDqp
+         wM5zvogAUFS9CpoyDqPCwjIRlKQq3061kyFuoMSqWhGgAtfnRAtuUGjy2tWmxSmy0vGP
+         fCxNqv7FMTODQ9nCL+B5ZMqTFg3uZ1Yp6CqTEvx5FS9d3AWrVUi4nDwWUboJq0xjDBqI
+         oVMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQiX7ym7NXnoziQaUucLcjAZEb63+k2aWRTDjzhj3+GFcQZhoCNhFkxAIbEdPzEf5QOXPbZNzfTtf+@vger.kernel.org, AJvYcCUU+oHjtbuQfiLMt8O/JDYSxCgOWYeDLXH/pVWHKSSkVNeIvi8VV31ALvbZdZ/L0GTvbnxocub+adFy@vger.kernel.org, AJvYcCWyOXK1Ojlzq60QU8STDToOu3lB+UzFELOb2sxsOaYSsqPHu61ZvGPA9+3QXQVFCiQ6x8gjd34YhZI1P/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyubvdR9rLV78Tl/u4qXRKY+/d55LXO4jc+OysnqJZneNh3pSyA
+	M/iZy2JEVL7UlhcDri8LdmZLGtsci4UUm+VajTUUkxjzRlACdpPEwAIngXchoI0Ik/ZmTB4dZqz
+	91DgIqI0dbgzbIbsKbg3ieYbdHcM=
+X-Gm-Gg: ASbGncv7D4FEk9rLGF+nmy8ghjP3RDUiDeezX+VL6oDLTElzjRx4SmQP37FgAhKnLeV
+	Q48sB9XN/C3ru1bYejfiM9HsdoDFw1fdbSiPVEHTJZWT4daESCzp0VM/KTYlAUbZZJMa/xTbb5l
+	tjV6MBKjwP+DSpHxqjg+uA8/1pRqQ=
+X-Google-Smtp-Source: AGHT+IGsPU4TjoAJ3iqho3vhlE0M3rrsyKyjPDbuj1pIel6bfcogzkpm7d9GOd0CHj1Cgh8n5qjmdFjPyPiZ7ndgLYk=
+X-Received: by 2002:a5d:6d88:0:b0:39c:3122:ad0c with SMTP id
+ ffacd0b85a97d-39cb36b2a5fmr14601478f8f.11.1744091027563; Mon, 07 Apr 2025
+ 22:43:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-tegra-cec-v1-4-e25dd9577b5f@gmail.com>
-References: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
-In-Reply-To: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744087203; l=4050;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=/KKv/TYqLGMeib4RLCtBAkuSb2lVtoCy1X50R5bg7FY=;
- b=Qe7WUDnKEe/CJA2Ni9XfRhcj9ymbqx0BS/5cX0NE9HrFsAa/cW3rj2vLHU5ggV/m6JR9aoI0S
- nu/hmkqtQMyDEVimS7+BPkmg6KGJGav6Sb1tmgmcXBkednWc3M+ALJ4
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <20250225143501.68966-1-clamor95@gmail.com>
+In-Reply-To: <20250225143501.68966-1-clamor95@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 8 Apr 2025 08:43:35 +0300
+X-Gm-Features: ATxdqUFmqygoZjQ1jPRy8xHAhI0P-Gqy0pNvzclHkp020md1cOggnjWtfe0KuS4
+Message-ID: <CAPVz0n29m5CrKMW_j8Q0Zz2pCBdYLmMn-3waSZx7ooJZG6ZTOQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/9] Tegra114: implement EMC support
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Georgi Djakov <djakov@kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <webgeek1234@gmail.com>
+=D0=B2=D1=82, 25 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:35 Svya=
+toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Add support for External Memory Controller found in Tegra 4 SoC along
+> with adjustments required for it to work properly.
+>
+> Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
+>
+> Svyatoslav Ryhel (9):
+>   ARM: tegra: Add ACTMON support on Tegra114
+>   dt-bindings: memory: Document Tegra114 Memory Controller
+>   drivers: memory: tegra: implement EMEM regs and ICC ops for T114
+>   dt-bindings: memory: tegra114: Add memory client IDs
+>   clk: tegra114: remove emc to mc clock mux
+>   dt-bindings: memory: Document Tegra114 External Memory Controller
+>   memory: tegra: Add Tegra114 EMC driver
+>   ARM: tegra: Add External Memory Controller node on Tegra114
+>   ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
+>     device-tree nodes
+>
+>  .../nvidia,tegra114-emc.yaml                  |  431 +++++
+>  .../nvidia,tegra114-mc.yaml                   |  154 ++
+>  .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   32 +
+>  drivers/clk/tegra/clk-tegra114.c              |   48 +-
+>  drivers/memory/tegra/Kconfig                  |   12 +
+>  drivers/memory/tegra/Makefile                 |    1 +
+>  drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
+>  drivers/memory/tegra/tegra114.c               |  193 +++
+>  include/dt-bindings/memory/tegra114-mc.h      |   67 +
+>  10 files changed, 2561 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra114-emc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra114-mc.yaml
+>  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dts=
+i
+>  create mode 100644 drivers/memory/tegra/tegra114-emc.c
+>
+> --
+> 2.43.0
+>
 
-This enables hdmi cec and routes it to the hdmi port on all supported
-Tegra210, Tegra186, and Tegra194 devkits.
+These patches had no activity/feedback from tegra maintainers for a
+while, so, in case they got lost in the depths of email box, this is a
+friendly reminder that they are still relevant and I would like them
+to move on.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts            | 6 ++++++
- arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 6 ++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts            | 6 ++++++
- arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi           | 6 ++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts            | 6 ++++++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts            | 6 ++++++
- 6 files changed, 36 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 15aa49fc450399c7bd525adcdb6e92a27a185805..90155e4ff1feb609f79416a410c3666ebef8b634 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -2394,6 +2394,12 @@ usb@3550000 {
- 		phy-names = "usb2-0";
- 	};
- 
-+	cec@3960000 {
-+		status = "okay";
-+
-+		hdmi-phandle = <&sor1>;
-+	};
-+
- 	i2c@c250000 {
- 		/* carrier board ID EEPROM */
- 		eeprom@57 {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-index 26f71651933d1d8ef32bbd1645cac1820bd2e104..a6d7fec2e84fb917018aff843845b02c34fede33 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-@@ -712,6 +712,12 @@ usb@3550000 {
- 		phy-names = "usb2-0";
- 	};
- 
-+	cec@3960000 {
-+		status = "okay";
-+
-+		hdmi-phandle = <&sor1>;
-+	};
-+
- 	hsp@3c00000 {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index c32876699a43e9f57b3888c5bc0f5da73c5b95b5..ea6f397a27926e3dcd54002177f68749bc1cc309 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -2121,6 +2121,12 @@ usb@3610000 {
- 			phy-names = "usb2-0", "usb2-1", "usb2-3", "usb3-0", "usb3-2", "usb3-3";
- 		};
- 
-+		cec@3960000 {
-+			status = "okay";
-+
-+			hdmi-phandle = <&sor2>;
-+		};
-+
- 		i2c@c240000 {
- 			typec@8 {
- 				compatible = "cypress,cypd4226";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
-index 4a17ea5e40fd034c6f4acb023cd7908d6800f710..16cf4414de599baea96362b494be40c800a8197f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
-@@ -2174,6 +2174,12 @@ usb@3610000 {
- 			phy-names = "usb2-1", "usb2-2", "usb3-2";
- 		};
- 
-+		cec@3960000 {
-+			status = "okay";
-+
-+			hdmi-phandle = <&sor1>;
-+		};
-+
- 		host1x@13e00000 {
- 			display-hub@15200000 {
- 				status = "okay";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index a6a58e51822d90f8815df880ea7e668caff1b1ec..627abf51a5a472ddcc42fdc1d783876b0a03da47 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -90,6 +90,12 @@ eeprom@57 {
- 		};
- 	};
- 
-+	cec@70015000 {
-+		status = "okay";
-+
-+		hdmi-phandle = <&sor1>;
-+	};
-+
- 	clock@70110000 {
- 		status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 0ecdd7243b2eb1abba9adbe9a404b226c29b85ef..ec0e84cb83ef9bf8f0e52e2958db33666813917c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -419,6 +419,12 @@ pmc@7000e400 {
- 		nvidia,sys-clock-req-active-high;
- 	};
- 
-+	cec@70015000 {
-+		status = "okay";
-+
-+		hdmi-phandle = <&sor1>;
-+	};
-+
- 	hda@70030000 {
- 		nvidia,model = "NVIDIA Jetson Nano HDA";
- 
-
--- 
-2.48.1
-
-
+Best regards,
+Svyatoslav R.
