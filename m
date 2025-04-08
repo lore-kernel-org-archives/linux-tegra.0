@@ -1,210 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2077.outbound.protection.outlook.com [40.107.96.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1FA2627E3;
-	Tue,  8 Apr 2025 08:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100240; cv=none; b=ZVSS97nv9JUax0BzHXPRSSJ4fjtRqw0aCB1XMOk/Rf11PGJxefxQYR/y9jdeh3KCPDIj/G2yf4+gqw2LQZqHstEbcZi+yQJour51N6HBRpThCzfTP9taFnqYeyaKdsMCfNy8D/5RJTiar1h6SlJ0oOHkl0jMYPkF6S9edRYpHDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100240; c=relaxed/simple;
-	bh=enf1eqRg2cFawO7RARD+HZdl3KnC0gY4tfN8Ux7CqDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B9NP2LBTqjc96oSTodQ9tFvTH2liyt9dQnF08LDpjtwYK9l5ujeIh1QvA0uioK0h8o0S3GOk+5xuaqgI15SGj+Hsl29a9jo97S/ZNhraW5ix4+nEVb4AAy9q1D10L8D+OrtKW2VPRMsDWEevI2U7cdMx1Xe1BU3k68I0uHaVer0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ns5V01Wq; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95918488;
+	Tue,  8 Apr 2025 08:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744101044; cv=fail; b=Gu/BB1EkjFaw2lCw5q0AY6e11BT7DekdgV0A3laGwvG9KGlDXnkHEDPtdUL2nv2F0r+b9MgunH3y4GUqHDd9kQ0utgqod9OA6lHp1zkNa2M6oVqkJw1ztFD5AOpuvLYjLV2/U4BNYNViIZjthSV7l2L05fv2Pl2u25OpjQsLBo0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744101044; c=relaxed/simple;
+	bh=agUcQTvsniCPc0DAXWAEDiMaF0H2zWFxfS03gQvJGoQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DGgr5WJ6kv5CebL1QIm3SqyeIMsPtIUOIZmMz3JQSoOS2Z/wHwsWjH9ni7C1N8Lhvd56tgKty9sJcBWW+7DeXOabYA+J142121ybjL639CNvZ7BUdI6ev9cPKnMczP4pxDdiSzSHxziWZkjU8hi9csL0LhYUfOsVE27mR/kuEYI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ETKtoNLq; arc=fail smtp.client-ip=40.107.96.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ns5V01Wq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC46FC4CEE9;
-	Tue,  8 Apr 2025 08:17:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744100237;
-	bh=enf1eqRg2cFawO7RARD+HZdl3KnC0gY4tfN8Ux7CqDs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ns5V01Wq+R+7c3ZPBdv17LI7hYvaMiOH6GB3lm0tE7kMiUC9wNEGnFZveaxLHl42T
-	 ySeOCYnZalBDF4w5W0RiLFTfUHrJaSFRk81nmUVyN5NlVK4zvmX0L/9Op9zlE3Z4sx
-	 vB1H38q6rDh12KD+uOb7PpFku6rcNXRLK1hQT+zVH9K6mIaMKLKYZdZZXYZx8WID9E
-	 5OSh0ye/cVipL7ZZ1dQXuXuJ4Tw09O44m5ArPNl22kaY1eBI6J19qf5LQ2qxSFOJun
-	 XKxuP4Om1VFPCoT52Tgi7E9FfsGKa6lqy45EHczooxS16FLa0o4/wxYFmg+vFF943b
-	 PiEByzH7OdArA==
-Message-ID: <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org>
-Date: Tue, 8 Apr 2025 10:17:11 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ETKtoNLq"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kJPAfS4e0vTLo3ECttAHyeZ1pAo+BM140lsOfWnhiq9ysJagmFKWvfPkaPXTIMTETGBJx8fKhhvPeHlpPFYxr/ePedFHP33tdHeU7jPSuKob/RkChVGYLTxYvvEcCj95s65OvnoZ4gUj1SLNJYn7S4OdQ1rUYn2z7guwYazH81PzK+8f3Lz69sqkXxRxLwSKLHW04l9nWzUpAIo1mKWvAHu4s4+ROTEtoVvHGClRnU9GvNevQPg7n66i5VYYeL3PPfzq4POhOOJ/oYfvAwxP1o+D3K+xVAE1moK3AJQVJdPKOyQ/ugLoDPe0yKCSfyNWSgLVj44cVqFKRrOgD3GOSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VPgLC8sUynbGV9MOqRlsU5b+TZNrT2hYqmKd8oPAlaU=;
+ b=a/nH5+DfYbEXAUkva7ONb5HsVpfugzLvkFDwUcuVrF06unjreBO92fpvX3+TiZujswG57fX5JjP5xHGeiBGqRMtrViBmESvXBHfg85fpT5+IyITR1TDzbFAFSTFUPNVl84WVhM+3gBVUFY47q+QHYEFc4TGp8Q9UiIY4DPNzjR8a8P45UQu8rj17hHbMoFIPogxClsN7BTgijX0vi2yLl0G1kE31FgOS5U845L4fVZ6k1SoSMVhKaLus5tQQ9ewfSCjiE29x4s0D0F8xktPn0o+/igldDLPbWAskP63Oq1P8TF+eypCnpd3SDQ1l/jpBWxHSbaDTu00+/EKkON/aWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VPgLC8sUynbGV9MOqRlsU5b+TZNrT2hYqmKd8oPAlaU=;
+ b=ETKtoNLq0Ft3yNw/FK2wrAyoREix4Mk5gu9ZuM/9rIQWf1LsncyNicsZLVKuyKE3JxYXJVGDGhUUHqzz4RonEjCiCFxddUxnC+WapPsx7FUpW1aOtIs1PFS7+c8DgfXQj/h7/aoSf7RbGfDRf9OFBHL/2Ief4MU7oRcWsYh9urXDkrSbDtOdcqC0FF6BfXvap5lhG+hpy9GsmNWqg7KhRBstCVi54qbRrTzawDkTqY2j5t2ntABNrGqTvjS1SNLmYNU3Z3zYpYEqZ+uHDUXhAxFxlvIBx+prkvG32G8DyqQOD2T/P4sNxU3WRqjCbIrGsAQjgAFZlEJazh31aYV27g==
+Received: from MW3PR05CA0024.namprd05.prod.outlook.com (2603:10b6:303:2b::29)
+ by MW4PR12MB6897.namprd12.prod.outlook.com (2603:10b6:303:20a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.21; Tue, 8 Apr
+ 2025 08:30:37 +0000
+Received: from CO1PEPF000075EE.namprd03.prod.outlook.com
+ (2603:10b6:303:2b:cafe::17) by MW3PR05CA0024.outlook.office365.com
+ (2603:10b6:303:2b::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.13 via Frontend Transport; Tue,
+ 8 Apr 2025 08:30:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1PEPF000075EE.mail.protection.outlook.com (10.167.249.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8606.22 via Frontend Transport; Tue, 8 Apr 2025 08:30:37 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 8 Apr 2025
+ 01:30:24 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 8 Apr 2025 01:30:24 -0700
+Received: from build-sheetal-bionic-20250305.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14
+ via Frontend Transport; Tue, 8 Apr 2025 01:30:24 -0700
+From: "Sheetal ." <sheetal@nvidia.com>
+To: <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+	<tiwai@suse.com>, <linux-sound@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jonathanh@nvidia.com>, <thierry.reding@gmail.com>, <mkumard@nvidia.com>,
+	<spujar@nvidia.com>, Sheetal <sheetal@nvidia.com>
+Subject: [RFC PATCH v2] ASoC: soc-pcm: Optimize hw_params() BE DAI call
+Date: Tue, 8 Apr 2025 08:30:22 +0000
+Message-ID: <20250408083022.3671283-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250406-tegra-pstore-v1-1-bf5b57f12293@gmail.com>
- <6920a557-9181-4c9c-98f4-a9be4e796a13@kernel.org>
- <CALHNRZ--to8B3zhg6zV90siL0x78BAjhS04DgfLwmnXEiOMe3g@mail.gmail.com>
- <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org>
- <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075EE:EE_|MW4PR12MB6897:EE_
+X-MS-Office365-Filtering-Correlation-Id: b744253d-dcaa-40d1-71d3-08dd7677a3d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KKWlHqFL6o0WeBxVfH08feTxAXpxLQEgjLm2blVuhgKuUTFuI2rLQ0Gmqv2d?=
+ =?us-ascii?Q?ZaKrk2kf3QyJ65nnH2yBifbpBONSVwgra/PhgIJ/K2sxzeShQ7OTv5qfAFRR?=
+ =?us-ascii?Q?wa/pWgKSnOSZAAHY+/wxyas+6dx3ZX8WUAgVXCQWusFkRD9CfwCp1NBoLEsb?=
+ =?us-ascii?Q?pyXb/cFEVr8XWI5+xVIwawRYiRhL13JfsOKq+4QSENy9RQQOeaiX8k860XGC?=
+ =?us-ascii?Q?VS+cz/53DGgY6RyOsm4vVsz5Nc9vYGeR96kzppJ6N/oiuKDH0XoMFdUjEB+o?=
+ =?us-ascii?Q?1C6zD3k9y0mNG3ONrZBO3ytl875MVvWggAwas1n66fXG7JUNIw4xlu7fUDvV?=
+ =?us-ascii?Q?3NszpM9LXqYqPPOFAX32xnPE13CDhRw/rIcV5wIT/DSnwGerz2WnUdqLsjqN?=
+ =?us-ascii?Q?sPLrYVWFaYd8T6tCGs5hkATDZKQxo40BXjtkCeX+f9jcD4r27rqY7HhiWc1w?=
+ =?us-ascii?Q?wi6oFj7NZ9u/jDUs8UuoHhFyAc8nBqKc3Xp9KJ+4HCdY5qpZYlAaf49v3btR?=
+ =?us-ascii?Q?qCwBHuf8MR6AvPDKhzzhk1sfT35FSpEnZDmRGK+e2n6hGNJcoPpMEnq7s3mJ?=
+ =?us-ascii?Q?QANrIoRWyXXk7++WjRNbvn8i+zEc+Qq7T9uAZJeP3iHlQb0km7ch1StKEmTH?=
+ =?us-ascii?Q?/y5b6XnLPUX2YihNRPQwTGVcqIXPfdsXSXJheRcM6XFDNwxRtkYUaJMkr60Z?=
+ =?us-ascii?Q?E03OZ5O34oxyjhlwTNfqsAB2Cq5LlXRycjSHAua/NWbYPIsjWtb7vZ8FmGOq?=
+ =?us-ascii?Q?l2Wb1r4Az2lt4ZUPgf5POijFsc/8KadWdjMtegnIZ25BfCcefsErokUOdRpq?=
+ =?us-ascii?Q?tTJ32mAhvaoSwkNCDd5RF6XqZfo9d2HJAjAzhGymFlY3bKV3bhbjOh6w8Ceb?=
+ =?us-ascii?Q?8n98cxjShjF0/S2KApvNt+v57MU5rObkawLP3uCsuA1cNFXybAIVh8vRLD7K?=
+ =?us-ascii?Q?yHTmR2mk4QwG5JsghK6LlJV6iCuruN6KFdLJ4ZhKL3yMX2lbTQ/SqtZYsJZG?=
+ =?us-ascii?Q?tCB3k9frMKihxFbUN4eHDltrosjTx50ytiDTPKWzAeiSCBrrWbbjR6BOuNnY?=
+ =?us-ascii?Q?mhmek+GO3xjDvURRtcclBmXsq9c+Pu2OcJtKElNo4ToT4R0UZdCfrWxxAU4d?=
+ =?us-ascii?Q?EN4i4+CXdxVa8OqGOKml16r0kLxeHU9yi1q61iProiyteH8TpUNnYDF8A2Jv?=
+ =?us-ascii?Q?4u797qreupVLe8x6wGITsNXTiWQyHvTUMvf9H4W7jxFoR6TV4Z6emruURUz8?=
+ =?us-ascii?Q?ggi9sulLeAHhRsyi9eua5XKerY8XpfBmiNNmwEFhK1JTrY/lc1BmUJt32wbu?=
+ =?us-ascii?Q?JwGNvMZcE+qfi8HvHclzbM7va3GVXPlyklM5C+wrhJ8jnbBNvZsLba/933Ez?=
+ =?us-ascii?Q?UDCuti7gHP6ItEc0X5+kjY7gMj1avbqrS71Tw8n/f14v4dDeI/0e7YNSJyPz?=
+ =?us-ascii?Q?72C8CEX28WjjcQebxlOxYFtp/3wHM4EK5gE0UhrXlk6E+PWLARMz2TcQPCeL?=
+ =?us-ascii?Q?qaFi1vojm1+yxcw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 08:30:37.7270
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b744253d-dcaa-40d1-71d3-08dd7677a3d3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075EE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6897
 
-On 08/04/2025 09:35, Aaron Kling wrote:
-> On Tue, Apr 8, 2025 at 1:08 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 07/04/2025 18:00, Aaron Kling wrote:
->>> On Mon, Apr 7, 2025 at 7:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On 06/04/2025 23:12, Aaron Kling via B4 Relay wrote:
->>>>> From: Aaron Kling <webgeek1234@gmail.com>
->>>>>
->>>>> This allows using pstore on all such platforms. There are some
->>>>> differences per arch:
->>>>>
->>>>> * Tegra132: Flounder does not appear to enumerate pstore and I do not
->>>>>   have access to norrin, thus Tegra132 is left out of this commit.
->>>>> * Tegra210: Does not support ramoops carveouts in the bootloader, instead
->>>>>   relying on a dowstream driver to allocate the carveout, hence this
->>>>>   hardcodes a location matching what the downstream driver picks.
->>>>> * Tegra186 and Tegra194 on cboot: Bootloader fills in the address and
->>>>>   size in a node specifically named /reserved-memory/ramoops_carveout,
->>>>>   thus these cannot be renamed.
->>>>> * Tegra194 and Tegra234 on edk2: Bootloader looks up the node based on
->>>>>   compatible, however the dt still does not know the address, so keeping
->>>>>   the node name consistent on Tegra186 and newer.
->>>>>
->>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
->>>>> ---
->>>>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
->>>>>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++++++++++
->>>>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 13 +++++++++++++
->>>>>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 16 ++++++++++++++++
->>>>>  4 files changed, 61 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>>>> index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..2e2b27deb957dfd754e42dd03f5a1da5079971dc 100644
->>>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>>>> @@ -2051,6 +2051,22 @@ pmu-denver {
->>>>>               interrupt-affinity = <&denver_0 &denver_1>;
->>>>>       };
->>>>>
->>>>> +     reserved-memory {
->>>>> +             #address-cells = <2>;
->>>>> +             #size-cells = <2>;
->>>>> +             ranges;
->>>>> +
->>>>> +             ramoops_carveout {
->>>>
->>>> Please follow DTS coding style for name, so this is probably only ramoops.
->>>
->>> As per the commit message regarding tegra186: bootloader fills in the
->>> address and size in a node specifically named
->>> /reserved-memory/ramoops_carveout, thus these cannot be renamed.
->>
->> That's not a reason to introduce issues. Bootloader is supposed to
->> follow same conventions or use aliases or labels (depending on the node).
->>
->> If bootloader adds junk, does it mean we have to accept that junk?
->>
->>>
->>>>
->>>> It does not look like you tested the DTS against bindings. Please run
->>>> `make dtbs_check W=1` (see
->>>> Documentation/devicetree/bindings/writing-schema.rst or
->>>> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
->>>> for instructions).
->>>> Maybe you need to update your dtschema and yamllint. Don't rely on
->>>> distro packages for dtschema and be sure you are using the latest
->>>> released dtschema.
->>>
->>> The bot is reporting that the reg field is missing from the added
->>> ramoops nodes on t186, t194, and t234. However, as also mentioned in
->>> the commit message, this is intentional because it is expected for the
->>> bootloader to fill that in. It is not known at dt compile time. Is
->>> there a way to mark this as intentional, so dtschema doesn't flag it?
->>
->> Fix your bootloader or chain load some normal one, like U-Boot.
-> How would chainloading a second bootloader 'fix' previous stage
-> bootloaders trampling on an out-of-sync hardcoded reserved-memory
-> address? It's possible for carveout addresses and sizes to change. Not
-> from boot to boot on the same version of the Nvidia bootloader, but
-> potentially from one version to another. Depending on if the
-> bootloader was configured with different carveout sizes.
-> 
-> There is precedence for this. When blind cleanup was done on arm
-> device trees, a chromebook broke because the memory node has to be
-> named exactly '/memory' [0]. How is this any different from that case?
+From: Sheetal <sheetal@nvidia.com>
 
-That was an existing node, so ABI.
+The hw_params() function for BE DAI was being called multiple times due
+to an unnecessary SND_SOC_DPCM_STATE_HW_PARAMS state check.
 
-> These nodes are an ABI to an existing bootloader. Carveouts on these
+Remove the redundant state check to ensure hw_params() is called only once
+per BE DAI configuration.
 
-You add new ABI, which I object to.
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+---
+Changes in v2:
+- Update commit message as its not a fix.
+- Marked as RFC patch as it requires feedback from other users
+  perspective as well.
+- The patch is being sent separately as other patch is not RFC.
 
-> archs are set up in bl1 or bl2, which are not source available. I
-> could potentially hardcode things for myself in bl33, which is source
-> available, but the earlier stages could still overwrite any chosen
-> block depending on how carveouts are configured. But even then, that
-> will not change the behaviour of the vast majority of units that use a
-> fully prebuilt boot stack direct from Nvidia. My intent here is for
-> pstore to work on such units without users needing to use a custom
-> bootloader.
-I understand your goal. What I still do not understand, why bootloader
-even bothers with ramoops carveout. It shouldn't and you should just
-ignore whatever bootloader provides, no?
+ sound/soc/soc-pcm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-It's not the same case as memory, where bootloader needs to fill out the
-actual size, or some other boot-specific properties.
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index d7f6d3a6d312..c73be27c4ecb 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2123,7 +2123,6 @@ int dpcm_be_dai_hw_params(struct snd_soc_pcm_runtime *fe, int stream)
+ 			continue;
+ 
+ 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN) &&
+-		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_PARAMS) &&
+ 		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE))
+ 			continue;
+ 
+-- 
+2.17.1
 
-Best regards,
-Krzysztof
