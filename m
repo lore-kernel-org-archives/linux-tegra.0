@@ -1,129 +1,114 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8012063FA;
-	Tue,  8 Apr 2025 05:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D0322B;
+	Tue,  8 Apr 2025 05:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744091030; cv=none; b=QW6nKXywgxV9KwcBIKNIKjDPE0Ao69pn+5pIsQPuiRI8YXERDbxWab2JcFfkijtybUeFllPoL/DWLeSs6NVOcdm4PoNklw6FGQQ3Pxz5iNDeP900z4h5X1DCBT0h1LGmxAN3t3aCeitbaYFc4ZXFkKh3QRk2m9GHEToRSaKSnZ8=
+	t=1744091235; cv=none; b=MSB78pDbf6IYId5eLPy3RlhTw08uzhyrzAD36wIbdkvZjQrQN7l6DdpJfPkCD1nUZI9dF6hX70LNp5Fw0lp8V78SUKEnVVWFUenPaQf5GARDgCQGKO5aIwfI6Yrx2nIy1mh5P8/YhsCvgts6HwLWo8J0fLWOKf1x/5oKl732auU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744091030; c=relaxed/simple;
-	bh=sCHT8GHC31TuiceCAaOvubizgy6yRJ5sEi7ftPp0xPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fKbqIennghA6HsrNVQVQKpy4+JPrDx0mKR8uzfp3IH5JZOJgydNoz990kZleBDWL4b4OhielS5ST2EaioAOq3bSYRni6i43mTGhuQCtGbgnXwqm9JMtJLTIqFvSGYFK5XT3zg4e/672Gj7SXYfbfuqRNo3D7QZAKlXCjtOAzPsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFDLXr2J; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744091235; c=relaxed/simple;
+	bh=TGrhTBtvGpDZsiu6g1yJFUnbKM0/DmzVAqE5Mqzpkj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dj/867jy5C68z2QAoFCIX3tOUBVuYGGhk/9iQXl/dzRPQGzhuXOVHq44D552Ey2kFcnTa/+88vBxqKJyTH2+Sy39AbYftsrWnn5t40p7Jj+UkwPttoOdZgBA9DDCu//vd0KAloclGROT71g0uaHMxt1j4EGtbxd/er+LF7FIMqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXNhL9R1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFDLXr2J"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so50486185e9.3;
-        Mon, 07 Apr 2025 22:43:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744091027; x=1744695827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kAuwdSEHLwB691PFl03qxzJ1K9Zrc8A7QXS5gXOWExk=;
-        b=jFDLXr2JTcGrwXknM7GoG5IwPaQ7P2uxXIAQl55ZKvoCEE8Vp1Ompr7tjtWqvyDT/N
-         y8MPaGwHwpGvCRqxRUH0CQ7GLJtbwktK6GQR+N1TnBimOSko0zBiPBLw4ZZDSy6E6fuQ
-         FZu6vnCMY+pfaICNZilFn1rAyHLA9LxwW6A11/uj7Wf3Xpv8/2P1aBqdYGiarlg+8+R4
-         wcpADjO/BQvwFXQWT0q2CPc6PJWLaOlEoDSvUUNZSocyVu05Rz9V85qspZKdlWdLuy/i
-         uaVaXhdeJFtSFMYqgOtjYhmquEJ0J2mIpxfqI5v5J8zxbUibEd3N4w/ICOFLH8HOufrb
-         73fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744091027; x=1744695827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kAuwdSEHLwB691PFl03qxzJ1K9Zrc8A7QXS5gXOWExk=;
-        b=KUGaZmjmoLLnaajoIncWrHfObgnJMLw+T0so1BLWRaC1sgv6LSmt+ax1x6aBy7/8gh
-         /lZXw0121sqoczsq4DEmUHojs1Lld/TvOdE0V7qGvJ6uJxqtjS5aeYd6JB42V+GAbQif
-         zxDo4i29Q3YUKnwkPkZKLGZ0Cvz+qYJhCFfKmzqd0tpsSFwd9c6TkO62uIGjP3StYDqp
-         wM5zvogAUFS9CpoyDqPCwjIRlKQq3061kyFuoMSqWhGgAtfnRAtuUGjy2tWmxSmy0vGP
-         fCxNqv7FMTODQ9nCL+B5ZMqTFg3uZ1Yp6CqTEvx5FS9d3AWrVUi4nDwWUboJq0xjDBqI
-         oVMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQiX7ym7NXnoziQaUucLcjAZEb63+k2aWRTDjzhj3+GFcQZhoCNhFkxAIbEdPzEf5QOXPbZNzfTtf+@vger.kernel.org, AJvYcCUU+oHjtbuQfiLMt8O/JDYSxCgOWYeDLXH/pVWHKSSkVNeIvi8VV31ALvbZdZ/L0GTvbnxocub+adFy@vger.kernel.org, AJvYcCWyOXK1Ojlzq60QU8STDToOu3lB+UzFELOb2sxsOaYSsqPHu61ZvGPA9+3QXQVFCiQ6x8gjd34YhZI1P/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyubvdR9rLV78Tl/u4qXRKY+/d55LXO4jc+OysnqJZneNh3pSyA
-	M/iZy2JEVL7UlhcDri8LdmZLGtsci4UUm+VajTUUkxjzRlACdpPEwAIngXchoI0Ik/ZmTB4dZqz
-	91DgIqI0dbgzbIbsKbg3ieYbdHcM=
-X-Gm-Gg: ASbGncv7D4FEk9rLGF+nmy8ghjP3RDUiDeezX+VL6oDLTElzjRx4SmQP37FgAhKnLeV
-	Q48sB9XN/C3ru1bYejfiM9HsdoDFw1fdbSiPVEHTJZWT4daESCzp0VM/KTYlAUbZZJMa/xTbb5l
-	tjV6MBKjwP+DSpHxqjg+uA8/1pRqQ=
-X-Google-Smtp-Source: AGHT+IGsPU4TjoAJ3iqho3vhlE0M3rrsyKyjPDbuj1pIel6bfcogzkpm7d9GOd0CHj1Cgh8n5qjmdFjPyPiZ7ndgLYk=
-X-Received: by 2002:a5d:6d88:0:b0:39c:3122:ad0c with SMTP id
- ffacd0b85a97d-39cb36b2a5fmr14601478f8f.11.1744091027563; Mon, 07 Apr 2025
- 22:43:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXNhL9R1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F20EC4CEE5;
+	Tue,  8 Apr 2025 05:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744091234;
+	bh=TGrhTBtvGpDZsiu6g1yJFUnbKM0/DmzVAqE5Mqzpkj8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sXNhL9R1kocMkR3tD1HO4MJcrJiggdL6Qxi6z6KWsWD9uWBurWFuWdyKZ8iSdgdTx
+	 0SS2VEzfbMblDTnaDqLv/xYe7FcgzZt9keMStGEDfksYIJziOqVBj9y3luatPsyscW
+	 lr6Z1AFy6WkiRimOEJAxirWlWuxMAPosr/SAy8pgn25pPNMWCrDq4qEDqZZ2TzosdO
+	 OcHHP9OGkxqKG3keYaUhxgX+698bfoZGQ8pIjXl1K4TCfl9wGWn7p/AIrwzlGSq5x/
+	 v/xy45iH3iFl/cZ2hTNYdAKbGkX6Fk8fH3ieSWDOAQzTvEvow26kqCQznJS39Ym6G3
+	 kVWNprhZpgBHQ==
+Message-ID: <5241e944-18ae-4100-9c08-e3ef4de306ab@kernel.org>
+Date: Tue, 8 Apr 2025 07:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225143501.68966-1-clamor95@gmail.com>
-In-Reply-To: <20250225143501.68966-1-clamor95@gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 8 Apr 2025 08:43:35 +0300
-X-Gm-Features: ATxdqUFmqygoZjQ1jPRy8xHAhI0P-Gqy0pNvzclHkp020md1cOggnjWtfe0KuS4
-Message-ID: <CAPVz0n29m5CrKMW_j8Q0Zz2pCBdYLmMn-3waSZx7ooJZG6ZTOQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1 0/9] Tegra114: implement EMC support
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Svyatoslav Ryhel <clamor95@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Georgi Djakov <djakov@kernel.org>, Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Georgi Djakov <djakov@kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250225143501.68966-1-clamor95@gmail.com>
+ <CAPVz0n29m5CrKMW_j8Q0Zz2pCBdYLmMn-3waSZx7ooJZG6ZTOQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAPVz0n29m5CrKMW_j8Q0Zz2pCBdYLmMn-3waSZx7ooJZG6ZTOQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-=D0=B2=D1=82, 25 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:35 Svya=
-toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Add support for External Memory Controller found in Tegra 4 SoC along
-> with adjustments required for it to work properly.
->
-> Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
->
-> Svyatoslav Ryhel (9):
->   ARM: tegra: Add ACTMON support on Tegra114
->   dt-bindings: memory: Document Tegra114 Memory Controller
->   drivers: memory: tegra: implement EMEM regs and ICC ops for T114
->   dt-bindings: memory: tegra114: Add memory client IDs
->   clk: tegra114: remove emc to mc clock mux
->   dt-bindings: memory: Document Tegra114 External Memory Controller
->   memory: tegra: Add Tegra114 EMC driver
->   ARM: tegra: Add External Memory Controller node on Tegra114
->   ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
->     device-tree nodes
->
->  .../nvidia,tegra114-emc.yaml                  |  431 +++++
->  .../nvidia,tegra114-mc.yaml                   |  154 ++
->  .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
->  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   32 +
->  drivers/clk/tegra/clk-tegra114.c              |   48 +-
->  drivers/memory/tegra/Kconfig                  |   12 +
->  drivers/memory/tegra/Makefile                 |    1 +
->  drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
->  drivers/memory/tegra/tegra114.c               |  193 +++
->  include/dt-bindings/memory/tegra114-mc.h      |   67 +
->  10 files changed, 2561 insertions(+), 15 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
-nvidia,tegra114-emc.yaml
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
-nvidia,tegra114-mc.yaml
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dts=
-i
->  create mode 100644 drivers/memory/tegra/tegra114-emc.c
->
-> --
-> 2.43.0
->
+On 08/04/2025 07:43, Svyatoslav Ryhel wrote:
+>>
+> 
+> These patches had no activity/feedback from tegra maintainers for a
+> while, so, in case they got lost in the depths of email box, this is a
+> friendly reminder that they are still relevant and I would like them
+> to move on.
+Huh? So you just ignore the review?
 
-These patches had no activity/feedback from tegra maintainers for a
-while, so, in case they got lost in the depths of email box, this is a
-friendly reminder that they are still relevant and I would like them
-to move on.
+I am not going to consider picking these up if you are not going to
+implement the review. What's more, your waiting 1.5 months after the
+review to ping is just inappropriate.
 
 Best regards,
-Svyatoslav R.
+Krzysztof
