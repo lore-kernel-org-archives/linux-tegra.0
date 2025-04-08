@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F15210E0;
-	Tue,  8 Apr 2025 06:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B5D2046A5;
+	Tue,  8 Apr 2025 06:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744092083; cv=none; b=lvV++t2GUiItnR/k8dClYO3kTht/Mynw4h+83Evz2/A9fAnxGGqZ/hehK+tPG+EREscyVa5vKpAhorlyEquBqRUad5TqPUjRkxGsLof0MIdhRv0TjgRHwQYH5tXqzkYCxpdJ+hC9lzXL1ilTY+vjEHWkxidzy6rWv4IW4qcCIkU=
+	t=1744092485; cv=none; b=mTjWRKvQPKg+VXZTevQPT0gp15HKBrJCwAJEdJJOaOX9tK/+GfEQRYu5qFa83W241BO2IKkluyy9t4zz7Njr+kVmnHwAJzHesbtUlqXqOYjuQXkSpk23+CejHISeMxVyuo8ZoierYW/DTuHHJewQezl6Y4snP+lPiPgA9s+5ujg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744092083; c=relaxed/simple;
-	bh=V08LfMrRepcIFzbFA52GTbzWj04RRx3nwYobnk7R1Xc=;
+	s=arc-20240116; t=1744092485; c=relaxed/simple;
+	bh=4EXbaWHpYi8DQSCUTq4v19YcmvFXSvgrzytJ0LYYrew=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ndM/yxmYjkgpkUmhfGpua+kuvP5h78GZoLJUF+TtFxUI3Na0oj9bxeBH2AI+VRv5he/pFJbHrSRmo70fUwT4pERThrIqqOXDym9b2jQoPTRJBg2hk3Y0lH4IRSmjNEUJcSkTwy8Eg5/o7ZwfKyHjxLKUP0v95GDK6F7QtFycVd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cbpio9LM; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=eXIyCEQB4q1LtfktkWRaczFhXbbASggsq2kIYKwF2A/2FFPa4i/FcaMZYF3Cn4sgRZJNVjm/2qILa08ptBO/ANXkj86hyJ259BMiUnnBEAOY+scB6nthzga6to2fmLh/epwWrsJoDlGwLmwwHe5i9BTaN+Lyd8uHOAECiTQHSqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8bAWxti; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cbpio9LM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB339C4CEE5;
-	Tue,  8 Apr 2025 06:01:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8bAWxti"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A54F9C4CEE5;
+	Tue,  8 Apr 2025 06:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744092082;
-	bh=V08LfMrRepcIFzbFA52GTbzWj04RRx3nwYobnk7R1Xc=;
+	s=k20201202; t=1744092485;
+	bh=4EXbaWHpYi8DQSCUTq4v19YcmvFXSvgrzytJ0LYYrew=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cbpio9LMXZsKy8AY6obGaCUJBqrRlFA2FxqdBHSxAQtsto+fSfTkszUOo4Il+siPp
-	 YOmRKENa0wnx3GVdhBW5ZI8VpsUgPReqpoiJj/mJtfETw9JZ/FowK0jDXkNOuX/72k
-	 KIdM3tjSOpJHCcz0dwEmaeRLviQGy+4BUR8Xhmf4eO10IKJBvWqdkveBR/Ah88QO5U
-	 VywREMoF7Ee0umkHuYUwR3B+znrH4GWT97UMEgTZMpGu1vhIVzT+96Ufc5z9tZ5Vsy
-	 edpIplC+hLM/QmGhaWEYBJEvMelapkl6o2R+tS5bkyqfctqo0rP39gfCvGn33om70T
-	 685a1tRIIG4nQ==
-Message-ID: <8d41f893-20dc-4362-91fd-689b41076e30@kernel.org>
-Date: Tue, 8 Apr 2025 08:01:18 +0200
+	b=i8bAWxtiJl/Zc9F70+mWYW1dpffCfK+raI81ht60ZhM7SQncYApnR86ZPj54cbPVm
+	 qx9IJjFyJ4OiHxWrooltbxV5F/NMxJ4A2e5miF30zZMvx9HzwW9yQlQoOM5bqYkzUr
+	 1RgKTWJKWIXrdiGUSwUbSvEaGizUSZxKwweIRZQSdgHzg3O+UyNNRt9mhcAms3LiW5
+	 ka2kCYVJdd61MiT8/vkhwvXd+gADMsKj8N/LFf58ZzbJdN9ZWdbLShjjlAI3j9yme3
+	 UZ5I92MnUfHw7AuuGdIZAYdfrsEs2GPC3aPR23fssng7r6mk1uZvAHvO2pBWzjvTey
+	 dWh3TVd4SKf5g==
+Message-ID: <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org>
+Date: Tue, 8 Apr 2025 08:07:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,16 +35,18 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] media: tegra-cec: Support Tegra186 and Tegra194
-To: webgeek1234@gmail.com, Hans Verkuil <hverkuil@xs4all.nl>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
- <20250407-tegra-cec-v1-2-e25dd9577b5f@gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250406-tegra-pstore-v1-1-bf5b57f12293@gmail.com>
+ <6920a557-9181-4c9c-98f4-a9be4e796a13@kernel.org>
+ <CALHNRZ--to8B3zhg6zV90siL0x78BAjhS04DgfLwmnXEiOMe3g@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,34 +92,83 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250407-tegra-cec-v1-2-e25dd9577b5f@gmail.com>
+In-Reply-To: <CALHNRZ--to8B3zhg6zV90siL0x78BAjhS04DgfLwmnXEiOMe3g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/04/2025 06:39, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
+On 07/04/2025 18:00, Aaron Kling wrote:
+> On Mon, Apr 7, 2025 at 7:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 06/04/2025 23:12, Aaron Kling via B4 Relay wrote:
+>>> From: Aaron Kling <webgeek1234@gmail.com>
+>>>
+>>> This allows using pstore on all such platforms. There are some
+>>> differences per arch:
+>>>
+>>> * Tegra132: Flounder does not appear to enumerate pstore and I do not
+>>>   have access to norrin, thus Tegra132 is left out of this commit.
+>>> * Tegra210: Does not support ramoops carveouts in the bootloader, instead
+>>>   relying on a dowstream driver to allocate the carveout, hence this
+>>>   hardcodes a location matching what the downstream driver picks.
+>>> * Tegra186 and Tegra194 on cboot: Bootloader fills in the address and
+>>>   size in a node specifically named /reserved-memory/ramoops_carveout,
+>>>   thus these cannot be renamed.
+>>> * Tegra194 and Tegra234 on edk2: Bootloader looks up the node based on
+>>>   compatible, however the dt still does not know the address, so keeping
+>>>   the node name consistent on Tegra186 and newer.
+>>>
+>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+>>> ---
+>>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
+>>>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++++++++++
+>>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 13 +++++++++++++
+>>>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 16 ++++++++++++++++
+>>>  4 files changed, 61 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..2e2b27deb957dfd754e42dd03f5a1da5079971dc 100644
+>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> @@ -2051,6 +2051,22 @@ pmu-denver {
+>>>               interrupt-affinity = <&denver_0 &denver_1>;
+>>>       };
+>>>
+>>> +     reserved-memory {
+>>> +             #address-cells = <2>;
+>>> +             #size-cells = <2>;
+>>> +             ranges;
+>>> +
+>>> +             ramoops_carveout {
+>>
+>> Please follow DTS coding style for name, so this is probably only ramoops.
 > 
-> The tegra186 and tegra194 controllers are working with the driver as-is,
-> so add the compatibles to allow them to probe.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/media/cec/platform/tegra/tegra_cec.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
-> index 3ed50097262f64c32fe0480698cea9a1056a0953..aa3d36286d256d59f9d726e5c3cee5decacd1d23 100644
-> --- a/drivers/media/cec/platform/tegra/tegra_cec.c
-> +++ b/drivers/media/cec/platform/tegra/tegra_cec.c
-> @@ -456,6 +456,8 @@ static const struct of_device_id tegra_cec_of_match[] = {
->  	{ .compatible = "nvidia,tegra114-cec", },
->  	{ .compatible = "nvidia,tegra124-cec", },
->  	{ .compatible = "nvidia,tegra210-cec", },
-> +	{ .compatible = "nvidia,tegra186-cec", },
-> +	{ .compatible = "nvidia,tegra194-cec", },
+> As per the commit message regarding tegra186: bootloader fills in the
+> address and size in a node specifically named
+> /reserved-memory/ramoops_carveout, thus these cannot be renamed.
 
-No, express compatible devices with fallbacks.
+That's not a reason to introduce issues. Bootloader is supposed to
+follow same conventions or use aliases or labels (depending on the node).
 
+If bootloader adds junk, does it mean we have to accept that junk?
+
+> 
+>>
+>> It does not look like you tested the DTS against bindings. Please run
+>> `make dtbs_check W=1` (see
+>> Documentation/devicetree/bindings/writing-schema.rst or
+>> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+>> for instructions).
+>> Maybe you need to update your dtschema and yamllint. Don't rely on
+>> distro packages for dtschema and be sure you are using the latest
+>> released dtschema.
+> 
+> The bot is reporting that the reg field is missing from the added
+> ramoops nodes on t186, t194, and t234. However, as also mentioned in
+> the commit message, this is intentional because it is expected for the
+> bootloader to fill that in. It is not known at dt compile time. Is
+> there a way to mark this as intentional, so dtschema doesn't flag it?
+
+Fix your bootloader or chain load some normal one, like U-Boot.
 
 Best regards,
 Krzysztof
