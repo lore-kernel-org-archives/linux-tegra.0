@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE5B35973;
-	Tue,  8 Apr 2025 04:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7FC1F8725;
+	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744087205; cv=none; b=MjN7GD/cxZzCP2yOVa77I0uKRNZhbfnvjXD2qUX6vSxBfGftsr6Xl4A4EJmOhnTJSNZSixDtSCIg2XeU0Tqqy+u7UUrfZUoCD9q+ZapfFfA9vFISKDXz1pDTriVHRzXtc5kgGTOOfpOZmi/Fbbvk5kq5R29+1owop432jtqKMTM=
+	t=1744087205; cv=none; b=m2P7lSBmx+BYdj2jFLEfM0xq1y0hiRKb5pMGALRgfVygsvlyzampzgANxbnsTBUIUvYa176XgmUqkFzvYCkqwXIm+dYaB0uwGvRzEYI0gaKEUFry4o2LGOZv+LLFuGbTl7OpNGzemGIMc7TVtB1gBNZNDjdPL1Kr1ivjOv+ypYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744087205; c=relaxed/simple;
-	bh=XEKLLzDUwO73lm036APy9wcjIJRYWRNLNEiLDKpC+yo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dgi8XdvVEb+u/1mvyJxWeZZ6UCPpNwk4OusN67Hcgzh+t/nNvjOR7f9UoYliotB+Dri9sUyKNobd4RLEQqS8HB2p+VwzIOjx1qKDzKZpzOBiXd08YukAVQ1u5leaJCTKiEvqC/4sI113ZBwcMiEppaTYLFxM4+qyGSLISRmo6Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7RmFrvN; arc=none smtp.client-ip=10.30.226.201
+	bh=yhMKEV0cCXxqfGp4QpUkRtWTz9lltxPGH8xVqkkKk6U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TVKKiGqgEEvvIDo4MAfeABx9dnfbgROpiKq9cAQSXcd3udpyh6vcvt4rWy0+5bnxV8rWUZaMLliWmdCH6s8WTPFkcHyRROvUO1+1YrSLSlH1/GdC7G2QuA+jXtB+PiyRs4zhw9OFhBz6ChEYNiGE/LE84JEAMH7x5EnUXfAn8xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYbIMuFV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7RmFrvN"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C0B2FC4CEEC;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYbIMuFV"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 79F9DC4CEE5;
 	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1744087204;
-	bh=XEKLLzDUwO73lm036APy9wcjIJRYWRNLNEiLDKpC+yo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=a7RmFrvN0gOaI+VeEyVWumDDev/zJNUxJlyhvZBHG7jSSHPMTMe4kVg2JcHoLx/0s
-	 M3wQOt43jEXEVxYGzhTJjH8Y+1exmHIPus/+Fr2CEZ6dib0QRf60buuKHK+2WWD+2f
-	 B0VhMMeX1bhtuXDgHE7HwPBpElF+0u//0Capx83QhP1djfG2fOPEJjmmewU82xUY0U
-	 vBbxa4KEkPfVxwXOTiGj8snRJ9tPsJGPufNOqLPL68Y7A21+0CWQfOS6u6ayJm852w
-	 Wy1HaB8R0aIda5wiWnb1khPC0RkZXFysHgoa88FoblLdENlCHRqPnSxaMWAtJWDt30
-	 p1aLPJFdVifpQ==
+	bh=yhMKEV0cCXxqfGp4QpUkRtWTz9lltxPGH8xVqkkKk6U=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=oYbIMuFV7ceLFvB8/96Xvpp0VPtG4kopOOPjJaG4djYfuycI2k0VcryLjlotvxqa4
+	 fFUzJ2xw1NLgoxzhsNqjzGu1jMchabmj0wGPocSwPjp8Mon6qKXQ/P0y5NyNXcVa6b
+	 iu7/F91o79GG9UE9mK9Yclt4+LDcwG9MpHXVyReUoea7pSrnzYlrNR9lYnVSBJaStT
+	 B+lni8n5dieA7cqFe54mn1zBLYIF3s/aQp6TSBLU6Vl77TJ5Q2UiL9AkNN/4ep5jBz
+	 Z1SrzZfjp4J7VJgqI0S2S3IHutwkJkCggWTDWAL7rKiudNt0zmufDSHTDYWrzMmu4Y
+	 1K6f+X3kUjPLA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B022BC369A2;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E52FC36010;
 	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 07 Apr 2025 23:39:50 -0500
-Subject: [PATCH 3/4] arm64: tegra: Add CEC controller on Tegra210
+Subject: [PATCH 0/4] Tegra CEC Updates
+Date: Mon, 07 Apr 2025 23:39:47 -0500
+Message-Id: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,9 +40,10 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-tegra-cec-v1-3-e25dd9577b5f@gmail.com>
-References: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
-In-Reply-To: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJOo9GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNz3ZLU9KJE3eTUZF3zVONE86TUNBNTszQloPqCotS0zAqwWdGxtbU
+ A6RE18lsAAAA=
+X-Change-ID: 20250407-tegra-cec-7e3a7bef456f
 To: Hans Verkuil <hverkuil@xs4all.nl>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -53,11 +54,11 @@ Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744087203; l=999;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744087203; l=1291;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=bblG65p7/xkPR55OcOIBpt0KSwsSdM49hsWkcsMIg5A=;
- b=zNgg7owY5OUtcXF0vHQva73Lmo6DNe1GsIsbF8GS6qjP+D7aNxMxSAimzlQ9v78JVjXfxT7MT
- qD49K/NfYCFAPX0w5HhHDj/65rODLOkqyOkLa38SUvdTHhxqlYBsoCE
+ bh=yhMKEV0cCXxqfGp4QpUkRtWTz9lltxPGH8xVqkkKk6U=;
+ b=JNmTCowIP6MS6wzfw9GGZGXQ0MW2dzlpWAzLQlRfvO1TQja1n8lxqpsC0oIgP+KoF4O49VeWF
+ qkgbthdLa0FAZzcQssXjf9m1RNjsJlbzPposr4TiSM4rSsghTM+4K/J
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -65,38 +66,33 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-From: Aaron Kling <webgeek1234@gmail.com>
-
-The CEC controller found on Tegra210 can be used to control consumer
-devices using the HDMI CEC pin.
+This series updates Tegra hdmi cec support to be usable out of the box
+on Tegra210 through Tegra194.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Aaron Kling (4):
+      media: dt-bindings: Document Tegra186 and Tegra194 cec
+      media: tegra-cec: Support Tegra186 and Tegra194
+      arm64: tegra: Add CEC controller on Tegra210
+      arm64: tegra: Wire up cec to devkits
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index b6c84d195c0ef9ae90721fada09ffd46a9c11fa3..402b0ede1472af625d9d9e811f5af306d436cc98 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -959,6 +959,15 @@ fuse@7000f800 {
- 		reset-names = "fuse";
- 	};
- 
-+	cec@70015000 {
-+		compatible = "nvidia,tegra210-cec";
-+		reg = <0x0 0x070015000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_CEC>;
-+		clock-names = "cec";
-+		status = "disabled";
-+	};
-+
- 	mc: memory-controller@70019000 {
- 		compatible = "nvidia,tegra210-mc";
- 		reg = <0x0 0x70019000 0x0 0x1000>;
+ .../devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml       | 2 ++
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi              | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi                         | 9 +++++++++
+ drivers/media/cec/platform/tegra/tegra_cec.c                     | 2 ++
+ 9 files changed, 49 insertions(+)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250407-tegra-cec-7e3a7bef456f
 
+Best regards,
 -- 
-2.48.1
+Aaron Kling <webgeek1234@gmail.com>
 
 
