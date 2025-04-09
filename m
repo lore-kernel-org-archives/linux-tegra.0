@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5BB21ADC6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC721B8F5;
 	Wed,  9 Apr 2025 22:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744239448; cv=none; b=tmc9hCWtMJZxRtxDfWlwPU0Y9NvjJRCNtt0IPj/2Oi13P5lheDHfW5SNEigp/l4ZD9gxP5CBgxQA2VB5KudgX9Ozk+pdlLYxe5QySLtefQewOi8XAvgttskRHSISk5prQzwiWtvx8r8W1jzyUmIp8Rw3XSJaNpUPkU2ExV4rjPE=
+	t=1744239448; cv=none; b=IZSp6vmTjOErd/3hULgfBAl+uiRiNTpRGuLTGwFqETE6McXMUHXeZ4r+pPHOJ/n1nLpXT7h0Y4Qf0NGpcz+KGJf9sFTFva2nx9OWQCg8ICoM35jFhg4Oh8cjcKf89dfRrj1FUg/dhDafBeXAm78Yw8ypZFVKR79wOplU+HKMZnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744239448; c=relaxed/simple;
-	bh=XEKLLzDUwO73lm036APy9wcjIJRYWRNLNEiLDKpC+yo=;
+	bh=UNT1pMAsqJn0pGCkN1SyqdE1kYgNn4CxvqI1ODiDn60=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RiAGZWwNKaRdPA7eCjSuKbE/t0R3tWNB5vYVKMhKE5D1hqhhkGfCkfLA9gVH4z3fYAb56D4bV5Le4CYwoc8/MBFt6VNY9pPrHWlYPxDnuxCGnqQQqe5xfjk//fpNX2iQ17C+8lFeRk+8D08zESnq9q9kxssuH43ips/XFKA+TPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeSw2vAC; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=bXq1udVuKX8SS0yCxmyhQMirlhYOyfKuchfN3C85vWzJ5yKkSqYa7ZOdOCSo5MEFd+iof95NUkbeJ0Kcu4+JFf+piIscTNzX9ibwkZGDAoajkhPc6K/lNjUmoY+edOYFhcUidEvRySgaWSkhd8aCzhd4KFD+/prAsqcaz/d7m3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5+hGrp5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeSw2vAC"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9A6A1C4CEF1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5+hGrp5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FC84C4CEE9;
 	Wed,  9 Apr 2025 22:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1744239447;
-	bh=XEKLLzDUwO73lm036APy9wcjIJRYWRNLNEiLDKpC+yo=;
+	bh=UNT1pMAsqJn0pGCkN1SyqdE1kYgNn4CxvqI1ODiDn60=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NeSw2vAClHxTPm5LnKEp+L+bvSDpx6A40E99d9lSPslUsHHKwOQicqBE1GDzbD6g+
-	 4hwWHs3lYGQGGuZFKVu1/ccS3k6jN+Xc4dQiC5xA54Ttfvqb4bjDoSvf2+cXJH5WLY
-	 rMILwARkz0Cy6saV1HeP0qJI+xB2hDmEiCj6SrE/Hh0ZpF5Lk20BfsKG/Y1sYihbPi
-	 Kekb6VQ4O2+pK6NUiauxYYqNyK4S6JBO188mPpZx0wlEc0aU7AyRtmB/+sSZI3InBK
-	 KSEGt000FNceBv9KXJgg6X1yMDP15AT1uoOAV81ubo3RrgHz22eQb6fn+ZxlEkU2I+
-	 aTuUU4YJLHxMg==
+	b=U5+hGrp55PSYEOQHWQwoaWUcSEkJG/Hg4gE+wWP7k7NNzAZpsFU4VMjaBAei4uBgN
+	 elRcujP4SDQR1Gop7Wpg5MWHirkfxXOuVHdltex+Kv/yb7JD2O0febylowWDgonMRg
+	 R+fLYqMSf+ZGYBzjpNi+28HPhIinIcisk7BzxQb7RlDOhlc6XRas3Kg3S2gCfS3nYg
+	 3+qHJ1LS71QalvfIhueqbUZhRIaqUTp1cTDdNx/WH+kfsvcJK1eZ55MOTo+wN/EOdv
+	 dXEZMgoovUt1yscGvifOU6T8imKpRS9jGMeJWmV8V3ngQgeiFhfaaBijPivIClqdCo
+	 HeqH3vB/FLp8A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9CDC369A2;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5789BC369A5;
 	Wed,  9 Apr 2025 22:57:27 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Wed, 09 Apr 2025 17:57:24 -0500
-Subject: [PATCH v3 3/4] arm64: tegra: Add CEC controller on Tegra210
+Date: Wed, 09 Apr 2025 17:57:22 -0500
+Subject: [PATCH v3 1/4] media: dt-bindings: Document Tegra186 and Tegra194
+ cec
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-tegra-cec-v3-3-91640131dfa2@gmail.com>
+Message-Id: <20250409-tegra-cec-v3-1-91640131dfa2@gmail.com>
 References: <20250409-tegra-cec-v3-0-91640131dfa2@gmail.com>
 In-Reply-To: <20250409-tegra-cec-v3-0-91640131dfa2@gmail.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>, 
@@ -53,11 +54,11 @@ Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744239446; l=999;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744239446; l=1294;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=bblG65p7/xkPR55OcOIBpt0KSwsSdM49hsWkcsMIg5A=;
- b=P3u9NV0614vLxzoqbUnCwqdkboJF+ta7CovsH752XtpwlOyF0mMjlOnGKt2oUB+o6QLdJbdS6
- 9tpt+z/QRslD/WJqK4JvuPLIMp9ZUKuIUR9/XoSC2WBteSte4UmIQIm
+ bh=OKxF0kfZG4y0m8GxH7XJEPDEjS3nCDGshb6+1TkJSyA=;
+ b=3Aq4MzVSdrZgI2CPGWCtMlp1Ksyfq5iPuzURj732chI+PPU/YpKFFSPq0frjZGKnNqs3nocfa
+ m8hCRLQ1e+EBcHCi8lhVWD4xENPYiAJcspTq/dTIYX561AaTdMA2j8b
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -67,34 +68,41 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-The CEC controller found on Tegra210 can be used to control consumer
-devices using the HDMI CEC pin.
+These are already used in device trees, so describe them here. As the
+driver only declares up through Tegra210, these must use a fallback
+compatible of tegra210-cec.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../bindings/media/cec/nvidia,tegra114-cec.yaml           | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index b6c84d195c0ef9ae90721fada09ffd46a9c11fa3..402b0ede1472af625d9d9e811f5af306d436cc98 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -959,6 +959,15 @@ fuse@7000f800 {
- 		reset-names = "fuse";
- 	};
+diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
+index a6b73498bc217a2e884e31af91e9d8845c9b1d76..3637fe2dfbd0dbb1baf265d7c128954df8faf740 100644
+--- a/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
++++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
+@@ -14,10 +14,17 @@ allOf:
  
-+	cec@70015000 {
-+		compatible = "nvidia,tegra210-cec";
-+		reg = <0x0 0x070015000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_CEC>;
-+		clock-names = "cec";
-+		status = "disabled";
-+	};
-+
- 	mc: memory-controller@70019000 {
- 		compatible = "nvidia,tegra210-mc";
- 		reg = <0x0 0x70019000 0x0 0x1000>;
+ properties:
+   compatible:
+-    enum:
+-      - nvidia,tegra114-cec
+-      - nvidia,tegra124-cec
+-      - nvidia,tegra210-cec
++    oneOf:
++      - items:
++          - enum:
++              - nvidia,tegra114-cec
++              - nvidia,tegra124-cec
++              - nvidia,tegra210-cec
++      - items:
++          - enum:
++              - nvidia,tegra186-cec
++              - nvidia,tegra194-cec
++          - const: nvidia,tegra210-cec
+ 
+   clocks:
+     maxItems: 1
 
 -- 
 2.48.1
