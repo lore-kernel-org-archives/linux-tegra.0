@@ -1,110 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC721B8F5;
-	Wed,  9 Apr 2025 22:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09FE3594F;
+	Thu, 10 Apr 2025 06:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744239448; cv=none; b=IZSp6vmTjOErd/3hULgfBAl+uiRiNTpRGuLTGwFqETE6McXMUHXeZ4r+pPHOJ/n1nLpXT7h0Y4Qf0NGpcz+KGJf9sFTFva2nx9OWQCg8ICoM35jFhg4Oh8cjcKf89dfRrj1FUg/dhDafBeXAm78Yw8ypZFVKR79wOplU+HKMZnE=
+	t=1744267172; cv=none; b=q6keK1k3SX/1yXFutaAKPTVsjx17+AsdFFJ3SfQI0LfHoS3tSmKtRs9ypvdtWssTm5uWJJICtuJRPQs3jzr38uXHjF/bEHgR0BUXufjAbiWAezTnH8T3ROIcfCZkXamnJKTK+HTM/olMmTCz9wCbgHPAjL1zMCGvPd2jXIybCIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744239448; c=relaxed/simple;
-	bh=UNT1pMAsqJn0pGCkN1SyqdE1kYgNn4CxvqI1ODiDn60=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bXq1udVuKX8SS0yCxmyhQMirlhYOyfKuchfN3C85vWzJ5yKkSqYa7ZOdOCSo5MEFd+iof95NUkbeJ0Kcu4+JFf+piIscTNzX9ibwkZGDAoajkhPc6K/lNjUmoY+edOYFhcUidEvRySgaWSkhd8aCzhd4KFD+/prAsqcaz/d7m3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5+hGrp5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744267172; c=relaxed/simple;
+	bh=DeOBabiwzSpNzgmvHAIm3HCn1UjmvmUWeuTxwxUChvE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y4r1bG8y3qcfBLr37PJ/xEBqjhvAHtYrcgoQTHzLUoNoRdwJiFkXcqj2A391GgNWgfqEKjkhbOymIEVZFZaV5gmLt29NrddiG2V+P8x3HmyX/ZSbL3fQSmkHKFChoY1MEbd0EQTa/hkuVPmzf4PB4CFgtfmW8jpSEHP8QDq8G9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=KoGsfqOW; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5+hGrp5"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FC84C4CEE9;
-	Wed,  9 Apr 2025 22:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744239447;
-	bh=UNT1pMAsqJn0pGCkN1SyqdE1kYgNn4CxvqI1ODiDn60=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=U5+hGrp55PSYEOQHWQwoaWUcSEkJG/Hg4gE+wWP7k7NNzAZpsFU4VMjaBAei4uBgN
-	 elRcujP4SDQR1Gop7Wpg5MWHirkfxXOuVHdltex+Kv/yb7JD2O0febylowWDgonMRg
-	 R+fLYqMSf+ZGYBzjpNi+28HPhIinIcisk7BzxQb7RlDOhlc6XRas3Kg3S2gCfS3nYg
-	 3+qHJ1LS71QalvfIhueqbUZhRIaqUTp1cTDdNx/WH+kfsvcJK1eZ55MOTo+wN/EOdv
-	 dXEZMgoovUt1yscGvifOU6T8imKpRS9jGMeJWmV8V3ngQgeiFhfaaBijPivIClqdCo
-	 HeqH3vB/FLp8A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5789BC369A5;
-	Wed,  9 Apr 2025 22:57:27 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Wed, 09 Apr 2025 17:57:22 -0500
-Subject: [PATCH v3 1/4] media: dt-bindings: Document Tegra186 and Tegra194
- cec
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="KoGsfqOW"
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 80F6D1F902;
+	Thu, 10 Apr 2025 08:39:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744267168;
+	bh=A1hNPAkZxUqx56ldFx7Q1sUmsZ7riPmThTz12iJw8wk=; h=From:To:Subject;
+	b=KoGsfqOWWZU/sFkHLpNPJ/Vary9VNh8R/IfzW+3c/GVmNfPA//jC7/YTZ+XpesCUs
+	 sIGvmNvhR4WZWS6d4CUneamXteSyKv0ayvhiJ7SyW5y9pEzWCaOajjipYtEZaiK7iu
+	 ofawD/cHCiK6fmMZy/cFJg0K0MVuN4d2T0m4UhNfMLxkFM1Ae9a747rKoqy6opj7wK
+	 diKn1pqDWLEmvUl0jepL+bQORNRBmabrUuEaIqnX3QjznrCujCMcxgl7kK+Hr8nBww
+	 X/RDcZdpvkUfsy1ibbcWoHWiFPvgRITwQGO6gz4iPHDvM4TAOz80uJkztbSPWTH8zy
+	 YDOK95QvNkEMw==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] ARM: tegra: apalis-eval: remove pcie-switch node
+Date: Thu, 10 Apr 2025 08:39:19 +0200
+Message-Id: <20250410063919.11199-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-tegra-cec-v3-1-91640131dfa2@gmail.com>
-References: <20250409-tegra-cec-v3-0-91640131dfa2@gmail.com>
-In-Reply-To: <20250409-tegra-cec-v3-0-91640131dfa2@gmail.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744239446; l=1294;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=OKxF0kfZG4y0m8GxH7XJEPDEjS3nCDGshb6+1TkJSyA=;
- b=3Aq4MzVSdrZgI2CPGWCtMlp1Ksyfq5iPuzURj732chI+PPU/YpKFFSPq0frjZGKnNqs3nocfa
- m8hCRLQ1e+EBcHCi8lhVWD4xENPYiAJcspTq/dTIYX561AaTdMA2j8b
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-These are already used in device trees, so describe them here. As the
-driver only declares up through Tegra210, these must use a fallback
-compatible of tegra210-cec.
+The compatible "plx,pex8605" does not exist, there is no DT binding for
+it and there was never a driver matching this compatible, remove it.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
- .../bindings/media/cec/nvidia,tegra114-cec.yaml           | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dts      | 5 -----
+ arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dts | 5 -----
+ arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dts       | 5 -----
+ arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1-eval.dts  | 5 -----
+ 4 files changed, 20 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
-index a6b73498bc217a2e884e31af91e9d8845c9b1d76..3637fe2dfbd0dbb1baf265d7c128954df8faf740 100644
---- a/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
-+++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
-@@ -14,10 +14,17 @@ allOf:
+diff --git a/arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dts b/arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dts
+index 0f3debeb294b..1aa7265554d9 100644
+--- a/arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dts
+@@ -84,11 +84,6 @@ i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
  
- properties:
-   compatible:
--    enum:
--      - nvidia,tegra114-cec
--      - nvidia,tegra124-cec
--      - nvidia,tegra210-cec
-+    oneOf:
-+      - items:
-+          - enum:
-+              - nvidia,tegra114-cec
-+              - nvidia,tegra124-cec
-+              - nvidia,tegra210-cec
-+      - items:
-+          - enum:
-+              - nvidia,tegra186-cec
-+              - nvidia,tegra194-cec
-+          - const: nvidia,tegra210-cec
+-		pcie-switch@58 {
+-			compatible = "plx,pex8605";
+-			reg = <0x58>;
+-		};
+-
+ 		/* M41T0M6 real time clock on carrier board */
+ 		rtc@68 {
+ 			compatible = "st,m41t0";
+diff --git a/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dts
+index d13b8d25ca6a..23158bb82173 100644
+--- a/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dts
+@@ -85,11 +85,6 @@ i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
  
-   clocks:
-     maxItems: 1
-
+-		pcie-switch@58 {
+-			compatible = "plx,pex8605";
+-			reg = <0x58>;
+-		};
+-
+ 		/* M41T0M6 real time clock on carrier board */
+ 		rtc@68 {
+ 			compatible = "st,m41t0";
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dts b/arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dts
+index fc284155cd76..ccb9f29c5de3 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dts
+@@ -91,11 +91,6 @@ i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+ 
+-		pcie-switch@58 {
+-			compatible = "plx,pex8605";
+-			reg = <0x58>;
+-		};
+-
+ 		/* M41T0M6 real time clock on carrier board */
+ 		rtc@68 {
+ 			compatible = "st,m41t0";
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1-eval.dts b/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1-eval.dts
+index 9d08e2b094b4..bc353324df43 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1-eval.dts
++++ b/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1-eval.dts
+@@ -92,11 +92,6 @@ i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+ 
+-		pcie-switch@58 {
+-			compatible = "plx,pex8605";
+-			reg = <0x58>;
+-		};
+-
+ 		/* M41T0M6 real time clock on carrier board */
+ 		rtc@68 {
+ 			compatible = "st,m41t0";
 -- 
-2.48.1
-
+2.39.5
 
