@@ -1,72 +1,81 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C5233F6
-	for <linux-tegra@vger.kernel.org>; Sat, 12 Apr 2025 07:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDAB4503B;
+	Sun, 13 Apr 2025 11:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744441259; cv=none; b=qUqOb31m60N75WKcf0QspsnliuBvkq4kNpj18ODWRzJhpIVRNKsvz55AEssPgxA2e13p+NaRSzxy5OEk562PW/qnx7vrYS0qcbykOESdW4oUvHHthgJwGEuOLJixoF8G8LZjCKEbv3/uslVl6rYaLidgHetCJriRRq81mGxKMVk=
+	t=1744542657; cv=none; b=RHzrj5Z01eihBaTA+nFDopRGwCUyBkCNzIvtJMQ+/+n7PUif6TeaoOHIyArOxsWj+/hIfdZupB/1ATrJUjIaYvu4O4PK+jjyTXMHEtR3yy9I2Hy3wu50ZqfJ0F8DZeX6nMA7OU5GmTo3mociGbmSzDdz4V5Lq3JDCgWjc6DW7y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744441259; c=relaxed/simple;
-	bh=bYlEK+ZrCx1PQLyeDSym1XsSvn526gaNT+fK7d3xUWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hgBdkX9NZfz/Ewjue5ZVDfrnb1vhjGGJVvn9qVcsXUGA0WDxr/Pj8d0WMBwet4GoaKb1sjGZ8xClJqh2UJaAZ5ZUmXztTbbD3KqU11I+B/SuCAdOfZREyiSZ10+50wQOnoWOIrRoyRvA9HvUNMn2RVgjYWgK5y/2FX3PMnRe9pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAnQRu8b; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1744542657; c=relaxed/simple;
+	bh=shKwtuRWOwVuhX7nJ1VVirTbPVO+qCucGtBLaD2uN54=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cpRz39DRrV+sFFJprrzeTdJnGzM60i88zG96QmL+Ua8bHL7A8fPqg4wGbkCL6HOnCbu9YLN0MPpJHbw2+dXkzxQwXtLPYMMCLvy2rgMaZajnITPp7SpmKGQcwdc9PtmFF6ad/p8uu95OKGYci5Zpb1gpuZeFoVUjDHRyI1U0s/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNsRv5u0; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAnQRu8b"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43edb40f357so22760695e9.0
-        for <linux-tegra@vger.kernel.org>; Sat, 12 Apr 2025 00:00:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNsRv5u0"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so5742786a12.3;
+        Sun, 13 Apr 2025 04:10:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744441255; x=1745046055; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744542654; x=1745147454; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUhRGZgWSR7a5HDQ/6iMHlL/ln4asDDzoYvwsKfR2to=;
-        b=WAnQRu8bZpjjw9Fr57QnO7xyZz3VI/OVdmTxXvgtR69PBoqYNpzgW0rz/WYx5hgct4
-         xXLsTElT3H4SBOv/S8D4hsP9q0T8Qe1Y9B3mFjIVVjFeX9ZOaxxudUY8uXq+kvIiG7XQ
-         KyYO7KdOEwp56yT7sYaJPXlW5Ddib9mxVh3qQ8WIq8MN1yo1whG9JwzqjBi4vsm8dIxg
-         KmS45NIUAcZ5p8ITLrngWqq8VHUKUQcVbQjs+0c457QUpVHk7n1LFpkR3lkodIqdVNMO
-         yh+PLdCo0rXH6GX+J358jexUtM81C/NyCbh5ZixXqZO51vA6BEIcfJIMPrxRiCUg/uF/
-         W8yQ==
+        bh=xcf3ZlnqzkHWxGOvggdBClD9tWnI/YAQdzz3gSG5sjY=;
+        b=kNsRv5u0obKwVxBYeVBIxf7e0ZMqUn2Y7HAu9JoXTSZFsbwRNDmZ3/ygXU0Mcs0keq
+         hZ+SeE3c+R8X51x1cavpleEdlz4oN39kSZO0Zhr5UtF3HZyRThtxCSTxCjNVz9jXPWQu
+         MqaHU1/ftlw799Nc1Xj0JHk7kxtspEpROqWCBj17xl7cbNXS3nnl86HccFdbH/JuIFlt
+         tzhpAqzSz9XO/E+gb6AOHLFqlk7lNhMEuqj4FsKJx6hav+Q5gE91G9AbkGKfpPGou9Gk
+         V1S82wzQ7ay3DCcE2EmXzjYBbuEg8wXz2Si39/9viZF82rG4Wg9dUzajCH78IFddfnAv
+         8vZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744441255; x=1745046055;
+        d=1e100.net; s=20230601; t=1744542654; x=1745147454;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QUhRGZgWSR7a5HDQ/6iMHlL/ln4asDDzoYvwsKfR2to=;
-        b=pnk8aYlD/Mw3EMFvozdl5BSnBmE9NWa43xXJnapPITnQlnKINmxyNvUUFzeWDPfVLi
-         +KdBi0zR10d8LR50cX5p6cBahbGyOM87twP2bu6y9hNAG/DssTrwpyl4x4oqHZ9zZH+q
-         rjt6dfetB/W02U1QLN9TwEedOpUeiZ72cocc/1naw6kUUGmPgvpx3LOMdVGOMS7l0Fei
-         drcHA4OlWFNQtbuwCG16kv4smcOtlnWjscJNWJNPmKOWDnBqB4U09jGz+LfZHBEDn0zf
-         vx3m8bY5QfWp2Zf57qoGwxKNZNgI2LUrDTVUSJUP5n13da6RbAUj0xG2TpXorP4eeITU
-         LOSA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+6IPH9HzUzk58ArtcecoBvglwILFV13MvLO1kIk70HOF3tCGMjmqAcMzWY9UOnlNNxkAqu/T2ivK4kg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoOLMh8a8cCQrBrhMu1bSirAoutV9itugOjVumohuVjmCknZLL
-	m8Ets55WJLf0qQc8H9JPZ9R7eGyTlz5alWcxjK4YfDU3twY502Hg
-X-Gm-Gg: ASbGncvS2xn+P6uvY4rfbFD3hixm8Fp1pMwHa9FU29m1sOk+RrFF6GpZTfqjjcVDQLl
-	zEjyX5YzuLJRgv24dRZ9iFSuMYA0u+WiKLgmn+bMU0ghLO1vMYy7WIK9yvYLuN6aDCp+V84JtUN
-	/PVn74O8Uf2eMZ3V240Vg/CvQucl1T8/f93P3BXdVCvTOpDVd+LYfJwido/nY5Ale65FR05cdH+
-	c28qI6vZDPvX0uEP345JLGOS2R1AhBsiH0F+PWlrChYVXnVjyAXr5jZHkfBZJyiZTA42MHhmXnS
-	VJMQ6dIPVfXD6WFBs6zZRJNyDd2bvKGpQjlcukL7+JXm8EM1vVB5hGlzFEVXeF/0h4BTBhmrS8w
-	q+aCI1QHNDXN0/ow4i1XI0ap+q/ddOy6VDblsKih5/mY=
-X-Google-Smtp-Source: AGHT+IErTOfdmVU3EKuPUo3Ppbpde7QYvJavdfbvObKt8eiHhHZBg2K6Hm/AdPV1iYx6YJippo3mBw==
-X-Received: by 2002:a5d:584a:0:b0:39c:30d8:a80 with SMTP id ffacd0b85a97d-39ea51f52fbmr4245757f8f.19.1744441255310;
-        Sat, 12 Apr 2025 00:00:55 -0700 (PDT)
-Received: from localhost (p200300e41f1b5e00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:5e00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae96c02esm4170184f8f.23.2025.04.12.00.00.53
+        bh=xcf3ZlnqzkHWxGOvggdBClD9tWnI/YAQdzz3gSG5sjY=;
+        b=VG+2VAhzZw9hVSNzhY3g/hxcx1zOBU4Wb6JBCIz/qcG1b/wAquUcIOXdE3chcns6VW
+         vyK/tP2q5O2/WQRNdWupAbfkQMLNhsLAuoSIfz2zrkZOSChII77QQ+Xgx5mAUrGj+hEd
+         /GKlx8K5pwgIAyGGebBILrdjaoiqzmr++XBcc82wXThoOSMacmAWgMoxoNDs4/scWIas
+         kj/hieuWoemKbxNy2Lbj7tmzPicezd/Wygg52MpxlZHz5iDLtXshOgUcNv/IQ8Xy02xV
+         s/GtfsR+kpXY5xGQTmeMaijt+mR0VxtIEFBSSLO3AgmqqfvovTz1558g3JUxwTlYmwmy
+         1OtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmvVr7ywLbq+yAp07MiewEVa/R2lXH83rbawAtP7L/NEBoMP4ElLSl6gaS1bvRDi7DtnBdXoCsy8C8tfZM@vger.kernel.org, AJvYcCWP0xu2unhNUWesu5hieK4Iw3MTqx8h/tOhSBQMOqQ+oa/2wwf9ib5hvDfSo9BBAObWu1QTNNCi3ZE6J6A=@vger.kernel.org, AJvYcCX3pQTusJiZ83wR7Az5UxRTXwNhjdHl73PgHz6ZDD8aMVv7fj10rrLe/Dz9+zrXrt1MOAiIbK9fFCg0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJpmNK5DPSGAbKnoAE/iwuSI6LvoaambeQ1jBuriylCrZBf7+r
+	CG0QKFOjlV+KwgQoIU5VIULUCDlau0LrRwI4JRppv9zIyFUA7lWM
+X-Gm-Gg: ASbGncts38VlaG0Nx0lViNdSpi+ZXrETiGXguePNYxFAbGE+ktnsrp/w+M8I7CfTpwo
+	BZ43f6jazkf8pPs1OKaD4o80ZtyV553Gg2b+kCexrYfkzx//naQ0YX4EemW7m/oYtjD9aqBTy6x
+	vIg+p2skvHDDWFVkZdyvTBZPRylqGjcaoL6bSakv4s+3OhdR7VJThSPsv1P+r0Wia2Vt5YrTXrR
+	7pX74LyJmGtgyS6LmoiOtxBc26yuoAHJGfhf4y7Kin5HRbJZi5S9xS0dhQgu1npF3MlHnfzGqfn
+	cnMTgpcsxWnkTcywNe3IApMK62JEZPDW
+X-Google-Smtp-Source: AGHT+IGKfEU3UPmw1OGPxln3hVIVkdOwAD7uGiyhhnTT/J4PdK/mNLgEZSe+9QpsBbpaemUGcjuPTA==
+X-Received: by 2002:a17:907:96a6:b0:aca:cda4:9aae with SMTP id a640c23a62f3a-acad3584f59mr647353666b.37.1744542653492;
+        Sun, 13 Apr 2025 04:10:53 -0700 (PDT)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be98d4sm728571266b.59.2025.04.13.04.10.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 00:00:53 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] drm/fbdev-client: Ignore EOPNOTSUPP errors
-Date: Sat, 12 Apr 2025 09:00:47 +0200
-Message-ID: <20250412070047.6725-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Sun, 13 Apr 2025 04:10:53 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/4] power: supply: add support for Pegatron Chagall battery
+Date: Sun, 13 Apr 2025 14:10:29 +0300
+Message-ID: <20250413111033.11408-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,54 +84,33 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Thierry Reding <treding@nvidia.com>
+The Pegatron Chagall is an Android tablet utilizing a customized Cypress
+CG7153AM microcontroller (MCU) as its battery fuel gauge. It supports a
+single-cell battery and features a dual-color charging LED.
 
-Recent generations of Tegra have moved the display components outside of
-host1x, leading to a device that has no CRTCs attached and hence doesn't
-support any of the modesetting functionality. When this is detected, the
-driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
-
-Unfortunately, this causes the following errors during boot:
-
-    [      15.418958] ERR KERN drm drm: [drm] *ERROR* Failed to register client: -95
-    [      15.425311] WARNING KERN drm drm: [drm] Failed to set up DRM client; error -95
-
-These originate from the fbdev client checking for the presence of the
-DRIVER_MODESET flag and returning -EOPNOTSUPP. However, if a driver does
-not support DRIVER_MODESET this is entirely expected and the error isn't
-helpful.
-
-One solution would have been to conditionally call drm_client_setup()
-only if modesetting is supported. This seems a bit redundant, however,
-and could further complicate things if ever any DRM clients are added
-that do not rely on modesetting.
-
-Instead, simply add an extra check to ignore this expected error and
-skip the fbdev client registration.
-
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/clients/drm_fbdev_client.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Changes in v2:
+- removed CG7153AM mentions in code, documentation and commit messages
+- moved schema to power/supply
+- left only pegatron,chagall compatible, other is dropped
+---
 
-diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-index f894ba52bdb5..8c8552ed912e 100644
---- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-+++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-@@ -152,7 +152,11 @@ int drm_fbdev_client_setup(struct drm_device *dev, const struct drm_format_info
- 
- 	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
- 	if (ret) {
--		drm_err(dev, "Failed to register client: %d\n", ret);
-+		if (ret != -EOPNOTSUPP)
-+			drm_err(dev, "Failed to register client: %d\n", ret);
-+		else
-+			ret = 0;
-+
- 		goto err_drm_client_init;
- 	}
- 
+Svyatoslav Ryhel (4):
+  dt-bindings: vendor-prefixes: add prefix for Pegatron Corporation
+  dt-bindings: power: supply: Document Pegatron Chagall fuel gauge
+  power/supply: Add driver for Pegatron Chagall battery
+  ARM: tegra: chagall: Add embedded controller node
+
+ .../power/supply/pegatron,chagall-ec.yaml     |  49 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ .../dts/nvidia/tegra30-pegatron-chagall.dts   |  16 +
+ drivers/power/supply/Kconfig                  |  12 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/chagall-battery.c        | 308 ++++++++++++++++++
+ 6 files changed, 388 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/pegatron,chagall-ec.yaml
+ create mode 100644 drivers/power/supply/chagall-battery.c
+
 -- 
-2.49.0
+2.43.0
 
