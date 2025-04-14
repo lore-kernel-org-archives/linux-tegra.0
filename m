@@ -1,133 +1,131 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8809461;
-	Mon, 14 Apr 2025 04:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A0619BBC
+	for <linux-tegra@vger.kernel.org>; Mon, 14 Apr 2025 13:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744605916; cv=none; b=gadQ1g+glqsHl8ZocDnloSxu61SWwfAtTqvugUEqvLVT3nsJn3lsDebEKk+LKTUktMOcsV64KRwyWzI8j443iJFRDTa8vNfyw+EziJoyocw3YKDRSCTvBDal+psbaEcIswPIGhw0J2190j7fnWyutdcSdOJ3DnMmiH+FWhHq88o=
+	t=1744637747; cv=none; b=mKjV9ja1PdmvNWS8+cGcAPUxEzN/qFDixJF5LlVTQqQiVJhPiyjmfSz1RK8dfBpNl8vu4Y70g6BHrCP+zT4f/uiu4pnufn9qPL8rPTNN1+2mboIcVGnvXgVFjOZCzpjs68UKj15n3HGh1yfj65qWTDdpUbWaGqfF7rtmrQ25cDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744605916; c=relaxed/simple;
-	bh=zYqv5bRj9M7qiWBu0KP5DDWKYdaSVC/KUzyG/VznBIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AXB300J2K+x8apf7zAPaOu1CSfd7WUI9nvGV4KlnjQVHeEu209mXdHLVyd0faDiwcDGaz1qMbnhRzyAN494uaqVSLR5kOh2LMdElXaO1zPNhqZwEifa4BICJXrgB7L32UrqZiP5BZnR1kQATQ/14sy/t1PVbloAOBaIPzqH+g9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l55MWd8y; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744637747; c=relaxed/simple;
+	bh=kqqu+/A+Uz1nhn8zf/EbTU41egI4Q8N9tLBs7qtln0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nG7t7EmJGEewMvBte+S/uBlDotVJaPYHYKlpUxrfpm44g+wkn/uQbGTivg8OfoUHsj4Q30NWxfFDfwpVYDmIJCrTyZEwzEjWCa+iyFeTL6fba0fmqPVokKmz03W8SWUFVVjZjFW5Z88rZ3V7sPn8ahFABVKU2FJIpaYwQa8RHPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w3tcU8UJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wfxtYhi2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w3tcU8UJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wfxtYhi2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l55MWd8y"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30c461a45f8so34355351fa.1;
-        Sun, 13 Apr 2025 21:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744605913; x=1745210713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yc3jiQ8kZxV+LcAN0rkQAoQqLmjbhOlTCeWE9SKAIWI=;
-        b=l55MWd8y8QuY96KElqS3rBX65weTC5UiMlJA7G3ugCY7u/YfvYDf8zMb/K3qA2A3SX
-         jRHUSXNcUon3ENduO7VS/y8aTCGGQJNxKIW4Zi9vTIuO3ZGhJ8G34zI5rM+ryj/Gq2+B
-         UWhKMFtdpANKyMEJ3F2GyXegGB1apGId+2lDOTIuP0oQtxAnerSKurwm4h2MLiNbOBip
-         lcM0pc0hKfiBPLXHW/iYFMMsrOj9ybmNqzS58LHkhKIjED9MxdWhmh1T+HhfLnwcpINn
-         5szcMqycyphHmtWxc2HcCeTIk7GHiBY/iVQKb/chlAGSO/NKIaXaE0joViG0JS6YYh/L
-         inRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744605913; x=1745210713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yc3jiQ8kZxV+LcAN0rkQAoQqLmjbhOlTCeWE9SKAIWI=;
-        b=DDEF0QVWd5E5xdBKmfelvoKY85zeZUVcg3p3AytrkAaTPu99ZtsSGoZyySGxakIuks
-         7ww2ORKSQg1MEaVib5FUkMXJiOUE+ZsGI9UX8f9j0wNmEANYy2lvR+GMpRXBiqvS/+2l
-         n65T786x4S93lEzRBxwW80mtyjOVoBSSVIC4j8MvikIgBbj9Y2QAaXvTXPCfPXiGIzsX
-         iMpwCVGqvTf8F4yvr3mDLadxqJJI3z+RhdegwNiC4OoTfYPe/SarlbhvtUWxupUgNEmW
-         5kasZb6Rdr8cXd+S0NgKLOi37alQ8pmfSKpUQLbAHMTuy3fixyX8wzv8jAjqkxXgNFSR
-         4P3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKS0oGg8T5ic+ivAYtuBDQLba8iOO8vruBadTBbsqIMw4BTjUGd7y6QKUTYG9bOANXvo72XLJTV1cNNIs=@vger.kernel.org, AJvYcCWyLcn6S8kHIobwPiqIBDM2QwVzP4+APSTzMzDh85TRY4Sbq4RynOd70fSEbVTwzOO4O3FXRU/F9Pagvik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxohl1eunNVMRFFENPQJIZi09HDx1iYPDXsF3AE+bcmJMqIiLwl
-	2fEfiAdXQ4Mkl9Li8vyWR3VpmjhiL8rJab0+EO0kFkHFPXnSmt6VMhWuZk7NRMmaH+f8F7onhx7
-	7j8x9NtNF2ZxJUi7NPvb87ScdyFk=
-X-Gm-Gg: ASbGnctmVVEWQMlnputiKFR1+FSQ9YWGzWASylvvxAkkBkI4MJE9rnth3tFeo4HjCWB
-	vZ4OrP8ZD7BZfrGcPAIQMnJHZ+oMKbzl/PtjthanNT7q6/HFpCA9slpkijqNYSGM+GtkCZigdtM
-	FVLG8jpXiBSTDxjNeGWL+L8A==
-X-Google-Smtp-Source: AGHT+IEW35UpKJ3TVFI5EnVSheZ5tHl+xOgElVMnA77E6wgo7u5O3iof6q5qmhz2WrQE+pWjN/KGO4h3blUSLI4s/Ks=
-X-Received: by 2002:a2e:bd88:0:b0:30b:e96a:7d69 with SMTP id
- 38308e7fff4ca-31049a9eff9mr30904871fa.35.1744605912293; Sun, 13 Apr 2025
- 21:45:12 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w3tcU8UJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wfxtYhi2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w3tcU8UJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wfxtYhi2"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CF21F2117C;
+	Mon, 14 Apr 2025 13:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744637742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=zVI7PazGQt+ZdVIu3vry9aECHHBaCzbLdY40zQra/ZI=;
+	b=w3tcU8UJKoA8315hAXluAnwqTu0eEdxnQgPTpTrH5l+FhaLr1OX9FzEOsiBkBe071nDlQK
+	mKonfXgW9uwXhVwV76/LC98A7TFWMTCtfymFJfZVtmS+OhTk91XQ+fU5McW2q0pp2dzt2q
+	wnKZfttrJGQCIERE/ifUkXUchX+D/Zc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744637742;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=zVI7PazGQt+ZdVIu3vry9aECHHBaCzbLdY40zQra/ZI=;
+	b=wfxtYhi2Tc/b8Jp9j0HlIiNdv0y6Aye5NfL9MIIbgl7vFuYMkIS7GUXQz6tty+IeED0Sdj
+	TUrycr6+laPTWgBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744637742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=zVI7PazGQt+ZdVIu3vry9aECHHBaCzbLdY40zQra/ZI=;
+	b=w3tcU8UJKoA8315hAXluAnwqTu0eEdxnQgPTpTrH5l+FhaLr1OX9FzEOsiBkBe071nDlQK
+	mKonfXgW9uwXhVwV76/LC98A7TFWMTCtfymFJfZVtmS+OhTk91XQ+fU5McW2q0pp2dzt2q
+	wnKZfttrJGQCIERE/ifUkXUchX+D/Zc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744637742;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=zVI7PazGQt+ZdVIu3vry9aECHHBaCzbLdY40zQra/ZI=;
+	b=wfxtYhi2Tc/b8Jp9j0HlIiNdv0y6Aye5NfL9MIIbgl7vFuYMkIS7GUXQz6tty+IeED0Sdj
+	TUrycr6+laPTWgBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F927136A7;
+	Mon, 14 Apr 2025 13:35:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5YjKIS4P/WfQfwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 14 Apr 2025 13:35:42 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/2] drm/tegra: Avoid struct drm_gem_object.import_attach
+Date: Mon, 14 Apr 2025 15:31:40 +0200
+Message-ID: <20250414133242.567132-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com>
-In-Reply-To: <20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sun, 13 Apr 2025 23:45:01 -0500
-X-Gm-Features: ATxdqUF57-rCxIpVekQ3O83bzoHuLDnXdYKspeuPx52uO3yuAc_oPztfCji0DhU
-Message-ID: <CALHNRZ_QUY7NPH87RYqFWEy4PkTgV5uZVZ6hh3sbe=U_8ga2jQ@mail.gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb: Default otg mode to peripheral
-To: webgeek1234@gmail.com
-Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-phy@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,nvidia.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Apr 4, 2025 at 3:18=E2=80=AFAM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> Currently, if usb-role-switch is set and role-switch-default-mode is
-> not, a xusb port will be inoperable until that port is hotplugged,
-> because the driver defaults to role none. Instead of requiring all
-> devices to set the default mode, assume that the port is primarily
-> intended for use in device mode. This assumption already has precedence
-> in the synopsys dwc3 driver.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/phy/tegra/xusb.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index 79d4814d758d5e1f0e8200d61e131606adbb0e2d..c56e83216d0f566a09b673771=
-72fb04c8406f4cf 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -731,13 +731,11 @@ static void tegra_xusb_parse_usb_role_default_mode(=
-struct tegra_xusb_port *port)
->
->         if (mode =3D=3D USB_DR_MODE_HOST)
->                 role =3D USB_ROLE_HOST;
-> -       else if (mode =3D=3D USB_DR_MODE_PERIPHERAL)
-> +       else
->                 role =3D USB_ROLE_DEVICE;
->
-> -       if (role !=3D USB_ROLE_NONE) {
-> -               usb_role_switch_set_role(port->usb_role_sw, role);
-> -               dev_dbg(&port->dev, "usb role default mode is %s", modes[=
-mode]);
-> -       }
-> +       usb_role_switch_set_role(port->usb_role_sw, role);
-> +       dev_dbg(&port->dev, "usb role default mode is %s", modes[mode]);
->  }
->
->  static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *us=
-b2)
->
-> ---
-> base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
-> change-id: 20250404-xusb-peripheral-c45b1637f33b
->
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
->
->
+Avoid the use of struct drm_gem_object.import_attach to get the
+object's dma-buf or test for an imported buffer. The import_attach
+field in struct drm_gem_object is an artifact of the import process,
+but should not be used otherwise.
 
-Friendly reminder about this patch.
+The helper drm_gem_is_imported() tests if a GEM object's buffer
+has been imported into the driver. The corresponding dma-buf is
+referenced by the object itself. Both cases avoid import_attach.
 
-Sincerely,
-Aaron
+Thomas Zimmermann (2):
+  drm/tegra: Test for imported buffers with drm_gem_is_imported()
+  drm/tegra: Use dma_buf from GEM object instance
+
+ drivers/gpu/drm/tegra/gem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.49.0
+
