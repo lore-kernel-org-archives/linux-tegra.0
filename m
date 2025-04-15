@@ -1,99 +1,94 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCBB23D2A2
-	for <linux-tegra@vger.kernel.org>; Tue, 15 Apr 2025 06:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CDD2260C;
+	Tue, 15 Apr 2025 17:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744698053; cv=none; b=p6MSAmCdwqbfGnMU9P+ZKmVNRpk3yS9/sWmhSNqT0QeIhKI/4xwIvcCdiCe7XT5v35bNs1MEF6s68uSP70JIL0qjKiGKL8t46CJQ1CtI5QOwyQyMHqEn5Tb2zkW5X7ZcxsIDG/8S3+8cZJIWwZ0Zkr9Ms2vHu3bOZPCY0df6FFA=
+	t=1744738932; cv=none; b=TkgUYcYY7u4IDQdBJqNsh7CJVBeVPXkm9+hNxp3JvNziVALutvhemcyyR35LlYf+z2gV5X2RKMgn58ZdpUghhoSkDdga99gKWsHcAVoy6I17PQjIZeIlinmRqZGPBYVHo3oje5N6lAXotd2lit++RShzfxzRFv510yPAEeLXl48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744698053; c=relaxed/simple;
-	bh=Yr8/CO/5lrD/MrKdDsIWubVaHw/mUFm3djrhZkdFkhg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gBXEjlEqBwj62W7LqFZwrU9BB/2+7yoE8s1Hn4cB6CjG0sfTwyW5m4Idf5cMUVQ62+0f8CR0KV/4iRdTGF9Z4fz7oIsaII8CWh6IpLG7/fh9AOXZ1KjJVpzbzLLocvJACByEG+SWK+67rH/DsXKqwwkw+gBLmvDrDC3DqY9LMZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nUylUHYO; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nUylUHYO"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5b736b3fcso716826a12.1
-        for <linux-tegra@vger.kernel.org>; Mon, 14 Apr 2025 23:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744698050; x=1745302850; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GkzlycTSWhUYmFh6lSEJKN483G6fww5F4wymxCLohK4=;
-        b=nUylUHYOqRFXiju35blyGm79sBUV3UKbBApKtS26AVPiPyk6x1/qEWVFJ6jVjY/e+z
-         zanrRKdES9zeBDrQ7Y448LE6sY6cRFM3lJUy8dovnWh7at/N2wwMd+bdvVehs/7ESqyy
-         J7S/79f6dHFlWlpyXekaRBOLuJ2cET9QgUiMQp7zUUWP4VcDh6ihQ2Te4TtF64KrGNbW
-         uhZVRdjDheuhqzN5zORMw4K/WevWdKAfO5lHtKZI+wQ0ZuRHa/9ZbLtraeTwlvIsbkkK
-         Wu7ZWN6DPstSU6/WoLfWfPX9EOdvu/YFV1AWXAIvFWnEKHhx5PPfyNxQPHruj6aYWf4F
-         HLLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744698050; x=1745302850;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GkzlycTSWhUYmFh6lSEJKN483G6fww5F4wymxCLohK4=;
-        b=ekSaSZ+GuhIP1knyf+ho4dsyJg63CI5E3v/dYiidSh7PzA/lLTzQnnFJCQKSgg3J3G
-         oHXyT7ijR//S2EuOzHIGXC8LnM61mekzxrAzMH3+QU6Lj0tMJqrgqWiUPsQuNP+sqyY1
-         GWdxtoV/Xy3ZjqRPAxeYBP+L0NHlB7I5LJXbBsgHPeL/PVxm6Xe829xfwenGPWqCeohF
-         3pdq+efiG6tvbMWbkjxo6g02SMZKYNmTt80dr5iVSpe/uFTQyOZLTV839+/dC6BFhZqz
-         tT1+S2fXt0niH1pM3S52QsXnVc3RxPNein1Q9L0RZtp6b66utSRmPQMWjHldMdgkt1vW
-         I7eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWi2YkIpsLdk0TLkzVolZxxkLRRYaj2xOqukEPhSvtAMqneCX9/t61D3K4rCyAGSg+mp77ZhU53Kw160A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+hSXACKfEhqvAxTXh8dRT/TGNuv4GS99+Xo1r5eC9wYACfeD9
-	Lv8z6SSfE5wJGCjhYrnq8rYwxiRsNvD9BG119okHwDz4KVfwRVk7NiCJnnPYeVE=
-X-Gm-Gg: ASbGnctDQIad8O70xqgPeg28Z+hOVhZrtBmhCc+rEczUaZuDe2szAL29cVudBDg79sn
-	+Ez6w08pNjcsE53CxitdbxzVADccXnuEQzJaCiUJnC24V4ApQDYpe3j2+HbsO7xgotj7lsYxN4p
-	hqk+D0OudbVnWrnJMRkKyHULwRv8K9WSSh1HGlDfeIRJ6QejHmU78V15vAFTbn9hwL0rr8M2zJL
-	3K3swnDg1bObl2sgzEP167amOxraPnF1iCz+d1mTy9ZVONn4BD8Z1UWbv3yCR8NwxflFXFiJ3Fm
-	Oa0bWY7ITbk+ypu9QFT5+nqZjGyunFeP4neT0z13e6x3XDP656IJ3WhQZxDf8zvyU8QBAsuZdRh
-	8zHU3s1pFynDBtro=
-X-Google-Smtp-Source: AGHT+IH5uEHZHf0q3fBMfhb3D5pup7+Ee5MfqdlEewW7DJLDoGW+CYuJRaRH9YD4ei7FrdbwX1nRgQ==
-X-Received: by 2002:a17:907:c8a8:b0:aca:bd09:3cf2 with SMTP id a640c23a62f3a-acad36a1dc6mr443491166b.13.1744698050067;
-        Mon, 14 Apr 2025 23:20:50 -0700 (PDT)
-Received: from [192.168.1.26] (46.150.74.144.lvv.nat.volia.net. [46.150.74.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb4129sm1053861866b.98.2025.04.14.23.20.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 23:20:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250404111703.235455-1-krzysztof.kozlowski@linaro.org>
-References: <20250404111703.235455-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] memory: Simplify 'default' choice in Kconfig
-Message-Id: <174469804877.15476.8104725489814649152.b4-ty@linaro.org>
-Date: Tue, 15 Apr 2025 08:20:48 +0200
+	s=arc-20240116; t=1744738932; c=relaxed/simple;
+	bh=g2timJ2x6HC90A+91+Twr37DLBayUHwEXu33vTYCSNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EgqO+QdVb15bQ5JhVSxMuf0aK+2KDUDbwN09bX6eyQcayoLUwM6RrIXZqEqr/fq6e3t6ix03VRHYpQtkShiKeqtrJmETlv2k4+jN2D6GZQoDc09MmC0iP68EOljLH3WXwBY9Zywzb1Cww2K/dmH12KWI/Vzje7vZnBxxnDkFCrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=basealt.ru; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=basealt.ru
+Received: from localhost (broadband-46-242-4-129.ip.moscow.rt.ru [46.242.4.129])
+	(Authenticated sender: gremlin)
+	by air.basealt.ru (Postfix) with ESMTPSA id E27B12337F;
+	Tue, 15 Apr 2025 20:42:04 +0300 (MSK)
+Date: Tue, 15 Apr 2025 20:42:04 +0300
+From: "Alexey V. Vissarionov" <gremlin@altlinux.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	"Alexey V. Vissarionov" <gremlin@altlinux.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	Nagarjuna Kristam <nkristam@nvidia.com>, linux-usb@vger.kernel.org,
+	linux-tegra@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: [PATCH] usb: tegra-xudc: check ep->desc before dereferencing
+Message-ID: <20250415174204.GB6814@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+Check ep->desc before dereferencing it in tegra_xudc_req_done() call
+and later in this function tegra_xudc_handle_transfer_completion()
+
+Found by ALT Linux Team (altlinux.org) and Linux Verification Center
+(linuxtesting.org)
+
+Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
+Signed-off-by: Alexey V. Vissarionov <gremlin@altlinux.org>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index c7fdbc55fb0b97ed..0322e984e2c6fd91 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -2661,6 +2661,10 @@ static void tegra_xudc_handle_transfer_completion(struct tegra_xudc *xudc,
+ 	trb = trb_phys_to_virt(ep, trb_read_data_ptr(event));
+ 	req = trb_to_request(ep, trb);
+ 
++	/* tegra_xudc_req_done() dereferences ep->desc; check it here */
++	if (!ep || !ep->desc)
++		return;
++
+ 	/*
+ 	 * TDs are complete on short packet or when the completed TRB is the
+ 	 * last TRB in the TD (the CHAIN bit is unset).
+@@ -2678,7 +2682,7 @@ static void tegra_xudc_handle_transfer_completion(struct tegra_xudc *xudc,
+ 
+ 		tegra_xudc_req_done(ep, req, 0);
+ 
+-		if (ep->desc && usb_endpoint_xfer_control(ep->desc))
++		if (usb_endpoint_xfer_control(ep->desc))
+ 			tegra_xudc_ep0_req_done(xudc);
+ 
+ 		/*
+@@ -2694,8 +2698,7 @@ static void tegra_xudc_handle_transfer_completion(struct tegra_xudc *xudc,
+ 		dev_warn(xudc->dev, "transfer event on dequeued request\n");
+ 	}
+ 
+-	if (ep->desc)
+-		tegra_xudc_ep_kick_queue(ep);
++	tegra_xudc_ep_kick_queue(ep);
+ }
+ 
+ static void tegra_xudc_handle_transfer_event(struct tegra_xudc *xudc,
 
 
-On Fri, 04 Apr 2025 13:17:02 +0200, Krzysztof Kozlowski wrote:
-> 'default y if FOO' can be written shorter (and it already is in other
-> places).
-> 
-> 
-
-Applied, thanks!
-
-[1/2] memory: Simplify 'default' choice in Kconfig
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/0c16b8fdfe0952ce6fb317c27dbd54e214e5ed6d
-[2/2] memory: tegra: Do not enable by default during compile testing
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/9a4199ae8a041bf75b544c1f46a2ea95417b69de
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Alexey V. Vissarionov
+gremlin נעי altlinux פ‏כ org; +vii-cmiii-ccxxix-lxxix-xlii
+GPG: 0D92F19E1C0DC36E27F61A29CD17E2B43D879005 @ hkp://keys.gnupg.net
