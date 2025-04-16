@@ -1,213 +1,139 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2069.outbound.protection.outlook.com [40.107.102.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7596155C82;
-	Wed, 16 Apr 2025 14:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744812698; cv=fail; b=L121SJn8bRgZd68/6Gkls/Fkc3BxoYkVHqmADgn6qVhQQBIInfHmySxry7eYUM96eUvSMKF4hQhE+ZIE83K4rGBfuBkT7dbGuIynHVfA/K5/iaEfVx8hwkiQ3g9G7AnEgb1QxyBCSkoYhQPiOtRveQzFMJ6MleNJMGCkKakxhxk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744812698; c=relaxed/simple;
-	bh=FD2syU9o7JxWTlOlEimC1aeSeB4oRnz4Rt+J66JxCwQ=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gc1KANgRlobWTMG4TthIRhYu9FxKfQc0wk6oNPi/G0IWR+2yOc1p47sEy69AdVxsrAzCSfSIinzEvlkTFxiLBU+p7hdMlJ/SZN3u+z9lBktWkmrRx8EyMSRTKHwdFWvJI+Y1KYAdwEQCHL/VFwuoN3nmgh7oEqpj5epkUWWZa4E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HW/9vdR0; arc=fail smtp.client-ip=40.107.102.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CBE1FAC4E
+	for <linux-tegra@vger.kernel.org>; Wed, 16 Apr 2025 14:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744812791; cv=none; b=Sx/UCfD13wfD3hZglGhjPmCGnAakf3qkx+yEfBrGpJgwKPcFWSyhacnZK9I8fFYYZLUH13HMndbNKD6ty50Y3KfkkE9JMU/Swf7oT1nmUP0v168Ruqcg3ZyNVT0VrMxxPuZqyS/03JXNkfDtVWo/LhSJvkigyEZ7UPYa8yBGjYw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744812791; c=relaxed/simple;
+	bh=als+rfk6oCyvduGa+aQFEMQSki0kbRznKDEXbNApUMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhDzCvck97yhsZSUB9NIeDds9jVjTZKN3oFmouCYYQ3PAox0kI3g7W0vIHEQZpvxckw2pxZv3CBqD03DFejzsoFZxyS17rMSeUwxk5nW90/3mz5Xcrn3+hrsy3Ww3SQyU4wjCNhtvOcy0raZyqj6w7T4Q8NgnhUtRme9GCFdP8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=HaioJZAF; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HW/9vdR0"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k2naSzGJs5MQcM+jNpyLySo9tNRCle6GnaXC0CPlcZC/S/J8X2YJ6hxudS3fm6eO4/4J0HAvtm3pUChSswoRbeX2oYEmRuWnDUp3h4EkGOter2n/Qf+riDIW4GwMZPFJddgdq3SdQH2vzfu7DYlN2wgXb5GcBKKe6FMbI1CcmaQDfRGxb/Eky04qzvTAbLPn+G2cuyN8jQm3Qb1uRkSHHRnBh9SWqOl7485Kc6lHSCyGsnq1Thu7qC5mXQqW8hcobPptGs9shBUfEg69cyDFTMd2wB4quRptpqty4PXhxuDPQBv695Ia/w22YPrckyY3VWcABPzrFShWMLC2TGhiRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WzfVtqD58qTC90UAk+XXZfJ/qWHmQdcLcDLBVxR+ClM=;
- b=PF3hYxWvwM9bI4h16QliXs+MTejw6kBc5UQM12fI87negBJ66388Oahy+d6mgjiHT2gPneyvszyU1xdNGrJj9/KWLMIr5mohfZn3NgXNv/M7iqdGBxhKkLi8OWFxRYt6XfKPObI7UwWuhogg8baCSK0iEGQj0HIUZiRkZAM4u3N93hKYgTGaQjmGMUpu3l61yLpE9jz/IvseP5ubdBp6nVEYxmbODOAiZ7M2tgs9SD5QxJVaksGeal6qFBJpUZXWdLcW7mai68riCLTSnn5LD0J+Z7p3mh4inFAeVFPoikyO18GLqj5hEYYH2ulNShEaHhSkaQQf794iZjFl2z4aaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WzfVtqD58qTC90UAk+XXZfJ/qWHmQdcLcDLBVxR+ClM=;
- b=HW/9vdR00/L+G6Hi7hfLACe4hCTekN8sPIeZJxyR/aW2w6e2bPetxqnqx+VrUkI8blxIa4dxe13vlZkYwq0HwYrTRCgLhsHYDAMzCVuveDRmWjP2jFGUPXf1gsg59sXNIgk/v8M6O90G0tPuuiZvthseUlRnbX8xcLcjcI7s8vFqmmxdzS9Q8aIGtrwPo+V3u5d8SxBtwtY/7VpxKpLQ7XHVDatDVw04pQc0DD9L8BW+4hJ8pXi/l7RofLkSQclvZpK6vRpRA3LvO2MTkpIPlrE1ud/c53BA8ubHV/UvAJM0StLZzdIHqhEzTnXgjPh7w9CeHMlvriISzF1pSOraFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by MW6PR12MB8914.namprd12.prod.outlook.com (2603:10b6:303:244::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Wed, 16 Apr
- 2025 14:11:34 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8655.022; Wed, 16 Apr 2025
- 14:11:33 +0000
-Message-ID: <a71d147c-ea95-41e6-b631-f889a18888d4@nvidia.com>
-Date: Wed, 16 Apr 2025 15:11:27 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] arm64: tegra: Configure QSPI clocks and add DMA
-To: Vishwaroop A <va@nvidia.com>, thierry.reding@gmail.com,
- skomatineni@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org,
- linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com, smangipudi@nvidia.com
-References: <20250416110606.2737315-1-va@nvidia.com>
- <20250416110606.2737315-5-va@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250416110606.2737315-5-va@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO0P265CA0008.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::11) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="HaioJZAF"
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c5c815f8efso623077985a.2
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Apr 2025 07:13:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1744812789; x=1745417589; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pks0t2682ixEDV+rKJC/2pXrF3RbV5mK870WF9n4hZ0=;
+        b=HaioJZAFjTstRFj5iBqS+lq9/N9uJR7kwucLiB9GFQKOaUXbTrFxqwi9rq/VBQAHAH
+         f0HHX9N2qoE2/V1WJNmEjbBchs4eVlpkt/aaDlT6Jh4ee0/4NYqnQuJumu1Of3717n7r
+         pEVoWCoJGya7HsbKbEx8t/0mzGBpibMyfwBMZerybJrf5nX/z62NtvoiGYFh0O7TbdCg
+         13urAJxJxd1GvxLKQ0MmdUuqrPlSu0MYPjAUSwhJBj2wJ0A9iVONeWf5NrnNuyP7G8ne
+         84onzlCCSpwwmMSpI5vIvxCo9AVq40SdYs2kthx8ssXXMRgEhWP1io7N0sU5HSdDJvDA
+         uChw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744812789; x=1745417589;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pks0t2682ixEDV+rKJC/2pXrF3RbV5mK870WF9n4hZ0=;
+        b=ZXJ84+9guaohSxeIgIyYA6Eva7uaiKBoh3Fi9ZF1+mCYfQlyANrStYAeTMSGaZq8D1
+         +0ABYNQ11wCS3bJo9b7KlEpaNWU/7xsQU06y8WqLJMVHxPCqVNfDcUuSqtuquUutuAdn
+         50IuYLKiKdctYuW6dcCUNjzYBexYckAb6ra4JQVztkAEW2AMiydXDqFGk7P33AkIS6Jl
+         EWmc9n+/OtLuXwoygJyy1uYFYUrqawGVjKye+AXH8yIPOqUqhWcA1EobW65/UvkmAve0
+         7uevBWiMr3aysm5p29+gitYYCQOTdV54uu3DShb3vJ7skwe/kbhvDj/434Cyuh9vslqa
+         88kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4nOWaM5bWAG3m2oxYAZfizDbWbGL3nEueu7B12sYOHGMPxjSqr4xGx6vqrDkBmBW1L2VC6a0JQ4IyQA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTC4MX1XorFZY2jDQmUZ6kYR573mDCzXYQZ1InjTTTTyr2qSTB
+	/TB3BX50gdKXqapRI8FiV0kEBIMuFK0pgYjSaOyHFe9xKoviPlj5cHIrmV5udQ==
+X-Gm-Gg: ASbGncs0rvg0f7UJbg8wmv2TT0fUJ0mdPDCigQSGV+SeMsyGoAHiXAANC1ghd6n570P
+	2nq8VNJhm0KTlrb6lI/vXT5gd9xJOMDMwv2Pzz7z3iGoicBgaVG6da2iMw0i2aGin5BZLLF3FOk
+	qAa73j91j9O9odUhHCPv6gm4E6Efvp7m9quDtp87jaEFPcmCc3oIOoIcu8xriojd+AMPEl3Udku
+	iaALeLzkzL49uf3Ymmhz8tdDtGjSpk8dCE3G6/z4i6CsECLYg9Fp/mrLD3vX3APLPVonn4i3yPY
+	2a9v/0pQYDgYppBksvVnxNi/Buu6AEV1v1jDMbgskzRm2AyNAXaWKbbQ32A=
+X-Google-Smtp-Source: AGHT+IFQVfFHxsUSyybMpwGTdG8vsHYAdEt7pGJ1yLJInbTaNdDRC1d/nfkD2HwTdo7V4ul8wPDRGw==
+X-Received: by 2002:a05:620a:468c:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7c918fefdf6mr240846285a.23.1744812788810;
+        Wed, 16 Apr 2025 07:13:08 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8a0e5e4sm1058184485a.104.2025.04.16.07.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 07:13:08 -0700 (PDT)
+Date: Wed, 16 Apr 2025 10:13:05 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Alexey V. Vissarionov" <gremlin@altlinux.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Uwe Kleine-Knig <u.kleine-koenig@baylibre.com>,
+	Nagarjuna Kristam <nkristam@nvidia.com>, linux-usb@vger.kernel.org,
+	linux-tegra@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] usb: tegra-xudc: check ep and ep->desc before deref
+Message-ID: <f17d63cd-14a0-44bf-af9c-358d2a36b69d@rowland.harvard.edu>
+References: <20250415174204.GB6814@altlinux.org>
+ <79265b11-c23a-4e4e-b7c3-6cf5b89b9977@nvidia.com>
+ <20250416095555.GB27292@altlinux.org>
+ <6e0b8bb7-c9c4-4625-bad0-552dcad89ea0@nvidia.com>
+ <20250416120000.GD27292@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MW6PR12MB8914:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0cf026c1-c112-4c92-75ef-08dd7cf097a7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MEhqNTU0aU9wamlEeEh4T29JSWR1S3EyWXZKcGE1WGxGbzN0bjZmODM1bW5N?=
- =?utf-8?B?UFdweWRya2FKMG95WGJkMXByWWJJSzA3b3ZXZGZJdHh0ZVBHaWtvZFkrQi9P?=
- =?utf-8?B?RlpJbi8xYmxpa2JlVjhjK3RZSGtDSHJaMHVYcnBqYVc3b1M3ejdsREx6SzRX?=
- =?utf-8?B?dVpOMXNKS0FLWWJYL1F2R3VNSG5XSFdrcXRKZ3dSd0ovRDBJMVVSbDRsWFFG?=
- =?utf-8?B?Z3ZRZ0NRVEgvR2VGZWtoV1oyY24vaXcwRkJoVFAyYStmOXg0YUhHKzkzY2RK?=
- =?utf-8?B?OW9xMmRQcC9OSWdWVnJxRXBiTEx4ek9oU3dPcUZ6aytBa2JYdVRYOS9xandV?=
- =?utf-8?B?dTNxKzZZUmpSclU1ZlgyeGZDZWM5cS96ZUhFUGZGdDA4bUsvQ1gxWWNmUllW?=
- =?utf-8?B?a1ZIY0R2UWMrRkE5SzhPb2ZSZWlVL2xwNUVIN3E2WFpDaVBDeVZIUjBHeEpM?=
- =?utf-8?B?d04wRitjanVCM2R3RUlmTjh6QTVId3lJZnpSODh3RGZnUzVzb01JcVhGTnNj?=
- =?utf-8?B?aG1LL0FDek14Qyt2Y0luazFNSkJRM0RVMlpkSENDQWNXN29DcWRpQWtSY2J2?=
- =?utf-8?B?RXlTYkxnbGV3c2RYcGltVlNvM3VwVThLamdpVWVWQ0c5R3lUZTZPTmNGMEM2?=
- =?utf-8?B?QjZSQWc3MW5IK0pKSjZyMnY3clRRMDVweU1tWGdlQ1lOblc1Y2NWRC81ZjEx?=
- =?utf-8?B?U0plSGJhcnhMNGtPMmd5QytUc1M2Q3BFR2s0dkpPMFd5a3hUc2VycTVsMUta?=
- =?utf-8?B?T1djSlpzNjRGR05nZ0ZlcU5BTlpNOHozU3VzaDdJSGwvdHA4Vjdsci9NcXN0?=
- =?utf-8?B?dmdXT0JYOXY5alhRdE1pdGREajlRWE5kOENGQTVBNzJwdGE1MlNNNU1USWQ3?=
- =?utf-8?B?a2xVUGtwZVkveGhqcXFhNUFtQWRQQnpVZmNhNHRERnFMc0JXQ3VkZ0MwUGd0?=
- =?utf-8?B?TGVjZVVZb0YwSm94SUVqd01Ec21PVzdVcUZVQm1VZk5MOXVwVE1VczdLeFha?=
- =?utf-8?B?WDdJK2NsVm5UNFN3eW9vejBwc0dhRXdlT2hmUmVLek1pSzNZM3p4TGp1TzE5?=
- =?utf-8?B?dGErT1AwSytZVXVqSDUxYzM0NW03eVRBbHF3SjV4bGhyejBmQkZlODRUTUxB?=
- =?utf-8?B?aXhGREpqdVEvejJGUkV4MEo5SVhPL1B6WXZXZG5Ta1F6RGxjZThCT3AzTmtk?=
- =?utf-8?B?RlgwZDNpaHVpeGpYcGNabnE2YTUySTJjSmxVcnY4UnFIbC9BaDZodzh5dHc0?=
- =?utf-8?B?SWcxQ3R1cVFzMVB4N29vSmNCNTU0ejMwMDZ6TklhWnVlNzhQcm1kYURFSDRC?=
- =?utf-8?B?VjZxeGdjMUNuU1lCS2hub09WNWVENkIya0w2cVlLNmxUcWp0Q1I2aUN4RWMy?=
- =?utf-8?B?L280WmZJeUI3WTdhaUVnT2FGOGl4OTVCOWRCM0FvakJVd2tIQWpvZ1NOR09T?=
- =?utf-8?B?RWswN05Uai9IMnJoSHJ4UFdvWXZDVFhCZXVLMS82c0dZRnp4Nzl5M1YveExP?=
- =?utf-8?B?ZDFRVG1jV1BDTkpwZG9abWwzRzdnTTEydUxEbnIzVzJNdm1wRkVGa29jSUpB?=
- =?utf-8?B?T0xNQWZmNnVVN2FnbUw4K1AzSzF3bzNLL1l1a3ViamlXU3Noc0dVenNFVE5C?=
- =?utf-8?B?SVFBN3pZRjU4Zkt6RXJYY0xlYVkvamFEY3N5UFN6WjJDaGQ2cUNKdGVxVmNm?=
- =?utf-8?B?OFhEVWlJdlVFN0cxR1A4TGhQYmY0YnAvQ0lWZWJMd1NlNTJheTJocC9BVmtj?=
- =?utf-8?B?MFNZRTg2OEpUaXJja3hJYXN5eE9HUmZOWWlRY3BMTy9tYUU4Y2tUR3BaMFhP?=
- =?utf-8?B?N1d5U0M3UGFhODFGcEk5TXBzWEpLN0VDdnNiejV1elFQQ3RBS015QWI3SGpH?=
- =?utf-8?B?eXA5bEVaTzR2TmpIL3czSWNnVzF5WFZaRmR6M1NMY3ZVdExzcStsRmtzNmta?=
- =?utf-8?B?RWVkazVIOUw5UGFpbk9zSVNWQ3VRc0NYMTA3eWVVNlozdDYrMVVRNmVwM1RD?=
- =?utf-8?B?N25uU0RSWEZBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a3Z2aGtIc21lZUNuQTFYYTE5Tm9wWkFwT3RrYU9SeEZGOTRuSW16U2s4QjNH?=
- =?utf-8?B?d1FRczd0VWhhZU53cE4zbjV3emFSM1J4VFF2SzNxL3dBbHQ5V0xIQjI1bGxW?=
- =?utf-8?B?MmR2WUxZN20rVUdDT2ppLzJTam9KRHVqd3kxeEhkRGlHeVFDbWZhUHFEamc0?=
- =?utf-8?B?NEdwSGQ0MWlSMmNIa3dDRVVSNUdaTzAwR3A5NkN1Wk5Eb3NpeUdkUmdPSG14?=
- =?utf-8?B?TXg0bzF2aURPSkdhYTJyM2lSaVJoWHAxQXJOUlV3OGJVMElJaExEQXp0V0tm?=
- =?utf-8?B?TitGZ0tnUlRCaUZBQ1VpK3ExcHAxcFR2cjZNTnpOMmIrNHpodEUxcTVoUEZi?=
- =?utf-8?B?UllTcm51N2xsS2I4VGd5aTlGWlJxZENyeGZZY004YVc1bFpCbFlyM2l6WGYz?=
- =?utf-8?B?aGJDL0dWeUZGTk5hK2NNcWxHYi82cWloVTIxeFl3TVlNY3RiRWJJVWRmL29o?=
- =?utf-8?B?WXg0SXN5dEtFeksrbTVFaEhmUDlCYTA5NW44TGFRSkRBNi9mdjBaSm96RU5C?=
- =?utf-8?B?OU8vV0pDckpiYWVGaVZKWlFXeHc4OTZUQytWU1liZmNYODdLaTNqc012M1Zm?=
- =?utf-8?B?TzVPU1JCNWc4a0R0UlJNeEhTeHJ3bGpnSFZqd3VmZlFPVWV1Q3g2RGd4eThX?=
- =?utf-8?B?emV4R3o3eEpicmJXdGpuVEhlcE9NMTZZME5jQm1hbC9vS1JhVHIyakV3WUZO?=
- =?utf-8?B?c24va1ZEMFdicWc0c1hueEYrbXNqdkNlNFBzUDNVMCtJeDBqQ3RFQU5nZVdJ?=
- =?utf-8?B?bzdrNC9aZnZtU1NSam9FMTFsWGY1cWlTY0c5QW9teTlQaVZtMGNqd1Fnemkx?=
- =?utf-8?B?WU1oTVBzeDhGWThESUNNMkQyeVNTTmIrck1LZUl1bmdaeGUySVRtSHZERFNl?=
- =?utf-8?B?TUlwZ1Y5eEJyS1VLTFZtMkpZSHlpb1Rsdy9MSFFmNnl6bXlnazh6MVlyREMw?=
- =?utf-8?B?bW8zSFJjeEYyYUlQbFRDZmZCbDlHM0FXMEVReWhGeUhDNktwelAwY0l6elFv?=
- =?utf-8?B?MktYWUttY29DU0hFZWdYb0I4Y2U0b1RpaG5SNTJkWFp3YThPOGhlYnhzSkhv?=
- =?utf-8?B?RmRzMFp4ekdIeFhkZTdsWnBtYU1QMnJ0cmRsWS9ZWFIxWjlKZnRJMDg4cmFV?=
- =?utf-8?B?bTl6bXFOTjdFbHNpVngycHoxY0J1WTBoQ0VrMnJMbjA3cm96b2ZpMldkTnJZ?=
- =?utf-8?B?cWV1TmV6WXBGSWtGL1N2R1JqWWpnNVJVbGIrdURQSmxKdDJ4R0FvY0VSTHBI?=
- =?utf-8?B?c201cGV6WTIvVVpPdnBtTXE3QlFISUlYSTRiUk5WNTducmJ6K09uMlh1VzVI?=
- =?utf-8?B?QUZVNnU3ME1NU0JjL2tNV2l4eTFuZm5ZcXZPTGplSVRBd0NScXI2TXB3WkUx?=
- =?utf-8?B?MER3UFlIUDNlYTUvVEY2ak0vU21zSkJ3SmZuZ0hKZytmNWtQVlhYRkdTakhJ?=
- =?utf-8?B?MWU1MGRCZkdwQWlFK1pGbmg2ZSs4bXZWczdoa2hMVDlmUlE1WlRIMHlmdkpT?=
- =?utf-8?B?aEhaVUljaUx4TFdZUU9JNW1lQVZKMkxFQWx0ditsd1JvWGFYQVYzR0h4TWdW?=
- =?utf-8?B?eGZQckRDVkZzQ3ZWeWhSOHRaNU9RSDVUL0F3ZEtLMTIzbWpwR1BmdEtBV1Fa?=
- =?utf-8?B?TnFFRWVGM2RmMUlPUEdYNisrbEMvbDYvK291S0ZGSFd6NE9Yd1ZJR0ZiQTE4?=
- =?utf-8?B?UUtWMkFYZEhuQjdlQlExalBIN3ZJWG1pSHNxSk9XRlBGTkxSNEQxblBZdSt4?=
- =?utf-8?B?ZndOQWp0dytUVHBJZWlxQWxWTFZVT3d0Rm1JcGhkSktLWGxBL1FiSjlIM0Vi?=
- =?utf-8?B?TW1qUzRXTXJSc2FiaDIzQVhmaXdsRk5oYXdCMmVFaGYzWXBxWEhCcWVPenRh?=
- =?utf-8?B?R0IyVk9oNkJja1J1SHNHdDF3YldjTWkyMExlVXJXNW5scnFFYUk1YndyUEgx?=
- =?utf-8?B?ekFUT2VqaUw2TEFBam1SOGtITHNHK29ncm9INnR3Z3pTNi9NcGFiWnd4eDRH?=
- =?utf-8?B?Nk50a2tsTmkxWUZpYjFhcGllNFpjdCtBUmlQK3NlTFdaL0pYZGtMMEFWYnU0?=
- =?utf-8?B?a0dIdEtoOTB6UzFiUFRSWUR1R3pnNXFmdzQvdzNJT2xUVGhoNGFVUm5md2Fl?=
- =?utf-8?B?aWMwb2wrNkQydHBKUWJkVVBKbm5JTHpRTnZ4V1FJY2N4OWF2TzAxb2NPRStj?=
- =?utf-8?B?WHE3cWlDcmtJb1RFU1FtRlgyODFMQmdFd2VXakNiWi9FZVpZb2N3UEY4VWw4?=
- =?utf-8?B?ZEl4VVZxT3pUQWJuek1LaFFObVNBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cf026c1-c112-4c92-75ef-08dd7cf097a7
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 14:11:33.7846
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rnspYJml9xUgXV3M9dOuTlXHmXmSEtkozb4pTU0JIFBoMuRh91gCXQhj/gz9f3G0oZjQKJfMCw2eW6FIDSuIBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8914
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416120000.GD27292@altlinux.org>
 
-
-On 16/04/2025 12:06, Vishwaroop A wrote:
-> For Tegra234 devices, set QSPI0_2X_PM to 199.99 MHz and QSPI0_PM to
-> 99.99 MHz using PLLC as the parent clock. These frequencies enable
-> Quad IO reads at up to 99.99 MHz, the maximum achievable given PLL
-> and clock divider limitations.
-
-No mention of adding the iommus property here.
-
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
-> ---
->   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+On Wed, Apr 16, 2025 at 03:00:00PM +0300, Alexey V. Vissarionov wrote:
+> Check ep before dereferencing it in trb_phys_to_virt() and ep->desc
+> before dereferencing it in tegra_xudc_req_done()
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> index 2601b43b2d8c..419dde2bfdf9 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> @@ -2948,6 +2948,11 @@
->   				 <&bpmp TEGRA234_CLK_QSPI0_PM>;
->   			clock-names = "qspi", "qspi_out";
->   			resets = <&bpmp TEGRA234_RESET_QSPI0>;
-> +			iommus = <&smmu_niso1 TEGRA234_SID_QSPI0>;
-> +			assigned-clocks = <&bpmp TEGRA234_CLK_QSPI0_2X_PM>,
-> +					  <&bpmp TEGRA234_CLK_QSPI0_PM>;
-> +			assigned-clock-rates = <199999999 99999999>;
-> +			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLC>;
->   			status = "disabled";
->   		};
->   
-> @@ -3031,6 +3036,11 @@
->   				 <&bpmp TEGRA234_CLK_QSPI1_PM>;
->   			clock-names = "qspi", "qspi_out";
->   			resets = <&bpmp TEGRA234_RESET_QSPI1>;
-> +			assigned-clocks = <&bpmp TEGRA234_CLK_QSPI1_2X_PM>,
-> +					  <&bpmp TEGRA234_CLK_QSPI1_PM>;
-> +			assigned-clock-rates = <199999999 99999999>;
-> +			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLC>;
-> +			iommus = <&smmu_niso1 TEGRA234_SID_QSPI1>;
+> Found by ALT Linux Team (altlinux.org) and Linux Verification Center
+> (linuxtesting.org)
+> 
+> Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
+> Signed-off-by: Alexey V. Vissarionov <gremlin@altlinux.org>
+> ---
+>  drivers/usb/gadget/udc/tegra-xudc.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+> index c7fdbc55fb0b97ed..d61a0675e18f448f 100644
+> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> @@ -2658,9 +2658,21 @@ static void tegra_xudc_handle_transfer_completion(struct tegra_xudc *xudc,
+>  	short_packet = (trb_read_cmpl_code(event) ==
+>  			TRB_CMPL_CODE_SHORT_PACKET);
+>  
+> +	/* trb_phys_to_virt() dereferences ep; check it here */
+> +	if (!ep) {
+> +		dev_err(xudc->dev, "unexpected NULL pointer: ep\n");
+> +		return;
+> +	}
 
-Please be consistent with the ordering of properties.
+Is this condition something that is totally under the kernel's control?  
+That is, is ep always passed in by a driver and there's never a valid 
+reason for it to be NULL?
 
->   			status = "disabled";
->   		};
->   
+Then there's really no need for this check.  In real life it will never 
+trigger.  And if it does, because of a programming bug, you're better 
+off getting the stack dump that comes with a NULL-pointer dereference -- 
+it would certainly be a lot more visible to the developer when testing 
+new code than a easy-to-miss error message, and it would indicate where 
+the actual problem originated.
 
--- 
-nvpublic
+> +
+>  	trb = trb_phys_to_virt(ep, trb_read_data_ptr(event));
+>  	req = trb_to_request(ep, trb);
+>  
+> +	/* tegra_xudc_req_done() dereferences ep->desc; check it here */
+> +	if (!ep->desc) {
+> +		dev_err(xudc->dev, "unexpected NULL pointer: ep->desc\n");
+> +		return;
+> +	}
 
+Same here.
+
+Of course, if it is reasonable for ep or ep->desc to sometimes be NULL, 
+then the checks should be made.  But if that were true, I don't know why 
+you would call dev_err().
+
+Alan Stern
