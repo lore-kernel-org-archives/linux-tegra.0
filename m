@@ -1,204 +1,185 @@
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2049.outbound.protection.outlook.com [40.107.223.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAB3204C0D
-	for <linux-tegra@vger.kernel.org>; Fri, 18 Apr 2025 11:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744976739; cv=none; b=jJ81tNd5xsxysLN+CC7hYB9hL+hVSw7m9+kCr/7pfqxElk2Z39X/9I9JhDapmfLXNtQHXRTIIzBkRQEBbHtG8axGO7ZjoC13Y4D9Rs/4tKLF379D2m2i0TCtm0mJsz1eKBA7aTzQjL4FkyBw3+KxW1q2FXr/9n4N5UFjRGv2Iq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744976739; c=relaxed/simple;
-	bh=Ry1h7m16FdgxZUCsG/YEor+XDuZU0CwFby5eFpHVpyc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=cfHS3dAw8nA9S/UyVrfRi5BePKcEIdY6YF4Q3vi3OXEg5phfE7rhL+5V4wYTxvk1tsICOLw4TWCV9AYrKpzFTh4kwAiPk3fioKx1zhrWTsvhAwbZqjfD4h7tgOL/7egMGjH92z/0pptW7XvC9plrU2rvtFFLabOEJHYT2/G8ZP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=xEoGYTdT; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D192165E8;
+	Fri, 18 Apr 2025 16:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744992982; cv=fail; b=V55BXQj/oyRmZXJL5T0JQcjIpobWL1KsngOaN/ZxPz3MKQw6jGVx9PqHRgcslpjGUDnzgTKc2BUtBvhPspbC8CwRJ+Ddl6tMeGcWHHpeorJc7rpqGGgYICqjjS4xvaJa4R7aiRlJs+ICvr8jmIYXYQCcS9K1Sg7wnaCYZd8D7JY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744992982; c=relaxed/simple;
+	bh=8t4Yf9XD/Fqm3jTXcnA/HAM5Y5lcUDf/DOdccWzo03Y=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=rO/5aRhSQVZPlR8CKCDb9oma0xR/MS+GfLIP1OS+B6CG+qnvPJD/GustRnq7ONgFyKrSe5mIdcM4jKCu5zz/TF1hrsH+OKjymEcaPltFN8zC6NEv7lc4rMuObgOFJAYJeR0yK+7FCRFqtH1tkO2HmRo0Ujvt1CZ7JIpP4FeRWX8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fpbn8dTr; arc=fail smtp.client-ip=40.107.223.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="xEoGYTdT"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fpbn8dTr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X9kccdrIzAVJpCm4TV0tCLCwotO7RBZMhnmX5sAq+THqnpJ+I4ovvi+roUonZmFfNi9jQKiWyXuJwnZBPP1W60XfoLHNsCfrhFpi6bDTSAMLXHSq7Gp3FrPMmCX5CY3a73Bj686AH5JmJlA/keSwFVuKpYYS1HdSLKxzSKvEPQuPhuJ1JxKtB9f8iXoRZ85waL+SYaqO13wNhwZBATvmfYepZvS8RnshruIGgkntW8lhtKp4gSMzwty111VQrzmwvB/CBa3W2dUqkI/JHs+gr5LqWjvcF6+kI+iz4fQK6DpRU+VdxjJgHgi9tjFQuNElqUaOu/S5HTFJRmlyDmW9UA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UwdL2aNMGNbcpPGgAgOwzWoBdazSw7/OdpMgRFoIPW4=;
+ b=p5ZFyT29dLHPpJicqWAvoBlPrJkAQTo+utqWFwFVi/wfWHJzbmDvAXGdZCwul3S8D7bLYosNX5vXULF+240bHiEXWE/QDuittcLyji+1ieFSn0ne2P8YoLH102wCVpg5/U0dJvd147rEhZ7OAVL4RW1nYfE1+127b3pJ/w6cOW582f1fWOa2ZVvqZxveoUEJAK06pCP4Z86iGQpzrffLImCjXP9tjWAOqjsEezOIPifHr8rHth1vbM3K0/FdCfr99ijlV6y5YqnNXHJWGvgf7xGlmyCskl+qMi4uQ4kOWtB6Yj8KLXoNw42IcqnXIv0l4tE8/dT0Tcd6rj4QidEA/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UwdL2aNMGNbcpPGgAgOwzWoBdazSw7/OdpMgRFoIPW4=;
+ b=fpbn8dTrvPAWomsS0PFASMivg7WSnM6HSsLv2qKdHFlaDKsyE2rkSyCnwvLjsvrnYoYTRd/JjByoMqqfjhL1aGkQAJTx15c/jpQiIc0dPHQi9+j80kqUS5EfQPWgYjVPxgkV5gg4EZl7Uc96I5+lQOmb0EyMJjmDVmIETNv4LgSOcxlE7RhDsynpBL+xLJ6ec66c6o5QRF31TzCVgk25SvOkMeNuFLGVCTkeI5/ZzBGZZb0N+QYD43bgPzDTUUlyDipfZGx7g3wbPLEwvg73LZKxJhYhYsxIa6f/Krjx9zVDruYyst1KwIdqz2wIHzw31r9+3ZLf4PcPi9aP8sQqZw==
+Received: from CH0PR03CA0191.namprd03.prod.outlook.com (2603:10b6:610:e4::16)
+ by DS7PR12MB6142.namprd12.prod.outlook.com (2603:10b6:8:9a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.27; Fri, 18 Apr
+ 2025 16:16:17 +0000
+Received: from CH3PEPF0000000D.namprd04.prod.outlook.com
+ (2603:10b6:610:e4:cafe::9b) by CH0PR03CA0191.outlook.office365.com
+ (2603:10b6:610:e4::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.22 via Frontend Transport; Fri,
+ 18 Apr 2025 16:16:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH3PEPF0000000D.mail.protection.outlook.com (10.167.244.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Fri, 18 Apr 2025 16:16:16 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 18 Apr
+ 2025 09:16:01 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 18 Apr
+ 2025 09:16:00 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 18 Apr 2025 09:16:00 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.12 000/392] 6.12.24-rc2 review
+In-Reply-To: <20250418110359.237869758@linuxfoundation.org>
+References: <20250418110359.237869758@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1744976732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+pKArFsMcV1twEuEApjeMF+AmY+/ECoXgfNbrjnGlo0=;
-	b=xEoGYTdTck1JVn6h6n60BfedloWuXHkfsKcqtmq73RjbFo4SQb+z9FvN8gByieubUonmFn
-	h0RFTJQUlY4kC3yshPS9zUr4DwfixrBYwoC+ZD1X1DudPEd/B69asbjW95JUnU47mjFqLy
-	DaVkWaYfjuY6uufxZva6Bq27aliOPjh8HmHIYxaZsxcIwHPuK35FLn3jV8ZnMOSFfHnGhr
-	uw7eqToGt2hXbjqc1jyhBZUj8vJ7In/Zjmr0cCVFXZMwceu87OLh9xQkLC8v6A5m/B6coR
-	FAAMLmfa7cIi3iIpyxwhJzl8jce6rvzyl4QuE26+V3kPuk/ozmNs3G7eBm/F3Q==
-Content-Type: multipart/signed;
- boundary=1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Fri, 18 Apr 2025 13:45:23 +0200
-Message-Id: <D99QMGBHHYJO.1D7D0ZXJLBG9Y@cknow.org>
-Cc: <davem@davemloft.net>, <thierry.reding@gmail.com>,
- <jonathanh@nvidia.com>, <linux-crypto@vger.kernel.org>,
- <linux-tegra@vger.kernel.org>, "Dragan Simic" <dsimic@manjaro.org>,
- "Corentin Labbe" <clabbe@baylibre.com>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/10] Tegra Security Engine driver improvements
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Akhil R" <akhilrajeev@nvidia.com>, <herbert@gondor.apana.org.au>
-References: <20250224091610.49683-1-akhilrajeev@nvidia.com>
-In-Reply-To: <20250224091610.49683-1-akhilrajeev@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Message-ID: <365ad590-aa84-44bd-948a-8b66a5eeddc2@rnnvmail201.nvidia.com>
+Date: Fri, 18 Apr 2025 09:16:00 -0700
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000D:EE_|DS7PR12MB6142:EE_
+X-MS-Office365-Filtering-Correlation-Id: aaffde4f-4e91-40d5-a16e-08dd7e9458ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dFJQa3B3L2pHQUtMSEJab0k4MkxLay9VblNmRUtrMHRuSmZnVE4xcUpkcmVG?=
+ =?utf-8?B?dTJqNmtpTVVwN0I1OXY2alFISGE1VC8zM3dHcHJZa0dnTFZuMy9rSU1MRjdQ?=
+ =?utf-8?B?cHVUb0JNTUVkbisrckZGWTE3MUMvcG1aL3VGYVE5d09pVVpjU3JlelZNbHh2?=
+ =?utf-8?B?cHNkZmUwL1d0d3N3aTlEcHpnVUlwM1AwZ1I4U0NxWlRzdm9yaEdnUllSZUJW?=
+ =?utf-8?B?MTA5OGJ6bEtFMlZIUUp4RlpqclAyTWcyWmtUbGRQeFpkdUVaYUJDWXBVTDA2?=
+ =?utf-8?B?eFBoWnJTYWIrWnlyZEthT29oK3Vzd2hSc3h6NUVSNDhxMC81ZHNiZVBqWUp4?=
+ =?utf-8?B?NmdOR2xBZTcrWHg2UFdPLzFNaUYzL01NN25iQmJOc2pXM1kzQmx6QlBSa3Nh?=
+ =?utf-8?B?NDlHK1ljQVNCTkcwUGVJS0pjbG9SSE1RSFo3d21WeHVsU1pJNzVuUWk1OGZX?=
+ =?utf-8?B?V3JpV3d1QWtwMGpmVjdkZ24zRzcwNTBkNUR6R29iWkQxS2tuVWtOdG5kdm9N?=
+ =?utf-8?B?Z1dKRVVaRTkxWXJzK3FrOFB2a3lRUWltYTJEWUFxUHQ0K2JvOVB0OHpvNlZI?=
+ =?utf-8?B?UXZrKzJoNGlpOE5POEZSMk1EQ0F3ZUt3NzZxNHhpbUJMcTRsTXdrWnllbEtz?=
+ =?utf-8?B?VGtrUjQ0L09JVGljWDVCUGVJY3p2dGNWb2M4ZlRHUjRKNG92Mm9ZU3pxSlhZ?=
+ =?utf-8?B?RUxRYXYzNWJJbTB3My9OcDJJRXh6cjk1aVgyUkxUdnJNTzFkWVpMMGNRczdB?=
+ =?utf-8?B?Sy9FVm1JTkFxQnkvcVptSFd1T0RsRGNNRVBTZ2Yvckw5dmtKd3NLdStSZHV6?=
+ =?utf-8?B?WVJFbDRxS3NDMEg0RHA5bHA2UEYvTktIZHVjVG9qZlZNV0hTZmdvaTd3SE56?=
+ =?utf-8?B?Q3haRFh3bnFmSk9xR3NyVFBLaTVXc0ZuYk8rSDF6K3M5N1QwS1hpRE1TdWpG?=
+ =?utf-8?B?NmhLaTIxMVJIeWloVTNpUlU5dk5zbzdnOXdmLzNCa1liemZ2dTliK2NjM1Zw?=
+ =?utf-8?B?Rlk3dkVQSmRBWHhlb2hUQ3NaQTliQVZaNjUvM2lmUldTako3dDBOUGJqMkdO?=
+ =?utf-8?B?WHgwS1Nub3p4UEJ4QjZWMWUvUnNCS0MyektyVWpnMVZsY2VyYnBxVW0vSWJi?=
+ =?utf-8?B?QVk5emV0NUN2eUVRbG1qcEhUaDdIQmU4NFUvV1I1S3gxVmloWmcxc3poWHp6?=
+ =?utf-8?B?K3p6NE1NaEFXNGdPVFFWSk5LQ2M0Zk9OcWU4NG1zejNib3pCWGtDK1paek96?=
+ =?utf-8?B?VktpeWdrUHk5aEJjYk56dzNXOEdPM2NEK0YrRUJCeFBKNUtKOWxJVkdlbkxX?=
+ =?utf-8?B?L3dFbVlIcHlqV0tCNjljRDh6c1hieUIvb0lOSll0QXdXZ1o3K3QxN1hFV2dK?=
+ =?utf-8?B?bVZCRm9CamRQb3VnWlRNWU1WdlUvWVpmT1RoYUpsT0JjV0ZiSjh2MjNQYmxC?=
+ =?utf-8?B?MEVLT3ZHMzYwOXJQRHRLOTR3M05RNXI4S2p0U1pZN2tIR1IrQ0tVcXkxdzVJ?=
+ =?utf-8?B?Q0xya1phOWRJbnNaQkZIYks1bVRteXU1Y0xSZXZEUVNoSlNRVzd1SUtVV2l0?=
+ =?utf-8?B?VE1mZUpINXgrVloyMDgzaWVCcitHMitmMUMvN0FXc3M5aDBQV2pJY3grVUMr?=
+ =?utf-8?B?Ym10NlY4MjZyTGc3cG5kc3d6Z1ByL1p4bURRcFdWUEtnVGtXNUphTGpJVnBF?=
+ =?utf-8?B?Z2E1L1RnZUJVZ29yNE15T2g0RGRXcnBYWnVBT241aWRleTR1dElObHQ2TXhW?=
+ =?utf-8?B?SkJvN1greThBc3FRbUxiMzlQMVU3R1VaUmlCQlQwQ3Y2QUN1Y2xiVlNvL2lw?=
+ =?utf-8?B?eWtBaTU4ZVR3aDMxNXN4Yk5yTHpHTWRHMjFGQ3Nsamp0WWpPTFZ6VC9PbVhY?=
+ =?utf-8?B?aVdFVTl5OHIwUUM3emx6R2ptYktWUE1SNm02M1lNUG56MW9aanhnWi9hZ2hK?=
+ =?utf-8?B?ZlBNNGFIRVlQeXd4NXIwVTBLVHpxaXpSQ1JLbnJIejRneEUyRU4yUUI5em5s?=
+ =?utf-8?B?bWNKWE4zMmdjd3VIVng1ajZXMzVWTFRldXFUSVBNV3ljNlhDUm1Nb0prYVBs?=
+ =?utf-8?B?Y1RYN0FmRzVqMGUzYTJVdk44UlRsWkRrZlhIdz09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 16:16:16.7274
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aaffde4f-4e91-40d5-a16e-08dd7e9458ef
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6142
 
---1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, 18 Apr 2025 13:05:08 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.24 release.
+> There are 392 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 20 Apr 2025 11:02:42 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.24-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
+All tests passing for Tegra ...
 
-Hi,
+Test results for stable-v6.12:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-Earlier today I tried to boot my 6.15-rc1 kernel on my RockPro64
-(rk3399) and that didn't go too well:
+Linux version:	6.12.24-rc2-g7b7562936f80
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-```
-[   13.946999] Unable to handle kernel paging request at virtual address fe=
-fefefefefeff46
-[   13.947010] Mem abort info:
-[   13.947012]   ESR =3D 0x0000000096000044
-[   13.947014]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[   13.947018]   SET =3D 0, FnV =3D 0
-[   13.947020]   EA =3D 0, S1PTW =3D 0
-[   13.947022]   FSC =3D 0x04: level 0 translation fault
-[   13.947024] Data abort info:
-[   13.947026]   ISV =3D 0, ISS =3D 0x00000044, ISS2 =3D 0x00000000
-[   13.947029]   CM =3D 0, WnR =3D 1, TnD =3D 0, TagAccess =3D 0
-[   13.947031]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-[   13.947034] [fefefefefefeff46] address between user and kernel address r=
-anges
-[   13.947039] Internal error: Oops: 0000000096000044 [#1]  SMP
-[   13.947044] Modules linked in: snd_soc_core(+) dw_hdmi_cec(+) des_generi=
-c rockchip_rga gpio_ir_recv leds_gpio(+) panfrost(+) v4l2_vp9 v4l2_h264 ecd=
-h_generic snd_compress rk_crypto gpu_sched videobuf2_dma_contig spi_nor(+) =
-rfkill snd_pcm_dmaengine videobuf2_dma_sg v4l2_mem2mem drm_shmem_helper vid=
-eobuf2_memops snd_pcm crypto_engine rockchip_saradc snd_timer libdes videob=
-uf2_v4l2 snd pwrseq_core mtd soundcore videodev industrialio_triggered_buff=
-er videobuf2_common kfifo_buf mc coresight_cpu_debug rockchip_thermal cores=
-ight_etm4x industrialio coresight cpufreq_dt binfmt_misc pkcs8_key_parser e=
-fi_pstore configfs nfnetlink ip_tables x_tables autofs4 ext4 crc16 mbcache =
-jbd2 phy_rockchip_samsung_hdptx phy_rockchip_naneng_combphy panel_boe_th101=
-mb31ig002_28a xhci_plat_hcd realtek xhci_hcd rockchipdrm dw_hdmi_qp dwmac_r=
-k stmmac_platform dw_hdmi rk808_regulator stmmac dwc3 cec fusb302 udc_core =
-rc_core ulpi tcpm pcs_xpcs dw_mipi_dsi fan53555 typec analogix_dp phylink p=
-hy_rockchip_emmc mdio_devres pwm_regulator dwc3_of_simple
-[   13.947183]  drm_display_helper sdhci_of_arasan of_mdio gpio_rockchip sd=
-hci_pltfm fixed_phy drm_client_lib ehci_platform ohci_platform fixed drm_dm=
-a_helper gpio_keys phy_rockchip_pcie phy_rockchip_inno_usb2 ohci_hcd sdhci =
-ehci_hcd drm_kms_helper fwnode_mdio usbcore nvmem_rockchip_efuse phy_rockch=
-ip_typec dw_wdt drm pl330 rockchip_dfi io_domain libphy i2c_rk3x cqhci dw_m=
-mc_rockchip spi_rockchip pwm_rockchip usb_common dw_mmc_pltfm dw_mmc
-[   13.947244] CPU: 5 UID: 0 PID: 617 Comm: cryptomgr_test Tainted: G      =
-   C          6.15-rc1+unreleased-arm64-cknow #1 NONE  Debian 6.15~rc1-1~ex=
-p1
-[   13.947252] Tainted: [C]=3DCRAP
-[   13.947254] Hardware name: Pine64 RockPro64 v2.1 (DT)
-[   13.947257] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[   13.947262] pc : crypto_ahash_init+0x68/0xf0
-[   13.947273] lr : crypto_ahash_init+0x50/0xf0
-[   13.947277] sp : ffff80008097b950
-[   13.947278] x29: ffff80008097b950 x28: 0000000000000000 x27: ffff5e7f8d1=
-10200
-[   13.947285] x26: 0000000000000014 x25: ffff80008097bb48 x24: ffff5e7f817=
-d0400
-[   13.947292] x23: ffffd5ef022c5008 x22: 0000000000000000 x21: ffff5e7f8d1=
-10610
-[   13.947298] x20: ffff5e7f817d0450 x19: fefefefefefefefe x18: 00000000fff=
-fffff
-[   13.947304] x17: 0000000000000001 x16: ffffd5ef1ee6c8a8 x15: ffff8000809=
-7bc78
-[   13.947310] x14: ffff80008097baa0 x13: 0000000000000000 x12: 00000000000=
-00000
-[   13.947316] x11: ffff5e80777cd470 x10: ffff5e80777cd450 x9 : ffffd5ef022=
-c50ac
-[   13.947322] x8 : ffff80008097ba08 x7 : 0000000000000000 x6 : ffffff79be1=
-40702
-[   13.947327] x5 : 1032547698badcfe x4 : efcdab8967452301 x3 : 00000000c3d=
-2e1f0
-[   13.947333] x2 : 0000000000000000 x1 : ffff5e7f8d110400 x0 : 00000000000=
-00000
-[   13.947339] Call trace:
-[   13.947342]  crypto_ahash_init+0x68/0xf0 (P)
-[   13.947348]  rk_ahash_init+0x3c/0x58 [rk_crypto]
-[   13.947358]  ahash_do_req_chain+0x13c/0x278
-[   13.947363]  crypto_ahash_init+0xc4/0xf0
-[   13.947367]  test_ahash_vec_cfg+0x340/0x748
-[   13.947372]  __alg_test_hash.isra.0+0x1e0/0x3b8
-[   13.947375]  alg_test_hash+0xe8/0x130
-[   13.947379]  alg_test+0x180/0x710
-[   13.947383]  cryptomgr_test+0x2c/0x58
-[   13.947389]  kthread+0x120/0x220
-[   13.947397]  ret_from_fork+0x10/0x20
-[   13.947406] Code: b9002e96 eb13029f 540001c0 f94012a1 (f9002661)=20
-[   13.947410] ---[ end trace 0000000000000000 ]---
-```
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Much more, including full dmesg output can be found at
-https://paste.sr.ht/~diederik/f440d669e7f94983b70acebda18a0b9d716f230e
-
-When I mentioned this to Dragan Simic, he noted there were similarities
-between Rockchip's crypto engine and Tegra's.
-Trying to find a good commit to (shorttrack) a ``git bisect`` operation,
-I stumbled upon this patch set. And that just seemed like too much of a
-coincidence :-)
-
-I don't have the skills/knowledge to fix this myself, but I was
-wondering/hoping you could maybe directly see/point to where things are
-going (so) wrong in the Rockchip code?
-
-Thanks in advance,
-  Diederik
-
-On Mon Feb 24, 2025 at 10:16 AM CET, Akhil R wrote:
-> With the CRYPTO_TEST now being run asynchronously unveiled some
-> concurrency issues in the Security Engine driver. These were not
-> caught during functional or fuzz testing as all the tests were run
-> synchronously.
->
-> This patchset contains the fixes for the concurrency issues and few
-> other improvements identified during the stress-ng and cryptsetup tests.
->
-> ---
->
-> Akhil R (10):
->   crypto: tegra: Use separate buffer for setkey
->   crypto: tegra: Do not use fixed size buffers
->   crypto: tegra: finalize crypto req on error
->   crypto: tegra: check return value for hash do_one_req
->   crypto: tegra: Transfer HASH init function to crypto engine
->   crypto: tegra: Fix HASH intermediate result handling
->   crypto: tegra: Fix CMAC intermediate result handling
->   crypto: tegra: Set IV to NULL explicitly for AES ECB
->   crypto: tegra: Reserve keyslots to allocate dynamically
->   crypto: tegra: Use HMAC fallback when keyslots are full
->
->  drivers/crypto/tegra/tegra-se-aes.c  | 401 ++++++++++++++++++---------
->  drivers/crypto/tegra/tegra-se-hash.c | 287 ++++++++++++-------
->  drivers/crypto/tegra/tegra-se-key.c  |  27 +-
->  drivers/crypto/tegra/tegra-se-main.c |  16 +-
->  drivers/crypto/tegra/tegra-se.h      |  39 ++-
->  5 files changed, 523 insertions(+), 247 deletions(-)
-
-
---1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaAI7VgAKCRDXblvOeH7b
-bnlmAQCZE3ooULP3BkjzEPOsJBp2ZB5l3ncqiOxI1MXlJtoZcAD+Km+imkb91I0p
-lDUO5FnFCynorpXbTC9a0sjrgQD06wk=
-=atQd
------END PGP SIGNATURE-----
-
---1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2--
+Jon
