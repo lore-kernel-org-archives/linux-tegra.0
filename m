@@ -1,166 +1,204 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2085.outbound.protection.outlook.com [40.107.243.85])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CA26AAB5;
-	Fri, 18 Apr 2025 08:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744963969; cv=fail; b=GXB0j2ut5yawVSBI2UyEi/WKQp6IRg2nNcVrr++9JIzFmiSwipSpmK3vq6XBCiDHowUaNmsaPD6WUykGrsa2RAEsL7TUKQWSP2/KZnaD43gRQBo8yPy15k+S5hjZ4Htl/yjZddwJwaeUMHdnUFmIVk7ie2EHoZzs+zcMpCpatbQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744963969; c=relaxed/simple;
-	bh=ddwu+v9kT+hApwwXJqxOjhnLngWZ1BgpzNSgZjoqoe4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NaFnx9FxRTY+pRaK51gmy1yqcpJUl9LIMFQX7Y8/YlAVUu2NbRBtDG+JD1LmDjOiLYQ/h2wybc9IE5xveyW04ew56/yGHob4jPp90T+/ccRhnMayHdhizNpbsRgIAmjAplVKpFTTvCB/3m6CPnQKc9Y9rTWKDyXg8v+9Y81WyZQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gK/C2za3; arc=fail smtp.client-ip=40.107.243.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAB3204C0D
+	for <linux-tegra@vger.kernel.org>; Fri, 18 Apr 2025 11:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744976739; cv=none; b=jJ81tNd5xsxysLN+CC7hYB9hL+hVSw7m9+kCr/7pfqxElk2Z39X/9I9JhDapmfLXNtQHXRTIIzBkRQEBbHtG8axGO7ZjoC13Y4D9Rs/4tKLF379D2m2i0TCtm0mJsz1eKBA7aTzQjL4FkyBw3+KxW1q2FXr/9n4N5UFjRGv2Iq4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744976739; c=relaxed/simple;
+	bh=Ry1h7m16FdgxZUCsG/YEor+XDuZU0CwFby5eFpHVpyc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=cfHS3dAw8nA9S/UyVrfRi5BePKcEIdY6YF4Q3vi3OXEg5phfE7rhL+5V4wYTxvk1tsICOLw4TWCV9AYrKpzFTh4kwAiPk3fioKx1zhrWTsvhAwbZqjfD4h7tgOL/7egMGjH92z/0pptW7XvC9plrU2rvtFFLabOEJHYT2/G8ZP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=xEoGYTdT; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gK/C2za3"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z6WuLN+XjnUjB+JKYDpDXxl2/CNvqm/wsQpaIn2Cl9S/bkB6nO1KxU1HDtLORB/vwiRT9w7AIRiA0IJpKCrwR4hsfwUu0rvumey5yASnF7wSu9IEN1ITAJ4kfTJt7RVoJJ5F2jOt4gV9aMhD2SBXBPIMfMuPWwE3C2buoeHL8P1D2iZoNEWjEstyaD3SpL7XqTi0o/AZV8CeYzlFr/wf6Cm0JwuAr3zhIM0hb8Ve8JZwtrQJLX/LWUerz1J/BwMrbz6UhhX6x7A3jV9bTxa3QcyJDGaefnZc0LvIhkzm+uCvOX7HQ6UR3MjufHRf0xJgM+GgS/9vsf9eX8xncSKHGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PkqE60Oa4WBIVu9h/HvFBCrQWMaZ8qG0eoCVKfT75l4=;
- b=aoHEHumU92m71vcadcWPfxbCG2OO2BXprt6Xmd+ahzO5lNObgb/I4bUtiBfwOha2IibuGT75tPc8b4iDrTIwFOXKqD+GfvnrP04OriRWTB23NzLtCsw3+65G5HcYJyakidxLAD5WVxhVRY9OnngMpON3zXuH/yDBOxEcCsZZbXrQoqScH9008KbjgmBJD0kG2UeLs68RBXuS3cKzP/+NhvITWOh/nEOQVec84EHMJBmrq8VMX7I2OzkZjI9bnhsswAjNGRHAPsNK1y3uw00tx9JlfQdIP1VlSxfPAwyaqdtOEGjyodx9ZEhybHLttOGFPIgpRcnFCbUn+OwEDxNPxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PkqE60Oa4WBIVu9h/HvFBCrQWMaZ8qG0eoCVKfT75l4=;
- b=gK/C2za3kyttw9aXJZcx8815yEnnQtnQHcZbP72KD9JQL4HPbZVhE2q1YTqqpnfsOrLrb9AiGgWXMy3t+oclkEV1+DvMFWK3yALiWDKIhLCZfGynqNTjCvF9puie/dnNRbFsYKBPVoi7XJ/Bq+BteSDDrWcxtOBolVVjNRE9ho9gSIAltNThOeBM8rxYd5Okpg5U/aPLGCIHlF4ici7m7zsIF26kvHIZOS/OF7bwt35mN4MKjGswIn25E0niAHr3Ruark4QMGhp/MOBTjC41VdSehOeapXcvsTRYQOw7WJYfM9v1Mh90IM7PLKlaslEWk97CMTHKMuFfOqhGRyue6Q==
-Received: from SA9PR13CA0127.namprd13.prod.outlook.com (2603:10b6:806:27::12)
- by SJ5PPF1394451C7.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::98b) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Fri, 18 Apr
- 2025 08:12:44 +0000
-Received: from SA2PEPF00001504.namprd04.prod.outlook.com
- (2603:10b6:806:27:cafe::75) by SA9PR13CA0127.outlook.office365.com
- (2603:10b6:806:27::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.8 via Frontend Transport; Fri,
- 18 Apr 2025 08:12:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00001504.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Fri, 18 Apr 2025 08:12:43 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 18 Apr
- 2025 01:12:32 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 18 Apr
- 2025 01:12:31 -0700
-Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via
- Frontend Transport; Fri, 18 Apr 2025 01:12:30 -0700
-From: Wayne Chang <waynec@nvidia.com>
-To: <waynec@nvidia.com>, <gregkh@linuxfoundation.org>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH 1/1] usb: gadget: tegra-xudc: ACK ST_RC after clearing CTRL_RUN
-Date: Fri, 18 Apr 2025 16:12:28 +0800
-Message-ID: <20250418081228.1194779-1-waynec@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="xEoGYTdT"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001504:EE_|SJ5PPF1394451C7:EE_
-X-MS-Office365-Filtering-Correlation-Id: e978edf6-256e-49e4-43bd-08dd7e50cbd4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?445AVd9nOqKC8iFsDDkp62MZ+9161lgd17JjSKzAF9JgoKnP/T+/ZZiBA2mp?=
- =?us-ascii?Q?ifE4DCDVLX49kPnvgKPiuZfEmNVPr+s5Oz6k+5jP22ohT+bFO/3eJFSXeRzE?=
- =?us-ascii?Q?qvgAAaIew5Ee6/00ml0MkSYUppI1d6gS0QN4nwhVxhHAm8gz+gVPWjeTQHx4?=
- =?us-ascii?Q?IHq2PTA4wN+ofr9bapmG3mAY6ommsuesQ3Bs8HMLFmxGzl/Dvc7OeIBMrzCs?=
- =?us-ascii?Q?nU2tUCmMwSbSnqk/lkGHv91ssAJndVyUs7GmU2JffFl0GQApsQAm0HImDEAM?=
- =?us-ascii?Q?bziKbfK3IlcQtPc2H5QNFFDNBqm1nqYcTyAtJfN7HU/cpY51/XdEEWMzZt1Y?=
- =?us-ascii?Q?agjlg0SNtNwH10rMz6A4BThdj43pUTztaXCdBsruK8ZmnNBIsuR+tbon9uEu?=
- =?us-ascii?Q?eJb7QQbwzdNjzxTLBvS3p2ah9NEGozW/CEEcXDvNIRyolYZb+Jqh53wiwqU7?=
- =?us-ascii?Q?GNDbE8cg2FSMnQPj3i0DtiZ9e/Tr7cqmvZuxfwQEzTOZ2DqpRRbdlRrKSZqp?=
- =?us-ascii?Q?IQIMBurqLnvGZmO+pkPEgwV+5VdtstXsFjy2ym8WPUgWUzJrSvtTrHKAU9OX?=
- =?us-ascii?Q?Fo6VEEZ98XwkX1/FWI8hig1Vuc+lAmhDdm1ZS1CqDRl1kFO7qU/By7GLXeX0?=
- =?us-ascii?Q?CHGijXFAsk1i2vozm6BmtI+rl4g5rya7W+k/J5GssrVqlQ+Tm5reiXe0bGZy?=
- =?us-ascii?Q?vT0lGP9CsUq8OYvdPOCOzi3n/FbCMsM3tscvR9rvmLVeLd1FHechtmxRF9GU?=
- =?us-ascii?Q?baTHY89EgcBk+pNtm9gv/cCDxyMnOvD63McBuXIFTNXwr424wbK5uSkcbmsD?=
- =?us-ascii?Q?mrsVhLRSuHq7FlE+KTga9cD5ehkSpl1PD7dptv0BphrnBAs/ZPif1LcGGHPy?=
- =?us-ascii?Q?K5Et3zr4BmvCeMi5zPkPH+pngzVW2bGPrdAn0G3I2YLA60ztrJTttzg7M25I?=
- =?us-ascii?Q?ZQPJ4vyjmN6pL8qukmUlmUup4wqsduRHxL+r+RNMytvsNhb4qOE6qFjsNXYT?=
- =?us-ascii?Q?q9qKsu3xl7CTaTG5xiDbKO3i3ncnJ1EmKsQpgdYl9/TNpBQFW/BZrwYhELrT?=
- =?us-ascii?Q?3Ir5K1k1dFSG9DdlStCK+B2r5IB0JnNtC40uPL4UHzh1auRjiG3BP5kGCPTE?=
- =?us-ascii?Q?84XTooEYDS1iFpxJQ3rC0d8NEcFWiEVM5QD1w/5tBX76scE48x7mX0hnANWU?=
- =?us-ascii?Q?XVjAwBv3hXoKu1m3BDD557MOMyI+XSTpL5A1CgaeQSamwTNSIf5je5ZJJebu?=
- =?us-ascii?Q?rIJaWchlFr27PD0DHxZrN2TgArssxmmNOp4kGd1OCMXiqk1gdvzCDRJcjJjD?=
- =?us-ascii?Q?48SfsoHwiI0AKV0KWr4wHVKheUW6ku7p3nB7acUSbQdnGtsdy8sbA6oKB1d5?=
- =?us-ascii?Q?iYVBEvZ4iShGAkbfnz2HmBQPLCuFHs3ZaD6ncbV1TFSQyBycrnVL+DXEe2Z0?=
- =?us-ascii?Q?y8PletZuHVTizlwwx4U1yweNwBtlQC4yRt+vKFfUex2kSiEakTr2hSaa1HX+?=
- =?us-ascii?Q?+QdMF2Ba3efgv5Piqe+O/97cG1R05LYMFiGh?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 08:12:43.7085
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e978edf6-256e-49e4-43bd-08dd7e50cbd4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001504.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF1394451C7
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1744976732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pKArFsMcV1twEuEApjeMF+AmY+/ECoXgfNbrjnGlo0=;
+	b=xEoGYTdTck1JVn6h6n60BfedloWuXHkfsKcqtmq73RjbFo4SQb+z9FvN8gByieubUonmFn
+	h0RFTJQUlY4kC3yshPS9zUr4DwfixrBYwoC+ZD1X1DudPEd/B69asbjW95JUnU47mjFqLy
+	DaVkWaYfjuY6uufxZva6Bq27aliOPjh8HmHIYxaZsxcIwHPuK35FLn3jV8ZnMOSFfHnGhr
+	uw7eqToGt2hXbjqc1jyhBZUj8vJ7In/Zjmr0cCVFXZMwceu87OLh9xQkLC8v6A5m/B6coR
+	FAAMLmfa7cIi3iIpyxwhJzl8jce6rvzyl4QuE26+V3kPuk/ozmNs3G7eBm/F3Q==
+Content-Type: multipart/signed;
+ boundary=1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Fri, 18 Apr 2025 13:45:23 +0200
+Message-Id: <D99QMGBHHYJO.1D7D0ZXJLBG9Y@cknow.org>
+Cc: <davem@davemloft.net>, <thierry.reding@gmail.com>,
+ <jonathanh@nvidia.com>, <linux-crypto@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>, "Dragan Simic" <dsimic@manjaro.org>,
+ "Corentin Labbe" <clabbe@baylibre.com>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/10] Tegra Security Engine driver improvements
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Akhil R" <akhilrajeev@nvidia.com>, <herbert@gondor.apana.org.au>
+References: <20250224091610.49683-1-akhilrajeev@nvidia.com>
+In-Reply-To: <20250224091610.49683-1-akhilrajeev@nvidia.com>
+X-Migadu-Flow: FLOW_OUT
 
-We identified a bug where the ST_RC bit in the status register was not
-being acknowledged after clearing the CTRL_RUN bit in the control
-register. This could lead to unexpected behavior in the USB gadget
-drivers.
+--1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-This patch resolves the issue by adding the necessary code to explicitly
-acknowledge ST_RC after clearing CTRL_RUN based on the programming
-sequence, ensuring proper state transition.
 
-Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wayne Chang <waynec@nvidia.com>
----
- drivers/usb/gadget/udc/tegra-xudc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi,
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index c7fdbc55fb0b..2957316fd3d0 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -1749,6 +1749,10 @@ static int __tegra_xudc_ep_disable(struct tegra_xudc_ep *ep)
- 		val = xudc_readl(xudc, CTRL);
- 		val &= ~CTRL_RUN;
- 		xudc_writel(xudc, val, CTRL);
-+
-+		val = xudc_readl(xudc, ST);
-+		if (val & ST_RC)
-+			xudc_writel(xudc, ST_RC, ST);
- 	}
- 
- 	dev_info(xudc->dev, "ep %u disabled\n", ep->index);
--- 
-2.25.1
+Earlier today I tried to boot my 6.15-rc1 kernel on my RockPro64
+(rk3399) and that didn't go too well:
 
+```
+[   13.946999] Unable to handle kernel paging request at virtual address fe=
+fefefefefeff46
+[   13.947010] Mem abort info:
+[   13.947012]   ESR =3D 0x0000000096000044
+[   13.947014]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+[   13.947018]   SET =3D 0, FnV =3D 0
+[   13.947020]   EA =3D 0, S1PTW =3D 0
+[   13.947022]   FSC =3D 0x04: level 0 translation fault
+[   13.947024] Data abort info:
+[   13.947026]   ISV =3D 0, ISS =3D 0x00000044, ISS2 =3D 0x00000000
+[   13.947029]   CM =3D 0, WnR =3D 1, TnD =3D 0, TagAccess =3D 0
+[   13.947031]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+[   13.947034] [fefefefefefeff46] address between user and kernel address r=
+anges
+[   13.947039] Internal error: Oops: 0000000096000044 [#1]  SMP
+[   13.947044] Modules linked in: snd_soc_core(+) dw_hdmi_cec(+) des_generi=
+c rockchip_rga gpio_ir_recv leds_gpio(+) panfrost(+) v4l2_vp9 v4l2_h264 ecd=
+h_generic snd_compress rk_crypto gpu_sched videobuf2_dma_contig spi_nor(+) =
+rfkill snd_pcm_dmaengine videobuf2_dma_sg v4l2_mem2mem drm_shmem_helper vid=
+eobuf2_memops snd_pcm crypto_engine rockchip_saradc snd_timer libdes videob=
+uf2_v4l2 snd pwrseq_core mtd soundcore videodev industrialio_triggered_buff=
+er videobuf2_common kfifo_buf mc coresight_cpu_debug rockchip_thermal cores=
+ight_etm4x industrialio coresight cpufreq_dt binfmt_misc pkcs8_key_parser e=
+fi_pstore configfs nfnetlink ip_tables x_tables autofs4 ext4 crc16 mbcache =
+jbd2 phy_rockchip_samsung_hdptx phy_rockchip_naneng_combphy panel_boe_th101=
+mb31ig002_28a xhci_plat_hcd realtek xhci_hcd rockchipdrm dw_hdmi_qp dwmac_r=
+k stmmac_platform dw_hdmi rk808_regulator stmmac dwc3 cec fusb302 udc_core =
+rc_core ulpi tcpm pcs_xpcs dw_mipi_dsi fan53555 typec analogix_dp phylink p=
+hy_rockchip_emmc mdio_devres pwm_regulator dwc3_of_simple
+[   13.947183]  drm_display_helper sdhci_of_arasan of_mdio gpio_rockchip sd=
+hci_pltfm fixed_phy drm_client_lib ehci_platform ohci_platform fixed drm_dm=
+a_helper gpio_keys phy_rockchip_pcie phy_rockchip_inno_usb2 ohci_hcd sdhci =
+ehci_hcd drm_kms_helper fwnode_mdio usbcore nvmem_rockchip_efuse phy_rockch=
+ip_typec dw_wdt drm pl330 rockchip_dfi io_domain libphy i2c_rk3x cqhci dw_m=
+mc_rockchip spi_rockchip pwm_rockchip usb_common dw_mmc_pltfm dw_mmc
+[   13.947244] CPU: 5 UID: 0 PID: 617 Comm: cryptomgr_test Tainted: G      =
+   C          6.15-rc1+unreleased-arm64-cknow #1 NONE  Debian 6.15~rc1-1~ex=
+p1
+[   13.947252] Tainted: [C]=3DCRAP
+[   13.947254] Hardware name: Pine64 RockPro64 v2.1 (DT)
+[   13.947257] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[   13.947262] pc : crypto_ahash_init+0x68/0xf0
+[   13.947273] lr : crypto_ahash_init+0x50/0xf0
+[   13.947277] sp : ffff80008097b950
+[   13.947278] x29: ffff80008097b950 x28: 0000000000000000 x27: ffff5e7f8d1=
+10200
+[   13.947285] x26: 0000000000000014 x25: ffff80008097bb48 x24: ffff5e7f817=
+d0400
+[   13.947292] x23: ffffd5ef022c5008 x22: 0000000000000000 x21: ffff5e7f8d1=
+10610
+[   13.947298] x20: ffff5e7f817d0450 x19: fefefefefefefefe x18: 00000000fff=
+fffff
+[   13.947304] x17: 0000000000000001 x16: ffffd5ef1ee6c8a8 x15: ffff8000809=
+7bc78
+[   13.947310] x14: ffff80008097baa0 x13: 0000000000000000 x12: 00000000000=
+00000
+[   13.947316] x11: ffff5e80777cd470 x10: ffff5e80777cd450 x9 : ffffd5ef022=
+c50ac
+[   13.947322] x8 : ffff80008097ba08 x7 : 0000000000000000 x6 : ffffff79be1=
+40702
+[   13.947327] x5 : 1032547698badcfe x4 : efcdab8967452301 x3 : 00000000c3d=
+2e1f0
+[   13.947333] x2 : 0000000000000000 x1 : ffff5e7f8d110400 x0 : 00000000000=
+00000
+[   13.947339] Call trace:
+[   13.947342]  crypto_ahash_init+0x68/0xf0 (P)
+[   13.947348]  rk_ahash_init+0x3c/0x58 [rk_crypto]
+[   13.947358]  ahash_do_req_chain+0x13c/0x278
+[   13.947363]  crypto_ahash_init+0xc4/0xf0
+[   13.947367]  test_ahash_vec_cfg+0x340/0x748
+[   13.947372]  __alg_test_hash.isra.0+0x1e0/0x3b8
+[   13.947375]  alg_test_hash+0xe8/0x130
+[   13.947379]  alg_test+0x180/0x710
+[   13.947383]  cryptomgr_test+0x2c/0x58
+[   13.947389]  kthread+0x120/0x220
+[   13.947397]  ret_from_fork+0x10/0x20
+[   13.947406] Code: b9002e96 eb13029f 540001c0 f94012a1 (f9002661)=20
+[   13.947410] ---[ end trace 0000000000000000 ]---
+```
+
+Much more, including full dmesg output can be found at
+https://paste.sr.ht/~diederik/f440d669e7f94983b70acebda18a0b9d716f230e
+
+When I mentioned this to Dragan Simic, he noted there were similarities
+between Rockchip's crypto engine and Tegra's.
+Trying to find a good commit to (shorttrack) a ``git bisect`` operation,
+I stumbled upon this patch set. And that just seemed like too much of a
+coincidence :-)
+
+I don't have the skills/knowledge to fix this myself, but I was
+wondering/hoping you could maybe directly see/point to where things are
+going (so) wrong in the Rockchip code?
+
+Thanks in advance,
+  Diederik
+
+On Mon Feb 24, 2025 at 10:16 AM CET, Akhil R wrote:
+> With the CRYPTO_TEST now being run asynchronously unveiled some
+> concurrency issues in the Security Engine driver. These were not
+> caught during functional or fuzz testing as all the tests were run
+> synchronously.
+>
+> This patchset contains the fixes for the concurrency issues and few
+> other improvements identified during the stress-ng and cryptsetup tests.
+>
+> ---
+>
+> Akhil R (10):
+>   crypto: tegra: Use separate buffer for setkey
+>   crypto: tegra: Do not use fixed size buffers
+>   crypto: tegra: finalize crypto req on error
+>   crypto: tegra: check return value for hash do_one_req
+>   crypto: tegra: Transfer HASH init function to crypto engine
+>   crypto: tegra: Fix HASH intermediate result handling
+>   crypto: tegra: Fix CMAC intermediate result handling
+>   crypto: tegra: Set IV to NULL explicitly for AES ECB
+>   crypto: tegra: Reserve keyslots to allocate dynamically
+>   crypto: tegra: Use HMAC fallback when keyslots are full
+>
+>  drivers/crypto/tegra/tegra-se-aes.c  | 401 ++++++++++++++++++---------
+>  drivers/crypto/tegra/tegra-se-hash.c | 287 ++++++++++++-------
+>  drivers/crypto/tegra/tegra-se-key.c  |  27 +-
+>  drivers/crypto/tegra/tegra-se-main.c |  16 +-
+>  drivers/crypto/tegra/tegra-se.h      |  39 ++-
+>  5 files changed, 523 insertions(+), 247 deletions(-)
+
+
+--1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaAI7VgAKCRDXblvOeH7b
+bnlmAQCZE3ooULP3BkjzEPOsJBp2ZB5l3ncqiOxI1MXlJtoZcAD+Km+imkb91I0p
+lDUO5FnFCynorpXbTC9a0sjrgQD06wk=
+=atQd
+-----END PGP SIGNATURE-----
+
+--1b697cfb805afad669590ac602a8a82f42215c1070e50bde362d177e9cb2--
