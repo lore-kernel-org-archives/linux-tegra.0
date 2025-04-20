@@ -1,198 +1,604 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F504C7D;
-	Sun, 20 Apr 2025 00:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07F6F9C1;
+	Sun, 20 Apr 2025 03:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745109288; cv=none; b=ktIPIGxWUtTC6ZP15Aecj0RkFH9+G9lLik7u7LUCRBc20A0U61CWBPzQMgIsEDUHwtxLeq7dyZztS5KyLsEHfpUBiWBqObglGmwh6Is4D/c7XekkXvFGxsXxfHVHg/D52VJF2s/K8r+nr9aObf2t3QxYrjm1HaP3Y7o0sy5XJqU=
+	t=1745119847; cv=none; b=MaEeDXh059kVOOsN8XAG2cq30N4DJ9pUmk9tKIpf0Arf78CZ9VDBKPr5SZXe3algzfDnMGxzCI1PAatEjX4izHz+tlcIQK5bRbAvDYLKdl/S4WeP4sAq/5HUpcwEy4j62h05fQQanQSwO8s5r6u47BBr3cUGvoRHLKa/x9BELxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745109288; c=relaxed/simple;
-	bh=CFylASbB8x1qwvmS81FU9E0X/hvT3rRGccqv9ZghGok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qFZhUmK3+4JZoHzOrwNnOwpcvyeWRDEhep2wa13pTrBLcQ4hU6Be/MxDk6U87/85BRcSBV2v9r2vaHh5TCC+jjA/zUQezVaj6azu4Ek/2t947Ngstbgj3gBuYVwNjnGhB1D1JW/WyqSy6LuJq+327qLP3uxGD5t7nLX5I4jmSs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zd10DXpg; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745119847; c=relaxed/simple;
+	bh=Pc01IytnMhKNpIarCvrWkUqTFqR9OkNN6LC2YjXLRJM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JMK0e6rEEgphx443NVrFb6BVQSc2rJwHV8+aKEAP8D3eQuiFbJ4wKzpNGKHNEP8BPdsjd28uL462TEf8XQi05N+7vAFjjyVosfcixtstGbShq4g1p18Kmd7zvaGVNb+SHp/qtJKWLBBkKHgao4eBx57Lv7AvhI1tIRJ2uZTv9Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S92Asl8X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zd10DXpg"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso27478081fa.2;
-        Sat, 19 Apr 2025 17:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745109284; x=1745714084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aCVfNP1UFzhQHU+UziS/1aMy/BtD5fPkaaRh6L2J8Tk=;
-        b=Zd10DXpgjq71buAQ3kVuCnjhoAaPIVooeQGkTZYipcwwozSLgniBah2aML7UgHXJ/e
-         X3nDTZVEnKxuWtl8uxvVEDp4iRO+Z1Lmgy8ozlLYuAwILnPgAkQzL/Y2UilRBMIonigh
-         dC9z/Lv4+LA8vRFnnH5oqbjozobZCkc04iKUWuwhsFsbfLEw4VeuKblIEQ/tmjPgwk28
-         y8bfFLPYLmZXv7QdW/qZ+PW+WgqRLtoFMNI8DkoxaeBpHTw0y4M9HpRz11ncuC006LMk
-         +Io1HfL1/+OudMkfkb1sUiL0Ftgf2GLHqcHPGzrHMdYxOTQzeOvTHWkpWP1pKhLJwA6i
-         CTOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745109284; x=1745714084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aCVfNP1UFzhQHU+UziS/1aMy/BtD5fPkaaRh6L2J8Tk=;
-        b=pxuXyfbxlwjfswhXf1aRkojUPAIS6arqHym2TRiLt8rZq1yqdpAkKNZhV/GPRGq9Nv
-         QezODVHE69reqW+VLeE5pz95fpnRyjtfrPe2TPhxt4x+5YTtsAQZCnVYK5Ng8tdz+92t
-         hec4TtQda3IryU5uJLr6n4RMVQ3DrA9f8F821HyGzjfJyY41mL8SIOFqrtuvWaLrU+Tp
-         OYDu5ThJKB/j3G57rDfy32HDzh5CSkCAmDatMNX/WT07Tbc/tKRUiyQLkw74mfz06a5u
-         mgy+xZbJ6jT25t2ccMV2JvwXtJ0mRrx53aBJ/3giHy18oTpUBaUiSvXY8QatoH2OEpF3
-         kC/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNCE7nF1MzouGp99FIrsGp94btRHiTvsg8IFvtnRwVxAFRXhSMyyiv85fHibv9AgOBdyIREbciv75ek4s=@vger.kernel.org, AJvYcCXT8uBCbx1jTYDKPr2ubnW1XzvkuuI3LfcKsmfKqK2f0xiU3X674lwutYWXn+I7NHoxLNshzCz0RFkRgRc=@vger.kernel.org, AJvYcCXVVuTGBcvXKo/mPb5Cw4nRwR0Chw21ZanGp9uJdoCkJDzHbh6jBQJY96URRbhxFTsCavNu96TW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzgEGlFA9nKkxxqvt6CZxpAxxy/gXsvSmaSQnhD0dQ28L1jzkW
-	sMt3g7a7BnnRF1oEe5OEtMIiyujneG7jSiu+xW9fPubIbrTVuxFWSi3nHzi2cyJ5DClio5dg3q5
-	d+CX4p5JSY+oApyJpS3XtKPsurnA=
-X-Gm-Gg: ASbGncsfsnCCdXnR4greFpgMIsBlPA2iMUF+v/Isr2CL5PcLsyEWg1onxuW/WzR4Gzj
-	ObtonaRZZ4UfVDnfxVRb62+IUWpMy/02FHIuEHelpBQCA8CI7ycvo2ywyWAkU2Gwy2sqBzAU/eb
-	8b53qE5IryC0vtnZnxTBPSvQ==
-X-Google-Smtp-Source: AGHT+IGnBT9PQ5jEYh6DumXMG4qyl8frndd6pk/C2KijCK3Ra++k3C4hOaeGs7Q5Y+TzsQlcujBhFcQSpRKFZqunwH8=
-X-Received: by 2002:a2e:a90c:0:b0:30b:c5e7:6e61 with SMTP id
- 38308e7fff4ca-31090502c67mr21744281fa.20.1745109284149; Sat, 19 Apr 2025
- 17:34:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S92Asl8X"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 31AE6C4CEEB;
+	Sun, 20 Apr 2025 03:30:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745119847;
+	bh=Pc01IytnMhKNpIarCvrWkUqTFqR9OkNN6LC2YjXLRJM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=S92Asl8X0jsp4k0iW6CSzt+pJrlpShqbCjhYOolrc3ewFCY3SRHyUEqGhETqfyMnw
+	 4QDTjJrRU3ak5BHLzQRrkPFjJ6Cwd528ycnFKpRJvCKVrDaCVmr9sCVFmxHJnfjP5U
+	 Ug3CmQWihLYQfzu3a1tVYa+6cCib+Y6WYZYvaOQuwuzUUdb02gmmQ/2Ew6xLthXpDj
+	 GVhyjB6DOMlPa+t9MaT7fk6yb9tBvWZHX7zWBwPmyHtBXi4o5zaRi0e26CHacz1S3R
+	 xD+hn0FOWCBB0Lem13YX7bFDxRxdPWB5ViOg/yHUCOh4laoBRoJAmB7At511skJQGw
+	 X/MSAAxc8F6SA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25ECDC369C2;
+	Sun, 20 Apr 2025 03:30:47 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sat, 19 Apr 2025 22:30:31 -0500
+Subject: [PATCH] arm64: tegra: Bump #address-cells and #size-cells on
+ Tegra186
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419-tegra-drm-primary-v1-1-b91054fb413f@gmail.com>
-In-Reply-To: <20250419-tegra-drm-primary-v1-1-b91054fb413f@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250419-tegra186-host1x-addr-size-v1-1-a7493882248d@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFZqBGgC/x3MPQ6DMAxA4asgz7UUpyT9uQrqYBEDXqCyEUIg7
+ t6o4ze8d4KLqTi8mxNMNnVd5gq6NdBPPI+CWqohhphCSy9cZTSmZ8Zp8ZV25FIMXQ/BzDHQ456
+ GlBlq/zUZdP+/u891/QD1ZpuFawAAAA==
+X-Change-ID: 20250419-tegra186-host1x-addr-size-6a201735f56a
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745119846; l=18473;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=2ovufkrZweXMh6oMHqP1zE+eX1nOSkeC4VJ4Y+9l2yU=;
+ b=vkyeGli4u1JIhHR4yOxLKUvDp5+IqlomWTcac8PA+FQOSMyHVzKUhz+ma3U59AKkwQjh+yPqJ
+ aeB8r3Mzr2MDjcnP54BhqD/TITIcPdZK008It3SvFQt18PEonwqaFYn
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sat, 19 Apr 2025 19:34:31 -0500
-X-Gm-Features: ATxdqUElBbV3bALOk2EQDcBsKfIDN7TbdtaDRssMJYfP5UjTo9xKypEXMgLxsUY
-Message-ID: <CALHNRZ83pcXT_7r4B-ZB-m9rP9vM0n+HzeCJkXvAFsdLch5-pg@mail.gmail.com>
-Subject: Re: [PATCH] drm/tegra: Assign plane type before registration
-To: webgeek1234@gmail.com
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 19, 2025 at 7:30=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Thierry Reding <treding@nvidia.com>
->
-> Changes to a plane's type after it has been registered aren't propagated
-> to userspace automatically. This could possibly be achieved by updating
-> the property, but since we can already determine which type this should
-> be before the registration, passing in the right type from the start is
-> a much better solution.
->
-> Suggested-by: Aaron Kling <webgeek1234@gmail.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Cc: stable@vger.kernel.org
-> ---
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/dc.c  | 12 ++++++++----
->  drivers/gpu/drm/tegra/hub.c |  4 ++--
->  drivers/gpu/drm/tegra/hub.h |  3 ++-
->  3 files changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index 798507a8ae56d6789feb95dccdd23b2e63d9c148..56f12dbcee3e93ff5e4804e5f=
-e9b23f160073ebf 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -1321,10 +1321,16 @@ static struct drm_plane *tegra_dc_add_shared_plan=
-es(struct drm_device *drm,
->                 if (wgrp->dc =3D=3D dc->pipe) {
->                         for (j =3D 0; j < wgrp->num_windows; j++) {
->                                 unsigned int index =3D wgrp->windows[j];
-> +                               enum drm_plane_type type;
-> +
-> +                               if (primary)
-> +                                       type =3D DRM_PLANE_TYPE_OVERLAY;
-> +                               else
-> +                                       type =3D DRM_PLANE_TYPE_PRIMARY;
->
->                                 plane =3D tegra_shared_plane_create(drm, =
-dc,
->                                                                   wgrp->i=
-ndex,
-> -                                                                 index);
-> +                                                                 index, =
-type);
->                                 if (IS_ERR(plane))
->                                         return plane;
->
-> @@ -1332,10 +1338,8 @@ static struct drm_plane *tegra_dc_add_shared_plane=
-s(struct drm_device *drm,
->                                  * Choose the first shared plane owned by=
- this
->                                  * head as the primary plane.
->                                  */
-> -                               if (!primary) {
-> -                                       plane->type =3D DRM_PLANE_TYPE_PR=
-IMARY;
-> +                               if (!primary)
->                                         primary =3D plane;
-> -                               }
->                         }
->                 }
->         }
-> diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-> index fa6140fc37fb16df4b150e5ae9d8148f8f446cd7..8f779f23dc0904d38b14d3f3a=
-928a07fc9e601ad 100644
-> --- a/drivers/gpu/drm/tegra/hub.c
-> +++ b/drivers/gpu/drm/tegra/hub.c
-> @@ -755,9 +755,9 @@ static const struct drm_plane_helper_funcs tegra_shar=
-ed_plane_helper_funcs =3D {
->  struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
->                                             struct tegra_dc *dc,
->                                             unsigned int wgrp,
-> -                                           unsigned int index)
-> +                                           unsigned int index,
-> +                                           enum drm_plane_type type)
->  {
-> -       enum drm_plane_type type =3D DRM_PLANE_TYPE_OVERLAY;
->         struct tegra_drm *tegra =3D drm->dev_private;
->         struct tegra_display_hub *hub =3D tegra->hub;
->         struct tegra_shared_plane *plane;
-> diff --git a/drivers/gpu/drm/tegra/hub.h b/drivers/gpu/drm/tegra/hub.h
-> index 23c4b2115ed1e36e8d2d6ed614a6ead97eb4c441..a66f18c4facc9df96ea8b9f54=
-239b52f06536d12 100644
-> --- a/drivers/gpu/drm/tegra/hub.h
-> +++ b/drivers/gpu/drm/tegra/hub.h
-> @@ -80,7 +80,8 @@ void tegra_display_hub_cleanup(struct tegra_display_hub=
- *hub);
->  struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
->                                             struct tegra_dc *dc,
->                                             unsigned int wgrp,
-> -                                           unsigned int index);
-> +                                           unsigned int index,
-> +                                           enum drm_plane_type type);
->
->  int tegra_display_hub_atomic_check(struct drm_device *drm,
->                                    struct drm_atomic_state *state);
->
-> ---
-> base-commit: 119009db267415049182774196e3cce9e13b52ef
-> change-id: 20250419-tegra-drm-primary-ce47febefdaf
->
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
->
->
+This was done for Tegra194 and Tegra234 in 2838cfd, but Tegra186 was not
+part of that change. The same reasoning for that commit also applies to
+Tegra186, plus keeping the archs as close to each other as possible makes
+it easier to compare between them and support features concurrently.
 
-This patch was being discussed on the tegra-drm freedesktop issue
-tracker [0], but movement there has stopped. I'm submitting the change
-here in hopes of getting it moving again.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 134 +++++++++++++++----------------
+ 1 file changed, 67 insertions(+), 67 deletions(-)
 
-The stable cc is intended to get this picked back to 6.12 at least.
-But as far as I know, this bug has existed as long as Tegra186 support
-in tegra-drm has.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..aa0c801eaaeb8e89630df3cc6de4a00882c0263c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -124,28 +124,28 @@ aconnect@2900000 {
+ 			 <&bpmp TEGRA186_CLK_APB2APE>;
+ 		clock-names = "ape", "apb2ape";
+ 		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges = <0x02900000 0x0 0x02900000 0x200000>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges = <0x0 0x02900000 0x0 0x02900000 0x0 0x200000>;
+ 		status = "disabled";
+ 
+ 		tegra_ahub: ahub@2900800 {
+ 			compatible = "nvidia,tegra186-ahub";
+-			reg = <0x02900800 0x800>;
++			reg = <0x0 0x02900800 0x0 0x800>;
+ 			clocks = <&bpmp TEGRA186_CLK_AHUB>;
+ 			clock-names = "ahub";
+ 			assigned-clocks = <&bpmp TEGRA186_CLK_AHUB>;
+ 			assigned-clock-parents = <&bpmp TEGRA186_CLK_PLLP_OUT0>;
+ 			assigned-clock-rates = <81600000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0x02900800 0x02900800 0x11800>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x02900800 0x0 0x02900800 0x0 0x11800>;
+ 			status = "disabled";
+ 
+ 			tegra_i2s1: i2s@2901000 {
+ 				compatible = "nvidia,tegra186-i2s",
+ 					     "nvidia,tegra210-i2s";
+-				reg = <0x2901000 0x100>;
++				reg = <0x0 0x2901000 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_I2S1>,
+ 					 <&bpmp TEGRA186_CLK_I2S1_SYNC_INPUT>;
+ 				clock-names = "i2s", "sync_input";
+@@ -159,7 +159,7 @@ tegra_i2s1: i2s@2901000 {
+ 			tegra_i2s2: i2s@2901100 {
+ 				compatible = "nvidia,tegra186-i2s",
+ 					     "nvidia,tegra210-i2s";
+-				reg = <0x2901100 0x100>;
++				reg = <0x0 0x2901100 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_I2S2>,
+ 					 <&bpmp TEGRA186_CLK_I2S2_SYNC_INPUT>;
+ 				clock-names = "i2s", "sync_input";
+@@ -173,7 +173,7 @@ tegra_i2s2: i2s@2901100 {
+ 			tegra_i2s3: i2s@2901200 {
+ 				compatible = "nvidia,tegra186-i2s",
+ 					     "nvidia,tegra210-i2s";
+-				reg = <0x2901200 0x100>;
++				reg = <0x0 0x2901200 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_I2S3>,
+ 					 <&bpmp TEGRA186_CLK_I2S3_SYNC_INPUT>;
+ 				clock-names = "i2s", "sync_input";
+@@ -187,7 +187,7 @@ tegra_i2s3: i2s@2901200 {
+ 			tegra_i2s4: i2s@2901300 {
+ 				compatible = "nvidia,tegra186-i2s",
+ 					     "nvidia,tegra210-i2s";
+-				reg = <0x2901300 0x100>;
++				reg = <0x0 0x2901300 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_I2S4>,
+ 					 <&bpmp TEGRA186_CLK_I2S4_SYNC_INPUT>;
+ 				clock-names = "i2s", "sync_input";
+@@ -201,7 +201,7 @@ tegra_i2s4: i2s@2901300 {
+ 			tegra_i2s5: i2s@2901400 {
+ 				compatible = "nvidia,tegra186-i2s",
+ 					     "nvidia,tegra210-i2s";
+-				reg = <0x2901400 0x100>;
++				reg = <0x0 0x2901400 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_I2S5>,
+ 					 <&bpmp TEGRA186_CLK_I2S5_SYNC_INPUT>;
+ 				clock-names = "i2s", "sync_input";
+@@ -215,7 +215,7 @@ tegra_i2s5: i2s@2901400 {
+ 			tegra_i2s6: i2s@2901500 {
+ 				compatible = "nvidia,tegra186-i2s",
+ 					     "nvidia,tegra210-i2s";
+-				reg = <0x2901500 0x100>;
++				reg = <0x0 0x2901500 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_I2S6>,
+ 					 <&bpmp TEGRA186_CLK_I2S6_SYNC_INPUT>;
+ 				clock-names = "i2s", "sync_input";
+@@ -229,7 +229,7 @@ tegra_i2s6: i2s@2901500 {
+ 			tegra_sfc1: sfc@2902000 {
+ 				compatible = "nvidia,tegra186-sfc",
+ 					     "nvidia,tegra210-sfc";
+-				reg = <0x2902000 0x200>;
++				reg = <0x0 0x2902000 0x0 0x200>;
+ 				sound-name-prefix = "SFC1";
+ 				status = "disabled";
+ 			};
+@@ -237,7 +237,7 @@ tegra_sfc1: sfc@2902000 {
+ 			tegra_sfc2: sfc@2902200 {
+ 				compatible = "nvidia,tegra186-sfc",
+ 					     "nvidia,tegra210-sfc";
+-				reg = <0x2902200 0x200>;
++				reg = <0x0 0x2902200 0x0 0x200>;
+ 				sound-name-prefix = "SFC2";
+ 				status = "disabled";
+ 			};
+@@ -245,7 +245,7 @@ tegra_sfc2: sfc@2902200 {
+ 			tegra_sfc3: sfc@2902400 {
+ 				compatible = "nvidia,tegra186-sfc",
+ 					     "nvidia,tegra210-sfc";
+-				reg = <0x2902400 0x200>;
++				reg = <0x0 0x2902400 0x0 0x200>;
+ 				sound-name-prefix = "SFC3";
+ 				status = "disabled";
+ 			};
+@@ -253,7 +253,7 @@ tegra_sfc3: sfc@2902400 {
+ 			tegra_sfc4: sfc@2902600 {
+ 				compatible = "nvidia,tegra186-sfc",
+ 					     "nvidia,tegra210-sfc";
+-				reg = <0x2902600 0x200>;
++				reg = <0x0 0x2902600 0x0 0x200>;
+ 				sound-name-prefix = "SFC4";
+ 				status = "disabled";
+ 			};
+@@ -261,7 +261,7 @@ tegra_sfc4: sfc@2902600 {
+ 			tegra_amx1: amx@2903000 {
+ 				compatible = "nvidia,tegra186-amx",
+ 					     "nvidia,tegra210-amx";
+-				reg = <0x2903000 0x100>;
++				reg = <0x0 0x2903000 0x0 0x100>;
+ 				sound-name-prefix = "AMX1";
+ 				status = "disabled";
+ 			};
+@@ -269,7 +269,7 @@ tegra_amx1: amx@2903000 {
+ 			tegra_amx2: amx@2903100 {
+ 				compatible = "nvidia,tegra186-amx",
+ 					     "nvidia,tegra210-amx";
+-				reg = <0x2903100 0x100>;
++				reg = <0x0 0x2903100 0x0 0x100>;
+ 				sound-name-prefix = "AMX2";
+ 				status = "disabled";
+ 			};
+@@ -277,7 +277,7 @@ tegra_amx2: amx@2903100 {
+ 			tegra_amx3: amx@2903200 {
+ 				compatible = "nvidia,tegra186-amx",
+ 					     "nvidia,tegra210-amx";
+-				reg = <0x2903200 0x100>;
++				reg = <0x0 0x2903200 0x0 0x100>;
+ 				sound-name-prefix = "AMX3";
+ 				status = "disabled";
+ 			};
+@@ -285,7 +285,7 @@ tegra_amx3: amx@2903200 {
+ 			tegra_amx4: amx@2903300 {
+ 				compatible = "nvidia,tegra186-amx",
+ 					     "nvidia,tegra210-amx";
+-				reg = <0x2903300 0x100>;
++				reg = <0x0 0x2903300 0x0 0x100>;
+ 				sound-name-prefix = "AMX4";
+ 				status = "disabled";
+ 			};
+@@ -293,7 +293,7 @@ tegra_amx4: amx@2903300 {
+ 			tegra_adx1: adx@2903800 {
+ 				compatible = "nvidia,tegra186-adx",
+ 					     "nvidia,tegra210-adx";
+-				reg = <0x2903800 0x100>;
++				reg = <0x0 0x2903800 0x0 0x100>;
+ 				sound-name-prefix = "ADX1";
+ 				status = "disabled";
+ 			};
+@@ -301,7 +301,7 @@ tegra_adx1: adx@2903800 {
+ 			tegra_adx2: adx@2903900 {
+ 				compatible = "nvidia,tegra186-adx",
+ 					     "nvidia,tegra210-adx";
+-				reg = <0x2903900 0x100>;
++				reg = <0x0 0x2903900 0x0 0x100>;
+ 				sound-name-prefix = "ADX2";
+ 				status = "disabled";
+ 			};
+@@ -309,7 +309,7 @@ tegra_adx2: adx@2903900 {
+ 			tegra_adx3: adx@2903a00 {
+ 				compatible = "nvidia,tegra186-adx",
+ 					     "nvidia,tegra210-adx";
+-				reg = <0x2903a00 0x100>;
++				reg = <0x0 0x2903a00 0x0 0x100>;
+ 				sound-name-prefix = "ADX3";
+ 				status = "disabled";
+ 			};
+@@ -317,14 +317,14 @@ tegra_adx3: adx@2903a00 {
+ 			tegra_adx4: adx@2903b00 {
+ 				compatible = "nvidia,tegra186-adx",
+ 					     "nvidia,tegra210-adx";
+-				reg = <0x2903b00 0x100>;
++				reg = <0x0 0x2903b00 0x0 0x100>;
+ 				sound-name-prefix = "ADX4";
+ 				status = "disabled";
+ 			};
+ 
+ 			tegra_dmic1: dmic@2904000 {
+ 				compatible = "nvidia,tegra210-dmic";
+-				reg = <0x2904000 0x100>;
++				reg = <0x0 0x2904000 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_DMIC1>;
+ 				clock-names = "dmic";
+ 				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC1>;
+@@ -336,7 +336,7 @@ tegra_dmic1: dmic@2904000 {
+ 
+ 			tegra_dmic2: dmic@2904100 {
+ 				compatible = "nvidia,tegra210-dmic";
+-				reg = <0x2904100 0x100>;
++				reg = <0x0 0x2904100 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_DMIC2>;
+ 				clock-names = "dmic";
+ 				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC2>;
+@@ -348,7 +348,7 @@ tegra_dmic2: dmic@2904100 {
+ 
+ 			tegra_dmic3: dmic@2904200 {
+ 				compatible = "nvidia,tegra210-dmic";
+-				reg = <0x2904200 0x100>;
++				reg = <0x0 0x2904200 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_DMIC3>;
+ 				clock-names = "dmic";
+ 				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC3>;
+@@ -360,7 +360,7 @@ tegra_dmic3: dmic@2904200 {
+ 
+ 			tegra_dmic4: dmic@2904300 {
+ 				compatible = "nvidia,tegra210-dmic";
+-				reg = <0x2904300 0x100>;
++				reg = <0x0 0x2904300 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_DMIC4>;
+ 				clock-names = "dmic";
+ 				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC4>;
+@@ -372,7 +372,7 @@ tegra_dmic4: dmic@2904300 {
+ 
+ 			tegra_dspk1: dspk@2905000 {
+ 				compatible = "nvidia,tegra186-dspk";
+-				reg = <0x2905000 0x100>;
++				reg = <0x0 0x2905000 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_DSPK1>;
+ 				clock-names = "dspk";
+ 				assigned-clocks = <&bpmp TEGRA186_CLK_DSPK1>;
+@@ -384,7 +384,7 @@ tegra_dspk1: dspk@2905000 {
+ 
+ 			tegra_dspk2: dspk@2905100 {
+ 				compatible = "nvidia,tegra186-dspk";
+-				reg = <0x2905100 0x100>;
++				reg = <0x0 0x2905100 0x0 0x100>;
+ 				clocks = <&bpmp TEGRA186_CLK_DSPK2>;
+ 				clock-names = "dspk";
+ 				assigned-clocks = <&bpmp TEGRA186_CLK_DSPK2>;
+@@ -397,9 +397,9 @@ tegra_dspk2: dspk@2905100 {
+ 			tegra_ope1: processing-engine@2908000 {
+ 				compatible = "nvidia,tegra186-ope",
+ 					     "nvidia,tegra210-ope";
+-				reg = <0x2908000 0x100>;
+-				#address-cells = <1>;
+-				#size-cells = <1>;
++				reg = <0x0 0x2908000 0x0 0x100>;
++				#address-cells = <2>;
++				#size-cells = <2>;
+ 				ranges;
+ 				sound-name-prefix = "OPE1";
+ 				status = "disabled";
+@@ -407,20 +407,20 @@ tegra_ope1: processing-engine@2908000 {
+ 				equalizer@2908100 {
+ 					compatible = "nvidia,tegra186-peq",
+ 						     "nvidia,tegra210-peq";
+-					reg = <0x2908100 0x100>;
++					reg = <0x0 0x2908100 0x0 0x100>;
+ 				};
+ 
+ 				dynamic-range-compressor@2908200 {
+ 					compatible = "nvidia,tegra186-mbdrc",
+ 						     "nvidia,tegra210-mbdrc";
+-					reg = <0x2908200 0x200>;
++					reg = <0x0 0x2908200 0x0 0x200>;
+ 				};
+ 			};
+ 
+ 			tegra_mvc1: mvc@290a000 {
+ 				compatible = "nvidia,tegra186-mvc",
+ 					     "nvidia,tegra210-mvc";
+-				reg = <0x290a000 0x200>;
++				reg = <0x0 0x290a000 0x0 0x200>;
+ 				sound-name-prefix = "MVC1";
+ 				status = "disabled";
+ 			};
+@@ -428,7 +428,7 @@ tegra_mvc1: mvc@290a000 {
+ 			tegra_mvc2: mvc@290a200 {
+ 				compatible = "nvidia,tegra186-mvc",
+ 					     "nvidia,tegra210-mvc";
+-				reg = <0x290a200 0x200>;
++				reg = <0x0 0x290a200 0x0 0x200>;
+ 				sound-name-prefix = "MVC2";
+ 				status = "disabled";
+ 			};
+@@ -436,14 +436,14 @@ tegra_mvc2: mvc@290a200 {
+ 			tegra_amixer: amixer@290bb00 {
+ 				compatible = "nvidia,tegra186-amixer",
+ 					     "nvidia,tegra210-amixer";
+-				reg = <0x290bb00 0x800>;
++				reg = <0x0 0x290bb00 0x0 0x800>;
+ 				sound-name-prefix = "MIXER1";
+ 				status = "disabled";
+ 			};
+ 
+ 			tegra_admaif: admaif@290f000 {
+ 				compatible = "nvidia,tegra186-admaif";
+-				reg = <0x0290f000 0x1000>;
++				reg = <0x0 0x0290f000 0x0 0x1000>;
+ 				dmas = <&adma 1>, <&adma 1>,
+ 				       <&adma 2>, <&adma 2>,
+ 				       <&adma 3>, <&adma 3>,
+@@ -489,7 +489,7 @@ tegra_admaif: admaif@290f000 {
+ 
+ 			tegra_asrc: asrc@2910000 {
+ 				compatible = "nvidia,tegra186-asrc";
+-				reg = <0x2910000 0x2000>;
++				reg = <0x0 0x2910000 0x0 0x2000>;
+ 				sound-name-prefix = "ASRC1";
+ 				status = "disabled";
+ 			};
+@@ -497,7 +497,7 @@ tegra_asrc: asrc@2910000 {
+ 
+ 		adma: dma-controller@2930000 {
+ 			compatible = "nvidia,tegra186-adma";
+-			reg = <0x02930000 0x20000>;
++			reg = <0x0 0x02930000 0x0 0x20000>;
+ 			interrupt-parent = <&agic>;
+ 			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+@@ -542,8 +542,8 @@ agic: interrupt-controller@2a40000 {
+ 				     "nvidia,tegra210-agic";
+ 			#interrupt-cells = <3>;
+ 			interrupt-controller;
+-			reg = <0x02a41000 0x1000>,
+-			      <0x02a42000 0x2000>;
++			reg = <0x0 0x02a41000 0x0 0x1000>,
++			      <0x0 0x02a42000 0x0 0x2000>;
+ 			interrupts = <GIC_SPI 145
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&bpmp TEGRA186_CLK_APE>;
+@@ -1511,10 +1511,10 @@ host1x@13e00000 {
+ 		resets = <&bpmp TEGRA186_RESET_HOST1X>;
+ 		reset-names = "host1x";
+ 
+-		#address-cells = <1>;
+-		#size-cells = <1>;
++		#address-cells = <2>;
++		#size-cells = <2>;
+ 
+-		ranges = <0x15000000 0x0 0x15000000 0x01000000>;
++		ranges = <0x0 0x15000000 0x0 0x15000000 0x0 0x01000000>;
+ 
+ 		interconnects = <&mc TEGRA186_MEMORY_CLIENT_HOST1XDMAR &emc>;
+ 		interconnect-names = "dma-mem";
+@@ -1533,7 +1533,7 @@ host1x@13e00000 {
+ 
+ 		dpaux1: dpaux@15040000 {
+ 			compatible = "nvidia,tegra186-dpaux";
+-			reg = <0x15040000 0x10000>;
++			reg = <0x0 0x15040000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_DPAUX1>,
+ 				 <&bpmp TEGRA186_CLK_PLLDP>;
+@@ -1567,7 +1567,7 @@ i2c-bus {
+ 
+ 		display-hub@15200000 {
+ 			compatible = "nvidia,tegra186-display";
+-			reg = <0x15200000 0x00040000>;
++			reg = <0x0 0x15200000 0x0 0x00040000>;
+ 			resets = <&bpmp TEGRA186_RESET_NVDISPLAY0_MISC>,
+ 				 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP0>,
+ 				 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP1>,
+@@ -1585,14 +1585,14 @@ display-hub@15200000 {
+ 
+ 			power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
+ 
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 
+-			ranges = <0x15200000 0x15200000 0x40000>;
++			ranges = <0x0 0x15200000 0x0 0x15200000 0x0 0x40000>;
+ 
+ 			display@15200000 {
+ 				compatible = "nvidia,tegra186-dc";
+-				reg = <0x15200000 0x10000>;
++				reg = <0x0 0x15200000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_P0>;
+ 				clock-names = "dc";
+@@ -1611,7 +1611,7 @@ display@15200000 {
+ 
+ 			display@15210000 {
+ 				compatible = "nvidia,tegra186-dc";
+-				reg = <0x15210000 0x10000>;
++				reg = <0x0 0x15210000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_P1>;
+ 				clock-names = "dc";
+@@ -1630,7 +1630,7 @@ display@15210000 {
+ 
+ 			display@15220000 {
+ 				compatible = "nvidia,tegra186-dc";
+-				reg = <0x15220000 0x10000>;
++				reg = <0x0 0x15220000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_P2>;
+ 				clock-names = "dc";
+@@ -1650,7 +1650,7 @@ display@15220000 {
+ 
+ 		dsia: dsi@15300000 {
+ 			compatible = "nvidia,tegra186-dsi";
+-			reg = <0x15300000 0x10000>;
++			reg = <0x0 0x15300000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_DSI>,
+ 				 <&bpmp TEGRA186_CLK_DSIA_LP>,
+@@ -1665,7 +1665,7 @@ dsia: dsi@15300000 {
+ 
+ 		vic@15340000 {
+ 			compatible = "nvidia,tegra186-vic";
+-			reg = <0x15340000 0x40000>;
++			reg = <0x0 0x15340000 0x0 0x40000>;
+ 			interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_VIC>;
+ 			clock-names = "vic";
+@@ -1681,7 +1681,7 @@ vic@15340000 {
+ 
+ 		nvjpg@15380000 {
+ 			compatible = "nvidia,tegra186-nvjpg";
+-			reg = <0x15380000 0x40000>;
++			reg = <0x0 0x15380000 0x0 0x40000>;
+ 			clocks = <&bpmp TEGRA186_CLK_NVJPG>;
+ 			clock-names = "nvjpg";
+ 			resets = <&bpmp TEGRA186_RESET_NVJPG>;
+@@ -1696,7 +1696,7 @@ nvjpg@15380000 {
+ 
+ 		dsib: dsi@15400000 {
+ 			compatible = "nvidia,tegra186-dsi";
+-			reg = <0x15400000 0x10000>;
++			reg = <0x0 0x15400000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_DSIB>,
+ 				 <&bpmp TEGRA186_CLK_DSIB_LP>,
+@@ -1711,7 +1711,7 @@ dsib: dsi@15400000 {
+ 
+ 		nvdec@15480000 {
+ 			compatible = "nvidia,tegra186-nvdec";
+-			reg = <0x15480000 0x40000>;
++			reg = <0x0 0x15480000 0x0 0x40000>;
+ 			clocks = <&bpmp TEGRA186_CLK_NVDEC>;
+ 			clock-names = "nvdec";
+ 			resets = <&bpmp TEGRA186_RESET_NVDEC>;
+@@ -1727,7 +1727,7 @@ nvdec@15480000 {
+ 
+ 		nvenc@154c0000 {
+ 			compatible = "nvidia,tegra186-nvenc";
+-			reg = <0x154c0000 0x40000>;
++			reg = <0x0 0x154c0000 0x0 0x40000>;
+ 			clocks = <&bpmp TEGRA186_CLK_NVENC>;
+ 			clock-names = "nvenc";
+ 			resets = <&bpmp TEGRA186_RESET_NVENC>;
+@@ -1742,7 +1742,7 @@ nvenc@154c0000 {
+ 
+ 		sor0: sor@15540000 {
+ 			compatible = "nvidia,tegra186-sor";
+-			reg = <0x15540000 0x10000>;
++			reg = <0x0 0x15540000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_SOR0>,
+ 				 <&bpmp TEGRA186_CLK_SOR0_OUT>,
+@@ -1766,7 +1766,7 @@ sor0: sor@15540000 {
+ 
+ 		sor1: sor@15580000 {
+ 			compatible = "nvidia,tegra186-sor";
+-			reg = <0x15580000 0x10000>;
++			reg = <0x0 0x15580000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_SOR1>,
+ 				 <&bpmp TEGRA186_CLK_SOR1_OUT>,
+@@ -1790,7 +1790,7 @@ sor1: sor@15580000 {
+ 
+ 		dpaux: dpaux@155c0000 {
+ 			compatible = "nvidia,tegra186-dpaux";
+-			reg = <0x155c0000 0x10000>;
++			reg = <0x0 0x155c0000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_DPAUX>,
+ 				 <&bpmp TEGRA186_CLK_PLLDP>;
+@@ -1824,7 +1824,7 @@ i2c-bus {
+ 
+ 		padctl@15880000 {
+ 			compatible = "nvidia,tegra186-dsi-padctl";
+-			reg = <0x15880000 0x10000>;
++			reg = <0x0 0x15880000 0x0 0x10000>;
+ 			resets = <&bpmp TEGRA186_RESET_DSI>;
+ 			reset-names = "dsi";
+ 			status = "disabled";
+@@ -1832,7 +1832,7 @@ padctl@15880000 {
+ 
+ 		dsic: dsi@15900000 {
+ 			compatible = "nvidia,tegra186-dsi";
+-			reg = <0x15900000 0x10000>;
++			reg = <0x0 0x15900000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_DSIC>,
+ 				 <&bpmp TEGRA186_CLK_DSIC_LP>,
+@@ -1847,7 +1847,7 @@ dsic: dsi@15900000 {
+ 
+ 		dsid: dsi@15940000 {
+ 			compatible = "nvidia,tegra186-dsi";
+-			reg = <0x15940000 0x10000>;
++			reg = <0x0 0x15940000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA186_CLK_DSID>,
+ 				 <&bpmp TEGRA186_CLK_DSID_LP>,
 
-Sincerely,
-Aaron Kling
+---
+base-commit: 119009db267415049182774196e3cce9e13b52ef
+change-id: 20250419-tegra186-host1x-addr-size-6a201735f56a
 
-[0] https://gitlab.freedesktop.org/drm/tegra/-/issues/3
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
