@@ -1,86 +1,158 @@
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C5B1B6CE3
-	for <linux-tegra@vger.kernel.org>; Sat, 19 Apr 2025 09:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C3EB667;
+	Sun, 20 Apr 2025 00:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745056153; cv=none; b=HVfdCV+UyidaEFhbHqU83HHd/f/G+jAIzmIRsD5kdyB2n4qUNQ2Ekktk/SYyv3JSI66Q7YM6mmpCWZspX6J6KQSOa8fr0kDIASOqOIGAIyakUtvyhRYR+HS1fuT1JUw+45XVx4cg6e6mVDiZqfpZzE60JH1NqdN9fqBMvSjr29U=
+	t=1745109013; cv=none; b=YDc0fppuCcET4LKWztCbPOT+E0hbKpfeyYUQ7d1kUvetVVjsLBIp/01VYdAJOgr1MVHg0+zrUspVsZ9WVof1+aFfK95liD3dzHFfYrAOoAR6PEP0tm4ArKDOWp04oq6FP4/eO2Ytp/xq6HVJW8BT2+iAo9/Nxo+ZItoOdOi5T/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745056153; c=relaxed/simple;
-	bh=zklzViCR78rtGWWpSQ+SH1wiYY08pHKOOyED16FNUtY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=VDI4yzfc1cahGQB0BUm2/3+WPDNMOvA2YEDzlOgO1zItToG52JMrragSAjpBUkV7Q8WDFcOpUAScTD8+aNATMkp6HLlaUNOS1i3CLAd5SZ1WNt6Q1FCCggTaCdkqpMbczAEqSEA0rGY2eobntUkG4fVWjUEpZmoL/lHCg4sFRB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=XKnDJwgw; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1745109013; c=relaxed/simple;
+	bh=lFsiqVIeYeqhHXcEjTCFxaRVC5Dt8c2tiWMgb1QT3HA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GcAg90Nh6yTMnffi+8ZmFZAZCd9YHFg63voWMoO5G4p4ebynFpWxV/zRriPVMpt81fQLM2IF377yv7vdxw1w0uRdtbmnv+mL4FXCQ4KdeqFp9imO+34ESjzaq/wG7BZIGZ+cXrcTys60S6cJXdOzBS5jeRQkLLvLmz4sPpiPzm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqJbf+De; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="XKnDJwgw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqJbf+De"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 59682C4CEE7;
+	Sun, 20 Apr 2025 00:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745109012;
+	bh=lFsiqVIeYeqhHXcEjTCFxaRVC5Dt8c2tiWMgb1QT3HA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=gqJbf+DeUMUSRzjCItVwNpi8nQdXP0CMVX5fSfnEMKSHvv/+a1NB64gMjtkIH3Tq+
+	 WNmUtx8I5WGXswas34sIAmMTitqfGTU8WhKU1zmE3LsmCXQlGRO9Fl0X1pkEcdCB9t
+	 Y80a2XV0jL40C7jLrh+/t+gc4vCbeC+wTW/W2YfDYr5sSa4yM2yPTBcofszzZH6Fjp
+	 DMRHyYgS5CRVzR5x6gM4MgPALwUxwLuueo+D88p8dUxzUZe2EMJzlgKUt0hjxLshgI
+	 dpMlKo6wkX0LApxf/EP292sOBBPMsIlS6P09wA7r+DqlMZGJHb08AjhP729ihRyCH9
+	 R1FHIc2s2o1jw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D51DC369CF;
+	Sun, 20 Apr 2025 00:30:12 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sat, 19 Apr 2025 19:30:02 -0500
+Subject: [PATCH] drm/tegra: Assign plane type before registration
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1745056135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WYcIiX7im0SwEgUBjW9RpMKMf9b+aamLPfpMOC5NliI=;
-	b=XKnDJwgwVh+2AJkayQ0NeH2Kvg8qAbd1tnYvcMl+DKXHqiczpSpLHXSIzPBsxU/16t7iF4
-	hlYG9UTJWjXQNnUnkl64Qgc/oFfw/T8qtw6j0f9K6IvZmc7UEmQIKrmtpBHirzgLvOQPh0
-	J3ZWdIczd+6ufV4zdSA/E+qA1OtlNVgCdyNgn29IB8XuTI5EEc9vqkSezr7poIUqsoBwmV
-	MxMirsfelUlnq6h9recCZVOrPLxjseiwhEtSocWqQ96RR6A5TKgXHBsJoiTs3TwP6IiEf0
-	CejUseD8cefGgezfsiE2cTsZxrvlhitP1egzdsgPVf3AdOdTHVAn/I5JnviHXA==
-Content-Type: multipart/signed;
- boundary=787e13d5ada3b08197d931c1726e36235e1092534fb802965a37df9b17c0;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sat, 19 Apr 2025 11:48:46 +0200
-Message-Id: <D9AIRPBIHXAO.3SDHEJW99DP4X@cknow.org>
-Subject: Re: [PATCH v3 00/10] Tegra Security Engine driver improvements
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Herbert Xu" <herbert@gondor.apana.org.au>
-Cc: "Akhil R" <akhilrajeev@nvidia.com>, <davem@davemloft.net>,
- <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
- <linux-crypto@vger.kernel.org>, <linux-tegra@vger.kernel.org>, "Dragan
- Simic" <dsimic@manjaro.org>, "Corentin Labbe" <clabbe@baylibre.com>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250224091610.49683-1-akhilrajeev@nvidia.com>
- <D99QMGBHHYJO.1D7D0ZXJLBG9Y@cknow.org>
- <aAMhYaq0Ze-z6E8q@gondor.apana.org.au>
-In-Reply-To: <aAMhYaq0Ze-z6E8q@gondor.apana.org.au>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250419-tegra-drm-primary-v1-1-b91054fb413f@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAlABGgC/x3MOwqAMBBF0a3I1A5EUUS3IhbRvOgUfpiIKJK9G
+ yxPce9LASoI1GUvKS4Jsm8JRZ7RtNhtBotLptKUtamKlk/MatnpyofKavXhCVXjMcI76yl1h8L
+ L/T/7IcYPfS/jYGMAAAA=
+X-Change-ID: 20250419-tegra-drm-primary-ce47febefdaf
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
+ Aaron Kling <webgeek1234@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745109011; l=3395;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=2G8UkSlgwDeChFlfMMABWHEAXMgLzztWjpyaOPbKpVg=;
+ b=5SgytgEJbkPisD/RHBHH6irE+mqOTQ2Ld0kkRR7fsi+WTpG1T6fpPWy5RZKmNCanrOc94c8fx
+ G/84KB4qIX9CHhOZagae0TMnmaUU7Qvy9Eb2UPx5Y/LUL8lFNeRhTUk
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
---787e13d5ada3b08197d931c1726e36235e1092534fb802965a37df9b17c0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Thierry Reding <treding@nvidia.com>
 
-On Sat Apr 19, 2025 at 6:06 AM CEST, Herbert Xu wrote:
-> On Fri, Apr 18, 2025 at 01:45:23PM +0200, Diederik de Haas wrote:
->>=20
->> Earlier today I tried to boot my 6.15-rc1 kernel on my RockPro64
->> (rk3399) and that didn't go too well:
->
-> This should be fixed in the latest mainline kernel where hash
-> request chaining has been disabled.
+Changes to a plane's type after it has been registered aren't propagated
+to userspace automatically. This could possibly be achieved by updating
+the property, but since we can already determine which type this should
+be before the registration, passing in the right type from the start is
+a much better solution.
 
-Excellent, thanks for letting me know.
-b2e689baf220 ("crypto: ahash - Disable request chaining")
+Suggested-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Cc: stable@vger.kernel.org
+---
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.c  | 12 ++++++++----
+ drivers/gpu/drm/tegra/hub.c |  4 ++--
+ drivers/gpu/drm/tegra/hub.h |  3 ++-
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
-Cheers,
-  Diederik
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 798507a8ae56d6789feb95dccdd23b2e63d9c148..56f12dbcee3e93ff5e4804e5fe9b23f160073ebf 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1321,10 +1321,16 @@ static struct drm_plane *tegra_dc_add_shared_planes(struct drm_device *drm,
+ 		if (wgrp->dc == dc->pipe) {
+ 			for (j = 0; j < wgrp->num_windows; j++) {
+ 				unsigned int index = wgrp->windows[j];
++				enum drm_plane_type type;
++
++				if (primary)
++					type = DRM_PLANE_TYPE_OVERLAY;
++				else
++					type = DRM_PLANE_TYPE_PRIMARY;
+ 
+ 				plane = tegra_shared_plane_create(drm, dc,
+ 								  wgrp->index,
+-								  index);
++								  index, type);
+ 				if (IS_ERR(plane))
+ 					return plane;
+ 
+@@ -1332,10 +1338,8 @@ static struct drm_plane *tegra_dc_add_shared_planes(struct drm_device *drm,
+ 				 * Choose the first shared plane owned by this
+ 				 * head as the primary plane.
+ 				 */
+-				if (!primary) {
+-					plane->type = DRM_PLANE_TYPE_PRIMARY;
++				if (!primary)
+ 					primary = plane;
+-				}
+ 			}
+ 		}
+ 	}
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index fa6140fc37fb16df4b150e5ae9d8148f8f446cd7..8f779f23dc0904d38b14d3f3a928a07fc9e601ad 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -755,9 +755,9 @@ static const struct drm_plane_helper_funcs tegra_shared_plane_helper_funcs = {
+ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
+ 					    struct tegra_dc *dc,
+ 					    unsigned int wgrp,
+-					    unsigned int index)
++					    unsigned int index,
++					    enum drm_plane_type type)
+ {
+-	enum drm_plane_type type = DRM_PLANE_TYPE_OVERLAY;
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 	struct tegra_display_hub *hub = tegra->hub;
+ 	struct tegra_shared_plane *plane;
+diff --git a/drivers/gpu/drm/tegra/hub.h b/drivers/gpu/drm/tegra/hub.h
+index 23c4b2115ed1e36e8d2d6ed614a6ead97eb4c441..a66f18c4facc9df96ea8b9f54239b52f06536d12 100644
+--- a/drivers/gpu/drm/tegra/hub.h
++++ b/drivers/gpu/drm/tegra/hub.h
+@@ -80,7 +80,8 @@ void tegra_display_hub_cleanup(struct tegra_display_hub *hub);
+ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
+ 					    struct tegra_dc *dc,
+ 					    unsigned int wgrp,
+-					    unsigned int index);
++					    unsigned int index,
++					    enum drm_plane_type type);
+ 
+ int tegra_display_hub_atomic_check(struct drm_device *drm,
+ 				   struct drm_atomic_state *state);
 
---787e13d5ada3b08197d931c1726e36235e1092534fb802965a37df9b17c0
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+base-commit: 119009db267415049182774196e3cce9e13b52ef
+change-id: 20250419-tegra-drm-primary-ce47febefdaf
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaANxgAAKCRDXblvOeH7b
-blJ4AP4v0v8uHn92ZBD/ipPt+rGobZitRKp0xpoUesLYwz/VOQD+ObBSY+Fau99D
-uvbyarhPlqm3RUyDXRzJnNuy1XXOEwY=
-=82VX
------END PGP SIGNATURE-----
 
---787e13d5ada3b08197d931c1726e36235e1092534fb802965a37df9b17c0--
