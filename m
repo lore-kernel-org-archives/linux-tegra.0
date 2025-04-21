@@ -1,91 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ED61DFE22;
-	Mon, 21 Apr 2025 15:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29521DED5C;
+	Mon, 21 Apr 2025 15:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745248060; cv=none; b=QVLyQQ1VrU2SV4bzlcj9Tk+qO0KLdgxqjU5GW5u0pWqIuam2fWlgUvUzvyw1/0u7i11RFbAvXFCP0vT5N8SJvIFgzvER5IC6O1tklvKAXshYt7mNNXGUBbMqz6Qkk98cRXQI6m4FAIwYBpz7UKfjX7Ya2CZQ3bWqAu/v606JkXo=
+	t=1745248061; cv=none; b=qm7LbrsdbCDcLKzLM4TOQwf/NDLmlTLqLWsw1fYukAiqw29OKQ2NLCu9xCuLJIfxWPEX39Ej2DjyESk7hqxbo/q2DcMABUN4x6L/KUwaN0qhKgABc8nn7NteyISXqpynYQPUv40litdBUGBrNBRNf0vsjEzEGpOr5O3k7SmN4aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745248060; c=relaxed/simple;
-	bh=N0EIcJmYbwc3S1r3REodb7XflNDvfiiQXdWup906UB8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=H+9RlTqjkTQlustb69hu5zjxFwf3lARv+B95cwx583n8fI6cHqWjBNj4mjXB3CVdY8lWq0n1EeXeDQdLIKLzvUOoKsVlvFGP8L4PF5c/250tdGGV8pE/PbVH99dVMw5xlzrNHHekgZ1s0OOO0/tNntFuQJsDidDYVyR82kV5wfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFX7fMmJ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFX7fMmJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8E9C4CEEE;
-	Mon, 21 Apr 2025 15:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745248059;
-	bh=N0EIcJmYbwc3S1r3REodb7XflNDvfiiQXdWup906UB8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=nFX7fMmJHKrYRCUZuISYoUF+Y0dQugakVYMqdJ08BOXa8AlUmbmGcdtf9qCaTgzE+
-	 3O0kbVMob3Y5Xoys3hqW5urNDywx2UIaTL7tWXVmRw7NQaIk4j9ohk/l5soFr4DX1s
-	 Rb9ZGp1VxxdNUNv5Hd2496c9G9MMHjIoqt/zY86WoYfEYgy4fycQ/ZFodsTQskvBC9
-	 LEVoXyR7GjL1RXGqsFZpDePTsNBI6bALFCbN5dCCulVX7CU3tS+8ghfcGCUN9HLJt9
-	 Yg/sYbqgv3nJUpao87KaDIWeKLWVWlZj5AQ9lLbt2WYG2sc5fj46iWaHByfPinl9+f
-	 cCa0/vUujLn5w==
-Date: Mon, 21 Apr 2025 10:07:37 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1745248061; c=relaxed/simple;
+	bh=dHbVgEuyWkzTQSqE2pRdwKjE+8/7vGcWKbOPvfMXWx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPH2w5o7WCBHghXbwtLrD70OmMHmUjwGWn+WVzo/BXlMOKhr1LDlRfjY2nvE89XPEpkpuU156NylRmmXbHvagzSmovqpRqw04q9Cq9mv5EW1I0e6/27w0j/nR6IX/YC+y9FNuUI+7GcqaFqaL68BkU9oBMmw4JZT8Xy2BGzxRoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=basealt.ru; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=basealt.ru
+Received: from localhost (broadband-46-242-4-129.ip.moscow.rt.ru [46.242.4.129])
+	(Authenticated sender: gremlin)
+	by air.basealt.ru (Postfix) with ESMTPSA id A0EB523399;
+	Mon, 21 Apr 2025 18:07:28 +0300 (MSK)
+Date: Mon, 21 Apr 2025 18:07:28 +0300
+From: "Alexey V. Vissarionov" <gremlin@altlinux.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Alexey V. Vissarionov" <gremlin@altlinux.org>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Uwe Kleine-Knig <u.kleine-koenig@baylibre.com>,
+	Nagarjuna Kristam <nkristam@nvidia.com>, linux-usb@vger.kernel.org,
+	linux-tegra@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] usb: tegra-xudc: check ep and ep->desc before deref
+Message-ID: <20250421150728.GA32725@altlinux.org>
+References: <20250415174204.GB6814@altlinux.org>
+ <79265b11-c23a-4e4e-b7c3-6cf5b89b9977@nvidia.com>
+ <20250416095555.GB27292@altlinux.org>
+ <6e0b8bb7-c9c4-4625-bad0-552dcad89ea0@nvidia.com>
+ <20250416120000.GD27292@altlinux.org>
+ <f17d63cd-14a0-44bf-af9c-358d2a36b69d@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-In-Reply-To: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com>
-References: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com>
-Message-Id: <174524752405.2425882.1720854230912655553.robh@kernel.org>
-Subject: Re: [PATCH] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f17d63cd-14a0-44bf-af9c-358d2a36b69d@rowland.harvard.edu>
+
+Good ${greeting_time}!
+
+On 2025-04-16 10:13:05 -0400, Alan Stern wrote:
 
 
-On Sun, 20 Apr 2025 17:42:53 -0500, Aaron Kling wrote:
-> This is based on 6f78a94, which enabled added the fan and thermal zones
-> for the Jetson Nano Devkit. The fan and thermal characteristics of the
-> two devkits are similar, so usng the same configuration.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 60 ++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
-> 
+ >> +	/* trb_phys_to_virt() dereferences ep; check it here */
+ >> +	if (!ep) {
+ >> +		dev_err(xudc->dev, "unexpected NULL pointer: ep\n");
+ >> +		return;
+ >> +	}
+ > Is this condition something that is totally under the kernel's
+ > control? That is, is ep always passed in by a driver and there's
+ > never a valid reason for it to be NULL?
+
+IIUC, the endpoints are reported by the device. But the device
+may be something like STM32 uC with malicious firmware.
+
+ > Then there's really no need for this check. In real life it
+ > will never trigger.
+
+With real devices. But ready-to-use STM32F103C8T6 boards are sold
+for only 10...15 CNY, so one would need only to write a firmware
+and to flash it in the board using 20 CNY program-and-debug tool.
+
+ > Of course, if it is reasonable for ep or ep->desc to sometimes
+ > be NULL, then the checks should be made. But if that were true,
+ > I don't know why you would call dev_err().
+
+This was suggested by Jon Hunter on 16 Apr 2025 08:43:58 +0100 and
+I've agreed that would be wise.
 
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 9c32cda43eb78f78c73aee4aa344b777714e259b
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250420-tx1-therm-v1-1-58516c7fc429@gmail.com:
-
-arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: thermal-zones: cpu-thermal:cooling-maps: 'cpu-active', 'cpu-critical', 'cpu-hot', 'cpu-passive' do not match any of the regexes: '^map[-a-zA-Z0-9]*$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
-
-
-
-
-
+-- 
+Alexey V. Vissarionov
+gremlin נעי altlinux פ‏כ org; +vii-cmiii-ccxxix-lxxix-xlii
+GPG: 0D92F19E1C0DC36E27F61A29CD17E2B43D879005 @ hkp://keys.gnupg.net
