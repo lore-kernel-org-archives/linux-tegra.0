@@ -1,103 +1,91 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BE91DB546;
-	Mon, 21 Apr 2025 12:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ED61DFE22;
+	Mon, 21 Apr 2025 15:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745240310; cv=none; b=XjAhF27D66yJ/0VRa34Lhwshxo3nzXAbguO73dc3TcKGuk5FVonwMVC9Jw2e9ydKc13IEaxpoDxZ0FF3WCkEjg36L89mckoYVvJTeCYqSSw4yc40Q9egMIpPKctiC/vk60n8SG+h1tv1mJVjgNPAZ7zJgNa3UJUewr8hkQ8QiiA=
+	t=1745248060; cv=none; b=QVLyQQ1VrU2SV4bzlcj9Tk+qO0KLdgxqjU5GW5u0pWqIuam2fWlgUvUzvyw1/0u7i11RFbAvXFCP0vT5N8SJvIFgzvER5IC6O1tklvKAXshYt7mNNXGUBbMqz6Qkk98cRXQI6m4FAIwYBpz7UKfjX7Ya2CZQ3bWqAu/v606JkXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745240310; c=relaxed/simple;
-	bh=scE+oan0V3netAVnAvlStP1ceftqTg7r+IH2oYiDtA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDNk5lHRWkXMAIvQXiH+o6vlVEm/03rLIUYjvDj2vdsG6b8+kwu6WleanbIEme6bjEuIN5HpvcdGvMNX97YLd5M/NULvUSRK8URgrFmBpjavsCdxrOPd+yxusqSioMgqxd7AufH5+zKPF1jclAE2g3dUN+uPPpU/eUlQEw0HmrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hOJYzMKp; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1745248060; c=relaxed/simple;
+	bh=N0EIcJmYbwc3S1r3REodb7XflNDvfiiQXdWup906UB8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=H+9RlTqjkTQlustb69hu5zjxFwf3lARv+B95cwx583n8fI6cHqWjBNj4mjXB3CVdY8lWq0n1EeXeDQdLIKLzvUOoKsVlvFGP8L4PF5c/250tdGGV8pE/PbVH99dVMw5xlzrNHHekgZ1s0OOO0/tNntFuQJsDidDYVyR82kV5wfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFX7fMmJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hOJYzMKp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745240309; x=1776776309;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=scE+oan0V3netAVnAvlStP1ceftqTg7r+IH2oYiDtA0=;
-  b=hOJYzMKp0lhGZ7TSVyrm0sTHH/Gz47pSB02Y2xGQEuJIMQ+3HJxmLeGn
-   rzGMgLh+o41bPIu9gxBIAPDOgcfReLUfP2+dPs5RNy8UDNKzYNbix8kgP
-   iqWDITwV5b4anueUF2zqnWWl2WKaT98m5VzKGvKLRuoEoqgWqcpdi2cfW
-   nDS8QsgbUVhfotbXZzbZit0crQqD8Y5zHn4i35yyMfvBVoCM002l7RmgS
-   kVurj620U04SqCHhffS6g2brnL2uFdpBdzGbTlIsXgKrzIM+p8HGD1hno
-   KDv4buhM5MAxJv9JJU9wuRZ1565xhi5/ExNrdCE9PwzQ45TWunNLIXiVF
-   g==;
-X-CSE-ConnectionGUID: zpg5nw5aQY+D5iR2zeo+mA==
-X-CSE-MsgGUID: IfQvi4qgTLa7ZfMO9ox1EA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="46901430"
-X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; 
-   d="scan'208";a="46901430"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 05:58:28 -0700
-X-CSE-ConnectionGUID: xw4oGS9qTp6pCxf+CYcwUA==
-X-CSE-MsgGUID: 3qeUjkA+TPa1bVpKzRS+nw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; 
-   d="scan'208";a="132229155"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 21 Apr 2025 05:58:25 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u6qj8-00007j-2d;
-	Mon, 21 Apr 2025 12:58:22 +0000
-Date: Mon, 21 Apr 2025 20:57:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Aaron Kling <webgeek1234@gmail.com>
-Subject: Re: [PATCH 2/2] PCI: tegra: Allow building as a module
-Message-ID: <202504212046.SmbccNZH-lkp@intel.com>
-References: <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFX7fMmJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8E9C4CEEE;
+	Mon, 21 Apr 2025 15:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745248059;
+	bh=N0EIcJmYbwc3S1r3REodb7XflNDvfiiQXdWup906UB8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=nFX7fMmJHKrYRCUZuISYoUF+Y0dQugakVYMqdJ08BOXa8AlUmbmGcdtf9qCaTgzE+
+	 3O0kbVMob3Y5Xoys3hqW5urNDywx2UIaTL7tWXVmRw7NQaIk4j9ohk/l5soFr4DX1s
+	 Rb9ZGp1VxxdNUNv5Hd2496c9G9MMHjIoqt/zY86WoYfEYgy4fycQ/ZFodsTQskvBC9
+	 LEVoXyR7GjL1RXGqsFZpDePTsNBI6bALFCbN5dCCulVX7CU3tS+8ghfcGCUN9HLJt9
+	 Yg/sYbqgv3nJUpao87KaDIWeKLWVWlZj5AQ9lLbt2WYG2sc5fj46iWaHByfPinl9+f
+	 cCa0/vUujLn5w==
+Date: Mon, 21 Apr 2025 10:07:37 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com>
+References: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com>
+Message-Id: <174524752405.2425882.1720854230912655553.robh@kernel.org>
+Subject: Re: [PATCH] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
 
-Hi Aaron,
 
-kernel test robot noticed the following build errors:
+On Sun, 20 Apr 2025 17:42:53 -0500, Aaron Kling wrote:
+> This is based on 6f78a94, which enabled added the fan and thermal zones
+> for the Jetson Nano Devkit. The fan and thermal characteristics of the
+> two devkits are similar, so usng the same configuration.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 60 ++++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+> 
 
-[auto build test ERROR on e3a854b577cb05ceb77c0eba54bfef98a03278fa]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Kling-via-B4-Relay/irqdomain-Export-irq_domain_free_irqs/20250421-110400
-base:   e3a854b577cb05ceb77c0eba54bfef98a03278fa
-patch link:    https://lore.kernel.org/r/20250420-pci-tegra-module-v1-2-c0a1f831354a%40gmail.com
-patch subject: [PATCH 2/2] PCI: tegra: Allow building as a module
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250421/202504212046.SmbccNZH-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250421/202504212046.SmbccNZH-lkp@intel.com/reproduce)
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504212046.SmbccNZH-lkp@intel.com/
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
-ERROR: modpost: "__aeabi_uldivmod" [fs/bcachefs/bcachefs.ko] undefined!
->> ERROR: modpost: "tegra_cpuidle_pcie_irqs_in_use" [drivers/pci/controller/pci-tegra.ko] undefined!
+  pip3 install dtschema --upgrade
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 9c32cda43eb78f78c73aee4aa344b777714e259b
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250420-tx1-therm-v1-1-58516c7fc429@gmail.com:
+
+arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: thermal-zones: cpu-thermal:cooling-maps: 'cpu-active', 'cpu-critical', 'cpu-hot', 'cpu-passive' do not match any of the regexes: '^map[-a-zA-Z0-9]*$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+
+
+
+
+
