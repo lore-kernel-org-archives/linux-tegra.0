@@ -1,139 +1,211 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2055.outbound.protection.outlook.com [40.107.236.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B7E1DE3A0
-	for <linux-tegra@vger.kernel.org>; Mon, 21 Apr 2025 15:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745250099; cv=none; b=kWIlg+zdHS6ttWMesDf5YAEXv9SuZZkbiLF2mAXx/K/LGo9g4hneLYWr/JZUgL60hiayWLT39bXW35NC2dvOL388POvlVVfNL5GeTMCoM+gYyrzHmTku7moMhHaN45b5rwiWJBpl7BGl1dbBxj+Rgo1WYbcNJLNytimOUFPmFzE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745250099; c=relaxed/simple;
-	bh=PQa09r6j/8ooGdQtXiPa1g4Vr9JUS1TpaWAV/y+J4Ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecUjUNPPofLz4zQbq238BpvvEokrcnidYYgdKntZ+GnQ1FhghA9//KLO86ebFaGny19lvK/8PE0SkdUa5PtSxsjty8eFqcegeev+h/21nCCEYDCyEQroybGTcqhznTX5DAA3QUjB8d1hjKwvil0/r35Rnhsvi6DIm2CNemebMD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=tUAItBqF; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6662214F9FB;
+	Mon, 21 Apr 2025 15:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745250192; cv=fail; b=JsiH3O4ggiOJtNVYYUgj4LYKK0ZDuijRC6tMFHTZwL7XbnpRtNyryvwkakl80mdnyMmNIq5uT3kfsbRL/WhDx5AD0x4TaceO/Lt2vVyf4sEma9V8+YFIxesil+Sr5nCzghiJtSnP6Pg88Xl/2zSUiR5w/Z89bJpi7ZiOL18ynj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745250192; c=relaxed/simple;
+	bh=N0MMqZR2itPeOdT4tgz5nd43O4BO+g8WZrhohC+uDdI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9OgLAAo4R32u7/p1eA/cmgLvh5KoljG/JTprgxLAbW1eLHyBabo4IaTvonzDovDCppMWnaE6vYLpYQv4eStBqkbOkUZEOe2X8e7ieNGzcpZ427MyCQbeQ3V1TGGuS5NJkRe6b/B2hPYi+UIzT7fIRgUN0SKDOYonahwcl75db4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LtI1Dtnr; arc=fail smtp.client-ip=40.107.236.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="tUAItBqF"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5568355ffso331233085a.0
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Apr 2025 08:41:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1745250096; x=1745854896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4TPkLFjyaQsZeuebMek2/SMUS9oNfyPtxNemBHcNa+4=;
-        b=tUAItBqFLj1rflLXyQlEur7uCzQbBhXctYAU53fLNMR+mmy+DJTVw6Cv2ZCFeAknio
-         xpgFPJGujd8LMQTDW8Wzz1e0BHmqvh0iwJC877FD/icOUeyhtFyAv0pZmA+npjU7rV5F
-         1t7xaQ/RdCfROf1OgXvHAzaJ5pSsxXoX2Mz+fdhbSXZxp1umx9CqOl1umj7rc/pBCsXX
-         ew80mQ9mh/sjmwCMt4XknZKD4cePNTHEMssMvxp8jMTL/Cd3wKe+vGUXf4Z9/XEUTd8j
-         atHAoWUEY1l/wKNTR4GXv1cq7NOyUhogXGkl7ej/lygkDBb/8zemeCGpytcsq9mI65hi
-         uyYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745250096; x=1745854896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4TPkLFjyaQsZeuebMek2/SMUS9oNfyPtxNemBHcNa+4=;
-        b=JLYbMI3u0WQ8Qf9Bmj8Ey7fUCP+xK6G0xqXwyqGEJ3QkwuaYLEtwrYLyCEHj2N8uB7
-         vf6FL1j7mBaZlqtF+bH8f32QNd4PWRcYwJ+7dBNMdPScRU4deVKV0boDcqrfEAdSn5iK
-         5bmLyUnYIoQseGgJmbKBFiES3Yn6IuhE+zdw2FG6kUARmmD2Li2S45EoReInNs/weY0Y
-         x5DKQGbNVM+EcDHD2ysMnVi1dJbJFARYkMv7nK3KhX5u57P1Rme1TO+s3EeeW+txqgnM
-         VtyV/RjBADVd26nrn5oj9jjSFd/j3sn6zC54jaiZrxZQcvu/RWSMZAR/jg1Ofw41czgn
-         oKQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYxpZIkdD6xCPur8HOgu0a6U+jhueqpmj8Q0fG+9DeIZb2cGXcUlZPzpk5B/FFW67ObJGgoL1aYMo6VA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8maLLvL/iubli6CReDGndpJ93qUcKNgnu7yg/tAYJ9hUKk0o
-	zsSrmh7jS9t+zOkK/nycSTbhnPejsVgUt/pdVWX41JIkQMr+CWaDlcmwTKwtNg==
-X-Gm-Gg: ASbGncvqwm+P2OW1Q4z1S/PTizX0GsnZSLFZ5KTB0uA+Gh60M/2p4253QGdtpW4gFyo
-	soT511qOrcvZy5OQiU02J+T4Rq2Gu7FrW3w9vYnkh9OGbwlKoTXhfPZ9eH2mGRUSHu05Rr5HUDw
-	aeq09bDPbv4uI9YVT3lq4fUHInIDmGUZBYhkYOEiIEpw70gMjYmno3doXs+zzgFqDnfXh5je2yF
-	UMoXx4NGrF7Jl4iGd17uK5bW7+ONIUO1GRj7cmwESPXZGGLDMDr+zXXIZE1VWNDUZA/e8Z5XLNU
-	jhi1SixgevGakmo2IVnwegkcZOX/cD+WFP8O6vtkzSu76ssCaBWoWVrwVyA=
-X-Google-Smtp-Source: AGHT+IFxk4QgWq+qBc70K4SqcUEOg6xHeTtZfd/Gn5+LywPh1UsOhJQ5xbD3fV49o91sTnL+bSml+Q==
-X-Received: by 2002:a05:620a:4149:b0:7c5:3cf6:7838 with SMTP id af79cd13be357-7c92805dcd3mr1994536885a.49.1745250096433;
-        Mon, 21 Apr 2025 08:41:36 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925b4dc09sm434539385a.73.2025.04.21.08.41.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 08:41:36 -0700 (PDT)
-Date: Mon, 21 Apr 2025 11:41:33 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Alexey V. Vissarionov" <gremlin@altlinux.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Uwe Kleine-Knig <u.kleine-koenig@baylibre.com>,
-	Nagarjuna Kristam <nkristam@nvidia.com>, linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] usb: tegra-xudc: check ep and ep->desc before deref
-Message-ID: <54fc8e1e-6d6b-4c4c-9ca4-164d24552477@rowland.harvard.edu>
-References: <20250415174204.GB6814@altlinux.org>
- <79265b11-c23a-4e4e-b7c3-6cf5b89b9977@nvidia.com>
- <20250416095555.GB27292@altlinux.org>
- <6e0b8bb7-c9c4-4625-bad0-552dcad89ea0@nvidia.com>
- <20250416120000.GD27292@altlinux.org>
- <f17d63cd-14a0-44bf-af9c-358d2a36b69d@rowland.harvard.edu>
- <20250421150728.GA32725@altlinux.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LtI1Dtnr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UaaZPMVOULZFL6FLWjoTiQiVqhIII+uoaKba8BX9RNHp6OQIRiQvVvaN80IDI0zW9df1RI3t1Yah495cgdNTgl2YuV3rNxVTJzec5RIDlS5M9U7uxE60hsVSZIIF92UuBoueHpW1swZICAiy97YIvbfB7W5KxNLmEx5kTIOxj4kiSqJxfdX/P4Mfsn0mC3qJevi24pLAVf0gKeMneaXt5pSeuAuJreeO3PDDlLnneVn7VeUSwtpDgnSxtPASZPy/ogPyOpH27VE6f7PfLb1qDJBW6O56BP6j91CceWO6PEMFN0kyymchqMKKomk1QS/P5x/AyVlj94sBghgJirerXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1TKqd7mWqqzRUirHIeediymt7eXLD2wLwsMa1eMtIac=;
+ b=ia5lFEflD2uSgeZJfRko+2GJKvEmnsyW1QC8PH7KPMs271kgcL3yW4MbYQvK6Mzq4+3qer06EXoiedmM9yWsutu8AfscfB2egDeFmAeUNU81SmpC1ea7uSHC16LbtRj+c+4YfBWpc/kTqgMJZdWE2EE2WXQSeVupWClGrVSpeSEOX2LOGnRUFZEo1/+Dy9ECXT07yLdkiia0kVo0ZpJv+Yhz3TYeMzsIpysHjjnV0MIXQV6gWi8zbFum6qc413ugs49Rs11BMm9wZJ32XnIBYd5ykJz9f8himzC3GIE5IA/Qrs9yE0y0wMg5IT5TZKZecwOTqs58gaK0OohkdsJ3xA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1TKqd7mWqqzRUirHIeediymt7eXLD2wLwsMa1eMtIac=;
+ b=LtI1DtnrwB356m+3C3pUgt+9SfyXIZPjlQsNcV2qv55yxV6xF1jAOLvSmqxsrwUy1C87vPGwj6ObyjiiuCCqd18RR/bUEzdogEXyVtxEU43S1Nvpy131MICcWWWcLntSikBGT3mgjfeMh9Y+CuucBofc/NlvQw4+7BknQT7BbXUOQBcERG65c6VeBKKMISYEkmK9SLbZBTXBqTnk9OKvbNQuSe1Q9FPv7ft19KPbPKREPGWg6eU76bNhH4QnavQLoVG/ved2mLpB5ojmFA7xrh0ab7sOZJVF5JbS+KNZAT23mWhhJrWFkSMFr7cDW+Kts4wMQxks7fci2b0WazVCFw==
+Received: from CH0PR03CA0217.namprd03.prod.outlook.com (2603:10b6:610:e7::12)
+ by LV3PR12MB9332.namprd12.prod.outlook.com (2603:10b6:408:20f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.31; Mon, 21 Apr
+ 2025 15:43:05 +0000
+Received: from CH2PEPF00000143.namprd02.prod.outlook.com
+ (2603:10b6:610:e7:cafe::bb) by CH0PR03CA0217.outlook.office365.com
+ (2603:10b6:610:e7::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.36 via Frontend Transport; Mon,
+ 21 Apr 2025 15:43:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH2PEPF00000143.mail.protection.outlook.com (10.167.244.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Mon, 21 Apr 2025 15:43:05 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Apr
+ 2025 08:42:54 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 21 Apr 2025 08:42:53 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 21 Apr 2025 08:42:52 -0700
+Date: Mon, 21 Apr 2025 08:42:50 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, "vdumpa@nvidia.com"
+	<vdumpa@nvidia.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "praan@google.com" <praan@google.com>,
+	"nathan@kernel.org" <nathan@kernel.org>, "peterz@infradead.org"
+	<peterz@infradead.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"jsnitsel@redhat.com" <jsnitsel@redhat.com>, "mshavit@google.com"
+	<mshavit@google.com>, "zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v1 09/16] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
+ ioctl
+Message-ID: <aAZnei9tnO8Pjy+d@Asurada-Nvidia>
+References: <cover.1744353300.git.nicolinc@nvidia.com>
+ <5cd2c7c4d92c79baf0cfc59e2a6b3e1db4e86ab8.1744353300.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276F362FA971F6A5861BA418CB82@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250421150728.GA32725@altlinux.org>
+In-Reply-To: <BN9PR11MB5276F362FA971F6A5861BA418CB82@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000143:EE_|LV3PR12MB9332:EE_
+X-MS-Office365-Filtering-Correlation-Id: 175c7346-bf2a-45bd-a437-08dd80eb3548
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?p/UYrMln642Rn3MqK76N0TXyosWYWo9WnVjbxLZEyCVhTgdxkv5jcrhzeBT2?=
+ =?us-ascii?Q?FCbwZ+kVxAgJZYrPAA28YFUgkUIQP3IMaXUc5nkauwTjpmJ3+s92S/H1HUdh?=
+ =?us-ascii?Q?uMuQjfujvP+acv+oWF6vPuci6XG1EwzYSHfhK36LG/BV5SeaGAtT84xxePNt?=
+ =?us-ascii?Q?KaDab0SK/PaIOnTkHuvAR53+CeCczq6yLUSaWpb75wMAJzefekxsTpnbnGTY?=
+ =?us-ascii?Q?6rt8iXwJJ55MZ63P4RrBvpDvICWep7RjA0wUhDXr6wqH0CpllIPoKqno/+bX?=
+ =?us-ascii?Q?46JqFx46g/Rl7PXq8RtXfK0ta/+Jvz14uqbRelSQYVBNvRa25amchz6VvUSC?=
+ =?us-ascii?Q?BxYQSn4rQEONPtpC+oEpPszPqTKNS8yXm4KFcLZrKZqmrgnmQiq0d+UnQxAU?=
+ =?us-ascii?Q?VT8gMXo9LtPjMxkQTAW6tc4+jt9G/x0zt2VNYYvawGfqqnOIxMyLa9WiyMSI?=
+ =?us-ascii?Q?WfuNkKnviI5PU8pVPRB8+rQrXgltntmxXWEZCV+SpCJF49AGBZTn4bHB48I+?=
+ =?us-ascii?Q?vRA/ohEUnfgip6s77OZLedf/llr0cPfi7SIdlZYKjUzG18E5cFaKQOOPCqPR?=
+ =?us-ascii?Q?m2qX6Egw8Iaky/pLXX7q+HvGpvczaMFG3s0olAM4cYKeB60dyFhpAMgwtqMo?=
+ =?us-ascii?Q?IXeet8VX9prl0ge/1wKoFv3weBDR9qCI5RgoxuUR/oaAWOWrONeDVBJNH1k9?=
+ =?us-ascii?Q?bZs1TzzqpFvqJMO8aMx3/0iYqCZJFyZkGcfuH5PoNB7j3GD81alP1CZIaWW3?=
+ =?us-ascii?Q?Xr0PhQ+2Z4tZH1iSaudtu4KvgOtI0a8jfeY7Mr1YE21Zab+zkqaEWDGUlICf?=
+ =?us-ascii?Q?MUH7BA3SFZEEHZsWsN50jjTGN2iWWKm7O4/Ba681/O+GcPhBvdlZrMi7N4Wr?=
+ =?us-ascii?Q?C0tFENAdle0ThyBL+8Q4fm7OG4kHyS66CcBcFD6kE8uBLkakL3xp6rZeZVcL?=
+ =?us-ascii?Q?r0vvIfeYWeYLdXaXLrTonFg8LYsuXjotqAlFAZEcp+dz6OAQRoHgdPIWVC2Q?=
+ =?us-ascii?Q?fcmhz5NGyhUtZcpD4nSnArcvyZWX9f+zYOpaybyponBy7FTRKAe99vPetoxw?=
+ =?us-ascii?Q?4g/9MYyKXRS50o0e0q2H1yDAriHSvcV6EeZE/UDNTRsnaDfVsHj+JDQgZQi3?=
+ =?us-ascii?Q?/WQCcjTWU6o9S5p5elkiF3zmULczYm2Md0ZPZSLjVG2oJpwiEspIvtR1NCdg?=
+ =?us-ascii?Q?/Bbidgs9WNmgtkG4OdyQTliQdUOksBRq9wuEuVi3+Q+bu6xINeyCdPjIPS1c?=
+ =?us-ascii?Q?CueI4jzzictTiMIYgotYTY00/2pITYRx+iE87baszHH9nUS+0DfUzZO1ExJL?=
+ =?us-ascii?Q?NLTujy3W9uq2/45QPCmXgr78M3ARdYhX39sQqkvAaILuPp+bFvUYXVDu5U6v?=
+ =?us-ascii?Q?QU53LByfI13Ui3TxxaE9gPgoh7SkCWeWEBBL09j+5+sI4ecEDlAYP/iOZqD5?=
+ =?us-ascii?Q?SIT3WtLDlM0jn9V6DbGSPOJvTBmO+0qAjJLl42p9S7xhkVzNZV1t5JcEBTSf?=
+ =?us-ascii?Q?pdpcvtqNv55ycUs64ohopCGr7AnmdXV/NbWV?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 15:43:05.4653
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 175c7346-bf2a-45bd-a437-08dd80eb3548
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000143.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9332
 
-On Mon, Apr 21, 2025 at 06:07:28PM +0300, Alexey V. Vissarionov wrote:
-> Good ${greeting_time}!
+On Mon, Apr 21, 2025 at 08:05:40AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Friday, April 11, 2025 2:38 PM
+> > 
+> > +
+> > +/**
+> > + * enum iommu_vcmdq_type - Virtual Queue Type
 > 
-> On 2025-04-16 10:13:05 -0400, Alan Stern wrote:
+> "Virtual Command Queue Type"
 > 
+> > + * @IOMMU_VCMDQ_TYPE_DEFAULT: Reserved for future use
+> > + */
+> > +enum iommu_vcmdq_data_type {
+> > +	IOMMU_VCMDQ_TYPE_DEFAULT = 0,
+> > +};
+> > +
+> > +/**
+> > + * struct iommu_vcmdq_alloc - ioctl(IOMMU_VCMDQ_ALLOC)
+> > + * @size: sizeof(struct iommu_vcmdq_alloc)
+> > + * @flags: Must be 0
+> > + * @viommu_id: viommu ID to associate the virtual queue with
+> > + * @type: One of enum iommu_vcmdq_type
 > 
->  >> +	/* trb_phys_to_virt() dereferences ep; check it here */
->  >> +	if (!ep) {
->  >> +		dev_err(xudc->dev, "unexpected NULL pointer: ep\n");
->  >> +		return;
->  >> +	}
->  > Is this condition something that is totally under the kernel's
->  > control? That is, is ep always passed in by a driver and there's
->  > never a valid reason for it to be NULL?
+> s/ iommu_vcmdq_type/ iommu_vcmdq_data_type/
 > 
-> IIUC, the endpoints are reported by the device. But the device
-> may be something like STM32 uC with malicious firmware.
-
-That doesn't matter, because the code you are changing doesn't run on 
-the host.  It runs on the gadget.  If a gadget with malicious firmware 
-crashes, who cares?  It would be a good thing, not a bad thing.
-
-Besides, the condition you are testing for, namely !ep, can never happen 
-anyway.  Here's why:
-
-This routine -- tegra_xudc_handle_transfer_completion() -- is called 
-from tegra_xudc_handle_transfer_event() in the case where comp_code is 
-TRB_CMPL_CODE_SUCCESS or TRB_CMPL_CODE_SHORT_PACKET.  Either way, 
-comp_code will be different from TRB_CMPL_CODE_BABBLE_DETECTED_ERR, so 
-the code immediately preceding the function call will already have 
-dereferenced ep.  If ep is NULL, the system will crash before your new 
-code is executed.
-
->  > Then there's really no need for this check. In real life it
->  > will never trigger.
+> > +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> > +{
+> > +	struct iommu_vcmdq_alloc *cmd = ucmd->cmd;
+> > +	const struct iommu_user_data user_data = {
+> > +		.type = cmd->type,
+> > +		.uptr = u64_to_user_ptr(cmd->data_uptr),
+> > +		.len = cmd->data_len,
+> > +	};
+> > +	struct iommufd_vcmdq *vcmdq;
+> > +	struct iommufd_viommu *viommu;
+> > +	int rc;
+> > +
+> > +	if (cmd->flags || cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT)
+> > +		return -EOPNOTSUPP;
+> > +	if (!cmd->data_len)
+> > +		return -EINVAL;
+> > +
+> > +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
+> > +	if (IS_ERR(viommu))
+> > +		return PTR_ERR(viommu);
+> > +
+> > +	if (!viommu->ops || !viommu->ops->vcmdq_alloc) {
+> > +		rc = -EOPNOTSUPP;
+> > +		goto out_put_viommu;
+> > +	}
+> > +
+> > +	vcmdq = viommu->ops->vcmdq_alloc(viommu,
+> > +					 user_data.len ? &user_data : NULL);
 > 
-> With real devices. But ready-to-use STM32F103C8T6 boards are sold
-> for only 10...15 CNY, so one would need only to write a firmware
-> and to flash it in the board using 20 CNY program-and-debug tool.
+> the length cannot be zero at this point due to earlier check.
 
-Do those boards run a Linux kernel?  If they don't then they won't run 
-the code you are changing, so your statement is irrelevant.
+Yes. Will fix them all.
 
->  > Of course, if it is reasonable for ep or ep->desc to sometimes
->  > be NULL, then the checks should be made. But if that were true,
->  > I don't know why you would call dev_err().
-> 
-> This was suggested by Jon Hunter on 16 Apr 2025 08:43:58 +0100 and
-> I've agreed that would be wise.
-
-The more I look at this, the more this change seems unnecessary.
-
-Alan Stern
+Thanks!
+Nicolin
