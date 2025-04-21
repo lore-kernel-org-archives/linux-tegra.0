@@ -1,163 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8561E25ED;
-	Mon, 21 Apr 2025 16:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AF01C84AB;
+	Mon, 21 Apr 2025 16:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745252002; cv=none; b=rhTWCNzXMdummXETUlCryQ9027/WKk2CMnMNPSXR66xJXIgp0JAcm6V0rTMZXDd76DD0YYvKuMfgFo+6m/HSxZ4xqRm+2x01/DFizOZVpgQxE6WvcSDYwpQYfZA+q6AkJrwkLF7cYR70im751Ee/7m50CTu/RjNzJN2K/4cKppI=
+	t=1745253197; cv=none; b=UBsBEzHHCqCbWLym5fVzOdDKCFVK1u15umk+uP9FqCHkHMy/Rk7/RMT+j4NduffEOtXYnInD4aVWOE2U9ihhXDMVVPvZLE71E+fAh4eDQqaI93CiaFwDLhQjnEQafEqawId6RnDy0Yvr6uAp4HW79UmvG8Ztl3TXwNcP96NoKM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745252002; c=relaxed/simple;
-	bh=un/wwArIfP7JErr0j3e550m4ix8Qb+8QW7iRtzJgnNc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gJJakMgyCySY3w4rIhVpMTRNzSLjZ/qEufIu+z3Ii+lUgG3WWtVQqGtBmEoqyVhQPGlCzU7BDDoVxQ8kd/TF2r+ppa5SXwJn9B1PrIQJsp7/bGG3T+KzQ4VHq7JwS6rNpHiLFN/ECjZxxVc5fYAi7gSvearh+s9CT9K5PIFmcIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfrbXB4s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745253197; c=relaxed/simple;
+	bh=UoNKEsj17isREgxZLDT9jvBpXB3AVOKKvjmQvpOpFIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PM87QcqLMN3aNwMcNXN+DZoaqeacilNoOCSpv+AXcWE4rijo+rMqKFm7gJMTYOChM2/Qsw51oDN246K0Oz7go33F8yJHEJyL1mddJMK7cJzpsIcnu+1sipA9ozGdPuW0wwkxhSbgT98p197yCsh10F/IYoHCoc193rhsVXq0+5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iaJeSKLH; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfrbXB4s"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A556C4CEE4;
-	Mon, 21 Apr 2025 16:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745252002;
-	bh=un/wwArIfP7JErr0j3e550m4ix8Qb+8QW7iRtzJgnNc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=cfrbXB4szIbk0vfuTA61GSiEXZ4bAIC4grzDgqrGhA9nSzZXEhYX+oy5dmZc1V3ec
-	 gxC936tXnENeCIe1MSHRsUIl7MZ7rIzNC1Lol/Z8WHt5vlsGTQea7YLkMfqq7YCLvp
-	 DsRAYs0SMGolELCf6MxEmZJhgkxcokrQ27B6UWH9IksJLclNAn6y36cFI6wxXaQbuv
-	 sm4lm+BKBP5MFn5TKpQ7/l33RAMbwnjxsAgrq0N896r9p1EF5Kp4rQq9u1CbQtGE9+
-	 s+5y/3GgUjuiUtwJOKnPWGAL6NZfd4gT4VS0MXWdyO6XJ3dAPRR5UWJ/byRW7eK0mF
-	 RQWALiY6T7xLQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039E3C369D5;
-	Mon, 21 Apr 2025 16:13:21 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 21 Apr 2025 11:13:05 -0500
-Subject: [PATCH v2] drm/tegra: Assign plane type before registration
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iaJeSKLH"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so39215991fa.1;
+        Mon, 21 Apr 2025 09:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745253193; x=1745857993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UoNKEsj17isREgxZLDT9jvBpXB3AVOKKvjmQvpOpFIg=;
+        b=iaJeSKLHxk/lM6FNSkaDdYf3Qrtoo3p6g/SwfzgG8oapg1ai2ZA7uIxXGXoE+Py/qY
+         0Iqq/5yaOc4avLgNoOi34SBMvY5UiMnmRp+UHiJao1/0latFpYU4ZRwbXzXSf9rlAWZk
+         4QHST/RsyWpOhr9ZQDq0hwr2YfkoEG9k9NHk7Bpbs74pm6cTSZOWxkpFmVQxmQJHgWIY
+         6E3VK25PRvp+2/DiDMYGP+3kmwqbxqfUaNfH3lynJs56MLkNIp9UL/1KZsC00pZZK3N6
+         QfFXxcsDGP0Obg4nJLlimdUx4mu8MzIvnQ2NwF+NpBpRBLZNF+POnBaty7RCj6nq94+E
+         GDCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745253193; x=1745857993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UoNKEsj17isREgxZLDT9jvBpXB3AVOKKvjmQvpOpFIg=;
+        b=kj9d+oprIhPK3ULtKQVXErwOunRY2pv0YrVtM06jg78Fo4mRzQ6aTux5Qwsn6Yw8+6
+         qWi6/jUfJjC3MWakmA9niR4DLRsHcnvcMtg8/XhrJeXtotFfKjE3sx18fQEtWKWfG2lx
+         VcqxM5sAGxSJYylP5/7W85fMyatfuC4o0GQxlA7btUb8kTppObgJ+1dvpo54fPW5n5Pu
+         IXnfmq/Kx7hVFOpky4Em/onCedudVBnRT7mzAi4qOeMqVp9Spu6/6guLF4+/6T37Panc
+         8EsqFEIGpbM25lvRCgO+QRdABTZIWSkEPoGXkh+hL6bdWCzwSJFubT86yosOctr5asBA
+         exvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXXlQi13PvaPUl0mLdlOoyk2xZjzlnC+Lb9/mrHux9GGszgs9BnFuVHKLrE+32k4YtcU88dPOFRFCZ@vger.kernel.org, AJvYcCXbAmTskyjC1yFVGWh5Co9Cq2smV0LgyOduz+Vw12Z/loW4kHR4phq9Hkf187GY6iBqWkvQIFwvmN3Wnso=@vger.kernel.org, AJvYcCXbzn6ppiC02RsNrvJHMal97tRxI64GJwx18O2tp1RLLFd4fDEJzXll8uTJM7u9flOtzhl1ah5Sh2Z3IQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBXWmxYPhWfXCvS8QqrOxdtdXHF8jre9ynL2b2nDMmDabP6iL7
+	pHraBRs+n2varqG26RRJU072FFFvzb8S0PiQV2/9TxMb6RMKVlXIZy3TUX2ELslKyHMmLJT3Wo/
+	3N3ElZml+6TXL5RGMM/KAuj2XRzM=
+X-Gm-Gg: ASbGncv9LKn2jOqEGF7nArYgi7/Ez7q0vk3IvsMBgsIH5q+rlLcQ/lovS1VisdDJDFn
+	aTj74bswdj0ayR1L2c2c4FscGYKTUCurxnYejAgaK171L47k8Kv71kX5Iyc55N3SLQV0hY/46LR
+	Bwg1CjoCf5RkccEFs/bX1Tzw==
+X-Google-Smtp-Source: AGHT+IHBYTXcQcbP9GB5C/9vup5nk8I8rSBNSwS38UnAGqghCncVUy4I/9VhS09CmV0dFJfbXkmit/X8ZLmghZjamjE=
+X-Received: by 2002:a2e:a582:0:b0:30d:e104:a943 with SMTP id
+ 38308e7fff4ca-31090579a17mr29419331fa.39.1745253192974; Mon, 21 Apr 2025
+ 09:33:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250421-tegra-drm-primary-v2-1-7f740c4c2121@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJBuBmgC/32NQQqDMBBFryKz7pQkjRS76j2KiyROdKBRmYhUx
- Ls39QBdvgf//R0yCVOGR7WD0MqZp7GAuVQQBjf2hNwVBqNMraxucKFeHHaScBZOTjYMZO+RPMX
- ORSi7WSjy52y+2sID52WS7bxY9c/+q60aNfpGq9pGb/UtPvvk+H0NU4L2OI4vqbPm+LIAAAA=
-X-Change-ID: 20250419-tegra-drm-primary-ce47febefdaf
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
- Aaron Kling <webgeek1234@gmail.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745252001; l=3636;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=Or7tDNWWlFSumB821skJoVUGwAK2I8ncBHMuDgkapE4=;
- b=2+gdz7hbqQdI1D615jKbm4aD/BhNq7CCHx//+FFw7ZttsjjqB7caby08sSZCdDJFDdEL1yeDq
- sX2OjpvnkKLDHCnfDKChpd8mL0k1bq9ld/T5saRYh89s0ouSp6jFrXh
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com>
+ <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com> <pgp3cdksefn2z4n2hlyhftbdlfwyx7gbol7q6wdj5j4brux3cw@thts2qcahdw3>
+ <CALHNRZ9R4SWtzAYocY9X7D9hm4mXeWKhdo_rk5UmRPVGD-vbBQ@mail.gmail.com> <lk37wtb25pr2rj3zhct5udaykr7joqw2mpgtupjq33of2xhesi@rmdgucbzxmgz>
+In-Reply-To: <lk37wtb25pr2rj3zhct5udaykr7joqw2mpgtupjq33of2xhesi@rmdgucbzxmgz>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 21 Apr 2025 11:33:01 -0500
+X-Gm-Features: ATxdqUFH5_AjQnqTEFKcOn5KajPXTH1HhKUSqV4aiEpPra7WIaa9mRdmopDK7dk
+Message-ID: <CALHNRZ8gSzOVpN_au_ntSan7or=uRBrPSRFdbDqAHxitcEfs7g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: tegra: Allow building as a module
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Thierry Reding <treding@nvidia.com>
+On Mon, Apr 21, 2025 at 3:54=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Apr 21, 2025 at 03:09:42AM -0500, Aaron Kling wrote:
+> > On Mon, Apr 21, 2025 at 2:52=E2=80=AFAM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > On Sun, Apr 20, 2025 at 09:59:06PM -0500, Aaron Kling via B4 Relay wr=
+ote:
+> > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > >
+> > > > The driver works fine as a module, so allow building as such.
+> > > >
+> > >
+> > > In the past, the former irqchip maintainer raised concerns for allowi=
+ng the
+> > > irqchip drivers to be removed from the kernel. The concern was mostly=
+ (afaik)
+> > > due to not disposing all IRQs before removing the irq_domain.
+> > >
+> > > So Marek submitted a series [1] that added a new API for that. But th=
+at series
+> > > didn't progress further. So if you want to make this driver a module,=
+ you need
+> > > to do 2 things:
+> > >
+> > > 1. Make sure the cited series gets merged and this driver uses the ne=
+w API.
+> > > 2. Get an Ack from Thomas (who is the only irqchip maintainer now).
+> >
+> > Should this be a hard blocker for building this one driver as a
+> > module? I did a quick grep of drivers/pci/controller for irq_domain,
+> > then compared several of the hits to the Kconfig. And every single one
+> > is tristate. Tegra is by far not a unique offender here.
+> >
+>
+> Not 'unique', yes. But the situation is a bit worse atm. Some of the patc=
+hes
+> (making the driver as a module) were merged in the past without addressin=
+g the
+> mapping issue.
+>
+> Please take a look at the reply from Marc:
+> https://lkml.iu.edu/hypermail/linux/kernel/2207.2/08367.html
+>
+> Even though Marc said that disposing IRQs is not enough to make sure ther=
+e are
+> no dangling pointers of the IRQs in the client drivers, I'm inclined to a=
+tleast
+> allow modular drivers if they could dispose all the mappings with the new=
+ API.
+> This doesn't mean that I'm not cared about the potential issue, but the r=
+emoving
+> of modules is always an 'experimental' feature in the kernel. So users sh=
+ould be
+> aware of what they are doing. Also, we have not seen any reported issues =
+after
+> disposing the IRQs from the controller drivers. That also adds to my view=
+ on
+> this issue.
+>
+> That being said, the safest option would be to get rid of the remove call=
+back
+> and make the module modular. This will allow the driver to be built as a =
+module
+> but never getting removed (make sure .suppress_bind_attrs is also set).
+.suppress_bind_attrs is already set in this driver. But what happens
+cleanup on shutdown if the remove is dropped? Would it be better to
+move remove to shutdown for this case?
 
-Changes to a plane's type after it has been registered aren't propagated
-to userspace automatically. This could possibly be achieved by updating
-the property, but since we can already determine which type this should
-be before the registration, passing in the right type from the start is
-a much better solution.
-
-Suggested-by: Aaron Kling <webgeek1234@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Cc: stable@vger.kernel.org
-Fixes: 473079549f27 ("drm/tegra: dc: Add Tegra186 support")
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
-Changes in v2:
-- Fixed signoff in commit message
-- Added fixes to commit message
-- Link to v1: https://lore.kernel.org/r/20250419-tegra-drm-primary-v1-1-b91054fb413f@gmail.com
----
- drivers/gpu/drm/tegra/dc.c  | 12 ++++++++----
- drivers/gpu/drm/tegra/hub.c |  4 ++--
- drivers/gpu/drm/tegra/hub.h |  3 ++-
- 3 files changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 798507a8ae56d6789feb95dccdd23b2e63d9c148..56f12dbcee3e93ff5e4804e5fe9b23f160073ebf 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1321,10 +1321,16 @@ static struct drm_plane *tegra_dc_add_shared_planes(struct drm_device *drm,
- 		if (wgrp->dc == dc->pipe) {
- 			for (j = 0; j < wgrp->num_windows; j++) {
- 				unsigned int index = wgrp->windows[j];
-+				enum drm_plane_type type;
-+
-+				if (primary)
-+					type = DRM_PLANE_TYPE_OVERLAY;
-+				else
-+					type = DRM_PLANE_TYPE_PRIMARY;
- 
- 				plane = tegra_shared_plane_create(drm, dc,
- 								  wgrp->index,
--								  index);
-+								  index, type);
- 				if (IS_ERR(plane))
- 					return plane;
- 
-@@ -1332,10 +1338,8 @@ static struct drm_plane *tegra_dc_add_shared_planes(struct drm_device *drm,
- 				 * Choose the first shared plane owned by this
- 				 * head as the primary plane.
- 				 */
--				if (!primary) {
--					plane->type = DRM_PLANE_TYPE_PRIMARY;
-+				if (!primary)
- 					primary = plane;
--				}
- 			}
- 		}
- 	}
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index fa6140fc37fb16df4b150e5ae9d8148f8f446cd7..8f779f23dc0904d38b14d3f3a928a07fc9e601ad 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -755,9 +755,9 @@ static const struct drm_plane_helper_funcs tegra_shared_plane_helper_funcs = {
- struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 					    struct tegra_dc *dc,
- 					    unsigned int wgrp,
--					    unsigned int index)
-+					    unsigned int index,
-+					    enum drm_plane_type type)
- {
--	enum drm_plane_type type = DRM_PLANE_TYPE_OVERLAY;
- 	struct tegra_drm *tegra = drm->dev_private;
- 	struct tegra_display_hub *hub = tegra->hub;
- 	struct tegra_shared_plane *plane;
-diff --git a/drivers/gpu/drm/tegra/hub.h b/drivers/gpu/drm/tegra/hub.h
-index 23c4b2115ed1e36e8d2d6ed614a6ead97eb4c441..a66f18c4facc9df96ea8b9f54239b52f06536d12 100644
---- a/drivers/gpu/drm/tegra/hub.h
-+++ b/drivers/gpu/drm/tegra/hub.h
-@@ -80,7 +80,8 @@ void tegra_display_hub_cleanup(struct tegra_display_hub *hub);
- struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 					    struct tegra_dc *dc,
- 					    unsigned int wgrp,
--					    unsigned int index);
-+					    unsigned int index,
-+					    enum drm_plane_type type);
- 
- int tegra_display_hub_atomic_check(struct drm_device *drm,
- 				   struct drm_atomic_state *state);
-
----
-base-commit: 119009db267415049182774196e3cce9e13b52ef
-change-id: 20250419-tegra-drm-primary-ce47febefdaf
-
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
-
-
+Sincerely,
+Aaron
