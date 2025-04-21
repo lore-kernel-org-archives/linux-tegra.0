@@ -1,142 +1,227 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417D51E98EA;
-	Mon, 21 Apr 2025 01:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D33421C9E5;
+	Mon, 21 Apr 2025 01:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745199859; cv=none; b=opg9RyG7AxoJepYvXLLylBbIXtp+cEUvt+Gl+LKEtpCOdrYtjWwWnNTcvs0oOE+vJ1QdSousnFurrzbCbrSzNQ32VC5I9An1r1qrr6w6q8wLpeggDcpP9HIJugOXMz2+Bnl/lCijutGOFSjnx/HCoQ5hm4mEysHL0YAoaVNH4Go=
+	t=1745199953; cv=none; b=MkqZbmcgrb1Th1gLVCMZkeD1vfzXzUN3QsehzTzzyoGz9WeGjpLnTMuzMvTu37UhGS1QOaTW4tglWuQFkvnogU+WxhSKt7LJ7xufg/98FuTtcVy2Ax4y/b+KBu0SGjaGQ041LgyZvvwDHCG1oWsM3xpe4JQZ903xH/1wpgddONk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745199859; c=relaxed/simple;
-	bh=1MWplbGj6J2kyMfB0GnmgHQUiASFoOeWcVvnaU+PZpM=;
+	s=arc-20240116; t=1745199953; c=relaxed/simple;
+	bh=FJI3M/ikUXckIgrL7LsYmqw9n24CqCCR7ttW6QLxTJs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SE5nz1S0nP/tHFcFEXm3rXV5h7Z6OFkiSgyQHrz4YSSrRmfyWhdYV6ZgrUUp8MGFpFvBjoqgn9A+c+3u6fYIS1x4F/verRtyDrWUaUckDNEvnyNW+mTXD3WetH8JIV/UifUBBmwMRiEmJfLPMbkACyp0Frqj+yo8PanRo+lm3VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Im4/2uib; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=N2PEdCaIwALO3bDZSbB+IjqA4YyTwdnMeFc1Ye80KRjmFL1057sjaehw80wzrc2lAAZabgl1zbysS3DQmoMkDVqYg1cUUSQt4C3YXefp/HqJQ8j2fEU8aSWPAI7q7k+ySIf//uXLVzhIZr3dUQxM25xQEZ+jOd+qeoW1exd4bko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lo6xVVJA; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Im4/2uib"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54afb5fcebaso4702157e87.3;
-        Sun, 20 Apr 2025 18:44:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo6xVVJA"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b166fa41bso4095092e87.0;
+        Sun, 20 Apr 2025 18:45:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745199855; x=1745804655; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745199950; x=1745804750; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xNsP8TLxSjuJhg4MR6E04vLB1ANe+AOPTx67417P+WE=;
-        b=Im4/2uibvNRYt0SDpBQGeO5/RgEdGqLQqhWQ2uo3C7tToyCo4O1ErCMHImD5gQG18u
-         DCGyRq+F9S1qNeHyrOo5+0CXmRMF0z1Wjk+YqfhdZX+H15ZsS2uHTgeM3PzkU+ZVLiwt
-         Lbw+2Sx9ryX2TqCVuvomlBmfKGLVdtYVF3SeOc8Xean9iloHThBVm45khCBJogAPwsvZ
-         W7UvZc1djXoHqSuYi8qcrsDPxlA0svKD4iiCEIqCnysFTbScYcyB+s7cZCWoL76DZMDM
-         v0gg0hLVAQL0sUFT/I+9HzQnb0pCtGz9OGa3JnEx5f6OUVtXj9pz6oSto0z7cKzNU0Le
-         XEDw==
+        bh=VlcAXEAOoA7rZxCFfDsCgU3ArJpLqYylP4zoHpggA6s=;
+        b=Lo6xVVJA+a/NrrWdRx3JxD9uEqHI1/XzPQcrpIQOHFzeKdxJhyjs5SxjLBYwFc4aNF
+         z0sLsPrsP+lkfYfuH5CIMPOaIjyot2DwUX0NE6uS0a8d8SzhVtS0u9RiHkAclfOO8lKj
+         to0AWPQkURyYe7Sc+KNrKZGr0mOuWo/sJQBNbhA7gLtJsIH5SfCDWrScsH0fUQZle/IY
+         VnL4RyuchTeq7cc2V/rQB8SXuZND8ZcP5WKRn7E1vo766v3HOxZs2atsk7WLL3VbCZfW
+         Bqajwas81uQh7gvNmDTVzKGYv9x0wza/N6yAWDhZL+GEmBhISTtPZTKW6z8diXxZcH6R
+         hYEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745199855; x=1745804655;
+        d=1e100.net; s=20230601; t=1745199950; x=1745804750;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xNsP8TLxSjuJhg4MR6E04vLB1ANe+AOPTx67417P+WE=;
-        b=aLSaPF50DL/h1m3kPmuqOH+jM7yM/HS2B/lsY8MP0lYHBoSvsLCEd46L2c66Ors5LI
-         Zx5YzwMYeo7B5RPpm/GQWKbbpSSKA5PGeh7894srhiVAt8NtqI9uolNCBl5xcOSJwSXi
-         F/3/Am5VoCdhie88fQ9ToKoDCY9SMNWEZOCJwVTITxxYosf+S/SqxuINdQunk2UqbBv9
-         EMUftmp674L8oE7tmCxy0QFfsvIyJXuIAaahfgJrTQQ8d3hJZE2/Kpkeee5RjRosfdao
-         q27W8Jpnm4EHFpXgbIc24ROHTrQ29PhfHNLuH3YHTTWNQRAP48o/6cmG1PjTeHGoc8cA
-         zawg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMFu0jQjJfE9uzQoVG2vUcszuD6eGEj6UtbD3TXDLpW3MVyzsoZrqiDZ6qgiiqI6hR0nTSjZ/xnk1MSL4=@vger.kernel.org, AJvYcCXKyCngke54QrbucR6+9e7WGXyfzQEwFcTfQK0StqNIg/I++EqQzUwd2TK56a0CByJv00ZrG0z6J5JzO+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXqpqVgo2nD4YMej/oZaHlt4pTg6oupsJWQ8pSFV64vOLovJOE
-	fUXJ7okUjf0CqicNwpFQqfXM7a+dkVDthq257SpAz9AABujw9dVOC5ThvPyJacCwt4baAHEuG3C
-	ts9QeqI4nM7i6l0jv7NQ1WFS3j3U=
-X-Gm-Gg: ASbGnculhltwF1TDovPR5DLGm3J/d3E/EYI4hqtWeaSqxErjn/c3OmWA0XY6HD3xmEg
-	inOAv0NGP8QObrILNbI986PVG6V7lgzD8RvFruZd71VJUS6MT5mASDvOIILsbLgO5/XAbm0KR95
-	2HwUEBtrL9G07/M2pIRgutCKFgAtjbc4Sh
-X-Google-Smtp-Source: AGHT+IFJLl/9yEM6wOg1YcMUI+mppVQUpO6qF5SpCVT+8GKVAgREPCb9zCBKUQIoF0AwDOC3aXUAnkrQH3n39mE1160=
-X-Received: by 2002:a05:6512:3f21:b0:545:2335:6597 with SMTP id
- 2adb3069b0e04-54d6e66c65dmr2824515e87.50.1745199855053; Sun, 20 Apr 2025
- 18:44:15 -0700 (PDT)
+        bh=VlcAXEAOoA7rZxCFfDsCgU3ArJpLqYylP4zoHpggA6s=;
+        b=MMbjo2BhD7lrU9Q7b4NehyX1I0MZJIT8BViw40FSHbYfvji4hpPlaE1Fdtj3R/X5o2
+         3UwBS58nVRqibD5bu+tzhVg4PvwrjDR4D73vYsiPPRn9yw1T5oXoxqlPqF6YRgzEsizC
+         uArsEKLHuh+sbrT9Kl38kidN9mQJjV+HBCdHfEUvydnFe704z7T6ntMaEOAwGDUGta7i
+         8OsDkm/aeZ4Sl9vhB7621moiUWlEArdJpOGqeNNOm7Cvs0sFjnsZ7/yiK1pVYQdlOvOq
+         gdohns6OMcYFk05SQCRhyrs41dhtH+Po6KrOv02fTXq6MJEyBEYfURDlL2QgDpTn/gFv
+         gLGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfcSKcPe73pdm3faeogMOy4yGLgLliF/zgfmlpirX0IBkehXXexv6EGKf0iZKk0QuONRvzhe8tncK3txdE@vger.kernel.org, AJvYcCVoZO+00oGmK9uA3Z/9RUx903i23xy8AffMTxEQ6W0/0wBSliPkUcAHJrbOBj0rJo/QaMtJTZFulsvfzqc=@vger.kernel.org, AJvYcCXLQTU1alC+/3rU+ASuL6CJuYwMnC2c6PzhV++z6JCUwlDcGO9pAKK2ROpXoSuzkYqb4Ozo7yT+/XjN@vger.kernel.org, AJvYcCXLSzM2RHk4MFBD8Dh8cFHjV4Dy1KHd8KQsUVPHJq32eLk3gao56O4tikoPtVRwLNuBDry6y7z2RlvoSGQ8qNro@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0nnui/fncIzP9ITSOQ5xJWwOiPCPAsUhwyZt/N1im/t2CCTZD
+	GrrNPAkbT+x6lObJv8bW9mw9IM8er6nTgbmmljMnzoCsYNKaMmAHPQM3XjjfFOQtCGqNKbC4I6K
+	LA85o51M80qPSYTd+XQ0ImENwuqk=
+X-Gm-Gg: ASbGncufkyDrJ9l+1tToXc4U+XxBfSXkImhEI/9xMeBA5GZB6/cUuKAFIDVwe5jpXdU
+	Q6r7eV8jM0/U1cRHSGh5NEoGJXao5TzRcDd2yP/Thk+nvUlbUE1IgV6U0pkl0WvUtR3yhsezumX
+	3CFkRWYiOvLR2CRs/n6z7PJQ==
+X-Google-Smtp-Source: AGHT+IFBQfBYw22PzM8o7/nREt8zlqjUpMIN9iZSIffXu3l+y4m8uuWr7b3JOCxpH2bWv4EqRskLz48rHrJj+or776M=
+X-Received: by 2002:a05:6512:3da3:b0:549:74a7:12de with SMTP id
+ 2adb3069b0e04-54d6e6629e9mr3074930e87.48.1745199949444; Sun, 20 Apr 2025
+ 18:45:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com> <CALHNRZ_QUY7NPH87RYqFWEy4PkTgV5uZVZ6hh3sbe=U_8ga2jQ@mail.gmail.com>
-In-Reply-To: <CALHNRZ_QUY7NPH87RYqFWEy4PkTgV5uZVZ6hh3sbe=U_8ga2jQ@mail.gmail.com>
+References: <20250406-tegra-pstore-v1-1-bf5b57f12293@gmail.com>
+ <6920a557-9181-4c9c-98f4-a9be4e796a13@kernel.org> <CALHNRZ--to8B3zhg6zV90siL0x78BAjhS04DgfLwmnXEiOMe3g@mail.gmail.com>
+ <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org> <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
+ <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org> <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
+In-Reply-To: <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sun, 20 Apr 2025 20:44:04 -0500
-X-Gm-Features: ATxdqUFF7fzxh_DaX7KhjifiWMQ2sIaayfrHFWcFH33ybOICoCOmsho-NVU-v8U
-Message-ID: <CALHNRZ9s5EdL3vapyJS4TdT=v5v_QG-=n8ABNJDLU4B-7w+wRw@mail.gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb: Default otg mode to peripheral
-To: webgeek1234@gmail.com
-Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-phy@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 20 Apr 2025 20:45:38 -0500
+X-Gm-Features: ATxdqUE5cS0cyfAWO7a_dIJbYZH-kWofZzpENlP389VPo4SVaCMRPo-pnM6P3sc
+Message-ID: <CALHNRZ-YZg3cKzRBMGaxRpejFMLSpOOz-FPQEaQVXFpFao40WA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Apr 13, 2025 at 11:45=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com=
-> wrote:
+On Tue, Apr 8, 2025 at 3:49=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com> =
+wrote:
 >
-> On Fri, Apr 4, 2025 at 3:18=E2=80=AFAM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> On Tue, Apr 8, 2025 at 3:17=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
 > >
-> > From: Aaron Kling <webgeek1234@gmail.com>
+> > On 08/04/2025 09:35, Aaron Kling wrote:
+> > > On Tue, Apr 8, 2025 at 1:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> > >>
+> > >> On 07/04/2025 18:00, Aaron Kling wrote:
+> > >>> On Mon, Apr 7, 2025 at 7:59=E2=80=AFAM Krzysztof Kozlowski <krzk@ke=
+rnel.org> wrote:
+> > >>>>
+> > >>>> On 06/04/2025 23:12, Aaron Kling via B4 Relay wrote:
+> > >>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> > >>>>>
+> > >>>>> This allows using pstore on all such platforms. There are some
+> > >>>>> differences per arch:
+> > >>>>>
+> > >>>>> * Tegra132: Flounder does not appear to enumerate pstore and I do=
+ not
+> > >>>>>   have access to norrin, thus Tegra132 is left out of this commit=
+.
+> > >>>>> * Tegra210: Does not support ramoops carveouts in the bootloader,=
+ instead
+> > >>>>>   relying on a dowstream driver to allocate the carveout, hence t=
+his
+> > >>>>>   hardcodes a location matching what the downstream driver picks.
+> > >>>>> * Tegra186 and Tegra194 on cboot: Bootloader fills in the address=
+ and
+> > >>>>>   size in a node specifically named /reserved-memory/ramoops_carv=
+eout,
+> > >>>>>   thus these cannot be renamed.
+> > >>>>> * Tegra194 and Tegra234 on edk2: Bootloader looks up the node bas=
+ed on
+> > >>>>>   compatible, however the dt still does not know the address, so =
+keeping
+> > >>>>>   the node name consistent on Tegra186 and newer.
+> > >>>>>
+> > >>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > >>>>> ---
+> > >>>>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
+> > >>>>>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++++++++++
+> > >>>>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 13 +++++++++++++
+> > >>>>>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 16 ++++++++++++++++
+> > >>>>>  4 files changed, 61 insertions(+)
+> > >>>>>
+> > >>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm6=
+4/boot/dts/nvidia/tegra186.dtsi
+> > >>>>> index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..2e2b27deb957dfd75=
+4e42dd03f5a1da5079971dc 100644
+> > >>>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> > >>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> > >>>>> @@ -2051,6 +2051,22 @@ pmu-denver {
+> > >>>>>               interrupt-affinity =3D <&denver_0 &denver_1>;
+> > >>>>>       };
+> > >>>>>
+> > >>>>> +     reserved-memory {
+> > >>>>> +             #address-cells =3D <2>;
+> > >>>>> +             #size-cells =3D <2>;
+> > >>>>> +             ranges;
+> > >>>>> +
+> > >>>>> +             ramoops_carveout {
+> > >>>>
+> > >>>> Please follow DTS coding style for name, so this is probably only =
+ramoops.
+> > >>>
+> > >>> As per the commit message regarding tegra186: bootloader fills in t=
+he
+> > >>> address and size in a node specifically named
+> > >>> /reserved-memory/ramoops_carveout, thus these cannot be renamed.
+> > >>
+> > >> That's not a reason to introduce issues. Bootloader is supposed to
+> > >> follow same conventions or use aliases or labels (depending on the n=
+ode).
+> > >>
+> > >> If bootloader adds junk, does it mean we have to accept that junk?
+> > >>
+> > >>>
+> > >>>>
+> > >>>> It does not look like you tested the DTS against bindings. Please =
+run
+> > >>>> `make dtbs_check W=3D1` (see
+> > >>>> Documentation/devicetree/bindings/writing-schema.rst or
+> > >>>> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicet=
+ree-sources-with-the-devicetree-schema/
+> > >>>> for instructions).
+> > >>>> Maybe you need to update your dtschema and yamllint. Don't rely on
+> > >>>> distro packages for dtschema and be sure you are using the latest
+> > >>>> released dtschema.
+> > >>>
+> > >>> The bot is reporting that the reg field is missing from the added
+> > >>> ramoops nodes on t186, t194, and t234. However, as also mentioned i=
+n
+> > >>> the commit message, this is intentional because it is expected for =
+the
+> > >>> bootloader to fill that in. It is not known at dt compile time. Is
+> > >>> there a way to mark this as intentional, so dtschema doesn't flag i=
+t?
+> > >>
+> > >> Fix your bootloader or chain load some normal one, like U-Boot.
+> > > How would chainloading a second bootloader 'fix' previous stage
+> > > bootloaders trampling on an out-of-sync hardcoded reserved-memory
+> > > address? It's possible for carveout addresses and sizes to change. No=
+t
+> > > from boot to boot on the same version of the Nvidia bootloader, but
+> > > potentially from one version to another. Depending on if the
+> > > bootloader was configured with different carveout sizes.
+> > >
+> > > There is precedence for this. When blind cleanup was done on arm
+> > > device trees, a chromebook broke because the memory node has to be
+> > > named exactly '/memory' [0]. How is this any different from that case=
+?
 > >
-> > Currently, if usb-role-switch is set and role-switch-default-mode is
-> > not, a xusb port will be inoperable until that port is hotplugged,
-> > because the driver defaults to role none. Instead of requiring all
-> > devices to set the default mode, assume that the port is primarily
-> > intended for use in device mode. This assumption already has precedence
-> > in the synopsys dwc3 driver.
+> > That was an existing node, so ABI.
 > >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  drivers/phy/tegra/xusb.c | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > > These nodes are an ABI to an existing bootloader. Carveouts on these
 > >
-> > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> > index 79d4814d758d5e1f0e8200d61e131606adbb0e2d..c56e83216d0f566a09b6737=
-7172fb04c8406f4cf 100644
-> > --- a/drivers/phy/tegra/xusb.c
-> > +++ b/drivers/phy/tegra/xusb.c
-> > @@ -731,13 +731,11 @@ static void tegra_xusb_parse_usb_role_default_mod=
-e(struct tegra_xusb_port *port)
+> > You add new ABI, which I object to.
 > >
-> >         if (mode =3D=3D USB_DR_MODE_HOST)
-> >                 role =3D USB_ROLE_HOST;
-> > -       else if (mode =3D=3D USB_DR_MODE_PERIPHERAL)
-> > +       else
-> >                 role =3D USB_ROLE_DEVICE;
-> >
-> > -       if (role !=3D USB_ROLE_NONE) {
-> > -               usb_role_switch_set_role(port->usb_role_sw, role);
-> > -               dev_dbg(&port->dev, "usb role default mode is %s", mode=
-s[mode]);
-> > -       }
-> > +       usb_role_switch_set_role(port->usb_role_sw, role);
-> > +       dev_dbg(&port->dev, "usb role default mode is %s", modes[mode])=
-;
-> >  }
-> >
-> >  static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *=
-usb2)
-> >
-> > ---
-> > base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
-> > change-id: 20250404-xusb-peripheral-c45b1637f33b
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
-> >
-> >
+> > > archs are set up in bl1 or bl2, which are not source available. I
+> > > could potentially hardcode things for myself in bl33, which is source
+> > > available, but the earlier stages could still overwrite any chosen
+> > > block depending on how carveouts are configured. But even then, that
+> > > will not change the behaviour of the vast majority of units that use =
+a
+> > > fully prebuilt boot stack direct from Nvidia. My intent here is for
+> > > pstore to work on such units without users needing to use a custom
+> > > bootloader.
+> > I understand your goal. What I still do not understand, why bootloader
+> > even bothers with ramoops carveout. It shouldn't and you should just
+> > ignore whatever bootloader provides, no?
 >
-> Friendly reminder about this patch.
+> Mmm, I actually don't have the answer to this. Ramoops carveout
+> handling was added to t186 and t194 in cboot for L4T r32.7.3, fairly
+> late in the life cycle. But it has always been in edk2 for t194 and
+> t234 afaik. I could hazard some guesses, but don't have any
+> documentation on why the decision was made. Maybe Thierry or Jonathan
+> could chime in on why this was done.
 >
-> Sincerely,
-> Aaron
 
-Friendly re-reminder about this series.
+Friendly reminder to the Tegra maintainers about this question.
 
 Sincerely,
 Aaron Kling
