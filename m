@@ -1,28 +1,28 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6190261390;
-	Mon, 21 Apr 2025 10:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C6A26156D;
+	Mon, 21 Apr 2025 10:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745230139; cv=fail; b=kNzHlcsSWFxyrHYeO/6YSa9Ve2HNCDGBraoHKPrF7J4GHs9a3KtnidXhmnPd3iAVAosiFdLiB/mkTbOnh4haTn9kNHK7E4zf5Q6m62lufSnLlPZqeikXCtQko86g5bqHodF2IxRhm3FIbmsLbD21t05ImvXweb4lhPNfiEDqn8Q=
+	t=1745230143; cv=fail; b=VfAHddcXtImHWz+Zwa84mOYwZVzkU2jly4JPHk+n34sq19tWYg67QiXrl/TbHYvxoOaxohNyfyFzmlRKCguiPnE0Ztbdx5VzKDo9dw8w2RZHzQsTYH8vW6pz4+BqU1VtkcV3nybkDTv8H0Ot0cXKDk7oytUsvrgXXmZ/8VRCNoo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745230139; c=relaxed/simple;
-	bh=r1Iq0N37h2NNJ+KyWXlAPUxl/haBcEmc15i+fEaiqZI=;
+	s=arc-20240116; t=1745230143; c=relaxed/simple;
+	bh=Yb/n3JY1Vojv2KvH67cZXPmsp/z/230dJiXVoLwGm0w=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b2ouQzETymLfqpXanYPmgFVzpiaaehtp2Lf9JKOuPLeYoVsMCinXla4RXQHMW5uBMyqCkx/kCVI04LQbk7s0WPo/b/GcTn9fNevLjZ4fsnCLbUy5L2eV/qrooVNzmxcMtClRVnKeIxPUdKQAr9I6OV1/2sKew7yYbmDtorv5Jbo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C5rqGgEk; arc=fail smtp.client-ip=40.107.94.49
+	 MIME-Version:Content-Type; b=Old6Qa6D9xpsbe9hPnptJF0pqNjzAT5DsGIKeI8SHfD7NI/QJiSYMmPF5qwGpq9CXTqufA3nj2UO7i2oSlPXIOQJ2k91+Ve/l0KFwn3YqHFc2hvANyiO3wDYKehEpL3b/Xg22lUckBqQLS/MlSfcj2TpyVeyf2WmqIEWztm1XoU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HkckL93O; arc=fail smtp.client-ip=40.107.93.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C5rqGgEk"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HkckL93O"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bztaeGkyBR5ENdOLCxqHnK49kSi+U9iFUmdrKQLnfrYSAEFX5ezGoeAsRGdwP9Lp0iJnI04vxTJmg35pwiYJA1Kd6xyYFR+we9OwuHYBHg4J3FfQ7gFNPbq9KifxgXH2CoZRbK0rKgVhmn6Xo1eOcj6cYi0UvfUZ+vMr/LWup/iU+n5x1dHYBSQHzDITi/Cjc2nc0siIEoQb9iyKM0cNqMy0WLDNQuKppcuBCTf4MCjLE1h/R9SCVZSW45gKv9N247hoZc18Bn8iQJPPSitiGL4vRpw3NmfDN9P+jl63iSNCrJzOtX8QiWoN7Yr/f60bJLGnw86EAVbx/i+uYEPVfQ==
+ b=my1I47M+SP3q10KjmmhcHhdF8r3LhsNHHY7x5/lkAPQeEu3rNH1Ec9XFszBPC8uNEGGZb1OuZi+/JgIVIj+RuLZzHfFpf47Fhqra7aqynFhznKpyJScIo8o2/IyXjjQhcLfeNN/qWd4AUzK1As2E8yvTIHI183GysoID0ViihBdD6wkA4NjAiEq1t/zNdcWmjweXlw/7kjUuJ3fAyBJSOjr2Nxs43SVHYHHCGzzcOUGZMRRKZhrnqOX4NVNjGMlDfpLLKjT38LNepBUragOMzyOc61/vPUHtJnscXBNhcNafGcg2G8oVOcmwht27FcZgxWTv3kGVXC1cvz0Zv3Fq8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U7SI/OPKWDN5kAkGzPndDgbIjpX2GUDHKWrSSRyhwoY=;
- b=d6nJ7flSdgOqQdWb3tSmoN0B35u6rdePwD2l9XMzX0/VXlnXGnbTlc5IKwQNsRhfkXrvuKDDthhs9d7CMHduNoe4N+noWmykBnV1yHSXSXeEOJAJS55aHwnCJgBO9uyrxHO2gW+1pYwfen4UDMP2ySeg/EjVVR/fIUMiWTnjHRnNXQ6+1goiHOKPcGmDjlEgRzn9Ui6mvV5WNYLe0eU+71JMVy5g0iosHlfmOcu2A8FRFl1NFOv1HsD93BKmoNT14mrCST9z2wCUo1WM7QGZqYlTOxiLyPKtPWhs9PnxfCc2lrk/d/WYxxXdcbxppnU4uM9y27CKX/EWF12RQoiMAA==
+ bh=338rOiqvn1SFHxi+tbPqBsLNhUaAYbEWD0BEUQ9Cxe4=;
+ b=wvV2Ni22ykOz6j1C6nLVZkSN5cVkUDPaKDekinBUmjhaWTmVumVhtzDNt7fwOF1RTgKy1S1NCzUDifa29koQqKLOcr5QETOTOcveS3fpBvpEPYCqfd5NDEh5CgvghUfIZ/vMR6z3kxw7dO3IcptPPg6Rz1CfKeJX1gPFVr/xZzlxkOc+ICoRW3JnwzCUd0uKE5cR6NXPlwCs5by9igk4Y88/2E3hHaD1x+7wBAcHHy5DVrk5ivv2UgSLc8qgivPEUH6rhzQR2c39TY7awhmkZlnyBoBnsxq4vfSuCPC4tfeUoJMvp+OpAI5Tr7u8XRVwIKL6XeJjfMEW1jj5xApFfw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U7SI/OPKWDN5kAkGzPndDgbIjpX2GUDHKWrSSRyhwoY=;
- b=C5rqGgEkJJflcHfq9Ka6E1SnAY9xvHGeexifZ1qZfzUzu/t2C38J/lkjLaPVHTvVLZmWQltxeo8sOgSv+ongVH3bPKC4HVWsVZn42or5t6g+2jjJuC9g4VHnIW6uZ/TFCvcAoa9OCB4EAd3/9M+3MwNtsGmbnH+XQhn30SImG+GP9WkpzCaWBioXW6RsC26EXq9DEE2sGplzxerJa/mupX92xsePMVj6YieosFmMCqgTI4dcMMGSNg5NQ7RU5DeQaMqNUhQi541tI4VO5nLA0v3ziJHK2FwDpkoJJEFN4G95RQIcpQa2UKIIcY1f72gZGVC28Me2zT4tY71NPlw99Q==
-Received: from SJ0PR13CA0062.namprd13.prod.outlook.com (2603:10b6:a03:2c4::7)
- by SJ2PR12MB8956.namprd12.prod.outlook.com (2603:10b6:a03:53a::6) with
+ bh=338rOiqvn1SFHxi+tbPqBsLNhUaAYbEWD0BEUQ9Cxe4=;
+ b=HkckL93OZ4/lmV91BTcgSe6+oXhDw0a8RHpquflIGr+WVo3c6S4rYjI1xjPiMhD/i2jHfjNzjgIWisfQWOp5hpFDHbe3I+XLjE6tfDoubnAxb6mRkJIyl0mUbtgUTRtJrbEsr3g3vCxKVBX7YEcoCQ81cG6oo6uU7s49hy+K3AB1CF+hIRlVsD157L43qtgyEaAogXReRaQox8BtNP2xipwSMB3PZLf9YwaErBqe0supR9ylV0UJU/Z1xFxhBLx5MttSZmbtRPxPWJwRq0s/u4CLMi+aVRpPhuXZQFBOcydhh/L4y6scZbtt66CyH2hZ6iQltErBy7/B2ISycmbp4Q==
+Received: from MW4PR03CA0049.namprd03.prod.outlook.com (2603:10b6:303:8e::24)
+ by PH7PR12MB6718.namprd12.prod.outlook.com (2603:10b6:510:1b1::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Mon, 21 Apr
- 2025 10:08:53 +0000
-Received: from SJ1PEPF000023CD.namprd02.prod.outlook.com
- (2603:10b6:a03:2c4:cafe::d5) by SJ0PR13CA0062.outlook.office365.com
- (2603:10b6:a03:2c4::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.25 via Frontend Transport; Mon,
- 21 Apr 2025 10:08:53 +0000
+ 2025 10:08:56 +0000
+Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
+ (2603:10b6:303:8e:cafe::5d) by MW4PR03CA0049.outlook.office365.com
+ (2603:10b6:303:8e::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Mon,
+ 21 Apr 2025 10:08:56 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -49,25 +49,25 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023CD.mail.protection.outlook.com (10.167.244.8) with Microsoft
+ SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Mon, 21 Apr 2025 10:08:53 +0000
+ 15.20.8655.12 via Frontend Transport; Mon, 21 Apr 2025 10:08:56 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Apr
- 2025 03:08:41 -0700
+ 2025 03:08:44 -0700
 Received: from robelin-Precision-3660.nvidia.com (10.126.231.35) by
  rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 21 Apr 2025 03:08:39 -0700
+ 15.2.1544.14; Mon, 21 Apr 2025 03:08:42 -0700
 From: Robert Lin <robelin@nvidia.com>
 To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
 	<jonathanh@nvidia.com>, <tglx@linutronix.de>, <pohsuns@nvidia.com>
 CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<sumitg@nvidia.com>, Robert Lin <robelin@nvidia.com>
-Subject: [PATCH v5 1/3] clocksource/drivers/timer-tegra186: add WDIOC_GETTIMELEFT support
-Date: Mon, 21 Apr 2025 18:08:19 +0800
-Message-ID: <20250421100821.2907217-2-robelin@nvidia.com>
+Subject: [PATCH v5 2/3] clocksource/drivers/timer-tegra186: fix watchdog self-pinging
+Date: Mon, 21 Apr 2025 18:08:20 +0800
+Message-ID: <20250421100821.2907217-3-robelin@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250421100821.2907217-1-robelin@nvidia.com>
 References: <20250421100821.2907217-1-robelin@nvidia.com>
@@ -83,162 +83,136 @@ X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CD:EE_|SJ2PR12MB8956:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60beaec7-8bd0-4e38-0915-08dd80bc853b
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|PH7PR12MB6718:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3eaefce5-d1f9-47b8-c32d-08dd80bc86f6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5vIX/iEQ/mV2wFjNNyqdS9jSdwhc6K+PqpJ8ICsEzm16Q2fa0qRjoaGREbLV?=
- =?us-ascii?Q?946/0H0seBwHWIao+IQKzNYqdLGWv3/xzcNS2vsomMxsY4g5FIhTvnX3HYgo?=
- =?us-ascii?Q?akewihc1mqB3F6/jfUPA74xJUBklknSe9zGmXUQrWY1yUnC929RVvZPqnMzN?=
- =?us-ascii?Q?1SlMumIViQ4XoQbTT4tQwmGNUVJetb+LZt2qG5XpK0KDwE4+Xq/jYK4vxBum?=
- =?us-ascii?Q?r4LOVclE1pVucNXJVJKIO9p4tpCV9SFxpfNnxZDzGUt/J1f7fO6S+c9SBg/h?=
- =?us-ascii?Q?kr7F7wZfaG8kcLlRt95XIYXN4fFnz8dwaQVXkRi16cAmR7dypD/ESilTb/+v?=
- =?us-ascii?Q?AtejracCCPazy2E4G0PG1Nt8P/GG6X6kuQSg3Anf4mUvAxXXMGNo7Do1QKvM?=
- =?us-ascii?Q?Kg6Z9qhRcduahZhUAbk3REQgDSnAzGl/WV6xqTdkO2v1lgtDZnJM7ZoONXSR?=
- =?us-ascii?Q?zOsUfEIpmoXoPdt9NWJICm0Hz5idU6IdQvajPgrEDRmCDZk1SYsnkWWekd0a?=
- =?us-ascii?Q?BJSFD9iCV31a2B50YG2fN9EKtjAgOyDNznpQf2Pe2XdTXnf5gTJqkvYzYTwX?=
- =?us-ascii?Q?l5+/zRoL7+qszXLaY/MzZN8qucPpS8z8JZzCCAwKQPjF+9qJkB0FrLedTP4P?=
- =?us-ascii?Q?efL0ljO8KMVmuBNpcdvWQOZPuqgyAbCwMpNwY1yEI5nsufHI2O0lsarp39lz?=
- =?us-ascii?Q?mScQCwSn+4sPgqDHTC9rxAerPHQ3z4sYlxcKGWq4OppM6Qrfqk4jErE434wO?=
- =?us-ascii?Q?hbZWUQCCNfoLTFR18PhPcW0rJNnndtEANp7D/hilsxcuLmrBy315I04VZ3jo?=
- =?us-ascii?Q?iV9PdXapXlUR9joT3ZAktYSH65NugsGUtaRk1gU2m9xRteQMhP8WWix2j/U1?=
- =?us-ascii?Q?L+tRD9yJTd+R6Qun/+/Ds2Mzb5RP+n4IOgsWsUJ1FGP8Z9bZW0exF26A9qOP?=
- =?us-ascii?Q?lBz0aqQgUyg4B1P10dxg0ztyDwby1OsT6dk2c/tT8gQLDGv0G7BZQadsTcDA?=
- =?us-ascii?Q?HIzZBDtXn+wC8ORoXlkcYSkaRzQQttsdT0tAjGPnRRmUWgrv475O0KNCKlwX?=
- =?us-ascii?Q?Umw1i6h/lvik39WFZ2BSTHh9mQvNJH8Zcc1aDPsgs4H3Jn/iyTMUkVCJCrvX?=
- =?us-ascii?Q?P0ld+H26AHa06AnK0xkIjisRIKdYnxrgE8SZF/rtfcCgqnN1T7NXoAA2zUFD?=
- =?us-ascii?Q?9d57jZ+x8S2byS0GrJxrB6es0l8bQ1dvWC/IGTFimK2Eg3660aJJQ2b32A55?=
- =?us-ascii?Q?BJNy9yOV0v608H1iQEei+JK5jAMMLW6LcX6pkjZp1SRN4Agjhxj7HX/xvy1F?=
- =?us-ascii?Q?UVHV6Hc6+aM/sFC1rnHzNSQsB9rqg6cWUr7GYhM7ve2aVY+ajBfy3/4k/t+4?=
- =?us-ascii?Q?V3uwJ7OvFwUeYWgddRyiBJD3wfXoFvLcaumQdwxePFbtRCvk0akUQYc9180P?=
- =?us-ascii?Q?VS2ktilzwrYnIgmRnuHEqL9rs/MAkw74fALQPI4WMNyq8p/J9rmDfHQZM801?=
- =?us-ascii?Q?11AUqVEtO6jU31A/OVS5kIsvrNaO1OGtnXdo?=
+	=?us-ascii?Q?cpe7gS9bqLCsQtopsRV7uH6sSZIVwO8E8h6+t7y+U1kJ70hcvupi3ZrGXQsg?=
+ =?us-ascii?Q?FuycCnsFxmOymgnTUJIZ5WTo+6GHZtRwogN0efU+DOFG+MateDZNDUKCg7MN?=
+ =?us-ascii?Q?hcogZNqM3pFO081Iv9F8G9uO5TfZdIimMoyh3YGGTPNTuQ16pW/qTJ3Rzv9Y?=
+ =?us-ascii?Q?fPcaqq+PXUln+UYJ5r/8E7FqUCu6zX46+ZRmSCeLScHwZAdzyWY65L8rDKJp?=
+ =?us-ascii?Q?j7NDYJaM0AZl+VvgBZinNQv2bn3QRB057JE3oDNAg/QVYfxwIUopNKwGYoE/?=
+ =?us-ascii?Q?9c5ITirBwMmOnViIOYah+5tOROE4jnoEnBd2rvD1juikmo56TRelEqDdk92Y?=
+ =?us-ascii?Q?iFsLEGxHIN/oM+n453Q+lnKXTNp+3J3r76QENld8yu+Jle62+dS8JaKxfzzA?=
+ =?us-ascii?Q?L/D76WBAgoz4u96MDz5LKJ8qt1lZbr35La5IlD501tjfpdQzD/ov1hRnmUG7?=
+ =?us-ascii?Q?TJnt5ntBCfm2r+Nsh4zE+XzhjrjSemYM2CI8Lvj6UxRbipzW/ShkDt/cxeZx?=
+ =?us-ascii?Q?9kdFq/r/AOW153FmTb8mTLNmBk/3g3NjZePH/hMDNv4nmLtnOtFhEChmC6WY?=
+ =?us-ascii?Q?u+0snFwKneBkqiHYCJTZ2J+PAfP6PVnwqC+voLvUKg3goZdYabBdKZ43RaIj?=
+ =?us-ascii?Q?BJNxoZo2zeImTYCSADwc4D5/YHuHJdntKb2UD3lbWQdz+BqLCmjXlyp/4wZM?=
+ =?us-ascii?Q?DB18r2dbYM119jpPg52IfF9vJM3smFNdSLv9kjhEDtWg8/glsFkSa0O/xkOX?=
+ =?us-ascii?Q?xh2iiYL01wvXQGUTy+S+Rbr1iweTU4/6d4OXeWBjGiyXVuQL8qUSmCwpk/g4?=
+ =?us-ascii?Q?iyt3v7v8h9z7EifUcqeZZOxiXQ3BkUs+Slvxht+R9jZ3TTrqQ10hC/3+q8EM?=
+ =?us-ascii?Q?h8tHZ00ufTPbzpfrRotArECV1Q6mOPG+AWXCFek0Mz1/lfe1Msvo/nPTIeYf?=
+ =?us-ascii?Q?P11HW0Gz8gFtcfpB8tIQBVlMlLj3J0tg/7v/x9txNTzijzQcrwWBlShg66DD?=
+ =?us-ascii?Q?KS5UgcnMsJDYC443NXNsODFij/ozhjDGxAVRKEPq/AQ0klcFlfmMrCvDBeZe?=
+ =?us-ascii?Q?GvGCe5PFgeAhvxOkEZN8rXzAfKdYYs/9PkvQJGWbgTNTM2XD4MEk0IJxuNdx?=
+ =?us-ascii?Q?05HPX6SWUhL1h5xluM8pfapB0tOvrDWUZXNiznxpkwfT+ErP7zCzH4k+Z5AK?=
+ =?us-ascii?Q?9+bgFAZzRTHkwwjTNu8Kk7hUnIw+E7AHazQTgWPeU/03EjXkM5MyFA09oufz?=
+ =?us-ascii?Q?TE5XuQl7oBa0zG31qsbfdXPCwqRE7HjgZTwXDs38AX0gFzuixDaEU1hoYUcD?=
+ =?us-ascii?Q?g+HBy7Pw6hTGyzjzk0FFX3gDQi6narFG7nD42hqUo6wMmH6e1cfLU0oBbKfe?=
+ =?us-ascii?Q?2xA0wwBQZadwuZMNHl5/SMsjz/UccMcQ+EFqo5JXkXQDPn/f/nlK/NcxWg0V?=
+ =?us-ascii?Q?tPeHSWh3dCTp29L/teZG/G9OY9+lBtNkakMj7qn3nYHk7J+8teKJcIIC4LT7?=
+ =?us-ascii?Q?/VsY6FtCEWxtObsggEyS2bRiHWONmR6kJi1v?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 10:08:53.2798
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 10:08:56.1728
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60beaec7-8bd0-4e38-0915-08dd80bc853b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3eaefce5-d1f9-47b8-c32d-08dd80bc86f6
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023CD.namprd02.prod.outlook.com
+	SJ1PEPF000023D0.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8956
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6718
 
 From: Pohsun Su <pohsuns@nvidia.com>
 
-This change adds support for WDIOC_GETTIMELEFT so userspace
-programs can get the number of seconds before system reset by
-the watchdog timer via ioctl.
+This change removes watchdog self-pinging behavior.
+
+The timer irq handler is triggered due to the 1st expiration,
+the handler disables and enables watchdog but also implicitly
+clears the expiration count so the count can only be 0 or 1.
+
+Since this watchdog supports opened, configured, or pinged by
+systemd, We remove this behavior or the watchdog may not bark
+when systemd crashes since the 5th expiration never comes.
 
 Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
 Signed-off-by: Robert Lin <robelin@nvidia.com>
 ---
- drivers/clocksource/timer-tegra186.c | 58 +++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-tegra186.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index ea742889ee06..56d08bf1b6b0 100644
+index 56d08bf1b6b0..4f06eb1ad309 100644
 --- a/drivers/clocksource/timer-tegra186.c
 +++ b/drivers/clocksource/timer-tegra186.c
-@@ -1,8 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
-+ * Copyright (c) 2019-2025 NVIDIA Corporation. All rights reserved.
-  */
+@@ -175,9 +175,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
+ 		value &= ~WDTCR_PERIOD_MASK;
+ 		value |= WDTCR_PERIOD(1);
  
-+#include <linux/bitfield.h>
- #include <linux/clocksource.h>
- #include <linux/module.h>
- #include <linux/interrupt.h>
-@@ -30,6 +31,7 @@
- 
- #define TMRSR 0x004
- #define  TMRSR_INTR_CLR BIT(30)
-+#define  TMRSR_PCV GENMASK(28, 0)
- 
- #define TMRCSSR 0x008
- #define  TMRCSSR_SRC_USEC (0 << 0)
-@@ -46,6 +48,9 @@
- #define  WDTCR_TIMER_SOURCE_MASK 0xf
- #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
- 
-+#define WDTSR 0x004
-+#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
-+
- #define WDTCMDR 0x008
- #define  WDTCMDR_DISABLE_COUNTER BIT(1)
- #define  WDTCMDR_START_COUNTER BIT(0)
-@@ -235,12 +240,63 @@ static int tegra186_wdt_set_timeout(struct watchdog_device *wdd,
- 	return 0;
+-		/* enable local interrupt for WDT petting */
+-		value |= WDTCR_LOCAL_INT_ENABLE;
+-
+ 		/* enable local FIQ and remote interrupt for debug dump */
+ 		if (0)
+ 			value |= WDTCR_REMOTE_INT_ENABLE |
+@@ -422,23 +419,10 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
+ 	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
  }
  
-+static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
-+{
-+	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
-+	u32 timeleft, expiration, val;
-+
-+	if (!watchdog_active(&wdt->base)) {
-+		/* return zero if the watchdog timer is not activated. */
-+		return 0;
-+	}
-+
-+	/*
-+	 * Reset occurs on the fifth expiration of the
-+	 * watchdog timer and so when the watchdog timer is configured,
-+	 * the actual value programmed into the counter is 1/5 of the
-+	 * timeout value. Once the counter reaches 0, expiration count
-+	 * will be increased by 1 and the down counter restarts.
-+	 * Hence to get the time left before system reset we must
-+	 * combine 2 parts:
-+	 * 1. value of the current down counter
-+	 * 2. (number of counter expirations remaining) * (timeout/5)
-+	 */
-+
-+	/* Get the current number of counter expirations. Should be a
-+	 * value between 0 and 4
-+	 */
-+	val = readl_relaxed(wdt->regs + WDTSR);
-+	expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, val);
-+	if (WARN_ON(expiration > 4))
-+             return 0;
-+
-+	/* Get the current counter value in microsecond.
-+	 */
-+	val = readl_relaxed(wdt->tmr->regs + TMRSR);
-+	timeleft = FIELD_GET(TMRSR_PCV, val);
-+
-+	/*
-+	 * Calculate the time remaining by adding the time for the
-+	 * counter value to the time of the counter expirations that
-+	 * remain. Do the multiplication first on purpose just to keep
-+	 * the precision due to the integer division.
-+	 */
-+	timeleft += wdt->base.timeout * (4 - expiration) / 5;
-+	/*
-+	 * Convert the current counter value to seconds,
-+	 * rounding up to the nearest second.
-+	 */
-+	timeleft = (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
-+	return timeleft;
-+}
-+
- static const struct watchdog_ops tegra186_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = tegra186_wdt_start,
- 	.stop = tegra186_wdt_stop,
- 	.ping = tegra186_wdt_ping,
- 	.set_timeout = tegra186_wdt_set_timeout,
-+	.get_timeleft = tegra186_wdt_get_timeleft,
- };
+-static irqreturn_t tegra186_timer_irq(int irq, void *data)
+-{
+-	struct tegra186_timer *tegra = data;
+-
+-	if (watchdog_active(&tegra->wdt->base)) {
+-		tegra186_wdt_disable(tegra->wdt);
+-		tegra186_wdt_enable(tegra->wdt);
+-	}
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static int tegra186_timer_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct tegra186_timer *tegra;
+-	unsigned int irq;
+ 	int err;
  
- static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *tegra,
+ 	tegra = devm_kzalloc(dev, sizeof(*tegra), GFP_KERNEL);
+@@ -457,8 +441,6 @@ static int tegra186_timer_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		return err;
+ 
+-	irq = err;
+-
+ 	/* create a watchdog using a preconfigured timer */
+ 	tegra->wdt = tegra186_wdt_create(tegra, 0);
+ 	if (IS_ERR(tegra->wdt)) {
+@@ -485,17 +467,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
+ 		goto unregister_osc;
+ 	}
+ 
+-	err = devm_request_irq(dev, irq, tegra186_timer_irq, 0,
+-			       "tegra186-timer", tegra);
+-	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ#%u: %d\n", irq, err);
+-		goto unregister_usec;
+-	}
+-
+ 	return 0;
+ 
+-unregister_usec:
+-	clocksource_unregister(&tegra->usec);
+ unregister_osc:
+ 	clocksource_unregister(&tegra->osc);
+ unregister_tsc:
 -- 
 2.34.1
 
