@@ -1,106 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B698F2561B4;
-	Mon, 21 Apr 2025 02:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E99A2AEE9
+	for <linux-tegra@vger.kernel.org>; Mon, 21 Apr 2025 05:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745204359; cv=none; b=vE3s9aJ5KvmAYzWuIOvo8t50GvnZEgop4EZ5FA6MpRkoUknadxBn2piZXxwcaYBslMvIq/eguzHS7/a6GksLhhP3uv8LM74zl7oIkZpc6rBMYI5wZIYES6chjbp/ZBDc4yc82f+PuZi9QixcRtYo7IAKQQkdKmCfDQx+q/NzTg4=
+	t=1745214297; cv=none; b=DV0SmnM/kRS8JkYk2zo1SgUwL4j77fDDMoy8vD6vFOtzwPAG7+BV1FNbRXZgYxeib9NnU6xEXANq/6Xbyf+HDYn1JbqwdvJsQyspsvDuwxjGJzt2nu98Qrbpw9XMLPmbJlWqb8Z4Nnza7orUw1z0LzU3YA/5Ij2jvHPWWeszPkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745204359; c=relaxed/simple;
-	bh=IhphpY0o4i7Nl1j4CbYkOEF3b1+ONoH+eN1oOCIVXZk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E9XUivujYsqrVQd8iqNnnAi+HZU4VgkUfDoD6xwcdllFsarzYiwYvmJL4ZJwyg7tWD9Kyg4odwhVCy+RPLfqvCj9Trt2iNqbTkjdB60e6ngDm22uBEfH9W0+zqS3lS1M7Lw5CtGm2oENQSdWfxANl4he5hc0m0qz5xKBVTwr0WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i674J8zC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745214297; c=relaxed/simple;
+	bh=eBG1slbqTRw8vsbgYrWTwEorbArUGPZrqx8A3p4gBj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZShmnOn5YMO2ryGV2b6LEgkjiC6XOi52/XtwBCyVCzqrkphkHrG2eiPYMA98/vl/RCCNKvtC/HVBLBVNLKKPYO6383d7VTQKOofWGCggA/ss6IhaIH313PtaAwnBn65K9flp+9/U+QryGhXsIeh/Av2Lhm+3uH4H7Xwg9hLv48I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v977lrKk; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i674J8zC"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1B26DC4CEEE;
-	Mon, 21 Apr 2025 02:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745204359;
-	bh=IhphpY0o4i7Nl1j4CbYkOEF3b1+ONoH+eN1oOCIVXZk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=i674J8zCxQDFYskdIciIt1zH0XL9L2wDequTMQyDFFq1a1ZU7jC0tTPq8xOdQIGQr
-	 uDUoTmp7gxp1skM6zdbxOQ3GRCzgQSHTBK1TVHCYl+Ro+ZqxmDXAPJpgrgKK9FvZiz
-	 bQEXdSISL1sJg9aPkQvONQ2mZwprJRrSD6Tj6oKV59G+bvnKBBiqWdOlb3pYnPwo8/
-	 geAH8nEjEOxBXEfFC9iZm8ojCaZq8AdczoVMYGU1kPlChD+Ie8f7rz/QDsuqu5/eGS
-	 QMRF+0Alvzn+b/58wO1dVLvBWEYh0GyKtMmEldevz3ukO+WWpTuxXFf47p7+amlai/
-	 0hWAqvxsDEM+A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA00C369D6;
-	Mon, 21 Apr 2025 02:59:19 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 20 Apr 2025 21:59:06 -0500
-Subject: [PATCH 2/2] PCI: tegra: Allow building as a module
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v977lrKk"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224019ad9edso52390405ad.1
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Apr 2025 22:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745214295; x=1745819095; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IyOTo7rnTJ1HQMNMgNbpA3SfQ6Ks6YJstKsXKdKshu8=;
+        b=v977lrKk8VNZnHgjNCWgZcKvluYqucgQMqsBUL9hoHL74ez4tx98oJCsDI63kFTpDO
+         ctgAGV1cdhyEWYlBGSsgM08ycWsKY9uZwDL5JjyBBaCAEmwLQkBSoNCumeyeVvW6XLBe
+         QIzp3whntcplHQPwhS+IuJVwQ9gyjqXHfHI8e4rTHbTU4q7NV6w4aPWQQvUwOp41gSdX
+         zeWzwBwqwc4G0K2XlPZI3jGPfzTjTT8Hv/2rl9V23Ah767XNZuztZncJuzD49Te5Q9p2
+         gSF5ccjRbhUnxd43S2noCBb52fNaOXFDJSVuedkzQUcu1UNtIcF1hvRn+JUyAy86XqIM
+         ldiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745214295; x=1745819095;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IyOTo7rnTJ1HQMNMgNbpA3SfQ6Ks6YJstKsXKdKshu8=;
+        b=LteJ69+gbH9+aoq3VIIzW7ZO4KpCprga9AgOpq39oMcDH7ikQiQ4+hcBEwXAnDVWGx
+         hdkG7E0h94BAnikMBbF2/4TIBPkFRMXFwggM1vp2IMhM64D1Kdld+sPFs1zIn5PFDYla
+         RZjuxa2ZLbSTbxkVLJVtgVL08PNzqgPQ7ImUShuP4xTmg0v1Tg43RVGqPahJtFtOinPt
+         YFRry2+vJglf0AZZx+HnRom9GoWGTHRJgpaH4fz8rtpMSE5qx5f0mCh1UWUk0UgdZXXZ
+         1eCf5BdqSCgmg+N4ZG2nZo+5AmnFOss2WJNYRRqNRqSh57kgJxmsvNpFgVuEdkeuAnlg
+         043A==
+X-Forwarded-Encrypted: i=1; AJvYcCXbsON0dVL3jQ3otXYXQj8hqVMpVBfCfGdmWhMCCWBdKk5GqJOPI52hwSd7x3MDrfLlukm3dLsra0En/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRGOSlndv4hduyNWQ87YmBm/Q3r+A/5uH1NErqarMPfQGVtRyS
+	FRtkUY7sXW8RObfRDyOWw57sbPCNOjRDJA6UO2c66IJRy1FoiPlTl5gP/DdHuyI=
+X-Gm-Gg: ASbGncvX2QoQf3fHnsIISWerKK1RC9PwrhgIJUtjO9y8irzZP438cYiZGzFmcoyDd70
+	kJiFe195DxhKrFXASr6relST0Ssjj2aoPn9i9fDFviw5mxmA9w+3+m9dbgUTk/iKcjkt3R7yuZL
+	tzl7Uup1fGSuK1TaVt7gUPh5mIq9ShXjKA36pDfZhWdtkdFZ/hLZWH4H1RshUo/2PNIKYl1Meop
+	ONJujRuGedvto7G0HxqEB4XthFmevZixD0f7X94li5LL5nmlsvMw6PbHyXFEUHE484yMJS6XS49
+	wcWWH5oADE7UkxmRqPQjo0nXMLJRf724a/RXFLmxiA==
+X-Google-Smtp-Source: AGHT+IFhnaa0z+ayVrcmvAvIxkBt8wrJ3nfuin/kbU7E0Vx+ZE9g1E7PEVYhPkwAR5/xTaisUcIpCA==
+X-Received: by 2002:a17:903:2ca:b0:224:ff0:4360 with SMTP id d9443c01a7336-22c53654c0fmr157873595ad.53.1745214295413;
+        Sun, 20 Apr 2025 22:44:55 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdaca6sm57336995ad.9.2025.04.20.22.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Apr 2025 22:44:54 -0700 (PDT)
+Date: Mon, 21 Apr 2025 11:14:52 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: webgeek1234@gmail.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] cpufreq: Export disable_cpufreq()
+Message-ID: <20250421054452.fdlrrhtsimyucbup@vireshk-i7>
+References: <20250420-tegra124-cpufreq-v1-0-0a47fe126091@gmail.com>
+ <20250420-tegra124-cpufreq-v1-1-0a47fe126091@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com>
-References: <20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com>
-In-Reply-To: <20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745204358; l=1330;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=wWrPTvwS8jQlrXtSz5cnnPOard6fs6fh1GhK5NDgNmg=;
- b=8J8tPTGbIDW4YOXuDJAJ/wlyLdpEM1EeTtjZPwF65RK2+uyH0nkKpYQvXP6gbatkV/CONBrRA
- n9uf9hDTxFRBjxFEMCiBqcQbyS1MaVzFb2dT8x3MNUniublfOF/gMAi
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250420-tegra124-cpufreq-v1-1-0a47fe126091@gmail.com>
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On 20-04-25, 15:42, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> This is used by the tegra124-cpufreq driver.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 0cf5a320bb5e864709b259249fb1af8bfbc0b04b..78cddc78ee98630f99ccc332c64c94f437297177 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -109,6 +109,7 @@ void disable_cpufreq(void)
+>  {
+>  	off = 1;
+>  }
+> +EXPORT_SYMBOL_GPL(disable_cpufreq);
+>  static DEFINE_MUTEX(cpufreq_governor_mutex);
+>  
+>  bool have_governor_per_policy(void)
 
-The driver works fine as a module, so allow building as such.
+I didn't realize earlier that tegra124 uses this call directly. I
+think this call was rather meant for other parts of the kernel
+(non-cpufreq drivers) to disable the frequency switching. It may not
+fit really well here.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/pci/controller/Kconfig     | 2 +-
- drivers/pci/controller/pci-tegra.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 9800b768105402d6dd1ba4b134c2ec23da6e4201..a9164dd2eccaead5ae9348c24a5ad75fcb40f507 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -224,7 +224,7 @@ config PCI_HYPERV_INTERFACE
- 	  driver.
- 
- config PCI_TEGRA
--	bool "NVIDIA Tegra PCIe controller"
-+	tristate "NVIDIA Tegra PCIe controller"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on PCI_MSI
- 	help
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index b3cdbc5927de3742161310610dc5dcb836f5dd69..c260842695f2e983ae48fd52b43f62dbb9fb5dd3 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2803,3 +2803,6 @@ static struct platform_driver tegra_pcie_driver = {
- 	.remove = tegra_pcie_remove,
- };
- module_platform_driver(tegra_pcie_driver);
-+MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-+MODULE_DESCRIPTION("NVIDIA PCI host controller driver");
-+MODULE_LICENSE("GPL");
+Instead what Tegra's driver could do is remove cpufreq_dt_pdev, which
+shall lead to unregistering the cpufreq driver completely.
 
 -- 
-2.48.1
-
-
+viresh
