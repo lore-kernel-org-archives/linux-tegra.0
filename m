@@ -1,76 +1,76 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2065.outbound.protection.outlook.com [40.107.95.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3411F92A;
-	Tue, 22 Apr 2025 07:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B71023A982;
+	Tue, 22 Apr 2025 07:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745306928; cv=fail; b=Gb334pILWNkalXuPa8zR3IXJy+4DmdjkpsjhP+D0JPJoDOxI+zePCmkljewexJuq3Ec36x+y6LchjEo1dA0gqnZr+dKj+ABFVC7g5FZPHKLxyjTydKX2RMkkIMZ2G7QU53YFCEI9oEKlOmLOHOAlCr1wNcZ4wrTTS8ZHbQx7GYU=
+	t=1745306930; cv=fail; b=aT8ce2yeIJ7X29RecMBEQpYV+B21PZMJXnve6Q9kOy0gnp3y7HnWCXWQKukJJ/ctm5JbnVBY+0iuZ6uxVULVe7OXd8OdHc6IFwe1RFVU2/wclC3vEwQ7Yo9Y+jYCEn/77DguFaYInnBYcol+BdLTol2Ic07nYR6JETfLsA56Q5s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745306928; c=relaxed/simple;
-	bh=bSdqxctK09d8IR3fggIeb2jBcnWQs+FAVOFPL2xQE1U=;
+	s=arc-20240116; t=1745306930; c=relaxed/simple;
+	bh=q2oDgiwaQj/sy93x0RGxXq5mZxl/mi5jNTxIKok18Hw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fj+SqO631z6rd6EHxsb1bYI0MwEhPXFyk4waf4R5Q3hU3/PMkFNt5plT82xw4T+0Csi7kiS0R8RsxJ1V19bqgCL9yfYT1nhFJ84DVmJZ+khxwCJ0gaIBWw85NWJaQcbXOwkd4wO79/DNwbXxtTyC111JaFGNvg/trjPhKQRQ1zI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HiWPrmwK; arc=fail smtp.client-ip=40.107.92.69
+	 MIME-Version:Content-Type; b=oA/f5G+gKBlVQ4XKwiBjNQglCuFNcOX0zmJfeQoTkNw3nYQdfdcHh7aOGkrKMUYCvX8S+fqhzo9a9CGvttwLWjhu9FhH3NZ7gxo5LuWvY75gkKL4/b5W4qZvj3NS/3vIRYTlj/jDTgXQVj2wWOnBDmmlmR5fubt0I8K3siDoaRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qfCDII82; arc=fail smtp.client-ip=40.107.95.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HiWPrmwK"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qfCDII82"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BYN2cdwk3JuN74s4HJIYiVwsxbrT7McTH1JlW/g5+VSn04Iq7hjF67mCRapgtljelL/Hv8i4m+pA46q06ZeEdlmcYibSPTG3ElmyUGeWUfhphTS6VbnZAF5lekFQ0a8YUkU1Uzx5yJ7rCuEtfVyjFa1nQWBmtHIVLJk3p/CDi+alJ8qUfJSCrNiYcay5dT0uGqiwPLAgIsHWkg/xvqaLAqKQyUoil5Vw4eDlIt3q0K9GvU/UfhI9PA8loMe3rr3bzdkJspM0pq1DkZSjs+tNCo1Ayyk596csWd6SiGJNXlYbup49I/BF9kJ3y4Qq6ZRgYGcRu+I6LMclc7vmHGdMpw==
+ b=xI9j2TU8kpI0T8Y2MAZwrpuzfX9yLW3xL6pnOo/x2OCRV/FE/6vYC9I3r2lpNHCzOJBpRbep/2BWkSwIZs8Uvd3TX3l4T7N2T+IezPUPPJLVE3Uj/Ct0oiz0K18eegWDCVtUq3xOXRJD1s1THqhnfeLZh7tXUm8Hb4RUeuHxEZSUOr65DPVNHd/oP9ppLxH6FKlKV5c1LKex6Xg60jv8D9gcb0tx7lIZPDAT7KgyY+yUeaY9o3Cnrchupe0bI/LvBFKRhpPMh9eOYDL6pQsWuEae2kkp+851nQsnUeLynu8xpjs1MQ97+ZFzL+pzOSH2yNiTH8ryYRjP4o8vc0ZVPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xs1+7/aKc/9fBgWTLn5YfUUQafY54KHXc1O71vqvswM=;
- b=Dfgyekvz7FbrOZbWpzgTaax1jSRRya7o5/bfDjja6hZ6SpgWfojcbhV0P959ipBYKNixgvJNAsvQtxBnvXxNXTOuNPU3w0JwTzsll8Zqr03Q8mDkK1rwThzPaS2COu+5TVFiSKigszJESgv1s5K7Tz6AM1lUNuVVJu6qgfSPVTUjIjOma0JHP34cmdzS/BeCBFQkBQ9Y70yZVWHSyAtqArFdMXGT26S7H69jK80u1C/VZOzZ94cJGlVTRoytVh1nVnK9zN04NIr0hfbhtxejzAdXPHgfThzktSkUuYzLhdqw6m+cNyl3Hk9OTCuu8uP4Y+DZuouWVVAMUIGQJydqGQ==
+ bh=ck58qZIGbhj4Drsn8WWOT7IDvl3FtfYND3bv8RDeS7k=;
+ b=mty6XLTOVYrBfyIQqQWtF8yB1sDF2aexESM3VoxIRaj6kFLrTBo2a4wKuRa2p4hcXPZZZXDR5LFOGqHh097nugGu1M7JJTh+mxyO5JW3zH7ST1XKRPyupDV/xuUwqCXS8zzPDwqFBAwRgFOYXgZ7A88djnx6xSmVI45JQk9CnlbOb6ZBr+c5HvNwMMGl+M70YJlr3RMXxnKuhiIgLm3ywYkAPWOGNPmbA7Rdgen5JbiTHG1xoTB9ZGI6dF8NWtuHU5yfV/LfsNLNH9cdPt8CHEVl6kWWvPEq2HMA9+QtJHyaEgp4Ez+oMQEGmD3s65LmLz3+M8z6AdoKO94GOLnyrQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xs1+7/aKc/9fBgWTLn5YfUUQafY54KHXc1O71vqvswM=;
- b=HiWPrmwK6HgxTNUArBQVdpjwPOuuDdr1y5rrDpVz/uezkM+5G5ZN4PJtefzGw0aGWs6Z9NL3lo3+J7hO2B9qTPfLq3/I6ePHsWnNOf78Vsqx0wM+llIbCK4rThSPAZZt2Xj76htZPB7VMjkVPkoppTH31lJjX5s6sGUQuapMY8fssEmzBLeqw3EqhZNkV5citZWly/zZ5/HBM2EKPfCaIwiDbAj0ZllfakVWSsWsyekNEQmBcOvSw75I/Hui6mme2dChaZooA9WUnw/m5tlJqTbyApLhKc5Z4R6nf5fqVojXlqoE65TwoxCtl5VjFnodH4Z+fURo3LBc2Uo9OxXKNA==
-Received: from CH0PR04CA0031.namprd04.prod.outlook.com (2603:10b6:610:77::6)
- by SA5PPF8BD1FB094.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d3) with
+ bh=ck58qZIGbhj4Drsn8WWOT7IDvl3FtfYND3bv8RDeS7k=;
+ b=qfCDII82Z6jV3vgJOrr5zdE81HZrjbsjgv+3J4lkJCd00jcuC9eSBqv8UhF5/9GEX3TIiuN/pkNzLVCoZsTYKI7QRiQ8TRG33z9mO/6VrTfDt1Mq+DNgDdVEw9KSZIQcPPL1UEffvxcqNWhXqbYXCyOosQox2NclQFeLQ7MkHnJNxrOtQFv740OYySYo9DeA5utHf27HiBBwJyBPvE+clnLPNSLIvMjZMX8lfTFFe+aowAykbdQt2SJW/xP85SW+hcyPeOwQ43t+e9Od5sZ5MCeA/7z9C4VeoA/SpTyRIVWYeqnm4UZIu90y0lAbGaCIrzgZY76Nh5DYU6wO4J102A==
+Received: from SJ0PR13CA0006.namprd13.prod.outlook.com (2603:10b6:a03:2c0::11)
+ by CY8PR12MB7706.namprd12.prod.outlook.com (2603:10b6:930:85::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Tue, 22 Apr
- 2025 07:28:41 +0000
-Received: from DS3PEPF0000C37A.namprd04.prod.outlook.com
- (2603:10b6:610:77:cafe::75) by CH0PR04CA0031.outlook.office365.com
- (2603:10b6:610:77::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Tue,
- 22 Apr 2025 07:28:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.34; Tue, 22 Apr
+ 2025 07:28:45 +0000
+Received: from SJ1PEPF00001CE9.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c0:cafe::89) by SJ0PR13CA0006.outlook.office365.com
+ (2603:10b6:a03:2c0::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.33 via Frontend Transport; Tue,
+ 22 Apr 2025 07:28:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS3PEPF0000C37A.mail.protection.outlook.com (10.167.23.4) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 07:28:41 +0000
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00001CE9.mail.protection.outlook.com (10.167.242.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 07:28:44 +0000
 Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Apr
- 2025 00:28:24 -0700
+ 2025 00:28:30 -0700
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 22 Apr
- 2025 00:28:24 -0700
+ 2025 00:28:29 -0700
 Received: from build-sheetal-bionic-20250305.nvidia.com (10.127.8.13) by
  mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via
- Frontend Transport; Tue, 22 Apr 2025 00:28:24 -0700
+ Frontend Transport; Tue, 22 Apr 2025 00:28:29 -0700
 From: "Sheetal ." <sheetal@nvidia.com>
 To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
 CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<jonathanh@nvidia.com>, <thierry.reding@gmail.com>, <mkumard@nvidia.com>,
 	<spujar@nvidia.com>, Sheetal <sheetal@nvidia.com>
-Subject: [PATCH 01/10] dt-bindings: ASoC: Document Tegra264 APE support
-Date: Tue, 22 Apr 2025 07:27:56 +0000
-Message-ID: <20250422072805.501152-2-sheetal@nvidia.com>
+Subject: [PATCH 02/10] ASoC: tegra: CIF: Add Tegra264 support
+Date: Tue, 22 Apr 2025 07:27:57 +0000
+Message-ID: <20250422072805.501152-3-sheetal@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250422072805.501152-1-sheetal@nvidia.com>
 References: <20250422072805.501152-1-sheetal@nvidia.com>
@@ -84,292 +84,116 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37A:EE_|SA5PPF8BD1FB094:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d374db0-ea77-4be2-4f84-08dd816f4e5e
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE9:EE_|CY8PR12MB7706:EE_
+X-MS-Office365-Filtering-Correlation-Id: 473430e4-b0b5-4fbe-bc72-08dd816f505c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oJljXdkzeDo0E2eyQWLJ6YCEIa01VsW57MZI8f84wcv1GqAMVmEltWP3di6U?=
- =?us-ascii?Q?W8UBbKmh0U5myRmJvh4frcYIfALE2uzSq264FFyPTFxoS0J1WL8bz7qdtVOi?=
- =?us-ascii?Q?rDr3gTWFpOYcN5RrI03SoZmEFqxLnlJWIX9+LsLCAlRXMI9oqV2hqxRZ/lng?=
- =?us-ascii?Q?sX1jf6z0K/w5ZTzs9+YSTrAUBA4l2xGzcNYWkDGoo4UwhiFQVW5IVcjS+OzS?=
- =?us-ascii?Q?/lN179yXq8AbClrLmwHqUG438Dz+ZLu33ezEdjvV6OTrdrWIjKhXMjYQ6Jkb?=
- =?us-ascii?Q?c1yOjYylV8s4OguJWQIkgOYpz0IxqpOj0+Af4xycoezoSauttzAV/3ScSoDr?=
- =?us-ascii?Q?I1FdAXtzbspkY5rH4DLxRqLuLppI4j6D92H7gU9CxMb+2rpghGHIdmrxlFrf?=
- =?us-ascii?Q?0svocGIKy4e2ugQhyIINauY30cD3h5csRXzocndk475AHOIwgEsNFZXupUtF?=
- =?us-ascii?Q?3KgzxFjaRWXboqIPx1sxVSGAG6i3pTXNXjymANNmxHTL8DySbXqbjSxraUuw?=
- =?us-ascii?Q?l1mWVAgO2Xmfi9Dw3dVLXCj5foeh9MyhtRp6d+ssrPB3O118QW6imEs7vrtJ?=
- =?us-ascii?Q?QuF526UdbUCjSlPNa4u1SpB30nnt8HAfOOZlRp2rBzdEoz4m+k7l0bOz/Xcq?=
- =?us-ascii?Q?gzlHRsisD1uwY2gk4UzAR8ziMV5W2MUTnnCKntqYfhC+ZluWT5PWbzuv3H3m?=
- =?us-ascii?Q?lUg5ebgGlV+pq+MAI3vpi5Dln9og3YNpKf13ne7BFdr0WzSR8xkCDbJll8qS?=
- =?us-ascii?Q?R6hd18aaX7pD+2u2Hg0afB5ArRebk+CUg+ZU5Y6n1ZbDIa5kiTAMbnhr4y2K?=
- =?us-ascii?Q?yjA2VklQfQ21coMHaRgdKbKYc9m68fOuYU7gj0fHvapagHmN85we6hMeusVx?=
- =?us-ascii?Q?47jIuDR9SxHLiGreL9mFVIp28H9GH9JqODkEUqXoT1JwjDxH7aGHDXiY5AD1?=
- =?us-ascii?Q?FpWA30f/EtMS6IJhBCCYpyR1RVDGnU8FLorXUIsI4Hz5rr5YtYKWYglQr4GV?=
- =?us-ascii?Q?2fUIky6ZPUxqMsgu7yHts6GeZok/P+broKfd02iRhavdVCv7uHDtCRO0SdY6?=
- =?us-ascii?Q?qhIlKyYf1x6CfuBo1dEMjDkmQwlVgja0rT/Cy6/GmWs57nXfG9cPYQQtbse8?=
- =?us-ascii?Q?jfGa7/S/E9Nr94bPCC5KI+hqHDtw7oajm4BGEz7e+08x6SVyaxlrdfBq4bRW?=
- =?us-ascii?Q?T+TBZo9eZPwy8PaxPpbqTpc+4f8EkM7A64pxRHXIIbCSSBm1Icr+6NuYWiD6?=
- =?us-ascii?Q?i2VBr6N499QGox9p5aWIEUhV4m9+SR06wJGfknsEVmhhIEz1chE6Psb0wJfD?=
- =?us-ascii?Q?/mVKvoRvYmxO3qxBkQ1S+bSTnjKnw34szcAjhts1LOSddMJaW5+0UKtVmPmZ?=
- =?us-ascii?Q?oO6MjIe7F6x66GGPvy4xQDaaTPN8QczZacD9phEvPwrr9AJYn3BS1MosL+Wm?=
- =?us-ascii?Q?0cCg0zU8TnYh+Q4KG8E8RWKqqAMgsu5y9DJvetVgX1FEvVuyOEJlLAwGHR7D?=
- =?us-ascii?Q?4yR3M2nNRbdB+wPI0cPr4L6zfrsrlfMYW8eI?=
+	=?us-ascii?Q?37SK863CZaDEb7wyAVa8tBQuClvsUhfbdkEyQMVz4oU9LojK+xCHcChhejFp?=
+ =?us-ascii?Q?GopBbj5K2+iauNwTOk1dlLj+2TARidIKZdnBtDKSPFXJFZsxWnjUco8LIwLo?=
+ =?us-ascii?Q?Md4HG2ugQVL1Ev7Oe8K+Gdln22KGtCBndFQEMxLiIHZxRCDrCQ8+10mikK/h?=
+ =?us-ascii?Q?jakDcR9KeOwxgn5GT6xgFOJOpbPxVdCO1LVpLhwmU0SqLsufpJMSuIVTp3Kg?=
+ =?us-ascii?Q?YvY4hz1TiBkKWq+jiiSR8PCgEu5dJDwPHbSshlAv9CfbgtYTdvTR9d9ATaOE?=
+ =?us-ascii?Q?jXVJjnW43w0fuiuDk05cTatl3oS9vMEZj/nI62q4Gc5AAQlIWklF1gUW9ch3?=
+ =?us-ascii?Q?+gvhGb4ppfFKqDHBCgvNKtZaJ+fiTKXDCFevsGnlnqBWkr2tZjLIoHiCr9bv?=
+ =?us-ascii?Q?bmmpp2kacq+Vrn7omlbcIyKxyeM998VGeT9fIQxWU+yQIegkkildMi4WHf6n?=
+ =?us-ascii?Q?wBcaF15gcH/dKuuVgZ0I9svxua38lCJbSB30HZfOi5eQqU4FoaLrEo40yE4W?=
+ =?us-ascii?Q?0LWxqySlyzKD2ARAQPmV7PYXZGsiLogQmpvtIOD1QkG+PRgOcqQ5PwpH1/Ka?=
+ =?us-ascii?Q?l/3CzCdCDP33Q6QTuBA9qNh+8YP72nrvu5gYgJ9Dm+ccafimyjNxq5/cD+ga?=
+ =?us-ascii?Q?4OdlCV8UhQ1R7ramcaWKEGQUJFWDRE+n6IiZJSt9T7MVQaQkCdHDLIlzPfmu?=
+ =?us-ascii?Q?F+x7GMcwLUTKvlJBbkQtoXe2CBmWP6MgJNkvlSxIoIDXl4I1NmWz5gdJ6Kvm?=
+ =?us-ascii?Q?yaApVhXcpQFJWAhmeWbLQjTGsH9O8N3JICHMeygyw1bpioZpkjy1pKGn7A8a?=
+ =?us-ascii?Q?tpjsdJpezBVDrK0BumD6oE5m4W/89EPJ+6yh6VPlvZkF0rxSqsgbRv9GKhmu?=
+ =?us-ascii?Q?BI8jvlmxoeZOqrbsAwVmHce4kA6G2L0ywKYUsnsSPCFZqkhUy7p960qkBJZj?=
+ =?us-ascii?Q?OP+HTyBf/htvgufNwm/msYEk1HDqtr6VuE+G/3nSTl52XISeKQ5bfgaoU3VK?=
+ =?us-ascii?Q?Nivea797OuXuk2lhjnh0sZBed4tspyZx7f3lXP+IKc5OLOsha/LO6hBOWewD?=
+ =?us-ascii?Q?9AL+ILzUMESrkoigrCEij9gQgc2+rbgBPVG1akr6UDuC2mupve6x6+0cThL/?=
+ =?us-ascii?Q?TCuemTAvURGASlawnh60cQ89EzqirQYEmvA/7t9b/kHZoOo1uB4JcmiKaLcY?=
+ =?us-ascii?Q?2Vohpe3vXNBoQS1S4HXquzq7k2T1YyRBcQZnJGXb9p18sOklor198MeqLa7V?=
+ =?us-ascii?Q?p176M8fVRX9mki+A+iY+sS92onPdhyLEvPANvINf90OHM304w5L4ThbwaFJd?=
+ =?us-ascii?Q?yghdJXoQYBi/R7ZS7KUacFJl76/3rGiyFop/YA7vdnYDKKdRIjlLFbg+H3LM?=
+ =?us-ascii?Q?Xbc8tYGncyWZVPD816B3KRApEL3mIPEEG4FXWr4uPWEK7RZE7ntNhNorD1pJ?=
+ =?us-ascii?Q?if9LeoCe2DZwpN50g7v/82Bp/RYBHpqYnrU5CS4cNueqgAx9Wjnfh8O13h9Y?=
+ =?us-ascii?Q?cp7IVswtsBd7DwUSVm4RoBWaSnkb6AE6MGV1?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 07:28:41.0916
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 07:28:44.4836
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d374db0-ea77-4be2-4f84-08dd816f4e5e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 473430e4-b0b5-4fbe-bc72-08dd816f505c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37A.namprd04.prod.outlook.com
+	SJ1PEPF00001CE9.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF8BD1FB094
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7706
 
 From: Sheetal <sheetal@nvidia.com>
 
-Add Tegra264 compatible strings to APE subsystem device bindings:
-- audio-graph-card: Due to different PLL clock rate.
-- admaif: Due to 32 channels supported and register offset changes.
-- i2s: Due to 32 channels supported and register offset changes.
-- amx/adx: Due to 32 channels supported and register offset changes.
-- asrc: Due to different ARAM address.
-- ahub: Due to AHUB IPs number of instances updates.
-- for future proofing the T264 compatibility is added for other device
-  nodes.
-
-These bindings enable the enhanced audio features of Tegra264
-while maintaining compatibility with existing platforms.
+In Tegra264, the CIF register data bit positions are changed for I2S,
+AMX, ADX and ADMAIF AHUB modules, as they now support a maximum of
+32 channels. tegra264_set_cif API added to set the CIF for IPs supporting
+32 channels.
 
 Signed-off-by: Sheetal <sheetal@nvidia.com>
 ---
- .../devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml     | 1 +
- .../bindings/sound/nvidia,tegra-audio-graph-card.yaml         | 1 +
- .../devicetree/bindings/sound/nvidia,tegra186-asrc.yaml       | 4 +++-
- .../devicetree/bindings/sound/nvidia,tegra186-dspk.yaml       | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-admaif.yaml     | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-adx.yaml        | 4 +++-
- .../devicetree/bindings/sound/nvidia,tegra210-ahub.yaml       | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-amx.yaml        | 4 +++-
- .../devicetree/bindings/sound/nvidia,tegra210-dmic.yaml       | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-i2s.yaml        | 4 +++-
- .../devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml      | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-mixer.yaml      | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-mvc.yaml        | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-ope.yaml        | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-peq.yaml        | 1 +
- .../devicetree/bindings/sound/nvidia,tegra210-sfc.yaml        | 1 +
- 16 files changed, 24 insertions(+), 4 deletions(-)
+ sound/soc/tegra/tegra_cif.h | 30 ++++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
-index 26362c9006e2..81a65e9f93f1 100644
---- a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
-+++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
-@@ -21,6 +21,7 @@ properties:
-       - const: nvidia,tegra210-aconnect
-       - items:
-           - enum:
-+              - nvidia,tegra264-aconnect
-               - nvidia,tegra234-aconnect
-               - nvidia,tegra186-aconnect
-               - nvidia,tegra194-aconnect
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-index b4bee466d67a..ee33f056b125 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-@@ -21,6 +21,7 @@ allOf:
- properties:
-   compatible:
-     enum:
-+      - nvidia,tegra264-audio-graph-card
-       - nvidia,tegra210-audio-graph-card
-       - nvidia,tegra186-audio-graph-card
+diff --git a/sound/soc/tegra/tegra_cif.h b/sound/soc/tegra/tegra_cif.h
+index 7cca8068f4b5..916aa10d8af8 100644
+--- a/sound/soc/tegra/tegra_cif.h
++++ b/sound/soc/tegra/tegra_cif.h
+@@ -1,8 +1,7 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * tegra_cif.h - TEGRA Audio CIF Programming
++/* SPDX-License-Identifier: GPL-2.0-only
++ * SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION. All rights reserved.
+  *
+- * Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
++ * tegra_cif.h - TEGRA Audio CIF Programming
+  *
+  */
  
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
-index e15f387c4c29..26e1ed7ec7a7 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
-@@ -31,7 +31,9 @@ properties:
+@@ -22,6 +21,10 @@
+ #define TEGRA_ACIF_CTRL_TRUNCATE_SHIFT		1
+ #define TEGRA_ACIF_CTRL_MONO_CONV_SHIFT		0
  
-   compatible:
-     oneOf:
--      - const: nvidia,tegra186-asrc
-+      - enum:
-+          - nvidia,tegra264-asrc
-+          - nvidia,tegra186-asrc
-       - items:
-           - enum:
-               - nvidia,tegra234-asrc
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-index e1362c77472b..46ba167081ef 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-@@ -29,6 +29,7 @@ properties:
-       - const: nvidia,tegra186-dspk
-       - items:
-           - enum:
-+              - nvidia,tegra264-dspk
-               - nvidia,tegra234-dspk
-               - nvidia,tegra194-dspk
-           - const: nvidia,tegra186-dspk
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
-index 15ab40aeab1e..e5a8741ec2fe 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
-@@ -24,6 +24,7 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
-+          - nvidia,tegra264-admaif
-           - nvidia,tegra210-admaif
-           - nvidia,tegra186-admaif
-       - items:
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
-index e4c871797fa6..ab9f8585fc60 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
-@@ -27,7 +27,9 @@ properties:
++#define TEGRA264_ACIF_CTRL_AUDIO_BITS_SHIFT	11
++#define TEGRA264_ACIF_CTRL_CLIENT_CH_SHIFT	14
++#define TEGRA264_ACIF_CTRL_AUDIO_CH_SHIFT	19
++
+ /* AUDIO/CLIENT_BITS values */
+ #define TEGRA_ACIF_BITS_8			1
+ #define TEGRA_ACIF_BITS_16			3
+@@ -62,4 +65,23 @@ static inline void tegra_set_cif(struct regmap *regmap, unsigned int reg,
+ 	regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
+ }
  
-   compatible:
-     oneOf:
--      - const: nvidia,tegra210-adx
-+      - enum:
-+          - nvidia,tegra264-adx
-+          - nvidia,tegra210-adx
-       - items:
-           - enum:
-               - nvidia,tegra234-adx
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-index c4abac81f207..1c9f24d26819 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-@@ -27,6 +27,7 @@ properties:
-           - nvidia,tegra210-ahub
-           - nvidia,tegra186-ahub
-           - nvidia,tegra234-ahub
-+          - nvidia,tegra264-ahub
-       - items:
-           - const: nvidia,tegra194-ahub
-           - const: nvidia,tegra186-ahub
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
-index 021b72546ba4..325d4072b6e6 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
-@@ -26,7 +26,9 @@ properties:
- 
-   compatible:
-     oneOf:
--      - const: nvidia,tegra210-amx
-+      - enum:
-+          - nvidia,tegra210-amx
-+          - nvidia,tegra264-amx
-       - items:
-           - const: nvidia,tegra186-amx
-           - const: nvidia,tegra210-amx
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
-index bff551c35da7..bb8088878d4b 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
-@@ -28,6 +28,7 @@ properties:
-       - const: nvidia,tegra210-dmic
-       - items:
-           - enum:
-+              - nvidia,tegra264-dmic
-               - nvidia,tegra234-dmic
-               - nvidia,tegra194-dmic
-               - nvidia,tegra186-dmic
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
-index a82f11fb6c9a..903e815af8fd 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
-@@ -25,7 +25,9 @@ properties:
- 
-   compatible:
-     oneOf:
--      - const: nvidia,tegra210-i2s
-+      - enum:
-+          - nvidia,tegra210-i2s
-+          - nvidia,tegra264-i2s
-       - items:
-           - enum:
-               - nvidia,tegra234-i2s
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
-index 5b9198602fc6..4c121b9cde1e 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
-@@ -23,6 +23,7 @@ properties:
-       - const: nvidia,tegra210-mbdrc
-       - items:
-           - enum:
-+              - nvidia,tegra264-mbdrc
-               - nvidia,tegra234-mbdrc
-               - nvidia,tegra194-mbdrc
-               - nvidia,tegra186-mbdrc
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
-index 049898f02e85..56b4c4fc123c 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
-@@ -28,6 +28,7 @@ properties:
-       - const: nvidia,tegra210-amixer
-       - items:
-           - enum:
-+              - nvidia,tegra264-amixer
-               - nvidia,tegra234-amixer
-               - nvidia,tegra194-amixer
-               - nvidia,tegra186-amixer
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
-index d0280d8aa3af..bde4ac6319b1 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
-@@ -31,6 +31,7 @@ properties:
-       - const: nvidia,tegra210-mvc
-       - items:
-           - enum:
-+              - nvidia,tegra264-mvc
-               - nvidia,tegra234-mvc
-               - nvidia,tegra194-mvc
-               - nvidia,tegra186-mvc
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
-index 9017fb6d575d..756c3096a2d6 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
-@@ -25,6 +25,7 @@ properties:
-       - const: nvidia,tegra210-ope
-       - items:
-           - enum:
-+              - nvidia,tegra264-ope
-               - nvidia,tegra234-ope
-               - nvidia,tegra194-ope
-               - nvidia,tegra186-ope
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
-index 1e373c49d639..2f11a484dc2e 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
-@@ -24,6 +24,7 @@ properties:
-       - const: nvidia,tegra210-peq
-       - items:
-           - enum:
-+              - nvidia,tegra264-peq
-               - nvidia,tegra234-peq
-               - nvidia,tegra194-peq
-               - nvidia,tegra186-peq
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
-index 185ca0be4f02..959aa7fffdac 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
-@@ -28,6 +28,7 @@ properties:
-       - const: nvidia,tegra210-sfc
-       - items:
-           - enum:
-+              - nvidia,tegra264-sfc
-               - nvidia,tegra234-sfc
-               - nvidia,tegra194-sfc
-               - nvidia,tegra186-sfc
++static inline void tegra264_set_cif(struct regmap *regmap, unsigned int reg,
++				    struct tegra_cif_conf *conf)
++{
++	unsigned int value;
++
++	value = (conf->threshold << TEGRA_ACIF_CTRL_FIFO_TH_SHIFT) |
++		((conf->audio_ch - 1) << TEGRA264_ACIF_CTRL_AUDIO_CH_SHIFT) |
++		((conf->client_ch - 1) << TEGRA264_ACIF_CTRL_CLIENT_CH_SHIFT) |
++		(conf->audio_bits << TEGRA264_ACIF_CTRL_AUDIO_BITS_SHIFT) |
++		(conf->client_bits << TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT) |
++		(conf->expand << TEGRA_ACIF_CTRL_EXPAND_SHIFT) |
++		(conf->stereo_conv << TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT) |
++		(conf->replicate << TEGRA_ACIF_CTRL_REPLICATE_SHIFT) |
++		(conf->truncate << TEGRA_ACIF_CTRL_TRUNCATE_SHIFT) |
++		(conf->mono_conv << TEGRA_ACIF_CTRL_MONO_CONV_SHIFT);
++
++	regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
++}
++
+ #endif
 -- 
 2.17.1
 
