@@ -1,95 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265E22192F5;
-	Mon, 21 Apr 2025 22:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D472367B8;
+	Tue, 22 Apr 2025 02:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745273037; cv=none; b=o4+k/Xkx4yyhqwK7oSi7yj3IH6irgUXYr30NPubM+oHZrKV9PPsTzmuY5DNCandJDKqr7xZi89TIgq4sncLSxuzi6tgxWYgLubCcnGTp2Jz4IK32/mlKUxgH/NRhSQzjfuTrpYFJuXp22kURNelyQRdtA24AiNqni1tF0GzAInk=
+	t=1745288183; cv=none; b=ErBwObDg7mdzFcfThGNC7fJHgCRLeNgBJ5maH42nWl6aaCaz04uEDUSYn5EUKjhh2r7KB2ZGL6E5fYzdYtabdFMFu0rP/EgvXNpWROU9U2I5IQPiTpsipWpwbiYgNWmxV4JbjLRa7kwZd/Gf0xCyKcKZh8XnnrRx46xjGrJ8ohQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745273037; c=relaxed/simple;
-	bh=01rp54CilMkAwqIJ6zYTHUJAgrWddf98A/Ksdxy40H8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RrFl/MK0uJIlMQiyXtPHSc1vtfY3RvcuviGC26imkniCHSQJJC6/N0aGaM+GId3/PDLSvmuNQD7lJ4+YaUDWVWHhJuPn+1aRqtgKBdxLk2Dg8gIX9i6ikJ/IqS+bANqiEYxMC9TWqjblJuC3r+fdfhdOJfqeRnauuiC/uGztwmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niazVZue; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745288183; c=relaxed/simple;
+	bh=Dt0yFF5R3hBKBjCcKd/RCEn3N9BrfwIh7OIkUIo0ZcU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OSoCRsdMvbTSVc5dnFIKSbL02kfemuV1oQZdc5lIP9oiqzaPeYDT1aCfZ5p8vtvwdzOCJ0MrzYo66RIvCAIbkqKVAPOvTe0fLfJepsM+oVxH0MhhUffc79+9Tcw/Co8Hsovs417H5MZvK4t38SM3LuTPiDuaQnK0+l0o9lGzBiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNx5+pFR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niazVZue"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F63C4CEEE;
-	Mon, 21 Apr 2025 22:03:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNx5+pFR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3330BC4CEE4;
+	Tue, 22 Apr 2025 02:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745273036;
-	bh=01rp54CilMkAwqIJ6zYTHUJAgrWddf98A/Ksdxy40H8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=niazVZueFSQ2KvVxM1rVDNi77ZtQR9FgG2KKza5Ya9JH4acJh3hjyyGvs2NbS8T0C
-	 QZpRWc7BVqGofg3U48tIcaAF4YbPaTyQplyC7dPOwxQFXfzSfUlwCMOXJHtw9fNq9Z
-	 5qAPFcCU4x37EWTn7q43qh5bdSpljhEJz1DgkCqF0MLddyL72ATBiqG3eNbCERg97o
-	 d39fcwkpUP3IFxyWH/M8ky10YA4aJJBjhWbkNO1ZZ6FuA6rKMdMaueC75OaZDFx+eG
-	 WD4JxITWCJyHBP2+FN3o3VRmNCTb7MQtb4dvcAlUSN2+8hDTv/quTlImi63IPrr6sv
-	 9MK7+yV99R4pw==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2aeada833so838836666b.0;
-        Mon, 21 Apr 2025 15:03:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkETo9GOzwY4og9/w9pgqJ/8FxYO6NJzNzVxDS39tRk7kE+7U8J7/C1Bcw9GhSM4yiigzrpNXXf+z6@vger.kernel.org, AJvYcCWRsd0mUZFy02tiX2iCadoWmY5ZAoo0Xsu7mSJklFH166uhitjiK97OT4Er/HAYrt6rYcE/z5l0W7AJRkM=@vger.kernel.org, AJvYcCXqWDjGR/3II/irlCiY4bn7JiuD/FmQDCMtv1ZlktKWWlB82HBy0EnyK+xYaE21oWi4Epqn5nTSz33XW+pI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3+JyaW5UM+xEsMikPLYDV7UI+iRbYJFdZJYgyTNxl/gd3RjUY
-	EomWKHhuPw4q+KSndfOxy5LIAGe0FyuJPs4xRPR5PZbM1B58Dj7+HBvhl9FQ8MRIMqWmA5EBpa/
-	BNQMY7gZRLB+gTXJ/QdgtNDAmIQ==
-X-Google-Smtp-Source: AGHT+IHxl6XK2QfRQVyCNWgLvJRj7ZuUIQ5fwQHcvIkQqattyeeIKmTOKM9JhGckpjhW3C3lyZts07ybe/w3rZATy8k=
-X-Received: by 2002:a17:906:1f05:b0:acb:aa0e:514c with SMTP id
- a640c23a62f3a-acbaa0e5185mr349993566b.2.1745273035071; Mon, 21 Apr 2025
- 15:03:55 -0700 (PDT)
+	s=k20201202; t=1745288182;
+	bh=Dt0yFF5R3hBKBjCcKd/RCEn3N9BrfwIh7OIkUIo0ZcU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rNx5+pFRgKnAe9i+aHqdsDrkmjy6Pjbka57wCT9Bg05wrLXjGgJoWD0rz6CPNoxYC
+	 oeREHhn6K5LgsaObOU733ntfvWcbPAu24+lRWXlUUQ9BGL3wt3+qLThyvpWE+SH7rD
+	 8XABlvJoZTMj1N6p0+B9joOfpf1JDk5cOZTbxVijwyPIi7zKKtf64jaw/v2FRzJ4HO
+	 vmKtymufKzQQg9vBwB60vStkX1x6rs/Bt9q6VVqglIQj+R7LrwHe3mSScohE6mrger
+	 N3x7uOh+MEBArWnqIh9VSS0s38BS9pfEUzfR9HTv+YuIVAJFIFiJljN2Xx86c6H0TP
+	 lCq2av2vEca1w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Breno Leitao <leitao@debian.org>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	ldewangan@nvidia.com,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	skomatineni@nvidia.com,
+	linux-tegra@vger.kernel.org,
+	linux-spi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 17/30] spi: tegra210-quad: use WARN_ON_ONCE instead of WARN_ON for timeouts
+Date: Mon, 21 Apr 2025 22:15:37 -0400
+Message-Id: <20250422021550.1940809-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250422021550.1940809-1-sashal@kernel.org>
+References: <20250422021550.1940809-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416120619.483793-1-shgarg@nvidia.com> <20250416120619.483793-2-shgarg@nvidia.com>
- <20250421220209.GA2975150-robh@kernel.org>
-In-Reply-To: <20250421220209.GA2975150-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 21 Apr 2025 17:03:43 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+Wy326DXXp=UGQ6WsB7-30RTJNMY3ckytk9auAh6Ec2Q@mail.gmail.com>
-X-Gm-Features: ATxdqUGmWpmb8bR3-MQ-Nby0OrOQO3Xpm-Hrp3ML4dt6UzrpLCyrIfNheD-Tbpg
-Message-ID: <CAL_Jsq+Wy326DXXp=UGQ6WsB7-30RTJNMY3ckytk9auAh6Ec2Q@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: mfd: add bindings for NVIDIA VRS PSEQ
-To: Shubhi Garg <shgarg@nvidia.com>
-Cc: lee@kernel.org, alexandre.belloni@bootlin.com, thierry.reding@gmail.com, 
-	jonathanh@nvidia.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 21, 2025 at 5:02=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Wed, Apr 16, 2025 at 12:06:15PM +0000, Shubhi Garg wrote:
-> > Add bindings for NVIDIA VRS (Voltage Regulator Specification) power
-> > sequencer device. NVIDIA VRS PSEQ controls ON/OFF and suspend/resume
-> > power sequencing of system power rails on Tegra234 SoC. This device
-> > also provides 32kHz RTC support with backup battery for system timing.
-> >
-> > Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
-> > ---
-> >  .../bindings/mfd/nvidia,vrs-pseq.yaml         | 61 +++++++++++++++++++
-> >  1 file changed, 61 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,vrs-ps=
-eq.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml=
- b/Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml
-> > new file mode 100644
-> > index 000000000000..d4c5984930e9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml
-> > @@ -0,0 +1,61 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +# SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFI=
-LIATES. All rights reserved.
->
-> First I've seen this...
->
-> According to this[1], you shouldn't have 'Copyright (c)'. But better
-> check with your lawyers.
+From: Breno Leitao <leitao@debian.org>
 
-With the link now:
+[ Upstream commit 41c721fc093938745d116c3a21326a0ee03bb491 ]
 
-[1] https://reuse.software/faq/
+Some machines with tegra_qspi_combined_seq_xfer hardware issues generate
+excessive kernel warnings, severely polluting the logs:
+
+    dmesg | grep -i "WARNING:.*tegra_qspi_transfer_one_message" | wc -l
+    94451
+
+This patch replaces WARN_ON with WARN_ON_ONCE for timeout conditions to
+reduce log spam. The subsequent error message still prints on each
+occurrence, providing sufficient information about the failure, while
+the stack trace is only needed once for debugging purposes.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Link: https://patch.msgid.link/20250401-tegra-v2-1-126c293ec047@debian.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/spi/spi-tegra210-quad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 08e49a8768943..2d320fbb8875f 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -1117,7 +1117,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
+ 					(&tqspi->xfer_completion,
+ 					QSPI_DMA_TIMEOUT);
+ 
+-			if (WARN_ON(ret == 0)) {
++			if (WARN_ON_ONCE(ret == 0)) {
+ 				dev_err(tqspi->dev, "QSPI Transfer failed with timeout: %d\n",
+ 					ret);
+ 				if (tqspi->is_curr_dma_xfer &&
+-- 
+2.39.5
+
