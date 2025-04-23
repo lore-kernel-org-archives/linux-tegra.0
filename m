@@ -1,72 +1,85 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2058.outbound.protection.outlook.com [40.107.94.58])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57916242D61;
-	Wed, 23 Apr 2025 09:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717CF20F09B;
+	Wed, 23 Apr 2025 11:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745400285; cv=fail; b=e27LrDOrH9YsEUcLvbtsN04AusEA/N2vt+Sb1Toe9b/1Df+pmNHOxiZa3aH+FaZCyVLR1v5o3V54ETwuU9/FIMfPYwYyHXUcXaLL0Ng7Mj9ddAv3SlPrvkO+bX+/2EGipeJNr7qoIBit/Uttz+8LYC0BZ6trS/fWwDwbPCPpxDQ=
+	t=1745409358; cv=fail; b=JzqU2mh2Vq+NNojBEsPVaQmwAqjzEltTXU7OpRbHr7I2djYRU/TrM4bc+x6VDie3IyZlICUazZFXAFFel9zW0a/br48XP/ZT1PnF7tey2qotvPEknFrHF/VUff4XB6QHiQgMpCEN/8EDk12bUi45lmmJhIGoDf2QqKLRXwcnl+k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745400285; c=relaxed/simple;
-	bh=fYD/W56FAaQgV2Mww9uCt2J4vIh1yunWPA8WdBbZpeI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CXvts/gTpzxnyPOWEPTB8nfq+H5A6HPN3449FGyN0Fuqp5RXn8CSmjysnyyq6CyehfqcyCGiGRfqjQg9ESFio314oL63zKaF+IqDTljAOlWBXidwShaLhIerzfhaZA+nJ639vPL89cYsvGGwK2uskGz+73AkOMg+hcZWzPcNdAw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BDIwR+7Z; arc=fail smtp.client-ip=40.107.94.58
+	s=arc-20240116; t=1745409358; c=relaxed/simple;
+	bh=sD16Yn3dMKEZiddsSBB+0rLwJry3Lf+FfnE2TUTL2MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=N7WsZ1IciRpRM8oADrW8R9kboeAxK/79SSKAwL4CDmw3Hq6rZVXp1Ljkhd5Xj3yBmwXwY8mFM4j1Xa+YdtwEPB8SO11z5GfqG5wUMIg0mf3wvCHqO7KRIDavhkRAWsSE8qv0NPUU25PF7+g5kIIaJ9kPLH7ivjljO30UyhNRxCI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kh5T/+b0; arc=fail smtp.client-ip=40.107.243.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BDIwR+7Z"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kh5T/+b0"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JgQiN8MNNhq2Ib6DqOkzWgOFK4OoBtZODIYTx7r/3/yS9suB8cSMWGt6cWkep5b82oluBftyMDOZAKw239wbcOwzX+QXuuMf2LYsTBQwabpnsb5R6/3b8/wVzWgdbf/iuMzHzmycdBS/YaLc1T5dM4X/cO/OyLw3azU4+xwekGeLrWe3MGqOuavL6I/cUZxBAtRRRFPtbIfyaIW+psXKpIhlYcisUPTgMNJORMYvbFEicMY3gjvc5P9X8KcdR8oNkLdWjf2WhqtIL/vJzB4PNRrlauO73KVyCyFuzUWIaz8dD6/fa68K2SeivW1F7q6qS8u0JKNnP4All0CCZuFpVQ==
+ b=BO931/JYrMuc39mvjVrpEaYsoIUoeSnkv7s6VdVRbgu/LUG1u+ZWgccWBlFtVkPLcy/w/bWR0u3cK8DJlRU1FEpBIMFMDKOmajDficMC/sCjg0XpzYQbd3p+4t0+umi3O15SEYCu5Pfk3oeY74tQ3onlnpYJhZ3Opjf0YsFhC/BEqr+LzrOqI2Bo3N/NdZX4b7NWXVUzm7Ied6FZJj3lr0NMA2GT8fSfiqA5+SZyLiHudS5U5+FpqqNlrZobLvPVPUI+DJtNIEXjKK0/W0AKzAXgLlj8FNU6KgpHD5Jy9ND+GA2EwIF6e4yzWVsWWbDF08gm2dff27z0FKaYoKdyJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6tmGFsEmGmJAQhjtPvqljcyknNTln9JiphJdsRi9Oj8=;
- b=So5hDVU3UAenMvuqhbBvBVPMeJBFRZAj/dJVgvs8NQr4st25bNUHRzAo5tFA9X+JOr+kMftvt0/SW6aUaoM95jMQ/0DysHjWjEwjwnxh+LzuUsS42tGR3DMxAVb9Sss1tEenR7136WaXpIvUBpM9QMsyzZ3zP1+xk6eFLmAhX247iaLv18woxnNyoVQYCqbb6ITALjaN8qS6IgsLfVOoEdZST9Jr/ENIKBszAZfRY9pgIlIb4cQTjcM69mwNBRdMjD6ESR9GIxSi/1slLvRIo+ZxMc7EBidB8Xg9C1pex87w7B6aMJfU9BOZk2nQZgscPMfSEhEtYomReHCoTz1lNQ==
+ bh=c+XiOrnZpE6WuyXIiLGzlzPZHFQqLlnM01GU229a5yo=;
+ b=W+4NuEwFDd3kdVjA/U2oQH5qzDD6mceRkKo+Z8OkjWbiIndE9nJ5FiNqPr8TrXXaqsL0jW/8DAoI3K5mfVSPERJyf4CPQ05wA8dT+RQH766J+c+GzO4nRPdPTlrzDuwMF4JAMguMRARDoqLzy38ns/G+m6ZigWNvwpUPulql1j0zYOBa0pFlXgsSFD6t8jTR3Uv+ZGaFx6wYUkmZWVt/85U1hqzAQxFrO6O3a9c1lXfrcUS2d1OzYAk67CB5Gzq/VfziRHRJtnrwZ2Z2EFb5RTzljeZjGOr2D0oqUK29GUUnUT6DcYCJlYvXXQbaSHpw/pprybfoS3wNKxpaqNOo5w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6tmGFsEmGmJAQhjtPvqljcyknNTln9JiphJdsRi9Oj8=;
- b=BDIwR+7ZSaHtXegcvuG595X5A2iIyKcz/UAUQBaukhICDatTtaI07OpkstBRk+bJSu4cFE2fC8Q8qvMooVOjp9iP0Pf8xjiVqrw7Sbguc+g5k3FlbbuGcffN1E8b+h9ALtqkdO+aaM1GvC6h7hFHK0V7A0o0y5LVbnyRa8zsjMIiEVq2SOS70NYf8W8yj4qCodZEgGQ08w5QSQmvDVJl7+x2NI+BD5051YAGnfuhBJYw9RB2VShYTRa5j8+f6Vdv+IZI4a5wqhhAvLzKuDR2Tqr0/OIa4GTI39hvgbLvmuw1NQ2+Y/9CGLLnaEVMKOSX4GMQt9earu+V2LpLmEHBpQ==
+ bh=c+XiOrnZpE6WuyXIiLGzlzPZHFQqLlnM01GU229a5yo=;
+ b=kh5T/+b0KWfcg1bkCrKsRKOBfDabliObZ5sPqX576iB+/FjgVRoAJLRePWhemIoPPmlYVoI53kvV8duScFSv+P1nmtTmlKSGChMYWltKssbbDaW4xTNB8EX/MxLoddMx+bUxgiuinkp/ap6kR8NE1X3qDjUixM1OA6JYgYSlNEQ0qLO7Ly6feqMkKFPCmbwokOKdrws3/Dkd02eAUdulVftUlvKdCugig7XdUOGknnQZ+It6q6P4bb/G+Ow7WhVkCVK63ztLCl6fUeHNYZyOGOwBB1PCZwCaA36qkA3uCb41ySMse28pBKUUQJYJx3jXjaJ1ybuvMJQu8qMEYDx1dQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SJ2PR12MB8808.namprd12.prod.outlook.com (2603:10b6:a03:4d0::10) with
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CH3PR12MB9284.namprd12.prod.outlook.com (2603:10b6:610:1c7::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Wed, 23 Apr
- 2025 09:24:40 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8655.033; Wed, 23 Apr 2025
- 09:24:40 +0000
-Message-ID: <4c042dd9-50d6-401a-bce7-d22213b07bca@nvidia.com>
-Date: Wed, 23 Apr 2025 10:24:33 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/10] tools headers: Update the syscall table with the
- kernel sources
-To: James Clark <james.clark@linaro.org>, Namhyung Kim <namhyung@kernel.org>,
- Arnd Bergmann <arnd@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- linux-arch@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20250410001125.391820-1-namhyung@kernel.org>
- <20250410001125.391820-6-namhyung@kernel.org>
- <f950fe96-34d3-4631-b04d-4a1584f4c2f1@linaro.org>
- <95c9bd53-ccef-4a34-b6d2-7203df84db01@linaro.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <95c9bd53-ccef-4a34-b6d2-7203df84db01@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0667.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:316::20) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+ 2025 11:55:52 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8632.030; Wed, 23 Apr 2025
+ 11:55:52 +0000
+Date: Wed, 23 Apr 2025 08:55:51 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	"vdumpa@nvidia.com" <vdumpa@nvidia.com>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"praan@google.com" <praan@google.com>,
+	"nathan@kernel.org" <nathan@kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"jsnitsel@redhat.com" <jsnitsel@redhat.com>,
+	"mshavit@google.com" <mshavit@google.com>,
+	"zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v1 15/16] iommu/tegra241-cmdqv: Add user-space use support
+Message-ID: <20250423115551.GC1648741@nvidia.com>
+References: <cover.1744353300.git.nicolinc@nvidia.com>
+ <30c7aff68c35040ee637629cb9fc2b6e7f83f76c.1744353300.git.nicolinc@nvidia.com>
+ <BN9PR11MB52768197516FB895146A12078CB82@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <aAaY+f2/jw9NaIWF@Asurada-Nvidia>
+ <BN9PR11MB5276220C7B2C5743DC8364CB8CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276220C7B2C5743DC8364CB8CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-ClientProxiedBy: MN2PR03CA0008.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::13) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,259 +87,109 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SJ2PR12MB8808:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b825247-12a8-4708-4dfe-08dd8248ac8d
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH3PR12MB9284:EE_
+X-MS-Office365-Filtering-Correlation-Id: d724e292-cd1d-406a-e438-08dd825dcbea
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U1NiSjRDVTFpdkllb2RMdVVQelp3VlJwRk40d05JUVhqNXI3WExxNlVQOUFU?=
- =?utf-8?B?VjYwQkUyVzA2cGN0djNZNHdPNVpJVXZhNUNuWFZkN2FtODV0TERBYkRIRks1?=
- =?utf-8?B?aG1uVnVFMDdIU0NiRG9OL0lGbXFZY3hERzlWc1FvV0hzMGdlbXNmeFpkUklw?=
- =?utf-8?B?dTJFN01ic2h1dDA2TzA0Z0xHUEFRV2xSSi8vK1VaQmdvVWhHYmlYM0c1K3BL?=
- =?utf-8?B?RDFXU1haSmtnNlQ4ekE3NEN3QS9IOUJMSEU3YzhONzF0dzdkb1hWWnJSOCto?=
- =?utf-8?B?dHhBV24xeHU2cFpUREdRUmlkVUJSVFpXOXp0ZFBnbHljc1h3bDhRUlJPWFRV?=
- =?utf-8?B?Z09oYlBSV2NlVi9HcU1JZklxSnpncmtBOGMvaXRBL3JjOUR0cGhEbjk0ZDJi?=
- =?utf-8?B?ekpNL3V4ZVlOVWtqdFF3NEVUTm1kOVFLTDBDeXJzU29RTi9nTVJydXQ1cUFq?=
- =?utf-8?B?cCtYSDgxZWE2NDhhWEZDdVkycE5IWjZsOVIzSldjRlRwcVQ4QXRqajFRaEQv?=
- =?utf-8?B?eUZ5cDBTU3R3eUt5SHlFSk5qaUZNNzlDcURUY1h5Zk1HQ1JxMk1wQVJaRmt2?=
- =?utf-8?B?bm5tQ3o5ekQxUDIvVE1kVEFjdmNYNXljc3N3THk3NWpNKzNURGdVOEFDNk9Y?=
- =?utf-8?B?TEVzMGl2Tmd2MkRvbndEYndFaExBWHJ2TmVheHA2dC9UbzZEc3hIdm0xQnZT?=
- =?utf-8?B?R0xlSTNlTWdsZVIvdWd6NDEycEJORkxIVW41eTQyMUlqSzhLeFJDOXcybng1?=
- =?utf-8?B?K3pNVUdYNjF6amRNOU5YazR2VG4yb0VYcVY3bmNxRGdMZE1GYk9jWGQyZCtJ?=
- =?utf-8?B?YTk3ZFVKOWVoZ0RRdk5KNFJoNXBoNHN2SThLaGMvWFhYK082dVhJYWZrUTIz?=
- =?utf-8?B?NXJINHBydjdKY2h4ZEQzNURQOG5OUkpQcXV4eUVyMktaL3N0OU1BRGhNZEF4?=
- =?utf-8?B?SU1MRm0rUzh5WjZvZWp2RkdvN1RZMVVEcHBkSFE0emR2aHRodUJMQkxaNENQ?=
- =?utf-8?B?RUJNUVNXdDJBRmhwSDFJNUdodWpvbUtuRVJZSnRPWlkwUUd2SVl1dUo0dzFo?=
- =?utf-8?B?dm1MZFRMZ2tyLzUvOEVBc3RqT2FLeW1hMEVNRnIrUmRXV2Urdy9DTWFsUDFC?=
- =?utf-8?B?RWM0ek56bE5wTTAzMkVRQ28vOFB6ZnpXMFQxZnRYQ2lwLzJqQ0IzQWZDUEpi?=
- =?utf-8?B?TmRab2tSYml0cFVtb0IzYytkNVVYcTNrZ0RSd3ovalVTeVYveStiYU1rUjBI?=
- =?utf-8?B?b2JRam02RWQzcEh3TDF2RzduY3BnbllNUGNvS1V6TUpBR3JVRXhvYnhwS3Ex?=
- =?utf-8?B?V0MrcWJMOUNMYUdNS2ljZmYxY1d2S3I5bmxFeW82ZlhRbWZNREJrNU9pN2Rl?=
- =?utf-8?B?QXB0Zy9YNDRSRmRUS2I1eUFwN1JZMys3SlJlbmRyY3FkY1MzMklzNThXNkkv?=
- =?utf-8?B?SDZCVUFKNVB6aFllbXNxcFBWZUplTkkvZW1qcWRwMVpxY2tPaFM0TWdFd0wr?=
- =?utf-8?B?RFF2K2lLL0lxcGVxOG1mVWtqci9NSlhOUzdMbzd3bHRTN1c3eUJUeFpFblRi?=
- =?utf-8?B?NkY5cStPTFhjNkZOOWk3U2t6YThYSlNEZXBXUktVMlhDWGhQVUZiSjNEWkhx?=
- =?utf-8?B?d1F3SnA4L05rNmxQUmdDTVlEVmVKNXNwWUlubDRLREVXQUZBUFdUSTJuOVJu?=
- =?utf-8?B?OW11SDJmajhoWWZiTzR2Z0VXNFo2T1N6VWRDSXJKaWlhMEx3Snl3WVBJc0lw?=
- =?utf-8?B?NllXQzhabDdaeDRZMEpZZnljWCtrWVYwMmc4TnAwaFI1Rm5XMUxkM0lISTRE?=
- =?utf-8?B?a2ZOU05Xalk0eldqQ2ExSmp1RlNKK1VFRTlSbWJ5bTZGaHlva3NnRkkrNkV2?=
- =?utf-8?B?TWtQenpmcjVqbFdwMlE2MDRGQTF3dGZ0bTBreXE4RXdkdlcvM2gvWm03aFpZ?=
- =?utf-8?Q?05YtVacbI5U=3D?=
+	=?us-ascii?Q?B1SI80xwaGN6yxnm9WgUsjHGHsq5UZOS2SjCEIDRrX1XrOIpFg8JEYbK0yX5?=
+ =?us-ascii?Q?DgF0l0il+hlBBiV1embD1egDgf85syzn41hJjJRvkinFXZIDvLKBQ/4kqek6?=
+ =?us-ascii?Q?XiTUY9NBnVwCHxq/423aurxhl+pmBMmJtorZ7PVUcFq6zXWkQTYIAs0zCz1e?=
+ =?us-ascii?Q?WhTED4qMkWKqrF/GFIpP+ZpxtN23JNQ1gEVP39n42obw3R0J5aX6tEcMMB/a?=
+ =?us-ascii?Q?Hw4k0KXaN5zz9BZViFapDyC0lWJm7F1YCEPCebzhlRvfLyqCx0GNjacnkMLL?=
+ =?us-ascii?Q?9k8oKv28U5pQ88XichqS5gYQKqqYJkG+C2bzTjRV/9cd6q3Ar9WMHM7/QvQj?=
+ =?us-ascii?Q?USbHAS+gIGjByZFg2UmUq8qn9+R2/9u6rVVv041DHNnEgob+3xlzTPLNonPy?=
+ =?us-ascii?Q?l6oNfsfgYmmb/N/McL9ECr21n9ixPXzEuZWH4eTpXHOA97n9W2vqp4BF+x20?=
+ =?us-ascii?Q?UWVPqN/v5tf1O3DbBsNttSfv2ShfnltcpkMpbS7218yDpEMRo+xon6mK7W6l?=
+ =?us-ascii?Q?QuCBJdHMNqRvTQhPBKR1IIVgkkEWmON3WEB483aRvUtgdWHv9RG9XFvJumYa?=
+ =?us-ascii?Q?lw/+hVihjjnJAhmKcUHJBQ7IhRbvGog7mun2kmfvMB8f3Km9ORAUaE+MMDq3?=
+ =?us-ascii?Q?3zo5AJ3XDdPJvOSBXRuGOf2hbAl0da3+zAkQoXMwgSrYtChuXe8xJ+Ks4FEN?=
+ =?us-ascii?Q?MkP+/r/bZXBfaynGTKEz8pXHZCNyQQCSdy2/G3OyOmnaFz9tTp/6zugTvCum?=
+ =?us-ascii?Q?c4mtHAa7UYE3rbcvVKf7oucvRLIwxyn9ylj9LzYMMFuK28grhpINj5/0rw+7?=
+ =?us-ascii?Q?pBi4CCwDzqmkqe9u7mZsuHSiVdFrxkHkNiIfHpIaI/buHkncsJaiAjuLmKhZ?=
+ =?us-ascii?Q?Cwntpag0B04fFggdGWrear0qy/WViJuS7mTOoLNsKvLV2cvqkkYL8KiCI2bF?=
+ =?us-ascii?Q?VuGVbw08TXhAp9QIq1gfUpK0jlCbneFIhIuetiBo9uN5jo63j5B2Yx7A7ajK?=
+ =?us-ascii?Q?gNEUKjE5GocHu5PRDxjYdL4k5eBYFERu9QOSOFKlFd53A0d5BMfRGlUTODq6?=
+ =?us-ascii?Q?k0WhtQj7c2omjVGIG3kkQBQ0Scz+xEUQlDZaSeCIgOgC94l7JlvWWEyrrJaP?=
+ =?us-ascii?Q?Sk6Dta6dXqnOPchbBUoso5kdt0T7zFolrt1vqKQ9bTcwr6uqw475UomsfVKK?=
+ =?us-ascii?Q?VdFtqYF1Wnpy+nT42mQX1qeb96bUPdE2Fj4CBn7R8DTA2oaPq2WcYVCvyG7p?=
+ =?us-ascii?Q?/PCYmnwjZ2AlQO7VP0G9LqYhZ5xJ5VV6B2cz9b6hZigXc7RJThKGGDL4GBBS?=
+ =?us-ascii?Q?SDgnBU0lbku5F0Msb20AodlrIDGavl9nFMtX4EGrgbGLEzXJgRj/er+Cgutb?=
+ =?us-ascii?Q?Bthk3rCzii9LyUagr7HhdQmAjiJMZnW56wjMLEEjtXMuayN+PGdIBVjiSZP9?=
+ =?us-ascii?Q?35M1MBmoZ94=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RWU0bnNxd3R0MFNvd2VFVWw2SVVYSU5SYVVPeDlZVW56WDdhbHpQQ3ZUQUpL?=
- =?utf-8?B?UTRvVWI2UTVhM0dyV2JYNmRyelBxUWpUUGNjQStEZVhoRllIRms5eXBvT01U?=
- =?utf-8?B?L2Q4Q3MyUksrc3ZVMFBMbzZhVW1SdFl5NHB4a3N6d1o5OUgvK2V6bzlMalNi?=
- =?utf-8?B?ZVMvQytqYlpTTkc4ZzMwcU1NQUQ5cUxsTHZzRzlIRzczamtMdVZsNGFld2No?=
- =?utf-8?B?MEkwV3NDR1hGeWY0LzZIL3cydnN3YktKNXFkOCs2NE1pdGJadnNxOU43S1R1?=
- =?utf-8?B?VHlzL1B5dFp1RkkrSHhMSUVmV0FzaCszNDNuYmd3b0dHem5keElzcUNPQ1pC?=
- =?utf-8?B?SStWV2FCNnhRQmNENklOVGNmVDhWaXB5ZTA4YjNMWXNVYmpsYmVOT0FBMUVL?=
- =?utf-8?B?VkVjWjZUbHBhWVhhSkJBMFFNK0ZjUk15dDBzeno5QlZhUEE5bVZUa2ZXSlRG?=
- =?utf-8?B?M0t2VEdaZmYrdWRrbFpja2wvQXdOWUhpdkNtb3FnYTFxU0p4MGwzRlZsRmhV?=
- =?utf-8?B?WWhBNm1HeEZEeUxWbHlSczlEaTJaZ01EZTBMU2tZUkRWbmpUQ3o3eXI0Rm5x?=
- =?utf-8?B?OGxxTkJkNm1TKzJieGJtcEgwU0RZNXdnL29aZHJoSERNaFhCYXRuS1R1QXRp?=
- =?utf-8?B?OC9tMS8wdFZRdGd6dm9RLzROTVVFMThITi9LVjFYYlducE9iSHNmNXdyY1BK?=
- =?utf-8?B?Q3F0S21lZU9WMzJrMTUyQ005MVY4b3liUDMzT0E0RHB6TG5GZFFBWFF2c3FY?=
- =?utf-8?B?Wnh0YXMyMW9KKzVHcHBGSG9aWExRUHlEc25HU2ZNSnRXK1lka0JFR2xVZHNn?=
- =?utf-8?B?QzB3MXBvRFdzZ2NvdzBMMjIrRnQveUo5MGN1YjhyY29nZU5PQTEveldLb1Bj?=
- =?utf-8?B?TGpURGcyWXV1T0ZTSVhSaDJQMm5kWW5NUGlETEV0YThsYXg4SFBYamlvZll3?=
- =?utf-8?B?YU1sakRxOXQyM1l3SGRnMkhjSFBYQmh6Y0NZcmFnRjJuSVBNN0h5aTBMbTZC?=
- =?utf-8?B?WWNuN09Dc0haQzA1WWVtUFl2K016SUliYlRIaWp0MVFVR0w3aWQ2TWNwWmlI?=
- =?utf-8?B?RllpVTlPaHFRVVdVRVQwZ3BRaXJ3U0hZOFgyczFsUmpLbXJzNGtrZ0ZEUm5z?=
- =?utf-8?B?ZFNBeUQzaFpEamtJTnZnVWptcTNmcUQyVkZjdUdDUDVuTHlKeG13RkRIdzNj?=
- =?utf-8?B?UkRXWWd3ZzVlWVRYTEYwK1hjWEMrUmgxd254Zjhic2Zkak4yZ0x0OEpaa2dD?=
- =?utf-8?B?aFV6KzNvaDcyVUVRTXdDTXdqZGR0NDEzeXVsNWlKSHg3MmJyWG9xTVUybDBZ?=
- =?utf-8?B?bmdZb0llOEtEaVl6MVBLNXhhYlhYRXBhK05NcU9lS1FmbFVYR01MSC83TXJl?=
- =?utf-8?B?QmowZEJMUTRLQlJuY0FISk5ldlM2djR2Qi81ZkZud1lWU3Nnd0Y3enR6cFdt?=
- =?utf-8?B?bXFldHBjSENoMTRydW1veUMwclFOUkxPcGlDRUIxdDdZM1A0TmhxZlFHUjBT?=
- =?utf-8?B?ZmYwN0FKd1ZnSTROUE0wY1hXMHRVWFBkOFpTYlowa0RXbGo4Sy9oc05seUN4?=
- =?utf-8?B?WmFvUlZwOGdJcmdST1E4dVZqNjJPK3hoc01hdFBvbkMzZmVwVHVCeG5xc3lH?=
- =?utf-8?B?S2RSR3lwWUtjbmY5VWY0WVRuOFBtSXZ2cmtaaHlkbWV5MFE1YWRSZWR6K1B3?=
- =?utf-8?B?dzh0TjhxeGdkSjV1VDg2a3I1dm01eDhPOEMyeFZ4NEZYYXJCWVJKcUxJSUF5?=
- =?utf-8?B?SStNS2R6SmcxTVVxMy80ZXhEaFMzZURzeGluYzdYSy9aVFhIVXdCbXpMYTdG?=
- =?utf-8?B?VVc3WXlrRlJ4K21RdW1KSkl4S2JTRDFFYmNucVlkS25meFNBcjFLNTFEcnJs?=
- =?utf-8?B?YUhsYzg5Yi9kY21LeVA4WHFESVBRaVR1cEFSZHNXcFZaclVWajdKY2JXRmNv?=
- =?utf-8?B?MzFhQUdyZnBTUGgzem4zV2FPMW1OZHFHVkxlL3cwMnNmS1I5ZDdUVHdaRTFh?=
- =?utf-8?B?OU1ScTdpQmRpSHdZdkV3ZG0zdTBjdzlvOGRCb29xbFZ1UEs2aS9PQ0ZFcExP?=
- =?utf-8?B?cXJkRytpMi9FUWxTYTAxc3F4azJYc0ErN0JuVG5QeFpUNVVwWVZ3N3VyaXRn?=
- =?utf-8?B?b1VQeWo3MVlNL09OeWFFS1pZdUxSRGp6K2tMME9ZMXloQmtxdFQ3VmkzSGNi?=
- =?utf-8?B?QUQvVVphZ1Q3R2hucEhiZmJpNDNmYUFYMWxZK0ZYMW9lbVBUb1hLbUlkT0xl?=
- =?utf-8?B?dXQ0R3hSb25iZkQ5d3dGcTdnNERnPT0=?=
+	=?us-ascii?Q?hVFmE2hQKr5Jf+jkRHiW6FLTSAKcwJ6w/YloX/7vUW+sJvcq+gbb7BpIiu7B?=
+ =?us-ascii?Q?VgtXEE7dGIrwdU5dUctK384XL6KpWKCwGxRcUGwHDA0cL8EKHW1h/wb3PhKi?=
+ =?us-ascii?Q?jmAwyz+yr+LSI9KaGa2ApOxq7AAkTCHkP7vOXwoqt4hcwh+h8XK6qgRNOH7k?=
+ =?us-ascii?Q?oU1hJLtYI1cjPfJj2+h7RRXmZGWvW96vcboJeBet0UMsrTvm8UYX6ySNN02P?=
+ =?us-ascii?Q?+aqQO73RkXZnk+Cht/TztHGDMzjDSLK2tzNbOsQvV0c/eT2WMxUIgY+Dz7aI?=
+ =?us-ascii?Q?H3g2+HDptKLDfDbkAM1bZcU1MG6kPbdSYBmaOgKXymB66ZVU8Jkv2OmMqqZc?=
+ =?us-ascii?Q?P2k37e6h+nWF2AQmhyQyw3BK0zu9fpIwhyiA+pDykIk2VrBGMeb8HbYOoX4B?=
+ =?us-ascii?Q?C5DJ0TaIYpkBlDmYFqKeC0Gow5fBRVAR7hPPF9u/OV+KPLGcuC49mCjnZcpq?=
+ =?us-ascii?Q?zO3/ZwiCaNUXhb8N6/61Autp4kx5QnqdT5xo4q4rUjOaOCMKuRWDPXX/qqrg?=
+ =?us-ascii?Q?aUWipgJ87dE1Scbae8Y1rr1N8SRQxv8btk9xikrBJRnIULeuvvob2RL80+Z8?=
+ =?us-ascii?Q?A3nCTLz277E4342oblAQkqAHIGRwEt+qar/wbvWjFMZ+MMwvocZUAxObny8r?=
+ =?us-ascii?Q?RGIKlewgcIBsPTlltHF7Y1CkzOtQsM2vCdcE4nl2eWh6MiD3unuNdvqnX/Px?=
+ =?us-ascii?Q?oeENq29VAhMfzFYlyuSmkVMOFdlbyIl+XjXZKf+CqRpFemx46LduU0gsrfd4?=
+ =?us-ascii?Q?JQ52coO1JBplKhgqK14oqxkcq1juFfqzFVRbK0zjl85HmdHEOLPpJ2zwjcq9?=
+ =?us-ascii?Q?pPgnC7nrNflkcpHDIfwDQ1/P+o9NcDXvht7GF/msjxSFygqBEQ0YIlrjZDzh?=
+ =?us-ascii?Q?1NAUYRy5PnldLSV3TspWslogk31XIzdyJ3Ocrnaj1CIJcv/5NwKrEHXQyM6j?=
+ =?us-ascii?Q?yxN2dnDNZNzWLa7U0WbdrR7PQut5s5M+KtuZQP71DcLktl61QO1KUIjNzjlf?=
+ =?us-ascii?Q?NOEnHxIZlizWo0XsaLhAUclVxnKEa3vMV+Xi+lXSPLCRz/aWsncrPphZ0TKT?=
+ =?us-ascii?Q?7m+0mLZSyaZmpBpmGJSCVW/JBqfCuYIKqMYyNutH4+ZW98jzDXWqOCIwr3+S?=
+ =?us-ascii?Q?BffhqHCK9RTfWAr+0hAgB1Vg9NIKpxmioPPVqcx6eKkhFNY38MD4uZwz6MPT?=
+ =?us-ascii?Q?76XegKIqukCJlRxqYwFmCrf4fBEFud92DuiyH6qTHJivY4Fbgnyn0svmXO9q?=
+ =?us-ascii?Q?OjSvhEd6w3TygSgcWlUlRb/hODCgQP15RINYpIXHHAsmydeYFH1nui7wRZDQ?=
+ =?us-ascii?Q?RiwhFVPaIse93EI2Q/ioJnFs8nqQmh87JghNdEOup550wsnjA/ZC7E4Y/85q?=
+ =?us-ascii?Q?3bPOKlqkbKoWqlmx46Km1szCbbgmKvjB8hwBGBpwGvFj2CTatmYvIOF0eh9X?=
+ =?us-ascii?Q?+d3xbw25W1t6dw7dXm4FK5U4mVmrSSs8UBS8A3AJimzJhBeKVqarFOkh+VTc?=
+ =?us-ascii?Q?maPIJhJ/b/5NUcWGAI/NLk6/JaprtWAn3UOlk5+pljg/T0ihscatLxhnaBc7?=
+ =?us-ascii?Q?GEFuDBGijy18Plgxmg3kOrSgh+1mZgdTxMLse314?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b825247-12a8-4708-4dfe-08dd8248ac8d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d724e292-cd1d-406a-e438-08dd825dcbea
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 09:24:40.2316
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 11:55:52.3104
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hBVyUFLX1DV7kSvE/SIe47BCqNGUs0PTjHgloMsuAtDX3UB5o6+DRg79Sv1WyyT2dEegkySOXTVXEJ44M+E3FA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8808
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jv2Ba+okItAPqUI2+066uoj1ws9VQxeGevCfkN70inbvJncPC5bRrpYbRpkUPFHD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9284
 
+On Wed, Apr 23, 2025 at 08:05:49AM +0000, Tian, Kevin wrote:
 
-On 16/04/2025 14:26, James Clark wrote:
-> 
-> 
-> On 14/04/2025 5:28 pm, James Clark wrote:
->>
->>
->> On 10/04/2025 1:11 am, Namhyung Kim wrote:
->>> To pick up the changes in:
->>>
->>>    c4a16820d9019940 fs: add open_tree_attr()
->>>    2df1ad0d25803399 x86/arch_prctl: Simplify sys_arch_prctl()
->>>    e632bca07c8eef1d arm64: generate 64-bit syscall.tbl
->>>
->>> This is basically to support the new open_tree_attr syscall.  But it
->>> also needs to update asm-generic unistd.h header to get the new syscall
->>> number.  And arm64 unistd.h header was converted to use the generic
->>> 64-bit header.
->>>
->>> Addressing this perf tools build warning:
->>>
->>>    Warning: Kernel ABI header differences:
->>>      diff -u tools/scripts/syscall.tbl scripts/syscall.tbl
->>>      diff -u tools/perf/arch/x86/entry/syscalls/syscall_32.tbl arch/ 
->>> x86/entry/syscalls/syscall_32.tbl
->>>      diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/ 
->>> x86/entry/syscalls/syscall_64.tbl
->>>      diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl arch/ 
->>> powerpc/kernel/syscalls/syscall.tbl
->>>      diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl arch/ 
->>> s390/kernel/syscalls/syscall.tbl
->>>      diff -u tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl 
->>> arch/ mips/kernel/syscalls/syscall_n64.tbl
->>>      diff -u tools/perf/arch/arm/entry/syscalls/syscall.tbl arch/arm/ 
->>> tools/syscall.tbl
->>>      diff -u tools/perf/arch/sh/entry/syscalls/syscall.tbl arch/sh/ 
->>> kernel/syscalls/syscall.tbl
->>>      diff -u tools/perf/arch/sparc/entry/syscalls/syscall.tbl arch/ 
->>> sparc/kernel/syscalls/syscall.tbl
->>>      diff -u tools/perf/arch/xtensa/entry/syscalls/syscall.tbl arch/ 
->>> xtensa/kernel/syscalls/syscall.tbl
->>>      diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/ 
->>> include/uapi/asm/unistd.h
->>>      diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/ 
->>> asm- generic/unistd.h
->>>
->>> Please see tools/include/uapi/README for further details.
->>>
->>> Cc: linux-arch@vger.kernel.org
->>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->>> ---
->>>   tools/arch/arm64/include/uapi/asm/unistd.h    | 24 +------------------
->>>   tools/include/uapi/asm-generic/unistd.h       |  4 +++-
->>>   .../perf/arch/arm/entry/syscalls/syscall.tbl  |  1 +
->>>   .../arch/mips/entry/syscalls/syscall_n64.tbl  |  1 +
->>>   .../arch/powerpc/entry/syscalls/syscall.tbl   |  1 +
->>>   .../perf/arch/s390/entry/syscalls/syscall.tbl |  1 +
->>>   tools/perf/arch/sh/entry/syscalls/syscall.tbl |  1 +
->>>   .../arch/sparc/entry/syscalls/syscall.tbl     |  1 +
->>>   .../arch/x86/entry/syscalls/syscall_32.tbl    |  3 ++-
->>>   .../arch/x86/entry/syscalls/syscall_64.tbl    |  1 +
->>>   .../arch/xtensa/entry/syscalls/syscall.tbl    |  1 +
->>>   tools/scripts/syscall.tbl                     |  1 +
->>>   12 files changed, 15 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/tools/arch/arm64/include/uapi/asm/unistd.h b/tools/arch/ 
->>> arm64/include/uapi/asm/unistd.h
->>> index 9306726337fe005e..df36f23876e863ff 100644
->>> --- a/tools/arch/arm64/include/uapi/asm/unistd.h
->>> +++ b/tools/arch/arm64/include/uapi/asm/unistd.h
->>> @@ -1,24 +1,2 @@
->>>   /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->>> -/*
->>> - * Copyright (C) 2012 ARM Ltd.
->>> - *
->>> - * This program is free software; you can redistribute it and/or modify
->>> - * it under the terms of the GNU General Public License version 2 as
->>> - * published by the Free Software Foundation.
->>> - *
->>> - * This program is distributed in the hope that it will be useful,
->>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> - * GNU General Public License for more details.
->>> - *
->>> - * You should have received a copy of the GNU General Public License
->>> - * along with this program.  If not, see <http://www.gnu.org/ 
->>> licenses/>.
->>> - */
->>> -
->>> -#define __ARCH_WANT_RENAMEAT
->>> -#define __ARCH_WANT_NEW_STAT
->>> -#define __ARCH_WANT_SET_GET_RLIMIT
->>> -#define __ARCH_WANT_TIME32_SYSCALLS
->>> -#define __ARCH_WANT_MEMFD_SECRET
->>> -
->>> -#include <asm-generic/unistd.h>
->>> +#include <asm/unistd_64.h>
->>
->> Hi Namhyung,
->>
->> Since we're not including the generic syscalls here anymore we now 
->> need to generate the syscall header file for the Perf build to work 
->> (build error pasted at the end for reference).
->>
->> I had a go at adding the rule for it, but I saw that we'd need to pull 
->> in quite a bit from the kernel so it was blurring the lines about the 
->> separation of the tools/ folder. For example this file has the arm64 
->> defs:
->>
->>   arch/arm64/kernel/Makefile.syscalls
->>
->> To make this common part of the makefile work:
->>
->>   scripts/Makefile.asm-headers
->>
->> Maybe we can just copy or reimplement Makefile.syscalls, but I'm not 
->> even sure if Makefile.asm-headers will work with the tools/ build 
->> structure so maybe that has to be re-implemented too. Adding Arnd to 
->> see what he thinks.
->>
->> As far as I can tell this is a separate issue to the work that Charlie 
->> and Ian did recently to build all arch's syscall numbers into Perf to 
->> use for reporting, as this is requires a single header for the build.
->>
->> Thanks
->> James
->>
->> ---
->>
->> In file included from /usr/include/aarch64-linux-gnu/sys/syscall.h:24,
->>                   from evsel.c:4:
->> /home/jamcla02/workspace/linux/linux/tools/arch/arm64/include/uapi/ 
->> asm/ unistd.h:2:10: fatal error: asm/unistd_64.h: No such file or 
->> directory
->>      2 | #include <asm/unistd_64.h>
->>        |          ^~~~~~~~~~~~~~~~~
->>
->>
->>
-> 
-> Hmmm I see this was also mentioned a while ago here [1]. Maybe I can 
-> have another go at adding the makerule to generate the file. I'll 
-> probably start by including as much as possible from the existing make 
-> rules from the kernel side. I think something similar was already done 
-> for generating the sysreg defs in commit 02e85f74668e ("tools: arm64: 
-> Add a Makefile for generating sysreg-defs.h")
-> 
-> 
-> [1]: https://lore.kernel.org/lkml/ZrO5HR9x2xyPKttx@google.com/T/ 
-> #m269c1d3c64e3e0c96f45102d358d9583c69b722f
+> It's not a good idea having the kernel trust the VMM. 
 
+It certainly shouldn't trust it, but it can validate the VMM's choice
+and generate a failure if it isn't good.
 
-FWIW I am seeing this build issue too on ARM64 and these changes have 
-now landed in the mainline :-(
+> Also I'm not
+> sure the contiguity is guaranteed all the time with huge page
+> (e.g. if just using THP).
 
-So would be great to get this fixed or reverted.
+If things are aligned then the contiguity will work out. Ie a 64K
+aligned allocation on a 2M GPA is fine. I don't think there are
+edge cases where a GPA will be fragmented. It does rely on the VMM
+always getting some kind of huge page and then pinning it in iommufd.
 
-Jon
+IMHO this is bad HW design, but it is what it is..
 
--- 
-nvpublic
+> btw does smmu only read the cmdq or also update some fields
+> in the queue? If the latter, then it also brings a security hole 
+> as a malicious  VMM could violate the contiguity requirement
+> to instruct the smmu to touch pages which don't belong to 
+> it...
 
+This really must be prevented. I haven't looked closely here, but the
+GPA -> PA mapping should go through the IOAS and that should generate
+a page list and that should be validated for contiguity.
+
+It also needs to act like a mdev and lock down the part of the IOAS
+that provides that memory so the pin can't be released and UAF things.
+
+Jason
