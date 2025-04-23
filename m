@@ -1,248 +1,211 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA0119CC3A;
-	Wed, 23 Apr 2025 04:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745382720; cv=none; b=njO5HMPxY5yn1rz6veijJ4r+73vTIboTjKO3+RdZPCa2owiJIwcF2sJSzY73Nqks3WLImMqEMiv05kJbiyOuaqWMxMvZ2fASQb2sXDMpSmQWFHoBirqtUA9nmz8D93UIu12aqYeXWTeH6sGNdbK36AEA2pj4cj7IQPiTilX7qEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745382720; c=relaxed/simple;
-	bh=P1w1LWSbsZN3WyeYHfmOFNLcHEWldP9/sO4hdjzrTik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W3cstDlIBfoeWfG90TbeyhPysqYseIlwx2YpkS9Qswim1Q5DbiJMEuP+QGfv3TIIco4jN5vzemmcgkmgApeDtGeaBfJ2nfyKfPIjttD0mmHaDxEwY0a5yqGNyL9UZnNrCSv0G9zvD3XsSGpUvfkLKcZMUig8rpinnWgLbpH7jsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LfG8CBr0; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC241DEFE7;
+	Wed, 23 Apr 2025 07:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745393318; cv=fail; b=YpHJJSrL8MmPHjqlS+z+/kYH+2bxj3RDQeOyDreDRi86e2Owlq/5sjrd5dxHYVbY3N5lQWzlWexlLcL6vqc5PvSTCEFeDETp9dshxTTQ78zmjSMsCyv5KogxJBJQHbzHyUD3qf7yEU5BIWWb/Sd9N6cdNEfoE6tjciv5IdWUthk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745393318; c=relaxed/simple;
+	bh=4Dpc/xqBoHhS/1bBumSdYhd3LN3wn87wVM9r5nuSdaA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=o+Hk3AAwZ2MQyxuLNgy8AZQptrJ1u8Zt0bdj2Pv8ua+W7dxj9PSvLIsnqBmBCLYxSSPItYM82NmND8Nad+1n8+sI/ZAyZvOdgLMabThij8+QGdsGxGnH7tbjEizF2xFZe0IZhd1ZtzI7rd+xS67xrl1jzrOb/MWKVJuEQUQr7v4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EBmODrpN; arc=fail smtp.client-ip=40.107.92.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LfG8CBr0"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5499c5d9691so6699696e87.2;
-        Tue, 22 Apr 2025 21:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745382716; x=1745987516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EfU6WjNv7EhQ1b3F1YgcLr0oW56464U4m7MZVKTAVBM=;
-        b=LfG8CBr08Ag7up2WOUrO9ycPp1fgAFnEmJr87Bycd7SWBhEuwUu3N3PL9+Oj7bnl6a
-         tAN3wPauilv9ZKkP2ppsbZen8PCs/IVlGg0SitdBov0+7oj5W09T0/5yp1BgRjDV9xxs
-         2krf+jzDYRdjKBg1ds3conn5ztZM1t4ggw0dkyziXqQl8as4Q0AgE/Pc3nHg+QKXovoo
-         cqdQGAA8VxZhsnMNBz11LTvJaSCmiUvXscgTiebXulyahSXfZ8CbOLm7ukoKKX1iRb6m
-         5g+DLaA7QbiESAA/OeA4iqv6M2bjfX2+A2qVqG0BOrCR/k9tAnurM8yb0+K2XqeFVX/V
-         oaLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745382716; x=1745987516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EfU6WjNv7EhQ1b3F1YgcLr0oW56464U4m7MZVKTAVBM=;
-        b=rPfx8TCuLZWIu9j01XkVwfhjZaXjx7Dawc7gVMCaR636Y5yXp6la7yzBiBF1Xoc3Re
-         RHe6vmuZyf59crMX95JTswx6pPBDUdO4/S3R0adwxHg9TH5tWCtbWqI186ijKY+eRm4G
-         CsPX69YhymstziMemQaZp//PRV1xD97NgQ0+32QlAQmIp9qekbyKXbhd3BQNn3p/mAcT
-         Ula50TYr/P5vZdkdgyvnVj9S71Ix2Ko/DqQLXXVMswMaliZ7Ky7mSOkOSrj7dbaKS+e1
-         8B++Y9XBOCPVX0mkQSj6D+85QMYjIXA2sER4KFF3yUfT+5Q8Gxtb2Vqx9UVUqpdvq8BV
-         ZbsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2NwznDajgu7nLRv5wiT4GhZFB4z3NoQoAXaKPFat7ojCgB/zB2PFC6NDkzoA788L2tu/TZiA3e5bK@vger.kernel.org, AJvYcCWG3OnWH21XqCO6tFzEqsLmikj63mHEwGUFNkcwLOx9oh98/oQIeyOM5E0Mtr91G/GzbvZstYu1UWzGoYZI@vger.kernel.org, AJvYcCX5d9Y9V54fXTeISog9p/0pLLEpNyvHDA+IJmArjJpS6KjZyLxJPwTyfwaSiCyoyAiPekaNNigvvAtn/5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMQk7dMYJhvUVFWArmsPHTMroYrVca/fv2G/UnZZj4MP2pMVdh
-	I+QTMrCiRtceOXu5X7VUirpMYUxlUcW4z9sbsG4hvGnD8CynU/1PjwwPVAUUunfwKVncMSSaa6T
-	CrEVyr321js0RvU97UN6GDSpXD/4=
-X-Gm-Gg: ASbGncsR61chFjzyrg/lEjQxZONryojDm7jo0XpIWfmDoK40OJRMMLnrdJfHrxTwSwr
-	irtnggbVdwztlvYbR/T79Hqy5mD+DYRbtFhCe0mAEBkbjMDQg2hJAQl1DpXl5/eKdyRQ/JlPXiK
-	nYtYMN1dD5WaOTGBYWIJkZGA==
-X-Google-Smtp-Source: AGHT+IHrhTx/MdAoqHZhA/XltNRI8gY7Qpv0iUa8fCoTK3yi48+MnrjeKBXmmWBDH2fdMJ2UBb3ov8ARoW/15k3JAeQ=
-X-Received: by 2002:a2e:be9f:0:b0:30b:d44d:e76d with SMTP id
- 38308e7fff4ca-31090553fb7mr54534981fa.26.1745382715958; Tue, 22 Apr 2025
- 21:31:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EBmODrpN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=awYoRaxB28Br2zv6Gt5eHE+dYfYL1BkygSbGCn6+hq1mpBzshA6A47zt8iWxKS9eqXt357nTGSbvvXkvG1bymfkRw2iMqYXQL4RAAx8GMe05ADQQBoL62DWp0OMTCbRtABLo6Rz7E/XD8MYG0yFoSYajxanWQeKuB0za6wIVRfC9H9cx/rvWES7oFtxwKCy1LWGHbvUoXMrCyK27Sw0q/ASOIgllhRNQVqC4hBWvcwjAVwIxQVu7Xz4tRHYHZFxBPvc8Ya2IK6+uaXDYXS0hkKwozc2QOQOMiaLA/UlCWcZ0G87+p0Geg+6QWtimnLz7q685l1Nj69EEjw1hLgO/Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bdhh5JefwpRcfi6y+kOaF7PRXXMg4siUZ75Q4XkyPNc=;
+ b=eFmANI1UKA0ANnSck5hnRD/i7dJHBMuzyUsBjqG4OaAGW1JohUvKDcd07lcV+D6WUbXr7rYOmFufEYR5R/GQjZH2bXACdJUwIYILxgcbcreK3dbkeTQHJQhpkgz383VEKMU66bEkEVKiDcm/fJbqs/nKKYAq/pEaRWPiedhq2hfVOci2iw46zEFx+Jz7y7TECI8yyEOd2eBkNhCXYsWlhiyovkSy6BusTpayUXJXbERo7oOnDqTSOKqzaK5Vc4Fcn84g9mX6dKgIH1ZSf+fJHHOwjTwS/3SUyE7OnmRlT3dvM9alGO1DOIDmACMzFePBx10qnOGdvqcGFIB3lh6nHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bdhh5JefwpRcfi6y+kOaF7PRXXMg4siUZ75Q4XkyPNc=;
+ b=EBmODrpNnZwDdGyIAjnzryggT9Tv+rYmCDMvGvE8VLiJheUiEFxumE9dhQ0g0pjitIQKkYE0Ismyl8NftJjpHjbuuXpopIhAsL5sEZZEDNnq4CCdwkYCaeotP7YP2yFy47F7zRdXJYo4P6KW7quJj9yEMRG0ZZx9788zBrp3eHw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ CY5PR12MB6201.namprd12.prod.outlook.com (2603:10b6:930:26::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.35; Wed, 23 Apr 2025 07:28:33 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8678.021; Wed, 23 Apr 2025
+ 07:28:33 +0000
+Message-ID: <a0c248f0-71ff-4477-98ec-1bbd52eda566@amd.com>
+Date: Wed, 23 Apr 2025 12:58:19 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/16] iommufd: Add vIOMMU infrastructure (Part-4
+ vCMDQ)
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ corbet@lwn.net, will@kernel.org
+Cc: robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+ vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org, praan@google.com,
+ nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
+ jsnitsel@redhat.com, mshavit@google.com, zhangzekun11@huawei.com,
+ iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ patches@lists.linux.dev
+References: <cover.1744353300.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <cover.1744353300.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0210.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:e9::19) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com>
- <d0da9dbd-7ea7-4047-bab3-22f416c45938@gmail.com> <CALHNRZ-1wY2D4FOauh7tD+2QKBfhtfdJcvpV_B9Y0tEpE1kTVA@mail.gmail.com>
- <03de9272-dbcc-4473-a267-c3a32e3fd844@gmail.com>
-In-Reply-To: <03de9272-dbcc-4473-a267-c3a32e3fd844@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 22 Apr 2025 23:31:43 -0500
-X-Gm-Features: ATxdqUFNNymFd9pSDXZBQVufkK6hibgt7Q7sXOUNoBMMd9XRCOgNUOfdi-xI_IU
-Message-ID: <CALHNRZ8i=gOrHfgjhL5X_mqM8=1KeW_cXpp2R32hmT5wUjkw5A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
-To: Tomasz Maciej Nowak <tmn505@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|CY5PR12MB6201:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c285b28-dca7-467c-8296-08dd823873a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TnZhOCt3M2VWOFJQbzF1a3FZRC8yS2lQa0R4QWhmbDNMcXRWRkJHV1hSTU1Q?=
+ =?utf-8?B?U2Y0L0k4enRpb24xcDVOZjh5ZUdidXRUMEx6TjBHUnk2bzgzRGE3Vk9HZlU4?=
+ =?utf-8?B?eFBOUlcvOFFQY0tRdkJ6S1Z4Z05jVDZTaDM3Vit6Y25lVzFSVjFtMFROTi9U?=
+ =?utf-8?B?MnI0MkgxeDV6WEtQVFg1akwwSTlma0dZd1NlMlJoZExOQng1TlI0SGxPMkJ3?=
+ =?utf-8?B?cTlKU09UazczcWNUcW13Uktwb0pHZ1d1WmVzdng3Tk9iUTVISCtrSEQvMXcy?=
+ =?utf-8?B?YjUvQURKNkwvbUsvQWRwclNNTmwrWnBIS0FjVU04c0kyTmFPeEZKbUZIcXFk?=
+ =?utf-8?B?UTMraE5uUVcxN3pwVHNFTk5lRTR4NFNWZzA0T0tBZUhBNjBiK2lkNCsrT2FN?=
+ =?utf-8?B?L3VsV3pzQXFqVStKU3QzZlY1Y29QQllCaVhUaTNaSnF6TUVVbHNzTlhGeHMv?=
+ =?utf-8?B?bHNyRHJNTnhlSURkTE9VY1ZxQmU5TTVaSFpFMDYyT1BrRXdURFNFQ2xCY3pw?=
+ =?utf-8?B?QXlwUnFQSGQwcXFPNDJqeGRaK2xyUmxNRUpac1lPY1h0VzBTeDJqMWhHc0Fo?=
+ =?utf-8?B?clFRU3d3enM2K01kOXRpUkUwRm9Jejk2UUtsYTV0VWZVTW95eHp4NHZPTSsx?=
+ =?utf-8?B?RTI5a0RNenVwNjNWVThoZG5Kb29jT2x6c2xJZ2NtNlJtL1NPMWhrTDh2bnFW?=
+ =?utf-8?B?aGFGRWFkRmh3dDFvN2UwbytBTFMxMFlvMmFRc3RvTEVPUG9RenlWbVBWMm04?=
+ =?utf-8?B?WVdJUXo2dUYzZE5KWUlBSWt2VzMrWXBZdm1jUXFwTVFWOGlwNC8rMTVyUkFh?=
+ =?utf-8?B?QnFvdzd4ZHpPNTJDd0pRb0xLbkVDd1RGRzdxbjVQRE03TCs0UXd1TkV4eC9Y?=
+ =?utf-8?B?dGEySk5pNjNqL1ZBM0RvM1BtMEs3SHJLRGJSZ3dZa0plMExzaVN3NDdDWWR0?=
+ =?utf-8?B?QU1CMFVOSFhYbFl4UHpiQk0wZ3I0QWl4SXJMOWhQWGNUYWE1VGlaSnlOUDFU?=
+ =?utf-8?B?bUx0ZTVjWFgrTGk2NjhJR3lhekk3bWlpNzFobjk5QU9vcU15K0tpNW1RMVVG?=
+ =?utf-8?B?RmJzTC92NE1BMUpyY1RGTW5PYTVwK3lJZ2swOWFaNFo0ZmF3akI4WW1oY0ZO?=
+ =?utf-8?B?VlVoeGxMYnRrRXJUU1FFRHIwLzVBUmZqUHF4a09pZFZneW90SzkxZUF6cWtZ?=
+ =?utf-8?B?ZVV6TzJ6aHJqdEh0MGNCQTEzRlhKTDFzOXFhcVlRWFpuMk5KNXd0bStvMGRa?=
+ =?utf-8?B?TmV5dWMveGZ6SExuK3dySTNjUGVTbnFqMjY4YWZnOTd1U0FsRDhjS2dQMHlT?=
+ =?utf-8?B?QVFDc1lqV0JOSHhyWFJ1YTJqRUZDUEVPSjVmRGpiMDFXck5IZWQ2OVJPcTM2?=
+ =?utf-8?B?UXNibzNyMVN4MFNMOXdMejY2TFFmdEx6OU5JaUVaOGZUQUpvVWNmQ3BJTVIx?=
+ =?utf-8?B?QXBTcnBIYW5SUW40cS8yNTlMWVFzRGl2WENwSk9HaTB4aWlSUnVaOHVUY3Qw?=
+ =?utf-8?B?cE9xZDRhbXhBQXROSFhBSXNSNStmbkJDL1FwUTh0RDJvd2E5cFFFS2VjSzNp?=
+ =?utf-8?B?RVNFNUxqQ3h2QXNpOHBicVlYdXlBWkRWRlE1eHQycTdNTkpiV0NUL0JlUFB5?=
+ =?utf-8?B?WVJ5ZnpIdXNpRjgyK3FIa1B3Qkh2Y2hWbk9xMmlZMzAvbFFMM09CTEhROW50?=
+ =?utf-8?B?OVNLTkZuejN4YS9rYW1GdTYwRDFrcXJISDIrWTQxSkt4ekVNMU9kQVpTRnhp?=
+ =?utf-8?B?a0JIN0txNi9iUGFnSFZlSUU0T2cxcXJ1TElJT3JLckpPS0RGVXJnNEFxa3dm?=
+ =?utf-8?B?R3RZTFUwM2d6RjNZVWdxMnk2YUlaU2FoQXFoQmhXWDd6cVQxbWV4U2NDem4v?=
+ =?utf-8?B?MytyZU54N05JbWtDbE1EMG5rR1crRFp3bGlYeU9zZ2FFRWJJdUV6aTNEdGoz?=
+ =?utf-8?Q?8fY2LwnOkZA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDgyYmJZR3NVV01VVjhaczNQN045OGlZQUZvdTF1SHYrNXZyYWtWelFwVytP?=
+ =?utf-8?B?dUZObE5velozTjRmK0hXcFYxWmlxa2ovbHIzeGd1V1hNQW5PelFPM3ZwOVpM?=
+ =?utf-8?B?ZkhOMGswQUEvYk8walhNTGIwL1JpNGNYNS9Ea3JGVDdJOUVSSm9ITDAxbmdM?=
+ =?utf-8?B?YXFHd0hLNnFmcmozdGY2SlR1ZlBrcWdMbE12cC9DWitLQUI3M1hMQ0J3QW5S?=
+ =?utf-8?B?Y0psRnlrNjVwR0g2NGhCZ2lMcTlOblpsM1RiK0VzaGRLaEdQQjA4VGI5czQ2?=
+ =?utf-8?B?WFFrOUxhdG1TL0h1TXBRRkw5TDBKUkdVOXhZM3QxREdXS1N0MmNPWHJzNXM5?=
+ =?utf-8?B?MHQxWWFWTi9MaWFIVmxQVGp1S2VxOWVOMEpTeDdsYzNsMm8xTWo3YnRNakh5?=
+ =?utf-8?B?RGM0NFYweEUzNEdHbFRVbkhkQnltWjNaTlZ6RWxSS0tWZ2I2eVgzZWYwYXhJ?=
+ =?utf-8?B?TWJWYzEremc5OEx0MmlxQ25OSVBTUnJmdnlURkdzTTM0ZzF6enc5Rmt4aGlj?=
+ =?utf-8?B?SGJvY3pRcFJ6blBrWE1CVDVKYVlmZXI1aER5eXVZNGEvNU5JQWtFbEgySUpz?=
+ =?utf-8?B?MnphQmY2SzluNU5LdUxLekRYT01HaFdQeFVJL0N3aTdSa3FvaFl2dWZycFEz?=
+ =?utf-8?B?N0FIZ3AxWnRVMC9oa3B2RUxwejJPTkFlL1pZSzlWd3V4UEYvYkRaQStBWm9s?=
+ =?utf-8?B?S3RybUcwZWV0QnlZZG1Eb1pwS3NoUzFGa1FPTDlDQVV3bEVWeDBaemxORzlU?=
+ =?utf-8?B?bnVLbVVITUgxVVdBMTYvTUZZcXRMTDhVSHVJKzJlbDY2a1ZnL3VHQWljM3JT?=
+ =?utf-8?B?VnJpbHhiV3RlNHBUVHR5b29veURZdGJzN1JERDNNdnUxVnpNVGZqTW9URTVT?=
+ =?utf-8?B?dFdYdWN0QkFEVEhPcDR1VmN2SjdEZmVyZ0RGdHFhTUhzTFdIYzNyRERoSFUv?=
+ =?utf-8?B?Y2FwWFlZd3VIR3NmZGNZT2pPZ0hxWmxTcTZQM1JvM1ZLb2ZFZzF2YVdLcjhO?=
+ =?utf-8?B?VHU0Rm5kUThxc1J2dGUrVXR3RWhiSzA5MWRYaTJqeDU1cktTMmFTZDBLbDRU?=
+ =?utf-8?B?cDVPN0hWVGtlU3BiTkNyWHROS2p6ZnBxMW9ibWJYYmxnaC9UaGs1cklYZnk0?=
+ =?utf-8?B?K0Q2a0RLZlh5d3hsYXVCdDA3TmxHc1JiVDZmL2diMDdDalM2dVFCQlh6OGpu?=
+ =?utf-8?B?MHJDdHpIQ3pGck0zSjFZbHBGa0NYcXloRG1GL1owY0ZBOURQdksxOEhxR0hW?=
+ =?utf-8?B?am1jSTI3ZCtWVGdDajB2RGhTZmpma0hEbWhqY3BnMlE5cWlBLzVYdWd3S0Mv?=
+ =?utf-8?B?WlNRU1VSeHR5VEhqUjhHSkdpc3p4d1pBaGg3RU9vVWJCWkhiZzF2U1luZnpi?=
+ =?utf-8?B?Sk1Lb2E1OVY1RStVM1ZGcjV5K3NSL055MDZLcXNFbU0zaTBEQkYyNko2VkRS?=
+ =?utf-8?B?bmlVL2JPSEZDOGFuZHAzSlpodW5wM0VUZXVpOWlXVmg3cUZ3algvbjhyQUta?=
+ =?utf-8?B?SjQyUjdkaWlXejY0dVpEOFlMWG9qK2JkckNEaVdwd29ZOE03SXJyY09TR3VL?=
+ =?utf-8?B?YkZJWkZsMzI1azZQZ0tDQy82OUdzZ0J3NDJrVVhab1VTazBNblVaaEZsT29X?=
+ =?utf-8?B?RUxIRmQyVGlrSXpEU1J3SENzbmR3dmNqZElnZGVIbjlVaWNaZDNjQnJVNy9P?=
+ =?utf-8?B?a1NkSUNHdk1PMnYzNTdIS2djcHk0Y3oxNU5NUWU4Q3FVcW4vbE5zNnlrb0c3?=
+ =?utf-8?B?OGVoRGN4YkdjcDkzQWpQZW9TTDV3NFozOURlNjJuYUIrdmlkQlRPR3BtdWoz?=
+ =?utf-8?B?QXR5V3NmNDkzUThPNzNQWXhtN2NrMUJRVUgrZUV0RE9DRGY4Vml5b29sUFNj?=
+ =?utf-8?B?THg5ZFpYWU1GZWlJNFY2VFFRUW1nMDlWTUl6ajlML2s5dHVKRGNGbk15NkZJ?=
+ =?utf-8?B?dmJwci9hWGk5QjYwTzlyS3VYWTNkNCt3MXA4cUhiRDQzOHlCYUpiV1pFVVl5?=
+ =?utf-8?B?dFVJWU1CN2M5ODROV3VPWkJoV0RaV2x5NlNCTDlzM0QxVkxTUGhMdERwQ1BG?=
+ =?utf-8?B?Uk1ObXZYRmdxUTN6d2ZPbzg1T0ZsNkJJMU9vQ3k5ZzBuakNNS09qQnNESEt5?=
+ =?utf-8?Q?/pQ9hmMQbDXksKuSaPIpgsH6U?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c285b28-dca7-467c-8296-08dd823873a7
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 07:28:33.1288
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5zfOXiRMB8a3Wo8EkXZA3n1eF2Jj4OMXYCeSKAJTBlyvauFQ10Pb8oTzoKtqutb5wcJfAmqD9zyjSv8o7xJ1YA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6201
 
-On Tue, Apr 22, 2025 at 11:19=E2=80=AFAM Tomasz Maciej Nowak <tmn505@gmail.=
-com> wrote:
->
-> W dniu 22.04.2025 o 17:58, Aaron Kling pisze:
-> > On Tue, Apr 22, 2025 at 9:52=E2=80=AFAM Tomasz Maciej Nowak <tmn505@gma=
-il.com> wrote:
-> >>
-> >> Hi.
-> >>
-> >> W dniu 21.04.2025 o 00:42, Aaron Kling via B4 Relay pisze:
-> >>> From: Aaron Kling <webgeek1234@gmail.com>
-> >>>
-> >>> This is based on 6f78a94, which enabled added the fan and thermal zon=
-es
-> >>> for the Jetson Nano Devkit. The fan and thermal characteristics of th=
-e
-> >>> two devkits are similar, so usng the same configuration.
-> >>
-> >> Does this work on Your DevKit? Doesn't on mine, the fan won't budge. M=
-aybe the
-> >> revision difference? What I'm using ATM is [1] and [2]. Because invert=
-ed polarity
-> >> of PWM, not submitted since that'll need the driver changes [3],[4].
-> >
-> > I would have sworn I verified this before sending it in. I've had the
-> > patches for some time. But you are correct, this does not work as-is.
-> > Maybe I lost something cleaning up for submission or just plain
-> > misremembered the verification. I will send a v2 once I've fixed and
-> > verified. Apologies to the list for the bad submission.
-> >
-> > For inverted polarity, listing them backwards already has precedence
-> > in mainline, see the Banana Pi R3 dt. This makes me want to double
-> > check the existing Nano pwm-fan entry in mainline, though. Cause I
-> > thought all the t210 devices were the same in regards to pwm fan
-> > inversion. And it doesn't have reversed entries.
->
-> That Banana Pi R3 reverse levels look ugly, but if it's permitted I'm not=
- against.
->
-> I would assume they fixed that in Nano, since PWM controller doesn't impl=
-ement
-> inverted polarity in hardware. Looking at Switch [5] it seems the TX1 Dev=
-Kit was
-> used for developing, since they replicated the issue.
->
-> 5. https://github.com/fail0verflow/switch-linux/commit/b23e8b89081415f2a6=
-3bc625db041c8092e2a8a2
->   >
-> > Sincerely,
-> > Aaron Kling
-> >
-> >>
-> >> 1. https://github.com/tmn505/linux/commit/a78c520ec94aeab2c9dc8e1f4659=
-7c4174ff957d
-> >> 2. https://github.com/tmn505/linux/commit/99beee4f0cd5d3a6f30e1829d823=
-c11cb8b54bac
-> >> 3. https://libera.irclog.whitequark.org/tegra/2024-07-19#36707118;
-> >> 4. https://libera.irclog.whitequark.org/tegra/2024-10-14#37145211;
-> >>
-> >> Regards
-> >>
-> >>>
-> >>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 60 ++++++++++++++++=
-++++++++++
-> >>>  1 file changed, 60 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/ar=
-m64/boot/dts/nvidia/tegra210-p2597.dtsi
-> >>> index 83ed6ac2a8d8f403fb588edce83dc401065c162f..bc02f2eb14bcbd99627c5=
-8b398bbf43061c8110b 100644
-> >>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> >>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> >>> @@ -1623,6 +1623,14 @@ key-volume-up {
-> >>>               };
-> >>>       };
-> >>>
-> >>> +     fan: pwm-fan {
-> >>> +             compatible =3D "pwm-fan";
-> >>> +             pwms =3D <&pwm 3 45334>;
-> >>> +
-> >>> +             cooling-levels =3D <0 64 128 255>;
-> >>> +             #cooling-cells =3D <2>;
-> >>> +     };
-> >>> +
-> >>>       vdd_sys_mux: regulator-vdd-sys-mux {
-> >>>               compatible =3D "regulator-fixed";
-> >>>               regulator-name =3D "VDD_SYS_MUX";
-> >>> @@ -1778,4 +1786,56 @@ vdd_usb_vbus_otg: regulator-vdd-usb-vbus-otg {
-> >>>               enable-active-high;
-> >>>               vin-supply =3D <&vdd_5v0_sys>;
-> >>>       };
-> >>> +
-> >>> +     thermal-zones {
-> >>> +             cpu-thermal {
-> >>> +                     trips {
-> >>> +                             cpu_trip_critical: critical {
-> >>> +                                     temperature =3D <96500>;
-> >>> +                                     hysteresis =3D <0>;
-> >>> +                                     type =3D "critical";
-> >>> +                             };
-> >>> +
-> >>> +                             cpu_trip_hot: hot {
-> >>> +                                     temperature =3D <70000>;
-> >>> +                                     hysteresis =3D <2000>;
-> >>> +                                     type =3D "hot";
-> >>> +                             };
-> >>> +
-> >>> +                             cpu_trip_active: active {
-> >>> +                                     temperature =3D <50000>;
-> >>> +                                     hysteresis =3D <2000>;
-> >>> +                                     type =3D "active";
-> >>> +                             };
-> >>> +
-> >>> +                             cpu_trip_passive: passive {
-> >>> +                                     temperature =3D <30000>;
-> >>> +                                     hysteresis =3D <2000>;
-> >>> +                                     type =3D "passive";
-> >>> +                             };
-> >>> +                     };
-> >>> +
-> >>> +                     cooling-maps {
-> >>> +                             cpu-critical {
-> >>> +                                     cooling-device =3D <&fan 3 3>;
-> >>> +                                     trip =3D <&cpu_trip_critical>;
-> >>> +                             };
-> >>> +
-> >>> +                             cpu-hot {
-> >>> +                                     cooling-device =3D <&fan 2 2>;
-> >>> +                                     trip =3D <&cpu_trip_hot>;
-> >>> +                             };
-> >>> +
-> >>> +                             cpu-active {
-> >>> +                                     cooling-device =3D <&fan 1 1>;
-> >>> +                                     trip =3D <&cpu_trip_active>;
-> >>> +                             };
-> >>> +
-> >>> +                             cpu-passive {
-> >>> +                                     cooling-device =3D <&fan 0 0>;
-> >>> +                                     trip =3D <&cpu_trip_passive>;
-> >>> +                             };
-> >>> +                     };
-> >>> +             };
-> >>> +     };
-> >>>  };
-> >>>
-> >>> ---
-> >>> base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
-> >>> change-id: 20250420-tx1-therm-9fb3c30fa43f
-> >>>
-> >>> Best regards,
-> >> --
-> >> TMN
-> >>
->
-> --
-> TMN
->
-Mmm, so this is strange. I am currently unable to get the fan to move
-on any t210 device. But it works just fine on t186, such as the tx2 nx
-setup supported by mainline. Tomasz, does your change work on 6.12 or
-current mainline? Even if I match your changes on the tx1 devkit, I
-get nothing. The pwm duty cycle is changing as expected, per the
-debugfs pwm listing. Gpio state for pin 4 of the tca9539@74 matches
-the 4.9 kernel when the fan is running. Best I can tell, it should be
-working. But it's not.
+Hi Nicolin,
 
-Sincerely,
-Aaron
+
+On 4/11/2025 12:07 PM, Nicolin Chen wrote:
+> The vIOMMU object is designed to represent a slice of an IOMMU HW for its
+> virtualization features shared with or passed to user space (a VM mostly)
+> in a way of HW acceleration. This extended the HWPT-based design for more
+> advanced virtualization feature.
+> 
+> A vCMDQ introduced by this series as a part of the vIOMMU infrastructure
+> represents a HW supported queue/buffer for VM to use exclusively, e.g.
+>   - NVIDIA's virtual command queue
+>   - AMD vIOMMU's command buffer
+
+I assume we can pass multiple buffer details (like GPA, size) from guest to
+hypervisor. Is that correct understanding?
+
+
+> either of which is an IOMMU HW feature to directly load and execute cache
+> invalidation commands issued by a guest kernel, to shoot down TLB entries
+> that HW cached for guest-owned stage-1 page table entries. This is a big
+> improvement since there is no VM Exit during an invalidation, compared to
+> the traditional invalidation pathway by trapping a guest-own invalidation
+> queue and forwarding those commands/requests to the host kernel that will
+> eventually fill a HW-owned queue to execute those commands.
+> 
+> Thus, a vCMDQ object, as an initial use case, is all about a guest-owned
+> HW command queue that VMM can allocate/configure depending on the request
+> from a guest kernel. Introduce a new IOMMUFD_OBJ_VCMDQ and its allocator
+> IOMMUFD_CMD_VCMDQ_ALLOC allowing VMM to forward the IOMMU-specific queue
+> info, such as queue base address, size, and etc.
+> > Meanwhile, a guest-owned command queue needs the kernel (a command queue
+> driver) to control the queue by reading/writing its consumer and producer
+> indexes, which means the command queue HW allows the guest kernel to get
+> a direct R/W access to those registers. Introduce an mmap infrastructure
+> to the iommufd core so as to support pass through a piece of MMIO region
+> from the host physical address space to the guest physical address space.
+> The VMA info (vm_pgoff/size) used by an mmap must be pre-allocated during
+> the IOMMUFD_CMD_VCMDQ_ALLOC and given those info to the user space as an
+> output driver-data by the IOMMUFD_CMD_VCMDQ_ALLOC. So, this requires a
+> driver-specific user data support by a vIOMMU object.
+
+Nice! Thanks.
+
+-Vasant
+
+
