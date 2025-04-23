@@ -1,123 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3B0BA50;
-	Wed, 23 Apr 2025 13:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77DF13AD26
+	for <linux-tegra@vger.kernel.org>; Wed, 23 Apr 2025 13:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745413353; cv=none; b=fBWq67fkM6SPuzkNRiEuDqc+4Sp+yXvxsZds/yMy5avlQMPUh1EOVUPGk5GZcd5kh88FZSjuOOEo7Po50oNahcfjoZ7fEE4r6ncs1vJXpE3yS+F+y11VH9ZMU+aF87W/F2k35S/K43BQC9sij1U3C6bOOyfb4WZUDbtkxdEHdmk=
+	t=1745413710; cv=none; b=pYRg/ox9Jbq/D8ZT6TuF/3bkxzxqUVT3NNptWlesj/1wSDhzJbNfR7SlgL6QwFB4JBiqwDIq1WFjCx43NX+P9YP4nob2NnGq4ZqVCltexscHGIl6EqDS/PE0tViN+n+oKBkAlQvHrnfZcir251cZIYqFRqJjL1lAi/B/FbnC544=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745413353; c=relaxed/simple;
-	bh=PRh04SSEpvmrrEMEKu0f4KPtxIFVTGV6VTf/pzMW9PA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HlvidII7kXfjeWRF9Nh5I7jcZmoVq070N+BrMBUylvI7ZbmSneZg+y59fVhypZMWqyufqsXUle0yLSYnJazUUaJJn92v79zTXiLtd6rC0nDQuizGNgmaFZMsgp6ptoDL7h9i34N6lu+eEec2NCK6OKMup1kj9DPLWOZaqGRO4Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiChBJcf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745413710; c=relaxed/simple;
+	bh=V/euKjCcP+EuEZclJHRJqQhL8BiXIhmeGbSZ3k59g8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f1Edkz/meV4fB/EQt7DI6ZSeG4laUq3aYHkHUsKkgNmLc1aEFGQaqM3Ozey9nZBD7Axk00NOZAwJThjgTHrCJPeZLXfBaz60aEyzSujoVR53a3GNVaAN1t9cOfFPZDZ0FPGBCeofj0vSEmDNYYSZ+LmcCmZakdJ98PjuGdCdwl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SJzUmGty; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiChBJcf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF65C4CEEF;
-	Wed, 23 Apr 2025 13:02:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745413351;
-	bh=PRh04SSEpvmrrEMEKu0f4KPtxIFVTGV6VTf/pzMW9PA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hiChBJcfIDyoFjpXxQdz1+1BR4jg6JOMZGSbKXW6TXNLPw2rYfwumxvuzKYG94mTb
-	 SI4L8WXEL/31FefubR4SpbWJnLxEr/Ifyluy5Qr9xR2dwOloKL3cjtCFYQQe5AahdQ
-	 S3i4GYq4FgbdFZ0p2MaSq4zsrvoxD8lIdwKdKiw6PSjhtZZZtjcAOCct3uQfQInJbx
-	 c8SIgJZpXJXA5H9qlA77V8tRA0gAiVjN7ZxRdkyDatShvZYY9GKlZAcqL52/B0nWfF
-	 jOdB3JEbAHJ1h4BtH2DRnmSwMdUUl8GM4wh0S5ehjSRHgPkMbaznUOyYpomKM9OWtY
-	 k6l7EYb2n/anA==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b10956398so1176217e87.0;
-        Wed, 23 Apr 2025 06:02:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1jPavYpdfF4pXOF0a0INYi9Nj8WU9FYcanDamHy3/eOnpKrL2Dol0uUllC7QTKFDuyY9F0YGsE0zfEdKl@vger.kernel.org, AJvYcCWwhAB/6MKkvXQHObGMjZNZ+GEcVGbFMULh3z5FgwWILqF4VGforMQrdRMGk0kRSkWmL4vflDfu3STvBhk=@vger.kernel.org, AJvYcCXASmTBXBIap7zTgOOxZut0qzJCzeliqByaK2jdIPDZQg9Uz6arFKqy6dzjJUHv8aSxqvm1edIemUGr@vger.kernel.org, AJvYcCXwYTPmYyBDonVGIYOWDSXhn7rfP7rgRarGgBdcNlI6C/HKZ4A4MtWzOcKOsTmjvkrbOdSWkwaQ9buw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC0JBRaTFecRBWQtHuI2okC7r8uzZRhicqTwzNfTsu3nEUxtfD
-	zEA5NTrDlgwXqpWTyqoetrmYjErXqzVNlKpUtVOuqMGUkTNmHM9aFfzC2GV4kWDpjPdlHyKdPsI
-	5A23eQq6ffgSeC3o4zIzl63oBsw==
-X-Google-Smtp-Source: AGHT+IFF61cNsysSViFU5Q1HGHd+IghJ6rm0yOqybKjpeUhaBtp/MtfvNvuL2E7bT+y7AYWOaIXE3wXMBX9+129E39Q=
-X-Received: by 2002:a05:6402:42c9:b0:5f4:c7b5:fd16 with SMTP id
- 4fb4d7f45d1cf-5f6cf41b4b2mr2527881a12.6.1745413338544; Wed, 23 Apr 2025
- 06:02:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SJzUmGty"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso5324381f8f.2
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Apr 2025 06:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745413707; x=1746018507; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5aKGWU/nxQJ1g/GQXjmzKsRQAC1mEWy7RzAyyaBKhic=;
+        b=SJzUmGtyqzzENuVu84/gZk73SHdxNhwQToDUfBYEUBJ/yFZmEfZ6yIkSdIhVLRyqnP
+         52V7TYA52s6nu3Y5LbqZoKgeKertnyzdz1lQCPOWPcEVXzcsOCRp40AZksCoVNaL5joI
+         1ELg0C6/4QP/RjHdPcvrWeipHyNTjyRfNuxH06c+2S/gdpx2n9Tx5rbOZWgpshgkRqWy
+         bNuJTTgF61hxrYYIf4KKiASwZEdkVCHPC/bgv0l24ypnLgtgaBcbpeytCuhnAVJxZ9dU
+         86CMsMi+rP/ycDizRebXzJopVIdokBt3d2KQ2JPnTLHRePco0IFIY8r8pYt5KY+jmIcl
+         JLCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745413707; x=1746018507;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5aKGWU/nxQJ1g/GQXjmzKsRQAC1mEWy7RzAyyaBKhic=;
+        b=C5guK3y9RkfbPBfsCLwBeb0Ygl4fx/tIHGNTcU1JNN10rsWIP7zVRwC1nx3+lCK/yq
+         N3pMQkcKDvB3kj2EkviXZYlzljO01evExhcVW3bS2wenF/nid2J6YqBtfpAo4sFTDfyw
+         6M/t15S2dBU4Dj37+L0Hf8LKQVxDexbkBL+NHiFenRPU1LDDJo/3ve15ZFCfZLrdqbQt
+         ALT6BO70RZS59OWy4+PsDKjVDglMtzWzCM50heQlk3Hirv9McP1skA66pqlgEvD/4bMz
+         T9g6I0KI0LFiiyJDNkNFt2TI/6/W2u7vQmjOSHavFP3cJX8HkWXe5MvyFzP7Bn27raqi
+         3llw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtVwqkdcle3yjMDzByVC7Lz7wS8m4Y3d2IgMj3Ov7e9xNw4fIj7vbHUa+SAN5yevdk5mNfrFJbM0D4Ug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfIz25xh5lQantCi+EPqHZqToLjLLUYHlFWJDvvnGoctTjzVFl
+	OPxedDScdsj7UFtt8aHP9tPlGrYyPebDm3sH8gGta0bnt1/kAXuFBFDXeoII8M8=
+X-Gm-Gg: ASbGnctzktFiCbF1DJYYzvDsCm/IS2VE9fAhRQnNCqusCVxWvRvtOIoyKfCl8HfsV0R
+	NbDN7MOXB+QBOJn4REwodNCTCbR3ISU0RV+7JeTwNuJO8PepiaBb6AwIX479Uj/IpyIiIbaZhyW
+	jjfP9pPYc704UkAXxYEAU+9Gf1GFwnjL9ILP4SozMxB3ex+cjZcaa5JcEbzC2tJrhtD0nfVzIKQ
+	WXGvAF8nyYe0WVzIqXIVEaNv4uz2ObUBJjdaRx0hCkHH4lRYZ51+o/2gg5Cmm5rhQsQ4VFb9be0
+	YGzSpJi24zon62s+//7/ge2I+uarhojZj+1h0EApYW705dYE4ukJMx9D
+X-Google-Smtp-Source: AGHT+IHFDE6RSxpVFbftFmRUuMMe1z1mFI84VXLmNBo24gUTBGerWwkyU/8c7yGJzERf6IPYsxhjow==
+X-Received: by 2002:a5d:64ae:0:b0:38f:30a3:51fe with SMTP id ffacd0b85a97d-39efbad2f6emr13262250f8f.42.1745413707142;
+        Wed, 23 Apr 2025 06:08:27 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa43330esm18445115f8f.21.2025.04.23.06.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:08:26 -0700 (PDT)
+Date: Wed, 23 Apr 2025 16:08:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Wayne Chang <waynec@nvidia.com>
+Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] phy: tegra: xusb: remove a stray unlock
+Message-ID: <aAjmR6To4EnvRl4G@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404221559.552201-1-robh@kernel.org> <20250422171830.GA335614@bhelgaas>
-In-Reply-To: <20250422171830.GA335614@bhelgaas>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 23 Apr 2025 08:02:04 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLS8qfRRRQ-FEirqo6FGWD4ypU5_=uc1mVu_U_Voga1=w@mail.gmail.com>
-X-Gm-Features: ATxdqUGDmT6Oa9be3YThQJN1rEFFXXEIWZljvkTyKuzEsju7EEKCXD71GZrP2u8
-Message-ID: <CAL_JsqLS8qfRRRQ-FEirqo6FGWD4ypU5_=uc1mVu_U_Voga1=w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: PCI: Remove obsolete .txt docs
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, Frank Li <Frank.li@nxp.com>, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jean-Philippe Brucker <jean-philippe@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Tue, Apr 22, 2025 at 12:18=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
- wrote:
->
-> [+cc Jean-Philippe for virtio dangling ref]
->
-> On Fri, Apr 04, 2025 at 05:15:57PM -0500, Rob Herring (Arm) wrote:
-> > The content in these files has been moved to the schemas in dtschema.
-> > pci.txt is covered by pci-bus-common.yaml and pci-host-bridge.yaml.
-> > pci-iommu.txt is covered by pci-iommu.yaml. pci-msi.txt is covered in
-> > msi-map property in pci-host-bridge.yaml.
->
-> I guess "dtschema" refers to
-> https://github.com/devicetree-org/dt-schema?
+We used to take a lock in tegra186_utmi_bias_pad_power_on() but now we
+have moved the lock into the caller.  Unfortunately, when we moved the
+lock this unlock was left behind and it results in a double unlock.
+Delete it now.
 
-Yes.
+Fixes: b47158fb4295 ("phy: tegra: xusb: Use a bitmask for UTMI pad power state tracking")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/phy/tegra/xusb-tegra186.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> I kinda wish there was some direct link from the Linux kernel source
-> to dt-schema where all this information now lives (Requester ID
-> format, iommu-map, msi-map, linux,pci-domain, reg (and reference to
-> IEEE Std 1275-1994), interrupt mapping info, external-facing, etc).
-> Being a DT neophyte, I need all the help I can get ;)
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index cc7b8a6a999f..23a23f2d64e5 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -656,8 +656,6 @@ static void tegra186_utmi_bias_pad_power_on(struct tegra_xusb_padctl *padctl)
+ 	} else {
+ 		clk_disable_unprepare(priv->usb2_trk_clk);
+ 	}
+-
+-	mutex_unlock(&padctl->lock);
+ }
+ 
+ static void tegra186_utmi_bias_pad_power_off(struct tegra_xusb_padctl *padctl)
+-- 
+2.47.2
 
-Links to each property wouldn't really scale. Might as well copy all
-the common schemas into the kernel tree at that point.
-
-I've thought about some tool to look-up the info. It would be easy
-enough to write. I'm just not sure what's useful to folks and what the
-interface should look like. It could be something like this:
-
-$ dt-info iommu-map
-schema file: path/to/schema.yaml
-type: uint32-matrix
-description:
- blah blah
-
-But maybe that needs to be "dt-info property <prop>" so we could also
-do "dt-info compatible <compat>".
-
->
-> There are a few dangling references to pci.txt:
->
->   Documentation/devicetree/bindings/pci/aardvark-pci.txt: - max-link-spee=
-d: see pci.txt
->   Documentation/devicetree/bindings/pci/aardvark-pci.txt: - reset-gpios: =
-see pci.txt
->   Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt:- bus-range: s=
-ee pci.txt
->   Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt:  1275-1994 (s=
-ee pci.txt) with the following restriction:
-
-If no one cares enough to convert these, then I don't think the link matter=
-s.
-
->   Documentation/devicetree/bindings/virtio/pci-iommu.yaml:      zero. See=
- Documentation/devicetree/bindings/pci/pci.txt
-
-That's fixed in my tree already.
-
-Rob
