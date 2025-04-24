@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AFC13B58A;
-	Thu, 24 Apr 2025 08:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D842322332D;
+	Thu, 24 Apr 2025 08:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745484629; cv=none; b=qoSOCCev2bYM3rRFolNWFdASf1635YGuKcX3FukHfyur8Cc9lw3B/a9LJzDo+iJfVHYMP5n4h5Ks1nfUaUZE838o34HUNKBI/WGGM0qoEEsvKyQLmfu3yx8tPRg3jMS3xJGjIU8oy7R/IiUH7d5ob3Zk0WDDap6AVerTncJvBv0=
+	t=1745484675; cv=none; b=FP4oWZzQMjK1EmP3K2ReKq6NPEwjlSJjLErh2BNjm+Qj6xW4NZOePn7aXch7lLewaAcimsK3on60V4VZcYCv4VZ7kPCu7fz1XFA0TZi2LPEldrVjilLECPdHG+NDEHDDNl8dCddyIhrXXjOBeaQgq+eXyxYG1jyxka2vaCI4ueo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745484629; c=relaxed/simple;
-	bh=s/xjxH81nfhobfanoVxHjL/I3uP/Vbv6gkNi09tXOug=;
+	s=arc-20240116; t=1745484675; c=relaxed/simple;
+	bh=i8sxy25Tt/JCsGjOPsAEnQWtVFk7TqgKi1nqUCJYo0c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jc9FAMz0QLmpeEGAReGH4Jixpp+8RxwNmgK+M683Fd4zUdKBbkZeEWat4EvFyvcjBtPd11L1KHqY12X4zZagpXTEyoHGNi7IQ8/+0G6WxaEEu8cnc1Clou8r8ON4gog3z0eXcuSY8ZJU4/+iHjfqm2N2tGoChxJ8cAUO0KIBr1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPaIs8zN; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=QX9s9eYnz6XGOO49tCoQLJZNIqQKNKrXy3S2qOfa35ehpspZ9JJHqeCI17s47aWdACTxbc/urKuJ7YiINBpfwWlPF882JWaGYSrJ0ck8n2AyyAwcWcgOCe0a1rAPMM9AjSOgIfyCVBX3RxePz8R2ypbqW63SE/Tufo2BADHPNfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiD/gIdY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPaIs8zN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0504FC4CEE3;
-	Thu, 24 Apr 2025 08:50:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiD/gIdY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58BEC4CEEB;
+	Thu, 24 Apr 2025 08:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745484629;
-	bh=s/xjxH81nfhobfanoVxHjL/I3uP/Vbv6gkNi09tXOug=;
+	s=k20201202; t=1745484674;
+	bh=i8sxy25Tt/JCsGjOPsAEnQWtVFk7TqgKi1nqUCJYo0c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uPaIs8zN4QMyUEFKHFX/R5BUNROD57WEUMwVXABv/DfhswMS9yMf2YS/ogJ8yEw4Z
-	 ZZvt82QUxowT7LgfUv7nuljTMDCdjnCfTkKr10DE4bmq4RtlPWbv4Q3olyyURsGtkN
-	 kMfCFRCOFMzhW4wSRh5GSOH7QX0zmsa3GBIMLCfT1w0yZpKtIm9DmnhIAo0vr20jRM
-	 pLwcEbDckyLv3ZkcZcYr+5abl0IM3opLMnGjcx3p1BX6t1XvVAEmTIGkb7+iOmQJiw
-	 oT+RNparrLrZL338r8OWr73ICp1ZbQGJQQ5etH6FGG4AbrMy5ia23VRbzjBQUwdoJI
-	 Vy0dQGIN2Qe3w==
-Message-ID: <d978a394-40c0-442c-82b5-58abfaa19f64@kernel.org>
-Date: Thu, 24 Apr 2025 10:50:25 +0200
+	b=UiD/gIdYNgcXGNixyVYKFuLxrj86hQtPf1AsWEFkxTyTZ5K4I1W8vq6tq+WqDRo2J
+	 gaQBJjl1NiXcZb/TdVMKOEec/8+hzyQuhFwZH6gf1EQXLZWZX8uJmpMp+XXUJaPoO2
+	 6qIfpOLy/7fsltBsMqSWJ+YirYKkP6ob7nsSy0y/jtHwrHsc4w3cZY0JleXsj19/dU
+	 gmsIoz6GSc2u/HZFzduD0LxAmiFKY23REDs4nz+nk+tuNyVjp7vo4lrMUeMwaf9kjm
+	 6vD15hVdPEaTAdK40CVhHQPqKJ+Bvc81khsHWBofoal71t3b4KeErT21A2h9JCrbJM
+	 gvjInxef2IVng==
+Message-ID: <cddf9688-fbb9-4176-83d3-0aa693931457@kernel.org>
+Date: Thu, 24 Apr 2025 10:51:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,16 +35,16 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] dt-bindings: ASoC: Document Tegra264 APE support
-To: "Sheetal ." <sheetal@nvidia.com>, broonie@kernel.org,
- linux-sound@vger.kernel.org
+Subject: Re: [RESEND PATCH 01/10] dt-bindings: ASoC: Document Tegra264 APE
+ support
+To: "Sheetal ." <sheetal@nvidia.com>, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-sound@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.com,
  jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com,
  spujar@nvidia.com
-References: <20250422072805.501152-1-sheetal@nvidia.com>
- <20250422072805.501152-2-sheetal@nvidia.com>
- <af965f9a-97c9-4e80-8d28-06532b16e80b@kernel.org>
- <22d4729d-590d-4082-ad02-7d4fdbfd08b6@nvidia.com>
+References: <20250422093815.506810-1-sheetal@nvidia.com>
+ <20250422093815.506810-2-sheetal@nvidia.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,70 +90,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <22d4729d-590d-4082-ad02-7d4fdbfd08b6@nvidia.com>
+In-Reply-To: <20250422093815.506810-2-sheetal@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/04/2025 09:12, Sheetal . wrote:
+On 22/04/2025 11:38, Sheetal . wrote:
+> From: Sheetal <sheetal@nvidia.com>
 > 
-> On 23-04-2025 18:16, Krzysztof Kozlowski wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 22/04/2025 09:27, Sheetal . wrote:
->>> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
->>> index b4bee466d67a..ee33f056b125 100644
->>> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
->>> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
->>> @@ -21,6 +21,7 @@ allOf:
->>>   properties:
->>>     compatible:
->>>       enum:
->>> +      - nvidia,tegra264-audio-graph-card
->>>         - nvidia,tegra210-audio-graph-card
->>>         - nvidia,tegra186-audio-graph-card
->>>
->>> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
->>> index e15f387c4c29..26e1ed7ec7a7 100644
->>> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
->>> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
->>> @@ -31,7 +31,9 @@ properties:
->>>
->>>     compatible:
->>>       oneOf:
->>> -      - const: nvidia,tegra186-asrc
->>> +      - enum:
->>> +          - nvidia,tegra264-asrc
->>> +          - nvidia,tegra186-asrc
->> Keep proper order, not random, not reversed.
->>
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC. It might happen, that command when run on an older
->> kernel, gives you outdated entries. Therefore please be sure you base
->> your patches on recent Linux kernel.
->>
->> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->> people, so fix your workflow. Tools might also fail if you work on some
->> ancient tree (don't, instead use mainline) or work on fork of kernel
->> (don't, instead use mainline). Just use b4 and everything should be
->> fine, although remember about `b4 prep --auto-to-cc` if you added new
->> patches to the patchset.
->>
->> You missed at least devicetree list (maybe more), so this won't be
->> tested by automated tooling. Performing review on untested code might be
->> a waste of time.
->>
->> Please kindly resend and include all necessary To/Cc entries.
->> </form letter>
+> Add Tegra264 compatible strings to APE subsystem device bindings:
+> - audio-graph-card: Due to different PLL clock rate.
+> - admaif: Due to 32 channels supported and register offset changes.
+> - i2s: Due to 32 channels supported and register offset changes.
+> - amx/adx: Due to 32 channels supported and register offset changes.
+> - asrc: Due to different ARAM address.
+> - ahub: Due to AHUB IPs number of instances updates.
+> - for future proofing the T264 compatibility is added for other device
+>   nodes.
 > 
-> 
-> I realized after sending the original series that I had missed the DT 
-> reviewers and already re-sent the complete series including the DT 
-> reviewers, with the subject prefix |*"RESEND PATCH"*|. Please review 
-> that version and ignore this one. Apologies for the inconvenience.
-No, you got review here, so implement the feedback.
-
+Implement the feedback given in previous patchset submission.
 
 Best regards,
 Krzysztof
