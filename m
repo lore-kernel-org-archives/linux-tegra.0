@@ -1,163 +1,270 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A36E22F01
-	for <linux-tegra@vger.kernel.org>; Sat, 26 Apr 2025 05:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745646767; cv=none; b=Hh7wK/j9xMxCMsb6iG15M+JnVeOYUBFP2QVvkEvw1pscn5MBn94PDWY3MKv+qMehczOp1Vyc16NMJ9KggFn/TMqouagNrhwDokNMbXM0LtMAgtaigt5ls3PtIPlBzK2zg65MnzFkLebIxb3tbZVBaCsAMQOxpMHypPW2UzCdyh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745646767; c=relaxed/simple;
-	bh=v3awsYbJh5b0Z+PsYaMmM2u65oeomrrii4LJE4qg4AM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=busJ0HUZ5m2x8MzVc57RghJRwJYvtubIe/YpsriWzx09B0COhIJoMcSfvrIEu/Nou/sK5cSiv9sXXAU6BgztBbJYN6NYKrNlsgsTpTl0ftr5h7rTGYEYGSXM6vsCo+Atl+aidAEyheSlLqDmQJbgd7xfjLkJsngJTgMNAer83EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=STeY3nIh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D736F22F01;
+	Sat, 26 Apr 2025 05:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745647122; cv=fail; b=vFMCIAvIktcxRNtAod0f8sG6dDaHZWPh5cKWnMQ0vVt2Lq73pvdu9+V8Z618snfwylT7824mI+PwFPn9UaExg6Pt13KHNGHBlsYuDDvIAm0+TADHSSDwYKWXOTF99xnZZc+qET+tZ8el9NHazDQhxxtWCsG1tk3PZ1HDW83TpJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745647122; c=relaxed/simple;
+	bh=A8Kb7Kxs/0pFnyzVrsgt0PjeGCNy5HgC2ByVBUtONf8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W6KPbrvNOVXEjRp+iU5y54xXepxZLCtLIH3ewagNq0p4RPgLl1uOBEN34bXYKmZDJytWktllABE5M0ZFtanmmTyJpylkmxA/S3/RnJ+2O32OsyKqcr1S9tMqU9DI+mff3iYrqlEBwDZwh8k85JArRjJ2l48/7swJqn28Wzqza4I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=abooRX2O; arc=fail smtp.client-ip=40.107.244.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="STeY3nIh"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53Q4lv70012187
-	for <linux-tegra@vger.kernel.org>; Sat, 26 Apr 2025 05:52:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=wPJiynUC5KrcChLqRhN+do2f
-	Q7u3TtFrtBAAerVGWrE=; b=STeY3nIhQbk54o0P6ireoWGeLAsgBSWr6NRaWQ1j
-	g4fKz8JnZXytwXe3hDg+7QZC4rN9pR0Q6VctYSRfSogq92bWCKNWyikjRVaeoTVi
-	ltVBVQOOWOLnjbzh62fozs1rFzhjhVUkmRKiQio8PUZaSPWIaAq7G0lHInuNjdkn
-	cmiVFXM3qBlYggT3rG/BfEzW7VlQITRSLc5OPwYTU6nilBtEdIytV0x14nVMgp0v
-	ZkribfDVy0T5l8hX7KC5Fp4dlXOPRFY84i9t30Um0/+bLAxXTBZOO8lC7RG0q9Aq
-	pRbTWFMnZiJiKePP9gJC+mEg0kjZFX4pCCv09wLqfyMuXA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468rsb04gb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Sat, 26 Apr 2025 05:52:44 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e9083404b7so52290256d6.1
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Apr 2025 22:52:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745646763; x=1746251563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wPJiynUC5KrcChLqRhN+do2fQ7u3TtFrtBAAerVGWrE=;
-        b=RF4MGrwalPijLGemrsyhI76YM+D94iaLg74BBp23rTS/SkIn4hXjBnvip9XqtRKlJw
-         kStyV9bHMrUehWdkUwa9lJ6V6K97TU+xBPl9s/RCkH3FB1mQkLlMRp5kD4K5MAW2iP1o
-         4b42wk0gE9J5dzVZqch/DDdSyl0Kc0N9KDb9JoutNimhDLT8cXAJXpCdq3g7KZU1v7LY
-         yr3J3pFXBHPJyAzeHp4QVKYKa/ZbxfufX1ZLgrgtDcMOYDwD77hkyrLL3rYcJRKFVOR5
-         /aBJgqFNp/FHyX4ULSyyGHFfQ+8EapQMlAZkp3MyOzNsR4cBg/F1bBHwqEPVNLTuL4l+
-         XaLA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4yjwkELOsm8+SHGrJQcotCt/XsT3JF9IvIdzY9Dj8YShj4bKV8w9NJDoH0uRYkKQK1Tu2pnBnEGeAqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywS6jUkI8dP/w4EUF229ySwpmIXRb6p6kNwzHv6G9ubYvBksrl
-	WZvBn0ctzAAOvm9wF2c9OO3a3M08HaJJBlwnGRhOq/rPqWeLMBFg1a2VwLCvxYlWlvamW3TbU4y
-	w+w9wUWaOWO5u7waU9Q1ZxHHwG1o8iBQnRljeHkIbBi+qARXJ64PswV7zBwpJ+Q==
-X-Gm-Gg: ASbGncsLWH2Nnnr5ORAaFHzy7F3T9Wwe/kxQ9jOyHWemE0x/K/nERjjjdn8lkjM8vrb
-	6bu0tWZtC4mOIAIuHMUHMQs5yBBAvWv3WI4zlaNpcE81wvKIP6TbaBgJVbCcduJGTGMEzsq4q57
-	qI1Yak37k26D1axMI1CvLzW54W8/bVWzHS2jyXDbWfjhe8dxYCR3hUuNr0YZhWJo9fLgLGunl2B
-	yR/5kxnvMk+QGHEof3Wwh6tX6LnAjcsKx6SOou2uxVcIS9t6i7fpIQl3xZwy8YuulmfqOrNNP9l
-	nqtRbFpxmBB60+D1XzBDpRcn7ONabctYyCN5ighrt7+0anOuPptgdnpmVwwqJuYRpbBDgiWRLAY
-	=
-X-Received: by 2002:a05:6214:29ca:b0:6d8:a7e1:e270 with SMTP id 6a1803df08f44-6f4cbb5893bmr70485336d6.40.1745646763443;
-        Fri, 25 Apr 2025 22:52:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGfnM89hyAQV0jPbK7IhI4wD6nEJfo4E+eFt6OFBoKATt5UnIfwc6pP9Q3dfmcI6nbIsPN2w==
-X-Received: by 2002:a05:6214:29ca:b0:6d8:a7e1:e270 with SMTP id 6a1803df08f44-6f4cbb5893bmr70485266d6.40.1745646763120;
-        Fri, 25 Apr 2025 22:52:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317d1b96d27sm10503671fa.107.2025.04.25.22.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 22:52:42 -0700 (PDT)
-Date: Sat, 26 Apr 2025 08:52:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] drm/fbdev-client: Ignore EOPNOTSUPP errors
-Message-ID: <tqvzgt3cyf453x6eovhe2ox5n7w4wacmdjzxpclxsubq3ub7ld@a6fzvt2is2sa>
-References: <20250412070047.6725-1-thierry.reding@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="abooRX2O"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=erVabDw9N0KGq+2kO/wJeo44Rq0UU9JqEoJhuF6QvJNNPcTUXRUodHiXJupPNSatrQ0T9j8KCCwh9c6tdpFD1I0fuymB8nZ1O0lkxXQMPTxp0r08rxEpXKXhHiiRkfxy1CW95FPdMmNixmZOvmGXWfsLNvoms6P+XhNaqXiD2GP7bjJ2buRY6z/xm8JEimlJy3IerGS3Y/bE5SFld3/dd+mPHr8zgrXDq0+nfpDekl9I6Jto8d03TCiQml3oMqDIDOBRW8Y3ZKHTVRsSuXMV625gnhUnj+VWPO+icCPJKyCzD4iwKEfgbYJe/reNujthRz3wlN6cKtsucWVg13pJSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WsLMjrp2bGkItm6JuyNdoid0sdAooygk2FvULxNofQ0=;
+ b=sfuY27B5WbYxPuAYLszDT8nH6YDUDvCiNoagDB3NDMuT4635mTv68ruPFMqoqScHIzoUUO42GUBH4Q1ZblBm7+0q962ggrq9WmZ0EjJrbCd7afomSrDibAtwVMzK3g6KRdF0bI/BoROx1wzQ/bQI7EEAR8dc/PcEH1tICzHMj0Enq4eYJ44BpLAMzzuobm0vmizmFBkK8cw65p1007PtD/O7DFoEhzG5eavOmRUoYsg+lM6vcOfTYC1Rci+j9mwc8IWpjj/QngMcku6NAnq2RkI4040EK6lt/76iiiRHjeRgggk4/iM3J9zn+mlrhVtQc7Wo1JCOWm175G0P2ML8xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WsLMjrp2bGkItm6JuyNdoid0sdAooygk2FvULxNofQ0=;
+ b=abooRX2OuOg8OlEMrJlxUXesPmFsOcNgswe/mxyNdz3oCepP5HPOmIvQztIc4wlwm7S+NY2gu5qEFJCvEPX/pOrsIbyjKKQiflZQnZCX7LhaknBh0zxDjaArMd3RavKNkAR3gDoDYks194KQxnMkkB7t3XJx4k/2cObj0/1IIFguVgzXlnW9QbC2N5sAe+Zhw+bIWUBFyrivK8+V9wq7JZe8CNLzTwizCBaXf64+H/qIKsDJu2i5PHZC8zlHiQPGlMwhLUXq82uB8DUUJFC3TnwSJoFeYgkgpKu0kwgiffZbUf23/aqzj6UHgzDEgcAhkg62F6LNZ3B1h3wXiH6mBg==
+Received: from DM6PR21CA0026.namprd21.prod.outlook.com (2603:10b6:5:174::36)
+ by DM6PR12MB4138.namprd12.prod.outlook.com (2603:10b6:5:220::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.28; Sat, 26 Apr
+ 2025 05:58:36 +0000
+Received: from DS3PEPF0000C37D.namprd04.prod.outlook.com
+ (2603:10b6:5:174:cafe::11) by DM6PR21CA0026.outlook.office365.com
+ (2603:10b6:5:174::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.12 via Frontend Transport; Sat,
+ 26 Apr 2025 05:58:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF0000C37D.mail.protection.outlook.com (10.167.23.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Sat, 26 Apr 2025 05:58:36 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 25 Apr
+ 2025 22:58:33 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Apr
+ 2025 22:58:33 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Fri, 25 Apr 2025 22:58:30 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
+	<will@kernel.org>
+CC: <bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
+	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
+	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
+Subject: [PATCH v2 00/22] iommufd: Add vIOMMU infrastructure (Part-4 vCMDQ)
+Date: Fri, 25 Apr 2025 22:57:55 -0700
+Message-ID: <cover.1745646960.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412070047.6725-1-thierry.reding@gmail.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI2MDAzMyBTYWx0ZWRfX4RdbO2+s8yac myEqD3RpRPS62KtH4910lBGJSOQpVkeb7fTThzOaE3BCQGVybS2C8F1Vto9n3jX+KNWm0FGo1Mg PAZTeV9vgqcwfcvADJecB+XHmUK1sYQJQlCPl8tRLckheZc9eIo5DUpFFBrcqeGkDSMrEwBIyGa
- QkxMIY7k9UzSG3vXsJ0TzJ7OOH9AyiYNMSH23cnAjx4ZJHJI21Y+nVj3S494yCQx6e4k9l7bYhi MneoAK2WaUzyBijy4YO8HDUgUSh57RHGQSRuFjF9zmOe6xWyVm068IL6a+ZyzpTl/EZGLhPm8dk m6MxuDFrm9l1gcaP/DPJG5HZdkdLpS/3Kheyfeupjo2HStV8rG4Okpi9Ss56Adsfx2drY8/dMwk
- WeFthkI+rKtbLE2cU6Cg3wwNsFz50KCVBY1koEmjNgKPRarJiePAz/s3CUb+QRrts4YRR7xb
-X-Proofpoint-GUID: r-n5s9G-GKCs2LSoQKJSxsgjlL5DoMBO
-X-Proofpoint-ORIG-GUID: r-n5s9G-GKCs2LSoQKJSxsgjlL5DoMBO
-X-Authority-Analysis: v=2.4 cv=I8ZlRMgg c=1 sm=1 tr=0 ts=680c74ac cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=Ikd4Dj_1AAAA:8 a=IgeXuqktetCwhAi8AUwA:9 a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-26_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 mlxscore=0 adultscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504260033
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37D:EE_|DM6PR12MB4138:EE_
+X-MS-Office365-Filtering-Correlation-Id: de405cd5-eba3-4857-c9d4-08dd8487627f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?k2qfCypExjI1HS/omnKRqFTKrHqlLXfsi2aw8HZ6fg4K+i3kKwTxQaT5wTg8?=
+ =?us-ascii?Q?jPjHb41yQz9VSB6mfWOAb0+5o95EQaHllEq8LiT9VDVGAGGvKg5NQTO09aC8?=
+ =?us-ascii?Q?JUfemC3XWcc+gR/xrviOh8uB8h8EJ5CwQtQSy1MWRarLgxQc+dvxo4cZt/I6?=
+ =?us-ascii?Q?AaBom7RmNTmQteGETj3uOfEemjbMxU7xqfR2M2rDazCAQPdNopc4BfneWitj?=
+ =?us-ascii?Q?V4ifsbOltLPZkUgp8pyEWvhQ8CqXtLV45y6yca/ICuIMNz89aVmzr44FucSh?=
+ =?us-ascii?Q?g6pCt5ikIX2jX+iFSVfMLmx7L80C0K66GmPdegQ5eekj6Y5tGq0Rkm2Kb12S?=
+ =?us-ascii?Q?YnllMfMEv1XQ0H9zicMgJD3sSSV5MhahGxdHuSAqaTfdra/XQ/fv7uEne8JS?=
+ =?us-ascii?Q?nu20pQKFIq/RHpd5c3gEdMH4RwQBmt/eLIEajJGgJgsv7JwWte0dlZHgsQXr?=
+ =?us-ascii?Q?rejQOxdLFNZ15SYe4PW2j9sUddTsoNXINyN9tXPOk5QDiOhKtNqfcHA7vB2S?=
+ =?us-ascii?Q?5pL3yp5jc/YJTBwNOFyQXqpDcRvXCs+rSvG+DsFTjQMduMaIjUW+IZyK98IV?=
+ =?us-ascii?Q?R10PJ/n4d7LMN7ehrh0UhcPHOn1XgOJVuu7SscEhsxxwtk0Bn45iqkDE+YRT?=
+ =?us-ascii?Q?oq1WiLjuc2DkM/QgZ5X9dP6/tEgKGSFj0hFnWSAIrx7puBb8Ho5eS4uxvgQa?=
+ =?us-ascii?Q?zU3UMk3iP6BnR23iWfztlJvNw0olvSr6h2R7SP76Hz2FO34lpAklUIgulDAq?=
+ =?us-ascii?Q?l9Izr/sXT+sxHTtb1DUoauLIAvAN8sR/QvBE0YLwuJ+/rBC+YYKgBRXh0J/3?=
+ =?us-ascii?Q?Mf6FxHaiW5alI4of7suyTy/hLF3XQ6mJu9Fc3GEzpyUoc3Mz8wt20IsNS7JV?=
+ =?us-ascii?Q?Ck0k4eg15H+8Nl5pDRfvLMqnP/tLst8cj16qcYk/duIC4U9xoCFeLljnYJ/v?=
+ =?us-ascii?Q?Z/yO8HMw4oz2jcUv3I3Mzz2nUm7EIvng4xjoNGN+ezEyZ/ga+13YXf4hMzlj?=
+ =?us-ascii?Q?2tNKHGhgEfWIQtpECCwmo/TEJtoLxHSrIcBVNw6USqDVvXUje6e9xok08DmC?=
+ =?us-ascii?Q?3tko0IyPxJnQEiytndIi5q6stUKHknF5kxd+HD6I4O/Rs7h1vSDDZyffUL18?=
+ =?us-ascii?Q?xMRfAfGR9I5J118tMj7kmtkNlmN6bU542yUKoPE8rZCY3RS4NN7BEebRmli8?=
+ =?us-ascii?Q?AKix011u+cI8e4pw5QBIMC9vGpqgekHllSk5CMCc3qibfO3scM2J1Qj1cEeF?=
+ =?us-ascii?Q?OsL1B1bG3+0po+64jo80nLB27kT98GXGAgTSX9fOWJmN3LSXcRSbB3UX4Dwa?=
+ =?us-ascii?Q?wRnIA11y1LZaX+z27GQIxNGTs9WNK2e+tjdxq07PvfgTaKfa0Z6b5RAp7FU7?=
+ =?us-ascii?Q?9qJToe1lg1Ki+uJ6UXv/4m4G1F9Paefz6ldrh3oS3jxM4i7LgAlMVdVF0s2I?=
+ =?us-ascii?Q?2hV9X6+06f9YhAGS6Qo1IURTq8Sqlp+BWxm1rvTtZCdJB9ljj/Z1ZQaEqbGy?=
+ =?us-ascii?Q?z5CEneLvId2ll/L2ZK1nCXQPEb7IMmF8Gh4pB0u1fgqCrvxNRyxRsyQ5Fw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2025 05:58:36.3221
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: de405cd5-eba3-4857-c9d4-08dd8487627f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4138
 
-On Sat, Apr 12, 2025 at 09:00:47AM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Recent generations of Tegra have moved the display components outside of
-> host1x, leading to a device that has no CRTCs attached and hence doesn't
-> support any of the modesetting functionality. When this is detected, the
-> driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
-> 
-> Unfortunately, this causes the following errors during boot:
-> 
->     [      15.418958] ERR KERN drm drm: [drm] *ERROR* Failed to register client: -95
->     [      15.425311] WARNING KERN drm drm: [drm] Failed to set up DRM client; error -95
-> 
-> These originate from the fbdev client checking for the presence of the
-> DRIVER_MODESET flag and returning -EOPNOTSUPP. However, if a driver does
-> not support DRIVER_MODESET this is entirely expected and the error isn't
-> helpful.
-> 
-> One solution would have been to conditionally call drm_client_setup()
-> only if modesetting is supported. This seems a bit redundant, however,
-> and could further complicate things if ever any DRM clients are added
-> that do not rely on modesetting.
-> 
-> Instead, simply add an extra check to ignore this expected error and
-> skip the fbdev client registration.
-> 
-> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/gpu/drm/clients/drm_fbdev_client.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> index f894ba52bdb5..8c8552ed912e 100644
-> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> @@ -152,7 +152,11 @@ int drm_fbdev_client_setup(struct drm_device *dev, const struct drm_format_info
->  
->  	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
->  	if (ret) {
-> -		drm_err(dev, "Failed to register client: %d\n", ret);
-> +		if (ret != -EOPNOTSUPP)
-> +			drm_err(dev, "Failed to register client: %d\n", ret);
-> +		else
-> +			ret = 0;
-> +
+The vIOMMU object is designed to represent a slice of an IOMMU HW for its
+virtualization features shared with or passed to user space (a VM mostly)
+in a way of HW acceleration. This extended the HWPT-based design for more
+advanced virtualization feature.
 
-Wouldn't it be better to explicitly return 0 in the beginning of the
-function if !drm_core_check_feature(dev, DRIVER_MODESET) ?
+A vCMDQ introduced by this series as a part of the vIOMMU infrastructure
+represents a HW supported queue/buffer for VM to use exclusively, e.g.
+  - NVIDIA's virtual command queue
+  - AMD vIOMMU's command buffer
+either of which is an IOMMU HW feature to directly load and execute cache
+invalidation commands issued by a guest kernel, to shoot down TLB entries
+that HW cached for guest-owned stage-1 page table entries. This is a big
+improvement since there is no VM Exit during an invalidation, compared to
+the traditional invalidation pathway by trapping a guest-own invalidation
+queue and forwarding those commands/requests to the host kernel that will
+eventually fill a HW-owned queue to execute those commands.
 
->  		goto err_drm_client_init;
->  	}
->  
-> -- 
-> 2.49.0
-> 
+Thus, a vCMDQ object, as an initial use case, is all about a guest-owned
+HW command queue that VMM can allocate/configure depending on the request
+from a guest kernel. Introduce a new IOMMUFD_OBJ_VCMDQ and its allocator
+IOMMUFD_CMD_VCMDQ_ALLOC allowing VMM to forward the IOMMU-specific queue
+info, such as queue base address, size, and etc.
+
+Meanwhile, a guest-owned command queue needs the kernel (a command queue
+driver) to control the queue by reading/writing its consumer and producer
+indexes, which means the command queue HW allows the guest kernel to get
+a direct R/W access to those registers. Introduce an mmap infrastructure
+to the iommufd core so as to support pass through a piece of MMIO region
+from the host physical address space to the guest physical address space.
+The VMA info (vm_pgoff/size) used by an mmap must be pre-allocated during
+the IOMMUFD_CMD_VCMDQ_ALLOC and given those info to the user space as an
+output driver-data by the IOMMUFD_CMD_VCMDQ_ALLOC. So, this requires a
+driver-specific user data support by a vIOMMU object.
+
+As a real-world use case, this series implements a vCMDQ support to the
+tegra241-cmdqv driver for the vCMDQ on NVIDIA Grace CPU. In another word,
+this is also the Tegra CMDQV series Part-2 (user-space support), reworked
+from Previous RFCv1:
+https://lore.kernel.org/all/cover.1712978212.git.nicolinc@nvidia.com/
+This enables the HW accelerated feature for NVIDIA Grace CPU. Compared to
+the standard SMMUv3 operating in the nested translation mode trapping CMDQ
+for TLBI and ATC_INV commands, this gives a huge performance improvement:
+70% to 90% reductions of invalidation time were measured by various DMA
+unmap tests running in a guest OS.
+
+This is on Github:
+https://github.com/nicolinc/iommufd/commits/iommufd_vcmdq-v2
+
+Paring QEMU branch for testing:
+https://github.com/nicolinc/qemu/commits/wip/for_iommufd_vcmdq-v2
+
+Changelog
+v2
+ * Add Reviewed-by from Jason
+ * [smmu] Fix vsmmu initial value
+ * [smmu] Support impl for hw_info
+ * [tegra] Rename "slot" to "vsid"
+ * [tegra] Update kdocs and commit logs
+ * [tegra] Map/unmap LVCMDQ dynamically
+ * [tegra] Refcount the previous LVCMDQ
+ * [tegra] Return -EEXIST if LVCMDQ exists
+ * [tegra] Simplify VINTF cleanup routine
+ * [tegra] Use vmid and s2_domain in vsmmu
+ * [tegra] Rename "mmap_pgoff" to "immap_id"
+ * [tegra] Add more addr and length validation
+ * [iommufd] Add more narrative to mmap's kdoc
+ * [iommufd] Add iommufd_struct_depend/undepend()
+ * [iommufd] Rename vcmdq_free op to vcmdq_destroy
+ * [iommufd] Fix bug in iommu_copy_struct_to_user()
+ * [iommufd] Drop is_io from iommufd_ctx_alloc_mmap()
+ * [iommufd] Test the queue memory for its contiguity
+ * [iommufd] Return -ENXIO if address or length fails
+ * [iommufd] Do not change @min_last in mock_viommu_alloc()
+ * [iommufd] Generalize TEGRA241_VCMDQ data in core structure
+ * [iommufd] Add selftest coverage for IOMMUFD_CMD_VCMDQ_ALLOC
+ * [iommufd] Add iopt_pin_pages() to prevent queue memory from unmapping
+v1
+ https://lore.kernel.org/all/cover.1744353300.git.nicolinc@nvidia.com/
+
+Thanks
+Nicolin
+
+Nicolin Chen (22):
+  iommufd/viommu: Add driver-allocated vDEVICE support
+  iommu: Pass in a driver-level user data structure to viommu_alloc op
+  iommufd/viommu: Allow driver-specific user data for a vIOMMU object
+  iommu: Add iommu_copy_struct_to_user helper
+  iommufd: Add iommufd_struct_destroy to revert iommufd_viommu_alloc
+  iommufd/selftest: Support user_data in mock_viommu_alloc
+  iommufd/selftest: Add covearge for viommu data
+  iommufd: Abstract iopt_pin_pages and iopt_unpin_pages helpers
+  iommufd/viommu: Introduce IOMMUFD_OBJ_VCMDQ and its related struct
+  iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC ioctl
+  iommufd: Add for-driver helpers iommufd_vcmdq_depend/undepend()
+  iommufd/selftest: Add coverage for IOMMUFD_CMD_VCMDQ_ALLOC
+  iommufd: Add mmap interface
+  iommufd/selftest: Add coverage for the new mmap interface
+  Documentation: userspace-api: iommufd: Update vCMDQ
+  iommu/arm-smmu-v3-iommufd: Add vsmmu_alloc impl op
+  iommu/arm-smmu-v3-iommufd: Support implementation-defined hw_info
+  iommu/tegra241-cmdqv: Use request_threaded_irq
+  iommu/tegra241-cmdqv: Simplify deinit flow in
+    tegra241_cmdqv_remove_vintf()
+  iommu/tegra241-cmdqv: Do not statically map LVCMDQs
+  iommu/tegra241-cmdqv: Add user-space use support
+  iommu/tegra241-cmdqv: Add IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV support
+
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  25 +-
+ drivers/iommu/iommufd/io_pagetable.h          |   8 +
+ drivers/iommu/iommufd/iommufd_private.h       |  25 +-
+ drivers/iommu/iommufd/iommufd_test.h          |  20 +
+ include/linux/iommu.h                         |  43 +-
+ include/linux/iommufd.h                       | 146 ++++++
+ include/uapi/linux/iommufd.h                  | 113 ++++-
+ tools/testing/selftests/iommu/iommufd_utils.h |  51 +-
+ .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     |  42 +-
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 451 +++++++++++++++++-
+ drivers/iommu/iommufd/device.c                | 117 +----
+ drivers/iommu/iommufd/driver.c                |  81 ++++
+ drivers/iommu/iommufd/io_pagetable.c          |  95 ++++
+ drivers/iommu/iommufd/main.c                  |  58 ++-
+ drivers/iommu/iommufd/selftest.c              | 123 ++++-
+ drivers/iommu/iommufd/viommu.c                | 111 ++++-
+ tools/testing/selftests/iommu/iommufd.c       |  93 +++-
+ .../selftests/iommu/iommufd_fail_nth.c        |  11 +-
+ Documentation/userspace-api/iommufd.rst       |  14 +
+ 19 files changed, 1436 insertions(+), 191 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
