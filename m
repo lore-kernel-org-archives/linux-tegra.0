@@ -1,109 +1,149 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B635B10E0;
-	Sun, 27 Apr 2025 07:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC306481A3
+	for <linux-tegra@vger.kernel.org>; Sun, 27 Apr 2025 15:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745738790; cv=none; b=JuknIHekORO42Qr5LTrrYTWUueHVuVH2y5lpZk7aYZrhbrYkZ5/LZIw4FDLSzw4KFf9K4CfXzdliV1/N2kwTlAk7vNan8fVHye46HSZ+sBlrmsmka41Mx4QmxUG4HwcE36vEk9gLi8ajG727Y+ufhEpKKdDYXY+1+jFj3D8csxQ=
+	t=1745769471; cv=none; b=SoNSN0MiYRnH4os0nYXk16TY66wd48g2VRem2W0/GaoQyk2aCXEj35zNe2GYqDl5u7qFTNv+3idr3z9fTIjCw7uvEwJoBmETl9UcVImUc8bZBewU6RHihoeKX6RlnAqj3m6QQIsMOnB2mXuXisujNTlrS83bB+pRpWlOvZKIJwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745738790; c=relaxed/simple;
-	bh=Jmn+u6fFBrsun9XakIeVgT39XGKP2ToxwISS/MEt76w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fZ16HpEF3FsPMKyaTKZuGPS1TWlTSW6/kH+eDlYpYi6lpcQ+eqI1IBL6+Yx+99KlaeMRZNGqHLdFGK/KSnnZ3DtPoYEzFkcThEnEbAlfse8NQqSl4uK9SuHBUCXI6M0rL0nXuBAzdhn2fd3ZxVt4rYB97QEJuUk1Oe9F6WNhNHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ow5hOO3d; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1745769471; c=relaxed/simple;
+	bh=vsvOb7IMd7UFDjWg/sdkTHiSVZXXld7fUcITTiCZhaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bC7cnFrmNA5/AKsIZqbF3QgSyd/d6mnSWsYugkTnWFikYw2Yw3yDqeq/gZM5RlPB6dSGHsy8DMyDDwDPiqca0/lIhNdJ9iK/cUUEswXhn5AnYPrT8equgNQqOTLA0SyNPup4AAvoys/a9nHxKYzOUvS6kmPt72B4BDpowjtaK2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KNtknHeO; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ow5hOO3d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745738789; x=1777274789;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Jmn+u6fFBrsun9XakIeVgT39XGKP2ToxwISS/MEt76w=;
-  b=Ow5hOO3dYdPH0bm9AffH6yeAFD7CCB0RIYwBaD2sFblt8KuyX2XRiK8t
-   M63DFWJ2N1cU7Gi4dOBQyCdq+sBMmrrDtO6U24dE5FVSUY2C43vHTadZq
-   swYAasRJ6lecXN4KTQ+DdBmATuzBRoaLMirCjJK25DE1vU6ABw2IzHGht
-   3DQBnyc04vtGl3oD+Zr9Qgj+EwQPb3HTAx16dowlH3JbZIbAQwiQkV0hx
-   XWWpelvGb+iUpfckbXNdNS3AUV+SnnY3dh6QSCTodkglgTCvaeGIGFtF6
-   MOBrgenJz10QDSIo59+a4G7CiMqKNEVGy9rxtG/jIv4/a3mfkJP9B86S3
-   Q==;
-X-CSE-ConnectionGUID: SkYzLka3Rden+VeSTREfmQ==
-X-CSE-MsgGUID: EVpScRpuSgyfLGkk0neDug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="58710628"
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="58710628"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 00:26:28 -0700
-X-CSE-ConnectionGUID: tjr0bvpUSgWfm/XawVYnrA==
-X-CSE-MsgGUID: OXjYL/GnT9ykpQQNpcmQ5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="164217471"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 00:26:22 -0700
-Message-ID: <376566b4-6c13-45ad-b1e5-8cfe2de437bc@linux.intel.com>
-Date: Sun, 27 Apr 2025 15:22:13 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KNtknHeO"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22c3407a87aso59311225ad.3
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Apr 2025 08:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745769469; x=1746374269; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wAQOexojybAGTeMdsNoO2UVvORn8VBszuxGfnJS/v7k=;
+        b=KNtknHeOWJs1uNWVfpf04+mUdU6DD62crEVxIx9Ny02iDROnSoZDZWhlsk6nzT1iTx
+         byhlXUEAT9Es88FpDMM6Pu2yEw57DFfzpScncRqgIRFz+TOBBgyIAWyLYiWz+oxxT3YR
+         +WJuwznddB7Y0am1YcsEj6WHpvoIv2ItkAoz1jxjLgIr76xP3pEiHIv67ljfKcMaQgrk
+         lnytceXm2aBZ4pZrDQDJp7Zlmxc0aOBsxUt/AzMeR8Fx1pdR4k501bvurMRcJgymvLdt
+         OvJd6+7LwuH7V5sp9mkg6E1bmQRyG5VLJZb4PWGOYS0kYxEUxFalyEm6zoaYKsZpnp8T
+         DP6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745769469; x=1746374269;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wAQOexojybAGTeMdsNoO2UVvORn8VBszuxGfnJS/v7k=;
+        b=nLH7A0WRrRZpR9GVzcS1/MNQ1shIZqm0fskcD1ee+GL+M+VOfKRLAvtSTKuYa+wdO8
+         RNU9sbLA/9mlkwH/EnmQNJIZlWxOCh/lJaugQpDtUwtE4fdvGfMrLfYtvI76X6d529nV
+         leLiGa+uNOsfYxH5EFRcyXD7gyzrlt2oKRgAiQBpsqanmd6LkZlP4BOlCwi1RBzLmIuK
+         qeCtCb5z19Uk4mqkhY5GJcEmwM8CpD9RGJ5ZpKu8L048sSGcbl9gC4qinFANgGu+VS4V
+         9eX30Bo729dYcCMScATZNGTwl3+eQZT7pzm2ReJnP3svbMH6AQiXnZs3HWyeZxDeTXJT
+         9Nzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTLQSXkyDvPAoFmwnEAtzCB6bwlGdWvAAgwujNEqU+MNARE16re5XQ11jNRObyPNPAdd6ePOSCwmDEwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9hqrlKcCD9Yz8DZa3vhoWeG4pGG/t2bYwdJYipXORZ8Irrecj
+	lbdXArW4XBdqX98wfOx+SBUscJQ9XbyosVlWCZkaXBi96AjbFEqVjOZCdSV5Cw==
+X-Gm-Gg: ASbGnctrC++t7WNYDJJOMa81vMMoYM7wsP6+U54ohXmLRTVWpO3gmw5a619qhdxhMU1
+	OOqeHaIFt4NOmP8ogAUXVMfYNUzO3/vnkyulKgswHuNbc9RDgdbTxJqwyukKy5eYB2M5yZTeAW/
+	fVC+FRqbyqjEsFvDdQIuhYE3KwISAc4fFveUVrt/iaJBVy7NRkMABcRktDkIpLRNFXMT/4cZ8aA
+	hO0wiZ4kUzZ1pvCC5yjphBFPuberMukFq1DN2pb9FiBzyZ0N7YRDdFkkXcg6/QTKtf67/ZJMYkM
+	9pQlctInLCQ5LJ2w7dRosQDzrVlA+fzH/nueGzqokGJZ1eiV5A==
+X-Google-Smtp-Source: AGHT+IEP13Jf8XrJ95hgr9B14nxiB8ZEhLY+BdmhSptU0N+CRKp6D1Tz5feKkZ7HgdcKBmp5ELALrA==
+X-Received: by 2002:a17:902:ec8b:b0:224:13a4:d61e with SMTP id d9443c01a7336-22dbf7472bbmr124495975ad.51.1745769468973;
+        Sun, 27 Apr 2025 08:57:48 -0700 (PDT)
+Received: from thinkpad ([120.60.52.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5216728sm65551085ad.231.2025.04.27.08.57.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Apr 2025 08:57:48 -0700 (PDT)
+Date: Sun, 27 Apr 2025 21:27:43 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: tegra: Allow building as a module
+Message-ID: <ym5fy2svuukmoy7uvg4i4amsosjdzygxauytxoctjbjzxwqdng@o5tsy5irkgfl>
+References: <20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com>
+ <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com>
+ <pgp3cdksefn2z4n2hlyhftbdlfwyx7gbol7q6wdj5j4brux3cw@thts2qcahdw3>
+ <CALHNRZ9R4SWtzAYocY9X7D9hm4mXeWKhdo_rk5UmRPVGD-vbBQ@mail.gmail.com>
+ <lk37wtb25pr2rj3zhct5udaykr7joqw2mpgtupjq33of2xhesi@rmdgucbzxmgz>
+ <CALHNRZ8gSzOVpN_au_ntSan7or=uRBrPSRFdbDqAHxitcEfs7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
- iopt_unpin_pages helpers
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALHNRZ8gSzOVpN_au_ntSan7or=uRBrPSRFdbDqAHxitcEfs7g@mail.gmail.com>
 
-On 4/26/25 13:58, Nicolin Chen wrote:
-> The new vCMDQ object will be added for HW to access the guest memory for a
-> HW-accelerated virtualization feature. It needs to ensure the guest memory
-> pages are pinned when HW accesses them and they are contiguous in physical
-> address space.
+On Mon, Apr 21, 2025 at 11:33:01AM -0500, Aaron Kling wrote:
+> On Mon, Apr 21, 2025 at 3:54 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Mon, Apr 21, 2025 at 03:09:42AM -0500, Aaron Kling wrote:
+> > > On Mon, Apr 21, 2025 at 2:52 AM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > On Sun, Apr 20, 2025 at 09:59:06PM -0500, Aaron Kling via B4 Relay wrote:
+> > > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > > >
+> > > > > The driver works fine as a module, so allow building as such.
+> > > > >
+> > > >
+> > > > In the past, the former irqchip maintainer raised concerns for allowing the
+> > > > irqchip drivers to be removed from the kernel. The concern was mostly (afaik)
+> > > > due to not disposing all IRQs before removing the irq_domain.
+> > > >
+> > > > So Marek submitted a series [1] that added a new API for that. But that series
+> > > > didn't progress further. So if you want to make this driver a module, you need
+> > > > to do 2 things:
+> > > >
+> > > > 1. Make sure the cited series gets merged and this driver uses the new API.
+> > > > 2. Get an Ack from Thomas (who is the only irqchip maintainer now).
+> > >
+> > > Should this be a hard blocker for building this one driver as a
+> > > module? I did a quick grep of drivers/pci/controller for irq_domain,
+> > > then compared several of the hits to the Kconfig. And every single one
+> > > is tristate. Tegra is by far not a unique offender here.
+> > >
+> >
+> > Not 'unique', yes. But the situation is a bit worse atm. Some of the patches
+> > (making the driver as a module) were merged in the past without addressing the
+> > mapping issue.
+> >
+> > Please take a look at the reply from Marc:
+> > https://lkml.iu.edu/hypermail/linux/kernel/2207.2/08367.html
+> >
+> > Even though Marc said that disposing IRQs is not enough to make sure there are
+> > no dangling pointers of the IRQs in the client drivers, I'm inclined to atleast
+> > allow modular drivers if they could dispose all the mappings with the new API.
+> > This doesn't mean that I'm not cared about the potential issue, but the removing
+> > of modules is always an 'experimental' feature in the kernel. So users should be
+> > aware of what they are doing. Also, we have not seen any reported issues after
+> > disposing the IRQs from the controller drivers. That also adds to my view on
+> > this issue.
+> >
+> > That being said, the safest option would be to get rid of the remove callback
+> > and make the module modular. This will allow the driver to be built as a module
+> > but never getting removed (make sure .suppress_bind_attrs is also set).
+> .suppress_bind_attrs is already set in this driver. But what happens
+> cleanup on shutdown if the remove is dropped? Would it be better to
+> move remove to shutdown for this case?
 > 
-> This is very like the existing iommufd_access_pin_pages() that outputs the
-> pinned page list for the caller to test its contiguity.
-> 
-> Move those code from iommufd_access_pin/unpin_pages() and related function
-> for a pair of iopt helpers that can be shared with the vCMDQ allocator. As
-> the vCMDQ allocator will be a user-space triggered ioctl function, WARN_ON
-> would not be a good fit in the new iopt_unpin_pages(), thus change them to
-> use WARN_ON_ONCE instead.
 
-I'm uncertain, but perhaps pr_warn_ratelimited() would be a better
-alternative to WARN_ON() here? WARN_ON_ONCE() generates warning messages
-with kernel call traces in the kernel messages, which might lead users
-to believe that something serious has happened in the kernel.
+remove() won't be called on shutdown path, you need to populate the shutdown()
+callback for that. But do note that both remove() and shutdown() serves
+different purpose, so do not just rename the function.
 
-> 
-> Rename check_area_prot() to align with the existing iopt_area helpers, and
-> inline it to the header since iommufd_access_rw() still uses it.
-> 
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
-> ---
->   drivers/iommu/iommufd/io_pagetable.h    |   8 ++
->   drivers/iommu/iommufd/iommufd_private.h |   6 ++
->   drivers/iommu/iommufd/device.c          | 117 ++----------------------
->   drivers/iommu/iommufd/io_pagetable.c    |  95 +++++++++++++++++++
->   4 files changed, 117 insertions(+), 109 deletions(-)
+- Mani
 
-Thanks,
-baolu
+-- 
+மணிவண்ணன் சதாசிவம்
