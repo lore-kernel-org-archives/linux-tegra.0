@@ -1,139 +1,159 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33354207DEE;
-	Mon, 28 Apr 2025 14:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745850697; cv=none; b=UBf03MSHCaBX69Szi1Oi+CyrWV0W2OgunfJH2Th/MOiXfuW8yGMBHkg3hmeoz5vx+svEsquxIqESc/EfgGNXI3enQ166r7Gymq6jPIyw/+Ke/vKk4nlos/wwcWPxs6opIzcRulpGm+F1a31+j4QObgprPYratDXyJA5NciYk4hE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745850697; c=relaxed/simple;
-	bh=NHhnqNyU+X9x0PgjbHhqdTx3NWTApQzLscPiWXWZPWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MmarWhr87CMJX9l+aq2aHQjQmTWbQB0TkIwi7TKiuTPtbORX796jmOqtqgSyArxk0cj7k5eNGOJhTZFYsHCbOTO1YPQDdgVB1MLd23cYSEX3rKqmyXiEPWg97z+bDXFA7VP48kDuuTM9wPAw8du0w81Wsn2GbcztkOy81oloK5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqPswbcY; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FFA1632DF
+	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 15:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745854505; cv=fail; b=e4hOhPbbSDe2obNWGKPIE7YvAX9bURN4acYGB6B61195MLZb4NZO3MdwlLAWlNKl5RES7YWV0isZYO6FxEWUFuCoo+yw4popsYc7e6j8RwGd4LJJ7H1tdMMShxAJqJwKG14doLR6S1mKND4kWVxIzt/9dygjBh5tpjMTobpWh5M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745854505; c=relaxed/simple;
+	bh=JBx+OjiE+ArKDIujbvejC/VT/+cxm2yzWfK9lt2iNJw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H8Grda5CE0XoypkMN110GwB7LUmNnUwBnSif/rtdSypDKkow/YpWbtH67n6NX0CPawWPWYeRF6MKFSXHTsLy8e9uc13yvrP2Ip70g2WYUoUj0wuhSTK1ge50QntIpXgrdPPR+tIctm8kxev+JUiWzzLus+13w9oU1JpGMzbHA/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uo+k6GZg; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqPswbcY"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-736ad42dfd6so4136927b3a.3;
-        Mon, 28 Apr 2025 07:31:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745850694; x=1746455494; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGHvgmXuRyhO4FY9ie5ulcZe9dpbfqVfa/omQpTJU54=;
-        b=mqPswbcYGg8sVn/7UDHvK5aAU+GEZrHkNnDthCw2icPQ7KjEovPnUlDSSW26nIykjp
-         3xfkL6dqIbtgIHkv3WIKl52NB5LTN1qLOFKc1EmAYwXzmDA/mGQDSMLPgXk7v1F1tvDR
-         HLr27MY4PvU4GsYkB6iUS85k0d/0stQ9CgAIthmj7KJjtNysqvipGUMTHciBtE1aTn73
-         tdF64fplQ/eF1E1bhJdoPZLleKFYOI8F6eay7cL7p5BrZyBl29p5+rIFNZvCqiJpnM4s
-         K4LvYxS5F6kW8HXWg00Q0kiDCNCXqxjINBaEDYCAyiDAYaLm5WT4Dbuj1ALdCsu5ioR1
-         90Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745850694; x=1746455494;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGHvgmXuRyhO4FY9ie5ulcZe9dpbfqVfa/omQpTJU54=;
-        b=GAfwMC42Fwu1G88qhvBv1DnzDqz+06qqwmL8O9oLd85jrU5h92uWGSth07FEjmiLUD
-         LzdIkzvRNY4VTECkkXKVcuaFeyKmIF68EaibMgtTitwRLXBR54Ceu6UB74H4FWa1G1yU
-         wWIy+kvkrEUIrPSHlinQUvhSOWnBgnvBhwBPDRxMaGxNKb/sPqU/hv3LsYnlvwNhqM5d
-         J5EPtUmuzJGElIsVhRzm1rgHfcadtxY4eOTcSLnE74hvMYwu3rG9+xg5cKM5GEnDDwos
-         faK9v5Qi1mSUGYyz8MwooUZHuLXThZN23zZb+tX78x7lNXJqnewp5iwmHlTocMyDbPCa
-         +u9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSYcI9SFBjsjQJd/F76kBSvCao3Rab7Ze5snKsYFcBNP1dra4LSRuDVJ3aa3lL8v2vRVESs4JOuavMLMDfJOal@vger.kernel.org, AJvYcCXAu8L0hFaFy6HkSgEea2Of2P2V5XCSTtA7ha+mAOzxbgS4/69pT78prIMgDN3EVjxNVMUDLmRJffhk2Lg=@vger.kernel.org, AJvYcCXFGlBNqBgulh51rhVEXpvjTEe3bN3y/6FeyT+kVrF84l1XqvKGIxIjZGJG4Ag8sdzHt2Se6ZrDJ73UY14U@vger.kernel.org, AJvYcCXwk4zrlVfhX+QFR9e1qoL1JRZUWJPn6ohd5lB4s8+BL9Ga6GXtMVY9ABMmIDs2kkhfeClyIV9BGJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQRj8XSHfZFNsb1TeSY1/Q5S6quL+2J9VmpNHVzUtvZbNPTPeo
-	0AgPhtYhlnpMprmzy7obftqLOXbZZp3Bt78iIeHFwpI45RcSeM7D
-X-Gm-Gg: ASbGnct1HIBuunopt/7OCJSsv76rf5FyVKcjZVIMBlfRxQnOG6uvIp9ukYyWAoBEsVN
-	x1OdwNiE82L5AuAim3Lb3JCiTO8tIEKZHP5pOIoWqECDfFouWFDklB733PDm/3HVJmnLiswHcSw
-	afOmS1Iia8TyjGysmaG7LeTU8xOtpheviBJ2pqXTVgfc+amCYps3JlPF4jdq/DB4g6b8P49zOKq
-	sT2QBPOZfx9omaEDIOmyyfEoM5bzH3dUi/dKofjDvUm187/p36F+FbGC4Q0ED+gOiRyP71MmBmg
-	Jr7HdLGOaHqgDpfHfvFuoP1MDWV6d03eeeihhtNo
-X-Google-Smtp-Source: AGHT+IGZk7PlsdCZr/j/ecR8nUYCM0KRmxVw7bgRrpwVPA2oV8otwvEl5YVA/3glGzlDDrcVC80bqA==
-X-Received: by 2002:a05:6a00:114a:b0:736:a540:c9ad with SMTP id d2e1a72fcca58-73fd9047c3fmr18100251b3a.20.1745850694197;
-        Mon, 28 Apr 2025 07:31:34 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a6a995sm8016677b3a.112.2025.04.28.07.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 07:31:33 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 6E52850790E2; Mon, 28 Apr 2025 21:31:31 +0700 (WIB)
-Date: Mon, 28 Apr 2025 21:31:31 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-	kevin.tian@intel.com, corbet@lwn.net, will@kernel.org
-Cc: robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, praan@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 15/22] Documentation: userspace-api: iommufd: Update
- vCMDQ
-Message-ID: <aA-RQwyTS1m4CuPw@archie.me>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <820dfdee121292fe4cf891feb86f82ceea521e22.1745646960.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uo+k6GZg"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d/q4g9rtSHn0FZzy9OUiKFEsf5cMlJoN/tIDCxypWeXnlkLl3RWwznnosC/+cpbVQivU1lGzYIjWfpjbrBuljwE/YpqjHe1KZxPzryHi3PRqMCGahKY5fqjnlcIN29JUffX2DVvbQsKawaNf3bOH9ce2r4UDkHAr6I9kSosqFP9oocvqQ7SCQonwAeiv1CozNIkX9BeKSCDdOwZq7KCwXBNTzrCDxSd27WacAVifpee9WH2bK6Iq2RUFgGwCq9UBDE/oZAtTuWclT8d5mEJr0KwZYT/G0viESa68hJCAuollVxVTJbSgUpzOK502gw9i8lA1Lcmf5BJ9gKs48aSSYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XmsCr6ilqFY8zo8IPwr/+jcTp5b6HtxHw/QM6IfuHAw=;
+ b=eg3GlBH6zlbkjy8UmJlmx4TZSEoGrl2tp2hZaBGXzOOC4StwKb+m/PYeQJ0KE+0kqXO333NagTFLGoZ9j73LMSns1qhjmj7scNXBbEsHocFhmY5EIsnebrt/OE6BY2CM4zSRflGPLdLyuQkhwrjO2P3RieUwpjE/pJYlW2iMongz0+yQhfJUl/772i06LBjHHltdQWBdt1ec0I0rpkRKAY4IVY1aZyMTcczehWA9C/o7Fqac45yXtA5EOaCCFQqMoUzhbY0fb743ucKvrojnJICeFZtClitMbdaVSYZ2oxyNi5VyglaZTlm//EAMRpbxqHYCRzpM79gWprcyhBNKtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XmsCr6ilqFY8zo8IPwr/+jcTp5b6HtxHw/QM6IfuHAw=;
+ b=uo+k6GZgRlYhg0q+grl6a/WrdBwM70ldDfmSjglK2q/RUKxsMNORWYCnEMRAyn8pYSHhAAgY0GqDWbJI1OvaQOPq9UOC/FKI7c1wgmA+Y1ezv3IIIdcGiP6vxwFwS9PsEszgkVRqovhFG3Qt51yPPyomR+VuqA7a/dDuqXBHG60dZhiJLvINSCZnpTriJj+yTE4EI6VJf+xmngnrVbKHB9dxDMHa4Faoic1Vm2QdjkdZfgDe6vUs4/eDpg6xUCICwc4dyBJLNghufXaD3KsdODJdoa3RYA7zGbh3f4gdGw3HQCqDRN3egETwR+cSIUdvPz4UbXShpJ0jdGsqMjctfQ==
+Received: from BN8PR15CA0049.namprd15.prod.outlook.com (2603:10b6:408:80::26)
+ by SJ2PR12MB8942.namprd12.prod.outlook.com (2603:10b6:a03:53b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.30; Mon, 28 Apr
+ 2025 15:34:57 +0000
+Received: from BL6PEPF00022573.namprd02.prod.outlook.com
+ (2603:10b6:408:80:cafe::dd) by BN8PR15CA0049.outlook.office365.com
+ (2603:10b6:408:80::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Mon,
+ 28 Apr 2025 15:34:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL6PEPF00022573.mail.protection.outlook.com (10.167.249.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 15:34:56 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Apr
+ 2025 08:34:40 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 28 Apr 2025 08:34:39 -0700
+Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 28 Apr 2025 08:34:38 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen
+	<mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>, "Jon
+ Hunter" <jonathanh@nvidia.com>
+Subject: [PATCH] drm/tegra: Remove unneeded include
+Date: Mon, 28 Apr 2025 16:34:35 +0100
+Message-ID: <20250428153435.1013101-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vD4TXIxpca4CWbLZ"
-Content-Disposition: inline
-In-Reply-To: <820dfdee121292fe4cf891feb86f82ceea521e22.1745646960.git.nicolinc@nvidia.com>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022573:EE_|SJ2PR12MB8942:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8498084e-9104-4c71-1871-08dd866a3ada
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0eGJyV2QjLLSQq+uaWXsQZbPWpaDrES8FEb4kUabiRNT8KZ82zu6LjVd8oi8?=
+ =?us-ascii?Q?pP1KNZMTMtt7qPAAllINRXCMM3oij04+IORHPveuoza5v0RgTJi5RMM+S884?=
+ =?us-ascii?Q?WFdCmCb68vE6MJfc/br7orR4QArVhmzhwtW4tK0j6LZjG2MaG7m3by53ersq?=
+ =?us-ascii?Q?xA69QZU1XgaphxuWKCteUedAZMSr0xRXBrpuyr+lwNXmNQ3/p1pjnx01LqIz?=
+ =?us-ascii?Q?h9+wsjl94FFuS8temghNwdpVSeaNAUgcN1ia6hAMTw0rtPMDFwShSBDqGH8j?=
+ =?us-ascii?Q?/7p9DlR5C7vzzuHTJohwE3bp85njE6YuDjOaAJl/fiPLjNEPV0QAaubP7OGv?=
+ =?us-ascii?Q?YdwS9iXPtndnf3wv1st1KFJcFjWQYmrZzMrQYkEhmOqlmM3DHR0E0hmpWjub?=
+ =?us-ascii?Q?WyQEWtD6mmCcm8OJMoN0Pt/GGOO/YFjVtAHhjPVYgV2j9lUPLB5dE5oL8yCL?=
+ =?us-ascii?Q?VK9RIAJC2d/wS3nxwisXW8GkFyJVCPMhqAbrO5dzPTzHVNAGNXVjYErAbDut?=
+ =?us-ascii?Q?Jf/yshFz8j9m1pklRXtNjE47BCf7t57taUYSSH89f/j22pP+esWPg5Vse2ay?=
+ =?us-ascii?Q?8lerisR+3irUafqbksVpuIkSsa2XP1t3law7Jwh9HQ/KDFedpumm5r374sJR?=
+ =?us-ascii?Q?URPiuXtncUtJAdnInbK3k9tPNaDS5I6mdHe1PfgnEMprBL+uOB2uDmWdM684?=
+ =?us-ascii?Q?5T87CPveMeRjg0cNhBip0GRM0Mow8YrmcAn3hKc6tgjdBXnDxleyxAj0SXeP?=
+ =?us-ascii?Q?NZ5C6zSKAJ3hPLoRtymX2E8EVOnVsLvijO2Qhw/MunHRiMU5D9BPlYZGHuQC?=
+ =?us-ascii?Q?8FceaKj4Tye2nm6OsV75FxzwkJcDghAd2SqMMKIwZy1RKpwWPi24q4JO3LOR?=
+ =?us-ascii?Q?PBDPfFSZ0lexfZv6JEvSQRScIKrg84AzUqc/CL8FGk6Ynvi7aUfwLm4vzhj3?=
+ =?us-ascii?Q?g5+C11RpBJDWCdTDT2RLG1DRd+7m+9+MN6ebqrFJ9jLkHywbxpzLXLImxtkC?=
+ =?us-ascii?Q?/R0o1Hni9Rj8a5cspEJU9XLG+e3F7Y9qN6PHos6DdfGY8zq+f6UhmnvVeLHI?=
+ =?us-ascii?Q?NcM/iE8zIeNFi1gxwhxLCrZcWJolwcdBR6Q79JxN7C61tT9kDaJV7yuxCdVp?=
+ =?us-ascii?Q?8Hc6R0zN3N/MJSUkfPTvSRrHPbA2RWyT+gM9ZYftYCXdy+z6DP3Lba9H0Q0h?=
+ =?us-ascii?Q?aMYctfrvmO/xh3SG0YlY58WW728rNaTC/2uKgqthTdRx422MbocAnlxcqPNy?=
+ =?us-ascii?Q?8SniIwtG4qbMuiBrAm0gBmQ+K8zZ6gHXAcAj4OSDaz6ZXagdwtjKhc3Bq8Y5?=
+ =?us-ascii?Q?OMFz8D04c/LbmyY1H4wV2AP+EYh3loKhJsrfsOU/1k832lzHcJjEl0f27LD4?=
+ =?us-ascii?Q?hQfDQ6k6SAr7PnpJJ5UVIGTE5mSRTnKgzy9NFgfgjyjpPWN3M2FXnzmRfaSE?=
+ =?us-ascii?Q?0qXD/BPXnv2Lig8xU8mN2eR7pDO85Dycb17NHjTgPDGUepmXlL6j0WTKTFJH?=
+ =?us-ascii?Q?QKZ477eWauVY/YUxJ+seOmAzI0MM0Vt7FyqG?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 15:34:56.6417
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8498084e-9104-4c71-1871-08dd866a3ada
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022573.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8942
 
+The header file 'tegra_drm.h' is included in gem.c, but this file is
+already include 'drm.h'. Although there is no harm in including this
+file again, it is also not necessary. Furthermore, the header file is
+located under 'include/uapi/drm' so ideally the full path would be
+used to be explicit. For now, just remove from gem.c.
 
---vD4TXIxpca4CWbLZ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/gpu/drm/tegra/gem.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Fri, Apr 25, 2025 at 10:58:10PM -0700, Nicolin Chen wrote:
-> +- IOMMUFD_OBJ_VCMDQ, representing a hardware queue as a subset of a vIOM=
-MU's
-> +  virtualization feature for a VM to directly execute guest-issued comma=
-nds to
-> +  invalidate HW cache entries holding the mappings or translations of a =
-guest-
-> +  owned stage-1 page table. Along with this queue object, iommufd provid=
-es the
-> +  user space an mmap interface for VMM to mmap a physical MMIO region fr=
-om the
-> +  host physical address space to a guest physical address space, to excl=
-usively
-> +  control the allocated vCMDQ HW. Thus, when allocating a vCMDQ, the VMM=
- must
-> +  request a pair of VMA info (vm_pgoff/size) for a later mmap call. The =
-length
-> +  argument of an mmap call could be smaller than the given size for a pa=
-ritial
-> +  mmap, but the given vm_pgoff (as the addr argument of the mmap call) s=
-hould
-"... partial mmap, ..."
-> +  never be offsetted, which also implies that the mmap will always start=
- from
-> +  the beginning of the physical MMIO region.
-> +
-=20
-Thanks.
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index ace3e5a805cf..dbc1394f96b8 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -17,7 +17,6 @@
+ 
+ #include <drm/drm_drv.h>
+ #include <drm/drm_prime.h>
+-#include <drm/tegra_drm.h>
+ 
+ #include "drm.h"
+ #include "gem.h"
+-- 
+2.43.0
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---vD4TXIxpca4CWbLZ
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaA+RQwAKCRD2uYlJVVFO
-o1eFAQCh6j1PsCslXzfPWuS46AzQ1o7ZR1WP481iUjIyZLhY3QEAixFoHFuftiEx
-UNcaIuEJ2lZEhZxTyJA7ccrRXFyIfQo=
-=VsW/
------END PGP SIGNATURE-----
-
---vD4TXIxpca4CWbLZ--
