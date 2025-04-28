@@ -1,164 +1,182 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91A815687D;
-	Mon, 28 Apr 2025 22:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745878371; cv=fail; b=sb5i+yIKMslWDFZXFBuD5QJGn09LedgxBnvoo33lUILA+JaplqXEZE5bxu4K0dJE/SDJC5y7Wnr6NsCS6BnO46Kkt2C/B0MOQQIL6vEZG7YpqRXq4KZLhBmHxOTSlvSgjVemevmG2wtQQuA0bdajIHSXr1geKoJzJwXsHyZleDc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745878371; c=relaxed/simple;
-	bh=JA13sP0GcwIBE63NkqrPCDWpD5tKr3T/bTZGMbvTb0o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFnAOT774Qma6rmzwJJ6ud/MMpqSlFyEUKalmJwn2ulgdFXurGQ4DF92g9bdaLuPRY4kiawW3OV7QDJ1U4PFWVbAzAuPKo0aUrTn5xCZKl/+8ZDjlTtTYzl1tBegmK3sxY5+4OhlBJlrQkMM5mYCZBwQP9/6oXFgbVjT23hO2Rs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ui/j/S94; arc=fail smtp.client-ip=40.107.93.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5D20B7FD;
+	Mon, 28 Apr 2025 22:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745879980; cv=none; b=fJqX52qbrPI3MmeMjajpFAxoHRqZ+2Uzcx41Vf2w0bEv8NOTJZqVmNNyiQqGYg/kd0J/Qr6sgco9yAkUoy61yvaD+bkddeVhmLk0q27c3eskueyHKB1DIpeWn0VLwrTgUpCQnoATE3fFzEmLckzBrADNXNgOgckR/H3FwSGwU/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745879980; c=relaxed/simple;
+	bh=8kijEYLCWz6PW7HEQrKNd0RhweHY8H7pf4r3gg5DYqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sFzawNiC8S9pKxSv+zekQsn7srpI9zTjfuJEXnrRWXcFdrpznwqKPuhIVOXiNBpdrOQUBBxSSg/VqnHPlHXzW5K3kgY/ahNmuO6SynmIPQImgRUECyxstwMn/lEhPAlYllcMF8Hx3vYfB3IQWsgjDePUONvNA7ALQ09TtFSL9Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=De9DHTTz; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ui/j/S94"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SEm7btUQPoqFrSUTOj639S5qfIBVpdUu1x5yBTyVElaGDe8arPFQvzw6Ys1gX98z+nE/Lp8VojV7ChxuGIaAhKpPTaPIRVmakCK97W949yCFjk79vJzdTM1U+nS+sMlgOMPavSKoRxZKF1gMRtwHd11WLiRIqvh9gmClzH42KnUQkoySK/k7IEHbR0pTlE/Juyt4I0thkJgE3z7vD15QWsSqjEEM2fSx+X7cNIAZJXlbNE7Cq4wVy06GjN9sJmhqF1Y/YMipwNyEYYzNuySGbNha+eDc2cZHAfBlJ8S4P5YuX4n7c5tdgAoszKLLBh3nW5nRhKWOFVm/o6FYQr5Vpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kb2EcoRg6jaM2ibrKTd0COtu7vhLgUO2VifOQvAJf3s=;
- b=ogdsc6W1GTCj4ltM24zQKhnPnEKgsvAEG4xjY07OtvKKTHIsh2sFx5hOhT0cwLR34G7HCWD7Okwg70R3CBtWN2OwMZVqU+Os62c3InU7MdWDQYsFJlbz0yiQYhYsDO6WieQZF0zKo762HxIz9j91lGB0TBIFrBc0hfQB4RmW3lTetEjHELNDDujHJuQMhZW+Qc7WEl73kQto9NWhB7T2dyn5yHR0FaypYh+YTvNgu+u/H6J0sCH1fxt+DpkJD8kp+5c0Ib98gQz2JB9Gh7cLusnice1tTkthrwJnJDB263OpO9Act2ayFyepB4GnzQU9m4KC/7aHxH03++Go9tQK8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kb2EcoRg6jaM2ibrKTd0COtu7vhLgUO2VifOQvAJf3s=;
- b=Ui/j/S94JkiGrJYbRr6WkLfZ+k/kZ2a9k1t2Dfg1JHsDdFoDRsH91aE0VbmjZkPtaecenlAX9NndXP1eSWaVXxSRu6BUo2yiMgufDLMNJlj7VregXBV7Bir4auNtWOfNXctYGxJ6o/uBog09Sj5wT9VPfvZdPodcL6GETJ9cat42PUIuK6nn4zHf7U2oeLhIKMjNZhwWiplNCylHuFTTCY/pRL0uPD+oZZzUPjxk6RIT1R8D51h6WVl7kX3HRn/No5nai6rxtw/VahJtZXM9b5ABwLaHKIgaEZOtjpdo76DU2IZLdK2PE+ovQy6MldoDdBRsgpqqMnfkDdD4bmUCaQ==
-Received: from SJ0PR13CA0217.namprd13.prod.outlook.com (2603:10b6:a03:2c1::12)
- by SN7PR12MB7979.namprd12.prod.outlook.com (2603:10b6:806:32a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.29; Mon, 28 Apr
- 2025 22:12:47 +0000
-Received: from SJ5PEPF000001D1.namprd05.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::c4) by SJ0PR13CA0217.outlook.office365.com
- (2603:10b6:a03:2c1::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.17 via Frontend Transport; Mon,
- 28 Apr 2025 22:12:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001D1.mail.protection.outlook.com (10.167.242.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 22:12:46 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Apr
- 2025 15:12:33 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 28 Apr
- 2025 15:12:33 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 28 Apr 2025 15:12:30 -0700
-Date: Mon, 28 Apr 2025 15:12:29 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Pranjal Shrivastava <praan@google.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <bagasdotme@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <shuah@kernel.org>, <jsnitsel@redhat.com>,
-	<nathan@kernel.org>, <peterz@infradead.org>, <yi.l.liu@intel.com>,
-	<mshavit@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
-	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
- iopt_unpin_pages helpers
-Message-ID: <aA/9TZq99TF+MRYv@Asurada-Nvidia>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
- <aA_hm_AD4Xzm3qJZ@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="De9DHTTz"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54993c68ba0so6386614e87.2;
+        Mon, 28 Apr 2025 15:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745879975; x=1746484775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kijEYLCWz6PW7HEQrKNd0RhweHY8H7pf4r3gg5DYqk=;
+        b=De9DHTTzTBL5O21Rz4MiyID2FIOFuode+oQO26pUQXPa84QwBw5zSu/ViOZgJTasLp
+         hnQ6JpncroSfS3eFhBRi6SvXF/G9X9Fvxlm9As9KJC9v01EEXB2kAvdpWD2xvRB76Qww
+         DQ6bj1q2s+yb2EBf1MNU/V/YgHcHYcYfh01rte1uzOFkzixAaE+gOB0WMXpPNAssuPCS
+         Vd1vTWFi2kOxF/xp51OYK0B+R3H5ZGhB8wHKioThooP7efLgwkSWAZ+MW7G1qI4tpLA3
+         1gdEHQhthX4KjJEJpgIFlpuCesCy2MJ1W10MXcYx2sf/7W0l9Ezx06P3KzxIaOVWBJgv
+         oEaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745879975; x=1746484775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kijEYLCWz6PW7HEQrKNd0RhweHY8H7pf4r3gg5DYqk=;
+        b=jXiaP3QslrTAV/8O9VMGc5Y+TpcPLkKN+W+ZrKTwheqhi4doCLpbzirSChqr6ip9U6
+         WuyNTIvVlM8Cocdj1QvOOPLSrowtXr6N2erpEAjq+5nRfDksF/ZTdz5FtIL6KPtqpnLF
+         JlFKD9/pf0ZX+uXN6KBYM1VhJrKAMzD5oyANLFfCqAWQYit5RR9rTdB9glBCKcgQRSP7
+         /f3ZCtVwzjkmmGkTnq0cNbBJpsvqNLFjmQVQuTgeR00YnLWBy4FfEZ2GIWOCcLRtQsOy
+         SyGgGUMat4+uUvMxf/8NRncGzMbDRa/Da9ux2RLs9Ucy7Xavh2fnByuVuUe13+xZuRU7
+         lFIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaNvoS9Kc1uDvvmB7o8gj35qFPO3FwBZhXiys7XD+VpLPKmPtoQo1ReidNyCDdHQXYjP+ieHQAVNG89Lc=@vger.kernel.org, AJvYcCXpisqHT/bNmY3Y5NH863rTIrlpyVVizNifDLHOLKlaxwo/Y4bUMYWLU/1rn3iiBePe2cGR+oIAfuQP@vger.kernel.org, AJvYcCXq1vOcxb3qGQaWDxSA7bmN55W7T4aMvJZcHdc2WQ3tnXBKwTkLE6MiYrggaRn8D9RiqObten3O1oJkk8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/+Jtx3cGsInGAUrowevrAkhoWMH60NEBJ1MZnbFlroobYYVcB
+	kZsemYylhbn0b1SCdUAUSYm3M/j2cWgtxt6ho3RMpOxlamHvwFp4F7AX/se4S2qwHAOLFn6zVqN
+	cqj0+6feTgUZqePqcveluJ3Rn8yo=
+X-Gm-Gg: ASbGncupxE1qSvL3A81WAWs3VbicvKclJVgSaqkk7pvszg18DukEE15Ig6pc5nyTvF6
+	2+3PM/nmPEH/Dvh0CgFxWiKVVxgb0wt5mISlVwErhpj89B54NrkofS7/mV9aQtMh7oJuYx3cHNn
+	F5V1YKAyY+X/UGFHOxxaQ94g==
+X-Google-Smtp-Source: AGHT+IGpUU0Dr0j69ZA43/sVTpHzX+UlOHTGI9+6U92xp3Xaam4yUKm6LCwuXZkWvHHEBkYoRFB8tLHhw7Kp4fLsTjM=
+X-Received: by 2002:a05:6512:3f12:b0:54b:117b:b54d with SMTP id
+ 2adb3069b0e04-54e9e568194mr150477e87.56.1745879974899; Mon, 28 Apr 2025
+ 15:39:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aA_hm_AD4Xzm3qJZ@google.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D1:EE_|SN7PR12MB7979:EE_
-X-MS-Office365-Filtering-Correlation-Id: bef927fe-e002-4840-107b-08dd86a1ce6c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7Pri3Y6tUQF1pKdLr8WDSB2EaBja4FRMGBvOnrjvtygxdq0gc7Ivi2HWhS/x?=
- =?us-ascii?Q?qn9k7S6ddLJDkZJRx0SeLJQ8qT62g3V5wrdIb7bfTBJcTMH3crDmtlUyXOWi?=
- =?us-ascii?Q?ZE7xhWtpHxJVnl0xWVWWIqXR2q/LYSP2bubgvwvu2FPAEdJCuEaRhZ9UcEBP?=
- =?us-ascii?Q?ryzA4FziR+6T6fPaRVGTodRNLVk/8eEUDkFks+0rhaSwVdS1peM7aD7DnzAB?=
- =?us-ascii?Q?DjaQiU3oW0MPMmJGMsbo7WVR3GpMn9IzuE5wihIv/ESE3162ju6wTbYwsNRe?=
- =?us-ascii?Q?CmIBcL8AMXHWswVq+iMgcf2KCFw4ehmSeVRfaGb1Teo7QY6PvKN/R5JTYja0?=
- =?us-ascii?Q?y6jr/nNyfzwQU8KqWzxlGP6BLDDCi2dwc3wA/zY5jsKCcvdAe9IYxnFl3ATk?=
- =?us-ascii?Q?wRrAUZOKjbhyXh7JsMJXn3dckTDbX6I3QzMiTHfV8AXaodMIYvvey+jFVYDN?=
- =?us-ascii?Q?cK2PNW4Rz0Pigdj3/lIp6zcX+1H1AneVlcWeSu4fi6sMVNdQkRZae18FtyYJ?=
- =?us-ascii?Q?+d0whIQkdT/OhRgRpVuQg1JFbSyFt6cXaq9l8qq4O/bCN7kqb2XbBPMVWMYh?=
- =?us-ascii?Q?ChMEGiiZtyA40C6uFvFHft37WooOvKGVn9Ih8jk+THrmTWUGHrKjpNZxxbEQ?=
- =?us-ascii?Q?M1CH42rSner+ufmija88ujYJaFfwLEdyjJFDcLwdBuw6Thl8ddKRWC9v61Bw?=
- =?us-ascii?Q?V9Oi1Y01B1HgL2BiZtBgxf7pn9FV6i4Fg8lxWnGXp8MG3B2lp16ULyw1zWzT?=
- =?us-ascii?Q?K2zWP91A/IWYB9Z6YSflSLGJ2/oT16RQM9GbFGz0Ot70Nw40aLUUp9OTUx51?=
- =?us-ascii?Q?t/Ic4+rTRT56JdPRxMW2mz1NqI5ld8iuPSz84CPq84dps5GQnj5VbQymttMl?=
- =?us-ascii?Q?uS4bnNBCRaL0bN6fXhoTxNx/jtD+lqc0KXB9/HBDf/zAMO60/C+FgCSzEnvW?=
- =?us-ascii?Q?Zb1h+s8Mqdz7ys/O1pqi71yvJimD9butx/pArTZMcWKcem1Ugz09Fy8X8Zks?=
- =?us-ascii?Q?izFPHW+5tY4r//fZmAuhJ5arqTsJ9HMiNrKKyAePGL46ijezybTSFARjdD3p?=
- =?us-ascii?Q?pMP4h4QqbCEHWWgUCAeTYPr5++Yxzrne8BNbG0+gVIVtrKqYVWgVU+CH0PRO?=
- =?us-ascii?Q?2IGUId2JrUQTjgvpyW1rQsuTN/py7Ly6YB2mg2QpVY5E93qhF0LlzQKB+nTx?=
- =?us-ascii?Q?zvHNhl9hKUk/9bZyydBs7AD1k67kT3Q/Sp4q/De7p+cHKvdOimBvMjmhV2u8?=
- =?us-ascii?Q?A18KBEMcTJhAAmF6IBN53h5Hx8nS5nCsfGhmt9pmw+ZaJPxrUb1yBH2D3pH8?=
- =?us-ascii?Q?2H9PSlKBEx8RF5vNQgBzgjHwfiOLsLcT0UWLjBkbndYwnb9EhlIwupxFzpbn?=
- =?us-ascii?Q?hBt8ZtTcVjMR62RWMnLk50PiqGMwimZnVc8If73TzgTLoXeS6CpoTvL5j1Wc?=
- =?us-ascii?Q?YhYmRLIvF7mH1Ir1f3jt0mdGED21po4JDPI41hS6A/ypQBdnumXeITYppVmV?=
- =?us-ascii?Q?/1vMn0saU6NQOmZW+uSTRCyQ5B6cNM7Mt6uC?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 22:12:46.6937
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bef927fe-e002-4840-107b-08dd86a1ce6c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7979
+References: <20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com>
+ <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com> <pgp3cdksefn2z4n2hlyhftbdlfwyx7gbol7q6wdj5j4brux3cw@thts2qcahdw3>
+ <CALHNRZ9R4SWtzAYocY9X7D9hm4mXeWKhdo_rk5UmRPVGD-vbBQ@mail.gmail.com>
+ <lk37wtb25pr2rj3zhct5udaykr7joqw2mpgtupjq33of2xhesi@rmdgucbzxmgz>
+ <CALHNRZ8gSzOVpN_au_ntSan7or=uRBrPSRFdbDqAHxitcEfs7g@mail.gmail.com> <ym5fy2svuukmoy7uvg4i4amsosjdzygxauytxoctjbjzxwqdng@o5tsy5irkgfl>
+In-Reply-To: <ym5fy2svuukmoy7uvg4i4amsosjdzygxauytxoctjbjzxwqdng@o5tsy5irkgfl>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 28 Apr 2025 17:39:23 -0500
+X-Gm-Features: ATxdqUH3PvKTZWXJSIROsnb_Oqs6Z73ioWcRg9tAM4X2zDrHkmm1o-UaBnHoPx4
+Message-ID: <CALHNRZ-vVzNzfJRMM+i044qwvuv-bm0hB8fTZu0XQJA_qT9Mow@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: tegra: Allow building as a module
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 08:14:19PM +0000, Pranjal Shrivastava wrote:
-> On Fri, Apr 25, 2025 at 10:58:03PM -0700, Nicolin Chen wrote:
-> > +	iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova) {
-> > +		unsigned long last = min(last_iova, iopt_area_last_iova(area));
-> > +		unsigned long last_index = iopt_area_iova_to_index(area, last);
-> > +		unsigned long index =
-> > +			iopt_area_iova_to_index(area, iter.cur_iova);
-> > +
-> > +		if (area->prevent_access ||
-> 
-> Nit:
-> Shouldn't we return -EBUSY or something if (area->prevent_access == 1) ?
-> IIUC, this just means that an unmap attempt is in progress, hence avoid
-> accessing the area.
+On Sun, Apr 27, 2025 at 10:57=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Apr 21, 2025 at 11:33:01AM -0500, Aaron Kling wrote:
+> > On Mon, Apr 21, 2025 at 3:54=E2=80=AFAM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > On Mon, Apr 21, 2025 at 03:09:42AM -0500, Aaron Kling wrote:
+> > > > On Mon, Apr 21, 2025 at 2:52=E2=80=AFAM Manivannan Sadhasivam
+> > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > >
+> > > > > On Sun, Apr 20, 2025 at 09:59:06PM -0500, Aaron Kling via B4 Rela=
+y wrote:
+> > > > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > > > >
+> > > > > > The driver works fine as a module, so allow building as such.
+> > > > > >
+> > > > >
+> > > > > In the past, the former irqchip maintainer raised concerns for al=
+lowing the
+> > > > > irqchip drivers to be removed from the kernel. The concern was mo=
+stly (afaik)
+> > > > > due to not disposing all IRQs before removing the irq_domain.
+> > > > >
+> > > > > So Marek submitted a series [1] that added a new API for that. Bu=
+t that series
+> > > > > didn't progress further. So if you want to make this driver a mod=
+ule, you need
+> > > > > to do 2 things:
+> > > > >
+> > > > > 1. Make sure the cited series gets merged and this driver uses th=
+e new API.
+> > > > > 2. Get an Ack from Thomas (who is the only irqchip maintainer now=
+).
+> > > >
+> > > > Should this be a hard blocker for building this one driver as a
+> > > > module? I did a quick grep of drivers/pci/controller for irq_domain=
+,
+> > > > then compared several of the hits to the Kconfig. And every single =
+one
+> > > > is tristate. Tegra is by far not a unique offender here.
+> > > >
+> > >
+> > > Not 'unique', yes. But the situation is a bit worse atm. Some of the =
+patches
+> > > (making the driver as a module) were merged in the past without addre=
+ssing the
+> > > mapping issue.
+> > >
+> > > Please take a look at the reply from Marc:
+> > > https://lkml.iu.edu/hypermail/linux/kernel/2207.2/08367.html
+> > >
+> > > Even though Marc said that disposing IRQs is not enough to make sure =
+there are
+> > > no dangling pointers of the IRQs in the client drivers, I'm inclined =
+to atleast
+> > > allow modular drivers if they could dispose all the mappings with the=
+ new API.
+> > > This doesn't mean that I'm not cared about the potential issue, but t=
+he removing
+> > > of modules is always an 'experimental' feature in the kernel. So user=
+s should be
+> > > aware of what they are doing. Also, we have not seen any reported iss=
+ues after
+> > > disposing the IRQs from the controller drivers. That also adds to my =
+view on
+> > > this issue.
+> > >
+> > > That being said, the safest option would be to get rid of the remove =
+callback
+> > > and make the module modular. This will allow the driver to be built a=
+s a module
+> > > but never getting removed (make sure .suppress_bind_attrs is also set=
+).
+> > .suppress_bind_attrs is already set in this driver. But what happens
+> > cleanup on shutdown if the remove is dropped? Would it be better to
+> > move remove to shutdown for this case?
+> >
+>
+> remove() won't be called on shutdown path, you need to populate the shutd=
+own()
+> callback for that. But do note that both remove() and shutdown() serves
+> different purpose, so do not just rename the function.
 
-Maybe. But this is what it was. So we need a different patch to
-change that.
+I did some more looking into this today and came across 662b94c3195654
+[0]. That commit stated to add support to the driver to be built as a
+module, but didn't touch the Kconfig, so I'm unsure how that ever
+worked. But Manivannan, can you please take a look at that commit and
+its message? I'm not familiar with pcie and what is required for
+proper de-initialization. That commit added the remove method for the
+stated purpose of making the driver a module. Implying that none of
+that was needed on shutdown when built-in. So if the intent is to make
+a permanent module which cannot be unloaded, as you're asking for,
+does that mean it's safe to just fully revert that commit?
 
-Thanks
-Nicolin
+Sincerely,
+Aaron
+
+[0] https://github.com/torvalds/linux/commit/662b94c3195654c225174c68009455=
+5c0d750d41
