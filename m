@@ -1,62 +1,63 @@
 Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F0F297A5C
-	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 20:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B80211484
+	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 21:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745871274; cv=none; b=mjqZxA1C/kG5NX9T6BjMGt/Kq2yNUVp+Kapz+RheSXqc2FezvOjdlXg4dMXKOrY6+440KkjsXIRocjYtWNj+7GJ3sBZK0em0F/bD2BxXsi+JZ8HQ4WlLRkRy2+BVbO+3TvgaUrs1s/Q/Z80LOZJUFAFx0HB1eKqgpaVQWObWx4Q=
+	t=1745874132; cv=none; b=J9M8jJL0kBCQGxjWQ+rrwthCR/Pgb6sKxTq0/pUKd4CYHDTAt1+BIQaEbk92t2zzayCf36ns+PF59RjArktm5uF9I31iwUui7wAalF1V8656DDLmzjpgisJR6szK1zjv59HUvnRKptswZ0LqYhOrvInJi6rSfM6uj1DVDtRbijk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745871274; c=relaxed/simple;
-	bh=npEaUa9y7aoYDxWJKVP6eFuSAM+GuqK8BYJKktzo5Io=;
+	s=arc-20240116; t=1745874132; c=relaxed/simple;
+	bh=2ZfuLVsCa3uyg/dV83Ti5a2MISfnFj53Uosz+hvO9pQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atJZkF2V3ZHMPK4ycF/oJDTixNxKBQtm1S0dmf7Sh8kzz3XhAsD2nwVAYu3/OOZL+ANGZIxma2GEgw3AIqiG926wy1I/JVZfRSxh7vSTy7vdqa1mr5gwO0lEShtmkZiopPDUteB9aRjFlA7819yW+rf+nDH7U04L1fIb/GmDjbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ky2cGoSa; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMe2Raxe2TgQFjHwTayWGDfCS+9PI2Qgqe7fG72FkRxE57XK4JhXLnks1lqbWpKIHX6RbTUENMX1LZtz2bbJDPrI36I1j05WLaNQ03gCvsRfc8Noy+k3AziGl1CRLRgrRWf2BVX7VVxknn857D1jES+/zyAHOgL7N4AqoSXtrGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lQyujIb3; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ky2cGoSa"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2264c9d0295so50105ad.0
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 13:14:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lQyujIb3"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2263428c8baso14185ad.1
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 14:02:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745871271; x=1746476071; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745874130; x=1746478930; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sF3TQXTjTwLlsmEr6Vx8Y4aN4YqmuAbAC+QoJEmyUXM=;
-        b=Ky2cGoSaaB94ucItZQTd8HpETrdWhBbW74LEj+4o9FkVJFX71BW0sMsHS1/EhtAirH
-         KIAnGUGFk1HsXe+yWJMaAWKOkGppqI2a/CdYfq5SSuk9fWJ28G2RqkRScSNlny+A21qz
-         epNBDcIuA4sF6zBjV5+r/suWCnMArCKByBM/7sFQboueXmGKdjFg77jeGJfuoTY+Bv49
-         3tKSurPXYXEoUXID8jKymBo4hGCl0FTsNbcFodMZZOujmANPv7HvwKIAXCWSMUbRK3uo
-         xh68iPcqOmHo3Aml390PpkTWb149DraQ9uSWY+QV6thmuLn7r41H8GFKwf+12wN/8QUU
-         oCew==
+        bh=YTPDgyBQFtwamlv7MOGnKiNXfQ7Dnv+t8g+TQ5a6GG8=;
+        b=lQyujIb3M0N2fS87nJJnXN2/MRoFi2d0yYqLtIxzYHmfyDOzXMYl3IgaiOeZ6RPfPl
+         xwqkDy0Wu93ESuBReZI8i7TFKgz6NBdfKLDL2cBI7MUot5IxxXJ4H/ZsrIstqM8Szmga
+         PwkyiX7p8lr1NlBYML1W2EZMYSuNXoVTxyDbrR3C9fX91PSOxNF/IiPxifrqbhMUHIeO
+         svXULhg40SL0CPo2RKbt6/s4jgLwuXjcDCVR22/9T8C/RZlH7sgHUA2xrrdqkofOsRoq
+         1OqAVyWA2CXWcGbXFnV1a539Kq3thmrJoS7FoaahKHcycS+LZS0tBQiek1eZS82bIe8I
+         7f8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745871271; x=1746476071;
+        d=1e100.net; s=20230601; t=1745874130; x=1746478930;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sF3TQXTjTwLlsmEr6Vx8Y4aN4YqmuAbAC+QoJEmyUXM=;
-        b=doHsJtYDZ5RKYiWq+cMELY/5hzQAQLtpw5etl32dUeAgDH+FmOr1BN9NylOmhW5m82
-         WNaSGksaCAaLvWxniYMz3pC7/gisw72tLP6lgj1FdGB80u7PM5QfBntStYjctwbwoblG
-         nsou08OxQALaaskBQaUDASXEU85AxS3JaOTRy/S3Zyf2Cx/H1n8x3IeF6huB5x/iuXBk
-         cps8RrlCLzaFop9CHL2scMHiZA2/8auzuNg+N1h1LzQBGDd7+BgGHG2P56DdqVnWvDns
-         l9NDaKwV0qVC9JvcoPiWa/KJ1JI53BZM3XSgEXKwxKKbrxVgR/F0onGtbFrtBMMZdCB7
-         +b6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWGUkWqhHJExAC+GHT0JkVT0iHz035T9xXKQw9uOw/A2ZIg2W3LUSPGy6agx5caRWCJhI2QkvwmVEU1Yg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFxGYYpgAIANtVYVpBBaV6Ty1ZwZcRUDPJTY8lXDuB+DdX/iqQ
-	mrgLHMYfmIRuO2uc7MYIgoRgOVvnJIMT7YJrdnAxkyAXevpO8MYfKxRni8S0vw==
-X-Gm-Gg: ASbGncsnnEdX6c9Jq0xFMhIctt3tdAK4iWHsypcCodqDGaSPuarC9X1/8uuw9ktarhC
-	EACZ05y7iQGzc8BtnmnVqxH74PGDie8avkHXQQJmzCAMYpllk6OiYxDyLGelONl4/CIa2n9IGeN
-	X482AiN6YBJdpb+vr2V/LT8BYaCavLECpZ6AiGB/1K7apRQk97fJf+mQ6BPwiIZ6WN27KCu2FIT
-	QlrSIj2w8Lkjt0KcolnjAlRN2GH3RejdWJlkIujM9mo/gWi+iOZTfAx+BB5dtRGHAEocbXYriy0
-	40cjzXp8eXt3OLkRcrqV1UkTxm4lY0hJNdTG5mJ/2acVXsJHdEyQP78yty4N3ItkfYc0oMYf
-X-Google-Smtp-Source: AGHT+IGmtl/Kj7Dfb3LKwjogpzMnxm1K7d+HjcHQ0Rw+sVKLpRXDlU7ddaIuIujt0mHKuRlgJFYRhQ==
-X-Received: by 2002:a17:902:ce0d:b0:21f:4986:c7d5 with SMTP id d9443c01a7336-22de6c488fcmr714075ad.8.1745871271079;
-        Mon, 28 Apr 2025 13:14:31 -0700 (PDT)
+        bh=YTPDgyBQFtwamlv7MOGnKiNXfQ7Dnv+t8g+TQ5a6GG8=;
+        b=nFACY+Ows5TZ6Unhs4CxVkWPFi86DYCEDnFt8V5DJCMu7b/lGfnM3nkpMCNwxNjW0l
+         AO7L+YdAvz0ubfWDpyMStrCO3RAhMa12JBew0RxohpCobv0LXdTp2l6ntR/XkK/hfv37
+         ofOXwg9Mz0ydT47yESweqi4f/gEZsMc+ds//5oAcLyGGO6dng6mkLLDGxShdRt8a19kh
+         7ztOpdoySneUFaf91wJEwp7Txb+dYGIvfnFzE3kkodFk1Xy2maYL/0nMbpYc7IIarTHB
+         IjaAN8bMuzzXUST4OGOLONvf+zHAUxO7wHFpApwqnMPo7hkXa5UVcUIiivEvVym9TfBI
+         P4/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNaMsg6CLqu0I6IZNRCyqq9ZgKhPju5AQokAljt+oOTgkuUVQSZN/HBPDC/lm61je5Re/Y5ZrO1dxqFQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+VFAJZoU+vGbzMvswmt7HJE3QIubO0tR6KR8ronfE4tmh51U0
+	PAIrqiuOAC0eh+FKo1GaZDGl4OMml+Re8asSDMF3uweSfodM/S3nRBpapsYakg==
+X-Gm-Gg: ASbGncuePHjzQ0Io5Q8hTQao5Em+zEHOBI968aW1Yh2J6DqiUDFfMr+26iR1xUJu5Mb
+	Vi/1mxoWntl4vrO73KgX2btcNrYA+31X8omf380rWiWULLvX/mdGlrWc55RB91iX/7DoSD+uQcZ
+	/HjMpW3obZQnR0FRqQZlKnM4bV+5d9MhAW+u8YspWXOhnbPV/yJHc6n9+WbkqB6VoeJAa6EFlBP
+	paEw50yICzkIV0W/Js+UHpj3HvjcQkotbDesF+QQ135NIcqwTXQM3KjF5kAAdfHkAUWGV8kCX/n
+	nxFdP4PmQJulehqt6S1Z7PNAHybiXLvKj5+v2CNH+SD90esiGWMEdzJzhijZ+YrZsUcFTFSfci2
+	xwKcFvvI=
+X-Google-Smtp-Source: AGHT+IGSuMnWnZQ91ixDrXUdSEwCsKBdyqU3BwTCUj27r44/z7SX9aXDHYQTjWFgiPOhsJhMa9YvFg==
+X-Received: by 2002:a17:903:124d:b0:223:37ec:63be with SMTP id d9443c01a7336-22de6c49626mr781305ad.4.1745874129655;
+        Mon, 28 Apr 2025 14:02:09 -0700 (PDT)
 Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15fadea8d8sm7669029a12.64.2025.04.28.13.14.25
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a6a3casm8778803b3a.96.2025.04.28.14.02.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 13:14:30 -0700 (PDT)
-Date: Mon, 28 Apr 2025 20:14:19 +0000
+        Mon, 28 Apr 2025 14:02:09 -0700 (PDT)
+Date: Mon, 28 Apr 2025 21:01:58 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
@@ -69,11 +70,11 @@ Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
 	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
 	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
- iopt_unpin_pages helpers
-Message-ID: <aA_hm_AD4Xzm3qJZ@google.com>
+Subject: Re: [PATCH v2 09/22] iommufd/viommu: Introduce IOMMUFD_OBJ_VCMDQ and
+ its related struct
+Message-ID: <aA_sxstJRbG1znKs@google.com>
 References: <cover.1745646960.git.nicolinc@nvidia.com>
- <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
+ <8bab0069503fa21b48298ed2ffe29a06963f71f5.1745646960.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,335 +83,101 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
+In-Reply-To: <8bab0069503fa21b48298ed2ffe29a06963f71f5.1745646960.git.nicolinc@nvidia.com>
 
-On Fri, Apr 25, 2025 at 10:58:03PM -0700, Nicolin Chen wrote:
-> The new vCMDQ object will be added for HW to access the guest memory for a
-> HW-accelerated virtualization feature. It needs to ensure the guest memory
-> pages are pinned when HW accesses them and they are contiguous in physical
-> address space.
+On Fri, Apr 25, 2025 at 10:58:04PM -0700, Nicolin Chen wrote:
+> Add a new IOMMUFD_OBJ_VCMDQ with an iommufd_vcmdq structure, representing
+> a command queue type of physical HW passed to a user space VM. This vCMDQ
+> object, is a subset of vIOMMU resources of a physical IOMMU's, such as:
+>  - NVIDIA's virtual command queue
+>  - AMD vIOMMU's command buffer
 > 
-> This is very like the existing iommufd_access_pin_pages() that outputs the
-> pinned page list for the caller to test its contiguity.
-> 
-> Move those code from iommufd_access_pin/unpin_pages() and related function
-> for a pair of iopt helpers that can be shared with the vCMDQ allocator. As
-> the vCMDQ allocator will be a user-space triggered ioctl function, WARN_ON
-> would not be a good fit in the new iopt_unpin_pages(), thus change them to
-> use WARN_ON_ONCE instead.
-> 
-> Rename check_area_prot() to align with the existing iopt_area helpers, and
-> inline it to the header since iommufd_access_rw() still uses it.
+> Inroduce a struct iommufd_vcmdq and its allocator iommufd_vcmdq_alloc().
+> Also add a pair of viommu ops for iommufd to forward user space ioctls to
+> IOMMU drivers.
 > 
 > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
+
 > ---
->  drivers/iommu/iommufd/io_pagetable.h    |   8 ++
->  drivers/iommu/iommufd/iommufd_private.h |   6 ++
->  drivers/iommu/iommufd/device.c          | 117 ++----------------------
->  drivers/iommu/iommufd/io_pagetable.c    |  95 +++++++++++++++++++
->  4 files changed, 117 insertions(+), 109 deletions(-)
+>  include/linux/iommufd.h | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 > 
-> diff --git a/drivers/iommu/iommufd/io_pagetable.h b/drivers/iommu/iommufd/io_pagetable.h
-> index 10c928a9a463..4288a2b1a90f 100644
-> --- a/drivers/iommu/iommufd/io_pagetable.h
-> +++ b/drivers/iommu/iommufd/io_pagetable.h
-> @@ -114,6 +114,14 @@ static inline unsigned long iopt_area_iova_to_index(struct iopt_area *area,
->  	return iopt_area_start_byte(area, iova) / PAGE_SIZE;
->  }
+> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index ef0d3c4765cf..e91381aaec5a 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -37,6 +37,7 @@ enum iommufd_object_type {
+>  	IOMMUFD_OBJ_VIOMMU,
+>  	IOMMUFD_OBJ_VDEVICE,
+>  	IOMMUFD_OBJ_VEVENTQ,
+> +	IOMMUFD_OBJ_VCMDQ,
+>  #ifdef CONFIG_IOMMUFD_TEST
+>  	IOMMUFD_OBJ_SELFTEST,
+>  #endif
+> @@ -112,6 +113,14 @@ struct iommufd_vdevice {
+>  	u64 id; /* per-vIOMMU virtual ID */
+>  };
 >  
-> +static inline bool iopt_area_check_prot(struct iopt_area *area,
-> +					unsigned int flags)
-> +{
-> +	if (flags & IOMMUFD_ACCESS_RW_WRITE)
-> +		return area->iommu_prot & IOMMU_WRITE;
-> +	return area->iommu_prot & IOMMU_READ;
-> +}
+> +struct iommufd_vcmdq {
+> +	struct iommufd_object obj;
+> +	struct iommufd_ctx *ictx;
+> +	struct iommufd_viommu *viommu;
+> +	dma_addr_t addr;
+> +	size_t length;
+> +};
 > +
->  #define __make_iopt_iter(name)                                                 \
->  	static inline struct iopt_##name *iopt_##name##_iter_first(            \
->  		struct io_pagetable *iopt, unsigned long start,                \
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 8d96aa514033..79160b039bc7 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -130,6 +130,12 @@ int iopt_cut_iova(struct io_pagetable *iopt, unsigned long *iovas,
->  void iopt_enable_large_pages(struct io_pagetable *iopt);
->  int iopt_disable_large_pages(struct io_pagetable *iopt);
->  
-> +int iopt_pin_pages(struct io_pagetable *iopt, unsigned long iova,
-> +		   unsigned long length, struct page **out_pages,
-> +		   unsigned int flags);
-> +void iopt_unpin_pages(struct io_pagetable *iopt, unsigned long iova,
-> +		      unsigned long length);
-> +
->  struct iommufd_ucmd {
->  	struct iommufd_ctx *ictx;
->  	void __user *ubuffer;
-> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-> index 2111bad72c72..a5c6be164254 100644
-> --- a/drivers/iommu/iommufd/device.c
-> +++ b/drivers/iommu/iommufd/device.c
-> @@ -1240,58 +1240,17 @@ void iommufd_access_notify_unmap(struct io_pagetable *iopt, unsigned long iova,
->  void iommufd_access_unpin_pages(struct iommufd_access *access,
->  				unsigned long iova, unsigned long length)
->  {
-> -	struct iopt_area_contig_iter iter;
-> -	struct io_pagetable *iopt;
-> -	unsigned long last_iova;
-> -	struct iopt_area *area;
-> -
-> -	if (WARN_ON(!length) ||
-> -	    WARN_ON(check_add_overflow(iova, length - 1, &last_iova)))
-> -		return;
-> -
-> -	mutex_lock(&access->ioas_lock);
-> +	guard(mutex)(&access->ioas_lock);
->  	/*
->  	 * The driver must be doing something wrong if it calls this before an
->  	 * iommufd_access_attach() or after an iommufd_access_detach().
->  	 */
-> -	if (WARN_ON(!access->ioas_unpin)) {
-> -		mutex_unlock(&access->ioas_lock);
-> +	if (WARN_ON(!access->ioas_unpin))
->  		return;
-> -	}
-> -	iopt = &access->ioas_unpin->iopt;
-> -
-> -	down_read(&iopt->iova_rwsem);
-> -	iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova)
-> -		iopt_area_remove_access(
-> -			area, iopt_area_iova_to_index(area, iter.cur_iova),
-> -			iopt_area_iova_to_index(
-> -				area,
-> -				min(last_iova, iopt_area_last_iova(area))));
-> -	WARN_ON(!iopt_area_contig_done(&iter));
-> -	up_read(&iopt->iova_rwsem);
-> -	mutex_unlock(&access->ioas_lock);
-> +	iopt_unpin_pages(&access->ioas_unpin->iopt, iova, length);
->  }
->  EXPORT_SYMBOL_NS_GPL(iommufd_access_unpin_pages, "IOMMUFD");
->  
-> -static bool iopt_area_contig_is_aligned(struct iopt_area_contig_iter *iter)
-> -{
-> -	if (iopt_area_start_byte(iter->area, iter->cur_iova) % PAGE_SIZE)
-> -		return false;
-> -
-> -	if (!iopt_area_contig_done(iter) &&
-> -	    (iopt_area_start_byte(iter->area, iopt_area_last_iova(iter->area)) %
-> -	     PAGE_SIZE) != (PAGE_SIZE - 1))
-> -		return false;
-> -	return true;
-> -}
-> -
-> -static bool check_area_prot(struct iopt_area *area, unsigned int flags)
-> -{
-> -	if (flags & IOMMUFD_ACCESS_RW_WRITE)
-> -		return area->iommu_prot & IOMMU_WRITE;
-> -	return area->iommu_prot & IOMMU_READ;
-> -}
-> -
 >  /**
->   * iommufd_access_pin_pages() - Return a list of pages under the iova
->   * @access: IOAS access to act on
-> @@ -1315,76 +1274,16 @@ int iommufd_access_pin_pages(struct iommufd_access *access, unsigned long iova,
->  			     unsigned long length, struct page **out_pages,
->  			     unsigned int flags)
->  {
-> -	struct iopt_area_contig_iter iter;
-> -	struct io_pagetable *iopt;
-> -	unsigned long last_iova;
-> -	struct iopt_area *area;
-> -	int rc;
-> -
->  	/* Driver's ops don't support pin_pages */
->  	if (IS_ENABLED(CONFIG_IOMMUFD_TEST) &&
->  	    WARN_ON(access->iova_alignment != PAGE_SIZE || !access->ops->unmap))
->  		return -EINVAL;
+>   * struct iommufd_viommu_ops - vIOMMU specific operations
+>   * @destroy: Clean up all driver-specific parts of an iommufd_viommu. The memory
+> @@ -135,6 +144,13 @@ struct iommufd_vdevice {
+>   * @vdevice_destroy: Clean up all driver-specific parts of an iommufd_vdevice.
+>   *                   The memory of the vDEVICE will be free-ed by iommufd core
+>   *                   after calling this op
+> + * @vcmdq_alloc: Allocate a @type of iommufd_vcmdq as a user space command queue
+> + *               for a @viommu. @index carries the logical vcmdq ID (for a multi-
+> + *               queue case); @addr carries the guest physical base address of
+> + *               the queue memory; @length carries the size of the queue memory
+> + * @vcmdq_destroy: Clean up all driver-specific parts of an iommufd_vcmdq. The
+> + *                 memory of the iommufd_vcmdq will be free-ed by iommufd core
+> + *                 after calling this op
+>   */
+>  struct iommufd_viommu_ops {
+>  	void (*destroy)(struct iommufd_viommu *viommu);
+> @@ -147,6 +163,10 @@ struct iommufd_viommu_ops {
+>  						 struct device *dev,
+>  						 u64 virt_id);
+>  	void (*vdevice_destroy)(struct iommufd_vdevice *vdev);
+> +	struct iommufd_vcmdq *(*vcmdq_alloc)(struct iommufd_viommu *viommu,
+> +					     unsigned int type, u32 index,
+> +					     dma_addr_t addr, size_t length);
+> +	void (*vcmdq_destroy)(struct iommufd_vcmdq *vcmdq);
+>  };
 >  
-> -	if (!length)
-> -		return -EINVAL;
-> -	if (check_add_overflow(iova, length - 1, &last_iova))
-> -		return -EOVERFLOW;
-> -
-> -	mutex_lock(&access->ioas_lock);
-> -	if (!access->ioas) {
-> -		mutex_unlock(&access->ioas_lock);
-> +	guard(mutex)(&access->ioas_lock);
-> +	if (!access->ioas)
->  		return -ENOENT;
-> -	}
-> -	iopt = &access->ioas->iopt;
-> -
-> -	down_read(&iopt->iova_rwsem);
-> -	iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova) {
-> -		unsigned long last = min(last_iova, iopt_area_last_iova(area));
-> -		unsigned long last_index = iopt_area_iova_to_index(area, last);
-> -		unsigned long index =
-> -			iopt_area_iova_to_index(area, iter.cur_iova);
-> -
-> -		if (area->prevent_access ||
-> -		    !iopt_area_contig_is_aligned(&iter)) {
-> -			rc = -EINVAL;
-> -			goto err_remove;
-> -		}
-> -
-> -		if (!check_area_prot(area, flags)) {
-> -			rc = -EPERM;
-> -			goto err_remove;
-> -		}
-> -
-> -		rc = iopt_area_add_access(area, index, last_index, out_pages,
-> -					  flags);
-> -		if (rc)
-> -			goto err_remove;
-> -		out_pages += last_index - index + 1;
-> -	}
-> -	if (!iopt_area_contig_done(&iter)) {
-> -		rc = -ENOENT;
-> -		goto err_remove;
-> -	}
-> -
-> -	up_read(&iopt->iova_rwsem);
-> -	mutex_unlock(&access->ioas_lock);
-> -	return 0;
-> -
-> -err_remove:
-> -	if (iova < iter.cur_iova) {
-> -		last_iova = iter.cur_iova - 1;
-> -		iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova)
-> -			iopt_area_remove_access(
-> -				area,
-> -				iopt_area_iova_to_index(area, iter.cur_iova),
-> -				iopt_area_iova_to_index(
-> -					area, min(last_iova,
-> -						  iopt_area_last_iova(area))));
-> -	}
-> -	up_read(&iopt->iova_rwsem);
-> -	mutex_unlock(&access->ioas_lock);
-> -	return rc;
-> +	return iopt_pin_pages(&access->ioas->iopt, iova, length, out_pages,
-> +			      flags);
->  }
->  EXPORT_SYMBOL_NS_GPL(iommufd_access_pin_pages, "IOMMUFD");
+>  #if IS_ENABLED(CONFIG_IOMMUFD)
+> @@ -286,6 +306,21 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
+>  		ret;                                                           \
+>  	})
 >  
-> @@ -1431,7 +1330,7 @@ int iommufd_access_rw(struct iommufd_access *access, unsigned long iova,
->  			goto err_out;
->  		}
->  
-> -		if (!check_area_prot(area, flags)) {
-> +		if (!iopt_area_check_prot(area, flags)) {
->  			rc = -EPERM;
->  			goto err_out;
->  		}
-> diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
-> index 8a790e597e12..160eec49af1b 100644
-> --- a/drivers/iommu/iommufd/io_pagetable.c
-> +++ b/drivers/iommu/iommufd/io_pagetable.c
-> @@ -1472,3 +1472,98 @@ int iopt_table_enforce_dev_resv_regions(struct io_pagetable *iopt,
->  	up_write(&iopt->iova_rwsem);
->  	return rc;
->  }
+> +#define iommufd_vcmdq_alloc(viommu, drv_struct, member)                        \
+> +	({                                                                     \
+> +		drv_struct *ret;                                               \
+> +									       \
+> +		static_assert(__same_type(struct iommufd_viommu, *viommu));    \
+> +		static_assert(__same_type(struct iommufd_vcmdq,                \
+> +					  ((drv_struct *)NULL)->member));      \
+> +		static_assert(offsetof(drv_struct, member.obj) == 0);          \
+> +		ret = (drv_struct *)_iommufd_object_alloc(                     \
+> +			viommu->ictx, sizeof(drv_struct), IOMMUFD_OBJ_VCMDQ);  \
+> +		if (!IS_ERR(ret))                                              \
+> +			ret->member.viommu = viommu;                           \
+> +		ret;                                                           \
+> +	})
 > +
-> +static bool iopt_area_contig_is_aligned(struct iopt_area_contig_iter *iter)
-> +{
-> +	if (iopt_area_start_byte(iter->area, iter->cur_iova) % PAGE_SIZE)
-> +		return false;
-> +
-> +	if (!iopt_area_contig_done(iter) &&
-> +	    (iopt_area_start_byte(iter->area, iopt_area_last_iova(iter->area)) %
-> +	     PAGE_SIZE) != (PAGE_SIZE - 1))
-> +		return false;
-> +	return true;
-> +}
-> +
-> +int iopt_pin_pages(struct io_pagetable *iopt, unsigned long iova,
-> +		   unsigned long length, struct page **out_pages,
-> +		   unsigned int flags)
-> +{
-> +	struct iopt_area_contig_iter iter;
-> +	unsigned long last_iova;
-> +	struct iopt_area *area;
-> +	int rc;
-> +
-> +	if (!length)
-> +		return -EINVAL;
-> +	if (check_add_overflow(iova, length - 1, &last_iova))
-> +		return -EOVERFLOW;
-> +
-> +	down_read(&iopt->iova_rwsem);
-> +	iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova) {
-> +		unsigned long last = min(last_iova, iopt_area_last_iova(area));
-> +		unsigned long last_index = iopt_area_iova_to_index(area, last);
-> +		unsigned long index =
-> +			iopt_area_iova_to_index(area, iter.cur_iova);
-> +
-> +		if (area->prevent_access ||
-
-Nit:
-Shouldn't we return -EBUSY or something if (area->prevent_access == 1) ?
-IIUC, this just means that an unmap attempt is in progress, hence avoid
-accessing the area.
-
-> +		    !iopt_area_contig_is_aligned(&iter)) {
-> +			rc = -EINVAL;
-> +			goto err_remove;
-> +		}
-> +
-> +		if (!iopt_area_check_prot(area, flags)) {
-> +			rc = -EPERM;
-> +			goto err_remove;
-> +		}
-> +
-> +		rc = iopt_area_add_access(area, index, last_index, out_pages,
-> +					  flags);
-> +		if (rc)
-> +			goto err_remove;
-> +		out_pages += last_index - index + 1;
-> +	}
-> +	if (!iopt_area_contig_done(&iter)) {
-> +		rc = -ENOENT;
-> +		goto err_remove;
-> +	}
-> +
-> +	up_read(&iopt->iova_rwsem);
-> +	return 0;
-> +
-> +err_remove:
-> +	if (iova < iter.cur_iova) {
-> +		last_iova = iter.cur_iova - 1;
-> +		iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova)
-> +			iopt_area_remove_access(
-> +				area,
-> +				iopt_area_iova_to_index(area, iter.cur_iova),
-> +				iopt_area_iova_to_index(
-> +					area, min(last_iova,
-> +						  iopt_area_last_iova(area))));
-> +	}
-> +	up_read(&iopt->iova_rwsem);
-> +	return rc;
-> +}
-> +
-> +void iopt_unpin_pages(struct io_pagetable *iopt, unsigned long iova,
-> +		      unsigned long length)
-> +{
-> +	struct iopt_area_contig_iter iter;
-> +	unsigned long last_iova;
-> +	struct iopt_area *area;
-> +
-> +	if (WARN_ON_ONCE(!length) ||
-> +	    WARN_ON_ONCE(check_add_overflow(iova, length - 1, &last_iova)))
-> +		return;
-> +
-> +	down_read(&iopt->iova_rwsem);
-> +	iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova)
-> +		iopt_area_remove_access(
-> +			area, iopt_area_iova_to_index(area, iter.cur_iova),
-> +			iopt_area_iova_to_index(
-> +				area,
-> +				min(last_iova, iopt_area_last_iova(area))));
-> +	WARN_ON_ONCE(!iopt_area_contig_done(&iter));
-> +	up_read(&iopt->iova_rwsem);
-> +}
+>  /* Helper for IOMMU driver to destroy structures created by allocators above */
+>  #define iommufd_struct_destroy(ictx, drv_struct, member)                       \
+>  	({                                                                     \
 > -- 
 > 2.43.0
 > 
