@@ -1,63 +1,62 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B80211484
-	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 21:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE9820FAB3
+	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 21:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745874132; cv=none; b=J9M8jJL0kBCQGxjWQ+rrwthCR/Pgb6sKxTq0/pUKd4CYHDTAt1+BIQaEbk92t2zzayCf36ns+PF59RjArktm5uF9I31iwUui7wAalF1V8656DDLmzjpgisJR6szK1zjv59HUvnRKptswZ0LqYhOrvInJi6rSfM6uj1DVDtRbijk=
+	t=1745876061; cv=none; b=G6mdEBCZVnYPShJANup1Y/9tm4RVjym7JotZx4PfuJIlLAJsPikwm2oa6w9yYLOqnuUMQFxPSSt6DtbdgJDi6q7Lq9CbUjG5rsQlO50iRgrBYrU1vUYR5nsuXz0bUGVkBcf9nt1lVab6skl8Ph8wCDTRZ5qhdVU15k/OToJIuo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745874132; c=relaxed/simple;
-	bh=2ZfuLVsCa3uyg/dV83Ti5a2MISfnFj53Uosz+hvO9pQ=;
+	s=arc-20240116; t=1745876061; c=relaxed/simple;
+	bh=NhoJqartshSidWBnqA3biJF0Iyls9l8gGjN8DFMEjgQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMe2Raxe2TgQFjHwTayWGDfCS+9PI2Qgqe7fG72FkRxE57XK4JhXLnks1lqbWpKIHX6RbTUENMX1LZtz2bbJDPrI36I1j05WLaNQ03gCvsRfc8Noy+k3AziGl1CRLRgrRWf2BVX7VVxknn857D1jES+/zyAHOgL7N4AqoSXtrGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lQyujIb3; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vh6UY9FnNdee0OMgxoArBsa/BFDOn5iASdUbf/gom7NYgTyqKCZe7jdsB7b3/r+SkbtWdvMihSj0KoHLfhrOhb80hCwI56Q4XjDWAiazYkw3N0PldAjpfwVMQ8RtxhAqcQ6esmrkDJJgLk7abtlIekI1BxiGu7DVBYwJwziD1vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vao2GL0e; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lQyujIb3"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2263428c8baso14185ad.1
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 14:02:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vao2GL0e"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2264c9d0295so3965ad.0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 14:34:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745874130; x=1746478930; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745876057; x=1746480857; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTPDgyBQFtwamlv7MOGnKiNXfQ7Dnv+t8g+TQ5a6GG8=;
-        b=lQyujIb3M0N2fS87nJJnXN2/MRoFi2d0yYqLtIxzYHmfyDOzXMYl3IgaiOeZ6RPfPl
-         xwqkDy0Wu93ESuBReZI8i7TFKgz6NBdfKLDL2cBI7MUot5IxxXJ4H/ZsrIstqM8Szmga
-         PwkyiX7p8lr1NlBYML1W2EZMYSuNXoVTxyDbrR3C9fX91PSOxNF/IiPxifrqbhMUHIeO
-         svXULhg40SL0CPo2RKbt6/s4jgLwuXjcDCVR22/9T8C/RZlH7sgHUA2xrrdqkofOsRoq
-         1OqAVyWA2CXWcGbXFnV1a539Kq3thmrJoS7FoaahKHcycS+LZS0tBQiek1eZS82bIe8I
-         7f8Q==
+        bh=ZsfJi5GV4gNJPXGtyMAi/qAe8sWnYVRwN1YewUo6rSc=;
+        b=Vao2GL0eAqh6o3IilW9VNv7k7EWrikBA9VfzG7aQXUdpo/91eG6DpGBpx6rb6LlPIs
+         321UHrOddkkBMLbpqF3SnoGOVQEhSGsOya9kZD8YXZ/QW4RrX0ltwLregoKz4ToNezFZ
+         1u/xGqNqYtm+P0DCh64pnQyFJCRk+4VCl5YVnW9oYf9zXBNsQZ+OHG9dYF5LwJL+WUvm
+         4qkwCK14ngxJUMIE0UVMcpTXTmpXcTpO5Ljij0arUMepkGtyTHrvP7ciGnhU/x76Vgj1
+         IIlj34JCUn7kI0BPU45JJVwKFQKYs+GUkOpBtWMe58bBmkYZnw5MahCb9r2rmuTcNy9T
+         jAuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745874130; x=1746478930;
+        d=1e100.net; s=20230601; t=1745876057; x=1746480857;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YTPDgyBQFtwamlv7MOGnKiNXfQ7Dnv+t8g+TQ5a6GG8=;
-        b=nFACY+Ows5TZ6Unhs4CxVkWPFi86DYCEDnFt8V5DJCMu7b/lGfnM3nkpMCNwxNjW0l
-         AO7L+YdAvz0ubfWDpyMStrCO3RAhMa12JBew0RxohpCobv0LXdTp2l6ntR/XkK/hfv37
-         ofOXwg9Mz0ydT47yESweqi4f/gEZsMc+ds//5oAcLyGGO6dng6mkLLDGxShdRt8a19kh
-         7ztOpdoySneUFaf91wJEwp7Txb+dYGIvfnFzE3kkodFk1Xy2maYL/0nMbpYc7IIarTHB
-         IjaAN8bMuzzXUST4OGOLONvf+zHAUxO7wHFpApwqnMPo7hkXa5UVcUIiivEvVym9TfBI
-         P4/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVNaMsg6CLqu0I6IZNRCyqq9ZgKhPju5AQokAljt+oOTgkuUVQSZN/HBPDC/lm61je5Re/Y5ZrO1dxqFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+VFAJZoU+vGbzMvswmt7HJE3QIubO0tR6KR8ronfE4tmh51U0
-	PAIrqiuOAC0eh+FKo1GaZDGl4OMml+Re8asSDMF3uweSfodM/S3nRBpapsYakg==
-X-Gm-Gg: ASbGncuePHjzQ0Io5Q8hTQao5Em+zEHOBI968aW1Yh2J6DqiUDFfMr+26iR1xUJu5Mb
-	Vi/1mxoWntl4vrO73KgX2btcNrYA+31X8omf380rWiWULLvX/mdGlrWc55RB91iX/7DoSD+uQcZ
-	/HjMpW3obZQnR0FRqQZlKnM4bV+5d9MhAW+u8YspWXOhnbPV/yJHc6n9+WbkqB6VoeJAa6EFlBP
-	paEw50yICzkIV0W/Js+UHpj3HvjcQkotbDesF+QQ135NIcqwTXQM3KjF5kAAdfHkAUWGV8kCX/n
-	nxFdP4PmQJulehqt6S1Z7PNAHybiXLvKj5+v2CNH+SD90esiGWMEdzJzhijZ+YrZsUcFTFSfci2
-	xwKcFvvI=
-X-Google-Smtp-Source: AGHT+IGSuMnWnZQ91ixDrXUdSEwCsKBdyqU3BwTCUj27r44/z7SX9aXDHYQTjWFgiPOhsJhMa9YvFg==
-X-Received: by 2002:a17:903:124d:b0:223:37ec:63be with SMTP id d9443c01a7336-22de6c49626mr781305ad.4.1745874129655;
-        Mon, 28 Apr 2025 14:02:09 -0700 (PDT)
+        bh=ZsfJi5GV4gNJPXGtyMAi/qAe8sWnYVRwN1YewUo6rSc=;
+        b=JtNIgFvyBhdaNpho5fLzNu9fOcshpA2sx+Pg1ZBFOnnkgmlJCgizDmo+Frza+Hz68b
+         F4O60nog5OaOXhSActgejdDQQNvk9o2O7nEktFWTrLI4Ie0CcLOnD69BaOTO7Q0QJukG
+         EJmh/txlbVM3BZTl8foYeuznQ1ai8wdMQw7XxY1/sIWZy1xsYTQeYX7cMih36Vw/ChBS
+         4eqrFRKEZkG2Tuw1yL2+O0jbeePkxW6vHJlPcZpvhWz4upxeqdX0klcQoariEqY8oQQp
+         XJSXqcFwTYlewzgruxWWbPH7hdT1D8J2PX8grR17se4FMD9FG1FA5AYVkfV4AWm49Hi+
+         chuA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6+mGiJRHBU6u8xFmu+4yjIZ5A2L1G+AdA8TilbYjLFFOeACGLN9xYEKW9g/DPoD5KwofslYfxkojocA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOOeY46BmcNPkFXXv/FG6v9a/XgvrCx5cB7SbiBb1knMG9r1Es
+	QR+jgE9Zxw2cQdEJfpmniqUoGgNfLL2+AMH68kJF/OFxUNjUOqVHed9xZylMxQ==
+X-Gm-Gg: ASbGncth1YM48MGKaBio2EsWMnfeZ2pGUoGmmJwcTjKxPKMCeokWEQ2APh1d6nFYn6q
+	VAkLYGFAdrkEIlJ2cXg6fBbAGJs0rC81uk42DoZ+r2hBvCleVmk+6PRzwgd5D+lHDQXqnTqaELX
+	ilP9LgW1OGj6kI/Vn+NqkHlwtil2btat2EimH4zlw26i6Dnc2vjsrM0hE3euXdfgkY6VJiX7J4q
+	Cz+xhomXWI6/m1D9rbfuY1aiPEWhU4ods6dRa0xR3YDoHlh0u4CK7Ubcn7HPa9J7R22OmoJ5Gis
+	MGydViuj5//tzHqoyvcYctWi8QsNeoiQvcMKNig2mitcS5Rvw4wSDeJdlQFIEMkJTE52fgMq
+X-Google-Smtp-Source: AGHT+IE+KaoUm6FAcva/asMGpdAdvSvxi6I/nzVOjZdBDcnh+kzvq6u61j/01qvHClHVKIVW/FIR3A==
+X-Received: by 2002:a17:903:124d:b0:223:37ec:63be with SMTP id d9443c01a7336-22de6c49626mr880365ad.4.1745876056773;
+        Mon, 28 Apr 2025 14:34:16 -0700 (PDT)
 Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a6a3casm8778803b3a.96.2025.04.28.14.02.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e75fdsm88595955ad.120.2025.04.28.14.34.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 14:02:09 -0700 (PDT)
-Date: Mon, 28 Apr 2025 21:01:58 +0000
+        Mon, 28 Apr 2025 14:34:16 -0700 (PDT)
+Date: Mon, 28 Apr 2025 21:34:05 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
@@ -70,11 +69,11 @@ Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
 	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
 	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 09/22] iommufd/viommu: Introduce IOMMUFD_OBJ_VCMDQ and
- its related struct
-Message-ID: <aA_sxstJRbG1znKs@google.com>
+Subject: Re: [PATCH v2 10/22] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
+ ioctl
+Message-ID: <aA_0TV0RkVOHk7Qj@google.com>
 References: <cover.1745646960.git.nicolinc@nvidia.com>
- <8bab0069503fa21b48298ed2ffe29a06963f71f5.1745646960.git.nicolinc@nvidia.com>
+ <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,101 +82,238 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8bab0069503fa21b48298ed2ffe29a06963f71f5.1745646960.git.nicolinc@nvidia.com>
+In-Reply-To: <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
 
-On Fri, Apr 25, 2025 at 10:58:04PM -0700, Nicolin Chen wrote:
-> Add a new IOMMUFD_OBJ_VCMDQ with an iommufd_vcmdq structure, representing
-> a command queue type of physical HW passed to a user space VM. This vCMDQ
-> object, is a subset of vIOMMU resources of a physical IOMMU's, such as:
->  - NVIDIA's virtual command queue
->  - AMD vIOMMU's command buffer
-> 
-> Inroduce a struct iommufd_vcmdq and its allocator iommufd_vcmdq_alloc().
-> Also add a pair of viommu ops for iommufd to forward user space ioctls to
-> IOMMU drivers.
+On Fri, Apr 25, 2025 at 10:58:05PM -0700, Nicolin Chen wrote:
+> Introduce a new IOMMUFD_CMD_VCMDQ_ALLOC ioctl for user space to allocate
+> a vCMDQ for a vIOMMU object. Simply increase the refcount of the vIOMMU.
 > 
 > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
 > ---
->  include/linux/iommufd.h | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+>  drivers/iommu/iommufd/iommufd_private.h |  2 +
+>  include/uapi/linux/iommufd.h            | 41 +++++++++++
+>  drivers/iommu/iommufd/main.c            |  6 ++
+>  drivers/iommu/iommufd/viommu.c          | 94 +++++++++++++++++++++++++
+>  4 files changed, 143 insertions(+)
 > 
-> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> index ef0d3c4765cf..e91381aaec5a 100644
-> --- a/include/linux/iommufd.h
-> +++ b/include/linux/iommufd.h
-> @@ -37,6 +37,7 @@ enum iommufd_object_type {
->  	IOMMUFD_OBJ_VIOMMU,
->  	IOMMUFD_OBJ_VDEVICE,
->  	IOMMUFD_OBJ_VEVENTQ,
-> +	IOMMUFD_OBJ_VCMDQ,
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index 79160b039bc7..b974c207ae8a 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -611,6 +611,8 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>  void iommufd_viommu_destroy(struct iommufd_object *obj);
+>  int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>  void iommufd_vdevice_destroy(struct iommufd_object *obj);
+> +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd);
+> +void iommufd_vcmdq_destroy(struct iommufd_object *obj);
+>  
 >  #ifdef CONFIG_IOMMUFD_TEST
->  	IOMMUFD_OBJ_SELFTEST,
->  #endif
-> @@ -112,6 +113,14 @@ struct iommufd_vdevice {
->  	u64 id; /* per-vIOMMU virtual ID */
+>  int iommufd_test(struct iommufd_ucmd *ucmd);
+> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+> index cc90299a08d9..06a763fda47f 100644
+> --- a/include/uapi/linux/iommufd.h
+> +++ b/include/uapi/linux/iommufd.h
+> @@ -56,6 +56,7 @@ enum {
+>  	IOMMUFD_CMD_VDEVICE_ALLOC = 0x91,
+>  	IOMMUFD_CMD_IOAS_CHANGE_PROCESS = 0x92,
+>  	IOMMUFD_CMD_VEVENTQ_ALLOC = 0x93,
+> +	IOMMUFD_CMD_VCMDQ_ALLOC = 0x94,
 >  };
 >  
-> +struct iommufd_vcmdq {
-> +	struct iommufd_object obj;
-> +	struct iommufd_ctx *ictx;
-> +	struct iommufd_viommu *viommu;
-> +	dma_addr_t addr;
-> +	size_t length;
+>  /**
+> @@ -1147,4 +1148,44 @@ struct iommu_veventq_alloc {
+>  	__u32 __reserved;
+>  };
+>  #define IOMMU_VEVENTQ_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VEVENTQ_ALLOC)
+> +
+> +/**
+> + * enum iommu_vcmdq_type - Virtual Command Queue Type
+> + * @IOMMU_VCMDQ_TYPE_DEFAULT: Reserved for future use
+> + */
+> +enum iommu_vcmdq_type {
+> +	IOMMU_VCMDQ_TYPE_DEFAULT = 0,
 > +};
 > +
->  /**
->   * struct iommufd_viommu_ops - vIOMMU specific operations
->   * @destroy: Clean up all driver-specific parts of an iommufd_viommu. The memory
-> @@ -135,6 +144,13 @@ struct iommufd_vdevice {
->   * @vdevice_destroy: Clean up all driver-specific parts of an iommufd_vdevice.
->   *                   The memory of the vDEVICE will be free-ed by iommufd core
->   *                   after calling this op
-> + * @vcmdq_alloc: Allocate a @type of iommufd_vcmdq as a user space command queue
-> + *               for a @viommu. @index carries the logical vcmdq ID (for a multi-
-> + *               queue case); @addr carries the guest physical base address of
-> + *               the queue memory; @length carries the size of the queue memory
-> + * @vcmdq_destroy: Clean up all driver-specific parts of an iommufd_vcmdq. The
-> + *                 memory of the iommufd_vcmdq will be free-ed by iommufd core
-> + *                 after calling this op
->   */
->  struct iommufd_viommu_ops {
->  	void (*destroy)(struct iommufd_viommu *viommu);
-> @@ -147,6 +163,10 @@ struct iommufd_viommu_ops {
->  						 struct device *dev,
->  						 u64 virt_id);
->  	void (*vdevice_destroy)(struct iommufd_vdevice *vdev);
-> +	struct iommufd_vcmdq *(*vcmdq_alloc)(struct iommufd_viommu *viommu,
-> +					     unsigned int type, u32 index,
-> +					     dma_addr_t addr, size_t length);
-> +	void (*vcmdq_destroy)(struct iommufd_vcmdq *vcmdq);
->  };
->  
->  #if IS_ENABLED(CONFIG_IOMMUFD)
-> @@ -286,6 +306,21 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
->  		ret;                                                           \
->  	})
->  
-> +#define iommufd_vcmdq_alloc(viommu, drv_struct, member)                        \
-> +	({                                                                     \
-> +		drv_struct *ret;                                               \
-> +									       \
-> +		static_assert(__same_type(struct iommufd_viommu, *viommu));    \
-> +		static_assert(__same_type(struct iommufd_vcmdq,                \
-> +					  ((drv_struct *)NULL)->member));      \
-> +		static_assert(offsetof(drv_struct, member.obj) == 0);          \
-> +		ret = (drv_struct *)_iommufd_object_alloc(                     \
-> +			viommu->ictx, sizeof(drv_struct), IOMMUFD_OBJ_VCMDQ);  \
-> +		if (!IS_ERR(ret))                                              \
-> +			ret->member.viommu = viommu;                           \
-> +		ret;                                                           \
-> +	})
+> +/**
+> + * struct iommu_vcmdq_alloc - ioctl(IOMMU_VCMDQ_ALLOC)
+> + * @size: sizeof(struct iommu_vcmdq_alloc)
+> + * @flags: Must be 0
+> + * @viommu_id: Virtual IOMMU ID to associate the virtual command queue with
+> + * @type: One of enum iommu_vcmdq_type
+> + * @index: The logical index to the virtual command queue per virtual IOMMU, for
+> + *         a multi-queue model
+> + * @out_vcmdq_id: The ID of the new virtual command queue
+> + * @addr: Base address of the queue memory in the guest physical address space
+> + * @length: Length of the queue memory in the guest physical address space
+> + *
+> + * Allocate a virtual command queue object for a vIOMMU-specific HW-accelerated
+> + * feature that can access a guest queue memory described by @addr and @length.
+> + * It's suggested for VMM to back the queue memory using a single huge page with
+> + * a proper alignment for its contiguity in the host physical address space. The
+> + * call will fail, if the queue memory is not contiguous in the physical address
+> + * space. Upon success, its underlying physical pages will be pinned to prevent
+> + * VMM from unmapping them in the IOAS, until the virtual CMDQ gets destroyed.
+> + */
+> +struct iommu_vcmdq_alloc {
+> +	__u32 size;
+> +	__u32 flags;
+> +	__u32 viommu_id;
+> +	__u32 type;
+> +	__u32 index;
+> +	__u32 out_vcmdq_id;
+> +	__aligned_u64 addr;
+> +	__aligned_u64 length;
+> +};
+> +#define IOMMU_VCMDQ_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VCMDQ_ALLOC)
+>  #endif
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index 2b9ee9b4a424..ac51d5cfaa61 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -303,6 +303,7 @@ union ucmd_buffer {
+>  	struct iommu_ioas_map map;
+>  	struct iommu_ioas_unmap unmap;
+>  	struct iommu_option option;
+> +	struct iommu_vcmdq_alloc vcmdq;
+>  	struct iommu_vdevice_alloc vdev;
+>  	struct iommu_veventq_alloc veventq;
+>  	struct iommu_vfio_ioas vfio_ioas;
+> @@ -358,6 +359,8 @@ static const struct iommufd_ioctl_op iommufd_ioctl_ops[] = {
+>  	IOCTL_OP(IOMMU_IOAS_UNMAP, iommufd_ioas_unmap, struct iommu_ioas_unmap,
+>  		 length),
+>  	IOCTL_OP(IOMMU_OPTION, iommufd_option, struct iommu_option, val64),
+> +	IOCTL_OP(IOMMU_VCMDQ_ALLOC, iommufd_vcmdq_alloc_ioctl,
+> +		 struct iommu_vcmdq_alloc, length),
+>  	IOCTL_OP(IOMMU_VDEVICE_ALLOC, iommufd_vdevice_alloc_ioctl,
+>  		 struct iommu_vdevice_alloc, virt_id),
+>  	IOCTL_OP(IOMMU_VEVENTQ_ALLOC, iommufd_veventq_alloc,
+> @@ -501,6 +504,9 @@ static const struct iommufd_object_ops iommufd_object_ops[] = {
+>  	[IOMMUFD_OBJ_IOAS] = {
+>  		.destroy = iommufd_ioas_destroy,
+>  	},
+> +	[IOMMUFD_OBJ_VCMDQ] = {
+> +		.destroy = iommufd_vcmdq_destroy,
+> +	},
+>  	[IOMMUFD_OBJ_VDEVICE] = {
+>  		.destroy = iommufd_vdevice_destroy,
+>  	},
+
+When do we expect the VMM to use this ioctl? While it's spawning a new
+VM? IIUC, one vintf can have multiple lvcmdqs and looking at the series
+it looks like the vcmdq_alloc allocates a single lvcmdq. Is the plan to
+dedicate one lvcmdq to per VM? Which means VMs can share a vintf?
+Or do we plan to trap access to trap the access everytime the VM
+accesses an lvcmdq base register?
+
+> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> index a65153458a26..02a111710ffe 100644
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -170,3 +170,97 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  	iommufd_put_object(ucmd->ictx, &viommu->obj);
+>  	return rc;
+>  }
 > +
->  /* Helper for IOMMU driver to destroy structures created by allocators above */
->  #define iommufd_struct_destroy(ictx, drv_struct, member)                       \
->  	({                                                                     \
+> +void iommufd_vcmdq_destroy(struct iommufd_object *obj)
+> +{
+> +	struct iommufd_vcmdq *vcmdq =
+> +		container_of(obj, struct iommufd_vcmdq, obj);
+> +	struct iommufd_viommu *viommu = vcmdq->viommu;
+> +
+> +	if (viommu->ops->vcmdq_destroy)
+> +		viommu->ops->vcmdq_destroy(vcmdq);
+> +	iopt_unpin_pages(&viommu->hwpt->ioas->iopt, vcmdq->addr, vcmdq->length);
+> +	refcount_dec(&viommu->obj.users);
+> +}
+> +
+> +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> +{
+> +	struct iommu_vcmdq_alloc *cmd = ucmd->cmd;
+> +	struct iommufd_viommu *viommu;
+> +	struct iommufd_vcmdq *vcmdq;
+> +	struct page **pages;
+> +	int max_npages, i;
+> +	dma_addr_t end;
+> +	int rc;
+> +
+> +	if (cmd->flags || cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT)
+> +		return -EOPNOTSUPP;
+
+The cmd->type check is a little confusing here, I think we could
+re-order the series and add this check when we have the CMDQV type.
+Alternatively, we could keep this in place and add the driver-specific
+vcmdq_alloc op calls when it's added/available for Tegra CMDQV while
+stubbing out the rest of this function accordingly.
+
+> +	if (!cmd->addr || !cmd->length)
+> +		return -EINVAL;
+> +	if (check_add_overflow(cmd->addr, cmd->length - 1, &end))
+> +		return -EOVERFLOW;
+> +
+> +	max_npages = DIV_ROUND_UP(cmd->length, PAGE_SIZE);
+> +	pages = kcalloc(max_npages, sizeof(*pages), GFP_KERNEL);
+> +	if (!pages)
+> +		return -ENOMEM;
+> +
+> +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
+> +	if (IS_ERR(viommu)) {
+> +		rc = PTR_ERR(viommu);
+> +		goto out_free;
+> +	}
+> +
+> +	if (!viommu->ops || !viommu->ops->vcmdq_alloc) {
+> +		rc = -EOPNOTSUPP;
+> +		goto out_put_viommu;
+> +	}
+> +
+> +	/* Quick test on the base address */
+> +	if (!iommu_iova_to_phys(viommu->hwpt->common.domain, cmd->addr)) {
+> +		rc = -ENXIO;
+> +		goto out_put_viommu;
+> +	}
+> +
+> +	/* The underlying physical pages must be pinned in the IOAS */
+> +	rc = iopt_pin_pages(&viommu->hwpt->ioas->iopt, cmd->addr, cmd->length,
+> +			    pages, 0);
+> +	if (rc)
+> +		goto out_put_viommu;
+> +
+> +	/* Validate if the underlying physical pages are contiguous */
+> +	for (i = 1; i < max_npages && pages[i]; i++) {
+> +		if (page_to_pfn(pages[i]) == page_to_pfn(pages[i - 1]) + 1)
+> +			continue;
+> +		rc = -EFAULT;
+> +		goto out_unpin;
+> +	}
+> +
+> +	vcmdq = viommu->ops->vcmdq_alloc(viommu, cmd->type, cmd->index,
+> +					 cmd->addr, cmd->length);
+> +	if (IS_ERR(vcmdq)) {
+> +		rc = PTR_ERR(vcmdq);
+> +		goto out_unpin;
+> +	}
+> +
+> +	vcmdq->viommu = viommu;
+> +	refcount_inc(&viommu->obj.users);
+> +	vcmdq->addr = cmd->addr;
+> +	vcmdq->ictx = ucmd->ictx;
+> +	vcmdq->length = cmd->length;
+> +	cmd->out_vcmdq_id = vcmdq->obj.id;
+> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
+> +	if (rc)
+> +		iommufd_object_abort_and_destroy(ucmd->ictx, &vcmdq->obj);
+> +	else
+> +		iommufd_object_finalize(ucmd->ictx, &vcmdq->obj);
+> +	goto out_put_viommu;
+> +
+> +out_unpin:
+> +	iopt_unpin_pages(&viommu->hwpt->ioas->iopt, cmd->addr, cmd->length);
+> +out_put_viommu:
+> +	iommufd_put_object(ucmd->ictx, &viommu->obj);
+> +out_free:
+> +	kfree(pages);
+> +	return rc;
+> +}
 > -- 
 > 2.43.0
 > 
