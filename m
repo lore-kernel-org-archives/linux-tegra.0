@@ -1,62 +1,62 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A693D27E1A7
-	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 17:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1602E27E1A7
+	for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 17:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745862643; cv=none; b=AFo5qdZrQGAV4JaauMDLQzXebL/2/NEapEvk9HpERXX14pRCq+jPrM5GJ7gOZvNPLuZsUsRqiNG76kYjna1JeDm4nPGMSjiEkxjxiMDm7Ii5WjoYdu2kpx5I+gr5Dwlc90DCiexFWSAKi7pDyfRPJeFXuo4yqhG9IMUDdkyV4os=
+	t=1745862759; cv=none; b=pMgg7+wirWSbbuIXbdZUlGKpLT/QUAE0f9GICBJ6qbz3jSY8biR73PFp9r4YnmtNCGsC8e4cvFAsuzblEGNOcMGndMSgb9Tn2W1RMx4sDaRuXeURAlGbQR+c6jhbnojAMJyn3bi5MOFKbRDws6dlYtULBUbws2CSJabToDxZXxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745862643; c=relaxed/simple;
-	bh=OvAf2T+pBvdBVQKKD1SCkOQm7K3cKaRnrNfz9b6U1KI=;
+	s=arc-20240116; t=1745862759; c=relaxed/simple;
+	bh=tlXItLWYzM0MSceJkd0MV2mZMr+DBkTlO0xigxKGaW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeCNdtq89y3EyHCVOoIABmxPfYYMQwQ534Bn+YwBjvy9jQxbLY5jt+oBbOywtCq3R3ui0UGWSbn9GYPDNOvl9dqeFkY6YSxSRmkwplxncnO8PjL3w9zQD1G302XNApSpLM5nlseXn0FU0PBV+5pPQuIajPL6dGW9X36nammykxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OmgDpqQa; arc=none smtp.client-ip=209.85.214.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=UxbpW28pIyniMgA/GYRn57O67Rd3VpJSToXkLQdcZ1/PVCbKe0acRZY+kbV683s1/NcOBJeLa5edqLZoTHHWmJTuORFTBxNJipYhw5tpnP949rFxj/3gcdVtozkCWPVfbAt3L03zXeIxw9HPjbulW857u7CV+hpQwl1+eAFHga8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=znVVWzsZ; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OmgDpqQa"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2264c9d0295so22125ad.0
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 10:50:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="znVVWzsZ"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2264c9d0295so23025ad.0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Apr 2025 10:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745862640; x=1746467440; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745862757; x=1746467557; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5mEMzzefTttNVGmGGFEF+tVQHWP3i8v0cb/h12OtES4=;
-        b=OmgDpqQaWfXDEzR3D7bT9oowtk+dIIu88v5Sm176ctaEOfVPp5XjFau3YloJfgx/yi
-         ag35CLiMNd1ci5DOIZ0lzudQiz2AMDieklzrbqAXwNTZaQx3d8SPhQ5797Z/82Ozvy1i
-         Rvm2mlPBqF9sr/ZuI1PjU5Yb7mB8xZu9UOBXxXBfNWi2pwFopCxGwbI9wMv90wtnzDYN
-         bYvKtPTfaAkBM+9egcrBNABC21SGVtlQxKSWNfUnuYD4F2ixB2IVUW15VmZiu22WONRe
-         s6bT81o6Slgb3IlwSUxOc+sjL8Ou4NcQWQix1N0ONy3nQcERXK+Zq+veif3VsWzGAjtt
-         XDSw==
+        bh=mXoy6sxPPZ/z2WrCrnWnxSxhkK1XoAbzd892zSPGLLk=;
+        b=znVVWzsZkViwJ9KNktbWf0SVEF5noddR04XFaMmY94Zy2Xp2+D18rCgAGTGH1tVaqs
+         TTyFi1VVrmWxZdr0LcmPaGtWFCemB5Vr4HzCt+SQOJbpsyeKqoQrkODdAXvAPgc6FcgI
+         m8gf/hXk4Dm97gDdpRCGZMGEX4KlwN5Bc2SpDRh5aEfr2BDL+riD58djW1JpnFk5Xzp7
+         uCDhmAH54yhLseams5OI7IDMQ2rQ9lO5eE6apAlkhTtzASG0t1ETlsqjNKHzpwxIk0U0
+         +7K1gghkiN4zT5XsR3iE7fA/xJ0cgdcfnq7o+4ITt60LrvoNt5Y3znxW39c+OrVCGm/5
+         5kgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745862640; x=1746467440;
+        d=1e100.net; s=20230601; t=1745862757; x=1746467557;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5mEMzzefTttNVGmGGFEF+tVQHWP3i8v0cb/h12OtES4=;
-        b=sg/QtwvfGkec8LQMha6X39cqtOFYayyZT5hPNwsAym4e5a47a3sCmiysN6BV89K/8j
-         oFUiVPVUBnYD5pedv62GAhfqHmmsnOUKQzDpAcIG+UaJ/68YFJiVwM9AUPYNrojTKtmg
-         huhqFK3p+Vzqw26ANgPSVbaLt7zwWGgRoH+6Y4ofLOkq8ENAeNQXLEkPX1bZhMM8leqb
-         cSE8Rud/zfaXwjqAZ1bA7KQg6YkNBKdwoBtnyN0PoQ0XRaN5EES05pJj3r1HqZ0pumjD
-         qRQFaIL2C7G+pn9/xL8f+/GjTQB2mdnWcRlIEPqNQQ1vPEJ7PHvtQCXSyeC3rd6yJteJ
-         o5bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuVNYpqAGTvmYmmw4L9EDv/2WKMIKT67FrInu14dxSRFh9AecTdBE2cAOWBbb96UpeFp4Jr/k3jPaleQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNPUiqnEPTb09YeMHOQwpSunWGZ/VBMjIo8nlIQNwrKD9AHlrE
-	J1rQkgFFwawLfvCdrobJsyZKl2edjWnYur57pvjcyWUMAVtvwqDuuuj3KjnKQw==
-X-Gm-Gg: ASbGncsY4U6HK24/XcePQ0zdRDmbj6BA5eVmAalo7MDgk6auMyJSfF1rEDRHGsWZZ4n
-	NPN3kKxs/tgkhQ2g/XOVvHgpgLH4Uf4xAxEwXx2zhehhZ9VtHgQk0D9oynwDAe6HsKYmtUF837r
-	XImLtMkQwpkL4Z6SZcXmKGxkGfqlz3cFduND9/CN33+1kVSWgpAibpdhFOWSSCG9uVgA4txkIzr
-	b9EwIIaVZhM9wmS567bdtCmDHjp/L47GRVNJDfgPEVnlB/8/sWnROHrffQK0u400Q/9ccYgsRFQ
-	ATsPa9UdLnLvXLFhZgAwMBJnC7Oalj4rCT9XBCzONdaIPZwXO4x5YiLlGIIFAkR5Dtbl+8AQ
-X-Google-Smtp-Source: AGHT+IFdvGjCZd8WihYpKKAdbavzVYWBtSaBNCLX1v9EIv3lNKixiHNvn3PMdFhA2dEanqkbNONo4w==
-X-Received: by 2002:a17:902:ebce:b0:229:1de5:e8c9 with SMTP id d9443c01a7336-22de6ebc37cmr33095ad.13.1745862639534;
-        Mon, 28 Apr 2025 10:50:39 -0700 (PDT)
+        bh=mXoy6sxPPZ/z2WrCrnWnxSxhkK1XoAbzd892zSPGLLk=;
+        b=QKwGvELHdFxMVIPh1mGwje61vhTMkAiF+aFxaHMi5y7/6GZ1isBa3l3PbKQ4w/JBF+
+         B3nE0M+9IvGZqUjMvAmo/I0FoCMM5kpFaD/n75gVNyAXlqftW9m4WNcDPHpRkTATCG4n
+         ySxIDvIxE1OtBPa/WxtDM3hi6vWmJARr6vl2Y/8Pp3zq03GbDvwUNBP/PfjvL7/PBB6Y
+         Y07pzT+HfmUJ+6droz/qRAHYHVHAAPGX00t+3BtmuYG65A/vnOuDV7hi6pbc42VKMgHc
+         /CZI1d6H4Fo+j3mJbehebMcDfeDeEZ/MTEpUavlHKMREuXF/KUjILBdPAUIVw50tycDC
+         hfKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYEFubI5PTu0VDtM4lw3p9DA5Pu/A0T0plYYnUf/GGutEePRPYE8hfSsDmHmHeoaIA4TR49/9t5VccRQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD/vBZXyf6aSsAdgxtNMLyvwRlyh5k/FmHpwwk2gwezsfwRlUU
+	nE4hrJY7nez0mPywzB4SOAGVgha4mu+nIQ/pmN43RNzy0CONBNJe+du7g9CfxA==
+X-Gm-Gg: ASbGncs28QRNFd/GY1a9+eNINOjkCNwuKMtqXKp2eTlwTocayJ2BaaBMqPA7IAyekIl
+	HJuSQRkC8KPyXXsSSdAFFCjWoNeo7Q/5yhNMEm5o+tiCTaGfkpt/HCoZP30rk4ZCT8XNKTEvuSM
+	b53hKXiJVvp7TY0yQf7VQUoBUskhcbbpCszVIsqP9ENcUA2L9S9QxOIeUavh520iodBV2BFIGAC
+	Wb+VTNHil4Lo49EjBt6GvnoYvsn5TC0RvHH6tEUezxpXv8mFvze8A9kKEp+3jsywoI5e8MtQVXx
+	2mmlhqUYoEjTBOAtpPztMsO89ABHaKoyFBYWx7cexDlkbz8QgdHMrvJk8s0CHn32YyN+tTIy
+X-Google-Smtp-Source: AGHT+IF7sSGBhp3GPgZs/6zIUASVzRs0/32vLn2f7+jmPw+exeJNlnbAKCbgqdOEVPuoFGNIT6O/Vw==
+X-Received: by 2002:a17:903:1946:b0:216:7aaa:4c5f with SMTP id d9443c01a7336-22de6ebc2f6mr21395ad.3.1745862756998;
+        Mon, 28 Apr 2025 10:52:36 -0700 (PDT)
 Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4db9b02sm85788765ad.56.2025.04.28.10.50.34
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f77032f9sm7553154a12.15.2025.04.28.10.52.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 10:50:39 -0700 (PDT)
-Date: Mon, 28 Apr 2025 17:50:28 +0000
+        Mon, 28 Apr 2025 10:52:36 -0700 (PDT)
+Date: Mon, 28 Apr 2025 17:52:26 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
@@ -69,10 +69,11 @@ Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
 	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
 	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 04/22] iommu: Add iommu_copy_struct_to_user helper
-Message-ID: <aA-_5FQK0uZPdGVA@google.com>
+Subject: Re: [PATCH v2 03/22] iommufd/viommu: Allow driver-specific user data
+ for a vIOMMU object
+Message-ID: <aA_AWhJGFWwAzRUl@google.com>
 References: <cover.1745646960.git.nicolinc@nvidia.com>
- <ca032e90c0241fe0653023fcb655185dba763f5f.1745646960.git.nicolinc@nvidia.com>
+ <7031ae5ab6f625e73dbd51b074c2ff8a9923c731.1745646960.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,77 +82,73 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca032e90c0241fe0653023fcb655185dba763f5f.1745646960.git.nicolinc@nvidia.com>
+In-Reply-To: <7031ae5ab6f625e73dbd51b074c2ff8a9923c731.1745646960.git.nicolinc@nvidia.com>
 
-On Fri, Apr 25, 2025 at 10:57:59PM -0700, Nicolin Chen wrote:
-> Similar to the iommu_copy_struct_from_user helper receiving data from the
-> user space, add an iommu_copy_struct_to_user helper to report output data
-> back to the user space data pointer.
+On Fri, Apr 25, 2025 at 10:57:58PM -0700, Nicolin Chen wrote:
+> The new type of vIOMMU for tegra241-cmdqv driver needs a driver-specific
+> user data. So, add data_len/uptr to the iommu_viommu_alloc uAPI and pass
+> it in via the viommu_alloc iommu op.
 > 
 > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+
+Acked-by: Pranjal Shrivastava <praan@google.com>
+
 > ---
->  include/linux/iommu.h | 40 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+>  include/uapi/linux/iommufd.h   | 6 ++++++
+>  drivers/iommu/iommufd/viommu.c | 8 +++++++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index ba7add27e9a0..634ff647888d 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -562,6 +562,46 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
->  	return 0;
->  }
+> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+> index f29b6c44655e..cc90299a08d9 100644
+> --- a/include/uapi/linux/iommufd.h
+> +++ b/include/uapi/linux/iommufd.h
+> @@ -965,6 +965,9 @@ enum iommu_viommu_type {
+>   * @dev_id: The device's physical IOMMU will be used to back the virtual IOMMU
+>   * @hwpt_id: ID of a nesting parent HWPT to associate to
+>   * @out_viommu_id: Output virtual IOMMU ID for the allocated object
+> + * @data_len: Length of the type specific data
+> + * @__reserved: Must be 0
+> + * @data_uptr: User pointer to an array of driver-specific virtual IOMMU data
+>   *
+>   * Allocate a virtual IOMMU object, representing the underlying physical IOMMU's
+>   * virtualization support that is a security-isolated slice of the real IOMMU HW
+> @@ -985,6 +988,9 @@ struct iommu_viommu_alloc {
+>  	__u32 dev_id;
+>  	__u32 hwpt_id;
+>  	__u32 out_viommu_id;
+> +	__u32 data_len;
+> +	__u32 __reserved;
+> +	__aligned_u64 data_uptr;
+>  };
+>  #define IOMMU_VIOMMU_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_ALLOC)
 >  
-> +/**
-> + * __iommu_copy_struct_to_user - Report iommu driver specific user space data
-> + * @dst_data: Pointer to a struct iommu_user_data for user space data location
-> + * @src_data: Pointer to an iommu driver specific user data that is defined in
-> + *            include/uapi/linux/iommufd.h
-> + * @data_type: The data type of the @dst_data. Must match with @src_data.type
-								   ^
-Nit: Must match with @dst_data type.
-
-> + * @data_len: Length of current user data structure, i.e. sizeof(struct _src)
-> + * @min_len: Initial length of user data structure for backward compatibility.
-> + *           This should be offsetofend using the last member in the user data
-> + *           struct that was initially added to include/uapi/linux/iommufd.h
-> + */
-> +static inline int
-> +__iommu_copy_struct_to_user(const struct iommu_user_data *dst_data,
-> +			    void *src_data, unsigned int data_type,
-> +			    size_t data_len, size_t min_len)
-> +{
-> +	if (WARN_ON(!dst_data || !src_data))
-> +		return -EINVAL;
-> +	if (dst_data->type != data_type)
-> +		return -EINVAL;
-> +	if (dst_data->len < min_len || data_len < dst_data->len)
-> +		return -EINVAL;
-> +	return copy_struct_to_user(dst_data->uptr, dst_data->len, src_data,
-> +				   data_len, NULL);
-> +}
-> +
-> +/**
-> + * iommu_copy_struct_to_user - Report iommu driver specific user space data
-> + * @user_data: Pointer to a struct iommu_user_data for user space data location
-> + * @ksrc: Pointer to an iommu driver specific user data that is defined in
-> + *        include/uapi/linux/iommufd.h
-> + * @data_type: The data type of the @ksrc. Must match with @user_data->type
-> + * @min_last: The last member of the data structure @ksrc points in the initial
-> + *            version.
-> + * Return 0 for success, otherwise -error.
-> + */
-> +#define iommu_copy_struct_to_user(user_data, ksrc, data_type, min_last)        \
-> +	__iommu_copy_struct_to_user(user_data, ksrc, data_type, sizeof(*ksrc), \
-> +				    offsetofend(typeof(*ksrc), min_last))
-> +
->  /**
->   * struct iommu_ops - iommu ops and capabilities
->   * @capable: check capability
-
-With the above nit.
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
+> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> index fffa57063c60..a65153458a26 100644
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -17,6 +17,11 @@ void iommufd_viommu_destroy(struct iommufd_object *obj)
+>  int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  {
+>  	struct iommu_viommu_alloc *cmd = ucmd->cmd;
+> +	const struct iommu_user_data user_data = {
+> +		.type = cmd->type,
+> +		.uptr = u64_to_user_ptr(cmd->data_uptr),
+> +		.len = cmd->data_len,
+> +	};
+>  	struct iommufd_hwpt_paging *hwpt_paging;
+>  	struct iommufd_viommu *viommu;
+>  	struct iommufd_device *idev;
+> @@ -48,7 +53,8 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  	}
+>  
+>  	viommu = ops->viommu_alloc(idev->dev, hwpt_paging->common.domain,
+> -				   ucmd->ictx, cmd->type, NULL);
+> +				   ucmd->ictx, cmd->type,
+> +				   user_data.len ? &user_data : NULL);
+>  	if (IS_ERR(viommu)) {
+>  		rc = PTR_ERR(viommu);
+>  		goto out_put_hwpt;
 > -- 
 > 2.43.0
 > 
