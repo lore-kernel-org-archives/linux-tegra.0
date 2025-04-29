@@ -1,128 +1,209 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63641F0E58
-	for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 08:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB394297A40
+	for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 08:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745915483; cv=none; b=m+XhF0M4J9uRuoxiIB150jl7Z654UfWcjtzHf/QSDI8JbYo/r1LZ/WNtwAp4IBzMSXTJn3ZQJsfB+OEybus9Q4BghaKTbo2SzxfEjt+yjCaSEK1EvOc2UT7k3L5bS/CMW+/MPSz2oMgvj7ja2gUYWyPofxZFECO23v8Uap5P+Kk=
+	t=1745917164; cv=none; b=St5f/QkwlifaZhTWHIcpl7FPWlniAs8bnsSOEWVL6PuEaVvHkH4LFnehN1f3XSXL7yJp4X2/f9p6mXY3rLjelI3MXlw+8TCdw80h00gtenucUWbGGBm8IRsWEQHlvoJrpn3PifB1HejMOelieGxcTyBMqz1P3u98HLEyEaZWWnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745915483; c=relaxed/simple;
-	bh=85qKaVraS+9MNdskLBxSjS9ktFkx0yQSDGXvIR/OvQI=;
+	s=arc-20240116; t=1745917164; c=relaxed/simple;
+	bh=maF8O0AXI3aSxltp1DZAMnjKxGYaRV9INEbsZPqSfLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJ2kGIIiiESu7dlzIu7zgIk5NGZf/zZhwI1Venxd1uUyvbB/x5YVI1Owf3epMPbTE1U9yzgRkc6jHMcBIgOuyCEqXaGxKwxjtIRfu73azReXfQAGfKAT0Fht8VcJwo/akpBwV2de4bM2kPIWN5UvAN2ZMCVoD+DoRnH+0WY8+7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oAodT9uA; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOCOrtmsVPNjYSuL2H62cDtBdbO9pfZ4FcjVC8wVq0PwcgKREhn0qF7Ddzhwkjsern59ePjMK2BJ+Q8UnMS7RpnLnMFbqg+cXqMZ4B5z0OTOfW4F3RpKWC5wF7qOfIeapBbjkiXhSmHNOzoZRLNnO3Sc6H9jvkd/ABII3xeu2AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Df/bg9Tt; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oAodT9uA"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2242ac37caeso52815ad.1
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 01:31:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Df/bg9Tt"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so38095475e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 01:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745915481; x=1746520281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TNi2KjTVYx94VsJLpl+aLzT0MDWDcyauEZBdUwqWejg=;
-        b=oAodT9uAJPpRkgB3B/eY+TMN04Fr3Putxl7q1c9Y+evLoj9i/ms+hT5HWJDs1hTnOK
-         d7wuMLxYD/czi7XXAIs+5pmHtC0hnxx1y7ekzhsOrYHXspWK5JDSm8bujYtOQCQCtbkH
-         ap5kE5qJ4qsOjatA9vGFq+a6r52hqDc30+i8/EJ8Be3kEd4cDaQqDtFP8PszYpaOe6HZ
-         cLf3ZMz2D3E1t04HD8iyhPcOoCCUa/G926U42LrA5DQ7CJbB0PV4Vz9j5y6WvWwQ+4Bh
-         Xjs1lABiyE0wzToxARN4fCJLQ42WCqAwRTwVF31zt9jxP3EfB7LidjyQAmwW6wMQEpKD
-         ZQMA==
+        d=linaro.org; s=google; t=1745917161; x=1746521961; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=72XrpgHFsueeXrTH8jlfFESoodkk8/GL5WRZUg5xx00=;
+        b=Df/bg9TtgC9/zADgGYeCRGePd/775IXWODFysiHgUqR/kOHsnQRaz8QA3SQ9YjDQs9
+         LNd8b6806E5oQqmeCkf8Drz2lzeSb9Fgc36Qn8rFigCMLV9O1rU5uPV1L7GvzWoa20WS
+         E81ZEq06U+bkOTmigWJ6JYRpl38v8oGVM/mrKgkkQDAyb0fIEGix+4wkixFd0spW6+3N
+         a2UmHI3S4olAXzrAYtWrY9XgL+iNpbR9BCvBonoGwbRjV5d6v1WP7nJFpyTUJvn/NbZs
+         owcmTI+fHaQ7mDvu6b7r8t/41/M3m72xzA7p6ia/FZlrc+RSc5OuOPpmM2ybJFP/Lp8g
+         788w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745915481; x=1746520281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNi2KjTVYx94VsJLpl+aLzT0MDWDcyauEZBdUwqWejg=;
-        b=C8l9J3lN60uQxfogBDvLAGDcBy2o9YjVIEr4kft8xe0/R1AVHbpHPBjAFicGZQhlP0
-         zwhE5FjdmwctNJ6CApBdPulbykzzRvwsQRKvTNJntsmTFl1CAVbCIy9qOxotFx2GIF2k
-         MMg6wzhD9GB4EzDmvMDMKm3Dow1/XaZ7QLOSujkgaEXorgVO+ymT4km1uQ0Sf8eaBycq
-         QkuV6+Wg3B+4IIZMetq3T94Y3AyqGVHNepcZtsBDQkuBEgaXIA6NnPktYtVwctucyg7f
-         J/o3MDvJouMk9HIpHJML/s0+cpfycCUrrYMEfXhT52xyfgzReHWO4aizipzpmadmhXxL
-         YbbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVnaV61JhpxdCa8pLAvbMbI04Fj/96Xw7RvsLNt5y2yLwg7AJ2MRyzsER1Bl1psiyJLtLuk8YAW8EblQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn1asBFAaPj1DLc2Xhn7Yp744L9dd5dM1K4Kwa146tehO9uiXn
-	lqmdbYBXnadRLGbpcg9Y97Ch38sluXMQlmLrezlsZLd+OAjr41YRI4m4XBH7xg==
-X-Gm-Gg: ASbGncs2rAvOhOtBzDq4GYaILTUymAGlrgApi2U/7GY8W3WYBJwF2jV05tfVJLDq255
-	uEgRhrwaucy6sMaH10Yjr69NjkIUNUHJ5EAMPvSjR3UPfDkOEmHsEaabsls1kxedF/c3crVfDaF
-	mzm+Macbr8MFtbIHK4+vQY+PlqcjPcWZpD8HpkNQmeb+bvr/4u/1/BGe4qpgX5L2jUpB2u8FDit
-	JoflL+o0DNqKWYHzX6+Ni2n3iWQ6c8eFYQggs5dTz1na9kPBif7oB2QHOt8lWFSqtHk93psm2la
-	U40G0RQ9vBq4lLuWP20hyW2Ir1Gx4fSdHhiU/2NVAYiauAikIJoWCb/bULPaKTaDF0r2g6Qj
-X-Google-Smtp-Source: AGHT+IEuwEN6Vz0nl2aEx/jObUHE3H07L74jGS/5bsNXpJR+QacDK6nh9jI6VmQObGdH+OZv4saKuQ==
-X-Received: by 2002:a17:903:1cd:b0:21f:465d:c588 with SMTP id d9443c01a7336-22de6c52c70mr2586365ad.14.1745915480493;
-        Tue, 29 Apr 2025 01:31:20 -0700 (PDT)
-Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef124ce9sm10440195a91.34.2025.04.29.01.31.14
+        d=1e100.net; s=20230601; t=1745917161; x=1746521961;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=72XrpgHFsueeXrTH8jlfFESoodkk8/GL5WRZUg5xx00=;
+        b=MynfHPtme5q9cCr7o0Ufs2bdeHTfW2CWIcCTulnR4X+H8x24xtERMnvWFZhy6J6xrr
+         36vg5K4bvchRcGAI2aLL90ouiP8Swlu/OQuqS7u2ybE1hhbu+12FtAokrCe8yQ2AjeHG
+         UwmTUT6Q6TPgxKCGULKjT92YC/ZWcROaPn7pyN9Qu9A/sROSoTrx8l5Tj5VOVvuodalT
+         cpZnjtsAVtKRDItAKSzZd1WoNWbuFfnqBydsAT804HR8Th0E9/Dzsl8W+t3duGLJimtY
+         g9CXiEUvRc2/h3GzpwE28X0qKzqjXIk5jimvVvY8+2GFdqsOWJMnhCQ1VYt+f3tz8BH1
+         zMxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCa4TyN3Y8R6nUorRlpnPtiHeedp3FWFlPrqDu4g+B6X0wEknYoeCypsv+Ye19aUOekgGfaQhgFVki5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRUc3vBgifeRkilghZaky67fn+CuvVpHSuJC1MxSpUfVevyptx
+	sKr5g8QDOTjA015AspuiYPhwDXRwGNUgpVKKGj6FYO0qR2Jts4XvYtYAilbkiX8=
+X-Gm-Gg: ASbGnctw6HMIDjjnGKj+mSZIwvPg4xWXo4r4u41qvU0/6lwU5ZMoXj4YmEkTbzz1xn7
+	tO+xMXEWjo9zdir6jOdw0vq+iX6BelSLeav7cAXSNTBE9sGlTG1cDASjALA3REGqX9NWl/FNtlN
+	t9UpIpdpAC0YO3YpJ96lB1UkaXOEn4+t5D3M1DKhYG7DHq+F/ikjCw2pZZUeg/DdLfFf68pBgBH
+	0jZN3VPjzw1AUUCYn/MqOjXzyJBojYYU0nrgcKI4zDOR4ZFZb2FHGp0Xe+1VxU6AU+Rl9iqVla1
+	9iH6DYjhvdgr9N1mRR5ZQcS66pLhePqhiLJBp7ZOFFEr4DYwOelMZ0P1/TmCQgnDUu1X24lt+pt
+	DYxg=
+X-Google-Smtp-Source: AGHT+IH9cAXRyLv2jIhDe13mooOzLDvV3Gb8BXq2tck1VmIh/qQf68NHpAxzv4kBa17j291y5Gx1/g==
+X-Received: by 2002:a05:600c:8119:b0:439:9737:675b with SMTP id 5b1f17b1804b1-441acb1fbafmr18348805e9.7.1745917161139;
+        Tue, 29 Apr 2025 01:59:21 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d29ba29sm183285395e9.7.2025.04.29.01.59.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 01:31:19 -0700 (PDT)
-Date: Tue, 29 Apr 2025 08:31:08 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 04/22] iommu: Add iommu_copy_struct_to_user helper
-Message-ID: <aBCOTDDC8--age-V@google.com>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <ca032e90c0241fe0653023fcb655185dba763f5f.1745646960.git.nicolinc@nvidia.com>
- <aA-_5FQK0uZPdGVA@google.com>
- <aA/HN2CV+0UQ4S9j@Asurada-Nvidia>
+        Tue, 29 Apr 2025 01:59:20 -0700 (PDT)
+Date: Tue, 29 Apr 2025 10:59:18 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Robert Lin <robelin@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+	pohsuns@nvidia.com, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, sumitg@nvidia.com
+Subject: Re: [PATCH v5 1/3] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
+Message-ID: <aBCU5vec0XMX5VRz@mai.linaro.org>
+References: <20250421100821.2907217-1-robelin@nvidia.com>
+ <20250421100821.2907217-2-robelin@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aA/HN2CV+0UQ4S9j@Asurada-Nvidia>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250421100821.2907217-2-robelin@nvidia.com>
 
-On Mon, Apr 28, 2025 at 11:21:43AM -0700, Nicolin Chen wrote:
-> On Mon, Apr 28, 2025 at 05:50:28PM +0000, Pranjal Shrivastava wrote:
-> > On Fri, Apr 25, 2025 at 10:57:59PM -0700, Nicolin Chen wrote:
-> > > Similar to the iommu_copy_struct_from_user helper receiving data from the
-> > > user space, add an iommu_copy_struct_to_user helper to report output data
-> > > back to the user space data pointer.
-> > > 
-> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > > ---
-> > >  include/linux/iommu.h | 40 ++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 40 insertions(+)
-> > > 
-> > > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> > > index ba7add27e9a0..634ff647888d 100644
-> > > --- a/include/linux/iommu.h
-> > > +++ b/include/linux/iommu.h
-> > > @@ -562,6 +562,46 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +/**
-> > > + * __iommu_copy_struct_to_user - Report iommu driver specific user space data
-> > > + * @dst_data: Pointer to a struct iommu_user_data for user space data location
-> > > + * @src_data: Pointer to an iommu driver specific user data that is defined in
-> > > + *            include/uapi/linux/iommufd.h
-> > > + * @data_type: The data type of the @dst_data. Must match with @src_data.type
-> > 								   ^
-> > Nit: Must match with @dst_data type.
+On Mon, Apr 21, 2025 at 06:08:19PM +0800, Robert Lin wrote:
+> From: Pohsun Su <pohsuns@nvidia.com>
 > 
-> Oh, that's a copy-n-paste mistake. It should be:
->   * @data_type: The data type of the @src_data. Must match with @dst_data.type
-
-Ack, yes that's what I meant!
-
+> This change adds support for WDIOC_GETTIMELEFT so userspace
+> programs can get the number of seconds before system reset by
+> the watchdog timer via ioctl.
 > 
-> Thanks!
-> Nicolin
+> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
+> Signed-off-by: Robert Lin <robelin@nvidia.com>
+> ---
 
-Thanks,
-Praan
+Hi Robert,
+
+I realize that this driver should be split in two and the watchdog part go
+under drivers/watchdog.
+
+>  drivers/clocksource/timer-tegra186.c | 58 +++++++++++++++++++++++++++-
+>  1 file changed, 57 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+> index ea742889ee06..56d08bf1b6b0 100644
+> --- a/drivers/clocksource/timer-tegra186.c
+> +++ b/drivers/clocksource/timer-tegra186.c
+> @@ -1,8 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
+> + * Copyright (c) 2019-2025 NVIDIA Corporation. All rights reserved.
+>   */
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/module.h>
+>  #include <linux/interrupt.h>
+> @@ -30,6 +31,7 @@
+>  
+>  #define TMRSR 0x004
+>  #define  TMRSR_INTR_CLR BIT(30)
+> +#define  TMRSR_PCV GENMASK(28, 0)
+>  
+>  #define TMRCSSR 0x008
+>  #define  TMRCSSR_SRC_USEC (0 << 0)
+> @@ -46,6 +48,9 @@
+>  #define  WDTCR_TIMER_SOURCE_MASK 0xf
+>  #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
+>  
+> +#define WDTSR 0x004
+> +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
+> +
+>  #define WDTCMDR 0x008
+>  #define  WDTCMDR_DISABLE_COUNTER BIT(1)
+>  #define  WDTCMDR_START_COUNTER BIT(0)
+> @@ -235,12 +240,63 @@ static int tegra186_wdt_set_timeout(struct watchdog_device *wdd,
+>  	return 0;
+>  }
+>  
+> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
+> +{
+> +	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
+> +	u32 timeleft, expiration, val;
+> +
+> +	if (!watchdog_active(&wdt->base)) {
+> +		/* return zero if the watchdog timer is not activated. */
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * Reset occurs on the fifth expiration of the
+> +	 * watchdog timer and so when the watchdog timer is configured,
+> +	 * the actual value programmed into the counter is 1/5 of the
+> +	 * timeout value. Once the counter reaches 0, expiration count
+> +	 * will be increased by 1 and the down counter restarts.
+> +	 * Hence to get the time left before system reset we must
+> +	 * combine 2 parts:
+> +	 * 1. value of the current down counter
+> +	 * 2. (number of counter expirations remaining) * (timeout/5)
+> +	 */
+> +
+> +	/* Get the current number of counter expirations. Should be a
+> +	 * value between 0 and 4
+> +	 */
+> +	val = readl_relaxed(wdt->regs + WDTSR);
+> +	expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, val);
+> +	if (WARN_ON(expiration > 4))
+> +             return 0;
+> +
+> +	/* Get the current counter value in microsecond.
+> +	 */
+> +	val = readl_relaxed(wdt->tmr->regs + TMRSR);
+> +	timeleft = FIELD_GET(TMRSR_PCV, val);
+> +
+> +	/*
+> +	 * Calculate the time remaining by adding the time for the
+> +	 * counter value to the time of the counter expirations that
+> +	 * remain. Do the multiplication first on purpose just to keep
+> +	 * the precision due to the integer division.
+> +	 */
+> +	timeleft += wdt->base.timeout * (4 - expiration) / 5;
+> +	/*
+> +	 * Convert the current counter value to seconds,
+> +	 * rounding up to the nearest second.
+> +	 */
+> +	timeleft = (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
+> +	return timeleft;
+> +}
+> +
+>  static const struct watchdog_ops tegra186_wdt_ops = {
+>  	.owner = THIS_MODULE,
+>  	.start = tegra186_wdt_start,
+>  	.stop = tegra186_wdt_stop,
+>  	.ping = tegra186_wdt_ping,
+>  	.set_timeout = tegra186_wdt_set_timeout,
+> +	.get_timeleft = tegra186_wdt_get_timeleft,
+>  };
+>  
+>  static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *tegra,
+> -- 
+> 2.34.1
+> 
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
