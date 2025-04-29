@@ -1,68 +1,68 @@
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2055.outbound.protection.outlook.com [40.107.101.55])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2051.outbound.protection.outlook.com [40.107.243.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C6027585B;
-	Tue, 29 Apr 2025 06:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C404525D8E8;
+	Tue, 29 Apr 2025 06:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745906419; cv=fail; b=eJyK0WZk9He2i69AsIcNdzaGuD6thNLPihzyT34lXXrdX2oQwNrPHA4oD+3A9/psIm7T3kWS0yg6G4ZbHM3BgKOEXda6AzhrcFMCBWu2v8xGYuQtQdjIXRUZ+TGkhIrlruOuVrhfWfEhNbNSx+W6X2g4eNy7Z6XO1VtKXGsZQXc=
+	t=1745906421; cv=fail; b=CHtCAkjcVVM57w4ZVYsZpSqmzHZTHSA2S24mBTQ9p/8qum+c4xP78tNxD7MPjai4YIHhJR4vRTockra+EWuWDAZH5NigKkBOvOqKgLpRogKOgYe8dO969Ik6ryOegziv+4sit4P3XjvcNI1ajCea+y6NCp+Tm6WQa9Qj1+/8Lx4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745906419; c=relaxed/simple;
-	bh=TlYMJ4pTpJdP3SxoPQEIaXfUmt80+YZdh8Ay/mkwdRw=;
+	s=arc-20240116; t=1745906421; c=relaxed/simple;
+	bh=ySoZdWrxmklKIRYpiHpR7pkGWuBskFmWi75GR2IDpSk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CRjCvpo5i27vu9O2q2pU9Xe1wThsplrHk8zL9f22Uwg7p4uew7kZjF+JyEb1KS09J2AdpHvDRZWuDYwvQdKTR+4LRQ7Uxadn1IUC8LxKh19lA5Uema2ekCnko7w1OsgLiLauOiehsh7chWk37ATOzb41J1KevxWnEm+A390X/+4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q89gmnw4; arc=fail smtp.client-ip=40.107.101.55
+	 MIME-Version:Content-Type; b=BhyMWuE7MujDLGgwEhWrwfQEWK6NkQvS7XYmkxI/ZIvnA+W53QNRYYMNQsj1du2rXV6gKfvUUsQZdUIyNRH5e4YEyU+lQKEDuW7OMvcbnBM4Q5r67oa3ut0Vbz8lidqkCa3I5uhWln/zNn6Xjc0mqXpGhASWYh0P4HBonjTr5+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=m6ytFh6a; arc=fail smtp.client-ip=40.107.243.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q89gmnw4"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="m6ytFh6a"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hbas0eLnGS4+LFal9yway7ef9l/oqun9f6o275s5HYRd6oPP4LKI12whekbOyxYTuBUcdg9Z4OVb4liNprPh8SXDFPNHuApaXcmnO96elUgJRv/TkWn4iGP1vbFCOgVv3rU6AKv/OsfM1NFCunwSF1PDzvFlioosOoHQDvcG5D4mj4nn3Z/YB9b4tb5/DS6bClDXnODbqCVmK6/0T2edmWTh5RgxqnP3OUD7WA0L2PKa6pVCCsQakKdeXR7nCkcWpCHXYuZgoAS+KzMJ+miVRD9Cmp45VKQFjNJArCeKY/v3XjQZeRaQH6wvVeAZflCviTfIRIx31DpIkjOk5MWsyg==
+ b=S3BTtsAVgH2Abxf2SB9y68hkSnBrTwzuubI1Sbp9TO6t1GNHt0ZnTaU/CMGQYN5Sj+I0Kx7tr1OwNgCgcGOvSccS2oBkZiQ0jfjcbsRH/1KioE7gE8zI2ZhmEWvcrrkdNwVwEOgMjl8PHvW5Z08UbE5xQUUDqmxP4QAVv6xsCvX/vHq6nJh7CbH0xitIs0xUeGZSFD+Q9aQSqRyg/16nX/4iOgXikCpdxzLm3xW3+Md/0EpVWATTUeTqjXr/UWlOGFk1P0MFUdI3JGrEGay6yW+ZunXVne2v1bRp8bi6GCmlspGqV5S8Se72uSkOqI3DLmzsYNm7WfDPhln5OcwrAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RnlkzjZy0ROvLGnOytKgILJe2WhWONMOCUWcbDn+c5k=;
- b=OpF8PwDaq4oJT7pVeQj6XLiIB3wPJJxULbmjadKGrq+2zbIFYupIWi0hRpjnFfDDvRKLmQPx5ImiW4TrlJVsnPg9cVSIGP12Fg9c4clyADeReTjLoUMFWPXOrIoU8Yo5NA4p92P0cm6ZDBMMHj+pNw3RClFOC9C2XWDS4msk8JnRMp2UwUrr6aUPB/+RXaPDKlFJJ8+68nmEqc0XryTrcFnydPlJ0j90RBG8oZ8K8vZPXAY9j1JelWb4rDycV8r0fuvDnr7v1DJE+uuS+MG5ON7yjuHFEDY2d9VaWoiJOkk7qXGc2IRZwVse40gCQ18QIjbnPSVgE0D5n9GxoM+swA==
+ bh=+rPL7nUCO79QV07KaSz3HbTzrcZPuy8Ji6bJwLuOP1U=;
+ b=C/6ZQzgpZTBuXVMpZf5bUs0ca1swb9q+q+NBCFThNY/Cw3YoYuKIFgXAH2Sk5VkcQO/4Uw6mr914vZvKCY36hCG61VAWpiZ1Cd8SVx1P0iW0bPRaO5b0lkxwJh2/HRev448ST6Dba2aJcMpk8TUEwrQM5DyDNLTt7mSrTWforklRee9rh4I2MeFPTyxjD9oiL6fAxaEMEUkKUHUVGoHfvyOhvTyUtuQIu6zXEjaCNP7rc+J7S+LQDnwWZzoID46BRp00EW8v8UtJbLjTs9W2MhPPMToHkh+6XktNrcc1jm1QG1MkrmndL+9iMJ/2zL+3Rqud/+Wzxx3oL+tFmO1swA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RnlkzjZy0ROvLGnOytKgILJe2WhWONMOCUWcbDn+c5k=;
- b=q89gmnw4Lbwcp27hanYCBlV+eTa0NDoTKg2BZ1HM0TKTigZsLxunEs4kAgrYY4Mr891Us3PMOu56Bmyb1CH2qVj4t5s7Gtw0V1gIP5b/uzvF7z4ZAnNN3B/Pd4s9R/4YjGFjGCC/W2WXYQCr/aIOmuQnLM4us1Q6dXgJKaf6rdtJhFOK217MBp7t0jnazpu3i/bFllYbhRTDdzrBl7xp2wVENiMzhuvYz7wDdOGCEbkPI4Y4mruv4HoK1LOPM52lqWt6cWPer1aSlgKAr/edmjNThyeNJqKfORtUQhEuoD1+zzKQiHmo+RY0K4gk+hprkJyeocnZ5AdZPgJoc5rb2Q==
-Received: from BN9PR03CA0454.namprd03.prod.outlook.com (2603:10b6:408:139::9)
- by DM4PR12MB9069.namprd12.prod.outlook.com (2603:10b6:8:b8::11) with
+ bh=+rPL7nUCO79QV07KaSz3HbTzrcZPuy8Ji6bJwLuOP1U=;
+ b=m6ytFh6asv0sTGBA7Wf++1K+MToHjw2L+UJA7Ru6gX4TGt8O4sO585iQZ4XKUfMuCbuu74wokFBbifN9OY/+QHIpVXtlkZIAOZWGEUYP04O9lCHyWOzE3HzlIbP/VAjwlzp1yNqKEkhaL/uRDPANK60XDVgwy4o48pznxmvllpnwsavdWCuKv6uLnnCaV8cS+mIxikLS6yG7K2gsweNo49Kbr4oKvi7Dr/AiWldIMXIleeDHmxfwRrfbilKsPf6e0IiSEKXa3odGrPUAC9UYmVYgL2Ead2ENXHY4oKBgX629YD/DQ2lCJOhKEFxC022hvl4ry4Hv36E+joe2VAichQ==
+Received: from DM6PR05CA0062.namprd05.prod.outlook.com (2603:10b6:5:335::31)
+ by MW4PR12MB6826.namprd12.prod.outlook.com (2603:10b6:303:20c::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Tue, 29 Apr
- 2025 06:00:08 +0000
-Received: from BN1PEPF00004686.namprd03.prod.outlook.com
- (2603:10b6:408:139:cafe::6) by BN9PR03CA0454.outlook.office365.com
- (2603:10b6:408:139::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.41 via Frontend Transport; Tue,
- 29 Apr 2025 06:00:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ 2025 06:00:05 +0000
+Received: from DS3PEPF000099D9.namprd04.prod.outlook.com
+ (2603:10b6:5:335:cafe::58) by DM6PR05CA0062.outlook.office365.com
+ (2603:10b6:5:335::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.33 via Frontend Transport; Tue,
+ 29 Apr 2025 06:00:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN1PEPF00004686.mail.protection.outlook.com (10.167.243.91) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF000099D9.mail.protection.outlook.com (10.167.17.10) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.33 via Frontend Transport; Tue, 29 Apr 2025 06:00:07 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.8699.20 via Frontend Transport; Tue, 29 Apr 2025 06:00:05 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Apr
- 2025 22:59:48 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 22:59:50 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 28 Apr
- 2025 22:59:48 -0700
+ 2025 22:59:50 -0700
 Received: from build-sheetal-bionic-20250305.nvidia.com (10.127.8.13) by
  mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via
- Frontend Transport; Mon, 28 Apr 2025 22:59:47 -0700
+ Frontend Transport; Mon, 28 Apr 2025 22:59:49 -0700
 From: "Sheetal ." <sheetal@nvidia.com>
 To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<lgirdwood@gmail.com>, <broonie@kernel.org>
@@ -71,9 +71,9 @@ CC: <perex@perex.cz>, <tiwai@suse.com>, <devicetree@vger.kernel.org>,
 	<linux-sound@vger.kernel.org>, <thierry.reding@gmail.com>,
 	<jonathanh@nvidia.com>, <spujar@nvidia.com>, <mkumard@nvidia.com>, Sheetal
 	<sheetal@nvidia.com>
-Subject: [PATCH v2 07/11] ASoC: tegra: I2S: Add Tegra264 support
-Date: Tue, 29 Apr 2025 05:59:37 +0000
-Message-ID: <20250429055941.901511-8-sheetal@nvidia.com>
+Subject: [PATCH v2 10/11] ASoC: tegra: AHUB: Add Tegra264 support
+Date: Tue, 29 Apr 2025 05:59:40 +0000
+Message-ID: <20250429055941.901511-11-sheetal@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250429055941.901511-1-sheetal@nvidia.com>
 References: <20250429055941.901511-1-sheetal@nvidia.com>
@@ -87,576 +87,1158 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004686:EE_|DM4PR12MB9069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d4dc975-9b05-40f8-faf7-08dd86e3185f
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D9:EE_|MW4PR12MB6826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86ee5620-3a6e-4512-1572-08dd86e316d9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3D8f9TlriT5NmjwdEU3A7b89IJgRY+a0ifgQu2KGJhISlC9dPRIrH0ixS5nH?=
- =?us-ascii?Q?pmkgCfPgCSkzdvzhIQ9epYP1lZGu4ti86w60bOjXlbTDfRhnKjSvDql7xEK1?=
- =?us-ascii?Q?OdtH3loByjMqtoYCoDU8KAzK9G/c97DpY4nM0huchmK7MdfOF2jeens1AGzh?=
- =?us-ascii?Q?5WGVA55eKeXfBqqI75mt09JTndc7zq4dWHVdP9GlE8PSkG6x5PYLN6LIuHqe?=
- =?us-ascii?Q?m/YECgku0fZmBtAwvXG1hcQNBjW87lYeWQ+rdjz6pQYCWpmO6piGvUqXHqrN?=
- =?us-ascii?Q?AYZ3gIUkgg8Yo92Dd81D2NvYb2gGt96o4fWnSSrZX22k1JWZXLWRAgH5SFmQ?=
- =?us-ascii?Q?QwxD7QGxeXCgPcqsrZ4+Q8aqhhHDhJU8hukqCM/fI3plCaTkSLRdFevtulij?=
- =?us-ascii?Q?AVAGMV5e+n8Fuj6HVeMD9UKcyOcJHvN5+OcehRCOvBpOx8Ec2jWE0IJL1Z0k?=
- =?us-ascii?Q?PIvagV0xgTX7LU6aetPUD8Y/ZQP2L3HL+4V4blbWW2P4foWVMZtLLN5R/WpZ?=
- =?us-ascii?Q?PYhzKH+pP5RmWK1a7DynBaiM7KI6SIRDtDPOon6cofORm5zZuyhhveifl+qR?=
- =?us-ascii?Q?BWxWENgYPgO28SUZ3h0ZASfE3Eb1pbob4XFxULqC9XuMR85PmrJIiBQWeGEN?=
- =?us-ascii?Q?t4l1sAUTF/K9oBOy06XRdX7E6Oe6s8KEdelS1asCm/RVbwfzkgNMdVJXbOoU?=
- =?us-ascii?Q?eoJYxKb5mgyPTSsbponB4eUcgYmGp8dFm58sPGElmQXdHPMmAq1eyMBcM3+Z?=
- =?us-ascii?Q?NpXJmnj9TqJAh5XQmyialXRyiZSwjtUUQ8v7bB5sNUsle0X6xS2l3H85i4DP?=
- =?us-ascii?Q?7vAoAeGPTInjm0avQgC7KxukUsTa8FTWV6eZ6PkPp5efnUh5iiGCOyEEob4O?=
- =?us-ascii?Q?7thmqHMrgmrK3ix/GtUNIP+LFUSjtW8kAlfOdR48DSVM0dSQXxFb3mgNc8JO?=
- =?us-ascii?Q?aRaJVJ/xWGsK0s1bf0gbeKd56KSYZ1DvzC2lRiJr3WFdZ8fGSLXB6CLK7avV?=
- =?us-ascii?Q?qwJUYh3C6JmF4V7fvmtWlR25GoJPD2IqFBEoPXUTiLvQ1sa2YrRlR4TGO5gD?=
- =?us-ascii?Q?qGsdZxNVOJDmx4jNfoz8UTpseoLL1nmzLuDx/4SD9NMQTt3X3UmhIc+PkGpB?=
- =?us-ascii?Q?dDCP4oVW0ZiHCAm/4BgUddWa7z3zyMZvmn2By/nsegVCNqgh9ufOoP+4gVzE?=
- =?us-ascii?Q?6t/kkTQxGp4wKihr0BAvXXNZ+A5OVp06U1lH3StbGkOq7BfGMFDIii4WyXb7?=
- =?us-ascii?Q?gZFnNKgyYjV1zZE1j5a8Q6ir65RcfvM7L3MkgEg5i8eRoY6pIgaV2pNETDh7?=
- =?us-ascii?Q?MP5pLmm3WedXNe+fHYw5KgkMAIOxUGWFvdEulVyaIEgSGH9ir1YPQg+VfynU?=
- =?us-ascii?Q?SaANnD6/1x51BXQh1sXSw4LMAadKlzAaTWSGhuQ3wIeGXe7WUIWEkhl71dNS?=
- =?us-ascii?Q?N1fkxRWVnY4ZyDfNEyWLF696iGBPqEu+hUR6MO7EGAnR9/guRICW0kxuBLp3?=
- =?us-ascii?Q?r4t0kBHXrKqIAjhpbzMtNDCI1hiI18XeASeZ?=
+	=?us-ascii?Q?1m1MFlQG8q2XpxsraMMoVqz5o9bCXe5oOYUdYWGu7Za03OC4GVSjiHjHmPXl?=
+ =?us-ascii?Q?z36UAfGb+E6b7n4ctdWY7LMVYnUUHOncoZ4LY3MfdFmofCGMoaFW+3K7Hgi/?=
+ =?us-ascii?Q?J1crrqmKNrSYtQMyyAHoznQWDguOvvja4mML2F4LD2Oo5L6mOeSoqTuKKJW3?=
+ =?us-ascii?Q?foR5dG+YBvpPjGwa6SbjsmflrV3fOA1qGJrlVqSe9M+0N+/Ca/wUfWVt7BaL?=
+ =?us-ascii?Q?78JbYcVWb16qXfbfcSJDd0Iq7e4rO4/FP9jrWJ21WWs4I6OuD9Vn383mhiWF?=
+ =?us-ascii?Q?oFS5yIbfk7iHN4Qhwt0IMr3Vm0HsvHX9ABjx3bH8/XqPRqxxvkgaad1lB8H2?=
+ =?us-ascii?Q?HN4Q8uqk3Ov5q1wWfmvcMCYSnkF7YzYGvQKabBo3q5EkXQBbPxGOe9lMH0LQ?=
+ =?us-ascii?Q?oqQ9EgRbILxjWrLVVZfdcT3EyUrxrMAfaMR2ljp3lKRAqmL+Fe00AxrcYWDP?=
+ =?us-ascii?Q?80K0K1mTfAMx6uGkG/cEkoPDx92iTIFresk6kfBo8QLAgZtQfyptKWo3+MAg?=
+ =?us-ascii?Q?vgVy/inMa7JxASQpuqAPgkWc3XxvqYq1xHFOs6vBYP+bhevskSrg02gDfdRs?=
+ =?us-ascii?Q?zeEzdHo3jLt+umS9oIuTPVj4MQMjHehsaZGsgYl4ELfNWvJeL5ls80urXv6Y?=
+ =?us-ascii?Q?cDe5Brtt8pT7ryyFz3N9dcnXqqUf5XlxcnZQLOubZyiPFru7esZXRxrrkpx/?=
+ =?us-ascii?Q?7YLVaSGOBDBAQtwhaqadSHJfg6R4h4sFWWBvSNPeq+1yzU8VLjQIprLgB134?=
+ =?us-ascii?Q?dXG6eIwrBSQ6KSPu7Wfb5tLRXcfQevX5kBmD3GGren2G5NazC3MyeMsdOjhn?=
+ =?us-ascii?Q?quwBkPvzFXp1cxtS6mFoNXDYfxG4JAgwNGuD8RvBH0C/EFB8f+FDpme7AYHn?=
+ =?us-ascii?Q?G7bsXon5EVQPNzV1LbYbRs9J5QEzlQhZUqrvqnz6CYkv0Tyvi6QpNXfGKH7F?=
+ =?us-ascii?Q?yYSxc2pu3isxvNKXOzfP6OUEYXLXmP8+12s8KHI8v1yeG7y1+rwL56i9Xj9V?=
+ =?us-ascii?Q?vUa2o5DcxPPrNbFLZcZw9gOVzbamITIVyiwIi9cSMXvE94CBhU5ki6GPh+aH?=
+ =?us-ascii?Q?Fj0P42P2vDCXag7cEwQctICcjxRyu3jBQm1RxXFEcpSjScnJvYfAOBuz+d/R?=
+ =?us-ascii?Q?3nV7BGPa19b7ogbXMDmOQBEIfTxBeH9CgRXBzMyhav6+1Fau9KHSSui+xzLH?=
+ =?us-ascii?Q?DROfhrfqS4O0/I+gf13n/3kvgSCbq4UM3Xm1ycIl+FUxUUjxPDx6inxfrYh2?=
+ =?us-ascii?Q?Hvq6F3p92wNeq6KM094pa5X+I9imsLzN8qTwe6GKS8KQemc8FqFRrLAwbO7u?=
+ =?us-ascii?Q?c909UTa7Zfi8xVvGWyQwgWiFFogxkYcNJbLFXtyARcQ+WVVvzUXFx5g3cULj?=
+ =?us-ascii?Q?BCqC3rXl/faYJoRx+QKDpj0D/JEqZhAwTOyjqmDLhxfrkQS5ISiE7Cms66jQ?=
+ =?us-ascii?Q?QrC1p4bjgSEYPfWkeZpag/iO6mXY7gWPtwYzkpwV9glsr6RrETMzwS6I6pVT?=
+ =?us-ascii?Q?3PJJhv2sWuQMOB9L1BKx0CTDLk8EWbRjDGgb?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 06:00:07.9003
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 06:00:05.4428
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d4dc975-9b05-40f8-faf7-08dd86e3185f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86ee5620-3a6e-4512-1572-08dd86e316d9
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004686.namprd03.prod.outlook.com
+	DS3PEPF000099D9.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB9069
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6826
 
 From: Sheetal <sheetal@nvidia.com>
 
-Add Tegra264 I2S support with following changes:
-- Add soc_data for Tegra264-specific variations
-- Tegra264 I2S supports 32 audio channels, hence update the TDM config,
-  CIF configuration API and DAI channel_max parameter.
-- Register offsets and default values are updated to align with Tegra264.
+Add Tegra264 AHUB support with following changes:
+- Update Tegra264 IP instances: DMIC(2), DSPK(1), AMX(6), ADX(6), I2S(8).
+- Update register offsets for Tegra264.
+- Add soc_data for Tegra264 chip-specific variations.
+- Increase channels_max to 32 for Tegra264 DAIs.
 
 Signed-off-by: Sheetal <sheetal@nvidia.com>
 ---
- sound/soc/tegra/tegra210_i2s.c | 231 ++++++++++++++++++++++++++-------
- sound/soc/tegra/tegra210_i2s.h |  51 +++++++-
- 2 files changed, 233 insertions(+), 49 deletions(-)
+ sound/soc/tegra/tegra210_ahub.c | 848 +++++++++++++++++++++++++++++++-
+ sound/soc/tegra/tegra210_ahub.h |  52 +-
+ 2 files changed, 891 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra210_i2s.c b/sound/soc/tegra/tegra210_i2s.c
-index 766cddebd5f6..100277c39001 100644
---- a/sound/soc/tegra/tegra210_i2s.c
-+++ b/sound/soc/tegra/tegra210_i2s.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
-+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES.
- // All rights reserved.
+diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
+index 99683f292b5d..41cf5c3e1aa5 100644
+--- a/sound/soc/tegra/tegra210_ahub.c
++++ b/sound/soc/tegra/tegra210_ahub.c
+@@ -2,7 +2,7 @@
  //
- // tegra210_i2s.c - Tegra210 I2S driver
-@@ -36,14 +36,28 @@ static const struct reg_default tegra210_i2s_reg_defaults[] = {
- 	{ TEGRA210_I2S_CYA, 0x1 },
- };
+ // tegra210_ahub.c - Tegra210 AHUB driver
+ //
+-// Copyright (c) 2020-2024, NVIDIA CORPORATION.  All rights reserved.
++// Copyright (c) 2020-2025, NVIDIA CORPORATION.  All rights reserved.
  
--static void tegra210_i2s_set_slot_ctrl(struct regmap *regmap,
-+static const struct reg_default tegra264_i2s_reg_defaults[] = {
-+	{ TEGRA210_I2S_RX_INT_MASK, 0x00000003 },
-+	{ TEGRA210_I2S_RX_CIF_CTRL, 0x00003f00 },
-+	{ TEGRA264_I2S_TX_INT_MASK, 0x00000003 },
-+	{ TEGRA264_I2S_TX_CIF_CTRL, 0x00003f00 },
-+	{ TEGRA264_I2S_CG, 0x1 },
-+	{ TEGRA264_I2S_TIMING, 0x0000001f },
-+	{ TEGRA264_I2S_ENABLE, 0x1 },
-+	{ TEGRA264_I2S_RX_FIFO_WR_ACCESS_MODE, 0x1 },
-+	{ TEGRA264_I2S_TX_FIFO_RD_ACCESS_MODE, 0x1 },
-+};
-+
-+static void tegra210_i2s_set_slot_ctrl(struct tegra210_i2s *i2s,
- 				       unsigned int total_slots,
- 				       unsigned int tx_slot_mask,
- 				       unsigned int rx_slot_mask)
- {
--	regmap_write(regmap, TEGRA210_I2S_SLOT_CTRL, total_slots - 1);
--	regmap_write(regmap, TEGRA210_I2S_TX_SLOT_CTRL, tx_slot_mask);
--	regmap_write(regmap, TEGRA210_I2S_RX_SLOT_CTRL, rx_slot_mask);
-+	regmap_write(i2s->regmap, TEGRA210_I2S_SLOT_CTRL + i2s->soc_data->i2s_ctrl_offset,
-+		     total_slots - 1);
-+	regmap_write(i2s->regmap, TEGRA210_I2S_TX_SLOT_CTRL + i2s->soc_data->tx_offset,
-+		     tx_slot_mask);
-+	regmap_write(i2s->regmap, TEGRA210_I2S_RX_SLOT_CTRL, rx_slot_mask);
- }
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -29,7 +29,7 @@ static int tegra_ahub_get_value_enum(struct snd_kcontrol *kctl,
+ 	for (i = 0; i < ahub->soc_data->reg_count; i++) {
+ 		unsigned int reg_val;
  
- static int tegra210_i2s_set_clock_rate(struct device *dev,
-@@ -53,7 +67,7 @@ static int tegra210_i2s_set_clock_rate(struct device *dev,
- 	unsigned int val;
- 	int err;
+-		reg = e->reg + (TEGRA210_XBAR_PART1_RX * i);
++		reg = e->reg + (ahub->soc_data->xbar_part_size * i);
+ 		reg_val = snd_soc_component_read(cmpnt, reg);
+ 		reg_val &= ahub->soc_data->mask[i];
  
--	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL, &val);
-+	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, &val);
- 
- 	/* No need to set rates if I2S is being operated in slave */
- 	if (!(val & I2S_CTRL_MASTER_EN))
-@@ -100,15 +114,15 @@ static int tegra210_i2s_sw_reset(struct snd_soc_component *compnt,
- 		cif_reg = TEGRA210_I2S_RX_CIF_CTRL;
- 		stream_reg = TEGRA210_I2S_RX_CTRL;
- 	} else {
--		reset_reg = TEGRA210_I2S_TX_SOFT_RESET;
--		cif_reg = TEGRA210_I2S_TX_CIF_CTRL;
--		stream_reg = TEGRA210_I2S_TX_CTRL;
-+		reset_reg = TEGRA210_I2S_TX_SOFT_RESET + i2s->soc_data->tx_offset;
-+		cif_reg = TEGRA210_I2S_TX_CIF_CTRL + i2s->soc_data->tx_offset;
-+		stream_reg = TEGRA210_I2S_TX_CTRL + i2s->soc_data->tx_offset;
- 	}
- 
- 	/* Store CIF and I2S control values */
- 	regmap_read(i2s->regmap, cif_reg, &cif_ctrl);
- 	regmap_read(i2s->regmap, stream_reg, &stream_ctrl);
--	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL, &i2s_ctrl);
-+	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, &i2s_ctrl);
- 
- 	/* Reset to make sure the previous transactions are clean */
- 	regmap_update_bits(i2s->regmap, reset_reg, reset_mask, reset_en);
-@@ -125,7 +139,7 @@ static int tegra210_i2s_sw_reset(struct snd_soc_component *compnt,
- 	/* Restore CIF and I2S control values */
- 	regmap_write(i2s->regmap, cif_reg, cif_ctrl);
- 	regmap_write(i2s->regmap, stream_reg, stream_ctrl);
--	regmap_write(i2s->regmap, TEGRA210_I2S_CTRL, i2s_ctrl);
-+	regmap_write(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, i2s_ctrl);
- 
- 	return 0;
- }
-@@ -140,16 +154,13 @@ static int tegra210_i2s_init(struct snd_soc_dapm_widget *w,
- 	int stream;
- 	int err;
- 
--	switch (w->reg) {
--	case TEGRA210_I2S_RX_ENABLE:
-+	if (w->reg == TEGRA210_I2S_RX_ENABLE) {
- 		stream = SNDRV_PCM_STREAM_PLAYBACK;
- 		status_reg = TEGRA210_I2S_RX_STATUS;
--		break;
--	case TEGRA210_I2S_TX_ENABLE:
-+	} else if (w->reg == (TEGRA210_I2S_TX_ENABLE + i2s->soc_data->tx_offset)) {
- 		stream = SNDRV_PCM_STREAM_CAPTURE;
--		status_reg = TEGRA210_I2S_TX_STATUS;
--		break;
--	default:
-+		status_reg = TEGRA210_I2S_TX_STATUS + i2s->soc_data->tx_offset;
-+	} else {
- 		return -EINVAL;
- 	}
- 
-@@ -199,7 +210,7 @@ static void tegra210_i2s_set_data_offset(struct tegra210_i2s *i2s,
- 					 unsigned int data_offset)
- {
- 	/* Capture path */
--	regmap_update_bits(i2s->regmap, TEGRA210_I2S_TX_CTRL,
-+	regmap_update_bits(i2s->regmap, TEGRA210_I2S_TX_CTRL + i2s->soc_data->tx_offset,
- 			   I2S_CTRL_DATA_OFFSET_MASK,
- 			   data_offset << I2S_DATA_SHIFT);
- 
-@@ -282,7 +293,8 @@ static int tegra210_i2s_set_fmt(struct snd_soc_dai *dai,
- 		return -EINVAL;
- 	}
- 
--	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL, mask, val);
-+	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
-+			   mask, val);
- 
- 	i2s->dai_fmt = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
- 
-@@ -296,10 +308,10 @@ static int tegra210_i2s_set_tdm_slot(struct snd_soc_dai *dai,
- 	struct tegra210_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 
- 	/* Copy the required tx and rx mask */
--	i2s->tx_mask = (tx_mask > DEFAULT_I2S_SLOT_MASK) ?
--		       DEFAULT_I2S_SLOT_MASK : tx_mask;
--	i2s->rx_mask = (rx_mask > DEFAULT_I2S_SLOT_MASK) ?
--		       DEFAULT_I2S_SLOT_MASK : rx_mask;
-+	i2s->tx_mask = (tx_mask > i2s->soc_data->slot_mask) ?
-+		       i2s->soc_data->slot_mask : tx_mask;
-+	i2s->rx_mask = (rx_mask > i2s->soc_data->slot_mask) ?
-+		       i2s->soc_data->slot_mask : rx_mask;
- 
- 	return 0;
- }
-@@ -327,8 +339,8 @@ static int tegra210_i2s_put_loopback(struct snd_kcontrol *kcontrol,
- 
- 	i2s->loopback = value;
- 
--	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL, I2S_CTRL_LPBK_MASK,
--			   i2s->loopback << I2S_CTRL_LPBK_SHIFT);
-+	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
-+			   I2S_CTRL_LPBK_MASK, i2s->loopback << I2S_CTRL_LPBK_SHIFT);
- 
- 	return 1;
- }
-@@ -364,9 +376,9 @@ static int tegra210_i2s_put_fsync_width(struct snd_kcontrol *kcontrol,
- 	 * cases mixer control is used to update custom values. A value
- 	 * of "N" here means, width is "N + 1" bit clock wide.
+@@ -80,7 +80,7 @@ static int tegra_ahub_put_value_enum(struct snd_kcontrol *kctl,
+ 	 * different part of the MUX register.
  	 */
--	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL,
--			   I2S_CTRL_FSYNC_WIDTH_MASK,
--			   i2s->fsync_width << I2S_FSYNC_WIDTH_SHIFT);
-+	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
-+			   i2s->soc_data->fsync_width_mask,
-+			   i2s->fsync_width << i2s->soc_data->fsync_width_shift);
- 
- 	return 1;
- }
-@@ -562,7 +574,7 @@ static int tegra210_i2s_set_timing_params(struct device *dev,
- 		return err;
- 	}
- 
--	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL, &val);
-+	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, &val);
- 
- 	/*
- 	 * For LRCK mode, channel bit count depends on number of bit clocks
-@@ -578,7 +590,7 @@ static int tegra210_i2s_set_timing_params(struct device *dev,
- 	case I2S_CTRL_FRAME_FMT_FSYNC_MODE:
- 		bit_count = (bclk_rate / srate) - 1;
- 
--		tegra210_i2s_set_slot_ctrl(i2s->regmap, channels,
-+		tegra210_i2s_set_slot_ctrl(i2s, channels,
- 					   i2s->tx_mask, i2s->rx_mask);
- 		break;
- 	default:
-@@ -591,7 +603,7 @@ static int tegra210_i2s_set_timing_params(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	regmap_write(i2s->regmap, TEGRA210_I2S_TIMING,
-+	regmap_write(i2s->regmap, TEGRA210_I2S_TIMING + i2s->soc_data->i2s_ctrl_offset,
- 		     bit_count << I2S_TIMING_CH_BIT_CNT_SHIFT);
- 
- 	return 0;
-@@ -673,7 +685,7 @@ static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	/* Program sample size */
--	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL,
-+	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
- 			   I2S_CTRL_BIT_SIZE_MASK, val);
- 
- 	srate = params_rate(params);
-@@ -697,13 +709,16 @@ static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
- 
- 		reg = TEGRA210_I2S_RX_CIF_CTRL;
- 	} else {
--		reg = TEGRA210_I2S_TX_CIF_CTRL;
-+		reg = TEGRA210_I2S_TX_CIF_CTRL + i2s->soc_data->tx_offset;
- 	}
- 
- 	cif_conf.mono_conv = i2s->mono_to_stereo[path];
- 	cif_conf.stereo_conv = i2s->stereo_to_mono[path];
- 
--	tegra_set_cif(i2s->regmap, reg, &cif_conf);
-+	if (i2s->soc_data->max_ch == TEGRA264_I2S_MAX_CHANNEL)
-+		tegra264_set_cif(i2s->regmap, reg, &cif_conf);
-+	else
-+		tegra_set_cif(i2s->regmap, reg, &cif_conf);
- 
- 	return tegra210_i2s_set_timing_params(dev, sample_size, srate,
- 					      cif_conf.client_ch);
-@@ -808,13 +823,20 @@ static const struct snd_kcontrol_new tegra210_i2s_controls[] = {
- 		       tegra210_i2s_put_bclk_ratio),
+ 	for (i = 0; i < ahub->soc_data->reg_count; i++) {
+-		update[i].reg = e->reg + (TEGRA210_XBAR_PART1_RX * i);
++		update[i].reg = e->reg + (ahub->soc_data->xbar_part_size * i);
+ 		update[i].val = (i == reg_idx) ? reg_val : 0;
+ 		update[i].mask = ahub->soc_data->mask[i];
+ 		update[i].kcontrol = kctl;
+@@ -304,6 +304,164 @@ static struct snd_soc_dai_driver tegra186_ahub_dais[] = {
+ 	DAI(OPE1 TX),
  };
  
--static const struct snd_soc_dapm_widget tegra210_i2s_widgets[] = {
--	SND_SOC_DAPM_AIF_IN_E("RX", NULL, 0, TEGRA210_I2S_RX_ENABLE,
--			      0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU),
--	SND_SOC_DAPM_AIF_OUT_E("TX", NULL, 0, TEGRA210_I2S_TX_ENABLE,
--			       0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU),
--	SND_SOC_DAPM_MIC("MIC", NULL),
-+#define TEGRA_I2S_WIDGETS(tx_enable_reg) \
-+	SND_SOC_DAPM_AIF_IN_E("RX", NULL, 0, TEGRA210_I2S_RX_ENABLE, \
-+			      0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU), \
-+	SND_SOC_DAPM_AIF_OUT_E("TX", NULL, 0, tx_enable_reg, \
-+			       0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU), \
-+	SND_SOC_DAPM_MIC("MIC", NULL), \
- 	SND_SOC_DAPM_SPK("SPK", NULL),
-+
-+static const struct snd_soc_dapm_widget tegra210_i2s_widgets[] = {
-+	TEGRA_I2S_WIDGETS(TEGRA210_I2S_TX_ENABLE)
++static struct snd_soc_dai_driver tegra264_ahub_dais[] = {
++	DAI(ADMAIF1),
++	DAI(ADMAIF2),
++	DAI(ADMAIF3),
++	DAI(ADMAIF4),
++	DAI(ADMAIF5),
++	DAI(ADMAIF6),
++	DAI(ADMAIF7),
++	DAI(ADMAIF8),
++	DAI(ADMAIF9),
++	DAI(ADMAIF10),
++	DAI(ADMAIF11),
++	DAI(ADMAIF12),
++	DAI(ADMAIF13),
++	DAI(ADMAIF14),
++	DAI(ADMAIF15),
++	DAI(ADMAIF16),
++	DAI(ADMAIF17),
++	DAI(ADMAIF18),
++	DAI(ADMAIF19),
++	DAI(ADMAIF20),
++	DAI(ADMAIF21),
++	DAI(ADMAIF22),
++	DAI(ADMAIF23),
++	DAI(ADMAIF24),
++	DAI(ADMAIF25),
++	DAI(ADMAIF26),
++	DAI(ADMAIF27),
++	DAI(ADMAIF28),
++	DAI(ADMAIF29),
++	DAI(ADMAIF30),
++	DAI(ADMAIF31),
++	DAI(ADMAIF32),
++	/* XBAR <-> I2S <-> Codec */
++	DAI(I2S1),
++	DAI(I2S2),
++	DAI(I2S3),
++	DAI(I2S4),
++	DAI(I2S5),
++	DAI(I2S6),
++	DAI(I2S7),
++	DAI(I2S8),
++	/* XBAR <-> DMIC <-> Codec */
++	DAI(DMIC1),
++	DAI(DMIC2),
++	/* XBAR <-> DSPK <-> Codec */
++	DAI(DSPK1),
++	/* XBAR -> SFC -> XBAR */
++	DAI(SFC1 RX),
++	DAI(SFC1 TX),
++	DAI(SFC2 RX),
++	DAI(SFC2 TX),
++	DAI(SFC3 RX),
++	DAI(SFC3 TX),
++	DAI(SFC4 RX),
++	DAI(SFC4 TX),
++	/* XBAR -> MVC -> XBAR */
++	DAI(MVC1 RX),
++	DAI(MVC1 TX),
++	DAI(MVC2 RX),
++	DAI(MVC2 TX),
++	/* XBAR -> AMX(4:1) -> XBAR */
++	DAI(AMX1 RX1),
++	DAI(AMX1 RX2),
++	DAI(AMX1 RX3),
++	DAI(AMX1 RX4),
++	DAI(AMX1),
++	DAI(AMX2 RX1),
++	DAI(AMX2 RX2),
++	DAI(AMX2 RX3),
++	DAI(AMX2 RX4),
++	DAI(AMX2),
++	DAI(AMX3 RX1),
++	DAI(AMX3 RX2),
++	DAI(AMX3 RX3),
++	DAI(AMX3 RX4),
++	DAI(AMX3),
++	DAI(AMX4 RX1),
++	DAI(AMX4 RX2),
++	DAI(AMX4 RX3),
++	DAI(AMX4 RX4),
++	DAI(AMX4),
++	DAI(AMX5 RX1),
++	DAI(AMX5 RX2),
++	DAI(AMX5 RX3),
++	DAI(AMX5 RX4),
++	DAI(AMX5),
++	DAI(AMX6 RX1),
++	DAI(AMX6 RX2),
++	DAI(AMX6 RX3),
++	DAI(AMX6 RX4),
++	DAI(AMX6),
++	/* XBAR -> ADX(1:4) -> XBAR */
++	DAI(ADX1),
++	DAI(ADX1 TX1),
++	DAI(ADX1 TX2),
++	DAI(ADX1 TX3),
++	DAI(ADX1 TX4),
++	DAI(ADX2),
++	DAI(ADX2 TX1),
++	DAI(ADX2 TX2),
++	DAI(ADX2 TX3),
++	DAI(ADX2 TX4),
++	DAI(ADX3),
++	DAI(ADX3 TX1),
++	DAI(ADX3 TX2),
++	DAI(ADX3 TX3),
++	DAI(ADX3 TX4),
++	DAI(ADX4),
++	DAI(ADX4 TX1),
++	DAI(ADX4 TX2),
++	DAI(ADX4 TX3),
++	DAI(ADX4 TX4),
++	DAI(ADX5),
++	DAI(ADX5 TX1),
++	DAI(ADX5 TX2),
++	DAI(ADX5 TX3),
++	DAI(ADX5 TX4),
++	DAI(ADX6),
++	DAI(ADX6 TX1),
++	DAI(ADX6 TX2),
++	DAI(ADX6 TX3),
++	DAI(ADX6 TX4),
++	/* XBAR -> MIXER1(10:5) -> XBAR */
++	DAI(MIXER1 RX1),
++	DAI(MIXER1 RX2),
++	DAI(MIXER1 RX3),
++	DAI(MIXER1 RX4),
++	DAI(MIXER1 RX5),
++	DAI(MIXER1 RX6),
++	DAI(MIXER1 RX7),
++	DAI(MIXER1 RX8),
++	DAI(MIXER1 RX9),
++	DAI(MIXER1 RX10),
++	DAI(MIXER1 TX1),
++	DAI(MIXER1 TX2),
++	DAI(MIXER1 TX3),
++	DAI(MIXER1 TX4),
++	DAI(MIXER1 TX5),
++	/* XBAR -> ASRC -> XBAR */
++	DAI(ASRC1 RX1),
++	DAI(ASRC1 TX1),
++	DAI(ASRC1 RX2),
++	DAI(ASRC1 TX2),
++	DAI(ASRC1 RX3),
++	DAI(ASRC1 TX3),
++	DAI(ASRC1 RX4),
++	DAI(ASRC1 TX4),
++	DAI(ASRC1 RX5),
++	DAI(ASRC1 TX5),
++	DAI(ASRC1 RX6),
++	DAI(ASRC1 TX6),
++	DAI(ASRC1 RX7),
++	/* XBAR -> OPE -> XBAR */
++	DAI(OPE1 RX),
++	DAI(OPE1 TX),
 +};
 +
-+static const struct snd_soc_dapm_widget tegra264_i2s_widgets[] = {
-+	TEGRA_I2S_WIDGETS(TEGRA264_I2S_TX_ENABLE)
+ static const char * const tegra210_ahub_mux_texts[] = {
+ 	"None",
+ 	"ADMAIF1",
+@@ -421,6 +579,100 @@ static const char * const tegra186_ahub_mux_texts[] = {
+ 	"OPE1",
  };
  
- static const struct snd_soc_dapm_route tegra210_i2s_routes[] = {
-@@ -841,6 +863,15 @@ static const struct snd_soc_component_driver tegra210_i2s_cmpnt = {
- 	.num_controls		= ARRAY_SIZE(tegra210_i2s_controls),
- };
- 
-+static const struct snd_soc_component_driver tegra264_i2s_cmpnt = {
-+	.dapm_widgets		= tegra264_i2s_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(tegra264_i2s_widgets),
-+	.dapm_routes		= tegra210_i2s_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(tegra210_i2s_routes),
-+	.controls		= tegra210_i2s_controls,
-+	.num_controls		= ARRAY_SIZE(tegra210_i2s_controls),
++static const char * const tegra264_ahub_mux_texts[] = {
++	"None",
++	"ADMAIF1",
++	"ADMAIF2",
++	"ADMAIF3",
++	"ADMAIF4",
++	"ADMAIF5",
++	"ADMAIF6",
++	"ADMAIF7",
++	"ADMAIF8",
++	"ADMAIF9",
++	"ADMAIF10",
++	"ADMAIF11",
++	"ADMAIF12",
++	"ADMAIF13",
++	"ADMAIF14",
++	"ADMAIF15",
++	"ADMAIF16",
++	"I2S1",
++	"I2S2",
++	"I2S3",
++	"I2S4",
++	"I2S5",
++	"I2S6",
++	"I2S7",
++	"I2S8",
++	"SFC1",
++	"SFC2",
++	"SFC3",
++	"SFC4",
++	"MIXER1 TX1",
++	"MIXER1 TX2",
++	"MIXER1 TX3",
++	"MIXER1 TX4",
++	"MIXER1 TX5",
++	"AMX1",
++	"AMX2",
++	"AMX3",
++	"AMX4",
++	"AMX5",
++	"AMX6",
++	"OPE1",
++	"MVC1",
++	"MVC2",
++	"DMIC1",
++	"DMIC2",
++	"ADX1 TX1",
++	"ADX1 TX2",
++	"ADX1 TX3",
++	"ADX1 TX4",
++	"ADX2 TX1",
++	"ADX2 TX2",
++	"ADX2 TX3",
++	"ADX2 TX4",
++	"ADX3 TX1",
++	"ADX3 TX2",
++	"ADX3 TX3",
++	"ADX3 TX4",
++	"ADX4 TX1",
++	"ADX4 TX2",
++	"ADX4 TX3",
++	"ADX4 TX4",
++	"ADX5 TX1",
++	"ADX5 TX2",
++	"ADX5 TX3",
++	"ADX5 TX4",
++	"ADX6 TX1",
++	"ADX6 TX2",
++	"ADX6 TX3",
++	"ADX6 TX4",
++	"ASRC1 TX1",
++	"ASRC1 TX2",
++	"ASRC1 TX3",
++	"ASRC1 TX4",
++	"ASRC1 TX5",
++	"ASRC1 TX6",
++	"ADMAIF17",
++	"ADMAIF18",
++	"ADMAIF19",
++	"ADMAIF20",
++	"ADMAIF21",
++	"ADMAIF22",
++	"ADMAIF23",
++	"ADMAIF24",
++	"ADMAIF25",
++	"ADMAIF26",
++	"ADMAIF27",
++	"ADMAIF28",
++	"ADMAIF29",
++	"ADMAIF30",
++	"ADMAIF31",
++	"ADMAIF32",
 +};
 +
- static bool tegra210_i2s_wr_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-@@ -895,7 +926,68 @@ static bool tegra210_i2s_volatile_reg(struct device *dev, unsigned int reg)
- 	}
- }
+ static const unsigned int tegra210_ahub_mux_values[] = {
+ 	0,
+ 	/* ADMAIF */
+@@ -558,6 +810,111 @@ static const unsigned int tegra186_ahub_mux_values[] = {
+ 	MUX_VALUE(2, 0),
+ };
  
--static const struct regmap_config tegra210_i2s_regmap_config = {
-+static bool tegra264_i2s_wr_reg(struct device *dev, unsigned int reg)
++static const unsigned int tegra264_ahub_mux_values[] = {
++	0,
++	/* ADMAIF */
++	MUX_VALUE(0, 0),
++	MUX_VALUE(0, 1),
++	MUX_VALUE(0, 2),
++	MUX_VALUE(0, 3),
++	MUX_VALUE(0, 4),
++	MUX_VALUE(0, 5),
++	MUX_VALUE(0, 6),
++	MUX_VALUE(0, 7),
++	MUX_VALUE(0, 8),
++	MUX_VALUE(0, 9),
++	MUX_VALUE(0, 10),
++	MUX_VALUE(0, 11),
++	MUX_VALUE(0, 12),
++	MUX_VALUE(0, 13),
++	MUX_VALUE(0, 14),
++	MUX_VALUE(0, 15),
++	/* I2S */
++	MUX_VALUE(0, 16),
++	MUX_VALUE(0, 17),
++	MUX_VALUE(0, 18),
++	MUX_VALUE(0, 19),
++	MUX_VALUE(0, 20),
++	MUX_VALUE(0, 21),
++	MUX_VALUE(0, 22),
++	MUX_VALUE(0, 23),
++	/* SFC */
++	MUX_VALUE(0, 24),
++	MUX_VALUE(0, 25),
++	MUX_VALUE(0, 26),
++	MUX_VALUE(0, 27),
++	/* MIXER */
++	MUX_VALUE(1, 0),
++	MUX_VALUE(1, 1),
++	MUX_VALUE(1, 2),
++	MUX_VALUE(1, 3),
++	MUX_VALUE(1, 4),
++	/* AMX */
++	MUX_VALUE(1, 8),
++	MUX_VALUE(1, 9),
++	MUX_VALUE(1, 10),
++	MUX_VALUE(1, 11),
++	MUX_VALUE(1, 12),
++	MUX_VALUE(1, 13),
++	/* OPE */
++	MUX_VALUE(2, 0),
++	/* MVC */
++	MUX_VALUE(2, 8),
++	MUX_VALUE(2, 9),
++	/* DMIC */
++	MUX_VALUE(2, 18),
++	MUX_VALUE(2, 19),
++	/* ADX */
++	MUX_VALUE(2, 24),
++	MUX_VALUE(2, 25),
++	MUX_VALUE(2, 26),
++	MUX_VALUE(2, 27),
++	MUX_VALUE(2, 28),
++	MUX_VALUE(2, 29),
++	MUX_VALUE(2, 30),
++	MUX_VALUE(2, 31),
++	MUX_VALUE(3, 0),
++	MUX_VALUE(3, 1),
++	MUX_VALUE(3, 2),
++	MUX_VALUE(3, 3),
++	MUX_VALUE(3, 4),
++	MUX_VALUE(3, 5),
++	MUX_VALUE(3, 6),
++	MUX_VALUE(3, 7),
++	MUX_VALUE(3, 8),
++	MUX_VALUE(3, 9),
++	MUX_VALUE(3, 10),
++	MUX_VALUE(3, 11),
++	MUX_VALUE(3, 12),
++	MUX_VALUE(3, 13),
++	MUX_VALUE(3, 14),
++	MUX_VALUE(3, 15),
++	/* ASRC */
++	MUX_VALUE(3, 24),
++	MUX_VALUE(3, 25),
++	MUX_VALUE(3, 26),
++	MUX_VALUE(3, 27),
++	MUX_VALUE(3, 28),
++	MUX_VALUE(3, 29),
++	/* ADMAIF */
++	MUX_VALUE(4, 7),
++	MUX_VALUE(4, 8),
++	MUX_VALUE(4, 9),
++	MUX_VALUE(4, 10),
++	MUX_VALUE(4, 11),
++	MUX_VALUE(4, 12),
++	MUX_VALUE(4, 13),
++	MUX_VALUE(4, 14),
++	MUX_VALUE(4, 15),
++	MUX_VALUE(4, 16),
++	MUX_VALUE(4, 17),
++	MUX_VALUE(4, 18),
++	MUX_VALUE(4, 19),
++	MUX_VALUE(4, 20),
++	MUX_VALUE(4, 21),
++	MUX_VALUE(4, 22),
++};
++
+ /* Controls for t210 */
+ MUX_ENUM_CTRL_DECL(t210_admaif1_tx, 0x00);
+ MUX_ENUM_CTRL_DECL(t210_admaif2_tx, 0x01);
+@@ -712,6 +1069,103 @@ MUX_ENUM_CTRL_DECL_234(t234_asrc15_tx, 0x68);
+ MUX_ENUM_CTRL_DECL_234(t234_asrc16_tx, 0x69);
+ MUX_ENUM_CTRL_DECL_234(t234_asrc17_tx, 0x6a);
+ 
++/* Controls for t264 */
++MUX_ENUM_CTRL_DECL_264(t264_admaif1_tx, 0x00);
++MUX_ENUM_CTRL_DECL_264(t264_admaif2_tx, 0x01);
++MUX_ENUM_CTRL_DECL_264(t264_admaif3_tx, 0x02);
++MUX_ENUM_CTRL_DECL_264(t264_admaif4_tx, 0x03);
++MUX_ENUM_CTRL_DECL_264(t264_admaif5_tx, 0x04);
++MUX_ENUM_CTRL_DECL_264(t264_admaif6_tx, 0x05);
++MUX_ENUM_CTRL_DECL_264(t264_admaif7_tx, 0x06);
++MUX_ENUM_CTRL_DECL_264(t264_admaif8_tx, 0x07);
++MUX_ENUM_CTRL_DECL_264(t264_admaif9_tx, 0x08);
++MUX_ENUM_CTRL_DECL_264(t264_admaif10_tx, 0x09);
++MUX_ENUM_CTRL_DECL_264(t264_admaif11_tx, 0x0a);
++MUX_ENUM_CTRL_DECL_264(t264_admaif12_tx, 0x0b);
++MUX_ENUM_CTRL_DECL_264(t264_admaif13_tx, 0x0c);
++MUX_ENUM_CTRL_DECL_264(t264_admaif14_tx, 0x0d);
++MUX_ENUM_CTRL_DECL_264(t264_admaif15_tx, 0x0e);
++MUX_ENUM_CTRL_DECL_264(t264_admaif16_tx, 0x0f);
++MUX_ENUM_CTRL_DECL_264(t264_i2s1_tx, 0x10);
++MUX_ENUM_CTRL_DECL_264(t264_i2s2_tx, 0x11);
++MUX_ENUM_CTRL_DECL_264(t264_i2s3_tx, 0x12);
++MUX_ENUM_CTRL_DECL_264(t264_i2s4_tx, 0x13);
++MUX_ENUM_CTRL_DECL_264(t264_i2s5_tx, 0x14);
++MUX_ENUM_CTRL_DECL_264(t264_i2s6_tx, 0x15);
++MUX_ENUM_CTRL_DECL_264(t264_i2s7_tx, 0x16);
++MUX_ENUM_CTRL_DECL_264(t264_i2s8_tx, 0x17);
++MUX_ENUM_CTRL_DECL_264(t264_sfc1_tx, 0x18);
++MUX_ENUM_CTRL_DECL_264(t264_sfc2_tx, 0x19);
++MUX_ENUM_CTRL_DECL_264(t264_sfc3_tx, 0x1a);
++MUX_ENUM_CTRL_DECL_264(t264_sfc4_tx, 0x1b);
++MUX_ENUM_CTRL_DECL_264(t264_mixer11_tx, 0x20);
++MUX_ENUM_CTRL_DECL_264(t264_mixer12_tx, 0x21);
++MUX_ENUM_CTRL_DECL_264(t264_mixer13_tx, 0x22);
++MUX_ENUM_CTRL_DECL_264(t264_mixer14_tx, 0x23);
++MUX_ENUM_CTRL_DECL_264(t264_mixer15_tx, 0x24);
++MUX_ENUM_CTRL_DECL_264(t264_mixer16_tx, 0x25);
++MUX_ENUM_CTRL_DECL_264(t264_mixer17_tx, 0x26);
++MUX_ENUM_CTRL_DECL_264(t264_mixer18_tx, 0x27);
++MUX_ENUM_CTRL_DECL_264(t264_mixer19_tx, 0x28);
++MUX_ENUM_CTRL_DECL_264(t264_mixer110_tx, 0x29);
++MUX_ENUM_CTRL_DECL_264(t264_dspk1_tx, 0x30);
++MUX_ENUM_CTRL_DECL_264(t264_ope1_tx, 0x40);
++MUX_ENUM_CTRL_DECL_264(t264_mvc1_tx, 0x44);
++MUX_ENUM_CTRL_DECL_264(t264_mvc2_tx, 0x45);
++MUX_ENUM_CTRL_DECL_264(t264_amx11_tx, 0x48);
++MUX_ENUM_CTRL_DECL_264(t264_amx12_tx, 0x49);
++MUX_ENUM_CTRL_DECL_264(t264_amx13_tx, 0x4a);
++MUX_ENUM_CTRL_DECL_264(t264_amx14_tx, 0x4b);
++MUX_ENUM_CTRL_DECL_264(t264_amx21_tx, 0x4c);
++MUX_ENUM_CTRL_DECL_264(t264_amx22_tx, 0x4d);
++MUX_ENUM_CTRL_DECL_264(t264_amx23_tx, 0x4e);
++MUX_ENUM_CTRL_DECL_264(t264_amx24_tx, 0x4f);
++MUX_ENUM_CTRL_DECL_264(t264_amx31_tx, 0x50);
++MUX_ENUM_CTRL_DECL_264(t264_amx32_tx, 0x51);
++MUX_ENUM_CTRL_DECL_264(t264_amx33_tx, 0x52);
++MUX_ENUM_CTRL_DECL_264(t264_amx34_tx, 0x53);
++MUX_ENUM_CTRL_DECL_264(t264_adx1_tx, 0x58);
++MUX_ENUM_CTRL_DECL_264(t264_adx2_tx, 0x59);
++MUX_ENUM_CTRL_DECL_264(t264_adx3_tx, 0x5a);
++MUX_ENUM_CTRL_DECL_264(t264_adx4_tx, 0x5b);
++MUX_ENUM_CTRL_DECL_264(t264_amx41_tx, 0x5c);
++MUX_ENUM_CTRL_DECL_264(t264_amx42_tx, 0x5d);
++MUX_ENUM_CTRL_DECL_264(t264_amx43_tx, 0x5e);
++MUX_ENUM_CTRL_DECL_264(t264_amx44_tx, 0x5f);
++MUX_ENUM_CTRL_DECL_264(t264_admaif17_tx, 0x60);
++MUX_ENUM_CTRL_DECL_264(t264_admaif18_tx, 0x61);
++MUX_ENUM_CTRL_DECL_264(t264_admaif19_tx, 0x62);
++MUX_ENUM_CTRL_DECL_264(t264_admaif20_tx, 0x63);
++MUX_ENUM_CTRL_DECL_264(t264_asrc11_tx, 0x64);
++MUX_ENUM_CTRL_DECL_264(t264_asrc12_tx, 0x65);
++MUX_ENUM_CTRL_DECL_264(t264_asrc13_tx, 0x66);
++MUX_ENUM_CTRL_DECL_264(t264_asrc14_tx, 0x67);
++MUX_ENUM_CTRL_DECL_264(t264_asrc15_tx, 0x68);
++MUX_ENUM_CTRL_DECL_264(t264_asrc16_tx, 0x69);
++MUX_ENUM_CTRL_DECL_264(t264_asrc17_tx, 0x6a);
++MUX_ENUM_CTRL_DECL_264(t264_admaif21_tx, 0x74);
++MUX_ENUM_CTRL_DECL_264(t264_admaif22_tx, 0x75);
++MUX_ENUM_CTRL_DECL_264(t264_admaif23_tx, 0x76);
++MUX_ENUM_CTRL_DECL_264(t264_admaif24_tx, 0x77);
++MUX_ENUM_CTRL_DECL_264(t264_admaif25_tx, 0x78);
++MUX_ENUM_CTRL_DECL_264(t264_admaif26_tx, 0x79);
++MUX_ENUM_CTRL_DECL_264(t264_admaif27_tx, 0x7a);
++MUX_ENUM_CTRL_DECL_264(t264_admaif28_tx, 0x7b);
++MUX_ENUM_CTRL_DECL_264(t264_admaif29_tx, 0x7c);
++MUX_ENUM_CTRL_DECL_264(t264_admaif30_tx, 0x7d);
++MUX_ENUM_CTRL_DECL_264(t264_admaif31_tx, 0x7e);
++MUX_ENUM_CTRL_DECL_264(t264_admaif32_tx, 0x7f);
++MUX_ENUM_CTRL_DECL_264(t264_amx51_tx, 0x80);
++MUX_ENUM_CTRL_DECL_264(t264_amx52_tx, 0x81);
++MUX_ENUM_CTRL_DECL_264(t264_amx53_tx, 0x82);
++MUX_ENUM_CTRL_DECL_264(t264_amx54_tx, 0x83);
++MUX_ENUM_CTRL_DECL_264(t264_amx61_tx, 0x84);
++MUX_ENUM_CTRL_DECL_264(t264_amx62_tx, 0x85);
++MUX_ENUM_CTRL_DECL_264(t264_amx63_tx, 0x86);
++MUX_ENUM_CTRL_DECL_264(t264_amx64_tx, 0x87);
++MUX_ENUM_CTRL_DECL_264(t264_adx5_tx, 0x88);
++MUX_ENUM_CTRL_DECL_264(t264_adx6_tx, 0x89);
++
+ static const struct snd_soc_dapm_widget tegra210_ahub_widgets[] = {
+ 	WIDGETS("ADMAIF1", t210_admaif1_tx),
+ 	WIDGETS("ADMAIF2", t210_admaif2_tx),
+@@ -996,6 +1450,147 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	WIDGETS("OPE1", t186_ope1_tx),
+ };
+ 
++static const struct snd_soc_dapm_widget tegra264_ahub_widgets[] = {
++	WIDGETS("ADMAIF1", t264_admaif1_tx),
++	WIDGETS("ADMAIF2", t264_admaif2_tx),
++	WIDGETS("ADMAIF3", t264_admaif3_tx),
++	WIDGETS("ADMAIF4", t264_admaif4_tx),
++	WIDGETS("ADMAIF5", t264_admaif5_tx),
++	WIDGETS("ADMAIF6", t264_admaif6_tx),
++	WIDGETS("ADMAIF7", t264_admaif7_tx),
++	WIDGETS("ADMAIF8", t264_admaif8_tx),
++	WIDGETS("ADMAIF9", t264_admaif9_tx),
++	WIDGETS("ADMAIF10", t264_admaif10_tx),
++	WIDGETS("ADMAIF11", t264_admaif11_tx),
++	WIDGETS("ADMAIF12", t264_admaif12_tx),
++	WIDGETS("ADMAIF13", t264_admaif13_tx),
++	WIDGETS("ADMAIF14", t264_admaif14_tx),
++	WIDGETS("ADMAIF15", t264_admaif15_tx),
++	WIDGETS("ADMAIF16", t264_admaif16_tx),
++	WIDGETS("ADMAIF17", t264_admaif17_tx),
++	WIDGETS("ADMAIF18", t264_admaif18_tx),
++	WIDGETS("ADMAIF19", t264_admaif19_tx),
++	WIDGETS("ADMAIF20", t264_admaif20_tx),
++	WIDGETS("ADMAIF21", t264_admaif21_tx),
++	WIDGETS("ADMAIF22", t264_admaif22_tx),
++	WIDGETS("ADMAIF23", t264_admaif23_tx),
++	WIDGETS("ADMAIF24", t264_admaif24_tx),
++	WIDGETS("ADMAIF25", t264_admaif25_tx),
++	WIDGETS("ADMAIF26", t264_admaif26_tx),
++	WIDGETS("ADMAIF27", t264_admaif27_tx),
++	WIDGETS("ADMAIF28", t264_admaif28_tx),
++	WIDGETS("ADMAIF29", t264_admaif29_tx),
++	WIDGETS("ADMAIF30", t264_admaif30_tx),
++	WIDGETS("ADMAIF31", t264_admaif31_tx),
++	WIDGETS("ADMAIF32", t264_admaif32_tx),
++	WIDGETS("I2S1", t264_i2s1_tx),
++	WIDGETS("I2S2", t264_i2s2_tx),
++	WIDGETS("I2S3", t264_i2s3_tx),
++	WIDGETS("I2S4", t264_i2s4_tx),
++	WIDGETS("I2S5", t264_i2s5_tx),
++	WIDGETS("I2S6", t264_i2s6_tx),
++	WIDGETS("I2S7", t264_i2s7_tx),
++	WIDGETS("I2S8", t264_i2s8_tx),
++	TX_WIDGETS("DMIC1"),
++	TX_WIDGETS("DMIC2"),
++	WIDGETS("DSPK1", t264_dspk1_tx),
++	WIDGETS("SFC1", t264_sfc1_tx),
++	WIDGETS("SFC2", t264_sfc2_tx),
++	WIDGETS("SFC3", t264_sfc3_tx),
++	WIDGETS("SFC4", t264_sfc4_tx),
++	WIDGETS("MVC1", t264_mvc1_tx),
++	WIDGETS("MVC2", t264_mvc2_tx),
++	WIDGETS("AMX1 RX1", t264_amx11_tx),
++	WIDGETS("AMX1 RX2", t264_amx12_tx),
++	WIDGETS("AMX1 RX3", t264_amx13_tx),
++	WIDGETS("AMX1 RX4", t264_amx14_tx),
++	WIDGETS("AMX2 RX1", t264_amx21_tx),
++	WIDGETS("AMX2 RX2", t264_amx22_tx),
++	WIDGETS("AMX2 RX3", t264_amx23_tx),
++	WIDGETS("AMX2 RX4", t264_amx24_tx),
++	WIDGETS("AMX3 RX1", t264_amx31_tx),
++	WIDGETS("AMX3 RX2", t264_amx32_tx),
++	WIDGETS("AMX3 RX3", t264_amx33_tx),
++	WIDGETS("AMX3 RX4", t264_amx34_tx),
++	WIDGETS("AMX4 RX1", t264_amx41_tx),
++	WIDGETS("AMX4 RX2", t264_amx42_tx),
++	WIDGETS("AMX4 RX3", t264_amx43_tx),
++	WIDGETS("AMX4 RX4", t264_amx44_tx),
++	WIDGETS("AMX5 RX1", t264_amx51_tx),
++	WIDGETS("AMX5 RX2", t264_amx52_tx),
++	WIDGETS("AMX5 RX3", t264_amx53_tx),
++	WIDGETS("AMX5 RX4", t264_amx54_tx),
++	WIDGETS("AMX6 RX1", t264_amx61_tx),
++	WIDGETS("AMX6 RX2", t264_amx62_tx),
++	WIDGETS("AMX6 RX3", t264_amx63_tx),
++	WIDGETS("AMX6 RX4", t264_amx64_tx),
++	TX_WIDGETS("AMX1"),
++	TX_WIDGETS("AMX2"),
++	TX_WIDGETS("AMX3"),
++	TX_WIDGETS("AMX4"),
++	TX_WIDGETS("AMX5"),
++	TX_WIDGETS("AMX6"),
++	WIDGETS("ADX1", t264_adx1_tx),
++	WIDGETS("ADX2", t264_adx2_tx),
++	WIDGETS("ADX3", t264_adx3_tx),
++	WIDGETS("ADX4", t264_adx4_tx),
++	WIDGETS("ADX5", t264_adx5_tx),
++	WIDGETS("ADX6", t264_adx6_tx),
++	TX_WIDGETS("ADX1 TX1"),
++	TX_WIDGETS("ADX1 TX2"),
++	TX_WIDGETS("ADX1 TX3"),
++	TX_WIDGETS("ADX1 TX4"),
++	TX_WIDGETS("ADX2 TX1"),
++	TX_WIDGETS("ADX2 TX2"),
++	TX_WIDGETS("ADX2 TX3"),
++	TX_WIDGETS("ADX2 TX4"),
++	TX_WIDGETS("ADX3 TX1"),
++	TX_WIDGETS("ADX3 TX2"),
++	TX_WIDGETS("ADX3 TX3"),
++	TX_WIDGETS("ADX3 TX4"),
++	TX_WIDGETS("ADX4 TX1"),
++	TX_WIDGETS("ADX4 TX2"),
++	TX_WIDGETS("ADX4 TX3"),
++	TX_WIDGETS("ADX4 TX4"),
++	TX_WIDGETS("ADX5 TX1"),
++	TX_WIDGETS("ADX5 TX2"),
++	TX_WIDGETS("ADX5 TX3"),
++	TX_WIDGETS("ADX5 TX4"),
++	TX_WIDGETS("ADX6 TX1"),
++	TX_WIDGETS("ADX6 TX2"),
++	TX_WIDGETS("ADX6 TX3"),
++	TX_WIDGETS("ADX6 TX4"),
++	WIDGETS("MIXER1 RX1", t264_mixer11_tx),
++	WIDGETS("MIXER1 RX2", t264_mixer12_tx),
++	WIDGETS("MIXER1 RX3", t264_mixer13_tx),
++	WIDGETS("MIXER1 RX4", t264_mixer14_tx),
++	WIDGETS("MIXER1 RX5", t264_mixer15_tx),
++	WIDGETS("MIXER1 RX6", t264_mixer16_tx),
++	WIDGETS("MIXER1 RX7", t264_mixer17_tx),
++	WIDGETS("MIXER1 RX8", t264_mixer18_tx),
++	WIDGETS("MIXER1 RX9", t264_mixer19_tx),
++	WIDGETS("MIXER1 RX10", t264_mixer110_tx),
++	TX_WIDGETS("MIXER1 TX1"),
++	TX_WIDGETS("MIXER1 TX2"),
++	TX_WIDGETS("MIXER1 TX3"),
++	TX_WIDGETS("MIXER1 TX4"),
++	TX_WIDGETS("MIXER1 TX5"),
++	WIDGETS("ASRC1 RX1", t264_asrc11_tx),
++	WIDGETS("ASRC1 RX2", t264_asrc12_tx),
++	WIDGETS("ASRC1 RX3", t264_asrc13_tx),
++	WIDGETS("ASRC1 RX4", t264_asrc14_tx),
++	WIDGETS("ASRC1 RX5", t264_asrc15_tx),
++	WIDGETS("ASRC1 RX6", t264_asrc16_tx),
++	WIDGETS("ASRC1 RX7", t264_asrc17_tx),
++	TX_WIDGETS("ASRC1 TX1"),
++	TX_WIDGETS("ASRC1 TX2"),
++	TX_WIDGETS("ASRC1 TX3"),
++	TX_WIDGETS("ASRC1 TX4"),
++	TX_WIDGETS("ASRC1 TX5"),
++	TX_WIDGETS("ASRC1 TX6"),
++	WIDGETS("OPE1", t264_ope1_tx),
++};
++
+ #define TEGRA_COMMON_MUX_ROUTES(name)					\
+ 	{ name " XBAR-TX",	 NULL,		name " Mux" },		\
+ 	{ name " Mux",		"ADMAIF1",	"ADMAIF1 XBAR-RX" },	\
+@@ -1015,7 +1610,6 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	{ name " Mux",		"I2S5",		"I2S5 XBAR-RX" },	\
+ 	{ name " Mux",		"DMIC1",	"DMIC1 XBAR-RX" },	\
+ 	{ name " Mux",		"DMIC2",	"DMIC2 XBAR-RX" },	\
+-	{ name " Mux",		"DMIC3",	"DMIC3 XBAR-RX" },	\
+ 	{ name " Mux",		"SFC1",		"SFC1 XBAR-RX" },	\
+ 	{ name " Mux",		"SFC2",		"SFC2 XBAR-RX" },	\
+ 	{ name " Mux",		"SFC3",		"SFC3 XBAR-RX" },	\
+@@ -1040,6 +1634,7 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	{ name " Mux",		"OPE1",		"OPE1 XBAR-RX" },
+ 
+ #define TEGRA210_ONLY_MUX_ROUTES(name)					\
++	{ name " Mux",		"DMIC3",	"DMIC3 XBAR-RX" },	\
+ 	{ name " Mux",          "OPE2",         "OPE2 XBAR-RX" },
+ 
+ #define TEGRA186_ONLY_MUX_ROUTES(name)					\
+@@ -1054,6 +1649,7 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	{ name " Mux",		"ADMAIF19",	"ADMAIF19 XBAR-RX" },	\
+ 	{ name " Mux",		"ADMAIF20",	"ADMAIF20 XBAR-RX" },	\
+ 	{ name " Mux",		"I2S6",		"I2S6 XBAR-RX" },	\
++	{ name " Mux",		"DMIC3",	"DMIC3 XBAR-RX" },	\
+ 	{ name " Mux",		"DMIC4",	"DMIC4 XBAR-RX" },	\
+ 	{ name " Mux",		"AMX3",		"AMX3 XBAR-RX" },	\
+ 	{ name " Mux",		"AMX4",		"AMX4 XBAR-RX" },	\
+@@ -1072,6 +1668,59 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	{ name " Mux",		"ASRC1 TX5",	"ASRC1 TX5 XBAR-RX" },	\
+ 	{ name " Mux",		"ASRC1 TX6",	"ASRC1 TX6 XBAR-RX" },
+ 
++#define TEGRA264_ONLY_MUX_ROUTES(name)					\
++	{ name " Mux",		"ADMAIF11",	"ADMAIF11 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF12",	"ADMAIF12 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF13",	"ADMAIF13 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF14",	"ADMAIF14 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF15",	"ADMAIF15 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF16",	"ADMAIF16 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF17",	"ADMAIF17 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF18",	"ADMAIF18 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF19",	"ADMAIF19 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF20",	"ADMAIF20 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF21",	"ADMAIF21 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF22",	"ADMAIF22 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF23",	"ADMAIF23 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF24",	"ADMAIF24 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF25",	"ADMAIF25 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF26",	"ADMAIF26 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF27",	"ADMAIF27 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF28",	"ADMAIF28 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF29",	"ADMAIF29 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF30",	"ADMAIF30 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF31",	"ADMAIF31 XBAR-RX" },	\
++	{ name " Mux",		"ADMAIF32",	"ADMAIF32 XBAR-RX" },	\
++	{ name " Mux",		"I2S6",		"I2S6 XBAR-RX" },	\
++	{ name " Mux",		"I2S7",		"I2S7 XBAR-RX" },	\
++	{ name " Mux",		"I2S8",		"I2S8 XBAR-RX" },	\
++	{ name " Mux",		"AMX3",		"AMX3 XBAR-RX" },	\
++	{ name " Mux",		"AMX4",		"AMX4 XBAR-RX" },	\
++	{ name " Mux",		"AMX5",		"AMX5 XBAR-RX" },	\
++	{ name " Mux",		"AMX6",		"AMX6 XBAR-RX" },	\
++	{ name " Mux",		"ADX3 TX1",	"ADX3 TX1 XBAR-RX" },	\
++	{ name " Mux",		"ADX3 TX2",	"ADX3 TX2 XBAR-RX" },	\
++	{ name " Mux",		"ADX3 TX3",	"ADX3 TX3 XBAR-RX" },	\
++	{ name " Mux",		"ADX3 TX4",	"ADX3 TX4 XBAR-RX" },	\
++	{ name " Mux",		"ADX4 TX1",	"ADX4 TX1 XBAR-RX" },	\
++	{ name " Mux",		"ADX4 TX2",	"ADX4 TX2 XBAR-RX" },	\
++	{ name " Mux",		"ADX4 TX3",	"ADX4 TX3 XBAR-RX" },	\
++	{ name " Mux",		"ADX4 TX4",	"ADX4 TX4 XBAR-RX" },	\
++	{ name " Mux",		"ADX5 TX1",	"ADX5 TX1 XBAR-RX" },	\
++	{ name " Mux",		"ADX5 TX2",	"ADX5 TX2 XBAR-RX" },	\
++	{ name " Mux",		"ADX5 TX3",	"ADX5 TX3 XBAR-RX" },	\
++	{ name " Mux",		"ADX5 TX4",	"ADX5 TX4 XBAR-RX" },	\
++	{ name " Mux",		"ADX6 TX1",	"ADX6 TX1 XBAR-RX" },	\
++	{ name " Mux",		"ADX6 TX2",	"ADX6 TX2 XBAR-RX" },	\
++	{ name " Mux",		"ADX6 TX3",	"ADX6 TX3 XBAR-RX" },	\
++	{ name " Mux",		"ADX6 TX4",	"ADX6 TX4 XBAR-RX" },	\
++	{ name " Mux",		"ASRC1 TX1",	"ASRC1 TX1 XBAR-RX" },	\
++	{ name " Mux",		"ASRC1 TX2",	"ASRC1 TX2 XBAR-RX" },	\
++	{ name " Mux",		"ASRC1 TX3",	"ASRC1 TX3 XBAR-RX" },	\
++	{ name " Mux",		"ASRC1 TX4",	"ASRC1 TX4 XBAR-RX" },	\
++	{ name " Mux",		"ASRC1 TX5",	"ASRC1 TX5 XBAR-RX" },	\
++	{ name " Mux",		"ASRC1 TX6",	"ASRC1 TX6 XBAR-RX" },
++
+ #define TEGRA210_MUX_ROUTES(name)					\
+ 	TEGRA_COMMON_MUX_ROUTES(name)					\
+ 	TEGRA210_ONLY_MUX_ROUTES(name)
+@@ -1080,6 +1729,10 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	TEGRA_COMMON_MUX_ROUTES(name)					\
+ 	TEGRA186_ONLY_MUX_ROUTES(name)
+ 
++#define TEGRA264_MUX_ROUTES(name)					\
++	TEGRA_COMMON_MUX_ROUTES(name)					\
++	TEGRA264_ONLY_MUX_ROUTES(name)
++
+ /* Connect FEs with XBAR */
+ #define TEGRA_FE_ROUTES(name) \
+ 	{ name " XBAR-Playback",	NULL,	name " Playback" },	\
+@@ -1238,6 +1891,136 @@ static const struct snd_soc_dapm_route tegra186_ahub_routes[] = {
+ 	TEGRA186_MUX_ROUTES("OPE1")
+ };
+ 
++static const struct snd_soc_dapm_route tegra264_ahub_routes[] = {
++	TEGRA_FE_ROUTES("ADMAIF1")
++	TEGRA_FE_ROUTES("ADMAIF2")
++	TEGRA_FE_ROUTES("ADMAIF3")
++	TEGRA_FE_ROUTES("ADMAIF4")
++	TEGRA_FE_ROUTES("ADMAIF5")
++	TEGRA_FE_ROUTES("ADMAIF6")
++	TEGRA_FE_ROUTES("ADMAIF7")
++	TEGRA_FE_ROUTES("ADMAIF8")
++	TEGRA_FE_ROUTES("ADMAIF9")
++	TEGRA_FE_ROUTES("ADMAIF10")
++	TEGRA_FE_ROUTES("ADMAIF11")
++	TEGRA_FE_ROUTES("ADMAIF12")
++	TEGRA_FE_ROUTES("ADMAIF13")
++	TEGRA_FE_ROUTES("ADMAIF14")
++	TEGRA_FE_ROUTES("ADMAIF15")
++	TEGRA_FE_ROUTES("ADMAIF16")
++	TEGRA_FE_ROUTES("ADMAIF17")
++	TEGRA_FE_ROUTES("ADMAIF18")
++	TEGRA_FE_ROUTES("ADMAIF19")
++	TEGRA_FE_ROUTES("ADMAIF20")
++	TEGRA_FE_ROUTES("ADMAIF21")
++	TEGRA_FE_ROUTES("ADMAIF22")
++	TEGRA_FE_ROUTES("ADMAIF23")
++	TEGRA_FE_ROUTES("ADMAIF24")
++	TEGRA_FE_ROUTES("ADMAIF25")
++	TEGRA_FE_ROUTES("ADMAIF26")
++	TEGRA_FE_ROUTES("ADMAIF27")
++	TEGRA_FE_ROUTES("ADMAIF28")
++	TEGRA_FE_ROUTES("ADMAIF29")
++	TEGRA_FE_ROUTES("ADMAIF30")
++	TEGRA_FE_ROUTES("ADMAIF31")
++	TEGRA_FE_ROUTES("ADMAIF32")
++	TEGRA264_MUX_ROUTES("ADMAIF1")
++	TEGRA264_MUX_ROUTES("ADMAIF2")
++	TEGRA264_MUX_ROUTES("ADMAIF3")
++	TEGRA264_MUX_ROUTES("ADMAIF4")
++	TEGRA264_MUX_ROUTES("ADMAIF5")
++	TEGRA264_MUX_ROUTES("ADMAIF6")
++	TEGRA264_MUX_ROUTES("ADMAIF7")
++	TEGRA264_MUX_ROUTES("ADMAIF8")
++	TEGRA264_MUX_ROUTES("ADMAIF9")
++	TEGRA264_MUX_ROUTES("ADMAIF10")
++	TEGRA264_MUX_ROUTES("ADMAIF11")
++	TEGRA264_MUX_ROUTES("ADMAIF12")
++	TEGRA264_MUX_ROUTES("ADMAIF13")
++	TEGRA264_MUX_ROUTES("ADMAIF14")
++	TEGRA264_MUX_ROUTES("ADMAIF15")
++	TEGRA264_MUX_ROUTES("ADMAIF16")
++	TEGRA264_MUX_ROUTES("ADMAIF17")
++	TEGRA264_MUX_ROUTES("ADMAIF18")
++	TEGRA264_MUX_ROUTES("ADMAIF19")
++	TEGRA264_MUX_ROUTES("ADMAIF20")
++	TEGRA264_MUX_ROUTES("ADMAIF21")
++	TEGRA264_MUX_ROUTES("ADMAIF22")
++	TEGRA264_MUX_ROUTES("ADMAIF23")
++	TEGRA264_MUX_ROUTES("ADMAIF24")
++	TEGRA264_MUX_ROUTES("ADMAIF25")
++	TEGRA264_MUX_ROUTES("ADMAIF26")
++	TEGRA264_MUX_ROUTES("ADMAIF27")
++	TEGRA264_MUX_ROUTES("ADMAIF28")
++	TEGRA264_MUX_ROUTES("ADMAIF29")
++	TEGRA264_MUX_ROUTES("ADMAIF30")
++	TEGRA264_MUX_ROUTES("ADMAIF31")
++	TEGRA264_MUX_ROUTES("ADMAIF32")
++	TEGRA264_MUX_ROUTES("I2S1")
++	TEGRA264_MUX_ROUTES("I2S2")
++	TEGRA264_MUX_ROUTES("I2S3")
++	TEGRA264_MUX_ROUTES("I2S4")
++	TEGRA264_MUX_ROUTES("I2S5")
++	TEGRA264_MUX_ROUTES("I2S6")
++	TEGRA264_MUX_ROUTES("I2S7")
++	TEGRA264_MUX_ROUTES("I2S8")
++	TEGRA264_MUX_ROUTES("DSPK1")
++	TEGRA264_MUX_ROUTES("SFC1")
++	TEGRA264_MUX_ROUTES("SFC2")
++	TEGRA264_MUX_ROUTES("SFC3")
++	TEGRA264_MUX_ROUTES("SFC4")
++	TEGRA264_MUX_ROUTES("MVC1")
++	TEGRA264_MUX_ROUTES("MVC2")
++	TEGRA264_MUX_ROUTES("AMX1 RX1")
++	TEGRA264_MUX_ROUTES("AMX1 RX2")
++	TEGRA264_MUX_ROUTES("AMX1 RX3")
++	TEGRA264_MUX_ROUTES("AMX1 RX4")
++	TEGRA264_MUX_ROUTES("AMX2 RX1")
++	TEGRA264_MUX_ROUTES("AMX2 RX2")
++	TEGRA264_MUX_ROUTES("AMX2 RX3")
++	TEGRA264_MUX_ROUTES("AMX2 RX4")
++	TEGRA264_MUX_ROUTES("AMX3 RX1")
++	TEGRA264_MUX_ROUTES("AMX3 RX2")
++	TEGRA264_MUX_ROUTES("AMX3 RX3")
++	TEGRA264_MUX_ROUTES("AMX3 RX4")
++	TEGRA264_MUX_ROUTES("AMX4 RX1")
++	TEGRA264_MUX_ROUTES("AMX4 RX2")
++	TEGRA264_MUX_ROUTES("AMX4 RX3")
++	TEGRA264_MUX_ROUTES("AMX4 RX4")
++	TEGRA264_MUX_ROUTES("AMX5 RX1")
++	TEGRA264_MUX_ROUTES("AMX5 RX2")
++	TEGRA264_MUX_ROUTES("AMX5 RX3")
++	TEGRA264_MUX_ROUTES("AMX5 RX4")
++	TEGRA264_MUX_ROUTES("AMX6 RX1")
++	TEGRA264_MUX_ROUTES("AMX6 RX2")
++	TEGRA264_MUX_ROUTES("AMX6 RX3")
++	TEGRA264_MUX_ROUTES("AMX6 RX4")
++	TEGRA264_MUX_ROUTES("ADX1")
++	TEGRA264_MUX_ROUTES("ADX2")
++	TEGRA264_MUX_ROUTES("ADX3")
++	TEGRA264_MUX_ROUTES("ADX4")
++	TEGRA264_MUX_ROUTES("ADX5")
++	TEGRA264_MUX_ROUTES("ADX6")
++	TEGRA264_MUX_ROUTES("MIXER1 RX1")
++	TEGRA264_MUX_ROUTES("MIXER1 RX2")
++	TEGRA264_MUX_ROUTES("MIXER1 RX3")
++	TEGRA264_MUX_ROUTES("MIXER1 RX4")
++	TEGRA264_MUX_ROUTES("MIXER1 RX5")
++	TEGRA264_MUX_ROUTES("MIXER1 RX6")
++	TEGRA264_MUX_ROUTES("MIXER1 RX7")
++	TEGRA264_MUX_ROUTES("MIXER1 RX8")
++	TEGRA264_MUX_ROUTES("MIXER1 RX9")
++	TEGRA264_MUX_ROUTES("MIXER1 RX10")
++	TEGRA264_MUX_ROUTES("ASRC1 RX1")
++	TEGRA264_MUX_ROUTES("ASRC1 RX2")
++	TEGRA264_MUX_ROUTES("ASRC1 RX3")
++	TEGRA264_MUX_ROUTES("ASRC1 RX4")
++	TEGRA264_MUX_ROUTES("ASRC1 RX5")
++	TEGRA264_MUX_ROUTES("ASRC1 RX6")
++	TEGRA264_MUX_ROUTES("ASRC1 RX7")
++	TEGRA264_MUX_ROUTES("OPE1")
++};
++
+ static const struct snd_soc_component_driver tegra210_ahub_component = {
+ 	.dapm_widgets		= tegra210_ahub_widgets,
+ 	.num_dapm_widgets	= ARRAY_SIZE(tegra210_ahub_widgets),
+@@ -1259,6 +2042,36 @@ static const struct snd_soc_component_driver tegra234_ahub_component = {
+ 	.num_dapm_routes	= ARRAY_SIZE(tegra186_ahub_routes),
+ };
+ 
++static const struct snd_soc_component_driver tegra264_ahub_component = {
++	.dapm_widgets		= tegra264_ahub_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(tegra264_ahub_widgets),
++	.dapm_routes		= tegra264_ahub_routes,
++	.num_dapm_routes	= ARRAY_SIZE(tegra264_ahub_routes),
++};
++
++static bool tegra264_ahub_wr_reg(struct device *dev, unsigned int reg)
 +{
-+	switch (reg) {
-+	case TEGRA210_I2S_RX_ENABLE ... TEGRA210_I2S_RX_SOFT_RESET:
-+	case TEGRA210_I2S_RX_INT_MASK ... TEGRA264_I2S_RX_CYA:
-+	case TEGRA264_I2S_TX_ENABLE ... TEGRA264_I2S_TX_SOFT_RESET:
-+	case TEGRA264_I2S_TX_INT_MASK ... TEGRA264_I2S_TX_FIFO_RD_ACCESS_MODE:
-+	case TEGRA264_I2S_TX_FIFO_THRESHOLD ... TEGRA264_I2S_TX_CYA:
-+	case TEGRA264_I2S_ENABLE ... TEGRA264_I2S_CG:
-+	case TEGRA264_I2S_INT_SET ... TEGRA264_I2S_INT_MASK:
-+	case TEGRA264_I2S_CTRL ... TEGRA264_I2S_CYA:
-+		return true;
-+	default:
-+		return false;
-+	};
++	int part;
++
++	for (part = 0; part < TEGRA264_XBAR_UPDATE_MAX_REG; part++) {
++		switch (reg & ~(part << 12)) {
++		case TEGRA264_AXBAR_ADMAIF_RX1 ... TEGRA264_AXBAR_SFC4_RX1:
++		case TEGRA264_AXBAR_MIXER1_RX1 ... TEGRA264_AXBAR_MIXER1_RX10:
++		case TEGRA264_AXBAR_DSPK1_RX1:
++		case TEGRA264_AXBAR_OPE1_RX1:
++		case TEGRA264_AXBAR_MVC1_RX1 ... TEGRA264_AXBAR_MVC2_RX1:
++		case TEGRA264_AXBAR_AMX1_RX1 ... TEGRA264_AXBAR_AMX3_RX4:
++		case TEGRA264_AXBAR_ADX1_RX1 ... TEGRA264_AXBAR_ASRC1_RX7:
++		case TEGRA264_AXBAR_ADMAIF_RX21 ... TEGRA264_AXBAR_ADX6_RX1:
++			return true;
++		default:
++			break;
++		};
++	}
++
++	return false;
 +}
 +
-+static bool tegra264_i2s_rd_reg(struct device *dev, unsigned int reg)
-+{
-+	if (tegra264_i2s_wr_reg(dev, reg))
-+		return true;
-+
-+	switch (reg) {
-+	case TEGRA210_I2S_RX_STATUS:
-+	case TEGRA210_I2S_RX_INT_STATUS:
-+	case TEGRA264_I2S_RX_CIF_FIFO_STATUS:
-+	case TEGRA264_I2S_TX_STATUS:
-+	case TEGRA264_I2S_TX_INT_STATUS:
-+	case TEGRA264_I2S_TX_FIFO_RD_DATA:
-+	case TEGRA264_I2S_TX_CIF_FIFO_STATUS:
-+	case TEGRA264_I2S_STATUS:
-+	case TEGRA264_I2S_INT_STATUS:
-+	case TEGRA264_I2S_PIO_MODE_ENABLE:
-+	case TEGRA264_I2S_PAD_MACRO_STATUS:
-+		return true;
-+	default:
-+		return false;
-+	};
-+}
-+
-+static bool tegra264_i2s_volatile_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case TEGRA210_I2S_RX_SOFT_RESET:
-+	case TEGRA210_I2S_RX_STATUS:
-+	case TEGRA210_I2S_RX_INT_STATUS:
-+	case TEGRA264_I2S_RX_CIF_FIFO_STATUS:
-+	case TEGRA264_I2S_TX_STATUS:
-+	case TEGRA264_I2S_TX_INT_STATUS:
-+	case TEGRA264_I2S_TX_FIFO_RD_DATA:
-+	case TEGRA264_I2S_TX_CIF_FIFO_STATUS:
-+	case TEGRA264_I2S_STATUS:
-+	case TEGRA264_I2S_INT_STATUS:
-+	case TEGRA264_I2S_TX_SOFT_RESET:
-+	case TEGRA264_I2S_PAD_MACRO_STATUS:
-+		return true;
-+	default:
-+		return false;
-+	};
-+}
-+
-+static const struct regmap_config tegra210_regmap_conf = {
+ static const struct regmap_config tegra210_ahub_regmap_config = {
  	.reg_bits		= 32,
- 	.reg_stride		= 4,
  	.val_bits		= 32,
-@@ -942,20 +1034,34 @@ static void tegra210_parse_client_convert(struct device *dev)
- 		i2s->client_sample_format = simple_util_get_sample_fmt(&data);
- }
+@@ -1275,6 +2088,15 @@ static const struct regmap_config tegra186_ahub_regmap_config = {
+ 	.cache_type		= REGCACHE_FLAT,
+ };
  
-+static const struct regmap_config tegra264_regmap_conf = {
++static const struct regmap_config tegra264_ahub_regmap_config = {
 +	.reg_bits		= 32,
-+	.reg_stride		= 4,
 +	.val_bits		= 32,
-+	.max_register		= TEGRA264_I2S_PAD_MACRO_STATUS,
-+	.writeable_reg		= tegra264_i2s_wr_reg,
-+	.readable_reg		= tegra264_i2s_rd_reg,
-+	.volatile_reg		= tegra264_i2s_volatile_reg,
-+	.reg_defaults		= tegra264_i2s_reg_defaults,
-+	.num_reg_defaults	= ARRAY_SIZE(tegra264_i2s_reg_defaults),
++	.reg_stride		= 4,
++	.writeable_reg		= tegra264_ahub_wr_reg,
++	.max_register		= TEGRA264_MAX_REGISTER_ADDR,
 +	.cache_type		= REGCACHE_FLAT,
 +};
 +
- static int tegra210_i2s_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct tegra210_i2s *i2s;
- 	void __iomem *regs;
--	int err;
-+	int err, id;
- 
- 	i2s = devm_kzalloc(dev, sizeof(*i2s), GFP_KERNEL);
- 	if (!i2s)
- 		return -ENOMEM;
- 
-+	i2s->soc_data = of_device_get_match_data(&pdev->dev);
- 	i2s->rx_fifo_th = DEFAULT_I2S_RX_FIFO_THRESHOLD;
--	i2s->tx_mask = DEFAULT_I2S_SLOT_MASK;
--	i2s->rx_mask = DEFAULT_I2S_SLOT_MASK;
-+	i2s->tx_mask = i2s->soc_data->slot_mask;
-+	i2s->rx_mask = i2s->soc_data->slot_mask;
- 	i2s->loopback = false;
- 	i2s->client_sample_format = -EINVAL;
- 
-@@ -981,7 +1087,7 @@ static int tegra210_i2s_probe(struct platform_device *pdev)
- 		return PTR_ERR(regs);
- 
- 	i2s->regmap = devm_regmap_init_mmio(dev, regs,
--					    &tegra210_i2s_regmap_config);
-+					    i2s->soc_data->regmap_conf);
- 	if (IS_ERR(i2s->regmap)) {
- 		dev_err(dev, "regmap init failed\n");
- 		return PTR_ERR(i2s->regmap);
-@@ -991,7 +1097,13 @@ static int tegra210_i2s_probe(struct platform_device *pdev)
- 
- 	regcache_cache_only(i2s->regmap, true);
- 
--	err = devm_snd_soc_register_component(dev, &tegra210_i2s_cmpnt,
-+	/* Update the dais max channel as per soc */
-+	for (id = 0; id < ARRAY_SIZE(tegra210_i2s_dais); id++) {
-+		tegra210_i2s_dais[id].playback.channels_max = i2s->soc_data->max_ch;
-+		tegra210_i2s_dais[id].capture.channels_max = i2s->soc_data->max_ch;
-+	}
-+
-+	err = devm_snd_soc_register_component(dev, i2s->soc_data->i2s_cmpnt,
- 					      tegra210_i2s_dais,
- 					      ARRAY_SIZE(tegra210_i2s_dais));
- 	if (err) {
-@@ -1015,8 +1127,31 @@ static const struct dev_pm_ops tegra210_i2s_pm_ops = {
- 	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ static const struct tegra_ahub_soc_data soc_data_tegra210 = {
+ 	.cmpnt_drv	= &tegra210_ahub_component,
+ 	.dai_drv	= tegra210_ahub_dais,
+@@ -1285,6 +2107,7 @@ static const struct tegra_ahub_soc_data soc_data_tegra210 = {
+ 	.mask[2]	= TEGRA210_XBAR_REG_MASK_2,
+ 	.mask[3]	= TEGRA210_XBAR_REG_MASK_3,
+ 	.reg_count	= TEGRA210_XBAR_UPDATE_MAX_REG,
++	.xbar_part_size	= TEGRA210_XBAR_PART1_RX,
  };
  
-+static const struct tegra_i2s_soc_data soc_data_tegra210 = {
-+	.regmap_conf		= &tegra210_regmap_conf,
-+	.i2s_cmpnt		= &tegra210_i2s_cmpnt,
-+	.max_ch			= TEGRA210_I2S_MAX_CHANNEL,
-+	.tx_offset		= TEGRA210_I2S_TX_OFFSET,
-+	.i2s_ctrl_offset	= TEGRA210_I2S_CTRL_OFFSET,
-+	.fsync_width_mask	= I2S_CTRL_FSYNC_WIDTH_MASK,
-+	.fsync_width_shift	= I2S_FSYNC_WIDTH_SHIFT,
-+	.slot_mask		= DEFAULT_I2S_SLOT_MASK,
+ static const struct tegra_ahub_soc_data soc_data_tegra186 = {
+@@ -1297,6 +2120,7 @@ static const struct tegra_ahub_soc_data soc_data_tegra186 = {
+ 	.mask[2]	= TEGRA186_XBAR_REG_MASK_2,
+ 	.mask[3]	= TEGRA186_XBAR_REG_MASK_3,
+ 	.reg_count	= TEGRA186_XBAR_UPDATE_MAX_REG,
++	.xbar_part_size	= TEGRA210_XBAR_PART1_RX,
+ };
+ 
+ static const struct tegra_ahub_soc_data soc_data_tegra234 = {
+@@ -1309,12 +2133,28 @@ static const struct tegra_ahub_soc_data soc_data_tegra234 = {
+ 	.mask[2]	= TEGRA186_XBAR_REG_MASK_2,
+ 	.mask[3]	= TEGRA186_XBAR_REG_MASK_3,
+ 	.reg_count	= TEGRA186_XBAR_UPDATE_MAX_REG,
++	.xbar_part_size	= TEGRA210_XBAR_PART1_RX,
 +};
 +
-+static const struct tegra_i2s_soc_data soc_data_tegra264 = {
-+	.regmap_conf		= &tegra264_regmap_conf,
-+	.i2s_cmpnt		= &tegra264_i2s_cmpnt,
-+	.max_ch			= TEGRA264_I2S_MAX_CHANNEL,
-+	.tx_offset		= TEGRA264_I2S_TX_OFFSET,
-+	.i2s_ctrl_offset	= TEGRA264_I2S_CTRL_OFFSET,
-+	.fsync_width_mask	= TEGRA264_I2S_CTRL_FSYNC_WIDTH_MASK,
-+	.fsync_width_shift	= TEGRA264_I2S_FSYNC_WIDTH_SHIFT,
-+	.slot_mask		= TEGRA264_DEFAULT_I2S_SLOT_MASK,
-+};
-+
- static const struct of_device_id tegra210_i2s_of_match[] = {
--	{ .compatible = "nvidia,tegra210-i2s" },
-+	{ .compatible = "nvidia,tegra210-i2s", .data = &soc_data_tegra210 },
-+	{ .compatible = "nvidia,tegra264-i2s", .data = &soc_data_tegra264 },
++static const struct tegra_ahub_soc_data soc_data_tegra264 = {
++	.cmpnt_drv	= &tegra264_ahub_component,
++	.dai_drv	= tegra264_ahub_dais,
++	.num_dais	= ARRAY_SIZE(tegra264_ahub_dais),
++	.regmap_config	= &tegra264_ahub_regmap_config,
++	.mask[0]	= TEGRA264_XBAR_REG_MASK_0,
++	.mask[1]	= TEGRA264_XBAR_REG_MASK_1,
++	.mask[2]	= TEGRA264_XBAR_REG_MASK_2,
++	.mask[3]	= TEGRA264_XBAR_REG_MASK_3,
++	.mask[4]	= TEGRA264_XBAR_REG_MASK_4,
++	.reg_count	= TEGRA264_XBAR_UPDATE_MAX_REG,
++	.xbar_part_size	= TEGRA264_XBAR_PART1_RX,
+ };
+ 
+ static const struct of_device_id tegra_ahub_of_match[] = {
+ 	{ .compatible = "nvidia,tegra210-ahub", .data = &soc_data_tegra210 },
+ 	{ .compatible = "nvidia,tegra186-ahub", .data = &soc_data_tegra186 },
+ 	{ .compatible = "nvidia,tegra234-ahub", .data = &soc_data_tegra234 },
++	{ .compatible = "nvidia,tegra264-ahub", .data = &soc_data_tegra264 },
  	{},
  };
- MODULE_DEVICE_TABLE(of, tegra210_i2s_of_match);
-diff --git a/sound/soc/tegra/tegra210_i2s.h b/sound/soc/tegra/tegra210_i2s.h
-index 543332de7405..42be2137342c 100644
---- a/sound/soc/tegra/tegra210_i2s.h
-+++ b/sound/soc/tegra/tegra210_i2s.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0-only
-- * SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
-+ * SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES.
-  * All rights reserved.
+ MODULE_DEVICE_TABLE(of, tegra_ahub_of_match);
+diff --git a/sound/soc/tegra/tegra210_ahub.h b/sound/soc/tegra/tegra210_ahub.h
+index 2728db4d24f2..f355b2cfd19b 100644
+--- a/sound/soc/tegra/tegra210_ahub.h
++++ b/sound/soc/tegra/tegra210_ahub.h
+@@ -2,7 +2,7 @@
+ /*
+  * tegra210_ahub.h - TEGRA210 AHUB
   *
-  * tegra210_i2s.h - Definitions for Tegra210 I2S driver
-@@ -47,9 +47,38 @@
- #define TEGRA210_I2S_CLK_TRIM			0xac
- #define TEGRA210_I2S_CYA			0xb0
+- * Copyright (c) 2020-2022, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2020-2025, NVIDIA CORPORATION.  All rights reserved.
+  *
+  */
  
-+/* T264 specific registers */
-+#define TEGRA264_I2S_RX_FIFO_WR_ACCESS_MODE	0x30
-+#define TEGRA264_I2S_RX_CYA			0x3c
-+#define TEGRA264_I2S_RX_CIF_FIFO_STATUS		0x40
-+#define TEGRA264_I2S_TX_ENABLE			0x80
-+#define TEGRA264_I2S_TX_SOFT_RESET		0x84
-+#define TEGRA264_I2S_TX_STATUS			0x8c
-+#define TEGRA264_I2S_TX_INT_STATUS		0x90
-+#define TEGRA264_I2S_TX_INT_MASK		0x94
-+#define TEGRA264_I2S_TX_CIF_CTRL		0xa0
-+#define TEGRA264_I2S_TX_FIFO_RD_ACCESS_MODE	0xb0
-+#define TEGRA264_I2S_TX_FIFO_RD_DATA		0xb4
-+#define TEGRA264_I2S_TX_FIFO_THRESHOLD		0xb8
-+#define TEGRA264_I2S_TX_CYA			0xbc
-+#define TEGRA264_I2S_TX_CIF_FIFO_STATUS		0xc0
-+#define TEGRA264_I2S_ENABLE			0x100
-+#define TEGRA264_I2S_CG				0x108
-+#define TEGRA264_I2S_STATUS			0x10c
-+#define TEGRA264_I2S_INT_STATUS			0x110
-+#define TEGRA264_I2S_INT_SET			0x114
-+#define TEGRA264_I2S_INT_MASK			0x11c
-+#define TEGRA264_I2S_CTRL			0x12c
-+#define TEGRA264_I2S_TIMING			0x130
-+#define TEGRA264_I2S_CYA			0x13c
-+#define TEGRA264_I2S_PIO_MODE_ENABLE		0x140
-+#define TEGRA264_I2S_PAD_MACRO_STATUS		0x144
+@@ -28,7 +28,39 @@
+ #define TEGRA186_XBAR_REG_MASK_3			0x3f0f00ff
+ #define TEGRA186_XBAR_UPDATE_MAX_REG			4
+ 
+-#define TEGRA_XBAR_UPDATE_MAX_REG (TEGRA186_XBAR_UPDATE_MAX_REG)
++/* Tegra264 specific */
++#define TEGRA264_XBAR_PART1_RX				0x1000
++#define TEGRA264_XBAR_PART2_RX				0x2000
++#define TEGRA264_XBAR_PART3_RX				0x3000
++#define TEGRA264_XBAR_PART4_RX				0x4000
++#define TEGRA264_XBAR_PART0_ADX6_RX1			0x224
++#define TEGRA264_XBAR_AUDIO_RX_COUNT			((TEGRA264_XBAR_PART0_ADX6_RX1 / 4) + 1)
++#define TEGRA264_XBAR_REG_MASK_0			0xfffffff
++#define TEGRA264_XBAR_REG_MASK_1			0x3f013f1f
++#define TEGRA264_XBAR_REG_MASK_2			0xff3c0301
++#define TEGRA264_XBAR_REG_MASK_3			0x3f00ffff
++#define TEGRA264_XBAR_REG_MASK_4			0x7fff9f
++#define TEGRA264_XBAR_UPDATE_MAX_REG			5
 +
- /* Bit fields, shifts and masks */
- #define I2S_DATA_SHIFT				8
- #define I2S_CTRL_DATA_OFFSET_MASK		(0x7ff << I2S_DATA_SHIFT)
-+#define TEGRA264_I2S_FSYNC_WIDTH_SHIFT		23
-+#define TEGRA264_I2S_CTRL_FSYNC_WIDTH_MASK	(0x1ff << TEGRA264_I2S_FSYNC_WIDTH_SHIFT)
- 
- #define I2S_EN_SHIFT				0
- #define I2S_EN_MASK				BIT(I2S_EN_SHIFT)
-@@ -102,6 +131,14 @@
- #define DEFAULT_I2S_RX_FIFO_THRESHOLD		3
- 
- #define DEFAULT_I2S_SLOT_MASK			0xffff
-+#define TEGRA210_I2S_TX_OFFSET			0
-+#define TEGRA210_I2S_CTRL_OFFSET		0
-+#define TEGRA210_I2S_MAX_CHANNEL		16
++#define TEGRA264_AXBAR_ADMAIF_RX1			0x0
++#define TEGRA264_AXBAR_SFC4_RX1				0x6c
++#define TEGRA264_AXBAR_MIXER1_RX1			0x80
++#define TEGRA264_AXBAR_MIXER1_RX10			0xa4
++#define TEGRA264_AXBAR_DSPK1_RX1			0xc0
++#define TEGRA264_AXBAR_OPE1_RX1				0x100
++#define TEGRA264_AXBAR_MVC1_RX1				0x110
++#define TEGRA264_AXBAR_MVC2_RX1				0x114
++#define TEGRA264_AXBAR_AMX1_RX1				0x120
++#define TEGRA264_AXBAR_AMX3_RX4				0x14c
++#define TEGRA264_AXBAR_ADX1_RX1				0x160
++#define TEGRA264_AXBAR_ASRC1_RX7			0x1a8
++#define TEGRA264_AXBAR_ADMAIF_RX21			0x1d0
++#define TEGRA264_AXBAR_ADX6_RX1				0x224
 +
-+#define TEGRA264_DEFAULT_I2S_SLOT_MASK		0xffffffff
-+#define TEGRA264_I2S_TX_OFFSET			0x40
-+#define TEGRA264_I2S_CTRL_OFFSET		0x8c
-+#define TEGRA264_I2S_MAX_CHANNEL		32
++#define TEGRA_XBAR_UPDATE_MAX_REG (TEGRA264_XBAR_UPDATE_MAX_REG)
++
++#define TEGRA264_MAX_REGISTER_ADDR (TEGRA264_XBAR_PART4_RX +		\
++	(TEGRA210_XBAR_RX_STRIDE * (TEGRA264_XBAR_AUDIO_RX_COUNT - 1)))
  
- enum tegra210_i2s_path {
- 	I2S_RX_PATH,
-@@ -109,7 +146,19 @@ enum tegra210_i2s_path {
- 	I2S_PATHS,
+ #define TEGRA186_MAX_REGISTER_ADDR (TEGRA186_XBAR_PART3_RX +		\
+ 	(TEGRA210_XBAR_RX_STRIDE * (TEGRA186_XBAR_AUDIO_RX_COUNT - 1)))
+@@ -76,6 +108,15 @@
+ 
+ #define MUX_ENUM_CTRL_DECL_234(ename, id) MUX_ENUM_CTRL_DECL_186(ename, id)
+ 
++#define MUX_ENUM_CTRL_DECL_264(ename, id)				\
++	SOC_VALUE_ENUM_WIDE_DECL(ename##_enum, MUX_REG(id), 0,		\
++				 tegra264_ahub_mux_texts,		\
++				 tegra264_ahub_mux_values);		\
++	static const struct snd_kcontrol_new ename##_control =		\
++		SOC_DAPM_ENUM_EXT("Route", ename##_enum,		\
++				  tegra_ahub_get_value_enum,		\
++				  tegra_ahub_put_value_enum)
++
+ #define WIDGETS(sname, ename)						     \
+ 	SND_SOC_DAPM_AIF_IN(sname " XBAR-RX", NULL, 0, SND_SOC_NOPM, 0, 0),  \
+ 	SND_SOC_DAPM_AIF_OUT(sname " XBAR-TX", NULL, 0, SND_SOC_NOPM, 0, 0), \
+@@ -92,7 +133,7 @@
+ 		.playback = {						\
+ 			.stream_name = #sname " XBAR-Playback",		\
+ 			.channels_min = 1,				\
+-			.channels_max = 16,				\
++			.channels_max = 32,				\
+ 			.rates = SNDRV_PCM_RATE_8000_192000,		\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |		\
+ 				SNDRV_PCM_FMTBIT_S16_LE |		\
+@@ -102,7 +143,7 @@
+ 		.capture = {						\
+ 			.stream_name = #sname " XBAR-Capture",		\
+ 			.channels_min = 1,				\
+-			.channels_max = 16,				\
++			.channels_max = 32,				\
+ 			.rates = SNDRV_PCM_RATE_8000_192000,		\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |		\
+ 				SNDRV_PCM_FMTBIT_S16_LE |		\
+@@ -115,9 +156,10 @@ struct tegra_ahub_soc_data {
+ 	const struct regmap_config *regmap_config;
+ 	const struct snd_soc_component_driver *cmpnt_drv;
+ 	struct snd_soc_dai_driver *dai_drv;
+-	unsigned int mask[4];
++	unsigned int mask[TEGRA_XBAR_UPDATE_MAX_REG];
+ 	unsigned int reg_count;
+ 	unsigned int num_dais;
++	unsigned int xbar_part_size;
  };
  
-+struct tegra_i2s_soc_data {
-+	const struct regmap_config *regmap_conf;
-+	const struct snd_soc_component_driver *i2s_cmpnt;
-+	unsigned int max_ch;
-+	unsigned int tx_offset;
-+	unsigned int i2s_ctrl_offset;
-+	unsigned int fsync_width_mask;
-+	unsigned int fsync_width_shift;
-+	unsigned int slot_mask;
-+};
-+
- struct tegra210_i2s {
-+	const struct tegra_i2s_soc_data *soc_data;
- 	struct clk *clk_i2s;
- 	struct clk *clk_sync_input;
- 	struct regmap *regmap;
+ struct tegra_ahub {
 -- 
 2.17.1
 
