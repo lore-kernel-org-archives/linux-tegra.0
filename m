@@ -1,161 +1,373 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16553253F25;
-	Tue, 29 Apr 2025 21:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745961180; cv=fail; b=q2sxvx8XnKVgGPYGMirc+6cUm18FqBmk1j4nBh+JrU/PjWIFlq22GUn1lbORGgLwualB7SDMzZQ1+052XhwZQ7P9nT2SKVqsm1ihL9czN7YC0Hl68YyXcLsvmGZF7ePOnsqDksmGcerNCJeifbvj0AxjOyhshyU8xZqFAHZHCdo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745961180; c=relaxed/simple;
-	bh=VxLqrXaVqHNZPSoKe1t88jv1vTacy7OCn5dVDr8raXc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nGcPKIuvBrTs3U66QxqLFmns4V2Xx7Ofr1ctOXh2AlNIEK62xH0PgM96K+CfJReDzl1Ri5b1fanRJhJvqsD1fEhKzDRk1mpUhlC3Ns+F1DfvicFyqXogfed6XkwCvIqBCJhoIpbm58mr5Yyj/w7h7E2uAFLRdgJgsuUVztc9wp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IC6SDFkt; arc=fail smtp.client-ip=40.107.92.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A0725486E;
+	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745962427; cv=none; b=Nn9MsTuKJRiGcBu394Q8t83Lf8ERdU5tfffPe3a+9nQFRlP2mxozGyy/Vt3xmyYJajnxvXlWl0dc9lzAVMa2CQr/iy65ZP82OdnnOPTv3icmxU+4vS1xY4Dqzaa0zNRvwUG8YiTas5lIVnQF/KkqojjnSY/QbrIm8sJaa7FGQUo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745962427; c=relaxed/simple;
+	bh=5ibUK7HGNQaDnCPbcAMcThDKBWgUVVSK8N8Y/HTEbSM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AOoqSlasTouwUB43JEdqR8zWPhfKJG8bPD+7ghhCPwBMxP89CcGxjQ5a14t39yh2UHP4Tb/+cX6xTh55TUzYcbGTGAYW8yPcL8RMQ5rVT8jpjIc+8Eyy7nbNzhO7LgaQSHIyO6OoWz+8wvI9XkmyJCqPHDhkbsV+eA9v7yjbI+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QD2PSbN7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IC6SDFkt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JZ2yHG+uFVo9p1nDKLgUTIrdLqfp/fA1IpcUUCrLYB7qWh+GW50ZuRHb1ES+MrAUcJOHvMsWMQOltiMxA5uQy+mm/6oDJxO1pzPyih8xmdbvjhgD79eHnCm7gMenvy0zEOjX43TCc0TFO22jyDrfwOfM2v0tOZYxmdrcijZIWExCnEpJUKItr0gmmYHTwhBBw7Gkcr9QXGSs6z5RlUI6YPxWVyE+bZWi8Qu1TiaXsgva8tLXF68KQivQf5F+eY1O++1++052ErBMJzqmWnLb2CyapKGuFchXGYM3rGcCNACNw+7kxE4X+fHzGDZZeGLzubwuSe9Uf1RhxoHAt7KpsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h0FrbLY+rHz3YBtwiTXqjPJN8NcbHf0UhtbppuIe1cs=;
- b=AP2JjiOMVx69zq980XhGLvDBbpNY58LhTCPYIS0gSQEIoxaU5rnm0GJIdjVd/wGh6rY6ahIOSbOuTcI0uHBEbjXedip43Cwpc+3cN3hwKWir32Tx7BgzMPlGTtQU1tE4b0tIhHwH8ljc4Qx5oPDl5sBheKF848OH2xrIpFzW4JJJbSA46EMsZKAO/4ZDypsw6nAMeufZkJeYINOn2XBnIyunfqcvsZUeORADSQD2yIhH9ejkcy33DsGZYH6u6dYijKbWvHgx7EIFvKMQG5004KpxA/803jrOVTJpksugJczq4jxoFzyzdns/rp35odqvBDZep/9zpBiDNMa6VB4Txg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h0FrbLY+rHz3YBtwiTXqjPJN8NcbHf0UhtbppuIe1cs=;
- b=IC6SDFkt+MlmzWNzEwhdoc0+C8DO3BgUKvamSg2TgG3FA93m0Shy0UYsvcZAekdME7rC18ioL+0EXNQOwwM6tHOSVFMWrF5kPzT9y3xrRHSson2FVhvUD6pOpatnrDt1KSOTOvkz2oqxylVxulvghf2hnG4HXFXHx9JY3809w8H9b6GvcXAk0cEdu8tuZqVkyX84kJ9+GDgXqr0H0SFMRTEbHiBgYaDQeyqLFB2BGq56/wNEOw9weqWnQtrYk5s3wOe9lpjD/OpmNgosz1DxvcQrMAvWdQB8XvMZwr6lJ8HqsLun6t94n8tQkk8TJTCLrwfEvEa/hk+auGd/Ol4ixw==
-Received: from SJ0P220CA0026.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::30)
- by IA0PPF89A593F05.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Tue, 29 Apr
- 2025 21:12:55 +0000
-Received: from SJ1PEPF00001CDE.namprd05.prod.outlook.com
- (2603:10b6:a03:41b:cafe::8f) by SJ0P220CA0026.outlook.office365.com
- (2603:10b6:a03:41b::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.40 via Frontend Transport; Tue,
- 29 Apr 2025 21:12:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF00001CDE.mail.protection.outlook.com (10.167.242.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8699.20 via Frontend Transport; Tue, 29 Apr 2025 21:12:54 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 29 Apr
- 2025 14:12:42 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 29 Apr
- 2025 14:12:42 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 29 Apr 2025 14:12:39 -0700
-Date: Tue, 29 Apr 2025 14:12:37 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <bagasdotme@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <shuah@kernel.org>, <jsnitsel@redhat.com>,
-	<nathan@kernel.org>, <peterz@infradead.org>, <yi.l.liu@intel.com>,
-	<mshavit@google.com>, <praan@google.com>, <zhangzekun11@huawei.com>,
-	<iommu@lists.linux.dev>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<patches@lists.linux.dev>, <mochs@nvidia.com>, <vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 21/22] iommu/tegra241-cmdqv: Add user-space use support
-Message-ID: <aBFAxWo4Ud1LRaTa@Asurada-Nvidia>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <b81b2332f793a9ffccc528d821f2ed3ac051f9e0.1745646960.git.nicolinc@nvidia.com>
- <39fd41e0-2218-4c70-b79c-83be3eab30e7@oracle.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QD2PSbN7"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 601A9C4CEEB;
+	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745962427;
+	bh=5ibUK7HGNQaDnCPbcAMcThDKBWgUVVSK8N8Y/HTEbSM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=QD2PSbN7eHg4C+1Lj0xtv+1ZgFf8LoTa9/9K9eOQwKTcAmXGeGF+hyn4sfiAyL7Cz
+	 6wupIRhmQvgUh4MogZrYSEm9iimkM0oPlhfHdfroWtAPCvFCdqCtlTyK6wJ1KLZGti
+	 mlsgTuYPLws2goDAuIpl7qBFiV5c0eyUWdOGII78h+x3Bq5xDoSTwaZvxLBvAs5xJS
+	 uiKzS5drBh7Yct2ZiAHl7DnjrkPmlHJd/8NOBCH2N8oj502zsu3WtHvALoS65l8reH
+	 92wjFkL5wfsyEPWyJBx0p9HzzVXqMh56fd4oyH2/drh08A3u2ClgEItiUbQJJOy0Cu
+	 pSDHICVwuwvIA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F912C3ABAA;
+	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Tue, 29 Apr 2025 16:33:30 -0500
+Subject: [PATCH 1/4] dt-bindings: pinctrl: Document Tegra186 pin
+ controllers
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <39fd41e0-2218-4c70-b79c-83be3eab30e7@oracle.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDE:EE_|IA0PPF89A593F05:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1c3cc3f-ba1d-4e2d-9e66-08dd87629be2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|7416014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2f6nzbAf2RhaRBfahVow13rcxaD+LFOQ84r0dRavmhNI2cbtsEDqeNHna9eO?=
- =?us-ascii?Q?P215TnHncZ5VmXi5zutKtvHc0kM+PZB5jXVh31T+ga2TECQrQ8wLIBLITVmE?=
- =?us-ascii?Q?QLV0MGQVQUbOTutSptyNU8lw7tW3uLyr0ajzQ2Cj0r6/f2SLOYHlSUS95diD?=
- =?us-ascii?Q?uBslRgdnJj76qfhu17LXOmpaXZxSQRxvFC40Ace4Wyoy2dWCCgsvqmwSVbKc?=
- =?us-ascii?Q?C+VBJZXnDJyYyZCAuRamFIel3LojhsyL3Yw6gcwoRGBlhpqsFFdBVj9iVCzL?=
- =?us-ascii?Q?rbACkauCdrTGBtQhK9k+PS1MAG5g12f7tSd3VJlORp5Je/eNUQPFlPJxul6D?=
- =?us-ascii?Q?yax3WQ+026mKMb5E9ja+Zwbr32Ft+q/625bIi8+GEDWWn+GIcyaYmFRF0fmi?=
- =?us-ascii?Q?m0BNj5o3/1fu5VpON0lMTeMx4J7BeEEzzBoVW9FUCfI+Vq7RrNknusqSvhU7?=
- =?us-ascii?Q?luZMIhEOWDnvEsd1OKVCcx23vJL4TD5/ZNpJSLv77BfjtxHfktFy3sT/q6E1?=
- =?us-ascii?Q?QSrGchv90J4JQptR5ZY2qSdijiZs1bCjuNAj2mxQQ5XEgEYRKO5vQE4yA2iP?=
- =?us-ascii?Q?LizS86+kpDMwZE7wLkqTeNopwtJ/rFCDFbJ3iIQ5P++nrz/wXbJIVyM2HeSd?=
- =?us-ascii?Q?6tsDP1QVoVKlpqJM5Vtvh4Z1M4SVz6huHVYV8VSkfg4UWj4PLyqJvUU7Ljqw?=
- =?us-ascii?Q?++k4MVriObNy/e7QkEdL1ZFI/NT9q1qwB4WYS5cjiRiEOd8Uwrlc4knshGzU?=
- =?us-ascii?Q?aQ+/XLaUPJB5oPRKZ99xjeMpHzfSTrIeem0UEsh8p7GtZq07+74+aYlAEoDf?=
- =?us-ascii?Q?KETP8WrN8KV1O2yZsT7ZLHtcJ18S2qln/0kkGklECtph+tMpn9qXUCmsgzRc?=
- =?us-ascii?Q?0mL3Wmc/uYHRgIb7RyPil8YaFDjYBzro9bCxf0smVtRFHAuoTMYS7BUA83xw?=
- =?us-ascii?Q?7PgwJbF8S7+ik3hsb+PRzzJuYq71Ah1v8pSmDbIgc86RX2X93hgq0e/n51w9?=
- =?us-ascii?Q?qzQMppU+iquIKMskMGkK8ihRlPPq+ELFT0m11aRt2znG5uV9UDZrFsLLccYz?=
- =?us-ascii?Q?x3ckO7Pksmaegg3N4vuPnF74a1vaTW+q5PQU+XT3ysCiZ9kgGrn6HM4c4tqN?=
- =?us-ascii?Q?8gUJqzUDnUOnRXzJr5uHR+7avQQ2JfA28Ej7QZNaXgVwkkbRTtv4X98gohsP?=
- =?us-ascii?Q?/3Dl9gHt9GaC19dkKK25A+OwLwgEgWJ+HB/8bKtmPYYh+fwtIbtcDh3r7mC2?=
- =?us-ascii?Q?HI2rhY5w201cMK0FIxlOazeJ2PoS7FifLfLFGqhGtFGxy9UUrBIsJDvY+flp?=
- =?us-ascii?Q?ckSD8yMn0l4QZ+B62VIAyv/Nq1qQHVLWlJbNSnqv+kKtW2gMdcI3rkkjhm8O?=
- =?us-ascii?Q?2DaDrCYVtBNlsb5H8USbnSbdlukrWKrRTDJhgjNloiqYqNV+UUF8eCY//oGz?=
- =?us-ascii?Q?JEtPJqtGDn40t/E3hLKCJYVeACbZvd33ghFhNP7FUGA+zC6b/6Uv1XUSmTih?=
- =?us-ascii?Q?jvV+pNz+UeLb/m4HrB/CbT0wv4agIZknmIt2?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 21:12:54.8054
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1c3cc3f-ba1d-4e2d-9e66-08dd87629be2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CDE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF89A593F05
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250429-tegra186-pinctrl-v1-1-722c7c42394e@gmail.com>
+References: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
+In-Reply-To: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745962426; l=16359;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=3k3YXs0SBtQGZRhuNjuF2GlsuJW/96TSbOplCCFJaCE=;
+ b=0nZ6t9inmZLfAzm4XXKaGA51o0dH1IX1V9WhDfA5jmsHIFmAh/nvrnjWA+f767UYlcm/yIPqg
+ 8ztqWiG5Qg7CXOZ0zth3dX4wMbwWZN0QQHH/naOIf03C+g1JSBpyeSC
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Wed, Apr 30, 2025 at 01:17:48AM +0530, ALOK TIWARI wrote:
-> > +	/*
-> > +	 * @length must be a power of 2, in range of
-> > +	 *   [ 32, 1 ^ (idr[1].CMDQS + CMDQ_ENT_SZ_SHIFT) ]
-> 
-> 2 ^ (idr[1].CMDQS + CMDQ_ENT_SZ_SHIFT) or 1 << idr[1].CMDQS
-> 
-> > +	 */
-> > +	max_n_shift = FIELD_GET(IDR1_CMDQS,
-> > +				readl_relaxed(smmu->base + ARM_SMMU_IDR1));
-> 
-> 
-> LGTM, aside from a minor cosmetic thing.
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Fixed all those and the typo in the other mail. Picked "2 ^ " btw.
+Tegra186 contains two pin controllers. Document their compatible strings
+and describe the list of pins and functions that they provide.
 
-Thanks
-Nicolin
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   | 285 +++++++++++++++++++++
+ 1 file changed, 285 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra186-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra186-pinmux.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..2fcf42869d7b68671ae3ce78bd33787901ae9203
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra186-pinmux.yaml
+@@ -0,0 +1,285 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/nvidia,tegra186-pinmux.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra186 Pinmux Controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    enum:
++      - nvidia,tegra186-pinmux
++      - nvidia,tegra186-pinmux-aon
++
++  reg:
++    items:
++      - description: pinmux registers
++
++patternProperties:
++  "^pinmux(-[a-z0-9-_]+)?$":
++    type: object
++
++    # pin groups
++    additionalProperties:
++      $ref: nvidia,tegra-pinmux-common.yaml
++      unevaluatedProperties: false
++      properties:
++        nvidia,function:
++          enum: [ aud, can0, can1, ccla, dca, dcb, dcc, directdc, directdc1,
++                  displaya, displayb, dmic1, dmic2, dmic3, dmic4, dmic5, dp,
++                  dspk0, dspk1, dtv, eqos, extperiph1, extperiph2, extperiph3,
++                  extperiph4, gp, gpio, hdmi, i2c1, i2c2, i2c3, i2c5, i2c7,
++                  i2c8, i2c9, i2s1, i2s2, i2s3, i2s4, i2s5, i2s6, iqc0, iqc1,
++                  nv, pe, pe0, pe1, pe2, qspi, rsvd0, rsvd1, rsvd2, rsvd3,
++                  sata, sce, sdmmc1, sdmmc2, sdmmc3, sdmmc4, soc, spdif, spi1,
++                  spi2, spi3, spi4, touch, uarta, uartb, uartc, uartd, uarte,
++                  uartf, uartg, ufs0, usb, vgp1, vgp2, vgp3, vgp4, vgp5, vgp6,
++                  wdt ]
++
++        nvidia,pull: true
++        nvidia,tristate: true
++        nvidia,schmitt: true
++        nvidia,enable-input: true
++        nvidia,open-drain: true
++        nvidia,lock: true
++        nvidia,drive-type: true
++        nvidia,io-hv: true
++
++      required:
++        - nvidia,pins
++
++additionalProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          const: nvidia,tegra186-pinmux
++    then:
++      patternProperties:
++        "^pinmux(-[a-z0-9-_]+)?$":
++          type: object
++          additionalProperties:
++            properties:
++              nvidia,pins:
++                description: An array of strings. Each string contains the name
++                  of a pin or group. Valid values for these names are listed
++                  below.
++                items:
++                  enum: [ pex_l0_rst_n_pa0, pex_l0_clkreq_n_pa1,
++                          pex_wake_n_pa2, pex_l1_rst_n_pa3,
++                          pex_l1_clkreq_n_pa4, pex_l2_rst_n_pa5,
++                          pex_l2_clkreq_n_pa6, uart4_tx_pb0, uart4_rx_pb1,
++                          uart4_rts_pb2, uart4_cts_pb3, gpio_wan1_pb4,
++                          gpio_wan2_pb5, gpio_wan3_pb6, gpio_wan4_pc0,
++                          dap2_sclk_pc1, dap2_dout_pc2, dap2_din_pc3,
++                          dap2_fs_pc4, gen1_i2c_scl_pc5, gen1_i2c_sda_pc6,
++                          sdmmc1_clk_pd0, sdmmc1_cmd_pd1, sdmmc1_dat0_pd2,
++                          sdmmc1_dat1_pd3, sdmmc1_dat2_pd4, sdmmc1_dat3_pd5,
++                          eqos_txc_pe0, eqos_td0_pe1, eqos_td1_pe2,
++                          eqos_td2_pe3, eqos_td3_pe4, eqos_tx_ctl_pe5,
++                          eqos_rd0_pe6, eqos_rd1_pe7, eqos_rd2_pf0,
++                          eqos_rd3_pf1, eqos_rx_ctl_pf2, eqos_rxc_pf3,
++                          eqos_mdio_pf4, eqos_mdc_pf5, sdmmc3_clk_pg0,
++                          sdmmc3_cmd_pg1, sdmmc3_dat0_pg2, sdmmc3_dat1_pg3,
++                          sdmmc3_dat2_pg4, sdmmc3_dat3_pg5, gpio_wan5_ph0,
++                          gpio_wan6_ph1, gpio_wan7_ph2, gpio_wan8_ph3,
++                          bcpu_pwr_req_ph4, mcpu_pwr_req_ph5, gpu_pwr_req_ph6,
++                          gpio_pq0_pi0, gpio_pq1_pi1, gpio_pq2_pi2,
++                          gpio_pq3_pi3, gpio_pq4_pi4, gpio_pq5_pi5,
++                          gpio_pq6_pi6, gpio_pq7_pi7, dap1_sclk_pj0,
++                          dap1_dout_pj1, dap1_din_pj2, dap1_fs_pj3,
++                          aud_mclk_pj4, gpio_aud0_pj5, gpio_aud1_pj6,
++                          gpio_aud2_pj7, gpio_aud3_pk0, gen7_i2c_scl_pl0,
++                          gen7_i2c_sda_pl1, gen9_i2c_scl_pl2, gen9_i2c_sda_pl3,
++                          usb_vbus_en0_pl4, usb_vbus_en1_pl5, gp_pwm6_pl6,
++                          gp_pwm7_pl7, dmic1_dat_pm0, dmic1_clk_pm1,
++                          dmic2_dat_pm2, dmic2_clk_pm3, dmic4_dat_pm4,
++                          dmic4_clk_pm5, gpio_cam1_pn0, gpio_cam2_pn1,
++                          gpio_cam3_pn2, gpio_cam4_pn3, gpio_cam6_pn5,
++                          gpio_cam7_pn6, extperiph1_clk_po0,
++                          extperiph2_clk_po1, cam_i2c_scl_po2, cam_i2c_sda_po3,
++                          dp_aux_ch0_hpd_pp0, dp_aux_ch1_hpd_pp1, hdmi_cec_pp2,
++                          gpio_edp0_pp3, gpio_edp1_pp4, gpio_edp2_pp5,
++                          gpio_edp3_pp6, directdc1_clk_pq0, directdc1_in_pq1,
++                          directdc1_out0_pq2, directdc1_out1_pq3,
++                          directdc1_out2_pq4, directdc1_out3_pq5,
++                          qspi_sck_pr0, qspi_io0_pr1, qspi_io1_pr2,
++                          qspi_io2_pr3, qspi_io3_pr4, qspi_cs_n_pr5,
++                          uart1_tx_pt0, uart1_rx_pt1, uart1_rts_pt2,
++                          uart1_cts_pt3, uart2_tx_px0, uart2_rx_px1,
++                          uart2_rts_px2, uart2_cts_px3, uart5_tx_px4,
++                          uart5_rx_px5, uart5_rts_px6, uart5_cts_px7,
++                          gpio_mdm1_py0, gpio_mdm2_py1, gpio_mdm3_py2,
++                          gpio_mdm4_py3, gpio_mdm5_py4, gpio_mdm6_py5,
++                          gpio_mdm7_py6, ufs0_ref_clk_pbb0, ufs0_rst_pbb1,
++                          dap4_sclk_pcc0, dap4_dout_pcc1, dap4_din_pcc2,
++                          dap4_fs_pcc3, directdc_comp, sdmmc1_comp, eqos_comp,
++                          sdmmc3_comp, qspi_comp,
++                          # drive groups
++                          drive_gpio_aud3_pk0, drive_gpio_aud2_pj7,
++                          drive_gpio_aud1_pj6, drive_gpio_aud0_pj5,
++                          drive_aud_mclk_pj4, drive_dap1_fs_pj3,
++                          drive_dap1_din_pj2, drive_dap1_dout_pj1,
++                          drive_dap1_sclk_pj0, drive_dmic1_clk_pm1,
++                          drive_dmic1_dat_pm0, drive_dmic2_dat_pm2,
++                          drive_dmic2_clk_pm3, drive_dmic4_dat_pm4,
++                          drive_dmic4_clk_pm5, drive_dap4_fs_pcc3,
++                          drive_dap4_din_pcc2, drive_dap4_dout_pcc1,
++                          drive_dap4_sclk_pcc0, drive_extperiph2_clk_po1,
++                          drive_extperiph1_clk_po0, drive_cam_i2c_sda_po3,
++                          drive_cam_i2c_scl_po2, drive_gpio_cam1_pn0,
++                          drive_gpio_cam2_pn1, drive_gpio_cam3_pn2,
++                          drive_gpio_cam4_pn3, drive_gpio_cam5_pn4,
++                          drive_gpio_cam6_pn5, drive_gpio_cam7_pn6,
++                          drive_dap2_din_pc3, drive_dap2_dout_pc2,
++                          drive_dap2_fs_pc4, drive_dap2_sclk_pc1,
++                          drive_uart4_cts_pb3, drive_uart4_rts_pb2,
++                          drive_uart4_rx_pb1, drive_uart4_tx_pb0,
++                          drive_gpio_wan4_pc0, drive_gpio_wan3_pb6,
++                          drive_gpio_wan2_pb5, drive_gpio_wan1_pb4,
++                          drive_gen1_i2c_scl_pc5, drive_gen1_i2c_sda_pc6,
++                          drive_uart1_cts_pt3, drive_uart1_rts_pt2,
++                          drive_uart1_rx_pt1, drive_uart1_tx_pt0,
++                          drive_directdc1_out3_pq5, drive_directdc1_out2_pq4,
++                          drive_directdc1_out1_pq3, drive_directdc1_out0_pq2,
++                          drive_directdc1_in_pq1, drive_directdc1_clk_pq0,
++                          drive_gpio_pq0_pi0, drive_gpio_pq1_pi1,
++                          drive_gpio_pq2_pi2, drive_gpio_pq3_pi3,
++                          drive_gpio_pq4_pi4, drive_gpio_pq5_pi5,
++                          drive_gpio_pq6_pi6, drive_gpio_pq7_pi7,
++                          drive_gpio_edp2_pp5, drive_gpio_edp3_pp6,
++                          drive_gpio_edp0_pp3, drive_gpio_edp1_pp4,
++                          drive_dp_aux_ch0_hpd_pp0, drive_dp_aux_ch1_hpd_pp1,
++                          drive_hdmi_cec_pp2, drive_pex_l2_clkreq_n_pa6,
++                          drive_pex_wake_n_pa2, drive_pex_l1_clkreq_n_pa4,
++                          drive_pex_l1_rst_n_pa3, drive_pex_l0_clkreq_n_pa1,
++                          drive_pex_l0_rst_n_pa0, drive_pex_l2_rst_n_pa5,
++                          drive_sdmmc1_clk_pd0, drive_sdmmc1_cmd_pd1,
++                          drive_sdmmc1_dat3_pd5, drive_sdmmc1_dat2_pd4,
++                          drive_sdmmc1_dat1_pd3, drive_sdmmc1_dat0_pd2,
++                          drive_eqos_td3_pe4, drive_eqos_td2_pe3,
++                          drive_eqos_td1_pe2, drive_eqos_td0_pe1,
++                          drive_eqos_rd3_pf1, drive_eqos_rd2_pf0,
++                          drive_eqos_rd1_pe7, drive_eqos_mdio_pf4,
++                          drive_eqos_rd0_pe6, drive_eqos_mdc_pf5,
++                          drive_eqos_txc_pe0, drive_eqos_rxc_pf3,
++                          drive_eqos_tx_ctl_pe5, drive_eqos_rx_ctl_pf2,
++                          drive_sdmmc3_dat3_pg5, drive_sdmmc3_dat2_pg4,
++                          drive_sdmmc3_dat1_pg3, drive_sdmmc3_dat0_pg2,
++                          drive_sdmmc3_cmd_pg1, drive_sdmmc3_clk_pg0,
++                          drive_qspi_io3_pr4, drive_qspi_io2_pr3,
++                          drive_qspi_io1_pr2, drive_qspi_io0_pr1,
++                          drive_qspi_sck_pr0, drive_qspi_cs_n_pr5,
++                          drive_gpio_wan8_ph3, drive_gpio_wan7_ph2,
++                          drive_gpio_wan6_ph1, drive_gpio_wan5_ph0,
++                          drive_uart2_tx_px0, drive_uart2_rx_px1,
++                          drive_uart2_rts_px2, drive_uart2_cts_px3,
++                          drive_uart5_rx_px5, drive_uart5_tx_px4,
++                          drive_uart5_rts_px6, drive_uart5_cts_px7,
++                          drive_gpio_mdm1_py0, drive_gpio_mdm2_py1,
++                          drive_gpio_mdm3_py2, drive_gpio_mdm4_py3,
++                          drive_gpio_mdm5_py4, drive_gpio_mdm6_py5,
++                          drive_gpio_mdm7_py6, drive_bcpu_pwr_req_ph4,
++                          drive_mcpu_pwr_req_ph5, drive_gpu_pwr_req_ph6,
++                          drive_gen7_i2c_scl_pl0, drive_gen7_i2c_sda_pl1,
++                          drive_gen9_i2c_sda_pl3, drive_gen9_i2c_scl_pl2,
++                          drive_usb_vbus_en0_pl4, drive_usb_vbus_en1_pl5,
++                          drive_gp_pwm7_pl7, drive_gp_pwm6_pl6,
++                          drive_ufs0_rst_pbb1, drive_ufs0_ref_clk_pbb0,
++                          drive_directdc_comp, drive_sdmmc1_comp,
++                          drive_eqos_comp, drive_sdmmc3_comp, drive_sdmmc4_clk,
++                          drive_sdmmc4_cmd, drive_sdmmc4_dqs,
++                          drive_sdmmc4_dat7, drive_sdmmc4_dat6,
++                          drive_sdmmc4_dat5, drive_sdmmc4_dat4,
++                          drive_sdmmc4_dat3, drive_sdmmc4_dat2,
++                          drive_sdmmc4_dat1, drive_sdmmc4_dat0,
++                          drive_qspi_comp ]
++
++  - if:
++      properties:
++        compatible:
++          const: nvidia,tegra186-pinmux-aon
++    then:
++      patternProperties:
++        "^pinmux(-[a-z0-9-_]+)?$":
++          type: object
++          additionalProperties:
++            properties:
++              nvidia,pins:
++                items:
++                  enum: [ pwr_i2c_scl_ps0, pwr_i2c_sda_ps1, batt_oc_ps2,
++                          safe_state_ps3, vcomp_alert_ps4, gpio_dis0_pu0,
++                          gpio_dis1_pu1, gpio_dis2_pu2, gpio_dis3_pu3,
++                          gpio_dis4_pu4, gpio_dis5_pu5, gpio_sen0_pv0,
++                          gpio_sen1_pv1, gpio_sen2_pv2, gpio_sen3_pv3,
++                          gpio_sen4_pv4, gpio_sen5_pv5, gpio_sen6_pv6,
++                          gpio_sen7_pv7, gen8_i2c_scl_pw0, gen8_i2c_sda_pw1,
++                          uart3_tx_pw2, uart3_rx_pw3, uart3_rts_pw4,
++                          uart3_cts_pw5, uart7_tx_pw6, uart7_rx_pw7,
++                          can1_dout_pz0, can1_din_pz1, can0_dout_pz2,
++                          can0_din_pz3, can_gpio0_paa0, can_gpio1_paa1,
++                          can_gpio2_paa2, can_gpio3_paa3, can_gpio4_paa4,
++                          can_gpio5_paa5, can_gpio6_paa6, can_gpio7_paa7,
++                          gpio_sen8_pee0, gpio_sen9_pee1, touch_clk_pee2,
++                          power_on_pff0, gpio_sw1_pff1, gpio_sw2_pff2,
++                          gpio_sw3_pff3, gpio_sw4_pff4, shutdown, pmu_int,
++                          soc_pwr_req, clk_32k_in,
++                          # drive groups
++                          drive_touch_clk_pee2, drive_uart3_cts_pw5,
++                          drive_uart3_rts_pw4, drive_uart3_rx_pw3,
++                          drive_uart3_tx_pw2, drive_gen8_i2c_sda_pw1,
++                          drive_gen8_i2c_scl_pw0, drive_uart7_rx_pw7,
++                          drive_uart7_tx_pw6, drive_gpio_sen0_pv0,
++                          drive_gpio_sen1_pv1, drive_gpio_sen2_pv2,
++                          drive_gpio_sen3_pv3, drive_gpio_sen4_pv4,
++                          drive_gpio_sen5_pv5, drive_gpio_sen6_pv6,
++                          drive_gpio_sen7_pv7, drive_gpio_sen8_pee0,
++                          drive_gpio_sen9_pee1, drive_can_gpio7_paa7,
++                          drive_can1_dout_pz0, drive_can1_din_pz1,
++                          drive_can0_dout_pz2, drive_can0_din_pz3,
++                          drive_can_gpio0_paa0, drive_can_gpio1_paa1,
++                          drive_can_gpio2_paa2, drive_can_gpio3_paa3,
++                          drive_can_gpio4_paa4, drive_can_gpio5_paa5,
++                          drive_can_gpio6_paa6, drive_gpio_sw1_pff1,
++                          drive_gpio_sw2_pff2, drive_gpio_sw3_pff3,
++                          drive_gpio_sw4_pff4, drive_shutdown, drive_pmu_int,
++                          drive_safe_state_ps3, drive_vcomp_alert_ps4,
++                          drive_soc_pwr_req, drive_batt_oc_ps2,
++                          drive_clk_32k_in, drive_power_on_pff0,
++                          drive_pwr_i2c_scl_ps0, drive_pwr_i2c_sda_ps1,
++                          drive_gpio_dis0_pu0, drive_gpio_dis1_pu1,
++                          drive_gpio_dis2_pu2, drive_gpio_dis3_pu3,
++                          drive_gpio_dis4_pu4, drive_gpio_dis5_pu5 ]
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
++
++    pinmux@2430000 {
++        compatible = "nvidia,tegra186-pinmux";
++        reg = <0x2430000 0x15000>;
++
++        pinctrl-names = "jetson_io";
++        pinctrl-0 = <&jetson_io_pinmux>;
++
++        jetson_io_pinmux: pinmux {
++            hdr40-pin7 {
++                nvidia,pins = "aud_mclk_pj4";
++                nvidia,function = "aud";
++                nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++                nvidia,tristate = <TEGRA_PIN_DISABLE>;
++                nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++            };
++        };
++    };
++...
+
+-- 
+2.48.1
+
+
