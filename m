@@ -1,153 +1,125 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A777626B0B6
-	for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 22:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745964366; cv=none; b=GCz6Il5jGSd7Mkz+DnNvxzS1EWjhyDfo+PJ8Y2vFt3h7QPn+sSdyRee/LjZ/Pry+XxouNluAcN9G2WakZ6Z1c1iHnhc1F1ZgVe6IxFZ3wri3uVbJTz2kx+B2iEen6g/U+fbgjE2Q5cIxOIbXh7uZcNWMdIEHDYzYr98eMWyhbUo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745964366; c=relaxed/simple;
-	bh=V0MjIrRRnJ7qPEsKlGIcg2Ppi1C1SKM7n+g7Vbf2skc=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B565D26B0B6;
+	Tue, 29 Apr 2025 22:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745964379; cv=pass; b=SzRB64MqdTpmevq8q1YaWAbq/5wIRu5A85LMOTficgrclHAGBYm7fzZ+AYvmQ6ekYSL9H6TpGOiIazu8FgP1O9bosUYXfxaOAsN55jfuxqnT5hFXJ2VxjhraOFKudasm/Zns/CW1jglM6vD2PlluFi86fYOueeTlbTxr+tYInjE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745964379; c=relaxed/simple;
+	bh=MbaXHLoJxArsHCdBOfQEu9DXbsHyT1rVLuVB1Qx+Wt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6ApSqOESn7bmygtM06IaM7jUEjX41PihpB0VK+DXQt6UQEjXjx2OuD6d5sKsw60av4TksJy7ZWLt+du7qrV/gAY8LiPvBAb+Tg1ndl1UMA7EEGbi90bMpXJvms5g6I4Fbml9q0dLGkKngGQnBe2rth0W5zrI5+jb+iiyLBSA8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lPd2kfDu; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJmiU8MSxG8xa+ciNnWtr+E8dco4LWTFHkamZSHUn6VnJQitHHJopLkj3a9iBkMSclwec54OplOAfCV2wzLixGuZv2nJjKFtgHij704hGE0OcsiRuYNM7FmLoc2cax+TYy4EyN6B7bmpTv6NK75qdXBv9B6wRANuVd9dCHo65ZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=GPpnDA0r; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lPd2kfDu"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2263428c8baso84835ad.1
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 15:06:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745964363; x=1746569163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R47AcAvcUPYEXwZnHLXErEx0+JYbAettmKys/t37PLc=;
-        b=lPd2kfDuc9nZmG7xpAUOKMVxZ8EzDzMEgogY3cj6kyJDvQz1bnlw/zjrRDqTiWzupw
-         sFOWMx7C5cF+3EqP0rvBEjBgT8rOHXN+kB8Sch1EpnV/pwBRhQC4/JeQks2mchCwuv5d
-         JI/KxKN9hnBcZ4r7bCxuZ7Pl0FVQ7OJHv6pxjYKM5QVcOsn6W3/uAsUNyXRSBpvSysaT
-         HewnD01tsxuh/2t+h1WogrdylOihu1k40RH28rOmX9XX4mTNK/O2uo8BRs51lZNr9oNB
-         KOu5/YkNmSY7Lk2JGJ05sgkiSxyFCb60aH0+XynzQlXV4PMTAEMasYtYqotspOfx5LGL
-         Sn3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745964363; x=1746569163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R47AcAvcUPYEXwZnHLXErEx0+JYbAettmKys/t37PLc=;
-        b=tHCQFOz27qCFkKCMXHRb/SOOxT8zcKqcuK+EjkmeJlAjrg0Aq5OrSlkPJnuwGW58z4
-         ljtartnc3/wEKc/2QCTIyN0QyNTKP9RZ/WbOHRY9/E4olx8y0I9V8MjpqraYsuntLfSr
-         NRA5wN/Yk1FS4giIh6ceKYxr3VPI+PcL5Zyqs1LPbEhe3XJ5nwJUslobyxzM0/NlEJ+P
-         ZrkFY6cPHVzAdoqqE8XLyvNVnqwVMO5xTLo+d79bUmGDj3vUfQZ2xHyyS4BQPRI+2JNd
-         A9hnQUfibiVx+rRlVDNh9ucgZgeaUBwDhOXBG3GjxN6nLtqkMXUef/2qswSza/kKruvx
-         holA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0nUMMiJf4UJXcv9ZnrYkwB2Eem8G63mfGrU4q6sjpSrWb81ttsR1bnYIyY4tpjDx7Sxqtr0mMPWhvnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzHj5wWklmFs1Lzr+NiaeXCHGk1pJE6o6tA+5FOE6o4iBB1lNV
-	9OF98y9jIgVOl8h3eM/LHvjyUA7v79r+Q6Yowzj0FF9D+mUvMVTqSFxhpPkBqw==
-X-Gm-Gg: ASbGncvrS89xZy6j9Oqws7wocjSGvtx4JbYXVLyQLJzjQoeRG2kMMyOc168xmBgesTj
-	TGcPI73ZQ2MhkuAmyIt/DeMGTH7PZ7LAaTEQXeaTyPM8TUEARPU4ca6+8GocMh0sNNRYDovfM1N
-	qE8k3N5CyjieIiInMB5smUTTli0G14uI/x4sYPnL+UUtv7N1/lg1ovl9fuQziOzUBmR3udlHjlv
-	iCugxmZ8bu8l+QoU4LtGKhzHy8VMnEf69Q7hyw4p10WX7UGFDwauB8iJnqAgTEokZY4zIM8a1JL
-	PNArnLTRbuhfYT6wWpGS7PBe4lwO13o7bYQS+yDPF6I72QFyHd0gVhiaskYRNT7LdOXk/Q3h
-X-Google-Smtp-Source: AGHT+IH6piFbPZPJtlfgLIuHdj3oSeyNguwt8iF17ao/opI6U18w7y2m7t4fquT0Dch2XSA/jTVSww==
-X-Received: by 2002:a17:903:41d1:b0:21f:2ded:bfc5 with SMTP id d9443c01a7336-22df4076324mr1004945ad.28.1745964363012;
-        Tue, 29 Apr 2025 15:06:03 -0700 (PDT)
-Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5100aa7sm107720575ad.161.2025.04.29.15.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 15:06:02 -0700 (PDT)
-Date: Tue, 29 Apr 2025 22:05:52 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 19/22] iommu/tegra241-cmdqv: Simplify deinit flow in
- tegra241_cmdqv_remove_vintf()
-Message-ID: <aBFNQFVbxyr596gB@google.com>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <7c180fb751def39cbc8634b08b65c3f26ad73833.1745646960.git.nicolinc@nvidia.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="GPpnDA0r"
+ARC-Seal: i=1; a=rsa-sha256; t=1745964350; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CxH5FmnYt3jz34p54uFpXpdabkd4YQ//oGr+UBOlF91tdO8gTrTfIZHHiQIDp92s2zi7FSDOKe725JtGQWVaIow/R+X0fseqw27HKAo9Jblqj1/s/nUv2LQB3gRiH+kAQNrXjHXiZ6a+FAaBmOVd500S3DbhCzvddqNlOx2++3A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745964350; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KdFbTJ+DPzwXoDMuxfaNe7+vTjaQwFbN5rPgO6uNUDQ=; 
+	b=gsjx/NXrH5THERaLwleLVBMeR1l0csvylt2I28yZyggmN+vWLaYEwBAxw20zf0Prcu/5s0K3tU/K5N0h2UzZXDWy50S5S38YzFs+gy9324Uq8YtMDyAIeAG3qpUTZESJIvjkpw3+LILBINOp890No81Rygv5VehlPIb76EHutYg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745964350;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=KdFbTJ+DPzwXoDMuxfaNe7+vTjaQwFbN5rPgO6uNUDQ=;
+	b=GPpnDA0rt1h6eg8FfBWhcMkPCLCwP7qHhWz0tDSeDhKDa6J/P/BxfKn4QpJj9eDs
+	qjKb9mReeyULz1OYiSSbVKFbdpNRhRB6BWBC8v/6YogjX7PdjqHUtrWz3KqCFRGbs2a
+	3/HIvCbrr90LXCYcaXGzPVNcMzG2K0WSBLU4yJLE=
+Received: by mx.zohomail.com with SMTPS id 1745964348503182.07787205987552;
+	Tue, 29 Apr 2025 15:05:48 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id AF3A5180D2B; Wed, 30 Apr 2025 00:05:43 +0200 (CEST)
+Date: Wed, 30 Apr 2025 00:05:43 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Aradhya Bhatia <a-bhatia1@ti.com>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] power: supply: Add driver for Pegatron Chagall
+ battery
+Message-ID: <uem7xcvoqaezqdagp5afdahpkbadyt2xplzq2vgj7rtkb3o2ty@stxwmj5rlhsc>
+References: <20250429061803.9581-1-clamor95@gmail.com>
+ <20250429061803.9581-4-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="derrf7u7tiethnp7"
 Content-Disposition: inline
-In-Reply-To: <7c180fb751def39cbc8634b08b65c3f26ad73833.1745646960.git.nicolinc@nvidia.com>
+In-Reply-To: <20250429061803.9581-4-clamor95@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/245.962.17
+X-ZohoMailClient: External
 
-On Fri, Apr 25, 2025 at 10:58:14PM -0700, Nicolin Chen wrote:
-> The current flow of tegra241_cmdqv_remove_vintf() is:
->  1. For each LVCMDQ, tegra241_vintf_remove_lvcmdq():
->     a. Disable the LVCMDQ HW
->     b. Release the LVCMDQ SW resource
->  2. For current VINTF, tegra241_vintf_hw_deinit():
->     c. Disable all LVCMDQ HWs
->     d. Disable VINTF HW
-> 
-> Obviously, the step 1.a and the step 2.c are redundant.
-> 
-> Since tegra241_vintf_hw_deinit() disables all of its LVCMDQ HWs, it could
-> simplify the flow in tegra241_cmdqv_remove_vintf() by calling that first:
->  1. For current VINTF, tegra241_vintf_hw_deinit():
->     a. Disable all LVCMDQ HWs
->     b. Disable VINTF HW
->  2. Release all LVCMDQ SW resources
-> 
-> Drop tegra241_vintf_remove_lvcmdq(), and move tegra241_vintf_free_lvcmdq()
-> as the new step 2.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+
+--derrf7u7tiethnp7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 3/4] power: supply: Add driver for Pegatron Chagall
+ battery
+MIME-Version: 1.0
+
+Hi,
+
+On Tue, Apr 29, 2025 at 09:18:01AM +0300, Svyatoslav Ryhel wrote:
+> The Pegatron Chagall is an Android tablet utilizing a customized Cypress
+> CG7153AM microcontroller (MCU) as its battery fuel gauge. It supports a
+> single-cell battery and features a dual-color charging LED.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> index ba029f7d24ce..8d418c131b1b 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> @@ -628,24 +628,17 @@ static int tegra241_cmdqv_init_vintf(struct tegra241_cmdqv *cmdqv, u16 max_idx,
->  
->  /* Remove Helpers */
->  
-> -static void tegra241_vintf_remove_lvcmdq(struct tegra241_vintf *vintf, u16 lidx)
-> -{
-> -	tegra241_vcmdq_hw_deinit(vintf->lvcmdqs[lidx]);
-> -	tegra241_vintf_free_lvcmdq(vintf, lidx);
-> -}
-> -
->  static void tegra241_cmdqv_remove_vintf(struct tegra241_cmdqv *cmdqv, u16 idx)
->  {
->  	struct tegra241_vintf *vintf = cmdqv->vintfs[idx];
->  	u16 lidx;
->  
-> +	tegra241_vintf_hw_deinit(vintf);
-> +
->  	/* Remove LVCMDQ resources */
->  	for (lidx = 0; lidx < vintf->cmdqv->num_lvcmdqs_per_vintf; lidx++)
->  		if (vintf->lvcmdqs[lidx])
-> -			tegra241_vintf_remove_lvcmdq(vintf, lidx);
-> -
-> -	/* Remove VINTF resources */
-> -	tegra241_vintf_hw_deinit(vintf);
-> +			tegra241_vintf_free_lvcmdq(vintf, lidx);
->  
->  	dev_dbg(cmdqv->dev, "VINTF%u: deallocated\n", vintf->idx);
->  	tegra241_cmdqv_deinit_vintf(cmdqv, idx);
+>
+> [...]
+>
+> +	cg->white_led.name =3D "power::white";
+> +	cg->white_led.max_brightness =3D 1;
+> +	cg->white_led.flags =3D LED_CORE_SUSPENDRESUME;
+> +	cg->white_led.brightness_set =3D chagall_led_set_brightness_white;
+> +	cg->amber_led.default_trigger =3D "chagall-battery-full";
 
-I don't have access to a HW spec to verify HW behaviour, but the changes
-make sense to me.
+^^^ I fixed up the typo while applying.
 
-Acked-by: Pranjal Shrivastava <praan@google.com>
+> [...]
 
-> -- 
-> 2.43.0
-> 
+Greetings,
+
+-- Sebastian
+
+--derrf7u7tiethnp7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmgRTSwACgkQ2O7X88g7
++pqEhw/+IwFRgtxVJelx1FT74sLgxKIYg2FTtDpPy/NaeX2hYC7hLAHKX/DGf5BJ
+po+IXI3KVaSEfRgq/QoIvvjIqTDuQYF9EuQpjhZghr+V0lHNRmOoDAaGSofRdHP4
+LznDh3ITORxtTz4yYTZVR/Z+uN+R++LPoKxCbaX2u1+aqnJDZzI4C+56yfhGyubG
+E9KOCCVkXxMmEqTkZJ8yviX3pead/oGBaKi4e1EdB4FaLgBWam766D/dbKhIHZ2F
+K/JKaj1llKip6jByFXadPlskdXhYUDu1kqgZNMylD7eC6olauWvKsaMmYSnkoNfP
+nTp1EWHCDnkcdTRmOWsvX4071Y5y1y64+MIK3vFP3ptjNIsdFFvLS/X8Opf4itJE
+z5dmXDI0TYY6i0wrpvw5eD61kqvDDwfzANZQ8AOS6k26tzmBSrhDDADCIuyJaEqL
+7Buj2zryA1tlutViQ7W35KmS7bs8sy6YNQBUa0N2iF4MHb9194d/OY43E6AgNlmK
+/aRPEHTzsG0k4ex1hSQBmh2kgVUOif4L+vFzcVN5pac+DexyeEcmBcKsp9zzzQcI
+ZWbirKXypRJjCFz8AgC7Rn9YnkW2d/OM/NrkNhTtaFN+bQmrmIB9UrowVbv+Ma5d
+wMON2BI9alM7jeGLH8n5V/f26DeN4s3PxbGm8/c//Hz7/Ov8pzY=
+=okJ9
+-----END PGP SIGNATURE-----
+
+--derrf7u7tiethnp7--
