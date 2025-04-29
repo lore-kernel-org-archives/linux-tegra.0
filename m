@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A7425E450;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AF125E47D;
 	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745962427; cv=none; b=dyCMYdQAxkeW6XTutY3RKX1hiUY8c9gJoOx+Lr7YJQG+9D6p3B3K7yi9R2LhgmT1EuayE9zDSnddnC/PuSDdCZ3fSRcAilJgPd3fRWRBFeTUaZczbsRnhY1aMemg1Nv2k3qCEw+Xzv/b5AXEXItie7sEPwM3TQW9Gb5DvdV4tL0=
+	t=1745962427; cv=none; b=SeCP0HyrOn0B8WpDSgf84lhQK0CgWNHZUxQwfRS9X4miSZRkDGQ8OnzgFT8i+pEOCDwxnf1x2yeFHLif9acgI8yci3LIVXipKo7Jx1mjAIoAmWKkAOt/JzllxQoNgwyGGiFytLmLULW+CJ9glfybdxJBSuGT1+PrOGkrokZkjyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745962427; c=relaxed/simple;
-	bh=sqgl5y8PVkwCo9nS/VR1ZpFSL6mY1lIOi7iBfe47K3E=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BvJ2NwFkQhqgwolpa/9FSK8zOu0jG4At3/qWUA+ZwvMb0HGkjSO8gjM9XVm1r96D045F0gID9JQjDGwVuvrnN5oIKnIr27dUxwPhPa4jOrlWQg8p8KlSdxLh5YVcIdxChcELbJi6vl1OwV3sR8TLnhKoCkfq2OKx+eyEy9g15gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJWjBJhL; arc=none smtp.client-ip=10.30.226.201
+	bh=TCAoEH6w3IlwJVDcE+8zZX58CauilAlUMkvXHUu/S50=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CMoCSVy+wAQ2U+W+cIK5TmMlQcvuZuABuSrsCMPvtM0466EKtPsH8NroZAxTPjbNTuy+eNYsx/OsPnM7JAyQDZNTUdhM6HHtPYq97HzSkI46KSeZRGiDNrLbzAkuD82a3QKY8Ki8Z2/koKzA9U2AnaYEp7wYeNj2xmCDx2MfGk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EV9jhv1/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJWjBJhL"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 51B9AC4CEE3;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EV9jhv1/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6B0A9C4CEEA;
 	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1745962427;
-	bh=sqgl5y8PVkwCo9nS/VR1ZpFSL6mY1lIOi7iBfe47K3E=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=uJWjBJhLgqgAq3KyfWA4iQ/y64zfVdFTV/DQxIcFmNyFI2OM7/YO54iiOB9Qs4mYz
-	 TtDUXIyu0moBh/E0YwfKKmUw1NehYSER8kFxXz6jB7XPWAug+bUsOomYqfL1gJcxQo
-	 N+1ghTXEFhzew73hoqSFcF125Du+8Ky2ecs2cEX2ncYKafJHTu9sZ/Y5s6I0PhbLgD
-	 ntzUE8pJN8HuLly5aSCkYVdsXNb0uuq0TIFNbFFYV81H85hDPjpjL8jcTSN3BoWOvX
-	 AI6hararlfwzPnfcKQYoVdIzaX+nBceCoMXaDboibrjrKZ29boG1dfTlsdv2BTMiAS
-	 7Ams1W7gJMGNw==
+	bh=TCAoEH6w3IlwJVDcE+8zZX58CauilAlUMkvXHUu/S50=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=EV9jhv1/NTFT5zWWzTFT+eD29fdPzGtNGQA+/M6IwYd44/cHcMyOdXu9TsCcVdmaM
+	 Q699eJe/Bw9w4FlSuFiYGxxXJPxSgNvOGSkFvaJojY1PkLosYVzoeZE3hs/2FQtr5b
+	 dpmNTS8UpUYhb+Jhb8A4c0MNpVCTBnZ9z/TmzNhYqArkr2M5IkRisLiZZXNh6IubJS
+	 gaYTRygo7RU1Gw0UTfFrGIfdUOyGDEGyQheZZBWLQ97fjEzO++DzuAgA/tMuO8zLBr
+	 618SW+3nnmTyZdlVpbRCQP0nHPLFyMxZNKd8RXHiJ75eYC230WkYMNY5kayTlm8T5A
+	 tEY97JPB6Rv8Q==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D344C3ABA5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D077C3ABA9;
 	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH 0/4] pinctrl: tegra: Add Tegra186 pinmux driver
-Date: Tue, 29 Apr 2025 16:33:29 -0500
-Message-Id: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
+Date: Tue, 29 Apr 2025 16:33:31 -0500
+Subject: [PATCH 2/4] dt-bindings: gpio: tegra186: Add gpio-ranges
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,10 +40,9 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKlFEWgC/x3MQQqAIBBA0avIrBO0UKSrRIu0sQbCYowIxLsnL
- d/i/wIZmTDDKAowPpTpTA26ExD2JW0oaW2GXvVGDcrJGzdetLPyohRuPqQ1OkbvPTptoWUXY6T
- 3X05zrR/vH5J7YgAAAA==
-X-Change-ID: 20250308-tegra186-pinctrl-651ffbbbe816
+Message-Id: <20250429-tegra186-pinctrl-v1-2-722c7c42394e@gmail.com>
+References: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
+In-Reply-To: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -53,11 +52,11 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745962426; l=1088;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745962426; l=832;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=sqgl5y8PVkwCo9nS/VR1ZpFSL6mY1lIOi7iBfe47K3E=;
- b=82IwiueRLIua0SuZBRzUSmXl81Zbv2b6djBSxHxKnI8T6smApO86ykTTBxfRIbDo3CWdWaQnn
- Rgx+JNwb27wBcGEP1lIIXapKtz6Fm9bK5pOrMWtsDNSV0qZaNfcKb6f
+ bh=Wl311uxZwU0cPpD42k7mMpBtBfmhP2gvdwX4d/QrBw8=;
+ b=EyJ3/CJnhzAuVJWSJI2G7LrgO6QcbHlVkZ6h6DfEgvgUXROCOOpDiVgLfGn47OLvE1x/JFs2D
+ uJIOiGc9cqdCzglXLHOFqTJog5uWX5SKvnNkvvwibNm01ulHiKKvJ7r
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -65,31 +64,31 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-This series adds support for Tegra186 pin control, based on a downstream
-driver, updated to match the existing Tegra194 driver.
+From: Aaron Kling <webgeek1234@gmail.com>
+
+Add optional gpio-ranges property.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
-Aaron Kling (4):
-      dt-bindings: pinctrl: Document Tegra186 pin controllers
-      dt-bindings: gpio: tegra186: Add gpio-ranges
-      pinctrl: tegra: Add Tegra186 pinmux driver
-      arm64: tegra: Add Tegra186 pin controllers
+ Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
- .../bindings/gpio/nvidia,tegra186-gpio.yaml        |    3 +
- .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   |  285 ++++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   12 +
- drivers/pinctrl/tegra/Kconfig                      |    4 +
- drivers/pinctrl/tegra/Makefile                     |    1 +
- drivers/pinctrl/tegra/pinctrl-tegra186.c           | 1784 ++++++++++++++++++++
- drivers/soc/tegra/Kconfig                          |    1 +
- 7 files changed, 2090 insertions(+)
----
-base-commit: 1110ce6a1e34fe1fdc1bfe4ad52405f327d5083b
-change-id: 20250308-tegra186-pinctrl-651ffbbbe816
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+index 4ef06b2ff1ff04c38801b621b8e9be2ed749861f..065f5761a93f61d6b2c501102eadd492026a64d0 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -111,6 +111,9 @@ properties:
+ 
+   gpio-controller: true
+ 
++  gpio-ranges:
++    maxItems: 1
++
+   "#gpio-cells":
+     description: |
+       Indicates how many cells are used in a consumer's GPIO specifier. In the
 
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+2.48.1
 
 
