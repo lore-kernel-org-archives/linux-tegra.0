@@ -1,62 +1,62 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBB2472B9
-	for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 18:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B61E2512E0
+	for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 18:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745952264; cv=none; b=VWiGtubteo24k7WrnA8Qxh/8oG55RjmVu6RhpNCYBY4s0QTG1AXNOcZ+L6RmtFYG1pvf0rIf1H13r9FuJhx3JhoQu/lZ80cIFBdlFh2DrK0jhiFE9sFIhpOxW5uHhtSIUOYVk5lM99jL3AqR1IxiKIAn2MW3CYGtlbynEXDhpyo=
+	t=1745953064; cv=none; b=eliFr6Zbbau3gZDWHjpQQc29sy8r6QxkRxGKD8p5Ys7gG/9WrlT/jRgBqZx/1UGifXnxIbDWFPrGEGZ6AWQVE/9DHCzbPafahsSeYdxMcG2VxWRBFRD0BcpsqRYz+hrmBr9spjUWXFeabLqpfVssbh0LMrPPEM1gNv3G4O6aRcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745952264; c=relaxed/simple;
-	bh=Yd+fxjsRydFKjO90TX3Imy2H/CCh7glVFS4yzzIbM64=;
+	s=arc-20240116; t=1745953064; c=relaxed/simple;
+	bh=neW8JICaEEWUIk+9rBwbn5iIXjtiSl0sUhd8RTSSX8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cv0upAuBcMKRtxC2H5x99nWZC/IupMC3NdQ33KZKpc7e8bWQw12eo5wCXyts5/F72N7vyjUP1QdoSX7lo42Do1F7RdyaFwdxfX8LsCVnVLo8TcJHZ7oqQiL4OLRV73+Ez81mbop9XDlFOfzmyKpIndJnQbKzY666WZ9eoIDYlTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vUEESBuw; arc=none smtp.client-ip=209.85.214.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEnG5OTA3XjZQyPYxKD0A9xR44bTdNlZxFaVc0Nd9v9xaFmFiRVEqOp/lh/0mjUPhfgfT7H/1OsktcZXUa4hGLgyq580cVAeJweBfNrCb0S8OI2Cx2h21xjT8LiNq/caWE+HogV6n2c2iyQlBhNgs4fWPkPJm/Vlh5kDI5KUxjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=op5DRgX/; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vUEESBuw"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2240aad70f2so209665ad.0
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 11:44:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="op5DRgX/"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2242ac37caeso53795ad.1
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Apr 2025 11:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745952261; x=1746557061; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745953062; x=1746557862; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbAOOUKsalrnyJTM4wor6y5G5I8sKroNDDc7YCgeN4g=;
-        b=vUEESBuwa2AFOvYPkM/3rpp8OuxqK3wanYiyIyw/DVGQgQD+5BjpaVqNrlXb8y1r5f
-         1oJ8sPKbPDFBG5qwH+D2ITRFzDK5KiNl7jJ8SsAEDEOgyJfByZW3ZAcV/b5H7nnh6IPq
-         Zwm1nzUAq5TMicigxxyCZY4WNgv15d0KIDZT1ChK6eLviB1nrFPZpdTAeFzFyWXDdGJ0
-         uqME84iLJ/vC/fu5XWbiIgkLjZW/XjSQkAMIyd2D9dNrBxDwlMPnhnyJzF5YJHLkPTTC
-         MevgqxQta010BKpqs89wjiYVX3TrxUM+g3/2mF0lpXvEoiqxos1YEVKvcmgn/ssMpf0j
-         o2iw==
+        bh=fdXV/8C/yQUJ8I+wtd2Z/G5iaXapJqIY6nj11Km1s7M=;
+        b=op5DRgX/KaTY0NxUnn1fFffmY3C5vo109AmUOlkmp/aWk0wZX6s7lJqDiczqtZL/bx
+         7d39aHojvWbM0l5hLfjDnSxqbnfnBkL2usFyFye0UyGQ8UsP0Yuz0H6eMk81criVqZsm
+         5l0QxzQ7+oxC3H/8d/IcT7N/fO5CGtl15LV3q0wypcVUD9HRhfyJEtSW0U2AkSRBSNsD
+         yseE9LRvUA8H9McpFjWOlUkNCX/93FsFSHd3oPUlkLyaFpHH2HEVrnCWQkw3/rPaZxJg
+         HtRETnh/oOboFCUhSrxzcWGh+IIB7lbuag/LlUf9kYGroHzOpRrhUUraqvTcZrfYs71a
+         ueTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745952262; x=1746557062;
+        d=1e100.net; s=20230601; t=1745953062; x=1746557862;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RbAOOUKsalrnyJTM4wor6y5G5I8sKroNDDc7YCgeN4g=;
-        b=ktnYThDfQQtvLlX3j7UK6iBsWAQtvBTRBoSERltwwtBE1YQM3J7em9bNLk/v52lCR5
-         LOCmH2Y6zTStSuTl3CpiP0hZ9LluY3KX7eBZTWjnDGBbuBPCEWp6I1eQa0EdgdTWmSr2
-         Ef3Po6fUoqMCyp8aaV+D7+yhID6Ro4rJWpsNz8BfgUWp0VLoxBWMHBkl9858rO+H89+M
-         X9k8yhE0tgQ3g3VmqwETmdMZDWa8+iGtPPPTRnVeFAM4zZO9g8+fharTb4ZRAHAhT+YO
-         dlHWCN22HRg+2wbu26HxOptysditlSSjNxCJ19odxotKUePH/m6QJKfZ+h8YYpgLewx1
-         8lJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaqThJyZZsZERvxOuoh7DF2ZvJgkPVHt80pDwNg7sRXHkfx0l30BGo7MRXW9wtHSWOZ3tSSty+Q1Ifvg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjhPaB27apZpuJVO4Ju0BGKfa5KojU4uQV4w7YDasVcy5w39Xs
-	CEgIVufFnCSyuoY+4AanP3oQ1qgzAmL+SGy+7PLGYzhGTmhHpg9kY8YIrZxnHg==
-X-Gm-Gg: ASbGncvbG4UZK+GX4LlmlyCumwTqi9he7R1leXctvmkVzNYSYmSOF38fDEj1K1ShSXx
-	vaKSyO5Umm+K7FeWi6vmCmXKZcPKPCQR87z7fRcqSrPO/moF3s4KDaymhXijeFU6f7wUtf0R4TL
-	D3FQysRltJselo699qLsePpPFCu4az4P5hXIuhU2Wd1zRV6+IHGgzvA3e+CNi+Zx7dNg/IxR+sX
-	1FXpu4hfskdykxywbPqvpQGcBNPWl28dxY1WpzGg91gJCvW+6xbKrOeMiA2JUiBwcgigrwy2aLg
-	2podeyIZWC56/jnQtmXTe2ZThMetcnl9v0+oExI1eoAmzJ2RTXazGk6NphXkSQlrH1Iu/wiJ
-X-Google-Smtp-Source: AGHT+IHAAAZnrzfCTnyRFSrfgzM7EUKVTFf0g+y/q4rYabIT5b7Fav3BwFROBr2u073eUGpUmQ9SUw==
-X-Received: by 2002:a17:902:d2ca:b0:216:21cb:2e14 with SMTP id d9443c01a7336-22df41fb4admr245055ad.21.1745952261334;
-        Tue, 29 Apr 2025 11:44:21 -0700 (PDT)
+        bh=fdXV/8C/yQUJ8I+wtd2Z/G5iaXapJqIY6nj11Km1s7M=;
+        b=vsboj1bt6HG+zrDVd0zausjpYaYFg/xeaGAkSiysgWTUlr/07fwBSkux/dJosrwDOg
+         WTvYtytkaalgrDgs0MRRUkgpECtMLVr0VEf0zacOYodBhdPIkD4YD0v0o95y0IytCmKZ
+         EM8AoK/3tFX2ugFZg76j27E6usARUwh5z2NPhfWCCcziQAyu3JCVrbokwWnQmea5L7xU
+         9kMy4hC+OZ4W0vIUSrkgI7bfhEW7FpSCCNd4RSTVPodOOELslSMVALPOUiC+GOqoYMHQ
+         ZV+eT2qXc3Fn8XfaDEaagnrCnhbDkoj1q09rCUmK3pX49rTt/9YGdL9Yr+FmCsMvljxI
+         yVog==
+X-Forwarded-Encrypted: i=1; AJvYcCWAdhIl7b72mGOZK5qGuIWMRD0p14W0tcNy1HldFRwu7B0fdWBn5uZWrONBJY83DbsjXGxRkKyjgGmXUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa3HRnZAxZ3u4XJtE8MrJILKOcUp4ip373Hs+ZHxzYVmVvMXbv
+	aiB48RW0PyDiegQfzw87kpru9I8uIERJMWby2xfsNSrwfRFCiJDfyMcYQYKebQ==
+X-Gm-Gg: ASbGncs1LasYz19Rl1eAGKpSl2HcMJ83NeE78p32F+zldbeQm9bB1qvHCcG3QO/lrQu
+	iDPASeE13Ir75l4wRnPnx507daN+rtP6ChIvqlc00MOQmuRwIgE9WrsjDVRTR3mj0Hpx/ic34bu
+	AYcboySUpZ1URs89nASsyx9YbcaNyljJeJcpDyJzP4NlZMPMFzB2tDQaxEsNaOpbNCyMVP2KNQ7
+	IgK+vz8mSOHH0S1k1UpXo4euxYlhDrMSsDL34dxApbjTJXoAOhkGT4euxNBPdD+IhLu4uNX3Xcp
+	OJldGd8mxfq+LJFtUwijeHbDtTxXRK8rISHInxw+AnVsmiyhtug/LYKhruDa9ZkDnZa+ZycX
+X-Google-Smtp-Source: AGHT+IGgXGpqrHCfuif7QcKDzCUp9vTefuXFD3aLx4LdLjCaDTVmYgt+1uOwojrpCvF02XNkiYlVaw==
+X-Received: by 2002:a17:903:248:b0:215:7ced:9d66 with SMTP id d9443c01a7336-22df3f77b8cmr333515ad.10.1745953061819;
+        Tue, 29 Apr 2025 11:57:41 -0700 (PDT)
 Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-740399415bcsm362b3a.73.2025.04.29.11.44.15
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef097e0csm11594174a91.25.2025.04.29.11.57.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 11:44:20 -0700 (PDT)
-Date: Tue, 29 Apr 2025 18:44:10 +0000
+        Tue, 29 Apr 2025 11:57:41 -0700 (PDT)
+Date: Tue, 29 Apr 2025 18:57:30 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
@@ -69,15 +69,16 @@ Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
 	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
 	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 11/22] iommufd: Add for-driver helpers
- iommufd_vcmdq_depend/undepend()
-Message-ID: <aBEd-kacX84dkUuf@google.com>
+Subject: Re: [PATCH v2 10/22] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
+ ioctl
+Message-ID: <aBEhGmoh0E865PxF@google.com>
 References: <cover.1745646960.git.nicolinc@nvidia.com>
- <a25c9454c17663f9e79b37bc2908bf3a99856be6.1745646960.git.nicolinc@nvidia.com>
- <aBDIpz7w8wxIn_AF@google.com>
- <aBEIBKdjuecVHgpU@Asurada-Nvidia>
- <aBEThP2Bn0YDgXfu@google.com>
- <aBEVboMt0OtZmt4Y@Asurada-Nvidia>
+ <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
+ <aA_0TV0RkVOHk7Qj@google.com>
+ <aBAEuP9962XweHPc@Asurada-Nvidia>
+ <aBCNkcLp6XZpjYYT@google.com>
+ <aBEWFw2wq40SHjTn@google.com>
+ <aBEXJFnLalIh788i@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -86,71 +87,39 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBEVboMt0OtZmt4Y@Asurada-Nvidia>
+In-Reply-To: <aBEXJFnLalIh788i@Asurada-Nvidia>
 
-On Tue, Apr 29, 2025 at 11:07:42AM -0700, Nicolin Chen wrote:
-> On Tue, Apr 29, 2025 at 05:59:32PM +0000, Pranjal Shrivastava wrote:
-> > On Tue, Apr 29, 2025 at 10:10:28AM -0700, Nicolin Chen wrote:
-> > > On Tue, Apr 29, 2025 at 12:40:07PM +0000, Pranjal Shrivastava wrote:
-> > > > On Fri, Apr 25, 2025 at 10:58:06PM -0700, Nicolin Chen wrote:
-> > > > >  /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
-> > > > >  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
-> > > > >  				       unsigned long vdev_id)
+On Tue, Apr 29, 2025 at 11:15:00AM -0700, Nicolin Chen wrote:
+> On Tue, Apr 29, 2025 at 06:10:31PM +0000, Pranjal Shrivastava wrote:
+> > On Tue, Apr 29, 2025 at 08:28:01AM +0000, Pranjal Shrivastava wrote:
+> > > On Mon, Apr 28, 2025 at 03:44:08PM -0700, Nicolin Chen wrote:
+> > > > On Mon, Apr 28, 2025 at 09:34:05PM +0000, Pranjal Shrivastava wrote:
+> > > > > On Fri, Apr 25, 2025 at 10:58:05PM -0700, Nicolin Chen wrote:
+> > > [...] 
+> > > > > IIUC, one vintf can have multiple lvcmdqs and looking at the series
+> > > > > it looks like the vcmdq_alloc allocates a single lvcmdq. Is the plan to
+> > > > > dedicate one lvcmdq to per VM? Which means VMs can share a vintf?
 > > > > 
-> > > > If I'm getting this right, I think we are setting up dependencies like:
-> > > > vcmdq[2] -> vcmdq[1] -> vcmdq[0] based on refcounts of each object,
-> > > > which ensures that the unmaps happen in descending order..
+> > > > VINTF is a vSMMU instance per SMMU. Each VINTF can have multiple
+> > > > LVCMDQs. Each vCMDQ is allocated per IOMMUFD_CMD_VCMDQ_ALLOC. In
+> > > > other word, VM can issue multiple IOMMUFD_CMD_VCMDQ_ALLOC calls
+> > > > for each VTINF/vSMMU.
+> > > > 
 > > > 
-> > > Yes.
-> > > 
-> > > > If that's right, Is it fair to have iommufd_vcmdq_depend/undepend in the
-> > > > core code itself? Since it's a driver-level limitation, I think we
-> > > > should just have iommufd_object_depend/undepend in the core code and the
-> > > > iommufd_vcmdq_depend/undepend can move into the CMDQV driver?
-> > > 
-> > > The moment we added iommufd_object_depend/undepend, we already had
-> > > a blur boundary here since we had no choice to handle in the driver
-> > > but to ask core for help.
-> > > 
-> > > The iommufd_vcmdq_depend/undepend is just a pair of macros to help
-> > > validating the structure inputs that are core defined. It is quite
-> > > fair to put next to the raw functions. I also had the notes on top
-> > > of the raw functions suggesting callers to use the macros instead.
-> > > 
+> > > Ack. I'm just wondering why would a single VM want more than one vCMDQ
+> > > per vSMMU?
+> > > [...]
 > > 
-> > Well, yes.. in that case let's call the macros something else? The
-> > current names suggest that the macros only setup dependencies for vcmdq
-> > and not any "two sibling structures created by one of the allocators
-> > above" as mentioned by the note. Maybe we could rename the macro to
-> > something like: `iommufd_container_obj_depend`?
+> > I guess the only thing on this patch from me was to understand why
+> > would a single VM want more than one vCMDQ per vSMMU? (Just curious to
+> > know :) )
 > 
-> That's the intention of the macros: to validate vCMDQ structure
-> and help covert a driver-defined vcmdq structure to the required
-> core field, as we only have vCMDQ objects using them.
-> 
-> If we have use case for other objects in the future, we should
-> add another iommufd_vxxxx_depend/undepend macros.
+> It gives some perf gain since it has two portals to fill commands.
 
-Thanks for clarifying the rationale behind the VCMDQ-specific naming.
-
-On the point of needing new iommufd_vxxxx_depend macros for future
-object types, I don't think that would be required because the current
-static_asserts within these macros validate the container->member.obj
-embedding pattern, not the struct type of the container itself which
-makes the macro logic inherently reusable for any other object type 
-that adopts the same embedding.
-
-However, if there's  a strong preference against making it generic,
-I don't have any issues since we only use it for vCMDQs right now.
-
-My main point was to keep the core code seem generic to aid other
-implementations in the future... today NVIDIA has CMDQV, tomorrow maybe
-someone else would have something for vdevice or something. Anyway, I
-don't feel strongly about this. Just trying to help :)
+Ohh! I'm imagining concurrent invalidations / commands! Interesting!
 
 > 
 > Nicolin
 
-Thanks,
+Thanks!
 Praan
-
