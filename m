@@ -1,157 +1,364 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97AC29D0B
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Apr 2025 17:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120612983F4;
+	Wed, 30 Apr 2025 17:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746033868; cv=none; b=GFqAGDU5/8JwCjAIGB6KRGakeTBpKRedFBcbzpAW3WTYZE033ksr7z6VOb0TzvQAWZU8uE6sT8g4XQyBekLEKlQQNUavR0Rh5U+9uiea9fn84ATDxOQY3vplqyCY8D9RWLPleE1O6bp0XTtnmN9P1XK8WDKrjrTicF88mDC83DE=
+	t=1746035537; cv=none; b=Do3tuV7Iop+NlQ9VwPBE3dNOSRtLLx9GYigIyaP0LMOxa/Xc/u3FPpbNFfLZvtkt8ydfY6ulv+alPJ/cwd18yDl1O0fIM38bK7SDqSzngv9e22xUyb4iR3mhDv4wZJi8Al8DDuTvhPRWR1mjO0qt5jevfke4oYTkCyZ92DVQ0Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746033868; c=relaxed/simple;
-	bh=mMZAlErZ6zeNrhp3KAdn7ICynxIviBAECZy9aocNaec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8d4zF6HYNr7PTsG+wXk2Mi4KCGh47HTDxVAxN7TYZLfBRD1PAVFthQnum2iavuZYTVFvcCC3oAFQ5UXyrYi8F4FBkCuvxwwc1fM/6A7UjwDwxGp8GmgHTPrFxSzhwK+nXqOp6643LKOpG2TGQ5YlR1m3VikYNFBLQaHTQde9c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hENnRGKD; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746035537; c=relaxed/simple;
+	bh=3IQls6LanaHFfB+tJv6QGqpwwG+ALsyhTOMes6xZWPY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WkSdwrzXTIcxIPBHnQa7It6Bhry7ttafFy+n4GAl06d1dxDIXaKIGUS/F8ToeYDXJ23RzgPIbQdcryFQ6EQSvL16qdQxa3FAlughxSgx2ONf9EwquyJpruFjXzy6lf7Qr3bo7uIIL9Od+dFY8+drgURxCi+uXGwKYEJjWvvPwUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RimY1o+5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hENnRGKD"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39bf44be22fso26389f8f.0
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Apr 2025 10:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746033865; x=1746638665; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ayaaH32OR9vWgQYDr3r7ikDeC22kKOnm+kDUQdBlQOM=;
-        b=hENnRGKDSte8OyPd+RfsRz8j+UC2tHDyUdXhSYUvePFQd99vHe6jQtIGzlRz7qvc0t
-         WncimjjJb3nHwEUItB9z2nNnKFsOSaA7Loz0SQIsPBqYjTkvjGTx0URW0mmMx0wfBm9a
-         O3oG4Yo36rVDBga+EupvuVNiqdHtOkPO+6H4VfVU1bwXKERCImw6aSXc5MRx8mMLJ5/y
-         De1R4jIP7Sc201Q0e828FYX4P3jI7Oa5bLsn5Gtl4dGn77Qupucug4MdeG5kPk6zWmdm
-         veOboqz0WK0xt4Ek43+Qjo4fzOqShFKdOy3u6sSGzM7AmALEuLlMnULCWOEjfVmfPy6z
-         vuGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746033865; x=1746638665;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ayaaH32OR9vWgQYDr3r7ikDeC22kKOnm+kDUQdBlQOM=;
-        b=joXNn71vs9A3IhYXXu2csK8mWMLKtc0jr84OmEPftuv4zL+l/j7oABLRz2i1Y7bznQ
-         dxgcDSxMfiMij4gkVyPNYVcj6sZSE0OKKYManSMKld/UVD6Rhlomb35f3NVpN1GqRmqi
-         ihKPpehns9Ybi1OA4pRbilUWtMCo1tD36cOcB2jScmxQL+ncYZKTsdrt8nD+sFYNR5rL
-         77tk5weBDCsmX/pODEzIrWm6KO1z/fB3XS5nhHXrwIM57Fjn47TasvXj/V5XVAxCyMR5
-         jMHQ//xCO54nCli4WYPY2eEUpXaPMq8DZxAfz/ZUUZOgCpEthWO5C74sx1EOCbRTdLWW
-         t5aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdmAlqqrQFofs4TxGM4DciMn0915fx5lA3sSBET0qgGf4iFJUJ4kakOMCaIK57gyZVrjoztQWPSP+BTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCnpJhSFlUL2sAL85BtfrQlnq6ByRb3KDutRhfLEl2nWN3N9sp
-	DaI4Z9YvTmfFBEWSBJUPPM+ewe7PeLki75amHuXg1P8cPooKwyA5VTSR8eurSG8=
-X-Gm-Gg: ASbGncucM0RAj8MwNG3EIvH7THzLGWpFxO+mpwAlyfN8Mvd9CZRHE6zd2Qjq5AJ3aMJ
-	vkoJM3Q/Fo5WWlZ+mit2jLlxAtnWyaIXhlLPiJ9C4AquC8LVql0rQn6KuhHqUWQdGE7+J6tOi4j
-	8JhuYOxM6IgiAHrSqaYgnlwD5MQgd+ic85Y1EhICMUHHo21KuUfCZxKZBR5F2tmRJ52rFcd3jed
-	yB/OlYXZB08NshKa3tLKpjaPiecp5CZAz4DTU38GogHZToKFH3OvOkr1+Zu87A45Y2uMzc4uH1d
-	KlaoPiE1NRnThcVS+jPF88rJ7ZYUA7pOTS0OGdU7lsxjRrw5ImIv1JLswKW7OHVnt/wyLBdol+n
-	1ZGbmnk9GKSAG0Q==
-X-Google-Smtp-Source: AGHT+IGOhD9VTEP3B95PCaK57gP5L5FqVsVm5W5JWQufEnZgC4ns/6K60KiF/Cb9Oj1M6oJruDEGDg==
-X-Received: by 2002:a05:6000:2cc:b0:3a0:8c46:1763 with SMTP id ffacd0b85a97d-3a08f7292a7mr4154159f8f.0.1746033864978;
-        Wed, 30 Apr 2025 10:24:24 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073c8d60asm17897655f8f.18.2025.04.30.10.24.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 10:24:24 -0700 (PDT)
-Date: Wed, 30 Apr 2025 19:24:22 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Robert Lin <robelin@nvidia.com>,
-	tglx@linutronix.de, pohsuns@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	sumitg@nvidia.com
-Subject: Re: [PATCH v5 1/3] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
-Message-ID: <aBJcxnOhKLUGA5lx@mai.linaro.org>
-References: <20250421100821.2907217-1-robelin@nvidia.com>
- <20250421100821.2907217-2-robelin@nvidia.com>
- <aBCU5vec0XMX5VRz@mai.linaro.org>
- <fbb3a1b3-3949-402a-b51c-f5446a392e83@nvidia.com>
- <0fc89d71-6510-4ca9-a789-290e1818798c@linaro.org>
- <4ks74upuufmt2ibh5ur5zpazvfj66ak4gyq7v4rtz2zi2u5wsi@rls64ws3rukp>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RimY1o+5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52222C32782;
+	Wed, 30 Apr 2025 17:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746035535;
+	bh=3IQls6LanaHFfB+tJv6QGqpwwG+ALsyhTOMes6xZWPY=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=RimY1o+54Xo2+N5HDxBoVmlO+1gJ0j7Z1+pzm8HLffj0PUt6h6DJ3dmXotUNotr0T
+	 fohs8VWG7YBtGpB2y8E3g0wdLbryzATB3ug56eEpBvlfoDLTWMkxa+CG8tdm3NFdUo
+	 wcP+71iqOcd3J6sXF4FjWycbsdTZAXSxMY1AqtU0mXFMlgmiyW4flJqD75xXy8shdO
+	 /o3hLASffLMi3ZGT1O67YwhLukyb6Wva+TCxGJh035XWUs3cnwoc2YHTwo8dJzcqvy
+	 3SbirMplKJ7yQhHzIuCuPBJ3thTMAZ5MoO83AwsM4gH6TW2jQkojyFQ7u5Dj/4+C3l
+	 Bsj2bT3bz0Bxg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D014FC3ABA9;
+	Wed, 30 Apr 2025 17:52:14 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Wed, 30 Apr 2025 12:52:01 -0500
+Subject: [PATCH] memory: tegra210-emc: Support Device Tree EMC Tables
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ks74upuufmt2ibh5ur5zpazvfj66ak4gyq7v4rtz2zi2u5wsi@rls64ws3rukp>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEBjEmgC/x3MSwqAIBRG4a3EHXfBpAe2lWgg+ld3kIVGBNLek
+ 4bf4JxMCVGQaKwyRdyS5AgFTV2R22xYweKLSSvdqVYbvrBGqxvF2B37i83gHXqjrG9BpTojFnn
+ +4zS/7wfGrSDaYQAAAA==
+X-Change-ID: 20250429-tegra210-emc-dt-97dce690ad4e
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746035534; l=11318;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=oK0pr0GREoOZzHrbUEhRzpd0qBn9cGUQIAd6Mb/CAcg=;
+ b=EqKw3T3C+p76GZFOR7E9cQJZ/nd9kzvp+ywCCbBSpfQSz2/MvBpngA1Tqc7KdyLx2f49GpZao
+ e3LTTGH3V8zDWvwetocL7Jly8ji2bPqNlf+53J4tFjvOue+0r4FtXzu
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Tue, Apr 29, 2025 at 04:23:22PM +0200, Thierry Reding wrote:
-> On Tue, Apr 29, 2025 at 03:19:25PM +0200, Daniel Lezcano wrote:
-> > On 29/04/2025 11:15, Jon Hunter wrote:
-> > > Hi Daniel,
-> > > 
-> > > On 29/04/2025 09:59, Daniel Lezcano wrote:
-> > > > On Mon, Apr 21, 2025 at 06:08:19PM +0800, Robert Lin wrote:
-> > > > > From: Pohsun Su <pohsuns@nvidia.com>
-> > > > > 
-> > > > > This change adds support for WDIOC_GETTIMELEFT so userspace
-> > > > > programs can get the number of seconds before system reset by
-> > > > > the watchdog timer via ioctl.
-> > > > > 
-> > > > > Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
-> > > > > Signed-off-by: Robert Lin <robelin@nvidia.com>
-> > > > > ---
-> > > > 
-> > > > Hi Robert,
-> > > > 
-> > > > I realize that this driver should be split in two and the watchdog
-> > > > part go
-> > > > under drivers/watchdog.
-> > > 
-> > > Are there any other examples you know of where the timer is split in
-> > > this way? It is not clear to me how you propose we do this?
-> > 
-> > Just keep the clocksource and move the watchdog code (everything related to
-> > the watchdog_ops) to a new driver under drivers/watchdog
-> 
-> That's a bad idea. This is all a single register space, so we can't have
-> "proper" drivers (i.e. ones that exclusively request I/O memory regions)
-> if we split them up.
-> 
-> I understand that it's nice and easy to have things split up along
-> subsystem boundaries, but sometimes hardware designs just aren't that
-> cleanly separated.
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Yes, that's true.
+These are generated by the Tegra210 Android bootloader. This is similar
+to the Tegra124 handling, so the support is based on that and modified
+to match Tegra210 by referencing the downstream Nvidia 4.9 kernel.
 
-The driver has a lot of watchdog code inside and I think it is
-possible to move most part of it under drivers/watchdog. Perhaps by
-exporting tegra186_wdt_disable() / tegra186_wdt_enable().
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/memory/tegra/tegra210-emc-core.c | 246 +++++++++++++++++++++++++++++--
+ 1 file changed, 236 insertions(+), 10 deletions(-)
 
-Anyway, I understand that is an important change and I don't want to
-block this series for this reason. At the first glance, these changes
-seem to be fine for me, I'll just do a last review and comment/pick
-them.
+diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
+index e63f6269057106ded054dea94d92d96cb9c13c06..0b8c7cd09679dc64b3fb04acf2bb5963dd7544fc 100644
+--- a/drivers/memory/tegra/tegra210-emc-core.c
++++ b/drivers/memory/tegra/tegra210-emc-core.c
+@@ -1783,6 +1783,226 @@ static void tegra210_emc_detect(struct tegra210_emc *emc)
+ 		emc->num_channels = 1;
+ }
+ 
++static struct device_node *
++tegra_emc_find_node_by_ram_code(struct device_node *node, u32 ram_code)
++{
++	struct device_node *np;
++	int err;
++
++	for_each_child_of_node(node, np) {
++		u32 value;
++
++		err = of_property_read_u32(np, "nvidia,ram-code", &value);
++		if (err || (value != ram_code))
++			continue;
++
++		return np;
++	}
++
++	return NULL;
++}
++
++static int load_one_timing_from_dt(struct tegra210_emc *emc,
++				   struct tegra210_emc_timing *timing,
++				   struct device_node *node)
++{
++	int err;
++
++#define EMC_READ_PROP(prop, dtprop) { \
++	err = of_property_read_u32(node, dtprop, &timing->prop); \
++	if (err) { \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
++		return err; \
++	} \
++}
++
++#define EMC_READ_PROP_STRING(prop, dtprop) { \
++	err = of_property_read_string(node, dtprop, (const char **)&timing->prop); \
++	if (err) { \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
++		return err; \
++	} \
++}
++
++#define EMC_READ_PROP_ARRAY(prop, dtprop, length) { \
++	err = of_property_read_u32_array(node, dtprop, timing->prop, length); \
++	if (err) { \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
++		return err; \
++	} \
++}
++
++	EMC_READ_PROP_STRING(clock_src, "nvidia,source")
++	EMC_READ_PROP_STRING(dvfs_ver, "nvidia,dvfs-version")
++
++	EMC_READ_PROP(revision, "nvidia,revision")
++	EMC_READ_PROP(rate, "clock-frequency")
++	EMC_READ_PROP(min_volt, "nvidia,emc-min-mv")
++	EMC_READ_PROP(gpu_min_volt, "nvidia,gk20a-min-mv")
++	EMC_READ_PROP(clk_src_emc, "nvidia,src-sel-reg")
++	EMC_READ_PROP(num_burst, "nvidia,burst-regs-num")
++	EMC_READ_PROP(emc_cfg_2, "nvidia,emc-cfg-2")
++	EMC_READ_PROP(emc_sel_dpd_ctrl, "nvidia,emc-sel-dpd-ctrl")
++	EMC_READ_PROP(emc_auto_cal_config, "nvidia,emc-auto-cal-config")
++	EMC_READ_PROP(emc_auto_cal_config2, "nvidia,emc-auto-cal-config2")
++	EMC_READ_PROP(emc_auto_cal_config3, "nvidia,emc-auto-cal-config3")
++	EMC_READ_PROP(latency, "nvidia,emc-clock-latency-change")
++	EMC_READ_PROP_ARRAY(burst_regs, "nvidia,emc-registers", timing->num_burst)
++	EMC_READ_PROP(needs_training, "nvidia,needs-training")
++	EMC_READ_PROP(trained, "nvidia,trained")
++
++	if (timing->revision >= 0x6) {
++		EMC_READ_PROP(periodic_training, "nvidia,periodic_training")
++		EMC_READ_PROP(trained_dram_clktree[C0D0U0], "nvidia,trained_dram_clktree_c0d0u0")
++		EMC_READ_PROP(trained_dram_clktree[C0D0U1], "nvidia,trained_dram_clktree_c0d0u1")
++		EMC_READ_PROP(trained_dram_clktree[C0D1U0], "nvidia,trained_dram_clktree_c0d1u0")
++		EMC_READ_PROP(trained_dram_clktree[C0D1U1], "nvidia,trained_dram_clktree_c0d1u1")
++		EMC_READ_PROP(trained_dram_clktree[C1D0U0], "nvidia,trained_dram_clktree_c1d0u0")
++		EMC_READ_PROP(trained_dram_clktree[C1D0U1], "nvidia,trained_dram_clktree_c1d0u1")
++		EMC_READ_PROP(trained_dram_clktree[C1D1U0], "nvidia,trained_dram_clktree_c1d1u0")
++		EMC_READ_PROP(trained_dram_clktree[C1D1U1], "nvidia,trained_dram_clktree_c1d1u1")
++		EMC_READ_PROP(current_dram_clktree[C0D0U0], "nvidia,current_dram_clktree_c0d0u0")
++		EMC_READ_PROP(current_dram_clktree[C0D0U1], "nvidia,current_dram_clktree_c0d0u1")
++		EMC_READ_PROP(current_dram_clktree[C0D1U0], "nvidia,current_dram_clktree_c0d1u0")
++		EMC_READ_PROP(current_dram_clktree[C0D1U1], "nvidia,current_dram_clktree_c0d1u1")
++		EMC_READ_PROP(current_dram_clktree[C1D0U0], "nvidia,current_dram_clktree_c1d0u0")
++		EMC_READ_PROP(current_dram_clktree[C1D0U1], "nvidia,current_dram_clktree_c1d0u1")
++		EMC_READ_PROP(current_dram_clktree[C1D1U0], "nvidia,current_dram_clktree_c1d1u0")
++		EMC_READ_PROP(current_dram_clktree[C1D1U1], "nvidia,current_dram_clktree_c1d1u1")
++		EMC_READ_PROP(run_clocks, "nvidia,run_clocks")
++		EMC_READ_PROP(tree_margin, "nvidia,tree_margin")
++	}
++
++	EMC_READ_PROP(num_burst_per_ch, "nvidia,burst-regs-per-ch-num")
++	EMC_READ_PROP(num_trim, "nvidia,trim-regs-num")
++	EMC_READ_PROP(num_trim_per_ch, "nvidia,trim-regs-per-ch-num")
++	EMC_READ_PROP(num_mc_regs, "nvidia,burst-mc-regs-num")
++	EMC_READ_PROP(num_up_down, "nvidia,la-scale-regs-num")
++	EMC_READ_PROP(vref_num, "nvidia,vref-regs-num")
++	EMC_READ_PROP(dram_timing_num, "nvidia,dram-timing-regs-num")
++	EMC_READ_PROP(min_mrs_wait, "nvidia,min-mrs-wait")
++	EMC_READ_PROP(emc_mrw, "nvidia,emc-mrw")
++	EMC_READ_PROP(emc_mrw2, "nvidia,emc-mrw2")
++	EMC_READ_PROP(emc_mrw3, "nvidia,emc-mrw3")
++	EMC_READ_PROP(emc_mrw4, "nvidia,emc-mrw4")
++	EMC_READ_PROP(emc_mrw9, "nvidia,emc-mrw9")
++	EMC_READ_PROP(emc_mrs, "nvidia,emc-mrs")
++	EMC_READ_PROP(emc_emrs, "nvidia,emc-emrs")
++	EMC_READ_PROP(emc_emrs2, "nvidia,emc-emrs2")
++	EMC_READ_PROP(emc_auto_cal_config4, "nvidia,emc-auto-cal-config4")
++	EMC_READ_PROP(emc_auto_cal_config5, "nvidia,emc-auto-cal-config5")
++	EMC_READ_PROP(emc_auto_cal_config6, "nvidia,emc-auto-cal-config6")
++	EMC_READ_PROP(emc_auto_cal_config7, "nvidia,emc-auto-cal-config7")
++	EMC_READ_PROP(emc_auto_cal_config8, "nvidia,emc-auto-cal-config8")
++	EMC_READ_PROP(emc_fdpd_ctrl_cmd_no_ramp, "nvidia,emc-fdpd-ctrl-cmd-no-ramp")
++	EMC_READ_PROP(dll_clk_src, "nvidia,dll-clk-src")
++	EMC_READ_PROP(clk_out_enb_x_0_clk_enb_emc_dll, "nvidia,clk-out-enb-x-0-clk-enb-emc-dll")
++
++	if (timing->revision >= 0x7)
++		EMC_READ_PROP_ARRAY(ptfv_list, "nvidia,ptfv", ARRAY_SIZE(timing->ptfv_list))
++
++	EMC_READ_PROP_ARRAY(burst_reg_per_ch, "nvidia,emc-burst-regs-per-ch",
++			timing->num_burst_per_ch)
++	EMC_READ_PROP_ARRAY(shadow_regs_ca_train, "nvidia,emc-shadow-regs-ca-train",
++			timing->num_burst)
++	EMC_READ_PROP_ARRAY(shadow_regs_quse_train, "nvidia,emc-shadow-regs-quse-train",
++			timing->num_burst)
++	EMC_READ_PROP_ARRAY(shadow_regs_rdwr_train, "nvidia,emc-shadow-regs-rdwr-train",
++			timing->num_burst)
++	EMC_READ_PROP_ARRAY(trim_regs, "nvidia,emc-trim-regs", timing->num_trim)
++	EMC_READ_PROP_ARRAY(trim_perch_regs, "nvidia,emc-trim-regs-per-ch", timing->num_trim_per_ch)
++	EMC_READ_PROP_ARRAY(vref_perch_regs, "nvidia,emc-vref-regs", timing->vref_num)
++	EMC_READ_PROP_ARRAY(dram_timings, "nvidia,emc-dram-timing-regs", timing->dram_timing_num)
++	EMC_READ_PROP_ARRAY(burst_mc_regs, "nvidia,emc-burst-mc-regs", timing->num_mc_regs)
++	EMC_READ_PROP_ARRAY(la_scale_regs, "nvidia,emc-la-scale-regs", timing->num_up_down)
++
++#undef EMC_READ_PROP
++#undef EMC_READ_STRING
++#undef EMC_READ_PROP_ARRAY
++
++	return 0;
++}
++
++#define NOMINAL_COMPATIBLE "nvidia,tegra21-emc-table"
++#define DERATED_COMPATIBLE "nvidia,tegra21-emc-table-derated"
++static int tegra210_emc_load_timings_from_dt(struct tegra210_emc *emc,
++					     struct device_node *node)
++{
++	struct tegra210_emc_timing *timing;
++	unsigned int num_nominal = 0, num_derated = 0;
++	int err;
++
++	emc->num_timings = 0;
++	for_each_child_of_node_scoped(node, child) {
++		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
++			emc->num_timings++;
++		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
++			num_derated++;
++	}
++
++	if (!emc->num_timings || (num_derated && (emc->num_timings != num_derated)))
++		return -EINVAL;
++
++	emc->nominal = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
++				    GFP_KERNEL);
++	if (!emc->nominal)
++		return -ENOMEM;
++
++	if (num_derated) {
++		num_derated = 0;
++		emc->derated = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
++					    GFP_KERNEL);
++		if (!emc->derated)
++			return -ENOMEM;
++	}
++
++	for_each_child_of_node_scoped(node, child) {
++		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
++			timing = &emc->nominal[num_nominal++];
++		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
++			timing = &emc->derated[num_derated++];
++		else
++			continue;
++
++		err = load_one_timing_from_dt(emc, timing, child);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++static int tegra210_emc_parse_dt(struct tegra210_emc *emc)
++{
++	struct device_node *node, *np = emc->dev->of_node;
++	int ram_code, ret = 0;
++
++	if (!np) {
++		dev_err(emc->dev, "Unable to find emc node\n");
++		return -ENODEV;
++	}
++
++	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
++		ram_code = tegra_read_ram_code();
++		node = tegra_emc_find_node_by_ram_code(np, ram_code);
++
++		if (!node) {
++			dev_warn(emc->dev, "can't find emc table for ram-code\n");
++			return -ENODEV;
++		}
++
++		ret = tegra210_emc_load_timings_from_dt(emc, node);
++		of_node_put(node);
++	} else {
++		ret = tegra210_emc_load_timings_from_dt(emc, np);
++	}
++
++	return ret;
++}
++
+ static int tegra210_emc_validate_timings(struct tegra210_emc *emc,
+ 					 struct tegra210_emc_timing *timings,
+ 					 unsigned int num_timings)
+@@ -1815,6 +2035,7 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+ 	struct device_node *np;
+ 	unsigned int i;
+ 	int err;
++	bool have_dt_tables = false;
+ 
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc)
+@@ -1847,16 +2068,20 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+ 	np = pdev->dev.of_node;
+ 
+ 	/* attach to the nominal and (optional) derated tables */
+-	err = of_reserved_mem_device_init_by_name(emc->dev, np, "nominal");
+-	if (err < 0) {
+-		dev_err(emc->dev, "failed to get nominal EMC table: %d\n", err);
+-		return err;
+-	}
++	if (of_reserved_mem_device_init_by_name(emc->dev, np, "nominal") >= 0) {
++		err = of_reserved_mem_device_init_by_name(emc->dev, np, "derated");
++		if (err < 0 && err != -ENODEV) {
++			dev_err(emc->dev, "failed to get derated EMC table: %d\n", err);
++			goto release;
++		}
++	} else {
++		err = tegra210_emc_parse_dt(emc);
++		if (err < 0) {
++			dev_err(emc->dev, "failed to get EMC tables: %d\n", err);
++			return err;
++		}
+ 
+-	err = of_reserved_mem_device_init_by_name(emc->dev, np, "derated");
+-	if (err < 0 && err != -ENODEV) {
+-		dev_err(emc->dev, "failed to get derated EMC table: %d\n", err);
+-		goto release;
++		have_dt_tables = true;
+ 	}
+ 
+ 	/* validate the tables */
+@@ -1980,7 +2205,8 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+ 	debugfs_remove_recursive(emc->debugfs.root);
+ 	tegra210_clk_emc_detach(emc->clk);
+ release:
+-	of_reserved_mem_device_release(emc->dev);
++	if (!have_dt_tables)
++		of_reserved_mem_device_release(emc->dev);
+ 
+ 	return err;
+ }
 
-> > BTW, there are three clocksources with the same rating, what is the point of
-> > having them supported ?
-> > 
-> > Is it not the architected clocksource enough ?
-> 
-> The TSC clock source that this driver exposes is different from the
-> architected timer. It's a SoC-wide clock that is routed to various IP
-> blocks and used for timestamping events. This clocksource allows these
-> events to be properly compared, etc.
+---
+base-commit: 8bac8898fe398ffa3e09075ecea2be511725fb0b
+change-id: 20250429-tegra210-emc-dt-97dce690ad4e
 
-I see, thanks for clarifying
-
-  -- Daniel
-
-
+Best regards,
 -- 
+Aaron Kling <webgeek1234@gmail.com>
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
