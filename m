@@ -1,164 +1,302 @@
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65754224B04;
-	Thu,  1 May 2025 19:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E392253EC
+	for <linux-tegra@vger.kernel.org>; Thu,  1 May 2025 21:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746126494; cv=none; b=VoZ5KGRyuNwLE6a1HdHbUl0bDYxqJLC1fyHRRFzkUCQh15jl17C6h7zMtmtSjML45gpF/LUSUV+pniCJ4F6922djtaX+TgdClN5/4++Np6Vu+09qIFna9H1/jjHvK7/LRYVmsgC2EE1ZJ1LUmRSjunQwQ9r2Ac7XcL5Al2gKP44=
+	t=1746135922; cv=none; b=javJ5HiXQ5qsX3g+QyT1k55WX3oojolncc8/rtC/y5HkxfbeHnxxbgoVphIw9fzTGbqTpRp42DVIbKXF2Cfgkrn8wxNtknkm7hMMA7xulpHCQ7954xUIIVKLv1tD4l1bXIUJ8qj5mBrgR7VxnInaTck7SwymfENopO2NjcOxF3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746126494; c=relaxed/simple;
-	bh=t72V4cMXfgECq2XlBkakvc0ngW0PUat2k9kI4OAGgGQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=h647JfEl1mBzQaHIkIyktzt1dH0Ir2wlz0rdsuB+RBPQmKP8hmYuEpwdvHdTVuaD7xn4mS3AGAL8Kh8d8fOs97MQs5HUeTjeNVPqWa3NHGWM9ZzGWBfPdLo2FIDUtPXGXiSVj5EVVkITFsZb9lJ5F44pmY8njVtCp8Q243+X88w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=gMWu11vI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kRRWrsXt; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+	s=arc-20240116; t=1746135922; c=relaxed/simple;
+	bh=1ET9KP8RClNAfd6IrcF68azgez6qvv9QSbmxMQKduHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AmxvgmSZt5OYQNqZDwW5XxcTWPYmY8u1DDzSV7vXWgtFcBwfYCCr4vEspuVGVqS64oUCnN6SRlVrBSxs1zXdSwsDH+iQru+FgM4HlVN6eIGDjVSFOHJ5BtodJ2h6aaCJA7wXtYqJkf3Bws8ImWlXnYannj/uDnybbO17qNdyE8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SGdzWzKI; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="gMWu11vI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kRRWrsXt"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailflow.phl.internal (Postfix) with ESMTP id 2F84F2007A6;
-	Thu,  1 May 2025 15:08:09 -0400 (EDT)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-04.internal (MEProxy); Thu, 01 May 2025 15:08:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1746126489; x=1746133689; bh=uy2Z23D4UX2pb4MGng/RS7Rc0DqXehjP
-	gXYL1GZyHEA=; b=gMWu11vIGwyUkebQS6FfJoMbvmG1K5I4PcYPfgos/+3IKTG9
-	gplwSngSdL9b0tzDvioUBprhL4wfVkOmTpNtoAAODeB28Xg6R/kwHB7dvxSuftFL
-	yhPHuhfnyZhbGy1Hk4LH0DS38ZnX4s0nqvPXJdj6j6YsCbSDjUNCmIVLH/A/20KP
-	oo3/VMPCqW0WLap/EGtkYjtqLqADG6I7601JRBgJjC9L0IW/fnmqPmRfywBz38B2
-	l4rECgxFIIXyjmPcKpJ3MKrLDuuogSY9AnqaHJ7N27iyCvQLDrLJO+Uzbvq2a1Ob
-	z/jW7mFvVIaWGr7pr0l6vyW2GdTQ2Hejj4c04Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746126489; x=
-	1746133689; bh=uy2Z23D4UX2pb4MGng/RS7Rc0DqXehjPgXYL1GZyHEA=; b=k
-	RRWrsXtBP2dGvKqi4W7O8NcUE4T3criJTN4RNqnwM3jvVZB6DFHHOoJRSzF4WwTC
-	zyfSgrVfEAEZo6Ar3KWwXFFgpo9OcSnMRAJNahqn3nlXJrX0g/PcOryetxJVwBdg
-	bMvCV+WGJfrIwElsLCpZTQGf+AFh+vAPQIz7pR9L3B7fo46k+1htBqhXoVi3Nr6i
-	iPfXM7t0uPbUxV6yQuN2xxuUHDxXOhwyx1GBr0m/YPvpPLJFGrE4r55Y1vhjLJkG
-	EYbgK2ov6OqW9yBM/N3vWdDrYa4RmB3gucHV7PaTEJHhJOlijJtkhtTp35Hug9Lp
-	KdTUch2CHWx/XAiNccw8Q==
-X-ME-Sender: <xms:lMYTaGgjwoD9jvvLQF3kWWQqAITXOwX2J_Tz44npf0_rwZTz5vZWuA>
-    <xme:lMYTaHCfTlr4IcDYYP9mfLiZVIcfetmb5w7EMXV6Z0z5aHP8l6w5d06NcLSmpdfDF
-    y_HHxOzjxiGRzZWmjM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedtfeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
-    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepleefteeugeduudeuudeuhfefheegveek
-    ueefffdvffektdffffelveffvddvueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhnsggp
-    rhgtphhtthhopeegledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorhhose
-    eksgihthgvshdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrghrmhdr
-    tghomhdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnh
-    hosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepfigvnhhssegtshhivgdrohhr
-    ghdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhope
-    grohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheprghlvgigsehg
-    hhhithhirdhfrhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilh
-    drtghomhdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:lMYTaOHaWClXa7praEdCDETzg-YVo8ghBfqAEKgcYyCNv-z3uiOvlg>
-    <xmx:lMYTaPTDyplPkZ6QrXRyRgI6CFJO6g9IDexaTEMgKEAyXB5CcIWOgQ>
-    <xmx:lMYTaDxrliDpH1IiImjsat2Qz56tDsozwSqIgW3l_ha48UqBCKavYA>
-    <xmx:lMYTaN4smmith_jw1KGBc7w4dLVQ7r3zWaP24jB2SlIhLdcRPVRmOw>
-    <xmx:mcYTaH2ZstH58KGLmGnY3MmWQlgQtyVkrQuLwkep4LE-hnCp6R9N54B6>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6CE25BA0070; Thu,  1 May 2025 15:08:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SGdzWzKI"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2263428c8baso17595ad.1
+        for <linux-tegra@vger.kernel.org>; Thu, 01 May 2025 14:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746135917; x=1746740717; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vDl1IZro28hdfrXTqI+ublfVfpbjZSHTo0z7wnsFXgQ=;
+        b=SGdzWzKIBG7U4E/uq6apsXkEdNeUSLUV4bYodU0PpCqfhhpREUJsKBA3x4dXV787ld
+         WJXxmQxvirMgDLf9j5Ewypl7WsZYJFv/YdwIN5koXj7oIc4tRb/u9Usvv1QFUCG73sxi
+         H0nmLXGqpp2FLAgrJDwW4s1G1cgrz4cjjfmhTxNLRsk2YJ3qPUoqY02YUgvw8eZW3HSS
+         goItuyOPC+NTLY4XH3wYE4MPEUcKIWA4dXrRKqIQYCbYloR8+AtMVUkZtKp6u8UMnfHZ
+         JzgEVfNnwhIe9jeG9jwOF3NgBSa0uXaGPYi9+07epYWtjV0E39sJEeWVUN8hlTP6rjFK
+         lWrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746135917; x=1746740717;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vDl1IZro28hdfrXTqI+ublfVfpbjZSHTo0z7wnsFXgQ=;
+        b=OSpkmihqkaU+4hIcSLqT/tvIp8SwDaarfMTS+Kp8paVpYpTdJn1L+OEP1y57ZC465p
+         UrnVJTZVLjPn75JiUfGmIqNuVFy/uo1e1KUb8xJeOyEFzbEkhphPGFHNKqAZl9Yhi14z
+         ZSrjjeLD++9UFOmsWbMzesZC+tYN3yYzUooMty1ZY+VURRDicK7eXHDjLksMt8qZHIr9
+         qCMq36UZoMoQhU2Rn24fg8u+UgxsYMW0UPWCoESazSvm/I4SLZyWuYVxa1JG7mmSjK3E
+         YG2GnFcP1O2z6p2l82caLsLmDFz6KRWX1f6xjGrspBjiOKRobZJLcFebWlcYqqSSePsn
+         qHKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTSySxNEIILdYXsPoBXptEMxr10865UrFuokPwRHMBtMRukx8II3A4lwR0ZanDxCXaAheA7yfumMMOPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP9NJXs0wHuMy7wA7XS4wwFNowgchqs+hbs8fK1JtaOo9hAupQ
+	phB+5ELrNgqFcvn+BCXQ5BPmMeojnFa/fSYg/DWMrsJ9BikQpYsZoMggaaxgcg==
+X-Gm-Gg: ASbGnctOAGOapH8jRPgN/Qyfw+rOUsAQdsbFZOFFhoGyRkgg5d1CoyOh0RN2mPsH0RH
+	D7ne0dZjSOOFo16DHydNtL4LLskTgSHQpdW+YRl4TJf/vrs1E7eVTL5qu0nHoHovgHb2UyRRiPx
+	+Ck1wuqaX/Sbihgd5Oufmk2a4W6lESNUUh1JnpMNDdzdPW5Njp/+Cdrgf5Kgv+eAEFUvDmpNlvV
+	Q72v34G5+k6ntOM69jmGAc+KryztVDnl1WCH6kpR0//4aGDfF9sbb308Sk74ZqByioxB8stMbl3
+	/Fg5+Ot+ZrOJoq/TupsJ4PsafEjzbvYkJBiUZTmQ/IU9mrUTnrlLiC00qw6x/BlDFxCXW1CS
+X-Google-Smtp-Source: AGHT+IFDO4aRxK7rdDiW3OLELFztZLzjuq4Em6bvp1QVNrSWDT0ZuSyTrNqpv/ttZNis0GC3pYd4Tg==
+X-Received: by 2002:a17:902:dac7:b0:216:5e53:d055 with SMTP id d9443c01a7336-22e0798903bmr3390015ad.9.1746135917077;
+        Thu, 01 May 2025 14:45:17 -0700 (PDT)
+Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fa85e4ab2sm133113a12.55.2025.05.01.14.45.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 14:45:16 -0700 (PDT)
+Date: Thu, 1 May 2025 21:45:05 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+Subject: Re: [PATCH v2 21/22] iommu/tegra241-cmdqv: Add user-space use support
+Message-ID: <aBPrYXixWhFRkM7q@google.com>
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <b81b2332f793a9ffccc528d821f2ed3ac051f9e0.1745646960.git.nicolinc@nvidia.com>
+ <aBKdMaFLPFJYegIS@google.com>
+ <aBKmk6PNFreeyfLh@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T5b013bf7ff4edb46
-Date: Thu, 01 May 2025 21:07:44 +0200
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Jason Gunthorpe" <jgg@nvidia.com>, "Alexandre Ghiti" <alex@ghiti.fr>,
- "Alim Akhtar" <alim.akhtar@samsung.com>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Lu Baolu" <baolu.lu@linux.intel.com>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Gerald Schaefer" <gerald.schaefer@linux.ibm.com>,
- "Heiko Stuebner" <heiko@sntech.de>, iommu@lists.linux.dev,
- "Janne Grunau" <j@jannau.net>,
- "Jean-Philippe Brucker" <jean-philippe@linaro.org>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>,
- "Jonathan Hunter" <jonathanh@nvidia.com>,
- "Joerg Roedel" <joro@8bytes.org>, "Kevin Tian" <kevin.tian@intel.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org,
- "Marek Szyprowski" <m.szyprowski@samsung.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Matthew Rosato" <mjrosato@linux.ibm.com>, "Neal Gompa" <neal@gompa.dev>,
- "Orson Zhai" <orsonzhai@gmail.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Rob Clark" <robdclark@gmail.com>, "Robin Murphy" <robin.murphy@arm.com>,
- "Samuel Holland" <samuel@sholland.org>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- "Tomasz Jeznach" <tjeznach@rivosinc.com>,
- "Krishna Reddy" <vdumpa@nvidia.com>, virtualization@lists.linux.dev,
- "Chen-Yu Tsai" <wens@csie.org>, "Will Deacon" <will@kernel.org>,
- "Yong Wu" <yong.wu@mediatek.com>,
- "Chunyan Zhang" <zhang.lyra@gmail.com>
-Cc: patches@lists.linux.dev
-Message-Id: <38706b77-4e58-4dfb-add3-814746f4a3c5@app.fastmail.com>
-In-Reply-To: <3-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
-References: <3-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
-Subject: Re: [PATCH 3/7] iommu: Remove ops.pgsize_bitmap from drivers that don't use it
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBKmk6PNFreeyfLh@Asurada-Nvidia>
 
-On Tue, Apr 29, 2025, at 16:34, Jason Gunthorpe wrote:
-> These drivers all set the domain->pgsize_bitmap in their
-> domain_alloc_paging() functions, so the ops value is never used. Delete
-> it.
->
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  drivers/iommu/apple-dart.c       | 1 -
->  drivers/iommu/intel/iommu.c      | 1 -
->  drivers/iommu/iommufd/selftest.c | 1 -
->  drivers/iommu/riscv/iommu.c      | 1 -
->  drivers/iommu/virtio-iommu.c     | 6 ++----
->  5 files changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-> index 757d24f67ad45a..190f28d7661515 100644
-> --- a/drivers/iommu/apple-dart.c
-> +++ b/drivers/iommu/apple-dart.c
-> @@ -991,7 +991,6 @@ static const struct iommu_ops apple_dart_iommu_ops = {
->  	.of_xlate = apple_dart_of_xlate,
->  	.def_domain_type = apple_dart_def_domain_type,
->  	.get_resv_regions = apple_dart_get_resv_regions,
-> -	.pgsize_bitmap = -1UL, /* Restricted during dart probe */
->  	.owner = THIS_MODULE,
->  	.default_domain_ops = &(const struct iommu_domain_ops) {
->  		.attach_dev	= apple_dart_attach_dev_paging,
+On Wed, Apr 30, 2025 at 03:39:15PM -0700, Nicolin Chen wrote:
+> On Wed, Apr 30, 2025 at 09:59:13PM +0000, Pranjal Shrivastava wrote:
+> > On Fri, Apr 25, 2025 at 10:58:16PM -0700, Nicolin Chen wrote:
+> > > The CMDQV HW supports a user-space use for virtualization cases. It allows
+> > > the VM to issue guest-level TLBI or ATC_INV commands directly to the queue
+> > > and executes them without a VMEXIT, as HW will replace the VMID field in a
+> > > TLBI command and the SID field in an ATC_INV command with the preset VMID
+> > > and SID.
+> > > 
+> > > This is built upon the vIOMMU infrastructure by allowing VMM to allocate a
+> > > VINTF (as a vIOMMU object) and assign VCMDQs (vCMDQ objects) to the VINTF.
+> > > 
+> > > So firstly, replace the standard vSMMU model with the VINTF implementation
+> > > but reuse the standard cache_invalidate op (for unsupported commands) and
+> > > the standard alloc_domain_nested op (for standard nested STE).
+> > > 
+> > > Each VINTF has two 64KB MMIO pages (128B per logical vCMDQ):
+> > >  - Page0 (directly accessed by guest) has all the control and status bits.
+> > >  - Page1 (trapped by VMM) has guest-owned queue memory location/size info.
+> > > 
+> > > VMM should trap the emulated VINTF0's page1 of the guest VM for the guest-
+> > > level VCMDQ location/size info and forward that to the kernel to translate
+> > > to a physical memory location to program the VCMDQ HW during an allocation
+> > > call. Then, it should mmap the assigned VINTF's page0 to the VINTF0 page0
+> > > of the guest VM. This allows the guest OS to read and write the guest-own
+> > > VINTF's page0 for direct control of the VCMDQ HW.
+> > > 
+> > > For ATC invalidation commands that hold an SID, it requires all devices to
+> > > register their virtual SIDs to the SID_MATCH registers and their physical
+> > > SIDs to the pairing SID_REPLACE registers, so that HW can use those as a
+> > > lookup table to replace those virtual SIDs with the correct physical SIDs.
+> > > Thus, implement the driver-allocated vDEVICE op with a tegra241_vintf_sid
+> > > structure to allocate SID_REPLACE and to program the SIDs accordingly.
+> > > 
+> > > This enables the HW accelerated feature for NVIDIA Grace CPU. Compared to
+> > > the standard SMMUv3 operating in the nested translation mode trapping CMDQ
+> > > for TLBI and ATC_INV commands, this gives a huge performance improvement:
+> > > 70% to 90% reductions of invalidation time were measured by various DMA
+> > > unmap tests running in a guest OS.
+> > > 
+> > 
+> > The write-up is super helpful to understand how the HW works from a high
+> > level. Thanks for explaining this well! :) 
+> > 
+> > I'm curious to know the DMA unmap tests that were run for perf?
+> 
+> tools/testing/selftests/dma/dma_map_benchmark.c
+> 
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev> # for Apple DART
+Ahh okay.. I thought it was something else. I guess it's worth posting
+some comparitive results in the cover letter if you prefer.
 
+> > >  /**
+> > >   * struct iommu_hw_info_arm_smmuv3 - ARM SMMUv3 hardware information
+> > >   *                                   (IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
+> > >   *
+> > > - * @flags: Must be set to 0
+> > > - * @impl: Must be 0
+> > > + * @flags: Combination of enum iommu_hw_info_arm_smmuv3_flags
+> > > + * @impl: Implementation-defined bits when the following flags are set:
+> > > + *        - IOMMU_HW_INFO_ARM_SMMUV3_HAS_TEGRA241_CMDQV
+> > > + *          Bits[15:12] - Log2 of the total number of SID replacements
+> > > + *          Bits[07:04] - Log2 of the total number of vCMDQs per vIOMMU
+> > > + *          Bits[03:00] - Version number for the CMDQ-V HW
+> > 
+> > Nit: It seems that we deliberately chose not to reveal `NUM_VINTF_LOG2`
+> > to the user-space. If so, maybe we shall mark those bitfields as unused
+> > or reserved for clarity? Bits[11:08] - Reserved / Unused (even 31:16).
+> 
+> I think it should have been there, but kernel should just report 0.
+>                  Bits[11:08] - Log2 of the total number of virtual interface
+> 
 
+Ack.
 
-Best,
+> > >   * @idr: Implemented features for ARM SMMU Non-secure programming interface
+> > >   * @iidr: Information about the implementation and implementer of ARM SMMU,
+> > >   *        and architecture version supported
+> > > @@ -952,10 +965,28 @@ struct iommu_fault_alloc {
+> > >   * enum iommu_viommu_type - Virtual IOMMU Type
+> > >   * @IOMMU_VIOMMU_TYPE_DEFAULT: Reserved for future use
+> > >   * @IOMMU_VIOMMU_TYPE_ARM_SMMUV3: ARM SMMUv3 driver specific type
+> > > + * @IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV Extension for SMMUv3
+> > >   */
+> > >  enum iommu_viommu_type {
+> > >  	IOMMU_VIOMMU_TYPE_DEFAULT = 0,
+> > >  	IOMMU_VIOMMU_TYPE_ARM_SMMUV3 = 1,
+> > > +	IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV = 2,
+> > > +};
+> > 
+> > This is a little confusing.. I understand that we need a new viommu type
+> > to copy the new struct iommu_viommu_tegra241_cmdqv b/w the user & kernel
+> > 
+> > But, in a previous patch (Add vsmmu_alloc impl op), we add a check to
+> > fallback to the standard type SMMUv3, if the impl_ops->vsmmu_alloc 
+> > returns -EOPNOTSUPP:
+> > 
+> > 	if (master->smmu->impl_ops && master->smmu->impl_ops->vsmmu_alloc)
+> > 		vsmmu = master->smmu->impl_ops->vsmmu_alloc(
+> > 			master->smmu, s2_parent, ictx, viommu_type, user_data);
+> > 	if (PTR_ERR(vsmmu) == -EOPNOTSUPP) {
+> > 		if (viommu_type != IOMMU_VIOMMU_TYPE_ARM_SMMUV3)
+> > 			return ERR_PTR(-EOPNOTSUPP);
+> > 		/* Fallback to standard SMMUv3 type if viommu_type matches */
+> > 		vsmmu = iommufd_viommu_alloc(ictx, struct arm_vsmmu, core,
+> > 					     &arm_vsmmu_ops);
+> > 
+> > Now, if we'll ALWAYS try to allocate an impl-specified vsmmu first, even
+> > when the viommu_type == IOMMU_VIOMMU_TYPE_ARM_SMMUV3, we are anyways
+> > going to return back from the impl_ops->vsmmu_alloc with -EOPNOTSUPP.
+> 
+> That's not necessarily true. An impl_ops->vsmmu_alloc can support
+> IOMMU_VIOMMU_TYPE_ARM_SMMUV3 potentially, e.g. an impl could just
+> toggle a few special bits in a register and return a valid vsmmu
+> pointer.
+> 
+> It doesn't work like this with VCMDQ as it supports its own type,
+> but for the long run I think we should pass in the standard type
+> to impl_ops->vsmmu_alloc too.
+> 
 
+That makes sense. I only considered CMDQV. Thanks for the clarification!
 
-Sven
+> > Then we'll again check if the retval was -EOPNOTSUPP and re-check the
+> > viommu_type requested.. which seems a little counter intuitive.
+> 
+> It's just prioritizing the impl_ops->vsmmu_alloc. Similar to the
+> probe, if VCMDQ is missing or encountering some initialization
+> problem, give it a chance to fallback to the standard SMMU.
+> 
+
+Ack.
+
+> > > +	/*
+> > > +	 * @length must be a power of 2, in range of
+> > > +	 *   [ 32, 1 ^ (idr[1].CMDQS + CMDQ_ENT_SZ_SHIFT) ]
+> > > +	 */
+> > 
+> > Nit: 2 ^ (idr[1].CMDQS + CMDQ_ENT_SZ_SHIFT) to match the comment in uapi
+> 
+> Alok pointed it out too. Fixed.
+> 
+
+Thanks! I had only skimmed through Alok's comments and felt he only
+pointed it out in the uapi and not here. Sorry for overlooking that :)
+
+> > > +	vcmdq = iommufd_vcmdq_alloc(viommu, struct tegra241_vcmdq, core);
+> > > +	if (!vcmdq)
+> > > +		return ERR_PTR(-ENOMEM);
+> > > +
+> > > +	/*
+> > > +	 * HW requires to unmap LVCMDQs in descending order, so destroy() must
+> > > +	 * follow this rule. Set a dependency on its previous LVCMDQ so iommufd
+> > > +	 * core will help enforce it.
+> > > +	 */
+> > > +	if (prev) {
+> > > +		ret = iommufd_vcmdq_depend(vcmdq, prev, core);
+> > > +		if (ret)
+> > > +			goto free_vcmdq;
+> > > +	}
+> > > +	vcmdq->prev = prev;
+> > > +
+> > > +	ret = tegra241_vintf_init_lvcmdq(vintf, index, vcmdq);
+> > > +	if (ret)
+> > > +		goto free_vcmdq;
+> > > +
+> > > +	dev_dbg(cmdqv->dev, "%sallocated\n",
+> > > +		lvcmdq_error_header(vcmdq, header, 64));
+> > > +
+> > > +	tegra241_vcmdq_map_lvcmdq(vcmdq);
+> > > +
+> > > +	vcmdq->cmdq.q.q_base = q_base & VCMDQ_ADDR;
+> > > +	vcmdq->cmdq.q.q_base |= log2size;
+> > > +
+> > > +	ret = tegra241_vcmdq_hw_init_user(vcmdq);
+> > > +	if (ret)
+> > > +		goto free_vcmdq;
+> > > +	vintf->lvcmdqs[index] = vcmdq;
+> > > +
+> > > +	return &vcmdq->core;
+> > > +free_vcmdq:
+> > > +	iommufd_struct_destroy(viommu->ictx, vcmdq, core);
+> > > +	return ERR_PTR(ret);
+> > 
+> > Are we missing an undepend here?
+> 
+> Right. The iommufd_struct_destroy doesn't invoke obj->ops.abort().
+> 
+> The whole revert flow is wonky, missing all the unmap/deinit steps.
+> 
+
+Right.
+
+> > > +static void tegra241_vintf_destroy_vdevice(struct iommufd_vdevice *vdev)
+> > > +{
+> > > +	struct tegra241_vintf_sid *vsid =
+> > > +		container_of(vdev, struct tegra241_vintf_sid, core);
+> > > +	struct tegra241_vintf *vintf = vsid->vintf;
+> > > +
+> > > +	writel_relaxed(0, REG_VINTF(vintf, SID_REPLACE(vsid->idx)));
+> > > +	writel_relaxed(0, REG_VINTF(vintf, SID_MATCH(vsid->idx)));
+> > 
+> > Just a thought: Should these be writel to avoid races?
+> > Although I believe all user-queues would be free-d by this point?
+> 
+> Yea. They should be. I will change them.
+> 
+
+Ack.
+
+> Thanks
+> Nicolin
+
+Thanks
+Praan
