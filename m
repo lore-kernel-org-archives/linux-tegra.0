@@ -1,166 +1,164 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F8118C011;
-	Thu,  1 May 2025 16:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65754224B04;
+	Thu,  1 May 2025 19:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746115647; cv=none; b=AizVDyn2Csi64RzE37zhy6oSVAW0GeGuRfZFpXEFpt3HNbK0BV0vGca0zFfyHnFO4wge4ckkqnGult/sdWF2ATtF1jfZ2ChUEW9N430tG1NHUvZDO6kViNfoLp9i7vJ9wsRC88bJWEP51WqlAGEevnB34tH6kx1SMluYAfclBbQ=
+	t=1746126494; cv=none; b=VoZ5KGRyuNwLE6a1HdHbUl0bDYxqJLC1fyHRRFzkUCQh15jl17C6h7zMtmtSjML45gpF/LUSUV+pniCJ4F6922djtaX+TgdClN5/4++Np6Vu+09qIFna9H1/jjHvK7/LRYVmsgC2EE1ZJ1LUmRSjunQwQ9r2Ac7XcL5Al2gKP44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746115647; c=relaxed/simple;
-	bh=2tVqBdPxBFJ0mtEhuB7K8OSbHOc9c5zYbTK8Vxk9Wu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Het2VsSHhU/DhnFHOL+l52tuqvGzBNAygguMkrcFTme8ghh4NQH3boj/fMZR8k4Bcv68KApkoF+vpCdNEC3W1rLGE1xalE8lIOtepDRNrdABm8ExQDbhztf9zsXfJdalKV/NbdMiV8rMNF3LAeKrDjmNDLYPYJ9KaIKPrGGzUGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7B46168F;
-	Thu,  1 May 2025 09:07:17 -0700 (PDT)
-Received: from bogus (unknown [10.57.47.198])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF2833F673;
-	Thu,  1 May 2025 09:07:23 -0700 (PDT)
-Date: Thu, 1 May 2025 17:07:20 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-pm@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 2/8] cpuidle: psci: Transition to the faux device
- interface
-Message-ID: <20250501-pony-of-undeniable-reverence-f34cb7@sudeepholla>
-References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
- <20250318-plat2faux_dev-v2-2-e6cc73f78478@arm.com>
- <cf4e70e4-9fe5-4697-8744-8c12c41b5ff9@nvidia.com>
+	s=arc-20240116; t=1746126494; c=relaxed/simple;
+	bh=t72V4cMXfgECq2XlBkakvc0ngW0PUat2k9kI4OAGgGQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=h647JfEl1mBzQaHIkIyktzt1dH0Ir2wlz0rdsuB+RBPQmKP8hmYuEpwdvHdTVuaD7xn4mS3AGAL8Kh8d8fOs97MQs5HUeTjeNVPqWa3NHGWM9ZzGWBfPdLo2FIDUtPXGXiSVj5EVVkITFsZb9lJ5F44pmY8njVtCp8Q243+X88w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=gMWu11vI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kRRWrsXt; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="gMWu11vI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kRRWrsXt"
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id 2F84F2007A6;
+	Thu,  1 May 2025 15:08:09 -0400 (EDT)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-04.internal (MEProxy); Thu, 01 May 2025 15:08:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1746126489; x=1746133689; bh=uy2Z23D4UX2pb4MGng/RS7Rc0DqXehjP
+	gXYL1GZyHEA=; b=gMWu11vIGwyUkebQS6FfJoMbvmG1K5I4PcYPfgos/+3IKTG9
+	gplwSngSdL9b0tzDvioUBprhL4wfVkOmTpNtoAAODeB28Xg6R/kwHB7dvxSuftFL
+	yhPHuhfnyZhbGy1Hk4LH0DS38ZnX4s0nqvPXJdj6j6YsCbSDjUNCmIVLH/A/20KP
+	oo3/VMPCqW0WLap/EGtkYjtqLqADG6I7601JRBgJjC9L0IW/fnmqPmRfywBz38B2
+	l4rECgxFIIXyjmPcKpJ3MKrLDuuogSY9AnqaHJ7N27iyCvQLDrLJO+Uzbvq2a1Ob
+	z/jW7mFvVIaWGr7pr0l6vyW2GdTQ2Hejj4c04Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746126489; x=
+	1746133689; bh=uy2Z23D4UX2pb4MGng/RS7Rc0DqXehjPgXYL1GZyHEA=; b=k
+	RRWrsXtBP2dGvKqi4W7O8NcUE4T3criJTN4RNqnwM3jvVZB6DFHHOoJRSzF4WwTC
+	zyfSgrVfEAEZo6Ar3KWwXFFgpo9OcSnMRAJNahqn3nlXJrX0g/PcOryetxJVwBdg
+	bMvCV+WGJfrIwElsLCpZTQGf+AFh+vAPQIz7pR9L3B7fo46k+1htBqhXoVi3Nr6i
+	iPfXM7t0uPbUxV6yQuN2xxuUHDxXOhwyx1GBr0m/YPvpPLJFGrE4r55Y1vhjLJkG
+	EYbgK2ov6OqW9yBM/N3vWdDrYa4RmB3gucHV7PaTEJHhJOlijJtkhtTp35Hug9Lp
+	KdTUch2CHWx/XAiNccw8Q==
+X-ME-Sender: <xms:lMYTaGgjwoD9jvvLQF3kWWQqAITXOwX2J_Tz44npf0_rwZTz5vZWuA>
+    <xme:lMYTaHCfTlr4IcDYYP9mfLiZVIcfetmb5w7EMXV6Z0z5aHP8l6w5d06NcLSmpdfDF
+    y_HHxOzjxiGRzZWmjM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedtfeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
+    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepleefteeugeduudeuudeuhfefheegveek
+    ueefffdvffektdffffelveffvddvueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhnsggp
+    rhgtphhtthhopeegledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorhhose
+    eksgihthgvshdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrghrmhdr
+    tghomhdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnh
+    hosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepfigvnhhssegtshhivgdrohhr
+    ghdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhope
+    grohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheprghlvgigsehg
+    hhhithhirdhfrhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilh
+    drtghomhdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:lMYTaOHaWClXa7praEdCDETzg-YVo8ghBfqAEKgcYyCNv-z3uiOvlg>
+    <xmx:lMYTaPTDyplPkZ6QrXRyRgI6CFJO6g9IDexaTEMgKEAyXB5CcIWOgQ>
+    <xmx:lMYTaDxrliDpH1IiImjsat2Qz56tDsozwSqIgW3l_ha48UqBCKavYA>
+    <xmx:lMYTaN4smmith_jw1KGBc7w4dLVQ7r3zWaP24jB2SlIhLdcRPVRmOw>
+    <xmx:mcYTaH2ZstH58KGLmGnY3MmWQlgQtyVkrQuLwkep4LE-hnCp6R9N54B6>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6CE25BA0070; Thu,  1 May 2025 15:08:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf4e70e4-9fe5-4697-8744-8c12c41b5ff9@nvidia.com>
+X-ThreadId: T5b013bf7ff4edb46
+Date: Thu, 01 May 2025 21:07:44 +0200
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Jason Gunthorpe" <jgg@nvidia.com>, "Alexandre Ghiti" <alex@ghiti.fr>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Lu Baolu" <baolu.lu@linux.intel.com>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Gerald Schaefer" <gerald.schaefer@linux.ibm.com>,
+ "Heiko Stuebner" <heiko@sntech.de>, iommu@lists.linux.dev,
+ "Janne Grunau" <j@jannau.net>,
+ "Jean-Philippe Brucker" <jean-philippe@linaro.org>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Jonathan Hunter" <jonathanh@nvidia.com>,
+ "Joerg Roedel" <joro@8bytes.org>, "Kevin Tian" <kevin.tian@intel.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Matthew Rosato" <mjrosato@linux.ibm.com>, "Neal Gompa" <neal@gompa.dev>,
+ "Orson Zhai" <orsonzhai@gmail.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Rob Clark" <robdclark@gmail.com>, "Robin Murphy" <robin.murphy@arm.com>,
+ "Samuel Holland" <samuel@sholland.org>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Thierry Reding" <thierry.reding@gmail.com>,
+ "Tomasz Jeznach" <tjeznach@rivosinc.com>,
+ "Krishna Reddy" <vdumpa@nvidia.com>, virtualization@lists.linux.dev,
+ "Chen-Yu Tsai" <wens@csie.org>, "Will Deacon" <will@kernel.org>,
+ "Yong Wu" <yong.wu@mediatek.com>,
+ "Chunyan Zhang" <zhang.lyra@gmail.com>
+Cc: patches@lists.linux.dev
+Message-Id: <38706b77-4e58-4dfb-add3-814746f4a3c5@app.fastmail.com>
+In-Reply-To: <3-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
+References: <3-v1-7c5282b0c334+2db-iommu_rm_ops_pgsize_jgg@nvidia.com>
+Subject: Re: [PATCH 3/7] iommu: Remove ops.pgsize_bitmap from drivers that don't use it
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 01, 2025 at 02:01:19PM +0100, Jon Hunter wrote:
-> Hi Sudeep,
-> 
-> On 18/03/2025 17:01, Sudeep Holla wrote:
-> > The PSCI cpuidle driver does not require the creation of a platform
-> > device. Originally, this approach was chosen for simplicity when the
-> > driver was first implemented.
-> > 
-> > With the introduction of the lightweight faux device interface, we now
-> > have a more appropriate alternative. Migrate the driver to utilize the
-> > faux bus, given that the platform device it previously created was not
-> > a real one anyway. This will simplify the code, reducing its footprint
-> > while maintaining functionality.
-> > 
-> > Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > Cc: linux-pm@vger.kernel.org
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > ---
-> >   drivers/cpuidle/cpuidle-psci.c | 32 ++++----------------------------
-> >   1 file changed, 4 insertions(+), 28 deletions(-)
-> > 
-> > diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-> > index 2562dc001fc1de69732ef28f383d2809262a3d96..5d4d6daed36d8540ba2ce3dc54a3180731b03d22 100644
-> > --- a/drivers/cpuidle/cpuidle-psci.c
-> > +++ b/drivers/cpuidle/cpuidle-psci.c
-> > @@ -16,7 +16,7 @@
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/of.h>
-> > -#include <linux/platform_device.h>
-> > +#include <linux/device/faux.h>
-> >   #include <linux/psci.h>
-> >   #include <linux/pm_domain.h>
-> >   #include <linux/pm_runtime.h>
-> > @@ -404,14 +404,14 @@ static int psci_idle_init_cpu(struct device *dev, int cpu)
-> >    * to register cpuidle driver then rollback to cancel all CPUs
-> >    * registration.
-> >    */
-> > -static int psci_cpuidle_probe(struct platform_device *pdev)
-> > +static int psci_cpuidle_probe(struct faux_device *fdev)
-> >   {
-> >   	int cpu, ret;
-> >   	struct cpuidle_driver *drv;
-> >   	struct cpuidle_device *dev;
-> >   	for_each_possible_cpu(cpu) {
-> > -		ret = psci_idle_init_cpu(&pdev->dev, cpu);
-> > +		ret = psci_idle_init_cpu(&fdev->dev, cpu);
-> >   		if (ret)
-> >   			goto out_fail;
-> >   	}
-> > @@ -431,28 +431,4 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
-> >   	return ret;
-> >   }
-> > -static struct platform_driver psci_cpuidle_driver = {
-> > -	.probe = psci_cpuidle_probe,
-> > -	.driver = {
-> > -		.name = "psci-cpuidle",
-> > -	},
-> > -};
-> > -
-> > -static int __init psci_idle_init(void)
-> > -{
-> > -	struct platform_device *pdev;
-> > -	int ret;
-> > -
-> > -	ret = platform_driver_register(&psci_cpuidle_driver);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	pdev = platform_device_register_simple("psci-cpuidle", -1, NULL, 0);
-> > -	if (IS_ERR(pdev)) {
-> > -		platform_driver_unregister(&psci_cpuidle_driver);
-> > -		return PTR_ERR(pdev);
-> > -	}
-> > -
-> > -	return 0;
-> > -}
-> > -device_initcall(psci_idle_init);
-> > +module_faux_driver(psci_cpuidle, psci_cpuidle_probe, NULL, true);
-> > 
-> 
-> 
-> I have noticed the following error messages on some of our Tegra devices ...
-> 
->  ERR KERN faux psci-cpuidle: probe did not succeed, tearing down the device
->  ERR KERN CPUidle PSCI: Failed to create psci-cpuidle device
-> 
-> I had a quick look at this and this occurs because of the following code in
-> the probe cpuidle-psci driver ...
-> 
->         /*
->          * If no DT idle states are detected (ret == 0) let the driver
->          * initialization fail accordingly since there is no reason to
->          * initialize the idle driver if only wfi is supported, the
->          * default archictectural back-end already executes wfi
->          * on idle entry.
->          */
->         ret = dt_init_idle_driver(drv, psci_idle_state_match, 1);
->         if (ret <= 0)
->                 return ret ? : -ENODEV;
-> 
-> 
-> So although it could be argued that the error message is valid, I am not
-> sure if there is anything that mandates that we need to have the idle-states
-> present.
-> 
-> We are always checking for new kernel errors and so if something new occurs,
-> I am trying to figure out what is the correct way to fix. For this case I am
-> not sure what is best.
-> 
+On Tue, Apr 29, 2025, at 16:34, Jason Gunthorpe wrote:
+> These drivers all set the domain->pgsize_bitmap in their
+> domain_alloc_paging() functions, so the ops value is never used. Delete
+> it.
+>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> ---
+>  drivers/iommu/apple-dart.c       | 1 -
+>  drivers/iommu/intel/iommu.c      | 1 -
+>  drivers/iommu/iommufd/selftest.c | 1 -
+>  drivers/iommu/riscv/iommu.c      | 1 -
+>  drivers/iommu/virtio-iommu.c     | 6 ++----
+>  5 files changed, 2 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+> index 757d24f67ad45a..190f28d7661515 100644
+> --- a/drivers/iommu/apple-dart.c
+> +++ b/drivers/iommu/apple-dart.c
+> @@ -991,7 +991,6 @@ static const struct iommu_ops apple_dart_iommu_ops = {
+>  	.of_xlate = apple_dart_of_xlate,
+>  	.def_domain_type = apple_dart_def_domain_type,
+>  	.get_resv_regions = apple_dart_get_resv_regions,
+> -	.pgsize_bitmap = -1UL, /* Restricted during dart probe */
+>  	.owner = THIS_MODULE,
+>  	.default_domain_ops = &(const struct iommu_domain_ops) {
+>  		.attach_dev	= apple_dart_attach_dev_paging,
 
-This is another case where probe was failing before too just that faux
-device probe throws the error. I will take a look and see what can be done.
-But yes, we shouldn't throw error if no idle-states are present in the DT.
+Reviewed-by: Sven Peter <sven@svenpeter.dev> # for Apple DART
 
--- 
-Regards,
-Sudeep
+
+
+Best,
+
+
+Sven
