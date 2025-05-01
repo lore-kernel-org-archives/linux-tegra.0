@@ -1,169 +1,184 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BB5224253;
-	Thu,  1 May 2025 22:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A043D6A;
+	Thu,  1 May 2025 22:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746138704; cv=none; b=kANubVzgT6a6/PL0rSHx95xhparLJOm10F8X/43Ej9vI658kIV8Lsl82bNMG4qlhVkE8arY69o/jtoPe1cNoy6USzqKuZN8ckVHJW/NTikuTVD9jLmWZL4dUO98wna09M4Smubs0bhzgYlVYwN8EeoewEo08g+797+VBSFDkySQ=
+	t=1746138747; cv=none; b=tT+LaFI2g0PqDtcSlFLKiQbgEOxfAbJMaUW9ntWCGxPLInJVOLrfvAiLttu9DINcvSiiSyrIM3P17uklpWxomZSX4g4An2GhiUfD6l/lzSjXm6CXZzp4xBh9BVeJ17z3ttFnJyU2UFMZvURO7x8GLYha8oJQoshtyrieUiUWPa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746138704; c=relaxed/simple;
-	bh=IUmOmh23ffVW5ccEnUJXO1QpsOO3VaSdH4ENaa8xDEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hybrc8L4Csc+xSVCSy07N4HGlTVUykdl9gJECsnCjQNvvQ0qu3EP+4FI0KYHdRoB37RfYKBChDIjexU3VSMRo/rf/Lw0BVihJ8FO1ghfUV3BuCv9Uo/IJ/vTHW/5CJuim/DGAF3vNR0Rl3EsJIYe0NNovAU8VmjTHSJQ7uw/ItU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+5O5tGQ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746138747; c=relaxed/simple;
+	bh=onQRN4XoWG/Smh1nPdvH5ErByOgifJ8Cg0vVX/S+viY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JFLNDUMJBjzLVvZ5udIFa6wTuzaR75ZPUjMwke/M211qc5lZTjTRDC0LiDldpnGuikipMoS+RSP8pOWQAVX1oAg0RgZn0OUqPVqpcMOBVnBrDeWO1xKaGFE6d+m83fAX/g97DQvRFX+5UaNt+3NT6AaD4/HJUYo6lXpSrKACdsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRt/ttdF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+5O5tGQ"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30effbfaf4aso13384751fa.3;
-        Thu, 01 May 2025 15:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746138699; x=1746743499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1WhLnGgrZK9KgJDLutiME2etA44y+MbfNDEIYfSdOas=;
-        b=M+5O5tGQbwkwVHLBpoZJ04ukCBdrA3EtmoSlj39yDV5HM9zknJvr7slZOLcc74Q60I
-         uaTV8gbPjIc4y6nBX1RBLeazKDDO0hTVEDHR8bZa4FNanmV6MhQLolw/2gUVuXcGag9V
-         3QkdCdqOwieLP7yyy9jxEnthwPnYCd/zdtvW4QWgU7t8vST34GKxprYrGFtcU4tng9k8
-         Pt3xw1CAJcLyLhL9fizvVH6LBUobW7OXUOJWJqwaqUOitoYshzp6AsD2Ilga8TqLG50x
-         qR2aBPxfif9eUqSMT95vvRz3KAZUGXxpJUkRKHoxHQikZFAvzXOY5CFAq6pkQR1+DDKJ
-         lwMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746138699; x=1746743499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1WhLnGgrZK9KgJDLutiME2etA44y+MbfNDEIYfSdOas=;
-        b=eqNLPQIEUMHDJP8DDfiItAT6KxUizfxb2oV5ulmTetUVEPKT+bY83a4Zu+rFSpRdXw
-         C59VaCfeKME0wneLHGgs1N7ev1sxn1ZJM0+tCcTxph8GBhVIJtz5AZLAnAG6tkGn/PtL
-         tQ/PZ93RzZE1OmVq9jQSfUwM5FhLs1Fi0rg4tRZVnDFov8f6v00XoF6ySRjOPtX9lFvH
-         Gz2RIZoiDrwpizqo9m8tUV1jqoReJH6CPl5epsxo908hR32pAbsce3jthzFeCRhuhLGH
-         /cLcFA/GML9F9+ynh6Z6/2yaBJ19ubwJYOqs/Ge4fokvIsUO7QcH76vgC09s2GvRairr
-         urhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVapa/ySnCmtO2I1YYQMo8Y2MMX0wd2dD56xva9/dHl0ozG5hcdpdCNuRaeCT/9yeyXqZY4X0eOI8v4@vger.kernel.org, AJvYcCWVWNDqQ+D9F7/z0t4Dp+xvNS53hLgWAuWVp5pp/koPPI0lz988Rds4IY6hozS2C5bszVt/ZozB1fLo7LM=@vger.kernel.org, AJvYcCXyaSIGve95xd8ZQSjfrYcr+JbIwS/axgwqoPgLR1wo/KoBUgqzTtVcXO7xYSUdBoR4aLF726YGohuP0oC6@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi2cDifH8uZLjX2vpHdX60aT2Csj9aQyd3AIsiskd/SaWoiq20
-	hKj9ryJuA0/fzsWJycrsDWw8Ld4X90D/XVcQjRE/RbJ7UAd0YA+7VmC1pdutmx8S/L1hBF6A7rE
-	rV+wxOWm7TJ4mu6bZaaxtQHy/cvR9nP2MUBk=
-X-Gm-Gg: ASbGncvnnbR8ENDXy4+5qTbuEVktq3yFKUMC2p1qImidawuN0vC4IWBuVllfuu9S4X3
-	1B80FJqshRJX2qqUkuU5P0/gEs71MhGOu25Gf6I5I9d7aZ3yfuv8JU1fEPplLQ6myXP/ANtIkik
-	uGD47kdFbiuT90VCfEjqaf7Q==
-X-Google-Smtp-Source: AGHT+IEYmFe5HB0Ycsl/5Rt5LMxC6ZnTanDjyMrQmJ8f+Ih6DUxHbiydzQUNZDruV7nSLfeDs1Pp/LcyUxabvAcgV60=
-X-Received: by 2002:a05:651c:548:b0:30d:e104:b593 with SMTP id
- 38308e7fff4ca-320c61bea9dmr1057501fa.39.1746138699095; Thu, 01 May 2025
- 15:31:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRt/ttdF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C3950C4CEE3;
+	Thu,  1 May 2025 22:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746138746;
+	bh=onQRN4XoWG/Smh1nPdvH5ErByOgifJ8Cg0vVX/S+viY=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=uRt/ttdFGIdLeZ0sUIRWKHIEN8jAiwS1xbXtjwcIn8Ap0qt5lEt7OaLEGo1r1ic98
+	 VuAkfsXojY3DbW4Tjp8UYmfbNWlIMexm/ag+Qxz45O3idfgAOJlQbtzLuSugXQKsK3
+	 OnAiU6vFNujsJPqXZ1Pv0oh/uDwf64hBKsKqZyNMoNiqahJKAoQuuXZCFr4LJftGBu
+	 L1/B0IYzmGUF8sJikAaxMm1rJho1gnBajUNA0EIvqveJDlXbJ2MVQ9HqTaNTkYbqOV
+	 2ZNEmnvS/ux6Uwh2Ph+XZ474nnYaJ9ZgoudQTh9F1JTe4vQEesTfhvV3rKhLZBgims
+	 yQSYpWc+xILGA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF20AC369DC;
+	Thu,  1 May 2025 22:32:26 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Thu, 01 May 2025 17:32:23 -0500
+Subject: [PATCH v2] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com>
- <d0da9dbd-7ea7-4047-bab3-22f416c45938@gmail.com> <CALHNRZ-1wY2D4FOauh7tD+2QKBfhtfdJcvpV_B9Y0tEpE1kTVA@mail.gmail.com>
- <03de9272-dbcc-4473-a267-c3a32e3fd844@gmail.com> <CALHNRZ8i=gOrHfgjhL5X_mqM8=1KeW_cXpp2R32hmT5wUjkw5A@mail.gmail.com>
- <2eb90841-f10c-4524-bbf8-10a2095ecde4@gmail.com>
-In-Reply-To: <2eb90841-f10c-4524-bbf8-10a2095ecde4@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250501-tx1-therm-v2-1-abdb1922c001@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHb2E2gC/23MSw7CIBSF4a00dyyGp1pH7sN0gAjlJlIMEFLTs
+ HexY4f/ycm3QbYJbYbrsEGyFTPGpQc/DGC8XmZL8NkbOOWKSk5JWRkp3qZARvcQRlCnpXDQ/+9
+ kHa67dZ96e8wlps9OV/Zb/ymVEUbURbGTOTsj+Xibg8bX0cQAU2vtC4GbZxyiAAAA
+X-Change-ID: 20250420-tx1-therm-9fb3c30fa43f
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746138746; l=3058;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=5WwXIILW7h6PVNyGMb5HuC90et+tCHw6bRcXa5HcJ8g=;
+ b=cdAMKSijdEpZU1K5DfekxqFfLwNz+5PfWhWRkyosUCSkP4J0nShnN5pYqwPAIkGJrkI9IzSow
+ eaTFIF278T1DXzlUlLLu5TobhfV55hLm6MHCLIVBWI5fQG7ESqdFqEl
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 1 May 2025 17:31:27 -0500
-X-Gm-Features: ATxdqUGrMNTj7xaG2iCFPJ4lREoHnf4_qjs03MsfW90lx2iInYnOxaWVxwrT6hU
-Message-ID: <CALHNRZ8GCBwjVOFoeGrP3Rbcy2NVzkahi_i0gR8qAYr2tA0SOA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
-To: Tomasz Maciej Nowak <tmn505@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 8:21=E2=80=AFAM Tomasz Maciej Nowak <tmn505@gmail.c=
-om> wrote:
->
-> W dniu 23.04.2025 o 06:31, Aaron Kling pisze:
-> > On Tue, Apr 22, 2025 at 11:19=E2=80=AFAM Tomasz Maciej Nowak <tmn505@gm=
-ail.com> wrote:
-> >>
-> >> W dniu 22.04.2025 o 17:58, Aaron Kling pisze:
-> >>> On Tue, Apr 22, 2025 at 9:52=E2=80=AFAM Tomasz Maciej Nowak <tmn505@g=
-mail.com> wrote:
-> >>>>
-> >>>> Hi.
-> >>>>
-> >>>> W dniu 21.04.2025 o 00:42, Aaron Kling via B4 Relay pisze:
-> >>>>> From: Aaron Kling <webgeek1234@gmail.com>
-> >>>>>
-> >>>>> This is based on 6f78a94, which enabled added the fan and thermal z=
-ones
-> >>>>> for the Jetson Nano Devkit. The fan and thermal characteristics of =
-the
-> >>>>> two devkits are similar, so usng the same configuration.
-> >>>>
-> >>>> Does this work on Your DevKit? Doesn't on mine, the fan won't budge.=
- Maybe the
-> >>>> revision difference? What I'm using ATM is [1] and [2]. Because inve=
-rted polarity
-> >>>> of PWM, not submitted since that'll need the driver changes [3],[4].
-> >>>
-> >>> I would have sworn I verified this before sending it in. I've had the
-> >>> patches for some time. But you are correct, this does not work as-is.
-> >>> Maybe I lost something cleaning up for submission or just plain
-> >>> misremembered the verification. I will send a v2 once I've fixed and
-> >>> verified. Apologies to the list for the bad submission.
-> >>>
-> >>> For inverted polarity, listing them backwards already has precedence
-> >>> in mainline, see the Banana Pi R3 dt. This makes me want to double
-> >>> check the existing Nano pwm-fan entry in mainline, though. Cause I
-> >>> thought all the t210 devices were the same in regards to pwm fan
-> >>> inversion. And it doesn't have reversed entries.
-> >>
-> >> That Banana Pi R3 reverse levels look ugly, but if it's permitted I'm =
-not against.
-> >>
-> >> I would assume they fixed that in Nano, since PWM controller doesn't i=
-mplement
-> >> inverted polarity in hardware. Looking at Switch [5] it seems the TX1 =
-DevKit was
-> >> used for developing, since they replicated the issue.
-> >>
-> >> 5. https://github.com/fail0verflow/switch-linux/commit/b23e8b89081415f=
-2a63bc625db041c8092e2a8a2
-> >>   >
-> >>> Sincerely,
-> >>> Aaron Kling
-> >>>
-> >>>>
-> >>>> 1. https://github.com/tmn505/linux/commit/a78c520ec94aeab2c9dc8e1f46=
-597c4174ff957d
-> >>>> 2. https://github.com/tmn505/linux/commit/99beee4f0cd5d3a6f30e1829d8=
-23c11cb8b54bac
-> >>>> 3. https://libera.irclog.whitequark.org/tegra/2024-07-19#36707118;
-> >>>> 4. https://libera.irclog.whitequark.org/tegra/2024-10-14#37145211;
-> >>>>
-> >>>> Regards
-> >>>>
->
-> [snip]
->
-> > Mmm, so this is strange. I am currently unable to get the fan to move
-> > on any t210 device. But it works just fine on t186, such as the tx2 nx
-> > setup supported by mainline. Tomasz, does your change work on 6.12 or
-> > current mainline? Even if I match your changes on the tx1 devkit, I
-> > get nothing. The pwm duty cycle is changing as expected, per the
-> > debugfs pwm listing. Gpio state for pin 4 of the tca9539@74 matches
-> > the 4.9 kernel when the fan is running. Best I can tell, it should be
-> > working. But it's not.
+This is based on 6f78a94, which enabled added the fan and thermal zones
+for the Jetson Nano Devkit. The fan and thermal characteristics of the
+two devkits are similar, so using the same configuration.
 
-For documentation purposes, I figured out why I couldn't get the fan
-to work on any of my test devices. I'm using the Android boot stack,
-which apparently doesn't do the pinmuxing that the L4T boot stack
-does. The downstream Android setup does pinmuxing in the kernel. And
-mainline support has been primarily designed against the L4T boot
-stack, doing pinmuxing in the bootloader and not in kernel. I've
-worked around this locally by setting the pinctrl name on the p2597
-pinmux node to 'default', so the kernel does pinmuxing. Which matches
-things back up between the two bootloaders. I'll be sending a working
-v2 shortly.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v2:
+- Add fan regulator
+- Add interrupt for tachometer
+- Reverse cooling map to account for inverse polarity
+- Rename cooling map nodes to map# as tht is all the schema allows
+- Link to v1: https://lore.kernel.org/r/20250420-tx1-therm-v1-1-58516c7fc429@gmail.com
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 75 ++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-Sincerely,
-Aaron
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 83ed6ac2a8d8f403fb588edce83dc401065c162f..584461f3a6196c4327e958b424dfd2139cd43965 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1623,6 +1623,18 @@ key-volume-up {
+ 		};
+ 	};
+ 
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		pwms = <&pwm 3 45334>;
++		fan-supply = <&vdd_fan>;
++		interrupt-parent = <&gpio>;
++		interrupts = <TEGRA_GPIO(K, 7) IRQ_TYPE_EDGE_RISING>;
++
++		/* cooling level (0, 1, 2, 3) - pwm inverted */
++		cooling-levels = <255 128 64 0>;
++		#cooling-cells = <2>;
++	};
++
+ 	vdd_sys_mux: regulator-vdd-sys-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDD_SYS_MUX";
+@@ -1778,4 +1790,67 @@ vdd_usb_vbus_otg: regulator-vdd-usb-vbus-otg {
+ 		enable-active-high;
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
++
++	vdd_fan: regulator-vdd-fan {
++		compatible = "regulator-fixed";
++		regulator-name = "VDD_FAN";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&exp1 4 GPIO_ACTIVE_LOW>;
++		vin-supply = <&vdd_5v0_sys>;
++
++		regulator-enable-ramp-delay = <284>;
++	};
++
++	thermal-zones {
++		cpu-thermal {
++			trips {
++				cpu_trip_critical: critical {
++					temperature = <96500>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++
++				cpu_trip_hot: hot {
++					temperature = <70000>;
++					hysteresis = <2000>;
++					type = "hot";
++				};
++
++				cpu_trip_active: active {
++					temperature = <50000>;
++					hysteresis = <2000>;
++					type = "active";
++				};
++
++				cpu_trip_passive: passive {
++					temperature = <30000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					cooling-device = <&fan 3 3>;
++					trip = <&cpu_trip_critical>;
++				};
++
++				map1 {
++					cooling-device = <&fan 2 2>;
++					trip = <&cpu_trip_hot>;
++				};
++
++				map2 {
++					cooling-device = <&fan 1 1>;
++					trip = <&cpu_trip_active>;
++				};
++
++				map3 {
++					cooling-device = <&fan 0 0>;
++					trip = <&cpu_trip_passive>;
++				};
++			};
++		};
++	};
+ };
+
+---
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+change-id: 20250420-tx1-therm-9fb3c30fa43f
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
