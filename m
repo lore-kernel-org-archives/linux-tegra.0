@@ -1,251 +1,166 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BB174EF0;
-	Thu,  1 May 2025 13:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F8118C011;
+	Thu,  1 May 2025 16:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746105219; cv=none; b=DY6kb/DucmVsZchEOvBn1CEunYnJ68DQTyqdKFKKXv9BT3QU+bH2z4uw+yjvsoeiWXHlsl954Jb+n7YwvfGX4MszDxWnor7e+VprODkcCSkYwqJh0ZOmcI4y6Zb0APK5iMGihH196UcDFt+OHT5L8ZZV3klk2CAle8HMagq8ttY=
+	t=1746115647; cv=none; b=AizVDyn2Csi64RzE37zhy6oSVAW0GeGuRfZFpXEFpt3HNbK0BV0vGca0zFfyHnFO4wge4ckkqnGult/sdWF2ATtF1jfZ2ChUEW9N430tG1NHUvZDO6kViNfoLp9i7vJ9wsRC88bJWEP51WqlAGEevnB34tH6kx1SMluYAfclBbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746105219; c=relaxed/simple;
-	bh=RDaGjhb6CLrz8nAp0mDGS3MCpW/LRQ28yHAfL5/xlP8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=siBNbSitUOoQauVin2DGDyZxURSZjFc4CgTExQbYzkZwisJ7d9I8pYSHD0opwdmpSeEEYbHJd692BXDjf9NvTfBC3dg/Xg1MBpcXokDFQhTOG1uImQ9rCyVXxuTyu5TqkwFrkart+PpDipKX+KzIblLJ/xjWqqkEJRuZB1E5UQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDgEOT2M; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDgEOT2M"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-30384072398so734072a91.0;
-        Thu, 01 May 2025 06:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746105217; x=1746710017; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/lHepDmfNzk/dMT78MMtoVF7nNV1GEq10f/wXak/5U=;
-        b=CDgEOT2MRCM7Uh8ckqVuiwWp3e42WnwFvanIRNpffTjRfCCXf4fapakj4inWmB7j8I
-         y2hLgi3eK/cQD2QzzkeJfwOthXgjmJar3/oxYjmFx4rc1Vmi0g/bDD7nfNDthYKuF89G
-         +PWUvguTgI5MTcKvHSKjKalQ8t3U5ny+CaxbseQtncr5rFLQuo87eN4UFijyUiydd+zD
-         dJf279gvphkaF0Mu0GO60XYLdu8I7MlCg/+VV8Z2zANEpWxb7/HE2fhEg63AkQ/s1UvG
-         0RZm93AeeQJE4HiJPuh+DzYVrIliJuB1U2iTdDdv+KU44+LGF+rKKi66ErbKawT6k1Yd
-         fInQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746105217; x=1746710017;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9/lHepDmfNzk/dMT78MMtoVF7nNV1GEq10f/wXak/5U=;
-        b=qwq8A26yMCUDq3d3GXZBSbJWIVZGhnMonT+Ak+EJ7QmANmh03HQLMWm+yrVMsAkLh8
-         yTGWtf4sLuAHyZ+1uvYzabckUTIdbbC7BTel64zTOQRXCHIWJ8ge1moL7cuRL7zAETpy
-         g4ac5WsTtK0PWuJ+s7UilyCWOwVPp+7teF+3NR51M3Bk3KWNE8WG5WeLmdl5v7qkVBFu
-         j5AvW+472R96WBvZdhhb3H1LWv6qiycI10HyRvnwz+g2RtJXvrTNiaSifaw8aDfmA7DK
-         Jgdn0fp641aaXU8esMFrhi2Nc5T5Ki6+5YlcwOb1zoMxUP3gprsYEPJ+ta6EXpoMAmxr
-         sfjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1oR9mGAqGSvs1dvOIaucFokLHeK5//I8RChDLC6EnItLIj3wq3kan7uDvjMwdTX0qecbHVo+cVXh4@vger.kernel.org, AJvYcCWIS91P0rT/kjsqG86UY1jQSWFGmDbvLCRz/Y+3LeJ/jNNaQ5dolA+uyC/VGtclswb3jN3OALmXMoTsaI7V@vger.kernel.org, AJvYcCXNKHXGo1SKqFZr/KiabuRN/vwqoHSFf9VeS58Z+HKdWODETECtL9Yb9sn9o/Gj3LEubTzl+UM3OjmFQLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtmXgFOM7zzF6IzMxVG1AzEMirINuL4qfxzTNz05+cdFHmYpj8
-	M5kZ2CFrDlwqOqcuza6Vo/rTySC4gmi9bCQ96ZfbYwEAcft9/8wb
-X-Gm-Gg: ASbGnctZZp6kpePjaKNpQdNzf9JoSHPFBNfcCqrEz3J2oIYFwJXNYWIdGloqCPx4eqC
-	asquhwTTXiLS6BsdwMtfbGGen4IFl+O1t8Am3tyX6gVFzWGtFIwjj+VJgbyyUz1V+cRhd4rXtuf
-	AN9gm3pMbjtAcdp5vgyb9OSfw50AzOnWAdbptqj7jRQrzfSrbDehraS81aZ7E74w4qSaI+UGx9p
-	VvonnWK74nARnjcnbqsgRwAy0Ur2iZNIpefPB/xjuqspgW/9bIp6bGamt6UACs8I66+fZOrb9K/
-	cDBjIsftw7jJFtJ1hP5Ebl2p982/f83j8NP1hph2En4WW2zQ+Q==
-X-Google-Smtp-Source: AGHT+IE+nV3BX0N2nAoX9cmzKwU9eZ6V/oqEsyX4ll06AYTgvgTYCZB09JmCJBgntZsJ8nSgyaFGEQ==
-X-Received: by 2002:a17:90b:5827:b0:303:75a7:26a4 with SMTP id 98e67ed59e1d1-30a332df593mr10706164a91.7.1746105216776;
-        Thu, 01 May 2025 06:13:36 -0700 (PDT)
-Received: from Black-Pearl. ([122.169.148.15])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-30a4764226csm853277a91.43.2025.05.01.06.13.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 06:13:36 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Thu, 01 May 2025 13:12:36 +0000
-Subject: [PATCH] dt-bindings: dma: convert text based binding to json
- schema
+	s=arc-20240116; t=1746115647; c=relaxed/simple;
+	bh=2tVqBdPxBFJ0mtEhuB7K8OSbHOc9c5zYbTK8Vxk9Wu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Het2VsSHhU/DhnFHOL+l52tuqvGzBNAygguMkrcFTme8ghh4NQH3boj/fMZR8k4Bcv68KApkoF+vpCdNEC3W1rLGE1xalE8lIOtepDRNrdABm8ExQDbhztf9zsXfJdalKV/NbdMiV8rMNF3LAeKrDjmNDLYPYJ9KaIKPrGGzUGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7B46168F;
+	Thu,  1 May 2025 09:07:17 -0700 (PDT)
+Received: from bogus (unknown [10.57.47.198])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF2833F673;
+	Thu,  1 May 2025 09:07:23 -0700 (PDT)
+Date: Thu, 1 May 2025 17:07:20 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 2/8] cpuidle: psci: Transition to the faux device
+ interface
+Message-ID: <20250501-pony-of-undeniable-reverence-f34cb7@sudeepholla>
+References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
+ <20250318-plat2faux_dev-v2-2-e6cc73f78478@arm.com>
+ <cf4e70e4-9fe5-4697-8744-8c12c41b5ff9@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250501-nvidea-dma-v1-1-a29187f574ba@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAENzE2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDE2MD3byyzJTURN2UXCBOtjA3STRKMzNNM1cCaigoSk3LrAAbFh1bWws
- ADJ3eKVwAAAA=
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf4e70e4-9fe5-4697-8744-8c12c41b5ff9@nvidia.com>
 
-Update text binding to YAML.
-Changes during conversion:
-- Add a fallback for "nvidia,tegra30-apbdma" as it is
-  compatible with the IP core on "nvidia,tegra20-apbdma".
-- Update examples and include appropriate file directives to resolve
-  errors identified by `dt_binding_check` and `dtbs_check`.
+On Thu, May 01, 2025 at 02:01:19PM +0100, Jon Hunter wrote:
+> Hi Sudeep,
+> 
+> On 18/03/2025 17:01, Sudeep Holla wrote:
+> > The PSCI cpuidle driver does not require the creation of a platform
+> > device. Originally, this approach was chosen for simplicity when the
+> > driver was first implemented.
+> > 
+> > With the introduction of the lightweight faux device interface, we now
+> > have a more appropriate alternative. Migrate the driver to utilize the
+> > faux bus, given that the platform device it previously created was not
+> > a real one anyway. This will simplify the code, reducing its footprint
+> > while maintaining functionality.
+> > 
+> > Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Cc: linux-pm@vger.kernel.org
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >   drivers/cpuidle/cpuidle-psci.c | 32 ++++----------------------------
+> >   1 file changed, 4 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
+> > index 2562dc001fc1de69732ef28f383d2809262a3d96..5d4d6daed36d8540ba2ce3dc54a3180731b03d22 100644
+> > --- a/drivers/cpuidle/cpuidle-psci.c
+> > +++ b/drivers/cpuidle/cpuidle-psci.c
+> > @@ -16,7 +16,7 @@
+> >   #include <linux/kernel.h>
+> >   #include <linux/module.h>
+> >   #include <linux/of.h>
+> > -#include <linux/platform_device.h>
+> > +#include <linux/device/faux.h>
+> >   #include <linux/psci.h>
+> >   #include <linux/pm_domain.h>
+> >   #include <linux/pm_runtime.h>
+> > @@ -404,14 +404,14 @@ static int psci_idle_init_cpu(struct device *dev, int cpu)
+> >    * to register cpuidle driver then rollback to cancel all CPUs
+> >    * registration.
+> >    */
+> > -static int psci_cpuidle_probe(struct platform_device *pdev)
+> > +static int psci_cpuidle_probe(struct faux_device *fdev)
+> >   {
+> >   	int cpu, ret;
+> >   	struct cpuidle_driver *drv;
+> >   	struct cpuidle_device *dev;
+> >   	for_each_possible_cpu(cpu) {
+> > -		ret = psci_idle_init_cpu(&pdev->dev, cpu);
+> > +		ret = psci_idle_init_cpu(&fdev->dev, cpu);
+> >   		if (ret)
+> >   			goto out_fail;
+> >   	}
+> > @@ -431,28 +431,4 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
+> >   	return ret;
+> >   }
+> > -static struct platform_driver psci_cpuidle_driver = {
+> > -	.probe = psci_cpuidle_probe,
+> > -	.driver = {
+> > -		.name = "psci-cpuidle",
+> > -	},
+> > -};
+> > -
+> > -static int __init psci_idle_init(void)
+> > -{
+> > -	struct platform_device *pdev;
+> > -	int ret;
+> > -
+> > -	ret = platform_driver_register(&psci_cpuidle_driver);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	pdev = platform_device_register_simple("psci-cpuidle", -1, NULL, 0);
+> > -	if (IS_ERR(pdev)) {
+> > -		platform_driver_unregister(&psci_cpuidle_driver);
+> > -		return PTR_ERR(pdev);
+> > -	}
+> > -
+> > -	return 0;
+> > -}
+> > -device_initcall(psci_idle_init);
+> > +module_faux_driver(psci_cpuidle, psci_cpuidle_probe, NULL, true);
+> > 
+> 
+> 
+> I have noticed the following error messages on some of our Tegra devices ...
+> 
+>  ERR KERN faux psci-cpuidle: probe did not succeed, tearing down the device
+>  ERR KERN CPUidle PSCI: Failed to create psci-cpuidle device
+> 
+> I had a quick look at this and this occurs because of the following code in
+> the probe cpuidle-psci driver ...
+> 
+>         /*
+>          * If no DT idle states are detected (ret == 0) let the driver
+>          * initialization fail accordingly since there is no reason to
+>          * initialize the idle driver if only wfi is supported, the
+>          * default archictectural back-end already executes wfi
+>          * on idle entry.
+>          */
+>         ret = dt_init_idle_driver(drv, psci_idle_state_match, 1);
+>         if (ret <= 0)
+>                 return ret ? : -ENODEV;
+> 
+> 
+> So although it could be argued that the error message is valid, I am not
+> sure if there is anything that mandates that we need to have the idle-states
+> present.
+> 
+> We are always checking for new kernel errors and so if something new occurs,
+> I am trying to figure out what is the correct way to fix. For this case I am
+> not sure what is best.
+> 
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
----
- .../bindings/dma/nvidia,tegra20-apbdma.txt         | 44 -----------
- .../bindings/dma/nvidia,tegra20-apbdma.yaml        | 90 ++++++++++++++++++++++
- 2 files changed, 90 insertions(+), 44 deletions(-)
+This is another case where probe was failing before too just that faux
+device probe throws the error. I will take a look and see what can be done.
+But yes, we shouldn't throw error if no idle-states are present in the DT.
 
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt
-deleted file mode 100644
-index 447fb44e7abe..000000000000
---- a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--* NVIDIA Tegra APB DMA controller
--
--Required properties:
--- compatible: Should be "nvidia,<chip>-apbdma"
--- reg: Should contain DMA registers location and length. This should include
--  all of the per-channel registers.
--- interrupts: Should contain all of the per-channel DMA interrupts.
--- clocks: Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--- resets : Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names : Must include the following entries:
--  - dma
--- #dma-cells : Must be <1>. This dictates the length of DMA specifiers in
--  client nodes' dmas properties. The specifier represents the DMA request
--  select value for the peripheral. For more details, consult the Tegra TRM's
--  documentation of the APB DMA channel control register REQ_SEL field.
--
--Examples:
--
--apbdma: dma@6000a000 {
--	compatible = "nvidia,tegra20-apbdma";
--	reg = <0x6000a000 0x1200>;
--	interrupts = < 0 136 0x04
--		       0 137 0x04
--		       0 138 0x04
--		       0 139 0x04
--		       0 140 0x04
--		       0 141 0x04
--		       0 142 0x04
--		       0 143 0x04
--		       0 144 0x04
--		       0 145 0x04
--		       0 146 0x04
--		       0 147 0x04
--		       0 148 0x04
--		       0 149 0x04
--		       0 150 0x04
--		       0 151 0x04 >;
--	clocks = <&tegra_car 34>;
--	resets = <&tegra_car 34>;
--	reset-names = "dma";
--	#dma-cells = <1>;
--};
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
-new file mode 100644
-index 000000000000..fc800231b39b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
-@@ -0,0 +1,90 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/nvidia,tegra20-apbdma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra APB DMA Controller
-+
-+description: |
-+  The NVIDIA Tegra APB DMA controller is a hardware component that
-+  enables direct memory access (DMA) on Tegra systems. It facilitates
-+  data transfer between I/O devices and main memory without constant
-+  CPU intervention.
-+
-+maintainers:
-+  - Jonathan Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra20-apbdma
-+      - items:
-+          - const: nvidia,tegra30-apbdma
-+          - const: nvidia,tegra20-apbdma
-+
-+  "#dma-cells":
-+    description:
-+      Must be <1>. This dictates the length of DMA specifiers
-+      in client node's dmas properties.
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Should contain all of the per-channel DMA interrupts in
-+      ascending order with respect to the DMA channel index.
-+    minItems: 1
-+    maxItems: 32
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: dma
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - resets
-+  - reset-names
-+  - "#dma-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/reset/tegra186-reset.h>
-+    dma@6000a000 {
-+        compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
-+        reg = <0x6000a000 0x1200>;
-+        interrupts = <0 136 0x04>,
-+                     <0 137 0x04>,
-+                     <0 138 0x04>,
-+                     <0 139 0x04>,
-+                     <0 140 0x04>,
-+                     <0 141 0x04>,
-+                     <0 142 0x04>,
-+                     <0 143 0x04>,
-+                     <0 144 0x04>,
-+                     <0 145 0x04>,
-+                     <0 146 0x04>,
-+                     <0 147 0x04>,
-+                     <0 148 0x04>,
-+                     <0 149 0x04>,
-+                     <0 150 0x04>,
-+                     <0 151 0x04>;
-+        clocks = <&tegra_car 34>;
-+        resets = <&tegra_car 34>;
-+        reset-names = "dma";
-+        #dma-cells = <1>;
-+    };
-+...
-
----
-base-commit: 9d9096722447b77662d4237a09909bde7774f22e
-change-id: 20250430-nvidea-dma-dc874a2f65f7
-
-Best regards,
 -- 
-Charan Pedumuru <charan.pedumuru@gmail.com>
-
+Regards,
+Sudeep
