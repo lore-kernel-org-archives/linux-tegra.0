@@ -1,98 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189401B393C;
-	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B14F1D6DBC;
+	Fri,  2 May 2025 20:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746212445; cv=none; b=RuhXZW21bm3mNGlA68HBpHviSIh2B11j2Yw1AfS0LUXxDYiWb2wY0QbvH3VlecIO/3fb+ZU43QlF5vLXQILHFwZo4mt8kJIkgyytqzF8pzx9WnGhS3VVR8bgtEfg7wCzGxxfDJWUMYLg483ekFXglEKjAwW2Ld0icieryPgHXko=
+	t=1746218005; cv=none; b=aP+9YNHpua72PsVJ9TpQY86E8ZK1hxiJ5n27+KtVfx6aSdFXbBAW+1fh5HNetoyjLM4OyLh3RoRCHGo7aKiUH+d/xbWkY+oc7ViomRiCslzObVx9uSmfqVqAYl72gfQR4dhfwOt7JREOpijo9oPaws37fm029xNGvOQZgGE8fxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746212445; c=relaxed/simple;
-	bh=EM6ElMfbJozbwi36h7rM3Qknfs+VrjA5AmrU9DsF36s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nWwgvHWbJQUuUr45EoeRhzMfDwloSxbbUY4PeBD6AbxfPreEdEdKjkwpEQ+B704+pEgZUisujfH9jLVuPF3ttbWj8QqK0h/Nl5kF5cnoibGjmDvF4GfImUNlbSJj0M4VMHMoAPwZ2VkSwZO2XuPpPgaIrXj94p9M70IPVSu4Ycc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYk9O1ao; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746218005; c=relaxed/simple;
+	bh=eQpPThGYqXJRVg1cJBD6NhPKcv8CfiVLMcrOd0iMaKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DipUT1eUhduXd1WhneGdq9RPL3Oq0Ow3yE7HeZ7LxMU1wv6S0TkHCnQfqstGga6xfUKCOFOt1nWTHfOnNKCnoASlnKMPd4ZDcMNb2O9Hki35nQvXRq0APVf+FkdvNRmk3yv0VrWE0AAS4Ony/cLlPta3PazeyPx0pdGP9t2XRcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkH/ix8e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYk9O1ao"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A607DC4CEE9;
-	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkH/ix8e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0CEC4CEEF;
+	Fri,  2 May 2025 20:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746212444;
-	bh=EM6ElMfbJozbwi36h7rM3Qknfs+VrjA5AmrU9DsF36s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VYk9O1aoPmu0AGsHsWYGcOvFTNkG5k5HBdSxIUgQ23nsQNxBzq3joz4pEGPw6mKxO
-	 JDybJA8k62Lol1jHhn881y1JWwbMpAX/6GBmbqy0fOhH01Saj9u62opFFwhyop8aUf
-	 VG6zeavbM4q44h2RqPRZFWEF7bAdR2FD7rBK98GboC0oH3FBgnEIw4v3S0VtazC/j1
-	 4GWK74R9qB71A4Doq+S9/UKRWCFzxoLQAmH/0ssO5I/szHmqpdOIf9Kx60muo5Bj8h
-	 Bo4ZoVJXVXphVo89bafFJCONslJZl/MLaS5qMgwNp/A4kt/tnsFaauDaaKAfHFPxoe
-	 2heui5+ACIEkg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9791FC3ABAA;
-	Fri,  2 May 2025 19:00:44 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Fri, 02 May 2025 14:00:30 -0500
-Subject: [PATCH v3 2/4] cpuidle: tegra: Export
- tegra_cpuidle_pcie_irqs_in_use
+	s=k20201202; t=1746218004;
+	bh=eQpPThGYqXJRVg1cJBD6NhPKcv8CfiVLMcrOd0iMaKU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LkH/ix8eRlN6Y0c0oKhTaKSTPGgY9N23Pj1ddgDD+5yZaWnWJIAiQM2ptXkfGTP4C
+	 7+9TcCJAEyTU+L9ZiKBurfiJ2Pfpu5dr9TmYoC4/8tX0UokT44/tg/M3Yd9DM9ye2S
+	 YQSqmr1HcdkNhGIPO9csXUTYpI3HqIUmBa6zbT814HDozm4+ZcTt2T/Zz/ndzE3jR4
+	 C2YvSHwLUW7kqwOiwrtRJED46fEmzVwQPZVe/XQjf3aalChU+ixfCkMNc2+Xtqrr+A
+	 NCmHgPbuYokTGFzlPmSitkFD4huqqarulMLGe3Fy29Bd0qIs6uFC+45R2e1xp7aSVN
+	 u8dZU2VGKznmg==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2cc57330163so1611082fac.2;
+        Fri, 02 May 2025 13:33:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUncAM1h1Kgvgnww9MhrZiVxwvaE8XkX58CuUkbO7OdCS1kCVbAi4BK/YZIUX+ATGS2Aw4MpDp0UPQ=@vger.kernel.org, AJvYcCW2A9ylygLQTPV7kaWWPwfCFbn/+vSIrcdQ7KAswbyaos0/CDdbryBWpxhhf1xLegS+kdx9ybGFauPwvW8=@vger.kernel.org, AJvYcCXpLhXMuFs62q/w3SPpfCgl6v9BH8TTP113mhCr5pV9UIYn/QdLw86zBZMPSf59BtCQb+he6/IVZMakZX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysbK88LUQ9EKp+gvswjo+VSAzIXMDIavEwCyJMGg5/oDK3at4I
+	tj0cdVrdMo4DXUX5itvmoqyeauBQwWUEBg/2HUV+d1jJBkDUzViGgyiTx45vqicHzJLsvpEs+ID
+	vCF0tdbeN233ReThvIMgBJ4wRc5Q=
+X-Google-Smtp-Source: AGHT+IEW5MPykyB7DblG9VdsAylYs04/gOlOoePxUKgxqXrheHVFXIzMetPRzrJbAUzi6p6p+9yRpLrYq8JRplfSSJY=
+X-Received: by 2002:a05:6870:82a4:b0:2d4:d07c:7cb6 with SMTP id
+ 586e51a60fabf-2dab2f5203amr2247004fac.1.1746218003811; Fri, 02 May 2025
+ 13:33:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-pci-tegra-module-v3-2-556a49732d70@gmail.com>
-References: <20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com>
-In-Reply-To: <20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746212443; l=830;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=xVyHjzSr7wHYXMLNGdp54ReYaOCWfcLl7SzVd0MbeFs=;
- b=SqXjWEAxLjXZ8IA642yInZJFT5zVd1nLIm+wRIuqLxf1ecpSS54HDkd1vt24WdaR5cLTNfshs
- VuuD0ygtyLJB4jBitbzfc2U5jSgSfnU+RV8dUr8yaJ//yilQWNe53IS
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <10629535.nUPlyArG6x@rjwysocki.net> <22630663.EfDdHjke4D@rjwysocki.net>
+ <c6cd714b-b0eb-42fc-b9b5-4f5f396fb4ec@nvidia.com>
+In-Reply-To: <c6cd714b-b0eb-42fc-b9b5-4f5f396fb4ec@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 2 May 2025 22:33:12 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jWTtaQEcx0p+onU3eujgAJpF_V57wzZCuYv2NVnEb7VQ@mail.gmail.com>
+X-Gm-Features: ATxdqUE5iv8R1HouAoR17904_EO8U54r-IoWclkxHnMpERA0eCldJYj2Oa7ePFY
+Message-ID: <CAJZ5v0jWTtaQEcx0p+onU3eujgAJpF_V57wzZCuYv2NVnEb7VQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Hi Jon,
 
-Add export for tegra_cpuidle_pcie_irqs_in_use() so that we can allow
-drivers like the pci-tegra driver to be loadable as a module.
+On Thu, May 1, 2025 at 11:51=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+>
+> Hi Rafael,
+>
+> On 14/03/2025 12:50, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > According to [1], the handling of device suspend and resume, and
+> > particularly the latter, involves unnecessary overhead related to
+> > starting new async work items for devices that cannot make progress
+> > right away because they have to wait for other devices.
+> >
+> > To reduce this problem in the resume path, use the observation that
+> > starting the async resume of the children of a device after resuming
+> > the parent is likely to produce less scheduling and memory management
+> > noise than starting it upfront while at the same time it should not
+> > increase the resume duration substantially.
+> >
+> > Accordingly, modify the code to start the async resume of the device's
+> > children when the processing of the parent has been completed in each
+> > stage of device resume and only start async resume upfront for devices
+> > without parents.
+> >
+> > Also make it check if a given device can be resumed asynchronously
+> > before starting the synchronous resume of it in case it will have to
+> > wait for another that is already resuming asynchronously.
+> >
+> > In addition to making the async resume of devices more friendly to
+> > systems with relatively less computing resources, this change is also
+> > preliminary for analogous changes in the suspend path.
+> >
+> > On the systems where it has been tested, this change by itself does
+> > not affect the overall system resume duration in a measurable way.
+> >
+> > Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravan=
+ak@google.com/ [1]
+> > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+>
+> I have noticed a suspend regression with -next on a couple of our Tegra
+> boards. Bisect was pointing to the following merge commit ...
+>
+> # first bad commit: [218a7bbf861f83398ac9767620e91983e36eac05] Merge
+> branch 'pm-sleep' into linux-next
+>
+> On top of next-20250429 I found that by reverting the following changes
+> that suspend is working again ...
+>
+> Revert "PM: sleep: Resume children after resuming the parent"
+> Revert "PM: sleep: Suspend async parents after suspending children"
+> Revert "PM: sleep: Make suspend of devices more asynchronous"
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/cpuidle/cpuidle-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
+I see.
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index b203a93deac5f378572be90e22c73e7417adb99e..aca907a62bb5de4ee4c71c1900eacedd4b90bc0a 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -336,6 +336,7 @@ void tegra_cpuidle_pcie_irqs_in_use(void)
- 	pr_info("disabling CC6 state, since PCIe IRQs are in use\n");
- 	tegra_cpuidle_disable_state(TEGRA_CC6);
- }
-+EXPORT_SYMBOL_GPL(tegra_cpuidle_pcie_irqs_in_use);
- 
- static void tegra_cpuidle_setup_tegra114_c7_state(void)
- {
+Do all three commits need to be reverted to make things work again?
+The first one only touches the resume path, so it would be surprising
+if it caused a suspend regression to occur.
 
--- 
-2.48.1
+The most likely commit to cause this issue to happen is the second one
+because it effectively changes the suspend ordering for "async"
+devices.
 
+> I have been looking into this a bit more to see what device is failing
+> and by adding a bit of debug I found that entry to suspend was failing
+> on the Tegra194 Jetson AGX Xavier (tegra194-p2972-0000.dts) platform
+> when one of the I2C controllers (i2c@c240000) was being suspended.
+>
+> I found that if I disable only this I2C controller in device-tree
+> suspend worked again on top of -next. This I2C controller has 3 devices
+> on the platform; two ina3221 devices and one Cypress Type-C controller.
+> I then found that removing only the two ina3221 devices (in
+> tegra194-p2888.dtsi) also allows suspend to work.
+>
+> At this point, I am still unclear why this is now failing.  If you have
+> any thoughts or things I can try please let me know.
 
+So are the devices in question "async"?  To check this, please see the
+"async" attribute in the "power" subdirectory of the sysfs device
+directory for each of them.
+
+If they are "async", you can write "disable" to this attribute to turn
+them into "sync" devices.  I'd do this and see what happens.
+
+Overall, it looks like some dependencies aren't properly represented
+by device links on this platform.
+
+Thanks, Rafael
