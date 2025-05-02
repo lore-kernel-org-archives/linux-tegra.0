@@ -1,154 +1,177 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7FE1A5B88;
-	Fri,  2 May 2025 07:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5F2BB13;
+	Fri,  2 May 2025 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746171079; cv=none; b=Bht+KkFO05sJsNlXffbFKEF3AJl1lrqFuhiPCOGZ+IkRtBcnHq14ZBCDS4F7W4Qx9IyGz1gxpOHfJG7MuecP0pZfeAOw6vZCFaGNNfCYdkkLVb6zPvq/Il3Qfe0R1MOk1aKCBCCPuJc3EgXZJMKKYcVP6QpTAlC9zXAjWRkIJJQ=
+	t=1746172728; cv=none; b=q1pojwbC707UvVbxdfsNx67YSE7iQvS8Vjn6N4sehhBmIUw4Y1ehL7DjpGk8GIbGEcwUbykX3EGNoao/TLQVTmMzQUHjQWvrr8NgEyxmRdExPiC6m2hxBDviSQReD1Mx85wuSh0Ck7Lb6npOOXN9YRqupz0M6AAD/uwSSTzR1BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746171079; c=relaxed/simple;
-	bh=wtoQr0xWC7SiqYlR1iiTaHqZi3kSYO3Wq5NsfIXggRU=;
+	s=arc-20240116; t=1746172728; c=relaxed/simple;
+	bh=Bks/IXRrnO56d/u9kmjniZJHwryYfuhVSZbHIvNCFhQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NvmMyxEZ6I8jf1i09nkkDZBHazgZEK2GFDUo9cm6+kWymEougB+r2MBa2MOUXjTXHHu/N1ra2p9+slHQErc7/ig6z6ZTmh/1JquT0vijub3ISFcZdzbeN+dGilIUoZ9RD8PVkofdJ6VjmSuQXKIRkome+xhRCj+/8r97xq9tfok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdqG+Fwy; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8TxznmV5nvqF41bb6bZYCfc8forVtCNrmzyf9sCUFuftwlVYF6zdJWIU2PkONmb14z8cudUWCr8y5vxDt0jOFv8QqICZRDFTZ4THSFtWzFKc8prd1tVZV7b2e2c0/ypgTRhiphxgi6RsDdVVvk6nPaE9ESw1T5+eZn8PMhYMko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDfSpXFc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdqG+Fwy"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22435603572so20241505ad.1;
-        Fri, 02 May 2025 00:31:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746171077; x=1746775877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WhyG+qPql1C6VOEStks/G335oAHhX6Klfc0SAJXR260=;
-        b=KdqG+FwyuPZx7cr9Qv2cDQSRFJ7Ghy/9mz0uQq40At0o8lY7LzQ3NuDDlc5edKE0Tj
-         JkQ/Tvi+N/5aj1EKnd5xKpvZg/jK999Fc1mgqIds4z1z4WISOrCNBWwv/XxphBAPgCcE
-         qYaYoZu9ZdhAb3kkFVTn563I6caJmK65CvDDJBA1XqWt3lMGkfAgg5PttS4ScZj8Dgtu
-         0cQ6+/tl3cw5yIM1QclAIJIDq/xiLcqFxRyONolF2oSv/8d+Kq5eE7YpRofuZQLKMtH0
-         29Z+C1/78MMAiSISScy3XXu7IA+XFRRmeN8Pa5r2cDqS2ZijTh55gYPf9RSzM3D0Xv0v
-         t+5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746171077; x=1746775877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WhyG+qPql1C6VOEStks/G335oAHhX6Klfc0SAJXR260=;
-        b=ZjAuazlb4qNvgp1wj1KQhzGO0Z5YVjYa6IxnKqTlfyTFlmLRVrv5ZJ/fh4zXFmk4Jc
-         ig2el3yLoYdHukROUiwU66IyNQbSA6p0fxIxBDrbS0j/+vA/Hj/izdzbsBQ4Z4joSyQc
-         D450GdUA7xkxwfFp6WPhBvvs6jdQPcL/zyTlaKOPDAvXiWHpVkgTRu8i0MCc62uYt2r9
-         cf+zReKEDYc0R3HXADvXiNkDkLeczntFQtwXSMgFpKiGPBmztIOU2gvsuQjl5HnYOgJe
-         uDQTnBb1F28xZB/eFEzeTOjFfN2oZLJFqHNqgu9eHOHa/OIQrJQ02JaA75WfVNaGNxhN
-         Y3Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVR30b/sHtpVdCNqUlIbchncu7XuvdOEwhlc3G3He6w7qv7DxVbx91oiEoqaBdSVpRSf3r2zy6Zzc=@vger.kernel.org, AJvYcCW1FCaK5S4AZslQmImhkquByBiQlERYmq4MgVxKKcNjAa/JVbcjepWGW2aC8fLpjt1n+/xLEOPAB9Bptp/u@vger.kernel.org, AJvYcCW72uvveCSxlRYCC6NH0+PHIhlYzw6mo9+8UtRBw1BXTGan03kzaHr6KzObY1j5MpUJeSJnd8OBHLc8TSI=@vger.kernel.org, AJvYcCXwuc/7e3mjYhvIGiCyfL4B4A2354O6BbknvxuDzOno3g0uFdCGdWwLcX8C/3TtiodTndtMKDIn810NoILlYOhX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR7Oijcb2IPNQoRM/xxe+FoNrQ6kVbE7D54h1fGICpHd4iUP3y
-	vfj0A97XP1u6PC8FN385iTp36jUkL9A34HaSvfrb+pcKBMHQHGOp
-X-Gm-Gg: ASbGncu25O3ALcydYRuE+WXqdiW4n62WZCN9g5jVUDLGG9igbNaDb2huHbg3fH0l4bT
-	/aQ9+a2e1b83EPXTOlOkomsqZ9NShRBppy78/qRR/V/KRpvWkYkah0dnm+DtQxhVYO6RTYYkQSe
-	WVoYy/Hlduxa2TeeOZWeYlvLOyM8mhDQ0IvY3LQhOsjjVvHySwZyZ3cFdt3gmUtFO6w7VmmUOdu
-	uhCRCjzpGbBcLtciBQ31DygA355hKKQdSkBp56hSGHjSUU5t3fs6tONFo3JIvVcPv/ZLInNcB50
-	Mb4uq/w1AoPO7YHrdOoocjkmdUewZ6AKlKuJw+S1
-X-Google-Smtp-Source: AGHT+IH52a6BgPoPUu5N1D3Rb40EG6pjnTkV9nhRgxYGSZyv07U3fjSm8A6SXkBygATuXX2l4VA+sQ==
-X-Received: by 2002:a17:903:2f91:b0:224:191d:8a87 with SMTP id d9443c01a7336-22e1034418bmr27532815ad.26.1746171077036;
-        Fri, 02 May 2025 00:31:17 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e1522f7c8sm937775ad.228.2025.05.02.00.31.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 00:31:15 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id B8C52420A6AB; Fri, 02 May 2025 14:31:13 +0700 (WIB)
-Date: Fri, 2 May 2025 14:31:13 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, praan@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v3 16/23] Documentation: userspace-api: iommufd: Update
- vQUEUE
-Message-ID: <aBR0wWzQablOklyW@archie.me>
-References: <cover.1746139811.git.nicolinc@nvidia.com>
- <0beddeaaa4a8a7a45ce93ff21c543ae58be64908.1746139811.git.nicolinc@nvidia.com>
- <aBRA75V9l9WlI2Q3@archie.me>
- <aBRYVkOKfFGMb5Y+@Asurada-Nvidia>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDfSpXFc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89BC7C4CEE4;
+	Fri,  2 May 2025 07:58:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746172728;
+	bh=Bks/IXRrnO56d/u9kmjniZJHwryYfuhVSZbHIvNCFhQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fDfSpXFc/tl2zJxLM+UIlti0OMiWjPiozjXL4MdTv/1DB8nPLs3DM5SmE25wGSEkN
+	 7H1bT0FoWGr2s4XIkhCzaFYsxxuG4zIRAmxPeZtVUZlrVs7RZEfQaVeOC1rooTKaTG
+	 AkupqShRLST2/bsa9Ir3EcC3HBOq9vtPBHwo1PAyCiiWr4ybapxGZjnDYoivyz1DCl
+	 5niaRTY+Y9ijxtFfEEg5EObxtSowrsJla6jIqVwzQ+qX4aSiGElGHe7Yuz/oBFYSOD
+	 NIS9hYEuRAuNrjUCwJu7X6eSDCkZ7f8+VSzozxXLOylC754jsxcVAygU7RZHOyV1nn
+	 qx+nQ0rrYJsXw==
+Date: Fri, 2 May 2025 09:58:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: dma: convert text based binding to json
+ schema
+Message-ID: <20250502-lush-resolute-cheetah-a8ceee@kuoka>
+References: <20250501-nvidea-dma-v1-1-a29187f574ba@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vde97DQHR/3Yogi4"
-Content-Disposition: inline
-In-Reply-To: <aBRYVkOKfFGMb5Y+@Asurada-Nvidia>
-
-
---vde97DQHR/3Yogi4
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250501-nvidea-dma-v1-1-a29187f574ba@gmail.com>
 
-On Thu, May 01, 2025 at 10:29:58PM -0700, Nicolin Chen wrote:
-> On Fri, May 02, 2025 at 10:50:07AM +0700, Bagas Sanjaya wrote:
-> > On Thu, May 01, 2025 at 04:01:22PM -0700, Nicolin Chen wrote:
-> > > +- IOMMUFD_OBJ_VQUEUE, representing a hardware accelerated virtual qu=
-eue, as a
-> > > +  subset of IOMMU's virtualization features, for the IOMMU HW to dir=
-ectly read
-> > > +  or write the virtual queue memory owned by a guest OS. This HW-acc=
-eleration
-> > > +  allows VM to work with the IOMMU HW directly without a VM Exit, i.=
-e. reducing
-> > > +  overhead from the hypercalls. Along with this vQUEUE object, iommu=
-fd provides
-> > > +  user space an mmap interface for VMM to mmap a physical MMIO regio=
-n from the
-> > > +  host physical address space to the guest physical address space, a=
-llowing the
-> > > +  guest OS to control the allocated vQUEUE HW. Thus, when allocating=
- a vQUEUE,
-> > > +  the VMM must request a pair of VMA info (vm_pgoff/size) for an mma=
-p syscall.
-> > > +  The length argument of an mmap syscall can be smaller than the giv=
-en size for
-> > > +  a partial mmap, but the addr argument of the mmap syscall should n=
-ever offset
-> > > +  from the returned vm_pgoff, which implies that an mmap will always=
- start from
-> >=20
-> > Did you mean never be offset from returned vm_pgoff?
->=20
-> Yes. Will fix this.
->=20
-> > > +  the beginning of the physical MMIO region.
-> > > +
-> >=20
-> > Confused...
->=20
-> Meaning that VMM should just use the given vm_pgoff as is, without
-> adding any offset to the vm_pgoff.
+On Thu, May 01, 2025 at 01:12:36PM GMT, Charan Pedumuru wrote:
+> Update text binding to YAML.
+> Changes during conversion:
+> - Add a fallback for "nvidia,tegra30-apbdma" as it is
+>   compatible with the IP core on "nvidia,tegra20-apbdma".
+> - Update examples and include appropriate file directives to resolve
+>   errors identified by `dt_binding_check` and `dtbs_check`.
+> 
 
-Understood, thanks!
-=20
---=20
-An old man doll... just what I always wanted! - Clara
+Please use subject prefixes matching the subsystem. You can get them for
+example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
---vde97DQHR/3Yogi4
-Content-Type: application/pgp-signature; name=signature.asc
+Missing final nvidia,tegra20-apbdma prefix.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaBR0wQAKCRD2uYlJVVFO
-o2GmAQD6yTz+9Kdn/nHALYBCiSbtX+ewWJjZ0spXlFlQyWBmSgEA9HdlnssGmaCv
-oibhf/yiDjC4MkNfQVDV7Jw5qTjhagQ=
-=zmrU
------END PGP SIGNATURE-----
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+> ---
+>  .../bindings/dma/nvidia,tegra20-apbdma.txt         | 44 -----------
+>  .../bindings/dma/nvidia,tegra20-apbdma.yaml        | 90 ++++++++++++++++++++++
+>  2 files changed, 90 insertions(+), 44 deletions(-)
+> 
 
---vde97DQHR/3Yogi4--
+...
+
+> +$id: http://devicetree.org/schemas/dma/nvidia,tegra20-apbdma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra APB DMA Controller
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The NVIDIA Tegra APB DMA controller is a hardware component that
+> +  enables direct memory access (DMA) on Tegra systems. It facilitates
+> +  data transfer between I/O devices and main memory without constant
+> +  CPU intervention.
+> +
+> +maintainers:
+> +  - Jonathan Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra20-apbdma
+> +      - items:
+> +          - const: nvidia,tegra30-apbdma
+> +          - const: nvidia,tegra20-apbdma
+> +
+> +  "#dma-cells":
+> +    description:
+> +      Must be <1>. This dictates the length of DMA specifiers
+> +      in client node's dmas properties.
+
+Drop description, you are not telling here anything new except
+explaining basically DT syntax.
+
+> +    const: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+
+reg is the second property. Old binding even had it correct.
+
+> +
+> +  interrupts:
+> +    description:
+> +      Should contain all of the per-channel DMA interrupts in
+> +      ascending order with respect to the DMA channel index.
+> +    minItems: 1
+> +    maxItems: 32
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: dma
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+And here the order is correct...
+
+> +  - interrupts
+> +  - clocks
+
+But here different. Keep the same order as in properties.
+
+> +  - resets
+> +  - reset-names
+> +  - "#dma-cells"
+> +
+
+missing allOf: to dma-controller
+
+> +additionalProperties: false
+
+unevaluatedProperties instead. Just open any other DMA binding.
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+
+You included this...
+
+> +    #include <dt-bindings/reset/tegra186-reset.h>
+> +    dma@6000a000 {
+
+Doesn't look like correct name. Schema requires specific name.
+
+> +        compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
+> +        reg = <0x6000a000 0x1200>;
+> +        interrupts = <0 136 0x04>,
+
+... so use it.
+
+Best regards,
+Krzysztof
+
