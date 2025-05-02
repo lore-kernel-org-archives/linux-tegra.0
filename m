@@ -1,82 +1,37 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6FA255E30
-	for <linux-tegra@vger.kernel.org>; Fri,  2 May 2025 17:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188182F2E;
+	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746207901; cv=none; b=IdkRNzcHOTrpdKbQpw+ProIEkLdJDC4GyzP83zdP1sE3cxo7PYwE2ev7ZZnOnf1Xrvg+HjDJDVHXPiKrZ5CW28vWZtBlaoW2nv7ROLSkok9TsYiyDaPC166Yf85lT0+OvXmFkLXuUnUtLgjwS3Nlf8X1cPdlXtrEuVoafQvuAAE=
+	t=1746212445; cv=none; b=fgxG3H3ktHYjAd0FkPuzlxEJOJZLwNrNpx/lwXSbWZw+Cgs/uO0VqGGlQXGgns6zLocC5KP5FPaVKQwi0Tk1P74PLzDY5itTtUarg33k9XRwv1VBf0GuACf0D0kdDB0aCFSUkBfrRQ8kJfA/x94yrRbPtbpThN8hdxLn8isb0pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746207901; c=relaxed/simple;
-	bh=XmCGPi5E/4vdLYqfzcEUuIa7Pjd6veLPx7s/gT1s0z0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cmw+646gq0inTQPgEjIROQSFil0VtpsrbuBSDpywgHlfhhQt0sFEE0K0Qsc9HYt/E0gRWR6izkMAtYjYRn4K7uGpkFn0IwdB0wpxZDr2detl0ghwD8XncPrTmU2hYcjPMcs17L5muLIzClreRJxQyEqErEeqEEhAWsLRKo/RyVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZfT8qh63; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746212445; c=relaxed/simple;
+	bh=LRTzkroHpUqBBS66F+/5iJ/bP7dLfCm5QyQ+g9hrpLk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jYP+IdN6Q26kLppO/T7rNO3fOTLbw7jqXpSXFG0SpGCqI3pWyIGR2+F5xW1q1GXrJAH6lCoMmcfmbHPJ7+3ePZyfgg+BGlhfx+RT49+W+OIdIfi5wA7GbCcwlWARbBnIKTy4SDVVypqaS+ssHgbzXD6lhhL1dXgABO678qWUR/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVCxA7Fi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZfT8qh63"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227a8cdd241so30424855ad.3
-        for <linux-tegra@vger.kernel.org>; Fri, 02 May 2025 10:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746207899; x=1746812699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dY8M+VLKea8pjpC946v5/t8PrnnUb0Gzxs+7tzVnLLg=;
-        b=ZfT8qh63//vQIKv+aV+pTKMNJSSjvLT94HkI9it5Jn5Lrufb7peCm8wUTuJpnfo/ye
-         UthcD5b7RleAhGAsixdB2GixpqQjAB9+HqsNmWbGlezGFqSx22VFJTJiSvyrox/n6Icf
-         K77bNvG8zu4fY+r/AfpLe6xuF9JCrjvc3chodM/LzqN0ACA8W5wOwNb80cchg+M/n/9W
-         BtopYKzjhNzoz/Mjj1rnJQ/MQ5uZZD+DWG+enEdFTzfQhmWwYc69OTs/2/s4v/guugbZ
-         AO7otwmEVRO+NBtCq0408ZJf3H7uzWZHmPE7A2OvDNw3geQtrYk0HefqjR5gx+4izAzk
-         lwLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746207899; x=1746812699;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dY8M+VLKea8pjpC946v5/t8PrnnUb0Gzxs+7tzVnLLg=;
-        b=CbUh2weu+9luTDXTqmbk5oIyhHHjYB1dLzJ6jlSbn1DHsBxNZgvLv/ep+At2O5ILbC
-         ynk0LaBLqDoOYOPoQ8nkuHccbIXsMPFUA06pSZO3UnWTPJC9qR/doE+NYX8L1eN+35SV
-         KkbI3MVsiMOj5ZGckuhaOsgz9wGZlrU8FtSDGB17Wn82ZTtQoDJZJ2LLBx9CyYmKfaXf
-         C7UhXq90++hFxsyCnsDzHPEyAl1tQW1PKrOp0O4uReOSSvGgWyihg8tFaanfebCZk+Nk
-         H5bryAi8e2NE3/SY3wsJfen5UnusIikXsiEeWFufljz+Wh5DYsnMBkCSQHXmexqkddHC
-         9oSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVz4LkqNSEA5wMFkbe89GsrWGeTs+ROZV/1gDcgm51b1De3rqG/6xNKUhwrFeGl3GN2ZU1F/mxM94f7iA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYK7CviTBID9eiRecUiADPwQGMJlSus7ki3Z1hkzWSK0ZW6y2+
-	k8M3Lnmuwfg3uCtpe0xC50YeiLs/9knkHu1YHl3NCfUE0MiQ1IJEcsR2+RDLxbbXmnyTnxtiwBs
-	=
-X-Gm-Gg: ASbGncsTOOORe+R7ALnbDWh2EAcHZ3ElJ0u87YaQKjtT9ySSfRVfK1HSxTTqHdKZaWJ
-	2qxiQBlLSaq/BzJ+3syzpILrYWrZmKYEA6chLGi9MQH9bsVuplKsZCpG3ePSWSyVdTYPL4QxEIF
-	GHfsJr1c1y8GU2IbnHP1q0kEmZx17Ws8/qdCtLiv/iqRUkaG7KtmEb5vj23atNBZhPlRcjYW1DJ
-	L0zRlrJ/aOesp9ub2H1QICeUzNXThzhfJX4KZmubTee7vZ71SM1MCTn8GdhSp2KDF55C1bW4RQd
-	emA4vtQTupo5+zRZqRDtJ7Bw6eqbPbeqECkbGen7KZCDNJHKnaHyC6+B
-X-Google-Smtp-Source: AGHT+IHXWlUErao4J1U1mlwJYk9ATwc8DlkGhI6ADj3IGLu/xR9EZ4EkOFgQ2fo9wnmS3hLmuShE4g==
-X-Received: by 2002:a17:903:187:b0:223:517a:d2a3 with SMTP id d9443c01a7336-22e1032f5a2mr56701275ad.17.1746207898939;
-        Fri, 02 May 2025 10:44:58 -0700 (PDT)
-Received: from thinkpad.. ([220.158.156.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e150eae99sm10608815ad.19.2025.05.02.10.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 10:44:58 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: lpieralisi@kernel.org,
-	Hans Zhang <18255117159@163.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	christophe.jaillet@wanadoo.fr,
-	thierry.reding@gmail.com,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	jonathanh@nvidia.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [v3] PCI: tegra194: Fix debugfs directory creation when CONFIG_PCIEASPM is disabled
-Date: Fri,  2 May 2025 23:14:50 +0530
-Message-ID: <174620787968.116062.4174884576928380234.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250407124331.69459-1-18255117159@163.com>
-References: <20250407124331.69459-1-18255117159@163.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVCxA7Fi"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BE755C4AF0D;
+	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746212444;
+	bh=LRTzkroHpUqBBS66F+/5iJ/bP7dLfCm5QyQ+g9hrpLk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=RVCxA7Fi2kC70zTldFhPrK12iBLCevvXON41AsQDhiT1fNWYAKJzGGtG2vHmHgeQz
+	 kjELgmD5yS/RwhIz6ZsP4qOmmrnBCBAI42KTEdcI36beuHzh6rrohOww0jH7VCepXq
+	 niPchHhpAF6xaYAvHHj71qbjmogoNEPbk5PS/ZTMFIQPFLJc1/b/7cjvbZq5TS1z3B
+	 raweVQ0sMEm2uUVth8Puo6kpl5vNGooYCbCs5hfBrUX4Am9pMc3eK51s2xuQPhU2Df
+	 W7P1tgBzpvX8TxFZ3rsLRfHw6ga1iEdjKpHK53zdXnOwsfm3v+nNaelfk5T9Es7/1Z
+	 iyvrzzxvfnmKA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00CDC3ABAC;
+	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Fri, 02 May 2025 14:00:32 -0500
+Subject: [PATCH v3 4/4] PCI: tegra: Drop unused remove callback
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -84,28 +39,89 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250502-pci-tegra-module-v3-4-556a49732d70@gmail.com>
+References: <20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com>
+In-Reply-To: <20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746212443; l=1781;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=miAFNHWEF9RJxGC8gWXehC/2+WRlc/Ou80W+mmEfiFc=;
+ b=Waqua4Tb7qWUjc1jh0Wel81cwJ28ZdHn3RtzwEJsCdSru2Wde97OIA4t1VBCcM2Gt/PaW64r4
+ m3PfBEnaE9fCLOlIe+Ks563X1TV6HHbYThvPTaXeCeMIL7ObcY64WHr
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
+From: Aaron Kling <webgeek1234@gmail.com>
 
-On Mon, 07 Apr 2025 20:43:31 +0800, Hans Zhang wrote:
-> Previously, the debugfs directory was unconditionally created in
-> tegra_pcie_config_rp() regardless of the CONFIG_PCIEASPM setting.
-> This led to unnecessary directory creation when ASPM support was disabled.
-> 
-> Move the debugfs directory creation into init_debugfs() which is
-> conditionally compiled based on CONFIG_PCIEASPM. This ensures:
-> - The directory is only created when ASPM-related debugfs entries are
->   needed.
-> - Proper error handling for directory creation failures.
-> - Avoids cluttering debugfs with empty directories when ASPM is disabled.
-> 
-> [...]
+Debugfs cleanup is moved to a new shutdown callback to ensure the
+debugfs nodes are properly cleaned up on shutdown and reboot.
 
-Applied, thanks!
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/pci/controller/pci-tegra.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-[1/1] PCI: tegra194: Fix debugfs directory creation when CONFIG_PCIEASPM is disabled
-      commit: ed798ff1c52f6fe232ce2e24e68fb63f5470ab97
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 1539d172d708c11c3d085721ab9416be3dea6b12..cc9ca4305ea2072b7395ee1f1e979c24fdea3433 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2674,27 +2674,12 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static void tegra_pcie_remove(struct platform_device *pdev)
++static void tegra_pcie_shutdown(struct platform_device *pdev)
+ {
+ 	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
+-	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+-	struct tegra_pcie_port *port, *tmp;
+ 
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS))
+ 		tegra_pcie_debugfs_exit(pcie);
+-
+-	pci_stop_root_bus(host->bus);
+-	pci_remove_root_bus(host->bus);
+-	pm_runtime_put_sync(pcie->dev);
+-	pm_runtime_disable(pcie->dev);
+-
+-	if (IS_ENABLED(CONFIG_PCI_MSI))
+-		tegra_pcie_msi_teardown(pcie);
+-
+-	tegra_pcie_put_resources(pcie);
+-
+-	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+-		tegra_pcie_port_free(port);
+ }
+ 
+ static int tegra_pcie_pm_suspend(struct device *dev)
+@@ -2800,7 +2785,7 @@ static struct platform_driver tegra_pcie_driver = {
+ 		.pm = &tegra_pcie_pm_ops,
+ 	},
+ 	.probe = tegra_pcie_probe,
+-	.remove = tegra_pcie_remove,
++	.shutdown = tegra_pcie_shutdown,
+ };
+ builtin_platform_driver(tegra_pcie_driver);
+ MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
 
-Best regards,
 -- 
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+2.48.1
+
+
