@@ -1,90 +1,169 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB9A29;
-	Sun,  4 May 2025 11:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264A85695;
+	Sun,  4 May 2025 13:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746357816; cv=none; b=scWrqvdvxRg80TiuE1cOInfec7HXPOtaNNZh0jO97RCt9xYGQ1CLYvl1T+7inrHBI0YWW96EpATx425BM4QvjilJwGtuWVoC9y4WHr6fHF3w5UOlUhW6Ow7+p/uRoLJBSvxJEwgFe8tz2B4ASFvsgv0qW8PB8Du9ClPYScFv69I=
+	t=1746365882; cv=none; b=bXr4UtLpHGHkKPUrj4lg2Pz5rjnE/YCKz7BvYJzG4pPp0GtL40hrBt3Hez39Yh53t0GgTV1WPfq6YXjv/CgsUTnYZcPTE5R5MJV9kUNA6fUhYq/Bkar+XfO5IotDVz4snaGYeGT9oHvgy2veAvpiygZLruPVFHaxrrki/NBNY8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746357816; c=relaxed/simple;
-	bh=WpIr8GKgvtxyOEB1BvYudVvyTK1mg+FzKhOiCtz/vik=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Nl0wBZZS2BzbMlkqCjCI2WyGbGUg3S+rm1NYQ6cKk0lUklP37odBXwHw817QhlYNrdeNO/IxuVd2h7fN1kZeYOudcRgzpKJ0FQWltZA+rXOnRq7Rsh4lKN5aN1IhRxPIAuQmolxURgRScRUWWAzgVEow5/1TVokXNHIU3e6/XHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zf7Fdp65; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746365882; c=relaxed/simple;
+	bh=TKviVJjXWZywKKGT0eWF4OOA/jY5DJYyKQaraAnPVrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IYvp4ZSxEXzPJFLOkDJgeZaso7tNGqHITZ5QrouEUNFjqgsJ2vclyRrrs4k35UFj/OzySpCOTx5Vyy3NYqLudEVHW+aWy8YtuSHZjkw6VM+iKub54lqebhrQkieK1DMqKb7a9VenclvQ3BOAE4g/UDIag+k+v6iB+D04IiS9z+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ekp8CYmA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zf7Fdp65"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4394a823036so32970515e9.0;
-        Sun, 04 May 2025 04:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746357813; x=1746962613; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zV8BrMTkzQFkPZ+3Fj6/O6YK38B+dAgJMFffx23ECvU=;
-        b=Zf7Fdp65Bcl7+cARFKuwl3gTm42W7hWOdPORCKTQdYbvo/PjRqQrIhguWoBihP4zsX
-         YiP3rrFudAUq+js6J3wHZdvFnf+w+j/ogTD9H0n+GDnFn7OE5TZrAFViZCK/Kq1gWU67
-         fzxvf1J5JyqreDWkLKd/ixs5kFwZMD/bYi4kV+Kb/TjTs34gecDms/dHiIGzId/1aqIp
-         ebGuS+eWKlR7aIcXHfQwPCyAT6vFhVheLpXaCMkvmJrmM0/L8rUt3CmkRn5si9Jcm5bn
-         tjxe3lVytDUOJjC5Lilavm+rXHdzZjRE03JIg1WCUkDRK2OvOtbEecoGrEw58toSN7Se
-         EdSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746357813; x=1746962613;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zV8BrMTkzQFkPZ+3Fj6/O6YK38B+dAgJMFffx23ECvU=;
-        b=gM21eUfTd5HpBNcAfIhO/D7kv0SIhmuaj/Xr42J+n5t5XuyPQ62eNMRy9wXtFV1UUY
-         yKmw3oA9lJGNJDyr9LVb8eKqDaiw2iWX40XUgcfCGlyFYn1vmNbdwKgu2VFMEdMm4RfV
-         S7zu19Xy2VaCa5oawU9FJLI0hBGLu/Ks0EpHbtEaJyouSchau/vJDbNtQxHNougX/eSD
-         Y9AMtiq2j22BJZ63DK98k7dVNnPW4HWzpHJHrK9F7d7X/7dKQm3lweL9u57nHiB7Hkwf
-         hRWLBnxMW/lxD6PVOyfbHocB2WmL0GFwEMUCc8oos1TJK1G6u8B23v3wDFoR43xR41KR
-         j8Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhoHQKY4/j+m2I3PZ7RqPwwQZEv4cuk9KPJlr9eDmsiDKM6GwVmgxOMqvW7P0cFuYu9KsL3GlW4dzmZfY=@vger.kernel.org, AJvYcCXarcyerWUiuv7t6fsgkPRvvJcrxukrsoizJMNvAnrUZ/OZm4jEFipNxoIMtrBWTKV5DpOJh7uKoRhM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/YUJb2CxZkH2Piu/RLLh1xgT0Ath3Wk86Vo1ULtGFMMnjv6hQ
-	qyXehW8zsyuRNOQH8dzrjNamybQhD282jwOjV7z4H7msFQ0WBO4z
-X-Gm-Gg: ASbGncsra5hBspbCFJklbQcU5UIP+47xtBtvf7h6ftpVhGFAP3lWDPhz6Nc4QHPLdWQ
-	TuiMTfK003WKm9fle1Lt/v58Nq7M6rU67LM3l4iLictxPLj840uW+taxvgjjsS4AaDFlr1Wb0A4
-	FWkCuBo/icEqwgvwwC62sM+6u66TVKeoww2nctPFQgvYeiyvuFtcQ00jgXwJS7SCFNEjPPu4Nd7
-	vFJQHn0c6GfpelYVANCv/CVL6pRybidbqZObmcaHhWBW89Tv6QmQewYJ4f2nY9Hf6isbG/itlC9
-	s9mDfQ1lbMRsEuSODggEl5REAhc7Zbww1Ajqlj5VGg==
-X-Google-Smtp-Source: AGHT+IGYsFl3VJuIKwcSGexluz2hUMdp2LZdMlhpAn/whLRKwiXkBw5rxLWOPeRKFmWeJpA2mQqpeQ==
-X-Received: by 2002:a05:600c:a401:b0:43c:f332:7038 with SMTP id 5b1f17b1804b1-441c7a306e5mr13926885e9.21.1746357812492;
-        Sun, 04 May 2025 04:23:32 -0700 (PDT)
-Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-441ad813a64sm149278145e9.0.2025.05.04.04.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 04:23:31 -0700 (PDT)
-Date: Sun, 4 May 2025 13:23:29 +0200
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: ldewangan@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, linux-spi@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [regression] jetson-tk1: spi do not probe anymore
-Message-ID: <aBdOMUhuUqbZm9w1@Red>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ekp8CYmA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A80AC4CEE7;
+	Sun,  4 May 2025 13:38:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746365881;
+	bh=TKviVJjXWZywKKGT0eWF4OOA/jY5DJYyKQaraAnPVrE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ekp8CYmArOY5y7h/PYShCXjxWo91+3/1XFQho11J2OivXI9tGjsEN4UvZ6FfD1Gir
+	 XOEc+YykRuub0IlDu3FsbgfayCsqsAckP4ZzX3ZRaKe7dqGXmedmzEkyK1JcSMpxdY
+	 /8PtmRYgs5BJ9jFeTT26DrOa64I8hDRCAH1lP0MCVljx6u83XaycwCNCCuwySzKF1k
+	 ujAyY1tX5nQmELZAMW2NT0OcVIQ5014TdJuma60nKrwmZGAWZDC9IY+ZpYcx4gnYbO
+	 L7oCzfxliNIC+veMf42rxFlRpUr0Q42LcyF3KVttXqDGs2zku/yynPUu0gFxgguOfL
+	 bp6OTGE/7k5Pw==
+Message-ID: <0dcf786f-d93a-4526-bdc6-e11d59347f98@kernel.org>
+Date: Sun, 4 May 2025 15:37:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: tegra210-emc: Support Device Tree EMC Tables
+To: webgeek1234@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello
+On 30/04/2025 19:52, Aaron Kling via B4 Relay wrote:
+> +#undef EMC_READ_PROP
+> +#undef EMC_READ_STRING
+> +#undef EMC_READ_PROP_ARRAY
+> +
+> +	return 0;
+> +}
+> +
+> +#define NOMINAL_COMPATIBLE "nvidia,tegra21-emc-table"
+> +#define DERATED_COMPATIBLE "nvidia,tegra21-emc-table-derated"
 
-On my jetson-tk1, SPI do not probe anymore:
-[    1.330681] spi spi1.0: Invalid delay unit 2, should be SPI_DELAY_UNIT_SCK
-[    1.335185] spi-tegra114 7000da00.spi: can't setup spi1.0, status -22
-[    1.341643] spi_master spi1: spi_device register error /spi@7000da00/flash@0
-[    1.348637] spi_master spi1: Failed to create SPI device for /spi@7000da00/flash@0
-I tested 6.14.7
-The SPI probed perfectly in 4.17.14
+No, you cannot add undocumented compatibles. Missing bindings.
 
-I tried to debug a bit, and the driver requires units to be SPI_DELAY_UNIT_SCK, but it seems there is no way to set it.
-Removing the "return -EINVAL" in tegra_spi_set_hw_cs_timing() lead to a successfull probe and the flash device appear.
-But I agree, it is not a correct fix:)
+> +static int tegra210_emc_load_timings_from_dt(struct tegra210_emc *emc,
+> +					     struct device_node *node)
+> +{
+> +	struct tegra210_emc_timing *timing;
+> +	unsigned int num_nominal = 0, num_derated = 0;
+> +	int err;
+> +
+> +	emc->num_timings = 0;
+> +	for_each_child_of_node_scoped(node, child) {
+> +		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
+> +			emc->num_timings++;
+> +		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
+> +			num_derated++;
+> +	}
+> +
+> +	if (!emc->num_timings || (num_derated && (emc->num_timings != num_derated)))
+> +		return -EINVAL;
+> +
+> +	emc->nominal = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
+> +				    GFP_KERNEL);
+> +	if (!emc->nominal)
+> +		return -ENOMEM;
+> +
+> +	if (num_derated) {
+> +		num_derated = 0;
+> +		emc->derated = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
+> +					    GFP_KERNEL);
+> +		if (!emc->derated)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	for_each_child_of_node_scoped(node, child) {
+> +		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
+> +			timing = &emc->nominal[num_nominal++];
+> +		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
+> +			timing = &emc->derated[num_derated++];
+> +		else
+> +			continue;
+> +
+> +		err = load_one_timing_from_dt(emc, timing, child);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_emc_parse_dt(struct tegra210_emc *emc)
+> +{
+> +	struct device_node *node, *np = emc->dev->of_node;
+> +	int ram_code, ret = 0;
+> +
+> +	if (!np) {
+> +		dev_err(emc->dev, "Unable to find emc node\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
 
-Since only the test made it fail, I think the driver is bad since commit 810593668468 ("spi: tegra114: change format for `spi_set_cs_timing()` function")
+I cannot find the bindings for this. Where is your DTS? Was it tested?
 
-Regards
+It seems nothing here is documented.
+
+Best regards,
+Krzysztof
