@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202685695;
-	Sun,  4 May 2025 16:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121DC8F7D;
+	Sun,  4 May 2025 16:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746375216; cv=none; b=LCuYGpORRphf9WgYFbLIRLGetQYpuxNvqY6IYdnd/W4ejbOMDsY8Yyfu3NpMxlSFl4fgV/EmdvLRzAOT1jACr6t8FuknKx5S+R5JR7qi9mniJSKERhKqlIeDPk/16ZPdxS3SCYnqT4JEyzmV0sKlowZt5pXaGRv4kmHDVeGqIlA=
+	t=1746375836; cv=none; b=XTTxnsQiF3TIVOP8qwMJThcSTbpa2odrojIIwbd8HhsvIvIswxzVlAjeWO1WxXWOy9YXyQBwInsHdkIXwem18SaHFMDA4Wj2t5hMR5ggoZoud8iLleMdMmG+aoVk/R5CdryXWoNSiVJEJwkQk0S9eKnP5Gw5zyBwLz29oEXtyyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746375216; c=relaxed/simple;
-	bh=gnfvGF5umEPHtAwOpL7GT8GArnNx+24y7yXlpuUgoh4=;
+	s=arc-20240116; t=1746375836; c=relaxed/simple;
+	bh=WmbfjHJWobBnlrCZhqw3Z/reoYgGpMym4TkAQR86rsM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Os9KOyLaHJRO996gQW6b3SuJ7zlc4FY6UOo38WdS2jtmYn9EXMmMqf+eUNAaAOzp93yxgJbwf7CgSY+EVkQecZo5dDuksd1zYmufVq5IxnlrO/ZWWiSoAXJOqkQqL8Q7wDpLeFrriZh+7rs2s+hp1eJXOMCy8Hxgwhgcjozmitw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9osQcVM; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=TbTUgEQG9U7XmCPTQv+BeHmctHnVWTFxwKb7ppTU+3q/45FutaiyrL02tI55n2T9OXIMyOLg/ssuFKoVbu1+OfDGDEAsUJ58opnKUSDnWyD5XvjYVzOj/sr6Yl3bvFk7wQSDjvHuLYwFWjkRzFyAeoS/Vu5hduEO6AjKluxY3Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXHJFaOD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9osQcVM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32721C4CEE7;
-	Sun,  4 May 2025 16:13:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXHJFaOD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B73C4CEE7;
+	Sun,  4 May 2025 16:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746375213;
-	bh=gnfvGF5umEPHtAwOpL7GT8GArnNx+24y7yXlpuUgoh4=;
+	s=k20201202; t=1746375835;
+	bh=WmbfjHJWobBnlrCZhqw3Z/reoYgGpMym4TkAQR86rsM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z9osQcVMXzJi1v6e35fstCW+Q1WW8evam2sBWGak6A4RdMWopNyU4Uaf0EudQz48m
-	 5r1xAPro0y8Qvu5R4GBOUzstwL1mUDxZoSDlnc/u4pMtHCnoebA9h2GPSpzh3S8nn3
-	 EWSCAVQKLlnvE6AtmU9mEnKexAYFh5ajWfhCtDShRAoqMvUm+Zi3lCelaH0/eIf9rG
-	 xrOkRh75TpZh539k0iIbVwf2ESIv+dd0SE5tl2R9iIjpuPFMn6pknCaqbMS8FXBU3h
-	 FQ+xypd23+99+2zN+U7fV2VDmUBQ1vMSNCGSQmKbmffjOxMA1aujpo7rBvQ6Zdt8Zr
-	 3/CREr04jSuCg==
-Message-ID: <c88f59dd-2319-41d2-a21e-6fa7c205b1d0@kernel.org>
-Date: Sun, 4 May 2025 18:13:30 +0200
+	b=OXHJFaODsW2Fv7z6jyKheo1pdQ4UJ3Wn/hE5udTwD3wgFaBZYFPN4e1naC8KF5q6h
+	 bGCM4G9/NWcyi0xFxQq5cZ2abQUhTS06epJNwzHXZms6R2AYtCELAOt1vMyIj0ANjM
+	 R/3+G3GR9W/PQueVrrkDHPSDjryOJi5k4pszZztpwsb/E9u7lKgQL44PrpHAgcykbS
+	 DM8pYtepflhDq8f98f5Rn2XLAhXOie30RvzG4F9u0GhQVjP0HCG9r+37+rie56pqLH
+	 eeNxA1ovqs/acBya5rQACV1lzTxbu0jMZeVEkCCAzKND3LCDn04jI3YDMQ4gUP2099
+	 l0rU0oJ8yCY8Q==
+Message-ID: <bd60283a-500a-4ed4-bb8b-c019d33f94cf@kernel.org>
+Date: Sun, 4 May 2025 18:23:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,14 +35,22 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: tegra210-emc: Support Device Tree EMC Tables
-To: Aaron Kling <webgeek1234@gmail.com>
+Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
+To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
- <0dcf786f-d93a-4526-bdc6-e11d59347f98@kernel.org>
- <CALHNRZ_oxOO_iekbKvN=5mJrR+UEh5jjkZ56UHGTaEAcs-BE3Q@mail.gmail.com>
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250321095556.91425-1-clamor95@gmail.com>
+ <20250321095556.91425-3-clamor95@gmail.com>
+ <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
+ <CAPVz0n2580WLJmqeH-mJGrTQUpADt32qw7pJzuqRuwrpojc5vA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,34 +96,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CALHNRZ_oxOO_iekbKvN=5mJrR+UEh5jjkZ56UHGTaEAcs-BE3Q@mail.gmail.com>
+In-Reply-To: <CAPVz0n2580WLJmqeH-mJGrTQUpADt32qw7pJzuqRuwrpojc5vA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/05/2025 17:58, Aaron Kling wrote:
->>> +static int tegra210_emc_parse_dt(struct tegra210_emc *emc)
->>> +{
->>> +     struct device_node *node, *np = emc->dev->of_node;
->>> +     int ram_code, ret = 0;
+On 03/05/2025 10:54, Svyatoslav Ryhel wrote:
+>>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+>>> +/*
+>>> + * This header provides Tegra114-specific constants for binding
+>>> + * nvidia,tegra114-car.
+>>> + */
 >>> +
->>> +     if (!np) {
->>> +             dev_err(emc->dev, "Unable to find emc node\n");
->>> +             return -ENODEV;
->>> +     }
+>>> +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
+>>> +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
 >>> +
->>> +     if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
+>>> +#define TEGRA114_RESET(x)            (5 * 32 + (x))
 >>
->> I cannot find the bindings for this. Where is your DTS? Was it tested?
 >>
->> It seems nothing here is documented.
+>> Does not look like a binding, but some sort of register. Binding IDs
+>> start from 0 (or 1) and are incremented by 1.
+>>
 > 
-> The relevant nodes are filled in by the bootloader. I had hoped that
-> the early stage bootloader would be able to copy that into the
+> Hello there!
+> This file add same logic for Tegra114 as Tegra124 currently
+> implements, check here
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/dt-bindings/reset/tegra124-car.h?h=v6.14.5
+> 
+> I did not re-use Tegra124 value, though it is same, to avoid confusion
+> in main Tegra114 device tree.
 
-It does not matter. You cannot have compatibles and ABI here without
-documenting that ABI.
-
-
+What confusion? Why would anyone be interested in comparing numbers thus
+getting confused by different number? These are abstract IDs.
 
 Best regards,
 Krzysztof
