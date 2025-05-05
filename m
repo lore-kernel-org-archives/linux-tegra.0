@@ -1,48 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B56288C06;
-	Mon,  5 May 2025 22:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6312EE4AA;
+	Mon,  5 May 2025 22:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483771; cv=none; b=C5FwjIibPBmsRUpMrNqrfGb6ia+51CzWZd4NlzVXN1hRT+UIkbpLEGP1tsbMkuJrh6ERwDXOCy06wLIZvYv7884sKMLGKiTuJWEmU6SndUAzPxtZlXu2xcdgQozc8++MFgGJyRQpEHac8S+t0HMKY3E484b+2dFi3n3Xh6F0+8U=
+	t=1746483800; cv=none; b=mXWwt46BIrG6cMHHhbkFUQm0s1o6bKRtE+y8yPgiqT/pLkhPARAwhEjwQKqrwn1WCebWlBT5kkQdPsheMnKhIyhGx7/G7K6E0oPy5JWjDMN+KlBUR1Ba4dH90xi3W2CyjgmkE25fpTulVleh7qKgEqJhgJxCvMVLi58P+aRqKdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483771; c=relaxed/simple;
-	bh=8WjTKjGU3V9xksAdI3/caOLKWUX5IZYzx5E2zBSlnAE=;
+	s=arc-20240116; t=1746483800; c=relaxed/simple;
+	bh=xcTwYq2bMsivseQDA5CYNGoPJpwC7m1P/ITeFcI4upU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bnNLoH6mNcI81k2HLyyd3s+byEr65f/vOy29E8GocmBCvX9xEfSTWouDAxK82hZJsHixJ85/jgbcw095njq6zZbiJTCsQcqt4GYacFue5DySCRpzvmbb9FJO72hxmW77lYoQxxFPL0q9y6q3uRVH77E4FBPEi/ue5nuvqfFg0DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+AcWVM5; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=UT74oWK1FVZjvoCWjfeR+gmr8ZqQZ9ENTSMM2nvXk6fiY4o53nCT3hi8Yv2c0nxVLEsNWJT8bbCW+9lcTMYyHAfZeIOUtnSeCbIE94Q9pGN7yPWJkEgv+LZUWwYtEY2h3zquiEXOCfmTC0eHA6b39im7b6ZS3/UAOi7Zhmpi50c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLcB0WVn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+AcWVM5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97373C4CEED;
-	Mon,  5 May 2025 22:22:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLcB0WVn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1868C4CEE4;
+	Mon,  5 May 2025 22:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483771;
-	bh=8WjTKjGU3V9xksAdI3/caOLKWUX5IZYzx5E2zBSlnAE=;
+	s=k20201202; t=1746483800;
+	bh=xcTwYq2bMsivseQDA5CYNGoPJpwC7m1P/ITeFcI4upU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S+AcWVM5JnZwF7lvb9FWjBfgA7GQkRNs5CuDtU3YdwCOjcq4GCK/zlvuuT24Oqim6
-	 IBTIau0+wAOdl0F+wMfjfJ4AmwJztZTxg92HcQ9smqOA2GRrkm+djyZK9ynQKoW5HF
-	 b1aPrvNmuARefWhi5nCgQA7Hf+yACiSjZt3ciYHKMF+JmTEE/inhhXCpS4xwO2nma1
-	 OXOqXlnYbtemRxJt1ZYWBUwpQLf/Zxns3v9xrbIHZzYOLcoxiTa7GCdyRug8mgklRg
-	 5sOn7K7zbFm2QuINuR2raTQLE9C4GrF9rL8yQuc7wa0gRvK5JH7r41tWthWYmsmXX4
-	 t2c4yvx9UWEbw==
+	b=nLcB0WVna8wWAQG1Kj29n4gS4hwBBQ7zWOAaEqFhiA68WYU1WGFJKccBvznEgyved
+	 iSlAIeSXP+NXPqdWvptT+g2IJea4Na9K1YuCg6iV9t+uB66Y0f9uKB6nzX9P7hMlg0
+	 3MTn7KKruKqopDMWouNZ/THfE3M7+I4pz5nsmruKZ7AXWPw3SKrKjvZpgzGrBcHh/f
+	 +va7vEsvFcmZchzgLnN1mmDL+ri1DbmVrDZrZhYVphrQ2BUQ6jrmwVnP1hk2X1fBhR
+	 tCzbsGrXJC6U9mxc1jV8bLcTlRTUNpDElA9H4g1ZaGfqmsNUSEZ7xqG9X+clfJmCV4
+	 NuZXOd3Yk8I6g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Aaron Kling <luceoscutum@gmail.com>,
-	Sumit Gupta <sumitg@nvidia.com>,
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
 	Thierry Reding <treding@nvidia.com>,
-	Aaron Kling <webgeek1234@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	rafael@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
 	thierry.reding@gmail.com,
 	jonathanh@nvidia.com,
-	linux-pm@vger.kernel.org,
+	tmn505@gmail.com,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 210/642] cpufreq: tegra186: Share policy per cluster
-Date: Mon,  5 May 2025 18:07:06 -0400
-Message-Id: <20250505221419.2672473-210-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.14 223/642] arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
+Date: Mon,  5 May 2025 18:07:19 -0400
+Message-Id: <20250505221419.2672473-223-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -57,45 +57,35 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <luceoscutum@gmail.com>
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 
-[ Upstream commit be4ae8c19492cd6d5de61ccb34ffb3f5ede5eec8 ]
+[ Upstream commit f34621f31e3be81456c903287f7e4c0609829e29 ]
 
-This functionally brings tegra186 in line with tegra210 and tegra194,
-sharing a cpufreq policy between all cores in a cluster.
+According to the board schematics the enable pin of this regulator is
+connected to gpio line #9 of the first instance of the TCA9539
+GPIO expander, so adjust it.
 
-Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Link: https://lore.kernel.org/r/20250224-diogo-gpio_exp-v1-1-80fb84ac48c6@tecnico.ulisboa.pt
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index c7761eb99f3cc..92aa50f016660 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
- 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-+	u32 cpu;
- 
- 	policy->freq_table = data->clusters[cluster].table;
- 	policy->cpuinfo.transition_latency = 300 * 1000;
- 	policy->driver_data = NULL;
- 
-+	/* set same policy for all cpus in a cluster */
-+	for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-+		if (data->cpus[cpu].bpmp_cluster_id == cluster)
-+			cpumask_set_cpu(cpu, policy->cpus);
-+	}
-+
- 	return 0;
- }
- 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 63b94a04308e8..38d49d612c0c1 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1686,7 +1686,7 @@ vdd_1v8_dis: regulator-vdd-1v8-dis {
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+ 		regulator-always-on;
+-		gpio = <&exp1 14 GPIO_ACTIVE_HIGH>;
++		gpio = <&exp1 9 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 		vin-supply = <&vdd_1v8>;
+ 	};
 -- 
 2.39.5
 
