@@ -1,158 +1,114 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DF91B3955
-	for <linux-tegra@vger.kernel.org>; Mon,  5 May 2025 18:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB332701A0
+	for <linux-tegra@vger.kernel.org>; Mon,  5 May 2025 19:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746470834; cv=none; b=f9qPwZKvGUSoFakpZ6XKKi8XULVhiFNocez7UlJGdeaJ8q0Gldq7KXtb/U2CwdoBFF6PSaz6d8UQ0Xz3UfBn5fxFaPJnhvT5VKg8/IakCCM2LG6AUPlaKnO4TdlX9gt9Be8/TZGXWIzX5xXrZhm0WY3BVVuI7UoMSyLp5LfEFOI=
+	t=1746473157; cv=none; b=LPGWQhQWFeaaOq5YZ4HXRmmH33hvpLHvalycM1dS6mgZljYMAqGkVdXGaLrIDsnj78o3htiVr8nuNsPW5F7nwLc0yCQjGDYsCkVucFrtnVBjogOCqPq49lzgMEvAa+JSJvkzx70yXY4cz8IEf9jpVmK+8jLCBjfkdDFomxUp6Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746470834; c=relaxed/simple;
-	bh=uBJ7Sa/PrR5rePngwuntuhMPWvr7I69Vj5BV8YF5Qnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvh0d61BA0Io8rTQsSPo/ZWt7JIlVqICwToYrU3oKXeBu2wYW0BzBJV8+O7c3l7T7J0P5WUfKptoM5d8egKvvrjpL45DHs+7FqvTQ0uiF+fWftdvHiLZvyHYiNaLbrGy6IIQwMaprXcr+HV/f89O0n7MCmz3ss2H6hv5xWGNysg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C3y0wwI9; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1746473157; c=relaxed/simple;
+	bh=Ynk3R5nbJSLKiEywR4223zh8hbUXr9zVKrKDdnMkXOE=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vv32dj8OP1Ax+CY2tC5Z5tO6DZqCZMOonywgDPtwEr5GyXcd+MQHZ6pcR3AILYVNJpn7ZaN03TwDiyxsBvuA08eJxkNQCDKAwOTLD9rnOXDvHFs5niBfqoLUP06pHd4O1eKUrzH8M8dmv7i2K8N+xTb0ODp0w83OfEIHEnaRaOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GRDGtYET; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C3y0wwI9"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2263428c8baso19395ad.1
-        for <linux-tegra@vger.kernel.org>; Mon, 05 May 2025 11:47:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GRDGtYET"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d4ff56136so5749155e9.3
+        for <linux-tegra@vger.kernel.org>; Mon, 05 May 2025 12:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746470832; x=1747075632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L+ZVcMDj6eiAq+w7fHgu0Ionz2mUULkjJy07tfVzR30=;
-        b=C3y0wwI93/TzbpMNwjEDs7rn8gi6OVtMdnAqMQVutgwYizMvJuC+1iXdjIxVMDNYll
-         gkUQMOhC9sIEgz8yQD9S8NWn9WYr+NUybXdloYDGTmi45kHnb3PCNbZAKs+xwku9ZBHB
-         5kLqAVHnFAowBHZsENj4dkpTpV0Q0mOv90yEZX7RwdVtAzGLbSwcVrXkQ/4t1H7Ia+Hv
-         j4zUQdDSzDsWU7fuH1bHzwf71Qm4UXqIhFc33zQZAZP2mpC09olKBm2xq1mehATDEzYn
-         uFC2PF8NBPscgSwVjFuukn4Qh5rtYjl3sI5p5ImSai2iA0UnJ1+ZqMWfwI/JstxESJZu
-         D6sA==
+        d=linaro.org; s=google; t=1746473153; x=1747077953; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WH8gtHz6B4rMizmqYQm1yuL9136pUtmyGX3DxrZ7Ves=;
+        b=GRDGtYETzUnbVnotCPSdwWGjfDBqdSdWszXKc7saiTf8ZN/6izNxoJTAZsQSfgdqp0
+         xxXrbckhJGuRxAk1rQOnw9pc+3C1UcSPXV0PR863ypcEqH7VaTVyEJ5EC/vaAFjGwPNP
+         OA74Gi20/zuR5D0TnX/kCXBmkN0NozlWNI4mrOXGywcUfpEYf6xmucYMQ9W1hUmU1Lt6
+         181b9XMnBkFLPRRjH6hn17ezrecZdVSmFqzxWg/L5iHU9DjCX70BHb2v8iompM/Kmh0k
+         xSs3Nh5GdFtMA7m2QotNpJRfa3ZfbXoMaktKXpiiB0/oAW6MxSQc+FKtsIjPAo/2+6Yq
+         5erQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746470832; x=1747075632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L+ZVcMDj6eiAq+w7fHgu0Ionz2mUULkjJy07tfVzR30=;
-        b=IjnaCUGG2oiTg79QGljjFmgrtjSVVKu1hPbtOCt4WvCwaogIbtdoRqQqitdeO9v/ZL
-         wBauI/AtCPej0f0XTa0XHLR+Z47hpRn7gr1RJrhSrBtyGCoF7fQ6UksO7cYIDi1xcazg
-         n3xUcoFjQcy31ratPd8nmxudk/4Nen1gyfDlcKzj+cyhi0C3ZvX0WNaMX21ZreaU4av2
-         T9QJpk4EnDhzw8E23Z2HdKwoeKQ5jTl8pzwSE4ZbzPB5tw4j/c211v6WSdWVPvpa7ytP
-         u6afLwDb8f5cuK8UtYpqu7uuALi7o+EeclU3MSfT4uO80XOnvKN34HaUuSbwu9jaMGs1
-         AxLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuTwlkSgX2px+7Y7fuU1nPE1Z0ncKQ2yA6+koYgKnZA5crW0xnT/wO4o944lvxhTi5ECXjE/51MuIvzg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCHX/+6vB9vz6LkYopZSejViL9XpTW6rsLBJVfYeFv8+saWH53
-	CVTHuZO6A7lypl+biBjgdm46xloTA2l2AtMyZGsPBfx8iJPxF+qSIXgiEBpO5yc0sYFfRDrm43B
-	68GhS
-X-Gm-Gg: ASbGncu5z7VVbiH5OC9tJjw+rJ1QUc2Plr0HT9+TOilSJOqsxyyNI03qR1aAjtKKEdj
-	MRrRB9k13UCA2+qfjTM796JawFC+OwzQU5Lv2f819J1LYcm/0Dhx+glBzQRef7S4CxuyBQNNQXr
-	kYpTNl8mNxmZug3OnfHXen0F1PEMx6xSHkVmYo9AZ8kEbbD+lLQdraiATOiM8EjRhjLlOGe+fWQ
-	w9QoSUxLXvY/8RHb3Sd3NpXal+20Snyv3tdxkIWpFPmKg6bD0HA/ahYfGkh49/GNiWPgkTTlsBI
-	27yDbaddfgKVu8I1LLAXvYGU4o61omlaRVsjV2v0q7vIiG5DEHQ2b2ioZkvQF59fySltXQE6oJ8
-	TNvIZC5I=
-X-Google-Smtp-Source: AGHT+IF+yI+Dgd32z62Vz4IkzG0Ih79IcbEYi6NeCGDCJdKqEO9PIlfWJBKMKIGX6EtzZ1WS3NzDOg==
-X-Received: by 2002:a17:902:da2d:b0:21f:2ded:bfc5 with SMTP id d9443c01a7336-22e3508e4d0mr352355ad.28.1746470831803;
-        Mon, 05 May 2025 11:47:11 -0700 (PDT)
-Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e1522054esm58673755ad.118.2025.05.05.11.47.06
+        d=1e100.net; s=20230601; t=1746473153; x=1747077953;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WH8gtHz6B4rMizmqYQm1yuL9136pUtmyGX3DxrZ7Ves=;
+        b=EsIujApcRQXOIrfXRC0tbzF2+jKYxhl+5i4dT5k4iLQ3r3Yw1Et300Z6/Mz6mG3/EQ
+         14mxmaO/li4WPHkgXQveajsDSCjnFVJhQE6vcZbFmV96MPq75IHDGavL+ieMsPIf4dgW
+         TDYfJYumusao2lgC7JygtaWRAWckkXix5umnLY5gqYyTa15BTzTtQj9nd24UUzXfg88J
+         bYJ6dg2eZmblpJ63p3FEyw5sdaol4G6txN4SJhLfLYdVqquoYFiS1UkOf4zZiCmGVeK5
+         yDgnl8+HA4OiYlj2NuTv53m/g4gHFrZYTZrp0kH20W9R8DH2fMStGufWz1MoTh/FxRX+
+         ycXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPRkkdZq5Ci3KjbJfvIwvLkcopXdpje+BgxEZThmyAysbCbp6TE5YzKT7UQG/WoXlvtrYWMvc5rq3NOA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV1h8aCKfBG92U6qhcUFrHqiC1ufyrRn6+l5g6W53WbbMLe66L
+	3Wgt5UCnD7i0ZjxFtYTti36jfZn3aAmnRq00CxJO6J3sAW13ydcRO1DHn6WvZYI=
+X-Gm-Gg: ASbGncs8FULRzfvAvew3sEeQ5Qs6dGKZNtiM2TgS+2uQyrgwld5zOFqG2Lfupofv0VB
+	pm3yCC8p7wcPqcLqKD3HKr7jjci/Z08snSeHc0nh3cuAKsa/PgHaGTOVXdHi+hkrf5t4FDLcBk9
+	z/He+YPKvMGAWxiwTshBsw0Sy7aKh9JhLY16sxeWy+9G5v7GHsxAU0mvF7+g25r/DFfR6+rwM0H
+	vMJDpPWkFm/+sdwaDhZnGlPURMi69ottoKx9GMg0Rk1OCOwtZxFFJL/BsCURN4FeokFEespjFi6
+	NW38uJuJMqdjIbhuXXPWRgJbBPD05f1z1vUWMrqW/78btnAmHg==
+X-Google-Smtp-Source: AGHT+IFQEHNGf7/D1efpW0ms8IrvVnOu76w+4u/3GMokHybcmKaxexp0/lnZzk4zFWZoiyidipxSsw==
+X-Received: by 2002:a05:600c:3c88:b0:439:9a40:aa1a with SMTP id 5b1f17b1804b1-441bbf38405mr42878885e9.6.1746473153627;
+        Mon, 05 May 2025 12:25:53 -0700 (PDT)
+Received: from kuoka.. ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89cc441sm145342045e9.3.2025.05.05.12.25.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 11:47:11 -0700 (PDT)
-Date: Mon, 5 May 2025 18:47:00 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
-	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
-	vasant.hegde@amd.com
-Subject: Re: [PATCH v2 13/22] iommufd: Add mmap interface
-Message-ID: <aBkHpJIeDxJJSxeS@google.com>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <7be26560c604b0cbc2fd218997b97a47e4ed11ff.1745646960.git.nicolinc@nvidia.com>
- <aBE1gUz9y415EuBQ@google.com>
- <aBE38GwvGBnpRNLc@google.com>
- <aBE47aySzDp2lsAz@Asurada-Nvidia>
- <aBE800DsAOOZ4ybv@google.com>
- <aBE/CD4Ilbydnmud@Asurada-Nvidia>
- <aBFGCxcTh54pecsk@google.com>
- <aBFIsYg+ITU8RvTT@Asurada-Nvidia>
- <20250505165552.GN2260709@nvidia.com>
+        Mon, 05 May 2025 12:25:52 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] arm64: tegra: tegra210-p2894: Align GPIO hog node name with preferred style
+Date: Mon,  5 May 2025 21:25:48 +0200
+Message-ID: <174647309278.308425.619180434639032.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250115204603.136997-1-krzysztof.kozlowski@linaro.org>
+References: <20250115204603.136997-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505165552.GN2260709@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=569; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject:message-id; bh=YWhEExbXWK0i0KinY8dDPGi15oUXCcJ3B2nDuPDFR0s=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoGRC7BRrRIgGFXwULyceZMeAFc9ZGxKd+jvR7x
+ o2L7OfgwiiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBkQuwAKCRDBN2bmhouD
+ 1xn9D/96vprsQHtyCJjXxBYrw4aZvYuYe6trpozVbY0NFOWQlNrh7yrs7mZgRzPVAEuR448nRdD
+ vOxKiflvbrDAOz3VCPWTjpJYzCyns/lnsEsWvCCK150aA2G5BWbzII0rVjxdfqtcYmuqh9lsq3R
+ OwMtn7gvSuuyN2GwD5AxvUSxoyZMpckLOJ0LkXLlxfet60KpN/hbQka55ua80l5JBh2WfN0dIrm
+ YdYBEbyGCKfvMO0VgjnRCd0HyQmCS64GKkOhx75trM5oSuHJyX+DaRSIwqIsoPG/ciwTICuZxir
+ F5Iwx4MC+qPNWSsXClTJCjyXtx62jziyLXQGNzEv+6IdpBvl95xriSAvPfj70llHdfyGk1VZAds
+ cepLdy1zzUM1b2rkj2A/FDltHbGDPNsxyhe8pvlZe7uB5EcH+45PH2mTGABYx7C7gS9aIc6mJJ2
+ cE+W+agKMiiNGchgWJCPVMXcGlLjUk2d+eXfkpaNScwjOsvVxg70b8HjHyJDp4ZoAjjmwnlk0Q3
+ xo1hLqyU2yesl/i902b3QsE1OcuoT2WBnSiDtDpL9stfasv/fxSajRBghD4ijEjxaMTMkDxAbJI
+ I85INAY5WOE7RkUGJ6o93owWYuW53C+sBntz2HlYtXUhmMoVlig9vntw2doxKpYmEuQ8EbXzUlJ VUcX8OjFSlihZKw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 05, 2025 at 01:55:52PM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 29, 2025 at 02:46:25PM -0700, Nicolin Chen wrote:
-> > > > > > > > > +	immap = kzalloc(sizeof(*immap), GFP_KERNEL);
-> > > > > > > > > +	if (!immap)
-> > > > > > > > > +		return -ENOMEM;
-> > > > > > > > > +	immap->pfn_start = base >> PAGE_SHIFT;
-> > > > > > > > > +	immap->pfn_end = immap->pfn_start + (size >> PAGE_SHIFT) - 1;
-> > > > > > > > > +
-> > > > > > > > > +	rc = mtree_alloc_range(&ictx->mt_mmap, immap_id, immap, sizeof(immap),
-> > > > > > > > 
-> > > > > > > > I believe this should be sizeof(*immap) ?
-> > > > > > > 
-> > > > > > > Ugh, Sorry, shouldn't this be size >> PAGE_SHIFT (num_indices to alloc) ?
-> > > > > > 
-> > > > > > mtree_load() returns a "struct iommufd_map *" pointer.
-> > > > > 
-> > > > > I'm not talking about mtree_load. I meant mtree_alloc_range takes in a
-> > > > > "size" parameter, which is being passed as sizeof(imap) in this patch.
-> > > > > IIUC, the mtree_alloc_range, via mas_empty_area, gets a range that is
-> > > > > sufficient for the given "size". 
-> > > > > 
-> > > > > Now in this case, "size" would be the no. of pfns which are mmap-able.
-> > > > > By passing sizeof(immap), we're simply reserving sizeof(ptr) i.e. 8 pfns
-> > > > > for a 64-bit machine. Whereas we really, just want to reserve a range
-> > > > > for size >> PAGE_SHIFT pfns.
-> > > > 
-> > > > But we are not storing pfns but the immap pointer..
+
+On Wed, 15 Jan 2025 21:46:03 +0100, Krzysztof Kozlowski wrote:
+> GPIO hogs device node names can use 'hog' prefix or suffix, but the
+> suffix is preferred.  The pattern in DT schema might narrow in the
+> future, so adjust the DTS now.
 > 
-> That doesn't seem right, the entire point of using a maple tree is to
-> manage the pfn number space, ie the pgoff argument to mmap.
-> 
-> So when calling mtree_alloc_range:
-> 
-> int mtree_alloc_range(struct maple_tree *mt, unsigned long *startp,
-> 		void *entry, unsigned long size, unsigned long min,
-> 		unsigned long max, gfp_t gfp)
-> 
-> size should be the number of PFNs this mmap is going to use, which is
-> not sizeof() anything
-> 
-> min should be 0 and max should be uh.. U32_MAX >> PAGE_SHIFT
-> IIRC.. There is a different limit for pgof fon 32 bit mmap()
 > 
 
-This is what I was thinking as well.. why use a maple tree if we aren't
-allocating a range to manage pfns.. I was still thinking about this in
-v3 which made me hold back from acking this. I'm glad we clarified this!
+No responses for four months, also to a ping, so I will just apply it.
 
-> > > Ohh... so we are storing the raw pointer in the mtree.. I got confused
-> > > with the `LONG_MAX >> PAGE_SHIFT`.. Sorry about the confusion!
-> > 
-> > Yes. We want the pointer at mtree_load(). The pfn range is for
-> > validation after mtree_load(). And we are likely to stuff more
-> > bits into the immap structure for other verifications.
-> 
-> Validation is fine, but you still have to reserve the whole pfn number
-> space to get sensible non-overlapping pgoffs out of the allocator.
-> 
-> Jason
+[1/1] arm64: tegra: tegra210-p2894: Align GPIO hog node name with preferred style
+      https://git.kernel.org/krzk/linux-dt/c/04e7638dd64af20e4e81b7569abea9673e337098
 
-Thanks
-Praan
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
