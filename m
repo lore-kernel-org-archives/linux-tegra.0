@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B402F419D;
-	Mon,  5 May 2025 23:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0D53A0133;
+	Mon,  5 May 2025 23:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486916; cv=none; b=bvoiu/eGUxjRvxx6WWIs4ae4GQdqdwq6A1yzsyLsI9ltMhjQqeJACuvy0u2dbJH7dzr5dAcORfgQO/STWM2IltZ8dRmfVseo/NVGaFkL70im46nkoKAbNbhM7ELnbc9k8C4BgMwxuL/WGOtYoU8ah5vrqywPaxuj5Z1tE8K9J0s=
+	t=1746486924; cv=none; b=DTrCrLjCwtaHjxd32ZaQ0Yf/J4GPDjrlhyPdZlmqMLPDElDjvjXuUmYEEIjZV3BqkLFOTxYlG1MWWkkUbGy5v0pIbJoHLmc7lSepNyjnxBjReA/0QcBXkAlJQ4CXxIQFuUGzF3Knf0Acuhh55XvEMVQN5u3zXWbk0bi7HCOebRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486916; c=relaxed/simple;
-	bh=caq7CBu5Lg5Kof0Mdnp7L1kax7V+jqELVJAntISz4vE=;
+	s=arc-20240116; t=1746486924; c=relaxed/simple;
+	bh=pxt1vUwyhbVDVIH4B45gFvaUMGnvP+TYbfp1Y6nmaow=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cPlCicM1AUAcM67FKUaTqwd050s8mIFkMnQosB/L0O+YKEtUNh1uJ+8d8NRUL9wZjFm2NWD2dWzEJM/iKJHPsVik1djfZmlVJQ2lTM5yYmfMmc8olVSvrF5nD3QmZ9yTyxsyge0wnO6Yn8dgpUfy68md0bPg4XtcTbXTtJseszY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIC+jLOP; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=C4sl0si8UNBEyvggTVC8C0dlO3hog3WpR+OtQrIsfFPk0Xy1QEJdzBdHFU9RW7mvUou+LAEvowkapqspjbqDch2oPJm3FJWsV+TVEcAycCWj7M69T1Waf4kBBEO8ZMuKtBFtLTJHIQvUe+4gp85hbchaP8lZCIQ6hPoqFcIceOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUUzTdPH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIC+jLOP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE60C4CEEE;
-	Mon,  5 May 2025 23:15:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUUzTdPH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CECC4CEEF;
+	Mon,  5 May 2025 23:15:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486915;
-	bh=caq7CBu5Lg5Kof0Mdnp7L1kax7V+jqELVJAntISz4vE=;
+	s=k20201202; t=1746486923;
+	bh=pxt1vUwyhbVDVIH4B45gFvaUMGnvP+TYbfp1Y6nmaow=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UIC+jLOPf7dj/ydhUSHABOvsa//Y29OhZe1zWOvaH7QSzYVhWBjYhOVdytgouSFBD
-	 V30Ny7HBMQLYS5sKL6Pf+G2R6pkBXreKfeAYlukoJXOjX3dTpZKeXtQYA31kng5uJj
-	 2fDproEYzSN5T1b60shybbfZTsudAHAOeErJ/oX9wGZp8Xub+jV9Cq0x+QUu08tqGc
-	 xCBQdzLzhQvrkgpBhU907iUhkuNp3hKZ58DBEIhoYD5rYcA9OQrPK+ruNfPrFjePp8
-	 ERcp19IGQbdstkPeHrF2YlltKOxnI3a+Rx2S64ZG0yE/2wH4pKVSUFD/gqsLW7VqBj
-	 cMCWe2+Bm/E1w==
+	b=GUUzTdPHxqIYjMUoo2lC+IuRVftpzQjY3AW0K3uMJ665YedfRZlD/bOXqnDETFe4E
+	 U5jkMZY8Oje5MQg4DRcmdlcxOyvBHjCf3ialHB9W3K5zEh8yoIFLybtvKdJwdNh2Jg
+	 w5P8D3HGxzLIGh64Mif2A4U/40QL3C95SVqDeYCv7XrWzBho+iYbiWEykc6EC048RM
+	 WvnLCN4qCPMbQiW0pi3tGYVMACeT3OH+hfF5QGTjD7GnsnbqcTpzJOby87K/2tvOxU
+	 0E1s76eRaZW3obwPCguWDxa98Nql/eUDV/KTOegyCaA4zDG4sWqYZY0jhLiVZ6WXnQ
+	 1xmN2xG3BnbIg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
 	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
 	robh@kernel.org,
@@ -37,12 +37,11 @@ Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
 	conor+dt@kernel.org,
 	thierry.reding@gmail.com,
 	jonathanh@nvidia.com,
-	tmn505@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 056/153] arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
-Date: Mon,  5 May 2025 19:11:43 -0400
-Message-Id: <20250505231320.2695319-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 061/153] ARM: tegra: Switch DSI-B clock parent to PLLD on Tegra114
+Date: Mon,  5 May 2025 19:11:48 -0400
+Message-Id: <20250505231320.2695319-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -57,35 +56,34 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
 
-[ Upstream commit f34621f31e3be81456c903287f7e4c0609829e29 ]
+[ Upstream commit 2b3db788f2f614b875b257cdb079adadedc060f3 ]
 
-According to the board schematics the enable pin of this regulator is
-connected to gpio line #9 of the first instance of the TCA9539
-GPIO expander, so adjust it.
+PLLD is usually used as parent clock for internal video devices, like
+DSI for example, while PLLD2 is used as parent for HDMI.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Link: https://lore.kernel.org/r/20250224-diogo-gpio_exp-v1-1-80fb84ac48c6@tecnico.ulisboa.pt
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Link: https://lore.kernel.org/r/20250226105615.61087-3-clamor95@gmail.com
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 2 +-
+ arch/arm/boot/dts/tegra114.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index d8409c1b43800..4abd8b14b8a5c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1638,7 +1638,7 @@ vdd_1v8_dis: regulator@7 {
- 		regulator-min-microvolt = <1800000>;
- 		regulator-max-microvolt = <1800000>;
- 		regulator-always-on;
--		gpio = <&exp1 14 GPIO_ACTIVE_HIGH>;
-+		gpio = <&exp1 9 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 		vin-supply = <&vdd_1v8>;
- 	};
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index fb99b3e971c3b..c00097794dab1 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -126,7 +126,7 @@ dsi@54400000 {
+ 			reg = <0x54400000 0x00040000>;
+ 			clocks = <&tegra_car TEGRA114_CLK_DSIB>,
+ 				 <&tegra_car TEGRA114_CLK_DSIBLP>,
+-				 <&tegra_car TEGRA114_CLK_PLL_D2_OUT0>;
++				 <&tegra_car TEGRA114_CLK_PLL_D_OUT0>;
+ 			clock-names = "dsi", "lp", "parent";
+ 			resets = <&tegra_car 82>;
+ 			reset-names = "dsi";
 -- 
 2.39.5
 
