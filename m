@@ -1,126 +1,126 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F94119F462
-	for <linux-tegra@vger.kernel.org>; Mon,  5 May 2025 08:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBD71C8619;
+	Mon,  5 May 2025 08:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746434227; cv=none; b=j/V2rTWhwMoGtEZFAJv3TEdXGXoTR7nTps/YTEOYr6+R79q5bXCg+N4P4LrLzF2BWr9EWgKKvBHaKlIB/R9VkQr/esi8dHoo+h9kHeO0N47vmN3v+Pi/1EHaXnX7xrCvMl1vai8P6qTicLi0R+sHEYj1ysVC9MJZDwVAh2pgflM=
+	t=1746435301; cv=none; b=IWzoNm3o2DigmqBW9g3wuSSdKPYRO+F/8Zhx4EvoUO+qgrWzKmhhIBulEUMYt6fLVMcR9x1ZP9et3P+iSdcNpVYCqEljTTJgAteEQ8TkOpfynlHOZnYWYXg54WAIvPMjk8ZpQcwjHrigKvxtYrstIqiS2k9QYBdgJGZCFY8GbfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746434227; c=relaxed/simple;
-	bh=baMJAkG27VqkKqYHwlOmJyskaqcTMSM4nApt/kG2w+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CDvR6PLLjsV9zski4XXoK6t3BN+syDT6+kSjtlRIDkn33UozIMBdU97gtFvAy3Jf/dKqzmmveAD5jd2um6NGcW1Ay5ZeKe4WwCNdyB5+75MQqsMZ8sD3qq/ABQ1X6eJSZBqbeIJGsUjncWkKQa+AmthpQYtQ8i8Y41LIGumr9XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FWkvI79y; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746435301; c=relaxed/simple;
+	bh=ANkmaSH+jSydLUFYg/7A8fPFIx7Wpt3FwfEdHjI1I5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oK4vpoPIkrdcaX99jfRwyJw+vKg5Liqmi1W+i58nQW41DF6fSQjXJ2xF6ls/L8C+qNBT8EvDzuw0LehJ6p0+6tqhSdsBbMlvwsKfB4GWRzrSUkchdWKTcQNiQVW3IC+pzJ+Yft38+f+tgWithIIgzrgEGlqJ83/hh50HM5T9+o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6kl/t1m; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FWkvI79y"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39ee623fe64so4165432f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 05 May 2025 01:37:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6kl/t1m"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39149bccb69so3170701f8f.2;
+        Mon, 05 May 2025 01:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746434224; x=1747039024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sN+l0bbqOaNHyCMlUBuryfQsJX8dUCuFeTIyy+iGYGk=;
-        b=FWkvI79yGA3IvrKzZbSAClqfgYy364yDHti6bPs40vVJPeNO6yp9E4Q8ExLLtSD7La
-         pxNY+EJM0Xqr7jC2Vx1i2pP8Dquhwu+PyZThhMgEUv81i7CRzxXQcwoil1jtQBTHdSB4
-         0OVdSkdSstHeZRbVyphBQXrarBHtdcS51f9iGjUTROm63K0hWhWZsKyfUPtTxo5NJMHg
-         e5FncJdGGWkZSJI9cDzI2zrs2bYP1t1n+/F+9RZwhG8n8IIxDHrgi1evcogBKknz4ODq
-         2xydI02Jlf0NvL5tyg/RAKj+YScCi2pwmZO2Q0kmCU6CHV3GIqWAvychO6pZAn1qaLTl
-         7cYA==
+        d=gmail.com; s=20230601; t=1746435298; x=1747040098; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YpsEFMWcB35gcbBcFGpV4LHFhrXxpliMigTkUFYalVw=;
+        b=Z6kl/t1meLjPZ7bsqbZcuRHJE2LBpS5Pwbr7wx9F9E0DwIJMSAEV81Dir22sU3nkeb
+         0X3WAqkEvNAjeptla+2x3nZW7RrzDozHigq79SbB78RN93b8CmklegB6qiWImq6um0M9
+         A0M8H0Ix5BOqWiCO2ntxUK7xzibqjZUoVDFzIHkRBUfaofH7Ech/3aoOjysaN343qhE7
+         5uI2iXqvSxY4H1YbyhixL50CK6KY2DJ8PToiGUaDd7qhJvohad42SGJGnXPhm8kYc+7G
+         E43V1Yy6IzW7A6PU9QauuGoe564O5ExL+xhmBv7eyrVIKdxelYZcZLikM3QfUnvy/Gdu
+         u49Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746434224; x=1747039024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1746435298; x=1747040098;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sN+l0bbqOaNHyCMlUBuryfQsJX8dUCuFeTIyy+iGYGk=;
-        b=bAqhV2fPE1KScprtg6aR7LraZARnBlFfZRacru5m9kiTxr7w2belLuDQfabXXk3ATx
-         oJJV0FwEn3S2gsgPHw4sHBtB3+aO2HRzOJnjUIag0Daty7EIL029Qb4vqsTA4R5CCs4N
-         GeZ8VEWUX2ETV+LBf3mo7Sd+Z0/vhUnsRKUsDMQqlict6qa6/WBSIEOaT3wfdRinLA1U
-         TNYiTuaxKipzZOacu0Rtw+EqN/ffuzaAtOjBcnv0AttJvOYGUJ0d4PPiDrEid1VrkfPX
-         hCFBXYNrCYQEyyrB2BieiYZl3WXmhIyJ1eGi/4Lvj0AitvikpJQ1bBciQPRhb5PiXrHk
-         l9pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWccsiYxROkeIM4SG5VOYWJlqRgsMTPCSbdOxYOj89s4/D1ShIuhUra1spcd3dwYi0Vrrf+pT3tLOuqQQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBexeWEu/5IniUECmv+0pxetUSuF0zQZg+dkVn3llSztJxfi3B
-	e/4vroDSxPzWzBwpP7/5tLpeVqEVNWI6+TsyroUdXNzoUa1ytwP1hP6XZKySIV8=
-X-Gm-Gg: ASbGncsfNZmiUc6wzyJrxLZYQnqGF8IJuYa3+VMRm4t+Us+dx41YKOXqQnWGc4bO8Qb
-	8ssvv2wNlCxpo4GJBH2Nzn27jDBnJJe4vCSNJInBf4rV1mlpJ9hzTDt5VfZ9qZHR2E5WvLL1nJ3
-	UNiIr8nYUvAbvJ/oBCoHkj4CD0KSB/u68bZhIpD+kqAYPMLcRr1qrS5/vcWJ7QJY5Dr/wc9gxMo
-	LDZkwi8K+rkHf8XeB/bEoV5XvYophfARxmbLHAGPNuK4kLpaVm3eJRkTqVYeCgYzN6hGKtpqukd
-	KCl8YtjXy7Zz67enciCVstl6+D/HfdcA1aaQhrHN0m57HQ5JvC9FnXOAKVR5Tvs/JwglJaLCj3X
-	y3wMF
-X-Google-Smtp-Source: AGHT+IHx5gQaW6NrJpXzB2ZmMAA8JB51I+tVwTpFwtk86FyblrmU5GquHCP1zT3M4G1bf+Egj+xPsA==
-X-Received: by 2002:a05:6000:2910:b0:39f:175b:a68d with SMTP id ffacd0b85a97d-3a09cea687cmr5975453f8f.11.1746434223826;
-        Mon, 05 May 2025 01:37:03 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a099ae3356sm9511430f8f.29.2025.05.05.01.37.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 01:37:03 -0700 (PDT)
-Message-ID: <12201db3-7c94-4430-964d-0fe349ad6390@linaro.org>
-Date: Mon, 5 May 2025 10:37:02 +0200
+        bh=YpsEFMWcB35gcbBcFGpV4LHFhrXxpliMigTkUFYalVw=;
+        b=pbFyRfsax2q5iIWzXobCHgrGHdpR/Bn8KHjDREua+58w20U7I23lR1r6Ve2GVtcZJe
+         889fLEEALqZXiPc/ELyoI4LcyZ825ZskoDrPGDGbl6SVm9mAaC6tPiPsqY9tqlaQMR5x
+         X3sbzxwRMTM4T6/J9euLJpJlACJd0f2TjQmOJngV1nzURccW40tzLA9LlGEHwe+G4NoX
+         0g7cfqqc0YNfleuMFhKDQ6CzDJbXDCmbwdAWQbRF9gVGob+dLqXio81C9n5PPQG+VytC
+         C27USlN02FZb1DmLqJycxcfYpbzc253Job4cuUEQVIOo3M1gUvw1/2m2gaT5Fu5/lCnl
+         cRpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuVaNunXDKUGDxnKuenZnpx34UVFp0SB7idlKawAFdOCK8EVy7mxBiEbGhxYr7TBeRnYApqXTs5U9h@vger.kernel.org, AJvYcCXiFZHARg8Vq3B9SLTfoOZRUz6CaHjraEujzZ/w+5KWc++xXpN9M0t/Vu4qn8W8nRoFe7tKJUe2A/KYCEk=@vger.kernel.org, AJvYcCXmiG8MZ40oDwwbCYjzvPDsSv969/q+DrtIWRrVSnKk3meRPurqDFsuoofWksweWetDoDHJNZ4uonvb7IY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrJi8UOXxsrTWok/lhU07Dz6ZZ/zNP4zQKXSi13w+Fk+Mwnqdg
+	cxS38xcfHheFRXrBzvRSNRoXFaMLQkNVX62U24Xiohf9qIQ94DIm
+X-Gm-Gg: ASbGnctGN6AAdlubwXYd0cnchBO994pGNdsxtXCN7vYeLFTzQP6PLzBt39MB2aqRIxg
+	1nCVZ22w2YBteOiQK4BX2rOYb+zhtW64uONkg+84djD8fcnb7StOU3vF1lDXoKnoAc4cLrmvw3C
+	t62X1gHOvoTaDzbkSRk+K6jTpZrSmCZefIy2yKbKO2Bccm+O4LWZpUxFgMFGoU7GgaGmgbv9SuT
+	YIfFGe9aMo8/ofZsXPeo1HQyBcHkR24iTwyPMLUNvNsA9t4yVdJMf+b73G3FQXPJlAuFhM7GcDO
+	Sx+qCp1nurY/o5cofY/wSIli0YmSgTPzQ4YTw1Nj7Q==
+X-Google-Smtp-Source: AGHT+IFJs4DAHEzrv4OPAPEb9BqOw2eTNDq0LTMwTq1E21oCu2Rmq52qupAsnj6uZ2VNyDW1j5Ox7w==
+X-Received: by 2002:a05:6000:2c6:b0:3a0:7b07:157 with SMTP id ffacd0b85a97d-3a09cea68e9mr6121795f8f.9.1746435297966;
+        Mon, 05 May 2025 01:54:57 -0700 (PDT)
+Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a099ae831esm9904574f8f.57.2025.05.05.01.54.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 01:54:57 -0700 (PDT)
+Date: Mon, 5 May 2025 10:54:55 +0200
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, ldewangan@nvidia.com,
+	thierry.reding@gmail.com, jonathanh@nvidia.com,
+	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: Re: [regression] jetson-tk1: spi do not probe anymore
+Message-ID: <aBh839v-3Z1ReDi4@Red>
+References: <aBdOMUhuUqbZm9w1@Red>
+ <aBfsJpId0Jrcz228@finisterre.sirena.org.uk>
+ <CALHNRZ-At4WmJXoNs_x0XD=bRTRsKMBm1qOQGkFcNOvFfVDaMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/3] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
-To: Robert Lin <robelin@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, Pohsun Su <pohsuns@nvidia.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>
-References: <20250502043727.396896-1-robelin@nvidia.com>
- <20250502043727.396896-2-robelin@nvidia.com>
- <aBSOJTlQUUnFIEVr@mai.linaro.org>
- <af0e0ab4-89d5-4f77-86c7-90d2bc3e13dd@nvidia.com>
- <aBSjyZJ0__ctBa-4@mai.linaro.org>
- <5824d505-0a42-40cc-84ec-814f0bbfb79f@nvidia.com>
- <93f063fa-0012-4018-8c37-a2bfa623d2bf@linaro.org>
- <a6a45384-18b4-4500-8b8e-8cdd8df5ac1f@nvidia.com>
- <DS0PR12MB6416E7BF479EF8C67BAC6147D98E2@DS0PR12MB6416.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <DS0PR12MB6416E7BF479EF8C67BAC6147D98E2@DS0PR12MB6416.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALHNRZ-At4WmJXoNs_x0XD=bRTRsKMBm1qOQGkFcNOvFfVDaMw@mail.gmail.com>
 
-On 05/05/2025 07:34, Robert Lin wrote:
-
-[ ... ]
-
->>>> Yes so WARN sounds appropriate. It should never happen. I
->>>> don't see the issue.
->>> 
->>> The issue is if there is an userspace application reading the
->>> ioctl and or the sysfs, then the warning will be emitted each
->>> time if the never- happen condition exists. Preferably replace
->>> the WARN_ON by pr_warn_once() as suggested if the bug must be
->>> reported.
->> 
->> Sounds a bit funny 'if the never-happen condition exists' :-)
->> 
->> However, I will be fine with WARN_ON_ONCE(). I think that this
->> warrants more of a large WARN splat than pr_warn() because it
->> should never happen.
->> 
+Le Sun, May 04, 2025 at 09:10:59PM -0500, Aaron Kling a écrit :
+> On Sun, May 4, 2025 at 5:37 PM Mark Brown <broonie@kernel.org> wrote:
+> >
+> > On Sun, May 04, 2025 at 01:23:29PM +0200, Corentin Labbe wrote:
+> >
+> > > On my jetson-tk1, SPI do not probe anymore:
+> > > [    1.330681] spi spi1.0: Invalid delay unit 2, should be SPI_DELAY_UNIT_SCK
+> > > [    1.335185] spi-tegra114 7000da00.spi: can't setup spi1.0, status -22
+> > > [    1.341643] spi_master spi1: spi_device register error /spi@7000da00/flash@0
+> > > [    1.348637] spi_master spi1: Failed to create SPI device for /spi@7000da00/flash@0
+> > > I tested 6.14.7
+> > > The SPI probed perfectly in 4.17.14
+> >
+> > That's a pretty big jump in versions...
+> >
+> > > I tried to debug a bit, and the driver requires units to be SPI_DELAY_UNIT_SCK, but it seems there is no way to set it.
+> > > Removing the "return -EINVAL" in tegra_spi_set_hw_cs_timing() lead to a successfull probe and the flash device appear.
+> > > But I agree, it is not a correct fix:)
+> > >
+> > > Since only the test made it fail, I think the driver is bad since commit 810593668468 ("spi: tegra114: change format for `spi_set_cs_timing()` function")
+> >
+> > Adding Alexandru who wrote that commit.  Assuming the delays came from
+> > DT (I'm not actually finding them, I didn't look too hard though) and
+> > are therefore in units of wall clock time I think we need to add a
+> > conversion helper for the units which the driver can use to convert to
+> > whatever units it actually wants to use, we do need to accept units of
+> > wall clock time given the generic binding there.  That gets a bit
+> > annoying if the bus speed changes, though that's quite infrequent in
+> > practice.
 > 
-> I believe the two WARN_ON I used here are the "this-should-never-
-> happen" situations. In my opinion, we are good to keep. But I am
-> also good with WARN_ON_ONCE for compromise. I wonder if Daniel is
-> good with this then I can fix them.
+> This should be fixed by a patch [0] which was recently picked up. I
+> saw the same issue on a tegra 210 device and submitted that to fix it.
+> Can you verify if it fixes this case too?
+> 
+> Sincerely,
+> Aaron
+> 
+> [0] https://lore.kernel.org/all/20250423-spi-tegra114-v1-1-2d608bcc12f9@gmail.com/
 
-I'm fine with this
+Yes it fixes my case
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks
+Regards
