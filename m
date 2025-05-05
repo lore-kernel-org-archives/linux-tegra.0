@@ -1,48 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED073745A5;
-	Mon,  5 May 2025 22:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973BB2DB4D8;
+	Mon,  5 May 2025 23:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485936; cv=none; b=o56+D2lHnTdiNyi8Y6lLVGVhGWAEzGDxDi9bT/zhvMKGwplPI/77BCqByq7cne0VvTS5rKMIIRI/m+eGaSQ4UG0dKCU4anzSB90FiP7gjW2cuBAjUpc92pstUFRNvDZTqvMQ404fGKqOJNEYiH710wJWoG8LfmaxXtHVyhufM30=
+	t=1746486004; cv=none; b=QCh9tFSA1QiR7Dnm2as2oiassqwOrHwHK6M2W0q3HukmFg++9pDXUER3LQhLK+YqWUj0h9Q1/t8jxodbuOp7XjsJkHQw6mUhUxCnLktnTDzdquCL2jb6a4W/YWJJhl0SbMlQP6Y9WJf0XlMrOAIdY/JdvFzyarvbWG9OkUorrcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485936; c=relaxed/simple;
-	bh=rOo8j2xsQXpsL82NQglsa2dm1Nhqx7YdR2/zchL6+xw=;
+	s=arc-20240116; t=1746486004; c=relaxed/simple;
+	bh=saZcNE4gx1D8gXuI1rjqKPbKSg93sYLrQS8kBHPgNcs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ijIr8AqH5v7i0EZ3YvaTN20mKEAbnflfNV2973vIOSMwRfo2Js8tDpx6qMIZNPPkOSKadLuD23IkHK2i/Fmn1eqKFwdhBXdSgkYHjiyAHX1zJpF4+UzeXq1MeJEykTj3RwZk0TIQVigZxlanhDKAmTEka8dmWL+o4UHP7HqKKLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdWdDeV2; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=CqSfa+osEGNJN3RoGlszjd5k/0jSY9KR3PuVchJUfrwodnxQCMZo6Gn6TS0kh5IoDyd/q9mGWoGHucKJog5206sN+/z1izIMmu2Bra4rguy5PUSl+03OZACylLYlwOD2zRQNT8AgZayTfYCj7gP0oMU6Qp0N+wG/txW15x+rfWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiMEVYEz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdWdDeV2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32C4C4CEE4;
-	Mon,  5 May 2025 22:58:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiMEVYEz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18000C4CEED;
+	Mon,  5 May 2025 23:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485936;
-	bh=rOo8j2xsQXpsL82NQglsa2dm1Nhqx7YdR2/zchL6+xw=;
+	s=k20201202; t=1746486004;
+	bh=saZcNE4gx1D8gXuI1rjqKPbKSg93sYLrQS8kBHPgNcs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hdWdDeV22HCRz9/iITCEYS9i19b0Mktg24weWKu2z2Yp1Ft/C4uWY50q8WtNX4SjN
-	 IPJzweayWLXzzEzFi2WXkmyzqOxhMD8XMis/J+KxYxn9IvD6ueiv6pRSZFz91MQOCI
-	 nwrAFMfntwdIkS1uthW+DOdbDbPuNicGwkjQ67b9E8J/mniLDjGs5gHaSR2MnAkBN8
-	 Ovx/xt6jYO6UtoK2AXCNlSpwC8OkdssSy8I+1m3rbt2LUcGox0SqlixgCBKQO8c7Xk
-	 iXqNy0HJj6xFn/7rPmw9FGB9A5h67bRsXsh0fjBRxdGEPWco0OwjPnHD6u9hK9wfut
-	 7I2z36JD4nAQg==
+	b=LiMEVYEzenkOW7jQXGeGEWViGcTqjPd1NgfkuXTNy4tlEybRlPILCybZJA2QnjEi2
+	 DfdnU06f/CSqTehgeNfsrCWmab7P4crKYYZ7DELY6Y9LoLX6EypikEj/LouYL0ueDx
+	 OMZaTN3uhrkFK5y2nmenaLXJyKoSQr4rSESPOGX7Ks9pOSYXCDnExQRp+tjufqrH2j
+	 Hx4xoCEVa3ZeggJlNkz2Yx3gKf346ejpkmQ07KPFBNOrlkUZ9IWEswziC3prJF07Yy
+	 iX1FZW9BzvNd2dc0FHCcGf8ygPMCVL3T4zdrUo73mcHordrpjeciC0xqAUhl9kuWew
+	 Wm3rha3CIiBVw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Prathamesh Shete <pshete@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
 	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	brgl@bgdev.pl,
-	peng.fan@nxp.com,
-	kunwu.chan@linux.dev,
-	dan.carpenter@linaro.org,
-	linux-gpio@vger.kernel.org,
+	dstotland@nvidia.com,
+	bgriffis@nvidia.com,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 074/294] pinctrl-tegra: Restore SFSEL bit when freeing pins
-Date: Mon,  5 May 2025 18:52:54 -0400
-Message-Id: <20250505225634.2688578-74-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 105/294] arm64: tegra: Resize aperture for the IGX PCIe C5 slot
+Date: Mon,  5 May 2025 18:53:25 -0400
+Message-Id: <20250505225634.2688578-105-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -57,181 +57,46 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Prathamesh Shete <pshete@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-[ Upstream commit c12bfa0fee65940b10ff5187349f76c6f6b1df9c ]
+[ Upstream commit 6d4bfe6d86af1ef52bdb4592c9afb2037f24f2c4 ]
 
-Each pin can be configured as a Special Function IO (SFIO) or GPIO,
-where the SFIO enables the pin to operate in alternative modes such as
-I2C, SPI, etc.
+Some discrete graphics cards such as the NVIDIA RTX A6000 support
+resizable BARs. When connecting an A6000 card to the NVIDIA IGX Orin
+platform, resizing the BAR1 aperture to 8GB fails because the current
+device-tree configuration for the PCIe C5 slot cannot support this.
+Fix this by updating the device-tree 'reg' and 'ranges' properties for
+the PCIe C5 slot to support this.
 
-The current implementation sets all the pins back to SFIO mode
-even if they were initially in GPIO mode. This can cause glitches
-on the pins when pinctrl_gpio_free() is called.
-
-Avoid these undesired glitches by storing the pin's SFIO/GPIO
-state on GPIO request and restoring it on GPIO free.
-
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-Link: https://lore.kernel.org/20250305104939.15168-2-pshete@nvidia.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Link: https://lore.kernel.org/r/20250116151903.476047-1-jonathanh@nvidia.com
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++----
- drivers/pinctrl/tegra/pinctrl-tegra.h |  6 +++
- 2 files changed, 57 insertions(+), 8 deletions(-)
+ .../boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 7c12a3470642c..1350ab56fbc03 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -280,8 +280,8 @@ static int tegra_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
+index bac611d735c58..2fa48972b2a91 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
+@@ -102,6 +102,16 @@ pcie@14160000 {
+ 		};
  
--static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
--					unsigned int offset)
-+static int tegra_pinctrl_get_group_index(struct pinctrl_dev *pctldev,
-+					 unsigned int offset)
- {
- 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned int group, num_pins, j;
-@@ -294,12 +294,35 @@ static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *
- 			continue;
- 		for (j = 0; j < num_pins; j++) {
- 			if (offset == pins[j])
--				return &pmx->soc->groups[group];
-+				return group;
- 		}
- 	}
- 
--	dev_err(pctldev->dev, "Pingroup not found for pin %u\n", offset);
--	return NULL;
-+	return -EINVAL;
-+}
+ 		pcie@141a0000 {
++			reg = <0x00 0x141a0000 0x0 0x00020000   /* appl registers (128K)      */
++			       0x00 0x3a000000 0x0 0x00040000   /* configuration space (256K) */
++			       0x00 0x3a040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  */
++			       0x00 0x3a080000 0x0 0x00040000   /* DBI reg space (256K)       */
++			       0x2e 0x20000000 0x0 0x10000000>; /* ECAM (256MB)               */
 +
-+static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
-+							    unsigned int offset,
-+							    int group_index)
-+{
-+	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++			ranges = <0x81000000 0x00 0x3a100000 0x00 0x3a100000 0x0 0x00100000      /* downstream I/O (1MB) */
++				  0x82000000 0x00 0x40000000 0x2e 0x30000000 0x0 0x08000000      /* non-prefetchable memory (128MB) */
++				  0xc3000000 0x28 0x00000000 0x28 0x00000000 0x6 0x20000000>;    /* prefetchable memory (25088MB) */
 +
-+	if (group_index < 0 || group_index > pmx->soc->ngroups)
-+		return NULL;
-+
-+	return &pmx->soc->groups[group_index];
-+}
-+
-+static struct tegra_pingroup_config *tegra_pinctrl_get_group_config(struct pinctrl_dev *pctldev,
-+								    unsigned int offset,
-+								    int group_index)
-+{
-+	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
-+
-+	if (group_index < 0)
-+		return NULL;
-+
-+	return &pmx->pingroup_configs[group_index];
- }
- 
- static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
-@@ -308,12 +331,15 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
- {
- 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	const struct tegra_pingroup *group;
-+	struct tegra_pingroup_config *config;
-+	int group_index;
- 	u32 value;
- 
- 	if (!pmx->soc->sfsel_in_mux)
- 		return 0;
- 
--	group = tegra_pinctrl_get_group(pctldev, offset);
-+	group_index = tegra_pinctrl_get_group_index(pctldev, offset);
-+	group = tegra_pinctrl_get_group(pctldev, offset, group_index);
- 
- 	if (!group)
- 		return -EINVAL;
-@@ -321,7 +347,11 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
- 		return -EINVAL;
- 
-+	config = tegra_pinctrl_get_group_config(pctldev, offset, group_index);
-+	if (!config)
-+		return -EINVAL;
- 	value = pmx_readl(pmx, group->mux_bank, group->mux_reg);
-+	config->is_sfsel = (value & BIT(group->sfsel_bit)) != 0;
- 	value &= ~BIT(group->sfsel_bit);
- 	pmx_writel(pmx, value, group->mux_bank, group->mux_reg);
- 
-@@ -334,12 +364,15 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
- {
- 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	const struct tegra_pingroup *group;
-+	struct tegra_pingroup_config *config;
-+	int group_index;
- 	u32 value;
- 
- 	if (!pmx->soc->sfsel_in_mux)
- 		return;
- 
--	group = tegra_pinctrl_get_group(pctldev, offset);
-+	group_index = tegra_pinctrl_get_group_index(pctldev, offset);
-+	group = tegra_pinctrl_get_group(pctldev, offset, group_index);
- 
- 	if (!group)
- 		return;
-@@ -347,8 +380,12 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
- 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
- 		return;
- 
-+	config = tegra_pinctrl_get_group_config(pctldev, offset, group_index);
-+	if (!config)
-+		return;
- 	value = pmx_readl(pmx, group->mux_bank, group->mux_reg);
--	value |= BIT(group->sfsel_bit);
-+	if (config->is_sfsel)
-+		value |= BIT(group->sfsel_bit);
- 	pmx_writel(pmx, value, group->mux_bank, group->mux_reg);
- }
- 
-@@ -785,6 +822,12 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	pmx->dev = &pdev->dev;
- 	pmx->soc = soc_data;
- 
-+	pmx->pingroup_configs = devm_kcalloc(&pdev->dev,
-+					     pmx->soc->ngroups, sizeof(*pmx->pingroup_configs),
-+					     GFP_KERNEL);
-+	if (!pmx->pingroup_configs)
-+		return -ENOMEM;
-+
- 	/*
- 	 * Each mux group will appear in 4 functions' list of groups.
- 	 * This over-allocates slightly, since not all groups are mux groups.
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index b3289bdf727d8..b97136685f7a8 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -8,6 +8,10 @@
- #ifndef __PINMUX_TEGRA_H__
- #define __PINMUX_TEGRA_H__
- 
-+struct tegra_pingroup_config {
-+	bool is_sfsel;
-+};
-+
- struct tegra_pmx {
- 	struct device *dev;
- 	struct pinctrl_dev *pctl;
-@@ -21,6 +25,8 @@ struct tegra_pmx {
- 	int nbanks;
- 	void __iomem **regs;
- 	u32 *backup_regs;
-+	/* Array of size soc->ngroups */
-+	struct tegra_pingroup_config *pingroup_configs;
- };
- 
- enum tegra_pinconf_param {
+ 			status = "okay";
+ 			vddio-pex-ctl-supply = <&vdd_1v8_ls>;
+ 			phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
 -- 
 2.39.5
 
