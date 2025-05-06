@@ -1,172 +1,187 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B54E26C3B0;
-	Tue,  6 May 2025 10:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525652; cv=fail; b=TtBt4epY7LN9Gf0PT4hn3s2AD5F91twu7wCpHaUmhIwsRsHU6UYIcIJg9ZTEUoPkpvPLLzT5zbHRLTptQKY38yYR6fF99UjpJdb3yBj/CsojyfzvF7qf6AzD/1D5A4mDcn2qZrdG9mV2Tg2Er2Gfz+fxjEwxwwZAGZ4IlfTKdLs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525652; c=relaxed/simple;
-	bh=0/3pHjKOP0I3W2FbIC9Wh8LBbI2FERLnT6gppPIaGwc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AHx/ApvnF78MDQmLSdr6sdrrqRd4kz2TTk9WxAYAOldvDNPBoig+E8uk4EVw76Mx5BA8ZJvlIKrgCvUc+UMig1nJ/Uzck4471UVOCle1XNqeGRp8XOxh7fHLKxuHN2mcKHfAKtGxDVLu778KYVnsrpKbFhU6Mx4ATvbNFKQClts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RY3x3RYA; arc=fail smtp.client-ip=40.107.236.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6336C270EB9;
+	Tue,  6 May 2025 10:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746525844; cv=none; b=KCaQAwMKB6avVlxJntA4iOqAlwHugESI0flFAI7UYIG/jTxooQbICilDIixm2ITz7iUCMfQAZVkzLURS77sB5qUsANFfiCxvd/DMdE8z0Q88PUT1Sej192YSBTG2zXD7F5gigDyLNokRAi/OH6XPcuYCmD7Wuv3g39+f9EbRTw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746525844; c=relaxed/simple;
+	bh=kxl6991z3S6FTrgaggQEvrxDteL5i0EJ9Yq+c+yztj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fGMqSfY9CbeBH7vhlb/Pp0sFIEKXDk6V3JaDkNmOCn+o4tXNnc2cxyA1Ggkl+mwGojMPY4zfDjTyjOQVvJrcLiEIaZNSI9nP9MI2lyUpgyRxqvsHZOKsZwEhdqhUC8K0ef8+5bTZXghXwCqbXcpuGZADfEgZmfflnsxCIxN0rWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Avjjiy6F; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RY3x3RYA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KYaSvm5m6lUJQH+MiqFOWwCikTA30tA0Thjvg8h3vOb4zqpiXLCBm8j/zQfJx+UJzYnB0csQjc1gzL5gk77S2amOSjCIqTzdljzFOTUg7iMJj++9tY5b7bf0rjNUWq7cv11nD0tLYOCpan+QGEn+BmMp+7PAvWO+/pOL2l75B2tQHeWGK4Jy/0JKbivfKqJT6fV3Vvhr4WIc8P0vjdhC42GAbNYk49K+2fsjhxsv/c0c1+xfRp2J5xuxklbsPwUrt4aqOGQ/YrmwXo1eZPmD0O63tO3SWMIHR0VS9qbCqcT9GCBYz9H5ZC3HKQ//f7sF2UI5wzTH4ttdXO26RRwP6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t5UW5wUZf8J4XUUzh54fKzQBtFybWYcybATU2Acwb2c=;
- b=cTglMqQD4Kyi6Y1/4jkyHYqmnQ6r+98MpMqafTWIP1OS4XWkSuE/6Rtjj9BqCYnZ9DnL5ABumKJ8km5c4mXDSrck3ZR2J8dcffvUgGpc/pdMOsTFGID84Z3JnMJaNh88gfGAuz/0Ap45+5duM5EamM6KethT3khoXckWDawqZpzoo1nXieKnWo4GI3GuI9Dmtnr04+Cz26ih9pITD9GGM5m/J8Or+JOgrBwh9K5J+3jpqjLngEVmF/6Evu13iWxJDRAXMZPBJFBS7THj66Xey+Lf+9iHni5jfIFCUu9+OzgFZoSGy8R2QwTShxlE29RgiOMPWxcJdR8ZVreV9GQN6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t5UW5wUZf8J4XUUzh54fKzQBtFybWYcybATU2Acwb2c=;
- b=RY3x3RYAjqBuaCDrXFgsHzqm+RHv9iz8FZvcLF1GG/CCEWq2cwEvTp+0LW6qoSF5YCxz9x74vka+z7kOop0RDkqdVZWxw1JPNz2p8OWF8D44Gh0Y1tmB+SjWMq98TQnTMnO7uYSXDG1a7Zqj3IZ0GffAfpHteOkh3UySp6UCpK9YvoJB8kirIl4YAVUtoJee0XsDKklwCWNc9sLt/iAZdHTa1BVBgKIOWS/jx6Vw1gbm85S6A3QicjBbfqYt4PALs4eppBnr1Tp77L6GaY8lrRlznZoNuhJg7BBrOqUeFH4zo9qyf3r8nD9ZHyhJPtiivrVjt3zajkVh5cJqQymJnA==
-Received: from DS7P220CA0048.NAMP220.PROD.OUTLOOK.COM (2603:10b6:8:224::6) by
- PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Tue, 6 May
- 2025 10:00:41 +0000
-Received: from DS2PEPF00003440.namprd02.prod.outlook.com
- (2603:10b6:8:224:cafe::e9) by DS7P220CA0048.outlook.office365.com
- (2603:10b6:8:224::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Tue,
- 6 May 2025 10:00:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 10:00:41 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 May 2025
- 03:00:32 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 6 May
- 2025 03:00:24 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Tue, 6 May 2025 03:00:20 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<onor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<ldewangan@nvidia.com>, <digetx@gmail.com>, <p.zabel@pengutronix.de>,
-	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH 4/4] arm64: tegra: Add I2C aliases for Tegra234
-Date: Tue, 6 May 2025 15:29:36 +0530
-Message-ID: <20250506095936.10687-4-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250506095936.10687-1-akhilrajeev@nvidia.com>
-References: <20250506095936.10687-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Avjjiy6F"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bfed67e08so54134261fa.2;
+        Tue, 06 May 2025 03:04:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746525840; x=1747130640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKzBLfrH7ZCXq8Z7XeDJquF9cK0JOdM2v72Fh6/i1GY=;
+        b=Avjjiy6F00icIZzGhxhbGgNCBS84XhHFORG6juybyKr2ffBIekmJOSnSNKJUJt/WBT
+         CbrCCsfLVSJ2Du5x2j5iuvtcwQvF8r6gVpovYv4Zop5VTkixwn5X+8yfAyuvNaGaDxCd
+         01M16IyLijclPRP0S+qeMxuLX83JVHCivRKywN+MKD7sQI/CA4aFnGPw8t9Ifps2jkXa
+         DRey0yEEA8xm1/dTP8svHZzbQjBa+d8Yag8cJUReJrK5iuPJuRZ7EDIeasTgRxqaPVwH
+         UoI+DrtsbYql/Hp3594YtSnqErEQi4ktz61mZwkRioo3YtQOy85icdUGjSfKVMU+sv7Z
+         bNyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746525840; x=1747130640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKzBLfrH7ZCXq8Z7XeDJquF9cK0JOdM2v72Fh6/i1GY=;
+        b=vSjSZOFXNdxLj8TraKxoYpzJVT3y4KwL6dRENPJiwCRigKwuziqNcLZ8kGbwj9m3mN
+         njCYnFwhcXXgQPICrKnDDNFNpc3L4jwH2gKFaKzE+cTxUHXRhZvgreaQYWdfO1iTa0SL
+         P2N6WDKQiKv+REUeQ3N+00Op+HYZ72rH3Bg02duZ/gsl9TaPcYgwN0iDxS7E/x7ZMSVa
+         XIDGBLiYn7wDxoCxg1wTHsmAOH/JYvBokSStcu4S7xHtrTNyS8du7fAa+T5NR8ylcZkw
+         OPCNkE0BDL7PhqIIC7A4tAggzRCFJ2qswhivtLcVFaX/hWLjcraVJRntZvUV2vn8bcXe
+         uPww==
+X-Forwarded-Encrypted: i=1; AJvYcCUk4h9jCNbpc3VxmcEs9CU0scja5xeLG95FMRqGWP4OV3PIQiEElQvvFov5SW1a9czoQ3Gw5SkuI8FxowY=@vger.kernel.org, AJvYcCVl79DPiyt3MtkEOjIwpvUhiyvY03ZlYjjYbtC/I3egQ7OWGGF4YgTOKA1Qxo1WNa62N9LvYMK0MSmIf1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGuadOX0txfBM12YBbWCgqRG1YOeFEQvTH2WoFqvilrnzBBoDV
+	J+3LMT82rU77w4uOWNp5X59/XJj4ShZUrE0hOtGv8QuRBb2Dkbp6/vR7gt2NdKOuX0MbcZgNUMt
+	b75THSRCbc/VdMFWp5Xa2a3i7rtgwOeO0Bt0BAQ==
+X-Gm-Gg: ASbGncvZ2xsrdyK4FNL6ytUT+hh8mpbCvIFbBoVW+bN8yd1uWu2lEJzVt9MtlpQ6Q2J
+	o+FfWQ71GfMSnHmjDepK5OlElvaIUzBAEikQBCdP/MZHk2iOGMJ1BmMZ+ztWI6v5anqGDGuBMvi
+	QTw5WtFsqFyzhKrfmmy8n27Bc=
+X-Google-Smtp-Source: AGHT+IGciPq7h67vOHHMe0xab6MDc0v5dNL433NEtKmDciAYRCLBTsLbgrW7XgJxzca/FxBElFGLqswtQhqwiWFwryo=
+X-Received: by 2002:a05:651c:1476:b0:30d:9198:5e81 with SMTP id
+ 38308e7fff4ca-3264f01a3c7mr9896271fa.9.1746525840156; Tue, 06 May 2025
+ 03:04:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|PH7PR12MB5974:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ea11408-ad40-48b9-eaae-08dd8c84dc30
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G/WX1zECWGPZxrBDrpZkY+Z4vkR3k1c3i2bFVrUr1dAindT0z52jwBvPq8G4?=
- =?us-ascii?Q?A9qMSykzbYg4WcawrJxbOg7o2MzKqRro3WR4gFOyQou73Xo/yCjGy2cEqmn2?=
- =?us-ascii?Q?5pOPfLSu565h4kw5KdJTapfRzlIviT+5y3Aoj+W30t4UBk1hpV9QHVJl0PhJ?=
- =?us-ascii?Q?x+Gk13yrgU3lj058ZJwpPz0dVftjNK29xs22zU7KPNizlDfjhlVQNsQqgIet?=
- =?us-ascii?Q?YQ6avSuGiBOjfgA11jUhRfKWQSuv+c+9sRPYqoPVsgN5eXJTV6qe/WGQ0Bjr?=
- =?us-ascii?Q?dO2Cb+pIkXLvZU5v/ONRICaNx0uN27TpZFsETgAFQI1/2dGZDETst80swgeY?=
- =?us-ascii?Q?KH2E2abq1AefXFsREKKe90p/FkoxJhzwoBMLf8Fs8zjE1SCUnlF2pQrW7N9a?=
- =?us-ascii?Q?fLcHiaCe6zOBi/gDyLMyg/oKKxJRwJhhc7Vlieq2hyEbuKgiq6DAwZmTpsKW?=
- =?us-ascii?Q?ze1Deh/2BsSeBclFVSFd8ejbNKvoIfoOnY7vQGwaQ/fex2giP8/TAAmkcWSP?=
- =?us-ascii?Q?j5uV1TTnsrP5uU7qAjD96LVGvCy3t7SY5OlqeizeV+zsXaly0PKlGQ0qu5gE?=
- =?us-ascii?Q?AWgwZNWBL+Q1VtDXD465Pg+jC5uT01nK4xUMuegzaAS4pLMV3I6TcGzn3PiY?=
- =?us-ascii?Q?pDmP2XI8ag5tompWodnTiMSkkJMCnowDqalA+u8e75GPx0gFYoEEIFDNPjYG?=
- =?us-ascii?Q?aGkj6gL0uIw7nG7/rOXV5v/WSqznd7P0G5tXcEc/x1F991gqs7RBL7AXaUm5?=
- =?us-ascii?Q?FCCxyjyx1Cs4A7bqnfq37ceEhc9QIap6Ah+brSYtfhiIh9SNodWS5AblWLcD?=
- =?us-ascii?Q?AOT2fZgMoPEkHjJcRFJd2C+Yt62GsdO0AhYdGzPM4svoXb027gpkmRRnZya6?=
- =?us-ascii?Q?vHzX7FPPlvLP8v9h3d9SwbtVwxEVyrFRzk0b2uYNmXt4W7gK+qmqds33KIH7?=
- =?us-ascii?Q?YVihImk4DG9TC/asQLbmdopcUHwkOlKjvfshQ38zuN/CsW9LSJkDDLmyDWc2?=
- =?us-ascii?Q?rb1OMO2nFsA4UoUsbwu4Qg1stFOUPiQJJBPxFCc6o2xw9W6ARE9Q4MoourJ/?=
- =?us-ascii?Q?TBVoU/x8wHfIE3GVvET46QiybA8hJMzuanjKRp5gHSFSMgY81TKSKHeDdEaz?=
- =?us-ascii?Q?mX6NjK8YuJmUYSHcwojAlCzbqNEZZEywvFvn6lrBY85E1fzFxd1fR630xk/M?=
- =?us-ascii?Q?UgeFLcaKWSZnEGCUG334kFkl1oUGupiXk7AvqMQNnTtAqZWe01r8jozMOYD9?=
- =?us-ascii?Q?O7fTfWONhul+N6y5rs8tKbXTAuKRF1lj1vw2OlXcC0MEQPP5j8BmvAq1EJYK?=
- =?us-ascii?Q?OVxduR9MrRgZj+zdJye8jNtUrEBxSKm9cE9yCRRe544cwdo18GZkEtPuMwf7?=
- =?us-ascii?Q?nlxzF0lUhmnBZ/TbLxG9Ao4qeTlqv/JJb8cBXzzNkxNtD05oiY1NBdfank9e?=
- =?us-ascii?Q?y1nMNUnt0VoGWfTYz6HWw9r2J/TO2Sey2xUA4wy0YXRD1lAxTAaxUUmTYd67?=
- =?us-ascii?Q?UE4Zv577UN0gp7rrOrPMGsZyKX0znWa0Cn9LbjZrS2TPsbARrMUdCCFmOA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 10:00:41.2707
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ea11408-ad40-48b9-eaae-08dd8c84dc30
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003440.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5974
+References: <20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com>
+ <CALHNRZ_QUY7NPH87RYqFWEy4PkTgV5uZVZ6hh3sbe=U_8ga2jQ@mail.gmail.com>
+ <CALHNRZ9s5EdL3vapyJS4TdT=v5v_QG-=n8ABNJDLU4B-7w+wRw@mail.gmail.com>
+ <CALHNRZ96Cs8+gyyb=_jTpvCq--uF3P1s8_m7t25nN_vPx0ELXA@mail.gmail.com> <66776953-ef1d-40ac-9d4b-a35a6ebae20c@nvidia.com>
+In-Reply-To: <66776953-ef1d-40ac-9d4b-a35a6ebae20c@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 6 May 2025 05:03:47 -0500
+X-Gm-Features: ATxdqUGvlu7DDYzmMS6LwM0KhqiAoWJKCs8SIgUhl7XFqFsl_6mr2D0nBIij5Xg
+Message-ID: <CALHNRZ8uXZQObwQBC-sLudUdtprM24qU5yYdb4D3FEP2AQVkmQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: tegra: xusb: Default otg mode to peripheral
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add aliases for all I2C nodes so that the I2C devnode numbers align with
-hardware bus number.
+On Tue, May 6, 2025 at 4:51=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> wr=
+ote:
+>
+>
+> On 05/05/2025 08:44, Aaron Kling wrote:
+> > On Sun, Apr 20, 2025 at 8:44=E2=80=AFPM Aaron Kling <webgeek1234@gmail.=
+com> wrote:
+> >>
+> >> On Sun, Apr 13, 2025 at 11:45=E2=80=AFPM Aaron Kling <webgeek1234@gmai=
+l.com> wrote:
+> >>>
+> >>> On Fri, Apr 4, 2025 at 3:18=E2=80=AFAM Aaron Kling via B4 Relay
+> >>> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >>>>
+> >>>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>>
+> >>>> Currently, if usb-role-switch is set and role-switch-default-mode is
+> >>>> not, a xusb port will be inoperable until that port is hotplugged,
+> >>>> because the driver defaults to role none. Instead of requiring all
+> >>>> devices to set the default mode, assume that the port is primarily
+> >>>> intended for use in device mode. This assumption already has precede=
+nce
+> >>>> in the synopsys dwc3 driver.
+> >>>>
+> >>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> >>>> ---
+> >>>>   drivers/phy/tegra/xusb.c | 8 +++-----
+> >>>>   1 file changed, 3 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> >>>> index 79d4814d758d5e1f0e8200d61e131606adbb0e2d..c56e83216d0f566a09b6=
+7377172fb04c8406f4cf 100644
+> >>>> --- a/drivers/phy/tegra/xusb.c
+> >>>> +++ b/drivers/phy/tegra/xusb.c
+> >>>> @@ -731,13 +731,11 @@ static void tegra_xusb_parse_usb_role_default_=
+mode(struct tegra_xusb_port *port)
+> >>>>
+> >>>>          if (mode =3D=3D USB_DR_MODE_HOST)
+> >>>>                  role =3D USB_ROLE_HOST;
+> >>>> -       else if (mode =3D=3D USB_DR_MODE_PERIPHERAL)
+> >>>> +       else
+> >>>>                  role =3D USB_ROLE_DEVICE;
+> >>>>
+> >>>> -       if (role !=3D USB_ROLE_NONE) {
+> >>>> -               usb_role_switch_set_role(port->usb_role_sw, role);
+> >>>> -               dev_dbg(&port->dev, "usb role default mode is %s", m=
+odes[mode]);
+> >>>> -       }
+> >>>> +       usb_role_switch_set_role(port->usb_role_sw, role);
+> >>>> +       dev_dbg(&port->dev, "usb role default mode is %s", modes[mod=
+e]);
+> >>>>   }
+> >>>>
+> >>>>   static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_po=
+rt *usb2)
+> >>>>
+> >>>> ---
+> >>>> base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+> >>>> change-id: 20250404-xusb-peripheral-c45b1637f33b
+> >>>>
+> >>>> Best regards,
+> >>>> --
+> >>>> Aaron Kling <webgeek1234@gmail.com>
+> >>>>
+> >>>>
+> >>>
+> >>> Friendly reminder about this patch.
+> >>>
+> >>> Sincerely,
+> >>> Aaron
+> >>
+> >> Friendly re-reminder about this series.
+> >>
+> >> Sincerely,
+> >> Aaron Kling
+> >
+> > It has been over a month since this patch was submitted. And neither
+> > this nor any other patch I've submitted since have been reviewed or
+> > responded to by any Tegra subsystem maintainer. Is there anyone else
+> > that can review these and pick them up? Or is there any other path
+> > forward for series that get ignored by the subsystem maintainers?
+>
+>
+> Sorry for the delay. I have had a look at this patch and I am not sure
+> about this. The function you are changing is called
+> 'tegra_xusb_parse_usb_role_default_mode' and it is doing precisely what
+> it was intended to do. In other words, parse device-tree and set the
+> mode accordingly. So forcing the mode in this function does not feel
+> correct.
+>
+> Also from the description it is not 100% clear to me the exact scenario
+> where this is really a problem.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+My specific use case is booting AOSP/Android on Tegra devices using
+mainline support. Android debug bridge is configured to use xudc on
+the otg ports. As mainline is currently set up, the default usb role
+is 'none'. So if I boot a unit with a usb cable already plugged into
+the debug port, I cannot access adb.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 2601b43b2d8c..c9f3724d2418 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -16,6 +16,18 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		i2c0 = &gen1_i2c;
-+		i2c1 = &gen2_i2c;
-+		i2c2 = &cam_i2c;
-+		i2c3 = &dp_aux_ch1_i2c;
-+		i2c4 = &bpmp_i2c;
-+		i2c5 = &dp_aux_ch0_i2c;
-+		i2c6 = &dp_aux_ch2_i2c;
-+		i2c7 = &gen8_i2c;
-+		i2c8 = &dp_aux_ch3_i2c;
-+	};
-+
- 	bus@0 {
- 		compatible = "simple-bus";
- 
--- 
-2.43.2
+I originally fixed this by setting role-switch-default-mode in the
+device tree for every device I'm targeting. Then I looked at just
+defaulting to peripheral mode in code. And as mentioned in the commit
+message, other usb drivers already default to peripheral mode instead
+of none. I'm open to other solutions, but requiring every device tree
+to set a default role doesn't seem like a good solution either.
 
+Sincerely,
+Aaron Kling
