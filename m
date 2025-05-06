@@ -1,137 +1,146 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0583E278E5D;
-	Tue,  6 May 2025 10:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FC4145348;
+	Tue,  6 May 2025 10:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746528309; cv=none; b=d+Ev55zQJ8LA0BnhDNbIyt5aVXRpXDi/8Z1X/6UDj+LUMW253kwWfeJCdZ5NZjZUaRbBiZ9eV1YgRX5meSyuQNorhMjeyCuWhZdtsZfL3jEsVPCfb3BL2d+J4NCQr0s/ZkQF1rV3YaRx/5INZMmVj4levDjqw1CDCewbRqhu5Js=
+	t=1746528373; cv=none; b=lpaOJk9l37J8juS/uGfhv5/G9YcpzozYqd2T9/DgXAUPvvSxDh9m/7w7CZz2vwsk6tKW8rAQsGYsGAe8ugxhNDKADbJ1XDhLoNu/skx7TWvjx3m9fIknQ6LZ7uBUeV762dS2MviLuz2sdKXTX4o2s7rn7JyTdgKCgOnfqMZLDgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746528309; c=relaxed/simple;
-	bh=NhZjj1rkjbCtGqFTYpEpAiOJI09NTrv2LMv9LzYCFxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DefD5YqqLsQDc8AoxzXIvXUddXK10creyizJkHojdN7H7T9MGDJNO5EFlU1YJxDwS9Kxfr+q64fqG/RBuJ8rhMEGLd7yWX+keJjIHeUkRyxKO6dRLtV/izEgd1wAKwYUouHfpa1GU0D5xvpT72FYDMSlUkRtcRbzsCQM2bifOO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfGkfnk0; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1746528373; c=relaxed/simple;
+	bh=93Y8Saet5swanjHpMJ/EvjJKe8b8M/Usop2eTKFKiVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WuN6dqy78AVwmnC4LSHX5UgIYkaSmSHcLcEh4dSdaRQcQefiZsWHBGOeXQpP/c+8EHe0PR4ZeVGfhry2+CJisAQzPmV0cHS7XD1G9jZzfsVk4ANkbS91z7iwfS+bvjnWABo52CgLxvoSwFKbbrf1Pub8OTra4pLpz6V83URwe4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXsYLiGd; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfGkfnk0"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-549963b5551so6098152e87.2;
-        Tue, 06 May 2025 03:45:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXsYLiGd"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22c3407a87aso80819065ad.3;
+        Tue, 06 May 2025 03:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746528306; x=1747133106; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0S0fj9pxRR8b5jSD6MLFbjyTm1j4w1pUjEF4KfpSSsM=;
-        b=hfGkfnk018PLewHy82znyTxiSsgRqmgaeCbdgJsGGRhuY88jxfG7InzNnVHqDGWZR5
-         XAqF0vCLhgvFvc0KJ2SYq7n4lv0VKHqMblSOip69oL/XqqqwenkjcxvmMIi72+adKUMt
-         1jhbdM/T2LJcbeMVWNrJgP9/vP8A705erK5xKX9KGl78GAP7Jl7fpD0h/9kX9Hur0YHw
-         194VYafj6YjXvdOivMCM1WILLj8E2kWdtER/RaxcW9lqL7pUtQBfGCULTKd/O006UqlO
-         l1ApUzer0dU1TvS7Dy21aIz2S0LD97YvQMt7viW8AsLBf31HSXCxxc75oQvUggMgdckw
-         CPHQ==
+        d=gmail.com; s=20230601; t=1746528369; x=1747133169; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nDxvPu0q0ye4Kx0FRPYzt58DlPLsXKD2FRRnq7YD7OA=;
+        b=RXsYLiGdUVObSHRQEkftJqBwLReakULk5C3AHPA2s6zVGs63SHCVRmUPHBDmRuq8yh
+         Ln73aFJMkbtqFcM+iOQOCvGS3KusFHJWpdbQEeJP8DixUUZTWS0GJCur3joqYdmRe8Eq
+         YhMrIOqc21UBuk4qrqkK2cwlssaNiFPsfQLBXEpS77/Lx6Tg4+IJz9a4lpuZscwbC2oI
+         qseX9+Az015ZIsCHOUWealhHPwrRlJvTibt0CrvlGspf7XsHE9P39rEHImrQuySP97Ac
+         H7cDt9ORt49YgDlzCtRUwrkZpcJOEOWnYUwt3T5AAv1EyPSoR0peb2+Xvwqt6K+FDR3+
+         75wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746528306; x=1747133106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0S0fj9pxRR8b5jSD6MLFbjyTm1j4w1pUjEF4KfpSSsM=;
-        b=MMd3M8IK/oEkM+Et7xDkKXQ70Oe0r1/Apl1PSy6upH9bpFdmb9Fja0YCl+bCUIuGku
-         w71MYi1YRQWnqQdEUeYe6ktephY0f5FaTxwT6dsYaSRc85UwidL9dG07VU9mQkiKvpgO
-         7eGMSL/l3wSd+Nzp8JHK9NpGYQG/8NMkUahDL4kNA/XaTd1HldfZT/pt5mNlZAUzopOP
-         h4aNZb/C/Fc233uovU8//vcDM2ih0WmBfKu/rrnRfXtyvANWa3o3AfQs8Yhpl+jvsA8U
-         oQQ38mGghaA60LPDXo0oOwXo2yGxGFXmc+XMqe48Qou/Fkm+bBu/GPdEb1b6NNWGkzYd
-         xFOw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1O4u+WX0evrnl2HULUY/fL6L3EwWjPqPb3cznFQa6fbzrhXtLHRkq1IlfLl/RsfOawCywyW0mkmM4OXs=@vger.kernel.org, AJvYcCW3A0UE/kJ28J1dFzqwAMcEFOG3h4MhVkVKDkmN9ZLXjeYVOpNJPJEui7KY39+Fqp/KbZmfJ+fpcF+CM9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd6sZI+tnP3VuwTsg9wO3m+LcZc+VJi9tE4Y1acc/t4hBqdyMt
-	w/PoN64IplfyKJy2ESyGn0Rg6BiteQt3kHGrmUU+MBn+ZrHHMRsGX/zyWEh2teFU+7yMC5tngZ7
-	HlPnZTX31c4GfbzjQx1D/08yoju8=
-X-Gm-Gg: ASbGncsBtCIZ6xEdklArSk1C4L69h1HlY5TTzOA+Lpng9Qg7+gn7Y/sNp9ryUIFk7Ut
-	yCs+ZlqfpKuUYHor+b/XndZ8EkALy/+rYNsBT6nJTzzmuXzJavBLbW2Tu8Tu/gePVznS4kSA6PL
-	6+UzWKBVbltgxrZh67O5W8EA3l1b9+uxxG0A==
-X-Google-Smtp-Source: AGHT+IH9PNd8hlxiWlK5qk2aXHbk+UNbCg3lFJraFSfHUkRwwn4of15fI+cwgYdFXfyeSGxNFfF+9OOqcNwyb29hug4=
-X-Received: by 2002:a05:6512:3c99:b0:544:ffbe:cd22 with SMTP id
- 2adb3069b0e04-54fb4a9804dmr786783e87.46.1746528305662; Tue, 06 May 2025
- 03:45:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746528369; x=1747133169;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nDxvPu0q0ye4Kx0FRPYzt58DlPLsXKD2FRRnq7YD7OA=;
+        b=LfH+9tFxAruaHgusXb6ky7iEo/tEU6vVPdNwCTCSi56wqqoMDnYMlPvtieGPblVwmv
+         PEkhky+QI/kh2SZyBIkUK7Vw/9VCiEIu+99FywuDqETjyix/1IAlVyisL/+NNFaZGZHW
+         S+QVDAVzLqeqCqvVk/diNqBUzgs8hlr4pFhzfzUYhOQPUMypK2qFoJDzUYhsTAPUEoYs
+         aPYMr8Hg+tVu7gSxFABrqWeqra2TukkQOkQ6Um20TqpLUzxYBfl/4H5AKBgJLJBxrKlG
+         iA7Hkm49GY4SwYcZwaE0g8ihPbCXMhAu524kf4t+Y0P9SviPcp5IAOzHu5F4ticui22t
+         MKhg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8ina4tshXF/ftqOsgnWh2wansMFN6VkhpgkJy/15JEtNZ+LFQqgtQYDilIx/kLiq1ltfuSDrmBRYG@vger.kernel.org, AJvYcCWuOizNY0bWhL8LdNEJqtOp+N3qOThlaKnClQH0Q+wWtTrx5Ua5fTVlsK8joeI9ZQc9MDtMALcujYG+fBhT@vger.kernel.org, AJvYcCXGKJnRKu3AhnYzNAMo8qhSlDer4KptX+wQ06GtIrp1uCGRZFYZIFUw1SvDVOVnMzAp8Dl94/W2E23cGMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFFkRxSrbgRKGRDFD1hWecBEGaSZvsAiJmTlvrAOYx0R0KYB2y
+	QxZ5Z9M/ozCbKW90NhoIyZX1xmkximcrr6tkM15wZoD+F71tInaC
+X-Gm-Gg: ASbGncsXaSKr/lI8WynXr9nEDfKEVTjfjibiiy1Q1rl70s0Ycb4XaMOzTwFZ/FxexV1
+	7mZpexQ+zpArzGqQ1c1si6YstN/2KCjQoVXDzaVuko1pS3ItSvOtJBndLw3tje1zzGM+AFBwlg1
+	DVvE9KpK+gmrtKV7gehwFLK1Q0kAWccQYDYy2S6Ax0pg8Ssqw4XiQHcnBR07qJdXZrQNuAeLsZr
+	PpkoTYdC+3FwPIPjzezybyTz6yzmXU8SYLzMZRzljoXHX9N8OJ4XNQTi0QS975qqXdXxjUX6F0j
+	YY3jNfxUrUMc9yOpg7qsX7aXQfpX9R+UoDaNEk8BYu9rvudApfUemAbm4biF/Mlxfg==
+X-Google-Smtp-Source: AGHT+IFyNLYbtacoU/dUxTCOlVGuZ/PEDuNxNnKTPJ9gfrdUAXvpdOQYnRRHx5wt+jrMYhveUPcKBA==
+X-Received: by 2002:a17:903:22cc:b0:22d:b2c9:7fd7 with SMTP id d9443c01a7336-22e1ea56fa1mr165054365ad.21.1746528368961;
+        Tue, 06 May 2025 03:46:08 -0700 (PDT)
+Received: from [192.168.1.5] ([122.174.61.156])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058dc768dsm8535457b3a.72.2025.05.06.03.46.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 03:46:08 -0700 (PDT)
+Message-ID: <a9729fd4-1fed-459a-b242-eabc71503954@gmail.com>
+Date: Tue, 6 May 2025 16:16:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com>
- <CALHNRZ_QUY7NPH87RYqFWEy4PkTgV5uZVZ6hh3sbe=U_8ga2jQ@mail.gmail.com>
- <CALHNRZ9s5EdL3vapyJS4TdT=v5v_QG-=n8ABNJDLU4B-7w+wRw@mail.gmail.com>
- <CALHNRZ96Cs8+gyyb=_jTpvCq--uF3P1s8_m7t25nN_vPx0ELXA@mail.gmail.com>
- <66776953-ef1d-40ac-9d4b-a35a6ebae20c@nvidia.com> <CALHNRZ8uXZQObwQBC-sLudUdtprM24qU5yYdb4D3FEP2AQVkmQ@mail.gmail.com>
- <b96ab3b0-3afb-4918-8db8-f6cab45576fd@nvidia.com>
-In-Reply-To: <b96ab3b0-3afb-4918-8db8-f6cab45576fd@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 6 May 2025 05:44:53 -0500
-X-Gm-Features: ATxdqUFydWW4ew7f9iRG9xOkB-y1i5aCY8W2iNBRJzuaeuS8Q9cA-ObsrH6XuA4
-Message-ID: <CALHNRZ9tgWTo8tUB1+Whf68CYu+qiMhO_S+KC2R0kFbDAjT9OQ@mail.gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb: Default otg mode to peripheral
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: dma: nvidia,tegra20-apbdma: convert
+ text based binding to json schema
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250506-nvidea-dma-v2-0-2427159c4c4b@gmail.com>
+ <20250506-nvidea-dma-v2-2-2427159c4c4b@gmail.com>
+ <28afd932-1d63-4bc7-8ed2-33bf838a858d@kernel.org>
+Content-Language: en-US
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+In-Reply-To: <28afd932-1d63-4bc7-8ed2-33bf838a858d@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 6, 2025 at 5:30=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> wr=
-ote:
->
->
-> On 06/05/2025 11:03, Aaron Kling wrote:
->
-> ...
->
-> >> Sorry for the delay. I have had a look at this patch and I am not sure
-> >> about this. The function you are changing is called
-> >> 'tegra_xusb_parse_usb_role_default_mode' and it is doing precisely wha=
-t
-> >> it was intended to do. In other words, parse device-tree and set the
-> >> mode accordingly. So forcing the mode in this function does not feel
-> >> correct.
-> >>
-> >> Also from the description it is not 100% clear to me the exact scenari=
-o
-> >> where this is really a problem.
-> >
-> > My specific use case is booting AOSP/Android on Tegra devices using
-> > mainline support. Android debug bridge is configured to use xudc on
-> > the otg ports. As mainline is currently set up, the default usb role
-> > is 'none'. So if I boot a unit with a usb cable already plugged into
-> > the debug port, I cannot access adb.
-> >
-> > I originally fixed this by setting role-switch-default-mode in the
-> > device tree for every device I'm targeting. Then I looked at just
-> > defaulting to peripheral mode in code. And as mentioned in the commit
-> > message, other usb drivers already default to peripheral mode instead
-> > of none. I'm open to other solutions, but requiring every device tree
-> > to set a default role doesn't seem like a good solution either.
->
-> Thanks for the background. I see that the
-> Documentation/devicetree/bindings/usb/usb-drd.yaml states that ...
->
->    role-switch-default-mode:
->      description:
->        Indicates if usb-role-switch is enabled, the device default operat=
-ion
->        mode of controller while usb role is USB_ROLE_NONE.
->      $ref: /schemas/types.yaml#/definitions/string
->      enum: [host, peripheral]
->      default: peripheral
->
-> Rather than reference 'synopsys dwc3' which is not related to the Tegra,
-> it would be better to update the binding doc for Tegra XUSB padctl device
-> to list this property and define the default mode.
 
-Let me make sure I understand you correctly. You're requesting to
-update the binding as above, listing peripheral as default when unset;
-fix my commit message; and leave my code change as-is? I'm unclear on
-if the code is okay as-is or not.
 
-Sincerely,
-Aaron Kling
+On 06-05-2025 13:00, Krzysztof Kozlowski wrote:
+> On 06/05/2025 09:07, Charan Pedumuru wrote:
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+> 
+> Why is this a irq.h now?
+> 
+>> +    #include <dt-bindings/reset/tegra186-reset.h>
+>> +    dma-controller@6000a000 {
+>> +        compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
+>> +        reg = <0x6000a000 0x1200>;
+>> +        interrupts = <0 136 0x04>,
+>> +                     <0 137 0x04>,
+>> +                     <0 138 0x04>,
+>> +                     <0 139 0x04>,
+>> +                     <0 140 0x04>,
+>> +                     <0 141 0x04>,
+>> +                     <0 142 0x04>,
+>> +                     <0 143 0x04>,
+>> +                     <0 144 0x04>,
+>> +                     <0 145 0x04>,
+>> +                     <0 146 0x04>,
+>> +                     <0 147 0x04>,
+>> +                     <0 148 0x04>,
+>> +                     <0 149 0x04>,
+>> +                     <0 150 0x04>,
+>> +                     <0 151 0x04>;
+> 
+> 
+> Again, quoting:
+> 
+> You included this...
+> ... so use it.
+> 
+> Otherwise what would be the point of including the header?
+
+
+Yes, I understood it now, will remove the header.
+
+
+> 
+>> +        clocks = <&tegra_car 34>;
+>> +        resets = <&tegra_car 34>;
+>> +        reset-names = "dma";
+>> +        #dma-cells = <1>;
+>> +    };
+>> +...
+>>
+> 
+> 
+> Best regards,
+> Krzysztof
+
+-- 
+Best Regards,
+Charan.
+
