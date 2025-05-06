@@ -1,72 +1,72 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C416283128;
-	Tue,  6 May 2025 13:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADC1283128;
+	Tue,  6 May 2025 13:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746538295; cv=none; b=gvYcOC33/gZzSHsitc+BBAJ7srlr8pM8vnqrxT2FsF9TLN4RgiaYSjunPxXyB0LYOaG8Yp4wdqmvDwvPOvAEWx6dKDy3wjLfNeL0VwKw6dzJmV2cG/7PBNfEUDIu93Rx+ZW6Wb90eu/LF3wmNP2Jjt7dERcjPsTQK5HGC4wKrZQ=
+	t=1746538297; cv=none; b=F00terNL59xscfAgoKfkb+HyEJEk44ek0kfX4OdP8vE2iB+0Fg+158H6z16isQhVZ8l0MPEdEE6iugfQXxuIhMOlkhiRUW4hv3t6sorOwNQeil07PcvFfKjdUMPNTPy+Bd6/2Kp4hu0zrJG9mPUYJohAAUfjEbhzMtEKIM5iMeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746538295; c=relaxed/simple;
-	bh=vOelN2G2QfAQNi/IUigjYLHX/tGz1EVvA35NInG3s5k=;
+	s=arc-20240116; t=1746538297; c=relaxed/simple;
+	bh=eIjzo8Ckb3cXJ2nSf9RVpGInHD2QTA1RcF+UDZa4jeo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YP+VEzEsWzjZNLjoLuF1aFJlfj2DBoWtWH0Pe0XmwAi1e06EegKxRXmRZtyYRewTQa3fjtmV8gT7bxtbRBXEiF7xtP0mUl6z6UZP09UlGnNKkj4oLv/B8OvxTBk2rwwmwK9myouY8H924G7t4tQHCbHPm82DK2SK01ntrrXpJy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLw2yQ7H; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=AcE+C29S9Tk4s7xHvIihIhUWhS2LBOXYc72BLtYUvehdLejLGsvRgdX6CcmnYY3iAGujpWsxTiKPwwuAg+U/E2uVAt80FWSe3TXf7dxfkgx//ZcKCfdFJe8YVqNZR0xUaSk2xIsBN2TDGFNPRGZu3xg2PxBkjpJY5B6MklMFt0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IkSHCMs+; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLw2yQ7H"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso25243215e9.0;
-        Tue, 06 May 2025 06:31:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkSHCMs+"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39129fc51f8so3742554f8f.0;
+        Tue, 06 May 2025 06:31:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746538291; x=1747143091; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746538294; x=1747143094; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r3zXV3HirDfRP3PUl3pFBh1c941K94R2FUpG7ljIx/I=;
-        b=YLw2yQ7HBXasyjNNhKg/IUG5j1cznmvL9M5uFV6jpROJyIKYO4gSC2I/EO4SMqC79n
-         SQ0HAe30sGI0qLw+QLAtCEAoY+V8jhZIxi+MhzAYA1HGN+xvnvWTYKdAL7yq1AdaqKTP
-         z21KbGtUPpaHT4BObzg6NxXujjkAPQk2GMm3Qdbx3zTwoudLPPMVD3liwqmfCjUXKRn3
-         scBVBMHf7Bi30ECWWxRsCPnXolXj87tl0oatrJIqH3fhXNo8IUaZtR3+ENzkx2MDG6ac
-         YIBTIvcb8BVRzKn/U4yxWbdxgP6acRvAxc1yjWoPK+n7qGKOeEpLibEMgwtg5B5qSCjX
-         j3LA==
+        bh=/Ly7N+DC8UGuo0Brj257a3S2ZZi5dSNi5oLrFAULbBo=;
+        b=IkSHCMs+qqQMr/FqOnwzvKBwqZZH7Ju19U/gZumAYEk4kDjIvPMrBGF5+2fTVpnRN6
+         5OryHopA7Nq05CIIrzbNTU8MqkaTGZG7KEocTnmoKGlH0IWx8GYrzWEhat4lXIbAs1ew
+         d2P8YggnCnNfyjAUEyJRTl5GKf8BSjITA8itvO/nbvsCz+VT1VoJW3MP2jwD3/Gvliu+
+         JvZInSW8ak5hmyhHo5JHoDR9vhpqPoJbE+ntjIdFPXwhu1LYlPjr4MVsE7BvxCxXrjdP
+         7514fNuhWKH1VimnlYp00sQg2aJMJLfUcH7Ebt2bB58+VXuZ1EmXz++9VvQc7tOfmfQa
+         +7IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746538291; x=1747143091;
+        d=1e100.net; s=20230601; t=1746538294; x=1747143094;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r3zXV3HirDfRP3PUl3pFBh1c941K94R2FUpG7ljIx/I=;
-        b=hKSKIB3dCIFIZ9TRYxd0J+3ZnJcx4gNNizbzLHZPSdtwF8oHaqf/Cf4XtfeqRX7FVR
-         QlW08nDsSwHk2Z9nVN29tXNj3Ci2vjAAEP6HEQn0iSHWaef+EtgIN0eWFsqIovqJYuZJ
-         BW0f+C/tERHIHS0v3ry0IuW+eBfC1fISozyHzxtcB918kOLjz/yvwILmfKVGkQ1bLsnm
-         HW5CVql/fBAfQtlYcahgG1trcSqzzmwEDb/Xj0pC19A86nNNWgHwfCyhoJ52EgHEUuXD
-         NrRd358e2k8DeQnDr+T5YZb5FdCgQFGEAEMpMvSMj+GE5EIzsv+rliUYvE3bGpK0KMN5
-         qEqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkvdC/b2w3eBpMli4A/mcr77MBa+QET60owav9NKjiVoJ3yIRwhzQInXwX9iqeJpbbhVcjQj81ux54@vger.kernel.org, AJvYcCXHXqzTDGICwkcJYg1GFyubO8Z+gntZBASyLo2qysxWTNfmHKNLyaqqP6DyWMcR+SI0SC92jLVFFPbdVGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1dhZfTK5+ov/d7IRqVcaXIxbkm+/kBp6GGQ3W+2n8/d8AwARM
-	z4cIa0CsAnPYxIwEtprpsOjiAHA3Sj++fWLfdctMeDokhD1lxh6i
-X-Gm-Gg: ASbGncvTnrdhHiaVa0fMbjlVm0rrCBdAZfe9Dsj5CL+kfTWAGNL2vg5f08aIpsYsSvz
-	4bzODqz/knoi83W6cg/eTPVA/n1a1ODq9lJRH5gXWxUw3PLB8u0zZM5ztuO/BqkbQupNBRmKMht
-	BdI7ykpPZWeHd84QXDK+bWQXjlNmZRFat0W/vyCQ0sdJx0O5q4m5xMsVFJry9w2K5N2B/nTWZBh
-	EglhHDI52ziGLrcCq7nYLSpspocr3FuVVamuX11gW3xLufRZbg4G4hWFX8h9zCkYax7uqytaUcN
-	Xh9CCCfDJTDV6EaNbmAQ9Xy0oiVCqzJwDXgcQtrFp8vnJEGcNvIPkA1nnLFdoFtQJ22aq7aLJ2c
-	thATlo16pENjWT2vTAmk/LFd6ZKtU3/QJ
-X-Google-Smtp-Source: AGHT+IFt+jAnp/1dorIrV5VN5se27tfdem9U33x4ONTBw1owAU8hcuV6CYu3Dsp/mq6lfYo+/yCW4w==
-X-Received: by 2002:a05:600c:4710:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-441bbeda9d2mr172755895e9.17.1746538291112;
-        Tue, 06 May 2025 06:31:31 -0700 (PDT)
+        bh=/Ly7N+DC8UGuo0Brj257a3S2ZZi5dSNi5oLrFAULbBo=;
+        b=bYq5OxtxaLd2J2tOwCMoyJFIsOYaRg6DvGSeX6UTuo/7mqt+sALd0iZtKU3k1oZ1rp
+         DRBQbYG26thLMZzvKB/DH6jHPz+pj1dH0nVilw88ygsS2U9eJcHBDfmdBt0AjthD1LRc
+         CzsRTCUvsM13oYjJa4IRzCRrvPHR8oYsVyDzzeeVB0OBRt4Vw2oL1HGc7gMZEWgDRsnc
+         nquGC9vrllui9GziP/9EQNwXjq8fvCmA8Hywz19ImInHaMMcjwno/WauxDRCLoweRvgk
+         YBn2Yms8s/jh+wml2MfzCn1Gjtk0D6rolTk/rtjl9lNWaSg43PI9aP1EejLC6go3XTTN
+         TtSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNYiB13TzijjLnpuphRQrkwlfB3CNf6i3Uds0uMEim+WRtHeLgiSiFmhZgOn3BVwP6arZWrWeZXooe@vger.kernel.org, AJvYcCXk5+kPYjOeGyWQyerCPJ3Y/nbAXcyjqqMr+Hy8iTYaAfGYNc3ugsg7XOS/aY+r3JxFdAXPixqEz1Qv0po=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+m81L+DWHi7LVU1BzXu2KrC1Q5ph8edmZftHu63CsRVpEWxDL
+	NhgfsCrGHlIDyU3rh0Nt6PHrTMt1gJgD9V3Dmm6q2iyGEMJkrqVe
+X-Gm-Gg: ASbGncskpRvee3WeuTTVs+hFJoOU+2fzfekPLS+OdKnM/jl11Zrs5VN+AvkUaprJ5fi
+	If4ueDfaqI9DekEuFevqTeV5zaDIULzMsLALyZhwoFAXhrTJQfB4RdfIP3ag9NjTnmhAMjucy3U
+	QvSsjvJee4FiBJNpjcFDoKF4O/BpLNbweFpQz9oHdoTpHMpGGr8KQbf2aU3id6HXVFLbTew8xjF
+	5GpObw0OollheHE0qR5h1/aculc/eyLd5Vc/BDem1/ifg1GKSoneFxlYoBXn5wMXN8SyghYml6p
+	8qCI6HvF4BSyJWzKZBh55VCmkNrtSiVjy/Y5mpO3yQva0SxZie7hwYS8m+f4t+6V+G4Gw11h08i
+	NIqzwg5HzefV3r3HOXVpyHBFO0xODeduT
+X-Google-Smtp-Source: AGHT+IEeR1ExlmG1yo4fSKgBq3ylxxIF0pAxZcjTLkLUeaBJk6yosVMQT70HuL6uaTIrSbkavGIhGg==
+X-Received: by 2002:a05:6000:184b:b0:3a0:77d0:ba3 with SMTP id ffacd0b85a97d-3a09fd79f8bmr9224541f8f.5.1746538293896;
+        Tue, 06 May 2025 06:31:33 -0700 (PDT)
 Received: from localhost (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2b28718sm217245765e9.36.2025.05.06.06.31.29
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae0d3csm13488923f8f.3.2025.05.06.06.31.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 06:31:30 -0700 (PDT)
+        Tue, 06 May 2025 06:31:32 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 03/11] dt-bindings: mailbox: tegra-hsp: Properly sort compatible string list
-Date: Tue,  6 May 2025 15:31:10 +0200
-Message-ID: <20250506133118.1011777-4-thierry.reding@gmail.com>
+Subject: [PATCH 04/11] dt-bindings: firmware: Document Tegra264 BPMP
+Date: Tue,  6 May 2025 15:31:11 +0200
+Message-ID: <20250506133118.1011777-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250506133118.1011777-1-thierry.reding@gmail.com>
 References: <20250506133118.1011777-1-thierry.reding@gmail.com>
@@ -80,30 +80,28 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-We want these strings to be sorted in order of release date of the
-chips, so the Tegra264 entry should go after the Tegra234 entry.
+While the BPMP found on Tegra264 is similar to the versions found on
+previous chips and should be backwards-compatible, some changes could
+eventually be needed. Anticipate such changes and introduce a chip-
+specific compatible string.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml        | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml       | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-index df6784a7c96a..cbc02b2a156a 100644
---- a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-@@ -66,10 +66,10 @@ properties:
-     oneOf:
-       - const: nvidia,tegra186-hsp
-       - const: nvidia,tegra194-hsp
--      - const: nvidia,tegra264-hsp
-       - items:
-           - const: nvidia,tegra234-hsp
-           - const: nvidia,tegra194-hsp
-+      - const: nvidia,tegra264-hsp
+diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+index c43d17f6e96b..3c44fe607e12 100644
+--- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
++++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+@@ -70,6 +70,7 @@ properties:
+           - enum:
+               - nvidia,tegra194-bpmp
+               - nvidia,tegra234-bpmp
++              - nvidia,tegra264-bpmp
+           - const: nvidia,tegra186-bpmp
+       - const: nvidia,tegra186-bpmp
  
-   reg:
-     maxItems: 1
 -- 
 2.49.0
 
