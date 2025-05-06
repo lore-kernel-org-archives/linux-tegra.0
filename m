@@ -1,72 +1,72 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7E8283140;
-	Tue,  6 May 2025 13:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C416283128;
+	Tue,  6 May 2025 13:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746538292; cv=none; b=XOYus/CQC9qQSRn5So5VXodLYI7ExGSr06hnfU+iFqBdNW3OGaZ3btU50Gu0OLdeDrNbl2dm5s7HS0eqjyURydV/Pg/Tjd7Jv1M4DCXm6cqu4dLaTLGVMVGUAYfZ6ZMXE985grdiYr+OAVAWY+IjniTJ/GPBSoz1/HOiloyyBV0=
+	t=1746538295; cv=none; b=gvYcOC33/gZzSHsitc+BBAJ7srlr8pM8vnqrxT2FsF9TLN4RgiaYSjunPxXyB0LYOaG8Yp4wdqmvDwvPOvAEWx6dKDy3wjLfNeL0VwKw6dzJmV2cG/7PBNfEUDIu93Rx+ZW6Wb90eu/LF3wmNP2Jjt7dERcjPsTQK5HGC4wKrZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746538292; c=relaxed/simple;
-	bh=btjeNJgN3YB0kjQAJls1FjRe+h+x/w5+rtvNA9zWi3w=;
+	s=arc-20240116; t=1746538295; c=relaxed/simple;
+	bh=vOelN2G2QfAQNi/IUigjYLHX/tGz1EVvA35NInG3s5k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KAilixWESKkS5fVHZm3bt6v8qkA3Q8bLPxSyByTZ1xT/PMSqgG4h+7+6Va+gJo0n+uNVwtKAoS6Fu5wL4zSOncViB6ZDaV6ugo24y2HbbOvbYBDAid5+pvSppXWpBfQinQPHh5N8m35aqHdH0p9X/YFMLLPGCY/7y4MoI57lc1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6QGLyUS; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version; b=YP+VEzEsWzjZNLjoLuF1aFJlfj2DBoWtWH0Pe0XmwAi1e06EegKxRXmRZtyYRewTQa3fjtmV8gT7bxtbRBXEiF7xtP0mUl6z6UZP09UlGnNKkj4oLv/B8OvxTBk2rwwmwK9myouY8H924G7t4tQHCbHPm82DK2SK01ntrrXpJy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLw2yQ7H; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6QGLyUS"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-391342fc0b5so3368675f8f.3;
-        Tue, 06 May 2025 06:31:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLw2yQ7H"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso25243215e9.0;
+        Tue, 06 May 2025 06:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746538288; x=1747143088; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746538291; x=1747143091; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CO2ACoq9K/NiDM+5zyO8LOqPTK7/saDpFlE2IMUvDMI=;
-        b=D6QGLyUStmGJ5qy4wBUKAcVy6PicVcmatxr71FvpFkSnfev9pKnjWRvjnCr5brsrto
-         YEBxo8FCwwXb+caEvKnyJKigZHNcJ2On5RubfsrUydbCF1CH14hbw7iCJ+28YRKA57lp
-         oVUD+KxPtHWGZMs13vb8Dxx+UCR16dN2EL1uyUXZZPU7P1q8j0prLm1tWEKeFEr+Zmhx
-         8VubjX/sReRNWNdza7k3l9yeFkom3dLjFjVrrzOoq6Uu1zJXnKBz1lbaIzCRYi2Fn8Uj
-         asba8afOgRDcchnShgCfYBh2V+oKLhZ+3tK8vHgBDVAY2s/v+vm3R4hNrdb0oJmveHcU
-         tbNw==
+        bh=r3zXV3HirDfRP3PUl3pFBh1c941K94R2FUpG7ljIx/I=;
+        b=YLw2yQ7HBXasyjNNhKg/IUG5j1cznmvL9M5uFV6jpROJyIKYO4gSC2I/EO4SMqC79n
+         SQ0HAe30sGI0qLw+QLAtCEAoY+V8jhZIxi+MhzAYA1HGN+xvnvWTYKdAL7yq1AdaqKTP
+         z21KbGtUPpaHT4BObzg6NxXujjkAPQk2GMm3Qdbx3zTwoudLPPMVD3liwqmfCjUXKRn3
+         scBVBMHf7Bi30ECWWxRsCPnXolXj87tl0oatrJIqH3fhXNo8IUaZtR3+ENzkx2MDG6ac
+         YIBTIvcb8BVRzKn/U4yxWbdxgP6acRvAxc1yjWoPK+n7qGKOeEpLibEMgwtg5B5qSCjX
+         j3LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746538288; x=1747143088;
+        d=1e100.net; s=20230601; t=1746538291; x=1747143091;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CO2ACoq9K/NiDM+5zyO8LOqPTK7/saDpFlE2IMUvDMI=;
-        b=nloACoMVan3rBMHxbSWLFf7NNBIBN9K6gmKgk27T3YcA6fOa69a/jfbKjPjzdIyCWA
-         PvFipY5Yy/eLGqjq+VjLQIYTumoTMKAMO73OYoGeEyJ+emiY/or1s0s2FRh86wtzroic
-         tFMRMRx4eHFO7HthrveZTQxLffR2Yy+QzFEQEnd9mxfpPLcvlbYavO3tJ0LK9gVtKXKz
-         43znNT8577R8oO2QoOslCn1lHEilWKfdi3H2W//agx8vgEEQ5XmH6BXY+YOPSyVXZL/7
-         hoGaLxEGoAtF+grHHLcdm7mRQbXSd9E9113kzWE7Zl21abAzK8y2LdOulHXKVt6fV/6+
-         ldkw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2eoqVsxHUQXpESAQGqnDmytEf2i6GBa0ApzKF4tfjEfcZFWGugXq7fqn+E6apx1jldmzZsL0HcMf8@vger.kernel.org, AJvYcCUx+nDHJtp6AMFwZg8G78hMaxwIfe0iidnaMDmC7sDMoslZjSaOYHdGZWBzcDB0GQUysmYz+3YeTs176fM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkbfeGC4yCmxPkmMsGnR6LekmaZtB1Ab80ExowjRP/pby7ywKz
-	EB2ewhIHIpk0SBebiyLLVgpaUhrNI5y0mwSjXtISjo3HO9Es2NCL
-X-Gm-Gg: ASbGncvP+1qPAE3aW4JZ880IDttE9n7drMAY6JsDb1MxaIF4x/4uo0P6ERsa+GraMVA
-	C+8ekB0fL71uqgFDMxV+/h6roE2lfHYQ/eHvZAXyKUhXOIkeb4LxyxV4W5m7/s1gGdTspeB3+1i
-	Ja9XwYRYdcinz0RQ9zfdjMSY/u5/E/H5vpKKQWRHRMIJHpOkhsa1p79I749gzYfPSJwcUE83fsR
-	8Yh3oSSve6y98OyMjnEFADcdvYTTL3sqyVe6klAiZAr3MNK0rsZWrFEKL4AVAQOAxsla44DpMYc
-	BgPoCihUiCf9YEp26VsbVlCoxYHp7DGdLv/X76ZykenjTmgrRGrZNklBhh/JWA4F+axA+xq+dad
-	5oWFH3iN5eyC5Lyt+pgohXksGr57F4M3n
-X-Google-Smtp-Source: AGHT+IEDaXH62KwwI37pr4wDfcFSHeSXONX0vaETDZcKfgUX5r54cbwZDUoUROuqlyv3IXysrdKtyA==
-X-Received: by 2002:a05:6000:2501:b0:39a:c9b3:e1d7 with SMTP id ffacd0b85a97d-3a0ac0ec351mr1987214f8f.29.1746538288382;
-        Tue, 06 May 2025 06:31:28 -0700 (PDT)
+        bh=r3zXV3HirDfRP3PUl3pFBh1c941K94R2FUpG7ljIx/I=;
+        b=hKSKIB3dCIFIZ9TRYxd0J+3ZnJcx4gNNizbzLHZPSdtwF8oHaqf/Cf4XtfeqRX7FVR
+         QlW08nDsSwHk2Z9nVN29tXNj3Ci2vjAAEP6HEQn0iSHWaef+EtgIN0eWFsqIovqJYuZJ
+         BW0f+C/tERHIHS0v3ry0IuW+eBfC1fISozyHzxtcB918kOLjz/yvwILmfKVGkQ1bLsnm
+         HW5CVql/fBAfQtlYcahgG1trcSqzzmwEDb/Xj0pC19A86nNNWgHwfCyhoJ52EgHEUuXD
+         NrRd358e2k8DeQnDr+T5YZb5FdCgQFGEAEMpMvSMj+GE5EIzsv+rliUYvE3bGpK0KMN5
+         qEqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkvdC/b2w3eBpMli4A/mcr77MBa+QET60owav9NKjiVoJ3yIRwhzQInXwX9iqeJpbbhVcjQj81ux54@vger.kernel.org, AJvYcCXHXqzTDGICwkcJYg1GFyubO8Z+gntZBASyLo2qysxWTNfmHKNLyaqqP6DyWMcR+SI0SC92jLVFFPbdVGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1dhZfTK5+ov/d7IRqVcaXIxbkm+/kBp6GGQ3W+2n8/d8AwARM
+	z4cIa0CsAnPYxIwEtprpsOjiAHA3Sj++fWLfdctMeDokhD1lxh6i
+X-Gm-Gg: ASbGncvTnrdhHiaVa0fMbjlVm0rrCBdAZfe9Dsj5CL+kfTWAGNL2vg5f08aIpsYsSvz
+	4bzODqz/knoi83W6cg/eTPVA/n1a1ODq9lJRH5gXWxUw3PLB8u0zZM5ztuO/BqkbQupNBRmKMht
+	BdI7ykpPZWeHd84QXDK+bWQXjlNmZRFat0W/vyCQ0sdJx0O5q4m5xMsVFJry9w2K5N2B/nTWZBh
+	EglhHDI52ziGLrcCq7nYLSpspocr3FuVVamuX11gW3xLufRZbg4G4hWFX8h9zCkYax7uqytaUcN
+	Xh9CCCfDJTDV6EaNbmAQ9Xy0oiVCqzJwDXgcQtrFp8vnJEGcNvIPkA1nnLFdoFtQJ22aq7aLJ2c
+	thATlo16pENjWT2vTAmk/LFd6ZKtU3/QJ
+X-Google-Smtp-Source: AGHT+IFt+jAnp/1dorIrV5VN5se27tfdem9U33x4ONTBw1owAU8hcuV6CYu3Dsp/mq6lfYo+/yCW4w==
+X-Received: by 2002:a05:600c:4710:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-441bbeda9d2mr172755895e9.17.1746538291112;
+        Tue, 06 May 2025 06:31:31 -0700 (PDT)
 Received: from localhost (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0b300873dsm638165f8f.78.2025.05.06.06.31.27
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2b28718sm217245765e9.36.2025.05.06.06.31.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 06:31:27 -0700 (PDT)
+        Tue, 06 May 2025 06:31:30 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 02/11] dt-bindings: mailbox: tegra-hsp: Bump number of shared interrupts
-Date: Tue,  6 May 2025 15:31:09 +0200
-Message-ID: <20250506133118.1011777-3-thierry.reding@gmail.com>
+Subject: [PATCH 03/11] dt-bindings: mailbox: tegra-hsp: Properly sort compatible string list
+Date: Tue,  6 May 2025 15:31:10 +0200
+Message-ID: <20250506133118.1011777-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250506133118.1011777-1-thierry.reding@gmail.com>
 References: <20250506133118.1011777-1-thierry.reding@gmail.com>
@@ -80,54 +80,30 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-It turns out that some instances of the HSP block on Tegra264 can have
-up to 16 shared interrupts, so bump the maximum number of allowed
-interrupts.
+We want these strings to be sorted in order of release date of the
+chips, so the Tegra264 entry should go after the Tegra234 entry.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/mailbox/nvidia,tegra186-hsp.yaml | 21 ++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml        | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-index 2d14fc948999..df6784a7c96a 100644
+index df6784a7c96a..cbc02b2a156a 100644
 --- a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
 +++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-@@ -76,7 +76,7 @@ properties:
- 
-   interrupts:
-     minItems: 1
--    maxItems: 9
-+    maxItems: 17
- 
-   interrupt-names:
+@@ -66,10 +66,10 @@ properties:
      oneOf:
-@@ -84,6 +84,25 @@ properties:
+       - const: nvidia,tegra186-hsp
+       - const: nvidia,tegra194-hsp
+-      - const: nvidia,tegra264-hsp
        - items:
-           - const: doorbell
+           - const: nvidia,tegra234-hsp
+           - const: nvidia,tegra194-hsp
++      - const: nvidia,tegra264-hsp
  
-+      - items:
-+          - const: doorbell
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+          - pattern: "^shared[1]?[0-9]$"
-+
-       - items:
-           - const: doorbell
-           - pattern: "^shared[0-7]$"
+   reg:
+     maxItems: 1
 -- 
 2.49.0
 
