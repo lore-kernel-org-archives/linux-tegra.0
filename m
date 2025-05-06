@@ -1,72 +1,72 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EE6281508;
-	Tue,  6 May 2025 13:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FA6283C8C;
+	Tue,  6 May 2025 13:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746538310; cv=none; b=kf82Ix+WbbhDpT2OtAxoOmrMd/ZhTLn78Ngh/z6BM4rO/PsQqL/8sv7WrDMpgQS2CMCQPGzsik+yOtCSIFiSNpDFf71Jwwiaq6xdcCi9U1wOj/j71xX5fB5inMTftTFvIlIQnmH7F7ihhwXmqnxwoambrk/kARmr+6eaoEGZ09M=
+	t=1746538312; cv=none; b=OnFdS7ysq8iFfeQgZS+uhYDbnagT5sj8bjTY/iLNPxUqpMR4ahfFHDMMs98q/GlwgSbsVLSJG8Wb2jWEcBv6ED4fbZXhlfki5/43q/GNCLWkKe7orUXtDTYHtT8Hp5eE00IhFYxhjo4ZGZzjP1WGNbx3F43/U8A7M0+bo6w8zk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746538310; c=relaxed/simple;
-	bh=k0CuVeDsApxggQmtHpKaBVAjgMPqfAd6uUYYyldJ2pg=;
+	s=arc-20240116; t=1746538312; c=relaxed/simple;
+	bh=LcOrty6LZ00HbBgJR6bvjHHeEuAq6Ky5k+ijm7bEDVM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=plLAnrY9sA+I4bLo4tLcDs2Yn5FwaFKsC0zbai93rgKKmyAdr06BlIlUBkVy94IQguYjGVCqGUcxZqqjJKdG6/hOJ9LKSjkViLkINmZfOYzOwLNcOEP/jfwRzqkSqv+xSyFmN3ewlC0sdiXOMei/C6qyCsmdF+hHSkK5k6kmdic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPVMuUg2; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=Ncmqu7yt722BZKuqnqjnQZisy4JPDdjwmB+W/K6211fKhdacwi+Slmroyq+FlDdrUbfwfpFsSnO1Qc9LeFQLonjeudVKy968mhpnZ1zhB5tN5Hzf9+8q5UnzKN6/zOJqB9r5jREdy7YEsZMRhCyKyrKL0cJU27WhR7SgVXh58ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfZHZUL9; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPVMuUg2"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so25052245e9.2;
-        Tue, 06 May 2025 06:31:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfZHZUL9"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so49093055e9.3;
+        Tue, 06 May 2025 06:31:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746538307; x=1747143107; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746538309; x=1747143109; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7jxbZ035QFkq21lpMHfGFtYoYGFOwjubRluiFPGrGTY=;
-        b=JPVMuUg2kT4IlljQ3oENIkrALl8LaZI036ybg3A3aVNVkNLVYwNb3fVinlRbtksxsT
-         zD1FP+LnplNBlmsqn8fMx77V8M4UV1dsOg7EsUC07s+9MMGTsQWzFuYSlGJ1alZGPvs+
-         7LKEeAO8mNOE5s/TFlzPbcAe7r+nbnqdz1QAWHXcV7+Jdo9o6MUx5WUcAyxw+0IY2i8V
-         rSgcC9LugcV/dkXTlEqHc3oPaLyEoVBeMHtRKCyNM2lNrQx2P51NxvalxA/MmtCJfcQH
-         edLz+ekaWRbqPCetS3931onuR0+fYXa633H+HrgXjbYIW1zPkgace4gCEsRay50LK7Cx
-         zR0A==
+        bh=Slorj42xucBLgcEgCTYJT1nDW78UozPuVsLaHl9+ais=;
+        b=jfZHZUL9x5mreS24FJ/Pyt99/MXUwBd5C2mSR21YcjruMX8UyQTsny+LwPTj/uPTPF
+         MwBxGhYfWoQTROjG1LOYCfSNe5BaGXkcH52w7Zq1cmfROA+vsRzv2NPViefcgyIE3Yw4
+         vMrpMvvjRvJqk+FAqdcZQcQAtSFVL07+RNHic7yPTG2moirKyPErnN9Vv0J0irHXFnfH
+         hD4cUEtpMdIalkxhJQ6uUd9uLgkMMVcruqTjeiTNevxDYfqTiT0EqFZXKh7+ghKe/pW2
+         vlMtIEa188cLv2jiHINdWRd8HO8etUDuUiIXmJzsdgAy+U+TtYcjCufHGfrbybqEOKNb
+         iIpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746538307; x=1747143107;
+        d=1e100.net; s=20230601; t=1746538309; x=1747143109;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7jxbZ035QFkq21lpMHfGFtYoYGFOwjubRluiFPGrGTY=;
-        b=BS9Z3UclLtiRjKMxIG3RqcQiQqUOLFCZkf+Ntd+SX64f2AqIPrjX4fQDyvXxxpAKdn
-         mzofbklTX8aHH8cKQgF6SFa8ja0D1r2gWe5AIbyTmRsJtFCakeyBdOyhnrPuRp/ZHrok
-         8ar8N5w0xBP4Dl2FWceYmm+tT9qonhCDmEO6srBDdBco7Zb2gaOC1QROYCU/+OaYpMz+
-         yrLG0WBDQbPNff+0eH05VcL3/PGCOcvPti2OqiEpn+gSw/ZuPLyvmJ2WbCNaVzttWwTQ
-         8nGjVyjLgpFbDQE1HkWeyDGEoQVkKKIl4NCCjQuO7w2KvqcDkASleuSA5wYnBwJbfms9
-         Vnqw==
-X-Forwarded-Encrypted: i=1; AJvYcCURHTzvHA9pemk7d57wZaZAjU/No4Df05gE3OBJsfBL7/OcYuXWdWL3kBdj0PDoEsbZQx1Kf7mIWzyw@vger.kernel.org, AJvYcCWMUYWJFMGmg5QOpBMwF+MlqG3EShOYjgdCVztbvG/VmdIi/9qFtHVRN0+6mmuEXV5YowE1p2j0JltL+kE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/wFFGR0hMZggG+cT86Xz+dJqWVGm2gBjLGyPbxflcPc1kCxuX
-	qseRvLYxJabvtTweduGGAmmhtHW5q5tA+y2fW9iml+yct1fv1uFrEGqiZg==
-X-Gm-Gg: ASbGncvW2warHoMUV7GqUEDhMDEzH5g1W1+2dEycOScWJ2TQNjEOFLFjbXiWn0G0Oc6
-	Duwone/RzgND9pEENdRprId4/SOKJUa1KkVs4eGraPzaxOqyvvYQwmsHmA7JfW2WycIj7eN947M
-	JFE92iWdjOWQ9/1r/NJUXbz2TyR2PbVi/eJXIWMPpfw9K5KS7oWKtmZErz5WjIXyAMbnSeMRWXn
-	51aZGoIshcTauFyok73uqcR5aNXCFSZtbjqcQ79nhpJo8GS+Bq4Caydke74T1qcASsW8XIcEcc9
-	g1qh+8kBOYNe2hCDTINTxeE2vanWkUTTtgt91qThoX2I11nswxZzKR3pl7PDodHe85L4ZdDDtrY
-	agwKNfW+Pa5DNEEmNcW32dCF8rYl1R4kP
-X-Google-Smtp-Source: AGHT+IEvZa9BdGXkFT5zzPGwBPqXPa2EzOboT5eW1NmG8nWLxf29uTsrdNSthXrYCAxweDBMMj3blg==
-X-Received: by 2002:a05:600c:821b:b0:43c:e70d:4504 with SMTP id 5b1f17b1804b1-441d0fd2cf7mr28337405e9.19.1746538307016;
-        Tue, 06 May 2025 06:31:47 -0700 (PDT)
+        bh=Slorj42xucBLgcEgCTYJT1nDW78UozPuVsLaHl9+ais=;
+        b=eW/JdGCpV/ulL1CWjeXgAIjYL96JyxbIGpxTzuQh+iiKZxm5jVRE+wDLBJlhVlD+uv
+         LC6ktoiARJWWx3b+McxN9NyHT/1D3dhXZ4Wt0aOVBD4t1zpYcMgz6uhlm0pNfZkaSpI+
+         Ia+ejkH05/PmtOH6UfiT/21V1ONt3kuJGbWcKASkBDaqQxl0PN7pKyw/Nwcz0dfnl/0h
+         8FTwITJvqwiTarxwFxlwcHa6TflH2jbk4OtK7olefWXzgzCx/R3BgvIAnQQ0I2ksMBjE
+         MxCXThu+si4OpN71DXzyb4BFWSWNZY6+MF4MMU6OoINHCjMpeHEli+tDBOdBYFircY1I
+         vXog==
+X-Forwarded-Encrypted: i=1; AJvYcCVy9kdVVhoGzeiqRjHch1XCHPAnyh0TTJflZcXJA0i0MzYV0KPB5SJv8WcRbbkkMZIwyTB4v3s5uyQN@vger.kernel.org, AJvYcCXc2ZFFe1E6Cskvwoh0wzki3K88qlWP8odGY0Aa6dut0QvLB1l3k0U3VBfiz2YB06KfrkQL35lQPUZvocE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBEwbdQ/7kCUonJDCMJLPPqNbvi/CtoidnuZk2d72+ASAEJzpe
+	KQMN1EbiUjddD+o0YWDfMT0V6sF/YrRxFOp9Nrzib8DWnOP/qWbHhrgqQg==
+X-Gm-Gg: ASbGnctfSO313aJSiIdfAzm5NIhLoH+ppkYVu989VAS3hdZE91q/jUP0pdaU2me5i34
+	UBgJ5ShdPzR+fQ+TWIIuPNTFZczPyJeuqbb7RMsDEQ8XJGZGtvi1MH+M8yRcrrwIU8vnl6703ZR
+	oi+nrYW3jPnfmdPqsncqzsZKb0ljdpMSmneXwJVqDNubxWP1U/VHhSA+kw5b/SBDU3EtRggoWYw
+	BBcHQzuihqqFiQ8og/33iwscLIdGEihd871zaDGUTQwsnLX8+Mf5WLrEJ+09ZmKrZsoX/wL9tza
+	hv0aOchghlHTxzdXCyKZk+twrtSumn0YWhCqD9CiDP66tI7U0QqiBuJH6gPSS1EKljU6YMBf2UL
+	rfIybhTD604BmLfMBjd2jpoSoL4SB/yKz
+X-Google-Smtp-Source: AGHT+IEqtAFghQueMw8z+GZ68EaGQYCbkFFmcLlBWgpzWkkb1FBjdt56CDfJkVu9rAJJoM/2Z/ekWg==
+X-Received: by 2002:a05:600c:1d8d:b0:440:66a4:8d1a with SMTP id 5b1f17b1804b1-441c48aa302mr102353625e9.7.1746538309306;
+        Tue, 06 May 2025 06:31:49 -0700 (PDT)
 Received: from localhost (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2ad76a2sm215973025e9.6.2025.05.06.06.31.45
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2af4546sm218375415e9.22.2025.05.06.06.31.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 06:31:45 -0700 (PDT)
+        Tue, 06 May 2025 06:31:47 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 10/11] firmware: tegra: bpmp: Add support on Tegra264
-Date: Tue,  6 May 2025 15:31:17 +0200
-Message-ID: <20250506133118.1011777-11-thierry.reding@gmail.com>
+Subject: [PATCH 11/11] arm64: defconfig: Enable Tegra HSP and BPMP
+Date: Tue,  6 May 2025 15:31:18 +0200
+Message-ID: <20250506133118.1011777-12-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250506133118.1011777-1-thierry.reding@gmail.com>
 References: <20250506133118.1011777-1-thierry.reding@gmail.com>
@@ -80,38 +80,70 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-Support for Tegra264 depends on the Tegra186 support, so make sure the
-latter is enabled.
+Selecting the IVC, HSP and BPMP drivers via Kconfig is problematic
+because it can create conflicting configurations. Instead, enable them
+in the default configuration.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/firmware/tegra/bpmp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/configs/defconfig | 2 ++
+ drivers/soc/tegra/Kconfig    | 9 ---------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index c3a1dc344961..e74bba7ccc44 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -836,7 +836,8 @@ static const struct dev_pm_ops tegra_bpmp_pm_ops = {
- 
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
-     IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
--    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC) || \
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_264_SOC)
- static const struct tegra_bpmp_soc tegra186_soc = {
- 	.channels = {
- 		.cpu_tx = {
-@@ -884,7 +885,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
- static const struct of_device_id tegra_bpmp_match[] = {
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
-     IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
--    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC) || \
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_264_SOC)
- 	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
- #endif
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 98ad22833282..85582019be04 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -266,6 +266,7 @@ CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
+ CONFIG_QCOM_QSEECOM=y
+ CONFIG_QCOM_QSEECOM_UEFISECAPP=y
+ CONFIG_EXYNOS_ACPM_PROTOCOL=m
++CONFIG_TEGRA_BPMP=y
+ CONFIG_GNSS=m
+ CONFIG_GNSS_MTK_SERIAL=m
+ CONFIG_MTD=y
+@@ -1431,6 +1432,7 @@ CONFIG_PLATFORM_MHU=y
+ CONFIG_BCM2835_MBOX=y
+ CONFIG_QCOM_APCS_IPC=y
+ CONFIG_MTK_ADSP_MBOX=m
++CONFIG_TEGRA_HSP_MBOX=y
+ CONFIG_QCOM_IPCC=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index bc532cbe32e7..9392c2c43cc8 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -97,9 +97,6 @@ config ARCH_TEGRA_186_SOC
+ 	bool "NVIDIA Tegra186 SoC"
+ 	depends on !CPU_BIG_ENDIAN
+ 	select MAILBOX
+-	select TEGRA_BPMP
+-	select TEGRA_HSP_MBOX
+-	select TEGRA_IVC
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 features a
+@@ -114,9 +111,6 @@ config ARCH_TEGRA_194_SOC
+ 	depends on !CPU_BIG_ENDIAN
+ 	select MAILBOX
+ 	select PINCTRL_TEGRA194
+-	select TEGRA_BPMP
+-	select TEGRA_HSP_MBOX
+-	select TEGRA_IVC
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegra194 SoC.
+@@ -126,9 +120,6 @@ config ARCH_TEGRA_234_SOC
+ 	depends on !CPU_BIG_ENDIAN
+ 	select MAILBOX
+ 	select PINCTRL_TEGRA234
+-	select TEGRA_BPMP
+-	select TEGRA_HSP_MBOX
+-	select TEGRA_IVC
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegra234 SoC.
 -- 
 2.49.0
 
