@@ -1,129 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA13283159;
-	Tue,  6 May 2025 15:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D332853F6;
+	Tue,  6 May 2025 17:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746546890; cv=none; b=pTeyCIyDbvy7RCbkhc5qFBmN0pN1if9j2j6iohIgIeTDEZTZmpC+c1SmYffMYfN5hIdCaQFMzZlEzSHzzpHh5Auq6vXgKnOaAkl844fa5nAFosuTwU2+99o1Yw2sz5jqVogUZUPeAmDpBdAhvIvExLREqtTrF9H6ZocH8VqolZw=
+	t=1746551374; cv=none; b=TQEWSRw2NZ0W1qjPFwuHcUo260/ixzKP71IdzDSwzf+wUKC1Zi2cBUrHlC/cFoESUKF+etfrhItIgE2r6rP4fG5BJ66uPxvOX8O3Aq77cXjWEMVAgsZZu8g7WIs0eTMqsZDLhiRkQolTQKUbyB2MtutjuQuiFhz8CcAxJrYg0t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746546890; c=relaxed/simple;
-	bh=CN4H43AlZ5yAzJyJzLWrVuFa8slUBC0Ks7P4bDi+zL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CX66oY9ci4X2S5y0vi5sP/LYdiKQ+B0AerU7EdOmhC43V7p2chQxxYV4cYZnsYGc4KP7o24oy5tXYzPn1ksNmjYbjs08JJIejMtlNe2Aoa2ph7vpg4l2f1cJo76vLNGXKL07X/FyB8LAH5WZlLD2iD06h331pRW49/tQRfl9Jj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5nHp5fJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746551374; c=relaxed/simple;
+	bh=FNA2gsRQTdJsloAcS3RRSgVH0l+51ZiDBDeK6njOiz8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZuAyxT+dbmUTMBx/NB9bSG4b8c+BGvZisOTIAylH8BdVou04A9JfuAVIArLskMzs9tmaI1sNyXbTwcA93/0DypanPvnz+4aMxOq/tV+LVp7aQN1P0PQpIanEsqse/HnsqQbTRy7Pura36DrSjBty682LsebFH8hB45sk9CVixIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD8tec4A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5nHp5fJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1283BC4CEE4;
-	Tue,  6 May 2025 15:54:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD8tec4A"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4066BC4CEF0;
+	Tue,  6 May 2025 17:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746546889;
-	bh=CN4H43AlZ5yAzJyJzLWrVuFa8slUBC0Ks7P4bDi+zL4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=c5nHp5fJIZPVpV8nyOTL/WSC/KG3eKQx+DyBSy/p+RzRvp1BXeEv8BYcnbU8v2YJa
-	 HLzaXkc+tNNmjOJNZeoyL78e2SDipRbMyLCdJkcdTQrMPa3Zmcs6e4g5xg1U2gFyFI
-	 HOu3G8paiBuD439SIXqHxgifwNiLNYvAxcJ6HONhhwCVvb0e3nQ/pES4EcxIppW2cQ
-	 qGy7XaMz3Pwmi2QihdwuPYn5tj8Kz1lm9PMyTvaQRejrmuCybjz0TQYS+TPpPN/dsz
-	 l8y0J+JQ4LD3iaBl9qJEWQ3DVwpZ3d+dYpq3Wsr0qvBeJKjB/8CbCNr/+fwks0rYQw
-	 ja0+CWpmyNUYA==
-Message-ID: <0aedf5fb-557b-4c8c-a336-182498e2c3ea@kernel.org>
-Date: Tue, 6 May 2025 17:54:43 +0200
+	s=k20201202; t=1746551374;
+	bh=FNA2gsRQTdJsloAcS3RRSgVH0l+51ZiDBDeK6njOiz8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=bD8tec4A0etJw6u2v9BYQfdDu4z4+U8FKKfYI+sQQyoqCTwtGl5z91W4lkHQGojA5
+	 VQI4JZTQyamjMzZyeRGfje0BkyBnHdLhEsf9xxIqSBBeUwFhd42sZLI/cENmB71L3q
+	 zT7hBr7/SnEBJj8jcTU3BgOd/mzgBHI7JC3MrP0P0Sg5hWm9VrBH6AO9/l960amG2m
+	 e/iGktH5Cki9ZlUUgqFkYlT9Upuq44FsjrYxP/WQMiQaFRbb/pd3cOTQ6zsOSC5Zol
+	 SFrKnEDxjCKCs8oYAFHOWPOy/8m3VrdV5TYt4E92DHr8ymcbiwmLdoGIeroykSnuqr
+	 9OX5kXOBB4GDA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C584C3ABBE;
+	Tue,  6 May 2025 17:09:34 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/2] phy: tegra: xusb: Default otg mode to peripheral
+Date: Tue, 06 May 2025 12:09:16 -0500
+Message-Id: <20250506-xusb-peripheral-v2-0-bfbe00671389@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/3] spi: tegra210-quad: Add iommus property to DT
- bindings
-To: Vishwaroop A <va@nvidia.com>, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com,
- kyarlagadda@nvidia.com, smangipudi@nvidia.com, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250506152350.3370291-1-va@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250506152350.3370291-1-va@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADxCGmgC/3WNyw7CIBBFf6WZtWMKpSpd+R+mC0Aok/RBQElN0
+ 38Xu3d5bnLO3SDZSDZBV20QbaZEy1yAnyowXs2DRXoWBl7ztha1wPWdNIYiBW+jGtGIVrNLc3V
+ No6FYIVpH61F89IU9pdcSP8dBZr/1fyszZCilYTehpXatuw+TovFslgn6fd+/RSnzeq4AAAA=
+X-Change-ID: 20250404-xusb-peripheral-c45b1637f33b
+To: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746551373; l=1076;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=FNA2gsRQTdJsloAcS3RRSgVH0l+51ZiDBDeK6njOiz8=;
+ b=+Y2xZC3OosSjaAuY4rTFVw/J7gz3zpQ3FqXfBcXxUM2W6VcJmlJ40WuayQMLyyTmMC4TMJ8RA
+ SWaNIMRmfzmDzYzt0EQkphgtJmhgwPVpVdguGVVDKbzt3j7q+lCQC2r
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On 06/05/2025 17:23, Vishwaroop A wrote:
-> The Tegra210 Quad SPI controller uses internal DMA engines to
-> efficiently transfer data between system memory and the SPI bus.
-> On platforms with an IOMMU, such as Tegra234, DMA transactions
-> must be properly mapped and protected to ensure system security
-> and functional correctness.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v2:
+- Add new patch to document role-switch-default-mode in xusb padctl
+- Simplify code change, per review
+- Comment in code why device mode is default
+- Link to v1: https://lore.kernel.org/r/20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com
 
-Does this mean this is not valid for other platforms? Then in
-allOf:if:then: disallow it (iommus: false) for hardware this is invalid.
+---
+Aaron Kling (2):
+      dt-bindings: phy: tegra-xusb: Document role-switch-default-mode
+      phy: tegra: xusb: Default otg mode to peripheral
 
-
-> 
-> This patch adds the iommus property to the device tree binding.
-
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-
-> This property is required to associate the SPI controller with
-> the system IOMMU, specifying the correct stream ID for address
-> translation and access protection.
-> 
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-Missing: dt-bindings
-
+ .../bindings/phy/nvidia,tegra124-xusb-padctl.yaml  | 33 ++++++++++++++++++++
+ .../bindings/phy/nvidia,tegra186-xusb-padctl.yaml  | 27 ++++++++++++++++
+ .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  | 36 ++++++++++++++++++++++
+ .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  | 36 ++++++++++++++++++++++
+ drivers/phy/tegra/xusb.c                           | 11 +++----
+ 5 files changed, 136 insertions(+), 7 deletions(-)
+---
+base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+change-id: 20250404-xusb-peripheral-c45b1637f33b
 
 Best regards,
-Krzysztof
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
