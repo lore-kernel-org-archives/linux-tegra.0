@@ -1,33 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64C224250;
-	Tue,  6 May 2025 11:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3857733DF;
+	Tue,  6 May 2025 11:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746529957; cv=none; b=oPrxukfkb7NUI27jLQIOi+5pGEPAU00Yl+iTKyfCvcB4dZftKJ0gShJCGsiwx3UNZ0OD5lnX0FkedfrxCVud4MQlW93I7NEDkSA+hG5gGkt82cP0ztWKiYF3ykQy3ZSiAB2HR35zBx1AGHpSbflmflmrFsHqwP6mZyJZJSb5xys=
+	t=1746531381; cv=none; b=M+itehJrUpi+fTtaT3bnhXNKa+NQ5GQcFQsIUu+ay62SdaIEib5qkvCBKUC0yXKsrK+utZ9II7mZqTUdPBu7/ScRN7KlN/f9SQclROTNfUSbsxaRynJiJiskuVPp7yjgSV5sLJnNCEyhSK7cWZGNbz1LcF0aWs5SKVb2CQQaoVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746529957; c=relaxed/simple;
-	bh=NGhTUQxKwHpGF5b4VFHgUHZrCVEnRrlcNKNuUbJdrJQ=;
+	s=arc-20240116; t=1746531381; c=relaxed/simple;
+	bh=9keMmpZSyqI5tSOuG8Pqrhgf7LjyBxdO9UY563YM01k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FuHMXQA52JMX5wFvlqOluXN9C2jff8V4t2tU1lam6rc30YgH7UdMpLWKT1bepRjFlsg6MND7q3RGYYCTJ37iHOlkj77ph+kdnmRc+gesjI/R2IWkQmRnu6DXpCXbK5x9hiwulw+XRdFXRUuPWS0YVq68G09UzCf6O2ddNyTGZnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcLcxZut; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=n/xQQOg4NEhD4RToAPS//EfmVjPjoze2g3Q3GUQQfJof/t4bRG5pnI32Qj/qg5kFDv7y3Qn6Wyta7mQ2KMaFPqfTpxaPOCLV1UJtRi4XG+tEKlMif8/MOF40McUCT0xKecqMM6brON2GS+EFn/DJwTB+RVGyZcnEFdn6xZEh//k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6TN1P1H; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcLcxZut"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F7FC4CEE4;
-	Tue,  6 May 2025 11:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746529957;
-	bh=NGhTUQxKwHpGF5b4VFHgUHZrCVEnRrlcNKNuUbJdrJQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hcLcxZutwIknyTvhOe6c2cW/CvT00A0bNAuwB5TlNKv5HOjNgnBf8O8Nqo+U2Ziui
-	 2SOT740dgJuJS7aflrts26/ltGVntUmnVmKy8seY69S3vTU1QijZup3LYZD2Dcy6k/
-	 8DN+1uVSNJuqHqF8LrFE6DeN0dpGFAoBET1r/4Rq+OIaDr+Fp/MJlAk4eQpl6DeHRz
-	 bjiz8WxBqgoQyPdzO7BW/LZIL/HS4VChvX57pz4Id5q8P8wA8Uclp4M9yGLOGCS7hj
-	 bPdeSng0fGdlo43uQGpw97piPH6oV/AdH27mGIxIprvpjFTD7/T7BXryvJjez/0+eZ
-	 OyACLFXeU06bQ==
-Message-ID: <28757bb3-61b4-423d-850a-70fd5a4c2786@kernel.org>
-Date: Tue, 6 May 2025 13:12:32 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6TN1P1H"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736b98acaadso5238663b3a.1;
+        Tue, 06 May 2025 04:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746531377; x=1747136177; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A+r2etV5TTN9GUy5eqZyzlOSAzsHs6a0GmxwX3NuYtQ=;
+        b=P6TN1P1Hsclhuy3OaKRoyDpFsC4498j+pm93S107dVOwPLWl3NRNPUWZrAfVlalfbi
+         16uALdgn9A/3ntRZFi9+nvq7CpJrrSRfIgJXpHCS2z8QRpdlbJq7oxBmVtO6FgteRn4c
+         oGOeRJWQhGxPevOwhQKcTuT3piPRl/PzO7W9WcTjNc0hZr7FJIeVoMfrUHL3TEIKc8hQ
+         bMzZC8dgEl/XsRn5LVAf1MMz4dKmIZ+3h/L1uODIbvGn5cZi8/wldmhwBmys4juBXv5U
+         VPzvztNQe1LCE59ebLuZbW1VqCzJCqOraSFP1GQgKJckUBq4qWHGCmycLZSqqAsRVJ+p
+         7NLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746531377; x=1747136177;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A+r2etV5TTN9GUy5eqZyzlOSAzsHs6a0GmxwX3NuYtQ=;
+        b=f69hT1YN72N+RzwKATAAwHs6ULhJr2FMv75pyviUulNFobALAkNBb99VIeNpGQP+XM
+         WrhQ2GHMX98xCiIq4k9EvZpES5OQEod27rWZCxfUMwuNtrS5RWatIDTJSMQkauHRS+aL
+         io+vcW5gw/zpxazNrOTaLB+Kh9nDbG5dgOvu2jEoJ3cFn8IyFYWdDqpu8j9y2si+0Emu
+         BFaXNaBfBXEl5Pb5IkzCNPoMSCitAdO8VpyVH8O6kRmALHoOZVvTh/eWqFLKKjn0NMYu
+         1u31WLGhKZuKPb/NfElAPrgXYnvua9ngRTGVjl2Oi0Xz43E3tz8jN2xmLcZUektsNxYh
+         EtsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEcatReaJoGhHsvnvSKzqz3lMoYEHayxmctnihgMH5j2tiQNsTD34z5ChRUOHbA5d6QjdFUiycRzUPUHM=@vger.kernel.org, AJvYcCXLCTLO86FrxTe/yP5xuvApWxlw9EFfRNd9WPH0ioNIU8SW26tV/Q9RyWQCVT3av5WKIjHVpBRsVU+js+Il@vger.kernel.org, AJvYcCXYojOuGRrna1ozM7AvVCrGmHlkVgIxCxghdfzxINy3F4lnXpokEz9F/YMZWJoKyIkAmj3jJ+xgaBhC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqq50BFTK12YyAnkFMIBcNkidl0VA4znl00qXti+HdVsn14FzQ
+	BPXNBkMfn2gX1RWPYFbDhkEDo7gUjBF0J2Qg9aoi5OmGoX8Ju6a6
+X-Gm-Gg: ASbGncsNThjt4n2z4gswsWm+QDDaFbpRB1NsBkJD/MMJ/AlsM8uW7+gvAnlUMExcL8L
+	Xa3dVfxO5ZhIKXDbs0JD5tqGovS21K25TVLy3R3MrkCK0aL1dESTzsqJz8a11gL7DTIa1AhC0rw
+	g63QTeJnU8fid6c/adW5PMkYQ68qsh0RzwgB93qjA5vUhsHRfWbq92DT2HZaGLVq7eExlw9JpSR
+	jJ+UEKz2v7J/p8pTJMwRRL4jOqsIvFzR5IomEBmBWvRfZ1dDJvShqRzQJc9BLFDHmjN7wUsSEvE
+	P8kPSczz51NJRBVi/xCQQz0PVb5AiV1oTH2KOYQXzsnAfPH3kl4IBxunHyOoz388JA==
+X-Google-Smtp-Source: AGHT+IE6XF0LC0bfX0riu351c7PSdWNsATp9NoJ9u5v3diJd1yyBdZH6E2imJcSroJJnM0fVZfgakQ==
+X-Received: by 2002:a05:6a20:244c:b0:1ee:e46d:58a2 with SMTP id adf61e73a8af0-2118153c0c5mr4211536637.3.1746531377426;
+        Tue, 06 May 2025 04:36:17 -0700 (PDT)
+Received: from [192.168.1.5] ([122.174.61.156])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405902154dsm8995529b3a.90.2025.05.06.04.36.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 04:36:17 -0700 (PDT)
+Message-ID: <d0bfbcd7-4fde-41d4-a8fd-796dc7db814c@gmail.com>
+Date: Tue, 6 May 2025 17:06:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -37,87 +68,57 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 2/2] dt-bindings: dma: nvidia,tegra20-apbdma: convert
  text based binding to json schema
-To: Charan Pedumuru <charan.pedumuru@gmail.com>, Vinod Koul
- <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250506-nvidea-dma-v3-0-3add38d49c03@gmail.com>
  <20250506-nvidea-dma-v3-2-3add38d49c03@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <28757bb3-61b4-423d-850a-70fd5a4c2786@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250506-nvidea-dma-v3-2-3add38d49c03@gmail.com>
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+In-Reply-To: <28757bb3-61b4-423d-850a-70fd5a4c2786@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/05/2025 13:02, Charan Pedumuru wrote:
-> +
-> +allOf:
-> +  - $ref: dma-controller.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/reset/tegra186-reset.h>
-> +    dma-controller@6000a000 {
-> +        compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
-> +        reg = <0x6000a000 0x1200>;
-> +        interrupts = <0 136 0x04>,
 
-You gave me little time to respond - 15 minutes - and then you sent v3.
 
-Use the header and its defines instead of hard-coding it. Wasn't this
-the entire point why you included the header in the first place in v1?
-Otherwise why was it included?
+On 06-05-2025 16:42, Krzysztof Kozlowski wrote:
+> On 06/05/2025 13:02, Charan Pedumuru wrote:
+>> +
+>> +allOf:
+>> +  - $ref: dma-controller.yaml#
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/reset/tegra186-reset.h>
+>> +    dma-controller@6000a000 {
+>> +        compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
+>> +        reg = <0x6000a000 0x1200>;
+>> +        interrupts = <0 136 0x04>,
+> 
+> You gave me little time to respond - 15 minutes - and then you sent v3.
+> 
+> Use the header and its defines instead of hard-coding it. Wasn't this
+> the entire point why you included the header in the first place in v1?
+> Otherwise why was it included?
+
+
+Oh my bad, now I got it, I will use #include <dt-bindings/interrupt-controller/arm-gic.h> header and redefine the interrupts with 
+interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH> format instead of hard coding. Thanks for your patience and clarification.
 
 > 
+>>
+> 
+> 
+> Best regards,
+> Krzysztof
 
+-- 
+Best Regards,
+Charan.
 
-Best regards,
-Krzysztof
