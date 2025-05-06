@@ -1,118 +1,220 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE914A639;
-	Tue,  6 May 2025 10:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38C914A639
+	for <linux-tegra@vger.kernel.org>; Tue,  6 May 2025 10:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746526360; cv=none; b=f2xbY5X8x5anSDfE4aIyZo2cYfvZuD/eTjgfamV96wbwQkCqQkihX+QNFjKt9FQ4XLBPr+gkO9CmgdZX0I2uMJt9eK+Lmw/CsLdi3OVYaC0Qp0BmGdJc6DtmAgdx6zFaxBnbPsCbEXjwdrT0xWSAgTExMitf1fMbcCN9Z4qoqDo=
+	t=1746526476; cv=none; b=YOuWH3ZT/ce4w000iPSNd/29YKOKcbtKS4XwQzy0FZrcDhq55r5XiyfYbCQyD6pP2Aeqqd0hKCv0nwzBhAxQWU6QdYC9sfr3xEa1GVVxBlbXZWztnkoQJOKn6JQK8+aXG5oNvh+iZr1+r7h7lOMkHFFidXLtskb8qq32WGLU06g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746526360; c=relaxed/simple;
-	bh=jxey7fOb8z/w61m9m6UsbaUxtlUPK0mYVbDuoM+RGvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YqrGc6oVadF+xTAPRUg0R9Y888xwc92Kg/gUizHmpf1lHqBXstLr/0rYxoRThizTfj6tPADN00Tc1lMEQzNlckGX0roCgN70hA9kN7DiaZ+yRM9QcjU26aLaUVzAXqNGPkjYMyHHnEsXfkp3YBVwqu+ESTLIvY5wbi+cACJvv6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzZ/PcHD; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzZ/PcHD"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so6737036e87.1;
-        Tue, 06 May 2025 03:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746526357; x=1747131157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJp0gvwl/+EohkZbSpkJbKg/JPMhDjkyhQTkFH9qrs0=;
-        b=jzZ/PcHDMktjyLgO7jgMW+QxcLTcYVjnHYHI2j5xR6yb8dUn4c8c3jglxzathhYKnc
-         AnNceh9OlUiTowJpqp9dx9S55f2PF86TIi/Ji8sZUi/mRQ4om91gEuWr33neTgKPx64L
-         9Og7Oo2712Qmb/2i/KzP3UWiOerBJOUfD10BnFtv5RfuWOwhrGOiAdLU1nPynStRW7LG
-         grWCOUoxzgy1HpwdjeX/3ZF0hj7nxIBSKJLqn9Yf1ovxa9JA0N4r5SNoU47tPDPqY881
-         QbRewzXE/ZbYZVRm8vPyV83ys6O/a2KIIQ0qu1O4ZThS52YTgDbij3Aw77d4t9Vnxiq7
-         ZqPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746526357; x=1747131157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mJp0gvwl/+EohkZbSpkJbKg/JPMhDjkyhQTkFH9qrs0=;
-        b=V1VPI1wvOdEeODTh1NEAa4YlQ/DW+3e0PZlirzUIuPjXZHM8r2SgPg4TWfSCK704Cz
-         Lh3bmEXExt4t3tgSzXCzss9x1xyKypd5rOjup0homVf1AwkVzpnucSyI5lXBmixVBBJ+
-         sTsu3nYgU3dQC3QHfcP11KvziWErGpZKAbodrKrL4dhvM5j4AYl8DWOHwyRyAQMbjmcP
-         uFwE4CDhMxp80akrCmWcx2dSk+8AtwYYCeKIds/XNcUVF2mJVMlF1OuwyPUQ8Nnv2oSQ
-         vYJF5546xqqtD+JIGmShtIFAyaAH2SpAqrN1i76gocTglIMfA5tMB5fY+iJaspJm8MZw
-         Azdg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+bci/48+Yfu8GSRXg+LT9dp3W3wFHbBh4uancuHuKkov3iirPIsjRDKgKIvVWtDhs8fcfTBeW65fr1Tk=@vger.kernel.org, AJvYcCV4Hug4chSXVvaMVCIywFjDq7Dp+m/8xFNOACdtyFp8gJbpsWy5ZxtAOMem6ZnoqVKvF5TOQQKJ13njbGg=@vger.kernel.org, AJvYcCVtTeuX4X6Op+kyP5X1SSACgACIh/f0U4ePQWKWoGXxcoGEVLQjoS/qAy+HULsfXjsh2g/TFYmWZf3Q@vger.kernel.org, AJvYcCXu3rERdwxUYZYmoD+BZE8nm/rX/JqBZNfJ9UyJIt9AzH2L0H6geX746KP0oGaNdf6i54XOcjQ3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHi+u0IwZ7XOex4BuWWaUrJtAjaCvkeUrV3hpOYvGrxoLdTfTq
-	TMNGBzSl8xJEr53QN0WM0hlp+/gjmFfb/33fIM3GHC+8yUoctSR31XP/YPtmQysJQm0ZP1VgRYo
-	2HvzREjniG9+ojszyow+xNVkpvD7dxDvmDm8=
-X-Gm-Gg: ASbGncsSprmxBoTLAHyDq8beL03HLjGq1keSWszvdUCUq9Orpcb0ZdJrJvGIUP3ZBJX
-	TwzQUnYgVMXoLXpSikysN0xP6Nxc/HGvGv8SaatQW1LXnFtvzq5PZJkrCo27T0Ea+zguAngXg0z
-	pllKDIhtIryhMMK+SCgmOyRyc=
-X-Google-Smtp-Source: AGHT+IEZ1gxTlLOfywqM5qJt0V6DfVuNiEdCu4F1a8cmHinv8fLmByAobF8BwxoJbphakrJv4LmyELLhW5VnjmOXg9s=
-X-Received: by 2002:a05:6512:3ca9:b0:545:4cb:b25d with SMTP id
- 2adb3069b0e04-54f9efcc142mr2725663e87.13.1746526356594; Tue, 06 May 2025
- 03:12:36 -0700 (PDT)
+	s=arc-20240116; t=1746526476; c=relaxed/simple;
+	bh=WD+ZJ4NtJb45Ch4i+Uiez7RgTZJ1NY8PlVuKx2jh1E4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Sd8KdPIgRV4PqzIF/oIaU1ovY4xRZtqp5jlcEcbADR0GzCGSE5cD0eK0TucmoqB9P4rqu0kgMMPmNK3tQZyv6ZYY6eDoaqaWcMfLa6vHxS9iJ/UxHXO8XVftjusqJA96LKcuTWtFy9+8vphdOCSlE2+IWJ1Rt2pBl5snRrpKBNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uCFJX-0002sa-Ve; Tue, 06 May 2025 12:14:15 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uCFJX-001NTS-2E;
+	Tue, 06 May 2025 12:14:15 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uCFJX-0005o0-1x;
+	Tue, 06 May 2025 12:14:15 +0200
+Message-ID: <6da16137350aced4881cd623c27acb4094bf874d.camel@pengutronix.de>
+Subject: Re: [PATCH 2/4] i2c: tegra: make reset an optional property
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Akhil R <akhilrajeev@nvidia.com>, andi.shyti@kernel.org,
+ robh@kernel.org,  krzk+dt@kernel.org, onor+dt@kernel.org,
+ thierry.reding@gmail.com,  jonathanh@nvidia.com, ldewangan@nvidia.com,
+ digetx@gmail.com,  linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 06 May 2025 12:14:15 +0200
+In-Reply-To: <20250506095936.10687-2-akhilrajeev@nvidia.com>
+References: <20250506095936.10687-1-akhilrajeev@nvidia.com>
+	 <20250506095936.10687-2-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423-spi-tegra114-v1-1-2d608bcc12f9@gmail.com>
- <00b119fb-1cbb-432d-a884-5b33696461e6@nvidia.com> <CALHNRZ928KN6ZBDzdGWyabSQw4Hny6F5RdqZ4hBUZosPZtni1A@mail.gmail.com>
- <ea5f8416-64da-4a26-8706-bc7ace502ad1@nvidia.com>
-In-Reply-To: <ea5f8416-64da-4a26-8706-bc7ace502ad1@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 6 May 2025 05:12:23 -0500
-X-Gm-Features: ATxdqUGR63m8acnNToPwMfN0230ptae2vEurQ4x2zJYJHAcaJlVza7b9HRyDsaU
-Message-ID: <CALHNRZ9LUqTBf5_WBKVt1FR+aPrTk-HUR2jmgQMrWH8xjAHx8A@mail.gmail.com>
-Subject: Re: [PATCH] spi: tegra114: Don't fail set_cs_timing when delays are zero
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mason Zhang <Mason.Zhang@mediatek.com>, 
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-On Tue, May 6, 2025 at 5:06=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> wr=
-ote:
->
->
-> On 06/05/2025 10:50, Aaron Kling wrote:
->
-> ...
->
-> >>> -     if (setup->unit !=3D SPI_DELAY_UNIT_SCK ||
-> >>> -         hold->unit !=3D SPI_DELAY_UNIT_SCK ||
-> >>> -         inactive->unit !=3D SPI_DELAY_UNIT_SCK) {
-> >>> +     if ((setup->unit && setup->unit !=3D SPI_DELAY_UNIT_SCK) ||
-> >>> +         (hold->unit && hold->unit !=3D SPI_DELAY_UNIT_SCK) ||
-> >>> +         (inactive->unit && inactive->unit !=3D SPI_DELAY_UNIT_SCK))=
- {
-> >>
-> >> The above does not look correct to me. For example, if 'setup->unit' i=
-s
-> >> 0, this means that the unit is 'SPI_DELAY_UNIT_USECS' and does not
-> >> indicate that the delay is 0.
-> >>
-> >> Shouldn't the above be ...
-> >>
-> >>    if ((setup && setup->unit !=3D SPI_DELAY_UNIT_SCK) ||
-> >>        (hold && hold->unit !=3D SPI_DELAY_UNIT_SCK) ||
-> >>        (inactive && inactive->unit !=3D SPI_DELAY_UNIT_SCK)) {
-> >
-> > This is what the code looked like before 373c36b [0], which dropped
-> > that check because the pointers can never be NULL. Should this check
-> > if ->value is not 0 instead?
->
-> What the code does now does not match what you describe and does not
-> appear to be correct. Yes checking ->value is not 0 would make sense.
+On Di, 2025-05-06 at 15:29 +0530, Akhil R wrote:
+> For controllers that has an internal software reset, make the reset
+> property optional. This is useful in systems that choose to restrict
+> reset control from Linux.
+>=20
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 35 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 33 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
+a.c
+> index 87976e99e6d0..49b77dcef184 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -134,6 +134,8 @@
+>  #define I2C_MST_FIFO_STATUS_TX			GENMASK(23, 16)
+>  #define I2C_MST_FIFO_STATUS_RX			GENMASK(7, 0)
+> =20
+> +#define I2C_MASTER_RESET_CNTRL			0x0a8
+> +
+>  /* configuration load timeout in microseconds */
+>  #define I2C_CONFIG_LOAD_TIMEOUT			1000000
+> =20
+> @@ -184,6 +186,9 @@ enum msg_end_type {
+>   * @has_mst_fifo: The I2C controller contains the new MST FIFO interface=
+ that
+>   *		provides additional features and allows for longer messages to
+>   *		be transferred in one go.
+> + * @has_mst_reset: The I2C controller contains MASTER_RESET_CTRL registe=
+r which
+> + *		provides an alternative to controller reset when configured as
+> + *		I2C master
+>   * @quirks: I2C adapter quirks for limiting write/read transfer size and=
+ not
+>   *		allowing 0 length transfers.
+>   * @supports_bus_clear: Bus Clear support to recover from bus hang durin=
+g
+> @@ -213,6 +218,7 @@ struct tegra_i2c_hw_feature {
+>  	bool has_multi_master_mode;
+>  	bool has_slcg_override_reg;
+>  	bool has_mst_fifo;
+> +	bool has_mst_reset;
+>  	const struct i2c_adapter_quirks *quirks;
+>  	bool supports_bus_clear;
+>  	bool has_apb_dma;
+> @@ -604,6 +610,18 @@ static int tegra_i2c_wait_for_config_load(struct teg=
+ra_i2c_dev *i2c_dev)
+>  	return 0;
+>  }
+> =20
+> +static int tegra_i2c_master_reset(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	if (!i2c_dev->hw->has_mst_reset)
+> +		return -EOPNOTSUPP;
+> +
+> +	i2c_writel(i2c_dev, 0x1, I2C_MASTER_RESET_CNTRL);
+> +	udelay(1);
+> +	i2c_writel(i2c_dev, 0x0, I2C_MASTER_RESET_CNTRL);
+> +
+> +	return 0;
+> +}
+> +
+>  static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>  {
+>  	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode=
+;
+> @@ -621,8 +639,10 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_=
+dev)
+>  	 */
+>  	if (handle)
+>  		err =3D acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> -	else
+> +	else if (i2c_dev->rst)
+>  		err =3D reset_control_reset(i2c_dev->rst);
+> +	else
+> +		err =3D tegra_i2c_master_reset(i2c_dev);
+> =20
+>  	WARN_ON_ONCE(err);
+> =20
+> @@ -1467,6 +1487,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2=
+c_hw =3D {
+>  	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D false,
+>  	.has_mst_fifo =3D false,
+> +	.has_mst_reset =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+>  	.supports_bus_clear =3D false,
+>  	.has_apb_dma =3D true,
+> @@ -1491,6 +1512,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2=
+c_hw =3D {
+>  	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D false,
+>  	.has_mst_fifo =3D false,
+> +	.has_mst_reset =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+>  	.supports_bus_clear =3D false,
+>  	.has_apb_dma =3D true,
+> @@ -1515,6 +1537,7 @@ static const struct tegra_i2c_hw_feature tegra114_i=
+2c_hw =3D {
+>  	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D false,
+>  	.has_mst_fifo =3D false,
+> +	.has_mst_reset =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+>  	.supports_bus_clear =3D true,
+>  	.has_apb_dma =3D true,
+> @@ -1539,6 +1562,7 @@ static const struct tegra_i2c_hw_feature tegra124_i=
+2c_hw =3D {
+>  	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D true,
+>  	.has_mst_fifo =3D false,
+> +	.has_mst_reset =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+>  	.supports_bus_clear =3D true,
+>  	.has_apb_dma =3D true,
+> @@ -1563,6 +1587,7 @@ static const struct tegra_i2c_hw_feature tegra210_i=
+2c_hw =3D {
+>  	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D true,
+>  	.has_mst_fifo =3D false,
+> +	.has_mst_reset =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+>  	.supports_bus_clear =3D true,
+>  	.has_apb_dma =3D true,
+> @@ -1587,6 +1612,7 @@ static const struct tegra_i2c_hw_feature tegra186_i=
+2c_hw =3D {
+>  	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D true,
+>  	.has_mst_fifo =3D false,
+> +	.has_mst_reset =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+>  	.supports_bus_clear =3D true,
+>  	.has_apb_dma =3D false,
+> @@ -1611,6 +1637,7 @@ static const struct tegra_i2c_hw_feature tegra194_i=
+2c_hw =3D {
+>  	.has_multi_master_mode =3D true,
+>  	.has_slcg_override_reg =3D true,
+>  	.has_mst_fifo =3D true,
+> +	.has_mst_reset =3D true,
+>  	.quirks =3D &tegra194_i2c_quirks,
+>  	.supports_bus_clear =3D true,
+>  	.has_apb_dma =3D false,
+> @@ -1666,7 +1693,11 @@ static int tegra_i2c_init_reset(struct tegra_i2c_d=
+ev *i2c_dev)
+>  	if (ACPI_HANDLE(i2c_dev->dev))
+>  		return 0;
+> =20
+> -	i2c_dev->rst =3D devm_reset_control_get_exclusive(i2c_dev->dev, "i2c");
+> +	if (i2c_dev->hw->has_mst_reset)
+> +		i2c_dev->rst =3D devm_reset_control_get_optional_exclusive(i2c_dev->de=
+v, "i2c");
+> +	else
+> +		i2c_dev->rst =3D devm_reset_control_get_exclusive(i2c_dev->dev, "i2c")=
+;
 
-Alright, I will send in a new revision once I can verify the change.
-Since this was already picked up, is there anything I need to do to
-get the bad patch pulled?
+This could just use devm_reset_control_get_optional_exclusive()
+unconditionally. If the device tree correctly marked the required
+resets as non-optional, DT checks would guarantee that required resets
+are present in the device tree.
 
-Sincerely,
-Aaron Kling
+regards
+Philipp
