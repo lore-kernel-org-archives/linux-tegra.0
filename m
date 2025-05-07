@@ -1,72 +1,72 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8D372635;
-	Wed,  7 May 2025 14:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B8972635;
+	Wed,  7 May 2025 14:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746628701; cv=none; b=P7wLXOHH0+lv/khI6ef8vvdwh0DQsfyUQHfZWgwj52pYToIA9oFY37ejfLJhEFTbVNeAvssfdyay76s50NYbMWLcYgOt9rSeYnLBwMLFq7QxkOKI4A6IG6M0GujDX3YFvCbMKQM45bHNCG+WLGGZMhjLEUfTkeo3pWFYBcQB7yE=
+	t=1746628704; cv=none; b=US50/cSll1K9UpBIuYWEGTbgpi3YUKLtZVeN86s9iMMXaCoiiFKqls0fR/QJZfP17x8E4EU2XUoY+veX1vqbhrNsxiotlGA8XkOPiNa2YqRkHaNDRBQak7cCpi3Fcfoy3hUQsJCCRhc6PQiZBrvehM0zHjMiZZ+ageujv81LguY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746628701; c=relaxed/simple;
-	bh=qgOXVS3uiOU5cM4Ku8pQlo1r3r+xgmzgLTfCXfnPk+o=;
+	s=arc-20240116; t=1746628704; c=relaxed/simple;
+	bh=OXFSSzIHtXi1ZftToHfjuhhCWPTTdinmXHmvKD1MhOY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ukwuRugpP4/5TihA8Ee0vHvdkXkiGFdSpvK6fNsolCXAqF7F3pVfxU7dOOx2upLu7zlJaCl+bQefpVMeOAmqORV/Ra5MSXgX3p6Cuuscci3UqQTrqJLapTv9pcqZCrn41HePrBgPsREUamMnUI+AgHgpPX/LZOCZLADX1+R+YGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCCMihFG; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=faL6savUX27gNtVrRr+qbPcEJ3xSoG8LAi9ePeo0CBPAkUh9aD+U/otRm1FFgfxi0Pe2sFssCnHYdTTrOzFOrNz/cn4o+21e48SHEqJQwnE5PoT8BiA1SinkWmjH+ChtPxZgicL+yCn11acEXl0An3Ei5cuLhvwBr8CiSD7n+J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3q55bVe; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCCMihFG"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3995ff6b066so3484035f8f.3;
-        Wed, 07 May 2025 07:38:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3q55bVe"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so2437405e9.3;
+        Wed, 07 May 2025 07:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746628698; x=1747233498; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746628701; x=1747233501; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tbaHkQtQrQfve1siYsg8GFliEdoPcVYlup1lmgOUvQ0=;
-        b=ZCCMihFGmOrJ736bHKf5UyRWutAhA6FP5Am6muXP1SYFbCwJUE7jEUIkj3jLotCAYH
-         T08ofwc88O+cQ2vhjMd0PxRmts/2XE+LEXzOdB4Gsf6PpNEmqRZWHrjPKnVy5piObHc1
-         IIE3V4dvxeCF2GwVugpz2cGn4evOpgm4roC1XtA3EQQvQYan4aBSSChrs9Jl3+ZQx4Yx
-         7OPsNBzBtbteXs+eACBvYLBVMGYE9eY2tDeiKpIntKvS56nnRDsrKK9wo8s3Dl2A3OA3
-         etd4aEeFYAzKwJ9SNbpV8p2/lPgYq/Jvo3MzS8vQ9M9FvLA5wL3ZiI2qIBy07DnPJShf
-         pMDg==
+        bh=XjHm1B1Dol6/zUw3jQARhV/mKabUcXMJ3aVJNVwVxy8=;
+        b=I3q55bVeGMgWXyKDu8pz4QKsB59Nlhqnr2kqKLtQ3f9Zlr0JNMwXKX2CBWjjQOjR3p
+         ZzTMfG1W1NHdNitJuOgtAlYJKKfara0+YhLmiyxzbEmzCjttmJdY6g6fScc6NMu4m9vi
+         uBWgDZCLkjZYUWC0aEwEejYcrZV5HTaWj/R2pV9QIqJHJSoA8JyzSEeqBeHKHTyCcEE2
+         aDySUb4UQl6yh6nQw/xpmP7CRPWtGjgdFvj0ZjV4eiiROaYsD4T5QVTNIkFK1CQu+S0E
+         lOstbWIteA5O4BhKrW+Bsow5ogFTeiNBc89yCWrI4xqXvLJRleE1EzKpHiXS4tNRTJVs
+         yFeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746628698; x=1747233498;
+        d=1e100.net; s=20230601; t=1746628701; x=1747233501;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tbaHkQtQrQfve1siYsg8GFliEdoPcVYlup1lmgOUvQ0=;
-        b=BImTuLhq9qGDttIvIX+OS8nY0G0ZSC3JR6z1iuHBBpIIxovPmvy3i3V7Rut+MgfhHb
-         l+wlFrCr0uo4Vwnq1Oy6h5wWtryhoep6CjwxEVPyQ16fImpMkyo/WEr1pjmyxqCyhl+K
-         pJ9oMuY3uGA0rBFiQtfnvDEKPvgma88e3o79MJGtKlb3lzXntYHKGSgdTS3yftAkX+cV
-         NqAeVUT2DWrCg57METmui6F5Mk81y28sA4i1DPZ3gQY0mKae5jyY9WO6X0ay+Y/uelWp
-         TURllUcEQW3SCk+SufUX/rVDMUBL9pJVIeMAlvhtMjly3CH3AQrpcZMShGJWvY0CfPS7
-         G7QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0YM+eUzCYoH7s8fBiUZ4mY+dpCeAHKzSRuFkjrk8FKAUmFjfkpNKYAdT7ovyv4VmHabPccjKsmlAh@vger.kernel.org, AJvYcCV6SvBzSiPtvlijguI5uoq7ZUIkAzo03PbcqRzoba3RloSsiyhxgXUfvYk6JnHs+MfcNysIY7xTSyS00yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfvh40wtOxDEViu801cliYnhGED3HVzeP02qd9lnTd2byaHsmx
-	rOXlYcq39oYo3jZ9AbQrJ/MNgiuyjUmqnLWiw8epbk3E60vVvQps
-X-Gm-Gg: ASbGncvSZmQlLVkDAx9+d/FOk9tCLjXyFLsg5C2rEIR3BFSUec3T6kkmeFWAIehr1/v
-	39USa7q239euirvT7dHFvw5WglHXVfznu690/2ehsQKSxz0pnn8ojUozyV5rsghLty4HhFnW3Sr
-	suQbCzehGK5pYsohv5S64kjSSx9E0s7TMtS9lVkVZNUgFsr2h1nfUssIuxNHFC5ejNOa3NW2PsN
-	TxfU3LbshtYw4rPm4Yezdy+241x4M8QYtlByDkcHvAwlSX+gJXh+9y4pyoAgoDNB/fTos/axZm0
-	2s+2F15WpjJoA9jOuA/jg3KDJkPR4M6tUIXDiijOGycTYHJqKV0StDmin2GibDYrZHQjLLa67Kd
-	4AwUNuSr++5Y1ZrZWeKeneD4d2S/oRPJ/
-X-Google-Smtp-Source: AGHT+IGYNKab8V1AgUhTMk5nBJpFGPuJZr2l6irKlge2al5oS+JLeYqJPgX/NhWMNzzKlRWrRNRQmA==
-X-Received: by 2002:a05:6000:18a5:b0:3a0:b63f:c88c with SMTP id ffacd0b85a97d-3a0b63fcbcdmr1889507f8f.58.1746628698354;
-        Wed, 07 May 2025 07:38:18 -0700 (PDT)
+        bh=XjHm1B1Dol6/zUw3jQARhV/mKabUcXMJ3aVJNVwVxy8=;
+        b=KPgbtR3Cfv5ugBE3LNTgnen4EdBCf149HmdJsJVcXLbLzFUmJUqWARrmgMedWVL8Ba
+         QgrIFK3xIe8cYKnmcBlP8N9mfAIY8Iw7TfhKTmCD/rF2CGSx3PIXlrpSbicTmLQXrxZr
+         hAiVEae6PQcKV8r9BqJpdAk4k8IZocDrwKE/ZgiUdZfXI6aWgoCr2ZB5VniYTAhqQYfg
+         cU8wHAd6N7OgLihwvVKL4RGAYJIWBJJgdIDT1UAA4BVMzCKRDCPsmNx+dcjlkwQm/+rb
+         o0BlmJak9/BPn2EuV8quFPpkUnJQvh6cGl0YMe28NpF58dD9VAX0NZG7t9ixSr/vmw8v
+         DKqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOpb/bUpKdsMYwtgeCWoitoA4Xw1WCQi5x9MOvMnP1c6fygzwYyl796YE+vfgpzkQyVa0CeaX+jp4CFkg=@vger.kernel.org, AJvYcCWtxb8rBXvC76UQupaOyJu91WqC9CzyvPXqi4XsDanu99SorAtwFN9gZSlZS3xQBU3wfsRLFLV8S2uD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrJBGQ5vvdtcYfQDISIYIkyQ1vRqZD5PATnNEQaWkrW7RUMcIT
+	TJWCNSDSZQN5PiMVqo2ybJFPbCZYNQjlz3R0a6QNfSfI91p4UVv2
+X-Gm-Gg: ASbGncvoMxPnUnv0TtY42A9Tom5E7j6h7YYV7rTNSAXHooWFMl37e2lv3wP8jEpxFGV
+	DJ02tRxsXk6dhVy7ifz353iKZVNpOTdGhTsvgry8ifKikKRkNxpFGWxKiGq7ihMjQsXN+gLd+w0
+	oivocQqwKJKLUp3jusTBH4B5a5pHhONzFCAIxSdDdJ7U8Dhe7u4ml9hI6TtQD6LkLqsq0Kq3sUy
+	hxkRbZov3H3uYnWftV7+Exh0AYU4x0Zvf0devZHQK3zTC2aNxujzfbDqUi7l20+rP96vw+TvgTo
+	SKWQAcA1aKTvL+P8Sy/Jfz1cbDyWCOzyiVZGFkPrQUYlqR3HjvTa+2ReSve+WxrK1v5RB9gSXQA
+	D1tCYJOpkSpUKqPhdS2tSQwFNAg3M387o
+X-Google-Smtp-Source: AGHT+IHGBKi5VYRbLhMgDoCgAi7F0n0AcFeEp62EtCNfWTr8tx3YHXmmuXFcoAabgma0YQ/p6jtl7A==
+X-Received: by 2002:a05:600c:5122:b0:43d:82c:2b23 with SMTP id 5b1f17b1804b1-441d44dcca0mr24288065e9.23.1746628700896;
+        Wed, 07 May 2025 07:38:20 -0700 (PDT)
 Received: from localhost (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0b1ff8453sm4744868f8f.34.2025.05.07.07.38.17
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442cd32b0c8sm3238005e9.3.2025.05.07.07.38.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 07:38:17 -0700 (PDT)
+        Wed, 07 May 2025 07:38:19 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 7/8] arm64: tegra: Add p3971-0089+p3834-0008 support
-Date: Wed,  7 May 2025 16:38:01 +0200
-Message-ID: <20250507143802.1230919-8-thierry.reding@gmail.com>
+Subject: [PATCH 8/8] arm64: defconfig: Enable Tegra241 and Tegra264
+Date: Wed,  7 May 2025 16:38:02 +0200
+Message-ID: <20250507143802.1230919-9-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250507143802.1230919-1-thierry.reding@gmail.com>
 References: <20250507143802.1230919-1-thierry.reding@gmail.com>
@@ -80,148 +80,27 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-The P3971-0089+P3834-0008 is an engineering reference platform for the
-Tegra264 SoC.
+Enable the configuration options for these newer generations of Tegra so
+that support for them gets built by default.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/Makefile           |  2 ++
- .../boot/dts/nvidia/tegra264-p3834-0008.dtsi  |  7 +++++
- .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi | 30 +++++++++++++++++++
- .../nvidia/tegra264-p3971-0089+p3834-0008.dts | 11 +++++++
- .../dts/nvidia/tegra264-p3971-0089+p3834.dtsi | 14 +++++++++
- .../boot/dts/nvidia/tegra264-p3971-0089.dtsi  |  3 ++
- .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  4 +++
- 7 files changed, 71 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971-0089.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-index 0fbb8a494dba..171e08c94d5a 100644
---- a/arch/arm64/boot/dts/nvidia/Makefile
-+++ b/arch/arm64/boot/dts/nvidia/Makefile
-@@ -12,6 +12,7 @@ DTC_FLAGS_tegra234-p3737-0000+p3701-0000 := -@
- DTC_FLAGS_tegra234-p3740-0002+p3701-0008 := -@
- DTC_FLAGS_tegra234-p3768-0000+p3767-0000 := -@
- DTC_FLAGS_tegra234-p3768-0000+p3767-0005 := -@
-+DTC_FLAGS_tegra264-p3971-0089+p3834-0008 := -@
- 
- dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
-@@ -31,3 +32,4 @@ dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3737-0000+p3701-0008.dtb
- dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3740-0002+p3701-0008.dtb
- dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3768-0000+p3767-0000.dtb
- dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3768-0000+p3767-0005.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra264-p3971-0089+p3834-0008.dtb
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi
-new file mode 100644
-index 000000000000..94ace6784749
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi
-@@ -0,0 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+
-+#include "tegra264-p3834.dtsi"
-+
-+/ {
-+	compatible = "nvidia,p3834-0008", "nvidia,tegra264";
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-new file mode 100644
-index 000000000000..06795c82427a
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+
-+#include "tegra264.dtsi"
-+
-+/ {
-+	compatible = "nvidia,p3834", "nvidia,tegra264";
-+
-+	aliases {
-+	};
-+
-+	bus@0 {
-+		serial@c4e0000 {
-+			status = "okay";
-+		};
-+
-+		serial@c5a0000 {
-+			status = "okay";
-+		};
-+	};
-+
-+	bus@8100000000 {
-+		iommu@5000000 {
-+			status = "okay";
-+		};
-+
-+		iommu@6000000 {
-+			status = "okay";
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts b/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts
-new file mode 100644
-index 000000000000..3a6f4b7e6b75
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+/dts-v1/;
-+
-+// module files must be included first
-+#include "tegra264-p3834-0008.dtsi"
-+#include "tegra264-p3971-0089+p3834.dtsi"
-+
-+/ {
-+	model = "NVIDIA P3971-0089+P3834-0008 Engineering Reference Platform";
-+	compatible = "nvidia,p3971-0089+p3834-0008", "nvidia,p3834-0008", "nvidia,tegra264";
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834.dtsi
-new file mode 100644
-index 000000000000..46cfa8f1da1c
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834.dtsi
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+
-+#include "tegra264-p3971-0089.dtsi"
-+
-+/ {
-+	aliases {
-+		serial0 = &{/bus@0/serial@c4e0000};
-+		serial1 = &{/bus@0/serial@c5a0000};
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089.dtsi
-new file mode 100644
-index 000000000000..e8576cf2a0b6
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3971-0089.dtsi
-@@ -0,0 +1,3 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+
-+#include "tegra264-p3971.dtsi"
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
-new file mode 100644
-index 000000000000..6b6259b7310f
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
-@@ -0,0 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+
-+/ {
-+};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 696bd4043c99..c5342a35fc15 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1491,6 +1491,8 @@ CONFIG_ARCH_TEGRA_210_SOC=y
+ CONFIG_ARCH_TEGRA_186_SOC=y
+ CONFIG_ARCH_TEGRA_194_SOC=y
+ CONFIG_ARCH_TEGRA_234_SOC=y
++CONFIG_ARCH_TEGRA_241_SOC=y
++CONFIG_ARCH_TEGRA_264_SOC=y
+ CONFIG_TI_PRUSS=m
+ CONFIG_OWL_PM_DOMAINS=y
+ CONFIG_RASPBERRYPI_POWER=y
 -- 
 2.49.0
 
