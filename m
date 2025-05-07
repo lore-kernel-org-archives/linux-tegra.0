@@ -1,120 +1,189 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5BB28E5E5;
-	Wed,  7 May 2025 19:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746647653; cv=none; b=rmULv9rfm4SkLkJQnQiVERgKzK3ull9wrWnOuhvtdzFT5kLrKEEBHax9/+Pa2ae16CNVjBJkI6U9TEpcwqomjnufDTaxP4hxs/nvlmSIDho3jP5ZLHM7+/X2LLpNxksXetJUjA4JMEhFatIAhxGvUDPsIcPfCBMANbvC99CiKUs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746647653; c=relaxed/simple;
-	bh=pHqrZ5HueZDBkUl2l/yst8f9HhyNSyT7n4oy9SPTS/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZITjF2t3VhRJISvkbdKynFgc6CxnfO/PXd2VBXvGKePYbYJy4bGI7Q2vZ/oDR807FGPnEKePl37vrVTwWBAFkahloYODrtPOSGIRRM21ZhAPZxLerBifjolPFA9YPsRk1xdMxHRkpi6aTB08RBXDxn1wGm/JPypFodpeN3/4t24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ms1h0sL6; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED4F28FA84;
+	Wed,  7 May 2025 20:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746651021; cv=fail; b=p0UL8pg8+zSeF7X9AytdAr7NcCk4iTcjDQzPSg+delT06cacftW3jUuVcygAGO4yRaaFPV5ggkj6etmfu0hjzZCMsYJu55LgX9NsMQF9ShE4sAaJP0TC+R0hS5zgvmHyiZb76fecc+sqqXPVJaTp5ozrbJ3fJEfAq+OpH3OPldg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746651021; c=relaxed/simple;
+	bh=qtaB9zLrx4Ehei6z1FgN9br+hFHuSMtHRE4zkvf7QoM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kx9XMIM53UFMOd4KJBj1mBv7E1FY+AXVEH7K6n+aYifY1UuQZmATZcDDLPTNsYxqcRLAmMXYVvUeLvn9ZgxUbNa7l4LT/Q1dp9W9P+BygL0mWqXh8l6N71O8WUJd1YDYZDy5NQfnPLOBiWMBOhponOfl3hCUVb2qEE5XAOZrTXM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KQZBUsr/; arc=fail smtp.client-ip=40.107.93.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ms1h0sL6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746647651; x=1778183651;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pHqrZ5HueZDBkUl2l/yst8f9HhyNSyT7n4oy9SPTS/o=;
-  b=Ms1h0sL60bK6HEZej2FN8VhtTKZFolTWWh+taDpfS5/myg6mT8FweC8q
-   J2K6zlV10BzZaf8G6CaRG4QRbLnwc7re7O/NOUD/TvwZgopzcXUjemzh2
-   osRwPqszGPZbFycipXT72aT7FiHjSDcU3EDykIdf9klCY9gh362p2klQZ
-   NcygcU02zm7cwI++GmtwZJ6+BwXpDX6yOImoDDjEwvAxQoFLQhyljQSHf
-   PvwCeED6H5wgVb4rOxv05ikBtAltUBdcLpSZP4+Uzgtg1rZxdp3IBB3ya
-   GtbmuC9CKMPuG2CKgMlrJGVPcDf6CSQvTVpKBUOKoQvjuHNPfhNQjvu+c
-   Q==;
-X-CSE-ConnectionGUID: zM+IpxtrSECd8ik9wo2iEw==
-X-CSE-MsgGUID: mD/I6pT2RbyjIFPcsDjT2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52215252"
-X-IronPort-AV: E=Sophos;i="6.15,270,1739865600"; 
-   d="scan'208";a="52215252"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 12:54:11 -0700
-X-CSE-ConnectionGUID: vjCpnfdORVu9jJ79BLDyJA==
-X-CSE-MsgGUID: 5f5VkCX2S86VmF1a5OwHsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,270,1739865600"; 
-   d="scan'208";a="135935834"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 07 May 2025 12:54:07 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCkqC-00090R-20;
-	Wed, 07 May 2025 19:54:04 +0000
-Date: Thu, 8 May 2025 03:54:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-pm@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-Subject: Re: [PATCH v5 3/3] PCI: tegra: Allow building as a module
-Message-ID: <202505080510.T9Y6L5rd-lkp@intel.com>
-References: <20250505-pci-tegra-module-v5-3-827aaac998ba@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KQZBUsr/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hj/v9uIQ1qp8UU9ARMXEiLqHC0zyNUVdJSGKkQ1PIhV09muzaEk5idWNwIkUjwvKc8H0nVmwQwzECsdnpDwchHsFy9n6lhsLkh5qy2OeZB80XctWyV4mQolz91Mit/c4b3mX+loAn68pbgL7o3/rSxK2m/17o9r2odm7tfeTc1NymMQcPTd2l/KerAZ0rJTNWNOndgv0qd+r8Rwd+Hq00kGD4LNdM4W4423VaLhGwQ02xydgoXsv5yyeSerAWlLEdcoNxpmSZ42vmfw4mWh+48Wz1PSl+8KAz3izIdrkSyL12DDqNaFYZJ/vGiYQG/0eEuakkx3SvTRW2I2OhXwSnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cBBuKirHhbij22TbcvU6Mqo/8sTIvROlRm8Rgh0sDNg=;
+ b=RcBIn2+cVvtrXjSxn/K9EjNiib1bpxIZNNPkxh8CnNwD1HzxJoWFpQDToojvk0Q5VXXyBxG2+vbm6cxbV2XDbLGMZrlu6i++ke2ovxjksrRpDao8wDwSbptGhhfaslfQjjc1H1T70XWPpTNcPd+16O1SVH/3xaYKn4OICeBv+OQl1bS9b98UqGy1erGG6yBPjXukJfTe1PKkNhXJqQtlF5zsZ6+b4/fTpT63eo6LgI0LmXrR02950q4CzG5aWmZdOI9eW3NFLJtPv3VNpH1OG4y2C7i07tX8X9qESQ46EO6o2IOmEIgmKr3AhPbhJdlK+grlSWe9yOkrpLTU9E/uyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cBBuKirHhbij22TbcvU6Mqo/8sTIvROlRm8Rgh0sDNg=;
+ b=KQZBUsr/uEsZ6f5rQzi841Vg9SgKvfI+S6nWhwxLAg9kRf1EdwKhtemKj8o63zCRuP04DLSV/BxVMB/m0qpRCFVNYra40++vvr43qSZWRP7vvXFmvG1Lr52ipz7W9o6ha8j8NPgLALPmPg2tdP5XvLGUcF+v5bhjTpDIYk+pWoNSZFMftCnD/gkJK6ip9kvqPKThitPYpX8Feo1/sAyjgBfZkrVH+sJQqrYsLUeCwXI0ctbtCFTAtv2pRHrm/L/G7fFawj6eJfpNZ3F3ynGSzmA3GK4x+bB+0lsvNau9VW6/tsXv93AGzCl+i2cJF0zFlEthkVKVxWqHEWtG4oEskw==
+Received: from BL1PR13CA0119.namprd13.prod.outlook.com (2603:10b6:208:2b9::34)
+ by CH0PR12MB8464.namprd12.prod.outlook.com (2603:10b6:610:184::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.22; Wed, 7 May
+ 2025 20:50:16 +0000
+Received: from BN3PEPF0000B071.namprd04.prod.outlook.com
+ (2603:10b6:208:2b9:cafe::2a) by BL1PR13CA0119.outlook.office365.com
+ (2603:10b6:208:2b9::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.17 via Frontend Transport; Wed,
+ 7 May 2025 20:50:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN3PEPF0000B071.mail.protection.outlook.com (10.167.243.116) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.18 via Frontend Transport; Wed, 7 May 2025 20:50:16 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 7 May 2025
+ 13:50:01 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 7 May 2025 13:50:03 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 7 May 2025 13:49:57 -0700
+Date: Wed, 7 May 2025 13:49:55 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Baolu Lu <baolu.lu@linux.intel.com>, <kevin.tian@intel.com>,
+	<corbet@lwn.net>, <will@kernel.org>, <bagasdotme@gmail.com>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <thierry.reding@gmail.com>,
+	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <shuah@kernel.org>,
+	<jsnitsel@redhat.com>, <nathan@kernel.org>, <peterz@infradead.org>,
+	<yi.l.liu@intel.com>, <mshavit@google.com>, <praan@google.com>,
+	<zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
+Subject: Re: [PATCH v2 13/22] iommufd: Add mmap interface
+Message-ID: <aBvHcyrLbQGerWFa@nvidia.com>
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <7be26560c604b0cbc2fd218997b97a47e4ed11ff.1745646960.git.nicolinc@nvidia.com>
+ <c4d03b52-422e-41ab-845b-1d2eda7ca9e2@linux.intel.com>
+ <20250505165019.GM2260709@nvidia.com>
+ <aBjzf9PrYnwF5uZN@nvidia.com>
+ <20250505172813.GS2260709@nvidia.com>
+ <aBkahmXQGxFC0Fdw@nvidia.com>
+ <20250506125425.GX2260709@nvidia.com>
+ <aBp28sjZpPfDUfYr@nvidia.com>
+ <20250507123648.GE90261@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250505-pci-tegra-module-v5-3-827aaac998ba@gmail.com>
+In-Reply-To: <20250507123648.GE90261@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B071:EE_|CH0PR12MB8464:EE_
+X-MS-Office365-Filtering-Correlation-Id: fcb38684-c7bc-4f1b-53cd-08dd8da8c5b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VcAp2uMyLZbLRz0zIoEA9iiRkXKoO1WSQN2JziSBBU2oXSA6qCKqXvUt10qr?=
+ =?us-ascii?Q?AGKbMjDHef86+5uKttI03OTLY3svRKkGDRvL9l4rItBWtUkPHwXObXCx+gJX?=
+ =?us-ascii?Q?qLDyUCqxvo4tb2NKPYDX6oQlZlKoIs8JmYKRvKDrsGEVXwLd3BOKBndEYZ2Z?=
+ =?us-ascii?Q?HUBCZs/MeWkGqNiJXmzsQGLE1OPPNXCm1MivqIH6/OK8aRcjMqYS62GWxg8F?=
+ =?us-ascii?Q?lBlKNLgH/hwDDXdunuAsQWELj1bHvmCIoV+GxFO52y/cL7qiezdTFQC9KxUB?=
+ =?us-ascii?Q?B940JiXWOcZEIxjjR9RmD/oZcpg7RSF7+GR7nIUQdYTPxlaxa5PRfnzNR01y?=
+ =?us-ascii?Q?/lHh4HXYnrbgvMDapouEJ7QcqBOU2rY3oD/MfHuYJ8hIBlrKJJufwE/Daw+8?=
+ =?us-ascii?Q?A1l3uWXw5KCWx0wVy/cIzlbHsxfw8OaYoRavVL28ssYeyiuJAj+zgdAYDZOX?=
+ =?us-ascii?Q?NAwUOXPqy8gs9t3pPLfBdebWvqy7GGY0W3iJ3BGv/6fC7kFX7x3MVvHJszUr?=
+ =?us-ascii?Q?fhjyuZwa3wCVmnosNREJA4fwyuBy87F7wdPlpekE5p7sETuvWft2T60E/9Hl?=
+ =?us-ascii?Q?20TwxOWW00RjeWBBJ9dzKZlMuzvlW+LKiktPzIzOYXjESGJeYr9Kpd0Q4Z73?=
+ =?us-ascii?Q?cb64YJ1zJwq+5joDf8nF3qejbVxyKQQnZVw/VW4BlQHZtNPXT5zr2wJ7w6Cm?=
+ =?us-ascii?Q?rtgz9XXpdmURMN7SbBVHNQqULDCbtW2YswthY9HIOZ164zOpB4xeZHMJZY2j?=
+ =?us-ascii?Q?ChacXocR4GQhR7G5fkjKihMaQpT8alrjuEgXfv3hJwOeXB7PEhrgVpzGQ8FL?=
+ =?us-ascii?Q?lMslZTcc3PUwsQ2wqSm9CyUGI4NvZ6GXde783RofNdugqZxJTl+DXVGcuRjP?=
+ =?us-ascii?Q?5f8t67TjBM3FOS/9brZnhAHJBvzIFBoFtvBrJA5PQHWd2ra7ixgu3uGun0PB?=
+ =?us-ascii?Q?lR01N1Vo3Ua9PFKtBnZNCSfgqJ/GG6rIQNMdxE2jjp91zMbQKWsbjTlx24kh?=
+ =?us-ascii?Q?N10hRH/EpAMmxoiniJw7AWmZYtZoZzWkZn5iL+tCb65vgtYdFKCCHtiy46/p?=
+ =?us-ascii?Q?Kj9YpHGjgV82LpC9dWN/sPHUDPuoEg1RhOaTtr3FH+urjLxDAHXkMya7hFst?=
+ =?us-ascii?Q?Bm2sXF5WVrm40GTy3Fcg63mg3pFs7uwXjAddpzUiuqX/k9FPFalIRSLrvZEJ?=
+ =?us-ascii?Q?+RtToWAhdowcf3M10L2QXFbxKwj0XsXUvmvic9sg0E7QjJpE81Do+BengdBd?=
+ =?us-ascii?Q?FSD3KtwbP8ySLyyManCq/xMzEVqPxnkJ9wpqd8OsjiSklMGm2HclB7+qyPt3?=
+ =?us-ascii?Q?EHPXvcJAAbLIVgo9sl0REY85z6xJ3GzEjq9YR0tk5abYrT7wrRqaw7RLpn+D?=
+ =?us-ascii?Q?q8BIuxT5OWKL1710K9aclniASRDblu0VurRh9p98fhEgwH6b6RvH09K3l9xr?=
+ =?us-ascii?Q?GQ9D76rbaHOm9pZVLAZ9NacAkgCF127gjfgrrFz5UMP/qxZv1ogRdP/VFzq1?=
+ =?us-ascii?Q?RxoI719o1oz7zhqJzsaKFUG5Z9TgRyOMeSEP?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 20:50:16.5569
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcb38684-c7bc-4f1b-53cd-08dd8da8c5b7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B071.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8464
 
-Hi Aaron,
+On Wed, May 07, 2025 at 09:36:48AM -0300, Jason Gunthorpe wrote:
+> On Tue, May 06, 2025 at 01:54:10PM -0700, Nicolin Chen wrote:
+> 
+> > Now I start to think about the FD situation: either a fault queue or
+> > an eventq returns an FD and holds a refcount on the event object. So
+> > the event object can't be destroyed unless the FD is released first.
+> > Are we doing it incorrectly here?
+> 
+> Not necessarily, and maybe that is a good point that we are already
+> doing these cross dependencies. But we could fix the FDs with some
+> work too.
 
-kernel test robot noticed the following build warnings:
+Noted it down. Similar to unmap_mapping_range() in the mmap case,
+is close_fd() or file_close_fd() the one that we should use in the
+event object destroy()? Either of which is holding a spinlock, so
+likely it's safe from a close racing, v.s. the mmap situation?
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus tip/irq/core tegra/for-next linus/master v6.15-rc5 next-20250507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > I see! It just needs to call that function when we remove the mmap
+> > for a vIOMMU destroy().
+> 
+> It is a little fussy to setup the inode as well, but yes.
+> 
+> The other small advantage is you don't need to setup a special VMA ops
+> and do VMA tracking to hold the refcount on the vqueue object.
+> 
+> But there is also any annoying race with unmap in setting up the mmap
+> PFNs which is why vfio is doing it from a fault handler..
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Kling-via-B4-Relay/cpuidle-tegra-Export-tegra_cpuidle_pcie_irqs_in_use/20250506-102907
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250505-pci-tegra-module-v5-3-827aaac998ba%40gmail.com
-patch subject: [PATCH v5 3/3] PCI: tegra: Allow building as a module
-config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20250508/202505080510.T9Y6L5rd-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505080510.T9Y6L5rd-lkp@intel.com/reproduce)
+I see. That's why VFIO is doing vmf_insert_pfn() in the fault op,
+instead of calling remap_pfn_range() in mmap().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505080510.T9Y6L5rd-lkp@intel.com/
+> So maybe refcount is the simplest option for now. We could fix it
+> later and it won't prevent close() from working right.
 
-All warnings (new ones prefixed by >>):
+Ack. I will keep the one that I posted in v3.
 
->> drivers/pci/controller/pci-tegra.c:2574:13: warning: 'tegra_pcie_debugfs_exit' defined but not used [-Wunused-function]
-    2574 | static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/tegra_pcie_debugfs_exit +2574 drivers/pci/controller/pci-tegra.c
-
-2cb989f6e99aa8 drivers/pci/host/pci-tegra.c Thierry Reding       2014-07-22  2573  
-662b94c3195654 drivers/pci/host/pci-tegra.c Manikanta Maddireddy 2018-02-28 @2574  static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
-662b94c3195654 drivers/pci/host/pci-tegra.c Manikanta Maddireddy 2018-02-28  2575  {
-662b94c3195654 drivers/pci/host/pci-tegra.c Manikanta Maddireddy 2018-02-28  2576  	debugfs_remove_recursive(pcie->debugfs);
-662b94c3195654 drivers/pci/host/pci-tegra.c Manikanta Maddireddy 2018-02-28  2577  	pcie->debugfs = NULL;
-662b94c3195654 drivers/pci/host/pci-tegra.c Manikanta Maddireddy 2018-02-28  2578  }
-662b94c3195654 drivers/pci/host/pci-tegra.c Manikanta Maddireddy 2018-02-28  2579  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+Nicolin
