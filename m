@@ -1,77 +1,70 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DA321504D;
-	Wed,  7 May 2025 15:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606E528BAB8
+	for <linux-tegra@vger.kernel.org>; Wed,  7 May 2025 15:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632702; cv=none; b=nmZiIeZln9BAPIr0ZCrheIJfRl08iCruxkDKKWPH9J1eybaZCR3boUDGzMwz4CfCrdunaR6EChLiVb3OTH/tlSyLCARBTek9wFdMGORCA+XLJegT8CI6dszwD63QwC1vhOpmcLst/1Rgm1J0o+ldJx8vzSjSs30QZdvpnCySiaI=
+	t=1746632986; cv=none; b=ll77rQCewZvxVPpVjzQeiguufW9y947rCGL7+QJ8+tyR/r08AfXgbl5mEFwrsdOMK5P9unYWktXhr4467ks1q2my+xlf79KxS7H1IkCZRAoS8u60FYMALrVXC9RTXw2J4sWZJFm1nLiMvdHWY66HqIXGOlfx93806pt3mZJElo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632702; c=relaxed/simple;
-	bh=IpPwe4sDGsovYZM0+/DOIiNIo5tp1kutwmQemRZEX3c=;
+	s=arc-20240116; t=1746632986; c=relaxed/simple;
+	bh=RjdE99qGxSkCwK7nrxumplHXMYGQb7RdGVDlPZLkvV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czOAiPWIBpVMdt3f67C3+MiJ3PVM9keuMzzheYmVsUHwtpz8NT2m/4UahBwGn9/ZtdROhu2W/v8anF1NOEzEMCxVvhzlU4cKb0iaXblV7WUc+QIdhKvHJj1Ao9pF8enAVuGYOlXrs1dTLM5Ide2rCEdhUVw1wlii44cSJ66q4qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUZww/XZ; arc=none smtp.client-ip=209.85.221.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjPhuK+G1LCjKidF+gCB+lUwdyu2FuUUBed6CJuoCvwL9eenaqVB2feGeIpAN6QfB/O9IOuzgY+42wECAntsiErWgplwvgkV8041B0OTuuqETAK3h0wo4p0oV/kF00DxOBKcD9y7NwQJYlSQ2uaYjI2PPPWqc8rUzs4QBm0HGnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sh9bH+wH; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUZww/XZ"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c266c1389so15086f8f.1;
-        Wed, 07 May 2025 08:44:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sh9bH+wH"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so140135e9.3
+        for <linux-tegra@vger.kernel.org>; Wed, 07 May 2025 08:49:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746632698; x=1747237498; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746632982; x=1747237782; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=byHNTAzoVmJ12jHVr8chWlceaJLIIt4EKT+rNT09G+c=;
-        b=bUZww/XZResdVSLjRlv+1T+oa1FL0vpKuLM6Utrlk/l0hz/4Nz4+NVeskx3/TFJKrM
-         df0lUiXEXIsghD6IAIGu/5DAlmWJAWcxvX79sbdwIcS8qniR4aXxdJYbPs0dnbgp0+xI
-         Ik1TNJZA7rsEs/AnnflvhwB0Q6ZRD5hL5l9psYQKVz8TYcAlH401I/QfPfElht1jyQga
-         pRKLvE3yzbvfidg6rOg81k4wb0qTnecQY/6xoT82znw95IsMrsKsKUqf5nC/WXx3/Zvh
-         tMJgrabvq1pWUppE55R36V74WpzAiYGMaEw1QLJ95rNyevBz3jMarRFM5dyGjvyJwykd
-         h4Dw==
+        bh=R9hjok4wS7/jyfDA7YpA23jhzWzR1hZPY1B70z6QI6o=;
+        b=Sh9bH+wHL7/cQfcaHCZDNAnVGAsLinZYfFCVKraoCbQx//Yp8uEd51e7BbZH0sOIyq
+         pX1ezbiJDSdAwdLUbiKpLjfIl9fB1RHHzlEoWulM0SwAQ6ybGEQDYW0BRovPJouE+bVk
+         z1jdWCCIjux+xelSneRwlp66X+ugqKq97ICcMD8I4ECggIhSMYJSQ9lDFfRAxmWn3wBr
+         2rbiNE0hitDU/sRSw2G4NBtuZoY+8loYh66QzzNa/ouSGpsBby+GKRM1HbB9oeUqLXFI
+         gskVuz+4aaFGMxLP2ocPNKOSkUJDti+UGFM9tEXn02jf4jOOjaEi7gstSLcmivjv7gIl
+         y2VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746632698; x=1747237498;
+        d=1e100.net; s=20230601; t=1746632982; x=1747237782;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=byHNTAzoVmJ12jHVr8chWlceaJLIIt4EKT+rNT09G+c=;
-        b=chpfTpVIf1pwfHwQmGIkVGb0V9foBeQnf2QEEC0IRXSbEVIvugucMA9fcLMmUW/MZj
-         ofsfjBVn/RkCloslyfsbXcBYjAI4VZ92t46r0IS7setUoKL0CBVyVa0mfREf9crqeCH0
-         IdmORXfC5iSucKETk+h1TLyO+w5IJDTXl+oCGcDU7yT1cRVTRmkjRsZQ7ilrfhSN971n
-         bMbt952rS3sUiGcY9VbzSAqhxqehpgt7c1qWRcNhO8AOfudtBdo14X7rckS3iBdAb/Af
-         ueXpj7g+tLYmTWnnhdR12xWF8Rw8mzNT346NRxX+byHiR3NldCgWheEErjgNFJVB3MI2
-         7P4g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6a2k5uVMXfXxi+y1abx7aHWhCvSBxxy5wMdiqsWiynFesy/4u1X+E+woifCfRaDTcnybufS9BdrWr7zU=@vger.kernel.org, AJvYcCVHuLyD5w3b2n1crcd34WLpqwhIFVu/rQCwsI9c1DG5QHl3/Snc4JOy0vcu7/B0lwuNCyAEX8tkgTm+1PQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3izatg9L9U8Cc7y55cLV/k61gByLuGYHpklURteBQsACNdpoH
-	DsL56z3sj0fq2jvy454S1UYd5WScHhcxrS+CCKs679lVaxh0U+6r
-X-Gm-Gg: ASbGncvqAgI6+AVrWjrHMvAAZeRKs0WnfOSmYm2rg88tkHnqa+ddpXMQBsm1wyc8niv
-	tSDvX31j1zhLJaLeyNNKLXgY+dnN/adTZ0/0trWKECTQt5SHIvD2/at74JhZjArqSL5XzbodS4Z
-	r0gcW+G3VhSUWBbRiR5kdBGI++Rbp883bZKSaMQMYFyeKwdQg3np1d8ZvkcbxKJFMWn89CrW+Xv
-	vaUsHVCDPBEsuk8DxsrghGjodAWOROxiA560Yz381r4YLtjL0FZLG1h/RdvpVuihgVry07stfXK
-	+0Y3GEON1Ips2mVzJ9iGJL/vrhdTfD4qYaoGSvXUdXIsXO4yazZGBrq7M5ns+npnkmfK76V9h+m
-	lOihavcwWJn+yfR5dv3XePUwn7+U=
-X-Google-Smtp-Source: AGHT+IHfJJG0cs4abjEiWvnxwVTISrHAZEF9OSHQcqWVHkiT4B5VkyD3vvSWb6GVCRi9QWsDxzrI4Q==
-X-Received: by 2002:a05:6000:420a:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-3a0b49bee22mr2812986f8f.21.1746632698276;
-        Wed, 07 May 2025 08:44:58 -0700 (PDT)
+        bh=R9hjok4wS7/jyfDA7YpA23jhzWzR1hZPY1B70z6QI6o=;
+        b=YY3CxV6haW9DWPyPSh0zprjDOU5xwKRL/VIXCeOneT2YqymuadziduapfDWkaqRiQA
+         XHPWRFgZSj+Obti4Bu64h8yqy+0sb+d5gB7+3RfpD0JPO4LB4SEzG5JXHMC6JBsAbmV3
+         10I5HElpthi1iXsMS69j5z0beGdWYfRPa00ND5SS7QK0T/q8VVxxbbfu+GEjU6sKvePq
+         FSWBuqRXrc9YsymUOWK4x/IVV7XmcMPS7wX2Sg3ZbhU+BaAK/wfq02sbffj9OG+8ZLZk
+         Wls1A2Qg+R7ubjMVYZJHHb9Lh66mo0zSYQBQ89XpYWDQALXdHqq2Ej6TKJVbmlDvNWI2
+         D03g==
+X-Forwarded-Encrypted: i=1; AJvYcCWVoAYXCgfBmJpPb+9Kqme13FQrlnrvg6fSDas1FRva7lGKz+xAlIMs+Mw/YuQciprjjaL5/T9ScQ/mBA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2UvdOqW5GMoDcuJDQZrpsnj0XFxacB5jAA+mZs57LMaWy6OCI
+	hwLAozL2dXkd9qVPnjEYXt28drefjbczTxYuDqRsduOZyo+3cGXQf8tZMQ==
+X-Gm-Gg: ASbGncvRy920TAPLrpSrx0tEhVASYfosaDUPVUspmuV4qeV2DahPMYIjV8x20/Js3vL
+	24cX/8ktpNMpPbIeLsZ2oZK0GE0IRz07Miv4W8ivwKVbloElsn0xI4f+doc29m9IsF+MmYuFx5g
+	gaq1RZVhXFSHSEiXc/qJAGhCuhXlAh3DrXvZQgoDcngxxhJXYPZVpQjajLJsELMlNvZAuSPP/Ou
+	X06jK1jCsRSkMeq0UgGR3TzB34fxN+vPmPO4fPT5JbhEKD/zEHlBruvjejlf2uqBXL9CLcWoNct
+	Sjp/afV4snhNqBFzSxim7oglC+eZYcsHehFgHNQQemBw23QdLeWftesPjl03v17qIFV2B/UEx/f
+	FLEpm+LNF9HqYpI0pr7N5QWSFRZ8=
+X-Google-Smtp-Source: AGHT+IEfBBX9lZi7CDSSTeq7Jp+h4dZpWsYn/tcSZZkhDjNw1bK5CzzUt6YmE5gfCvZKeo/kHS7hjg==
+X-Received: by 2002:a5d:59a8:0:b0:391:13d6:c9f0 with SMTP id ffacd0b85a97d-3a0b4a0fc47mr3451624f8f.47.1746632982533;
+        Wed, 07 May 2025 08:49:42 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0ad54f105sm5672659f8f.85.2025.05.07.08.44.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae3b57sm17644687f8f.36.2025.05.07.08.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 08:44:57 -0700 (PDT)
-Date: Wed, 7 May 2025 17:44:55 +0200
+        Wed, 07 May 2025 08:49:41 -0700 (PDT)
+Date: Wed, 7 May 2025 17:49:39 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: shao.mingyin@zte.com.cn
-Cc: laurent.pinchart@ideasonboard.com, mperttunen@nvidia.com, 
-	airlied@gmail.com, simona@ffwll.ch, jonathanh@nvidia.com, 
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tomi.valkeinen@ideasonboard.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, michal.simek@amd.com, linux-arm-kernel@lists.infradead.org, 
-	yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, ye.xingchen@zte.com.cn, 
-	zhang.enpei@zte.com.cn
-Subject: Re: [PATCH linux-next 1/2] gpu: drm: tegra: dpaux: Use
- dev_err_probe()
-Message-ID: <lihaxdejm7rvuurpoj43hf5zcvrfqlztdwxqs6p443jt73noqt@iipbc2udbgo5>
-References: <20250402193656279azy9TKahAE5TQ5-i4XCQT@zte.com.cn>
- <20250402193758365XauggSF2EWBYY-e_jgNch@zte.com.cn>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	Ivan Raul Guadarrama <iguadarrama@nvidia.com>
+Subject: Re: [PATCH] drm/tegra: falcon: Pipeline firmware copy
+Message-ID: <zr5xiqfla3hkzsqcrsgitbi4acwuiw434bj6fsez6mzpsj6qlj@t2mi3np5e6o4>
+References: <20250205061027.1205748-1-mperttunen@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,52 +72,57 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rt7ige55tnphtzlx"
+	protocol="application/pgp-signature"; boundary="tcwdze7jyxpqlqww"
 Content-Disposition: inline
-In-Reply-To: <20250402193758365XauggSF2EWBYY-e_jgNch@zte.com.cn>
+In-Reply-To: <20250205061027.1205748-1-mperttunen@nvidia.com>
 
 
---rt7ige55tnphtzlx
+--tcwdze7jyxpqlqww
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH linux-next 1/2] gpu: drm: tegra: dpaux: Use
- dev_err_probe()
+Subject: Re: [PATCH] drm/tegra: falcon: Pipeline firmware copy
 MIME-Version: 1.0
 
-On Wed, Apr 02, 2025 at 07:37:58PM +0800, shao.mingyin@zte.com.cn wrote:
-> From: Zhang Enpei <zhang.enpei@zte.com.cn>
+On Wed, Feb 05, 2025 at 06:10:27AM +0000, Mikko Perttunen wrote:
+> The Falcon DMA engine allows queueing multiple operations for
+> improved performance. Do this to optimize firmware loading.
+> A performance improvement of 4x to 6x is observed.
 >=20
-> Replace the open-code with dev_err_probe() to simplify the code.
->=20
-> Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+> Co-developed-by: Ivan Raul Guadarrama <iguadarrama@nvidia.com>
+> Signed-off-by: Ivan Raul Guadarrama <iguadarrama@nvidia.com>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  drivers/gpu/drm/tegra/dpaux.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
+>  drivers/gpu/drm/tegra/falcon.c | 20 +++++++++++++++++++-
+>  drivers/gpu/drm/tegra/falcon.h |  1 +
+>  2 files changed, 20 insertions(+), 1 deletion(-)
 
-Applied, thanks.
+Sorry, missed this the last time. Applied now, thanks.
+
+There was a warning from checkpatch about the (1 << 0) that's added here
+for FALCON_DMATRFCMD_FULL, but I ignored it since using BIT() would look
+odd among all the other definitions.
 
 Thierry
 
---rt7ige55tnphtzlx
+--tcwdze7jyxpqlqww
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgbf/YACgkQ3SOs138+
-s6H2ZBAArFAuCN0WTxbq9wpDNT3hPLUMpHA6Sdh2TFEGIklk5Hj+oHTcSPS5AV9q
-uvfJynPiWqjRY4dTAs0J+6IH1R7eo/Qm71jvnoPS37oAteCO3hQqHeRVGgWN8PoH
-vWwKaO4T/ipB8rcUfqv8TH/b74FIchpMB3/K5oaalRKjPlYEs7rahimhPq0utf7u
-GELGnbPiXftDKLXxXkeQ+sXdVcvIINIikGobmY2khF9oxb43kN0JlRqxnnNF0lHh
-0+j2q2TMEGQRr/V8+avobslZXYkqyuBOa/RaWNN7W3Y4kBOEXNxOn3GoN3hkaaol
-WrXzjMX2k6OVU+MLYxR5+G+OWNRVXg/GK6KbzE4O1zJcJ5zhWssqThv61Nt3cqgz
-nby8EIlFfV+/Yjus8iTVKE2HcntU2vbi0PCB2HHdzkVGwyha9nx9lprcq83N4HJ5
-rKg3m+FP2tnrT5/JBg39FN5OftZgjN7q63WZwaly3P90pP9OhGKKDGE8+HGpzOea
-mxVEb+8MwHag8/vNh8LHLxMLTTvNb4mn/pbmTmtFU4v/sDnsFtS0zcTAcDiY7tsL
-0n/8gjh/ELimcnCQMWe4v4RGb2bCxSIFupwn2o01Shq3RgppcL+yEng2D9cJ+NVV
-TdDxber+/HIqgTWDWoMkq0D2FUZG0pN3DPMF0FXUIQDGQAy17Qs=
-=2Zbo
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgbgRMACgkQ3SOs138+
+s6EFSg//f/Sh6cYqCMaOysBS3w2h4w+wYug+gGPh5dlkrAW+zhJwlM8MvTi1oWn1
+oYCCKX7G2ilgnVXLY/dV0XNE9NMQ+mh1XpreojFllACpOuX7Gj9K09ZMm+RoUSfw
+ufoDlsNgsfAuqzWdONQ2tqCKR0WNzp9/Vs0224UvSbBJ2A1UKJeTYZmyaWH2hPpk
+TfE9TjqJSc4sB1E8YPZpisSXWRldDYu8EhMcr9eZZUV9MyOs1E1eZS0lViijqQ22
+qvfXcJ3SZN9GbdhahPTkqEwyuRreQlXoHrsVc5PLcsdVhgeoERpRHrq5J/biuBrO
+cy9votexuZTDRLiOEVR5S+s1YibZt3ALak9alJJEJa+FLf4eYsb+meYQBv/Dtwh2
+HkfPjIapS+aCS6DxDs4Q7WS1THPIN+sSmkiFQ2oga60C0YieKGq74Lah8E3MlZJu
+NFYNNi0w/hgeKXVDD0jC0XMjHdN+tuahru460VSR42tP1fJlYaeQL6j0bzDbtMCl
+KBBvHHqdpBUgTtzgkx9sx4xoEfdoPljoo00bowawWzlhiX6tB0t7MIMrdWrGRIr1
+WGlVsdskW2O8qcF6rHmdEC6CBPt9xCqKuc01q9ZSU4znA6XBgWnbMfYwjVLlOVPE
+qO06/tRGGLBND9OXuuJWkyGT6Hpy73jgp+V7YmzmHtQQ2kCvY9c=
+=Em07
 -----END PGP SIGNATURE-----
 
---rt7ige55tnphtzlx--
+--tcwdze7jyxpqlqww--
