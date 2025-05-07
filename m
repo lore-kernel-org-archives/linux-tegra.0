@@ -1,254 +1,187 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0667728AB04;
-	Wed,  7 May 2025 15:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632403; cv=fail; b=bSgo49+Iql1ScTUJPUTMw6/Y3ja+EcFv9KEyimnK2EFcTMKaP3ZqUsBrvfHrmrp7N5ByE0WUefKJQTvMJqfgEHtB3kyRirSMnf4V8/xeB59ivfJy8oVr4R74XtxQ6CZac8ZjzduDClgTxRMuOnCJD4MjQOXNbxo1NOdg+Sq6huw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632403; c=relaxed/simple;
-	bh=gxj/Mj9XZWK2yNVpJpEDtbCWPeuwn83J3c4Vw4MCJng=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gC3gNYx19Su/Z2RxE9qTTixgwaSNrohR1H3bJM7mE7ttheJ71XqFmI6Bp3Fc+e49iXQivwiQINSEkQ/oQo0d07WNVqXhatXANKq2M1VLq6MmztIiHwYnndKmmp6ntvtTpq4BH9FnAtVc/0dRFNw3ki6rqNNIrfwT9RfBWS+SBzA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W34OYDPB; arc=fail smtp.client-ip=40.107.223.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9F628B505
+	for <linux-tegra@vger.kernel.org>; Wed,  7 May 2025 15:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746632548; cv=none; b=QhJL2sGyROwHODWMi3CzSphIBK7JFAvhIxmaZa5FLv2apP8PLN3VDFXjObMMrY1hcHRdMcRWubN9w4KvMsHDVBgKWjlsa/7jxGkrx//tYo0ojtKz3NqVMJ1+yMWrvgfU0D87QgR6eqM2sJOhhPeSSmlHsHfsouWr7vg0X25t6p4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746632548; c=relaxed/simple;
+	bh=vEf0MzSl8IcAFrLEq9xXANHwiINR5TDoGKxS7LUHfU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KiXauveJo+rOGLpOW74FrYe/sVEJ81FWVHj5h0jaluCCNNHVKJes4C4/m+rXh9dUnF4lT3u6Gm0u1pvWPuGDtxwKtGWzYtTXODy0rvdaTyPb63Rsd2xGtpHA6V2K4pFaoCb2GiwiVT+hFYuOrPvwGB6hKmsd/4g3U95EskEM1O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEUHk5u/; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W34OYDPB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vy3UUa4USY+3fUu3EWyds4KtgwJmZB5EiW/zfiiu/3QvZYX3YASRUdAgFm4c1tq6haPbTQR/WPSrwjxwx3GTjgtrI77LsLzu5aBgNAN4j9dTzmBn0knQa3uwzLA2wdKTTg3l+wXfk6C0JdJBXaZPIVkdxRaWnpcLQIYxtw/t86aSCMu6xNEb0F/QNgqffXJNwgqQDif5xZu7Hk0aI5JJgJ2zMPyenKi6vcYPtHGS+ynSGsoHfanW0XZZzaJmDA+Gw/ujYXhD7e8vvARVeBpofIpgAevjkJsBAEKzmDn01QaPYCe6x0ZUEY+vx1MiPYankjTRJdHNIWr/7vE8lkyH4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gZF4f1OljxdH9yzKOSp+u6Suq5+P4Tp6fwjaHQrygY4=;
- b=rgdIDWp1w5fwhCzKYPYgA7zLt68rjXPeyYJTXCv7YUlad/+PjAU+pe9x/+ysawERU+Ix6Bxw1g2emFvxVdnzzV+lSSye+usGjisEw7lTFzIGMDa+kwORa1k7EBb8pvU/VIaQf+Z4nBMU8ShowkYKZEwlA9iMfkY2vZnwrK9qUQwBjUVHcwV+oFOT6xzsD+YVlpl8Y0aMyvymFd+QWBTML8sCl6kaaYSlqMEQ9giug66QjPKooNivxmsIg1uvyrTYcKMVobaTLzr2txlpfksE4XF6AVXbV3WN+gQgvHnaL0z26/agv9VbEyrvJLsuR7rJdvniB3ddsU/taIPa87AN2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gZF4f1OljxdH9yzKOSp+u6Suq5+P4Tp6fwjaHQrygY4=;
- b=W34OYDPBUehQrFbvxUDZqexkSNacS1a6ewiKIMgK0I+dH5F2YJ/gEb8U9R39XyxyvkAcqNYRPr4QT0amxaTJHueDA0Jes0lN7CjG4rsdKTWxHfJYhWG6nodK/rd6gph4oDm5k7mlgXszGyZ2qQT5dVC0IcKq9OkRyVz1UuLhCzdNPBcLNQCpuYxEulqnHtn2r2ChenxKDfO05Ucp+xQh+E5fwJtRvGhvpnmuOkFh4/ygltHaeN3UCYO5fS9b55DLSA59L8osIJGjrbNJnI9tfIHFnPyeuZUO0f/GJzB9w/YiqxheyH8EMv84Ba/2QrVnNkRt5Igm7h3bBXmC9YX9Lw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by IA1PR12MB6603.namprd12.prod.outlook.com (2603:10b6:208:3a1::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.22; Wed, 7 May
- 2025 15:39:56 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8699.022; Wed, 7 May 2025
- 15:39:56 +0000
-Message-ID: <b17469ee-0d8c-49ff-8fc8-a3c3cc9964dd@nvidia.com>
-Date: Wed, 7 May 2025 16:39:50 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the
- parent
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson
- <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Saravana Kannan <saravanak@google.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <10629535.nUPlyArG6x@rjwysocki.net>
- <22630663.EfDdHjke4D@rjwysocki.net>
- <c6cd714b-b0eb-42fc-b9b5-4f5f396fb4ec@nvidia.com>
- <CAJZ5v0jWTtaQEcx0p+onU3eujgAJpF_V57wzZCuYv2NVnEb7VQ@mail.gmail.com>
- <7c970b02-7b58-4d15-b5f6-18bbfd883ccd@nvidia.com>
- <CAJZ5v0jcWQ3QKx=2nzDpnYPyGuYfT4TModwdAreWZu4d0hXmoA@mail.gmail.com>
- <CAJZ5v0jG+54uKiY-uSc6B+8JuA6eU1j8tGM5d=XsrT0EmabMeQ@mail.gmail.com>
- <563657c5-5529-45fd-96fa-bab68ca992a9@nvidia.com>
- <CAJZ5v0jVOG_u=F36aOVh=qu4Ef-5QFAmC+5-fmF_mU8NSr_LnA@mail.gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <CAJZ5v0jVOG_u=F36aOVh=qu4Ef-5QFAmC+5-fmF_mU8NSr_LnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0263.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:194::16) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEUHk5u/"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso107835e9.1
+        for <linux-tegra@vger.kernel.org>; Wed, 07 May 2025 08:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746632543; x=1747237343; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlQ5hw6LWmdOYpYPvKtDsPG1vnMrD1DZlCe7qiUp07k=;
+        b=BEUHk5u/qoSMltYQVI1fjygLf3zSxiu/w5NRy029VpBAazITkmDVqC3Z1DP3qdKSyn
+         leiWrg8XY7qzN4jMT0du0FkRCOwyw0FbvUfO40TRj4u7gFsCr7iFH5ZPXwtIIMUFH8O1
+         hk7i3cJ5a8mwUsGmY9R+Zc8CWc1VwfOF93rf472Q73lbIe35ge1KnFHHyHFtinYkFXKR
+         GKg4iamxv2Jiv/WHhnAVgXJnF4c4E9wPp5FxjSMlTO4cbYmR8w/kVhNAMF2geHT4w2Nd
+         43RS8BHLI+1K5iXgO+VQnino3srb5E5yXD4V68WgaYtdS+cF2QvqG2lNwFi/U17DO9G1
+         rI0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746632543; x=1747237343;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TlQ5hw6LWmdOYpYPvKtDsPG1vnMrD1DZlCe7qiUp07k=;
+        b=fkvMNTa7ZbuqzOGtHHbhYQ7/Qx63GfsdYKhWlQQCtcUOwAAGk2FC6r4BYFjntrjD1P
+         JDNuz4lQQmiAtKeYXvSBjIOEEgaWTTQr/iMXfj/48AeahyKolIbNGYTyCP8Cl3yiVyCF
+         bLBbN3XBli4Vua+AUiDxBeh+aoQhFc1Gs9mFOigotaeB+4W9s0sSyFdCxpXgH5iaV/Hr
+         VECwSpFjKEC0j0YvDBdS+L71yh2n8wF1M9vSRs13es4hIwRWWBPAzZ13L3pPT49jH6GR
+         U2B+at/TWtQN8WamsHosXgauaYSqnNckoJ+qYXPDe3UjsgjMltDIEhABA3RSxtChC0bP
+         4PsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDomwX8N8aIvhcRyb2XoVF4JYh3FUmAHVbG9DUWttHxIIJGp4WvZLHkWM5jYiX/9oStvedIdC52sZnCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBblnuGfs2kqOs9RIe5+njl16EYN03p4r4BtIReLnPB9b4MkR5
+	gZ8Y/hnWa4+u/5wQl46LBGtC9TGQdPs4OVVad0ypCozylBD8QFMn
+X-Gm-Gg: ASbGnct9XDydJH+0bX/TUiL/fsd03lLSdV0tt6RXteDTFVKHGj592uV46T98ZpqvLlf
+	eGAFHA6RqmRgATuMeaBoPDFX1+0bEtO8e0piRVyQRwyQvBZe1S2hVa4t5pZHELZQrgetPA7llWg
+	VOQS1JuVMB62f2HM9L7t7/AhB5XLPlYov0lOyWJUHXJDxfZvD/W/h52bOIsbqQeAxgCu6HtvjmM
+	/PEEcGEwPdsKhqNxMo/QC2Vpa8fX8u2Vz5YF9SgfszmmKN1LLJcMG6+9VCq/+5LTY7ideG8p7vW
+	N6DIExJKOLmlJhkRL/l9AhCyAaopfZBOi7Fzjke72cxK3yuCg7FhVOrSrSwGelrAO07Kp2EmFZP
+	7x+swswNWJWtmzQEt8NbleliqpUo=
+X-Google-Smtp-Source: AGHT+IGjXvu9oFQySoHXW/9xwWknPz1Z0gC3AIJFj0PBkN+vPBbSa6+gpsSaULJ4J4weRDJhyGu+Xg==
+X-Received: by 2002:a05:600c:4eca:b0:43c:e2dd:98f3 with SMTP id 5b1f17b1804b1-441d44dd21cmr24445935e9.21.1746632543150;
+        Wed, 07 May 2025 08:42:23 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7b83sm4516915e9.33.2025.05.07.08.42.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 08:42:21 -0700 (PDT)
+Date: Wed, 7 May 2025 17:42:20 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] drm/fbdev-client: Ignore EOPNOTSUPP errors
+Message-ID: <7auvkja5skuew55xrpb5vbat3qgopg2mynm2rxxxa4re3ar3ql@jue4ofk5ohl5>
+References: <20250412070047.6725-1-thierry.reding@gmail.com>
+ <tqvzgt3cyf453x6eovhe2ox5n7w4wacmdjzxpclxsubq3ub7ld@a6fzvt2is2sa>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|IA1PR12MB6603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3068e490-589d-466f-7ec3-08dd8d7d6aad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHFhUEcxZ2lJc1BrL09SV0o0MitpS0Rzclo1ZTh2eXNpclpudHgrQ3NmdFk5?=
- =?utf-8?B?eXVndUxUSHpFcHlVdnkzYnNYcVRjV2xZMVRzQ0lGTnRoUVppOEw2YWZXazZh?=
- =?utf-8?B?QlhVUEdhWkRpdzlKaCtBc21QaW9SREp0SFFDZlpYY0hyOVNvTmYyTy9yb3dL?=
- =?utf-8?B?NGYvWGg0QkcweFlzempSU01ydHp0Y1hucTRxVm52d1hlWmxXajFRM1RWQURX?=
- =?utf-8?B?dnpzejUxMmZhSFN1QWdhdDh1VGhsNUhQT3Rja3JVR3IxQlBhcGJkWHpkNll6?=
- =?utf-8?B?UkdLY2xnaFYxeHVnNWlaRjhvSWw5UU9vV3NjMlBVdzRjNmtZVGV3aDVhdDdx?=
- =?utf-8?B?UklaOGNqbGlZVGhVamVoUVZPUVZMNHFwZU11UFFMMTl5c3M0SmtVcHpXNlBR?=
- =?utf-8?B?QktoeXRqcjd3aG1qdDJrUlFtUVZhSXdyV0lHWCtTWXhNWHk3ZEZtZVdqOVla?=
- =?utf-8?B?bnlCMGtlU2c1L3pURDhqY0tXa1NRWmtqaHgwbk8vUThrTkE1QnovN09sanZq?=
- =?utf-8?B?S1hES05IWUVUUEs0Zk5Hdm00TXRqRGd6VW9LRUduSzZiQzVQYTI3UnpjVUR3?=
- =?utf-8?B?M29tUkp1Z0tnWFJiZEtnK1kxcGNBSmRwY0g0UHVYTEJ1V3NmN3hVRW1qWFdv?=
- =?utf-8?B?cllYQ3h2elNEMlR1eklGMEQ3YVM3Q2xyNGNWT3Z6bTBWVG40UGNQQkRxRlJx?=
- =?utf-8?B?ajgwanZFa3NkZ2FpMW1RL0cxbDkyK3REdUFYVXR0dlhxNDVYL1NxV2h6YU15?=
- =?utf-8?B?RHJnTEk1TTl4S29wOHh2bGtLU1M5S21HK2djMVduTnluTlUrdWQyRzZZY2RX?=
- =?utf-8?B?V2NaSGY3anlNR25MdGRlYlhJMlBVVUsvd1RMRmQzL0dqSk1mVThNV1NGYlRh?=
- =?utf-8?B?TlZYbjVWRnMzUk5pY1QvRlc1R3lXb01QclAwbmc2QTNLbTJZVzVGSE1yb0lo?=
- =?utf-8?B?c0hJbWIyR0NBMGpIcC9MQkg2MnIwVEJvRmJUQmk5OFVCQ3JEekpzY2FtS2NX?=
- =?utf-8?B?SUVXRk1sU1duNkcrdUlrcHl3SmFMOEFWaEVjZnlYWVBodWZNME15ZFB5NTNw?=
- =?utf-8?B?RkY1RklGUWt5TFdPUDN5MlM0UEs0akw2RUpwWGxERXRDemhrSFBtb0RLa3E4?=
- =?utf-8?B?ZXNMMml0SCtyWlBpQmRJNEJDQXprYlBOaHFhRVgrbWtDQlJZRUkyMk9MdjZj?=
- =?utf-8?B?YzQrWjdyTE5iN1J4SzZYU3dnanVZT29RK3JZT3JRWkZBZGVuaUt4bUZPVjI2?=
- =?utf-8?B?K1dJeVU3V0duS1EyMVZXQVFQYW52SGhhbFI1NlBSbU1VV0JIWDAvVHRyZjF6?=
- =?utf-8?B?SVpxYStucEtBOGtHN2pLRXJnKzhrMXE5Z2pRa2pCeklOYWFaRzBLYVh2VVQ3?=
- =?utf-8?B?NG9GTHlJTHhoeDJWdHhmV1NSNUtuQUt3UjdXdnd3RlN0RW5PRHBWNFY3UWJX?=
- =?utf-8?B?djN2dUc1UlR1bm8wanlTa0M1cXREUWNTMzJFckRMZmFCYVFBaVJpSnlEQTNa?=
- =?utf-8?B?bUQ4Qmh1TDFXU04zTFBGb0RZTWQ4OHdFN0pOYjNPbng5elpUVVNDS1M4Mkdo?=
- =?utf-8?B?RzkyOXZKb2JCaTNNQitVOG1PSWtpN3doT0hzN1oxaFV5VFBCYThwVFZGSTBs?=
- =?utf-8?B?Q0dmQU1wUHZsVStOb2RpWUg4SksybWNTNVFFR3UvT21QdndqbUNXTnFtSHhx?=
- =?utf-8?B?SE1hWE9nRVBMT1Jrb3oxdFFibFY2Nkl5UTlCMW14Y1BpZTFvazd0QWFRWG9P?=
- =?utf-8?B?NlBYVlUvYzl0M3ZmdHVEMTJiQnE0cWR6a1VqUEdwdVcrRmRRanRnU2kySzRw?=
- =?utf-8?B?a1E4NnhYQUdVNG1TaUUxdkF6eUZkcm1YdEl6VDVJbjVQREZGNDN2SjhPNTlv?=
- =?utf-8?B?cHptcHZwek9QQjMxNjU4NHlieWlET3I3USs0UjFSd2hsSFhJNGhZMGg3alBK?=
- =?utf-8?Q?qYe4U3Vcs5M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TSt4MkVjVmRzNzBVKzFkRyt2Q1Q0YVE2SC90dXhEUThQR1lTUis0Q3gzRmFG?=
- =?utf-8?B?dGU0MTNJMWFJd0JPVHJsOVhyRGdzTkhWNFcyL0I0OXFIWC9GU1Nqei9HVWRp?=
- =?utf-8?B?aTAxc3hpRHJvNFdRVnl0WjRJaTdmUmYrTGJON3hUenpRQW9KSHZ2bVJNN2U3?=
- =?utf-8?B?YlpsOEhCeE1JWDBKSXNkM2RCTjR4ZnFHcE1rN2Y4bU4ybDQ4WEllZ3NmTW8r?=
- =?utf-8?B?RDVRRkljc01WczFNNVVkS0lUVTN2elg0NUxFdDhFV1RLQmZZdXJXc3hiWTlQ?=
- =?utf-8?B?SXIxWk9QT2YvcXFaUDZ3eEZWT2lPNWIxYzF1T2w4UjFNYWFqak5WcnVSRnhW?=
- =?utf-8?B?U29FR1MreXVBL0x0Ky81UFJTN1dPdFI2T0tNdUFlYnFxclpuWkx3T1o1b2R6?=
- =?utf-8?B?WllObjNNWnlJVzhxNExGTXlOUWswM3VXQXFXWEZQc290anV1NW9jYWU3a09Q?=
- =?utf-8?B?V05IQzQzbGU3K1dST3luZGY1UW9vOFR1YkMweTNabkE4eEQ4d1NFemViNjhx?=
- =?utf-8?B?Z0tNSzE1Mzg1S1NUQjUxNU5TNUdiWm5GT2h1WEd4dkFxUkZyVXZVQmppU092?=
- =?utf-8?B?NUxwWTcwK3hGb3VFZ2JKb1NZRXdwZklreXFvL1gyRnNJeWErTnNqK05sVGQ1?=
- =?utf-8?B?N0hMS3l0bHFBSndvNHQyOWlpMTJJcGRpTHpNMWZwNGlSNmZsUHFMS3dzbmtL?=
- =?utf-8?B?a0t6UW9SQ05iTHkwOE5mT2tLMFYvU0daY05MUEJHZTRKcE5yUXpXUzBLNmRs?=
- =?utf-8?B?ZWQwVHd4OU4wYVhvUWdxUHRhcTkremk3dXk0WHJiTGozQjczbU1yTldCM2p6?=
- =?utf-8?B?MUdTVzhqaTQrS3pMKzlmNjZTaE9oUE9ZU3grMlA1dDI3ZXJITlA2VE52Yk0y?=
- =?utf-8?B?NkhiZHJodFpSMDhKRGdZbXE5a0VzUHZ3eGI0bGFqTUo4aFhBbFVBZlpid2Y3?=
- =?utf-8?B?UndZNnBreU52UkoyMlNuUU5IeEdlbFgrTkZOaW9jazZLMXhTUGh3cWVKQ1RL?=
- =?utf-8?B?NTNRUVhWTDlLNURhYVVnVS9PTlVmUURpV1JyTkpmVXoyV1BRSjNOSW51VEE3?=
- =?utf-8?B?elhlemIzdmgxSzNBWGRvTW0wazJTL3BraTg3VGlVcFVZaTVTQlNXN2tydG1u?=
- =?utf-8?B?WXRMOVNlVndxbmZFT0Jnb3lBb3ZqQ0lWY1I4RFRGemtIc3RWV201NWtvWGh4?=
- =?utf-8?B?VmdXUUlSUGpQazBoUWFhUGFCRXd6NlJDR0xreWZ4VWs5a1c3dEdVZGM5T0lt?=
- =?utf-8?B?L3hGK0R3TlNZdGVTOHpHMllVYlkzNmh4bXA5T1d4NU9sckZzYU9WeEh0dE80?=
- =?utf-8?B?M1k5UlRZVlU1eldKaTJ5bVdsWnp3U3RCczllTmRoamZHRDFwQ2FJQ01ONGg1?=
- =?utf-8?B?NFZEN3RGYXFFNDFEYkFNOE5pUjEyd1MySUNwNERiSmlUbWVHenozeVZ3dkpC?=
- =?utf-8?B?VlkrdW1MMkZUd280ejY2YnVtaWhTQlh2aGUzaGNEa045VmhnWWlUSUJ0d1VM?=
- =?utf-8?B?ZXZMR3k2MS95dThpR05wUE5CN2F2QkxBYTJnMFN0QVo5ait5YUpMSXJlNmZI?=
- =?utf-8?B?UmRTR0lJVVpXblZucmlHYW9aUENtcnN4cDhNeTlLbW81Z2NlZEhGS3JuOVJH?=
- =?utf-8?B?NStXRUp2TitYOE9zcldMQmh6SDIzNFpHV2tUbVVwNFhUOTN1TFUwbEVDRy8v?=
- =?utf-8?B?Q3puSCt0RzlMNEVGVnhRSnUza2tKckRpUU1zUEdwelN2cWhFSzhraXhUR2xw?=
- =?utf-8?B?SjJiRTFBU3E0aS9vZWhsMWV3WlN5SC9xR1RRdCtoS2hEdXdzOHNVdGd2clZM?=
- =?utf-8?B?WUhaNktOSTVlYnFJbGdPSDRhSGxZNEUxZXFvN1NKaU9BQlNOYmFnNkltbVdZ?=
- =?utf-8?B?TVJEWHd6RjViT2h0d1ZVM0MxY2gzSkZoWXdDLzFwQkRWZVVLend0NkFlemlB?=
- =?utf-8?B?T3NoZFM5Ni9HMU8xTVl3empFSkhubkdiV3Y4aUdrMHo4NFZUV3cwWWVWQmJp?=
- =?utf-8?B?ejFoY2JER1ZGamRhUDZLZkJoZXFmaEVQMk5oUWRxRmc4VXlReVBDRmdoRktv?=
- =?utf-8?B?MFN1SWRoYldJTDRJTS9zTnlBVFZSN0I3NlhwUFc0UkVKZ1Zyekh2dWdycGtD?=
- =?utf-8?B?QjRSK200MzVScHNEbjNPeG9BWi9Mb2N5U1hlS09DSjgvMkJvdmtrVWxGTDZm?=
- =?utf-8?Q?h9dGQg4grXy2cHh4HA9J85sE5ZYIkBJIcR0Fer7jAGFB?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3068e490-589d-466f-7ec3-08dd8d7d6aad
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 15:39:55.9817
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1vXZHSwCdQpegQrHfmmA2HtEO39ISzYFqAVDIgOciVVHVqGulfhy112zZ87f/zE7YI1afNV5FBH4uAaAXgX04g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6603
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tcjqysmwuu4pfr7d"
+Content-Disposition: inline
+In-Reply-To: <tqvzgt3cyf453x6eovhe2ox5n7w4wacmdjzxpclxsubq3ub7ld@a6fzvt2is2sa>
 
 
+--tcjqysmwuu4pfr7d
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/fbdev-client: Ignore EOPNOTSUPP errors
+MIME-Version: 1.0
 
-On 07/05/2025 15:56, Rafael J. Wysocki wrote:
+On Sat, Apr 26, 2025 at 08:52:40AM +0300, Dmitry Baryshkov wrote:
+> On Sat, Apr 12, 2025 at 09:00:47AM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Recent generations of Tegra have moved the display components outside of
+> > host1x, leading to a device that has no CRTCs attached and hence doesn't
+> > support any of the modesetting functionality. When this is detected, the
+> > driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
+> >=20
+> > Unfortunately, this causes the following errors during boot:
+> >=20
+> >     [      15.418958] ERR KERN drm drm: [drm] *ERROR* Failed to registe=
+r client: -95
+> >     [      15.425311] WARNING KERN drm drm: [drm] Failed to set up DRM =
+client; error -95
+> >=20
+> > These originate from the fbdev client checking for the presence of the
+> > DRIVER_MODESET flag and returning -EOPNOTSUPP. However, if a driver does
+> > not support DRIVER_MODESET this is entirely expected and the error isn't
+> > helpful.
+> >=20
+> > One solution would have been to conditionally call drm_client_setup()
+> > only if modesetting is supported. This seems a bit redundant, however,
+> > and could further complicate things if ever any DRM clients are added
+> > that do not rely on modesetting.
+> >=20
+> > Instead, simply add an extra check to ignore this expected error and
+> > skip the fbdev client registration.
+> >=20
+> > Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/gpu/drm/clients/drm_fbdev_client.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/d=
+rm/clients/drm_fbdev_client.c
+> > index f894ba52bdb5..8c8552ed912e 100644
+> > --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
+> > +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
+> > @@ -152,7 +152,11 @@ int drm_fbdev_client_setup(struct drm_device *dev,=
+ const struct drm_format_info
+> > =20
+> >  	ret =3D drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_=
+client_funcs);
+> >  	if (ret) {
+> > -		drm_err(dev, "Failed to register client: %d\n", ret);
+> > +		if (ret !=3D -EOPNOTSUPP)
+> > +			drm_err(dev, "Failed to register client: %d\n", ret);
+> > +		else
+> > +			ret =3D 0;
+> > +
+>=20
+> Wouldn't it be better to explicitly return 0 in the beginning of the
+> function if !drm_core_check_feature(dev, DRIVER_MODESET) ?
 
-...
+It'd return a bit earlier in that case, so there's that. On the other
+hand I think it becomes a little less clear what's going on. In the
+above, we already have the appropriate check in a central location and
+we reuse that here.
 
-> So apparently one of the children has not been suspended yet when this
-> happens.  That's fine because it should be suspended at one point and
-> the parent suspend should be unblocked, so it looks like the child
-> suspend doesn't complete for some reason.
-> 
->> I will enable the PM_ADVANCED_DEBUG and confirm that making the I2C
->> itself non-async works.
-> 
-> What probably happens is that after the "PM: sleep: Suspend async
-> parents after suspending children" , the i2c clients are suspended
-> upfront (because they have no children) and when one of them has
-> suspended, it triggers a parent suspend.  The parent suspend then
-> waits for the other client to complete suspending, but that cannot
-> make progress for some reason.
-> 
-> Before that patch, the i2c clients would have suspended only after all
-> of the "sync" devices following them in dpm_list had been suspended
-> (the list is processed in the reverse order during suspend), so it
-> looks like there is a hidden dependency between one of the i2c clients
-> and a "sync" device.
-> 
-> If the above supposition is right, flagging the i2c client as "sync"
-> will make the problem go away.
+I don't feel very strongly either way, though.
 
-So all the I2C controllers are 'sync' devices ...
+Thierry
 
-$ cat /sys/class/i2c-dev/i2c-*/power/async
-disabled
-disabled
-disabled
-disabled
-disabled
-disabled
-disabled
+>=20
+> >  		goto err_drm_client_init;
+> >  	}
+> > =20
+> > --=20
+> > 2.49.0
+> >=20
+>=20
+> --=20
+> With best wishes
+> Dmitry
 
-The I2C clients on the problematic I2C controller are all 'async' 
-devices ...
+--tcjqysmwuu4pfr7d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-$ cat /sys/class/i2c-dev/i2c-2/device/2-*/power/async
-enabled
-enabled
-enabled
+-----BEGIN PGP SIGNATURE-----
 
-Setting all these to 'disabled' fixes the problem. However, also just 
-setting the 'cypd4226' device to 'sync' fixes the problem (the ina3221 
-devices seem to be fine being async). The 'cypd4226' device is 
-interesting, because this one is a USB Type-C controller and there is a 
-circular dependency between the Type-C and USB PHY (see 
-arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts).
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgbf1wACgkQ3SOs138+
+s6Fygw/+Mkw6+cuUsTfKqPTm0TmTd8ImHwyo54jIptx737/JkRutAG94/l7qi1P7
+NVkueLtx2NF3cAnZeA8nYs5mAQqo71YqjQ4uJqGm5Uc7jrZEiMIz74msZXLChMKY
+lW1ELYDC0xRJDDMTQkVO4rZum0E7IavUlLtC1D1taQmfY4nvXJYJJ+d8J0GrqK7S
+5eQ02ESYqaCJND+M6Naa5PfP3ab2mKKOzRmU69q6U45s7mWz/2iIZtgs/cJCJU9w
+4K+jIMbzAchf1eHdPMWTDDprgpApL0luHB3Wc7t/n60puLawWgsMec+TdMB2hXHy
+a9Re1flEbsmbbuHtGtk/jIbuG+9SObcWvHpOQaFHgZO0Lg8kE6XpC2vw2GJ8DkDG
+6MJy9+7BpSPqzeF17RQOKM3ILacy85fCeyQFlcD7GZaIUkxII3QledgwqGF4fBs+
+n1POebwZEyxAqp6fuAfRIkNo8L7WsJULPIGiRtB6tqv0Z9N+NuCGQoVC7iHhnPbW
+dbjj3Kk8dJ9XFNvvN5cXZRdvuftc+m4eCHOTjOJsb4jgY3d+jWN+zwa+yMRnRBlK
+5/7oA7wMmIBoor5GFMyitDm0Mk1aEdnxYtTru6T7KqUbbWsqdzV6lnTmYaesSp/k
+wclXSwn/h93MdG4QSsbrh7AynYapuR+v49uYv85hPf6RthVKtS8=
+=1JI4
+-----END PGP SIGNATURE-----
 
-If I make the following change then this does fix it ...
-
-diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c 
-b/drivers/usb/typec/ucsi/ucsi_ccg.c
-index f01e4ef6619d..e9a9df1431af 100644
---- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-+++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-@@ -1483,6 +1483,8 @@ static int ucsi_ccg_probe(struct i2c_client *client)
-
-         i2c_set_clientdata(client, uc);
-
-+       device_disable_async_suspend(uc->dev);
-+
-         pm_runtime_set_active(uc->dev);
-         pm_runtime_enable(uc->dev);
-         pm_runtime_use_autosuspend(uc->dev);
-
-Is this the right fix for this?
-
-Jon
-
--- 
-nvpublic
-
+--tcjqysmwuu4pfr7d--
