@@ -1,146 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F20286D7A;
-	Wed,  7 May 2025 14:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30B7289E3E;
+	Wed,  7 May 2025 15:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746629796; cv=none; b=SlAozlG9C2HdRPe+OproKxvceiR59A2P6hBpS0D+RD+yj5Dt3JyWHM3WWC/eiiAX4kKwJF3gMG/X0bwAJqgfRXfV5Fi5XtPfsCJURsnFHWCdRLk/4rH7b9VluS/VBxoeTW5hxEyvpfNuFpqsoOlGzc8jgVoi29PpphC4KVHSiKg=
+	t=1746631410; cv=none; b=L7ZKoCEj1SGC/1DfYkEmnpjvDgrfK+o7HKwdNyNKrHiLbSJ3z4RtpSn6D0Z3jTEFpvws49PD7AV0ukNKHLJpap+P/CsVRAk394bftedmm0W7DScMkgHXG7BzL4Cqe1eEvG6bt476ukRSdMb//qYVvbM52HkaM/hCjKMg2ch1wxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746629796; c=relaxed/simple;
-	bh=iR3+pPyHy41ZeZVnOn5rv4RaR3wxqUlhFY2EECiUbXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h7xkyd195SH+W4IbWIBQEvJThPXXSve+j6GaaC+YWoQvg3qQqtm/qaed/X+PL5OBvorqRbNqkgMXjTrIHG9fQy4DNjEOVfDcF8dbupHm9fVgP/TOa+SJ0dDFrnf3lWOU3b0OWGJtl7hvKJKYg2o7qm7XtheKkAyeFA0uP3+uVIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU6dTXEI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746631410; c=relaxed/simple;
+	bh=h36C8gizKwyGSI3YJ2TR+N9OhKaR+u1FY/uS9APPblc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTHdbGeLjOOO89/hZay8muGTxL2GcQa1n1sayrKFJKjPv+gK8fPOSal6/rq2fSgLgOgV5sP4Ymcubpig48H2HISTLH6tv8wlO3/KbY7bh84jYOg0mtP9hzgslzrWGmSnYTAVIQ+ecq7K8wNuCFUwdIlWAGExeT00y6BQU0fXQRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMvmVCCn; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU6dTXEI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEB3C4CEEE;
-	Wed,  7 May 2025 14:56:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746629795;
-	bh=iR3+pPyHy41ZeZVnOn5rv4RaR3wxqUlhFY2EECiUbXk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jU6dTXEIQVMc827z7kgqKuav90ToTqf60EvIpnBOzK/Mc9a73bykC1jr+DICq+B2P
-	 E62D3RgiUplBrdI73FXc84QgECM0JBQO9Axut+LN2vKQGpbw147sm3CkVqZM80etxo
-	 NifP+AwCidiFt5k2ZnLoNs9Dn+UxccgOF8wtKCYX18/2A4fesPpruAvu5ucgMnhXZW
-	 Jo7+gNAAjTTmPfsvi81PY2tixj6FZSjs8E9/5siTsF3R44QiEIgu34LNQPbxtpnHlM
-	 pJBJAHCmfS/B4OmGHY5x0eyTWyJCGU1hLPm/YUlN95iiyCIu8AmkFWUCBl8uqNGbcP
-	 SWADUfed6dGcQ==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2c2ada8264aso5667323fac.2;
-        Wed, 07 May 2025 07:56:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDUcpeQL7RRY2hUHVDaw6nQApnZKx7Rq/6y2NF/6NBBLDZ2MMU7WWsvgXJBCN/PGN285g8Szgaaaj9Rh0=@vger.kernel.org, AJvYcCUPT1LxTu3RJAuKV9RUXOFHGcYWFLVb0Q8kUiBEoHdTnHFwHtTztLHMVicpoXU2iIqphu/FPP/vHs4=@vger.kernel.org, AJvYcCV/6kkRluMfkKfEiMQWYLFzCZB/flSA/GeTF1KzICMVZEOKAXuT6cmXKMeTx+ywrxchBS3YR3F+/auEd0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa3Igk1LgHsvCe5cQU2uzO3AimqjZ4Gnb9C2GQ8oYKzN875UM7
-	3MKUcn3LY8Q1T+BmuxRIpTAz+zVuPKL13t2T0tFQh41x+IR5VD1CuH0/jzlxX6Gh5j9vGINjXn8
-	sPDTtlHAkChhaYOwMG/qsF8H0df0=
-X-Google-Smtp-Source: AGHT+IGudK8BYiwNYGu4ohVqJM5tiVLI5ldUeTtWGQTiAMjmIpjqWC1GYXLvzHMYY9hWCYIOoKyMW5g4wmc2N+ZJ3gg=
-X-Received: by 2002:a05:6870:1590:b0:2d4:d9d6:c8d2 with SMTP id
- 586e51a60fabf-2db5c16ad18mr2234594fac.35.1746629794947; Wed, 07 May 2025
- 07:56:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMvmVCCn"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5f5bef591d6so14235941a12.1;
+        Wed, 07 May 2025 08:23:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746631407; x=1747236207; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu+V95WZmuevBWrYtl8nXKNY0WPBNalcqPNhN8Y1Gbc=;
+        b=cMvmVCCn6KyilzSe5d8lfITUeUdKSpCTuFQhoOCc1Ay7gh3j1ys6db6MpBDh8Psb4v
+         s5xXeTO0CGCpF8PdYE1QG6DTj3ZoGJmsuZDk344v4prz2Fy/5+eQRDmlToIhA9tWZlY0
+         op+v7zldKxYkrmdo6Djs0SDZ8bg+GjhGVMcjuu+6OjNq2eu+FFonfF5wYDvGnjvXn8Rb
+         Qv9m2YPjhqkIDHJZThj+zroR1ZOYnbZkUuHYU43AnXGIIx+OsXDbxgIVD8XoOJ7a8dLt
+         N6iXEONtOAjnGxgeRMcRmp6VdaPD30K5MUVhlzor2JkgvhfuZwQsVRinJcXUvKGimFby
+         rzTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746631407; x=1747236207;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bu+V95WZmuevBWrYtl8nXKNY0WPBNalcqPNhN8Y1Gbc=;
+        b=p8OVzzGUiMnywbBNpJYmdHiyh1a6IXp2Uvge8DczHQUVMnCafXEZVgCPmcfe/zTzXy
+         tMod6i4PVekiZh2eZX+S6+i3GijX3nVnAoPOWdfgkZsk8O/twosLZuyf5FM69mbF8Ln+
+         2xmWPYWhl43TyHu/F3G2m+8BdMnENMA/SH/E+8MiXvfx0nOgE+p/5rzW/fS/GYi+us86
+         Ou2BO00W2Cp5rN6issRhl0txnr3b+xMLKnLIbn1+ZL0Uzj4xh8OuNo3ZjVcKjbM5j2js
+         kYHtK6rxiqMAIWFG7VlMEiLcWDB6JW8E1bD0FlQS5/T4A7nlXSdN52EcmpgdjYoDImtJ
+         8aHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxuJt2q7eAWN6+oZE4iUUik10TW2NiNOBftq9g14iIsszfMomErxC6rN+XWfdRSeKPJewPKMpr@vger.kernel.org, AJvYcCWDBGupNSm4ZzePu+5SW6v0CvRZ7OzOWw1irkQJocQdLz8Pp5flacEB+h/oyqXITj1qoJWwNQwG0E2bUvE=@vger.kernel.org, AJvYcCWidy56Wz367HMkziso8ajBy6ciIyyYIipQDTxRg7cufzmIn71jfz/tKDdIjBDUham7TJyD0xfXVHbRYnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsgn1IUveDTTYzH+eOCiElTT7QmfFzhXAbtf+oFwBJ1OGhI2wE
+	HyR24oKGSwvzx52D75y/Vf/l0i+PItf0HlrV8IiSUpumXEhubEWTtQcY2g==
+X-Gm-Gg: ASbGncvWhXPGLOCTOzz/qumhjZVdaKRbuQ1cY0o0yUGwkXKhuI9YqdsBVkv/cm5E0VT
+	L0gtVVxmvE2veUDFh5OtXU6MTd/YcXiRckcv5X/FFJz1MFDB/89ZM3ZVnILEmfDlYYbI5eX7hde
+	L2qk4W5CMi7pnNHBTjI53CkZckuVPdlOaXaI8UTRkqTF3d06DoYSBcehAXuUlEW1Di92bOC9HEz
+	O2GSMTYAVPLEFKpHKmL72gQk5UuLc3WL6QN5N+nENhECF/+sSXtOV5gzLvwBgp09n0L8+FivESz
+	Qih6K22ByAMcahJVvHtZDO5QI/RAPaOSLA9mSDugDksKZuHMlLlIwfdUKYR5hidDsbISYwHYNWk
+	5OyPUbtR423Htor8DQgn2LUjUHOE=
+X-Google-Smtp-Source: AGHT+IGjfHXnrpEUYevTUWlZNdlZY2K76cUxolllBKTvZC9lPWbiy+bz6X7MHwmtyPjAegiT6kqLtg==
+X-Received: by 2002:a5d:5887:0:b0:3a0:9fe1:c298 with SMTP id ffacd0b85a97d-3a0b4a161b7mr3182648f8f.18.1746630987926;
+        Wed, 07 May 2025 08:16:27 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b0f125sm17160004f8f.72.2025.05.07.08.16.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 08:16:26 -0700 (PDT)
+Date: Wed, 7 May 2025 17:16:24 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: webgeek1234@gmail.com
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] drm/tegra: Assign plane type before registration
+Message-ID: <6nnklsiik7cwgmul2ygy7zayenybarmikfgl2hogryo7r2vtd3@vgksl6swjrxm>
+References: <20250421-tegra-drm-primary-v2-1-7f740c4c2121@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net> <22630663.EfDdHjke4D@rjwysocki.net>
- <c6cd714b-b0eb-42fc-b9b5-4f5f396fb4ec@nvidia.com> <CAJZ5v0jWTtaQEcx0p+onU3eujgAJpF_V57wzZCuYv2NVnEb7VQ@mail.gmail.com>
- <7c970b02-7b58-4d15-b5f6-18bbfd883ccd@nvidia.com> <CAJZ5v0jcWQ3QKx=2nzDpnYPyGuYfT4TModwdAreWZu4d0hXmoA@mail.gmail.com>
- <CAJZ5v0jG+54uKiY-uSc6B+8JuA6eU1j8tGM5d=XsrT0EmabMeQ@mail.gmail.com> <563657c5-5529-45fd-96fa-bab68ca992a9@nvidia.com>
-In-Reply-To: <563657c5-5529-45fd-96fa-bab68ca992a9@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 7 May 2025 16:56:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jVOG_u=F36aOVh=qu4Ef-5QFAmC+5-fmF_mU8NSr_LnA@mail.gmail.com>
-X-Gm-Features: ATxdqUEcOF86Nme0hytRK5-B0QGEeP-m3_CkCwqx73YWJM7ZH8pajY7lMxQxKns
-Message-ID: <CAJZ5v0jVOG_u=F36aOVh=qu4Ef-5QFAmC+5-fmF_mU8NSr_LnA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Saravana Kannan <saravanak@google.com>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yzkzi6i556e7c47u"
+Content-Disposition: inline
+In-Reply-To: <20250421-tegra-drm-primary-v2-1-7f740c4c2121@gmail.com>
+
+
+--yzkzi6i556e7c47u
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] drm/tegra: Assign plane type before registration
+MIME-Version: 1.0
 
-On Wed, May 7, 2025 at 4:39=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> wr=
-ote:
->
->
-> On 07/05/2025 15:25, Rafael J. Wysocki wrote:
->
-> ...
->
-> >>>> So are the devices in question "async"?  To check this, please see t=
-he
-> >>>> "async" attribute in the "power" subdirectory of the sysfs device
-> >>>> directory for each of them.
-> >>>
-> >>> I checked for both the I2C controller and ina3221 and don't see any
-> >>> 'async' files ...
-> >>>
-> >>> $ ls /sys/class/i2c-dev/i2c-2/device/2-0040/power/
-> >>> autosuspend_delay_ms  runtime_active_time  runtime_suspended_time
-> >>> control               runtime_status
-> >>> $ ls /sys/class/i2c-dev/i2c-2/device/2-0041/power/
-> >>> autosuspend_delay_ms  runtime_active_time  runtime_suspended_time
-> >>> control               runtime_status
-> >>> $ ls /sys/class/i2c-dev/i2c-2/power/
-> >>> autosuspend_delay_ms  runtime_active_time  runtime_suspended_time
-> >>> control               runtime_status
-> >>
-> >> You need to set CONFIG_PM_ADVANCED_DEBUG to see those (and other debug
-> >> attributes).
-> >>
-> >>>> If they are "async", you can write "disable" to this attribute to tu=
-rn
-> >>>> them into "sync" devices.  I'd do this and see what happens.
-> >>
-> >> You may also turn off async suspend altogether:
-> >>
-> >> # echo 0 > /sys/power/pm_async
-> >>
-> >> and see if this helps.
->
-> This does indeed help!
->
-> >>>> Overall, it looks like some dependencies aren't properly represented
-> >>>> by device links on this platform.
-> >>>
-> >>> Yes that would appear to be the case, but at the moment, I don't see
-> >>> what it is. The ina3221 devices appear to suspend fine AFAICT, but ha=
-ngs
-> >>> when suspending I2C controller. Exactly where is still a mystery.
-> >
-> > I checked in the meantime and found that the i2c subsystem enables
-> > async suspend/resume for all devices, clients and controllers, so the
-> > devices in question are "async" AFAICS.
->
-> So that would make sense given that the above works.
->
-> When it fails it appears to hang in dpm_wait_for_subordinate() when
-> calling dpm_wait_for_children() from what I can tell.
+On Mon, Apr 21, 2025 at 11:13:05AM -0500, Aaron Kling via B4 Relay wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Changes to a plane's type after it has been registered aren't propagated
+> to userspace automatically. This could possibly be achieved by updating
+> the property, but since we can already determine which type this should
+> be before the registration, passing in the right type from the start is
+> a much better solution.
+>=20
+> Suggested-by: Aaron Kling <webgeek1234@gmail.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 473079549f27 ("drm/tegra: dc: Add Tegra186 support")
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v2:
+> - Fixed signoff in commit message
+> - Added fixes to commit message
+> - Link to v1: https://lore.kernel.org/r/20250419-tegra-drm-primary-v1-1-b=
+91054fb413f@gmail.com
+> ---
+>  drivers/gpu/drm/tegra/dc.c  | 12 ++++++++----
+>  drivers/gpu/drm/tegra/hub.c |  4 ++--
+>  drivers/gpu/drm/tegra/hub.h |  3 ++-
+>  3 files changed, 12 insertions(+), 7 deletions(-)
 
-So apparently one of the children has not been suspended yet when this
-happens.  That's fine because it should be suspended at one point and
-the parent suspend should be unblocked, so it looks like the child
-suspend doesn't complete for some reason.
+Applied to drm-misc-next, thanks.
 
-> I will enable the PM_ADVANCED_DEBUG and confirm that making the I2C
-> itself non-async works.
+Thierry
 
-What probably happens is that after the "PM: sleep: Suspend async
-parents after suspending children" , the i2c clients are suspended
-upfront (because they have no children) and when one of them has
-suspended, it triggers a parent suspend.  The parent suspend then
-waits for the other client to complete suspending, but that cannot
-make progress for some reason.
+--yzkzi6i556e7c47u
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Before that patch, the i2c clients would have suspended only after all
-of the "sync" devices following them in dpm_list had been suspended
-(the list is processed in the reverse order during suspend), so it
-looks like there is a hidden dependency between one of the i2c clients
-and a "sync" device.
+-----BEGIN PGP SIGNATURE-----
 
-If the above supposition is right, flagging the i2c client as "sync"
-will make the problem go away.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgbeUgACgkQ3SOs138+
+s6E8shAAimUEuugWp3icnj7eXRj2vOg3BUz/p6I7LDUlHLc1/oumW7zSeXpRUMpb
+o9tfQ7CDoApO3BOBxWjJh1g5Me8nKoQwWxANkJ0O/QGqYcKOdNaeeeHLjN3veQEe
+E/LfkIpFTEuSIV56GypmQUjp10+lgU/BcgKu3uw8lEoHJdR8RYZqdtjpRRT3ey8D
+pNMFQJ6CgruF5VqVSS1Z1xcE7hBTuLnqJmZ1w1v+r2klt3uiivpxE8zbOOiHjyoR
+XERgg+wWM5MLVjRvPdkdNOXlOMO85quLmr8WeV0SE6plBOSQAETgqATj4BchuBkc
+cvN1pYwtghCKLD/Z9xikAxxfh+p+W87+bZY4TUdr7QzQ62S7SyHKwye0ORtUdZnC
+XP0+fHXVb2qOmSpGVtlP53MWGbLCVsy1vjb1sg1N/J5CIHprgTeGRWJVCqgUPjZS
+jQLrKV3Y54MDV4XAA5HpzmbaFhABZ1H/PdAy08mwPsc/shHbD+p/6m26NR0elNRS
+CaDicCDmX6oIE3sEYRBjKNcAkW9DqDrJWIaNH+qDpywO/JVa4Khb2W0CNyw4UY74
+qY+YttsGD2/M6Ym3/yZRQ5zzgVn81nkD38RHIFQUvhgt0Moarp9zDMeBKBlHzjeG
+L8A+IW7WldrGcxMDWkmXArTyZeSbkpnDGisHNvr/CbZ7PH9AsTg=
+=NqSH
+-----END PGP SIGNATURE-----
+
+--yzkzi6i556e7c47u--
