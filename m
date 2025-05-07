@@ -1,220 +1,127 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365001D7E5C;
-	Wed,  7 May 2025 04:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746593042; cv=fail; b=MgopMi3VANLLKMiqzWXx83Zo9f2PdoiB4Nc3jrj4c+SJMVEmJQ3B21evOvXeNtsHDPJag7PRZYi2jwW3Oi49wS77Dr04MqFJ6to4Jp/S9d1CTn8k39x+x+iggE2qSA0OMzu9tCyFLeL5m/5CQpnzIOShZBJVhlTrLtFzlPcqwpw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746593042; c=relaxed/simple;
-	bh=UMo4Y4r4ZzKFwsXGWwiMsFGIPwoqDbjXApxcgVESqyA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FRF6h94fuCfpq+jgO59r1Ny8uDMQoE0vBP8gJYoIYOoXskOF8vfnDM6vEQ1/GyKmj1uD1zNzusqyaA7DvTFA1wB1Wd4Rs2LRyfFdJvEgOgIdL++MwoItnI2TatxX4843u4ZdAgJfJXyBhecDuAAoFrH3GWbQDa1jWI6HCUAgYHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tuhh4po4; arc=fail smtp.client-ip=40.107.102.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1F119F120;
+	Wed,  7 May 2025 04:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746593897; cv=none; b=gnfYfGcr3aIin3X47p/pOz2qZnhDY1jlSgYTv95mq4+ctlI00YzCyLLee5E1LqoF5zcq+SGSxXPpITR++eLV3hv3skclmz6IiLh3JWzlWFOqOICBfSHuKzg2DV6NbesxrjlhQoFLwd4rI1b96iv559b5F2SWAEGgA7LsL0qhFAo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746593897; c=relaxed/simple;
+	bh=xdjEQbp19q2s570tGrHn1bkVAJvFSkW+5g1YF6WUKgs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I0nsxufBpBdPzjOMSnQM/1QwtHrRnh/aM1o2rsLNkNl8RN4JHZL7uXeBYr04ABbEqN8ArvB8QyYOsUWWNdtjzv60Eb67tGAo8zp9DzEMN0RQiENYGwe7d0O+hbMRWKiUAMkWTZ2ZsO9OR1RWkBXSSHUuuJ7DgG44U5/naoVrIk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnunYzK9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tuhh4po4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FkJryhUF5TbCWcPRp/B8P/LF0zkvexd7vVI29Uo77YzZ8d6fHgLXFXmp4PStrEcsvrqrSGjStQuPxYSEpdiB1xv7lbKprrWgPY1w/NHvkjCirqobD7CQ18L/WN4RKa9mrOt/dByfwrrozT4wvGmV8W3sVCptJdZ9y/fq5mT1R4okcb9RxhgIHakvqfKuIbLUpoxgJsYLbpp3f9XKwY1wU1MzcZTi1TTQ7bFvXY6CsUafD+7LTSCfwcBxf4CC9dV84a2FffGsWItJvMiJ87GWylPvtvVVBojrz9T4FFYUHzNI07nGTekXdM0dqjB1LgSSgsQBtKCbfCI2TBEOAQEJ1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OtH1HctqGusKQVbHpRxzvC6m4xIQzNiC+AjgoB5FGkI=;
- b=dIwjJVWc4BX9Ca9owbWULDUzQe+kBTyN7X093OQf50xgFLgIvAZGNPNMPypCCuQXiPnaNpY+5Fw+g1UxM58j/foO4ted9StRyiknhKxPoexUQvlEtImkn1ZoQ9GSC+VgdjGB36egSP5eTZHxwn++dnci60d22BPAmvwPDRfxopf3QWHKTf5U969v/5JZxuEV3WLuu8EiIoqZraqwY4TA50ZcMgkl39Sgo7Xfn3InAr5qztv5jmXhhp6fuHOcJJf88CM0K0rrE07p5EDZMUKt4xDa0X9+CdLR7rfdi+NpBvehrKcnnajNQbcyRxjH9U7PR37EEyBhSsVKiHHU80RaQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OtH1HctqGusKQVbHpRxzvC6m4xIQzNiC+AjgoB5FGkI=;
- b=tuhh4po48NR7eUvdrPYw/hKPlqO1GkkknN+RHUmax2tyXjAESATjl4+vGclWPUzRWKhuLHFiTVhLTADzu7HBJvX57F45LWbTERE4oQI1ebEAv5r6dxQrXr+QanZ0OtERWt30NE7KULFdCK3DIvwOlicq9QYah1CvhXqTcNOV8uv96907L2bubP7R0rOTygUNIsT+8/eLE3hxlU6BnMljm82zLVnHUht3nzW45Xa0Av9A2nYvu1ic5TM3WjCtpGGDiLbg1WE5MSJoBumq28v1b2ipMiBeFKmjOUUxZECT5NeztrXtlcWj5ffNF+hTqh7r2cUEUdbNQ+E1qyN6hqW0Zw==
-Received: from DS7PR03CA0034.namprd03.prod.outlook.com (2603:10b6:5:3b5::9) by
- MW6PR12MB8949.namprd12.prod.outlook.com (2603:10b6:303:248::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Wed, 7 May
- 2025 04:43:53 +0000
-Received: from DS1PEPF0001709C.namprd05.prod.outlook.com
- (2603:10b6:5:3b5:cafe::f1) by DS7PR03CA0034.outlook.office365.com
- (2603:10b6:5:3b5::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.32 via Frontend Transport; Wed,
- 7 May 2025 04:43:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF0001709C.mail.protection.outlook.com (10.167.18.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Wed, 7 May 2025 04:43:53 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 May 2025
- 21:43:47 -0700
-Received: from robelin-Precision-3660.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 6 May 2025 21:43:37 -0700
-From: Robert Lin <robelin@nvidia.com>
-To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
-	<jonathanh@nvidia.com>, <tglx@linutronix.de>, <pohsuns@nvidia.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<sumitg@nvidia.com>, <linux-watchdog@vger.kernel.org>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>, Robert Lin
-	<robelin@nvidia.com>
-Subject: [PATCH v8 2/3] clocksource/drivers/timer-tegra186: fix watchdog self-pinging
-Date: Wed, 7 May 2025 12:43:10 +0800
-Message-ID: <20250507044311.3751033-3-robelin@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250507044311.3751033-1-robelin@nvidia.com>
-References: <20250507044311.3751033-1-robelin@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnunYzK9"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22c33677183so76340295ad.2;
+        Tue, 06 May 2025 21:58:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746593894; x=1747198694; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CF7PWDnQqg0uCZ3ZgAYaN8+U8QoDOtDNlNF6ydTzfG4=;
+        b=VnunYzK9NQ7Wl3/SQqp6fSqcCaIYPGaRmi+98YdawHq37hQpdOPMFLV8dEjFIL5uBY
+         /qp4hOrhmbiE6Cjbnk6vkxAn+FCl5HR6TTK536DuyyhpOE/3SQ+t49mpQjR7Xn0Sk4n1
+         aytEzfKf9XPJvVp2xzmYjvQI1vpsPzfyXE3MNUM3YtA0zR1OhfnsioXrvIT4nF+vPfvk
+         aXxrRnl75by22EqZByZydyFFU/ogolBLl72e9Cyy1KSxrt0IaIs3xdugXrYtU5IaEsme
+         Wvza5qGUb25cXp8LokU6jwQkbuupOBttMV44faI06vCGWP7h2NRX6scsEVR7kCY7aOIS
+         0WGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746593894; x=1747198694;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CF7PWDnQqg0uCZ3ZgAYaN8+U8QoDOtDNlNF6ydTzfG4=;
+        b=QSwnQT6+cK6TpFNJBTFZWtAqVqiNCtUgLhUjkrFcoCM/IF/qX+cvgD70DCJJQufrjP
+         zuQT4MiWUnI1BSLHjiYqsBrhgU3V8ELdeiSCey/OF7bW7tTOLLnHSnnDqGJDL1dKSLcY
+         aHLRH+1J7vPOikvnOxhV9p9IJ4mVrvzlWgJEmsdof91lzl5stS2rJZdZDM8qi6LTF8+t
+         9krMis4P1hnAxQxoSYdr/IZixqWil5Ri1Pu66CTgzomwRhKDFgBiJdHy954nr2daKip4
+         yfyE+EpGZgjq9KqgsslohF5mXohWc4RH2ouGTUFpWWluFXTTyyGD3qPyqEQWxKo/keR9
+         6fpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAFTOsFOVZR74J71551FSj3VsJe+mR8id0xHDUNwt88/vzNQ8REmdOdrO7MKsQ7n3UUGVUW1suz1Ngz2Al@vger.kernel.org, AJvYcCWdq50nkAAHvcrFqkShhTntvG7ChRIZpGCN74SQUZt/tkgEU2b7NkJvELU134RnRV4Aztrsy16sfD5GQvA=@vger.kernel.org, AJvYcCX4/Y053UJEHJH0+g9n1tBlUz8/GmX6xMrrzhVaEj/m8aRqYlyXWnl6TkqXSCnRJYJ3bjan23xuJdpI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyERRC/REwlWlHfzTttR+uCg7Q9V+jL4PfhgerfsAEJsPumSL3h
+	loxG69W0WDNnlb9X3JhapsB9vHj5zcF9vsg37uhyHScig0jGt6Zh
+X-Gm-Gg: ASbGncsAJ5SRinCrz7DW+uty51xuVbD0ospZEYjyP+OPSboUNYebKKkYw5Eg77A0Z75
+	IVFCD0A9/RPhxlgXYdT3FzzJbLlUiB0ZgpYA4en/w3Xr5NoNccGHO3RKNtTGCBZ86t7J/x/fC79
+	fs7/JfCsORbvceWolb8Oxu8qXTRG6XhCrHv2gDJ00/Zmowkl9Xp/0w1wBouHxk7ug0ALweamD9S
+	o0dBVbEM1liovhsFBO0MS23tEz03ys4x59pmP4oDvRtsqJ1yr/18IyIPNbsiXLt7ZaqWlQ4J9SB
+	NXrhXv0kXoybEtTQSL0tu/AyTGGOfiCCrvvXumu4aWXt8Sm8mQk=
+X-Google-Smtp-Source: AGHT+IGmAoXw06X7J+s/eF8DCb1Uyh7QYcT4U4RWQqldPOWf7Q4GPeM4j9uV+T0maV5qPzp9UJuw4Q==
+X-Received: by 2002:a17:903:478d:b0:220:e924:99dd with SMTP id d9443c01a7336-22e5ecc52a4mr31793175ad.34.1746593894097;
+        Tue, 06 May 2025 21:58:14 -0700 (PDT)
+Received: from Black-Pearl. ([122.162.204.119])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22e1521fd12sm84261505ad.127.2025.05.06.21.58.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 21:58:13 -0700 (PDT)
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+Subject: [PATCH v4 0/2] dt-bindings: dma: nvidia,tegra20-apbdma: Add json
+ schema for text binding
+Date: Wed, 07 May 2025 04:57:32 +0000
+Message-Id: <20250507-nvidea-dma-v4-0-6161a8de376f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709C:EE_|MW6PR12MB8949:EE_
-X-MS-Office365-Filtering-Correlation-Id: bdc2bd0f-be37-40e0-9b5d-08dd8d21c4fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XzOqXEuRjQeIlboK5iuuf0JtBQM0k2PZAaxJUUxFUgcNvua/1AGNukMvs4eG?=
- =?us-ascii?Q?Z+eEKlDQuMglTsaHdnGA1ifPyQZoFccU3IDbxDEFTl6tqa5bLcBih4N7FO4s?=
- =?us-ascii?Q?ebQycumzRB0Bu88ShG+VYt+EuLiRR3NpO1PBtMNZ4Wan8WUZAozDo+pShUPl?=
- =?us-ascii?Q?EItsE7j6MIZPiZb6oK+LpcUDYzxrhSH0sNyyzu5w6lxgecDgNJuMaDSdhSIK?=
- =?us-ascii?Q?bvoDabbFI0KxJogFqvrhtnlqoR3kc85ieLnB/z4dxx7lg9stzmbtTy++pE9N?=
- =?us-ascii?Q?jPHPS58hDONHqdSNrpBRe1SxaTbpdptwMoyUTBg7EHC7LNqi0VvL7skzHmFO?=
- =?us-ascii?Q?Ud4NT3Q9c9tdCL3H/2wba8RfrZeeITcilqx2qjWFs4+eDJB+hyp0R7kbN5J5?=
- =?us-ascii?Q?PfeeNoBQR5p3vudh+YkQmYY4NXl5JbypsksGoa4POXO2lqhRQjvZPMQY9Ab3?=
- =?us-ascii?Q?vlenwEvc0C2RmA71wD8QSJVkLgZb0TAPz3FFAwYVCJfbKpqDwzksimi5t0hv?=
- =?us-ascii?Q?CBQJsTnMkMlvcWWUg5PTZwxy7Yz8R3iVm3KKcvdi5GgozOJkgb7TG0jAF0eX?=
- =?us-ascii?Q?K1Wa3H9VmP49pCa3RSdp/YXeLz3GNpQSPoDhd643PjP5Jhy2qWikv00rZ+Au?=
- =?us-ascii?Q?CHWL3+dJMXJvx3ja8JhUHiCNrzeFsKfJHzYzCS5jA8q3F4WNtvnxjujPqMcY?=
- =?us-ascii?Q?4HyhUEwSnoCw/tIXPTsbg745habjwGbNYArnm0fH+ZpMlgXPgsy6tfwH0SIE?=
- =?us-ascii?Q?4yW4jZ3ljrxj9i58unRwqPrZXhJJGstVWetJ2UqVZ+LrSNjweJB4Zqu85z1g?=
- =?us-ascii?Q?ah40XvFIQ3iMsPiQpr+hFNvRM/r/WYfupAKa55P6j7lAcG97FAHtaFQHqMvp?=
- =?us-ascii?Q?M6mRKB9m3sUUz3BMz3emiL//KAT+v3B2p3Bj4mkZrfGzk52h/ILcr4loGIEi?=
- =?us-ascii?Q?Y5T//qUT7t031fAmafuawEdqXNOiYUIGp+3sIl+5hPWwHHiD/yPjpK1pRfIm?=
- =?us-ascii?Q?9PAZ0oeB6cOnk8PbEbbOFdvrcTs7SemhBv54PT0j5T72/or+ks8CSqBTS7/r?=
- =?us-ascii?Q?vsOF/BHaX+KuhW03xilld0zr2RHLDV/Dh/YGfwnMtuVKx4P08qLbo+hQMswu?=
- =?us-ascii?Q?amoW9d6qlRtU09fiwsPKhKj1NHN3WYQ1vqvTxSZyc/c+CnCbVxvaVSAjHP++?=
- =?us-ascii?Q?FjQ4LRBpG4ednTSI/WRuPJ90H8a5jvxHWaJr90+hvcYctOMzFNHD2xkyrMtU?=
- =?us-ascii?Q?Mgqn+YLXiuhxgO3zCMczsZb7JTSwW5GCZzUvv9lVd79PTO7bL8bNRDlklbsV?=
- =?us-ascii?Q?GMtoSc+xb32Msf4LTNo6YZCSU+7SHbFe4oOhr4hV/YXZg8dcFZNuFIulusaB?=
- =?us-ascii?Q?0JmNHldsDoKgEhO+zO1PtePfdfmazumYKy1Wa9olZKyZfoU/5eGHEVrNPhKD?=
- =?us-ascii?Q?o0K2bJo984SqaQboLh28BRxBZX5z2BuBCnGs+WeKsCxakypAwd8BgsZhCSus?=
- =?us-ascii?Q?rUp7MpRV0GO91BxRuzT4p1IUcu5zslW+6F0U?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 04:43:53.3195
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdc2bd0f-be37-40e0-9b5d-08dd8d21c4fa
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709C.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8949
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADzoGmgC/3XMTQ6CMBCG4auQrq3pz5SCK+9hXJS2wCQCpjWNh
+ nB3C27QxMUsvkmedybRB/SRnIqZBJ8w4jTmAYeC2N6Mnafo8iaCCcVAMjomdN5QN+SzlQYj2lK
+ 1mmRwD77F5xa7XPPuMT6m8Nraia/fT0Yxvs8kTjk1ouaVbpWGxpy7weDtaKeBrJkk9rT8ooIyK
+ kBormoLFppfKv9Tmak0zsnKQW2Z3NNlWd66DEOyGgEAAA==
+X-Change-ID: 20250430-nvidea-dma-dc874a2f65f7
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Charan Pedumuru <charan.pedumuru@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
-From: Pohsun Su <pohsuns@nvidia.com>
+Create a YAML binding for nvidia,tegra20-apbdma and modify the apbdma
+nodename in dts to match with the common dma-controller binding.
 
-This change removes watchdog self-pinging behavior.
-
-The timer irq handler is triggered due to the 1st expiration,
-the handler disables and enables watchdog but also implicitly
-clears the expiration count so the count can only be 0 or 1.
-
-Since this watchdog supports opened, configured, or pinged by
-systemd, We remove this behavior or the watchdog may not bark
-when systemd crashes since the 5th expiration never comes.
-
-Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
-Signed-off-by: Robert Lin <robelin@nvidia.com>
+Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
 ---
- drivers/clocksource/timer-tegra186.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
+Changes in v4:
+- Added header file for interrupt-controller under examples.
+- Redefine the interrupts format following header instead of hard coding it under examples.
+- Link to v3: https://lore.kernel.org/r/20250506-nvidea-dma-v3-0-3add38d49c03@gmail.com
 
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index e3ea6110e6f5..20685d122b47 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -175,9 +175,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
- 		value &= ~WDTCR_PERIOD_MASK;
- 		value |= WDTCR_PERIOD(1);
- 
--		/* enable local interrupt for WDT petting */
--		value |= WDTCR_LOCAL_INT_ENABLE;
--
- 		/* enable local FIQ and remote interrupt for debug dump */
- 		if (0)
- 			value |= WDTCR_REMOTE_INT_ENABLE |
-@@ -428,23 +425,10 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
- 	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
- }
- 
--static irqreturn_t tegra186_timer_irq(int irq, void *data)
--{
--	struct tegra186_timer *tegra = data;
--
--	if (watchdog_active(&tegra->wdt->base)) {
--		tegra186_wdt_disable(tegra->wdt);
--		tegra186_wdt_enable(tegra->wdt);
--	}
--
--	return IRQ_HANDLED;
--}
--
- static int tegra186_timer_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct tegra186_timer *tegra;
--	unsigned int irq;
- 	int err;
- 
- 	tegra = devm_kzalloc(dev, sizeof(*tegra), GFP_KERNEL);
-@@ -463,8 +447,6 @@ static int tegra186_timer_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		return err;
- 
--	irq = err;
--
- 	/* create a watchdog using a preconfigured timer */
- 	tegra->wdt = tegra186_wdt_create(tegra, 0);
- 	if (IS_ERR(tegra->wdt)) {
-@@ -491,17 +473,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
- 		goto unregister_osc;
- 	}
- 
--	err = devm_request_irq(dev, irq, tegra186_timer_irq, 0,
--			       "tegra186-timer", tegra);
--	if (err < 0) {
--		dev_err(dev, "failed to request IRQ#%u: %d\n", irq, err);
--		goto unregister_usec;
--	}
--
- 	return 0;
- 
--unregister_usec:
--	clocksource_unregister(&tegra->usec);
- unregister_osc:
- 	clocksource_unregister(&tegra->osc);
- unregister_tsc:
+Changes in v3:
+- Dropped arch from subject line for dts patch.
+- Removed include statement for interrupt-controller under examples.
+- Link to v2: https://lore.kernel.org/r/20250506-nvidea-dma-v2-0-2427159c4c4b@gmail.com
+
+Changes in v2:
+- Modified the subject to add subject prefix to the binding patch.
+- Changed the alignment of properties and required in the binding.
+- Removed description for "dma-cells" and included allOf to dma-controller.
+- Changed the include statement to use irq.h instead of arm-gic.h.
+- Created a new patch to rename apbdma node to match with common dma-controller binding.
+- Link to v1: https://lore.kernel.org/r/20250501-nvidea-dma-v1-1-a29187f574ba@gmail.com
+
+---
+Charan Pedumuru (2):
+      arm: dts: nvidia: tegra20,30: Rename the apbdma nodename to match with common dma-controller binding
+      dt-bindings: dma: nvidia,tegra20-apbdma: convert text based binding to json schema
+
+ .../bindings/dma/nvidia,tegra20-apbdma.txt         | 44 -----------
+ .../bindings/dma/nvidia,tegra20-apbdma.yaml        | 90 ++++++++++++++++++++++
+ arch/arm/boot/dts/nvidia/tegra20.dtsi              |  2 +-
+ arch/arm/boot/dts/nvidia/tegra30.dtsi              |  2 +-
+ 4 files changed, 92 insertions(+), 46 deletions(-)
+---
+base-commit: 9d9096722447b77662d4237a09909bde7774f22e
+change-id: 20250430-nvidea-dma-dc874a2f65f7
+
+Best regards,
 -- 
-2.34.1
+Charan Pedumuru <charan.pedumuru@gmail.com>
 
