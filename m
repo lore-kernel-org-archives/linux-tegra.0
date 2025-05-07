@@ -1,215 +1,121 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011000.outbound.protection.outlook.com [52.101.125.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D2C17E4;
-	Wed,  7 May 2025 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746634217; cv=fail; b=C6njAHk2wLYzoXBmzFPW1PhYzwyC57Dueb1EfAl2awtLEuj9z3rSaHQMBILHlNIxHHNC0RDWX+ItOdrxOwEs4WSsEc1Ytsr7hQBIikPGAjoNzvivYRPdzMY9sWJ0J03KGRZKrLw9hsY4LdXJi2Dd1BQgHfzhGyQdcjjNnw1zcYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746634217; c=relaxed/simple;
-	bh=ZzmSjCPHEbYjy9WKOmRnRCW4x+vhQOn+I9U4PXOTxyc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Cb4SoI3cNTPmj/iG1tNaEx3MvWF333kQTU3rkfohWGEcuOtQRQ7S44D4Do3pYr/TqK1RjvLgKk8c3RMenAKbW4S0vZnx0WmO4yCGx2eMgflyMWKRTlwT8Y6ZDerqJYkjPnQNIKSRbBRLXf1e3MWswrvZ8406XR6S27jxy1HSsuA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=rkizce6j; arc=fail smtp.client-ip=52.101.125.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880D7289821;
+	Wed,  7 May 2025 16:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746635233; cv=none; b=pHYKY9q9NH/CxSLZED+ip4oDY8GD6cUdTlSfoRGTI4qhByUktWFtCDfvTIJPp2i1TO1goWrFFzR5682MBpVVJ0X5cNkdkfuM0ME57zb9m61AbVg8PJa0Kgh4xlvzFC1vQO8Mcdl8aMgUDZD8dO7rnMzLT9D2Fbj8e+J52W6MU64=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746635233; c=relaxed/simple;
+	bh=/bkp1+ndxM6IUZavIiudg3yZ6BIozijVYfvBG//IBwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JLF4YWzJ9fp5J1Vo9uKSa6NSY0lAunYV6s/4pBSi4O3rDhx0nm3NVt2t3VKsaIe4HBwGDl9mVr4I9+xFv4VJpNRtP8wW37ovVleZmgJlKOezavUaXCXpnxJt5x7hLNW6EhuJ5LBcdHav1WrMGX//CQBRoVhy87czwIaP1oLuoAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXKpjqzr; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="rkizce6j"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V15mn9iTTPPwqOtR8fo53x8kwyvU/2rJXoP6j+whOQ1FlwJb7F2+UAExuu4qfYSxk4puTFWY6zMz8Gy/6bRv2yq3RXD4QFunf+p24nqVCaWFQT4bfnMHzvkklsMEImMdDo3/pMDK5wseQ6Uz9ssdN37q0VLspKHL+JkQdJ8GTWnAvZLLXpfT6JJFLkRvVf+aOK1BoZu3VDGtLYSkHvQMGsOaGpqZXp3yZLUtAPzuyZCVVBPqNTXOj1eAVNETzCmag7gdMM1tas5wT46uyIh7j4s5xxSi751BVh2UPFGwavohe8wVH6RMKLwrQXQTEcjbubcyU//IEziJGPqXSVX1Jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cQDmkwNEG2Q5azyj5lMS6klgv3cQGIDFvs1x/0qIBcQ=;
- b=ZndeVnhCzucMPsQ0JLlG+NZT1J2zc480taj4VTTWLL1UXDAp7V5JW0sY3jJh05JnF+26oGvXgXkmSty+VbDH2NwUBbNc16ER7CN12Xy0z6lNpxLZ6/Vl9vr8yIFxOOwlguescFoq0t6eZP+DeUMlB7b9YHhgp5za/0ft87jiK5MDqKBvK5nA9InHPf3Z/BXXqHneG3t6FXBcXRmTKoRAsOVSa+G9AUbI+Abu9XNilwrdRDX5TIhOqNi1dtfZW7PiLr1njBaJvXQO8CgPwaXAxhmYxPNTzj4jFILNAmdIJ/pZAU6oJIO04gW3L9nSnboahnAxycols/DEvIokG3eGeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cQDmkwNEG2Q5azyj5lMS6klgv3cQGIDFvs1x/0qIBcQ=;
- b=rkizce6jS8UXCe4v6V3DbE6fSPfwgj7fOHEgpi+6cimSI0ocsWqq8ypLdB8Mkw3IicrfXV8rPSW0QOGF0vEnTWtaqilaIz3bTVRrfn7lw7iLWFnLmfs5+1fPimKKJsstKpUZ+IETPtO+FOhdRmgkediTsA/XoPdLBBq/FLfR6ik=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY3PR01MB9746.jpnprd01.prod.outlook.com (2603:1096:400:22f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Wed, 7 May
- 2025 16:10:07 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.8722.020; Wed, 7 May 2025
- 16:10:07 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Mikko
- Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	Mark Zhang <markz@nvidia.com>, Dave Airlie <airlied@redhat.com>, Terje
- Bergstrom <tbergstrom@nvidia.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
-	<biju.das.au@gmail.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] drm/tegra: rgb: Fix the unbound reference count
-Thread-Topic: [PATCH] drm/tegra: rgb: Fix the unbound reference count
-Thread-Index: AQHbd8Aqai4WhmiBF0OEIqjKJRkhe7PH4p8AgAACizA=
-Date: Wed, 7 May 2025 16:10:07 +0000
-Message-ID:
- <TY3PR01MB11346CB37650B2F888CFC6DE48688A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250205112137.36055-1-biju.das.jz@bp.renesas.com>
- <a3gzox3ajhvatfmld5ny2lulmp325ycnukksusfbtldg37nqp3@jb4qajtuzczb>
-In-Reply-To: <a3gzox3ajhvatfmld5ny2lulmp325ycnukksusfbtldg37nqp3@jb4qajtuzczb>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB9746:EE_
-x-ms-office365-filtering-correlation-id: ffb21744-fa16-4a65-31b6-08dd8d81a2cd
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?RP3X7CD3HcHCDq9Q3c6JBcnh5KJk2/C6VmNL92TLHSZ/aR7r/BU14Nw0iAwI?=
- =?us-ascii?Q?Oy8k4WATEEM2E/IW7YYgdWom8GlBnqfGQraYmDbHjDcfWQ9iDsslj1MwioXN?=
- =?us-ascii?Q?BahMTlsOnw9cExEV6YGgZPghBQBIM1P2dXnu7EvECI0VHPmG4V+b6/BDcZVq?=
- =?us-ascii?Q?4v3rHjgxSF9mICrKmMIx9fbTiGpK2KFWtYU1jPsqi/FZU0EU5TAfWEgz3Bih?=
- =?us-ascii?Q?0C49QicULSYjyP/AXiwCNVdnejOjdJwdmq+I0+7aUHUSLLtmj5TtBAOSnZvA?=
- =?us-ascii?Q?+I0LKHgb7bkFfelwo2b7aDsTVlHMb2Y+PYozLhpvsuMkvIbiaak8dt2LvOSA?=
- =?us-ascii?Q?gphkDDWjo5s3aGy839sHYcbzTiDCvyGHclT2uiOV0AIVjEU8s8U4/RDWURmZ?=
- =?us-ascii?Q?aDEoVar6+FeY+4+fciCvn5ORxTbor2lGct2rn4qSW3A0gYTc1kXqYw0vCj7H?=
- =?us-ascii?Q?aVkcA72lnpRCG9TLhTkABhy+cGP8ks3/GubR+8MNh6lEogc7BNAqFwgcpo1e?=
- =?us-ascii?Q?nGvGqVXJ8cnYtedSPzYEnErzVEMJv0ncnijeffyBk2wGZMhy03z/4mRrN06S?=
- =?us-ascii?Q?diHb8+k//+buv044Q5aeD0BHv8Z/O2cSqxNKcdlNXmfjBzhPcw0FvnSLB51b?=
- =?us-ascii?Q?FjjdcWxFzsAKA4edDLyyUEaNXo9LJHUVqkc/gkARhDksntNpGd/ETVyBhFTX?=
- =?us-ascii?Q?kDLpixyVZCBNY5KpmiQ/TbiHJrQcbH0xkNCe+5goB8ApgYbp7rIHk8sB6O6r?=
- =?us-ascii?Q?68lxe8Br3SnXcDUerIGiVISPz3kPoncYK6vPUQcUaCvvOlHVbOKW1wS4v4f8?=
- =?us-ascii?Q?CtMdaDqgCRJHOgZ/LpWM9HJGKezd80a4XWunmRLmOKrllIL3qeMdMlIDrVbj?=
- =?us-ascii?Q?dAcsL9sb0XUEUJwRsNDgn20lGV3LFsxZfNIQCizvVPfAKomGVjjAjSzNzSa0?=
- =?us-ascii?Q?1Wzv6z2MDBWKy/CYx5PeMARD8+P1wfmfLKM/mE+YLx6zqYBoacglvIro9O6J?=
- =?us-ascii?Q?qPu2graXJ22PxisEV5eNrZo7gGUFdmyLUOf0tfMNExX4fbb+GmgQKqhLP6Vp?=
- =?us-ascii?Q?ZtawyBHu8QdSdEVcSw80PdTutNmbgI4UDUjTUngn/M7ROjdhdchiRkC5r+mg?=
- =?us-ascii?Q?V2s881KWUPWvySnJcEl5Fmri5so3vW0WDcfiwBpZleh0fgL6GpgngtLWtD6+?=
- =?us-ascii?Q?NctjhqISKO3bkYhzB2k9VzxBx60h816zw0Jp/lgkeptKbRtC0J12LPpTfcM7?=
- =?us-ascii?Q?oV34XNHFip2viXfrD4zEKGY+DnNjqg6owSIR8apf/0gGD67CnMG1L5jdP/m8?=
- =?us-ascii?Q?81M0Gg3Y/JpF5ordVEpPgbTkUuI+ouFPL7LQDA3jERwHtSAyE2xBN5LnUOL9?=
- =?us-ascii?Q?qyYdIX+LoAUh8TUglSsVeJkQ1V/3akX1+IhC+ep98WvkoF/U7x4Wc/ZzZvln?=
- =?us-ascii?Q?SFdNabtjR1cQ+fexlGk0fsuOgP43OSMSUT5c2R9m4Z6smS/21lyP3iMCqg+e?=
- =?us-ascii?Q?Ey/dBchZ0UxcHr8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?OdRaRwxcXblaJaKd+jdBjPQIvx6q6yfoIZwX5FVJSb91Qk9yF81VHn3oMXkb?=
- =?us-ascii?Q?hQv65vroqtNoWnsNneFvKOIXPnyJlvOC/FhKe57WeNpzE5SdX56p0zfQdKlx?=
- =?us-ascii?Q?1VSp1hWQzFG2WSwuOZVJI8jdMTRRFmsyUC3ocucLF9ZQcZFry8xZHfFvnakO?=
- =?us-ascii?Q?88r5mg3n+rJPE3qh7Cf6jP5c5CNz3jUQx4Ld4egS6S6rM8Xoi/A/7KR1X6P4?=
- =?us-ascii?Q?eDxTkj6kNYW9lJMJvL5Qqgz1T1Z7X9PsgTGY8gNLrfzUnLkvvJiABgE7Lqn9?=
- =?us-ascii?Q?9T8jcpvZAS+TAUmP/JzyudsXBF8IvlHiyr9jc8GZFBKDbBICMzN8bZjJJ61D?=
- =?us-ascii?Q?3t+1rU8SSACkfgmYsVvzfG1rid3cRhCXOK4yhGo71PVElJjeZJ1p0fu8Y4rI?=
- =?us-ascii?Q?CXLbWYEG1zbaJCzJN7Oi6cA3SrlNJE85QgYtjgKtrToBX1LUPuUfkahCyOwM?=
- =?us-ascii?Q?y3ggilZecScgglKlFZPSvnML4g0qHklD8z+N4MBMpygsqW3+5EHkjgSxz7qx?=
- =?us-ascii?Q?qUqKjN47je6E5rrnVNDH7NmIIHF6ltbrZ06uoxQdWUGzGxpzFFXvn6R0fG8h?=
- =?us-ascii?Q?rA5CN5dD3KJtaTuth5Vf6P4D5Aio+ciSP361DnRMtl44BRMzS3FwWqKYng4Y?=
- =?us-ascii?Q?nabwsZKU6P3nPAWvPDdsEMc6MeEqng8W0EHhJ7xReeEE+ioK8MFEXWZW6lGB?=
- =?us-ascii?Q?UqFc8dX2o9xlphL7LuiwvJJR0dADyewz58RDsrGnFlnwfuuRW5kkmBbP9613?=
- =?us-ascii?Q?mX4KfPnlSrXtFCQPpbxfTMGJjgjfMK42xHWEmBiAdN4Rl6C76KHzNjU8fyqq?=
- =?us-ascii?Q?XNQ9oRlg/STZ2GFeB94CC2aGBMshlQ8omg9jaRsglHkZp5JJquOWVaqFdiys?=
- =?us-ascii?Q?cA8LViooRiE8F7SOo6SYQfE5CHGpgXhPojvg2pDk+gB+Hlfx7yixuil5Rx4N?=
- =?us-ascii?Q?VNw4aXfN1WqbsxB9mUbbQuESae3fjyGfJi3cqkhdo7sh//FtdMP4MkVEyPvU?=
- =?us-ascii?Q?tRUxeO7T75F4cvsyNNBcbFGXY5W67JBJcMIRIw3MAkNNDGdqMWqxMpOZtRAs?=
- =?us-ascii?Q?pAJZLrZIkDy5swllx9psgHUh9SQPdAAHF8U7u/ulMIeQ41jrc6rgi4jRt9zF?=
- =?us-ascii?Q?w1Z5nTHhKFI4FHhmhRGvFEYQPrEyCGCzHoAzISwc8W4WXuqjzaIrlT4gk6ld?=
- =?us-ascii?Q?iJRq118sXj1w9QPLbAPFvmVPufdbYfH4wW1WCMCbMSlNJuJKZBqhR0T6eIon?=
- =?us-ascii?Q?ief0axFxJ912XzghK1TpZXN6ht3yZvdje1nAdco39m0ro2yX8VKGBB0zz/61?=
- =?us-ascii?Q?96eW3PWRUGim3cy8L9GaGWzjcYLYSKLVPY6awcR7o35/zh+fG7+EKoHmmE4s?=
- =?us-ascii?Q?8s6hXKVwZSIq6/cZ9NXyu18ehllcr57udNfPheocSbIxpebnGlpUUFLyfZcC?=
- =?us-ascii?Q?UVgpcQY2U+ux65PES9yNoT9kMSHNTQ8teo3ROhM6WPwCJhpCmJGI5DWVyrRe?=
- =?us-ascii?Q?TNdbGHAz6KCDsx8Qm1iuSsC02pP6407obn4D+LA0OTL7e1TpkEb0R/LBEkDv?=
- =?us-ascii?Q?iK0IwKyBf5zoGv+S6OBDueJd8tfmSRyx+f3P/F+CJECwpVKRRC6ZbsWn2xAc?=
- =?us-ascii?Q?Dg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXKpjqzr"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-326b683ac3aso1036151fa.0;
+        Wed, 07 May 2025 09:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746635228; x=1747240028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/bkp1+ndxM6IUZavIiudg3yZ6BIozijVYfvBG//IBwU=;
+        b=BXKpjqzrZU/aK6BeKwUiNeBVcVsuvFwRaX8r2rvIf/c7nZfeDNwrvCETuR4C9Hh/fz
+         YEerQ0DqjXofVkKtV49lE7dMAmakQIu/gmpBad9AkL8uC/0aDENWAv54+4EOMbZIm7A2
+         zLl+HPhtfNdJaA+wrZI1ZhxjQTxfMJVc48LuNclgfCFgqG1afhN40Rz8Xavp4IoW2rEa
+         2vpr5XeCpzfFULpSTa8Sd5LAfAJnP8S7niCr8nSxQV2mndAr9ZM2NYwgAUZixihMlUlq
+         U/1ScTlRGXdcphSNpM9rck3jyXIwlnCrzaKfO/ToUlfrMphnctTcXXWJqeJmlUtrO27n
+         1xbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746635228; x=1747240028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/bkp1+ndxM6IUZavIiudg3yZ6BIozijVYfvBG//IBwU=;
+        b=go/H1gshU1GgRdcQKZNjLLVECW8p1uEFwiL0p1rjwoSm8sAn9JoQJR0R4TZPPE7ykB
+         CyVWlGidfrsy7oHOY0Hj7mHuhPu0C8og/JTXWAybwbxj9JEi7ln5yr2cVH4d2bF34pCs
+         T12iNQC7PJDkAMHnQjR/ms+smY7TuhjwtFZgKKScqBCjV1PEj00JmRTVdD/y6LyBptwC
+         RhUXGrIFxpPcnPEIK13jwRZyOP/eMnGIeF6g3GLgzLSBsTEfOdH6SBJA/eAlybTsO1mB
+         4c75pszLO/W5iPK251zyjJ1E+UfrseIU5gPExLVydEXwz7CIWEQhuTBoE0WwQ7Y8V8mR
+         LIzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFP80x14djxj9zsAJ23t17AgFkH1iVpF64tQCQk9yxdNR04SdEoyKcxcF0eC/pU7+NQ5vrXDdRvM2OLPU=@vger.kernel.org, AJvYcCUSoqq/xX34+Q2UtEL2f1S5Dkldc2xkalKzHcZtWMjt/gldi/pgp/BZggjT/ivNMyHRgIG6Y2zp/XH2@vger.kernel.org, AJvYcCWJUnBFcv/gDCW/N+0aGu+B15/kPvYigQf5jJo4XY6ExOMR//qWR0Vyyva7roChG2z31Qjr7MlNcSKXERgg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7QShvRKOrOAlL+HHmmTmbIs4FMfZ/tKmFRrPB6sfyvb1GF8Qi
+	JHk+gOAae7Cc2GOgy7/7+rOz4m55fZSXyXOBz0woD3izKRbP7HONPFWfa6oNhwLPTafNjuZTty/
+	7sjrKo1hzv5Hrd95Qvz3EaAEAr4c=
+X-Gm-Gg: ASbGncvpSwCkxVaU3MPnTKkGUX3+UFhpF0+/S1xOAwfaRb+mpQvLez47Tktz0bSqa1H
+	XkRR85Nq2T5yhJQ4f+xM0/R1wpJM3c+2+EwF2vl7P9q5Rt4UMVDeV50A35jSiI6nJxVAqqvaVpp
+	s+JfIjIcA+Xz6Rz30hPxFKowtwV22K56oRUg==
+X-Google-Smtp-Source: AGHT+IHOrELlfrPc4U6o94ZfK4oHdb0EgEpd9D53TLeAXQjPNrwN+J+jfBObUTEvdKwpYzy9vRNel+cJiNf8YN9WrPA=
+X-Received: by 2002:a2e:bc94:0:b0:30d:6270:a3b4 with SMTP id
+ 38308e7fff4ca-326b764f0bcmr720101fa.15.1746635228251; Wed, 07 May 2025
+ 09:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffb21744-fa16-4a65-31b6-08dd8d81a2cd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2025 16:10:07.8074
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9FMX+EcAxocJ+PcYXTHXDYHyGA0Sr74ZHe0tMFhsIfQNP4AwlUPzdxWjfYsbs4IAsbJyoYIy1BhLo6c+a4wN4YeoDoxVmk+IUcbs4xex4uI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9746
+References: <20250419-tegra186-host1x-addr-size-v1-1-a7493882248d@gmail.com> <vegicz45jspxecpaitgju6ivvrefwoufg5yrzlvxudjatno7cr@rnvnqrmqofsk>
+In-Reply-To: <vegicz45jspxecpaitgju6ivvrefwoufg5yrzlvxudjatno7cr@rnvnqrmqofsk>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Wed, 7 May 2025 11:26:57 -0500
+X-Gm-Features: ATxdqUHPCKEwfrljQ_Y3mZLOd5OdP80bfGHGqvB8s0eKCloQAxHcEsxq3hWZt1Q
+Message-ID: <CALHNRZ8N=NnirL_vBYjsUt_w8hSXzu5z7H7ditFQTjuHH2Zs2A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Bump #address-cells and #size-cells on Tegra186
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+On Wed, May 7, 2025 at 10:37=E2=80=AFAM Thierry Reding <thierry.reding@gmai=
+l.com> wrote:
+>
+> On Sat, Apr 19, 2025 at 10:30:31PM -0500, Aaron Kling via B4 Relay wrote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > This was done for Tegra194 and Tegra234 in 2838cfd, but Tegra186 was no=
+t
+> > part of that change. The same reasoning for that commit also applies to
+> > Tegra186, plus keeping the archs as close to each other as possible mak=
+es
+> > it easier to compare between them and support features concurrently.
+>
+> As explained in the commit that you referenced, the reason for making
+> these changes for Tegra194 and Tegra234 was so that the PCI and GPU
+> nodes could move back into the bus@0 node. This doesn't exist on
+> Tegra186, and the top-level already has #address-cells =3D <2> and
+> #size-cells =3D <2>.
 
-> -----Original Message-----
-> From: Thierry Reding <thierry.reding@gmail.com>
-> Sent: 07 May 2025 17:00
-> To: Biju Das <biju.das.jz@bp.renesas.com>
-> Subject: Re: [PATCH] drm/tegra: rgb: Fix the unbound reference count
->=20
-> On Wed, Feb 05, 2025 at 11:21:35AM +0000, Biju Das wrote:
-> > The of_get_child_by_name() increments the refcount in
-> > tegra_dc_rgb_probe, but the driver does not decrement the refcount
-> > during unbind. Fix the unbound reference count using devm_add_action_or=
-_reset() helper.
-> >
-> > Fixes: d8f4a9eda006 ("drm: Add NVIDIA Tegra20 support")
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> >  drivers/gpu/drm/tegra/rgb.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-> > index 1e8ec50b759e..2065157daab3 100644
-> > --- a/drivers/gpu/drm/tegra/rgb.c
-> > +++ b/drivers/gpu/drm/tegra/rgb.c
-> > @@ -200,6 +200,11 @@ static const struct drm_encoder_helper_funcs tegra=
-_rgb_encoder_helper_funcs =3D {
-> >  	.atomic_check =3D tegra_rgb_encoder_atomic_check,  };
-> >
-> > +static void tegra_dc_of_node_put(void *data) {
-> > +	of_node_put(data);
-> > +}
-> > +
-> >  int tegra_dc_rgb_probe(struct tegra_dc *dc)  {
-> >  	struct device_node *np;
-> > @@ -207,7 +212,14 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
-> >  	int err;
-> >
-> >  	np =3D of_get_child_by_name(dc->dev->of_node, "rgb");
-> > -	if (!np || !of_device_is_available(np))
-> > +	if (!np)
-> > +		return -ENODEV;
-> > +
-> > +	err =3D devm_add_action_or_reset(dc->dev, tegra_dc_of_node_put,
-> > +dc->dev);
->=20
-> Actually, I think this needs to be:
->=20
->   err =3D devm_add_action_or_reset(dc->dev, tegra_dc_of_node_put, np);
->=20
-> otherwise tegra_dc_of_node_put() would attempt to call of_node_put() on
-> dc->dev, which won't work, or rather cause corruption of some sort.
->=20
-> Shout if you disagree.
+This isn't recursive, though. I had thought it was, but kept having
+issues. Then I found docs that say:
 
-I agree, is it something you can do while applying or you want me to send v=
-2?
-Please let me know.
+The #address-cells and #size-cells properties are not inherited from
+ancestors in the devicetree. They shall be explicitly defined. [0]
 
-Cheers,
-Biju
+> Does this actually fix a bug? Just making this look more similar to
+> Tegra194/234 doesn't seem like the best of justifications for bloating
+> the DT.
+
+Tegra132 and Tegra210 also have size 2 on all these nodes. I probably
+should have mentioned that in the message too. But having Tegra186 as
+the only odd out tegra arm64 arch is confusing and makes for extra
+work when trying to implement things across all archs.
+
+What made me sit down and and type all this out was an attempt to get
+simplefb working for seamless display handoff. And I could not get the
+reserved-memory nodes and iommu-addresses and all to line up. Not
+until I made everything connected to that have #address-cells =3D <2>
+and #size-cells =3D <2>. Which happened to line up with every arm64
+tegra arch except t186, so I submitted this.
+
+Sincerely,
+Aaron Kling
+
+[0] https://devicetree-specification.readthedocs.io/en/stable/devicetree-ba=
+sics.html#address-cells-and-size-cells
