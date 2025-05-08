@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF59C215F49;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5FB21638C;
 	Thu,  8 May 2025 06:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746684465; cv=none; b=Fl0xCObakmVmglSAX40e7VFD4JfwRxoIA+VXF2FemYnqkjICXiPolYdhmXaTw5nOCnkQ/350KCTmf3lxD+ZFuQrhyttzWTGLXpd4LZkI598f5Kzf0irYP2kQp01OAb5J1UQbscvIqFmvpjdORXOWFQT2kMEY9kUTL5BDpKGoZHM=
+	t=1746684465; cv=none; b=g2ld39DWQDZ8I6gdCUczjBB8q3FZJ81PBZT/ZXAZP3ghkXK6YZdLxcYVGrUDFJ9k8tTNvg3bSaPuc9cXhRSNA7YwqVsKpelGcpu9wN9s7zaxPPOs4sR68KHCWOBPt7WaI7q+LXV8JS9ZmFiGLBwAUnDkYzREX1YcyFqABRxgzlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746684465; c=relaxed/simple;
-	bh=h+pfeE2YEuEkhstsQ/EywIS3qHB3FnGPIcU0/7ZAPTU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gASg1WLygT6sp6wkgRZmN2CfoGwqvr6CtyoDLF2aKzV9lDwdS7kvg1DnflSpzh8i+ENbKdPQWCM/gjq5Vh2XphiCO1TOHfIEtps559ivl68JJYV87nOYApDTFV4fohLp2qOq7l5vnl6CHkihLjLq+SIXUBIo/mQ6UmTM9y9XzlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNnZY8Ax; arc=none smtp.client-ip=10.30.226.201
+	bh=yi88OJK5yR59gz0QB+OegU7xAAvdm64svetJl4b8fk8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sgAi+5pWZtsU1ZtG9hP2WTByIMwEDrtZH4Jq16OSV7q8MxMi1SNmXFay12BWl5NG+Jo3xS7ti9iH+6LnrZ79xaQzwR0gvjh2k+1qZ5UIkadiCkSnSLINKk/+VulraWnyyNCKxMfhOqanscdsOqUkikZPVjZ/Wza1K8UYRl21T+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAvw9cQn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNnZY8Ax"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3C8D1C4CEEE;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAvw9cQn"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58C4DC4CEF1;
 	Thu,  8 May 2025 06:07:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746684465;
-	bh=h+pfeE2YEuEkhstsQ/EywIS3qHB3FnGPIcU0/7ZAPTU=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=oNnZY8AxUi54fgzC1pe5/5StosyfWF8rsZ3VcbEDy52pFh1ycjWwO+07QoFTswycI
-	 tcmJ3v8+7zWUE1WTO/S3QGMxmzuIvwHA/G+IgP5CbkzejWBezHvaOa534CSgF39UrQ
-	 sb/ID0qRZft7OVTA/MzGLZj9xV3gmK0Sgb2GY2cg0VH39ozK/dMeedMUagEh6ptJLP
-	 /AoKCFIGZVEJjttz+Aw9jt4OqDQinzP3M1+BRKNi/IvkGecHrvW6yNy8XarG/yGkNP
-	 2Le0ZdsfkqEssva2plEWaeANWq/JWiCCCkwG4Z8TfhEjeIvsBXEvq6LWFtkI0Jt1Eb
-	 SXOYxCPCJHPlw==
+	bh=yi88OJK5yR59gz0QB+OegU7xAAvdm64svetJl4b8fk8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=lAvw9cQnohd2Ft89FwlkPqeOSCa4N5MM7Qw1YSGGMltxZZWfcJ0HQ9OFVELQyJ2ko
+	 N/ad9ALb068NAb+Q2UqpNB+lvOtwCedz2PkWYCurzRYfdrvbS+Yw/bvKRH0jq11VCN
+	 2UyZfXJeSITcb1TVolv2kpfqQ9rXofXYawYdRsrqaiJYcZ+Jy+olYXIi77OxS0dHQ5
+	 bK/EYkh0f8DxHChYYPQS7AJIA1O6YmpBQfZilyOhI7R75qtA9lh23IJkJcLD0AiUaK
+	 MtIM5WxX8uAjHfynAIRN1T5+TMNmXExm8g7fkbsuLzHApzOxe7VLGuEIgn+z3+dkzs
+	 N7TZoBkR5EmiQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29276C3ABC0;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A980C3ABC5;
 	Thu,  8 May 2025 06:07:45 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-Date: Thu, 08 May 2025 01:07:37 -0500
-Message-Id: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
+Date: Thu, 08 May 2025 01:07:39 -0500
+Subject: [PATCH v2 2/4] dt-bindings: memory-controllers: tegra210: Allow
+ fallback compatible
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,11 +41,9 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAClKHGgC/2WNQQ6CMBBFr0Jm7Zi2IDquvIdh0bQDTGKpaQnRE
- O5uJe5cvpf891fInIQzXKsVEi+SJU4FzKECN9ppYBRfGIwyJ9UYwpmHZI1WyMGhn5HO3nFLyvq
- GoayeiXt57cV7V3iUPMf03g8W/bW/Vq3+WotGjUQXanvbUt3o2xCsPI4uBui2bfsAPz21Hq4AA
- AA=
-X-Change-ID: 20250429-tegra210-emc-dt-97dce690ad4e
+Message-Id: <20250508-tegra210-emc-dt-v2-2-d33dc20a1123@gmail.com>
+References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
+In-Reply-To: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Thierry Reding <thierry.reding@gmail.com>, 
  Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
@@ -54,11 +52,11 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
  devicetree@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746684461; l=1217;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746684461; l=1131;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=h+pfeE2YEuEkhstsQ/EywIS3qHB3FnGPIcU0/7ZAPTU=;
- b=2sbjpz0NHNUxabBRxSPI3YxFl2lApicoZ+XOPwEzfS+fRBYBmvSKFAQVP6HGDOZW4jdMz3iCh
- WEfRWwRIuxGBjZoADeWJnDqLPX8JjbqochzUpo/8/ZcN2dOBOHsDUR2
+ bh=5IbR1bmo6NLdZ9+ATxenwM0aRIdwm6/TcE2oX1FSILI=;
+ b=uBUYKRVk2hA7/8KefqSsKjzmXcReRWWGodF8KPbEmLzvsiEG/GsU0LUyg5Ix+wD9tUlaLvEKO
+ 1AxodFDoXUIBULjrjc1nNLgXLxPto/QPazlqIhal/GEPCOb79gneVLK
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -66,34 +64,36 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
+From: Aaron Kling <webgeek1234@gmail.com>
+
+The nvidia,tegra21-emc compatible is required by the Nvidia Android
+bootloader to copy emc training value into the kernel dt. So allow this
+as a fallback compatible to avoid needing to change the driver.
+
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
-Changes in v2:
-- Add patch to describe the emc table bindings
-- Add patch to allow a fallback compatible on the tegra210 emc device to
-  match firmware expectations
-- Add a patch to include the baseline emc tables on p2180
-- Link to v1: https://lore.kernel.org/r/20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com
+ .../devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
----
-Aaron Kling (4):
-      dt-bindings: memory-controllers: Describe Tegra210 EMC Tables
-      dt-bindings: memory-controllers: tegra210: Allow fallback compatible
-      arm64: tegra: Add EMC timings to P2180
-      memory: tegra210-emc: Support Device Tree EMC Tables
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+index 78e3417d273a329b77bf2f61de41b29017be56d3..acae6c8a6c0ab9ceaddf00342c933499350568eb 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+@@ -16,7 +16,11 @@ description: |
+ 
+ properties:
+   compatible:
+-    const: nvidia,tegra210-emc
++    oneOf:
++      - const: nvidia,tegra210-emc
++      - items:
++          - const: nvidia,tegra210-emc
++          - const: nvidia,tegra21-emc
+ 
+   reg:
+     maxItems: 3
 
- .../nvidia,tegra21-emc-table.yaml                  |  1692 +
- .../memory-controllers/nvidia,tegra210-emc.yaml    |    44 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2180-emc.dtsi | 49749 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |     1 +
- drivers/memory/tegra/tegra210-emc-core.c           |   246 +-
- 5 files changed, 51721 insertions(+), 11 deletions(-)
----
-base-commit: 8bac8898fe398ffa3e09075ecea2be511725fb0b
-change-id: 20250429-tegra210-emc-dt-97dce690ad4e
-
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+2.48.1
 
 
