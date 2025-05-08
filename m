@@ -1,129 +1,127 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA72066CF;
-	Thu,  8 May 2025 12:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EFB2165E7;
+	Thu,  8 May 2025 12:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708508; cv=none; b=HqM8X2vJeXe29p2+BwdjxZ2WOGS4E0kJGmwJCD+FJUyHr0GlPL45ysqWNGHijgBh626/bZ5Fesc5d5n2Yi4NVR/0Y9HLEEumT5ZQkd+XevUuGWB5oVpERQm01ckN0iAmgVnwlqxfZ8P7xCBjSgKWa4Cp0+4zko0At6bFIN5amns=
+	t=1746708611; cv=none; b=bsGZwHTsD8RPMt8iTRXCANBEnIbl4+PxrbN+9qc58tLYtVYcMWf6t4qUCrx/d6IT26MsC3KEiRl2ZTno5uvzS3kUNXVQad9Si1J+9SjcdtQHbwvHamQhumbDaSJnOf1rkDZoHdi7KfXBbAP5xDbDgqIstJoPtAGbgrWAJyPxsag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708508; c=relaxed/simple;
-	bh=K1JcDkyymVY9Ta8SYRATFg4KegkMDnSgEyDqpkv3p00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xt2Fg+xNlBBMQwU1kHXylyUTPkDpMSTN8H5M2BBz6OUDB3QOe8/yuep7IgA3W3JJpkozApflXS+HSlKQBRgX1dRQyfTQBLOckyBVbUQKKqE8CQhYsTzt6atjzkiJTZCbITJbsESBoHEogHsRQCDlZ6q4rYMaCtahyyXyak22sFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7CRbjQR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746708611; c=relaxed/simple;
+	bh=xYuNafxacf7RHIvvgPdPCXZN9xq30/baUz6q+qidB7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IsjceFp2vpPERxHW7HTk1p8zNZNlSIQAjlwO7HmtrGDzsNRZNqbO+ulqhxnQCd6hWZx5+UPK4/QeTJ58JeVUZXY1nnI+WyOupf4ud5BKNGmufAcTnIER3xrtH8HI3V+EkuSVeRWlhmYkuyOZMgYlXa3uwbp67ObSKr4HjqJHeq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqqUNfP5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7CRbjQR"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-440685d6afcso10734195e9.0;
-        Thu, 08 May 2025 05:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746708504; x=1747313304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K1JcDkyymVY9Ta8SYRATFg4KegkMDnSgEyDqpkv3p00=;
-        b=W7CRbjQRlAfxEHN3J+Lhvatrn8mvYSExWgZ6ymQc4dT3OXXC+8Gf3chPOUbeRtuB4n
-         pjXC+3oHZTgnzQXDAdKO5FwCar2xiHMjXoZ44lw6Hj4h+4JO2MjFXKIJRFwweR+l6PRn
-         DsxhL5gS0tFSdYWi4dTmtJ2kwp4kI6z8RTJHqq+CohllObI88nA7HW6GEwIw6GaMvgF3
-         1HKl9oKNbE0WAeigV7G/Lz0rymX8jnuY7QzSZkPL6rPaKixwHwhAp2IRqU7tbOVmNz04
-         Ff+4FlgbPI/6bCmv8vJNGMpotaW/FqrvOilbpbby+Fx9gLUDV5MFIbejG3Z+kxpci/SV
-         Kr6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746708504; x=1747313304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K1JcDkyymVY9Ta8SYRATFg4KegkMDnSgEyDqpkv3p00=;
-        b=W1tLAHTsxOzw85OfTr+7y7K7YG9RsMUYnchwuCTHCvZuKYeFIktJDpIx1tGWF3EIBm
-         +svU5GP3SGIfEW2MSBXsY1A41pDhRmwsu5G2TspIYDQ09cMl3KpzaVwffVCgW3PZbxPF
-         mL+vlXb+8jX0Y1RehR62VaB6CsWhmvMWwOPf1N3YYkOJnS/YQiD3ww33HUFmKIvQ+FIt
-         aNo6ulGbYQ09W88GrsR+SmOuc1cB5Q/G+wwDnkhTY63qxAD842t4RgLiEYeWpmjm5xzK
-         8pPuQ49WLAW+g60tq15OWBqoJfTEej8KGAgQ09j5jLExEotK8okwzLTyMz+Dy6vrDmoq
-         S8Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ol6BXYK/J4cPTyBECCx0Emz4igcz0UWxqNyHxEH07aVYw64ZhJVTuabmGsYDFJcTQAh7p/8EboelYxaJ@vger.kernel.org, AJvYcCVwdybWhWaKOEVVikaDAH+o5RPxB/esuCFM12ajl5vCNObqz0ZKBbI3Z8E0KdFUwqlN2OYdlfWHpGkC@vger.kernel.org, AJvYcCWP2FpB2lfYx/Mj555xtenQnuxu9VAFKBtPTZ04cOTaA0kJS5fvUnnku1L5QaojLffLOCb2FBwCq06kPGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYz8JkP9uGmhrk7yyRVxFbQYXO03MiloxTmV1Mr54cQ9vXO0FP
-	897rt3j5Q+s87UeEx+G3Ihz3hVa1T1Td4ULS9Nts2vgzKrM87ohd
-X-Gm-Gg: ASbGncuZuWTfOUpD4ClTu577E04H7e4KA8QrDkPMtR5/bLsmSRqRc5I8CCPHhw4eZbO
-	agCf/qBU1M5cDsiiCYn8bt40rCKBuvURXu6vkm8CD/2pqjUFYNCBcgPs4UvPYwTjMJGU1N7+J2Y
-	xQZCrIvD+c6SnudkryWZqmX/cX6VPUZo2JZTpXUO1vlmfBbEC/OxITSektgpxbX8p3jisEw7K2T
-	ns+i+OC8lUmFvDH+FBhXuy8PAG2rNoWfdGsf22ggfkT9xY/w8to4S0iAUzFP9Tyavt8NPlmyDX+
-	VFsg2YMD9iGJ0Wywo+exTzMnY5hPjEGz6exOqI+GRxWRMtoLxyd73psfbmCyELwjpq3xX196cOv
-	qHrjK9CSOERQuXe9E/vhQl9hqKUQ=
-X-Google-Smtp-Source: AGHT+IHSVvOwM76//qmn73kAnoUTmj/CnRUBRA7zQwSUPHrkrhEv1jw1uHjVkLixP24yaZc89bJizA==
-X-Received: by 2002:a05:600c:37c6:b0:43d:1b74:e89a with SMTP id 5b1f17b1804b1-441d44c3933mr66198845e9.9.1746708504289;
-        Thu, 08 May 2025 05:48:24 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd328455sm37086045e9.2.2025.05.08.05.48.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 05:48:23 -0700 (PDT)
-Date: Thu, 8 May 2025 14:48:21 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-Message-ID: <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy>
-References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
- <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
- <CALHNRZ-q7W9CfeD4ipmwFVqHm7oGfTgJpwNoVhfbSXFPDxF91Q@mail.gmail.com>
- <eba00bd5-fa1a-4cad-bb41-b395011235e1@kernel.org>
- <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqqUNfP5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E757C4CEE9;
+	Thu,  8 May 2025 12:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746708610;
+	bh=xYuNafxacf7RHIvvgPdPCXZN9xq30/baUz6q+qidB7U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UqqUNfP5tWjaBUefvChrRuZH1QtEIZTU1yHKO8LANCTEkVJU80VFx9Fhwj4O3fA3p
+	 jqJQM9HP9AsXNlKb8w2j3CKlwCHlMlZZ2VtStXFqtQdncsYlFF92uSSIL1ZBgzr1Ph
+	 zpl7tp4uAXLNMPfDDcBoXidjS6cc17yTkHPwczWNVg/ykA/OlA/AB0L4p8bh9k5HfP
+	 BDQGuBPPiXLZDEgmY8ykbExasVzbW45qthxuvMsXdjVM9j79Ohsbvk8tLmXe8i9cth
+	 Qys1+n9HVhSTVqlmhk3LmsCyT9LHUSXVezjX8zPMOfcWvfyb0L9itGhVYhHB/hqvWg
+	 k09hvXwRsJXcg==
+Message-ID: <e463be7d-cf7b-4ea4-aa85-4dbe47ac4154@kernel.org>
+Date: Thu, 8 May 2025 14:50:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7hulawnxj67g4v62"
-Content-Disposition: inline
-In-Reply-To: <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dmaengine: tegra210-adma: Add Tegra264 support
+To: "Sheetal ." <sheetal@nvidia.com>, vkoul@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com
+References: <20250508123520.973675-1-sheetal@nvidia.com>
+ <20250508123520.973675-3-sheetal@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250508123520.973675-3-sheetal@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 08/05/2025 14:35, Sheetal . wrote:
+> 
+> Signed-off-by: Sheetal <sheetal@nvidia.com>
+> ---
+>  drivers/dma/tegra210-adma.c | 194 ++++++++++++++++++++++++++++++------
+>  1 file changed, 164 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index ce80ac4b1a1b..1ed3ee590f5c 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -1,9 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/*
+> - * ADMA driver for Nvidia's Tegra210 ADMA controller.
+> - *
+> - * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+> - */
+> +// SPDX-FileCopyrightText: Copyright (c) 2016-2025 NVIDIA CORPORATION & AFFILIATES.
+
+2016,2025
+
+Read about range:
+https://www.gnu.org/licenses/gpl-howto.en.html#copyright-notice
+
+I would be also happy to see first documented usage of
+SPDX-FileCopyrightText in license-rules, otherwise I have doubts we
+actually want this (and just because some drivers have it, is not good
+reason, because some drivers have bugs as well).
 
 
---7hulawnxj67g4v62
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-MIME-Version: 1.0
-
-On Thu, May 08, 2025 at 07:27:52AM -0500, Aaron Kling wrote:
-[...]
-> The devices I'm talking about are not yet end of life, so it is
-> physically possible for them to get a bootloader update to conform to
-> the existing mainline model. But I'm just one guy trying to do 3rd
-> party support for these devices, I can't affect what Nvidia does with
-> the signed bootloader on these devices. I'd love to be able to swap
-> out an open source bootloader on these, but the secure boot setup
-> prevents that.
-
-I've reached out to our Android team internally to see if there's
-anything we can realistically do about this.
-
-Thierry
-
---7hulawnxj67g4v62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcqBUACgkQ3SOs138+
-s6FseA//dsjUgo5pq8qp+c6KgtZoXZsobQIJS+p23RqDrJ0vTBDlP1gkR03kkOiD
-o3POI2fzjsN2i90Ic+mv/N4R1w7Wwa/zjtdms+xLWNiHu4D/wCkHdiU/X4vd7MWX
-cIMOn1AvXLsXuUbK3KJdp1LVYauqva5psI5JmJBlu/FppBFplY9b9chcgDVf+Foh
-tMab7xWM0XeUHxoJvVCP+YD7XVeuX437wvhzT4pyIXm/Bl+YQhCzUBPiQetKX6Ui
-z0a8hw1v9nMIoz4C0GWmDLNs4pnQ31s8RN+oVQurMZtDBveP4r31QRvZ1DGirOLk
-mQ/iJOpJqHf5kbIEcHvep6BZKH3bEjotjF2N99YX2TYyHOgANUQO5OqD3Fh7ttCJ
-WmmPlVCJsdYtQQMF2kBJiQAcRrv5r0+ZzHmKm7S7vGeFjQiMegLZVPLOm2X+0aUS
-NCMPPiHG7+gKIOHHYsdyVF4z6Qv8ATU7BA+6ggR5UoqRLJ/Pilp3VKLj76nms/TX
-T0GMmJJU5/WAmLBawlWswKuoGIAWrgiYsmwqpt+SMFrgIwwMNV/ToxfbyCu8L64X
-I0IXCV0XDr8gvpitpAwA33GxP8VhFvxqSysvCr9BBgQkDmoITGhVAn4reJfoz6tj
-F8Fizop1NQzBwNFJMAwl8aUfJZoh95P5hC4uPKUS75Xg/zRR0hA=
-=YCXe
------END PGP SIGNATURE-----
-
---7hulawnxj67g4v62--
+Best regards,
+Krzysztof
