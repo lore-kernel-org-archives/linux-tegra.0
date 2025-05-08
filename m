@@ -1,151 +1,152 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B4E1F4C9D;
-	Thu,  8 May 2025 07:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CD0220686;
+	Thu,  8 May 2025 07:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689516; cv=none; b=hZOFEW84AMpVKT0eXKnNO4/Q4aRS1HE1W7p4650AcZtUgT6MBHHXwpc5LbQd7Ly8k/QiBqROXI7iNnjOew017D0Wo1oz2L5yBFWrxFrNYeamB7SuOQH51/7bSYzE6DI/jG9xvUkYnaFzPDuNwevwVxxvlDb0ZjPgiW908uRkaqo=
+	t=1746689851; cv=none; b=Xy6S2XRzAxfreoLMb1S8Ts23/3cWDQIG1D5bHfmp/Cm6q4Mju7Cl1ozYST4Zpxcu3aMMFoGdz7KEMnHEyL14r9imQfychXA/wKG+QkXXLTHetv+p38FcuHY9FDGzkv/C1UivgtDQxKAVQMccTplLtp/rin5fSO6xIptwC/nkkn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689516; c=relaxed/simple;
-	bh=AgHutt4HjBaJU2TcQQpxJ89vhSA7SHhMm+HCmWKbMAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BI7t768Liu28mXpK2lfaESgOH0Wy6t0n1D6Itdwjh+PWdZaUvpvpQNErzc0rHWayz9hbKVEylphcyC9TNcOWlq4/52zM6CcTWwgpo9UzKw19DEGkyEugbJWMeeHqVwTO+Xf/DM4l3kFQezJSgA3ge+sVirVXJHcXqytlkNvVMQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1cSEGmh; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746689851; c=relaxed/simple;
+	bh=2K8uNXQXxO0Gc5a70Je+EdtIou/J82MA7oGGP6kUuDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iFgxRE4VMS1JZGC1DpzVu1oLeEOLOqnvEUwAtlPRUUXjM/B3hOFn3qyurm9VtSIz+fMG8nxqtLnqDMKz9eoAgmEZshWPgIaxnHZ4VtuvwWh+N7zeAFQLQ67ij2TjZTrvzrKmb88Qy1jSIA9P88XxlBv2CJQ7N9Z3k9gytVi1bx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5BYQSUw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1cSEGmh"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a0b6aa08e5so959168f8f.1;
-        Thu, 08 May 2025 00:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746689513; x=1747294313; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aEjJzYsdHCDfg7DEYH2Vg3tOhB12CqNu2FmVJukJ7SE=;
-        b=L1cSEGmhzpsKKLorpfX6rSJvpJaFQkVeN7qRNuXBzqa64UTSTNQ5Xnx0XnuWMwWdhK
-         5Q/j05hJrc9wsSDG5xMPqvYhBDhfYHsY/n8jw8KtSz3wpK1cOoztTKXxsa1G0CizCHGY
-         hJjKqd2Dd8pDaTnfJHzQ+ZaXZ/0a9BRnMY4GRrL2Pt53tNZmFe0TSBm5QHPYek+eW2Rh
-         rnDPAba6uhiBaS5DNYvE/Dcas2i2jN6pCv84+ILH3Oh70qNaZ83Sh5vi6gZu6LYumP4e
-         7RjPl1bhadFgZljXgPNzcfN44+pDjyxwjEZv6jt+pzw6JK+d5V18/u9ckV/Z9dIAbErE
-         ZhWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746689513; x=1747294313;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aEjJzYsdHCDfg7DEYH2Vg3tOhB12CqNu2FmVJukJ7SE=;
-        b=aENPfJizJ7rbFxOIGkMyp8j9p4QP8oVHxjH9KvmdP3gIeD8GYQRNsVGnw0U3JiDkIf
-         mlhkRj/3tKCnzdHr60eN57jOp4yBrMF3cdpPiVYDSAQ+SIHI6//tj76wOldydbw2o2/M
-         D7a/1ofAgZuA8MYq9mIZGGjbyicaALyqJAzu9WBhw1YmYdYYr+KBhhz5dCt3+01yI70U
-         i8JvR40g9XRVILxxgnhDPXw9MLqr9ffTQuyLnUqbwBSWn7UzwtUYUK6SEYHPb7hHb0Xh
-         3Ikk5aYNSH61f1gyjbgyr0rMaGAI1j3CnH8tpQThSDXy268t9p8oPZrEX7afkzrlTDv3
-         rwDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPU3eoXSiiYiCwLJh+NzjZvSn4uqyL61e7F3Y+Ilmi56By81EO8Not8ygXW0F/xMprwm666JdkfzXk@vger.kernel.org, AJvYcCXpRoT+TJCKsIMAqk0K9lZ4bNPbxEtBFVOP+kzX/RAMcBmX2WSAeV/QbxstgWP0cH/ZOppeDRSpxC0x+ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/f304FXMoRKJfOyjcT0v64OmRUjgCGEYpaDAnC3i0sxIj1qdR
-	FiX0NQrvjnZO1tPVkj5ASAzdLsK9eiW4zzm2B44PhEmoGzGk2Rj++gEFxw==
-X-Gm-Gg: ASbGncs+1KVzOrhAMzJ4jGvjYOyRwRebL9TP5AijUwBDmbH+ogPV8LaLNsZadBa1yTw
-	En+3WPSNrMqbPUnnTih6StfkH7w4jD0On8qNKOgdL0agCNdL8Ouha0WvUv5jOp4yb6AYJlTJHeu
-	b65wbxlW65uAGkHiBBS3rrNoVS6EoYPid8j1GnSgAo+vQmZxMA1HyEXAOIZwBSs3/ia0hD8AvFo
-	kBX+dql0do4uhjCbj8xDsWRHv36w4ugatHTD615VzAUg135rfRHa9DqCpl0qz1i36987jmvvO9F
-	BdVZNy6PUQxs43LDdEyTD7cPTWaIgjkStqFs0s3+Gg9sihXJRVQEnsdq59d5JINx2QTiU6eZDUG
-	7NcmmGMGdihzjRsXnEsVrpZ5sRkM=
-X-Google-Smtp-Source: AGHT+IG1yR4rGhWUtkmkWIDRYUZ1wU83cR5nh3D7k/LMR2j9TYQMYoaizk99YqloQtl2YMEFecyY4g==
-X-Received: by 2002:a5d:59a6:0:b0:3a0:b84d:816f with SMTP id ffacd0b85a97d-3a0b991fa38mr1910968f8f.14.1746689512640;
-        Thu, 08 May 2025 00:31:52 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae3441sm18991273f8f.26.2025.05.08.00.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 00:31:51 -0700 (PDT)
-Date: Thu, 8 May 2025 09:31:50 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/8] dt-bindings: memory: Add Tegra264 definitions
-Message-ID: <apxlsl54wyigk7yovtrb2tadhhsad5ti7hdvueisjcdjzfk443@4q3fv6pjaac5>
-References: <20250507143802.1230919-1-thierry.reding@gmail.com>
- <20250507143802.1230919-6-thierry.reding@gmail.com>
- <b6d4f40d-9ad2-48c7-a5a1-55b2ebc4e21d@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5BYQSUw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 570D4C4CEEB;
+	Thu,  8 May 2025 07:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746689850;
+	bh=2K8uNXQXxO0Gc5a70Je+EdtIou/J82MA7oGGP6kUuDw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a5BYQSUwmSe2AIAlk4ED5lhtXyxFsamGRscOe4QLDx9CrHVQ3TavnWpggox44HLAT
+	 gkk/L/iG+9ot6GD18JqL/D866EGLF+LblH4Bgc9/CpY25QO9YEGeE0SZ0Dx7/S2+l3
+	 jhConMyP61i7Z2Xy9QzXePdid4qdxwQt8cTRZ1gqTQe2isMYm/86vS+iNBxFsoYxLz
+	 e3dBjOeHlcjnbbT6YJ/Ius1Td90uNyORh3iJxhVimxptsdf3M3nFoLGK49Zw2A7Bxx
+	 Rj+TDElIolOkKhFFV5RCADh+ijvZvl6TtOcmKMyS06o3gLTHmlIF2AGWQ2hlSc5EMd
+	 uOabcwplsWa0Q==
+Message-ID: <f346c140-52f6-4209-b62e-53dfa2c8c7c4@kernel.org>
+Date: Thu, 8 May 2025 09:37:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="e3xoqdmdt4ognzxn"
-Content-Disposition: inline
-In-Reply-To: <b6d4f40d-9ad2-48c7-a5a1-55b2ebc4e21d@kernel.org>
-
-
---e3xoqdmdt4ognzxn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 5/8] dt-bindings: memory: Add Tegra264 definitions
-MIME-Version: 1.0
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250507143802.1230919-1-thierry.reding@gmail.com>
+ <20250507143802.1230919-6-thierry.reding@gmail.com>
+ <b6d4f40d-9ad2-48c7-a5a1-55b2ebc4e21d@kernel.org>
+ <apxlsl54wyigk7yovtrb2tadhhsad5ti7hdvueisjcdjzfk443@4q3fv6pjaac5>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <apxlsl54wyigk7yovtrb2tadhhsad5ti7hdvueisjcdjzfk443@4q3fv6pjaac5>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 08, 2025 at 07:48:22AM +0200, Krzysztof Kozlowski wrote:
-> On 07/05/2025 16:37, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > This doesn't currently contain any stream ID or memory client ID
-> > definitions, but they will be added in subsquent patches.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> <form letter>
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC (and consider --no-git-fallback argument, so you will
-> not CC people just because they made one commit years ago). It might
-> happen, that command when run on an older kernel, gives you outdated
-> entries. Therefore please be sure you base your patches on recent Linux
-> kernel.
->=20
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> </form letter>
+On 08/05/2025 09:31, Thierry Reding wrote:
+> On Thu, May 08, 2025 at 07:48:22AM +0200, Krzysztof Kozlowski wrote:
+>> On 07/05/2025 16:37, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> This doesn't currently contain any stream ID or memory client ID
+>>> definitions, but they will be added in subsquent patches.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>
+>> <form letter>
+>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>> and lists to CC (and consider --no-git-fallback argument, so you will
+>> not CC people just because they made one commit years ago). It might
+>> happen, that command when run on an older kernel, gives you outdated
+>> entries. Therefore please be sure you base your patches on recent Linux
+>> kernel.
+>>
+>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>> people, so fix your workflow. Tools might also fail if you work on some
+>> ancient tree (don't, instead use mainline) or work on fork of kernel
+>> (don't, instead use mainline). Just use b4 and everything should be
+>> fine, although remember about `b4 prep --auto-to-cc` if you added new
+>> patches to the patchset.
+>> </form letter>
+> 
+> get_maintainers.pl lists 13 people and 7 lists. That's *way* too many
+> recipients for something as trivial as this series, in my opinion, so I
+> tend to curate the list of recipients manually. I guess I went a bit
+> overboard and should've at least listed all DT maintainers explicitly.
 
-get_maintainers.pl lists 13 people and 7 lists. That's *way* too many
-recipients for something as trivial as this series, in my opinion, so I
-tend to curate the list of recipients manually. I guess I went a bit
-overboard and should've at least listed all DT maintainers explicitly.
 
-> > ---
-> >  include/dt-bindings/memory/tegra264-mc.h | 13 +++++++++++++
->=20
-> Filename based on compatible.
+Usually that's a sign you combine too many subsystems into one patchset,
+so the solution is to split, not remove maintainers/lists from CC.
 
-The compatible string for this is nvidia,tegra264-mc, so I don't know
-how much more you'd like me to make it based on that. Do you expect me
-to add the nvidia, prefix? In that case it would be inconsistent with
-all of the 8 other Tegra MC includes that we have in that directory.
+> 
+>>> ---
+>>>  include/dt-bindings/memory/tegra264-mc.h | 13 +++++++++++++
+>>
+>> Filename based on compatible.
+> 
+> The compatible string for this is nvidia,tegra264-mc, so I don't know
 
-Thierry
 
---e3xoqdmdt4ognzxn
-Content-Type: application/pgp-signature; name="signature.asc"
+so nvidia,tegra264-mc.h
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcXeYACgkQ3SOs138+
-s6FnRhAAku1QkoTdXibdp5EpZgLKfuxNx35sXUWwmNNtesCln01v1iYHZOaLyb+K
-iwKOk7FgCfezvEJme9J9h3EV/8vIC+yb6mloPJoxTdAhlg3cdNZsoEP6S4DMSsrW
-075z/nHmiDElbmm/SvdI/rKzgLZpIR7AyLSdDPWCPJl37V4C1tjLsBbYvwh1D2Xg
-z4uwCrJxXHgXiK+AS4BD2sHFxJBkbiCjBHAPj1l6aVAs+sEbhryPYHihLaZeDcMr
-+5IcuQ5Uh7X+0U83bAPUoi+q0SwELcZA5ZMqnVSEAE/sCjc3Go5umZxXLXD3AevS
-oRRy3bks+flYkWoXNB6+V+Ii2hnUml7OunJglKk0o9aGiUjhabyylYWUv5BnrO+v
-/rLl9m7JdeTU5nywOP+du5ajzss+0LuQokF6ZJ4DcFob+vRrOYIsCUCzvpXvuwiN
-NCf7iDwl1fqG3yHZOI4l1KuwZjsdYQwKaek2U7SxcxuRoerdHPggNJ0i40hBNy6L
-oD8LRRTeblZ1XiIqkLEs4fiMNsANUHtTip11osb8OihjqhF/vHp7xi60vCwLjF2L
-YjQP/NTFeJP+vo8y4R2shkRC34en9Bw6kzQMdHjWRsFHpwJafVVU9Afti16r98eo
-5GnykrXF8WzThPYOT8e+VcJ7OXPwCHNbewJ2x1W3N3opQHbnUJc=
-=FUct
------END PGP SIGNATURE-----
+> how much more you'd like me to make it based on that. Do you expect me
+> to add the nvidia, prefix? In that case it would be inconsistent with
+> all of the 8 other Tegra MC includes that we have in that directory.
 
---e3xoqdmdt4ognzxn--
+
+Same story as for every other case, why this would be different? All of
+them - amlogic, mediatek, samsung, qcom, every soc - move to new style
+since some years, why this one should be different?
+
+Best regards,
+Krzysztof
