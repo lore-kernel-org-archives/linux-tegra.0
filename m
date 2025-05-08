@@ -1,77 +1,74 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A516BFC0;
-	Thu,  8 May 2025 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE1725394C;
+	Thu,  8 May 2025 09:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746694740; cv=none; b=ijVrImy9xV5toWdIZkWU0Jz15SE8j4P9nxY19lwit6cypHsWwz6ryIEoRxUlNU7W+guSSB7tIwMbL614AOjxVdlfx0NDCvAuBYxpYXUs8dBrqCRjgk8EuqHobe+OS6yDZdcM2Vm7Nc3MJL98lwNk6VNg3/nat3xEr9t0rsSZTgQ=
+	t=1746695104; cv=none; b=Bye5VdoB67XeVZpYp6dfD0vmDkhDJeLaDgECt+Qb5WO0YMrM4dhFTrV9O2jS/qdP9U3UUc84kQvck4vXkYtMZorVy4wtNgU7kOHKyoMvP4QPToDXEivFI+hkqVLd4iv49ggNI9kdfwbzLgkfb8oIjf4wqgq1F+UVglfvHGi5EBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746694740; c=relaxed/simple;
-	bh=plxb5037jVxGsPUc8bcLLYmzQYP1O/cVRf47wludlyA=;
+	s=arc-20240116; t=1746695104; c=relaxed/simple;
+	bh=rEPh7f+J10KPTUGLy/zWkhfF+tENEdRcngN5TQfTGHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bsoDMb/dMxgyo4ff2qZHVPxYGxTEhOE0lShzc1a/c1iwlewI+F9OcyPnsSISXP2kS7yqRVGB2sC26yE29+IW86o1W3R/DBNyFUllyb3h95Gl5mFDltxovDx0E8Rhehms8ldkH68uLC85CVs1b2thduL5t2bZBHP/po3PIUKtIKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/9Ngbwk; arc=none smtp.client-ip=209.85.221.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNUQ9fA++ZVXiptxeR4EB1p/jRycm9g+soUZH+gtPxra0v/Zd3rq+tf1CzkNfsUhzORuoWUuF893e9iTrclmur/I7PpKaHxttQbP2Tp1kyjSzL9ul/BK0LGDtOnhwdxpz/eevci6wqxkB9IWVvlFeoE8WmcpaH8qO/q4kh5Xzkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQC/B6rH; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/9Ngbwk"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a0b135d18eso410106f8f.2;
-        Thu, 08 May 2025 01:58:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQC/B6rH"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso3738715e9.3;
+        Thu, 08 May 2025 02:05:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746694737; x=1747299537; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746695100; x=1747299900; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3njpwnWBUHdyjgi8K2/1wk/9cMLPfkLXGNSkvChm3CY=;
-        b=K/9Ngbwk489GIubLn+IpI/6J4/xOJ4jysF9G9pD11LtGEDyEvniC5xVGicgQjq0kTa
-         gFCCEarmU2T22FrLsPn21yzhP7637JjY0U3ed6k9S1RT3OWkx6Djz0YezCwQ5FgTRgA+
-         bdhuZU/fKk2SAEPht5uL0W/Qb8NGXKL+1jrsio4ajYHpxRftfMZqKoaolZt1SqYkl6DB
-         h2s4Oprme3aM4lprMMqSxtzYNyFCjzHBiOdOkgDlJ4bEqQwrvvavoAPq111u15CYbnHV
-         4Ifr0lkPtobqFGgzk0K1qSJnGMldulAnA3j2PdTqpbHikf2ONOuFeabLT0kaHZ/GdLJr
-         B6Og==
+        bh=jMpmFs9yHrwvpCn9q4VKyxiOLgjk53pgVJePgrt1J7M=;
+        b=NQC/B6rH5kTw9Rws4rlBEjqmo9mEEh+CeB5oAlzI5Koi/nxFQX36l1TXPIz5NVQXD4
+         P7HFPxD5jlsS6MKlBLGHdZDdd6otk3Et60isNNmY3NO3E4nG0cej8ctlt+wB1dh4qdPQ
+         t7zB/QlXUUMxjPzoDz1MvEIDYh0NPaqoH3vQcHOCSjV9YABOkuTgCt/0Sg0Re9TuGg59
+         lSBThBUltDgMsHIQBRHzRPVC209OQUVhGawwhzPcXuoOpUUcP9fJtPm2yQNp9Oo6g9//
+         N6Zx7pkKs+Ejtc69dxfzjqovFXvUzFFwSPGilAkU4JJK/TO7J8tE/pZPCrLgQvW7t1Zk
+         YESg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746694737; x=1747299537;
+        d=1e100.net; s=20230601; t=1746695100; x=1747299900;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3njpwnWBUHdyjgi8K2/1wk/9cMLPfkLXGNSkvChm3CY=;
-        b=ORi+EZAtlhN5f1lDpSbiRRcAMB4MWrvUXYAmF2T/Zsjcmi7b+KA3m6R4C8zZdtBgfd
-         8j9uBKFqo7UdHp9h7qTNtf4rf5zRbm5jV3YHwLWGEET2OMDb/g4iGv6QBkCZXl6165xi
-         B0u+rNe6qkkuMwHJ5Q59ni+fTTRjOPFpiHGG4b5QwKmTkcwOyzHJUHwde+StIH+L67wL
-         pI/MWDw0duTm3fS2ZIt2rvg/ob5BaCSvY2YO/P6SS+BcQ52y6XM/iAgN1hL5HnbhSrn2
-         V5llJwk7qAuJ33rre231Yz2Tx7IXc+GhSuz3pIhPpqZuJIpQX5R46Ngwc4/uliAbaalr
-         hH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEfGSVTadj5ciToXrmWf1swfnNpPLbMXlTg18mYQVwfoTpQk+U7oBLbsA7flyQbdagjkyVJ21Bo1NxsPw=@vger.kernel.org, AJvYcCXVU6lb6DaaA8WoTunGP19gJqM4J3tzktpznIhvX+U93yQe6Jto9X0igVA7882zJLdDYK/eW07QNQOH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/LhDEk+UZ5EsL1JB8qAiw9t1oACM0/1tLRYUS2lPiJKFRBgF5
-	x7ChoBB2bxtcVFRk5FGsvt8WsOikmEdQQkfRPBgm8uSGCgCTqdiQ
-X-Gm-Gg: ASbGncubsZkHifqpm/R8fmZbfH7GzTmQ5lC8lbqa5xhniZdWYhrHLkIp5B/bM49VuYF
-	4hdbROBRFLirHIixSS2VECLna8nVVnTzBytcN3d3k4dyncx4bcpUDSWhdKoHhhUmnBTcZZoRRto
-	ichzvLsww9CnPeHd08EybI28xWhwGWTFnOhUPM7dfP6hODZhhZ/JAOSXbgzptmmmcQfYHUcApj3
-	E+97RlH2mzgUPfxz9bQOp3WA9j9XEKld3zw2te1DXmLDRAQHF+TRWy00zNUoBaEN7QPw3tWYYyd
-	G4Spv7b4on3fpsA3ZiN80DhqUCsopr3ccahFKFSP2Vuh6LfRqOs8EAlOY4HmURS9H3jQqf8vPGv
-	PKhuGJj+0T3MEKGwJeAwmiZ0gkTTntIhBeqdGJA==
-X-Google-Smtp-Source: AGHT+IHRENLBMEe7YXiOL5c7kFEzTbBPsJlvi9dkV+r0VPyt0g4hUHwZfO3pKS1hsn8AmhRaqsQ5oQ==
-X-Received: by 2002:a05:6000:40cf:b0:39c:1f19:f0c3 with SMTP id ffacd0b85a97d-3a0b4a39f62mr5477643f8f.46.1746694736993;
-        Thu, 08 May 2025 01:58:56 -0700 (PDT)
+        bh=jMpmFs9yHrwvpCn9q4VKyxiOLgjk53pgVJePgrt1J7M=;
+        b=e7tUYs5I5KbrYecoGT2hpciqgczydXcNbAX7P7fDaymLGM1w6NZkQRlB+1Dcos/NSW
+         Vtom9nChE0XQR2ZQcWaGKE9Zha8/lotUucl6QJxuubZmr7cuObi+CcNkyjxauoHDcKAk
+         5QO0B+YwI3K8AXdyL8K9iDVCu7N/BIp7+waB3KkbnJ0L9xDYg/SGUCn0jJEMAOutmfBH
+         kL/8BoxHwUyUei9T94mL3qA2u3mKdpGrDTrZKXgb/B+g4Hli77jY6S1WR/DK1xyuGCtE
+         nkdB4iXI8KqGfFfA5FxL5Lck79AiKLwqoIS3j0i1R8V2ZMul9KufBdVNnpj+Z6gO19jv
+         2aLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlBCFP6cf3kJ/chpkTJuUSnOm1Mo2evLEH/+OcH+3S/lXyEsPqwQIwrEZpn0bwLgcbWwMZhc3tfx9x@vger.kernel.org, AJvYcCVSGO78fPMeFR2PqnBSKPmZJS06glJSNGn6qDI7nogk+bSOXeeziEhVQAMHWYxA7i5YasRBfC0yGjp6M40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI+9MLKnIS+v298aFruQ9N7CZdx3Waq3vhRZ+tPKPgZgKPBGGh
+	yAUo320rZ/lPV+Zt+ycKOJVB8MXj9jO9poDhBLufnuQSxJx0kWGGo7bGEQ==
+X-Gm-Gg: ASbGncsEgttInhSglwdcr8CetJaI4UCR4sUP5o3cUPHnqKeO1slu95RBeCxE/eL9HPT
+	vFxNnzOb7wMSc0yczbxTvkMU0C9nkJc8AxI+4u3ox29g91dyAdMsrTxxrvQihGa0QuRugSRtZ/M
+	6X60Vc1pNRmKXQtjPbPksfJlMRmABpgZVtj0MJMy5DAJ7K9w7/CmJMizmivGlfX+0LrJf0m6R04
+	afLxQFWXb8TxFA4q4y2qVznaGLmcn88LEsuMsO7rzj/Wl/ITottIqhMGciwg1cxqCdObWU+IMhR
+	sQvy06Rz5JQIOAT/2ZQIlpNF0HmuUmRbDNusgor26pojQHmumS/UvgOHfF7czqP7fhmfQxkfPE9
+	Cu/g75SEhL+YP+H2WcND81Oa4Bng=
+X-Google-Smtp-Source: AGHT+IE1u972oGQwOb9cGNOeMNv6MEsmM55l6qq0xnnj/vFXN8pi6pWawjcrWO3keTfAh1Rai4cqhw==
+X-Received: by 2002:a05:600c:1d08:b0:43d:94:cfe6 with SMTP id 5b1f17b1804b1-441d44c7addmr64871425e9.16.1746695100108;
+        Thu, 08 May 2025 02:05:00 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae3bc0sm19961157f8f.35.2025.05.08.01.58.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3809f2sm29850555e9.35.2025.05.08.02.04.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 01:58:55 -0700 (PDT)
-Date: Thu, 8 May 2025 10:58:54 +0200
+        Thu, 08 May 2025 02:04:57 -0700 (PDT)
+Date: Thu, 8 May 2025 11:04:55 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
-Message-ID: <ry3rfjn5owscxkwf2ouqdc4rsdvdh6hi2bi7rqeiufh2oekakz@6eqkbwkumdcw>
+Message-ID: <hndrlfzdmbg7fq4g4w7rlftcgyb3p3yphmyf7cejgbnxfyj4am@7w6x4s5kxqat>
 References: <20250507143802.1230919-1-thierry.reding@gmail.com>
  <20250507143802.1230919-5-thierry.reding@gmail.com>
- <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
- <12d0eac8-545a-4595-a1df-1dc52728ef54@kernel.org>
- <rz64mnhdb5vu42tcerlobmulkyxvpqgeeer43t57thwzxnrcou@6xcpuiiru66b>
- <0501c0b2-df78-4c93-9ca1-7f32767b0225@kernel.org>
- <kut7odtjumfmqia7to75yda4qwtsyhwmm3xejkwtfm7yxyap5t@icfpljkitpwp>
- <321bf682-71b4-433e-ade4-97e8c9839564@kernel.org>
+ <1ec7ed24-a4fe-450b-8f99-34aae6ed2c4d@kernel.org>
+ <3gpirue4rr5hpgynzzadzlr6i2fvdhaugcutyqyfoeix2zf3fu@xpbdadb5nynu>
+ <b20ad0cf-f49b-4c78-ab67-adf3a4c55cf0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,124 +76,113 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bxazby72sxylsoos"
+	protocol="application/pgp-signature"; boundary="2clf4e2raimg3bgd"
 Content-Disposition: inline
-In-Reply-To: <321bf682-71b4-433e-ade4-97e8c9839564@kernel.org>
+In-Reply-To: <b20ad0cf-f49b-4c78-ab67-adf3a4c55cf0@kernel.org>
 
 
---bxazby72sxylsoos
+--2clf4e2raimg3bgd
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
 MIME-Version: 1.0
 
-On Thu, May 08, 2025 at 10:51:57AM +0200, Krzysztof Kozlowski wrote:
-> On 08/05/2025 09:59, Thierry Reding wrote:
-> > On Thu, May 08, 2025 at 09:49:12AM +0200, Krzysztof Kozlowski wrote:
-> >> On 08/05/2025 09:46, Thierry Reding wrote:
-> >>> On Thu, May 08, 2025 at 09:40:38AM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 08/05/2025 09:39, Krzysztof Kozlowski wrote:
-> >>>>> On 07/05/2025 16:37, Thierry Reding wrote:
-> >>>>>> From: Thierry Reding <treding@nvidia.com>
-> >>>>>>
-> >>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >>>>>
-> >>>>> Missing commit msg
-> >>>>>
-> >>>>>> ---
-> >>>>>>  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
-> >>>>>>  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
-> >>>>>>  2 files changed, 16 insertions(+)
-> >>>>>>  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
-> >>>>>>  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
-> >>>>>
-> >>>>>
-> >>>>> Filename equal to the compatible. That's the standard convention fo=
-r all
-> >>>>> the headers since some years.
-> >>>>
-> >>>> Huh, I cannot find the binding in this patchset. Where is the actual
-> >>>> binding added?
-> >>>
-> >>> The bindings for this are in
-> >>>
-> >>>   Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+On Thu, May 08, 2025 at 10:42:33AM +0200, Krzysztof Kozlowski wrote:
+> On 08/05/2025 09:53, Thierry Reding wrote:
+> > On Thu, May 08, 2025 at 09:40:02AM +0200, Krzysztof Kozlowski wrote:
+> >> On 07/05/2025 16:37, Thierry Reding wrote:
+> >>> @@ -0,0 +1,9 @@
+> >>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>> +/* Copyright (c) 2022-2023, NVIDIA CORPORATION. All rights reserved.=
+ */
+> >>> +
+> >>> +#ifndef DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H
+> >>> +#define DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H
+> >>> +
+> >>> +#define TEGRA264_CLK_CLK_S			2U
 > >>
-> >> There is no tegra264 in that binding.
+> >> Abstract IDs start from 0 or 1, not 2. Also drop "U".
 > >=20
-> > That's part of an earlier series I sent out (and linked to from the
-> > cover letter). It's here:
+> > These are not abstract IDs, they are defined by the BPMP ABI. We cannot
+> > change them, otherwise it'll completely break.
+>=20
+>=20
+> You mean from the firmware? Sure. You have entire commit msg to explain
+> all unusual things here...
+
+It's not unusual, though. This has been the convention for a number of
+years now. But yeah, I guess I can be verbose and repeat all of these
+details for each new generation...
+
+>=20
 > >=20
-> > 	https://lore.kernel.org/linux-tegra/20250506133118.1011777-1-thierry.r=
-eding@gmail.com/T/#m96bb396b352659581a9e71a4610c51e6ab4d5b6a
->=20
->=20
-> Then this patch belongs there. Standard rules apply: binding headers go
-> with the binding itself and the binding itself go with driver patch via
-> driver subsystem tree. At least usually. Nothing here is different than
-> all other vendors who follow such convention.
-
-This has nothing to do with the bindings. We add clock and reset ID
-definitions that are used by the device tree nodes added in this series.
-There will be other patches in the future that add ID definitions to
-these files when they will be needed by the device tree nodes that will
-be added at the time.
-
-> >> The header always goes with the binding and the drivers.
-> >>
-> >>>
-> >>> There's no 1:1 mapping to a compatible for this because BPMP is many
-> >>> things. It's a clock provider, a reset provider, a power domain
-> >>
-> >> Sure, that's fine.
-> >>
-> >>> provider. These definitions reflect the IDs assigned by the BPMP ABI
-> >>> and we've used this structure ever since this was introduced back in
-> >>> 2016.
-> >>>
-> >>> I don't think changing the convention for this is a net advantage.
-> >>
-> >> Headers still should match the compatible one way or another. Can be
-> >> nvidia,tegra264.h
-> >> (because -clock is redundant and you do not want to use the actual
-> >> compatible)
+> > For similar reasons I'd like to keep the "U". These definitions are for
+> > the most part directly imported from the BPMP ABI headers, though we do
+> > try to be selective about what we add, to avoid adding hundreds of new
+> > lines in one go, and several safety-checking tools run on these headers
+> > that happen to require the "U" suffix to make sure these have a defined
+> > type.
 > >=20
-> > I get it. You want consistency. But what about consistency with earlier
-> > chip generations?
+> >>> +
+> >>> +#endif /* DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H */
+> >>> diff --git a/include/dt-bindings/reset/tegra264-reset.h b/include/dt-=
+bindings/reset/tegra264-reset.h
+> >>> new file mode 100644
+> >>> index 000000000000..31d89dcf62fa
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/reset/tegra264-reset.h
+> >>> @@ -0,0 +1,7 @@
+> >>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>> +/* Copyright (c) 2022-2023, NVIDIA CORPORATION. All rights reserved.=
+ */
+> >>> +
+> >>> +#ifndef DT_BINDINGS_RESET_TEGRA264_RESET_H
+> >>> +#define DT_BINDINGS_RESET_TEGRA264_RESET_H
+> >>> +
+> >> This is empty, drop.
+> >=20
+> > We have three people currently working on additional drivers for this
+> > SoC and they all need to add to these two files. Adding the empty file
+> > here makes it a bit easier to coordinate things, making the resulting
+> > conflicts trivial to resolve.
 >=20
 >=20
-> I will fix them after finishing my time machine. :)
+> Bindings are supposed to be complete (see writing bindings doc), this
+> means also bindings headers. If the constants come from firmware, they
+> are defined so I really do not understands why they cannot be published n=
+ow.
 >=20
-> > Do you want me to go and rename all of these files?
->=20
->=20
-> No, I don't want to change them, but I would be fine if someone does the
-> change (although someone else might claim this is a churn). That ship
-> has sailed, but at least we can start with new bindings.
+> Unless you mean that this is a new SoC and the firmware is not yet
+> fixed/finished, but all this must be explained in the commit msg.
 
-Totally pointless, but... whatever.
+These are fully defined, but they are also close to 500 IDs, most of
+which we won't be using for a long time, so it seems wasteful to dump
+them all in here at once.
+
+But I don't care all that much, if you want all of them, then that's
+what you'll get.
 
 Thierry
 
---bxazby72sxylsoos
+--2clf4e2raimg3bgd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcckoACgkQ3SOs138+
-s6HuxQ//ac8xfzjdddtwASnBo3ZzwSG58AAMitjqUhOimrqLRXMqSTlPkD3QXvcl
-VYB8JpRW0KYjo60nzf44noGlvi1y6hq0vspwNd43rjKm2wfyXfx+bsFwK4aOajFE
-q+JG9/PBk0fFBcAEHj7wQG3iVA60bBFXp/6EQbiDcvvrjyl1Oysr7lmmAWVO1zuU
-6JamkZJSt7nL7BNr8UbeCd9zV9r5M83L/vx2iX2ZLjt/4ekFUR/PKXwuHO+kDomj
-eXU7hJTMlMzYZczHGZFSRGetnjYFwNw2nhngq5rNNOJPMBCjky6r53Ay5kKjWj7p
-JGfE7u9jLwPvEZ8NkN5p4BdijUohmxsPMHhYAd0OJ+/3A7GVeBOM8BJgmKh8oeof
-dFSqRinhsvJv8BN23yPEgUnB00PykvuPoe4qBKxIYlaQSzeNzL6HYYnDsBgu3HAc
-UYDGl3cwYcbKsFJ+qm/u3BP0j+XNjnOKsjlAWjlPcPaNZMbYGryQUFn1UyIRR9jU
-/Z4aQ3Mvl3qfLx3AhcsSis00IK0OAp7WG7FzcWALaseN5qlh0flKx87gFT8DMXLQ
-T0nuh9Q8aR16RcTy5uzy+y8ymDUI74G9x0pImmut/tNhGgxlrrvBlKfexZ/0Qbng
-vRqsBhAwm42rM0ff3XhtLDzhYlEo2Qfjs7wPUagHvY3nGg/Vl+Y=
-=k/X0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcc7cACgkQ3SOs138+
+s6FPfBAAhnb2gwUU4ZHYaDFUBgtXwCwDkJEn7vQHfLLDJ66fQANgj1Yy92wlPEBT
+NYSoLWi4GeH4qpNNxp5KF/0HWgK57yX7AATvTQEVCSydzdBLKFhhFpEbtA+WFyPo
+4L9UH07KMxZIO3L9U62c85m1htDkCgySHO4nY6lxp+kalE82dFaJ02ckudrWH0R5
+1dp+c+onM833RPE+Q83Rx8VQGd1pT8dR+AnK5/fPwUIeRiLVCvxOg7ql71/L+vQg
+BCG21GaYvPRNce8Kt4DRyvpMS/aSimr7/AZX4MzaysF7sBdGYi1LzvJvvQ8mkLoS
+iF3+d5ieP88G0IrFfnr688OZUgH87uOPuBvPUOjv3aPcHS0O0Eh3fs5d4RenGCOJ
+3boezcTxYltqBx116nuGWuibmlZpuIqnp08kz5SdXyUkB5AqO8LLDfeidXxJorfA
+iurYvaZbjvw/LNiv+JBK1QAJuXBTpwOYahU7ZtXWRF56Gk1V8tf9WoEI7Lxr90Ec
+Q4vLQ10mqazLSZC5s2pwPdd/i/aEMG3j9GI9V3df3xWV47kMfEt25NaaaL+o1gvD
+lHT3MVsnuyE/ALPcAqxKe/zyNHezQVK+l0wMaBYvjjPIWD4K+yf8Hf9reTx5UgPL
+2W+MC8MfwC7NxllLWdvUVJlPCA5oKWslCmDqk+Pqg4lWlcUrg2w=
+=I6j+
 -----END PGP SIGNATURE-----
 
---bxazby72sxylsoos--
+--2clf4e2raimg3bgd--
