@@ -1,117 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D2F195FE8;
-	Thu,  8 May 2025 07:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA0F220F41;
+	Thu,  8 May 2025 07:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746690044; cv=none; b=o2XJ1ZlVFK4xFrXalkmFhl9SSgX+8ahC/ayaY/apIwsXgZYHBlOzudZFfY7NfiF1fSrGs1iQYYBfT2zDD8Jft5aC/0Q/sWPlwTiLpfWd4tbgN6bqxinXgCh+Tyh6gvjgR5R8DpKkxPZkf6zfh5y7b9RH0KXghHGXIoccog/Eb5A=
+	t=1746690106; cv=none; b=kXwtt8aeFSSyOvII5sxNkOd4ZfgEhFASELKA3/o8VgjMyS3If8CvTGOQ7VG8cgjrYtqhJhksPjuLfA1iMhz0nGT3wxu0c3GphtfcdeZ51Dy/obSNPKNWAaNFsASu8flw+MygSPxPVPAnffqMMoEP7MNDV6UEeyUsbjL4JJzBBrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746690044; c=relaxed/simple;
-	bh=km4iw2pHgE70+o0ck8mziQA0sfa8ZS9ETgIY6W86Z+M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Fd9tRvTcEbMbiloVE6CsJrVjCVK2GV8lhXvfRru3a0mpJI0rjs9tPf5HrG9ARHzSnyy9A+PU41BGKDJ4tIxjCULfZ8hoRYw3/5u+fOTbO1SEKg3DR6b51kgyjLJ1ewMekAUoS+qGrPObKGAhxHwJ2FURT8mKYUsF+X7e1mt0hcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sC8FUn8T; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746690106; c=relaxed/simple;
+	bh=LZMGa+sNdd/7ypFwlQIyhR4SJrCDbccCWGjTEkdyzqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAt+521ffd0TDohkQLzo2Wl8y+AaHDj9FoK4zEtwBSVzljUM/OkFul5d9GSLIX13OeqGhp/cYRSFALoVGeG6fSWnha84XY64eR4aWh24Y6CYAemDzrSlEqnmKhFJF9kZK707MMefCIZIkv7Xc6/j3VlCRjtZ0h0nuCrRmK/yDRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zc9NCs0i; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sC8FUn8T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26216C4CEEB;
-	Thu,  8 May 2025 07:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746690041;
-	bh=km4iw2pHgE70+o0ck8mziQA0sfa8ZS9ETgIY6W86Z+M=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=sC8FUn8T4b6Q+LUpxkaZFNBYpakOfI02pCtq8JGku5o9V5/JtB3V99VogEqODH/Kx
-	 flMdiK8qLQm8lQ/ZfF4NstFCQ4gt7R/34xNTZTNjL0oWSoXH0VTTJEAxbu5gdX22Qk
-	 wbmfpnwc9X4nnthvV2/jKCTZFDFRZ28HGncCe0009HVXNwShNQWPXoJtiXFoYlkTQd
-	 7q9zxGhuRkQ+/562lnOZS/i6eV3ELo5slwS2TRmF08f2IvxnyFpE5trBkE7KJ3KOpU
-	 hWpXmTVStirqQEIMJktV1HvUzqFgmNw7MdO25zAndN9YfxujTmO/W6OwrwBwvchp6e
-	 NL71GZh4dZSIQ==
-Message-ID: <12d0eac8-545a-4595-a1df-1dc52728ef54@kernel.org>
-Date: Thu, 8 May 2025 09:40:38 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zc9NCs0i"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so6944245e9.3;
+        Thu, 08 May 2025 00:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746690103; x=1747294903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wInBD0+S8ogpBYTrt7N+Mqd0fIS7ldl/Cpzv19xsKvY=;
+        b=Zc9NCs0i/JidJwvhCc/1Cm33CArjbUaK/12tskdyiVqX62yrPUfG2Dc9H3RLMPZSJA
+         QDGAni1dMvIDQUO1CeCXo98CTJBRvjoxkBOMGN5Q0ZgvHMDuQwms+qVWhy7LQb5gyWQ/
+         pKQJ2haO21z4XG/9dd7wJGsBDMcd06viMW5lf+pagbtj4kfdrvdpNs8HOoDyXQMaEHRz
+         wqx2S1aNU50TEiVItrsbyMIpI5GpGAtpNXVCbyBoFU4hChv+HHhjhmunxyRUmYVAYsRy
+         di9AMdkcwBHzcgmy6+QX5k8pqjOnahkCZn4eprebCK0SRE/fiHbKqD2imFrO/JIBuQQ7
+         UAOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746690103; x=1747294903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wInBD0+S8ogpBYTrt7N+Mqd0fIS7ldl/Cpzv19xsKvY=;
+        b=ChEMU6ervM1Y4qo1C3NO1XBq0tquOsAsFLnsTjo/nYLAHZNTwv9NR/jWfqQA4VlkKb
+         pY6cAwLQNUYs+/4EHfbsf7PEABW2YL0QKT0bKNYLRNVA0CDDLzE34FX6XB0c9JThhEaS
+         OHfAxEb6wrU2bDqmGdNnTclUil5CRwvi5HCM6O4BmRkfUXDxdWx0XIeHntvedenuh5qX
+         WHsfRFmWwm5zg+WFyzKwLlSfuIC7rDT2mWDaYt/S+7qCSXYRrRcw2PXK8ZlBAjlBey/Z
+         auwwRNJ4ZqP31CmKgL2GIH3tlz30mqtMcqzs0pdwQ2oJqZ50rZmjUBZ2CqFaK/0o/2d3
+         TZFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2KyBVyQZfWZ517Swrjl6AZxjhB0sMf4Fj0q/m7hvd6KEiCq5o/y/vRuDPtnDjC6KJNsMdWdK4FtkJ@vger.kernel.org, AJvYcCVO+FNtrzqLp7KaxPzX5F6Waaa2QFIVGVC8uB7cWR0GgOjVVS5sA+YxP33I7oaYAHemX22oskra+BDj9afA@vger.kernel.org, AJvYcCWSUtwYL0LTkzhC2UIOPnHOz4vZ987puk852PPYXSqBlOugN2Yk4Z7rpQYpDVfhooyw5/gYSwlhHDMOOrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTsW2McPLIsuLAzhG3vQ53c4GtaUM15fJOg5ppREh4u+U5jWGO
+	zxMJ/bzPqxUjxgzSOXpu9Pn/0ajqUAdtzxEnTOG9qnPsu6x8o0Z2
+X-Gm-Gg: ASbGncvLD6dw57JPPgQqf5tBFnY1Yfaw96AqHOjtStEHGBYLl8ItPDC36pBsZOWfv07
+	W+xdeUd2HYZEtR5dh4fa89b8a4Cy77xfNVsv9KdksG2lWuXbCR5ljGS7RYauDWPk9lagsgWSWBs
+	Tjg1Hg5X7yDDZkDRDkAiQetHqY4f5eIxQHPLCTdTR0s2fpo2fh63oH3YMTsITRSWCnxMfD3JQZz
+	Oa/UN3Hx+pOhqbIuCsA62gbtSk12sdtS8LcdzGCqsoMCdx8UNoEXX//VMoOpm/AFq3PqS8qnDFV
+	ZydShI6h160itD+rtvhjzHHKj3jtb4/GrqvXMjy3V3XVLVtuWrJK6ZTYF6yUAtcVrL1JyWSakZ2
+	PrnXDfZ0ckVkWaZrLm1kdyI8F1DY=
+X-Google-Smtp-Source: AGHT+IFro/41EYrU+HOca/VbaYhbXNGLbd9BWBtPcwSmPCLoxLac9ReY2lvgtSDg9U8/P7DGSnih6A==
+X-Received: by 2002:a05:600c:3d15:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-442d02eadb4mr22081505e9.14.1746690102785;
+        Thu, 08 May 2025 00:41:42 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd333326sm26956295e9.16.2025.05.08.00.41.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 00:41:41 -0700 (PDT)
+Date: Thu, 8 May 2025 09:41:39 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: webgeek1234@gmail.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
+ Tables
+Message-ID: <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
+References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250507143802.1230919-1-thierry.reding@gmail.com>
- <20250507143802.1230919-5-thierry.reding@gmail.com>
- <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vrbfmczrdwlcxhxj"
+Content-Disposition: inline
+In-Reply-To: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
 
-On 08/05/2025 09:39, Krzysztof Kozlowski wrote:
-> On 07/05/2025 16:37, Thierry Reding wrote:
->> From: Thierry Reding <treding@nvidia.com>
->>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> 
-> Missing commit msg
-> 
->> ---
->>  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
->>  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
->>  2 files changed, 16 insertions(+)
->>  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
->>  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
-> 
-> 
-> Filename equal to the compatible. That's the standard convention for all
-> the headers since some years.
 
-Huh, I cannot find the binding in this patchset. Where is the actual
-binding added?
+--vrbfmczrdwlcxhxj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
+ Tables
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+On Thu, May 08, 2025 at 01:07:37AM -0500, Aaron Kling via B4 Relay wrote:
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v2:
+> - Add patch to describe the emc table bindings
+> - Add patch to allow a fallback compatible on the tegra210 emc device to
+>   match firmware expectations
+> - Add a patch to include the baseline emc tables on p2180
+> - Link to v1: https://lore.kernel.org/r/20250430-tegra210-emc-dt-v1-1-998=
+96fa69341@gmail.com
+>=20
+> ---
+> Aaron Kling (4):
+>       dt-bindings: memory-controllers: Describe Tegra210 EMC Tables
+>       dt-bindings: memory-controllers: tegra210: Allow fallback compatible
+>       arm64: tegra: Add EMC timings to P2180
+>       memory: tegra210-emc: Support Device Tree EMC Tables
+>=20
+>  .../nvidia,tegra21-emc-table.yaml                  |  1692 +
+>  .../memory-controllers/nvidia,tegra210-emc.yaml    |    44 +-
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180-emc.dtsi | 49749 +++++++++++++=
+++++++
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |     1 +
+>  drivers/memory/tegra/tegra210-emc-core.c           |   246 +-
+>  5 files changed, 51721 insertions(+), 11 deletions(-)
+
+We've had discussions about this in the past, and I don't think this is
+going to go anywhere. Device tree maintainers have repeatedly said that
+they won't accept this kind of binding, which is, admittedly, a bit non-
+sensical. 50,000 lines of DT for EMC tables is just crazy.
+
+The existing binary table bindings were created to avoid the need for
+this. I don't know how easy this is to achieve for all bootloaders, but
+the expectation was that these tables should be passed in their native
+format.
+
+Thierry
+
+--vrbfmczrdwlcxhxj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcYDMACgkQ3SOs138+
+s6F3YxAAn9VDKgGgj3LaRyo7aobSxZQZ+pFtSQy6+5C/SD5DweYmFbhh/tMm0EZ+
+TgZO2HGhhxeBMBKiIuW0eV3koQ/Lt80DC6ZX9vvQGqTQ/9bRM8LBpD5xi8UlXM06
+oZfg0vC8EDNo+/4f9oMsjcHafopTnLmxyA8LUC6dE0SZ+sUN8X7ApnoA7oCFtTFD
+GXFDealI9c9DdIFu9dtsGD3EOWwaauM3d0RoQePR3d7tIeWGaJlEwxsxhJrFjNzX
+o+VcAbEykbDbtsqbiZIWl5i7VEt2SzjYycCmoP4w1Dk52L5fmv/0gPpZRvmRzPLT
+tupK6BJgRMl8etiH/j7hDMTaLHaT/yUMEnM6cO8qzBvuzEkHgwKiRAEXb/7JJMHK
+eKbZtF7vr1bBODUaydaIeL2t1dQ/TVLp6iy4+folI3JK7j4fulVSem5om2Db6kAZ
+AdZXYLRW1f+yDTk5NiYpfbz52Zpsdjy6GnxX7cooYAkyDUvMONuTldpHMH0+3g8Z
+GIn2IrWOjZyfz0iaMAyfajKy/ygALtRk+XZkXwhsUTuaMM1mlqDvQRHNX6E81NnO
+x6whhXaGFZWoL+K1SQZJjraym4vKxo1zWCIlXMrf1EpOtX2qpeOD0dDNbkcNsfUk
+5d5NLj4YX6Fpr3NRyQV2JFvfaqAGCBPcWj9miUwykEa9DxK0EhE=
+=0Egh
+-----END PGP SIGNATURE-----
+
+--vrbfmczrdwlcxhxj--
