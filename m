@@ -1,239 +1,202 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797923C8A4
-	for <linux-tegra@vger.kernel.org>; Thu,  8 May 2025 08:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A516BFC0;
+	Thu,  8 May 2025 08:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746694349; cv=none; b=pmW+jS6O+gi3dHsf0mwz4QoRg4Nq3KFp/88EIrGSU90+zGsTmG/qtHWjTHAW0WYFerMSQLEnZx5A4+Hx6G6ZKs8ifGHQ8SIgErajASsLewrLyzoZkH/LswwRQc5xVfy6k0YkI53TCDmSLkkhcMOjXJWbTtjy0Am1c7695N7FIY8=
+	t=1746694740; cv=none; b=ijVrImy9xV5toWdIZkWU0Jz15SE8j4P9nxY19lwit6cypHsWwz6ryIEoRxUlNU7W+guSSB7tIwMbL614AOjxVdlfx0NDCvAuBYxpYXUs8dBrqCRjgk8EuqHobe+OS6yDZdcM2Vm7Nc3MJL98lwNk6VNg3/nat3xEr9t0rsSZTgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746694349; c=relaxed/simple;
-	bh=2FyChGP5T9hPQdIMmZs3inBBjpmrBwsu2pA/jaUDfbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaNvtW9ci51h+g3zDkmXps9yD5flVe+LZLecH5BksywtxBBAghALCpkRMRuk9+i0Kyv/8kWyPMEgnLid2FipyJUY7Q2hxIX11AqfW+6vtz6IRjm5dUSZE7J+96jbqR37xoSpJuaWFSo+kHyNxWwWjGD3GSK7rRa2cHQb0gXrS7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PbTnNk8y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sZJuHhEf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PbTnNk8y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sZJuHhEf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1746694740; c=relaxed/simple;
+	bh=plxb5037jVxGsPUc8bcLLYmzQYP1O/cVRf47wludlyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bsoDMb/dMxgyo4ff2qZHVPxYGxTEhOE0lShzc1a/c1iwlewI+F9OcyPnsSISXP2kS7yqRVGB2sC26yE29+IW86o1W3R/DBNyFUllyb3h95Gl5mFDltxovDx0E8Rhehms8ldkH68uLC85CVs1b2thduL5t2bZBHP/po3PIUKtIKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/9Ngbwk; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PbTnNk8y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sZJuHhEf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PbTnNk8y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sZJuHhEf"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9A4121F385;
-	Thu,  8 May 2025 08:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746694345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
-	b=PbTnNk8ybCBTRdQJIgHnC9q4YVG9j6CAFx2mKOc4cbMn4QrqvbwQQqR3tBQY02DLCJYqqW
-	jo9NY8MhK59wd7D4K0BGCOC2GdjHzn7udmDPhSv9wnO4XeiVIaSCFboca9NU6Vpuk0/z+t
-	ERPxqeBG1IYWWaKzLdnczrW0ON5BYbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746694345;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
-	b=sZJuHhEfnipyUMGuXUlod+Rzr0t7mjBW6+VVxym89DPStJDerrMEHbDEAoFDtYV5lwxzL4
-	bgmvRR/ff7K9wZCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PbTnNk8y;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sZJuHhEf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746694345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
-	b=PbTnNk8ybCBTRdQJIgHnC9q4YVG9j6CAFx2mKOc4cbMn4QrqvbwQQqR3tBQY02DLCJYqqW
-	jo9NY8MhK59wd7D4K0BGCOC2GdjHzn7udmDPhSv9wnO4XeiVIaSCFboca9NU6Vpuk0/z+t
-	ERPxqeBG1IYWWaKzLdnczrW0ON5BYbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746694345;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
-	b=sZJuHhEfnipyUMGuXUlod+Rzr0t7mjBW6+VVxym89DPStJDerrMEHbDEAoFDtYV5lwxzL4
-	bgmvRR/ff7K9wZCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 625E013687;
-	Thu,  8 May 2025 08:52:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vUixFslwHGg0ZAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 08 May 2025 08:52:25 +0000
-Message-ID: <538ee029-543a-41be-be7f-40283b5cfc2b@suse.de>
-Date: Thu, 8 May 2025 10:52:25 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/9Ngbwk"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a0b135d18eso410106f8f.2;
+        Thu, 08 May 2025 01:58:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746694737; x=1747299537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3njpwnWBUHdyjgi8K2/1wk/9cMLPfkLXGNSkvChm3CY=;
+        b=K/9Ngbwk489GIubLn+IpI/6J4/xOJ4jysF9G9pD11LtGEDyEvniC5xVGicgQjq0kTa
+         gFCCEarmU2T22FrLsPn21yzhP7637JjY0U3ed6k9S1RT3OWkx6Djz0YezCwQ5FgTRgA+
+         bdhuZU/fKk2SAEPht5uL0W/Qb8NGXKL+1jrsio4ajYHpxRftfMZqKoaolZt1SqYkl6DB
+         h2s4Oprme3aM4lprMMqSxtzYNyFCjzHBiOdOkgDlJ4bEqQwrvvavoAPq111u15CYbnHV
+         4Ifr0lkPtobqFGgzk0K1qSJnGMldulAnA3j2PdTqpbHikf2ONOuFeabLT0kaHZ/GdLJr
+         B6Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746694737; x=1747299537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3njpwnWBUHdyjgi8K2/1wk/9cMLPfkLXGNSkvChm3CY=;
+        b=ORi+EZAtlhN5f1lDpSbiRRcAMB4MWrvUXYAmF2T/Zsjcmi7b+KA3m6R4C8zZdtBgfd
+         8j9uBKFqo7UdHp9h7qTNtf4rf5zRbm5jV3YHwLWGEET2OMDb/g4iGv6QBkCZXl6165xi
+         B0u+rNe6qkkuMwHJ5Q59ni+fTTRjOPFpiHGG4b5QwKmTkcwOyzHJUHwde+StIH+L67wL
+         pI/MWDw0duTm3fS2ZIt2rvg/ob5BaCSvY2YO/P6SS+BcQ52y6XM/iAgN1hL5HnbhSrn2
+         V5llJwk7qAuJ33rre231Yz2Tx7IXc+GhSuz3pIhPpqZuJIpQX5R46Ngwc4/uliAbaalr
+         hH9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUEfGSVTadj5ciToXrmWf1swfnNpPLbMXlTg18mYQVwfoTpQk+U7oBLbsA7flyQbdagjkyVJ21Bo1NxsPw=@vger.kernel.org, AJvYcCXVU6lb6DaaA8WoTunGP19gJqM4J3tzktpznIhvX+U93yQe6Jto9X0igVA7882zJLdDYK/eW07QNQOH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/LhDEk+UZ5EsL1JB8qAiw9t1oACM0/1tLRYUS2lPiJKFRBgF5
+	x7ChoBB2bxtcVFRk5FGsvt8WsOikmEdQQkfRPBgm8uSGCgCTqdiQ
+X-Gm-Gg: ASbGncubsZkHifqpm/R8fmZbfH7GzTmQ5lC8lbqa5xhniZdWYhrHLkIp5B/bM49VuYF
+	4hdbROBRFLirHIixSS2VECLna8nVVnTzBytcN3d3k4dyncx4bcpUDSWhdKoHhhUmnBTcZZoRRto
+	ichzvLsww9CnPeHd08EybI28xWhwGWTFnOhUPM7dfP6hODZhhZ/JAOSXbgzptmmmcQfYHUcApj3
+	E+97RlH2mzgUPfxz9bQOp3WA9j9XEKld3zw2te1DXmLDRAQHF+TRWy00zNUoBaEN7QPw3tWYYyd
+	G4Spv7b4on3fpsA3ZiN80DhqUCsopr3ccahFKFSP2Vuh6LfRqOs8EAlOY4HmURS9H3jQqf8vPGv
+	PKhuGJj+0T3MEKGwJeAwmiZ0gkTTntIhBeqdGJA==
+X-Google-Smtp-Source: AGHT+IHRENLBMEe7YXiOL5c7kFEzTbBPsJlvi9dkV+r0VPyt0g4hUHwZfO3pKS1hsn8AmhRaqsQ5oQ==
+X-Received: by 2002:a05:6000:40cf:b0:39c:1f19:f0c3 with SMTP id ffacd0b85a97d-3a0b4a39f62mr5477643f8f.46.1746694736993;
+        Thu, 08 May 2025 01:58:56 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae3bc0sm19961157f8f.35.2025.05.08.01.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 01:58:55 -0700 (PDT)
+Date: Thu, 8 May 2025 10:58:54 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
+Message-ID: <ry3rfjn5owscxkwf2ouqdc4rsdvdh6hi2bi7rqeiufh2oekakz@6eqkbwkumdcw>
+References: <20250507143802.1230919-1-thierry.reding@gmail.com>
+ <20250507143802.1230919-5-thierry.reding@gmail.com>
+ <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
+ <12d0eac8-545a-4595-a1df-1dc52728ef54@kernel.org>
+ <rz64mnhdb5vu42tcerlobmulkyxvpqgeeer43t57thwzxnrcou@6xcpuiiru66b>
+ <0501c0b2-df78-4c93-9ca1-7f32767b0225@kernel.org>
+ <kut7odtjumfmqia7to75yda4qwtsyhwmm3xejkwtfm7yxyap5t@icfpljkitpwp>
+ <321bf682-71b4-433e-ade4-97e8c9839564@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/fbdev-client: Ignore EOPNOTSUPP errors
-To: Thierry Reding <thierry.reding@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- Jonathan Hunter <jonathanh@nvidia.com>
-References: <20250412070047.6725-1-thierry.reding@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250412070047.6725-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 9A4121F385
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim,bootlin.com:url,nvidia.com:email]
-X-Rspamd-Action: no action
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bxazby72sxylsoos"
+Content-Disposition: inline
+In-Reply-To: <321bf682-71b4-433e-ade4-97e8c9839564@kernel.org>
 
-Hi,
 
-sorry for the late review. I've been away for a few days.
+--bxazby72sxylsoos
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
+MIME-Version: 1.0
 
-Am 12.04.25 um 09:00 schrieb Thierry Reding:
-> From: Thierry Reding <treding@nvidia.com>
->
-> Recent generations of Tegra have moved the display components outside of
-> host1x, leading to a device that has no CRTCs attached and hence doesn't
-> support any of the modesetting functionality. When this is detected, the
-> driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
->
-> Unfortunately, this causes the following errors during boot:
->
->      [      15.418958] ERR KERN drm drm: [drm] *ERROR* Failed to register client: -95
->      [      15.425311] WARNING KERN drm drm: [drm] Failed to set up DRM client; error -95
->
-> These originate from the fbdev client checking for the presence of the
-> DRIVER_MODESET flag and returning -EOPNOTSUPP. However, if a driver does
-> not support DRIVER_MODESET this is entirely expected and the error isn't
-> helpful.
->
-> One solution would have been to conditionally call drm_client_setup()
-> only if modesetting is supported. This seems a bit redundant, however,
-> and could further complicate things if ever any DRM clients are added
-> that do not rely on modesetting.
+On Thu, May 08, 2025 at 10:51:57AM +0200, Krzysztof Kozlowski wrote:
+> On 08/05/2025 09:59, Thierry Reding wrote:
+> > On Thu, May 08, 2025 at 09:49:12AM +0200, Krzysztof Kozlowski wrote:
+> >> On 08/05/2025 09:46, Thierry Reding wrote:
+> >>> On Thu, May 08, 2025 at 09:40:38AM +0200, Krzysztof Kozlowski wrote:
+> >>>> On 08/05/2025 09:39, Krzysztof Kozlowski wrote:
+> >>>>> On 07/05/2025 16:37, Thierry Reding wrote:
+> >>>>>> From: Thierry Reding <treding@nvidia.com>
+> >>>>>>
+> >>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >>>>>
+> >>>>> Missing commit msg
+> >>>>>
+> >>>>>> ---
+> >>>>>>  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
+> >>>>>>  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
+> >>>>>>  2 files changed, 16 insertions(+)
+> >>>>>>  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
+> >>>>>>  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
+> >>>>>
+> >>>>>
+> >>>>> Filename equal to the compatible. That's the standard convention fo=
+r all
+> >>>>> the headers since some years.
+> >>>>
+> >>>> Huh, I cannot find the binding in this patchset. Where is the actual
+> >>>> binding added?
+> >>>
+> >>> The bindings for this are in
+> >>>
+> >>>   Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+> >>
+> >> There is no tegra264 in that binding.
+> >=20
+> > That's part of an earlier series I sent out (and linked to from the
+> > cover letter). It's here:
+> >=20
+> > 	https://lore.kernel.org/linux-tegra/20250506133118.1011777-1-thierry.r=
+eding@gmail.com/T/#m96bb396b352659581a9e71a4610c51e6ab4d5b6a
+>=20
+>=20
+> Then this patch belongs there. Standard rules apply: binding headers go
+> with the binding itself and the binding itself go with driver patch via
+> driver subsystem tree. At least usually. Nothing here is different than
+> all other vendors who follow such convention.
 
-These default in-kernel clients are all somewhat legacy by definition 
-and the only viable use cases involve display output. There won't be any 
-clients that don't output to the display. Best would be to put that 
-check around drm_client_setup() in the tegra driver. [1]
+This has nothing to do with the bindings. We add clock and reset ID
+definitions that are used by the device tree nodes added in this series.
+There will be other patches in the future that add ID definitions to
+these files when they will be needed by the device tree nodes that will
+be added at the time.
 
-if (drm->driver_features & MODESET)
-   drm_client_setup()
+> >> The header always goes with the binding and the drivers.
+> >>
+> >>>
+> >>> There's no 1:1 mapping to a compatible for this because BPMP is many
+> >>> things. It's a clock provider, a reset provider, a power domain
+> >>
+> >> Sure, that's fine.
+> >>
+> >>> provider. These definitions reflect the IDs assigned by the BPMP ABI
+> >>> and we've used this structure ever since this was introduced back in
+> >>> 2016.
+> >>>
+> >>> I don't think changing the convention for this is a net advantage.
+> >>
+> >> Headers still should match the compatible one way or another. Can be
+> >> nvidia,tegra264.h
+> >> (because -clock is redundant and you do not want to use the actual
+> >> compatible)
+> >=20
+> > I get it. You want consistency. But what about consistency with earlier
+> > chip generations?
+>=20
+>=20
+> I will fix them after finishing my time machine. :)
+>=20
+> > Do you want me to go and rename all of these files?
+>=20
+>=20
+> No, I don't want to change them, but I would be fine if someone does the
+> change (although someone else might claim this is a churn). That ship
+> has sailed, but at least we can start with new bindings.
 
-[1] 
-https://elixir.bootlin.com/linux/v6.14.5/source/drivers/gpu/drm/tegra/drm.c#L1274
+Totally pointless, but... whatever.
 
-If you want to get fancy, you could also add that test at the very top 
-of drm_client_setup() itself; with a drm_dbg() statement noting the 
-absense of modesetting.
+Thierry
 
-Best regards
-Thomas
+--bxazby72sxylsoos
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> Instead, simply add an extra check to ignore this expected error and
-> skip the fbdev client registration.
->
-> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   drivers/gpu/drm/clients/drm_fbdev_client.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> index f894ba52bdb5..8c8552ed912e 100644
-> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> @@ -152,7 +152,11 @@ int drm_fbdev_client_setup(struct drm_device *dev, const struct drm_format_info
->   
->   	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
->   	if (ret) {
-> -		drm_err(dev, "Failed to register client: %d\n", ret);
-> +		if (ret != -EOPNOTSUPP)
-> +			drm_err(dev, "Failed to register client: %d\n", ret);
-> +		else
-> +			ret = 0;
-> +
->   		goto err_drm_client_init;
->   	}
->   
+-----BEGIN PGP SIGNATURE-----
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcckoACgkQ3SOs138+
+s6HuxQ//ac8xfzjdddtwASnBo3ZzwSG58AAMitjqUhOimrqLRXMqSTlPkD3QXvcl
+VYB8JpRW0KYjo60nzf44noGlvi1y6hq0vspwNd43rjKm2wfyXfx+bsFwK4aOajFE
+q+JG9/PBk0fFBcAEHj7wQG3iVA60bBFXp/6EQbiDcvvrjyl1Oysr7lmmAWVO1zuU
+6JamkZJSt7nL7BNr8UbeCd9zV9r5M83L/vx2iX2ZLjt/4ekFUR/PKXwuHO+kDomj
+eXU7hJTMlMzYZczHGZFSRGetnjYFwNw2nhngq5rNNOJPMBCjky6r53Ay5kKjWj7p
+JGfE7u9jLwPvEZ8NkN5p4BdijUohmxsPMHhYAd0OJ+/3A7GVeBOM8BJgmKh8oeof
+dFSqRinhsvJv8BN23yPEgUnB00PykvuPoe4qBKxIYlaQSzeNzL6HYYnDsBgu3HAc
+UYDGl3cwYcbKsFJ+qm/u3BP0j+XNjnOKsjlAWjlPcPaNZMbYGryQUFn1UyIRR9jU
+/Z4aQ3Mvl3qfLx3AhcsSis00IK0OAp7WG7FzcWALaseN5qlh0flKx87gFT8DMXLQ
+T0nuh9Q8aR16RcTy5uzy+y8ymDUI74G9x0pImmut/tNhGgxlrrvBlKfexZ/0Qbng
+vRqsBhAwm42rM0ff3XhtLDzhYlEo2Qfjs7wPUagHvY3nGg/Vl+Y=
+=k/X0
+-----END PGP SIGNATURE-----
 
+--bxazby72sxylsoos--
