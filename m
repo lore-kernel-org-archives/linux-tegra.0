@@ -1,63 +1,63 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D03720E01B;
-	Thu,  8 May 2025 20:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB6A21CC5F;
+	Thu,  8 May 2025 20:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746737998; cv=none; b=KBrNcpnJdlg8CumYmZ5mcRm6G/1VeGBD99NQBWeYY+uUd33phABdzrC0RH69m6qRykhbCw5YxduipZCeXekiALE6kt1iTJd9vMchHHAaQR8XGbKo4RA1cURoqWmuKXN99dkFpZ9PvuopLrjKu/9AcvBCZL1cEnDBdVh96xEYePQ=
+	t=1746738000; cv=none; b=QQztv+kcB5q2Mqw96G/rCe80q3Rw75L4OzDAMD/OJGJ08oCt+ToWgjFuPvp941z0bJpD/pza8yCAGP9k1wqwHuNyU3Z9vLAgZd18eRPA73cXiZCpImgdkexZz3X6XLmi4bYUGSsqVtDKO3kJfnbzdaDNl+wlcmD/+cJcgfXaGf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746737998; c=relaxed/simple;
-	bh=UnymAstYRcrWx4ndk/L+X0blB3wHwjRJbSa4uhr7Em0=;
+	s=arc-20240116; t=1746738000; c=relaxed/simple;
+	bh=1f6uRG/atN2IxIF7hix3SM9mpHcBWaLU6Jdup6jEUPs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IX8IoTy3bovFmmdEjJuHHbXhnGcbZAV0raFEroUQIyTgPBrOMb1zCwIkqoW4Z5yKvR/RNr5Ccg9nUaRY3s6HrMDGtfgpHH2Htf1GGdOZwmhv5xvc9PnjdmjdzCGL3UUj3pfPzryyrIBJZUPlHwrrSwmE3icvZFVa3nFK1OMg11Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QlsFoVUl; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version:Content-Type; b=tQLCWhSOsOqUVNWBDWIbfcxcS3Ij1xHfD2Xr44jqztH6c2qMlnkdYTiOrx70syRB7ygT1uSotlsJVxpgKLlxQPXsJvY9Et4ebN8P9u8+bt233caOlU5qTqmaoH6jH14RjCRBvCvzLZKRXs6HsPYU0QuILViOu/QGGjj/k7zQGn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+mN0zsy; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlsFoVUl"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso9995945e9.2;
-        Thu, 08 May 2025 13:59:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+mN0zsy"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a0b9303998so677599f8f.0;
+        Thu, 08 May 2025 13:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746737995; x=1747342795; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746737997; x=1747342797; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rJXOkr+3jhHxWuSur0WABxJdRS3smL59x9d/Ul/2q+E=;
-        b=QlsFoVUlpNaGvSTOrQ+fc/vAGCzgiVe3QJcfSqdmF+uMQabbwCIZZTM5zdN/VHq4E2
-         /+p0cgz8aU53XSYnQksUf1pZQKsheQjBfbT0qnFXIc2TPdTH9BBtjGWny6UqpFxPq+Su
-         Ln4EQ1UedHEmRk42SFYXvtRiG6k7AtfpV0PabOUtAmxi7CEB4QgCwZz6jmF19uYofZ6e
-         Fd+kd0gDjtvPig0Dg4n9Ps9sf/g8WgEo/VqoOG9NJ5geF6QQZvjSFoxmzN5dCXWsZLwD
-         OZuZJFCwsLtIZnegrpG6CFG+cRAVmpnGHBQBAQshTlT3lpiuyrNXHNuHSOje9qMy4LOJ
-         AI1A==
+        bh=P+oK33lhh3xzOMvbgHcoxo693v7D69BZv+tpKv1bhyE=;
+        b=a+mN0zsy1LIPLSiGsNRjowr3Z4pCzTQAKsEVuvvSx5YcppAEtr0O5njuutiTCz0PhU
+         xorxc1HuDe7YJWDcfxnfHzuDboJpH33S2gESSI40T75Qa+aGDmn2Flqvmq9qtxZr/s/H
+         3BLYJvhgVaYl9PvoX0kuCIv1fEKRqaJ98aGuQCBOfoSMNh8OE39j12A1pUJWVYEqyy1A
+         oxHqMWN0ccc+82I9eGWGkYHlk8ekb5/W49kgIQ6DQstbgu8tzSI4MAYoHVL32NjG91Qr
+         U1XWp2SaoKXefHvdJfVQTjm0e7ms4s7D/2XDWDfU1IRqk7hrIuM90Cm8nC4fTK+GX+ig
+         wWtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746737995; x=1747342795;
+        d=1e100.net; s=20230601; t=1746737997; x=1747342797;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rJXOkr+3jhHxWuSur0WABxJdRS3smL59x9d/Ul/2q+E=;
-        b=qpoPGVuM39K6kltlG33Y1OFE1OyWQxf6yrRR0aE4GU+a3Mjd/Z1vy4ZVVjFTjopKIU
-         tGOeVeH/QUPAYFVrk8ATol8m7fHtAChhmyY4h16RW8LLII4NV20Fzj7OU5d4MjeG/8bD
-         MWyI6BiWLSu+I0Msu3chxx9zsiRmnXmvnrSZeN3eIWylphZK2oYV+lU3XTvkL4rsw2bm
-         zBALQKd4q23PR4o6d9Jbce8bD1CbrPANptlsHQx80nFxXHSnZleOxpkF3rOs0+mlFqlP
-         9E8ChOxAyVgTErFURE7ESL+1gyn9KcSDPRl6grtCTQnwHSYXsV54yAaRMR5bQYd4xRIw
-         e3CA==
-X-Forwarded-Encrypted: i=1; AJvYcCViYL03bjoiQiJf6yLUpY+EmTHqPLzM95v3rGSTeIpEEFl1VKEupQyPTnp8pSft9iSpLOFVIFJF3BttkiA=@vger.kernel.org, AJvYcCWvjL5NG2TudYt7RLMVGgQEb7YeRFr5ml69x5d9DShBtczyLSaTygxgLqBYV/xYBxo2YWdls3rt1ZiNx24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJP3wQ4WuvKWNg2gsXusDLYmDxTtva/JJqLE76o7GTWpdAy9z0
-	56TrnEVxPWbIBmpjMi6G7FX5ODSNCjFJ91kqdsdCyjNDJZfx+BCN
-X-Gm-Gg: ASbGncuW5hf7UPiEaXCfSvCAIUc1rX4O23w6kswu+aLua0VqpwiYp033PZQvKwicm0f
-	FlZZ1PEWOCN00N/ToKKsMiZLotXmvV3JI7ID4T2KthKIwijZkpqx6oaZIWo3x9GpjVtt5/mKvhR
-	DCDgn5OWXEc8PreXfU2O3Eub8oU8IBypz4pMF77aLgLdUfGtmT8YqeVje+90bjWs3QyBRCKb/u2
-	ZjWvh2rSe/EryrJ6OJVI/6JSzSlUVDinJjAPv0OtaO7hrBbikICJrYreS4FsB2w6eFU6gwwY4Nf
-	495EjLxNmjpvYWzFjoZZXiyyrrMz5jZ8+hs10Mhl0wxAFeW+VeyCdoVSQhyqyhCyp5RN4XQLSAj
-	nvr9V15F1bNBml7q2/kL4ndypl643Z/q6
-X-Google-Smtp-Source: AGHT+IGUcqxerh+T/wVsgoYuOmW5NMwA03sfy6rm5jPI0PyjaKAgg/u7btSqOgUTBpqFSduNDpQ4uw==
-X-Received: by 2002:a05:600c:c12:b0:43c:f616:f08 with SMTP id 5b1f17b1804b1-442d6d3decbmr6039205e9.8.1746737994853;
-        Thu, 08 May 2025 13:59:54 -0700 (PDT)
+        bh=P+oK33lhh3xzOMvbgHcoxo693v7D69BZv+tpKv1bhyE=;
+        b=TxQwXjgy2bvKBw5jJUyex3F8oN6TLZdO0lthoIvBh0FwzfqKCLv1S6FSZix8+jQBYX
+         kLrMCiuk6A1yQbHayGbOR/G643clPFxr+JqGWvmaa8GCner6D/dPDih5AVZaaMNXqbUx
+         /g9RYlq822crytLiviCA+a2J/6WIBWHsUI25eBZMzqWP0/aB0GY0Oddn7NBRMUevRRBf
+         bzCRWBY3/H52edKtbv+mud2FsGDYqJ1Aa1mLa4ok9o1hh8/Ap3uDdCgYQ/oocf9tRU0l
+         jbrMod7gsz3zYpstbiYcJ0sSfpIbgVd9yXWcQ0LeQ0gWk681mV1KG5TgqYMNy9/LZ6UV
+         pM7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNoMwS5fWnhcBEJD0FvqW+7eb2xrKeKYP+yuQSzLqmsA99vz30iD1CI51zxmP1SvhVMTsO6SQutNOMmXw=@vger.kernel.org, AJvYcCXdGF94Njs2QJ4gQA4xurFtL9PA50fD2Xgssd2VbtNeFT5Idmnkmcte/Pt/On8lTQqSQei9QAilz0ttjEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/+Lrmk6S2IGNQO2aRxLE1jPNPK3KJSwKf3Ed38eTdH7SDpiHg
+	s40cC3GPASevRbXckBRrwE6eULunwW4RZrfNZMPWLRDx1KMh5Laa
+X-Gm-Gg: ASbGncuUIIIQNmTdp9tEuAFFn6qqxj0GxQ5wWdNpIfKp7tO54hYO4sFP2bGZ6liw5QM
+	U+F8iKS+RlRMSh7itz9VfMArn41dLWuW7Qyk8gBoWnQI7YU9XSTyzJ0VeM/zpg+KAUCwpKzsJBz
+	39kOb2h7f6N4/wMirpIlqOKbbN8eREUnH0/EtDVBa29Ao3WnFgZI836/vEUIMRFZ56floWflb1W
+	A9JyOzDovMizMMS3gnfBypuhSLkcwltO2JZQwslCwn1geVnYpXXSSNFzd0c2zEOhlcQahM2EXG+
+	DuBvg3GXzklB64mpkqZF1X+9XUZQ2duFwX1qnVxlm6m1i/2PEuY6ysOWExO1J0++shut8PoOahz
+	M0yn0TVUX+1jXrKAReKhPKRIsgnjBnl8Q
+X-Google-Smtp-Source: AGHT+IHb/rSxQqKlFYxVU3GOqpC1q71xzUwAlXdVcNRtIJjhgRowK9nGso1SFstRXuRYcI6piccFdA==
+X-Received: by 2002:a05:6000:2dc4:b0:3a0:b1f7:c1e9 with SMTP id ffacd0b85a97d-3a0b98fcd85mr4686360f8f.1.1746737997075;
+        Thu, 08 May 2025 13:59:57 -0700 (PDT)
 Received: from localhost (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442cd328535sm50460445e9.4.2025.05.08.13.59.52
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442d687ac8csm6476275e9.33.2025.05.08.13.59.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 13:59:52 -0700 (PDT)
+        Thu, 08 May 2025 13:59:55 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,12 +68,12 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: p3310: Explicitly enable GPU
-Date: Thu,  8 May 2025 22:59:39 +0200
-Message-ID: <174673796550.1567582.1490595643351017486.b4-ty@nvidia.com>
+Subject: Re: [PATCH v2] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
+Date: Thu,  8 May 2025 22:59:40 +0200
+Message-ID: <174673796548.1567582.9511557114395024866.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250426-tx2-gpu-v1-1-fa1c78dcdbdc@gmail.com>
-References: <20250426-tx2-gpu-v1-1-fa1c78dcdbdc@gmail.com>
+In-Reply-To: <20250501-tx1-therm-v2-1-abdb1922c001@gmail.com>
+References: <20250501-tx1-therm-v2-1-abdb1922c001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -86,18 +86,17 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Sat, 26 Apr 2025 19:45:32 -0500, Aaron Kling wrote:
-> The gpu node originally was explicitly left disabled as it was expected
-> for the bootloader to enable it. However, this is only done in u-boot.
-> If u-boot is not in the boot chain, this will never be enabled. Other
-> Tegra186 devices already explicitly enable the gpu, so make p3310 match.
+On Thu, 01 May 2025 17:32:23 -0500, Aaron Kling wrote:
+> This is based on 6f78a94, which enabled added the fan and thermal zones
+> for the Jetson Nano Devkit. The fan and thermal characteristics of the
+> two devkits are similar, so using the same configuration.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] arm64: tegra: p3310: Explicitly enable GPU
-      commit: 52dedbe81ee5e99b0d44321347fc85417837eea6
+[1/1] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
+      commit: 01f11ffdfd909e870c3863af60875e8de328790a
 
 Best regards,
 -- 
