@@ -1,104 +1,134 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2B321E0AF;
-	Thu,  8 May 2025 21:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C99220F27;
+	Thu,  8 May 2025 21:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746738511; cv=none; b=L/Z43k+Xv98E6GT/qVPnp188j1lcPMnkBbTDNeP7FVABJMnhgJtqf9/QCDOStxVxBGJnAFLO1DGVO+QDiPI5SgT0gHF68T7GevBp+J6O24gAXWBkWYchlca62SoKbfCGPTqKNljBgbxjzQYkNEa305J1v4Npcz3SC8Vy8tMS7Lg=
+	t=1746738732; cv=none; b=uJ1CIanRs4MhGbIgY3DGXQZ8h+Gxn86B6DWj3kGd0NzHXN5neitrmON6PL/utwpqEDqd693hxdi0A79Uw+u1EHmqPWFCrALMDBRaSGSBPHB0yR1GBHBhoFTsaVl6qToli3DPKb4QUSFDOy1Gfk0AbUhAzcGsPRZR3OwLJYfiokw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746738511; c=relaxed/simple;
-	bh=sSh3UlRruF1zdvBbJ88hPL/r57RJN/FG1Nf1hx5CcFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mClYJ0YWlM5zWxVSN2iQ4pgz+2yjKpMNztnTqrYSsyXHsWqV7Z7L/MZiaB9V4QIfZiwMMIUemwT9VC2XT1R1OF+h/Zr4yFBCiFdrtABCwq++S7N2L/gfcmik/8dcZohmO/znggr8iMZUPmWsYBiEVMg1zOZtvv/OEaoiKPdhoqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DY2GVtc4; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1746738732; c=relaxed/simple;
+	bh=Y03yt2F9GY2M/JUkLlGaAKVHFQnD51SLZfOToXgxJnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHYJAuFlTEaNWzIB9Daj4t+1VTceN+HJjp7H8JQ8vPsd+rk0SbDQOYSswhJfG2TjhLwx+KEQDHtPMW4jTAQoZL9aGNvHTvYqfRD7ovATziBi4JbQ4MLfLqqNixHAUGI1/6xiABVY+keBCbuZuW+H93K9He9XyUrqIUicbBw4qnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHoUfE6L; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DY2GVtc4"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad1e8e2ad6bso290033066b.0;
-        Thu, 08 May 2025 14:08:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHoUfE6L"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a1b8e8b2b2so420684f8f.2;
+        Thu, 08 May 2025 14:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746738508; x=1747343308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mh8E2OTrklV1CT8+lIctUYvo1JeSW/6ehZQ/r2K/Nmc=;
-        b=DY2GVtc4S/rIlSiO3HlA+zByfCi3OyxWdBBGfTx+32/wTumQx+0fBIJ2frzJC/lMqo
-         nDHZ20lKpoLHCTDCB18Q6CR0qjIwq805Ap/WNoBjGaTnxDLfYj9lIj0iw0vxwvmWN6Eh
-         i1svVrOn0x+aauRFv1n5fSpMCCEkaWTH91GspNATxiafnl+eNLij385PpQYhXDX0yMIm
-         ebfZ0v8svtCsV2wy366RwoztD5cazSpb2zr+umkz5satql7HamgBYtYfw0Fl6w/IBupM
-         VThX8g5TjdBgsuV1lEls28CziceQAU25EwqKR9A46CUec7cJm712SFcTJnSBm5/pVMxc
-         x1/w==
+        d=gmail.com; s=20230601; t=1746738729; x=1747343529; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXsssHBev89zw2MSQtYyLJLZXpMvVaD0rH2BER+YTvg=;
+        b=aHoUfE6LupP2d0uD+ml8AwG+68L7HQfyfQhMRwWGUCsrtplJ5MjqTZpitw/kjrOd06
+         2dxQqz9ECFUzwLDipCSfhK5H96egCm1tFkAUvGA6PT3RHjf9DLajtgK6koUoXJdyw+4u
+         /mvba6NDoqsm8BOybO0XAAVL9RlMHatp29oHFEuzwY7Xz4ijz3HCo2fByhgAyxHPPEvY
+         5Y/LRRJHi6r3dKRXFuIrM4Gq9Tt1uFAXK9S4vfscfZOm/hZ1nwSMwVv4cyOw5qydNzna
+         WR6Hw/nr/q3Rlgy6p/8ZDdwXInQI12jsbpMr47eQqy9by1MQ7cBO+/xXntqAKjRVxVUx
+         YBvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746738508; x=1747343308;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mh8E2OTrklV1CT8+lIctUYvo1JeSW/6ehZQ/r2K/Nmc=;
-        b=Ak8H1P2wXP8QTTp17CTA0MXpW/1KFkj45jv8fHmZx47Dm7uYEYo2ZSm22Gyfmt49Dq
-         1MRFhfnBTEceQtLOjPvTLFpA6nTeAmFHBn23zgPosTUK+sPawQYNj82WWnxSDVXsatBJ
-         jWOO3pETF+gfiQqPJ2S1QzCnQeGZQoTjxMYl98PlGP21dkVTHm+gz5sZ2z7FGmFav3mO
-         NymjzhDnbNFE1qV3qhr31WS9/xcZphcsLFrcp4bAJWoTjXOefDbKZyY2RVtvdHt/tytK
-         r9gMXmXyCMp0oTTkexG6VLohw6n48nlrIJjW1IeCYG7zPSdGaY6BPtDhfdend3/l8rXG
-         53Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVldptVeev3caYN9Na7lNwhSMZX8lO4zKIXOe4+nTmpOoBMuemTlzDn58ra9ZGcQHNtOpi/hZD82lUBryU=@vger.kernel.org, AJvYcCXsSTg8QymCAI2IkE6imzbRs8GJKDoMOvC7pKQwL982kuB1tyARjTTeU+di5KSMW7RODqSGJaf1wlFKT5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySoLBUIxkCc3/9c3sVJL8Q7AiQgcjw+TfRLCFST+thH18f6LQz
-	Xn+pcDy8vFo+JqIAbMa0POH1E6X4zyZF4JdVyv3B8Dm7LyY5ebOu2KScDw==
-X-Gm-Gg: ASbGncuOmF1K8/GofDJeUOvS6aGgr07vIlRUsy1Ck+vsQYJbUVSPpJPQYuEMCBoHPYl
-	ZQnrAKcyzjuXc39bisAQv3FMrojLf72W0vyWG0ZGeNkNOLNBfv3f+KkbDktJAmpzopJJmh/w40j
-	B7iU0OQgY5dKKXyMhI9JythID7Yx04DjBN//3Zs+MFLjt44F5p96Pr0b+xMWlQy2FR0/wSQuxEg
-	JNBye/ZxLD1t+lqAR2/r6krB7L6vj9tRX/OJu/6wsqHPjTHS35sHQfeEmnH56XEIM/V+O0csCSn
-	JcDrhaQjG6wi+25sGQNSzDKQWeIXQ3D1fdUL/SgRXvf1gw7giCHR8A0kIuJF9gdNIoLYeCTzzix
-	xl6/b/yxO4qLHF6FqcOTla7nyPTepsNjn
-X-Google-Smtp-Source: AGHT+IETGDDtUGrG9k2RbXZdbP/78mtsOXiATeb6D4TevvfXBuiLGpSkUi/snj1y9hf2kdjVh3EnIA==
-X-Received: by 2002:a17:907:2cc6:b0:ad1:fa38:9e4 with SMTP id a640c23a62f3a-ad218f6ee1dmr112553566b.26.1746738507643;
-        Thu, 08 May 2025 14:08:27 -0700 (PDT)
-Received: from localhost (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad2192c8508sm43581866b.9.2025.05.08.14.08.26
+        d=1e100.net; s=20230601; t=1746738729; x=1747343529;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QXsssHBev89zw2MSQtYyLJLZXpMvVaD0rH2BER+YTvg=;
+        b=QDjVX64piS0TusS/5yx7Xz17dNo/50XhttGZFdN0jvhOl8PiJbiQe9ywYV70xWGTGH
+         yfUsmQILvuLHw8nsbmU6z7RrNe55677Grc9nFkyHdZ3g5VHoWWZ8BMOuB8aGNAH68CmG
+         qsrEw9jwZrUb/r9skmoM9kciBPCImlBaQSWfB8BGc5F8A7ISXOiwahh6Nk2Z9vOHHToO
+         fBZXgVNSa4E8S8TWy3TJX6aIb8zix/Ot/K19ooc7szL4fy8Ki6QY4rPN+HYsC/X6eNPs
+         G9OU6DkS+/jQVSicFWnEuJmGow4GuUpVRWqOlsfjU+IBgTcolYg79eVlEpbvw//5pWiP
+         AlcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlOI00Qt+SAobaLF31a4zoqOZ0YIydfJQy6rphdrYbHhoH1JiI7H3PBV40E4y3ti6TbvBQO/9R8oGgWwCq@vger.kernel.org, AJvYcCW46Q5cCR8q1E8zQ96BVjGT4IygV9N8kL4DL3hxt+7jK2LDafqtHLKoqdNS86eDsf2Epz1S6ULohHXivuc=@vger.kernel.org, AJvYcCXNX7S3vjJGa9rjfJiM5s1pjEN6RWVoT7wKFdyxMlKR1RztWg8XRDJMeMbyufHpwSUz60mkvxdUMCRy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGyY6mlbYlfitOb6MUFfpH9H+ou3bvPIiuBubuedhfzf62XeOk
+	fJU5zkEwpzMByz0JXmCIilbyOrWOVgwM6nByzEh7jPad6Mp+/Iri
+X-Gm-Gg: ASbGncvNDCNCop7Pqu7wz6+KtSn/ygcKkV+6dq5PjAPdC37riVEOrkI07jccRmt7lNK
+	W4rgSY/4Meoc5GXmuTE3DDKnUpCDG40+tRU4OPF3Hv/has35fwxSZcsoQFbEcMIwkxWb6iVhf/5
+	f6+QC8UbZKIXzRzOLAmV5pYBbwN0sa4e+uX2JZ08topBJt41VTxYHhYjtYXZ2NYzD/PA4FuWSIe
+	XAtFdCRQZsmQMj3Oyt1IU5aJLyN7zYQBht4O8wRrZ8673nDADg4zOESdHgCAcAMdlzLKW0B8hzC
+	/13xXAADLvWSK5eG8nK7gCeYDcFublzjTXilFfXkP8HQU8YMdySVODLtr9raeZ7QSmux/qstA6i
+	ZDgihNLGMbxj5d9Rp+jh9e3DaE2efNXG5PCmlng==
+X-Google-Smtp-Source: AGHT+IGZ5UZCBT/ZXTKQLLgWmt7g7eoK6pATm3TNtHyvZRGoQoXHyipRR92qmmPDaUzhPRVC5Y4YTw==
+X-Received: by 2002:a05:6000:4287:b0:3a0:b635:ea40 with SMTP id ffacd0b85a97d-3a1f64a3e3dmr845022f8f.55.1746738728771;
+        Thu, 08 May 2025 14:12:08 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f2fe6sm1072304f8f.58.2025.05.08.14.12.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 14:08:26 -0700 (PDT)
+        Thu, 08 May 2025 14:12:07 -0700 (PDT)
+Date: Thu, 8 May 2025 23:12:06 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <webgeek1234@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
+	Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: p2180: Explicitly enable GPU
-Date: Thu,  8 May 2025 23:08:23 +0200
-Message-ID: <174673849358.1568857.4837060567282332844.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250420-tx1-gpu-v1-1-d500de18e43e@gmail.com>
-References: <20250420-tx1-gpu-v1-1-d500de18e43e@gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Add uartd serial alias for Jetson TX1
+ module
+Message-ID: <dof7iez7sbm6jrhcmdx7hgm53tynxjaeoyfkcp4zxrxxwpikp6@2jl3ahueit5i>
+References: <20250420-tx1-bt-v1-1-153cba105a4e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="z35vkohc537tb7zj"
+Content-Disposition: inline
+In-Reply-To: <20250420-tx1-bt-v1-1-153cba105a4e@gmail.com>
 
-From: Thierry Reding <treding@nvidia.com>
 
+--z35vkohc537tb7zj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] arm64: tegra: Add uartd serial alias for Jetson TX1
+ module
+MIME-Version: 1.0
 
-On Sun, 20 Apr 2025 17:25:17 -0500, Aaron Kling wrote:
-> The gpu node originally was explicitly left disabled as it was expected
-> for the bootloader to enable it. However, this is only done in u-boot.
-> If u-boot is not in the boot chain, this will never be enabled. Other
-> Tegra210 devices already explicitly enable the gpu, so make p2180 match.
-> 
-> 
+On Sun, Apr 20, 2025 at 09:35:37AM -0500, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+>=20
+> If a serial-tegra interface does not have an alias, the driver fails to
+> probe with an error:
+> serial-tegra 70006300.serial: failed to get alias id, errno -19
+> This prevents the bluetooth device from being accessible.
+>=20
+> Fixes: 6eba6471bbb7 ("arm64: tegra: Wire up Bluetooth on Jetson TX1 modul=
+e")
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-Applied, thanks!
+Huh... seems a bit over the top to fail in the absence of an alias. Oh
+well.
 
-[1/1] arm64: tegra: p2180: Explicitly enable GPU
-      commit: d1b72547610497ea4d0917214986cffb752a8710
+Applied, thanks.
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Thierry
+
+--z35vkohc537tb7zj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgdHiUACgkQ3SOs138+
+s6FDHQ//VIwAzjJvLpKrl7Fj+/NVymjjBruYnOchUVcYO5ZPcjiTQ9YuD7EF66UO
+eR6Olqe50xL7Fv9GsdTbPz6HUMhAjV82YhcohH21qjaAWcyFfsbOP20M8nT8I+JC
+/7CKVok/mYSgmCgZWa237ML6ThbmBc44kU8aAIk/SYlmkoMtx/rPY21unJc9TAhe
+7fi8JX9EDR32IFha+xEb3DyQAP8mcraoPhQfkwkB1wNtMlFPKFcAVKBnLifOEHIu
+cc7SKr77e9/JmhGNMIs8UJ5i3pbmh1WAJQu43UVqGKtnhU2GkWPDaIpROGhXIanJ
+n4x2XHK+iBQ+FoNK3zb5dxd5WqiWkzuzusX4N0v957bGVKj1rEwRW8blk7Y+7LwR
+WAQlmMnwu//RKNSUGRxc5YPRxemEAKVFMqEnJ8r9T2UKL5e+Vphba9V+lcPgd+um
+YJzR8lFTPwWOjrKWRy87KZVZy2uhMW68CsqQ7QEuIUixBQfGdTQuR9zT0juq1PFg
+il0mVNnNmrUIM9YVN1gVVFWEMmVhyf0yZssPLhgCfRhXSUFlbAiv1Z9Zh8pd9FQR
++pREttXHUKRyziUSog02w/j5yroyFLOPvQaE5iG+ogaXlzCguQOXIRvuFpvdYdkD
++dH4An2TN2yJEd66+iMoMmZgHUWYrcgliRvslWF1TAbcx7z6hQY=
+=+bXS
+-----END PGP SIGNATURE-----
+
+--z35vkohc537tb7zj--
