@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CD0220686;
-	Thu,  8 May 2025 07:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686F21FBCB2;
+	Thu,  8 May 2025 07:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689851; cv=none; b=Xy6S2XRzAxfreoLMb1S8Ts23/3cWDQIG1D5bHfmp/Cm6q4Mju7Cl1ozYST4Zpxcu3aMMFoGdz7KEMnHEyL14r9imQfychXA/wKG+QkXXLTHetv+p38FcuHY9FDGzkv/C1UivgtDQxKAVQMccTplLtp/rin5fSO6xIptwC/nkkn8=
+	t=1746689950; cv=none; b=aa8/1hF1IlCsN7i19E3TXn4JPMYTqyXAk0FZzcP0fMpT5XrbLIpUZBIcbHfeU74oDuj8vn/aZRfNMBeIZpuYTgUXprFbuA7JIDcjus2j4bOikiGtcwMjtz+07HodH3Hjwkm9L0mMyqx+UGcLeseM2uhc3xPpL5qB5rPlPMeBkqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689851; c=relaxed/simple;
-	bh=2K8uNXQXxO0Gc5a70Je+EdtIou/J82MA7oGGP6kUuDw=;
+	s=arc-20240116; t=1746689950; c=relaxed/simple;
+	bh=aoPmvlpUVTJBZ80tWq1+Sss5jsve9UvcYpZ4ZQTThio=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iFgxRE4VMS1JZGC1DpzVu1oLeEOLOqnvEUwAtlPRUUXjM/B3hOFn3qyurm9VtSIz+fMG8nxqtLnqDMKz9eoAgmEZshWPgIaxnHZ4VtuvwWh+N7zeAFQLQ67ij2TjZTrvzrKmb88Qy1jSIA9P88XxlBv2CJQ7N9Z3k9gytVi1bx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5BYQSUw; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Z3AaOERDK+Nr9kjvlMYIjm/6p7xAxc7kxJYbfyjoxK8sYBiHwM/ybivE4EM6w3cKS/kLYDSGvBgzLeQK3JiH5RADwO2eyu4ACrVjcWS/dsoF7Mkp2i13uARWOTpoI5ljyjiGVcAGsNyL6TdNSLCqFoI4qKfhalB6ORj2nX/l6uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/lgARPn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5BYQSUw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 570D4C4CEEB;
-	Thu,  8 May 2025 07:37:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/lgARPn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B75C4CEEB;
+	Thu,  8 May 2025 07:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746689850;
-	bh=2K8uNXQXxO0Gc5a70Je+EdtIou/J82MA7oGGP6kUuDw=;
+	s=k20201202; t=1746689949;
+	bh=aoPmvlpUVTJBZ80tWq1+Sss5jsve9UvcYpZ4ZQTThio=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a5BYQSUwmSe2AIAlk4ED5lhtXyxFsamGRscOe4QLDx9CrHVQ3TavnWpggox44HLAT
-	 gkk/L/iG+9ot6GD18JqL/D866EGLF+LblH4Bgc9/CpY25QO9YEGeE0SZ0Dx7/S2+l3
-	 jhConMyP61i7Z2Xy9QzXePdid4qdxwQt8cTRZ1gqTQe2isMYm/86vS+iNBxFsoYxLz
-	 e3dBjOeHlcjnbbT6YJ/Ius1Td90uNyORh3iJxhVimxptsdf3M3nFoLGK49Zw2A7Bxx
-	 Rj+TDElIolOkKhFFV5RCADh+ijvZvl6TtOcmKMyS06o3gLTHmlIF2AGWQ2hlSc5EMd
-	 uOabcwplsWa0Q==
-Message-ID: <f346c140-52f6-4209-b62e-53dfa2c8c7c4@kernel.org>
-Date: Thu, 8 May 2025 09:37:27 +0200
+	b=P/lgARPncMDWxTgNawjxRdtqA5vHwfp/N0Q3j/6pvLjzugxV7xj3D9Rq8fXKLaqE7
+	 c3NeW2JSvmX+EPIXt6moMqToNMik22Vl0VIJ+XY1RvOWvEEe7tH4sRUX5QSftG3zMZ
+	 YBDsZ2P98CQr/fqx8Nj9iYIRPXG4M0/Haygv4fSnW0/xbH49wQKFqEKKyaAtw8zqMd
+	 Qg5/Ijze8hqCfwPjNfBy26GKDTmCKDTh87EERqUNiUlptUu2oSx3goJ4NbsVoWKkKP
+	 Rg9MI3CEEPw3h0wRIm/fe6CWBNqihC1DvDkFHpU709nQ7CXy48wiDP9v6y2dluNMFl
+	 MwdsHS6DWytjg==
+Message-ID: <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
+Date: Thu, 8 May 2025 09:39:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,14 +35,12 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] dt-bindings: memory: Add Tegra264 definitions
+Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20250507143802.1230919-1-thierry.reding@gmail.com>
- <20250507143802.1230919-6-thierry.reding@gmail.com>
- <b6d4f40d-9ad2-48c7-a5a1-55b2ebc4e21d@kernel.org>
- <apxlsl54wyigk7yovtrb2tadhhsad5ti7hdvueisjcdjzfk443@4q3fv6pjaac5>
+ <20250507143802.1230919-5-thierry.reding@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,65 +86,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <apxlsl54wyigk7yovtrb2tadhhsad5ti7hdvueisjcdjzfk443@4q3fv6pjaac5>
+In-Reply-To: <20250507143802.1230919-5-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/05/2025 09:31, Thierry Reding wrote:
-> On Thu, May 08, 2025 at 07:48:22AM +0200, Krzysztof Kozlowski wrote:
->> On 07/05/2025 16:37, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> This doesn't currently contain any stream ID or memory client ID
->>> definitions, but they will be added in subsquent patches.
->>>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC (and consider --no-git-fallback argument, so you will
->> not CC people just because they made one commit years ago). It might
->> happen, that command when run on an older kernel, gives you outdated
->> entries. Therefore please be sure you base your patches on recent Linux
->> kernel.
->>
->> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->> people, so fix your workflow. Tools might also fail if you work on some
->> ancient tree (don't, instead use mainline) or work on fork of kernel
->> (don't, instead use mainline). Just use b4 and everything should be
->> fine, although remember about `b4 prep --auto-to-cc` if you added new
->> patches to the patchset.
->> </form letter>
+On 07/05/2025 16:37, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> get_maintainers.pl lists 13 people and 7 lists. That's *way* too many
-> recipients for something as trivial as this series, in my opinion, so I
-> tend to curate the list of recipients manually. I guess I went a bit
-> overboard and should've at least listed all DT maintainers explicitly.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Missing commit msg
+
+> ---
+>  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
+>  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
+>  2 files changed, 16 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
+>  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
 
 
-Usually that's a sign you combine too many subsystems into one patchset,
-so the solution is to split, not remove maintainers/lists from CC.
-
-> 
->>> ---
->>>  include/dt-bindings/memory/tegra264-mc.h | 13 +++++++++++++
->>
->> Filename based on compatible.
-> 
-> The compatible string for this is nvidia,tegra264-mc, so I don't know
-
-
-so nvidia,tegra264-mc.h
-
-
-> how much more you'd like me to make it based on that. Do you expect me
-> to add the nvidia, prefix? In that case it would be inconsistent with
-> all of the 8 other Tegra MC includes that we have in that directory.
-
-
-Same story as for every other case, why this would be different? All of
-them - amlogic, mediatek, samsung, qcom, every soc - move to new style
-since some years, why this one should be different?
+Filename equal to the compatible. That's the standard convention for all
+the headers since some years.
 
 Best regards,
 Krzysztof
