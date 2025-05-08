@@ -1,185 +1,145 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2058.outbound.protection.outlook.com [40.107.244.58])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C959218AAF;
-	Thu,  8 May 2025 17:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746726120; cv=fail; b=I/AXpw9l1JpoA//pN9YHik1tFk7sCYgT18M9DEvxq3qYzSignrY6VPcU7k70ThEttAXpB41ou2KZgVqbWHQgZl3M2Maq5XXA1I3vaWfwZ6iTqoL6l4hdVrw/kHNliJp6onrUI9e/vrvdmdAc3HMZ/kft/iR3HWhEVAcMr4gypyM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746726120; c=relaxed/simple;
-	bh=6qubscmoSf1MgxTMV0FDN1A3D/CcAabiLf477ifuJZw=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=ToJdvA/eGql5qLuGHNIN0DizZ3Bea4/lKDV7Am9Fyxd+tARtOgIWIoQgNGek/NutVaukGWcx6PLTZfvdEm+/osJY3Pho66HphKCiqp7BFfmVYoaj+OOJsOh0mfKBb+08LAN/5db8tTdcEvXO79YSo3gSi9dlgMR88M/DDXctxU8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t10keYG6; arc=fail smtp.client-ip=40.107.244.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF5038384;
+	Thu,  8 May 2025 18:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746727605; cv=none; b=pe05krgheRuRky32vZNVm/x4gTjTJhh1Z+jQJaUUrSk1pA5jgOGZDO/U0M6k4zpf6opTvp7nQp3Cbh/299Q/j2JlJ7ORoQqd1M852bC5oydt4xZbErek1/GMGEaFd2BgUr7iXWVNLnWnv9Bv3qmX7AwyXD5K7rrNgLRqTxK7PeQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746727605; c=relaxed/simple;
+	bh=AT673/beXh1Iw+NWSwcYovpba3fg3Uqn/BBz/hPfvEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T4CMU4CNkUwJyXsKYkWBerzjqTAuWWT6h+fm3GZdZvxgzfqomCSHdmdaXT8DLxWPc7BVwVDiYMiV4Ahq0OzcnG/FsNLPWyWHKfnYteUsHrQr4L4EJRyyBppYcEffocI83Rp4TiVMAekfJUbsdRMygOT0lAaWxGtKOCWogxbra60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LM6VZUEW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t10keYG6"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MjEDik8Gf+tsJtq/0n5kpJ/o6ufI79mTD7qBhau6d4qo4XYSsMJBs4ch0ZFRwqUjf9HjhDdFDeVJEUPzXjGc0oZm8rGAccL1cWpQDDh26fVFQYiTDezjHAIXmSxqudITmTRcR7YMWekvHwHo/Cbn9aRor1dnZ2kwQ7Wbcmjyg0Tp0HRTelycQtnR8bE2NgxFWcvlfvWql5QbslRiIS2kCmq+HaI9bVZwcW1afKMUC/rtvPm8O0AOWeo89L59cfeAqIGNgiI2oWLb5AKoJlC/4hdAFxICMdl6ssFFjReb6RoeBBmDCpEDNETrrjz4/UnHy6F53Y6pLA3KNUyZoe4/tA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=prEoUjrojpDsm+qUDLKkW9O+0I+7nzGBvyZwlcPKBaw=;
- b=qlAPwlRy6soHtNyxDVk28umbyVaeFdHm7FfCTO5blgwFMQ2orsBSnJu020MOC7tVnTxUk4dEitQNVu8rmZnYd/qhcf8azFTG3gpyVvVvuyQ5mCJxJ1tfohXOHQwpHqK1LxziYfu8OaJIzSwd1jxh51azS9YPrzcMLM3OTUxTZpUVRl7ig+xpPRFA87h8kBbBel9C3u6d9ZIg2iwJQwOcaIoKUIcLl6N6P9zPfj7Pes5OW7x+jcYYItY7CU9GyRGAU3Eezlt5kMKNNtFR9SBKSZ7blrQR5/VoykfIKM869PBfhHL5uT1CmjfTEynxN6wIJNKYP8+RwuF4DprBQJkfHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=prEoUjrojpDsm+qUDLKkW9O+0I+7nzGBvyZwlcPKBaw=;
- b=t10keYG6ndM48WgJ+dXHi+uHVC14RVR9LlsMIUura3z4dWBaCDIh6G/fztkoWwYPjlftnA8bK+hQQUC/8Wy8FcSANysV/YrnH5PNZbdrRFrWi8l/JGYHqCgxYjnU4vkl1zirt9DPprNGc0s938HjLggyBdBIXmjhVL/IzcntlM8skYyA9SjP3zXGn8YI7/Ny/oDcXzqidZQ+WXTrI/XGUOZ9/pOWrbuIXWPE6Tywtmz3ftVYcaEjwGXrWqO/BKO5JS0XjitDE9AEtup9yjq0YNQoZrOpoL5qLOGD/j7a3r7JHQfH3BTI+HZ6J5/iIKDYc6O+qmITMpjYBKJV2movhA==
-Received: from MW4PR03CA0317.namprd03.prod.outlook.com (2603:10b6:303:dd::22)
- by MW6PR12MB8898.namprd12.prod.outlook.com (2603:10b6:303:246::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Thu, 8 May
- 2025 17:41:52 +0000
-Received: from CO1PEPF000044FB.namprd21.prod.outlook.com
- (2603:10b6:303:dd:cafe::10) by MW4PR03CA0317.outlook.office365.com
- (2603:10b6:303:dd::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.26 via Frontend Transport; Thu,
- 8 May 2025 17:41:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CO1PEPF000044FB.mail.protection.outlook.com (10.167.241.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8746.3 via Frontend Transport; Thu, 8 May 2025 17:41:51 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 8 May 2025
- 10:41:38 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 8 May 2025 10:41:38 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 8 May 2025 10:41:38 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.6 000/129] 6.6.90-rc2 review
-In-Reply-To: <20250508112618.875786933@linuxfoundation.org>
-References: <20250508112618.875786933@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LM6VZUEW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C5AC4CEF0;
+	Thu,  8 May 2025 18:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746727603;
+	bh=AT673/beXh1Iw+NWSwcYovpba3fg3Uqn/BBz/hPfvEY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LM6VZUEWarLOmvN11dUkHIZAVIRR/0lBT50i3B1BtVuiDSmPm1OT9Rabd6WeQ4+9c
+	 9QPtezlfycYZ9n+i7REbZT1XkgVLcGk/GmkUeg5tT5vOQ+B+TG0axzlz6pTBvzzNTx
+	 ekxvjrSzTLcjJZRJxZ5MP06aoKfcpdnB92Sd8X9kmlwF1giUYCf4PU46za9CZ7XA9d
+	 aDcumzZReTpJ34Sj6yh5SePTPm8PYXTKYc03PmovpyzcGuAMeXLQlpH88MrmtKvLYd
+	 dxXGpgwlgR5SqqpfTpHTlV99XUuC0uLInnDbAlc/Tegij5Hjeeyiz0sN8bkxci92Ze
+	 Azgy5tcKacFsQ==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-72ecc30903cso732473a34.0;
+        Thu, 08 May 2025 11:06:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUX/41teIuvMQM3gTa2C9f2DSgRXtABUMYk1NsAt/9/3nhmt9o0i05mJuELmN0aTgtR685HdmF07pQ=@vger.kernel.org, AJvYcCUfGGbPtt66lkqcZxRItBU394iNuxA1KWVvaMUknai6AdDV6RnLZRWAahdEq0OebAcZ+u+g6jjGBdu0CLU=@vger.kernel.org, AJvYcCWFuQYY27zMonAGqF1/am1c3megWxNVN80uRrlw8dZdDBZBtBJNNLp/Zbne4pQ3VLWn7F26K5Ue/3hkqko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJKEzZ2Vf1aU1oo3hod8W1rAYkgEm0cvET0RGN7F7CIycO4+Zd
+	zfVY9z9J6EvZnZpNJRoqDuVzp4UZTUdjjaoASR2ANTwtyBQYGIe9I/GQbPipvnLTvGQLaRhGRDq
+	IBWxeJ97ikkrvsFqyJZibGCltRKo=
+X-Google-Smtp-Source: AGHT+IGzS7QNq7+HaeTooVtJmyLUF32qMz67Rfq0dA/F8YUy3BlapHyOdQ18btj/Rts/39j11fm208hRejH3SNsO2F0=
+X-Received: by 2002:a05:6870:e243:b0:2bc:716c:4622 with SMTP id
+ 586e51a60fabf-2dba455ac8bmr279543fac.38.1746727602527; Thu, 08 May 2025
+ 11:06:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <54f1b0a3-7035-44d5-9ba2-694d91d26a36@drhqmail203.nvidia.com>
-Date: Thu, 8 May 2025 10:41:38 -0700
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FB:EE_|MW6PR12MB8898:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f469cd1-5418-4f31-0fae-08dd8e579df7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WmJyQUYrZGVta0V6bUFoUlVDVU5SUzBnNDRJM2FjVWl4WlEyN0ZVUUhJWDYy?=
- =?utf-8?B?K0RBZlBmc1I5V2NNVTM2R1p1WVhCUjMxRDNySUwzMnMzUnJyVlh6VzExUjBZ?=
- =?utf-8?B?dEo0QlFXQkllVVZ1a1ZRMlF3amRuUUdHNjNCdzFEcVhxcHBVWXY2RGo3RWhz?=
- =?utf-8?B?RldpbDY0eEN0R2xvK01PKzdoV1pXSmNKTFFTelBaMXFSSmczdXNJL2I3c0RG?=
- =?utf-8?B?ckZ2cUY1OWFBUUVWNmtWaG9zOVVKZkFNS0lCVUk5N3hCTTEwd1VCblgyUEdm?=
- =?utf-8?B?RjQ5YWdSUHVKSXljMUJUT0dxeEFLL3RlZE13WjFXWmpCdTRrT1B3dm1IQjVT?=
- =?utf-8?B?clduRnpBTHBVbkdTOFh6blRCM1BWbzBidXlZajY5ZFJWdG5sOTZxMFE1aElv?=
- =?utf-8?B?VHV1WjBrQnpBcWFuRTQ2MC9URFNnRTNGN2xWcE9kTzZNV2xTcmNvQzFFbXMy?=
- =?utf-8?B?Mm5JbkVrOE16YTNRUmd1eEpVQytBUEszSmduYmpSNUU3clJEdzY2ZGhRVmtn?=
- =?utf-8?B?ZzFCcUk3ZDNSUndrNnVGT1lMSGxmeTNTV05BZ0RsMVA1eWpKM09GUG9SQlB2?=
- =?utf-8?B?ekVVYmxoMVdpbUVIcGVuN3I2Q3FVbkh2MmFEbDZBUHp0NWZZTEdTU2UvU2ll?=
- =?utf-8?B?LzBjb0oxSlBjTk4wVit2UE9sY2JBOXUxSlNCUTczVkIzMHZCYVBuZkppTWd4?=
- =?utf-8?B?bktRd2FRTkpYK1lPVVYwWWdHYXNLcG9CL0xpSEtxMng5TjdpT2dVcFZJVzlH?=
- =?utf-8?B?RCsxakljT0xFalduNDZmdVh4ajNPZjBOeld6cnlSeHV6VS9YR2NvNGx3Z2JT?=
- =?utf-8?B?OTZQSlExekgyQ3BabWNsUU9SYUk5NUlLNlA3Z1MzSnFkeTZCd1FBRzFXeDRh?=
- =?utf-8?B?V2M2VnNVa3o3VkNuNUgwcmVhYnFVcGlmRzN3V1EvajNUaFhGUEo1MWRwa1Fq?=
- =?utf-8?B?Myt1OXV6MWRUOE1kSU9MM01nd0tkYkVEL0xPakc1dGw0SmhxVm5KSnZNaGdO?=
- =?utf-8?B?UW5ZZm84Y1h2QWMybE1kV2Nna2xCNHUwWldpYXVWNDlpVVlwcldMdFBmaW9w?=
- =?utf-8?B?WHgvbVY1UmN6a0cvTHovMWprVjdrQXpDbG9wRE91SHAxei8xVnozMXA4QlNm?=
- =?utf-8?B?RjFXNDMxc2JJcmVtUEgvN0JJVzZkK2hONlY1U3ZVRXRJeWxwWnUzbGFLVTVU?=
- =?utf-8?B?YWZTWmRKU1dUb1lZbXVYSENVKzFKdUxWOThybHNEYzBTZ3VsaUhvTnJTdGsy?=
- =?utf-8?B?Q0IwMjViNzZ0YzBOL096NnJXZ2cySzBEZFhiSU9tMGo5TEdVNnhGYXJvNElo?=
- =?utf-8?B?dUdzbzZiTUNmdG91NENLN3hDK3lRVWtXS1RodFZmakxteTJOK2pkclJDV3dX?=
- =?utf-8?B?eDZpMzZEM3JnWkRkcXlpSXgzK3VVTTVCd0V4THdiMFFQRjB5NWQvdEJnVGdk?=
- =?utf-8?B?eHlZTHpGb1RNRWpQQ1J6RVJCTThrd2xsOHJzZ2ViSkFWSVk3bXJ2Z0FLOWtO?=
- =?utf-8?B?c2dtT2ppKzRNTTdlWWtQNFBWbnBzWWxuZmZmclMwWVUydjkxTllWRTM4dGRh?=
- =?utf-8?B?U1J1enJKaEsycUs2WXJzcWIwVlE3cDRqYnQwUkhHaTZKK3VDVGlnSXNNUVFK?=
- =?utf-8?B?RzVSTGcwU1p0V05MMHgvSjJyWUpXZitqbThtLzl5b1FSdFBuU2hoR2l1c2wz?=
- =?utf-8?B?WEN6RHJtS3RhTVFka016MXFoMTUzVVZyc290MUQ2WGxENXBySlF6Zm5SbG8v?=
- =?utf-8?B?UnA2dlQ2SmxjbDV2R0U0c21MMTE0M1ZoRHZkQmNZTGJyK28zMUpVeUlqdUlm?=
- =?utf-8?B?VW5keDJaYldvNFNoNXhtOUNNV3Fwbzgyb1RjdEpkUURhM0FMOFNFcEhBV2w1?=
- =?utf-8?B?ZXkzNHNtc3QwVVdicmNKb3VtOXV5TFNEUUY0SzlEMmUzSTFGU3NlY1NUUmJ2?=
- =?utf-8?B?Kytsb3dKRGpQcXdxb2l2TCtJVzBidXZrYkNHb3piZ1liN0VpTmhWMzZWSkhD?=
- =?utf-8?B?djJ3Q3JMNXIxMk9hNjkrVEptLytVcmNFb29Ec3RnT1JIdFMzVzFFZ2pUaDQ2?=
- =?utf-8?B?OUNQNDZnWHpncGM3S0ZQREtvekZtcWFlS3hkZz09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 17:41:51.8984
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f469cd1-5418-4f31-0fae-08dd8e579df7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FB.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8898
+References: <10629535.nUPlyArG6x@rjwysocki.net> <22630663.EfDdHjke4D@rjwysocki.net>
+ <c6cd714b-b0eb-42fc-b9b5-4f5f396fb4ec@nvidia.com> <CAJZ5v0jWTtaQEcx0p+onU3eujgAJpF_V57wzZCuYv2NVnEb7VQ@mail.gmail.com>
+ <7c970b02-7b58-4d15-b5f6-18bbfd883ccd@nvidia.com> <CAJZ5v0jcWQ3QKx=2nzDpnYPyGuYfT4TModwdAreWZu4d0hXmoA@mail.gmail.com>
+ <CAJZ5v0jG+54uKiY-uSc6B+8JuA6eU1j8tGM5d=XsrT0EmabMeQ@mail.gmail.com>
+ <563657c5-5529-45fd-96fa-bab68ca992a9@nvidia.com> <CAJZ5v0jVOG_u=F36aOVh=qu4Ef-5QFAmC+5-fmF_mU8NSr_LnA@mail.gmail.com>
+ <b17469ee-0d8c-49ff-8fc8-a3c3cc9964dd@nvidia.com> <CAJZ5v0gMHU71drwOYatFhUcDFKXb9=vTo=JFFYfDabYBdrqWLg@mail.gmail.com>
+ <0f7a3738-0b94-4361-a277-c3a90d87aebc@nvidia.com>
+In-Reply-To: <0f7a3738-0b94-4361-a277-c3a90d87aebc@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 8 May 2025 20:06:30 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jSr1t=bEkOO9HJKmxFVf4oY+ij77aHsBeKgL+NpDfmnQ@mail.gmail.com>
+X-Gm-Features: ATxdqUHZQwekIOa610qRcHGjQBASmlDhweBXeumeyI6_7h0NqIavIVDj9frv7O8
+Message-ID: <CAJZ5v0jSr1t=bEkOO9HJKmxFVf4oY+ij77aHsBeKgL+NpDfmnQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 08 May 2025 13:30:36 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.90 release.
-> There are 129 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 10 May 2025 11:25:47 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.90-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Thu, May 8, 2025 at 3:38=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> wr=
+ote:
+>
+>
+> On 07/05/2025 17:43, Rafael J. Wysocki wrote:
+>
+> ...
+>
+> >> Setting all these to 'disabled' fixes the problem. However, also just
+> >> setting the 'cypd4226' device to 'sync' fixes the problem (the ina3221
+> >> devices seem to be fine being async). The 'cypd4226' device is
+> >> interesting, because this one is a USB Type-C controller and there is =
+a
+> >> circular dependency between the Type-C and USB PHY (see
+> >> arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts).
+> >
+> > Circular dependencies are problematic for suspend/resume in general.
+> > I wonder if fw_devlink can resolve this?
+>
+> I booted with fw_devlink=3Don, but this did not resolve the problem :-(
 
-All tests passing for Tegra ...
+I see, but thanks for checking.
 
-Test results for stable-v6.6:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+> >> If I make the following change then this does fix it ...
+> >>
+> >> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> >> b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> >> index f01e4ef6619d..e9a9df1431af 100644
+> >> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> >> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> >> @@ -1483,6 +1483,8 @@ static int ucsi_ccg_probe(struct i2c_client *cli=
+ent)
+> >>
+> >>           i2c_set_clientdata(client, uc);
+> >>
+> >> +       device_disable_async_suspend(uc->dev);
+> >> +
+> >>           pm_runtime_set_active(uc->dev);
+> >>           pm_runtime_enable(uc->dev);
+> >>           pm_runtime_use_autosuspend(uc->dev);
+> >>
+> >> Is this the right fix for this?
+> >
+> > At least as a stop-gap, yes.
+> >
+> > In order to enable async suspend for a device, one needs to at least
+> > assume with sufficiently high confidence that it will be safe to
+> > reorder it with respect to any other device in the system except for
+> > the devices having known dependencies on the device in question.
+> > Those known dependencies either are parent-child connections or they
+> > need to be represented by device links.
+> >
+> > In this particular case, it is painfully clear that the suspend of the
+> > device in question cannot be reordered with respect to at least one
+> > other device where the dependency is not known in the above sense.
+> >
+> > Thus the device in question should not be allowed to suspend asynchrono=
+usly.
+> >
+> > Would it be better to represent the dependency in question via a
+> > device link?  Yes, it would, but until that happens, disabling async
+> > suspend is the right thing to do IMV.
+>
+> OK so it is not clear to me if the PM core should be handling this for
+> us.
 
-Linux version:	6.6.90-rc2-ga7b3b5860e08
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+No, it can't because dependency information is missing.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Is that what you are implying/suggesting?
 
-Jon
+No.
+
+Async suspend needs to be disabled for this device for now I'm afraid
+and I don't think that it will make suspend/resume take much more
+time.
+
+Thanks!
