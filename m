@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53154221708;
-	Thu,  8 May 2025 07:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D2F195FE8;
+	Thu,  8 May 2025 07:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746690006; cv=none; b=FizX8K7Qqv1t41cwQBwebZ8qwSqftnyetjPfUROpFXtcVvnkXxMCnTEvRmQ37Qiny43ou1uS8eJB0ZnuYUL6r+NSLTh+8AjtzUiQKI/PGEqpmXHToZZs+BffhO8h3T1Ei8ORkb3Fny9k2K/z9y/IdH0jXFFEyP/y12Us+djmekg=
+	t=1746690044; cv=none; b=o2XJ1ZlVFK4xFrXalkmFhl9SSgX+8ahC/ayaY/apIwsXgZYHBlOzudZFfY7NfiF1fSrGs1iQYYBfT2zDD8Jft5aC/0Q/sWPlwTiLpfWd4tbgN6bqxinXgCh+Tyh6gvjgR5R8DpKkxPZkf6zfh5y7b9RH0KXghHGXIoccog/Eb5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746690006; c=relaxed/simple;
-	bh=mImWPT01rTjHtOsUeo2zVwTd8Wqc26QlROBMKIsOyFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mul/R5FDUH6Av0/Z/29K2bp0YQARo8B7vO2Kd/vDYZ6LarMDxQIf8kZD5LEtN0Te1o+ReqgD98MuFZ+EjZc7YDNf59lpN5aLSXqyfQHO1o0p0bGpNeYQ2JjxKvN3BoxsIYRCTKsPFvkpKMnML6ut/Xq0IjurwLA0U6rxllm0PJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBB1YJ3E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746690044; c=relaxed/simple;
+	bh=km4iw2pHgE70+o0ck8mziQA0sfa8ZS9ETgIY6W86Z+M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Fd9tRvTcEbMbiloVE6CsJrVjCVK2GV8lhXvfRru3a0mpJI0rjs9tPf5HrG9ARHzSnyy9A+PU41BGKDJ4tIxjCULfZ8hoRYw3/5u+fOTbO1SEKg3DR6b51kgyjLJ1ewMekAUoS+qGrPObKGAhxHwJ2FURT8mKYUsF+X7e1mt0hcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sC8FUn8T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBB1YJ3E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48006C4AF09;
-	Thu,  8 May 2025 07:40:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sC8FUn8T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26216C4CEEB;
+	Thu,  8 May 2025 07:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746690005;
-	bh=mImWPT01rTjHtOsUeo2zVwTd8Wqc26QlROBMKIsOyFU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tBB1YJ3EEozUZjYUMljSUAIGhSXur4697Sgps2nUadgeWydLT2563mvOKGv8gp+dC
-	 DtlM6+26ZfBQ2xK66VcKeWpzjb0MnJIvAwEPiIvTMat5BbmK/27N8fBW8T2PcMo6Zj
-	 GMmhXArnK26QAa3nvaYy/ug7jQbyfVyifzSb3eBrYznk65Fltcs/HKKHjR1wHyFNZH
-	 BifLS3/NZKRWXlhj7jya977W3gq0LaKS2uJx8lZxSlWwOIEv6pqICfG7lT7Z75ryke
-	 Y9EHeCbR9z6k3uUOyGZZKTGu3PtZVacIIP3/bzq5dFw/sz7LUgazhHubetlvj93GFk
-	 0lwYwNcRBqK8g==
-Message-ID: <1ec7ed24-a4fe-450b-8f99-34aae6ed2c4d@kernel.org>
-Date: Thu, 8 May 2025 09:40:02 +0200
+	s=k20201202; t=1746690041;
+	bh=km4iw2pHgE70+o0ck8mziQA0sfa8ZS9ETgIY6W86Z+M=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=sC8FUn8T4b6Q+LUpxkaZFNBYpakOfI02pCtq8JGku5o9V5/JtB3V99VogEqODH/Kx
+	 flMdiK8qLQm8lQ/ZfF4NstFCQ4gt7R/34xNTZTNjL0oWSoXH0VTTJEAxbu5gdX22Qk
+	 wbmfpnwc9X4nnthvV2/jKCTZFDFRZ28HGncCe0009HVXNwShNQWPXoJtiXFoYlkTQd
+	 7q9zxGhuRkQ+/562lnOZS/i6eV3ELo5slwS2TRmF08f2IvxnyFpE5trBkE7KJ3KOpU
+	 hWpXmTVStirqQEIMJktV1HvUzqFgmNw7MdO25zAndN9YfxujTmO/W6OwrwBwvchp6e
+	 NL71GZh4dZSIQ==
+Message-ID: <12d0eac8-545a-4595-a1df-1dc52728ef54@kernel.org>
+Date: Thu, 8 May 2025 09:40:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -36,12 +36,13 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20250507143802.1230919-1-thierry.reding@gmail.com>
  <20250507143802.1230919-5-thierry.reding@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -86,37 +87,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250507143802.1230919-5-thierry.reding@gmail.com>
+In-Reply-To: <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/05/2025 16:37, Thierry Reding wrote:
-> @@ -0,0 +1,9 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/* Copyright (c) 2022-2023, NVIDIA CORPORATION. All rights reserved. */
-> +
-> +#ifndef DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H
-> +#define DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H
-> +
-> +#define TEGRA264_CLK_CLK_S			2U
+On 08/05/2025 09:39, Krzysztof Kozlowski wrote:
+> On 07/05/2025 16:37, Thierry Reding wrote:
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> 
+> Missing commit msg
+> 
+>> ---
+>>  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
+>>  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
+>>  2 files changed, 16 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
+>>  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
+> 
+> 
+> Filename equal to the compatible. That's the standard convention for all
+> the headers since some years.
 
-Abstract IDs start from 0 or 1, not 2. Also drop "U".
-
-> +
-> +#endif /* DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H */
-> diff --git a/include/dt-bindings/reset/tegra264-reset.h b/include/dt-bindings/reset/tegra264-reset.h
-> new file mode 100644
-> index 000000000000..31d89dcf62fa
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/tegra264-reset.h
-> @@ -0,0 +1,7 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/* Copyright (c) 2022-2023, NVIDIA CORPORATION. All rights reserved. */
-> +
-> +#ifndef DT_BINDINGS_RESET_TEGRA264_RESET_H
-> +#define DT_BINDINGS_RESET_TEGRA264_RESET_H
-> +
-This is empty, drop.
+Huh, I cannot find the binding in this patchset. Where is the actual
+binding added?
 
 Best regards,
 Krzysztof
