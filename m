@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9540B33FD;
-	Thu,  8 May 2025 07:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7679E21D596;
+	Thu,  8 May 2025 07:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746688193; cv=none; b=mnUkAe3hTaFcqQ5omqEIyOi7Af2jbny6H54C5nGO8/f+IV9vS7sRxyeAp3OpH6AL5fHjCn98ykbJfmEaIuH7bzT/q7edQQKRbxSf4bQh+aS4xbOmOnhpkTmJxtQQHlEk+uA86EgpOqrK2AUrAY7l1G+XLXWHoBuMmCcfLM9dTCc=
+	t=1746688195; cv=none; b=QprQHJfhQv1YZa286zGtUtoZiaBZz03vUjar8gRqIGPOiIWLc4JWVWVYE9PpXJE/pYV/5I9Qdhz7cqeVUGZOFw7w/Yz7jJulHi4IqyfDAkpQNKiOY/NwdgehQeRjxPEH3KhFRfF4f4gB1Y8b9fHduxJsfd13FmwqdymGfMDTfWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746688193; c=relaxed/simple;
-	bh=PJ/PP2F5c8QPs/bsQK2xCSyZv7Z+aM461X/NRkBVAQk=;
+	s=arc-20240116; t=1746688195; c=relaxed/simple;
+	bh=qOdsN6vhSLQCDG9wzMOOucqWx12KN8d4fZu7cJwPzhU=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=pxhZtJa/p3ILvk4IbmMMOMj/YCe5W4lpCt3qDyTvokDMcNVs7jn4rzuY34kR9YHxaseaYB1t0VLgE2VO+dJNdA6uXSRkfZVMVqx56vAH0Hx3ybDnr9WmM6mQ1Wpx2/duFE5NhjkFsZk054LqWoKJMR/FjiVMymvPOcuBf8r9oIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UILFyR9f; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=KNQWOn0b61qRaCbYv0nH1sDtKwrGXrjBX+z31XaC6sMjwcj6xJatX1VnSJnf2eMx+bdldrNFj6vZa18W9ByLYREhb9377xN0hAeiUjTyBo5cG90gjcyb510GyryxKM/rbOdowYhO2ZJwAGqDlQizn2UIR8ubESPohihUZTZRefU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SEO7+wI1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UILFyR9f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4ADEC4CEEB;
-	Thu,  8 May 2025 07:09:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SEO7+wI1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9683C4CEEE;
+	Thu,  8 May 2025 07:09:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746688193;
-	bh=PJ/PP2F5c8QPs/bsQK2xCSyZv7Z+aM461X/NRkBVAQk=;
+	s=k20201202; t=1746688194;
+	bh=qOdsN6vhSLQCDG9wzMOOucqWx12KN8d4fZu7cJwPzhU=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=UILFyR9fk90zer2obzv7zlpRwl0SpaPCv0TMv6XnBMOitHG+GBSaTWJUehS7rsJdY
-	 XwvK6Qyo4kS6p8Fl6QpWghScF592MPU5LNEK3LFlaKwLT4OQaPwPc6YOLnjGarCjiO
-	 XmDAmSM+fWAhtxDViUPrV8M/ec3PTSj3BPEaOm2YsPN89DmypU0ETb+J9tgqn/7/Bf
-	 YTU+HAdUFMXMpGxS5IG0EgDA08bu4fz88aKHqd7PrFbTInSjmb3a1bjkQw8fHE0Mt0
-	 9VWsWZTXgVn3wxdQXSJjfakhBIhfLYjkUqcP3/3rbhh/wcoEwmfLMV/TTktQDkx8NL
-	 lZ7bALj9hdcXw==
-Date: Thu, 08 May 2025 02:09:51 -0500
+	b=SEO7+wI13ipozHxOzsMHBqzgUbVmIagROA+HNlvrxssYaDaZ8pY72zNvw6uzfVn6y
+	 GtmVhQ3ZeW6RMtTCb8iXdmvJw4Vu82VT8FKQcy568hyOxquc0fPpIHGAP172FJ083H
+	 1Fc7Enx5hp5A+plqFaPmykNxMUAqoNFPm2IQ9tdm6AL8+I10Ebr2LG9I/Mk3sqvdQw
+	 q3rdmDK6Va7eQJHZZUYsK/huUu/bCnfZjwsE7Up9nRgEYQ3TXhD6VgaSre/2SvR5dW
+	 HR+fmOdnsuCYsIle5JHY4Um0PX5bnbZDop6TdwPiVweePJGc5t6Ffcd8P3H84TthCm
+	 Uk0i3c50ueaQw==
+Date: Thu, 08 May 2025 02:09:53 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -37,29 +37,28 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, 
- linux-tegra@vger.kernel.org
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
+ Jonathan Hunter <jonathanh@nvidia.com>
 To: Aaron Kling <webgeek1234@gmail.com>
-In-Reply-To: <20250508-tegra210-emc-dt-v2-1-d33dc20a1123@gmail.com>
+In-Reply-To: <20250508-tegra210-emc-dt-v2-2-d33dc20a1123@gmail.com>
 References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
- <20250508-tegra210-emc-dt-v2-1-d33dc20a1123@gmail.com>
-Message-Id: <174668818681.3553837.11747943637365850974.robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: memory-controllers: Describe
- Tegra210 EMC Tables
+ <20250508-tegra210-emc-dt-v2-2-d33dc20a1123@gmail.com>
+Message-Id: <174668818805.3553879.14449746176560386642.robh@kernel.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: memory-controllers: tegra210:
+ Allow fallback compatible
 
 
-On Thu, 08 May 2025 01:07:38 -0500, Aaron Kling wrote:
-> Add device tree bindings for Tegra210 EMC tables as used by the Nvidia
-> Android bootloader.
+On Thu, 08 May 2025 01:07:39 -0500, Aaron Kling wrote:
+> The nvidia,tegra21-emc compatible is required by the Nvidia Android
+> bootloader to copy emc training value into the kernel dt. So allow this
+> as a fallback compatible to avoid needing to change the driver.
 > 
 > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  .../nvidia,tegra21-emc-table.yaml                  | 1692 ++++++++++++++++++++
->  .../memory-controllers/nvidia,tegra210-emc.yaml    |   38 +
->  2 files changed, 1730 insertions(+)
+>  .../devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -71,7 +70,7 @@ dtschema/dtc warnings/errors:
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250508-tegra210-emc-dt-v2-1-d33dc20a1123@gmail.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250508-tegra210-emc-dt-v2-2-d33dc20a1123@gmail.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
