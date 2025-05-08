@@ -1,76 +1,78 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74146263F2F;
-	Thu,  8 May 2025 09:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104412641C6;
+	Thu,  8 May 2025 09:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746695359; cv=none; b=VgG6YMdyxrOsLf4iH+tqnMZLWwj4qxJE9O3SJov5vDzhvwM1MPqIxuWgAhmHdG8U5aXgxmZxH/u3fhb7CBtbLXlniAkrPhiVD+vjr6mLBBOcMWYtvoav6QwkkuP9JXGlZOhvGZ8WStsO23lHbbhcyheguIuOWbagC5rZrjf/U+Y=
+	t=1746695581; cv=none; b=Tw0AVPm+FDq5fCQMgjY/+gtNiFsuyXcaAM91evTMg324K9NDIZ0rn5SANJbenuWAZGS9q7G+E3PiH6PwFr7WUG/WzStgh86DrUl/YCHViL2OyZXzObHhA8/ClrCEu43rqTua1NYgdjFi6GMsLdh9r51/F7oVIvLEonSG9kGbl+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746695359; c=relaxed/simple;
-	bh=5xJARQkGD6OzSwCc2dOa2nBAlpXubIp8vef7Mr3omBk=;
+	s=arc-20240116; t=1746695581; c=relaxed/simple;
+	bh=DjPPqyZ7pZEMb9GjAxxw2AsCbyg+yLeGxWgwbDjBbk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgyjJK37uwi4+VuanQE9al51haVbkLJ9MaLnIiF7M76D/3uCHYX+cpa9UePmn90zn+0KGpt+CCAWh04J4G7QxqKdjmdq3WrUajauGm51aZgGAGkufLK7sVtyXZYFAh9zmMHR/KZgs8dZA6VFz6Esdbb1Qi3hPWU8KWsLvpp1/wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YssS/QQd; arc=none smtp.client-ip=209.85.128.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=PukKkfZpl9T9UZ/hwZjjIfGNTy6eSHUnEqbF6fBuMUcu3W8OHDndCh1ru56PAdXUPd6TFeVhuH27FGTNQp64ZBKaddlut1LojJ8McxJ5MM/T1vb4JhveGf2C6e8DpEbccOJSEdeHeYee3+ix3eXQv6AkCGho30/ePtBgsGyjPBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OvQswoa1; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YssS/QQd"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so4897105e9.1;
-        Thu, 08 May 2025 02:09:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OvQswoa1"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f7ec0e4978so1373363a12.1;
+        Thu, 08 May 2025 02:12:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746695355; x=1747300155; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746695577; x=1747300377; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5xJARQkGD6OzSwCc2dOa2nBAlpXubIp8vef7Mr3omBk=;
-        b=YssS/QQdxOtGSpa9VBwE6M/b6UdC2EHVuB9xQICmITAavjqZV66pNgVALyaHsUD7ht
-         0zJvYBpPPWsz+5UZha4YiuwqS6oWbwsdaF+8HqHiEwPP5t6TeshV1UCipUBY80DUlvae
-         qkdne+TSlANCDwNjRMfKha9KV4WvBO68hF9VeJ2L1vQS2I1POUz+hqatHnSJMtaX+Xl+
-         DOAwckwXKBV+adDFln67KuMyneQziJ3xXX6eyaKXh+Dzz2i4XERchTdVXbI48CaijK++
-         RB9oB7A9Isv3cm/Iv3+b4Y2DDQSZRt7WRYNxEeTE3gVi9CAFzKT3zajJ4SfRowTC7Nww
-         LkJw==
+        bh=9dp1vstYqz3mDBq4CkJf4LU45gaqxJrhVS+uXqNfvYk=;
+        b=OvQswoa1iGqnb1YIIFIsDjS13m14QCu11j7TQrY0Hpo7zmhT+nmZo2JjdGuhA6uad8
+         o/MQJbDFy8DV7bch/BqTlrvL0nR/OJ9xEpy4xRG733liwyKVBse/+/gBpt0T1OVp3wC0
+         BrqgFLgJaymFjHd5r3qw78n3ikNiyg5gEnchDo9DmUfG/8OWvEg/hTmlUcCPMmUZXD1r
+         ooORxUySAMVJQbzRmkn6XxeUDLDA98HvS1KgN5HSHYZ8AP4r1kSwrT6fmspRIxWhnOXt
+         9cYw+E8p/IPYZN77qkKDrLJ89Er8UFGI3At8CPd7yzXqg4T4BtEja7hGBRnFTDgeVLPd
+         OUjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746695355; x=1747300155;
+        d=1e100.net; s=20230601; t=1746695577; x=1747300377;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5xJARQkGD6OzSwCc2dOa2nBAlpXubIp8vef7Mr3omBk=;
-        b=WW9noH8B/Yis4xIjJNIgWqqHaLvEF/MhsnmXngsltRkuJPDS/WjxkbQpJ4bvMITYOb
-         IqINl7WeLl9UeoX0Z+3ktr6CAxFHc5rQO13e0I9B+wZALOAja5AE1uXjO3flllllMaEL
-         Kqg/VdSfkBpr4JOfdGClolcwAxzG6oCwiPkqpwdeetW3V+sOr4DUmxlkZiS21w++ZttW
-         Pt7X4Z3l5xO5nIe3jb1lEUPUjVopSycZAWuUGGCadZqroZCkucueMSYDu1HmQZkBC07H
-         /qQ/3V5IqqOwUaBxTYSc+iibeJg7yRTxu+zVE7XcPwfSW8CEZ92iHyd/zfCVspMBEQin
-         Sn5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUagYPJDWeB2bB58zyH1dhtHrHrLvSWdzxoD/BjxBPiSm4eX2qauhUpV3fWJ5H1dPotYKKd/srdvlMSNwo=@vger.kernel.org, AJvYcCWONCC9+eRkDfdU2r/M/0Ij4ii46081kfOGSyut+oKUfBOj1KlRQYkqEDDM88YPTAg1p89U/NZD3MFm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW6NK1Zw+nsXzYQfV0G/eBKiVVDQrsN5pLuJPGa8TqO1z0A2dj
-	gxCn2CXQeWTQljVaDxLo/aZtEqup/n/kGKtXNn9uuwTR8TcJ51amH4/LTA==
-X-Gm-Gg: ASbGnct6ucb3VqYDyXasFvAL6OHwpZQWQbHAOWOp8aE9eYGfSBkgDSRPrMADdGXhdYA
-	2tMTjxW3bxf5vXXgxgDk7p5uHzxDE29e04QMVOUS1CXhgXxUWQZyv9EL5eM7P1F8jlpKbEbekE5
-	SoLzCvAZ0reU2JOuyMxbF74wcTOOGbbM+bdtJqTZV6CJaexyc0MqMMgB/Sj94R/U4FhU12VYqY1
-	AzeWuaRsz7pCsPDsPUTuQSxJ43t+KNEWtUNX0aFwTQ7ORxHrc6z3ZB1Fnmj2R+wI3Y0UH+xrfrH
-	+Bd/jauS6MyUzbDlbm3stz3/uU3Kclw2OBAuqYQxRGgUctV65F31mqTejUFrfbj3YG8EoYWGsVx
-	PckNgJhIIVFUHtYVJ7MIgPh/Mwz0=
-X-Google-Smtp-Source: AGHT+IG41S3GsRonhNn16HOEl/Shw3ERiMiNQ/XobV2dvSf8q7K1S0aIINLP6AhncWSbg+xfu/0/Tw==
-X-Received: by 2002:a05:600c:1c12:b0:43c:fd72:f028 with SMTP id 5b1f17b1804b1-442d034f0d7mr20647505e9.29.1746695355354;
-        Thu, 08 May 2025 02:09:15 -0700 (PDT)
+        bh=9dp1vstYqz3mDBq4CkJf4LU45gaqxJrhVS+uXqNfvYk=;
+        b=W+Z8CfVQw8BBboR8eHyGNQtkFNIus6COl2Sm5ROXK7phV0GYrYVMZKz9jRl1MMxj59
+         w1Wc2zEt3q7xCYnS4imt9xX1JJKpowL7UB7Lg24idd58GYCLVZe0CMrzPigq6jrprp+Y
+         +chyBGOn19pucMNcGKuu+eOu5Z2CHjP6/3TC5T36KFRjXQtmXqI7/sFXM58/5Kx/FK++
+         EOlUt+Abrty9KqkAg2Rn40cAdZPNsT7/DEndAWJhkhik165c5KC7EAxN4IJd9Udo8JEg
+         c9Xx+scD5hjEaXJIvejy3squsJMJl6PndQUg503xKdsn8HREH21Lnk040cThPPMYUges
+         VvXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa97466N6AJ2SZBl/t6wa9sNRmeivUSln+mho9S1AIFoveCzO8NYLON+VgnZxCvlwMXgbJHg+mP4CF+DHJyRjxvw==@vger.kernel.org, AJvYcCUr5GC3vYbC0UuCwkbnsl+xuv5N93d6vvx4Lm7xt5Fjfvt52vJjaHbWbGu6JWEyHPBhrL1W2F5WhqIqj90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQx5cpnNp1CCS1nL6rcTr5u/2ydGrYPdh0QsuuSX1G9qzzQWho
+	/D5N4Hm+/3e4ETo2qNoM6LPxjfGoz3eSJSFEr9oDsDE0LHtqWC4a
+X-Gm-Gg: ASbGncsGFNB0IwSsDPfVbR443gNytGjRj0WLd1UHdIsh/KoIKOrOPyu+BNaIDO89aAG
+	RdKWNyV4UO2zBrm+lGomO8dG61bI47xKIz4ADW1+rxAmVCew5WAycaf/m1RBFB5fyIzOZcrt1G3
+	ohz/aM4ms6o5Wv7C1YXeT17jBMNUma/DQzc2czquznOgrpulTBRV9x65Od/2rJRPPo4may+2SLJ
+	oIhE4Dh2tNEsEDYTydS1ZW2DsKhGMN7PnoM/owpr83O7ysMYpv8dpgWCUgw8SP+TW+56+ZvAP7Q
+	lNRbMyhTSBSoaHc6B68UxcHhxCBu0DL0h3TM6Gkttkof+7Jz4riAzEXfgD5kVCQCsSXWuYHuhd1
+	3I93fypuoBhEZ7uDb4rwHjD7vmLc=
+X-Google-Smtp-Source: AGHT+IGKlsVS9Aggzopar0EguhK232leccJ6N51EzyZlx36/ZSXJN9uVC7qPM4dsor1ubnH6vieEUw==
+X-Received: by 2002:a05:6402:2809:b0:5fc:348a:e21 with SMTP id 4fb4d7f45d1cf-5fc348a34a1mr2057037a12.31.1746695577114;
+        Thu, 08 May 2025 02:12:57 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0cafsm19788993f8f.19.2025.05.08.02.09.13
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fbb4ceb417sm3893637a12.60.2025.05.08.02.12.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 02:09:14 -0700 (PDT)
-Date: Thu, 8 May 2025 11:09:12 +0200
+        Thu, 08 May 2025 02:12:55 -0700 (PDT)
+Date: Thu, 8 May 2025 11:12:54 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/8] dt-bindings: memory: Add Tegra264 definitions
-Message-ID: <prjmur3ih7kbf2hapdzp4vtbt5cd3coophsm24d2liykosvuda@nwxbvabp2m2m>
-References: <20250507143802.1230919-1-thierry.reding@gmail.com>
- <20250507143802.1230919-6-thierry.reding@gmail.com>
- <b6d4f40d-9ad2-48c7-a5a1-55b2ebc4e21d@kernel.org>
- <apxlsl54wyigk7yovtrb2tadhhsad5ti7hdvueisjcdjzfk443@4q3fv6pjaac5>
- <f346c140-52f6-4209-b62e-53dfa2c8c7c4@kernel.org>
- <hitexxuelppvbdd3hyxf3qoncdizj6mvhiuhp63s7qpgkgqd6f@63xybk6n6dfn>
- <ca0680d6-f846-49af-8470-3fe10d4f8610@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mark Zhang <markz@nvidia.com>, Dave Airlie <airlied@redhat.com>, 
+	Terje Bergstrom <tbergstrom@nvidia.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	"biju.das.au" <biju.das.au@gmail.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] drm/tegra: rgb: Fix the unbound reference count
+Message-ID: <lqbli5eryxnl52bvncg543zkqqbteheixhcb4nmxljx6nozhay@nli5n47oelft>
+References: <20250205112137.36055-1-biju.das.jz@bp.renesas.com>
+ <a3gzox3ajhvatfmld5ny2lulmp325ycnukksusfbtldg37nqp3@jb4qajtuzczb>
+ <TY3PR01MB11346CB37650B2F888CFC6DE48688A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,79 +80,99 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2244kuj2qj42ob2v"
+	protocol="application/pgp-signature"; boundary="72qnzxkycxla5eor"
 Content-Disposition: inline
-In-Reply-To: <ca0680d6-f846-49af-8470-3fe10d4f8610@kernel.org>
+In-Reply-To: <TY3PR01MB11346CB37650B2F888CFC6DE48688A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
 
---2244kuj2qj42ob2v
+--72qnzxkycxla5eor
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/8] dt-bindings: memory: Add Tegra264 definitions
+Subject: Re: [PATCH] drm/tegra: rgb: Fix the unbound reference count
 MIME-Version: 1.0
 
-On Thu, May 08, 2025 at 10:45:29AM +0200, Krzysztof Kozlowski wrote:
-> On 08/05/2025 10:02, Thierry Reding wrote:
-> >>
-> >>
-> >>> how much more you'd like me to make it based on that. Do you expect me
-> >>> to add the nvidia, prefix? In that case it would be inconsistent with
-> >>> all of the 8 other Tegra MC includes that we have in that directory.
-> >>
-> >>
-> >> Same story as for every other case, why this would be different? All of
-> >> them - amlogic, mediatek, samsung, qcom, every soc - move to new style
-> >> since some years, why this one should be different?
+On Wed, May 07, 2025 at 04:10:07PM +0000, Biju Das wrote:
+> Hi Thierry,
+>=20
+> > -----Original Message-----
+> > From: Thierry Reding <thierry.reding@gmail.com>
+> > Sent: 07 May 2025 17:00
+> > To: Biju Das <biju.das.jz@bp.renesas.com>
+> > Subject: Re: [PATCH] drm/tegra: rgb: Fix the unbound reference count
 > >=20
-> > Because we've used exactly this naming convention for more than a
-> > decade. I get that it's nice to have consistency, but do you really want
-> > me to go and churn all of these files just so we can add a vendor-prefix
-> > and drop a redundant suffix?
-> No, I want new files. Look:
-> 1. Some time ago tegra-1.h was added.
-> 2. Someone spotted that there was tegra-1.h, so added now tegra-2.h.
-> 3. Now this is a pattern so of course next person, even if asked to use
-> vendor prefix, will not, right? Because it would break the pattern. So
-> we have tegra-3.h
-> 4. tegra.4 - no vendor prefix, because you have already three cases.
-> 5. You see where I am going?
+> > On Wed, Feb 05, 2025 at 11:21:35AM +0000, Biju Das wrote:
+> > > The of_get_child_by_name() increments the refcount in
+> > > tegra_dc_rgb_probe, but the driver does not decrement the refcount
+> > > during unbind. Fix the unbound reference count using devm_add_action_=
+or_reset() helper.
+> > >
+> > > Fixes: d8f4a9eda006 ("drm: Add NVIDIA Tegra20 support")
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > ---
+> > >  drivers/gpu/drm/tegra/rgb.c | 14 +++++++++++++-
+> > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+> > > index 1e8ec50b759e..2065157daab3 100644
+> > > --- a/drivers/gpu/drm/tegra/rgb.c
+> > > +++ b/drivers/gpu/drm/tegra/rgb.c
+> > > @@ -200,6 +200,11 @@ static const struct drm_encoder_helper_funcs teg=
+ra_rgb_encoder_helper_funcs =3D {
+> > >  	.atomic_check =3D tegra_rgb_encoder_atomic_check,  };
+> > >
+> > > +static void tegra_dc_of_node_put(void *data) {
+> > > +	of_node_put(data);
+> > > +}
+> > > +
+> > >  int tegra_dc_rgb_probe(struct tegra_dc *dc)  {
+> > >  	struct device_node *np;
+> > > @@ -207,7 +212,14 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+> > >  	int err;
+> > >
+> > >  	np =3D of_get_child_by_name(dc->dev->of_node, "rgb");
+> > > -	if (!np || !of_device_is_available(np))
+> > > +	if (!np)
+> > > +		return -ENODEV;
+> > > +
+> > > +	err =3D devm_add_action_or_reset(dc->dev, tegra_dc_of_node_put,
+> > > +dc->dev);
+> >=20
+> > Actually, I think this needs to be:
+> >=20
+> >   err =3D devm_add_action_or_reset(dc->dev, tegra_dc_of_node_put, np);
+> >=20
+> > otherwise tegra_dc_of_node_put() would attempt to call of_node_put() on
+> > dc->dev, which won't work, or rather cause corruption of some sort.
+> >=20
+> > Shout if you disagree.
 >=20
-> All of above - amlogic, mediatek, samsung, qcom - had decade of such
-> convention. I asked to changed, they used the same argument as you
-> ("decade") and then changed.
->=20
-> Why this is different case than decade in amlogic, mediatek, samsung and
-> qcom?
+> I agree, is it something you can do while applying or you want me to send=
+ v2?
+> Please let me know.
 
-It's a matter of principle. One convention is as good as another. There
-are no clear advantages of one over another. It's pointless and frankly
-there are more important things than changing filenames that everybody
-has been okay with for the last 10 years.
-
-But then again, I guess you're the boss, and I'm not going to change
-your mind, so renaming these files is what I'll go do.
+It's already done, thanks for confirming and for the patch.
 
 Thierry
 
---2244kuj2qj42ob2v
+--72qnzxkycxla5eor
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcdLgACgkQ3SOs138+
-s6Hecw//a6tg8o5jcMdrG+ldzPKEF5pPQvK2ubj1X9EzTmzp1x6qUs75VFpMZUqo
-mWDmGwcgEGmaYXKQy9nWEEgG2MC953NL1ErEXA9wi1+sgVTDkpqamBTVAcgl6bPs
-QE3iStzAR+4Zu66o7Fxnecmz+V7mOa1vjFH4bhGyj7N1JktsTjA9bLaWYkVYmtjZ
-2/A4TC53M4o9/UB9PN+9UFKxOgR4Flc9Nwd6uzsj5re2Jh06I/rPhUmDVtv9Bbd6
-5ivOAzO+zNsukZtD2BI5gpM/jOeXXUXjbseXeVmT9E3LYWdMV3rfxWuBGWI2bDXE
-3XMo2tBLeoDCBMGL6KmYnzhEWeeH5QWxLJDWMqMz0CgFPPoYdC0pq0nyD5VwIGlx
-yfMvIZexKg7GviceW982pEzMINSSbjRWSlYJJ7HPB5SWccahac6dpGxI9oY91xAG
-m14o9dX6KEDO1JfCzhj7GX7HbgKOMngI9scb5/7ufYw7UE2tI4PWCv4yIu5plYuW
-IADBZCsh5pqIBo8eivFLv+vs+wAc7LLM2bAN0Q1cdrvDEHj+7hIYmDAFrHVix+5B
-LZmzqVegE971iwGXfrtklVKVW7D0XRTu6utM8D6ZgcSmAB/sRk9PoDnlIjbR7j6A
-Su5EjXum0fRALBLusADgQUBIJrfO1Dr0SWDyueSPk5L+meat4HM=
-=sTYK
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmgcdZYACgkQ3SOs138+
+s6EIghAAnYd6socF/Wj9gjVWp0eaVoJqHClj8WN/mrPAskJ39aZVMYsTi+Vt7DmK
+Kz6RHFBCvGL465K9DenItSWa7+wSqz7SrxLAT4pc5PpHRs1AlSeY9aeBhCMMQ/Sd
+ivx+3ycn1MjeYyRxmRfUzNFtv4q8K9A9AAyuhg5fI/lLZuMBwnV43d6/iYygNW7C
+VQ6Jl/LV7gphu4pxvPJwnyOyfOS9P7vsC9a0lssMxWMJ39oJH/WuvgX+CpYsyDLU
++BhyfQcfjD4GG5fHTcQia5IUutt3MnGYPpsRL9A6ZmxGGkHjCU9T1l8G1kADAoCz
+xeDg0QEs0ycWCKCU7XeaOc6AlQYyJg7wZQmRa1+yqQ8a9WkrlXd+K/gTu5nlJ2yG
+JCEIkPRCjfKKsGDP+nmH9zOsVWgGeRHSpN0i75aF5a0n4PMV3NvRRRLjBMwONnX2
+E1iBcnmXuoOL+sr+vDPS00eUqI/F0Yzl7CUmIiotK1tg+58A075aYZn1WXOePIq+
++2WTTWm/QOe9iFQxW0mjNXP0DlBM7AWHqgLD4xMfChJGMBnjbMHGoCCdXJlZTgeR
+VSW/SWviIpAriG2wrUEukq6khinVZRmLHVfo6cTTAnk6RvRrPTGrr3vOy1Kt1y/f
+IG/+dLxsyPVHT9Ju9LFx2mssmO/Ky5lGUe6hN5mnGSObk8+WvY0=
+=1Kba
 -----END PGP SIGNATURE-----
 
---2244kuj2qj42ob2v--
+--72qnzxkycxla5eor--
