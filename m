@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686F21FBCB2;
-	Thu,  8 May 2025 07:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53154221708;
+	Thu,  8 May 2025 07:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689950; cv=none; b=aa8/1hF1IlCsN7i19E3TXn4JPMYTqyXAk0FZzcP0fMpT5XrbLIpUZBIcbHfeU74oDuj8vn/aZRfNMBeIZpuYTgUXprFbuA7JIDcjus2j4bOikiGtcwMjtz+07HodH3Hjwkm9L0mMyqx+UGcLeseM2uhc3xPpL5qB5rPlPMeBkqQ=
+	t=1746690006; cv=none; b=FizX8K7Qqv1t41cwQBwebZ8qwSqftnyetjPfUROpFXtcVvnkXxMCnTEvRmQ37Qiny43ou1uS8eJB0ZnuYUL6r+NSLTh+8AjtzUiQKI/PGEqpmXHToZZs+BffhO8h3T1Ei8ORkb3Fny9k2K/z9y/IdH0jXFFEyP/y12Us+djmekg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689950; c=relaxed/simple;
-	bh=aoPmvlpUVTJBZ80tWq1+Sss5jsve9UvcYpZ4ZQTThio=;
+	s=arc-20240116; t=1746690006; c=relaxed/simple;
+	bh=mImWPT01rTjHtOsUeo2zVwTd8Wqc26QlROBMKIsOyFU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z3AaOERDK+Nr9kjvlMYIjm/6p7xAxc7kxJYbfyjoxK8sYBiHwM/ybivE4EM6w3cKS/kLYDSGvBgzLeQK3JiH5RADwO2eyu4ACrVjcWS/dsoF7Mkp2i13uARWOTpoI5ljyjiGVcAGsNyL6TdNSLCqFoI4qKfhalB6ORj2nX/l6uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/lgARPn; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Mul/R5FDUH6Av0/Z/29K2bp0YQARo8B7vO2Kd/vDYZ6LarMDxQIf8kZD5LEtN0Te1o+ReqgD98MuFZ+EjZc7YDNf59lpN5aLSXqyfQHO1o0p0bGpNeYQ2JjxKvN3BoxsIYRCTKsPFvkpKMnML6ut/Xq0IjurwLA0U6rxllm0PJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBB1YJ3E; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/lgARPn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B75C4CEEB;
-	Thu,  8 May 2025 07:39:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBB1YJ3E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48006C4AF09;
+	Thu,  8 May 2025 07:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746689949;
-	bh=aoPmvlpUVTJBZ80tWq1+Sss5jsve9UvcYpZ4ZQTThio=;
+	s=k20201202; t=1746690005;
+	bh=mImWPT01rTjHtOsUeo2zVwTd8Wqc26QlROBMKIsOyFU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P/lgARPncMDWxTgNawjxRdtqA5vHwfp/N0Q3j/6pvLjzugxV7xj3D9Rq8fXKLaqE7
-	 c3NeW2JSvmX+EPIXt6moMqToNMik22Vl0VIJ+XY1RvOWvEEe7tH4sRUX5QSftG3zMZ
-	 YBDsZ2P98CQr/fqx8Nj9iYIRPXG4M0/Haygv4fSnW0/xbH49wQKFqEKKyaAtw8zqMd
-	 Qg5/Ijze8hqCfwPjNfBy26GKDTmCKDTh87EERqUNiUlptUu2oSx3goJ4NbsVoWKkKP
-	 Rg9MI3CEEPw3h0wRIm/fe6CWBNqihC1DvDkFHpU709nQ7CXy48wiDP9v6y2dluNMFl
-	 MwdsHS6DWytjg==
-Message-ID: <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
-Date: Thu, 8 May 2025 09:39:06 +0200
+	b=tBB1YJ3EEozUZjYUMljSUAIGhSXur4697Sgps2nUadgeWydLT2563mvOKGv8gp+dC
+	 DtlM6+26ZfBQ2xK66VcKeWpzjb0MnJIvAwEPiIvTMat5BbmK/27N8fBW8T2PcMo6Zj
+	 GMmhXArnK26QAa3nvaYy/ug7jQbyfVyifzSb3eBrYznk65Fltcs/HKKHjR1wHyFNZH
+	 BifLS3/NZKRWXlhj7jya977W3gq0LaKS2uJx8lZxSlWwOIEv6pqICfG7lT7Z75ryke
+	 Y9EHeCbR9z6k3uUOyGZZKTGu3PtZVacIIP3/bzq5dFw/sz7LUgazhHubetlvj93GFk
+	 0lwYwNcRBqK8g==
+Message-ID: <1ec7ed24-a4fe-450b-8f99-34aae6ed2c4d@kernel.org>
+Date: Thu, 8 May 2025 09:40:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -91,22 +91,32 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/05/2025 16:37, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/* Copyright (c) 2022-2023, NVIDIA CORPORATION. All rights reserved. */
+> +
+> +#ifndef DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H
+> +#define DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H
+> +
+> +#define TEGRA264_CLK_CLK_S			2U
 
-Missing commit msg
+Abstract IDs start from 0 or 1, not 2. Also drop "U".
 
-> ---
->  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
->  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
->  2 files changed, 16 insertions(+)
->  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
->  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
-
-
-Filename equal to the compatible. That's the standard convention for all
-the headers since some years.
+> +
+> +#endif /* DT_BINDINGS_CLOCK_TEGRA264_CLOCK_H */
+> diff --git a/include/dt-bindings/reset/tegra264-reset.h b/include/dt-bindings/reset/tegra264-reset.h
+> new file mode 100644
+> index 000000000000..31d89dcf62fa
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/tegra264-reset.h
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/* Copyright (c) 2022-2023, NVIDIA CORPORATION. All rights reserved. */
+> +
+> +#ifndef DT_BINDINGS_RESET_TEGRA264_RESET_H
+> +#define DT_BINDINGS_RESET_TEGRA264_RESET_H
+> +
+This is empty, drop.
 
 Best regards,
 Krzysztof
