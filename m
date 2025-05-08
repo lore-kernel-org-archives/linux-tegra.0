@@ -1,84 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30AA2750E0;
-	Thu,  8 May 2025 14:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1746283127;
+	Thu,  8 May 2025 15:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746715150; cv=none; b=TdQOQmQBLmqVrKQ98zvFmxynGlCB3ZijZLWKTeUMtfRP42VV27TZXpg3xvc4zhXdxwtCWN+sHRlffbrQz+U4H/U6jqxaPhn5xK5RbUrHKAxywPyt1S7bixqGzJCYRNOZiguR/FlDeZ0bCwbW+a35gPIEJNg6pgL8550SDKD+5Ao=
+	t=1746717002; cv=none; b=AtrS4CCuDtQ8vuXHkV/Y2j3sUo6C+25ljtakZEzjIS+/lQnIuQffjeMpLPTrdoQXsVhlt7pvYKqeyyD/1tvL9A3GO26ga/YiaFGzDAK//wqfi8wdC5vYQ9onHldpZmZP7HYBmLMKvRR5MMvJYmjltTOcRuLpyug0T//SLIlEOt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746715150; c=relaxed/simple;
-	bh=7x/zIqzniHo4bmHJ0f2dOc92RnSxwmSijCV3x2DCqvY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Pa9Ars6AYwjXCQdUA+wZ+4neeoZ0CVCotk3hwTpWMR8TjsnmgZpjcsP4RjfCQ3BlBVjGF47eAyY9Fyp3wDyh9s2O1F9V9T6JdKtVqAJeyC0/I6Oc56ZsAf81BfGIW6L9AhFC1cH1L2HmscUKFdlkyvtI2eTHD2qeGQWZ/4bT1k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BslcZOLX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746717002; c=relaxed/simple;
+	bh=rVR/N/7ODChG6fZhtF8ZvMaMmZ6Fx13049NqQCPPeMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NYVA/s+dFrrtML3YMLTI+/cwdIL1r8ZqOAWUODrrBCzeYTIlVcNyvWliUPbj2UBhsoCY4ydsS85Mjyalwf7O1ofcxz9EtH4nv62yduTVTovGone6ysrZ3q75UhW89PhW4MaACjRDiVzXGw8nR29KMPpQSZ88/7ELi+AgDhulth4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkmD0J1l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BslcZOLX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08D6C4CEEE;
-	Thu,  8 May 2025 14:39:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkmD0J1l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22AECC4CEF0;
+	Thu,  8 May 2025 15:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746715149;
-	bh=7x/zIqzniHo4bmHJ0f2dOc92RnSxwmSijCV3x2DCqvY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BslcZOLXlwCaUocOERsZK3iNFalaG9N73wIWQ9kTkYAJ2dVNGFGtesNnxH0dqEYcb
-	 1ZAKGSeY4+4y/+9EcH9jEmYeUE9HqpdTwin59ECSmjC4szNfmGAV7SWNmorcJEB7jH
-	 fg5zkSITb87Emxq8APb+t9B+d8/khgEZGKb/+qE/IKEPT/r5TZbKsUME9qpAtpgR1D
-	 ekRNK8B+WQcnzTT4714IpVC2NWbncEtVkm0DOLqrO2UHbs69ECoJET1YQ0x+h7pi/D
-	 rwk2iDdMB96fgitcgKfFqIf0VMzpG0Xn0mE7bnLJQPcZxHr5aSpOo5mUDJaKYLCuzg
-	 alDm2yd5DtUaw==
-From: Mark Brown <broonie@kernel.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250506-spi-tegra114-fixup-v1-1-136dc2f732f3@gmail.com>
-References: <20250506-spi-tegra114-fixup-v1-1-136dc2f732f3@gmail.com>
-Subject: Re: [PATCH] spi: tegra114: Use value to check for invalid delays
-Message-Id: <174671514732.7639.17825357036042971229.b4-ty@kernel.org>
-Date: Thu, 08 May 2025 23:39:07 +0900
+	s=k20201202; t=1746717001;
+	bh=rVR/N/7ODChG6fZhtF8ZvMaMmZ6Fx13049NqQCPPeMg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GkmD0J1lOEP2v5R6Gl6VpW7bpQlNU+pvI1gjVPllebBtvu3VgZcVkbVEEUACCHxKA
+	 hITDaX6O72YKW7Abv8VD3qWeh0KvPv/oGLqBhNCazutTxVMaqx8kVCZmEtEO6TAfBP
+	 46u+J3V7ImhbwA+1hvN7ONIeaLBJ25VEkS29d6ZOU7GG8KfRNU1MGC3Ww2ZaEFGdEx
+	 eDKIrKCdFJ7FxhlrE0n5HeR31facf7qqtvPXnMMkl/8L+mzQ1cFAqsGNwsVwhqzDuJ
+	 LQ/rXhCaKJqR73NioMyZwo+eCDJ1zg0u//SIEb+IvDkg21Rds8Ptm260xSuIJdS644
+	 1cd60ulMzEOBQ==
+Date: Thu, 8 May 2025 16:09:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	ldewangan@nvidia.com, digetx@gmail.com, p.zabel@pengutronix.de,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: i2c: Specify reset as optional
+Message-ID: <20250508-atrocious-till-30aad5010c3e@spud>
+References: <20250506095936.10687-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iwu+DycW32HAkSb8"
+Content-Disposition: inline
+In-Reply-To: <20250506095936.10687-1-akhilrajeev@nvidia.com>
 
-On Tue, 06 May 2025 13:36:59 -0500, Aaron Kling wrote:
-> A delay unit of 0 is a valid entry, thus it is not valid to check for
-> unused delays. Instead, check the value field; if that is zero, the
-> given delay is unset.
-> 
-> 
 
-Applied to
+--iwu+DycW32HAkSb8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+On Tue, May 06, 2025 at 03:29:33PM +0530, Akhil R wrote:
+> Specify reset as optional in the description for controllers that has an
+> internal software reset available
 
-Thanks!
+Optionality of properties is not determined by text. The property is not
+marked required in the binding, and therefore is optionally on all
+platforms. If some platforms require it, you should submit a patch making
+it mandatory there (via the required keyword).
 
-[1/1] spi: tegra114: Use value to check for invalid delays
-      commit: e979a7c79fbc706f6dac913af379ef4caa04d3d5
+Cheers,
+Conor.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+>=20
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yam=
+l b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> index b57ae6963e62..19aefc022c8b 100644
+> --- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> @@ -97,7 +97,9 @@ properties:
+> =20
+>    resets:
+>      items:
+> -      - description: module reset
+> +      - description: |
+> +          Module reset. This property is optional for controllers in Teg=
+ra194 and later
+> +          chips where an internal software reset is available as an alte=
+rnative.
+> =20
+>    reset-names:
+>      items:
+> --=20
+> 2.43.2
+>=20
+>=20
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--iwu+DycW32HAkSb8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBzJRAAKCRB4tDGHoIJi
+0vgnAP9UM812drDNILFwXxq22fplvS0kxJiN9gGVH+/OGyOlEQD+JBBjHC1MU1Lt
+okfKuk6deNpkgC+viWGs12HgWWuu8g4=
+=9QSL
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
+--iwu+DycW32HAkSb8--
