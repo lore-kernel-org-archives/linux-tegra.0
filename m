@@ -1,33 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645CD2397A4;
-	Thu,  8 May 2025 08:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797923C8A4
+	for <linux-tegra@vger.kernel.org>; Thu,  8 May 2025 08:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746694321; cv=none; b=JgCCf9pT0zp13IktHPf19D4MFzaBZGlARQ87nHjEaLc1KRQhYC1r08YHOAUe0zXfYbsbbNbXeCAHTdE5z7/vhnFbO66L5+rGkZ0gbz7Bfe8UsDLECOYYrhMP9QKyZffpguN+1/wCJW2EBf6luDTAGInLED4hKUx6fN/AGaKol6Y=
+	t=1746694349; cv=none; b=pmW+jS6O+gi3dHsf0mwz4QoRg4Nq3KFp/88EIrGSU90+zGsTmG/qtHWjTHAW0WYFerMSQLEnZx5A4+Hx6G6ZKs8ifGHQ8SIgErajASsLewrLyzoZkH/LswwRQc5xVfy6k0YkI53TCDmSLkkhcMOjXJWbTtjy0Am1c7695N7FIY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746694321; c=relaxed/simple;
-	bh=CvCHKw2DrPRIkEjStvg0PsH/JFmu5t3thdOEGFPOWJ4=;
+	s=arc-20240116; t=1746694349; c=relaxed/simple;
+	bh=2FyChGP5T9hPQdIMmZs3inBBjpmrBwsu2pA/jaUDfbg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DcCi6wGdDkwVlHL4Rns9dyEbNsBbiD9IEL160HVUOVYIhN3dO58BNzVnMRQmCwCC1mxcOCgolXgmeZsbk/X3WYS/iC7j/3g0P7rHTtue3p6g37CR6qqbTFLDKQA+Tz1dacxsvZxawXKHnxV6/gWGYNuwlWfsXaTpWPNf5bHEnNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYNbhNSz; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HaNvtW9ci51h+g3zDkmXps9yD5flVe+LZLecH5BksywtxBBAghALCpkRMRuk9+i0Kyv/8kWyPMEgnLid2FipyJUY7Q2hxIX11AqfW+6vtz6IRjm5dUSZE7J+96jbqR37xoSpJuaWFSo+kHyNxWwWjGD3GSK7rRa2cHQb0gXrS7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PbTnNk8y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sZJuHhEf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PbTnNk8y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sZJuHhEf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYNbhNSz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DC33C4CEE7;
-	Thu,  8 May 2025 08:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746694320;
-	bh=CvCHKw2DrPRIkEjStvg0PsH/JFmu5t3thdOEGFPOWJ4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gYNbhNSzA07ONu9LeO0a+DQQ+UD00WnlsX/2kJsX5z7ngesZpBWFr5PoQT/sNkr8E
-	 bcVMDlnrzVF2nEWAuQhmyH6VDwawNLi8zMbOmBH3l4EmznMgxZrB1T7aY2LBdp5NeI
-	 ncBNMcAG9CnN41xFyQ+skOzmrR3SB9EklseCpwGq2F6ZnHQAzO5ySwfFprAVFKC8o7
-	 3QW+sU6R8t4RhKeYB4vcaZYAjtJULCEUIg4ldWFlp8874pdpRdDm1VAGjOr1B8aAFb
-	 /0uLf2S8JUJO9pIj9+uKDZTDbEE9UiLiyr8gfyOeQVJ4hq2f9YC+TwP7DzQltCygSG
-	 XDEn4Dny58nRw==
-Message-ID: <321bf682-71b4-433e-ade4-97e8c9839564@kernel.org>
-Date: Thu, 8 May 2025 10:51:57 +0200
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PbTnNk8y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sZJuHhEf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PbTnNk8y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sZJuHhEf"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9A4121F385;
+	Thu,  8 May 2025 08:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746694345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
+	b=PbTnNk8ybCBTRdQJIgHnC9q4YVG9j6CAFx2mKOc4cbMn4QrqvbwQQqR3tBQY02DLCJYqqW
+	jo9NY8MhK59wd7D4K0BGCOC2GdjHzn7udmDPhSv9wnO4XeiVIaSCFboca9NU6Vpuk0/z+t
+	ERPxqeBG1IYWWaKzLdnczrW0ON5BYbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746694345;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
+	b=sZJuHhEfnipyUMGuXUlod+Rzr0t7mjBW6+VVxym89DPStJDerrMEHbDEAoFDtYV5lwxzL4
+	bgmvRR/ff7K9wZCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PbTnNk8y;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sZJuHhEf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746694345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
+	b=PbTnNk8ybCBTRdQJIgHnC9q4YVG9j6CAFx2mKOc4cbMn4QrqvbwQQqR3tBQY02DLCJYqqW
+	jo9NY8MhK59wd7D4K0BGCOC2GdjHzn7udmDPhSv9wnO4XeiVIaSCFboca9NU6Vpuk0/z+t
+	ERPxqeBG1IYWWaKzLdnczrW0ON5BYbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746694345;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QHTt6o55yYjofN0X6cUNZDpXS8zaEbTeYZ5+qKEWI7E=;
+	b=sZJuHhEfnipyUMGuXUlod+Rzr0t7mjBW6+VVxym89DPStJDerrMEHbDEAoFDtYV5lwxzL4
+	bgmvRR/ff7K9wZCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 625E013687;
+	Thu,  8 May 2025 08:52:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vUixFslwHGg0ZAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 08 May 2025 08:52:25 +0000
+Message-ID: <538ee029-543a-41be-be7f-40283b5cfc2b@suse.de>
+Date: Thu, 8 May 2025 10:52:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,141 +83,157 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] dt-bindings: Add Tegra264 clock and reset definitions
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250507143802.1230919-1-thierry.reding@gmail.com>
- <20250507143802.1230919-5-thierry.reding@gmail.com>
- <8a26a37a-26ce-41ef-96e4-10ee09ebe704@kernel.org>
- <12d0eac8-545a-4595-a1df-1dc52728ef54@kernel.org>
- <rz64mnhdb5vu42tcerlobmulkyxvpqgeeer43t57thwzxnrcou@6xcpuiiru66b>
- <0501c0b2-df78-4c93-9ca1-7f32767b0225@kernel.org>
- <kut7odtjumfmqia7to75yda4qwtsyhwmm3xejkwtfm7yxyap5t@icfpljkitpwp>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] drm/fbdev-client: Ignore EOPNOTSUPP errors
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ Jonathan Hunter <jonathanh@nvidia.com>
+References: <20250412070047.6725-1-thierry.reding@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <kut7odtjumfmqia7to75yda4qwtsyhwmm3xejkwtfm7yxyap5t@icfpljkitpwp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250412070047.6725-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 9A4121F385
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim,bootlin.com:url,nvidia.com:email]
+X-Rspamd-Action: no action
 
-On 08/05/2025 09:59, Thierry Reding wrote:
-> On Thu, May 08, 2025 at 09:49:12AM +0200, Krzysztof Kozlowski wrote:
->> On 08/05/2025 09:46, Thierry Reding wrote:
->>> On Thu, May 08, 2025 at 09:40:38AM +0200, Krzysztof Kozlowski wrote:
->>>> On 08/05/2025 09:39, Krzysztof Kozlowski wrote:
->>>>> On 07/05/2025 16:37, Thierry Reding wrote:
->>>>>> From: Thierry Reding <treding@nvidia.com>
->>>>>>
->>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>>>>
->>>>> Missing commit msg
->>>>>
->>>>>> ---
->>>>>>  include/dt-bindings/clock/tegra264-clock.h | 9 +++++++++
->>>>>>  include/dt-bindings/reset/tegra264-reset.h | 7 +++++++
->>>>>>  2 files changed, 16 insertions(+)
->>>>>>  create mode 100644 include/dt-bindings/clock/tegra264-clock.h
->>>>>>  create mode 100644 include/dt-bindings/reset/tegra264-reset.h
->>>>>
->>>>>
->>>>> Filename equal to the compatible. That's the standard convention for all
->>>>> the headers since some years.
->>>>
->>>> Huh, I cannot find the binding in this patchset. Where is the actual
->>>> binding added?
->>>
->>> The bindings for this are in
->>>
->>>   Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
->>
->> There is no tegra264 in that binding.
-> 
-> That's part of an earlier series I sent out (and linked to from the
-> cover letter). It's here:
-> 
-> 	https://lore.kernel.org/linux-tegra/20250506133118.1011777-1-thierry.reding@gmail.com/T/#m96bb396b352659581a9e71a4610c51e6ab4d5b6a
+Hi,
 
+sorry for the late review. I've been away for a few days.
 
-Then this patch belongs there. Standard rules apply: binding headers go
-with the binding itself and the binding itself go with driver patch via
-driver subsystem tree. At least usually. Nothing here is different than
-all other vendors who follow such convention.
+Am 12.04.25 um 09:00 schrieb Thierry Reding:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Recent generations of Tegra have moved the display components outside of
+> host1x, leading to a device that has no CRTCs attached and hence doesn't
+> support any of the modesetting functionality. When this is detected, the
+> driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
+>
+> Unfortunately, this causes the following errors during boot:
+>
+>      [      15.418958] ERR KERN drm drm: [drm] *ERROR* Failed to register client: -95
+>      [      15.425311] WARNING KERN drm drm: [drm] Failed to set up DRM client; error -95
+>
+> These originate from the fbdev client checking for the presence of the
+> DRIVER_MODESET flag and returning -EOPNOTSUPP. However, if a driver does
+> not support DRIVER_MODESET this is entirely expected and the error isn't
+> helpful.
+>
+> One solution would have been to conditionally call drm_client_setup()
+> only if modesetting is supported. This seems a bit redundant, however,
+> and could further complicate things if ever any DRM clients are added
+> that do not rely on modesetting.
 
-> 
->> The header always goes with the binding and the drivers.
->>
->>>
->>> There's no 1:1 mapping to a compatible for this because BPMP is many
->>> things. It's a clock provider, a reset provider, a power domain
->>
->> Sure, that's fine.
->>
->>> provider. These definitions reflect the IDs assigned by the BPMP ABI
->>> and we've used this structure ever since this was introduced back in
->>> 2016.
->>>
->>> I don't think changing the convention for this is a net advantage.
->>
->> Headers still should match the compatible one way or another. Can be
->> nvidia,tegra264.h
->> (because -clock is redundant and you do not want to use the actual
->> compatible)
-> 
-> I get it. You want consistency. But what about consistency with earlier
-> chip generations?
+These default in-kernel clients are all somewhat legacy by definition 
+and the only viable use cases involve display output. There won't be any 
+clients that don't output to the display. Best would be to put that 
+check around drm_client_setup() in the tegra driver. [1]
 
+if (drm->driver_features & MODESET)
+   drm_client_setup()
 
-I will fix them after finishing my time machine. :)
+[1] 
+https://elixir.bootlin.com/linux/v6.14.5/source/drivers/gpu/drm/tegra/drm.c#L1274
 
-> Do you want me to go and rename all of these files?
+If you want to get fancy, you could also add that test at the very top 
+of drm_client_setup() itself; with a drm_dbg() statement noting the 
+absense of modesetting.
 
+Best regards
+Thomas
 
-No, I don't want to change them, but I would be fine if someone does the
-change (although someone else might claim this is a churn). That ship
-has sailed, but at least we can start with new bindings.
+>
+> Instead, simply add an extra check to ignore this expected error and
+> skip the fbdev client registration.
+>
+> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   drivers/gpu/drm/clients/drm_fbdev_client.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
+> index f894ba52bdb5..8c8552ed912e 100644
+> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
+> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
+> @@ -152,7 +152,11 @@ int drm_fbdev_client_setup(struct drm_device *dev, const struct drm_format_info
+>   
+>   	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
+>   	if (ret) {
+> -		drm_err(dev, "Failed to register client: %d\n", ret);
+> +		if (ret != -EOPNOTSUPP)
+> +			drm_err(dev, "Failed to register client: %d\n", ret);
+> +		else
+> +			ret = 0;
+> +
+>   		goto err_drm_client_init;
+>   	}
+>   
 
-Best regards,
-Krzysztof
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
