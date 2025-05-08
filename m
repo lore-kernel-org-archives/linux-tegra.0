@@ -1,213 +1,119 @@
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2062.outbound.protection.outlook.com [40.107.212.62])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E211F8723;
-	Wed,  7 May 2025 22:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746655702; cv=fail; b=bCoPmg0zIsdST2yCg+Uolfa4qCBThgokx+qf9STUqZsS9HAHWMYG7z6ELU1iBaZe/1RkGV45LyQuW2UHk9lGwxwybZdcsHotLg6NoLtNU8RywP5vZmH4waP+fTTyP1p2b3byqk0vz7ziituLwJ81Hd+qAf3kJPZjtCMvVVGn0Jk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746655702; c=relaxed/simple;
-	bh=zJE1yYbEwwjqhZIpWZBqVJ45o1pwM4nsSB4FSfFx8KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LXlmVz19oQ8RMGoOYEE+2YrkhYkC0Skubkc0izHPehkf2mZcw1ioVUTh1Fqniz6m6X1ZOR/n0Lyb511m/XX893fKCqpWHIzdKd8gZbhDP6sEWfFTHCqYZSU99rXhJs4sSLe3HZktDK7yD8U31bpBQcx5XBxc3hguvMje5kNz6uo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gUDdqn0x; arc=fail smtp.client-ip=40.107.212.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F851F181F;
+	Thu,  8 May 2025 03:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746674754; cv=none; b=frY2dmc8ZurF9W0cm3N3j5mxu17KwYunXqouDALHGqJI0u91TPP3wH6tf3XDx4vOa9Aq+4R4qN0nDZaBZWiLAwhRABFL1OgaxH+rn6uQPWwZzTPYQSssji57EY8mAKEtZRvBXUyDAJJJMPAyUUtqPBfe/f0+oOuNEGqKr+PgVDA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746674754; c=relaxed/simple;
+	bh=0pcAJu24LCSnOoE0alnDTb7LX09SzOwDg3pSbDn2Ii8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hUvq6yFYyW7X9R6ve05ci+9ztMIBD/cn48ACHYMOyJZ4arUeoHEHEQFvmSiFZZT7Dt/zwbp4+0Adp3VkYOS1ESd16yhNEnxWnTns8KUzZ+Tbm8hjbD0WVfK4sN8WZmN3l3UNRT0URJ2+jAKiShXxM9wT9pBV3bH9uwxY5UqpnIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duGg0xtR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gUDdqn0x"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EwSQLlqLaoe+Bo4klYkCEmscno54Kc+Rb4Eg++Qg4Syf430tlivnUIu9vhOvtGUOVvU8N8+riDxsQXh9wSb91PPMoh8rHFKAvvYXSKKw1zdFMOBl6iMLzfL0V7IOhfGr2HK82mXxiVD1P/nh+r6/rcpo2cZelCrTkHeQNYwYz2nvqlmmSKsLiUbWCABDv4PqPVE2YSaPx0d+PQFUWxe9V/ljRB9cTm8l82YYlYRmatTladodCd9q3DvBLkjVMGHqIuj9tIv1sBnWyrTaE5yhj6Gv29ZBcctgrb/PTdzg0GFzDT6JMOJPVEr+rRe8A3rRcfiayobs5SOycCIEy4Dk+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H/6LdExZH06MwY4+AtZpl9LaiaTOhCeXhCXKgCYyx0M=;
- b=tWVBtSHXmE216xO61kW38adJdN/73eM2ktkpwT0JJMgv/onOhhmmm55I2yU+hTFqj3SwFPeEnsltPihfL1oERH9xvFFwTVyH+IBRmBBw0q35RQsGYmZXTxzlx8OwB/IuYaIquwidMnQs8B0WbqSDvR/uxxJb7ThsgMIr55MIHJr46SX/PaSjFSIcwdSQSIWo2MW/dFuPorTb4FrRq0cxmrpUvWRqp/udtjDAT1IFZ0txbB70ogEsLPpLiwz8ReuGvycUNkDdbGJQdWK8JFetCKEEjP+MGgKlwd469ylJrUQBsFRs7fJM0u8HBAoiucsZqicmXwuWoDyEk61s3Q9j/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H/6LdExZH06MwY4+AtZpl9LaiaTOhCeXhCXKgCYyx0M=;
- b=gUDdqn0xInWsT6XkdFnTI/3kIJd1JM1XITFrY0eqvlR50s6XZHOC8TR/WsJ7ZMmQjal2ZZtoqer+V7ep4D9hSGstsYQgELX8D3Ye8H3c6iUp8JbvV5OiBdSJ3guJxU/bpat4LAaKrm5q2rBoLiIduJtvUOPZBfMHCxZb4hOAkHIKjQ7yfIw/P1kbGwKSjDe/6jkTx0SdweLwd1tw1YsZToiG0faJ4f5/ErdnW0115OL4eDelYnPfvB2Gjyq1yjqFsuzBEnO3ECtiKcYhvLdQZ/rXVxv/friILIGKoZWaq7uoop1YQ2AMNU62aDOviWEXJ4bXkc2pRVeM7JHkCwfMTg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DM4PR12MB7527.namprd12.prod.outlook.com (2603:10b6:8:111::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 7 May
- 2025 22:08:11 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8699.026; Wed, 7 May 2025
- 22:08:10 +0000
-Date: Wed, 7 May 2025 19:08:09 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Pranjal Shrivastava <praan@google.com>, kevin.tian@intel.com,
-	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
-	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
-	vasant.hegde@amd.com
-Subject: Re: [PATCH v2 13/22] iommufd: Add mmap interface
-Message-ID: <20250507220809.GB232705@nvidia.com>
-References: <aBFGCxcTh54pecsk@google.com>
- <aBFIsYg+ITU8RvTT@Asurada-Nvidia>
- <20250505165552.GN2260709@nvidia.com>
- <aBj1Av6Xaj8flMN+@nvidia.com>
- <20250505173101.GT2260709@nvidia.com>
- <aBkWoH23VysYake3@nvidia.com>
- <20250506125222.GW2260709@nvidia.com>
- <aBpjbtRgR1nK/LIm@nvidia.com>
- <20250507123901.GF90261@nvidia.com>
- <aBvMC7dnYghoX5Aq@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBvMC7dnYghoX5Aq@nvidia.com>
-X-ClientProxiedBy: BN9PR03CA0305.namprd03.prod.outlook.com
- (2603:10b6:408:112::10) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duGg0xtR"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C5EDC4CEE8;
+	Thu,  8 May 2025 03:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746674754;
+	bh=0pcAJu24LCSnOoE0alnDTb7LX09SzOwDg3pSbDn2Ii8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=duGg0xtRQEpaxG6c6mCX25iD6rC2FR+xj4+oipUaBBVhbxyxITe9bG/y2bevlP4ae
+	 8vtC8bVnyGYeM0PO0zT1eeduO/Nhq56/CB2okOt092JIzf+TzNjGzi54FfR+nLhZDM
+	 wKX6oj/i0bKzEuDHStC3dhzA2tIKQwkYtG3KfQaida8Sqtoh79XkDZScCmBNsVFCFV
+	 XoDgRat0ny7aOPtyCkbvWUpzuv9sjx1vxpddsPS+njZVfdBlBN/lvCIpram1/e+GLc
+	 Uek36gM8Wt2uF7qgIJpR4VRf5F9hR7P5TPoVbHO8mqDCVdfXR4dJ6oq0JBpgYi+Uqv
+	 9+n+04TuEIxCA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB86C3ABBE;
+	Thu,  8 May 2025 03:25:53 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v6 0/3] PCI: tegra: Allow building as a module
+Date: Wed, 07 May 2025 22:25:51 -0500
+Message-Id: <20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM4PR12MB7527:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49f18077-e3ae-42b3-ab32-08dd8db3a77f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7rVDTJckXje8JJ7EN1JDzgLtABptuw6eD3flw93wEIT+74sfw7LlBxg81mqG?=
- =?us-ascii?Q?V/5aeu79pgu0bSjZVAcSE0ZIwaLOUBppJOh019TmaFrPUqqfZIFa4ofk4h29?=
- =?us-ascii?Q?QxjGzyC/rHxnPw+PBOqC8funNIR6/+qRoFwnPexBMr9v2vIbBCeaMbFuvKpf?=
- =?us-ascii?Q?lqGkJ2ebcN4yZSfwr11Njx57HbYhyFIsRP8YzMynajcXzN7OY7bGa3oNufE1?=
- =?us-ascii?Q?1bM4EGWTRIechAFzwNnPPVl+ifiYjsrQZlsAGmoTqMqxUsCgXC5A4vpaKdfz?=
- =?us-ascii?Q?qEB3IxNWd9XFJ65eckoP1PLK3yDBpEejIjX1IGdvMSVUsQMjZW/uJqxVzg9+?=
- =?us-ascii?Q?cmmSWThAsg4xsIb7HM6oxjqOjA+n1RmMw2Bp71oD3KGc745W9aLS9Fj3cqhU?=
- =?us-ascii?Q?fKt7yOsh6dXKFciZ7ccfApPGzdQruuXu5fGeZAVV/2w+TmjilWILOt/+6jf5?=
- =?us-ascii?Q?JYFfZIJjXzP6Ur+sCUlaYHO1XSD4F95CaUWxCg/DkHg9lkCe8yGCoDiEhC8V?=
- =?us-ascii?Q?oY1GTSKpwsLnfpy7CwatyDNiZP9/znl2n/5mjeMPeVyokmowAVbNtU21flx+?=
- =?us-ascii?Q?at4eEbWL8UTHnAE5vEOaMGossnGoLvibcgF2gT9mglzlpi+GxRKD+m7+MRmy?=
- =?us-ascii?Q?u5asY3oaDdCP9GrjKGclQivsvixGDzG5hk2lMHpm5uOeH6+PFr2gWy01wePi?=
- =?us-ascii?Q?y7XufJ1XabNhWLQNm9y1aOR/+AxrqMvbWjZc17SoJEt+2VTDlGpt4jTi9S6/?=
- =?us-ascii?Q?icZO/nRfHmAombHar/tKu1LPSnfUAN0LQGwxRn7OmQstFJlSPgGcvgZ6CZNv?=
- =?us-ascii?Q?4m4h9W3U0kkbuxvvqoNYzPW+Nusn1SQjD5C41loGhrJbmSLdtgYB539JLAhX?=
- =?us-ascii?Q?U9UgXiVc7xdtPTZPj0oZ3/JzVbfbosPhAk5s6KFbYwwsCA5jajwY66OMEuYc?=
- =?us-ascii?Q?yhKZs3aKSnnDOvDv7Gi0QjdbCyAYvzrqMQgJ+jgB2tZgoxlOY6O7fv4/7cXB?=
- =?us-ascii?Q?EcjVnFvIJDWOwSAZ8odwmmCpdz48hw4bxfFG/W1I0N9eyzbEEJfpYtfCfzY6?=
- =?us-ascii?Q?RLcyELP/keD5q3g+azuKYt9c2B0Fo7Ygn5cUSONmZz0ERwrl1hSqwrj2oKah?=
- =?us-ascii?Q?GL52QR9GhXG86TZq7fBxQvB6rBypPzIkka6r862cIciu7Er3en5WHhaRttk/?=
- =?us-ascii?Q?TipdlLJWt0l0tgkLg3TEy7di4oJ3+os8lvt+nNxUub1XlWUbGv18EiU9kgDD?=
- =?us-ascii?Q?1O69TrG25ZIbK+uQbtV3sjUsPXO2cvh/JcXwP/W2ZjY9A9sWgctjxh53YACc?=
- =?us-ascii?Q?mDqHd8DCSEGYopVF27jwdWUbjIcP/5J9hgAvF8vNYKrBNnxKJy0BRiC9jGlz?=
- =?us-ascii?Q?lGlqhOob1LOxb9d7xgsyIyudDk4JwnXN0/geO/qLH86TLVTkqoYJ7BuM8OQ6?=
- =?us-ascii?Q?8qbPjjgkITs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EN655Ohf9HqzEldnz+0gKIxItVsaGYy1tBNTor8bfN7gpzrf+RsV9ptwO3Dx?=
- =?us-ascii?Q?I34wktbd1CyiMa6VVHO6nQ/6W+ZJ9YpvdDlInbb60DbCZCmCjW95FRTwHjMo?=
- =?us-ascii?Q?I8qp1lPHy1B7z4ZbFpZ1vQ0CXYCDkMA0e48K5iyUMqLc5xER7WKj30mfy3Wd?=
- =?us-ascii?Q?TCOSNWhKWXUM05neycQTCZkgqOSWnczfFwloQq5rE8gAYI530tB2N5b8DPiX?=
- =?us-ascii?Q?+dmuZkUA7q1HbBfbDOdNck0S9CcYR8SilO4qOEoXidySpYMY9la1ruRc9tqu?=
- =?us-ascii?Q?eNarM4cmet848uMoIJ7nLMb06cOEXqrBK6VRcbKSTI9b6crfn2Wp4MabhS0F?=
- =?us-ascii?Q?b6LbvgYH9uQI+e0kQMZ4pewrmAEXKjT1cgNdhLncolIhjEjJlhpmG3eL+J/X?=
- =?us-ascii?Q?VfOb6uLmEcJQsMnbEzhh4voBmgOyIbNR4ri1OEoT6sLdIXtQ5zM0esgju+Wl?=
- =?us-ascii?Q?GjvreaqG6ahmbXVFjnBXa/cBaczqHnXJmBI90Qnqo+g9R3XW/Y2CS4ueMbXs?=
- =?us-ascii?Q?Y8F3/rmhrdogGLCMhgZZRt6Yal5+UnoMrePEZ9E5EYL/PWcKDEp+JMz+qM3R?=
- =?us-ascii?Q?8LDiuAnoiZ6i0EFz+uwUzVCsGOI4A+LoVhLLOfNBIkjNR6k/tewvuTSKdZqd?=
- =?us-ascii?Q?DBPPgYJmkdDYdGMAdLWeAdp8RB8df1wvyzx0JrPkijcPDrWLXOc+1DNNB9UN?=
- =?us-ascii?Q?5wvl4yFDbLfu682BcKEdvHi8jDe7WtiuFjm0KqSVEO0Vy1awrG15nKZl8tL0?=
- =?us-ascii?Q?MRBLy5geF9JnS6UvRyHb31DPm3pgsUytgCGyvQ4T0Iy7DOLvzjj2/mKBbZAa?=
- =?us-ascii?Q?FY4HYaEk+A+OzPPRTKet9hFWpYFwxfED3VXB8gyYx0xmAkosiwWIKq4mvmae?=
- =?us-ascii?Q?lUZlmYjO/i8EDbytKKWBkAqixiDP8tLFWxN/RuLMgO6Ldh+pj2yDNmjW3yjS?=
- =?us-ascii?Q?uP7y1o+H1nwD7V7EHUUO76HpKFH3JtqqBn8dBhEZRWjRZju1MesMIr69sY6i?=
- =?us-ascii?Q?W0EeFwMPY2vFjIexIX9NyiSPr5k8eZWGnz/nH3cPiJrpaOaY8v2QZg0QpTwX?=
- =?us-ascii?Q?Y3DDRGADpt9/06XRA+KyiUXa3lOtg5ydKYqQUqAcfEsdcSEwc5LJlbGt+nE+?=
- =?us-ascii?Q?xyx5nTV8Y4qTEK3I3eb3XdJrMJV4f2wvyr2NDBbZUMiGHXODv40wDiMJ8d9C?=
- =?us-ascii?Q?TUSfwGaAcdOari+TmGkopHnUPdcVdXToey933ffMwfA1xTDmyImel0ppFtD7?=
- =?us-ascii?Q?VNYeD8iuyMuSaitw8dPDHjLzRl0E0Gl94Y9cgIwguUbxOBhAH9f5g5erxTNp?=
- =?us-ascii?Q?m/0OCPOaGowRvlgAYdwtaAqWd6ufj5EwFtJyHyUrWX3+oNnmQPUJqgw2s+uM?=
- =?us-ascii?Q?wClUQBqB8GUwwgJJSU1CSXHURWIhsbxHAVk/V8mH/Oo7tSXcW80AFBEUzgg7?=
- =?us-ascii?Q?UdvQEGJDqwDiptfke5hFqraVB7vKu7uMEi0DpxLsZxwtpuo0ODL2O++Y7e8p?=
- =?us-ascii?Q?WGG1ldangT7hbg8Ko2lpm6RKDjC4Q/f+1oYXHElXZ5cgAYJASp9ew+f5Y/7y?=
- =?us-ascii?Q?C2ms/BtqD2tIbvL2ZiWStDlKzQ2616lOG2SjwLZm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49f18077-e3ae-42b3-ab32-08dd8db3a77f
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 22:08:10.7239
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /28NiB2LkeHN/uJVlBaxshXDgdo+hNcQn5XTQVeV6tWCgudDiNZMH+d6UfXF8IGG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7527
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD8kHGgC/4XPQW7CMBAF0KsgrzEajz2x01XvUXUxdpxgiRDk0
+ KgVyt3rwKIUIrH8X5r3NRcxxpziKN42F5HjlMY0HEuothsR9nzsokxNyQIBCbTS8hSSPMcus+y
+ H5usQpQ2+UYGiBW5FOTvl2KbvK/nxWfI+jech/1wXJrW0N8wgPGOTkiADsGpdGSPD713P6bALQ
+ y8WbMJ7wK0AuABKsfG1QmOqR0D/AQS4AugCEFVsaquxsfAImHuAVgBTAHDOE2EwXj29QK8AKoB
+ Dy8yhrp3/B8zz/AuxzBD0tAEAAA==
+X-Change-ID: 20250313-pci-tegra-module-7cbd1c5e70af
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746674753; l=1783;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=0pcAJu24LCSnOoE0alnDTb7LX09SzOwDg3pSbDn2Ii8=;
+ b=5vI6/OkRPTKlzXe3vVbMLbMax/WLtUua8eriSFeb3LmCylg7E0sqz4CFjwIwr0huTUaKGwQA6
+ x5guMxskE33BGyaQTk/iUqrLiuhTyRck/5TsXnB7nfr24uc/0wnRJ+y
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Wed, May 07, 2025 at 02:09:31PM -0700, Nicolin Chen wrote:
-> On Wed, May 07, 2025 at 09:39:01AM -0300, Jason Gunthorpe wrote:
-> > On Tue, May 06, 2025 at 12:30:54PM -0700, Nicolin Chen wrote:
-> > 
-> > > So, if I understand it correctly, what we want to achieve is to
-> > > have maple tree to manage all PFN ranges. And each range holds
-> > > the same entry, a structure that we can use to verify the sanity
-> > > of an mmap? Let's say for PFNs A->B, the tree should store the
-> > > structure between index A and index B (inclusive)?
-> > 
-> > And tell you what has been mmap'd.
-> > 
-> > > If this is correct, mtree_alloc_range() that is given a range of
-> > > [0, ULONG_MAX] would allocate the PFN range from the lowest index
-> > > (i.e. 0) instead of PFN A?
-> > 
-> > mtree_alloc_range() returns a new range of PFNs that does not overlap
-> > with any existing range. It should always be called on O->U32_MAX (for
-> > 32bit uapi compat) and it should always pick the range to use.
-> 
-> Ah, so it's like an address translation table. mtree_alloc_range()
-> just gives us a virtual address range (i.e the cookie) for mmap()
-> to translate back to the real PFN range.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v6:
+- Remove unused debugfs cleanup function, as caught by kernel ci
+- Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com
 
-Yes. It is just a way to adopt the mmap interface - mmap is about
-ranges in a logical file, so we want to create logical ranges to refer
-to the objects to be mapped.
+Changes in v5:
+- Copy commit message exactly word for word on patch 1, as required by reviewer
+- Delete remove callback in patch 3, per request
+- Don't clean up debugfs, per request, which drops patch 4 entirely
+- Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com
 
-> I have another question: while I don't think my code is handling
-> this well either, how should we validate the input address is an
-> allowed one?
+Changes in v4:
+- Updated commit messages for patches 1 and 2, per review
+- Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com
 
-The pgoff to mmap? If it isn't in the maple tree it is not allowed, if
-it isn't at the start of range it is not allowed, if the size is not
-exactly the same as the range it is not allowed.
+Changes in v3:
+- Add patch to drop remove callback, per request
+- Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c11a4b912446@gmail.com
 
-> Because mmap() is per ictx, i.e. it's a global translation table.
+Changes in v2:
+- Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
+  building pci-tegra as a module for arm
+- Drop module exit to prevent module unloading, as requested
+- Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com
 
-It's per-FD. The pgoff number space is per-fd calling mmap.
+---
+Aaron Kling (3):
+      irqdomain: Export irq_domain_free_irqs
+      cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+      PCI: tegra: Allow building as a module
 
-> So, the following might happen: let's say we have two vIOMMUs in
-> the same ictx. Either vIOMMU has reported a cookie to index the
-> mtree for the real PFN range: call them PFN_RANGE0 (for vIOMMU0)
-> and PFN_RANGE1 (for vIOMMU1). What if a buggy VMM inverted these
-> cookies between the two vIOMMUs, so it would end up with vIOMMU0
-> accessing PFN_RANGE1?
+ drivers/cpuidle/cpuidle-tegra.c    |  1 +
+ drivers/pci/controller/Kconfig     |  2 +-
+ drivers/pci/controller/pci-tegra.c | 35 ++++-------------------------------
+ kernel/irq/irqdomain.c             |  1 +
+ 4 files changed, 7 insertions(+), 32 deletions(-)
+---
+base-commit: 18352e73612d60b81790d2437845276ae499b64a
+change-id: 20250313-pci-tegra-module-7cbd1c5e70af
 
-Oh well. That is too buggy for the kernel to do anything about. The
-mmap cookie comes out of the VIOMMU_ALLOC call and goes back into the
-mmap() call, if you mess it up or mix up the pointers then too bad.
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-But if two VMMs are doing this then they each have their own iommufd
-and their own private numberspace and VMM A's VIOMMU cannot be mapped
-through VMM B's iommufd FD.
 
-Jason
