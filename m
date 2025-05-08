@@ -1,185 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AAE5A79B;
-	Thu,  8 May 2025 11:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DE022154A;
+	Thu,  8 May 2025 11:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746703493; cv=none; b=kUsk8B3R3XygBfOFNjJtZpdSt+ZGVwEK5OcH0kErstF0EOYeYOQJeNT+PttIANvZzfdangM4loXoPKIKJA4MATEzRjZSs/07EaQc07dPDQ2pjTJMpQ1BXbkH/qVFpdvV9BbsUN9STHT9ti/I+afMWVxgiMqlGjC6vQboT1FJdGQ=
+	t=1746703617; cv=none; b=TJOeO8pEabWR33S5osvaIZ7HYWLveCnhygPz0aBPkYpXiXOfM0JxoG91EzJ0zIJPJ9D5e2BCw+2sZw60babFUs65zc9EbHWnpthDIxYzPaGVGTNA+L9IC7Ke6fOJYpojxp2JxQYlvzCVF3hjFMusvx8JuQE6bz3xLFYZTABy3hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746703493; c=relaxed/simple;
-	bh=RRwfTGeTIvNyVZy/AsMPNv+peATmffSL6coS5PTf8ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwUa3r9BZOcFQJRWZ31eSD5WEy9MnvEo36UEaKTG3063T0quXDH5p4wA+dxyglupACMIeQEyqhWqAOWCcrMn4IYbqlR073p91pYQgflmvUwD0VSxYE+QUOFR/oF23vo1x5qndiDNVbzg11yPFMOgCpxYOFUBrCpAOS3OTmM8tIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=L2bQ7BXG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746703617; c=relaxed/simple;
+	bh=UwqdZjavUhNfdPs8P/IRq9MCV1ehSBWln2HaUUuXZ6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=odEZ1OJhZxB4V9AG72RD/sKhV3+y8B6zRzGVFfi2+TXgj9Ucyz6kfm94gj2zPPECSLht2tikQ3NJv7K3N8D1hwBYrYjoLJ03ziTRGQ02wSh7aNKq5znQ9Efu5o/MvSd+pPJAqVqoH1HW59fG5LlEsLwy4ORrZSF2kw6GY4/uRAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyXWj40o; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="L2bQ7BXG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBFC0C4CEE7;
-	Thu,  8 May 2025 11:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1746703492;
-	bh=RRwfTGeTIvNyVZy/AsMPNv+peATmffSL6coS5PTf8ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L2bQ7BXGN3poNCo3gljF/N2EJaFrUuQU6M3QF8NhxIPWJWxQ3FxoljH0E8NPLSVrD
-	 UePD9IL/SOD9yOfDRe3WmOjmXC3H7uWVCQ+Lbyn9qnn1LhLM3oWYA7ivDBSdwh3LYH
-	 /Q6sHJEMcIk2s1qJPOuMS5S8monUwyOfa7NMj6aM=
-Date: Thu, 8 May 2025 13:24:49 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.1 00/97] 6.1.138-rc1 review
-Message-ID: <2025050819-acquaint-guidable-5e97@gregkh>
-References: <20250507183806.987408728@linuxfoundation.org>
- <864a7a10-ed68-4507-a67c-60344c57753a@rnnvmail203.nvidia.com>
- <2a83d6a6-9e80-4c78-94a6-5dedd3326367@nvidia.com>
- <55d3cdaf-539f-4d5b-8bf1-a2c5f917e81d@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyXWj40o"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso7634751fa.0;
+        Thu, 08 May 2025 04:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746703614; x=1747308414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UwqdZjavUhNfdPs8P/IRq9MCV1ehSBWln2HaUUuXZ6A=;
+        b=QyXWj40oehcBxrB6m9lBR2349UIrkWTWoWBMM4IpmENxk8r6tcPUj7ufAfkd9RyRvZ
+         phvHloqHdqI8VK93XxPcl6tActizIBIJ3fINFAOqvYxz41igMaUwJAQP6BnBz3DL0nYY
+         m0cDEwFwMllo++H1WmHcUrnv3kJTkxmGzliFRX4j8+Dc5c5eYJApeWXAXxP4PeQRrB/J
+         Xn/soRaiQSo+IwdsGOJfPmGt1wH3bIlZt8W9K4s8WlcVtldCNvMPTdllZFAH3MpMVv/B
+         i6v4IQE+1d2X8Q04gd3UkuQ0KVC+gNzw5lh0TAtAx5yAJi3Zw0PljLj938VGdQEeb9tl
+         FQag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746703614; x=1747308414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UwqdZjavUhNfdPs8P/IRq9MCV1ehSBWln2HaUUuXZ6A=;
+        b=vFgp+CTvZ9u5wJvj5Fi7/v9pqkGPC1Xo+hzN+sHQdXnLVMeUbf358gvpdYcMo77dtM
+         YzxDYpbIhD24xSa+5pxwvMQcisl3nKukg1tSLcN2jF8sMqmm4zc4K0pjfrRxeupXCO6y
+         KIXZfsxdlz/AQW689ej1QfZoKj0D7F9RWqK6LXDTwAAtai43euJyH30ncWI/Xcxd2Zqu
+         lxRdnhPkvx3ALBru1tOSZwCtAMivH+QuLSHPSBgoE4lt99565rElLFktaV1SZzfAMIWX
+         1oR3m9skQmknxQB6Sr4NDQplFqD9NTQB3bxcUXSL2M+1gZrCkTnVxbCLQNpC9+66EYOI
+         xFWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbxNVZluDQfbm93jcKfD2qHLaULmYtTlEhGP+3zqg8tBRudtuYkGa92Ox5KuVZA3pqLAcYp7cNCnA=@vger.kernel.org, AJvYcCW5/WR5gVKQsnNJJteW5Co4n4nhIzMayHiFzCgotP2JTCy+dzBcS5k8KMjInPJMn+CYwkhr6OMIwVcokr0=@vger.kernel.org, AJvYcCWzRYiq3KOpAbxB4G0Q5htdvrTpSkx489Akl2Ujy/hdyUFaw/TxvCd2SZlQovDZQn2xU4pDk9zmEleUTAg=@vger.kernel.org, AJvYcCXKSK7KwGW/eqoVdh7FIuhamWqBFZaPxtA2Rd7bmfnLiCO1EDiSH9DOqfjE6ZkMm6yNtp33g+Mm2xP6@vger.kernel.org
+X-Gm-Message-State: AOJu0YychMfHktFde8Ma4RGYeyRsblUj5AqdDpLH/NPODLQxQRRu0Y7w
+	F4WBN9MWj8I/IwxPkrO8c+jy75qbTk733xG2FMFGgYQilKkLTsLRCLolTz57yruRmnSDro3FUq8
+	/D7VtNmodKbT2AW90Rbrn0vpe7YA=
+X-Gm-Gg: ASbGncvX2MRxX6P2eLRgOJA2STe1cES55c7iSWSVDCGdjU4rCEBRdvmd2k3ZX3+o/Ag
+	aLEYJFD8XDSMegdpd2S6DlZ5krQxNl7hvQDVial0mvq8zifKdtP972QZEc79bqs+vnn5ASFYz39
+	yq/mVZ2k5FnEZQRPlsSRcpBRs=
+X-Google-Smtp-Source: AGHT+IEd3RTS5tFkCDfVtx+pBxGffB6x8KVD5klUtDaAhuxiIEXoPS9/TVA+TqNUh4Sdl/LHg54A08o0LN2KL3ISF0w=
+X-Received: by 2002:a05:651c:150d:b0:30b:9813:b010 with SMTP id
+ 38308e7fff4ca-326ad32331fmr27545361fa.31.1746703613470; Thu, 08 May 2025
+ 04:26:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <55d3cdaf-539f-4d5b-8bf1-a2c5f917e81d@nvidia.com>
+References: <20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com>
+ <20250507-pci-tegra-module-v6-3-5fe363eaa302@gmail.com> <w2ertcizgmtu27kcike3lpw5dvhvqi2b4c6amqzwdfs2xtebfy@itrpen3oblhs>
+In-Reply-To: <w2ertcizgmtu27kcike3lpw5dvhvqi2b4c6amqzwdfs2xtebfy@itrpen3oblhs>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 8 May 2025 06:26:39 -0500
+X-Gm-Features: ATxdqUFB97ndpbhzQ5rwxdLhAukeBPDgXsdzB0UK835iwPge0aY5C8MO-nVf2I8
+Message-ID: <CALHNRZ8899t0BYMgn1a3iDKz_J9z_Wv_XYM2d8Y4AoiXPZaFjA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] PCI: tegra: Allow building as a module
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 08, 2025 at 10:52:59AM +0100, Jon Hunter wrote:
-> 
-> On 08/05/2025 10:48, Jon Hunter wrote:
-> > Hi Greg,
-> > 
-> > On 08/05/2025 10:45, Jon Hunter wrote:
-> > > On Wed, 07 May 2025 20:38:35 +0200, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 6.1.138 release.
-> > > > There are 97 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Fri, 09 May 2025 18:37:41 +0000.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > >     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/
-> > > > patch-6.1.138-rc1.gz
-> > > > or in the git tree and branch at:
-> > > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-
-> > > > stable-rc.git linux-6.1.y
-> > > > and the diffstat can be found below.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > 
-> > > Failures detected for Tegra ...
-> > > 
-> > > Test results for stable-v6.1:
-> > >      10 builds:    10 pass, 0 fail
-> > >      28 boots:    28 pass, 0 fail
-> > >      115 tests:    109 pass, 6 fail
-> > > 
-> > > Linux version:    6.1.138-rc1-gca7b19b902b8
-> > > Boards tested:    tegra124-jetson-tk1, tegra186-p2771-0000,
-> > >                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-> > >                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-> > >                  tegra210-p2371-2180, tegra210-p3450-0000,
-> > >                  tegra30-cardhu-a04
-> > > 
-> > > Test failures:    tegra186-p2771-0000: cpu-hotplug
-> > >                  tegra194-p2972-0000: pm-system-suspend.sh
-> > >                  tegra210-p2371-2180: cpu-hotplug
-> > >                  tegra210-p3450-0000: cpu-hotplug
-> > 
-> > 
-> > I am seeing some crashes like the following ...
-> > 
-> > [  212.540298] Unable to handle kernel NULL pointer dereference at
-> > virtual address 0000000000000000
-> > [  212.549130] Mem abort info:
-> > [  212.552008]   ESR = 0x0000000096000004
-> > [  212.555822]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [  212.561151]   SET = 0, FnV = 0
-> > [  212.564213]   EA = 0, S1PTW = 0
-> > [  212.567361]   FSC = 0x04: level 0 translation fault
-> > [  212.572246] Data abort info:
-> > [  212.575137]   ISV = 0, ISS = 0x00000004
-> > [  212.578980]   CM = 0, WnR = 0
-> > [  212.581945] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000103824000
-> > [  212.588394] [0000000000000000] pgd=0000000000000000,
-> > p4d=0000000000000000
-> > [  212.595199] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> > [  212.601465] Modules linked in: snd_soc_tegra210_mixer
-> > snd_soc_tegra210_ope snd_soc_tegra186_asrc snd_soc_tegra210_adx
-> > snd_soc_tegra210_amx snd_soc_tegra210_mvc snd_soc_tegra210_sfc
-> > snd_soc_tegra210_admaif snd_soc_tegra186_dspk snd_soc_tegra210_dmic
-> > snd_soc_tegra_pcm snd_soc_tegra210_i2s tegra_drm drm_dp_aux_bus cec
-> > drm_display_helper drm_kms_helper snd_soc_tegra210_ahub tegra210_adma
-> > drm snd_soc_tegra_audio_graph_card snd_soc_audio_graph_card crct10dif_ce
-> > snd_soc_simple_card_utils at24 tegra_bpmp_thermal tegra_aconnect
-> > snd_hda_codec_hdmi snd_hda_tegra snd_hda_codec snd_hda_core tegra_xudc
-> > host1x ina3221 ip_tables x_tables ipv6
-> > [  212.657003] CPU: 0 PID: 44 Comm: kworker/0:1 Tainted: G
-> > S                 6.1.138-rc1-gca7b19b902b8 #1
-> > [  212.666306] Hardware name: NVIDIA Jetson TX2 Developer Kit (DT)
-> > [  212.672221] Workqueue: events work_for_cpu_fn
-> > [  212.676588] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS
-> > BTYPE=--)
-> > [  212.683546] pc : percpu_ref_put_many.constprop.0+0x18/0xe0
-> > [  212.689036] lr : percpu_ref_put_many.constprop.0+0x18/0xe0
-> > [  212.694520] sp : ffff80000a5fbc70
-> > [  212.697832] x29: ffff80000a5fbc70 x28: ffff800009ba3750 x27:
-> > 0000000000000000
-> > [  212.704970] x26: 0000000000000001 x25: 0000000000000028 x24:
-> > 0000000000000000
-> > [  212.712105] x23: ffff8001eb1a1000 x22: 0000000000000001 x21:
-> > 0000000000000000
-> > [  212.719240] x20: 0000000000000000 x19: 0000000000000000 x18:
-> > ffffffffffffffff
-> > [  212.726376] x17: 00000000000000a1 x16: 0000000000000001 x15:
-> > fffffc0002017800
-> > [  212.733510] x14: 00000000fffffffe x13: dead000000000100 x12:
-> > dead000000000122
-> > [  212.740645] x11: 0000000000000001 x10: 00000000f0000080 x9 :
-> > 0000000000000000
-> > [  212.747780] x8 : ffff80000a5fbc98 x7 : 00000000ffffffff x6 :
-> > ffff80000a19c410
-> > [  212.754914] x5 : ffff0001f4d44750 x4 : 0000000000000000 x3 :
-> > 0000000000000000
-> > [  212.762048] x2 : ffff8001eb1a1000 x1 : ffff000080a48ec0 x0 :
-> > 0000000000000001
-> > [  212.769184] Call trace:
-> > [  212.771628]  percpu_ref_put_many.constprop.0+0x18/0xe0
-> > [  212.776769]  memcg_hotplug_cpu_dead+0x60/0x90
-> > [  212.781127]  cpuhp_invoke_callback+0x118/0x230
-> > [  212.785574]  _cpu_down+0x180/0x3b0
-> > [  212.788981]  __cpu_down_maps_locked+0x18/0x30
-> > [  212.793339]  work_for_cpu_fn+0x1c/0x30
-> > [  212.797086]  process_one_work+0x1cc/0x320
-> > [  212.801097]  worker_thread+0x2c8/0x450
-> > [  212.804846]  kthread+0x10c/0x110
-> > [  212.808075]  ret_from_fork+0x10/0x20
-> > [  212.811657] Code: 910003fd f9000bf3 aa0003f3 97f9c873 (f9400260)
-> > [  212.817745] ---[ end trace 0000000000000000 ]---
-> > 
-> > I will kick off a bisect now.
-> 
-> 
-> I wonder if it is this old chestnut again ...
-> 
-> Shakeel Butt <shakeel.butt@linux.dev>
->     memcg: drain obj stock on cpu hotplug teardown
-> 
-> I will try that first.
+On Thu, May 8, 2025 at 3:40=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
+>
+> On Wed, May 07, 2025 at 10:25:54PM -0500, Aaron Kling via B4 Relay wrote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > This changes the module macro back to builtin, which does not define an
+> > exit function. This will prevent the module from being unloaded. There
+> > are concerns with modules not cleaning up IRQs on unload, thus this
+> > needs specifically disallowed. The remove callback is also dropped as i=
+t
+> > is unused.
+>
+> What exactly are these concerns? I haven't done this lately, but I'm
+> pretty sure that unbinding the PCI controller is something that I
+> extensively tested back when this code was introduced. PCI is designed
+> to be hot-pluggable, so there shouldn't be a need to prevent unloading
+> of the controller.
+>
+> Rather than just forcing this to be always there, can we not fix any
+> issues and keep this unloadable?
 
-Argh, that one keeps slipping back in.  I'll go drop it from here, and
-6.6.y as I don't see what would have fixed it from before.
+For the short version, see this part of the conversation on v1 [0].
+For the long version, read comments on all revisions. Basically, I
+originally submitted this as unloadable, but got told that due to
+generic concerns that affect all pci drivers, including ones already
+modules and unloadable, making this one a module would be blocked if
+it was unloadable. Which leads us to this revision of the series.
 
-thanks,
+Sincerely,
+Aaron
 
-greg k-h
+[0] https://lore.kernel.org/all/4u4h27w77sdjvy43b3yonidhfjuvljylms3qxqfaqwy=
+w3v32qo@kzgrrenxr6yz/
