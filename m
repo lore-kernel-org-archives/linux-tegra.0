@@ -1,559 +1,128 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2458B23CEF9;
-	Fri,  9 May 2025 16:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746809688; cv=fail; b=ss09z5ofm9l45YWoGnzjkdMZjYTDhp/sTB+Yc/XmmQE/FD1ooc5NhYlGe5M6KfoUc5YWDikWQgbrtgm//EcqhBT2FRghl4myDoPvPDSaoBQ3uTBddBn1TUMxkXijy/9JR6mmzDi4YzRXffU83jzw8x9FddzCfha7y3zUCLobS0Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746809688; c=relaxed/simple;
-	bh=LsBrQ6P+OWRF06+RM3IXl7WgyribTIcIDlrAqKs1eyg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cb8rxAC/H/LQsDJb9Rv1OImuW2abTP4HAB+AXfXvWb4FO/qVR5momLzR/1yD5YIk+k3aDuhbtWMjcvgoV83vYwIg+ZJNuB0bWBKLOWWYsJxbupjO4G+PgFDgdyV8/VUw1eoxlz7HHYyHAfys9qR+dOPXk03pTcbkjf2ZYCOGbp0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h2HRSV/M; arc=fail smtp.client-ip=40.107.220.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C156120C030;
+	Fri,  9 May 2025 16:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746809857; cv=none; b=kyonxcCjdmwdDxrcIgcl/zNOtZTf0qoTZE2t1jEJQI8FIs7U/QUHDCXihbEyTstF3vheo2/4Ma5kOtCwzUZdsg1V+pxJIY0nJfJ66O8D7YnJNCQSKScGw1CYs1eY+G8dYx4pl4n1EflXhI1r6DxvOl/k4oc1qbC0lNYkT1/xzhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746809857; c=relaxed/simple;
+	bh=f+HzxQPWwken1azUW8kFJMFBZlKUu3T4KQof9pysA/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DaQGLdkBOLjznH/c215g9lCwtlzXmsHiBMgZ+MimkVNzAKY71aisvr8pczA7mOE3W4DmBiqX+USl7a0iybqR5j1IboAhXq1NvNgy8skau50/HHsGWfMB/j06LbQlOsIYMMMlOfXlfRReJzXalyaFW9dmRK5j5LhFs3qtt6VJAv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np91o4oi; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h2HRSV/M"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AOmjc2Y+bihrCCAYV4I5fyRPq1qTGGsndYodbCt0V7jNc0h3j2V3AVrEfD4IKihb5S+gOMth8lKRAixpPJmZbgFXD+6EWZUoPSs495OH/fOSE1BTMwgQqtUb5TIMz7nWMTeJGp23F+EQGyMXVAF9gHi+/PZCkk6oVuz+jXkup+wNikAx2sgrbtlbn9EKmbTO/EjWslhvsEwek46xSvmQr6yQ8+Fu1WKsFaBLKeG+JobOFQ8Phppy07Al0rryAVGWCW4YC/16aIqCY5amNZODTCFsxX8wfzVVNsDJvpn9icilIq5SKCvBfb8I4n/yTiTYrAUNDPTCxGibrrdjQe5NeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I9lqmypYj0tUgoJEu4Ou/+9vpQc0ofC2Zq+pTzz7kzI=;
- b=LMI1JvSos39cbXzKCvoDN81ju1KkoiZacW4P4UHN9NOlsth0TqDwqEPtGJ3PPU/ap9cJpFHgpCj/GWHhJ03/999UHVppDzdIt1sRE7OSaHGfQZN8J3e6T45YYOi0lECjtSqfpajg5t96KNVxv7k1LSD1voB8C3CtsYQf302S8fke6E5IkTKFMKi3WQN44N27erDRE5gfG5WPP+gaDiuX9eqJ6tpQPGPxdNWU4OLa7gNlN6yuhYqZ1ZVHeuFb1AZCl/fEVAd6OLDCW/Y8GM7Hu6IBvW/3FVaYQNYvvSa1NnXQIiJqIppnG+VoOmdVsQzXqjWbdK6MAU7+azlZsWhQfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I9lqmypYj0tUgoJEu4Ou/+9vpQc0ofC2Zq+pTzz7kzI=;
- b=h2HRSV/Ml4t2NdRlypKx0Oqxf29oiy1G62KNQS1pwlfL+K7DQRPZ2mj/QuDNbOnVBzmSW/aL9fDwqorJBN+MLWV05nQn36P9y2xN1mNIQ37CETj2fPK0tYIExqPvRJY0EV9vmk3p7OjAygDmtkx6BVt1V0O14ZzMrbkAsc+N83I8h9F2gsBrj0dVD/bwZbVxHpC0rfMdYMVY6yb9OpenO9r8cOSax2aNnvcBKOo6RqN8F+X3dH56cKW0ZZSio5EVR11ERBTTsz7Or5X6QPlwJL+hvuDp//EIZzq2OE0QKTSVyH988sb71LidTYwYwMTh+4OuBRtukrM2qpSWKSgPtw==
-Received: from SJ0PR03CA0202.namprd03.prod.outlook.com (2603:10b6:a03:2ef::27)
- by DM4PR12MB7526.namprd12.prod.outlook.com (2603:10b6:8:112::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.20; Fri, 9 May
- 2025 16:54:41 +0000
-Received: from MWH0EPF000A672F.namprd04.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::d) by SJ0PR03CA0202.outlook.office365.com
- (2603:10b6:a03:2ef::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.29 via Frontend Transport; Fri,
- 9 May 2025 16:54:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- MWH0EPF000A672F.mail.protection.outlook.com (10.167.249.21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Fri, 9 May 2025 16:54:41 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 9 May 2025
- 09:54:34 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 9 May 2025 09:54:33 -0700
-Received: from build-va-bionic-20241022.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14
- via Frontend Transport; Fri, 9 May 2025 09:54:29 -0700
-From: Vishwaroop A <va@nvidia.com>
-To: <krzk@kernel.org>, <broonie@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
-	<kyarlagadda@nvidia.com>, <smangipudi@nvidia.com>, <bgriffis@nvidia.com>,
-	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Vishwaroop A <va@nvidia.com>
-Subject: [PATCH V3 RESEND 2/2] spi: tegra210-quad: Add support for internal DMA
-Date: Fri, 9 May 2025 16:54:09 +0000
-Message-ID: <20250509165409.311912-2-va@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250509165409.311912-1-va@nvidia.com>
-References: <20250509165409.311912-1-va@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np91o4oi"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-326b9930730so12700821fa.0;
+        Fri, 09 May 2025 09:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746809854; x=1747414654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HG/qN/B1wwOujzXnr45jOXtdzYz6t+IOg1u2LQ5o1Xs=;
+        b=Np91o4oiUXIEBSIlVkzhgGN7TVH2L6yGhMKE+P0uv5gP0OMLmx3z3subOW663c/PmJ
+         WAYuc4r5g88Rf5eHqnNkZS9ddG7fnZjx0whNBpO+H2oJRU2brptQaJfAqN5ho0sMsy9n
+         +zA9VfELxl7d0Df+xzQJ2h1ZHkqI+ui+bATDAthbl8SrsTK7vmJ44VoY9JYARxGWucz+
+         enr+GZNuiXuPszqwAosf52TzIPFsJBWK/iGXgcqZNRQLnq9XDuLWNwA+8HMF8nx73UU2
+         /0Kxup4QecXG4HFSUet0Di931mmRfKAKutBaITbiZ02kYy6+BtpeEZkJYtwmaZsn0ajz
+         fEYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746809854; x=1747414654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HG/qN/B1wwOujzXnr45jOXtdzYz6t+IOg1u2LQ5o1Xs=;
+        b=Pm+9kg0ChOjEF6iKkr4Ao3Bh2XBpbWiwC+D3ALf1w1PYJ1Tnilk341WsW3ZLhNdMh/
+         2nsOp6cFwXrCN+YS3HOT7W7IfGFj9AweT5RsWdtXzaEfNHThRuTnukOaFt3PeLhlvo0e
+         c4OiaDUwl/zRaAWtwglr/xF7/RD6Kmi7e6Mc/+EYsuTfp83zkcc2aAQlNl7wvsWHGHBE
+         PJm9xlnkZWhW0LlP4Vo/zmyVesluMO3AJQB5/1HO4hFN/Yc0SEdOFMu1WfhfqTfVKQ5z
+         QXm0LOxm82/naJlEJYzq7nTRKxlQTzjNRHL3pjLaMsuiGKwFgzSLeIqlunNhTpgzLLh+
+         DfKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXSHIFg7Mmepl6yY9zUQxaI2FITEBpRax2/BXp10pbr+seU2Y4xNjHgGJ4+qzPZxqWOckewvoqQyGzB8I=@vger.kernel.org, AJvYcCWcoQ8/tLscqAUhWpcajSQ1CqfEFo909Og2Dgw41UqTk0lxXflljhABmdI+Jo8OJhBVxrJIdG6+Rh/he6k=@vger.kernel.org, AJvYcCXkL64f+Gq15dGD/IGm9QMm7pGSM/xkpFEcbz3m7h6GuTkS0R5m/izv0aVvPD7/ZuLplfXYj52sQPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5B3exjUsCsZGh1vMurSa+ikfpHdbh6l7t0iibhhKVuUhnGV26
+	Kqz/FGm1r08fzrmCPEjWK3jn98wBbSswuT1aFGiB0J3Qx0eBozMse8Q0s7rNJWwajs+Ci21y4fI
+	0GGXPtaDEXcxmUHGdaTxLC3a9XRw=
+X-Gm-Gg: ASbGncsg7ACsaYj0XE3kClrdId6pZX8jxLxJSu9B4ioHqSzXklrpKD0pf7FwYkLX3fX
+	SC188S1gfpR7O5w+rKyjyA4SgknZ4BXa+cvuQYOvUji0pt9+CVMJqq5zJMA3XO46DsVpRnuElkH
+	gbO+YXP56wuHxcwiRRnpgd23c=
+X-Google-Smtp-Source: AGHT+IFi0cF1V2iQpXTJCR3ehLfO/KkBUNbi40rI+b+xnbSC/u9nzRUrq6I2aH8N0QpOvZtq/8HaO2OBzNmgALN9d6c=
+X-Received: by 2002:a05:651c:146a:b0:30b:c22d:83b3 with SMTP id
+ 38308e7fff4ca-326c45d5a16mr15986021fa.15.1746809853513; Fri, 09 May 2025
+ 09:57:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A672F:EE_|DM4PR12MB7526:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15ec11e0-8208-45f9-5ea5-08dd8f1a3159
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6L6NH3SE4lc4Gf1St6mJJM1AU8FT06J33KZ/JVU5rKTzf1amfyJmZ5BDXDaC?=
- =?us-ascii?Q?u+lhYC9xZz+FlE7davKVYc98L7ACRWpXlKGfAEm6LbGtAILsdqBL7buREuq/?=
- =?us-ascii?Q?noYwRy10un+8rb2o1+QKOXp3iyLjDfJ7M2qxHi+rc0Rf2vBHOkhHGpZkWLGh?=
- =?us-ascii?Q?XXHaVBO3/BzGvxlbyyp5ZzuCHUVzGIByBTWIp7bE7MEBjw9ukGEojX/6EsM9?=
- =?us-ascii?Q?nVlb340QUPHRTnBCdxlAho6j1Pz+TBdGRaLng0j3qu79RnIs2Io7j+WEVXYx?=
- =?us-ascii?Q?hjHts9FjSrxk/5qW+/Ko+rvLnKBgFAbFpULooItNgnF382YA/xKDavBKuWrT?=
- =?us-ascii?Q?7SgtXyjP5BVdDBE9dZ/fEt97qvcx1ubIg36dSDUXY3VcVmet++BbctZWu/fM?=
- =?us-ascii?Q?0gCIG1zG4dKyGT8JbbfYMy0awMJTrstQN6J1RlMNctBbhSm7xxhg3SNH9eAu?=
- =?us-ascii?Q?FW6UaaX7dEtO6EqFeBOqHXOkIaRCCACC04vBJNdx33i7ZixqqEZTctu0KIkn?=
- =?us-ascii?Q?h3CssLinh9OOua/g6c+KTLzT7UsSnQLgBELGsfc24isXZZcoOvSAhellDwac?=
- =?us-ascii?Q?P/vwUXa+WixYsMlLOgw43Xjv7hheHaTl9k+aaYDS9VW2SyluzjzFRd0svKEB?=
- =?us-ascii?Q?gIVOZ2qin52mYpsmXe7VuJsOVRvWFhupxQQU+1lotAQoxr6Anwk+8cuwLfgy?=
- =?us-ascii?Q?m0gDgS51EpfqCna6eVn3nhEopnfIjZBaF0ObGjP/RCc0DF4+568mNaGHxv7N?=
- =?us-ascii?Q?idNyEzs3SkGZSOpyIiBpuTZTUK+zIohj95fYK9KAFbnG9ghC7YNcMXhXxSfP?=
- =?us-ascii?Q?aLL0+LA2KOZyMWh7/Hd3jzHvlXKyQY2kMDXOXPCEZvmzycX1BOpnoBksvG47?=
- =?us-ascii?Q?ZCVaapVwlDjuAaf1729NrLrzCnjfESQG+6bNCo2bHF4AHF237+0hS6je81bv?=
- =?us-ascii?Q?7e4BwF/nVpsODN1rItMgkY0bCtwHFHviZKa85lM9PC18vk9CChUh3uI0U7SD?=
- =?us-ascii?Q?ZzevUwhVsH0wQfLeH3vWKwwnCytyuqMZoAG+JZy2iMkbZuehUA878/PDC2Kl?=
- =?us-ascii?Q?2bCO50OgI+iA0jw6i76kQM7dHB1qJX2ybvhv42rKn5jPOHN73au4bcsHnYtA?=
- =?us-ascii?Q?NfS/M+NBPmWL+GHAUDjLM/TnMtT8Fw0Dbsn8omm1T4k8fYZKcgvlDKt+qMUe?=
- =?us-ascii?Q?ZsYQPSDcldlEnB9f6EYnzr++liZbeU8fuF4dfE3o6vCLJuDtikNraip5MoJ8?=
- =?us-ascii?Q?jaVZvqqbdP+aVJZbHj94HKtiZx2jzinvoaz3Wcp01d19GQYfXRTutd3jQ2q4?=
- =?us-ascii?Q?YgU9tFnxlzuy76bZDpnMsFtUCvL5zT+KZW6sK9RtvmneeL3t2jBtdsNfdkaI?=
- =?us-ascii?Q?BNUR44WWsBWZlfPWBM9ReGnc2TctCqO34fCBoxC/LJGbWVk7wTQS9CW1S0Ta?=
- =?us-ascii?Q?pNJGU2m2LWdf7afILz1DO38R+jJtZUKpjWRRoMENeJ6X6jysXp77k4JHt87p?=
- =?us-ascii?Q?GO4zcFofIzlcYJIeJ6i1Pm2RAPeTLa/a97fwx85zbHE1p24KHoJfOXWYUg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 16:54:41.5974
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15ec11e0-8208-45f9-5ea5-08dd8f1a3159
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A672F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7526
+References: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
+ <20250508-tegra124-cpufreq-v4-1-d142bcbd0234@gmail.com> <040b0d8b-e862-48dd-9b77-9266a5194f99@nvidia.com>
+In-Reply-To: <040b0d8b-e862-48dd-9b77-9266a5194f99@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Fri, 9 May 2025 11:57:20 -0500
+X-Gm-Features: AX0GCFuVMPqFC7B8B51EiIFyIqN0yLO5E4GUOE7AbDBM_ioXLvtK80spl4zANbI
+Message-ID: <CALHNRZ_AH-OkDak_RDoA3FB6EVO78r5G=5zosiJEXk4UGLH=fQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] cpufreq: tegra124: Remove use of disable_cpufreq
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for internal DMA in Tegra234 devices. Tegra234 has an
-internal DMA controller, while Tegra241 continues to use an external
-DMA controller (GPCDMA). This patch adds support for both internal
-and external DMA controllers.
+On Fri, May 9, 2025 at 6:04=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> wr=
+ote:
+>
+>
+>
+> On 09/05/2025 01:04, Aaron Kling via B4 Relay wrote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > Instead, unregister the cpufreq device for this fatal fail case.
+>
+> This is not a complete sentence. Seems to be a continuation of the
+> subject which is not clear to the reader (at least not to me). No
+> mention of why or what this is fixing, if anything?
 
-Signed-off-by: Vishwaroop A <va@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 225 +++++++++++++++++++-------------
- 1 file changed, 131 insertions(+), 94 deletions(-)
+I can clean up the subject and message in a new revision. More on the
+reasoning below.
 
-Changes since v2:
-- Fixed version number to match the actual version
-- Added proper changelog section
-- No functional changes from v2
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >   drivers/cpufreq/tegra124-cpufreq.c | 5 ++++-
+> >   1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra=
+124-cpufreq.c
+> > index 514146d98bca2d8aa59980a14dff3487cd8045f6..bc0691e8971f9454def37f4=
+89e4a3e244100b9f4 100644
+> > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > @@ -168,7 +168,10 @@ static int __maybe_unused tegra124_cpufreq_resume(=
+struct device *dev)
+> >   disable_dfll:
+> >       clk_disable_unprepare(priv->dfll_clk);
+> >   disable_cpufreq:
+> > -     disable_cpufreq();
+> > +     if (!IS_ERR(priv->cpufreq_dt_pdev)) {
+> > +             platform_device_unregister(priv->cpufreq_dt_pdev);
+> > +             priv->cpufreq_dt_pdev =3D ERR_PTR(-ENODEV);
+> > +     }
+>
+> So you are proposing to unregister the device in resume? That seems odd.
+> I see there is no remove for this driver, but I really don't see the
+> value in this.
 
-Changes since v1:
-- Added support for Tegra241 device which uses external DMA controller (GPCDMA)
-- Renamed variable 'err' to 'num_errors' for better clarity
-- Added DMA mapping functions for buffer management
-- Added support for internal DMA controller on Tegra234
-- Added new DMA registers QSPI_DMA_MEM_ADDRESS and QSPI_DMA_HI_ADDRESS
-- Modified DMA initialization to handle both internal and external DMA controllers
-- Updated DMA transfer logic to support both internal and external DMA paths
-- Added proper error handling for DMA transfers
-- Updated SoC data to reflect DMA controller type (internal vs external)
+This was suggested by Viresh in v1 [0] to replace the call to
+disable_cpufreq, which is not currently an exported function. I'm open
+to other suggestions.
 
-Initial Version:
-- Initial implementation of internal DMA support for Tegra234 QSPI
-- Added DMA channel initialization and configuration
-- Implemented DMA mapping functions for buffer management
-- Added support for both transmit and receive paths
-- Renamed variable 'err' to 'num_errors' for better clarity
-- Added support for Tegra241 device with external DMA controller
+Sincerely,
+Aaron
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index a93e19911ef1..3581757a269b 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -111,6 +111,9 @@
- #define QSPI_DMA_BLK				0x024
- #define QSPI_DMA_BLK_SET(x)			(((x) & 0xffff) << 0)
- 
-+#define QSPI_DMA_MEM_ADDRESS			0x028
-+#define QSPI_DMA_HI_ADDRESS			0x02c
-+
- #define QSPI_TX_FIFO				0x108
- #define QSPI_RX_FIFO				0x188
- 
-@@ -167,9 +170,9 @@ enum tegra_qspi_transfer_type {
- };
- 
- struct tegra_qspi_soc_data {
--	bool has_dma;
- 	bool cmb_xfer_capable;
- 	bool supports_tpm;
-+	bool has_ext_dma;
- 	unsigned int cs_count;
- };
- 
-@@ -605,13 +608,16 @@ static void tegra_qspi_dma_unmap_xfer(struct tegra_qspi *tqspi, struct spi_trans
- 
- 	len = DIV_ROUND_UP(tqspi->curr_dma_words * tqspi->bytes_per_word, 4) * 4;
- 
--	dma_unmap_single(tqspi->dev, t->tx_dma, len, DMA_TO_DEVICE);
--	dma_unmap_single(tqspi->dev, t->rx_dma, len, DMA_FROM_DEVICE);
-+	if (t->tx_buf)
-+		dma_unmap_single(tqspi->dev, t->tx_dma, len, DMA_TO_DEVICE);
-+	if (t->rx_buf)
-+		dma_unmap_single(tqspi->dev, t->rx_dma, len, DMA_FROM_DEVICE);
- }
- 
- static int tegra_qspi_start_dma_based_transfer(struct tegra_qspi *tqspi, struct spi_transfer *t)
- {
- 	struct dma_slave_config dma_sconfig = { 0 };
-+	dma_addr_t rx_dma_phys, tx_dma_phys;
- 	unsigned int len;
- 	u8 dma_burst;
- 	int ret = 0;
-@@ -634,60 +640,86 @@ static int tegra_qspi_start_dma_based_transfer(struct tegra_qspi *tqspi, struct
- 		len = tqspi->curr_dma_words * 4;
- 
- 	/* set attention level based on length of transfer */
--	val = 0;
--	if (len & 0xf) {
--		val |= QSPI_TX_TRIG_1 | QSPI_RX_TRIG_1;
--		dma_burst = 1;
--	} else if (((len) >> 4) & 0x1) {
--		val |= QSPI_TX_TRIG_4 | QSPI_RX_TRIG_4;
--		dma_burst = 4;
--	} else {
--		val |= QSPI_TX_TRIG_8 | QSPI_RX_TRIG_8;
--		dma_burst = 8;
-+	if (tqspi->soc_data->has_ext_dma) {
-+		val = 0;
-+		if (len & 0xf) {
-+			val |= QSPI_TX_TRIG_1 | QSPI_RX_TRIG_1;
-+			dma_burst = 1;
-+		} else if (((len) >> 4) & 0x1) {
-+			val |= QSPI_TX_TRIG_4 | QSPI_RX_TRIG_4;
-+			dma_burst = 4;
-+		} else {
-+			val |= QSPI_TX_TRIG_8 | QSPI_RX_TRIG_8;
-+			dma_burst = 8;
-+		}
-+
-+		tegra_qspi_writel(tqspi, val, QSPI_DMA_CTL);
- 	}
- 
--	tegra_qspi_writel(tqspi, val, QSPI_DMA_CTL);
- 	tqspi->dma_control_reg = val;
- 
- 	dma_sconfig.device_fc = true;
-+
- 	if (tqspi->cur_direction & DATA_DIR_TX) {
--		dma_sconfig.dst_addr = tqspi->phys + QSPI_TX_FIFO;
--		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
--		dma_sconfig.dst_maxburst = dma_burst;
--		ret = dmaengine_slave_config(tqspi->tx_dma_chan, &dma_sconfig);
--		if (ret < 0) {
--			dev_err(tqspi->dev, "failed DMA slave config: %d\n", ret);
--			return ret;
--		}
-+		if (tqspi->tx_dma_chan) {
-+			dma_sconfig.dst_addr = tqspi->phys + QSPI_TX_FIFO;
-+			dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+			dma_sconfig.dst_maxburst = dma_burst;
-+			ret = dmaengine_slave_config(tqspi->tx_dma_chan, &dma_sconfig);
-+			if (ret < 0) {
-+				dev_err(tqspi->dev, "failed DMA slave config: %d\n", ret);
-+				return ret;
-+			}
- 
--		tegra_qspi_copy_client_txbuf_to_qspi_txbuf(tqspi, t);
--		ret = tegra_qspi_start_tx_dma(tqspi, t, len);
--		if (ret < 0) {
--			dev_err(tqspi->dev, "failed to starting TX DMA: %d\n", ret);
--			return ret;
-+			tegra_qspi_copy_client_txbuf_to_qspi_txbuf(tqspi, t);
-+			ret = tegra_qspi_start_tx_dma(tqspi, t, len);
-+			if (ret < 0) {
-+				dev_err(tqspi->dev, "failed to starting TX DMA: %d\n", ret);
-+				return ret;
-+			}
-+		} else {
-+			if (tqspi->is_packed)
-+				tx_dma_phys = t->tx_dma;
-+			else
-+				tx_dma_phys = tqspi->tx_dma_phys;
-+			tegra_qspi_copy_client_txbuf_to_qspi_txbuf(tqspi, t);
-+			tegra_qspi_writel(tqspi, lower_32_bits(tx_dma_phys),
-+					  QSPI_DMA_MEM_ADDRESS);
-+			tegra_qspi_writel(tqspi, (upper_32_bits(tx_dma_phys) & 0xff),
-+					  QSPI_DMA_HI_ADDRESS);
- 		}
- 	}
- 
- 	if (tqspi->cur_direction & DATA_DIR_RX) {
--		dma_sconfig.src_addr = tqspi->phys + QSPI_RX_FIFO;
--		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
--		dma_sconfig.src_maxburst = dma_burst;
--		ret = dmaengine_slave_config(tqspi->rx_dma_chan, &dma_sconfig);
--		if (ret < 0) {
--			dev_err(tqspi->dev, "failed DMA slave config: %d\n", ret);
--			return ret;
--		}
--
--		dma_sync_single_for_device(tqspi->dev, tqspi->rx_dma_phys,
--					   tqspi->dma_buf_size,
--					   DMA_FROM_DEVICE);
-+		if (tqspi->rx_dma_chan) {
-+			dma_sconfig.src_addr = tqspi->phys + QSPI_RX_FIFO;
-+			dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+			dma_sconfig.src_maxburst = dma_burst;
-+			ret = dmaengine_slave_config(tqspi->rx_dma_chan, &dma_sconfig);
-+			if (ret < 0) {
-+				dev_err(tqspi->dev, "failed DMA slave config: %d\n", ret);
-+				return ret;
-+			}
- 
--		ret = tegra_qspi_start_rx_dma(tqspi, t, len);
--		if (ret < 0) {
--			dev_err(tqspi->dev, "failed to start RX DMA: %d\n", ret);
--			if (tqspi->cur_direction & DATA_DIR_TX)
--				dmaengine_terminate_all(tqspi->tx_dma_chan);
--			return ret;
-+			dma_sync_single_for_device(tqspi->dev, tqspi->rx_dma_phys,
-+						   tqspi->dma_buf_size, DMA_FROM_DEVICE);
-+			ret = tegra_qspi_start_rx_dma(tqspi, t, len);
-+			if (ret < 0) {
-+				dev_err(tqspi->dev, "failed to start RX DMA: %d\n", ret);
-+				if (tqspi->cur_direction & DATA_DIR_TX)
-+					dmaengine_terminate_all(tqspi->tx_dma_chan);
-+				return ret;
-+			}
-+		} else {
-+			if (tqspi->is_packed)
-+				rx_dma_phys = t->rx_dma;
-+			else
-+				rx_dma_phys = tqspi->rx_dma_phys;
-+
-+			tegra_qspi_writel(tqspi, lower_32_bits(rx_dma_phys),
-+					  QSPI_DMA_MEM_ADDRESS);
-+			tegra_qspi_writel(tqspi, (upper_32_bits(rx_dma_phys) & 0xff),
-+					  QSPI_DMA_HI_ADDRESS);
- 		}
- 	}
- 
-@@ -726,9 +758,6 @@ static int tegra_qspi_start_cpu_based_transfer(struct tegra_qspi *qspi, struct s
- 
- static void tegra_qspi_deinit_dma(struct tegra_qspi *tqspi)
- {
--	if (!tqspi->soc_data->has_dma)
--		return;
--
- 	if (tqspi->tx_dma_buf) {
- 		dma_free_coherent(tqspi->dev, tqspi->dma_buf_size,
- 				  tqspi->tx_dma_buf, tqspi->tx_dma_phys);
-@@ -759,16 +788,29 @@ static int tegra_qspi_init_dma(struct tegra_qspi *tqspi)
- 	u32 *dma_buf;
- 	int err;
- 
--	if (!tqspi->soc_data->has_dma)
--		return 0;
-+	if (tqspi->soc_data->has_ext_dma) {
-+		dma_chan = dma_request_chan(tqspi->dev, "rx");
-+		if (IS_ERR(dma_chan)) {
-+			err = PTR_ERR(dma_chan);
-+			goto err_out;
-+		}
- 
--	dma_chan = dma_request_chan(tqspi->dev, "rx");
--	if (IS_ERR(dma_chan)) {
--		err = PTR_ERR(dma_chan);
--		goto err_out;
--	}
-+		tqspi->rx_dma_chan = dma_chan;
- 
--	tqspi->rx_dma_chan = dma_chan;
-+		dma_chan = dma_request_chan(tqspi->dev, "tx");
-+		if (IS_ERR(dma_chan)) {
-+			err = PTR_ERR(dma_chan);
-+			goto err_out;
-+		}
-+
-+		tqspi->tx_dma_chan = dma_chan;
-+	} else {
-+		if (!device_iommu_mapped(tqspi->dev)) {
-+			dev_warn(tqspi->dev,
-+				 "IOMMU not enabled in device-tree, falling back to PIO mode\n");
-+			return 0;
-+		}
-+	}
- 
- 	dma_buf = dma_alloc_coherent(tqspi->dev, tqspi->dma_buf_size, &dma_phys, GFP_KERNEL);
- 	if (!dma_buf) {
-@@ -779,14 +821,6 @@ static int tegra_qspi_init_dma(struct tegra_qspi *tqspi)
- 	tqspi->rx_dma_buf = dma_buf;
- 	tqspi->rx_dma_phys = dma_phys;
- 
--	dma_chan = dma_request_chan(tqspi->dev, "tx");
--	if (IS_ERR(dma_chan)) {
--		err = PTR_ERR(dma_chan);
--		goto err_out;
--	}
--
--	tqspi->tx_dma_chan = dma_chan;
--
- 	dma_buf = dma_alloc_coherent(tqspi->dev, tqspi->dma_buf_size, &dma_phys, GFP_KERNEL);
- 	if (!dma_buf) {
- 		err = -ENOMEM;
-@@ -1128,15 +1162,14 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 			if (WARN_ON_ONCE(ret == 0)) {
- 				dev_err_ratelimited(tqspi->dev,
- 						    "QSPI Transfer failed with timeout\n");
--				if (tqspi->is_curr_dma_xfer &&
--				    (tqspi->cur_direction & DATA_DIR_TX))
--					dmaengine_terminate_all
--						(tqspi->tx_dma_chan);
--
--				if (tqspi->is_curr_dma_xfer &&
--				    (tqspi->cur_direction & DATA_DIR_RX))
--					dmaengine_terminate_all
--						(tqspi->rx_dma_chan);
-+				if (tqspi->is_curr_dma_xfer) {
-+					if ((tqspi->cur_direction & DATA_DIR_TX) &&
-+					    tqspi->tx_dma_chan)
-+						dmaengine_terminate_all(tqspi->tx_dma_chan);
-+					if ((tqspi->cur_direction & DATA_DIR_RX) &&
-+					    tqspi->rx_dma_chan)
-+						dmaengine_terminate_all(tqspi->rx_dma_chan);
-+				}
- 
- 				/* Abort transfer by resetting pio/dma bit */
- 				if (!tqspi->is_curr_dma_xfer) {
-@@ -1251,10 +1284,12 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
- 						  QSPI_DMA_TIMEOUT);
- 		if (WARN_ON(ret == 0)) {
- 			dev_err(tqspi->dev, "transfer timeout\n");
--			if (tqspi->is_curr_dma_xfer && (tqspi->cur_direction & DATA_DIR_TX))
--				dmaengine_terminate_all(tqspi->tx_dma_chan);
--			if (tqspi->is_curr_dma_xfer && (tqspi->cur_direction & DATA_DIR_RX))
--				dmaengine_terminate_all(tqspi->rx_dma_chan);
-+			if (tqspi->is_curr_dma_xfer) {
-+				if ((tqspi->cur_direction & DATA_DIR_TX) && tqspi->tx_dma_chan)
-+					dmaengine_terminate_all(tqspi->tx_dma_chan);
-+				if ((tqspi->cur_direction & DATA_DIR_RX) && tqspi->rx_dma_chan)
-+					dmaengine_terminate_all(tqspi->rx_dma_chan);
-+			}
- 			tegra_qspi_handle_error(tqspi);
- 			ret = -EIO;
- 			goto complete_xfer;
-@@ -1323,7 +1358,7 @@ static bool tegra_qspi_validate_cmb_seq(struct tegra_qspi *tqspi,
- 			return false;
- 		xfer = list_next_entry(xfer, transfer_list);
- 	}
--	if (!tqspi->soc_data->has_dma && xfer->len > (QSPI_FIFO_DEPTH << 2))
-+	if (!tqspi->soc_data->has_ext_dma && xfer->len > (QSPI_FIFO_DEPTH << 2))
- 		return false;
- 
- 	return true;
-@@ -1384,41 +1419,43 @@ static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi)
- 	unsigned int total_fifo_words;
- 	unsigned long flags;
- 	long wait_status;
--	int err = 0;
-+	int num_errors = 0;
- 
- 	if (tqspi->cur_direction & DATA_DIR_TX) {
- 		if (tqspi->tx_status) {
--			dmaengine_terminate_all(tqspi->tx_dma_chan);
--			err += 1;
--		} else {
-+			if (tqspi->tx_dma_chan)
-+				dmaengine_terminate_all(tqspi->tx_dma_chan);
-+			num_errors++;
-+		} else if (tqspi->tx_dma_chan) {
- 			wait_status = wait_for_completion_interruptible_timeout(
- 				&tqspi->tx_dma_complete, QSPI_DMA_TIMEOUT);
- 			if (wait_status <= 0) {
- 				dmaengine_terminate_all(tqspi->tx_dma_chan);
- 				dev_err(tqspi->dev, "failed TX DMA transfer\n");
--				err += 1;
-+				num_errors++;
- 			}
- 		}
- 	}
- 
- 	if (tqspi->cur_direction & DATA_DIR_RX) {
- 		if (tqspi->rx_status) {
--			dmaengine_terminate_all(tqspi->rx_dma_chan);
--			err += 2;
--		} else {
-+			if (tqspi->rx_dma_chan)
-+				dmaengine_terminate_all(tqspi->rx_dma_chan);
-+			num_errors++;
-+		} else if (tqspi->rx_dma_chan) {
- 			wait_status = wait_for_completion_interruptible_timeout(
- 				&tqspi->rx_dma_complete, QSPI_DMA_TIMEOUT);
- 			if (wait_status <= 0) {
- 				dmaengine_terminate_all(tqspi->rx_dma_chan);
- 				dev_err(tqspi->dev, "failed RX DMA transfer\n");
--				err += 2;
-+				num_errors++;
- 			}
- 		}
- 	}
- 
- 	spin_lock_irqsave(&tqspi->lock, flags);
- 
--	if (err) {
-+	if (num_errors) {
- 		tegra_qspi_dma_unmap_xfer(tqspi, t);
- 		tegra_qspi_handle_error(tqspi);
- 		complete(&tqspi->xfer_completion);
-@@ -1444,9 +1481,9 @@ static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi)
- 	/* continue transfer in current message */
- 	total_fifo_words = tegra_qspi_calculate_curr_xfer_param(tqspi, t);
- 	if (total_fifo_words > QSPI_FIFO_DEPTH)
--		err = tegra_qspi_start_dma_based_transfer(tqspi, t);
-+		num_errors = tegra_qspi_start_dma_based_transfer(tqspi, t);
- 	else
--		err = tegra_qspi_start_cpu_based_transfer(tqspi, t);
-+		num_errors = tegra_qspi_start_cpu_based_transfer(tqspi, t);
- 
- exit:
- 	spin_unlock_irqrestore(&tqspi->lock, flags);
-@@ -1474,28 +1511,28 @@ static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
- }
- 
- static struct tegra_qspi_soc_data tegra210_qspi_soc_data = {
--	.has_dma = true,
-+	.has_ext_dma = true,
- 	.cmb_xfer_capable = false,
- 	.supports_tpm = false,
- 	.cs_count = 1,
- };
- 
- static struct tegra_qspi_soc_data tegra186_qspi_soc_data = {
--	.has_dma = true,
-+	.has_ext_dma = true,
- 	.cmb_xfer_capable = true,
- 	.supports_tpm = false,
- 	.cs_count = 1,
- };
- 
- static struct tegra_qspi_soc_data tegra234_qspi_soc_data = {
--	.has_dma = false,
-+	.has_ext_dma = false,
- 	.cmb_xfer_capable = true,
- 	.supports_tpm = true,
- 	.cs_count = 1,
- };
- 
- static struct tegra_qspi_soc_data tegra241_qspi_soc_data = {
--	.has_dma = false,
-+	.has_ext_dma = true,
- 	.cmb_xfer_capable = true,
- 	.supports_tpm = true,
- 	.cs_count = 4,
--- 
-2.17.1
-
+[0] https://lore.kernel.org/all/20250421054452.fdlrrhtsimyucbup@vireshk-i7/
