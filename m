@@ -1,287 +1,1853 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2057.outbound.protection.outlook.com [40.107.102.57])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17232EAC7;
-	Fri,  9 May 2025 13:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746797884; cv=fail; b=tbMhfZUGy2qw89WAPyyzzHgswgIu4mWh+VG9QAqI+bIC8o1jZ3lnyoZct2XKZOdoKqqmPQkVBiYOPaCyOsZapgN5Z0O3dfJNblG8J3LVWJOAfkSoAXisGa4BLPvtehvQha0vmHVn4sn1cavbsb3yuql3L2H9ssaXcfOl+QdLBgA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746797884; c=relaxed/simple;
-	bh=8qTPdlZWL31+xM2wd29iHnFmlFZIuUm9YJ6/eg2MYw4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nqgIYMlV21HgOllLpNaolWkPQHlWYcpatWtYL/NvEwk/2cN5vIun/GEj5OlFa/qSCKch+8BfWu73gQrd8VPa9OXNUUGuVJ8aV73S8FKXD4PFVT+RGYb6qW2vp0RMcYrW2hb+TRvSs4KJLJdQ47fU1F3Poywxn5ZlHdVYiek+CM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e2Is/zMt; arc=fail smtp.client-ip=40.107.102.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB6D139B;
+	Fri,  9 May 2025 13:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746798152; cv=none; b=iQtSBtxgKy1izxOw3dHsbQj3kFskG5qowp/yEnKzMLND3N+KfZkOTu2I1pe+CMo12WNktdBAuWFm+N2JV8AAthvfhxctCQ0cJKVmq0rfC2KzG5eyep27gocDwGDz258QcYMV0i2IOrGUpTvERtgtPpvMOE8tf8AYpDNmVt0MyI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746798152; c=relaxed/simple;
+	bh=ecXMxOTIukrmutSQyw3ct1CfM9cjH7YmUUdvT+6CizI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVdZFBbhwm3ZPuJN3rK5CAyMjK71ce9pK4nd8Yia+yDhTzmIdhByQb0BuJzvJCt6uNqnJLeUEjHcP8oGHLLPPaUiatQWYZ0klwC4IZnXrePEPYMvPQamZNXudP2kPIvXH8OXFa/Tgh/OQG8oxJj/msh+5maL1fVWX6vwx9v+XKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TbUOxOPb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e2Is/zMt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rkyxZUQm41uOdgs2Rt6/TrQSwDQ5c1Wm6d1Nemg4n8LDyiv0Ymqihrkt0ltmdZMw6jP4OavLcVim7G7Rm9ti4axMctizAr32EpeLnyXTkSgsPfx+MVdwxNasa7+BVO3R463mYZU/gV3mdiPNNPRmTs7QyBItMT8SiZzxvyskt+5WpO4WhuthhLq28Jb0b4V3cTKhf8MAYxR8xeJjXyzyVo3F0g/vD7aVVEH9zaAwgA/VpXqG5plWQ55XG0nNLXOjErAdVNmGCoHCqFt0bRMjI5NGAia6w5fbVbdY+tM9az7VmLowVc6m6SaDO8znAShSOs9MISuLJOulNzCWBZEu0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JesImqvwE/v9i+fhEI0+JVHpdB3VIfuTw+1rE2SWBWU=;
- b=jIAG91xVCQmjGinuR8RUhLyGYqPv3rtzDIMEDWCq6n3Wq1T4obWk5sxP4tNHfE0OlVKHBuU8QJVEadZQgB6vbnO/NudCAALEOT1CtoicJil6Wfq4bGIwVBiEI50Uk/C3BUdFTjFErpi0nYZ7TxOCCew8UOiG4l9qqKTpA0dQrR92MrapcSE9LOI+zqAcu3SpVojmOSxyA2GTUCxIjRoEbkH9cM1y6Kzd+aexOYCp1pwCe1grPSrtJ1CV1Uhv4hjn74MKF2073f3+6dwa8hrodX4Ut78YCOnsELJ20+d4mnlrPodYYrAw5oI380LY1YO0B5b2ddtm6XCt5tkAawUIwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JesImqvwE/v9i+fhEI0+JVHpdB3VIfuTw+1rE2SWBWU=;
- b=e2Is/zMtLopvqhKj4gKEHCyV8R6yADhlrMebtxWQOQt1Nrj5KNdjnre7XEr0KtajBlWuLL13tLmSA1mCGTNURizWu+pkNIdIaVajqgXqWER0vNSXGc0sIxd/LPcdQpZJaYp/ty9n0n6Gkuie6EU8NMTunw2TZBkpoTfqoOfiBBUaebakKn0TWuyEg1UJHujrvRZeNyieCKoq4T6JkHKxX/gz/CD4kc98GwuDLNLQ4q43iPaOFzDJ7HibBzxbJZE2XiTFDEiLh9yf0Flt5a0IZvwdeQqhi2QMKsv26RYMk/a1f1JVHLlQbvWf4FijZeKJjZ2LgGBA5CSlz1+YUn3Ujg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by DS7PR12MB9044.namprd12.prod.outlook.com (2603:10b6:8:e3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.23; Fri, 9 May
- 2025 13:38:00 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8699.022; Fri, 9 May 2025
- 13:38:00 +0000
-Message-ID: <cd801698-d7cf-4e9e-aa01-5525f8687ab0@nvidia.com>
-Date: Fri, 9 May 2025 14:37:54 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] cpufreq: tegra124: Allow building as a module
-To: webgeek1234@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
- <20250508-tegra124-cpufreq-v4-2-d142bcbd0234@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250508-tegra124-cpufreq-v4-2-d142bcbd0234@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0378.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18e::23) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TbUOxOPb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9944BC4CEE4;
+	Fri,  9 May 2025 13:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746798152;
+	bh=ecXMxOTIukrmutSQyw3ct1CfM9cjH7YmUUdvT+6CizI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TbUOxOPblAZ7GRsfJPF4oENb3ICICVQ4p5FAmZjJaokH+qp/o2JMuFmApv14/R2Cw
+	 /jkQuyqhL+NlJi6znDErLKy/EWLMIE6DUtDk6ZPQbg8ZOwKc+TEEXjrNxJfFkNh+27
+	 ICsvrO1vf3aPWinAR3dyBIOyXdXwAaL/XTEeih5cHhe6wg/g0TCwZX6QffqXB8zxnf
+	 0EAGfzJD4BTCHKcVpaYCloP+sphY6UCJGEUGu1sucKWrrbm85UQdpksP1gwAZOZyg+
+	 qtEksLUWANknP7A8gf8LbWVQK82KQ7GhWv8ABIEo1J/DycTLWmFUuN+Mm7wJgmIY/r
+	 j775kKo3/50DQ==
+Date: Fri, 9 May 2025 08:42:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: memory-controllers: Describe
+ Tegra210 EMC Tables
+Message-ID: <20250509134230.GA3188545-robh@kernel.org>
+References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
+ <20250508-tegra210-emc-dt-v2-1-d33dc20a1123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS7PR12MB9044:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e24ce1a-c4ab-4c78-4b32-08dd8efeb6e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|10070799003|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZzBwS0ZoMUlOQ3pTaFpsWUJqOTNYeUw2RHI4ZTVTdG9mOTJNd1VlUng1ZGti?=
- =?utf-8?B?VHZCcGlTWVRJa05Tcmo3cnF5YUxrZGYzS2EySGFHQWh5UVd3eUFZR3YyUjJG?=
- =?utf-8?B?TTBFY2tiLzQ2N0NiZjVCUlRMbUViOUNDaFFnTnRKRXlMdUpZRjZGTXRKbnJm?=
- =?utf-8?B?MStaeVI1bERsUXZmVG95YldPRGNtR2RhUFFYeWJvK29aVmdoTnhXbXNTdXFU?=
- =?utf-8?B?Wkd0WUZhTlNmRGFxUkxpenRjajVnK1RjUWxieFF2NktvZ3RCQ0tXVHJsYm14?=
- =?utf-8?B?bGxRelpCbHc4NXo0bHRLZG5iMGYvWklvczF4aFhWWHUraTQ2aytNWmZuT2Ny?=
- =?utf-8?B?d2gyMjJIUnZLYmxMWm03bFNOUFoxbncwWmYzUzMxWmwzaWVJVEFtNnFNYjNQ?=
- =?utf-8?B?RzlpK2c5VTlrTDlBYzhMcjJQV3pHZFNFdy80amhPcmZNcEZwS2ViNElMcW5R?=
- =?utf-8?B?QzN6OTNZNU40VlZzczUvTy9xQysxR2pwVG1SWnUvTWJxbUxzSFk3MU45KzhP?=
- =?utf-8?B?YXpJMmtXMlArSzJBYkRiTlR2ZkpSQ3QyV256UDZ5NVFmT1JTdkE1bU9SVWtn?=
- =?utf-8?B?YlZBWFRPNHBEN1B2czBPR3V0M3dpNFVhZ0RVWlBkTndXSVdZM2pOMERPM3VN?=
- =?utf-8?B?UnRwRFFkZWE1bTB5VE5iV1kvVHNWdlRQVlRGQlpoMlEwUEpQUFcvVU1TOFdC?=
- =?utf-8?B?bjlOamxZOVYvcjZLZWd3UlRNaFJENGtYVzFmZnZBcHBKb09ORWJFK2RxdjhI?=
- =?utf-8?B?MnhoSGl6YzZQWEFBOTRneFQ3djQ0OGNtY2NsYW9nN214TnRTT0JBbkFVeFZZ?=
- =?utf-8?B?NW5IdmFEdnpBTWgzMEd2T3czS3E2Q2l1N1dPUU5FNXArS21DYThON3BnZlFP?=
- =?utf-8?B?N3M3RnFnTnVqdWVqUUtRcWhzS2ZJMjZhYit3MVRiaVVLVDNTTkxYNmxDcE5n?=
- =?utf-8?B?RkROcE41U0pER3JoNXAxUmpNbVZnVkZWWmh0TTVLS1plaEs2T1FFc1NyU002?=
- =?utf-8?B?cHZ1aUUvQzRPM1NmYm0rbVNSTjRGdUpOd1BhT0YzYmo1eG85ZzJ2RTRwaGRz?=
- =?utf-8?B?Y0ovZ2M2c1daU1c1TVNlTGhIVFcyRDlOZFVad3cvQ2pUc2svT2ZBaW9VRG92?=
- =?utf-8?B?VXFEREJld1l3ejJ4Z0tFMHQ0Q09tc2xoRzN6YjNCRTA0bXlpSlUxbmh3OGFu?=
- =?utf-8?B?ZVY2KytZeGdtVjN3RmppSlkvWXZYanlxT0pIVTQ3Y1J6bmpDMXk0aTJCdXIv?=
- =?utf-8?B?b01tRW5lNmtFdFhlZ2F5dFpkTE0yNlUzN2d6akFnRmg4b0FhYkx5eVZhWmVq?=
- =?utf-8?B?a3JmN1RkWm9EVlNYdXplZzBsMW1jQXRsV2IyblgwNmVuZHVqU2RWRWVNSGdM?=
- =?utf-8?B?a01LaFdGSmZGWjNsOVdFUmhPNGRNeUlSSjkyR3IzYkZGVkJlK1NacllZWGY3?=
- =?utf-8?B?SjNrdHFzZ0FJTkZEcjNBbTAwR0hVRXp1citJZTZhS0VFOCt6L09pcCtadjFJ?=
- =?utf-8?B?UE85TjY2YnJDZmZVdjJ4UENvRUM2SytNMCtPSXFRTkFYeG9BdEZqY3N5R0M1?=
- =?utf-8?B?enByZERQVTRpODdaUWkyQ2xoeWF0YXp6SXlhTTRSR29OeFJ4djFSa2xiWG1T?=
- =?utf-8?B?TElYVTZHNVVYY1JUa3R1azF4dkVraGVKMUoxcVR4cnRaV3IxYmkraTZLc1Zh?=
- =?utf-8?B?TXYxVWlGc09ESFlTT1J1YmxOdCtSZ2daWmQwdzh2NlRDVFhLZFdFL2dCdTZx?=
- =?utf-8?B?Y3lCYTNhT2lxa0p0U2RnbDY2NHJBQitJWGo2ZmNDdFMrRkJZK3ZhTXB1a2Js?=
- =?utf-8?B?R29TN1huWDgvZDI2TURaaGxMTG5iaGxtbktLL3JSMll2Yjc3b3U3UFZ5R3dy?=
- =?utf-8?B?T01NZFl3ZlRraXllb0tLQXZIMFlxd1ZPbllJT0xXcDRubUtGcjNyZkpGbno2?=
- =?utf-8?Q?Ep+Gvn++wXA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M2NHS2ptY2laWCtDdTFtVW0vRGFGS1M3d2U0M2twWTZvbkZYcjlYdzd1SGx2?=
- =?utf-8?B?cUtuT0FLVG5NR2ZHSXhvZ1BkWjA2NTdQdEFCY3lXK1NjaFRyNXE0dUF1c0dt?=
- =?utf-8?B?SEpjYmIvZnV5K2wvYUNpRnNwYzg3Q2ErakpyREJ3SWtESHRCTkRacHZWMjRP?=
- =?utf-8?B?YTlDSE1EUU1JTUNZSWpVTE4wQ0tEQXZQaHA4T2VnV0JpZnBpSXhaS3IxMkpX?=
- =?utf-8?B?U2dpRksxeUhjUno4Z3RZYnppWXVzLzBFdFZpU2J3OUZaQzZSdWVGd3c1Zk5S?=
- =?utf-8?B?aUhQd0RWRm1BTDRwWE1XV1FVV3k5NTdMSEtVVCtIWXlIWGt5elhWeE9hZlJW?=
- =?utf-8?B?c2Uva0pVbHlWbTVFNE5wYXJ2RjF1ZnhQQ1BaVTVyN1JOWWdQUG5xMERMRDBw?=
- =?utf-8?B?azg1Um9Zb2hYWlRkWmpkaytrVzJWb256VE45clgyOHVLZVFKb0dDZDRReVpH?=
- =?utf-8?B?NC9URDdBOTFINTJ2L3Q0VTcwczhLQytSQm5zSGVuT3Nucklhdk9jSmZnUXla?=
- =?utf-8?B?TmRyYzMyd3MwWlZKa0FQQWRxbEdhMFc3VmFRWEtDSmRQL3V4SEFFUU9YdmJJ?=
- =?utf-8?B?WWdITktPVDdVdnR1K1ExU0JIcnU3WS9EM3AxSmpEbWhaa0JzOEJkdG5wa3pZ?=
- =?utf-8?B?amhSWGM0WTlSVlpEOGpMRXRTYWFGbTJnSTZWWnhnY0xWUktIRHZoVXJ6ZElY?=
- =?utf-8?B?MzltWmpnTkx5dEJGQWdSN1VZZzZwSitOS3RpZlBMUWhreHlTT2ZHMHM5ZDhx?=
- =?utf-8?B?U1Fld0dkdGNOSGFtcC9Lbm4zeCtjTCsxMmducG1XSUtjdTdaOERvV2N5S1hw?=
- =?utf-8?B?TXZSMVZYWG84OUJ6R2JpZVovb3F4aWlDN0FHSnEwck1US1M3eWc0TXJKdTNY?=
- =?utf-8?B?MVFEdXNkWWNBbE1aRlVDZUtybEVZRGZyR2pKM1ZBdFVkemtnNFc3OUMxRm9j?=
- =?utf-8?B?S0xURlpJb1h6Y24zQnVGUnVTa3JnYmRqL3I1amQydVkxZGszOStaNWJ5MlBj?=
- =?utf-8?B?ek5IM21RcmtwcUdKMm0wa2hqVkppL3BKNi9BOFNaZDM5cEp4NDRWcHJ3S3Q5?=
- =?utf-8?B?QjV2dGZjZFE3U3NqdGlqMmEvM2FuaDhGcFdQcWFWWVFYMWh5eXB1V2JzUzJF?=
- =?utf-8?B?VWN4elVIZ292QjI0TXBVam5Da1IvR0xSaGpmbGEvbG1SQ1A0YVpRUHMvb2FW?=
- =?utf-8?B?dEkzYm13akJJNlgrcUR0V0p2UkpMRG11ODFYcFpBcTljZGlJT2RScTliVnJi?=
- =?utf-8?B?YzJYMlJ1VkdNT3JiWG40UVZMMVZYSk5kWVQrelQ5cHovQWtUNUJHejErNDZu?=
- =?utf-8?B?UXJVVTR5L0MxSzBuSzVtdFJ6cEcza1ZHQ2YvcGU4UGJYNXV3bk1NTkJBRHE1?=
- =?utf-8?B?MFVGb3BlQlVVK2FiYUpRakxvNCtIVlVRV3pVem50enRLUkJTZCtmMVJPR2Nq?=
- =?utf-8?B?SjNnbUJ6RHZKL3B5dEhRVnBMNk1mVmwrUzRNK2NoODZkSkJxSjRhYkcxc0FO?=
- =?utf-8?B?dUxlVkxKOGVWTHg0V0VTWUcwUzl5QW8rT0FvOWFhV3VVR0c2Sjkrb2dGMURr?=
- =?utf-8?B?aUFJTGZRVUliQTNUaGs5SEhRd3BLa0tiQnd0ZU5xcUxVUklVZmI1ZE1JZTBP?=
- =?utf-8?B?cUFiT00vUmx0SkxPWTJrZXhjRUQ4a2p3eEMvOU4wWUdPMXk1MWRxYWdyL0tU?=
- =?utf-8?B?NFN6Skc5VUpPRm9rTXZJTUp3L3V2WVhLakJhNUNtR0pHQTFKVDJzditsVkln?=
- =?utf-8?B?UFBXeEs4ZWovQm9DKysvdmc4akpqdFAzN1ZDR24wKzFhZk5QZFlXM1k5aEww?=
- =?utf-8?B?L1NPZnRYbzZaZGRpaTk5UStXVDZVaGcybEJpK0hqdEhuMFRpYTVyOGNuYjlV?=
- =?utf-8?B?TW94dVRIZUZEK2NyNWE5VFRCbVViOUNWNnVLRjZ0UWI5d3Ztd092c3RYMW01?=
- =?utf-8?B?UGhudnpsbjFrS1c3RlY0bHRmblplMWRYZWtoUzJVVFZHVDZ5MXI5clJlTFg2?=
- =?utf-8?B?WFFieTdvWUc1WFJyckx4Y0NEY3ZwTzZXVFZPQ0x5T1Z3WUx1eGtkQ2VYek1W?=
- =?utf-8?B?aHVJdXpXR1N0WUQ1enJqWE5XV1ZNN2xxUHNTU1RYZStnL2loazVxZHN0S3RI?=
- =?utf-8?B?VE9nenE2eWpUakdNdTRDVGRYOWFydFk4ZG5hWVBtMS9BZzJYZUowMDVGNGJZ?=
- =?utf-8?Q?Gls4nCtPlgaCO2UjE+vy9uqq7Q51Su+ZxL+06m5Wjmbf?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e24ce1a-c4ab-4c78-4b32-08dd8efeb6e7
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 13:38:00.1517
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ti3cKRioSTRdhnxtxSt2tCQeTSdbqi+tfolezCNO3gr5kapWfzqzzDcz88aGmvDckIwrWSy/7Ytb/UXueXN1CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9044
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508-tegra210-emc-dt-v2-1-d33dc20a1123@gmail.com>
 
-
-
-On 09/05/2025 01:04, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
-> 
-> This requires three changes:
-> * A soft dependency on cpufreq-dt as this driver only handles power
->    management and cpufreq-dt does the real operations
-
-Hmmm .. how is this handled for other drivers using the cpufreq-dt 
-driver? I see the imx driver has a dependency on this.
-
-> * Adding a remove routine to remove the cpufreq-dt device
-> * Adding a exit routine to handle cleaning up the driver
+On Thu, May 08, 2025 at 01:07:38AM -0500, Aaron Kling wrote:
+> Add device tree bindings for Tegra210 EMC tables as used by the Nvidia
+> Android bootloader.
 > 
 > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->   drivers/cpufreq/Kconfig.arm        |  2 +-
->   drivers/cpufreq/tegra124-cpufreq.c | 36 ++++++++++++++++++++++++++++++++----
->   2 files changed, 33 insertions(+), 5 deletions(-)
+>  .../nvidia,tegra21-emc-table.yaml                  | 1692 ++++++++++++++++++++
+>  .../memory-controllers/nvidia,tegra210-emc.yaml    |   38 +
+>  2 files changed, 1730 insertions(+)
 > 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 4f9cb943d945c244eb2b29f543d14df6cac4e5d4..625f6fbdaaf5fd774e3b0bb996eb7ce980da41ee 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -238,7 +238,7 @@ config ARM_TEGRA20_CPUFREQ
->   	  This adds the CPUFreq driver support for Tegra20/30 SOCs.
->   
->   config ARM_TEGRA124_CPUFREQ
-> -	bool "Tegra124 CPUFreq support"
-> +	tristate "Tegra124 CPUFreq support"
->   	depends on ARCH_TEGRA || COMPILE_TEST
->   	depends on CPUFREQ_DT
->   	default y
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index bc0691e8971f9454def37f489e4a3e244100b9f4..b6059c91f2474c56809c403eca94eacf51df734f 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -16,6 +16,8 @@
->   #include <linux/pm_opp.h>
->   #include <linux/types.h>
->   
-> +static struct platform_device *platform_device;
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra21-emc-table.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra21-emc-table.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..df371c835b95ad75deb74ad1d8711ed40a9b2361
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra21-emc-table.yaml
+> @@ -0,0 +1,1692 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra21-emc-table.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra210 SoC EMC Table
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +description: |
 
-Do we need this?
+Don't need '|' if no formatting to preserve.
 
+> +  EMC training data used by the emc driver to do periodic training
 > +
->   struct tegra124_cpufreq_priv {
->   	struct clk *cpu_clk;
->   	struct clk *pllp_clk;
-> @@ -176,6 +178,21 @@ static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
->   	return err;
->   }
->   
-> +static void tegra124_cpufreq_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(&pdev->dev);
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - nvidia,tegra21-emc-table
+> +          - nvidia,tegra21-emc-table-derated
 > +
-> +	if (!IS_ERR(priv->cpufreq_dt_pdev)) {
-> +		platform_device_unregister(priv->cpufreq_dt_pdev);
-> +		priv->cpufreq_dt_pdev = ERR_PTR(-ENODEV);
-> +	}
-> +
-> +	clk_put(priv->pllp_clk);
-> +	clk_put(priv->pllx_clk);
-> +	clk_put(priv->dfll_clk);
-> +	clk_put(priv->cpu_clk);
-> +}
-> +
->   static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
->   	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
->   				tegra124_cpufreq_resume)
-> @@ -185,12 +202,12 @@ static struct platform_driver tegra124_cpufreq_platdrv = {
->   	.driver.name	= "cpufreq-tegra124",
->   	.driver.pm	= &tegra124_cpufreq_pm_ops,
->   	.probe		= tegra124_cpufreq_probe,
-> +	.remove		= tegra124_cpufreq_remove,
->   };
->   
->   static int __init tegra_cpufreq_init(void)
->   {
->   	int ret;
-> -	struct platform_device *pdev;
->   
->   	if (!(of_machine_is_compatible("nvidia,tegra124") ||
->   		of_machine_is_compatible("nvidia,tegra210")))
-> @@ -204,15 +221,26 @@ static int __init tegra_cpufreq_init(void)
->   	if (ret)
->   		return ret;
->   
-> -	pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
-> -	if (IS_ERR(pdev)) {
-> +	platform_device = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
-> +	if (IS_ERR(platform_device)) {
->   		platform_driver_unregister(&tegra124_cpufreq_platdrv);
-> -		return PTR_ERR(pdev);
-> +		return PTR_ERR(platform_device);
->   	}
->   
->   	return 0;
->   }
->   module_init(tegra_cpufreq_init);
->   
-> +static void __exit tegra_cpufreq_module_exit(void)
-> +{
-> +	if (platform_device && !IS_ERR(platform_device))
-> +		platform_device_unregister(platform_device);
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      Clock rate for this table
 
-The device is unregistered in the remove. Why do we need this?
+?? Drop
 
 > +
-> +	platform_driver_unregister(&tegra124_cpufreq_platdrv);
-> +}
-> +module_exit(tegra_cpufreq_module_exit);
+> +  clock-frequency:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+Already has a type defined. Drop.
+
+> +    description:
+> +      external memory clock rate in KHz
+> +    minimum: 40800
+> +    maximum: 1600000
 > +
-> +MODULE_SOFTDEP("pre: cpufreq-dt");
->   MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
->   MODULE_DESCRIPTION("cpufreq driver for NVIDIA Tegra124");
-> +MODULE_LICENSE("GPL");
+> +  nvidia,revision:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      The revision of this table
+> +
+> +  nvidia,dvfs-version:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      The dvfs version of this table
+
+Constraints on the string?
+
+> +
+> +  nvidia,emc-min-mv:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      The minimum emc voltage allowed for this table
+
+Use standard unit suffixes.
+
+> +
+> +  nvidia,gk20a-min-mv:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      The minimum gpu voltage allowed for this table
+> +
+> +  nvidia,source:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      The clock source for this table
+> +
+> +  nvidia,src-sel-reg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the source selection register
+> +
+> +  nvidia,needs-training:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      If this table needs training
+
+Sounds like a boolean?
+
+> +
+> +  nvidia,training_pattern:
+
+Don't use '_' in names.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Which training pattern to use for this table
+> +
+> +  nvidia,trained:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      If this table has been trained
+
+Isn't that just !nvidia,needs-training?
+
+> +
+> +  nvidia,periodic_training:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      If this table should be periodically trained
+> +
+> +  nvidia,trained_dram_clktree_c0d0u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c0d0u0 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c0d0u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c0d0u1 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c0d1u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c0d1u0 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c0d1u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c0d1u1 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c1d0u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c1d0u0 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c1d0u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c1d0u1 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c1d1u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c1d1u0 in the dram clock tree
+> +
+> +  nvidia,trained_dram_clktree_c1d1u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Trained value of c1d1u1 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c0d0u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c0d0u0 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c0d0u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c0d0u1 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c0d1u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c0d1u0 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c0d1u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c0d1u1 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c1d0u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c1d0u0 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c1d0u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c1d0u1 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c1d1u0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c1d1u0 in the dram clock tree
+> +
+> +  nvidia,current_dram_clktree_c1d1u1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Current value of c1d1u1 in the dram clock tree
+
+Could all of these just be an array?
+
+> +
+> +  nvidia,run_clocks:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Clocks to run
+> +
+> +  nvidia,tree_margin:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Tree margin
+> +
+> +  nvidia,burst-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of burst registers
+> +
+> +  nvidia,burst-regs-per-ch-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of burst registers per channel
+> +
+> +  nvidia,trim-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of trim registers
+> +
+> +  nvidia,trim-regs-per-ch-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of trim registers per channel
+> +
+> +  nvidia,burst-mc-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of burst mc registers
+> +
+> +  nvidia,la-scale-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of la scale registers
+> +
+> +  nvidia,vref-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of voltage reference registers
+> +
+> +  nvidia,training-mod-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of training mod registers
+> +
+> +  nvidia,dram-timing-regs-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Number of dram timing registers
+> +
+> +  nvidia,min-mrs-wait:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the MIN_MRS_WAIT register
+> +
+> +  nvidia,emc-mrw:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_MRW register
+> +
+> +  nvidia,emc-mrw2:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_MRW2 register
+> +
+> +  nvidia,emc-mrw3:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_MRW3 register
+> +
+> +  nvidia,emc-mrw4:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_MRW4 register
+> +
+> +  nvidia,emc-mrw9:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_MRW9 register
+> +
+> +  nvidia,emc-mrs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_MRS register
+> +
+> +  nvidia,emc-emrs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_EMRS register
+> +
+> +  nvidia,emc-emrs2:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_EMRS2 register
+> +
+> +  nvidia,emc-auto-cal-config:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG register
+> +
+> +  nvidia,emc-auto-cal-config2:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG2 register
+> +
+> +  nvidia,emc-auto-cal-config3:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG3 register
+> +
+> +  nvidia,emc-auto-cal-config4:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG4 register
+> +
+> +  nvidia,emc-auto-cal-config5:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG5 register
+> +
+> +  nvidia,emc-auto-cal-config6:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG6 register
+> +
+> +  nvidia,emc-auto-cal-config7:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG7 register
+> +
+> +  nvidia,emc-auto-cal-config8:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_AUTO_CAL_CONFIG8 register
+> +
+> +  nvidia,emc-cfg-2:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_CFG_2 register
+> +
+> +  nvidia,emc-sel-dpd-ctrl:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_SEL_DPD_CTRL register
+> +
+> +  nvidia,emc-fdpd-ctrl-cmd-no-ramp:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Value of the EMC_FDPD_SEL_DPD_CTRL_NO_RAMP register
+> +
+> +  nvidia,dll-clk-src:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      VALUE of the DLL_CLK_SRC register
+> +
+> +  nvidia,clk-out-enb-x-0-clk-enb-emc-dll:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      If the dll clock should be enabled for this table
+> +
+> +  nvidia,emc-clock-latency-change:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Clock latency change
+> +
+> +  nvidia,ptfv:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Ptfv list values
+> +
+> +  nvidia,emc-registers:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Burst register values, size is determined by
+> +      nvidia,burst-regs-num
+> +
+> +  nvidia,emc-burst-regs-per-ch:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Per channel EMC burst register values, size is determined by
+> +      nvidia,burst-regs-per-ch-num
+> +
+> +  nvidia,emc-shadow-regs-ca-train:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Shadow registers ca train, size is determined by
+> +      nvidia,burst-regs-num
+> +
+> +  nvidia,emc-shadow-regs-quse-train:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Shadow registers quse train, size is determined by
+> +      nvidia,burst-regs-num
+> +
+> +  nvidia,emc-shadow-regs-rdwr-train:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Shadow registers rdwr train, size is determined by
+> +      nvidia,burst-regs-num
+> +
+> +  nvidia,emc-trim-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Trim register values, size is determined by
+> +      nvidia,trim-regs-num
+> +
+> +  nvidia,emc-trim-regs-per-ch:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Per channel trim register values, size is determined by
+> +      nvidia,trim-regs-per-channel-num
+> +
+> +  nvidia,emc-vref-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Voltage reference register values, size is determined by
+> +      nvidia,vref-regs-num
+> +
+> +  nvidia,emc-dram-timing-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Dram timing register values, size is determined by
+> +      nvidia,dram-timing-regs-num
+> +
+> +  nvidia,emc-training-mod-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Training mod register values, size is determined by
+> +      nvidia,training-mod-regs-num
+> +
+> +  nvidia,emc-save-restore-mod-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Save restore mod register values
+> +
+> +  nvidia,emc-burst-mc-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Burst mc register values, size is determined by
+> +      nvidia,burst-mc-regs-num
+> +
+> +  nvidia,emc-la-scale-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      La scale register values, size is determined by
+> +      nvidia,burst-mc-regs-num
+
+That's a ton of properties... And somehow completely different than 
+other Tegra stuff. 
+
+> +
+> +required:
+> +  - compatible
+> +  - clock-frequency
+
+Seems like a few more should be required. Or there's some dependencies 
+between properties? 
+
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra210-car.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    external-memory-controller@7001b000 {
+
+This node needs a compatible.
+
+> +        reg = <0x7001b000 0x1000>,
+> +              <0x7001e000 0x1000>,
+> +              <0x7001f000 0x1000>;
+> +        clocks = <&tegra_car TEGRA210_CLK_EMC>;
+> +        clock-names = "emc";
+> +        interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+> +        nvidia,memory-controller = <&mc>;
+> +        nvidia,use-ram-code;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        emc-table@0 {
+> +            reg = <0>;
+> +            nvidia,ram-code = <0x0>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            emc-table@40800 {
+> +                reg = <40800>;
+> +                compatible = "nvidia,tegra21-emc-table";
+> +                nvidia,revision = <0x07>;
+> +                nvidia,dvfs-version = "04_40800_03_V9.8.7_V1.6";
+> +                clock-frequency = <40800>;
+> +                nvidia,emc-min-mv = <800>;
+> +                nvidia,gk20a-min-mv = <1100>;
+> +                nvidia,source = "pllp_out0";
+> +                nvidia,src-sel-reg = <0x40188012>;
+> +                nvidia,needs-training = <0x00000000>;
+> +                nvidia,training_pattern = <0x00000000>;
+> +                nvidia,trained = <0x00000000>;
+> +                nvidia,periodic_training = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c0d0u0 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c0d0u1 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c0d1u0 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c0d1u1 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c1d0u0 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c1d0u1 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c1d1u0 = <0x00000000>;
+> +                nvidia,trained_dram_clktree_c1d1u1 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c0d0u0 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c0d0u1 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c0d1u0 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c0d1u1 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c1d0u0 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c1d0u1 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c1d1u0 = <0x00000000>;
+> +                nvidia,current_dram_clktree_c1d1u1 = <0x00000000>;
+> +                nvidia,run_clocks = <0x00000003>;
+> +                nvidia,tree_margin = <0x00000001>;
+> +                nvidia,burst-regs-num = <221>;
+> +                nvidia,burst-regs-per-ch-num = <8>;
+> +                nvidia,trim-regs-num = <138>;
+> +                nvidia,trim-regs-per-ch-num = <10>;
+> +                nvidia,burst-mc-regs-num = <33>;
+> +                nvidia,la-scale-regs-num = <24>;
+> +                nvidia,vref-regs-num = <4>;
+> +                nvidia,training-mod-regs-num = <20>;
+> +                nvidia,dram-timing-regs-num = <5>;
+> +                nvidia,min-mrs-wait = <0x00000015>;
+> +                nvidia,emc-mrw = <0x08010004>;
+> +                nvidia,emc-mrw2 = <0x08020000>;
+> +                nvidia,emc-mrw3 = <0x080d0000>;
+> +                nvidia,emc-mrw4 = <0xc0000000>;
+> +                nvidia,emc-mrw9 = <0x0c0e7272>;
+> +                nvidia,emc-mrs = <0x00000000>;
+> +                nvidia,emc-emrs = <0x00000000>;
+> +                nvidia,emc-emrs2 = <0x00000000>;
+> +                nvidia,emc-auto-cal-config = <0xa01a51d8>;
+> +                nvidia,emc-auto-cal-config2 = <0x05500000>;
+> +                nvidia,emc-auto-cal-config3 = <0x00770000>;
+> +                nvidia,emc-auto-cal-config4 = <0x00770000>;
+> +                nvidia,emc-auto-cal-config5 = <0x00770000>;
+> +                nvidia,emc-auto-cal-config6 = <0x00770000>;
+> +                nvidia,emc-auto-cal-config7 = <0x00770000>;
+> +                nvidia,emc-auto-cal-config8 = <0x00770000>;
+> +                nvidia,emc-cfg-2 = <0x00110805>;
+> +                nvidia,emc-sel-dpd-ctrl = <0x00040008>;
+> +                nvidia,emc-fdpd-ctrl-cmd-no-ramp = <0x00000001>;
+> +                nvidia,dll-clk-src = <0x40188012>;
+> +                nvidia,clk-out-enb-x-0-clk-enb-emc-dll = <0x00000001>;
+> +                nvidia,emc-clock-latency-change = <0x00005172>;
+> +                nvidia,ptfv = <
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x0000000a
+> +                    0x0000000a
+> +                    0x0000000a
+> +                    0x00000001
+> +                >;
+> +                nvidia,emc-registers = <
+> +                    0x0000000c
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x0000000a
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x0000000b
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000020
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000003
+> +                    0x00000000
+> +                    0x00000006
+> +                    0x00000004
+> +                    0x00000002
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x0000000d
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x08037171
+> +                    0x0000000a
+> +                    0x00000000
+> +                    0x0000000a
+> +                    0x00010001
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x00000015
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x0000009a
+> +                    0x00000000
+> +                    0x00000026
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000014
+> +                    0x00000005
+> +                    0x00000002
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000004
+> +                    0x00000009
+> +                    0x48037171
+> +                    0x000000a0
+> +                    0x00000000
+> +                    0x9160a00d
+> +                    0x00003bbf
+> +                    0x002c00a0
+> +                    0x00008000
+> +                    0x000000be
+> +                    0x0fff0fff
+> +                    0x0fff0fff
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x080b0000
+> +                    0x00120010
+> +                    0x00120011
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00100010
+> +                    0x00120012
+> +                    0x00110011
+> +                    0x00120012
+> +                    0x00000010
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x8020221f
+> +                    0x0220f40f
+> +                    0x00000012
+> +                    0x00064000
+> +                    0x00090029
+> +                    0x00290015
+> +                    0x000b000a
+> +                    0xc1e00302
+> +                    0x1f13412f
+> +                    0x00010014
+> +                    0x00000804
+> +                    0x00000550
+> +                    0xf3200000
+> +                    0x0fff0fff
+> +                    0x0000023a
+> +                    0x00000009
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000012
+> +                    0x00000012
+> +                    0x00020000
+> +                    0x00050037
+> +                    0x00000000
+> +                    0x00000010
+> +                    0x00003000
+> +                    0x0a000000
+> +                    0x02000111
+> +                    0x00000008
+> +                    0x00030808
+> +                    0x00015c00
+> +                    0x00100404
+> +                    0x00001600
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000034
+> +                    0x00000040
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000020
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0xefffefff
+> +                    0xc0c0c0c0
+> +                    0xc0c0c0c0
+> +                    0xdcdcdcdc
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0118600b
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000013
+> +                    0x00000009
+> +                    0x00000015
+> +                    0x08161414
+> +                    0x00000011
+> +                    0x00010001
+> +                    0x00009080
+> +                    0x07070404
+> +                    0x00040014
+> +                    0x0513801f
+> +                    0x1f101100
+> +                    0x00000014
+> +                    0x00107240
+> +                    0x01124000
+> +                    0x01125b6a
+> +                    0x0f081000
+> +                    0x00105800
+> +                    0x1110fc00
+> +                    0x0f081300
+> +                    0x00105800
+> +                    0x1114fc00
+> +                    0x07000300
+> +                    0x00107240
+> +                    0x55553c5a
+> +                    0x48161414
+> +                >;
+> +                nvidia,emc-burst-regs-per-ch = <
+> +                    0x880c7272
+> +                    0x880c7272
+> +                    0x480c7272
+> +                    0x480c7272
+> +                    0x8c0e7272
+> +                    0x8c0e7272
+> +                    0x4c0e7272
+> +                    0x4c0e7272
+> +                >;
+> +                nvidia,emc-shadow-regs-ca-train = <
+> +                    0x0000000c
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x0000000a
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x0000000b
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000020
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000003
+> +                    0x00000000
+> +                    0x00000006
+> +                    0x00000004
+> +                    0x00000002
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x0000000d
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x08037171
+> +                    0x0000000a
+> +                    0x00000000
+> +                    0x0000000a
+> +                    0x00010001
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x00000015
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x0000009a
+> +                    0x00000000
+> +                    0x00000026
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000014
+> +                    0x00000005
+> +                    0x00000002
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000004
+> +                    0x00000009
+> +                    0x48037171
+> +                    0x000000a0
+> +                    0x00000000
+> +                    0x9960a00d
+> +                    0x00003bbf
+> +                    0x002c00a0
+> +                    0x00008000
+> +                    0x00000055
+> +                    0x0fff0fff
+> +                    0x0fff0fff
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x080b0000
+> +                    0x00120010
+> +                    0x00120011
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00100010
+> +                    0x00120012
+> +                    0x00110011
+> +                    0x00120012
+> +                    0x00000010
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x8020221f
+> +                    0x0220f40f
+> +                    0x00000012
+> +                    0x00064000
+> +                    0x00090029
+> +                    0x00290015
+> +                    0x000b000a
+> +                    0xc1e00302
+> +                    0x1f13412f
+> +                    0x00010014
+> +                    0x00000804
+> +                    0x00000550
+> +                    0xf3200000
+> +                    0x0fff0fff
+> +                    0x0000023a
+> +                    0x00000009
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000012
+> +                    0x00000012
+> +                    0x00020000
+> +                    0x05058033
+> +                    0x05050000
+> +                    0x00000000
+> +                    0x00003000
+> +                    0x0a000000
+> +                    0x02000111
+> +                    0x00000008
+> +                    0x00030808
+> +                    0x00015c00
+> +                    0x00100404
+> +                    0x00001600
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000034
+> +                    0x00000040
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000020
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0xefffefff
+> +                    0xc0c0c0c0
+> +                    0xc0c0c0c0
+> +                    0xdcdcdcdc
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0118600b
+> +                    0x00000001
+> +                    0x0000001f
+> +                    0x00000013
+> +                    0x00000003
+> +                    0x00000015
+> +                    0x08161414
+> +                    0x0000000b
+> +                    0x00010001
+> +                    0x00019080
+> +                    0x07070404
+> +                    0x00040014
+> +                    0x0513801f
+> +                    0x1f101100
+> +                    0x00000014
+> +                    0x00107240
+> +                    0x01124000
+> +                    0x01125b6a
+> +                    0x0f081000
+> +                    0x00105800
+> +                    0x1110fc00
+> +                    0x0f081300
+> +                    0x00105800
+> +                    0x1114fc00
+> +                    0x07000300
+> +                    0x00107240
+> +                    0x55553c5a
+> +                    0x48161414
+> +                >;
+> +                nvidia,emc-shadow-regs-quse-train = <
+> +                    0x0000000c
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000009
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x0000000b
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000020
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000003
+> +                    0x00000000
+> +                    0x00000006
+> +                    0x00000004
+> +                    0x00000002
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x0000000d
+> +                    0x00000002
+> +                    0x00000002
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000005
+> +                    0x08037171
+> +                    0x00000008
+> +                    0x00000001
+> +                    0x80000000
+> +                    0x00010002
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x00000015
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x0000009a
+> +                    0x00000000
+> +                    0x00000026
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000014
+> +                    0x00000005
+> +                    0x00000002
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000004
+> +                    0x00000009
+> +                    0x48037171
+> +                    0x000000a0
+> +                    0x00000000
+> +                    0x9160400d
+> +                    0x00003bbf
+> +                    0x002c00a0
+> +                    0x00008000
+> +                    0x000000be
+> +                    0x0fff0fff
+> +                    0x0fff0fff
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x080b0000
+> +                    0x00120010
+> +                    0x00120011
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00100010
+> +                    0x00120012
+> +                    0x00110011
+> +                    0x00120012
+> +                    0x00000010
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x8020221f
+> +                    0x0220f40f
+> +                    0x00000012
+> +                    0x00064000
+> +                    0x00090029
+> +                    0x00290015
+> +                    0x000b000a
+> +                    0xc1e00302
+> +                    0x1f13412f
+> +                    0x00010014
+> +                    0x00000804
+> +                    0x00000550
+> +                    0xf3200000
+> +                    0x0fff0fff
+> +                    0x0000023a
+> +                    0x00000009
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000012
+> +                    0x00000012
+> +                    0x30020000
+> +                    0x00058037
+> +                    0x00000000
+> +                    0x00000010
+> +                    0x00003000
+> +                    0x0a000000
+> +                    0x02000111
+> +                    0x00000008
+> +                    0x00030808
+> +                    0x00015c00
+> +                    0x00100404
+> +                    0x00001600
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000034
+> +                    0x00000040
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000020
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0xefffefff
+> +                    0xc0c0c0c0
+> +                    0xc0c0c0c0
+> +                    0xdcdcdcdc
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0118600b
+> +                    0x00000001
+> +                    0x0000001f
+> +                    0x0000001d
+> +                    0x00000013
+> +                    0x0000001f
+> +                    0x08161414
+> +                    0x0000001b
+> +                    0x00010002
+> +                    0x00009080
+> +                    0x07070404
+> +                    0x00040014
+> +                    0x0513801f
+> +                    0x1f101100
+> +                    0x00000014
+> +                    0x00107240
+> +                    0x01124000
+> +                    0x01125b6a
+> +                    0x0f081000
+> +                    0x00105800
+> +                    0x1110fc00
+> +                    0x0f081300
+> +                    0x00105800
+> +                    0x1114fc00
+> +                    0x07000300
+> +                    0x00107240
+> +                    0x55553c5a
+> +                    0x48161414
+> +                >;
+> +                nvidia,emc-shadow-regs-rdwr-train = <
+> +                    0x0000000c
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x0000000d
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x0000000b
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000020
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000006
+> +                    0x00000003
+> +                    0x00000013
+> +                    0x00000006
+> +                    0x00000004
+> +                    0x00000002
+> +                    0x00000000
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x0000000d
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000000
+> +                    0x30000002
+> +                    0x00000004
+> +                    0x08037171
+> +                    0x0000000a
+> +                    0x00000000
+> +                    0x0000000a
+> +                    0x00010001
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x00000015
+> +                    0x00000011
+> +                    0x00000013
+> +                    0x0000009a
+> +                    0x00000000
+> +                    0x00000026
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000003
+> +                    0x00000014
+> +                    0x00000005
+> +                    0x00000002
+> +                    0x0000000d
+> +                    0x00000008
+> +                    0x00000008
+> +                    0x00000005
+> +                    0x00000005
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x00000004
+> +                    0x00000004
+> +                    0x00000009
+> +                    0x48037171
+> +                    0x000000a0
+> +                    0x00000000
+> +                    0x9160a00d
+> +                    0x00003bbf
+> +                    0x002c00a0
+> +                    0x00008000
+> +                    0x000000be
+> +                    0x0fff0fff
+> +                    0x0fff0fff
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x080b0000
+> +                    0x00120010
+> +                    0x00120011
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00280027
+> +                    0x0025002a
+> +                    0x002a002a
+> +                    0x00260026
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00100010
+> +                    0x00120012
+> +                    0x00110011
+> +                    0x00120012
+> +                    0x00000010
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x8020221f
+> +                    0x0220f40f
+> +                    0x00000012
+> +                    0x00064000
+> +                    0x00090029
+> +                    0x00290015
+> +                    0x000b000a
+> +                    0xc1e00302
+> +                    0x1f13412f
+> +                    0x00010014
+> +                    0x00000804
+> +                    0x00000550
+> +                    0xf3200000
+> +                    0x0fff0fff
+> +                    0x0000023a
+> +                    0x00000009
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000012
+> +                    0x00000012
+> +                    0x00020000
+> +                    0x00050037
+> +                    0x00000000
+> +                    0x00000010
+> +                    0x00003000
+> +                    0x0a000000
+> +                    0x02000111
+> +                    0x00000008
+> +                    0x00030808
+> +                    0x00015c00
+> +                    0x00100404
+> +                    0x00001600
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000034
+> +                    0x00000040
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x10000000
+> +                    0x08000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000020
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0xefffefff
+> +                    0xc0c0c0c0
+> +                    0xc0c0c0c0
+> +                    0xdcdcdcdc
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0a0a0a0a
+> +                    0x0118600b
+> +                    0x00000001
+> +                    0x00000000
+> +                    0x00000013
+> +                    0x00000009
+> +                    0x00000015
+> +                    0x08161414
+> +                    0x00000011
+> +                    0x00010001
+> +                    0x0000b080
+> +                    0x07070404
+> +                    0x00040014
+> +                    0x0513801f
+> +                    0x1f101100
+> +                    0x00000014
+> +                    0x00107240
+> +                    0x01124000
+> +                    0x01125b6a
+> +                    0x0f081000
+> +                    0x00105800
+> +                    0x1110fc00
+> +                    0x0f081300
+> +                    0x00105800
+> +                    0x1114fc00
+> +                    0x07000300
+> +                    0x00107240
+> +                    0x55553c5a
+> +                    0x48161414
+> +                >;
+> +                nvidia,emc-trim-regs = <
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00280028
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x11111111
+> +                    0x11111111
+> +                    0x28282828
+> +                    0x28282828
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00120010
+> +                    0x00120011
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                >;
+> +                nvidia,emc-trim-regs-per-ch = <
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00249249
+> +                    0x00249249
+> +                    0x00249249
+> +                    0x00249249
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                >;
+> +                nvidia,emc-vref-regs = <
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                >;
+> +                nvidia,emc-dram-timing-regs = <
+> +                    0x00000049
+> +                    0x00000104
+> +                    0x000000b4
+> +                    0x0000007a
+> +                    0x00000006
+> +                >;
+> +                nvidia,emc-training-mod-regs = <
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                >;
+> +                nvidia,emc-save-restore-mod-regs = <
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                    0x00000000
+> +                >;
+> +                nvidia,emc-burst-mc-regs = <
+> +                    0x40020001
+> +                    0x80000013
+> +                    0x000a1020
+> +                    0x80001028
+> +                    0x00000001
+> +                    0x00000000
+> +                    0x00000002
+> +                    0x00000000
+> +                    0x00000001
+> +                    0x00000001
+> +                    0x00000002
+> +                    0x00000005
+> +                    0x00000002
+> +                    0x00000001
+> +                    0x00000004
+> +                    0x00000008
+> +                    0x00000005
+> +                    0x00000000
+> +                    0x02020001
+> +                    0x00030201
+> +                    0x72c30303
+> +                    0x70000f0f
+> +                    0x00000000
+> +                    0x001f0000
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                    0x0080001a
+> +                >;
+> +                nvidia,emc-la-scale-regs = <
+> +                    0x00000006
+> +                    0x0080001a
+> +                    0x00000076
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x00ff003d
+> +                    0x00ff00ff
+> +                    0x00ff003d
+> +                    0x00ff0049
+> +                    0x00ff0080
+> +                    0x00ff0004
+> +                    0x000800ff
+> +                    0x000000ff
+> +                    0x00ff0004
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x00ff00ff
+> +                    0x000000ff
+> +                    0x000000ff
+> +                    0x00ff00ff
+> +                    >;
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+> index bc8477e7ab193b7880bb681037985f3fccebf02f..78e3417d273a329b77bf2f61de41b29017be56d3 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+> @@ -44,6 +44,44 @@ properties:
+>      description:
+>        phandle of the memory controller node
+>  
+> +  nvidia,use-ram-code:
+> +    description:
+> +      If set, timings are split per ram code and expected to be in
+> +      subnodes per ram-code
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^emc-table@[0-9]+$":
+> +    type: object
+> +    additionalProperties: true
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +        description:
+> +          Ram code for this timing set
+> +
+> +      nvidia,ram-code:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          value of the RAM_CODE field in the PMC_STRAPPING_OPT_A register that
+> +          this timing set is used for
+> +
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    required:
+> +      - reg
+> +      - nvidia,ram-code
+> +
+> +
+>  required:
+>    - compatible
+>    - reg
 > 
-
--- 
-nvpublic
-
+> -- 
+> 2.48.1
+> 
