@@ -1,150 +1,125 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A94D295D9F;
-	Fri,  9 May 2025 14:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5EB21ADB4;
+	Fri,  9 May 2025 14:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800012; cv=none; b=bxkNwNRvA/8lOIv2Hy+BcM8id5UpVvvptvsGppcpivmtWr4bJ1ldRsfB/taUDDbCgS6nswHBHVqyqaPjFQIJKqkyVQks/xKx/FzUaHaC0jhEEINcORze7ZmvvbN8NY4ohAP4Sgs3fg2kbIl7RlIj7POh11Mvno1R9YBP7hqXwJk=
+	t=1746800226; cv=none; b=tdXVdJshMY3aJQr30iTr1ukaULXccBwqPpUvfD4X6ii243XqYkPiyCOPBhvY/6yYFWIfLHj6HXOkiGMfTNrtWP0MbbN22G0YKN40BWYOq6OClL8sPUEWOrH2IiU1xGjQ/0z7ufPEV4BYBuV1TeVCbFeH7WosMM/8fmtYDKzPvcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800012; c=relaxed/simple;
-	bh=0/dtn/kdBfNqf/vszxB+yWxoYVNi1v0FvDrPLSfbTQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVO8MHxo40702NGjLBlgbcEywAqwpGjU+yimH75fdV+VeyM8OYthjGpPr5wd/aNcmpayzEm/VuAeZSXQOJ6VqfiHX+iJwM1sZawxGYtxbH2x73iNBqxby4elweqVmP8yb8z574kLvqqzG9LMtjlHJgSKXwdboHfJgU8sXbKIbOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNTpvpLZ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1746800226; c=relaxed/simple;
+	bh=y2Dk41ikf2no08XfqeTD6j9mDySyYoV8x2zZIVEA+P8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Bs5YGAD5X5Md1PamZ2xFwfvjB7WKvBKSPK2HrrxinkiHHS0QNsqXsK8k78PIAYPfDeC4jB1GyII5xtNmtSVT8SarHFUzDkj2E6MuiLnDTky5zsYSl677ujTwjCsLiVU7Zfa1zZlqrGPZkAjBWpsg9yCZesBTv2HEF2EFotcK7zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTNFhwAZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNTpvpLZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746800011; x=1778336011;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0/dtn/kdBfNqf/vszxB+yWxoYVNi1v0FvDrPLSfbTQY=;
-  b=nNTpvpLZyO2qudRsV2AjsWADPYqVkv93ka886VEZH+G1+r86+mK/dJJD
-   Zo3hv+sOhVQZzwHmyV9fi0lwGJrT2TFhU3RKk4S1zXH/NStD1KHfqcnp8
-   MYr9jbOb2ZLWKa6gGoZWvCnSCx6piGsq7rDXjaatFvLksCutL1vbl8D0l
-   IeYkk+H/x52bnVnsdpCQUi174YFgCS3lhXdjIS2C92OK6DVr83cgk36ta
-   B2rxX2Pm34U6GRdt2J6y5Z5axcrOxtF5X/nBtbMNfT6zdExCLcjkOXAaO
-   EiVbIRxWhWCYqmk+prcBhpvIrojotcL3R8nNtumSgAQX9VMQhFQVQTeYV
-   A==;
-X-CSE-ConnectionGUID: vigOUJHVQOuSzQSjtnHZ0A==
-X-CSE-MsgGUID: t/bAtmxOSDufsuQh4EHvGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48782053"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="48782053"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 07:13:28 -0700
-X-CSE-ConnectionGUID: H4zXQepxSMe8aX0MXumPvw==
-X-CSE-MsgGUID: RcgC4DNNQty3MbgoXScnBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
-   d="scan'208";a="141580924"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 09 May 2025 07:13:22 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uDOTW-000C9N-2m;
-	Fri, 09 May 2025 14:13:18 +0000
-Date: Fri, 9 May 2025 22:13:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-	kevin.tian@intel.com, corbet@lwn.net, will@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	yi.l.liu@intel.com, mshavit@google.com, praan@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v4 14/23] iommufd: Add mmap interface
-Message-ID: <202505092119.UALKhnIX-lkp@intel.com>
-References: <ee9ee287264fd75eb4fc64a63f20d03e9ba18161.1746757630.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTNFhwAZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4FCC4CEEF;
+	Fri,  9 May 2025 14:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746800226;
+	bh=y2Dk41ikf2no08XfqeTD6j9mDySyYoV8x2zZIVEA+P8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=qTNFhwAZG+15SQKaHxtuHVGIVnPcrnWgIAsRKKWpxAr05Jf6LXynUtngORPyz7wnX
+	 T7gGN7lDqv7yiDDUjOqywhH48GuXu05eWI24KtVANYIDQfZzDzjTWS1dO0mtasoScA
+	 fkwXb2M4Pa9gwcUEY5PbnT2k6VojB/9ugiUS9zlgdWM2ahboXunvKuM1XWrgUXaUJF
+	 VhIOn4j7cADXAED+oEqTf4yIXjWJpuTmfob+Ox2krN2eWDQcKQy3YLD7tgdPXNtb37
+	 Q2Zr7edjesNYD6de5Rrwzisn3aMCEloSUv39VSvwLbRYXbYV3jwdsAwakoJgreK2X0
+	 1/GX3ZtbQoZDg==
+Date: Fri, 09 May 2025 09:17:04 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee9ee287264fd75eb4fc64a63f20d03e9ba18161.1746757630.git.nicolinc@nvidia.com>
-
-Hi Nicolin,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 92a09c47464d040866cf2b4cd052bc60555185fb]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommufd-viommu-Add-driver-allocated-vDEVICE-support/20250509-110521
-base:   92a09c47464d040866cf2b4cd052bc60555185fb
-patch link:    https://lore.kernel.org/r/ee9ee287264fd75eb4fc64a63f20d03e9ba18161.1746757630.git.nicolinc%40nvidia.com
-patch subject: [PATCH v4 14/23] iommufd: Add mmap interface
-config: i386-buildonly-randconfig-003-20250509 (https://download.01.org/0day-ci/archive/20250509/202505092119.UALKhnIX-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505092119.UALKhnIX-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505092119.UALKhnIX-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/iommu/iommufd/driver.c:91:6: warning: variable 'num_pfns' set but not used [-Wunused-but-set-variable]
-      91 |         int num_pfns, rc;
-         |             ^
-   1 warning generated.
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Conor Dooley <conor+dt@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
+References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
+Message-Id: <174679985362.3369193.11591563013648639015.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
+ Tables
 
 
-vim +/num_pfns +91 drivers/iommu/iommufd/driver.c
+On Thu, 08 May 2025 01:07:37 -0500, Aaron Kling wrote:
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v2:
+> - Add patch to describe the emc table bindings
+> - Add patch to allow a fallback compatible on the tegra210 emc device to
+>   match firmware expectations
+> - Add a patch to include the baseline emc tables on p2180
+> - Link to v1: https://lore.kernel.org/r/20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com
+> 
+> ---
+> Aaron Kling (4):
+>       dt-bindings: memory-controllers: Describe Tegra210 EMC Tables
+>       dt-bindings: memory-controllers: tegra210: Allow fallback compatible
+>       arm64: tegra: Add EMC timings to P2180
+>       memory: tegra210-emc: Support Device Tree EMC Tables
+> 
+>  .../nvidia,tegra21-emc-table.yaml                  |  1692 +
+>  .../memory-controllers/nvidia,tegra210-emc.yaml    |    44 +-
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180-emc.dtsi | 49749 +++++++++++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |     1 +
+>  drivers/memory/tegra/tegra210-emc-core.c           |   246 +-
+>  5 files changed, 51721 insertions(+), 11 deletions(-)
+> ---
+> base-commit: 8bac8898fe398ffa3e09075ecea2be511725fb0b
+> change-id: 20250429-tegra210-emc-dt-97dce690ad4e
+> 
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
+> 
+> 
+> 
 
-    80	
-    81	/*
-    82	 * Allocate an @offset to return to user space to use for an mmap() syscall
-    83	 *
-    84	 * Driver should use a per-structure helper in include/linux/iommufd.h
-    85	 */
-    86	int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
-    87				phys_addr_t base, size_t length, unsigned long *offset)
-    88	{
-    89		struct iommufd_mmap *immap;
-    90		unsigned long startp;
-  > 91		int num_pfns, rc;
-    92	
-    93		if (WARN_ON_ONCE(!offset))
-    94			return -EINVAL;
-    95		if (!PAGE_ALIGNED(base))
-    96			return -EINVAL;
-    97		if (!length || !PAGE_ALIGNED(length))
-    98			return -EINVAL;
-    99		num_pfns = length >> PAGE_SHIFT;
-   100	
-   101		immap = kzalloc(sizeof(*immap), GFP_KERNEL);
-   102		if (!immap)
-   103			return -ENOMEM;
-   104		immap->owner = owner;
-   105		immap->base_pfn = base >> PAGE_SHIFT;
-   106		immap->num_pfns = length >> PAGE_SHIFT;
-   107	
-   108		rc = mtree_alloc_range(&ictx->mt_mmap, &startp, immap, immap->num_pfns,
-   109				       0, U32_MAX >> PAGE_SHIFT, GFP_KERNEL);
-   110		if (rc < 0) {
-   111			kfree(immap);
-   112			return rc;
-   113		}
-   114	
-   115		/* mmap() syscall will right-shift the offset in vma->vm_pgoff */
-   116		*offset = startp << PAGE_SHIFT;
-   117		return 0;
-   118	}
-   119	EXPORT_SYMBOL_NS_GPL(_iommufd_alloc_mmap, "IOMMUFD");
-   120	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 8bac8898fe398ffa3e09075ecea2be511725fb0b
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com:
+
+arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^emc-table@[0-9]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^emc-table@[0-9]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^emc-table@[0-9]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^emc-table@[0-9]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2571.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^emc-table@[0-9]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^emc-table@[0-9]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+
+
+
+
+
