@@ -1,80 +1,156 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4DC2512F7;
-	Mon, 12 May 2025 16:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8105E248F49;
+	Mon, 12 May 2025 16:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747066532; cv=none; b=cFoLLAZx5vOcj3+6duZbaYrCN7LyeDXnkKLErB27++E0ncFl7WOuEbHJ20QiYtrM2i3Z6Mk6DyJ3gRJlASksy/gIh34rf8LW50iG1t0DyocRqE0uL7KI/fWWXShwfE626FOdZb3lRztfKflnJ8NAHFx1AgqkT7/oRBeToPgRHFE=
+	t=1747067082; cv=none; b=dqWPS5jEZukh03/nUzhf3aMdqzs1UyyQ+s++rZK+PKXzKhRMtWck+qHfVOHENiU9z+M5rZW/dj0OY3LddGtn9bo68yV3R0yzLVjZoDgtFYK1rEjpGaJ2D2hrHbMmHf/YZogKQmBgjvQt1u/JaGppfYpzBIHylJunCA6BEqCy3wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747066532; c=relaxed/simple;
-	bh=Q36OXvwzuW54iqDLyYNH6PqzQwvoWLmXEDu9aHSwUeI=;
+	s=arc-20240116; t=1747067082; c=relaxed/simple;
+	bh=r/UZNmFYWgtwLiPQR7YXnDQZ1KJqs2OKZNrQQbttzmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+NNevA7Z0HHMzLtehMMa51O5wiuQ+CE4031RPBtfaZS3OkMsLCBH2JHggm8HJOan7o4y85AFuKTS911/x6uS68BjfrubDO/GX2QUEfs9elWVF5dbFltSApiufqPw35ujiXrLmRzYEGnqDUhlnLj4QWz7fET3VvBkXfhFGmmGC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMumuf1f; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6bOvRgZ2WOf1RXFJ4zr+s989/vJ+ZPFIu2zqZB3/IHgFx1JXrtAQhUvzfg5x6GMpbt+fpPlu/prJJ0S/WmBsnQsWG6hKnZLGqIxba7QEeq0pvMOIV+hrX6nBGhv0uWc0FIjNBJWbTup1Rm9p9BMPy2ALCGwOuO5BdKSdnu1WmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPTRWWvz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMumuf1f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED0CC4CEE7;
-	Mon, 12 May 2025 16:15:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPTRWWvz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0AF6C4CEE7;
+	Mon, 12 May 2025 16:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747066531;
-	bh=Q36OXvwzuW54iqDLyYNH6PqzQwvoWLmXEDu9aHSwUeI=;
+	s=k20201202; t=1747067082;
+	bh=r/UZNmFYWgtwLiPQR7YXnDQZ1KJqs2OKZNrQQbttzmM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vMumuf1fuj/rbQ6mArroJOZXERVX2mqe6K+2BIU5aA6VpjvVzH/R+KZMDzLdmlNFu
-	 7lVZL153dMPP++MSKRNzZftZF09NRcuVMJB/EZii/aFqBslJBn50e+Bo/8d/DgLO9y
-	 6CQG4JwR3YM10yjvjxpoY2H1PVXRku2fQI4ctBY/qPnf9oYfw+MMKm85ctv7hbH4qp
-	 5yrFxZX9iIiN110PUuEg5BnGeZyc8kQSET3XCMGi7UNZC1v2sUehWDpeoutO5E4Wsz
-	 XlyLs2By4cWwC9pLS7NNDmgQ4avKnozFStop2tu1fM7KolHqMQh/LbZE2TSIevB19n
-	 wdWXe9gBHKcTw==
-Date: Mon, 12 May 2025 17:15:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	ldewangan@nvidia.com, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: Document Tegra264 ADMA support
-Message-ID: <20250512-default-ninja-01455d36e14f@spud>
-References: <20250512050010.1025259-1-sheetal@nvidia.com>
- <20250512050010.1025259-2-sheetal@nvidia.com>
+	b=fPTRWWvznMT4g7LeNUe1n5ADd7juAK2snyBKEcY79qo22TS8TdCeF9q1SqWAeZV8V
+	 TMck4o4LVEe1HUyZuahUCqeMOHSQuCf6PAqowUwWCKMPnwRIngfgV2arZhV2p0V/uB
+	 gEiKJimRZiPDQUZuOFFHJ5UZiUbe7cWRe2JmDUHgiKbOCNfY9180LDQO7Yk5hV6/tr
+	 +4dOa5uXIqkuhOI4td7Cg6r5gn7Kh/MWi00m0ocynLvgPCrfF+tlJbkm8K7tga4rTe
+	 X0SvEKJPGvuUzbZqcsjr3+3qEh0TGl0X5ClAme3GHUquGjPmIvuup0zPMuRfhrzWNI
+	 K6VbMvryH5QnQ==
+Date: Mon, 12 May 2025 11:24:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: display: tegra: document EPP, ISP,
+ MPE and TSEC for Tegra114+
+Message-ID: <20250512162439.GA3441216-robh@kernel.org>
+References: <20250504092324.10802-1-clamor95@gmail.com>
+ <20250504092324.10802-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uM1xOrZY5Fq5Lc7j"
-Content-Disposition: inline
-In-Reply-To: <20250512050010.1025259-2-sheetal@nvidia.com>
-
-
---uM1xOrZY5Fq5Lc7j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250504092324.10802-2-clamor95@gmail.com>
 
-On Mon, May 12, 2025 at 05:00:09AM +0000, Sheetal . wrote:
-> From: Sheetal <sheetal@nvidia.com>
->=20
-> Add Tegra264 ADMA support to the device tree bindings documentation.
-> The Tegra264 ADMA hardware supports 64 DMA channels and requires
-> specific register configurations.
->=20
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
+On Sun, May 04, 2025 at 12:23:22PM +0300, Svyatoslav Ryhel wrote:
+> The current EPP, ISP and MPE schemas are largely compatible with Tegra114+,
+> requiring only minor adjustments. Additionally, the TSEC schema for the
+> Security engine, which is available from Tegra114 onwards, is included.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra114-tsec.yaml   | 79 +++++++++++++++++++
+>  .../display/tegra/nvidia,tegra20-epp.yaml     | 14 +++-
+>  .../display/tegra/nvidia,tegra20-isp.yaml     | 15 +++-
+>  .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
+>  4 files changed, 113 insertions(+), 13 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> new file mode 100644
+> index 000000000000..ed0a5a8a091b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra114-tsec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra Security co-processor
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +description: Tegra Security co-processor, an embedded security processor used
+> +  mainly to manage the HDCP encryption and keys on the HDMI link.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra114-tsec
+> +          - nvidia,tegra124-tsec
+> +          - nvidia,tegra210-tsec
+> +
+> +      - items:
+> +          - const: nvidia,tegra132-tsec
+> +          - const: nvidia,tegra124-tsec
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: tsec
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Drop -names properties if there is only 1.
 
---uM1xOrZY5Fq5Lc7j
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: tsec
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  operating-points-v2: true
+> +
+> +  power-domains:
+> +    items:
+> +      - description: phandle to the core power domain
 
------BEGIN PGP SIGNATURE-----
+Instead, just 'maxItems: 1'.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCIenwAKCRB4tDGHoIJi
-0lX2AQD9H99iiPiDs9XOd4gc6siPEsvj0OvXUzRvIAaSiCtdAwEAicOztjwIpfSs
-AzHcj3tUaw3P5EVeYTj2aWLFzyZm2ws=
-=UcFi
------END PGP SIGNATURE-----
-
---uM1xOrZY5Fq5Lc7j--
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - resets
+> +  - reset-names
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra114-car.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    tsec@54500000 {
+> +        compatible = "nvidia,tegra114-tsec";
+> +        reg = <0x54500000 0x00040000>;
+> +        interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&tegra_car TEGRA114_CLK_TSEC>;
+> +        resets = <&tegra_car TEGRA114_CLK_TSEC>;
+> +        reset-names = "tsec";
+> +    };
