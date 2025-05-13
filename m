@@ -1,118 +1,90 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A9F28C863;
-	Tue, 13 May 2025 11:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817A128DB70
+	for <linux-tegra@vger.kernel.org>; Tue, 13 May 2025 13:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747134575; cv=none; b=Gr+lUpp2vw6i5XmxgpfA6FUPipJHudBA4F2J9ZiIVDFHFFotIs+3mloBVg+g/IhN7aip+u3vBueUqJ8+LQFZWp6S1H6CidIHeJDhg6+gQodbVpKiTPMqMhv9dda4RfYDFNh9CziumXetPDhwDbXM6cjsO7jCpQSH8yCN+zulkkE=
+	t=1747142736; cv=none; b=bGzfnqiJDYZycXDjebRoEA3wmPAzvtwj78pZw9AWTQ/R3OgRGLLJzc3HQ/zoQpJT/Z52d8IdojWKi5O52udaEg6FcHJFTNshTGY016rt995/UousVN3EYH+MNej4fdXIJLOS8v/ovZif5nKiUAd8QmNtf8MRSk+pVSrJR12/frE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747134575; c=relaxed/simple;
-	bh=PuSZtEwH/xHLs5A8wyth+7ZTwg8pPqLvreBhp8FJUA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmokRBmCFhCnnAJmv7aI1C//L6ApQSw48vvy0ufRaTmvKjSTCYucqdbnbOEjijd1Ou03cykyvR3VJXKNkC1Rv63/vZUEyN8vLjlVZaaDDsrzfFSuqU5Ks61ix7h+AgVmvUq61D+ocEVwD8HxtmhKOqKE86oloerkgUdjPONZK6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuPOw4jp; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1747142736; c=relaxed/simple;
+	bh=vr6jWP48yxMylfuZaQtdjlPFLP+Sk0yvaEXfr4dRZmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSqpIPEHE7B9807Vjuhttkk8+B5yjGeNZNmyaMA261KwziFKXohqpNNJsE8AX8IsUGpltAR69cjj8OeWNKwJEzx1vU2/wzX6HsmxkENk1cx8/ZUy0yCGiYJ6xY2R/SZX5uIvP4x8KRMtesfCib0WvJS7tmC3gA5GwWYZ3PNx2HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i/2LWdbn; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuPOw4jp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747134574; x=1778670574;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PuSZtEwH/xHLs5A8wyth+7ZTwg8pPqLvreBhp8FJUA0=;
-  b=RuPOw4jpJ+X8DrJgVndrRpFJn6FQLGXemujEFwebheslOJ7Clr8IIUhl
-   xAt/x4oSfCMiDYgFNI68T71F4UFlvfP2mp4/3IhplrEN9wYBWgZ/PV3bM
-   SjNCeeReAk/ITgh5CFeO0D4N3tr4tY381DT/eB8gTCF3h+GDCt4TkOwpm
-   hfDCUVsCg9ujCPcfSOUbXLDLKDZRlPU13DIgMGQP5Afz7Z10+Ww0CBeTz
-   8I7iN59+XVDk9y6CAhg3ciOukgMejiEqRZTb632xBzT3BOStvYOXDyira
-   DT+NgkhVazU8khAwcSDMPCmlxcQUtUx7oEzZ6eG7zdqEeWRPXHJFjAgUa
-   g==;
-X-CSE-ConnectionGUID: PsYCsLQpSwWqYmHlRKT7ww==
-X-CSE-MsgGUID: dRzNCnHCRZySHz3nLY7RKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="48666372"
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="48666372"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 04:09:33 -0700
-X-CSE-ConnectionGUID: MZ6QgjQYQiajde8s+G5A1g==
-X-CSE-MsgGUID: jsJsgqVUSDWxF6KZoHjvLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="138159969"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO [10.245.246.168]) ([10.245.246.168])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 04:09:29 -0700
-Message-ID: <52681983-2fe2-45da-b0ee-1e9452ed469e@linux.intel.com>
-Date: Tue, 13 May 2025 14:10:42 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/2LWdbn"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54fc61b3ccaso5872025e87.1
+        for <linux-tegra@vger.kernel.org>; Tue, 13 May 2025 06:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747142732; x=1747747532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vr6jWP48yxMylfuZaQtdjlPFLP+Sk0yvaEXfr4dRZmY=;
+        b=i/2LWdbnAflcM5SZ41RLSj7y1Jw7DUynh9ewjfOfjYRPaRzQWgcJvKHN5Cft4SL2rM
+         zgGqZTiZkoEvBQURAWM3ZRTSa8hWb3EaCUcZGXm79YVpJ/Vt8d+mkTdtZDywVu5Dhxxb
+         dTrbjFccTfPvtRuWQ0nozj0ulwV2vS8T8cV3y2W5IWH7NiiVHHDnLYNKWTsI/tIuWI6r
+         eI3/7CP0EHm6xCNt2e4PAj2c50WpQOzptxqDavL84fVNlDXn+gSJIFWX/hHf5sORnv3z
+         DFIAot4XvhnAL0D8N4mfLEVdW880gkr2bhaPwDJWD/KwjC0CgIM7me7D5d9cd/gudOtc
+         QlEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747142732; x=1747747532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vr6jWP48yxMylfuZaQtdjlPFLP+Sk0yvaEXfr4dRZmY=;
+        b=QjB7ak2iDkyFmRhFxNtCtALUlHTdLex5ZxCfl3f84pkdyM9cdO4VAALH70JFiTMwPq
+         FGkxD/dhRx4wIvWUuQ/JynAcJgkvegRO9tdv010MqbBEGfcHsjWpN8J2zJ3vPy3gOMtB
+         MKkPxsPVGbayfb9vp8g1B5UTvsbh7nOzdEqUYEx8TjVNxr3efF45XgT6sjUhf8WBvEB6
+         QtSVgtlOD/lGCQgqxyHGKj2fUsvak6c/nVzcgBB2p8arkz0oX/J+Ut8TpHVqC+4YgQGw
+         IqV8gnZwA54dHm+aDQTgIB3V/6c5uBs+2Xn6jN9XHzlCnybAzWg/V9twqBQNNh8Yvdl3
+         uN/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUiBw8Z9gxNQ0yH/vwzEc65edUZcZYYy4P2SP4ydoCd4iKhofDbmf424H52U7K/RPVllVhqZgGEo/LKYw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJh2EkXf7jjHZ7NWj7N1iXdn6psvSSAefgDQL1Xx1bjWc4G6da
+	JkEAcwjtuQLzcTUNGRAXuxlCXXmFBLznnuiXvhv1xLCFoSOWacvlE8MYWTaIeVBUPaI0EhCDyL+
+	FjAHNffI5+okLR4C/8O8rKXCTNcjDCBVdD6Q3kA==
+X-Gm-Gg: ASbGncvmn9IX4EKAkLlPJ9KIHM3RxvqzskwxHJhhTr6ej5/6bI1+bBfDGhZ+gP1+AKg
+	UFJ4GTxbF4w2UOZlteXWSY2XoYobEGp/nXox2Iat2lCia5CSjA5KECxMriKebExMbqB1aGSBHEc
+	klJKCGOCkgVLZ9T71QOkI0FjkNE9jhERLT
+X-Google-Smtp-Source: AGHT+IE0uPHvi59GKQReP0FS4yIDYcDcoiE56BNfoi9s0ZtA39+qwHxI+HlYyMOtM6ESsG8BIrjV3tSi2Mg5STR1bXk=
+X-Received: by 2002:a05:6512:4201:b0:54b:f33:cc16 with SMTP id
+ 2adb3069b0e04-54fc67bf61dmr5906057e87.16.1747142731593; Tue, 13 May 2025
+ 06:25:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2] ASoC: soc-pcm: Optimize hw_params() BE DAI call
-To: "Sheetal ." <sheetal@nvidia.com>, broonie@kernel.org,
- lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
- linux-sound@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com,
- spujar@nvidia.com
-References: <20250408083022.3671283-1-sheetal@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <20250408083022.3671283-1-sheetal@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com> <20250429-tegra186-pinctrl-v1-2-722c7c42394e@gmail.com>
+In-Reply-To: <20250429-tegra186-pinctrl-v1-2-722c7c42394e@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 13 May 2025 15:25:20 +0200
+X-Gm-Features: AX0GCFsgSRMFDJQegzrwRWIt-rIi0vhgKArb-MEwIUl7eEY9iod1pr2LmbxZAks
+Message-ID: <CACRpkdYyaTaXcz2zdM-13vXvc2JKXKk75=XS9VELDRaDA6=R=Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: gpio: tegra186: Add gpio-ranges
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Apr 29, 2025 at 11:33=E2=80=AFPM Aaron Kling via B4 Relay
+<devnull+webgeek1234.gmail.com@kernel.org> wrote:
 
+> From: Aaron Kling <webgeek1234@gmail.com>
+>
+> Add optional gpio-ranges property.
+>
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 
-On 08/04/2025 11:30, Sheetal . wrote:
-> From: Sheetal <sheetal@nvidia.com>
-> 
-> The hw_params() function for BE DAI was being called multiple times due
-> to an unnecessary SND_SOC_DPCM_STATE_HW_PARAMS state check.
-> 
-> Remove the redundant state check to ensure hw_params() is called only once
-> per BE DAI configuration.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-The first sentence tells that the hw_params() of the BE is called
-multiple times.
-
-The second sentence states that the check is redundant then tells that
-it is removed to not call the hw_params() of the BE, so the check was
-not redundant, it got exercised.
-
-Which one is true?
-
-Under what circumstance the __soc_pcm_hw_params() got called multiple
-times? Was it normal or was it error? What causes it?
-
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
-> ---
-> Changes in v2:
-> - Update commit message as its not a fix.
-> - Marked as RFC patch as it requires feedback from other users
->   perspective as well.
-> - The patch is being sent separately as other patch is not RFC.
-> 
->  sound/soc/soc-pcm.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-> index d7f6d3a6d312..c73be27c4ecb 100644
-> --- a/sound/soc/soc-pcm.c
-> +++ b/sound/soc/soc-pcm.c
-> @@ -2123,7 +2123,6 @@ int dpcm_be_dai_hw_params(struct snd_soc_pcm_runtime *fe, int stream)
->  			continue;
->  
->  		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN) &&
-> -		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_PARAMS) &&
->  		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE))
->  			continue;
->  
-
--- 
-Péter
-
+Yours,
+Linus Walleij
