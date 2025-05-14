@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B822F22;
-	Wed, 14 May 2025 21:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A92E2F22;
+	Wed, 14 May 2025 21:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747259394; cv=none; b=f3DyW1bRbLnGe76o0FJWffbIngxR8hlq4YcoYZfP6Bk5P48+S0+N3RYoADl+mAgJepn4IPo076CKKF0kNf9FS9Kez2oFrn+s6amT77+BSKHPYFk1ffhJNq1Em6XLexAbI+YLplkpcUiuPPYMHYnuV/AT6JOIVaC7tG/f1pIHhR0=
+	t=1747259434; cv=none; b=t9jC0gDXrLo04ExvRBk/4TCSSNF/XazmRnQN8DZxcEKK8MW29Ozvo7q2h9gpqHWX4teepW8PTiFME0HFMVpjtmPBymArXAzZg8pT2wz2jDowzOL/FYvOW+WrxrbHpdQgT9EyGxzPd3Ng7qzuJnJpMwXJEbo+oObbdXoi4chdxn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747259394; c=relaxed/simple;
-	bh=M5N9Uj/TVRF761dj227/sDDUY6pKb0r7vhQltz99Uy8=;
+	s=arc-20240116; t=1747259434; c=relaxed/simple;
+	bh=TBwCGxAE9tlAznNLsiJmEWfUw7Fy2HDZ2rJFrlJMHss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBCh14K+UYXBLZzOqHjPXbQKLbyYF1AXWeo6ZCA6IDeBEiDBaeSYM58uPPIhsYKgPxV4O4i8v5Ri7ubfGML+f9INVNvO4rywTe75SwGtY6Gg7elejzxr582Tiwcmo4qTTuz/4W27WfPOj2YmQUPYq/eBEl/i6id+pY5UNpWA3cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACB5d+4r; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdU4tDp5ad5DF0FGLY8wlpl6jbbnWtpjnTg45D7mRqtxTY9StPtmsSKphhGbfEKyVDC2/RnjH+xcOndQFN/bP3ON8sjsw7hTABnb4YyFBfYIyWDI98Z2DDwVcqdRxGzVLG4UAxozSeVmQAScmrZP4e6EhieV2JuhgVJDbyDXc3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0+vz/+X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACB5d+4r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 786F4C4CEE3;
-	Wed, 14 May 2025 21:49:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0+vz/+X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EEAC4CEE3;
+	Wed, 14 May 2025 21:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747259393;
-	bh=M5N9Uj/TVRF761dj227/sDDUY6pKb0r7vhQltz99Uy8=;
+	s=k20201202; t=1747259434;
+	bh=TBwCGxAE9tlAznNLsiJmEWfUw7Fy2HDZ2rJFrlJMHss=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ACB5d+4rorlnzgQu5K5d+aeD+h/PTxV932idcjEdEeftAbA/X8gI07rjneHv2KYV3
-	 baZ7VU1ASBmmVorEnZeZuV9DAqxJyhRZUOycgfSK9dN+BO0dVFaHFBostujw9VhdxG
-	 E5W0Q2XCKQ+1Vs7VBkzqbfVY8K+h4LzyjIUyBaZxqQE4geCkwNnSlec9EzkFYdAXtM
-	 Ka4O+AyKeDJaBcxBYv6ZBTD/DjLg8iT2/Q/tkVzqpPHZ+qSY/C02H3BnotAqCDieiX
-	 duCXTdZtY75YY4ejQJ52SgR4OkaLwlIgMAqTzOHWjQ0MPb+J+ev2h9jERaba6LySxq
-	 08wl2c9jvzW5w==
-Date: Wed, 14 May 2025 16:49:51 -0500
-From: Rob Herring <robh@kernel.org>
+	b=Z0+vz/+XAJXmGZoSZF3yA4er1i+MNbm5FXBYQ+3+k5FPEpcfemqRwXyZyzm6c1vp8
+	 0wQFXwBeRB4pDyEpOYGNGSflXEQeqydEbdId20JT8XSSJun/tTcSDCURF/5EuHst5g
+	 ejj5So9qkXGiTaWgoGzZKNxvktLg2FYCI/uEDWAyeqr5Eq/WCHU2OwsADOF3jzr7v1
+	 gQYBUtqWwK3XFRpklRzQAxLFdKQh2OZBA4nDTl19uTXM4ssR8js67G41GOCfCf+97h
+	 9c+WSd8S1bJLhErUKuXPqe5fJkyM6vx4/gVc3ohW3XmkVLCBrxAXVswkwMHeqs4W0f
+	 yJzEIGwiZAznQ==
+Date: Wed, 14 May 2025 16:50:32 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
 To: "Sheetal ." <sheetal@nvidia.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+Cc: linux-tegra@vger.kernel.org, conor+dt@kernel.org,
 	linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, perex@perex.cz, tiwai@suse.com
+	perex@perex.cz, tiwai@suse.com, devicetree@vger.kernel.org,
+	broonie@kernel.org, jonathanh@nvidia.com, lgirdwood@gmail.com,
+	krzk+dt@kernel.org, linux-sound@vger.kernel.org
 Subject: Re: [PATCH 1/3] dt-bindings: Update Tegra194 and Tegra234 HDA
  bindings
-Message-ID: <20250514214951.GA3093539-robh@kernel.org>
+Message-ID: <174725943164.3099141.411153645160050033.robh@kernel.org>
 References: <20250512064258.1028331-1-sheetal@nvidia.com>
  <20250512064258.1028331-2-sheetal@nvidia.com>
 Precedence: bulk
@@ -49,11 +49,9 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20250512064258.1028331-2-sheetal@nvidia.com>
 
-On Mon, May 12, 2025 at 06:42:56AM +0000, Sheetal . wrote:
+
+On Mon, 12 May 2025 06:42:56 +0000, Sheetal . wrote:
 > From: Sheetal <sheetal@nvidia.com>
-
-Needs a 'ASoC' subject prefix on both patches.
-
 > 
 > - Tegra194 and Tegra234 HDA is not compatible with Tegra30, hence update
 >   them as standalone compatibles. Also, add necessary logic to the binding
@@ -75,123 +73,6 @@ Needs a 'ASoC' subject prefix on both patches.
 >  .../bindings/sound/nvidia,tegra30-hda.yaml    | 83 ++++++++++++++++---
 >  1 file changed, 72 insertions(+), 11 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-> index 3ca9affb79a2..703f009862a4 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-> @@ -20,11 +20,12 @@ properties:
->  
->    compatible:
->      oneOf:
-> -      - const: nvidia,tegra30-hda
-> +      - enum:
-> +          - nvidia,tegra30-hda
-> +          - nvidia,tegra194-hda
-> +          - nvidia,tegra234-hda
->        - items:
->            - enum:
-> -              - nvidia,tegra234-hda
-> -              - nvidia,tegra194-hda
->                - nvidia,tegra186-hda
->                - nvidia,tegra210-hda
->                - nvidia,tegra124-hda
-> @@ -48,10 +49,7 @@ properties:
->  
->    clock-names:
->      minItems: 2
-> -    items:
-> -      - const: hda
-> -      - const: hda2hdmi
-> -      - const: hda2codec_2x
-> +    maxItems: 3
->  
->    resets:
->      minItems: 2
-> @@ -59,10 +57,7 @@ properties:
->  
->    reset-names:
->      minItems: 2
-> -    items:
-> -      - const: hda
-> -      - const: hda2hdmi
-> -      - const: hda2codec_2x
-> +    maxItems: 3
->  
->    power-domains:
->      maxItems: 1
-> @@ -93,6 +88,72 @@ required:
->  
->  additionalProperties: false
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra30-hda
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: hda
-> +            - const: hda2hdmi
-> +            - const: hda2codec_2x
-> +        resets:
-> +          minItems: 3
-> +        reset-names:
-> +          items:
-> +            - const: hda
-> +            - const: hda2hdmi
-> +            - const: hda2codec_2x
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra194-hda
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: hda
-> +            - const: hda2hdmi
-> +            - const: hda2codec_2x
-> +        resets:
-> +          maxItems: 2
-> +        reset-names:
-> +          items:
-> +            - const: hda
-> +            - const: hda2hdmi
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra234-hda
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: hda
-> +            - const: hda2codec_2x
-> +        resets:
-> +          maxItems: 2
-> +        reset-names:
-> +          items:
-> +            - const: hda
-> +            - const: hda2codec_2x
-> +
->  examples:
->    - |
->      #include<dt-bindings/clock/tegra124-car-common.h>
-> -- 
-> 2.17.1
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
