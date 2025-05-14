@@ -1,43 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1AD277020;
-	Wed, 14 May 2025 11:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26691DED5D;
+	Wed, 14 May 2025 15:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747222316; cv=none; b=j7flvvM/9NyEP4UCK0LpOIQut6HDpagEVD2Mau+U3KU3SQcOBsGojipKBiM/RENL6ugkt5I319zMeuxefPTluHIngrR/baWQFYpifGcquRsGOWrhSP0UPI/MEMg7xWV71vResb5r9EpOa9D+fUOy7Wo57r+9OryJ7+8nEaXl7vg=
+	t=1747234980; cv=none; b=iQOZT2UU9PLJu8lyx1FlhV9cz4Jsthaw/fMZUuT9PaBiIgMyB6B356D6blUtBNEIYXMvyCuNkwoCM1JvYs/mkdccmYAnqiR7hQt+FEJouzm2c4oGxRBrZwEnkytPciiwZHtxmPb2CtX68UuPHMSzYeMuPIAdMnV/DDkKLh9J4uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747222316; c=relaxed/simple;
-	bh=NzqA+eKHxUEF+PGJTwjMCdcX89RCrviZg/f/DP8l7OQ=;
+	s=arc-20240116; t=1747234980; c=relaxed/simple;
+	bh=15Etcu4xfg85YZbJ8Ox9B4ke3VtIDNM5//5H62ElP5Y=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ge71OFTNnGCuqw+KFZ74hq00IKetE1Y2W4Y057zM82pe4YE0vFqGIstMCPdHRRlRTdwUrsNRYRQQza53w6A8hHDoqSA17SMOK+3KlbKskPj975vfa/xlwl9YjQ76IMaoEtS2N9Cv+TAe7Fbp9Io5qMa/pkST+grqxGR7oppUie4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsQsqm9+; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=srVrsI+Zt9QmDxZxnnGVHMNDU+5KHhMcXIqZPkLHXpA69VbUumU7guX8ItSjra7FVrpZmkfeRXh04P3ZqAyzD67fd+T1Nfie69BMd8u3Oy6fhmrj8KxoKZXGMHcQ2H++hsiJKy/xqyAYZEwBFrcKdf+/07eviNgLnoZ4o3oiqR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTb7jo6w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsQsqm9+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39ABC4CEF1;
-	Wed, 14 May 2025 11:31:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTb7jo6w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB8AC4CEE3;
+	Wed, 14 May 2025 15:02:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747222315;
-	bh=NzqA+eKHxUEF+PGJTwjMCdcX89RCrviZg/f/DP8l7OQ=;
+	s=k20201202; t=1747234980;
+	bh=15Etcu4xfg85YZbJ8Ox9B4ke3VtIDNM5//5H62ElP5Y=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IsQsqm9+Cv6oUwM1UdOrUbglX8hxrEWScrCJE1BTLzJcqjvJhqwgZZKrpMNwzUhDV
-	 j2IAAm2FJlMgsz0uET7tT1xGCbvxpwn+jhsVPBlkmax9y3ZoDI0qanBtlXccPE99nF
-	 0bDb7xrqDSw1n8oHRwLeDPMIZ3cce9caD5HzZvSjqfPk8e5ka8JrA1zVkLdyZ5SkF/
-	 cAZy+liB5kEtUgGWaN0Zp3h9KXMAwVvUVum05nlpl4TrQdFRX1WRya/BGuolGohjtj
-	 O8GeLi8+2JA6QjEWxW1oJFOm8AjwvW1Fj3+DNEh87omuuBhgvq96jlIck3uBYGWpNE
-	 uFyr5oajNQafg==
+	b=UTb7jo6w30T8CfHLjPZc3AtxTyqT+WAeYMjDfjy9sbvmeAy4/uN2vH2W6hR79Q6af
+	 fJMnFMQz5JyUfVmi6JMHBTTK+d9LDhPxuY3hlp27QlnorQYH2/a0G70IPGeA09sSuv
+	 eU2gChFMELFg06Br5BPHfk4osa7O9X4sN6lrB8w4MyuTBrJnEB1ywTiNbmzVsSncsU
+	 E4mdRpTEoC1/AqsNS4QuT8t5vBTgbZd5zBltT1efs+jaZfi9yiA+b5JYNIfrLLiqiH
+	 E70up5Ri8Jlzj9DvRXn7LCZkk5Q/PBHkakRUVGH7oXWtosZJKRUdLfNk4fs9DYWS2u
+	 XN/dcfhPtvFXA==
 From: Vinod Koul <vkoul@kernel.org>
-To: jckuo@nvidia.com, kishon@kernel.org, thierry.reding@gmail.com, 
- jonathanh@nvidia.com, Ma Ke <make24@iscas.ac.cn>
-Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
- stable@vger.kernel.org
-In-Reply-To: <20250303072739.3874987-1-make24@iscas.ac.cn>
-References: <20250303072739.3874987-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2 RESEND] phy: Fix error handling in
- tegra_xusb_port_init
-Message-Id: <174722231344.74407.15426957064569052576.b4-ty@kernel.org>
-Date: Wed, 14 May 2025 12:31:53 +0100
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ "Sheetal ." <sheetal@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, 
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250512050010.1025259-1-sheetal@nvidia.com>
+References: <20250512050010.1025259-1-sheetal@nvidia.com>
+Subject: Re: [PATCH v2 0/2] Add Tegra264 support in ADMA driver
+Message-Id: <174723497746.115803.4058332926629460459.b4-ty@kernel.org>
+Date: Wed, 14 May 2025 16:02:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -49,20 +48,26 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 03 Mar 2025 15:27:39 +0800, Ma Ke wrote:
-> If device_add() fails, do not use device_unregister() for error
-> handling. device_unregister() consists two functions: device_del() and
-> put_device(). device_unregister() should only be called after
-> device_add() succeeded because device_del() undoes what device_add()
-> does if successful. Change device_unregister() to put_device() call
-> before returning from the function.
+On Mon, 12 May 2025 05:00:08 +0000, Sheetal . wrote:
+> The patch series includes the necessary changes to enable
+> support for the Tegra264 platforms in ADMA drivers.
+> 
+> Changelog
+> =========
+> 
+> v1 -> v2:
+> ---------
+>  - Patch 1/2: Update commit message and Tegra264 bindings properly.
+>  - Patch 2/2: No header update.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] phy: Fix error handling in tegra_xusb_port_init
-      commit: b2ea5f49580c0762d17d80d8083cb89bc3acf74f
+[1/2] dt-bindings: Document Tegra264 ADMA support
+      commit: b81cd165e4a5599bd96c11adf40872fcbc5fa54f
+[2/2] dmaengine: tegra210-adma: Add Tegra264 support
+      commit: 21e12738779f74d9ae63faa995f5743656eadc07
 
 Best regards,
 -- 
