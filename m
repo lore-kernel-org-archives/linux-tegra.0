@@ -1,42 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26691DED5D;
-	Wed, 14 May 2025 15:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D11B6D11
+	for <linux-tegra@vger.kernel.org>; Wed, 14 May 2025 15:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747234980; cv=none; b=iQOZT2UU9PLJu8lyx1FlhV9cz4Jsthaw/fMZUuT9PaBiIgMyB6B356D6blUtBNEIYXMvyCuNkwoCM1JvYs/mkdccmYAnqiR7hQt+FEJouzm2c4oGxRBrZwEnkytPciiwZHtxmPb2CtX68UuPHMSzYeMuPIAdMnV/DDkKLh9J4uM=
+	t=1747236684; cv=none; b=JR4HzqytSBpT+2tfkPqQKZC/BWGWZVLRn63oNRvKHtbPx1kbtxsezlGXj/mqnsZNuSk6aGmEQwHZhcnkfw93oSRgyWz7rbwvgCx2VoPYj8U/t110YEY+7UJQ51W1Hdch9B5KZiJsy1CDpiaSnAvIEQaK3KomdWmGYoOU5xUzurs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747234980; c=relaxed/simple;
-	bh=15Etcu4xfg85YZbJ8Ox9B4ke3VtIDNM5//5H62ElP5Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=srVrsI+Zt9QmDxZxnnGVHMNDU+5KHhMcXIqZPkLHXpA69VbUumU7guX8ItSjra7FVrpZmkfeRXh04P3ZqAyzD67fd+T1Nfie69BMd8u3Oy6fhmrj8KxoKZXGMHcQ2H++hsiJKy/xqyAYZEwBFrcKdf+/07eviNgLnoZ4o3oiqR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTb7jo6w; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747236684; c=relaxed/simple;
+	bh=Z1sxsE8kXcUhyoj0n/3eQWxMrwrp8xETdMTl6tZn0Jg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hTR3imDeEAcufsXyFPVVgjerRx+nQ9jb4KsXEulKvrXQr9VbZmRnsugaHViOHxCZU2sSutrtfu3iRo3SaJg8euB6UbP01U52Sr82ou7FrJ6xZNserlPib3Pd+VwlaDJ1ELkmFd/9WnK+AV97nC9KOu/PbohKLFyB9fTrV1vTK6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NjIA3K4c; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTb7jo6w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB8AC4CEE3;
-	Wed, 14 May 2025 15:02:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747234980;
-	bh=15Etcu4xfg85YZbJ8Ox9B4ke3VtIDNM5//5H62ElP5Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UTb7jo6w30T8CfHLjPZc3AtxTyqT+WAeYMjDfjy9sbvmeAy4/uN2vH2W6hR79Q6af
-	 fJMnFMQz5JyUfVmi6JMHBTTK+d9LDhPxuY3hlp27QlnorQYH2/a0G70IPGeA09sSuv
-	 eU2gChFMELFg06Br5BPHfk4osa7O9X4sN6lrB8w4MyuTBrJnEB1ywTiNbmzVsSncsU
-	 E4mdRpTEoC1/AqsNS4QuT8t5vBTgbZd5zBltT1efs+jaZfi9yiA+b5JYNIfrLLiqiH
-	 E70up5Ri8Jlzj9DvRXn7LCZkk5Q/PBHkakRUVGH7oXWtosZJKRUdLfNk4fs9DYWS2u
-	 XN/dcfhPtvFXA==
-From: Vinod Koul <vkoul@kernel.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- "Sheetal ." <sheetal@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, 
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250512050010.1025259-1-sheetal@nvidia.com>
-References: <20250512050010.1025259-1-sheetal@nvidia.com>
-Subject: Re: [PATCH v2 0/2] Add Tegra264 support in ADMA driver
-Message-Id: <174723497746.115803.4058332926629460459.b4-ty@kernel.org>
-Date: Wed, 14 May 2025 16:02:57 +0100
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NjIA3K4c"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-441d1ed82faso49257735e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 14 May 2025 08:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1747236680; x=1747841480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EGR4+1BG0FD7hF4WA19BAUgiyzmgLYBs/GSczEJQxEg=;
+        b=NjIA3K4c9L0i4et5fKAejFpL9vC3TkQOgER2Q40rHyEPU7b6pp2EIPBjR9PSvmMUZY
+         YDnH0mqEpPSEuECdChDLwK6uf0r5onaoNOZUM821+M6ZcVpaPrAw7tHF8kJfK5W36QXe
+         PV5bhm96SyQbmG/OaxhRxDYQtHeZ+k9/GvI1BEyI2yYTeY851tmNgOm3hrQjWvk8RjVr
+         gKK8xbWstPGRl6XIsBdsB9BAMg2VzAjNKBuGocQulbBLCcsTg60ocAVKusWcSNTrgg60
+         sjnRZ2eGFcDyqpplV73xEw24ezGW1GeXB3GIc8sSseGQvTw59C9eds5Os1ZVMLVfnSv4
+         ymuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747236680; x=1747841480;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EGR4+1BG0FD7hF4WA19BAUgiyzmgLYBs/GSczEJQxEg=;
+        b=xUPFoV5dzOWHeuWx2C7IG173FRKObl8XIscf6XhJbx8uJVHZtb2GJN5B7TeBeD5MnZ
+         FxlIZX60AJHNJC1YPoVnoqZl6lD8lbz93UcSRkYPJxrC3828gMTTEtlFhftmG/FF7INI
+         TV9rg98NU0Cc1272+Hya+1igWSK8Kp7sRNJ6Ru+xbokhvatYhjbtrEiF93Q4RJvE5WLl
+         uCxEHITavR6TdtICucp48+jHwMw3zIbR0ohcVUz5h55b6VAfnJAaZF86JwIC+wXa7pDQ
+         ck0Nz7XlXXzBX7GeqUJGVBNfLFJSrMww16HwtTRgqEa3eFnTgkGGl4mTMb8icY8EWBk5
+         BYcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWfk4+Xit/DSeueypa7ZQsoYWI2efo70zg1/h/i9mh98DNF3cj/Ik9ZgkJ8ng+zgHFGGPYkaPpZbmezg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDQkC1UI7hKAtdnNL/tVQ79Ee7t6Quoe19A4h7dLjgceyAQuMg
+	GOFqnVld4yXi3QzkR57bWK5YAVZCdMEu0+8Z856u5s13t459QCtQQZDQudLVGDM=
+X-Gm-Gg: ASbGnctPD0RNU1Vw9t9peSx5iCGf7u1MdcXjvEK6uFgQwCDlHVX6eEFBbkfYDmGkpKb
+	WVQgpvuMZ7L37LVzpnq6W2Bvl3WCbx7wTxM+sl1fRIWjy/C6eyaoBVXIPANWuyoBMsBrP+oOX2D
+	sF75FmR5xH3n33POi7/v6EpNCsa14NGM3vtYKsgUpLz4NgvbQeYK182KFGz5crmf+bjXcmH82o7
+	nvbrYGMUEsv/MoFYdC3IwY19a52VRBsmVOpyu8S5BIGZRFeD8ZfaXjjywxzajJPWX26nKiteYf9
+	d0yXY45mhEVMN9RpPAeCFkPLAce4uYAbI/qkM5vKHx4BA4uxNVsoigBiEH93uJYygragx3VcZqc
+	Aloumce5DLjayyGP1gUbvcVbX
+X-Google-Smtp-Source: AGHT+IHOvVPhpwSb7mTZDJYjwkd9um7VINSJBr3N9zogJFPLlegS2njAEUaLrSQ74A/tb/6r6JJrbw==
+X-Received: by 2002:a05:600c:1c9e:b0:43d:b3:fb1 with SMTP id 5b1f17b1804b1-442f216c175mr31299005e9.27.1747236680160;
+        Wed, 14 May 2025 08:31:20 -0700 (PDT)
+Received: from brgl-uxlite.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f337db3bsm32975415e9.9.2025.05.14.08.31.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 08:31:19 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Aaron Kling <webgeek1234@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/4] pinctrl: tegra: Add Tegra186 pinmux driver
+Date: Wed, 14 May 2025 17:31:17 +0200
+Message-ID: <174723666619.14309.2874778168838879633.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
+References: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,33 +85,22 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Mon, 12 May 2025 05:00:08 +0000, Sheetal . wrote:
-> The patch series includes the necessary changes to enable
-> support for the Tegra264 platforms in ADMA drivers.
+On Tue, 29 Apr 2025 16:33:29 -0500, Aaron Kling wrote:
+> This series adds support for Tegra186 pin control, based on a downstream
+> driver, updated to match the existing Tegra194 driver.
 > 
-> Changelog
-> =========
 > 
-> v1 -> v2:
-> ---------
->  - Patch 1/2: Update commit message and Tegra264 bindings properly.
->  - Patch 2/2: No header update.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: Document Tegra264 ADMA support
-      commit: b81cd165e4a5599bd96c11adf40872fcbc5fa54f
-[2/2] dmaengine: tegra210-adma: Add Tegra264 support
-      commit: 21e12738779f74d9ae63faa995f5743656eadc07
+[2/4] dt-bindings: gpio: tegra186: Add gpio-ranges
+      https://git.kernel.org/brgl/linux/c/1275c70c4c1ca764cbf9ced01fb4286e4f49747e
 
 Best regards,
 -- 
-~Vinod
-
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
