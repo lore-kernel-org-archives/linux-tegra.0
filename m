@@ -1,61 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4095D18C011;
-	Wed, 14 May 2025 16:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF4D27FD4F;
+	Wed, 14 May 2025 16:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747239489; cv=none; b=UUuLMAhGeknTS5LRDFtbADqNlM7P+UEivcbriTf03pGlwjtA+O122qJDLPL6ovwYRx6db0VL0gtDgMrwSaTzCS1UNVm0siD8L0bw/L1xuij4CUhFuAlyDyq48cxRvKqpU3oRwQyH4grB/IwxBHDt9xc40/l6GYQ+51s/4iTZ334=
+	t=1747239909; cv=none; b=PhzXJYeTCirTiQ0xBDYO5ynbiLuHjRXi5I0uSflNVd11dn1W8sd5LV1nszp1plmqxS5AINiHjfs9pGzbO0SUdtsw2H2nv1t6nMy29xCEZwJLeu+Qnaw5fyrWYRVqQpYz5Cayoc+IxL0+3M8jOYyj2ZwF3IhVRLitZi3KVocUCp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747239489; c=relaxed/simple;
-	bh=9FKUWOJipi0rvxqpVFsZ5LYqcVI0NRqJ68uKB0gVQIk=;
+	s=arc-20240116; t=1747239909; c=relaxed/simple;
+	bh=8YOc48xEuXr4DJ2sYcMuh/KPNLlwfh6kUwEIoaMrSoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boQxXI9E/46+TrDjkd07J/sTdahgd3ArNeyDlJsMMEO0l7Ch++CiA2NVaut3n0aGVaYFVEfU9KbFuZ8L+tAy9SnDCRFZAJlEhEgpDQhTwiPccA/md81mS/BVMHxAoGwVhAWQJfgpRpWsWBbx5/sZHqHAakq1xzRI2BABNo6hzuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=euaCr+8A; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxe/r3gzDaz/6iiTZrEgYqsBcRGxCCvbtMl3ts4hYVgTYuzLqaXzD5DsYlp4xhgW7JpmcNbWZrgUUdHn1t6HVbteGQGE7jTQD7hGXYhD0KmRrp80hnyKvsSXHXfiH2PEDJmqzgZfRxlH4q9eKWx+l1I/vBVvPFBccYSM9vqWEs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFNZUBSs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="euaCr+8A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2C8C4CEE3;
-	Wed, 14 May 2025 16:18:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFNZUBSs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F2AC4CEE3;
+	Wed, 14 May 2025 16:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747239488;
-	bh=9FKUWOJipi0rvxqpVFsZ5LYqcVI0NRqJ68uKB0gVQIk=;
+	s=k20201202; t=1747239908;
+	bh=8YOc48xEuXr4DJ2sYcMuh/KPNLlwfh6kUwEIoaMrSoE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=euaCr+8AKPHRyz/S1xRm+eifwxkWnvCWj6ryx2SEkc/es/8/TklpQ27Apc/7mPCYn
-	 ek6zQnZ5gjOkys6Zd2bOW7CxnIQQ1jlXU6BmqSHyyvsG/PChkIa97YSO1GFA7yMYWm
-	 0LB0sxJB8L++cdbEmREWHAoam82GIh8/0eAHDMcsmBkBaDhMK/j9QAmVH+JRPOU2xa
-	 cPRh1wWSYKaxPwTmSTD9CjiSrZdi8IKQk+rp9P9jIQgnE5H+KxI71ffQ9aTjdEqAiz
-	 ra0FFH5vKpORB38+L1v02Ngl4VBHuyx2EdCQt/Iro80xSH4HDhvxkBm0Ml5tH2d49d
-	 H2sMnC4juA9yw==
-Date: Wed, 14 May 2025 11:18:07 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 05/11] dt-bindings: misc: Document Tegra264 APBMISC
- compatible
-Message-ID: <174723948656.2532633.8102674613984687601.robh@kernel.org>
-References: <20250506133118.1011777-1-thierry.reding@gmail.com>
- <20250506133118.1011777-6-thierry.reding@gmail.com>
+	b=aFNZUBSs18u7vNTlMtcWiIJ8SvP2FFDkbpHlQrN+YoDFwueqYt+X6WcXB1yFHQtTr
+	 aVku4Tyavvh6Bv+6WOoMfBnz4VbdDC0T+hYE04Nb3HuLpnt04x2Cjxs23JmA4wwaTR
+	 v/SaYkB7Fzuob4sgAeMa49ka8t2xajp2Bj15IhADoeujJ50oyQDDv5kZ6KTStdPThy
+	 rz7ZFuPdNpI47t8nz/TOx3xAQFJUWfaiwu+M+CcGjdD/8nFebdDoRClVveb7r6VZYp
+	 eEu0xX1iGdNvbkcr1a96/VKeJ/ED49wWQ2HjThtvMtFT/cT3ENLei+/I4FnQFLoNqv
+	 iVV2CK+CwZouQ==
+Date: Wed, 14 May 2025 17:25:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vishwaroop A <va@nvidia.com>
+Cc: krzk@kernel.org, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com,
+	kyarlagadda@nvidia.com, smangipudi@nvidia.com, bgriffis@nvidia.com,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/2] dt-bindings: spi: tegra: Document IOMMU property
+ for Tegra234 QSPI
+Message-ID: <20250514-shrimp-ranged-14b4529eb997@spud>
+References: <20250513200043.608292-1-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DQh+ciSLDM9qG+dk"
+Content-Disposition: inline
+In-Reply-To: <20250513200043.608292-1-va@nvidia.com>
+
+
+--DQh+ciSLDM9qG+dk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506133118.1011777-6-thierry.reding@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, May 13, 2025 at 08:00:42PM +0000, Vishwaroop A wrote:
+> Add the 'iommus' property to the Tegra QSPI device tree binding.
+> The property is needed for Tegra234 when using the internal DMA
+> controller, and is not supported on other Tegra chips, as DMA is
+> handled by an external controller.
+>=20
+> Signed-off-by: Vishwaroop A <va@nvidia.com>
 
-On Tue, 06 May 2025 15:31:12 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+--DQh+ciSLDM9qG+dk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCTD3wAKCRB4tDGHoIJi
+0t2XAP4/BH7fs0e/BmQhWpvWaKGS3RlpZ6n1pIQr0ApCchqAXgEAqGfukdfko0bU
+H52InxlNzKSfABdad/KmdkSjoHLYTQ8=
+=b50c
+-----END PGP SIGNATURE-----
+
+--DQh+ciSLDM9qG+dk--
