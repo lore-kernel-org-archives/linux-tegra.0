@@ -1,40 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34C418C011;
-	Wed, 14 May 2025 16:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4095D18C011;
+	Wed, 14 May 2025 16:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747239471; cv=none; b=QV7o/oubYsO4x+mQuUr3IJZfHZ6HFyKnLVtbh2NR8PYPbly1R8i7dYvHlZUC4HRUUe92+E3Bj1ayWMvODoPSwCZFKZNUyB/h5+6xZ4yMn9K9+nyUsnTB8hKCfD23IiRvih51YN+O2f1YLuIZ9lJXRnYjSiUa+cgh+Eed6nPNly0=
+	t=1747239489; cv=none; b=UUuLMAhGeknTS5LRDFtbADqNlM7P+UEivcbriTf03pGlwjtA+O122qJDLPL6ovwYRx6db0VL0gtDgMrwSaTzCS1UNVm0siD8L0bw/L1xuij4CUhFuAlyDyq48cxRvKqpU3oRwQyH4grB/IwxBHDt9xc40/l6GYQ+51s/4iTZ334=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747239471; c=relaxed/simple;
-	bh=aqUoPtC1xc3xR9sEMf8NIVU+ZgOW5Hbhj8zK97ZrDzA=;
+	s=arc-20240116; t=1747239489; c=relaxed/simple;
+	bh=9FKUWOJipi0rvxqpVFsZ5LYqcVI0NRqJ68uKB0gVQIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDUBvvzCt4PUMQ9Hx6dhWokok5B8WgHj2ae3DlPl8jLBWEu/vxsL4jSB0h50yF2cUwpohw5QvDjFBK8lIVQyKO3WEcndRcKhMUVek42BBSY2xZ8BBEcRP29C/ZQ/TBWhAgS87TIgnZ8eUFMrFmCR85aCD4N7ueiW8DzjDvZDLWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sq4ITlmO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=boQxXI9E/46+TrDjkd07J/sTdahgd3ArNeyDlJsMMEO0l7Ch++CiA2NVaut3n0aGVaYFVEfU9KbFuZ8L+tAy9SnDCRFZAJlEhEgpDQhTwiPccA/md81mS/BVMHxAoGwVhAWQJfgpRpWsWBbx5/sZHqHAakq1xzRI2BABNo6hzuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=euaCr+8A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sq4ITlmO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47427C4CEE9;
-	Wed, 14 May 2025 16:17:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="euaCr+8A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2C8C4CEE3;
+	Wed, 14 May 2025 16:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747239470;
-	bh=aqUoPtC1xc3xR9sEMf8NIVU+ZgOW5Hbhj8zK97ZrDzA=;
+	s=k20201202; t=1747239488;
+	bh=9FKUWOJipi0rvxqpVFsZ5LYqcVI0NRqJ68uKB0gVQIk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sq4ITlmOF1IOOxPyyWtXgca8yT3bBrZZi9gdMX9Iw1DuwVQpBYo2iMF7Pd/nNTy19
-	 O5oaVqijiH5kpwJ4nr+7Expd5Ml5SpoHwLgB2roMn3biWp7W3eKzAnsFoqOAa9Lxlp
-	 7iCG6eF0QAlIUsKzRMaRdbRpuwYX83RM+Uab9BnrzYwI7OIdSfiaPJcFfPxyEyjXEt
-	 moMkoBsVBIQVi/yoT7OxCnfzJGNVCCNGdlgWmc6LipOX3ipqO1E6uU4pRCrXSC3UOf
-	 CciIWgbZfkLHWWgs/iQSNNIigyJS+0r1PEGHniOKezvaxbBLLHiyWc9ekZRgnV4ME/
-	 mMAMfmRzfseNA==
-Date: Wed, 14 May 2025 11:17:48 -0500
+	b=euaCr+8AKPHRyz/S1xRm+eifwxkWnvCWj6ryx2SEkc/es/8/TklpQ27Apc/7mPCYn
+	 ek6zQnZ5gjOkys6Zd2bOW7CxnIQQ1jlXU6BmqSHyyvsG/PChkIa97YSO1GFA7yMYWm
+	 0LB0sxJB8L++cdbEmREWHAoam82GIh8/0eAHDMcsmBkBaDhMK/j9QAmVH+JRPOU2xa
+	 cPRh1wWSYKaxPwTmSTD9CjiSrZdi8IKQk+rp9P9jIQgnE5H+KxI71ffQ9aTjdEqAiz
+	 ra0FFH5vKpORB38+L1v02Ngl4VBHuyx2EdCQt/Iro80xSH4HDhvxkBm0Ml5tH2d49d
+	 H2sMnC4juA9yw==
+Date: Wed, 14 May 2025 11:18:07 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 04/11] dt-bindings: firmware: Document Tegra264 BPMP
-Message-ID: <174723946819.2530421.5585015626188126772.robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 05/11] dt-bindings: misc: Document Tegra264 APBMISC
+ compatible
+Message-ID: <174723948656.2532633.8102674613984687601.robh@kernel.org>
 References: <20250506133118.1011777-1-thierry.reding@gmail.com>
- <20250506133118.1011777-5-thierry.reding@gmail.com>
+ <20250506133118.1011777-6-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,20 +45,15 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506133118.1011777-5-thierry.reding@gmail.com>
+In-Reply-To: <20250506133118.1011777-6-thierry.reding@gmail.com>
 
 
-On Tue, 06 May 2025 15:31:11 +0200, Thierry Reding wrote:
+On Tue, 06 May 2025 15:31:12 +0200, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
-> 
-> While the BPMP found on Tegra264 is similar to the versions found on
-> previous chips and should be backwards-compatible, some changes could
-> eventually be needed. Anticipate such changes and introduce a chip-
-> specific compatible string.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  .../devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml       | 1 +
+>  Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.yaml | 1 +
 >  1 file changed, 1 insertion(+)
 > 
 
