@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A92E2F22;
-	Wed, 14 May 2025 21:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DC3215067;
+	Wed, 14 May 2025 21:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747259434; cv=none; b=t9jC0gDXrLo04ExvRBk/4TCSSNF/XazmRnQN8DZxcEKK8MW29Ozvo7q2h9gpqHWX4teepW8PTiFME0HFMVpjtmPBymArXAzZg8pT2wz2jDowzOL/FYvOW+WrxrbHpdQgT9EyGxzPd3Ng7qzuJnJpMwXJEbo+oObbdXoi4chdxn4=
+	t=1747259527; cv=none; b=n7aWnd1PDVM5M/Qef2VPeV9dU8nSZAAIkFirA7d9mK+zNL/2iIc8cpxeLxrjkIHLroz63yGJvAt0grWREx3f79UPIJk9kXn5mUygWqYx7a4eDG2obzrNk+alsiKiwMocWX9j9k5OEiVg0NJHvfsPGFWxNYaxuIqlKtwCMWGAJE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747259434; c=relaxed/simple;
-	bh=TBwCGxAE9tlAznNLsiJmEWfUw7Fy2HDZ2rJFrlJMHss=;
+	s=arc-20240116; t=1747259527; c=relaxed/simple;
+	bh=uP6ECvuLzjkEvyy0LlPR8ssZUXSIF+C9102LZ8ocYJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rdU4tDp5ad5DF0FGLY8wlpl6jbbnWtpjnTg45D7mRqtxTY9StPtmsSKphhGbfEKyVDC2/RnjH+xcOndQFN/bP3ON8sjsw7hTABnb4YyFBfYIyWDI98Z2DDwVcqdRxGzVLG4UAxozSeVmQAScmrZP4e6EhieV2JuhgVJDbyDXc3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0+vz/+X; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lywdJ4IR/JKJ4OV/026wk17fy6r1fRyPtjthEQFv9/UG/5m79qLTvNQhQa3r1lC3LCFIAQDnzoXMhnrKjhIBMZ1/c9eUe6UyKSJ5PM5xJdGqeTzbT9Z+cKTrTaLfmBSOi5800q5fSfezdoGmUNRScaMAicpqYW45jA/qNUsq1xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLRT5WO5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0+vz/+X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EEAC4CEE3;
-	Wed, 14 May 2025 21:50:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLRT5WO5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B50C4CEE3;
+	Wed, 14 May 2025 21:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747259434;
-	bh=TBwCGxAE9tlAznNLsiJmEWfUw7Fy2HDZ2rJFrlJMHss=;
+	s=k20201202; t=1747259526;
+	bh=uP6ECvuLzjkEvyy0LlPR8ssZUXSIF+C9102LZ8ocYJ8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0+vz/+XAJXmGZoSZF3yA4er1i+MNbm5FXBYQ+3+k5FPEpcfemqRwXyZyzm6c1vp8
-	 0wQFXwBeRB4pDyEpOYGNGSflXEQeqydEbdId20JT8XSSJun/tTcSDCURF/5EuHst5g
-	 ejj5So9qkXGiTaWgoGzZKNxvktLg2FYCI/uEDWAyeqr5Eq/WCHU2OwsADOF3jzr7v1
-	 gQYBUtqWwK3XFRpklRzQAxLFdKQh2OZBA4nDTl19uTXM4ssR8js67G41GOCfCf+97h
-	 9c+WSd8S1bJLhErUKuXPqe5fJkyM6vx4/gVc3ohW3XmkVLCBrxAXVswkwMHeqs4W0f
-	 yJzEIGwiZAznQ==
-Date: Wed, 14 May 2025 16:50:32 -0500
+	b=pLRT5WO5iPJCiqN6shJXPldHXPrgrDboP5Ne5g8Cu53qnvLf7qrnjCMQVPaDCzNkS
+	 5Bb9jRl7wLhewx0pRkbiAynVaCChTOL/KowYwOX6XECTPicMaoOKU27tPKANTeiSWU
+	 Uvil7wk9/OzZ4HWbT6WnrA7WdnqgSpZSNMJ+FRrvWfO0UII3+zXC+HkyMvOtx+M4f8
+	 5IylwZRKxNf75VEJmyo6IO3bFgbSiqa6nLGifg6gxtraH1bEmZnP71BQ1Z/d74MLJc
+	 nttcnyFkcUo18fnueLuJdOeKrD5GlsGm5H95VeNPL9+X5mEc26/wDjiRhgUdBLsCYl
+	 cJWgUkE/Q+ffg==
+Date: Wed, 14 May 2025 16:52:04 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: "Sheetal ." <sheetal@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-	perex@perex.cz, tiwai@suse.com, devicetree@vger.kernel.org,
-	broonie@kernel.org, jonathanh@nvidia.com, lgirdwood@gmail.com,
-	krzk+dt@kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: Update Tegra194 and Tegra234 HDA
- bindings
-Message-ID: <174725943164.3099141.411153645160050033.robh@kernel.org>
+Cc: linux-sound@vger.kernel.org, broonie@kernel.org, krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	thierry.reding@gmail.com, jonathanh@nvidia.com, perex@perex.cz,
+	conor+dt@kernel.org, lgirdwood@gmail.com,
+	linux-tegra@vger.kernel.org, tiwai@suse.com
+Subject: Re: [PATCH 2/3] dt-bindings: Document Tegra264 HDA Support
+Message-ID: <174725952441.3101271.15433560346114148625.robh@kernel.org>
 References: <20250512064258.1028331-1-sheetal@nvidia.com>
- <20250512064258.1028331-2-sheetal@nvidia.com>
+ <20250512064258.1028331-3-sheetal@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,31 +46,21 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250512064258.1028331-2-sheetal@nvidia.com>
+In-Reply-To: <20250512064258.1028331-3-sheetal@nvidia.com>
 
 
-On Mon, 12 May 2025 06:42:56 +0000, Sheetal . wrote:
+On Mon, 12 May 2025 06:42:57 +0000, Sheetal . wrote:
 > From: Sheetal <sheetal@nvidia.com>
 > 
-> - Tegra194 and Tegra234 HDA is not compatible with Tegra30, hence update
->   them as standalone compatibles. Also, add necessary logic to the binding
->   doc as HDA clocks and resets for Tegra194 and Tegra234 are different from
->   Tegra30. This fixes below dtbs_check errors:
->    - compatible: 'oneOf' conditional failed, one must be fixed:
->         ['nvidia,tegra194-hda'] is too short
->         'nvidia,tegra30-hda' was expected
->         'nvidia,tegra132-hda' was expected
->    - compatible: 'oneOf' conditional failed, one must be fixed:
-> 	['nvidia,tegra234-hda'] is too short
-> 	'nvidia,tegra30-hda' was expected
->         'nvidia,tegra132-hda' was expected
->    - hda@3510000: clock-names:1: 'hda2hdmi' was expected
->    - hda@3510000: reset-names:1: 'hda2hdmi' was expected
+> For Tegra264 device there is one clock, two resets and no power-domain.
+> Add the Tegra264 compatible and necessary logic to the binding doc to
+> determine appropriate clocks, resets and power-domain properties based
+> on the compatible string.
 > 
 > Signed-off-by: Sheetal <sheetal@nvidia.com>
 > ---
->  .../bindings/sound/nvidia,tegra30-hda.yaml    | 83 ++++++++++++++++---
->  1 file changed, 72 insertions(+), 11 deletions(-)
+>  .../bindings/sound/nvidia,tegra30-hda.yaml    | 25 +++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
