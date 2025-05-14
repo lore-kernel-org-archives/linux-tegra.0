@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D07C274FD8;
-	Wed, 14 May 2025 11:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1AD277020;
+	Wed, 14 May 2025 11:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747222311; cv=none; b=B77iiXDpK6glOKfcn/exfP4rQBRjibMD/TNWfOaRudy0EdX1lswDtDtNhRdC5wt3iavB0X3tudo9aacw4c15iX9vxGIgh8Sqkrfd8CIKRjBzfMyj0rzV7Egzajw3BErKet0tDy8zowaarn5LjeClT0M3cFgLMNe2Qcx14rX+1iQ=
+	t=1747222316; cv=none; b=j7flvvM/9NyEP4UCK0LpOIQut6HDpagEVD2Mau+U3KU3SQcOBsGojipKBiM/RENL6ugkt5I319zMeuxefPTluHIngrR/baWQFYpifGcquRsGOWrhSP0UPI/MEMg7xWV71vResb5r9EpOa9D+fUOy7Wo57r+9OryJ7+8nEaXl7vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747222311; c=relaxed/simple;
-	bh=TjHZy0Qfxt/73KW8i7sJ4rh5wCGHa3DkSz4VAJQCJ6g=;
+	s=arc-20240116; t=1747222316; c=relaxed/simple;
+	bh=NzqA+eKHxUEF+PGJTwjMCdcX89RCrviZg/f/DP8l7OQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oHdPEyX/GrLPJVE0qq8ad4Ut/PozQRFuNEK1R01BPWE6jcq8DHkb8a7OX873uYRhJtdGUr2UvtM7za1ySUzCMAl9bK4vItmV0vSqxcjE0oHTrBARF3M1FIk5lvAKaK8DzkXynqvLELeP0O2rVlWrgpSTFAVbjpR+g+Nw4ChRZvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB/8ByW0; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Ge71OFTNnGCuqw+KFZ74hq00IKetE1Y2W4Y057zM82pe4YE0vFqGIstMCPdHRRlRTdwUrsNRYRQQza53w6A8hHDoqSA17SMOK+3KlbKskPj975vfa/xlwl9YjQ76IMaoEtS2N9Cv+TAe7Fbp9Io5qMa/pkST+grqxGR7oppUie4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsQsqm9+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB/8ByW0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A74D9C4CEEB;
-	Wed, 14 May 2025 11:31:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsQsqm9+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39ABC4CEF1;
+	Wed, 14 May 2025 11:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747222310;
-	bh=TjHZy0Qfxt/73KW8i7sJ4rh5wCGHa3DkSz4VAJQCJ6g=;
+	s=k20201202; t=1747222315;
+	bh=NzqA+eKHxUEF+PGJTwjMCdcX89RCrviZg/f/DP8l7OQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YB/8ByW00FbNFBueMKwnoMSXkVUdZ1lwH2w7mN/kBXoW4srl3mplbK9fPjF4daagl
-	 qTzcE8/fBtF1q0vw7oaBLgfrJkiBuhzksA6Ck26mrxehzkd9rulxq8RBYQc8ITaPlO
-	 OH2s5Xr1kQGhCgTDAk8FNxMqOidG+Pf0bqyZ5yrWynPoxPCFEERHNBcKprKiJktQR1
-	 5nLp/HX4ruV1ddcDZv7V7XhxVWrxoBnN/b2RRwfDAKhgaY+gIC4V16DL/K8kTMQzPH
-	 LULIOM1SZ1E8RUvbSrSOJFWoo/i/ploc3RUQC2oKSpbn+efWwOrA4cQxBYIitt8RLI
-	 l4gMkSqLvlP0A==
+	b=IsQsqm9+Cv6oUwM1UdOrUbglX8hxrEWScrCJE1BTLzJcqjvJhqwgZZKrpMNwzUhDV
+	 j2IAAm2FJlMgsz0uET7tT1xGCbvxpwn+jhsVPBlkmax9y3ZoDI0qanBtlXccPE99nF
+	 0bDb7xrqDSw1n8oHRwLeDPMIZ3cce9caD5HzZvSjqfPk8e5ka8JrA1zVkLdyZ5SkF/
+	 cAZy+liB5kEtUgGWaN0Zp3h9KXMAwVvUVum05nlpl4TrQdFRX1WRya/BGuolGohjtj
+	 O8GeLi8+2JA6QjEWxW1oJFOm8AjwvW1Fj3+DNEh87omuuBhgvq96jlIck3uBYGWpNE
+	 uFyr5oajNQafg==
 From: Vinod Koul <vkoul@kernel.org>
-To: Wayne Chang <waynec@nvidia.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-phy@lists.infradead.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aAjmR6To4EnvRl4G@stanley.mountain>
-References: <aAjmR6To4EnvRl4G@stanley.mountain>
-Subject: Re: [PATCH next] phy: tegra: xusb: remove a stray unlock
-Message-Id: <174722230834.74407.625250786881304963.b4-ty@kernel.org>
-Date: Wed, 14 May 2025 12:31:48 +0100
+To: jckuo@nvidia.com, kishon@kernel.org, thierry.reding@gmail.com, 
+ jonathanh@nvidia.com, Ma Ke <make24@iscas.ac.cn>
+Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20250303072739.3874987-1-make24@iscas.ac.cn>
+References: <20250303072739.3874987-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2 RESEND] phy: Fix error handling in
+ tegra_xusb_port_init
+Message-Id: <174722231344.74407.15426957064569052576.b4-ty@kernel.org>
+Date: Wed, 14 May 2025 12:31:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,18 +49,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 23 Apr 2025 16:08:23 +0300, Dan Carpenter wrote:
-> We used to take a lock in tegra186_utmi_bias_pad_power_on() but now we
-> have moved the lock into the caller.  Unfortunately, when we moved the
-> lock this unlock was left behind and it results in a double unlock.
-> Delete it now.
+On Mon, 03 Mar 2025 15:27:39 +0800, Ma Ke wrote:
+> If device_add() fails, do not use device_unregister() for error
+> handling. device_unregister() consists two functions: device_del() and
+> put_device(). device_unregister() should only be called after
+> device_add() succeeded because device_del() undoes what device_add()
+> does if successful. Change device_unregister() to put_device() call
+> before returning from the function.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] phy: tegra: xusb: remove a stray unlock
-      commit: 83c178470e0bf690d34c8c08440f2421b82e881c
+[1/1] phy: Fix error handling in tegra_xusb_port_init
+      commit: b2ea5f49580c0762d17d80d8083cb89bc3acf74f
 
 Best regards,
 -- 
