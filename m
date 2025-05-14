@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9681624DD;
-	Wed, 14 May 2025 19:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9A41624DD;
+	Wed, 14 May 2025 19:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747251144; cv=none; b=rWqu6oyMRXfSwDShpz1IR5dK5AVRfK9sOJEuX5mUbYNUBJk9tQ2OxM2NSpXdODsPsJNeL2YLFGd6SnKqGqJfrTSZIQmKZ2x0DSfY7Nyxx8bYyccFRkwtR/T+eElvouZQ8qcz1YMrQfMi2qg00DUaMWE6TY1MBcC2HY4ARkRhhUY=
+	t=1747251181; cv=none; b=IuQygpzdgFSPfOiom6lIviF6PMAs03bDjq4Sv9wCq97GSmyWmrOUvw7416KAb8MfVqnlD1JPiQiGbJSQ5E4GJpSfoNeNd3qVrRY12Nw8i5Fqfj5sqg85lf8F/SqIJuDO2oDgSXg7n1NHWwHrh3ReQfMtDk0SO5VJMVooldZErZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747251144; c=relaxed/simple;
-	bh=jgNWTWiWkIwzVlf6pEDhEKvyRN9QG8lqyb8q90ZMvdc=;
+	s=arc-20240116; t=1747251181; c=relaxed/simple;
+	bh=8V2EkmTjcMCH4OEHIKQotnrppd46LM8W6gcOF6PKQOo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pySTlUKYWXz1wCOaLefg4Vj4AyeauwkcleJIhoZG+BkvSrptScKvmP7cMY90ej5W4dRmu7wG0dNz0g6yEAGOxyS7zoDRtBgnDdre/22YUrCA4YbMc2DOMLKEahKyL4AZ532Mm20q5asHq6X+vW6qZcbc08RSnjJWRkqZgsYltt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVsseQZr; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9kY6z2L+m2+xEu+SLUJ8dWJQYPeNTHhhMp1PzetEDxy4O13TlQoWtYj01AwAjXO5mdO+5oxu8rViDRSm+8Sr8h9G5PPm0RBKoc6O3js4Pow4hBLuaCZtawKLHwoQHn0cxGJNcFp1v0RFbWP9x/4DviujMiqpczQF5sAPjQSVpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilQ2sw9t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVsseQZr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD20FC4CEE3;
-	Wed, 14 May 2025 19:32:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilQ2sw9t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB894C4CEE3;
+	Wed, 14 May 2025 19:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747251143;
-	bh=jgNWTWiWkIwzVlf6pEDhEKvyRN9QG8lqyb8q90ZMvdc=;
+	s=k20201202; t=1747251181;
+	bh=8V2EkmTjcMCH4OEHIKQotnrppd46LM8W6gcOF6PKQOo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UVsseQZroc++JvR1GiWqQW2iFu/U6eWs21colKYitO+7TcBo9WYuidPT839+DNXRX
-	 yRi2HgPXkfDbmSpZc/TW7KOykaUsJLRrsDcvETfebAtyAPXLNOGVXqnPaEpEubmhe9
-	 9Thfv1RE/wU0yT68RWAWVuKnt7TYxwMQ2hSF+avKFPL2abZVXTp2VcMwa9ZIJpEh9U
-	 LDMMT5l/6yPsVsZecCjmLCgnC5xNtg7eq3Y91jIn+iVYQ3JM2PGweq5JOhPdkbqGre
-	 bZl7wbboHCZa/kitlVx7su7MPy2iUltP3VkOmJznak/sbGzZZVdwlsjnH4+MeQEx1F
-	 mUWwaQTRBwihw==
-Date: Wed, 14 May 2025 14:32:22 -0500
+	b=ilQ2sw9tgHXJjch9owrzHEnuV5XAgAJ6gK7QllLLbrQ71gZVF+fJbXMA/LyUNDadq
+	 +ucU//BRSs8j93iF/N5zHJUxHNPC+pZI77WBHZ2FTUP/nNZNSY9VgtUjloQJG7xTSU
+	 ljX/wXIOCrX21HMazCnhSvGA+/8JmyaeZjdymREOdAK/3S3bCSAl7U38Kw0/aJ7rFl
+	 tfgTTgT9mRbzfKetJaKc9o15Bx841OCSPPKMClkYdR9SWlwVBkcJEdjuXuFxZe9q1P
+	 6EhqQqPY67dgS+egod89GXvfQ4hUe1WQt3Ga3QBocOQjynz6uNrVsnia+ZjBmpGOuw
+	 v9FwxIgsdYfEg==
+Date: Wed, 14 May 2025 14:32:59 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/8] dt-bindings: rtc: tegra: Document Tegra264 RTC
-Message-ID: <174725114145.2870991.544607577077096887.robh@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/8] dt-bindings: tegra: Document P3971-0089+P3834-0008
+ Platform
+Message-ID: <174725117885.2871934.9920497627228392092.robh@kernel.org>
 References: <20250507143802.1230919-1-thierry.reding@gmail.com>
- <20250507143802.1230919-3-thierry.reding@gmail.com>
+ <20250507143802.1230919-4-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,18 +44,18 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250507143802.1230919-3-thierry.reding@gmail.com>
+In-Reply-To: <20250507143802.1230919-4-thierry.reding@gmail.com>
 
 
-On Wed, 07 May 2025 16:37:56 +0200, Thierry Reding wrote:
+On Wed, 07 May 2025 16:37:57 +0200, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Add the compatible string for the RTC block found on the Tegra264 SoC.
+> This is an engineering reference platform for the Tegra264 SoC.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/arm/tegra.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
