@@ -1,68 +1,68 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2084.outbound.protection.outlook.com [40.107.94.84])
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEA2225792;
-	Sun, 18 May 2025 03:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FD8227B81;
+	Sun, 18 May 2025 03:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.89
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747538574; cv=fail; b=dX5p/a819Z1U26P6Vz+LSCvSaxBWRzLCFE4TmbINbimUtDt9hOjtrKXpOWLHyZEu5fXL27GERxZQOOshyKBm0LN7cO8ctMxpl4RztlkhWOVavgJ6urUbfCmXjp0YFOqgMhz5TtUTnU/sqN+1eXFZ9Gb5zDLyfhIOh9doM4t0Qpg=
+	t=1747538575; cv=fail; b=tiCrc/6EGzEznj6iWUOh20OH0SJXxtqnYkVWwCCQJzinhmpu2bmLoXasivhJEqF9KZx7V0HYT1DtF8GdChzwgvhX8IiEBmF/vWR031/pPfxVWX9R2+dXIEnkFPLoKcPTwcFGWsrkIh7r8o1WQIgVTEbNrrBOaVVhr5AquqkiATM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747538574; c=relaxed/simple;
-	bh=xH0pCpWFt+IfcRmKvhLWWli0L+t4TVojzYywUj4/jjg=;
+	s=arc-20240116; t=1747538575; c=relaxed/simple;
+	bh=/eLEIfzQDpxfKFMh8bpe7TsO8Hvxd8uZkJqeBqNcaWY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DV9VkEMkKLtfPPbqC+tKZ5B0izVW6VtVH4xVXK+M045Ilycpv5JwwFH5KG749mXA7XMnAC6alJw50f44cQ2ilEOX0xuoRa4dX5PhjmnlSOEgYeOFg4R+3eCwf8xkvR/Lf4toGGgIjzqyEav7ycTfXPhw/Betpm10tGGvw7v7mwY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XGjruzYm; arc=fail smtp.client-ip=40.107.94.84
+	 MIME-Version:Content-Type; b=K1nK4jqyDHwQSRDLB1BhMi4Orf1TMSlEsYA5kdYf6UZ1ea+ivE8ftZ9zy4QIvaNXELmSKdX/rAnnA3HiTk9ZuXiz083S2V0KTS/Q+wnFP6q+jaTtRrQkkIWM1kvnvMFiK43xc3V7rNn2pqylyeDrvRxHGGzvHEiEESb/w0y0DcQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CJGz8QEL; arc=fail smtp.client-ip=40.107.237.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XGjruzYm"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CJGz8QEL"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F1FAsiuc8g2ZWgnRS3g8MMF9tdv2GICBWv80Oo3DXVbQy0d0aXJy/sQrTXUc/C0tP2gvZZ6PO5Uv6PdaYaKhmwOgHKqZ14X4xxL8BgLI+mKbYm6ZjXYXq4NKiUVXF4usUj4AdUO9W9qySqnW7q+xGhnOgKpXEUi2cxXHzr0R/DywGhFbI5+Tt+Vnzm91swnLSzlOzxLrb1JmEaBjP9V4Ka2lbf1Ij1UUB265zdDD7/lV6UN5OIpS9v/GLzQbWgZ/F9dGGjlB8dhVQoWSvpBCXF4MjFB/Z3k6H8zB4K6GnDDsDshGE6qgQnFceLkiVqZJf3j98ehjMaDGMjhh4RdEMQ==
+ b=IOG+g1q8pi3EFMx5ANnpuwFSe/zQdfaPkkBRH1txcisVuJVsS5WB6z3QTKNKtVsEKXzKtBnrgRfimmslFXWY+olPo425KSXOdcPyl+9hZaxF5IGcDt9EsqXcjgE+sW144Nkm3oYiMm2olOFbBCBHtokIx10b1u1mkC9cGPzJ92oGBiUcJ3Pbzec+EC/QxWH6uBoaC1vwOsFE0sDpuiAdBzxx4UH38rzOXqUJ8Zd9desGdcs32ckI4j+ipc/2BpmnNIv42xM/qEIUnf1vhkXjFXe839Ez38m4ZyyuxYY/6b829E4LedzszO088UbQ4Tg76J5n1Bw0FHAKsqPpbTUjow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OAErJHsigqHvvSowoG4g92P8d35iDhTJq9ELHQlRXD0=;
- b=A70bNHzMakzQ+7v1cC5WtDKS4rKObKZlCVYd2A0eR8ftNdxHH1L0QP52qDtB7NbLifGEF/JuNu07Lz73HA3dMQbbngHvVkZtXG/QScM7/Fi7u1nT/RIksxQiuDhawMbRizs/FRTjDQ2S7o5a6Y6Yw3ZQ5bOmKmpUK6yNdsmZGFZNkAIS3mZMuR2A8fQds5/NomLVI+kn/dYXaaateUgnz7jct4FgSNsFO59JVteQhAdp1XIK+6dsPI0xLnrbQDJYUcezS7TDjqOHp47pPlqMcAhCDHP0uEBVoroVdq6tJmk7814rHOsYx3jJt/c5Y2qd2XEyp3QMlhx70/f18/HQCA==
+ bh=P4HojS49TgLrFyjn+pm6N47+T5bs5nD8oqRSAI25hXE=;
+ b=gIQrQwbytmg0hwnnuc8rSi6AB4WxOwMMO/2rBtOVOCNXqQft1Hqb/9a4HJa2PZ9oqXBRqW2BZr4CiT3V9DrI+q/0A13EIKD5g0DFo0eLWavnYAdleyQz2/htdfxxgdJJ3CYUtOGhwvApqi7OICarh0ItZV/WiXq3DeXfC6YYE5wQi2H+P50gtEFPvqi/YcizMd1nnWOffmxtL7P0cvysUF7vJbatiJ5uCO3rAfuT2Y36kSY8RQ4RtbF/Upgc425uO7NdXF8pmjWx8ueoKS9qlzT48t06Z6GTOlCQ26G2wDPAZPCfSBqIMDIgbbh9IYNqOUs8Y++jDCVxxHALhtSJ+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OAErJHsigqHvvSowoG4g92P8d35iDhTJq9ELHQlRXD0=;
- b=XGjruzYmWp218KrQT0uD3yLLUg/WP5cnBinD3hlnWd0VI3n7jPWT/D7tNGMli6EL1BDWGfK2uom/pc8FCmJOGHPqLZouyB0TNgWtQ09QyNzIjLcH+A352aabWyHuaISXBBmA+nO+uXuuBpLM/1hsd210nNM59f0LEaAFRF+Gdnjl8QyRMrpTxbPtPgoyGO/K/TCzpIlTNdMX0fgDr5y2lLzEF91V0RoK1agYaoKEv1f60GukdFkxKlM2QONftW7IRjPSju+mKe30J4+pXVjWtXXvw8I5x+7/0iH26Bwx+c7TQjehSIFVhH+h+7J2AjBbYaZn2IlBEyLZyJgxyhpXpw==
-Received: from SA9PR10CA0021.namprd10.prod.outlook.com (2603:10b6:806:a7::26)
- by CH2PR12MB9542.namprd12.prod.outlook.com (2603:10b6:610:27d::14) with
+ bh=P4HojS49TgLrFyjn+pm6N47+T5bs5nD8oqRSAI25hXE=;
+ b=CJGz8QEL9xPHTcwRvgAfb+SvPQBDx299SgoyziBvLscMXLlicGIS0c9CQqcn4znxxPfLAhL/xtd8LVbjgaoSAtpwHWprr7eJWhTqw2SVA5fhh9H458skx+ji20lDaAI6y+plHEnhmwQXcIIJ9EBQ3a6ANyxuCq0sl8nmab/uULy/Az3Y6yGXfnVzOW3B3mqQAu2p+z/ImFMJcv0PV1Czd3QQRbU8lISRgOTiCapG72Fx41VGYkGVE0wsspChDn3JXkpysuecOCf4G9fiCgkoNkxzweAmDmehtvKBKGJzuYp/V+n7566OIyMXNm6FTqo7hrWU0EsVLojl+GbdHheyNw==
+Received: from DM6PR12CA0021.namprd12.prod.outlook.com (2603:10b6:5:1c0::34)
+ by BY5PR12MB4161.namprd12.prod.outlook.com (2603:10b6:a03:209::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Sun, 18 May
- 2025 03:22:48 +0000
-Received: from SA2PEPF00003F64.namprd04.prod.outlook.com
- (2603:10b6:806:a7:cafe::55) by SA9PR10CA0021.outlook.office365.com
- (2603:10b6:806:a7::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.20 via Frontend Transport; Sun,
- 18 May 2025 03:22:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.29; Sun, 18 May
+ 2025 03:22:47 +0000
+Received: from DS1PEPF00017092.namprd03.prod.outlook.com
+ (2603:10b6:5:1c0:cafe::a8) by DM6PR12CA0021.outlook.office365.com
+ (2603:10b6:5:1c0::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.25 via Frontend Transport; Sun,
+ 18 May 2025 03:22:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00003F64.mail.protection.outlook.com (10.167.248.39) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS1PEPF00017092.mail.protection.outlook.com (10.167.17.135) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.20.8746.27 via Frontend Transport; Sun, 18 May 2025 03:22:47 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sat, 17 May
  2025 20:22:37 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 17 May
- 2025 20:22:33 -0700
+ 2025 20:22:37 -0700
 Received: from Asurada-Nvidia.nvidia.com (10.127.8.11) by mail.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Sat, 17 May 2025 20:22:31 -0700
+ Transport; Sat, 17 May 2025 20:22:35 -0700
 From: Nicolin Chen <nicolinc@nvidia.com>
 To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
 	<will@kernel.org>
@@ -76,9 +76,9 @@ CC: <bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
 	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
 	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
 	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
-Subject: [PATCH v5 20/29] iommu: Allow an input type in hw_info op
-Date: Sat, 17 May 2025 20:21:37 -0700
-Message-ID: <d75b14f77997836603650bb12437ccaf50afd2a6.1747537752.git.nicolinc@nvidia.com>
+Subject: [PATCH v5 22/29] iommufd/selftest: Update hw_info coverage for an input data_type
+Date: Sat, 17 May 2025 20:21:39 -0700
+Message-ID: <523aaea4faf9b91a54aeaecdb721c68ea3a675c3.1747537752.git.nicolinc@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1747537752.git.nicolinc@nvidia.com>
 References: <cover.1747537752.git.nicolinc@nvidia.com>
@@ -93,169 +93,220 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F64:EE_|CH2PR12MB9542:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31e96027-b17b-472c-370c-08dd95bb4389
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017092:EE_|BY5PR12MB4161:EE_
+X-MS-Office365-Filtering-Correlation-Id: 155f0b52-f0b6-49fb-9061-08dd95bb42f5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|82310400026|376014|1800799024|36860700013;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?96UdjM9CngzH7AUX967+LUd80nKjmZ+l4FpKnINA2nqTMSTtaHaG2JD+3d7T?=
- =?us-ascii?Q?1R0y59n1KQ1G1xwUtpw2NoQ03gyaInM2arM1fVadD6yEdfgcxgUVcpl97HMv?=
- =?us-ascii?Q?LCZumCg5vkmFjWIG3YBFpylLTOzmFj7OCaAj6A6jLoLBMQHVVqTFnEt47t3F?=
- =?us-ascii?Q?0VbuxT53jpYcVFJDj8PbQ8P363t/C7AdhgUYuYL55N56CYV5GDBIDnf6WyCB?=
- =?us-ascii?Q?Jzu8lbmnZinV0Z0GDGE0JSRMOPMM4LbM4ncAprqWsKhXYChtMFqZN9N7GQ71?=
- =?us-ascii?Q?C2HB4dvP4akY/+/JbAZ8Xkb+6TP0nqrvu0Jl77Cf7FNBmF0BYqOWAI/psHVa?=
- =?us-ascii?Q?SRTichGetAu2TmiR20oq0fhJBEuFxLmpT0bSsPgbqbiQcqNcXdUyAk9UTyvV?=
- =?us-ascii?Q?KOf4GGB2pewpkqoc0cTSN16P02S9nScLijN+vIDf1ucLjY4vUPrjGE7TKmwC?=
- =?us-ascii?Q?O6NJ3oK8Gsw7rjly4n1g1Qx2H8srjhZbB5xalSSZWIrCEIW87zLhUgjdzfUW?=
- =?us-ascii?Q?EU/clc3z0vtvzzXsVt2/pH3vQbYpVKQNfCNVuaZcv99DjmBqXq1XdqFMDXc5?=
- =?us-ascii?Q?CbsU2iVxFFNfhyYMFo0Pcw2sW2iwgdlOO5VkwB1kuYe8cKKfRDtk+602iDJx?=
- =?us-ascii?Q?vTXxqg9F66+wSF5A4zgEqLgk8ZNo5BLSpAjpNomR4MlseUGbgHmjlmoqDal5?=
- =?us-ascii?Q?xEx8GYzP4RrQrx83XS7Wsucd3kjHiqKKSWZ1r6fU/kXxMxV7RS2XxicBiJeH?=
- =?us-ascii?Q?3Qt40efClsEP5Yugn6OjAqDp97NSY/ALuUtsil0ZWjgk5ny088e0lhd4juIa?=
- =?us-ascii?Q?tFFqFMtXQTpfkT0imqeh+2sGDHxq1tekRu08HbKpfQ9XXVA/YnLY0N0PSVnq?=
- =?us-ascii?Q?jFFbIfrrW5lADCsi8FKXc6OOMuUC89aHJLFmJOD7HZC25mS+U2gmDviw/22Z?=
- =?us-ascii?Q?/k64n789sz+uTd3oCd7Z7JINvl8UObfhNpxMT9xtFItH9U+mRqmQvFgWixJY?=
- =?us-ascii?Q?gRQikjBt4MB0DxR6Tg6MMtu1REA4v/d7A8EsuMjCpxHZyUC0vqq5avrU3du/?=
- =?us-ascii?Q?1LyDrsyNhTLQ1Hz4EY3jaCbI6dOHOHzX3Sk7BrIspUFNJrAf7pXorRvoKUpQ?=
- =?us-ascii?Q?DdjmQB0ykkAMDdMwYfWpiuINFAQyF505wP/3zDdkXhnoIjKAi+CRA1ffom+h?=
- =?us-ascii?Q?puwwIXc4PxFc0SGfht99C1zjPC8gXKqrAwTYTOm0Wq4mB1DWFizfNv0ePmdW?=
- =?us-ascii?Q?7PT0KGVphR2Rkgj6gx6JomCdrXmzJS22FpmkhTK39pQr+skm2lCy7rLqyg02?=
- =?us-ascii?Q?PzHfjZk3jYcKDfVQ2p8hKDePV0MX66sAMwWqo9Y2nsCyloBEJSXqAV4h5dwQ?=
- =?us-ascii?Q?2Dh32rqP8wKcqOtbA9kAeMsyGukdSFzPS6NKFFYiQSbEd+D4fPaWk8Tac1uL?=
- =?us-ascii?Q?aTpBS3du3t7mAnDy9a26Ay0pIiaU+bNN+otzOUlyspSrPSvdqlQgsV+dgwxr?=
- =?us-ascii?Q?sawh/HdO88j3FtGpCriFfrfGYnyTXjREhQJ0?=
+	=?us-ascii?Q?8nzXGQw9JH+Tf+W2pC0I31M33UpmHCG4/1AYtnR3nftNc0HjPQ4dfNMjcjF2?=
+ =?us-ascii?Q?dBJa30Lr/hp9ymQwvp1Vd1esPyoAwu2PLhS5bPLx51HUfwrWakwEwgjSq4JR?=
+ =?us-ascii?Q?OPuV1BY90uT6fLh/TMYXncZGhY/ZwLaqhNZOKyDySQ6NgLe8BrGCGLLjhOfz?=
+ =?us-ascii?Q?9hlEfZ5OFlxrdR0SO28ycClRdCRCa+BBxtF7PTLe3jWGbjsK7cihiXIn8XR7?=
+ =?us-ascii?Q?A6HFcG1ForpGkYp2iVT76HWu+tdmxjuKh6i1G6LK+dGSj9TOnXm9XHE+IGi8?=
+ =?us-ascii?Q?aXz0bZOTRfb5O524le0B3+XZk6W5cpOXaxQY3DZh+VXKzyPsviMSVhG48K4a?=
+ =?us-ascii?Q?k9Rj8M7Y0uERIuuVbgIbs6qnjyBmdCqR4tYT9N48gYpy9bK2fq4s10+/i94y?=
+ =?us-ascii?Q?2rkQPTkhhfJls6LWTX+KG1x8wM+h+qEebCtRlO0vuTYscx1N9vtnbLmsag1b?=
+ =?us-ascii?Q?JfqX25+lkrxC3Go+KFGM6ldT2Tj432IIVPcTHrc9m1EO1np31ZEwqozhXeWb?=
+ =?us-ascii?Q?CGIB94iMyAsnasPQgvEnLx7jAtgL2+LhyaDamfDccMYnQbTh3Hm8jE1yCSVc?=
+ =?us-ascii?Q?G559mGL7ulXlK8yu3i6AY6Qohw6Py2+e3xMPYVeL6jn8UAYHMt7LZIu0hd5T?=
+ =?us-ascii?Q?s3NDd6z3pBJh66HOkGnaWVz6uUbz2y7xAyrmBWdeB+1uU8Q4lgAe0fAQ9rgl?=
+ =?us-ascii?Q?BOgw3WRDmvOXsQrtOBA3jffT9ss8ZFZnI2HArTnhwVe2WVx/TcZYotf7qQeX?=
+ =?us-ascii?Q?ynObSMPOCCHc+Ju5y/e4NusWbwTj0xy05U7NFAdenOBszBj675qOYHHG52Rp?=
+ =?us-ascii?Q?9D1cGn09VA6WvSPoSdBN9iYCCNoMy2jq+72/l+n1/Gnk2AriNnVi3jUf64S8?=
+ =?us-ascii?Q?6EGCp6Bjt273g1gwHt4O7NN6nB+zVI5ChIIiRmCQ8vhmpo8sBfxHTFhGun7J?=
+ =?us-ascii?Q?pWMNC18YArHPCa9hAvvB5BhWGb2FQBV1TUR5w6aGEneyc2YHiIKoPXVjtK/8?=
+ =?us-ascii?Q?LSdLpZLUgDf/IlQn1YL7X0D45aPjoaKWMTMUvObKC40dsUYWSb2xAoVszOiL?=
+ =?us-ascii?Q?HvXf2dnOvizFmAM4aCIAT8QdA1ywIhcOeVIib9pKzkFVj0CThI6SrCVzrX73?=
+ =?us-ascii?Q?3P06gU05AAMyHjxZMbFGsUYCUWX4a02A0pnT04J7dJo/1heue+h6CJo7qD1w?=
+ =?us-ascii?Q?HkFFX65giyxdwPldITwu1ymO2n03dACJYp62hqpp9DAmFVRswTZyY5F/5b4U?=
+ =?us-ascii?Q?B4GEN+nJmum6uT9SKKTGZmWnnCN30ZX20CqAE6YVNfJsFiaHW1Jj2s+QcJa8?=
+ =?us-ascii?Q?PJ++NzAP5rlQ/rixrXJQvoBQTGN1xcH19yiAY/ubT6mY0dHhJdJ/ZmiqsJvt?=
+ =?us-ascii?Q?p49wfDJbjMtdPNAJc926bTsyEh8pOmsoEBve459Cg8BYaToG0tCu5kN3ubAE?=
+ =?us-ascii?Q?lvbvYhTp1P/IEAWvT5w0K42nRVaEvIYHagU81cPeWU0Jxj6U39/Hr98y0YNE?=
+ =?us-ascii?Q?bjcbIazMWSRR9vBU+xw0MQB9OjR4ykcCFcMR?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2025 03:22:47.9423
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2025 03:22:47.0125
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31e96027-b17b-472c-370c-08dd95bb4389
+X-MS-Exchange-CrossTenant-Network-Message-Id: 155f0b52-f0b6-49fb-9061-08dd95bb42f5
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F64.namprd04.prod.outlook.com
+	DS1PEPF00017092.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9542
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4161
 
-The hw_info uAPI will support a bidirectional data_type field that can be
-used as an input field for user space to request for a specific info data.
+Test both IOMMU_HW_INFO_TYPE_DEFAULT and IOMMU_HW_INFO_TYPE_SELFTEST, and
+add a negative test for an unsupported type.
 
-To prepare for the uAPI update, change the iommu layer first:
- - Add a new IOMMU_HW_INFO_TYPE_DEFAULT as an input, for which driver can
-   output its only (or firstly) supported type
- - Update the kdoc accordingly
- - Roll out the type validation in the existing drivers
+Also drop the unused mask in test_cmd_get_hw_capabilities() as checkpatch
+is complaining.
 
 Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 ---
- include/linux/iommu.h                               | 6 ++++--
- include/uapi/linux/iommufd.h                        | 4 +++-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 4 ++++
- drivers/iommu/intel/iommu.c                         | 4 ++++
- drivers/iommu/iommufd/device.c                      | 3 +++
- drivers/iommu/iommufd/selftest.c                    | 4 ++++
- 6 files changed, 22 insertions(+), 3 deletions(-)
+ tools/testing/selftests/iommu/iommufd_utils.h | 35 +++++++++++--------
+ tools/testing/selftests/iommu/iommufd.c       | 32 ++++++++++++-----
+ .../selftests/iommu/iommufd_fail_nth.c        |  4 +--
+ 3 files changed, 47 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 4c54dd8f94e4..01a19b68a0ea 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -607,8 +607,10 @@ __iommu_copy_struct_to_user(const struct iommu_user_data *dst_data,
-  * @capable: check capability
-  * @hw_info: report iommu hardware information. The data buffer returned by this
-  *           op is allocated in the iommu driver and freed by the caller after
-- *           use. The information type is one of enum iommu_hw_info_type defined
-- *           in include/uapi/linux/iommufd.h.
-+ *           use. @type can input a requested type and output a supported type,
-+ *           either of which must be defined in enum iommu_hw_info_type in
-+ *           include/uapi/linux/iommufd.h. Driver should reject an unsupported
-+ *           data @type input
-  * @domain_alloc: allocate and return an iommu domain if success. Otherwise
-  *                NULL is returned. The domain is not fully initialized until
-  *                the caller iommu_domain_alloc() returns.
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index aeed0127553e..1fc546acb231 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -593,13 +593,15 @@ struct iommu_hw_info_arm_smmuv3 {
+diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
+index 4a1b2bade018..399d0dd18daf 100644
+--- a/tools/testing/selftests/iommu/iommufd_utils.h
++++ b/tools/testing/selftests/iommu/iommufd_utils.h
+@@ -761,25 +761,29 @@ static void teardown_iommufd(int fd, struct __test_metadata *_metadata)
+ #endif
  
- /**
-  * enum iommu_hw_info_type - IOMMU Hardware Info Types
-- * @IOMMU_HW_INFO_TYPE_NONE: Used by the drivers that do not report hardware
-+ * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
-  *                           info
-+ * @IOMMU_HW_INFO_TYPE_DEFAULT: Input to request for a default type
-  * @IOMMU_HW_INFO_TYPE_INTEL_VTD: Intel VT-d iommu info type
-  * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
-  */
- enum iommu_hw_info_type {
- 	IOMMU_HW_INFO_TYPE_NONE = 0,
-+	IOMMU_HW_INFO_TYPE_DEFAULT = 0,
- 	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
- 	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
- };
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-index adef56db4028..61a3f9134a9b 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-@@ -14,6 +14,10 @@ void *arm_smmu_hw_info(struct device *dev, u32 *length, u32 *type)
- 	u32 __iomem *base_idr;
- 	unsigned int i;
- 
-+	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
-+	    *type != IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
- 	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index cb0b993bebb4..8ad8714ece5e 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4149,6 +4149,10 @@ static void *intel_iommu_hw_info(struct device *dev, u32 *length, u32 *type)
- 	struct intel_iommu *iommu = info->iommu;
- 	struct iommu_hw_info_vtd *vtd;
- 
-+	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
-+	    *type != IOMMU_HW_INFO_TYPE_INTEL_VTD)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
- 	vtd = kzalloc(sizeof(*vtd), GFP_KERNEL);
- 	if (!vtd)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-index 0f2bda9e9d84..50337183eb1c 100644
---- a/drivers/iommu/iommufd/device.c
-+++ b/drivers/iommu/iommufd/device.c
-@@ -1365,6 +1365,9 @@ int iommufd_get_hw_info(struct iommufd_ucmd *ucmd)
- 	    cmd->__reserved[2])
- 		return -EOPNOTSUPP;
- 
-+	/* Clear the type field since drivers don't support a random input */
-+	cmd->out_data_type = IOMMU_HW_INFO_TYPE_DEFAULT;
-+
- 	idev = iommufd_get_device(ucmd, cmd->dev_id);
- 	if (IS_ERR(idev))
- 		return PTR_ERR(idev);
-diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
-index 45276c137cee..299a8e1e7f6c 100644
---- a/drivers/iommu/iommufd/selftest.c
-+++ b/drivers/iommu/iommufd/selftest.c
-@@ -290,6 +290,10 @@ static void *mock_domain_hw_info(struct device *dev, u32 *length, u32 *type)
+ /* @data can be NULL */
+-static int _test_cmd_get_hw_info(int fd, __u32 device_id, void *data,
+-				 size_t data_len, uint32_t *capabilities,
+-				 uint8_t *max_pasid)
++static int _test_cmd_get_hw_info(int fd, __u32 device_id, __u32 data_type,
++				 void *data, size_t data_len,
++				 uint32_t *capabilities, uint8_t *max_pasid)
  {
- 	struct iommu_test_hw_info *info;
+ 	struct iommu_test_hw_info *info = (struct iommu_test_hw_info *)data;
+ 	struct iommu_hw_info cmd = {
+ 		.size = sizeof(cmd),
+ 		.dev_id = device_id,
+ 		.data_len = data_len,
++		.data_type = data_type,
+ 		.data_uptr = (uint64_t)data,
+ 		.out_capabilities = 0,
+ 	};
+ 	int ret;
  
-+	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
-+	    *type != IOMMU_HW_INFO_TYPE_SELFTEST)
-+		return ERR_PTR(-EOPNOTSUPP);
++	if (data_type != IOMMU_HW_INFO_TYPE_DEFAULT)
++		cmd.flags |= IOMMU_HW_INFO_FLAG_INPUT_TYPE;
 +
- 	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return ERR_PTR(-ENOMEM);
+ 	ret = ioctl(fd, IOMMU_GET_HW_INFO, &cmd);
+ 	if (ret)
+ 		return ret;
+ 
+-	assert(cmd.out_data_type == IOMMU_HW_INFO_TYPE_SELFTEST);
++	assert(cmd.data_type == IOMMU_HW_INFO_TYPE_SELFTEST);
+ 
+ 	/*
+ 	 * The struct iommu_test_hw_info should be the one defined
+@@ -817,20 +821,23 @@ static int _test_cmd_get_hw_info(int fd, __u32 device_id, void *data,
+ 	return 0;
+ }
+ 
+-#define test_cmd_get_hw_info(device_id, data, data_len)               \
+-	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id, data, \
+-					   data_len, NULL, NULL))
++#define test_cmd_get_hw_info(device_id, data_type, data, data_len)         \
++	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id, data_type, \
++					   data, data_len, NULL, NULL))
+ 
+-#define test_err_get_hw_info(_errno, device_id, data, data_len)               \
+-	EXPECT_ERRNO(_errno, _test_cmd_get_hw_info(self->fd, device_id, data, \
+-						   data_len, NULL, NULL))
++#define test_err_get_hw_info(_errno, device_id, data_type, data, data_len) \
++	EXPECT_ERRNO(_errno,                                               \
++		     _test_cmd_get_hw_info(self->fd, device_id, data_type, \
++					   data, data_len, NULL, NULL))
+ 
+-#define test_cmd_get_hw_capabilities(device_id, caps, mask) \
+-	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id, NULL, \
++#define test_cmd_get_hw_capabilities(device_id, caps)                        \
++	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id,              \
++					   IOMMU_HW_INFO_TYPE_DEFAULT, NULL, \
+ 					   0, &caps, NULL))
+ 
+-#define test_cmd_get_hw_info_pasid(device_id, max_pasid)              \
+-	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id, NULL, \
++#define test_cmd_get_hw_info_pasid(device_id, max_pasid)                     \
++	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id,              \
++					   IOMMU_HW_INFO_TYPE_DEFAULT, NULL, \
+ 					   0, NULL, max_pasid))
+ 
+ static int _test_ioctl_fault_alloc(int fd, __u32 *fault_id, __u32 *fault_fd)
+diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
+index 2b3274015832..eb5b0adb16a5 100644
+--- a/tools/testing/selftests/iommu/iommufd.c
++++ b/tools/testing/selftests/iommu/iommufd.c
+@@ -764,19 +764,34 @@ TEST_F(iommufd_ioas, get_hw_info)
+ 		uint8_t max_pasid = 0;
+ 
+ 		/* Provide a zero-size user_buffer */
+-		test_cmd_get_hw_info(self->device_id, NULL, 0);
++		test_cmd_get_hw_info(self->device_id,
++				     IOMMU_HW_INFO_TYPE_DEFAULT, NULL, 0);
+ 		/* Provide a user_buffer with exact size */
+-		test_cmd_get_hw_info(self->device_id, &buffer_exact, sizeof(buffer_exact));
++		test_cmd_get_hw_info(self->device_id,
++				     IOMMU_HW_INFO_TYPE_DEFAULT, &buffer_exact,
++				     sizeof(buffer_exact));
++
++		/* Request for a wrong data_type, and a correct one */
++		test_err_get_hw_info(EOPNOTSUPP, self->device_id,
++				     IOMMU_HW_INFO_TYPE_SELFTEST + 1,
++				     &buffer_exact, sizeof(buffer_exact));
++		test_cmd_get_hw_info(self->device_id,
++				     IOMMU_HW_INFO_TYPE_SELFTEST, &buffer_exact,
++				     sizeof(buffer_exact));
+ 		/*
+ 		 * Provide a user_buffer with size larger than the exact size to check if
+ 		 * kernel zero the trailing bytes.
+ 		 */
+-		test_cmd_get_hw_info(self->device_id, &buffer_larger, sizeof(buffer_larger));
++		test_cmd_get_hw_info(self->device_id,
++				     IOMMU_HW_INFO_TYPE_DEFAULT, &buffer_larger,
++				     sizeof(buffer_larger));
+ 		/*
+ 		 * Provide a user_buffer with size smaller than the exact size to check if
+ 		 * the fields within the size range still gets updated.
+ 		 */
+-		test_cmd_get_hw_info(self->device_id, &buffer_smaller, sizeof(buffer_smaller));
++		test_cmd_get_hw_info(self->device_id,
++				     IOMMU_HW_INFO_TYPE_DEFAULT,
++				     &buffer_smaller, sizeof(buffer_smaller));
+ 		test_cmd_get_hw_info_pasid(self->device_id, &max_pasid);
+ 		ASSERT_EQ(0, max_pasid);
+ 		if (variant->pasid_capable) {
+@@ -786,9 +801,11 @@ TEST_F(iommufd_ioas, get_hw_info)
+ 		}
+ 	} else {
+ 		test_err_get_hw_info(ENOENT, self->device_id,
+-				     &buffer_exact, sizeof(buffer_exact));
++				     IOMMU_HW_INFO_TYPE_DEFAULT, &buffer_exact,
++				     sizeof(buffer_exact));
+ 		test_err_get_hw_info(ENOENT, self->device_id,
+-				     &buffer_larger, sizeof(buffer_larger));
++				     IOMMU_HW_INFO_TYPE_DEFAULT, &buffer_larger,
++				     sizeof(buffer_larger));
+ 	}
+ }
+ 
+@@ -2175,8 +2192,7 @@ TEST_F(iommufd_dirty_tracking, device_dirty_capability)
+ 
+ 	test_cmd_hwpt_alloc(self->idev_id, self->ioas_id, 0, &hwpt_id);
+ 	test_cmd_mock_domain(hwpt_id, &stddev_id, NULL, NULL);
+-	test_cmd_get_hw_capabilities(self->idev_id, caps,
+-				     IOMMU_HW_CAP_DIRTY_TRACKING);
++	test_cmd_get_hw_capabilities(self->idev_id, caps);
+ 	ASSERT_EQ(IOMMU_HW_CAP_DIRTY_TRACKING,
+ 		  caps & IOMMU_HW_CAP_DIRTY_TRACKING);
+ 
+diff --git a/tools/testing/selftests/iommu/iommufd_fail_nth.c b/tools/testing/selftests/iommu/iommufd_fail_nth.c
+index 41c685bbd252..651fc9f13c08 100644
+--- a/tools/testing/selftests/iommu/iommufd_fail_nth.c
++++ b/tools/testing/selftests/iommu/iommufd_fail_nth.c
+@@ -667,8 +667,8 @@ TEST_FAIL_NTH(basic_fail_nth, device)
+ 					&self->stdev_id, NULL, &idev_id))
+ 		return -1;
+ 
+-	if (_test_cmd_get_hw_info(self->fd, idev_id, &info,
+-				  sizeof(info), NULL, NULL))
++	if (_test_cmd_get_hw_info(self->fd, idev_id, IOMMU_HW_INFO_TYPE_DEFAULT,
++				  &info, sizeof(info), NULL, NULL))
+ 		return -1;
+ 
+ 	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0,
 -- 
 2.43.0
 
