@@ -1,72 +1,73 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B321FF61E
-	for <linux-tegra@vger.kernel.org>; Mon, 19 May 2025 10:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3DE1C6FFA
+	for <linux-tegra@vger.kernel.org>; Mon, 19 May 2025 10:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747649850; cv=none; b=qxNHfKcsRm7F/VRW2BJivnQF3uOG7q4Q8E0iUhEyL3USKu+VeVojz5PgWblMmiDaiQsnQtTWs9v5gA4sEqBWfcMIFsQB6dAea80yMoPUzxEH5CiwBqPwVU0D0nG4klHVPJFoDWXuIAmaIOJLgFDdcNKkiS4xraOn37ty0V1dSNs=
+	t=1747650393; cv=none; b=VghR6UcGSv07sD+AnML5LM3QmTZtxytzxZE4mgq1M+9FwzdXFl3uRYFKRymw01yB1B59DwX7IP4wsTZNCge4Oh6f3nOQfbyaSPI18K7sVDnTD/I5rws4gynzUC38dJNl0c+TqXhCTWt600o1wReDpJrRpjynJIxFGl3qH/yUVrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747649850; c=relaxed/simple;
-	bh=kGZApSmsqJ8FNloZKAWaRm5Et6mAG5BJUOLTz4KMwl8=;
+	s=arc-20240116; t=1747650393; c=relaxed/simple;
+	bh=6T1f1gQ788CwCIndP7K5d2YwrhlQLWj57RrD8MAtP7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIMOv2xC8uU2DZsiVEm5Qiu5vTO6sjSMyO8CM8M6AjHOMPPkg4PfjEqnmarFRz5BnaoPZujCdZHeOApAyZcxnOOo3MyH1dv3rJlutPIuToRRXUGLNMWX0SHV1EBl7qybzikwSkxeuwh3NYZdU4TDPnYwE8/4Ki6Cd5GhRqRZnWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cq/7wDP7; arc=none smtp.client-ip=209.85.215.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUdYDiPG3xD80pKQcsofCh1ZZn98A9LG9PI8C5TYUWUOuX+0W6kvxCxfCGvVQHL/eV+HPdEGhVUqKuoIGKJzZIS6Gxe5tXqmH9GRKEFuq/PaoP4YNv+M97cdP7noHpwZzfmeoRziyfgh7B8YIhydA54HQSDfFphbn/81gb4+pdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sWeoyF8n; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cq/7wDP7"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-879d2e419b9so3468440a12.2
-        for <linux-tegra@vger.kernel.org>; Mon, 19 May 2025 03:17:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sWeoyF8n"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30dfd9e7fa8so5240228a91.2
+        for <linux-tegra@vger.kernel.org>; Mon, 19 May 2025 03:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747649848; x=1748254648; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747650392; x=1748255192; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2boHRW0tDTKKABf5lEFG75r/QTlyWAxlLMkN8E6Z4vI=;
-        b=cq/7wDP7hD7YPKSF2bUnj7fEhZGR+HfkQjxgcl+/qT63Rlh6RNe5m7EgPaZtRmwR9+
-         g78d1GvcMFIqo7YgNoqkh8ilKmiaR8m/F5gbkA+fk46crPtR6f8yk0Yjdh+W8LMAsLb2
-         wb2PaCEEEVJU2r9lUefcP2haB438ZxAep03x6u9UlugIKPMweypLL5SQEamtd8q9ZZnA
-         4bVGRD01eR82n0tbNn5lIlnno2orOp9hPFoY7x3v4Djg2ooFuMGJNTAiQvxvcR+4344b
-         zqheTN/ejkOLRYM0H8usJjuusm2TJxQs6RGdAaYBow3NGbeG0cWeVGfe7TsJRU0wEujk
-         QtXA==
+        bh=94QENvQ1KWEG5NwI/w4uyuU8E14TEUfGFeGO7c7WDvo=;
+        b=sWeoyF8neBCSuvdV+42RbR1GCnL48ocG3rxQtKbvMBbaVZIs2yt6esFFy12BewYbOu
+         40eaf2VfRtvXa16PSA7ZKkX6zaMogWpgiwk5vdPP+PR5QI7LdFLrmiGw7EYLDTKeoL7G
+         0PcjXVYDwp0Byyditw7zUTIiSnzVy9DX3uLXB0tez8LKgJy3fu8R7oNBIbYuY0KdJhOg
+         ag4f/ZNMTrL3HwvX0rYu0+WGJC4mI5v8jY5c1nDChegHsRiN2YeXLvUUixh/eyWZGns1
+         XIjK1N+WB3BXKfO7sQzbWi3qvafyHxwVPba7IS5k0Wk+HkiisNxUckwyufDyB3lKI1K8
+         LjGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747649848; x=1748254648;
+        d=1e100.net; s=20230601; t=1747650392; x=1748255192;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2boHRW0tDTKKABf5lEFG75r/QTlyWAxlLMkN8E6Z4vI=;
-        b=Wx51OUCDvdSfz/NZpPZ6tmtdPd8slOJrDvpQD/xlmAjdzgv4YVtN/gHg/T/0IHuMwK
-         antdpOVGJT0zY4RwwEQ0rHflRtjbO7YV4SzdolyA71CraqF+mjWbcK+lk+RrkfnWCVgz
-         sx6ykpm3OODPMxp7x1hGl5AiKt53KLcKvqXRSSrAHhPmknOjUKD1Pa3sxXNLf49gUMiM
-         paN2Vk0dlerUkwBeqNbZBea4lBF8viu8CwbTlTqXhYvqVqns2+7V04vYTFvLC+NOkG8b
-         FUIvY1n00xIcYvvWyVOS7HbsDYibzZe9iXXF/x4hkQBRXg2MwaKly713FQK1T8dN9VXn
-         SUcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnyGHED/B/4Y1SBsGl0IGk9n4q0xFEqU2CwNY4u5UIXpLBbvwC1JoEMcwitGUJhnG0sZD47l/KaK2Kog==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBidbgP+9BxrqqluQg5gIKYZGPu/f0pSH7kiXoyU9Zyvby9Cf9
-	NmwW/QqMBQeW/0O0UQ8ixTSANk5n/MFnYXKg6SFgcOFrwW7kFC3fKMvWlUxozSwHtQI=
-X-Gm-Gg: ASbGncu0EZ53PhR5GESgT9YwVBp6DzrK2f0cyru588cG/Ba6fwNZxHsf6CkTkzJ8f56
-	47+oigFt5VvQBByEn3t3Yn4Df3dhNmNzlioiWo0BF+wDlZ7eJD2f+ozGK3MKxDhTVott5hr3VEv
-	m+Kg5uUw94PvEBQWXwmnd1j3CVZTvQhZvfKOUJ4tG0E9oIDCWenzNuhXKKGc2b8zRoBezXVSi7t
-	EVA6+JaYydwnNqU9PtCxN2joB654kaDn5hfoh+sjA+iLnn6SI0JPb0/nAwtdApeBJBcPL3deYrd
-	by1eeokdyu24ge+z6NRb0nCA96MJj82lkmUYQ6jLJMcYqTUN9ybm
-X-Google-Smtp-Source: AGHT+IEhCTAYxf2Bo20tqIdppUI7vimjOl158zpzlgDenffyAtRSk7F0NETM1YiKj0O0xkG784yPvw==
-X-Received: by 2002:a17:903:2449:b0:231:c2e8:89df with SMTP id d9443c01a7336-231d4535a98mr192661745ad.28.1747649848139;
-        Mon, 19 May 2025 03:17:28 -0700 (PDT)
+        bh=94QENvQ1KWEG5NwI/w4uyuU8E14TEUfGFeGO7c7WDvo=;
+        b=OsnyDRL5u7aTvL8JIUbdGj9vB7s27MssIPR2CNl/ujm+lUDD+DDKyhg+1p7MS5RuZL
+         ek9dAzZY0pUMMucL4kCpbb2EdW6y02Vb0w+yMGaunGE6GK76aKxg6MwDZHILVTjKZHm/
+         WVWRkzerTKeBdnermcuCMKvOC00Lng8VLiHrA/PCcJjExCI0yny79Lxzb4Sy97uxw6hr
+         IuWJ6c308js49IN0gi7yBlPYedZ8VDfb74eFWonwADMpYk18rENNRE2Xne85holLjD4P
+         sWYhiAszzESDvoBKVKC0ZG0XnTahgZlOBJjB+xFV5Eb6JzMwUxGuS99nqucmKyB+rXiS
+         1TBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbahhvFFajDs5vRfdiwD9Bj2BocF/nA7ZwWUwUy2Zcr4rGjETYxCo9v5FR9HUnGtf3rxiOPhz2Rnx1yg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsjoorrxZHTDxNPU/gS0Xo/WJatEVsg/mKsgp7nqMNXvUs4rZY
+	Z+Rl/fW+htRaKvtFEEFLFZMiagkInfl3DP9MCXGyonDyJSe4DN5KTvwk9uYb06puCicJ++pE8So
+	4RHrw
+X-Gm-Gg: ASbGncuZMV9mlb51o6yuXunZl93KLBINdNkylGkYqweKFJwlRaE6o0mGAmpP1kbn/tu
+	9VOFqsnWGcyftQhA1nYANiobkoMIZSiaJk3LMYCdRIWZC3Jk6NeqStyPLOnjsJeVilRR5srxoqM
+	k84hS/PWkC+EXr6eUfdNR3I3FgJ7gB/t7sqpf27EWnA7blU9bOYugQZGDRcTlazszmSLvgy7dZt
+	a8mdopqUqHwl2G3zdBz3ECDk9mGP4t/LbKOnogizo0Sw/+a2stBx5tt5Tgh3yX/ihdh8ricIJ6F
+	zwMaV7/6ej8GyXqzLDnCBZF7xSz6qamlVWimmptvFigergUCGSsi
+X-Google-Smtp-Source: AGHT+IFOX0X2+R42qCuUGR5p/td3W4u1++p+fajp/DYt04hZBSF3cDqdXMoReTclZppoLGO2xeShYQ==
+X-Received: by 2002:a17:90b:5710:b0:2ee:9d49:3ae6 with SMTP id 98e67ed59e1d1-30e830fbf1fmr18521513a91.10.1747650381025;
+        Mon, 19 May 2025 03:26:21 -0700 (PDT)
 Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ed4ecfsm56201355ad.234.2025.05.19.03.17.27
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e7d1d12c7sm6314287a91.0.2025.05.19.03.26.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 03:17:27 -0700 (PDT)
-Date: Mon, 19 May 2025 15:47:25 +0530
+        Mon, 19 May 2025 03:26:20 -0700 (PDT)
+Date: Mon, 19 May 2025 15:56:18 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: webgeek1234@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] cpufreq: tegra124: Remove use of disable_cpufreq
-Message-ID: <20250519101725.k644wzizjwygtwa7@vireshk-i7>
+Subject: Re: [PATCH v4 2/2] cpufreq: tegra124: Allow building as a module
+Message-ID: <20250519102618.4thbahapz3lfmfo5@vireshk-i7>
 References: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
- <20250508-tegra124-cpufreq-v4-1-d142bcbd0234@gmail.com>
- <040b0d8b-e862-48dd-9b77-9266a5194f99@nvidia.com>
+ <20250508-tegra124-cpufreq-v4-2-d142bcbd0234@gmail.com>
+ <da080e61-4e54-4334-a239-1619bf8fea0c@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,31 +76,30 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <040b0d8b-e862-48dd-9b77-9266a5194f99@nvidia.com>
+In-Reply-To: <da080e61-4e54-4334-a239-1619bf8fea0c@nvidia.com>
 
-On 09-05-25, 12:04, Jon Hunter wrote:
-> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> > index 514146d98bca2d8aa59980a14dff3487cd8045f6..bc0691e8971f9454def37f489e4a3e244100b9f4 100644
-> > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > @@ -168,7 +168,10 @@ static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
-> >   disable_dfll:
-> >   	clk_disable_unprepare(priv->dfll_clk);
-> >   disable_cpufreq:
-> > -	disable_cpufreq();
+On 14-05-25, 11:31, Jon Hunter wrote:
+> > +static void tegra124_cpufreq_remove(struct platform_device *pdev)
+> > +{
+> > +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(&pdev->dev);
+> > +
 > > +	if (!IS_ERR(priv->cpufreq_dt_pdev)) {
 > > +		platform_device_unregister(priv->cpufreq_dt_pdev);
 > > +		priv->cpufreq_dt_pdev = ERR_PTR(-ENODEV);
 > > +	}
+> > +
+> > +	clk_put(priv->pllp_clk);
+> > +	clk_put(priv->pllx_clk);
+> > +	clk_put(priv->dfll_clk);
+> > +	clk_put(priv->cpu_clk);
 > 
-> So you are proposing to unregister the device in resume? That seems odd. I
-> see there is no remove for this driver, but I really don't see the value in
-> this.
+> 
+> If we use devm_clk_get() in probe, then we should be able to avoid this.
 
-This is the failure path and the driver is trying to disable itself
-here. Instead of using the disable_cpufreq() (which isn't designed for
-this usecase), I suggested removing the device itself as the driver
-will be unusable after this anyway.
+Not sure if we can do that. The clks belong to the CPU device, while
+the devm_* functions are using &pdev->dev. The CPU device never goes
+away and so the resources won't get freed if we use devm for the CPU
+device.
 
 -- 
 viresh
