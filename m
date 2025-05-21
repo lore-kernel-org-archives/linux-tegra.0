@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED911A9B4C;
-	Wed, 21 May 2025 09:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824E021CA04;
+	Wed, 21 May 2025 09:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818745; cv=none; b=fWvedgIVr6vc4JUeszXtGdNB3krRWYhjBH8+U15tLL3CQEvL75oKgA2ZYYkMl8iXsbfGWcCziLmRQczCSopckP5AwdTsHRAByBka+mbhr20O7GfzFZS6wLz0ddNqgMfkV3X86VQw+cGJ/DKaOVTns8Ciz+oWUCPNU9e2H/jwv2c=
+	t=1747818857; cv=none; b=A+cmHTF+aHbzMQv+Uue+1tj/caxlXGUdJnQj86rPsRdud4V5D1CThASr2z3VozAokVzp0JmgGiBdXpXpPyNey1puisrlkTHZxKEYIxQk7oP7ZGFsNZDQrhZth6pXsKibPjqH8RK/o1uRhOGJdaiiah753nbDoFe8FEhOP9qdxXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818745; c=relaxed/simple;
-	bh=Y79uDuogax25dTt9+OzgCk6nHYwyKb9v3cGEu2DGz+g=;
+	s=arc-20240116; t=1747818857; c=relaxed/simple;
+	bh=tYRJUOPfNGsvrTGCxbsmOXCb/gzW8sQ71iGyz2Pu0GY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayI9SBvhejXJ6F/sULny9WLdLWJ/k5+3qqHk4seLiLQNaY9+xmeFzirVIsDUzmEyut7Qm3eWth5VbUxu/so3yHW0fQ9ExlyfwQJ20fOgC0vaEtUcQrxoNl/iIgImv3uaz9o84qwIpwPiz5GjSNhBq9A0RPR9Uk2IJEtvoRpH+90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2ZqpZVY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=PAEfMLuDyKUCAXTT0DsghvkfD2ZZFknGJ0DoqNJIdb2e1tA3O33xUabIYoLL3cclEccERNLaMjZ/2K/KAT6H3/COO17HKbqnS7GW2AZXmiVctnEBd6q0vuW3E+unOserqd8uEBIPH8UZ3IHSFhaIFAmgGQNYRwlK/DNtPRlIHlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0cq9G0s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2ZqpZVY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15BB7C4CEE4;
-	Wed, 21 May 2025 09:12:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0cq9G0s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D64EC4CEE4;
+	Wed, 21 May 2025 09:14:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747818744;
-	bh=Y79uDuogax25dTt9+OzgCk6nHYwyKb9v3cGEu2DGz+g=;
+	s=k20201202; t=1747818856;
+	bh=tYRJUOPfNGsvrTGCxbsmOXCb/gzW8sQ71iGyz2Pu0GY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O2ZqpZVY1GHVQvRnH+uS7bAcwOBaeSTumQS66Srfn7xj+j7LlO+ktInrIjSC0n1z5
-	 Mop4xRkyEeXpYUd1sXgZA1PbIsxrSoy08anRBx6uhut3Ugb2V/J12aVEKzr6iQXoU0
-	 powBgA1aXpH0J0yVHeLMCEfgPYh+09+/x0ld2pEYZ7r5aqAqIFMkeWWlRBGy/54J6I
-	 x57UfcllCfGdE5juXSdZwDGxN5215O/VY2Aa92ku1PBKW9mdKIJTRhL4A1LxgRtxRd
-	 RzErkNhAdxYQjbOdoP9Auqi2JccH/TZt55kOb9mpyP9IOxad/WzQfqLuDfknrCSIwe
-	 +c4rL0NVdPbVA==
-Date: Wed, 21 May 2025 11:12:22 +0200
+	b=Z0cq9G0s8SFScGuuBh9JbnvFXY//UN+Qd8WClmF5MqvQQcYjfEZ9EYccKZXvLzun0
+	 hNC+C/wrabE17Ds8v16dKMTxhxwf9FWY0oqg4oWRgALSNSGR1WlXBbIwELavAP/QQD
+	 DIvYmvA1U+GlzGAhIRXc+1KECRpsuk1YsE1l6xTVEObg7B27bClUNFJbjMFcVxX0Ov
+	 ot5gDPkE7JRJQd/RLyCNgQNxSMsdrFfSXml1MNnALRM2HtZwFwWbUJJCQ9stPKDoXH
+	 pnlfQ0fDREeMlN11H80S5rYO6Fl0k+9tOtzem2+VR/d4cvM/6SaT3JKO1DgbTW3X99
+	 U5dpGqjCk++Yw==
+Date: Wed, 21 May 2025 11:14:13 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Shubhi Garg <shgarg@nvidia.com>
 Cc: jonathanh@nvidia.com, lee@kernel.org, robh@kernel.org, 
 	alexandre.belloni@bootlin.com, thierry.reding@gmail.com, devicetree@vger.kernel.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 3/6] mfd: nvvrs: add NVVRS PSEQ MFD driver
-Message-ID: <20250521-observant-wildcat-of-weather-8ecc4e@kuoka>
+Subject: Re: [PATCH V2 4/6] rtc: nvvrs: add NVIDIA VRS PSEQ RTC device driver
+Message-ID: <20250521-dazzling-myrtle-flounder-a9e57d@kuoka>
 References: <20250520090832.3564104-1-shgarg@nvidia.com>
- <20250520090832.3564104-4-shgarg@nvidia.com>
+ <20250520090832.3564104-5-shgarg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,144 +44,184 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250520090832.3564104-4-shgarg@nvidia.com>
+In-Reply-To: <20250520090832.3564104-5-shgarg@nvidia.com>
 
-On Tue, May 20, 2025 at 09:08:29AM GMT, Shubhi Garg wrote:
-> Add support for NVIDIA VRS (Voltage Regulator Specification) power
-> sequencer device driver. This driver manages ON/OFF and suspend/resume
-> power sequencing of system power rails for NVIDIA Tegra234 SoC. It also
-> provides 32kHz RTC clock support with backup battery for system timing.
+On Tue, May 20, 2025 at 09:08:30AM GMT, Shubhi Garg wrote:
+> Add support for NVIDIA VRS (Voltage Regulator Specification) Power
+> Sequencer RTC device driver. This RTC can be used to get/set system
+> time, retain system time across boot, wake system from suspend and
+> shutdown state.
 > 
 > Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
 > ---
 > 
 > v2:
-> - removed unnecessary error logs
-> - changed dev_info to dev_dbg
-> - changed dev_err to dev_err_probe
-> - fixed "of_match_table" assignment
+> - removed regmap struct since it is not required
+> - removed rtc_map definition to directly use register definition
+> - removed unnecessary dev_err logs
+> - fixed dev_err logs to dev_dbg
+> - used rtc_lock/unlock in irq handler
+> - changed RTC allocation and register APIs as per latest kernel
+> - removed nvvrs_rtc_remove function since it's not required
 > 
->  drivers/mfd/Kconfig                 |  12 ++
->  drivers/mfd/Makefile                |   1 +
->  drivers/mfd/nvidia-vrs-pseq.c       | 270 ++++++++++++++++++++++++++++
->  include/linux/mfd/nvidia-vrs-pseq.h | 127 +++++++++++++
->  4 files changed, 410 insertions(+)
->  create mode 100644 drivers/mfd/nvidia-vrs-pseq.c
->  create mode 100644 include/linux/mfd/nvidia-vrs-pseq.h
+>  drivers/rtc/Kconfig               |  10 +
+>  drivers/rtc/Makefile              |   1 +
+>  drivers/rtc/rtc-nvidia-vrs-pseq.c | 456 ++++++++++++++++++++++++++++++
+>  3 files changed, 467 insertions(+)
+>  create mode 100644 drivers/rtc/rtc-nvidia-vrs-pseq.c
 > 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6fb3768e3d71..3144b8f3eb9b 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1437,6 +1437,18 @@ config MFD_SC27XX_PMIC
->  	  This driver provides common support for accessing the SC27xx PMICs,
->  	  and it also adds the irq_chip parts for handling the PMIC chip events.
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index 838bdc138ffe..3b6dc27a50af 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -406,6 +406,16 @@ config RTC_DRV_MAX77686
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called rtc-max77686.
 >  
-> +config MFD_NVVRS_PSEQ
-> +	tristate "NVIDIA Voltage Regulator Specification Power Sequencer"
-> +	depends on I2C=y
+> +config RTC_DRV_NVVRS_PSEQ
+> +	tristate "NVIDIA VRS Power Sequencer RTC device"
+> +	depends on MFD_NVVRS_PSEQ
 
-Why I2C cannot be a module? This is a module.
+I bet this fails when MFD_NVVRS_PSEQ is a module.
 
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	select REGMAP_IRQ
 > +	help
-> +	  Say Y here to add support for NVIDIA Voltage Regulator Specification
-> +	  Power Sequencer. NVVRS_PSEQ supports ON/OFF, suspend/resume sequence of
-> +	  system power rails. It provides 32kHz RTC clock support with backup
-> +	  battery for system timing.
+> +	  If you say yes here you will get support for the battery backed RTC device
+> +	  of NVIDIA VRS Power Sequencer. The RTC is connected via I2C interface and
+> +	  supports alarm functionality.
+> +	  This driver can also be built as a module. If so, the module will be called
+> +	  rtc-nvidia-vrs-pseq.
 > +
 
 ...
 
-> +static int nvvrs_pseq_irq_clear(void *irq_drv_data)
+> +static int nvvrs_rtc_probe(struct platform_device *pdev)
 > +{
-> +	struct nvvrs_pseq_chip *chip = (struct nvvrs_pseq_chip *)irq_drv_data;
-> +	struct i2c_client *client = chip->client;
-> +	u8 reg, val;
-> +	unsigned int i;
-> +	int ret = 0;
-> +
-> +	/* Write 1 to clear the interrupt bit in the Interrupt
-> +	 * Source Register, writing 0 has no effect, writing 1 to a bit
-> +	 * which is already at 0 has no effect
-> +	 */
-> +
-> +	for (i = 0; i < chip->irq_chip->num_regs; i++) {
-> +		reg = (u8)(chip->irq_chip->status_base + i);
-> +		ret = i2c_smbus_read_byte_data(client, reg);
-> +		if (ret) {
-> +			val = (u8)ret;
-> +			dev_dbg(chip->dev, "Clearing interrupts! Interrupt status reg 0x%02x = 0x%02x\n",
-> +				reg, val);
-
-ratelimit
-
-...
-
-> +
-> +static int nvvrs_pseq_probe(struct i2c_client *client)
-> +{
-> +	const struct regmap_config *rmap_config;
-> +	struct nvvrs_pseq_chip *nvvrs_chip;
-> +	const struct mfd_cell *mfd_cells;
-> +	int n_mfd_cells;
+> +	struct nvvrs_rtc_info *info;
+> +	struct device *parent;
+> +	struct i2c_client *client;
 > +	int ret;
 > +
-> +	nvvrs_chip = devm_kzalloc(&client->dev, sizeof(*nvvrs_chip), GFP_KERNEL);
-> +	if (!nvvrs_chip)
+> +	info = devm_kzalloc(&pdev->dev, sizeof(struct nvvrs_rtc_info), GFP_KERNEL);
+
+sizeof(*)
+
+> +	if (!info)
 > +		return -ENOMEM;
 > +
-> +	/* Set PEC flag for SMBUS transfer with PEC enabled */
-> +	client->flags |= I2C_CLIENT_PEC;
+> +	mutex_init(&info->lock);
 > +
-> +	i2c_set_clientdata(client, nvvrs_chip);
-> +	nvvrs_chip->client = client;
-> +	nvvrs_chip->dev = &client->dev;
-> +	nvvrs_chip->chip_irq = client->irq;
-> +	mfd_cells = nvvrs_pseq_children;
-> +	n_mfd_cells = ARRAY_SIZE(nvvrs_pseq_children);
-> +	rmap_config = &nvvrs_pseq_regmap_config;
-> +	nvvrs_chip->irq_chip = &nvvrs_pseq_irq_chip;
-> +
-> +	nvvrs_chip->rmap = devm_regmap_init_i2c(client, rmap_config);
-> +	if (IS_ERR(nvvrs_chip->rmap)) {
-> +		ret = PTR_ERR(nvvrs_chip->rmap);
-
-Useless assignment
-
-> +		return dev_err_probe(nvvrs_chip->dev, ret,
-> +				     "Failed to initialise regmap\n");
-> +	}
-
-Drop }
-
-> +
-> +	ret = nvvrs_pseq_vendor_info(nvvrs_chip);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	nvvrs_pseq_irq_chip.irq_drv_data = nvvrs_chip;
-> +	ret = devm_regmap_add_irq_chip(nvvrs_chip->dev, nvvrs_chip->rmap, client->irq,
-> +				       IRQF_ONESHOT | IRQF_SHARED, 0,
-> +				       &nvvrs_pseq_irq_chip,
-> +				       &nvvrs_chip->irq_data);
+> +	ret = platform_get_irq(pdev, 0);
 > +	if (ret < 0) {
-> +		return dev_err_probe(nvvrs_chip->dev, ret,
-> +				     "Failed to add regmap irq\n");
+> +		dev_err(&pdev->dev, "Failed to get irq\n");
+
+return dev_err_probe
+
+> +		return ret;
 > +	}
+> +	info->rtc_irq = ret;
+> +
+> +	info->dev = &pdev->dev;
+> +	parent = info->dev->parent;
+> +	client = to_i2c_client(parent);
+> +	client->flags |= I2C_CLIENT_PEC;
+> +	i2c_set_clientdata(client, info);
+> +	info->client = client;
+> +	info->rtc_irq_chip = &nvvrs_rtc_irq_chip;
+> +	platform_set_drvdata(pdev, info);
+> +
+> +	/* Allocate RTC device */
+> +	info->rtc_dev = devm_rtc_allocate_device(info->dev);
+> +	if (IS_ERR(info->rtc_dev))
+> +		return PTR_ERR(info->rtc_dev);
+> +
+> +	info->rtc_dev->ops = &nvvrs_rtc_ops;
+> +	info->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> +	info->rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
+> +
+> +	ret = devm_request_threaded_irq(info->dev, info->rtc_irq, NULL,
+> +					nvvrs_rtc_irq_handler, 0, "rtc-alarm", info);
+> +	if (ret < 0)
+> +		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+> +			info->rtc_irq, ret);
+> +
+> +	/* RTC as a wakeup source */
+> +	device_init_wakeup(info->dev, true);
 
-Drop }
+You leak wakeup.
 
-Your entire code is full of that.
+> +
+> +	return devm_rtc_register_device(info->rtc_dev);
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int nvvrs_rtc_suspend(struct device *dev)
+> +{
+> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
+> +	int ret = 0;
+> +
+> +	if (device_may_wakeup(dev)) {
+> +		/* Set RTC_WAKE bit for auto wake system from suspend state */
+> +		ret = nvvrs_update_bits(info, NVVRS_PSEQ_REG_CTL_2,
+> +					NVVRS_PSEQ_REG_CTL_2_RTC_WAKE,
+> +					NVVRS_PSEQ_REG_CTL_2_RTC_WAKE);
+> +		if (ret < 0) {
+> +			dev_err(info->dev, "Failed to set RTC_WAKE bit (%d)\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		ret = enable_irq_wake(info->rtc_irq);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int nvvrs_rtc_resume(struct device *dev)
+> +{
+> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (device_may_wakeup(dev)) {
+> +		/* Clear FORCE_ACT bit */
+> +		ret = nvvrs_update_bits(info, NVVRS_PSEQ_REG_CTL_1,
+> +					NVVRS_PSEQ_REG_CTL_1_FORCE_ACT, 0);
+> +		if (ret < 0) {
+> +			dev_err(info->dev, "Failed to clear FORCE_ACT bit (%d)\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		return disable_irq_wake(info->rtc_irq);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +#endif
+> +static SIMPLE_DEV_PM_OPS(nvvrs_rtc_pm_ops, nvvrs_rtc_suspend, nvvrs_rtc_resume);
+> +
+> +static const struct platform_device_id nvvrs_rtc_id[] = {
+> +	{ "nvvrs-pseq-rtc", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, nvvrs_rtc_id);
+> +
+> +static struct platform_driver nvvrs_rtc_driver = {
+> +	.driver		= {
+> +		.name   = "nvvrs-pseq-rtc",
+> +		.pm     = &nvvrs_rtc_pm_ops,
+> +	},
+> +	.probe		= nvvrs_rtc_probe,
+> +	.id_table       = nvvrs_rtc_id,
+> +};
+> +
+> +module_platform_driver(nvvrs_rtc_driver);
+> +
+> +MODULE_AUTHOR("Shubhi Garg <shgarg@nvidia.com>");
+> +MODULE_DESCRIPTION("NVVRS PSEQ RTC driver");
+> +MODULE_LICENSE("GPL");
+> \ No newline at end of file
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
+You have patch warnings.
 
-Best regards,
-Krzysztof
-
+> -- 
+> 2.43.0
+> 
