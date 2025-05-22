@@ -1,99 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F30E2620FC;
-	Thu, 22 May 2025 16:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309B381741;
+	Thu, 22 May 2025 16:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747930287; cv=none; b=uojlEEtJvrZ70Z+Y1fh9L6kUud0Cyn4xe4CU+/NzeDRChGVBv/gfK19mkAISp+RvxAV0QHA+q2FkRTuXI4D6kTxUnS5DTr3DRPbdSYN99BuOyBqVvzeAsb9HKPhhN2r1Ly8Tmj0dP73d1L6QlR7V6QIqMHEGPLjRSwGFn6y9E8w=
+	t=1747931925; cv=none; b=Z1vHXbdwsWYh+5VwCM5YVbBdMCsvcG32ZFFLX8LO+bSpTLuDjK6kzlpWLbPvpu06V8q8IkCNI+ToA9feUYNLGaCglDW1D3fAaRat/ABBkF24DPZXGTDQVGOQmmNBYP8x4nReGr3URu7K+hjMahOkiP3+0xxGpjsgoPzyv+w3q8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747930287; c=relaxed/simple;
-	bh=JEfH3x55bskJhV3y2mrEzMyulGhfZQeDOuhnI2p0a6g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PnyNvDtFZFPMGOhXQ8wHk2/VdFaJdzabdor9OxZpIEjzS4vfV1tkcubtJp9cmWHIJJn4FnGuQetQcg9NBE8uhkIRhIWCFh+GnJBEfanhTgOg0HDbCDMXRXIzV8m8RlGOGV/SJ+U7hXh+7A8k7g1R3TamwUeJ7t71v2EQ0F40fXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsqCeWt4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747931925; c=relaxed/simple;
+	bh=BNpi2nFBQAFV/WMKJHvYLfcwSSej3dZ3v1djNDve9jk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rrj6Ad5mjOZwcBZGRJkJKXqoaxfkaqS5gci64wruAgziQ10Dj6WKF+tiwyNyi7FSQzl0GuTWcv/XnGR5FH7/t5rTlupf1AllRmqGG9NgSDnBJYerYblN7+2coSAZuXnOGpoAMwfB37GGIMaClecW77hFPcA0w5qZLSk6EoenIGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MrA6cTl+; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsqCeWt4"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D626C4CEE4;
-	Thu, 22 May 2025 16:11:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747930287;
-	bh=JEfH3x55bskJhV3y2mrEzMyulGhfZQeDOuhnI2p0a6g=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=TsqCeWt4Z5jpzoA9XrSdgkEWWeJChz14BXRa4W3a+NfpsL+dco2AmMLp8o7dbZJN9
-	 uijjEp32I9PMHFDXcBTwoP2YLDoamxf6Pddcg1vxRz+T87xTo0dcR5DjNqTNds9+0W
-	 sDY37BVcpkOFv70jjtF5/7Y/y8DvKu5kj96tawRkkDGrk8E5vx4rJLzR5srx1viZ1x
-	 6iOmyZ0EUlqu3p7eWopo+i8T90ZSaCRqrqAkZnCkqhj9DmCn5eXbJ3bQhBqSNbvf6x
-	 F6KMgsr6T6pbUncEMum9Gdb/o4IR9PEiepKZpxKbnkyChTpzLzOsghDgJjwWCIpIsN
-	 Oa3Fpnai6MU3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222F6C54E65;
-	Thu, 22 May 2025 16:11:27 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Thu, 22 May 2025 11:11:24 -0500
-Subject: [PATCH] ARM: tegra: Use io memcpy to write to iram
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MrA6cTl+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=x3
+	IEnvTJUGCZMysuw/nTm9ZVJwxYs3uYCivFSvi4Vsk=; b=MrA6cTl+mJySoMZcWx
+	j6w+aEuPXz08+r6Dm7n0uzPxuzv+gugAm9t//DkukYhCpFixbQgl67RfZZm+Jlwr
+	gMQuGsqUMZ/RfZ8q9sR5o9WN9TlkGZa57rbasDZi522+xSWj4LISC0VeqTxuuHw5
+	Cr3ziAwV6OLGzYNPU+s2eq8U8=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgAHCmX6Ui9ohoENBg--.33019S2;
+	Fri, 23 May 2025 00:38:20 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: ldewangan@nvidia.com,
+	andi.shyti@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: digetx@gmail.com,
+	linux-i2c@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hans.zhang@cixtech.com,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH] i2c: tegra: Add missing kernel-doc for dma_dev member
+Date: Fri, 23 May 2025 00:38:14 +0800
+Message-Id: <20250522163814.399630-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKtML2gC/x2MQQqAMAzAviI9W9CKIn5FPNTZbUWcsokI4t8dH
- kNIHkgSVRIMxQNRLk26hwx1WYDxHJygLpmBKmqrlgg3Nh5PcZFx5cQBLc9Llo2lroecHVGs3v9
- ynN73A1jjFBdiAAAA
-X-Change-ID: 20250522-mach-tegra-kasan-fabd0253f268
-To: Russell King <linux@armlinux.org.uk>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747930286; l=1106;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=hU2Yl0x61OcdReq0QPOKVTLdxOPyeKujmiktaOo9ip0=;
- b=+CjK5VVg+heemutBNUgW5ZgTFi1GM58YOUfxw5ahL0xfg7exDr03GfcypGLgflQH1UbQahdYf
- mcrxHC7m+mzAOsRFSKYDE1V/wZ1CtL+lOYdb9zBf6HZy+SnO69xWWEV
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgAHCmX6Ui9ohoENBg--.33019S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr45Kry3trWDZw1rury7trb_yoWkXrgEvF
+	n7WF47tr1q9rnIyF13WF4fXryjkrWYgF1ktas7t39aka4qqw15GF1DZrWfCrW8X3ZrtFsr
+	Wr1DtFWIyrnxAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sREqXdUUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxtVo2gvSyDDsAAAs9
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Fix the kernel-doc warning by describing the 'dma_dev' member in
+the tegra_i2c_dev struct.  This resolves the compilation warning:
 
-Kasan crashes the kernel trying to check boundaries when using the
-normal memcpy.
+drivers/i2c/busses/i2c-tegra.c:297: warning: Function parameter or struct member 'dma_dev' not described in 'tegra_i2c_dev'
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Fixes: cdbf26251d3b ("i2c: tegra: Allocate DMA memory for DMA engine")
+Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
-Change-Id: I27714f45aa6aea6a7bee048f706b14b8c7535164
----
- arch/arm/mach-tegra/reset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index d5c805adf7a82b938bebd8941eae974cf6bcdbe3..ea706fac63587a393a17fe0f1c2ad69d6e5c14f2 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -63,7 +63,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 	BUG_ON(is_enabled);
- 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
- 
--	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
-+	memcpy_toio(iram_base, (void *)__tegra_cpu_reset_handler_start,
- 			tegra_cpu_reset_handler_size);
- 
- 	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 87976e99e6d0..07bb1e7e84cc 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -253,6 +253,7 @@ struct tegra_i2c_hw_feature {
+  * @dma_phys: handle to DMA resources
+  * @dma_buf: pointer to allocated DMA buffer
+  * @dma_buf_size: DMA buffer size
++ * @dma_dev: DMA device used for transfers
+  * @dma_mode: indicates active DMA transfer
+  * @dma_complete: DMA completion notifier
+  * @atomic_mode: indicates active atomic transfer
 
----
-base-commit: d608703fcdd9e9538f6c7a0fcf98bf79b1375b60
-change-id: 20250522-mach-tegra-kasan-fabd0253f268
-
-Best regards,
+base-commit: fee3e843b309444f48157e2188efa6818bae85cf
 -- 
-Aaron Kling <webgeek1234@gmail.com>
-
+2.25.1
 
