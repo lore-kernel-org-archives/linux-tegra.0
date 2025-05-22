@@ -1,111 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193332236E0;
-	Thu, 22 May 2025 14:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B866D1F09B3;
+	Thu, 22 May 2025 14:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747923751; cv=none; b=FFGgcto6pkq7ZSL7jcQ83hf/i3UaDJ/OTgCWqKw3ZyDpxdGdQcGDxQD/XII9Slx7nky9ZDcqACGE8tPT95RWTlrylh53CzFxd/WfjoOk+S72kiRlDKhaxgwn24cyzH+uO4L88IjW0n4bh/VRByQ/JFwlKJt/qbjdgubCCJrm93s=
+	t=1747923911; cv=none; b=sfmc43Wq7OHhT9+cJEd+ZjUI/Tneei3VaV2klXR7OPYwoL3CVH1wJPTM67FTw2T5PHyszpG1v8WZIBTspg4CnsDuOfMBLgiYZRvDSg6fZ98sXJjbF4fZhb5J2pZKHC+GOq/SYjaEN7uHtBiFoI4HUFOGq6EwxpJEmO9nBHSOYlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747923751; c=relaxed/simple;
-	bh=af1wkIPmu0wtzjZfFWYUrFSXewdr+W6mEJt3TOe6tHs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=StsVcQqh47bgjKuNLHu4yO29RDkXY+anqDpTSWkkQjpaK2DN8o8Hz6jLhUUd4LJVb8ceXNllXNsgBfkagErC6KEG1CVz7aoDuBhu1eNeOHmSw9IzDnXxUg6ce+ayUmDGXXJ5i+OhSnrCCixhuwX4RMCdMEkgHW4uMZ7nQbCEIBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I5HU/BUc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747923911; c=relaxed/simple;
+	bh=slATyv5h7gWeRdLB6vnPQns+Dk3KMLiREYgtKciFJNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=olzy9K+AxPwSch3+HdiQGadNQ7j4c1Ghf41nPSpBCjvbZA1+GZuYJ+qimzlQG0rfL5Wg5JlDwOFTl0X+sDS+Iiiu3JUVEkwZR/vCBEAeyZtrR61qtFxmaweXRCrwQaGMjTddcoMDn8WehIE+YR4oSQluVgR0xd/NylGcjduobDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwXHTIB7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I5HU/BUc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9001C4CEF1;
-	Thu, 22 May 2025 14:22:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwXHTIB7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71DCFC4CEF0;
+	Thu, 22 May 2025 14:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747923750;
-	bh=af1wkIPmu0wtzjZfFWYUrFSXewdr+W6mEJt3TOe6tHs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=I5HU/BUcvyYVpmOva6SAY1sca7cFrpp+eSjSllYMu3wLer2EMbpLd48x6Sf4DJ8T0
-	 KtJ3fomKsiqYGMneeVnY1dg7g70Y64u6xviUdQy1n9vt7zysOLAfhQFUiF/5jeRx32
-	 5IrXhdBaot7EM6l6LuDZGALIrSSBO3HsUUCDa3IDs3tYRpgqpMDdz5nQ1tBpdnyLf4
-	 dEEsjyVUMdmX5kYZGqwE4b7mu0uOGiiXvosHoI07VzobhZnrDx/9kspCeUP7uwVNDY
-	 NwDdIch5sTRs7yB+hhebudJXpbDUHX3kC8xj7IxYFM/C8+Rq/zIF+IwGBjEPvjdMmQ
-	 /2dMGd4jMNq8g==
-From: Mark Brown <broonie@kernel.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- lgirdwood@gmail.com, "Sheetal ." <sheetal@nvidia.com>
-Cc: perex@perex.cz, tiwai@suse.com, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
- spujar@nvidia.com, mkumard@nvidia.com
-In-Reply-To: <20250512051747.1026770-1-sheetal@nvidia.com>
-References: <20250512051747.1026770-1-sheetal@nvidia.com>
-Subject: Re: [PATCH v3 00/11] Add Tegra264 support in AHUB drivers
-Message-Id: <174792374755.97913.2208583690041067416.b4-ty@kernel.org>
-Date: Thu, 22 May 2025 15:22:27 +0100
+	s=k20201202; t=1747923910;
+	bh=slATyv5h7gWeRdLB6vnPQns+Dk3KMLiREYgtKciFJNo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pwXHTIB7D0TZtK+esxOSZmR55wcTRzjGOHCuaD5ry0n2g+f+jy3ggD7zeABZihir7
+	 nTkRyLETxWl77dTI4mOKGiaiJketOOJ9L6hd6bVsr251IYasjxiZJPpIEaUirdr+zx
+	 JB8LTUoHs7tpK+NBCXebDwhFsIqlLuGM/M/ouUzprr55X+mX039PDkQD4OydT35cPF
+	 fjdcIgNGdyIhAipqNDjji24KbdeaN1pByvx4Tt67uayNWkrfcJGDdxClYTYDcu8XMk
+	 nhQ7TFTOEnDcSM6Z5UR3cNgux/o0PXUgExPQlBUf7HXW42xwz9eMMTajbK4h4coR86
+	 F2bD9bkd/0RaA==
+Message-ID: <54078715-84f9-4d6d-8c9c-2517f5972225@kernel.org>
+Date: Thu, 22 May 2025 16:25:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/11] dt-bindings: ASoC: admaif: Add missing
+ properties
+To: "Sheetal ." <sheetal@nvidia.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, lgirdwood@gmail.com, broonie@kernel.org
+Cc: perex@perex.cz, tiwai@suse.com, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+ spujar@nvidia.com, mkumard@nvidia.com
+References: <20250512051747.1026770-1-sheetal@nvidia.com>
+ <20250512051747.1026770-2-sheetal@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250512051747.1026770-2-sheetal@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
 
-On Mon, 12 May 2025 05:17:36 +0000, Sheetal . wrote:
-> The patch series includes the necessary changes to enable
-> support for the Tegra264 platforms in AHUB drivers.
+On 12/05/2025 07:17, Sheetal . wrote:
+> From: Sheetal <sheetal@nvidia.com>
 > 
-> Changelog
-> =========
-> v2 -> v3:
-> --------
->  - Patch 1/11: Update commit message and update binding doc with info
->    that the properties are not relevant for Tegra210.
+> Add optional interconnect and iommu properties to admaif yaml. These
+> properties are supported from Tegra186 SoC onwards.
 > 
-> [...]
+> This fixes below dtbs_check error for Tegra194 and Tegra234:
+>  'interconnect-names', 'interconnects', 'iommus' do not match any of the regexes: 'pinctrl-[0-9]+'
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+You never responded - I reported it is not possible to reproduce it.
+Instead of sending the same, please address the feedback.
 
-Thanks!
+How this can be reproduced?
 
-[01/11] dt-bindings: ASoC: admaif: Add missing properties
-        commit: 37240f703041439cd8a39abd670dbfc0e75b725c
-[02/11] dt-bindings: ASoC: Document Tegra264 APE support
-        commit: 628dafc476eb658544ad6b5b3592bfcd82597051
-[03/11] ASoC: tegra: CIF: Add Tegra264 support
-        commit: 35c0d1de8e669878797e40cc625f4bdc37c3e084
-[04/11] ASoC: tegra: ADMAIF: Add Tegra264 support
-        commit: 7668c6378b0577893bcf8c0f272b6ed099e0787d
-[05/11] ASoC: tegra: ASRC: Update ARAM address
-        commit: fa83757df3f40c05b5ab4154253e8aeefa31a9a6
-[06/11] ASoC: tegra: Update PLL rate for Tegra264
-        commit: 1fb500476f609008ee1c499540af32c4fa5a19de
-[07/11] ASoC: tegra: I2S: Add Tegra264 support
-        commit: b3354438d89867654b4a95a9630fd3393e275e33
-[08/11] ASoC: tegra: AMX: Add Tegra264 support
-        commit: fd509c6f8e4028539bf35d80e3bcdce7b3ba0f9f
-[09/11] ASoC: tegra: ADX: Add Tegra264 support
-        commit: 7dc8299fbb1c8e6373e8e55d562b7674ee37b2b0
-[10/11] ASoC: tegra: AHUB: Add Tegra264 support
-        commit: 4152d33ab162d5378f57cd757e1de5cb4867dfb4
-[11/11] ASoC: tegra: Tegra264 support in isomgr_bw
-        commit: 7d852b34be4df61ae4327b47c39701d0f7ffcc70
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Best regards,
+Krzysztof
