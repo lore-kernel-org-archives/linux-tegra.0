@@ -1,156 +1,276 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2056.outbound.protection.outlook.com [40.107.95.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F94A1D;
-	Sat, 24 May 2025 03:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748057465; cv=fail; b=USOWWnlr4k9pgDwLg5beBH/XaNP/loLcwMEdb4T36LT4y3oTMdoNLqG8aSlTQ6BHuV7VS6s/UkZD6qiM1hZDtkrhHYv3tWp1/hVdSM91u5waoKV4z75ewkvTvfTsRxQNU7wuxJJodtWJh1TMdhvtGw8ie4/S/DdLmPOB0hWvnLU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748057465; c=relaxed/simple;
-	bh=qsV16cl4s4nZFFEysZFGmfq5FggV9rLio70o1xOpyeY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VP+8RbTV5IDpI+c6sqht39L9rxqL42Qgz1MWPwlBsirxwtpKJsFwOa3ZNPu+0t/4Wb4sytjJkHlFYkkOkdx6ndMKhievG3h0m4ZslQK95E/By1scgCW+LeB843X4HE3ZMSGZBOA0QqPrwExOs5Sp+urnX1IhZme0TgI9rwTMDf0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d/ny2XVF; arc=fail smtp.client-ip=40.107.95.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E41F4E4F;
+	Sun, 25 May 2025 14:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748184422; cv=none; b=g4Oz/Hxvu7bd3N+AgnQ5G9WtW3rlKEKyCgSh3FgpFTNVNbKBJ7BVek3yhDgkVjck0HuzmwEFcZoLfStxuMXY/ExUdchLB1HYSD3S7/fWhOUcKSQE8qYa1w1oSOzPB6xYxCutxoAAD4FBS+VQF/bt7mAcMqKXkpggZManO44sm9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748184422; c=relaxed/simple;
+	bh=4b2sAqOMMJ8dcklJdkoRt1GLlnkVi9x9wGx3OaUDMaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9+Fl1uHjijweL4wZjYNlv5Xy+U2eb3Fdw2vHgqWBwt7vrZcnJxMD+kJ2wYkn2ssU92AHNMT8P4jJpEU4izR3MH2Gvj8Bh5UfpvETFLugxkYzWkhR3mudfHX03FVBz4Vdd64vOJkzsQiLabNo4AvPr4bEYYCwahtAzzXPcMyxSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCgVI7Sm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d/ny2XVF"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=quFOK4H09wvgqjt/l1/rauDylKtU7EdUASDhex/WxjY6MbZ47x1QO8ragfnxK3JvFWzPTT07Mp9FfCXlYKNBTHh6+BUunfk5q8L6pPdWy3RrCDwtHtNzUjUDTPC56UUuQfPBnerlHXXodk2GIVsqIk8YLqR/DEAoyWZSnYEF8cw67bFRttjMmIGcvLkWnifPkoOAXWNx2qRogEIOF4lQsB8bnpDwDpfIE+61Ryfjkhu8FiRpXBCWcTzq/ar3nUjFalljWNHlxjYG28eP3tQ8ohCX1DZwcNPK2boz91YG3Pjk5Qhu3asPRPL9N6BM5zS/6Jmsu2RRPrXdnrS+IoOnkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mGeg59IbrTyhfsH7zb4ORv1bnacu9xpc+yDTvyzrzWs=;
- b=MMi6vsXgXJFispL1Q/CeYNqzXas2cUq/U6mJ/JzV8lbawguFZjNb+33uIKiQVF1RgeymuucOZwcNEErpEpdQ2mnn7Tv+eUW2v/IILviu6CuWbh7R+wuJp1sFcm9Kzv01Su/+KB1ocL6S0SLJI5Bp3QWPSrsC1S+fql4fxGQVtJ8oA708htpzQaZtqtfESGHDa8Tu7eSk3s/HUbdtpkVAJWQsZP1VYiZ7krbRfrJdkRZimilV9oPUSQh8nRn28NcnQdtVlGUDq2DD7uYKz28eLIIU/DnAWZQcazyfpbPq7VoNnrDYG3+EhxSVv6HQqtRXk8gXkCLaZFUeBnF2HOfdaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mGeg59IbrTyhfsH7zb4ORv1bnacu9xpc+yDTvyzrzWs=;
- b=d/ny2XVF59SWESwYLbdpU2pdP6XnXBslYptxALoHUl6rYokAPezu2fwSpAxNJHFQZTeaH+S5RCYsqP+9E/Nt6GRQFNgf379+x4835ZPxfZbxQAEVxZvV8Ahfp3ZnOMamAS7WIX4qssZ8tc5cvqdxjKS5Vh7qDhQ0lXsNU27F4Zdq/SafiXAu+aN6Ojx/aLFAheYxfLS5AsoR89RM/G49km/TLZZF0cB9gMFpjF8VDkIYSIHngsdAVIfpbfdBf3U62C4e70adksln9EBMlrPD8oQ1IcboxV4X1SN7juhtrwwHFeC5xSDAbQG/ew4H4Facx+h7pz1f0m5Wz3KSHuCtIQ==
-Received: from MN2PR01CA0063.prod.exchangelabs.com (2603:10b6:208:23f::32) by
- DM4PR12MB6495.namprd12.prod.outlook.com (2603:10b6:8:bc::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8746.30; Sat, 24 May 2025 03:30:56 +0000
-Received: from BL6PEPF00022573.namprd02.prod.outlook.com
- (2603:10b6:208:23f:cafe::d1) by MN2PR01CA0063.outlook.office365.com
- (2603:10b6:208:23f::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18 via Frontend Transport; Sat,
- 24 May 2025 03:30:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL6PEPF00022573.mail.protection.outlook.com (10.167.249.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8769.18 via Frontend Transport; Sat, 24 May 2025 03:30:56 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 23 May
- 2025 20:30:38 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 23 May
- 2025 20:30:38 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 23 May 2025 20:30:36 -0700
-Date: Fri, 23 May 2025 20:30:35 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>
-CC: <bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
-	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
-	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
-	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v5 09/29] iommufd: Do not unmap an owned iopt_area
-Message-ID: <aDE9WyUT3z2+asQA@Asurada-Nvidia>
-References: <cover.1747537752.git.nicolinc@nvidia.com>
- <3ddc8c678406772a8358a265912bb1c064f4c796.1747537752.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCgVI7Sm"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22e331215dbso16281425ad.1;
+        Sun, 25 May 2025 07:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748184420; x=1748789220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mUBZLDan2eHNaNoZcWdVDsVnGQBcMSxMokkMwlfK4G4=;
+        b=WCgVI7SmDpu3SONFnb+xgPegErY3KkZ59olUJ5Ey2c38ihL80WWOIH/4CuDnihJQ4M
+         hkMipEFGO77aU36IrSzqkYQxXRqJnrKQBrWBcO4oLolQ/zL2C3X9K1FEUzPglM+4l7as
+         EboIolgDxbYccM9j3O56PsMGKWuuVxiSOVksF+b0ZqUilLhPF6UVz7c2tBXwz6eLsntB
+         KbnjPZjHJN/6HeHAryz50PzfZ3K4taO4fyyOee03vRashiZiWx/wM9iigc4EyehHcVtb
+         G9MnPbOwt2D6OnFroW6qAi/6Vo+pYWEqU63FyEVMvtl+YG+YfQSJefLQxqZO2ebqD6b9
+         UryA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748184420; x=1748789220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mUBZLDan2eHNaNoZcWdVDsVnGQBcMSxMokkMwlfK4G4=;
+        b=ZgByOjbqFRkI5qPCjOWJBejs+PzUy5eZBgPc0NBI/dJxUUQUcz4Y63mbsBZemzoHvQ
+         2AQrbqlchAkRngaigH4YF3BiEYHwAZxResXowK4ev5x8KSGCzIFgID3kaStIay8PxiIu
+         qjdSXo6Mthr+Ggg9ZnodqxI9rutY9H6286+J8fPIPVdKoXtCpIrk6U8P+x+2SFxAgpuh
+         bDWa+h4JwFWe+2XbI23bnlpA7ApBqyMftqce27BYPJYytTpm+nGDGswbJUNySzV+b4gY
+         /7ymtZvavsMLIbzrGboHkvNR7m2lNCLZR3AK1F2eGbR0fk2VqL04ji3ChP+Bks6xrcbi
+         JkWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZVoKr9FHu+R6YDLpEabPcr+6keseCKfwHBgjAvP2ZBfZg2j2b1q3xbmgmcvx+bzMuk8OCDWkFySRplU=@vger.kernel.org, AJvYcCVqb0RXeZ0CbpAXY7hBAydH5I+GFXb6ny88nbsjQw7rtnPviqJSBqw5SSsrh/KdZ6Cn0RJdBMNGUI1Sftg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw2tJHwCpp3x2RAiwZwn6YMRNdmLa5tIBIWlvo9M4gRWaAlko9
+	hFGiLH1otAen7DbY0Bn/SidiKLSgDQBmPcPa/tV68+IDv8mF8CvRrzrS
+X-Gm-Gg: ASbGncuYeIuwh0szKOlwGaktHl8aOZ4W+h8hxHJbme+soB4YqN3zL8mZHMqxt3GFd+C
+	ZXRiABgYZgGqcaZGeTvjnhXQEU7x722xXOr2ypx6WEvvLRVuknDr304UBFX1MUkxHD5N4b0OXrW
+	Xqk/oqWSXOHeAwSu/zvzk1XVhzsfAm2ar04RmZfhvNQlHatay1/4DHTvYcEn2Fkq8O7pq37NOGI
+	yNCr6y8tqRwWhbXQoYWa3Gg2OBLFiIXh9aKvBVqxoG713ZRaw3iw33K3Z5D1PShYKkWrje9ilSI
+	0mTN3CI8lDmXgFiVVexz05/QNqssYFXFf42r1vII7eDgPEvkqeAMXVXX
+X-Google-Smtp-Source: AGHT+IHZ4ZVvOSCTSKofCdJ6GvvfD60Ebge+g2JstzGYgmfkSNm08awAgjeBbuyIeU+QYdMtvOSe3A==
+X-Received: by 2002:a17:903:2b03:b0:234:557d:a4cb with SMTP id d9443c01a7336-234557da6f4mr15822185ad.20.1748184419704;
+        Sun, 25 May 2025 07:46:59 -0700 (PDT)
+Received: from eleanor-wkdl.. ([140.116.96.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2341b732b58sm25121925ad.180.2025.05.25.07.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 May 2025 07:46:59 -0700 (PDT)
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jonathanh@nvidia.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	jserv@ccns.ncku.edu.tw,
+	visitorckw@gmail.com,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: [PATCH] drm: tegra: Fix undefined behavior in left shift operation
+Date: Sun, 25 May 2025 22:46:50 +0800
+Message-ID: <20250525144650.2365704-1-eleanor15x@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3ddc8c678406772a8358a265912bb1c064f4c796.1747537752.git.nicolinc@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022573:EE_|DM4PR12MB6495:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8e1da59-9bba-45c1-27f1-08dd9a736533
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wZveVzyhpKsOHDEliWaHu5aBISUo3g/gdeFIkux98C5o9U61UEIdQg78Vz1l?=
- =?us-ascii?Q?qkrDwg6d1zwO2MbEKijw4x8yOIa1+Ti9E/Ruc+oR2vNfQ6fmEpQeCu9QpBp1?=
- =?us-ascii?Q?8i78awhmTdip05ar70erSIBuRPDcM3q0Ktygc5bOWywzM+Dc/1wC1PtXhwpz?=
- =?us-ascii?Q?vFpIOMj2LoBMnRnGJMJSBQZ7cc7tzGI0DByTYwaeLC50mWmfY/8Ih5OwpJdH?=
- =?us-ascii?Q?p98SOZcuXZpsCA05/6vVkjuns0s7WksRr+9ToTDxk1a5g6YCd4CuCSakPTr3?=
- =?us-ascii?Q?QGdrH2CfErp3xwvK3gYVHxr+s4fkjlPDvUnQVfIwCNvUeqxrwAEKLynEl34G?=
- =?us-ascii?Q?WCizktSLo01hH1PhWGgDwxpbZji41M38c8Y6CVjsZmNsy1ruz3laXCYiB+Hr?=
- =?us-ascii?Q?aEZWRfqhRNmv0iC+HY4zd/zc/4T52XF3aH22gkweKIPFk4+5QP61y1Cp2eOD?=
- =?us-ascii?Q?44UBbVZa+sFtcVghXm+obrSlRJGRqPx9brGSyUL541KspSEnF3KMM/lOLrLR?=
- =?us-ascii?Q?DqmvMUX2TSG//QSHP1fQNs28noD0K2/O9rzBFbTEg61t2xc+wjghFntaMzNT?=
- =?us-ascii?Q?y4xtWO02MK+MhVzjGYRuQ4jTlWi07TNw+EsAnz99befjLiUL6f30lKvSt//g?=
- =?us-ascii?Q?/SWPe6piHDN11fI0hSEIkAECMzRKxtZ5FjKFkVIe7eo9IyEAPqdtx8/Lilk9?=
- =?us-ascii?Q?oac+01rRDhwmxyjgaKdvBeroPaHDT8u3049iVZtVGPODTZPhXV1a5nnLsbzA?=
- =?us-ascii?Q?WCO9ZX3gL99qHem6bVUa5DSLjgnHBx8843J2eHDY94BlJ6KTVJKdCA+2Hobk?=
- =?us-ascii?Q?BpLJ6GB68eWQIMy6MnG+zgQRaTf7g1hgX/NXyIosRJqzLoTiJt6eCACNCsum?=
- =?us-ascii?Q?mIM8RQrgW8RhnsnphNwsVc/flP3zehMOORN2e/CyM0PBGOcv36EMf2e6FMko?=
- =?us-ascii?Q?+fsmSEV3sw7Bqz+zku67DdZ6PzE5FyANrMq4w2hwuH5ryaGhqHuiZV2rYZ/t?=
- =?us-ascii?Q?S0FAKD82tJtVq4dYYqlTweO8+VOXd34qoGu/tdKgygxJ5IiM1C3mJiGge/aG?=
- =?us-ascii?Q?sTbopiUfdV/n9ua5GsG21nHzCaMET3NtD73FbhhvfCxblE5mNeKoBFS6k7XP?=
- =?us-ascii?Q?tQRcGWIZOplwkcmC50S8GbI4+HZ0CZlkYXIjtM5zyjqR8XatXXNT1YmnbCCy?=
- =?us-ascii?Q?BWRjDYykjI2r91HhS0ayTs8GdcsUkOggqiAvBQ/WbecmM6iKA5moGfv06Hy7?=
- =?us-ascii?Q?dvI7C3KQnzIt4anl++xulsAysdzDROzVJE2yM36mYen6gAelXZzGdeWjI8b3?=
- =?us-ascii?Q?lDBhX1tHngOKWDHLEY7UxhkfnTG8N58KwB/k3308GdMkQcR0gZ5myvFhDmpU?=
- =?us-ascii?Q?KBFRjC16mwqcSwjeGVAF+EK16j2Wz6MXrIM50cG9+9YuRJWKcuhXoCh196kZ?=
- =?us-ascii?Q?so2DwvtuzVkqT4m0jAhJkWoyjdrqFwv/IafhmSZEnjHY42HgGmtNZZPDvQBv?=
- =?us-ascii?Q?1bbEMaXN93p9OBUS0S0P9yKY0sPiU6V/LRui?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2025 03:30:56.3886
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8e1da59-9bba-45c1-27f1-08dd9a736533
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022573.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6495
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 17, 2025 at 08:21:26PM -0700, Nicolin Chen wrote:
-> @@ -250,6 +250,7 @@ int iopt_pages_rw_access(struct iopt_pages *pages, unsigned long start_byte,
->   */
->  struct iopt_pages_access {
->  	struct interval_tree_node node;
-> +	unsigned int owners;
->  	unsigned int users;
+According to the C11 standard (ISO/IEC 9899:2011, 6.5.7):
+"If E1 has a signed type and E1 x 2^E2 is not representable in the result
+type, the behavior is undefined."
 
-This isn't used anywhere, and I forgot to delete.
+Shifting 1 << 31 causes signed integer overflow, which leads to undefined
+behavior.
 
-Will drop in v6.
+Fix this by explicitly using 'BIT(31)' to ensure the shift operates on an
+unsigned type, avoiding undefined behavior.
 
-Thanks
-Nicolin
+Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+---
+Compile test only
+
+ drivers/gpu/drm/tegra/dc.c    |  2 +-
+ drivers/gpu/drm/tegra/hdmi.c  |  8 ++++----
+ drivers/gpu/drm/tegra/hdmi.h  |  8 ++++----
+ drivers/gpu/drm/tegra/riscv.c |  2 +-
+ drivers/gpu/drm/tegra/sor.h   | 14 +++++++-------
+ 5 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 430b2eededb2..3047a380bb83 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2171,7 +2171,7 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
+ 		u32 syncpt = host1x_syncpt_id(dc->syncpt), enable;
+ 
+ 		if (dc->soc->has_nvdisplay)
+-			enable = 1 << 31;
++			enable = BIT(31);
+ 		else
+ 			enable = 1 << 8;
+ 
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index e705f8590c13..524b46a297be 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1719,7 +1719,7 @@ static const struct tegra_hdmi_config tegra20_hdmi_config = {
+ 	.tmds = tegra20_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra20_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = false,
+ 	.has_hda = false,
+ 	.has_hbr = false,
+@@ -1729,7 +1729,7 @@ static const struct tegra_hdmi_config tegra30_hdmi_config = {
+ 	.tmds = tegra30_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra30_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = false,
+ 	.has_hda = true,
+ 	.has_hbr = false,
+@@ -1739,7 +1739,7 @@ static const struct tegra_hdmi_config tegra114_hdmi_config = {
+ 	.tmds = tegra114_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra114_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_PAD_CTLS0,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = true,
+ 	.has_hda = true,
+ 	.has_hbr = true,
+@@ -1749,7 +1749,7 @@ static const struct tegra_hdmi_config tegra124_hdmi_config = {
+ 	.tmds = tegra124_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra124_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_PAD_CTLS0,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = true,
+ 	.has_hda = true,
+ 	.has_hbr = true,
+diff --git a/drivers/gpu/drm/tegra/hdmi.h b/drivers/gpu/drm/tegra/hdmi.h
+index 8deb04223c18..57727703779b 100644
+--- a/drivers/gpu/drm/tegra/hdmi.h
++++ b/drivers/gpu/drm/tegra/hdmi.h
+@@ -119,7 +119,7 @@
+ 
+ #define ACR_SUBPACK_CTS(x) (((x) & 0xffffff) << 8)
+ #define ACR_SUBPACK_N(x)   (((x) & 0xffffff) << 0)
+-#define ACR_ENABLE         (1 << 31)
++#define ACR_ENABLE         BIT(31)
+ 
+ #define HDMI_NV_PDISP_HDMI_CTRL					0x44
+ #define HDMI_CTRL_REKEY(x)         (((x) & 0x7f) <<  0)
+@@ -130,7 +130,7 @@
+ #define HDMI_NV_PDISP_HDMI_VSYNC_WINDOW				0x46
+ #define VSYNC_WINDOW_END(x)   (((x) & 0x3ff) <<  0)
+ #define VSYNC_WINDOW_START(x) (((x) & 0x3ff) << 16)
+-#define VSYNC_WINDOW_ENABLE   (1 << 31)
++#define VSYNC_WINDOW_ENABLE   BIT(31)
+ 
+ #define HDMI_NV_PDISP_HDMI_GCP_CTRL				0x47
+ #define HDMI_NV_PDISP_HDMI_GCP_STATUS				0x48
+@@ -158,8 +158,8 @@
+ #define SOR_PWR_SAFE_STATE_PD       (0 << 16)
+ #define SOR_PWR_SAFE_STATE_PU       (1 << 16)
+ #define SOR_PWR_SETTING_NEW_DONE    (0 << 31)
+-#define SOR_PWR_SETTING_NEW_PENDING (1 << 31)
+-#define SOR_PWR_SETTING_NEW_TRIGGER (1 << 31)
++#define SOR_PWR_SETTING_NEW_PENDING BIT(31)
++#define SOR_PWR_SETTING_NEW_TRIGGER BIT(31)
+ 
+ #define HDMI_NV_PDISP_SOR_TEST					0x56
+ #define HDMI_NV_PDISP_SOR_PLL0					0x57
+diff --git a/drivers/gpu/drm/tegra/riscv.c b/drivers/gpu/drm/tegra/riscv.c
+index 6580416408f8..a5941239b194 100644
+--- a/drivers/gpu/drm/tegra/riscv.c
++++ b/drivers/gpu/drm/tegra/riscv.c
+@@ -19,7 +19,7 @@
+ #define RISCV_BCR_CTRL_CORE_SELECT_RISCV		(1 << 4)
+ #define RISCV_BCR_DMACFG				0x466c
+ #define RISCV_BCR_DMACFG_TARGET_LOCAL_FB		(0 << 0)
+-#define RISCV_BCR_DMACFG_LOCK_LOCKED			(1 << 31)
++#define RISCV_BCR_DMACFG_LOCK_LOCKED			BIT(31)
+ #define RISCV_BCR_DMAADDR_PKCPARAM_LO			0x4670
+ #define RISCV_BCR_DMAADDR_PKCPARAM_HI			0x4674
+ #define RISCV_BCR_DMAADDR_FMCCODE_LO			0x4678
+diff --git a/drivers/gpu/drm/tegra/sor.h b/drivers/gpu/drm/tegra/sor.h
+index 00e09d5dca30..4f404f22dd04 100644
+--- a/drivers/gpu/drm/tegra/sor.h
++++ b/drivers/gpu/drm/tegra/sor.h
+@@ -74,7 +74,7 @@
+ #define SOR_CAP 0x14
+ 
+ #define SOR_PWR 0x15
+-#define  SOR_PWR_TRIGGER			(1 << 31)
++#define  SOR_PWR_TRIGGER			BIT(31)
+ #define  SOR_PWR_MODE_SAFE			(1 << 28)
+ #define  SOR_PWR_NORMAL_STATE_PU		(1 << 0)
+ 
+@@ -154,7 +154,7 @@
+ #define  SOR_SEQ_CTL_PU_PC(x)		(((x) & 0xf) <<  0)
+ 
+ #define SOR_LANE_SEQ_CTL 0x21
+-#define  SOR_LANE_SEQ_CTL_TRIGGER		(1 << 31)
++#define  SOR_LANE_SEQ_CTL_TRIGGER		BIT(31)
+ #define  SOR_LANE_SEQ_CTL_STATE_BUSY		(1 << 28)
+ #define  SOR_LANE_SEQ_CTL_SEQUENCE_UP		(0 << 20)
+ #define  SOR_LANE_SEQ_CTL_SEQUENCE_DOWN		(1 << 20)
+@@ -163,7 +163,7 @@
+ #define  SOR_LANE_SEQ_CTL_DELAY(x)		(((x) & 0xf) << 12)
+ 
+ #define SOR_SEQ_INST(x) (0x22 + (x))
+-#define  SOR_SEQ_INST_PLL_PULLDOWN (1 << 31)
++#define  SOR_SEQ_INST_PLL_PULLDOWN BIT(31)
+ #define  SOR_SEQ_INST_POWERDOWN_MACRO (1 << 30)
+ #define  SOR_SEQ_INST_ASSERT_PLL_RESET (1 << 29)
+ #define  SOR_SEQ_INST_BLANK_V (1 << 28)
+@@ -192,7 +192,7 @@
+ #define  SOR_PWM_DIV_MASK			0xffffff
+ 
+ #define SOR_PWM_CTL 0x33
+-#define  SOR_PWM_CTL_TRIGGER			(1 << 31)
++#define  SOR_PWM_CTL_TRIGGER			BIT(31)
+ #define  SOR_PWM_CTL_CLK_SEL			(1 << 30)
+ #define  SOR_PWM_CTL_DUTY_CYCLE_MASK		0xffffff
+ 
+@@ -261,7 +261,7 @@
+ #define  SOR_LANE_POSTCURSOR_LANE0(x) (((x) & 0xff) << 0)
+ 
+ #define SOR_DP_CONFIG0 0x58
+-#define SOR_DP_CONFIG_DISPARITY_NEGATIVE	(1 << 31)
++#define SOR_DP_CONFIG_DISPARITY_NEGATIVE	BIT(31)
+ #define SOR_DP_CONFIG_ACTIVE_SYM_ENABLE		(1 << 26)
+ #define SOR_DP_CONFIG_ACTIVE_SYM_POLARITY	(1 << 24)
+ #define SOR_DP_CONFIG_ACTIVE_SYM_FRAC_MASK	(0xf << 16)
+@@ -370,7 +370,7 @@
+ #define  SOR_HDMI_ACR_SUBPACK_LOW_SB1(x) (((x) & 0xff) << 24)
+ 
+ #define SOR_HDMI_ACR_0320_SUBPACK_HIGH 0xb3
+-#define  SOR_HDMI_ACR_SUBPACK_HIGH_ENABLE (1 << 31)
++#define  SOR_HDMI_ACR_SUBPACK_HIGH_ENABLE BIT(31)
+ 
+ #define SOR_HDMI_ACR_0441_SUBPACK_LOW 0xb4
+ #define SOR_HDMI_ACR_0441_SUBPACK_HIGH 0xb5
+@@ -382,7 +382,7 @@
+ #define  SOR_HDMI_CTRL_REKEY(x) (((x) & 0x7f) << 0)
+ 
+ #define SOR_HDMI_SPARE 0xcb
+-#define  SOR_HDMI_SPARE_ACR_PRIORITY_HIGH (1 << 31)
++#define  SOR_HDMI_SPARE_ACR_PRIORITY_HIGH BIT(31)
+ #define  SOR_HDMI_SPARE_CTS_RESET(x) (((x) & 0x7) << 16)
+ #define  SOR_HDMI_SPARE_HW_CTS_ENABLE (1 << 0)
+ 
+-- 
+2.43.0
+
