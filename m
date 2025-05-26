@@ -1,114 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333741A26B;
-	Mon, 26 May 2025 05:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00884149C64;
+	Mon, 26 May 2025 06:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748238494; cv=none; b=Udd2Sc8klFTqSPnsfuHjM7Uo1I+H9Bez5VtcL/fsIW0EnW6k+nNSWkYfa1yDYIHuIzdoI2OHS0HsNV+das7lkrX+A26Cj+nHEcgKLyoTsadyi6AmXhxzt8BubMZvmkefEvCW8YfW257X8im6HT9IlPwKplw/iT1T+KXnM1NG3Kc=
+	t=1748239654; cv=none; b=gHbqv2Y8lU0SFE+AGwofrxkPrIXr3GmPKTa7vWRuCCbJBhM7RC1/fMALdOEBXchghTXCm0V+je+5vnOcF3cE/T0T79MywJS7LhJq+XqdY/Ve17aR9eLthDWMAOdxb9RQiHcB2YUk7l5Cs/40a9GyVlK0jCWNKzDa2McBWMf6qPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748238494; c=relaxed/simple;
-	bh=bdCCiAUM39wgNEBtRijLIZNzyMM8ZIX0c28i/gBEN9g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=I9vzqlSCql8/BSNyGRi9dwRQuqpPsziRzFalKuC5o4nF+n9tPMIgCEJPdP9viQbt0H+doEkv8llaszAykfwQ1kYw/1WXvn33+ZQgDD/W0GjEr7SGu1tR+Q3+uOuXGWgDjZYVjmL+u1cEtMyOlcthfzagePv0k5N7eGByn66WdJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cprSY10D; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cprSY10D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579B6C4CEE7;
-	Mon, 26 May 2025 05:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748238493;
-	bh=bdCCiAUM39wgNEBtRijLIZNzyMM8ZIX0c28i/gBEN9g=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=cprSY10DcSwnHX3T8uesB5jegtXD8Gt8oxLbuZ49sz613i76bKDJT1dF3nJDK6bby
-	 uIMibDFhXVQ+R/H+Wrr2ZOC0YPh8aJ88RzKw3zKYIcLU8dAWxmOXCJH4p8KO7CzE6i
-	 9ujStQd9vczJZjIJltiDlfCdTgom3DJskR/5hhcWL4M21jOBl7z8iVQkiNgJiESN2u
-	 TldvRfP9Y2GqEejuxAzO4FDoGonL/KkRv+ZCxWZn8xh6Xk/cSMmEmD6jFRLC3GA53Z
-	 F9LclGtRDhAUoyI59VBsekGbMoHHpqlFB+EU1x3gP5sz7MS1Dav04VXDgdmXlVYn5C
-	 9249rAKTNy/iw==
-Message-ID: <6067561e-14d4-4512-afd7-4a4eca27ecfa@kernel.org>
-Date: Mon, 26 May 2025 07:48:08 +0200
+	s=arc-20240116; t=1748239654; c=relaxed/simple;
+	bh=0ggrMd7btCjWp0qzNz3E63hzxUwC6H5a8qcMAEl5pks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mcebEFK9c0hCRR6+3s4suYi0E+3Ae0Z4vib7vKiUPzMIQvhQdzqNwqhsX4mUjDzHvfM226U0WSaTcxlWKUtsJAp5e/QRZqno0vihy4AdIHcXQ8Xy7bxLnUjK8n2l9vrcoge36sVvyNXctRcSPoqSEZk4c3lvWLx7tjkLrBuT2D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.3])
+	by gateway (Coremail) with SMTP id _____8AxGHEjBTRoTYb8AA--.15906S3;
+	Mon, 26 May 2025 14:07:31 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.69.3])
+	by front1 (Coremail) with SMTP id qMiowMDxu8QhBTRo0gTyAA--.30312S3;
+	Mon, 26 May 2025 14:07:31 +0800 (CST)
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	linux-mmc@vger.kernel.org,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 31/34] mmc: sdhci-tegra: Drop the use of sdhci_pltfm_free()
+Date: Mon, 26 May 2025 14:07:19 +0800
+Message-ID: <76a05370d9907c407c0419214b3d791e7a1ac998.1747792905.git.zhoubinbin@loongson.cn>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <cover.1747792905.git.zhoubinbin@loongson.cn>
+References: <cover.1747792905.git.zhoubinbin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: nvidia,tegra20-i2c: Specify the
- required properties
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Akhil R <akhilrajeev@nvidia.com>, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, ldewangan@nvidia.com, digetx@gmail.com,
- p.zabel@pengutronix.de, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250526052553.42766-1-akhilrajeev@nvidia.com>
- <44b5d5f1-f45e-4d81-809f-707bd756257d@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <44b5d5f1-f45e-4d81-809f-707bd756257d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxu8QhBTRo0gTyAA--.30312S3
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ZrW8Xw4kKF4fXr4fCF1fXwc_yoW8CFW5pF
+	4DJFWIkr4xWr4FkFyDGwnrZa45Cr129ay7K3s5Kwn7A398JryDGFn3AFyjvFWrAFykK3W8
+	XF1UKF18CF9rWabCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Cr1j6rxdM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVW8
+	Xw0E3s1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48Icx
+	kI7VAKI48JM4x0Y40E4IxF1VCIxcxG6Fyj6r4UJwCF04k20xvY0x0EwIxGrwCFx2IqxVCF
+	s4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI
+	8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41l
+	IxAIcVC0I7IYx2IY67AKxVWDJVCq3wCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr1j6F4UJwCI42IY
+	6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUYkwIDUUUUU==
 
-On 26/05/2025 07:40, Krzysztof Kozlowski wrote:
-> On 26/05/2025 07:25, Akhil R wrote:
->> Specify the properties which are essential for the Tegra I2C driver to
->> function correctly. Though all the existing DT nodes have these
->> properties already, it was not mandated by the DT bindings.
-> 
-> I was rather expecting to see explanation why these were missing.
+Since the devm_mmc_alloc_host() helper is already in
+use, sdhci_pltfm_free() is no longer needed.
 
-To clarify: I meant, explain the bug/mistake. Rest of explanation is ok.
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+---
+ drivers/mmc/host/sdhci-tegra.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-> 
-> Fixes: f10a9b722f80 ("dt-bindings: i2c: tegra: Convert to json-schema")
-> 
-> 
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index b2f5c3f8b839..c811297185d8 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1693,7 +1693,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 
+ 	rc = mmc_of_parse(host->mmc);
+ 	if (rc)
+-		goto err_parse_dt;
++		return rc;
+ 
+ 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+ 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
+@@ -1739,7 +1739,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 		if (IS_ERR(clk)) {
+ 			rc = PTR_ERR(clk);
+ 			if (rc == -EPROBE_DEFER)
+-				goto err_power_req;
++				return rc;
+ 
+ 			dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
+ 			clk = NULL;
+@@ -1750,7 +1750,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 		if (rc) {
+ 			dev_err(&pdev->dev,
+ 				"failed to enable tmclk: %d\n", rc);
+-			goto err_power_req;
++			return rc;
+ 		}
+ 
+ 		tegra_host->tmclk = clk;
+@@ -1811,8 +1811,6 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ err_clk_get:
+ 	clk_disable_unprepare(tegra_host->tmclk);
+ err_power_req:
+-err_parse_dt:
+-	sdhci_pltfm_free(pdev);
+ 	return rc;
+ }
+ 
+@@ -1831,7 +1829,6 @@ static void sdhci_tegra_remove(struct platform_device *pdev)
+ 	pm_runtime_force_suspend(&pdev->dev);
+ 
+ 	clk_disable_unprepare(tegra_host->tmclk);
+-	sdhci_pltfm_free(pdev);
+ }
+ 
+ static int __maybe_unused sdhci_tegra_runtime_suspend(struct device *dev)
+-- 
+2.47.1
 
-
-Best regards,
-Krzysztof
