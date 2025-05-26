@@ -1,172 +1,154 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2058.outbound.protection.outlook.com [40.107.220.58])
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6953B45009;
-	Mon, 26 May 2025 13:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748266251; cv=fail; b=fFd7yPfjvmvOeOKjRmQXpiHn7EnnNny/yJoggMi5ShTRuX4RRCpVZ4C5/TvmKxloU++AYXlRmPJTFj+8IUY9rtVjD8smvc3oijIF/EROQxbVH5vInW/7o98MmVZf3x7zFVECzBZTZqvYCwobcwRFfdOd/OQnXtA+Y8d376G1bRE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748266251; c=relaxed/simple;
-	bh=HW2hQTR8K/hLgbbRaJh2gUL3OYDZZ3IiLuXXbT0Cl6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=C0ezcGKBM2P1u3ZncOU/GldRFp1IHF+4KhIh2Utgx22xDXNjRrdntmWX2T9TN7GCzXYJt6Z3WmiiUERV3O/bIHoVrc45ijwKmXNGW7CJo0Gguh35OEN6YkOvRucQ67zjnxMurDEtcvoMUgC5bkD0PFoapL8DFe0y9wdcHdUq/30=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ut00by3A; arc=fail smtp.client-ip=40.107.220.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3255F25569
+	for <linux-tegra@vger.kernel.org>; Mon, 26 May 2025 16:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748276341; cv=none; b=CF97w94ii2/qYqONoN6W7SPiNFrQUEYrSDmiJC7OV0Fu2X02UIRt0FLXeVtyuiQgww+sluQU4y0FPxAs0RNQoXZELI74vDWJeTrEDfLZNlnTbwlCgf7iwOqjs4By3txgXhPJNMz6N9FPN6GQRcV4/T3+WWoQ0Z2TjNFJir461/U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748276341; c=relaxed/simple;
+	bh=3O9uODhheyd75IXO4fOpFql0g/mYJkjjqhqvQGXfe/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YM+CbGbI+tfwYE/tsb2R/bdCgVmIq8tkTwzpFmNBgB9BWR7KEROF+Plqknslb1yLxa3ET/lNmdiTk0F0A8EKazasYR+t/JUZAAmePcR0WRMYlVKRiFG6bLchSFxqd+9gt2pj9JQRjQFghBqSx+98TSOOIzXarY8y74VPooVLix0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rWhW4KQu; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ut00by3A"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NJlm7f3oAzdXZorAfkB+tY8/W0zcSiH5uL/FpmNtidQQj/aaZWW7wiqL6PGHTg/obcliQvws//3nrNOh9xyB8ODApB9JdqrnDk/El+ES6FagIwP8X6guepy48SEhVfwQNz8G6UrX5aYh4NsaE/tyRwxmSQc14sCGlaKFi1IHr+5vanqtF+yhxIuI8oO5rVunpLJfgdw6QteoD6wjY/I1WFc0D9yEpk9NaJoamP1fSvFTBDsy8WUGdLXEyxlT8Ri5OtrISH5KKqXtr4KFhBJt5p9MUR4QdvBkXqNh3bGGoijV47b/6kQlWlof/NV6Fj7gvBxuJXwsWN4+V1gZEouCBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cnBYyrvKQO19fIrvVH1iHkQkLCAlLdUcINadjeQdBLc=;
- b=ofZvcMOWYM3DzIn7n3gt7w6pRyg5wVLqRzEloVF65mk0vzHDgextiknBtKfWnbebqn5pVucA7/Jp5bQ+FjfBMdlxVAczzgrQpqqy2IJ7vfKuYGQO8oa78E8AhIolobBmSUmoSDU396IdK65b2/9VuRMqzohH8XyAZr+jnr9zDaZNW3KW79cwzTxUmEoyC30PFa4p4bCwsUtg8Rz6hz+l0g8AeMuyVOpJRCd1a1+IxJOMxSvFXYsS+APY+7kf9m4+g7rtNbvbFe///ur04PVZDQtOXqaBGqAcZicsATUAGm73l5v18IdV3fTejYkENJHlw0L4uReyypkYlOaNWq+OxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cnBYyrvKQO19fIrvVH1iHkQkLCAlLdUcINadjeQdBLc=;
- b=ut00by3AGK3aPkz3qBE1b/ACYlWsKpRrP9VfT6XOQCBKeUQulrqGKRw0xub8dC9+Mf7IvX3B5MvFvIzwmM1kbjreKqxc0VmclEJp6lwJ8wqFJYffwsr0Ufb7BG4C8LKe2YzoTP9IR93WClwRfN6UTuF5sCjy+6MZPCeF49QNaQVPmttz5Omm8rvaIvH9cG/SS7/CMAq+jz3KkQZSq0+hiFKs0vIOVfP+HUHdwMfNq7XPByjWMaF2s9yYLvCRigytS2sQZSwI7KpC7185RabAXxnjhhm9wVQyniX45WbrrOBAaYM+drpGiZvc2fhWRoBsM6NbLfLgxobikgkaSrl9iQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SA5PPFE3F7EF2AE.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Mon, 26 May
- 2025 13:30:47 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8769.022; Mon, 26 May 2025
- 13:30:47 +0000
-Date: Mon, 26 May 2025 10:30:46 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v4 05/23] iommufd/driver: Let iommufd_viommu_alloc helper
- save ictx to viommu->ictx
-Message-ID: <20250526133046.GD9786@nvidia.com>
-References: <cover.1746757630.git.nicolinc@nvidia.com>
- <5288cec9804e7e394be3b7de6b246d8ca9c4792a.1746757630.git.nicolinc@nvidia.com>
- <20250514170637.GE382960@nvidia.com>
- <aCadeeP+Z4s6WzOi@Asurada-Nvidia>
- <20250516132845.GH613512@nvidia.com>
- <aCemeved47HE6Q2B@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCemeved47HE6Q2B@Asurada-Nvidia>
-X-ClientProxiedBy: MN2PR07CA0004.namprd07.prod.outlook.com
- (2603:10b6:208:1a0::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rWhW4KQu"
+Message-ID: <3e8810e3-1346-498d-8914-f5f81167cb5c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748276327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iJv5lA8od/YM8eLH9W+Fh4Qc3lU7Hef1zizGNnnPSAI=;
+	b=rWhW4KQuPO92q53OSQnBIRJvVbyKz3u1xKvSx69boc3nVQP0/cpc3sZ150fKQMfHS5dGOS
+	//7rDdV+0ONn3ZHEw60J4K27fl9aA8YK1kRk7VH3jHEw8n+c5xkFwh/QnJoeq/aAB/LsEW
+	b5hh2yRWgo5JeuICWGPwzIC5DrqX480=
+Date: Mon, 26 May 2025 18:18:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA5PPFE3F7EF2AE:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1876dbc-34bf-42fd-cb9d-08dd9c59861d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pFAlow/I7M519XMW0PGCpLlmVqJuY01rrsSstpO+taccOAvpESUOCosefI7R?=
- =?us-ascii?Q?oWmE/6WZjEHxksfCj7JTjMb1PSsBb9EEEOITmPt24T0JJYOUn4vcHZibbFTT?=
- =?us-ascii?Q?yvHvM2EMlMLZY9m9LFQ8cOyUGFwv+Wp9QDd1jsMObsYFEg1FTLFT/xn1woNq?=
- =?us-ascii?Q?ESz+qgFnNWkbK/jryk3kzuvMgLdPkBcsc7jH0Jsp5VaZ/W04h2qzxNF5a5Ig?=
- =?us-ascii?Q?rFjQPcOQvIy7EYWW0dOAUQBbGhseRMzJLUIiYEETjYZ/cqe/Ym/Me6B1e3iD?=
- =?us-ascii?Q?wNmh5mDWBHZhOqpB5qa/SC6bKnVBMgTUlTJZsI3Zqm9vQp5U+v9HChsFVl8J?=
- =?us-ascii?Q?2jkck3kpRYdPBhj4qqXBO0LHATyW4KS+toxsfUK105cPpOZflkp1fDB0U719?=
- =?us-ascii?Q?m746uLaB7Z1u7B4OdY9vjtwZTMidQy25i2Z3ZY3f26nG0988IW71/fnKMpJe?=
- =?us-ascii?Q?1xonLcBbLGBJEv4P+fT/eo23VSAJ2Uis+O15GJOyIvFtnthTpXX4oqrKIkHT?=
- =?us-ascii?Q?pwsfhBcqDdAPARxEkaDhZZD7mcUKRY2zI3OqQ0FHF3iLGidwnj2lHBgNfLz2?=
- =?us-ascii?Q?uQXNU0k97Q+eigAuwx+jmPod/7m1HLabtWYOW6Eo4XAO2xaf+v7Y0ZSjxGvm?=
- =?us-ascii?Q?t8PPTD4FJPPj6ywB76twNYWHBlh2VMjWUcjX75/bVl7d86v4GQgN5ps9bKZN?=
- =?us-ascii?Q?A3CQf7Nw5hR/WmxSo5xDM4gR57v88+SQuyx/Y4no78UfRS97EgqBCJk7kmrK?=
- =?us-ascii?Q?tpoaOOtZjNCadrBqWJKE4lmPjgbUmQ9z05O+k8G5NbAR5Lhk3jYXsB1KGTos?=
- =?us-ascii?Q?lKSIFHVNs50b7L0v7/5yqdC+TKVTCl0T5Hub/BHe9jIRlANftKCF5KWlTjG4?=
- =?us-ascii?Q?bxFnpPVOUMYHkET/fzavSY+1A9M8QwrZ2PMO96qQWcrZkF8eomp3J6b4145b?=
- =?us-ascii?Q?wViotJSGX5vPy8Fy62JW6ay9dFJfYhsZ4HgCtjesXMEme6RFkR6rOipFTWu1?=
- =?us-ascii?Q?CLVKo8rzbpz+x++D2dVg5/noS0AJGMdstknJqh/slc2r6P2/M5ZwA6YEiZjD?=
- =?us-ascii?Q?GVgeBO8go7hgTqHpIVFrqi9VmF+/iEJ1x8rR1+vVNCgmnxH5mHH5qHrQK6QT?=
- =?us-ascii?Q?d52nw6BVzH6bYAO+NTKmbJDPs3mrqIXMJKWkTV9d09fqNYEyZkxmB95VR3kL?=
- =?us-ascii?Q?ZLlaj4EToUXtRhKlWw8L/hUYmOvWe4YR6umhXbART7weXU4dIcm+7s63FSZA?=
- =?us-ascii?Q?wKTiHjqqRgrqWLouJiJTbY+Ae34sELu6vf9RlCGJrxXoT9wSGdMQqQumS+JU?=
- =?us-ascii?Q?zr/4A7KO4lybgjYbU1uEpciK49w8Cp62VIB+21TgN3z8LIHVkWK61nknIoVF?=
- =?us-ascii?Q?dfKcr0ltOcaNrwWF+1NyXqNkR/r2x5lMJalZYcnNinqO40kOzm1qqyoEQ33h?=
- =?us-ascii?Q?YYKs2qhTgDc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o36fO8c7YgiFnbHOBT7DFEwvWBooaL7Se4lQDT0gxw9cqcuZPnRSzMhwFqHD?=
- =?us-ascii?Q?gdfNA34Wn2kZ3TMuky7W1H3dO5+s3tB2KP2DlT5vWLAYUAb6MKwvCzgX9wAF?=
- =?us-ascii?Q?g5sq1PjcSyNCn8C5vID327c3q8D/mGESueWibK7CQPSdXE/HJBtcei4a9f1h?=
- =?us-ascii?Q?/9DR341UKM6qeniFZT8EW/P5WoEaahIANfgdjOlriNPfmNyMwqZR4UW59ykb?=
- =?us-ascii?Q?Qyrfbfg74fu7b02QcwnY+GeNib6B3huaBhCmCvCllQlkeWl1lxbXtEhgdbzG?=
- =?us-ascii?Q?Zxc5ZtHKRl9c6zvrhnzKT8zQba2KAb+n74xqLClSo/jSa+y7UjbnlPstRbt7?=
- =?us-ascii?Q?V6eIsBmexr+yFeRiOwGYCpvHR1qbLhfwoIRQi0+BJhsBnaH/G85GnIFIxb6h?=
- =?us-ascii?Q?jf3ZhJEkn+44fJWXZhv07fXlNpgOOGgGQ2gkS8aCdC1DRkUTCyV6wuGTUhau?=
- =?us-ascii?Q?Hxx/16phb7wucx899yImqlmjFcyJT08iZl8Ca9AtpJPqcH06oChMd6rqE5ya?=
- =?us-ascii?Q?nCSTLvMCwN8mlfYo8nbsgRWoccOsf+Mk8FuTVib2RwQObxd5JS9sVxNdEGiO?=
- =?us-ascii?Q?k3Wo5YahMMnRWs6FXMOlgpdU4YaqV+BmzUnZPMTbfNa1RV8MH3qN8LnwppQ0?=
- =?us-ascii?Q?645iC9cvezCnziDLor1qGorm93cWDzU16qhDcFxuGPLJVEkX42J/9hwlzOjc?=
- =?us-ascii?Q?BxU22mq+nzycClyfpoWHzVg2GnhFZwGrbQV1+pI9iTRdWRVvOn7DKeJoV1/B?=
- =?us-ascii?Q?j3KFUg8fdkNS8SqXFrJKyu+FIexzvDGin9jKaqWU+FuIFLI+Ixd2EKAxzphV?=
- =?us-ascii?Q?knlPsHZMPgFlHIXgXl/1gGW059Dw9El8M3sVPV5vQOJbc6s18vT/DOhlrZ4w?=
- =?us-ascii?Q?FYGRQjtlVZZjvMTvFmHv9rqlz98wNrxypMFLC3md3nKfwfEwuEFcBEb54IDp?=
- =?us-ascii?Q?ZfZkJRusnu9Hj3JSR59E16Ag1T3Aw4JeimHPk6gCNN6DgRlUnXoGIk8gEfUA?=
- =?us-ascii?Q?fXMXWB1YJ78AiqdgOm1hN84tVTLqqM+boFb01gkNlTuY/XKs0PJj6B8z/vDH?=
- =?us-ascii?Q?uYs5djihvxKgn9E0qXuDcgJ2bq2HZSvXGZw5dhsR/bCixFoqIAk9wEcQeUlO?=
- =?us-ascii?Q?uwyuLlPOrwDMvBpleHDkMLtGzjNxOxM/8L9ijg9msJ2+o7S3hLMqJLdxrW57?=
- =?us-ascii?Q?YaERv2HQMFryZZXz6kasWfKB6kpsXGdQykUoZqfPJeU3y+U6CNhc7YzoGuoB?=
- =?us-ascii?Q?3NCvkBcFFUS5wip2ESBpOEvR/SCFeV5SDEnlzatKC0otLSrs6bZegpDn5vZf?=
- =?us-ascii?Q?W1FxS14Kx46WOsFETvnV1+KwwKGkK+dRVmhFPClGBJZitYIyZgFJlphl7zwr?=
- =?us-ascii?Q?xuxjmnnZq/HW+NBK+qY2RjZFFyXfx50UgdNnB6vUGDo1a0MVoNUHuH9HI0dm?=
- =?us-ascii?Q?izQbczdtkM32NpoAzcwMDdxQcXXwJ1EKhIcJGlk+mXeLEj3Kqks9vxsleEin?=
- =?us-ascii?Q?8Wdil1r+IOdDse4DpWYN0ZYhb54u6+NX4YgoMEyvd0FJxeuAKU+JKeUuu7d9?=
- =?us-ascii?Q?Wed6bg5ljyt6vZcbDGtbqf9s//bHm1skKAv/47LH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1876dbc-34bf-42fd-cb9d-08dd9c59861d
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 13:30:47.4954
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UotRtQtPWOd8JpTh9aCsF+6kOMCdcyPy0B+5cifeV2C2hQUaYdylWfVAByi4OBVa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFE3F7EF2AE
+Subject: Re: [RFC PATCH v2] ASoC: soc-pcm: Optimize hw_params() BE DAI call
+To: "Sheetal ." <sheetal@nvidia.com>,
+ =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
+ broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ linux-sound@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com,
+ spujar@nvidia.com
+References: <20250408083022.3671283-1-sheetal@nvidia.com>
+ <52681983-2fe2-45da-b0ee-1e9452ed469e@linux.intel.com>
+ <1328ff08-1de7-4c62-b8f7-b09e15f50737@linux.dev>
+ <897155bb-da81-485a-869c-da587e063bc2@nvidia.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <897155bb-da81-485a-869c-da587e063bc2@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, May 16, 2025 at 01:56:26PM -0700, Nicolin Chen wrote:
 
-> > You don't need to move this unless you are using inlines. Just use a
-> > forward declaration.
+>> I share Peter's question. The code has been around since 2016, in what 
+>> case would the existing logic need to be updated?
 > 
-> Since we forward ucmd now, ictx is in the ucmd so we need this
-> structure for:
+> As such it is not causing any issue. But I think if the BE DAI state is 
+> already SND_SOC_DPCM_STATE_HW_PARAMS, there is no need to call it again. 
+> Similar to how dpcm_be_dai_prepare() and dpcm_be_dai_startup() won't 
+> call BE DAI prepare() / open() callbacks if the state is already 
+> SND_SOC_DPCM_STATE_PREPARE or SND_SOC_DPCM_STATE_OPEN respectively.
 > 
-> -		if (!IS_ERR(ret))                                              \
-> +		if (!IS_ERR(ret)) {                                            \
->  			ret->member.ops = viommu_ops;                          \
-> +			ret->member.ictx = ucmd->ictx;                         \
-> +		}                                                              \
+> For example:
+> 
+> When two or more streams sharing a common BE DAI are started 
+> consecutively, the following sequence can cause multiple unnecessary 
+> hw_params() calls for the BE DAI:
+> (1) Stream1 hw_params() called for BE DAI and updates state to
+>     SND_SOC_DPCM_STATE_HW_PARAMS
+> (2) Before Stream1 BE DAI prepare() call triggered,
+>     Stream2 dpcm_be_dai_hw_params() call happened and now BE DAI 
+> hw_params() callback happen again unnecessarily as the state of BE DAI 
+> is still SND_SOC_DPCM_STATE_HW_PARAMS.
 
-De-inline more of that function probably..
+It's possible that the second call uses different parameters. Don't make 
+the assumption that the parameters are exactly the same between FEs, see 
+more below.
 
-Also seem my other remarks about not storing ictx so much..
+>> One key point is that hw_params() may be called multiple times with 
+>> different parameters, it's a feature and not a bug. If a call to 
+>> hw_params() changes an internal state, a follow-up call to hw_params() 
+>> shall undo the initial state change and rerun the appropriate 
+>> configuration.
+> 
+> As per my understanding, after hw_params() callback, prepare() will be 
+> called and the BE DAI state will be updated to PREPARE now, then 
+> hw_params() callback for same BE DAI will not occur as condition will be 
+> unmet. Not sure how the different parameters will be configured in this 
+> case? Please clarify.
 
-Jason
+prepare() is a different stage, you shouldn't assume that the transition 
+between hw_params() and prepare() is immediate.
+
+You could have two FEs that try to configure different parameters, i.e. 
+S16LE or S32LE before the prepare stage is reached. Not to mention that 
+sound servers such as PulseAudio or PipeWire do make repeated calls to 
+hw_params() with different configurations to figure out what is 
+supported, i.e. prepare() and trigger() stages are not reached.
+
+Note that the DPCM logic is far from perfect, in the case of shared BEs 
+the hw_params should not be propagated from FEs. In the case of a mixer, 
+it would be very useful to have a boundary between FE and BE, with the 
+mixer pre-configured to e.g. 48kHz S32LE. The existing propagation from 
+FE to BE can be problematic in that the last configuration will be 
+retained, and that's not necessarily the highest resolution. We had 
+similar problems in the past when we tried to be smart with PulseAudio 
+and automatically select 44.1kHz or 48 kHz. That causes all kinds of 
+issues where the change of configuration only happens when all streams 
+are idle, and while a stream is active the configuration cannot be 
+reconfigured. It's much simpler to decide what the BE settings are once 
+and not try to adapt.
+
+In other words, the existing logic is fine, only redundant in the case 
+of *identical* hw_params for all streams feeding into a common BE. I 
+don't feel it's worth changing for now, if we change something in the 
+logic that should be a bigger change to add constraints between domains, 
+and allow for more than two domains.
+
+>>>> Signed-off-by: Sheetal <sheetal@nvidia.com>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Update commit message as its not a fix.
+>>>> - Marked as RFC patch as it requires feedback from other users
+>>>>    perspective as well.
+>>>> - The patch is being sent separately as other patch is not RFC.
+>>>>
+>>>>   sound/soc/soc-pcm.c | 1 -
+>>>>   1 file changed, 1 deletion(-)
+>>>>
+>>>> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+>>>> index d7f6d3a6d312..c73be27c4ecb 100644
+>>>> --- a/sound/soc/soc-pcm.c
+>>>> +++ b/sound/soc/soc-pcm.c
+>>>> @@ -2123,7 +2123,6 @@ int dpcm_be_dai_hw_params(struct 
+>>>> snd_soc_pcm_runtime *fe, int stream)
+>>>>                       continue;
+>>>>
+>>>>               if ((be->dpcm[stream].state != 
+>>>> SND_SOC_DPCM_STATE_OPEN) &&
+>>>> -                (be->dpcm[stream].state != 
+>>>> SND_SOC_DPCM_STATE_HW_PARAMS) &&
+>>>>                   (be->dpcm[stream].state != 
+>>>> SND_SOC_DPCM_STATE_HW_FREE))
+>>>>                       continue;
+>>>>
+>>>
+>>
+> 
+> 
+
