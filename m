@@ -1,81 +1,35 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E41F4E4F;
-	Sun, 25 May 2025 14:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E121CD2C;
+	Mon, 26 May 2025 02:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748184422; cv=none; b=g4Oz/Hxvu7bd3N+AgnQ5G9WtW3rlKEKyCgSh3FgpFTNVNbKBJ7BVek3yhDgkVjck0HuzmwEFcZoLfStxuMXY/ExUdchLB1HYSD3S7/fWhOUcKSQE8qYa1w1oSOzPB6xYxCutxoAAD4FBS+VQF/bt7mAcMqKXkpggZManO44sm9c=
+	t=1748225081; cv=none; b=MC4/ZXrCr6J3W4B/adYsrYiFhAep9hvJGdRNG4EXToR8r0Arg58zUsW1mKdYMLB/PTaFE3G6DSPz2MipD91iIE6FyUt2Vs87/EMyItyZZ4x+KJzvWCjN8fAzqBNgAdcQpc0KhzXpdeueKftHAPmAsBjR2HrwgdSNfX6adgsIYRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748184422; c=relaxed/simple;
-	bh=4b2sAqOMMJ8dcklJdkoRt1GLlnkVi9x9wGx3OaUDMaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9+Fl1uHjijweL4wZjYNlv5Xy+U2eb3Fdw2vHgqWBwt7vrZcnJxMD+kJ2wYkn2ssU92AHNMT8P4jJpEU4izR3MH2Gvj8Bh5UfpvETFLugxkYzWkhR3mudfHX03FVBz4Vdd64vOJkzsQiLabNo4AvPr4bEYYCwahtAzzXPcMyxSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCgVI7Sm; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCgVI7Sm"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22e331215dbso16281425ad.1;
-        Sun, 25 May 2025 07:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748184420; x=1748789220; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mUBZLDan2eHNaNoZcWdVDsVnGQBcMSxMokkMwlfK4G4=;
-        b=WCgVI7SmDpu3SONFnb+xgPegErY3KkZ59olUJ5Ey2c38ihL80WWOIH/4CuDnihJQ4M
-         hkMipEFGO77aU36IrSzqkYQxXRqJnrKQBrWBcO4oLolQ/zL2C3X9K1FEUzPglM+4l7as
-         EboIolgDxbYccM9j3O56PsMGKWuuVxiSOVksF+b0ZqUilLhPF6UVz7c2tBXwz6eLsntB
-         KbnjPZjHJN/6HeHAryz50PzfZ3K4taO4fyyOee03vRashiZiWx/wM9iigc4EyehHcVtb
-         G9MnPbOwt2D6OnFroW6qAi/6Vo+pYWEqU63FyEVMvtl+YG+YfQSJefLQxqZO2ebqD6b9
-         UryA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748184420; x=1748789220;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mUBZLDan2eHNaNoZcWdVDsVnGQBcMSxMokkMwlfK4G4=;
-        b=ZgByOjbqFRkI5qPCjOWJBejs+PzUy5eZBgPc0NBI/dJxUUQUcz4Y63mbsBZemzoHvQ
-         2AQrbqlchAkRngaigH4YF3BiEYHwAZxResXowK4ev5x8KSGCzIFgID3kaStIay8PxiIu
-         qjdSXo6Mthr+Ggg9ZnodqxI9rutY9H6286+J8fPIPVdKoXtCpIrk6U8P+x+2SFxAgpuh
-         bDWa+h4JwFWe+2XbI23bnlpA7ApBqyMftqce27BYPJYytTpm+nGDGswbJUNySzV+b4gY
-         /7ymtZvavsMLIbzrGboHkvNR7m2lNCLZR3AK1F2eGbR0fk2VqL04ji3ChP+Bks6xrcbi
-         JkWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkZVoKr9FHu+R6YDLpEabPcr+6keseCKfwHBgjAvP2ZBfZg2j2b1q3xbmgmcvx+bzMuk8OCDWkFySRplU=@vger.kernel.org, AJvYcCVqb0RXeZ0CbpAXY7hBAydH5I+GFXb6ny88nbsjQw7rtnPviqJSBqw5SSsrh/KdZ6Cn0RJdBMNGUI1Sftg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw2tJHwCpp3x2RAiwZwn6YMRNdmLa5tIBIWlvo9M4gRWaAlko9
-	hFGiLH1otAen7DbY0Bn/SidiKLSgDQBmPcPa/tV68+IDv8mF8CvRrzrS
-X-Gm-Gg: ASbGncuYeIuwh0szKOlwGaktHl8aOZ4W+h8hxHJbme+soB4YqN3zL8mZHMqxt3GFd+C
-	ZXRiABgYZgGqcaZGeTvjnhXQEU7x722xXOr2ypx6WEvvLRVuknDr304UBFX1MUkxHD5N4b0OXrW
-	Xqk/oqWSXOHeAwSu/zvzk1XVhzsfAm2ar04RmZfhvNQlHatay1/4DHTvYcEn2Fkq8O7pq37NOGI
-	yNCr6y8tqRwWhbXQoYWa3Gg2OBLFiIXh9aKvBVqxoG713ZRaw3iw33K3Z5D1PShYKkWrje9ilSI
-	0mTN3CI8lDmXgFiVVexz05/QNqssYFXFf42r1vII7eDgPEvkqeAMXVXX
-X-Google-Smtp-Source: AGHT+IHZ4ZVvOSCTSKofCdJ6GvvfD60Ebge+g2JstzGYgmfkSNm08awAgjeBbuyIeU+QYdMtvOSe3A==
-X-Received: by 2002:a17:903:2b03:b0:234:557d:a4cb with SMTP id d9443c01a7336-234557da6f4mr15822185ad.20.1748184419704;
-        Sun, 25 May 2025 07:46:59 -0700 (PDT)
-Received: from eleanor-wkdl.. ([140.116.96.205])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2341b732b58sm25121925ad.180.2025.05.25.07.46.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 May 2025 07:46:59 -0700 (PDT)
-From: Yu-Chun Lin <eleanor15x@gmail.com>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jonathanh@nvidia.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1748225081; c=relaxed/simple;
+	bh=4KFRG0JoG2YFzjPvR9NRoAseUIIuSWEwDIujr8L/O8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W63tea/iY3iSKTL2ZN/yc0yhWegnlOJAs3hJrm3z7UC5oWmhoNdX4AO16dcKuddnB0Fn1oiHGMqvx9K81etrz8iNzxygpHWqtvJs1Q+NGttNgi39oDau9PVenaG4f/AaXsg6BQP2S+ZLNjEnvcWOcoQtdYjmUMqK2prNxiMMNQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAAnPVUozDNoORIFAA--.2207S2;
+	Mon, 26 May 2025 10:04:29 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: akhilrajeev@nvidia.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-crypto@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	jserv@ccns.ncku.edu.tw,
-	visitorckw@gmail.com,
-	Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: [PATCH] drm: tegra: Fix undefined behavior in left shift operation
-Date: Sun, 25 May 2025 22:46:50 +0800
-Message-ID: <20250525144650.2365704-1-eleanor15x@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] crypto: tegra: Add crypto config in tegra_cmac_do_final()
+Date: Mon, 26 May 2025 10:04:02 +0800
+Message-ID: <20250526020403.230-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,194 +37,51 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAnPVUozDNoORIFAA--.2207S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF4rXr1kAr4kKF45Zw1UKFg_yoWkurc_ua
+	1UurnrX345Krs7uF4DurWxZr4jg343XFykKFyjqr45Ca15Xr1fXas2qF109r1UJa1DJFn3
+	W3y7ZFyUGw43ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUU
+	U==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAcOA2gzuGxdeQAAst
 
-According to the C11 standard (ISO/IEC 9899:2011, 6.5.7):
-"If E1 has a signed type and E1 x 2^E2 is not representable in the result
-type, the behavior is undefined."
+The function tegra_cmac_do_final() calls the function tegra234_aes_cfg(),
+but does not call tegra234_aes_crypto_cfg() to have a crypto
+configuration. A proper implementation can be found in
+tegra_ccm_do_ctr().
 
-Shifting 1 << 31 causes signed integer overflow, which leads to undefined
-behavior.
+Add the tegra234_aes_crypto_cfg() for configuration.
 
-Fix this by explicitly using 'BIT(31)' to ensure the shift operates on an
-unsigned type, avoiding undefined behavior.
-
-Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
-Compile test only
+ drivers/crypto/tegra/tegra-se-aes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/gpu/drm/tegra/dc.c    |  2 +-
- drivers/gpu/drm/tegra/hdmi.c  |  8 ++++----
- drivers/gpu/drm/tegra/hdmi.h  |  8 ++++----
- drivers/gpu/drm/tegra/riscv.c |  2 +-
- drivers/gpu/drm/tegra/sor.h   | 14 +++++++-------
- 5 files changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 430b2eededb2..3047a380bb83 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2171,7 +2171,7 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
- 		u32 syncpt = host1x_syncpt_id(dc->syncpt), enable;
+diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
+index 9d130592cc0a..e01653985a31 100644
+--- a/drivers/crypto/tegra/tegra-se-aes.c
++++ b/drivers/crypto/tegra/tegra-se-aes.c
+@@ -1550,6 +1550,8 @@ static int tegra_cmac_do_final(struct ahash_request *req)
+ 	rctx->datbuf.size = rctx->residue.size;
+ 	rctx->total_len += rctx->residue.size;
+ 	rctx->config = tegra234_aes_cfg(SE_ALG_CMAC, 0);
++	rctx->crypto_config = tegra234_aes_crypto_cfg(SE_ALG_CMAC, 0) |
++		SE_AES_KEY_INDEX(ctx->key_id);
  
- 		if (dc->soc->has_nvdisplay)
--			enable = 1 << 31;
-+			enable = BIT(31);
- 		else
- 			enable = 1 << 8;
- 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index e705f8590c13..524b46a297be 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1719,7 +1719,7 @@ static const struct tegra_hdmi_config tegra20_hdmi_config = {
- 	.tmds = tegra20_tmds_config,
- 	.num_tmds = ARRAY_SIZE(tegra20_tmds_config),
- 	.fuse_override_offset = HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT,
--	.fuse_override_value = 1 << 31,
-+	.fuse_override_value = BIT(31),
- 	.has_sor_io_peak_current = false,
- 	.has_hda = false,
- 	.has_hbr = false,
-@@ -1729,7 +1729,7 @@ static const struct tegra_hdmi_config tegra30_hdmi_config = {
- 	.tmds = tegra30_tmds_config,
- 	.num_tmds = ARRAY_SIZE(tegra30_tmds_config),
- 	.fuse_override_offset = HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT,
--	.fuse_override_value = 1 << 31,
-+	.fuse_override_value = BIT(31),
- 	.has_sor_io_peak_current = false,
- 	.has_hda = true,
- 	.has_hbr = false,
-@@ -1739,7 +1739,7 @@ static const struct tegra_hdmi_config tegra114_hdmi_config = {
- 	.tmds = tegra114_tmds_config,
- 	.num_tmds = ARRAY_SIZE(tegra114_tmds_config),
- 	.fuse_override_offset = HDMI_NV_PDISP_SOR_PAD_CTLS0,
--	.fuse_override_value = 1 << 31,
-+	.fuse_override_value = BIT(31),
- 	.has_sor_io_peak_current = true,
- 	.has_hda = true,
- 	.has_hbr = true,
-@@ -1749,7 +1749,7 @@ static const struct tegra_hdmi_config tegra124_hdmi_config = {
- 	.tmds = tegra124_tmds_config,
- 	.num_tmds = ARRAY_SIZE(tegra124_tmds_config),
- 	.fuse_override_offset = HDMI_NV_PDISP_SOR_PAD_CTLS0,
--	.fuse_override_value = 1 << 31,
-+	.fuse_override_value = BIT(31),
- 	.has_sor_io_peak_current = true,
- 	.has_hda = true,
- 	.has_hbr = true,
-diff --git a/drivers/gpu/drm/tegra/hdmi.h b/drivers/gpu/drm/tegra/hdmi.h
-index 8deb04223c18..57727703779b 100644
---- a/drivers/gpu/drm/tegra/hdmi.h
-+++ b/drivers/gpu/drm/tegra/hdmi.h
-@@ -119,7 +119,7 @@
- 
- #define ACR_SUBPACK_CTS(x) (((x) & 0xffffff) << 8)
- #define ACR_SUBPACK_N(x)   (((x) & 0xffffff) << 0)
--#define ACR_ENABLE         (1 << 31)
-+#define ACR_ENABLE         BIT(31)
- 
- #define HDMI_NV_PDISP_HDMI_CTRL					0x44
- #define HDMI_CTRL_REKEY(x)         (((x) & 0x7f) <<  0)
-@@ -130,7 +130,7 @@
- #define HDMI_NV_PDISP_HDMI_VSYNC_WINDOW				0x46
- #define VSYNC_WINDOW_END(x)   (((x) & 0x3ff) <<  0)
- #define VSYNC_WINDOW_START(x) (((x) & 0x3ff) << 16)
--#define VSYNC_WINDOW_ENABLE   (1 << 31)
-+#define VSYNC_WINDOW_ENABLE   BIT(31)
- 
- #define HDMI_NV_PDISP_HDMI_GCP_CTRL				0x47
- #define HDMI_NV_PDISP_HDMI_GCP_STATUS				0x48
-@@ -158,8 +158,8 @@
- #define SOR_PWR_SAFE_STATE_PD       (0 << 16)
- #define SOR_PWR_SAFE_STATE_PU       (1 << 16)
- #define SOR_PWR_SETTING_NEW_DONE    (0 << 31)
--#define SOR_PWR_SETTING_NEW_PENDING (1 << 31)
--#define SOR_PWR_SETTING_NEW_TRIGGER (1 << 31)
-+#define SOR_PWR_SETTING_NEW_PENDING BIT(31)
-+#define SOR_PWR_SETTING_NEW_TRIGGER BIT(31)
- 
- #define HDMI_NV_PDISP_SOR_TEST					0x56
- #define HDMI_NV_PDISP_SOR_PLL0					0x57
-diff --git a/drivers/gpu/drm/tegra/riscv.c b/drivers/gpu/drm/tegra/riscv.c
-index 6580416408f8..a5941239b194 100644
---- a/drivers/gpu/drm/tegra/riscv.c
-+++ b/drivers/gpu/drm/tegra/riscv.c
-@@ -19,7 +19,7 @@
- #define RISCV_BCR_CTRL_CORE_SELECT_RISCV		(1 << 4)
- #define RISCV_BCR_DMACFG				0x466c
- #define RISCV_BCR_DMACFG_TARGET_LOCAL_FB		(0 << 0)
--#define RISCV_BCR_DMACFG_LOCK_LOCKED			(1 << 31)
-+#define RISCV_BCR_DMACFG_LOCK_LOCKED			BIT(31)
- #define RISCV_BCR_DMAADDR_PKCPARAM_LO			0x4670
- #define RISCV_BCR_DMAADDR_PKCPARAM_HI			0x4674
- #define RISCV_BCR_DMAADDR_FMCCODE_LO			0x4678
-diff --git a/drivers/gpu/drm/tegra/sor.h b/drivers/gpu/drm/tegra/sor.h
-index 00e09d5dca30..4f404f22dd04 100644
---- a/drivers/gpu/drm/tegra/sor.h
-+++ b/drivers/gpu/drm/tegra/sor.h
-@@ -74,7 +74,7 @@
- #define SOR_CAP 0x14
- 
- #define SOR_PWR 0x15
--#define  SOR_PWR_TRIGGER			(1 << 31)
-+#define  SOR_PWR_TRIGGER			BIT(31)
- #define  SOR_PWR_MODE_SAFE			(1 << 28)
- #define  SOR_PWR_NORMAL_STATE_PU		(1 << 0)
- 
-@@ -154,7 +154,7 @@
- #define  SOR_SEQ_CTL_PU_PC(x)		(((x) & 0xf) <<  0)
- 
- #define SOR_LANE_SEQ_CTL 0x21
--#define  SOR_LANE_SEQ_CTL_TRIGGER		(1 << 31)
-+#define  SOR_LANE_SEQ_CTL_TRIGGER		BIT(31)
- #define  SOR_LANE_SEQ_CTL_STATE_BUSY		(1 << 28)
- #define  SOR_LANE_SEQ_CTL_SEQUENCE_UP		(0 << 20)
- #define  SOR_LANE_SEQ_CTL_SEQUENCE_DOWN		(1 << 20)
-@@ -163,7 +163,7 @@
- #define  SOR_LANE_SEQ_CTL_DELAY(x)		(((x) & 0xf) << 12)
- 
- #define SOR_SEQ_INST(x) (0x22 + (x))
--#define  SOR_SEQ_INST_PLL_PULLDOWN (1 << 31)
-+#define  SOR_SEQ_INST_PLL_PULLDOWN BIT(31)
- #define  SOR_SEQ_INST_POWERDOWN_MACRO (1 << 30)
- #define  SOR_SEQ_INST_ASSERT_PLL_RESET (1 << 29)
- #define  SOR_SEQ_INST_BLANK_V (1 << 28)
-@@ -192,7 +192,7 @@
- #define  SOR_PWM_DIV_MASK			0xffffff
- 
- #define SOR_PWM_CTL 0x33
--#define  SOR_PWM_CTL_TRIGGER			(1 << 31)
-+#define  SOR_PWM_CTL_TRIGGER			BIT(31)
- #define  SOR_PWM_CTL_CLK_SEL			(1 << 30)
- #define  SOR_PWM_CTL_DUTY_CYCLE_MASK		0xffffff
- 
-@@ -261,7 +261,7 @@
- #define  SOR_LANE_POSTCURSOR_LANE0(x) (((x) & 0xff) << 0)
- 
- #define SOR_DP_CONFIG0 0x58
--#define SOR_DP_CONFIG_DISPARITY_NEGATIVE	(1 << 31)
-+#define SOR_DP_CONFIG_DISPARITY_NEGATIVE	BIT(31)
- #define SOR_DP_CONFIG_ACTIVE_SYM_ENABLE		(1 << 26)
- #define SOR_DP_CONFIG_ACTIVE_SYM_POLARITY	(1 << 24)
- #define SOR_DP_CONFIG_ACTIVE_SYM_FRAC_MASK	(0xf << 16)
-@@ -370,7 +370,7 @@
- #define  SOR_HDMI_ACR_SUBPACK_LOW_SB1(x) (((x) & 0xff) << 24)
- 
- #define SOR_HDMI_ACR_0320_SUBPACK_HIGH 0xb3
--#define  SOR_HDMI_ACR_SUBPACK_HIGH_ENABLE (1 << 31)
-+#define  SOR_HDMI_ACR_SUBPACK_HIGH_ENABLE BIT(31)
- 
- #define SOR_HDMI_ACR_0441_SUBPACK_LOW 0xb4
- #define SOR_HDMI_ACR_0441_SUBPACK_HIGH 0xb5
-@@ -382,7 +382,7 @@
- #define  SOR_HDMI_CTRL_REKEY(x) (((x) & 0x7f) << 0)
- 
- #define SOR_HDMI_SPARE 0xcb
--#define  SOR_HDMI_SPARE_ACR_PRIORITY_HIGH (1 << 31)
-+#define  SOR_HDMI_SPARE_ACR_PRIORITY_HIGH BIT(31)
- #define  SOR_HDMI_SPARE_CTS_RESET(x) (((x) & 0x7) << 16)
- #define  SOR_HDMI_SPARE_HW_CTS_ENABLE (1 << 0)
- 
+ 	/* Prepare command and submit */
+ 	cmdlen = tegra_cmac_prep_cmd(ctx, rctx);
 -- 
-2.43.0
+2.42.0.windows.2
 
