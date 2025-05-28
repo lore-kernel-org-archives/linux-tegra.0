@@ -1,112 +1,112 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC7D28DF04;
-	Wed, 28 May 2025 17:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A937137923;
+	Wed, 28 May 2025 17:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748454178; cv=none; b=PwaxbWRlyvsGGfi4MvorkROB8y3YOZ1lhNlS296XcLnWgWDaohLox+AKr4lU5uGTAwBRT7BRowGegrlL743KCNw+qmR7OYt6DxOMrmtNvllmCDkWBaXrd8jjiIkC8psRaEa297D+Y4rfQVlBXj+36kDm9OVnJXXHSUR5OkVXDt4=
+	t=1748454341; cv=none; b=jy/p2Ps7NQbDQTaz0ZBEA9xUEdp91PCozcxOnfXKwC9efKPdxi8vblt0xzC8Em90mXJabhwgOoa4WpfCtHrFSN3dQYjOlqTLQPw2CZg6uy/GEcu7T4Oe0qKGS1eHaFRDxRHoRNV4xdQacxLIyAUsoannSlmHwMotUxpHGRsjlyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748454178; c=relaxed/simple;
-	bh=2YDjtS0/m1db/xCeODn4kUX47SCzZ9Mjb6o+4HoExpI=;
+	s=arc-20240116; t=1748454341; c=relaxed/simple;
+	bh=60APgDZJxBk9xro71MqYiSmTSeDZs9bMdWJV5wfWH1w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sP//iXcCpnU1k4L/MKs2jXPztXxtF445ihDZZ8H9pZgSlvF4mygMN1J3Q5n7aoeWDogC9F2xC5xK811GJ3rtX1lLbp8XKZtCmy8cy2nkT8MNNtspQaPaSEV/gO222nJE2xwciU5N+5QzJjjCp5IMla4qPi/j/tHG4O6h4XTWw6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdZST/k5; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=kxpDEV6zG3URBTgoFQfRLfz4ziNbkYO6PhKhcysjV2h6gemQMbV9OqZOP6TjZp6IYJT7TBxynOftFdkfgGvXv1s/QWmjaJZCOJ9gRaIfm7Y+TomPDUmiyT+WVxXnfL9U9tw/afc5GUMd28t/fpiQu0QUXzZSSO5oRYSNvV+Zkes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/ylC1KB; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdZST/k5"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553331c3dc7so870386e87.3;
-        Wed, 28 May 2025 10:42:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/ylC1KB"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54afb5fcebaso6137144e87.3;
+        Wed, 28 May 2025 10:45:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748454174; x=1749058974; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748454337; x=1749059137; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=peMrqfMc+7wlRfgY2FdKZ0DpMq6c8tEVqwm2fUCWmc0=;
-        b=IdZST/k5Ay8qRO10qMZE2q1W3kg6rsb4Cn6u/nTzTY9Wa8gmrl1Qd7WoRY1VnpzrD8
-         iyAGpq8pkvVVXgNU173KMA8ZkB/fTG2M45rDXsrGzpwKLUegVnBET/Gy4EjELfo/D7TY
-         HLLBwiuRmWYAfh6i0cKlw55qxTltCrVTRGDMrI0gtoWutOxygiuPpyhlphuylAuk9jnp
-         w2FvYnxdCaGo5Q392tgL2KMy6KqB70tu4QV3Rq+TQUDabaCagyxzW7Hm7pV6B4EnVCo1
-         6ENUDFwyg+sNQXfbkVyKuDHlfpRGlFrDDXhzyjG7ttsYsWSHN5mTiqi9XjMIRnncXNkW
-         dpJw==
+        bh=vfbvcUyjsrPaltQIZdnZTuOiypSudH36zL4/KM7+5qI=;
+        b=C/ylC1KBxFtXUIGBfFA297wmgjdritfIVIdkNIgMYJsLYzZX8kvTC0XcBRoQksE4nr
+         nKn1JshinJIjXlWi0Rv0migwpb6GajLKMLB7xTrGRTuAu84dPOqHYiSalgqTYsRVfJNs
+         yjlffVVnY0xndv5S+MQbnaMtVMLO+DNiVQZ7eeq6uzeEB28teMR3/CdFVnlwpyWBY3Ab
+         gKBVpKiBdW7Ozedmuy21EaVXVE1eOmLX7iHiatzY4Z8DmGZ2XA2UlrbkSLvhj5FKNmiP
+         oAwXzKM4WuM2ltid42CfIDqUUfu2V+dhpPPRYqOJhl+BU1NFkVtiHg9eMGHkW61xCW9b
+         JoxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748454174; x=1749058974;
+        d=1e100.net; s=20230601; t=1748454337; x=1749059137;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=peMrqfMc+7wlRfgY2FdKZ0DpMq6c8tEVqwm2fUCWmc0=;
-        b=TNK/FoVhX89SqXE8eNsHhMgzJPNCqDNI99srLSlWqfoTOzIy9OhATjg5l7xXQn8psr
-         RjvUZAe7Ydb3ZOlGF88t7vP73CXL0zbPp19qgCsRXf782i4iqqzijj0I0nuxanP0//aR
-         0Y398cCsPIt5TkXzoIN3pfO3Mcg4ul/rUlbg/F4capkb5jBB9OjTfy74adA7/82MjSSo
-         zNN8GGaQvNdSYS3fMK7G9IjCGJ9/uasGSU0CQ7lRxCfQ+UBfP0zk3pyMcarjiKhRdya1
-         rh6pIayvq7kxhNnDogLUUoWxhCoiWJrPGTkoQ3nQIUUp4uAmJ6zBeq01MidyObI8dJFZ
-         1EbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsrh6K9KaX5WBWFmCLVDe596iNLVT5XVhTnGgCfwoa4BDoiatIzw4iWqsdNZHY474IdrRWCMEFIbQpLTor@vger.kernel.org, AJvYcCXHpXyUHy89A7i+ZoBFp/IJnfcB88CdWTEUriBgd5L7LmOHXTFvz/pWQWI5xGFJUxG9nOEpn9f4IJeRJeg=@vger.kernel.org, AJvYcCXX4UvhEs1kvfuijoayUOAKAGJJJ8Sb9Y+a1nP3uKiFVW8aH94gGxwivBKg2RcmSpNYzsYnvW1gWMIX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjDXRR9j5pmdV/t4VyJefpcnQo/FO32W2rbmKLW8vs9exIxgVC
-	5AoIH+IktaUwR7Q3YJu/JjQwIkvcBXeo3eLOlTUNLvV4lTi/mR8te6QWP/h0GC0azs/d/qGKV4a
-	/RawcKq9aWOTQJh/mpBApd+vEnrqWPVE=
-X-Gm-Gg: ASbGncveauUNMW/LfLFNlHGXUiWx3+VEtDjjJfXCShsiueiW39S0qu0MOBOfyzRE/Lk
-	vXvrMP7T0yzsRrF/6T2UqXcIqgb2AaVsmcU5L7L+APVc6lnCMlnl4sLO/haf8c4iJMx0a5FVGQo
-	oDY7zqdgW9Gy+sr9Z5KDtQHWn0/FhgQSKt
-X-Google-Smtp-Source: AGHT+IEePaTsDSCKQBBx+1XNiTRQdexhn8T5e5qosTlyR5OHnM7zWzUrWU28KqeHhk3p29C8BI5RVlENeH9tCjY3YLY=
-X-Received: by 2002:a05:6512:3984:b0:553:32f3:7ec4 with SMTP id
- 2adb3069b0e04-55332f3b345mr795836e87.29.1748454174283; Wed, 28 May 2025
- 10:42:54 -0700 (PDT)
+        bh=vfbvcUyjsrPaltQIZdnZTuOiypSudH36zL4/KM7+5qI=;
+        b=Qvj3OBo75H+fLiWefEM1yRffsQM7V54QzctheeW+jYO+TatrItsMt3RPJrkO33evRS
+         5DyzIRZ4LOU2rfZjMtQ3J9o4zD2rJQYSDLWz2G5jekz5wbEaB97VjFMaZOskFevV4lj5
+         W8LPipxzZ65FBDjLDcz4ARfn1L17YHKwiCt872SfIsmN5FEmeMe68G/Czr/vZJnyMGQu
+         +T3wV7l/xN8KbnebMKu5IUUqWVAom21YBVH9/6KtiBIYRI32caJLNEc+nBoyY8yUuMaj
+         1zfiMRWbcUBVHWcAzCUR6qQKDYP926aPgOOMJmfmezIquP1mWhtcUYx2o135ZugwsBVv
+         8b2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWoQwJjVx1HoT/TVZCQKAvjApIJgZAX+9dFcurtzT+XC++tsBXSA4Xj7pYbtPX+sE0xG0EMb0ZSXPAaqLY=@vger.kernel.org, AJvYcCXUYtsTd+LKrQ0g5tkLu/h4dTn3tIjN9npzmqBjXHt3X0trTdzBrxNiONkNZz5Wd0xRKlhJ5yE+IlLARDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8d1Wrp9SUcPFnH4I79CaVpvdCHolwasohK5NYcN4cFZU4mHR2
+	dufFxcLPNmw7ce4aXNNBpHUPi2HH9mryO/iHhvFTa5stiXZRcLulxs3DO7sFYYICxC5/pKnB/fv
+	t3IYKKRaDEX3nl3nDOpbRYvwkSsjrv84=
+X-Gm-Gg: ASbGncuUl72xl9yH3842bY4IgBGsRyS6Da8YyT6B8RDrRLA8oh+1lFs65U4nlDNEWgz
+	+BOchGYjP6KlV0vog//X0WL2Th8OyFKaQCKfU87dwAcHLz1WFmN0NInSRzh7D4kJq9PfTNpXw7j
+	3mNw2lFTdiGD7UPlfT1KWqq7cMKNVSUH2AbPN00838Zz8=
+X-Google-Smtp-Source: AGHT+IE50d5cC46kRAB7AG1Wvgv40PQ5flcgNy54WFeoBt+wY7VUUu4UH+CR4hMgrhhgp1YCMK5/SyewZvJ5ZJUiAgI=
+X-Received: by 2002:a05:6512:3e04:b0:54f:c101:4c04 with SMTP id
+ 2adb3069b0e04-5521c7c47a2mr5617350e87.46.1748454337119; Wed, 28 May 2025
+ 10:45:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
-In-Reply-To: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
+References: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
+In-Reply-To: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 28 May 2025 12:42:42 -0500
-X-Gm-Features: AX0GCFtvYYh5Pgdr2LmUYuuaCJ9OV-l6idPcpes18X0OD4m3akqThi_BvBA8_DQ
-Message-ID: <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
+Date: Wed, 28 May 2025 12:45:23 -0500
+X-Gm-Features: AX0GCFtw6EOz4hp5YkRpjgPCO_GRJV-z3wAN2pksjWiT0dZd5iq6XbMFR1v4t8M
+Message-ID: <CALHNRZ_7Yv98v83JvYLP2MmUZj+EDPwk7dDDArN4_U5docbRCw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: tegra: Use io memcpy to write to iram
 To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+Cc: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
+On Thu, May 22, 2025 at 11:11=E2=80=AFAM Aaron Kling via B4 Relay
 <devnull+webgeek1234.gmail.com@kernel.org> wrote:
 >
 > From: Aaron Kling <webgeek1234@gmail.com>
 >
-> The p3509 carrier board does not connect the id gpio. Prior to this, the
-> gpio role switch driver could not detect the mode of the otg port.
+> Kasan crashes the kernel trying to check boundaries when using the
+> normal memcpy.
 >
 > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 1 -
->  1 file changed, 1 deletion(-)
+> Change-Id: I27714f45aa6aea6a7bee048f706b14b8c7535164
+> ---
+>  arch/arm/mach-tegra/reset.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dt=
-s b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df355bbcb691=
-ef99b0d0c9d504e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> @@ -669,7 +669,6 @@ connector {
->                                         vbus-gpios =3D <&gpio
->                                                       TEGRA186_MAIN_GPIO(=
-L, 4)
->                                                       GPIO_ACTIVE_LOW>;
-> -                                       id-gpios =3D <&pmic 0 GPIO_ACTIVE=
-_HIGH>;
->                                 };
->                         };
+> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+> index d5c805adf7a82b938bebd8941eae974cf6bcdbe3..ea706fac63587a393a17fe0f1=
+c2ad69d6e5c14f2 100644
+> --- a/arch/arm/mach-tegra/reset.c
+> +++ b/arch/arm/mach-tegra/reset.c
+> @@ -63,7 +63,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
+>         BUG_ON(is_enabled);
+>         BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SI=
+ZE);
 >
+> -       memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+> +       memcpy_toio(iram_base, (void *)__tegra_cpu_reset_handler_start,
+>                         tegra_cpu_reset_handler_size);
+>
+>         err =3D call_firmware_op(set_cpu_boot_addr, 0, reset_address);
 >
 > ---
-> base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> change-id: 20250513-tx2nx-role-switch-37ec55d25189
+> base-commit: d608703fcdd9e9538f6c7a0fcf98bf79b1375b60
+> change-id: 20250522-mach-tegra-kasan-fabd0253f268
 >
 > Best regards,
 > --
