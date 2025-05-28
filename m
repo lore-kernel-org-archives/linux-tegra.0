@@ -1,129 +1,101 @@
 Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C084A199939;
-	Wed, 28 May 2025 17:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355E12750FA;
+	Wed, 28 May 2025 17:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748453856; cv=none; b=DkmsjQ1CM8vXZinzI61P+AN188zxmsByXS7/rQaf8/ejJzWfpSaXZJ+O0IjzK/N6fC6Rt3xBDphuEgph+1F1vHGxPrz1MENnjScXBv82KuPIlK0JcCld29h3KXQFUjmuYv4wVgpDhD8Bx42xfuD0EIoKaalEBOSXrdFRr6B7FfM=
+	t=1748454092; cv=none; b=PccS5BCmycAkOU/AxZeZx7z7956/3FWXgeaiBVFpjwwoLupa/ITsgJBjY6TAdXehufYajkbK6FR5AhVWb4hiW/iRdlQPd+alU4gFozmRe5boptQos4WzdN4rsD/XPWyTRpzCl74dzcLeP0HdOJOEwAkpSb+7AMplRN78cKlWNzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748453856; c=relaxed/simple;
-	bh=kNWthH0g4ApCrBfxHhlb8LxBWJC73FgpCl6D3ahFNBA=;
+	s=arc-20240116; t=1748454092; c=relaxed/simple;
+	bh=hS73FPpRS7UBhsgsxHm6xLQp2o/6nNTRK7WKsBx1J2U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dszjbgAOAwpmh35DUxesYVkPYlVF7uJaHeNKLX8yXkIOoRccK+tMSLBphUMkx9HOAZvSCfyXlQ9cp8FnoFCLRPs+4Vkazj4BeJ66QEMX0ttQ429OHli8MKr/QHKgy6EK85grR/C+h+Z82RuitfuNtKD5eCakIK6hfuFZP+JZgCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Arqb5ggn; arc=none smtp.client-ip=209.85.167.47
+	 To:Cc:Content-Type; b=iWYIpbqfy3GygnxVBMiHdMjHusLP9JD5CTnDw2X/SZR5WDgH2tBhOrwXjm4gxPSJFOECKzglLHiyztUHQV19Fhl0zFJPsMOgtM5uhS26qFVa7MoLXD5pfMGxsqz8ld/KcUJLzhz+MQ1XIfQe4NQoabqNP7xb7DfF+sRNuGd5Ick=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9RNNWpL; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Arqb5ggn"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55220699ba8so4976076e87.2;
-        Wed, 28 May 2025 10:37:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9RNNWpL"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553233211d3so4512136e87.2;
+        Wed, 28 May 2025 10:41:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748453853; x=1749058653; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748454089; x=1749058889; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dPLbA0TtARsZRpgoy+SeG1Y86H0J4M4EKn9jgtbPam4=;
-        b=Arqb5ggnyTfXX24/ViNwP4mEU8sQWvObydcLq3P3iEjReXkP9xQ/4Q+zExv98pFqgG
-         tFuBmmN2WeBODGfmtSQNq447lZn2iKhNysLkeGxOa+ZFITRnguPZHhf6eZWCxgBAmDRp
-         Ao/uKy4tXFBprJeo4EJ3nOfZxm1sRp8OB0bRh9BqExfFRc39pdmQRfzKtmTgekG/y7+j
-         7OGzwl3t8aRD0dNZT1ySvREYuAXp1qGy9PdIzDXDjcWysNbr6NCx2FmBGNwKRn6IRur8
-         cANh8zXND7OJY0IzoRLTUGvxK4ekclFU8eCe+olA0h2YixSxtLxgZ6oJX4KnfVUxk5++
-         wV5Q==
+        bh=hS73FPpRS7UBhsgsxHm6xLQp2o/6nNTRK7WKsBx1J2U=;
+        b=L9RNNWpL0iJd8AFFPa/qibFmsK8SBt3j9U91hUn7/kocoSADfEzHMN4Hmp1we9DYz7
+         mWkV0OSqlkDq36fAdXS5Dwx+PzNhQcOdRDLc3SwHrd/ND2KjR0n8mN6yd2FimWggNsZs
+         x2hioU+/N4A8U5OWvMv/BaOZcV0M+S9Kv3TJyfts01Tqyp/c1+O57hkIDsrBUzkN4p2H
+         mQ3IqyNXu1AkE4hy3Njh1Ee6oC7gijSuXasACEDGXXUvKCitNi52qjjWqKPUCQyAa4/4
+         Di2mGpMX+xNJo+O+DdlM7tGCaI5QQNDcPQ0ZIhfwl7tVzRQiPwHFQ2k+yZrSg0Vcuw7e
+         BPgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748453853; x=1749058653;
+        d=1e100.net; s=20230601; t=1748454089; x=1749058889;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dPLbA0TtARsZRpgoy+SeG1Y86H0J4M4EKn9jgtbPam4=;
-        b=D+mLpsDDwCXovdHVH0ssB95jPd99Lwr1M2fWigeklFCFnrSxbVmv1UH5uDBybFylck
-         Elo4fXZj/uW8Vz1dqgSiw1P8YYPvvMaun0DIkHncjXtD4SB+xlcXrm6aLMZ4A8L/n+Cz
-         EQ3npmCyYYbFlPwclls2kZ1AY4Kn0iurJcj5I5reXJWzY1jif1thPMKURiTQeIVrIX6q
-         iNGnRkAfnrzG0Bg/pitbC/TFXLgPcshLNuEFKEqV+FNZgbtFKmCC2uKPBRn3gtqPSeqK
-         dpiJbTPKFg5SvwLPcz5WTJ4BteCVhOnHWyxGuWPT8zSvGjHInpOuPon/M4oXImXDXZsM
-         jcug==
-X-Forwarded-Encrypted: i=1; AJvYcCUp3T2tiFf1SX7KpuaWqPanaXITiZN6NdiQGV7D0ZR/vbXZmiMzM9joQ19422JIg4PVNzyotMbe3gMnvaP2@vger.kernel.org, AJvYcCV56XwYB6J/JMclatXMXIM73J/+P4YpKj71U+rsYgU5gynTwcn9fJ5NKJ+X2ky/HZ/JH/oUI5yzksVPWWE=@vger.kernel.org, AJvYcCV9BvWHY+9gv16VyAigjdpi21Wm+qOWbh/yUb4W14PHVvFzTbmcvKzqOPOXUS1GCyKZR6PnoatDBiF28A==@vger.kernel.org, AJvYcCVPBjB3KxtbWrf0oUVNPoC8KaoyJQ0cAuq9dTkm45XoFhCojPkZcJDzfqqHWyzr0e7sGQAuXRJAhImF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSgiOTKGeIbYCGhvBXfapdUtAS+IsRi4yCoy/2YFtH+cMuigxv
-	f+Sh4u9atMy1r7MZhZ1aspD0hpyrCFh95F690mMnggCsve2mqvdYKmGILrkReXQNDSJ3ncJm93i
-	jsfEAbQf43C18c4GBjM/uDnLMGYpStvg=
-X-Gm-Gg: ASbGnct4koJSng1EULLyOo7zPnmtFghdwfK5KwC2anoy4dI5JWaX/ll162G30ur83qK
-	W5oIlSpolM1whOFrPJVg5p96RcJk8NAgHhV/eRD/RaP3WMxHZ2pJyE54i68EzUkr3lb10NUM9xA
-	iy09ZA+TXQx4bzh6XIY6yzXqxQ0rEHl24V
-X-Google-Smtp-Source: AGHT+IGgMHiMa2LFQv9Alp4wlZhdkgFdKybKBvuJASh3xQCuBHQ39R5N1rVWML27L94mjMzYkuQzp0Zp3A1W73oMYMI=
-X-Received: by 2002:a05:6512:33c9:b0:553:2f47:ed21 with SMTP id
- 2adb3069b0e04-5532f47ee2amr1220096e87.41.1748453852656; Wed, 28 May 2025
- 10:37:32 -0700 (PDT)
+        bh=hS73FPpRS7UBhsgsxHm6xLQp2o/6nNTRK7WKsBx1J2U=;
+        b=ZFIu82dnGHKeL1r3Cj+kStwWWp4hvQ83qOrkOXW0DaQJ/D5DrmQ52Bx0ntIQTS/f0b
+         DGNxEGYwDkmHufGgcVJpVNKB+4pVWnMGcSqUSYqbE+itnkK/NDGFesrSSujPsaTyhx7K
+         wokKIdKk029arBySPcJIyio6ymWg+fqFwXxJH3wVHnRNZB1gIq9gK0cu04qqqwSvA4i+
+         Uq32EfFjIjaBMAgO1HKm8kIW6kfhuKfxsuURdVMTrbljhfijp8OKTzRzzISMfZkV5P3x
+         2xk+ciAB6oQmAA1It6soucfoTQXb+V5TeJA7YhpkWsje40ku3faXjsTxAAzIia6Mdnkk
+         PHrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw6hqsUv+OvWAB0gdbQri1ACMqCTaGKQvZDP7IhJVWY8gdt4PFEzPIQnKgaGKTOIzfVBbUQzSpvXwJs5A1@vger.kernel.org, AJvYcCVfNy2yCy24oCfHRO7pj/QZPdzYMfs0V0iEc7W0d0TXsZO2osNhYN4+UwDoWm0w/8MpcQYu+SoA3YM7@vger.kernel.org, AJvYcCXB9V8tgmfSBTaDg8kBp/mFRZjYPSUKb5KZavu3p0EyZ694KJ4+oiMQpKRaRTAzcuQBPMkQJx2GBpFWAYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztC2MZb5Lf0iVrnLSOZsQIBa56C4L3jRAs3gPBzDzelgbrV+CX
+	Rmh+XwehI8tmMnygUlaBmrds59Zb/LIsSkHqHU7KW4lpORqfERZEoRk+tBWWH7tUjWEI6b2/Sn2
+	+u2q6M4TvuvylQp481Yz18gtDkDmzO5mjXD6xT+8=
+X-Gm-Gg: ASbGncsUjTIYAmO/iKmE92mva66oIArn9uF/vcnExZOntgInmYJ/UGzJhA/7dPRO5GU
+	wOm5Cfw8Dc4V76Z469NwHthQA1Z0p+DYSEC1CaO19yuhLltVFJbWlTCnqS1I+abtDLtjU2o8ukd
+	9NYJgMQfSmgsVmwUmV617B8fIcCq7Yx85Y
+X-Google-Smtp-Source: AGHT+IEdvzETSNew0wJrJHYQDd2+wio+9tt88mErF+EAbjKyOwY/dFQ5t09SILXWe+7BWnCiLxt8sViAdTga5RteNIw=
+X-Received: by 2002:a05:6512:104a:b0:553:2f25:3b46 with SMTP id
+ 2adb3069b0e04-5532f253ba3mr1276388e87.57.1748454089060; Wed, 28 May 2025
+ 10:41:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com> <CALHNRZ8ndcd3mvGP+W2DVFcm65t4Ai4epNeGigPv=Oo8Cf3LkQ@mail.gmail.com>
-In-Reply-To: <CALHNRZ8ndcd3mvGP+W2DVFcm65t4Ai4epNeGigPv=Oo8Cf3LkQ@mail.gmail.com>
+References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
+ <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
+ <CALHNRZ-q7W9CfeD4ipmwFVqHm7oGfTgJpwNoVhfbSXFPDxF91Q@mail.gmail.com>
+ <eba00bd5-fa1a-4cad-bb41-b395011235e1@kernel.org> <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
+ <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy>
+In-Reply-To: <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 28 May 2025 12:37:20 -0500
-X-Gm-Features: AX0GCFtLvzBNOUpU0th8YfFcJvN5mluId11UW3CRjUP-3UhpfQ0aTL7BcczZ98Y
-Message-ID: <CALHNRZ91nUSUNPjMNF-4ORvVRCaBSKG+0UKzG4T=ehPaHwBTgA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] pinctrl: tegra: Add Tegra186 pinmux driver
-To: webgeek1234@gmail.com
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 28 May 2025 12:41:17 -0500
+X-Gm-Features: AX0GCFuKyPpA45aXd7UQq3W1QhIua69hUEcYfsKQ6H_qYs6KBSfgt3aO4OTvd1Y
+Message-ID: <CALHNRZ-r_U+ByS0FWxamv9ozzjBWdkqAh2wJOt3s3cMsX6K_kQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC Tables
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 4:38=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
+On Thu, May 8, 2025 at 7:48=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
 >
-> On Tue, Apr 29, 2025 at 4:33=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >
-> > This series adds support for Tegra186 pin control, based on a downstrea=
-m
-> > driver, updated to match the existing Tegra194 driver.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> > Aaron Kling (4):
-> >       dt-bindings: pinctrl: Document Tegra186 pin controllers
-> >       dt-bindings: gpio: tegra186: Add gpio-ranges
-> >       pinctrl: tegra: Add Tegra186 pinmux driver
-> >       arm64: tegra: Add Tegra186 pin controllers
-> >
-> >  .../bindings/gpio/nvidia,tegra186-gpio.yaml        |    3 +
-> >  .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   |  285 ++++
-> >  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   12 +
-> >  drivers/pinctrl/tegra/Kconfig                      |    4 +
-> >  drivers/pinctrl/tegra/Makefile                     |    1 +
-> >  drivers/pinctrl/tegra/pinctrl-tegra186.c           | 1784 ++++++++++++=
-++++++++
-> >  drivers/soc/tegra/Kconfig                          |    1 +
-> >  7 files changed, 2090 insertions(+)
-> > ---
-> > base-commit: 1110ce6a1e34fe1fdc1bfe4ad52405f327d5083b
-> > change-id: 20250308-tegra186-pinctrl-651ffbbbe816
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
-> >
-> >
-> Thierry and Jonathan, as the maintainers for the other tegra pinmux
-> drivers, I listed you as the maintainers for this one in the dt
-> bindings. And I think MAINTAINERS will do that by default for the
-> driver itself. Are you okay with taking over ongoing maintenance for
-> this one once it is approved for merge? I made it match the others as
-> closely as possible, so it shouldn't need any additional changes over
-> time that the others don't. But I don't want to sign anyone up for
-> work without prior approval.
+> On Thu, May 08, 2025 at 07:27:52AM -0500, Aaron Kling wrote:
+> [...]
+> > The devices I'm talking about are not yet end of life, so it is
+> > physically possible for them to get a bootloader update to conform to
+> > the existing mainline model. But I'm just one guy trying to do 3rd
+> > party support for these devices, I can't affect what Nvidia does with
+> > the signed bootloader on these devices. I'd love to be able to swap
+> > out an open source bootloader on these, but the secure boot setup
+> > prevents that.
 >
-> Sincerely,
-> Aaron
+> I've reached out to our Android team internally to see if there's
+> anything we can realistically do about this.
+>
+> Thierry
 
-Friendly reminder about this series.
+Thierry, has there been any feedback about this?
 
 Sincerely,
 Aaron
