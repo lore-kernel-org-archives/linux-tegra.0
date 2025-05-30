@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF5F268696;
-	Fri, 30 May 2025 12:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B1426FA53;
+	Fri, 30 May 2025 12:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748608868; cv=none; b=iXYxSSVlJ48cYgW+yo1QvFDDbKEZAJuVoItTzbp3jRXmh0pxyL6Zy1+Q2yrcq2PgpQXQT4e009HHs20rdIxT8LvV7C7qNajbeF3NkJ+eeZpOK6vJ5Nih+tfukT9PqOL8tf5rKe6aeDrGEPqpT35hArTPbevx+t+z0T6UKnoITNc=
+	t=1748608888; cv=none; b=bKxhhQ847uD8PfKkQhQaeHkO45jDTKkBam8Zif98MWOL3TcIPtcMrnZPjeVvTi87IxLAA2F35Et0OL0yYymDSolon+gQnbgcFs8cBW/N3nq5d2RKvWsFPfDo3Au5w9akrhY6I1J+XVCRT5Fs3AEm+8sFE5u6UDGWNzW4qXAH4kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748608868; c=relaxed/simple;
-	bh=Yizfy1XHJ4W+SiEGnJstdQkQ/isGgjlfcQVKxgOkasE=;
+	s=arc-20240116; t=1748608888; c=relaxed/simple;
+	bh=hw1GoorufsFMRWHhcLKrwojPpH2cjlyG8VbQwqVCMnc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hzhdUVGQt5rUc18q9PqS3o24baaxTDGaWKusXiV2HwlBgZ6UXYqLtnz2GUe55VPdRGEJ1zIxoNG7BCONFSHvqG0hlFKxBpDKTa4A+YZ1T70top+Ax2errKnFaV0JH/JkV3aFiABA7fopaAVjNlhZoQEBd6BzvcI3+J5wvyXjcHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0XRL3c9; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=LodkDu10PnCPbI4KXCdTPVE42gW4hJFrBy+J2HgSlUg2az9LoBkzKxrYI5+1Hnpp1cCpufbRwgndJ1+4DAP6ZkhWnVxFNV0oeMdRXNDzJUN+dhbfijsPvvYS5ljsuyOkIZ7LHBV70V3KtV32PVDk3Pgc8sULcW+ScXLWRGCl5cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXWrhlgH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0XRL3c9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F41C3C4CEEB;
-	Fri, 30 May 2025 12:41:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXWrhlgH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC9CC4CEEA;
+	Fri, 30 May 2025 12:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748608868;
-	bh=Yizfy1XHJ4W+SiEGnJstdQkQ/isGgjlfcQVKxgOkasE=;
+	s=k20201202; t=1748608888;
+	bh=hw1GoorufsFMRWHhcLKrwojPpH2cjlyG8VbQwqVCMnc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H0XRL3c9B4orkjyAWaUtCTYn1vEBJFgEmoBcizlUfCMZIeg6e9NCETIHJS46kfgXb
-	 Fadz10yIHy88F5TPcRfCrGV2DCSkEVbm+zzntIi5GmpYsFOY+NX+cdN20+VYjgxRbU
-	 mcLwxclHb3/0mgflkULHxz7zNvA8Vuhwqx6H3b7FqHkGW3krRQTva6LkvT1UbS4rl3
-	 mfDTpqrjB8iJvoj17h1ObAdQCXCfY9dxF6PJiQntyVRKRj3T6ryf/J727cH0oL4eo4
-	 +FM0JuScCQYUxR8JvCaubAu95ynQnrLePVUzWxJJ6PgxNYUE2oabfv3JkM1xAHu2rJ
-	 OAQgc1zBv73Mg==
+	b=dXWrhlgHruOwh9qwC4sq9nATb6pZy+jxfy87UaPTI67bS+4vptVTkKorj3BhdBh4B
+	 d2Px7c94ZY0IMKvWox6N8BAuRnyMWXMyDGJoKT/PiqvtfdifEqpjdhw3JPy97xDDsL
+	 eG0RajvlrkbI7hv+QpstbfQt3R8Ca/qrDvyTN6eRf7E8UAXxjyXrDA68cDbRSu5X4X
+	 0/hz4W66owz5NGkHQM8haiYbbC4SCFcQf2pubBpUc+VaL4FTksiAwBGeb65v5HomqG
+	 rL5R+wLK2HF+jjQ1cCSUs7XMNCIXP55kCXtr0+lgISIPumiPO5EQzY5tSiPep4qr2C
+	 5acMhwnVXRIWw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -40,12 +40,12 @@ Cc: Yuanjun Gong <ruc_gongyuanjun@163.com>,
 	alsa-devel@alsa-project.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 15/18] ASoC: tegra210_ahub: Add check to of_device_get_match_data()
-Date: Fri, 30 May 2025 08:40:44 -0400
-Message-Id: <20250530124047.2575954-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 11/13] ASoC: tegra210_ahub: Add check to of_device_get_match_data()
+Date: Fri, 30 May 2025 08:41:10 -0400
+Message-Id: <20250530124112.2576343-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250530124047.2575954-1-sashal@kernel.org>
-References: <20250530124047.2575954-1-sashal@kernel.org>
+In-Reply-To: <20250530124112.2576343-1-sashal@kernel.org>
+References: <20250530124112.2576343-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.92
+X-stable-base: Linux 6.1.140
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -118,10 +118,10 @@ drivers that already have this protection.
  1 file changed, 2 insertions(+)
 
 diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
-index ab3c6b2544d20..140cb27f73287 100644
+index dfdcb4580cd75..4be5683504154 100644
 --- a/sound/soc/tegra/tegra210_ahub.c
 +++ b/sound/soc/tegra/tegra210_ahub.c
-@@ -1359,6 +1359,8 @@ static int tegra_ahub_probe(struct platform_device *pdev)
+@@ -1369,6 +1369,8 @@ static int tegra_ahub_probe(struct platform_device *pdev)
  		return -ENOMEM;
  
  	ahub->soc_data = of_device_get_match_data(&pdev->dev);
