@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B6327511E;
-	Fri, 30 May 2025 12:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FD127E1AB;
+	Fri, 30 May 2025 12:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748608905; cv=none; b=FHDgzcqo01YrMXf5SDV8r9po+IIVbo5BCL7KlcKdy+bG65476/4AhSuKpLR+c+bCCRy2BhlLxUjh9Jpu+Xbh83FyezjHvs/ZXTFX/BUZUKNzFqf45YAW+7kNUzlhFBiIotW8RFAzexIIIibOhzQBoUdQr7aAnH70tEW0oNN2X3Y=
+	t=1748608920; cv=none; b=go3tLuyLv9REFE2yRSyiLLkQglhiubcv2ZJXJ6rAJz7Yoh1XMkKZG/NoHacd8OffxzsgPFGR0JuM5n+8wqr+DWQqAVUTvmue06CxGIMPJI1zOwNq7CPlGvpxoym9+ZuOu3okMx9uNFx2Ap+JfoOfrQ0u9cZ+zarSvTNfTkeod/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748608905; c=relaxed/simple;
+	s=arc-20240116; t=1748608920; c=relaxed/simple;
 	bh=SumBUkfrG0wtiXyJpufWgfiVWH6WVko4x6bFVrjMH5Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HtCPdzJ9k3k6RMfn2JfN33TjGSh3+gX/g3Ic7Ixln0h9hiuB95IminV+FMu+Kfs9CqPckDXTZy9YwLf4N9QT9gOPXuJcRNclKh/xPFsTQ3bso5S5KmSfUG/XNIkYL04iD352ECtSiEIo39urTCIsV0X93tXC81sWUR+hb8ggdEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZhIiPby; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=IchVrHmEaH3qj6sAVRzHFFkPA0hCihVert8sqwW7FJ/ckYSiFmowjd1/TGU2s+RUdH9UNVRNKMET8YT2DpGJG/kUOhiFBDD4LLPzeNQSbBXIrLc5UfVHL04u0hiJDb0lSw64SzJPwmRc8OJ3MIJ2bXC3Ua5IjKOr55m+WgsYifg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeC7whn8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZhIiPby"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6979C4CEEA;
-	Fri, 30 May 2025 12:41:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeC7whn8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C67C4CEE9;
+	Fri, 30 May 2025 12:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748608904;
+	s=k20201202; t=1748608920;
 	bh=SumBUkfrG0wtiXyJpufWgfiVWH6WVko4x6bFVrjMH5Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EZhIiPbyn1H6cSTznUxkZophljVtFZPClKjjQdWoebVTWtLExSj8vIY2IVqes+n0L
-	 YPaaI6jYOojP0+DgfTvu2y3dWV0V7JIV94xwf+zR6rFmwbrCs25sMi2BFX/1koXEAd
-	 XSFlaDYCqHQN4KIbXe6DWAadCoG5fzKjUGGL6oO5n1Uz8X+9Cf3KEFa7B40BzgElvX
-	 2AmRzfMueCLogZZFKqawH6Z5fc/wqcJfm8AuzPFwZ6dt7rNdr6VxRZ8SEx9yLsueYU
-	 rx4/IyP1bWJ+xDiVSlW//VRYj8gSICEm3mlB4B6qJySdGCjGZVDEKkV8je6VwmBWn/
-	 i4Tj4OGlOVQ0A==
+	b=NeC7whn8F853I4IKmleFBufFOSaWENFYe1bEYHUB7ARmTzhBDzz+WGM0LvVRyhNxv
+	 GmmKcCt0G/dj7QQ1/F1SqsPUhk4xuZEhxI8h1Ww7DGSAg98rmKuugy2O6ev9OfGP3j
+	 TviNsPyYqZlc+G09dChxl7F3Q3hkEYAZtM6PeSIvJZ+mZe7bKObLWlEcpJ5iz2DD3b
+	 zIeGTFoxA7NZ2cm0mspxQEupz/h+lviqcmXCFJyBKhZrhm40F7HY4FhHO3wtQtSS7y
+	 fbvIgX47hRhle0vA04o/u8Tk/iHXH0Q5rAzWxH9+CpE2z/wXCQoUQZFgY/wLHzAz0n
+	 GW3PPdwfTR6Fw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -40,12 +40,12 @@ Cc: Yuanjun Gong <ruc_gongyuanjun@163.com>,
 	alsa-devel@alsa-project.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 09/11] ASoC: tegra210_ahub: Add check to of_device_get_match_data()
-Date: Fri, 30 May 2025 08:41:29 -0400
-Message-Id: <20250530124131.2576650-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 08/10] ASoC: tegra210_ahub: Add check to of_device_get_match_data()
+Date: Fri, 30 May 2025 08:41:46 -0400
+Message-Id: <20250530124148.2576913-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250530124131.2576650-1-sashal@kernel.org>
-References: <20250530124131.2576650-1-sashal@kernel.org>
+In-Reply-To: <20250530124148.2576913-1-sashal@kernel.org>
+References: <20250530124148.2576913-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.184
+X-stable-base: Linux 5.10.237
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
