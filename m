@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C74296171;
-	Sun,  1 Jun 2025 23:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5980303BF1;
+	Sun,  1 Jun 2025 23:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748820798; cv=none; b=WSdIZgSfTP/xI8lwQC98cBDVrfnN9y2nzN+o5XALgYSnH3Ci9FKvJN7Ir9sXi73GTOhOq/Y9df2F47kkYfYB7letnuys1UVyU2g3UnaYCGlPCKs+/ZnlZQCweOqct+kgvDfFwsuVGKKlc93J3EyYBlWZOYxmOApnDNm4HqSXhDg=
+	t=1748821025; cv=none; b=G4lO3cSQ+WYYw9ind7/dw1Eur4gk7T8y3eQHOrAFTzW8NXvB2LNI5Q5IVp6RvGSWOnHyfZYB4iu7rtAUNHUyY0Zb8bNsatOyYZ5JVKS8RBuyG9lTo6welH7dNe1LGyrwQUBUE5xCpJ6pecTnFM7VqKul8B055U/d45T+wmDK9RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748820798; c=relaxed/simple;
-	bh=pBv3YDbVYe9X1FV6i8owyfTqrbjX2jHfl7KhWX/I7KQ=;
+	s=arc-20240116; t=1748821025; c=relaxed/simple;
+	bh=hr95H+EQED96vd1xQnOVdC9R2WoCM4lZqmScNMPGxYU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nNJKLxbJwvFLHxymLzmdrHGo9J6aT7gzuzQW4q5r8g2fSEA878dYaB8wC/rcEGnU+Hw0knCpqS6UYfAbZqSKmnwxmhcb5ikvvIw1DR4Mn33at9MYDyu29iqasqcbzZuGYpZo/CLjJxuJgYZJE2OjiDC8eLWj5jC7huS+/FMvkCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbNE2fdo; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=diWvTxvqvD6RtKMubnk1mZmc19jRWZ0vbdrS5USwoyB2xRuAD/WwHwyHnbv2QpkxXbkiZYuanxnZj/3Wjh8MNLhKNRIjDo5m8wIGddqsZCYfGOLpZRyVYgFdbB0hyRN20kS5GpcxAfBDMOgUDkIZX5boGePJHphflfhljjZ8Ums=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWCnneuU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbNE2fdo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9829C4CEE7;
-	Sun,  1 Jun 2025 23:33:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWCnneuU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDDA5C4CEE7;
+	Sun,  1 Jun 2025 23:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748820798;
-	bh=pBv3YDbVYe9X1FV6i8owyfTqrbjX2jHfl7KhWX/I7KQ=;
+	s=k20201202; t=1748821025;
+	bh=hr95H+EQED96vd1xQnOVdC9R2WoCM4lZqmScNMPGxYU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rbNE2fdoj1lDhx6AK2Aa6nnYtn9SZh1TLbWwRMIIhE/0p+QRIGdIqwuX5q2mzcASU
-	 a8u+2ZMVoOXCHmFm8naZRdYsegPDMkFWnd+zK4FyDdt/mjDlPsgdjmvC0s2BLl8V+R
-	 27N5xeEkclEXRkQuwvRxzyAVrFrosOMeccBmEbxvCawI2pafeOD5Oxnb4BVmAg+y4G
-	 pnm2tMss0YLxUwlK+V4YAPaz0Ow0+QHZuF5DMatxOVt6skPgOG4aTwn8iL1aG9TGm2
-	 7hwoIwMT2cQT1cgMQ+9AigRroPghTFgcmPOwIYymUiYv1xBsdEehurHJ0TrCyng//6
-	 AWotxjNvJebRw==
+	b=cWCnneuUVTQnlGhVjPrBqHxai0ZlwuLLUbM7fYn2Ufr3+KYcsAJU9/aAmq49m/g3W
+	 sytgJGcK04zsFB71uPhblgi0gUKA0qy3O3MgkD82+3Yx6289qUwJA+z2QO4vEpIZXw
+	 7vy9l/eJDP14B7jvR/oLPHHrLaLV97M7WZw2LmTiW6Qcna0HALo+Sie31MPG8MKUeD
+	 FQ7P5KJxLdcO6P6CFIVUfF+AEAQQUSLnVwRBXlHVa9++eEENXj/dBJez0srw3g5GLJ
+	 tPQBzUHrG8vhem6/dMZWsFh3uKp6IJMey/yIDh4X2yN0h3caStluGsufNT+477Kn4Z
+	 CY+88kyYV3FLA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Pohsun Su <pohsuns@nvidia.com>,
 	jonathanh@nvidia.com,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 081/102] clocksource/drivers/timer-tegra186: Fix watchdog self-pinging
-Date: Sun,  1 Jun 2025 19:29:13 -0400
-Message-Id: <20250601232937.3510379-81-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 74/93] clocksource/drivers/timer-tegra186: Fix watchdog self-pinging
+Date: Sun,  1 Jun 2025 19:33:41 -0400
+Message-Id: <20250601233402.3512823-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601232937.3510379-1-sashal@kernel.org>
-References: <20250601232937.3510379-1-sashal@kernel.org>
+In-Reply-To: <20250601233402.3512823-1-sashal@kernel.org>
+References: <20250601233402.3512823-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.9
+X-stable-base: Linux 6.12.31
 Content-Transfer-Encoding: 8bit
 
 From: Pohsun Su <pohsuns@nvidia.com>
@@ -120,7 +120,7 @@ fail.
  1 file changed, 27 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index 5d4cf5237a113..c481fae3f909e 100644
+index 304537dadf2c1..ebe3ffa79591a 100644
 --- a/drivers/clocksource/timer-tegra186.c
 +++ b/drivers/clocksource/timer-tegra186.c
 @@ -169,9 +169,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
