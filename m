@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2B2270EC3;
-	Sun,  1 Jun 2025 23:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37082277819;
+	Sun,  1 Jun 2025 23:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748821180; cv=none; b=pFmjzk7Fpd+blvJrQxaovBtlR7cQ1gJU0x5dTfRHC5Uh/UFW76TIoEA8tDLxXJ82OZbg+HekV/BaAnBOISEcHCPl8fNxtxSO5ysltY5hhYp9EduTDcmWrW3jhtOj8jPxW7NWi10hfqMHTMTD9AHsvcYdyPQyx6Ex5m8vM1gwTgU=
+	t=1748821320; cv=none; b=SJEGcnEUtPCJtONMQqJHqhzxWkwcKKlSO4zH++m48xNesqhFKZUgU6vNp6vSQDbz3WDDtAa7R9rCgUDSzuYtW5m9ZkRhRSxCzKhA/xKjZ7Soae4IX1X8RljdZYlzEAhHglHcRwWM9qkghLpMDO8/r3BUjCAKTO66Yth6Cfym2T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748821180; c=relaxed/simple;
-	bh=hr95H+EQED96vd1xQnOVdC9R2WoCM4lZqmScNMPGxYU=;
+	s=arc-20240116; t=1748821320; c=relaxed/simple;
+	bh=iM6pSY8Ai8HR8vYaQD4zoZGOMR+lQ36214XZMXiXmtM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G62nTMx5lXyPSLheCQgKedQe4XDyZlVtxcEBqDTc8JOEyqOHcHf7K/+TFlLioArA1GSpK+/v9DJHhQmbwokA+rciA+4Z0rxmdk55c12cAFilJG7B2UHwliuaT11SUrZU6oIeEFNxJUz3iZ9BCh9K7gRw/gq5Wi16o1ZkiWHuk3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JK89qMaZ; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=chKqWBtPWgc1uO7ImXlJby4M0FxES6p23XrBNSpsjg0v0+oOa28o7qxlNadjeBjsMmBx1z2WTmqHVLhnIHEzPfhBDlYiW9gGQ6V1hCDavKeYZKVFO5Ofxn+O7AxcJhgEGUzccxdskXAZR2VOWcOkZQAPLGlhfXCwrF9DB4P6A8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ21XwFV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JK89qMaZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493F9C4CEE7;
-	Sun,  1 Jun 2025 23:39:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ21XwFV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEC8C4CEF1;
+	Sun,  1 Jun 2025 23:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748821180;
-	bh=hr95H+EQED96vd1xQnOVdC9R2WoCM4lZqmScNMPGxYU=;
+	s=k20201202; t=1748821319;
+	bh=iM6pSY8Ai8HR8vYaQD4zoZGOMR+lQ36214XZMXiXmtM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JK89qMaZhKWeLDfY2tbW7DHVPUQQSGo2Tq37eOfq8uI2KFB4tR4kDaXWoKg9sfTfT
-	 /At5P8DiMUxhhdnM+6Yrmkxp+/WX6qehq1reEBa0/O8Az4YwGEAtF3pxhYVpyKaUgL
-	 /SUFwWklUX6FlvA5DVUH9I/Wz565TXAaY3orPGRAnxtl70YO0Ur3ZReZel25x4XOmb
-	 LcOTxWLh0Ep6RiSI4wSkDijz1T26ErOYMDG5PuKUkIhiHrhpvmqVBByOT0IG9Coj0E
-	 f0n0lZk3ZxAke3o5E4qsKOlso+KEyvL3aCQFsyOo0Of4IVt8FlrM63vYb65+sDgG3D
-	 o3U9/AQDCstrA==
+	b=rJ21XwFVDnOdzFVbaLdAPG0AqODA8AGjR+4dblO+hwhtgoNaN3VEfL3lILqZMyWgi
+	 J/ftPFBqzbNYt9Lv+cewzwrCfQkRJWatmPVr3MQ2HSd0n/1C8KCsmnB+z0h/lw5eWa
+	 BpURQDy9cp0BGAqWtxrPGKSRZGZAl+D2uTC7QP467w3nokOqhlFr0YP1kXcf8wqc6t
+	 mroFTrHrWD0do881jLZem0tBZ2wbkYZ+gSZUG2oHykvuFkTdMA7dhvsXA/2jtJ2YuE
+	 XzPI69riWN+qbIHNUmZfeHXDGkmQrj5q+J4M6CjQPcQksw+etMrrbhemWiwFlFX3vf
+	 nMHXogFmHWyAQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Pohsun Su <pohsuns@nvidia.com>,
 	jonathanh@nvidia.com,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 50/66] clocksource/drivers/timer-tegra186: Fix watchdog self-pinging
-Date: Sun,  1 Jun 2025 19:37:27 -0400
-Message-Id: <20250601233744.3514795-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 46/58] clocksource/drivers/timer-tegra186: Fix watchdog self-pinging
+Date: Sun,  1 Jun 2025 19:39:59 -0400
+Message-Id: <20250601234012.3516352-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601233744.3514795-1-sashal@kernel.org>
-References: <20250601233744.3514795-1-sashal@kernel.org>
+In-Reply-To: <20250601234012.3516352-1-sashal@kernel.org>
+References: <20250601234012.3516352-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.92
+X-stable-base: Linux 6.1.140
 Content-Transfer-Encoding: 8bit
 
 From: Pohsun Su <pohsuns@nvidia.com>
@@ -120,10 +120,10 @@ fail.
  1 file changed, 27 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index 304537dadf2c1..ebe3ffa79591a 100644
+index ea742889ee067..cbe8d33cbb018 100644
 --- a/drivers/clocksource/timer-tegra186.c
 +++ b/drivers/clocksource/timer-tegra186.c
-@@ -169,9 +169,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
+@@ -170,9 +170,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
  		value &= ~WDTCR_PERIOD_MASK;
  		value |= WDTCR_PERIOD(1);
  
@@ -133,7 +133,7 @@ index 304537dadf2c1..ebe3ffa79591a 100644
  		/* enable local FIQ and remote interrupt for debug dump */
  		if (0)
  			value |= WDTCR_REMOTE_INT_ENABLE |
-@@ -365,23 +362,10 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
+@@ -366,23 +363,10 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
  	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
  }
  
@@ -157,7 +157,7 @@ index 304537dadf2c1..ebe3ffa79591a 100644
  	int err;
  
  	tegra = devm_kzalloc(dev, sizeof(*tegra), GFP_KERNEL);
-@@ -400,8 +384,6 @@ static int tegra186_timer_probe(struct platform_device *pdev)
+@@ -401,8 +385,6 @@ static int tegra186_timer_probe(struct platform_device *pdev)
  	if (err < 0)
  		return err;
  
@@ -166,7 +166,7 @@ index 304537dadf2c1..ebe3ffa79591a 100644
  	/* create a watchdog using a preconfigured timer */
  	tegra->wdt = tegra186_wdt_create(tegra, 0);
  	if (IS_ERR(tegra->wdt)) {
-@@ -428,17 +410,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
+@@ -429,17 +411,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
  		goto unregister_osc;
  	}
  
