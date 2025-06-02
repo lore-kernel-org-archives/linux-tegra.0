@@ -1,63 +1,64 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F72239E69
-	for <linux-tegra@vger.kernel.org>; Mon,  2 Jun 2025 15:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F967230D0E
+	for <linux-tegra@vger.kernel.org>; Mon,  2 Jun 2025 15:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748877550; cv=none; b=NTtCXW4t+btYrH2j7N7jcdCREnBNqPM1RPRPlm75YlqDHDwyv8pJA13IdIKelqv2kC1ckhyULx8Uaqi/CcUBlen9T2nhwL+VZsI3obVGU+t8Ya8U/aQAZ7SJ9Wx5JN/102IHrE2SgBeJUdrOGcf9XrHewMt1oPPTHPyvgovPnww=
+	t=1748877559; cv=none; b=ceWC0AUjiE1Bn5hEOg0LnSVT6G9yqFPalCMeDlHhu/TADvKujlPGKeEpK32P6zmoB+3UnnOnRJq2yRoVr57K52h0WVK2vAIHRkjLQzgVdBW0WH37AVLhLNLUThAIQYv8r2a89i7dCQWIxfvwXy0ZaCwyhGc2lwwqAuC5ZC77PrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748877550; c=relaxed/simple;
-	bh=GxbSdL0PyZ8UlejUoxlDIdlFpATxnSdyF2KX6oHR03A=;
+	s=arc-20240116; t=1748877559; c=relaxed/simple;
+	bh=qXg36nIEaSbraDl3K9/tt/qe1tR1XHyEOkFR1xkoAXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aCybeJryPzWkwXZf+ivc8XOrj6QJhVfFy5NHeEQ1yLdd0DIYq05w+96nxPQftS8omsBgPL2MDQw2TJQZynQPcGNiKMSR1PqbHu2daYyGgpcp4FogCIdRihRB1UUl+rpq326KXJtRadY9Bf+lIkDUW0tcoV4PwXG3AWZQv976yyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q1Ht0zWV; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=a5BwxriJ+8cNSx5cCQXe7yGSDFwc9I19Nfo90B9W3yEFL1eqUlj8wWRQYSR+aInVEHkQ61g+vHLPXgsq91psVPxPCevmtb9rRmRgyczAqVB151M7BeMszra9v8gNuV0FV4683sEX4LmzUzJBcAWoa8tGh6egQTvDHpaLs4LUy0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wzIbW7uq; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q1Ht0zWV"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a5123c1533so127928f8f.2
-        for <linux-tegra@vger.kernel.org>; Mon, 02 Jun 2025 08:19:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wzIbW7uq"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32934448e8bso44307891fa.3
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Jun 2025 08:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748877546; x=1749482346; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748877554; x=1749482354; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h4kATdXtYuRJowbluuoUfq4iaqlYfYT07dwMRu/eijw=;
-        b=q1Ht0zWVmXyQXOxoXmReB/1O6jeMdlz5oaNDqn+KKfsTcemeYF/cWZff6Jucji0rZx
-         L9BuslqtLxJHpy2EaXOX3uNx5u9qZmdYMW1FJFkgdVLTI3W+g02DIhsj45UGQL8uFgKj
-         QVE2LMVrATzGalVID2OybgjblihUuI0LoOUALUaI0YjjmmutX5rv5vgK1YNuSB/HRn15
-         p83eNbwJeY4LPD6KZqGewBAcNaluhiDxtec1at/zWZZz2CPHsz+uyLaVShpJk2oIAZNZ
-         HMDE0QHiJ22gy15jTq07FOrXi0icJltEKeYAh1/qh+eY4i2aiLtwz9f6uK5h2C/1F23X
-         mUWg==
+        bh=S7FRnrLBkBYHmFUuH4KGx1nHshhZCeSgrXIZ5dzYfvU=;
+        b=wzIbW7uqxUZcfsXCm9lwIDZ9sQuUYxhnkZ60Ketzv9pRHflF5dgidGZ0Kb0lYeAPAh
+         x3zLeHlel0RzVIM7Oi3awlGDk0kBx/XVh5ZI6L46AEsYSYHh/NChzq3kkI7mS16uizeH
+         NBrcGokad/Jd36vsOLDiyK/Guga/b2ms4L1AQ0o7XoLl9ZuUnaxDAH6ILRd0j74Wc5XQ
+         jSh4Or5Zjf1nbaJ1THS/7R7vwDOfXklAAmCVfyrGViuxtCFBgfACgViUqeCI0VAvjw+D
+         Q8O9KOa8qU+lBqw/sn1s0dZVPOfrVdQ48oQJrsxPiqIK92hmg95P0hHgklMgtO/YSjFc
+         wuQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748877546; x=1749482346;
+        d=1e100.net; s=20230601; t=1748877554; x=1749482354;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h4kATdXtYuRJowbluuoUfq4iaqlYfYT07dwMRu/eijw=;
-        b=WQGTtPWomiJ6Dx7YsoTfjGGRKn1Mfpn/DoJcrgSaJXtUo1RkvklnymQ1a/oeb9XOD5
-         +mX9lCFVrlZIAJQvBrji74sBFVmvAqjwIIqwNv3jWcJpj/blEA7po5BLOkFxKDh+Fr1P
-         3wJwweDht7NNnZTTd7Gbd5Sptcp72kbmoDzZ5kTW7hnPyr3CawRRYePWS9wqH6lttdzV
-         PGDoTbTPMsF5/aRJLVvcjAkmcQtpttCtGGdbkryp7Kx+wnp/DwdPZw6hE7gzunu5prA4
-         54VROxKlwOFssiWuGA3SyLnNYjs+ZP1VM2eH1csAFl/B+ZB/49e8zeggDsT48fLa/NyL
-         HIQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAwHv5+Upm0KEbVM+TSL7qeTYvXxr1wZR1zmegwo8xvPeSpXAP1cw53dAXVxuK+8JXhXDOqMKtNEUgeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAj+eyDgeU5ajE15/8MTgUBhcGnyGNouue2HE1P78nu7mDuhF/
-	jsrfigmtV9gRm8jjgWCVF+pddDLaTB9Ru9DbhKbxGyBnmDoZallTMPxPw66GTvLWdxw=
-X-Gm-Gg: ASbGncv9NwokZguQ+A5dttzeP/j1HbF97svolpMbP7gxd9GjCVJ5H9sTLAZVKo68iQY
-	F8l5BljTwuIDGF0+mvULLkf/Vm5hemdVCV3xJ08rtyfb+X8A38wU3P/ub2g06CStzMqodNOTKLu
-	k4gcvdn4CA9EamFVPA5z5ewbaQv6SOFM5mo9aA7JQ40Tx8sgHbXyZNaxA3b/axq6JGm6J3TxuX9
-	QrhBb/ibkRXlRX9knchAXGlG4PRqj7m4IP7kA5xOEyXWonxUf4qt/+t8/GNUvZ1FBrnMw8d4kwr
-	Mhg3ldCH0Xuh5Wq4J9c5cqdrwu+zZLzbYmWv5YbDDE6wQeJpmFy4+1brY7189P7pwURGcznXXaw
-	KKg==
-X-Google-Smtp-Source: AGHT+IGo3+b4mB4bJZk3jsrIr83JxAnU/93JoVte/2RVs9090BDS0xWFY0i+YN16EfaKcepr/Do0FQ==
-X-Received: by 2002:a5d:588f:0:b0:3a4:de13:2a25 with SMTP id ffacd0b85a97d-3a4f89dcb7cmr10264360f8f.45.1748877546552;
-        Mon, 02 Jun 2025 08:19:06 -0700 (PDT)
+        bh=S7FRnrLBkBYHmFUuH4KGx1nHshhZCeSgrXIZ5dzYfvU=;
+        b=cPD4Fsd4VvPfoWdyKHCyeoZwwk7OhZ9+zRUqVXdJtHej8cW9EgllX/bFMrzo8P9UMX
+         4mR+KhsDqot0msidX5sycq3yspzKpT8b69ALUBYDFPmv2eofO9t2l0QopJ+kLYSphkE5
+         MsNOO4sBxt23qnLOpvoeiCZ06SD8r659EDZTmvCmsijW6JIiyvTULY6cgdy2rhcpQFUR
+         KrQvjRWTxAIW6FZZeltlFuazULjei3R9hezfVlyuGFmIpCvmU1AkNgLi05wSaFgbeEDY
+         IUvYN8jRsYfaHqd17t/LwHJhUM0fX2IGIjWJcuuaEjUfUzgsCw4PltijGH8cgloI28Ou
+         sd4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXohJZQgB7s4x1OuXNEUUoGnuROb/2IYchS8Q9OuRJO4oS9n4+kOz6qlrGFUMC7xzsFGxZbJx+thS5yg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQyo5NFkClcEpKHFwihyb15DXR09hI5I3LFxiaPjfNl4O5wEKy
+	gKnuvyJYLdm5ILmSXgMKQrAhNuNvC5LJeaWJ7bxfjFTcqZpENmVxfBA9VzaX+KvxyPnhtAzfWPL
+	F/mjE9FQ=
+X-Gm-Gg: ASbGncuKfDAkD1MBspyS3mYb2KYe9AG0nct0PQ/WF1hUL2IxTTCN8AhwaXlFXHH+th0
+	fWwYiiX1dKLNBD1OvmIC/XBOviPhQiEpkXM+soOpA0fCROPxEnHrUlqA4FdQ0Yp9YmaHZyM1vSz
+	nHnr7TjV984W2+IZU04NCNB8umbbhjTLLzsFuS9BKLCoBRZ+Lq9/jZjZyW1fia2Zxj3JWtzB8X/
+	OHqsYCXk9+bb9qqmPiEYm09ziSgv1l2iy+BKf3Yebh5IZLa1Yuxx/LKNYYPV+wQ5USn1+VAk8UO
+	4gjZ5iyi0n7hRlswpGGVRUP+jaWEoi2jn//3IGdlL5tC4rbPUevUS7a+qTya0NCGZU6l+4upzYH
+	VQg==
+X-Google-Smtp-Source: AGHT+IE+SpRjISuBJ+0qyPRe6UZcsVpz/N5qpzBFRSza5rkSFVM1NCoj9ElY/SVHO3bb6cTtRiaJ4w==
+X-Received: by 2002:a05:6000:26ca:b0:3a4:f787:9b58 with SMTP id ffacd0b85a97d-3a4f7ab515fmr11075338f8f.58.1748877543609;
+        Mon, 02 Jun 2025 08:19:03 -0700 (PDT)
 Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe74111sm15619844f8f.56.2025.06.02.08.19.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe74111sm15619844f8f.56.2025.06.02.08.19.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 08:19:06 -0700 (PDT)
+        Mon, 02 Jun 2025 08:19:03 -0700 (PDT)
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 To: daniel.lezcano@linaro.org,
 	tglx@linutronix.de
@@ -81,9 +82,9 @@ Cc: Jim Cromie <jim.cromie@gmail.com>,
 	Will McVicker <willmcvicker@google.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	Saravan Kanna <saravanak@google.com>
-Subject: [PATCH v1 7/7] time: Export symbol for sched_clock register function
-Date: Mon,  2 Jun 2025 17:18:51 +0200
-Message-ID: <20250602151853.1942521-8-daniel.lezcano@linaro.org>
+Subject: [PATCH v1 5/7] clocksource/drivers/stm: Add module owner
+Date: Mon,  2 Jun 2025 17:18:49 +0200
+Message-ID: <20250602151853.1942521-6-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
 References: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
@@ -95,41 +96,43 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The timer drivers could be converted into modules. The different
-functions to register the clocksource or the clockevent are already
-exporting their symbols for modules but the sched_clock_register()
-function is missing.
+The conversion to modules requires a correct handling of the module
+refcount in order to prevent to unload it if it is in use. That is
+especially true with the clockevents where there is no function to
+unregister them.
 
-Export the symbols so the drivers using this function can be converted
-into modules.
+The core time framework correctly handles the module refcount with the
+different clocksource and clockevents if the module owner is set.
+
+Add the module owner to make sure the core framework will prevent
+stupid things happening when the driver will be converted into a
+module.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- kernel/time/sched_clock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-nxp-stm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index cc15fe293719..cc1afec306b3 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -174,8 +174,7 @@ static enum hrtimer_restart sched_clock_poll(struct hrtimer *hrt)
- 	return HRTIMER_RESTART;
- }
+diff --git a/drivers/clocksource/timer-nxp-stm.c b/drivers/clocksource/timer-nxp-stm.c
+index d7ccf9001729..bbc40623728f 100644
+--- a/drivers/clocksource/timer-nxp-stm.c
++++ b/drivers/clocksource/timer-nxp-stm.c
+@@ -201,6 +201,7 @@ static int __init nxp_stm_clocksource_init(struct device *dev, struct stm_timer
+ 	stm_timer->cs.resume = nxp_stm_clocksource_resume;
+ 	stm_timer->cs.mask = CLOCKSOURCE_MASK(32);
+ 	stm_timer->cs.flags = CLOCK_SOURCE_IS_CONTINUOUS;
++	stm_timer->cs.owner = THIS_MODULE;
  
--void __init
--sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
-+void sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
- {
- 	u64 res, wrap, new_mask, new_epoch, cyc, ns;
- 	u32 new_mult, new_shift;
-@@ -247,6 +246,7 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
+ 	ret = clocksource_register_hz(&stm_timer->cs, stm_timer->rate);
+ 	if (ret)
+@@ -314,6 +315,7 @@ static int __init nxp_stm_clockevent_per_cpu_init(struct device *dev, struct stm
+ 	stm_timer->ced.cpumask = cpumask_of(cpu);
+ 	stm_timer->ced.rating = 460;
+ 	stm_timer->ced.irq = irq;
++	stm_timer->ced.owner = THIS_MODULE;
  
- 	pr_debug("Registered %pS as sched_clock source\n", read);
- }
-+EXPORT_SYMBOL_GPL(sched_clock_register);
+ 	per_cpu(stm_timers, cpu) = stm_timer;
  
- void __init generic_sched_clock_init(void)
- {
 -- 
 2.43.0
 
