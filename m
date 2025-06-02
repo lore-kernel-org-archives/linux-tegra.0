@@ -1,189 +1,126 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37082277819;
-	Sun,  1 Jun 2025 23:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892D14A1A;
+	Mon,  2 Jun 2025 11:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748821320; cv=none; b=SJEGcnEUtPCJtONMQqJHqhzxWkwcKKlSO4zH++m48xNesqhFKZUgU6vNp6vSQDbz3WDDtAa7R9rCgUDSzuYtW5m9ZkRhRSxCzKhA/xKjZ7Soae4IX1X8RljdZYlzEAhHglHcRwWM9qkghLpMDO8/r3BUjCAKTO66Yth6Cfym2T0=
+	t=1748863129; cv=none; b=WYk4oaUQSfp8PzU8mLhWBJcEb6NOgP1JgvrmShVPW3Etc5X2G99brHqJ3We9h5XQn9rroiOm11ybYRonte3HEZ6/njXLUnQshUFLPsy5cT7TuLWpF/QIlUf9VVhTquUk5mBonvt5nZ/ObIS9fYwnmjKDkSreAkhS/Dlg+K4+wX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748821320; c=relaxed/simple;
-	bh=iM6pSY8Ai8HR8vYaQD4zoZGOMR+lQ36214XZMXiXmtM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=chKqWBtPWgc1uO7ImXlJby4M0FxES6p23XrBNSpsjg0v0+oOa28o7qxlNadjeBjsMmBx1z2WTmqHVLhnIHEzPfhBDlYiW9gGQ6V1hCDavKeYZKVFO5Ofxn+O7AxcJhgEGUzccxdskXAZR2VOWcOkZQAPLGlhfXCwrF9DB4P6A8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ21XwFV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748863129; c=relaxed/simple;
+	bh=M7geZGDFd3xN4OWNSfnEf9QfScVNNmctqt168yp5Lbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E/1RxmVJ069iz0YWrzVMmwXOfxjMX1K/RT3UbFlbdF1TMfvDt4tax+O098hyZY3jajegjVZ3MmGoU9jLDzTZodrcyvkSwmWHPSLTw+Ilm3vlSwT72N6SBJkbFbmWBt/0SuqTEqBjSsLAGLnwxTCFvd2HO5iy5im4vYtfFy1DWPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6PVecjJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ21XwFV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEC8C4CEF1;
-	Sun,  1 Jun 2025 23:41:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6PVecjJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7868FC4CEEB;
+	Mon,  2 Jun 2025 11:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748821319;
-	bh=iM6pSY8Ai8HR8vYaQD4zoZGOMR+lQ36214XZMXiXmtM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rJ21XwFVDnOdzFVbaLdAPG0AqODA8AGjR+4dblO+hwhtgoNaN3VEfL3lILqZMyWgi
-	 J/ftPFBqzbNYt9Lv+cewzwrCfQkRJWatmPVr3MQ2HSd0n/1C8KCsmnB+z0h/lw5eWa
-	 BpURQDy9cp0BGAqWtxrPGKSRZGZAl+D2uTC7QP467w3nokOqhlFr0YP1kXcf8wqc6t
-	 mroFTrHrWD0do881jLZem0tBZ2wbkYZ+gSZUG2oHykvuFkTdMA7dhvsXA/2jtJ2YuE
-	 XzPI69riWN+qbIHNUmZfeHXDGkmQrj5q+J4M6CjQPcQksw+etMrrbhemWiwFlFX3vf
-	 nMHXogFmHWyAQ==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Pohsun Su <pohsuns@nvidia.com>,
-	Robert Lin <robelin@nvidia.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	tglx@linutronix.de,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 46/58] clocksource/drivers/timer-tegra186: Fix watchdog self-pinging
-Date: Sun,  1 Jun 2025 19:39:59 -0400
-Message-Id: <20250601234012.3516352-46-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601234012.3516352-1-sashal@kernel.org>
-References: <20250601234012.3516352-1-sashal@kernel.org>
+	s=k20201202; t=1748863129;
+	bh=M7geZGDFd3xN4OWNSfnEf9QfScVNNmctqt168yp5Lbk=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=u6PVecjJ1PAFHm6JWhMg7hC6gLHXH0iLchAevAphj0y/TBsb9Kfnj3ND0ndjrYT8J
+	 FlTrfPGfdefmjTruodeFMnDySx9T0Y7boIuKmLQEIPn2bjh92E2Ea+lj8VuTGfL7WY
+	 tjWEZxLf08fthr2bgr9Mest/zGwBVcLRClr/gCVXWESQGBE3Gflf9n9FQV29qqW4WZ
+	 e5K4ATjOfIeJxFws+x1EO9TDWEbhFZpSOBBcpyRIgj3QtbcPAp4S2sHOSybWHo+Sb3
+	 2gCp7Wnhjh61FElfOqENhN/PQubjan2Jfif3bnVdQE9UfHsbeM1RRThC03Vg6THeGt
+	 KhhHOt4YqEc/Q==
+Message-ID: <f536ceb2-6794-4877-83d1-898e56840c0c@kernel.org>
+Date: Mon, 2 Jun 2025 13:18:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.140
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: nvidia,tegra20-i2c: Specify the
+ required properties
+To: Akhil R <akhilrajeev@nvidia.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+ "digetx@gmail.com" <digetx@gmail.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250526052553.42766-1-akhilrajeev@nvidia.com>
+ <44b5d5f1-f45e-4d81-809f-707bd756257d@kernel.org>
+ <PH7PR12MB8178836F70C0A9F90121676EC062A@PH7PR12MB8178.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <PH7PR12MB8178836F70C0A9F90121676EC062A@PH7PR12MB8178.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Pohsun Su <pohsuns@nvidia.com>
+On 02/06/2025 13:10, Akhil R wrote:
+>>
+>>> +          Module reset. This property is optional for controllers in Tegra194 and later
+>>
+>> Your binding says Tegra210 requires it, but 210 feels like something
+>> later than 194. Maybe that's obvious for people knowing that device?
+> 
+> Tegra210 is in fact an older device than T194. I will probably mention the chip names
+> instead of “later” in the next version.
+> 
+>>
+>> Anyway, please wrap at 80 (see kernel coding style).
+> 
+> Okay. Will update.
+> checkpatch.pl don’t warn now till 100 characters. I thought it was updated.
 
-[ Upstream commit b42d781e0350c969ef8155b800e33400f5f8b8a6 ]
+Checkpatch is a tool, not coding style. Coding style document describes
+the coding style.
 
-This change removes watchdog self-pinging behavior.
 
-The timer irq handler is triggered due to the 1st expiration,
-the handler disables and enables watchdog but also implicitly
-clears the expiration count so the count can only be 0 or 1.
 
-Since this watchdog supports opened, configured, or pinged by
-systemd, We remove this behavior or the watchdog may not bark
-when systemd crashes since the 5th expiration never comes.
-
-Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
-Signed-off-by: Robert Lin <robelin@nvidia.com>
-Link: https://lore.kernel.org/r/20250507044311.3751033-3-robelin@nvidia.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-## YES **Extensive Analysis:** This commit should be backported to
-stable kernel trees as it fixes a critical watchdog functionality bug
-that affects system reliability and crash recovery. ### Code Changes
-Analysis: **1. Removal of Self-Pinging IRQ Handler (lines 368-378):**
-The commit removes the `tegra186_timer_irq()` function that was
-automatically resetting the watchdog on first timeout. This function was
-calling `tegra186_wdt_disable()` followed by `tegra186_wdt_enable()`,
-which had the side effect of clearing the expiration count. **2. Removal
-of Local Interrupt Enable (line 173):** The code removes `value |=
-WDTCR_LOCAL_INT_ENABLE;` from `tegra186_wdt_enable()`, which was
-enabling the interrupt that triggered the self-pinging behavior. **3.
-Removal of IRQ Infrastructure (lines 384, 403, 431-436):** The commit
-removes the IRQ request and associated error handling since the IRQ is
-no longer needed without the self-pinging behavior. ### Why This Should
-Be Backported: **1. Critical Bug Fix:** This addresses a fundamental
-flaw where the watchdog would never reach its intended 5th expiration
-because the IRQ handler was resetting the count after the 1st
-expiration. The comment in the original code states "system reset
-happens on the fifth expiration" (line 156/157), but this never occurred
-due to the self-pinging. **2. System Reliability Impact:** When systemd
-or other watchdog managers crash, the system should reboot via watchdog
-timeout. With the old behavior, systems would hang indefinitely instead
-of recovering, which is a serious reliability issue in production
-environments. **3. Hardware Design Intent:** The Tegra186 watchdog is
-designed to count 5 expirations before resetting the system. The self-
-pinging behavior was defeating this safety mechanism, making the
-watchdog unreliable for its primary purpose. **4. Minimal Risk:** - The
-change is small and well-contained - It removes problematic code rather
-than adding complex new logic - No new features or architectural changes
-- Follows the "do one thing well" principle for watchdogs **5. Clear
-User Impact:** Systems using Tegra186/234 SoCs with systemd or other
-watchdog daemons would benefit from proper crash recovery functionality.
-**6. Stable Tree Suitability:** - Fixes an important bug affecting users
-- Small, contained change with minimal regression risk - No new features
-introduced - Affects a specific hardware platform (limited blast radius)
-The commit properly removes flawed self-recovery logic that was
-preventing the watchdog from functioning as designed, making systems
-more reliable by ensuring proper reboot behavior when watchdog daemons
-fail.
-
- drivers/clocksource/timer-tegra186.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
-
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index ea742889ee067..cbe8d33cbb018 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -170,9 +170,6 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
- 		value &= ~WDTCR_PERIOD_MASK;
- 		value |= WDTCR_PERIOD(1);
- 
--		/* enable local interrupt for WDT petting */
--		value |= WDTCR_LOCAL_INT_ENABLE;
--
- 		/* enable local FIQ and remote interrupt for debug dump */
- 		if (0)
- 			value |= WDTCR_REMOTE_INT_ENABLE |
-@@ -366,23 +363,10 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
- 	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
- }
- 
--static irqreturn_t tegra186_timer_irq(int irq, void *data)
--{
--	struct tegra186_timer *tegra = data;
--
--	if (watchdog_active(&tegra->wdt->base)) {
--		tegra186_wdt_disable(tegra->wdt);
--		tegra186_wdt_enable(tegra->wdt);
--	}
--
--	return IRQ_HANDLED;
--}
--
- static int tegra186_timer_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct tegra186_timer *tegra;
--	unsigned int irq;
- 	int err;
- 
- 	tegra = devm_kzalloc(dev, sizeof(*tegra), GFP_KERNEL);
-@@ -401,8 +385,6 @@ static int tegra186_timer_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		return err;
- 
--	irq = err;
--
- 	/* create a watchdog using a preconfigured timer */
- 	tegra->wdt = tegra186_wdt_create(tegra, 0);
- 	if (IS_ERR(tegra->wdt)) {
-@@ -429,17 +411,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
- 		goto unregister_osc;
- 	}
- 
--	err = devm_request_irq(dev, irq, tegra186_timer_irq, 0,
--			       "tegra186-timer", tegra);
--	if (err < 0) {
--		dev_err(dev, "failed to request IRQ#%u: %d\n", irq, err);
--		goto unregister_usec;
--	}
--
- 	return 0;
- 
--unregister_usec:
--	clocksource_unregister(&tegra->usec);
- unregister_osc:
- 	clocksource_unregister(&tegra->osc);
- unregister_tsc:
--- 
-2.39.5
-
+Best regards,
+Krzysztof
