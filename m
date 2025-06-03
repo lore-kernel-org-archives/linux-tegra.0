@@ -1,63 +1,63 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F3B1E7C02
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 17:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078FA19C554
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 17:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748973322; cv=none; b=ck0vYh3SWGlqSweEzXQ+jrBXllOc81pUareFqMz20pj7Ds4lgd1AYJKcCuNeNZOxRHD4AEg+GjYY03AisblHgvD9dk3uW3rDCU8iZ509ZR27KpHUZ0YkXByVhQKPV3JYmtwh6vbEP+BvXkrnQluQJCV0NlEI5aJG4ztQ7X4f0KA=
+	t=1748973429; cv=none; b=dFyHa58OKUdbzPyCT+Pjx2A/2VG9d3ubZ2l3iXTmCBnG7NXn8xJTH/VglMhmfklokjjpnFBUHL+3gAxUyCAZ1oI3Zla2/Hpxa2p7PY+2VWmn5d4m1S1wrj+xII6SNOUZ5arnRKNJYslQmIM2NXilRXi4kVi6sDjPwbUmDwJcH3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748973322; c=relaxed/simple;
-	bh=Zynt2xYe4yLXyl+ZNUkX5fnAcUYRdDyO5jFQWOfl0z4=;
+	s=arc-20240116; t=1748973429; c=relaxed/simple;
+	bh=QN5rbcRHWNYvmqhVhRD9FgtoDgxlmTfU7H2bsy6rsYA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLxqI1aly0nLBdj9SXbHfNzFMV7uHvxuGXdVuLSWAcBeremwyCuRzVtO0MEfvfC59aJ7yMWep56NQSxxMR5mOJH/JrzAt1+18XazGtOb5BLILl3R4il18fOup15Y5D7Wq04uMNSzfgFwFoW2ooxMHgNl/Jfwu/Ycc5nzUobzYUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uai4lAgN; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=rampH6zwRqWOIo8qhlglGdjZZnPEX5MydmQLnLY/u7R1PEj47B+w/yRq5v9dtMWlQNDmUsE5XlMy0eYI/T0TVVinbKFBqCAgA+yGtx9g9zlg2eRo8XYZH5rrle9UGUcd3bw2Wxl4Li3czXC9+5nQweuMSOqwiNscaaXq9H+xcP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XgmYLCFu; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uai4lAgN"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23526264386so42508135ad.2
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 10:55:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XgmYLCFu"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-73c17c770a7so6516612b3a.2
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 10:57:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748973319; x=1749578119; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1748973426; x=1749578226; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wmWUl9C985EL5CPivjVUp+r9x59BJAZUaKZ7PmzbsT0=;
-        b=Uai4lAgNjGyKwfWkEPE2cR3ZTrsSVshwOqYsCF+PlZ2RqV2VP+FoWgmCmEIFuYnu2b
-         aF9c+OQGaqOPbQb403yHwjMECDOzH9FOrxUm2dCBb3Yy2ncGOGbkKeDThJt2ouE35BOm
-         C20LcYOxWlIKeU2m7j8paCifnMt6xe+UbAD+nuO9dkyrVN8pl//y8rNrzIhWKQWOXSdk
-         njYQkkSvd6wAEYXn4TUTN+77V7oaaHk1pKTTyE1BUdO02cOVySY93zsUEkGeLeFwDgbO
-         HUOaVi+H437sW9/LPjODC7iJh1yUDHaapqDRTkJVb67wlYu3RCBMbHbzsCXW6TI92ZUI
-         0kXA==
+        bh=QOHtIjIllleG5NXeGwEB/iZNkovTPGk/XQvSsFwTJgY=;
+        b=XgmYLCFu/k7G5+IOwdFliJRnYqVS/ouWbx8HfJzDg0uA627UihR1+lWwNA9Tw6pkRa
+         K8qTKwy0FmppnROfGPd7miSxvPZeT2Eg3uqpjd6Vjz07T0kapGvNX8CfOEz1AS+Gs/BX
+         T8C3th5akxqIJbnwBLQ8iKCwEfpS0LeZiLDC0RdzZb9yLGJjN4+Kh0fzRGFoNSyW1sD+
+         NDxSCDtDwnw/IbVnbfF+Kc2SdVTuRyruVblL2RuYJ2d4lA9jnWNeRqoTxalJjRAprFh2
+         Scom6IJ8bmo9p2HO4H7eK+3YX3Xvi4IAyQYykaW7Jo/xBIKGxCYOLNiWNwkk2C1h01cT
+         F/zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748973319; x=1749578119;
+        d=1e100.net; s=20230601; t=1748973426; x=1749578226;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wmWUl9C985EL5CPivjVUp+r9x59BJAZUaKZ7PmzbsT0=;
-        b=NlJyAzL07RL4Zj5/y24m5Cbpx6d+e1AmUkqrl/9zitoo9CQamF3z2/F6azRtBH5x17
-         KM2lKZTdG8phbiW7lGsFE9vOIj4tvZTNysk8+f4JLFBVffUAOjjJ3vZk6gxXvbQ2G7tl
-         m1TvrUABDyH+bBIlcfih2ieIJMiIHIDIU/8D+9b8JV4e9ICTAkAd5liUzOjuLcJ9gNOJ
-         dQ9CpRgW2HeRiKQkJoM66Dd/r5uEi/rwRGAU8jHl3mX/6Y+tU3JJQs2N6NTik92Tl7j/
-         jDPVUUP152x1OKVwdSTFHU4jtMfg1UIiOk5ZDYRFJcn6qirUQp+ct89XMZLThd09uo6b
-         qb5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3LEy943LRuUJ1h5hlZwERRgDkSytBt7XPIAcJiYnQkVekAc+ve73lrcqDvr6l9Ni7eSRdCFRBfI/5fQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy+5Xp8kwaL7RtcrIUi57V1llBspn4w6jBy2JhLtJJgeaath2n
-	FYRtQn+GsE8X/AiPoayXh3gUITzR7LYR0XM6N2Qfnn2Cts7mc/7mhrYpMPlHG7NUqA==
-X-Gm-Gg: ASbGnctGqFrr67t/pKU49/5OzTtW3pjhYyP0MBVWwzGhOSjQzOw+Sm53aplaULbcvak
-	3cxCOIJropBqldUWTrQI8Ol0IhfAvYo1OXrRDaL5wDFioLHA/S+r9GjFKoS0/qigtCGROUq9CBD
-	91+H6doOIHyl3uSJ2yr7bp+Fu2xA0myPBJvouRJYea/yteMArCh3tYwLIAUbdZms3uVFn6CWvrM
-	n9nUWo1rrMq4Y2ZveMF1OlOXF0Gcw+sPfjaZOssP+QDG/j5DqTys3h1TlnQK0pSfM3y9UgKXFNA
-	4oAddrTmgsmv/ReFZh0zX/BPCMA0DKlGUEcZzSjMK6sWcVDHmBfYcHWNnGoMNqsaO+vYMav+kgu
-	Eqf4R5d16gtHFCv1xEY+MMGrQAqM=
-X-Google-Smtp-Source: AGHT+IEL8qWQXsZH17HCYlbbIw9UGPDhlEkxpYMP6+pX9reecYXFMezlkTqgJADRlqe4EFkksHLW1w==
-X-Received: by 2002:a17:903:b50:b0:235:779:ede3 with SMTP id d9443c01a7336-2355f9ef557mr237428345ad.41.1748973318650;
-        Tue, 03 Jun 2025 10:55:18 -0700 (PDT)
+        bh=QOHtIjIllleG5NXeGwEB/iZNkovTPGk/XQvSsFwTJgY=;
+        b=s4qyFDgeBqgvpuVvsBqV1FFOCuy+4hKbkJ0we6DGsw7ohwCrIIqv9FcDwhKvtOq1mP
+         sej3xiNHO9vTLJ4oHz6cT4qRrMp9TMjWS1hnIl6UPXGGwKdeIYFmSVUJSNKABERTf8B9
+         lbH1y4VP3h4a/lb0KI9MuVMpuk/jMaRZKIZyuvf5kQNh2sQ2nYfBpMyB87ENbOf+FEfW
+         lh8i+CwLOChYmUCYlfmztPbhgjP0KTtyvHyHLRfV0jJxgkZWGEZrI1Xzz/1cdP8QJ0A1
+         AJzizju6bN9UCTs63YagbyWt4v4dh9uMlsQWLJWT+/Mrh6GhdYDKNvVkwK1HfVIuLoWS
+         m41Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVxzGxKQccAx9vbeVLilr5YxHBsPG1BgOQIvZCIOwDXfTK9kftppfzHSrDn2P9oUwGObuu7FzlF9tjWIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzebTUL4R1VioIVAlDYg7TLnpmZVW4J89jZENcYeTaauAwVSK8c
+	p3n7wFJE8j8g27orGHygz/S7jAx1LDdSdNUWU79dayqUhTIWtJL92a5CqlYbT0B08g==
+X-Gm-Gg: ASbGncsKAWyeFvP/hGe7sFgkBuUWMw1bY4lHUEL+ZuqMT879MdU0uAbTcJXs2lHGtXk
+	rmQkkKPVR5A6aCoYNqIPbZeplmjwPZpb5lV9ZPqnAmq1FEvdcl/hKcky/d/jxVsTd7RXvVGDuwy
+	zo+ytLW8fmhGkQcKO6aBGaLVsMDD1dd6OsZokEsOYO576Gs8gJl2G3mgNUgJZ0gM7aHos3TLK6E
+	f7QkN6av/9bf3sOkp9qsk20gxOeXompHncqLMyfvw6zBZmXMQ59vk02GBkMnzgQNf6yBAgYcyYB
+	BVJdTH0OsJ9Sq50Mrn9gyOyDOXbnehwd9fLENAAfSfS3sdDIlqOJTmiyAs3TITyfux+vbIqEJ++
+	AnsVhTlfP+xc0WjFPxKxsNr9s8jI=
+X-Google-Smtp-Source: AGHT+IFJjRiNTfrHUGA38dJeGT2+lFGgu3T7p+sKAbadh5LPG+wdrTfumVyLbKsTRptWC4Rroj128g==
+X-Received: by 2002:a05:6a00:3d12:b0:737:678d:fb66 with SMTP id d2e1a72fcca58-7480b1f3b1amr53928b3a.5.1748973426129;
+        Tue, 03 Jun 2025 10:57:06 -0700 (PDT)
 Received: from google.com (128.65.83.34.bc.googleusercontent.com. [34.83.65.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d14bcfsm90207425ad.236.2025.06.03.10.55.18
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeab4acsm9633273b3a.43.2025.06.03.10.57.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 10:55:18 -0700 (PDT)
-Date: Tue, 3 Jun 2025 10:55:14 -0700
+        Tue, 03 Jun 2025 10:57:05 -0700 (PDT)
+Date: Tue, 3 Jun 2025 10:57:01 -0700
 From: William McVicker <willmcvicker@google.com>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: tglx@linutronix.de, Jim Cromie <jim.cromie@gmail.com>,
@@ -76,10 +76,10 @@ Cc: tglx@linutronix.de, Jim Cromie <jim.cromie@gmail.com>,
 	linux-tegra@vger.kernel.org, John Stulz <jstultz@google.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	Saravan Kanna <saravanak@google.com>
-Subject: Re: [PATCH v1 3/7] clocksource/drivers/sun5i: Add module owner
-Message-ID: <aD83ArjAx463xOx2@google.com>
+Subject: Re: [PATCH v1 4/7] clocksource/drivers/tegra186: Add module owner
+Message-ID: <aD83bbyEPKSDXv_T@google.com>
 References: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
- <20250602151853.1942521-4-daniel.lezcano@linaro.org>
+ <20250602151853.1942521-5-daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -88,7 +88,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250602151853.1942521-4-daniel.lezcano@linaro.org>
+In-Reply-To: <20250602151853.1942521-5-daniel.lezcano@linaro.org>
 
 On 06/02/2025, Daniel Lezcano wrote:
 > The conversion to modules requires a correct handling of the module
@@ -111,29 +111,37 @@ Thanks,
 Will
 
 > ---
->  drivers/clocksource/timer-sun5i.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clocksource/timer-tegra186.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/clocksource/timer-sun5i.c b/drivers/clocksource/timer-sun5i.c
-> index 6b48a9006444..f827d3f98f60 100644
-> --- a/drivers/clocksource/timer-sun5i.c
-> +++ b/drivers/clocksource/timer-sun5i.c
-> @@ -185,6 +185,7 @@ static int sun5i_setup_clocksource(struct platform_device *pdev,
->  	cs->clksrc.read = sun5i_clksrc_read;
->  	cs->clksrc.mask = CLOCKSOURCE_MASK(32);
->  	cs->clksrc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
-> +	cs->clksrc.owner = THIS_MODULE;
+> diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+> index e5394f98a02e..56a5342bcf78 100644
+> --- a/drivers/clocksource/timer-tegra186.c
+> +++ b/drivers/clocksource/timer-tegra186.c
+> @@ -373,6 +373,7 @@ static int tegra186_timer_tsc_init(struct tegra186_timer *tegra)
+>  	tegra->tsc.read = tegra186_timer_tsc_read;
+>  	tegra->tsc.mask = CLOCKSOURCE_MASK(56);
+>  	tegra->tsc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+> +	tegra->tsc.owner = THIS_MODULE;
 >  
->  	ret = clocksource_register_hz(&cs->clksrc, rate);
->  	if (ret) {
-> @@ -214,6 +215,7 @@ static int sun5i_setup_clockevent(struct platform_device *pdev,
->  	ce->clkevt.rating = 340;
->  	ce->clkevt.irq = irq;
->  	ce->clkevt.cpumask = cpu_possible_mask;
-> +	ce->clkevt.owner = THIS_MODULE;
+>  	return clocksource_register_hz(&tegra->tsc, 31250000);
+>  }
+> @@ -392,6 +393,7 @@ static int tegra186_timer_osc_init(struct tegra186_timer *tegra)
+>  	tegra->osc.read = tegra186_timer_osc_read;
+>  	tegra->osc.mask = CLOCKSOURCE_MASK(32);
+>  	tegra->osc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+> +	tegra->osc.owner = THIS_MODULE;
 >  
->  	/* Enable timer0 interrupt */
->  	val = readl(base + TIMER_IRQ_EN_REG);
+>  	return clocksource_register_hz(&tegra->osc, 38400000);
+>  }
+> @@ -411,6 +413,7 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
+>  	tegra->usec.read = tegra186_timer_usec_read;
+>  	tegra->usec.mask = CLOCKSOURCE_MASK(32);
+>  	tegra->usec.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+> +	tegra->usec.owner = THIS_MODULE;
+>  
+>  	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
+>  }
 > -- 
 > 2.43.0
 > 
