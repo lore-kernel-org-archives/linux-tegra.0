@@ -1,67 +1,66 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF3C22F74A
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 11:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC72222FF59
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 11:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748951852; cv=none; b=gaGZ3n5iqmGB7eO5itq1N3Pdz+gc1tDstLDQOo031y3aRDATjuCIhjncKK6xWaTbDY7XFEryK1kJhNjgCRivQxvDoJuVla7AYu7HT9My6W8G+TnYX9FQGq4QQGLU1KMnfJt3eK/CEAWN/iiVurw3T9BDWBLh8MPDSY30nAsLG1I=
+	t=1748951854; cv=none; b=FQtAbXEf4JG1GXwFBB96T7H1dPepRaWs0tcUxl23f775iA8XEyJwVvtLuDeAdvJBBq6/tMgr+RJiFFxNXiSYSlD4J0NoMWW5EgTk4fwPK40QwDo7ZSSgWOZ0726jJ5S7F56HtGacmQb1i0pyruNB2dh6EAfp9EnBxBHneyd71Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748951852; c=relaxed/simple;
-	bh=PmQVq4hQS35gwAsgZYe0MBq9ErqtT+mom2oZuUDxvi4=;
+	s=arc-20240116; t=1748951854; c=relaxed/simple;
+	bh=pbB5PzrHWvVUn04LbVYo2MNOE6kLsW5gBdzmEzOHczU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CndNA64RlK9tp86gb3Adin/T7iVe4grgS/EQsOICj9cch7J+oGI6DxT960RBCYaRtdmdGzPqBZ8eG1rcSUGvhpRB8uSTSPbn/lvbU29Y5O+1SCC/1W57AThw2n5pDFe/g7g/2icKyrPS824KNgivlB/HlHsPduOhiY3BWVKdKW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EZCTQArh; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:To:Cc; b=bElXkMgnAbPJMTUElW5pijf2yhf0AyFh4RWBx+0aaMV/LI5jQs3qlPbuiEMmNk6W5Gpsqmx0t1/2cwAEc+lCOTOWhDVFmUF+nqfLRU1cLCF1dGJHTdMM9G9wty75etFmDqEjm0zKey8ZXTfiEAmXb9dIY0bsM0ixk+wbVNLPdZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iLihSSRE; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EZCTQArh"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450ca8e6d05so1739085e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 04:57:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLihSSRE"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4ef05f631so621260f8f.3
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 04:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748951849; x=1749556649; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748951851; x=1749556651; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=P9iOMNCqnm556i6iWSK9mE2UkHu3B2asZSKy8c1kTbA=;
-        b=EZCTQArhG5wguIM/WrtePDThGROYXf9FMu49xPYbaXjlYXe9iZx/msOicacrLSc9MQ
-         oSrlW+R2HhF2B+hPebtMqzEudtA1kzpF6QqIb2Acw9PIu18/2cYcD7FKTzgV5f0kT69t
-         vGWU2sPUzgW/vvv/UIRyCYV7b64+rVnqdX3ZIZqi57NuDhwlwVe6xhoLK4LKSLFhkNgX
-         zlIO6gnsDw2XJWX4Vw9gdHOlsC4znhpm02m6ab4hGqbT3zYbXCkUGh1hXEoceg2JlZaj
-         ZpHlBZh4eoQwNZmCUbcDyE9WQU/yezKyJ7s6dkV7iXKF+bfdDLTp1wkLTykoBf6KVwkz
-         wOGg==
+        bh=ExhN+XF0N6J6awaTyjEwEtgTC+vyO+pqDRvv89W3ABg=;
+        b=iLihSSREAI+7rdTpPTk0/xTDzi+FlOfeeBX83JoAFtLmW9HE04ZXhUw29ibgSmoJmh
+         CbQrIqu/YZhYj7VXYXb/fWwTbneOmsKmlUFcW/RC7kzH1/J5hDI8d3WKd2+EJv2hU++O
+         J/2odWmkLtxBsR+N/NRtmBIAHHzL8AZ924Iu8TGtCEut+c3tTyrLoPj6fS0UivaULyvy
+         DoAfWOE0fur1UaLXIDbRsPEDzT5lIlSknQDWT9LpI41GaAjPmVQxqL1uOHCHPgx0XaEX
+         1vfAzJV24Ey64w4m32tMVajDZbMn+/XX/blrStzuLAhveRzYhGhdyXazOTkNw+jDmaE2
+         R8Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748951849; x=1749556649;
+        d=1e100.net; s=20230601; t=1748951851; x=1749556651;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P9iOMNCqnm556i6iWSK9mE2UkHu3B2asZSKy8c1kTbA=;
-        b=HbhZKONQEa1od/WdET82rn7BJOC4y6pAOV3tQcRM5NfbRBg7CRU7hBKmB1I0UQQP8G
-         7wpPqH8qZzRX40SDRssBDA34Jvahj1afQogGO83zko7tyOgSq2Rf+Ix8kOcYSCvq7Z+/
-         iWbQpY/EQVQ0gLsyx9UyNeSlP7Z2jPBTqA63jIEpHSf3ADH9IUIzh76pkYO5lk8mMbMf
-         hii+yQaxm/DDOrT/hdyabEVswj7Hc8wjm2herz+bB9D1oSk/urFpmlr+52tHCnAsgaHy
-         cLn2sS8D6MgISw/389iQT1wBBl1ks1RiaRPjpciRA+gmOKSds+O11O7bAtBAYTqUz5WE
-         6TsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUx+N+6gXkZcnVNsw9YbjeDfCifh2OrfZgJuRVBTMAVM0I952kO7qVngdgxzKC6ZQ16fl+pe71WFXXDnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5h9SgRhw+OnQusc/kQaNnJJQhYKw5y3rx0r2wamTFH+QxRi7Y
-	MQ1tO4ar4VrUfATNBLxozAGBAb3LvAMGJ5fCgbLcUrmFETIyZuRv5sMqojtp3soUqOs=
-X-Gm-Gg: ASbGncuU1NLKBEosTlSHnCi8S282EX7qh8JDhhJrjy8c8kRGjyXtZ9bgTzcDBf7bR9a
-	O1Rr7gQ5UB3pcf91Smb+X+sF96tfIQf+2exBLyNZ37w9f92vrnG7DfdVrwb+LLIm2rvf2+d2xZE
-	rddagxdAuybQszFpJiZLQv8ief2gMlsucH0CEnAJM5VeMSnOiyuEo1uyV04mQA/7I9iI5YiNELh
-	d1V6fFj5/TbD/uATuoNVeKmAZRc7VlxrcW7YvBxfxl1rHZOlqdqb+kYdASYHRl7vtXhBXSifTPp
-	pId/RZQJd0ok1vUlJcx7FU320gGuNlYo3oQ11o6Q/xZ9/dB6tfFI8fj55ODxMp+CBHWKg6jekCW
-	3qgNVDbSPLifNm7tr7UkxBQ==
-X-Google-Smtp-Source: AGHT+IG6CmWM3RslzVJ9Zs6x2OnxvGd9okADIrUTxvkVwVY0rJS07w9DnVo5m/6fQdGbvnL2BjUAIg==
-X-Received: by 2002:a05:6000:2886:b0:3a3:7049:f947 with SMTP id ffacd0b85a97d-3a4f897bc88mr4781768f8f.10.1748951849223;
-        Tue, 03 Jun 2025 04:57:29 -0700 (PDT)
+        bh=ExhN+XF0N6J6awaTyjEwEtgTC+vyO+pqDRvv89W3ABg=;
+        b=sWwcCHLHipOjwF5dJ0upSOT1VY8gQW1vE2Kg+DdUOg3K44SYWb9Cb/1R9JhIxozqUB
+         zQSml4ZFwqxoK8qAgWb050CkyOHTxc0SuhcwP5VWlNv3ODMYFoNgRbpAjNMp2i+++eju
+         Uky/3kTgzhO48bw6fbz1v53BnoC3rrtpaz56e9c79yb/F96o5m+gHEBPjeAZjEzvkxy+
+         F4zHvCobZaODQN1QqUooocGe1vbKJCI540yaNtQEZPFjNhhSjFQcYz4Rq8elXseHfVrf
+         oXIU/FrQl6HysXL6FBbRoAyHypWvQ3XHpTs6PMrESaiQoYNiX2DFwTO/9xXINihRgnOk
+         c2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbh+hSCPHVuZBzcJhEreKm1jyVngL+aHTbVHviYH3EdP8q+qSSVAGnXcq4pfKMZlZXs46AmV5ZWZATmA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOfgfDDOQC8RxNlvF5vpIAuMdizIfhe9JXbhi+RJ7SNxYQr4v/
+	vkVYeFsLArEjO7c3cx0acsZvPmP7ESHVs+Nd8Inmjk5617fufxvD+F/21jt9a3GCHhw=
+X-Gm-Gg: ASbGncs52UvDQZmX3aakpUlXYAuDDOR54vfB0RaU4tI02KHMTmMCfEG3N3kPMf8S/zz
+	/BOl4njn16vYJPqb5DrD92gzRhbnMrC1vXwGF0mvdcYT9zTJp35hcUWNWCkkJ21Ufb9+ARA8Dbf
+	PVymSlKqPsZq06OYe6IeEZVnYSls7ShQkYymIRZzEGVp7XEPmvTV++YBcQBXWZPEodmOGr0fvjs
+	+yIjhLjqJquUleF+bdIJDG+ebymSN31rJ7xuQuAqa2KBa5FyuyQheci31W2clW38AxweQocn1qN
+	19z2tPIqdu9g6Vhgpm2OhC3E9kHW1JvQeW2zHN5RZYXrTlA59fSFXmYhpeSyeZSl2rt+GiJoInT
+	FEid7fBo6NJaqRQ9foOSSyg==
+X-Google-Smtp-Source: AGHT+IFtYARGpAfUwedcZUr+rv2i3DwXIs+E+vyvXAOm1JZEhhjjlgKaNxSVWr0jm35V1p0FWxTuuQ==
+X-Received: by 2002:a05:6000:144a:b0:3a4:d7c7:89d1 with SMTP id ffacd0b85a97d-3a512c0dcf3mr920895f8f.4.1748951850998;
+        Tue, 03 Jun 2025 04:57:30 -0700 (PDT)
 Received: from [172.16.23.13] (adsl-84-227-104-5.adslplus.ch. [84.227.104.5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c7adsm17671666f8f.26.2025.06.03.04.57.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c7adsm17671666f8f.26.2025.06.03.04.57.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 04:57:28 -0700 (PDT)
+        Tue, 03 Jun 2025 04:57:30 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 03 Jun 2025 13:57:09 +0200
-Subject: [PATCH 2/5] dt-bindings: mailbox: ti,secure-proxy: Add missing reg
- maxItems
+Date: Tue, 03 Jun 2025 13:57:10 +0200
+Subject: [PATCH 3/5] dt-bindings: mailbox: Correct example indentation
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -70,7 +69,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250603-dt-bindings-mailbox-cleanup-v1-2-724407563997@linaro.org>
+Message-Id: <20250603-dt-bindings-mailbox-cleanup-v1-3-724407563997@linaro.org>
 References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
 In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
@@ -92,46 +91,126 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=902;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5065;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=PmQVq4hQS35gwAsgZYe0MBq9ErqtT+mom2oZuUDxvi4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoPuMb6qbPyHvmIRIrN/4NfNvZ2r6JN2VnhQ/rt
- P/6fx1bFIiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaD7jGwAKCRDBN2bmhouD
- 11okD/9H8uQVKm6Fba6vs1oJEhpW2E6WDVf76MJKju/FQ59Kihwd3IlRjqvGcI3JVd0sghwfs5E
- dVHRZW7lejfKzozTRGlzYKm8jWya/bma153cjRkvzpDQ4dCBvIRrkIYg1uIO2KFYZbF+V1iRT3b
- g7UmqkWQqU2Xb3Vf2CVYNjeCKU7YQMZfAM2zsm2XqrHunsByEHhmiuPvSN4lljzOe//vWePZRWG
- oO8322aArQSfeBI4C52Yg3eKV9fHdvXpB6DijXi8YYx1Wb7SNfaj4LhVu8ODa/+DU8SGRNlxNP1
- Z9PDMuPCdkOOHza9p/Gzg96ZEX6jiKXZKNLNsZ+MjGfjP+789AdQqGGgMgnuGAk8XzT9GFl8lwQ
- fiu3PECrJ9h2dK0zIrh7fps9SVMjmuxVr4ap/yatDj2cnoKj1Ecc3/++X50tuN4BcbhEcrwOBNX
- KhkMPb8L/I7QgZ5Au5q7TpxMhDVfJXNqe+Iy+pY/JEE4GthRQjtzicDApK+RT8f+pceNlH4Ic/c
- Z1yMhvvNcKbEQkmwRPFyFCJHuv4iX9VNx0nZOxzJnR5Lc+ILPanys9dW3fr6NbwJo5ZlEyyJujQ
- JAyTMfMPK7r9ETJN711C9Myj4NJ76EYYBkR/8yBzgRKUIZmx+mA4WHhJApZvSUkhlTtOCzwMCuu
- LpLpbn5wLmTgrQA==
+ bh=pbB5PzrHWvVUn04LbVYo2MNOE6kLsW5gBdzmEzOHczU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoPuMdIBzxTrvdsP5gds/d0vjogFtPZqCCBexkU
+ t2g8c+MQ+iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaD7jHQAKCRDBN2bmhouD
+ 1xFyD/9L4+1GTV5DN1265YZBVsYfGT671n0VhpafJSb91mwvevxDWPkwfY40WAvavWVSdnU+oKt
+ Oul+mg/UJQ89kOSzcxD5LsRCQ9Acsti3Mrc2v+VcXQ5aaKGlGq7jt1acfeHhjeNosEAA5Q/7GGm
+ eGS3YqpRuHV86siWBlHPpFj41TaROQ96ys/d/JfM1FXitBk+o3yBl/OYpWLB7yPVR2Z10titntk
+ KnMS7dslZtULk5I/aSaL/TbCHAPuqYMwom+/SLCL+0+ujJZiLU4XJoZ+lOGclDgOgoRXIVmFHLy
+ irFm7Ztc9RUbHsC/CWQiAZSY3kGwQHDfxSbCfdceTq8dLC8feQ5/8UwFAvJP5pHuUCGmLp4nOj9
+ NCR3wksI5Jhat9TOXbmwNu8Kz2+urDI5jTQ3cX7HOojU8O4d+lByyUWVZIP2AlA/C20a6gv+e4p
+ P02u3sMkeIYYEcZYgTdJAs+VqRVrdEHt2IO21B9N3257zT4/OF95e2urmhCQyJ+Bi8SjdskB7jQ
+ zyl774llaFFuVkbXNBCuRXGiLGYdXtf5iES9z33x77UWRyzpUFqldA4EucRbBYnQR3KT5SomaK+
+ yDnULbjaDeWyLOrtLDh2fBnybkwPfmkdFDiBKfXFCiWAmJFWEfh/RFzExHvT0ZxT9pmyAT0IrdY
+ RkEvLVdycgzd0KA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Lists should have fixed constraint, so add missing maxItems to the "reg"
-property.  Since minItems=maxItems, the minItems is implied by dtschema
-so can be dropped.
+DTS example in the bindings should be indented with 2- or 4-spaces, so
+correct a mixture of different styles to keep consistent 4-spaces.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml     | 14 +++++++-------
+ .../bindings/mailbox/amlogic,meson-gxbb-mhu.yaml         |  8 ++++----
+ .../devicetree/bindings/mailbox/apple,mailbox.yaml       | 16 ++++++++--------
+ .../devicetree/bindings/mailbox/ti,secure-proxy.yaml     | 16 ++++++++--------
+ 4 files changed, 27 insertions(+), 27 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+index 75d5d97305e19f50059e61a4db2632765885e850..87d31963c1b73c956b9782f029b1a5ad2654f507 100644
+--- a/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+@@ -68,13 +68,13 @@ examples:
+     #include <dt-bindings/reset/sun8i-h3-ccu.h>
+ 
+     msgbox: mailbox@1c17000 {
+-            compatible = "allwinner,sun8i-h3-msgbox",
+-                         "allwinner,sun6i-a31-msgbox";
+-            reg = <0x01c17000 0x1000>;
+-            clocks = <&ccu CLK_BUS_MSGBOX>;
+-            resets = <&ccu RST_BUS_MSGBOX>;
+-            interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+-            #mbox-cells = <1>;
++        compatible = "allwinner,sun8i-h3-msgbox",
++                     "allwinner,sun6i-a31-msgbox";
++        reg = <0x01c17000 0x1000>;
++        clocks = <&ccu CLK_BUS_MSGBOX>;
++        resets = <&ccu RST_BUS_MSGBOX>;
++        interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++        #mbox-cells = <1>;
+     };
+ 
+ ...
+diff --git a/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.yaml b/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.yaml
+index 0849799ee0c5caaeb27fe1e3e3714a630a7c2b09..79963c9878bad1684fa0810ad71554af2ceeb75d 100644
+--- a/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.yaml
++++ b/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.yaml
+@@ -46,8 +46,8 @@ additionalProperties: false
+ examples:
+   - |
+     mailbox@c883c404 {
+-          compatible = "amlogic,meson-gxbb-mhu";
+-          reg = <0xc883c404 0x4c>;
+-          interrupts = <208>, <209>, <210>;
+-          #mbox-cells = <1>;
++        compatible = "amlogic,meson-gxbb-mhu";
++        reg = <0xc883c404 0x4c>;
++        interrupts = <208>, <209>, <210>;
++        #mbox-cells = <1>;
+     };
+diff --git a/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml b/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
+index 4c0668e5f0bdc1e03404cbd58a392465d30b0e8e..474c1a0f99f34777e1bed7fc0a34f89320a93b7c 100644
+--- a/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
+@@ -78,11 +78,11 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-        mailbox@77408000 {
+-                compatible = "apple,t8103-asc-mailbox", "apple,asc-mailbox-v4";
+-                reg = <0x77408000 0x4000>;
+-                interrupts = <1 583 4>, <1 584 4>, <1 585 4>, <1 586 4>;
+-                interrupt-names = "send-empty", "send-not-empty",
+-                 "recv-empty", "recv-not-empty";
+-                #mbox-cells = <0>;
+-        };
++    mailbox@77408000 {
++        compatible = "apple,t8103-asc-mailbox", "apple,asc-mailbox-v4";
++        reg = <0x77408000 0x4000>;
++        interrupts = <1 583 4>, <1 584 4>, <1 585 4>, <1 586 4>;
++        interrupt-names = "send-empty", "send-not-empty",
++                          "recv-empty", "recv-not-empty";
++        #mbox-cells = <0>;
++    };
 diff --git a/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml b/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml
-index eea822861804c259068aa8c4598188db28895518..682ccd76f5c25fc13bb3375007d39e6208cdddc0 100644
+index 682ccd76f5c25fc13bb3375007d39e6208cdddc0..c321b69f0ccd3cdc7cedefadf46982b42cce915e 100644
 --- a/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml
 +++ b/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml
-@@ -36,7 +36,7 @@ properties:
-       - const: scfg
- 
-   reg:
--    minItems: 3
-+    maxItems: 3
- 
-   interrupt-names:
-     minItems: 1
+@@ -68,12 +68,12 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     secure_proxy: mailbox@32c00000 {
+-          compatible = "ti,am654-secure-proxy";
+-          #mbox-cells = <1>;
+-          reg-names = "target_data", "rt", "scfg";
+-          reg = <0x32c00000 0x100000>,
+-                <0x32400000 0x100000>,
+-                <0x32800000 0x100000>;
+-          interrupt-names = "rx_011";
+-          interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++        compatible = "ti,am654-secure-proxy";
++        #mbox-cells = <1>;
++        reg-names = "target_data", "rt", "scfg";
++        reg = <0x32c00000 0x100000>,
++              <0x32400000 0x100000>,
++              <0x32800000 0x100000>;
++        interrupt-names = "rx_011";
++        interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+     };
 
 -- 
 2.45.2
