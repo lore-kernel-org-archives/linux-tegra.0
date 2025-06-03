@@ -1,147 +1,111 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE57F182D2;
-	Tue,  3 Jun 2025 15:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DE7151991
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 16:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748965781; cv=none; b=o34DdfadROPI/5E/TcN6d5U9VMw9bSiKDSyl83l1YBeAwdndhL+PxIH6D7+uGxR4dWyDRzfvbQPgDsy5i6/p7uN/jYLxkh6wtwRFpbGusF95adZT0dKx5Vrdc/342+W+mRDkIJ24TnjNQ0b/Pysy4zaPIsmibHESy7SnB40ma+A=
+	t=1748969531; cv=none; b=c8EoW4EG6xMe42DtcoO/EhLqjiTh7zmr0MT6A74nzWCv3jrfmbHaCBOgeTWdetL0dc6rrbpaY+jzCNzP3ttKY26YmMW6j3QW21WDJ2wuLEP4+I2hgcXb6boFMQkWYo5iU0R5GNpQAy8FnZVaTkoiVhUG94Zp/M24N2N5DioAzpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748965781; c=relaxed/simple;
-	bh=zRJhD7sF5YaVre9akGENc8NLed+Bjt5csNUjdKbF2tc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WGtuBOw2zNLDOOws985Dr9bb5cOpNUnXf+9sjwcJ25qHEjSPunud1qy6rtsveeLcu11Vh3ruY3ToFPr//NoU1INX1zN3NjdSAn9lm48eW1FCVlMcb11/qs7+RSmQWPrZ1TwLweanLHspuRkaRitpp+RgGtulkvvmu5ksF6H+RtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FPVbgXwM; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1748969531; c=relaxed/simple;
+	bh=BEdyI613Wia/ZTJv8cLxtkDLc3JEgRwZIE8nbEtxdp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tHvJ3ZzhclYhErCJLBHySf6gcNaEt/8HBlJOomVo7U0zyxOSdsbHwuNomCuoa53UfsjLzt1BmKJ/wyZIHVpTVRtT7IlhKFYKudm2odkY0FI0Mmm3HzUbwM7mXGGRBZFi2UkV2Y/Q2slg712eCSCJ8h4d755r9rmftjNlSk0V9yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=jI7LWKBk; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FPVbgXwM"
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 553Fn5bq556677;
-	Tue, 3 Jun 2025 10:49:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1748965745;
-	bh=Ar5D4zBSs/YUAUx/REy11enEaNMluqXtZe67Zl84UoY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=FPVbgXwMAZE/ZsvtLocKXO3Y3kWf4ta5LsqRBF84wWrOSiq7MrQaGxAofMCJRvFag
-	 q534Ov6HTadamlsWXy5sNeqsNM2W3mbasRZBdG90ky87j88oF60ugwyhXorSRgw568
-	 YTexki4PRPNXAJAAw5YEFaaAC6IIdx3BF+R+Qp4E=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 553Fn4O53854379
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 3 Jun 2025 10:49:04 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Jun 2025 10:49:04 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Jun 2025 10:49:04 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 553Fn4is569045;
-	Tue, 3 Jun 2025 10:49:04 -0500
-Date: Tue, 3 Jun 2025 10:49:04 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman
-	<khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chen-Yu Tsai
-	<wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland
-	<samuel@sholland.org>, Sven Peter <sven@svenpeter.dev>,
-        Janne Grunau
-	<j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Neal Gompa
-	<neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, Suman
- Anna <s-anna@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-        <asahi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH 5/5] dt-bindings: mailbox: Drop consumers example DTS
-Message-ID: <20250603154904.oa5lx5loywmzoqhr@varmint>
-References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
- <20250603-dt-bindings-mailbox-cleanup-v1-5-724407563997@linaro.org>
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="jI7LWKBk"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 29FD660029AB;
+	Tue,  3 Jun 2025 17:52:06 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id DIpdyDOjBGPF; Tue,  3 Jun 2025 17:52:03 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 472AA6000239;
+	Tue,  3 Jun 2025 17:52:03 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1748969523;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pW986tRbkWUUWIgebSvT0wxSNc6gzHLIJHoRP9TXW4Y=;
+	b=jI7LWKBk6xn6Zpi/utxZGLBrjTitzKmTpgQQyRjSjWXKAKgjoWBd68bXX8ayMia3giLsEQ
+	MtdsIDSHIBqf8AHxEOldBHfkG4vCmTyl2ZS9A3QevVWS+B/PB1ad+hSCISHaSklaPARP52
+	3+cIaCSy2hMC/AgemzLr2oT6XDquCl4=
+Received: from [IPV6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 2506C36008A;
+	Tue,  3 Jun 2025 17:52:02 +0100 (WEST)
+Message-ID: <46ef896e-9b73-437f-bfa9-4dcae5089028@tecnico.ulisboa.pt>
+Date: Tue, 3 Jun 2025 17:52:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-5-724407563997@linaro.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] EMEM address decode error when using Tegra210 media
+ engines
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, joro@8bytes.org,
+ will@kernel.org, robin.murphy@arm.com, jonathanh@nvidia.com,
+ baolu.lu@linux.intel.com, jsnitsel@redhat.com, jroedel@suse.de,
+ regressions@lists.linux.dev, linux-tegra@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
+ <20250603153257.GB407166@ziepe.ca>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20250603153257.GB407166@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 13:57-20250603, Krzysztof Kozlowski wrote:
-> Providers DTS examples should not contain consumer nodes, because they
-> are completely redundant, obvious (defined in common schema) and add
-> unnecessary bloat.  Drop consumer examples and unneeded node labels.
+
+On 6/3/25 4:32 PM, Jason Gunthorpe wrote:
+> On Tue, Jun 03, 2025 at 04:06:47PM +0100, Diogo Ivo wrote:
+>> Hello,
+>>
+>> Commit 50568f87d1e233e introduced a regression when trying to use the media
+>> accelerators present on the Tegra X1 SoC.
+>>
+>> I came across this regression when testing the branch [1] that leverages
+>> the NVJPG engine in the Tegra X1 for decoding a JPEG file. After commit
+>> 50568f87d1e233e we see the following error messages after submitting a job
+>> through the TEGRA_CHANNEL_SUBMIT IOCTL:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
-> index 1a2001e58880d2fc26954b26cff8ed53e7667f33..8504ceb64806bc7e25468597acdff99624571e9f 100644
-> --- a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
-> @@ -242,7 +242,7 @@ examples:
->    - |
->      /* OMAP4 */
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
-> -    mailbox: mailbox@4a0f4000 {
-> +    mailbox@4a0f4000 {
->          compatible = "ti,omap4-mailbox";
->          reg = <0x4a0f4000 0x200>;
->          interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -260,13 +260,9 @@ examples:
->          };
->      };
->  
-> -    dsp {
-> -        mboxes = <&mailbox &mbox_dsp>;
-> -    };
-> -
->    - |
->      /* AM33xx */
-> -    mailbox1: mailbox@480c8000 {
-> +    mailbox@480c8000 {
->          compatible = "ti,omap4-mailbox";
->          reg = <0x480c8000 0x200>;
->          interrupts = <77>;
-> @@ -283,7 +279,7 @@ examples:
->  
->    - |
->      /* AM65x */
-> -    mailbox0_cluster0: mailbox@31f80000 {
-> +    mailbox@31f80000 {
->          compatible = "ti,am654-mailbox";
->          reg = <0x31f80000 0x200>;
->          #mbox-cells = <1>;
+> Maybe this?
+> 
+> @@ -567,7 +567,7 @@ static void tegra_smmu_set_pde(struct tegra_smmu_as *as, unsigned long iova,
+>   
+>          /* The flush the page directory entry from caches */
+>          dma_sync_single_range_for_device(smmu->dev, as->pd_dma, offset,
+> -                                        sizeof(*pd), DMA_TO_DEVICE);
+> +                                        sizeof(pd->val[0]), DMA_TO_DEVICE);
+>   
+>          /* And flush the iommu */
+>          smmu_flush_ptc(smmu, as->pd_dma, offset);
+> 
+> It is the only mistake I was able to notice.
+> 
+> But I'd be puzzled - I'd expect bigger sizeof would make it slower not
+> broken.. Though your crash sure looks like either missing cache
+> coherency or a bad PTE construction.
 > 
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+With this change there is still an error:
 
-> -- 
-> 2.45.2
-> 
+[   21.794016] tegra-mc 70019000.memory-controller: nvjpgsrd: read 
+@0x00000000ffffbe00: EMEM address decode error (SMMU translation error 
+[--S])
+[   21.804409] tegra-mc 70019000.memory-controller: nvjpgsrd: read 
+@0x00000000ffffbe00: Page fault (SMMU translation error [--S])
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+the difference being that we only get it for one address compared to the
+previous log.
+
+Diogo
