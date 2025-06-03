@@ -1,99 +1,131 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56CB1361
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 17:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E461E5B65
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 17:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748972652; cv=none; b=NGeCqjtqVjLPuQD9g6v9CeLvmOgHYEiWID5MmplqmaPQrazAUNnfBWFgVTRp8c3gP89JEOWUOODR4wfeCBrP3r7AW2X4gwXwH5zjSCPWsUBV9CuLlHOXIxVMI7ki6BerVoNJoYFDrQZeKdZLD5m3mvF+zqq9tfo3TkqoPyxBymY=
+	t=1748972931; cv=none; b=p0nAcDgR0Rmg/nqV60UobRwGUjE1VCMROh2Weau/1Wxk8GKtPi9+sC+goZbS1uAjYnVBGCM0WnRXHJupL5qhuHG9oRt7QQ1+5q3kkm8MTwj4DLNkUqJSv/1cRMWeI8nfbu75+OdsjXPVJzhgN77Adk7s/JLJMtUdmbq3mXFt4rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748972652; c=relaxed/simple;
-	bh=UTb8ZDSnNnfE4kNWe8QXV+RinSAafNMsCyq+Ic89xNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DWCr1SitR20xR5LAr01l5kOUubAbp0tbeTRlckT91Ffwbr+sbNCGhFNabqHpWlwZyu8E43fRUqvoORRd3o7vId+QGytS2Bcnm1V9g0BBUtvDHeo+oHtYw/t+s6bq6KE06QUDDt5jtLbUAAZgFwNBEXKZTCTrgLSci/f+nGB9KMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24B9012FC;
-	Tue,  3 Jun 2025 10:43:53 -0700 (PDT)
-Received: from [10.57.24.31] (unknown [10.57.24.31])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABF1B3F5A1;
-	Tue,  3 Jun 2025 10:44:07 -0700 (PDT)
-Message-ID: <ef7c8bf7-d6b1-4486-bb8c-04d24488ecdc@arm.com>
-Date: Tue, 3 Jun 2025 18:43:49 +0100
+	s=arc-20240116; t=1748972931; c=relaxed/simple;
+	bh=eEBuMoSNI7au+HNe76KotnFGWKYETVSxnFoLxaa7t74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJR+T33+v0fXypW8wptVrlCilzZm7Yp2xVMb/yoiSlo1z2+jfUlFQc1u4sb3mWP68UfcSHKrpK4aQh6NnnOj17yETN8Q3MPTm+lTPNoECj9uSCFITTyZxckErmUOT8GLaNZYKKsIgQ4Hqf2Z+gbIiViIEhHOuiP1fDVZj8BJ5bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=duz1kGW7; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="duz1kGW7"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23539a1a421so32529555ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 10:48:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748972929; x=1749577729; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AZQvVO8nyC+ZKLyjCrtVBxSwB/yFvzMpPXbPJR/HF0A=;
+        b=duz1kGW7PAtnkdkfCcjOIelyryshY4G4Jm2w3ktysiA1PSI00KLpQNpyKAJ8/Jg3ls
+         byNUdz8Drt00ALRWVJmYZNV1RgK9AYtu1BtOswL6Bq5OlZ6WySPNW5C+bBCaDVR9tJyj
+         SlVyrrKyYqaAq6mQpBbUBMDuYNr1Y0KFDG2i5HDmGDSfwilzchLn8mXT3PVkEIr+SOUa
+         C3BNkvrbs5f0ycMCsgjEabxFCjW4HD29R35ZCzVXCkJUNxxWz6t0FVfI45fyzgl3IDaK
+         twLNFPop8zJa7RIDY1inon6rGtViA5UmlMCDC9VhmrGzhoBH4vloCqHoQXTV1jyziYB8
+         dVHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748972929; x=1749577729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AZQvVO8nyC+ZKLyjCrtVBxSwB/yFvzMpPXbPJR/HF0A=;
+        b=XBhV3xfvtXWfNvAqFF5h22WlkaqLO2dGKz5dc58I5z8BllK9WtitdcRdQd7yPb94tv
+         5ec36tVAzx2ZFqB+Q3bHkK6Y41G/xxYxP0OweU2SPvB5qXfUNhou1ZzV+CYZMe6dIiJF
+         xn+aCPFg0E0Fm4Z1safPg7EFzjTuCyMNyFOAyB60yttBPpMXvWEru3pKmSqxeL6NOO5P
+         1u4D1CO09FAx2nd4aUhRSU17y+nYRY56sF3FyPPtH2gLzPR12iXVbHPsP3VoiJGtB2Rl
+         /Pe8OKUD+naDiJdaX8Ov8mFKrFdkVAnH+v5rRM9X/jImDRdmOctYTvGawkDZBt1sU/pT
+         +gtg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2IhhvKxd0/O4dYCb2N2uAofNpH6cKDccbbKDd4n4hP9WPCvLC0SNSw3jr9DgoQJi51+/dqeqNIjlYtw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmpqtUHKM9fqd3ha+IWUxe7MEVB8Ga7Tc0iqx2axMIPcEua0iI
+	sA2IxfIGvX2+DZSsYlhaP7sV318MkpkT/SN+1z0F4iJZ5N/nWGoG4sCyUzu6icc1uw==
+X-Gm-Gg: ASbGncsooYr2CIdLmpBcQSrIJiu5E/3pJIHAEyImWDKxrV/GAyPRgs2XbP74XPAVt/g
+	HJsnKdftAb53BSNdso3wSXxjfWmDj4Hxae3JDZC2j1m2xkaoqL/bmuSyBp3rjlpnmY+q/F68kp4
+	b0GUpWIoMSJfNI7jFKfUA8Yo5VvFDNRz60nDRSwhznM5R055qgzFc9qBDeYjMrVWL5MHj3ffc22
+	vFSZMeJ+Ayzx5jro3yiToMlPdpsMAzBZioaKgXywLIFc82fo8pRBuR/x3RtzpnVvU/27yfngXbU
+	vU7GwKIEwpwGkL0wRpqsbBiNWELeDAPkeU7G8uvKp04yittB/ux2s6WDQZTDflR1XhtNsaRlCBN
+	ZfJGvom1GhpX3ypZHEiedFedMIE0=
+X-Google-Smtp-Source: AGHT+IFw/hM9KjB2+YIvlfPv7TCR6YjgHHZTSPyy4qbS7jSH9/Uc2dPgZocX8nOAauHg/zfpx7Iegw==
+X-Received: by 2002:a17:903:234f:b0:234:98eb:8eda with SMTP id d9443c01a7336-2355f762d1amr220323805ad.28.1748972928721;
+        Tue, 03 Jun 2025 10:48:48 -0700 (PDT)
+Received: from google.com (128.65.83.34.bc.googleusercontent.com. [34.83.65.128])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc95fcsm89801555ad.11.2025.06.03.10.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 10:48:48 -0700 (PDT)
+Date: Tue, 3 Jun 2025 10:48:44 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: tglx@linutronix.de, Jim Cromie <jim.cromie@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Marco Elver <elver@google.com>, Nam Cao <namcao@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, John Stulz <jstultz@google.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Saravan Kanna <saravanak@google.com>
+Subject: Re: [PATCH v1 1/7] clocksource/drivers/scx200: Add module owner
+Message-ID: <aD81fLvQQOBd7cot@google.com>
+References: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
+ <20250602151853.1942521-2-daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] EMEM address decode error when using Tegra210 media
- engines
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, joro@8bytes.org,
- will@kernel.org, jonathanh@nvidia.com, baolu.lu@linux.intel.com,
- jsnitsel@redhat.com, jroedel@suse.de, regressions@lists.linux.dev,
- linux-tegra@vger.kernel.org, iommu@lists.linux.dev
-References: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
- <20250603153257.GB407166@ziepe.ca>
- <46ef896e-9b73-437f-bfa9-4dcae5089028@tecnico.ulisboa.pt>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <46ef896e-9b73-437f-bfa9-4dcae5089028@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250602151853.1942521-2-daniel.lezcano@linaro.org>
 
-On 2025-06-03 5:52 pm, Diogo Ivo wrote:
+On 06/02/2025, Daniel Lezcano wrote:
+> The conversion to modules requires a correct handling of the module
+> refcount in order to prevent to unload it if it is in use. That is
+> especially true with the clockevents where there is no function to
+> unregister them.
 > 
-> On 6/3/25 4:32 PM, Jason Gunthorpe wrote:
->> On Tue, Jun 03, 2025 at 04:06:47PM +0100, Diogo Ivo wrote:
->>> Hello,
->>>
->>> Commit 50568f87d1e233e introduced a regression when trying to use the 
->>> media
->>> accelerators present on the Tegra X1 SoC.
->>>
->>> I came across this regression when testing the branch [1] that leverages
->>> the NVJPG engine in the Tegra X1 for decoding a JPEG file. After commit
->>> 50568f87d1e233e we see the following error messages after submitting 
->>> a job
->>> through the TEGRA_CHANNEL_SUBMIT IOCTL:
->>
->> Maybe this?
->>
->> @@ -567,7 +567,7 @@ static void tegra_smmu_set_pde(struct 
->> tegra_smmu_as *as, unsigned long iova,
->>          /* The flush the page directory entry from caches */
->>          dma_sync_single_range_for_device(smmu->dev, as->pd_dma, offset,
->> -                                        sizeof(*pd), DMA_TO_DEVICE);
->> +                                        sizeof(pd->val[0]), 
->> DMA_TO_DEVICE);
->>          /* And flush the iommu */
->>          smmu_flush_ptc(smmu, as->pd_dma, offset);
->>
->> It is the only mistake I was able to notice.
->>
->> But I'd be puzzled - I'd expect bigger sizeof would make it slower not
->> broken.. Though your crash sure looks like either missing cache
->> coherency or a bad PTE construction.
+> The core time framework correctly handles the module refcount with the
+> different clocksource and clockevents if the module owner is set.
+> 
+> Add the module owner to make sure the core framework will prevent
+> stupid things happening when the driver will be converted into a
+> module.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-I reckon the "unsigned long offset = pd_index * sizeof(*pd);" a few 
-lines above is probably more impactful ;)
+Reviewed-by: Will McVicker <willmcvicker@google.com>
 
-Robin.
+Thanks,
+Will
 
->>
+> ---
+>  drivers/clocksource/scx200_hrt.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> With this change there is still an error:
+> diff --git a/drivers/clocksource/scx200_hrt.c b/drivers/clocksource/scx200_hrt.c
+> index c3536fffbe9a..5a99801a1657 100644
+> --- a/drivers/clocksource/scx200_hrt.c
+> +++ b/drivers/clocksource/scx200_hrt.c
+> @@ -52,6 +52,7 @@ static struct clocksource cs_hrt = {
+>  	.mask		= CLOCKSOURCE_MASK(32),
+>  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+>  	/* mult, shift are set based on mhz27 flag */
+> +	.owner		= THIS_MODULE,
+>  };
+>  
+>  static int __init init_hrt_clocksource(void)
+> -- 
+> 2.43.0
 > 
-> [   21.794016] tegra-mc 70019000.memory-controller: nvjpgsrd: read 
-> @0x00000000ffffbe00: EMEM address decode error (SMMU translation error 
-> [--S])
-> [   21.804409] tegra-mc 70019000.memory-controller: nvjpgsrd: read 
-> @0x00000000ffffbe00: Page fault (SMMU translation error [--S])
-> 
-> the difference being that we only get it for one address compared to the
-> previous log.
-> 
-> Diogo
-
