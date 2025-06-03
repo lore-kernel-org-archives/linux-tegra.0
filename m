@@ -1,108 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5158E2C324C;
-	Tue,  3 Jun 2025 07:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB33D22A80D
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 11:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748934581; cv=none; b=l6u9Jxx4/cMjTVnMR6CcPJmFyfRQeox+B7rTiW3OfaSywC42+MwLfA4HjsRCq8rbsyT/SAeo7uinugTkJIVKeDyTNwbCZWDQjqB2gepZorcauLoKrg20qw/YMST2amlGHstocTadcYZSGi/JLlXV02o2NGN1D5pNdKXKQeAYEYc=
+	t=1748951849; cv=none; b=ESc8LPPp/fAbGhrp0IirTYgIKwK9g+RrQESgFnKdWXsJ900d6W6EYPW+N80HQ/ob4Vr9kP3goHxYP43537WcMPcicaSEfruYEBXteTuqb6Ffzg8g8k1ZDg69nnjzQZVslcgY8M1M0o01bZzXPHbe0hdARV9X0uLx2P9Via7eCFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748934581; c=relaxed/simple;
-	bh=xAEI3Ut9TYumW68KMwCVHfupohyU8Y1rYilzS5OHv+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rW5hlFdJHQG5FnJ7lCmAydJp7F78vXWXNec3ct8eBV+o1zfIatLKnq79Nv5gLp2kfHAdk60kVQklmkTJ2vVZXqf/dE51qVzFUOpeNuhqyANzdxlqiy3ca/y94zl1xcgyTJIeDPdkEeJ3HmGej3TLsrNbkpfmqYDi/YsU7pDwf8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p24BGaJ7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748951849; c=relaxed/simple;
+	bh=8VGdoBQnsW1Y8fk4p9+RrKW9XWt9gACX/CPbdQ0dOb8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EOR0gWVvOLp0mItYZHd/r9nnhy8c5ONKQNoTRXb22FqUriTPqmxqa9638juueuENQfW4geqONgOkNJfoluGslE0o5mGOnJoBbTSvFIwCdn2Ju9ZhoTunfLZbLM3MeV8xp5U17KqTp/S9JDDSG/EyLGzJtuCu8jHaCgGZ9SnW5vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ju0G0vqW; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p24BGaJ7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 780D3C4CEED;
-	Tue,  3 Jun 2025 07:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748934580;
-	bh=xAEI3Ut9TYumW68KMwCVHfupohyU8Y1rYilzS5OHv+I=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=p24BGaJ7f6ypCBiHUpAeNeN8J/zJdpYM/N4+zN5o75OJCA9Nk6wBkW9KBMkBNXSrV
-	 R8L5Hl6lggzWeC02evPI/gZ6EmRlWW8/KzK57Eyz++BW5N4QL+f/10NvSuRbE0CXOe
-	 8Pgjma635AedSHD23/f1sgPqcLLXS/RhjKxcTE3Mdc6iK8JeMeK68OQHl3h5giWav0
-	 ZAoNX4cYRxB0JHIbRChnBbB4HNv4/oyn/WnkdIyCBdozG3OTKbELjH3TbxCO/3tgxB
-	 wbNDtPse29q++kHnPdyg0vjoua5ZoKpjEijPkNEe5vuzhHt1PP8xEbMmBQLnrvO94a
-	 dHettTZYxTGEw==
-Message-ID: <2bcb724d-d582-40f0-a1d2-3b6fac93fcad@kernel.org>
-Date: Tue, 3 Jun 2025 09:09:35 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ju0G0vqW"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450ca8e6d05so1738915e9.3
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 04:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748951845; x=1749556645; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IBFWQj94F31lf6usd6PCcvd2+aXV7FOAOa4N/LRiuA=;
+        b=ju0G0vqWBuSJVuEFV2dCSjU0MIbsyU8GdCozvUoF2AC1UBJP9m/XWXJWb4lPg+2u2Q
+         7HKAZkJ7/OFPUrXKADzsHmyez6eWnbmkaRc8yLhwAMZcIJ78KPUV1UbXlfw1DkLfwlpc
+         ffCKvK3SaQfYXTf9N/AiGBfk5LzbTKBa0uBZicZhLw2+D674t4dQJiU4I1VYjBj0dU/3
+         bphVS8FPsf4vRZJBxOPFgVSzqoswppM7HnVYk2+r50w71AbZNYrgdFVFIa9yMo2oajcs
+         wMM7MK9lG4drKdCweJticdcry7qetqEtMm9ZulOsRa9ES3T6K/gnrc5Jcz3yYJ2O1TyN
+         2F+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748951845; x=1749556645;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1IBFWQj94F31lf6usd6PCcvd2+aXV7FOAOa4N/LRiuA=;
+        b=xRCijpfwNrZQsTqoIQhct2sqbPnobBu8e1IoJaM7YCXqXin6Zq6Ve4IMYyCtBFGr8C
+         LmpHjp0H/6TGhcY3aG9z0pI3xNfYp/fx+bYTVHpjAb6Of/BZDVMIPOopIpMZni54opiN
+         EfkZ+INeg7oABbEqJnEX5k1ur4oGrsX0QtojuSIL5q0N68XjiY16QNXu14EcvifjFYEj
+         dnR+ocKf1u75CqtIGxCtJfK+0YEVyLTiiaZCFiMOxDwc+08gqsHE0ZZbdNptYXuSkNWf
+         4cKzTJ3y65ZsOxSCnvTVZIIIC0snCsbJWf2sFWg5r2ldaHlobDu0YwqTC6PIZu7cVlNa
+         k44g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZVyHqzRpWPKtC3NFkr6hdm07SDrzjZGGWa4GhCoVTz3BmMJxCbSFkY0j1bJnKzX7nuk1kJbQxTuGGEQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK5vonTKpk920GAT7fCaGZve1Wb3BJj19iG/jXQulhgLcu732R
+	Lhux8btViXnAWqMSjkGZvCCBbgu2zaEz1juUrEJxibyieqS/WnkBxfcKbIVvvd9huNc=
+X-Gm-Gg: ASbGncsj42J5W/YzOi073AOay5R64lGzJZNndi1zwU4K4cO1W1TUi5IkCT0fCmFn95h
+	w3edVRDFlooLNFDphhLpE9hxUH331GJSEIUF2lL93YiPzNySyiJQOp5O72R6TRDW30id0EM4B4r
+	30XwRx29PXAm7ea34wbQBMEcfehD+RgZEnCgoVqDaaaf78esR6dCgRgPYgLvSOGcbZDM7bI5DJA
+	SRCOf+EuDg3AMgzyAgzXP1UATMXtcluVXcYX1FodX9Pd7mF08Mae+wt2Fug/XMs9ZDhB9fZxZTI
+	JnPS6sOX6vEcLR/6gy1ZfAWWUVCieo8DWCkEoM3Q7r9QRA+BqUlHyVgk1lQ93ZEQXgqrlK5CCJc
+	dnJudmyXA++Natx3A2gN3cw==
+X-Google-Smtp-Source: AGHT+IHcDKEnQI0iAe8KmJOAN+5AyRCThhejg+k63FaCsSnbGWGPgYCXX5i11cKOm0Js9aE/AZP8Og==
+X-Received: by 2002:a05:6000:2dc6:b0:3a4:e8c8:fb89 with SMTP id ffacd0b85a97d-3a4f892f306mr4455673f8f.0.1748951845084;
+        Tue, 03 Jun 2025 04:57:25 -0700 (PDT)
+Received: from [172.16.23.13] (adsl-84-227-104-5.adslplus.ch. [84.227.104.5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c7adsm17671666f8f.26.2025.06.03.04.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 04:57:24 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/5] dt-bindings: mailbox: Few cleanups
+Date: Tue, 03 Jun 2025 13:57:07 +0200
+Message-Id: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch 6/8] dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0
- binding
-To: Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
- jonathanh@nvidia.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250530133336.1419971-1-sumitg@nvidia.com>
- <20250530133336.1419971-7-sumitg@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250530133336.1419971-7-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABPjPmgC/x3MSwqDMBAA0KvIrB1IU5OqV5Eu8hl1QEdJbBHEu
+ zd0+TbvgkyJKUNfXZDoy5k3KXjUFYTZyUTIsRi00kZZ9cR4oGeJLFPG1fHitxPDQk4+O4a2bUx
+ jtH1RB2XYE418/vfhfd8/Li2Ljm0AAAA=
+X-Change-ID: 20250603-dt-bindings-mailbox-cleanup-c884545267e9
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Nishanth Menon <nm@ti.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Sven Peter <sven@svenpeter.dev>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Suman Anna <s-anna@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, asahi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1218;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=8VGdoBQnsW1Y8fk4p9+RrKW9XWt9gACX/CPbdQ0dOb8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoPuMWnfe5utyaUx5gvALmsxmruk7JbV/krIhA4
+ j8qvLrJLFCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaD7jFgAKCRDBN2bmhouD
+ 15ILD/910b+r8xCBseUJF1YO+j/IHLYwnq2p99ZLKQrjJPODK2Hsa8PvABhsMOVX7NEhd45xauB
+ 1gokachMmddL3QTHvT2SwZxCkXOkbMCydACOrC/fTJt47ZMqSJVTQddnBcQSgLyjNGm4CeOEnp9
+ PNBoEYnzvybXEkQACPTe80hUYBPNMff0l9H1886se4gDoMTuKflotBkuNAKnzK+8kiDBgxNOH9h
+ bZsCvRJodQOSAPreMvq0IihcpWlEs34BWltovMVcvF9aAUp083WRW+KVQYmOhWlos+j/T4BRIbR
+ CwPlyHjcGOVLxKnlJKijLA9qGkIsezGqUQ2SPYxLPKlc2qzyajNrDlj84gdKweskDeOpiBvLN+B
+ KyqdmGfxbd7NpRwX3CTYh4w/0CtWItIAUr9Ys7jFtXr/VsuA0YOCgJjVX1uEFU1xkudoFs1rAth
+ RJ/8B3UMC55EENVrV4M2L4siLZlqy2RcczsoTJFZF2waT+o7rvR+fmeeJf0wybsj1f/u9znmagT
+ kQ8ZnJpha5iIwXpe+p1xsFf82A53nj0jMMo0yNx2V3WeXOWMo7LyjgxfIAQHTUVhIFc4TIZqJVB
+ +kMs1/3Ubq5gPtCQo6w7qymB7PfuxwdaWvtwnw2jPw7zgEtHYR+5EiDbtFhXsuuiB3VyuoxS3ez
+ N7pia2kgSwXPEsw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On 30/05/2025 15:33, Sumit Gupta wrote:
-> Update device-tree bindings documentation to represent the
-> Control Backbone (CBB) 2.0 based fabrics used in Tegra264 SoC.
-> Fabrics reporting errors are: SYSTEM, TOP, UPHY, VISION.
-> 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml    | 4 ++++
->  1 file changed, 4 insertions(+)
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Few cleanups for Mailbox bindings.
 
 Best regards,
 Krzysztof
+
+---
+Krzysztof Kozlowski (5):
+      dt-bindings: mailbox: amlogic,meson-gxbb-mhu: Add missing interrupts maxItems
+      dt-bindings: mailbox: ti,secure-proxy: Add missing reg maxItems
+      dt-bindings: mailbox: Correct example indentation
+      dt-bindings: mailbox: nvidia,tegra186-hsp: Use generic node name
+      dt-bindings: mailbox: Drop consumers example DTS
+
+ .../bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml   | 14 +++++++-------
+ .../bindings/mailbox/amlogic,meson-gxbb-mhu.yaml       | 10 +++++-----
+ .../devicetree/bindings/mailbox/apple,mailbox.yaml     | 16 ++++++++--------
+ .../bindings/mailbox/nvidia,tegra186-hsp.yaml          |  9 +--------
+ .../bindings/mailbox/qcom,apcs-kpss-global.yaml        |  9 +--------
+ .../devicetree/bindings/mailbox/ti,omap-mailbox.yaml   | 10 +++-------
+ .../devicetree/bindings/mailbox/ti,secure-proxy.yaml   | 18 +++++++++---------
+ 7 files changed, 34 insertions(+), 52 deletions(-)
+---
+base-commit: 3be1a7a31fbda82f3604b6c31e4f390110de1b46
+change-id: 20250603-dt-bindings-mailbox-cleanup-c884545267e9
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
