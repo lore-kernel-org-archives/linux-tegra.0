@@ -1,112 +1,97 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAED11E570D
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 18:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294FE2853E0;
+	Tue,  3 Jun 2025 18:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748974488; cv=none; b=dETJC33ucnuSQ8oANQno3wY8yn4sk6jTzlJYsR1rQ9s9QZjZh2MF0xdbaFS+iSb5eD7Dk3UOQYBFgV/F/Qjk8e784a9fhVunY3movIeanvtAwwIKGGemkTf8DVDHezSQUqrd01/Q1fkomY1ls+mAytLPNUTkfOIpmjNDUEw3kXg=
+	t=1748974608; cv=none; b=V+7AtKE2RInpMxGJClQidwzkgUTGUuxkCztiu2pzqHiXcg0/wwCJhP+QrgqERU+We2lwhCEfiXZ/BW8ULsN+AS6YsBiRHCQ54I4T3zJEgG8uwJu8cFqEpaoaVGvGIanNVXY253vG0UBSwgvLrPeYjCGzMiVBp4FOEvXKcFUVTiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748974488; c=relaxed/simple;
-	bh=9vyQ/hWBeMaP41xxr4+/F5bsqXNx99oAM5mI/eDGL7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cjTI/pvGvUvOvwK8fjhEDZ0+Wl4Pu3Uk/bxMK8rcV4u2xD9UCRzR45Rt/9cQ0JDd/wikD93oYyKjcQnygrI8hF4T4Z8DjKhJ8EJsHxXvneWhO8Wvz1dfTVfhrjPafgfLacwLWA+xHNDO7T6wWYGLwHTP/W4YIsggFopy1m4+Qy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=ljBy3W9C; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1748974608; c=relaxed/simple;
+	bh=p1oikR6A7CSugoR4HjSUuEWBgK7rKrZS/huPT73PKfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M+ws9QJ/5A6SldDYUUs//LnnT8L1nsNitNDAhU1arqQb7lqqB/iMs/9HV5GkuRF3uFc6OvYxTQjDI2p7ZDKklbFrErG41i+4oJVG4muncq9YXo2nm2d5lchTwxiswJhh6+dwn6ym27MvekCyr5b6856zWl12tq3f2bZiv9tGeW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=WgeGMCfW; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="ljBy3W9C"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id D17BC60022E8;
-	Tue,  3 Jun 2025 19:14:43 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id c0RF1RHjHWYO; Tue,  3 Jun 2025 19:14:41 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id CDECA60022ED;
-	Tue,  3 Jun 2025 19:14:40 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1748974481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lJrKSQdj7mdla0nMevQ8JAjDOQ8LmBYVi6tQmOOTlzA=;
-	b=ljBy3W9C3kHWU0lywMHhq8oxERm3bvvCgLWWwFwbMVquLDnSYt6JSQPzHX+RzVaQ9LFczn
-	dndCjakGLddLxjGSN4hW7C5q/boGOtR9bJ1MwuAUBWtLjPkawwfuJGhNJ9H6x3V5BpM8fp
-	IKqQvIMCtkRq82lfSEcn953HW1eabsk=
-Received: from [IPV6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 80A5D360092;
-	Tue,  3 Jun 2025 19:14:39 +0100 (WEST)
-Message-ID: <1aa9892f-38f6-4d75-b840-c525f24cf934@tecnico.ulisboa.pt>
-Date: Tue, 3 Jun 2025 19:14:38 +0100
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="WgeGMCfW"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2351ffb669cso48200625ad.2;
+        Tue, 03 Jun 2025 11:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1748974606; x=1749579406; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=muedraecWG3k6sC4BkfWIIfP1Qhn6jm5riTVBMIqDbo=;
+        b=WgeGMCfWNsQgQbH6s3AziOcGfKJSpfd7SrXjfU9HrVE7iu887hNpQ71Okfzf2Ng83S
+         OZsfmOR/4oLCF6/m2yjhZGpGxhrq/ensB3Fj6drWUtD4BsnDw3B3nOH8k7oiGqXFmQST
+         zY1RJLky5G6t2/01It32qE3VgwpM24EFKyH5K7+vHiPJ/9Sq0HNLO+kB2CKSACaA3XCl
+         BJIGuIKQZsERRU41RlxRtINrhU6WGGL3Z4JEkRRKnDqVltmTVhecqfU3s2QWcAOoKHvJ
+         XuoMj4YmnVMQEItztLayKDU7k+HZeClyBZwXCQV0O676aXbUPGinfHUP5kKVRYVqgvbq
+         MRQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748974606; x=1749579406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=muedraecWG3k6sC4BkfWIIfP1Qhn6jm5riTVBMIqDbo=;
+        b=QL6kxppAW0DxhVlkEr8XexzWe0jGsUijNBgITYEoim7JMHH8gHJNuLyLqJ0mkKo3jG
+         0CVwrfqgvrLie6pG8Zuy12ZHAV3LPOXRzH77KKsoRfR/VglgpksGg0lkzd3wFOkvR9br
+         dmJTymRt7tGwr/qEVJXGX+Hm8ycxixRBTJtUNAhXo2ZTNCMq5Ia/tKcEAxTbrg31qpL3
+         PL4f7UE07h4RECHSpgnsJAd1a67mI0PtL7OEVra0Ko7EEU/N5T4bSfWk3uf082vF0Zjv
+         ZGzYWHfIOs1iYBTBPcxYVTAcCPw57nbEyAk18BCsfp8CsPxZSS/Id19dOUTvjWmwKvp9
+         rjuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ1HnrAe+yF7J0jXH/3e3vFa9pn7TPaotvRPyZGZcPs0NYl+jWLViOECwru0C7ZWtmDzNOMJthPq02YB38@vger.kernel.org, AJvYcCUSqScBygIcSlUQJaXb/2jUp//Py4DPrwjLhV8EGDJXe30yTkH5GXDEUsQ1S/nNzcR2jM9hChp0bXUu/iuJEA==@vger.kernel.org, AJvYcCV5sY+XrZyCnsZWHPopkpqFG8XFf1rVHEiCKwgQ6zIK/sI70AQmcK1EYvOviwjOAjHSc1UbJAB803uj2b4=@vger.kernel.org, AJvYcCVynmWObn4HlH5ry5nwFSoPcgQ39yoCzRZL9Bp3b36yx6pJdnYlO5kb35gmTMGmWyyNzX39Ehdt3Ld6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdGwBDVxyIdxR5Ar1nbzvolwvndizW5qZ7luO4IAkKb3rBRlbC
+	MbuxZk9LtY+Ek365LFnMFoG+9qyjmnnb6yoeQB5louzbks/WMaH/yDK5kSvLd4YfMWPf8paMpte
+	AXodhOONcpAPpaD1sEpuUJg15dG/1/Po=
+X-Gm-Gg: ASbGncvpIOrOLjWhirG6S1vJC4E1M45eClxemcgKACHYj5DCuBeF2nb0sGTUgRbeP5b
+	VrVPpIuCBrJGQizTuZJzhw4a9QEmesKJAWEibhR0nZx6C2y+AEcd67EWYe6O9LZaJhZBXDLrAPa
+	ycPedmxyamyQp/KGiwJ/sxQ++MdWFyLTcspZ820ILFSdq9MGv0pcZ9v6YtRnrYp6tkL0pvYppJB
+	oKX
+X-Google-Smtp-Source: AGHT+IHr9J8+h+AZ8STPC1y2/qEM2ZZcXzahpAeXjwcKczY154NqfHQ6m3ty2wKy8w/H9uZv/VxmB7VQvs3K1RzoMLk=
+X-Received: by 2002:a17:903:234c:b0:235:779:edfd with SMTP id
+ d9443c01a7336-2355f76c215mr179533115ad.39.1748974606365; Tue, 03 Jun 2025
+ 11:16:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] EMEM address decode error when using Tegra210 media
- engines
-To: Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, joro@8bytes.org,
- will@kernel.org, jonathanh@nvidia.com, baolu.lu@linux.intel.com,
- jsnitsel@redhat.com, jroedel@suse.de, regressions@lists.linux.dev,
- linux-tegra@vger.kernel.org, iommu@lists.linux.dev
-References: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
- <20250603153257.GB407166@ziepe.ca>
- <46ef896e-9b73-437f-bfa9-4dcae5089028@tecnico.ulisboa.pt>
- <ef7c8bf7-d6b1-4486-bb8c-04d24488ecdc@arm.com>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <ef7c8bf7-d6b1-4486-bb8c-04d24488ecdc@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
+ <20250603-dt-bindings-mailbox-cleanup-v1-1-724407563997@linaro.org>
+In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-1-724407563997@linaro.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 3 Jun 2025 20:16:35 +0200
+X-Gm-Features: AX0GCFsq34ioWPbcIqxTayHSRdJ5z4uSRbOfAewoz0GwtzdI-PxfH0Fpo31M6tA
+Message-ID: <CAFBinCBSyniWtR5T3XdgohG+n0Ae=6tgmdASSxsnsmoQV4yhQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: mailbox: amlogic,meson-gxbb-mhu: Add
+ missing interrupts maxItems
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Nishanth Menon <nm@ti.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, asahi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 6/3/25 6:43 PM, Robin Murphy wrote:
-> On 2025-06-03 5:52 pm, Diogo Ivo wrote:
->>
->> On 6/3/25 4:32 PM, Jason Gunthorpe wrote:
->>> On Tue, Jun 03, 2025 at 04:06:47PM +0100, Diogo Ivo wrote:
->>>> Hello,
->>>>
->>>> Commit 50568f87d1e233e introduced a regression when trying to use 
->>>> the media
->>>> accelerators present on the Tegra X1 SoC.
->>>>
->>>> I came across this regression when testing the branch [1] that 
->>>> leverages
->>>> the NVJPG engine in the Tegra X1 for decoding a JPEG file. After commit
->>>> 50568f87d1e233e we see the following error messages after submitting 
->>>> a job
->>>> through the TEGRA_CHANNEL_SUBMIT IOCTL:
->>>
->>> Maybe this?
->>>
->>> @@ -567,7 +567,7 @@ static void tegra_smmu_set_pde(struct 
->>> tegra_smmu_as *as, unsigned long iova,
->>>          /* The flush the page directory entry from caches */
->>>          dma_sync_single_range_for_device(smmu->dev, as->pd_dma, offset,
->>> -                                        sizeof(*pd), DMA_TO_DEVICE);
->>> +                                        sizeof(pd->val[0]), 
->>> DMA_TO_DEVICE);
->>>          /* And flush the iommu */
->>>          smmu_flush_ptc(smmu, as->pd_dma, offset);
->>>
->>> It is the only mistake I was able to notice.
->>>
->>> But I'd be puzzled - I'd expect bigger sizeof would make it slower not
->>> broken.. Though your crash sure looks like either missing cache
->>> coherency or a bad PTE construction.
-> 
-> I reckon the "unsigned long offset = pd_index * sizeof(*pd);" a few 
-> lines above is probably more impactful ;)
-
-Yes, that fixes it :)
-
-Diogo
+On Tue, Jun 3, 2025 at 1:57=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Lists should have fixed constraint, so add missing maxItems to the
+> "interrupts" property.  Since minItems=3DmaxItems, the minItems is implie=
+d
+> by dtschema so can be dropped.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
