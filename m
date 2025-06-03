@@ -1,116 +1,122 @@
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A63D23BF9B
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 15:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCBE189F20;
+	Tue,  3 Jun 2025 15:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748964781; cv=none; b=RGDrK5TARZH1zY7x84X0pFZK+4nF0yYhr4Z0xwZw9Ms6gdCdEEFJAu0Vzt1NW25vA8PmKbrGN3BdZQTzu8/A8BwNmMoca4TnmxCm1+/m1E9/Kd0g0omVcZKs0LYMYYRqs6VF0BsX3xQSdPA0uOyvcSenm9rxsr4HtSsLA0WPTiQ=
+	t=1748965582; cv=none; b=pkFxWu4rDjO3WLYvuVvYPivpFCeGIDk6+PUVK1kvsx8273lwqS0WaOpfSJC9/Ou13CGEbzc2Ufong1rIwZsqM5LG2EvQf6CQN/t0ME3CicKPaUL0jzvlaYoYJEX647GQB6bnVka9b+x4THnIQ8O0bL4HD8J4fYdPCbCBQ163HGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748964781; c=relaxed/simple;
-	bh=l9yh5roB6TAD+eJpxkrTHsMLVCJdRJ3KS9fKxDqDNog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRKoXE1fM9Co4TrlmBsvf8IVtwy5XBp5gk37ohuBvjBfFjG3anJq+8AgU+/o/eRBPV4aaZbUqRUNAKO4OGRTq7CENjgrXkvqQm2AN3/73uzrZUCsvQociIojo56pF7lLUkcNHud2uVFlG4WMvnpPS1u9hRRDD3U8lIh05lqmmYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=iXHGlJYu; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1748965582; c=relaxed/simple;
+	bh=7W40XcPbIp9auuYKPsUESX4uR0NXpKHXqGhBdPTYtQo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEfBSB3BhuDWwdLORqyxobH7QjNnsSWzUKGMrzgArL2+GRjKW1ZTk1aD3W6NHBWKmItYucvcsmLR/op1fjxiIGmzz5BxYO4kGIG7jK++c03sXGMNhYkMGpUU6JjzjiVXjRU0kPkX5Do7tNLIHVCIGyf/tkewOrnquPDzQU+I7AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LAIDzCaG; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iXHGlJYu"
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d094e26252so831237685a.0
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 08:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1748964778; x=1749569578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mtQW3fkkCN4JKD2bOxa9OSXsumf197V91aZsIjfwDI=;
-        b=iXHGlJYuIdwZTH47GRTUbOnPY8Iz3kqbDdX8FPDDdlDr3j/h7Aa/zvm3uoVdDzWElY
-         rUEPYd4MCvKMYKO/tUDgtuc6LWRfMgBSG9AujRkVUQq/BfKVZqZJ1FomjEarYcfLTKM3
-         4SIFtFbI3LCHXdmFDEjXyVB5cz42P9cjxHOQcnEcIwl+qjH287L+6NKkSogpVKd9D+KK
-         9ba88EoPQNdEq0K/TyRJMLrHLS89BK7mbgDrgCC/kbYBGlwwvQbQ9R8UceGfNofQ3Hs4
-         S+Pp8t8EVAsxw4iMRG937auj91oD3XKwr4yFhrWIlUpSM0/elrIz0QXyPgamJ92HI+15
-         yNJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748964778; x=1749569578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1mtQW3fkkCN4JKD2bOxa9OSXsumf197V91aZsIjfwDI=;
-        b=L72GWP6D4mWdGUftxVU+35OjwazhS7fcmJJqGqz8fQl+4qquOlBgBeX6m2fSeh2wlE
-         oTKgkiaJ11KszaT1mMliUA2hX5wKrQqE8xeuWxKelkXhXgV82bVOgPT26V339oC1tbON
-         NZpKpXHQeXrXFf6daAW43lko4fP5CgWQr2OoCMLdRZoJGZQ8dz5tXRhfLsZr2i8zR03N
-         hPGFSQkTtX9J4P1A45PtzFcnB76y7k+6K1i3jAVF0jzCe2MK/O6YtEHYe6DZCqut6ZMd
-         VRJ0R3T21BiwbYHtjhwSAMmGi8o8NPBUS03ZavxpUo970HKBYuflAkAwBOZnN1047R48
-         XcMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsQCu8H2adkGOg9xn5Y/Oolq1vSaq6Bw+TMQxJLFVeb8n9y0zow0Lqp9PNq1GtUtVBIFpXdH6RFLHLVw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDUqsWOgZ2YRMkz/GuKM2UXcQvu1vSNvsbTj+44FHNwZwS2GNP
-	6B3wnpIBBiUsp7iABja/3XkhlwfWwKtm1et00Hol79g44rG4hY4amUUMIEI/nQW4zZ9C+IBOzn6
-	hoCy3
-X-Gm-Gg: ASbGncuIDb/cwg2LIM3ggeO2Psf+Bmi0Mho7fHQEuZof2ALaXbMT29biaeV/+KJHcZk
-	dNO+EErQIXNOk/3siFIsnxX3xzyndSIx6A7Ds/mEM4ErCi+/vX3Mp07ZooZQp0IbSK4MD67u8w5
-	0e0MBH1aKC+5s5f1ag70PqEPJQ4smdWGJnfI9U8eXdTb2dYz558RgSW04aD/WTGn5peTxyMnm7+
-	mOHVoLTnlTYyEzgTZU0uwQQJJ7QxK/IvCc+n8i7//ozpqKAc5J/mM/9N7YavAcDEU/gIkyrkVU1
-	wTQVB1Q+7F5r2P9REZerx5+rwMh/afNkst50GssKRK/AXAso9fEFKb2qeBWV40YjPxa8Q6Btj21
-	Mg7qDzwG6MpbNSWNEPEXztBXANlE=
-X-Google-Smtp-Source: AGHT+IGNetUYleKkkekxf29HMZ0X2KdHF1aj+g1S3YQFzx43O8VQkGEV1jpWL/mxUQXnB44kVfrbIQ==
-X-Received: by 2002:a05:620a:6081:b0:7c3:d5a4:3df3 with SMTP id af79cd13be357-7d0a4e396a1mr2453954585a.34.1748964778475;
-        Tue, 03 Jun 2025 08:32:58 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a1a70fasm854998785a.95.2025.06.03.08.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 08:32:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uMTdJ-00000001j8y-2UtV;
-	Tue, 03 Jun 2025 12:32:57 -0300
-Date: Tue, 3 Jun 2025 12:32:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, jonathanh@nvidia.com,
-	baolu.lu@linux.intel.com, jsnitsel@redhat.com, jroedel@suse.de,
-	regressions@lists.linux.dev, linux-tegra@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [REGRESSION] EMEM address decode error when using Tegra210 media
- engines
-Message-ID: <20250603153257.GB407166@ziepe.ca>
-References: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LAIDzCaG"
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 553Fjb4Y3549572;
+	Tue, 3 Jun 2025 10:45:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748965537;
+	bh=k79/t0nkrynCfBdnkrMBZYitRqiJPksoN+vCidZA6tg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LAIDzCaGtrG7BOYxjg2Zy5SWUgjPSOlLbzKuTEjYh/xUtaU3Ngn30qsYvcZeXbOUf
+	 e+PmZpftIyyC5AdxoaRviwrh6UP/f9H/+jYz5OBXeqxh8jy9KDtEkTt8BBAZKQZ3E3
+	 KTlOUYZnkGYFn/ST7gI7cjN8yWxgA+R8JAAFv+pk=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 553FjbLd3852667
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 3 Jun 2025 10:45:37 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Jun 2025 10:45:36 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Jun 2025 10:45:36 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 553Fja5C649814;
+	Tue, 3 Jun 2025 10:45:36 -0500
+Date: Tue, 3 Jun 2025 10:45:36 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman
+	<khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chen-Yu Tsai
+	<wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland
+	<samuel@sholland.org>, Sven Peter <sven@svenpeter.dev>,
+        Janne Grunau
+	<j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Neal Gompa
+	<neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, Suman
+ Anna <s-anna@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+        <asahi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: mailbox: ti,secure-proxy: Add missing
+ reg maxItems
+Message-ID: <20250603154536.cfa6galvuwkq2qxp@recipient>
+References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
+ <20250603-dt-bindings-mailbox-cleanup-v1-2-724407563997@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
+In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-2-724407563997@linaro.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Jun 03, 2025 at 04:06:47PM +0100, Diogo Ivo wrote:
-> Hello,
+On 13:57-20250603, Krzysztof Kozlowski wrote:
+> Lists should have fixed constraint, so add missing maxItems to the "reg"
+> property.  Since minItems=maxItems, the minItems is implied by dtschema
+> so can be dropped.
 > 
-> Commit 50568f87d1e233e introduced a regression when trying to use the media
-> accelerators present on the Tegra X1 SoC.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I came across this regression when testing the branch [1] that leverages
-> the NVJPG engine in the Tegra X1 for decoding a JPEG file. After commit
-> 50568f87d1e233e we see the following error messages after submitting a job
-> through the TEGRA_CHANNEL_SUBMIT IOCTL:
+> diff --git a/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml b/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml
+> index eea822861804c259068aa8c4598188db28895518..682ccd76f5c25fc13bb3375007d39e6208cdddc0 100644
+> --- a/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/ti,secure-proxy.yaml
+> @@ -36,7 +36,7 @@ properties:
+>        - const: scfg
+>  
+>    reg:
+> -    minItems: 3
+> +    maxItems: 3
+>  
+>    interrupt-names:
+>      minItems: 1
+> 
+> -- 
+> 2.45.2
+> 
+Reviewed-by: Nishanth Menon <nm@ti.com>
 
-Maybe this?
-
-@@ -567,7 +567,7 @@ static void tegra_smmu_set_pde(struct tegra_smmu_as *as, unsigned long iova,
- 
-        /* The flush the page directory entry from caches */
-        dma_sync_single_range_for_device(smmu->dev, as->pd_dma, offset,
--                                        sizeof(*pd), DMA_TO_DEVICE);
-+                                        sizeof(pd->val[0]), DMA_TO_DEVICE);
- 
-        /* And flush the iommu */
-        smmu_flush_ptc(smmu, as->pd_dma, offset);
-
-It is the only mistake I was able to notice.
-
-But I'd be puzzled - I'd expect bigger sizeof would make it slower not
-broken.. Though your crash sure looks like either missing cache
-coherency or a bad PTE construction.
-
-Jason
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
