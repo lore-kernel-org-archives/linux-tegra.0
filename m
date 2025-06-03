@@ -1,285 +1,116 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B4123BD0F;
-	Tue,  3 Jun 2025 15:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748964685; cv=fail; b=imkuTa9WNkNEddPFjeBlJsJehTq5LVwKDqyuM/TfW7ZwA0vhCsSHRWJ5e7nsO7aAwlg3w6KL1aPfCrO9yiBnxrFt5cz/U2MncHXNp44SiCotIltZf1hMwcycsWV62IEP/TM+GYe4dy9uKIKYtOKle/1t7K5KtG2sHfhC2QpIeOk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748964685; c=relaxed/simple;
-	bh=60Hedu1C5znc1D97pOSxAM9of+vzIc5ib1kizYNbkps=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pwc+t8fcgx1Tna+eAnt7w+LwfJ0zKMuPC60X0fN7+g1RziglqghDFD2b6OlHjVrR7blB8BZyHOoisfH+5OmrBHAlfD3wdS74QegOEe7rIFmMpYCQHOz/55p7qOwbNFrsBDaWLLgg2UT2KveGGdAITerQ+PJoz//Hzm0+eLBK/Mg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KX0aL42f; arc=fail smtp.client-ip=40.107.243.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A63D23BF9B
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 15:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748964781; cv=none; b=RGDrK5TARZH1zY7x84X0pFZK+4nF0yYhr4Z0xwZw9Ms6gdCdEEFJAu0Vzt1NW25vA8PmKbrGN3BdZQTzu8/A8BwNmMoca4TnmxCm1+/m1E9/Kd0g0omVcZKs0LYMYYRqs6VF0BsX3xQSdPA0uOyvcSenm9rxsr4HtSsLA0WPTiQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748964781; c=relaxed/simple;
+	bh=l9yh5roB6TAD+eJpxkrTHsMLVCJdRJ3KS9fKxDqDNog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRKoXE1fM9Co4TrlmBsvf8IVtwy5XBp5gk37ohuBvjBfFjG3anJq+8AgU+/o/eRBPV4aaZbUqRUNAKO4OGRTq7CENjgrXkvqQm2AN3/73uzrZUCsvQociIojo56pF7lLUkcNHud2uVFlG4WMvnpPS1u9hRRDD3U8lIh05lqmmYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=iXHGlJYu; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KX0aL42f"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NbpEz/92vsKA2uduzr7wTKGNTHC+MVnANHLPQ9nRIadUQQmSL4/naO5Ef7Vmgq/q5NNm/79rJ0q4EeC1m+lvDmALK+laoDVE0NQ08+7Xglp7ywzcvBgSXPCB8C+DhSRfBuIWP+aLDhS8xN+CV+6HOAJ1sYkttS0GnNXZOOcVQ9RmV4kgfGeO8p5gyIDg6B0XO68rmCREi4T+uXdviIWB/4y67Vukjld/HLR0Wy5bHSOP0P1aqtqbCdThUYPOXw4oqhcHgmEGDpqqQ1EcgQ0JrvK9PTwRYAWAL5uuaKNkzJuQ4NWXSY/ClOZWc3kgiHsFZcwmQObbeSpPKtOg/cPgcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sghxC7rw53Qcsso+ijWrk8LSvXav82UBTYy1jeL5kz8=;
- b=XkOutYU9wH/sYjDn+HfIBy5zb7q9JPv21RE8VPvAwZYg+9Q19SigxHLN1Pq37NOSNu+pXrxulTOeLrUisS39PtYMwTEflXns42o72Domf3NocllH7ISdkHNeZCwfLJrZDAd/zZLoCLL/kywekB8sYb70EcpDv8nbuCvAbUtvlT0Ff+VZyghgfH4WojW+zCw0UQYdf+SX1r7ZFn7VNnsPYHfymPzqcqbupqk5MosqLpZsAc8GhmyV7oUbh9Lqh7NOoz85WLNOXdCrRl3ZTcQ31gu8XtgJNrkLutN+Ww2p1aL/IxZY3EeTiJwkG8CiAF625qhveKXY2dWWQ9swswZTag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sghxC7rw53Qcsso+ijWrk8LSvXav82UBTYy1jeL5kz8=;
- b=KX0aL42fDUN5LHVLhAJSZtyP7uqheLtKO8ZqxcYwywCS9vpqkr23U7DdOhFypsyqRzNLE+BHMcr+POwBOgjGp9Z+NlG0nxTPL+9w27tro6fxKgwgxqx/ViR6OvlV9RwuHkiCtUlKlgRKiRSJjZbOAfPrNgRKVNRciB12lEW0q3kPWdL1CmdHdIlWI5gYLwKFjSMDPuu7UwwZ75qsnB55IGBUn6CG6W7jLe1WVlwmLaPq+Itf2rLGCCdLqELeWnnmJauqAf73CGfyuBuOAzdKY7l+jngVaIF91wjGKwPNGMMDLUVMnQ1NHrhWaASg5EG+PFdu1Obvv6Nz0h+5q9GNUw==
-Received: from BN9PR03CA0409.namprd03.prod.outlook.com (2603:10b6:408:111::24)
- by CH3PR12MB8753.namprd12.prod.outlook.com (2603:10b6:610:178::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.34; Tue, 3 Jun
- 2025 15:31:13 +0000
-Received: from BN2PEPF000044A7.namprd04.prod.outlook.com
- (2603:10b6:408:111:cafe::dd) by BN9PR03CA0409.outlook.office365.com
- (2603:10b6:408:111::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.27 via Frontend Transport; Tue,
- 3 Jun 2025 15:31:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN2PEPF000044A7.mail.protection.outlook.com (10.167.243.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8792.29 via Frontend Transport; Tue, 3 Jun 2025 15:31:13 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Jun 2025
- 08:30:50 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 3 Jun 2025 08:30:50 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Tue, 3 Jun 2025 08:30:46 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<ldewangan@nvidia.com>, <digetx@gmail.com>, <p.zabel@pengutronix.de>,
-	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v4 2/3] i2c: tegra: make reset an optional property
-Date: Tue, 3 Jun 2025 21:00:21 +0530
-Message-ID: <20250603153022.39434-2-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250603153022.39434-1-akhilrajeev@nvidia.com>
-References: <20250603153022.39434-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iXHGlJYu"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d094e26252so831237685a.0
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 08:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1748964778; x=1749569578; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1mtQW3fkkCN4JKD2bOxa9OSXsumf197V91aZsIjfwDI=;
+        b=iXHGlJYuIdwZTH47GRTUbOnPY8Iz3kqbDdX8FPDDdlDr3j/h7Aa/zvm3uoVdDzWElY
+         rUEPYd4MCvKMYKO/tUDgtuc6LWRfMgBSG9AujRkVUQq/BfKVZqZJ1FomjEarYcfLTKM3
+         4SIFtFbI3LCHXdmFDEjXyVB5cz42P9cjxHOQcnEcIwl+qjH287L+6NKkSogpVKd9D+KK
+         9ba88EoPQNdEq0K/TyRJMLrHLS89BK7mbgDrgCC/kbYBGlwwvQbQ9R8UceGfNofQ3Hs4
+         S+Pp8t8EVAsxw4iMRG937auj91oD3XKwr4yFhrWIlUpSM0/elrIz0QXyPgamJ92HI+15
+         yNJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748964778; x=1749569578;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1mtQW3fkkCN4JKD2bOxa9OSXsumf197V91aZsIjfwDI=;
+        b=L72GWP6D4mWdGUftxVU+35OjwazhS7fcmJJqGqz8fQl+4qquOlBgBeX6m2fSeh2wlE
+         oTKgkiaJ11KszaT1mMliUA2hX5wKrQqE8xeuWxKelkXhXgV82bVOgPT26V339oC1tbON
+         NZpKpXHQeXrXFf6daAW43lko4fP5CgWQr2OoCMLdRZoJGZQ8dz5tXRhfLsZr2i8zR03N
+         hPGFSQkTtX9J4P1A45PtzFcnB76y7k+6K1i3jAVF0jzCe2MK/O6YtEHYe6DZCqut6ZMd
+         VRJ0R3T21BiwbYHtjhwSAMmGi8o8NPBUS03ZavxpUo970HKBYuflAkAwBOZnN1047R48
+         XcMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQCu8H2adkGOg9xn5Y/Oolq1vSaq6Bw+TMQxJLFVeb8n9y0zow0Lqp9PNq1GtUtVBIFpXdH6RFLHLVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDUqsWOgZ2YRMkz/GuKM2UXcQvu1vSNvsbTj+44FHNwZwS2GNP
+	6B3wnpIBBiUsp7iABja/3XkhlwfWwKtm1et00Hol79g44rG4hY4amUUMIEI/nQW4zZ9C+IBOzn6
+	hoCy3
+X-Gm-Gg: ASbGncuIDb/cwg2LIM3ggeO2Psf+Bmi0Mho7fHQEuZof2ALaXbMT29biaeV/+KJHcZk
+	dNO+EErQIXNOk/3siFIsnxX3xzyndSIx6A7Ds/mEM4ErCi+/vX3Mp07ZooZQp0IbSK4MD67u8w5
+	0e0MBH1aKC+5s5f1ag70PqEPJQ4smdWGJnfI9U8eXdTb2dYz558RgSW04aD/WTGn5peTxyMnm7+
+	mOHVoLTnlTYyEzgTZU0uwQQJJ7QxK/IvCc+n8i7//ozpqKAc5J/mM/9N7YavAcDEU/gIkyrkVU1
+	wTQVB1Q+7F5r2P9REZerx5+rwMh/afNkst50GssKRK/AXAso9fEFKb2qeBWV40YjPxa8Q6Btj21
+	Mg7qDzwG6MpbNSWNEPEXztBXANlE=
+X-Google-Smtp-Source: AGHT+IGNetUYleKkkekxf29HMZ0X2KdHF1aj+g1S3YQFzx43O8VQkGEV1jpWL/mxUQXnB44kVfrbIQ==
+X-Received: by 2002:a05:620a:6081:b0:7c3:d5a4:3df3 with SMTP id af79cd13be357-7d0a4e396a1mr2453954585a.34.1748964778475;
+        Tue, 03 Jun 2025 08:32:58 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a1a70fasm854998785a.95.2025.06.03.08.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 08:32:58 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uMTdJ-00000001j8y-2UtV;
+	Tue, 03 Jun 2025 12:32:57 -0300
+Date: Tue, 3 Jun 2025 12:32:57 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com, jonathanh@nvidia.com,
+	baolu.lu@linux.intel.com, jsnitsel@redhat.com, jroedel@suse.de,
+	regressions@lists.linux.dev, linux-tegra@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [REGRESSION] EMEM address decode error when using Tegra210 media
+ engines
+Message-ID: <20250603153257.GB407166@ziepe.ca>
+References: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A7:EE_|CH3PR12MB8753:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9b0a520-4ad7-4ce9-ad93-08dda2b3ac76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0ojZCDqkcwZWWdsjDlO7ly2Px18EGb6T54AvLZOFVzxF1btfLgRzrkC+zFHc?=
- =?us-ascii?Q?PWFgketS5Mep6gC5NuV0BKt05XvwgNjIID2gA0ysDEDMtt2ZgDhYpFwJ5PVU?=
- =?us-ascii?Q?87uLxfaso/FrCjUdY1ZzgBUPtk0AC1Qzwseb/uiIe9JaM04XRKZc4sKRlqNS?=
- =?us-ascii?Q?g4MPgDzBRocPlIAsvUsJ2eD7VAlvxh60mOSvPBaxfePS7ZdJ0PRJiJ88xgX1?=
- =?us-ascii?Q?cIB/f9ixsSUsqqb7w7fkQgcAnT5dlNEJ8D1hXRIezj7c+R8HztVkXT0riGq8?=
- =?us-ascii?Q?jtHMkjh94DAu341oiNkW/AAFhshYoiJrz1LQ8uQg7Rk+6rayiPotK7v4uQik?=
- =?us-ascii?Q?w64iv8tuqANYSCYelTTCG3F8kHP70T42Sfzlws8lEQLYODC23HYav7L0glBT?=
- =?us-ascii?Q?L8bseuGSzF7yLMic+V5/ptK/0VQJv971CJqzZF8ba1KgSLS1yl6Fl4YQTr+2?=
- =?us-ascii?Q?v9xDGYUtdNpG1/Wm1HgxytCyJKKrTMz49vDLWgqOrG0VoVuTvPwzgDjbGj1j?=
- =?us-ascii?Q?silOKPKUUnCsm5+NUGqmtWqzML2BFY2Bv9VPZg3uYjtN3qSspZuHcEBQT6C9?=
- =?us-ascii?Q?nmXwSUkavBqsMT9kfaDLb7aoz2WEhRtCr27DNHeHYOuVIMQYeUDw4cnJ/ha7?=
- =?us-ascii?Q?W8Kq/5I8+An8SNvhBgDY5Zj5eHU5IKHBuVmr5epEAByBJ7Mq3M4NEdv45VYT?=
- =?us-ascii?Q?V7/URAUz0txh6o/RLDMyXougKc8RJNimjQNcqR/3D4eCo+HG/heN0WFsVNw6?=
- =?us-ascii?Q?g5u0G90J4QH/Mb2bfCJ+nmj+XFsRMspphCpFCALPMegVIkKy3ys1Kx1JxHbi?=
- =?us-ascii?Q?aSVtZekacK/KmTjpgPc9zg/0bMt0X6dUcMh83oS2oL5BldIaWMz4iOEAGvCK?=
- =?us-ascii?Q?X+YfWIcsFhAuLV7yHDUeVFumSEolJiZ6nTKBf6m97+UIy3tsRoOg1m4Ydi3N?=
- =?us-ascii?Q?qz72qoJ/cfUP8SPjQWUBD6wHiK5SAfqSSlLwxS8c9lsbssrc579hS2NZVOIM?=
- =?us-ascii?Q?qqVRT0DlkeRwdAWd3y9MT9b7A+20TQ1Ddv95aG9+7iuVFe+G3uiFwX4Fo1PG?=
- =?us-ascii?Q?t36wmYnGP4IJJdbG6YOyh+6yWtN1Nozo7NHxvxc1Lz4AdjS5zDAJcG9sADUE?=
- =?us-ascii?Q?3fxVIboHL98XDR+fOf1hsA8pUpR25RVUIAj4bZJHAG+HDSMM1IK3tRa0i5SB?=
- =?us-ascii?Q?XamzoJrqlXEyLI9ezxVEWX/9yLCCXP9jEBVDFRgtP20KJEHHmaqaHfykq0xR?=
- =?us-ascii?Q?rwDdhSzw7WXWrHy8A2iz9J8GQ0+TAS9n/00RmXgobwtcJdIGoh8e5Da6EoSG?=
- =?us-ascii?Q?xyuX1OB0e0BST5aC0inr7i7+yM7nHkTjU0ZkbEGV0HmPjQNQ0vtlPwnkeifh?=
- =?us-ascii?Q?QcdgABt4bsEGCuYlpD1ekWyjJi8kaVw/0uxvlAuMK9cyFW4feUg2kUqsIvjg?=
- =?us-ascii?Q?T1Cf3fhk+PJVqLIwsTcU6AJO1TmUsmbXwgjyaywTYME/O0qmbzosvBRDnC4i?=
- =?us-ascii?Q?X+WacpKUIOxenpoJ17IWUlbEMbRgQfOTARGSZdgwzfbXJXz0+T1AvnUB4g?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 15:31:13.0756
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9b0a520-4ad7-4ce9-ad93-08dda2b3ac76
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A7.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8753
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62e7f7fe-6200-4e4f-ad42-d58ad272baa6@tecnico.ulisboa.pt>
 
-For controllers that has an internal software reset, make the reset
-property optional. This is useful in systems that choose to restrict
-reset control from Linux.
+On Tue, Jun 03, 2025 at 04:06:47PM +0100, Diogo Ivo wrote:
+> Hello,
+> 
+> Commit 50568f87d1e233e introduced a regression when trying to use the media
+> accelerators present on the Tegra X1 SoC.
+> 
+> I came across this regression when testing the branch [1] that leverages
+> the NVJPG engine in the Tegra X1 for decoding a JPEG file. After commit
+> 50568f87d1e233e we see the following error messages after submitting a job
+> through the TEGRA_CHANNEL_SUBMIT IOCTL:
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
-v3->v4: No change
-v2->v3: No change
-v1->v2:
-  * Call devm_reset_control_get_optional_exclusive() unconditionally.
-  * Add more delay based on HW recommendation.
+Maybe this?
 
- drivers/i2c/busses/i2c-tegra.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+@@ -567,7 +567,7 @@ static void tegra_smmu_set_pde(struct tegra_smmu_as *as, unsigned long iova,
+ 
+        /* The flush the page directory entry from caches */
+        dma_sync_single_range_for_device(smmu->dev, as->pd_dma, offset,
+-                                        sizeof(*pd), DMA_TO_DEVICE);
++                                        sizeof(pd->val[0]), DMA_TO_DEVICE);
+ 
+        /* And flush the iommu */
+        smmu_flush_ptc(smmu, as->pd_dma, offset);
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 87976e99e6d0..22ddbae9d847 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -134,6 +134,8 @@
- #define I2C_MST_FIFO_STATUS_TX			GENMASK(23, 16)
- #define I2C_MST_FIFO_STATUS_RX			GENMASK(7, 0)
- 
-+#define I2C_MASTER_RESET_CNTRL			0x0a8
-+
- /* configuration load timeout in microseconds */
- #define I2C_CONFIG_LOAD_TIMEOUT			1000000
- 
-@@ -184,6 +186,9 @@ enum msg_end_type {
-  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
-  *		provides additional features and allows for longer messages to
-  *		be transferred in one go.
-+ * @has_mst_reset: The I2C controller contains MASTER_RESET_CTRL register which
-+ *		provides an alternative to controller reset when configured as
-+ *		I2C master
-  * @quirks: I2C adapter quirks for limiting write/read transfer size and not
-  *		allowing 0 length transfers.
-  * @supports_bus_clear: Bus Clear support to recover from bus hang during
-@@ -213,6 +218,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	bool has_mst_reset;
- 	const struct i2c_adapter_quirks *quirks;
- 	bool supports_bus_clear;
- 	bool has_apb_dma;
-@@ -604,6 +610,20 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 	return 0;
- }
- 
-+static int tegra_i2c_master_reset(struct tegra_i2c_dev *i2c_dev)
-+{
-+	if (!i2c_dev->hw->has_mst_reset)
-+		return -EOPNOTSUPP;
-+
-+	i2c_writel(i2c_dev, 0x1, I2C_MASTER_RESET_CNTRL);
-+	udelay(2);
-+
-+	i2c_writel(i2c_dev, 0x0, I2C_MASTER_RESET_CNTRL);
-+	udelay(2);
-+
-+	return 0;
-+}
-+
- static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
-@@ -621,8 +641,10 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	 */
- 	if (handle)
- 		err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
--	else
-+	else if (i2c_dev->rst)
- 		err = reset_control_reset(i2c_dev->rst);
-+	else
-+		err = tegra_i2c_master_reset(i2c_dev);
- 
- 	WARN_ON_ONCE(err);
- 
-@@ -1467,6 +1489,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.has_mst_reset = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = false,
- 	.has_apb_dma = true,
-@@ -1491,6 +1514,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.has_mst_reset = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = false,
- 	.has_apb_dma = true,
-@@ -1515,6 +1539,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.has_mst_reset = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = true,
-@@ -1539,6 +1564,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.has_mst_reset = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = true,
-@@ -1563,6 +1589,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.has_mst_reset = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = true,
-@@ -1587,6 +1614,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.has_mst_reset = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = false,
-@@ -1611,6 +1639,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.has_mst_reset = true,
- 	.quirks = &tegra194_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = false,
-@@ -1666,7 +1695,7 @@ static int tegra_i2c_init_reset(struct tegra_i2c_dev *i2c_dev)
- 	if (ACPI_HANDLE(i2c_dev->dev))
- 		return 0;
- 
--	i2c_dev->rst = devm_reset_control_get_exclusive(i2c_dev->dev, "i2c");
-+	i2c_dev->rst = devm_reset_control_get_optional_exclusive(i2c_dev->dev, "i2c");
- 	if (IS_ERR(i2c_dev->rst))
- 		return dev_err_probe(i2c_dev->dev, PTR_ERR(i2c_dev->rst),
- 				      "failed to get reset control\n");
--- 
-2.49.0
+It is the only mistake I was able to notice.
 
+But I'd be puzzled - I'd expect bigger sizeof would make it slower not
+broken.. Though your crash sure looks like either missing cache
+coherency or a bad PTE construction.
+
+Jason
