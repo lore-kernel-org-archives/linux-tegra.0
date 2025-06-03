@@ -1,67 +1,66 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8252A23182B
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 11:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F01231A55
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Jun 2025 11:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748951856; cv=none; b=UjVUB3haG/q0vwybznuZdsRzf4DEfYLnnbbAHbsoHKF7JRdguAJkFsqERQe2wi6bcfmHJXKtdwExMUcGT7YbZtfO+/QhK3IQXG++4qp0mOuog+09guQ0HHUquKbxZnN5RT+PQ7zzYRpyqk0Pv65Dxybqs39KuCh5BHggbkM5dpc=
+	t=1748951860; cv=none; b=Jh6w8kTIfD8F6yyVMKCX1o4TnsW/moFKjixV6a+LBgIMvk3Dm03Zt6Q/EgsY0FCwuDdnJ1eyjPPOz8nUycHHOTf0CWihqzgzNkEnwgFuVC/GclbztYx017H6Mse+Lq3eol3ZoE3S5j9EqriKHzT7nwd43cp4lcAB5oXyp0vwYD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748951856; c=relaxed/simple;
-	bh=H+6vQ8kkEeYZu8N/t6R0JhPBnLddxAjO0+PqCquNCao=;
+	s=arc-20240116; t=1748951860; c=relaxed/simple;
+	bh=In9ZWwzHdKPobwGSTNurFlsX8+WfCzcf4pnpnURGnOI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O4junL00jWEKqZCuE5IGBTZI3NXrQ5wQl0pl6K32hxsJpytMUMtZ/iZ1qZdO0X1fa4+RVQTjRiRFbS+2B/5DF2JelwajLbdO6XHq4qxljmZX51kzLZwl2j0N9pn3JkgfMejM3JuPlTxprlO8EDKZDVSCO5AIGR0KC17TndM0HsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RM5noWJA; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:To:Cc; b=Ag3yGeRyfjbsxcubfve5oWxFB0H5fg3c/t6mBfbelw/43W2y3JCqGzp1kRQepuxxc1LSPKIjKTQpy3fXFYvPTeAKOD2zF3KUp/6P16Tqn/70DHLbFZfQEMrguNroVK3VN4eLeqVHssZ9AeukYY7ZWQD+stveTbzWvi0Ya6akocc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nSY3xb9b; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RM5noWJA"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-44ff4081975so2164385e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 04:57:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nSY3xb9b"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450828af36aso2348825e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Jun 2025 04:57:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748951853; x=1749556653; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748951855; x=1749556655; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AkhPqPyokGiCNL8dfKTXdO+jBSmWZLLyi7+WMgDPG7A=;
-        b=RM5noWJA0SYLj56u0L2Os1l+pO4uNaiDNPsmXGrtfFWQH/mzDZ3X8v1fjrsyB/do7q
-         8u5UkjqVFj6/npowta7qs8hj/reyuSDV8lppFlZKUAlwwphEC669NeTKD7pqDN7UMzDb
-         8AoXJnJpmspvOUacJmmKVNWU8lNClFE7IpUQ0I8aU+qEqDIU56QOS9TwXY7s28Urn7T+
-         Zd6whYpxsEMCVjKOT9mG7PJTNQd8V5TWpJ1Xtq4P8CSxWPb6BSIzRkp2Qa1tJIhLBcla
-         UH7bcmIb5rRmZfjlx0WQ6eeuThKp3zPzUlK2Wa05FRUMrAAIZ4Z9vaLUCHBKmTe2sD7k
-         mRXA==
+        bh=vXr8fPf00egmatGOKDz34aDKcgEmfMhnXVj1rBpajmU=;
+        b=nSY3xb9bg5s74aRkxAcDpMjHBWfWaddtoqQ5C2nBNn26dJkAVB4/WK50h2QboGueme
+         Nhdmk5BVgZpfh1B1S9kY1Hl7Q6aeD5+tiYTGF3t5Tvh6N/bWc34/aYhdBzkWI9rDJ//l
+         J8kOQhSRKniE3vuqPiGp+ga1ciyeBVyONqXSZjK72RKWtzLvRWzA0qkyVmjdYik8EXAK
+         DGDYlhO9sZ6LdzHZBW+CUcJ0uBJi3O1LLKmFHt1pgvDSk+Df24NiYBVLDpnX043ThGWN
+         ay7ssQVtbbW7zOAIf7hYlE/xPIw83fjxpkbLVtAfDjGOyZpe0uqqOB6LeeKqa19UkuqR
+         wFLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748951853; x=1749556653;
+        d=1e100.net; s=20230601; t=1748951855; x=1749556655;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AkhPqPyokGiCNL8dfKTXdO+jBSmWZLLyi7+WMgDPG7A=;
-        b=N9WGl+gGH8ukLNyUigLfIM9O6QrE8JGYqyj4grqoX7kHOIHAc+JeyOx3EBf4AXzOdZ
-         i9Wih9JvZG0tts/IK0zj3/H0Og7tuScO7An/0VzXe3569Zutz6mnmQ+BXyRS0oWr7i+X
-         gAdy2o6j08eJjzeC/hztnD3seEeFBd5fa6sjDYaiCuGWS8/isKE4RivdWYHdhwZJo74V
-         V4G+IdIfKbuaBNP6k31i/dlbxhnVUVRsd+KCHeDnCpFMLI0h5bEDfdqNiVSdBaYTsm/k
-         cbz0cUfoXmp3+lYz2ZC2W/Drw8ZH4ZXcDLGqChvkRQzMiu6fDeh6Ma56fi+tzw+gfcFF
-         xllA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNQUIXtsIAueh0MPpX/aG++jjejASKrGsTQowQm+zkjfux0IV1Qc5GshGws73ROf+MMOm4kErZ0Cp0kQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDZbi0GRH+OxpxKJShgXDVpy0DgWcafWa6vJnr593k8Umc/no9
-	TVT+aFt+gnTUav/kmD8J1sSfTZhDidXxAOhHbM+yD+Rz3KxRC7Bme0n3s+skh//r2qo=
-X-Gm-Gg: ASbGnct6Qy6z4AyhvPunIW0LTdFO8DRaAQCABxAmMt+FrUwIGLlL4OEa4OnEGsrIo7d
-	czA5CijRvQ32MbVlvkbT/GtNz93AG7j11PfMrB0h0C51p7mDK5TW3tFzqa8+YR6AsYnDWT92Lkz
-	FO4xQBf3zW7seZk43hB0umUJDJNzetvyNJpkc9WyWV2QdCJYlyfwLcQNbN88Sq7ExB8dNJsyWgk
-	ewLl6uz0vJbjDYwaM55rR6tymuw0NR4dbwWvhAdGxlVIlWXvjsbOm/Ii0NRJZGqAIgPCRGO/JOh
-	gvL3wKRFzrVGKNc6EmW5hPKzGO6TvhGLLi16V8kruyED+NPwOV595ugRDFMMjmfYLZdcRQPFFZv
-	UfIxf+Ey+UOACCOciFyFlLA==
-X-Google-Smtp-Source: AGHT+IEIdRGgKrmg9eIPwusMN4coMc3y/Fl5QTtPAy4hr0BEuWlRYIqpATHkHHaKQ/oVeyqsm4Wl5g==
-X-Received: by 2002:a5d:5f52:0:b0:3a4:dcfb:6f98 with SMTP id ffacd0b85a97d-3a4f8984976mr4415811f8f.14.1748951852870;
-        Tue, 03 Jun 2025 04:57:32 -0700 (PDT)
+        bh=vXr8fPf00egmatGOKDz34aDKcgEmfMhnXVj1rBpajmU=;
+        b=Ca0Fp+6d/CvSq2zs1Xi8RoQkIshNtfSbdXDUEuin2dgUT8CY8j+WNnFqrR1ZIDJAPR
+         OrzioXPfbn3LbdEFYmO5RuprzgRg936gJcfok/GNcRsVx9/60vTzdscjfrqyQUsf/4RE
+         TIeC9SRVi8x4Fsb4PSUVHKvv8DySWU5OoTWewkkBO5yV+PI+hyh7dr0PWO9YLmqlDh6m
+         WSI3yaquNzivO3OaCKP+hHqmgYTQP/pNjn2XoHrReCwSfLshemA5s8/6l/LOSw/WXims
+         UiNv3lFQ9EwH8DfMDXBiH3VV7LJELIrHwqcCjWgeQUn19gYjK+iZZrF30wIWjYIUPZFk
+         Ggsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEu21DTw8Asr3bqvhG8UIfyI9fijQtstpIiQt4pgk2efQka8IqMugAMdbmDNWaWrJKHS7MGnjRyGB7EA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyovK7tAgaukZloaowo9DP3dfvSH2qdEPiMr+gZLYw+yVfFROQU
+	DkJSFm9TQxgMBPqU3Nh5L6FVgt/4+Uffp20jpPUOkMUhnNEvcYfhDlUltbXxLLMp8zw=
+X-Gm-Gg: ASbGnct3/0ZYHNfV3PP6Qo8dAc/qZtyQcGBO/KJAT+uzs1Z93MBe777vpAhX01I9y25
+	rdu3jOWiF79G5kXW2Sh7Qh49x6i9pCoy8ucPfCmVx+Xsxu0P1WZas5m0PIe9W8XaZXQCAjlg1mR
+	syeJqFYbzB/mDM8mAwOJjyXuVEfLAQDOWJG3t3Ns6K6K2sKggjUAHiCblP53a4AAEJaEp82I564
+	oz/CqTTelzdIw4NoS8SGrjwA/CJNQyG1hbHffyRPQr7EOHORHLW6DCuAzwVaoLjaiNJnFoWG0Zh
+	ucUE0FoWPINM0baEOJTgnLWavrWPIUVUhDZgPJmUHMrGK0BAQw62UluX+QVjAKdl5hQy6N8EeWR
+	DXzYd5aACZ8BpzoQaDZODzgy30pID0dbN
+X-Google-Smtp-Source: AGHT+IHc7vfZ9Jls7pqd4J6k0aCDh+rQJvsx6pfapU4HqG5Fs2nmsdWERExeMcxNl0cV1Ifa/yfWyA==
+X-Received: by 2002:a05:600c:3555:b0:450:d4b4:92d0 with SMTP id 5b1f17b1804b1-451e3132b4amr12478215e9.3.1748951854649;
+        Tue, 03 Jun 2025 04:57:34 -0700 (PDT)
 Received: from [172.16.23.13] (adsl-84-227-104-5.adslplus.ch. [84.227.104.5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c7adsm17671666f8f.26.2025.06.03.04.57.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c7adsm17671666f8f.26.2025.06.03.04.57.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 04:57:32 -0700 (PDT)
+        Tue, 03 Jun 2025 04:57:34 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 03 Jun 2025 13:57:11 +0200
-Subject: [PATCH 4/5] dt-bindings: mailbox: nvidia,tegra186-hsp: Use generic
- node name
+Date: Tue, 03 Jun 2025 13:57:12 +0200
+Subject: [PATCH 5/5] dt-bindings: mailbox: Drop consumers example DTS
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -70,7 +69,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250603-dt-bindings-mailbox-cleanup-v1-4-724407563997@linaro.org>
+Message-Id: <20250603-dt-bindings-mailbox-cleanup-v1-5-724407563997@linaro.org>
 References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
 In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
@@ -92,55 +91,119 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1323;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3817;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=H+6vQ8kkEeYZu8N/t6R0JhPBnLddxAjO0+PqCquNCao=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoPuMeEkx3emRaicraRsdlG7Qk+79kckwyGvqvt
- XqsNEE9H/CJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaD7jHgAKCRDBN2bmhouD
- 18v0D/9K1Jmn28bJcnZym4p7/2l524kGy0WHkj1kJ7p663rVCLXVsBqAtmClz1Ha+PdTJMfdeEd
- MfIY8cyQL0enStoD7Qwhc0OKP+kdk2x81uco+5g8XkwZw00MqrEV6xeQ/a+584D4uM9Y4mUuzpY
- xb0R6Rzh06VO7eZWvGttFDTtgMPQEezaSJ0rXDyUbkjQLVY2BZ3oi73oZ0KuqA76/boFe5Iu68G
- HpxQAeT1mUZWCaf5+8v9+H3A1ad4qKHAQXylPTO29W0kWmEIGfWKmMnhZ97iks1gzkZVeaEz9sK
- Kicl/QruPMpE1oCHrMwmoQXNl4Wrx1YJmyxGKFhg97uOzpZTnEP2P54wvwE2FD2Tpt2T4dpItgS
- La4JmIJO1MTb2CWQBy42+ymq/Rus7qrUH8VsbNUZIhYtz5z8snJFzzzfD9LQFhcs31ufhfATuPB
- aakw+bOPf9khBRBGBkqPpfKoHTg/T+5wJPmNdT3BSHz+3o+Zx7x0PPO5fCa/G62Cvf2rQKGipUq
- Ow7hIntbw4FA8pe79J8wK3mK0JY0aCydyWV76u9g7W4CbBKeiq5l1gOJDPqncQ8Hv/HLQrAt0ny
- L+cdfkucZCFNmHgazW46Bdxf4u6CuN8JHeIIXwPBYPqmm7clEHdJ2OsrfYhvp2P3Xt+bBdTJLjo
- 6Cv9kBlwsqkJehQ==
+ bh=In9ZWwzHdKPobwGSTNurFlsX8+WfCzcf4pnpnURGnOI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoPuMfcaFZwH9bb0S9dNAm40CuljsCWcpE+w7CS
+ Rz+2L02tMSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaD7jHwAKCRDBN2bmhouD
+ 124kD/9QeML755TJwa+q6NyJCG2/dFgpT6gEYosjiRxkkcvC5kezgKst0oA8mPhfT7+68lSwqel
+ wwVtZABbKsDQn/IZi1acleKCkZjAf2mI6XZNNhjl5bwSR4Sz+Vi9/NADv6xDv+mN8jZ+ICjwu9y
+ tdpxGOFN791CYC4LlqwPfrxkCTXCQ7KamSyPduvwkULCeM8ELDa1xNwoHXBbgH7vObF/mJbMonF
+ 4hGz19dD0HFoCZ3cIf1YhezaYF2U+1Eej9MW5x1Zu/ErlISqCOlyEXiHIuhtM4JgxMTqQu62oKD
+ gxaCDQ9ddIICmpY5a/OHZj5Z94FAroXzhsLc5v0j/qyopvezq47jKqztcpGsvbqY4bXBMKVnqP3
+ i1wiFEQrhf1PGnJM0ZYmlPUgMXp2E8X58tgqkhBIiVxmczsp+qMpTyqSMRWJQEE203EHJ2KctRL
+ CUSj+k91UZbE1qzLtVzBucvP70Yz5wh3JNr85Kjj/gg8hvDuWnn20lukNzd1xEr33C0Ar++BEgX
+ n/JtchllxwY7IFYq5+5I09kqV+uLPaMgWR+h6YcYQIJXGmCn2f5ODOS2XeW5MQ4lQEafpUwpfGM
+ e6A6q/4CpvTsXYxz10mwer+CW8mornr2kBt6RLRQE6QmE/+wxLyk3ilI/RzAMnM51geNFpIQnjG
+ 7k8TFFyHFeUL+hw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-According to Devicetree specifications, device node names should be
-generic, thus Mailbox provider should be called "mailbox", not "hsp".
+Providers DTS examples should not contain consumer nodes, because they
+are completely redundant, obvious (defined in common schema) and add
+unnecessary bloat.  Drop consumer examples and unneeded node labels.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ .../devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml       |  6 +-----
+ .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml     |  9 +--------
+ Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml | 10 +++-------
+ 3 files changed, 5 insertions(+), 20 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-index 2d14fc9489998a8dbe5356e2422748a228693d7a..e1a44e4ae6f91eaa1cd81b357e9e5caeaaf0f5bb 100644
+index e1a44e4ae6f91eaa1cd81b357e9e5caeaaf0f5bb..3a387d5e4f065e6fe1bed7e402cb236f4e13ef56 100644
 --- a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
 +++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-@@ -59,9 +59,6 @@ description: |
-         <dt-bindings/mailbox/tegra186-hsp.h>
- 
- properties:
--  $nodename:
--    pattern: "^hsp@[0-9a-f]+$"
--
-   compatible:
-     oneOf:
-       - const: nvidia,tegra186-hsp
-@@ -111,7 +108,7 @@ examples:
+@@ -108,14 +108,10 @@ examples:
      #include <dt-bindings/interrupt-controller/arm-gic.h>
      #include <dt-bindings/mailbox/tegra186-hsp.h>
  
--    hsp_top0: hsp@3c00000 {
-+    hsp_top0: mailbox@3c00000 {
+-    hsp_top0: mailbox@3c00000 {
++    mailbox@3c00000 {
          compatible = "nvidia,tegra186-hsp";
          reg = <0x03c00000 0xa0000>;
          interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+         interrupt-names = "doorbell";
+         #mbox-cells = <2>;
+     };
+-
+-    client {
+-        mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_CCPLEX>;
+-    };
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+index a58a018f3f7b9f8edd70d7c1bd137844ff2549df..ae28ba44855f75e83ea70ce3c670465ae145178e 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+@@ -200,7 +200,7 @@ examples:
+   # Example apcs with msm8996
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+-    apcs_glb: mailbox@9820000 {
++    mailbox@9820000 {
+         compatible = "qcom,msm8996-apcs-hmss-global";
+         reg = <0x9820000 0x1000>;
+ 
+@@ -208,13 +208,6 @@ examples:
+         #clock-cells = <0>;
+     };
+ 
+-    rpm-glink {
+-        compatible = "qcom,glink-rpm";
+-        interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-        qcom,rpm-msg-ram = <&rpm_msg_ram>;
+-        mboxes = <&apcs_glb 0>;
+-    };
+-
+   # Example apcs with qcs404
+   - |
+     #define GCC_APSS_AHB_CLK_SRC  1
+diff --git a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
+index 1a2001e58880d2fc26954b26cff8ed53e7667f33..8504ceb64806bc7e25468597acdff99624571e9f 100644
+--- a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
+@@ -242,7 +242,7 @@ examples:
+   - |
+     /* OMAP4 */
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+-    mailbox: mailbox@4a0f4000 {
++    mailbox@4a0f4000 {
+         compatible = "ti,omap4-mailbox";
+         reg = <0x4a0f4000 0x200>;
+         interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+@@ -260,13 +260,9 @@ examples:
+         };
+     };
+ 
+-    dsp {
+-        mboxes = <&mailbox &mbox_dsp>;
+-    };
+-
+   - |
+     /* AM33xx */
+-    mailbox1: mailbox@480c8000 {
++    mailbox@480c8000 {
+         compatible = "ti,omap4-mailbox";
+         reg = <0x480c8000 0x200>;
+         interrupts = <77>;
+@@ -283,7 +279,7 @@ examples:
+ 
+   - |
+     /* AM65x */
+-    mailbox0_cluster0: mailbox@31f80000 {
++    mailbox@31f80000 {
+         compatible = "ti,am654-mailbox";
+         reg = <0x31f80000 0x200>;
+         #mbox-cells = <1>;
 
 -- 
 2.45.2
