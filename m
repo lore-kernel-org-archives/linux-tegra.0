@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED53618C02E;
-	Wed,  4 Jun 2025 01:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A08213220;
+	Wed,  4 Jun 2025 01:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998960; cv=none; b=NA5vERwX8y+cuLMCRJmEHivXVJDLPeXqSDtf5p8+o9qWAcNbuF//IFvk1XieP3yMjqdyqm6ZIQ/rtZBIYfe1flNOW7qsxTWqFRAQdKx1Gs7+gRHvZHNtsxbAZszmrrRGdAxM5+7Gy63a78hvdwB7GuO6bqGkBgt4iLc0fyInp1w=
+	t=1748999066; cv=none; b=tvHnXos6IIvbjfvkN0MLcPmIJTnsAIn+Uf9imuAJHkSbxsBK1XuwT8EnZVMe3g7GtE6UeArKVtYInTilx4R0uonnPw+yoWr57aNA6dH4TjI6Zj/EMJzkm2pTCyA6h33ZYSZacxFwhb76dxwHJsMVBlC6q5tDe1wtuSQvbYoIFcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998960; c=relaxed/simple;
-	bh=4tW9bZfefsai8Gl1GXpHec4SeTPYwbLbBhYMUiLfofg=;
+	s=arc-20240116; t=1748999066; c=relaxed/simple;
+	bh=smGyV2PLtKsxkj/Df1QWT5j3WPZNWe2YfBQIzZ8xChM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Njp9TST0T/6/tvwgbYRpAL4uuvNNZ95TPqSSdZRUKI8yfV7b8www9rW44JIFytdWxsoNAOYyABUOyxBbEaEw2m/+EzOAjJn/TXCuetYaI0DfHsAwEN5oEI2JgadfZkv7BSl11MlNd2bf9Pdyjid+7VVAdBXpabVrlajPanyX5E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/upRYuc; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=qF0L754h7vXWcQ1zhgILmgg5POxwNcEZNLFIz4wC2N6eIUhhlpI072qaADN0tYzVNWAv+DIsF0jjxH9D1E0XpeoyuXtThiTvvSM+135n7hZ/MEeXD6eGU39eo3hC+ppIkfs4yLajPoWU1JbpGfQIUoN9wWCq542DD3qyW3Aqbt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBl+7qxz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/upRYuc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF5DC4CEED;
-	Wed,  4 Jun 2025 01:02:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBl+7qxz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB534C4CEF4;
+	Wed,  4 Jun 2025 01:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748998959;
-	bh=4tW9bZfefsai8Gl1GXpHec4SeTPYwbLbBhYMUiLfofg=;
+	s=k20201202; t=1748999066;
+	bh=smGyV2PLtKsxkj/Df1QWT5j3WPZNWe2YfBQIzZ8xChM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X/upRYucQ8TObX1etc7U812agpngK/BjXdQ74oA9i2e2YFksrgSOl4vn1YzrjOsuN
-	 r1CJtwFymTOQnoFW4+X3JWzZ2OE8zSrVmnfS2MFRjSIqdrZd/UQSk4ekswi+2Hwzso
-	 bQkeB+4ikfpaT46njEy302yvEZvd2wNCDSn8oCnh57oyzKyQfmD2Uhpgu3IHp0LsaM
-	 xOUkFxLRiuGUz1LMMbMQQRQfthQzPWPcNBdnJ36POx7JZzhZ9BYc52JXuVCiJU4k5Q
-	 nin7D38GW/sVjZXbUPsrOn2SoC0i8SNI1XwjXhIbxLYwlmINfeESBYsc6vb5AK9FmR
-	 qHOyHeyIA5fgA==
+	b=UBl+7qxz2WJm/PCD7gdais3ouHhkjrY5CFIum1m5oTNFQK75I2myRYr8c0X4zGIJr
+	 G5qPR02dCzmGDU+t+Y6VQY/y8RZODPBCLSdj0A3scLdWXpZimSGCBaUSRtl/Ms9hM3
+	 9l3+IsaRgmhCu1AIOy32yrS7DXPVrslZXAbr7VLRtbYq4KnxwKJ/CoKKEEatZaoaug
+	 MobzoD9j8yQbX8DIr+t5B6ySFQmIf8uUC1Ht8QIltNfKwQjMgaPh7r8fWIzwTcgULd
+	 O0kN5t6pzHerHvtnzag7gFR6wEvxVt40EeJiFKFCWASLPB/O/pZuyyHFi80JpoGX3f
+	 BYQOjtyWLU6uw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Akhil R <akhilrajeev@nvidia.com>,
 	jonathanh@nvidia.com,
 	linux-i2c@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 13/62] i2c: tegra: check msg length in SMBUS block read
-Date: Tue,  3 Jun 2025 21:01:24 -0400
-Message-Id: <20250604010213.3462-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 11/46] i2c: tegra: check msg length in SMBUS block read
+Date: Tue,  3 Jun 2025 21:03:29 -0400
+Message-Id: <20250604010404.5109-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250604010213.3462-1-sashal@kernel.org>
-References: <20250604010213.3462-1-sashal@kernel.org>
+In-Reply-To: <20250604010404.5109-1-sashal@kernel.org>
+References: <20250604010404.5109-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.92
+X-stable-base: Linux 6.1.140
 Content-Transfer-Encoding: 8bit
 
 From: Akhil R <akhilrajeev@nvidia.com>
@@ -115,10 +115,10 @@ designed to include.
  1 file changed, 5 insertions(+)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 91be04b534fe6..08a81daedc115 100644
+index f7b4977d66496..b8726167cf739 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1397,6 +1397,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+@@ -1425,6 +1425,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
  			ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], MSG_END_CONTINUE);
  			if (ret)
  				break;
