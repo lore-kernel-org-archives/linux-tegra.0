@@ -1,198 +1,135 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6517C224;
-	Tue,  3 Jun 2025 20:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0310846C;
+	Wed,  4 Jun 2025 00:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748983161; cv=none; b=UwIcrL7UhsRlEQGbdtZQdwMWcCpoxnfBCtzW2X6ivNq0hocAjrJvELQk4eESL2eomThZfCeF98OGS3vsqmslJDtoUKB0HjeRdTLE2i51Sz2mgeEXXv9FJzXCHbEtPZEHL16mY9IDyjIUXm4GVwks7KVC7k4Zz5Gw9SENRiViNTo=
+	t=1748998297; cv=none; b=Lbi4FRd7HLk9qVWfPAVpk6pkS+JYbA5Y+9NiYRT2oD0Vs0fj5rNeKJVQX0TZ9CF1eMLNuExhOYgjwLlGAMvEumIU2O6+PVhRGSmIhsLbVI0/lIg1izLcePM7QSF7X/DiPj7Gkk25Ekswmq8+telBKXFgC9aeTxOL6ejeHejJcXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748983161; c=relaxed/simple;
-	bh=lrn9yhVHbHWZ5mXEe9CH6pC/dm0YLGaICm/gri4Dj9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FZgVN6sUVLQfGWRfiO8p0BgkH6KpbFpJZNZfBCsgqLKEnr3B7M1TPvCuVORKAWbI9W9DXSqLLW2B6q/PiNM7/W60DQGRWWebXIUGV3lrbvgeFwEmtQ8XRQeh3VoUZllkdaCTI8FruTVVkRVLYxM4p9MAV6jKBMhCrUgcGJ8jzPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=sgk0VBiU; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1748998297; c=relaxed/simple;
+	bh=9nYkW3WOfD9ZTiIkSZXcDzADWTK4YLHDkxj/pHoXQsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WBRs00/WrlbJn64y1STiQOVd3rGomFRvDIi61JKQ7iCJNFX7bkX23gS65t9aqUuYUky+FJAEboTffjs3ofKAuBTvWjNMS8D4WRArXephF04Y4r5udMDdbUjzW1gvo73RDip+MnPEE79GF9aAzhPk0o+Pe9wJBHA8lTWVrYkYBr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6U3Qaj8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="sgk0VBiU"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Bay90DQT92IuqmHtqLW5SL201i6ewsYeFfNYqS0IHf4=; b=sgk0VBiUEWhXTmfR
-	yqQdx0YdmKK87a8TZVf++8Ve/7Aj8IvwXwObDNDZLwMLQWawxVSBdUUe44hxcc38pi4YzoMVery+Y
-	VAHTVDDHYFQ/wepIOrmsx5oPRDErmJ0RJGrz4cbONYjInP9vGqors7YVlNzi7FnWlOrPPnxBXXvJR
-	LnixHqi/efuDJ4H23674/cNLbRBvx3pYWntoy9qxgBcCwx85hNchcNyqR1fLghE7HeoIE4yC5/0MH
-	yykmE0pAmX7AcbkDOFj2Hvg6w+i9+jiX9zOwUfyVSFgo//O9iiqyBv5Wsdrj1d8jyerOHelrv0kEw
-	k98plQc7vacY1N8bzg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uMYPa-007TPC-2Q;
-	Tue, 03 Jun 2025 20:39:06 +0000
-From: linux@treblig.org
-To: thierry.reding@gmail.com,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6U3Qaj8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D73ECC4CEF2;
+	Wed,  4 Jun 2025 00:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748998297;
+	bh=9nYkW3WOfD9ZTiIkSZXcDzADWTK4YLHDkxj/pHoXQsE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=s6U3Qaj8ej7DI+69soVLlSwFrADkUtGZb/Zcru0hHZA6FXCcTQLfvUtOhQ8JGZkbd
+	 h2mVQ1BOCMYSD6SOw4SpgQvEVUQImqOdG9HimMHhhtN4BNy+D7OM6rPWGwhEbkwyi6
+	 1vZSqM1EnGIe2yNl3KYe3UamiKmbC1qIPZDzWhPoHu6axunJUK/aQhPnnh2Fb2GHYO
+	 Hp2cqnrCJkFV3QjhsTfyK5Xe2bhknLDZdTizDI+lW6kpzyhoVoO/X7ueFeuX1G7hAl
+	 REoANmMWS/Ez2wlfE5rCOpoT89aT3cJTV9C5UeMhlru2Yl7uf+bCuf01oMTCJQ3a6s
+	 tuPu2Ht0k1w+g==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Akhil R <akhilrajeev@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	ldewangan@nvidia.com,
+	thierry.reding@gmail.com,
 	jonathanh@nvidia.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] usb: phy: tegra: Remove unused functions
-Date: Tue,  3 Jun 2025 21:39:05 +0100
-Message-ID: <20250603203905.279307-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	linux-i2c@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.15 023/118] i2c: tegra: check msg length in SMBUS block read
+Date: Tue,  3 Jun 2025 20:49:14 -0400
+Message-Id: <20250604005049.4147522-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250604005049.4147522-1-sashal@kernel.org>
+References: <20250604005049.4147522-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.15
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+From: Akhil R <akhilrajeev@nvidia.com>
 
-tegra_ehci_phy_restore_start() and tegra_ehci_phy_restore_end()
-last use was removed in 2013 by
-commit a4faa54e3aa2 ("USB: EHCI: tegra: remove all power management")
+[ Upstream commit a6e04f05ce0b070ab39d5775580e65c7d943da0b ]
 
-tegra_usb_phy_preresume() and tegra_usb_phy_postresume() last
-use was removed in 2020 by
-commit c3590c7656fb ("usb: host: ehci-tegra: Remove the driver")
-(Although that one makes me wonder how much of the rest of the file
-is actually used)
+For SMBUS block read, do not continue to read if the message length
+passed from the device is '0' or greater than the maximum allowed bytes.
 
-Remove both sets.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20250424053320.19211-1-akhilrajeev@nvidia.com
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/phy/phy-tegra-usb.c   | 89 -------------------------------
- include/linux/usb/tegra_usb_phy.h |  9 ----
- 2 files changed, 98 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index bee222967f6b..fb9031628d39 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -711,58 +711,6 @@ static int utmi_phy_power_off(struct tegra_usb_phy *phy)
- 	return utmip_pad_power_off(phy);
- }
- 
--static void utmi_phy_preresume(struct tegra_usb_phy *phy)
--{
--	void __iomem *base = phy->regs;
--	u32 val;
--
--	val = readl_relaxed(base + UTMIP_TX_CFG0);
--	val |= UTMIP_HS_DISCON_DISABLE;
--	writel_relaxed(val, base + UTMIP_TX_CFG0);
--}
--
--static void utmi_phy_postresume(struct tegra_usb_phy *phy)
--{
--	void __iomem *base = phy->regs;
--	u32 val;
--
--	val = readl_relaxed(base + UTMIP_TX_CFG0);
--	val &= ~UTMIP_HS_DISCON_DISABLE;
--	writel_relaxed(val, base + UTMIP_TX_CFG0);
--}
--
--static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
--				   enum tegra_usb_phy_port_speed port_speed)
--{
--	void __iomem *base = phy->regs;
--	u32 val;
--
--	val = readl_relaxed(base + UTMIP_MISC_CFG0);
--	val &= ~UTMIP_DPDM_OBSERVE_SEL(~0);
--	if (port_speed == TEGRA_USB_PHY_PORT_SPEED_LOW)
--		val |= UTMIP_DPDM_OBSERVE_SEL_FS_K;
--	else
--		val |= UTMIP_DPDM_OBSERVE_SEL_FS_J;
--	writel_relaxed(val, base + UTMIP_MISC_CFG0);
--	usleep_range(1, 10);
--
--	val = readl_relaxed(base + UTMIP_MISC_CFG0);
--	val |= UTMIP_DPDM_OBSERVE;
--	writel_relaxed(val, base + UTMIP_MISC_CFG0);
--	usleep_range(10, 100);
--}
--
--static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
--{
--	void __iomem *base = phy->regs;
--	u32 val;
--
--	val = readl_relaxed(base + UTMIP_MISC_CFG0);
--	val &= ~UTMIP_DPDM_OBSERVE;
--	writel_relaxed(val, base + UTMIP_MISC_CFG0);
--	usleep_range(10, 100);
--}
--
- static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
-@@ -1123,43 +1071,6 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
- 	return err;
- }
- 
--void tegra_usb_phy_preresume(struct usb_phy *u_phy)
--{
--	struct tegra_usb_phy *phy = to_tegra_usb_phy(u_phy);
--
--	if (!phy->is_ulpi_phy)
--		utmi_phy_preresume(phy);
--}
--EXPORT_SYMBOL_GPL(tegra_usb_phy_preresume);
--
--void tegra_usb_phy_postresume(struct usb_phy *u_phy)
--{
--	struct tegra_usb_phy *phy = to_tegra_usb_phy(u_phy);
--
--	if (!phy->is_ulpi_phy)
--		utmi_phy_postresume(phy);
--}
--EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
--
--void tegra_ehci_phy_restore_start(struct usb_phy *u_phy,
--				  enum tegra_usb_phy_port_speed port_speed)
--{
--	struct tegra_usb_phy *phy = to_tegra_usb_phy(u_phy);
--
--	if (!phy->is_ulpi_phy)
--		utmi_phy_restore_start(phy, port_speed);
--}
--EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_start);
--
--void tegra_ehci_phy_restore_end(struct usb_phy *u_phy)
--{
--	struct tegra_usb_phy *phy = to_tegra_usb_phy(u_phy);
--
--	if (!phy->is_ulpi_phy)
--		utmi_phy_restore_end(phy);
--}
--EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
--
- static int read_utmi_param(struct platform_device *pdev, const char *param,
- 			   u8 *dest)
- {
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index e6c14f2b1f9b..40afcee8b4f5 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -80,13 +80,4 @@ struct tegra_usb_phy {
- 	bool powered_on;
- };
- 
--void tegra_usb_phy_preresume(struct usb_phy *phy);
--
--void tegra_usb_phy_postresume(struct usb_phy *phy);
--
--void tegra_ehci_phy_restore_start(struct usb_phy *phy,
--				 enum tegra_usb_phy_port_speed port_speed);
--
--void tegra_ehci_phy_restore_end(struct usb_phy *phy);
--
- #endif /* __TEGRA_USB_PHY_H */
+Based on my analysis of both the commit message, code changes, and the
+kernel tree context, here is my assessment: **YES** This commit should
+be backported to stable kernel trees for the following reasons: ##
+Analysis of Code Changes The commit adds a critical validation check for
+SMBUS block read operations: ```c /bin /bin.usr-is-merged /boot /dev
+/etc /home /init /lib /lib.usr-is-merged /lib64 /lost+found /media /mnt
+/opt /proc /root /run /sbin /sbin.usr-is-merged /snap /srv /sys /tmp
+/usr /var Validate message length before proceeding linux/ if
+(msgs[i].buf[0] == 0 || msgs[i].buf[0] > I2C_SMBUS_BLOCK_MAX) break; ```
+## Why This Should Be Backported: ### 1. **Security and Data Integrity
+Protection** The change prevents two critical issues: - **Buffer
+overflow protection**: Without this check, a malicious or faulty device
+could specify a block length > 32 bytes (I2C_SMBUS_BLOCK_MAX), causing
+the driver to read beyond allocated buffer boundaries - **Zero-length
+validation**: Prevents processing zero-length blocks which could cause
+undefined behavior in subsequent operations ### 2. **Clear Bug Fix
+Nature** This is a straightforward bug fix that: - Adds missing input
+validation for a critical path - Uses existing constants
+(I2C_SMBUS_BLOCK_MAX = 32) - Follows validation patterns used in other
+I2C drivers - Is confined to a single, well-understood code path ### 3.
+**Minimal Risk and Contained Change** - Only 3 lines of code added -
+Simple conditional check with well-defined behavior - No architectural
+changes or new features - Limited to SMBUS block read functionality in
+Tegra I2C driver ### 4. **Alignment with Stable Tree Criteria**
+Examining the similar commits provided: - **Similar Commit #2** (YES
+status): Also a bug fix for SMBUS block read functionality - **Similar
+Commit #4** (YES status): Simple validation improvement using core
+functionality - Both demonstrate that contained I2C validation fixes are
+appropriate for backporting ### 5. **Critical Subsystem Protection** I2C
+is a fundamental communication protocol used throughout embedded
+systems. SMBUS block reads are commonly used for: - Battery management
+systems - Temperature sensors - EEPROM access - Hardware monitoring
+Unvalidated block lengths could lead to system instability or security
+vulnerabilities. ### 6. **Follows Precedent** The commit references
+fixing behavior "for SMBUS block read" - this type of protocol-specific
+validation fix has been consistently backported in similar scenarios. ##
+Risk Assessment: **LOW** - Simple validation addition - Well-tested I2C
+constant (I2C_SMBUS_BLOCK_MAX) - Fail-safe behavior (breaks loop on
+invalid input) - No impact on valid use cases This commit represents
+exactly the type of important, low-risk bug fix that stable trees are
+designed to include.
+
+ drivers/i2c/busses/i2c-tegra.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 87976e99e6d00..049b4d154c233 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1395,6 +1395,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], MSG_END_CONTINUE);
+ 			if (ret)
+ 				break;
++
++			/* Validate message length before proceeding */
++			if (msgs[i].buf[0] == 0 || msgs[i].buf[0] > I2C_SMBUS_BLOCK_MAX)
++				break;
++
+ 			/* Set the msg length from first byte */
+ 			msgs[i].len += msgs[i].buf[0];
+ 			dev_dbg(i2c_dev->dev, "reading %d bytes\n", msgs[i].len);
 -- 
-2.49.0
+2.39.5
 
