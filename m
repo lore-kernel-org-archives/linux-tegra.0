@@ -1,89 +1,85 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20401246789
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Jun 2025 03:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6583D544;
+	Mon,  9 Jun 2025 04:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438557; cv=none; b=Gf/sKeyVWvEEsiCe6pjALymnW3KdqAkVlwXNp8OxAE9MpOthtMvVtVgbWYkeEsaLFE2YDyoThcGkhBzk9qKb3GrzMxuPb1v0mWkTWIibRx7caiRzUT6/Rmc3rC1C14roDoDt/Hf1njJP7av1OffwQYo/calqxJQ0F8OONdrb4PU=
+	t=1749443084; cv=none; b=i5InU/ltil2XR8dn22N5SsKTQZNg4QTotwfVg4dUJx0uOEzgZqT+TGQoOpposUKKHLwTgKzUCtJTlfxm7K+nUK9TXOJhl/VRhA2x07c6SwBkWZ7kxqv1ykl94bhgdezNVhqwxOmdUfFpA82oR7BWoXjwJao3tx/fAbC/+QH1DA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438557; c=relaxed/simple;
-	bh=KII6ThsHrFR0MZOEBIGCKQlpsxQ2gXIhyRw5r9eyv5Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=H0HFbRACcRve0jAvlcCgq4dMCC+wTUsJV/tpBX0QUeFyZ2Iie+NsNTPTzzIEIPpsYBCPEg9Qda44dJOn9WFTYzstCbvYbLKGXw4NI7eeGrzsZ4cwqu3pGPBEbB02hfKVTqrTo8w+08riRGymThzuiE0A41gD3rS5wwqDQ0J3+ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxUf+Y/b; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1749443084; c=relaxed/simple;
+	bh=nA4pr8rR8GdTPJG1GEj2FJ2dYpGn+ljhMBTSZXnCjfw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mqXz1osUcMFvKce8Nt6oyGYvJp0bhQHKoRvBVz3TcujWPz6I4uV6q4bV+c0ErEM2cim9HBc/oCooZ/Cjvx9skdDmCjEub7R/vzQk2GFJazu1/YjrEISABuLImLAqJJQAoQHi/GSJUUoqKJvSbR+Wshu85/qxNnXdSPgnL4agYpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVcxzpDu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxUf+Y/b"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553241d30b3so3560444e87.3
-        for <linux-tegra@vger.kernel.org>; Sun, 08 Jun 2025 20:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749438553; x=1750043353; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vp9bW5+iE/Xm2g3bcTDWAPYnK2L65sPGkWKo6XuozWM=;
-        b=PxUf+Y/bb18Cp2hyFFJUHS9AtKAtY8zUMVghFME5VhgCGVO3hsrEBnmXv9V/EzP7+O
-         CG8MwBfTD40HlSWvclS14nFFItnLUFAH+AV2++qf9A5AmjS+Kjy6C3f7KMyUymyJXJ10
-         S58ybXzwLMQb19aS/xBLv2mEV3SM13l/iMx1tTKahU54UFZcZG0GIYBNnrc9aKv9x+rS
-         YV3tFdS+l1JftYBCo2oBT9HZDbY4YUEgmz8vOq+0nqwyXXr4edpv2hjhcH+frAPgax12
-         YgzE3uVKdpNSLwP+npgHW0w9ArliNybOHXEZS8kpW8Oai9nqw+7YYUAvfKyUy5MjdXQ3
-         DntQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749438553; x=1750043353;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vp9bW5+iE/Xm2g3bcTDWAPYnK2L65sPGkWKo6XuozWM=;
-        b=pmZvhxDgAK8eWrSLFDkVJpX/lIhpaN2JXThRFC9aCpcTov0CyMrtG7qXvQspLLZrj1
-         4hlIeFzCCJNfwbTZ9bDGMqvRKZgx2gZ5/fJYm7Dg6YucoRNGgOs2PkPEfRB8HvAs0/qf
-         oF0uzJGCpgItvwXx5xSvWBjKao743fvEAKRJqkefVSFgI3JkoJZV4mpkA3m2kuspyVtD
-         3QQMFPCCPSdNd6m4QBkrGerodkciPynrXRFSLwW/DJWvpyPfbBECTng2HGtw5I/e7FzJ
-         DJl2ie0Z6dkp1AvEgqZ4v35j9DYW9dwdUC/ryZ2aAcNg9yHiZj3sG1qq6yEZsCUyqJN2
-         13ew==
-X-Gm-Message-State: AOJu0Yyqipqp7Iey3/gD8uhxF937+W5So2vuEZZWLC+0GFF9YkkPuEn+
-	GMO7HN6EaCtZXwUhN1dd7oxjLHcyPRtvN1hPfdM9tN8t6T48dMvB7FXEuu8tC5ZnN1oQBzZKh76
-	iqBHLh73z9JaSxGCINOluc0viYlW9x8Z+800i
-X-Gm-Gg: ASbGncsiwmMnU5TRvW6o1yCEGeK8nn+A1jKtSV9G/afivXRArWeF7ekQegdzuqy7G8p
-	rZf0op72LW2+7qjsFCo2wXPujK5viEkTCKxQRKvoBTGYV4wLPdp9f3fRzQSrUMJrtHrYPHx2Up9
-	NAKBPVHLGTnerttu0v2g+9SxklS86xnELTiwa7MkQqLyY=
-X-Google-Smtp-Source: AGHT+IHecKhCgkOy3Ts+IExm1cxxXOhBaW4jDg2gD9qfaFBZy1Uan6POeNnA2FL9phx4BLwZFdyv5SL225KkQJr+IUc=
-X-Received: by 2002:a05:6512:3d28:b0:553:65bc:4231 with SMTP id
- 2adb3069b0e04-55366bee1femr2590697e87.21.1749438552755; Sun, 08 Jun 2025
- 20:09:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVcxzpDu"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 35AF6C4CEED;
+	Mon,  9 Jun 2025 04:24:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749443084;
+	bh=nA4pr8rR8GdTPJG1GEj2FJ2dYpGn+ljhMBTSZXnCjfw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cVcxzpDuEraFhdpW7J67sDmKDDlbT3xG796Wbx1mHcjKH9fM42tQoyXNAcuTxnkFe
+	 Q92amqZ8H9L3RcKTvvNn/ytyEYe2POutaO0oR9JrVtmgg1xEABqOFSTT63K7olUkdy
+	 WhW/BhZ6x/DGU0n4W3UjHITjSMw5p63aV7vyt3A0WfNfwJc26jo+Gvb6UK1SP7wFDg
+	 uTdINLnQJmRUFE/dXrVF8TtfPwEpOFQFJArbOBDUmo2J+nr7Rzq8bnjHAyD01OdgAJ
+	 StsvpyGiZ1CxuXMiRut6KDlmAbfBUxybrvbC5evhTJRA/Vvnpz67q2baxMWOaEZL7E
+	 1kwNq+MLS9blw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F598C61DB2;
+	Mon,  9 Jun 2025 04:24:44 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH RFC 0/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer
+ Kit support
+Date: Sun, 08 Jun 2025 23:24:34 -0500
+Message-Id: <20250608-p3452-v1-0-4c2c1d7e4310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sun, 8 Jun 2025 22:09:01 -0500
-X-Gm-Features: AX0GCFueNoG0oSdBEKHj09JhaThRBuC4fjCfbAQB1PkoQKUu849SYrDXQ0WyqyM
-Message-ID: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
-Subject: [BUG] cpufreq: tegra186: Denver cores do not register
-To: linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAJiRmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDU0Nj3QJjE1MjXQNTS3MDi+RES0tLYyWg2oKi1LTMCrA50UpBbs5KsbW
+ 1ABmodlpcAAAA
+X-Change-ID: 20250513-p3452-059708ca9993
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749443083; l=606;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=nA4pr8rR8GdTPJG1GEj2FJ2dYpGn+ljhMBTSZXnCjfw=;
+ b=3whLJDhEmZEwU8CgXuejrd87bVi5K1GSxA2ybAQz6muihICLk3igRj4rBsRDHAJUSejhtoOZs
+ lKQcri3FujqByhHbo5T43vkhqLy7BhYxw7ZvjIKUHsSHIcUq9AXbprh
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-The boot logs when using the L4T r32.7.6 boot stack without u-boot show:
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (2):
+      dt-bindings: arm: tegra: Document Jetson Nano Devkits
+      arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer Kit support
 
-[    2.648162] cpufreq: cpufreq_policy_online: ->get() failed
+ Documentation/devicetree/bindings/arm/tegra.yaml   |  5 +++
+ arch/arm64/boot/dts/nvidia/Makefile                |  2 +
+ arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts | 43 ++++++++++++++++++++++
+ 3 files changed, 50 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250513-p3452-059708ca9993
 
-I have traced this down to ndiv [0] being read as 0 for cpus 1 and 2.
-Prior to "Share policy per cluster" [1], this would also fail for cpu
-3, one of the a57 cores; but with the policy for 3 being shared with
-0, the driver no longer tries to read its registers directly. This
-issue has existed since at least 6.1, which is the earliest I've tried
-to use Tegra186 on a mainline kernel.
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-I've tried to compare this driver to the downstream 4.9 version, which
-does work as expected, but I do not see any differences to the
-register offsets being read. If I hardcode ndiv to 35 for the failing
-cpus to match what the downstream driver gets and what the other cpus
-get with this driver, scaling appears to work properly. But that's not
-a proper fix. Does anyone know why the registers for cpus 1-3 aren't
-read properly while 0,4-5 are?
 
-Sincerely,
-Aaron Kling
-
-[0] https://github.com/torvalds/linux/blob/19272b37aa4f83ca52bdf9c16d5d81bdd1354494/drivers/cpufreq/tegra186-cpufreq.c#L117
-[1] https://github.com/torvalds/linux/commit/be4ae8c19492cd6d5de61ccb34ffb3f5ede5eec8
