@@ -1,185 +1,132 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EDC2512C8;
-	Mon,  9 Jun 2025 12:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749473426; cv=fail; b=T0tYo1COj4HpoGBhsrnu9vbakz2MR+7Zh13TIE7mfTNtom9Wbhe6vno6+LSNEuFKDRysf3OGtK0MRUMeNN755ZXcKe0yMJrYAL5OsuEATgwp17QIMogrxXkD2p+eHnuUq25uJk72RGQkJi4ZOHo8QxGGxX7GQRXtWE1vz3kUkyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749473426; c=relaxed/simple;
-	bh=6XmSr7yWqDWQ4l8+PuCl0Xv5P8it8lb9nT4lKwjdc/M=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=fFb7sgoJSwCwNTwmC241DRxj/2dj7WaW213VOm6WW7yLGEzD8nMwir23uRikfwYOh7YAM7107xCi780aAo+3iIh0La4MnIM7NQZcx2jSKDOIIRYDquxClVG42X866iU5zYLHNW6Iqd70lhO09CgUVpibI5+M9LEHzD3kxvsEK+Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZM4XT3d2; arc=fail smtp.client-ip=40.107.237.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CFC224896;
+	Mon,  9 Jun 2025 15:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749481275; cv=none; b=ePn25rha9V9e6s55J6bpgBam0b0GB0DFVyd8BU9fA5S0TirdTx14kMhXJj1LkNoxcl5N7CPgfcQ2sc+SFGca9QDWceAE+S5PfFYeXgkh7QPgewFK+Eol/kUwLIeU7CvSN4P/nG5fESkbMJlAe4VgY6lhRsZT8/92ckVwJNPakQc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749481275; c=relaxed/simple;
+	bh=bMGu6bXrspSd6vTEsv4p9+r2Ppn+jbVNqYWzYKyLmsc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=mwAf2XPviKkbb5zhcUQ1Pz6T4gmsQimc8NnYvEjtoABznPyYV6Gfu96wmGvADSj+6JaUKQJ/hr7aFb991mvaHc/YIHABNHaXNT+7KhY6l6ZY+7cYvRN02pxhRET22bDVhlUMYcGfNsF3Lwsv26fJP0d4StkQ/NONT6vwCyNB308=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PlNiwZTR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZM4XT3d2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mYZpfgcV0qad3FKxR0qdS666Hw4ZQdGXNEaQ3hFeIjTdkexsyg4cvjiaS9nxkokwqIZei/Z5CYhpstUYlDXW20oPTpR24C4KobfySZzE6q+R/zYKrShA2bJdM21hduhzq6GasVUF9ZeqtWCxFaZ4I+cufWjCp+OV2SHOsIfBsk0nWfm2bb5K9lMonI7/Fc5KOQvGU5pw2qMGhUvMKyyqAQobgGW9CHZp0C1/QEBKiNeUvTglvJC/oun6BSn4KiWYnAmCvJhUUCZPVC1QXpFF5dMAMy/PB/SnORE+uLHY3D/LFodzf/jNP2c5HqvcNymOwvbqw54qkrPuyg6O0YKXzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CqGUXXrKHhfnpSx+ngoFzQsfC+4iao4nxChfNNkxlac=;
- b=gKcvlngZgGI1Ba72bu+K5Q4w6uU6bCl3JOW6vf+yldF2U/lzPK6rIb2v+OtONLFZzpHWK4pPzs+i/wzWsuJdm1DKEbuVx2ObrJIMdqFAmjMhjcxLEBc7OX0Vki6ciMcgV7ZkYQVbL9l+EG8QV7UeV00vPul8fW9LNg8RykSyDtmpoMzgmntAdcOTyK6mqzcwvuUhETu4G6gBv+vYqdd3HHqTqLFKbdB2EHV1d4hC2Dipma7LNrkLLAeKfMM1WAstPG+LCfuBs9ESw/0ATPPj7yFl+c6f5Di0DlN99TL+z41y/18DtBpiy9ZV58a81ViBa25qnBT9iwQ/zUfJeWES5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CqGUXXrKHhfnpSx+ngoFzQsfC+4iao4nxChfNNkxlac=;
- b=ZM4XT3d2IRLcLU6yNo1VyQtPk5mxWE8A9qyeUqG6KJFHoB4SnyHhcj2c1OODBE+04xfO5Omt5i3f1gtARzeFFO2x9uEANfJ5CjEQSoHiFwbo6wC65BtQDT4ZJoG9tIzgDqPm5uQsTFZNJxSWE3/yZBwGBch0s+H5QJMIj2OlfHSvOOX8K/qsT53wg7PX3hPZkbyAgXUeq0PBdS/+eqWKxeIE7+Hi5NzvT8yP0YuE5heJwqXWlK6nmn/K/UazbvS0rgQ7CKfOEy8iA2YKePldGvTFFwOKi722CKy2GCot+UZb9cj+gck3x+m8rCoABHMbR1nkf5yK6y/NHtIfYDMzYQ==
-Received: from CH0PR03CA0418.namprd03.prod.outlook.com (2603:10b6:610:11b::19)
- by MW4PR12MB7141.namprd12.prod.outlook.com (2603:10b6:303:213::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 9 Jun
- 2025 12:50:17 +0000
-Received: from CH2PEPF00000144.namprd02.prod.outlook.com
- (2603:10b6:610:11b:cafe::48) by CH0PR03CA0418.outlook.office365.com
- (2603:10b6:610:11b::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18 via Frontend Transport; Mon,
- 9 Jun 2025 12:50:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF00000144.mail.protection.outlook.com (10.167.244.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.15 via Frontend Transport; Mon, 9 Jun 2025 12:50:17 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 9 Jun 2025
- 05:50:05 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 9 Jun
- 2025 05:50:04 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 9 Jun 2025 05:50:04 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.14 00/24] 6.14.11-rc1 review
-In-Reply-To: <20250607100717.706871523@linuxfoundation.org>
-References: <20250607100717.706871523@linuxfoundation.org>
-X-NVConfidentiality: public
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PlNiwZTR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF32C4CEED;
+	Mon,  9 Jun 2025 15:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749481274;
+	bh=bMGu6bXrspSd6vTEsv4p9+r2Ppn+jbVNqYWzYKyLmsc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=PlNiwZTRJPkkXxfWUEzS1zcKmJu8KlkIOzzjW1FsR7sK4Gn3ni/93dukK9cY3j+LB
+	 7MPRAbYD2qOQ0Nk/gMVMWyVHJx8/toOAf5YplIoI5vWGr/DoCDZJUlwykkbHzQgDG3
+	 vQESo1gUBumToIvlohybBWWYOsqY+LRsvDYwy8w1MxVv2SyFbHg/o5m8VG2NIB1ZnO
+	 lSr5VrJp6Vm06sSFpQJNda+GLToqbP9q6Jhou26kx8VaNosaHyuZb2Io6r7yJ7NaWJ
+	 ROwEn9x+J3O9W3oJ2HtBb9/MD9pqqoWqSrB8ybrfwB9FvpJFPE34ClHN3ujfgSQh3f
+	 g5dxuwfMzxFVw==
+Date: Mon, 09 Jun 2025 10:01:13 -0500
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <054bc082-8738-47e9-bf35-ed759010f361@rnnvmail201.nvidia.com>
-Date: Mon, 9 Jun 2025 05:50:04 -0700
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000144:EE_|MW4PR12MB7141:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8dee5b7e-631f-4bb1-b11e-08dda7542fd5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZW5mN1AxbFl3L0I3ckgwSDE5ZXc1aitBekpsUGZUTlVjeVlvUmNKOUNvQmha?=
- =?utf-8?B?ZklIOTg4R2hHQXJPbE5zaE1oVXdhQUp0TU5Rb3JzaVRJaFpkKzd0dDJ0a2VP?=
- =?utf-8?B?eE8ybnNxR0ZPZlBLVjN3Y2dqTlZCNC9FMHg4MjF6YWY1OUFndW4vaGRXY1JB?=
- =?utf-8?B?Vk9iczF6dGhsc0Y1UkkvZjIrT3VjRHh5UDVBOTNiQ2Q0UWFvdkl6QUYwcmtl?=
- =?utf-8?B?M2Z4TFozMHB4MEJHdGpZSjVheU8rVU9lRW1va1Bpdzk1UnNDRXJiQUZFOEdk?=
- =?utf-8?B?czNnWWxGLy9GU1c5WnlNTUUwK3ZnQ0ptMW5SSzZGTTZKZm9lK1NxZTRTOWcz?=
- =?utf-8?B?MnlaS0JOVEVwUEpHbkkwZksraUNmSUEyQ0IvaEJDcjRBYjVWWUV4eWx6Ym5j?=
- =?utf-8?B?U2tmWi9GeGZka0IzUm80VjNVZ2ZMTWxwcGF6VWVJUEdKMmxyWnRCRDBmQWpU?=
- =?utf-8?B?bS9Vc0NXNDNVcnZNT2NnZWpmc1NCdjZqUGJ5Y3VpQjM3Q1k1U0w3ekhmV2R4?=
- =?utf-8?B?YzNEcjRQUVVpN05VQnd3dlJUdFdkUFlIVmFmT0c4dzN5YzRhbGVOS2QvaVBC?=
- =?utf-8?B?RjBXdFF0NmpqamZXZDNkZitkTGtBMklZd291RU03aXFGU0IrZzVPOG5HdWZ1?=
- =?utf-8?B?Qk1ZMGE3VkZmcXN2ZGwzYm9hZC9mYjlYNjlMcXpDb2ZLVVI4VWRjeURhMVlt?=
- =?utf-8?B?ck9hdyszTkRZWUtocm1DWkNaa2I1S1ducVo4alVxNkxsRVBDc0hhVC9VVHdk?=
- =?utf-8?B?S3gyOHBnMi9RTkErSTVnQjRTd1MxNTlBMHRyTlJYR084VzVOWnFZVmpwSHVk?=
- =?utf-8?B?bXp0Z2ZsTVJHZElMWnZqOWpoUmkxbFc2akc3QmlHQ202clhvQS93UU5hcDVH?=
- =?utf-8?B?bWMrUkhZdEcvMzB5NjJ5bFZ4QUxFVC8rSk5mcXRLR3huNVVLYURsNWFQcm5G?=
- =?utf-8?B?Zm5mejMzOGMxWTFCSUpGamVVMzMwK3pWVlJDdWR1cFBNbHlac3FqK215b0Fy?=
- =?utf-8?B?bGZEdHpXV0NnNVVLdXd3Tk41OGlMODIwbHhpOWxWV1Bxc0JXM2hhZ2VIMkNU?=
- =?utf-8?B?Z0JZekJTR1FOS1l1Vjd2U3phQmZUNmNRcmpKbENxWDVYaWNuRm03TWlOSFgw?=
- =?utf-8?B?RGtBd2g0TGRWaTV5enBZSnczN3RDc01xWHlKck1kRWpuSHE5R0FITGV1RW5O?=
- =?utf-8?B?TWhXTnVFd3JPSFpFRXBON1FIeGNxTEwwUWJKNDZnTW1vVjVuZ0xIZDdXYjVZ?=
- =?utf-8?B?NTNOOVFBUjdCNkU0eGp5YmxWdXY3OVZtSldpYzNlVGZzM0U1VEwrYzVxZVIz?=
- =?utf-8?B?clJhcUxPd2NodkJMeUpSMUZLUnp2eVVIT2k2OWtnekI1d1IxNWFsUS80dFB3?=
- =?utf-8?B?NTZTYjAxNDdNS2lzWldidlN3V3NRYW5tOG5MTFVKYVNGcVdINkNILzRLek1p?=
- =?utf-8?B?OHZQdW53UGtCWHNBcUZoaDA4MVlhYzJRR3o5ZEU1ZWxqV3U1UVF0UkQ5dkhL?=
- =?utf-8?B?ZlhzVW9YSGhPeWF0TGhKSTNuaHl1a2hyNHRCampUcElDMk9SOGpVYXRRMVM4?=
- =?utf-8?B?bldsMVYyclduUUpzNWRDeEVqdkVpczVVUUorS3RMSzRDN21CZ09JSTVtWmw2?=
- =?utf-8?B?cUhRY2IyYVk5UlVsV241YnFKM1U3cHVmRW9qb3ZLRDVBalBaemV5amdIc00y?=
- =?utf-8?B?MWdBemJXWnhheENaYXh2YnlBRmljYjZMNWJPTXNZYWNEVXc3M1hCdEdoZXo5?=
- =?utf-8?B?NFA2eHc0OVBXREZSN2RYc013bUpXYUQrTlNwZHVvT1FnQVFUdDN1N0J0a2ZF?=
- =?utf-8?B?UHZ5V0YwMUtSWFhJUnBWTW9hTjlxMW9ZQ2VpTUZCZTc2Zksyam9GK00xelNw?=
- =?utf-8?B?eXJBZE5vUHMvQTRoay9GMkRvQlppalNDWk5YdHZ1WFFzTjZPcmFXanJjcFI1?=
- =?utf-8?B?Z1U3TDZDcUFkVU9TQ0RBRDVHbE14N1pkOEROU2YxYUZiTDZuWldISHVobURv?=
- =?utf-8?B?aTh0QUc4MVJrT0pSdktPN2FoOERXK3U0Q1paTFkxbGovSXcwSFl6SDRhd2F0?=
- =?utf-8?B?eG9BNVprRWR0RDBhVWhFK0d2MXAzMWhDUFl0QT09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 12:50:17.6372
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dee5b7e-631f-4bb1-b11e-08dda7542fd5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000144.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7141
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250608-p3452-v1-0-4c2c1d7e4310@gmail.com>
+References: <20250608-p3452-v1-0-4c2c1d7e4310@gmail.com>
+Message-Id: <174948105045.2282609.1608022090248656959.robh@kernel.org>
+Subject: Re: [PATCH RFC 0/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB
+ Developer Kit support
 
-On Sat, 07 Jun 2025 12:07:40 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.14.11 release.
-> There are 24 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+On Sun, 08 Jun 2025 23:24:34 -0500, Aaron Kling wrote:
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Aaron Kling (2):
+>       dt-bindings: arm: tegra: Document Jetson Nano Devkits
+>       arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer Kit support
 > 
-> Responses should be made by Mon, 09 Jun 2025 10:07:05 +0000.
-> Anything received after that time might be too late.
+>  Documentation/devicetree/bindings/arm/tegra.yaml   |  5 +++
+>  arch/arm64/boot/dts/nvidia/Makefile                |  2 +
+>  arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts | 43 ++++++++++++++++++++++
+>  3 files changed, 50 insertions(+)
+> ---
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> change-id: 20250513-p3452-059708ca9993
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
-> and the diffstat can be found below.
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
 > 
-> thanks,
 > 
-> greg k-h
+> 
 
-All tests passing for Tegra ...
 
-Test results for stable-v6.14:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Linux version:	6.14.11-rc1-g1927b72132da
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Jon
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250608-p3452-v1-0-4c2c1d7e4310@gmail.com:
+
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /pcie@1003000: failed to match any schema with compatible: ['nvidia,tegra210-pcie']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /host1x@50000000/tsec@54100000: failed to match any schema with compatible: ['nvidia,tegra210-tsec']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /host1x@50000000/tsec@54500000: failed to match any schema with compatible: ['nvidia,tegra210-tsec']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /gpu@57000000: failed to match any schema with compatible: ['nvidia,gm20b']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /interrupt-controller@60004000: failed to match any schema with compatible: ['nvidia,tegra210-ictlr']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /dma@60020000: failed to match any schema with compatible: ['nvidia,tegra210-apbdma', 'nvidia,tegra148-apbdma']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /dma@60020000: failed to match any schema with compatible: ['nvidia,tegra210-apbdma', 'nvidia,tegra148-apbdma']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /i2c@7000d000/pmic@3c: failed to match any schema with compatible: ['maxim,max77620']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /memory-controller@70019000: failed to match any schema with compatible: ['nvidia,tegra210-mc']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra210-dfll']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: usb-phy@7d000000 (nvidia,tegra210-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
+	['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy'] is too long
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra124-usb-phy', 'nvidia,tegra114-usb-phy']
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra30-usb-phy', 'nvidia,tegra20-usb-phy']
+	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra20-usb-phy.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /usb-phy@7d000000: failed to match any schema with compatible: ['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: usb-phy@7d004000 (nvidia,tegra210-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
+	['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy'] is too long
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra124-usb-phy', 'nvidia,tegra114-usb-phy']
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra30-usb-phy', 'nvidia,tegra20-usb-phy']
+	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra20-usb-phy.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: /usb-phy@7d004000: failed to match any schema with compatible: ['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy']
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: cpu@0 (arm,cortex-a57): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: cpu@0 (arm,cortex-a57): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: thermal-zones: cpu-thermal:cooling-maps: 'cpu-active', 'cpu-critical', 'cpu-hot', 'cpu-passive' do not match any of the regexes: '^map[-a-zA-Z0-9]*$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dtb: thermal-zones: mem-thermal:cooling-maps: 'dram-active', 'dram-passive' do not match any of the regexes: '^map[-a-zA-Z0-9]*$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+
+
+
+
+
