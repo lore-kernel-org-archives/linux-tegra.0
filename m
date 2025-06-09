@@ -1,128 +1,101 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7944842A83;
-	Sat,  7 Jun 2025 07:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2790612FF69;
+	Mon,  9 Jun 2025 02:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749282751; cv=none; b=JlozDp+gUfRI98A0cUgaYslx5tE1nPvaxhQexVUyLxD1m4U+v5OoIo1Cuq0S64fADzFzvAp3QUcgtuyq92AxdZ3NfL9IAViCmQmIQ0DFeN1E22J9ZmmERYDxoN7YKMhlUTvZUF6h6i6S64V0Ba8V6stJk1pCA++wq11aGDG6MaE=
+	t=1749435200; cv=none; b=PgrOzVOw6aEbUd86AhJPifKKAwXaDG+0V6WZD9ZHAbR4wGEro/FqScBf1UTNjnriKzA/HuferkwOVV9aJcCqPyKGro9cMt4mzwuvfFPUXtCaxyvezg42W3epfJvRr8258IybKUG9ninDSlSjFCYU33YujIAz6cYBc8mHp4NPS64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749282751; c=relaxed/simple;
-	bh=NNc/Qya68Pqu2BaUk5YCLfe344htnliiaLl+9up7ktA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zwd5hzJQeUVOTPA4Vt+HH5/3dBdR0vqjJ2EXLFCbGkDA2nWq4rrFSJCzm9euGGx2mwoiOwsyJzAzvayISDHR2Mu5PvMfD3sZ0yBawFSIX5pWb2qmzrsbS1ohg9DDyzYA1wB7CHLM6RlhnfwsEvt9C4/JzZCCubU0xBZ1ABM0EWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.3])
-	by gateway (Coremail) with SMTP id _____8DxQK+870NoJxkPAQ--.5731S3;
-	Sat, 07 Jun 2025 15:52:28 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.3])
-	by front1 (Coremail) with SMTP id qMiowMDxvhu570No0aIOAQ--.58689S2;
-	Sat, 07 Jun 2025 15:52:27 +0800 (CST)
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	linux-mmc@vger.kernel.org,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 31/35] mmc: sdhci-tegra: Drop the use of sdhci_pltfm_free()
-Date: Sat,  7 Jun 2025 15:52:16 +0800
-Message-ID: <cee82eaad0392838fbe1fab8e2301e680d34c0c5.1749127796.git.zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1749127796.git.zhoubinbin@loongson.cn>
-References: <cover.1749127796.git.zhoubinbin@loongson.cn>
+	s=arc-20240116; t=1749435200; c=relaxed/simple;
+	bh=lOx07OEPHI4zIhQLY6PyPM+jjTNfD5XG4BYf083Bork=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fOn+bpQDXxZm0cuSCLJ6RzK07tHpaC8zD/Pz8h1sNpCTu++Jsheoic2TeBnXD0LAB533B3pe2eZusKOXOQhaRAbIxQFMHxjYHv1ChbxMMRBd3ZVm3dW4F5wrBNwAdVGFmNMUGq86D+oET1EWhDybsU6GdWuNCxSA9eSuVIgHWNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5VSebKL; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5VSebKL"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B0435C4CEEE;
+	Mon,  9 Jun 2025 02:13:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749435199;
+	bh=lOx07OEPHI4zIhQLY6PyPM+jjTNfD5XG4BYf083Bork=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=G5VSebKLRwMrJ+AhMsSo0P3RibMQm3HgCV34RWSmnLYPH5RrJbHTyXq2ScXNFM9QM
+	 hU2EzkxUjN6sctfX7klmRuFoBC1cgGfekHCTkVkHKikIrpklHRsF6j8SXhwzdM75Ii
+	 WljVrJ8j/n5AF0DEIzIfEiarg/XovsmPRSQXSR7TcVPmJvjmlyjcV/jKJbW6JvspMy
+	 uPrfGHGSmw9cXSN+/FighUzQ0+I09c1Vx70i3S1Q43+oLc1UjTkFR6sZnFX/9RioYT
+	 le4ItE0NKxJ/rZPnmW2fipWijAY+HYhMzeM8YLOrmgODfPX6yh0OEZROGYb6S11ddy
+	 6hm1gwJN6lKzQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB98C61CE7;
+	Mon,  9 Jun 2025 02:13:19 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
+Date: Sun, 08 Jun 2025 21:13:12 -0500
+Message-Id: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxvhu570No0aIOAQ--.58689S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZrW8Xw4kKF4fXr4fCF1fXwc_yoW8CFW5pF
-	4DJFWIkr4xWr4FkFyDGwnrZa45Cr129ay7K3s5Kwn7A398JryDGFn3AFyjvFWrAFykK3W8
-	XF1UKF18CF9rWabCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUmFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVW3
-	AVW8Xw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48Icx
-	kI7VAKI48JM4x0Y40E4IxF1VCIxcxG6Fyj6r4UJwCY1x0262kKe7AKxVWUAVWUtwCF04k2
-	0xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s
-	026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_
-	Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWDJVCq3wCI42IY6xIIjxv20x
-	vEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
-	aVAFwI0_Gr1j6F4UJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IU5mXdUUUUUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADhDRmgC/2WNyw6CMBBFf4XM2pp2KC9X/odhQesUJuGVtiEaw
+ r9bcenynOSeu0MgzxTglu3gaePAy5wALxnYoZt7EvxMDCixkLmsRaTed6ouxcqzjX4UZaGcM8Z
+ QrUpIs9WT49eZfLSJBw5x8e/zYVNf+4tpbP5jmxJSVIi2shrzRtO9nzoer3aZoD2O4wOodoShs
+ AAAAA==
+X-Change-ID: 20250308-tegra186-pinctrl-651ffbbbe816
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749435198; l=1219;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=lOx07OEPHI4zIhQLY6PyPM+jjTNfD5XG4BYf083Bork=;
+ b=O1rlq6CV9i34HIKnA2LRs9rH6O9Bnt683ScNvXZXVAqIWBk3Yq6RQDFNOzO4LQi+KVVwaV+Ju
+ VgsQi1AFbneBuSoJ55FJ2JDsEg23RmM8iC+mCFXUHdJqgneva1MFsTm
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Since the devm_mmc_alloc_host() helper is already in use,
-sdhci_pltfm_free() is no longer needed.
+This series adds support for Tegra186 pin control, based on a downstream
+driver, updated to match the existing Tegra194 driver.
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Changes in v2:
+- Don't allow underscores in node names in patch 1
+- Rebase on v6.16-rc1
+- Patch 2 was picked up and thus not in the rebase
+- Link to v1: https://lore.kernel.org/r/20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index b2f5c3f8b839..c811297185d8 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1693,7 +1693,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 
- 	rc = mmc_of_parse(host->mmc);
- 	if (rc)
--		goto err_parse_dt;
-+		return rc;
- 
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
-@@ -1739,7 +1739,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 		if (IS_ERR(clk)) {
- 			rc = PTR_ERR(clk);
- 			if (rc == -EPROBE_DEFER)
--				goto err_power_req;
-+				return rc;
- 
- 			dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
- 			clk = NULL;
-@@ -1750,7 +1750,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 		if (rc) {
- 			dev_err(&pdev->dev,
- 				"failed to enable tmclk: %d\n", rc);
--			goto err_power_req;
-+			return rc;
- 		}
- 
- 		tegra_host->tmclk = clk;
-@@ -1811,8 +1811,6 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- err_clk_get:
- 	clk_disable_unprepare(tegra_host->tmclk);
- err_power_req:
--err_parse_dt:
--	sdhci_pltfm_free(pdev);
- 	return rc;
- }
- 
-@@ -1831,7 +1829,6 @@ static void sdhci_tegra_remove(struct platform_device *pdev)
- 	pm_runtime_force_suspend(&pdev->dev);
- 
- 	clk_disable_unprepare(tegra_host->tmclk);
--	sdhci_pltfm_free(pdev);
- }
- 
- static int __maybe_unused sdhci_tegra_runtime_suspend(struct device *dev)
+---
+Aaron Kling (3):
+      dt-bindings: pinctrl: Document Tegra186 pin controllers
+      pinctrl: tegra: Add Tegra186 pinmux driver
+      arm64: tegra: Add Tegra186 pin controllers
+
+ .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   |  285 ++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   12 +
+ drivers/pinctrl/tegra/Kconfig                      |    4 +
+ drivers/pinctrl/tegra/Makefile                     |    1 +
+ drivers/pinctrl/tegra/pinctrl-tegra186.c           | 1784 ++++++++++++++++++++
+ drivers/soc/tegra/Kconfig                          |    1 +
+ 6 files changed, 2087 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250308-tegra186-pinctrl-651ffbbbe816
+
+Best regards,
 -- 
-2.47.1
+Aaron Kling <webgeek1234@gmail.com>
+
 
