@@ -1,74 +1,68 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612DE278754;
-	Tue, 10 Jun 2025 09:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B3028B7CE
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Jun 2025 09:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749546918; cv=none; b=nzWZJbinwZ9WqUBTq4C24BbBMXUQNZW5t+0IxBW9NSYx2gTmNwayfGXp3jf0xUs+ocAmruAPAHLtonmgFdC0oWBW61MYac1wCY8EMPXu4KvijFgdQoPQ2ZvBNsyi7nqShizxIVD77FYDy5tICvrB6WbUP55p//vUKLWbeAHpyOE=
+	t=1749547207; cv=none; b=evqo4dbBoygv8eW/8eBA/qbzs08/Kje0Iyk66s4ojBjBHP83dp2nd12ZMg4lXS97MbBl3KUOGQnl3mqd/tm41ReCgnpmYdOmvofBYBKfww7rkTx89CzjCgblicaVosa4Ub3zwUGthhtMZd2eWwWdqU6uGglTIEFUEFt2kbXmTKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749546918; c=relaxed/simple;
-	bh=OMjEdAFdmcV6ZwyVPelJvNH18GruRxDe/BNmKSl3e84=;
+	s=arc-20240116; t=1749547207; c=relaxed/simple;
+	bh=nyPvhoX/Ffji344tkDnaespCSI9q4T1UWrnyikAL2Bc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RelJBOpGsoUsYyeOrDWlkh8bJUvJp6zfJVone+9sFO2epAxDpV245+yedbnhMooIwktSRd9rd0eemxupg1LA1j4CKHjC/X6wWXa9xqelT3fkVZINARQiALGKO83sJIn7tcUw72ekartykRFb/Hyg06OhAlWhMhuUqWGJP33vknY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6ZeSvMf; arc=none smtp.client-ip=209.85.128.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=krFWXX+iErV0KVBqABXrPL9/JRznbC7s0WfcYlLThb13i4ofV+l8ga+dk1Db2HyVU0MO1uWx/DaGkSdwjFE0/T+AUzsi9KZQFJ1R4Dxe39eSRycH08VeOZaKyY5i0x8h1rlWZCzTNrkQmekaMCdZfbWg+CMjYgS5j2QAA1DjI6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQfNPtGU; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6ZeSvMf"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4508287895dso38023685e9.1;
-        Tue, 10 Jun 2025 02:15:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQfNPtGU"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso32535085e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Jun 2025 02:20:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749546914; x=1750151714; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749547204; x=1750152004; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MAzL9OJNNLRO4WKadHozIzXtPHjuC0n6jvYRjDJjK58=;
-        b=T6ZeSvMfD3ytLqMsT+axDGAcN3aFEZwxQde0ISoMNGy2vyIDCeYFUtvueQuJ2JOaYt
-         o75Sa3GS0S8WhFCqToUBFm17ZW2RHIHSpuRuIvrBScbddbhaDwOZdDFozeJKvxFJF9Ki
-         VliYN/xw8nBSCJKcgqa+P1r6xTnkZ9eHF2vBu3j3Lym2GaqYEfsSqwv7d62G7XTZJgdT
-         +bVYITQQzyz+MGhx1oApsGviK7cGQ/rnZ5J+WcPusUIpeLKucbuVKDmiDi8DqzieIdLd
-         U837lfwqINUis0yLXPbLTHBSEbAf9R2RTzmlRquVqmgVeHycsZb8dGCHktLPaYV7vqzX
-         7O0A==
+        bh=5YBJbTNWnmhAa1OyVMuSiMucR3l83+Rg+SCBbERWj1I=;
+        b=CQfNPtGUc9Zm7084rf4houM2qrYWxeymEA+utb5OiZ6wNVccMWTsiX5SRHyrUxr3KG
+         Z2jLfi9Xgmg8V88tDjTxfDXoPyOanVdOhVge+LztT7MDmWRDrp/hGIrgyqyGJSoVcwia
+         l4Ut+uJM4mPc0r1TB3YB8igtUHtohG5SemQuJEGxGwmZ6M/ih8998e6ZyFATcMF6yK+J
+         HBAX02gfjx1VcJylMfT+i58aiO24HMyEZaGg0fPqvJSoerc04VJSKS2wDQFj9kxVUVv1
+         DqKLyOjSK0AFxPIsCQ3KyXcxuMhHm1OWw5QPFkCtMRNiiLrb62nRhPBLARWatjv5Mz1T
+         D9Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749546914; x=1750151714;
+        d=1e100.net; s=20230601; t=1749547204; x=1750152004;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MAzL9OJNNLRO4WKadHozIzXtPHjuC0n6jvYRjDJjK58=;
-        b=FwGIB51kLz+N5Qu3d8NXE7fbNc2DNEw7Rx9sg1hWDiskKDhJYq8jGjGnmgdtPGmIjd
-         Q4x9Koh1myovZqQOB8GrIrep/qXFg7TZAbyyUNVrljUvqspDB/thebc/kMp9aFgnvZPy
-         vRS4PH3Z4PmHCWx47D1gG4xBgXrA44z1tqRAQ98SZiwhK9bUaBDvx8oGbJ8aMt4nYiVP
-         DgS4VuwoyyDXsed8zhcK8H5jCk2u6KwqrCishCDdv7JBFGWlcG/gAcM3NW+vI+8gP/H+
-         u2+k+MyFSX5d+Uzx8Ow/tzNkZLfichjBjjOvkFHtMSYKJeWsMzANjKczj7SKyC8LirOW
-         SNZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBrl6xOigaJDeDEk5sGMvth69tupIxvfSeKoHPTprLzWdA9Dd+wnQjr7Cx1xsRuFBqt5syR7WJVceCMa4=@vger.kernel.org, AJvYcCWstaDqs/YdaUqUS/IARmb0QPE4orjXCxoPooQbkZkdI1OHM28lpkWuoEh1nQrGsH7tFm5m0+LZukLiBtOw@vger.kernel.org, AJvYcCX5ogq1+O3JSwZB4gXsAA7dNo1wer6huQUhNTiRC4333+narl8f/ibYvSgm3HhtNfIRr7jrkVu4bVg2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF3MX+mBHlTvGdr8rKeF5fn9SdYJiR3LTbnQiKOl4AFqwADBml
-	SBivpNJDQRfjUdThMVNG4D+XhIiV3usgLf5FvaHAmKXzbB7KwtvgOFKH
-X-Gm-Gg: ASbGnctqSd38vjnAXDLdP/AP8U/j5llCljNkCVtcSquSeWDeMNfy693BdhEhL+EOONY
-	itOKduqa6w0CnxSv3583QgtAkjFUcTqRNqsxQl8rlK7s4B9XMWcsbwE27W0BdxoiwnnfF88Cabj
-	p8md1nwwms1UjshOqHJinrB2ZfNx5SsK7jaY4dVBs5Mt//Y2g9yDDJT81+JOU8ONYXW4q462w/y
-	v7kQ4DBdfkBSOBg08954Ze+QVmO5rEaKGrygF/+ZD3wey3ucRzEvwGenhambee0bsUYfAIfqLja
-	aTVWW73+oLA4a6Dl7RrMfA/7lfkooon9LHvAq0lRkbF74k4ih6n60MovV0qmRZXmkO6hBjCH2gs
-	GKbhGR+9trrLRiXLP0Ty7nO1pD+uTltFOUFVvauxoM1M81W1W
-X-Google-Smtp-Source: AGHT+IGM2+afJT+5RliiXm/UFRz6U4gnEGVbbtSS/DN7WoURs9vyYezUQ2aVrpksBzox70qfANRxog==
-X-Received: by 2002:a05:600c:5303:b0:442:f4a3:a2c0 with SMTP id 5b1f17b1804b1-4531cffa4bemr26081645e9.13.1749546913541;
-        Tue, 10 Jun 2025 02:15:13 -0700 (PDT)
+        bh=5YBJbTNWnmhAa1OyVMuSiMucR3l83+Rg+SCBbERWj1I=;
+        b=h9Pa49ZtVV5MTjWTz4hXPOcxddtvOM6CUsgP586lfon7sH5qI1N472wT8I7QXYV11w
+         dTHltOKuBhoLvztzW78iJVFZQnke2KZJ9gfKUq2GVUgs+RBxKGdJa01dLrBakR+tZo0v
+         pZ5MsHRJNvv6oVt5c3JvmBxU9B39JdGKYyBRgLYMdJm1hzdw1zv2JCV9qqMnwmLfh81Z
+         7CxzzGs6Xm/OuqattFUM68ozzhAwPs6juM0KKdbHBZGK0M2DoYBgYNgyQ4dMMlJaQyu+
+         cg7tGtuSs7wZJBd8l5GiANeeD7NneiNzJWKRxCDzVHvjOHpYNw3ux7u620iocF8yfeZV
+         0MEg==
+X-Gm-Message-State: AOJu0Yx1y1JEspba6atzPu2fY6T3pWKYE7KTF+S8TMiz8DPtQ6nGBZ7U
+	Z1qsER/QiPPRPzHt4y8qecU5FHpCIWeZfxPDvpQCzgUwk73yzLlVqvio
+X-Gm-Gg: ASbGncvtOwEJGxfGelJ4gYvbYH87YVdTLIhLl/7df56bEf6o04lfOBmPA3GV2549Ad2
+	kpUD0oK3QR7Ra5x5dyt7FOiq5wOAUdb2711W20/plWOvBvDQ+5Dc9UoA7BGRK+O5cGGbW/R6y4K
+	BSn2x/+nQJ6IrpMm84z+ntLN1Kv+HbtryZA2+HYTh3tOk++gSrk/N2vaBI/DcV8Pbkf/Sl5c9QB
+	GqJD+6Bv0d2ewYuaphqTLruzP/uwKBTiuriYLWQNsYveqiVzQwoTukF9BAHZhIfoOGl8+NB+eBU
+	5x0oFfp57DW7rzE/12ZnIA6dhl+TaUswvOo1GAw3m5fmPNHU80gxYWWaKxfeDqf7vpGzhUMsCs3
+	yFqvg268j4HDGNV2SaBEsLH3gI6YmaVTRnjBepvSPvFKrtFh/
+X-Google-Smtp-Source: AGHT+IFDd/gXp7EEWfm6JisRTyh8AD8ARnN79xdGGrk4QwiNZ4USWkO6ap5bx9a619Z/aIlSm/TWjg==
+X-Received: by 2002:a05:600c:8b08:b0:440:9b1a:cd78 with SMTP id 5b1f17b1804b1-4520141635bmr188289705e9.10.1749547203661;
+        Tue, 10 Jun 2025 02:20:03 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5324638e9sm11573567f8f.89.2025.06.10.02.15.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452730b9b3esm133002725e9.25.2025.06.10.02.20.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 02:15:12 -0700 (PDT)
-Date: Tue, 10 Jun 2025 11:15:10 +0200
+        Tue, 10 Jun 2025 02:20:02 -0700 (PDT)
+Date: Tue, 10 Jun 2025 11:20:00 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB
- Developer Kit support
-Message-ID: <tx7zodgijgip7jhaxookffpa6g6wdnbbl75mz46aff5ch524iv@ky3ltt35amon>
-References: <20250608-p3452-v1-0-4c2c1d7e4310@gmail.com>
- <CALHNRZ_Zo6w2KgRTEPcJuZi93bOqQD4Spzr4+YfqnxJZVnUPsw@mail.gmail.com>
+To: Aaron Kling <webgeek1234@gmail.com>, Sumit Gupta <sumitg@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+Subject: Re: [BUG] cpufreq: tegra186: Denver cores do not register
+Message-ID: <73cbbuahttztsfkz36ndl7mla5dswo4wjqvzvuuajfuuxdo3gn@eiq3q2jniajw>
+References: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -76,76 +70,68 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zlxe6zmtcamlsoiq"
+	protocol="application/pgp-signature"; boundary="uvvgfrdajviy76uo"
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ_Zo6w2KgRTEPcJuZi93bOqQD4Spzr4+YfqnxJZVnUPsw@mail.gmail.com>
+In-Reply-To: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
 
 
---zlxe6zmtcamlsoiq
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--uvvgfrdajviy76uo
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 0/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB
- Developer Kit support
+Subject: Re: [BUG] cpufreq: tegra186: Denver cores do not register
 MIME-Version: 1.0
 
-On Sun, Jun 08, 2025 at 11:25:53PM -0500, Aaron Kling wrote:
-> On Sun, Jun 8, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> > Aaron Kling (2):
-> >       dt-bindings: arm: tegra: Document Jetson Nano Devkits
-> >       arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer Kit support
-> >
-> >  Documentation/devicetree/bindings/arm/tegra.yaml   |  5 +++
-> >  arch/arm64/boot/dts/nvidia/Makefile                |  2 +
-> >  arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts | 43 ++++++++++++++=
-++++++++
-> >  3 files changed, 50 insertions(+)
-> > ---
-> > base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> > change-id: 20250513-p3452-059708ca9993
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
+On Sun, Jun 08, 2025 at 10:09:01PM -0500, Aaron Kling wrote:
+> The boot logs when using the L4T r32.7.6 boot stack without u-boot show:
 >=20
-> This is sent as an RFC, because it doesn't fully work. In my tests,
-> this boots and everything I can see works, except for hdmi. The
-> hotplug detect pin never changes, regardless of hdmi plug state. This
-> works as expected on the downstream 4.9 kernel. Based on the
-> downstream kernel dt for p3541, it's almost identical to p3540, and
-> I've mirrored those differences in this series. Things like the hpd
-> pin are the same. I'm failing to see why hpd would work on p3450, but
-> not on p3541, when using the same boot stack. Does anyone know why
-> this doesn't work?
+> [    2.648162] cpufreq: cpufreq_policy_online: ->get() failed
+>=20
+> I have traced this down to ndiv [0] being read as 0 for cpus 1 and 2.
+> Prior to "Share policy per cluster" [1], this would also fail for cpu
+> 3, one of the a57 cores; but with the policy for 3 being shared with
+> 0, the driver no longer tries to read its registers directly. This
+> issue has existed since at least 6.1, which is the earliest I've tried
+> to use Tegra186 on a mainline kernel.
+>=20
+> I've tried to compare this driver to the downstream 4.9 version, which
+> does work as expected, but I do not see any differences to the
+> register offsets being read. If I hardcode ndiv to 35 for the failing
+> cpus to match what the downstream driver gets and what the other cpus
+> get with this driver, scaling appears to work properly. But that's not
+> a proper fix. Does anyone know why the registers for cpus 1-3 aren't
+> read properly while 0,4-5 are?
+>=20
+> Sincerely,
+> Aaron Kling
+>=20
+> [0] https://github.com/torvalds/linux/blob/19272b37aa4f83ca52bdf9c16d5d81=
+bdd1354494/drivers/cpufreq/tegra186-cpufreq.c#L117
+> [1] https://github.com/torvalds/linux/commit/be4ae8c19492cd6d5de61ccb34ff=
+b3f5ede5eec8
 
-My recollection is that the HPD pin essentially loops back the +5V pin,
-so that would be my prime suspect. Other than that I suppose it could be
-a pinmux issue where HPD is muxed as something else.
+Adding Sumit who usually knows this kind of thing.
 
 Thierry
 
---zlxe6zmtcamlsoiq
+--uvvgfrdajviy76uo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH954ACgkQ3SOs138+
-s6G9exAAi6ISleCAMzkbsYYuFcCui+KRvTLHXLfAvJw/MXABJhQgTYH9sxavgRiu
-cniBxxOLvTcXINg8BdTbTM4dgPcHBIqfo0A5SiQelsET5PXRMvfNjzN0FzwwfjaF
-Ht3kzFmkPRCLqkW75+UFKYHLJdtujAe334hkIg5wk8Wvse1FDR2bmPxkRa2ljP6+
-d81kkl+IkMajJXdzjFUoYAl8c7uHTWDL061F/XlOA4IYrSUErZFZb5CI72AilvD5
-z29FZllWusetqE8Q4muzRnCZ7OMGPZ+MlhYejSCBS0CQjjFAx8z5cV1/b2crw4yk
-lio3ZqkuhPZUo5peLR7vn7TPLV1uUPeM8o5/LYsfsSYvkHQKJdCl+BAf4kY45pNs
-QSjr0vq37oEYSQxO3UB0I08bWJBbnVC0TKG7v7olOYiB66J7/b3gbQhWAvargIIT
-O2LzG4xPMihWahgdUjKWEuP3SvEnYdGzX6D2Te3xD8B856dKedMXGDkSDXVvR2FA
-Cb7LtuwdjQXT7DMDiA8icRBdKb6AB0OfMhM4cv1FtEr6BAXeUFKSyL1GlYCzhie3
-rnuwci3GaSlGbg8Ea3KPBoyw40wnINqGbb6dGYQbFO6zsD++GqvjDeiTAaKLIm5T
-RupESDMo7ugVeHJnnOtvtDSzi//04oVXTtW/K5vfc48qJml0tkQ=
-=7Edi
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH+MAACgkQ3SOs138+
+s6F1DA//Vga4/HY4S0MRkSof8p4z2qOhjtt/+xYByyNm707v84vjFV32Qy3JjUri
+k+eURNtrI6cVIAbatts12qCxcK/BILVFFsqdWSCoe69P8wEFbDG2dhtCbdN8GSxj
+ayKOajI8KQEJJYVgLwBY29E4Na1HC4duYbNIFvPiInbaUb+Yhv7uogvIUrCG2LOm
+9LpGWj+WQhk3C24jdEo7MpjNZMlIqjK9o+zt+I8T/IGgSVzzw8GBPTE5ViZTpdMO
+hAVb0H2UoApVMs6vPB+FYVBDfVBzYM4XZXtW1uC8x9Brrg0gcdVIVpbUt2nesYRj
+RTBuf7mt33HMMqiaKrKySKW+h8oL/+ahXTR4wryqJhgoXPHHUzffB6mgME+Z7wrq
+MDwh5Wpt5DYH7h2enrwEpgyZMS8aVElVS05yHNiICeCUaRFe3HOq7Q2ny8DHQvO5
+6gr4KriHJHa1tFDudbOyboA49eZLPEP7JF/ApUvSdofpu/2Aocr3y2tVWn1pMM/9
+2KrRQG9rVwyIcy/P8MJR5M9fUAvMGK7WykK+PYbCgiD3GHVeTyJNAVGdaQv8WGVF
+cv2a8ag0v5ITHsIA41c0Y08rwnVwVIUZdU2+r8wT0r5Z+pOhX0wPkW5zRyLOe18m
+1IoLeRDAc2T/e8LvChkyHnI5dL3Vf+8Yrc0s7XB6BUtDm2+inYs=
+=YhLj
 -----END PGP SIGNATURE-----
 
---zlxe6zmtcamlsoiq--
+--uvvgfrdajviy76uo--
