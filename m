@@ -1,73 +1,76 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CF41D555;
-	Tue, 10 Jun 2025 08:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EBA22DFBB;
+	Tue, 10 Jun 2025 08:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749544383; cv=none; b=dM3Z58Y9Qhe7wJ8RuFnfl2HvjQ+QWI7FLhGHWpaGO6i+Btm7rPnjER8mQfwepFMiTk0FCbITr+cSuqTU2iMZ5fL9sYZCiaHxM+gzfLTV4DtxIeqpcEvchjnDCYhksZXSNKm0ReLZt4SdoY/7ieym3w/nkPV65ZL85MYECaHsZXE=
+	t=1749545058; cv=none; b=Aiq489R4AFO+wQSgxku51b+mUJjhRPOJ9UCqUKB8HOgaFIvONW3crMujE6WlXZPMgMtuaWLw8e0NW4lqbAXsZ6fkyptB8W3tU3oMQ9h82cRwbV1j1sNf0BFke9RZlTxGH8q1AYAi2jKpJMQrp8TZZxS4vTm/Swb9g7XB+RtCf8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749544383; c=relaxed/simple;
-	bh=GxPozG1CZB8z2pXqUGvtMBHxXNvOTKQf740WHBq83/c=;
+	s=arc-20240116; t=1749545058; c=relaxed/simple;
+	bh=ybgxTm+kvB6cJ0D3DyEVRKBYFC8Z0+U7/NRwx8tLwLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MP6JVK6wuWL995sRx8z8ZmgcSi4ro+4YemuzWvShTrVNjidTGyRtGI+1YPI2Vmz8Kz80E/I7oeBVLr4SZbFeYhfws2OhiziVFgfG9EdUDo+ys3PyY5Eq21/OOXX3nEdoD4FPnxAhZKBvtIOLSFpWpjIaErt+/Uj5TzdazqvhCag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9Xm2lxz; arc=none smtp.client-ip=209.85.128.51
+	 Content-Type:Content-Disposition:In-Reply-To; b=heSSyInBmnnVEbXCE6ZOLDFEz5n9aaa4Oo5QuJcc9Ql0xHEotFAHEbszmyQI7HeO1DDArKqTrTacmK0GE1iyaRjccKnn9QZnianAAYbSm5r4i5th2RiICEsVvpsPxXJK6QiVKuWN/J88Sgq8ARecn12TpSK7sYrcuIoXb58UZhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8vwcNtU; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9Xm2lxz"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so64864855e9.1;
-        Tue, 10 Jun 2025 01:33:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8vwcNtU"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d54214adso42213985e9.3;
+        Tue, 10 Jun 2025 01:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749544380; x=1750149180; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749545054; x=1750149854; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XSVka9oJlpR7dCg/+KYidGC8BG6Hl2ojLK4qAZEX05k=;
-        b=R9Xm2lxzNMSwAEuCWj/M+/DMlFqCSukoZpwIXB7tQh+esP11PRFT7Zoq2oUVaT+hPE
-         w62xRB3qqSxxfe9qasMajhc2dmcrOmvNr0e4ox1YagjZel1vyKkRojT17yGP5N6azugw
-         EWouxDyuVm30L1AwrUTS0dUpi54lOIk+ca5OaLXEx7bnSrkJd9w4LlZVu7/UEOXHVwOB
-         94XtoNJM0IwP0e2lxZvjTRdGGDyksJ8ITbhUSYUmNJFDOren2Ivobc++ylXh184m0BeW
-         21ZleFeWtBWnE0BP9qacCORG9VbADPPz8o7Cufel1VFkOg7tRCWFQ9EM4EkPaa+mDvoW
-         WHgw==
+        bh=ufg6uwyWwGQNdeZaC5T+n52EK93yzGWyzvZoh5XZFzA=;
+        b=f8vwcNtUnKy6qZMHoBLqDQyW/S11geLbj7lsOq1Gzqj3RgwSOOk6yxlEf92zK0Ccun
+         BV+6AwzYRuzSWLPiImp68NennUC0vfBLnngu8q1QPuLr/Km8zQBj1wN5OetnpQmOM5gX
+         HuzUUAoeIprfHO95Ljn372PGiOuxLGBjkqedZBr1zStxkk6lobUf14Xw4Y2VxX/JwnSD
+         dhd2yZ7AaS3gzQFwiFLTCpbpagt3GTerL983WQmwAVqZBFJIaIvrzycYK6vj17lkaNjD
+         oEPF6UG4qualjwXRUgWK80ohzWt3k+ngL4vmvrIAq2lrPLn5jdnMLmoA9PGINqRGDCdw
+         4VAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749544380; x=1750149180;
+        d=1e100.net; s=20230601; t=1749545054; x=1750149854;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XSVka9oJlpR7dCg/+KYidGC8BG6Hl2ojLK4qAZEX05k=;
-        b=Uy2f+QnMHVxGkvkSpXyaohGcDdOrzO5uImv3uL+V8L/3fZH/REEOMNiphQUQWU+fWS
-         LEYA1WeSl3KyCZhKfi9oWL79EK1vrphgyNSwe95cxzTKkviiARq3oOpNdERrwDRCARmz
-         K3T7hHAq+oEkwu9EeFV+Zm8KYaUmGLpMZSbFD/iDZeXrpoj33Sfvwm56XqTVrNszXj3a
-         EGwxQ+BZVJg6PQWjDHc2YRg9GGjh/tS/Gqq/vD9AbPBLRxQ6/LZWIAgvo2Hd7FiQqiz0
-         vJ8aQKbVhv/aAe/q3A8TNRv2mVbKrBEy1jbYsXXxRybYieq6OCwg0R8w3CJSXtCZmZ0i
-         R68w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMEYNydiUhRKm+BqRdb1O2c+kWcnqtmybZpQI1WzWgJNOJrYLXmFpu/LeKwt8LcgUOIJV/AuRmwSsA@vger.kernel.org, AJvYcCVNJ1rGBW/kjCIntVulJ1fISLruvKPifCXQOmoI1nZXOIg7+zZNlo8cstE64xGQPp79LDG938zHo01j@vger.kernel.org, AJvYcCW6/RDF2bpdzZSGqc/Yqy/1uN/B+ADWjl2DmOV5dH28LZSYagDMYCEY0C76eebaQTgTkEE2CoA3RzEC7NQO@vger.kernel.org, AJvYcCXjt49zr144lyYbtymenmlAOH6ftCnb4U8lLRKRoyPeaUd4OsSqsVVGBqmtn3s5niGhPaQ0D2mKCQ0HHKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQWY1NF2drPxSkHuD516y5Vgs3g2FN17arj4HMapPBfzN0KZCD
-	zKhjzch5xMaosMtrlcftk684jWqYFIsX+Bn0GX08u1idvAdHdF8T8Poy
-X-Gm-Gg: ASbGncuRerwnajc8JiNUxGn6eqZjtcZF+HzLzKNY1c2zu44JQxOSv2pU6MvRu2+6+pT
-	YEztsZzoCxn7/E0z5lV5zfFfAvvotRYXV8R6XcMhhJ3QCx8zfa15513gT2lEqgK4/nPvk0THrWU
-	vml18ee3cz3Knx0dP0JZKiSgVqch/kyvyUf1cR57uTn6Ho5qthIIXCKHVV23+GzNMQklvV9WsBn
-	VnFqZCeHHdgWb7sFyrZFSBD7FZc3pCCRGk8p1CReDwIe9iPnVFDBbV4vkfBntBQl2u4QyhUk/Y9
-	z7wDTkgzVzChgmkw4mu2qvkvDdkD9Iw+F1C6WdG4sYtI9py+YKXKN18UG9Es0y4qEh7/uCj1FYu
-	xLF6EOqBCuOQcW9dYJzX3zp6axq9xfspL5WY1q+WVc8id/1ge
-X-Google-Smtp-Source: AGHT+IFxMEiDZAZjiWh6OKaFOvLOGCaKHNJM6DCI4Vjs8zfgGbyngmI3cFwsh/pnB/BT3WfAfjXQRQ==
-X-Received: by 2002:a05:600c:5295:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-4531de718f9mr15496145e9.18.1749544379381;
-        Tue, 10 Jun 2025 01:32:59 -0700 (PDT)
+        bh=ufg6uwyWwGQNdeZaC5T+n52EK93yzGWyzvZoh5XZFzA=;
+        b=W2IerGAvhfkkW4vlrM5jNPeXvOvConZJjw1Gj447XX2ZFqQXhOb5yH4qf9+ECYslfM
+         e2rBGco6P0q+ElJ0ktUFyBml0Amn9zOuZPQDhvPVEXz7AU1MmEewMUrpPIveMKo83RaW
+         l3mhSXo2eLZ3aGHEeyS9v+yCwuWPfBc8PJoIWtuPmZAPEiKGGZ0nuSUgtT5KsfBQ5Vvg
+         CkAizT5dc3JWS6senCZI6wv7Hc97nthY3R19Ddx3DFSMUq8Xg0SwpRY0TW83o3/fIjy8
+         xfsZj78QIFxb4Uv8FZu8Nt+XG/4qd8HHX2J0vzRGHTCAoyrE1gfewhKRzy+0bEtwFY1J
+         473w==
+X-Forwarded-Encrypted: i=1; AJvYcCUN62rokCTKnBiBZMRgZ/9qWEkjB9MOIQtgW5//9rXcOuZN1BmiyJQTBE71+q7jeijSTV1BuX730pBReDS6@vger.kernel.org, AJvYcCV9qMCBDUMsidm+lO1sX8hFfmM0j8hfYnmMaBd6/B0QqOYAkrCZtcEUf6v9LtJhlMU/bwJJkKPf423M@vger.kernel.org, AJvYcCWRcUs6GXTINnM8YQXOejYvcyqyVj+jVSzPINfL+3KgvcwpIZQiej3TqokeBzscviKK0SEps7sp7ncDoak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4MyId7ElAdMpZKWHSjfYfPTqeIUdcRLz5NzqthmllPap2aAe8
+	pWJRopvABdiLdbLfIz9+teIhyDcbltYDpVUK5HYbisVrmGIQsLvWStJ0
+X-Gm-Gg: ASbGncvwbN0BtydCqMNeINfNfuPr1o195iHyHWEDxRW8U4Hpulf8E1gzpLN7hscAEU/
+	Y/BNZp01Z3/l17WOKJO9ZdgUflZO/FCwRFKqaKXt4pIzXzS3SDiflmej9cVIyq1bzQ5BH3rrd7P
+	Ln/tPAnphnr1OREbAjxrkuIL9FaYC1cJugQv3XkVlmkKc1mTrm+apuvBYN6BZJ9SCVRxkStLZzi
+	IpENHwOnGbFP7oeVX1BGlgPLPTmwc1qw5QZ9ca8alQML1VGpfypkO4UNHB1vuCqFustI2fVTQ7K
+	nJ44JI90NDDHP8w9xWwlAcu9ihqthncIIpbcHO61w/SEONcCeOVM6XnqasZ4iHatFeqPT2xvjK6
+	frGsEik6BffztXyQdvr+rq+1lCOuQQ1pekP35r/NFSFyE4ApP
+X-Google-Smtp-Source: AGHT+IEI6U/wlkyv60EtHKpGkOxvKNc8dBNCAlpQUDw7Gbe+DfsHFVL8q5OU8MIyrQVeRvXJaoxmiQ==
+X-Received: by 2002:a05:6000:2082:b0:3a5:2cb5:6402 with SMTP id ffacd0b85a97d-3a55226815cmr1210790f8f.12.1749545054244;
+        Tue, 10 Jun 2025 01:44:14 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53245275esm11607688f8f.76.2025.06.10.01.32.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532452d7esm11567635f8f.85.2025.06.10.01.44.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 01:32:58 -0700 (PDT)
-Date: Tue, 10 Jun 2025 10:32:56 +0200
+        Tue, 10 Jun 2025 01:44:13 -0700 (PDT)
+Date: Tue, 10 Jun 2025 10:44:11 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, jonathanh@nvidia.com, ldewangan@nvidia.com, digetx@gmail.com, 
-	p.zabel@pengutronix.de, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] i2c: tegra: make reset an optional property
-Message-ID: <cs7polavxoyphttd4uuzb63eguayc5zrd6l6tvyq5nbizpkq2r@g6qvgewu2d2d>
-References: <20250603153022.39434-1-akhilrajeev@nvidia.com>
- <20250603153022.39434-2-akhilrajeev@nvidia.com>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm/tegra: Add NVJPG driver
+Message-ID: <fhumfjczxcohn5h5mnrdmz3x23ituxktzudtfutly35jkziiou@ocffx4vennrn>
+References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
+ <20250606-diogo-nvjpg-v1-1-5f2c36feeb39@tecnico.ulisboa.pt>
+ <811ad406-4afb-45c5-9783-683779f874cc@kapsi.fi>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,120 +78,81 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="treicxcu6kbo7pul"
+	protocol="application/pgp-signature"; boundary="4tgir5eftbmngfvg"
 Content-Disposition: inline
-In-Reply-To: <20250603153022.39434-2-akhilrajeev@nvidia.com>
+In-Reply-To: <811ad406-4afb-45c5-9783-683779f874cc@kapsi.fi>
 
 
---treicxcu6kbo7pul
+--4tgir5eftbmngfvg
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/3] i2c: tegra: make reset an optional property
+Subject: Re: [PATCH 1/3] drm/tegra: Add NVJPG driver
 MIME-Version: 1.0
 
-On Tue, Jun 03, 2025 at 09:00:21PM +0530, Akhil R wrote:
-> For controllers that has an internal software reset, make the reset
-> property optional. This is useful in systems that choose to restrict
-> reset control from Linux.
+On Tue, Jun 10, 2025 at 12:26:07PM +0900, Mikko Perttunen wrote:
+> On 6/6/25 7:45 PM, Diogo Ivo wrote:
+> > Add support for booting and using NVJPG on Tegra210 to the Host1x
+> > and TegraDRM drivers. This driver only supports the new TegraDRM uAPI.
 >=20
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
-> v3->v4: No change
-> v2->v3: No change
-> v1->v2:
->   * Call devm_reset_control_get_optional_exclusive() unconditionally.
->   * Add more delay based on HW recommendation.
->=20
->  drivers/i2c/busses/i2c-tegra.c | 33 +++++++++++++++++++++++++++++++--
->  1 file changed, 31 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 87976e99e6d0..22ddbae9d847 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -134,6 +134,8 @@
->  #define I2C_MST_FIFO_STATUS_TX			GENMASK(23, 16)
->  #define I2C_MST_FIFO_STATUS_RX			GENMASK(7, 0)
-> =20
-> +#define I2C_MASTER_RESET_CNTRL			0x0a8
-> +
->  /* configuration load timeout in microseconds */
->  #define I2C_CONFIG_LOAD_TIMEOUT			1000000
-> =20
-> @@ -184,6 +186,9 @@ enum msg_end_type {
->   * @has_mst_fifo: The I2C controller contains the new MST FIFO interface=
- that
->   *		provides additional features and allows for longer messages to
->   *		be transferred in one go.
-> + * @has_mst_reset: The I2C controller contains MASTER_RESET_CTRL registe=
-r which
-> + *		provides an alternative to controller reset when configured as
-> + *		I2C master
->   * @quirks: I2C adapter quirks for limiting write/read transfer size and=
- not
->   *		allowing 0 length transfers.
->   * @supports_bus_clear: Bus Clear support to recover from bus hang during
-> @@ -213,6 +218,7 @@ struct tegra_i2c_hw_feature {
->  	bool has_multi_master_mode;
->  	bool has_slcg_override_reg;
->  	bool has_mst_fifo;
-> +	bool has_mst_reset;
->  	const struct i2c_adapter_quirks *quirks;
->  	bool supports_bus_clear;
->  	bool has_apb_dma;
-> @@ -604,6 +610,20 @@ static int tegra_i2c_wait_for_config_load(struct teg=
-ra_i2c_dev *i2c_dev)
->  	return 0;
->  }
-> =20
-> +static int tegra_i2c_master_reset(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	if (!i2c_dev->hw->has_mst_reset)
-> +		return -EOPNOTSUPP;
-> +
-> +	i2c_writel(i2c_dev, 0x1, I2C_MASTER_RESET_CNTRL);
-> +	udelay(2);
-> +
-> +	i2c_writel(i2c_dev, 0x0, I2C_MASTER_RESET_CNTRL);
-> +	udelay(2);
-> +
-> +	return 0;
-> +}
-> +
->  static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->  {
->  	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
-> @@ -621,8 +641,10 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_=
-dev)
->  	 */
->  	if (handle)
->  		err =3D acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> Hello Diogo -- I'm happy to see this driver!
 
-How is the internal reset handled on ACPI? Does the _RST method do the
-internal reset?
+So am I, nice work!
+
+[...]
+> > +	if (IS_ERR(nvjpg->regs))
+> > +		return PTR_ERR(nvjpg->regs);
+> > +
+> > +	nvjpg->rst =3D devm_reset_control_get_exclusive_released(&pdev->dev, =
+"nvjpg");
+> > +	if (IS_ERR(nvjpg->rst)) {
+> > +		err =3D PTR_ERR(nvjpg->rst);
+> > +
+> > +		if (err !=3D -EBUSY || WARN_ON(!pdev->dev.pm_domain)) {
+> > +			dev_err(&pdev->dev, "failed to get reset control: %d\n",
+> > +				err);
+> > +			return err;
+> > +		}
+> > +
+> > +		/*
+> > +		 * At this point, the reset control is most likely being used
+> > +		 * by the generic power domain implementation. With any luck
+> > +		 * the power domain will have taken care of resetting the SOR
+> > +		 * and we don't have to do anything.
+> > +		 */
+> > +		nvjpg->rst =3D NULL;
+> > +	}
+>=20
+> I see you've taken this from sor.c, but I think it should be unnecessary.=
+ I
+> imagine the code in sor.c is overcomplicated as well, maybe because we us=
+ed
+> not to have the power domain implementation.
+
+Agreed. SOR is also slightly older than NVJPG and used on Tegra124 where
+we don't use power domains, so most of these quirks are for backwards-
+compatibility. If we can avoid them for NVJPG, that'd be great.
 
 Thierry
 
---treicxcu6kbo7pul
+--4tgir5eftbmngfvg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH7bgACgkQ3SOs138+
-s6HdZRAAnhujjzWpAquHyf6+WinvqVKo6WkTVmd8n9dKR0GF6bpOXjWsXD4td2aQ
-JqGsPONKg3tOXPgO9O2LYQmCKFLWs777/piGIGXy0iddzVMItyoMOTiVkvKnLfCG
-52eIT/5RBjSBPIy2qZ1QrxIskyRw+HShjjlmSHphZDKQqUp47T8lUxG13MJVPX2Z
-9spyhkpPwMeDeS6Jjv6dAWljhUDf27hLjppxMI1HNjSPmKhYbEJxyDKLQRI/a86S
-MKevinR/MCkj632QOadQIk6LfU9nxBj6Y4kZ2NGD51oaHfJOZXfYPnTnE9gu2Mwg
-R8qjs/PqgTil8zSfZkjHiNrtemBxk5dEXleFgh7EENHna149z56+92B37rqeqw1w
-X83coo6YWZkiBwniH8cYsHytFHDSVcMroYIxYA8zTEE/srbV9bdVTncky2seGJff
-GZIYHJx8ed4e3mG44Adjfk+0hrF78kPnB+BWutPrCxma4waMd+ruKvcQ3oY8ltQg
-bvMGsgICLcMUgj4RYCyE/MPjnRyHq5doph5uf0yZ0Cwg5Xou5zNbeuVuF49/3b5k
-Ly84BPXbvjwJjr9/OqUrDdRjejUkprXeIXP3IJSWyLY9xGEVseKdO/OSf2zvB+/v
-SOEUtrMrKeooTjOZXhrZWdDnEdcwkIe5dlQPvzywb4vGS2MTj4I=
-=8pL6
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH8FcACgkQ3SOs138+
+s6HO5xAAuFcTDTd//elXh91lR+ye68vqyuQs9ieD1JizLFCjtviETpAU/eRizVY3
+nptiSkEPE3sVenbPIFwveqnkYiAGWAk6oOcixS3TG7GSEJg8iZKhT9firLCNNp7h
+lJWHQVN4RLywgBHPeZx8vpupyZBWi7Qv8uiSu37b6EsOWiUacvI7nQgQGY19/Iwe
+H/EnohUJL5mN79V4Y8P+8gwuy+8gJAl1iAa39oeFBR9xJFtxDMm582nWb5txhyY+
+8smkQfRYdNmsyxJtzewPIoUTxSpycM7OjCv3idK6ezYQ1kaXtx55IVzgwlaKO4SP
+oOW6U7Vzj40bufDjOyKCCIc1BUrnxsiQGBKdqJKTUVQSVC2xFiafHWIDD9w9mLYN
+Cspt1zyGIM0rAF+RB+Az4FQwly21KVlyruZ5BnhES2LrZIEDcFWhbjvftqvSFV8r
+EJDSZyVDyGg37Sgl3VkRWYdtt3Ao/tv/Lii0VBOS8v5wvkZ9xv9OXN1GSV4DGF18
+G40Ixjy3362iiecmwA8DU+ExFQGx2JTPtMIf+Cqb6yP9qHGY6ZrN00ai1Gu8ti3U
+EpMs7y7hRbuLP4TdZGnXMhGGUh1wjF/h3dLszxLUKunYkDRegAV6N2cpal7NwiVv
+JBrwR/L8nJMVO5fkhMlybop1j0c6SwJaVY/7BAe3U97G9GyNlCg=
+=tF10
 -----END PGP SIGNATURE-----
 
---treicxcu6kbo7pul--
+--4tgir5eftbmngfvg--
