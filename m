@@ -1,267 +1,115 @@
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D86111712;
-	Tue, 10 Jun 2025 03:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB811712;
+	Tue, 10 Jun 2025 03:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749527424; cv=none; b=gyAysiA0grshak9BOmf83yWTEmAh4xeXgbSUhQIfI0d16Ta8UUPGSiZPSo+TYE6YMaLZqeVLpaIXgDQhbddVNw2dJQY5fBzAf14FZQH2TqzTKicFnKplPRZ+q+t3AT5+Q0/yai7Nx5Ri9norUqZD4c/Tb+6nc+Ah+3V9tx0i2xo=
+	t=1749527585; cv=none; b=hvluul7jwDipk1VuLXeadU/QIAuMxvSRukCZ9N8piIGG9aAiHaoqdvoMhPSige8LPmIn87uh3gBRqwBfn296EfqB5vSR+mgO+VBhOUKYdBSTICAGm/dmdWp4ZrdlTDqxYSmTg2nuCbqPj+HNJ0zCEnptdfyH9k1wy7LIcgU4THc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749527424; c=relaxed/simple;
-	bh=VXsAjM2QXcPXbvD1ITfVpephKRy63w8SnaJkJK382CE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VrADWs8i0XUcxZGV0VVQRPF7PeJ7yeYO/Y5srvV/pVSaaV6hyhwPJqml4tblljmeFg+81U2SxtML8QbNtm0KaFYP1Iat0uwQ3l47yHRmg+TVdZBex689RDcgM9LAOUentkwoqXbouU/jr7mBG+XZc7apGen/69+6ELFYdzwd/H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=1MKtmw0s; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="1MKtmw0s"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=affox4Kq1bjPy2ctrshBc/luTilar3kM1+7WxMRnXhk=; b=1MKtmw0stbFdFaEP07QMflhn5v
-	6OzXDVRpnyoJFWyaRE5BuY04kss9NGiP7nSQm3uVJXcfddytQaiUeWv8mwC4bPM3XBT3yzJqgiPiT
-	BFy5gBGEBbn3tvx0yGbwaUsJH6Tz9Fg5IPx7PIFcBVfY+VI50hMDO3WUK5MdErdFpFDSurf1q+Ej3
-	EGjryscY+F9vGMcfXvECefEVwYz3hIEq5cry6bUn7zuyzsrzplU14AsJlLb+1w7kPDYfNas7yGuUM
-	ozghhO/5e75yqV6LNpPvB1hldZ20HfnTMu8QdZCHuYjnjcYXxLxQFm4CrzHjBl/dL0YHNwodR1hvS
-	GhEY2/cg==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f]
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uOpe1-0077Zu-0r;
-	Tue, 10 Jun 2025 06:27:25 +0300
-Message-ID: <811ad406-4afb-45c5-9783-683779f874cc@kapsi.fi>
-Date: Tue, 10 Jun 2025 12:26:07 +0900
+	s=arc-20240116; t=1749527585; c=relaxed/simple;
+	bh=SuVp9AFmt8gLD64j4a+SRLxEwyPAPmST5oVeKyyVGVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dr+17gViv/G3wrJCZeqh9AV9Xk5h1zZ9drqhlzuFey/seFcpT3+MkFNIu6O5oui2pWUHAwB7ZPG7jYXbsWfT017/Zj2rOPxREYQnlpGpxU3q5/wkUDJgpNdanFSUlu1pPxM6WmN+4WFl7F+FPu0y3ZI35gZALur86Ic3U3ir0hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5532e0ad84aso5208945e87.2;
+        Mon, 09 Jun 2025 20:53:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749527581; x=1750132381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nZk/7/4MvcJfckdyvA+r+JfqYVWkeTH5dDDkcVRzYjI=;
+        b=KhhcGJSgZ5PvBScI9Ax7F48s/ybhfF6fvS3bqrzPZIfjD2jlT25mfIRFJguj1ea57r
+         BpCHH7wJ4BVRD3wrCfN0IlcmrZ6pTX3XIy5FMgkXJjXkvBXMRnV2NNlYKMJnPjHCtpMA
+         o0Et7UbgXc6pxENvjOOh8dku+B5AR605THKkY49sd8XiTkzBMQOycS+Z+rJp3Y6xHt3L
+         6jovsTxbaksrNBUMcaA9FG++WFG8fRd4xd/Mb0U75xEiEEWg0sN2EhSkKjPiEE2EMBTQ
+         X52Ya4NhXFPcmHtKO5gIbPrvokRcfrnr0UF/wJchxIAhpIgfr2EwHOizANJTyLmRXQNp
+         qp4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9/FJZuFGLfbbkg2vIw/reXkvkPO3h/aVc/2KrGu1birjDnxfXqyWueS4YKM5JvSKLtCSZ1i3fxo8Miw==@vger.kernel.org, AJvYcCW+HqwT+OTsKkEaAbslDnRJlz+bI1nYph23aDy2We5ct8VE7uRDFoQ8LoluDNoM+uOFBsoW+10WF9OltUex@vger.kernel.org, AJvYcCWi4iwzU36BvEhRSLupeTZIoEbdT3vFrOYqmalnuhnayrajAi4VSApwpjzKEXpDwq+aLj4/RnU3M7nfJPk=@vger.kernel.org, AJvYcCX0CGgMmXMNb+LMul6MbVbHRd0HjuSJtZsbVq3/NodqAYA0oIJ0l+F4QPg/XcAI9w1TKIVIEUl6ud0ZRh6rSB/6Yoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyiTg3S2Tv/ybAu+aUHISgZT2q8gboVBjzpA652HqMd1DUO2//
+	clugsNf8vljHdgnOP1JLko4xnwSzIJ35JGf+dKsSUaUswXVKFlZlVeHdCtEbe8a0rPQRxQ==
+X-Gm-Gg: ASbGncsCsD9uxztsGJe732e3OLpJgthnZLEjJlUclnNs6jheoe/ubbz3IEq3PALu11Q
+	mt/7dwjHU7NvEgPf+3bqVn0rb8wG+tPHbGoyYq4vUPHIgqJHb9oeLUKkkALyidBDW4sLkF28U8N
+	qva5arm79zRaiKIr6pFr7/84fgw+4aJH3suIErADceo6HN+s6xdfjmwprVuceqm7NBtV0ojCHWq
+	d77XguqkppbonIZhbBgd9G18rufdjMsnmsTcHlIHIZQPmZjkkbCV1mUxlOxDjc0GfugV1oWc3Rq
+	AirPOC6UyeFJG0qfsuVc9ilWjqKlC8a/mcqCARydXEjk3J8Qp2DaMrBl9Tz6j9kZnNtfkgd9RXz
+	8BpQq/B92y1UDPr2tjc3XDRx+9g==
+X-Google-Smtp-Source: AGHT+IEjqIl/G//+0L2PG04SCS4x7CxnAtsVII5K2shRbeMMFO+P5s1IyWnobe6Hdd+bWTuBmFu+IA==
+X-Received: by 2002:a05:651c:1508:b0:32a:7a12:9286 with SMTP id 38308e7fff4ca-32adfd366d6mr36284881fa.31.1749527581287;
+        Mon, 09 Jun 2025 20:53:01 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1d03507sm13378511fa.113.2025.06.09.20.53.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Jun 2025 20:53:01 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54e98f73850so5370718e87.1;
+        Mon, 09 Jun 2025 20:53:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOTsd/Kq0p5rPpjxHBGg3JsQ/kWwn6lIfNotPtyxU7ZshUtqLLmXmJIeRPEr17cIomF0meIkrPHVt1GA==@vger.kernel.org, AJvYcCUrr+gkm9kJ7C3W1pcMkrqFUjJuzlNGbPvXRg4Q9t1BVMpG4x3Wwv70gDO4YvPfaRo6iilKddHd31m62FuQ@vger.kernel.org, AJvYcCVeTQhlzr0mPNb4h7V4eHKQBbWVmeBKCncIyPwK666cavh0e0zMFoCWLWcqawY8JXKvYXIOPtkUXM70yDeIY7gno6M=@vger.kernel.org, AJvYcCVnxFLxzQUkwzcHO0uyFV7YzNcnccwzaz835xx5W7FnOPPPS/RQSRZhzDaPmyAcgO4dFZ6GLEPHurVaTY4=@vger.kernel.org
+X-Received: by 2002:a2e:b693:0:b0:32a:ddd2:208e with SMTP id
+ 38308e7fff4ca-32adfc06f41mr30364041fa.9.1749527274652; Mon, 09 Jun 2025
+ 20:47:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/tegra: Add NVJPG driver
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <20250606-diogo-nvjpg-v1-1-5f2c36feeb39@tecnico.ulisboa.pt>
-Content-Language: en-US
-From: Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20250606-diogo-nvjpg-v1-1-5f2c36feeb39@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+References: <0-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com> <4-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
+In-Reply-To: <4-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 10 Jun 2025 11:47:42 +0800
+X-Gmail-Original-Message-ID: <CAGb2v672aLfjX2_+=gnYEt09Z2m+sDoUi-weN2VsgtqnrK_fDw@mail.gmail.com>
+X-Gm-Features: AX0GCFvT3cfnNTYictCtJSVKUrXJH3fCgSrvu85ggYc6KyathRV-zklZHWwYSnM
+Message-ID: <CAGb2v672aLfjX2_+=gnYEt09Z2m+sDoUi-weN2VsgtqnrK_fDw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] iommu: Remove iommu_ops pgsize_bitmap from simple drivers
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	asahi@lists.linux.dev, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev, Janne Grunau <j@jannau.net>, 
+	Jean-Philippe Brucker <jean-philippe@linaro.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Matthew Rosato <mjrosato@linux.ibm.com>, Neal Gompa <neal@gompa.dev>, 
+	Orson Zhai <orsonzhai@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>, Sven Peter <sven@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy <vdumpa@nvidia.com>, 
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>, 
+	Yong Wu <yong.wu@mediatek.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>, patches@lists.linux.dev, 
+	Niklas Schnelle <schnelle@linux.ibm.com>, Sven Peter <sven@svenpeter.dev>, 
+	Tomasz Jeznach <tjeznach@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/25 7:45 PM, Diogo Ivo wrote:
-> Add support for booting and using NVJPG on Tegra210 to the Host1x
-> and TegraDRM drivers. This driver only supports the new TegraDRM uAPI.
-
-Hello Diogo -- I'm happy to see this driver!
-
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+On Tue, Jun 10, 2025 at 4:41=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> These drivers just have a constant value for their page size, move it
+> into their domain_alloc_paging function before setting up the geometry.
+>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Acked-by: Niklas Schnelle <schnelle@linux.ibm.com> # for s390-iommu.c
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->   drivers/gpu/drm/tegra/Makefile |   1 +
->   drivers/gpu/drm/tegra/drm.c    |   2 +
->   drivers/gpu/drm/tegra/drm.h    |   1 +
->   drivers/gpu/drm/tegra/nvjpg.c  | 379 +++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 383 insertions(+)
-> ...
-> +
-> +static __maybe_unused int nvjpg_runtime_resume(struct device *dev)
-> +{
-> +	struct nvjpg *nvjpg = dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	err = clk_prepare_enable(nvjpg->clk);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	usleep_range(20, 30);
-> +
-> +	if (nvjpg->rst) {
-> +		err = reset_control_acquire(nvjpg->rst);
-> +		if (err < 0) {
-> +			dev_err(dev, "failed to acquire reset: %d\n", err);
-> +			goto disable_clk;
-> +		}
-> +
-> +		err = reset_control_deassert(nvjpg->rst);
-> +		if (err < 0) {
-> +			dev_err(dev, "failed to deassert reset: %d\n", err);
-> +			goto release_reset;
-> +		}
-> +
-> +		usleep_range(20, 30);
-> +	}
+>  drivers/iommu/exynos-iommu.c   | 3 ++-
+>  drivers/iommu/ipmmu-vmsa.c     | 4 ++--
+>  drivers/iommu/mtk_iommu_v1.c   | 3 ++-
+>  drivers/iommu/omap-iommu.c     | 3 ++-
+>  drivers/iommu/rockchip-iommu.c | 3 ++-
+>  drivers/iommu/s390-iommu.c     | 2 +-
+>  drivers/iommu/sprd-iommu.c     | 3 ++-
+>  drivers/iommu/sun50i-iommu.c   | 3 ++-
 
-Do we need this manual reset handling? NVJPG is only on T210+ where the 
-power domain code handles the reset as well. Did you run into any issues 
-with it?
-
-(As a note, the reset_control_* functions are no-ops on a NULL reset. So 
-the 'if' here is unnecessary.)
-
-> +
-> +	err = nvjpg_load_falcon_firmware(nvjpg);
-> +	if (err < 0)
-> +		goto assert_reset;
-> +
-> +	err = falcon_boot(&nvjpg->falcon);
-> +	if (err < 0)
-> +		goto assert_reset;
-> +
-> +	return 0;
-> +
-> +assert_reset:
-> +	reset_control_assert(nvjpg->rst);
-> +release_reset:
-> +	reset_control_release(nvjpg->rst);
-> +disable_clk:
-> +	clk_disable_unprepare(nvjpg->clk);
-> +	return err;
-> +}
-> ...
-> +
-> +static int nvjpg_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct nvjpg *nvjpg;
-> +	int err;
-> +
-> +	/* inherit DMA mask from host1x parent */
-> +	err = dma_coerce_mask_and_coherent(dev, *dev->parent->dma_mask);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	nvjpg = devm_kzalloc(dev, sizeof(*nvjpg), GFP_KERNEL);
-> +	if (!nvjpg)
-> +		return -ENOMEM;
-> +
-> +	nvjpg->config = of_device_get_match_data(dev);
-> +
-> +	nvjpg->regs = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-
-This can be devm_platform_ioremap_resource -- slightly simpler.
-
-> +	if (IS_ERR(nvjpg->regs))
-> +		return PTR_ERR(nvjpg->regs);
-> +
-> +	nvjpg->rst = devm_reset_control_get_exclusive_released(&pdev->dev, "nvjpg");
-> +	if (IS_ERR(nvjpg->rst)) {
-> +		err = PTR_ERR(nvjpg->rst);
-> +
-> +		if (err != -EBUSY || WARN_ON(!pdev->dev.pm_domain)) {
-> +			dev_err(&pdev->dev, "failed to get reset control: %d\n",
-> +				err);
-> +			return err;
-> +		}
-> +
-> +		/*
-> +		 * At this point, the reset control is most likely being used
-> +		 * by the generic power domain implementation. With any luck
-> +		 * the power domain will have taken care of resetting the SOR
-> +		 * and we don't have to do anything.
-> +		 */
-> +		nvjpg->rst = NULL;
-> +	}
-
-I see you've taken this from sor.c, but I think it should be 
-unnecessary. I imagine the code in sor.c is overcomplicated as well, 
-maybe because we used not to have the power domain implementation.
-
-> +
-> +	nvjpg->clk = devm_clk_get(dev, "nvjpg");
-> +	if (IS_ERR(nvjpg->clk)) {
-> +		dev_err(&pdev->dev, "failed to get clock\n");
-> +		return PTR_ERR(nvjpg->clk);
-> +	}
-
-Probably a good idea to set the clock rate to max (see vic.c).
-
-> +
-> +	nvjpg->falcon.dev = dev;
-> +	nvjpg->falcon.regs = nvjpg->regs;
-> +
-> +	err = falcon_init(&nvjpg->falcon);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	platform_set_drvdata(pdev, nvjpg);
-> +
-> +	INIT_LIST_HEAD(&nvjpg->client.base.list);
-> +	nvjpg->client.base.ops = &nvjpg_client_ops;
-> +	nvjpg->client.base.dev = dev;
-> +	nvjpg->client.base.class = HOST1X_CLASS_NVJPG;
-> +	nvjpg->dev = dev;
-> +
-> +	INIT_LIST_HEAD(&nvjpg->client.list);
-> +	nvjpg->client.version = nvjpg->config->version;
-> +	nvjpg->client.ops = &nvjpg_ops;
-> +
-> +	err = host1x_client_register(&nvjpg->client.base);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to register host1x client: %d\n", err);
-> +		goto exit_falcon;
-> +	}
-> +
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, 500);
-> +	devm_pm_runtime_enable(dev);
-> +
-> +	return 0;
-> +
-> +exit_falcon:
-> +	falcon_exit(&nvjpg->falcon);
-> +
-> +	return err;
-> +}
-> +
-> +static void nvjpg_remove(struct platform_device *pdev)
-> +{
-> +	struct nvjpg *nvjpg = platform_get_drvdata(pdev);
-> +
-> +	host1x_client_unregister(&nvjpg->client.base);
-> +	falcon_exit(&nvjpg->falcon);
-> +}
-> +
-> +static const struct dev_pm_ops nvjpg_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(nvjpg_runtime_suspend, nvjpg_runtime_resume, NULL)
-> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				pm_runtime_force_resume)
-> +};
-
-There are modern, improved variants with no SET_ prefix.
-
-Thanks,
-Mikko
-
-> +
-> +struct platform_driver tegra_nvjpg_driver = {
-> +	.driver = {
-> +		.name = "tegra-nvjpg",
-> +		.of_match_table = tegra_nvjpg_of_match,
-> +		.pm = &nvjpg_pm_ops
-> +	},
-> +	.probe = nvjpg_probe,
-> +	.remove = nvjpg_remove,
-> +};
-> +
-> +#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-> +MODULE_FIRMWARE(NVIDIA_TEGRA_210_NVJPG_FIRMWARE);
-> +#endif
-> 
-
+Acked-by: Chen-Yu Tsai <wens@csie.org> # sun50i-iommu.c
