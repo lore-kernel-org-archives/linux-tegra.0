@@ -1,82 +1,77 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66939284B4C;
-	Tue, 10 Jun 2025 10:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015DC28DF0E;
+	Tue, 10 Jun 2025 11:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749552203; cv=none; b=vBt0PIzBn0wrMd4a+nv89RTkGqwHHzO6+H/8HE1wE6pd5BYTpzrMTf+zMtmhjGultNUoZp9UQTX8jswqIUNPv0XI8SzusirrPj5/6nqbqrB49M7VsH/Ci7sOwk7vBsG6/fvC3z4ssG9Uf5P3I/AmCm1uyZnumI13Er+rP9wuXZg=
+	t=1749553661; cv=none; b=qjmN0b2eDOc0b5kFkYcVIsslJIdl93le3wdZSiP0R6O0kUR/YIqxcmYAGdD+HVclQSlL9lJYeeG/77XqaPL9x8Nz6Vf5tdsCV+WRB3b38iW4D1mvM73PraXkmctqq8ZfXdx2/C7RApMVMChj0lhxJ4qHRI/mfVmLNK2bFfAqEDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749552203; c=relaxed/simple;
-	bh=z2e8Cx4N22j0jFPYP9dn1ksvGApxjY/BLZUazVli9yA=;
+	s=arc-20240116; t=1749553661; c=relaxed/simple;
+	bh=5WyJDjOsacc1tyrhglR5f00AB2huMpl9kWaITwLH2gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDM8FumG1cOduVHOhoqvVmYTszpFFjspBnyQtR8Z2YzOhMTuaI3gKgk9CAyFdo8bIizXLEHoMwf8WqiD16QFl5stZBxqeN9UydjY8zlrhjydLMwR0OpPNdffXUF0q/Ldoqn92uw3WsGE5QJUV+Pg6JGOcZOuPR+5UxfFWicclSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVqNtd/M; arc=none smtp.client-ip=209.85.128.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOa9DNu7g9yS7nRYN91fzLbFj69mR919Ok/mEhQ3fKI5sigeKY82ixczBXM0yudi+tHJ/+4f5K3E+yGUJFkpgkSHZsDZONj2QXtZaNHyvmKicwyJZeqqiCp9yJuTd2yWSdoyBh1qxwUsRmD5EwELesfr1xFmSxLwVibkaIc7iWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dre9Zpx8; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVqNtd/M"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so31917115e9.2;
-        Tue, 10 Jun 2025 03:43:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dre9Zpx8"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450cfb6a794so34332035e9.1;
+        Tue, 10 Jun 2025 04:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749552200; x=1750157000; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749553658; x=1750158458; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kOaDoz9H3gJVjVkXf5SppnF68Xo6KIKjXhIxBWkW7q8=;
-        b=OVqNtd/MkKBwLKdX1eaDYWbcIZHVkLTPtropkpmNz2rKGwdMVZlWNiue9eT+halpQZ
-         9J7bZIQ560j3TO+t2E2PMwmdvTw/NoW4dapBUbaEsvblZgJvweh+VuK+LT16x+4OMGpg
-         kz5EDMQZuYUybLjLIkqnX385BjtDE2SI8H8NDnbJt6cGdJUOoQknOd7MJxWf21hzjegY
-         NjT0XWQdVlV7GubgvjwS4cRyj7ssmYxyWp86aInL0i7dU8XOYGGYLhMgfMZr1FhRM4r8
-         I9Mx8HAkAhqjuNYA0kgJkcAyFgr2dDBAZcmj/JSOqn76tBf5c99y0gxNCtmZM6bNwIXW
-         V76Q==
+        bh=lSDkUNg7pCMVGDi1JhrPkWKMxNcgCg8HawFBRzXOTrI=;
+        b=dre9Zpx8/rNdCYA1RW70X6SMxRNeaA8IaQWu7NUnG5CVbaW2fUGuWmxHyEPI3ExH+H
+         PX2GZuNcHtUp7dwRWUbY/Wp3dTLQWtMwZEQf+CX5qI+ZQxOMKHG1yMLB6GwI3lPOJoFg
+         KsNJp7KI29a3LtAKhm4u/l7jsFQ9nstNQygzEuSh7avf6KE2OM7S8GvFXYaF/MNa1Kh6
+         c2eqx8m/Xxb43fa2DwJK1sFOUMlxKOuZpzgFlBLCamDbhC+LassZxE6SAJfxJKEe94dC
+         Hi8qWn/Ej00lCQspDuH8fVZvk/zSfIAgMD9UnFtwEWUt9yK8yhvfyHpovXNbgXZ0oDmR
+         pbOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749552200; x=1750157000;
+        d=1e100.net; s=20230601; t=1749553658; x=1750158458;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kOaDoz9H3gJVjVkXf5SppnF68Xo6KIKjXhIxBWkW7q8=;
-        b=ueqZjvcu71X5/3nwLqA7BP8ZJlByc5ralwYeWi5D6Uwj3OYwb+MNZ975MIGuimxKxG
-         SmF/1Ej1Qr0M0OlKPra6xSXtlZ1TEL740u4PlVQ1qeAbDIgkm6WkSCvNyozVyrrqhofP
-         EQ0px6ZBldi+7uJKTAzqhdD1a4ogfereBRcgVNAzl6om2vE7vRhMItrQiVD+ZiFvJ/gP
-         qfEPoq/2p68XMVsfxn7+mS0hb2JK3UDbN7Fft4XWfEaEhFPIga4DEtXJ+mLUnoHTu7Qb
-         vSdzsJ2DWvEcrzGHuHfiIfrKOb0iGb1ZBbrCsRgIt35xVhGvU6R+/Ou/1i1W3QmhvI9B
-         e7yA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAV2OoSZS3Hy6qGlg4xfL2aJ4QCM0SeLFJCmCuXMO4RCT406OXO/6V6QCvj4Kauj5W7EqHzsOIegkl@vger.kernel.org, AJvYcCUyOTqUVKKyRO3k3szOWJPsLyia8byE/9ZbGaytTALhJq7OCxIpR1D0AeK1ZOAqStuYRcQq+biW8jRH6/s=@vger.kernel.org, AJvYcCWRzzlhUGf/73cGv+ymQBqs5Yli9TpxX0rwnLXJYNi4xadwDyKgoOioJvhgnPuIvY8sAq3FQmXSsXr/U/FruQ==@vger.kernel.org, AJvYcCXLRQI1E3EAvIh0/tXHUv6xDPCue5x3Ylt4sDaUqjJUF3nTtiWcJapVMzWVwBBSeLhilAtSZOt/RUzf6QL5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw04nr+7aj/wSb/lZrk7WJKzJfgPlNl0vEGk7WfYJaTrtKA6SiD
-	jOf1KQyS33/qzLBzXjJuQcaGGumI8FhsjkHT/I9FmApdjS4wjz9bMmb9
-X-Gm-Gg: ASbGnctoJ/IARBtHeHXIwIatqHTz/O5WPwkocVbxl84N1lsEWwwiAX5FKIZKIHO18pd
-	TZfYpREkJP+OTwqeEvp1CfdYu/RgLPkE+PyujWdREIe2HVmoz6kTv8R1h8U/9tBngtEe+1iRrtW
-	IDNbDWSkbZ8cTQL3nbDl/lloK3jg3SLEsY360/NbKPLWZ1fEdCCInpJS3zeYJKMy7GeUzG9KGBx
-	YJm9xn8SxjMJVKTVkf0cjfQl2MgyihsRVTKJeYqagROqVTS2DSebZXvh/JcGZqbtVDiSJrnSIwT
-	K0u441gFQaSBUE7oT2QymDE0FSkxTIRA2lMDZ3R+tV7It6CZcppUB/EBAk7Jdrz3f+nFevsuY/v
-	qtlTInThqIw1Yb4hRvwK+/4jSFx0Sj/o3Wu6OoStulbMHr82dCBd4YAobxGM=
-X-Google-Smtp-Source: AGHT+IHQ/+H0xmT4/n8SzqPJO5wYfpUJEhNk4WbIofE8jpTP1D8Vxb32j//I2sl0mRwL2FnnAavasQ==
-X-Received: by 2002:a05:600c:8218:b0:43d:5ec:b2f4 with SMTP id 5b1f17b1804b1-4531de00602mr28517275e9.10.1749552199291;
-        Tue, 10 Jun 2025 03:43:19 -0700 (PDT)
+        bh=lSDkUNg7pCMVGDi1JhrPkWKMxNcgCg8HawFBRzXOTrI=;
+        b=D2x2GnJylpydS9RBnKc+5YA5d7R7Yb+ElpiSpyyTvAkLi3qNrUA10iiRbRxcG4dxFp
+         LAVOsuSwlNjw5F1m/nOI/HZ9DAItaJcuBjXkC7V1S2QFEjzNQ6SQxDBwFiXJTZHXy43q
+         kkhCL9Is4xbIthTdkFQP7pHpDqKQsu47Ne/gDn6BvChMRtkUx6UsNXgudPB+kz/MC7bt
+         FYZdsmqcirBonaNiWITGFaX3INImZOly4TAEPhPLMv13nPbw/b8FYE40iryPOFhka/2N
+         CMAgxubuqGcFKjPAxBsrMRET9eq41m+VvAlFci1wlU89PDMWFwtuOZzwA5xtgwY9zjS9
+         RLgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG1IRFzTVIUPfcM+VTMckrwRSrUmn+6VYFlfI4gLCXmSpbBEgAJuSURBYy8AuDmblrNsGFcsXOO+2Vlzur@vger.kernel.org, AJvYcCWUGdXsdDBFRUX1sAVT68nrnmGGv5Ff/iGvw6VqLIjnFGD/KFNAWwpuZZlWoVHdngLopdAUEypPdJE=@vger.kernel.org, AJvYcCWetYkFf3WaVr8ByMEh5RCxEXPaejVqjmgxmrPCqTyJ5EpNLBfUtELYebHLxtVASebfVFFo7LboO3gMqUc=@vger.kernel.org, AJvYcCXzyebREo2T2ZodbTO0xKITytIzGxymsw/uP/PPA9oFTgXGlq0mtwwo/t9r1Nq3dLwMlZ8P6MnlHxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbOWCHolJJBi9v3OYReN59nZ/tRyX7ZBAoMbnbpqdgwte6nhQ1
+	dPasEyBjWj1LDdegwB3HP2nCF82yrPLl128y02Zen8COc8OWJxsAXPsS
+X-Gm-Gg: ASbGncs31PX2xwYsd2DCC0Y3TPuXXUdmT6njfLPoWKbAaZnp/L/+qS6Zs1pVtMI1N46
+	jnygpqia9f7Wj82iELVy3kqQThr3evpcyuEmsSYhMlFIUl32sLXCTebvtA8JJ96KzXzMDdG2rC8
+	m1pwNhrrQI3ZENA8bdlhcA78MplZ/dla1TDSqByewC+GXxOHCvmUSxivV5d+B26BrPEoOI2eaPW
+	SKpqD37g+q/aqR6t2QyfZ/7716UnG2TZQrugcly2WtLgAMYcnvwc53ym/Sxs+yEE0oWSR9WhOYN
+	U9webGFseRrc1yPn/BU3WuioJtXVbIIi6GFnvQnI/hPy4fLi8tDGTu7paLqpFxRNdegZWxwON8t
+	jIRx6u0G1Ut53BxEoCbWbA0rBPgV71Ban+DkSw5YFCU+JBSSo
+X-Google-Smtp-Source: AGHT+IGJLn68qlQRgM1RWjGLvgYWa/yZA0vynepgw1pm/prSBNurVotzXJWhrmwMI0/EhEopshwdMw==
+X-Received: by 2002:a05:600c:8b72:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-4531de00a15mr22080545e9.13.1749553658041;
+        Tue, 10 Jun 2025 04:07:38 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4521370961csm137172115e9.22.2025.06.10.03.43.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45307b4788fsm88637525e9.21.2025.06.10.04.07.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 03:43:17 -0700 (PDT)
-Date: Tue, 10 Jun 2025 12:43:15 +0200
+        Tue, 10 Jun 2025 04:07:36 -0700 (PDT)
+Date: Tue, 10 Jun 2025 13:07:34 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Nishanth Menon <nm@ti.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, asahi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: mailbox: nvidia,tegra186-hsp: Use
- generic node name
-Message-ID: <hcw6q4iwiout2htnq7wdd3bijozjoqbfdk3tdt42ynr4cx53uy@rxd4io4oua3a>
-References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
- <20250603-dt-bindings-mailbox-cleanup-v1-4-724407563997@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
+Message-ID: <g7kegtso3opafpwocvibhm3rym35oikxoyq2wmphqy3wjenzpa@m7extntwahau>
+References: <20250321095556.91425-1-clamor95@gmail.com>
+ <20250321095556.91425-3-clamor95@gmail.com>
+ <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -84,49 +79,103 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="abxrtw4wmi4tc3x3"
+	protocol="application/pgp-signature"; boundary="mdr3yu4j4s5eicl5"
 Content-Disposition: inline
-In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-4-724407563997@linaro.org>
+In-Reply-To: <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
 
 
---abxrtw4wmi4tc3x3
+--mdr3yu4j4s5eicl5
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/5] dt-bindings: mailbox: nvidia,tegra186-hsp: Use
- generic node name
+Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
 MIME-Version: 1.0
 
-On Tue, Jun 03, 2025 at 01:57:11PM +0200, Krzysztof Kozlowski wrote:
-> According to Devicetree specifications, device node names should be
-> generic, thus Mailbox provider should be called "mailbox", not "hsp".
+On Fri, Mar 21, 2025 at 09:50:09PM +0100, Krzysztof Kozlowski wrote:
+> On 21/03/2025 10:55, Svyatoslav Ryhel wrote:
+> > Extend the Tegra124 driver to include DFLL configuration settings requi=
+red
+> > for Tegra114 compatibility.
+> >=20
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml | 5 +=
-----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument, so you will
+> not CC people just because they made one commit years ago). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
+>=20
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> </form letter>
+>=20
+>=20
+>=20
+> > +++ b/include/dt-bindings/reset/tegra114-car.h
+>=20
+> Filename based on compatible.
+>=20
+> > @@ -0,0 +1,13 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> > +/*
+> > + * This header provides Tegra114-specific constants for binding
+> > + * nvidia,tegra114-car.
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
+> > +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
+> > +
+> > +#define TEGRA114_RESET(x)		(5 * 32 + (x))
+>=20
+>=20
+> Does not look like a binding, but some sort of register. Binding IDs
+> start from 0 (or 1) and are incremented by 1.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+I'll try and clear up some of the confusion around this. The way that
+resets are handled on these Tegra devices is that there is a set of
+peripheral clocks & resets which are paired up. This is because they
+are laid out in banks within the CAR (clock and reset) controller. In
+most cases we're referring to those resets, so you'll often see a clock
+ID used in conjection with the same reset ID for a given IP block.
 
---abxrtw4wmi4tc3x3
+In addition to those peripheral resets, there are a number of extra
+resets that don't have a corresponding clock and which are exposed in
+registers outside of the peripheral banks, but still part of the CAR.
+To support those "special" registers, the TEGRA*_RESET() is used to
+denote resets outside of the regular peripheral resets. Essentially it
+defines the offset within the CAR at which special resets start. In the
+above case, Tegra114 has 5 banks with 32 peripheral resets each. The
+first special reset, TEGRA114_RESET(0), therefore gets ID 5 * 32 + 0.
+
+So to summarize: We cannot start enumerating these at 0 because that
+would fall into the range of peripheral reset IDs.
+
+Thierry
+
+--mdr3yu4j4s5eicl5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhIDEAACgkQ3SOs138+
-s6FLeA/8C28wIE1XdUrfWbZVBn7aovpLS99DRcLoPyMvhw8fjByqxokguQTPyVMb
-uUYMChlSTxFTyYulzP+K2kv12E04Yeu6n4nhk6gOx90ItrPuiqCqPsBrp8WU6Ktu
-/Xr/DpwTy6DdlN+Xb5RZ6FtcncU0CMdf7bpB0ZxYIciQfRnimdpG6e8JTxE5ShIa
-uLTNQjPYdtJb7RSE4jaQ3KZFLP5tUsb43sh/Yr+8356lE0ehI+L994IO+H8J5OKn
-0A8ZKhCRzXwMdMb3N9bYfP0BpMRlgnk5BhGMEu5BTGVt1QjNTlSSstt3kaees5pd
-3D+2vN4NLXtkSoSUjyxIwUK+nJhZudE7DjySBZpIf1TiJ3Js64i6wMwWEqs4v+0/
-7jPjZp9JXKzFvBoBUtmEpGt3YM9B4kALq9gqooFzH8IkowTK6FUlamTqSlBytDrd
-0ZjwrGllN7fYZZaxZ4L/5CIeLyo/XLG/AgVm45QeuGIpT3uBRVdox3X1oPgHKz57
-dCnGomNKN7WyMEqXCE2TSJQkIh3qdhtpHg0p/Wf3gvKg+ak8kJYE099TTtOYS6VN
-DyHrxbecTi/ktRX9d7TmReGlCkFwrmLrl5FECpWWUEO0ZnrFXuQj5cNues8Y5wSQ
-V3Ey7khUayaf0c9EiafF4zDHDgx4YBeHw7Rn3bRM6PzdboL3EcQ=
-=rTWv
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhIEfMACgkQ3SOs138+
+s6GhaRAAmd49Bi91xyPfMgzNKI861C3Y5GeN/U4iPxCnbuxP6d/aG+FGMZgfL6rt
+1oEh6iocRWI6eF3ydldX6NAQec3h8kbQUT2wxfybcfjpUVH4vwqfHnV4BcWdNmKO
+kDxZIxDWCzZxUAT9DsqKT0p4GKdWreJO5JEdsZBw/tc0szmMB2+5yQxA3eKgOLjG
+kvRAxBvt8dfb6Y+MiDFESKX3SwUVKzfSZYofLxZDo0HS74fJlNlP0MtTu47QN4H/
+C3HdExss0D9Z6T2FuFXeKXiTlDO2x4q6ZBuSyVsrYAlUGtWAoeQD5s59zL26Vfuu
+xQYo5a8iPSaE3LNyyiEavk5NPkaNo+2Y4f9JMls09n69uEeQIL6+bAGJ0fKKhZ/Z
+5DuTugrGpHFs6r8wKC4rGsKq40aprc7Q0eOZFL1bBQyh08yPsi72QgQM5edVYxcC
+xjsNPjAm3PhGsUE+5MMBMV8uArxQGrPJLghz9MzsVGimjePZg6KE35xNkOeYUhn9
+1UHksmOY0TYJEuxu3+o0IxuFwzHAqcO+v6B+gusqAxeHhPn5kaPSMK4wYeCwnhAk
+EOuvs1Wnqw3FPrSnahnuoodY8Muz7fSuXG9sGmxRJZtekSzRiZ4qvTBQZCgcUrUp
+WFNWYoNNf1N72sSPVZAfeOne9c+U37vTi83ieJGI6qQoXePP4Eg=
+=N9Uu
 -----END PGP SIGNATURE-----
 
---abxrtw4wmi4tc3x3--
+--mdr3yu4j4s5eicl5--
