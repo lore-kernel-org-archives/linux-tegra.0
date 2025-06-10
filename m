@@ -1,68 +1,74 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B3028B7CE
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Jun 2025 09:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F728B40E;
+	Tue, 10 Jun 2025 09:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547207; cv=none; b=evqo4dbBoygv8eW/8eBA/qbzs08/Kje0Iyk66s4ojBjBHP83dp2nd12ZMg4lXS97MbBl3KUOGQnl3mqd/tm41ReCgnpmYdOmvofBYBKfww7rkTx89CzjCgblicaVosa4Ub3zwUGthhtMZd2eWwWdqU6uGglTIEFUEFt2kbXmTKc=
+	t=1749548434; cv=none; b=eZc3ssbW3R97jsR+xsksB2bKvv5PN6mfkVYmYIBZagrFFM4eAjqiTsmfz6IkxobtoFgk++ylsbYKgOHSFO6Heii7kuDM3CGSkydpy52LNfVOFwveK8ykST9yrcI7fGhMTEpRxjO9OEfNdELPyqEyFa+gGzq9U5mGC2W5ngXm9K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547207; c=relaxed/simple;
-	bh=nyPvhoX/Ffji344tkDnaespCSI9q4T1UWrnyikAL2Bc=;
+	s=arc-20240116; t=1749548434; c=relaxed/simple;
+	bh=bc3ArTVUw4P5VtScDalALhWhOUuTjLnFF0E/aUNzDbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krFWXX+iErV0KVBqABXrPL9/JRznbC7s0WfcYlLThb13i4ofV+l8ga+dk1Db2HyVU0MO1uWx/DaGkSdwjFE0/T+AUzsi9KZQFJ1R4Dxe39eSRycH08VeOZaKyY5i0x8h1rlWZCzTNrkQmekaMCdZfbWg+CMjYgS5j2QAA1DjI6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQfNPtGU; arc=none smtp.client-ip=209.85.128.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=NiMyvZogy+kV6BZmqg6iz4+CfRDnmJ+X7X7pSHBrG4K7/2UXN8QspikJtKAH/dj6hSEW2YWUZrIUQwFL91X1CgtOWUKhKiLtxpU0MwC4Yop7QZUm+LnR4GAeemKnM4TzH/vXpMrSZwyxwMKIIuSwq7G1gbe+BtvPthgGPOFPAto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9LrnvGO; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQfNPtGU"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso32535085e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Jun 2025 02:20:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9LrnvGO"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-453066fad06so17512245e9.2;
+        Tue, 10 Jun 2025 02:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749547204; x=1750152004; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749548431; x=1750153231; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YBJbTNWnmhAa1OyVMuSiMucR3l83+Rg+SCBbERWj1I=;
-        b=CQfNPtGUc9Zm7084rf4houM2qrYWxeymEA+utb5OiZ6wNVccMWTsiX5SRHyrUxr3KG
-         Z2jLfi9Xgmg8V88tDjTxfDXoPyOanVdOhVge+LztT7MDmWRDrp/hGIrgyqyGJSoVcwia
-         l4Ut+uJM4mPc0r1TB3YB8igtUHtohG5SemQuJEGxGwmZ6M/ih8998e6ZyFATcMF6yK+J
-         HBAX02gfjx1VcJylMfT+i58aiO24HMyEZaGg0fPqvJSoerc04VJSKS2wDQFj9kxVUVv1
-         DqKLyOjSK0AFxPIsCQ3KyXcxuMhHm1OWw5QPFkCtMRNiiLrb62nRhPBLARWatjv5Mz1T
-         D9Pw==
+        bh=j3V5HrYJtU5hIgsrllrDB6dJf8rX+Q/4NXndWlhVdio=;
+        b=W9LrnvGO8u+taNjV+sgvQbfL4fsfw+8qG2ommwvv6E6VHxvlA7tHciSFBdvY3OgH4b
+         JjPtrqzLKq//twtv7A4eTKeJeKL0VdgN3adFR9U2059pDDTZmkBee6JkZrkbt9/+T5yI
+         T2vKLVTIU7zbOT529M3C5iKrBXCbEGeOLCHzwpsYx4kixAPbLstA06VKkPIPDnITaTs8
+         eVXpbv8tiKWggsFSVBych6kWyhbC/y3A+vZgiJLOgaN8NnjkfvA0bkODSFr865y/F9vu
+         506p1OzafOxEZx6kuOBmSE6BeYbgHKMCRYx9flm4TLwI6RIUJOtdz/uZe6K9wnAPDJkE
+         7vag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749547204; x=1750152004;
+        d=1e100.net; s=20230601; t=1749548431; x=1750153231;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5YBJbTNWnmhAa1OyVMuSiMucR3l83+Rg+SCBbERWj1I=;
-        b=h9Pa49ZtVV5MTjWTz4hXPOcxddtvOM6CUsgP586lfon7sH5qI1N472wT8I7QXYV11w
-         dTHltOKuBhoLvztzW78iJVFZQnke2KZJ9gfKUq2GVUgs+RBxKGdJa01dLrBakR+tZo0v
-         pZ5MsHRJNvv6oVt5c3JvmBxU9B39JdGKYyBRgLYMdJm1hzdw1zv2JCV9qqMnwmLfh81Z
-         7CxzzGs6Xm/OuqattFUM68ozzhAwPs6juM0KKdbHBZGK0M2DoYBgYNgyQ4dMMlJaQyu+
-         cg7tGtuSs7wZJBd8l5GiANeeD7NneiNzJWKRxCDzVHvjOHpYNw3ux7u620iocF8yfeZV
-         0MEg==
-X-Gm-Message-State: AOJu0Yx1y1JEspba6atzPu2fY6T3pWKYE7KTF+S8TMiz8DPtQ6nGBZ7U
-	Z1qsER/QiPPRPzHt4y8qecU5FHpCIWeZfxPDvpQCzgUwk73yzLlVqvio
-X-Gm-Gg: ASbGncvtOwEJGxfGelJ4gYvbYH87YVdTLIhLl/7df56bEf6o04lfOBmPA3GV2549Ad2
-	kpUD0oK3QR7Ra5x5dyt7FOiq5wOAUdb2711W20/plWOvBvDQ+5Dc9UoA7BGRK+O5cGGbW/R6y4K
-	BSn2x/+nQJ6IrpMm84z+ntLN1Kv+HbtryZA2+HYTh3tOk++gSrk/N2vaBI/DcV8Pbkf/Sl5c9QB
-	GqJD+6Bv0d2ewYuaphqTLruzP/uwKBTiuriYLWQNsYveqiVzQwoTukF9BAHZhIfoOGl8+NB+eBU
-	5x0oFfp57DW7rzE/12ZnIA6dhl+TaUswvOo1GAw3m5fmPNHU80gxYWWaKxfeDqf7vpGzhUMsCs3
-	yFqvg268j4HDGNV2SaBEsLH3gI6YmaVTRnjBepvSPvFKrtFh/
-X-Google-Smtp-Source: AGHT+IFDd/gXp7EEWfm6JisRTyh8AD8ARnN79xdGGrk4QwiNZ4USWkO6ap5bx9a619Z/aIlSm/TWjg==
-X-Received: by 2002:a05:600c:8b08:b0:440:9b1a:cd78 with SMTP id 5b1f17b1804b1-4520141635bmr188289705e9.10.1749547203661;
-        Tue, 10 Jun 2025 02:20:03 -0700 (PDT)
+        bh=j3V5HrYJtU5hIgsrllrDB6dJf8rX+Q/4NXndWlhVdio=;
+        b=rgxtJDwJHZFBd90CH+GTGPW6qxB1drxqRgz9hZUVEZG61GsLIqdtCIFcIjdmlemyu2
+         4WDSVpS0gSN/dB4iEaMxFyVxqWy/ZuKVvk1SKaKr6KNqTIkpxwA7OCtN+AXo45B/2hqO
+         GrG4BVWTXR1Hb4J1UlpzeZLdrk+LAjfSzJAZazppFhdtmN9V4xe9icX6GRLLaC5OLWIl
+         cR5tQ+7+Pvmdaza8vsy+OAOxsAnCa3NCyUyOcETXQanY/yG6tEOob9bfs4jWlOIdwI+4
+         bNbkxCoYOY826Lt2+otY4Sjh9QhlZQ7BP9IVAJEtXVm5rvxd7ljLUiKYRIxNcXuXC73t
+         HDGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFeAJxW48GcJ4ADC+1LIjYUAz4qzljQGyfhZbeZNXqCS0IaHA9AgwSX7ui8Qyrl6Fw8r/X7/3Z68XLa+4=@vger.kernel.org, AJvYcCWbnLSmeTgeBhM6s0OiqeeBvwPaN125u2J2/kwEbpejnfE9YD1EBl4W7eOZbiODPiqMFw41yzLr6Yc/5QJS@vger.kernel.org, AJvYcCWdtoddQDzc79qbG5WvU7y4P6nNDTpDjlIwbT0WDc6Aop6rIsd0stIRIzfFcWP8AN/Qi1LymtFMEP56YQ==@vger.kernel.org, AJvYcCXr4gvBLERCoqqyWAdRJr1lOZUtvTxxayOwUMzf0jONn7ZwOobvzIo5VCOJCxXPQcrqNGnNfEO46lZ+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAlhC1QjRds6AtyZv4201SwDsxdfNH08a/c8cyz4sZBhBg2R5H
+	Ro7ZbX5I8NelAzBjmb1VUH4h5u1fwFdlsQsBAorq1pNurEOMbRwpCpXj
+X-Gm-Gg: ASbGnct8wy39N3tgpy4LmQL/+O17Jc3FtQMIHukTrfvSR6XwBDCTY4PRhyBej0m6N+Y
+	nj9GlNUQiF5ULiict+mMjEUacqoK7A79ySDJLUohbHnEbjd6vHTFB6i1F4cOQRISTM5g+KFaiGN
+	QIXcbPRxymstVJ6MMXiKvtTIP8vnMcbX7eqp3g/Qr08quRBspetV0ycf9cINfRQtXWrj8mRAMgl
+	fHt4skI2F2vHKnJu507eHHF737o7u4u4HRwQc+YfHlUk2vBkqFNgDRTxie3ZYXukV9r7BlCT4lt
+	f3XkW0ysYKO/L1yLwNHakG1YEhLUCkhQRSa+1J2HyALpxDEJdWySx+4PaMgO8fBaHqw5l659b/L
+	8g684sIRWsR/QTwRr1iFrzt17YzzYw5lM1Ia2FEdmLKbsgPfZ
+X-Google-Smtp-Source: AGHT+IHhEUfYh/4N1lGaiXcMB3u3JRzvlrUtVSKhzNzblyDKGclQtPc9Ir85S4ccQrzyJpoLCLb4Nw==
+X-Received: by 2002:a05:600c:4751:b0:453:c39:d0d0 with SMTP id 5b1f17b1804b1-4530c39d65fmr77488045e9.13.1749548430901;
+        Tue, 10 Jun 2025 02:40:30 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452730b9b3esm133002725e9.25.2025.06.10.02.20.02
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532063ebf6sm4571485e9.3.2025.06.10.02.40.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 02:20:02 -0700 (PDT)
-Date: Tue, 10 Jun 2025 11:20:00 +0200
+        Tue, 10 Jun 2025 02:40:29 -0700 (PDT)
+Date: Tue, 10 Jun 2025 11:40:27 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>, Sumit Gupta <sumitg@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: [BUG] cpufreq: tegra186: Denver cores do not register
-Message-ID: <73cbbuahttztsfkz36ndl7mla5dswo4wjqvzvuuajfuuxdo3gn@eiq3q2jniajw>
-References: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
+To: webgeek1234@gmail.com
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
+Message-ID: <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
+References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
+ <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -70,68 +76,138 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uvvgfrdajviy76uo"
+	protocol="application/pgp-signature"; boundary="koz7pqhubwkgry26"
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
+In-Reply-To: <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com>
 
 
---uvvgfrdajviy76uo
+--koz7pqhubwkgry26
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [BUG] cpufreq: tegra186: Denver cores do not register
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
 MIME-Version: 1.0
 
-On Sun, Jun 08, 2025 at 10:09:01PM -0500, Aaron Kling wrote:
-> The boot logs when using the L4T r32.7.6 boot stack without u-boot show:
+On Sun, Jun 08, 2025 at 09:13:14PM -0500, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 >=20
-> [    2.648162] cpufreq: cpufreq_policy_online: ->get() failed
->=20
-> I have traced this down to ndiv [0] being read as 0 for cpus 1 and 2.
-> Prior to "Share policy per cluster" [1], this would also fail for cpu
-> 3, one of the a57 cores; but with the policy for 3 being shared with
-> 0, the driver no longer tries to read its registers directly. This
-> issue has existed since at least 6.1, which is the earliest I've tried
-> to use Tegra186 on a mainline kernel.
->=20
-> I've tried to compare this driver to the downstream 4.9 version, which
-> does work as expected, but I do not see any differences to the
-> register offsets being read. If I hardcode ndiv to 35 for the failing
-> cpus to match what the downstream driver gets and what the other cpus
-> get with this driver, scaling appears to work properly. But that's not
-> a proper fix. Does anyone know why the registers for cpus 1-3 aren't
-> read properly while 0,4-5 are?
->=20
-> Sincerely,
-> Aaron Kling
->=20
-> [0] https://github.com/torvalds/linux/blob/19272b37aa4f83ca52bdf9c16d5d81=
-bdd1354494/drivers/cpufreq/tegra186-cpufreq.c#L117
-> [1] https://github.com/torvalds/linux/commit/be4ae8c19492cd6d5de61ccb34ff=
-b3f5ede5eec8
+> This is based on Nvidia's downstream 5.10 driver, rewritten to match the
+> mainline Tegra194 pinmux driver.
 
-Adding Sumit who usually knows this kind of thing.
+A few words upfront, to justify why I'm being pedantic. Originally the
+pinmux drivers were generated using the tegra-pinmux-scripts[0]. This
+project was later archived because Tegra210 was deemed to be the last
+chip to need a pin controller. It then turned out that Tegra194 needed
+pinmuxing for certain pins, and then more, so we ended up with a full
+pinmux driver for it. However, we also deemed Tegra194 to be an
+exception, so that's why that pinctrl driver was a one-off job.
+
+I now regret these decisions because the same formatting mistakes are
+now proliferating, which is exactly what the scripts were meant to
+avoid.
+
+One thing that's not clear from this patch set is whether we actually
+need the Tegra186 pinmux driver, or you're only adding it because it
+happens to be present in a 5.10 downstream driver. Do you actually have
+a requirement for setting pins dynamically at runtime? Do you need to be
+able to set a static configuration at boot that can't be set using some
+earlier bootloader/firmware mechanism?
+
+If we really need this pinctrl driver it may be worth resurrecting the
+tegra-pinmux-scripts so that we can add these drivers based on the
+generated files as originally intended.
+
+As announced, there's a few pedantic nitpicks down below.
+
+[0]: https://github.com/NVIDIA/tegra-pinmux-scripts
+
+[...]
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra186.c b/drivers/pinctrl/t=
+egra/pinctrl-tegra186.c
+[...]
+> +static const unsigned int pex_l0_rst_n_pa0_pins[] =3D {
+> +	TEGRA_PIN_PEX_L0_RST_N_PA0,
+> +};
+> +static const unsigned int pex_l0_clkreq_n_pa1_pins[] =3D {
+> +	TEGRA_PIN_PEX_L0_CLKREQ_N_PA1,
+> +};
+
+Typically there'd be a blank line to separate each of these structures.
+Or maybe we can come up with some notation to make these single lines?
+
+> +static const unsigned int sdmmc4_clk_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_cmd_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dqs_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat7_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat6_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat5_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat4_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat3_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat2_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat1_pins[] =3D {};
+> +
+> +static const unsigned int sdmmc4_dat0_pins[] =3D {};
+
+These look out of place. Ideally these would simply be NULL and 0 in the
+respective PINGROUP definitions, but not sure if that's something that
+can be done with the preprocessor. Are these guaranteed not to take up
+any space in the generated binary?
+
+[...]
+> +#define PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_io_hv, e_lpbk, e_input,	\
+> +			     e_lpdr, e_pbias_buf, gpio_sfio_sel, \
+> +			     e_od, schmitt_b, drvtype, epreemp,	\
+> +			     io_reset, rfu_in)			\
+
+It looks like there's an alignment issue in this macro.
+
+> +#define PINGROUP(pg_name, f0, f1, f2, f3, r, bank, pupd, e_io_hv, e_lpbk=
+, e_input, e_lpdr, e_pbias_buf, \
+> +			gpio_sfio_sel, e_od, schmitt_b, drvtype, epreemp, io_reset, rfu_in)		\
+> +	{							\
+> +		.name =3D #pg_name,				\
+> +		.pins =3D pg_name##_pins,				\
+> +		.npins =3D ARRAY_SIZE(pg_name##_pins),		\
+> +			.funcs =3D {				\
+> +				TEGRA_MUX_##f0,			\
+> +				TEGRA_MUX_##f1,			\
+> +				TEGRA_MUX_##f2,			\
+> +				TEGRA_MUX_##f3,			\
+> +			},					\
+
+This .funcs substructure seems to be indented wrongly. I see that that's
+also the case for Tegra194, but it's correct on Tegra210, so it looks
+like you copied from the wrong source. =3D)
 
 Thierry
 
---uvvgfrdajviy76uo
+--koz7pqhubwkgry26
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH+MAACgkQ3SOs138+
-s6F1DA//Vga4/HY4S0MRkSof8p4z2qOhjtt/+xYByyNm707v84vjFV32Qy3JjUri
-k+eURNtrI6cVIAbatts12qCxcK/BILVFFsqdWSCoe69P8wEFbDG2dhtCbdN8GSxj
-ayKOajI8KQEJJYVgLwBY29E4Na1HC4duYbNIFvPiInbaUb+Yhv7uogvIUrCG2LOm
-9LpGWj+WQhk3C24jdEo7MpjNZMlIqjK9o+zt+I8T/IGgSVzzw8GBPTE5ViZTpdMO
-hAVb0H2UoApVMs6vPB+FYVBDfVBzYM4XZXtW1uC8x9Brrg0gcdVIVpbUt2nesYRj
-RTBuf7mt33HMMqiaKrKySKW+h8oL/+ahXTR4wryqJhgoXPHHUzffB6mgME+Z7wrq
-MDwh5Wpt5DYH7h2enrwEpgyZMS8aVElVS05yHNiICeCUaRFe3HOq7Q2ny8DHQvO5
-6gr4KriHJHa1tFDudbOyboA49eZLPEP7JF/ApUvSdofpu/2Aocr3y2tVWn1pMM/9
-2KrRQG9rVwyIcy/P8MJR5M9fUAvMGK7WykK+PYbCgiD3GHVeTyJNAVGdaQv8WGVF
-cv2a8ag0v5ITHsIA41c0Y08rwnVwVIUZdU2+r8wT0r5Z+pOhX0wPkW5zRyLOe18m
-1IoLeRDAc2T/e8LvChkyHnI5dL3Vf+8Yrc0s7XB6BUtDm2+inYs=
-=YhLj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH/YgACgkQ3SOs138+
+s6E3vQ/7BbhIeEooFiDj0/uIixGcizRegwHcKrtrqsFTfHYcdG1Eeoo3b1lDjtXG
+yon6OYCL0C3HodxYmACCb0Pbpif3QV34wDDIe6N2380WIJmTYIWNLF6DFsioY06A
+aA1kvwU9gH24w7SoviwfWcNp5SzcYUegUF6n6G6bjGoVNbgmig9P0ZxsmaQNRUT9
+SN/rlqUmgE8djmIZPZzzVYWFJbbXkZd8bHf5F8SBSTf/C0L+iqar02z4cI+auW9A
+6KDR/qdpKvKywQs30fTNcYnD7eRpIiSxvxR4yt6Mi9v2Ax1z4XuUpvbTPT5urO52
+PB2LcrxhXd6IyC3fJ/ltjiRoQ21nUsiwUBBkT7a28Gn1LHrmy3naNwLFIrcAlwlL
+g0Bo/NXYag2VqjJ44mXYZUCHE4DoQXhSWJdAX8iKyc2IgWP1GghCkMNDrPqJy54E
+p2dgUEIVfq8nhci3m0VmL3Fq0g+4h0NLmbxTb5syQwwo1DMTPSZEhSM8WC2MpCH1
+yuJb6uPGv+f0Ic+dvt6D49XQI7Oscy89rVwTOlLckwO53VgODdn4mW18uVNNB50Q
+CEiYXvV2YPTgyX5k93E4v+6mrFMmN14uqW3NnQiirOSrnoD5tLVy7u2Q27gClq6b
+W89SGKPYxvUCnhRj+QXmOnzvW202qnSQshoTlrNsnRspZrS3uaU=
+=k3CP
 -----END PGP SIGNATURE-----
 
---uvvgfrdajviy76uo--
+--koz7pqhubwkgry26--
