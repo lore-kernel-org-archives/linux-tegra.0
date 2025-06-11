@@ -1,45 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AB728850E;
-	Wed, 11 Jun 2025 10:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B7428850C;
+	Wed, 11 Jun 2025 10:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749638682; cv=none; b=AbtcxnF8WmEBf9F7pGXStHPMSvuTQUcUWOWoA7Z+26CCBvwQPKVYOxIfL/R7GFYbL55JgUjsSZ4QCF6euKqjLAQ0k6fdN119jaLUpILb7LmtaXc1uiD0f+C12/CnDSX0lVDBaOAYp7qSqsHF2o+zsR/6fH+FD96/BIis26Xk224=
+	t=1749638685; cv=none; b=PJ6zPTYu0W/9URrUqr43s9etp8MzB4mT3pQ52iJuNys8BuVPWwKATwrw9qhMhm9xPBVo9QIJhqODolTxriHLPLflO1QYAWJYDsFc34XcxV8i5hU5Pfn0hHv6IQrCbUGsc+iqzwg9T8cnrIQVBdt8L05Gwpsho5rjv2spmL2FH0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749638682; c=relaxed/simple;
-	bh=NLnT5+LOFbAWdUD6OEeMhq8wMEwsqTEbDWDE/LB5oWI=;
+	s=arc-20240116; t=1749638685; c=relaxed/simple;
+	bh=f5qbQ8Fc4E+01P0Dh1oZ2Hoqqa0z07Fu0gRmiBSanlk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TrZBBiA+5D+VfrOoDryOk70RtqQDO0iQ/W4k/FY7w2LCPfYV7YQK/K/vFA5MHVis7OqRDQEELMcmTMRKwIUsGegkoSjDBceLQgkC9jeGxIzjAl2DUohvfSweKjkQWYO3h7ql1ccrL2hMEKPqsf+830Y23SMB+NClZEE1352J4kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhJu2rvf; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=GcV0SzDpD97FWPGrVBq8R97QPoh2GgaIKfWdT0x0AzD+YUoVxpjWozIgR3gdDxo2hcN7yvQZggLYeULksOkKVLM63c/bnVfl/3DSWqa9mBpuVrOr0QgXw85od3Fr8mU8+AAuyVY2MMf+Ncexee2jBwKLU/sId+z5/HV9Qd5Q9vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sa4DIAu9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhJu2rvf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC8EC4CEF2;
-	Wed, 11 Jun 2025 10:44:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sa4DIAu9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAC3AC4CEF2;
+	Wed, 11 Jun 2025 10:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749638682;
-	bh=NLnT5+LOFbAWdUD6OEeMhq8wMEwsqTEbDWDE/LB5oWI=;
+	s=k20201202; t=1749638685;
+	bh=f5qbQ8Fc4E+01P0Dh1oZ2Hoqqa0z07Fu0gRmiBSanlk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bhJu2rvffdhuDVYngs0/mJHh/Ii4qb2QtctIipm4DBUJclR7bsCSEQGuTxOzsfrfd
-	 Tn7OMefVMV6axO7RrfvnO8OMXp5QKHdplyCFpuiVX3N9XIeci0hEtQCurRRXEoNS47
-	 5oZjNV8VHM9DH7/3p/qvdnQz1P7LRnMlqmILblb6ZJAW41cFP8LhyauvBLQrtkAfWY
-	 nm5aGIbCO8SY0LuJpQe5iQZ1I9feFo0r+Vho7MCYLp7c6CU4howsxj+6Yr+olrWmg6
-	 evu2rEF7aJz8wsiiOu7o+21ahm9P3mc3P2Ioqhcq69dKyjhSWfLsmpSZ15C0ivm/ty
-	 yuu2qvRW95l+A==
+	b=sa4DIAu9Vvf1WurQjI0XhYcEIcBkDlZ3nyZ23fCFbbba0Mh1Iq6uywKVi5H9/NcoI
+	 a2Pmjva05ZVRM38aqIYUO9X+GUQW/N69gi1nSvWcd+XEowP3bATpkkt5LqlKNWZRc0
+	 OKI+Yi5uJkgMxg9FuyH6L9ebGHnH38BHj/XPVokzGZ0DgVDTzV1Nkh77hEmEeYlSXT
+	 6sDR7tP7fyEj3PcrdnTsZEVRcpSImF4PRJiJu1CkAmaANzBfNF2t29cPRKNZtBhC74
+	 FeP68e4Jw3uhhr3f2tBxpldJKsvAfnlEKss+6xoyBrDxOJ7T+avAJChry0yU6mnC0A
+	 B6OAlJsAeR/HA==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: tglx@linutronix.de,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Amit Kucheria <amitk@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] soc: Use dev_fwnode()
-Date: Wed, 11 Jun 2025 12:43:47 +0200
-Message-ID: <20250611104348.192092-19-jirislaby@kernel.org>
+	linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] thermal: Use dev_fwnode()
+Date: Wed, 11 Jun 2025 12:43:48 +0200
+Message-ID: <20250611104348.192092-20-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250611104348.192092-1-jirislaby@kernel.org>
 References: <20250611104348.192092-1-jirislaby@kernel.org>
@@ -58,55 +62,84 @@ using of_node with of_fwnode_handle().
 So use the dev_fwnode() helper.
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Amit Kucheria <amitk@kernel.org>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Lukasz Luba <lukasz.luba@arm.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-
----
+Cc: linux-arm-msm@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org
 ---
- drivers/soc/fsl/qe/qe_ic.c | 3 +--
- drivers/soc/tegra/pmc.c    | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+Cc: linux-pm@vger.kernel.org
+---
+ drivers/thermal/qcom/lmh.c       |  3 +--
+ drivers/thermal/tegra/soctherm.c | 13 +++++--------
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
-index 4068b501a3a3..943911053af6 100644
---- a/drivers/soc/fsl/qe/qe_ic.c
-+++ b/drivers/soc/fsl/qe/qe_ic.c
-@@ -407,7 +407,6 @@ static int qe_ic_init(struct platform_device *pdev)
- 	void (*high_handler)(struct irq_desc *desc);
- 	struct qe_ic *qe_ic;
- 	struct resource *res;
--	struct device_node *node = pdev->dev.of_node;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (res == NULL) {
-@@ -441,7 +440,7 @@ static int qe_ic_init(struct platform_device *pdev)
- 		high_handler = NULL;
+diff --git a/drivers/thermal/qcom/lmh.c b/drivers/thermal/qcom/lmh.c
+index 991d1573983d..75eaa9a68ab8 100644
+--- a/drivers/thermal/qcom/lmh.c
++++ b/drivers/thermal/qcom/lmh.c
+@@ -209,8 +209,7 @@ static int lmh_probe(struct platform_device *pdev)
  	}
  
--	qe_ic->irqhost = irq_domain_create_linear(of_fwnode_handle(node), NR_QE_IC_INTS,
-+	qe_ic->irqhost = irq_domain_create_linear(dev_fwnode(&pdev->dev), NR_QE_IC_INTS,
- 						  &qe_ic_host_ops, qe_ic);
- 	if (qe_ic->irqhost == NULL) {
- 		dev_err(dev, "failed to add irq domain\n");
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e0d67bfe955c..9543bee0c321 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -2500,8 +2500,7 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
- 	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
- 	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+ 	lmh_data->irq = platform_get_irq(pdev, 0);
+-	lmh_data->domain = irq_domain_create_linear(of_fwnode_handle(np), 1, &lmh_irq_ops,
+-						    lmh_data);
++	lmh_data->domain = irq_domain_create_linear(dev_fwnode(dev), 1, &lmh_irq_ops, lmh_data);
+ 	if (!lmh_data->domain) {
+ 		dev_err(dev, "Error adding irq_domain\n");
+ 		return -EINVAL;
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 926f1052e6de..53a5c649f4b1 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -1206,7 +1206,7 @@ static const struct irq_domain_ops soctherm_oc_domain_ops = {
+ /**
+  * soctherm_oc_int_init() - Initial enabling of the over
+  * current interrupts
+- * @np:	The devicetree node for soctherm
++ * @fwnode:	The devicetree node for soctherm
+  * @num_irqs:	The number of new interrupt requests
+  *
+  * Sets the over current interrupt request chip data
+@@ -1215,7 +1215,7 @@ static const struct irq_domain_ops soctherm_oc_domain_ops = {
+  * -ENOMEM (out of memory), or irq_base if the function failed to
+  * allocate the irqs
+  */
+-static int soctherm_oc_int_init(struct device_node *np, int num_irqs)
++static int soctherm_oc_int_init(struct fwnode_handle *fwnode, int num_irqs)
+ {
+ 	if (!num_irqs) {
+ 		pr_info("%s(): OC interrupts are not enabled\n", __func__);
+@@ -1234,10 +1234,8 @@ static int soctherm_oc_int_init(struct device_node *np, int num_irqs)
+ 	soc_irq_cdata.irq_chip.irq_set_type = soctherm_oc_irq_set_type;
+ 	soc_irq_cdata.irq_chip.irq_set_wake = NULL;
  
--	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96,
--						  of_fwnode_handle(pmc->dev->of_node),
-+	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96, dev_fwnode(pmc->dev),
- 						  &tegra_pmc_irq_domain_ops, pmc);
- 	if (!pmc->domain) {
- 		dev_err(pmc->dev, "failed to allocate domain\n");
+-	soc_irq_cdata.domain = irq_domain_create_linear(of_fwnode_handle(np), num_irqs,
+-						     &soctherm_oc_domain_ops,
+-						     &soc_irq_cdata);
+-
++	soc_irq_cdata.domain = irq_domain_create_linear(fwnode, num_irqs, &soctherm_oc_domain_ops,
++							&soc_irq_cdata);
+ 	if (!soc_irq_cdata.domain) {
+ 		pr_err("%s: Failed to create IRQ domain\n", __func__);
+ 		return -ENOMEM;
+@@ -1968,10 +1966,9 @@ static void tegra_soctherm_throttle(struct device *dev)
+ static int soctherm_interrupts_init(struct platform_device *pdev,
+ 				    struct tegra_soctherm *tegra)
+ {
+-	struct device_node *np = pdev->dev.of_node;
+ 	int ret;
+ 
+-	ret = soctherm_oc_int_init(np, TEGRA_SOC_OC_IRQ_MAX);
++	ret = soctherm_oc_int_init(dev_fwnode(&pdev->dev), TEGRA_SOC_OC_IRQ_MAX);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "soctherm_oc_int_init failed\n");
+ 		return ret;
 -- 
 2.49.0
 
