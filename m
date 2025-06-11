@@ -1,77 +1,76 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C59B7E0FF;
-	Wed, 11 Jun 2025 15:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FE717B506;
+	Wed, 11 Jun 2025 15:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654415; cv=none; b=WSobzUhMokwrVyBRn+ixWhBeTM5jgP0SYUhWeBO9Qk/B5/0n8xTnmB/Ipy0LeRpwrDNI1Y4RPcziGajZvXc2W4wzMmhBhV0Nf0I6vuGO6VtYCTtVmtAvhCp/wXuexLf4TmQfY6cNHJnAKb0k4GO6Yz9z4mrI2q+LtaDqPVcBckg=
+	t=1749654632; cv=none; b=WsIaJIbI7hHoajSUddGv9Jg1EYNNKhSxdu3Vl469JuT8CBhoFqlu/scWmpXCDxtu584YxQNDVWdQHpDKrfFJyDOoZ4vfA7hGgmc/JguyIwO5K8+Tbhp66aO6G+lPbKJCYhXUg5bj1myVlsD+GKFqBJLUsXJXCzMgxP5oR3I2E8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654415; c=relaxed/simple;
-	bh=rZvstCIx0930gy+FitWy2h9ieXUWIADy6nD/O8Xen/w=;
+	s=arc-20240116; t=1749654632; c=relaxed/simple;
+	bh=6S8PHrg4XjEfujkT1575VWw1Fek905U7Rjg8vUvSE8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkxBqDLCgkscW37zVslbE7/RSIqt1XJirtiSmBB2ot6DdUYEmxU7G/iraP1JpQcmLSpFiOvjoHlPJ7ompnrkOz/KdXB2AnhGmYDgn6GV9KDusdKihi9G9jlMQBxmqEXCK+s1t6nROAGOrV0HiTq+fpnWyA1Jt8vyueZkHK07qg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbXcj3Ey; arc=none smtp.client-ip=209.85.221.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=DgnzIeq0/aWIklhJB82FDe5UUnIEcOBoAw4e9S6w7piGkb8V5syKL1QbBI9R9fLhaC/aLnTZU9dxXNYrmvTMsXMnOl49QVYKrI8mZVKflIzUyd49uXAkebBFCli7/weVstLqhYxfomUGzW2Nw6gEIJaE+WZu4R4bdpZ+z2SjiN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzTRS66C; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbXcj3Ey"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a54700a46eso2828288f8f.1;
-        Wed, 11 Jun 2025 08:06:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzTRS66C"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450ce671a08so43850985e9.3;
+        Wed, 11 Jun 2025 08:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749654411; x=1750259211; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749654629; x=1750259429; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rZvstCIx0930gy+FitWy2h9ieXUWIADy6nD/O8Xen/w=;
-        b=VbXcj3EyokysKu81565iUWb7QAdwC0kM4Lmi+8rJ9KVaZwXNPRNUDmsM38C/9mVezO
-         YrOAL4B5UwJEA0bx5gFC4yoPY/x9rK/MvCL8w/EJlIyIOxGZc2LChRdMhh52sPtysDKf
-         jBiHvRWkEBOQwI5y6RGHpijLMuVnK5utbsdPUu7Kv2aAvMei47WgjFCt3sbqjrIFb6IP
-         uWGvolxiwWuEFWOCzVlHCrlM02JBos/2AQIkPLsA3JXhsfXaOIMeJz5xWq0/wrxbm1rj
-         s6+gKjbpccOcIaK1gelIg1Tk4TDoyCsyNHE6u5oA2EHasPj544kpnap+dDYgIvnigbsu
-         Nqdg==
+        bh=6S8PHrg4XjEfujkT1575VWw1Fek905U7Rjg8vUvSE8U=;
+        b=EzTRS66CXZ0Md9I1dSFjRQKlavFqkIgk1ocAWA6iZX6rk95TLLBKbAiCPGeQeSr7Na
+         w7BBPXlmIblzXIg93YCOUO6PNcIAyTk/F7vv/6C/6UUWjGW5LaplzbFp8FnC7JtamZst
+         dLHpvbuftXF4RmfDC1pzRLi5ptzOQA66o/7LPWHRwrafWXUwDBzpNicI8d6Uquegfa6F
+         V50jWMlLgemyjX7e0Ji76N3qU4rF4g1UP7W9B7XIppKd5busG9RvekfxL7DJCKfZNzjd
+         y1JLOx6oRHH4tpHEwpmajL5Ut6m2d+07fZZPH0fzSuPIhRvBHwgYls28EPnB1yim0KIR
+         AWsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749654411; x=1750259211;
+        d=1e100.net; s=20230601; t=1749654629; x=1750259429;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rZvstCIx0930gy+FitWy2h9ieXUWIADy6nD/O8Xen/w=;
-        b=jNlTdYOW6pp2d0mEG21X9LAwfkV77wd4Evmn6F642dyz1xnQbxbzGUMNAiow3dTgHU
-         Ist9uPtsafTPdg/2N2q0uIwYnXbfeRRLaJOEQlKqIxvaYa8nyi3PSBVEz7JsTDrK8yHU
-         3wuD6AhF/eBtJ/V5LXkBkQeb+6goIpRUSyW0OkE2GZdHvwrohADVH3Fe5XMgN219PGdy
-         ZqI2gmhI7cTccCrWlK4pZUNU7xg6024gBB3cYrvzi6L54pqjb1gzEMEzHexvMILneUUK
-         ThoWun4+04Fw4Jro01FVvFOJNNgUkE9Xpn8qCIVXLwohwEM5x6AJ/f4V4u80mMQPJxzc
-         r8bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVs4Vyun2t6sQdSdoDfMHaPV4XW+busURG1VBrgQeQCT0/8AQXC4N6cQnvqKQ3Xo5XohXdFO+82McKzhkRb@vger.kernel.org, AJvYcCX5ezX2xtnQNgRfZoaSaXwM+BLTVn3yKh2M4RJNsMNlrzkpZvEpgtLB4hQRytaAVwk8t70r+StfXIVw@vger.kernel.org, AJvYcCXNETrkC21f229r1PBcLpEzomZtMNJyC5IaZjg/A2S68sRemgWB3hjnk02/XbGA6VhMrDE7BR2BvXL3aGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMf+IF20mU7ZS5zl5nUSeaBB4ucMoL9bIbG3J8TLaaqElg3bpq
-	zHSVlEetwxv26aaAaNRyKEheDAsY2frExDc8o0D4yHBVW/tXPylpA8T3
-X-Gm-Gg: ASbGncuBFEGNo+NWQekDSxMbZBYFreK/CGSoIzRQQQ9WWzwEBSuPub5Mfnzv8Je4ajI
-	/m6TPAbpQkGbvZWgDu4v5hI+1i639RsHU111ewAlqadT18mL8jbUIpJlrn+13/o7MNr+TwSYxVo
-	cYbLc8tsx1WfxjDlZWDfD6zVn8HVVlgyf0nwKsxMKAaIP3mwGL7uNILKHwtLollJdeaZQv0AnFq
-	WtBDfBAh8+e1sL/hqeLKLfmfdLqhn5exJR1RIQvdT97F6E63r242bZxZcYIiYkD3TyiNAcJyaTq
-	LYYhg9Bq+V/jnBfMt/unffrODaJIcNZnswB0g9lyA2dXdhGtLHLWQFuIU9hoyvX+aw1eeljGPdK
-	Uw02ewq0daZc8LgmmZqhyfpbiYFVgCfR30sILmf/UN4i8CS2e
-X-Google-Smtp-Source: AGHT+IH7gCL0A1jwyehirZD75wEUOdI2MNoMc6qGX53PjwOW0K3sU25NqW7e29pI1Cuyu7enpaum4w==
-X-Received: by 2002:a05:6000:2304:b0:3a4:f50b:ca2 with SMTP id ffacd0b85a97d-3a558689146mr2940381f8f.8.1749654410702;
-        Wed, 11 Jun 2025 08:06:50 -0700 (PDT)
+        bh=6S8PHrg4XjEfujkT1575VWw1Fek905U7Rjg8vUvSE8U=;
+        b=DOzPfqhatrjZa/g/0fwwkgiDbU4GKaHviys4I5ir/lJU37MvPJB4AsH+iGkq5AoU9x
+         76A1D+npRUVeFOW5xSpqj3mFv4y8UdtOUTCpuv6mf30t7trxi7RmKexm/sIttlLGAiNY
+         VeUj4sidgg+1iz9X0KB73qOZ/6/Csi+RawNf7hN6+4OTTEwCJRMpkARW0uXSpCrX9dM7
+         aMjzjELRupuKft8JUXBcOcCynbicfd7uTUmXgHoMLRRrsKbTZu4CxmB+C2QxJznUxT05
+         6rIPeaPqUy6+Kn+3u4ztXG66Clb2ZDh4z7J06WrGhPLABbDzAOsf8XHmNV66BPm05s0y
+         zjcA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Cy+DHpvOIO/XC4qAKwW1JFO9bPhHRKgo5HUoN4wYHQvagZk9wpgyIMiwq11CjgZdDHUbb/+sWlY98awa@vger.kernel.org, AJvYcCVtpQh6wxiTWiECXAQg4GFvnoxpkGoNNYskWqIOQ18lyWFhvcQ3EW3lSUCq1yfF9MwBPrfIupr7Ecq3@vger.kernel.org, AJvYcCXoAJSSM7pE6VuD1zn7ztJMf+QiWahAE+hhtT+I3OmZq1Xs5xZ8wQiyWllH38uFQ616DIeHcA4RYt/iwLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSQnPVCbO7lzW97+I9Jdff1NkH6ZhONZbnC3TafI9RVyTjBmzd
+	fmv4ZJVsjkBkYM825zds33JR6a+WLYAtog+fMOHUXqtdOTuV/JCAPZ2f
+X-Gm-Gg: ASbGnctZQ4ypcumodE0buoo6eegdISFZqDJHeBm1lWQFNEpioCZehfWM0wye4vNLPR9
+	dbN4wt0uiUoN2E/9gEZ5Ou2ISsWEXp6i6tV33FJgU+vm2ezB3G7qmz4mP9/s83Sn1H67yqAzSCL
+	19iLpkvwE91BZKgbkFmERAmYrqTSVlGoJynjF7Jl6/3JYbDWSM5rnFYnAEMV6JiW+w9tg64lVdw
+	Ytp8Z5TaBDbOYKw7q2bm7vPw5NTnzefdhA7U4CMu36ada/9VRwuQUTSv1mxgHVhq4svhRzLBulD
+	e+QsiVKgwiv/LNkThzQCcZSg98ON+XwBdNMXhPhceVTka6tcCyidMlHuZChbCtw1WwwMEOLW36l
+	/9uCkSyKvlmL7s4Gn+73R5dYtHDNuPPPW4BfARfuuVM3MJq/L
+X-Google-Smtp-Source: AGHT+IGV2tevVvnQ6RCHD0iJmFj1JTxfJOLQ/4g1Cwf7cPMViMXWr9d2Vxgox5m5bmrvt0G7XLIM4Q==
+X-Received: by 2002:a05:600c:3504:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-453248d3739mr29788245e9.25.1749654628570;
+        Wed, 11 Jun 2025 08:10:28 -0700 (PDT)
 Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532436871sm15373810f8f.49.2025.06.11.08.06.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323ad0c4sm15684910f8f.30.2025.06.11.08.10.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 08:06:49 -0700 (PDT)
-Date: Wed, 11 Jun 2025 17:06:47 +0200
+        Wed, 11 Jun 2025 08:10:27 -0700 (PDT)
+Date: Wed, 11 Jun 2025 17:10:25 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: Mikko Perttunen <cyndis@kapsi.fi>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-Message-ID: <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
+Message-ID: <c3un5kjfepprcjddchqmecik27huepuxejs6vckuqb3dshrcba@s2jcf23au62n>
 References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
  <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
- <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
- <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
+ <00f678ae-0b66-403c-bd53-6090e5920b1a@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,107 +78,97 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ahdzzbv4aoxgwn2z"
+	protocol="application/pgp-signature"; boundary="eounn7ro2a5wiyxy"
 Content-Disposition: inline
-In-Reply-To: <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
+In-Reply-To: <00f678ae-0b66-403c-bd53-6090e5920b1a@tecnico.ulisboa.pt>
 
 
---ahdzzbv4aoxgwn2z
+--eounn7ro2a5wiyxy
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
 MIME-Version: 1.0
 
-On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
+On Wed, Jun 11, 2025 at 01:04:14PM +0100, Diogo Ivo wrote:
 >=20
 >=20
-> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
-> > On 6/10/25 6:05 PM, Thierry Reding wrote:
-> > > On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
-> > > > Hello,
-> > > >=20
-> > > > This series adds support for the NVJPG hardware accelerator found i=
-n the
-> > > > Tegra210 SoC.
-> > > >=20
-> > > > The kernel driver is essentially a copy of the NVDEC driver as both
-> > > > engines are Falcon-based.
-> > > >=20
-> > > > For the userspace part I have written a Mesa Gallium backend [1] th=
-at,
-> > > > while still very much experimental, works in decoding images
-> > > > with VA- API.
-> > > >=20
-> > > > I have been using ffmpeg to call VA-API with the following command:
-> > > >=20
-> > > > ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
-> > > > /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
-> > > > /dev/fb0
-> > > >=20
-> > > > which decodes <input.jpg> and shows the result in the framebuffer.
-> > > >=20
-> > > > The firmware for the engine can be obtained from a Linux for Tegra
-> > > > distribution.
+> On 6/10/25 10:05 AM, Thierry Reding wrote:
+> > On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
+> > > Hello,
 > > >=20
-> > > By the way, have you tried running this on anything newer than Tegra2=
-10?
-> > > Given your progress on this, we can probably start thinking about
-> > > submitting the binaries to linux-firmware.
+> > > This series adds support for the NVJPG hardware accelerator found in =
+the
+> > > Tegra210 SoC.
+> > >=20
+> > > The kernel driver is essentially a copy of the NVDEC driver as both
+> > > engines are Falcon-based.
+> > >=20
+> > > For the userspace part I have written a Mesa Gallium backend [1] that,
+> > > while still very much experimental, works in decoding images with VA-=
+API.
+> > >=20
+> > > I have been using ffmpeg to call VA-API with the following command:
+> > >=20
+> > > ffmpeg -v verbose -hwaccel vaapi -hwaccel_device /dev/dri/renderD129 =
+-i <input.jpg> -pix_fmt bgra -f fbdev /dev/fb0
+> > >=20
+> > > which decodes <input.jpg> and shows the result in the framebuffer.
+> > >=20
+> > > The firmware for the engine can be obtained from a Linux for Tegra
+> > > distribution.
 > >=20
-> > FWIW, the impression I have is that NVJPG is basically unchanged all the
-> > way to Tegra234. So if we add stream ID support and the firmwares, it'll
-> > probably just work. Tegra234 has the quirk that it has two instances of
-> > NVJPG -- these have to be distinguished by their different class IDs.
-> > But we should go ahead with the T210 support first.
+> > By the way, have you tried running this on anything newer than Tegra210?
+> > Given your progress on this, we can probably start thinking about
+> > submitting the binaries to linux-firmware.
 >=20
-> I have a question here, what exactly are the stream IDs? While working
-> on the driver this came up and I didn't manage to figure it out.
+> Since I don't have access to other Tegra platforms I haven't been able
+> to test this driver there. For this I need help from someone with access
+> to more hardware, I can send a version that just adds the extra compatibl=
+es
+> and we could see if it works.
+>=20
+> As for the firmwares that would be great!
 
-Stream IDs are a way to identify memory transactions as belonging to a
-certain device. This comes into play when working with the IOMMU (which
-is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
-is used to isolate DMA capable devices. Basically for every stream ID
-you get a separate I/O address space. NVJPG will have its own address
-space, and so will VIC. Each device can only access whatever has been
-mapped to it's I/O address space. That means NVJPG can't interfere with
-VIC and vice-versa. And neither can any of these engines read from or
-write to random system memory if badly programmed.
+I think both of these are things that Mikko and I can help with.
 
-For Tegra SMMU there's no such thing as programmable stream IDs, so the
-stream ID is fixed for the given device.
+> > > Due to the way the Gallium implementation works for Tegra
+> > > the GPU also needs to be enabled.
+> >=20
+> > I wonder if maybe we can get rid of this requirement. While it's
+> > certainly nice to have the GPU enabled, there may be cases where using
+> > only the other engines may be advantageous. Originally when I had worked
+> > on VIC, I was looking at how it could be used for compositing without
+> > getting the GPU involved. That's something that Android devices tend(ed)
+> > to do because of the power savings that come with it.
+>=20
+> Yes I think this is possible to do, it mainly has involves properly
+> handling the Gallium driver initialization. I'll take a look at it
+> before submitting the MR for the Gallium driver.
 
-On newer chips (Tegra186 and later, or maybe it wasn't until Tegra194),
-certain IP blocks have special registers that can be used to override
-the stream ID. There's also a way to set the stream ID via command
-streams, which means that you can have different I/O address spaces (I
-think we call them memory context) per engine, which means that you can
-isolate different processes using the same engine from each other.
-
-Again, for Tegra210 that's nothing we need to worry about. For newer
-chips it's probably just a matter of adding .get_streamid_offset() and
-=2Ecan_use_memory_ctx() implementations.
+Okay, great. But I think it's definitely something that we can defer if
+it's non-trivial.
 
 Thierry
 
---ahdzzbv4aoxgwn2z
+--eounn7ro2a5wiyxy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhJm4MACgkQ3SOs138+
-s6FNWBAAtJCLRWy3HnLpatC3L34V9NYYS65LIc6i75tLGDS4+bBBVllqqYZrDaMc
-2QXib+yx+tG3P1z43Nq+Cp26YfjIRVdLqlOiQ89bURxrCas6jTBg4o8N8mYIkS62
-s9p/Q+YO58bNDfPVGhXOfSLTLciU5i/ull7kAkJMYmAsI31Bt1HywLimUCwHwdlC
-sSzGKK38fIZdwKYqR1yAEmtKzc04lOZGXN74/OW8o+h77WrLUlcwIpKb8mF3Q4Sc
-wzGX3IJah5vmZHWBnWvWo3ans257qlqz7B6P6lEe3jgPhhs1yL1TD4ii7X8T/sc2
-l6wHexytUYYPgWYOV+nIzqrL+F2SU+52YDVng4ADB1HtvdH4X/ransteUoo59MEc
-9glcqy40Y6PCAwXwQGGizpQ88Tlg6ttBru0npckcN44iJuHksyca9JO1crBlWoMs
-OiRpu8/YOzVGKHlolwhNfFdcJ77C1UP/UoHSnCndgVuTx14ZoFZVjhCpBqwlviU2
-7luQxXj5LZdk3sxnlP+q054H8udEC9PDavNwwO4jpH+0mcFZH06lpSGad67nOVgA
-dVTI15W89MocI4CDrbq8wLOlDJijKz5ztoLwm+e5V0BXgu4SrdvbuCvcnRlxvphV
-wX0oNHG2ZZ6OZFZQ2eaWAxWniSkNKFfuV3lnVMlz7B4bR6hmD1E=
-=pPIb
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhJnGEACgkQ3SOs138+
+s6F92Q//f6SU6icZGjpZAWYgaEic9DvE0zJTrIzfnl6VwUmSUi/tSCoe374MyNK/
+3onpN91p6PgcJbZgg93wbSc2hSgThPrn3Wxr6xVaAaCbEQ2cP3bzNTCI/q+oFrQn
+FaqjgYpSO0rSzqtTlanIqpPWJ6NEBvb411fmCycBR8sreSMGqDmyvZBgzRVhLWAb
+Pc93qJMc+fp3VjJ/M5tr0ffv7DimWH2f+9RyR7ydoYNZYvv+bHlcA03qNvkJZCPM
+ssDQ2pOwB7Ubg0GarzpNHdpoyeh+LfxViRowTvCtbeB+wFjeZyINSO2a6c1wYzzp
+rnov9B+i9akVFGZaHLkADP6FlNS6LQelzklja4Je9DPmptrtYQXFdQ+MawtH9slk
+ZTm8gSpA09Jq6HdNL6J9+pCRvxlVibGf7n7acD52dFAhEx779Si+8fuNMd3KQ8/O
+1+pYSGJEij/ZSuvwIEae/XNlkmXJhmDZ1vIek1bA8/JeYI7h0UmKy/x8lKsH8bz0
+J6RJehIvilKS5D9J8dTp3B9Xh6p2cfx3NWX9Pwzn+4SUbQ5pWnweoT3jErTpuJmM
+RwEzn2QCmsEGj32bn0v0iPj5IRlhGwlR/9SO8kZuRY0mf0AMRRS7O47wtfvbI3y8
+fxsJpInNhbqBw2tPhgHb/fDt+pjd7uS2NprQtm8IldzR7o4JpWc=
+=kiwA
 -----END PGP SIGNATURE-----
 
---ahdzzbv4aoxgwn2z--
+--eounn7ro2a5wiyxy--
