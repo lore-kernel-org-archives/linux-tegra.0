@@ -1,47 +1,47 @@
 Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8021B2405E1;
-	Wed, 11 Jun 2025 11:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E975C26E6F0;
+	Wed, 11 Jun 2025 12:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749643015; cv=none; b=r8sHr4gNX0sQ5uTj1m/3zkReMTap/2DImeDW6dUjAuyE9hHzhy/b2FCUEDR1Y3KVCaLEKEkJLXo9C21+RGNsddpkkj2zyPB15ozVW7vp4AhIkZQ8FZD7d6ACQJt6CTTXEyNeD8i1EqiQmXK8nw5t8AMSR9MNitpJCRrDzkUVVGo=
+	t=1749643463; cv=none; b=hzSnUpuju47nK1rfYM+sgWjidJRACT5+Eyg9hQR11dLRUoEGoB7kqcWOL61pmT2bb8xjsVIVhyxYe/B4/7tnt8byQ08jtPiPqLPYxKpYM5G4ah62vcucrpX7okOHZS7hJ3d3xEFboCKVsAqC6SVeHVsSxrQ5UjTyibL8YSOqIZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749643015; c=relaxed/simple;
-	bh=o2Q6JsbeZEg3VnNVA/mc0TjyJ6HDggtrwtpAR64di+M=;
+	s=arc-20240116; t=1749643463; c=relaxed/simple;
+	bh=d1XWIPNm2kp6LPDXGxjYDFYz3Dgz6XKTwrp50cPkDVQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I//DYnI3QTzjz6fWJRQm8o3WEPoQKu7Dtto11+pFUVPxwC1+EKJB0a8jTCTDdfD7yeT9jd6fhFTtpJn8d29GU9vgZKvnuzZQGwIphj8xpEi20aFsi25mbFH1F3h1/44rY3y+VHS0pBV10hv/TeiO5J6BsNDGOgMUbC/VKlkDWKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=GkFzxb33; arc=none smtp.client-ip=193.136.128.21
+	 In-Reply-To:Content-Type; b=AIyatnyD+zyaylVNtNp8XXFFeX/kbA7vGfVQkO3wmGbq1tfLxCZD6b8FQfBtPFTWKNSMrEy2TO/aYG9nuAoIJ01HrOkpbGadC1Bert6ZkrhT1EeupvBt6Od390mQ4bq4fOQ6l2u5mBDpbeMxcbSIPrma29w75Lkuu9UGkQqcJkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=pea6Ccjr; arc=none smtp.client-ip=193.136.128.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="GkFzxb33"
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="pea6Ccjr"
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 9EDA56003C08;
-	Wed, 11 Jun 2025 12:56:51 +0100 (WEST)
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 0DC616003014;
+	Wed, 11 Jun 2025 13:04:19 +0100 (WEST)
 X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
 Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
  by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id lqO9FPTecebC; Wed, 11 Jun 2025 12:56:49 +0100 (WEST)
+ with LMTP id 9hPjO_f-eCHZ; Wed, 11 Jun 2025 13:04:16 +0100 (WEST)
 Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 495336003C1B;
-	Wed, 11 Jun 2025 12:56:49 +0100 (WEST)
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 9E4C7600301B;
+	Wed, 11 Jun 2025 13:04:16 +0100 (WEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1749643009;
+	s=mail; t=1749643456;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PJUruQAOGbhUpiQy9dRrHappJl3EfKmSUYgVRieXboY=;
-	b=GkFzxb33XyZ+Uv3TH3RQ4jmB6ESz/iLOoIhYGofy+s93P+Q4jGQjYoSkk1PYQ3opDizp/B
-	LinPIL7BXJ4BmRHgBEUazzWw9mZ5j6X4K/XgokKnOEHwyN7mfjm4ovKeQGc+fapLp4SO8K
-	arhFWeG26mu4WR51Pp7ikgtRjw81Od0=
+	bh=H3JQgS3p43p5THNQw0KB6nL6/rdKYdxEDetoSqTjwzo=;
+	b=pea6Ccjr2yJlbBuKzdmYxoS9nbR9av6NMj2oOIxhgJlvvljUstw3g6j6sjQ2q5iiwf1ycS
+	fhEkGEvVtyRk6qZSBEvrKie42yw1F4/YJ5y/UEWPR4Z9b14PTHmxWnTJZg9Up/+jzsg3yH
+	XptrtAyHblh3mUflMr/V0ZiIB+3JBiQ=
 Received: from [IPV6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
 	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 0E6DF36008F;
-	Wed, 11 Jun 2025 12:56:49 +0100 (WEST)
-Message-ID: <9ddcd776-28b6-4fad-ab09-d3305e0f960b@tecnico.ulisboa.pt>
-Date: Wed, 11 Jun 2025 12:56:46 +0100
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 6179C360084;
+	Wed, 11 Jun 2025 13:04:16 +0100 (WEST)
+Message-ID: <00f678ae-0b66-403c-bd53-6090e5920b1a@tecnico.ulisboa.pt>
+Date: Wed, 11 Jun 2025 13:04:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,16 +60,16 @@ Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
  dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <lxgh2rtt2fqbmom64vbmtkly2dqcnivwvlhxt6zscwskhzsrne@kd66mumdaukf>
+ <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
 Content-Language: en-US
 From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <lxgh2rtt2fqbmom64vbmtkly2dqcnivwvlhxt6zscwskhzsrne@kd66mumdaukf>
+In-Reply-To: <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 6/10/25 9:58 AM, Thierry Reding wrote:
+On 6/10/25 10:05 AM, Thierry Reding wrote:
 > On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
 >> Hello,
 >>
@@ -81,20 +81,41 @@ On 6/10/25 9:58 AM, Thierry Reding wrote:
 >>
 >> For the userspace part I have written a Mesa Gallium backend [1] that,
 >> while still very much experimental, works in decoding images with VA-API.
+>>
+>> I have been using ffmpeg to call VA-API with the following command:
+>>
+>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev /dev/fb0
+>>
+>> which decodes <input.jpg> and shows the result in the framebuffer.
+>>
+>> The firmware for the engine can be obtained from a Linux for Tegra
+>> distribution.
 > 
-> Nice. It's good to see that there's some use in this after all. I
-> haven't taken an in-depth look yet, but from a high-level point of view
-> this looks like what I had imagined back when I started out with this
-> driver.
+> By the way, have you tried running this on anything newer than Tegra210?
+> Given your progress on this, we can probably start thinking about
+> submitting the binaries to linux-firmware.
 
-Good to know that the structure makes sense to you :)
+Since I don't have access to other Tegra platforms I haven't been able
+to test this driver there. For this I need help from someone with access
+to more hardware, I can send a version that just adds the extra compatibles
+and we could see if it works.
 
-I still have some kinks to iron out before submitting a merge request in
-Mesa but if you have the time to take a look before that and you already
-have some comments before that that would be great.
+As for the firmwares that would be great!
 
-> This made my day, thank you!
+>> Due to the way the Gallium implementation works for Tegra
+>> the GPU also needs to be enabled.
+> 
+> I wonder if maybe we can get rid of this requirement. While it's
+> certainly nice to have the GPU enabled, there may be cases where using
+> only the other engines may be advantageous. Originally when I had worked
+> on VIC, I was looking at how it could be used for compositing without
+> getting the GPU involved. That's something that Android devices tend(ed)
+> to do because of the power savings that come with it.
 
-Happy to know that!
+Yes I think this is possible to do, it mainly has involves properly
+handling the Gallium driver initialization. I'll take a look at it
+before submitting the MR for the Gallium driver.
 
 Diogo
+
+> Anyway, not a big deal, depending on the GPU for now is fine.
