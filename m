@@ -1,144 +1,185 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381EF279345;
-	Wed, 11 Jun 2025 12:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C59B7E0FF;
+	Wed, 11 Jun 2025 15:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749644331; cv=none; b=ani+fhpasqiVO4UwRnmTSYIEtm7XxuuD3Cka6e9sGttLot+IrHvreO22IXrerDvtnung7mskQVTAgfHKxrohzxWS92GHOt0r5cMWjP/Z2pb1WGi8TBBSsX9EVqKn4KzIm6MX8jNvNcrshPSbq1zMVPgTuq3y7IibKRs5xMoXWYw=
+	t=1749654415; cv=none; b=WSobzUhMokwrVyBRn+ixWhBeTM5jgP0SYUhWeBO9Qk/B5/0n8xTnmB/Ipy0LeRpwrDNI1Y4RPcziGajZvXc2W4wzMmhBhV0Nf0I6vuGO6VtYCTtVmtAvhCp/wXuexLf4TmQfY6cNHJnAKb0k4GO6Yz9z4mrI2q+LtaDqPVcBckg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749644331; c=relaxed/simple;
-	bh=v5RXLigG8aIKIExdJGg5HcvBIh2/wkBko4AAd6qmGmI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jIvW5glPKTWAdVn3luf4r2vifpBL8l2pDVNXI+rak/gQotXLCg1DaaPk/LXzj9xaxwFNLCv2PhLNHKhqoCyaH6NN0loWWZolc80OHTtRt58peJmOjku7EW2fglwQymXtIqpixRMwB1l6ok+wKa8yTsZg93yWsJyHQtR11PoAJ5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=hlPy9Ian; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1749654415; c=relaxed/simple;
+	bh=rZvstCIx0930gy+FitWy2h9ieXUWIADy6nD/O8Xen/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkxBqDLCgkscW37zVslbE7/RSIqt1XJirtiSmBB2ot6DdUYEmxU7G/iraP1JpQcmLSpFiOvjoHlPJ7ompnrkOz/KdXB2AnhGmYDgn6GV9KDusdKihi9G9jlMQBxmqEXCK+s1t6nROAGOrV0HiTq+fpnWyA1Jt8vyueZkHK07qg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbXcj3Ey; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="hlPy9Ian"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 7827D6002409;
-	Wed, 11 Jun 2025 13:18:46 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id TKkBtBk9tKFT; Wed, 11 Jun 2025 13:18:43 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 63E766002306;
-	Wed, 11 Jun 2025 13:18:43 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1749644323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bsCIytP8F7I0Dm27535yA17bXs0Y3AmhN8O0FTm92vU=;
-	b=hlPy9Ian4tmKDvnbSBxADY5p4WcAy2WopGd9PAvbepwIC6hd5C7a5d+34u2ukIQWHfwSVd
-	GOE8GwXrxbCkSsTAlr7IpC8G1jRgE1rbiCOv6O/D6ZvyxiN8G4c4/UiVsKEYEk5lifpFsx
-	pEE616DIlN7qtOLQa++ikxJZtwM+V74=
-Received: from [192.168.1.151] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 279DD360084;
-	Wed, 11 Jun 2025 13:18:43 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Subject: [PATCH v2 0/3] NVIDIA Tegra210 NVJPG support
-Date: Wed, 11 Jun 2025 13:18:00 +0100
-Message-Id: <20250611-diogo-nvjpg-v2-0-01f8c76ea90f@tecnico.ulisboa.pt>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbXcj3Ey"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a54700a46eso2828288f8f.1;
+        Wed, 11 Jun 2025 08:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749654411; x=1750259211; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZvstCIx0930gy+FitWy2h9ieXUWIADy6nD/O8Xen/w=;
+        b=VbXcj3EyokysKu81565iUWb7QAdwC0kM4Lmi+8rJ9KVaZwXNPRNUDmsM38C/9mVezO
+         YrOAL4B5UwJEA0bx5gFC4yoPY/x9rK/MvCL8w/EJlIyIOxGZc2LChRdMhh52sPtysDKf
+         jBiHvRWkEBOQwI5y6RGHpijLMuVnK5utbsdPUu7Kv2aAvMei47WgjFCt3sbqjrIFb6IP
+         uWGvolxiwWuEFWOCzVlHCrlM02JBos/2AQIkPLsA3JXhsfXaOIMeJz5xWq0/wrxbm1rj
+         s6+gKjbpccOcIaK1gelIg1Tk4TDoyCsyNHE6u5oA2EHasPj544kpnap+dDYgIvnigbsu
+         Nqdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749654411; x=1750259211;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rZvstCIx0930gy+FitWy2h9ieXUWIADy6nD/O8Xen/w=;
+        b=jNlTdYOW6pp2d0mEG21X9LAwfkV77wd4Evmn6F642dyz1xnQbxbzGUMNAiow3dTgHU
+         Ist9uPtsafTPdg/2N2q0uIwYnXbfeRRLaJOEQlKqIxvaYa8nyi3PSBVEz7JsTDrK8yHU
+         3wuD6AhF/eBtJ/V5LXkBkQeb+6goIpRUSyW0OkE2GZdHvwrohADVH3Fe5XMgN219PGdy
+         ZqI2gmhI7cTccCrWlK4pZUNU7xg6024gBB3cYrvzi6L54pqjb1gzEMEzHexvMILneUUK
+         ThoWun4+04Fw4Jro01FVvFOJNNgUkE9Xpn8qCIVXLwohwEM5x6AJ/f4V4u80mMQPJxzc
+         r8bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs4Vyun2t6sQdSdoDfMHaPV4XW+busURG1VBrgQeQCT0/8AQXC4N6cQnvqKQ3Xo5XohXdFO+82McKzhkRb@vger.kernel.org, AJvYcCX5ezX2xtnQNgRfZoaSaXwM+BLTVn3yKh2M4RJNsMNlrzkpZvEpgtLB4hQRytaAVwk8t70r+StfXIVw@vger.kernel.org, AJvYcCXNETrkC21f229r1PBcLpEzomZtMNJyC5IaZjg/A2S68sRemgWB3hjnk02/XbGA6VhMrDE7BR2BvXL3aGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMf+IF20mU7ZS5zl5nUSeaBB4ucMoL9bIbG3J8TLaaqElg3bpq
+	zHSVlEetwxv26aaAaNRyKEheDAsY2frExDc8o0D4yHBVW/tXPylpA8T3
+X-Gm-Gg: ASbGncuBFEGNo+NWQekDSxMbZBYFreK/CGSoIzRQQQ9WWzwEBSuPub5Mfnzv8Je4ajI
+	/m6TPAbpQkGbvZWgDu4v5hI+1i639RsHU111ewAlqadT18mL8jbUIpJlrn+13/o7MNr+TwSYxVo
+	cYbLc8tsx1WfxjDlZWDfD6zVn8HVVlgyf0nwKsxMKAaIP3mwGL7uNILKHwtLollJdeaZQv0AnFq
+	WtBDfBAh8+e1sL/hqeLKLfmfdLqhn5exJR1RIQvdT97F6E63r242bZxZcYIiYkD3TyiNAcJyaTq
+	LYYhg9Bq+V/jnBfMt/unffrODaJIcNZnswB0g9lyA2dXdhGtLHLWQFuIU9hoyvX+aw1eeljGPdK
+	Uw02ewq0daZc8LgmmZqhyfpbiYFVgCfR30sILmf/UN4i8CS2e
+X-Google-Smtp-Source: AGHT+IH7gCL0A1jwyehirZD75wEUOdI2MNoMc6qGX53PjwOW0K3sU25NqW7e29pI1Cuyu7enpaum4w==
+X-Received: by 2002:a05:6000:2304:b0:3a4:f50b:ca2 with SMTP id ffacd0b85a97d-3a558689146mr2940381f8f.8.1749654410702;
+        Wed, 11 Jun 2025 08:06:50 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532436871sm15373810f8f.49.2025.06.11.08.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jun 2025 08:06:49 -0700 (PDT)
+Date: Wed, 11 Jun 2025 17:06:47 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
+Message-ID: <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
+References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
+ <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
+ <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
+ <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPhzSWgC/1XMQQrCMBCF4auUWZuSpiaiK+8hXbTJtB2RTEhqU
- Ervbiy4cPk/eN8KCSNhgku1QsRMidiXUIcK7Nz7CQW50qCk0tJILRzxxMLne5gESne0+tQoYzW
- UR4g40mvXbl3pmdLC8b3jufmuP8f8ObkRUuhR2daMiEN7vi5oPVmunw9KA/d1WKDbtu0D9hBil
- q8AAAA=
-X-Change-ID: 20250605-diogo-nvjpg-e0d4c57126c5
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749644321; l=2448;
- i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=v5RXLigG8aIKIExdJGg5HcvBIh2/wkBko4AAd6qmGmI=;
- b=UU2A7JimG4deA21OVUCUZKd30eaNbTbzfEDJzxtmPgPbgXSU41wHwdNrrnIW4BrF5KDitB1lP
- 7HwLpdm/0MEDvsF0m2zzmxffRhEU3d2srPGHo9/mV4Pr8k6wpXf/H/E
-X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ahdzzbv4aoxgwn2z"
+Content-Disposition: inline
+In-Reply-To: <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
 
-Hello,
 
-This series adds support for the NVJPG hardware accelerator found in the
-Tegra210 SoC.
+--ahdzzbv4aoxgwn2z
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
+MIME-Version: 1.0
 
-The kernel driver is essentially a copy of the NVDEC driver as both
-engines are Falcon-based.
+On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
+>=20
+>=20
+> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
+> > On 6/10/25 6:05 PM, Thierry Reding wrote:
+> > > On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
+> > > > Hello,
+> > > >=20
+> > > > This series adds support for the NVJPG hardware accelerator found i=
+n the
+> > > > Tegra210 SoC.
+> > > >=20
+> > > > The kernel driver is essentially a copy of the NVDEC driver as both
+> > > > engines are Falcon-based.
+> > > >=20
+> > > > For the userspace part I have written a Mesa Gallium backend [1] th=
+at,
+> > > > while still very much experimental, works in decoding images
+> > > > with VA- API.
+> > > >=20
+> > > > I have been using ffmpeg to call VA-API with the following command:
+> > > >=20
+> > > > ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
+> > > > /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
+> > > > /dev/fb0
+> > > >=20
+> > > > which decodes <input.jpg> and shows the result in the framebuffer.
+> > > >=20
+> > > > The firmware for the engine can be obtained from a Linux for Tegra
+> > > > distribution.
+> > >=20
+> > > By the way, have you tried running this on anything newer than Tegra2=
+10?
+> > > Given your progress on this, we can probably start thinking about
+> > > submitting the binaries to linux-firmware.
+> >=20
+> > FWIW, the impression I have is that NVJPG is basically unchanged all the
+> > way to Tegra234. So if we add stream ID support and the firmwares, it'll
+> > probably just work. Tegra234 has the quirk that it has two instances of
+> > NVJPG -- these have to be distinguished by their different class IDs.
+> > But we should go ahead with the T210 support first.
+>=20
+> I have a question here, what exactly are the stream IDs? While working
+> on the driver this came up and I didn't manage to figure it out.
 
-For the userspace part I have written a Mesa Gallium backend [1] that,
-while still very much experimental, works in decoding images with VA-API.
+Stream IDs are a way to identify memory transactions as belonging to a
+certain device. This comes into play when working with the IOMMU (which
+is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
+is used to isolate DMA capable devices. Basically for every stream ID
+you get a separate I/O address space. NVJPG will have its own address
+space, and so will VIC. Each device can only access whatever has been
+mapped to it's I/O address space. That means NVJPG can't interfere with
+VIC and vice-versa. And neither can any of these engines read from or
+write to random system memory if badly programmed.
 
-I have been using ffmpeg to call VA-API with the following command:
+For Tegra SMMU there's no such thing as programmable stream IDs, so the
+stream ID is fixed for the given device.
 
-ffmpeg -v verbose -hwaccel vaapi -hwaccel_device /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev /dev/fb0
+On newer chips (Tegra186 and later, or maybe it wasn't until Tegra194),
+certain IP blocks have special registers that can be used to override
+the stream ID. There's also a way to set the stream ID via command
+streams, which means that you can have different I/O address spaces (I
+think we call them memory context) per engine, which means that you can
+isolate different processes using the same engine from each other.
 
-which decodes <input.jpg> and shows the result in the framebuffer.
+Again, for Tegra210 that's nothing we need to worry about. For newer
+chips it's probably just a matter of adding .get_streamid_offset() and
+=2Ecan_use_memory_ctx() implementations.
 
-The firmware for the engine can be obtained from a Linux for Tegra
-distribution. Due to the way the Gallium implementation works for Tegra
-the GPU also needs to be enabled.
+Thierry
 
-Thanks!
+--ahdzzbv4aoxgwn2z
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Diogo
+-----BEGIN PGP SIGNATURE-----
 
-To: Thierry Reding <thierry.reding@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-To: David Airlie <airlied@gmail.com>
-To: Simona Vetter <simona@ffwll.ch>
-To: Jonathan Hunter <jonathanh@nvidia.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhJm4MACgkQ3SOs138+
+s6FNWBAAtJCLRWy3HnLpatC3L34V9NYYS65LIc6i75tLGDS4+bBBVllqqYZrDaMc
+2QXib+yx+tG3P1z43Nq+Cp26YfjIRVdLqlOiQ89bURxrCas6jTBg4o8N8mYIkS62
+s9p/Q+YO58bNDfPVGhXOfSLTLciU5i/ull7kAkJMYmAsI31Bt1HywLimUCwHwdlC
+sSzGKK38fIZdwKYqR1yAEmtKzc04lOZGXN74/OW8o+h77WrLUlcwIpKb8mF3Q4Sc
+wzGX3IJah5vmZHWBnWvWo3ans257qlqz7B6P6lEe3jgPhhs1yL1TD4ii7X8T/sc2
+l6wHexytUYYPgWYOV+nIzqrL+F2SU+52YDVng4ADB1HtvdH4X/ransteUoo59MEc
+9glcqy40Y6PCAwXwQGGizpQ88Tlg6ttBru0npckcN44iJuHksyca9JO1crBlWoMs
+OiRpu8/YOzVGKHlolwhNfFdcJ77C1UP/UoHSnCndgVuTx14ZoFZVjhCpBqwlviU2
+7luQxXj5LZdk3sxnlP+q054H8udEC9PDavNwwO4jpH+0mcFZH06lpSGad67nOVgA
+dVTI15W89MocI4CDrbq8wLOlDJijKz5ztoLwm+e5V0BXgu4SrdvbuCvcnRlxvphV
+wX0oNHG2ZZ6OZFZQ2eaWAxWniSkNKFfuV3lnVMlz7B4bR6hmD1E=
+=pPIb
+-----END PGP SIGNATURE-----
 
-[1]: https://gitlab.freedesktop.org/d.ivo/mesa/-/tree/diogo/vaapi_gl?ref_type=heads
-
----
-Changes in v2:
-- [01/03]: Remove reset handling, set clk rate to max
-- [02/03]: Explicitly mention Tegra210 in the commit subject
-- [03/03]: Explicitly mention Tegra210 in the commit subject
-- Link to v1: https://lore.kernel.org/r/20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt
-
----
-Diogo Ivo (3):
-      drm/tegra: Add NVJPG driver
-      arm64: tegra: Add Tegra210 NVJPG power-domain node
-      arm64: tegra: Add NVJPG node for Tegra210 platforms
-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi |  14 +-
- drivers/gpu/drm/tegra/Makefile           |   1 +
- drivers/gpu/drm/tegra/drm.c              |   2 +
- drivers/gpu/drm/tegra/drm.h              |   1 +
- drivers/gpu/drm/tegra/nvjpg.c            | 331 +++++++++++++++++++++++++++++++
- 5 files changed, 348 insertions(+), 1 deletion(-)
----
-base-commit: 736ecbbf1e57fc3bc6575c76f6a46c84760233f8
-change-id: 20250605-diogo-nvjpg-e0d4c57126c5
-
-Best regards,
--- 
-Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-
+--ahdzzbv4aoxgwn2z--
