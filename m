@@ -1,115 +1,232 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2072.outbound.protection.outlook.com [40.107.100.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E3D22E40F
-	for <linux-tegra@vger.kernel.org>; Wed, 11 Jun 2025 06:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749625144; cv=none; b=mYpnkkDpItOr8ebLtGC3uMDER3a8GUB8pWYSn92xcFa7WcWcYhLvW9EadGkCAv1fDg+XB7fvFfnE0nZQPWmzPr2tTlB1xVSYcywyW1W1PNg5obV+aVWd/VzAJRUi/rpWRa4wtbmaYEdPuAxtAcxlcagR5WTsjUlXPhdkNisIljo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749625144; c=relaxed/simple;
-	bh=dhY8tTIaHxzBeyhk1xPMKaQLngS8G/RjM44iDX1MTQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LZ9bALvzpttq+xWTQzr3t3ifRoeOok155B7l5oVuGAfFH/e/qG2DZ29FyZYnt5R6ij3M5zI3JpK5icNTHaSOJgXsEC/nQOUsNP/gZbWuwXAaI3EVzYyZuigAhIHNYsloMrSZPwt1z7bEqfvJfNeQoILRfpITpb65CEk+ZDA1TyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jocJ9c58; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8189C2F85B;
+	Wed, 11 Jun 2025 07:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749627321; cv=fail; b=gHGgq3qITWV80XZ4HGSYErwA7esC2fDlzXu/lIWO9/isQphFsbGRkid3e68XcysKjZ8GP01w196omZ1H+MLdD+41OnN0Evb61MbN/rENVIPC8gkTCbVKZ2SHfAFKgajOJEtIU9tUbzup/zAKyf0qevwCHsDJLvII5Ur+azziCJI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749627321; c=relaxed/simple;
+	bh=q+tRzTZHc1Fei38vn03XQpjQZLG/YEAiYz7eFPB9zGk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sxdaxyr8wJCQTVIjvfDV3R3S4jbi9KENBifuDoNrLIQBR5dCiQ/Juw8VXPExLSnNzyKmZ6Z1Ld+ALlnHXMs3lJFwOZR6U8lBW4TnlCqRXHCDOGTCMYMiy1O/t2i2PmxJV5zTocOb/qhv9jhRWYedM7Km+oNM4sNP/V5Y5b3n8dk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gwAjop3X; arc=fail smtp.client-ip=40.107.100.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jocJ9c58"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5533a86a134so6025854e87.3
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Jun 2025 23:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749625141; x=1750229941; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U8nA2PNnIRRvEbnFF50ioWvbhGVteh9Ywj6FtJtDCnA=;
-        b=jocJ9c584qlVDVn6UJhYMjrkzw9Wz7thkJ+41v8/8fjP4fZD9JlkteyJbZBgMs60zu
-         Ehr56YhE/IZZsEMaddr0kcfsM1TOO0094kwB6XyGKTuQSpH28mmYhWpUTk6vmwkSf3hP
-         Wl8JHP3mzrncyKn+5pYIlREWzw0ImLZ8SScx1A+wg59wy5sA7XgYTGS5KFFQU6MmNjb3
-         tl9rPz/ix2vZmjFlgzhY4eeVvlq1UFrZcz5fVjtSE2C9l8l2wYKgdr4evEt1hSkgg9yN
-         lcHEdQxtyzCUcQn+gqVH1mhhgN3avvekWhpK1tSDlEVQPS+k0putfQPOMpxjjDVYjHdD
-         H8RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749625141; x=1750229941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U8nA2PNnIRRvEbnFF50ioWvbhGVteh9Ywj6FtJtDCnA=;
-        b=aiXb4elgJ7NcguDG76cTpfvb2WfIR2iQX8BEIoqWuGwrQtDP8METn6fYaqdbTKGHao
-         95caYuUrP6ord6GOufBStusM/wSuT37PaSGVWrHY8mjS63jE5HoD2a6N1wzMcFVMwjnN
-         DMpiblXIx0AEJ4NWSNXa+R/CcrE5FbM4dDLJpJ8ZuBnT2TkySEIQcZY4+BYTuzSZMVyx
-         98Q7cvhl9mESBMKmLlQziBtCsoCoI9NKuKwUitQF2q/NHuwFEIC2kZgIqCrf9Xrlt40T
-         hYcUPPgCLECpaV6tLFP+Zp3HDh457YAVHGM/SqN5e2CcIYxpsZmDxoX1UYn3JslGFnD6
-         210w==
-X-Forwarded-Encrypted: i=1; AJvYcCV74vSL+0J7/9W1/IJ+8fvT02fycXJvhTKUl15rtFajwckka+zkwur75ey8Pq64ieGoy/I+3FqUjksovg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWuzubKDsWKuZpIe8gCO67772fwWmP7NWm5Y4e4w6R5nT0aGEr
-	8gUWbgNUyzIIJI4w9+hpltt4B9RaeOKGHTPFNtSdwW6rTESavupmRC7ArE4oofpqi1VhA6q6ifI
-	7BAYm8w0rjjv058yy5rQ5Z/9m27jP5jXVAzuQZ8Oj8w==
-X-Gm-Gg: ASbGncsu5raUqI34cPhFLoS1z03qLp7xwFduiDbuOWUkgpjKFweQVIVHCGVlDs98Gva
-	EKUJlaZhzVuZxT5alaZhH0CvXtbEMskfI+wNhn1avBki5hYnI31/4JEOxHKcZ/qRDds6tV7G7vt
-	k+21gkofrhvbeKg+pM54pTzK5YREDTugarcJXhEfcDz5w=
-X-Google-Smtp-Source: AGHT+IG6utHIOdDkcpuozNh2nqM9zH/+sRrcv4+dUano9lJ8/d+qcOtmsSZATDFdcJvRJ4JBx+FV6cWHmQ4clAOQL1E=
-X-Received: by 2002:a05:651c:221f:b0:30b:edfc:5d8a with SMTP id
- 38308e7fff4ca-32b22100cf8mr5212561fa.0.1749625140694; Tue, 10 Jun 2025
- 23:59:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gwAjop3X"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jmKrFzkR5PQ8emf9yytV7Qw8PRpqx+d2mvNDe8y7UUMYCKtXaA0ntXDD3OuGVLlMFgKI2ecqeG2oTyJIM/FaelAhag92s6TMp66mZHsmUPhCCA3zMdZJfIijYNJTS8LgcubWAkJU8GUOsCJE9zTVtDkl3b/UGC3tHUZL8P2v6DcAivooEQD26n2fhFStM8dSYSZGZHWGZIH0ztzt808BITfn4dWM5/zzAVimKr8hs2r83m+2dzm7ANWyFnICLZh6UIqdu5xQSXgJ3L4OVCbHPftTDrndtcj/+xQd11we+F9lBA3aDnN9LjV/8uQKLZ2YwxDtcINcdBm4+lbeOmB5wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R515x1/V8OarFVwhJBMHbiutCymbxNncAqDgJPO8NQo=;
+ b=hx8y53SCRaI5Ke7NXCcft0e5WUW1HYqdrfPk0f1uBuRMdd1Jee23muVhl7i+Y+cPVDuSRU2mcQXyBZhX+TBIG3mYWB3kuImDvI6bFZTadO/p1VHd5tcPe1VgonJUMzoB3d2eAButcjAd3X9uzotruwLc1BG5gH0PHKPrH2KEFAtzI8gQ9Gv3MQBpYM0vLB1HCbbmV8Gs9OR+g91HUp5jHvZCST7vhqJ21t4nnCv2tEwWRdcVccpnVyg7bd1RkMfXOSo/Btyqrye91nbxbKkkAKC7nCouV0qPtgbd+BaI6HGCFC4aRkrBR7bnT1xSs1VOmd2Jg/GaQyM+9ptCNYQeDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R515x1/V8OarFVwhJBMHbiutCymbxNncAqDgJPO8NQo=;
+ b=gwAjop3XqwGhJRJk/FOB0UQXSBsYKs8PjZz0F1T/9QaSmpHttvIrQ0X8SuCqA1yPaHjFWcO3kKyDDVnFYdTvWD47zckStW2jarLmbq1aVQvXCpyvS2h/NfaEdI8uce9VZdmExmgbTez6KpyNYnZLUI8rE2sbQx1pEEWxAioGHqolFiXjBNeN8xkqDo3RdVQ/XRmoH+YHJ3rQGFkyMnHQREzmr1e6dEOzkDeRjgeWkOeiwFQzi8ilIg/vwnR4LTbs+EuxofGy3VWf8teHUC2GOWCpZcunw4ULX+oczLehvW9ShiSXpPnIaNBEtlSqVX3hWdj9qLAnoiX6L7A6s/sRKA==
+Received: from BL1P223CA0001.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::6)
+ by IA0PR12MB7700.namprd12.prod.outlook.com (2603:10b6:208:430::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Wed, 11 Jun
+ 2025 07:35:12 +0000
+Received: from BL6PEPF0001AB72.namprd02.prod.outlook.com
+ (2603:10b6:208:2c4:cafe::c3) by BL1P223CA0001.outlook.office365.com
+ (2603:10b6:208:2c4::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Wed,
+ 11 Jun 2025 07:35:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF0001AB72.mail.protection.outlook.com (10.167.242.165) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.15 via Frontend Transport; Wed, 11 Jun 2025 07:35:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 11 Jun
+ 2025 00:34:58 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 11 Jun
+ 2025 00:34:58 -0700
+Received: from build-shgarg-noble-20250422.internal (10.127.8.11) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via
+ Frontend Transport; Wed, 11 Jun 2025 00:34:58 -0700
+From: Shubhi Garg <shgarg@nvidia.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, "Alexandre
+ Belloni" <alexandre.belloni@bootlin.com>, <--to=jonathanh@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-rtc@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Shubhi Garg
+	<shgarg@nvidia.com>
+Subject: [PATCH v3 1/6] dt-bindings: mfd: add NVIDIA VRS PSEQ
+Date: Wed, 11 Jun 2025 07:34:49 +0000
+Message-ID: <20250611073454.978859-2-shgarg@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250611073454.978859-1-shgarg@nvidia.com>
+References: <20250611073454.978859-1-shgarg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
- <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com> <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
-In-Reply-To: <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 11 Jun 2025 08:58:49 +0200
-X-Gm-Features: AX0GCFtY4lWmGfSr3aKIZM_841dA1Q0ZW3SK2jFhQhq_82hUZBSPfb71HJ3Q2qM
-Message-ID: <CACRpkdZha_ucjWvP_NQ+z2vbD65Y3u7Q0U57NYbJ=vqQ6uPGGA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB72:EE_|IA0PR12MB7700:EE_
+X-MS-Office365-Filtering-Correlation-Id: e37c9952-9540-473c-bd9a-08dda8ba8082
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|36860700013|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?H5w6xbWNsvtEzVlmJdRQMSN3YX747ufAEju9ytH5X9egPc5Ev/lafvToIkda?=
+ =?us-ascii?Q?EHmgXuAsoPRKqXdfq1chQk/+yHsUD39+pX3fvTGtjCLy/s5fBFMOOhJJCSXm?=
+ =?us-ascii?Q?pSjMsp4A5kTdMtaJRv9eYHMWt6awrs8Qw7th7HQhP5NOvF3jc8KV3fb1hopp?=
+ =?us-ascii?Q?nc88KEZ9QYZ2jLRrmkXqeLSx3jAahB9u3xBqFiCI/WdX2TpOQFs0nv41b+GP?=
+ =?us-ascii?Q?k2paq2AJErtC73NFl8h+GwTgA898wwJNdI5YmbOjiLDFIfAS+rUrLYPv1gh+?=
+ =?us-ascii?Q?FpY2LikSJnpY4lRUKF9L64U8+ehpeC2DRqNBBguCLKnvyavifuBt2St4/YJ6?=
+ =?us-ascii?Q?J/pWYurJBDADDuMtsG6N3510tY8+CyfOsaO56+Dbmzi2MGrDCy9hwVETR8aK?=
+ =?us-ascii?Q?4gLNBLY815bAAeyBamHj4u8aF61/HuWY1plKO0fx8blktHP+OAy1xSb7PsSq?=
+ =?us-ascii?Q?5DoZNXe1+AbUFg9Qi9zckUKNf2RRRydOydmNeemq4Qu99Zm85XvVBbd4OohT?=
+ =?us-ascii?Q?EyVIrqezzA532lUbR5hHuMFU5ZTcM94agvmj9pCHdodteD3iPjXyeN7JlGVQ?=
+ =?us-ascii?Q?FFd4uDrZyE0VYop9kIJ+QzsqCKCzq7mhs5FLKVSVnEAq/UbZcVFJdA8H1mBZ?=
+ =?us-ascii?Q?/zC8iLGHIPVoLZN4ooLg7GsiA1kXYkagUTC0AHjSWya8WUoZ+ml/IJN6Tvcq?=
+ =?us-ascii?Q?drq5B9BdcgNg9Obu+sAwm3VrS8USHhdQ6nqoc4JFFHUj1QpAGzuoQ1HBrcSZ?=
+ =?us-ascii?Q?p+PmfS15l4fGec0rAv0RZmhRB0lFcLekCscph+r0Zo1DQu08ZlX0bkS0ZbY5?=
+ =?us-ascii?Q?YpV/2PyAfzw9TaDIvl5sEjSYd0su8F7tiyh8yPZZp8ryZ5eOQ9UJtRTzvt8R?=
+ =?us-ascii?Q?ZIxjRPt+WYbA9E9hEllnL5xr4MVK2WFgGvG/nZ/PrdOgm+RMxO628O7cW2Hi?=
+ =?us-ascii?Q?pJ4vKx3c0q2SvcH1BQlanEy6FbVdfC6OgDHqGhelknI/Xg8rCDeStNCZj8dc?=
+ =?us-ascii?Q?+L/cStOI1qdfIi1BTFMKvHiUYZIqkytyupNoikL6HMQ4UujTuPygHapmOUoX?=
+ =?us-ascii?Q?Frpar0fcmT/w7Sl7R8qMNv5NzJePXVkeAj4dPpaIqtRcQHUyHezciuXWz67s?=
+ =?us-ascii?Q?SSOG58MITCaftVwbgNm3GeHpLZCmXuucAyXroFQaA1NL9lFWXQkbME0svWc1?=
+ =?us-ascii?Q?eafyoWnKVwyd67bLLkvO2ApUSwvTC4hGT3OKMQ2nAdcZKapwLn2iB87EQDfb?=
+ =?us-ascii?Q?sUcXA2IQyT1p/irhNObZ5SmySL2AMQxno/xoOsLA4nfpLRXfT0FPmWe8owT/?=
+ =?us-ascii?Q?GALBkP9r9rkkyJ8fGHjo45IKqkan12LDefXBX3L0WYGAAsLK/elIqytYJRx2?=
+ =?us-ascii?Q?6B2GxsETc4UB8BBKpHFQ68YNAx3x2nThVC2ebmlV6h0k6oPafvXljTPKY6kL?=
+ =?us-ascii?Q?TV1xwip3BMgYIcgesUk0VqpsGGz8UJnm++W7UPOn7TWpPtu88FIojPduR6CW?=
+ =?us-ascii?Q?LWWqkk4IjMFIrrO9urFGzhDAn9BckmdDR63u?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2025 07:35:12.7885
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e37c9952-9540-473c-bd9a-08dda8ba8082
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB72.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7700
 
-On Tue, Jun 10, 2025 at 11:40=E2=80=AFAM Thierry Reding
-<thierry.reding@gmail.com> wrote:
+Add support for NVIDIA VRS (Voltage Regulator Specification) power
+sequencer device. NVIDIA VRS PSEQ provides 32kHz RTC support with backup
+battery for system timing. It controls ON/OFF and suspend/resume power
+sequencing of system power rails on below NVIDIA platforms:
 
-> One thing that's not clear from this patch set is whether we actually
-> need the Tegra186 pinmux driver, or you're only adding it because it
-> happens to be present in a 5.10 downstream driver. Do you actually have
-> a requirement for setting pins dynamically at runtime? Do you need to be
-> able to set a static configuration at boot that can't be set using some
-> earlier bootloader/firmware mechanism?
+- NVIDIA Jetson AGX Orin Developer Kit
+- NVIDIA IGX Orin Development Kit
+- NVIDIA Jetson Orin NX Developer Kit
+- NVIDIA Jetson Orin Nano Developer Kit
 
-Actually, speaking as the maintainer of pin control I hear the following
-a lot:
+Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
+---
 
-- We don't need pin control, the BIOS/firmware deals with it
-- We don't need runtime pin control, the BIOS/firmware deals
-  with it
-- We don't need runtime pin control, static set-up should be
-  enough
+v3:
+- fixed device tree node name to generic "pmic@3c"
+- fixed indentation
 
-These are all enthusiastic estimates, but in practice, for any
-successful SoC we always need pin control. Either the BIOS
-firmware authors got things wrong or made errors (bugs) and
-there is no path to upgrade the firmware safely, or runtime
-usecases appear that no-one ever thought about.
+v2:
+- fixed copyrights
+- updated description with RTC information
+- added status node in dtb node example
 
-Aarons case looks like that latter.
+ .../bindings/mfd/nvidia,vrs-pseq.yaml         | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml
 
-I think it'd be wise to send the message to any SoC system
-architects (or Linux base port overseer or whatever title
-this person may have) that a pin control driver is usually
-needed.
+diff --git a/Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml b/Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml
+new file mode 100644
+index 000000000000..65bf77f70c44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/nvidia,vrs-pseq.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Voltage Regulator Specification Power Sequencer
++
++maintainers:
++  - Shubhi Garg <shgarg@nvidia.com>
++
++description:
++  NVIDIA Voltage Regulator Specification Power Sequencer device controls
++  ON/OFF and suspend/resume power sequencing of system power rails for NVIDIA
++  SoCs. It provides 32kHz RTC clock support with backup battery for system
++  timing. The device also acts as an interrupt controller for managing
++  interrupts from the VRS power sequencer.
++
++properties:
++  compatible:
++    const: nvidia,vrs-pseq
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++    description:
++      The first cell is the IRQ number, the second cell is the trigger type.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@3c {
++            compatible = "nvidia,vrs-pseq";
++            reg = <0x3c>;
++            interrupt-parent = <&pmc>;
++            interrupts = <24 IRQ_TYPE_LEVEL_LOW>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++        };
++    };
+-- 
+2.43.0
 
-The SCMI people heard the message and have added pin
-control into the specification for that firmware interface.
-
-Yours,
-Linus Walleij
