@@ -1,144 +1,113 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701BE18DB29;
-	Thu, 12 Jun 2025 12:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87502F4306;
+	Thu, 12 Jun 2025 12:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749731690; cv=none; b=h92tq0aY2Jp2+koURtmLAbJj7b4sq77QnSwgrpcKsKB1ysraspALWNI+y/OJZG1bx5llealQLwtcd73ZdH0sbCMOpcnQoZEvvgXgJRxC7KHQI0oH4HuWL2NvTElS80mVrx9FOO6x3ax2R8+GxdaxIogS6Gfcyb0Di62EMdHwvyA=
+	t=1749732328; cv=none; b=qirKPD2rQlspTAFQ9xMzaPrkn/C2aM1O7896mmMOrTBIXonA3KYn39sVIcWRwgRUwmRTq9UuOpzxq+8sYOhnvrKvJGZRqRqF34H6472XCnEx4LVt2XseBsqcgPYllHZjCe77cqJbVvaBU9MkgNxXrSl7Gl5QctUKdqIhVTSmjn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749731690; c=relaxed/simple;
-	bh=HMvmy76NLGORQArlbIXSPIXwELaN8ey56Ig9mvz4sxY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Syhbr9DGIDMbjdkBsUQ1wHrxmHU/KWyvruhq1LC8ZKd3eJ2c4DMGTT5/HQfNKWw6WNo/CZ2XQy0bmv40Z4XmUcNWGRwYPzBp9qjVcbnYxOGcukvbB2RPedCnj2DhCtezgMewTT9TU9OwQGDQSPjef/+zkhaf3TtmMZt9vWzLZGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fad79433bbso9856876d6.0;
-        Thu, 12 Jun 2025 05:34:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749731686; x=1750336486;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YdmKBl6XQx/lg6XYfGHOU0jB5qghLcO4dPwReFsMtRM=;
-        b=KiMMa0XEfJb8/8nXxKylvl7VLY7DhuSoUKznjOovZ/6Cq8sjlguIBrr92OiOIzWelN
-         /dkFjOepRQich3JXrsmptdTzLdHEPzfu5nqZ23ahmNBnlRY6DzIgdZaqLh9nVmqf9Kel
-         3I0VGlLAnWkEuPQnb0FcvETZM0NNh9uWt/ecpDs6TOtdDPxXLodWIW3J1eg2/77G9Xaj
-         ZxlCO/oNQi1IZ1P3ItIrQv+S5q/Kv/bSnqEhOuvtYRqYtow/Elqj+V80FxgYxRhPbqZh
-         2Vy9obYP3XyJWUzfd+pW+qaT5K5IpbY3fhSmsDMfnWW2ESMO6O11ZPbXy+BR6DYcJ58+
-         q+kg==
-X-Forwarded-Encrypted: i=1; AJvYcCURLPb+AgC1yRmG93NtCxxlz4cRwCMV+kNNQjw11xIRKmNBB4/VCrjOy/NkmQ0ZnJ7/cRrVsotqNC+MmV4=@vger.kernel.org, AJvYcCWIKRSCwtVZUvMT1MWayJMt9aOcz5DOO2B5a+PYU2/qiwqxbnougP90pFcfj0dM7HLCwQlLplHfuVfQbnw=@vger.kernel.org, AJvYcCXfT4QPxd8JyW/itHtFLgbytIvusredRVxXnADNitSpkdft67hloDcQZkrcGOMaxZpFgw8N8b5wNd18pbd0/rnSrgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKaYpfxay0QCag6llgt7a96y8PM7LsJ3IREsfN10VEoRO0QJt7
-	r6hu1uUH578LFFr0kNYrsVnoEaouwFq7lhWdF6+fXLsFJEx6JYRtzexo4MTf0ltc
-X-Gm-Gg: ASbGnctTgq7NE5oKRdO0nVYdfmOb2IsiQEfdHARTrlBeMEybt+dVIm1cnjw77AWNSRU
-	znCTq/WdsAmMLOkpXSbcJqh6mWInHPk7ZpM71C6NeB/yCKfJoZuWWLfEXLnG62k37O8Ji1aTdrt
-	+GkzBixWB9DADkUZgpmxhnMXqAw2nANc2g1aFeFwUB5YdEVbgDdGkTVyLcb09U8MtpqYefeZGfm
-	KtPwPCHp5U8Xfo2LDMVkY2ad/a/pNthSM14+p0M03OQMH5Xw5aluuc8KLByKVulzuN02jHp/+je
-	t/Ffsfavu29WyDMR5ZS44NYwFIsWXjWS/5ct2JmR8uIK3KkpoKhb6OY/R8+M6mOKAYhk4vjEE1l
-	GuNQL/arMSIq22uwjN2yONy6ymUD3
-X-Google-Smtp-Source: AGHT+IHssHqpj8tpytx5oKPL/gYKfnWAcsnJBTEMjqRK6IUxecWolGe0vqo3MRJgMkGJB28DZRIPgg==
-X-Received: by 2002:a0c:f083:0:20b0:6fb:39e5:1b64 with SMTP id 6a1803df08f44-6fb39e51b7emr10142526d6.40.1749731686469;
-        Thu, 12 Jun 2025 05:34:46 -0700 (PDT)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com. [209.85.222.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8eabe70sm34572385a.57.2025.06.12.05.34.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 05:34:46 -0700 (PDT)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7d3939ecb7dso91700785a.3;
-        Thu, 12 Jun 2025 05:34:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdFztynFyr3VNJqCnSTDTjwU18hpKq2+brppVl0PRoG5fSywVc9oP7OSMFjtZPLnV31LTcE+g1A5muAzI=@vger.kernel.org, AJvYcCWdKykHP21sChuXDzmDe8MHhRkk38AafyFg2HQh78NbLL9WjzUXZ0N7azVFFK4e8XwQIx6oU0xhgcc7DQE=@vger.kernel.org, AJvYcCXHpd0tRLTkVuYEYz0ERob7MrGekBe3CppqlD+FR95aduObxlh+/uAQdPRBAvXXOONYHPdyjQV26ak5+pNTK0qImt8=@vger.kernel.org
-X-Received: by 2002:a05:620a:2953:b0:7cd:565b:dbc9 with SMTP id
- af79cd13be357-7d3b369e445mr372396085a.26.1749731685801; Thu, 12 Jun 2025
- 05:34:45 -0700 (PDT)
+	s=arc-20240116; t=1749732328; c=relaxed/simple;
+	bh=8MKRQTb/7JzqiplCl8iXB7PfHb6PwfHGnuzaemLIaj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4gOe0wEdjeVr5yaJo5f8RaCLx8hDS4wrZFYCCE4xG4AZ1RQ51z+H13aqgmPW80bgbW1pbyNc+vtyC9UPKVSF3hNESa5mWZQBF8d+cYxyjrk2/HZBrVgvhDTGE4zfuGfKZy476KLOe0uBDY5Dqms8jW2maSILhBjX0QZIqelaR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NTn8e+6g; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NTn8e+6g"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=23ZG+xJSw4YpAjmPdytqobZOImtcUHEUQlR+e/rQiqI=; b=NTn8e+6gKdA3pIbp0py+2v72Mi
+	jTjyRpKf6fLT7hpmfyodEh7uknxaaSBFccw61FIxbUPhz5+05UVGkAbKoa1uQSYbW6UgkBo85/L0G
+	/9F7l5826yfE8XQr3N0hpst+Fk8xhcwYnifPsU5AelPsi2sImXP76Bh/wrAOgikqSthw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPhIv-00FXUq-UD; Thu, 12 Jun 2025 14:45:13 +0200
+Date: Thu, 12 Jun 2025 14:45:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Subbaraya Sundeep <sbhatta@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org,
+	Alexis Lothorrr <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH] net: stmmac: Fix PTP ref clock for Tegra234
+Message-ID: <353f4fd1-5081-48f4-84fd-ff58f2ba1698@lunn.ch>
+References: <20250612062032.293275-1-jonathanh@nvidia.com>
+ <aEqyrWDPykceDM2x@a5393a930297>
+ <85e27a26-b115-49aa-8e23-963bff11f3f6@lunn.ch>
+ <e720596d-6fbb-40a4-9567-e8d05755cf6f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506104731.111876-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWhwJTbJOBhKmC9YUaSebBg-9m7euqmxqJLCXdr6++siA@mail.gmail.com>
- <bdd989b4-a572-44c2-ae7b-2c445c09fd7a@linaro.org> <d05f2c03-fa86-4fc6-9b81-1a7b5592c2e8@nvidia.com>
-In-Reply-To: <d05f2c03-fa86-4fc6-9b81-1a7b5592c2e8@nvidia.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 14:34:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX9NzFvsOv9eT0t4KVNufHSqVEht7yRbrt0qE49WgHpGg@mail.gmail.com>
-X-Gm-Features: AX0GCFtVgQikSSiKAPvkGq33v0M-ImHzyr3NJwP-bYJMvcSTiP6kAXgBA_LZ8eQ
-Message-ID: <CAMuHMdX9NzFvsOv9eT0t4KVNufHSqVEht7yRbrt0qE49WgHpGg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Build STMMAC Ethernet driver into the
- kernel for NFS boot
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Prabhakar <prabhakar.csengg@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e720596d-6fbb-40a4-9567-e8d05755cf6f@nvidia.com>
 
-Hi Jon,
+On Thu, Jun 12, 2025 at 01:26:55PM +0100, Jon Hunter wrote:
+> 
+> On 12/06/2025 13:10, Andrew Lunn wrote:
+> > On Thu, Jun 12, 2025 at 10:57:49AM +0000, Subbaraya Sundeep wrote:
+> > > Hi,
+> > > 
+> > > On 2025-06-12 at 06:20:32, Jon Hunter (jonathanh@nvidia.com) wrote:
+> > > > Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
+> > > > 0 before configuring timestamping") was added the following error is
+> > > > observed on Tegra234:
+> > > > 
+> > > >   ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
+> > > >   WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
+> > > > 
+> > > > It turns out that the Tegra234 device-tree binding defines the PTP ref
+> > > > clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
+> > > > exposes this and that the PTP clock is not configured correctly.
+> > > > 
+> > > > Ideally, we would rename the PTP ref clock for Tegra234 to fix this but
+> > > > this will break backward compatibility with existing device-tree blobs.
+> > > > Therefore, fix this by using the name 'ptp-ref' for devices that are
+> > > > compatible with 'nvidia,tegra234-mgbe'.
+> > 
+> > > AFAIU for Tegra234 device from the beginning, entry in dts is ptp-ref.
+> > > Since driver is looking for ptp_ref it is getting 0 hence the crash
+> > > and after the commit 030ce919e114 result is Invalid error instead of crash.
+> > > For me PTP is not working for Tegra234 from day 1 so why to bother about
+> > > backward compatibility and instead fix dts.
+> > > Please help me understand it has been years I worked on dts.
+> > 
+> > Please could you expand on that, because when i look at the code....
+> > 
+> > 
+> >    	/* Fall-back to main clock in case of no PTP ref is passed */
+> >   	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
+> >    	if (IS_ERR(plat->clk_ptp_ref)) {
+> >    		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
+> >    		plat->clk_ptp_ref = NULL;
+> > 
+> > if the ptp_ref does not exist, it falls back to stmmac_clk. Why would
+> > that cause a crash?
+> >  > While i agree if this never worked, we can ignore backwards
+> > compatibility and just fix the DT, but i would like a fuller
+> > explanation why the fallback is not sufficient to prevent a crash.
+> 
+> The problem is that in the 'ptp-ref' clock name is also defined in the
+> 'mgbe_clks' array in dwmac-tegra.c driver. All of these clocks are requested
+> and enabled using the clk_bulk_xxx APIs and so I don't see how we can simply
+> fix this now without breaking support for older device-trees.
 
-CC Arnd
+So you can definitively say, PTP does actually work? You have ptp4l
+running with older kernels and DT blob, and it has sync to a grand
+master?
 
-On Thu, 12 Jun 2025 at 14:20, Jon Hunter <jonathanh@nvidia.com> wrote:
-> On 23/05/2025 12:54, Krzysztof Kozlowski wrote:
-> > On 23/05/2025 13:39, Geert Uytterhoeven wrote:
-> >> On Tue, 6 May 2025 at 12:47, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>>
-> >>> Enable `CONFIG_STMMAC_ETH` as built-in (`y`) instead of a module (`m`) to
-> >>> ensure the Ethernet driver is available early in the boot process. This
-> >>> is necessary for platforms mounting the root filesystem via NFS, as the
-> >>> driver must be available before the root filesystem is accessed.
-> >>>
-> >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>> ---
-> >>> With this change, the Renesas RZ/V2H EVK board can boot from NFS
-> >>> which has the DWMAC IP.
-> >>
-> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> i.e. will queue in renesas-devel for v6.17.
-> >
-> > With my Nacked, please.
->
-> I was surprised to see this change in -next. We also use NFS for testing
-> and we use the dwmac drivers. To date we are explictly building these
-> drivers into the initramfs but I noticed that that is now failing
-> because this driver is no longer a module by default. This is easy for
-
-Oops, sorry for that...
-
-> us to fix.
-
-Good ;-)
-
-> I do agree that if we start to build every networking driver into the
-> kernel it is going to bloat. Yes I do see the kernel image growing
-> regardless of this, but nonetheless it seems better to just build as a
-> module IMO.
-
-Not _every_ networking driver, of course.  AFAIK, making network
-drivers built-in for systems where development is done using nfsroot
-has always been acceptable for the arm64 defconfig before.  For things
-not critical for booting, modular is indeed the preferred way.
-
-BTW, we have other low-hanging fruit to fix, though:
-
-CONFIG_SOUND=y
-CONFIG_SND=y
-CONFIG_SND_SOC=y
-CONFIG_SND_SOC_SAMSUNG=y (Krzysztof? ;-)
-CONFIG_USB=y
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Andrew
