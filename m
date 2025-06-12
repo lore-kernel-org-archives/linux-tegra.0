@@ -1,169 +1,136 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD53A1B043E;
-	Thu, 12 Jun 2025 08:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3E021B9F5;
+	Thu, 12 Jun 2025 10:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749717797; cv=none; b=f3iSXgawlTOG9V/fBYkyLKDPZ9RsbIEquxsgobmc5/nEv9orCX0c+dG93Vf8zYF5E+b+jBtWzPRCE6WcwE6t9wTI0nwIM1aBfIFN8nKESigxfGfZSHin/ysNA0VVYwEOv41HA/CDTzymM9pC8eV+gEOt0WIEih6J2Zlqt+lOAQ8=
+	t=1749725895; cv=none; b=DzsMWwA4TBJGJhMAsQBzob1+7xwvjJHyHEB4WpbkIp8hsJawI1tTfa/pzs9l1mo3hbEA+nSRHQD+krWFPB6m5+zCf62tkASko1Ll1p/U3a7v5dfneMgXBRd/AmiiYaJLX+IaiMDJo+x/9Y7mTspAWXo0AM54jdCRYTm50iFB5bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749717797; c=relaxed/simple;
-	bh=DFZAKZf8wHZi/y9r247ZL0ZUXvFSN1yMyupDQcqZ3+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nU8lnlEvHplRoGD+16+NelFADyeufiZBeNzVNxLF5zUiVtkBptSBSciNcAXa0B4J22arE5Vlqb8mvByKUuo6hw26969XNzctmALb5jOcy8HLFTS0/oQBkbvlUR35UB8hLhkPTDxHE8yqFj5pkNPG6ocK28geGmvuEkKqKAEdZIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=P97DiLsE; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1749725895; c=relaxed/simple;
+	bh=H4OuaDf5StydheIM3OLEp7rVlhFLqCXAFgq/V1hQP6E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qt83HBRlBMy1wwSLaOI0y+VNJgY//NJ9JKZH6SXpLoytZ9NTVA7wnW6BOnBo7tawe12utBrliUtWg4N3ap0SUQKZHHaGgwXqCH67300MfKe6UoCIUFl4JblIWMqZfBxZcqvsP1Vz4AtPP6E3FyZZFYIJ4eyUxB6wOKvmcsRsoDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=V1uWe0Pr; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="P97DiLsE"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 55F0C250;
-	Thu, 12 Jun 2025 10:43:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1749717784;
-	bh=DFZAKZf8wHZi/y9r247ZL0ZUXvFSN1yMyupDQcqZ3+0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P97DiLsEsf/6i8aVwoi/8/jCDHmL9CIaqVE6F1kh5oZibLMLuYmgz4R5sZGO7dayi
-	 A9sBXgz1SuZs74C1VD4Xp16/e+PXSodQRenE1+LjsblMSGLXpOt87yMih54vtsY4Sp
-	 87w8fmpZjBB9PIYbdL6yYmzS28ULBjvl9UmrLU2M=
-Message-ID: <d7e016fd-3d0e-4822-a404-a53ba11e5dc4@ideasonboard.com>
-Date: Thu, 12 Jun 2025 11:43:08 +0300
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="V1uWe0Pr"
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C8nOrH008416;
+	Thu, 12 Jun 2025 03:57:56 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=RzrmsF3U8d58TCrCiaBdRk3nm
+	+8EgVOFqwwqcZbva7c=; b=V1uWe0PrCfmDa/X6zFt+9GUnFC2/hqwnnNlmpX0IJ
+	mXM/uDEQrVjekqfTZD5d1yngRZONqPnfFQXygcP39FM1emvq7sWS03IVNQeco5eB
+	jB43PDno4RGxw2/iNOfUrt/Tu/9dMmtlDswNO72RBQUq/kpeSppyvWMbd/Lalzib
+	EmlZ1jo3epgUEz4HMUDGEton8+9lzUEy6q9OTyWlQtKAoAtTQ3XUIOIOZrdoX9oF
+	YGDP7FujsJdqi7cRLJU14qfowMvKLGxZe8eqm7kcexKFZfcdn3/5JmV5lN9EzRQ+
+	jH0C45yLcVk7+TZbN2LQRsnJ8aXy9HmjL3efAUscpiBvQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 477ttj8d8b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Jun 2025 03:57:56 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 12 Jun 2025 03:57:55 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 12 Jun 2025 03:57:55 -0700
+Received: from a5393a930297 (HY-LT91368.marvell.com [10.29.24.116])
+	by maili.marvell.com (Postfix) with SMTP id 75A1A3F7044;
+	Thu, 12 Jun 2025 03:57:51 -0700 (PDT)
+Date: Thu, 12 Jun 2025 10:57:49 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-tegra@vger.kernel.org>,
+        Alexis Lothorrr <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH] net: stmmac: Fix PTP ref clock for Tegra234
+Message-ID: <aEqyrWDPykceDM2x@a5393a930297>
+References: <20250612062032.293275-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/25] drm/gem-dma: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- simona@ffwll.ch, airlied@gmail.com, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, geert@linux-m68k.org
-References: <20250311155120.442633-1-tzimmermann@suse.de>
- <20250311155120.442633-4-tzimmermann@suse.de>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250311155120.442633-4-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250612062032.293275-1-jonathanh@nvidia.com>
+X-Authority-Analysis: v=2.4 cv=FssF/3rq c=1 sm=1 tr=0 ts=684ab2b4 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=Ikd4Dj_1AAAA:8 a=j1aDQpsCGRxs8slw8KsA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: uMA3pJ9d0Kjiajs8b8PSsUwxBvIcSg4W
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA4MyBTYWx0ZWRfXxq1/obkGJyr/ 1Bc/1xofZuyUO/2muYyZEqJYKDzcOmeUBvHiyniZ8Xex2cXo31moCqxdTqIcYXYNhpfBujIm0KU UEpbn8hrhwHeq+7o+im+sBLJiKNRpuUomo3/UyL7a8+9jA5NkLp5OWNf+NH0rJtTORPL96szvF3
+ 40jqF/i7AHRCF/5PC5MHqw24U8GvQjZ4RdsnsgQLIrDCqzEa/5Ywr995vJHfVEAivjhmxngojME TFAkVszAYcdJDsNvOywWna4m0gAR8oJOTY0W1mrZfPkrY+POZqVbuOsxWDWJly21AoWxH5XGDvT M5NWrwYoncz2tDU3QLp4yTBIBTNPP75vKMuTInlnZZZ885bniUjWtyQwaqPlYEIjWg1Iuh8D4Fz
+ paU12PE+2ZblYF+BQbvJuUK8EVUGr6IOqFQcfE7dUPgAeTP97Zf6K/Efz7b6z9N+GHvETVbd
+X-Proofpoint-GUID: uMA3pJ9d0Kjiajs8b8PSsUwxBvIcSg4W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
 
 Hi,
 
-On 11/03/2025 17:47, Thomas Zimmermann wrote:
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-> buffer size. Align the pitch to a multiple of 8.
+On 2025-06-12 at 06:20:32, Jon Hunter (jonathanh@nvidia.com) wrote:
+> Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
+> 0 before configuring timestamping") was added the following error is
+> observed on Tegra234:
 > 
-> Push the current calculation into the only direct caller imx. Imx's
-> hardware requires the framebuffer width to be aligned to 8. The
-> driver's current approach is actually incorrect, as it only guarantees
-> this implicitly and requires bpp to be a multiple of 8 already. A
-> later commit will fix this problem by aligning the scanline pitch
-> such that an aligned width still fits into each scanline's memory.
+>  ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
+>  WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
 > 
-> A number of other drivers are build on top of gem-dma helpers and
-> implement their own dumb-buffer allocation. These drivers invoke
-> drm_gem_dma_dumb_create_internal(), which is not affected by this
-> commit.
+> It turns out that the Tegra234 device-tree binding defines the PTP ref
+> clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
+> exposes this and that the PTP clock is not configured correctly.
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Ideally, we would rename the PTP ref clock for Tegra234 to fix this but
+> this will break backward compatibility with existing device-tree blobs.
+> Therefore, fix this by using the name 'ptp-ref' for devices that are
+> compatible with 'nvidia,tegra234-mgbe'.
+AFAIU for Tegra234 device from the beginning, entry in dts is ptp-ref.
+Since driver is looking for ptp_ref it is getting 0 hence the crash
+and after the commit 030ce919e114 result is Invalid error instead of crash.
+For me PTP is not working for Tegra234 from day 1 so why to bother about
+backward compatibility and instead fix dts.
+Please help me understand it has been years I worked on dts.
+
+Thanks,
+Sundeep
+> 
+> Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  drivers/gpu/drm/drm_gem_dma_helper.c     | 7 +++++--
->  drivers/gpu/drm/imx/ipuv3/imx-drm-core.c | 2 ++
->  2 files changed, 7 insertions(+), 2 deletions(-)
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
-> index b7f033d4352a..49be9b033610 100644
-> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
-> @@ -20,6 +20,7 @@
->  #include <drm/drm.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_drv.h>
-> +#include <drm/drm_dumb_buffers.h>
->  #include <drm/drm_gem_dma_helper.h>
->  #include <drm/drm_vma_manager.h>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> index b80c1efdb323..f82a7d55ea0a 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> @@ -635,8 +635,12 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+>  	}
+>  	clk_prepare_enable(plat->pclk);
 >  
-> @@ -304,9 +305,11 @@ int drm_gem_dma_dumb_create(struct drm_file *file_priv,
->  			    struct drm_mode_create_dumb *args)
->  {
->  	struct drm_gem_dma_object *dma_obj;
-> +	int ret;
->  
-> -	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
-> -	args->size = args->pitch * args->height;
-> +	ret = drm_mode_size_dumb(drm, args, SZ_8, 0);
-> +	if (ret)
-> +		return ret;
->  
->  	dma_obj = drm_gem_dma_create_with_handle(file_priv, drm, args->size,
->  						 &args->handle);
-> diff --git a/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c b/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c
-> index ec5fd9a01f1e..e7025df7b978 100644
-> --- a/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c
-> +++ b/drivers/gpu/drm/imx/ipuv3/imx-drm-core.c
-> @@ -145,6 +145,8 @@ static int imx_drm_dumb_create(struct drm_file *file_priv,
->  	int ret;
->  
->  	args->width = ALIGN(width, 8);
-> +	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
-> +	args->size = args->pitch * args->height;
->  
->  	ret = drm_gem_dma_dumb_create(file_priv, drm, args);
->  	if (ret)
-
-Won't the pitch and size just be overwritten by the
-drm_gem_dma_dumb_create() call?
-
- Tomi
-
+> +	if (of_device_is_compatible(np, "nvidia,tegra234-mgbe"))
+> +		plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp-ref");
+> +	else
+> +		plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
+> +
+>  	/* Fall-back to main clock in case of no PTP ref is passed */
+> -	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
+>  	if (IS_ERR(plat->clk_ptp_ref)) {
+>  		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
+>  		plat->clk_ptp_ref = NULL;
+> -- 
+> 2.43.0
+> 
