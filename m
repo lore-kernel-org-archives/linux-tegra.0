@@ -1,158 +1,178 @@
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2082.outbound.protection.outlook.com [40.107.92.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5051B770FE;
-	Thu, 12 Jun 2025 01:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749693473; cv=none; b=WLa6UPdcpVBmQ8GgAY4xNk3Ei18WWDum3HcFRcDV7yQdWoQ+iXkyb641fOnmDaWws2kHSHlnzchcMR6akYgXKHlFMTE5M40fZhbT9Exorta5SC9M6Z54LWbfYJ8/IOr5Bztdss97Bq7t/GXCdpscFSbNdCVGdvCfPw+ItziaoYQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749693473; c=relaxed/simple;
-	bh=A9TkELkIlKIZrcNNPESM/UHkept+MT+PNaOa2I+ZqYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mgug0BlQHG2vDOvWMk5YLGnM5xKjtT4fiEM0JwOtBFN/pjnmmfkpDkaaGJcWyeZjobtEXqkWDbChKKFRcmxDFVWd19uA6PH2iUZ+jg8Ca8Kg1Slsyu/x5OfbahMxK3oVRhOvVz3bFR9OnnCTHTkvYuQ2/zcqvTJrLtf7uLkfaP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=I3aYeJZa; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5667A1EF394;
+	Thu, 12 Jun 2025 06:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749709264; cv=fail; b=lWfRV4eLLgtjOtwPb2LIlvEk7Xw4nO6sCSsK/tSbpv9EWFQTLpwYNSbuTVXgdpP8Ay3VK+pIYEZSIJQvMG4n0irBbZHANE9lAIhbRQvEqPftpk69z0weeCdOvWWc7R3LUTQeXb4EjsC7DjJFXvShh+xvB85gd/GiELyolGQ1plc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749709264; c=relaxed/simple;
+	bh=Ffg8nvG7nhBJz2MeO7n1MqDiK25QU5EAsl0OubRoJ+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mip9evxZMjNwG8Mb/vkibD3VLw+KfKGoWMfQyEtsuUl0Mqo8u0SS1I8E2p10/FSIuR/dOFBIrukZV56oexmGHJcEoNMhblYQBni2ujb3Laxoc2cv6e/dMUpjZjHIaIe90u6wzyF4f/ntBA5DKktBe9mh3BtJM4ScjPSPUTesf10=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CqX8p1Zm; arc=fail smtp.client-ip=40.107.92.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="I3aYeJZa"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=My7ku61t0R/YRh9ePPMG3Cu/uUDaAwNFOLS11kIAzO8=; b=I3aYeJZa2lk55Pl6fTG+8F/o4w
-	ZcPCbMt7wb6UunSsp0/KS+Esydn0Hy2OmdTwZVIQos5OGtqLa4uutdi2A+eV1+0jFGwaSD+A/ABBP
-	yn6vH0UiUOwwu7MKejqcEa99scRqe/INEt3AfNkpV0d3F7pntla3AESfGF8nm2siLVEK8dyrZlLOz
-	h6goBYqPXg9AJMQYrx9cgrT65Megs03wDemCGJ/jeKC74iNrWjSY8cgcno0HXOqULibwbY3A+N+f1
-	RzG+eN3+9H6Ro00j6ndzcpCR6DYiaoEINqb+iR29j0C0WTpA4qs1kCWg4AQBe1LK3y4YwQWUYpWFj
-	h1/+Fhew==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f]
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uPXBH-000k9l-2B;
-	Thu, 12 Jun 2025 04:56:39 +0300
-Message-ID: <3293ae49-90c6-454c-b2f4-98ea84302c11@kapsi.fi>
-Date: Thu, 12 Jun 2025 10:55:20 +0900
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CqX8p1Zm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ILjHp5vbDFkPmZgdl5W5+NVBrce2/lHOIXnQ6tLTQ1P12BCymvSUwSx/GVl15JqZDwM78m2xGWqRyWyVXBg+FE/DvKiUiCmXRNYWvgiCy40xazifZzB9FJMs2aZIBeKYlPQmp3nFujDwOdEoL8VpvZ4kNVIwedGemNKFSWubFgTdCN7ibIml/A44SvsPFcbE/DMp/BCKrFgHg2ZXiy+ykCsLiaolTSeH/9DMRamdDy8FAieuSsL9eL0kgBs/5OoAgLfnPTYBsCD3/ZuqobmRplg0SvMNKyFuGzZzfcCZQ9sF8C5ydeAYG0Brka92Gf0v+Q65+ZqK4PmpHnipjn3X0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vf3htj/37Nn8PuzXv7xeq7hBiVeRakom7YIGpBCgQas=;
+ b=Zi1FTcE5ptBHTdKi5BM0oBfadflaA4lMKDebvC9HLrT8d12Bwl+GFkuPxTBYurDpsStxUw/CZwOcNmuNpjZtiqB86EysYecVOksCEH3FASsYdrvipNNioA4KHnufYAXaMG2nwX/8W2mm+bshLjSf/c5pjC2y2rJv4pKCU7oRYC5WVi2kiLpsrkL+up04skPWFU1hIHVIx8ECnFrtq5qtWqGh6xHt2WxFoCjAUYKAo7uPY2y5V/AU/3NFMsFVLtyC3uv/EKKbwu32/r9qp1j+xwMaMTx7je4IglYWsmqGnoI565mZIS89dsvh6dHlfjj1RvSXl+JlPS6ttW1wbdnj1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=lunn.ch smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vf3htj/37Nn8PuzXv7xeq7hBiVeRakom7YIGpBCgQas=;
+ b=CqX8p1Zmjfddz/46kgDPxJZq2PQ9rvmdppjm4GXxR/mLdFbGjRJdcVkBnQsY4aPSzmFdpYnXpvn1SaobC8Tbp0dFc+sbAK2bm4lq089ZDBQZc3CW6F0440eJPCEodSfUFtLPE+bNQBazr+1XwH/bbdRBs238sCofchR1ls52MlV/7VXuHofQx6tI0hC1DLaUIccWvXk2NsgfcjpU2NxOsqo9zutS9cjgXbzux3OUvYakZX+14xGe4Kfl8sDH115abzev/EjM5WXF/GKyzclzSARJjJAI8Avtb6KNJcT+c+L2a52M4QBbXtJiqEDfpomNNRcqEEhOaVeqLa4JuBaCXQ==
+Received: from MW4PR03CA0064.namprd03.prod.outlook.com (2603:10b6:303:b6::9)
+ by CY5PR12MB6274.namprd12.prod.outlook.com (2603:10b6:930:21::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Thu, 12 Jun
+ 2025 06:20:58 +0000
+Received: from SJ1PEPF00002313.namprd03.prod.outlook.com
+ (2603:10b6:303:b6:cafe::43) by MW4PR03CA0064.outlook.office365.com
+ (2603:10b6:303:b6::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Thu,
+ 12 Jun 2025 06:20:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002313.mail.protection.outlook.com (10.167.242.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.15 via Frontend Transport; Thu, 12 Jun 2025 06:20:57 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 11 Jun
+ 2025 23:20:38 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 11 Jun
+ 2025 23:20:37 -0700
+Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Wed, 11 Jun 2025 23:20:35 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-tegra@vger.kernel.org>, =?UTF-8?q?Alexis=20Lothor=C3=A9?=
+	<alexis.lothore@bootlin.com>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] net: stmmac: Fix PTP ref clock for Tegra234
+Date: Thu, 12 Jun 2025 07:20:32 +0100
+Message-ID: <20250612062032.293275-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-To: Thierry Reding <thierry.reding@gmail.com>,
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
- <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
- <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
- <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
-Content-Language: en-US
-From: Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|CY5PR12MB6274:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6ac495e-2cbd-47b7-9377-08dda9794b50
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lpBQwNAQx2IFxOtD6CELvshOgAi88aAL+cy7e26dHdt6FAq+TzFB5XKJeBoM?=
+ =?us-ascii?Q?BZrQcPeAVeMJbFDSiBeha8Nokh/j94i0jE7hNH2H1V0YK2JaPv+FD6IcoFDK?=
+ =?us-ascii?Q?porkSFGB2UxnPIT+/jE+8fZqjJ934kkgf2szgGVHhAxTaTuUGrpaxjSxd7sE?=
+ =?us-ascii?Q?k4HZXvA+ck+PXSWcvfQ0SRbYRBxthvPrHcHoRbn7HCJWOYim8je7WZLRn/yp?=
+ =?us-ascii?Q?sQEWtndnxPgkFzqSd8REPKZYOOL6OGU3KKLfKz+G6sHmKzjzweSkUp9+iJ8Q?=
+ =?us-ascii?Q?EBdfmWdd0q1CE2Lwn/llvxqKpbvtU1VlBtgIO0vHwQPaRa8lk7HXyY0D11Hv?=
+ =?us-ascii?Q?X/wyPC5K9pEG+Yu7CffHpii14E6BoG+jlVKQEqE9Ns+EwQdE0fUXVuzcxcYm?=
+ =?us-ascii?Q?SKW2gEpofYbKDwVHqjmWpHAnxDxaxxM7Q1NOo4vNLjLqCSFy0eGJvSYDMAqq?=
+ =?us-ascii?Q?b7gX+WGN3ThNln9s6dg18HSZ8YMKLXdjh0HPyAbhOxbidX55RHdwjm0v8AkW?=
+ =?us-ascii?Q?s3kwLDsVGlKjb72tvxtRKTQiLrD6bFYwYjdCaMwvHrTgZltb+tcOVqC69gmy?=
+ =?us-ascii?Q?9BBrcdtxHaRQREQLs8OIoOJ52OKzcG7N9zG5/1R4+I42rCvrjcEm/deN9wPP?=
+ =?us-ascii?Q?opUh81JQTGhUJoWd08f+HavDstwAHcjwqnohYaqxHNkLPyaSOF20vviOxwMH?=
+ =?us-ascii?Q?KeEbgwEGWxJtSdHkpetrb/Q7jLu1zKJE3MXvgJXQQDBeGLCXLG8NArLsunIr?=
+ =?us-ascii?Q?FRxFYw2KGmf5Ssz5Y91KDc0JRTfiYNAPU7Um/MY5u/e6tdc/4HFKHL4jTflj?=
+ =?us-ascii?Q?4FgQlQkJi2l2hMHDjaDw03kUWg5ac3brsjtihtbd0Jmi8ijkH3whl6i5BzLw?=
+ =?us-ascii?Q?D6nurr1onB3CW4BhamvO0fo75Z3GscPje8DYqsMSiCNuWvJdeSVjCWtbpd9X?=
+ =?us-ascii?Q?T5W4WqyRuN9CWOfTcyRewNCqKWLYgH3lafm0ulgBUTBoKcljlJTcKUKZf4KP?=
+ =?us-ascii?Q?qxMLptxt4fKzZBKM7xV43iOqAVvjlRz3Mv9uPUJw4XDDyBZ2uj3vWHs+HwA5?=
+ =?us-ascii?Q?8EjFCbN7ZgMsXY41BAnxN3Uml0QUGZa2ypIsjy2Mkxwyqv8Ncmxfo/wLtZTx?=
+ =?us-ascii?Q?XfnLJlHxcdVXv+F1073dwzxjIsoXXSAFpsUG/oFDJStjmi8rEh97LAha/tKz?=
+ =?us-ascii?Q?XhwvJbIvM/yxyq852/P22bKy6M9VVUlpQ2VJdMNKqs+hmXddwoPdcnVw8Fwa?=
+ =?us-ascii?Q?lcp2QCZ+kuIgzwo8tRfbobaDusgEC8eW1HtiaUUrvsv7FOIqd1Gx5bMb/VdD?=
+ =?us-ascii?Q?qSQEmtkSvrFWO/HObTKM+t7bdriaemuEQnicZJS0V+nLPqLYOOZ5J64PObgV?=
+ =?us-ascii?Q?bVvRjWOOCDvw6JCfA5vFyZeLIb71Fuyua5iLTSByfr+96ismBclz3qTbA4L5?=
+ =?us-ascii?Q?I+0mjDuATOyoTxAMgGpIaQRuszvhWOHD1tBWk6RtFEXtQD/CWDRhDUKnPpRW?=
+ =?us-ascii?Q?jfXBzpdm40RY0OrrjEFdiw9XMrRoxBpLAMOa?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 06:20:57.5764
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6ac495e-2cbd-47b7-9377-08dda9794b50
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002313.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6274
 
-On 6/12/25 12:06 AM, Thierry Reding wrote:
-> On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
->>
->>
->> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
->>> On 6/10/25 6:05 PM, Thierry Reding wrote:
->>>> On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
->>>>> Hello,
->>>>>
->>>>> This series adds support for the NVJPG hardware accelerator found in the
->>>>> Tegra210 SoC.
->>>>>
->>>>> The kernel driver is essentially a copy of the NVDEC driver as both
->>>>> engines are Falcon-based.
->>>>>
->>>>> For the userspace part I have written a Mesa Gallium backend [1] that,
->>>>> while still very much experimental, works in decoding images
->>>>> with VA- API.
->>>>>
->>>>> I have been using ffmpeg to call VA-API with the following command:
->>>>>
->>>>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
->>>>> /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
->>>>> /dev/fb0
->>>>>
->>>>> which decodes <input.jpg> and shows the result in the framebuffer.
->>>>>
->>>>> The firmware for the engine can be obtained from a Linux for Tegra
->>>>> distribution.
->>>>
->>>> By the way, have you tried running this on anything newer than Tegra210?
->>>> Given your progress on this, we can probably start thinking about
->>>> submitting the binaries to linux-firmware.
->>>
->>> FWIW, the impression I have is that NVJPG is basically unchanged all the
->>> way to Tegra234. So if we add stream ID support and the firmwares, it'll
->>> probably just work. Tegra234 has the quirk that it has two instances of
->>> NVJPG -- these have to be distinguished by their different class IDs.
->>> But we should go ahead with the T210 support first.
->>
->> I have a question here, what exactly are the stream IDs? While working
->> on the driver this came up and I didn't manage to figure it out.
-> 
-> Stream IDs are a way to identify memory transactions as belonging to a
-> certain device. This comes into play when working with the IOMMU (which
-> is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
-> is used to isolate DMA capable devices. Basically for every stream ID
-> you get a separate I/O address space. NVJPG will have its own address
-> space, and so will VIC. Each device can only access whatever has been
-> mapped to it's I/O address space. That means NVJPG can't interfere with
-> VIC and vice-versa. And neither can any of these engines read from or
-> write to random system memory if badly programmed.
-> 
-> For Tegra SMMU there's no such thing as programmable stream IDs, so the
-> stream ID is fixed for the given device.
-> 
-> On newer chips (Tegra186 and later, or maybe it wasn't until Tegra194),
+Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
+0 before configuring timestamping") was added the following error is
+observed on Tegra234:
 
-Tegra186 and newer -- all chips with the ARM SMMU. To add a little bit, 
-each engine can address two stream IDs, one for firmware and one for 
-data. All user specified buffers are mapped into the data IOMMU domain, 
-and these are switched between jobs / applications.
+ ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
+ WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
 
-As an aside, currently each engine has its own firmware stream ID, but 
-that's a bit wasteful, since the kernel allocates a separate IOMMU 
-domain for each. The firmwares are all read-only so they could be in a 
-shared one. We've had to consolidate these on some platforms that ran 
-out of IOMMU domains otherwise. Not really a concern with upstream 
-platforms, though.
+It turns out that the Tegra234 device-tree binding defines the PTP ref
+clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
+exposes this and that the PTP clock is not configured correctly.
 
-> certain IP blocks have special registers that can be used to override
-> the stream ID. There's also a way to set the stream ID via command
-> streams, which means that you can have different I/O address spaces (I
-> think we call them memory context) per engine, which means that you can
-> isolate different processes using the same engine from each other.
-> 
-> Again, for Tegra210 that's nothing we need to worry about. For newer
-> chips it's probably just a matter of adding .get_streamid_offset() and
-> .can_use_memory_ctx() implementations.
+Ideally, we would rename the PTP ref clock for Tegra234 to fix this but
+this will break backward compatibility with existing device-tree blobs.
+Therefore, fix this by using the name 'ptp-ref' for devices that are
+compatible with 'nvidia,tegra234-mgbe'.
 
-Also need to program the THI_STREAMID / TRANSCFG registers during boot.
+Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Cheers,
-Mikko
-
-> 
-> Thierry
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index b80c1efdb323..f82a7d55ea0a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -635,8 +635,12 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 	}
+ 	clk_prepare_enable(plat->pclk);
+ 
++	if (of_device_is_compatible(np, "nvidia,tegra234-mgbe"))
++		plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp-ref");
++	else
++		plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
++
+ 	/* Fall-back to main clock in case of no PTP ref is passed */
+-	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
+ 	if (IS_ERR(plat->clk_ptp_ref)) {
+ 		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
+ 		plat->clk_ptp_ref = NULL;
+-- 
+2.43.0
 
