@@ -1,86 +1,84 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06A279D2;
-	Thu, 12 Jun 2025 16:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493A9664C6
+	for <linux-tegra@vger.kernel.org>; Thu, 12 Jun 2025 18:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749746305; cv=none; b=jRLLlqtMVJEjUVtdfkt6m6yC305Nfeut9nTyC8nHgJW9o8p0nFIDoUIi+Y2nKGV1KnrmMJyw8gz5VWhqjJK5toAsQAFYt2QHexhi9Nqa/dSaBKUrNfVSkKIvYNXxbpDMh9y1gVKKYg7wBt+Ad0hzQsD3y0CC67Au20ZlT0h85k8=
+	t=1749753865; cv=none; b=oWHUcwvwuwEjgZ4WOSQtbewEcg+NtIRnjFxm/VfBMpJLlCA68IwCwBkuxZk0sFny50Qq5j3QqX6mRnPdHwNbozv1JodSQ2uvsYRwTYCuRQ1SFaKJ+bnBpmlzcPGY7IrGi1GFQcXC6qP9zD6aY2FPkb3VdT8uBCz76QpgRt7Vtvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749746305; c=relaxed/simple;
-	bh=KYVFWLl+65htoJPS0/qLvXuh6nSvRnMY9ovcb5uW6m0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjtInvEvou5SJ2lyngVtVscB4WvS1OID6DTgRYshq+UHjVi5jMqMVbUMe355+Fwrbn2pK+Z77pmd4bdwzTReDUPVbWpGBu3TO4WfmCXHkDuQnZ9LGHV3IrhqjBFXHZhd+HT6m05gNFiQWX6KqhcA7yvsA0+MXc6OlpEgFGXfrUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IIcrjN4n; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IIcrjN4n"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=aGDZFMgTvME7pRVCtWm3yOWZ2QscL3IKAWvsAAk139M=;
-	b=IIcrjN4nkiCHVp2PRnt30XAPgsQtIfdzPuaFiTlM+fEWNX18F7SO0buiTEe90y
-	ivoFZ7exTXyzah/BFVF+brf1qiW+cROvXXh4+vhwtF3rG0jJp0IRdD76dy7+i1l3
-	DE3mIbX+SqZcid284RprFFczakKEqtFMERhVeQWmWEX60=
-Received: from [192.168.71.94] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHLdFmAktoRwcuHw--.37158S2;
-	Fri, 13 Jun 2025 00:37:58 +0800 (CST)
-Message-ID: <e218509e-50f4-4c30-b52a-a53263ebe394@163.com>
-Date: Fri, 13 Jun 2025 00:37:57 +0800
+	s=arc-20240116; t=1749753865; c=relaxed/simple;
+	bh=AM/CMJfK0GYiU4RCv8jWMyfn/lCdgsfSJwTNeIpKM2k=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=reemCH+k6/cmMRsEQTVl4qFTv45Ock7Ee4QZ4GVa+Qzx9QN62pQOJqoWy9UTih64zei1qGWOxi6zsvykbXg2OmF8BnbvqVGX04JXzE4tj6Qez5n7/oOQjhveOfkwVlcx26GxbU73C8yRau5VvGE2HE827UOfcfR02wByYrtg4Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 320ce3ed-47bd-11f0-a97c-005056bdfda7;
+	Thu, 12 Jun 2025 21:43:56 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 12 Jun 2025 21:43:56 +0300
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: andriy.shevchenko@linux.intel.com, andi.shyti@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, digetx@gmail.com,
+	jonathanh@nvidia.com, krzk+dt@kernel.org, ldewangan@nvidia.com,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
+	robh@kernel.org, thierry.reding@gmail.com
+Subject: Re: [PATCH v4 2/3] i2c: tegra: make reset an optional property
+Message-ID: <aEsf7Ml__JE1ixQX@surfacebook.localdomain>
+References: <aErOOSxt0ovCIeSA@smile.fi.intel.com>
+ <20250612153338.68829-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: tegra: Add missing kernel-doc for dma_dev member
-To: ldewangan@nvidia.com, andi.shyti@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com
-Cc: digetx@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, hans.zhang@cixtech.com
-References: <20250522163814.399630-1-18255117159@163.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250522163814.399630-1-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDHLdFmAktoRwcuHw--.37158S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7XFy7KF4xWFWkuFWDGw13XFb_yoW8Jr17pa
-	yxCFW0yw1Utayj93W7Xr4UurW5Jw4rXayUGwnIywnYvanxt34kJF12gFyruFs5Gr9Fvw4x
-	t3yUt3WfC3WjvFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRA9N3UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwhqo2hK-6FNOgAAsJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612153338.68829-1-akhilrajeev@nvidia.com>
 
-Hi all,
+Thu, Jun 12, 2025 at 09:03:38PM +0530, Akhil R kirjoitti:
+> On Thu, 12 Jun 2025 15:55:21 +0300, Andy Shevchenko wrote:
 
-Gentle ping.
+...
 
-Best regards,
-Hans
+> >> >     if (handle)
+> >> >             err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> >> > -   else
+> >> > +   else if (i2c_dev->rst)
+> >> >             err = reset_control_reset(i2c_dev->rst);
+> >> > +   else
+> >> > +           err = tegra_i2c_master_reset(i2c_dev);
+> >>
+> >> Can you please take a look here? Should the reset happen in ACPI?
+> >
+> > This is a good question. Without seeing all the implementations of _RST method
+> > for the platforms based on this SoC it's hard to say. Ideally the _RST (which
+> > is called above) must handle it properly, but firmwares have bugs...
+> >
+> > TL;DR: I think the approach is correct, and if any bug in ACPI will be found,
+> > the workaround (quirk) needs to be added here later on.
+> 
+> As in Thierry's comment, I was in thought of updating the code as below.
+> Does it make sense or would it be better keep what it is there now?
+> 
+> if (handle && acpi_has_method(handle, "_RST"))
+> 	err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> else if (i2c_dev->rst)
+> 	err = reset_control_reset(i2c_dev->rst);
+> else
+> 	err = tegra_i2c_master_reset(i2c_dev);
 
-On 2025/5/23 00:38, Hans Zhang wrote:
-> Fix the kernel-doc warning by describing the 'dma_dev' member in
-> the tegra_i2c_dev struct.  This resolves the compilation warning:
-> 
-> drivers/i2c/busses/i2c-tegra.c:297: warning: Function parameter or struct member 'dma_dev' not described in 'tegra_i2c_dev'
-> 
-> Fixes: cdbf26251d3b ("i2c: tegra: Allocate DMA memory for DMA engine")
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 87976e99e6d0..07bb1e7e84cc 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -253,6 +253,7 @@ struct tegra_i2c_hw_feature {
->    * @dma_phys: handle to DMA resources
->    * @dma_buf: pointer to allocated DMA buffer
->    * @dma_buf_size: DMA buffer size
-> + * @dma_dev: DMA device used for transfers
->    * @dma_mode: indicates active DMA transfer
->    * @dma_complete: DMA completion notifier
->    * @atomic_mode: indicates active atomic transfer
-> 
-> base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+This will change current behaviour for the ACPI based platforms that do not
+have an _RST method. At bare minumum this has to be elaborated in the commit
+message with an explanation why it's not a probnlem.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
