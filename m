@@ -1,79 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270A222575;
-	Thu, 12 Jun 2025 15:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06A279D2;
+	Thu, 12 Jun 2025 16:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743202; cv=none; b=kOxpcBn3EeDpALvz1QO4QacmGUOM5rfPKy9mJOyfhQczNxSti92dDCoCOP2XLh9X7ahugdHtFn/xXnuCwiCm05bjSJMWeT4gi2iE6lDcuiFRyd4RuqvldNSbZhFSz6C1ZdEmnJPhp+kSwcgOntABLnVo8N4yN+agSZgJ+3up2GI=
+	t=1749746305; cv=none; b=jRLLlqtMVJEjUVtdfkt6m6yC305Nfeut9nTyC8nHgJW9o8p0nFIDoUIi+Y2nKGV1KnrmMJyw8gz5VWhqjJK5toAsQAFYt2QHexhi9Nqa/dSaBKUrNfVSkKIvYNXxbpDMh9y1gVKKYg7wBt+Ad0hzQsD3y0CC67Au20ZlT0h85k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743202; c=relaxed/simple;
-	bh=nN7tgNs/ZFcOM7vnqnGPxg3lpLHHcc83AoFtsLi0eQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyQhtIm1Kltj3qHEuIKkREhwAHVXY+ODfT0Nz8Gg0tubgaM1SHLFJ72gimdalCiwFjV1OZ4SdK2FElB2Vj9fyMmcSCftHsd7H0tNCJkesRCzux4/gkjMS6HHWkInsyUhSsZibOkvurNBYZq7J/JQTiZcri7phJFJsbQU2xmCR+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5RsZj6E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749746305; c=relaxed/simple;
+	bh=KYVFWLl+65htoJPS0/qLvXuh6nSvRnMY9ovcb5uW6m0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kjtInvEvou5SJ2lyngVtVscB4WvS1OID6DTgRYshq+UHjVi5jMqMVbUMe355+Fwrbn2pK+Z77pmd4bdwzTReDUPVbWpGBu3TO4WfmCXHkDuQnZ9LGHV3IrhqjBFXHZhd+HT6m05gNFiQWX6KqhcA7yvsA0+MXc6OlpEgFGXfrUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IIcrjN4n; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5RsZj6E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4BFC4CEEB;
-	Thu, 12 Jun 2025 15:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749743201;
-	bh=nN7tgNs/ZFcOM7vnqnGPxg3lpLHHcc83AoFtsLi0eQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G5RsZj6E3hWrBgSQaBbUpfwiWHbjT+XCDDuSwogMQ63iYc4shmexLMBE/Wr76Drko
-	 UzgpemkSIogOdoLz/VzwR5WCJi+AEGLJVPB+6EmKPj7ah8gI2jmwbBEddVGmMVDhzE
-	 1FUU0N0ALL1dixaD0vqO7F/JWGTr1x7XrZ2+vQuSc+l5QV6n3W0iXIPsChjFBTY72H
-	 Df47tRCAMHu17KzRcMil6SpctRy+08J1IXJtCiqBnknDyw3j2fjf59FTxv8Q5PXz5k
-	 FIV24SU3DZ078EoLZ6jJvrN11IS7EYgCYdIbTpblT5ky/9gWn1BSnkpBwZpyt6AgQg
-	 eRWqucdUJK02A==
-Date: Thu, 12 Jun 2025 16:46:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: samsung,mipi-video-phy: document
- exynos7870 MIPI phy
-Message-ID: <20250612-unrushed-endurance-a9a0933fb8be@spud>
-References: <20250611-p3452-v2-0-fd2679706c63@gmail.com>
- <20250611-p3452-v2-1-fd2679706c63@gmail.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IIcrjN4n"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=aGDZFMgTvME7pRVCtWm3yOWZ2QscL3IKAWvsAAk139M=;
+	b=IIcrjN4nkiCHVp2PRnt30XAPgsQtIfdzPuaFiTlM+fEWNX18F7SO0buiTEe90y
+	ivoFZ7exTXyzah/BFVF+brf1qiW+cROvXXh4+vhwtF3rG0jJp0IRdD76dy7+i1l3
+	DE3mIbX+SqZcid284RprFFczakKEqtFMERhVeQWmWEX60=
+Received: from [192.168.71.94] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHLdFmAktoRwcuHw--.37158S2;
+	Fri, 13 Jun 2025 00:37:58 +0800 (CST)
+Message-ID: <e218509e-50f4-4c30-b52a-a53263ebe394@163.com>
+Date: Fri, 13 Jun 2025 00:37:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h5shkSpl2/e0c3YV"
-Content-Disposition: inline
-In-Reply-To: <20250611-p3452-v2-1-fd2679706c63@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: tegra: Add missing kernel-doc for dma_dev member
+To: ldewangan@nvidia.com, andi.shyti@kernel.org, thierry.reding@gmail.com,
+ jonathanh@nvidia.com
+Cc: digetx@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hans.zhang@cixtech.com
+References: <20250522163814.399630-1-18255117159@163.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250522163814.399630-1-18255117159@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDHLdFmAktoRwcuHw--.37158S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7XFy7KF4xWFWkuFWDGw13XFb_yoW8Jr17pa
+	yxCFW0yw1Utayj93W7Xr4UurW5Jw4rXayUGwnIywnYvanxt34kJF12gFyruFs5Gr9Fvw4x
+	t3yUt3WfC3WjvFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRA9N3UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwhqo2hK-6FNOgAAsJ
 
+Hi all,
 
---h5shkSpl2/e0c3YV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Gentle ping.
 
-On Wed, Jun 11, 2025 at 01:53:37PM -0500, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
->=20
-> Add compatibles for the Tegra210 Jetson Nano Developer Kits
->=20
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Best regards,
+Hans
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+On 2025/5/23 00:38, Hans Zhang wrote:
+> Fix the kernel-doc warning by describing the 'dma_dev' member in
+> the tegra_i2c_dev struct.  This resolves the compilation warning:
+> 
+> drivers/i2c/busses/i2c-tegra.c:297: warning: Function parameter or struct member 'dma_dev' not described in 'tegra_i2c_dev'
+> 
+> Fixes: cdbf26251d3b ("i2c: tegra: Allocate DMA memory for DMA engine")
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+>   drivers/i2c/busses/i2c-tegra.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 87976e99e6d0..07bb1e7e84cc 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -253,6 +253,7 @@ struct tegra_i2c_hw_feature {
+>    * @dma_phys: handle to DMA resources
+>    * @dma_buf: pointer to allocated DMA buffer
+>    * @dma_buf_size: DMA buffer size
+> + * @dma_dev: DMA device used for transfers
+>    * @dma_mode: indicates active DMA transfer
+>    * @dma_complete: DMA completion notifier
+>    * @atomic_mode: indicates active atomic transfer
+> 
+> base-commit: fee3e843b309444f48157e2188efa6818bae85cf
 
---h5shkSpl2/e0c3YV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEr2XQAKCRB4tDGHoIJi
-0n+0AQDB10mgfSWItI9oBHwCaew2X9fAIPcr23SmYH2qihEvEAD+OWkUm3h9K0hQ
-QD47+O9BP+3shMzJuAPoGh2VVN4vbAY=
-=TzIn
------END PGP SIGNATURE-----
-
---h5shkSpl2/e0c3YV--
