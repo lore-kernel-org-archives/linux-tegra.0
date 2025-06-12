@@ -1,136 +1,121 @@
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3E021B9F5;
-	Thu, 12 Jun 2025 10:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32171EC2;
+	Thu, 12 Jun 2025 11:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725895; cv=none; b=DzsMWwA4TBJGJhMAsQBzob1+7xwvjJHyHEB4WpbkIp8hsJawI1tTfa/pzs9l1mo3hbEA+nSRHQD+krWFPB6m5+zCf62tkASko1Ll1p/U3a7v5dfneMgXBRd/AmiiYaJLX+IaiMDJo+x/9Y7mTspAWXo0AM54jdCRYTm50iFB5bw=
+	t=1749727909; cv=none; b=BZxC/l+/z9EX77ttNzZ83gvLoFg0SrZ3PIiOA6BckRoYHRoDKE/bEwUV7jhNp4OJtP+D2LTTdeLxNPh7vgADO6oh15s9ZNy7FN/otchW3s9UiX4OWs+oTEBkt1kSqIWns9z0nsFp+Jjg2v4z3NUCHR1OndbZdJIoRMcB4EI2784=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725895; c=relaxed/simple;
-	bh=H4OuaDf5StydheIM3OLEp7rVlhFLqCXAFgq/V1hQP6E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qt83HBRlBMy1wwSLaOI0y+VNJgY//NJ9JKZH6SXpLoytZ9NTVA7wnW6BOnBo7tawe12utBrliUtWg4N3ap0SUQKZHHaGgwXqCH67300MfKe6UoCIUFl4JblIWMqZfBxZcqvsP1Vz4AtPP6E3FyZZFYIJ4eyUxB6wOKvmcsRsoDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=V1uWe0Pr; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+	s=arc-20240116; t=1749727909; c=relaxed/simple;
+	bh=+BsA3cwuds/jgcNwO1cJQWgktBoVm/F0s6venw96rjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KCLrIYNxK0dQy14aBU5I6QGPA4aOfGPpAC5E8vFSbFf+hCArXYkKkfncQJ0sghLZHzMBjkxhyG9YB8Izsg++7O4tpAO66eHZ1wFzQmkEwSC3I74BpMHCWBOEvelN/TQp5O6oRssQEopILZ27l0lU2vZ3NSUy+aTpwLDTDnb3/zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZyeQb6j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="V1uWe0Pr"
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C8nOrH008416;
-	Thu, 12 Jun 2025 03:57:56 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=RzrmsF3U8d58TCrCiaBdRk3nm
-	+8EgVOFqwwqcZbva7c=; b=V1uWe0PrCfmDa/X6zFt+9GUnFC2/hqwnnNlmpX0IJ
-	mXM/uDEQrVjekqfTZD5d1yngRZONqPnfFQXygcP39FM1emvq7sWS03IVNQeco5eB
-	jB43PDno4RGxw2/iNOfUrt/Tu/9dMmtlDswNO72RBQUq/kpeSppyvWMbd/Lalzib
-	EmlZ1jo3epgUEz4HMUDGEton8+9lzUEy6q9OTyWlQtKAoAtTQ3XUIOIOZrdoX9oF
-	YGDP7FujsJdqi7cRLJU14qfowMvKLGxZe8eqm7kcexKFZfcdn3/5JmV5lN9EzRQ+
-	jH0C45yLcVk7+TZbN2LQRsnJ8aXy9HmjL3efAUscpiBvQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 477ttj8d8b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 03:57:56 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 12 Jun 2025 03:57:55 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 12 Jun 2025 03:57:55 -0700
-Received: from a5393a930297 (HY-LT91368.marvell.com [10.29.24.116])
-	by maili.marvell.com (Postfix) with SMTP id 75A1A3F7044;
-	Thu, 12 Jun 2025 03:57:51 -0700 (PDT)
-Date: Thu, 12 Jun 2025 10:57:49 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S . Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-tegra@vger.kernel.org>,
-        Alexis Lothorrr <alexis.lothore@bootlin.com>
-Subject: Re: [PATCH] net: stmmac: Fix PTP ref clock for Tegra234
-Message-ID: <aEqyrWDPykceDM2x@a5393a930297>
-References: <20250612062032.293275-1-jonathanh@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZyeQb6j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D679C4CEEA;
+	Thu, 12 Jun 2025 11:31:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749727908;
+	bh=+BsA3cwuds/jgcNwO1cJQWgktBoVm/F0s6venw96rjk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RZyeQb6jo9ZUL24z6GUmHkHkhC9yRhdSfl62rZp7e4biO3eo8bRAkbfErVjB6ON5v
+	 xfYe9VfqEiWbsWuvzhOVP99UJyqLEpJX2RWe0iEAlEAl9IxF5aegAEyh4Z627gWXjN
+	 JnNuFnMLzX+iV9ReTNHBOpC4LSxfsfGDX0JD7UtgymKTOdCAGMzRzMBDyChTXifWGm
+	 4g3h+YTq1eiy6iwR8hEpASdKq/8kLMDJpqFIXYGw7fanNMWtFUUWCHVZPLbY+lUq9T
+	 ZjzihnIoDXBr/S17myzZLg9+cRAMQOS5xnKZuJKedi5qnVEqxQA3N8BUxY2FC8uvOY
+	 Z7K2greq8hH0w==
+Message-ID: <22deb36a-ca61-4793-99b4-87f520445490@kernel.org>
+Date: Thu, 12 Jun 2025 13:31:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250612062032.293275-1-jonathanh@nvidia.com>
-X-Authority-Analysis: v=2.4 cv=FssF/3rq c=1 sm=1 tr=0 ts=684ab2b4 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=Ikd4Dj_1AAAA:8 a=j1aDQpsCGRxs8slw8KsA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: uMA3pJ9d0Kjiajs8b8PSsUwxBvIcSg4W
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDA4MyBTYWx0ZWRfXxq1/obkGJyr/ 1Bc/1xofZuyUO/2muYyZEqJYKDzcOmeUBvHiyniZ8Xex2cXo31moCqxdTqIcYXYNhpfBujIm0KU UEpbn8hrhwHeq+7o+im+sBLJiKNRpuUomo3/UyL7a8+9jA5NkLp5OWNf+NH0rJtTORPL96szvF3
- 40jqF/i7AHRCF/5PC5MHqw24U8GvQjZ4RdsnsgQLIrDCqzEa/5Ywr995vJHfVEAivjhmxngojME TFAkVszAYcdJDsNvOywWna4m0gAR8oJOTY0W1mrZfPkrY+POZqVbuOsxWDWJly21AoWxH5XGDvT M5NWrwYoncz2tDU3QLp4yTBIBTNPP75vKMuTInlnZZZ885bniUjWtyQwaqPlYEIjWg1Iuh8D4Fz
- paU12PE+2ZblYF+BQbvJuUK8EVUGr6IOqFQcfE7dUPgAeTP97Zf6K/Efz7b6z9N+GHvETVbd
-X-Proofpoint-GUID: uMA3pJ9d0Kjiajs8b8PSsUwxBvIcSg4W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_07,2025-06-10_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: Use dev_fwnode()
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Qiang Zhao <qiang.zhao@nxp.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-tegra@vger.kernel.org
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+ <20250611104348.192092-19-jirislaby@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250611104348.192092-19-jirislaby@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 2025-06-12 at 06:20:32, Jon Hunter (jonathanh@nvidia.com) wrote:
-> Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
-> 0 before configuring timestamping") was added the following error is
-> observed on Tegra234:
+On 11/06/2025 12:43, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
 > 
->  ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
->  WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
+> So use the dev_fwnode() helper.
 > 
-> It turns out that the Tegra234 device-tree binding defines the PTP ref
-> clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
-> exposes this and that the PTP clock is not configured correctly.
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linuxppc-dev@lists.ozlabs.org
 > 
-> Ideally, we would rename the PTP ref clock for Tegra234 to fix this but
-> this will break backward compatibility with existing device-tree blobs.
-> Therefore, fix this by using the name 'ptp-ref' for devices that are
-> compatible with 'nvidia,tegra234-mgbe'.
-AFAIU for Tegra234 device from the beginning, entry in dts is ptp-ref.
-Since driver is looking for ptp_ref it is getting 0 hence the crash
-and after the commit 030ce919e114 result is Invalid error instead of crash.
-For me PTP is not working for Tegra234 from day 1 so why to bother about
-backward compatibility and instead fix dts.
-Please help me understand it has been years I worked on dts.
-
-Thanks,
-Sundeep
-> 
-> Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> index b80c1efdb323..f82a7d55ea0a 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> @@ -635,8 +635,12 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
->  	}
->  	clk_prepare_enable(plat->pclk);
->  
-> +	if (of_device_is_compatible(np, "nvidia,tegra234-mgbe"))
-> +		plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp-ref");
-> +	else
-> +		plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
-> +
->  	/* Fall-back to main clock in case of no PTP ref is passed */
-> -	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
->  	if (IS_ERR(plat->clk_ptp_ref)) {
->  		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
->  		plat->clk_ptp_ref = NULL;
-> -- 
-> 2.43.0
-> 
+> Cc: linux-tegra@vger.kernel.org
+> ---
+>  drivers/soc/fsl/qe/qe_ic.c | 3 +--
+>  drivers/soc/tegra/pmc.c    | 3 +--
+These are separate subsystems. You need to split the patch per each
+actual SoC vendor.
+
+Best regards,
+Krzysztof
