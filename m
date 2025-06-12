@@ -1,172 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DF6288C0C;
-	Wed, 11 Jun 2025 18:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30D444C77;
+	Thu, 12 Jun 2025 00:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749668026; cv=none; b=s2JRM+waULqjkTbbVrifdGN/P+SNH374mvhe4O58+1Nqyc97xCWVTnlIbCHS7ma5t/nXZ+5Rsi0alnyAdWiIGB4VYEOAbzlfV1WbvNDm6omPrnO0/yxy9lTEFB1PHYKiu2iMq/+bvJC/LiMfZ3c1S4IWcaVR2rzO/9uOS/k2oNs=
+	t=1749689861; cv=none; b=bBfrxXp5vCB0WkLXt6lCmOCdcnuMmsTHme+zRiZPW9m8vcdsqFdlKmz0aBtmMll5F6i0LCxGzHxWjkYiL4wT6JUjCkKgrFkG7PYQhzqgPIKQT50ziY0YzFGsirKTIC2LQu8Fs5yuEi2glMlvrV3GmZDgSI6F4oEAdjeFEthvfho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749668026; c=relaxed/simple;
-	bh=OrWtfE0k8fSxvMydg+gq6xQRUTFOXMBiDeg+VK4LNAo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OErOr4iktmHq3LSn/KM1uqGTK5EeHCP1cZW/RteYAdIO3xhvKc+Xqvgc0idUoTmiILw+QQ88KPx4HBAwyCq+u6nKW77Hlw7e2gdTTVOm+S1Wzd4li+5QwtVpybv7ecdIWI0K9LsH9vWq0uQoPik2UQgukmuy3vyKnkI/GhNbAdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1nPY+BW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749689861; c=relaxed/simple;
+	bh=+pBOia5bLDm5o6g/thWQR//IYb1Ob0VFiM5/8EF7+gY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkspoDWaM9p3rOKduhM6DgURzQPBUmMejTXkp8qbjKtL804PaX8Jog0lzc+Z9DXY/VDAyCXLQWUmLWgHxzYdv92K2O7RYtydmp9MVeY23BjUdR0iv6Kwv539C0VPvNRd5KDe5kWMoGNAGBiv3cXtynwAz2AM8mXd3YbKaeTrhgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqEKGNLk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1nPY+BW"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CD1A7C4CEF1;
-	Wed, 11 Jun 2025 18:53:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqEKGNLk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE09C4CEE3;
+	Thu, 12 Jun 2025 00:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749668025;
-	bh=OrWtfE0k8fSxvMydg+gq6xQRUTFOXMBiDeg+VK4LNAo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=e1nPY+BWIXwpv6n98YDwrMgmy1z0RPEtC9XT5DnT+Ih4yEO3htdSeK6UD0sh3GjST
-	 NVfKMrKRaAaR12HmHO2q3YqufBY9024ycYH60MwmKUmBC0rIEFSOkUQPpGLXA3L3Z3
-	 F6BtTaD6gAHTw8C7Lj86Tmh+S27mrkKBPUb+i2JmlqeplZ3M4WnKu+duAp4hD7P0GM
-	 E0z4tk4bzw2ENkdzVHI9/PmJvh9SXV9CJIgRO80bx9qtvqp1ww+StdRteY+W/iAg1l
-	 tDBne7eBp0hfPdoO/HcHaaiH8COPONmGcBoaoxOgVgvRAB41RrnBLXZzt8W5t2q+S2
-	 geXZV1NOldLiw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5F2C71141;
-	Wed, 11 Jun 2025 18:53:45 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Wed, 11 Jun 2025 13:53:38 -0500
-Subject: [PATCH v2 2/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer
- Kit support
+	s=k20201202; t=1749689861;
+	bh=+pBOia5bLDm5o6g/thWQR//IYb1Ob0VFiM5/8EF7+gY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DqEKGNLktAmnG45+h3EpK+23slsoAVvPBtfnALmZgWa0kcCUwb69mKpmnfnJ38Bza
+	 +bRW4x5cC+SD8hO05vORvex1GsbnYTZ0SIvYnnmCNO5rMNVI/ZgiF42ahXAqTndPxP
+	 UlzqKfGFVgEGs47YlWfuYtRLZeR+xynlTIK/s/+zy1W4Hi5QOf5nhfa5n9zLRPPMj0
+	 rr0Wba1LtsrDVW1u8UsuIAr6Efw3/3g2TLP5iiTeSyFEA3YnV9hUPkV6qmaQIKuZoN
+	 lNZX82OIbqvwRrWb9tReCVq6VCy2ltkqx3zotVDKfRz7Rc1itygAqBHvNPslV/yx5C
+	 048MpIQ7bY46Q==
+Date: Thu, 12 Jun 2025 02:57:36 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, digetx@gmail.com, 
+	p.zabel@pengutronix.de, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 2/3] i2c: tegra: make reset an optional property
+Message-ID: <7sncphuidgiz6orsocixgybm2npcsjrdm7gnl3e52vfms2polu@4mmhdtc4zg5x>
+References: <20250603153022.39434-1-akhilrajeev@nvidia.com>
+ <20250603153022.39434-2-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-p3452-v2-2-fd2679706c63@gmail.com>
-References: <20250611-p3452-v2-0-fd2679706c63@gmail.com>
-In-Reply-To: <20250611-p3452-v2-0-fd2679706c63@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749668025; l=3203;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=42OimoFJFrvH09yIqaz1jWdoda8v/mnkO8i3GiH9JpM=;
- b=s9iva6uoq+uW+o+2KkN3I/3FReqx2GkSwk5aFp5eApaNzLaZxXMZdb9o6G5SFcQyryaIz6W4u
- hJeNJRTC1A3DPtrb7saPzfe9Bq4TIacnCWDgeuliVkSm52C6EnDKWeU
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603153022.39434-2-akhilrajeev@nvidia.com>
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Hi Andy,
 
-This devkit is very similar to P3450, except it has less ram, no display
-port, and only 3 usb host ports. Derive from P3450 and disable the
-hardware that is unavailable.
+...
 
-Gpio PA6 is used to control the hdmi power rail and needs to be on for
-hotplug detect to work. This is mapped to the 3.3V usb hub on P3450.
-That usb rail is not used here, so delete the regulator to avoid
-conflicts.
+> @@ -184,6 +186,9 @@ enum msg_end_type {
+>   * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
+>   *		provides additional features and allows for longer messages to
+>   *		be transferred in one go.
+> + * @has_mst_reset: The I2C controller contains MASTER_RESET_CTRL register which
+> + *		provides an alternative to controller reset when configured as
+> + *		I2C master
+>   * @quirks: I2C adapter quirks for limiting write/read transfer size and not
+>   *		allowing 0 length transfers.
+>   * @supports_bus_clear: Bus Clear support to recover from bus hang during
+> @@ -213,6 +218,7 @@ struct tegra_i2c_hw_feature {
+>  	bool has_multi_master_mode;
+>  	bool has_slcg_override_reg;
+>  	bool has_mst_fifo;
+> +	bool has_mst_reset;
+>  	const struct i2c_adapter_quirks *quirks;
+>  	bool supports_bus_clear;
+>  	bool has_apb_dma;
+> @@ -604,6 +610,20 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+>  	return 0;
+>  }
+>  
+> +static int tegra_i2c_master_reset(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	if (!i2c_dev->hw->has_mst_reset)
+> +		return -EOPNOTSUPP;
+> +
+> +	i2c_writel(i2c_dev, 0x1, I2C_MASTER_RESET_CNTRL);
+> +	udelay(2);
+> +
+> +	i2c_writel(i2c_dev, 0x0, I2C_MASTER_RESET_CNTRL);
+> +	udelay(2);
+> +
+> +	return 0;
+> +}
+> +
+>  static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>  {
+>  	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
+> @@ -621,8 +641,10 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>  	 */
+>  	if (handle)
+>  		err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> -	else
+> +	else if (i2c_dev->rst)
+>  		err = reset_control_reset(i2c_dev->rst);
+> +	else
+> +		err = tegra_i2c_master_reset(i2c_dev);
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- arch/arm64/boot/dts/nvidia/Makefile                |  2 +
- arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts | 59 ++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+Can you please take a look here? Should the reset happen in ACPI?
 
-diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-index 0fbb8a494dba5089d9b7243e766bd6028b7f3744..2989550e0d482e0dde09c1ff89930f7eb7b5b644 100644
---- a/arch/arm64/boot/dts/nvidia/Makefile
-+++ b/arch/arm64/boot/dts/nvidia/Makefile
-@@ -3,6 +3,7 @@
- # Enables support for device-tree overlays
- DTC_FLAGS_tegra210-p2371-2180 := -@
- DTC_FLAGS_tegra210-p3450-0000 := -@
-+DTC_FLAGS_tegra210-p3541-0000 := -@
- DTC_FLAGS_tegra186-p2771-0000 := -@
- DTC_FLAGS_tegra186-p3509-0000+p3636-0001 := -@
- DTC_FLAGS_tegra194-p2972-0000 := -@
-@@ -18,6 +19,7 @@ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p3450-0000.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p3541-0000.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2894-0050-a08.dtb
- dtb-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-p2771-0000.dtb
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..b86e271dde0bee7ceb70f16113eba5cf06da98e2
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+
-+#include "tegra210-p3450-0000.dts"
-+
-+/ {
-+	model = "NVIDIA Jetson Nano 2GB Developer Kit";
-+	compatible = "nvidia,p3541-0000", "nvidia,p3450-0000", "nvidia,tegra210";
-+
-+	memory@80000000 {
-+		reg = <0x0 0x80000000 0x0 0x80000000>;
-+	};
-+
-+	host1x@50000000 {
-+		sor@54540000 {
-+			status = "disabled";
-+		};
-+
-+		dpaux@545c0000 {
-+			status = "disabled";
-+		};
-+	};
-+
-+	padctl@7009f000 {
-+		ports {
-+			usb2-1 {
-+				vbus-supply = <&vdd_hub_5v0>;
-+			};
-+
-+			usb2-2 {
-+				vbus-supply = <&vdd_hub_5v0>;
-+			};
-+
-+			usb3-0 {
-+				/delete-property/ vbus-supply;
-+			};
-+		};
-+	};
-+
-+	regulator-vdd-hdmi-5v0 {
-+		gpio = <&gpio TEGRA_GPIO(A, 6) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	/delete-node/ regulator-vdd-hub-3v3;
-+
-+	vdd_hub_5v0: regulator-vdd-hub-5v0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VDD_HUB_5V0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+
-+		gpio = <&gpio TEGRA_GPIO(I, 2) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vdd_5v0_sys>;
-+	};
-+};
-
--- 
-2.49.0
-
-
+Thanks,
+Andi
