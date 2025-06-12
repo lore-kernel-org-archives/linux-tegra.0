@@ -1,113 +1,92 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87502F4306;
-	Thu, 12 Jun 2025 12:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613B9229B12;
+	Thu, 12 Jun 2025 12:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749732328; cv=none; b=qirKPD2rQlspTAFQ9xMzaPrkn/C2aM1O7896mmMOrTBIXonA3KYn39sVIcWRwgRUwmRTq9UuOpzxq+8sYOhnvrKvJGZRqRqF34H6472XCnEx4LVt2XseBsqcgPYllHZjCe77cqJbVvaBU9MkgNxXrSl7Gl5QctUKdqIhVTSmjn4=
+	t=1749732637; cv=none; b=moBhTLr+aGTvWBOHA26YIXlnq2E6NRUFg0dtPIYxY5l7c044z94nYbAD6O+R2110HnZRwZPABkD8qgtkg0LLWgH0+TfZKTeexHsjsrZdbguo/uGxBoN3ePkDeaqrVnpOqrZ7gz+b5Q84AedFYQ5PZnudQDIqvh4mjUzCA3eHd14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749732328; c=relaxed/simple;
-	bh=8MKRQTb/7JzqiplCl8iXB7PfHb6PwfHGnuzaemLIaj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4gOe0wEdjeVr5yaJo5f8RaCLx8hDS4wrZFYCCE4xG4AZ1RQ51z+H13aqgmPW80bgbW1pbyNc+vtyC9UPKVSF3hNESa5mWZQBF8d+cYxyjrk2/HZBrVgvhDTGE4zfuGfKZy476KLOe0uBDY5Dqms8jW2maSILhBjX0QZIqelaR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NTn8e+6g; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NTn8e+6g"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=23ZG+xJSw4YpAjmPdytqobZOImtcUHEUQlR+e/rQiqI=; b=NTn8e+6gKdA3pIbp0py+2v72Mi
-	jTjyRpKf6fLT7hpmfyodEh7uknxaaSBFccw61FIxbUPhz5+05UVGkAbKoa1uQSYbW6UgkBo85/L0G
-	/9F7l5826yfE8XQr3N0hpst+Fk8xhcwYnifPsU5AelPsi2sImXP76Bh/wrAOgikqSthw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uPhIv-00FXUq-UD; Thu, 12 Jun 2025 14:45:13 +0200
-Date: Thu, 12 Jun 2025 14:45:13 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Subbaraya Sundeep <sbhatta@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org,
-	Alexis Lothorrr <alexis.lothore@bootlin.com>
-Subject: Re: [PATCH] net: stmmac: Fix PTP ref clock for Tegra234
-Message-ID: <353f4fd1-5081-48f4-84fd-ff58f2ba1698@lunn.ch>
-References: <20250612062032.293275-1-jonathanh@nvidia.com>
- <aEqyrWDPykceDM2x@a5393a930297>
- <85e27a26-b115-49aa-8e23-963bff11f3f6@lunn.ch>
- <e720596d-6fbb-40a4-9567-e8d05755cf6f@nvidia.com>
+	s=arc-20240116; t=1749732637; c=relaxed/simple;
+	bh=EE1ske5xbCd3TbfXLaqtf0BwK5AykzlzAQ07qgaAk1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SA7Ic+Xs2e+vw5swPLU6M/iHS2UZrupffd2AKfkbVW/oChYHba2QE9j6ip/l4sdl2vgCw5pyhXsyaFrfNGMjeNh6aNPDJv07vCJeK61pAW23Vp1vpu90qEfjgcwIp3vE1wmXZzCa5Eiz+RnQzbMTDWi94TQxtqrIAx1/4wn5/bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bJ1zW1ZZcz9tNC;
+	Thu, 12 Jun 2025 14:28:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Zr2vrxnsQQ38; Thu, 12 Jun 2025 14:28:55 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bJ1zD0n2Kz9t2s;
+	Thu, 12 Jun 2025 14:28:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 155E18B77B;
+	Thu, 12 Jun 2025 14:28:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id oyxrjpKtRtzW; Thu, 12 Jun 2025 14:28:40 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 94E438B769;
+	Thu, 12 Jun 2025 14:28:39 +0200 (CEST)
+Message-ID: <af4e9c8f-edd6-4baf-bb24-caddf731da29@csgroup.eu>
+Date: Thu, 12 Jun 2025 14:28:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e720596d-6fbb-40a4-9567-e8d05755cf6f@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: Use dev_fwnode()
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Qiang Zhao <qiang.zhao@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-tegra@vger.kernel.org
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+ <20250611104348.192092-19-jirislaby@kernel.org>
+ <22deb36a-ca61-4793-99b4-87f520445490@kernel.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <22deb36a-ca61-4793-99b4-87f520445490@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025 at 01:26:55PM +0100, Jon Hunter wrote:
+
+
+Le 12/06/2025 à 13:31, Krzysztof Kozlowski a écrit :
+> On 11/06/2025 12:43, Jiri Slaby (SUSE) wrote:
+>> irq_domain_create_simple() takes fwnode as the first argument. It can be
+>> extracted from the struct device using dev_fwnode() helper instead of
+>> using of_node with of_fwnode_handle().
+>>
+>> So use the dev_fwnode() helper.
+>>
+>> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+>> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+>> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> Cc: Thierry Reding <thierry.reding@gmail.com>
+>> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>>
+>> ---
+>> Cc: linux-tegra@vger.kernel.org
+>> ---
+>>   drivers/soc/fsl/qe/qe_ic.c | 3 +--
+>>   drivers/soc/tegra/pmc.c    | 3 +--
+> These are separate subsystems. You need to split the patch per each
+> actual SoC vendor.
 > 
-> On 12/06/2025 13:10, Andrew Lunn wrote:
-> > On Thu, Jun 12, 2025 at 10:57:49AM +0000, Subbaraya Sundeep wrote:
-> > > Hi,
-> > > 
-> > > On 2025-06-12 at 06:20:32, Jon Hunter (jonathanh@nvidia.com) wrote:
-> > > > Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
-> > > > 0 before configuring timestamping") was added the following error is
-> > > > observed on Tegra234:
-> > > > 
-> > > >   ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
-> > > >   WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
-> > > > 
-> > > > It turns out that the Tegra234 device-tree binding defines the PTP ref
-> > > > clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
-> > > > exposes this and that the PTP clock is not configured correctly.
-> > > > 
-> > > > Ideally, we would rename the PTP ref clock for Tegra234 to fix this but
-> > > > this will break backward compatibility with existing device-tree blobs.
-> > > > Therefore, fix this by using the name 'ptp-ref' for devices that are
-> > > > compatible with 'nvidia,tegra234-mgbe'.
-> > 
-> > > AFAIU for Tegra234 device from the beginning, entry in dts is ptp-ref.
-> > > Since driver is looking for ptp_ref it is getting 0 hence the crash
-> > > and after the commit 030ce919e114 result is Invalid error instead of crash.
-> > > For me PTP is not working for Tegra234 from day 1 so why to bother about
-> > > backward compatibility and instead fix dts.
-> > > Please help me understand it has been years I worked on dts.
-> > 
-> > Please could you expand on that, because when i look at the code....
-> > 
-> > 
-> >    	/* Fall-back to main clock in case of no PTP ref is passed */
-> >   	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
-> >    	if (IS_ERR(plat->clk_ptp_ref)) {
-> >    		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
-> >    		plat->clk_ptp_ref = NULL;
-> > 
-> > if the ptp_ref does not exist, it falls back to stmmac_clk. Why would
-> > that cause a crash?
-> >  > While i agree if this never worked, we can ignore backwards
-> > compatibility and just fix the DT, but i would like a fuller
-> > explanation why the fallback is not sufficient to prevent a crash.
-> 
-> The problem is that in the 'ptp-ref' clock name is also defined in the
-> 'mgbe_clks' array in dwmac-tegra.c driver. All of these clocks are requested
-> and enabled using the clk_bulk_xxx APIs and so I don't see how we can simply
-> fix this now without breaking support for older device-trees.
 
-So you can definitively say, PTP does actually work? You have ptp4l
-running with older kernels and DT blob, and it has sync to a grand
-master?
 
-	Andrew
+It has already been Acked by Thierry Reding who maintains tegra so I can 
+take this patch as is via soc/fsl tree.
+
+Christophe
