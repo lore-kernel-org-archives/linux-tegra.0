@@ -1,173 +1,188 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D681DDD1;
-	Fri, 13 Jun 2025 12:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F0B1E50E;
+	Fri, 13 Jun 2025 13:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749817842; cv=none; b=o5EEZpJveXQBexTY+a1xfH4W2doIDNDpH6nfTofbLPnKcI20w2p2xDiI/veaCY9xJeDS1EPtnGpO5UQ17tJx5dedhVf/IQ/blA83hcVHGaLjsfBOe8OukdSlNkGehuDEj055WMKVk+sBEMSNo5pD+HIchQupYY6h8RZ7cFow0Uw=
+	t=1749821085; cv=none; b=TRy6j/zdNKc0ymd02hEN9tCwSWTus0pWwHmG6/M9G8aIETAMF8WUQZnul2riIm5NfzvaHUTuRwd+yZOSZiLXgNuXVmDpGh+TuZ7BbMkx7+qjKt9CnrNhwW/iiYK5YzH7McPJED/K24oBUHFBKjT0k/UZOK8Ycpj/hV8c3F9TZbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749817842; c=relaxed/simple;
-	bh=dirYhv9VT2S9TTUD3pIN80CKZ7uxHA8Zrru+Tpjkb5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/K1oiw+aitEPIDawbzuFkqC3jeWbqcI3JqfiUaMB2zc2y8092BW5c8NK+1zksJK8iVD0GL6UBJW/M2a0KJpviaK88ET9b10hG4iZtxxqNJUQ2J5xkxevBhbennhAQNdj0qg1IffAllUTK7H3N4id6aMhW5ei7OKVIFDQEBQDnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xw5UD+My; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1749821085; c=relaxed/simple;
+	bh=tOkVEKEMXNclCaMtag04qkqt+z54h+ZwBX10cOKCP8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8RRnAvFzT0u8qrNCK42QX0vwe0UIHjVoIeCpAkmnSQOGb6F8YkAFGQ8EfK6GDZqN/v1l1vdR+RTZtM0f/zZxqqJM4i0KZqng/hoYCND5CCrpGUe3usVMl2yin1dor42sHDVUc+0asc+ihX7Gbh+hgm5hbFHX+2Fpm8cAU5eImo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsCjCcCi; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xw5UD+My"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so2034185f8f.0;
-        Fri, 13 Jun 2025 05:30:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsCjCcCi"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-313a001d781so1936564a91.3;
+        Fri, 13 Jun 2025 06:24:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749817839; x=1750422639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDahtSYkj+HkMH3zYP8DVq39ggZjJyBAZAxdjk4esRw=;
-        b=Xw5UD+MyHzF9VAKtk9hFx+Vp8LSJKq/nxOPTFRW4Gm5ib4aIibQ3yc5N26JJmj8YPO
-         8VWv58lXq/+1KSs2d1zOJnpJy3oF769PM4TuOEn6jZ0o5RMCGmhAOWHr+5ykD2+PU71b
-         gxlhXyiP8H+xfCJ/FWfqNzRPX93aM74FCX6Z+HM2tdqzWI8OVhFdmpSsxZTqqg9RDrJ0
-         xkzIUZP/SB1DrYu22LlLskHqBkmp1JbZryd+bsLXa+jUEtB7iZNlow7mWN5T+KYuL5GF
-         rhSILzj2zSLP16razfY5wFW+AXxYHrD8dl2TEmuLjuHFOkPWOPqnuFa4bJCEB1gTZS5D
-         +8vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749817839; x=1750422639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1749821083; x=1750425883; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FDahtSYkj+HkMH3zYP8DVq39ggZjJyBAZAxdjk4esRw=;
-        b=cLmSRX1VszaUmy5H7yGGjEGS4tmbujuOY7TiHinLKG+tkYOq2ibPUUTOBKz5AGOQ/q
-         7fTBzQUS6b+M6TdNtxeSCrP8k8xVCHCBiA0CVj3j7eRsM/a62o4mygEJ3kgx2Cs5WblS
-         UKMZF/2sLlh0AqRmNhqHEwR8VgKQ4lJz68kFawYBf/ELzSxGrrMsV+uLxWljewV9CIY7
-         KNcZAMJqQwubz2L8o5BvV6goaXIoMMlGVRzED/MX0nMi3mWoUJQap4YZEn028i/j1WkV
-         thBQF7TtNZyFeSu5TMZw/83wmK1qsR1sIAa6k1LPM0Fs0jn90u0S09C+53OaHttBSnTJ
-         BtTA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7lQqXzzLd8UWXFDscwVT/Lf0GHZiKVil2wY/titkHx+T/dDPgZmn5H17QesxS2AVh8EttbCbUKZE=@vger.kernel.org, AJvYcCXPQEybSKDV3mR3RU6NDzawXNk/+AQEX7rIuNKjvVvUbigjGusSd6VNU6OG6bDg9xAOmESzy5cQ3e2X904=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDV/2EHLkb96gcG/+TIMivDaMPfxTjpL4kBdwBkdMc6ED2UfSn
-	YP11tqZKI2HQHj50oeb/iSw4CzetTEgdB6hAZCRy2NKVgUAp+dXZ/sA29oOxyw==
-X-Gm-Gg: ASbGncsONEm9afrHiKJU9Y38apNe1hnen1XJ1Av0DihitOWuLoTVwB10CaSIK3j3HHX
-	G8Gqif1Qq0bdFXhszZ19/iULDMqCNVJugXDSazNQi77BBPtyitCA/dFtGvHW4gNeXWRfOEw/P9U
-	/7xVzhFWSc7XNSBYdcICSYA0D3rt2bH9Nlr3bz0vC5nfZN7ZmWlRl7CYp/EX4B+kTkaMx/8Qlpx
-	yByNPaZE2zR6EfJ0HU6Xwsuj/+w20T+CSEuFtqI53hyQMeWHJ8Y2gziMm9Un1kql64tlBQnQgQP
-	OondyxqOT3aeyHD/qV2TjOG7wactj0SzlEpWUVzKDD5QkDDwxWlt+9lCNzEDCYJxw8dq/wL/SL1
-	nu9Ndgs8t3hINhfFTSmYNExfq3tiAWVEcHzpaEwZZs1hvjagXYMUgnw==
-X-Google-Smtp-Source: AGHT+IHuJ5xo7QniB5DnKQzH5ZflLS/T2ofG5VoQUjB/z36gjes12Eh7vW/JEPoz0V6HghfrPuZ+iA==
-X-Received: by 2002:a5d:584c:0:b0:3a5:2f6a:ccd5 with SMTP id ffacd0b85a97d-3a56873dc7cmr2597097f8f.49.1749817839013;
-        Fri, 13 Jun 2025 05:30:39 -0700 (PDT)
-Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568b18f96sm2305444f8f.66.2025.06.13.05.30.37
+        bh=BP1QV4sUieItyspzf8jXfbznQKvpoMI7baHkbF85A7k=;
+        b=KsCjCcCiuBn9vBek5VNopz2n7N9UA4FcIFwB9EedMxeCS5+Ly5oFXR+hCKyCUlgBMU
+         lUDc/nidCO8Wz8ejRG6g7SGSsCgLL544fORFdMmlEOkTwRkPxHJPFXZbVL1C1STMgyMV
+         UPt3//U5Oe9rJN/8N6qbwJZlLovO9KN3HEUrxVsjBzxYTjvZEC07Cw08O4h62P948q6J
+         BBW8qqGDr+5lHuORzLHbUudBA3lXrbsTWZTacyReOQ9zQYhXsUNWZQt6lJ8KEB4kviHN
+         dvUCoG1JS0tScc4RG3Ku/N7N9j5QajunmK+Ck31DB7Uj27h8dRELbB+t15j+b6hUM3GQ
+         Q4Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749821083; x=1750425883;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BP1QV4sUieItyspzf8jXfbznQKvpoMI7baHkbF85A7k=;
+        b=t6gzvpNuIEN6m6QNJ5SOby7IjCY3R0/OzhaGvNDXNQgfd/WWO1vGe4jqIGgVJtto5x
+         Ps5voZO+3Btx10nHUN+iMApwuLyX4qBE5IzEqz5wgdrWIi4j6JVgZu6UKqZoRcQW/LAs
+         DRXefoapNEcXMnzN8hYCMas8W8Hk18Ta6077Esu+0HecwiPLeM2zCcV6HLawEWFAvuls
+         8xBnXU+eIzfhye2JYnnkFB0FM2JTsnSSTb5qgXQpKauk1qZfmQkgQEcwA9LBxS/2GAgK
+         oEo73HAlNcZbom8bsTb0HPEl0Wy9omnWtQ/Qs9cHjDFhqGaFkp1pQTRyFa6tHARIvgwt
+         FBEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmJmvNHdno4zZEVhEj5wh+Na9BiOoL+ed/zZCM4y42rt4paKyVfkqh1YTtz3qQqrfn0AJpgX9bT+vwBjHqIrw=@vger.kernel.org, AJvYcCXNZLRTrUO+SwMDpW+4HRoJTx5IvXBHAUNuvzHT3Dqip8ZNlKgdFVtH9hxKHvUWl2odpNg8A2mSHj5BjPM=@vger.kernel.org, AJvYcCXuqxhXwiMfeZx97g+SC1+a0skoWoXh0QjKJp+UH8ikzUbstLjtzV2qSHYvCwrHt/Wc3z4Gq+gCXXAl6II=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwIH6eKArsM8fIMuifIzOws3uKc85AJOwWjkhbh3uzcZGn95Ls
+	SKJnciFLRBhwmmDlfaGPYgqqAEO/UBdsKlYuRZRbjKTBZIg+wnG6ZWP7yw/0p1X/
+X-Gm-Gg: ASbGnctI1l+ygpBCwtugh6ImwxuKsVbDThAsJGzEhPdzQ0QTDmsnmctTQw3nmB0n49o
+	eDqFnij05s7YoedJRDm4JIDjlIEaTfsUVCV0dqbqIpA3/9gyor2oMh6PutwwokUSFuXo7uyq6q6
+	btL8Xen+sKMJE5ttRAtk2SNljdOsFHiCryr0ch2o7XAhh29eFYNBS0bMXaEPgij6DkIFIIsk1OT
+	bZ0BOyJyvvD2A7HyyO9vYvXQcjV+HOEUOKSL2eB7rYP7mVzmr5OqsrF1WVVpoqdfsWzZjevatKM
+	+zxC+ozultyvR/0lxzvlDBnLrTjsRwzKDpX2Q30uAYMXRD8yGIvx9QIyjoo1olzUn8cx9Xzq9Us
+	=
+X-Google-Smtp-Source: AGHT+IGekiRSBJ+kbms44njHRzdmd7Q8ixErbibo4Dnrs3p9LH0tWKgyorpHc60qghBSU+Ldv9EaMA==
+X-Received: by 2002:a17:90b:38c7:b0:313:283e:e881 with SMTP id 98e67ed59e1d1-313d9d797c6mr4835640a91.11.1749821082701;
+        Fri, 13 Jun 2025 06:24:42 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de781dfsm13807225ad.131.2025.06.13.06.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 05:30:38 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Vishwaroop A <va@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Brad Griffis <bgriffis@nvidia.com>
-Subject: [PATCH] spi: tegra210-qspi: Remove cache operations
-Date: Fri, 13 Jun 2025 14:30:37 +0200
-Message-ID: <20250613123037.2082788-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Fri, 13 Jun 2025 06:24:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 13 Jun 2025 06:24:40 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Robert Lin <robelin@nvidia.com>
+Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org,
+	jonathanh@nvidia.com, tglx@linutronix.de, pohsuns@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	sumitg@nvidia.com, linux-watchdog@vger.kernel.org,
+	wim@linux-watchdog.org
+Subject: Re: [PATCH v8 1/3] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
+Message-ID: <5c5ba239-f8e4-43b5-ab58-b3850c57d74b@roeck-us.net>
+References: <20250507044311.3751033-1-robelin@nvidia.com>
+ <20250507044311.3751033-2-robelin@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507044311.3751033-2-robelin@nvidia.com>
 
-From: Thierry Reding <treding@nvidia.com>
+Hi,
 
-The DMA memory for this driver is allocated using dma_alloc_coherent(),
-which ends up mapping the allocated memory as uncached. Performing the
-various dma_sync_*() operations on this memory causes issues during SPI
-flashing:
+On Wed, May 07, 2025 at 12:43:09PM +0800, Robert Lin wrote:
+> From: Pohsun Su <pohsuns@nvidia.com>
+> 
+> This change adds support for WDIOC_GETTIMELEFT so userspace
+> programs can get the number of seconds before system reset by
+> the watchdog timer via ioctl.
+> 
+> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
+> Signed-off-by: Robert Lin <robelin@nvidia.com>
+> ---
+>  drivers/clocksource/timer-tegra186.c | 64 +++++++++++++++++++++++++++-
+>  1 file changed, 63 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+> index ea742889ee06..e3ea6110e6f5 100644
+> --- a/drivers/clocksource/timer-tegra186.c
+> +++ b/drivers/clocksource/timer-tegra186.c
+> @@ -1,8 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
+> + * Copyright (c) 2019-2025 NVIDIA Corporation. All rights reserved.
+>   */
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/module.h>
+>  #include <linux/interrupt.h>
+> @@ -30,6 +31,7 @@
+>  
+>  #define TMRSR 0x004
+>  #define  TMRSR_INTR_CLR BIT(30)
+> +#define  TMRSR_PCV GENMASK(28, 0)
+>  
+>  #define TMRCSSR 0x008
+>  #define  TMRCSSR_SRC_USEC (0 << 0)
+> @@ -46,6 +48,9 @@
+>  #define  WDTCR_TIMER_SOURCE_MASK 0xf
+>  #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
+>  
+> +#define WDTSR 0x004
+> +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
+> +
+>  #define WDTCMDR 0x008
+>  #define  WDTCMDR_DISABLE_COUNTER BIT(1)
+>  #define  WDTCMDR_START_COUNTER BIT(0)
+> @@ -235,12 +240,69 @@ static int tegra186_wdt_set_timeout(struct watchdog_device *wdd,
+>  	return 0;
+>  }
+>  
+> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
+> +{
+> +	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
+> +	u32 expiration, val;
+> +	u64 timeleft;
+> +
+> +	if (!watchdog_active(&wdt->base)) {
+> +		/* return zero if the watchdog timer is not activated. */
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * Reset occurs on the fifth expiration of the
+> +	 * watchdog timer and so when the watchdog timer is configured,
+> +	 * the actual value programmed into the counter is 1/5 of the
+> +	 * timeout value. Once the counter reaches 0, expiration count
+> +	 * will be increased by 1 and the down counter restarts.
+> +	 * Hence to get the time left before system reset we must
+> +	 * combine 2 parts:
+> +	 * 1. value of the current down counter
+> +	 * 2. (number of counter expirations remaining) * (timeout/5)
+> +	 */
+> +
+> +	/* Get the current number of counter expirations. Should be a
+> +	 * value between 0 and 4
+> +	 */
+> +	val = readl_relaxed(wdt->regs + WDTSR);
+> +	expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, val);
+> +	if (WARN_ON_ONCE(expiration > 4))
+> +		return 0;
+> +
+> +	/* Get the current counter value in microsecond. */
+> +	val = readl_relaxed(wdt->tmr->regs + TMRSR);
+> +	timeleft = FIELD_GET(TMRSR_PCV, val);
+> +
+> +	/*
+> +	 * Calculate the time remaining by adding the time for the
+> +	 * counter value to the time of the counter expirations that
+> +	 * remain.
+> +	 */
+> +	timeleft += (((u64)wdt->base.timeout * USEC_PER_SEC) / 5) * (4 - expiration);
 
-[    7.818017] pc : dcache_inval_poc+0x40/0x58
-[    7.822128] lr : arch_sync_dma_for_cpu+0x2c/0x4c
-[    7.826854] sp : ffff80008193bcf0
-[    7.830267] x29: ffff80008193bcf0 x28: ffffa3fe5ff1e908 x27: ffffa3fe627bb130
-[    7.837528] x26: ffff000086952180 x25: ffff00008015c8ac x24: ffff000086c9b480
-[    7.844878] x23: ffff00008015c800 x22: 0000000000000002 x21: 0000000000010000
-[    7.852229] x20: 0000000106dae000 x19: ffff000080112410 x18: 0000000000000001
-[    7.859580] x17: ffff000080159400 x16: ffffa3fe607a9bd8 x15: ffff0000eac1b180
-[    7.866753] x14: 000000000000000c x13: 0000000000000001 x12: 000000000000025a
-[    7.874104] x11: 0000000000000000 x10: 7f73e96357f6a07f x9 : db1fc8072a7f5e3a
-[    7.881365] x8 : ffff000086c9c588 x7 : ffffa3fe607a9bd8 x6 : ffff80008193bc28
-[    7.888630] x5 : 000000000000ffff x4 : 0000000000000009 x3 : 000000000000003f
-[    7.895892] x2 : 0000000000000040 x1 : ffff000086dbe000 x0 : ffff000086db0000
-[    7.903155] Call trace:
-[    7.905606]  dcache_inval_poc+0x40/0x58 (P)
-[    7.909804]  iommu_dma_sync_single_for_cpu+0xb4/0xb8
-[    7.914617]  __dma_sync_single_for_cpu+0x158/0x194
-[    7.919428]  __this_module+0x5b020/0x5baf8 [spi_tegra210_quad]
-[    7.925291]  irq_thread_fn+0x2c/0xc0
-[    7.928966]  irq_thread+0x16c/0x318
-[    7.932467]  kthread+0x12c/0x214
+This results in
 
-Fix this by removing all calls to the dma_sync_*() functions. This isn't
-ideal because DMA is used only for relatively large (> 64 words or 256
-bytes) and using uncached memory for this might be slow. Reworking this
-to use cached memory for faster access and reintroducing the cache
-maintenance calls is probably worth a follow-up patch.
+xtensa-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra186_timer_remove':
+timer-tegra186.c:(.text+0x350): undefined reference to `__udivdi3'
+xtensa-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra186_wdt_get_timeleft':
+timer-tegra186.c:(.text+0x52c): undefined reference to `__udivdi3'
 
-Reported-by: Brad Griffis <bgriffis@nvidia.com>
-Fixes: 017f1b0bae08 ("spi: tegra210-quad: Add support for internal DMA")
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 14 --------------
- 1 file changed, 14 deletions(-)
+when trying to build xtensa:allmodconfig.
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index 3581757a269b..3be7499db21e 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -407,9 +407,6 @@ tegra_qspi_read_rx_fifo_to_client_rxbuf(struct tegra_qspi *tqspi, struct spi_tra
- static void
- tegra_qspi_copy_client_txbuf_to_qspi_txbuf(struct tegra_qspi *tqspi, struct spi_transfer *t)
- {
--	dma_sync_single_for_cpu(tqspi->dev, tqspi->tx_dma_phys,
--				tqspi->dma_buf_size, DMA_TO_DEVICE);
--
- 	/*
- 	 * In packed mode, each word in FIFO may contain multiple packets
- 	 * based on bits per word. So all bytes in each FIFO word are valid.
-@@ -442,17 +439,11 @@ tegra_qspi_copy_client_txbuf_to_qspi_txbuf(struct tegra_qspi *tqspi, struct spi_
- 
- 		tqspi->cur_tx_pos += write_bytes;
- 	}
--
--	dma_sync_single_for_device(tqspi->dev, tqspi->tx_dma_phys,
--				   tqspi->dma_buf_size, DMA_TO_DEVICE);
- }
- 
- static void
- tegra_qspi_copy_qspi_rxbuf_to_client_rxbuf(struct tegra_qspi *tqspi, struct spi_transfer *t)
- {
--	dma_sync_single_for_cpu(tqspi->dev, tqspi->rx_dma_phys,
--				tqspi->dma_buf_size, DMA_FROM_DEVICE);
--
- 	if (tqspi->is_packed) {
- 		tqspi->cur_rx_pos += tqspi->curr_dma_words * tqspi->bytes_per_word;
- 	} else {
-@@ -478,9 +469,6 @@ tegra_qspi_copy_qspi_rxbuf_to_client_rxbuf(struct tegra_qspi *tqspi, struct spi_
- 
- 		tqspi->cur_rx_pos += read_bytes;
- 	}
--
--	dma_sync_single_for_device(tqspi->dev, tqspi->rx_dma_phys,
--				   tqspi->dma_buf_size, DMA_FROM_DEVICE);
- }
- 
- static void tegra_qspi_dma_complete(void *args)
-@@ -701,8 +689,6 @@ static int tegra_qspi_start_dma_based_transfer(struct tegra_qspi *tqspi, struct
- 				return ret;
- 			}
- 
--			dma_sync_single_for_device(tqspi->dev, tqspi->rx_dma_phys,
--						   tqspi->dma_buf_size, DMA_FROM_DEVICE);
- 			ret = tegra_qspi_start_rx_dma(tqspi, t, len);
- 			if (ret < 0) {
- 				dev_err(tqspi->dev, "failed to start RX DMA: %d\n", ret);
--- 
-2.49.0
-
+Guenter
