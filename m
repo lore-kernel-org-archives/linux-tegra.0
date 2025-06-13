@@ -1,72 +1,71 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028AA2DECAE
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Jun 2025 12:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D681DDD1;
+	Fri, 13 Jun 2025 12:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749817733; cv=none; b=uZAki6IoF2RdKUfjUrQQyB0QgTJwzAFregEtaQywP1ORWuwRV7hJv8p60RHiUzqr6s8O3Hg1IjUAaZUCNASNQvjWVL4+1VmpXyHXGCwoeri+C7wZsn/OlFLnCBmhi8COhMIRGMB2gHHiL6hwD830tpDnKE7PaRmNEiBS4x/uMd4=
+	t=1749817842; cv=none; b=o5EEZpJveXQBexTY+a1xfH4W2doIDNDpH6nfTofbLPnKcI20w2p2xDiI/veaCY9xJeDS1EPtnGpO5UQ17tJx5dedhVf/IQ/blA83hcVHGaLjsfBOe8OukdSlNkGehuDEj055WMKVk+sBEMSNo5pD+HIchQupYY6h8RZ7cFow0Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749817733; c=relaxed/simple;
-	bh=B3d/54kUt5PbY30XYh7UucGZrzO5LeADz04Nw7fCcJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L+kOT996GZ38ExsloPSGyKiwIQujeBstAOYR/RnbgubI1HZ2XeNV1EfQtYgiLAYNmp9uVT5UPaO1UuJQ4HWRUvhIF66rY7MrSptGiWtLWeO07FefSZ1oovPBHRS9RTgNMu9lMEenVUrFuKDGnEOmIntxztr62fOM1p7yCcz29cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9JTocyZ; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1749817842; c=relaxed/simple;
+	bh=dirYhv9VT2S9TTUD3pIN80CKZ7uxHA8Zrru+Tpjkb5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/K1oiw+aitEPIDawbzuFkqC3jeWbqcI3JqfiUaMB2zc2y8092BW5c8NK+1zksJK8iVD0GL6UBJW/M2a0KJpviaK88ET9b10hG4iZtxxqNJUQ2J5xkxevBhbennhAQNdj0qg1IffAllUTK7H3N4id6aMhW5ei7OKVIFDQEBQDnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xw5UD+My; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9JTocyZ"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so24360225e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Jun 2025 05:28:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xw5UD+My"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so2034185f8f.0;
+        Fri, 13 Jun 2025 05:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749817730; x=1750422530; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749817839; x=1750422639; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3SdZ/GxfWV/W/p+CZLyOj0V8DqNHminUrDVPHxaO0zY=;
-        b=B9JTocyZ0aQuF7GmRDxjU26KfHsKstNCJJVG4iWF5pVuGSzCi3Z6rMD8ZdhET1hmAD
-         rhvHvcZvCO9uEiPJrbwEpM+2LVgKHxEsbrfK4x+X0YQ125rm9gwE+cyf6U0u5fNWTRAi
-         wKhb9IFzNZ57rhk3fjh7rCBtFskSXifbsDsg4ZHWLmHkcPH3H3k/BObMiOUH8gcz5BGC
-         OGMCpPeXB48+A0fn2nOw01pDIFLv8Ejojsx50GCFs/4aPRI7wNBC9jCIznp/0H0EbMEg
-         9KGBG4NpPA0e31YvI7StUPvcG9W4OvSZICYmukO1VhWXlFNARE1qQcsqOGl+Z7fF8upq
-         KDjQ==
+        bh=FDahtSYkj+HkMH3zYP8DVq39ggZjJyBAZAxdjk4esRw=;
+        b=Xw5UD+MyHzF9VAKtk9hFx+Vp8LSJKq/nxOPTFRW4Gm5ib4aIibQ3yc5N26JJmj8YPO
+         8VWv58lXq/+1KSs2d1zOJnpJy3oF769PM4TuOEn6jZ0o5RMCGmhAOWHr+5ykD2+PU71b
+         gxlhXyiP8H+xfCJ/FWfqNzRPX93aM74FCX6Z+HM2tdqzWI8OVhFdmpSsxZTqqg9RDrJ0
+         xkzIUZP/SB1DrYu22LlLskHqBkmp1JbZryd+bsLXa+jUEtB7iZNlow7mWN5T+KYuL5GF
+         rhSILzj2zSLP16razfY5wFW+AXxYHrD8dl2TEmuLjuHFOkPWOPqnuFa4bJCEB1gTZS5D
+         +8vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749817730; x=1750422530;
+        d=1e100.net; s=20230601; t=1749817839; x=1750422639;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3SdZ/GxfWV/W/p+CZLyOj0V8DqNHminUrDVPHxaO0zY=;
-        b=V0BAYy+m6BxjZ6dcur2ec8QGHzT4ITVq4INpiLJrAVd+zFU/pHzqH7qXFeqLsAfSQp
-         BMm6tHC1KgcQoyVErXj9Lqd3YhVlDjgnLiGciVrAnQ7FLY4Zz/U6qi7L+GvNlTOEFumS
-         IqmShFart0J/O2G8rFkxE4vcl2oMEPhZvCA8MvBuOGsUYuvCWOxvzFZtEuWLvrndirZr
-         QwjSQ5WZeRlW+nvu1Uvw3TbBT+WoRkHZchItAJjfsuUxAKlPd21r+4s68/15EjYPlJ9q
-         uaqfNMxrb6u4DomCdPYKchhVnszB+mHQK91KvVcNonHCDzcW+18dLgCW9etZJCFfMJIb
-         jPAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnTbahWA5/9Wa88msnPsnRUsEeOYTHRUSRceKdDnURka5SNTJZ9iMWqmgdbC+VpNggJX2zNOOE4hn7Vw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrs05eN8VIX4VzedNeX41Ja7Sl7bk+6GDaYxT1SOg5pDmZ6+qd
-	khLCFr8mmuSLurrMCRfFqjy9rjBMRzCHpqX5ih7+2i7jSGCbBxeCmany
-X-Gm-Gg: ASbGncti9dsn/5t/jeIhVSVRpY9WSzKqNZhP1AY/MWG98a8+oiMCTUKaPFoa7neYIuJ
-	2AMBHnPIppUZbKW3sQUJfyl47bJe7ATa67ddZ5OTampWvJ9ZFw7lSdHa7TwAfYY8fjSTDigf/G0
-	4L/LStcbNS3Rhptc5DbF5oPxhSA/BmVUJyHn8LJB1TXQLALNgJVwD2UXJWBZNqJFLoR0rLWOG0T
-	Sn8IeaKByUYhiCIFuvpoJzHCrWOhrrjoSyw7iD2cgz1M5vjSJxNOQDWpNH9aUtOTDkBPRa4vgSB
-	sz7f446ym1WMDbgaTGJc9PqvQkm1cF5sjpZ4t03gXZbbRSwUmVzml+wq1+S+FoqnkJP/cHf5q+6
-	1i93hrZ3LI2o0BlwvC7rCF0UftR6ZYCJvayoBHBgO75SKQUR1Id44YA==
-X-Google-Smtp-Source: AGHT+IEFHENr5ISYnvmEiH8MxR7Wx9/fODHzGABFsPhDA+iTx85P13NmyGBvASmtgR9S5z/x1X2KCg==
-X-Received: by 2002:a05:6000:2889:b0:3a4:d64a:3df6 with SMTP id ffacd0b85a97d-3a56869cdfemr2520299f8f.3.1749817729957;
-        Fri, 13 Jun 2025 05:28:49 -0700 (PDT)
+        bh=FDahtSYkj+HkMH3zYP8DVq39ggZjJyBAZAxdjk4esRw=;
+        b=cLmSRX1VszaUmy5H7yGGjEGS4tmbujuOY7TiHinLKG+tkYOq2ibPUUTOBKz5AGOQ/q
+         7fTBzQUS6b+M6TdNtxeSCrP8k8xVCHCBiA0CVj3j7eRsM/a62o4mygEJ3kgx2Cs5WblS
+         UKMZF/2sLlh0AqRmNhqHEwR8VgKQ4lJz68kFawYBf/ELzSxGrrMsV+uLxWljewV9CIY7
+         KNcZAMJqQwubz2L8o5BvV6goaXIoMMlGVRzED/MX0nMi3mWoUJQap4YZEn028i/j1WkV
+         thBQF7TtNZyFeSu5TMZw/83wmK1qsR1sIAa6k1LPM0Fs0jn90u0S09C+53OaHttBSnTJ
+         BtTA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7lQqXzzLd8UWXFDscwVT/Lf0GHZiKVil2wY/titkHx+T/dDPgZmn5H17QesxS2AVh8EttbCbUKZE=@vger.kernel.org, AJvYcCXPQEybSKDV3mR3RU6NDzawXNk/+AQEX7rIuNKjvVvUbigjGusSd6VNU6OG6bDg9xAOmESzy5cQ3e2X904=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDV/2EHLkb96gcG/+TIMivDaMPfxTjpL4kBdwBkdMc6ED2UfSn
+	YP11tqZKI2HQHj50oeb/iSw4CzetTEgdB6hAZCRy2NKVgUAp+dXZ/sA29oOxyw==
+X-Gm-Gg: ASbGncsONEm9afrHiKJU9Y38apNe1hnen1XJ1Av0DihitOWuLoTVwB10CaSIK3j3HHX
+	G8Gqif1Qq0bdFXhszZ19/iULDMqCNVJugXDSazNQi77BBPtyitCA/dFtGvHW4gNeXWRfOEw/P9U
+	/7xVzhFWSc7XNSBYdcICSYA0D3rt2bH9Nlr3bz0vC5nfZN7ZmWlRl7CYp/EX4B+kTkaMx/8Qlpx
+	yByNPaZE2zR6EfJ0HU6Xwsuj/+w20T+CSEuFtqI53hyQMeWHJ8Y2gziMm9Un1kql64tlBQnQgQP
+	OondyxqOT3aeyHD/qV2TjOG7wactj0SzlEpWUVzKDD5QkDDwxWlt+9lCNzEDCYJxw8dq/wL/SL1
+	nu9Ndgs8t3hINhfFTSmYNExfq3tiAWVEcHzpaEwZZs1hvjagXYMUgnw==
+X-Google-Smtp-Source: AGHT+IHuJ5xo7QniB5DnKQzH5ZflLS/T2ofG5VoQUjB/z36gjes12Eh7vW/JEPoz0V6HghfrPuZ+iA==
+X-Received: by 2002:a5d:584c:0:b0:3a5:2f6a:ccd5 with SMTP id ffacd0b85a97d-3a56873dc7cmr2597097f8f.49.1749817839013;
+        Fri, 13 Jun 2025 05:30:39 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4532e232e0asm49941605e9.14.2025.06.13.05.28.48
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568b18f96sm2305444f8f.66.2025.06.13.05.30.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 05:28:48 -0700 (PDT)
+        Fri, 13 Jun 2025 05:30:38 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2] drm/fbdev-client: Skip DRM clients if modesetting is absent
-Date: Fri, 13 Jun 2025 14:28:38 +0200
-Message-ID: <20250613122838.2082334-1-thierry.reding@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Vishwaroop A <va@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-spi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Brad Griffis <bgriffis@nvidia.com>
+Subject: [PATCH] spi: tegra210-qspi: Remove cache operations
+Date: Fri, 13 Jun 2025 14:30:37 +0200
+Message-ID: <20250613123037.2082788-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -78,56 +77,97 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-Recent generations of Tegra have moved the display components outside of
-host1x, leading to a device that has no CRTCs attached and hence doesn't
-support any of the modesetting functionality. When this is detected, the
-driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
+The DMA memory for this driver is allocated using dma_alloc_coherent(),
+which ends up mapping the allocated memory as uncached. Performing the
+various dma_sync_*() operations on this memory causes issues during SPI
+flashing:
 
-Unfortunately, this causes the following errors during boot:
+[    7.818017] pc : dcache_inval_poc+0x40/0x58
+[    7.822128] lr : arch_sync_dma_for_cpu+0x2c/0x4c
+[    7.826854] sp : ffff80008193bcf0
+[    7.830267] x29: ffff80008193bcf0 x28: ffffa3fe5ff1e908 x27: ffffa3fe627bb130
+[    7.837528] x26: ffff000086952180 x25: ffff00008015c8ac x24: ffff000086c9b480
+[    7.844878] x23: ffff00008015c800 x22: 0000000000000002 x21: 0000000000010000
+[    7.852229] x20: 0000000106dae000 x19: ffff000080112410 x18: 0000000000000001
+[    7.859580] x17: ffff000080159400 x16: ffffa3fe607a9bd8 x15: ffff0000eac1b180
+[    7.866753] x14: 000000000000000c x13: 0000000000000001 x12: 000000000000025a
+[    7.874104] x11: 0000000000000000 x10: 7f73e96357f6a07f x9 : db1fc8072a7f5e3a
+[    7.881365] x8 : ffff000086c9c588 x7 : ffffa3fe607a9bd8 x6 : ffff80008193bc28
+[    7.888630] x5 : 000000000000ffff x4 : 0000000000000009 x3 : 000000000000003f
+[    7.895892] x2 : 0000000000000040 x1 : ffff000086dbe000 x0 : ffff000086db0000
+[    7.903155] Call trace:
+[    7.905606]  dcache_inval_poc+0x40/0x58 (P)
+[    7.909804]  iommu_dma_sync_single_for_cpu+0xb4/0xb8
+[    7.914617]  __dma_sync_single_for_cpu+0x158/0x194
+[    7.919428]  __this_module+0x5b020/0x5baf8 [spi_tegra210_quad]
+[    7.925291]  irq_thread_fn+0x2c/0xc0
+[    7.928966]  irq_thread+0x16c/0x318
+[    7.932467]  kthread+0x12c/0x214
 
-    [      15.418958] ERR KERN drm drm: [drm] *ERROR* Failed to register client: -95
-    [      15.425311] WARNING KERN drm drm: [drm] Failed to set up DRM client; error -95
+Fix this by removing all calls to the dma_sync_*() functions. This isn't
+ideal because DMA is used only for relatively large (> 64 words or 256
+bytes) and using uncached memory for this might be slow. Reworking this
+to use cached memory for faster access and reintroducing the cache
+maintenance calls is probably worth a follow-up patch.
 
-These originate from the fbdev client checking for the presence of the
-DRIVER_MODESET flag and returning -EOPNOTSUPP. However, if a driver does
-not support DRIVER_MODESET this is entirely expected and the error isn't
-helpful.
-
-Prevent this misleading error message by setting up the DRM clients only
-if modesetting is enabled.
-
-Changes in v2:
-- use DRIVER_MODESET check to avoid registering any clients
-
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Reported-by: Brad Griffis <bgriffis@nvidia.com>
+Fixes: 017f1b0bae08 ("spi: tegra210-quad: Add support for internal DMA")
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/clients/drm_client_setup.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/spi/spi-tegra210-quad.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/clients/drm_client_setup.c b/drivers/gpu/drm/clients/drm_client_setup.c
-index e17265039ca8..e460ad354de2 100644
---- a/drivers/gpu/drm/clients/drm_client_setup.c
-+++ b/drivers/gpu/drm/clients/drm_client_setup.c
-@@ -2,6 +2,7 @@
- 
- #include <drm/clients/drm_client_setup.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_print.h>
- 
-@@ -31,6 +32,10 @@ MODULE_PARM_DESC(active,
-  */
- void drm_client_setup(struct drm_device *dev, const struct drm_format_info *format)
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 3581757a269b..3be7499db21e 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -407,9 +407,6 @@ tegra_qspi_read_rx_fifo_to_client_rxbuf(struct tegra_qspi *tqspi, struct spi_tra
+ static void
+ tegra_qspi_copy_client_txbuf_to_qspi_txbuf(struct tegra_qspi *tqspi, struct spi_transfer *t)
  {
-+	if (!drm_core_check_feature(dev, DRIVER_MODESET)) {
-+		drm_dbg(dev, "driver does not support mode-setting, skipping DRM clients\n");
-+		return;
-+	}
+-	dma_sync_single_for_cpu(tqspi->dev, tqspi->tx_dma_phys,
+-				tqspi->dma_buf_size, DMA_TO_DEVICE);
+-
+ 	/*
+ 	 * In packed mode, each word in FIFO may contain multiple packets
+ 	 * based on bits per word. So all bytes in each FIFO word are valid.
+@@ -442,17 +439,11 @@ tegra_qspi_copy_client_txbuf_to_qspi_txbuf(struct tegra_qspi *tqspi, struct spi_
  
- #ifdef CONFIG_DRM_FBDEV_EMULATION
- 	if (!strcmp(drm_client_default, "fbdev")) {
+ 		tqspi->cur_tx_pos += write_bytes;
+ 	}
+-
+-	dma_sync_single_for_device(tqspi->dev, tqspi->tx_dma_phys,
+-				   tqspi->dma_buf_size, DMA_TO_DEVICE);
+ }
+ 
+ static void
+ tegra_qspi_copy_qspi_rxbuf_to_client_rxbuf(struct tegra_qspi *tqspi, struct spi_transfer *t)
+ {
+-	dma_sync_single_for_cpu(tqspi->dev, tqspi->rx_dma_phys,
+-				tqspi->dma_buf_size, DMA_FROM_DEVICE);
+-
+ 	if (tqspi->is_packed) {
+ 		tqspi->cur_rx_pos += tqspi->curr_dma_words * tqspi->bytes_per_word;
+ 	} else {
+@@ -478,9 +469,6 @@ tegra_qspi_copy_qspi_rxbuf_to_client_rxbuf(struct tegra_qspi *tqspi, struct spi_
+ 
+ 		tqspi->cur_rx_pos += read_bytes;
+ 	}
+-
+-	dma_sync_single_for_device(tqspi->dev, tqspi->rx_dma_phys,
+-				   tqspi->dma_buf_size, DMA_FROM_DEVICE);
+ }
+ 
+ static void tegra_qspi_dma_complete(void *args)
+@@ -701,8 +689,6 @@ static int tegra_qspi_start_dma_based_transfer(struct tegra_qspi *tqspi, struct
+ 				return ret;
+ 			}
+ 
+-			dma_sync_single_for_device(tqspi->dev, tqspi->rx_dma_phys,
+-						   tqspi->dma_buf_size, DMA_FROM_DEVICE);
+ 			ret = tegra_qspi_start_rx_dma(tqspi, t, len);
+ 			if (ret < 0) {
+ 				dev_err(tqspi->dev, "failed to start RX DMA: %d\n", ret);
 -- 
 2.49.0
 
