@@ -1,37 +1,37 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0656279DCF
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Jun 2025 09:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB0A279DCB
+	for <linux-tegra@vger.kernel.org>; Fri, 13 Jun 2025 09:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749805494; cv=none; b=OK3YpjEyTqku7WEDzjjR5EsiQycmC0coFzzYhALPMdbt1mLLeJ+saXPjnI1pcMeS5T0T6ZOWNXgJIbBEqnxNnDaLLIhGfTYAraJD43Rl4mszBggTDHvb2H0EwdXxzr2Zj0rMFW89HJ0LiA8OKfy1mGuv/0bFLbpHa3pdW1eKtJQ=
+	t=1749805499; cv=none; b=emVXcjoOncf8k+2mBV2/WgMtS4kOl/gk964DdSuReG/pl20oqggmmgzlY39+Evta/b6yrLuhZk4PIzczpgSJto5nD3w2ZRt3MdJSDmOr9bFCt65npWDNlIo5BrCpNVRRGq++Exk470UptjJxwa65+bUibZyLAd6mFu3F3SKw2A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749805494; c=relaxed/simple;
-	bh=vjVu+TZ1h5EKN/QtvGFqa83iNMQAqZrvADrx7gJDzpg=;
+	s=arc-20240116; t=1749805499; c=relaxed/simple;
+	bh=6sqMloEw6vgJ2EUYl3sL8N+MnZh6iWobKQRxEq2YSKQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qmYsWzeI1GbP/T/KwM4QgYM46NT+n+l74YiLBK+uNRkZvMbucaAGPbH4cu9lkVC7K1GCSgNhSw+Jl26uzvdITDxbYbXLQZrLfRCpY5ql/QX+se2RY0VU4AsYUOY/5tKQrTXBVpW7pl8u0gFq6m4iirjCIcrrwAnlS1ULUfCRWXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=OU9XkPOHX2+3OzeMBTwI2qXRAMN9IKOMTn65nOZ4jkKX7hQvZeU1ZnpqBao2nObMbVRqqf2xQrMaGhumXJk7wSX/01qSlDNUUbrRfIJis+7wLJsEYW6zaIO3imVa1Bix/dNZHX4e+Af9tS7pcyjWqRlaYBbY+hKkDP3upwJ/hmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AA4B22126D;
-	Fri, 13 Jun 2025 09:04:40 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5C92E1F850;
+	Fri, 13 Jun 2025 09:04:39 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
 	none
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 03FC013A9C;
-	Fri, 13 Jun 2025 09:04:39 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB29B13A9C;
+	Fri, 13 Jun 2025 09:04:38 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6LJgO6fpS2inNAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 13 Jun 2025 09:04:39 +0000
+	id aIs2MKbpS2inNAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 13 Jun 2025 09:04:38 +0000
 From: Thomas Zimmermann <tzimmermann@suse.de>
 To: simona@ffwll.ch,
 	airlied@gmail.com,
@@ -53,15 +53,10 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
 	intel-xe@lists.freedesktop.org,
 	xen-devel@lists.xenproject.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v5 07/25] drm/exynos: Compute dumb-buffer sizes with drm_mode_size_dumb()
-Date: Fri, 13 Jun 2025 11:00:26 +0200
-Message-ID: <20250613090431.127087-8-tzimmermann@suse.de>
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v5 05/25] drm/gem-vram: Compute dumb-buffer sizes with drm_mode_size_dumb()
+Date: Fri, 13 Jun 2025 11:00:24 +0200
+Message-ID: <20250613090431.127087-6-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613090431.127087-1-tzimmermann@suse.de>
 References: <20250613090431.127087-1-tzimmermann@suse.de>
@@ -80,7 +75,7 @@ X-Spam-Level:
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	REPLY(-4.00)[]
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: AA4B22126D
+X-Rspamd-Queue-Id: 5C92E1F850
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
@@ -88,50 +83,62 @@ X-Rspamd-Action: no action
 X-Spam-Score: -4.00
 
 Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-buffer size. No alignment required.
+buffer size. Inline code from drm_gem_vram_fill_create_dumb() without
+the existing size computation. Align the pitch to a multiple of 8.
+
+Only hibmc and vboxvideo use gem-vram. Hibmc invokes the call to
+drm_gem_vram_fill_create_dumb() directly and is therefore not affected.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_gem_vram_helper.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 4787fee4696f..ffa1c02b4b1e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -11,6 +11,7 @@
- #include <linux/shmem_fs.h>
- #include <linux/module.h>
- 
+diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+index ead50fef5e7d..73383d5708e2 100644
+--- a/drivers/gpu/drm/drm_gem_vram_helper.c
++++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+@@ -6,6 +6,7 @@
+ #include <drm/drm_debugfs.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_drv.h>
 +#include <drm/drm_dumb_buffers.h>
- #include <drm/drm_prime.h>
- #include <drm/drm_vma_manager.h>
- #include <drm/exynos_drm.h>
-@@ -330,15 +331,16 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
- 	unsigned int flags;
- 	int ret;
+ #include <drm/drm_file.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem_atomic_helper.h>
+@@ -544,10 +545,31 @@ int drm_gem_vram_driver_dumb_create(struct drm_file *file,
+ 				    struct drm_device *dev,
+ 				    struct drm_mode_create_dumb *args)
+ {
++	struct drm_gem_vram_object *gbo;
++	int ret;
++
+ 	if (WARN_ONCE(!dev->vram_mm, "VRAM MM not initialized"))
+ 		return -EINVAL;
  
-+	ret = drm_mode_size_dumb(dev, args, 0, 0);
+-	return drm_gem_vram_fill_create_dumb(file, dev, 0, 0, args);
++	ret = drm_mode_size_dumb(dev, args, SZ_8, 0);
 +	if (ret)
 +		return ret;
 +
- 	/*
- 	 * allocate memory to be used for framebuffer.
- 	 * - this callback would be called by user application
- 	 *	with DRM_IOCTL_MODE_CREATE_DUMB command.
- 	 */
++	gbo = drm_gem_vram_create(dev, args->size, 0);
++	if (IS_ERR(gbo))
++		return PTR_ERR(gbo);
++
++	ret = drm_gem_handle_create(file, &gbo->bo.base, &args->handle);
++	if (ret)
++		goto err_drm_gem_object_put;
++
++	drm_gem_object_put(&gbo->bo.base);
++
++	return 0;
++
++err_drm_gem_object_put:
++	drm_gem_object_put(&gbo->bo.base);
++	return ret;
+ }
+ EXPORT_SYMBOL(drm_gem_vram_driver_dumb_create);
  
--	args->pitch = args->width * ((args->bpp + 7) / 8);
--	args->size = args->pitch * args->height;
--
- 	if (is_drm_iommu_supported(dev))
- 		flags = EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC;
- 	else
 -- 
 2.49.0
 
