@@ -1,111 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38F92F4311;
-	Fri, 13 Jun 2025 06:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDE825A327;
+	Fri, 13 Jun 2025 07:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749795440; cv=none; b=fBM/2vQzzzg3SW+hT/wAqcH4EddX7DGNJ5diHPudGMqH4rz8J4MDz2xk8l3MhgOX3mA7piPZLlxfRAORY4+6XdgYZUp9Ilud0x375kPkB9/ia16ImZ/SP7qlXGLqws714rPipwwhTqnc/uBL9ev23+QhI0XBAXV14cBU7k91fCo=
+	t=1749798045; cv=none; b=VR0NvHsYKnHTn1C2RqhUUF6+y1avWm0aQLNCRE4jVQq/xSLKej3RK9WRdFueEJwuGvCFhV+IfGJoA9N+IcIqPpgjqPXu9m7g6BARbXAO+sSZN8W5EAo2p950+qqIsBR0UWFbYyMFrZf8CgPkIOiJwpUeTncYIbjcObbRNDUIR8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749795440; c=relaxed/simple;
-	bh=7uMJRBkZTwSojUVs3ahTYNVgJZbMZtxufQ23KVSHhVo=;
+	s=arc-20240116; t=1749798045; c=relaxed/simple;
+	bh=Bvj8CtaShUexAfMaH2rcjFAH8uSwrjT3+TlcJ5+aHgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTuLeFoF503hcTzJaZLgW75tkZqAA0oXHkqO6xVjqDN3/BzA3SvOR3cHCSxSsNHhC/7gBOTPpSLbrJjzTOc9jNMtkxqJv3lyZd3aWMIivXRohkPPGsBY5NfKnMiiRJewszfbLYe1CEIT7ALxiobiB45L4dVD8LO0cCfen7qE2vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ents2dGN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtyRWnfyAu6GzgK/2P1RUy3ybrLyTLJg5oJN6cG//Obo+BL/juZzUu+g889v52GP6LbmLJ9TMn3/1+xZey+zR7F0uprXD+0oeqCCsKHAwft/0zBNXCOebAZfUMDAcJTyJMkTfpirgNjyq6fL4W4PwQH3TvFWqi7JoYwVZRy5yTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=euIEhjk7; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ents2dGN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D517C4CEE3;
-	Fri, 13 Jun 2025 06:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749795439;
-	bh=7uMJRBkZTwSojUVs3ahTYNVgJZbMZtxufQ23KVSHhVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ents2dGNfB23pNE1ivbyQHn7NoDaRtC7gaOQQYrZRea4T3Ryhav8R/BiPHK6ycket
-	 5k7wITWgPyhYqf2wdlLYxqJzcHlGV6e4HrK4ZYQDvNJWl5U8zumJyn9v0XuF2FMIoD
-	 b5aUZzaa13PY1gygiP3Qa4/K0YooL4qt2wZAXgF3390YYNbxI/oH3Ayy8CW0QKyy0q
-	 TY8EomBnEh26TIe+iORQjC7ILgznQX7nCfnU7jZ1v42DgSeYyY8NSryD7JQq/FRQ1T
-	 vxrbiCBihl6ygke0c+sQMJNLWIO3Uy9j0BEFeFXZaLmHbdRbTXWWqIw4rTz8590D8R
-	 fsHioFynjJ1Yg==
-Date: Fri, 13 Jun 2025 11:47:09 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: webgeek1234@gmail.com
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] PCI: tegra: Allow building as a module
-Message-ID: <nz76wk5yqytag255jijxlyuodzpo3fm6d5coxutqrd7tgomzxm@pwzvpv4frjxu>
-References: <20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="euIEhjk7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749798044; x=1781334044;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bvj8CtaShUexAfMaH2rcjFAH8uSwrjT3+TlcJ5+aHgs=;
+  b=euIEhjk75uNY27/cmPZsIRC4ZAkVHCDWmVu13CNSZAOddjYF3JYCgjTV
+   fxahn/RL8Ew2pA1oDxFLDa+f/nwdfkHgDGh5A5HX8B4nzt503IfIWUtqC
+   nl+BvhbtUxudb+pseT/XFG6EVl6ptSmhlOCxbMSu9hw3fUtiAwaoh3gON
+   Yj/NiP4KTLx9RLzGW3OHPzC0IT8mFrMC6rZPR/ZDoV8ERosdkQezsYTqr
+   iUBoA7fc4fl3JsKZr0wmEUbu3Gla+DdDH5uXDhB/J9xEZKW0uY4ID1ZLn
+   96YMbjEC9YG2TsV6W1a2vBjljFbLrC6Ta8a0hR/b7ZtmUVd1IChUFhvL9
+   A==;
+X-CSE-ConnectionGUID: S1I/r/I2Q0aHD4ZR6NLVlQ==
+X-CSE-MsgGUID: OYObDru+S5KGjsJrP/3wEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="55803189"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="55803189"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:00:43 -0700
+X-CSE-ConnectionGUID: 7//jaAb9Tjqk9OACg5dc1A==
+X-CSE-MsgGUID: u/GJR5lmQHun57KFWNtcEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="147625757"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 00:00:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uPyOy-00000006AQq-4AUO;
+	Fri, 13 Jun 2025 10:00:36 +0300
+Date: Fri, 13 Jun 2025 10:00:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: andy.shevchenko@gmail.com, andi.shyti@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
+	krzk+dt@kernel.org, ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	p.zabel@pengutronix.de, robh@kernel.org, thierry.reding@gmail.com
+Subject: Re: [PATCH v4 2/3] i2c: tegra: make reset an optional property
+Message-ID: <aEvMlKIfcccD_s-O@smile.fi.intel.com>
+References: <aEsf7Ml__JE1ixQX@surfacebook.localdomain>
+ <20250613060032.14927-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com>
+In-Reply-To: <20250613060032.14927-1-akhilrajeev@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, May 07, 2025 at 10:25:51PM -0500, Aaron Kling via B4 Relay wrote:
+On Fri, Jun 13, 2025 at 11:30:32AM +0530, Akhil R wrote:
+> On Thu, 12 Jun 2025 21:43:56 +0300, Andy Shevchenko wrote:
 
-You should always add the context of the series in the cover letter.
+> >> >> >     if (handle)
+> >> >> >             err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> >> >> > -   else
+> >> >> > +   else if (i2c_dev->rst)
+> >> >> >             err = reset_control_reset(i2c_dev->rst);
+> >> >> > +   else
+> >> >> > +           err = tegra_i2c_master_reset(i2c_dev);
+> >> >>
+> >> >> Can you please take a look here? Should the reset happen in ACPI?
+> >> >
+> >> > This is a good question. Without seeing all the implementations of _RST method
+> >> > for the platforms based on this SoC it's hard to say. Ideally the _RST (which
+> >> > is called above) must handle it properly, but firmwares have bugs...
+> >> >
+> >> > TL;DR: I think the approach is correct, and if any bug in ACPI will be found,
+> >> > the workaround (quirk) needs to be added here later on.
+> >> 
+> >> As in Thierry's comment, I was in thought of updating the code as below.
+> >> Does it make sense or would it be better keep what it is there now?
+> >> 
+> >> if (handle && acpi_has_method(handle, "_RST"))
+> >> 	err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> >> else if (i2c_dev->rst)
+> >> 	err = reset_control_reset(i2c_dev->rst);
+> >> else
+> >> 	err = tegra_i2c_master_reset(i2c_dev);
+> >
+> > This will change current behaviour for the ACPI based platforms that do not
+> > have an _RST method. At bare minumum this has to be elaborated in the commit
+> > message with an explanation why it's not a probnlem.
+> 
+> This sequence is hit only at boot and on any error. It should be good to reset
+> the controller internally at least for those cases. We are reconfiguring the I2C
+> anyway after this and hence should not cause any problem.
+> Will add these in the commit message as well.
 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
-> Changes in v6:
-> - Remove unused debugfs cleanup function, as caught by kernel ci
-> - Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com
-> 
-> Changes in v5:
-> - Copy commit message exactly word for word on patch 1, as required by reviewer
-> - Delete remove callback in patch 3, per request
-> - Don't clean up debugfs, per request, which drops patch 4 entirely
-> - Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com
-> 
-> Changes in v4:
-> - Updated commit messages for patches 1 and 2, per review
-> - Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com
-> 
-> Changes in v3:
-> - Add patch to drop remove callback, per request
-> - Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c11a4b912446@gmail.com
-> 
-> Changes in v2:
-> - Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
->   building pci-tegra as a module for arm
-> - Drop module exit to prevent module unloading, as requested
-> - Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com
-> 
-> ---
-> Aaron Kling (3):
->       irqdomain: Export irq_domain_free_irqs
->       cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+This is not enough. You should explain the ACPI case. The above is just generic
+wording as I read it. It does not explain 1) if there are ACPI firmwares that
+have no _RST method for this device; 2) why it's not a problem for them to do
+like this and why it was not supported before (with the current code this
+platform will return an error on the method evaluation. Moreover the current
+code is buggy. The acpi_evaluate_object() returns an ACPI error code and not
+Linux one. so, for the such platforms (which I think do not exist, but still)
+the err will have positive code which may be interpreted incorrectly.
 
-I need an ACK from the cpuidle maintainers to take these 3 patches through PCI
-tree.
+So, fix the bug first, then rebase your code based on that change and
+extend the commit message to really elaborate on all of the aspects.
+W/o this done it's no go change.
 
-- Mani
 
->       PCI: tegra: Allow building as a module
-> 
->  drivers/cpuidle/cpuidle-tegra.c    |  1 +
->  drivers/pci/controller/Kconfig     |  2 +-
->  drivers/pci/controller/pci-tegra.c | 35 ++++-------------------------------
->  kernel/irq/irqdomain.c             |  1 +
->  4 files changed, 7 insertions(+), 32 deletions(-)
-> ---
-> base-commit: 18352e73612d60b81790d2437845276ae499b64a
-> change-id: 20250313-pci-tegra-module-7cbd1c5e70af
-> 
-> Best regards,
-> -- 
-> Aaron Kling <webgeek1234@gmail.com>
-> 
-> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With Best Regards,
+Andy Shevchenko
+
+
