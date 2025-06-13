@@ -1,37 +1,78 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3683D281356
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Jun 2025 09:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E987B280CE5
+	for <linux-tegra@vger.kernel.org>; Fri, 13 Jun 2025 09:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749805519; cv=none; b=eDgw4B53FO7lmzNOp9/fOi/+xOs5Omy0HzwYbl1IelFjGKBibs0d0RHJ76DgtMnrkmDB4EP3M/sd7UV0eIbb80OpduTKnl9SG1r+fnEemRPpSrjuwH5pcj0e4WZ3QbsJIyq3lxjhI8/XdmHlxrddDNJlA7irCyIEWP7Kde88Vqo=
+	t=1749805525; cv=none; b=CrLfVWZPWE1ZPwaLBnWxAIFXq4pxZbCKz7fmY6+xmI1jmUNEVfWN2Ie5Tuwf5AYysHFQI2tlLHdxpeYvMLebiUYayjjpxoVZfvjmJpl064j0QgOOe+x1J3/61z0KUqJalTy5fO2sq/+PLC5bTmW9u1rInQ7RDmnT/hgmLrfeIiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749805519; c=relaxed/simple;
-	bh=ohcWkK9YM0DMhWXNvySFO0rjD3ij4C2UsqkIU9dIdE0=;
+	s=arc-20240116; t=1749805525; c=relaxed/simple;
+	bh=7npq0SVa454z9aGOGEKztMKtvRwJLcdH6kq3Jc4OK7c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m7cVm4jhsBcC4W7R+NG5tUlqo/rqL2hDGYncIrk/HesnSqa2eDcVahvOFETWgp0E4mTm02n9YquCfUOwRFzXHMHG/Y+/Rn4nFSInn4cuMrQm5uyCW6V3I8vyqe3YLZdjvHXXPFmF52zJfyDdEGeapbCjzJo6fikiWbbGRQTF27E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=SQ7AK5LLXG7OfYZWO+YpD8SpIvg9kqlLUDKMFr1y3M+4Im2SXl92tyeehBcnk8JBlOjp3rFLWU52uB1LH8j++FozJ9m+C+ZvBgEq8zdqmGJx2Yjb1YWNumBM2nHdBLn3YkGT+g1unfNkuoO1cIT3A5VsLsgBeWPuCIICBjy5sr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OpvkHcV1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uh5rpvHS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OpvkHcV1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uh5rpvHS; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OpvkHcV1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uh5rpvHS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OpvkHcV1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uh5rpvHS"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1D02A2127F;
-	Fri, 13 Jun 2025 09:04:50 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6436921282;
+	Fri, 13 Jun 2025 09:04:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749805491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7jf9qOExxDcSOt4izp67/OXl6KEF+Jd/H4a7h9LsPuc=;
+	b=OpvkHcV1/2de0xS4OZzHVt9N8jm2reUe5KPT9bWKoZ9u4z1dvB8sO7YYkQVOyDC7JLzXrr
+	cvbV4vCNMIdtMSVxhO1smLBtMckCpfjFbUvWdvpBwoOGjK8llf8bXPfCzxP0Nh4BF+kTy4
+	3kVow4aDqx4epsUoxiGzL6JpexbF2vI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749805491;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7jf9qOExxDcSOt4izp67/OXl6KEF+Jd/H4a7h9LsPuc=;
+	b=uh5rpvHS8JlHCsb5KBUR7mEQa3z2/atdoBMkNf0dIomDDg2iOAkRvf0OrFRgb/vopVkntg
+	CudKOkXm40sL13Cg==
 Authentication-Results: smtp-out1.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749805491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7jf9qOExxDcSOt4izp67/OXl6KEF+Jd/H4a7h9LsPuc=;
+	b=OpvkHcV1/2de0xS4OZzHVt9N8jm2reUe5KPT9bWKoZ9u4z1dvB8sO7YYkQVOyDC7JLzXrr
+	cvbV4vCNMIdtMSVxhO1smLBtMckCpfjFbUvWdvpBwoOGjK8llf8bXPfCzxP0Nh4BF+kTy4
+	3kVow4aDqx4epsUoxiGzL6JpexbF2vI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749805491;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7jf9qOExxDcSOt4izp67/OXl6KEF+Jd/H4a7h9LsPuc=;
+	b=uh5rpvHS8JlHCsb5KBUR7mEQa3z2/atdoBMkNf0dIomDDg2iOAkRvf0OrFRgb/vopVkntg
+	CudKOkXm40sL13Cg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20C8F137FE;
-	Fri, 13 Jun 2025 09:04:49 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6143137FE;
+	Fri, 13 Jun 2025 09:04:50 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OJSgBrHpS2inNAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 13 Jun 2025 09:04:49 +0000
+	id sAX9LrLpS2inNAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 13 Jun 2025 09:04:50 +0000
 From: Thomas Zimmermann <tzimmermann@suse.de>
 To: simona@ffwll.ch,
 	airlied@gmail.com,
@@ -54,12 +95,11 @@ Cc: dri-devel@lists.freedesktop.org,
 	intel-xe@lists.freedesktop.org,
 	xen-devel@lists.xenproject.org,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 20/25] drm/tegra: Compute dumb-buffer sizes with drm_mode_size_dumb()
-Date: Fri, 13 Jun 2025 11:00:39 +0200
-Message-ID: <20250613090431.127087-21-tzimmermann@suse.de>
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v5 22/25] drm/vmwgfx: Compute dumb-buffer sizes with drm_mode_size_dumb()
+Date: Fri, 13 Jun 2025 11:00:41 +0200
+Message-ID: <20250613090431.127087-23-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613090431.127087-1-tzimmermann@suse.de>
 References: <20250613090431.127087-1-tzimmermann@suse.de>
@@ -70,62 +110,84 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	TAGGED_RCPT(0.00)[]
-X-Rspamd-Queue-Id: 1D02A2127F
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.00
+X-Spam-Score: -5.30
+X-Spamd-Result: default: False [-5.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[ffwll.ch,gmail.com,kernel.org,linux.intel.com,linux-m68k.org,ideasonboard.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Level: 
 
-Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-buffer size. Align the pitch according to hardware requirements.
+Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch
+and buffer size. No alignment required.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Reviewed-by: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
 ---
- drivers/gpu/drm/tegra/gem.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index dbc1394f96b8..9b9dabbc8ec9 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -16,6 +16,7 @@
- #include <linux/vmalloc.h>
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
+index 7e281c3c6bc5..c4ac9b47e23a 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
+@@ -15,6 +15,7 @@
+ #include "vmw_surface_cache.h"
+ #include "device_include/svga3d_surfacedefs.h"
  
- #include <drm/drm_drv.h>
 +#include <drm/drm_dumb_buffers.h>
- #include <drm/drm_prime.h>
+ #include <drm/ttm/ttm_placement.h>
  
- #include "drm.h"
-@@ -542,12 +543,13 @@ void tegra_bo_free_object(struct drm_gem_object *gem)
- int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
- 			 struct drm_mode_create_dumb *args)
- {
--	unsigned int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
- 	struct tegra_drm *tegra = drm->dev_private;
- 	struct tegra_bo *bo;
-+	int ret;
+ #define SVGA3D_FLAGS_64(upper32, lower32) (((uint64_t)upper32 << 32) | lower32)
+@@ -2267,23 +2268,9 @@ int vmw_dumb_create(struct drm_file *file_priv,
+ 	 * contents is going to be rendered guest side.
+ 	 */
+ 	if (!dev_priv->has_mob || !vmw_supports_3d(dev_priv)) {
+-		int cpp = DIV_ROUND_UP(args->bpp, 8);
+-
+-		switch (cpp) {
+-		case 1: /* DRM_FORMAT_C8 */
+-		case 2: /* DRM_FORMAT_RGB565 */
+-		case 4: /* DRM_FORMAT_XRGB8888 */
+-			break;
+-		default:
+-			/*
+-			 * Dumb buffers don't allow anything else.
+-			 * This is tested via IGT's dumb_buffers
+-			 */
+-			return -EINVAL;
+-		}
+-
+-		args->pitch = args->width * cpp;
+-		args->size = ALIGN(args->pitch * args->height, PAGE_SIZE);
++		ret = drm_mode_size_dumb(dev, args, 0, 0);
++		if (ret)
++			return ret;
  
--	args->pitch = round_up(min_pitch, tegra->pitch_align);
--	args->size = args->pitch * args->height;
-+	ret = drm_mode_size_dumb(drm, args, tegra->pitch_align, 0);
-+	if (ret)
-+		return ret;
- 
- 	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
- 					 &args->handle);
+ 		ret = vmw_gem_object_create_with_handle(dev_priv, file_priv,
+ 							args->size, &args->handle,
 -- 
 2.49.0
 
