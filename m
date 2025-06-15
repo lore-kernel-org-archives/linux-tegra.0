@@ -1,41 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4749D381C4;
-	Sun, 15 Jun 2025 16:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F8381C4;
+	Sun, 15 Jun 2025 16:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750006327; cv=none; b=sU8xnij3JmyvEbizwmQkzblg5Ehskjun/XzZQ6DFphVgMtO9TfwrcHz4lNxUJ9CUUS9guNQM170xr2Dnl88WXqrvVc0OQN5AbKBhCBKl0XFSNJkzucy+B25h4AohMCIAfWQ2o96izTpEptyoqhE8GdUKKjeYI2ZtHKVvLvOnT2w=
+	t=1750006330; cv=none; b=GWGlh1lU9lIKP7s7COrmaEQ6uw2pWWeWnVEM3Hr1vJQbSXFRqsA/nZtbtUd+wntKNh302mc9HnfqeM1NV8DSgxqJ9YFdvfN2jNPk/fmEKMp76hRNQT++AnQpLzGSbdDBh6XJ9SBBJZv2A1r8pmu+8Pzp8IKNcB5q2jG7iUVFsgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750006327; c=relaxed/simple;
-	bh=eQhy7wTqmA7Th7Sg0Iuj5eoKYhPZYEf/yoxdoGc0Wkk=;
+	s=arc-20240116; t=1750006330; c=relaxed/simple;
+	bh=l/fGt3Zz/3ZUxPCveJXSuMJcWc2tzptxBmmNZmFRBqk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=boC5tYsgwTRouP/lgCJFJPH6V1wcDf4kawXWnd56A6mBcw9fuRCOlxlORgDBEhbQmme/N6OmWeUBq23FgsnM3BKcxL5bxDOQS7hIS+7FIfdKiD0b5kE4Ky1Wala33B/Ko/ljYPl+9LTTfe2jIIEjPJ1mU3YteXB0lD6tsLypDY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/qzwb0D; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=oqK0GQAwKAWxHEwwq/veqMUr7Uwk6YXOynvwBb/N9NOUngjVxRjddfPKvkYaL8Y/wBgZeYqcfia1jjeYPH83IOIX7lMK8EtcEb/P7kmFtdh0RpP8N1z8kxd0GjlfqnB8V3ZXHgPFZsvfcwlTzrAxv7raAMWSUY3lq4jiTrxggns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YP5jYylc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/qzwb0D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C14C4CEE3;
-	Sun, 15 Jun 2025 16:52:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YP5jYylc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD49C4CEEF;
+	Sun, 15 Jun 2025 16:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750006325;
-	bh=eQhy7wTqmA7Th7Sg0Iuj5eoKYhPZYEf/yoxdoGc0Wkk=;
+	s=k20201202; t=1750006329;
+	bh=l/fGt3Zz/3ZUxPCveJXSuMJcWc2tzptxBmmNZmFRBqk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=C/qzwb0D5z/ffIt3Pa/cpHVflVJPIsj0Lg0ZUyQ47dblRO4RqLI0lkkR72hoETsSE
-	 qKvTAaXjLFfLHTCUb95YqfbhqY0xxKckdCMTyQ58NR4+y2s2rGl5DLoWDSN1B7uQrY
-	 mEIXNojUZLFYMkR7ZpbwYbaYKleB9Q3AwHFvzgbikUKPsxLRRChTgpCxMHjk/XxYT1
-	 Z7doCzYxKMzdksPTxciYyS1fkJfuVW7UMlQCuXPxPZIzdxrXesUtpaP4FH3RRh5NIm
-	 s0GDV5I4w7dWpBLklDG2RUVxxDeoYmVCo3MqJo40/O12nWtOL1IQecq3c5mhIcFB2b
-	 Vir1aVL+h04iA==
+	b=YP5jYylcUkG7aEJrMeOvZkqIxxQElInVpAhhRQbwPmlIjZK40iv6coxEFYMM4lJoM
+	 zX4iH1OzbgLpKp3LdR0vp1ppFKmd23IGLbvNYRDKUMJImYviyE04t6lvETQoxnk4fS
+	 5Fd+kARy2kvbrEkehDI8Zc6HKu8cO82fNLHlsVbVYCPsI9x+/z7qrigBEJohE907NY
+	 FqPKRlde3tr3Swxr0vU/H6WNiVf+9whfA5ZhUs9CthKxlIYXEzzDUjbnEM9MzImI23
+	 B369fdHtqwOpPWmEcf3mFk72XDHisdgVsmHsVko9FPR/SbvLPu+n+DOAEB/lbxV1gm
+	 5HDR3m2I9DrmA==
 From: Vinod Koul <vkoul@kernel.org>
 To: jckuo@nvidia.com, kishon@kernel.org, thierry.reding@gmail.com, 
  jonathanh@nvidia.com, Wayne Chang <waynec@nvidia.com>
 Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250519090929.3132456-1-waynec@nvidia.com>
-References: <20250519090929.3132456-1-waynec@nvidia.com>
-Subject: Re: [PATCH V2 0/2] Disable periodic tracking on Tegra234
-Message-Id: <175000632281.1180789.12546166906023856282.b4-ty@kernel.org>
-Date: Sun, 15 Jun 2025 22:22:02 +0530
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20250502092606.2275682-1-waynec@nvidia.com>
+References: <20250502092606.2275682-1-waynec@nvidia.com>
+Subject: Re: [PATCH 1/1] phy: tegra: xusb: Fix unbalanced regulator disable
+ in UTMI PHY mode
+Message-Id: <175000632608.1180789.15034099318224353632.b4-ty@kernel.org>
+Date: Sun, 15 Jun 2025 22:22:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,25 +48,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 19 May 2025 17:09:27 +0800, Wayne Chang wrote:
-> Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from trk_hw_mode and disable
-> periodic tracking on Tegra234
+On Fri, 02 May 2025 17:26:06 +0800, Wayne Chang wrote:
+> When transitioning from USB_ROLE_DEVICE to USB_ROLE_NONE, the code
+> assumed that the regulator should be disabled. However, if the regulator
+> is marked as always-on, regulator_is_enabled() continues to return true,
+> leading to an incorrect attempt to disable a regulator which is not
+> enabled.
 > 
-> Haotien Hsu (1):
->   phy: tegra: xusb: Disable periodic tracking on Tegra234
-> 
-> Wayne Chang (1):
->   phy: tegra: xusb: Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from
->     trk_hw_mode
+> This can result in warnings such as:
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] phy: tegra: xusb: Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from trk_hw_mode
-      commit: 24c63c590adca310e0df95c77cf7aa5552bc3fc5
-[2/2] phy: tegra: xusb: Disable periodic tracking on Tegra234
-      commit: 7be54870e9bf5ed0b4fe2a23b41a630527882de5
+[1/1] phy: tegra: xusb: Fix unbalanced regulator disable in UTMI PHY mode
+      commit: cefc1caee9dd06c69e2d807edc5949b329f52b22
 
 Best regards,
 -- 
