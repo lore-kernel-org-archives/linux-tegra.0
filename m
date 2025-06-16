@@ -1,96 +1,102 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2D42EB5A9;
-	Mon, 16 Jun 2025 11:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA94C2980B0;
+	Mon, 16 Jun 2025 13:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750074879; cv=none; b=ll/cZXV+ymQPrQPeEkfqYABGGy9QkF/BoUpqOmTJlsK0LjUf7MEGIo3+RyI51UpSJycXjRlWPjyghJzIUQ+6zekjPwJOxQrHoEKh2w4COEOzmYejfPk19G4f6BEfgALnDEUrDllbPijtFAW9RfFdlvfmy+2oXjQJmsn8y88Z7G0=
+	t=1750079190; cv=none; b=luBuJgZ1fheFrL22eklkDggi7zVU3LBuG5o6QaKhR+Ke3ConRCQ7zycjnEGBPga+yY+iaux9oW1rNV73wxKgW46etVaeVhjcQdpkYuHb+8peDjiaCntcVpnjZ7NIgCMcb8RN8gFPrvV3SLS18wZVJgjbAFGYkEZif+8STypxo0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750074879; c=relaxed/simple;
-	bh=a4308r24XGn+BMFT+GUDp6JTrDSZTiUE/F3YsroUvUM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ou5xmJMU3kOmoLaNeBePW361mONUW4+hD4B7eRb3bDr1lMfHgwjntOxRWSNg2iQr2FuWjPW8BWCRvjgOjoKihLqtADPxKoH52Gdoyht+E7+hAnSGbEuAeiDKmx7AVtv7JKaT2JklFuFlfrBRefaDU8Y5W43O9S881YuJogI4t/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCndAI6n; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1750079190; c=relaxed/simple;
+	bh=T6wJzTLO+nGf43vLM3Fwpt1bP/VNgv49Gb8skEx3yIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dr2Nq7XA7bNzdylalMWP+RoYB3HKjNsNZdeKLs3S4Hm/zL391JOxgDa1cOjUaMCB6VGO7PUHVw+YrZ3NisYj7SiW1NuIO633BEvMdE6u9HkpjKL7wurM4ZMMfsD7nKS3RFv/KOnhQSufLn5qDAyehltkSoEDG2pVktH2oL30To4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Etludh7d; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCndAI6n"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750074878; x=1781610878;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=a4308r24XGn+BMFT+GUDp6JTrDSZTiUE/F3YsroUvUM=;
-  b=MCndAI6nQbgl+aW7ifyAHQxlGUoRgSluXnyeIfbW4oqWxG8C6uXOXF66
-   HT+x+k8do595YAw27leKCFR16/Dk5wCV6xijYPv1xkfvCdJr4bB/XW7vQ
-   wMW4j/yH/kFV/SMYy/uvjJmx79BOjGTfi4DWaBANQ0sL/bOt+qe1imeNz
-   LTWDmNfW74jSKykI1YSskelSVy19ofnezf6vbZfaaX0eiAt531A+GK5rr
-   H7zgSUy1kHlQ2A+86slDVzh4KO8wFKlgmn36vM0ntLW9RQSwKvWTKIrlZ
-   5La080asbJbRuGC+1mPwBwgWMvkaE4GF9jL6IA9zJHbUNUHM8DPNjaw7j
-   Q==;
-X-CSE-ConnectionGUID: X52ILO8SQVCmwwS3K6pFvw==
-X-CSE-MsgGUID: 21Prh0tTQ360tgb8mwYStw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="51323398"
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="51323398"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:54:35 -0700
-X-CSE-ConnectionGUID: IYbJH8q2SSmGyMvltH3CVA==
-X-CSE-MsgGUID: VG9tbGEyRFWbq9Pf22lypw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="148824406"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.243.252]) ([10.124.243.252])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:54:29 -0700
-Message-ID: <78d05dff-f396-4214-a7fc-f0c674144aef@linux.intel.com>
-Date: Mon, 16 Jun 2025 19:54:26 +0800
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Etludh7d"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6EiGoP0CFRPN9DlmZM3Ult5DiFuokD7txHWgsRXBcRM=; b=Etludh7dptxTH6P3Xz+xzQmn4M
+	Pk9fgXsVBhX6nlUcl/bIdl8VkxWLYWFmfr/qZ1LWpn7R4uemH0Nb7uWb7aBEdNXWihw5Tx6OK0ZAt
+	RZG3PgaUf+ZuUqdsrp9D+lNIJxt3YM81WpBkrsQyhMhcZ7vWSAWI3ltxQTSETcXpE/Us=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uR9XH-00G2lm-N1; Mon, 16 Jun 2025 15:06:03 +0200
+Date: Mon, 16 Jun 2025 15:06:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Subbaraya Sundeep <sbhatta@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org,
+	Alexis Lothorrr <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH] net: stmmac: Fix PTP ref clock for Tegra234
+Message-ID: <e87b4398-41de-4584-87fe-b9ad1df32dbe@lunn.ch>
+References: <20250612062032.293275-1-jonathanh@nvidia.com>
+ <aEqyrWDPykceDM2x@a5393a930297>
+ <85e27a26-b115-49aa-8e23-963bff11f3f6@lunn.ch>
+ <e720596d-6fbb-40a4-9567-e8d05755cf6f@nvidia.com>
+ <353f4fd1-5081-48f4-84fd-ff58f2ba1698@lunn.ch>
+ <9544a718-1c1a-4c6b-96ae-d777400305a7@nvidia.com>
+ <5a3e1026-740a-4829-bfd2-ce4c4525d2a0@lunn.ch>
+ <f769098f-2268-491e-9c94-dbecf7a280a4@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, bagasdotme@gmail.com, robin.murphy@arm.com,
- joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
- jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
- nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
- mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
- iommu@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
- patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
- vasant.hegde@amd.com, dwmw2@infradead.org
-Subject: Re: [PATCH v6 17/25] iommufd: Allow an input data_type via
- iommu_hw_info
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <8e1d8432fb7e11f0ed514bc96690ece1f5e47fdd.1749884998.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <8e1d8432fb7e11f0ed514bc96690ece1f5e47fdd.1749884998.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f769098f-2268-491e-9c94-dbecf7a280a4@nvidia.com>
 
-On 6/14/2025 3:14 PM, Nicolin Chen wrote:
-> The iommu_hw_info can output via the out_data_type field the vendor data
-> type from a driver, but this only allows driver to report one data type.
+On Mon, Jun 16, 2025 at 11:06:54AM +0100, Jon Hunter wrote:
 > 
-> Now, with SMMUv3 having a Tegra241 CMDQV implementation, it has two sets
-> of types and data structs to report.
+> On 13/06/2025 14:22, Andrew Lunn wrote:
+> > > > So you can definitively say, PTP does actually work? You have ptp4l
+> > > > running with older kernels and DT blob, and it has sync to a grand
+> > > > master?
+> > > 
+> > > So no I can't say that and I have not done any testing with PTP to be clear.
+> > > However, the problem I see, is that because the driver defines the name as
+> > > 'ptp-ref', if we were to update both the device-tree and the driver now to
+> > > use the expected name 'ptp_ref', then and older device-tree will no longer
+> > > work with the new driver regardless of the PTP because the
+> > > devm_clk_bulk_get() in tegra_mgbe_probe() will fail.
+> > > 
+> > > I guess we could check to see if 'ptp-ref' or 'ptp_ref' is present during
+> > > the tegra_mgbe_probe() and then update the mgbe_clks array as necessary.
+> > 
+> > Lets just consider for the moment, that it never worked.
 > 
-> One way to support that is to use the same type field bidirectionally.
-> 
-> Reuse the same field by adding an "in_data_type", allowing user space to
-> request for a specific type and to get the corresponding data.
-> 
-> For backward compatibility, since the ioctl handler has never checked an
-> input value, add an IOMMU_HW_INFO_FLAG_INPUT_TYPE to switch between the
-> old output-only field and the new bidirectional field.
-> 
-> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+> To be clear, by 'it never worked', you are referring to only PTP support?
+> Then yes that is most likely.
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Yes, i'm just referring to PTP. I would be very surprised if
+sending/receiving Ethernet frames is broken, that gets lots of
+testing.
+
+> > If we change the device tree to the expected 'ptp_ref', some devices
+> > actually start working. None regress, because none ever worked. We can
+> > also get the DT change added to stable, so older devices start
+> > working. We keep the code nice and clean, no special case.
+> 
+> Although PTP may not work, basic ethernet support does and 'correcting' the
+> device-tree only, will break basic ethernet support for this device.
+
+We clearly don't want to do that. But we should be able to come up
+with a fix which does not make things worse. The obvious one is that
+we have both ptp-ref and ptp_ref in tegra234.dtsi, so that both
+mgbe_clks in dwmac-tegra.c and stmmac_probe_config_dt is happy.
+
+	Andrew
