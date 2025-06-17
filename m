@@ -1,145 +1,84 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CCB28C2D2;
-	Tue, 17 Jun 2025 12:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EBE199E9D;
+	Tue, 17 Jun 2025 13:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165189; cv=none; b=ASOh3Lko24uvhMsBdVbS+4e1aFO6fHvtRf0+2RYyU83HbAk2B+SozUBEortQxnPh120rJ90LV0MSDUB8Gr6sHVK3L3YzjVDKaWHjREGvYmXIxDcQe4fN3Wdq6FbwEt+nuxjZ2SjQOPuK9RC3GQLBK+P2Q8nTEgfindJXr3XCs4w=
+	t=1750166502; cv=none; b=VowpRTHlg2HAVJab1dV6MilqeYarW0/Xu1F1sbmxx3zCCOyMmPX1NaPLR1fMiYxkvH02KIYdFI5P03Y52EPtmb3Ca6misv0R3y4TYYfso7Gz+XB2y3rG/PsrGOUI6ZYJ/7ARAxSE0KhN3wwJ6uhkUdTneYjCjPCW4sBemCHszxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165189; c=relaxed/simple;
-	bh=oYOeIAfsmU4t9r2TCrVIZpfx7hejLpjjsg6BpCI0j9g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cJXdFp9/slGbFGbNGkvFQTvzocfyPWqWPJQOMvog+tlc9o7LHaHL0+aEOT0Ga2oEVaiioUlJa2W6PUudl3KbbwQxuuP0+9T6ho9XLHxywkMch56p0njhz2WCEatbfbHgxXj1ma5TpEthbq66L5Z9Fxr8CaZ35TWWzgFfJsIj8sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORMG9S8A; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1750166502; c=relaxed/simple;
+	bh=fkLB4KJre60wZsb+cBk8QXhaiGcgNVN5pkbyduMuRgM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MNTlfxY/SXaRi9u0VSo7So1TsmgCb/QFx4kKCpDn0CLOg8gr1DTolKgnHVIFwcMmpmaVn2nP76dsEA3PfcX2N8FsIhfJXcw575XeYqtAF5zytwpY0tP2WZZLsqD75StDFSEH9tuVQs1zi7F+OircIydOhBTRbDoOtd+/CaV4mAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMVNIq7s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORMG9S8A"
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-528ce9730cfso1367022e0c.3;
-        Tue, 17 Jun 2025 05:59:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750165186; x=1750769986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IJGnTu2P8k2zWLpKT9gQ0C6Ynav6qAdbDTnXBuG6SzE=;
-        b=ORMG9S8AviVWps2q7cE2qTujtqL3y/uL5aplY7pFiAH9qTSBls2RwtPaJiMJmARIeK
-         AtTIHejHFlJ56wUQT9UF+HUA205bz0F5ON1zg4YWtJlGEXM4JNlR2TFcZi09ykZxRUl5
-         pIAkKxarvVxANcFbDNWY6GUXb6yhazx1y6+2jojw+wiNZT2PF110J3QFfM9LtbrpLMVB
-         SD1YNpNm3NwZkt2YjIh5MJp4p9d5UVKxQZ5jLXIV87P/Kp/XAB/9AbdNhA/n/vGWGZhs
-         e92yE40k3oxrf4EKmcYHcuRZAmyEcVjdKD1lM2LW6obIZy/Iio18Pi7QTwyo4DyMgPMF
-         qVqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750165186; x=1750769986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IJGnTu2P8k2zWLpKT9gQ0C6Ynav6qAdbDTnXBuG6SzE=;
-        b=HofpYPYs9ptLzJcZotHvtvg1SL/K0PpkFCxuOcsggNaWgIQBkFQpC0qv94NDLjwItu
-         37mdsX87YTirTUCvNU9ggQXjTBF1YIAhp0N3jNm5ir4s90A4toX6lyj5nn3xROZJrLfe
-         ByHv7z6qUDBzRZtxFhpQMBRHr9QmZw+VdoFzw853xgzZ/rX+EnFzCg1UClRVlyAgBc8F
-         Zykg+Jhsq6o1LLhaMOsDJLqbmfCZkPPftLsYGPyfadHWWNAZWk0/gj9ihjWqoJP+D4St
-         FyDbwO8TnryYqp7AO3f3+xMtO44/rwV5m2FWccj5pt/5kYn+fte6Qzydx2WBAy0oaxwS
-         gdug==
-X-Forwarded-Encrypted: i=1; AJvYcCUUczxDnXsZLVuPzhPm+Ms5U01Ar1HG+S7DgD3ipwFyPwEsRa8hf9DIwYjtRM1YMqAVwYI1h9C5RuIBZzsl@vger.kernel.org, AJvYcCVOQALkpL0teT0Z4A2UxvkW8vp9yh/q4jZQg0E9rMxxuEtai4KKapEcu8DbN3EquYTVWiw4uThEprprFbS86ceukfg=@vger.kernel.org, AJvYcCXIuJvCwTo5OaELGFLQQCJS4tSpqeM7ZPG11QeegpCs2Xay6j3aAGG1HPj8nbepRbHOog+0z1M2BqHTRTpBiPsTwXU=@vger.kernel.org, AJvYcCXZNH3ieSC7kuEua8T11IAGnmNgdK8FTfOqI/zrABMwF3FTB4KnELnqIUeP9LNIdut9waidF2syXRtCZoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr+9YTg5SwfgY6wiTTAf+y1QjEeyHYKFnSy3NUlzocAPGwAGZT
-	3Bcs4q1u2P7/3Zkj1v00TO3B3Yev/1BN9tXzgmFWVQMWHrSxNjfI8Q+jWUd7jB+IhwpV+m+slzu
-	k6a1zGp2y8VzktfQaisoeWA0UjQWh5tk=
-X-Gm-Gg: ASbGncv5d3jeHrFmbelJT0RjFYrJCq6OQ22dHLuRO/4dlFGncOgOicIbJ8hCtSOQuxp
-	3PA6uH8amFpFYIwXQl3YMUqhmCyer4F6eToyhHoIwUeTNiD2p4vmURRJ7K0vuuSPlPA1GY5D3BZ
-	/yQkRDISFijcnW2NwPNESDP6PhVs4ddyMPf2Qx/P9IAA==
-X-Google-Smtp-Source: AGHT+IFyDxk9ofOoSE1jUdDwuXC6uj68bPw86gFHeN0xbFulbam2J1M/auQRgbuNa5uXdcywAXE8tSUc/+x2hYqgo2M=
-X-Received: by 2002:a05:6122:4586:b0:52f:47de:3700 with SMTP id
- 71dfb90a1353d-53149677e4amr8402312e0c.5.1750165185838; Tue, 17 Jun 2025
- 05:59:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMVNIq7s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809BFC4CEE3;
+	Tue, 17 Jun 2025 13:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750166501;
+	bh=fkLB4KJre60wZsb+cBk8QXhaiGcgNVN5pkbyduMuRgM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cMVNIq7scUGAicrvb3WCnalpEkMC8AU8op2D06fAzQaWGa1PvKS+F+Pfm9lopy532
+	 myHNPd+EggBz2OGjUv08dXIK03bthrzbxAAuV0GicuqI1Retmi9ORC1jie5nKNErRk
+	 6nFDVhQfZMAHHpeKOXUkAHx5zSa4JM2wBqAlbhjYMx7DKkFDGVi8KPa6xWL6rjSaLV
+	 OHyohUza2dy1eioFMDTOBoFShbwZuuSnuQLLpr/mKk3FhvB5lWlU5grFLDejlkavO4
+	 W+K4bhKtWQ4Zwu3INOT3jEUqwYUNSpYTsWItaygjMZtNXtQcTUGmAy+rTBUVjpIyIf
+	 /FU30L73gNAtw==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ thierry.reding@gmail.com, jonathanh@nvidia.com, sheetal@nvidia.com, 
+ u.kleine-koenig@baylibre.com, mkumard@nvidia.com, rituc@nvidia.com, 
+ ruc_gongyuanjun@163.com, Chen Ni <nichen@iscas.ac.cn>
+Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250617032103.1725040-1-nichen@iscas.ac.cn>
+References: <20250617032103.1725040-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH] ASoC: tegra: AHUB: Remove unneeded semicolon
+Message-Id: <175016649927.38619.12894561378049163567.b4-ty@kernel.org>
+Date: Tue, 17 Jun 2025 14:21:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613090431.127087-1-tzimmermann@suse.de> <20250613090431.127087-8-tzimmermann@suse.de>
-In-Reply-To: <20250613090431.127087-8-tzimmermann@suse.de>
-From: Inki Dae <daeinki@gmail.com>
-Date: Tue, 17 Jun 2025 21:59:08 +0900
-X-Gm-Features: Ac12FXy1YqAOwtksyoMPU_mcRXzK8GOxRWP5F_To6gWRQ1V5y95DviShSwJIG6g
-Message-ID: <CAAQKjZOiz3Z42N_GEPzqU=CCfim+Z7oCuyxuji6Guj_dKYsimw@mail.gmail.com>
-Subject: Re: [PATCH v5 07/25] drm/exynos: Compute dumb-buffer sizes with drm_mode_size_dumb()
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: simona@ffwll.ch, airlied@gmail.com, mripard@kernel.org, 
-	maarten.lankhorst@linux.intel.com, geert@linux-m68k.org, 
-	tomi.valkeinen@ideasonboard.com, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	xen-devel@lists.xenproject.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-08c49
 
-2025=EB=85=84 6=EC=9B=94 13=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 6:05, T=
-homas Zimmermann <tzimmermann@suse.de>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
-:
->
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-> buffer size. No alignment required.
->
+On Tue, 17 Jun 2025 11:21:03 +0800, Chen Ni wrote:
+> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
+> 
+> 
 
-Acked-by : Inki Dae <inki.dae@samsung.com>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tegra: AHUB: Remove unneeded semicolon
+      commit: d9f38d9824bfb1b046d2e720349d2f45959ab184
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Inki Dae
+Mark
 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gem.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_gem.c
-> index 4787fee4696f..ffa1c02b4b1e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> @@ -11,6 +11,7 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/module.h>
->
-> +#include <drm/drm_dumb_buffers.h>
->  #include <drm/drm_prime.h>
->  #include <drm/drm_vma_manager.h>
->  #include <drm/exynos_drm.h>
-> @@ -330,15 +331,16 @@ int exynos_drm_gem_dumb_create(struct drm_file *fil=
-e_priv,
->         unsigned int flags;
->         int ret;
->
-> +       ret =3D drm_mode_size_dumb(dev, args, 0, 0);
-> +       if (ret)
-> +               return ret;
-> +
->         /*
->          * allocate memory to be used for framebuffer.
->          * - this callback would be called by user application
->          *      with DRM_IOCTL_MODE_CREATE_DUMB command.
->          */
->
-> -       args->pitch =3D args->width * ((args->bpp + 7) / 8);
-> -       args->size =3D args->pitch * args->height;
-> -
->         if (is_drm_iommu_supported(dev))
->                 flags =3D EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC;
->         else
-> --
-> 2.49.0
->
->
