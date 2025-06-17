@@ -1,169 +1,183 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2065.outbound.protection.outlook.com [40.107.95.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA02293C63;
-	Tue, 17 Jun 2025 09:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152429; cv=none; b=Q8fdQLXFo1HSV4FV982mYuRjX/w5KIYNUhbGlhYnHoiZW0y+itB6nqaiFJ60l8xipfo+3dadTMaVoFyP0WAFC2sa5nJBCnkgi68osy30KpN3f2G0XbWd3IJitComItvcrdRiHiGmej1ZnU/esSTU132w8YApbmwHxK1Y3TET2dM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152429; c=relaxed/simple;
-	bh=6NWPPlQjO1jAJ/PEmOb+hvVFlM5PIHsiKWIz6FWtskA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtI6dwjrg6sROjvQUBAfTfLCOfflmvr/Y7w/ojxvz1KtU47YOs/v5ArDxZhkWLkn9FlOHY9z6s6vqlLikmV5CKcaPfpawAIUjbVo64/N+YAKwxz41hsUS3jFv6tHzR3jvV294BMANuRzGjqPSZRKsrsu/tX/haCTmv4Z0OJA0Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=FFKg4QgY; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEDE2E06D6;
+	Tue, 17 Jun 2025 11:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750161321; cv=fail; b=OOk3WjKqN1NNTx/6FMyRNroQHpNEC9r0Ujt+OGF/Nywm2AIs1Dso5WnLlno0JiVysRVPE5cON1Ffy8UkvLc7TMhC1EapqEsHGZd02yxpitcHCIAZF7VtDL7TUV/XXb9RlPkTlAwTN4Q8GRs2zhfBrTCKFwUDnAw7Hny4rix/EuM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750161321; c=relaxed/simple;
+	bh=8lvXJ2XOimTfo3OzzhenSrG9hL7QwQHXk9OIKm4o3DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kLmYuHgYkp4deFgrh7Wskx9scY3WrmUfaFUx1AgS64sKZZPn0K7LgTMxwDPXfizdBdjrbabcvVdy0pfaPMOL26hZDV5KDn9Y+7qt7EYHD+9/O25sp+YF0dIfilSu9Y0Hr6OGtEPKbHJmPPT+vzqLLI0LCk2bzc6LbTQCjNP89GI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GRAGe6Sy; arc=fail smtp.client-ip=40.107.95.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="FFKg4QgY"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id A568F600023C;
-	Tue, 17 Jun 2025 10:27:03 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id myyMLEEWYjmo; Tue, 17 Jun 2025 10:27:01 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 0441C6000248;
-	Tue, 17 Jun 2025 10:27:00 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1750152421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MmK/CfeD2UinWWA4TumYD2vKdr/yWCjwsN6TOvI7FK8=;
-	b=FFKg4QgYeTHlD874AcH9qvxVa6dYirY61mYj77LtWOh26aKHHLRzSIRMH8hYK9LgwkylVg
-	0KHSQfi2EWvZU8D+fe7n4G3Vt+BKx6IGyhMjPjfV2cBOnP3x0wq8MX7esdSI/3c954oyp0
-	ZZtUKBO18sKn1KfjdG9TlTCy7Z4cGbo=
-Received: from [10.158.133.22] (dial-b1-161-46.telepac.pt [194.65.161.46])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 2D7E4360089;
-	Tue, 17 Jun 2025 10:27:00 +0100 (WEST)
-Message-ID: <82bfabf0-8c55-4bbd-8c81-44dc86209b15@tecnico.ulisboa.pt>
-Date: Tue, 17 Jun 2025 10:26:54 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GRAGe6Sy"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fg/lNEcJnR5mklRfrf8GhUhYETcM8ZRFOqcpatNG+dZmOtr6z5l9L0aDvAPjPo8xhHXR40oB9AZ09KlSTucf0HwwMsadqEoSKhvTzET6khmwb44pl2JOuF3xnDf2Y0qkUPPUlRljT/23IjcWIs97zFIOKGJl5yOTEf1r5WF6MV/+NB61qljrRwLLrXYrIW88AYwh6mEIFz3AORHL30XJRKHeSqzWPfCeqReak+7FRBrWDJXKoWRpt+XTLIf4UYNGfsUiwbtQzeyIfArp0iD471CcyMTelxjSHmkR9bCXFlrX8Ghn47ImkKhI1nleXAYH3JtdpPzD9AckQmTHeW4fEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O4L0wrXd1+kos8fqkAcKtNV3cV/s6K8YU9ceeN8uX30=;
+ b=biR5pLI4yKwY+YdOLyJg25UUWVXKGiH2me3vnQP6DwlMYSsz1clUFcFll/uH0PpvQG0c3/u5jxopNNwVaSAXBMNPUtkCrQStzK/w5eNSUx5+hbVSCcz1Qu1SVbi42qQW/Nj/q2V2O7SfnElQSq0wuehOqQSoE0Bk6UcAK9kmkyMFslpJeco9VP11iUt44K5uXpQ4FJi9SsP05x/r87r6WQVjwLFlt46fO5q8O+z6nykh/BYemMZkMYIww2BiR4SuMsszPR6yM35VrKtKtBGbAN2QS2TD3hYRmDrdM0ItUkfS4qMmN+ypZZN9SqrZcnUfCWZfobWstb03Yy3B6UFizA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O4L0wrXd1+kos8fqkAcKtNV3cV/s6K8YU9ceeN8uX30=;
+ b=GRAGe6SyPouIbUORZ6NwOCoXlHcau9N1q/Cpe+lQeseJBPeyVLeg/geIYr3OmOfoA8BwsPOP8DG64j2012AX+gLrjvPGkzfZg3MmiKuFPYjwNE/pFCooOVCWd2uulU7wtY2gupdV7cD2g4lFBTWKBTsXZ5MMDdN+t20yGYqATA3F2dYPUEx8jPTWZFaT+mgVI8RbUQ0P29NvydFrbXTvRKviOVzBg6imw3bC/y9Z+4AV/js9Zf+w3VPVHUkXOrR5tkZx8OEkhS4ldbPe4ve7z4iKCOrXhd8nD1hdqGpkon80LMUkJs30OuI90rAG5Ru5oFiRpzRlqZlfCic2NAsjNg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA1PR12MB7175.namprd12.prod.outlook.com (2603:10b6:806:2b2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Tue, 17 Jun
+ 2025 11:55:17 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8835.023; Tue, 17 Jun 2025
+ 11:55:16 +0000
+Date: Tue, 17 Jun 2025 08:55:15 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
+	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
+	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
+	yi.l.liu@intel.com, mshavit@google.com, praan@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org
+Subject: Re: [PATCH v6 07/25] iommufd/access: Add internal APIs for HW queue
+ to use
+Message-ID: <20250617115515.GT1174925@nvidia.com>
+References: <cover.1749884998.git.nicolinc@nvidia.com>
+ <64145b184a0fa7c9b60532c9b475a51625edb77c.1749884998.git.nicolinc@nvidia.com>
+ <20250616133719.GC1174925@nvidia.com>
+ <aFDSNYOTToFSbFA2@nvidia.com>
+ <c3842cc4-f057-4ab6-b0bd-f7742ca7c645@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3842cc4-f057-4ab6-b0bd-f7742ca7c645@linux.intel.com>
+X-ClientProxiedBy: YT4PR01CA0329.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10a::19) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-To: Mikko Perttunen <cyndis@kapsi.fi>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
- <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
- <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
- <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
- <78cc8814-c89f-4a5f-9a70-08ed69580c3f@tecnico.ulisboa.pt>
- <36898d74-d9f7-4c5a-b6f2-d9652c674b84@kapsi.fi>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <36898d74-d9f7-4c5a-b6f2-d9652c674b84@kapsi.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA1PR12MB7175:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6fdabdb-5080-43f6-2687-08ddad95d353
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?toS15LBrcXHxB8PNJpKZyc/Ja6kkn6g9Ma7gJcsAuXlV11W6/DsoMLx4Shnb?=
+ =?us-ascii?Q?Frpq/GfbSuzYLl5tnZ3/EiNCznCYRLp1SLNAjNjfgLZC0Z/32SrsSc/HIMuJ?=
+ =?us-ascii?Q?+FyNENu10rl3eVWgsOVEPnvqYdGurNtrodv5sZjzny5osWMQio335b7I3yz4?=
+ =?us-ascii?Q?k3wUbCAG8jI7KZfbbyF07Gn8XyCu9IpgaYhR8XdVIm5u4mffU7yfLY57/oZP?=
+ =?us-ascii?Q?oswUWpMa4DLhwvQPV8RGEvI+5v6TE8kUP4evTKSBhQukTAT9PyASlK6k6mnx?=
+ =?us-ascii?Q?q9p7uTzKXQewyWpg+W566rDBlMyX6wuNh3xkk/xFBHpNQAtOy70S36hp2k55?=
+ =?us-ascii?Q?56Dsv3qiAu1CfGWnNctB4uOPG3BCVdEkuOp0x7HJmEeWnAusWblSURsjsig5?=
+ =?us-ascii?Q?dLYD9jITY6pTv+/h41ava2jIgr0n6vm8GQCqqp5uEOO5mHHRb3Tr0JtL4gra?=
+ =?us-ascii?Q?P5TGfJptzp8tiXQ8H0YIibjSnwQHVBy2HJxU6AI1eYw57MrNELvJpKMqpIZ4?=
+ =?us-ascii?Q?xVVrKinkM2daCCX6hWLbL6T6tcxiRIRQqDJka8ByHU4bSbWd4QRDL9QOq/hZ?=
+ =?us-ascii?Q?4/p6ZEuzJWIDyjv5jytkLq42z4A/cHs5MfHhGO+B+5ZG1pIKsYvBlPCiq4OM?=
+ =?us-ascii?Q?bhlYZz7xH2FLCPM9j/RBy85G4qo3N/HF8z6dQ7Va2XEDO7SVUrHmQ7NbcjD8?=
+ =?us-ascii?Q?kVMjKjXOYlDn++3U3f28QYxcOPdIVxFx26cRTT6LjIbTGXkoudN3UfJUt6Ep?=
+ =?us-ascii?Q?Yl/41hbChoT7Nawik61YXkCLUqv9qkGcaZbyrXmBkD/+Aj5mpZWVCc4+AADC?=
+ =?us-ascii?Q?NUoGe85hbRtwXaWBEAYe34kYZo2pEiWjWUpKUtPbtz28yjgua6pWZcMLvRKG?=
+ =?us-ascii?Q?KPIusQ/SIxYDeZEsbueuBVuFgpnJPTIz3/Hl2EbAjCCpxVjgiG009VGolIMA?=
+ =?us-ascii?Q?p5ldDFWpP+Vo0+IfivqukFxV1hxQsVMYZ51tLyNRCm8tSeW7Zj5+Qn/J6L3F?=
+ =?us-ascii?Q?F9q3+VmmeevbFvwEAfVhc7eDqOCCze1zyAsbH202ScEUwTCMFnAk1ecneGGQ?=
+ =?us-ascii?Q?Ob1QSMHdwKpklMXMHjLWKtvv0UnPxC3M9QJZdU5v/c8uPZviOOzlmFj97U2G?=
+ =?us-ascii?Q?AlTlUJCvkf6y0YthEJHFFaiJy7P2gxZA7e0HNDHe6wjCsG4NY+eE42FIug0n?=
+ =?us-ascii?Q?/1Fpx3ICIs1UCt/P0BDEg+EuplFytba4lROfOXtxeZn4DkiFczI1e0m+9uGG?=
+ =?us-ascii?Q?pAAGIevA1Bvm8ez9zOclUZzzuF/MZx80ZwoBpN6CPlyA4kuk65Eg/1SfjeHI?=
+ =?us-ascii?Q?YVQmkBM2km4SOrrw9wBLmTexKl7j5WC5+HXpUgYcy+rfIUg2rhH3iv93IRG9?=
+ =?us-ascii?Q?5+bwZ/1UOxdND7kSOoA1grQ/AZlfy7ibQ12s8vWMwgFvbzelVzvPr7H3FFhr?=
+ =?us-ascii?Q?BpTiXnUluhA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tr9yitB71SPQIeVBK0yzVJMuBKNfpiHP7TmfHxQK251aHhGMwtdu38dncnJI?=
+ =?us-ascii?Q?ExOEP3vozVdzdVeEL3a/Yg/dUVF949QCxi3j/a3iTLuC3XDucQN4VkCdvVSe?=
+ =?us-ascii?Q?nxFLI1vHzd1nbcdvJe2OOrPRpxx1Xq534jFeRz5kakRHYs0oMcg18y1fFmbt?=
+ =?us-ascii?Q?NStraAF4ad12QQKwKuAdQCwi0FRp9Osun86uHvbz5PsvMnnVEpwKzEhtEwnD?=
+ =?us-ascii?Q?o8wCgz8VDOWR1N/gyJr3sTDIJlnSkBqwf6lWdPdDOyGxs4XzkqWM5hA2xUUt?=
+ =?us-ascii?Q?bgXAnUkxjOJP58RTWZjnx/D2yW7tlm5fF9NOGgIVUoV+fi3HxODK6EHAnRjO?=
+ =?us-ascii?Q?yNFTa7Sv1+7u9gZ4DMwLfx8YerTfYqSWF0CRROkGXK+z3l6vkjqSzosx738S?=
+ =?us-ascii?Q?excPfAASBBN41iyKc6w7g2QPuqLhWXc/pjxPGc/Hrn86np86WU5PU60Jflis?=
+ =?us-ascii?Q?UanqgEyu6cfuBxgEe4661MfclxNUlDlSslhO64J3GBk+RGPr6MXoOPTPNQ53?=
+ =?us-ascii?Q?oyJe1bwNnLwuNmPgeJ6neH32AyMfxhhOrNmo35sLsbh6Gwidg1/gLORTg2DI?=
+ =?us-ascii?Q?/gHFk1n0XfEIt3w7s9l0UcOGsTxvBQdlrwFveJpWprhJmEj/fMI76QFfKVT6?=
+ =?us-ascii?Q?9ukffNQ83iPBr76jrog33oFVCIvhqAefoeiMQMcbqklve+VatVp2mKJwl16W?=
+ =?us-ascii?Q?Ocl8XSfDbOEXgOtL7NCsW3W+mRrMBuuZNQsNbjG3jFTpHzv5Oa8uqRyy5d42?=
+ =?us-ascii?Q?eOg5/hRZkfaDlX6tIIegMfYy6Yh079VrUKh831+uTK1gzIUvBcDUMBYrYmAb?=
+ =?us-ascii?Q?5lukykQt5zHxXTUIs8OEZRBeVJ6EsS7Q5lKp05D6B57PsyPwLfonDgXbkAzR?=
+ =?us-ascii?Q?BcCjPpglgNox/xmWrbtIEkiaeY3Hp9lHWDUGmMhGnOEFack7LuJiTQZRPlIO?=
+ =?us-ascii?Q?IWsGFtMwH2Ym4CFNzw2VfVvkg92ucelgs3jZPfSWd3qoV327/x3sjT/6/bRU?=
+ =?us-ascii?Q?czaMj/JzKUJUuFE2XRAbIlWg/JSR5jpZQHwIdTr0a9Ds9z7OA4i5bkHPQAb8?=
+ =?us-ascii?Q?HbHLmvg4i8qPuTOZkKoU5fNZjL+QZDMlQdJZci9xrtFNwnbjE6la/KjRgQGg?=
+ =?us-ascii?Q?JV65jWMpENtlT6EIId3mTGvdAlfB6CMtlgWzY3jxgMUphTMPqC05udBWaYWn?=
+ =?us-ascii?Q?yPQmz1ksr8xxBFDxCg81Du2zNPNa5N/ACKk4ltlU0hbyROa6csSyakgRD6ym?=
+ =?us-ascii?Q?zKXFuuLu17hmt5kKXD882mF8/I9QRS0uqVJaq/j3b7EhjAXdTU19YsPxrnSz?=
+ =?us-ascii?Q?WJkrHMVvYTeezlhUPFgHngdCIIvk/110K7WekDZkmzYXNqZWuBRGUa3ag9/S?=
+ =?us-ascii?Q?3dFQOEGTKEENhyS/uIj7yqpllb8CDzSANrrm7M+eZK8dMs4GmZ+/psR5Y2GQ?=
+ =?us-ascii?Q?J2zRIx3k7dc+eRBk+VPkr/YopcpwRL4zLaVAWjYo5b8OiGHXOpfyc7F5NEkj?=
+ =?us-ascii?Q?ysX6tiuVcv6CDE/SLLvgTVWDCC8WD07iFszZ1wTsXJ7/OZJjpojTX56KfLsV?=
+ =?us-ascii?Q?8GMEOvRB/TsrXq2xwxw8oMCfhlH6+kJ1ihY5HcCK?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6fdabdb-5080-43f6-2687-08ddad95d353
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 11:55:16.8320
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qX66gQVFTxQFRPV9BA9aX1L/smSZF6V1UyQqyDtXoc14C1tdOpSDSoUYacEnhxLr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7175
 
-
-
-On 6/17/25 5:40 AM, Mikko Perttunen wrote:
+On Tue, Jun 17, 2025 at 12:23:20PM +0800, Baolu Lu wrote:
+> On 6/17/25 10:25, Nicolin Chen wrote:
+> > > >   struct iommufd_eventq {
+> > > >   	struct iommufd_object obj;
+> > > >   	struct iommufd_ctx *ictx;
+> > > > diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
+> > > > index 9293722b9cff..ad33f1e41a24 100644
+> > > > --- a/drivers/iommu/iommufd/device.c
+> > > > +++ b/drivers/iommu/iommufd/device.c
+> > > > @@ -1084,7 +1084,39 @@ void iommufd_access_destroy_object(struct iommufd_object *obj)
+> > > >   	if (access->ioas)
+> > > >   		WARN_ON(iommufd_access_change_ioas(access, NULL));
+> > > >   	mutex_unlock(&access->ioas_lock);
+> > > > -	iommufd_ctx_put(access->ictx);
+> > > > +	if (access->ops)
+> > > > +		iommufd_ctx_put(access->ictx);
+> > > I was hoping we could null the ictx to signal internal? That didn't
+> > > work out?
+> > access->ictx should be NULL for internal. It should have been:
+> > +	if (access->ictx)
+> > +		iommufd_ctx_put(access->ictx);
 > 
-> 
-> On 6/16/25 7:21 PM, Diogo Ivo wrote:
->>
->>
->> On 6/11/25 4:06 PM, Thierry Reding wrote:
->>> On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
->>>>
->>>>
->>>> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
->>>>> On 6/10/25 6:05 PM, Thierry Reding wrote:
->>>>>> On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> This series adds support for the NVJPG hardware accelerator found 
->>>>>>> in the
->>>>>>> Tegra210 SoC.
->>>>>>>
->>>>>>> The kernel driver is essentially a copy of the NVDEC driver as both
->>>>>>> engines are Falcon-based.
->>>>>>>
->>>>>>> For the userspace part I have written a Mesa Gallium backend [1] 
->>>>>>> that,
->>>>>>> while still very much experimental, works in decoding images
->>>>>>> with VA- API.
->>>>>>>
->>>>>>> I have been using ffmpeg to call VA-API with the following command:
->>>>>>>
->>>>>>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
->>>>>>> /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
->>>>>>> /dev/fb0
->>>>>>>
->>>>>>> which decodes <input.jpg> and shows the result in the framebuffer.
->>>>>>>
->>>>>>> The firmware for the engine can be obtained from a Linux for Tegra
->>>>>>> distribution.
->>>>>>
->>>>>> By the way, have you tried running this on anything newer than 
->>>>>> Tegra210?
->>>>>> Given your progress on this, we can probably start thinking about
->>>>>> submitting the binaries to linux-firmware.
->>>>>
->>>>> FWIW, the impression I have is that NVJPG is basically unchanged 
->>>>> all the
->>>>> way to Tegra234. So if we add stream ID support and the firmwares, 
->>>>> it'll
->>>>> probably just work. Tegra234 has the quirk that it has two 
->>>>> instances of
->>>>> NVJPG -- these have to be distinguished by their different class IDs.
->>>>> But we should go ahead with the T210 support first.
->>>>
->>>> I have a question here, what exactly are the stream IDs? While working
->>>> on the driver this came up and I didn't manage to figure it out.
->>>
->>> Stream IDs are a way to identify memory transactions as belonging to a
->>> certain device. This comes into play when working with the IOMMU (which
->>> is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
->>> is used to isolate DMA capable devices. Basically for every stream ID
->>> you get a separate I/O address space. NVJPG will have its own address
->>> space, and so will VIC. Each device can only access whatever has been
->>> mapped to it's I/O address space. That means NVJPG can't interfere with
->>> VIC and vice-versa. And neither can any of these engines read from or
->>> write to random system memory if badly programmed.
->>
->> So if I understand this correctly a Stream ID corresponds to an IOMMU
->> domain right?
-> 
-> Technically not necessarily, but in practice that's the case, as the 
-> IOMMU driver creates IOMMU domains for each stream ID in the device 
-> tree. They are similar to the SWGROUPs on Tegra210.
+> access->ictx could be treated as user ownership token. If it's NULL,
+> there is no user ownership, indicating it's owned by the kernel. This is
+> the concept here?
 
-Ok that makes sense, thank you for the clarification :)
+Yes
 
->> Ok, then in that case I'll keep the driver in its current state without
->> these implementations if that's ok. Connected with this I wanted to know
->> your thoughts on the best way to upstream this, is it better to wait for
->> testing on different platforms first and then if things work merge a
->> driver that works for all of them or go with Tegra210 first and then add
->> more platforms later on?
-> 
-> Personally, I'd say to go for Tegra210 first.
-
-In that case I believe that in the v2 I sent out of the driver I addressed
-both yours and Thierry's reviews and the driver should be in good condition
-for Tegra210. What are the next steps in order to merge it?
-
-Thanks,
-Diogo
-
-> Cheers
-> Mikko
+Jason
