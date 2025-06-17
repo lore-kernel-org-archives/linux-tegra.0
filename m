@@ -1,60 +1,62 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB0C28B4EF;
-	Tue, 17 Jun 2025 07:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF22128D827;
+	Tue, 17 Jun 2025 07:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750143825; cv=none; b=iPHCeodCPneSvt+LhYxm1G9RXL3xn64epf5KUndxnOH1uxqhEiZdmOaKyFA+oE0CMb4XuJAbV84KtxUkaPYYpaCBiWyqhQLEbI221Y7oQuOFK9ogOjGz02SAEKYlk0oIhVyjwc+w/8p93B+yh1IoIhtLTpx7zyDPgUDNs0Knf2Q=
+	t=1750143828; cv=none; b=naZ2N9R46KNWD55iVyuAYsFvPtTXouPyXBqrJ6pCMqEGQEuME3E6iSdjy6fvXaotJIjxhgZl0wzgDz8VzUDMzA8lJB7YRaR1rQsq478wFAjjYeJurynYQCWhzVubPGJLlLRoiaK/kzDOpYQ+4G5iTrVnQSpTMLYHGihHcBnPiD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750143825; c=relaxed/simple;
-	bh=PfdGmg/x4/7nB3EQSg7VVR9RuCzYHYcB0MMRz/XKzV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rzji0kuEx5IZqam/L8o86hN56N2FGN22+ACK6H7HAfsX6EJYWsHHSp6tFyEUmeIQd6ul+F1V0912uAceTqv9UNVKW23UNraQAVrzkXrPJswGHP4FgQX1LVDDcBH8hCIFa9l3usaW6QM6t/BilcFgCnTMlnVtKfyZWvi1ZIGHhKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwR4um2H; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1750143828; c=relaxed/simple;
+	bh=Go9kQY4Cf/0m/2ndhISA/csNmyOdz1/clqv8HISg6JA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aSuI0vq+kdT1/QdOxER/QaHOl22tBMRSiCTpxKMksATBsf7eFVEoNDwOirkTIANMtlI8GVVzn0hjvNtT0ABCbx0UvdHBhZxP4jnSXtIFrjD/HemzckcX9fTxdsRQB2Fb8sO1TnM9woKfoJSAGFnRIOf0yFUhrv7mcbamZ+VbbVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdY4XOMQ; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwR4um2H"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5533303070cso4980128e87.2;
-        Tue, 17 Jun 2025 00:03:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdY4XOMQ"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54998f865b8so5048255e87.3;
+        Tue, 17 Jun 2025 00:03:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750143822; x=1750748622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzozzkRmHvGfmxyMSPRvg/0NGpKdzQJ5w85bzdYdRTw=;
-        b=EwR4um2HuaF16hoPMnkbl7xVv50L4BaxLZr0id+4Js3BRnNuIA36zUJSa0nHRdQ3P7
-         7IIhVAwLLkShQXCPevgciCqr233Hnry+nNTkFCyH/aPphW5aT2PwTRlMNh1g8+QbjFb/
-         UjpfiaatzXlvd5v57wNBnqr/3Y1lNFu53PqwU0dZeyY2CZvvWD/vqE2uvFIsAYUGjnju
-         1ChEDbbTgLJtpCGqiwsi0uf7G8BCiUXqUY4H/7hJgDfPDHjjtRPQBunnkApxv2rAjl9B
-         D+wmqTatCDyxuuzzc1z47vEnmEM2lINaMrbF6bitZqAryjaRIYV+h6GEF2HScGmef+j6
-         F05w==
+        d=gmail.com; s=20230601; t=1750143824; x=1750748624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=67aHHGr/9M3riI6drWDtEAom9IKHNVLM2r7fXP9AaVs=;
+        b=IdY4XOMQhKC/FK+SWrpqJZsml5pwXczNaX6PV6L2d5x8eIePP0odQ/AKZQPNNnMCvh
+         eg01GD+r86ARApf3CdQl7Tx621gm6K12ukw5vKaGzdAELNvTyRb6DvxZBZlNd0F/D+rK
+         8znq8jhww4ULHIz2d0tEreC7yTGkCGvUwQ9CX1QxGmNszZXv/wVtJoLR6qWmH2yHctDZ
+         La+VOQIrguhieZo8P0LpgHcCE7NBVhtO0sZFP9Bwp4DAo5l0M24o7vf2VZHN56RkEhZS
+         /qTbPz6KCNbS6yLFqeqCo+uoTTNVnSkTGusmGvfi+wQqRf+akF7oxi5dK/MF0i7wpDvL
+         mEPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750143822; x=1750748622;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jzozzkRmHvGfmxyMSPRvg/0NGpKdzQJ5w85bzdYdRTw=;
-        b=BjMYcOniUh9lhWD9mL3/Ir5Uvq4lBKap2+peWjoEDx5GmgYGjUwVYpUjj9jAo+Ysow
-         EA7zIlaSfzkpeS7ckiQNkChVase1iFyuThULdPyO9g5QR6fB0a9KU1IWP4asbk9kQC3W
-         yJgCB1Tw6S6woOY5cCv41UIry2jBy4qz5fiw9Xvd/9YV/CcLA4HAzewjI0IkJUenfOdB
-         MTN7csh/ScjI5FSOENvp1x+yb2+BIXkraGss3jPXvULcVvxWmPiptrEfvQ2L7ImpA5Dq
-         1AHEn/R1UDkeqyw0nPN8IvJLksucMc464M//DqU0TBYah1Lc5fPNJ4YbC57gT3YvL3XS
-         z53A==
-X-Forwarded-Encrypted: i=1; AJvYcCUL2yBBFwrUZIk1PY+S9j3N4IhRE5pOZQsr1Za+Fc8O0Dm+7t+FqhcnmOyK6xPKCSykNQPo0X5FAa9Tb5Q=@vger.kernel.org, AJvYcCWpfMG1MQpboHsjFslc0unXDyxtEe6osFW84M28MSwjWRkU1j0MHC53iqHRPRWjys0p6fTEQhst5kRj2JE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRNOkaD9Ffi74GBaWqKE1Soa+jFU8u69MIQC/qoBmfKT31onsX
-	FhL+Sac3C9CQHVhea5b+bzuqHUMvY5ZvYNv37YP8hzu7unizYXpto4ny
-X-Gm-Gg: ASbGncukFvTXwJEoPJdjhSyjZ20/vRBfpeHtNFKgWoUVNSUpi8HW+VVtss4HbAQCfkc
-	XbJWCIG8P4u+SiYAvO4Nv06kLTYJbYGgPtKSXKQWpmo8GGdSOFBLWVlXe5D4CCCV0kbPscV4mVV
-	i5yIKXKy86buRqSV6PpEe7/uomnCI6NvBtLygXGiD5L7+bGB0us86PhzIMlpuhxmIM8VA/WFeAs
-	ZbwLU8bEzBzo73EHTZkYeGd4ouUTMGW2vpBPJ+XpjcNa27f5be8nZBqwK7Ng+/FmF9HOxKYb2nd
-	H1XKLUiwdAk6LjWhOIrknfylaE7F0POgmzRKjWcx9p7BmAvKRAmCxw==
-X-Google-Smtp-Source: AGHT+IELiQKRDtuK59YcZ2fZwrR1yDb0i5IMoTwgFHWyXf9bGNSSHgdGjjBRBGPDeXJnqpETDLY61Q==
-X-Received: by 2002:a05:6512:6ca:b0:553:25b2:fd2d with SMTP id 2adb3069b0e04-553b6f16e9cmr2803309e87.30.1750143821932;
-        Tue, 17 Jun 2025 00:03:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750143824; x=1750748624;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=67aHHGr/9M3riI6drWDtEAom9IKHNVLM2r7fXP9AaVs=;
+        b=WftAVZtUyP3gSn/wWTlTJqVOUfb1JGXCeTfvXEJFAmI3BruD349r9fEhq8WiU7yOtb
+         PCSu+MkUKqUd/BODru2l5iqhJeNmTA8ALKAkYiT93SFIxO0MPuNcHAnMS/VYe2P118ge
+         VvohAKZciDtWsiWY7B8QGeabeoHkmmhktPYtCXgGszNppzM4t8YtPzQ2/w8oHjFLJO4n
+         DONK4M16+YpkI6LgkKi7y6HKflxlCNMIYMg3mOvy6iZmxDMTCzsCXrGhr3An6/cWwzFy
+         13ss+WRZtAA/IIH7YlRbc5gv+aul6YfGcidAW09ggesLoJrcMV5so+z+TX+NI0peehs6
+         tJBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUch2jo45g4sv84D9i48yidpXSijheHEvItVNEDlL3PUMfJpB6E8zSuvLcY9/SBXgPZywPdEm0jFZrj9s8=@vger.kernel.org, AJvYcCVY3CCoTXeDv6i/7tmqD9C6SWwibtcy+tBgr2fMPb0SCILkC29Tr8ip4eD1FNhb6JZpptXhiXA9u1F91fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHkBwTxzqVzOCVQcpWavnkvWY2oJkn3ycWB/CDkuPxYqzF4QcD
+	Bq4zsM0A+psSoGjTjByVKVcZ5Hw5I85QsR7g37vfAxyb/1JL8PV2q+mn
+X-Gm-Gg: ASbGnct76ODKFVqhCuP9ZKt1DI9UC3IYC6+xFGBTi7id0tQPLS0hFDZ9UlYEFreAi0n
+	LoZ51bQ9hwSK54OrUtEdurveeSmlh8No3J7PclSXt2COEl9ZkeAJ367xQYzMy680iJzznjivSap
+	q2KFQsshPzEl9H2IsnJ/UQQw1xhs5MRyCzwR+vf3SNiz/15FVAzIkeI6C97TGfuor0HA1X+nmrJ
+	y9V93Ob3Ugsnn6N1PplTEN8jHkybeq1LtpqSaBw5duIVFs/Ku53HBRridvcBXZjxOBi/MxjFdef
+	mPTGy5GzUc5qoWqhhPaQ9D1+J+UHEPxk0TXNDcOtWOzgQ7tUjv0QhA==
+X-Google-Smtp-Source: AGHT+IGTb1O/R8WuLXbPa6uJop8ySVEJbpXR+bXI7d2N+cIJY9LKjjahO+fjAIWgfPkDYNU1wIIuKA==
+X-Received: by 2002:a05:6512:1150:b0:553:2a16:2513 with SMTP id 2adb3069b0e04-553b6f4cd59mr2847802e87.47.1750143823668;
+        Tue, 17 Jun 2025 00:03:43 -0700 (PDT)
 Received: from xeon.. ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1ab9c8sm1800427e87.114.2025.06.17.00.03.39
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1ab9c8sm1800427e87.114.2025.06.17.00.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 00:03:40 -0700 (PDT)
+        Tue, 17 Jun 2025 00:03:42 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -67,10 +69,12 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/2] ARM: tegra: Add device-tree for ASUS VivoTab RT TF600T
-Date: Tue, 17 Jun 2025 10:03:18 +0300
-Message-ID: <20250617070320.9153-1-clamor95@gmail.com>
+Subject: [PATCH v1 1/2] dt-bindings: arm: tegra: Add Asus VivoTab RT TF600T
+Date: Tue, 17 Jun 2025 10:03:19 +0300
+Message-ID: <20250617070320.9153-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250617070320.9153-1-clamor95@gmail.com>
+References: <20250617070320.9153-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,21 +83,31 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device-tree for ASUS VivoTab RT TF600T, which is NVIDIA Tegra30-based
-tablet device with Windows RT.
+From: Maxim Schwalm <maxim.schwalm@gmail.com>
 
-Maxim Schwalm (1):
-  dt-bindings: arm: tegra: Add Asus VivoTab RT TF600T
+Add a compatible for the Asus VivoTab RT TF600T.
 
-Svyatoslav Ryhel (1):
-  ARM: tegra: Add device-tree for ASUS VivoTab RT TF600T
+Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/tegra.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../devicetree/bindings/arm/tegra.yaml        |    4 +
- arch/arm/boot/dts/nvidia/Makefile             |    1 +
- .../boot/dts/nvidia/tegra30-asus-tf600t.dts   | 2500 +++++++++++++++++
- 3 files changed, 2505 insertions(+)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index 79b027740694..534197a87439 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -65,6 +65,10 @@ properties:
+               - asus,tf300tl
+               - asus,tf700t
+           - const: nvidia,tegra30
++      - description: Asus VivoTab RT
++        items:
++          - const: asus,tf600t
++          - const: nvidia,tegra30
+       - description: LG Optimus 4X P880
+         items:
+           - const: lg,p880
 -- 
 2.48.1
 
