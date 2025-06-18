@@ -1,115 +1,185 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7DB2EF66A;
-	Tue, 17 Jun 2025 14:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750170058; cv=none; b=Cw6jsC4Lcn6Cw8x5aewkYMVm65J9ykqB3TmLx7rPXRGBMKPUwoC7BsyKpYoL3FiHW6I+cUcBt0dQZHQS/SjV324VKJ9kBj7/pU81R74ITXnT1X+HG/5BI3//Z1VDgi+Thb0EZXeKhWxWSEhq2cbZuqVJdZlKnaPy17N8RnlQTn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750170058; c=relaxed/simple;
-	bh=sdw7k5oHidQopO79fqxIRmRg+33TTaRec4Ui+YTfxbE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=hS2WqtScFgt8Myano82xChHyG1Q2/jvTEZFxvnbk1wwA8bSG6lgI9tjt/WjyLrNLKiA6KdLUuN/bl274PBuzBwg+r2CZtIFcBg2iyjuOgVnVY5Nn9GDhUjjzx3h2w9S7uPftEHHr73dTpDOpdA5W+FpdVSgJ5dpwiLzyAIx+nsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dO5J/+9T; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7E91E573F;
+	Wed, 18 Jun 2025 06:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750228925; cv=fail; b=qHQI59I0cElQR0twhLwuG5qLQWmoXyoaUtsa6VKBTyVk1bQ0xGWMoMtHYDvPUejPmFOZ5/Znkhr4ppd2roBj7XacBD05Cj03Ee7kuHXWSguDj0jexy/2jEXEDjCBbUTVNajsGHttbo8znlK4QQ4hVc8M1P70msEWU1VdExEH32o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750228925; c=relaxed/simple;
+	bh=rD+Da0+hjby30PwIDjKQAel002LtEmwMXq9HRuxBUiQ=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=S1tf9kPMZ8vxwivipJsDeeg0hDSyiopIVeDfm247L5AOu98I2jjmLMwVoZhgtepLqI88/I1riGihP0zDzZDLJA7/KyBnU02dn1kayEcD3nrutmg0pU21d7++8eKK1adyIwfd/4m5yrPjiFu7wii95a8u+R6a5e4IY3SVBaxM5lI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=elTaoz13; arc=fail smtp.client-ip=40.107.94.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dO5J/+9T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3174CC4CEE3;
-	Tue, 17 Jun 2025 14:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750170057;
-	bh=sdw7k5oHidQopO79fqxIRmRg+33TTaRec4Ui+YTfxbE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=dO5J/+9T9GbNFmpOekO7g0QKwObWlEh6XFuM6ilxFED7poYIrvvLrMHwoowYsbL9q
-	 Z0kerajDaCu5fPYVAh3f1rDNyuoVHl0wKePHaX/Ubpg8zvD5t+9YXfpZYDRTN0KsmD
-	 7Eofcs+I8bvVHkjENz8wm1OP7xaQH9r0Rp3agiUSQkbSETM3uZE5fISW5PXDbTV4qp
-	 ohGbiH7F4I9C6GKAGx5PKZIB1dwfSYOQG3L55wprMzXWaTywg0omnLZAUEuRUymJAV
-	 ViQnDrBU6JHcdaSBSFCEjSL7F6rEfYhBg+150wwEpaskbkmBBiUTrnD1k6S5vsczsI
-	 rSb/k48SIHtRQ==
-Date: Tue, 17 Jun 2025 09:20:54 -0500
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="elTaoz13"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bd8l/Y6rT5ylC07b5YaAT02B8sJQNi3GQjoYXOar0Cgezd2KzGTIGI5urNV4SSkp2EqERcq3gJzk/pREaxDk8ttBpU5RcnoEd8eTS5iq3m8Te3QNYXdu1wHFi+lBzEwBLm14bJrO6I7C29sgu0Ef1aGhtKKPYUqgjXx6nLPfb2tErYZmzrmu8PgGpJ4OJBnp3oJ1p4v+ep3OAHMIjAgAK3Af//GtTwcP3H/efiLz612H5uWe1EYznir0DjsTG91BkNKc4Do1HI97iNtANThKMbZbxOMqMO8WLXU7pZj4zwc41L7n06PDsJj2XZzwGBgpntEEBWDoGBX+RboEBSLUzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WWDmDilhmFNkZtoVxXs30vvX6UTyJs+R3+elO0Aafrg=;
+ b=CiO82cs4/ap7UZwZoapt99qPjRCIR2plvHvQmF1p1vS0lEuFRWwqWtvKdipPg5MWAZht4L809G8cdtA90nM1mPbUOtxS/U4aRAscDAyLZBNdyzxzx2tfUrFHH+yO7ciEJHFcXLsdlv/vQSbvhlXf6Uo7e7oBGwtGnmIFeG5iLGLg2DcImX6RFTIiG8PZkVcQAC5oKuUj4J/t7lwc5gOHbyUVGbWCN//Xyw8S/rvBptcmNjSvgSK2eGpmSBvlHVbvTDRYXEoLUHarxx++SdYzwAUOBnQNfixvu1rEX5JpQcatuRGzcI4ntx7shehMMoICccVX02RWLtQDQimbfR9xew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WWDmDilhmFNkZtoVxXs30vvX6UTyJs+R3+elO0Aafrg=;
+ b=elTaoz13rU6lss9V+ef7BPX/GXALKqKni0fqzAWpPpe/dRfR5zROwBLL+D4E1Y4SFtmz0TQgprNmTzNzeJ7A0BojjAyGvFddbsZBMapkx+/owVOds7i4meaJKOtZl1mN9EPQUWcV1mho3p90KSOIgVX5bvBF2XXJIuzhK67BS1yXOdgqhC1qbpyUtIWV6jvm2rv1LTPRpToireuXN4SXLqJvRTX44koP/pB4Vk6mFnfhHf/i9410zoIUoPUplRO0YgfpkPTQ1F72ilLF9yi38MKSid3lsbPu5R/wXCbAbGwXS1cEJ/5XG0zcv70fNW7bMXPlmwRtcmiXirrFCBYeyg==
+Received: from BL1PR13CA0301.namprd13.prod.outlook.com (2603:10b6:208:2c1::6)
+ by DM6PR12MB4354.namprd12.prod.outlook.com (2603:10b6:5:28f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.20; Wed, 18 Jun
+ 2025 06:41:59 +0000
+Received: from BL6PEPF0001AB75.namprd02.prod.outlook.com
+ (2603:10b6:208:2c1:cafe::ee) by BL1PR13CA0301.outlook.office365.com
+ (2603:10b6:208:2c1::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.23 via Frontend Transport; Wed,
+ 18 Jun 2025 06:41:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL6PEPF0001AB75.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8857.21 via Frontend Transport; Wed, 18 Jun 2025 06:41:59 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Jun
+ 2025 23:41:43 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 17 Jun 2025 23:41:43 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 17 Jun 2025 23:41:43 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 000/356] 6.6.94-rc1 review
+In-Reply-To: <20250617152338.212798615@linuxfoundation.org>
+References: <20250617152338.212798615@linuxfoundation.org>
+X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
- David Heidelberg <david@ixit.cz>, linux-kernel@vger.kernel.org, 
- Ion Agorria <ion@agorria.com>, Thierry Reding <thierry.reding@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250617070320.9153-1-clamor95@gmail.com>
-References: <20250617070320.9153-1-clamor95@gmail.com>
-Message-Id: <175016979656.2093474.3678510431694468900.robh@kernel.org>
-Subject: Re: [PATCH v1 0/2] ARM: tegra: Add device-tree for ASUS VivoTab RT
- TF600T
+Message-ID: <deb43f08-b92a-4481-845f-d8b87e052b0e@drhqmail203.nvidia.com>
+Date: Tue, 17 Jun 2025 23:41:43 -0700
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB75:EE_|DM6PR12MB4354:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9d46a8b-bbeb-4e53-072d-08ddae3339d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VUVwR2FmS25YTEdjb2c3ZVh0RW94c1FHeDV0emF3b2RtT2tuRTk5enRyNVE3?=
+ =?utf-8?B?UkFEdkM0VTNBdmEzUTY3QWkwRUhieXRvY0tjNjd1R0g3OE5SMnUvUkVaakZl?=
+ =?utf-8?B?ZnAra3JPV1JjVEFpTWlUY1JvL0NxenY3anpGQ0NxWUljMXo5cDVtdmxwZ3F5?=
+ =?utf-8?B?RFUzU3cvd0w0K0h5bWlQY2w3REs1SHViMTEwdElhMzNRRk5QM1lwckdrbm53?=
+ =?utf-8?B?RDJDRlNnNXBjcWgveGF2OUNYN1dxb0NLQ0ZBZFZoSlVKV25WYnhIUXhsWmRS?=
+ =?utf-8?B?ODl5R3lOSzFNQVIwanpTd1BHK0tHUm15YWUyd1pTamgzaFZ2S2xUcWt2b3No?=
+ =?utf-8?B?Z0RJQUNBc09vbFA4MjdaVEJQK2x4bXlZQ1I2eVRWTGNBQXlhV3ZMT2d1YWpW?=
+ =?utf-8?B?U09jT0FlcEdIWDJQZlZJSms4Q1pSR0dJVWVYMDRVaHFyeUIxWStqajJEdnU1?=
+ =?utf-8?B?Q3pSS01sQjM5WlZMQi9mM2daY3ZQcXQvYmpCeTZDRVBTTTJIbzRBWEJ0ZVhz?=
+ =?utf-8?B?dFZoM1d4QmFxSXRFUG1UdXpOcWhQR2FCVnpCSS9IMFVvbDB0eHRJdTRGTEhT?=
+ =?utf-8?B?UmdTVGpEdGpRR2pkeGgwb3JveGxCdmlEbmYvZ29sUmdzV3lpUFJKSi8wL3RB?=
+ =?utf-8?B?enI1V0NXT21tRnAvT240azVzN0NsY05zbVJpMm8wV0hoNGtSRnBxQzVjNUJY?=
+ =?utf-8?B?YUNheTNSRzVPNzVsbU5GeVN5WTcvekN3dzZVdlFTOXJ0VG50bHdDaFJ1dlRJ?=
+ =?utf-8?B?UUhEUjBwVFdRTU1UZTVhUUx4clBvMlNlNnZBZy9UTGxoZUZxY2RlclBwUkxv?=
+ =?utf-8?B?UmRncG1ETkx2M2RlR2E3UUowTkhoRXF0WFFTL2U3Vm9tTlNtTkQzRGVkR1ZC?=
+ =?utf-8?B?bWV4WXFidHkrOXBrSVZoRm1HdzREREp5WEkyZXlaeklUZkpsOURXR3QyN2VL?=
+ =?utf-8?B?UlRsa1Zlb2U2VWtsbmVqTGhiQzNoRURWbkhYaUpPTXVFSDIwSjNPK1NNWkNp?=
+ =?utf-8?B?RGcwUjdlZ3B1QUlyeWpRZ3RxU2doVm95Wk1CTElla24vTmU2ZGpMdk9nZWFT?=
+ =?utf-8?B?WDJOQjZ6c2FtOVRsV2JadHkrSWJGc1ltd0RXekVKbzRHbTl6Z0NjT2szTDJF?=
+ =?utf-8?B?ZUZJY1lWOXgzeXIvYitGVWxjdkM0ZkcyQVUvL1pVUHJZWGVzY3hCb01jc0pL?=
+ =?utf-8?B?V3pOaWZyUWNVOWVoaDVlRS9Tbzd0L3UyRVR6bVZxNTNWVGxpcEVNclk5R2RJ?=
+ =?utf-8?B?UXNRVzFXeXlnemQxdExERmhRTGVOU0tWcE5uUzJUM25FMlJuOHJLUWtaejZw?=
+ =?utf-8?B?YkNSUFZiZVE0S2Y5eUZUSTNWMlpaaGhMS3F4dnJDN09iVzZydGltcE9FREw4?=
+ =?utf-8?B?ZVFjQjdGcVpNakZSQnZqekRORWVMd0xtZ3hsTnU0S3h5ZEZscXFCYkEwSXgx?=
+ =?utf-8?B?LzFQdEU1QWFrRFNMWFpJNW12YnpTWnR5ajJYUUlzbzRpWDB4ZWlpZnI4YVph?=
+ =?utf-8?B?TExuallnSkQ5UkhoQW1Cc1A5L1pxaGlNUENmN0FMVFRJaXRnREZneUdrYStn?=
+ =?utf-8?B?ajB6Q2FZZWhoSlk3dTBGTFVDZUE0dWtHN0YwU2NFc2lySThrQ251WG1ITlFa?=
+ =?utf-8?B?Y24xd3BIUGo2aytuMTBrekJJWDVCMFpLTE9zZ0E4T0swcnVUVUhYNWNWYjd3?=
+ =?utf-8?B?UkIxcWVJWHNjNzFHM0V5cUhacmE2a1pJSkNoVlNEVEdjWjlFU0duZVp6cWM1?=
+ =?utf-8?B?RktMTGJYdkRnRHlhVkgzT3U2WDlHUVFXRElxNDlRdGhRM2g1d2diZEFwbFI3?=
+ =?utf-8?B?WEVEOHVUNlV6TGFiUGJwUytKdlgwYmV3SVRDenpraTMvMndTZXJUSVRYZWF6?=
+ =?utf-8?B?K3Ftek1SR3FFalQ0ejBmMXFoVjZxTmk0Zi9EQnFMTmx1QXVjMkJvaWZYc3Fp?=
+ =?utf-8?B?MHh5cUhsaXV6VFV5ZHRhVHhKZnVjK0VLdEF4ZUFocWhIb25WRkdndHM1RWZ1?=
+ =?utf-8?B?YldqelM3Vzh2WXRhdUlJeitWWkpEZnJmZUZYejFxd1dHUGNOOGtUOEJHbHdW?=
+ =?utf-8?B?NTZVbEJvMzJNWTRLeEI0d01ScmpFM2tUVlFXUT09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 06:41:59.1148
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9d46a8b-bbeb-4e53-072d-08ddae3339d2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB75.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4354
 
-
-On Tue, 17 Jun 2025 10:03:18 +0300, Svyatoslav Ryhel wrote:
-> Add device-tree for ASUS VivoTab RT TF600T, which is NVIDIA Tegra30-based
-> tablet device with Windows RT.
+On Tue, 17 Jun 2025 17:21:55 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.94 release.
+> There are 356 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Maxim Schwalm (1):
->   dt-bindings: arm: tegra: Add Asus VivoTab RT TF600T
+> Responses should be made by Thu, 19 Jun 2025 15:22:33 +0000.
+> Anything received after that time might be too late.
 > 
-> Svyatoslav Ryhel (1):
->   ARM: tegra: Add device-tree for ASUS VivoTab RT TF600T
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.94-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
->  .../devicetree/bindings/arm/tegra.yaml        |    4 +
->  arch/arm/boot/dts/nvidia/Makefile             |    1 +
->  .../boot/dts/nvidia/tegra30-asus-tf600t.dts   | 2500 +++++++++++++++++
->  3 files changed, 2505 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
+> thanks,
 > 
-> --
-> 2.48.1
-> 
-> 
-> 
+> greg k-h
 
+All tests passing for Tegra ...
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    120 tests:	120 pass, 0 fail
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Linux version:	6.6.94-rc1-g7ef12da06319
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: failed to guess base
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250617070320.9153-1-clamor95@gmail.com:
-
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /i2c@7000c500/flash-led@33: failed to match any schema with compatible: ['ti,tps61052']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: audio-codec@1c (realtek,rt5640): Unevaluated properties are not allowed ('clock-names', 'clocks' were unexpected)
-	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5640.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /i2c@7000d000/pmic@2d: failed to match any schema with compatible: ['ti,tps65911']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: light-sensor@48 (capella,cm32181): 'vdd-supply' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
-
-
-
-
-
+Jon
