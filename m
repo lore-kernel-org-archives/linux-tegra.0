@@ -1,50 +1,50 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5274B246BC4
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 19:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E025246BCA
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 19:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750360794; cv=none; b=AoyWpOGkOujJc+zzBqECsNZ/8fZ/Bn2eXUp0G0dE0QuBSr5zjAYea1bP9iFgsQNEdJny2vWKeryawkEIdp+OYMOEyaEbuye6QCsenSS5WGVJjhnPyjg+rSooNECxvwhRFQuumchyK0CXtQvuGAr+WfRHm48IrWKllYvdQ4IhXL0=
+	t=1750360801; cv=none; b=d1rmG1OGcfgXPhaI9iFW+w0TiPsLGgJbvAUYtPsrFApx1sBdETJdPQowImIjJm1nvp767HA+D5wxIJtjQ+aHtdB+mpECEBAMaSp1LVR3MzS9rsfm736caacestXHwPUBT8+NjaKr4Bsh6Pbtpy9+3K5KbNvvIjS2iqhD5PyED9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750360794; c=relaxed/simple;
-	bh=b823FRyxNk2zUXNAxRRwyAl9jZ3op/S3C5+BRvbNvEg=;
+	s=arc-20240116; t=1750360801; c=relaxed/simple;
+	bh=ei71xVf2KxFKheQUD3Rv5JMFWYUVLIYvcB17YZdR71g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FCPespZUwlO9ccleIAfHT5rBLtDgB4NvvnSUliw/ROzf1ERfVIMsDzoCG1XWg9h3REzrx5fWJadpChqFFdF+/RpkaQ7yhZdhhEHffunLFgbHnyDalSxBk9OYsIUOlweCvooWKclbvOwjDIRZkkBTb5JHwClyxtgyj+sf9Xg7mYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fJId/i4L; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=tNxqr2uT/mNfW4KK2ulaf5IpxsRy3Ez3Urvn+cAswKn9YuLPM4hHOdLPxB2pzQiizbAZxhFO5UfvZGpDQifMgSwGZeU+1LEjGP9wrIkAFMkwaQrml6ExQnVKDbJJJsYbSZFJ+pitCzzq5UTdtqafL6FDchY2ZKBxRWQO+qlHo7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VGXli3Fs; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fJId/i4L"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VGXli3Fs"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750360792;
+	s=mimecast20190719; t=1750360799;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8s0/BoDvtigAkjklSz/ICtodVAcsmabGq3DdUWE3hzQ=;
-	b=fJId/i4Ly282NP7KoLU3FXgo0MClkHB890zEAHQ7y817RcbAtkbj7euamPvVVPKmfMwoWD
-	bOLcvCw5xnNN7T1fj2jOr4FUnTi7543AFRU7BvFYHdjdkVuAhnZc5Yi/QJl1VIjVI4cPgm
-	hJhg+wf/mZcNTuGuHUwb3t7r3Dn/5KA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=XYZzMpw3Bxp8YLLX6DesTwmCC5/XZln9mJUBAa+iG5M=;
+	b=VGXli3FsxoaRdRgbN8ATfWDd6T9BComog78o420KQO7R63sXF9LAA4s+9n21ZS3dQdVOGF
+	E9BGA5jUtlP64ip+uTzrfkJqWgDFLgpcNJe88iVbS/1tQ2GsZ7N1bdAmXRoF2RicSJZUhP
+	LBQ6UEuJAMeF4+FYgABcdoumRkoHjec=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-6pxqT6xjOEWHSa88NyS5mA-1; Thu,
- 19 Jun 2025 15:19:47 -0400
-X-MC-Unique: 6pxqT6xjOEWHSa88NyS5mA-1
-X-Mimecast-MFC-AGG-ID: 6pxqT6xjOEWHSa88NyS5mA_1750360783
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-4Fak0v4QO76UnbQSUGYWXw-1; Thu,
+ 19 Jun 2025 15:19:57 -0400
+X-MC-Unique: 4Fak0v4QO76UnbQSUGYWXw-1
+X-Mimecast-MFC-AGG-ID: 4Fak0v4QO76UnbQSUGYWXw_1750360792
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 512361956080;
-	Thu, 19 Jun 2025 19:19:43 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B09319560B5;
+	Thu, 19 Jun 2025 19:19:52 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.132])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 73AAC19560B2;
-	Thu, 19 Jun 2025 19:19:34 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA44019560A3;
+	Thu, 19 Jun 2025 19:19:43 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Thu, 19 Jun 2025 14:16:06 -0500
-Subject: [PATCH v2 14/16] drm/mcde: Keep up with refcounting
+Date: Thu, 19 Jun 2025 14:16:07 -0500
+Subject: [PATCH v2 15/16] drm/bridge/analogix: Keep up with refcounting
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-b4-of_drm_find_panel_part1-v2-14-0df94aecc43d@redhat.com>
+Message-Id: <20250619-b4-of_drm_find_panel_part1-v2-15-0df94aecc43d@redhat.com>
 References: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
 In-Reply-To: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -87,40 +87,39 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
  linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
  linux-tegra@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750360565; l=890;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750360565; l=1001;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=b823FRyxNk2zUXNAxRRwyAl9jZ3op/S3C5+BRvbNvEg=;
- b=wWsnhBemjeQlglwDgt/hzl7chtN/3hr6NEunwdyAsRD96K1++/0XZg1FAsb6nT4f2CulEZbv9
- e95T+S6gGF8BwuHfuveMiznTS/dB0f7fPY0cvnLM3udmfc6HsIORW5J
+ bh=ei71xVf2KxFKheQUD3Rv5JMFWYUVLIYvcB17YZdR71g=;
+ b=x5KTNU62immLK/3d5Cjd14ZkRw2TEI6w258GU0vHV5JXNPdlTrcWV1UvtT8zitAB9n3hGRLOT
+ zzLWHSNl3jXAwzsg1eHQtUHb+hwe1jUTvcKEHan6JdmemGVZj+Ardge
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Put the panel reference returned by of_drm_find_panel()
-back when driver is no longer using it.
+The panel is looked for in exynos_dp_probe() which
+calls analogix_dp_probe() after which the prepare(),
+enable(), disable() and unprepare() helpers are called.
+Put the reference after unprepare()
+
+Patch added in v2.
 
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- drivers/gpu/drm/mcde/mcde_dsi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index a3423459dd7ac8395b77d0479a02ebb3a9ba259c..af9b149345adfd91ffdd620c016a1b6ea86cf209 100644
---- a/drivers/gpu/drm/mcde/mcde_dsi.c
-+++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -1154,8 +1154,11 @@ static void mcde_dsi_unbind(struct device *dev, struct device *master,
- {
- 	struct mcde_dsi *d = dev_get_drvdata(dev);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 505eec6b819bb26c6984a0cda4013fa40e44b674..5fe7a846da410ee59d65b854a440a1b49c6f508f 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1230,6 +1230,7 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	pm_runtime_put_sync(dp->dev);
  
--	if (d->panel)
-+	if (d->panel) {
- 		drm_panel_bridge_remove(d->bridge_out);
-+		drm_panel_put(d->panel);
-+	}
-+
- 	regmap_update_bits(d->prcmu, PRCM_DSI_SW_RESET,
- 			   PRCM_DSI_SW_RESET_DSI0_SW_RESETN, 0);
- }
+ 	drm_panel_unprepare(dp->plat_data->panel);
++	drm_panel_put(dp->plat_data->panel);
+ 
+ 	dp->fast_train_enable = false;
+ 	dp->psr_supported = false;
 
 -- 
 2.48.1
