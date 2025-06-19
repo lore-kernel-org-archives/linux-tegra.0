@@ -1,155 +1,177 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A50E1FE44D;
-	Thu, 19 Jun 2025 15:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750345675; cv=none; b=eyuglXv8yj8WaMf4PVNuEU3q6FeE+b7+kPE/AmgijgOvOD6k0HcWRwWrXY86bkHLiZVe57hW3cxbFBPgcwj6JvYLFh7WWCB8cR8I2YwHWHWrOTJ9VwKFzeyBQ1BJ970YkrI9iQzIHLTEqgjOnfmJtvo4khcGwF5kBpo9AcNSfPE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750345675; c=relaxed/simple;
-	bh=EgW9uuCj1TkY834i13v0eLe0br95u+N1morseH8cszs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OP5l77G86j2RN5tiYDB6fkxj3L0I/ZY6KsCKPr+7X4SYZ19eNHTxL/MA7hxgyWyqw/Zimga1ohcQ57qKbC5BxegQBkP/cy3aI91n9WvUMnbKB1sonT2PV/UkrLHWgJd11ya7N9wAb9Iwea89FiE9zpYMKdN+EaHI14gjMA61C0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a442a3a2bfso13203461cf.1;
-        Thu, 19 Jun 2025 08:07:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750345671; x=1750950471;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cXr4DkxQyQe6cO2hVmMV/1vKr4WFSQJXwlWoVF3SQUw=;
-        b=M7QhSWaa7CVaQ0l0o2AfYiX8nbD2NfzQIxMifXExZfxL4P8PSQiETvtcEmuF28FtYq
-         SJqb0Bi6xvyWEFb5GuIfWy089/4Dc96vhF5yxZ7FS1mv5PmSwmNbOWTqxIKrLayyau/R
-         Az9FHXtDMMs/sCItLmVRTk1sRMqR98W8xQwDOPdB5SWiScPKzcdB2BTGsF8UCFNyzk23
-         MlMktSeT3dvxIoRHFG0x3sVgy2JEOjYonAhXxtEjLErEIMZFrCuKFn7KFrjDd2tyOzT9
-         r2cDUD56Pih2VCclnGo1E9AYMRJ7b2bRPRvQBnEPaizAxwee8vtePA/D+61LATua3ykB
-         r7tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxqaDZL5YjenojoXD4z5OFtxJWEPloIbdyQPLnGtqF0Una+NwegrFUAO3jlDXUDDXY5I+/wq6/fcajg88=@vger.kernel.org, AJvYcCVmps3S5QRe8Bt2DP3aPBw11xCncWNINUZx3G6ycf8CsdA2Nr2+WHMx/mc5vt1XyzE7rDnP9dMVSWjsYPA=@vger.kernel.org, AJvYcCXLGK+NbTbiZ/NtMWDIRGtw7N3qHnyubQSXQ21PdTFfY/p4GWhcaadwybUwjkjPNk3y038V6amAqCyvohAfK7rK0qI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz51RL/A5tRSFn8szPcyS7nh6p0smgljB6Mc8hq4rkOA3i2315f
-	ycMNnzMj5ZHiEqIoXCou43b+aReDaBgVJGzFenASf03+74AHAf6zddnRb+nppF0N
-X-Gm-Gg: ASbGnctO7LcHaB/03pU0802Kerq8HaacUBCT/5VT1KlneB3uoRQANS+gPaP01l4g93M
-	bfK18iq5FROS/5lvPGwdpHlMCui6ABITKiUEfWC0CV4u5ZmBKDkOuBmE/o4PrEXuMtzc4vF2Pe2
-	PSK9fiTbnDADk8X0KrD200wCgsfOpGNpKxN9nP8kSJtoBO2c6l+eC3L9mRFFSHcJUt8piuwp9L+
-	/tq9ANuwUqzRPuo85iJJBRTvG9eVnYXi1BXyBiZ41FBuIGZ2XxXCR+afxflkgIBaeslHnTD9Xu5
-	RnXEDwQu2PVXHILs9nti3+phCd7l1uq5d7V6TsEtppale12cwhJYYG0SYou0q/FK2mXp39BszRw
-	XP3yH4oZ13Il5hju3Nu2oKi56n7PY
-X-Google-Smtp-Source: AGHT+IH2VQoxeZ4MlsXLGXW1iYTwh8bc5zogZbpBSrotexv/yblbvyqLA2vsGoKnzGPmRJFSZUE2+w==
-X-Received: by 2002:a05:622a:1887:b0:4a7:22fe:8ec5 with SMTP id d75a77b69052e-4a76d467930mr62973931cf.1.1750345671232;
-        Thu, 19 Jun 2025 08:07:51 -0700 (PDT)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com. [209.85.222.169])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7785a9e82sm264491cf.44.2025.06.19.08.07.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jun 2025 08:07:50 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7d3dd14a7edso151552285a.2;
-        Thu, 19 Jun 2025 08:07:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWT5pyUW8IKs97rkdkC1Ruj8dTEElneV1Lo0NXWG8xUsW2pF3NlaH/3XOZG4ReBQ3xx/5JVY1vT3FEcLJg=@vger.kernel.org, AJvYcCWVv9DlYfI5T/3+cSlROf9zO0A4FGbQg2Qy5OBE+aonFn4aNj68mRI6HEb8btxqgne7ijh0W3kBSw9F5lJWSIaX3uY=@vger.kernel.org, AJvYcCWeqWld8whZXkwfOCpZs8hJkf0wfEVlo/CaxdvL47I+L+Bcp+/HxPy8KyVm4GjKUTFSttqy652Q4/4p3QM=@vger.kernel.org
-X-Received: by 2002:a05:620a:319b:b0:7d3:8566:e9ad with SMTP id
- af79cd13be357-7d3c6cda22amr2925901685a.34.1750345669885; Thu, 19 Jun 2025
- 08:07:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD6330E858;
+	Thu, 19 Jun 2025 18:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750359213; cv=fail; b=OX3LOuUbKq21jvYH9FKsJhRqYx9G0VbKoWL5yFXlzhc3t1vXTfkn4hoqbhbtuDLY1C9XIR+ie/s9U9JAWx3DNGpG1KMBuYXJnNOq1yKCHiVnPnmt7TDKrZHBKfdcAWKu2vwUaHWM2RTDTtu9OErGH3Nv/HJG1h3J4ewqa/Q+I04=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750359213; c=relaxed/simple;
+	bh=ZD+NEl6lXN0oesmmthhAUzMSARzCE8FbPFzFBODs2Cw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XLmgo5/xt1hUChwBSPTtl8UF+Is3AYe2FH5aUzsa/neiM+tPHjZ9cQbi7UTIswcsXUcoKmSdpAdJEcUz3yWRqzj28r+tWPqbLSinI2B6JeC767NM829R5qpXIkZYr4LYQBOCR3xCNhDG+fGFib3SJ8RdBCJpEDazr2uDoSipGSI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iUsmE9I5; arc=fail smtp.client-ip=40.107.220.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iUsmE9I5"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rlYaVBDgkI34nD2bl8sK3nzJnD0ZL8Jj0aiTHwPrLLGtVZ1+mQBVV7q1b5FOnqyidqTU5DobAhXrYbs8DEwW/xupe7ex0U6H1SCzzbVMlIXqNInuDR7kGR43y2diiqFCRRtPUExqobI5B0MnjVm8Xl2RX+5pElNc8c3FlQpk5BDUUwjD++1ASHhl69auWQZR5j6cdp0iXGTdAI2B5aWyOBU3OyPduGklbLm6UUyUQqk93MRg/VKFBDbKCtlM/uMpOLTC+xx5QVKg3Y78vHqYlcNE+EnSnWMtDP26MaL8hG1fOeYp/ALoWJD3tUoY8Qa0z41yV043bVZAw/vtZsNw9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s6VVSCnzoXcSCZIY+NOqmj96j4hbJPY4xHkw1zYxUIc=;
+ b=m0EmyNRGLZJw35Pd0eNRLODOxxDN68isnKx1tFUx9Y2My0+3nme7BxFC27/oBQJbrwSQIb9Eu8VO6QUHEDNFQUDCSximkLpMvMXjLC1XX9eTQrqcRvR5PO/ct1+LWwiqV2oBx2v5GSXKPqvNlKKyaukbnROQYqlYDk540U53M1XMm0DreHQ+0S72lGiTuTT8D6pCUZOtLajMt+V6KEAjweb24oF9KOllwmt+bif3v24R/Y1NKCh731aKcsm8xYBxqSC3FnIWxKpE0G3avTm1tN5au+BUVl/hZ+Oq7SZjxW3o3Uzb5OX+ArLBfNrXva4sMHh5X/H6jA6901SXUriO7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s6VVSCnzoXcSCZIY+NOqmj96j4hbJPY4xHkw1zYxUIc=;
+ b=iUsmE9I5nHSBba1DAYsXHe2gStkInuNQmB89F9n7DCsu+94EyyilNL8cIZodhBMBWRB8gqz/03a/S8IKRoLbofltjZpni6FQGm4ihPkw58660Rn4su23s09B8ORvjFdpgnCTsh7nDhVmK+0AtGI5C336p6MsRBwPTHPQJVCsFX1u1JGN4cwj+e3HfPPUBRblddKJqZ1NjnjJyxGN2907rQet5+Nj83ptoTuiP7z+JyGt6eiP9i3NPAPzi41ccx1ID6htI7eWWgkmlzmY/8ju6e948ch1aek9WbS/4iEy7P6Rd4vc7HQ4qenGMO7QSEiyrxYsKNL5fxNaoVCmAxxHMw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MN0PR12MB5762.namprd12.prod.outlook.com (2603:10b6:208:375::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Thu, 19 Jun
+ 2025 18:53:27 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8835.027; Thu, 19 Jun 2025
+ 18:53:27 +0000
+Date: Thu, 19 Jun 2025 15:53:25 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
+	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
+	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
+	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
+	vasant.hegde@amd.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v6 20/25] iommu/arm-smmu-v3-iommufd: Add hw_info to
+ impl_ops
+Message-ID: <20250619185325.GB17127@nvidia.com>
+References: <cover.1749884998.git.nicolinc@nvidia.com>
+ <f36b5e42bac83d0cdf5773cad1c3a44c3eaed396.1749884998.git.nicolinc@nvidia.com>
+ <aFP4zHIVT6epJeLb@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFP4zHIVT6epJeLb@google.com>
+X-ClientProxiedBy: MN2PR12CA0032.namprd12.prod.outlook.com
+ (2603:10b6:208:a8::45) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506104731.111876-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWhwJTbJOBhKmC9YUaSebBg-9m7euqmxqJLCXdr6++siA@mail.gmail.com>
- <bdd989b4-a572-44c2-ae7b-2c445c09fd7a@linaro.org> <d05f2c03-fa86-4fc6-9b81-1a7b5592c2e8@nvidia.com>
- <CAMuHMdX9NzFvsOv9eT0t4KVNufHSqVEht7yRbrt0qE49WgHpGg@mail.gmail.com> <kjotbgwqlvl4uv4bcynqsiynf4dsoplw3szaqlcfd7rm7k633p@64c552v3llz2>
-In-Reply-To: <kjotbgwqlvl4uv4bcynqsiynf4dsoplw3szaqlcfd7rm7k633p@64c552v3llz2>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Jun 2025 17:07:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXt0AoHnCitc6GNUuT_THRvy17c5uq5geD0ubQ12FONZw@mail.gmail.com>
-X-Gm-Features: Ac12FXyqjFu03K5SyvIX5tcmxTFfiSwi7mDocCZBFa2GT0By0yuMp0VwoZlcHKg
-Message-ID: <CAMuHMdXt0AoHnCitc6GNUuT_THRvy17c5uq5geD0ubQ12FONZw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Build STMMAC Ethernet driver into the
- kernel for NFS boot
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Prabhakar <prabhakar.csengg@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN0PR12MB5762:EE_
+X-MS-Office365-Filtering-Correlation-Id: f644c443-dce9-47a2-4766-08ddaf62933b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PcKeHql+hkyOV7lZ7oNIQ0/VoSQNbHrbPvF6pJ8M476kI95qPPFYnEsh2Wgy?=
+ =?us-ascii?Q?rje0yVz6+6+XRhHwnMuN3L+njsNGsm4mdzwX1DGWh3AiCFWYSlbO9u17y0NU?=
+ =?us-ascii?Q?f8vyskSt0WG6g93YK99nwQBdCztLW9DWU02ykCJe9dU7+4p3HQjwniHaAB7G?=
+ =?us-ascii?Q?oH9ABjW58brfglICVPr6Vaqu7q/addqWfhNdM1a0/YqdUEG/XhfYGc0Ob8XG?=
+ =?us-ascii?Q?XFEgXdloAxmx/vIihoRIM3jmytZCvVlqDnKluqdWXQqKouO+6L0o9BgYOJI2?=
+ =?us-ascii?Q?tJMvg7+V8HC8BkbakGkKURFCsZxrujAiqzddJ9siu4fUleWJKmbx/F31VeTH?=
+ =?us-ascii?Q?FFiyLl8/er+Q8t9Kr8H9ZN3B9A13ep0/N6iqtOwt3IfXQhJ2j1CkOTueDhbd?=
+ =?us-ascii?Q?31gGE5qiLvb6Dn1kKfQxAbwTHusoq9UwmlqSdJK9Uyrpez+XkSH8StfwehZJ?=
+ =?us-ascii?Q?+ZGKQh6xuheNHd3dvaBXplEcXqpF4z3FQpSom9//oxLYB+8+TqEubirwkM0O?=
+ =?us-ascii?Q?GPFauCNees7ARDT93t4GvcwFPejyPlECk6DnjdVeiRy3PG8MceMU7CIABJf5?=
+ =?us-ascii?Q?oqKuVzffGjzwPrDat6PSN48GDMn1+QQaHvanz1FAcXyV+Jh1NQeTtMpaniP1?=
+ =?us-ascii?Q?n+ruZZWdiPiUjgrHZzP8dxR0XXvwmpZyltdHFpLgFEF+i0bGmNirJ7J+q6Uc?=
+ =?us-ascii?Q?suKHVwH0XXZxX8Lu0GfS12xCagYVog5osDNmS8oyuYfHoeuKwqjt+Ms4Rnrl?=
+ =?us-ascii?Q?qcsGrSWpTGcOjM6TeHAt58TYGzR81Kz+4v7NLp1Rpf+RpCyfl2/5+WGs3Hfc?=
+ =?us-ascii?Q?3f6XSE7uUWLQQ8lm2mDrXC7wdujfROQ4baEaUlePCnAomrz/pJ+s0PLr3LXZ?=
+ =?us-ascii?Q?4Zg6wHKoOTyHc3MNWoHen5mlImn5JD04SwP9GY0QTRtMjOgZRbNzIzr45t2f?=
+ =?us-ascii?Q?k7NfdKCzK3El2EDfG1rCm/vjwsXskqeqVmifDJCUemjkfS6Dn89Zp5bc5yvj?=
+ =?us-ascii?Q?UELHSoGLmLh7VbJe6nM1YjB1Wis3BYbLtki3zXd5z+OLVKkL2xoY+mDouHek?=
+ =?us-ascii?Q?QN6IX5i/ajGAyO6b/acmaO5r4Chl1GWl/8Av//N2+MFzHViebJ6ZWXpyOUqz?=
+ =?us-ascii?Q?Sb8grFykdCMd2fTgD9fwXSokLaGa8f1Rns+yvmAR1srVxP8AxCnZ/X1UhCGX?=
+ =?us-ascii?Q?DcszgJNbe4BJmoLKJ88R2nviCiN8cTdHgkZeSMaLJwhguYtTuzRPrw3wy1oV?=
+ =?us-ascii?Q?vX0y+rB3RiDgy0LLcafgIluHCEUcRS3uypZVGov2fxUze5OBTpx5IF6RyExb?=
+ =?us-ascii?Q?0nT46KhKI5tRAlixfF1ch9o1kk9IEdWZpelbf9gdDjyBnRSi/w8IuDH1rxDj?=
+ =?us-ascii?Q?b//lGA6RZu+ue7rq2V2NTW8JEkhVpNCNovMnNxqB455jEEYcjA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UEOevReBZfLpSCh4SMX8emeF9IVIS8XvzSmWIPGqLP63s9r9lrfj+w9TxjOS?=
+ =?us-ascii?Q?vHNjpCySeSUMUpvU72CxnLaJIgK9aWsWkgr+a4ZY7qSqTVMJOyfcGfXUKead?=
+ =?us-ascii?Q?jdTChTBeH3oHYTSjsAJwAyehmp4wlIIB8J5Qyx01zpe7H5D8tiN/PG0F1b0b?=
+ =?us-ascii?Q?eSb68RgTOrKd9/ADO6nOMcUjZh4BXyGpFsa2IIMWtV5rzYQjBOUjK6BJJvVL?=
+ =?us-ascii?Q?46StGXePJ8GvKgaFxsSo427s+tZwqOGHsdlx2FYnNjl0HwQEwFKXxPaqBJd4?=
+ =?us-ascii?Q?zzl26SaLHWlRrKTtiziNCuqVS4j2hsCZpc5fLz1emjtqnpwrKR7F/hjgOJo0?=
+ =?us-ascii?Q?RinVqDVWaq0R09Z8P56gFiTvF1Ge6E0UMjQtnOwRAmNGBCE5HaKGogRQohD2?=
+ =?us-ascii?Q?xwVflxCRGp+gFQs+XHDr37lPhSsHE1UUKxavJ3dh8a+N++3LJYCZACwejqk/?=
+ =?us-ascii?Q?rm1C9IDsxpQ+ZnxwiJp66Aby+p3O8aDsRARdfEz8M/B7HDBBxXylakE4VOuV?=
+ =?us-ascii?Q?1VUbPhl1zcgoxyXPMvL+csnJJiF8jsu5hzYIxRIKeHExK1IZjfEiPCh32x/h?=
+ =?us-ascii?Q?SmFOmUr3MRObQcflKytfxEEq9tkIQo0bL1c+A+n2cKIEfnMBiK2qQYvfkgo5?=
+ =?us-ascii?Q?djE9ngV6FSqvNPVe069pq5jOFH1fqHmxUvTypephHNb2bBaQoVSdwXdOCy/g?=
+ =?us-ascii?Q?dbGOUMK9J2N3oRN+RKQDf5rG8Q95wiha+Wr1mNV+AuOQBvsft36Hk4L5BcSr?=
+ =?us-ascii?Q?WeQM6eylwxrBXYllbql2SJXKuulCGlCZKDGlScMsB8Uj8hJlmv23vNx7WZgZ?=
+ =?us-ascii?Q?NsEISYd+smL5pkSfxmpkbBXbQfcUVrMVCVkTyRiK35q6t664B2eppaLUYtfr?=
+ =?us-ascii?Q?qoSHh/TVREWzjubNYmlsHufpsXs9yR0EqKUDjsIyrddAs7JzXhV0izrezRrJ?=
+ =?us-ascii?Q?iM5iVrOmL5dczMY8Ax2m2sQEIkYwVsIz2ayShar/ZfHFJ26nNoLNdRfwP8vs?=
+ =?us-ascii?Q?wcT4pjwuKvoRN3z/ijQNaAumSNH7GR9YzVxhXaoRt9wp9/7zHEA9NIX9KAoW?=
+ =?us-ascii?Q?AD2iHwi72tt8yjDd1jB5DUWaG3VxmAcKtecQyDo4eCr/g6KeMI4F+leX3mss?=
+ =?us-ascii?Q?5fhcHOduTDRJkJAqwsE9HFLVnnU0MbQXeQZqb0fsvzha10ZSkRpnTLlLGJdE?=
+ =?us-ascii?Q?QHoPhGgb/pjXvehxVFEkWTfsFyg/kW6cxn60lX4oaRRWy+uZHhSF3EIZDDBa?=
+ =?us-ascii?Q?bDD8gvMBzzaSq+POlJu1VdmL/saANGksLmxYLdTiN8bXNhYZNr6+PerKgLM/?=
+ =?us-ascii?Q?1HG8wTccWhjBo1ZeXFgtxLKaC+hCTtGxAKXF0BWfbN6S315sY4vLO2CRNVRk?=
+ =?us-ascii?Q?H2x0bSxytfqKNPhhjBUplf2BQc2ljEkl4Dh3RNcFidB7DGK06qgeTGz/wDvP?=
+ =?us-ascii?Q?Kwhj8xtArnBSQNcTndwbxaH7eXl2aTHkJiJPOu1XH5cUnqSr+WlDfN8OE9TP?=
+ =?us-ascii?Q?l/4vCcrhUFWHdDsxNG2X0atxtAjgFROhte6uCrIasVMJMrDYTashIyDQfWdr?=
+ =?us-ascii?Q?vdGOA2vypo6ZNfPgj2yPAnN5L6ubBGq5IvGqigMU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f644c443-dce9-47a2-4766-08ddaf62933b
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 18:53:27.0946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /3EpBINhL50Zf/45X2odqituZ3ZIbaC5vaDsWp2F6KlMdzQErsWhLy2nPvz4ec83
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5762
 
-On Thu, 12 Jun 2025 at 16:30, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Thu, Jun 12, 2025 at 02:34:32PM +0200, Geert Uytterhoeven wrote:
-> > On Thu, 12 Jun 2025 at 14:20, Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > On 23/05/2025 12:54, Krzysztof Kozlowski wrote:
-> > > > On 23/05/2025 13:39, Geert Uytterhoeven wrote:
-> > > >> On Tue, 6 May 2025 at 12:47, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > > >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >>>
-> > > >>> Enable `CONFIG_STMMAC_ETH` as built-in (`y`) instead of a module (`m`) to
-> > > >>> ensure the Ethernet driver is available early in the boot process. This
-> > > >>> is necessary for platforms mounting the root filesystem via NFS, as the
-> > > >>> driver must be available before the root filesystem is accessed.
-> > > >>>
-> > > >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >>> ---
-> > > >>> With this change, the Renesas RZ/V2H EVK board can boot from NFS
-> > > >>> which has the DWMAC IP.
-> > > >>
-> > > >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > >> i.e. will queue in renesas-devel for v6.17.
-> > > >
-> > > > With my Nacked, please.
-> > >
-> > > I was surprised to see this change in -next. We also use NFS for testing
-> > > and we use the dwmac drivers. To date we are explictly building these
-> > > drivers into the initramfs but I noticed that that is now failing
-> > > because this driver is no longer a module by default. This is easy for
-> >
-> > Oops, sorry for that...
-> >
-> > > us to fix.
-> >
-> > Good ;-)
-> >
-> > > I do agree that if we start to build every networking driver into the
-> > > kernel it is going to bloat. Yes I do see the kernel image growing
-> > > regardless of this, but nonetheless it seems better to just build as a
-> > > module IMO.
-> >
-> > Not _every_ networking driver, of course.  AFAIK, making network
-> > drivers built-in for systems where development is done using nfsroot
-> > has always been acceptable for the arm64 defconfig before.  For things
-> > not critical for booting, modular is indeed the preferred way.
->
-> Last time I tried to merge something like this I was told that we
-> shouldn't bloat the kernel for everyone just for our own convenience. I
-> tend to agree with this now. It's trivial to make local adjustments for
-> things like this. In fact, that's what I do all the time. I will use
-> defconfig as a base line and if I want the convenience of having network
-> drivers included because I don't want to update the initramfs every time
-> I update the kernel, I'll just change the driver to built-in in my local
-> .config.
->
-> I think of the defconfig as more of a reference for what a typical
-> development system would need. So it gives you reasonable build coverage
-> and such for a wide variety of boards.
->
-> If we start building too many things into the kernel, then at some point
-> it's going to become uselessly large for everyone. That's essentially
-> trading everyone's convenience for your own.
+On Thu, Jun 19, 2025 at 11:47:24AM +0000, Pranjal Shrivastava wrote:
+> I'm not sure if I get this right.. if the user (while porting a VMM or
+> something) mistakenly passes *type == IOMMU_HW_INFO_TYPE_INTEL_VTD here,
+> they'll get impl-specific info?
 
-As discussed with Arnd on #armlinux, I will drop this patch.
+It should call the impl hw_info which should fail?
 
-Gr{oetje,eeting}s,
++static void *tegra241_cmdqv_hw_info(struct arm_smmu_device *smmu, u32 *length,
++				    u32 *type)
++{
++	if (*type != IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV)
++		return ERR_PTR(-EOPNOTSUPP);
 
-                        Geert
+If impl ops is null/etc then it fails:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
++             if (!impl_ops || !impl_ops->hw_info)
++                     return ERR_PTR(-EOPNOTSUPP);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Where does IOMMU_HW_INFO_TYPE_INTEL_VTD return something?
+
+> I agree in that case the impl-specific
+> driver needs to check the type, but shouldn't we simply return from here
+> itself if the type isn't arm-smmu-v3?
+
+Then how do you return IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV?
+
+Jason
