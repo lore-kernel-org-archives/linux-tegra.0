@@ -1,228 +1,259 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C648C220F27;
-	Thu, 19 Jun 2025 10:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EEF223311
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 10:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750327409; cv=none; b=neQBGVvqzvogzGQQ1tK+1dnoOtANpTIhRCzz5PcABjKhkpT3lVQb7WhMDz2/oL7EoNh3ZfqxWqN/tsoMfgLzTf+0tevHiKx+8pAnKGvI4c1lez+Lo63ZIp0FUkHJ+NGTWkCWmJ4WinEvLEdnxyWLM7cB60mXNshQIKUCkZ3nDIU=
+	t=1750328804; cv=none; b=GdFrI6i6wLbPFfxfOFB+L0ow8m3Nkxavpb81CTm1qBbmNkDeyGTbCJAfZLEfLAzBU/j/3Rgo0+v54d5OTBnWHHkTYWOnynIr0fdqHVTf/el/4SmEUvbqUcYayLPKF44GlvN1O+6RS31XoD+RURZ21xwlQtIPhaRCzg/TllYIAto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750327409; c=relaxed/simple;
-	bh=703KiELmDjP8Uw1qN8XJ8LZkYlIjoyRI6q6sVdlOWGM=;
+	s=arc-20240116; t=1750328804; c=relaxed/simple;
+	bh=l5p9J2QLOh7J7ogYCt7vV0BkK248vYvNV1+J7U/FHbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxweLC2WjyZ8Bu2yQCotgZK2/D9bhxZfKqEv9Y7K98X9c/xswfsIyProajflZjYUHl1BPUXlyR0UXDD7PFI2qv7NFZ53S4qGLdxjDaxk7AGwcFEz6mZMgKcshqOi0a+X4lLNsx4MXvNRm8FWm+gMndz+kejEaXaxpTY7NixpJKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2v0YqdU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBYAyks59lh4P1T/A5R51ltAGYSnhiulEJPtfHfZuUAcWeSEwttB3/6s0SvL9TVVqh60Lg65oGTueR+iUuikwLUcgTDI3jVFYaSkcdP/CqPgKfohhXM2dc7+ZsZWu0CHpCOFRHDwciO4MlnvV+3HePzkR3dHBOjt0Ltk+61grwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEtDX93D; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2v0YqdU"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cf214200so5225865e9.1;
-        Thu, 19 Jun 2025 03:03:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LEtDX93D"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-235e389599fso166595ad.0
+        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 03:26:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750327406; x=1750932206; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1750328801; x=1750933601; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6cusTDU2sumyTVDYQ9G+PYn6zrx6R2pwR2MrJ1EXiEo=;
-        b=f2v0YqdU2nekC/dRFrqpKDvhsAfxbomcx5byp/ExSaLNkTToOsU7vKxqxFbrUJjcPz
-         UZgT7uek5NR8hmafHxszhe8XJFPwUSIxBaVj8AxdFef4IaTJfm091QVzfxOoc8ra9Okx
-         gaH19k3Bb+VNjPsN7yf+fU9QsMF4fEte1f/VPHnhoTvkLK8EvpDW0RI7X/rR8okdQhaY
-         GmNQ33PIAVszVmOSVEVOv8bSpH3q+Q4hH2YelM07ve7ZySys3GDiE1GUP06t2x62Kd+k
-         Ws7ubsQRMBqUsVp/YytuLQWzsmCagX7FleXYNblmnrTHXj21AC08Nv541VDxWJzgI2os
-         J6TQ==
+        bh=jrdYKQcH3sp0apOchPLnA+m1+Ly6Mzn8RffcZko3gSE=;
+        b=LEtDX93DFDeoZojEpnkHQoJVgEjAjCq1ih1RMCuWDYzYmZZv3SLgc0FZdXOI2A3j/C
+         SdgFl4AhIqn4ONzjhg45rpCucJulpSBGol1w+Th70biz5NQKTz8PWqXeuoKNnRgFaDBc
+         4Bg5zT353R+aAQpkHSL0zA9rUjwWp5Fp9gyNd/PiXTqt9t9FAMB+oSqfwK49GF3E1qwW
+         05hAMioXNDT3Ot+mhhxHdim0wxdl+EFqJX3a7B0CXgvqSRoLMtwtadbTUMnqtbNgLKnI
+         9stDrgABCzz0L1sZxGi45E7bMkyAYLzVmSR7DKFrIry7eUNdzxIgSvXutCHzOWHqc0ig
+         AdZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750327406; x=1750932206;
+        d=1e100.net; s=20230601; t=1750328801; x=1750933601;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6cusTDU2sumyTVDYQ9G+PYn6zrx6R2pwR2MrJ1EXiEo=;
-        b=RnfHp3gPE2jpx6kiM3y3jadAGzeORPn1w4tFhpPv/NsszVzDW2IJLZDkX2GtYKoQaZ
-         XwokU62A1K0zEscPz/sbghMpYqBl8RKTUn+QkO6pBBCjRmJgHbVndy7uproM93PWU14U
-         et55GnRLD5O6g0dfWrToGeMEGDlvv42EN7T1Hka9FaJpxkpe268eY2mAGS9a0X4/wWrY
-         durxVVd9VOVuCR1jH+6TIcS0JZq9gWfEbP8Dauc/IwV2fMt9GoNTRA6PFq43ALIVqZ6Z
-         2RAzPoRNqgBsWDttveAP6GUfC3WMG1BKq9t9IZk/zrWGYAAT0z0UqD2j95U44WGai4T1
-         1kXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3jSGukzTqdF+C7HXN7RfrqolTtKMtUTpUaZFz1uCKM7qbzlh0y3eE7N5XnSpW3wpMM5Mbxt45GRCshj0=@vger.kernel.org, AJvYcCVRStXsQIcm7tu+Q5YQhER/QPJIqvONSGenuDMhrAFJolInTLu6CBdV6kLgdPvXIGVFh3SHpbj/rmwcIu93Cw4=@vger.kernel.org, AJvYcCVkoCu0qUHLGc61IUebQQrn8+kDnpCLrlvOKEc+6425i9d2pAhcrFWQbp0atfJaiViVSzDHcvnssv8eHWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP6WPVxh+8fSiFWC4+7HMGLwiSY/w8/CEgQuESrLLz/ZDcmND4
-	6iGC8zUEU3okxxX1kiZUXf/Qzcp8AK+aZBWkXTJFV6Ha5ghDjHQjlAW9
-X-Gm-Gg: ASbGnct5vym5ua4Y41ptCxhMXVuW7R++1u0xrnN8DvUraSwZanNyKJL6iFdf70d+CS2
-	PH9+BEkrY979HNcvtkp/RhIYxE6BisnoThl0hckxZCn4k+a8BLl9jmjhm1t5wVTEhKyoROH9YzA
-	60R1rS+rgmKpMBpkyYCnMAnmTjuCeKMeDmhfH1GuBgRPiZT/wzmPuwb0qm3eU51uY0Ukr+N7XS+
-	mSA/98bQpViF1cFUKphup8P24r2XH/KQ2/mVCQeKNVMd+Y3IV9sNFa/1YR3JyiL0fbtm5S2rnQc
-	GngC/V5YY3TPUhNahwAxYGtMMo8vqL5ivFxrp+hjxscE+TO57Ani9JMbNihkLLlDQhvwi6GxHYK
-	NKWQQo7ugqymrtTqxGy28+BgX0JBKnoV64Y9DtFW/smCG3xbh
-X-Google-Smtp-Source: AGHT+IFei2sv4Is4eRKDMO6SQ5KWPDd3+hXWSApQVxlUQKGGKcBG83g5eVrYF8DApk8Damil4kEEGw==
-X-Received: by 2002:a05:6000:288a:b0:3a5:27ba:47d0 with SMTP id ffacd0b85a97d-3a572e5737bmr17084853f8f.56.1750327405682;
-        Thu, 19 Jun 2025 03:03:25 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b08c99sm19311952f8f.63.2025.06.19.03.03.23
+        bh=jrdYKQcH3sp0apOchPLnA+m1+Ly6Mzn8RffcZko3gSE=;
+        b=jitFfZ6GZkFbk5dB/7N9MIR4bt0JmKBwgZOqTCvQZ21l4b2MMMs2jg4+U1Em0U1x9+
+         RCOZWDLyBbHl/UTTsxvoBtvqFz9J6YVC542UJhGPzSkjADFy/ImUgV0HLNqzlPsIjQ2h
+         6BfKxvY7zW+dvOHS9uf02Uo/955yfdhPIHUz9IH2RaT7rv7H7XH3lPYsBk8l/VIwKqPF
+         SoiR5inFbVIRIYg5JRSpuPUbqo5SEvTcQu1Mqj1dSPQDt+p1XZcYcaKp4MXph7oPkguy
+         oWu2J7YaoiTVkEuhJPtDRXN6UNLOQA6zxkaON/LQAiO1WN8qtHxepEny4ENE5uZF8hE8
+         PRWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCP5I+kXR28h8oHIWgKxRAUyYmYU9w1VM0pIm3b1PmA7wd5SJAn+eLy07gNdNLSoYIdnGoy8vTBq3M+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQHflLiGRzuMgKdtGpM2I1FEaM098/GAfk30mga+Ps4bHbcH8f
+	0/mPqCBvJtwOhz4lMXc1FztUXv+TS+RecQCNdkl4jkHJlOJJ85bnt5AuKFZVLFPCMw==
+X-Gm-Gg: ASbGncvQl0s5/DszIZ9h59fReseI9HVpzPIHBUCiJbKpWIb03yTkaWZgelz3Uyuju4t
+	flhU+lwq2u700gah13ItrXSzRzV7zsMDKT/gCcUDgqQqWScOBngqB/PI8ey28VDdIDPiLRx9451
+	WsytijoB5mEfBzL7IUEyDYlnrwOxei8Bv4nkJYKFkzu0/CzkMF+WW7f4jj7dJrvQM6ih4350qvH
+	MfHUDHACyvw+eWrQsRoqmB5i2xxfQMLEHp4rmXerfGC/I2FT4i0zpZHIDpV/u+aHce6bWrr3Mxg
+	zccTnk7mF+SepsV80pG2PZ0GyFlfoKzpJvdXhlvKzFS1ov2lPb0cb89HMnnwUDTQokDyhpUIADT
+	oK+G/CasaDzezjy6UC+jR
+X-Google-Smtp-Source: AGHT+IGiUkrhNhPK9lXuO365Ne3OwVoTaAk8SvrZ2YyadUl+5Mml/HIcLv4k3/+1+30tV1lrdYYgXA==
+X-Received: by 2002:a17:902:e5c3:b0:224:6c8:8d84 with SMTP id d9443c01a7336-237cca5ada5mr2619125ad.4.1750328800415;
+        Thu, 19 Jun 2025 03:26:40 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900b04e4sm12850712b3a.121.2025.06.19.03.26.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 03:03:23 -0700 (PDT)
-Date: Thu, 19 Jun 2025 12:03:21 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Robert Lin <robelin@nvidia.com>, daniel.lezcano@linaro.org, 
-	jonathanh@nvidia.com, tglx@linutronix.de, pohsuns@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, sumitg@nvidia.com, 
-	linux-watchdog@vger.kernel.org, wim@linux-watchdog.org
-Subject: Re: [PATCH v8 1/3] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
-Message-ID: <nzuhltjezafyjekctgdazcfayxa2jyk3k2qhfssxfqtmce2nor@sd2s7hvjdpqr>
-References: <20250507044311.3751033-1-robelin@nvidia.com>
- <20250507044311.3751033-2-robelin@nvidia.com>
- <5c5ba239-f8e4-43b5-ab58-b3850c57d74b@roeck-us.net>
+        Thu, 19 Jun 2025 03:26:39 -0700 (PDT)
+Date: Thu, 19 Jun 2025 10:26:28 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v6 08/25] iommufd/viommu: Add driver-defined vDEVICE
+ support
+Message-ID: <aFPl1LD8r3Du-Far@google.com>
+References: <cover.1749884998.git.nicolinc@nvidia.com>
+ <937d515032be07af36c06a4adb662ee2f7693c75.1749884998.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zc6ugy6dzkprjq5r"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5c5ba239-f8e4-43b5-ab58-b3850c57d74b@roeck-us.net>
+In-Reply-To: <937d515032be07af36c06a4adb662ee2f7693c75.1749884998.git.nicolinc@nvidia.com>
 
+On Sat, Jun 14, 2025 at 12:14:33AM -0700, Nicolin Chen wrote:
+> NVIDIA VCMDQ driver will have a driver-defined vDEVICE structure and do
+> some HW configurations with that.
+> 
+> To allow IOMMU drivers to define their own vDEVICE structures, move the
+> struct iommufd_vdevice to the public header and provide a pair of viommu
+> ops, similar to get_viommu_size and viommu_init.
+> 
+> Doing this, however, creates a new window between the vDEVICE allocation
+> and its driver-level initialization, during which an abort could happen
+> but it can't invoke a driver destroy function from the struct viommu_ops
+> since the driver structure isn't initialized yet. vIOMMU object doesn't
+> have this problem, since its destroy op is set via the viommu_ops by the
+> driver viommu_init function. Thus, vDEVICE should do something similar:
+> add a destroy function pointer inside the struct iommufd_vdevice instead
+> of the struct iommufd_viommu_ops.
+> 
+> Note that there is unlikely a use case for a type dependent vDEVICE, so
+> a static vdevice_size is probably enough for the near term instead of a
+> get_vdevice_size function op.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h |  7 -------
+>  include/linux/iommufd.h                 | 26 +++++++++++++++++++++++++
+>  drivers/iommu/iommufd/viommu.c          | 26 ++++++++++++++++++++++++-
+>  3 files changed, 51 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index 468717d5e5bc..e6b1eb2ab375 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -638,13 +638,6 @@ void iommufd_viommu_destroy(struct iommufd_object *obj);
+>  int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>  void iommufd_vdevice_destroy(struct iommufd_object *obj);
+>  
+> -struct iommufd_vdevice {
+> -	struct iommufd_object obj;
+> -	struct iommufd_viommu *viommu;
+> -	struct device *dev;
+> -	u64 id; /* per-vIOMMU virtual ID */
+> -};
+> -
+>  #ifdef CONFIG_IOMMUFD_TEST
+>  int iommufd_test(struct iommufd_ucmd *ucmd);
+>  void iommufd_selftest_destroy(struct iommufd_object *obj);
+> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index 2d1bf2f97ee3..f3b5cfdb6d53 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -104,6 +104,16 @@ struct iommufd_viommu {
+>  	enum iommu_viommu_type type;
+>  };
+>  
+> +struct iommufd_vdevice {
+> +	struct iommufd_object obj;
+> +	struct iommufd_viommu *viommu;
+> +	struct device *dev;
+> +	u64 id; /* per-vIOMMU virtual ID */
 
---zc6ugy6dzkprjq5r
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 1/3] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
-MIME-Version: 1.0
+Nit: Why not call this viommu_id?
 
-On Fri, Jun 13, 2025 at 06:24:40AM -0700, Guenter Roeck wrote:
-> Hi,
->=20
-> On Wed, May 07, 2025 at 12:43:09PM +0800, Robert Lin wrote:
-> > From: Pohsun Su <pohsuns@nvidia.com>
-> >=20
-> > This change adds support for WDIOC_GETTIMELEFT so userspace
-> > programs can get the number of seconds before system reset by
-> > the watchdog timer via ioctl.
-> >=20
-> > Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
-> > Signed-off-by: Robert Lin <robelin@nvidia.com>
-> > ---
-> >  drivers/clocksource/timer-tegra186.c | 64 +++++++++++++++++++++++++++-
-> >  1 file changed, 63 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource=
-/timer-tegra186.c
-> > index ea742889ee06..e3ea6110e6f5 100644
-> > --- a/drivers/clocksource/timer-tegra186.c
-> > +++ b/drivers/clocksource/timer-tegra186.c
-> > @@ -1,8 +1,9 @@
-> >  // SPDX-License-Identifier: GPL-2.0-only
-> >  /*
-> > - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
-> > + * Copyright (c) 2019-2025 NVIDIA Corporation. All rights reserved.
-> >   */
-> > =20
-> > +#include <linux/bitfield.h>
-> >  #include <linux/clocksource.h>
-> >  #include <linux/module.h>
-> >  #include <linux/interrupt.h>
-> > @@ -30,6 +31,7 @@
-> > =20
-> >  #define TMRSR 0x004
-> >  #define  TMRSR_INTR_CLR BIT(30)
-> > +#define  TMRSR_PCV GENMASK(28, 0)
-> > =20
-> >  #define TMRCSSR 0x008
-> >  #define  TMRCSSR_SRC_USEC (0 << 0)
-> > @@ -46,6 +48,9 @@
-> >  #define  WDTCR_TIMER_SOURCE_MASK 0xf
-> >  #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
-> > =20
-> > +#define WDTSR 0x004
-> > +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
-> > +
-> >  #define WDTCMDR 0x008
-> >  #define  WDTCMDR_DISABLE_COUNTER BIT(1)
-> >  #define  WDTCMDR_START_COUNTER BIT(0)
-> > @@ -235,12 +240,69 @@ static int tegra186_wdt_set_timeout(struct watchd=
-og_device *wdd,
-> >  	return 0;
-> >  }
-> > =20
-> > +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *=
-wdd)
-> > +{
-> > +	struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
-> > +	u32 expiration, val;
-> > +	u64 timeleft;
-> > +
-> > +	if (!watchdog_active(&wdt->base)) {
-> > +		/* return zero if the watchdog timer is not activated. */
-> > +		return 0;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Reset occurs on the fifth expiration of the
-> > +	 * watchdog timer and so when the watchdog timer is configured,
-> > +	 * the actual value programmed into the counter is 1/5 of the
-> > +	 * timeout value. Once the counter reaches 0, expiration count
-> > +	 * will be increased by 1 and the down counter restarts.
-> > +	 * Hence to get the time left before system reset we must
-> > +	 * combine 2 parts:
-> > +	 * 1. value of the current down counter
-> > +	 * 2. (number of counter expirations remaining) * (timeout/5)
-> > +	 */
-> > +
-> > +	/* Get the current number of counter expirations. Should be a
-> > +	 * value between 0 and 4
-> > +	 */
-> > +	val =3D readl_relaxed(wdt->regs + WDTSR);
-> > +	expiration =3D FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, val);
-> > +	if (WARN_ON_ONCE(expiration > 4))
-> > +		return 0;
-> > +
-> > +	/* Get the current counter value in microsecond. */
-> > +	val =3D readl_relaxed(wdt->tmr->regs + TMRSR);
-> > +	timeleft =3D FIELD_GET(TMRSR_PCV, val);
-> > +
-> > +	/*
-> > +	 * Calculate the time remaining by adding the time for the
-> > +	 * counter value to the time of the counter expirations that
-> > +	 * remain.
-> > +	 */
-> > +	timeleft +=3D (((u64)wdt->base.timeout * USEC_PER_SEC) / 5) * (4 - ex=
-piration);
->=20
-> This results in
->=20
-> xtensa-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra=
-186_timer_remove':
-> timer-tegra186.c:(.text+0x350): undefined reference to `__udivdi3'
-> xtensa-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra=
-186_wdt_get_timeleft':
-> timer-tegra186.c:(.text+0x52c): undefined reference to `__udivdi3'
+> +
+> +	/* Clean up all driver-specific parts of an iommufd_vdevice */
+> +	void (*destroy)(struct iommufd_vdevice *vdev);
+> +};
+> +
+>  /**
+>   * struct iommufd_viommu_ops - vIOMMU specific operations
+>   * @destroy: Clean up all driver-specific parts of an iommufd_viommu. The memory
+> @@ -120,6 +130,14 @@ struct iommufd_viommu {
+>   *                    array->entry_num to report the number of handled requests.
+>   *                    The data structure of the array entry must be defined in
+>   *                    include/uapi/linux/iommufd.h
+> + * @vdevice_size: Size of the driver-defined vDEVICE structure per this vIOMMU
+> + * @vdevice_init: Initialize the driver-level structure of a vDEVICE object, or
+> + *                related HW procedure. @vdev is already initialized by iommufd
+> + *                core: vdev->dev and vdev->viommu pointers; vdev->id carries a
+> + *                per-vIOMMU virtual ID (refer to struct iommu_vdevice_alloc in
+> + *                include/uapi/linux/iommufd.h)
+> + *                If driver has a deinit function to revert what vdevice_init op
+> + *                does, it should set it to the @vdev->destroy function pointer
+>   */
+>  struct iommufd_viommu_ops {
+>  	void (*destroy)(struct iommufd_viommu *viommu);
+> @@ -128,6 +146,8 @@ struct iommufd_viommu_ops {
+>  		const struct iommu_user_data *user_data);
+>  	int (*cache_invalidate)(struct iommufd_viommu *viommu,
+>  				struct iommu_user_data_array *array);
+> +	const size_t vdevice_size;
+> +	int (*vdevice_init)(struct iommufd_vdevice *vdev);
+>  };
+>  
+>  #if IS_ENABLED(CONFIG_IOMMUFD)
+> @@ -224,4 +244,10 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
+>  	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
+>  	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_viommu,                 \
+>  					((drv_struct *)NULL)->member)))
+> +
+> +#define VDEVICE_STRUCT_SIZE(drv_struct, member)                                \
+> +	(sizeof(drv_struct) +                                                  \
+> +	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
+> +	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_vdevice,                \
+> +					((drv_struct *)NULL)->member)))
+>  #endif
+> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> index c5eea9900c54..28ea5d026222 100644
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -116,6 +116,8 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
+>  		container_of(obj, struct iommufd_vdevice, obj);
+>  	struct iommufd_viommu *viommu = vdev->viommu;
+>  
+> +	if (vdev->destroy)
+> +		vdev->destroy(vdev);
+>  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
+>  	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
+>  	refcount_dec(&viommu->obj.users);
+> @@ -126,6 +128,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  {
+>  	struct iommu_vdevice_alloc *cmd = ucmd->cmd;
+>  	struct iommufd_vdevice *vdev, *curr;
+> +	size_t vdev_size = sizeof(*vdev);
+>  	struct iommufd_viommu *viommu;
+>  	struct iommufd_device *idev;
+>  	u64 virt_id = cmd->virt_id;
+> @@ -150,7 +153,22 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  		goto out_put_idev;
+>  	}
+>  
+> -	vdev = iommufd_object_alloc_ucmd(ucmd, vdev, IOMMUFD_OBJ_VDEVICE);
+> +	if (viommu->ops && viommu->ops->vdevice_size) {
+> +		/*
+> +		 * It is a driver bug for:
+> +		 * - ops->vdevice_size smaller than the core structure size
+> +		 * - not implementing a pairing ops->vdevice_init op
+> +		 */
+> +		if (WARN_ON_ONCE(viommu->ops->vdevice_size < vdev_size ||
+> +				 !viommu->ops->vdevice_init)) {
+> +			rc = -EOPNOTSUPP;
+> +			goto out_put_idev;
+> +		}
+> +		vdev_size = viommu->ops->vdevice_size;
+> +	}
+> +
+> +	vdev = (struct iommufd_vdevice *)_iommufd_object_alloc_ucmd(
+> +		ucmd, vdev_size, IOMMUFD_OBJ_VDEVICE);
+>  	if (IS_ERR(vdev)) {
+>  		rc = PTR_ERR(vdev);
+>  		goto out_put_idev;
+> @@ -168,6 +186,12 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  		goto out_put_idev;
+>  	}
+>  
+> +	if (viommu->ops && viommu->ops->vdevice_init) {
+> +		rc = viommu->ops->vdevice_init(vdev);
+> +		if (rc)
+> +			goto out_put_idev;
+> +	}
+> +
+>  	cmd->out_vdevice_id = vdev->obj.id;
+>  	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
+> 
 
-I'm unable to reproduce this. I wonder if maybe I have a different
-toolchain that doesn't have this issue? Do you have a link so I can try
-to get closer to the setup you have?
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-Thanks,
-Thierry
-
---zc6ugy6dzkprjq5r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhT4GkACgkQ3SOs138+
-s6G35Q/+OscriuS9td/FzsgIvIf5uyQsg8UDu9ZMHYSd65WppQmg4rENctRq3+oH
-1Sbytk8z2Hl6putu7F8uQRO477ps2n1EeJ7+3bGO2fnOMNMns3IIV8yHBjsKGrpM
-RKNho5Z42xTcavdrLTzNQMG0ZRpEGGFZKn+mo2aPqA6nTiJtap7q95m2Yh2P7CgV
-K4YpbcmKi7QufChQXnGUMdsLTK4ahKrBkBSC78w7oCnW/tywWTgi9ESx2kRTHLL0
-3Dl4/dnWnEWkqeM7Y6mMQlar1qYW+4hjXjBlrvbMBms9W+hvoF4FNKQ5v/mFE2WB
-et4bMjhHe9jMacG4ZZN2//mbSw8jHKmZ0/JYp244/xo97Dawpkgy59auHEjj7Zs9
-h2f3yrw+HUgbumNAuRzkS8TUwvHAcg3MlaZXZB5qIdP0dhryhRTqBvfLTfQQfI3p
-DyNibyuu0XGmgNaW//UhAR5LnQIJ+Q6161gd7TKSgYLCep+ABu4RmV8agerRxa28
-HDvFEKE/dxmUSOTSyeSljckseB7vEnxd8IMeD2VLWdTXY+WO9uHqEhsoRvh5rWYU
-iHwK6gasv9Zrk6rpY/77+o+FR31FPl56N6N95f+jdEdtGDld45LS7MSRF5+N+cfh
-iAqZLBUQlSEP1mVmbXKSz5vRSBMP1wuWy9vdR4cHG5cVLyDhzH0=
-=CR/o
------END PGP SIGNATURE-----
-
---zc6ugy6dzkprjq5r--
+> -- 
+> 2.43.0
+> 
