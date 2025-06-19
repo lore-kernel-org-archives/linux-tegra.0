@@ -1,170 +1,228 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26765221700
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 09:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C648C220F27;
+	Thu, 19 Jun 2025 10:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750326565; cv=none; b=I7VV53tBNyUseaEJ1zmWgX4y7mFJpWxdhdyloqqzc1630ythBVNZEaMSMPvEa0lFICOwRHPieS2yyYH0iRU3siJmdBBKJVLj0F91e29rbCgjQ7zaRmHV0SmPNpHZ36RLctutXCOyWHkW0MkRk/lXiGZcM+qjz+6XzPTDkKJ1R84=
+	t=1750327409; cv=none; b=neQBGVvqzvogzGQQ1tK+1dnoOtANpTIhRCzz5PcABjKhkpT3lVQb7WhMDz2/oL7EoNh3ZfqxWqN/tsoMfgLzTf+0tevHiKx+8pAnKGvI4c1lez+Lo63ZIp0FUkHJ+NGTWkCWmJ4WinEvLEdnxyWLM7cB60mXNshQIKUCkZ3nDIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750326565; c=relaxed/simple;
-	bh=3LkyeQl0t9LM+cj52xpO+Ax9lI0k6dCYkCdTOXS+hWU=;
+	s=arc-20240116; t=1750327409; c=relaxed/simple;
+	bh=703KiELmDjP8Uw1qN8XJ8LZkYlIjoyRI6q6sVdlOWGM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7C2OBZA+k9Lar2EslzUEgHbi402qmXXwyAVs7WYC5MbF23VrsrQZCqT/vWfHpDWrFGHDCwgjN6xK76PHT/qLNSMyqKT1IzW0L49Hsw9BuBsf8mP5ek48R/+utuHysElID6Sk629YFNxixV92dSWFH+n7pQZt+FspZxzzwpH0uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PQuxVCDT; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxweLC2WjyZ8Bu2yQCotgZK2/D9bhxZfKqEv9Y7K98X9c/xswfsIyProajflZjYUHl1BPUXlyR0UXDD7PFI2qv7NFZ53S4qGLdxjDaxk7AGwcFEz6mZMgKcshqOi0a+X4lLNsx4MXvNRm8FWm+gMndz+kejEaXaxpTY7NixpJKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2v0YqdU; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PQuxVCDT"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2348ac8e0b4so111165ad.1
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 02:49:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2v0YqdU"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cf214200so5225865e9.1;
+        Thu, 19 Jun 2025 03:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750326562; x=1750931362; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750327406; x=1750932206; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=17oxjeeFsHFeG65L770MNpFPAUdse/NuAwqFBcFBF84=;
-        b=PQuxVCDTgWhORmrR+ZAqjQ151mrOTPmBYrhmS4vovM/Nv9PEbDz5t34HHCFxijI9mm
-         AoMwwDmkKo7sRjAXRm+uY3T2oYCPYKgFcSinlh8ag8XezsLHtXaU4ROr172WILE2I2nh
-         ojyGe5tOmRmNybjbv4b4fgAPKZmUyHZ+fdvxRxA3nV/IFiiChxuqEtta02niY+Yb5SFD
-         gRXS7ufjGxEeqozweC/UNHMlOneORaNGmao7JGAXogXkL98bHE5d6d4UN1590tWvtyKy
-         aK6+/3lGwzf5Rg3tqr3pSxypnkcKFixHGe6YdvqF0jl1c/IS71kwp+TGLb/j3tZoqcNV
-         YQgg==
+        bh=6cusTDU2sumyTVDYQ9G+PYn6zrx6R2pwR2MrJ1EXiEo=;
+        b=f2v0YqdU2nekC/dRFrqpKDvhsAfxbomcx5byp/ExSaLNkTToOsU7vKxqxFbrUJjcPz
+         UZgT7uek5NR8hmafHxszhe8XJFPwUSIxBaVj8AxdFef4IaTJfm091QVzfxOoc8ra9Okx
+         gaH19k3Bb+VNjPsN7yf+fU9QsMF4fEte1f/VPHnhoTvkLK8EvpDW0RI7X/rR8okdQhaY
+         GmNQ33PIAVszVmOSVEVOv8bSpH3q+Q4hH2YelM07ve7ZySys3GDiE1GUP06t2x62Kd+k
+         Ws7ubsQRMBqUsVp/YytuLQWzsmCagX7FleXYNblmnrTHXj21AC08Nv541VDxWJzgI2os
+         J6TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750326562; x=1750931362;
+        d=1e100.net; s=20230601; t=1750327406; x=1750932206;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=17oxjeeFsHFeG65L770MNpFPAUdse/NuAwqFBcFBF84=;
-        b=idWfAlgUMKrp/SaNYLEIgTSIT0at9gORWuVpCn5hMovA/pw1avXdH0n8xf/vUpwmvW
-         KrnleFm/0debnOAIPT4DhUy3MYeF7hshCp5JbodxkOs4wMswO0rL5OWWLx8bVN5YUpZ5
-         PEN8jEKf0AOQ7dSqwEfxeCeEBJahR0TDS4eOUTaGk3GMoYxc4wTxeRKy9t7hUDK8rL7q
-         p+MfFKMAxVomeZVcEtKmdQ+RK8W0l20bbVW+yo4yWNrxPxea5WEDvRSlHJ7bwCh1z0FX
-         FovXCvfpZBYZA72h6Hv6jRURwCx82r9SiiCKvfT1fXbiG2MXXpxAi5wAzjEVsmfH3ssa
-         vXDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtZwHdRnENTV39DFQ9KGm27RBRjaDraMXCoSsIqJglXF2psjZ33GxU979nVBI5ydBC5+Llr3pcbAvBRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT65S8sP+3UHpqQ1IO9FyABGgIZi29Yjh0nrX15F5hefbS/T+l
-	BninTyyRCrtFI7CT3E9oVdL5iBj+DVR4dAwDrB/QVQ0+oT3h11Wxgjv7ChCnd7D1yA==
-X-Gm-Gg: ASbGncs0OdxazjvvY/GM1nNou9Z7YUU6KafVdA1IQhPSGkzSiEXLAiwYNIBKGoNqg8M
-	EzNdaOO18VN4XbOyq07f8hL9BcnUYCxA25Ry/dhk3Orb7iw0zQawWwBKczK/OYmhAuuNEA7k2xe
-	aSrvNLmOaHdB/ZFOhFzhzYALbJbHnnu2U6qzeJ5weGQZDLa2rDQc7n2fKl6cZJ9uUXGWJSnPXgP
-	f7SQdbartd9nRgngI8C5mZYv13a6Bblf5eMR39hvJ4DvwKl3gbJgv0zJ1ehDu7HVsrwnVkqpHw5
-	H04e+N4xx/gU8teDChFyp4wqGqndaWHbwwYtMAbWFgG4xrRoTZY+/Uk+M7+awCXZ9m3ICVn4tHO
-	tmW0GWqLBr32R/RFCPPoX
-X-Google-Smtp-Source: AGHT+IEuCYASVN8j1eZMJIcAvoBEAqstpKSSgGIYZ2iYQuSQhTyrI+a8+/330LWZVAAW9AYW4syqlA==
-X-Received: by 2002:a17:902:fc46:b0:234:bcd0:3d6f with SMTP id d9443c01a7336-237cdfe9619mr1746815ad.1.1750326562236;
-        Thu, 19 Jun 2025 02:49:22 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deb04a6sm116435595ad.178.2025.06.19.02.49.16
+        bh=6cusTDU2sumyTVDYQ9G+PYn6zrx6R2pwR2MrJ1EXiEo=;
+        b=RnfHp3gPE2jpx6kiM3y3jadAGzeORPn1w4tFhpPv/NsszVzDW2IJLZDkX2GtYKoQaZ
+         XwokU62A1K0zEscPz/sbghMpYqBl8RKTUn+QkO6pBBCjRmJgHbVndy7uproM93PWU14U
+         et55GnRLD5O6g0dfWrToGeMEGDlvv42EN7T1Hka9FaJpxkpe268eY2mAGS9a0X4/wWrY
+         durxVVd9VOVuCR1jH+6TIcS0JZq9gWfEbP8Dauc/IwV2fMt9GoNTRA6PFq43ALIVqZ6Z
+         2RAzPoRNqgBsWDttveAP6GUfC3WMG1BKq9t9IZk/zrWGYAAT0z0UqD2j95U44WGai4T1
+         1kXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jSGukzTqdF+C7HXN7RfrqolTtKMtUTpUaZFz1uCKM7qbzlh0y3eE7N5XnSpW3wpMM5Mbxt45GRCshj0=@vger.kernel.org, AJvYcCVRStXsQIcm7tu+Q5YQhER/QPJIqvONSGenuDMhrAFJolInTLu6CBdV6kLgdPvXIGVFh3SHpbj/rmwcIu93Cw4=@vger.kernel.org, AJvYcCVkoCu0qUHLGc61IUebQQrn8+kDnpCLrlvOKEc+6425i9d2pAhcrFWQbp0atfJaiViVSzDHcvnssv8eHWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP6WPVxh+8fSiFWC4+7HMGLwiSY/w8/CEgQuESrLLz/ZDcmND4
+	6iGC8zUEU3okxxX1kiZUXf/Qzcp8AK+aZBWkXTJFV6Ha5ghDjHQjlAW9
+X-Gm-Gg: ASbGnct5vym5ua4Y41ptCxhMXVuW7R++1u0xrnN8DvUraSwZanNyKJL6iFdf70d+CS2
+	PH9+BEkrY979HNcvtkp/RhIYxE6BisnoThl0hckxZCn4k+a8BLl9jmjhm1t5wVTEhKyoROH9YzA
+	60R1rS+rgmKpMBpkyYCnMAnmTjuCeKMeDmhfH1GuBgRPiZT/wzmPuwb0qm3eU51uY0Ukr+N7XS+
+	mSA/98bQpViF1cFUKphup8P24r2XH/KQ2/mVCQeKNVMd+Y3IV9sNFa/1YR3JyiL0fbtm5S2rnQc
+	GngC/V5YY3TPUhNahwAxYGtMMo8vqL5ivFxrp+hjxscE+TO57Ani9JMbNihkLLlDQhvwi6GxHYK
+	NKWQQo7ugqymrtTqxGy28+BgX0JBKnoV64Y9DtFW/smCG3xbh
+X-Google-Smtp-Source: AGHT+IFei2sv4Is4eRKDMO6SQ5KWPDd3+hXWSApQVxlUQKGGKcBG83g5eVrYF8DApk8Damil4kEEGw==
+X-Received: by 2002:a05:6000:288a:b0:3a5:27ba:47d0 with SMTP id ffacd0b85a97d-3a572e5737bmr17084853f8f.56.1750327405682;
+        Thu, 19 Jun 2025 03:03:25 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b08c99sm19311952f8f.63.2025.06.19.03.03.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 02:49:21 -0700 (PDT)
-Date: Thu, 19 Jun 2025 09:49:10 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, kevin.tian@intel.com, corbet@lwn.net,
-	will@kernel.org, bagasdotme@gmail.com, robin.murphy@arm.com,
-	joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
-	jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
-	nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
-	mshavit@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v6 07/25] iommufd/access: Add internal APIs for HW queue
- to use
-Message-ID: <aFPdFnKvus57cGOU@google.com>
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <64145b184a0fa7c9b60532c9b475a51625edb77c.1749884998.git.nicolinc@nvidia.com>
- <20250616133719.GC1174925@nvidia.com>
- <aFDSNYOTToFSbFA2@nvidia.com>
+        Thu, 19 Jun 2025 03:03:23 -0700 (PDT)
+Date: Thu, 19 Jun 2025 12:03:21 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Robert Lin <robelin@nvidia.com>, daniel.lezcano@linaro.org, 
+	jonathanh@nvidia.com, tglx@linutronix.de, pohsuns@nvidia.com, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, sumitg@nvidia.com, 
+	linux-watchdog@vger.kernel.org, wim@linux-watchdog.org
+Subject: Re: [PATCH v8 1/3] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
+Message-ID: <nzuhltjezafyjekctgdazcfayxa2jyk3k2qhfssxfqtmce2nor@sd2s7hvjdpqr>
+References: <20250507044311.3751033-1-robelin@nvidia.com>
+ <20250507044311.3751033-2-robelin@nvidia.com>
+ <5c5ba239-f8e4-43b5-ab58-b3850c57d74b@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zc6ugy6dzkprjq5r"
 Content-Disposition: inline
-In-Reply-To: <aFDSNYOTToFSbFA2@nvidia.com>
+In-Reply-To: <5c5ba239-f8e4-43b5-ab58-b3850c57d74b@roeck-us.net>
 
-On Mon, Jun 16, 2025 at 07:25:57PM -0700, Nicolin Chen wrote:
-> On Mon, Jun 16, 2025 at 10:37:19AM -0300, Jason Gunthorpe wrote:
-> > On Sat, Jun 14, 2025 at 12:14:32AM -0700, Nicolin Chen wrote:
-> > > Now, access->ops can be NULL, to support an internal use case for the new
-> > > HW queue object. Since an access object in this case will be allocated by
-> > > an inernal iommufd object, the refcount on the ictx should be skipped, so
-> > > as not to deadlock the release of the ictx as it would otherwise wait for
-> > > the release of the access first during the release of the internal object
-> > > that could wait for the release of ictx:
-> > >     ictx --releases--> hw_queue --releases--> access
-> > >       ^                                         |
-> > >       |_________________releases________________v
-> > > 
-> > > Add a set of lightweight internal APIs to unlink access and ictx:
-> > >     ictx --releases--> hw_queue --releases--> access
-> > > 
-> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > > ---
-> > >  drivers/iommu/iommufd/iommufd_private.h |  8 ++++
-> > >  drivers/iommu/iommufd/device.c          | 59 +++++++++++++++++++++----
-> > >  2 files changed, 58 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> > > index 4a375a8c9216..468717d5e5bc 100644
-> > > --- a/drivers/iommu/iommufd/iommufd_private.h
-> > > +++ b/drivers/iommu/iommufd/iommufd_private.h
-> > > @@ -484,6 +484,14 @@ void iopt_remove_access(struct io_pagetable *iopt,
-> > >  			struct iommufd_access *access, u32 iopt_access_list_id);
-> > >  void iommufd_access_destroy_object(struct iommufd_object *obj);
-> > >  
-> > > +/* iommufd_access for internal use */
-> > > +struct iommufd_access *iommufd_access_create_internal(struct iommufd_ctx *ictx);
-> > > +#define iommufd_access_destroy_internal(ictx, access) \
-> > > +	iommufd_object_destroy_user(ictx, &(access)->obj)
-> > 
-> > Use a static inline please
-> > 
-> > > +int iommufd_access_attach_internal(struct iommufd_access *access,
-> > > +				   struct iommufd_ioas *ioas);
-> > > +#define iommufd_access_detach_internal(access) iommufd_access_detach(access)
-> > 
-> > 
-> > >  struct iommufd_eventq {
-> > >  	struct iommufd_object obj;
-> > >  	struct iommufd_ctx *ictx;
-> > > diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-> > > index 9293722b9cff..ad33f1e41a24 100644
-> > > --- a/drivers/iommu/iommufd/device.c
-> > > +++ b/drivers/iommu/iommufd/device.c
-> > > @@ -1084,7 +1084,39 @@ void iommufd_access_destroy_object(struct iommufd_object *obj)
-> > >  	if (access->ioas)
-> > >  		WARN_ON(iommufd_access_change_ioas(access, NULL));
-> > >  	mutex_unlock(&access->ioas_lock);
-> > > -	iommufd_ctx_put(access->ictx);
-> > > +	if (access->ops)
-> > > +		iommufd_ctx_put(access->ictx);
-> > 
-> > I was hoping we could null the ictx to signal internal? That didn't
-> > work out?
-> 
-> access->ictx should be NULL for internal. It should have been:
-> +	if (access->ictx)
-> +		iommufd_ctx_put(access->ictx);
-> 
 
-Ohh sorry, just saw this. +1, I too believe this is better than relying
-on access->ops being NULL.
+--zc6ugy6dzkprjq5r
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 1/3] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
+MIME-Version: 1.0
 
-> > I would at least add a comment here this is filtering internal that
-> > doesn't have ictx. Maybe a little inline 'iommufd_access_is_internal'
-> > is appropriate. We'll be sad down the road if we need ops for
-> > internal.
-> 
-> Yea, an inline will be cleaner. Will add that.
-> 
+On Fri, Jun 13, 2025 at 06:24:40AM -0700, Guenter Roeck wrote:
+> Hi,
+>=20
+> On Wed, May 07, 2025 at 12:43:09PM +0800, Robert Lin wrote:
+> > From: Pohsun Su <pohsuns@nvidia.com>
+> >=20
+> > This change adds support for WDIOC_GETTIMELEFT so userspace
+> > programs can get the number of seconds before system reset by
+> > the watchdog timer via ioctl.
+> >=20
+> > Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
+> > Signed-off-by: Robert Lin <robelin@nvidia.com>
+> > ---
+> >  drivers/clocksource/timer-tegra186.c | 64 +++++++++++++++++++++++++++-
+> >  1 file changed, 63 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource=
+/timer-tegra186.c
+> > index ea742889ee06..e3ea6110e6f5 100644
+> > --- a/drivers/clocksource/timer-tegra186.c
+> > +++ b/drivers/clocksource/timer-tegra186.c
+> > @@ -1,8 +1,9 @@
+> >  // SPDX-License-Identifier: GPL-2.0-only
+> >  /*
+> > - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
+> > + * Copyright (c) 2019-2025 NVIDIA Corporation. All rights reserved.
+> >   */
+> > =20
+> > +#include <linux/bitfield.h>
+> >  #include <linux/clocksource.h>
+> >  #include <linux/module.h>
+> >  #include <linux/interrupt.h>
+> > @@ -30,6 +31,7 @@
+> > =20
+> >  #define TMRSR 0x004
+> >  #define  TMRSR_INTR_CLR BIT(30)
+> > +#define  TMRSR_PCV GENMASK(28, 0)
+> > =20
+> >  #define TMRCSSR 0x008
+> >  #define  TMRCSSR_SRC_USEC (0 << 0)
+> > @@ -46,6 +48,9 @@
+> >  #define  WDTCR_TIMER_SOURCE_MASK 0xf
+> >  #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
+> > =20
+> > +#define WDTSR 0x004
+> > +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
+> > +
+> >  #define WDTCMDR 0x008
+> >  #define  WDTCMDR_DISABLE_COUNTER BIT(1)
+> >  #define  WDTCMDR_START_COUNTER BIT(0)
+> > @@ -235,12 +240,69 @@ static int tegra186_wdt_set_timeout(struct watchd=
+og_device *wdd,
+> >  	return 0;
+> >  }
+> > =20
+> > +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *=
+wdd)
+> > +{
+> > +	struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
+> > +	u32 expiration, val;
+> > +	u64 timeleft;
+> > +
+> > +	if (!watchdog_active(&wdt->base)) {
+> > +		/* return zero if the watchdog timer is not activated. */
+> > +		return 0;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Reset occurs on the fifth expiration of the
+> > +	 * watchdog timer and so when the watchdog timer is configured,
+> > +	 * the actual value programmed into the counter is 1/5 of the
+> > +	 * timeout value. Once the counter reaches 0, expiration count
+> > +	 * will be increased by 1 and the down counter restarts.
+> > +	 * Hence to get the time left before system reset we must
+> > +	 * combine 2 parts:
+> > +	 * 1. value of the current down counter
+> > +	 * 2. (number of counter expirations remaining) * (timeout/5)
+> > +	 */
+> > +
+> > +	/* Get the current number of counter expirations. Should be a
+> > +	 * value between 0 and 4
+> > +	 */
+> > +	val =3D readl_relaxed(wdt->regs + WDTSR);
+> > +	expiration =3D FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, val);
+> > +	if (WARN_ON_ONCE(expiration > 4))
+> > +		return 0;
+> > +
+> > +	/* Get the current counter value in microsecond. */
+> > +	val =3D readl_relaxed(wdt->tmr->regs + TMRSR);
+> > +	timeleft =3D FIELD_GET(TMRSR_PCV, val);
+> > +
+> > +	/*
+> > +	 * Calculate the time remaining by adding the time for the
+> > +	 * counter value to the time of the counter expirations that
+> > +	 * remain.
+> > +	 */
+> > +	timeleft +=3D (((u64)wdt->base.timeout * USEC_PER_SEC) / 5) * (4 - ex=
+piration);
+>=20
+> This results in
+>=20
+> xtensa-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra=
+186_timer_remove':
+> timer-tegra186.c:(.text+0x350): undefined reference to `__udivdi3'
+> xtensa-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra=
+186_wdt_get_timeleft':
+> timer-tegra186.c:(.text+0x52c): undefined reference to `__udivdi3'
 
-Ack.
+I'm unable to reproduce this. I wonder if maybe I have a different
+toolchain that doesn't have this issue? Do you have a link so I can try
+to get closer to the setup you have?
 
 Thanks,
-Praan
+Thierry
+
+--zc6ugy6dzkprjq5r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhT4GkACgkQ3SOs138+
+s6G35Q/+OscriuS9td/FzsgIvIf5uyQsg8UDu9ZMHYSd65WppQmg4rENctRq3+oH
+1Sbytk8z2Hl6putu7F8uQRO477ps2n1EeJ7+3bGO2fnOMNMns3IIV8yHBjsKGrpM
+RKNho5Z42xTcavdrLTzNQMG0ZRpEGGFZKn+mo2aPqA6nTiJtap7q95m2Yh2P7CgV
+K4YpbcmKi7QufChQXnGUMdsLTK4ahKrBkBSC78w7oCnW/tywWTgi9ESx2kRTHLL0
+3Dl4/dnWnEWkqeM7Y6mMQlar1qYW+4hjXjBlrvbMBms9W+hvoF4FNKQ5v/mFE2WB
+et4bMjhHe9jMacG4ZZN2//mbSw8jHKmZ0/JYp244/xo97Dawpkgy59auHEjj7Zs9
+h2f3yrw+HUgbumNAuRzkS8TUwvHAcg3MlaZXZB5qIdP0dhryhRTqBvfLTfQQfI3p
+DyNibyuu0XGmgNaW//UhAR5LnQIJ+Q6161gd7TKSgYLCep+ABu4RmV8agerRxa28
+HDvFEKE/dxmUSOTSyeSljckseB7vEnxd8IMeD2VLWdTXY+WO9uHqEhsoRvh5rWYU
+iHwK6gasv9Zrk6rpY/77+o+FR31FPl56N6N95f+jdEdtGDld45LS7MSRF5+N+cfh
+iAqZLBUQlSEP1mVmbXKSz5vRSBMP1wuWy9vdR4cHG5cVLyDhzH0=
+=CR/o
+-----END PGP SIGNATURE-----
+
+--zc6ugy6dzkprjq5r--
