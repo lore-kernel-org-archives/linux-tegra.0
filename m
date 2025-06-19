@@ -1,375 +1,219 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF0A3085BA
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 11:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1A4224254
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 11:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331771; cv=none; b=s52bpB2BmENd3AXw2hL0rfhDa2jAHuyjRcC5NvzXlNJD4GD5kxR8Ydbr+BrGjle7P98tqsCYka2SsQHOr7pKAxlFrgB+kFmrBb5wiAAZcy8xv+jHO48NDwdN0UaZ0Cy2ltWRSej7O8ZahuiA1yQrQiv8UG/clniemGFzdvtxfd0=
+	t=1750332031; cv=none; b=WbVYCzxc5L/F41XUDy6+OSFg2gYNOI1GljK50OzR/FKt0Z5dWIvYJ/atRmjOmQp8wTfrUlGm6qWgzdr+zufm3CRRNiM18qo0nlUqeY2x4ZuFwHJHsQ9f/O2/j8Jz/OKFIA8zaGlpaD6r1HzLnY6PzxoGVgIZSNX8ZXsNwA7x7xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331771; c=relaxed/simple;
-	bh=JNzJ+ikVlKEZOEeS2Nkj64WAcOodHqRpXfrd0eO7bg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXUPcQ4+4DJxV/FhahfMFqxRs+tllvV1BMr8NwJHIYoYA2lDlwE4KXvIp2Eb0BNSKhqqSmehRyH41LKhz0EEQ6zMrCXs1NsH9MAINTZwW1Wmc5/Gi3/zOJT5cG3twd1O6HcfFmCSl0k8rqLSoVrnNBB/ZesWzyVn5hGYvfpIQ2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ekOQ/lB5; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1750332031; c=relaxed/simple;
+	bh=lYFZw4l/ySiLP9yv1DOpV3NKA5HpDmbgq92YmFRhr7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VDswhczLPxZnIGqGI+M3AJ5jt2y0PDYEdgn+4DAYQyHHHzPHk2PLz4k1Epk8Rea7d4GClMWjLRJhWRWr2qQPbJOoejbuljjjHsp0F4BPFdARgv72Lvhw/aaD0T0KZ5X8eq/0HOL4KUTY5wYNdud+AqZKnH2cqjXqE85vg+y1xRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=saCQmiov; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ekOQ/lB5"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-235e389599fso173555ad.0
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 04:16:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saCQmiov"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e812fc35985so599497276.0
+        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 04:20:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750331769; x=1750936569; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J0K5kka6ny6/IX+friUQkiPa7P6oG70XusQAK8iDSEg=;
-        b=ekOQ/lB5aTNETw/+LHIvFJamb1ZaoMp+VOW+YpUzL1s1Xv4ey/CNv6QS+B0DjVMXwM
-         43QnSNw1q8bWovEx8N0BcKx3/YiiBVvUsQ4vSOQEUwqlmg0roUV8G5gnHuUq5tRsAkiH
-         JGjMLt6xNvGKjlwarrrFpWQg4eo+rRVnEplZt7rvPE3lca5rA2o0uE3jQN4VdprtpNh7
-         OHSzRosGd+6BP8FJQYgo1Qd936e59S3h4dlOmQ81NzIap7HRf0o6wRVHdJ/wYB5xdp2s
-         JjQBKfoSML9i68IX4JcwnPOkpl2aUx0YLM9x2Vvqntaa7X4f3vW5G8ON60q0lyoAbLE6
-         DbLg==
+        d=linaro.org; s=google; t=1750332029; x=1750936829; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBUsi0YBNMAsSBVKTalCtjkPCy5c9CLBxMjhKRUhDZY=;
+        b=saCQmiovoIwSTwybLtAnXZYvOAzByJ87BfKcwZnjjvns9YSwiaIptpOBZGMoqSI4jm
+         AkQ8EmmB6ArnpxipOVCg+G4KMUsWplhMRCmFstrDvgW4XhMqCjOW++qdRvnUcOd6KxTd
+         CGRgobtgWvEuKUwyslKHjAfUPhRvVLUa6uxCiO2dy2iFqrdn0JYaUpszbaQEcUJ05LMs
+         GeS4rcojM8ng9RU+f3DjJiQrrmiwqW29AwASiKW0lH4a4g9E3vVy/HdBkmsvNjv3KNA3
+         jtEbY5cL+v1euXR9Eve0K5MsEMSLfb+fzoqneMcZOcx5KlBzdy1XEpS5wPDNll4j0jK9
+         agWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750331769; x=1750936569;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J0K5kka6ny6/IX+friUQkiPa7P6oG70XusQAK8iDSEg=;
-        b=CnwK9QyAoFvn65y+2ub/2C67TfdAEKLam0/KiqVi1+Qss3/RUQmBZrHbtjU4Tg7Gpz
-         hPY7N5AGAAUY9LC60JpzCAJJr0WWBZ1mdKZQwU76ynf18JQJQlRAf2Rwh+9F5d3bIh0T
-         wjw6zJ+iCYUymigE23p+w+gf6ukDAy2JAMkfO3A6F1Zdwgr+2/N3QEriF7OfIa7gn7iw
-         Nkl1FDHXPPGjg8/2P/4dcsQVo86Vx/NdAv0oixFXilHOKnjV/GEVZEyyqS5CPP5C0dx6
-         Y+IUXiAwsQXTxRyVtAPLqa6v6OCJf2yp/2topIqIj2U9q01YQvKBWzLgtHac4DNLoG6/
-         nxSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUylY9MYx+dCMMpGOmhXtJyw7YKSkQKwRRrXZAFPlBq9F8b3ckJIEXzgXq4Ri7G15cyozi4NT/WJkb7Cg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywum9cLcOyYQNogCUz/k0ZSJZxYhSwsG0PS/KbWJn1ij3oOmvqi
-	CgHXDOqU9xvmDZFzCiB33W/44PAXBTgIo+By/q6OztL5Mx8Q+fBf7DuZ1qoChdp3rQ==
-X-Gm-Gg: ASbGnct5kn2TOJV4SOv7qV5E0fIY/ibPkng/JXw5gg/2e1fng8K194maibHF8loQ1E6
-	xq+JUl3YlICeHpBGuT7/EI96LEJUDf+6FGcz7OsK3cmj6aUwjVYeYJ291u/TOGwgn7W4ohAAwkY
-	MsEDc4Rxjk8on9X7Rf1FMrKPu4+Fk8vmF9twDyC5C13d7KXcVbnLG8qUYxFBIo/cbdq6k5BYO5s
-	bdGkQtlHHV113V9qepHGDzt29w/ZF+femC5wNVS/jIQ5TfuL91xohVCRaRpJApmKPUvd2f+qtVq
-	zccewhzAOpewZ4jt1BBkk+N/HNf0SfU34KbK69FnFMgy2v+p/CBtMSv+5XBKmPkykf4/7+2hma5
-	tGsnjk2kVBTJ5w6vORpSa
-X-Google-Smtp-Source: AGHT+IGLBsKU5Xvykqrr05mmuSSE5AlVTYBeY0JsehoP0OVQHYRUJcJLrjggBr4O05auamlyHYplKw==
-X-Received: by 2002:a17:903:1b64:b0:234:b2bf:e676 with SMTP id d9443c01a7336-237ce039494mr2004475ad.11.1750331769012;
-        Thu, 19 Jun 2025 04:16:09 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a3188a3sm1912852a91.36.2025.06.19.04.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 04:16:08 -0700 (PDT)
-Date: Thu, 19 Jun 2025 11:15:57 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v6 13/25] iommufd: Add mmap interface
-Message-ID: <aFPxbfDJZzG2EqxQ@google.com>
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <c9929e0c9ec6f3f6348cd0c399d6fdfa9f35f973.1749884998.git.nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1750332029; x=1750936829;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PBUsi0YBNMAsSBVKTalCtjkPCy5c9CLBxMjhKRUhDZY=;
+        b=OewI3YwDZ5paxwapGn5grUgwVRb6E3KLSEjBC/lxpvcOQrBWfMaoSA8cKUdvWF5obu
+         i/oqGbKlEepEgOQxw+fPOJfRv5C075CvHsaIExaHBI6eme3IV/lfJQM7YMq94VunKK0c
+         nBEtAueOBewt999idJB+KavbXDZgRO4bqy86zh+oIMB89llN+htTOocsoKBmmnuMkEZ0
+         MgiI6qHZypyIer/q65eSD86ghjD5bvhmLg/1MFTnbeZ3MVDxwy9A9AFOm1QOvZOj9bYQ
+         exA+xbH4eBiAJZnj9kHA1j6TwYqXCpXtsaieYX+U/Q2N6BJp838UFZSIrtM/uXXmTmEW
+         G1Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ+gEqyC8SCxts3aY62k3ypD1P2YEf8c1LBSxwhZD2rw3GZ9b9povTn+DA6iUVncymz7OG+dllMWobLg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNpVVrW00Wyq1W0TOYLF+aAwQyz5Txn1+JeC3+6EBNv17GUhjq
+	S33ce8pNRjpAKDR/PDst/NRO75DSF/6o6UrUDbfTC7dJ2e2E5b6vyp7OOYR+1d+4bI+5LQG9WXN
+	9ywhq5hMcG1ddK+xK4Jd3mgkdZg+gERT1MI+ynN0MFA==
+X-Gm-Gg: ASbGnctnxuXagd8rYQKCQn+q4gALlBeescm2WgxbXNC+aAkuYIrJp3yEq6J0u1QmXWU
+	ETSYQR7bOGBgE8023eKZKbyvy2l+P2zRfQong5NxbN6a23+IgWwqxoaOnhJd9CShVlWh5n2CTBO
+	BM4RN0R6Hq8k9/rV968gakMdTn1IarSg7h0o7uLv5DOV+y
+X-Google-Smtp-Source: AGHT+IHX9ksGPdiWQPczJro/bAe1IGvypwqoP8WCOZDCwwHcVTV4TvNUdtBj0nob0BRaQUU78E2vrWhUpGn208sRiuY=
+X-Received: by 2002:a05:6902:1b04:b0:e82:13f4:6156 with SMTP id
+ 3f1490d57ef6-e822acc6b88mr30435408276.13.1750332028965; Thu, 19 Jun 2025
+ 04:20:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9929e0c9ec6f3f6348cd0c399d6fdfa9f35f973.1749884998.git.nicolinc@nvidia.com>
+References: <cover.1749127796.git.zhoubinbin@loongson.cn>
+In-Reply-To: <cover.1749127796.git.zhoubinbin@loongson.cn>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 19 Jun 2025 13:19:50 +0200
+X-Gm-Features: AX0GCFvvZQe_9Nix73DE7Q-G_-P34yyA4RJkioiqjIQNcE5PdVnCw3Am06hW7zc
+Message-ID: <CAPDyKFqbCcHPN8yf9Rzo0b0Gr2uBwXUCJDQNkSnnBesESN+kQA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] mmc: Cleanup sdhci_pltfm_free()/sdhci_free_host()
+ usage
+To: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	linux-mmc@vger.kernel.org, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Ben Dooks <ben-linux@fluff.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Kamal Dasu <kamal.dasu@broadcom.com>, 
+	Al Cooper <alcooperx@gmail.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, openbmc@lists.ozlabs.org, 
+	Michal Simek <michal.simek@amd.com>, Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org, 
+	Aubin Constans <aubin.constans@microchip.com>, Eugen Hristev <eugen.hristev@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-tegra@vger.kernel.org, Hu Ziji <huziji@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jun 14, 2025 at 12:14:38AM -0700, Nicolin Chen wrote:
-> For vIOMMU passing through HW resources to user space (VMs), allowing a VM
-> to control the passed through HW directly by accessing hardware registers,
-> add an mmap infrastructure to map the physical MMIO pages to user space.
-> 
-> Maintain a maple tree per ictx as a translation table managing mmappable
-> regions, from an allocated for-user mmap offset to an iommufd_mmap struct,
-> where it stores the real PFN range for an io_remap_pfn_range call.
-> 
-> Keep track of the lifecycle of the mmappable region by taking refcount of
-> its owner, so as to enforce user space to unmap the region first before it
-> can destroy its owner object.
-> 
-> To allow an IOMMU driver to add and delete mmappable regions onto/from the
-> maple tree, add iommufd_viommu_alloc/destroy_mmap helpers.
+On Sat, 7 Jun 2025 at 09:32, Binbin Zhou <zhoubinbin@loongson.cn> wrote:
+>
+> Hi all:
+>
+> After the first part of the cleanup[1], there are sdhci related
+> drivers that need further cleanup.
+>
+> This patchset is the second part of the cleanup series, and since sdhci has
+> sdhci_alloc_host() as the general interface, our main job is to clean up
+> sdhci_pltfm_free() and sdhci_free_host().
+>
+> [1]: https://lore.kernel.org/all/cover.1748933789.git.zhoubinbin@loongson.cn/
+>
+> Thanks.
+>
+> -----
+> V3:
+> - Collect Reviewed-by and Acked-by tags.
+> Patch-19:
+>   - Use dev_err_probe() to cleanup the code.
+> Patch-32:
+>   - Fix build warning by lkp:
+>         https://lore.kernel.org/all/202505300815.tjQRQD6z-lkp@intel.com/
+>
+> Link to V2:
+> https://lore.kernel.org/all/cover.1748515612.git.zhoubinbin@loongson.cn/
+>
+> V2:
+> - Collect Reviewed-by and Acked-by tags.
+>
+> Patch-01:
+>  - Set sdhci_free_host() to empty, rather than dropping it.
+> Patch-07:
+>  - Set sdhci_pltfm_free() to empty, rather than dropping it.
+> Patch-22:
+>  - As requested by Yixun, retain the goto scheme.
+> Patch-35:
+>  - New patch;
+>  - Since all calls have been cleaned up, sdhci_pltfm_free()/sdhci_free_host()
+>    are now dropped directly;
+>
+> Link to V1:
+> https://lore.kernel.org/all/cover.1747792905.git.zhoubinbin@loongson.cn/
+>
+> Binbin Zhou (35):
+>   mmc: sdhci: Use devm_mmc_alloc_host() helper
+>   mmc: sdhci-acpi: Drop the use of sdhci_free_host()
+>   mmc: sdhci-milbeaut: Drop the use of sdhci_free_host()
+>   mmc: sdhci-pci: Drop the use of sdhci_free_host()
+>   mmc: sdhci-s3c: Drop the use of sdhci_free_host()
+>   mmc: sdhci-spear: Drop the use of sdhci_free_host()
+>   mmc: sdhci-pltfm: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-bcm-kona: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-brcmstb: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-cadence: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-dove: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-esdhc-imx: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-esdhc-mcf: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-iproc: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-msm: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-npcm: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-arasan: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-aspeed: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-at91: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-dwcmshc: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-esdhc: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-k1: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-ma35d1: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-of-sparx5: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-omap: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-pic32: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-pxav2: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-pxav3: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-sprd: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-st: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-tegra: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci-xenon: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci_am654: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci_f_sdh30: Drop the use of sdhci_pltfm_free()
+>   mmc: sdhci: Drop sdhci_free_host()/sdhci_pltfm_free() interface
+>
+>  drivers/mmc/host/sdhci-acpi.c       |  3 ---
+>  drivers/mmc/host/sdhci-bcm-kona.c   |  2 --
+>  drivers/mmc/host/sdhci-brcmstb.c    |  1 -
+>  drivers/mmc/host/sdhci-cadence.c    | 21 ++++++------------
+>  drivers/mmc/host/sdhci-dove.c       | 12 ++---------
+>  drivers/mmc/host/sdhci-esdhc-imx.c  |  3 ---
+>  drivers/mmc/host/sdhci-esdhc-mcf.c  | 25 ++++++----------------
+>  drivers/mmc/host/sdhci-iproc.c      | 18 ++++------------
+>  drivers/mmc/host/sdhci-milbeaut.c   | 19 ++++++-----------
+>  drivers/mmc/host/sdhci-msm.c        | 11 ++++------
+>  drivers/mmc/host/sdhci-npcm.c       | 15 +++----------
+>  drivers/mmc/host/sdhci-of-arasan.c  | 26 +++++++----------------
+>  drivers/mmc/host/sdhci-of-aspeed.c  | 10 ++-------
+>  drivers/mmc/host/sdhci-of-at91.c    | 30 ++++++++++----------------
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 14 +++++-------
+>  drivers/mmc/host/sdhci-of-esdhc.c   | 11 ++--------
+>  drivers/mmc/host/sdhci-of-k1.c      |  1 -
+>  drivers/mmc/host/sdhci-of-ma35d1.c  | 23 +++++++-------------
+>  drivers/mmc/host/sdhci-of-sparx5.c  | 24 +++++++--------------
+>  drivers/mmc/host/sdhci-omap.c       | 21 ++++++------------
+>  drivers/mmc/host/sdhci-pci-core.c   |  9 ++------
+>  drivers/mmc/host/sdhci-pic32.c      |  9 +++-----
+>  drivers/mmc/host/sdhci-pltfm.c      | 16 +-------------
+>  drivers/mmc/host/sdhci-pltfm.h      |  1 -
+>  drivers/mmc/host/sdhci-pxav2.c      | 26 ++++++-----------------
+>  drivers/mmc/host/sdhci-pxav3.c      |  7 +-----
+>  drivers/mmc/host/sdhci-s3c.c        | 16 ++++----------
+>  drivers/mmc/host/sdhci-spear.c      | 11 ++++------
+>  drivers/mmc/host/sdhci-sprd.c       | 33 +++++++++--------------------
+>  drivers/mmc/host/sdhci-st.c         |  6 ++----
+>  drivers/mmc/host/sdhci-tegra.c      |  9 +++-----
+>  drivers/mmc/host/sdhci-xenon.c      | 15 +++++--------
+>  drivers/mmc/host/sdhci.c            |  9 +-------
+>  drivers/mmc/host/sdhci.h            |  1 -
+>  drivers/mmc/host/sdhci_am654.c      | 20 ++++++-----------
+>  drivers/mmc/host/sdhci_f_sdh30.c    | 13 ++++--------
+>  36 files changed, 135 insertions(+), 356 deletions(-)
+>
 >
 
-The usage of mtree seems fine now, storing pfns ranges as compared to
-pointers in v3. Input validation checks, vma checks and destroy op look
-good.
+The series applied for next, thanks!
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommufd/iommufd_private.h | 14 ++++++
->  include/linux/iommufd.h                 | 42 ++++++++++++++++
->  drivers/iommu/iommufd/driver.c          | 51 ++++++++++++++++++++
->  drivers/iommu/iommufd/main.c            | 64 +++++++++++++++++++++++++
->  4 files changed, 171 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 1bb1c0764bc2..e8192f79fe42 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -7,6 +7,7 @@
->  #include <linux/iommu.h>
->  #include <linux/iommufd.h>
->  #include <linux/iova_bitmap.h>
-> +#include <linux/maple_tree.h>
->  #include <linux/rwsem.h>
->  #include <linux/uaccess.h>
->  #include <linux/xarray.h>
-> @@ -44,6 +45,7 @@ struct iommufd_ctx {
->  	struct xarray groups;
->  	wait_queue_head_t destroy_wait;
->  	struct rw_semaphore ioas_creation_lock;
-> +	struct maple_tree mt_mmap;
->  
->  	struct mutex sw_msi_lock;
->  	struct list_head sw_msi_list;
-> @@ -55,6 +57,18 @@ struct iommufd_ctx {
->  	struct iommufd_ioas *vfio_ioas;
->  };
->  
-> +/* Entry for iommufd_ctx::mt_mmap */
-> +struct iommufd_mmap {
-> +	struct iommufd_object *owner;
-> +
-> +	/* Allocated start position in mt_mmap tree */
-> +	unsigned long startp;
-> +
-> +	/* Physical range for io_remap_pfn_range() */
-> +	unsigned long mmio_pfn;
-> +	unsigned long num_pfns;
-> +};
-> +
->  /*
->   * The IOVA to PFN map. The map automatically copies the PFNs into multiple
->   * domains and permits sharing of PFNs between io_pagetable instances. This
-> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> index acf0e8f0c630..0da9bc8f94f3 100644
-> --- a/include/linux/iommufd.h
-> +++ b/include/linux/iommufd.h
-> @@ -251,6 +251,11 @@ int _iommufd_object_depend(struct iommufd_object *obj_dependent,
->  			   struct iommufd_object *obj_depended);
->  void _iommufd_object_undepend(struct iommufd_object *obj_dependent,
->  			      struct iommufd_object *obj_depended);
-> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
-> +			phys_addr_t mmio_addr, size_t length,
-> +			unsigned long *offset);
-> +void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
-> +			   struct iommufd_object *owner, unsigned long offset);
->  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
->  				       unsigned long vdev_id);
->  int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
-> @@ -271,6 +276,20 @@ _iommufd_object_undepend(struct iommufd_object *obj_dependent,
->  {
->  }
->  
-> +static inline int _iommufd_alloc_mmap(struct iommufd_ctx *ictx,
-> +				      struct iommufd_object *owner,
-> +				      phys_addr_t mmio_addr, size_t length,
-> +				      unsigned long *offset)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
-> +					 struct iommufd_object *owner,
-> +					 unsigned long offset)
-> +{
-> +}
-> +
->  static inline struct device *
->  iommufd_viommu_find_dev(struct iommufd_viommu *viommu, unsigned long vdev_id)
->  {
-> @@ -338,4 +357,27 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
->  		_iommufd_object_undepend(&dependent->member.obj,               \
->  					 &depended->member.obj);               \
->  	})
-> +
-> +/*
-> + * Helpers for IOMMU driver to alloc/destroy an mmapable area for a structure.
-> + *
-> + * To support an mmappable MMIO region, kernel driver must first register it to
-> + * iommufd core to allocate an @offset, during a driver-structure initialization
-> + * (e.g. viommu_init op). Then, it should report to user space this @offset and
-> + * the @length of the MMIO region for mmap syscall.
-> + */
-> +static inline int iommufd_viommu_alloc_mmap(struct iommufd_viommu *viommu,
-> +					    phys_addr_t mmio_addr,
-> +					    size_t length,
-> +					    unsigned long *offset)
-> +{
-> +	return _iommufd_alloc_mmap(viommu->ictx, &viommu->obj, mmio_addr,
-> +				   length, offset);
-> +}
-> +
-> +static inline void iommufd_viommu_destroy_mmap(struct iommufd_viommu *viommu,
-> +					       unsigned long offset)
-> +{
-> +	_iommufd_destroy_mmap(viommu->ictx, &viommu->obj, offset);
-> +}
->  #endif
-> diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
-> index 70b7917da0cb..8220b61d8c8d 100644
-> --- a/drivers/iommu/iommufd/driver.c
-> +++ b/drivers/iommu/iommufd/driver.c
-> @@ -31,6 +31,57 @@ void _iommufd_object_undepend(struct iommufd_object *obj_dependent,
->  }
->  EXPORT_SYMBOL_NS_GPL(_iommufd_object_undepend, "IOMMUFD");
->  
-> +/*
-> + * Allocate an @offset to return to user space to use for an mmap() syscall
-> + *
-> + * Driver should use a per-structure helper in include/linux/iommufd.h
-> + */
-> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
-> +			phys_addr_t mmio_addr, size_t length,
-> +			unsigned long *offset)
-> +{
-> +	struct iommufd_mmap *immap;
-> +	unsigned long startp;
-> +	int rc;
-> +
-> +	if (!PAGE_ALIGNED(mmio_addr))
-> +		return -EINVAL;
-> +	if (!length || !PAGE_ALIGNED(length))
-> +		return -EINVAL;
-> +
-> +	immap = kzalloc(sizeof(*immap), GFP_KERNEL);
-> +	if (!immap)
-> +		return -ENOMEM;
-> +	immap->owner = owner;
-> +	immap->num_pfns = length >> PAGE_SHIFT;
-> +	immap->mmio_pfn = mmio_addr >> PAGE_SHIFT;
-> +
-> +	rc = mtree_alloc_range(&ictx->mt_mmap, &startp, immap, immap->num_pfns,
-> +			       0, U32_MAX >> PAGE_SHIFT, GFP_KERNEL);
-> +	if (rc < 0) {
-> +		kfree(immap);
-> +		return rc;
-> +	}
-> +
-> +	immap->startp = startp;
-> +	/* mmap() syscall will right-shift the offset in vma->vm_pgoff */
-> +	*offset = startp << PAGE_SHIFT;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(_iommufd_alloc_mmap, "IOMMUFD");
-> +
-> +/* Driver should use a per-structure helper in include/linux/iommufd.h */
-> +void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
-> +			   struct iommufd_object *owner, unsigned long offset)
-> +{
-> +	struct iommufd_mmap *immap;
-> +
-> +	immap = mtree_erase(&ictx->mt_mmap, offset >> PAGE_SHIFT);
-> +	WARN_ON_ONCE(!immap || immap->owner != owner);
-> +	kfree(immap);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(_iommufd_destroy_mmap, "IOMMUFD");
-> +
->  /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
->  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
->  				       unsigned long vdev_id)
-> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-> index 4e8dbbfac890..339a269ebbc8 100644
-> --- a/drivers/iommu/iommufd/main.c
-> +++ b/drivers/iommu/iommufd/main.c
-> @@ -275,6 +275,7 @@ static int iommufd_fops_open(struct inode *inode, struct file *filp)
->  	xa_init_flags(&ictx->objects, XA_FLAGS_ALLOC1 | XA_FLAGS_ACCOUNT);
->  	xa_init(&ictx->groups);
->  	ictx->file = filp;
-> +	mt_init_flags(&ictx->mt_mmap, MT_FLAGS_ALLOC_RANGE);
->  	init_waitqueue_head(&ictx->destroy_wait);
->  	mutex_init(&ictx->sw_msi_lock);
->  	INIT_LIST_HEAD(&ictx->sw_msi_list);
-> @@ -479,11 +480,74 @@ static long iommufd_fops_ioctl(struct file *filp, unsigned int cmd,
->  	return ret;
->  }
->  
-> +static void iommufd_fops_vma_open(struct vm_area_struct *vma)
-> +{
-> +	struct iommufd_mmap *immap = vma->vm_private_data;
-> +
-> +	refcount_inc(&immap->owner->users);
-> +}
-> +
-> +static void iommufd_fops_vma_close(struct vm_area_struct *vma)
-> +{
-> +	struct iommufd_mmap *immap = vma->vm_private_data;
-> +
-> +	refcount_dec(&immap->owner->users);
-> +}
-> +
-> +static const struct vm_operations_struct iommufd_vma_ops = {
-> +	.open = iommufd_fops_vma_open,
-> +	.close = iommufd_fops_vma_close,
-> +};
-> +
-> +/* The vm_pgoff must be pre-allocated from mt_mmap, and given to user space */
-> +static int iommufd_fops_mmap(struct file *filp, struct vm_area_struct *vma)
-> +{
-> +	struct iommufd_ctx *ictx = filp->private_data;
-> +	size_t length = vma->vm_end - vma->vm_start;
-> +	struct iommufd_mmap *immap;
-> +	int rc;
-> +
-> +	if (!PAGE_ALIGNED(length))
-> +		return -EINVAL;
-> +	if (!(vma->vm_flags & VM_SHARED))
-> +		return -EINVAL;
-> +	if (vma->vm_flags & VM_EXEC)
-> +		return -EPERM;
-> +
-> +	/* vma->vm_pgoff carries an index to an mtree entry (immap) */
-> +	immap = mtree_load(&ictx->mt_mmap, vma->vm_pgoff);
-> +	if (!immap)
-> +		return -ENXIO;
-> +	/*
-> +	 * mtree_load() returns the immap for any contained pgoff, only allow
-> +	 * the immap thing to be mapped
-> +	 */
-> +	if (vma->vm_pgoff != immap->startp)
-> +		return -ENXIO;
-> +	if (length != immap->num_pfns << PAGE_SHIFT)
-> +		return -ENXIO;
-> +
-> +	vma->vm_pgoff = 0;
-> +	vma->vm_private_data = immap;
-> +	vma->vm_ops = &iommufd_vma_ops;
-> +	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> +
-> +	rc = io_remap_pfn_range(vma, vma->vm_start, immap->mmio_pfn, length,
-> +				vma->vm_page_prot);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/* vm_ops.open won't be called for mmap itself. */
-> +	refcount_inc(&immap->owner->users);
-> +	return rc;
-> +}
-> +
->  static const struct file_operations iommufd_fops = {
->  	.owner = THIS_MODULE,
->  	.open = iommufd_fops_open,
->  	.release = iommufd_fops_release,
->  	.unlocked_ioctl = iommufd_fops_ioctl,
-> +	.mmap = iommufd_fops_mmap,
->  };
->  
->  /**
-> -- 
-> 2.43.0
-> 
+Kind regards
+Uffe
