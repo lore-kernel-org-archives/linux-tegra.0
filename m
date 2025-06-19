@@ -1,63 +1,63 @@
 Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EEF223311
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 10:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF0A3085BA
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 11:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750328804; cv=none; b=GdFrI6i6wLbPFfxfOFB+L0ow8m3Nkxavpb81CTm1qBbmNkDeyGTbCJAfZLEfLAzBU/j/3Rgo0+v54d5OTBnWHHkTYWOnynIr0fdqHVTf/el/4SmEUvbqUcYayLPKF44GlvN1O+6RS31XoD+RURZ21xwlQtIPhaRCzg/TllYIAto=
+	t=1750331771; cv=none; b=s52bpB2BmENd3AXw2hL0rfhDa2jAHuyjRcC5NvzXlNJD4GD5kxR8Ydbr+BrGjle7P98tqsCYka2SsQHOr7pKAxlFrgB+kFmrBb5wiAAZcy8xv+jHO48NDwdN0UaZ0Cy2ltWRSej7O8ZahuiA1yQrQiv8UG/clniemGFzdvtxfd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750328804; c=relaxed/simple;
-	bh=l5p9J2QLOh7J7ogYCt7vV0BkK248vYvNV1+J7U/FHbI=;
+	s=arc-20240116; t=1750331771; c=relaxed/simple;
+	bh=JNzJ+ikVlKEZOEeS2Nkj64WAcOodHqRpXfrd0eO7bg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBYAyks59lh4P1T/A5R51ltAGYSnhiulEJPtfHfZuUAcWeSEwttB3/6s0SvL9TVVqh60Lg65oGTueR+iUuikwLUcgTDI3jVFYaSkcdP/CqPgKfohhXM2dc7+ZsZWu0CHpCOFRHDwciO4MlnvV+3HePzkR3dHBOjt0Ltk+61grwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEtDX93D; arc=none smtp.client-ip=209.85.214.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXUPcQ4+4DJxV/FhahfMFqxRs+tllvV1BMr8NwJHIYoYA2lDlwE4KXvIp2Eb0BNSKhqqSmehRyH41LKhz0EEQ6zMrCXs1NsH9MAINTZwW1Wmc5/Gi3/zOJT5cG3twd1O6HcfFmCSl0k8rqLSoVrnNBB/ZesWzyVn5hGYvfpIQ2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ekOQ/lB5; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LEtDX93D"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-235e389599fso166595ad.0
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 03:26:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ekOQ/lB5"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-235e389599fso173555ad.0
+        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 04:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750328801; x=1750933601; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1750331769; x=1750936569; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jrdYKQcH3sp0apOchPLnA+m1+Ly6Mzn8RffcZko3gSE=;
-        b=LEtDX93DFDeoZojEpnkHQoJVgEjAjCq1ih1RMCuWDYzYmZZv3SLgc0FZdXOI2A3j/C
-         SdgFl4AhIqn4ONzjhg45rpCucJulpSBGol1w+Th70biz5NQKTz8PWqXeuoKNnRgFaDBc
-         4Bg5zT353R+aAQpkHSL0zA9rUjwWp5Fp9gyNd/PiXTqt9t9FAMB+oSqfwK49GF3E1qwW
-         05hAMioXNDT3Ot+mhhxHdim0wxdl+EFqJX3a7B0CXgvqSRoLMtwtadbTUMnqtbNgLKnI
-         9stDrgABCzz0L1sZxGi45E7bMkyAYLzVmSR7DKFrIry7eUNdzxIgSvXutCHzOWHqc0ig
-         AdZQ==
+        bh=J0K5kka6ny6/IX+friUQkiPa7P6oG70XusQAK8iDSEg=;
+        b=ekOQ/lB5aTNETw/+LHIvFJamb1ZaoMp+VOW+YpUzL1s1Xv4ey/CNv6QS+B0DjVMXwM
+         43QnSNw1q8bWovEx8N0BcKx3/YiiBVvUsQ4vSOQEUwqlmg0roUV8G5gnHuUq5tRsAkiH
+         JGjMLt6xNvGKjlwarrrFpWQg4eo+rRVnEplZt7rvPE3lca5rA2o0uE3jQN4VdprtpNh7
+         OHSzRosGd+6BP8FJQYgo1Qd936e59S3h4dlOmQ81NzIap7HRf0o6wRVHdJ/wYB5xdp2s
+         JjQBKfoSML9i68IX4JcwnPOkpl2aUx0YLM9x2Vvqntaa7X4f3vW5G8ON60q0lyoAbLE6
+         DbLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750328801; x=1750933601;
+        d=1e100.net; s=20230601; t=1750331769; x=1750936569;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jrdYKQcH3sp0apOchPLnA+m1+Ly6Mzn8RffcZko3gSE=;
-        b=jitFfZ6GZkFbk5dB/7N9MIR4bt0JmKBwgZOqTCvQZ21l4b2MMMs2jg4+U1Em0U1x9+
-         RCOZWDLyBbHl/UTTsxvoBtvqFz9J6YVC542UJhGPzSkjADFy/ImUgV0HLNqzlPsIjQ2h
-         6BfKxvY7zW+dvOHS9uf02Uo/955yfdhPIHUz9IH2RaT7rv7H7XH3lPYsBk8l/VIwKqPF
-         SoiR5inFbVIRIYg5JRSpuPUbqo5SEvTcQu1Mqj1dSPQDt+p1XZcYcaKp4MXph7oPkguy
-         oWu2J7YaoiTVkEuhJPtDRXN6UNLOQA6zxkaON/LQAiO1WN8qtHxepEny4ENE5uZF8hE8
-         PRWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCP5I+kXR28h8oHIWgKxRAUyYmYU9w1VM0pIm3b1PmA7wd5SJAn+eLy07gNdNLSoYIdnGoy8vTBq3M+Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQHflLiGRzuMgKdtGpM2I1FEaM098/GAfk30mga+Ps4bHbcH8f
-	0/mPqCBvJtwOhz4lMXc1FztUXv+TS+RecQCNdkl4jkHJlOJJ85bnt5AuKFZVLFPCMw==
-X-Gm-Gg: ASbGncvQl0s5/DszIZ9h59fReseI9HVpzPIHBUCiJbKpWIb03yTkaWZgelz3Uyuju4t
-	flhU+lwq2u700gah13ItrXSzRzV7zsMDKT/gCcUDgqQqWScOBngqB/PI8ey28VDdIDPiLRx9451
-	WsytijoB5mEfBzL7IUEyDYlnrwOxei8Bv4nkJYKFkzu0/CzkMF+WW7f4jj7dJrvQM6ih4350qvH
-	MfHUDHACyvw+eWrQsRoqmB5i2xxfQMLEHp4rmXerfGC/I2FT4i0zpZHIDpV/u+aHce6bWrr3Mxg
-	zccTnk7mF+SepsV80pG2PZ0GyFlfoKzpJvdXhlvKzFS1ov2lPb0cb89HMnnwUDTQokDyhpUIADT
-	oK+G/CasaDzezjy6UC+jR
-X-Google-Smtp-Source: AGHT+IGiUkrhNhPK9lXuO365Ne3OwVoTaAk8SvrZ2YyadUl+5Mml/HIcLv4k3/+1+30tV1lrdYYgXA==
-X-Received: by 2002:a17:902:e5c3:b0:224:6c8:8d84 with SMTP id d9443c01a7336-237cca5ada5mr2619125ad.4.1750328800415;
-        Thu, 19 Jun 2025 03:26:40 -0700 (PDT)
+        bh=J0K5kka6ny6/IX+friUQkiPa7P6oG70XusQAK8iDSEg=;
+        b=CnwK9QyAoFvn65y+2ub/2C67TfdAEKLam0/KiqVi1+Qss3/RUQmBZrHbtjU4Tg7Gpz
+         hPY7N5AGAAUY9LC60JpzCAJJr0WWBZ1mdKZQwU76ynf18JQJQlRAf2Rwh+9F5d3bIh0T
+         wjw6zJ+iCYUymigE23p+w+gf6ukDAy2JAMkfO3A6F1Zdwgr+2/N3QEriF7OfIa7gn7iw
+         Nkl1FDHXPPGjg8/2P/4dcsQVo86Vx/NdAv0oixFXilHOKnjV/GEVZEyyqS5CPP5C0dx6
+         Y+IUXiAwsQXTxRyVtAPLqa6v6OCJf2yp/2topIqIj2U9q01YQvKBWzLgtHac4DNLoG6/
+         nxSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUylY9MYx+dCMMpGOmhXtJyw7YKSkQKwRRrXZAFPlBq9F8b3ckJIEXzgXq4Ri7G15cyozi4NT/WJkb7Cg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywum9cLcOyYQNogCUz/k0ZSJZxYhSwsG0PS/KbWJn1ij3oOmvqi
+	CgHXDOqU9xvmDZFzCiB33W/44PAXBTgIo+By/q6OztL5Mx8Q+fBf7DuZ1qoChdp3rQ==
+X-Gm-Gg: ASbGnct5kn2TOJV4SOv7qV5E0fIY/ibPkng/JXw5gg/2e1fng8K194maibHF8loQ1E6
+	xq+JUl3YlICeHpBGuT7/EI96LEJUDf+6FGcz7OsK3cmj6aUwjVYeYJ291u/TOGwgn7W4ohAAwkY
+	MsEDc4Rxjk8on9X7Rf1FMrKPu4+Fk8vmF9twDyC5C13d7KXcVbnLG8qUYxFBIo/cbdq6k5BYO5s
+	bdGkQtlHHV113V9qepHGDzt29w/ZF+femC5wNVS/jIQ5TfuL91xohVCRaRpJApmKPUvd2f+qtVq
+	zccewhzAOpewZ4jt1BBkk+N/HNf0SfU34KbK69FnFMgy2v+p/CBtMSv+5XBKmPkykf4/7+2hma5
+	tGsnjk2kVBTJ5w6vORpSa
+X-Google-Smtp-Source: AGHT+IGLBsKU5Xvykqrr05mmuSSE5AlVTYBeY0JsehoP0OVQHYRUJcJLrjggBr4O05auamlyHYplKw==
+X-Received: by 2002:a17:903:1b64:b0:234:b2bf:e676 with SMTP id d9443c01a7336-237ce039494mr2004475ad.11.1750331769012;
+        Thu, 19 Jun 2025 04:16:09 -0700 (PDT)
 Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900b04e4sm12850712b3a.121.2025.06.19.03.26.34
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a3188a3sm1912852a91.36.2025.06.19.04.16.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 03:26:39 -0700 (PDT)
-Date: Thu, 19 Jun 2025 10:26:28 +0000
+        Thu, 19 Jun 2025 04:16:08 -0700 (PDT)
+Date: Thu, 19 Jun 2025 11:15:57 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
@@ -71,11 +71,10 @@ Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
 	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
 	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
 	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v6 08/25] iommufd/viommu: Add driver-defined vDEVICE
- support
-Message-ID: <aFPl1LD8r3Du-Far@google.com>
+Subject: Re: [PATCH v6 13/25] iommufd: Add mmap interface
+Message-ID: <aFPxbfDJZzG2EqxQ@google.com>
 References: <cover.1749884998.git.nicolinc@nvidia.com>
- <937d515032be07af36c06a4adb662ee2f7693c75.1749884998.git.nicolinc@nvidia.com>
+ <c9929e0c9ec6f3f6348cd0c399d6fdfa9f35f973.1749884998.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -84,176 +83,293 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <937d515032be07af36c06a4adb662ee2f7693c75.1749884998.git.nicolinc@nvidia.com>
+In-Reply-To: <c9929e0c9ec6f3f6348cd0c399d6fdfa9f35f973.1749884998.git.nicolinc@nvidia.com>
 
-On Sat, Jun 14, 2025 at 12:14:33AM -0700, Nicolin Chen wrote:
-> NVIDIA VCMDQ driver will have a driver-defined vDEVICE structure and do
-> some HW configurations with that.
+On Sat, Jun 14, 2025 at 12:14:38AM -0700, Nicolin Chen wrote:
+> For vIOMMU passing through HW resources to user space (VMs), allowing a VM
+> to control the passed through HW directly by accessing hardware registers,
+> add an mmap infrastructure to map the physical MMIO pages to user space.
 > 
-> To allow IOMMU drivers to define their own vDEVICE structures, move the
-> struct iommufd_vdevice to the public header and provide a pair of viommu
-> ops, similar to get_viommu_size and viommu_init.
+> Maintain a maple tree per ictx as a translation table managing mmappable
+> regions, from an allocated for-user mmap offset to an iommufd_mmap struct,
+> where it stores the real PFN range for an io_remap_pfn_range call.
 > 
-> Doing this, however, creates a new window between the vDEVICE allocation
-> and its driver-level initialization, during which an abort could happen
-> but it can't invoke a driver destroy function from the struct viommu_ops
-> since the driver structure isn't initialized yet. vIOMMU object doesn't
-> have this problem, since its destroy op is set via the viommu_ops by the
-> driver viommu_init function. Thus, vDEVICE should do something similar:
-> add a destroy function pointer inside the struct iommufd_vdevice instead
-> of the struct iommufd_viommu_ops.
+> Keep track of the lifecycle of the mmappable region by taking refcount of
+> its owner, so as to enforce user space to unmap the region first before it
+> can destroy its owner object.
 > 
-> Note that there is unlikely a use case for a type dependent vDEVICE, so
-> a static vdevice_size is probably enough for the near term instead of a
-> get_vdevice_size function op.
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommufd/iommufd_private.h |  7 -------
->  include/linux/iommufd.h                 | 26 +++++++++++++++++++++++++
->  drivers/iommu/iommufd/viommu.c          | 26 ++++++++++++++++++++++++-
->  3 files changed, 51 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 468717d5e5bc..e6b1eb2ab375 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -638,13 +638,6 @@ void iommufd_viommu_destroy(struct iommufd_object *obj);
->  int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
->  void iommufd_vdevice_destroy(struct iommufd_object *obj);
->  
-> -struct iommufd_vdevice {
-> -	struct iommufd_object obj;
-> -	struct iommufd_viommu *viommu;
-> -	struct device *dev;
-> -	u64 id; /* per-vIOMMU virtual ID */
-> -};
-> -
->  #ifdef CONFIG_IOMMUFD_TEST
->  int iommufd_test(struct iommufd_ucmd *ucmd);
->  void iommufd_selftest_destroy(struct iommufd_object *obj);
-> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> index 2d1bf2f97ee3..f3b5cfdb6d53 100644
-> --- a/include/linux/iommufd.h
-> +++ b/include/linux/iommufd.h
-> @@ -104,6 +104,16 @@ struct iommufd_viommu {
->  	enum iommu_viommu_type type;
->  };
->  
-> +struct iommufd_vdevice {
-> +	struct iommufd_object obj;
-> +	struct iommufd_viommu *viommu;
-> +	struct device *dev;
-> +	u64 id; /* per-vIOMMU virtual ID */
+> To allow an IOMMU driver to add and delete mmappable regions onto/from the
+> maple tree, add iommufd_viommu_alloc/destroy_mmap helpers.
+>
 
-Nit: Why not call this viommu_id?
-
-> +
-> +	/* Clean up all driver-specific parts of an iommufd_vdevice */
-> +	void (*destroy)(struct iommufd_vdevice *vdev);
-> +};
-> +
->  /**
->   * struct iommufd_viommu_ops - vIOMMU specific operations
->   * @destroy: Clean up all driver-specific parts of an iommufd_viommu. The memory
-> @@ -120,6 +130,14 @@ struct iommufd_viommu {
->   *                    array->entry_num to report the number of handled requests.
->   *                    The data structure of the array entry must be defined in
->   *                    include/uapi/linux/iommufd.h
-> + * @vdevice_size: Size of the driver-defined vDEVICE structure per this vIOMMU
-> + * @vdevice_init: Initialize the driver-level structure of a vDEVICE object, or
-> + *                related HW procedure. @vdev is already initialized by iommufd
-> + *                core: vdev->dev and vdev->viommu pointers; vdev->id carries a
-> + *                per-vIOMMU virtual ID (refer to struct iommu_vdevice_alloc in
-> + *                include/uapi/linux/iommufd.h)
-> + *                If driver has a deinit function to revert what vdevice_init op
-> + *                does, it should set it to the @vdev->destroy function pointer
->   */
->  struct iommufd_viommu_ops {
->  	void (*destroy)(struct iommufd_viommu *viommu);
-> @@ -128,6 +146,8 @@ struct iommufd_viommu_ops {
->  		const struct iommu_user_data *user_data);
->  	int (*cache_invalidate)(struct iommufd_viommu *viommu,
->  				struct iommu_user_data_array *array);
-> +	const size_t vdevice_size;
-> +	int (*vdevice_init)(struct iommufd_vdevice *vdev);
->  };
->  
->  #if IS_ENABLED(CONFIG_IOMMUFD)
-> @@ -224,4 +244,10 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
->  	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
->  	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_viommu,                 \
->  					((drv_struct *)NULL)->member)))
-> +
-> +#define VDEVICE_STRUCT_SIZE(drv_struct, member)                                \
-> +	(sizeof(drv_struct) +                                                  \
-> +	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
-> +	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_vdevice,                \
-> +					((drv_struct *)NULL)->member)))
->  #endif
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index c5eea9900c54..28ea5d026222 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -116,6 +116,8 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
->  		container_of(obj, struct iommufd_vdevice, obj);
->  	struct iommufd_viommu *viommu = vdev->viommu;
->  
-> +	if (vdev->destroy)
-> +		vdev->destroy(vdev);
->  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
->  	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
->  	refcount_dec(&viommu->obj.users);
-> @@ -126,6 +128,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  {
->  	struct iommu_vdevice_alloc *cmd = ucmd->cmd;
->  	struct iommufd_vdevice *vdev, *curr;
-> +	size_t vdev_size = sizeof(*vdev);
->  	struct iommufd_viommu *viommu;
->  	struct iommufd_device *idev;
->  	u64 virt_id = cmd->virt_id;
-> @@ -150,7 +153,22 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  		goto out_put_idev;
->  	}
->  
-> -	vdev = iommufd_object_alloc_ucmd(ucmd, vdev, IOMMUFD_OBJ_VDEVICE);
-> +	if (viommu->ops && viommu->ops->vdevice_size) {
-> +		/*
-> +		 * It is a driver bug for:
-> +		 * - ops->vdevice_size smaller than the core structure size
-> +		 * - not implementing a pairing ops->vdevice_init op
-> +		 */
-> +		if (WARN_ON_ONCE(viommu->ops->vdevice_size < vdev_size ||
-> +				 !viommu->ops->vdevice_init)) {
-> +			rc = -EOPNOTSUPP;
-> +			goto out_put_idev;
-> +		}
-> +		vdev_size = viommu->ops->vdevice_size;
-> +	}
-> +
-> +	vdev = (struct iommufd_vdevice *)_iommufd_object_alloc_ucmd(
-> +		ucmd, vdev_size, IOMMUFD_OBJ_VDEVICE);
->  	if (IS_ERR(vdev)) {
->  		rc = PTR_ERR(vdev);
->  		goto out_put_idev;
-> @@ -168,6 +186,12 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  		goto out_put_idev;
->  	}
->  
-> +	if (viommu->ops && viommu->ops->vdevice_init) {
-> +		rc = viommu->ops->vdevice_init(vdev);
-> +		if (rc)
-> +			goto out_put_idev;
-> +	}
-> +
->  	cmd->out_vdevice_id = vdev->obj.id;
->  	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
-> 
+The usage of mtree seems fine now, storing pfns ranges as compared to
+pointers in v3. Input validation checks, vma checks and destroy op look
+good.
 
 Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h | 14 ++++++
+>  include/linux/iommufd.h                 | 42 ++++++++++++++++
+>  drivers/iommu/iommufd/driver.c          | 51 ++++++++++++++++++++
+>  drivers/iommu/iommufd/main.c            | 64 +++++++++++++++++++++++++
+>  4 files changed, 171 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index 1bb1c0764bc2..e8192f79fe42 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/iommufd.h>
+>  #include <linux/iova_bitmap.h>
+> +#include <linux/maple_tree.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/xarray.h>
+> @@ -44,6 +45,7 @@ struct iommufd_ctx {
+>  	struct xarray groups;
+>  	wait_queue_head_t destroy_wait;
+>  	struct rw_semaphore ioas_creation_lock;
+> +	struct maple_tree mt_mmap;
+>  
+>  	struct mutex sw_msi_lock;
+>  	struct list_head sw_msi_list;
+> @@ -55,6 +57,18 @@ struct iommufd_ctx {
+>  	struct iommufd_ioas *vfio_ioas;
+>  };
+>  
+> +/* Entry for iommufd_ctx::mt_mmap */
+> +struct iommufd_mmap {
+> +	struct iommufd_object *owner;
+> +
+> +	/* Allocated start position in mt_mmap tree */
+> +	unsigned long startp;
+> +
+> +	/* Physical range for io_remap_pfn_range() */
+> +	unsigned long mmio_pfn;
+> +	unsigned long num_pfns;
+> +};
+> +
+>  /*
+>   * The IOVA to PFN map. The map automatically copies the PFNs into multiple
+>   * domains and permits sharing of PFNs between io_pagetable instances. This
+> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index acf0e8f0c630..0da9bc8f94f3 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -251,6 +251,11 @@ int _iommufd_object_depend(struct iommufd_object *obj_dependent,
+>  			   struct iommufd_object *obj_depended);
+>  void _iommufd_object_undepend(struct iommufd_object *obj_dependent,
+>  			      struct iommufd_object *obj_depended);
+> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
+> +			phys_addr_t mmio_addr, size_t length,
+> +			unsigned long *offset);
+> +void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+> +			   struct iommufd_object *owner, unsigned long offset);
+>  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>  				       unsigned long vdev_id);
+>  int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
+> @@ -271,6 +276,20 @@ _iommufd_object_undepend(struct iommufd_object *obj_dependent,
+>  {
+>  }
+>  
+> +static inline int _iommufd_alloc_mmap(struct iommufd_ctx *ictx,
+> +				      struct iommufd_object *owner,
+> +				      phys_addr_t mmio_addr, size_t length,
+> +				      unsigned long *offset)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+> +					 struct iommufd_object *owner,
+> +					 unsigned long offset)
+> +{
+> +}
+> +
+>  static inline struct device *
+>  iommufd_viommu_find_dev(struct iommufd_viommu *viommu, unsigned long vdev_id)
+>  {
+> @@ -338,4 +357,27 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
+>  		_iommufd_object_undepend(&dependent->member.obj,               \
+>  					 &depended->member.obj);               \
+>  	})
+> +
+> +/*
+> + * Helpers for IOMMU driver to alloc/destroy an mmapable area for a structure.
+> + *
+> + * To support an mmappable MMIO region, kernel driver must first register it to
+> + * iommufd core to allocate an @offset, during a driver-structure initialization
+> + * (e.g. viommu_init op). Then, it should report to user space this @offset and
+> + * the @length of the MMIO region for mmap syscall.
+> + */
+> +static inline int iommufd_viommu_alloc_mmap(struct iommufd_viommu *viommu,
+> +					    phys_addr_t mmio_addr,
+> +					    size_t length,
+> +					    unsigned long *offset)
+> +{
+> +	return _iommufd_alloc_mmap(viommu->ictx, &viommu->obj, mmio_addr,
+> +				   length, offset);
+> +}
+> +
+> +static inline void iommufd_viommu_destroy_mmap(struct iommufd_viommu *viommu,
+> +					       unsigned long offset)
+> +{
+> +	_iommufd_destroy_mmap(viommu->ictx, &viommu->obj, offset);
+> +}
+>  #endif
+> diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
+> index 70b7917da0cb..8220b61d8c8d 100644
+> --- a/drivers/iommu/iommufd/driver.c
+> +++ b/drivers/iommu/iommufd/driver.c
+> @@ -31,6 +31,57 @@ void _iommufd_object_undepend(struct iommufd_object *obj_dependent,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(_iommufd_object_undepend, "IOMMUFD");
+>  
+> +/*
+> + * Allocate an @offset to return to user space to use for an mmap() syscall
+> + *
+> + * Driver should use a per-structure helper in include/linux/iommufd.h
+> + */
+> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
+> +			phys_addr_t mmio_addr, size_t length,
+> +			unsigned long *offset)
+> +{
+> +	struct iommufd_mmap *immap;
+> +	unsigned long startp;
+> +	int rc;
+> +
+> +	if (!PAGE_ALIGNED(mmio_addr))
+> +		return -EINVAL;
+> +	if (!length || !PAGE_ALIGNED(length))
+> +		return -EINVAL;
+> +
+> +	immap = kzalloc(sizeof(*immap), GFP_KERNEL);
+> +	if (!immap)
+> +		return -ENOMEM;
+> +	immap->owner = owner;
+> +	immap->num_pfns = length >> PAGE_SHIFT;
+> +	immap->mmio_pfn = mmio_addr >> PAGE_SHIFT;
+> +
+> +	rc = mtree_alloc_range(&ictx->mt_mmap, &startp, immap, immap->num_pfns,
+> +			       0, U32_MAX >> PAGE_SHIFT, GFP_KERNEL);
+> +	if (rc < 0) {
+> +		kfree(immap);
+> +		return rc;
+> +	}
+> +
+> +	immap->startp = startp;
+> +	/* mmap() syscall will right-shift the offset in vma->vm_pgoff */
+> +	*offset = startp << PAGE_SHIFT;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(_iommufd_alloc_mmap, "IOMMUFD");
+> +
+> +/* Driver should use a per-structure helper in include/linux/iommufd.h */
+> +void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+> +			   struct iommufd_object *owner, unsigned long offset)
+> +{
+> +	struct iommufd_mmap *immap;
+> +
+> +	immap = mtree_erase(&ictx->mt_mmap, offset >> PAGE_SHIFT);
+> +	WARN_ON_ONCE(!immap || immap->owner != owner);
+> +	kfree(immap);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(_iommufd_destroy_mmap, "IOMMUFD");
+> +
+>  /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
+>  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>  				       unsigned long vdev_id)
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index 4e8dbbfac890..339a269ebbc8 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -275,6 +275,7 @@ static int iommufd_fops_open(struct inode *inode, struct file *filp)
+>  	xa_init_flags(&ictx->objects, XA_FLAGS_ALLOC1 | XA_FLAGS_ACCOUNT);
+>  	xa_init(&ictx->groups);
+>  	ictx->file = filp;
+> +	mt_init_flags(&ictx->mt_mmap, MT_FLAGS_ALLOC_RANGE);
+>  	init_waitqueue_head(&ictx->destroy_wait);
+>  	mutex_init(&ictx->sw_msi_lock);
+>  	INIT_LIST_HEAD(&ictx->sw_msi_list);
+> @@ -479,11 +480,74 @@ static long iommufd_fops_ioctl(struct file *filp, unsigned int cmd,
+>  	return ret;
+>  }
+>  
+> +static void iommufd_fops_vma_open(struct vm_area_struct *vma)
+> +{
+> +	struct iommufd_mmap *immap = vma->vm_private_data;
+> +
+> +	refcount_inc(&immap->owner->users);
+> +}
+> +
+> +static void iommufd_fops_vma_close(struct vm_area_struct *vma)
+> +{
+> +	struct iommufd_mmap *immap = vma->vm_private_data;
+> +
+> +	refcount_dec(&immap->owner->users);
+> +}
+> +
+> +static const struct vm_operations_struct iommufd_vma_ops = {
+> +	.open = iommufd_fops_vma_open,
+> +	.close = iommufd_fops_vma_close,
+> +};
+> +
+> +/* The vm_pgoff must be pre-allocated from mt_mmap, and given to user space */
+> +static int iommufd_fops_mmap(struct file *filp, struct vm_area_struct *vma)
+> +{
+> +	struct iommufd_ctx *ictx = filp->private_data;
+> +	size_t length = vma->vm_end - vma->vm_start;
+> +	struct iommufd_mmap *immap;
+> +	int rc;
+> +
+> +	if (!PAGE_ALIGNED(length))
+> +		return -EINVAL;
+> +	if (!(vma->vm_flags & VM_SHARED))
+> +		return -EINVAL;
+> +	if (vma->vm_flags & VM_EXEC)
+> +		return -EPERM;
+> +
+> +	/* vma->vm_pgoff carries an index to an mtree entry (immap) */
+> +	immap = mtree_load(&ictx->mt_mmap, vma->vm_pgoff);
+> +	if (!immap)
+> +		return -ENXIO;
+> +	/*
+> +	 * mtree_load() returns the immap for any contained pgoff, only allow
+> +	 * the immap thing to be mapped
+> +	 */
+> +	if (vma->vm_pgoff != immap->startp)
+> +		return -ENXIO;
+> +	if (length != immap->num_pfns << PAGE_SHIFT)
+> +		return -ENXIO;
+> +
+> +	vma->vm_pgoff = 0;
+> +	vma->vm_private_data = immap;
+> +	vma->vm_ops = &iommufd_vma_ops;
+> +	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+> +
+> +	rc = io_remap_pfn_range(vma, vma->vm_start, immap->mmio_pfn, length,
+> +				vma->vm_page_prot);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* vm_ops.open won't be called for mmap itself. */
+> +	refcount_inc(&immap->owner->users);
+> +	return rc;
+> +}
+> +
+>  static const struct file_operations iommufd_fops = {
+>  	.owner = THIS_MODULE,
+>  	.open = iommufd_fops_open,
+>  	.release = iommufd_fops_release,
+>  	.unlocked_ioctl = iommufd_fops_ioctl,
+> +	.mmap = iommufd_fops_mmap,
+>  };
+>  
+>  /**
 > -- 
 > 2.43.0
 > 
