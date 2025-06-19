@@ -1,219 +1,151 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1A4224254
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 11:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E2D23B627
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 11:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332031; cv=none; b=WbVYCzxc5L/F41XUDy6+OSFg2gYNOI1GljK50OzR/FKt0Z5dWIvYJ/atRmjOmQp8wTfrUlGm6qWgzdr+zufm3CRRNiM18qo0nlUqeY2x4ZuFwHJHsQ9f/O2/j8Jz/OKFIA8zaGlpaD6r1HzLnY6PzxoGVgIZSNX8ZXsNwA7x7xo=
+	t=1750332884; cv=none; b=I3sjrUrheTT2hYe16nr+wlJaXmcR/cjEgL1emkV0YZ917V3UlE9Fbz9KywrJKJMolMi9TNfwyUL40/IUScfIGhovuZAd6kbaBXT2LnmHkE0L00W/Esrb52ITmKfWT8DplVzhmd6b1sa3NnO8MAmhiGpghjRm2VlPFoxmIcG2MKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332031; c=relaxed/simple;
-	bh=lYFZw4l/ySiLP9yv1DOpV3NKA5HpDmbgq92YmFRhr7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDswhczLPxZnIGqGI+M3AJ5jt2y0PDYEdgn+4DAYQyHHHzPHk2PLz4k1Epk8Rea7d4GClMWjLRJhWRWr2qQPbJOoejbuljjjHsp0F4BPFdARgv72Lvhw/aaD0T0KZ5X8eq/0HOL4KUTY5wYNdud+AqZKnH2cqjXqE85vg+y1xRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=saCQmiov; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750332884; c=relaxed/simple;
+	bh=wgm1RJdsP1ul4qvnEwxTEpXGtARexNbE4cqGN5mXxoA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kpG0fLzjKaKCiGbKQzM3zG+pz1wIXZsQ4jHu15TjeB8ETe5H/pNlM3PSUVXIamDkw80YTWNVEijjKFbDd8mtkiQ5OP4hQuV8NbRekTSPmZB2/yr0lrWABYODFv+JvgMyIbcvTi19VeVbzxdpyUEyMpFLpI9HzzvXhfC3oK5YthM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nzXzInCE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/fpQqBfK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nzXzInCE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/fpQqBfK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saCQmiov"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e812fc35985so599497276.0
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Jun 2025 04:20:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750332029; x=1750936829; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PBUsi0YBNMAsSBVKTalCtjkPCy5c9CLBxMjhKRUhDZY=;
-        b=saCQmiovoIwSTwybLtAnXZYvOAzByJ87BfKcwZnjjvns9YSwiaIptpOBZGMoqSI4jm
-         AkQ8EmmB6ArnpxipOVCg+G4KMUsWplhMRCmFstrDvgW4XhMqCjOW++qdRvnUcOd6KxTd
-         CGRgobtgWvEuKUwyslKHjAfUPhRvVLUa6uxCiO2dy2iFqrdn0JYaUpszbaQEcUJ05LMs
-         GeS4rcojM8ng9RU+f3DjJiQrrmiwqW29AwASiKW0lH4a4g9E3vVy/HdBkmsvNjv3KNA3
-         jtEbY5cL+v1euXR9Eve0K5MsEMSLfb+fzoqneMcZOcx5KlBzdy1XEpS5wPDNll4j0jK9
-         agWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750332029; x=1750936829;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PBUsi0YBNMAsSBVKTalCtjkPCy5c9CLBxMjhKRUhDZY=;
-        b=OewI3YwDZ5paxwapGn5grUgwVRb6E3KLSEjBC/lxpvcOQrBWfMaoSA8cKUdvWF5obu
-         i/oqGbKlEepEgOQxw+fPOJfRv5C075CvHsaIExaHBI6eme3IV/lfJQM7YMq94VunKK0c
-         nBEtAueOBewt999idJB+KavbXDZgRO4bqy86zh+oIMB89llN+htTOocsoKBmmnuMkEZ0
-         MgiI6qHZypyIer/q65eSD86ghjD5bvhmLg/1MFTnbeZ3MVDxwy9A9AFOm1QOvZOj9bYQ
-         exA+xbH4eBiAJZnj9kHA1j6TwYqXCpXtsaieYX+U/Q2N6BJp838UFZSIrtM/uXXmTmEW
-         G1Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ+gEqyC8SCxts3aY62k3ypD1P2YEf8c1LBSxwhZD2rw3GZ9b9povTn+DA6iUVncymz7OG+dllMWobLg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNpVVrW00Wyq1W0TOYLF+aAwQyz5Txn1+JeC3+6EBNv17GUhjq
-	S33ce8pNRjpAKDR/PDst/NRO75DSF/6o6UrUDbfTC7dJ2e2E5b6vyp7OOYR+1d+4bI+5LQG9WXN
-	9ywhq5hMcG1ddK+xK4Jd3mgkdZg+gERT1MI+ynN0MFA==
-X-Gm-Gg: ASbGnctnxuXagd8rYQKCQn+q4gALlBeescm2WgxbXNC+aAkuYIrJp3yEq6J0u1QmXWU
-	ETSYQR7bOGBgE8023eKZKbyvy2l+P2zRfQong5NxbN6a23+IgWwqxoaOnhJd9CShVlWh5n2CTBO
-	BM4RN0R6Hq8k9/rV968gakMdTn1IarSg7h0o7uLv5DOV+y
-X-Google-Smtp-Source: AGHT+IHX9ksGPdiWQPczJro/bAe1IGvypwqoP8WCOZDCwwHcVTV4TvNUdtBj0nob0BRaQUU78E2vrWhUpGn208sRiuY=
-X-Received: by 2002:a05:6902:1b04:b0:e82:13f4:6156 with SMTP id
- 3f1490d57ef6-e822acc6b88mr30435408276.13.1750332028965; Thu, 19 Jun 2025
- 04:20:28 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nzXzInCE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/fpQqBfK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nzXzInCE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/fpQqBfK"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D08911F38D;
+	Thu, 19 Jun 2025 11:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750332880; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PxkbOGMqP0e8d5eC3yq3MnBCg11yfuatWFNdzgYFqgs=;
+	b=nzXzInCE6r6p9a55Swqg4txUY95SrAalwNMrupOOHIKrUfuQP106GuW6YYYGSrRXcvnn2y
+	/L325GTOjIsrxmUstgGix1jP7OtuCb1yl72KuRs2r0zW0BUO7pAAFIWKU2R6Aids6hPp/4
+	M/52xivZweXOdGXcKmSO4OkEFsFbxGQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750332880;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PxkbOGMqP0e8d5eC3yq3MnBCg11yfuatWFNdzgYFqgs=;
+	b=/fpQqBfKvEGjUaWZmNwIaqHfyQdHzkWEafxSj5nVDeqafwphQ4yvOG7FPLgPfCzg+shchd
+	CSQfKlSLE3yZunCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750332880; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PxkbOGMqP0e8d5eC3yq3MnBCg11yfuatWFNdzgYFqgs=;
+	b=nzXzInCE6r6p9a55Swqg4txUY95SrAalwNMrupOOHIKrUfuQP106GuW6YYYGSrRXcvnn2y
+	/L325GTOjIsrxmUstgGix1jP7OtuCb1yl72KuRs2r0zW0BUO7pAAFIWKU2R6Aids6hPp/4
+	M/52xivZweXOdGXcKmSO4OkEFsFbxGQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750332880;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PxkbOGMqP0e8d5eC3yq3MnBCg11yfuatWFNdzgYFqgs=;
+	b=/fpQqBfKvEGjUaWZmNwIaqHfyQdHzkWEafxSj5nVDeqafwphQ4yvOG7FPLgPfCzg+shchd
+	CSQfKlSLE3yZunCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C28B13721;
+	Thu, 19 Jun 2025 11:34:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +GTvHND1U2hKbQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 19 Jun 2025 11:34:40 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	jonathanh@nvidia.com,
+	sumit.semwal@linaro.org,
+	christian.koenig@amd.com,
+	simona@ffwll.ch,
+	airlied@gmail.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 1/2] drm/tegra: Test for imported buffers with drm_gem_is_imported()
+Date: Thu, 19 Jun 2025 13:27:00 +0200
+Message-ID: <20250619113100.70292-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250619113100.70292-1-tzimmermann@suse.de>
+References: <20250619113100.70292-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1749127796.git.zhoubinbin@loongson.cn>
-In-Reply-To: <cover.1749127796.git.zhoubinbin@loongson.cn>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 19 Jun 2025 13:19:50 +0200
-X-Gm-Features: AX0GCFvvZQe_9Nix73DE7Q-G_-P34yyA4RJkioiqjIQNcE5PdVnCw3Am06hW7zc
-Message-ID: <CAPDyKFqbCcHPN8yf9Rzo0b0Gr2uBwXUCJDQNkSnnBesESN+kQA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/35] mmc: Cleanup sdhci_pltfm_free()/sdhci_free_host()
- usage
-To: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Huacai Chen <chenhuacai@loongson.cn>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	linux-mmc@vger.kernel.org, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Ben Dooks <ben-linux@fluff.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Kamal Dasu <kamal.dasu@broadcom.com>, 
-	Al Cooper <alcooperx@gmail.com>, Haibo Chen <haibo.chen@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
-	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
-	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, openbmc@lists.ozlabs.org, 
-	Michal Simek <michal.simek@amd.com>, Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org, 
-	Aubin Constans <aubin.constans@microchip.com>, Eugen Hristev <eugen.hristev@linaro.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-tegra@vger.kernel.org, Hu Ziji <huziji@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,nvidia.com,linaro.org,amd.com,ffwll.ch];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Level: 
 
-On Sat, 7 Jun 2025 at 09:32, Binbin Zhou <zhoubinbin@loongson.cn> wrote:
->
-> Hi all:
->
-> After the first part of the cleanup[1], there are sdhci related
-> drivers that need further cleanup.
->
-> This patchset is the second part of the cleanup series, and since sdhci has
-> sdhci_alloc_host() as the general interface, our main job is to clean up
-> sdhci_pltfm_free() and sdhci_free_host().
->
-> [1]: https://lore.kernel.org/all/cover.1748933789.git.zhoubinbin@loongson.cn/
->
-> Thanks.
->
-> -----
-> V3:
-> - Collect Reviewed-by and Acked-by tags.
-> Patch-19:
->   - Use dev_err_probe() to cleanup the code.
-> Patch-32:
->   - Fix build warning by lkp:
->         https://lore.kernel.org/all/202505300815.tjQRQD6z-lkp@intel.com/
->
-> Link to V2:
-> https://lore.kernel.org/all/cover.1748515612.git.zhoubinbin@loongson.cn/
->
-> V2:
-> - Collect Reviewed-by and Acked-by tags.
->
-> Patch-01:
->  - Set sdhci_free_host() to empty, rather than dropping it.
-> Patch-07:
->  - Set sdhci_pltfm_free() to empty, rather than dropping it.
-> Patch-22:
->  - As requested by Yixun, retain the goto scheme.
-> Patch-35:
->  - New patch;
->  - Since all calls have been cleaned up, sdhci_pltfm_free()/sdhci_free_host()
->    are now dropped directly;
->
-> Link to V1:
-> https://lore.kernel.org/all/cover.1747792905.git.zhoubinbin@loongson.cn/
->
-> Binbin Zhou (35):
->   mmc: sdhci: Use devm_mmc_alloc_host() helper
->   mmc: sdhci-acpi: Drop the use of sdhci_free_host()
->   mmc: sdhci-milbeaut: Drop the use of sdhci_free_host()
->   mmc: sdhci-pci: Drop the use of sdhci_free_host()
->   mmc: sdhci-s3c: Drop the use of sdhci_free_host()
->   mmc: sdhci-spear: Drop the use of sdhci_free_host()
->   mmc: sdhci-pltfm: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-bcm-kona: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-brcmstb: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-cadence: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-dove: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-esdhc-imx: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-esdhc-mcf: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-iproc: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-msm: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-npcm: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-arasan: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-aspeed: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-at91: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-dwcmshc: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-esdhc: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-k1: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-ma35d1: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-of-sparx5: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-omap: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-pic32: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-pxav2: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-pxav3: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-sprd: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-st: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-tegra: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci-xenon: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci_am654: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci_f_sdh30: Drop the use of sdhci_pltfm_free()
->   mmc: sdhci: Drop sdhci_free_host()/sdhci_pltfm_free() interface
->
->  drivers/mmc/host/sdhci-acpi.c       |  3 ---
->  drivers/mmc/host/sdhci-bcm-kona.c   |  2 --
->  drivers/mmc/host/sdhci-brcmstb.c    |  1 -
->  drivers/mmc/host/sdhci-cadence.c    | 21 ++++++------------
->  drivers/mmc/host/sdhci-dove.c       | 12 ++---------
->  drivers/mmc/host/sdhci-esdhc-imx.c  |  3 ---
->  drivers/mmc/host/sdhci-esdhc-mcf.c  | 25 ++++++----------------
->  drivers/mmc/host/sdhci-iproc.c      | 18 ++++------------
->  drivers/mmc/host/sdhci-milbeaut.c   | 19 ++++++-----------
->  drivers/mmc/host/sdhci-msm.c        | 11 ++++------
->  drivers/mmc/host/sdhci-npcm.c       | 15 +++----------
->  drivers/mmc/host/sdhci-of-arasan.c  | 26 +++++++----------------
->  drivers/mmc/host/sdhci-of-aspeed.c  | 10 ++-------
->  drivers/mmc/host/sdhci-of-at91.c    | 30 ++++++++++----------------
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 14 +++++-------
->  drivers/mmc/host/sdhci-of-esdhc.c   | 11 ++--------
->  drivers/mmc/host/sdhci-of-k1.c      |  1 -
->  drivers/mmc/host/sdhci-of-ma35d1.c  | 23 +++++++-------------
->  drivers/mmc/host/sdhci-of-sparx5.c  | 24 +++++++--------------
->  drivers/mmc/host/sdhci-omap.c       | 21 ++++++------------
->  drivers/mmc/host/sdhci-pci-core.c   |  9 ++------
->  drivers/mmc/host/sdhci-pic32.c      |  9 +++-----
->  drivers/mmc/host/sdhci-pltfm.c      | 16 +-------------
->  drivers/mmc/host/sdhci-pltfm.h      |  1 -
->  drivers/mmc/host/sdhci-pxav2.c      | 26 ++++++-----------------
->  drivers/mmc/host/sdhci-pxav3.c      |  7 +-----
->  drivers/mmc/host/sdhci-s3c.c        | 16 ++++----------
->  drivers/mmc/host/sdhci-spear.c      | 11 ++++------
->  drivers/mmc/host/sdhci-sprd.c       | 33 +++++++++--------------------
->  drivers/mmc/host/sdhci-st.c         |  6 ++----
->  drivers/mmc/host/sdhci-tegra.c      |  9 +++-----
->  drivers/mmc/host/sdhci-xenon.c      | 15 +++++--------
->  drivers/mmc/host/sdhci.c            |  9 +-------
->  drivers/mmc/host/sdhci.h            |  1 -
->  drivers/mmc/host/sdhci_am654.c      | 20 ++++++-----------
->  drivers/mmc/host/sdhci_f_sdh30.c    | 13 ++++--------
->  36 files changed, 135 insertions(+), 356 deletions(-)
->
->
+Instead of testing import_attach for imported GEM buffers, invoke
+drm_gem_is_imported() to do the test.
 
-The series applied for next, thanks!
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/tegra/gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index dbc1394f96b8..8ede07fb7a21 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -523,7 +523,7 @@ void tegra_bo_free_object(struct drm_gem_object *gem)
+ 	if (tegra->domain) {
+ 		tegra_bo_iommu_unmap(tegra, bo);
+ 
+-		if (gem->import_attach) {
++		if (drm_gem_is_imported(gem)) {
+ 			dma_buf_unmap_attachment_unlocked(gem->import_attach, bo->sgt,
+ 							  DMA_TO_DEVICE);
+ 			dma_buf_detach(gem->import_attach->dmabuf, gem->import_attach);
+-- 
+2.49.0
+
