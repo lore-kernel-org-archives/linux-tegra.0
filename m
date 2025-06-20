@@ -1,93 +1,103 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E358A268683;
-	Fri, 20 Jun 2025 11:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A51028D8E5;
+	Fri, 20 Jun 2025 13:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750418384; cv=none; b=sg8Ovj11HnRbbA8OW49ndyET+beselJLRKffJnMzGLgG/rWYzUYnMVQh9oQfmAnfJg8EVWLIIDusG2zGqTrvVQFE7b6ndaT+ougRVLABC3Zi+hTYxgoGURONOvu7rC54gy1+0YLueRi40KvUwYNMbdD1HkYaBAZxvUVEL0y758o=
+	t=1750426059; cv=none; b=A5JsQz8n5b8qwPdD0c4jSLUaIeIfMMPXJ/4b2htGczw9H5FxfksiD2iC5pb2U8SW2Zd/Q4i8aRqnqtQKn1FymdbD2nZLCu392pZQ86WH13cisJJWIMzHEW7KgpYk+sNOyizkUDI0xX9oouFBlUrZNaoJ3X5/3qNo5BoErKmp2gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750418384; c=relaxed/simple;
-	bh=v4CSPeGlTth/fyAsN1KxvH9LcX2LADhaZVDWoO+/GwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bkpWL/Iz3u8xg8uznCF4ZLFvztTvkT7VL7d/kA/cF1K6qP2b0LymwseKYLMJvv/kTcO8YvRg7x9BehxiP6Lww/p1zZlmsRFrJZtE9FoCFbh9V5dMAescz+reTOmZw9NYgQJiEGwfaQ2s5/m0sSOtaIOb7bV1fQ9NF7P2/cZSnEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZNHFMLM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750426059; c=relaxed/simple;
+	bh=7iO3Spwl78oqvR7sBJ2s9rW+W2FFODb7uMsgMUDC2CQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQcwkLeQtRFXIr6s5oFNbME5MNkJOJ3Glu1RYpMWC4SKbRXYOB488iPLuv/QynA5lU+WtMujTE1uNDRFtMOwwL41ZXWw6Gj6yz1azJngEHgG+33ADf81ibZDJmQdu2VZdDP3RRz77B86PbQZTbPvNdTZT15LOeyR7rcjqRucVuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOvXj3rc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZNHFMLM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3B6C4CEEE;
-	Fri, 20 Jun 2025 11:19:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOvXj3rc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10046C4CEE3;
+	Fri, 20 Jun 2025 13:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750418383;
-	bh=v4CSPeGlTth/fyAsN1KxvH9LcX2LADhaZVDWoO+/GwU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XZNHFMLMOwJs1tRC9UEfBSfA5v9xqXp3vhC2nC7TtET0tRZikVz7OeRertU+daUAw
-	 LA3TF/NWE9VMthu1Hwj6dNdd/4jDOoDN9ChBMwWhOB7a0/f28nQhvV+WktLGe0OBak
-	 2ZA0/JyGoMqX8Ky7ivixNDebHthm32Fjht9dJQpUyaTVjZ0jpF2ghqIaxPpcwC8AJQ
-	 lZWVGxErxouSemnabSzvHNF0EpcUzktj/EuRyuwPPNjeI+Tn1nxBFDCaFsTY+yCWPA
-	 RhQxY2Kw4a8kXLXevWjHy8YI0hUOkXuVkjuDzUd2pW8iCW9O9WitKpUeGFytoPJEek
-	 zUUE4oc2J6EOQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Pohsun Su <pohsuns@nvidia.com>,
-	Robert Lin <robelin@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] clocksource: tegra186: avoid 64-bit division
-Date: Fri, 20 Jun 2025 13:19:35 +0200
-Message-Id: <20250620111939.3395525-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1750426058;
+	bh=7iO3Spwl78oqvR7sBJ2s9rW+W2FFODb7uMsgMUDC2CQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fOvXj3rcFOvEn7+6z2VCgBASlxMhFXHKU0pYL1+VPMPsw2hcdVW+WTzTp5F8GHa+R
+	 u0LhsP5h1Em5JyH/IPLhFcL4OeNNPJk6899oXGLsDhgfFKRNZLVBbA9p214KlHqfOx
+	 C/Uc+tZGtio6132bYstHc81NMVl65Oi/HPNqtYCizlTw7ayFFyQr+HKWDyzmNus1xP
+	 +9QEmVgYIdUaFamjX53zwHgJOfe7SYq0yO6FQ8ChzilK5h3ygRfq09C+TQfIsF4XKv
+	 0GoONah3IfiinYalyMqwADfFD4eP1rGE3Qt87rnpopKK9/PppSeF9UU10H5hKMkfNo
+	 rZHz0DLhR+zMQ==
+Date: Fri, 20 Jun 2025 15:27:36 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 04/16] drm/panel/sun4i: Keep up with refcounting
+Message-ID: <20250620-groovy-imposing-reindeer-e52ed0@houat>
+References: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
+ <20250619-b4-of_drm_find_panel_part1-v2-4-0df94aecc43d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="bdw7jb5mvkrn4ozs"
+Content-Disposition: inline
+In-Reply-To: <20250619-b4-of_drm_find_panel_part1-v2-4-0df94aecc43d@redhat.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-The newly added function causes a build failure on 32-bit targets with
-older compiler version such as gcc-10:
+--bdw7jb5mvkrn4ozs
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 04/16] drm/panel/sun4i: Keep up with refcounting
+MIME-Version: 1.0
 
-arm-linux-gnueabi-ld: drivers/clocksource/timer-tegra186.o: in function `tegra186_wdt_get_timeleft':
-timer-tegra186.c:(.text+0x3c2): undefined reference to `__aeabi_uldivmod'
+Hi,
 
-The calculation can trivially be changed to avoid the division entirely,
-as USEC_PER_SEC is a multiple of 5. Change both such calculation for
-consistency, even though gcc apparently managed to optimize the other one
-properly already.
+On Thu, Jun 19, 2025 at 02:15:56PM -0500, Anusha Srivatsa wrote:
+> Put the panel reference back when driver is no
+> longer using it.
+>=20
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
-Fixes: 28c842c8b0f5 ("clocksource/drivers/timer-tegra186: Add WDIOC_GETTIMELEFT support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clocksource/timer-tegra186.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+When I asked you to provide a rationale for why you think the
+drm_panel_put() call belonged where it does, it was pretty obvious it
+needed to be done for all patches with the same issue, not just a few
+random ones.
 
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index e5394f98a02e..bd3d443e41cd 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -159,7 +159,7 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
- 	tmr_writel(wdt->tmr, TMRCSSR_SRC_USEC, TMRCSSR);
- 
- 	/* configure timer (system reset happens on the fifth expiration) */
--	value = TMRCR_PTV(wdt->base.timeout * USEC_PER_SEC / 5) |
-+	value = TMRCR_PTV(wdt->base.timeout * (USEC_PER_SEC / 5)) |
- 		TMRCR_PERIODIC | TMRCR_ENABLE;
- 	tmr_writel(wdt->tmr, value, TMRCR);
- 
-@@ -267,7 +267,7 @@ static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
- 	 * counter value to the time of the counter expirations that
- 	 * remain.
- 	 */
--	timeleft += (((u64)wdt->base.timeout * USEC_PER_SEC) / 5) * (4 - expiration);
-+	timeleft += (u64)wdt->base.timeout * (USEC_PER_SEC / 5) * (4 - expiration);
- 
- 	/*
- 	 * Convert the current counter value to seconds,
--- 
-2.39.5
+Maxime
 
+--bdw7jb5mvkrn4ozs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFVhwQAKCRAnX84Zoj2+
+dhZ7AYDOISUO6C76OQb9MnRtqKLlnfKoNLnLbNNJpHKiYfBhR0RN5gz9giVgJRKz
+6JU4aXoBgPNzjBXU7e39cZGKgNcl1PHMh/B8GaoCK9FIE1cDbftlr/Xb8NYNNyEU
+Z311rJJ3bA==
+=G9Cw
+-----END PGP SIGNATURE-----
+
+--bdw7jb5mvkrn4ozs--
