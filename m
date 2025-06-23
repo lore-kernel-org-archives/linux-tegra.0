@@ -1,133 +1,124 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957FE27991E;
-	Mon, 23 Jun 2025 15:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6FF28313D
+	for <linux-tegra@vger.kernel.org>; Mon, 23 Jun 2025 15:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691645; cv=none; b=LnlgSVeCNqV/eP1kKBTxVbv+yO9dAWzTPo1/ImUHPVrQOHOqrblJ+3KqKvqBUT6x7E1D2gyHX5yB6V/F5m6K4TyfEiFBuZm6Q/rOh+ftfadWEhUVWZqxnc4o3umA3Hl87EmsCwvjr2kSjZtje2aXPGyawwbUZoC+tSvt13x4i7I=
+	t=1750691646; cv=none; b=DQ61joJkybHQzGuMAMs1JDc96fcOcYDluPZkqIfQ53O2TNxFvwt6GmoPctfak85T52uMyLR0GQ0nHIqsGKwFy+3h8JX5v5geCIeBigHAouR5GFrBvELwRT7B/Lw5Aiy8z9w4K1+jAPxdtsldvqkytMbnI3kpE3snvdxFvBZI/ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691645; c=relaxed/simple;
-	bh=45lmqAUYpUykmyRNsOjFpkel3OPLmML527QXdh0o9zU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hK+7gZKYSHAqxgdGA2MlGmdFsGm1Hm1pkro6djfcz3U6LmRLqLC6cPrrJ3OttmC5wKxxbRe+Pg9QRjcd+X8inaTq6LopXZBqx65izD+Zqqkr6sHIcUSeP45S7Y2NgqZDNdk/wvn3dV5ODfIsAyaCQraBygZxuFChAxwq7N9cdx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dk4DRySe; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1750691646; c=relaxed/simple;
+	bh=T97FIRu7KTdXAKAuE2uiR/N85Qp0pQvg5x4paRRjBE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vr+++J6gstwyS7yjNeElarlcN33p2mk5v4OJ9TXAiweCkmufKM/IZ0OlaAq0+2hPwM52tIMt07wEwbvySvag8DUyN4MEw4pol/IZDTJmkK/tZtdhI8Scl7u9Mpw4tAF7sZ0yzbVAT5eIv6xhmqnf7f4oZZclV0GJUiKNIHHRe5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VKkhY7Ta; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dk4DRySe"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EC94944288;
-	Mon, 23 Jun 2025 15:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750691640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=45lmqAUYpUykmyRNsOjFpkel3OPLmML527QXdh0o9zU=;
-	b=Dk4DRySeiEHJkC5ucZz7LZZ5UhTo8qfaM+NNpNfIAmI8eb71jZ1iyZigWxGJIVUh/eddQP
-	8Xl1XY+V1ya18+kaQTE+VfNrEVges9y6YeLXaGu/C3rRQVwdpYLIzr+sV2HHzE/5UmgjzB
-	/+xepzhCWX1cw6Sjteg1eK+SyfTf1nG848+wARLHC34oEtB0GGeHyHyWCzEjD96U8cz4ZV
-	Q9lHqj9ZKe3ogELbhBMi//RQzmrzPpFKAf5qiAiUT/AZUHomVPjE09J5Bf3w9srIdSfWcY
-	Yt4Oua24qVH3rU576TSTUWjL+lZ5mN7oW47CVCJAgdJIvxqw3/Z3LAIlRF5uqQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Pan Chuang <panchuang@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,  Daniel Lezcano
- <daniel.lezcano@linaro.org>,  Zhang Rui <rui.zhang@intel.com>,  Lukasz
- Luba <lukasz.luba@arm.com>,  Markus Mayer <mmayer@broadcom.com>,  Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-  Florian Fainelli <florian.fainelli@broadcom.com>,  Shawn Guo
- <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
- <festevam@gmail.com>,  zhanghongchen <zhanghongchen@loongson.cn>,  Yinbo
- Zhu <zhuyinbo@loongson.cn>,  Amit Kucheria <amitk@kernel.org>,  Thara
- Gopinath <thara.gopinath@gmail.com>,  Niklas =?utf-8?Q?S=C3=B6derlund?=
- <niklas.soderlund@ragnatech.se>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>,  Heiko
- Stuebner <heiko@sntech.de>,  Bartlomiej Zolnierkiewicz
- <bzolnier@gmail.com>,  Krzysztof Kozlowski <krzk@kernel.org>,  Alim Akhtar
- <alim.akhtar@samsung.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-  Alexandre Torgue <alexandre.torgue@foss.st.com>,  Vasily Khoruzhick
- <anarsoul@gmail.com>,  Yangtao Li <tiny.windzz@gmail.com>,  Chen-Yu Tsai
- <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
- Holland <samuel@sholland.org>,  Thierry Reding <thierry.reding@gmail.com>,
-  Jonathan Hunter <jonathanh@nvidia.com>,  Kunihiko Hayashi
- <hayashi.kunihiko@socionext.com>,  Masami Hiramatsu <mhiramat@kernel.org>,
-  Thomas Gleixner <tglx@linutronix.de>,  Matthias Brugger
- <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>,  Greg KH
- <gregkh@linuxfoundation.org>,  Peter Zijlstra <peterz@infradead.org>,
-  =?utf-8?Q?N=C3=ADcolas?= F. R. A. Prado <nfraprado@collabora.com>,  Conor
- Dooley
- <conor.dooley@microchip.com>,  Julien Panis <jpanis@baylibre.com>,  Arnd
- Bergmann <arnd@arndb.de>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,  Colin Ian King <colin.i.king@gmail.com>,
-  Raphael Gallais-Pou <rgallaispou@gmail.com>,  Patrice Chotard
- <patrice.chotard@foss.st.com>,  Jonathan Cameron
- <Jonathan.Cameron@huawei.com>,  "Jiri Slaby (SUSE)"
- <jirislaby@kernel.org>,  Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>,  Andrew Morton <akpm@linux-foundation.org>,
-  Costa Shulyupin <costa.shul@redhat.com>,  Yury Norov
- <yury.norov@gmail.com>,  Cheng-Yang Chou <yphbchou0911@gmail.com>,  Caleb
- Sander Mateos <csander@purestorage.com>,  linux-pm@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  imx@lists.linux.dev,  linux-arm-msm@vger.kernel.org,
-  linux-renesas-soc@vger.kernel.org,  linux-rockchip@lists.infradead.org,
-  linux-samsung-soc@vger.kernel.org,
-  linux-stm32@st-md-mailman.stormreply.com,  linux-sunxi@lists.linux.dev,
-  linux-tegra@vger.kernel.org,  linux-mediatek@lists.infradead.org,
-  Yangtao Li <frank.li@vivo.com>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v6 01/24] genirq/devres: Add
- devm_request_threaded_irq_probe() and devm_request_irq_probe()
-In-Reply-To: <20250623123054.472216-2-panchuang@vivo.com> (Pan Chuang's
-	message of "Mon, 23 Jun 2025 20:30:34 +0800")
-References: <20250623123054.472216-1-panchuang@vivo.com>
-	<20250623123054.472216-2-panchuang@vivo.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 23 Jun 2025 17:13:54 +0200
-Message-ID: <87a55ywkwd.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VKkhY7Ta"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235e389599fso345365ad.0
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Jun 2025 08:14:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750691644; x=1751296444; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQjNcvHYakrNgjIQGLE/wyS2yfZF4798fujbYGUPWpc=;
+        b=VKkhY7Ta928BptYCHJVYvcLh5d5S42bzKA+iRJ+oEn0vaAOt9h0TsdKx0TVjsG5sH4
+         Z4q93H89iMYgYf0aYTsAgCNfxEn9VdxmzIGv5nStyrSyPIKbxJo9juXqmMMNq7ECHFDx
+         B8JomsblSvNpl/fEvJo6R4/YPa9gv3aZKDa1EMjVHvRE+O9+BIZhlH/xK/wIzNWS/YSZ
+         u5O5ucng1O3F0A9odAfGrmPgdSFcRgmoE3vaSf9skQt3uezUoJ5cU1m8WFQM9WRytk3B
+         +hYacxGBwtbMioE5B0mmYlJdkMqV/80MQguGEMxtequZg9ItcVJDvF+AGxR7FFvPz+ij
+         jIZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750691644; x=1751296444;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sQjNcvHYakrNgjIQGLE/wyS2yfZF4798fujbYGUPWpc=;
+        b=ueETOcuZYvIh2QDOkhkdxGSDYogJ8sDL0aRHlN0efHKt86VWllKDhOgGWEhSTpeDt6
+         26TPkqqqzyPM/5sUEq47GB9j6Hd7k70ZgL97AfPuEuHchvfcqHQVxP+KdyqhS6HkEocy
+         tC1BiN4+aKdWpaj6CW6CSm3p/zNvo2CK05lVay7vMNhooFKP6LCZF0dUyqfDS2AoZfz7
+         GX6VQBC5k+Xlg+ajMCFaJoHvlt34sGF8bSVYderRHe3d1QrrA7nUgPCGaWqynpkxdepZ
+         a1iLM14yvvN0ttyj49BdURj2i7lZwudQnkdDiG5poJcy49d9Kx92N6kBD6sCVhylQ5MV
+         0zlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTRls5yJF6HZlZl67BF9tl06J6GQ6LGu+697U3aQW88YmDybSLZKtmfUt3JNsHlzA2jMV+w7ezdmdb4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9/vaME1XhNd9/iIWPKNuow4CaIqoNd6kTnpRbQ7wpz8pSP1dX
+	z8YIZGluaAjjSmWDN5sKAJYyx0zuRbQY6ARQG3yF7a37qp4pV09u0jvc894bUkA46w==
+X-Gm-Gg: ASbGncsRBMz/VIIVmV1r4K5L1nLCFuXmTNb3mVEZmDU87cMSwKIxgParERYupQWRNhq
+	NCqt5bbyyiqcnYWMIBtwWEP4x5CBisX5hBIwRod0hOJ4AdxC+05ktQn96pOwNNWBOdfEpjVsJWP
+	0a16wYT7Tmc6QOzViRBgQR8xV5ls1DQmazF2/OwmX5g31i7MV2FKYIGX3mOSkOJRLqVgSB1phiZ
+	/EsBFqMGC4Z00ASRVwm26J63rkbknMa5qn2sfxSv3f6PZNaTWlW7w8u5/SGASdZu2ILEWpo9+Zm
+	8n6qzU8ylVF1LhT7w0ei4yrmh2t/XDfjVVuhRzi8TGVIbChq81WLu1k2gXZ+u8LtoTilVSaAUPD
+	v4W1DThzmFV8bRVhW3PGcH27n4xFlo7E=
+X-Google-Smtp-Source: AGHT+IFjZuHSmjWz3mlyiiORGjulfaekm2TrngIFHZiE0ZqJkNGQDEFi3n1LBmgMIlW05C9z3Da4aQ==
+X-Received: by 2002:a17:902:e951:b0:224:6c8:8d84 with SMTP id d9443c01a7336-237e478a96fmr4808555ad.4.1750691643222;
+        Mon, 23 Jun 2025 08:14:03 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a23e6fbsm11004566a91.14.2025.06.23.08.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 08:14:02 -0700 (PDT)
+Date: Mon, 23 Jun 2025 15:13:51 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, kevin.tian@intel.com, corbet@lwn.net,
+	will@kernel.org, bagasdotme@gmail.com, robin.murphy@arm.com,
+	joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
+	jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
+	nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
+	mshavit@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v6 20/25] iommu/arm-smmu-v3-iommufd: Add hw_info to
+ impl_ops
+Message-ID: <aFlvLw0SHgYiA614@google.com>
+References: <cover.1749884998.git.nicolinc@nvidia.com>
+ <f36b5e42bac83d0cdf5773cad1c3a44c3eaed396.1749884998.git.nicolinc@nvidia.com>
+ <aFP4zHIVT6epJeLb@google.com>
+ <20250619185325.GB17127@nvidia.com>
+ <aFTWQ4v6aZABpzeV@google.com>
+ <aFZE+MhTOCvbkKbH@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddujeefhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedtpdhrtghpthhtohepphgrnhgthhhurghnghesvhhivhhordgtohhmpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepmhhmrgihv
- ghrsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFZE+MhTOCvbkKbH@nvidia.com>
 
-Hi Pan,
+On Fri, Jun 20, 2025 at 10:36:56PM -0700, Nicolin Chen wrote:
+> On Fri, Jun 20, 2025 at 03:32:19AM +0000, Pranjal Shrivastava wrote:
+> > My point is that in-case someone passed INTEL_VTD type, we would end up
+> > calling impl_ops->hw_info and then the impl_ops->hw_info shall check for
+> > the type to return -EOPNOTSUPP. Either we should clearly mention that
+> > each impl_op implementing hw_info *must* add another type and check for
+> > it
+> 
+> Let's add this:
+> 
+> @@ -721,6 +721,11 @@ struct arm_smmu_impl_ops {
+>         int (*init_structures)(struct arm_smmu_device *smmu);
+>         struct arm_smmu_cmdq *(*get_secondary_cmdq)(
+>                 struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
+> +       /*
+> +        * An implementation should define its own type other than the default
+> +        * IOMMU_HW_INFO_TYPE_ARM_SMMUV3. And it must validate the input @type
+> +        * to return its own structure.
+> +        */
+>         void *(*hw_info)(struct arm_smmu_device *smmu, u32 *length, u32 *type);
+>         const size_t vsmmu_size;
+>         const enum iommu_viommu_type vsmmu_type;
+> 
+> And I found that we could have another patch changing "u32 *type"
+> to "enum iommufd_hw_info_flags *type" to avoid some duplications
+> in the kdocs.
+> 
 
-On 23/06/2025 at 20:30:34 +08, Pan Chuang <panchuang@vivo.com> wrote:
+Yea, that sounds good. Thanks!
 
-> From: Yangtao Li <frank.li@vivo.com>
->
-> There are more than 700 calls to devm_request_threaded_irq method and
-> more than 1000 calls to devm_request_irq method. Most drivers only
-> request one interrupt resource, and these error messages are basically
-> the same. If error messages are printed everywhere, more than 2000 lines
-> of code can be saved by removing the msg in the driver.
-
-[...]
-
-> So add devm_request_threaded_irq_probe() and devm_request_irq_probe(),
-> which ensure that all error handling branches print error information.
-> In this way, when this function fails, the upper-layer functions can
-> directly return an error code without missing debugging information.
-> Otherwise, the error message will be printed redundantly or missing.
-
-While I understand the goal and adhere to it, may I challenge the use of
-a yet another intermediate function that 99% of the users will anyway
-use? Wouldn't it be more straightforward to just add the error message
-in the existing functions directly? If we really want an alternative, it
-may be created and called in the few places where a dev_err_probe()
-might not be relevant.
-
-Thanks,
-Miqu=C3=A8l
+> Thanks
+> Nicolin
