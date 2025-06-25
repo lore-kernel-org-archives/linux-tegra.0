@@ -1,670 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2080.outbound.protection.outlook.com [40.107.92.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1212C2ACE;
-	Wed, 25 Jun 2025 11:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750850963; cv=none; b=NJFBN5z9Aag8aV3pq+d8gZ0gOWZ5ZRCAgCJoYUmzq+uTI+syRC7r0eEQoSH6wYYMte80/n1cR8uIM9XuZQ3pAGtadjbobmKMp9JhxJfqAlCXjWD8wRtEhvh9QWCVTIf9Tr3LBug8SLLa+qA8hxrJpGOzMvVYblAO3QM3Jy4miKw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750850963; c=relaxed/simple;
-	bh=CcWYS6fKwMpfwwV3JsNJq0FJ07VqNzGU5p6m3hA9+RA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5J99N1BdWYBy7QbjnGxg+4/c4RmS7o8Xf5v0lSbcdJVc5bRhbtEc7UwrvQTbYCbvYGAbxuihVKF7uyadccir+utwfAi23X4Ue8wsGcNB6DL80n2cl5F/FZKAHZzSUlPesleGTFMYZXKQBQrgLJngVaVeLrS3GAxSdaiIs5Vnj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGkAowJz; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B13925C81E;
+	Wed, 25 Jun 2025 11:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750851375; cv=fail; b=trYaM62Gvr6p1DK/2xJU2jcAaGkTJJ6HxeD2fwf4qY4hX0pXyokAwPzjdirxvfZ6+Y6KJeGtTyvgptZelMr7xXZzB8gwm3X2OOYtGIxM8IvqgrqDg7+uSZfC3zDxSXbslZrur1Buw13bfh7xIt8COS1lo74xorhEXrM4hT1/F2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750851375; c=relaxed/simple;
+	bh=gR0IAnZRnUl3YE7yzAUTY40PeCA5UG1hy9mBbRo5U+o=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=nuqRmZ3QC9hCntPY+svpOiBvnMzQsWHKKL6DTTSzruTuOw3Jg/Jq4F0TmvOuUZkvROrSnOrvp3Xbv+C9SSl5VliUahF2UT93yB6O68zISHD6yqSv1gqe4G5pm7kQzBz8gSqathmEmT0P20wtpdZLzWjP1wIjBiVB0bhtAMz5UKc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lxvMo0F4; arc=fail smtp.client-ip=40.107.92.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGkAowJz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CCF3C4CEEA;
-	Wed, 25 Jun 2025 11:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750850962;
-	bh=CcWYS6fKwMpfwwV3JsNJq0FJ07VqNzGU5p6m3hA9+RA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oGkAowJzjZpzsbecACapkEVOBa2ryl01cMiiCPmJ5abjPtHSlnaRypjdKysZl32hz
-	 uRm4adx+N5JMZlQqJaFT0mCkNIoG7xOwXos0ZRnFxBFCx3bJhAcJC+0nmGGbEUCNwH
-	 SdjPlldScLx+wZ+OtjLjf/A17H+idis+alqkP10+YPep9EXI5TJ2ji/xd/G6LZQepx
-	 Q7qyMJSeyejpmrsT2l4FUhewIra1Mkn4QG3mm9ZuNDX/uzaJukFMDFh1n45UlWNz2F
-	 jgHk8ygJZoSPuYfcITambrQ+1chiIsyka5UDRZJp/Y8HkCp0PtBCUsww79JA+jetwK
-	 dkKxQXneYkMSA==
-Date: Wed, 25 Jun 2025 12:29:17 +0100
-From: Lee Jones <lee@kernel.org>
-To: Shubhi Garg <shgarg@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] mfd: nvvrs: add NVVRS PSEQ MFD driver
-Message-ID: <20250625112917.GV795775@google.com>
-References: <20250619084427.3559207-1-shgarg@nvidia.com>
- <20250619084427.3559207-4-shgarg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lxvMo0F4"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cBjRDzMgY/qBqAfw1as/sppf/Pr0YlZ+bQghPfQqUoH8LoRed0/jfdcyg3DSzFHSnlXJ/hTmo+sKDcR4ErHTpCG6/SKLd35oqakjt8xeU3czdOXYMQvK2koHMCaKcYngZm7Hl3R5IxP+Ij6Kxl/0RFY4r6R88ux2E1nOB7UJciH3hF90s7Xjr+rnZq1BXfTnVrN/sdRgcV8W9jZE0D82l81sR20JeT6MiES7I85g49tXVvXux4wQR2uo6mjkgj/P6jU9unysQCPcG+uzB9JoCO/UP29YJE9A7y2QUOK70aOR7zdI/2aLrCKFghbCqzsH13p+suIBMbwnWaMSEf2ipQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fzw9yC9lfQLtjXfQuxchWlIzGXP0rsijf8nkMljRQU4=;
+ b=AFPfJLccSDFTsGqXEz8dE7f44lJRvViw55ngIbbvavbyhAv+eSNvaXO9E0X7iWTEbjuf/pti1ya/m6ilYoeGZfWR9DSeUi3rwhqs0thkf7CY+CWTgnFE6iCHKj8h7DuVymIkqv7yXso+sg0QesEMJmmjKjApZ3Y0UtJqS4p1SBX5rEajKMQyDo0VBiPdZcgHAqQztdD1Wwgay8OgW32UaBgmSu0vS3UWRPwiW8AbD/lNZ815/ymxW4+T7HfrNtQyn5zwzFUWMe5SA/Uuf3HgrLQJpy4jXi1E1g5nboGJj9t+uceffuTysIRtffWeeZ+yYeNMMKhupH2HOXXdyPpzUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fzw9yC9lfQLtjXfQuxchWlIzGXP0rsijf8nkMljRQU4=;
+ b=lxvMo0F4lTNNCqEpAWThLqXPw2O3jLrhMU1RBd2uXG6mz4gG1ojzpWwAwy1Yo/7UoS1xnTv6L2VLaRzz9sq8HslAgb/khYnvmNa1nQQ38Y0+gYA92gvzYBaesdGCENVWmwTYs95FSfcNT9W7FoJLWR2FL5Ryxd93Qk39iWzC7TEfNZjA4+D6J48eol3qPfc4tN56jms9UmPWU3lZaNCHxc9Z3mcZhg2uwFBGy3yQ4dVGu0/UNOEb/FWy0m+elDrH4+DXifvbWBTngMyfKt2cHd8AWkTiUL6c7V2uETpjraXZd4JeFU+EVxTNii2C8ijwEUh7vxyCHEFDXsvPTgYQQA==
+Received: from MW4P222CA0015.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::20)
+ by SJ1PR12MB6049.namprd12.prod.outlook.com (2603:10b6:a03:48c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 25 Jun
+ 2025 11:36:10 +0000
+Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
+ (2603:10b6:303:114:cafe::87) by MW4P222CA0015.outlook.office365.com
+ (2603:10b6:303:114::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Wed,
+ 25 Jun 2025 11:36:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Wed, 25 Jun 2025 11:36:09 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 25 Jun
+ 2025 04:35:58 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 25 Jun 2025 04:35:58 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 25 Jun 2025 04:35:58 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/215] 5.4.295-rc2 review
+In-Reply-To: <20250625085227.279764371@linuxfoundation.org>
+References: <20250625085227.279764371@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250619084427.3559207-4-shgarg@nvidia.com>
+Message-ID: <b9b7fb8b-9489-4150-8ab0-5267a5be2321@drhqmail203.nvidia.com>
+Date: Wed, 25 Jun 2025 04:35:58 -0700
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|SJ1PR12MB6049:EE_
+X-MS-Office365-Filtering-Correlation-Id: b988344d-3b00-4255-56a0-08ddb3dc7b50
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?czNFL3B0M3kvbnYyaldNdXFNWDBQSUpETUpUVE5POHppRFJ2T3NReHM5L1FX?=
+ =?utf-8?B?VXZXby9qU29BMi9nQ2ZlbTJ5S0Y2OHlNZndPTTF1TUplOThqUDRBaE14bG5r?=
+ =?utf-8?B?TmhnT016ZzBweDEwZ1BRUXpIek5sY1F2TnNEcjd5Qk5uWDBmNkJvTVVFUjhE?=
+ =?utf-8?B?WkVTQWRKN3dLVVpXc1RrSkpTcjBJN3dQeUI0QW5mdHZDemFsUVN1L1JPeFhu?=
+ =?utf-8?B?d2xxN1JlZXdkdDg4YXlDR05iY2R3ck9IOFZXOG5IaGdHdmRkRk5pTllIcFZn?=
+ =?utf-8?B?eEx5a3VIWHgvNDB4bHN5NjV5Y05sY3plRkgvbHgzOW1ObVI4RkNhMmszMmVI?=
+ =?utf-8?B?UzhlTHBzR0QyUEZiQnhLcjFBeUozY3BwZzdZUkRKZ29xbDRSS0szYnYwVXJo?=
+ =?utf-8?B?MHBxV2pIS2JRZEMwUE9QR2Rjbzg2R0xuekFDRjllSUNBYzNIV3VIcU4zZmdv?=
+ =?utf-8?B?VVVkSXEvMnJuTUZUeVl5bmdJUnloREwySlpMUmhEeklkSmZIM0tJek1CY1o3?=
+ =?utf-8?B?c3h1cUpmbXFDMXFsWXB3dXVmSzZ1bnZWVEg4b0w0eHFCN1c0NlhKSjV5Z3dP?=
+ =?utf-8?B?NWtZUmR0NVk3T0ROSTBjNGNJL0NwK2JRMzU1NW9WWEEycVp1SE10TERpSmJw?=
+ =?utf-8?B?Nld6K2hNYXFscWRPTVdzdFEwYm13QVRVZkxWSHJJb2tuaDNicDdDcHJsV2gv?=
+ =?utf-8?B?amwvbEhnTmdJSjhHMlRKU0RlQ0s2U0RZTGt0R3lueHB1UE1kZVY0K3NFRUpE?=
+ =?utf-8?B?RE4vM2E5NUhhM3AvcjE3Sm1QSFBTY0c4bEFFc3VPM3dYb0FEbVJCNSt2T3Ny?=
+ =?utf-8?B?VWNXUURXd24xMEd2NFhUaElZWmlra2pxeWNXayswOWRqa3BvaVVsWk5ubUo4?=
+ =?utf-8?B?aEN1ZlF6SzBETG43d2ZwYW9nbWRjUnZjZVY4RWswZkdvVDM5dG0rS0JIQ3g3?=
+ =?utf-8?B?WUo3dEpxVDFwdXZ4N08rNzdXNWJxMngzMUtNNVV3cDVkT0MreVFpK1BSWlBv?=
+ =?utf-8?B?YXc5enhIeW44VUpmV0hWZ3prckErdWtobHkvZE11U2l5T0M5SGdXdmdRbGhp?=
+ =?utf-8?B?YkpKOWdhNHExaDVLcU9Zc2haU0V6VTg3b0EwWjV2ZGJPWlNHSTZMS09kbmlV?=
+ =?utf-8?B?SHRDUTZhaGVia2xwWUJKYmtEdEM0bytSRlVidEZiVk9ZaklUbXIrZGdlN0Fw?=
+ =?utf-8?B?QmJZZDRRUkJoanY3bVFXSG52SllacUNRNEdOMG9BSVlJb1JVaHBuN213QzMw?=
+ =?utf-8?B?cUZ6UGlOTWRxR1BlTmJSaHVSbG1BVzJublg4Z0J0TFI3R1RqZGZBVytaaDdV?=
+ =?utf-8?B?a2lDQ0NHS3loVGpvckxZV3VhVkh1d1F4c1k0ZS9EZkQxOG9Oclp1RmtiaktJ?=
+ =?utf-8?B?ZWwyM3pnZzIwTFp2Q09uVmxOLzZFV3plMEY2M1RPOWN4YkNVN1B4Z3ZMN3Zq?=
+ =?utf-8?B?WlRhNU0vZU5vTlVUSzVmRTJCYXVvMFBiTU8xNnNMdlJrTnJDRy9DV2o2amZq?=
+ =?utf-8?B?aVRwQXNJczJPMUxvbmFFRjh1bUczelJqdFR0MUtUMDMvVVRkNGVvQ3R2MGo3?=
+ =?utf-8?B?YzY5V3htOWdkMXVkYzNrZ3N1UUhPa2pNYVRuTnFNdEYxa2g2eS96MTMrTzJ4?=
+ =?utf-8?B?RGlJVzduYWFENmRIU1hIb21QaEZlMVdvZUlNWVN6Zlc2WEM1Z0xmSkNxRTFl?=
+ =?utf-8?B?T3Q5SEo3NHZuNWxaZ0VzK2NUYk04NEYyMGcwR2Y2cjAvaFppME9DSHlrNUNk?=
+ =?utf-8?B?OGsra0M4VnNQZWJ1MXRwWVdkMHF2YlFDNVg1UnBxT3U5RUlpWGlqa1B0Um1C?=
+ =?utf-8?B?OEZCMk5OQlBDMkNZUjRtVTlLdithZ1kySGpFWEpoazhvSEZ3ZTlsU1RqSytK?=
+ =?utf-8?B?RU1RaXY0RmVNYkhRM2Z4VWVqZFNHQWFDSG5DdVFUMVZaL3BjdXFjTndTUTdK?=
+ =?utf-8?B?OWQwOGFrSnkxcnhYeFpjS0lQWGQwVUtFVEpmKy9idVcxSFZFcU90S2FyVnZi?=
+ =?utf-8?B?WUR4eVkvenNsRGY3MHhRMkxCMlkvUmQ0ZmUwUVQ2cEdka21EaWFhR2doaWNo?=
+ =?utf-8?B?aHA3TXJGcFJJYlR0Y2FuenRDcXYwYlZNbFRQdz09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 11:36:09.8814
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b988344d-3b00-4255-56a0-08ddb3dc7b50
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6049
 
-With respect to the subject line, please remove "MFD driver".
-
-You can use "core driver" or replace it for whatever this is.
-
-> Add support for NVIDIA VRS (Voltage Regulator Specification) power
-> sequencer device driver. NVIDIA VRS PSEQ provides 32kHz RTC support with
-> backup battery for system timing. It controls ON/OFF and suspend/resume
-> power sequencing of system power rails on below NVIDIA platforms:
+On Wed, 25 Jun 2025 09:53:55 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.295 release.
+> There are 215 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> - NVIDIA Jetson AGX Orin Developer Kit
-> - NVIDIA IGX Orin Development Kit
-> - NVIDIA Jetson Orin NX Developer Kit
-> - NVIDIA Jetson Orin Nano Developer Kit
+> Responses should be made by Fri, 27 Jun 2025 08:52:04 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
-> ---
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.295-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> v4:
-> - no changes
+> thanks,
 > 
-> v3:
-> - added rate limiting to interrupt clearing debug logs
-> - removed unnecessary braces in if blocks
-> - changed dependency from I2C=y to I2C in mfd Kconfig
-> 
-> v2:
-> - removed unnecessary error logs
-> - changed dev_info to dev_dbg
-> - changed dev_err to dev_err_probe
-> - fixed "of_match_table" assignment
-> 
->  drivers/mfd/Kconfig                 |  12 ++
->  drivers/mfd/Makefile                |   1 +
->  drivers/mfd/nvidia-vrs-pseq.c       | 267 ++++++++++++++++++++++++++++
->  include/linux/mfd/nvidia-vrs-pseq.h | 127 +++++++++++++
->  4 files changed, 407 insertions(+)
->  create mode 100644 drivers/mfd/nvidia-vrs-pseq.c
->  create mode 100644 include/linux/mfd/nvidia-vrs-pseq.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6fb3768e3d71..9a3451eebd6e 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1437,6 +1437,18 @@ config MFD_SC27XX_PMIC
->  	  This driver provides common support for accessing the SC27xx PMICs,
->  	  and it also adds the irq_chip parts for handling the PMIC chip events.
->  
-> +config MFD_NVVRS_PSEQ
+> greg k-h
 
-Suggest separating the company from the product.
+All tests passing for Tegra ...
 
-If you want to use NV for this (I only see a single other instance of
-this), then use NV_VRS_PSEQ.
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    24 boots:	24 pass, 0 fail
+    54 tests:	54 pass, 0 fail
 
-> +	tristate "NVIDIA Voltage Regulator Specification Power Sequencer"
+Linux version:	5.4.295-rc2-g1de5ce8d465e
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-"NVIDIA Voltage Regulator Specification (VRS) Power Sequencer"
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> +	depends on I2C
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	select REGMAP_IRQ
-> +	help
-> +	  Say Y here to add support for NVIDIA Voltage Regulator Specification
-
-(VRS) at the end.
-
-> +	  Power Sequencer. NVVRS_PSEQ supports ON/OFF, suspend/resume sequence of
-
-NVVRS_PSEQ seems like the wrong terminology for this paragraph.
-
-"The NVIDIA VRS PSEQ" perhaps.
-
-What does ON/OFF mean?
-
-> +	  system power rails. It provides 32kHz RTC clock support with backup
-
-This paragraph doesn't flow.  You only have a list of 2 items here and
-no connecting "and" anywhere.
-
-"a backup battery"
-
-> +	  battery for system timing.
-
-Is it a "backup battery" if it has a primary function?
-
->  config RZ_MTU3
->  	tristate "Renesas RZ/G2L MTU3a core driver"
->  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 79495f9f3457..9b07289985b5 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -183,6 +183,7 @@ obj-$(CONFIG_MFD_MT6360)	+= mt6360-core.o
->  obj-$(CONFIG_MFD_MT6370)	+= mt6370.o
->  mt6397-objs			:= mt6397-core.o mt6397-irq.o mt6358-irq.o
->  obj-$(CONFIG_MFD_MT6397)	+= mt6397.o
-> +obj-$(CONFIG_MFD_NVVRS_PSEQ)    += nvidia-vrs-pseq.o
->  
->  obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
->  obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
-> diff --git a/drivers/mfd/nvidia-vrs-pseq.c b/drivers/mfd/nvidia-vrs-pseq.c
-> new file mode 100644
-> index 000000000000..cef7abac08b7
-> --- /dev/null
-> +++ b/drivers/mfd/nvidia-vrs-pseq.c
-> @@ -0,0 +1,267 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> + * NVIDIA VRS Power Sequencer driver.
-
-Put this at the top followed by a line separator before the copyright
-line.
-
-Drop "driver".
-
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/nvidia-vrs-pseq.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/err.h>
-
-Alphabetical.
-
-> +
-> +static const struct resource rtc_resources[] = {
-> +	DEFINE_RES_IRQ(NVVRS_PSEQ_INT_SRC1_RTC),
-> +};
-> +
-> +static const struct regmap_irq nvvrs_pseq_irqs[] = {
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_RSTIRQ, 0, NVVRS_PSEQ_INT_SRC1_RSTIRQ_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_OSC, 0, NVVRS_PSEQ_INT_SRC1_OSC_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_EN, 0, NVVRS_PSEQ_INT_SRC1_EN_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_RTC, 0, NVVRS_PSEQ_INT_SRC1_RTC_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_PEC, 0, NVVRS_PSEQ_INT_SRC1_PEC_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_WDT, 0, NVVRS_PSEQ_INT_SRC1_WDT_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_EM_PD, 0, NVVRS_PSEQ_INT_SRC1_EM_PD_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC1_INTERNAL, 0, NVVRS_PSEQ_INT_SRC1_INTERNAL_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_PBSP, 1, NVVRS_PSEQ_INT_SRC2_PBSP_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_ECC_DED, 1, NVVRS_PSEQ_INT_SRC2_ECC_DED_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_TSD, 1, NVVRS_PSEQ_INT_SRC2_TSD_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_LDO, 1, NVVRS_PSEQ_INT_SRC2_LDO_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_BIST, 1, NVVRS_PSEQ_INT_SRC2_BIST_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_RT_CRC, 1, NVVRS_PSEQ_INT_SRC2_RT_CRC_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_SRC2_VENDOR, 1, NVVRS_PSEQ_INT_SRC2_VENDOR_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR0, 2, NVVRS_PSEQ_INT_VENDOR0_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR1, 2, NVVRS_PSEQ_INT_VENDOR1_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR2, 2, NVVRS_PSEQ_INT_VENDOR2_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR3, 2, NVVRS_PSEQ_INT_VENDOR3_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR4, 2, NVVRS_PSEQ_INT_VENDOR4_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR5, 2, NVVRS_PSEQ_INT_VENDOR5_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR6, 2, NVVRS_PSEQ_INT_VENDOR6_MASK),
-> +	REGMAP_IRQ_REG(NVVRS_PSEQ_INT_VENDOR7, 2, NVVRS_PSEQ_INT_VENDOR7_MASK),
-> +};
-> +
-> +static const struct mfd_cell nvvrs_pseq_children[] = {
-> +	{
-> +		.name = "nvvrs-pseq-rtc",
-> +		.resources = rtc_resources,
-> +		.num_resources = ARRAY_SIZE(rtc_resources),
-> +	},
-> +};
-
-One device is not and MFD.  This is not allowed.
-
-> +static const struct regmap_range nvvrs_pseq_readable_ranges[] = {
-> +	regmap_reg_range(NVVRS_PSEQ_REG_VENDOR_ID, NVVRS_PSEQ_REG_MODEL_REV),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_INT_SRC1, NVVRS_PSEQ_REG_LAST_RST),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_EN_ALT_F, NVVRS_PSEQ_REG_IEN_VENDOR),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_RTC_T3, NVVRS_PSEQ_REG_RTC_A0),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_WDT_CFG, NVVRS_PSEQ_REG_WDTKEY),
-> +};
-> +
-> +static const struct regmap_access_table nvvrs_pseq_readable_table = {
-> +	.yes_ranges = nvvrs_pseq_readable_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(nvvrs_pseq_readable_ranges),
-> +};
-> +
-> +static const struct regmap_range nvvrs_pseq_writable_ranges[] = {
-> +	regmap_reg_range(NVVRS_PSEQ_REG_INT_SRC1, NVVRS_PSEQ_REG_INT_VENDOR),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_GP_OUT, NVVRS_PSEQ_REG_IEN_VENDOR),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_RTC_T3, NVVRS_PSEQ_REG_RTC_A0),
-> +	regmap_reg_range(NVVRS_PSEQ_REG_WDT_CFG, NVVRS_PSEQ_REG_WDTKEY),
-> +};
-> +
-> +static const struct regmap_access_table nvvrs_pseq_writable_table = {
-> +	.yes_ranges = nvvrs_pseq_writable_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(nvvrs_pseq_writable_ranges),
-> +};
-> +
-> +static const struct regmap_config nvvrs_pseq_regmap_config = {
-> +	.name = "nvvrs-pseq",
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = NVVRS_PSEQ_REG_WDTKEY + 1,
-> +	.cache_type = REGCACHE_RBTREE,
-> +	.rd_table = &nvvrs_pseq_readable_table,
-> +	.wr_table = &nvvrs_pseq_writable_table,
-> +};
-> +
-> +static int nvvrs_pseq_irq_clear(void *irq_drv_data)
-> +{
-> +	struct nvvrs_pseq_chip *chip = (struct nvvrs_pseq_chip *)irq_drv_data;
-
-This cast is superfluous.
-
-> +	struct i2c_client *client = chip->client;
-> +	u8 reg, val;
-
-This line on the bottom please.
-
-> +	unsigned int i;
-> +	int ret = 0;
-> +
-> +	/* Write 1 to clear the interrupt bit in the Interrupt
-
-Properly formatted multi-line comments please.
-
-Nit: The top line should be blank.
-
-> +	 * Source Register, writing 0 has no effect, writing 1 to a bit
-> +	 * which is already at 0 has no effect
-> +	 */
-> +
-> +	for (i = 0; i < chip->irq_chip->num_regs; i++) {
-> +		reg = (u8)(chip->irq_chip->status_base + i);
-> +		ret = i2c_smbus_read_byte_data(client, reg);
-> +		if (ret) {
-> +			val = (u8)ret;
-> +			dev_dbg_ratelimited(chip->dev,
-
-How useful is this now that it's ready for publishing?
-
-> +					    "Clear IRQ reg 0x%02x=0x%02x\n",
-> +					    reg, val);
-> +
-> +			ret = i2c_smbus_write_byte_data(client, reg, val);
-> +			if (ret < 0)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static struct regmap_irq_chip nvvrs_pseq_irq_chip = {
-> +	.name = "nvvrs-pseq-irq",
-> +	.irqs = nvvrs_pseq_irqs,
-> +	.num_irqs = ARRAY_SIZE(nvvrs_pseq_irqs),
-> +	.num_regs = 3,
-> +	.status_base = NVVRS_PSEQ_REG_INT_SRC1,
-> +	.handle_post_irq = nvvrs_pseq_irq_clear,
-> +};
-> +
-> +static int nvvrs_pseq_vendor_info(struct nvvrs_pseq_chip *chip)
-> +{
-> +	struct i2c_client *client = chip->client;
-> +	u8 vendor_id, model_rev;
-> +	int ret;
-> +
-> +	ret = i2c_smbus_read_byte_data(client, NVVRS_PSEQ_REG_VENDOR_ID);
-> +	if (ret < 0)
-> +		return dev_err_probe(chip->dev, ret,
-> +				     "Failed to read Vendor ID\n");
-
-You use 100-chars above - why not use that everywhere to prevent these
-line-breaks?
-
-> +
-> +	vendor_id = (u8)ret;
-
-All vendor IDs are supported?
-
-Why does 'vendor_id' have to be u8?
-
-> +	ret = i2c_smbus_read_byte_data(client, NVVRS_PSEQ_REG_MODEL_REV);
-> +	if (ret < 0)
-> +		return dev_err_probe(chip->dev, ret,
-> +				     "Failed to read Model Rev\n");
-> +
-> +	model_rev = (u8)ret;
-> +
-> +	if (model_rev < 0x40) {
-
-No magic numbers.  Please define them.
-
-What if the model_rev is some larger unsupported number?
-
-> +		dev_err(chip->dev, "Chip revision 0x%02x is not supported!\n",
-> +			model_rev);
-> +		return -ENODEV;
-> +	}
-> +
-> +	dev_dbg(chip->dev, "NVVRS Vendor ID: 0x%02x, Model Rev: 0x%02x\n",
-> +		vendor_id, model_rev);
-
-How useful is this now, really?
-
-> +	return 0;
-> +}
-> +
-> +static int nvvrs_pseq_probe(struct i2c_client *client)
-> +{
-> +	const struct regmap_config *rmap_config;
-
-"config"
-
-Why does this need to exist at all?
-
-> +	struct nvvrs_pseq_chip *nvvrs_chip;
-
-"ddata"
-
-> +	const struct mfd_cell *mfd_cells;
-> +	int n_mfd_cells;
-> +	int ret;
-> +
-> +	nvvrs_chip = devm_kzalloc(&client->dev, sizeof(*nvvrs_chip), GFP_KERNEL);
-> +	if (!nvvrs_chip)
-> +		return -ENOMEM;
-> +
-> +	/* Set PEC flag for SMBUS transfer with PEC enabled */
-> +	client->flags |= I2C_CLIENT_PEC;
-> +
-> +	i2c_set_clientdata(client, nvvrs_chip);
-> +	nvvrs_chip->client = client;
-> +	nvvrs_chip->dev = &client->dev;
-
-What are client and dev used for?
-
-I suggest you only need one of them.
-
-> +	nvvrs_chip->chip_irq = client->irq;
-
-Just "irq".
-
-> +	mfd_cells = nvvrs_pseq_children;
-> +	n_mfd_cells = ARRAY_SIZE(nvvrs_pseq_children);
-
-Why are you placing this into another variable?
-
-> +	rmap_config = &nvvrs_pseq_regmap_config;
-
-As above.  Why have we created another local variable for this?
-
-> +	nvvrs_chip->irq_chip = &nvvrs_pseq_irq_chip;
-
-Where is irq_chip used outside of this function?
-
-> +	nvvrs_chip->rmap = devm_regmap_init_i2c(client, rmap_config);
-
-"regmap"
-
-> +	if (IS_ERR(nvvrs_chip->rmap))
-> +		return dev_err_probe(nvvrs_chip->dev, PTR_ERR(nvvrs_chip->rmap),
-> +				     "Failed to initialise regmap\n");
-> +
-> +	ret = nvvrs_pseq_vendor_info(nvvrs_chip);
-> +	if (ret < 0)
-> +		return ret;
-
-dev_err_probe()
-
-> +	nvvrs_pseq_irq_chip.irq_drv_data = nvvrs_chip;
-> +	ret = devm_regmap_add_irq_chip(nvvrs_chip->dev, nvvrs_chip->rmap,
-> +				       client->irq, IRQF_ONESHOT | IRQF_SHARED,
-> +				       0, &nvvrs_pseq_irq_chip,
-> +				       &nvvrs_chip->irq_data);
-> +	if (ret < 0)
-> +		return dev_err_probe(nvvrs_chip->dev, ret,
-> +				     "Failed to add regmap irq\n");
-
-"IRQ Chip"
-
-> +	ret = devm_mfd_add_devices(nvvrs_chip->dev, PLATFORM_DEVID_NONE,
-> +				   mfd_cells, n_mfd_cells, NULL, 0,
-> +				   regmap_irq_get_domain(nvvrs_chip->irq_data));
-> +	if (ret < 0)
-> +		return dev_err_probe(nvvrs_chip->dev, ret,
-> +				     "Failed to add MFD children\n");
-
-Failed to add {children ,sub-}devices.
-
-> +	return 0;
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-
-Use the helper instead.
-
-git grep CONFIG_PM_SLEEP -- drivers/mfd
-<nothing>
-
-> +static int nvvrs_pseq_i2c_suspend(struct device *dev)
-> +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +
-> +	/*
-> +	 * IRQ must be disabled during suspend because if it happens
-
-IRQs or The IRQ.
-
-> +	 * while suspended it will be handled before resuming I2C.
-> +	 *
-> +	 * When device is woken up from suspend (e.g. by RTC wake alarm),
-> +	 * an interrupt occurs before resuming I2C bus controller.
-> +	 * Interrupt handler tries to read registers but this read
-
-The interrupt ...
-
-> +	 * will fail because I2C is still suspended.
-> +	 */
-
-Most of this is pretty self explanatory and implied TBH.
-
-> +	disable_irq(client->irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static int nvvrs_pseq_i2c_resume(struct device *dev)
-> +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +
-> +	enable_irq(client->irq);
-
-'\n' here.
-
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops nvvrs_pseq_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(nvvrs_pseq_i2c_suspend, nvvrs_pseq_i2c_resume)
-> +};
-> +
-> +static const struct of_device_id nvvrs_dt_match[] = {
-> +	{ .compatible = "nvidia,vrs-pseq" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, nvvrs_dt_match);
-> +
-> +static struct i2c_driver nvvrs_pseq_driver = {
-> +	.driver = {
-> +		.name = "nvvrs_pseq",
-> +		.pm = &nvvrs_pseq_pm_ops,
-> +		.of_match_table = nvvrs_dt_match,
-> +	},
-> +	.probe = nvvrs_pseq_probe,
-> +};
-> +
-
-Remove this line.
-
-> +module_i2c_driver(nvvrs_pseq_driver);
-> +
-> +MODULE_AUTHOR("Shubhi Garg <shgarg@nvidia.com>");
-> +MODULE_DESCRIPTION("NVIDIA Voltage Regulator Specification Power Sequencer Driver");
-
-As above.
-
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/nvidia-vrs-pseq.h b/include/linux/mfd/nvidia-vrs-pseq.h
-> new file mode 100644
-> index 000000000000..7e6f3aa940e7
-> --- /dev/null
-> +++ b/include/linux/mfd/nvidia-vrs-pseq.h
-> @@ -0,0 +1,127 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +// SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved
-
-This should be part of the comment above.
-
-> +
-> +#ifndef _MFD_NVIDIA_VRS_PSEQ_H_
-> +#define _MFD_NVIDIA_VRS_PSEQ_H_
-> +
-> +#include <linux/types.h>
-> +
-> +/* Vendor ID */
-> +#define NVVRS_PSEQ_REG_VENDOR_ID		0x00
-> +#define NVVRS_PSEQ_REG_MODEL_REV		0x01
-> +
-> +/*  Interrupts and Status registers */
-> +#define NVVRS_PSEQ_REG_INT_SRC1			0x10
-> +#define NVVRS_PSEQ_REG_INT_SRC2			0x11
-> +#define NVVRS_PSEQ_REG_INT_VENDOR		0x12
-> +#define NVVRS_PSEQ_REG_CTL_STAT			0x13
-> +#define NVVRS_PSEQ_REG_EN_STDR1			0x14
-> +#define NVVRS_PSEQ_REG_EN_STDR2			0x15
-> +#define NVVRS_PSEQ_REG_EN_STRD1			0x16
-> +#define NVVRS_PSEQ_REG_EN_STRD2			0x17
-> +#define NVVRS_PSEQ_REG_WDT_STAT			0x18
-> +#define NVVRS_PSEQ_REG_TEST_STAT		0x19
-> +#define NVVRS_PSEQ_REG_LAST_RST			0x1A
-> +
-> +/* Configuration Registers */
-> +#define NVVRS_PSEQ_REG_EN_ALT_F			0x20
-> +#define NVVRS_PSEQ_REG_AF_IN_OUT		0x21
-> +#define NVVRS_PSEQ_REG_EN_CFG1			0x22
-> +#define NVVRS_PSEQ_REG_EN_CFG2			0x23
-> +#define NVVRS_PSEQ_REG_CLK_CFG			0x24
-> +#define NVVRS_PSEQ_REG_GP_OUT			0x25
-> +#define NVVRS_PSEQ_REG_DEB_IN			0x26
-> +#define NVVRS_PSEQ_REG_LP_TTSHLD		0x27
-> +#define NVVRS_PSEQ_REG_CTL_1			0x28
-> +#define NVVRS_PSEQ_REG_CTL_2			0x29
-> +#define NVVRS_PSEQ_REG_TEST_CFG			0x2A
-> +#define NVVRS_PSEQ_REG_IEN_VENDOR		0x2B
-> +
-> +/* RTC */
-> +#define NVVRS_PSEQ_REG_RTC_T3			0x70
-> +#define NVVRS_PSEQ_REG_RTC_T2			0x71
-> +#define NVVRS_PSEQ_REG_RTC_T1			0x72
-> +#define NVVRS_PSEQ_REG_RTC_T0			0x73
-> +#define NVVRS_PSEQ_REG_RTC_A3			0x74
-> +#define NVVRS_PSEQ_REG_RTC_A2			0x75
-> +#define NVVRS_PSEQ_REG_RTC_A1			0x76
-> +#define NVVRS_PSEQ_REG_RTC_A0			0x77
-> +
-> +/* WDT */
-> +#define NVVRS_PSEQ_REG_WDT_CFG			0x80
-> +#define NVVRS_PSEQ_REG_WDT_CLOSE		0x81
-> +#define NVVRS_PSEQ_REG_WDT_OPEN			0x82
-> +#define NVVRS_PSEQ_REG_WDTKEY			0x83
-> +
-> +/* Interrupt Mask */
-> +#define NVVRS_PSEQ_INT_SRC1_RSTIRQ_MASK		BIT(0)
-> +#define NVVRS_PSEQ_INT_SRC1_OSC_MASK		BIT(1)
-> +#define NVVRS_PSEQ_INT_SRC1_EN_MASK		BIT(2)
-> +#define NVVRS_PSEQ_INT_SRC1_RTC_MASK		BIT(3)
-> +#define NVVRS_PSEQ_INT_SRC1_PEC_MASK		BIT(4)
-> +#define NVVRS_PSEQ_INT_SRC1_WDT_MASK		BIT(5)
-> +#define NVVRS_PSEQ_INT_SRC1_EM_PD_MASK		BIT(6)
-> +#define NVVRS_PSEQ_INT_SRC1_INTERNAL_MASK	BIT(7)
-> +#define NVVRS_PSEQ_INT_SRC2_PBSP_MASK		BIT(0)
-> +#define NVVRS_PSEQ_INT_SRC2_ECC_DED_MASK	BIT(1)
-> +#define NVVRS_PSEQ_INT_SRC2_TSD_MASK		BIT(2)
-> +#define NVVRS_PSEQ_INT_SRC2_LDO_MASK		BIT(3)
-> +#define NVVRS_PSEQ_INT_SRC2_BIST_MASK		BIT(4)
-> +#define NVVRS_PSEQ_INT_SRC2_RT_CRC_MASK		BIT(5)
-> +#define NVVRS_PSEQ_INT_SRC2_VENDOR_MASK		BIT(7)
-> +#define NVVRS_PSEQ_INT_VENDOR0_MASK		BIT(0)
-> +#define NVVRS_PSEQ_INT_VENDOR1_MASK		BIT(1)
-> +#define NVVRS_PSEQ_INT_VENDOR2_MASK		BIT(2)
-> +#define NVVRS_PSEQ_INT_VENDOR3_MASK		BIT(3)
-> +#define NVVRS_PSEQ_INT_VENDOR4_MASK		BIT(4)
-> +#define NVVRS_PSEQ_INT_VENDOR5_MASK		BIT(5)
-> +#define NVVRS_PSEQ_INT_VENDOR6_MASK		BIT(6)
-> +#define NVVRS_PSEQ_INT_VENDOR7_MASK		BIT(7)
-> +
-> +/* Controller Register Mask */
-> +#define NVVRS_PSEQ_REG_CTL_1_FORCE_SHDN		(BIT(0) | BIT(1))
-> +#define NVVRS_PSEQ_REG_CTL_1_FORCE_ACT		BIT(2)
-> +#define NVVRS_PSEQ_REG_CTL_1_FORCE_INT		BIT(3)
-> +#define NVVRS_PSEQ_REG_CTL_2_EN_PEC		BIT(0)
-> +#define NVVRS_PSEQ_REG_CTL_2_REQ_PEC		BIT(1)
-> +#define NVVRS_PSEQ_REG_CTL_2_RTC_PU		BIT(2)
-> +#define NVVRS_PSEQ_REG_CTL_2_RTC_WAKE		BIT(3)
-> +#define NVVRS_PSEQ_REG_CTL_2_RST_DLY		0xF0
-> +
-> +enum {
-> +	NVVRS_PSEQ_INT_SRC1_RSTIRQ,		/* Reset or Interrupt Pin Fault */
-> +	NVVRS_PSEQ_INT_SRC1_OSC,		/* Crystal Oscillator Fault */
-> +	NVVRS_PSEQ_INT_SRC1_EN,			/* Enable Output Pin Fault */
-> +	NVVRS_PSEQ_INT_SRC1_RTC,		/* RTC Alarm */
-> +	NVVRS_PSEQ_INT_SRC1_PEC,		/* Packet Error Checking */
-> +	NVVRS_PSEQ_INT_SRC1_WDT,		/* Watchdog Violation */
-> +	NVVRS_PSEQ_INT_SRC1_EM_PD,		/* Emergency Power Down */
-> +	NVVRS_PSEQ_INT_SRC1_INTERNAL,		/* Internal Fault*/
-> +	NVVRS_PSEQ_INT_SRC2_PBSP,		/* PWR_BTN Short Pulse Detection */
-> +	NVVRS_PSEQ_INT_SRC2_ECC_DED,		/* ECC Double-Error Detection */
-> +	NVVRS_PSEQ_INT_SRC2_TSD,		/* Thermal Shutdown */
-> +	NVVRS_PSEQ_INT_SRC2_LDO,		/* LDO Fault */
-> +	NVVRS_PSEQ_INT_SRC2_BIST,		/* Built-In Self Test Fault */
-> +	NVVRS_PSEQ_INT_SRC2_RT_CRC,		/* Runtime Register CRC Fault */
-> +	NVVRS_PSEQ_INT_SRC2_VENDOR,		/* Vendor Specific Internal Fault */
-> +	NVVRS_PSEQ_INT_VENDOR0,			/* Vendor Internal Fault Bit 0 */
-> +	NVVRS_PSEQ_INT_VENDOR1,			/* Vendor Internal Fault Bit 1 */
-> +	NVVRS_PSEQ_INT_VENDOR2,			/* Vendor Internal Fault Bit 2 */
-> +	NVVRS_PSEQ_INT_VENDOR3,			/* Vendor Internal Fault Bit 3 */
-> +	NVVRS_PSEQ_INT_VENDOR4,			/* Vendor Internal Fault Bit 4 */
-> +	NVVRS_PSEQ_INT_VENDOR5,			/* Vendor Internal Fault Bit 5 */
-> +	NVVRS_PSEQ_INT_VENDOR6,			/* Vendor Internal Fault Bit 6 */
-> +	NVVRS_PSEQ_INT_VENDOR7,			/* Vendor Internal Fault Bit 7 */
-> +};
-> +
-> +struct nvvrs_pseq_chip {
-> +	struct device *dev;
-> +	struct regmap *rmap;
-> +	int chip_irq;
-> +	struct i2c_client *client;
-> +	struct regmap_irq_chip_data *irq_data;
-> +	const struct regmap_irq_chip *irq_chip;
-> +	void *irq_drv_data;
-
-Where is this used?
-
-> +};
-> +
-> +#endif /* _MFD_NVIDIA_VRS_PSEQ_H_ */
-> -- 
-> 2.43.0
-> 
-
--- 
-Lee Jones [李琼斯]
+Jon
