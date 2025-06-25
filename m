@@ -1,47 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F230D2BF00C;
-	Wed, 25 Jun 2025 19:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B683714F9D6;
+	Wed, 25 Jun 2025 21:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750880303; cv=none; b=SjzKluEJ1Quu9l0T6kiGQ7K4g74VAis6A4Tg+pyAoRbY1br7s3gxj0i+ZbWivtVQFjyHLvssdSW+zi9/XfXV+Gj2yhkJ58XvkTejXyEtQ9BRRX3jQ8MRQkfpQV5q4lV6/1+m7q94cTzyrKiHFgiIFIHeg3n90bYhkK8FxVjsrXQ=
+	t=1750885359; cv=none; b=KynDrWly4pTUsbb/xxiw1IDEhxnuM47k17jqrwFCbwnJCN8905r7wUE/h/zCVWlEeSU4rr1H0iR99qD8ZTJ53nUNlNK5LHIHWPsOs3Cmmu5icQwy7TsQqR24943amvLR9/r7SMKSxc0AQnRDkZiMa8ikXQYypeNnmT1TlZEydew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750880303; c=relaxed/simple;
-	bh=pwFIsXgv0jLSLDkzwQ4SNkMiI5VIG0czRQZUAQtF9nQ=;
+	s=arc-20240116; t=1750885359; c=relaxed/simple;
+	bh=DSBiVBGaGl053liqN+1YDOK55xX2RlMth3+oFu4qu88=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCjHbqbEMrIC6B5CY0if6xTQ2f1EsiCJgk24qPpzq3IYxJYBL0/6sn8jdiJLavO5BpQqb4CA6vBhLpcVLG7RFXv0fOdFQCIkD0S3ZJaS/vk1CAQw5VetQO7x4pWBx+GXWH9HDOSb/VL/3Fy1YD2CbXHsToHxqgBEbmzblos/fT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cB634nAy; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jP6ZIuuDv7EUJ2Ahxt7N9AqGyD/8RTEw8rNsbjb4j/wlB2eaKmNUG4zvcQU6y4M9GFWEOrotTJ93s4D12L/7/ybtoN0vesCEzkzv7F4ZoxXz8c+ytCXnx2oo3Ffo505FYFc647OrTyh6q6I6AGW6OwqMvI0edcMC2lqVXqzOry0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2evYmPy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cB634nAy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A763C4CEEA;
-	Wed, 25 Jun 2025 19:38:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2evYmPy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C94C4CEEA;
+	Wed, 25 Jun 2025 21:02:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750880302;
-	bh=pwFIsXgv0jLSLDkzwQ4SNkMiI5VIG0czRQZUAQtF9nQ=;
+	s=k20201202; t=1750885356;
+	bh=DSBiVBGaGl053liqN+1YDOK55xX2RlMth3+oFu4qu88=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cB634nAyoPtk4yrpYunxkzaAwXgeq6j2V72DD3axaFkRazYJOULImQfq9yfJWRLNu
-	 nX7n0CK6pkoOmqxEgUmlpanBvXFrifyFBG9FGj5wbNJy7U9Cw/vh1scCUPuuayaqD+
-	 ZRfCmay010+kNuw7D9sK1hTu2jDs8OJmB1S4keojNgO/i4JfLi3uWc9QhuqtqLClYm
-	 FXMlgcsW1M9PnG+KmXeH048HTPN7/pCtsvCbiLAlxCPZ6Qrneo14F9zv3qfedY6knT
-	 VZxJ3xNF4e3WqEJv+4f4+D4GPFxltIV1zMn6fvFbMtbqALX//JBuR6HJLGVpAK8hAG
-	 FfDk3GQAJd8iw==
-Date: Wed, 25 Jun 2025 14:38:21 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Document Tegra186 pin
- controllers
-Message-ID: <175088030096.2091553.3144090820246144987.robh@kernel.org>
-References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
- <20250608-tegra186-pinctrl-v2-1-502d41f3eedd@gmail.com>
+	b=m2evYmPyAUMUA355NG/SEs1um1ALvC6wqjyF62aKXnQEaoqMORymTShyvdKjoZwk/
+	 huk/axCD+rAbQ6NGcNd2Zez0rCxeDLyPwuQmWucYcVXcZHBdXu0mH6+LUUZQFOjcVI
+	 zboD0R7nZHLN8Yu1mRHsF1I3cKRf4T6av8NFJQhHTSozNB5gtN9AS/2ugLEPIBtqsn
+	 MSlpkNudhMUbRKLbJ7/dBkPkg7ld4xxZRXyJozl3EWQye+ZKQzQ1HyAV4NYqGERgdl
+	 tVatecqbxTXCQecWlf40e5mIa4pNjvJT+rdkpbwqwSfyGO4/o7gV9KUsuYl4t59X1W
+	 Rb6D/8Dwdvimw==
+Date: Wed, 25 Jun 2025 23:02:30 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, 
+	digetx@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, hans.zhang@cixtech.com
+Subject: Re: [PATCH] i2c: tegra: Add missing kernel-doc for dma_dev member
+Message-ID: <2dhrjeetbn654gz6jhe55ihypfrhgkkhw3cdpidv55gmat2qk6@64yfrjoc2wjy>
+References: <20250522163814.399630-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,18 +43,22 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250608-tegra186-pinctrl-v2-1-502d41f3eedd@gmail.com>
+In-Reply-To: <20250522163814.399630-1-18255117159@163.com>
 
+Hi Hans,
 
-On Sun, 08 Jun 2025 21:13:13 -0500, Aaron Kling wrote:
-> Tegra186 contains two pin controllers. Document their compatible strings
-> and describe the list of pins and functions that they provide.
+On Fri, May 23, 2025 at 12:38:14AM +0800, Hans Zhang wrote:
+> Fix the kernel-doc warning by describing the 'dma_dev' member in
+> the tegra_i2c_dev struct.  This resolves the compilation warning:
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   | 285 +++++++++++++++++++++
->  1 file changed, 285 insertions(+)
+> drivers/i2c/busses/i2c-tegra.c:297: warning: Function parameter or struct member 'dma_dev' not described in 'tegra_i2c_dev'
 > 
+> Fixes: cdbf26251d3b ("i2c: tegra: Allocate DMA memory for DMA engine")
+> Signed-off-by: Hans Zhang <18255117159@163.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks for your patch. I merged it in i2c/i2c-host without the
+Fixes tag as this is not a fix which deserves to be backported to
+older kernels.
 
+Thanks,
+Andi
