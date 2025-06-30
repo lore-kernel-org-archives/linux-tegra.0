@@ -1,125 +1,148 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B16A1D5ACE;
-	Mon, 30 Jun 2025 19:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6111A23A5;
+	Mon, 30 Jun 2025 19:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751312053; cv=none; b=SUeaGGbgRPOFBDq9e6UPCyhB+Ndgy6OgBRmjqs4bX5Knd8c7CVe4a6iN2X8u3Yea2CKqCr3x+PzMMRj9p9SQJEnitfxabY3W6916RvYSXsgUk9vy2CRxTPoWuD43Ofc8rqMexHtVCTx1jqZNAW8gpjMj7LuWNNTvaDNobeIrsz0=
+	t=1751312113; cv=none; b=f7bfZex9PypdGhJl7eCKvV4Z3Yy4eoiFbYyexmi6lZEU8eC762FR5tvBUQ6WJmK8n3LxqIlKeNwttx3EoLR6W5fMqryjO6NmZJ4HIRPE/neEQm0RkUJG4oIUcETJIO6LP2QAfBJgMilHfYz28YO+9xFo6VwiiimkO1J8CrkZ0Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751312053; c=relaxed/simple;
-	bh=r4TAHMfMdBvI2f+/ZJEXkp0NVNxlfoCluJQ/w8NVpZw=;
+	s=arc-20240116; t=1751312113; c=relaxed/simple;
+	bh=pCe0UWQj5p0UjomBq3BotCN6hd9SYCM6I5RJj7dfTfM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jP5aQS6nIiGwStTNP16Sdv15vw4lLecBFiKuOcHLCR8TZjl39KwUw/+mwIw6aZ1UmxqpAZKVJX9Q0EUbM+AmT+SUMWYCqO4Q1/6iePcHdRdH6dMwpYuy/UmUf2Jh73H5dn/BpADLXYCMlOJWyoUm4KE7gRO6Ts0ZvBQwQolXrEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6vYAFOT; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=HTS1RmfdicdIf3YxdjYSIRac2U+z2CUEoEu41oxskrJR6Wz56kIjmWBS4whk+xK4nXkXTkVfRGegdmEpQAG1OydFPG4ZcZ9f1GYHV4qzA9MW/Eem9jGKY4eTzIy59iJ3Z4zWNJCni0VMpau9CB0sUe3GqPJteX7U1pguGAKJ374=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Felx1SCr; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6vYAFOT"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso1186477e87.2;
-        Mon, 30 Jun 2025 12:34:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Felx1SCr"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5551a770828so1685474e87.1;
+        Mon, 30 Jun 2025 12:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751312048; x=1751916848; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751312110; x=1751916910; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=beR3gBnMegNXmfOxcSKlnP3s1NNAUYnmJTdUmJfeEZ0=;
-        b=X6vYAFOTbZZgS9jxwq0/+SMQTiVPe3bjH63M8yIc59ZA8Tv6Ycd2Adj+2O81BLloof
-         D6SC8WWRs8VtbGW+cXAX0pnCEAifUxCy8rOWFka6m5USCb/aQi+V5PoJHYa+taBe6iHG
-         le9wUHDoXP68vNjEZiYx43heGbByV1NvYl8PsWMt/24bzsSDvOKnSUH7TjivSno2FcbY
-         I85GcISnYxae7h7hXVDoqCC9N4J1G+NvGhpW9fhD/MGUjDbNf9bPB/D03kglvv/hLzPw
-         XRJy6pzAep5zwrcoMTAaWT/8vnoJzrXnjWo+Pe89mknGqC6ib+FAeQqyHRgc9XwjvzNo
-         yR0Q==
+        bh=OglMbGQ+Y/qJHraGlD7x6aapMaYudTkxwNEgY4J4Ewg=;
+        b=Felx1SCr9CvKhvfX2rE9u3JjYF4qO5v4qL4P3T5RE5STeXES7plX7jshAHtGkvljH6
+         +XjeiqrPyqz8zehSUQqQGQDIvkt6AuB+xTuOxftWClCn/kYbazTTaw0rjYCbBmnGC/yf
+         NWNSoSXVCLoN/VKZBQl4cdw9JCF23bJVHFdNTI8BnMdR8a6VKyUfDL2bKrRot0se2VPv
+         IsvLqs1Su4C0jbongiuzS/wJHjUSxJRvGHz9ODGM2YDKVtmSzc8Jo1cQsBqKp70JqYvV
+         5FkdfxZ6sEE6m1gFmTMsp3uowczMeCXD/4PgY9UgvaJb0p2ZS3+CQCljUro+rOaaeKLW
+         lIQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751312048; x=1751916848;
+        d=1e100.net; s=20230601; t=1751312110; x=1751916910;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=beR3gBnMegNXmfOxcSKlnP3s1NNAUYnmJTdUmJfeEZ0=;
-        b=Q/W79YjSPmDMoZUOPM6v12wDBxP3atd4Qoy+Y4x83zazVLWX/s120kdfCD8+PDGV4w
-         78E9Uh7fIr1bXE/mqy8tvdnu/84BSevNGDPI+YAd61Qgg0xM4RN2R1T1mDnRSZpcxhfy
-         VAKdepm0oAsUwWC0+DqGfr8GNvLFBDsh8p+CLn2n7NfA/xXQB5Rt74b6Bt9riPgcRBE/
-         Z2uUTrzKLkgTk7p5YH5BxzWMFMOFqc2PQUbNO0ZeN8SDDdzwhvkDx4PbSN4Mka6bd1/h
-         EUCpC0xkKRX2UqrDCsG9aWBiQNU77087pUFKKnG1Hjfr2f98kqQzSrAKdayOzFRw3lC8
-         1Zyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKsFUzdqyFqGXdlx+xqN+h4GOocG3G0lL2buKIZAxx+yvI4EiYqNM9X/vT6NzkoYu3Nq1y/+AualiEIgo=@vger.kernel.org, AJvYcCWx6hNgy2IjaulvTfKluRvyvIRlqZ1p89Ol5V4Uu0kJbUgeRx6eaGfMXoJE6mTWSCPiuvWgoqsCWfhXS8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDXey29z1QyFbpz0YBDcGJMtzX51+LIwTDEjXx39YIRVj+nXOW
-	OANe53RIdAv6JSVv5Fvk1kUHzRpkcot3duIay85rpBH3Xc5wM2xPp9btYTiohKspNPhdxDCDwNv
-	36+oK6eOQo2/rwKYZTeQm5c2U1IN1RQM=
-X-Gm-Gg: ASbGncsXnbkIhIFcHmdJMUSVZljfdUdbXpQ0ITA92kMWfgg4W0wViSboMR6F1/aZYLt
-	sTK3EvvWOp3W2pX3jykRPidtOq43uD66kieQlQsYpCOLcDbeRvo9jKiAiKob+ssRlSE53jSDoR/
-	7BO2a7dAikb+nTEqCH9aXxL/G/aB4POqkNkeOmGbdrD0M=
-X-Google-Smtp-Source: AGHT+IEcZloFG6l4jJ8cgNCYeXgOddz00TihtZjrzR3EcWyur1s6dsDtIuhCgF2HuMdXrYLuOyWPUJEpBwohJWSq4fs=
-X-Received: by 2002:a05:6512:3ba5:b0:553:d444:d4c4 with SMTP id
- 2adb3069b0e04-5550b9ee2b5mr5103562e87.50.1751312048082; Mon, 30 Jun 2025
- 12:34:08 -0700 (PDT)
+        bh=OglMbGQ+Y/qJHraGlD7x6aapMaYudTkxwNEgY4J4Ewg=;
+        b=jmFiBDVFdrPXo6ECKqjurvvNooVvK/zHlwkEOK3tTQYrTvp5a7/8yXP2onK3Brdu8t
+         yOKoHBqD2P42VmlnP1pO37MMYcVEnh83Gphk+fXNaQrWgSxLbhNk0QB0VdJHDW5KlZs2
+         vTdpgEgfTJO4TCLfpSUNqndcoB6oFnoo6vh1jzhDykfbIv81qWZku23wFVnXes2KVEu/
+         kkfYcVIPZpsHsgj9oL9DyuUzLbSSmgnhhqnXiZ8dDyvzgSYtx/IRB7OH/Z+jJuZraNNp
+         7O7H9vUKJzOoJSavne79L+cI0fu40InweqptyP0trrhXaUOUMlZudCHNqu5D4ATZzehW
+         q3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdWaAZqpE2mOWes12kzuqd+s9iKZYGKEePDRhHhldMGIxZdIH/qwA6Foi5mnoQyY+FFJYE/cuRKD/V@vger.kernel.org, AJvYcCUppjSKUxgqOU3epRClpaf1g5mv0JPLkZfPiSfAESyaypTj/qMi3VCZHT9PpdlyzplwbY7qupsOFZDu7EUW@vger.kernel.org, AJvYcCXi4Svo+XmF4MaoUjCQz6srpK8aCvKFMOkZNlqCEkHxgU5nlcpVrP0XGczqJLnJqClfLREUwxBn+kla31A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEmWofLVr5szGyXJKKHoSfXFEUgjD17LIzsph0WXP4J2jgUPG+
+	ClsbhRyvHb7pADInTf5AAagCDiwiAZFUvG1X5NLMnWmrzIicpZblN7OC0pqKEYbtwHYUwYQq+nu
+	z14R3tTrrl4lTshDUNorfluyMUUvXYI/Bv/QcrPY=
+X-Gm-Gg: ASbGncv+jAPzA7rIBquNvhjna4fs3sHqaRROouZx08J4MM5rd8s4xhrQpY3Cy3F1lUh
+	q3Zv9hoNXQitW60ieK4Gq/gyTjVsJ4qlq4b52xJV1fmB/pwq+ENEL0am9JfsZGpz66n5nWsAm+i
+	yrByVFx3IWHoUqhrnHtasvdVaqFJ/Zl/QPkpjyUVNUH88=
+X-Google-Smtp-Source: AGHT+IFthP3fIFTbr1jHVDjh5GjZDjDXJV+6FmRWZhCwU9Tk0eHFm8Y8SYay9LxMwKPSLoRHVpx8oAKlgfQjJWWV7y0=
+X-Received: by 2002:a05:6512:3f1d:b0:553:aadd:1987 with SMTP id
+ 2adb3069b0e04-5550b9ee8a2mr4745009e87.30.1751312109880; Mon, 30 Jun 2025
+ 12:35:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com> <CALHNRZ_7Yv98v83JvYLP2MmUZj+EDPwk7dDDArN4_U5docbRCw@mail.gmail.com>
-In-Reply-To: <CALHNRZ_7Yv98v83JvYLP2MmUZj+EDPwk7dDDArN4_U5docbRCw@mail.gmail.com>
+References: <20250526-p3450-mts-bug-v1-1-78500613f02c@gmail.com> <CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8Jg_3itwQ@mail.gmail.com>
+In-Reply-To: <CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8Jg_3itwQ@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 30 Jun 2025 14:33:56 -0500
-X-Gm-Features: Ac12FXw5JMTdMU1UgcC1jxmIMzSdOncHyLMk8rYWZi1A362LpDpLt0LTHSI3GJQ
-Message-ID: <CALHNRZ-nCGyYTndv=o1NBvL=zH6Pbp=Jkj2CHXtNgwcFzudYgg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Use io memcpy to write to iram
+Date: Mon, 30 Jun 2025 14:34:57 -0500
+X-Gm-Features: Ac12FXwRTWfAZBRnWky7vBCy_porlzvhHwzuTdc1h8-WwX9HAH84biN0zTIrW2M
+Message-ID: <CALHNRZ_+wU3saUR025HynpiRps_3ace6769NcKfQDOAS2owPHw@mail.gmail.com>
+Subject: Re: [PATCH RFC] arm64: tegra: Add reserved-memory node for P3450
 To: webgeek1234@gmail.com
-Cc: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 28, 2025 at 12:45=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com=
-> wrote:
+On Mon, May 26, 2025 at 2:07=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
 >
-> On Thu, May 22, 2025 at 11:11=E2=80=AFAM Aaron Kling via B4 Relay
+> On Mon, May 26, 2025 at 2:06=E2=80=AFPM Aaron Kling via B4 Relay
 > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
 > >
 > > From: Aaron Kling <webgeek1234@gmail.com>
 > >
-> > Kasan crashes the kernel trying to check boundaries when using the
-> > normal memcpy.
+> > The Tegra210 L4T bootloader ram training will corrupt the in-ram kernel
+> > dt if no reserved-memory node exists. This prevents said bootloader fro=
+m
+> > being able to boot a kernel without this node, unless a chainloaded
+> > bootloader loads the dt. Add the node to eliminate the requirement for
+> > extra boot stages.
 > >
 > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > > ---
-> > Change-Id: I27714f45aa6aea6a7bee048f706b14b8c7535164
+> >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/=
+arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > index 0ecdd7243b2eb1abba9adbe9a404b226c29b85ef..8fc995e71696f2ef5e662a2=
+1feb96ea771c7a53f 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > @@ -22,6 +22,12 @@ chosen {
+> >                 stdout-path =3D "serial0:115200n8";
+> >         };
+> >
+> > +       reserved-memory {
+> > +               #address-cells =3D <2>;
+> > +               #size-cells =3D <2>;
+> > +               ranges;
+> > +       };
+> > +
+> >         memory@80000000 {
+> >                 device_type =3D "memory";
+> >                 reg =3D <0x0 0x80000000 0x1 0x0>;
+> >
 > > ---
-> >  arch/arm/mach-tegra/reset.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-> > index d5c805adf7a82b938bebd8941eae974cf6bcdbe3..ea706fac63587a393a17fe0=
-f1c2ad69d6e5c14f2 100644
-> > --- a/arch/arm/mach-tegra/reset.c
-> > +++ b/arch/arm/mach-tegra/reset.c
-> > @@ -63,7 +63,7 @@ static void __init tegra_cpu_reset_handler_enable(voi=
-d)
-> >         BUG_ON(is_enabled);
-> >         BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_=
-SIZE);
-> >
-> > -       memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
-> > +       memcpy_toio(iram_base, (void *)__tegra_cpu_reset_handler_start,
-> >                         tegra_cpu_reset_handler_size);
-> >
-> >         err =3D call_firmware_op(set_cpu_boot_addr, 0, reset_address);
-> >
-> > ---
-> > base-commit: d608703fcdd9e9538f6c7a0fcf98bf79b1375b60
-> > change-id: 20250522-mach-tegra-kasan-fabd0253f268
+> > base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+> > change-id: 20250526-p3450-mts-bug-02394af31f0a
 > >
 > > Best regards,
 > > --
 > > Aaron Kling <webgeek1234@gmail.com>
-> >
-> >
 >
-> Friendly reminder about this patch.
+> This was sent as an RFC to see if there are any better solutions to
+> this problem. Mts in l4t r32 for t210 tries to copy the training data
+> to the reserved ram location provided by the kernel dt. But if that
+> node doesn't exist, it somehow corrupts that dt, causing later stage
+> boot stages and the kernel itself to fail. Since software support for
+> this hardware is EOL, no fix for the bug can be expected. The normal
+> Linux boot flow on this hardware involves placing the downstream dt in
+> both the bootloader-dtb and kernel-dtb slots, allowing mts to work,
+> then u-boot loading whatever dt the kernel expects. However, my use
+> for Android does not need u-boot, as nvidia's cboot can load a
+> standard android boot image without the extra complexity of additional
+> boot stages. And I would prefer to keep complexity to a minimum. It
+> should be noted that this affects p2371-2180 using the L4T bootloader
+> as well, but since I am using the Android bootloader there, I sidestep
+> the issue.
+>
+> Are there any thoughts on how to handle this problem? I know that it
+> is typically undesirable to add broken bootloader workarounds to the
+> kernel dt. But it would be preferable to have a fix upstream, instead
+> of having to carry various workarounds in downstream forks.
 
-Re-reminder about this patch.
+Friendly reminder about this question.
 
 Aaron
