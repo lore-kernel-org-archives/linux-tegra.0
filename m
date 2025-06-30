@@ -1,201 +1,478 @@
 Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A2F2BCF5;
-	Mon, 30 Jun 2025 08:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EFF23F40A;
+	Mon, 30 Jun 2025 08:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751273534; cv=none; b=jihGw6+yCCwohRDmsFnrDxxNizmqK1y6Y5AQuWLgQD8X6+qDCKiegYeLmugvCwysMjqaqNi2k9Xr3UCKxqSZzP3Hiyx0ko8umDaYlCWi/Qmiw5Tx8HXwusmpdNcfGpVnnuBw1kCO1r19owuL24adR+7tmla7izuDX/UmMfS0Dss=
+	t=1751273902; cv=none; b=C+cz/li/+/GpZyOb3mRXpiLnD2ZKSBdOBs4Hmw/+jxTZ+ui3hyNLMApB9rYl+uJpfoLoow35BFgWEQxlWCO+Q9ZectRhwKsPf6CvI6boTuvi70+AcidTLSfoaffpTYtwHwAo3LbUSkHtV/vm7XR2ebORhq1vZf9+SWaiLW3miVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751273534; c=relaxed/simple;
-	bh=TzBa5Htahk12/liIIhew3rL19S6s3qcifnural6TAY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mcE+dPQ75E1AIzxDYwpX+5N7mI9P6KalSByu2EryUAaikA8+7IWUuIZxJn4my4MeZp6dLDJuSRSUbf/rK+lVLE6pUA6nonFAQD3oLZx1IjgOtUfAg9uxFJGagwRrd/c1dIV13QpHQq4rAjbhRJkAKt7G6KgqzlGDQ5HSI1swp04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=K9OIzhqe; arc=none smtp.client-ip=193.136.128.21
+	s=arc-20240116; t=1751273902; c=relaxed/simple;
+	bh=5MWy0VbB3a2xKpdUlKN6bA8X8zp7YcrqToBNVK2VYYc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=g2Vj4t/EaP46QTorHBqqpLJ98hu5FSDB8/D3rReafLK21oosPkzzr7JldHQkTeIrkIJoTlUuFaKdMEpy/gzYxwXIVkFgWhdaEJ0TDe9lJ26/9L3JCR+SaV5B6e2T4dMHUL+c5QCYnAcgSGENxJCxoALBmQH3echtF2oYQjYBjZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=VqyHu2Ip; arc=none smtp.client-ip=193.136.128.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="K9OIzhqe"
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="VqyHu2Ip"
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 9382260022E5;
-	Mon, 30 Jun 2025 09:52:10 +0100 (WEST)
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 4DDFD60010B4;
+	Mon, 30 Jun 2025 09:49:22 +0100 (WEST)
 X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
 Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
  by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id dLtn5WJTzlZG; Mon, 30 Jun 2025 09:52:08 +0100 (WEST)
+ with LMTP id PrrKZMLvhQnK; Mon, 30 Jun 2025 09:49:20 +0100 (WEST)
 Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 65B5B60022FD;
-	Mon, 30 Jun 2025 09:52:08 +0100 (WEST)
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 04F9560010B8;
+	Mon, 30 Jun 2025 09:49:19 +0100 (WEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1751273528;
+	s=mail; t=1751273359;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iYrszlhKrE+3rdPzD0KHo3Mkh5qRDqFv6VEwxfGiZyg=;
-	b=K9OIzhqeOT11oxMfGwHcvaqPsRscpGBxUmH5NTsbSN32JHsByyOEQffHecgeDvDEXRZNtG
-	rnIKZkbRc69JeEFBgTRX8876WVJFH7XwogYOP2eUEU8nXEnELU+djUYVPyDA87+Ajz1xDE
-	2W5JGY+dUitw26iPErv+Hgz+SMthuk8=
+	bh=o7RC5Yaho27s6keGIdo2MXa135kKrSIZEJMp9mgNyJU=;
+	b=VqyHu2IpoHROI+CsLD7ejgW9DmqbuE461HAn6nSxmElKFUXCwYjnnPyXGOCGuUhDVTCmU2
+	onOwKTQ4HBhka0u7xreZaqVSjPTwHdT0ykE+ox97DT0UTy1cOiinuuAmLumb/hEkFqzPxK
+	61kxi1z9JhJqpO1ecGTUhcIoM1JIUBc=
 Received: from [192.168.1.69] (unknown [92.56.11.86])
 	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id BB96B360083;
-	Mon, 30 Jun 2025 09:52:06 +0100 (WEST)
-Message-ID: <b4f97871-bf42-45f8-b4c5-65fef7e583e3@tecnico.ulisboa.pt>
-Date: Mon, 30 Jun 2025 09:52:00 +0100
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id ADA4B360083;
+	Mon, 30 Jun 2025 09:49:17 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Date: Mon, 30 Jun 2025 09:48:42 +0100
+Subject: [PATCH v3 1/3] drm/tegra: Add NVJPG driver
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-To: Mikko Perttunen <cyndis@kapsi.fi>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
- <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
- <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
- <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
- <78cc8814-c89f-4a5f-9a70-08ed69580c3f@tecnico.ulisboa.pt>
- <36898d74-d9f7-4c5a-b6f2-d9652c674b84@kapsi.fi>
- <82bfabf0-8c55-4bbd-8c81-44dc86209b15@tecnico.ulisboa.pt>
- <338ae324-1f1a-429f-9ea2-ecab56331895@kapsi.fi>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <338ae324-1f1a-429f-9ea2-ecab56331895@kapsi.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250630-diogo-nvjpg-v3-1-a553c7e91354@tecnico.ulisboa.pt>
+References: <20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt>
+In-Reply-To: <20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt>
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
+ Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751273350; l=11034;
+ i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
+ bh=5MWy0VbB3a2xKpdUlKN6bA8X8zp7YcrqToBNVK2VYYc=;
+ b=lHC0Fb7AmsJibktnPrTz9sbQ2b8h3/PTtRs5AdGCYllkt8r0DsSBZ6qo4FNKEb1U8kgda5BIk
+ Q8V0e66U9VrDm8Tnm4L98TLlrmNLXdLwGg7YdTVbhsXhA1Lj3AEfpXV
+X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
+Add support for booting and using NVJPG on Tegra210 to the Host1x
+and TegraDRM drivers. This driver only supports the new TegraDRM uAPI.
 
-Hi Mikko,
+Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+---
+v2->v3:
+- Properly handle dma_alloc_coherent error path by checking for a valid
+  return pointer
 
-On 6/30/25 7:14 AM, Mikko Perttunen wrote:
-> On 6/17/25 6:26 PM, Diogo Ivo wrote:
->>
->>
->> On 6/17/25 5:40 AM, Mikko Perttunen wrote:
->>>
->>>
->>> On 6/16/25 7:21 PM, Diogo Ivo wrote:
->>>>
->>>>
->>>> On 6/11/25 4:06 PM, Thierry Reding wrote:
->>>>> On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
->>>>>>
->>>>>>
->>>>>> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
->>>>>>> On 6/10/25 6:05 PM, Thierry Reding wrote:
->>>>>>>> On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
->>>>>>>>> Hello,
->>>>>>>>>
->>>>>>>>> This series adds support for the NVJPG hardware accelerator 
->>>>>>>>> found in the
->>>>>>>>> Tegra210 SoC.
->>>>>>>>>
->>>>>>>>> The kernel driver is essentially a copy of the NVDEC driver as 
->>>>>>>>> both
->>>>>>>>> engines are Falcon-based.
->>>>>>>>>
->>>>>>>>> For the userspace part I have written a Mesa Gallium backend 
->>>>>>>>> [1] that,
->>>>>>>>> while still very much experimental, works in decoding images
->>>>>>>>> with VA- API.
->>>>>>>>>
->>>>>>>>> I have been using ffmpeg to call VA-API with the following 
->>>>>>>>> command:
->>>>>>>>>
->>>>>>>>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
->>>>>>>>> /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
->>>>>>>>> /dev/fb0
->>>>>>>>>
->>>>>>>>> which decodes <input.jpg> and shows the result in the framebuffer.
->>>>>>>>>
->>>>>>>>> The firmware for the engine can be obtained from a Linux for Tegra
->>>>>>>>> distribution.
->>>>>>>>
->>>>>>>> By the way, have you tried running this on anything newer than 
->>>>>>>> Tegra210?
->>>>>>>> Given your progress on this, we can probably start thinking about
->>>>>>>> submitting the binaries to linux-firmware.
->>>>>>>
->>>>>>> FWIW, the impression I have is that NVJPG is basically unchanged 
->>>>>>> all the
->>>>>>> way to Tegra234. So if we add stream ID support and the 
->>>>>>> firmwares, it'll
->>>>>>> probably just work. Tegra234 has the quirk that it has two 
->>>>>>> instances of
->>>>>>> NVJPG -- these have to be distinguished by their different class 
->>>>>>> IDs.
->>>>>>> But we should go ahead with the T210 support first.
->>>>>>
->>>>>> I have a question here, what exactly are the stream IDs? While 
->>>>>> working
->>>>>> on the driver this came up and I didn't manage to figure it out.
->>>>>
->>>>> Stream IDs are a way to identify memory transactions as belonging to a
->>>>> certain device. This comes into play when working with the IOMMU 
->>>>> (which
->>>>> is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
->>>>> is used to isolate DMA capable devices. Basically for every stream ID
->>>>> you get a separate I/O address space. NVJPG will have its own address
->>>>> space, and so will VIC. Each device can only access whatever has been
->>>>> mapped to it's I/O address space. That means NVJPG can't interfere 
->>>>> with
->>>>> VIC and vice-versa. And neither can any of these engines read from or
->>>>> write to random system memory if badly programmed.
->>>>
->>>> So if I understand this correctly a Stream ID corresponds to an IOMMU
->>>> domain right?
->>>
->>> Technically not necessarily, but in practice that's the case, as the 
->>> IOMMU driver creates IOMMU domains for each stream ID in the device 
->>> tree. They are similar to the SWGROUPs on Tegra210.
->>
->> Ok that makes sense, thank you for the clarification :)
->>
->>>> Ok, then in that case I'll keep the driver in its current state without
->>>> these implementations if that's ok. Connected with this I wanted to 
->>>> know
->>>> your thoughts on the best way to upstream this, is it better to wait 
->>>> for
->>>> testing on different platforms first and then if things work merge a
->>>> driver that works for all of them or go with Tegra210 first and then 
->>>> add
->>>> more platforms later on?
->>>
->>> Personally, I'd say to go for Tegra210 first.
->>
->> In that case I believe that in the v2 I sent out of the driver I 
->> addressed
->> both yours and Thierry's reviews and the driver should be in good 
->> condition
->> for Tegra210. What are the next steps in order to merge it?
-> 
-> I left one more comment on the v2 patch. With that fixed, if Thierry has 
-> no further objections, hopefully he can merge.
+v1->v2:
+- Removed explicit reset handling, leaving it to power-domain code
+- Set clock rate to maximum upon getting clock
+- Use modern variants to set PM ops
+- Simplify getting io resource
+---
+ drivers/gpu/drm/tegra/Makefile |   1 +
+ drivers/gpu/drm/tegra/drm.c    |   2 +
+ drivers/gpu/drm/tegra/drm.h    |   1 +
+ drivers/gpu/drm/tegra/nvjpg.c  | 329 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 333 insertions(+)
 
-I sent out v3 addressing this comment and picked up your Acked-by.
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index 6fc4b504e7861df8802f3f0f5d6faf9eb167b27a..e399b40d64a1d2070b27c2219a36693a8e3edc61 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -25,6 +25,7 @@ tegra-drm-y := \
+ 	falcon.o \
+ 	vic.o \
+ 	nvdec.o \
++	nvjpg.o \
+ 	riscv.o
+ 
+ tegra-drm-y += trace.o
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 4596073fe28fa1beb6689da305775f4468714548..f44fb145920ae77dda82780a659a98c88ea25a5a 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1383,6 +1383,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra210-sor1", },
+ 	{ .compatible = "nvidia,tegra210-vic", },
+ 	{ .compatible = "nvidia,tegra210-nvdec", },
++	{ .compatible = "nvidia,tegra210-nvjpg", },
+ 	{ .compatible = "nvidia,tegra186-display", },
+ 	{ .compatible = "nvidia,tegra186-dc", },
+ 	{ .compatible = "nvidia,tegra186-sor", },
+@@ -1421,6 +1422,7 @@ static struct platform_driver * const drivers[] = {
+ 	&tegra_gr3d_driver,
+ 	&tegra_vic_driver,
+ 	&tegra_nvdec_driver,
++	&tegra_nvjpg_driver,
+ };
+ 
+ static int __init host1x_drm_init(void)
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 0b65e69f3a8add906e48b471804ad45bb3241455..64c8577720245564c421b85057a02419e235a6b6 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -212,5 +212,6 @@ extern struct platform_driver tegra_gr2d_driver;
+ extern struct platform_driver tegra_gr3d_driver;
+ extern struct platform_driver tegra_vic_driver;
+ extern struct platform_driver tegra_nvdec_driver;
++extern struct platform_driver tegra_nvjpg_driver;
+ 
+ #endif /* HOST1X_DRM_H */
+diff --git a/drivers/gpu/drm/tegra/nvjpg.c b/drivers/gpu/drm/tegra/nvjpg.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..d1beee32223225d6a541403302d08544d01e5012
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/nvjpg.c
+@@ -0,0 +1,329 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/dma-mapping.h>
++#include <linux/host1x.h>
++#include <linux/iommu.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++
++#include "drm.h"
++#include "falcon.h"
++
++struct nvjpg_config {
++	const char *firmware;
++	unsigned int version;
++};
++
++struct nvjpg {
++	struct falcon falcon;
++
++	void __iomem *regs;
++	struct tegra_drm_client client;
++	struct device *dev;
++	struct clk *clk;
++
++	/* Platform configuration */
++	const struct nvjpg_config *config;
++};
++
++static inline struct nvjpg *to_nvjpg(struct tegra_drm_client *client)
++{
++	return container_of(client, struct nvjpg, client);
++}
++
++static int nvjpg_init(struct host1x_client *client)
++{
++	struct tegra_drm_client *drm = host1x_to_drm_client(client);
++	struct drm_device *dev = dev_get_drvdata(client->host);
++	struct tegra_drm *tegra = dev->dev_private;
++	struct nvjpg *nvjpg = to_nvjpg(drm);
++	int err;
++
++	err = host1x_client_iommu_attach(client);
++	if (err < 0 && err != -ENODEV) {
++		dev_err(nvjpg->dev, "failed to attach to domain: %d\n", err);
++		return err;
++	}
++
++	err = tegra_drm_register_client(tegra, drm);
++	if (err < 0)
++		goto detach;
++
++	/*
++	 * Inherit the DMA parameters (such as maximum segment size) from the
++	 * parent host1x device.
++	 */
++	client->dev->dma_parms = client->host->dma_parms;
++
++	return 0;
++
++detach:
++	host1x_client_iommu_detach(client);
++
++	return err;
++}
++
++static int nvjpg_exit(struct host1x_client *client)
++{
++	struct tegra_drm_client *drm = host1x_to_drm_client(client);
++	struct drm_device *dev = dev_get_drvdata(client->host);
++	struct tegra_drm *tegra = dev->dev_private;
++	struct nvjpg *nvjpg = to_nvjpg(drm);
++	int err;
++
++	/* avoid a dangling pointer just in case this disappears */
++	client->dev->dma_parms = NULL;
++
++	err = tegra_drm_unregister_client(tegra, drm);
++	if (err < 0)
++		return err;
++
++	pm_runtime_dont_use_autosuspend(client->dev);
++	pm_runtime_force_suspend(client->dev);
++
++	host1x_client_iommu_detach(client);
++
++	if (client->group) {
++		dma_unmap_single(nvjpg->dev, nvjpg->falcon.firmware.phys,
++				 nvjpg->falcon.firmware.size, DMA_TO_DEVICE);
++		tegra_drm_free(tegra, nvjpg->falcon.firmware.size,
++			       nvjpg->falcon.firmware.virt,
++			       nvjpg->falcon.firmware.iova);
++	} else {
++		dma_free_coherent(nvjpg->dev, nvjpg->falcon.firmware.size,
++				  nvjpg->falcon.firmware.virt,
++				  nvjpg->falcon.firmware.iova);
++	}
++
++	return 0;
++}
++
++static const struct host1x_client_ops nvjpg_client_ops = {
++	.init = nvjpg_init,
++	.exit = nvjpg_exit,
++};
++
++static int nvjpg_load_falcon_firmware(struct nvjpg *nvjpg)
++{
++	struct host1x_client *client = &nvjpg->client.base;
++	struct tegra_drm *tegra = nvjpg->client.drm;
++	dma_addr_t iova;
++	size_t size;
++	void *virt;
++	int err;
++
++	if (nvjpg->falcon.firmware.virt)
++		return 0;
++
++	err = falcon_read_firmware(&nvjpg->falcon, nvjpg->config->firmware);
++	if (err < 0)
++		return err;
++
++	size = nvjpg->falcon.firmware.size;
++
++	if (!client->group) {
++		virt = dma_alloc_coherent(nvjpg->dev, size, &iova, GFP_KERNEL);
++		if (!virt)
++			return -ENOMEM;
++	} else {
++		virt = tegra_drm_alloc(tegra, size, &iova);
++		if (IS_ERR(virt))
++			return PTR_ERR(virt);
++	}
++
++	nvjpg->falcon.firmware.virt = virt;
++	nvjpg->falcon.firmware.iova = iova;
++
++	err = falcon_load_firmware(&nvjpg->falcon);
++	if (err < 0)
++		goto cleanup;
++
++	/*
++	 * In this case we have received an IOVA from the shared domain, so we
++	 * need to make sure to get the physical address so that the DMA API
++	 * knows what memory pages to flush the cache for.
++	 */
++	if (client->group) {
++		dma_addr_t phys;
++
++		phys = dma_map_single(nvjpg->dev, virt, size, DMA_TO_DEVICE);
++
++		err = dma_mapping_error(nvjpg->dev, phys);
++		if (err < 0)
++			goto cleanup;
++
++		nvjpg->falcon.firmware.phys = phys;
++	}
++
++	return 0;
++
++cleanup:
++	if (!client->group)
++		dma_free_coherent(nvjpg->dev, size, virt, iova);
++	else
++		tegra_drm_free(tegra, size, virt, iova);
++
++	return err;
++}
++
++static __maybe_unused int nvjpg_runtime_resume(struct device *dev)
++{
++	struct nvjpg *nvjpg = dev_get_drvdata(dev);
++	int err;
++
++	err = clk_prepare_enable(nvjpg->clk);
++	if (err < 0)
++		return err;
++
++	usleep_range(20, 30);
++
++	err = nvjpg_load_falcon_firmware(nvjpg);
++	if (err < 0)
++		goto disable_clk;
++
++	err = falcon_boot(&nvjpg->falcon);
++	if (err < 0)
++		goto disable_clk;
++
++	return 0;
++
++disable_clk:
++	clk_disable_unprepare(nvjpg->clk);
++	return err;
++}
++
++static __maybe_unused int nvjpg_runtime_suspend(struct device *dev)
++{
++	struct nvjpg *nvjpg = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(nvjpg->clk);
++
++	return 0;
++}
++
++static int nvjpg_can_use_memory_ctx(struct tegra_drm_client *client, bool *supported)
++{
++	*supported = false;
++
++	return 0;
++}
++
++static const struct tegra_drm_client_ops nvjpg_ops = {
++	.get_streamid_offset = NULL,
++	.can_use_memory_ctx = nvjpg_can_use_memory_ctx,
++};
++#define NVIDIA_TEGRA_210_NVJPG_FIRMWARE "nvidia/tegra210/nvjpg.bin"
++
++static const struct nvjpg_config nvjpg_t210_config = {
++	.firmware = NVIDIA_TEGRA_210_NVJPG_FIRMWARE,
++	.version = 0x21,
++};
++
++static const struct of_device_id tegra_nvjpg_of_match[] = {
++	{ .compatible = "nvidia,tegra210-nvjpg", .data = &nvjpg_t210_config },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra_nvjpg_of_match);
++
++static int nvjpg_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct nvjpg *nvjpg;
++	int err;
++
++	/* inherit DMA mask from host1x parent */
++	err = dma_coerce_mask_and_coherent(dev, *dev->parent->dma_mask);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
++		return err;
++	}
++
++	nvjpg = devm_kzalloc(dev, sizeof(*nvjpg), GFP_KERNEL);
++	if (!nvjpg)
++		return -ENOMEM;
++
++	nvjpg->config = of_device_get_match_data(dev);
++
++	nvjpg->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(nvjpg->regs))
++		return PTR_ERR(nvjpg->regs);
++
++	nvjpg->clk = devm_clk_get(dev, "nvjpg");
++	if (IS_ERR(nvjpg->clk)) {
++		dev_err(&pdev->dev, "failed to get clock\n");
++		return PTR_ERR(nvjpg->clk);
++	}
++
++	err = clk_set_rate(nvjpg->clk, ULONG_MAX);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to set clock rate\n");
++		return err;
++	}
++
++	nvjpg->falcon.dev = dev;
++	nvjpg->falcon.regs = nvjpg->regs;
++
++	err = falcon_init(&nvjpg->falcon);
++	if (err < 0)
++		return err;
++
++	platform_set_drvdata(pdev, nvjpg);
++
++	INIT_LIST_HEAD(&nvjpg->client.base.list);
++	nvjpg->client.base.ops = &nvjpg_client_ops;
++	nvjpg->client.base.dev = dev;
++	nvjpg->client.base.class = HOST1X_CLASS_NVJPG;
++	nvjpg->dev = dev;
++
++	INIT_LIST_HEAD(&nvjpg->client.list);
++	nvjpg->client.version = nvjpg->config->version;
++	nvjpg->client.ops = &nvjpg_ops;
++
++	err = host1x_client_register(&nvjpg->client.base);
++	if (err < 0) {
++		dev_err(dev, "failed to register host1x client: %d\n", err);
++		goto exit_falcon;
++	}
++
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_set_autosuspend_delay(dev, 500);
++	devm_pm_runtime_enable(dev);
++
++	return 0;
++
++exit_falcon:
++	falcon_exit(&nvjpg->falcon);
++
++	return err;
++}
++
++static void nvjpg_remove(struct platform_device *pdev)
++{
++	struct nvjpg *nvjpg = platform_get_drvdata(pdev);
++
++	host1x_client_unregister(&nvjpg->client.base);
++	falcon_exit(&nvjpg->falcon);
++}
++
++static const struct dev_pm_ops nvjpg_pm_ops = {
++	RUNTIME_PM_OPS(nvjpg_runtime_suspend, nvjpg_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
++};
++
++struct platform_driver tegra_nvjpg_driver = {
++	.driver = {
++		.name = "tegra-nvjpg",
++		.of_match_table = tegra_nvjpg_of_match,
++		.pm = &nvjpg_pm_ops
++	},
++	.probe = nvjpg_probe,
++	.remove = nvjpg_remove,
++};
++
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
++MODULE_FIRMWARE(NVIDIA_TEGRA_210_NVJPG_FIRMWARE);
++#endif
 
-Thanks for the review!
-Diogo
+-- 
+2.50.0
 
-> Cheers,
-> Mikko
-> 
->>
->> Thanks,
->> Diogo
->>
->>> Cheers
->>> Mikko
->>
-> 
