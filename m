@@ -1,124 +1,177 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F31F0E55;
-	Sun, 29 Jun 2025 20:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B09822339;
+	Mon, 30 Jun 2025 06:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751230568; cv=none; b=tBmyy6kZn2MlKFGXnEpFb/ZmBz3nSl2ZQMHKOkxxhvdFOFZ8OMzn7G7LUFKPHhsf3NMG5OZ400Ed9GGnsjFdnyAyEHtCLHOLBPABKDsYjrtZE/qqHQEgZfYxiiuCXAALxw2tmi/jC8NCADjC40kNuF+tqCMSuOwFC+YDdCW9N4A=
+	t=1751264163; cv=none; b=rrBobOvL4s7GLdb7txMZJ4J6N0c6MZ3Y/vk0JxOPdPYiL6P7FX8qp2QqJN8vHm+GeUnHqkgl5cKkrjp+zwzjvV3wJdzIZPlzgSmf91WM66mLLf+gSZiAT02SSKracmPIMF6tkRT9LPbtTGbPoO7DU8eHCd2VaX07mD9162H68Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751230568; c=relaxed/simple;
-	bh=wxPOxZ/UV/k3nkqU8M9ommX7Jy3RtmifN1Lsn4mr+AY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2aWwJIzshFQN4wNr6Wcw/WJVej6cV3YckeBcMj5OAlRSc8i5o/9GlRYx0adI32rUGh1XPIc2gzhSN8g9P7+ubtRrHWQkkVc100kZkfyjxkPHgO5UWFLaSslhdAVMf2XOf52elU1K0wyQsJWfyGDv2IJ3kphgoZcMoOZ41qQOws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JafR0q7V; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751264163; c=relaxed/simple;
+	bh=84ULDpkwTG8NZR1likp3a+Q/5y9ueneVBjOxTpqV888=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HpZj0wo9As3eVosR7Yda79VrhzgZt09lPXGBMzzmUzaF1qHKX8mN2sVnMU3aBSFwxoA3ojO9DlU9ILgzE3r/hW5wZ1vDtMyNdDXWFmFM1Y88v6GIiuc6jtrCWXjM5nvsUPuQuymxZi4+mdn4Qw5w8/zXYIFFNVIvjqnj2MjIN3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=ok6dWuoo; arc=none smtp.client-ip=91.232.154.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JafR0q7V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE970C4CEEB;
-	Sun, 29 Jun 2025 20:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751230567;
-	bh=wxPOxZ/UV/k3nkqU8M9ommX7Jy3RtmifN1Lsn4mr+AY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JafR0q7VK1QSCjrMj0r8VwcsPzjNxnYBbF9x1UCwj5ay0PIUprwQRy73UGFxP+YLa
-	 UVVE7jHIrLp1JoHbGJ8cV7v+azD+e0iXxky27zPnOq4SyYtkJMfpdLqqYxUhX5qJH2
-	 jhFdMkuEVIJbWh72I8+w86MjFHk4LiS75EBgrUDUu8aZIa84KYAuEWKkMIcCNHeNi/
-	 BlV9jSJCnbFWWcFUh9eipj/iNexN3a9ANdxefeYo9OVRxW1gSNxOML3DzlOe5I2Ocr
-	 pkaU+54zZPxoifiAGbwKntn6WjiA0mKwDTKQYYCjDTvfbYWkgQJGrNT24Wa8MGuxzU
-	 aTaTbLFN0VfJw==
-Date: Sun, 29 Jun 2025 22:56:01 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: register_syctl_init error in linux-next-20250612
-Message-ID: <4s3egeo2fhq6hk7pcsxplsqomiiw6vbnnswhimlekfrl6tsixt@wzf5x63pdvp6>
-References: <20250612175515.3251-1-spasswolf@web.de>
- <vvorpevngfle6budlgqhmj3f25lb77czzyvd5aa6jil7zkaqgp@weanygri324r>
- <11898dd756020687c2016a37af3c948b350bdbbc.camel@web.de>
- <szadjbcldmcirdtgiv6wowqumlk4cbthb37f3e42lzcbt4tnla@ilp4m6quqk4b>
- <6eb19bee-c553-4a28-9342-b2b218deabe7@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="ok6dWuoo"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uOyvLlB5DZhNU2OQSOEwMLDnnkD/pggoJfzTlSH/488=; b=ok6dWuooOPMyqUSYCHslbgyHCO
+	AwqP/CW3T+Ud4dilU/c6haYEBMssUY/2jlThiPFt+GMbVLYNNBTTa7DjXc1q23E9KyiKX8jDHHP2V
+	VrowW8BR0uJPHrNNt/EzctnnBXru5zoXxV4sFLhqcyFKSw8gURpyQSe8aNP0zV16kDS/YAeo8OMfs
+	kqmQBIX/ax747fJkSg//JjsYgbbphSnOewndRwFMWbHYNPoRPrGPhBTlcua1tlzc9IvW3lpeXmikX
+	VaH0LQqKjs6TZme4sLY+omEdXts4qtbYfGVK8BMm8eGshMgm75lhqkjUWX8fKOcXTQyDb9s+pI0PD
+	PArZ4aWg==;
+Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f]
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1uW7nx-00A5g5-1W;
+	Mon, 30 Jun 2025 09:15:49 +0300
+Message-ID: <338ae324-1f1a-429f-9ea2-ecab56331895@kapsi.fi>
+Date: Mon, 30 Jun 2025 15:14:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3a3woiyuowbqzbpf"
-Content-Disposition: inline
-In-Reply-To: <6eb19bee-c553-4a28-9342-b2b218deabe7@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
+ <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
+ <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
+ <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
+ <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
+ <78cc8814-c89f-4a5f-9a70-08ed69580c3f@tecnico.ulisboa.pt>
+ <36898d74-d9f7-4c5a-b6f2-d9652c674b84@kapsi.fi>
+ <82bfabf0-8c55-4bbd-8c81-44dc86209b15@tecnico.ulisboa.pt>
+Content-Language: en-US
+From: Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <82bfabf0-8c55-4bbd-8c81-44dc86209b15@tecnico.ulisboa.pt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
+On 6/17/25 6:26 PM, Diogo Ivo wrote:
+> 
+> 
+> On 6/17/25 5:40 AM, Mikko Perttunen wrote:
+>>
+>>
+>> On 6/16/25 7:21 PM, Diogo Ivo wrote:
+>>>
+>>>
+>>> On 6/11/25 4:06 PM, Thierry Reding wrote:
+>>>> On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
+>>>>>
+>>>>>
+>>>>> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
+>>>>>> On 6/10/25 6:05 PM, Thierry Reding wrote:
+>>>>>>> On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
+>>>>>>>> Hello,
+>>>>>>>>
+>>>>>>>> This series adds support for the NVJPG hardware accelerator 
+>>>>>>>> found in the
+>>>>>>>> Tegra210 SoC.
+>>>>>>>>
+>>>>>>>> The kernel driver is essentially a copy of the NVDEC driver as both
+>>>>>>>> engines are Falcon-based.
+>>>>>>>>
+>>>>>>>> For the userspace part I have written a Mesa Gallium backend [1] 
+>>>>>>>> that,
+>>>>>>>> while still very much experimental, works in decoding images
+>>>>>>>> with VA- API.
+>>>>>>>>
+>>>>>>>> I have been using ffmpeg to call VA-API with the following command:
+>>>>>>>>
+>>>>>>>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
+>>>>>>>> /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
+>>>>>>>> /dev/fb0
+>>>>>>>>
+>>>>>>>> which decodes <input.jpg> and shows the result in the framebuffer.
+>>>>>>>>
+>>>>>>>> The firmware for the engine can be obtained from a Linux for Tegra
+>>>>>>>> distribution.
+>>>>>>>
+>>>>>>> By the way, have you tried running this on anything newer than 
+>>>>>>> Tegra210?
+>>>>>>> Given your progress on this, we can probably start thinking about
+>>>>>>> submitting the binaries to linux-firmware.
+>>>>>>
+>>>>>> FWIW, the impression I have is that NVJPG is basically unchanged 
+>>>>>> all the
+>>>>>> way to Tegra234. So if we add stream ID support and the firmwares, 
+>>>>>> it'll
+>>>>>> probably just work. Tegra234 has the quirk that it has two 
+>>>>>> instances of
+>>>>>> NVJPG -- these have to be distinguished by their different class IDs.
+>>>>>> But we should go ahead with the T210 support first.
+>>>>>
+>>>>> I have a question here, what exactly are the stream IDs? While working
+>>>>> on the driver this came up and I didn't manage to figure it out.
+>>>>
+>>>> Stream IDs are a way to identify memory transactions as belonging to a
+>>>> certain device. This comes into play when working with the IOMMU (which
+>>>> is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
+>>>> is used to isolate DMA capable devices. Basically for every stream ID
+>>>> you get a separate I/O address space. NVJPG will have its own address
+>>>> space, and so will VIC. Each device can only access whatever has been
+>>>> mapped to it's I/O address space. That means NVJPG can't interfere with
+>>>> VIC and vice-versa. And neither can any of these engines read from or
+>>>> write to random system memory if badly programmed.
+>>>
+>>> So if I understand this correctly a Stream ID corresponds to an IOMMU
+>>> domain right?
+>>
+>> Technically not necessarily, but in practice that's the case, as the 
+>> IOMMU driver creates IOMMU domains for each stream ID in the device 
+>> tree. They are similar to the SWGROUPs on Tegra210.
+> 
+> Ok that makes sense, thank you for the clarification :)
+> 
+>>> Ok, then in that case I'll keep the driver in its current state without
+>>> these implementations if that's ok. Connected with this I wanted to know
+>>> your thoughts on the best way to upstream this, is it better to wait for
+>>> testing on different platforms first and then if things work merge a
+>>> driver that works for all of them or go with Tegra210 first and then add
+>>> more platforms later on?
+>>
+>> Personally, I'd say to go for Tegra210 first.
+> 
+> In that case I believe that in the v2 I sent out of the driver I addressed
+> both yours and Thierry's reviews and the driver should be in good condition
+> for Tegra210. What are the next steps in order to merge it?
 
---3a3woiyuowbqzbpf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I left one more comment on the v2 patch. With that fixed, if Thierry has 
+no further objections, hopefully he can merge.
 
-On Fri, Jun 27, 2025 at 12:02:48PM +0100, Jon Hunter wrote:
-> Hi Joel,
->=20
-> On 20/06/2025 10:42, Joel Granados wrote:
-=2E..
-> > +		.data		=3D &max_lock_depth,
-> > +		.maxlen		=3D sizeof(int),
-> > +		.mode		=3D 0644,
-> > +		.proc_handler	=3D proc_dointvec,
-> > +	},
-> > +};
-> > +
-> > +static int __init init_rtmutex_sysctl(void)
-> > +{
-> > +	printk("registering rtmutex");
-Well that just slipped in there undetected :).
+Cheers,
+Mikko
 
-> > +	register_sysctl_init("kernel", rtmutex_sysctl_table);
-> > +	return 0;
-> > +}
->=20
->=20
-> With recent -next trees I am seeing the following kernel warning when
-> booting -next on our Tegra boards ...
->=20
->  boot: logs: [       0.231226] WARNING KERN registering rtmutex
->=20
-> This warning triggers a test failure for us because this is a new/unexpec=
-ted
-> warning. Looking at the above it seems that making this a pr_debug() or
-> pr_info() would be more appropriate. Let me know if it is OK to update th=
-is.
-this is just a debug print statement that made its way to next. I'll
-remove it. Thx for the report.
+> 
+> Thanks,
+> Diogo
+> 
+>> Cheers
+>> Mikko
+> 
 
-Best
->=20
-> Thanks!
-> Jon
->=20
-> --=20
-> nvpublic
->=20
-
---=20
-
-Joel Granados
-
---3a3woiyuowbqzbpf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmhhqFIACgkQupfNUreW
-QU/4Twv/YnX5yNyWtYD3GHMdqa+5hv6IQk3y+7xhOJTQqTRWU5fhowWTXIYq56uh
-5ftswx9HQVOYMf3jbp0o1xTwC4f1AQk8nQzbacmVfj2ZX3XwB0N9xVAumeWCXQc4
-mP36k+ixQSE3YqSDAmuBOMdyIpk0GaqepxXDdgEYHQ9OFLJFsqIrcUrQX41sA3Gd
-xMpjzkgHCg4+KIE7ow5e3u3SuwS0aaPDylNWXDp8fQI5K03FIwvDOgImR0dHk9hK
-LjODXVr6ZN2b4/sYVveAGOKMmwBpON2gHQzpJmf9QRSz0kjp8odYmiUvSoE3D2fP
-rtN0Xh2FVIeLA/jPU9iozuWzHQSZl5EuHc81k3kRlKVbvuR9cdCN4zNsfK2Bh0Sg
-U3u9zZz9GdUO7CywZqSdPft+KsMZsOOM6cbpIb2WL1EkcjQN58eXGLTk904wMymw
-R53xfWZtroYO4+5xANOXAZglx2bEzOa8Q1Q7MmC9ps9s/m9kGydP5oI1pYAlqnlJ
-Z1+0F/TC
-=ZAFG
------END PGP SIGNATURE-----
-
---3a3woiyuowbqzbpf--
