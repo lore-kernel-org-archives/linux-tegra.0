@@ -1,63 +1,63 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25A978F34
-	for <linux-tegra@vger.kernel.org>; Tue,  1 Jul 2025 12:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DA1158DD4
+	for <linux-tegra@vger.kernel.org>; Tue,  1 Jul 2025 12:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373054; cv=none; b=dxt8Wu4XuPqnBzHHAEImjdiv6eQVIB/B9frbVOJMUiGQ/NG6fft6h7TPcIKMFFwTC6WBlryJGVWqtRm3uVr74EqEchveAvxB6NJSlLxmGFAOCDybSf8rDkBs7Ov0CY5CWg6l2afYpPyj2lk6GQVVVWvZC+0XSo0bVRU8MWDZTl8=
+	t=1751374110; cv=none; b=RUaVV+FMYHTFYMNz02MAV6g0OUfRfinHkNW7hW+Ys4dCHjjZF63oTIv+ONhub/n4WGs7QiwOYgveSWwLB9UZSQzK5u/V2mgZEMulx5b4BKG96satkqXjE0zBpGLWUcALaS6BTM2uGGnW/BUC7zjjkc3WGigcmQnhbREQ66+bJbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373054; c=relaxed/simple;
-	bh=oNWtBTfARcQCwaHYGLs5aIj0PBvFVGGFyKJg1UjJTYM=;
+	s=arc-20240116; t=1751374110; c=relaxed/simple;
+	bh=lMQz4zmsd7w5xt6oF1tWg4U3+aXJ3dQRmn4Q70GwhfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOAYgDIY0gFopnQXTLboc9lt+vg/PBH05ysrcBeepBD9G473x92/fR+oE76m1ykLQy+03OEhIHcwrWgikZhJUYcjuPC8QjHo6v8Fb2UHzRLzbKcw0oPc8KunV/p63YTyvyGH+ITiIgnf2GqUNJHRSm+JIgmT3HMe4FAjjX0ixKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WKbn0Nnm; arc=none smtp.client-ip=209.85.214.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwA3gGHE2H2Xq+/TyolqzFB8ssQaDg9WT4wF0tgAOD7nO1fUrZRclFDQ2wXOn3BFylGtu1t9A56B2ZTf4Tt49ipem1ECw8Loq0uvp2RhH+CXAun2sVcs67hzBlh6/sb1x1+ZFzzQn4p/7YGIYHUXfkyJ2m3haRXSS/aRsTN6QbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YPgoFGGG; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WKbn0Nnm"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-237f18108d2so175445ad.0
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Jul 2025 05:30:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YPgoFGGG"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f18108d2so178185ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Jul 2025 05:48:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751373052; x=1751977852; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1751374108; x=1751978908; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5G5J3LAQCME/FJ/aVZc/0ZWGlfQeuCDS4lOhsOKRFGs=;
-        b=WKbn0NnmgkzxUsdcaqhQqraPMyrURXHKnri5ElSn1Vkd6BoqcdJ+BpbWZHRjOlYZzm
-         NbP4xOICMR07Egga4/fajji1H5YeNz8LkRGRQVi97jr8gxwK03VAeI/v76ao5vcEth2/
-         I7qCPu1lO+z90lkSnZD9P1Bq2LYvwRcu+Jt8/iNmhfKNQf4oQTo7RZ3Ppc0QvlX3n31u
-         zd5zLWVizh5Ixst6JzcJxBp8j0nExn9Cnhgd9KuYQIpBsfjHvJF50X+gLlRo7wpe4x+B
-         iuwMl6EycXVvvzBFEXVjcmCHNaGj/of7MPz3Bvvxz7M7DeNs0ch+lolEIsPjbZaLjtJl
-         YtUg==
+        bh=GPts6df6Q4890tqHCArh7YEtzYo+b0PlaNL9e95JEQ4=;
+        b=YPgoFGGGz8YqBQUQrMCpEDYCJe1L0EqIwq50aqDT6fOApqa7NKCycHFfaM73oXfZZ6
+         Oo9EQbdNPCC1q+2dWgyvxm8S/tXKGEyk38XRgW6gu3w2X31d5iWG7tyCrUeowgzhPN2e
+         tKA99D4xwAS9ePM8pZSjgJS0ZBhySFVQyXGraL9B3BXBpZgn6YzWyTZ7wLVH/sglgjE3
+         hxh6hkYl23r/cj6cPbPlAXUQ1jgzxPb8wDw7MQ6+VL1LapdAKk/C5l8wbTHHDH9UfkJT
+         5mYDehtkgCfW88QtdMtlzX0OluKqsI9+rcvLQXcOchq9a11DB/sr+k3jfvpNfdZRENGs
+         h9Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751373052; x=1751977852;
+        d=1e100.net; s=20230601; t=1751374108; x=1751978908;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5G5J3LAQCME/FJ/aVZc/0ZWGlfQeuCDS4lOhsOKRFGs=;
-        b=CFHUyxg6mxmFEgY4WseI/wG2QTIfzTBB1+ZN81zoFqt2hH949FZ6gHd12JZV2KH4V8
-         DBgdn8FuI54zOL8VmTPk/m0oh04gDl8Ht7JU7tTE5P4x/SmQgObmlNuv4s82YLozEgj6
-         BZJJgQmeYAfTBitSGAgnJPrpLOxMu9SCBYwhshP+es574rlonHbZPqkiD07D2WwUhb5P
-         0ZcwTaKo/E88yXCKZVSosG10DOF6hAx9ls9weWWNBtSJvTRrw9MWiyLIcZnbe6V66VIX
-         zOoWbfW1p9qoB15MaVV2e0uU1xiwsOZZVl4FWZWKaqJrI3kfqXi2rkCvppfSKIEbmeMe
-         RZdg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6zBC65yZWQbLEpfuKjcf6Nwc5VTits7pK5jm9HK9y13E2qmFdzgxwTROEQDnaWzXjtrb2cZQMB7YSjg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxja4gYK49ycgoSWPiq+krXzfcp4brPi6VSTF2ga93xXv2AnerQ
-	6bL2g445WenkKo0YWgPpmcQpcET5SqrT/IDT8Kn6UDOwtsUaRkXCPoSqYJPxxJOgrg==
-X-Gm-Gg: ASbGncuB6IBYmsSglGRJlLxfmc8nBn8UoVIO1dqX3GwDBDM/0RpF0B3bRrkf8u5mExK
-	zjCZt15rcNtq2Fbjphgt6iqs3Mx516D4NhkVAhjsYYd+cur3mHXrU5h5+PHpxCQeONAvJNc4d1R
-	EYkf7gwbOVH3Yq7E/Ru6nm3J2pd8CXQ5YXiTC4ku3+cgYxKsdHZi/RYv+3R+QYX+TmW/GKpOr9f
-	5ww+N7YU7kCKCh6TdIZL7wZEHTFiTjSOL8i5RTQjkXnHvOEkeKBe5+MeeVNdYTi5u/weR02F5X0
-	i04Af7oMsvvHsg1+lning/4aR8hUlITjCc0WEu25hHoNG830ANDY2v9xPowtPGMHUudQ7Obg45C
-	+a2TWdD940HVFfd1iwPuR
-X-Google-Smtp-Source: AGHT+IGYS+ky70yGGbfgecWTu3WMn+4HvkqtKADO91HI0LqScQKuEGTHZn38lZjYqivfuwsxMW7HzQ==
-X-Received: by 2002:a17:902:ce89:b0:235:f10a:ad0 with SMTP id d9443c01a7336-23c601a7645mr2227915ad.28.1751373051941;
-        Tue, 01 Jul 2025 05:30:51 -0700 (PDT)
+        bh=GPts6df6Q4890tqHCArh7YEtzYo+b0PlaNL9e95JEQ4=;
+        b=a+xU8F5JqZROrnakrcGxUdx+DTUisLJgEQP3yxXfdsH5MK0j9BrFhJl094FYzCLWRt
+         nXsXhyYYc+kwrrQUqs8yA+AojrMvlS8zlEzPB8dOVe5oKYUnGQ6SZsSwglwWVGTD5IDc
+         HTPviNYRqigFzwbcaywoM2WoR92OAPsCqOtRPvAnCA6v4ABRmYY2/CGrCbM9fzWpOMag
+         +4mw9VqwXo2OE/MN2R/JLG1rLcph5IXTnSPh2skN3Vphdgop8MRUpaTFoZEmoMKnreqa
+         fuTIkNquffJ615fA0UAiJMK6rlQXMGQ0kHpCboC42aDp9i72gY4ybv1qZp5oOQ/vHL5n
+         qddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU27Y2uv9EMGp6m91FZ188J1PDR/G2IqR8ujnS81NUVEiLtqha+PrrnZwCk/lkL+LjYtudgn/rU0qmhNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzig7yR9s4VYBThKn6PVLoAtNt/0Swgv7oCFCnWQgjI3LhyEiFQ
+	KZ8SrSATkw0+X8h2plVQZh9wR0iJkHhkAp3OPmM9kob8UVMkj+TPsjPPUelBxIyYIw==
+X-Gm-Gg: ASbGncvshhqbhtY35bc+3+weoavBZWyB/RchkkFaPcEEJYjXLQMlbTzeD99EThhdjuI
+	YlMpUylv6kL8uOrnt0A4sC9lA786p354jw1sBsnB6tkY2tIn5eB8zoEqUUBcnFJuZt+PEVbzaow
+	X06L7Y2Gm/RFbva0PoAIn0I34pxdbHwCMUT1Zoc/JYDeWeyh+ynRUrkYzt9dw0RKIhn1A63qtBj
+	V1J/Xt32Wi1kL2smzcstAVb+9q8VeTpRFFMw2XmpXrNgtNqmBwvRIPa5UxdJPR4QHTbx/DSGxB3
+	1H0JoIaLQ6ky60/tIAgrBv0qFxINdWDk3dxVcGN8miaQ9lBm0PEVAOUJJbjAk8KHwKk2ompzwkA
+	cJzOPw4hOxZkMDo1Sr3Q7
+X-Google-Smtp-Source: AGHT+IE1AhXNqed/8JZKyAmcFp7SvY2x6/U4LqFKGR3TbYVNdWAQposrAbDssUYuNO2iiJxapdN4ug==
+X-Received: by 2002:a17:903:2cf:b0:231:e069:6195 with SMTP id d9443c01a7336-23c6015a715mr2208215ad.23.1751374107263;
+        Tue, 01 Jul 2025 05:48:27 -0700 (PDT)
 Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e31da818sm9319671a12.61.2025.07.01.05.30.45
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541e5c1sm11877926b3a.70.2025.07.01.05.48.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 05:30:51 -0700 (PDT)
-Date: Tue, 1 Jul 2025 12:30:42 +0000
+        Tue, 01 Jul 2025 05:48:26 -0700 (PDT)
+Date: Tue, 1 Jul 2025 12:48:17 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
@@ -71,10 +71,11 @@ Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
 	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
 	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
 	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v7 02/28] iommufd/viommu: Explicitly define vdev->virt_id
-Message-ID: <aGPU8qgfsa816eQ1@google.com>
+Subject: Re: [PATCH v7 03/28] iommu: Use enum iommu_hw_info_type for type in
+ hw_info op
+Message-ID: <aGPZEbur-8d5cHz1@google.com>
 References: <cover.1750966133.git.nicolinc@nvidia.com>
- <cc7a558bfcdce5c2ea0d53b0c9c382f944df33ce.1750966133.git.nicolinc@nvidia.com>
+ <f588bf6a47cbaf350a03e5a1680074b852fb5502.1750966133.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,72 +84,87 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cc7a558bfcdce5c2ea0d53b0c9c382f944df33ce.1750966133.git.nicolinc@nvidia.com>
+In-Reply-To: <f588bf6a47cbaf350a03e5a1680074b852fb5502.1750966133.git.nicolinc@nvidia.com>
 
-On Thu, Jun 26, 2025 at 12:34:33PM -0700, Nicolin Chen wrote:
-> The "id" is too genernal to get its meaning easily. Rename it explicitly to
-> "virt_id" and update the kdocs for readability. No functional changes.
+On Thu, Jun 26, 2025 at 12:34:34PM -0700, Nicolin Chen wrote:
+> Replace u32 to make it clear. No functional changes.
+> 
+> Also simplify the kdoc since the type itself is clear enough.
 > 
 > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
->  drivers/iommu/iommufd/iommufd_private.h | 7 ++++++-
->  drivers/iommu/iommufd/driver.c          | 2 +-
->  drivers/iommu/iommufd/viommu.c          | 4 ++--
->  3 files changed, 9 insertions(+), 4 deletions(-)
+>  include/linux/iommu.h                               | 6 +++---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 3 ++-
+>  drivers/iommu/intel/iommu.c                         | 3 ++-
+>  drivers/iommu/iommufd/selftest.c                    | 3 ++-
+>  4 files changed, 9 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 4f5e8cd99c96..09f895638f68 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -634,7 +634,12 @@ struct iommufd_vdevice {
->  	struct iommufd_object obj;
->  	struct iommufd_viommu *viommu;
->  	struct device *dev;
-> -	u64 id; /* per-vIOMMU virtual ID */
-> +
-> +	/*
-> +	 * Virtual device ID per vIOMMU, e.g. vSID of ARM SMMUv3, vDeviceID of
-> +	 * AMD IOMMU, and vRID of a nested Intel VT-d to a Context Table
-> +	 */
-> +	u64 virt_id;
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 04548b18df28..b87c2841e6bc 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -563,8 +563,7 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
+>   * @capable: check capability
+>   * @hw_info: report iommu hardware information. The data buffer returned by this
+>   *           op is allocated in the iommu driver and freed by the caller after
+> - *           use. The information type is one of enum iommu_hw_info_type defined
+> - *           in include/uapi/linux/iommufd.h.
+> + *           use.
+>   * @domain_alloc: Do not use in new drivers
+>   * @domain_alloc_identity: allocate an IDENTITY domain. Drivers should prefer to
+>   *                         use identity_domain instead. This should only be used
+> @@ -623,7 +622,8 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
+>   */
+>  struct iommu_ops {
+>  	bool (*capable)(struct device *dev, enum iommu_cap);
+> -	void *(*hw_info)(struct device *dev, u32 *length, u32 *type);
+> +	void *(*hw_info)(struct device *dev, u32 *length,
+> +			 enum iommu_hw_info_type *type);
+>  
+>  	/* Domain allocation and freeing by the iommu driver */
+>  #if IS_ENABLED(CONFIG_FSL_PAMU)
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> index 9f59c95a254c..69bbe39e28de 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> @@ -7,7 +7,8 @@
+>  
+>  #include "arm-smmu-v3.h"
+>  
+> -void *arm_smmu_hw_info(struct device *dev, u32 *length, u32 *type)
+> +void *arm_smmu_hw_info(struct device *dev, u32 *length,
+> +		       enum iommu_hw_info_type *type)
+>  {
+>  	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+>  	struct iommu_hw_info_arm_smmuv3 *info;
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 7aa3932251b2..850f1a6f548c 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -4091,7 +4091,8 @@ static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+>  	return ret;
+>  }
+>  
+> -static void *intel_iommu_hw_info(struct device *dev, u32 *length, u32 *type)
+> +static void *intel_iommu_hw_info(struct device *dev, u32 *length,
+> +				 enum iommu_hw_info_type *type)
+>  {
+>  	struct device_domain_info *info = dev_iommu_priv_get(dev);
+>  	struct intel_iommu *iommu = info->iommu;
+> diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
+> index 74ca955a766e..7a9abe3f47d5 100644
+> --- a/drivers/iommu/iommufd/selftest.c
+> +++ b/drivers/iommu/iommufd/selftest.c
+> @@ -287,7 +287,8 @@ static struct iommu_domain mock_blocking_domain = {
+>  	.ops = &mock_blocking_ops,
 >  };
 >  
->  #ifdef CONFIG_IOMMUFD_TEST
-> diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
-> index 2fee399a148e..887719016804 100644
-> --- a/drivers/iommu/iommufd/driver.c
-> +++ b/drivers/iommu/iommufd/driver.c
-> @@ -30,7 +30,7 @@ int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
->  	xa_lock(&viommu->vdevs);
->  	xa_for_each(&viommu->vdevs, index, vdev) {
->  		if (vdev->dev == dev) {
-> -			*vdev_id = vdev->id;
-> +			*vdev_id = vdev->virt_id;
->  			rc = 0;
->  			break;
->  		}
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index 25ac08fbb52a..bc8796e6684e 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -111,7 +111,7 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
->  	struct iommufd_viommu *viommu = vdev->viommu;
->  
->  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
-> -	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
-> +	xa_cmpxchg(&viommu->vdevs, vdev->virt_id, vdev, NULL, GFP_KERNEL);
->  	refcount_dec(&viommu->obj.users);
->  	put_device(vdev->dev);
->  }
-> @@ -150,7 +150,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  		goto out_put_idev;
->  	}
->  
-> -	vdev->id = virt_id;
-> +	vdev->virt_id = virt_id;
->  	vdev->dev = idev->dev;
->  	get_device(idev->dev);
->  	vdev->viommu = viommu;
+> -static void *mock_domain_hw_info(struct device *dev, u32 *length, u32 *type)
+> +static void *mock_domain_hw_info(struct device *dev, u32 *length,
+> +				 enum iommu_hw_info_type *type)
+>  {
+>  	struct iommu_test_hw_info *info;
+> 
 
 Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
