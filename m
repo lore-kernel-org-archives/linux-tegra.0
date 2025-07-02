@@ -1,41 +1,37 @@
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F4E28691;
-	Wed,  2 Jul 2025 02:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD092309B3;
+	Wed,  2 Jul 2025 07:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751422113; cv=none; b=R677bvI0hSG32rKuy/KhaZBoqlxkhwyPbpSL3kjftk188G8/icb2MlJYCATshs+jlNP0Shnver8tEAwEAySs4V8eTtVpcoSg2AFASYOTJ4zuMiztm9BdChv9DSv+Y7JZfseVUC1mSgQHjwRXRuJhaYuJnXVVnMjsD1Yg8PpFmaU=
+	t=1751442409; cv=none; b=nH6IKyq4IVjsYDevVssfcuS/bMJClS+8xl+5p6PJr7Vg/KZm4yseNKNL7+9Rzf5wVqlF5AiBj4Aclr/bUhu7d5E+7OUv6XYYenFw/vpbZCuHqvrU5hbeX9CFIz3MwgLaRllCclIGswPyKo6z/1Jx77BDdKDyb2ekthowvbgm+u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751422113; c=relaxed/simple;
-	bh=6IYgUXCKOVWQzjCaAmYhbeLmZspvJK13K3WyaSLTAb4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iKy58ERzcsJ/oerUAU2vA3xieWEA/Pk8CweXh7+Brzu0TpFzkgz8KfHsJXxV0xrjbgek4EGHZBNdisWBhb9rCpLjYgw64W/aozAOfr7vzlmjYsShvkv6qGiCLEJac3UAS0GX7v81zC71GoNrJxdPGcaJWgSO0BfPmMxwy0hF+zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=S1C6Gqsz; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+	s=arc-20240116; t=1751442409; c=relaxed/simple;
+	bh=UPGQs6o7IxPKQ3JcTYGvuyxfO5biIaF57rUkGXslPb4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cvN40lHstZ+nzIxJY/iNub5bnd1MaU2w1ccMn3KnI9Lyw9qSDn/c/rIXQs1gj9dQa9qzefLE9uH883D9qHf75A4Kfz00ApBK835bbMre2FggqhkBxlEbwNtIpHVasFnsMQUtTzkTUPJCmr4qCW7N2r34P8oEdLJI0kCfw/D87h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnV4Ri9J; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="S1C6Gqsz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=YrHlgdl2SBTQ9+yMHREA+yud3zapvbMej8Khrxpmchs=; b=S1C6Gqsz6rvZ7zPHpW6DkFNyxN
-	EfpgyWeYa8ZE0FjdD03gULx5uWEN2WTCDQiHxsF4yFBrSyqBT3kVOpR0U11IAAosp/2D8n2wIboze
-	nDBobaF2X4VNnEMAVLlawWPaBe6wKRrgyegFXFalZult/2dBojBLUd0d6gsvZ5iGmL7rQDhGTyvPz
-	FuTiFotWG4i1HyaDlqwlkXkhUkt5XWZzkfzZQQbxi8wxsaCdv1/S/CWnviQozj4Iayc9sq5QA9rYC
-	QW+JTzrdmniGWWb6AXkicPsKGE4L06rYcct6UcU52xykYveF1Rhbb6v9l8bgtnJbwqB13RlVw2NRh
-	I3MoW8Jw==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f] (helo=senjougahara.localdomain)
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uWmtU-000N2g-2M;
-	Wed, 02 Jul 2025 05:08:17 +0300
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Date: Wed, 02 Jul 2025 11:08:07 +0900
-Subject: [PATCH] drm/tegra: nvdec: Fix dma_alloc_coherent error check
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnV4Ri9J"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8C270C4CEF8;
+	Wed,  2 Jul 2025 07:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751442408;
+	bh=UPGQs6o7IxPKQ3JcTYGvuyxfO5biIaF57rUkGXslPb4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=AnV4Ri9JJmbRqp+2AmdUWHshc+V6XXIpGoF5GH5eK9UPuYZfVvnpeu34Efkxpr1Ux
+	 DQdgL1zW1Zb72KyiaUuNj7xOQTKoASEA3FduGQSYUbaOSCxcx1XjX7Pl2EvBePrAO6
+	 aPI7EHIS5BkfW4IyRyUrT1BNVE7zTZ3jKaRdTT8rKHKwmk8AtztSlQ25FqEonfdwPm
+	 w6J8A2aqmGWPZuHxBiXrASK64mVUe+EFdKQBmJSXCC99kiCdK6nhGIZrZskCUcIFl5
+	 as2dLtwTRpZXKwO61NrPmUMfV8RhQrs83QmE1bpW5m/SzUAqJR9xtxuCBaYFeDztSP
+	 7A4m+9PwFTyyQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F09BC83013;
+	Wed,  2 Jul 2025 07:46:48 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Wed, 02 Jul 2025 02:46:25 -0500
+Subject: [PATCH v5 2/3] cpufreq: dt: Add register helper
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,49 +40,75 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-nvdec-dma-error-check-v1-1-c388b402c53a@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAIaUZGgC/x3MQQqDMBBG4avIrB2IqWLpVYqLMPmjQ2ksExAhe
- PcGl9/ivUoFpij06ioZDi2654ah70i2kFewxmbyzk9udp7zESEcv4FhthvLBvkwUgppludjHCK
- 19mdIet7f93Jdf/DppnFnAAAA
-X-Change-ID: 20250702-nvdec-dma-error-check-effaf7c8341d
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Message-Id: <20250702-tegra124-cpufreq-v5-2-66ab3640a570@gmail.com>
+References: <20250702-tegra124-cpufreq-v5-0-66ab3640a570@gmail.com>
+In-Reply-To: <20250702-tegra124-cpufreq-v5-0-66ab3640a570@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751442407; l=1698;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=o7BSnjiEeAr40p8PQoKLMNpDwUQoKoaMMFdZbO3EPoY=;
+ b=u4mb1O8HXeuudeU1EGdFvH0aUkecR25S5gJX5CVbPdk8NDZc+4BN+f4lUC6Z8GIrCWEn/rh6x
+ cV07wFV9m6NAs9gOIagCuROX0B+zZJCWw3Xj6o336YmaPmLC3ICPw5n
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Check for NULL return value with dma_alloc_coherent, in line with
-Robin's fix for vic.c in 'drm/tegra: vic: Fix DMA API misuse'.
+Cpufreq-dt currently exports no functions. This means that drivers that
+are based on cpufreq-dt have no way of establishing a depmod dependency
+on it. This helper allows that link.
 
-Fixes: 46f226c93d35 ("drm/tegra: Add NVDEC driver")
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/gpu/drm/tegra/nvdec.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/cpufreq/cpufreq-dt.c | 11 +++++++++++
+ drivers/cpufreq/cpufreq-dt.h |  2 ++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-index 2d9a0a3f6c381d600189078036b0a5eb3d89d461..7a38664e890e37d163410bced688f4650d6318e9 100644
---- a/drivers/gpu/drm/tegra/nvdec.c
-+++ b/drivers/gpu/drm/tegra/nvdec.c
-@@ -261,10 +261,8 @@ static int nvdec_load_falcon_firmware(struct nvdec *nvdec)
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index e80dd982a3e23f6e678d691daba2d8bfda28d93c..506437489b4db241a7a6259274ae84e688772e66 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -329,6 +329,17 @@ static struct platform_driver dt_cpufreq_platdrv = {
+ };
+ module_platform_driver(dt_cpufreq_platdrv);
  
- 	if (!client->group) {
- 		virt = dma_alloc_coherent(nvdec->dev, size, &iova, GFP_KERNEL);
--
--		err = dma_mapping_error(nvdec->dev, iova);
--		if (err < 0)
--			return err;
-+		if (!virt)
-+			return -ENOMEM;
- 	} else {
- 		virt = tegra_drm_alloc(tegra, size, &iova);
- 		if (IS_ERR(virt))
++struct platform_device *cpufreq_dt_pdev_register(struct device *dev)
++{
++	struct platform_device_info cpufreq_dt_devinfo = {};
++
++	cpufreq_dt_devinfo.name = "cpufreq-dt";
++	cpufreq_dt_devinfo.parent = dev;
++
++	return platform_device_register_full(&cpufreq_dt_devinfo);
++}
++EXPORT_SYMBOL_GPL(cpufreq_dt_pdev_register);
++
+ MODULE_ALIAS("platform:cpufreq-dt");
+ MODULE_AUTHOR("Viresh Kumar <viresh.kumar@linaro.org>");
+ MODULE_AUTHOR("Shawn Guo <shawn.guo@linaro.org>");
+diff --git a/drivers/cpufreq/cpufreq-dt.h b/drivers/cpufreq/cpufreq-dt.h
+index 28c8af7ec5ef3ad0aa94f43ad9129600ca094329..fc1889aeb4f1f15fa7c46c2380021bbf40b62f11 100644
+--- a/drivers/cpufreq/cpufreq-dt.h
++++ b/drivers/cpufreq/cpufreq-dt.h
+@@ -22,4 +22,6 @@ struct cpufreq_dt_platform_data {
+ 	int (*resume)(struct cpufreq_policy *policy);
+ };
+ 
++struct platform_device *cpufreq_dt_pdev_register(struct device *dev);
++
+ #endif /* __CPUFREQ_DT_H__ */
 
----
-base-commit: 2aeda9592360c200085898a258c4754bfe879921
-change-id: 20250702-nvdec-dma-error-check-effaf7c8341d
+-- 
+2.50.0
+
 
