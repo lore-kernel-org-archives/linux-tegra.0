@@ -1,149 +1,198 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1A2258CE9;
-	Thu,  3 Jul 2025 17:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29760288C9F
+	for <linux-tegra@vger.kernel.org>; Thu,  3 Jul 2025 17:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751562714; cv=none; b=HAh4Qz/BhzCnDpCDDVC2CkIAbXRh2RWpGL5UBpqdSJy9LQjxE54f3tT6YTx0zyLE43i/siJ8TKsr6EhFUliLgeLyZIw06Xpz+yemyUGho/n1P90vUKMrcnUVgmtFq7ZMsPyfP7n92dwkru0WRyrAn00PFMBCBUB1y8iYchY4Asc=
+	t=1751564370; cv=none; b=qYEhn6k743xbFT5yHFgrTwDnZQmXbB235Y4nhH0h1V2bstFVrezm06paX/b7dHdwpN76upHm3WNlR3mHm74uUObg+JueOVOrsGuwIFkcMVXaDbl+x3wY7eBvswKZbLQMsV/nlV/U37ENYI2XwwpwA3ciPSk227369GXD/fgjXbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751562714; c=relaxed/simple;
-	bh=DeRiQLwC9hH0Pfe7J+UzbD/J/UCdYASssdvcJZ0DNgo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WXPXXgFf0ezwmXaiDd5IsH/0d4ov9Q91PXM/UIgHMHnuMM9pEawgn2pWqdmz5xEnqnKLI0mLEv/c8YSZkGmWQ3ZZBpasF15C6PaXatupJcKMGawtDxpkWT2loutnd07VRPMp//1qmIjywqkHjHe09Y0Ojnu5BEvRFcY4/nUBnfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WJhGOhel; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1751564370; c=relaxed/simple;
+	bh=OyLzI9ti5ZF4tK6Y97Gl7vSXaMfHy1WelDatJfxOx4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UvCEdphRLdtz8TIBi6NgwlSeS4zgNep5j7Q86Y+8RnkKv2hBnZTeslUagMP/x00ECZQVfUmteTs714tOoPMLpZQahxDEZlGXN+jihpFQLQuDI/2A86yuvDg7Ubf4529b90bMlo6CFJU8GwVmqHlwNOaCFpFkWVJjeHuFJwsg8gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=abUr61XR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJhGOhel"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b7123edb9so1620011fa.2;
-        Thu, 03 Jul 2025 10:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751562711; x=1752167511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DeRiQLwC9hH0Pfe7J+UzbD/J/UCdYASssdvcJZ0DNgo=;
-        b=WJhGOheljX718ex+hW+rKJ2TGKgGW4YH6oS1AFEQkQU8rBsAMarRZPQqP3Cj8gxfFW
-         sZag/ARHloKFcgO9ftR0C4XWjRFHsgHXB/WLuXNnnN8vtAyKEzjMRmhujGf6krxS3JOV
-         +pDZl1p+c918tu8h6UmJUUtagBF3GsOQtpDPgKy5iNDBI2P/hTsmQqdISDMp0+DZptur
-         utvRVVp83bJEs5psCnHoLbZEwJrdxx7tVrQJ/xNbdj5u5roPNbS08Z2pw23J0mks3KZ+
-         iFz1phw6xp5HHJPzbJWyh8tvl/BoTa1MNQhONsI9IbAXD8rqGiXTFMffpxvmMOGTdHvi
-         8dig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751562711; x=1752167511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DeRiQLwC9hH0Pfe7J+UzbD/J/UCdYASssdvcJZ0DNgo=;
-        b=M02/FbKhh6atAK7J0IXVdMZtdO26wzGUR7Ph9fsgnz9izD0KYIIbeP/Imz44+7jRqK
-         b+bV2lZxojxLMu0OmqLQDJwW/iUzO3zZFuNszjaEGCdXP6i/QnxgdGUWhebHuyyL2Z8B
-         LUIk22rAVFkfXvrQMM2j+rqU2sE4+WpL2Z+xFtOkAdLmwVnWZPiHzQ3xxu5vhVqk7Az6
-         hsGP2ozfPUcnMX/qBLPYYEpTrZFNNCTnvGW9V/v2VmIBoZcrAlkfMHhkdTakdnG2hcZO
-         E3zynSsFQifKHhFYp8QEQFoRBq1Gg1FdGIZ1ELvvjnE7IJpA5hKkqbcI45YgHmNtkwbY
-         YYNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHtwxJRBL9hbZ2+7NbhyHcuN+vQx46sQ9L38JQAPB/p1XpbRw59rVVXkuOfwSGcfrxHTUocMigTxxI@vger.kernel.org, AJvYcCW6z3Fpj2zaXzyj1wONLr+xT4CNFUg96OCg9u4tH0dEx/rvzbT55GIcxfyMdBpz70hjWCEIHOItUo5mKyx4@vger.kernel.org, AJvYcCX0c37eBGOl3m2Npl507FFn7uH5dR8VBWbEkaERXoJufO6YKzSwYh11/h6F6vBeKqCPIfz6igaL5aKL2uo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAmZdRs8wJjGewZ5js05yCEaHm9MIXdCwCKc2YZazfhQyaH7wV
-	SBV45VdCQjQ0eudec3RzzHarsL6SUe9WN+LM6o3QNb9MTkOGv7pvhF8UtrTKsalYpb92uYnN4e5
-	E07LV0gvwU4+JOo0tEmonB61EUtxY0iyWjH1dKao=
-X-Gm-Gg: ASbGncs6L9n4duqxpRnkVm6zUIeKO6YRYrec8gflXjTwXEpBMMUYdSc3l1uqNxZstrz
-	vDhix4J8F4EaKQ+uF4AGxJoatTKpOqypnVpzbe1iu7mT63n8L4Bz7Uxj+WkXGCMnNaFjZQo+0hC
-	uNgaieEXUKCw6QtGnaitppG0sYF2rwJGBTc+e9JCEPGQR/9ipHV6895g==
-X-Google-Smtp-Source: AGHT+IHzT/p4DiBJb6XLRm5GxvH8m3/DrtVnGHCJcHCaOHiRp1mpq4WBT1jqf282ObG+eHZ2Yva13pFwEf05n9PaElc=
-X-Received: by 2002:a2e:a16d:0:b0:32b:47be:e1a5 with SMTP id
- 38308e7fff4ca-32e0d0eb860mr14808471fa.39.1751562710873; Thu, 03 Jul 2025
- 10:11:50 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="abUr61XR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751564366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Jr9UUYTDJ7ikkP8jHrSyTuWft6sFVyd5UT0R70tW400=;
+	b=abUr61XRwRbAU+9GckYHH1eck5hA3fbHWWgeCxNoBTaPeIznGa5z6XPpu8CLbhdW0qTGSg
+	tZwFjMiUbzNQJ5MqICXrukNxtaB22ziAaIL7NNqNZJg4lUrFpq41fgr1DzxExI8M0/0eOc
+	U50knsePAvtus9AL8LK10ERmDMEkILY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-W8nV6t3uN-Ou3Ud00PVttA-1; Thu,
+ 03 Jul 2025 13:39:22 -0400
+X-MC-Unique: W8nV6t3uN-Ou3Ud00PVttA-1
+X-Mimecast-MFC-AGG-ID: W8nV6t3uN-Ou3Ud00PVttA_1751564359
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF94F1808984;
+	Thu,  3 Jul 2025 17:39:17 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.44.32.252])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0297C1956087;
+	Thu,  3 Jul 2025 17:39:01 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-omap@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+Date: Thu,  3 Jul 2025 19:38:57 +0200
+Message-ID: <20250703173859.246664-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
- <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
- <CALHNRZ-q7W9CfeD4ipmwFVqHm7oGfTgJpwNoVhfbSXFPDxF91Q@mail.gmail.com>
- <eba00bd5-fa1a-4cad-bb41-b395011235e1@kernel.org> <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
- <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy>
- <CALHNRZ-r_U+ByS0FWxamv9ozzjBWdkqAh2wJOt3s3cMsX6K_kQ@mail.gmail.com>
- <CALHNRZ8qyu6wsTTnmRWtNgYL4XWR8G7TFammqTFPfHH5d==LbA@mail.gmail.com> <paksdvlwrbmdo7wg5cuzdazi4epu3oukxdavkkzoje2gw7aeuy@grsls7hp4khb>
-In-Reply-To: <paksdvlwrbmdo7wg5cuzdazi4epu3oukxdavkkzoje2gw7aeuy@grsls7hp4khb>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 3 Jul 2025 12:11:39 -0500
-X-Gm-Features: Ac12FXy5QPP-Xi4wccNZ2mSLhMc03q_19NJIZjoxMWPzosT8-mMWWJyImNgN1KU
-Message-ID: <CALHNRZ8fOe_tQvybemvBa4yjS7JyXpAA1ksP_Dmx_9w=KXb2ig@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC Tables
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Jul 3, 2025 at 5:37=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Mon, Jun 30, 2025 at 02:26:06PM -0500, Aaron Kling wrote:
-> > On Wed, May 28, 2025 at 12:41=E2=80=AFPM Aaron Kling <webgeek1234@gmail=
-.com> wrote:
-> > >
-> > > On Thu, May 8, 2025 at 7:48=E2=80=AFAM Thierry Reding <thierry.reding=
-@gmail.com> wrote:
-> > > >
-> > > > On Thu, May 08, 2025 at 07:27:52AM -0500, Aaron Kling wrote:
-> > > > [...]
-> > > > > The devices I'm talking about are not yet end of life, so it is
-> > > > > physically possible for them to get a bootloader update to confor=
-m to
-> > > > > the existing mainline model. But I'm just one guy trying to do 3r=
-d
-> > > > > party support for these devices, I can't affect what Nvidia does =
-with
-> > > > > the signed bootloader on these devices. I'd love to be able to sw=
-ap
-> > > > > out an open source bootloader on these, but the secure boot setup
-> > > > > prevents that.
-> > > >
-> > > > I've reached out to our Android team internally to see if there's
-> > > > anything we can realistically do about this.
-> > > >
-> > > > Thierry
-> > >
-> > > Thierry, has there been any feedback about this?
-> > >
-> >
-> > Reminder about this question. Has there been any response from the
-> > Nvidia Android team? Or do I/we need to continue pursuing independent
-> > solutions?
->
-> There's been no decision either way, but it's fairly complicated because
-> the changes involved here are fairly large, even if the impact should be
-> fairly low.
->
-> If all else fails, do we have other alternatives? I suspect that adding
-> some sort of shim that runs prior to the kernel won't work because the
-> EMC tables just aren't accessible from the bootloader anymore. Would it
-> entail parsing the entirety of the DT EMC tables and transcribing them
-> into some memory and pass that to the kernel?
+The kernel Makefiles define the __ASSEMBLY__ macro to provide
+a way to use headers in both, assembler and C source code.
+However, all the supported versions of the GCC and Clang compilers
+also define the macro __ASSEMBLER__ automatically already when compiling
+assembly code, so some kernel headers are using __ASSEMBLER__ instead.
+With regards to userspace code, this seems also to be constant source
+of confusion, see for example these links here:
 
-I see three options in general
+ https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
+ https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
+ https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
+ https://github.com/riscv-software-src/opensbi/issues/199
 
-1) Change the bootloader to conform with existing mainline standards
-2) Merge support for the existing bootloader method to mainline
-3) Have a chainloaded bootloader / shim that converts the tables
+To avoid confusion in the future, it would make sense to standardize
+on the macro that gets defined by the compiler, so this patch series
+changes all occurances of __ASSEMBLY__ into __ASSEMBLER__.
 
-I submitted this series because I was trying to avoid 3. On most
-devices, I don't need u-boot and I'm trying to avoid it. Due to
-another issue on p2571 (nvtboot ignores the bootloader dtb when the
-cvm board id is 2530 and uses the kernel dtb, making it to where I
-can't replace the kernel dtb like I can everywhere else), I will
-likely have to use u-boot. But for p2897, p3425, and the devkits I can
-still avoid it.
+I split the patches per architecture to ease the review, and I also
+split the uapi headers from the normal ones in case we decide that
+uapi needs to be treated differently from the normal headers here.
 
-If 1 fails and 3 is undesirable, then 2 is the only option I see.
-Which based on responses seems pretty unlikely too. If u-boot becomes
-the only option, I should be able to write something to read the dt
-tables and write out a reserved memory region. I just want to exhaust
-every other possibility before adding that complexity to the boot
-flow.
+The related cleanup patches for x86, parisc, sh and arc patches
+already got merged via their specific architecture tree:
 
-Aaron
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=24a295e4ef1ca8
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8a141be3233af7
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cccaea1d66e94b
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e2b6a188625a2b
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9cc646950eefda
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=179e949719fe81
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2cb74be378675c
+
+So I assume the arm patches should go via the arm tree.
+
+v3:
+- Split the arm patches from the global series
+  (see https://lore.kernel.org/all/20250314071013.1575167-1-thuth@redhat.com/)
+- Rebased the patches on linux-next and fixed the conflicts
+
+Thomas Huth (2):
+  arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+  arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
+
+ arch/arm/include/asm/arch_gicv3.h                |  4 ++--
+ arch/arm/include/asm/assembler.h                 |  2 +-
+ arch/arm/include/asm/barrier.h                   |  4 ++--
+ arch/arm/include/asm/cache.h                     |  2 +-
+ arch/arm/include/asm/cp15.h                      |  4 ++--
+ arch/arm/include/asm/cputype.h                   |  4 ++--
+ arch/arm/include/asm/current.h                   |  4 ++--
+ arch/arm/include/asm/delay.h                     |  4 ++--
+ arch/arm/include/asm/domain.h                    |  8 ++++----
+ arch/arm/include/asm/fpstate.h                   |  2 +-
+ arch/arm/include/asm/ftrace.h                    |  6 +++---
+ arch/arm/include/asm/hardware/cache-b15-rac.h    |  2 +-
+ arch/arm/include/asm/hardware/cache-l2x0.h       |  4 ++--
+ arch/arm/include/asm/hardware/dec21285.h         |  2 +-
+ arch/arm/include/asm/hardware/ioc.h              |  2 +-
+ arch/arm/include/asm/hardware/iomd.h             |  4 ++--
+ arch/arm/include/asm/hardware/memc.h             |  2 +-
+ arch/arm/include/asm/hwcap.h                     |  2 +-
+ arch/arm/include/asm/irq.h                       |  2 +-
+ arch/arm/include/asm/jump_label.h                |  4 ++--
+ arch/arm/include/asm/kexec.h                     |  4 ++--
+ arch/arm/include/asm/kgdb.h                      |  4 ++--
+ arch/arm/include/asm/mach/arch.h                 |  2 +-
+ arch/arm/include/asm/mcpm.h                      |  4 ++--
+ arch/arm/include/asm/memory.h                    |  4 ++--
+ arch/arm/include/asm/mpu.h                       |  4 ++--
+ arch/arm/include/asm/opcodes.h                   | 12 ++++++------
+ arch/arm/include/asm/page.h                      |  4 ++--
+ arch/arm/include/asm/pgtable-2level.h            |  4 ++--
+ arch/arm/include/asm/pgtable-3level.h            |  4 ++--
+ arch/arm/include/asm/pgtable-nommu.h             |  4 ++--
+ arch/arm/include/asm/pgtable.h                   | 10 +++++-----
+ arch/arm/include/asm/probes.h                    |  4 ++--
+ arch/arm/include/asm/proc-fns.h                  |  4 ++--
+ arch/arm/include/asm/ptrace.h                    |  4 ++--
+ arch/arm/include/asm/system_info.h               |  4 ++--
+ arch/arm/include/asm/system_misc.h               |  4 ++--
+ arch/arm/include/asm/thread_info.h               |  2 +-
+ arch/arm/include/asm/thread_notify.h             |  2 +-
+ arch/arm/include/asm/tlbflush.h                  | 10 +++++-----
+ arch/arm/include/asm/tls.h                       |  4 ++--
+ arch/arm/include/asm/unified.h                   |  6 +++---
+ arch/arm/include/asm/unwind.h                    |  4 ++--
+ arch/arm/include/asm/v7m.h                       |  4 ++--
+ arch/arm/include/asm/vdso.h                      |  4 ++--
+ arch/arm/include/asm/vdso/cp15.h                 |  4 ++--
+ arch/arm/include/asm/vdso/gettimeofday.h         |  4 ++--
+ arch/arm/include/asm/vdso/processor.h            |  4 ++--
+ arch/arm/include/asm/vdso/vsyscall.h             |  4 ++--
+ arch/arm/include/asm/vfp.h                       |  2 +-
+ arch/arm/include/asm/virt.h                      |  4 ++--
+ arch/arm/include/uapi/asm/ptrace.h               |  4 ++--
+ arch/arm/mach-at91/pm.h                          |  2 +-
+ arch/arm/mach-exynos/smc.h                       |  4 ++--
+ arch/arm/mach-footbridge/include/mach/hardware.h |  2 +-
+ arch/arm/mach-imx/hardware.h                     |  2 +-
+ arch/arm/mach-imx/mxc.h                          |  2 +-
+ arch/arm/mach-omap2/control.h                    |  8 ++++----
+ arch/arm/mach-omap2/soc.h                        |  4 ++--
+ arch/arm/mach-omap2/sram.h                       |  4 ++--
+ arch/arm/mach-pxa/irqs.h                         |  2 +-
+ arch/arm/mach-pxa/pxa-regs.h                     |  2 +-
+ arch/arm/mach-s3c/map-base.h                     |  2 +-
+ arch/arm/mach-sa1100/include/mach/bitfield.h     |  2 +-
+ arch/arm/mach-sa1100/include/mach/hardware.h     |  2 +-
+ arch/arm/mach-tegra/reset.h                      |  2 +-
+ arch/arm/mach-tegra/sleep.h                      |  2 +-
+ arch/arm/tools/gen-mach-types                    |  2 +-
+ drivers/memory/emif.h                            |  4 ++--
+ 69 files changed, 129 insertions(+), 129 deletions(-)
+
+-- 
+2.50.0
+
