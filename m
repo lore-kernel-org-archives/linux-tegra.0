@@ -1,88 +1,65 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A1D190498
-	for <linux-tegra@vger.kernel.org>; Thu,  3 Jul 2025 14:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B5D2E7620;
+	Thu,  3 Jul 2025 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553975; cv=none; b=kTdbvTkuSGR/5cYlNW1QBb5b0mF1NrUpin9g4fdGk3cw1Gp/DgHe6T9rbZmHRTClLgdMeWFmTdLdkAWG2s8sbign3vnNNMPOOy4hEfPmbPQPDjaFjsNE7RgSqTiAioRR4v/cDI9EFtIbSf0autelATK5G3dnGdhgxl8Qnf0BKmY=
+	t=1751558568; cv=none; b=Adjtu/Pj1s31kqHzF56RPyK/GmkPcYFdXLWM/hu4+2sDKbNrNTKIxbdk/mdO9XTUzYDxW5LsBBCL1gLxFfcTPgmoZA1IKkVAfGiIlsnGxUOJ2bOi60R8st4PFmgtQKwb6a9oTH0Ccyr11yCReu9MseYMalWnJGJ3YIhmVaNXL1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553975; c=relaxed/simple;
-	bh=072pcCvBMR7vtDKQsCrYBJuqlkcEW2Q3tlczFa12bes=;
+	s=arc-20240116; t=1751558568; c=relaxed/simple;
+	bh=OzgEgyinOD2u+eSMzdaGCr7tFY0dcCCASCneanv0fW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNe6AF7AMbaoS7VsQ+iSk/ER8HAPkBO/wdwk04Xw7u5T20fwi8aSc3Pm7Qleb5M+ewd3EbLPke85Ykj96oyyVf5X9FBAW6UqOGOlQOAzzqIaf74tfvwyFjrhJhNaj4XfniBZwggucF2adQGa4m2N522T0a/7MdXRGVd65v9xjAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pe97KF09; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ns08c+q+9Ac2UZf1SRsocuoeO5Zl3GmxRQhennYF9gLLdSqDKNSLg/mSWXVuzMxfjC7b6czZZEjkKwkL/1Z0JHsafGSqlxorSiJBQH6bSOSeFzFCbRP9PrYfQnpJm2OZ15hF0PHSLFWHZnMsIGiMEMHdMvAE0TGS9cvDjT8/UlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWAytJZ6; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pe97KF09"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f18108d2so205905ad.0
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Jul 2025 07:46:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751553973; x=1752158773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZyBqVSoupq82KbFVVt6LJyI9rbtpg1wvjlbr52oP/Zs=;
-        b=pe97KF09BgQKKDcXvBjTyD5thKMVPjlLEj9vsiy1SF+kOVZMI3hdrThiA4DKsmB+aB
-         bxc2ukmwbFh9WgG5e5C8vF3LzlA5SpGsdReusVbSUyROmZ8/dJf1JzO0EQlPtkGxk1Er
-         6UETb8vAWwUpKdRX1fN3IwMHF+TYbT0e8fADzoNz/17MJZu4fyGv08RJ4Pcxl5/VaLm3
-         1x9F3uwSalFW/P+twGFyDIkYdqcNDws+mUKRnQMH9qLodyjTeVeXlFcZFcnzXyVuKMsw
-         sNgj0j7QsL06Ry0de97205tHproHHVw0HT+mo74BTVH7pxTLaTFVRUigJHBZbgfIgJb8
-         wgNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751553973; x=1752158773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZyBqVSoupq82KbFVVt6LJyI9rbtpg1wvjlbr52oP/Zs=;
-        b=JQzdY3GFcc1rZSwkOeyH8ZBMfEmSLjtC6kolbAdKe/GZeoJIf1Oo8iFZGnvRcOtTvR
-         gZIRMmIa0pcQdQO0HNAiofWImdmCompQZGODQkDyXZ/K5eKmTbqgK/nI8fiXoF78jxZ4
-         Xy/qEnvsPoFg2U6sZqMVbYhs2J1kZEaF51PYpWV1j/oKE/w7fm0E9vpr7p0cGGl98bqH
-         LPrvTQYhHrotwNP3PPeDDGNQwXVAl9Q3q7oWTv5Y3D+h0UJjMoC5U1IDBW170dbk3R6O
-         PGW+PK3QLuDUnwLqUdmlJCm+HSOmAZTGUkhllCztqBv2/vgl9ep074q/OPTUW8myW+/X
-         BvKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnuAvMsnZsHfq9y94UgLMrEFHE/6nL9jsk+anXHvypWPfkFunJ4xn5XkxLp7rh7uVWWGZvtCpMyE7M0g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlrsj233ZKSetU50YMXuqMnghn0TU0gg2SEnDUi1Gu87yRlQYm
-	Ml2GaBOjXIE1wGEVJnAKxIwhz68YHSkbTIMfpQyZEozjNQxnN33xITUAxhstxs39Zw==
-X-Gm-Gg: ASbGncuHD/2/pveh1I+UWzivQZnRZFcH5P2KxN98M/Da7euak4R6in+xJJAMbRRN+Kg
-	S+JMZSaUTnrkY/AKQzRZirYxN6kx5GhRCBTGzouwtSpIla8ePaoXhdt/bPiSeb0lCdlu240a7kK
-	GOH9dHXY3tet5rGpCp7rWy+wjWspmE9bE94pliQkYZN1D1iCmxrokmsFmzrm6P/QHdrlVjKh48o
-	VPxcMHh46fmTuFOzTCB6WBwSY+YZgKaHk2hoFWD4tYF7ymg+FDZj4lEC77v9ObDYLrirAICTxrE
-	+pD9lbAzNDdF1eE2GkS17CHg1LsKqzTMF/SlrtFxHfpiYtR8I905bdoqBULGh3gdmglAkcXGYhi
-	5U6Ka5WRUVpyGpsVqkoevU7nSt+zMGy0=
-X-Google-Smtp-Source: AGHT+IE+IjimVm/cNBTQKKRIynsqnkmviMOQfy4mliRYK2mww3VHnjujL8mKkHcoqxy9cwNV6ZMlng==
-X-Received: by 2002:a17:902:c941:b0:22c:3cda:df11 with SMTP id d9443c01a7336-23c79b3ab97mr3276285ad.10.1751553972827;
-        Thu, 03 Jul 2025 07:46:12 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e39d4sm158508935ad.18.2025.07.03.07.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 07:46:12 -0700 (PDT)
-Date: Thu, 3 Jul 2025 14:46:03 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
-	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
-	vasant.hegde@amd.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v7 27/28] iommu/tegra241-cmdqv: Add user-space use support
-Message-ID: <aGaXqwzfLwsgCH6n@google.com>
-References: <aGQ_F7Qx3scbbA-J@google.com>
- <aGRDtYRXFLoT+PrI@Asurada-Nvidia>
- <aGRIctg4T6cQECx4@google.com>
- <aGRcPSwaJkTeUrMx@Asurada-Nvidia>
- <aGRmaOORg-YDfncY@google.com>
- <aGRozoIDIlgl9H9x@Asurada-Nvidia>
- <aGR55PUBnwb8qT8U@google.com>
- <aGSBTpY0nkdp2TTL@Asurada-Nvidia>
- <aGSNmf5Q82xEbDpX@google.com>
- <20250702180541.GD1139770@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWAytJZ6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751558567; x=1783094567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OzgEgyinOD2u+eSMzdaGCr7tFY0dcCCASCneanv0fW4=;
+  b=hWAytJZ6c69r80Quo4ULlMLQAuW6Q+DQSwfzsAYkDQyAdwEx6uZya78E
+   Swyem4hXEP1OWNjXVfduHnQGQqePFs8wvaLOhkH3W/5OZb+j1YcApVuhn
+   QxhmzNQf9LLBmHPJqnYaRGpJOu4xNziCZbuqWGDKX3LNqm5xy0CF06t5k
+   WrVf/od1kBS1NgyRYn9UPKPfiZeNZ+6VEY++s/355Ud06IyvWoFMH1FVx
+   7Kys7694lQJ/EFlVLLHahjlFjvBiQHMGIAUqXngyYA8G8YvMckT8ciV+3
+   pj511KLosVmqmpdhXkWeo1VH4LvyPE8lOqmzYo4K/e/pp1h8vYk24t+La
+   Q==;
+X-CSE-ConnectionGUID: NTfIbjZtSXmPXH/y8ozzag==
+X-CSE-MsgGUID: /GSqrALkT8ixg0ibcK8fXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57666242"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="57666242"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 09:02:46 -0700
+X-CSE-ConnectionGUID: 5VJaoDJqRYODVXcNjGfdew==
+X-CSE-MsgGUID: zVWz+w0NRn+byUEnsi9U/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="154532412"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 03 Jul 2025 09:02:43 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXMOW-0002l1-0i;
+	Thu, 03 Jul 2025 16:02:40 +0000
+Date: Fri, 4 Jul 2025 00:02:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhil R <akhilrajeev@nvidia.com>, andriy.shevchenko@linux.intel.com,
+	andi.shyti@kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
+	thierry.reding@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, akhilrajeev@nvidia.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	ldewangan@nvidia.com, robh@kernel.org
+Subject: Re: [PATCH v5 2/3] i2c: tegra: make reset an optional property
+Message-ID: <202507032359.AfHPKWEQ-lkp@intel.com>
+References: <20250702133450.64257-2-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -91,83 +68,73 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250702180541.GD1139770@nvidia.com>
+In-Reply-To: <20250702133450.64257-2-akhilrajeev@nvidia.com>
 
-On Wed, Jul 02, 2025 at 03:05:41PM -0300, Jason Gunthorpe wrote:
-> On Wed, Jul 02, 2025 at 01:38:33AM +0000, Pranjal Shrivastava wrote:
-> > On Tue, Jul 01, 2025 at 05:46:06PM -0700, Nicolin Chen wrote:
-> > > On Wed, Jul 02, 2025 at 12:14:28AM +0000, Pranjal Shrivastava wrote:
-> > > > Thus, coming back to the two initial points:
-> > > > 
-> > > > 1) Issuing "non-invalidation" commands through .cache_invalidate could
-> > > >    be confusing, I'm not asking to change the op name here, but if we
-> > > >    plan to label it, let's label them as "Trapped commands" OR
-> > > >    "non-accelerated" commands as you suggested.
-> > > 
-> > > VCMDQ only accelerates limited invalidation commands, not all of
-> > > them: STE cache invalidation and CD cache invalidation commands
-> > > still go down to that op.
-> > > 
-> > 
-> > Right, I'm just saying the "other" non-accelerated commands that are
-> > NOT invalidations also go down that op. So, if we add a comment, let's 
-> > not call them "non-invalidation" commands.
-> 
-> There are no non-invalidation commands:
-> 
-> static int arm_vsmmu_convert_user_cmd(struct arm_vsmmu *vsmmu,
-> 				      struct arm_vsmmu_invalidation_cmd *cmd)
-> {
-> 	switch (cmd->cmd[0] & CMDQ_0_OP) {
-> 	case CMDQ_OP_TLBI_NSNH_ALL:
-> 	case CMDQ_OP_TLBI_NH_VA:
-> 	case CMDQ_OP_TLBI_NH_VAA:
-> 	case CMDQ_OP_TLBI_NH_ALL:
-> 	case CMDQ_OP_TLBI_NH_ASID:
-> 	case CMDQ_OP_ATC_INV:
-> 	case CMDQ_OP_CFGI_CD:
-> 	case CMDQ_OP_CFGI_CD_ALL:
-> 
-> Those are only invalidations.
-> 
-> CD invalidation can't go through the vCMDQ path.
-> 
+Hi Akhil,
 
-Right.. I was however hoping we'd also trap commands like CMD_PRI_RESP
-and CMD_RESUME...I'm not sure if they should be accelerated via CMDQV..
-I guess I'll need to look and understand a little more if they are..
+kernel test robot noticed the following build errors:
 
-> > > > 2) The "FIXME" confusion: The comment in arm_vsmmu_cache_invalidate
-> > > >    mentions we'd like to "fix" the issuing of commands through the main
-> > > >    cmdq and instead like to group by "type", if that "type" is the queue
-> > > >    type (which I assume it is because IOMMU_TYPE has to be arm-smmu-v3),
-> > > 
-> > > I recall that FIXME is noted by Jason at that time. And it should
-> > > be interpreted as "group by opcode", IIUIC.
-> > 
-> > I see.. I misunderstood that..
-> 
-> Yes, we could use the vCMDQ in the SMMU driver for invalidations which
-> would give some minor locking advantage. But it is not really
-> important to anyone.
-> 
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on andi-shyti/i2c/i2c-host linus/master v6.16-rc4 next-20250703]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Alright, I see. Makes sense. Thanks for the clarification.
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/i2c-tegra-make-reset-an-optional-property/20250702-214005
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250702133450.64257-2-akhilrajeev%40nvidia.com
+patch subject: [PATCH v5 2/3] i2c: tegra: make reset an optional property
+config: sh-randconfig-002-20250703 (https://download.01.org/0day-ci/archive/20250703/202507032359.AfHPKWEQ-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250703/202507032359.AfHPKWEQ-lkp@intel.com/reproduce)
 
-> > > The thing is that for a host kernel that enabled in-kernel VCMDQs,
-> > > those trapped user commands can be just issued to the smmu->cmdq
-> > > or a vcmdq (picked via the get_secondary_cmdq impl_op).
-> > 
-> > Ohh.. so maybe some sort of a load balancing thing?
-> 
-> The goal of the SMMU driver when it detects CMDQV support is to route
-> all supported invalidations to CMDQV queues and then balance those
-> queues across CPUs to reduce lock contention.
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507032359.AfHPKWEQ-lkp@intel.com/
 
-I see.. that makes sense.. so it's a relatively small gain (but a nice
-one). Thanks for clarifying!
+All errors (new ones prefixed by >>):
 
-> Jason
+   In file included from include/linux/build_bug.h:5,
+                    from include/linux/bits.h:22,
+                    from include/linux/ioport.h:13,
+                    from include/linux/acpi.h:12,
+                    from drivers/i2c/busses/i2c-tegra.c:9:
+   drivers/i2c/busses/i2c-tegra.c: In function 'tegra_i2c_reset':
+>> drivers/i2c/busses/i2c-tegra.c:632:23: error: implicit declaration of function 'acpi_has_method'; did you mean 'acpi_has_watchdog'? [-Wimplicit-function-declaration]
+     632 |         if (handle && acpi_has_method(handle, "_RST")) {
+         |                       ^~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:52: note: in definition of macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                    ^~~~
+   drivers/i2c/busses/i2c-tegra.c:632:9: note: in expansion of macro 'if'
+     632 |         if (handle && acpi_has_method(handle, "_RST")) {
+         |         ^~
 
-Praan
+
+vim +632 drivers/i2c/busses/i2c-tegra.c
+
+   626	
+   627	static int tegra_i2c_reset(struct tegra_i2c_dev *i2c_dev)
+   628	{
+   629		acpi_handle handle = ACPI_HANDLE(i2c_dev->dev);
+   630		int err;
+   631	
+ > 632		if (handle && acpi_has_method(handle, "_RST")) {
+   633			err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+   634			if (ACPI_FAILURE(err))
+   635				return -EIO;
+   636	
+   637			return 0;
+   638		}
+   639	
+   640		if (i2c_dev->rst)
+   641			return reset_control_reset(i2c_dev->rst);
+   642	
+   643		return tegra_i2c_master_reset(i2c_dev);
+   644	}
+   645	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
