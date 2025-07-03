@@ -1,131 +1,137 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8352D130B
-	for <linux-tegra@vger.kernel.org>; Thu,  3 Jul 2025 08:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EDC242D80;
+	Thu,  3 Jul 2025 10:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751531504; cv=none; b=V4b0xt1s+7a4V37jU2GT1a1p590m1WU/Lb9IRaYsMBdx85NMS0SrajrYunAALvn1Vip5rS596qSyE9oviiMNfOBiCmS7we9lLfwKRuqsZGZVOcLDfn3cr/7k6a+O7vOqXKak8sZQLKrVWfBtw23PID/BMwSaqrviCUqRZF9C0fo=
+	t=1751537318; cv=none; b=BBwmoSDGZua/HzmiVueLqJHGaFavtT4jD0ULBvtUD6mZnOonUwGhp46L74ZXzCh0DuGvzpjQ1pZ7cp56tyI6N/5t8AYwgFgEY+2xaWbqdlijwl67eC7qgwZDnznBMOUuADLGP2o2MLDe/aPzV1yswtkZsp+uyx0nEkLGDgvzmnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751531504; c=relaxed/simple;
-	bh=/7pQrBULX82eRAQiAoBVqcEsotF1YuJcYS3E+/6Oc5s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t4XseS+P4f0W8QD5xk/qsfLicbBasL4vm0+gQICzkW8YtIyjNuOC0wpGFZbqQc9xu+hur+SlMfA2hidciPrKdVak82PcIXbBMcTABDUcJp1kReFGzfH0M05y4nnhI3ZOB27NTUrGx95q5xUscPIOdL+itdswBh60Upnk1f4MjLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXFLq-0004el-KC; Thu, 03 Jul 2025 10:31:26 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXFLp-006ZQf-2V;
-	Thu, 03 Jul 2025 10:31:25 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXFLp-0002j4-2E;
-	Thu, 03 Jul 2025 10:31:25 +0200
-Message-ID: <14af238d2106544147dfb1c7824787d6d54f1885.camel@pengutronix.de>
-Subject: Re: [PATCH v5 1/3] i2c: tegra: Fix reset error handling with ACPI
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Akhil R <akhilrajeev@nvidia.com>, andriy.shevchenko@linux.intel.com
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
- digetx@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org,
- ldewangan@nvidia.com,  linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-tegra@vger.kernel.org,
- robh@kernel.org, thierry.reding@gmail.com
-Date: Thu, 03 Jul 2025 10:31:25 +0200
-In-Reply-To: <20250702171036.1892-1-akhilrajeev@nvidia.com>
-References: <aGVMr87HLrYGEw98@smile.fi.intel.com>
-	 <20250702171036.1892-1-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751537318; c=relaxed/simple;
+	bh=AT1CnXLkiA949eHbI3N4NRZADoe17hbbQAYuiZp/Zhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eJvAtGZVL4Yx7PI1/N+z5Wmf1P6K8HwC31EzUXS/WeDRicnQOejeozBOxrAEA1zV7B5qzkNF/j1WsLxAYHX7byn8Fxs64UWcWjrqPP2NzSH1A2U8UzoVTYbP0e+ZK+bJINchb/aMxOv//Xw0VIStDFDCQR2+a7YLFoR538svl5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcmLiAVH; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcmLiAVH"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a52874d593so4525699f8f.0;
+        Thu, 03 Jul 2025 03:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751537315; x=1752142115; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AT1CnXLkiA949eHbI3N4NRZADoe17hbbQAYuiZp/Zhw=;
+        b=JcmLiAVHFNTrwYImNpHkMO1suxt3kTDGHfmnh53Xznc9vRLNxZ2AlxxNdAm3Blyuvy
+         pw2E4a79U0lVBOuXPByOeN0MR/U82Q54GBJ0xd4cLG9OPJ2cKe0Wb2ysH1qKCXHlwVTQ
+         CS8CncqIgXjfm7DWNndFndiew25CI7pDNyUqiguZDtYluIvdoimDy0W3y5DSJ0QHnoEO
+         ApVyAeYN5GQvCUhQWAh1d5nNM3c70T1skWp4JfDM+xswne8mc7gQtww2J1RA2IrN1YJg
+         xmmg4AQzl3aIpuqu54AGjhCTpDfYLQlG82lkFUPKmqfHsfdKpp5RQ9coozZ9T162iJjV
+         e29Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751537315; x=1752142115;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AT1CnXLkiA949eHbI3N4NRZADoe17hbbQAYuiZp/Zhw=;
+        b=Yj9rH2CGCz1/zUY382gQont4JoxWPQtCz4aXs8Z7xuMsMsnT1RDvUsb3KMKH+DDZxg
+         zQ4eqKABNFkMAQv808yQEU1/tpWJpvNvgbuCF7vBcHp5sMErbG50NoDNV9FCP1f+9tZU
+         8ijAKNg1o46CFnlT/hpWF39Gv3hPE5i/04f2GmhaCaiRgZUYWNtJPlIfx5DxjTGfEbSd
+         SAT7V4pJ7jiBYi6c0PnQzE4bzvbNnko12QGhWp4YIJrmWFf6Cv1vTON1Eyg+4r052jsX
+         dzwt+l6ZtLIzvnTSAX/C3f8NefG4gBdl12LpKmeMPqXx99laCS4gLFQzAOs7C5K49cf6
+         J3lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqbUS6ANNZXVOgiiYAPnxuVMDObTX1pXiLNLUQkJQsxAIgByYMgtRaKZAX07t36fhpdTnPmHWj1NkeqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg4aXpv+ukp09qDfOnkRw6MA4cIM4Y2uAgfHRXeIYjbO0r+Lx6
+	+PKxSZlcwIT6WQxO0XrIV2Aftw3LKWZ9NAhfgo69sRkbDI/SONFBCFg7FIfh+w==
+X-Gm-Gg: ASbGncs4CJww06DPKZVUPN+g1h/HRUIro53Qda1EhSfBw7QDhdKIyZuRjiMGJVHvJv7
+	Vy2uTpTnGi1RXzq5v0xQtw1809uK7n+a6tU+L2Pi5DrJ0o4ttNYKnLaRqB+7fmYlhIN86p4Ts9X
+	aug3qpOyHTAl8Tldey68DQgW0kKuZ1XBl71/mfDnc+hJU0NA3BrreCWgw90IPCJhvI75VZJh4zx
+	eHnx6stncQR/KM6veOAYC+bS7R715JYl+C0AtLpgGC4Z1Lih8Wm0M+TrUemhHTZ2IPOQkqoBaep
+	mQZu5sgdcxeXoQRuXyfUTXPUPMM94r920cas97pBOf4nMTsXyKi7LRZJW2drLVY/d/WZR8wln+J
+	ruv6bUVirNelsCfMn0Jry5lOI7dl4DYWy2ipe6PYTol/r3D8qRbsi9SFDOB4=
+X-Google-Smtp-Source: AGHT+IETajEME0XqnHpss2XyhqyS6HlcQReH+pyyCGg3rACxCGSi8imadxWYD1Y3lB2jG1a6lNtKbw==
+X-Received: by 2002:a05:6000:43c9:b0:3a5:2599:4178 with SMTP id ffacd0b85a97d-3b32bbd689cmr1357777f8f.19.1751537314773;
+        Thu, 03 Jul 2025 03:08:34 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bac51bsm22609605e9.39.2025.07.03.03.08.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 03:08:33 -0700 (PDT)
+Date: Thu, 3 Jul 2025 12:08:30 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-tegra@vger.kernel.org
+Subject: Forcing devices into idle
+Message-ID: <rlzpjdsg6cbgxc553j6m25ysb6tyldy4lnxsjjn4hdzv7rszpp@y6rfcrbjfook>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
-
-Hi Akhil,
-
-On Mi, 2025-07-02 at 22:40 +0530, Akhil R wrote:
-> On Wed, 2 Jul 2025 18:13:51 +0300, Andy Shevchenko wrote:
-> > > > +static int tegra_i2c_reset(struct tegra_i2c_dev *i2c_dev)
-> > > > +{
-> > > > +	acpi_handle handle =3D ACPI_HANDLE(i2c_dev->dev);
-> > > > +	int err;
-> > > > +
-> > > > +	if (handle) {
-> > > > +		err =3D acpi_evaluate_object(handle, "_RST", NULL, NULL);
-> > > > +		if (ACPI_FAILURE(err))
-> > > > +			return -EIO;
-> > > > +
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	return reset_control_reset(i2c_dev->rst);
-> > >=20
-> > > It's better to be written other way around:
-> > >=20
-> > > 	acpi_handle handle;
-> > > 	int err;
-> > >=20
-> > > 	handle =3D ACPI_HANDLE(i2c_dev->dev);
-> > > 	if (!handle)
-> > > 		return reset_control_reset(i2c_dev->rst);
-> > >=20
-> > > 	err =3D acpi_evaluate_object(handle, "_RST", NULL, NULL);
-> > > 	if (ACPI_FAILURE(err))
-> > > 		return -EIO;
-> > >=20
-> > > 	return 0;
-> > >=20
-> > > > +}
-> > >=20
-> > > Other than that, LGTM,
-> > >=20
-> > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >=20
-> > Actually I have to withdraw the tag. The above function is repetition o=
-f
-> > the device_reset() / device_reset_optional(). Please use that instead.
->=20
-> I did check that. But device_reset_optional() returns '0' if reset is
-> not available or when the reset succeeds. Then there is no option to
-> conditionally trigger the internal reset when the reset is not available.
->=20
-> Other option was to do the internal reset unconditionally. But then the
-> devices that do not have an internal reset will have to skip the reset
-> silently if the reset property is absent in the device tree (or _RST
-> method is absent in the ACPI table).
->=20
-> Though device_reset() returns error when reset is absent, it looks to
-> be not so straight-forward to detect from the return value that if there
-> is an actual error during reset or if the reset is absent.
-
-device_reset() should return -ENOENT if the reset is absent (as opposed
-to present but somehow broken). If there is any code path where this
-isn't the case, we should probably fix this.
-
-In the ACPI case, -ENOENT is returned by __device_reset() if the "_RST"
-method is not found.
-
-In the OF case, -ENOENT is returned by __of_reset_control_get() if the
-requested id can't be found in a "reset-names" property, or if
-of_parse_phandle_with_args() returns -ENOENT for the "resets" (or
-"reset-gpios") property - that is, when this property doesn't exist or
-the entry indicated by the reset id is empty.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z5seqlr4kwwbvdcx"
+Content-Disposition: inline
 
 
-regards
-Philipp
+--z5seqlr4kwwbvdcx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Forcing devices into idle
+MIME-Version: 1.0
+
+Hi Rafael, all,
+
+I've been looking at adding support for VPR on Tegra. This is a special
+type of protected memory (video protection region) and since it can be
+used for potentially large video frames, it can grow fairly large. For
+certain devices, this is prohibitively large, so the VPR needs to be
+resizable at runtime.
+
+One of the prerequisites for runtime resizing of the VPR is that certain
+devices need to go into idle mode. Essentially they need to be suspended
+before the VPR resize and resumed after.
+
+Instead of adding some custom API to achieve this, I was hoping I could
+use the PM framework for this. I can hook up devices with VPR using DT
+properties, and using the reserved memory infrastructure I can get
+access to all the necessary struct device:s for the devices that are
+impacted by this.
+
+Unfortunately, I can't seem to find a good way to force devices into an
+idle mode using the existing APIs. I've had some success by running
+pm_runtime_put_sync() and pm_runtime_get_sync() before and after the
+resize on these devices, but that feels wrong, since these APIs are more
+targeted at being called from the owning drivers themselves.
+
+Any thoughts on how to solve this? Is the pm_runtime_{put,get}_sync()
+method acceptable? If not, are there other alternatives to achieve the
+same thing that I'm not aware of? Would it be useful to add a new set of
+APIs to force devices into an idle state (which could be semantically
+different from runtime suspend)? Or is this all too specific for any
+kind of generic API?
+
+Thanks,
+Thierry
+
+--z5seqlr4kwwbvdcx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhmVpoACgkQ3SOs138+
+s6H8eA/8DKYXM8Q4NfN3Dy4sm+8suSuldzrTG2nzdVrJS7jjhpg6iBam0X/tYTvz
+xUfL8LCp6jllqzMZJw9RNyiX+oavicZVGoFoAeg/AcrlFRUzLjbHwEvLllg52R8c
++AjbncteyFTszrmUoEwrpy+dq0JtQuItUOcQPhFV2ULjsVux4NcWMusgRdQEmzjY
+b1YJ8MMYo8Rr2iX0zQs0+v12sJuS6IYA6+rn6tmGIzUehAlrsKGHcGLcxk4k8+d6
+fhEbDH+DKescqZ05F1mLbQs4qVwQcLVnN/2nuJw2C0P4Nm5f2xgj4FyWs3+VUfRF
+bQ7cmXSmx6irZsWe9VJqKWJ6AEcJ/zkAL/acjt4dtFFMls20DDixjP4lJcbsqxfd
+sG5J/w21r64fw2oAYE+sWg9agvfKBf3q39VPDw6nK7AneQv63o3Jgnh3OOS65WVy
+lqFT4NcsOHayGNeoMlzFOKblkY6yvMqCJ7iAFR3FVYc+jpmKaTyuuESsX6+g2r3a
+KKUjyf9nCP5RvEG8/mJiaEFJgZQDMenciUTyfPrYXWY2eQfCgL1jKmMW/Cp3Gs2Q
+Jkjv1t7DElIor4KIUFT3NwZy6K5T/CcR6YQRPFhpfDGU3NvZYb4wxy9xBE4kGN51
+L06NpjjfQZQSCNSJH/0EKyv3yoA8KXcCPFQgIevMCTh4+/31M0I=
+=gwc0
+-----END PGP SIGNATURE-----
+
+--z5seqlr4kwwbvdcx--
