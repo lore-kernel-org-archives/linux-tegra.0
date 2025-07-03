@@ -1,78 +1,82 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEE26AA7;
-	Thu,  3 Jul 2025 07:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9C5293B7F;
+	Thu,  3 Jul 2025 07:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751526506; cv=none; b=u5RUFL6i487jel4GQH1ZfWgSL1IEONRKehB9ZrjmaMgKV/oAbhVx77r8wP7RKUax17Lm18R0bPpzNyQKraeUzTQ7vu4PDRgOWQdpBgllL5v1JpoXt+roQFl41UcbDZM2DB+2Okdthfg2oEfte3Mj+NSN5kMq7zSCyClhUIiodDk=
+	t=1751527451; cv=none; b=ZF75w5v/Y962tGlei8Y6wzhnO1gG8qeEo4dg497Np3QSvI3TSmmfjpbGahCTWsKFAZFgQReV7ULccYZIC+p9gYwGYBNZKTOhwh79mGuiSVN5FTcoOh3/DQsR9e2uPmdjfnSBbEQm+ve5w9FwjeWpu/bdg3rW9xyBFYXPAhBq2XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751526506; c=relaxed/simple;
-	bh=yYjCpeuYQtQNuaFa8dZMG9K73OIB5Fzop4v74jtN3mQ=;
+	s=arc-20240116; t=1751527451; c=relaxed/simple;
+	bh=G4aYWKBF9bNTgqi027FSsHts9UeJhkjWvMWx9L27QR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/n2PdgvQF3v+Zb1wxHTDBwfK+roPggi8S3pAa0kk4AkhKelJF0ZTb7xK7pFXbk/uMqWS5M0AORDD+tsAu/Slao4/Dm8J/Vp+RzqD8HBb9J1Pyi3uCM5lWqw0QG0zTT6IppdlA0swC/MLzGoArLM3lgqIUU+e16ZxBfxfT7kLYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwfpphQV; arc=none smtp.client-ip=209.85.128.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=I15OPGsv9l8x7N4pP62V6RfTj7k6kNNRD6r2dcENSyPHiXe6No7K4FHzPA1YnU0mI+nLf4lEOyYu6DqZizby+2PqGhu8NEL3Vbv0zUS9F2kiiViCPNRMTnmqTAFyAQMil4+7vvlOWdmCPSSaDkKYPRyjzFlP19cDhmrtwyesZas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9lDM/RH; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwfpphQV"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-451d54214adso54533425e9.3;
-        Thu, 03 Jul 2025 00:08:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9lDM/RH"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-453634d8609so54613545e9.3;
+        Thu, 03 Jul 2025 00:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751526502; x=1752131302; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751527448; x=1752132248; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Knet8d8KkTP4ZKAEfHfgU7X+neJwgTW1V59mQo4vcKM=;
-        b=IwfpphQV4++ecMDF5lvNsCugup+C10YG3dNgyTdPhZam1asonw5ifYZPmaRLwa2h+p
-         IPU7H26GowrDDO0YCUyaw/to+XdUdyM/JYAwqzj6kHX6njxL4mYwxz7JYR3jOQ8x1VPj
-         SDsd8oFJSq7iW53t8ok5UssoUarLZXsljbxxbbYBQRXtvJKG83IJlChxuE41/Sw5HG9V
-         2QPpJLgluCwIrw8m3CX4QwuWdJr88OcFCRJPDy/o951xDEpKiv81wq5po4/hve8qoNu4
-         9JN/wLq1W2+hKKMk0gyQN31CK7Q+vz+MVjhjEEMi4AWWDJdv0zEv11y4c2MYPzZi0tG2
-         zXJA==
+        bh=G4aYWKBF9bNTgqi027FSsHts9UeJhkjWvMWx9L27QR0=;
+        b=D9lDM/RHWgZy/BuJPPOwSiEuRzIMzRiTLYGXE4EBkKe3ZRSSVRt1SFgOThdI4MPbDs
+         iOnbCf5ZzJCVW4m0HaPLg9ft6ydU3Ab2O8RU4DO1+Bj7cVZcWyzpgf5CPeF94R7MgMs1
+         0VnHti9/l7y9/mZZI8jwf92LZ+2+Jc4LeRIKpJEvWF2ZOLF2S17S9Yzk0BtgHXVnwiDz
+         4GleImlj+/oQYEPSxQu7ClZ9T0I22825Sf1oKY+l6jeSHsmPoox7v3zRljACF8dg1jcF
+         zuw8A5IpcQxLb0CRdnc+Ywadxe+OpT+YUtpXZP0NeP5+l3mdMciwCLbyDSrlSEWPnp+m
+         k/ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751526502; x=1752131302;
+        d=1e100.net; s=20230601; t=1751527448; x=1752132248;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Knet8d8KkTP4ZKAEfHfgU7X+neJwgTW1V59mQo4vcKM=;
-        b=XTqNt63bYrvMsFgsGzKkplzzKBhJWtLst9eIdr2839BduOWHgsraBzhrF3mgGIdafX
-         yYVJzpTLcYyujOEe73jgE2P0Ntb+Nv7WFPK9jly81t7Udzq4vIfzdhV49Wc1W4xiMjP0
-         na/cRqhVq36thCUx7tr8guWCjFIcotB8Kjd5TgVawFQgsQoV5rUVJ35OqI9PF9KX+6C8
-         gS9BfbLLesM+LEtS6a8crRaVtmYka4mHQ0hVTJfIfRcwTl3XVWFdRGw532Xm7RaSBtPh
-         cLqqiz7j+7S0BHQ5edVDV4lwNBK2c0AsGphavMvYwhfc4ajizO1LaqZ3pD3/JIFh30iX
-         A7Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUezH/qbZq4S5RLjLJQOdF+0FemJD/LG/lM8iRMNYdaotkVSC9RvQyzPyXr6wXkBKRHU+iQDdXFHQzu@vger.kernel.org, AJvYcCUtwAWx4YrjFBq0N+mE7XzWVWIehNDZc/eIvS23fH3X4gGh6GDICZLgd6PWU5XIGoAf7ZCCVTHXP8hrcg==@vger.kernel.org, AJvYcCUweakHDdF/mcQ5sEjIxOV1IFVXCyx4rQioiSAUpGsSFpDPXfvP9GjFZTuOOkOfG40Ur7g1vS/Toi+z6fEY@vger.kernel.org, AJvYcCUxpim4fHL2OJR6/h7H8/AC3Thbk7jC8XZFb0o1umSc/4ZD083lFymc1vQbTaLw0pTz/a04A+xlc40rnk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHzGlklX+uspa3rmHwiL/TTnbFe1x1WfnuwR0pm8e1Rt0H+b4B
-	VOoM165YuEAns7jmMTLE+iqH5Z/rJG6OTwZ+m5cNyDNmmXAdACr5zxZK/TyLXQ==
-X-Gm-Gg: ASbGncsU694b7FTVl9/VTQf3JM2Zy8rZKfDvBHfpQxdYEjjPGsa59YS7LLCdV90q8f8
-	KmW1d+xdhban2Txn9Y1HdLxs8lF1MABR2qkPeYgcq2ZG8+PIWEyofL9NrZJaNH4FMotcQHefQVS
-	Ofg0b4fN0qpDM9vpe0YYfYzkqdHK2rVNlnb+QetDWvIVlmLHv//UKu4uE5BEkz26OFbdofNwuSf
-	Q2oMADmLDJ0QrhUCIzQXdhm2fa5F09lK55me+yB06V4IhuZRrvHBFAgG5gWJs1BJorCOBPJam2o
-	BJITqWbu+idLpS1vkRIu2+ftGHAro1p2wuJ0dA99wv6oPzSFf4xpx8ofOVhpz9Kw1zqUJ45coyv
-	ooD0Gi/u7ig8sbkfEZWIXP+MdCokWS2xEp9QZyYiISPzXzyGS
-X-Google-Smtp-Source: AGHT+IFrLNW/KIKZ5DyhBIbYT6nPlrNb+rcXVcHkFVFnd/2G5k9pePw1ZCLmWlYDRnQYIaVmWuDvtg==
-X-Received: by 2002:a05:6000:24c7:b0:3a5:39bb:3d61 with SMTP id ffacd0b85a97d-3b1ff9f58f0mr4105638f8f.27.1751526502223;
-        Thu, 03 Jul 2025 00:08:22 -0700 (PDT)
+        bh=G4aYWKBF9bNTgqi027FSsHts9UeJhkjWvMWx9L27QR0=;
+        b=YRbO/eapH2eYqmu90iNk1+DFHqez6b6RX/S/nVNATEmJpYEh6VWkVkKpu73IlY/uA9
+         lzh/fyqHaa7q9TDSa5mQWom+3dWuLObKjyzi7ELjRNb1YleLkAzKV17XHd25Y1GNFDO6
+         VIInQB8sSTKjUz9i3/I81i6AmGBPcGXK2POW0iNeSTSSSHv+FbIoqrvkU8x9gfbhpdPJ
+         neiOtomJvneNNyp3XkddmqO6jEqutr++ygCrIq7GXaeY+9LQG/NTsU0X6QGIm6teqfW4
+         lZO4PDYHT7n7eXr9upxYth1MfZkklg6QlKi/lnwaGs+1rjyIbovnOlJP00XUSwWb4YZU
+         ZmUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPNtFtrGafZiF7DBox4purKBA+KysWvlOT3RSdvFX3J+hzEey60BpZJO74lBKetw5ZelfejCSUceSJylU=@vger.kernel.org, AJvYcCWgC+GjrktwzwspVLzroZY8YDPO0/pBpoHEr+g8B+6zjcjIeakPszNm5DATCOdGEBsyC6+1dErGNpTeHvEHg5JK@vger.kernel.org, AJvYcCWrH3ncS4K6nuuAvlQ1DuxySb8WWR1wxyjYbYFFDeInW8r0AV/vc6KapOxLvzbQg6SzZSLZ+zXGjAQj@vger.kernel.org, AJvYcCXxnETIbHPni1AjlIPlGgYUMxdD0/iMPeV8teSnbMWygaRWGChj5v/UU7t+f80kwRURdZG2cDX7fY3BAN8j@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeB3oy3qF7zEUwLlm14+vsl8JPse1fZGDJcexTE7FPKvipFrAz
+	ooHSe0kjUqYfpsVcoWlcw++pre6xcINY2dETjKDnG5TRbrTtjuOKBFtT
+X-Gm-Gg: ASbGncssi07CQg9Qk7ZUc1/nH2wLek54VOsuazMPgIbLHsbUKrNWOGBKHCqedaobH05
+	3KzELi+jFrszntfL272BYbBE1weL6mS0Led5dZPUYskWnH58LeTqAcrd81GFh16yEWEccJ1RorT
+	51xoAULfTiWbCBYVp3BENzueTpHzqbnCupkUQCsz8AiW/0K0n4ldkf6uLd2gQefpsFkdyZ6ZDTw
+	eDnvT8Hs8IGO0crp4urS8syaSKonGQqtq4P3AMUHtTWPtlt0Py5LiCuv81J12V015Dq351MTyiw
+	p92cFm/1g5lQVmnKAitw5T1Eg/0WwTY5lJC3WnnCYW4ozdyXL1bq+O2uOvJf4AfB/zGmwAXNVQ9
+	yeK2ovowGMpo2QJCJfw26BV/Mgi1Xff2/15zINggmzVi/Soqv
+X-Google-Smtp-Source: AGHT+IG84fee0434ywGYKGFaIDizoAiTbmVyIEdlpi7un97G+ddJj5k9fCrnNFmeQ0DoqqG6gZ1vOg==
+X-Received: by 2002:a05:600c:6383:b0:442:f482:c432 with SMTP id 5b1f17b1804b1-454ab3a92bdmr14299605e9.18.1751527447623;
+        Thu, 03 Jul 2025 00:24:07 -0700 (PDT)
 Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e9d1csm18062931f8f.13.2025.07.03.00.08.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9beb22asm18133725e9.36.2025.07.03.00.24.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 00:08:20 -0700 (PDT)
-Date: Thu, 3 Jul 2025 09:08:18 +0200
+        Thu, 03 Jul 2025 00:24:06 -0700 (PDT)
+Date: Thu, 3 Jul 2025 09:24:04 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
-Message-ID: <xc72g7j7png443pjxu2wpsuqofgrpxvn43emkt3rv5qrjzf7vt@qzvsiy3eakub>
-References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
- <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com>
- <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
- <CACRpkdZha_ucjWvP_NQ+z2vbD65Y3u7Q0U57NYbJ=vqQ6uPGGA@mail.gmail.com>
- <yslfabklduaybg255d3ulaxmzpghyj54zdfeqkx3oxgisxf6fo@2wecuqpvvefc>
- <CALHNRZ8jq++KVKxKP2-GwMA6CauP=cM2_wt==MRAV4mOzK2kxw@mail.gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
+Message-ID: <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
+References: <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org>
+ <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
+ <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org>
+ <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
+ <CALHNRZ-YZg3cKzRBMGaxRpejFMLSpOOz-FPQEaQVXFpFao40WA@mail.gmail.com>
+ <CALHNRZ-jxC5PXqiG4tNShybaU9gZjTz4YT+VXgfQFNQ-Ox7crg@mail.gmail.com>
+ <yczvbwanjadyfife3hnp2khxkgs77pokypqkxotlldjskshskt@xckrkfucg6xx>
+ <CALHNRZ--ZUxqrXHEnizXC8ddHC5LFA10oH+CgQmOcTt+cJ1CWw@mail.gmail.com>
+ <6abdc70c-0def-4cf1-b1f4-ea9bdde4fcb5@kernel.org>
+ <CALHNRZ8=ikQe4L6h9VHpTGm+OFU0iZA_OV6LUP6jDUySBv4+Lg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,115 +84,107 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="am4ud672vipjc4px"
+	protocol="application/pgp-signature"; boundary="zhooneufzlu6qd56"
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ8jq++KVKxKP2-GwMA6CauP=cM2_wt==MRAV4mOzK2kxw@mail.gmail.com>
+In-Reply-To: <CALHNRZ8=ikQe4L6h9VHpTGm+OFU0iZA_OV6LUP6jDUySBv4+Lg@mail.gmail.com>
 
 
---am4ud672vipjc4px
+--zhooneufzlu6qd56
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
+Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
 MIME-Version: 1.0
 
-On Mon, Jun 30, 2025 at 02:23:42PM -0500, Aaron Kling wrote:
-> On Wed, Jun 11, 2025 at 10:23=E2=80=AFAM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
+On Mon, Jun 30, 2025 at 01:48:28PM -0500, Aaron Kling wrote:
+> On Thu, May 29, 2025 at 3:53=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.=
+org> wrote:
 > >
-> > On Wed, Jun 11, 2025 at 08:58:49AM +0200, Linus Walleij wrote:
-> > > On Tue, Jun 10, 2025 at 11:40=E2=80=AFAM Thierry Reding
-> > > <thierry.reding@gmail.com> wrote:
-> > >
-> > > > One thing that's not clear from this patch set is whether we actual=
-ly
-> > > > need the Tegra186 pinmux driver, or you're only adding it because it
-> > > > happens to be present in a 5.10 downstream driver. Do you actually =
-have
-> > > > a requirement for setting pins dynamically at runtime? Do you need =
-to be
-> > > > able to set a static configuration at boot that can't be set using =
-some
-> > > > earlier bootloader/firmware mechanism?
-> > >
-> > > Actually, speaking as the maintainer of pin control I hear the follow=
+> > On 28/05/2025 19:35, Aaron Kling wrote:
+> > >>>>
+> > >>>> Friendly reminder to the Tegra maintainers about this question.
+> > >>>>
+> > >>> In lieu of a response from the Tegra subsystem maintainers, I can o=
+nly
+> > >>> hazard an assumption, Krzysztof. I presume the pstore carveout is
+> > >>> bootloader controlled because various stages of the boot stack can
+> > >>> dynamically allocate memory, and this became bootloader controlled =
+to
+> > >>> prevent any of those from overwriting pstore. I worry about hardcod=
 ing
-> > > a lot:
+> > >>> an address in the kernel dt, then finding out later that there's an
+> > >>> in-use configuration that overwrites or corrupts that section of ram
+> > >>> during boot. What are your thoughts on this? And is there any way f=
+or
+> > >>> this patch to proceed?
+> > >>
+> > >> I haven't been able to find anything out about this yet. Generally i=
+t's
+> > >> difficult to get the bootloaders updated for these devices. Tegra194=
+ and
+> > >> Tegra234 may be new enough to make an update eventually go into a
+> > >> release, but for Tegra186 and older, I honestly wouldn't hold my
+> > >> breath.
+> > >>
+> > >> Thierry
 > > >
-> > > - We don't need pin control, the BIOS/firmware deals with it
-> > > - We don't need runtime pin control, the BIOS/firmware deals
-> > >   with it
-> > > - We don't need runtime pin control, static set-up should be
-> > >   enough
+> > > Krzysztof, based on this response, is there any way or form that the
+> > > Tegra186 part of this could be submitted? I can drop the newer
+> > > platforms from this patch if Thierry can get a response to his other
+> > > reply about how the bootloader could conform.
 > > >
-> > > These are all enthusiastic estimates, but in practice, for any
-> > > successful SoC we always need pin control. Either the BIOS
-> > > firmware authors got things wrong or made errors (bugs) and
-> > > there is no path to upgrade the firmware safely, or runtime
-> > > usecases appear that no-one ever thought about.
-> > >
-> > > Aarons case looks like that latter.
+> > I don't NAK it. Eventually it is up to platform maintainer if they
+> > accept known DTC warnings.
 > >
-> > This was a long time ago now, but I have a vague recollection about
-> > hardware engineers telling software engineers that muxing pins
-> > dynamically at runtime wasn't safe for all pins and hence we had to
-> > do static configuration during early boot.
-> >
-> > But then along came devkits with expansion headers and then people
-> > started using scripts to mux pins to the right functions and such.
-> >
-> > > I think it'd be wise to send the message to any SoC system
-> > > architects (or Linux base port overseer or whatever title
-> > > this person may have) that a pin control driver is usually
-> > > needed.
-> > >
-> > > The SCMI people heard the message and have added pin
-> > > control into the specification for that firmware interface.
-> >
-> > I'd agree with you that there's plenty of evidence that we need these
-> > drivers, so maybe I need to go back and look at what exactly the risks
-> > are that come with this and maybe there's something we need to do to
-> > avoid that (I'm thinking along the lines of certain pins being generally
-> > safe to mux at runtime, but not all).
-> >
-> > Thierry
+> > Best regards,
+> > Krzysztof
 >=20
-> So what's the path forward on this? Will this series be used, or is
-> Nvidia going to bring back the pinmux scripts and regenerate
-> everything in a new series?
+> If the decision is up the the tegra maintainers, then Thierry, what's
+> your thoughts now? What is in this patch should be compatible with
+> existing l4t and android bootloaders. But it does add a few new dtb
+> check lines.
 
-Let's bring back the pinmux scripts. I don't have much time to look into
-this right now. If you have some spare cycles to take a stab, that'd be
-great.
+I don't adding new DTC warnings, especially ones that we know up front
+we can never get rid of. The memory one is a notable exception because
+the system becomes unusable without it.
 
-For most of these newer chips it should be far less work to get this
-going because we really only need the SoC bits, for which all of the
-information is available. For earlier chips where all of the default
-configuration had to be done by Linux there was a lot more generation
-needed, but newer chips do all of the default settings in early
-firmware, so we don't need a whole lot of pinmuxing in DT, only where
-it deviates from the defaults.
+ramoops is not in that same category. While it's certainly nice to have,
+I don't think it's critical enough to warrant that permanent exception.
+Where possible I think we need to work to address issues souch as this
+at the root and fix bootloaders to do the right thing.
+
+For any cases where we can't fix the bootloaders, I think that's
+something we have to live with. Having the support for this live in a
+fork is a fair compromise, I think.
+
+I know this is frustrating, and it's very painful for me personally
+because I initially set out to redress a lot of these things and failed
+to do so.
+
+However I can't justify accepting endless amounts of quirks upstream,
+all of which would set a bad precedent, just for the sake of things
+being upstream.
 
 Thierry
 
---am4ud672vipjc4px
+--zhooneufzlu6qd56
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhmLF8ACgkQ3SOs138+
-s6GpYw/+M4gpp/wAF2RY4WC7v/y9T6Qqt4pnVptN3CzcT/XmZkydR1ATJpKVADF3
-vje3ycw2R7Mx8Rz/F0X51oceYbynSE3pgx9LRV6JsKuIsPPANiaykzp3q32mlKYk
-4HKZpsKSsFcuMWk3N3Q9QtS+tIn84EZHcvOxXEZlcMYOmiusWkuQHwdV0Eg001u1
-KVAlZJzZj6lqtfnw2fgkpVMz/+haQGgWhAeTN5H34thxZZmdzU8dTvrs3+Nk88p8
-6Vqx+VNPFd6Wba6LR0JV8ixkcqUE9Bv7IB5ZDLMTsvhAInKbzo/tQnot1xTfaQvQ
-4/7kkWi/P6Ru44GBG2+LFMe4VHO+bXGAjVElRqmqjS3eBeHG+0haD1ZdSTXVj27f
-wys0bZ/fiLHGDDwIyLiQ+VY3xxp+t+TkOYz2moq0P4WaOVjBFb0700lpCyh/yFW7
-TdEOSzoFJzwKfpdvDKBswoD/g2j21QW5awlqLKjBEhUs30vz8VqVTlWrRlmYWVf6
-DdqmgtYs+wYwg5Wt+60OWq3sff/H9RR1U9rcQUJ7D3ib1N9UbMEpbCyQl6Ymv5gx
-hvxn67J8H2dbjqu0PXtlUbXiRhewv7kXYLOhS3Bcpepphg3ImYM/qI+9PkvvGUT5
-htyZXVesWFeDPqH2tV0P/zDVHVXlTPk4qB6ISn5q4rG5V23aUGs=
-=0Qww
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhmMBEACgkQ3SOs138+
+s6H4ZRAAql2oMF67UcQRYR5ZlDKVTECjUTogz61E3D3VEqbR6Q3+Rjq10XzZOuwD
+TJ3aow8VkSU/BbWlqZg5X7FgZW8yExrpYrrHqY+5sVHkgaxTBcWpaiNFuP6H38nN
+5HkHTkQIwqGK63JzSdYE/yCdpICeNRuXturYF28MJk/kZvBV8kBYl87z0JM2VRDZ
+SL5UrDNdSX9MjbnimJLRnp91skWb+p9mQS7HInD3xDhhh1xMgOjdmci/Ruet9Wac
+u4Kvpybp1//Z8QMWS6VGvj20Ej9RQl2IABdDqfo1vAoDQZs+0fGvj8SRJ5VOMZxM
+ntpuSRYt1sLLjPHO1MWJXrSWVvdoIRJyxozvxk4TBRzcMZRz8G44iJB86TkNGs9b
+Z8eIv5v/t6S3gT2JKBvDFUcnIWBXYbxBpxHkk6xrhOk2TWcGnSEN56KOrS25XxSS
++ryaQWdtIgib73eoMjtgAeMhzl6UgBICePwfPofMIDWeit1LXRBlGaBZ1KRzyS8S
+z4obZsQbALvk6Pz1qjMkos0GlaHBLMIZcnICsJ1FObkG8oWSHiIwl6lQuDJ1tDcM
+bSxfazATD2BPSxZJfc7S1i7JJFI8KzEDST5BpUW7W7ZxV7gnMm96f/pT3mlnjUK3
+pYaBGfihVy+z/0iVtRX6B1tPKPpXZErBlK2vC29PcBmT4pJ2+vQ=
+=+ves
 -----END PGP SIGNATURE-----
 
---am4ud672vipjc4px--
+--zhooneufzlu6qd56--
