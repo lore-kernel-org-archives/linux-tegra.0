@@ -1,140 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B5D2E7620;
-	Thu,  3 Jul 2025 16:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63728E17;
+	Thu,  3 Jul 2025 16:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751558568; cv=none; b=Adjtu/Pj1s31kqHzF56RPyK/GmkPcYFdXLWM/hu4+2sDKbNrNTKIxbdk/mdO9XTUzYDxW5LsBBCL1gLxFfcTPgmoZA1IKkVAfGiIlsnGxUOJ2bOi60R8st4PFmgtQKwb6a9oTH0Ccyr11yCReu9MseYMalWnJGJ3YIhmVaNXL1E=
+	t=1751559853; cv=none; b=kUzlTFQPYzZ44FE50wWLksQRvVMfSPimbBuf8oScIoybmQGOy7G39naYbhrXn1x7GS/lfcyRuZHufZhHNQqo8dYrPvxkhmp9wqkIgzaepPc693tzzPgdDcMQPH+FSlwC855bJhPwJCakS6OmfkOioX8HX1iSt5iB87vCztsLUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751558568; c=relaxed/simple;
-	bh=OzgEgyinOD2u+eSMzdaGCr7tFY0dcCCASCneanv0fW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ns08c+q+9Ac2UZf1SRsocuoeO5Zl3GmxRQhennYF9gLLdSqDKNSLg/mSWXVuzMxfjC7b6czZZEjkKwkL/1Z0JHsafGSqlxorSiJBQH6bSOSeFzFCbRP9PrYfQnpJm2OZ15hF0PHSLFWHZnMsIGiMEMHdMvAE0TGS9cvDjT8/UlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWAytJZ6; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1751559853; c=relaxed/simple;
+	bh=ZattO5Mn2hbw8j6k+Ojc2VZsIcamMU7rl1sPrW/W0SA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j9r8EWEqPeQfDMdKRFSxSN6MG57YKidd9raHC4Aix5j5fZfwOrHlruUiOwpnlwMY6jeGhMyXquLkwPHm5+hh6jLj84zSvgjb348dWBn49MOlXFqJi+mDzbYvjAsNH8Qv99hdJtdG0s4f4olgLY2QxRg5btBRfrA0b+bGB1sOyrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEgCWzvH; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWAytJZ6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751558567; x=1783094567;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OzgEgyinOD2u+eSMzdaGCr7tFY0dcCCASCneanv0fW4=;
-  b=hWAytJZ6c69r80Quo4ULlMLQAuW6Q+DQSwfzsAYkDQyAdwEx6uZya78E
-   Swyem4hXEP1OWNjXVfduHnQGQqePFs8wvaLOhkH3W/5OZb+j1YcApVuhn
-   QxhmzNQf9LLBmHPJqnYaRGpJOu4xNziCZbuqWGDKX3LNqm5xy0CF06t5k
-   WrVf/od1kBS1NgyRYn9UPKPfiZeNZ+6VEY++s/355Ud06IyvWoFMH1FVx
-   7Kys7694lQJ/EFlVLLHahjlFjvBiQHMGIAUqXngyYA8G8YvMckT8ciV+3
-   pj511KLosVmqmpdhXkWeo1VH4LvyPE8lOqmzYo4K/e/pp1h8vYk24t+La
-   Q==;
-X-CSE-ConnectionGUID: NTfIbjZtSXmPXH/y8ozzag==
-X-CSE-MsgGUID: /GSqrALkT8ixg0ibcK8fXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57666242"
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="57666242"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 09:02:46 -0700
-X-CSE-ConnectionGUID: 5VJaoDJqRYODVXcNjGfdew==
-X-CSE-MsgGUID: zVWz+w0NRn+byUEnsi9U/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="154532412"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 03 Jul 2025 09:02:43 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXMOW-0002l1-0i;
-	Thu, 03 Jul 2025 16:02:40 +0000
-Date: Fri, 4 Jul 2025 00:02:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>, andriy.shevchenko@linux.intel.com,
-	andi.shyti@kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
-	thierry.reding@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, akhilrajeev@nvidia.com,
-	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
-	ldewangan@nvidia.com, robh@kernel.org
-Subject: Re: [PATCH v5 2/3] i2c: tegra: make reset an optional property
-Message-ID: <202507032359.AfHPKWEQ-lkp@intel.com>
-References: <20250702133450.64257-2-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEgCWzvH"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-60f24b478e3so76176eaf.3;
+        Thu, 03 Jul 2025 09:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751559850; x=1752164650; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZattO5Mn2hbw8j6k+Ojc2VZsIcamMU7rl1sPrW/W0SA=;
+        b=ZEgCWzvHLTVHSgww+IzCSNfW+8Ih7H+5gTka5NGtzjwlOSTSd2yudGQfJaR6ZdLFE2
+         8woLK3hlCwW9YuvNC5lu2m3TlAGF4B1slPveL9pUCn+sSTTQfGQ7HZiwTysWgSTRxAjt
+         WTuOdxIrURSEihndDtlTLwtR/Wsnxxlbs//PIoY3v1eTZwUKYOwOmHmm5m+00hVTGE7f
+         2IJsra+44L7fAF0CX+rJE0HPDew+xxV7UiFM8DHLK2bPCsBGzTAJ3Mvzez9KHgMRtlRE
+         VTMDpUXxj8Kxru0CClgxJqafkskjYT3HW6hzlPnEJ33T4AOFDKCa7GA43pMMfwRZG028
+         M+nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751559850; x=1752164650;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZattO5Mn2hbw8j6k+Ojc2VZsIcamMU7rl1sPrW/W0SA=;
+        b=FKooUpFvffqwboSoGTlO5sNeDuN2CyMVdrU5In0Se8kLc0nOGoCXGN2xRuNIw4WSrB
+         gxLAaeOLsDJpJFJpO20sFItlDNJkJ/Da+0mRljrXasGCAXiNKQMr1ARikB830ZQwj4lV
+         9fEQfOLu7oirpJQnxtsWQQS1Alrg41jHiHSVD+nMpXIfXizQ1gwsKyIMnNl5xEFiIXn3
+         pqBpFVJPtChjKr0zcqaWum+ZLuLyIG65sAAjgcEtzwAPANfUljRWi49ZaYADv4DhEV9S
+         FrBXMIJXLre45LZmd4BtUziN9zshSZ6FL6NBnBGOk51DGELOP0QkStNj+r7bJEGbNjvA
+         5UgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN1x5rV7vgUlgkpvME3J63XGxpbwODzo/3p5/VyNUEVKWSnWJkIw1maJDeZtyalxYLuc2B0lfQKuqb@vger.kernel.org, AJvYcCWTOCiaWU8W2FULAqqLVFYSbPK5uJFIaxma2QXlRvCN+sJRNIPnweWhiLhj1ILoWl8AL32t36Zyd6mL8DLi@vger.kernel.org, AJvYcCXyVwLUlW+lney2jqoMPzaEuj0J08/aBKTYI4N0yEFmUo/ZM/9Cbxa27FTaXg1IjeCNF/IIE37urApwK/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCAWBXn4NqLJTHGDYauzmsMJIL6CUMV8QXRPckv6AoCuBbpVYL
+	uNHtL/vJK4bwcXpjGKZuma09ip7ihMJ6OP94nV1LQN8am4YNEAZ+706hZx6KIdkMOIAjKI8dANc
+	4DGEzytVAseIERRs41dTQMsCe9cxSkqM=
+X-Gm-Gg: ASbGncsUCtAD2BAY19faOwhvax/2CsfivtnG5E2Rsjw2B3g6ks5bJO2h7FQ3dsl7+Un
+	rR3tvb/Ay91X4uV89eNxiq2krOZ6vMuFrgfy+Cs2t/bVxmD8hxjjZaQk/4+KJcKM1bY2q/OOYH0
+	nsIGyy67iEm3vVCn+K+GLuSCO0+zrh3YI8oopYbful
+X-Google-Smtp-Source: AGHT+IH23ww8t4Ksjbvw04Pw1dg6g23ybwLHvx+e9HpnjY0WklCP4KSUDd3Djui5CG6kL/P3nrBFNMGPKv5nAgOzn1k=
+X-Received: by 2002:a05:6820:c8f:b0:611:e00a:598d with SMTP id
+ 006d021491bc7-6120116d82fmr5594771eaf.8.1751559849936; Thu, 03 Jul 2025
+ 09:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702133450.64257-2-akhilrajeev@nvidia.com>
+References: <20250526-p3450-mts-bug-v1-1-78500613f02c@gmail.com>
+ <CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8Jg_3itwQ@mail.gmail.com> <nuicekbfdgjbfudtlul74ifsqckfg6itybb76bkzuaxfcp5ve5@yevlttgtobxy>
+In-Reply-To: <nuicekbfdgjbfudtlul74ifsqckfg6itybb76bkzuaxfcp5ve5@yevlttgtobxy>
+From: Nicolas Chauvet <kwizart@gmail.com>
+Date: Thu, 3 Jul 2025 18:23:58 +0200
+X-Gm-Features: Ac12FXxB8p0am1jeHuRsG3pEC3-oMtt-Xsi26v4UVhYH88yQRdtMwuJ6D3jOGbA
+Message-ID: <CABr+WTnn2qOXEMCiRDywySAxn0UeKAcx5XOJNpn731tXxbCPDQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] arm64: tegra: Add reserved-memory node for P3450
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Akhil,
+Le jeu. 3 juil. 2025 =C3=A0 13:00, Thierry Reding
+<thierry.reding@gmail.com> a =C3=A9crit :
+>
+> On Mon, May 26, 2025 at 02:07:35PM -0500, Aaron Kling wrote:
+> > On Mon, May 26, 2025 at 2:06=E2=80=AFPM Aaron Kling via B4 Relay
+> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > >
+> > > From: Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > > The Tegra210 L4T bootloader ram training will corrupt the in-ram kern=
+el
+> > > dt if no reserved-memory node exists. This prevents said bootloader f=
+rom
+> > > being able to boot a kernel without this node, unless a chainloaded
+> > > bootloader loads the dt. Add the node to eliminate the requirement fo=
+r
+> > > extra boot stages.
 
-kernel test robot noticed the following build errors:
+Is there any particular reason why this applies on jetson-nano but not
+jetson-tx1 (or any other l4t based boards ?)
+I wonder if it would be enough to boot an upstream kernel with the l4t
+bootloader (and no chainloaded upstream u-boot) as I cannot do the
+other way for some reason (using fedora based upstream u-boot cannot
+boot downstream l4t kernel anymore)
 
-[auto build test ERROR on tegra/for-next]
-[also build test ERROR on andi-shyti/i2c/i2c-host linus/master v6.16-rc4 next-20250703]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/i2c-tegra-make-reset-an-optional-property/20250702-214005
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250702133450.64257-2-akhilrajeev%40nvidia.com
-patch subject: [PATCH v5 2/3] i2c: tegra: make reset an optional property
-config: sh-randconfig-002-20250703 (https://download.01.org/0day-ci/archive/20250703/202507032359.AfHPKWEQ-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250703/202507032359.AfHPKWEQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507032359.AfHPKWEQ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/build_bug.h:5,
-                    from include/linux/bits.h:22,
-                    from include/linux/ioport.h:13,
-                    from include/linux/acpi.h:12,
-                    from drivers/i2c/busses/i2c-tegra.c:9:
-   drivers/i2c/busses/i2c-tegra.c: In function 'tegra_i2c_reset':
->> drivers/i2c/busses/i2c-tegra.c:632:23: error: implicit declaration of function 'acpi_has_method'; did you mean 'acpi_has_watchdog'? [-Wimplicit-function-declaration]
-     632 |         if (handle && acpi_has_method(handle, "_RST")) {
-         |                       ^~~~~~~~~~~~~~~
-   include/linux/compiler.h:57:52: note: in definition of macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                    ^~~~
-   drivers/i2c/busses/i2c-tegra.c:632:9: note: in expansion of macro 'if'
-     632 |         if (handle && acpi_has_method(handle, "_RST")) {
-         |         ^~
-
-
-vim +632 drivers/i2c/busses/i2c-tegra.c
-
-   626	
-   627	static int tegra_i2c_reset(struct tegra_i2c_dev *i2c_dev)
-   628	{
-   629		acpi_handle handle = ACPI_HANDLE(i2c_dev->dev);
-   630		int err;
-   631	
- > 632		if (handle && acpi_has_method(handle, "_RST")) {
-   633			err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
-   634			if (ACPI_FAILURE(err))
-   635				return -EIO;
-   636	
-   637			return 0;
-   638		}
-   639	
-   640		if (i2c_dev->rst)
-   641			return reset_control_reset(i2c_dev->rst);
-   642	
-   643		return tegra_i2c_master_reset(i2c_dev);
-   644	}
-   645	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks for the hints.
