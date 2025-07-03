@@ -1,124 +1,188 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8EA2D9EF4
-	for <linux-tegra@vger.kernel.org>; Thu,  3 Jul 2025 12:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848AE13B2A4;
+	Thu,  3 Jul 2025 13:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751546528; cv=none; b=lXxgy3j6KMME39DLtHXvQk2LNQVItEQHLSzpq8QmplzRZxauTIFb5d48JbKwLxDQLw86OZ5k6IFAhYh/WXpY6OGbcR4+oMTXjxudobmFvkc9wEtMzxYmhEJ94OubHzcH/oIUvUTIHXfG1rvtxGmVzh2IBm0uZki/qw8sqryO9iA=
+	t=1751549552; cv=none; b=HPDp+Lw6EKjfMKaj/yzuhRrr/g1+VaPF3iEakEGe9FEPC/9dLdBNkj+pkSuudu3BoCmCnHv9D5IHnMMz+aexdE5WGyMp/b9aFkroZLxbxRcCgU8F5IaUn0rCGby0DWMEKbO5Xc5OL++265Zc7n/rnU1EnWjCID1zqzcAquYjchg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751546528; c=relaxed/simple;
-	bh=0l0g609HVyh2VkxVYU15QrjPHSnVsY35u7bAI8jISDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cFy2sp4C39PduBmqKxVTpQvfix3uv92ZiAw9z4mizYmFZy7xngf0ndeCuf3h91V34kYhJE0ASmw5W1YBmwy3Eo7WEa88g3tGc/Y4z808asHEZgXx18B6RXGjWcqC1OQzgsaQhU+lJAeVLtriGENJY+DqSnx3RBygozdvCEYB56A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NupuFHo8; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751549552; c=relaxed/simple;
+	bh=zGKkOzJI2At6lwlypOoOWjmLIZuzEOoWGySWBtnvhTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QuGOt5Tjua0awFDy/q5Ijprop5Dwbl08q6C03jDaG6tL7Fo/F2ZxROiji6obs/vVJdzJH8NKInyhq60gGb3paY+AlW2KTrnBNvLVzhT8dG4azXUtKDN0J9G7vkY8AMoCUbpqZXcmYZvnTFEKheQNBIHZfyzWSBtuT/63607hb+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTO3y/sR; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NupuFHo8"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4535fbe0299so33218705e9.3
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Jul 2025 05:42:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTO3y/sR"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso4464076f8f.1;
+        Thu, 03 Jul 2025 06:32:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751546525; x=1752151325; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5p9HSXMAZ0v2wNzjZpRgTRLF0wQRlJMdXlU+Zo+kCWg=;
-        b=NupuFHo8xkvLzI6hU9QX8Fc2vCx2KitcSTFwk2GbciPWyn46QgzMbcm+s5DvDeZMDz
-         c9mg5GliHC7tI80BfOoZGysHB32dga+PcJjYHTFl9uUUBOFx4FauLG63DnYSsuIhLitD
-         d9XceErksyUEiMnzdkg8dqKXFV+D/Z3qZ6W/rR6EK0TkNMO7z2FhaKpOGW07VlYZwMt2
-         MI8ApXkQBQg4va/Ho0R3xr+gdNDTd1ooAnRIR8CXBD9nJAboDNeaeSdXYCk7wGYYgDaq
-         hQ0WUYwTb7qXErx0+xA0C5DC4UMnUyxsPR7TTqq1TYTwKSFBfn9CGIaZxV27cW5AXarK
-         k6mQ==
+        d=gmail.com; s=20230601; t=1751549548; x=1752154348; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VzTZN1Rgi3KEaXkVhx7sTEQ+GfRghm0dQNuxhM8Lk7o=;
+        b=hTO3y/sRMpU7KHb3YXqVcBt+kadH6BFfvfVvNGab6ykLtzoVBAAQj7JGijc5gVtE/t
+         pcCmw3gSHjgCMJBM7KVr8+FF/Sub/vSBYM8vGNH0TnO/paI/DgWKJqjdaQEZBx636iqH
+         Q9UnM5MkcoacKIe2KcGSrGPq+nkb65oqX6AhDSlnjY5KmF3n4fOBLXKR5XolXZNFoS4h
+         lREs5XWG1TsOE9AJKU+pCxURgUuNqUBn29xe/TayZ+ux25OTv0OB1lvg8TVPyKQpo69H
+         y6bumlK4kOM1TcXnePBCjeTVFS5PMGQeM5B250hdAx9axyb4Ak6P8CLqxpWBUKD5d5m9
+         KUVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751546525; x=1752151325;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5p9HSXMAZ0v2wNzjZpRgTRLF0wQRlJMdXlU+Zo+kCWg=;
-        b=qGmeUK3+Ya9bgFyiG2Lck1dt4XymiXICDAFqOhK+EJ8SisUq02ju18zwHUOGsfma56
-         WHjSB+kXRP7dOgQSqu9/U3UTSXtDCxoOL8EkNax0hSuIYXMUlVGb519wZ3twFDZ21YKi
-         IvF+W8/osMP4+nK72GA52kqo2g5zbB+XRMEB/B6peSal8qz0swWVesFGFrTKWv3m0D5Z
-         bDPBzxsJQShcSuXPHWW6c8xDCMHb8vEMjibJojFh8e9B2g8bQUakK3WZs8OSQd0p3/kP
-         O+1Szx++XIKM4vlGFSZFiL3KBq3IjZSCthMhjrmUSXVKHGw+AVv4Ycex1pUQQK4oHbpy
-         zonw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNaIjDm8ol1nv2FKbwrygXrlI3/EDY7pINyZT3mRs8XOenBU5ADHZyvGXItAeIcicRAg3x2QE8kDQhMQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOAmOhCBfI5QGimtJe6P6GwNBWFWyxgPdiEv4gjvKUpR0NDi7u
-	j97oRJ5V3w6bbufx/7a9JIPCGnlQS5dX/ALjrGJ6RnRqdnhR8N90RsqWj4cU71kU4L8=
-X-Gm-Gg: ASbGncv05tgdo0GiLi/NcAjk1/tIQeRobi9/UWUXYkt46wzI9noTKwwonAM5d/NTLDF
-	unxFFdJqmI+5PqzIdCjoVJ05rXYsNIfesEIAphml7BA48hO+z6SyXoD5JhbAOtRRluMCz7dqa9y
-	QkKG31Fjp9W+BwVwc/5BuucPP4K1L0IW0Ln/1YzK6euL1RrLtG1y+JoQ83dGPmewvkWR96lebD0
-	J6Xy6ypArJ3KsZBMRZJsRNKUzy2FqW0NocjaUwszSbARyTJfgpLjiXv6vdnuP3jLx0qJv8tX59u
-	QOjiLFoKFD6vt3qyEcTLqGhDVXrs3fJE8DXoiO7OupbMJE0N5uMSntq9kpdb9fhk5hpOrnh0NJE
-	aQX7DYwJcfeVpb1uJvEJptvfPAA==
-X-Google-Smtp-Source: AGHT+IFkwCUP2Or9pxGcJZO0ugBdGvWqQnDw6EDu/auVXc2pvANU2o3HxgEpV11kUFoe/iQLZyFidw==
-X-Received: by 2002:a05:600c:1383:b0:43c:ea1a:720a with SMTP id 5b1f17b1804b1-454a9c62561mr32788245e9.1.1751546524956;
-        Thu, 03 Jul 2025 05:42:04 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9beae81sm26706105e9.40.2025.07.03.05.42.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 05:42:04 -0700 (PDT)
-Message-ID: <42399fd9-0fad-4770-abea-90511a72e0e1@linaro.org>
-Date: Thu, 3 Jul 2025 14:42:03 +0200
+        d=1e100.net; s=20230601; t=1751549548; x=1752154348;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VzTZN1Rgi3KEaXkVhx7sTEQ+GfRghm0dQNuxhM8Lk7o=;
+        b=Pyj3SwcsXH6Ev6kBO34HAa4E6b5SXqm1DpN3HqaSnee3IYVL39L9ELcTzzNrT2JlM1
+         HaZIhNRYn/BgvsjbInEXWT+JZFagZSTOtMUgrDfdni/tgrva9RPkJJh8MI8kcV7sBUsj
+         ztba2L8lwegFrvDnjngkSI9BjY6qQ1rgRgA/0WiHCMK3OVojccdJ7Oh6VqX5gq4qMKKS
+         ClhUMaI2EdEbZ2/NX65TrHLGEDxQY3G9crzRwSkfuGYtj6kuUkVIell++sZVK7d/4TrB
+         /v07lrYEmdUEJSuMilECVcDfpKg03WgRweWqWmumgN1r5VJ+pBCq6721ViG8XNd3S4eg
+         kT5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4JWNlMzmnkzaBZXbYgnKPECJdwhnUW9Jk3JkUMNbssktk23N2FsJR93bVm6Aq4BlohP6co0azeg==@vger.kernel.org, AJvYcCXrxJzTZfBbS4SwViw0PcgyBrxXptbHhW2GCFCF+zHqJ+XmIRb85JtOh6hqvVohueHw4Pj7fTWSgTaNouQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweNZYxmxS8PN/4GruUTg+wbUIq+LbCSt32KC9E15NwFepoecUX
+	6iBy1P86kivv3YAGG4Ss4LLWlkkvoOW/sqCF+U2FZuuUccv9B7M0+4tMUogf4Q==
+X-Gm-Gg: ASbGnctC1+YMIWFtYKImV3UAOJE7HxWGL5ipMNIDvQ9BGq/o5mbJzXx94jDhPkYTIxC
+	y7QwWMsJPLEstSkgRfCjbDVS6EKnvjj2UgGDhx/+Mpd+HDgqAjlm/lUawkdV7h5gGV8SfJEBX/D
+	9lqH4D9KafAhJENQjynsvOp58htF9GNCo8hdCgdHMBwbhwvTeh3UtUWe6PAXGWQZEF+JF7R00YT
+	2m/ZSg+/fqUHEhYHpsRZdOV62Ye1kzV7DhDGpPYjB3D18PPnkWTDYnMRaIHmhcxfNt/n1VEKjbb
+	TCWw2VHOsrplvId2C2C9kb/CRdm2WCv2X1TOwLIx41gyO8GdnoaJHrEjHpV5XFEK/iHfPgd2CKp
+	LkqlqW7wOOpfanU79b2txNu6AJptv9n19H6g+ARnNRwh1w9vJ
+X-Google-Smtp-Source: AGHT+IGWpisDXiFyyqwzWsMXcKSEHmRXU6edUilLRNhMLwl6kmpAmMNt1c/YASvIJDD2NqdC0Xef1A==
+X-Received: by 2002:a5d:64e4:0:b0:3a4:efbb:6df3 with SMTP id ffacd0b85a97d-3b32b14582dmr2868264f8f.10.1751549547337;
+        Thu, 03 Jul 2025 06:32:27 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a999c8cdsm27218775e9.24.2025.07.03.06.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 06:32:25 -0700 (PDT)
+Date: Thu, 3 Jul 2025 15:32:24 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Oliver Neukum <oneukum@suse.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: Forcing devices into idle
+Message-ID: <e635l6gfpg7amck2hnu4l47tnc54lr6e26v7y3ohaywil6pjwr@4trxzfdigo62>
+References: <rlzpjdsg6cbgxc553j6m25ysb6tyldy4lnxsjjn4hdzv7rszpp@y6rfcrbjfook>
+ <fbfc6bf9-d7c6-4df5-85d0-b1d357159d88@suse.com>
+ <CAJZ5v0hPh19h9uVRVHSXiLaHxm3PR9A3W5+j=2=-B-YCyBr=uw@mail.gmail.com>
+ <hjkm55hus3ctueydf7ebfb25hbdw6w3spdzx7maauzlzmnakas@noqexx2pxxtj>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clocksource/drivers/timer-tegra186: Avoid 64-bit
- divide operation
-To: Jon Hunter <jonathanh@nvidia.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, Pohsun Su <pohsuns@nvidia.com>,
- Robert Lin <robelin@nvidia.com>, Arnd Bergmann <arnd@arndb.de>
-References: <20250614175556.922159-1-linux@roeck-us.net>
- <aFq29Fr5c2TAZOYO@mai.linaro.org>
- <b77c900b-3b54-4cb6-8057-e5b7ca0fdfa8@nvidia.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <b77c900b-3b54-4cb6-8057-e5b7ca0fdfa8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kl7qpfexrmgtjonf"
+Content-Disposition: inline
+In-Reply-To: <hjkm55hus3ctueydf7ebfb25hbdw6w3spdzx7maauzlzmnakas@noqexx2pxxtj>
 
-On 03/07/2025 14:34, Jon Hunter wrote:
-> Hi Daniel,
-> 
-> On 24/06/2025 15:32, Daniel Lezcano wrote:
->> On Sat, Jun 14, 2025 at 10:55:55AM -0700, Guenter Roeck wrote:
->>> Building the driver on xtensa fails with
->>>
->>> tensa-linux-ld: drivers/clocksource/timer-tegra186.o:
->>>     in function `tegra186_timer_remove':
->>> timer-tegra186.c:(.text+0x350):
->>>     undefined reference to `__udivdi3'
->>>
->>> Avoid the problem by rearranging the offending code to avoid the 64-bit
->>> divide operation.
->>>
->>
->> Hi Guenter,
->>
->> Arnd posted a version which seems more complete.
->>
->> https://lore.kernel.org/all/20250620111939.3395525-1-arnd@kernel.org/
-> 
-> Actually Arnd responded here saying this version looks better :-)
-> 
-> https://lore.kernel.org/all/5a571236-7de0-42bc- 
-> bfb2-52a57e210852@app.fastmail.com/
-> 
-> OK, to pick up this series now?
 
-Yes, I'm ok.
+--kl7qpfexrmgtjonf
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Forcing devices into idle
+MIME-Version: 1.0
 
-May be Thomas can pick them up for the next -rc ?
+On Thu, Jul 03, 2025 at 02:06:00PM +0200, Thierry Reding wrote:
+> On Thu, Jul 03, 2025 at 01:12:15PM +0200, Rafael J. Wysocki wrote:
+> > On Thu, Jul 3, 2025 at 12:33=E2=80=AFPM Oliver Neukum <oneukum@suse.com=
+> wrote:
+> > >
+> > > On 03.07.25 12:08, Thierry Reding wrote:
+> > >
+> > > > Any thoughts on how to solve this? Is the pm_runtime_{put,get}_sync=
+()
+> > > > method acceptable? If not, are there other alternatives to achieve =
+the
+> > > > same thing that I'm not aware of? Would it be useful to add a new s=
+et of
+> > > > APIs to force devices into an idle state (which could be semantical=
+ly
+> > > > different from runtime suspend)? Or is this all too specific for any
+> > > > kind of generic API?
+> > >
+> > > Basically what you need is what happens when the system prepares to
+> > > do a snapshot for S4. However, if you just perform FREEZE and then TH=
+AW,
+> > > devices will assume that user space has been frozen. You need a way
+> > > to substitute for that assumption.
+> >=20
+> > Well, you just need to freeze user space beforehand.
+>=20
+> Freezing userspace seems a bit heavy-handed. There's only a very few
+> devices that need to be put into reset (such as the GPU), so most of
+> userspace should be fine to continue to run. For the GPU the idea is
+> to block all incoming requests while the device is forced into idle,
+> and then to resume processing these requests after the VPR resize.
+>=20
+> But maybe freezing userspace isn't the heavy operation that I think it
+> is. Ideally we do not want to suspend things for too long to avoid
+> stuttering on the userspace side.
+>=20
+> Also, I think we'd want the freezing to be triggered by the VPR driver
+> because userspace ideally doesn't know when the resizing happens. The
+> DMA BUF heap API that I'm trying to use is too simple for that, and
+> only the VPR driver knows when a resize needs to happen.
+>=20
+> Is it possible to trigger the freeze from a kernel driver? Or localize
+> the freezing of userspace to only the processes that are accessing a
+> given device?
+>=20
+> Other than that, freeze() and thaw() seem like the right callbacks for
+> this.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+I've prototyped this using the sledgehammer freeze_processes() and
+thaw_processes() functions and the entire process seems to be pretty
+quick. I can get through most of it in ~30 ms. This is on a mostly
+idle test system, so I expect this to go up significantly if there
+is a high load.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+On the other hand, this will drastically simplify the GPU driver
+implementation, because by the time ->freeze() is called, all userspace
+will be frozen, so there's no need to do any blocking on the kernel
+side.
+
+What I have now is roughly this:
+
+	freeze_processes();
+
+	for each VPR device dev:
+		pm_generic_freeze(dev);
+
+	resize_vpr();
+
+	for each VPR device dev:
+		pm_generic_thaw(dev);
+
+	thaw_processes()
+
+I still can't shake the feeling that this is sketchy, but it seems to
+work. Is there anything blatantly wrong about this?
+
+Thierry
+
+--kl7qpfexrmgtjonf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhmhmUACgkQ3SOs138+
+s6F+6g//aRuHpYkzTMvccJ4QyH5yNDpNqRpGvN9HG7a5R6V0sul3YDjRBFiTSJ5U
+87wncw9HcxnM/em3AHaqPeoGjLL5R95Sz1owAMh1TPxUHWfVlUfSqB5TCyd7dJ0S
+O+F1EIjuVJrOcdd8P9gccBZLzJEkIGCdBe1ZAVWBapuj1wxAQxhPXZme/grtCiet
+dzUbcHuZzkxThASpUDs0ftezwiamiW0W3xYKS+PjWC1sstlw7E2EIcsOTYyomLOA
+LxcncWBzXYiApIwLuQtEI71We/5bATYbUJHdN1lo0Wc5tGlTFxgnKPRYME2WUit6
+l2M6/3TfHPZOD7RxicU8NIeB1kBk5IefqiZ54SzH6BVuRV66gD56UmjxJP66K6vc
+3OIgbXNeKwTsbMdd2Ho3fV9qEMfWdswH/YXev+WojMCGJLXQNzo9E6fO2bNH6FWA
+5nHvK2/Ms2z6Q06Mbm+VSFnWSpcRf81vyqXFvD3ODX44hemA+tnEVB20T1/gEESe
+Y8cuNsa0Jk6agmgQAA6Gpftne8R5gSO/gyQJrTJKBv+oTlR31P439/cd9nTB5pzT
+aK0cD+JGCPoZZww4fuYwww5DwSRAq+/viU7Og71OF859E/BwOP6l5G2UDX7Qew9I
+6Ekqjd9864mv0m9wIkDkLSM9gEU8E6qKMWQKyMrPzbJIQ1TJCpw=
+=tnZJ
+-----END PGP SIGNATURE-----
+
+--kl7qpfexrmgtjonf--
