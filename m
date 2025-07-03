@@ -1,76 +1,76 @@
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3B62E174A;
-	Thu,  3 Jul 2025 10:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACA62E266C;
+	Thu,  3 Jul 2025 10:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751539154; cv=fail; b=rUHkhgSUdg23+Z6peBNxoHA9FC4DZZhw9lJV3ijTE1jWomHmI9p5sgFNAqdMqvRoTOWjvb9NBgoNcQNyWFB0dRlnAzFgeODzFdzpZv6IQvC5N+qrhm8w63aLB6s4mcAEb33PZnA0S5/Ri/R6ApeiRDbg/GTbw0uzU9PnHpBdmck=
+	t=1751539155; cv=fail; b=O8MSRCCrwYmwb+asiP5j2vh6rpbp3qm/m3G+9SBwKBta4IUzjfQzjaCfx9eH1UvrZsqd3ZO7LKnlzi6vnr6I71WflWxNOi5bF8HgAij3iTQqeapbi4717cO6vP52zGGpj6d/RGyfwXIzPHL86YmvZ5hMDOOoRLtLCcXDPHLiiKM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751539154; c=relaxed/simple;
-	bh=Gt7poHbAR6dlcELZgkW39jU80OD6VGfL/i+zTXakfwg=;
+	s=arc-20240116; t=1751539155; c=relaxed/simple;
+	bh=/KoiG9oC+6ukrdJWb5wCW7P0Yld2yfCJy1U/CmPg3Po=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h1NOyWhq8RTvfnQUapGVnat0wKFJmzNcf8aYBQKejpE/PMfxwDC6Tc9DZIu7UmHYyY70euGAKsjgrEiIthOhCPRZtz8xAuJyBfSEcXrbyh59hL9Bl1LUumP2L2xmXx+xMU2mKCSLMgkJBeCUDUYWFLYEhPxm+TlFXNfvlxMdxGk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ttZ6N61B; arc=fail smtp.client-ip=40.107.100.46
+	 MIME-Version:Content-Type; b=V87IWDZw3Pz/G0YgywsxA/Z7YCUAsVBM2mjFgmeHZAzG9RKOufm0Dj7ct4fMcZsm1zncWmYiO3u+7ct7AdUU1v1VugqTNqmIhdzl/F7d+g+d9pSs65xNgnpmGors9k58PaZrDO1swpL+o7uVwIxn8pdTRkGx+RmVKQsuersyAoY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CSl7fZzx; arc=fail smtp.client-ip=40.107.92.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ttZ6N61B"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CSl7fZzx"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MzZFgF2+W1CVZ0j8bucQDgeT7XEbOb55zVi34jHyCO7Ws5oiYr5OgnwQ0yLDbGrZ6mHYWDisPoRxBR4DcbC0TPifxEgjAV4hbN9myF978TfTl8ktFBNsySpv20czb3kV9AOrm76TVyEo5YpxV+iQvoCg76ascYxDRhRED9DUxTbrSZxfQlEjhsTIB3okawpe5TE7ziST81d/q3d1nxgdEzjVE8qv3Lhaeot6j4kGVYTg0HkW+TVeOfqYSnsULJTmAP6S/EufP2UMFx83r/nZx2PBkMRYTlLrNMbuv8L59Df51RMd9oJlpnk7kjogewJZ/pV1IO35tNN/dxHqqqpKdQ==
+ b=CMSBQBXWe+7RtaVKkEsgZUQZzTpJGn+NX14yWLBgOibOE9FGhNZBSH+ZOyu4C8vTO1te6zYNIkWKY+eu47ljN8LLYIp3BIvJ31C2DEGILmPUWUYw1iSHsjm63sooi313usuIDMuNQZ36yATZh6B4Z7tsSCGmMHOkaaR7Xy9eEhQh/zTbA6pM+/YQfJWzkoDBMPkGgRb1f4LD8hnHmmMtmd0V/ewpwyET7VTUVoRhduF551f2iSm0tNGFD2Lys1BSR7r2SnCarXoLOMEcAQbhA0+KXMsayFFzDJr7UUIml37zcbEseZc/FiEz9TF3GeJuPqNrHEULS1mNdmGowuz51g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vvz38SLuB2zflJkQzFJjY/e9+yEZHeS05S3/ai4Y6QY=;
- b=jcI5+UfNnfyfBe0CEYt/zHsIX+zkljEjzmQQ6OsiobABz/J3INpiT894z0PZfwvVf8KV8oXhD3Qd8Lmk+mNYCd1ZIY5miQ9tiP7pJZ7fWUdfTtm1LUuNy1Ba0pijtJhI3tbscQPkV0o/ZKeB1mm5X1hxh+4U3cXO0sNi/FZjof5/Un8GWyhVljkFrGVY2+0+8mksa30O7NclL9rEpkpcLxdBEAmqC6pSwhTFZ4nD035GRyCbZ2hICmCCxOq95iBOq6U4FRWHw0LBpGN0iFccEykPk0TNAEZQyHH1zOulBnJX7TNirqDHcJl+01WdHq6sgRFzvVTWqBOvAoMMSLu2Wg==
+ bh=t6dP2dVoePfydBdEWYS4xlVlzrxilNkumpA/eLn7Dc0=;
+ b=y41h8435gZ99hu4Ax8UvH2Gk1JXlFfhGDEKBlTdz1+jQMQYkBpGcjlSWQIj6pyn0hdjw2oL4U87e7TQiiA9u8BsVXG/IwOAJ1j4zS5ElgP4NOBOGG/VXunBE11J/gR9J6mS5yFoPZaS7lOqdR9+Lp1xNiTlkuKSqldL9d01hWHoMq+SAFRraXI/z6/OxOHFSA4js55snIRsWyQySIySv0vM768Ww4JwukkPaCg+ZpBUkAQns742nVlwHzhjeHwv5/GOy325hOBvf68CDs7VWguTZsVUeTGiQPk7v1uhrtHByJZ8EWtbKRuGdSl9S6UaE6GTnF7e9kwj7WmtJyUI6Vg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vvz38SLuB2zflJkQzFJjY/e9+yEZHeS05S3/ai4Y6QY=;
- b=ttZ6N61B2/UY3KEI+BedD3a2Jv+SXJs7Tj0neX5fviLebqnpfy5rPE/NnHw1095BUGGBR493lOGZIvA0nS/f0RBbRCgIGZIRzWV9g9iMDNdrTg88j0cb7nSAYTn0W4/JRWe5Zt0I1CBIXKCu8y5Lx+9/FBjWaEbGcwRAOGB1jkmppFF9rkTZSwmZ7IK3uEvVH91Qumdwl0kPCgBhNhtgTYqvLBG1YBL5v59aQMnYQ2m+uZl10/ZHxSskFIoNjyaCPqjRH00KDDbgHNmrrqk7UhWs8gt7q5stI4kgQR1IRjAobsHlcY2qX9NfewKPUanfea3sm1Rj/uEyoVOuHLfIuQ==
-Received: from SN6PR01CA0010.prod.exchangelabs.com (2603:10b6:805:b6::23) by
- SJ2PR12MB9085.namprd12.prod.outlook.com (2603:10b6:a03:564::10) with
+ bh=t6dP2dVoePfydBdEWYS4xlVlzrxilNkumpA/eLn7Dc0=;
+ b=CSl7fZzxihb5mp2WGRKyFKCXAnN86vRtWkG9DiMxWQY4lICBqWRzJKhY9NVbNdBWuBmbyPimiSwa0b1Tb9ITdpDOPy4v2rkm1K+IAlVayC7f87/STsuXS/HqCm/XPFXIyv4pQM0c9f31kA1L0zdT5l6XUDhqEtfvK70pt1OlkkH7Ig78WFgxJpN4AKRZyPp4O4kqhd0ai5+AIEIEZJV1ywJYxZ4jgFPMiUzH5EfCaGptKG1XMReXeZh2f6zrN95TKJL2jZSlmSN9vmRv7OalPeI4V7EnP2GrMnx9lSqaFUu0b43wcfaq5Eqr689123696ZAqj59mroxbfbmWNl5prw==
+Received: from CH2PR10CA0021.namprd10.prod.outlook.com (2603:10b6:610:4c::31)
+ by IA1PR12MB9061.namprd12.prod.outlook.com (2603:10b6:208:3ab::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.34; Thu, 3 Jul
- 2025 10:39:08 +0000
-Received: from SN1PEPF0002636A.namprd02.prod.outlook.com
- (2603:10b6:805:b6:cafe::42) by SN6PR01CA0010.outlook.office365.com
- (2603:10b6:805:b6::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
+ 2025 10:39:01 +0000
+Received: from CH2PEPF0000013C.namprd02.prod.outlook.com
+ (2603:10b6:610:4c:cafe::b8) by CH2PR10CA0021.outlook.office365.com
+ (2603:10b6:610:4c::31) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.21 via Frontend Transport; Thu,
- 3 Jul 2025 10:38:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ 3 Jul 2025 10:39:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF0002636A.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF0000013C.mail.protection.outlook.com (10.167.244.73) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Thu, 3 Jul 2025 10:39:08 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.8901.15 via Frontend Transport; Thu, 3 Jul 2025 10:39:01 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 3 Jul 2025
- 03:38:58 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 03:38:51 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 3 Jul
- 2025 03:38:57 -0700
+ 2025 03:38:50 -0700
 Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 3 Jul 2025 03:38:54 -0700
+ Transport; Thu, 3 Jul 2025 03:38:47 -0700
 From: Sumit Gupta <sumitg@nvidia.com>
 To: <treding@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
 CC: <tbergstrom@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [PATCH v2 4/8] soc: tegra: cbb: improve handling for per SoC fabric data
-Date: Thu, 3 Jul 2025 16:08:25 +0530
-Message-ID: <20250703103829.1721024-5-sumitg@nvidia.com>
+Subject: [PATCH v2 2/8] soc: tegra: cbb: change master-slave to initiator-target
+Date: Thu, 3 Jul 2025 16:08:23 +0530
+Message-ID: <20250703103829.1721024-3-sumitg@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250703103829.1721024-1-sumitg@nvidia.com>
 References: <20250703103829.1721024-1-sumitg@nvidia.com>
@@ -86,486 +86,738 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636A:EE_|SJ2PR12MB9085:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42f58988-0919-4fae-2916-08ddba1dd72d
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013C:EE_|IA1PR12MB9061:EE_
+X-MS-Office365-Filtering-Correlation-Id: 06b1ca13-1219-4ea3-dcca-08ddba1dd2e8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DnzDpH24NjBkhNOuG7bFRXGcacrOJ0yPYdR3WTRzpH/BGmgp424RDf8edFkm?=
- =?us-ascii?Q?04t3t4f6NqZ7GsfIOWFDT/uvXftFKZ0wFt1vVY6s6PiiJmlGuPTt5GgHZE7R?=
- =?us-ascii?Q?zfu9+bVfAR/FXRTdtbUjJIxvFGHVPuubGv7Nha2lWU2FYEwbQPiVYEiOd88o?=
- =?us-ascii?Q?BF4cy9x1oUrigaBhBM6G2ajfsZ8/klVmW5wnuW7THXESjcxghrHsYPJxFbHM?=
- =?us-ascii?Q?pgpv7IF2Cg6YZlbbM/5/2xtvR+rmt3TW8UNvoVt1sU5cOmbWWtb/jtcmP7vu?=
- =?us-ascii?Q?AM2jX52pgGEq4Lt5E5fGVsnfqNN4/+C6SimYstIwXKvpW5wcUyVm59/147sV?=
- =?us-ascii?Q?IlDWQloepdPkhgxvtdUL4W/PIogyUVywX9tRL2zEuZ5tirwaAxPqb0ZOAdMz?=
- =?us-ascii?Q?B+HPsstYlOBEhqSNEhdFpKrFGKFd2y4hJ62UC03ZdvkSKkN1ORoJL1CHbW3B?=
- =?us-ascii?Q?vj8ocDVXodqz/NmvUbfyIMJ0+ZqEQZU0eov59taqxI11xr+hqDyVnkAixj3i?=
- =?us-ascii?Q?YuAMSZbq9FLHc2ywn06galn/F318WMbdHmiEs0wJVp0rLMfoVc7jNHDPtdrN?=
- =?us-ascii?Q?jQPKctpUEz68hLUd7eSghMH5DaHYNmnU/C13WSsVg4xya5hvRoHPxkFzo+8R?=
- =?us-ascii?Q?P+WaSsFVbNS26hMMVD/Quucf3WtTlLKoDipZsi+S5aOuXRAJdjijs0RGOGuK?=
- =?us-ascii?Q?DFIP9XtToyl/x863XPUk0peH8xIZDBtKQvIDDK7UH+wexu8TUf4VtD+xJvQz?=
- =?us-ascii?Q?LrTRnbiIvJ9PsKkQvOy90C3PFs2fKY4qeAcLQQ8Q0fbbvuaWDNyDKw080nq9?=
- =?us-ascii?Q?B/CMJrKuTSrYErtusr1JArantk0bLEnd4IXFVzsjp6GSduEjPji/3o3S8Lph?=
- =?us-ascii?Q?MQWSr8w3erEIoDFG7vqxy6NgJgRa9oKfpZHXZVOo4HbSz7TIiOstXj6/WVpf?=
- =?us-ascii?Q?eEOG4vR9hbHE2aAW2F/CjAmF3RFV7HhCbT3D1BrVevHd9cNoxj+3MEj4KaRt?=
- =?us-ascii?Q?Hd1Wtp8J4kK8M54HC5fSE/yOgocqTFW1ZCfWgWyCwU9jcj6+h4ngsdACqAk7?=
- =?us-ascii?Q?SQ2pRSEKtkArMne64ve619rXvloioaoZGwnjCLYQKHkK8XkeSAELrcggiN7Q?=
- =?us-ascii?Q?0P1PSEYggfs9Li0RBzAyncJsJcY/ja5GlFVkaWyx14WXaWDOusVFhBLMb++H?=
- =?us-ascii?Q?xEeMDBjVJDYgg7J/3QpMLjUklxIp5GKBqm0BVEr3PmBs94Hajhlp7Fuisyg2?=
- =?us-ascii?Q?Lhml1/P4R4nisYNKoucp8lo35fCoXc0LEYo/ICl1kUZBCI7wHAs0TngYwEso?=
- =?us-ascii?Q?4O3u3154t99mUDEy1KVQMX1LVYBavkHDEhNMg2Ni8U9GSZOGZEFIv0LsvSs1?=
- =?us-ascii?Q?C6Z6/LcvvNUY0Bvo4hkOr0YvdGE2Vr97haAix+6YrRz2OsGMjMS+uiXbRAKw?=
- =?us-ascii?Q?cuyzjXtRk0GHaL3JD7pxEFB0qLNtyWqlr8pEv66caBYhE1Ms4scuKlt4PaPI?=
- =?us-ascii?Q?cj+LChsneFzz4v/CmFQhbdHjz3WxaXa0TR/e?=
+	=?us-ascii?Q?yZ6HEjjie/g0gUHiqij4PdIyppVJSvP+X3b54npgUgQbOvIDWZTYPGtQOt9i?=
+ =?us-ascii?Q?g4/GfDPv7cJ8llNCfWA/f/l/v/kdR/QMWK1FOXijudI58tSzKim+dicqJNHx?=
+ =?us-ascii?Q?7hGfVGdFow6farH+lDUGpxP5fYgmpub5ELGaMaMJ7LHIHB+yVnwO0Ao6kQ0k?=
+ =?us-ascii?Q?zdb5Dh/sHSjjak9/AyNeV6euhXDQIY0ou53+KuWv77SuMDw8B4IVBcF0u+mA?=
+ =?us-ascii?Q?7p4jMBinY/7mmuWSq1h79IP2apxqJAGTrVdgHEi8Gr0MvD/uEMTgM8fGw3UM?=
+ =?us-ascii?Q?h6JEUMgxdFE6avCeZGbCN5NS4RTmwpjq3NGcRgKoDlrDgsavwjqhQgiggiHW?=
+ =?us-ascii?Q?OLY9jOuS4B9H4BxCsctIDR15hgcpx78/v6K/D8cWpD1vxRYULckfvRRlhEoy?=
+ =?us-ascii?Q?tb2+5SuRDyvaEMvsHbux51lpeI0r5TZ9U9Nh7IFqAEha8vI3jNj7YzeoBACI?=
+ =?us-ascii?Q?/Rde72JigPzj9edqW8p+CK1eEuNTIHShup9YnQ2GroetJouFwMmHGYE/2N6j?=
+ =?us-ascii?Q?25IRycreNRteQyabhD6Ox5CZJ00WhjdR0o2b4wDOeKF6HrNdGEtcB6v+tK8F?=
+ =?us-ascii?Q?P5nla6Rwy5QHZl+wOmhCdVYg3ITdz541tqxiFbt90fTRF7lcmWk6Qiqtg+89?=
+ =?us-ascii?Q?LZtPRSYl/4UjF7TVYOvjJNw6O8voz3c0ZYajSbDGbKQXAY+kbs2IkkjDByeE?=
+ =?us-ascii?Q?xtjMFEUVxgLKCYnDFWYpvxVEv8EPuoDfTG/lWK+rSiPMvALexmYJbhfvg/Yf?=
+ =?us-ascii?Q?fQCyz/abL0KUH81jdnOu7aFVPeWGcdnfLYF9nvlzzoAItHOszqMh/RwLY8Yp?=
+ =?us-ascii?Q?UeQ7Y1yJPXsHQmsTY34hcTz306AoAzVvou0/fdVIEusNWR1qs5PH2ypk6Iu/?=
+ =?us-ascii?Q?n5OmjqBPkiE9ijKJocsvX6aQoZC3qqBzb/x+OTXjqCZ4ZQsFgxYF8DkS/IK0?=
+ =?us-ascii?Q?FRyCmFJiNcFxOKDWHYI5SGEpll5uPAyhNDdSNSz+EpgwHLk+TYHbmoSXcG/U?=
+ =?us-ascii?Q?ohF+92/ODX/ZMsHvfuv4SjFucW1yw8pbQN2HJMwRqcEysVQn07jvdFIu/ZW/?=
+ =?us-ascii?Q?b7PEnXF2QnxqR276nwBKrNzezXd738IpBad23TuzV/rpi1pV1agwNrV549oX?=
+ =?us-ascii?Q?+B6VgEjGsynGyhcfdzFHctiGtQSC00U20VaNgQiELknnCf/v9uEuGbzsjAdz?=
+ =?us-ascii?Q?X8KdVe+IiOOOOZPE3rY9FF/LRsmnO+HhH2atfKRoV83wBSYDiy60s9Qv1Sqv?=
+ =?us-ascii?Q?wfnCwIgM/37ibZOMo1sBeFpO0x/rOHMs5LsC12TktPZoNo3uiOh8+cAUpDRA?=
+ =?us-ascii?Q?wc5YSUjvxflwrtPvy3MT+xZRpOk8+KuoAUlykRM/4v6EAQmBD9wkI2d85Opq?=
+ =?us-ascii?Q?kPxERbAy4yeiASRM7Y9ZGCVQ8bkzpxXFnxgH/v6do4Rj6xGx4rxT33rabew/?=
+ =?us-ascii?Q?v3oDsBVZOX2qXmYWu/DKIGmHJlxg6G/ka6mPXrr5E5xfSg3WR7Z5V4zCBDoB?=
+ =?us-ascii?Q?JFwdI3YkWQXlvJsdzyowKP9T1PIIjVgd1+Jr?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:39:08.2095
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:39:01.0201
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42f58988-0919-4fae-2916-08ddba1dd72d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06b1ca13-1219-4ea3-dcca-08ddba1dd2e8
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636A.namprd02.prod.outlook.com
+	CH2PEPF0000013C.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9085
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9061
 
-Improve handling for the per soc fabrics and targets.
-The below changes make them more flexible and ready for future SoC's.
-- Added SoC prefix to Fabric_ID enums.
-- Rename *lookup_target_timeout() to *sw_lookup_target_timeout() to
-  make it separate from HW based lookup function to be added later.
-- Moved target_map within fabric_lookup table to make it easy to
-  check whether SW vs HW lookup is supported and handle accordingly.
-- Slight improvements to some error prints.
+Change usage of 'Master/Slave' to 'Initiator/Target' as per
+the new convention.
 
 Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- drivers/soc/tegra/cbb/tegra234-cbb.c | 239 +++++++++++++++------------
- 1 file changed, 131 insertions(+), 108 deletions(-)
+ drivers/soc/tegra/cbb/tegra194-cbb.c |  34 ++---
+ drivers/soc/tegra/cbb/tegra234-cbb.c | 205 ++++++++++++++-------------
+ 2 files changed, 120 insertions(+), 119 deletions(-)
 
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index 846b17ffc2f97..c1bdea8c853fe 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved
++ * Copyright (c) 2021-2025, NVIDIA CORPORATION. All rights reserved
+  *
+  * The driver handles Error's from Control Backbone(CBB) generated due to
+  * illegal accesses. When an error is reported from a NOC within CBB,
+@@ -138,7 +138,7 @@ struct tegra194_cbb_userbits {
+ struct tegra194_cbb_noc_data {
+ 	const char *name;
+ 	bool erd_mask_inband_err;
+-	const char * const *master_id;
++	const char * const *initiator_id;
+ 	unsigned int max_aperture;
+ 	const struct tegra194_cbb_aperture *noc_aperture;
+ 	const char * const *routeid_initflow;
+@@ -216,7 +216,7 @@ static const char * const tegra194_axi2apb_error[] = {
+ 	"CH2RFIFOF - Ch2 Request FIFO Full interrupt"
+ };
+ 
+-static const char * const tegra194_master_id[] = {
++static const char * const tegra194_initiator_id[] = {
+ 	[0x0] = "CCPLEX",
+ 	[0x1] = "CCPLEX_DPMU",
+ 	[0x2] = "BPMP",
+@@ -238,7 +238,7 @@ static const struct tegra_cbb_error tegra194_cbb_errors[] = {
+ 	{
+ 		.code = "SLV",
+ 		.source = "Target",
+-		.desc = "Target error detected by CBB slave"
++		.desc = "Target error detected by CBB target"
+ 	}, {
+ 		.code = "DEC",
+ 		.source = "Initiator NIU",
+@@ -1774,8 +1774,8 @@ static void print_errlog5(struct seq_file *file, struct tegra194_cbb *cbb)
+ 		tegra_cbb_print_err(file, "\t  AXI ID\t\t: %#x\n", userbits.axi_id);
+ 	}
+ 
+-	tegra_cbb_print_err(file, "\t  Master ID\t\t: %s\n",
+-			    cbb->noc->master_id[userbits.mstr_id]);
++	tegra_cbb_print_err(file, "\t  Initiator ID\t\t: %s\n",
++			    cbb->noc->initiator_id[userbits.mstr_id]);
+ 	tegra_cbb_print_err(file, "\t  Security Group(GRPSEC): %#x\n", userbits.grpsec);
+ 	tegra_cbb_print_cache(file, userbits.axcache);
+ 	tegra_cbb_print_prot(file, userbits.axprot);
+@@ -1837,14 +1837,14 @@ print_errlog1_2(struct seq_file *file, struct tegra194_cbb *cbb,
+ 
+ /*
+  * Print transcation type, error code and description from ErrLog0 for all
+- * errors. For NOC slave errors, all relevant error info is printed using
++ * errors. For NOC target errors, all relevant error info is printed using
+  * ErrLog0 only. But additional information is printed for errors from
+- * APB slaves because for them:
+- *  - All errors are logged as SLV(slave) errors due to APB having only single
++ * APB targets because for them:
++ *  - All errors are logged as SLV(target) errors due to APB having only single
+  *    bit pslverr to report all errors.
+  *  - Exact cause is printed by reading DMAAPB_X_RAW_INTERRUPT_STATUS register.
+  *  - The driver prints information showing AXI2APB bridge and exact error
+- *    only if there is error in any AXI2APB slave.
++ *    only if there is error in any AXI2APB target.
+  *  - There is still no way to disambiguate a DEC error from SLV error type.
+  */
+ static bool print_errlog0(struct seq_file *file, struct tegra194_cbb *cbb)
+@@ -1884,8 +1884,8 @@ static bool print_errlog0(struct seq_file *file, struct tegra194_cbb *cbb)
+ 		/* For all SLV errors, read DMAAPB_X_RAW_INTERRUPT_STATUS
+ 		 * register to get error status for all AXI2APB bridges.
+ 		 * Print bridge details if a bit is set in a bridge's
+-		 * status register due to error in a APB slave connected
+-		 * to that bridge. For other NOC slaves, none of the status
++		 * status register due to error in a APB target connected
++		 * to that bridge. For other NOC targets, none of the status
+ 		 * register will be set.
+ 		 */
+ 
+@@ -2118,7 +2118,7 @@ static const struct tegra_cbb_ops tegra194_cbb_ops = {
+ static struct tegra194_cbb_noc_data tegra194_cbb_central_noc_data = {
+ 	.name = "cbb-noc",
+ 	.erd_mask_inband_err = true,
+-	.master_id = tegra194_master_id,
++	.initiator_id = tegra194_initiator_id,
+ 	.noc_aperture = tegra194_cbbcentralnoc_apert_lookup,
+ 	.max_aperture = ARRAY_SIZE(tegra194_cbbcentralnoc_apert_lookup),
+ 	.routeid_initflow = tegra194_cbbcentralnoc_routeid_initflow,
+@@ -2130,7 +2130,7 @@ static struct tegra194_cbb_noc_data tegra194_cbb_central_noc_data = {
+ static struct tegra194_cbb_noc_data tegra194_aon_noc_data = {
+ 	.name = "aon-noc",
+ 	.erd_mask_inband_err = false,
+-	.master_id = tegra194_master_id,
++	.initiator_id = tegra194_initiator_id,
+ 	.noc_aperture = tegra194_aonnoc_aperture_lookup,
+ 	.max_aperture = ARRAY_SIZE(tegra194_aonnoc_aperture_lookup),
+ 	.routeid_initflow = tegra194_aonnoc_routeid_initflow,
+@@ -2142,7 +2142,7 @@ static struct tegra194_cbb_noc_data tegra194_aon_noc_data = {
+ static struct tegra194_cbb_noc_data tegra194_bpmp_noc_data = {
+ 	.name = "bpmp-noc",
+ 	.erd_mask_inband_err = false,
+-	.master_id = tegra194_master_id,
++	.initiator_id = tegra194_initiator_id,
+ 	.noc_aperture = tegra194_bpmpnoc_apert_lookup,
+ 	.max_aperture = ARRAY_SIZE(tegra194_bpmpnoc_apert_lookup),
+ 	.routeid_initflow = tegra194_bpmpnoc_routeid_initflow,
+@@ -2154,7 +2154,7 @@ static struct tegra194_cbb_noc_data tegra194_bpmp_noc_data = {
+ static struct tegra194_cbb_noc_data tegra194_rce_noc_data = {
+ 	.name = "rce-noc",
+ 	.erd_mask_inband_err = false,
+-	.master_id = tegra194_master_id,
++	.initiator_id = tegra194_initiator_id,
+ 	.noc_aperture = tegra194_scenoc_apert_lookup,
+ 	.max_aperture = ARRAY_SIZE(tegra194_scenoc_apert_lookup),
+ 	.routeid_initflow = tegra194_scenoc_routeid_initflow,
+@@ -2166,7 +2166,7 @@ static struct tegra194_cbb_noc_data tegra194_rce_noc_data = {
+ static struct tegra194_cbb_noc_data tegra194_sce_noc_data = {
+ 	.name = "sce-noc",
+ 	.erd_mask_inband_err = false,
+-	.master_id = tegra194_master_id,
++	.initiator_id = tegra194_initiator_id,
+ 	.noc_aperture = tegra194_scenoc_apert_lookup,
+ 	.max_aperture = ARRAY_SIZE(tegra194_scenoc_apert_lookup),
+ 	.routeid_initflow = tegra194_scenoc_routeid_initflow,
 diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index 6116221f0ca61..10f57f17fee8d 100644
+index 1da31ead2b5eb..5d04ed3b2d50d 100644
 --- a/drivers/soc/tegra/cbb/tegra234-cbb.c
 +++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -74,15 +74,15 @@
- #define WEN				0x20000
+@@ -1,13 +1,13 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved
++ * Copyright (c) 2021-2025, NVIDIA CORPORATION. All rights reserved
+  *
+  * The driver handles Error's from Control Backbone(CBB) version 2.0.
+  * generated due to illegal accesses. The driver prints debug information
+  * about failed transaction on receiving interrupt from Error Notifier.
+  * Error types supported by CBB2.0 are:
+  *   UNSUPPORTED_ERR, PWRDOWN_ERR, TIMEOUT_ERR, FIREWALL_ERR, DECODE_ERR,
+- *   SLAVE_ERR
++ *   TARGET_ERR
+  */
  
- enum tegra234_cbb_fabric_ids {
--	CBB_FAB_ID,
--	SCE_FAB_ID,
--	RCE_FAB_ID,
--	DCE_FAB_ID,
--	AON_FAB_ID,
--	PSC_FAB_ID,
--	BPMP_FAB_ID,
--	FSI_FAB_ID,
--	MAX_FAB_ID,
-+	T234_CBB_FABRIC_ID,
-+	T234_SCE_FABRIC_ID,
-+	T234_RCE_FABRIC_ID,
-+	T234_DCE_FABRIC_ID,
-+	T234_AON_FABRIC_ID,
-+	T234_PSC_FABRIC_ID,
-+	T234_BPMP_FABRIC_ID,
-+	T234_FSI_FABRIC_ID,
-+	T234_MAX_FABRIC_ID,
+ #include <linux/acpi.h>
+@@ -30,18 +30,18 @@
+ #define FABRIC_EN_CFG_ADDR_LOW_0		0x80
+ #define FABRIC_EN_CFG_ADDR_HI_0			0x84
+ 
+-#define FABRIC_MN_MASTER_ERR_EN_0		0x200
+-#define FABRIC_MN_MASTER_ERR_FORCE_0		0x204
+-#define FABRIC_MN_MASTER_ERR_STATUS_0		0x208
+-#define FABRIC_MN_MASTER_ERR_OVERFLOW_STATUS_0	0x20c
++#define FABRIC_MN_INITIATOR_ERR_EN_0		0x200
++#define FABRIC_MN_INITIATOR_ERR_FORCE_0		0x204
++#define FABRIC_MN_INITIATOR_ERR_STATUS_0		0x208
++#define FABRIC_MN_INITIATOR_ERR_OVERFLOW_STATUS_0	0x20c
+ 
+-#define FABRIC_MN_MASTER_LOG_ERR_STATUS_0	0x300
+-#define FABRIC_MN_MASTER_LOG_ADDR_LOW_0		0x304
+-#define FABRIC_MN_MASTER_LOG_ADDR_HIGH_0	0x308
+-#define FABRIC_MN_MASTER_LOG_ATTRIBUTES0_0	0x30c
+-#define FABRIC_MN_MASTER_LOG_ATTRIBUTES1_0	0x310
+-#define FABRIC_MN_MASTER_LOG_ATTRIBUTES2_0	0x314
+-#define FABRIC_MN_MASTER_LOG_USER_BITS0_0	0x318
++#define FABRIC_MN_INITIATOR_LOG_ERR_STATUS_0	0x300
++#define FABRIC_MN_INITIATOR_LOG_ADDR_LOW_0		0x304
++#define FABRIC_MN_INITIATOR_LOG_ADDR_HIGH_0	0x308
++#define FABRIC_MN_INITIATOR_LOG_ATTRIBUTES0_0	0x30c
++#define FABRIC_MN_INITIATOR_LOG_ATTRIBUTES1_0	0x310
++#define FABRIC_MN_INITIATOR_LOG_ATTRIBUTES2_0	0x314
++#define FABRIC_MN_INITIATOR_LOG_USER_BITS0_0	0x318
+ 
+ #define AXI_SLV_TIMEOUT_STATUS_0_0		0x8
+ #define APB_BLOCK_TMO_STATUS_0			0xc00
+@@ -53,7 +53,7 @@
+ #define FAB_EM_EL_FALCONSEC		GENMASK(1, 0)
+ 
+ #define FAB_EM_EL_FABID			GENMASK(20, 16)
+-#define FAB_EM_EL_SLAVEID		GENMASK(7, 0)
++#define FAB_EM_EL_TARGETID		GENMASK(7, 0)
+ 
+ #define FAB_EM_EL_ACCESSID		GENMASK(7, 0)
+ 
+@@ -85,7 +85,7 @@ enum tegra234_cbb_fabric_ids {
+ 	MAX_FAB_ID,
  };
  
- struct tegra234_target_lookup {
-@@ -90,8 +90,15 @@ struct tegra234_target_lookup {
+-struct tegra234_slave_lookup {
++struct tegra234_target_lookup {
+ 	const char *name;
  	unsigned int offset;
  };
- 
--struct tegra234_cbb_fabric {
-+struct tegra234_fabric_lookup {
- 	const char *name;
-+	bool is_lookup;
-+	const struct tegra234_target_lookup *target_map;
-+	const int max_targets;
-+};
-+
-+struct tegra234_cbb_fabric {
-+	int fab_id;
- 	phys_addr_t off_mask_erd;
+@@ -96,12 +96,12 @@ struct tegra234_cbb_fabric {
  	phys_addr_t firewall_base;
  	unsigned int firewall_ctl;
-@@ -100,8 +107,7 @@ struct tegra234_cbb_fabric {
+ 	unsigned int firewall_wr_ctl;
+-	const char * const *master_id;
++	const char * const *initiator_id;
  	unsigned int notifier_offset;
  	const struct tegra_cbb_error *errors;
  	const int max_errors;
--	const struct tegra234_target_lookup *target_map;
--	const int max_targets;
-+	const struct tegra234_fabric_lookup *fab_list;
- 	const u32 err_intr_enbl;
- 	const u32 err_status_clr;
+-	const struct tegra234_slave_lookup *slave_map;
+-	const int max_slaves;
++	const struct tegra234_target_lookup *target_map;
++	const int max_targets;
  };
-@@ -266,12 +272,17 @@ static void tegra234_cbb_lookup_apbslv(struct seq_file *file, const char *target
- 	}
+ 
+ struct tegra234_cbb {
+@@ -185,9 +185,9 @@ static void tegra234_cbb_error_clear(struct tegra_cbb *cbb)
+ {
+ 	struct tegra234_cbb *priv = to_tegra234_cbb(cbb);
+ 
+-	writel(0, priv->mon + FABRIC_MN_MASTER_ERR_FORCE_0);
++	writel(0, priv->mon + FABRIC_MN_INITIATOR_ERR_FORCE_0);
+ 
+-	writel(0x3f, priv->mon + FABRIC_MN_MASTER_ERR_STATUS_0);
++	writel(0x3f, priv->mon + FABRIC_MN_INITIATOR_ERR_STATUS_0);
+ 	dsb(sy);
  }
  
--static void tegra234_lookup_target_timeout(struct seq_file *file, struct tegra234_cbb *cbb,
--					   u8 target_id, u8 fab_id)
-+static void tegra234_sw_lookup_target_timeout(struct seq_file *file, struct tegra234_cbb *cbb,
-+					      u8 target_id, u8 fab_id)
- {
--	const struct tegra234_target_lookup *map = cbb->fabric->target_map;
-+	const struct tegra234_target_lookup *map = cbb->fabric->fab_list[fab_id].target_map;
- 	void __iomem *addr;
- 
-+	if (target_id >= cbb->fabric->fab_list[fab_id].max_targets) {
-+		tegra_cbb_print_err(file, "\t  Invalid target_id:%d\n", target_id);
-+		return;
-+	}
-+
- 	/*
- 	 * 1) Get target node name and address mapping using target_id.
- 	 * 2) Check if the timed out target node is APB or AXI.
-@@ -354,7 +365,6 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
- {
- 	u8 cache_type, prot_type, burst_length, mstr_id, grpsec, vqc, falconsec, beat_size;
- 	u8 access_type, access_id, requester_socket_id, local_socket_id, target_id, fab_id;
--	char fabric_name[20];
- 	bool is_numa = false;
- 	u8 burst_type;
- 
-@@ -399,21 +409,18 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
- 	else
- 		tegra_cbb_print_err(file, "\t  Wrong type index:%u\n", cbb->type);
- 
--	tegra_cbb_print_err(file, "\t  Initiator_Id\t\t: %s\n", cbb->fabric->initiator_id[mstr_id]);
-+	tegra_cbb_print_err(file, "\t  Initiator_Id\t\t: %#x\n", mstr_id);
-+	if (cbb->fabric->initiator_id)
-+		tegra_cbb_print_err(file, "\t  Initiator\t\t: %s\n",
-+				    cbb->fabric->initiator_id[mstr_id]);
-+
- 	tegra_cbb_print_err(file, "\t  Address\t\t: %#llx\n", cbb->access);
- 
- 	tegra_cbb_print_cache(file, cache_type);
- 	tegra_cbb_print_prot(file, prot_type);
- 
- 	tegra_cbb_print_err(file, "\t  Access_Type\t\t: %s", (access_type) ? "Write\n" : "Read\n");
--	tegra_cbb_print_err(file, "\t  Access_ID\t\t: %#x", access_id);
--
--	if (fab_id == PSC_FAB_ID)
--		strcpy(fabric_name, "psc-fabric");
--	else if (fab_id == FSI_FAB_ID)
--		strcpy(fabric_name, "fsi-fabric");
--	else
--		strcpy(fabric_name, cbb->fabric->name);
-+	tegra_cbb_print_err(file, "\t  Access_ID\t\t: %#x\n", access_id);
- 
- 	if (is_numa) {
- 		tegra_cbb_print_err(file, "\t  Requester_Socket_Id\t: %#x\n",
-@@ -424,7 +431,9 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
- 				    num_possible_nodes());
- 	}
- 
--	tegra_cbb_print_err(file, "\t  Fabric\t\t: %s\n", fabric_name);
-+	tegra_cbb_print_err(file, "\t  Fabric\t\t: %s (id:%#x)\n",
-+			    cbb->fabric->fab_list[fab_id].name, fab_id);
-+
- 	tegra_cbb_print_err(file, "\t  Target_Id\t\t: %#x\n", target_id);
- 	tegra_cbb_print_err(file, "\t  Burst_length\t\t: %#x\n", burst_length);
- 	tegra_cbb_print_err(file, "\t  Burst_type\t\t: %#x\n", burst_type);
-@@ -433,21 +442,13 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
- 	tegra_cbb_print_err(file, "\t  GRPSEC\t\t: %#x\n", grpsec);
- 	tegra_cbb_print_err(file, "\t  FALCONSEC\t\t: %#x\n", falconsec);
- 
--	if ((fab_id == PSC_FAB_ID) || (fab_id == FSI_FAB_ID))
-+	if (!cbb->fabric->fab_list[fab_id].is_lookup)
- 		return;
- 
--	if (target_id >= cbb->fabric->max_targets) {
--		tegra_cbb_print_err(file, "\t  Invalid target_id:%d\n", target_id);
--		return;
--	}
--
--	if (!strcmp(cbb->fabric->errors[cbb->type].code, "TIMEOUT_ERR")) {
--		tegra234_lookup_target_timeout(file, cbb, target_id, fab_id);
--		return;
--	}
-+	if (!strcmp(cbb->fabric->errors[cbb->type].code, "TIMEOUT_ERR"))
-+		tegra234_sw_lookup_target_timeout(file, cbb, target_id, fab_id);
- 
--	tegra_cbb_print_err(file, "\t  Target\t\t\t: %s\n",
--			    cbb->fabric->target_map[target_id].name);
-+	return;
+@@ -218,13 +218,13 @@ static u32 tegra234_cbb_get_tmo_slv(void __iomem *addr)
+ 	return timeout;
  }
  
- static int print_errmonX_info(struct seq_file *file, struct tegra234_cbb *cbb)
-@@ -508,7 +509,7 @@ static int print_err_notifier(struct seq_file *file, struct tegra234_cbb *cbb, u
+-static void tegra234_cbb_tmo_slv(struct seq_file *file, const char *slave, void __iomem *addr,
++static void tegra234_cbb_tmo_slv(struct seq_file *file, const char *target, void __iomem *addr,
+ 				 u32 status)
+ {
+-	tegra_cbb_print_err(file, "\t  %s : %#x\n", slave, status);
++	tegra_cbb_print_err(file, "\t  %s : %#x\n", target, status);
+ }
  
- 	pr_crit("**************************************\n");
- 	pr_crit("CPU:%d, Error:%s, Errmon:%d\n", smp_processor_id(),
--		cbb->fabric->name, status);
-+		cbb->fabric->fab_list[cbb->fabric->fab_id].name, status);
+-static void tegra234_cbb_lookup_apbslv(struct seq_file *file, const char *slave,
++static void tegra234_cbb_lookup_apbslv(struct seq_file *file, const char *target,
+ 				       void __iomem *base)
+ {
+ 	unsigned int block = 0;
+@@ -234,7 +234,7 @@ static void tegra234_cbb_lookup_apbslv(struct seq_file *file, const char *slave,
+ 
+ 	status = tegra234_cbb_get_tmo_slv(base);
+ 	if (status)
+-		tegra_cbb_print_err(file, "\t  %s_BLOCK_TMO_STATUS : %#x\n", slave, status);
++		tegra_cbb_print_err(file, "\t  %s_BLOCK_TMO_STATUS : %#x\n", target, status);
  
  	while (status) {
  		if (status & BIT(0)) {
-@@ -531,13 +532,13 @@ static int print_err_notifier(struct seq_file *file, struct tegra234_cbb *cbb, u
- 			tegra234_cbb_error_clear(&cbb->base);
- 			if (err)
- 				return err;
-+			tegra_cbb_print_err(file, "\t**************************************\n");
- 		}
+@@ -249,7 +249,7 @@ static void tegra234_cbb_lookup_apbslv(struct seq_file *file, const char *slave,
+ 					if (clients != 0xffffffff)
+ 						clients &= BIT(client);
  
- 		status >>= 1;
- 		index++;
+-					sprintf(name, "%s_BLOCK%d_TMO", slave, block);
++					sprintf(name, "%s_BLOCK%d_TMO", target, block);
+ 
+ 					tegra234_cbb_tmo_slv(file, name, addr, clients);
+ 				}
+@@ -264,16 +264,16 @@ static void tegra234_cbb_lookup_apbslv(struct seq_file *file, const char *slave,
  	}
- 
--	tegra_cbb_print_err(file, "\t**************************************\n");
- 	return 0;
  }
  
-@@ -586,7 +587,8 @@ static irqreturn_t tegra234_cbb_isr(int irq, void *data)
+-static void tegra234_lookup_slave_timeout(struct seq_file *file, struct tegra234_cbb *cbb,
+-					  u8 slave_id, u8 fab_id)
++static void tegra234_lookup_target_timeout(struct seq_file *file, struct tegra234_cbb *cbb,
++					   u8 target_id, u8 fab_id)
+ {
+-	const struct tegra234_slave_lookup *map = cbb->fabric->slave_map;
++	const struct tegra234_target_lookup *map = cbb->fabric->target_map;
+ 	void __iomem *addr;
  
- 		if (status && (irq == priv->sec_irq)) {
- 			tegra_cbb_print_err(NULL, "CPU:%d, Error: %s@0x%llx, irq=%d\n",
--					    smp_processor_id(), priv->fabric->name,
-+					    smp_processor_id(),
-+					    priv->fabric->fab_list[priv->fabric->fab_id].name,
- 					    priv->res->start, irq);
+ 	/*
+-	 * 1) Get slave node name and address mapping using slave_id.
+-	 * 2) Check if the timed out slave node is APB or AXI.
+-	 * 3) If AXI, then print timeout register and reset axi slave
++	 * 1) Get target node name and address mapping using target_id.
++	 * 2) Check if the timed out target node is APB or AXI.
++	 * 3) If AXI, then print timeout register and reset axi target
+ 	 *    using <FABRIC>_SN_<>_SLV_TIMEOUT_STATUS_0_0 register.
+ 	 * 4) If APB, then perform an additional lookup to find the client
+ 	 *    which timed out.
+@@ -287,12 +287,12 @@ static void tegra234_lookup_slave_timeout(struct seq_file *file, struct tegra234
+ 	 *	e) Goto step-a till all bits are set.
+ 	 */
  
- 			err = print_err_notifier(NULL, priv, status);
-@@ -704,21 +706,6 @@ static const struct tegra234_target_lookup tegra234_aon_target_map[] = {
- 	{ "CPU",     0x16000 },
+-	addr = cbb->regs + map[slave_id].offset;
++	addr = cbb->regs + map[target_id].offset;
+ 
+-	if (strstr(map[slave_id].name, "AXI2APB")) {
++	if (strstr(map[target_id].name, "AXI2APB")) {
+ 		addr += APB_BLOCK_TMO_STATUS_0;
+ 
+-		tegra234_cbb_lookup_apbslv(file, map[slave_id].name, addr);
++		tegra234_cbb_lookup_apbslv(file, map[target_id].name, addr);
+ 	} else {
+ 		char name[64];
+ 		u32 status;
+@@ -301,7 +301,7 @@ static void tegra234_lookup_slave_timeout(struct seq_file *file, struct tegra234
+ 
+ 		status = tegra234_cbb_get_tmo_slv(addr);
+ 		if (status) {
+-			sprintf(name, "%s_SLV_TIMEOUT_STATUS", map[slave_id].name);
++			sprintf(name, "%s_SLV_TIMEOUT_STATUS", map[target_id].name);
+ 			tegra234_cbb_tmo_slv(file, name, addr, status);
+ 		}
+ 	}
+@@ -351,7 +351,7 @@ static void tegra234_cbb_print_error(struct seq_file *file, struct tegra234_cbb
+ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
+ {
+ 	u8 cache_type, prot_type, burst_length, mstr_id, grpsec, vqc, falconsec, beat_size;
+-	u8 access_type, access_id, requester_socket_id, local_socket_id, slave_id, fab_id;
++	u8 access_type, access_id, requester_socket_id, local_socket_id, target_id, fab_id;
+ 	char fabric_name[20];
+ 	bool is_numa = false;
+ 	u8 burst_type;
+@@ -366,7 +366,7 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
+ 
+ 	/*
+ 	 * For SOC with multiple NUMA nodes, print cross socket access
+-	 * errors only if initiator/master_id is CCPLEX, CPMU or GPU.
++	 * errors only if initiator_id is CCPLEX, CPMU or GPU.
+ 	 */
+ 	if (is_numa) {
+ 		local_socket_id = numa_node_id();
+@@ -379,7 +379,7 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
+ 	}
+ 
+ 	fab_id = FIELD_GET(FAB_EM_EL_FABID, cbb->mn_attr2);
+-	slave_id = FIELD_GET(FAB_EM_EL_SLAVEID, cbb->mn_attr2);
++	target_id = FIELD_GET(FAB_EM_EL_TARGETID, cbb->mn_attr2);
+ 
+ 	access_id = FIELD_GET(FAB_EM_EL_ACCESSID, cbb->mn_attr1);
+ 
+@@ -397,7 +397,7 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
+ 	else
+ 		tegra_cbb_print_err(file, "\t  Wrong type index:%u\n", cbb->type);
+ 
+-	tegra_cbb_print_err(file, "\t  MASTER_ID\t\t: %s\n", cbb->fabric->master_id[mstr_id]);
++	tegra_cbb_print_err(file, "\t  Initiator_Id\t\t: %s\n", cbb->fabric->initiator_id[mstr_id]);
+ 	tegra_cbb_print_err(file, "\t  Address\t\t: %#llx\n", cbb->access);
+ 
+ 	tegra_cbb_print_cache(file, cache_type);
+@@ -423,7 +423,7 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
+ 	}
+ 
+ 	tegra_cbb_print_err(file, "\t  Fabric\t\t: %s\n", fabric_name);
+-	tegra_cbb_print_err(file, "\t  Slave_Id\t\t: %#x\n", slave_id);
++	tegra_cbb_print_err(file, "\t  Target_Id\t\t: %#x\n", target_id);
+ 	tegra_cbb_print_err(file, "\t  Burst_length\t\t: %#x\n", burst_length);
+ 	tegra_cbb_print_err(file, "\t  Burst_type\t\t: %#x\n", burst_type);
+ 	tegra_cbb_print_err(file, "\t  Beat_size\t\t: %#x\n", beat_size);
+@@ -434,24 +434,25 @@ static void print_errlog_err(struct seq_file *file, struct tegra234_cbb *cbb)
+ 	if ((fab_id == PSC_FAB_ID) || (fab_id == FSI_FAB_ID))
+ 		return;
+ 
+-	if (slave_id >= cbb->fabric->max_slaves) {
+-		tegra_cbb_print_err(file, "\t  Invalid slave_id:%d\n", slave_id);
++	if (target_id >= cbb->fabric->max_targets) {
++		tegra_cbb_print_err(file, "\t  Invalid target_id:%d\n", target_id);
+ 		return;
+ 	}
+ 
+ 	if (!strcmp(cbb->fabric->errors[cbb->type].code, "TIMEOUT_ERR")) {
+-		tegra234_lookup_slave_timeout(file, cbb, slave_id, fab_id);
++		tegra234_lookup_target_timeout(file, cbb, target_id, fab_id);
+ 		return;
+ 	}
+ 
+-	tegra_cbb_print_err(file, "\t  Slave\t\t\t: %s\n", cbb->fabric->slave_map[slave_id].name);
++	tegra_cbb_print_err(file, "\t  Target\t\t\t: %s\n",
++			    cbb->fabric->target_map[target_id].name);
+ }
+ 
+ static int print_errmonX_info(struct seq_file *file, struct tegra234_cbb *cbb)
+ {
+ 	u32 overflow, status, error;
+ 
+-	status = readl(cbb->mon + FABRIC_MN_MASTER_ERR_STATUS_0);
++	status = readl(cbb->mon + FABRIC_MN_INITIATOR_ERR_STATUS_0);
+ 	if (!status) {
+ 		pr_err("Error Notifier received a spurious notification\n");
+ 		return -ENODATA;
+@@ -462,11 +463,11 @@ static int print_errmonX_info(struct seq_file *file, struct tegra234_cbb *cbb)
+ 		return -EINVAL;
+ 	}
+ 
+-	overflow = readl(cbb->mon + FABRIC_MN_MASTER_ERR_OVERFLOW_STATUS_0);
++	overflow = readl(cbb->mon + FABRIC_MN_INITIATOR_ERR_OVERFLOW_STATUS_0);
+ 
+ 	tegra234_cbb_print_error(file, cbb, status, overflow);
+ 
+-	error = readl(cbb->mon + FABRIC_MN_MASTER_LOG_ERR_STATUS_0);
++	error = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_ERR_STATUS_0);
+ 	if (!error) {
+ 		pr_info("Error Monitor doesn't have Error Logger\n");
+ 		return -EINVAL;
+@@ -478,15 +479,15 @@ static int print_errmonX_info(struct seq_file *file, struct tegra234_cbb *cbb)
+ 		if (error & BIT(0)) {
+ 			u32 hi, lo;
+ 
+-			hi = readl(cbb->mon + FABRIC_MN_MASTER_LOG_ADDR_HIGH_0);
+-			lo = readl(cbb->mon + FABRIC_MN_MASTER_LOG_ADDR_LOW_0);
++			hi = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_ADDR_HIGH_0);
++			lo = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_ADDR_LOW_0);
+ 
+ 			cbb->access = (u64)hi << 32 | lo;
+ 
+-			cbb->mn_attr0 = readl(cbb->mon + FABRIC_MN_MASTER_LOG_ATTRIBUTES0_0);
+-			cbb->mn_attr1 = readl(cbb->mon + FABRIC_MN_MASTER_LOG_ATTRIBUTES1_0);
+-			cbb->mn_attr2 = readl(cbb->mon + FABRIC_MN_MASTER_LOG_ATTRIBUTES2_0);
+-			cbb->mn_user_bits = readl(cbb->mon + FABRIC_MN_MASTER_LOG_USER_BITS0_0);
++			cbb->mn_attr0 = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_ATTRIBUTES0_0);
++			cbb->mn_attr1 = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_ATTRIBUTES1_0);
++			cbb->mn_attr2 = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_ATTRIBUTES2_0);
++			cbb->mn_user_bits = readl(cbb->mon + FABRIC_MN_INITIATOR_LOG_USER_BITS0_0);
+ 
+ 			print_errlog_err(file, cbb);
+ 		}
+@@ -591,7 +592,7 @@ static irqreturn_t tegra234_cbb_isr(int irq, void *data)
+ 				goto unlock;
+ 
+ 			/*
+-			 * If illegal request is from CCPLEX(id:0x1) master then call WARN()
++			 * If illegal request is from CCPLEX(id:0x1) initiator then call WARN()
+ 			 */
+ 			if (priv->fabric->off_mask_erd) {
+ 				mstr_id =  FIELD_GET(USRBITS_MSTR_ID, priv->mn_user_bits);
+@@ -643,7 +644,7 @@ static const struct tegra_cbb_ops tegra234_cbb_ops = {
+ #endif
  };
  
--static const struct tegra234_cbb_fabric tegra234_aon_fabric = {
--	.name = "aon-fabric",
--	.initiator_id = tegra234_initiator_id,
--	.target_map = tegra234_aon_target_map,
--	.max_targets = ARRAY_SIZE(tegra234_aon_target_map),
--	.errors = tegra234_cbb_errors,
--	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
--	.err_intr_enbl = 0x7,
--	.err_status_clr = 0x3f,
--	.notifier_offset = 0x17000,
--	.firewall_base = 0x30000,
--	.firewall_ctl = 0x8d0,
--	.firewall_wr_ctl = 0x8c8,
--};
--
- static const struct tegra234_target_lookup tegra234_bpmp_target_map[] = {
+-static const char * const tegra234_master_id[] = {
++static const char * const tegra234_initiator_id[] = {
+ 	[0x00] = "TZ",
+ 	[0x01] = "CCPLEX",
+ 	[0x02] = "CCPMU",
+@@ -674,8 +675,8 @@ static const char * const tegra234_master_id[] = {
+ 
+ static const struct tegra_cbb_error tegra234_cbb_errors[] = {
+ 	{
+-		.code = "SLAVE_ERR",
+-		.desc = "Slave being accessed responded with an error"
++		.code = "TARGET_ERR",
++		.desc = "Target being accessed responded with an error"
+ 	}, {
+ 		.code = "DECODE_ERR",
+ 		.desc = "Attempt to access an address hole"
+@@ -684,17 +685,17 @@ static const struct tegra_cbb_error tegra234_cbb_errors[] = {
+ 		.desc = "Attempt to access a region which is firewall protected"
+ 	}, {
+ 		.code = "TIMEOUT_ERR",
+-		.desc = "No response returned by slave"
++		.desc = "No response returned by target"
+ 	}, {
+ 		.code = "PWRDOWN_ERR",
+ 		.desc = "Attempt to access a portion of fabric that is powered down"
+ 	}, {
+ 		.code = "UNSUPPORTED_ERR",
+-		.desc = "Attempt to access a slave through an unsupported access"
++		.desc = "Attempt to access a target through an unsupported access"
+ 	}
+ };
+ 
+-static const struct tegra234_slave_lookup tegra234_aon_slave_map[] = {
++static const struct tegra234_target_lookup tegra234_aon_target_map[] = {
  	{ "AXI2APB", 0x00000 },
- 	{ "AST0",    0x15000 },
-@@ -727,19 +714,13 @@ static const struct tegra234_target_lookup tegra234_bpmp_target_map[] = {
- 	{ "CPU",     0x18000 },
- };
+ 	{ "AST",     0x14000 },
+ 	{ "CBB",     0x15000 },
+@@ -703,9 +704,9 @@ static const struct tegra234_slave_lookup tegra234_aon_slave_map[] = {
  
--static const struct tegra234_cbb_fabric tegra234_bpmp_fabric = {
--	.name = "bpmp-fabric",
--	.initiator_id = tegra234_initiator_id,
--	.target_map = tegra234_bpmp_target_map,
--	.max_targets = ARRAY_SIZE(tegra234_bpmp_target_map),
--	.errors = tegra234_cbb_errors,
--	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
--	.err_intr_enbl = 0xf,
--	.err_status_clr = 0x3f,
--	.notifier_offset = 0x19000,
--	.firewall_base = 0x30000,
--	.firewall_ctl = 0x8f0,
--	.firewall_wr_ctl = 0x8e8,
-+static const struct tegra234_target_lookup tegra234_common_target_map[] = {
-+	{ "AXI2APB", 0x00000 },
-+	{ "AST0",    0x15000 },
-+	{ "AST1",    0x16000 },
-+	{ "CBB",     0x17000 },
-+	{ "RSVD",    0x00000 },
-+	{ "CPU",     0x18000 },
- };
- 
- static const struct tegra234_target_lookup tegra234_cbb_target_map[] = {
-@@ -806,11 +787,61 @@ static const struct tegra234_target_lookup tegra234_cbb_target_map[] = {
- 	{ "AXI2APB_3",  0x91000 },
- };
- 
-+static const struct tegra234_fabric_lookup tegra234_cbb_fab_list[] = {
-+	[T234_CBB_FABRIC_ID] = { "cbb-fabric", true,
-+				 tegra234_cbb_target_map,
-+				 ARRAY_SIZE(tegra234_cbb_target_map) },
-+	[T234_SCE_FABRIC_ID] = { "sce-fabric", true,
-+				 tegra234_common_target_map,
-+				 ARRAY_SIZE(tegra234_common_target_map) },
-+	[T234_RCE_FABRIC_ID] = { "rce-fabric", true,
-+				 tegra234_common_target_map,
-+				 ARRAY_SIZE(tegra234_common_target_map) },
-+	[T234_DCE_FABRIC_ID] = { "dce-fabric", true,
-+				 tegra234_common_target_map,
-+				 ARRAY_SIZE(tegra234_common_target_map) },
-+	[T234_AON_FABRIC_ID] = { "aon-fabric", true,
-+				 tegra234_aon_target_map,
-+				 ARRAY_SIZE(tegra234_bpmp_target_map) },
-+	[T234_PSC_FABRIC_ID] = { "psc-fabric" },
-+	[T234_BPMP_FABRIC_ID] = { "bpmp-fabric", true,
-+				 tegra234_bpmp_target_map,
-+				 ARRAY_SIZE(tegra234_bpmp_target_map) },
-+	[T234_FSI_FABRIC_ID] = { "fsi-fabric" },
-+};
-+
-+static const struct tegra234_cbb_fabric tegra234_aon_fabric = {
-+	.fab_id = T234_AON_FABRIC_ID,
-+	.fab_list = tegra234_cbb_fab_list,
+ static const struct tegra234_cbb_fabric tegra234_aon_fabric = {
+ 	.name = "aon-fabric",
+-	.master_id = tegra234_master_id,
+-	.slave_map = tegra234_aon_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra234_aon_slave_map),
 +	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0x7,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x17000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0x8d0,
-+	.firewall_wr_ctl = 0x8c8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra234_bpmp_fabric = {
-+	.fab_id = T234_BPMP_FABRIC_ID,
-+	.fab_list = tegra234_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0xf,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x19000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0x8f0,
-+	.firewall_wr_ctl = 0x8e8,
-+};
-+
- static const struct tegra234_cbb_fabric tegra234_cbb_fabric = {
--	.name = "cbb-fabric",
-+	.fab_id = T234_CBB_FABRIC_ID,
-+	.fab_list = tegra234_cbb_fab_list,
- 	.initiator_id = tegra234_initiator_id,
--	.target_map = tegra234_cbb_target_map,
--	.max_targets = ARRAY_SIZE(tegra234_cbb_target_map),
++	.target_map = tegra234_aon_target_map,
++	.max_targets = ARRAY_SIZE(tegra234_aon_target_map),
  	.errors = tegra234_cbb_errors,
  	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
- 	.err_intr_enbl = 0x7f,
-@@ -822,20 +853,10 @@ static const struct tegra234_cbb_fabric tegra234_cbb_fabric = {
+ 	.notifier_offset = 0x17000,
+@@ -714,7 +715,7 @@ static const struct tegra234_cbb_fabric tegra234_aon_fabric = {
+ 	.firewall_wr_ctl = 0x8c8,
+ };
+ 
+-static const struct tegra234_slave_lookup tegra234_bpmp_slave_map[] = {
++static const struct tegra234_target_lookup tegra234_bpmp_target_map[] = {
+ 	{ "AXI2APB", 0x00000 },
+ 	{ "AST0",    0x15000 },
+ 	{ "AST1",    0x16000 },
+@@ -724,9 +725,9 @@ static const struct tegra234_slave_lookup tegra234_bpmp_slave_map[] = {
+ 
+ static const struct tegra234_cbb_fabric tegra234_bpmp_fabric = {
+ 	.name = "bpmp-fabric",
+-	.master_id = tegra234_master_id,
+-	.slave_map = tegra234_bpmp_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra234_bpmp_slave_map),
++	.initiator_id = tegra234_initiator_id,
++	.target_map = tegra234_bpmp_target_map,
++	.max_targets = ARRAY_SIZE(tegra234_bpmp_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
+ 	.notifier_offset = 0x19000,
+@@ -735,7 +736,7 @@ static const struct tegra234_cbb_fabric tegra234_bpmp_fabric = {
+ 	.firewall_wr_ctl = 0x8e8,
+ };
+ 
+-static const struct tegra234_slave_lookup tegra234_cbb_slave_map[] = {
++static const struct tegra234_target_lookup tegra234_cbb_target_map[] = {
+ 	{ "AON",        0x40000 },
+ 	{ "BPMP",       0x41000 },
+ 	{ "CBB",        0x42000 },
+@@ -801,9 +802,9 @@ static const struct tegra234_slave_lookup tegra234_cbb_slave_map[] = {
+ 
+ static const struct tegra234_cbb_fabric tegra234_cbb_fabric = {
+ 	.name = "cbb-fabric",
+-	.master_id = tegra234_master_id,
+-	.slave_map = tegra234_cbb_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra234_cbb_slave_map),
++	.initiator_id = tegra234_initiator_id,
++	.target_map = tegra234_cbb_target_map,
++	.max_targets = ARRAY_SIZE(tegra234_cbb_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
+ 	.notifier_offset = 0x60000,
+@@ -813,7 +814,7 @@ static const struct tegra234_cbb_fabric tegra234_cbb_fabric = {
  	.firewall_wr_ctl = 0x23e8,
  };
  
--static const struct tegra234_target_lookup tegra234_common_target_map[] = {
--	{ "AXI2APB", 0x00000 },
--	{ "AST0",    0x15000 },
--	{ "AST1",    0x16000 },
--	{ "CBB",     0x17000 },
--	{ "RSVD",    0x00000 },
--	{ "CPU",     0x18000 },
--};
--
+-static const struct tegra234_slave_lookup tegra234_common_slave_map[] = {
++static const struct tegra234_target_lookup tegra234_common_target_map[] = {
+ 	{ "AXI2APB", 0x00000 },
+ 	{ "AST0",    0x15000 },
+ 	{ "AST1",    0x16000 },
+@@ -824,9 +825,9 @@ static const struct tegra234_slave_lookup tegra234_common_slave_map[] = {
+ 
  static const struct tegra234_cbb_fabric tegra234_dce_fabric = {
--	.name = "dce-fabric",
-+	.fab_id = T234_DCE_FABRIC_ID,
-+	.fab_list = tegra234_cbb_fab_list,
- 	.initiator_id = tegra234_initiator_id,
--	.target_map = tegra234_common_target_map,
--	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
+ 	.name = "dce-fabric",
+-	.master_id = tegra234_master_id,
+-	.slave_map = tegra234_common_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra234_common_slave_map),
++	.initiator_id = tegra234_initiator_id,
++	.target_map = tegra234_common_target_map,
++	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
  	.errors = tegra234_cbb_errors,
  	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
- 	.err_intr_enbl = 0xf,
-@@ -847,10 +868,9 @@ static const struct tegra234_cbb_fabric tegra234_dce_fabric = {
- };
+ 	.notifier_offset = 0x19000,
+@@ -837,9 +838,9 @@ static const struct tegra234_cbb_fabric tegra234_dce_fabric = {
  
  static const struct tegra234_cbb_fabric tegra234_rce_fabric = {
--	.name = "rce-fabric",
-+	.fab_id = T234_RCE_FABRIC_ID,
-+	.fab_list = tegra234_cbb_fab_list,
- 	.initiator_id = tegra234_initiator_id,
--	.target_map = tegra234_common_target_map,
--	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
+ 	.name = "rce-fabric",
+-	.master_id = tegra234_master_id,
+-	.slave_map = tegra234_common_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra234_common_slave_map),
++	.initiator_id = tegra234_initiator_id,
++	.target_map = tegra234_common_target_map,
++	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
  	.errors = tegra234_cbb_errors,
  	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
- 	.err_intr_enbl = 0xf,
-@@ -862,10 +882,9 @@ static const struct tegra234_cbb_fabric tegra234_rce_fabric = {
- };
+ 	.notifier_offset = 0x19000,
+@@ -850,9 +851,9 @@ static const struct tegra234_cbb_fabric tegra234_rce_fabric = {
  
  static const struct tegra234_cbb_fabric tegra234_sce_fabric = {
--	.name = "sce-fabric",
-+	.fab_id = T234_SCE_FABRIC_ID,
-+	.fab_list = tegra234_cbb_fab_list,
- 	.initiator_id = tegra234_initiator_id,
--	.target_map = tegra234_common_target_map,
--	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
+ 	.name = "sce-fabric",
+-	.master_id = tegra234_master_id,
+-	.slave_map = tegra234_common_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra234_common_slave_map),
++	.initiator_id = tegra234_initiator_id,
++	.target_map = tegra234_common_target_map,
++	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
  	.errors = tegra234_cbb_errors,
  	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
- 	.err_intr_enbl = 0xf,
-@@ -985,6 +1004,17 @@ static const struct tegra_cbb_error tegra241_cbb_errors[] = {
+ 	.notifier_offset = 0x19000,
+@@ -861,7 +862,7 @@ static const struct tegra234_cbb_fabric tegra234_sce_fabric = {
+ 	.firewall_wr_ctl = 0x288,
+ };
+ 
+-static const char * const tegra241_master_id[] = {
++static const char * const tegra241_initiator_id[] = {
+ 	[0x0] = "TZ",
+ 	[0x1] = "CCPLEX",
+ 	[0x2] = "CCPMU",
+@@ -879,22 +880,22 @@ static const char * const tegra241_master_id[] = {
+ };
+ 
+ /*
+- * Possible causes for Slave and Timeout errors.
+- * SLAVE_ERR:
+- * Slave being accessed responded with an error. Slave could return
++ * Possible causes for Target and Timeout errors.
++ * TARGET_ERR:
++ * Target being accessed responded with an error. Target could return
+  * an error for various cases :
+  *   Unsupported access, clamp setting when power gated, register
+- *   level firewall(SCR), address hole within the slave, etc
++ *   level firewall(SCR), address hole within the target, etc
+  *
+  * TIMEOUT_ERR:
+- * No response returned by slave. Can be due to slave being clock
+- * gated, under reset, powered down or slave inability to respond
+- * for an internal slave issue
++ * No response returned by target. Can be due to target being clock
++ * gated, under reset, powered down or target inability to respond
++ * for an internal target issue
+  */
+ static const struct tegra_cbb_error tegra241_cbb_errors[] = {
+ 	{
+-		.code = "SLAVE_ERR",
+-		.desc = "Slave being accessed responded with an error."
++		.code = "TARGET_ERR",
++		.desc = "Target being accessed responded with an error."
+ 	}, {
+ 		.code = "DECODE_ERR",
+ 		.desc = "Attempt to access an address hole or Reserved region of memory."
+@@ -903,16 +904,16 @@ static const struct tegra_cbb_error tegra241_cbb_errors[] = {
+ 		.desc = "Attempt to access a region which is firewalled."
+ 	}, {
+ 		.code = "TIMEOUT_ERR",
+-		.desc = "No response returned by slave."
++		.desc = "No response returned by target."
+ 	}, {
+ 		.code = "PWRDOWN_ERR",
+ 		.desc = "Attempt to access a portion of the fabric that is powered down."
+ 	}, {
+ 		.code = "UNSUPPORTED_ERR",
+-		.desc = "Attempt to access a slave through an unsupported access."
++		.desc = "Attempt to access a target through an unsupported access."
+ 	}, {
+ 		.code = "POISON_ERR",
+-		.desc = "Slave responds with poison error to indicate error in data."
++		.desc = "Target responds with poison error to indicate error in data."
+ 	}, {
+ 		.code = "RSVD"
+ 	}, {
+@@ -970,7 +971,7 @@ static const struct tegra_cbb_error tegra241_cbb_errors[] = {
  	},
  };
  
-+static const struct tegra234_target_lookup tegra241_bpmp_target_map[] = {
-+	{ "RSVD",    0x00000 },
-+	{ "RSVD",    0x00000 },
-+	{ "RSVD",    0x00000 },
-+	{ "CBB",     0x15000 },
-+	{ "CPU",     0x16000 },
-+	{ "AXI2APB", 0x00000 },
-+	{ "DBB0",    0x17000 },
-+	{ "DBB1",    0x18000 },
-+};
-+
- static const struct tegra234_target_lookup tegra241_cbb_target_map[] = {
+-static const struct tegra234_slave_lookup tegra241_cbb_slave_map[] = {
++static const struct tegra234_target_lookup tegra241_cbb_target_map[] = {
  	{ "RSVD",       0x00000 },
  	{ "PCIE_C8",    0x51000 },
-@@ -1047,11 +1077,16 @@ static const struct tegra234_target_lookup tegra241_cbb_target_map[] = {
- 	{ "AXI2APB_32", 0x8F000 },
- };
+ 	{ "PCIE_C9",    0x52000 },
+@@ -1034,9 +1035,9 @@ static const struct tegra234_slave_lookup tegra241_cbb_slave_map[] = {
  
-+static const struct tegra234_fabric_lookup tegra241_cbb_fab_list[] = {
-+	[T234_CBB_FABRIC_ID]  = { "cbb-fabric", true,
-+				  tegra241_cbb_target_map, ARRAY_SIZE(tegra241_cbb_target_map) },
-+	[T234_BPMP_FABRIC_ID] = { "bpmp-fabric", true,
-+				  tegra241_bpmp_target_map, ARRAY_SIZE(tegra241_cbb_target_map) },
-+};
  static const struct tegra234_cbb_fabric tegra241_cbb_fabric = {
--	.name = "cbb-fabric",
-+	.fab_id = T234_CBB_FABRIC_ID,
-+	.fab_list = tegra241_cbb_fab_list,
- 	.initiator_id = tegra241_initiator_id,
--	.target_map = tegra241_cbb_target_map,
--	.max_targets = ARRAY_SIZE(tegra241_cbb_target_map),
+ 	.name = "cbb-fabric",
+-	.master_id = tegra241_master_id,
+-	.slave_map = tegra241_cbb_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra241_cbb_slave_map),
++	.initiator_id = tegra241_initiator_id,
++	.target_map = tegra241_cbb_target_map,
++	.max_targets = ARRAY_SIZE(tegra241_cbb_target_map),
  	.errors = tegra241_cbb_errors,
  	.max_errors = ARRAY_SIZE(tegra241_cbb_errors),
- 	.err_intr_enbl = 0x7,
-@@ -1063,22 +1098,10 @@ static const struct tegra234_cbb_fabric tegra241_cbb_fabric = {
+ 	.notifier_offset = 0x60000,
+@@ -1046,7 +1047,7 @@ static const struct tegra234_cbb_fabric tegra241_cbb_fabric = {
  	.firewall_wr_ctl = 0x2368,
  };
  
--static const struct tegra234_target_lookup tegra241_bpmp_target_map[] = {
--	{ "RSVD",    0x00000 },
--	{ "RSVD",    0x00000 },
--	{ "RSVD",    0x00000 },
--	{ "CBB",     0x15000 },
--	{ "CPU",     0x16000 },
--	{ "AXI2APB", 0x00000 },
--	{ "DBB0",    0x17000 },
--	{ "DBB1",    0x18000 },
--};
--
+-static const struct tegra234_slave_lookup tegra241_bpmp_slave_map[] = {
++static const struct tegra234_target_lookup tegra241_bpmp_target_map[] = {
+ 	{ "RSVD",    0x00000 },
+ 	{ "RSVD",    0x00000 },
+ 	{ "RSVD",    0x00000 },
+@@ -1059,9 +1060,9 @@ static const struct tegra234_slave_lookup tegra241_bpmp_slave_map[] = {
+ 
  static const struct tegra234_cbb_fabric tegra241_bpmp_fabric = {
--	.name = "bpmp-fabric",
-+	.fab_id = T234_BPMP_FABRIC_ID,
-+	.fab_list = tegra241_cbb_fab_list,
- 	.initiator_id = tegra241_initiator_id,
--	.target_map = tegra241_bpmp_target_map,
--	.max_targets = ARRAY_SIZE(tegra241_bpmp_target_map),
+ 	.name = "bpmp-fabric",
+-	.master_id = tegra241_master_id,
+-	.slave_map = tegra241_bpmp_slave_map,
+-	.max_slaves = ARRAY_SIZE(tegra241_bpmp_slave_map),
++	.initiator_id = tegra241_initiator_id,
++	.target_map = tegra241_bpmp_target_map,
++	.max_targets = ARRAY_SIZE(tegra241_bpmp_target_map),
  	.errors = tegra241_cbb_errors,
  	.max_errors = ARRAY_SIZE(tegra241_cbb_errors),
- 	.err_intr_enbl = 0xf,
-@@ -1197,7 +1220,7 @@ static int __maybe_unused tegra234_cbb_resume_noirq(struct device *dev)
- 
- 	tegra234_cbb_error_enable(&cbb->base);
- 
--	dev_dbg(dev, "%s resumed\n", cbb->fabric->name);
-+	dev_dbg(dev, "%s resumed\n", cbb->fabric->fab_list[cbb->fabric->fab_id].name);
- 
- 	return 0;
- }
+ 	.notifier_offset = 0x19000,
 -- 
 2.34.1
 
