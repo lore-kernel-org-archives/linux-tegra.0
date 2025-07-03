@@ -1,76 +1,75 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2067.outbound.protection.outlook.com [40.107.93.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D229F293C52;
-	Thu,  3 Jul 2025 10:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80A12E1744;
+	Thu,  3 Jul 2025 10:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751539139; cv=fail; b=CWDdI0l2y0S0pNojMgmDR3sRbNVLzuno0C+lCA/g7n7zeIdV8vKmut5BWpIMAV69zPIB71hSVWB+pBHV+8avoJvZOQ1p0PJRBH8MfiizKEhHMfnuzN5MbmLhERBczG9q8vd/3RIDLfh1I8ZeAoIebrSQGVUNhiVegKu5J4emU5w=
+	t=1751539152; cv=fail; b=QNAsCf7k0c6LUhSqW+7KX7lj+OfFEiJI4jfZbppC45Y47buVftfm5W5Hx6HIZFW/BN69Ds5XOacqqnBpldB+dOSGHeji1vlEIqS7U3iEi/DEnSAkoy8OqUAXU1T166GmHRs1DWTzEWA6huedIGWmWcz86DfE78yeEpK9jgg+fz4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751539139; c=relaxed/simple;
-	bh=4fDaNbGW9N5aDuDDRfuhvODskWe3XjVwpCJQTb8p1k4=;
+	s=arc-20240116; t=1751539152; c=relaxed/simple;
+	bh=isPVhJl4x/7FQOqXKy+6AbSeBV0vjLk3b/fxMgHn1Pk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ovQ8BIhH8HmZrR5h1t21SmFcXBI0ZnwLm9q0LuhoJKyNiAuYSTEYAlNWvPHwKNko6Y4ugQQiRKDL2Wvz8HXBTyery9Xyx+By5yPYhTVSwrHHNgeIJfPClhZvGgvEEhNxcgYt6gh0DW+agVdS1wY8TFXByZc9Rjf6AB2LZyWfEu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r2PZF69X; arc=fail smtp.client-ip=40.107.94.65
+	 MIME-Version:Content-Type; b=lfff+5KS0xsFkBSqOu7J3OROK5om5W1kNDmRY2dv0T71g6bBChtgDq+AWK9ANmqzBQRkv7+0dJZtav25r4v4mjWVq692tOACwM9lUlRSo/Ri31Rq2bAvXBRD7vHY0Svx3zzDMxa+Lf+UHMAckXRjJbnpsM/+0IklM8Yx4RSNNf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MBnqk9NK; arc=fail smtp.client-ip=40.107.93.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r2PZF69X"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MBnqk9NK"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pB33YgDdIEx7QrWz9BL5a87broYB8THt7sMSaAdWE5aadHDRzmPWwBwGEeWFa/c+36MaTqKhOtFcnYnj//ZOM1viOyrdQXKWU6k3t8+xLjKX05PucB/W2vT/bSrAHdfkU+sb3usLEtMAoXwtMy8pCdMHLrq6jXrRElhmWIhXnmMb2UepH8/7lDNl6mwBIdRQ81VW8pr9HSzEJcSuOS8PJS/QvUM/WFMS+3fzUH8bn96pTiseUN0Mo1xYfw9U8oLRJTc5X4LMj1jV3lyBdAtAT9Jt+OZi5pcOaQ5xrUyiJwSmBrVUmxv6H2+XkVUgJdtZMPWkbrIUNOqjupE4toJB6A==
+ b=u0+hfzIvk04S6U9FK6agHoTqFdFxAKQCSkwLHUxKz1hHd+CkwIVklfQNDCwBGvUs/+TZv572L7YgHgOoaxNT2Q1dxPXTX5Q9UDzhmYun6ZGdBwHH+jw3nJOJ70+GtS1+Vr9yGsLziJTw45KE13JnAjlY7Ng/hsmssEkWRwl7+YbLyZWwZjVZy6uF3srRfJWxjX7GxckwLYLAsjfHNY5AFceXu3QZX7slGqaSk3tcAh4elF+7HNVGCtqeFFgh0GqXwkIDq60+xz10zkHr10pwXwIcHly+N4jkUsZ7oGbzRxLHp/XRYyFWlYHv8EOoRxsthnP4OmeplfOpdOHwQcDeUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=So850jWhEnPCOPDO8yoQ0O6xWkBxXhVUb9yqnM5etls=;
- b=t4CwjlxBIxEt4zY7RptpawzWIpIKzJ9br+0u09o+vE8Ee4CGQJTZ1Rg1BV71pVYIwOt8yjjLzqQ0TIORPPXCcfZUhgE4HCXTplf4opzcFB40+gZPxqSkMgfHe5RD9KjW6dvqWlLjIweGuk8JHLnf5ismK3+rOadNq6WPAEUBx4rZeZ1e3D0kB6wfnxsKFBPeyZdbrZk60/tlkujGU2uAIenD0zr8zSjM0KRQFxwQUdsLhtZRz9T2rkC/0Hv1BDOl9g3onbU55Y5+xLeH9v/KOEFQ2jC7LLsPfXAgK+FkV+VYkDG3pPCk8Jn6uUUZsWMcp3dOKZNmAPjSFyGgWVcx7A==
+ bh=JdVWeBjW7ObsP5pxumootoPWr5aU+iF1lLH0W/FA1/k=;
+ b=pCdbrA0l1nhDj5t5gNVyzv2THqxccTSn5UPC0LgxbnpZc57IChSi/E/S7KVXxSYn5eO7EAkmfaERVr/GTv1uwINMs0YoJ/84nMgBJ8TPc+hVhpbA/JOT5VRP2Xwm++aDs+/vd8Pcm9TrPnZaPDjgBEIEEc1yHHopCfNHrtnFO4RvCYSLZ2VLHtMbcPxOAUqLnoIilAF3yDKKlj6qE6mewKjyw9t3QxD8x/qzxjHoJv1S5ICTFyoY8sL92NZQzte2hshYdIjmMUp9hyUv5Wyp9hbEdEq135blhDEtOobBHpLNVVp6PfrTEQedbld0/mWDJ/TCZJoAqmoFl/CxswsDwg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=So850jWhEnPCOPDO8yoQ0O6xWkBxXhVUb9yqnM5etls=;
- b=r2PZF69X+5Kxl4vpVVs9KNFibyELPeST+fa/UdaN04eKoHRtRfHhwpacoxshckb4YI5q41LY00Urm1rYxn+E6Yi/Hu7+WW+X8N5wOsEP6nt/pZNJC6UCETupeN5pM7uslVarwDi2OSqh5rTTbuezytfoUTBwIf7tjr3g5MhKjyg/UhK9FK//6VbUokqYLbHHFM0Mv1ng9wTe/I6yPHCHH7zur2WGKjlXQG+FI+Z87y6ciM5/N3SdVqaY2myChVV+PM8UL+371N2ViafaoUIH+MM2uZ44DzERJWVJ8Hgzx0n+zyvBi0XjoMNiwniRiTGkj0jj9Kv35dg5iYIeigrBgw==
-Received: from CH0PR04CA0119.namprd04.prod.outlook.com (2603:10b6:610:75::34)
- by SN7PR12MB8435.namprd12.prod.outlook.com (2603:10b6:806:2e2::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.34; Thu, 3 Jul
- 2025 10:38:55 +0000
-Received: from CH2PEPF00000141.namprd02.prod.outlook.com
- (2603:10b6:610:75:cafe::2c) by CH0PR04CA0119.outlook.office365.com
- (2603:10b6:610:75::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.20 via Frontend Transport; Thu,
- 3 Jul 2025 10:38:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ bh=JdVWeBjW7ObsP5pxumootoPWr5aU+iF1lLH0W/FA1/k=;
+ b=MBnqk9NKIfn/HDNuhDDB7TNyDJ+f4EGfeV7HRMB38TuUX/r6d8oLtjQt2AJC0N4RnBzYdW1IKHD72JbefW1gEtGZ0KNS0+EMl8jontd6x9ZnReVsX0QIn4ZDWRDTSru7onfMTV5KMsYIrRK8K351I7mGvjFdqhTWOgEe3JzaE9vaI8dcyfXmkEpHQg8RTxYpF5fvb9LH0Qp392qzxeP3+r20XPDPo9CNfPJIgvBAX1Bs26EtLNeBRnz7PcIF8cEeG/TlNbyJDO58bhSk5kWbWZCaFYf+5ocIx5rTy/yDyR8dEDHOOb/xzGUN1u05TSHw8cQf5xO183wY9UJ+TaSBKg==
+Received: from SA1P222CA0130.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c2::21)
+ by DM4PR12MB6615.namprd12.prod.outlook.com (2603:10b6:8:8d::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.20; Thu, 3 Jul 2025 10:39:06 +0000
+Received: from SN1PEPF00026369.namprd02.prod.outlook.com
+ (2603:10b6:806:3c2:cafe::8c) by SA1P222CA0130.outlook.office365.com
+ (2603:10b6:806:3c2::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.21 via Frontend Transport; Thu,
+ 3 Jul 2025 10:39:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF00026369.mail.protection.outlook.com (10.167.241.134) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Thu, 3 Jul 2025 10:38:55 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.8901.15 via Frontend Transport; Thu, 3 Jul 2025 10:39:06 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 3 Jul 2025
- 03:38:45 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 03:38:54 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 3 Jul
- 2025 03:38:45 -0700
+ 2025 03:38:54 -0700
 Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 3 Jul 2025 03:38:42 -0700
+ Transport; Thu, 3 Jul 2025 03:38:51 -0700
 From: Sumit Gupta <sumitg@nvidia.com>
 To: <treding@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
 CC: <tbergstrom@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [PATCH v2 1/8] soc: tegra: cbb: clear err force register with err status
-Date: Thu, 3 Jul 2025 16:08:22 +0530
-Message-ID: <20250703103829.1721024-2-sumitg@nvidia.com>
+Subject: [PATCH v2 3/8] soc: tegra: cbb: make error interrupt enable and status per SoC
+Date: Thu, 3 Jul 2025 16:08:24 +0530
+Message-ID: <20250703103829.1721024-4-sumitg@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250703103829.1721024-1-sumitg@nvidia.com>
 References: <20250703103829.1721024-1-sumitg@nvidia.com>
@@ -86,78 +85,165 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|SN7PR12MB8435:EE_
-X-MS-Office365-Filtering-Correlation-Id: f200d268-18d2-4979-dd30-08ddba1dcfb1
+X-MS-TrafficTypeDiagnostic: SN1PEPF00026369:EE_|DM4PR12MB6615:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4150f4cc-5c63-4407-b6c1-08ddba1dd643
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VLeqkLV7MCZe0f8WLThdBXenzGYKJ8A1glQGE6WYwwU/S+1VThrKP9BbWQv5?=
- =?us-ascii?Q?fME/1khZaL31y0/1W7JfWjUo5PzX1XrJWToj1lvTRdz9qD+XLjhbl+9MBiVD?=
- =?us-ascii?Q?0yMLkiayyu+/hqlx3a6/mBTaoGtwKN/M/WY5YpUOkC/NCtD9z2YS6nNgP2v3?=
- =?us-ascii?Q?ymDfOb4rmCWmXx144meXrqzOIBrPZbIr9FqL63jjGRLCp37aaJof3NHDtkv1?=
- =?us-ascii?Q?pfOSemvKbv7JQU/Bz7qiGeZ74PUfdgnonnQx1X3Cs7If+iJCbX88tgNB92vH?=
- =?us-ascii?Q?97oiNy4qjq2NeaICinia3PW/dsIBApQDAvgyW9nlvLD6yPHh6O845R77B2GC?=
- =?us-ascii?Q?4kWa5tFJBF1WSM16ukwfNbyycS32dS06IOG7MiFXHERI6ZZwitJGjoobiY4W?=
- =?us-ascii?Q?ENiITj45ZW+wW6jWNk9XFFcoZsim2tPvGWenHbvfjvXucU7/fTWZ0f5RDyRX?=
- =?us-ascii?Q?ud81+7fcGN9Er9t3QDvFDakRCzjOr7YgtE/GUR2TqJNdi0ng2d2g0L6vI7U5?=
- =?us-ascii?Q?j72tVHu4JWYd+N09u88S9IOJ3+epRViYHa7xDlO5uH21j4+Bwa6aOaw38AEd?=
- =?us-ascii?Q?A1tbxceAynTSNvJQtxhr3GGlVzD33/DcnEDDSbTm5Qq5v1NQEhpbNeKb3YHq?=
- =?us-ascii?Q?F/ycQaBynAwNilLtSCa3/gT7yjF39D+HebVLT82hB6ZAxujmKgOqIwro9gAn?=
- =?us-ascii?Q?RjRZ4vw/GszCQE5c1B8DWvXOoGpvAhK6ynEKKDT0/PGpnhfKp+zgbDInKiCq?=
- =?us-ascii?Q?XmhmE9yT1c5TRUv3yYo/P0kP98ZLa7aCyczHqTanabkwRMmhz7AQriGFDBLq?=
- =?us-ascii?Q?Q0ZgvMvN66y8EW3j76kZjCR0GRnjzHdd49hXuRbjhX9tZJm8xZkoFia9IeVx?=
- =?us-ascii?Q?0G/qOcXHtk2zhglXQnimuxcNWLAz7aTzc5EP2McW66inydy29o+xtRrOU3gV?=
- =?us-ascii?Q?OaMOhFFYOLoKEVcMkl2BIT7MeOgrQdzG7BnCdmCpVuRThRWWZBp0BLbAMPIQ?=
- =?us-ascii?Q?nI5wiFstazsc+ci7fi6krZDgmsMl5I8WZxhUPM/TTFTE/we/ddqtcelbw6R4?=
- =?us-ascii?Q?HjWmBRgFvywQc2LKtdFZTQcXVKWJArwcjr6irkhRy2BzBj2CWOgHW2V6UL4+?=
- =?us-ascii?Q?nHPXLw3Ql6LPuBYFFvnZZBKcMZMtr2UfWDDfyyOTaw8s2kEbH8L9y+wh+2gf?=
- =?us-ascii?Q?2Lv/eguJET7c9DjOO6AwRdVbUznqrMFMKXiz17LndCe9V+BOTS5UC/i4sNpK?=
- =?us-ascii?Q?r/lMdyH9z+OSKIU8DQWpt+xIUULwqbQW11UsvrzU5aIuaCUQduSSW4tFaPn8?=
- =?us-ascii?Q?USjZThTSqjc+0Xqoljj65xEvB4R3fC5pTC5RYy88hMq9AscLkmnURtWxeaID?=
- =?us-ascii?Q?b9tuge9axf/Ub4eJUJxsTBx/slyiA2hVzc4Uwhns+hoU7w5whbEtlY6grmb4?=
- =?us-ascii?Q?ZU39T51SNGkQTLETC2rPtNaYwrpGeE6KLm/LfANAKM4KQqjwQep4HL6hExpA?=
- =?us-ascii?Q?k/1kCIQHpJNNJlCgWkbyn9w0qLgJ+qAUItYC?=
+	=?us-ascii?Q?K2s0S/7dXKo0vYpnCRR68knV6TpJJSZdRdl09TYgUtGFXofabXtOLho0z2uC?=
+ =?us-ascii?Q?u0AEeIAXlade9YhKWXMXh6GM9fnVJ0t0nsoWEmL0JFcf8/MrjWJ0PsbLkov2?=
+ =?us-ascii?Q?f6BCqYAs70lKq77h2mFanztx1IDXLcmxppR/qK+QZ1/CuLjf5vuNGKzURKGa?=
+ =?us-ascii?Q?GbMm/XMuPTW09Uj9hO7cmHE3zAT6d0O1AEg0zyowSBEl5uekZOos9ZUu4kmr?=
+ =?us-ascii?Q?Ps12Hry3Cs5/Z1avnvy1Yvu5qxERkdLM7YdZcX2JSbvMn8FkXaRVBtbuvMES?=
+ =?us-ascii?Q?W83ksOA28+uPqr2c9qcyD8g0i/CWqTzEmnX9FbYxFq3LD9bITHBDTjdHcnFF?=
+ =?us-ascii?Q?8AJPE1GtODcRtbYI67tAZp5uQ4HZ9KBju5gnubZQ10xYGvXUwIcxH9dk6kh2?=
+ =?us-ascii?Q?LCUnazBw3uolKTOTI7Z9RbKIS45h5EdMi4m4xE3ivaOZspbKXnGD8UghGIjl?=
+ =?us-ascii?Q?qyuu5yhV5Jy9DY8/Y3hetb8KdaY+SaqeqMuMxOSrXha6n4OvL1nikX97P1Oj?=
+ =?us-ascii?Q?y5Zd520+LCRfLNRpUhcRURKeioJQlRX1+YhOafFF146CLCVUJYQmKDDQYfTV?=
+ =?us-ascii?Q?3hUZ1/P2enbyk0uAL15EX0r3gGYEZC3Yz9lBN3DnzoerC1ZN02heOzvPJJJm?=
+ =?us-ascii?Q?AOClKj86Q+t7J7I7nG1tmrtghwkKZaAJfhpUl3PE85i+da9r0Q0Pi6XXNc7W?=
+ =?us-ascii?Q?WYF5723zvrf+m007PrZpq5n1Xu4xv69G4pAEHhyYSNoNJXRlBRDgleNMb33U?=
+ =?us-ascii?Q?IQ23AbiYIzr7KG6caAXB7xYJ9Gl2U7hgrFSoN4FofCdnRKnDE2EULGyT9BBn?=
+ =?us-ascii?Q?/wpT+czb5qdY6s2udQBXJzIciFOy4ZKeAvXBs+PU4ttjQ8G399/GX4AoYQN8?=
+ =?us-ascii?Q?9C/LMj7KMUpz9pBGhJZOLVhb47w+BXg0mgNgqG1nePdo+oaIpECySA4RQTTL?=
+ =?us-ascii?Q?a2dnqS13TGIBiPlHhRlFRTWPIwEig5SJbZsAND3zetQzaS+C6+xsR5zZlgHk?=
+ =?us-ascii?Q?q9Dnjcfl05dLTT28SDvzWBvnmKiP/YffNEk+dM91HtBQH+uoxp0q5r1JlIfT?=
+ =?us-ascii?Q?9Qgzle4clQTwb8YxUYG+141r25Uv5JBF6z5rW+BMtxLhKiGoIquMoyUM5sMV?=
+ =?us-ascii?Q?Pv6hZolNt7+7viARFxhpu3Ht0mb06pEuDD8Gm7OFSOHcw4yI8nh7YhmfNzkx?=
+ =?us-ascii?Q?i0DFRJLFlcycrEvxLd1zI7U70YdfdL1FhdHeX/zp14xyQQkHenEFQu0TmSNB?=
+ =?us-ascii?Q?9Nuv2r76H32691w3i85+jWTZmU+G6PUkq62O824KwGSVK5dC1Gc64c0dAKoe?=
+ =?us-ascii?Q?L/a9CaB6c0CZCp4fAKOT8Q66MZrgrc4veZR1L5cstotWZhn61fDreCP0ZSGp?=
+ =?us-ascii?Q?0Q7KbhOh3PqbbAfVqhvxyRTdFYIiaDYqEAWwewrLg24xvGJg2ZO8kFjRAIqS?=
+ =?us-ascii?Q?C2xydw1rgDZqtVxXNJHv2jiIMf70ukAAdbZNSKabDf53xKGTzYcPpVhQpQhN?=
+ =?us-ascii?Q?r1iHEpsLtbxCwZ7cvLc9emha8Lwfd3lfBgML?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:38:55.6305
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:39:06.6978
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f200d268-18d2-4979-dd30-08ddba1dcfb1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4150f4cc-5c63-4407-b6c1-08ddba1dd643
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000141.namprd02.prod.outlook.com
+	SN1PEPF00026369.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8435
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6615
 
-When error is injected with the ERR_FORCE register, then this
-register is not auto cleared on clearing the ERR_STATUS register.
-This causes repeated interrupts on error injection. To fix, set
-the ERR_FORCE to zero along with clearing the ERR_STATUS register
-after handling error.
+Make the error interrupt enable and error status fields as per SoC.
+Both these fields can change for different SoC's. Moving them to per
+SoC data helps to set or clear the required bits only for a SoC.
 
-Fixes: fc2f151d2314 ("soc/tegra: cbb: Add driver for Tegra234 CBB 2.0")
 Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- drivers/soc/tegra/cbb/tegra234-cbb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/tegra/cbb/tegra234-cbb.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index c74629af9bb5d..1da31ead2b5eb 100644
+index 5d04ed3b2d50d..6116221f0ca61 100644
 --- a/drivers/soc/tegra/cbb/tegra234-cbb.c
 +++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -185,6 +185,8 @@ static void tegra234_cbb_error_clear(struct tegra_cbb *cbb)
- {
- 	struct tegra234_cbb *priv = to_tegra234_cbb(cbb);
+@@ -102,6 +102,8 @@ struct tegra234_cbb_fabric {
+ 	const int max_errors;
+ 	const struct tegra234_target_lookup *target_map;
+ 	const int max_targets;
++	const u32 err_intr_enbl;
++	const u32 err_status_clr;
+ };
  
-+	writel(0, priv->mon + FABRIC_MN_MASTER_ERR_FORCE_0);
-+
- 	writel(0x3f, priv->mon + FABRIC_MN_MASTER_ERR_STATUS_0);
+ struct tegra234_cbb {
+@@ -177,7 +179,7 @@ static void tegra234_cbb_fault_enable(struct tegra_cbb *cbb)
+ 	void __iomem *addr;
+ 
+ 	addr = priv->regs + priv->fabric->notifier_offset;
+-	writel(0x1ff, addr + FABRIC_EN_CFG_INTERRUPT_ENABLE_0_0);
++	writel(priv->fabric->err_intr_enbl, addr + FABRIC_EN_CFG_INTERRUPT_ENABLE_0_0);
  	dsb(sy);
  }
+ 
+@@ -187,7 +189,7 @@ static void tegra234_cbb_error_clear(struct tegra_cbb *cbb)
+ 
+ 	writel(0, priv->mon + FABRIC_MN_INITIATOR_ERR_FORCE_0);
+ 
+-	writel(0x3f, priv->mon + FABRIC_MN_INITIATOR_ERR_STATUS_0);
++	writel(priv->fabric->err_status_clr, priv->mon + FABRIC_MN_INITIATOR_ERR_STATUS_0);
+ 	dsb(sy);
+ }
+ 
+@@ -709,6 +711,8 @@ static const struct tegra234_cbb_fabric tegra234_aon_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra234_aon_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
++	.err_intr_enbl = 0x7,
++	.err_status_clr = 0x3f,
+ 	.notifier_offset = 0x17000,
+ 	.firewall_base = 0x30000,
+ 	.firewall_ctl = 0x8d0,
+@@ -730,6 +734,8 @@ static const struct tegra234_cbb_fabric tegra234_bpmp_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra234_bpmp_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
++	.err_intr_enbl = 0xf,
++	.err_status_clr = 0x3f,
+ 	.notifier_offset = 0x19000,
+ 	.firewall_base = 0x30000,
+ 	.firewall_ctl = 0x8f0,
+@@ -807,6 +813,8 @@ static const struct tegra234_cbb_fabric tegra234_cbb_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra234_cbb_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
++	.err_intr_enbl = 0x7f,
++	.err_status_clr = 0x3f,
+ 	.notifier_offset = 0x60000,
+ 	.off_mask_erd = 0x3a004,
+ 	.firewall_base = 0x10000,
+@@ -830,6 +838,8 @@ static const struct tegra234_cbb_fabric tegra234_dce_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
++	.err_intr_enbl = 0xf,
++	.err_status_clr = 0x3f,
+ 	.notifier_offset = 0x19000,
+ 	.firewall_base = 0x30000,
+ 	.firewall_ctl = 0x290,
+@@ -843,6 +853,8 @@ static const struct tegra234_cbb_fabric tegra234_rce_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
++	.err_intr_enbl = 0xf,
++	.err_status_clr = 0x3f,
+ 	.notifier_offset = 0x19000,
+ 	.firewall_base = 0x30000,
+ 	.firewall_ctl = 0x290,
+@@ -856,6 +868,8 @@ static const struct tegra234_cbb_fabric tegra234_sce_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra234_common_target_map),
+ 	.errors = tegra234_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
++	.err_intr_enbl = 0xf,
++	.err_status_clr = 0x3f,
+ 	.notifier_offset = 0x19000,
+ 	.firewall_base = 0x30000,
+ 	.firewall_ctl = 0x290,
+@@ -1040,6 +1054,8 @@ static const struct tegra234_cbb_fabric tegra241_cbb_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra241_cbb_target_map),
+ 	.errors = tegra241_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra241_cbb_errors),
++	.err_intr_enbl = 0x7,
++	.err_status_clr = 0x1ff007f,
+ 	.notifier_offset = 0x60000,
+ 	.off_mask_erd = 0x40004,
+ 	.firewall_base = 0x20000,
+@@ -1065,6 +1081,8 @@ static const struct tegra234_cbb_fabric tegra241_bpmp_fabric = {
+ 	.max_targets = ARRAY_SIZE(tegra241_bpmp_target_map),
+ 	.errors = tegra241_cbb_errors,
+ 	.max_errors = ARRAY_SIZE(tegra241_cbb_errors),
++	.err_intr_enbl = 0xf,
++	.err_status_clr = 0x1ff007f,
+ 	.notifier_offset = 0x19000,
+ 	.firewall_base = 0x30000,
+ 	.firewall_ctl = 0x8f0,
 -- 
 2.34.1
 
