@@ -1,128 +1,204 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E93093B1;
-	Fri,  4 Jul 2025 08:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735BC2EBDF6;
+	Fri,  4 Jul 2025 08:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751616701; cv=none; b=TtZJdkDeY4bPr4JxHl3p37iRfJCid4xBTniX4DRzFpxH0158uloVrYYF3U2KqweilW2w/wyP30JtNDUTrRrKJNTMZui4R6HVHPmXburffeJAUU9qIVKNXzgzMyzPzgkk4/UV7nrP5mTpH09D+lnYxpb4CUeiIOM4ckmVeo3FFZE=
+	t=1751619399; cv=none; b=Jp5fmnJciI4CUWPcpd+5DItLUbjX7uaee3dRzQMajYjqE+FJISCS1jaPEB5WKYG4y2DdpVTOy2m9foj8FLGdLcu0A3YMWs4qcl4eV6ryTFV/zxLcNJzR4NRJ61ia+6hBJRe5Ddwzz+Cc5YDAgiUUJbBJJMYiWmcgOTMm5DFSPZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751616701; c=relaxed/simple;
-	bh=hXYmRLx6CndyqgBfjOW2CrFdlMs+3zq1ANJEEZCHtM0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GrV2MP9IM55LHTQSvtoNtX0Y9A84sBcwJeBevyC9p48E1p7X2u/0y8ufgkD1wnEEDDZTni9Z8FXmL2TnR5KF2fYps5n90O9pDWvazBD5DmnwIARpbdcuYWSMXUJKTNFMVRJlv890vDA+VaDp8Jd2FGxFj0/c706hNFl0KStvhws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jJU9IZtm; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1751619399; c=relaxed/simple;
+	bh=y1j/5Cpk8bPb641kRnAZ7hwtcYIwzQznPTALWGJ9fVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IfT8b+mUqrZX5T2iiHUdyXFbCbfTeWXnzZ252G7EtDKK/S+rHs+wePyaFRD5CsHQGj6ZR5A+ExwIqiDJnKMhLCaVimwN72APhMn+t1B/+EYWAsqIYIbjw93rGFbPm0jtWpz5wjHL5TJ7d1qbY7Ss0kRmQ1ZU002duXRu9Ox/BFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=C/+JdCFc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jJU9IZtm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751616700; x=1783152700;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=hXYmRLx6CndyqgBfjOW2CrFdlMs+3zq1ANJEEZCHtM0=;
-  b=jJU9IZtmlRldQTt7rQjjraB8yVDuT+QdPBJeVew6FnxmimTEXG7h+j+9
-   WA/kT57cgAk9pcy5pbqTN+IjV7hNo3FnaYNh7XD9S5vPtpMB0l3WVKeRK
-   DJS4QLJ8F+hqx/mwVrrdMlIH4Xyz3T+M8DFp/Xmr2VjyrybMEXhj9482R
-   +UJ/D05qtPMZm8HN3rZukX6G4XOUhzFOnzXUTFq6BLXmGz+NnOEj9UHaM
-   RJwK4rC0Nzys+BuNZQWqR1QJCfjh09Egz/oe3IWo7pnRdI8gQhGamDRsD
-   I6CB+UpkGp4pZaUHHpjBUDgBtQso4qmdhJKu5a0vR4IKa7vXaFtLU5MZw
-   w==;
-X-CSE-ConnectionGUID: iYdhP+UnT0qiH1//ALXpNA==
-X-CSE-MsgGUID: rxQdeJ+dR2ep4Xb1iodiQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="65004417"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="65004417"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:11:38 -0700
-X-CSE-ConnectionGUID: IaKHq96qSDKcGEjh98uuoA==
-X-CSE-MsgGUID: /7bgrxnWTmeUHlLJS9o4qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="154955604"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.102])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:11:21 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Douglas Anderson <dianders@chromium.org>,
- Lucas Stach <l.stach@pengutronix.de>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
- Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Laurentiu Palcu
- <laurentiu.palcu@oss.nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Qiang Yu
- <yuq825@gmail.com>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Boris
- Brezillon <boris.brezillon@collabora.com>, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Thierry Reding
- <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
- <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Dmitry
- Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Damon Ding
- <damon.ding@rock-chips.com>, Ayushi Makhija <quic_amakhija@quicinc.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6ni?=
- =?utf-8?Q?g?=
- <u.kleine-koenig@baylibre.com>, Chen-Yu Tsai <wenst@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- imx@lists.linux.dev, lima@lists.freedesktop.org,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 20/80] drivers: drm: Remove redundant
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="C/+JdCFc"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E1409667;
+	Fri,  4 Jul 2025 10:56:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751619369;
+	bh=y1j/5Cpk8bPb641kRnAZ7hwtcYIwzQznPTALWGJ9fVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C/+JdCFcyFuFUjl0QTjLej9Xh05699NjSblVGkEA7NTpLykJbK7wfxC4CUjBACvZU
+	 vcOGW37478l7BW/3U6xRbSAt7++pBYugym6uc+1NYHApNY6oCyads4kSY9QdMAFwUi
+	 D2owJvVj3WhBx3sQowso2QN7Oy4LeQlR1UdwX6KY=
+Date: Fri, 4 Jul 2025 11:56:04 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
+	Martin Hecht <mhecht73@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Michael Riesch <michael.riesch@collabora.com>,
+	Mikhail Rudenko <mike.rudenko@gmail.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Nicholas Roth <nicholas@rothemail.net>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Matt Ranostay <matt@ranostay.sg>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Jackson Lee <jackson.lee@chipsnmedia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Sean Young <sean@mess.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 41/80] media: Remove redundant
  pm_runtime_mark_last_busy() calls
-In-Reply-To: <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-ID: <20250704085604.GC14736@pendragon.ideasonboard.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
-Date: Fri, 04 Jul 2025 11:11:17 +0300
-Message-ID: <a48b77bc632824c6f64bbdb3775f97387e9eedb9@intel.com>
+ <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
 
-On Fri, 04 Jul 2025, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+Hi Sakari,
+
+On Fri, Jul 04, 2025 at 10:54:31AM +0300, Sakari Ailus wrote:
 > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
 > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
 > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
 > pm_runtime_mark_last_busy().
->
+> 
 > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 > ---
 > The cover letter of the set can be found here
 > <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
->
+> 
 > In brief, this patch depends on PM runtime patches adding marking the last
 > busy timestamp in autosuspend related functions. The patches are here, on
 > rc2:
->
+> 
 >         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
 >                 pm-runtime-6.17-rc1
+> 
+>  drivers/media/i2c/alvium-csi2.c                          | 1 -
+>  drivers/media/i2c/ccs/ccs-core.c                         | 4 ----
+>  drivers/media/i2c/dw9768.c                               | 1 -
+>  drivers/media/i2c/gc0308.c                               | 3 ---
+>  drivers/media/i2c/gc2145.c                               | 3 ---
+>  drivers/media/i2c/imx219.c                               | 2 --
+>  drivers/media/i2c/imx283.c                               | 3 ---
+>  drivers/media/i2c/imx290.c                               | 3 ---
+>  drivers/media/i2c/imx296.c                               | 1 -
+>  drivers/media/i2c/imx415.c                               | 1 -
+>  drivers/media/i2c/mt9m114.c                              | 6 ------
+>  drivers/media/i2c/ov4689.c                               | 3 ---
+>  drivers/media/i2c/ov5640.c                               | 4 ----
+>  drivers/media/i2c/ov5645.c                               | 3 ---
+>  drivers/media/i2c/ov64a40.c                              | 4 ----
+>  drivers/media/i2c/ov8858.c                               | 2 --
+>  drivers/media/i2c/st-mipid02.c                           | 2 --
+>  drivers/media/i2c/tc358746.c                             | 5 -----
+>  drivers/media/i2c/thp7312.c                              | 4 ----
+>  drivers/media/i2c/vd55g1.c                               | 4 ----
+>  drivers/media/i2c/vd56g3.c                               | 4 ----
+>  drivers/media/i2c/video-i2c.c                            | 4 ----
+>  drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c | 4 ----
+>  drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 5 -----
+>  drivers/media/platform/nvidia/tegra-vde/h264.c           | 2 --
+>  drivers/media/platform/qcom/iris/iris_hfi_queue.c        | 1 -
+>  drivers/media/platform/raspberrypi/pisp_be/pisp_be.c     | 2 --
+>  drivers/media/platform/verisilicon/hantro_drv.c          | 1 -
+>  drivers/media/rc/gpio-ir-recv.c                          | 1 -
+>  29 files changed, 83 deletions(-)
 
-I would think it's better to wait for linux-pm to get merged to Linus'
-tree and then backmerged to drm after -rc1 instead of cross-merging that
-directly to drm.
+[snip]
 
-Regardless, for merging the i915 changes via whichever tree,
+> diff --git a/drivers/media/i2c/ccs/ccs-core.c b/drivers/media/i2c/ccs/ccs-core.c
+> index 487bcabb4a19..3316639b695e 100644
+> --- a/drivers/media/i2c/ccs/ccs-core.c
+> +++ b/drivers/media/i2c/ccs/ccs-core.c
+> @@ -788,7 +788,6 @@ static int ccs_set_ctrl(struct v4l2_ctrl *ctrl)
+>  	}
+>  
+>  	if (pm_status > 0) {
+> -		pm_runtime_mark_last_busy(&client->dev);
+>  		pm_runtime_put_autosuspend(&client->dev);
+>  	}
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+You can now drop the curly braces.
+
+>  
+
+[snip]
+
+> diff --git a/drivers/media/i2c/ov64a40.c b/drivers/media/i2c/ov64a40.c
+> index a5da4fe47e0b..15912ecb8d26 100644
+> --- a/drivers/media/i2c/ov64a40.c
+> +++ b/drivers/media/i2c/ov64a40.c
+
+[snip]
+
+> @@ -3330,7 +3328,6 @@ static int ov64a40_set_ctrl(struct v4l2_ctrl *ctrl)
+>  	}
+>  
+>  	if (pm_status > 0) {
+> -		pm_runtime_mark_last_busy(ov64a40->dev);
+>  		pm_runtime_put_autosuspend(ov64a40->dev);
+>  	}
+
+Same here.
+
+>  
+
+[snip]
+
+> diff --git a/drivers/media/rc/gpio-ir-recv.c b/drivers/media/rc/gpio-ir-recv.c
+> index bf6d8fa983bf..161f8919022c 100644
+> --- a/drivers/media/rc/gpio-ir-recv.c
+> +++ b/drivers/media/rc/gpio-ir-recv.c
+> @@ -49,7 +49,6 @@ static irqreturn_t gpio_ir_recv_irq(int irq, void *dev_id)
+>  		ir_raw_event_store_edge(gpio_dev->rcdev, val == 1);
+>  
+>  	if (pmdev) {
+> -		pm_runtime_mark_last_busy(pmdev);
+>  		pm_runtime_put_autosuspend(pmdev);
+>  	}
+
+And here too.
+
+With that,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  
 
 -- 
-Jani Nikula, Intel
+Regards,
+
+Laurent Pinchart
