@@ -1,119 +1,104 @@
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567F52F94A4;
-	Fri,  4 Jul 2025 15:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE5B29B790;
+	Fri,  4 Jul 2025 15:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751642795; cv=none; b=kho35o4mXPgPkJOg1q1Z9EXX1ASz6LhhquX6Kx54V9Zm3XAtHcEOp7yz2euQipq3mrMBltbNaN8ct1NuRrn5Wyq/gmCrD+v2nJdR0O9vRol+v3kgz6EACn795FuRSqha4TFcRlkH6SvGYK+sMn11Mddbyb4EABj+fvqeurJqMfE=
+	t=1751642871; cv=none; b=fRW5MW3fSr1iN80bO5dJUg+yUPAnedoqKKd/+yE7sA4aZILQ6wDglKGuQGOHKZ6PVK3wUEZeJk6hPGh/iNM5N7uuME0EZERQ+DDfFAg3qS6p1a/egvBH51xyt9CJkbzNxqWvoOgVa1Cv9Y8IDLF9Sq7I6+blm04ccPDp9pJV2is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751642795; c=relaxed/simple;
-	bh=fw+3kHpH71x1Y/Yo4BaIBNzC5KdPfbmT9z0yHAtrnEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2yDJU4XJYmo5VtvdVovBN8S8qzAWtqQajQ6QD57Kp4pwxFcMv28fHd6YNBUQco1LOGzRORDJSn8zWSAsVmHqbDAx5KX5PkstvBwaKuwysRCLP1tb9B0iaJWHKUYV4i2LpwkXzNuJOaxvLFXl6UKHmOGCEhFE6elf2ua8F5K0ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=OZN6bha/; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+	s=arc-20240116; t=1751642871; c=relaxed/simple;
+	bh=4v3TRQ4gYwnhEwc5GUKsBPODNNDA4dpVHy1PtRhstxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oeeGjSUHIFcL1K4MC/ylWFXs2toBCx8fA1MPaU4lLE6HQT7g1xLcqDTCJct8TBDfCcZet44R8BbqUuH5lG63Id9CiRE86tS7BB1EOe0hC5S09rxE3O/mxjC+Hb3WkbwpSxcxpWer1Qfa17hw/+brqz3iBrZhNrJKvFHHeMhav8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kz46GqaP; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="OZN6bha/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1751642202; bh=fw+3kHpH71x1Y/Yo4BaIBNzC5KdPfbmT9z0yHAtrnEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZN6bha/FAxDe4H3fOtXJMB05O6PSsOIO8iLAT0AKWh6sAQ6HB3DJiCrUOfFJq89K
-	 JlEVcbJXJWChT72to/oZT3GU/laMbw/fzI0RLjd8Hy4W+YhrBNIcS7FBMyf1Br408n
-	 D+vIYlKlKvQaBNxdLEYY206FNUOmF3WpRVHBHZ1vmtW+7G5wC/1YrvfLV23GVAUdqp
-	 B/az+zmd5IfyH8fsuSPeJ7Tso4Nt+VLxtIvSJqcA5OjODsIW08BHHuUVTWKUjj/mSP
-	 J09uIe2u1xXvKRqvzYMMRCl9G9OAJjjyA8Iaelz6sx05RL8u10fivwd9m8ceR6d7VY
-	 +wjycNZVop6Vg==
-Received: by gofer.mess.org (Postfix, from userid 1000)
-	id 34B531003B9; Fri,  4 Jul 2025 16:16:42 +0100 (BST)
-Date: Fri, 4 Jul 2025 16:16:42 +0100
-From: Sean Young <sean@mess.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <mhecht73@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Michael Riesch <michael.riesch@collabora.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Nicholas Roth <nicholas@rothemail.net>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Matt Ranostay <matt@ranostay.sg>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 41/80] media: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aGfwWkZg48T1tooH@gofer.mess.org>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kz46GqaP"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-adb2bd27d8bso15216866b.1;
+        Fri, 04 Jul 2025 08:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751642868; x=1752247668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+ebNQOqTu5W6nuPcdddqE5wsc9kXNQZiBU7TM8ffBE=;
+        b=Kz46GqaPAwhQ7LwnJV2Lcz9/JH06R9JUh75DRrZ80upv+YeeSuC1tI+rQ6n25mqJfo
+         1RIOIKVoKonVrEJwGNxcJ0typhEXJQSrjY9s2+gBK/1+u8pYN4EOBA9Wb7bm0gKLnbZO
+         65FolFJqnQiLXLUNbq1k1/NYnrgjtrL8UfBCqYVaQpGUiuRXgHG9V8ty26cRPvKwbPYI
+         P5iagId+mJBbY8cyK2D+AhxuDoCBQxZECwT9rhkFgJnHLdL7RHV+BCOWv5ZLF4Mwb/Mo
+         DuVsn2S1lO8T4J8J1FNaRIK14OOsSjzC7w/ypK1CtxJ3C3gVYuPcKlrZvdh0ruiLRI10
+         MINw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751642868; x=1752247668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+ebNQOqTu5W6nuPcdddqE5wsc9kXNQZiBU7TM8ffBE=;
+        b=TCYMeiSlpFfji+Hfxjm9AMBJ2vtelG0E6+R7vFi9yFZt4GdhlfprF1mpToO58SE5H4
+         BMquK2fb4/rwrmdsx/so152j1wDn54PRF751m60aVukW58lhsNqCy+QPKWBUpslWHNk+
+         hQq3Ptemr8ioCh0F3D1vsvxaVK1mSyctLYKvf2UtwPRbpfUyDvtjuEOO4ecDKPCg5lxo
+         q8xDiFzq2X7ggJz1S6ZnQ3AjpQwfE1bEv7ir4QW8zRzzCxEFzmXogwoaVKvANTbz3BGf
+         DgP1VvvFVQvhdbEw6155zlnQyiLe4RwS09voUjaUrPeD/ADN65dOy5DVnLlTmnBHN4su
+         RPVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPtZdDrFxhGehwsS9tDvX7FoZ8koCo4RhjEpUrkThCtU2FhmKTmSKBFi0SrEevGseaG44lBV648dRfMCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzleggxqF1yfxiqYya63Jol9kXQkMifaUrYVFf4w8fhX2tku9SF
+	/dW5fo39sI6AmHCW0yodY7VcxV8e19/HdMdv9XgAzNMYgQDNMM+8Y65Z
+X-Gm-Gg: ASbGncuxuIOiSVPN8F8Va5XxXlt0/c5fw8+t07d9Wv83dBqukQ9isX6cgc5PXys+rv2
+	BsDEKgMWsDA2v/nJn5M3Fr5Qe7LynWw7Ax4Ru96Ns4OvNkA0F8Mxsm4SIvnXa+A8IxSRF/xEpmH
+	WsB7shF2y3Lc7D8dLmtyWgOdycqcA3R0TW5jSid2uJkINi5XvnPIoIj/e0XMCDQPQ0Q7KD24rA0
+	iXYO+zXaENr8nvN4LnxpsH2yiVn/TWe7js0QUYXIDaDIGjjPJjoelYNodBZUNwWzFcW++Bbu19o
+	FqdB23p/61ivLm2qD1YH/DCl2lgp/eEyn/QpfQZsoNEpV/JENw==
+X-Google-Smtp-Source: AGHT+IF6oLHogNvjH3Oz67SB2byAsyBihuBG/+HbpIQjbMscOU/bzY+tofufIUk1WNXeICSLqYmeug==
+X-Received: by 2002:a17:907:3daa:b0:ae3:cd73:efb9 with SMTP id a640c23a62f3a-ae3fc212ea3mr109904766b.12.1751642868054;
+        Fri, 04 Jul 2025 08:27:48 -0700 (PDT)
+Received: from fridge ([46.2.120.40])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac5feasm190894866b.107.2025.07.04.08.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 08:27:47 -0700 (PDT)
+From: Emre Cecanpunar <emreleno@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org,
+	marvin24@gmx.de,
+	linux-kernel@vger.kernel.org,
+	Emre Cecanpunar <emreleno@gmail.com>
+Subject: [PATCH] staging: nvec: silence macro argument warnings in NVEC_PHD()
+Date: Fri,  4 Jul 2025 18:27:37 +0300
+Message-ID: <20250704152737.14315-1-emreleno@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 04, 2025 at 10:54:31AM +0300, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
+checkpatch.pl warns that the NVEC_PHD macro defines unused arguments.
+Use (void) casts to prevent unused argument warnings when the macro is disabled.
+
+Signed-off-by: Emre Cecanpunar <emreleno@gmail.com>
+---
+ drivers/staging/nvec/nvec_ps2.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
+index 575233fa1677..38e736b3761e 100644
+--- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -28,7 +28,11 @@
+ 	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
+ 			16, 1, buf, len, false)
+ #else
+-#define NVEC_PHD(str, buf, len) do { } while (0)
++#define NVEC_PHD(str, buf, len) do { \
++	(void)(str); \
++	(void)(buf); \
++	(void)(len); \
++} while (0)
+ #endif
  
-...
+ enum ps2_subcmds {
+-- 
+2.50.0
 
->  diff --git a/drivers/media/rc/gpio-ir-recv.c b/drivers/media/rc/gpio-ir-recv.c
-> index bf6d8fa983bf..161f8919022c 100644
-> --- a/drivers/media/rc/gpio-ir-recv.c
-> +++ b/drivers/media/rc/gpio-ir-recv.c
-> @@ -49,7 +49,6 @@ static irqreturn_t gpio_ir_recv_irq(int irq, void *dev_id)
->  		ir_raw_event_store_edge(gpio_dev->rcdev, val == 1);
->  
->  	if (pmdev) {
-> -		pm_runtime_mark_last_busy(pmdev);
->  		pm_runtime_put_autosuspend(pmdev);
->  	}
-
-No need for braces any more - as Laurent already pointed out.
-
-Reviewed-by: Sean Young <sean@mess.org>
-
-
-Sean
