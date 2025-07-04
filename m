@@ -1,93 +1,81 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CF328D841;
-	Fri,  4 Jul 2025 09:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874682F4334;
+	Fri,  4 Jul 2025 09:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751620035; cv=none; b=kaF4G6X0yrbr+R/QL13sdUHO4LskM7+mt6s+COoMnjhX7YxCnGOjRsUx3lD9KgBfjmwjYvonH0vno9Wpt9n/8pV5kSwq6q5jXtbDaLCZnFHlNY9qjCEvrsdcJ+6+EupSZmLEWdxWWAjChmeP2yxMrxxY3M0UqKuz7vFRosYDXV0=
+	t=1751620292; cv=none; b=oxhqEm5uC950uOHSEO6OS1RFnD6+Q2JBKkE7Sn3VLLQb1VP6BaWDpycunW43WzQ0kpgeOVGrymxpe4nPJJWNe/s5OHgHgMa2j1Ka98pKvshVv80Xi4AyiUfRRsvkgTS2e6f3lsIZkhpalQwixL63gIrDxBU8bKk7urUVcsurv2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751620035; c=relaxed/simple;
-	bh=K/pDT6NEfs9vZStUh/AAp3iRYDEmDGOlly4bnEkujTE=;
+	s=arc-20240116; t=1751620292; c=relaxed/simple;
+	bh=U/K6TYBPGbFygsv68xo28nwKyHeVOgVII1meYzdMuSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nlOd8jU0goUUZgJ1TBG97eueih9Jw/kHepA81aR3RP+MTwYpgVND10YGHrFBy6A+SUp94Akgeou2YxPbZdz0PCcafsGhLWgJOjivSnuIG28VLRzC1bZgX5TGZQmSA7R33ZmF8bWH6axkdCP3sKwQmBIoUZGuHdYG3f6umzywAWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxLeLunk; arc=none smtp.client-ip=209.85.221.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFXpdx7fnllvxMadXgHJKHbV1gWWSI50kL5qS/LNs8QbePN+QzuuUEOcX22I5kEFhFFoWhxxUMJ7vZVMZtACOEYnvFikSRaOzEIUUeTU+CIFtBRyuoOEjTzDsEUdqu6+XCFyrViaJR/0vkXIZvYdtmWxmDReW0+//a8FtgEDTik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSjVfTLx; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxLeLunk"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so677341f8f.0;
-        Fri, 04 Jul 2025 02:07:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSjVfTLx"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a588da60dfso430462f8f.1;
+        Fri, 04 Jul 2025 02:11:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751620032; x=1752224832; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751620289; x=1752225089; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDywWjxdtqgZteOHlklAyHpSbZ7foh31pe/ikqYRz6k=;
-        b=fxLeLunkwj8qY3FzOh1LVQ4z4mtZyL0Sc1t7BB21axAfVGQe1VbPZxBDS7nXsNB8t1
-         wFi8J2jUwwJr2jbWeVExRyaqtNT9rrw2s1Hq4wTFTAjo9qhqpYf10KNP+0tQ1VKtn2Gx
-         Z7UH2Fc6GC/8bCpNMQUU7sxH5OLLa84XrFrLUSwc9XGB5SmVZKpvSiFncIdQuX5b/g5r
-         XA1DNsWq6pL2gC6mVNqH5r1RIrcUSg9jwWs2/eEqqqKeawcZIIYN56pJ6G/XGLESZ6zD
-         XcHB2saL1FZZ38vpg2qhg1ABmXDkSgTHu8nSMDSWRzhc/x4yoDp9HpJARLwVb5WJAbxl
-         GQ4w==
+        bh=4BxPSNuI1K+0U+zGcMRGFuPmBq+1SIMVgn3s+fjE3jI=;
+        b=mSjVfTLxuo99cIYHIvwTU+Wjr6nOn12otsxhwMiLoBeGaB3QoVGvc+Et2V4F6qRmJs
+         thG8i9qmI2AKYZT0B+1fCRCjKpMdvcCwDHltVJr3z9pLEzgETEOVlc7eq5+XHuEpdPOU
+         WOUy4Zc0ziZ7ykaW6UXbcumTjIoEg248VGks9KMk1UiTJcCilzJttJtj11SoZ/ukUZ2s
+         CTstPf7nS4PnWRzDDUkTcN7I07WbYwamJLO7EUQXOF6ZW98JniTA1LXSgUoP2/2bcl+Z
+         KQrCKRiBNb+OYD5fKr78DyMrZiurXZhZJ/6LAWMzalLvZaH8QU3pgzpjvBCsINn7YRPQ
+         8r1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751620032; x=1752224832;
+        d=1e100.net; s=20230601; t=1751620289; x=1752225089;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VDywWjxdtqgZteOHlklAyHpSbZ7foh31pe/ikqYRz6k=;
-        b=pV1TH/tk9gTEVgoiFcoaXAco231bMR+RW0kNgO93tA0IRJSMXvM70mCpekenqey3aW
-         F9zaEjgtPlGsaSHLavjUuM48jbDA5Y5PiuiL8JG18POAeLFfQvqtSiYhJi036ypVybBh
-         944cfa9GW7Kww05ej/BfTILcJUzSoY/yazlNvuLJCRIP8u7jzWmTrGvVxwTqI2WuOkC5
-         A3rUcFIB370fjrqEDzN1ZHcVOnbItCwIaY1XUqMLr9gTskUmpmJCPFEiQZA8pLR+wG8/
-         QYRuBUrGcJ+WxP/aO/HhnvRsxO5ZTr1x1erJcHHbSN0jmZ4cYoKGXSnfcIaRzkhi33Ni
-         MfDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVm1BeyQ7S75s6sLBaTUVQRCx6UFf04KS9ELMPaH1XqYXYnMXSSrSot3iERsQ8R6QngDqEVddjmju+/hYo=@vger.kernel.org, AJvYcCVpIXruhUcoCU5TpVT8LDFlzdvvJ3PSj2UIcozpDr25ZYQWNiXMcDJFjTwT8CM7BGKQS5bPllEBxxmmRvQh@vger.kernel.org, AJvYcCWJo35zE3L/CT5ZKMOOdfJfZgNRC1yf23eu2Qp2+8iOaWVSxDlBZjNamUxip96+1fXoP+UvakLAjQ9bnKA=@vger.kernel.org, AJvYcCXKUZF2SOtL7dNGRSi0m09+OBvC/6cg0BlI/1Ho3WR29Z/AbukVEdzzJ3YfQj5BJ9CpP89Z5gC9Ve9+2N34@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz17CMHMtWKrXmNzdckXsJT+f+j1ie+2gDDTYOp5ihM6ZGgCX5e
-	5Xt53ppIjTK6Zw0rCSsVjjZo6HkKKmCkfNKaHqnOkJXqEVrFJ4hpnYqL
-X-Gm-Gg: ASbGncuIi+UKiqFmUkxvn5oQU1VvrchNtnz/y4zyRJAYzB37Oqtlvkrfl70Dgv4dq/B
-	hHjlHN/KRedNJAUu3q4kLx9TQUnoFBGpvQw4L54lMYhjqVLFZz2n22WGjBtKWAHNJGoDF30HuCs
-	3FatvrOjGS6mm0NCsyJxQpjaKRM6Vic5dDmkqnv1SMYGZDxJNNQVc7nA4acSmqKC1XZPFBO9524
-	jFuCcMvqd37BQiloOjywRxV3TSNXYvacnkeig9nY5O9mswGNrI2Eb5OPRRWy/dYLcFKris7GMV/
-	x0FX42NMRXCUMHWZaHZYwcgddGdBwfSdYMSQfnRCW0P+q+ShaMupb2F5QqvPcB6vEO4jNCfEsNz
-	x2uuYubYnJrlLxwvZghCjPFaagKc2kvaQk0Gj5eGTm6XfyiG4
-X-Google-Smtp-Source: AGHT+IHEPxQdMHTXbR1zyfFVxzPQhYfItopt0GRpKhNC4icZ8avdDH2El8o9lUAz/MQc695EIAp2Fw==
-X-Received: by 2002:a5d:5d8a:0:b0:3a4:e4ee:4c7b with SMTP id ffacd0b85a97d-3b4964f8be8mr1457452f8f.15.1751620031616;
-        Fri, 04 Jul 2025 02:07:11 -0700 (PDT)
+        bh=4BxPSNuI1K+0U+zGcMRGFuPmBq+1SIMVgn3s+fjE3jI=;
+        b=KutpM6rgsWV5xwIk8H0orXO38fem5PayURFW2Ce8Ziz5SY+lk0KwMEuLwD+UeLnNKs
+         9OFkaWZqt9/3APcOg6LWsW6IxuGi/x2hrXd9wyLQKmMLIdl2phOrWyySSPxWE0qCM6Ob
+         HVJ7IpI0VJh+J1wkPMweOLCfDXhYqKsZxBWDyw3ezlFSPw08AvGUURzkqFc4Mpu5GV4a
+         OFEVle4Rz9+DJrdYMjSAz28AEP6ApiFgk6W/q8uLHcNqrCz00Nv9jzcTWzVm1BibFkxO
+         21lbsgzXdiKmsyQRjPr/XpTXemzwVUW/pfiu+9xkGkzSPNJq7rVhOWvoFzLBBBbhne6O
+         vpcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTJqW+1svipFO7h8JjyoYSswsMETRnYMo4b3nbGYwsj+HPzt5KHxHlSSmqN5bi/GPyPvFJQLsmjE2p+Cw=@vger.kernel.org, AJvYcCWlxIH/RbtyQQ9HiVUvKXRpu+ONEwjoaoPj2J2885lcsWJ5QGe5JKla13et9bYX25Ppm6bZ6d1OYDS1Cw==@vger.kernel.org, AJvYcCX7Z3gPNPwgk6mRb/ya8AOJ0Z+jP5vGhl5uPyAAtSVuzx6edhoc8EchVaVvZh/zZvMThewANDO8xEGH@vger.kernel.org, AJvYcCXfCj1Q5g/0zCKpumS7Mb4Ywz/VxaDZAx110J5sLSmDSv2Yv63VadTlLotGC3zWrZa6GcuUivf/cilz55M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/3lqyoU/GbtrMkkyx9ENkFXYHIhrwm/VEFKk7LiC4QiKRiX25
+	QMKgdU0NOiNJKd9V3eiVpE5Nao49208QOunlFdepoVY0vhTeeOIhBwgh
+X-Gm-Gg: ASbGncuLYEMglQZora+bF5XK7E7c2yT+959Yl8iWIWhr1Pw/oRhZAQkrhchJlcR+eJ7
+	l8tUqMV7Qlm8MmEUjYsh7Iv96eGhW4BujSdGP/JJbzlSgnG59yG/N9J+Qj7rdFwcZbuFB5wAY/M
+	diCCViBURSZTZ2EHgyFHUPPYGbbyS+IqJRJuSu8FxKkR/fvtg6/Zr0RReZXgvJrn7URz9UU69u3
+	k+BbhAQbCu70r59va36tOrJE+S2CA6oxFe8ra1mt/685D4rL98Y9GtpxmzF6qYg1PUXpNRot6lX
+	k5h/QiTbf0i0J4g95iyVT17KZnUpYm5EhsGk86WkHFIQYZQ2QB95Bt53cgY8k16YWsAhQOkqLYO
+	8zY/vKPYLu3Gy4tGzinu68hXYqBVokOV9kVgjzg6iss62fR4N
+X-Google-Smtp-Source: AGHT+IEifZ9+Qoefw6C59P68ghxiOjv/mmB7vnLxOoNgNMQhGBq65x9dlLFXIorvyQQpoQF/016xrw==
+X-Received: by 2002:a05:6000:2f83:b0:3a5:8934:493a with SMTP id ffacd0b85a97d-3b4964e56c8mr1521328f8f.44.1751620288471;
+        Fri, 04 Jul 2025 02:11:28 -0700 (PDT)
 Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c9f9sm1967858f8f.93.2025.07.04.02.07.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bcececsm49889865e9.23.2025.07.04.02.11.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 02:07:10 -0700 (PDT)
-Date: Fri, 4 Jul 2025 11:07:07 +0200
+        Fri, 04 Jul 2025 02:11:27 -0700 (PDT)
+Date: Fri, 4 Jul 2025 11:11:25 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>, 
-	Martin Hecht <mhecht73@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	Umang Jain <umang.jain@ideasonboard.com>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Riesch <michael.riesch@collabora.com>, 
-	Mikhail Rudenko <mike.rudenko@gmail.com>, Steve Longerbeam <slongerbeam@gmail.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Nicholas Roth <nicholas@rothemail.net>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Sylvain Petinot <sylvain.petinot@foss.st.com>, 
-	Paul Elder <paul.elder@ideasonboard.com>, Matt Ranostay <matt@ranostay.sg>, 
-	Nas Chung <nas.chung@chipsnmedia.com>, Jackson Lee <jackson.lee@chipsnmedia.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sean Young <sean@mess.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Matthias Fend <matthias.fend@emfend.at>, Marco Felsch <m.felsch@pengutronix.de>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ricardo Ribalda <ribalda@chromium.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 41/80] media: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <oanwnvwlfewhtihgxqhxeuyayiqehzryqdsvmq5hku62nn7ri7@favwssinmjjq>
+Cc: Peter Chen <peter.chen@kernel.org>, 
+	Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Michal Simek <michal.simek@amd.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
+	Mathias Nyman <mathias.nyman@intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Bastien Nocera <hadess@hadess.net>, Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 67/80] usb: Remove redundant pm_runtime_mark_last_busy()
+ calls
+Message-ID: <ycajp5zwm65aauacebivz5773qhe2tmhcn7wqhorjybarfs5qq@su6kxog6t66k>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
+ <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -95,20 +83,20 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kwmvyrwxhkrq3xlc"
+	protocol="application/pgp-signature"; boundary="dd3rsrobpe5enhed"
 Content-Disposition: inline
-In-Reply-To: <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
+In-Reply-To: <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
 
 
---kwmvyrwxhkrq3xlc
+--dd3rsrobpe5enhed
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 41/80] media: Remove redundant
- pm_runtime_mark_last_busy() calls
+Subject: Re: [PATCH 67/80] usb: Remove redundant pm_runtime_mark_last_busy()
+ calls
 MIME-Version: 1.0
 
-On Fri, Jul 04, 2025 at 10:54:31AM +0300, Sakari Ailus wrote:
+On Fri, Jul 04, 2025 at 10:54:53AM +0300, Sakari Ailus wrote:
 > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
 > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
 > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
@@ -116,29 +104,46 @@ On Fri, Jul 04, 2025 at 10:54:31AM +0300, Sakari Ailus wrote:
 >=20
 > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 [...]
->  drivers/media/platform/nvidia/tegra-vde/h264.c           | 2 --
-[...]
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index 0c7af44d4dae..554b03e3ae92 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -1394,7 +1394,6 @@ static void tegra_xhci_id_work(struct work_struct *=
+work)
+>  		}
+> =20
+>  		tegra_xhci_set_port_power(tegra, true, true);
+> -		pm_runtime_mark_last_busy(tegra->dev);
+> =20
+>  	} else {
+>  		if (tegra->otg_usb3_port >=3D 0)
+
+pm_runtime_mark_last_busy() was previously called conditionally only for
+host mode, but not for peripheral mode. That said, since that call was
+now moved into the pm_runtime_put_autosuspend(), any issues would
+already have been introduced by the series that this depends on, so
+we'll see if there's any fallout.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---kwmvyrwxhkrq3xlc
+--dd3rsrobpe5enhed
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhnmbsACgkQ3SOs138+
-s6HR2g/+NoY3pcxcF7vUmDQS013DsHFgpV+Tl+JcGqzntxo7nvqoPqTVCDHLybr8
-bkYad4XE946YrelbKsxzncJn4vZjVB6qrGMujyv65H8WfO7AG6nzlibOIunL8WOd
-Y+uxVe5SBCDS7bajKFtmuEKFnz08e0bpIWOgKkOauDAuEkrbPsqXXYSUxXE+pf0z
-8XTFc6AQAMeg4AQTnDMUYRA1FgHi5ZQCFhedxjKRmXSQd+P8td6GZsvYK427AWyK
-mvKwRu4NPb6FosulEpEctkbpI6ObbN7fAUdjbIlSIHnNm9L/GDApH3zAGn5oGT0q
-m1XodmUsGZHRJt7KEzAqHqx2pzM/ab9UNEJGDaCMzpYGJMjowIYpoVgxubKmwVUV
-YgVNJ0IZL4QrGL5yr1S5XZD0+0pi+vH0nrjX9MewaJyhDebyBNKuifREtuPndWqS
-hXBQXVtSFW/mMCCxyMYmmT6GBNjnbd+vaTiRFGCNz1cds0nz0F3LtGTAg+UjGe7o
-p5+7dWzdafTk8aIeGY6Pozuei+LziegbVWpegNMLkK9TRVwm21bKvhggMay1Fl8z
-R3OBaZKmkHmsqC25vsdaVhwNjFoR36UqmGhXUMnl3gl4aee0lbG6nCqJKBAfCJUa
-dkGr3BlRGwk0DC98kTAVD7TUuwmROlTKR5tlcoLgvi7rPb/C/Ek=
-=tZ0M
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhnmr0ACgkQ3SOs138+
+s6FhWRAAmqKDqeofJQ11k5izwUxvfuUGMikCMaAXOhGyv2+Tokqg6xbVpQ/LTy3A
+jW7wNUyH5ZjWFprk7RPURsZpkc8ruTDl3bmWdSdp+DlV5VNfEYs1fqreyNsOF1k/
+a++KWAlrXA7VRbSlFdMj6W6SjudMMjWby6Pm2K7I8pDuJQdOwSuBf0bWgN95JEiu
+MEf7+WORXLjgJToa1eiPE9aPSMqS+vOMhkrhJLfrsCmwqoG5CUnIJXf6wnaN5hqq
+QGKPnHXbDocqwAaMFkzX1/nSahQOIl4A882n8JB885SajqJ81BnjWVaUFnS2RDfS
+aPDiHDlZ+xs/Ix8ISxgpY6MPoMalnKlf3pkQ3FWrgS/NyTNryLm9bBT/SbhJVddC
+kAShqX2e8jXSn1MbNhLryWBJYdQ7jWagl5HwL2/R1w6BzY69iwUKHK/1Pi3SHFY9
+ryW8wlQGR2/ukqPqFPZVfXMmcX00Zuu+JIaiSscFM/Q5I3n47JIYmsFSWsertbI6
+DTkF9fKh5n1npEGFeUCilrG9b1bsYM+BJIrwqZ+7qfpgKb1uxC6yjdIlDLwkOLjy
+gc0ZORc30ulN3X2p+KUzVnte27Q3llclgZoISLYfv0+wkWvQcNYuBCBSvpajeqMe
+dC9Twi/Dm657HYa4TfqcD3EMTgt//GUiOVxKCHqOlQhXpEvQMuM=
+=lUG1
 -----END PGP SIGNATURE-----
 
---kwmvyrwxhkrq3xlc--
+--dd3rsrobpe5enhed--
