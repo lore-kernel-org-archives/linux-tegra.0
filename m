@@ -1,28 +1,28 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2053.outbound.protection.outlook.com [40.107.220.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA331FF7DC;
-	Sat,  5 Jul 2025 01:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4652F20012B;
+	Sat,  5 Jul 2025 01:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751678069; cv=fail; b=qBRkARX6XBKvyJIq0prN2d/dgh66pfeHJ6L7R153qIeHk7XGrMGOFJdl7nX8tECHnJBbrgE9YIlpb5Ze4xIn04hPft2t/okqPQMiYL5zyl6eUvvfNfY/sQjNO6e3tR9jsAIF8CIYunyLTpTGv3/O6LDyjyHXHtDlEiI1WDNbVWM=
+	t=1751678069; cv=fail; b=gzkvn8DTKOoN/8xgJRT7wbGmzgVsPRocG/gL6/37vCnHvEplcEG04UizmLrTgU2ZRGWiY/gBWTFTLyTk4n6lOQVOZa66UJ8cHFfIoaO2kHW9wM8cX0noMs+t8C8D0pOXOXQL2YTRhhpwTUFvoV/Kl0OWUa5lbibHv1lXCbpiTOE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751678069; c=relaxed/simple;
-	bh=sdRV38YfffU8VpeKJKLy8aD23uMiABTs9JAcT6qZvwQ=;
+	bh=AVAw1tR7SIjY37gcgPHwyuxL/Ua8i1gmzlgZQsAK+j4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lPahhPiXE3gUPF4Q4ErIgbwK/jDLGy5fD5Ke27n6xYbBraYeZx8xTBkRZcEdzT5+VXkuefFfpFUudh2nYXrDXzFXesFOvd3AfDdmHp2/x2AoMvRYeABG2v4smMOel6Ila7levk5GW5zrgKt8jHtDIYxWigdrdCRPY57qkqPEjPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GX9F8v3G; arc=fail smtp.client-ip=40.107.94.74
+	 MIME-Version:Content-Type; b=OrYpcNWxLPBF5Po7v/FuhuaY/aXg38/+2Rdb73oLKhaunzzQpwTL79+8K2wg+jyGHHs0pKxs0rv+DL52XbdoRpe9FRQqAM/0jobnovYmpSxZl6WOYNexvGMsCBja7MbEKwGAaV0M++uu/iv2pJS2UFeuszrB0ZMgqvkogiZOGtw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CQodrWn5; arc=fail smtp.client-ip=40.107.220.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GX9F8v3G"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CQodrWn5"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ytGouUKzeLV2mtme4wmWlj6qRc9dyow0QBKDEj0kOKBVhdFQBXKZou/rPXhNRXAdjY67cYuW7GLTEZlYyQTjjZBzICiirNvi3HGJZ+nxzPMNVb+KLOr8Bswfj8+JMYaVQBsOI4/4PVvqG0kih7hGSOLeMDY+tUHp3aRVYJeu/LeGZ0V279bUGDzH9dQkgJtJh2378D30v9yu2yOetnm2r9ZGv5Pv4144LO+npbCQKR1nJNMAlQbV5xx0yl7XFnnmnKOobbx/+glZH73iYmAgorwgKvrle31NYGWJ8acRBc3LWV6fSZaFhbXMoYPG7z+paalF56KpF8nclzpP+HRWFA==
+ b=SdNiilQe2wNJVV1ooVHo4iXz20OZDqiokU+OzrZDP3PFuIo6umJMEK29YMsqiiuujXgb9WTH4rm82Zzprstz+uqMQrAUPZf/gCxMCiXNlem8J6MYXRa1kZc+4TnpqM18iaYlhA8Z5gUHqphj7a1tDexVZR+Bh4cav1WBboUCZGKdRBVqkSUImTWgGCZ5jme0Paj6WpCy9Oy29k8nKiTlhcilmoE61fC/P327lqmcXZAqztTWki6gu21A9uErLotzAh/1HD/fZqD09MuSvh5XgTFovtFVhFtPvGORqSUFNjNHH4sEHqZIkWDmShBvurZ/0hhcD+uga7mT9m+NDEiGmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KJ+3QmhJEyvGvTTXuFFBDc1ZXP8tUN77scFN3bhW228=;
- b=jres29i8/0Fcgd/hR1xgsv575SxGQXCIeEp+qDEjbpEWQK7riZ0OGSKspovuTkAaHvUjgNf6ehRA3EaXO2Gf10qBpilfE06Pz/a8MowEW1o/zAfsoLeyc33SEFAtke5xidcae7pVZVLOAi3/45819SD14P7X6nu2vlv/JJ77VSZeIXstMQGVMh0nwA77Dzojz/ljSgLZPckJqiSKclpoiLrrk1zcT35H+/zCAX9R36BWWNg6AoVM+aSMJGDSGEykCMYQr8AfKQahyqg09bMQ9oFkDDEinzmBTH60vxAgtdkcmOY+T6kqpyuRfIjTJlBAPv72cCZN/J9NABQ1znlIRQ==
+ bh=dklKg9uUrRmd/WIlyI6ryPma5hxpkYfODl1wQgGp6SA=;
+ b=Ih7PSJ26sZAlVDEcaCurJ0VCKBPEzr8uCicX1bHp1hbYa2aHbErS7Hei5QmOy/CB0thoCDmlt/kodN5rGhh/xEQxJ57N1jhU4NihXcQXHKjKeICkoVvu1g3HVhtiBdYVc1jxU3+EE6EHCt7cn1eYrqNS+5qZjMsjzpwksUm9UWtv+INeR5JuqJnHWmXrEEF7wB8h3UpmX9xMS0Dtb6ZChD9d+2LvhQM4J+OuHc4zUHDznOCjmIQXjm0TZSsrB+b8BzN3cml/Z5iPcBXE8xe9cLNYvDM/aRyRQRCnpCrCLxetvjyJfZC1Xwv1p4tHETBXwfQziLt0i1LmubLDZCtVwg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KJ+3QmhJEyvGvTTXuFFBDc1ZXP8tUN77scFN3bhW228=;
- b=GX9F8v3GQhjNFgm13Si6vQA6pAEn2K+njGcJCmu+WuyMWsIMQeUk6XaC+nIE+/yVzzaEsRLwf1QmhcjDbbuATOUwLYnfoyCi9r28aHC4Lg7G3U97FfleR4jlcN1jZ3YRJT+P8snjR/s5epcxMsDAvRQ6mcK+aNBCHAsdrrLsLoqpkfMrNKr2CD+2nm5QfvAaLnDtgWe1MT5epS+VcutxeOPvAckw+8jv7ZXMMo0L3t7Rnkog97PQRrHMu84XrKspCW++wz7s7uTH6CFNokPROmctdJYBphkHAGdutn6jBzO7ImACNdQmaBnvsHOBEn1nwgrhAWliKs/Q4/NFuBs/QQ==
-Received: from SJ0PR03CA0086.namprd03.prod.outlook.com (2603:10b6:a03:331::31)
- by BN5PR12MB9538.namprd12.prod.outlook.com (2603:10b6:408:2ac::12) with
+ bh=dklKg9uUrRmd/WIlyI6ryPma5hxpkYfODl1wQgGp6SA=;
+ b=CQodrWn5NC1KiEeFcV5wwtjCz1M9xaFmqkVgIQRPnscjY8tCK5PX9M/IcWeS81UZa1WD097luZ3y3bqGVNZw1OxG+sJ6RKJQ8Lv+AEQgIgJO1U7mpImX8EW2ajglnxGcxn0bpCLOoaEC7aJ226Ccpde6Q8QFXypPT2s76wpykSiY9moZTboPm4IlEKMiQXA40RpCLBFNPgDUmtx70Q7RXPzDpxzeJVucJDWTdt5K61364F1S03e5ogJh+vADNhhqz+EC6vYhScreCG7XlysSt9rDCrd1BwXcBZT6IKTJ1U2L6atYt/Nw3SDrcfVPzM9xUyhEZNh6LwmgnMFEBhVDFQ==
+Received: from SJ0PR03CA0088.namprd03.prod.outlook.com (2603:10b6:a03:331::33)
+ by SA1PR12MB6946.namprd12.prod.outlook.com (2603:10b6:806:24d::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.34; Sat, 5 Jul
- 2025 01:14:23 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Sat, 5 Jul
+ 2025 01:14:21 +0000
 Received: from CO1PEPF000042AC.namprd03.prod.outlook.com
- (2603:10b6:a03:331:cafe::c) by SJ0PR03CA0086.outlook.office365.com
- (2603:10b6:a03:331::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.23 via Frontend Transport; Sat,
- 5 Jul 2025 01:14:22 +0000
+ (2603:10b6:a03:331:cafe::68) by SJ0PR03CA0088.outlook.office365.com
+ (2603:10b6:a03:331::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.24 via Frontend Transport; Sat,
+ 5 Jul 2025 01:14:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -51,18 +51,18 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.118.232) by
  CO1PEPF000042AC.mail.protection.outlook.com (10.167.243.41) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Sat, 5 Jul 2025 01:14:22 +0000
+ 15.20.8901.15 via Frontend Transport; Sat, 5 Jul 2025 01:14:21 +0000
 Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
  (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 4 Jul 2025
- 18:14:15 -0700
+ 18:14:12 -0700
 Received: from drhqmail201.nvidia.com (10.126.190.180) by
  drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 4 Jul 2025 18:14:15 -0700
+ 15.2.1544.14; Fri, 4 Jul 2025 18:14:12 -0700
 Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
  (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Fri, 4 Jul 2025 18:14:14 -0700
+ Transport; Fri, 4 Jul 2025 18:14:11 -0700
 From: Nicolin Chen <nicolinc@nvidia.com>
 To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
 	<will@kernel.org>
@@ -76,9 +76,9 @@ CC: <bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
 	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
 	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
 	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
-Subject: [PATCH v8 13/29] iommufd/viommu: Introduce IOMMUFD_OBJ_HW_QUEUE and its related struct
-Date: Fri, 4 Jul 2025 18:13:29 -0700
-Message-ID: <40fde2d6d418f8ccda5915eeb9a57c08ce0b46ae.1751677708.git.nicolinc@nvidia.com>
+Subject: [PATCH v8 11/29] iommufd/access: Bypass access->ops->unmap for internal use
+Date: Fri, 4 Jul 2025 18:13:27 -0700
+Message-ID: <820ae86e5455be2cac480d941e9ab7e29b206402.1751677708.git.nicolinc@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1751677708.git.nicolinc@nvidia.com>
 References: <cover.1751677708.git.nicolinc@nvidia.com>
@@ -93,192 +93,251 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AC:EE_|BN5PR12MB9538:EE_
-X-MS-Office365-Filtering-Correlation-Id: 417e6a4f-0f05-4e7d-0773-08ddbb6146b8
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AC:EE_|SA1PR12MB6946:EE_
+X-MS-Office365-Filtering-Correlation-Id: f25aafec-8c69-45dd-6427-08ddbb6145ae
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024|7053199007;
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8KPlqxh4/NKGrX9iJ5DtJvTkE0kTpgevQYMWvEZa80WVtjp6MjcgIJ/in4yM?=
- =?us-ascii?Q?FefIZlAQykRoOMvTeQ9YyhTpInG/AnpLmht9FopUyVfW1MxLzFQbnIjHpm6E?=
- =?us-ascii?Q?PhPi5XZFCI6vDo6CDPqcVgJ+PXMEBRiPKmi346KAfggqrG22T091VwCIbeas?=
- =?us-ascii?Q?kY/nGoKvNgKvSAyI5zDkOpUhhVmH4oPO4Dp7/AIJ0z2Sq3pBZYHWgzsR3eIs?=
- =?us-ascii?Q?ykIWwjsLLyHyUTxoIMWlglEeJBXPWleXWBWQNljQ4BQi1p+qZzhO1LYbc/dW?=
- =?us-ascii?Q?+CjhZWd+/A550J8HtmzT0SpGF1BpXoK6DkJL03ujlUG/GWM3dPpIQSAXtTCt?=
- =?us-ascii?Q?6Nx7oLARsXlgRrC3P4vwPzYGU0LEW6synabj7xPE/dSovLZDSHSO1mRDgHC2?=
- =?us-ascii?Q?0kmI0pKhjG+d333QWvaDWXORZKOZjAKAdGfD26ZKs7+CUowEtbifuEbhf2T9?=
- =?us-ascii?Q?3lrfLEW/gRpc62F4kYqKza27dfplLiQ9tqSdc9YZg8aXttdRbYZ0VXIl3RqX?=
- =?us-ascii?Q?PnjLQYeSLTTV8zVtxMDmPU4pWci5WmlLw+w6vtA2vpZ/wLYr5Bny/IUR2pmQ?=
- =?us-ascii?Q?lFSZ9lWIZGeRilTUEhjN4ihmDmHcW43bpAhRdUAxeevv886L2nTHJ93d0jDK?=
- =?us-ascii?Q?SanEWyYHBlom4oi8yowwNHMpDud405rClWtuWEBGBlaw+02QomQNFn5Rq/A0?=
- =?us-ascii?Q?XxrF/9uy51ST6rrxIbcKvq7iXRUTkDkymE6M5iRGtt0Zsx0oyC0mD0TJYrNT?=
- =?us-ascii?Q?SiHEuq9UQyORLC2G8MCE3nwLdZzC2wpsFMs9RSdtOs74YF5rXo2Xq0/Zqk+B?=
- =?us-ascii?Q?/QaMbnD8/wkwB1A/XNUbrThgNj5nwVHnGqvP7H0tJCGE7fgGVbBflAitRQZj?=
- =?us-ascii?Q?JsV8H/2Ab0N4PZ26v6QBiCrWKKmcFzdE8M/Y+5oncVKt5lfxuVKmtUQU1uNs?=
- =?us-ascii?Q?gxEj8FJKSQ/sfB9Uj8eqmer7K7liyHukz3NIAVwqjOUR7f907z2oHSTl9B0a?=
- =?us-ascii?Q?LT+kHI7VzUq9MiMEr+KGMwAczqn9Ave6Gvdbv3xUj1NDhsrbHfGaMzkPJEc3?=
- =?us-ascii?Q?P/+m7PcM7Y5CoBWBh7zweTR7w/ttIFfG3F6Nr9HoF0uZ9gy5NSaqwfyA8icd?=
- =?us-ascii?Q?4k5UmJ24DdzoDZYFnatnEOZfd0jY48KKVWekRK6CH8lhO78oFWBYmK7gBShj?=
- =?us-ascii?Q?Kv0N74XhpPgntcCQep4ec653DwaapQU0B8VCHChQdqdRAuR2DVNQpFZaaGE9?=
- =?us-ascii?Q?5xpiqlHBWTGJ4LWonqIxZQCxicy/ChhH0tP1UHJFs7r2CjCwudAvBrUM4jPe?=
- =?us-ascii?Q?mZ5krPs402JM/5IjcCubTfmHJSrdbo8/+bHD69gGGquNlNTlMEzLIPSXlBsb?=
- =?us-ascii?Q?GPs+isCYqjqoIMQhF5zavmn3CD8ez5h+HnfxKfLgZxcyiL3tkCs0g8fhgrt0?=
- =?us-ascii?Q?keVSQ5KcUW+Qt5k/QJkPf8WUgXou3tG9PRFJKcsPuvtm6FIt0AM4SWRtaWrI?=
- =?us-ascii?Q?IvQgaSpZtZ8vLDv27ci2xQ6GVWgHZwt8G0w/?=
+	=?us-ascii?Q?+xgw5QwucnPW/s4OIshB5PnRJrbG5JvKtg2vYdmjGM0nev1zZ6QwUjPr1YBa?=
+ =?us-ascii?Q?Lcypk38wSfLFOQ8tgh/fNzbFNsZzV/YkWICiIWBe0Ehr0lpB2NOvdUoiK6CK?=
+ =?us-ascii?Q?094NvCFmQUmt+qY3b3Od7pX75KAS8r1lVqNmcjqKZg2pjph42kLRionncctU?=
+ =?us-ascii?Q?1CmH5rhOoTwPuNDKz5GXz/N5NiNeiw5PttlJidEoQpHutnThBMOgTlWZFUUq?=
+ =?us-ascii?Q?rtW5zDcLvtkNWZwEdH7Z2YUkW7n2hRYXp3M9URtt3UUyc0870KirP+KEwqjB?=
+ =?us-ascii?Q?RBCvDLOjeBAZG/ps2Puwig6mOs3ftxCL1UWYvUSIC2hkHemCgDFH1Fzx3nf7?=
+ =?us-ascii?Q?H/KyizVab4txFUUflyfY1uaol4JDlvMQPN7lvITa4b5vcLXSjgxl6hcV6PpV?=
+ =?us-ascii?Q?D7U0+uG40vGuJSVt8QBGjAx5BQBufNcMcN0vYjUYdP51n2PoyGy0abrv/0cH?=
+ =?us-ascii?Q?i0x4bzv1XAJfDNC3skR8cQn2HstN3ZaKsHtQyYovFQ7bEVKw83berdOdNoRH?=
+ =?us-ascii?Q?vI6Pp3WEk8zUKNSHxPqg88hlc7bBRnI8KRaQnuKgfPU2lXW6zZNDB14C/5tF?=
+ =?us-ascii?Q?WLtYTZfV7wrLs7+UgaYXjzyBsCOzBiW2BjO2FVJFV/V9BDPe03oT3X6HzebK?=
+ =?us-ascii?Q?7tN9t62GoH7oT4phapMIRtCcGxecyxxc+bXZaoVQr67lfU66O9RvDteMaDGY?=
+ =?us-ascii?Q?tIbhe5IeELvA38GYl8cjrOJp+Sp0VMZj7lZfsIsvbjwHcqbsq1ZP049yslQZ?=
+ =?us-ascii?Q?sWYRHbvwc6yMo2fqLIjDfC1k+Tc89UvIeYmQFS7zZKySHw7imoJWOJTE+Vau?=
+ =?us-ascii?Q?scs26btrWugceWGW3s9TxEWUpvGDFcUTlfbKDlZsgJcMMH7HmmUD6Y5rKTuQ?=
+ =?us-ascii?Q?lZJ9uIzCD+slceEKFUX2yQpTmiF/HZLWlqacKwjjReGhRNLour0Esp2NEld9?=
+ =?us-ascii?Q?30HRMaxuqpf2FTRYRk4yz0lB2fPPyMDv0a1bDzqne/GvyqF9/9w48UfHzuWl?=
+ =?us-ascii?Q?nu5ivq9LcMDTdxzGJF+zVQV/kS9xRqo9paFvP5vqQ0kWzdldL1vLvQfpmCa5?=
+ =?us-ascii?Q?sCgNSWgCPumvGZSTM+MD7L4uTDJsFHZowEVYndwzj+9KvDn5RtHK32wpO8i5?=
+ =?us-ascii?Q?jzopPDjZTFBvf+CWXSebpNJtDIM7uiJEmiOmHoAK0kP/uhBJGJVuS5aevcAY?=
+ =?us-ascii?Q?LoBYnZ47fJ/YlLhIDX9EpvKuiJ6E15VS0UZtyiDCqxpqNZ4tJJMcqX3xHvYt?=
+ =?us-ascii?Q?V25vuhUAlHnrFszVI4RfHlEvcvAN6hpmep+gPbJnX8lKef4fAyOhv/4NgQ/W?=
+ =?us-ascii?Q?9gKv1q7vQLkH4ZhI5hQ7tllBFBncKNXKuJdvz8gwJbdeJdBjOfuSgGYwgtj7?=
+ =?us-ascii?Q?qLc/bRrXUZUPM8+qY5WYIcNZezDPcU3M+6QcwKCrhuu8c0wDHYILbk9o82Xm?=
+ =?us-ascii?Q?sP5uDLL5TjMHJAEz0hsBnIVIrHtL1X5Qnp8jl4WZCiBOJzTK0AO2UzHrjPH/?=
+ =?us-ascii?Q?XrBWew2z/3bHaV0IndzaelfZwkA+8c2UJFk4?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2025 01:14:22.8517
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2025 01:14:21.1088
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 417e6a4f-0f05-4e7d-0773-08ddbb6146b8
+X-MS-Exchange-CrossTenant-Network-Message-Id: f25aafec-8c69-45dd-6427-08ddbb6145ae
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	CO1PEPF000042AC.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9538
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6946
 
-Add IOMMUFD_OBJ_HW_QUEUE with an iommufd_hw_queue structure, representing
-a HW-accelerated queue type of IOMMU's physical queue that can be passed
-through to a user space VM for direct hardware control, such as:
- - NVIDIA's Virtual Command Queue
- - AMD vIOMMU's Command Buffer, Event Log Buffers, and PPR Log Buffers
+The access object has been used externally by VFIO mdev devices, allowing
+them to pin/unpin physical pages (via needs_pin_pages). Meanwhile, a racy
+unmap can occur in this case, so these devices usually implement an unmap
+handler, invoked by iommufd_access_notify_unmap().
 
-Add new viommu ops for iommufd to communicate with IOMMU drivers to fetch
-supported HW queue structure size and to forward user space ioctls to the
-IOMMU drivers for initialization/destroy.
+The new HW queue object will need the same pin/unpin feature, although it
+(unlike the mdev case) wants to reject any unmap attempt, during its life
+cycle. Instead, it would not implement an unmap handler. Thus, bypass any
+access->ops->unmap access call when the access is marked as internal.
 
-As the existing HWs, NVIDIA's VCMDQs access the guest memory via physical
-addresses, while AMD's Buffers access the guest memory via guest physical
-addresses (i.e. iova of the nesting parent HWPT). Separate two mutually
-exclusive hw_queue_init and hw_queue_init_phys ops to indicate whether a
-vIOMMU HW accesses the guest queue in the guest physical space (via iova)
-or the host physical space (via pa).
+Also, an area being pinned by an internal access should reject any unmap
+request. This cannot be done inside iommufd_access_notify_unmap() as it's
+a per-iopt action. Add a "num_locks" counter in the struct iopt_area, set
+that in iopt_area_add_access() when the caller is an internal access.
 
-In a latter case, the iommufd core will validate the physical pages of a
-given guest queue, to ensure the underlying physical pages are contiguous
-and pinned.
-
-Since this is introduced with NVIDIA's VCMDQs, add hw_queue_init_phys for
-now, and leave some notes for hw_queue_init in the near future (for AMD).
-
-Either NVIDIA's or AMD's HW is a multi-queue model: NVIDIA's will be only
-one type in enum iommu_hw_queue_type, while AMD's will be three different
-types (two of which will have multi queues). Compared to letting the core
-manage multiple queues with three types per vIOMMU object, it'd be easier
-for the driver to manage that by having three different driver-structure
-arrays per vIOMMU object. Thus, pass in the index to the init op.
-
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
 Reviewed-by: Pranjal Shrivastava <praan@google.com>
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 ---
- include/linux/iommufd.h      | 42 ++++++++++++++++++++++++++++++++++++
- include/uapi/linux/iommufd.h |  9 ++++++++
- 2 files changed, 51 insertions(+)
+ drivers/iommu/iommufd/io_pagetable.h |  5 +++--
+ drivers/iommu/iommufd/device.c       | 18 ++++++++++++------
+ drivers/iommu/iommufd/io_pagetable.c |  6 ++++++
+ drivers/iommu/iommufd/pages.c        | 12 ++++++++++--
+ 4 files changed, 31 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-index bdd10a85eeef..f13f3ca6adb5 100644
---- a/include/linux/iommufd.h
-+++ b/include/linux/iommufd.h
-@@ -37,6 +37,7 @@ enum iommufd_object_type {
- 	IOMMUFD_OBJ_VIOMMU,
- 	IOMMUFD_OBJ_VDEVICE,
- 	IOMMUFD_OBJ_VEVENTQ,
-+	IOMMUFD_OBJ_HW_QUEUE,
- #ifdef CONFIG_IOMMUFD_TEST
- 	IOMMUFD_OBJ_SELFTEST,
- #endif
-@@ -119,6 +120,19 @@ struct iommufd_vdevice {
- 	void (*destroy)(struct iommufd_vdevice *vdev);
+diff --git a/drivers/iommu/iommufd/io_pagetable.h b/drivers/iommu/iommufd/io_pagetable.h
+index c115a51d9384..b6064f4ce4af 100644
+--- a/drivers/iommu/iommufd/io_pagetable.h
++++ b/drivers/iommu/iommufd/io_pagetable.h
+@@ -48,6 +48,7 @@ struct iopt_area {
+ 	int iommu_prot;
+ 	bool prevent_access : 1;
+ 	unsigned int num_accesses;
++	unsigned int num_locks;
  };
  
-+struct iommufd_hw_queue {
-+	struct iommufd_object obj;
-+	struct iommufd_viommu *viommu;
+ struct iopt_allowed {
+@@ -238,9 +239,9 @@ void iopt_pages_unfill_xarray(struct iopt_pages *pages, unsigned long start,
+ 
+ int iopt_area_add_access(struct iopt_area *area, unsigned long start,
+ 			 unsigned long last, struct page **out_pages,
+-			 unsigned int flags);
++			 unsigned int flags, bool lock_area);
+ void iopt_area_remove_access(struct iopt_area *area, unsigned long start,
+-			     unsigned long last);
++			     unsigned long last, bool unlock_area);
+ int iopt_pages_rw_access(struct iopt_pages *pages, unsigned long start_byte,
+ 			 void *data, unsigned long length, unsigned int flags);
+ 
+diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
+index 07a4ff753c12..0567faff5680 100644
+--- a/drivers/iommu/iommufd/device.c
++++ b/drivers/iommu/iommufd/device.c
+@@ -1048,7 +1048,7 @@ static int iommufd_access_change_ioas(struct iommufd_access *access,
+ 	}
+ 
+ 	if (cur_ioas) {
+-		if (access->ops->unmap) {
++		if (!iommufd_access_is_internal(access) && access->ops->unmap) {
+ 			mutex_unlock(&access->ioas_lock);
+ 			access->ops->unmap(access->data, 0, ULONG_MAX);
+ 			mutex_lock(&access->ioas_lock);
+@@ -1255,7 +1255,8 @@ void iommufd_access_notify_unmap(struct io_pagetable *iopt, unsigned long iova,
+ 
+ 	xa_lock(&ioas->iopt.access_list);
+ 	xa_for_each(&ioas->iopt.access_list, index, access) {
+-		if (!iommufd_lock_obj(&access->obj))
++		if (!iommufd_lock_obj(&access->obj) ||
++		    iommufd_access_is_internal(access))
+ 			continue;
+ 		xa_unlock(&ioas->iopt.access_list);
+ 
+@@ -1279,6 +1280,7 @@ void iommufd_access_notify_unmap(struct io_pagetable *iopt, unsigned long iova,
+ void iommufd_access_unpin_pages(struct iommufd_access *access,
+ 				unsigned long iova, unsigned long length)
+ {
++	bool internal = iommufd_access_is_internal(access);
+ 	struct iopt_area_contig_iter iter;
+ 	struct io_pagetable *iopt;
+ 	unsigned long last_iova;
+@@ -1305,7 +1307,8 @@ void iommufd_access_unpin_pages(struct iommufd_access *access,
+ 			area, iopt_area_iova_to_index(area, iter.cur_iova),
+ 			iopt_area_iova_to_index(
+ 				area,
+-				min(last_iova, iopt_area_last_iova(area))));
++				min(last_iova, iopt_area_last_iova(area))),
++			internal);
+ 	WARN_ON(!iopt_area_contig_done(&iter));
+ 	up_read(&iopt->iova_rwsem);
+ 	mutex_unlock(&access->ioas_lock);
+@@ -1354,6 +1357,7 @@ int iommufd_access_pin_pages(struct iommufd_access *access, unsigned long iova,
+ 			     unsigned long length, struct page **out_pages,
+ 			     unsigned int flags)
+ {
++	bool internal = iommufd_access_is_internal(access);
+ 	struct iopt_area_contig_iter iter;
+ 	struct io_pagetable *iopt;
+ 	unsigned long last_iova;
+@@ -1362,7 +1366,8 @@ int iommufd_access_pin_pages(struct iommufd_access *access, unsigned long iova,
+ 
+ 	/* Driver's ops don't support pin_pages */
+ 	if (IS_ENABLED(CONFIG_IOMMUFD_TEST) &&
+-	    WARN_ON(access->iova_alignment != PAGE_SIZE || !access->ops->unmap))
++	    WARN_ON(access->iova_alignment != PAGE_SIZE ||
++		    (!internal && !access->ops->unmap)))
+ 		return -EINVAL;
+ 
+ 	if (!length)
+@@ -1396,7 +1401,7 @@ int iommufd_access_pin_pages(struct iommufd_access *access, unsigned long iova,
+ 		}
+ 
+ 		rc = iopt_area_add_access(area, index, last_index, out_pages,
+-					  flags);
++					  flags, internal);
+ 		if (rc)
+ 			goto err_remove;
+ 		out_pages += last_index - index + 1;
+@@ -1419,7 +1424,8 @@ int iommufd_access_pin_pages(struct iommufd_access *access, unsigned long iova,
+ 				iopt_area_iova_to_index(area, iter.cur_iova),
+ 				iopt_area_iova_to_index(
+ 					area, min(last_iova,
+-						  iopt_area_last_iova(area))));
++						  iopt_area_last_iova(area))),
++				internal);
+ 	}
+ 	up_read(&iopt->iova_rwsem);
+ 	mutex_unlock(&access->ioas_lock);
+diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
+index 22fc3a12109f..abf4aadca96c 100644
+--- a/drivers/iommu/iommufd/io_pagetable.c
++++ b/drivers/iommu/iommufd/io_pagetable.c
+@@ -719,6 +719,12 @@ static int iopt_unmap_iova_range(struct io_pagetable *iopt, unsigned long start,
+ 			goto out_unlock_iova;
+ 		}
+ 
++		/* The area is locked by an object that has not been destroyed */
++		if (area->num_locks) {
++			rc = -EBUSY;
++			goto out_unlock_iova;
++		}
 +
-+	u64 base_addr; /* in guest physical address space */
-+	size_t length;
-+
-+	enum iommu_hw_queue_type type;
-+
-+	/* Clean up all driver-specific parts of an iommufd_hw_queue */
-+	void (*destroy)(struct iommufd_hw_queue *hw_queue);
-+};
-+
- /**
-  * struct iommufd_viommu_ops - vIOMMU specific operations
-  * @destroy: Clean up all driver-specific parts of an iommufd_viommu. The memory
-@@ -143,6 +157,22 @@ struct iommufd_vdevice {
-  *                include/uapi/linux/iommufd.h)
-  *                If driver has a deinit function to revert what vdevice_init op
-  *                does, it should set it to the @vdev->destroy function pointer
-+ * @get_hw_queue_size: Get the size of a driver-defined HW queue structure for a
-+ *                     given @viommu corresponding to @queue_type. Driver should
-+ *                     return 0 if HW queue aren't supported accordingly. It is
-+ *                     required for driver to use the HW_QUEUE_STRUCT_SIZE macro
-+ *                     to sanitize the driver-level HW queue structure related
-+ *                     to the core one
-+ * @hw_queue_init_phys: Initialize the driver-level structure of a HW queue that
-+ *                      is initialized with its core-level structure that holds
-+ *                      all the info about a guest queue memory.
-+ *                      Driver providing this op indicates that HW accesses the
-+ *                      guest queue memory via physical addresses.
-+ *                      @index carries the logical HW QUEUE ID per vIOMMU in a
-+ *                      guest VM, for a multi-queue model. @base_addr_pa carries
-+ *                      the physical location of the guest queue
-+ *                      If driver has a deinit function to revert what this op
-+ *                      does, it should set it to the @hw_queue->destroy pointer
+ 		if (area_first < start || area_last > last) {
+ 			rc = -ENOENT;
+ 			goto out_unlock_iova;
+diff --git a/drivers/iommu/iommufd/pages.c b/drivers/iommu/iommufd/pages.c
+index cbdde642d2af..301c232462bd 100644
+--- a/drivers/iommu/iommufd/pages.c
++++ b/drivers/iommu/iommufd/pages.c
+@@ -2111,7 +2111,7 @@ iopt_pages_get_exact_access(struct iopt_pages *pages, unsigned long index,
   */
- struct iommufd_viommu_ops {
- 	void (*destroy)(struct iommufd_viommu *viommu);
-@@ -153,6 +183,11 @@ struct iommufd_viommu_ops {
- 				struct iommu_user_data_array *array);
- 	const size_t vdevice_size;
- 	int (*vdevice_init)(struct iommufd_vdevice *vdev);
-+	size_t (*get_hw_queue_size)(struct iommufd_viommu *viommu,
-+				    enum iommu_hw_queue_type queue_type);
-+	/* AMD's HW will add hw_queue_init simply using @hw_queue->base_addr */
-+	int (*hw_queue_init_phys)(struct iommufd_hw_queue *hw_queue, u32 index,
-+				  phys_addr_t base_addr_pa);
- };
+ int iopt_area_add_access(struct iopt_area *area, unsigned long start_index,
+ 			 unsigned long last_index, struct page **out_pages,
+-			 unsigned int flags)
++			 unsigned int flags, bool lock_area)
+ {
+ 	struct iopt_pages *pages = area->pages;
+ 	struct iopt_pages_access *access;
+@@ -2124,6 +2124,8 @@ int iopt_area_add_access(struct iopt_area *area, unsigned long start_index,
+ 	access = iopt_pages_get_exact_access(pages, start_index, last_index);
+ 	if (access) {
+ 		area->num_accesses++;
++		if (lock_area)
++			area->num_locks++;
+ 		access->users++;
+ 		iopt_pages_fill_from_xarray(pages, start_index, last_index,
+ 					    out_pages);
+@@ -2145,6 +2147,8 @@ int iopt_area_add_access(struct iopt_area *area, unsigned long start_index,
+ 	access->node.last = last_index;
+ 	access->users = 1;
+ 	area->num_accesses++;
++	if (lock_area)
++		area->num_locks++;
+ 	interval_tree_insert(&access->node, &pages->access_itree);
+ 	mutex_unlock(&pages->mutex);
+ 	return 0;
+@@ -2166,7 +2170,7 @@ int iopt_area_add_access(struct iopt_area *area, unsigned long start_index,
+  * must stop using the PFNs before calling this.
+  */
+ void iopt_area_remove_access(struct iopt_area *area, unsigned long start_index,
+-			     unsigned long last_index)
++			     unsigned long last_index, bool unlock_area)
+ {
+ 	struct iopt_pages *pages = area->pages;
+ 	struct iopt_pages_access *access;
+@@ -2177,6 +2181,10 @@ void iopt_area_remove_access(struct iopt_area *area, unsigned long start_index,
+ 		goto out_unlock;
  
- #if IS_ENABLED(CONFIG_IOMMUFD)
-@@ -255,4 +290,11 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
- 	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
- 	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_vdevice,                \
- 					((drv_struct *)NULL)->member)))
-+
-+#define HW_QUEUE_STRUCT_SIZE(drv_struct, member)                               \
-+	(sizeof(drv_struct) +                                                  \
-+	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
-+	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_hw_queue,               \
-+					((drv_struct *)NULL)->member)))
-+
- #endif
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index 04eee77335cf..640a8b5147c2 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -1147,4 +1147,13 @@ struct iommu_veventq_alloc {
- 	__u32 __reserved;
- };
- #define IOMMU_VEVENTQ_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VEVENTQ_ALLOC)
-+
-+/**
-+ * enum iommu_hw_queue_type - HW Queue Type
-+ * @IOMMU_HW_QUEUE_TYPE_DEFAULT: Reserved for future use
-+ */
-+enum iommu_hw_queue_type {
-+	IOMMU_HW_QUEUE_TYPE_DEFAULT = 0,
-+};
-+
- #endif
+ 	WARN_ON(area->num_accesses == 0 || access->users == 0);
++	if (unlock_area) {
++		WARN_ON(area->num_locks == 0);
++		area->num_locks--;
++	}
+ 	area->num_accesses--;
+ 	access->users--;
+ 	if (access->users)
 -- 
 2.43.0
 
