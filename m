@@ -1,240 +1,134 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B977A1898F8;
-	Sat,  5 Jul 2025 15:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751727826; cv=fail; b=KglWqLQwKSuQfSW873XRfl5HWkMcuHuAbevxnGajgey/3YlLq38RGOIgA9R7XUgx0HJKrk+XWelJO6Bfj5NVT75TSdM+cQELgdmg1CZT3GP6YVUVEdlpC5hy+0u/7t1jXgBwkym0gKZ5MEbe5FGrphVHFWzQKDGjFSufxCXF4C0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751727826; c=relaxed/simple;
-	bh=qYKs80OFOvp72dHCLggo195POZ9C8XaoBEm0pa+MAyA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MB47qUEjgRj9vJvPZ/9UemGJ5Wrb4qvOZfdufHZITTQef5PRhb1Oht4vgnuBX6WDmFzsyNFQMdIG46a2mqWuDa3Dq3LMtLrKnb4vz3wAuStz0yHQZsa230CRAZVC+rkJ8Ta21TJbdiTvOcG54/KWbaNNyBFJOYZ1fxgdvmhEBG0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jIjpWgp+; arc=fail smtp.client-ip=40.107.94.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7B9201113
+	for <linux-tegra@vger.kernel.org>; Sun,  6 Jul 2025 11:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751799973; cv=none; b=Mq5upHAOmpv28dt9ussu8JKtrizsKKdVt1Dbvb25/LOGipDpw23yjnilPkszkVWiJilhIzJky2QGUBWISK6OPf0axTpJ37hG4b7Mty1wkqKkEoYYCvHMpkG+FMMxgHdDCAcKhkihOFz+9Rzmkxszjx8YBQFtLFvBFe7gcnhQhdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751799973; c=relaxed/simple;
+	bh=A59nXS+mbnEaSYMFxG/JqiqHCM/ApP1v6hb6TD++ILE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ek9pWLBTPD5ORVO1f1xTi5fTwnsAK4X7f9Cbub64d+CdW4CHNGwTEXCqEBEHjA6Op0Nz93fKUYgC2dq+nZQuDFFxwbwviVS+4ArwZl649e1YdBH+RMmQpXyS6IyN5WMseFQnKMdrfeKlh6iHD966qxD+RFuaFc64p8sVppxFAug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WT2PbVLZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jIjpWgp+"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=clu/5CISrh9eIs2SRc88XALq1mIZuS2eLDDdjcb1QYfheKrBJQoln3vECrQtpuQo91/BF9F66yrGKqBM++/TqB8lqxMB07lb3YtGWFlrBsmiyN+MYQ2GoslZnOtsOZN+bcT/X1a+Jtn868L3Y+f9UtrfJFXZY4PqMAhwa+WFymlNtB9ab+BqqLR1h0DKaTryFcaEcd61UGfFIkWHD3o8ok++O6eguQd5vKt9yCyx0gNfEW2OTi9Yabp3D8tKUpPGA5x/p2rsjwJ6QCTuLehzToZouADPFhWJYwTOFmVtKXYDApFNEV86Iu3QUa+CE556Du+dYCV+hhXTly1qzjaZig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HQJAXpvHCW6eCgk5zoBB6QUeth/krclAtLV/LTqj8m8=;
- b=R1Odrj+XD2rbUPodRnhCjqVrTaHq28QJC3aJqE3V0r/gHcQ39ZEf9sJTqHZxWM8wUuEO3js3zVsHOj3TBx6+fotgyj6gAk3p4nR3R+ar11go8/2zpBuyPyMuxLBCYff9D92pNiDBwqFmW6yZ6y+P/eOIr5VrLRKJCXpHH5H9zAGyhWUU3tiGOCnSJRzojSbnYPi3mZchpgRdOtKdLRCMxH032/wT9A09Qxcc2/xNPNCxbXsaYJmzEriXLiqSlpkzX4KNgjs1j2lKCRhR41QsgVWc9UZQXthPqft0rW4fo9b44/+VNJYXhys0XM4RbCYo1uv36ewD47b7NyqdgFRk7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HQJAXpvHCW6eCgk5zoBB6QUeth/krclAtLV/LTqj8m8=;
- b=jIjpWgp+IXdKoLEkSv5P/0vXO5/C1nHygBwF5WBuMP6z+FQe2sNriFFlpFjgIhY7lh5zajPCQj7aYwXhf4PNI7PlKvFWgkJhwLchUZyiZDXYWEF05gjWX++Z4KvSqA8JjOzUcY2/eF/SzJS38N44xHkZU2J5WMUdW2nFMnJx0g4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DS2PR12MB9776.namprd12.prod.outlook.com (2603:10b6:8:2bd::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.24; Sat, 5 Jul 2025 15:03:42 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8901.018; Sat, 5 Jul 2025
- 15:03:41 +0000
-Message-ID: <5d186300-7a94-497f-8d10-30eff1bd2795@amd.com>
-Date: Sat, 5 Jul 2025 20:33:27 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 03/29] iommufd/viommu: Explicitly define vdev->virt_id
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
-References: <cover.1751677708.git.nicolinc@nvidia.com>
- <146f91d9e1974cfdbbed3418373645295ce0cca1.1751677708.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <146f91d9e1974cfdbbed3418373645295ce0cca1.1751677708.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0105.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:27::20) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WT2PbVLZ"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5666OPph008766
+	for <linux-tegra@vger.kernel.org>; Sun, 6 Jul 2025 11:06:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eOhCEmF+uV+au2Gk6pPccqIbZaEi6QqNF6NnOQEKyi4=; b=WT2PbVLZDLLyMqzR
+	CeaRMGUmrLHO7TB+C8NYp7uDBxngRbAynVqmv/NTZK9dEPYfP6GEeVM08neRAfZ1
+	Lm+W2lAilqGoziTONOiJZvPU9dKnme4nFW/J2U5duRYPAU2Io/HNMim97618JsP3
+	y29xMuBPfm7eXdhvadvN3sDjVBY00FEfz1DlKYFkJiQ1b7+QPJWhMtzpS3p0J9I1
+	qZB/63J/tsKwhbTFl49ht+xR2cMsnZwMV1PN4wYN6366/d4s1QfJ5P76Leusl8cR
+	JJtiC2xQ4MtDxSPOiTxop35jsKIFP3TdWmUwJkFVG/umr56i8ZxUdeDFHk936rbx
+	GXBqFw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47psrk3p92-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Sun, 06 Jul 2025 11:06:11 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6ff810877aaso59899336d6.3
+        for <linux-tegra@vger.kernel.org>; Sun, 06 Jul 2025 04:06:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751799970; x=1752404770;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eOhCEmF+uV+au2Gk6pPccqIbZaEi6QqNF6NnOQEKyi4=;
+        b=lLJS/J92Gi1VxH1VOUMqElI8cvqinPWHLLzp9ntkyqEQji24V10RmOqTS6IrgmoY0F
+         Ebcloox1tdq0X+0telq8nyNrzsmA3sdZFNFg2Hwr43JUT6tfEFyyONeLlN/fKfp0REhP
+         b2z+9EU9e+YqsG/2hW9kze6XEHSxS6Atnvr94V+nrr/U0cLa2dVwzW0CCVvdFix9CRkI
+         zgUtyPs2RtfL1+qNCVDBZsUK1HLW0IVIk2vJykAZi0nE3utY2Z+ErRAQS12AESWQFH8v
+         Mn+7Bo8i9tkNtyN6AiPwO+Ky0kF5S4UEAorvTgk/8ikVcC6ImEpOqggNo+xYIo9W6meu
+         ixsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0hMNzWyeFzF1Xp3ViaXt//4L88alhdidCxV3UHbTXiH1YEgGoq+zoOhj4nRt2YrHRRxAYVn0NSUQmYA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzlnR1n5im2K42vhjDTIZdbmH2Ha6dO94r10aI/8spGR8I6MaN
+	Fhequ0bEV2r+K3j5FEPXgfnW6Ni7X05nxHdQ35L3dykHMmaxPNP2WJfexg/lYV5cEc1BHPz36eG
+	vKrI0xZGA+bazo43/ys2aNb5T78z6mADo4xkyfj9AXSCaQjKiJ5AQ7ensY27s929wcA==
+X-Gm-Gg: ASbGnctFHE/RdCBzwE35uFDufKTLQr1+7Wj8eRdh9drndc6tARJySXP8ZUgK5bGCa80
+	3rE5wsgZRBZYfOVwtWlN9EltOx3ecFZ1g5LpeCY5Y8KPwPBaCDKvZmwbkpMezq7JekzY7QNIeM1
+	caw0q5GancqZbNCz3CTeyAGFsJcoFw2p1IScezWZvldZ1Ejeg+pjfVVTBPtolQg0YLhC5HZTENL
+	zJ7G+HJ3BYWKC1d4+kOn5MDrXzwnRybMU7xjwECCnLFim6MheWKGlIk94FSs9bFNNkhdq3moRWn
+	pJVCSFSbcWWoeyYvfLtbc9IAFI0Af97RbjFfpR/gfFM4CehP0nhRO/J/gevJ1KYMSr+p85Nyeid
+	CB6N4M91xK583QFBh2z5lruU0hqzdO29RvuU=
+X-Received: by 2002:a05:620a:1aa7:b0:7d4:57a5:9742 with SMTP id af79cd13be357-7d5dcd0783amr1166925585a.39.1751799969897;
+        Sun, 06 Jul 2025 04:06:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGONDgnDnvrSDe6qvx2fU3hNgdKW6lnSf2axuoSi2pM1AUPmOnALDeg2BDGk/SgSQqBZddqxw==
+X-Received: by 2002:a05:620a:1aa7:b0:7d4:57a5:9742 with SMTP id af79cd13be357-7d5dcd0783amr1166922685a.39.1751799969465;
+        Sun, 06 Jul 2025 04:06:09 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384d16c7sm918063e87.253.2025.07.06.04.06.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Jul 2025 04:06:08 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+In-Reply-To: <20250613122838.2082334-1-thierry.reding@gmail.com>
+References: <20250613122838.2082334-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] drm/fbdev-client: Skip DRM clients if modesetting
+ is absent
+Message-Id: <175179996829.2704907.4823332673925452896.b4-ty@oss.qualcomm.com>
+Date: Sun, 06 Jul 2025 14:06:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DS2PR12MB9776:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae1e1c66-e98a-4484-21dc-08ddbbd5210b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YlN4ckorQTUybk9KeEVHTjExdjhlemwxT2xDSEdkWHRNZVBFQm0wN2FlNGwy?=
- =?utf-8?B?NzcvZ2kzd3dCZU9CZ3FWZlpWc0kxZUdlSHA5ZXBqSnU3K2dqRjNHWjVIM2w2?=
- =?utf-8?B?U3BOdG9kN1EvZjlEUU8rckJkOWY5ZDhJWHN4ODdmN2R4Q2N1UHQxcXFycU9P?=
- =?utf-8?B?MTZZS0xlNzk4eWptMXRuOHRBUFkzcHg3cktKbDR3RFQ4d2RrNUF6RHljQkdK?=
- =?utf-8?B?MXRnVkFSWE1NUGg4U0hYTUhaUTRnSGdPazcyN3V0Q2ZMWUZWV0IyNlNsUGZO?=
- =?utf-8?B?dWlBNnlYT1BqV3FBcG1QbEhXUys2WXNZbDZGYmhQeVo0Tm9ZZkJNZFAzMHJC?=
- =?utf-8?B?ZGttalRTby9LRnJDbDRMSG85aW5EeXF0bDFlcUtvdEdLeDVYM3h2c2RYNisw?=
- =?utf-8?B?b3o2bXFUcC9MUHdrOHZpTzhCSkhXY2t1K0xoeG1ieGJmYmRoZHlZSnlxY1hk?=
- =?utf-8?B?MzlzMUtIM1MvOGhvU3hEQnBMTmhCN2dkYk1YRllzaU9HbGxxdnBIS2dUWXZ2?=
- =?utf-8?B?U0VZSDFhb0hFT2xqZnA2N2U5V0x2dWlRSm8zc0Rvd2lyZWpsU2x3UEo0bnh6?=
- =?utf-8?B?ay9yVkVzcyttOVQ5eStyNkdDbDhJd3RSRjNLQzh5Q01VNncvN2MySGQ0VEw5?=
- =?utf-8?B?VE9HazdwekxjQmcya25XUnB6Q0Vab0pCMnA4Ym5DM0EzdnFEakl1M0gyRjQy?=
- =?utf-8?B?elA0Z2xvem9mYkpTVVB4ZVlkMzJtajUyZkhBcHROQmQ1a2M3V3RiV3QyTFQ0?=
- =?utf-8?B?ZE82K1ViaVRGNWxka29KWGNMaktkdHlZQ0piL3VGSm5FdVIzdEFKZGM0Titn?=
- =?utf-8?B?K2JJTk1XYnNva1I4K2FHWlVHazVVSUVOUit5dkE4RC9vM25vZE0yL0xkRUEx?=
- =?utf-8?B?eVFQMzZYQURiWXlmOEhxNFdJU1dhbEZJT3pxK05BV3BSVUtpQjM1TEF2RU9L?=
- =?utf-8?B?bzNVMFhTeXJ5QUJrWWVBZlhpeEJTdk54OWU4SEdrMHQrMnZDbittaWxsVm1n?=
- =?utf-8?B?Qnd2NDNPMG82WjQrbUhma2l3WDhNMG1ZdkFLTThQWmRhZ2NMaFZtalNYUVNC?=
- =?utf-8?B?aXlWYUNMVVROSlF1SksxU09MQm1yaU1keExPbU5HSVBpK1RwNGl3MmJJeE1Z?=
- =?utf-8?B?UkJzSkFIbkZZaGsxc1d4ZEl5aG1MVjBZNlRvK29yNC9lcENGTURLM241bWpR?=
- =?utf-8?B?eXhBTGNzUDdxRVdEOVFLWHd1b2FzZVlDRDlLZS9KU2RPb0pDYXNIZkIweXY0?=
- =?utf-8?B?RkNCaE1wNktadisyN1FwWG9LdkIweEhDRDFzd0JaK0VpUVZWc2VhVWlqMVZw?=
- =?utf-8?B?RlRCKzZOZFFpbHp6OUtpK3VlcmNHeGtwM25jVEMyb3A4ajU4Wk1NMlg4SFRQ?=
- =?utf-8?B?bjh4dHIyWXpsd2xibGpieWR1cWs5bGZ1MzE3OHBFNDY2elVJZzQ5aUxmRWVs?=
- =?utf-8?B?NUZ0bHEvS2MzakdZMW5kVzNQR20wVnB0c0JLTGFzbCtNZHRWQVd5Z0hpMzI5?=
- =?utf-8?B?SkdHSDY0Wmk1TmZTcmhETExYQ00vb1Y1SzdEdVp3YXYwRnFPdFZYZzZGMER5?=
- =?utf-8?B?eGxGWmZRK0RsZnIydUxZZTBaVXdNUVNlQ29BREgxVGJCZHk3YWkyL21QV2RD?=
- =?utf-8?B?VmN3VGhOOHlRdEczd0hML05lNHlhb2Vna0xDekZjQndkVXQvbHp3bUU1SmlX?=
- =?utf-8?B?L0hxM2lCRC94Y3dubU1FTHROZk5OU2REekNCTW1HSzI4RXo2K2grZlp6b2Uz?=
- =?utf-8?B?NEhUMUtGVkh0YmVjNGRsdlNEZG1ZV3pDUHlISTVTemdJUFhuaEVoa3dscXIy?=
- =?utf-8?B?ZVdBcjBOVzFpVlZLS0NxK0RXMU9yOUNMcWNXbjhQYlRjNVh2LzFETlRUYVRI?=
- =?utf-8?B?ek4yMVJ0MlZjbWp2UktGK3VObXBDSytia3RGTzhKSGtuM3c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R2FzMTRBdytaM0FGMStRa3E2L1FCc0xrbm9qQmdybjFYTVFzdWVzazdPMGF1?=
- =?utf-8?B?SDd3NlpUOThocytndVN5Vm5hMEZseEVFQ0M1ZjloRFVOb2RVUzBXTnU5eWNE?=
- =?utf-8?B?c1dmbitPdi93SlA1VzdHRDdtbzNQTEtIVDFwZ3N2RVkzMmptaFVkOVUyRjlJ?=
- =?utf-8?B?QjByMkEwVWVWMisrK0Jjc0ZlWEJiTEtWMzNwbklTRExYcUNjNkZjTGFLQzkw?=
- =?utf-8?B?czFsMFhYbXQ1NTJPbDFSdURORVRSWmxCd01KTkZRS0ZNdm13MnA1SjBtQmpF?=
- =?utf-8?B?UFJINWlzVlkvdmZWSGoyUHdiOUdjd1RzQ3N5QkNFcXRBNDhYdkRjcVplY3N6?=
- =?utf-8?B?V2FRT2JZRFB4b0lHVVV6ZU81ZHBnQkVCNm5uOTJibWtjWkpwWE42eW9CWXVT?=
- =?utf-8?B?RHZMaVFXVzMxSWYvYU5GVWZLazVKenBJQ1dQZ05kSmhOckRGZHlZZVFxMzlL?=
- =?utf-8?B?cnBNamQ5QWdtR2RsMEx2VUJLbkRPL0lUNlltdGJRemNVS1ZzSVpmTGMwTjZS?=
- =?utf-8?B?a0kwemk0dVZUOWJQSGRCNEVORmlub09aeGFwNWJHWXFsZVhOL2VIRVdpMmlH?=
- =?utf-8?B?SVV4elFaZ0VlNnhaNDY5Y3dYSVByc2VIeWpveFNjSFpyazExN1ZTakc3VDJj?=
- =?utf-8?B?blZ2UFRYRDQ4Qm9pKzZJQU1URDlCeEU3Z0U3bCtTVlVQMjZ6THFwczEyZTg0?=
- =?utf-8?B?dWlHV29uL2Z0MDFvV2ZubHpKWjBpL1ZHQ2VXQis4L2czbXdCL2RFazdwcWxj?=
- =?utf-8?B?U0owMkJtWUJ5dkJGV2VrV0ZHZTNwK0hOV29JY3NvRmJpVFZ4QlMzNWVBQ3du?=
- =?utf-8?B?NFZ3bFRXSXIrU0NjbERCTjVKbG1LM1ludFZ4VDduN3RTZlQvR1pWK1gwaTEr?=
- =?utf-8?B?ODRQYVRNKytMNHptQWNad25DRVYzRmRUVDlZeVdxSkdrNVo4ZXhHRnhQS2p0?=
- =?utf-8?B?OE81VkwwbjJNaFl4MHMzMUxZczdjRThxVFE0TTJYKzRGNUYxWWc5bWlDdEhK?=
- =?utf-8?B?bXd6bXlxcmtKd1czMDFlVDI3SnkrcVdpUU84MjMzTGtGc3ZqMG9iMUZ2dXdl?=
- =?utf-8?B?NGJyU0pNYzA4eXhmKzZySDhoNWNBS2hBRnB4Q2FwZUxTQzhZZnpkU1hHT01K?=
- =?utf-8?B?RTlzdUluMS92dDVxT0ZHWmpRd292c2tiM3RJRUFtL05lMXNqbHhXN2FZeU5m?=
- =?utf-8?B?cHZnOTI5S2ZyV0tYVFhjeVFNTHlZZ1ZUYWhvTXlJTXZudzllWnFuVjd5RW9s?=
- =?utf-8?B?VGFaOHlnWXZBUzBSbm0zSEVKYkdCUEsxZ3JqSzdWbndNckUwcXJWMGFCcmJW?=
- =?utf-8?B?ZHZjbzVFVGFlM3gwcS9TUG1oZVVuRk13VjFGOE5vaUQzY1FYT2FZQ3NscVd5?=
- =?utf-8?B?ZHFqdXF3VUt0bnhHM1loOUp6ZE1jbmkvUVBoTWxYUHlHSUxxNFovMHgxazhw?=
- =?utf-8?B?dnhsTlFCTXE3T0JqNmdUNktnUSs5azRBWC9rUVluODBtQTB2blBZVTM1Qk00?=
- =?utf-8?B?TW1NeTZCZ2I2eUczaUo0aW02WVo1ckplaStTb2c1bXJyWEZBZnpYb05ZQXBD?=
- =?utf-8?B?WEpMSGpFNjRSeHAxekducUpqU093RXdLT1A4L1pKUHRFY2VKQUJPUkpleFlO?=
- =?utf-8?B?Q252eXJwb28zcFhMM0lobis2QkdISDErTTRlMWV5NVUxYUl0akRmY1ZjcGMr?=
- =?utf-8?B?OWU1UE9KTWN4OFBCNGRCOXZyQkoranNMQTFiRXAvTk1TVElvcEJkTURXNmFF?=
- =?utf-8?B?VjBHNkdLMm5ZSFZVVVdiTjNBeE1Vb1dWeGFaSi9GaEloMVU4cjhDVWZ3Tk1n?=
- =?utf-8?B?VllReDJJblhnd3hJN3FYdVdBaTNoVWlERFFSSFdPdEVYUjJkazJ2UEoxUm9V?=
- =?utf-8?B?VnE1dlVyazR3akpiZytHNzVDeW1ubnN0NVcvK3BnRTFvRGNWRVJ1bE1PMmNz?=
- =?utf-8?B?T2tjQWxLTmN1M09oclNMZ0doZjFNa0lZSy82MnZqclEyNnFvVUNNWFNJRFpU?=
- =?utf-8?B?K1R2dGdtYnNtNW9BRjdTaWdKc2pONWJWSnBrVG5lQVM1aHUyT3YrSHlwMDk4?=
- =?utf-8?B?QlV6TmNRV2w3NTJiNm9KU2xEdW9CaUE2YXpTMFZwYnZMWG83M05iRmNCTHZH?=
- =?utf-8?Q?ubJZ9m9LgJkx5dK05FOMY7+DL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae1e1c66-e98a-4484-21dc-08ddbbd5210b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2025 15:03:41.7543
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r81z7FihKyiAllvaOyEtO+lgqnL0m/XTWE/8Ri688kKrq2OnFypmfV+m0Qg6iB3K+w2gHkbJ5EwSRKvZOXXbyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9776
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: MNHRHHZgZ8D7osL-vExcQa6czXNrcqm1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA2MDA2OSBTYWx0ZWRfXxF5Fdv0ee+qB
+ 86cPQzGds9BVdjrb9FnT5Nz6l0u4oVnhXuy6JRauqki6raDBqtTqZn4QoBq1mCw9S0KfkNkAmM1
+ e28BvLRlmrSIYji0pm4ZLLWZsImtX20ianik8+XS0jJkUXCOxvSXZ+pzTcKi9Azo1L3ew6XEQaJ
+ J1xUfK7a4VM6LHBL1aKcWnwxtvB7YR5WZzG1mYLm+v//Oi18YIZGdLn5D+Kf77M9KzIZTuTRGYs
+ icVMpHKNtv2+ZQ30yRLyKDCErR59h84I0/crrNLVXnob17iVO1tqmWc1sQ+edt05cNH1gBgdY+A
+ XhKS3EtQoU8AvMlealqUfNcan0hdBxaSOhHD120AOSbI4t+101K2t7hvDvY0mErlscMykct5Yy+
+ GG+IbV+q8631CdughIwZhJny09qroEzYlBwIuMdXJfiTY5M0zFmckl5fBgTZ4TgRmB5D5WZN
+X-Proofpoint-GUID: MNHRHHZgZ8D7osL-vExcQa6czXNrcqm1
+X-Authority-Analysis: v=2.4 cv=GtBC+l1C c=1 sm=1 tr=0 ts=686a58a3 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=qTWL-RXyTIDn97wEdt8A:9 a=QEXdDO2ut3YA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_07,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 spamscore=0 adultscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=982 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507060069
 
-
-
-On 7/5/2025 6:43 AM, Nicolin Chen wrote:
-> The "id" is too genernal to get its meaning easily. Rename it explicitly to
-> "virt_id" and update the kdocs for readability. No functional changes.
+On Fri, 13 Jun 2025 14:28:38 +0200, Thierry Reding wrote:
+> Recent generations of Tegra have moved the display components outside of
+> host1x, leading to a device that has no CRTCs attached and hence doesn't
+> support any of the modesetting functionality. When this is detected, the
+> driver clears the DRIVER_MODESET and DRIVER_ATOMIC flags for the device.
 > 
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
-
--Vasant
-
-> ---
->  drivers/iommu/iommufd/iommufd_private.h | 7 ++++++-
->  drivers/iommu/iommufd/driver.c          | 2 +-
->  drivers/iommu/iommufd/viommu.c          | 4 ++--
->  3 files changed, 9 insertions(+), 4 deletions(-)
+> Unfortunately, this causes the following errors during boot:
 > 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 4f5e8cd99c96..320635a177b7 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -634,7 +634,12 @@ struct iommufd_vdevice {
->  	struct iommufd_object obj;
->  	struct iommufd_viommu *viommu;
->  	struct device *dev;
-> -	u64 id; /* per-vIOMMU virtual ID */
-> +
-> +	/*
-> +	 * Virtual device ID per vIOMMU, e.g. vSID of ARM SMMUv3, vDeviceID of
-> +	 * AMD IOMMU, and vRID of Intel VT-d
-> +	 */
-> +	u64 virt_id;
->  };
->  
->  #ifdef CONFIG_IOMMUFD_TEST
-> diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
-> index 2fee399a148e..887719016804 100644
-> --- a/drivers/iommu/iommufd/driver.c
-> +++ b/drivers/iommu/iommufd/driver.c
-> @@ -30,7 +30,7 @@ int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
->  	xa_lock(&viommu->vdevs);
->  	xa_for_each(&viommu->vdevs, index, vdev) {
->  		if (vdev->dev == dev) {
-> -			*vdev_id = vdev->id;
-> +			*vdev_id = vdev->virt_id;
->  			rc = 0;
->  			break;
->  		}
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index 25ac08fbb52a..bc8796e6684e 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -111,7 +111,7 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
->  	struct iommufd_viommu *viommu = vdev->viommu;
->  
->  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
-> -	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
-> +	xa_cmpxchg(&viommu->vdevs, vdev->virt_id, vdev, NULL, GFP_KERNEL);
->  	refcount_dec(&viommu->obj.users);
->  	put_device(vdev->dev);
->  }
-> @@ -150,7 +150,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  		goto out_put_idev;
->  	}
->  
-> -	vdev->id = virt_id;
-> +	vdev->virt_id = virt_id;
->  	vdev->dev = idev->dev;
->  	get_device(idev->dev);
->  	vdev->viommu = viommu;
+> [...]
+
+Applied to drm-misc-next, thanks!
+
+[1/1] drm/fbdev-client: Skip DRM clients if modesetting is absent
+      commit: cce91f29c088ba902dd2abfc9c3216ba9a2fb2fe
+
+Best regards,
+-- 
+With best wishes
+Dmitry
+
 
