@@ -1,41 +1,75 @@
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF34E2D78A;
-	Mon,  7 Jul 2025 09:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BB4262FF5;
+	Mon,  7 Jul 2025 10:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751882334; cv=none; b=UvPcKoZXfgPenC3K65o0kZGx/K7xAYsUgHLeMlGLJJPRprZsNJ1QKzjGn9jhE0knSnjiJsl1tav75FPkSm/MZqQBoMOcWXttR5u6PUHVj6REcbXN/3HOh+03xy3wS8eDDOLY9zvC/Bh7i6PlQ66VZTSG+MECeV1aFalbu8TWduM=
+	t=1751883617; cv=none; b=SItKWRN15mu2/MoWmGO2MzJ2MrJjfe8etFGF4/bsWV3tAWqrrdFga0K1tuW8rBVZM8kRo+V4li1aIOmjQNzNR4+BeieaVx9tQCOod/9sRu5MwpV4nRPSLpyvSGcW1OyyFXDwNln4XtN1BPDibNwEm+Hl8IWkGIesDayyrILI57s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751882334; c=relaxed/simple;
-	bh=mfywlIon05GmSQBSaq9TMA0n5Dr/tJ2GG+p4Un6YPuE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U3aBHD4AFseaZgruPkRk/9pqRtdLitrI0Hf5oApBEv6D91PcLCdOabRzVczh5I9/IMf3T89ptcxkovJaMuA5WLPiTlSjMVj3FudluzwdhK6auSBBZQ7z+Ze6RHgFbSU7PSjzt+VFGMUW1QefKdSbpFZpHEjf+OifWeLA5rOQJUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=nKhuQZle; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+	s=arc-20240116; t=1751883617; c=relaxed/simple;
+	bh=gtjPYpCezkEDWByB7tIgWXzptFOInyrMouY/RPBzoHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uH+7Oj8ti3gQ0vDNm56/kMNDXnM6FuRM7QA0ICzMN60ayDgyE6H1MGGfvKGFuffBxmqc3ocftuluqtL6riG6DYYCBdMBQ20ZTVP1Bbv0hjmxyO/8wWqUjWeeUDptFX5t3oYlP3hIOL6EI5WU2C879iCJkbx1BTSJFGsVD+V9QeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAB+mJU5; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="nKhuQZle"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DJTmg+WhfK7CgNVvUl2qBtbYazeyB4bBuWMjCQQUljw=; b=nKhuQZleEvyG0SR1w10ngQz4pU
-	soNjHDDfGpzJnV0HmdwVlXtsCUnPmc/yihuJ2+7u99keOUcGLCvjkOoF9MxQRTMuFqt/Qdl0S9nRz
-	bYugarW1bArLJElUSgaU3g+SBeZJottEun2B0i8yASBrEG/nEKJH3opLw+JotZuxCyFNLzKtZZ9Qe
-	sTOZpmObzShKGTvgjP2K83hGuxs/OOQgwuKYVQVjKR3fGMj/pKe0pk7/ppCvnhrI0O1CkFP1cHLDa
-	gVHOTwj1s9uJ0Nlpa0uF3koEDdjKsIsHDKQ+yeS6QcY43weMeK3QfODCd9bZGRf1iHVR3TNM8LpC8
-	fjq2pDQA==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f] (helo=senjougahara.localdomain)
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uYicZ-003up3-2D;
-	Mon, 07 Jul 2025 12:58:48 +0300
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Date: Mon, 07 Jul 2025 18:58:32 +0900
-Subject: [PATCH] gpu: host1x: Syncpoint interrupt performance optimization
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAB+mJU5"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4537fdec39fso7643475e9.0;
+        Mon, 07 Jul 2025 03:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751883614; x=1752488414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kHUwvTfnjSEmpcztlWS+Zdhw3cEDVg/IjXMugjFFPWs=;
+        b=gAB+mJU5/R+Bt+/9NMBQMgxTblQKxP4VNI6FV1LEzja3HxZhVm1bZNtV/RxeNbBkmu
+         2K96xlOIqmuPdefipZvZJkm4n13a7Agp7MY6pNvf1oo3MHED0vTCXDbEJA78OiuxRiSD
+         ma7/apUMfdqrSYNu5/7q16XkhI99OHsi0+yREgcXtZ5jP5cM9QRQBqfkRRBPMgcEjoKM
+         lzPfDC6pnzRVQeCN/9ZBW5+KIY3RTmCGy76r0PdTisciWaVRDswGtz8fXQzqqJoxwplF
+         e96uMYUpUKuhbRJAe9DSNvwuJLwITN9Pz4+/bLf/1xL5F8JDeq0OTk3N+KCYxPdg1uNq
+         8uFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751883614; x=1752488414;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kHUwvTfnjSEmpcztlWS+Zdhw3cEDVg/IjXMugjFFPWs=;
+        b=Hi6xQ0mxvyhnzLxnPgvEMFZf4H/tgT5GEgJPFzRURu/Bn4jzqVUjYNPew/CAUssewV
+         rX1h61Mwevd+So9VL0rqBvk2ec4gGhvh+5CukpTUcrP90pwJBC6ML7I7GelhGlOtmIP+
+         NZhMRqlGvwzC8/PXt9xmTOl0u9HJejHy4vKbsIRVM7ha+zUkz7g2S+OWM3kRK0129X6Z
+         xr3DCth7w8YoJ+dskO5dQo2AL5GUhp1ohVIj5Orch76STL0CeEaPu2JvfI/We5OUKDp9
+         FQqCjzh+mpo3kJHP+xKWPu+LDRKmj2bw12JaqMXgT04vI4kdzT5gDSiFSkvUQ+lYqazs
+         7gEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVK2IGo6+rn+GXd4SvcnCuDuz3joeUTVcU7YEaKJhOi/SUZg4muewvL8Uy9EVfFFEfU1fPTlyuzXMUT@vger.kernel.org, AJvYcCVWkUbPGH/W6eInzgjulYq7jeZRMKlFRhZmtjgL4HYaQZZH0zu/4S6/g6hVJ8Av7aDjNrKd/ZZfNvGXvRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2kFTymG4tfGw3B1TEpBskKjuJPhyAS4NI30RgwCiiwvKGMiph
+	01gS0JY+XKCHV4D2OjEPCucy4VBPzJo3jxQpr9te+HfwAHUXNqTKZEQp
+X-Gm-Gg: ASbGncsCTAmMF6NgiYdmxps10KM8wM+QQnXPiAr1mUHImEX32nz6rLqEDIjHjYrnADq
+	UVbPGr/MnaBltHdGy+Y8FTRU46xGtCdmJxGRLu9jPTJnj0wpvckDD8tvZs25KBtZaObjCgONhbe
+	pLo51Ctzpapw/WddcqLtwokeylkO6cmM3K4qykuAdrhMv7R6sSpa4Gbf8NX9k94TB8X+O30BEdp
+	pNVPYWJFkLRJ8YX9qtD3iYnN0V/osYL5jI4aiV3Y72zrnJqwacNOOsNlT5+mP+k4ZiEiev6xtO+
+	Bd+70YDU4HxZ+4yss5zOWfpwHvdElYlF129H2MEWsm7qZSVRnanZSAeJncw7jZK8mC5gDm3NUA3
+	CnzewU1nQ/rZYyRAGmMQPdQBKDmRQGjkNa19KC+BlsiAcGpQ9toywZQ==
+X-Google-Smtp-Source: AGHT+IEBzgDT7wIm3e1zpg37ZK8wP8jTto3HqLMBUK5O7zlQTGqg1rZHhi5m/jFgqFJzbmmfcIWWAA==
+X-Received: by 2002:a05:600c:8b72:b0:453:a95:f086 with SMTP id 5b1f17b1804b1-454b311637amr99037235e9.12.1751883614008;
+        Mon, 07 Jul 2025 03:20:14 -0700 (PDT)
+Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b47030c2e8sm9583420f8f.3.2025.07.07.03.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 03:20:12 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/11] dt-bindings: tegra: pmc: Add Tegra264 compatible
+Date: Mon,  7 Jul 2025 12:20:04 +0200
+Message-ID: <175188357609.1321171.837662238630621185.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250506133118.1011777-2-thierry.reding@gmail.com>
+References: <20250506133118.1011777-1-thierry.reding@gmail.com> <20250506133118.1011777-2-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,143 +77,23 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-host1x-syncpt-irq-perf-v1-1-16d53e516895@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAEeaa2gC/x3MwQqDMAyA4VeRnA00Finbq4wdnE1nLrVLRJTiu
- 694/A7/X8FYhQ2eXQXlXUzW3EB9B/My5S+jxGYY3DC64AIuq210oJ15LhuK/rCwJpzIfSg+PPm
- YoMVFOclxj1/v6/oDGlzGMmgAAAA=
-X-Change-ID: 20250707-host1x-syncpt-irq-perf-a10b1d9313df
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Optimize performance of syncpoint interrupt handling by reading
-the status register in 64-bit chunks when possible, and skipping
-processing when the read value is zero.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/dev.c        |  9 +++++++++
- drivers/gpu/host1x/dev.h        |  3 +++
- drivers/gpu/host1x/hw/intr_hw.c | 40 ++++++++++++++++++++++++++++++----------
- 3 files changed, 42 insertions(+), 10 deletions(-)
+On Tue, 06 May 2025 15:31:08 +0200, Thierry Reding wrote:
+> The PMC found on Tegra264 is similar to the version in earlier chips but
+> some of the register offsets and bitfields differ, so add a specific
+> compatible string for this new generation.
+> 
+> 
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 1f93e5e276c0835eac2f713ffcd60a9db8db2c21..80380b6138276877be9709048c15da85d079f977 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -71,6 +71,15 @@ u32 host1x_sync_readl(struct host1x *host1x, u32 r)
- 	return readl(sync_regs + r);
- }
- 
-+#ifdef CONFIG_64BIT
-+u64 host1x_sync_readq(struct host1x *host1x, u32 r)
-+{
-+	void __iomem *sync_regs = host1x->regs + host1x->info->sync_offset;
-+
-+	return readq(sync_regs + r);
-+}
-+#endif
-+
- void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r)
- {
- 	writel(v, ch->regs + r);
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index d3855a1c6b472a9bd289c753d79906463e6bcdb4..ef44618ed88a128bae9ab712bf49f8abc0f3b778 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -179,6 +179,9 @@ void host1x_hypervisor_writel(struct host1x *host1x, u32 v, u32 r);
- u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
- void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r);
- u32 host1x_sync_readl(struct host1x *host1x, u32 r);
-+#ifdef CONFIG_64BIT
-+u64 host1x_sync_readq(struct host1x *host1x, u32 r);
-+#endif
- void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r);
- u32 host1x_ch_readl(struct host1x_channel *ch, u32 r);
- 
-diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
-index 415f8d7e42021b791550ca719adafa088cd34101..fe45890a9bfb1dfcbc0354f76d625e78e72ee548 100644
---- a/drivers/gpu/host1x/hw/intr_hw.c
-+++ b/drivers/gpu/host1x/hw/intr_hw.c
-@@ -11,26 +11,46 @@
- #include "../intr.h"
- #include "../dev.h"
- 
-+static void process_32_syncpts(struct host1x *host, u32 val, u32 reg_offset)
-+{
-+	unsigned int id;
-+
-+	if (!val)
-+		return;
-+
-+	host1x_sync_writel(host, val, HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(reg_offset));
-+	host1x_sync_writel(host, val, HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(reg_offset));
-+
-+	for_each_set_bit(id, (unsigned long *)&val, 32)
-+		host1x_intr_handle_interrupt(host, reg_offset * 32 + id);
-+}
-+
- static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
- {
- 	struct host1x_intr_irq_data *irq_data = dev_id;
- 	struct host1x *host = irq_data->host;
- 	unsigned long reg;
--	unsigned int i, id;
-+	unsigned int i;
- 
-+#if !defined(CONFIG_64BIT)
- 	for (i = irq_data->offset; i < DIV_ROUND_UP(host->info->nb_pts, 32);
- 	     i += host->num_syncpt_irqs) {
- 		reg = host1x_sync_readl(host,
- 			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
- 
--		host1x_sync_writel(host, reg,
--			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
--		host1x_sync_writel(host, reg,
--			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
-+		process_32_syncpts(host, reg, i);
-+	}
-+#else
-+	/* All 64-bit capable SoCs have number of syncpoints divisible by 64 */
-+	for (i = irq_data->offset; i < DIV_ROUND_UP(host->info->nb_pts, 64);
-+	     i += host->num_syncpt_irqs) {
-+		reg = host1x_sync_readq(host,
-+			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i*2));
- 
--		for_each_set_bit(id, &reg, 32)
--			host1x_intr_handle_interrupt(host, i * 32 + id);
-+		process_32_syncpts(host, lower_32_bits(reg), i*2+0);
-+		process_32_syncpts(host, upper_32_bits(reg), i*2+1);
- 	}
-+#endif
- 
- 	return IRQ_HANDLED;
- }
-@@ -68,12 +88,12 @@ host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
- 
- 	/*
- 	 * Program threshold interrupt destination among 8 lines per VM,
--	 * per syncpoint. For each group of 32 syncpoints (corresponding to one
--	 * interrupt status register), direct to one interrupt line, going
-+	 * per syncpoint. For each group of 64 syncpoints (corresponding to two
-+	 * interrupt status registers), direct to one interrupt line, going
- 	 * around in a round robin fashion.
- 	 */
- 	for (id = 0; id < host->info->nb_pts; id++) {
--		u32 reg_offset = id / 32;
-+		u32 reg_offset = id / 64;
- 		u32 irq_index = reg_offset % host->num_syncpt_irqs;
- 
- 		host1x_sync_writel(host, irq_index, HOST1X_SYNC_SYNCPT_INTR_DEST(id));
+Applied, thanks!
 
----
-base-commit: 2aeda9592360c200085898a258c4754bfe879921
-change-id: 20250707-host1x-syncpt-irq-perf-a10b1d9313df
+[01/11] dt-bindings: tegra: pmc: Add Tegra264 compatible
+        commit: 5b820eb176846dad95b0a45dcfe788931f5e7527
 
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
