@@ -1,185 +1,110 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
+Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44491273D89;
-	Mon,  7 Jul 2025 08:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751877836; cv=fail; b=Z0VGCYCpanRHP5DprPM864ehnhiz7F71xUmAtvebmEVNzSfrOjLJrM12v/VAFqSROF8i+XsNPTmp/2U+8B699v6a0Weum1f/ADXpf1pR2AOEpPV3OSJdW9qYRr2VFyyNPV7ZVvja0wYAhfOeE9z5zCPaCkZSi+w48wpWkgAgXh4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751877836; c=relaxed/simple;
-	bh=60hG64iz9yESosXqgo94JQjEH+ZqJbLbHdqaKU0lnPQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=ggZZ9sX+OD69dGMMBGyYpkBbZeRWqFwLnmD2yzpjbK+4e2n4EwBxlPPucmj+2x9OnutsdOE07FKgSWFQKVXZ54zmJEwQMeY9Ic3iVJ3TrFH2pAEc75SqLJSdg+8oGntDiyMpQ+Q2i278MY9VWj++QEjsGEwvTDjhfutOfALwEVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gBmGxbcW; arc=fail smtp.client-ip=40.107.92.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE111DA61B;
+	Mon,  7 Jul 2025 09:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751879906; cv=none; b=JnHh72My5s4mbP9KMu4XRLw2sNpsm5/L0QnbC5y2M7a0jejeVO6TyeheIqsHfa5JhulhcohFbAEd3n+MoUKgFV/VAyXjN/HrDJvnNgVHxg3OD95UztbTcAs5T3TaZ7wa6oSqgagJmk0dectG8wemMZsfQoLJQrY/LmAggCMSgsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751879906; c=relaxed/simple;
+	bh=OsbU+JWlkJko6AeBucieqGeCprZti8QpcIi0q3kS5WE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tMsuIObb5LIFlm/STw3YgntlVGomNbOYKxXt47QuMYaVyP1amDNaWqi/HFTgja9rP0Jzbg2wLbn3FC6Uz4O22B15Nq4HRyGIaDeuS+JCfhwsaqFR5OuZHHgDwOt8jhAyIK9lvGYOwpTRznKS8YlzOw534DI8UXurTVLTkZqn87w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=BUxUMpZ4; arc=none smtp.client-ip=91.232.154.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gBmGxbcW"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PSn3AxRORP4K9sWCz4hqjngLOrK7ChswDi2g4315CUN0cxelKtws+oilzjoQ2PAPeQbXPMVZzBEbW5eGvJLRPeEnASUmV5FAHwwXrC5jUXeZH5Od7+F2QCs8LrqTGKDkQz+RGbSMecZEZUUidEMwOY/xjVzSRipfsxhchcquqNya48RAzj6b95XrDnNud/01sH+1zWykrLXMci6SyLWA/iXae3/mwje1f7YBZoN6YxBt5JogRHb/fBepcXVywK+5Bn02gGucGFyYZTF9KEH0SMyhyMUuhIbYyn60Odig0qqPzwzRuw4p0TzUJp3giqBpXt4ImFRjFRDjehz6Qc0v8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VCsVp1GRIR8AMUlh4pRUydEsQ2VcrU3RHyx0ZX80Oe8=;
- b=uElku54uCHbPc2TNg/4ZKPyTad+XU41UuNOGAmxMwtM+j6OEKyh8GWKsEMSDckA7WJ6a6eisMe6iBIbfkUlqsr7Pqxr61gE3zOa+z2RALutuDEGfaFZ0wLakHrpQppOynxo8JrungnAuJ+H3TczhCyRO3M/sjOeZy5TTMzuJxX3og8rA6vxSvAUHRSNk0PB8m7RyDkluXHAb8nkknuQMb6/+TgSJkS2YnNaYfDXe0Dliol/bVLNXXxwjfTiC3eeOsNDqJ8UHOxvrFtyGEDMXL/XTJ3zLcZrXG8UbQeZ8RRvPZ2hrJj/IDQDUDc7g5J66HRep0N5iYGJf/o2YBd3AaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VCsVp1GRIR8AMUlh4pRUydEsQ2VcrU3RHyx0ZX80Oe8=;
- b=gBmGxbcWetU/xs1dJz1vfzluIa6SdegnU/lPkYJZtGFXbxpY3C5D5JlI7fPzsnaTPsl0RfsWI4WyHr9/pWrw/YTCb/xlRh9te5YZtvgEdaeRkIiu0uZUlU/qEBjcT0k1WuIv3jtB8MfUshMUQ+6rNKuskLUNaEeSf+Ml8lXlNf/7+lGs7RI4SYGJZF475BYx0PkVbwGUTw7PXsY/92GM7wp4SCnPflBhDvxH80gdtHJKE209SwxYloV8znI7vYayQhxSfRTXvWnYMv0SsuTM4bIymQMsPFziO0yxXd2aBAswtLWBTIMzMfAC+ACtgzduNnXdsK4F62oFvxOVRwworw==
-Received: from SN7P220CA0025.NAMP220.PROD.OUTLOOK.COM (2603:10b6:806:123::30)
- by MW3PR12MB4410.namprd12.prod.outlook.com (2603:10b6:303:5b::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Mon, 7 Jul
- 2025 08:43:49 +0000
-Received: from SN1PEPF000397AE.namprd05.prod.outlook.com
- (2603:10b6:806:123:cafe::4e) by SN7P220CA0025.outlook.office365.com
- (2603:10b6:806:123::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.27 via Frontend Transport; Mon,
- 7 Jul 2025 08:43:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF000397AE.mail.protection.outlook.com (10.167.248.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Mon, 7 Jul 2025 08:43:49 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Jul 2025
- 01:43:32 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 7 Jul 2025 01:43:32 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 7 Jul 2025 01:43:32 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.15 000/263] 6.15.5-rc2 review
-In-Reply-To: <20250704125604.759558342@linuxfoundation.org>
-References: <20250704125604.759558342@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="BUxUMpZ4"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=56yF/zI7i6sgqCq8VI4vVeBeXQpKc4+9Sjf8ASmThTs=; b=BUxUMpZ41VghoI+Vz9XXRZu3fk
+	4IKlVayPb5Ns8jQ2nDmw9D6pa+TpLyLpmzHTfPTNjT33I05j2RgN6PYbS36GKPqI1pmY5RIU4/lZm
+	1px5hEMyp/uE9gGJGh72q81jAQ6OwmYntvt6zQ1uPXsz9FwLZLKLbJ3HTZLyRtAkpRTAWxfLyd4aA
+	nV3JHK9ueyewZlo6/56+ZFeS6nsuUfnR1SjfJaFAe6L+SDkXe2i2xx4UiZN9KTjuveXMeyFpD9a4W
+	jb7CqUX90RTl7ljIQ7QFQbjlaFq/8pYrtjlaYZD9cAa76kXLq9Lt+qNEiZyQ6O0xcVqABr3ytlo6g
+	HK2bn/xQ==;
+Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f] (helo=senjougahara.localdomain)
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1uYhzH-003mee-2n;
+	Mon, 07 Jul 2025 12:18:12 +0300
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Date: Mon, 07 Jul 2025 18:17:39 +0900
+Subject: [PATCH] gpu: host1x: Fix race in syncpt alloc/free
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <19d2e833-547d-4712-a68d-b64cb3438999@drhqmail203.nvidia.com>
-Date: Mon, 7 Jul 2025 01:43:32 -0700
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397AE:EE_|MW3PR12MB4410:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ade600c-e53c-42f2-f55f-08ddbd3264a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V2ZFTkRPM3BpNUxCL2lpblZZVmR4aURBZ2ppZFBTK1djVGxHN2ZLWUE3NWtq?=
- =?utf-8?B?cUY3N2xtQ0FGSVhhd25ueUlJc1JPSURFVkNxQm5hYTZLOHd0aVJ4clVGMWZD?=
- =?utf-8?B?MWR4RGZ1SXY4bkdSbmY5bTNHSTBwZHYwSit6bFU1b3NxQ0Z3MnNBOWExd2w5?=
- =?utf-8?B?bVhHaVBaZWhCS2NveVQrVDVTcm9rc2gyc2ZrMFQ3aXpMY0dSR1p6MTFrdE94?=
- =?utf-8?B?NHNzK3NKTkp2RU8zMnE0TVhCdExmYmVEYkJtTFd3NkEwKzhua3BhRU9jTS84?=
- =?utf-8?B?VGp5NmJKRU1yS21iNG00TTFFMXphQ1BNdVJINGRRZEIxeDRPcWlDSGo2SjJl?=
- =?utf-8?B?RlNUVnJrZE5iQVVZZEtWYWh3MVlDMFU0MitVVHZwVkViWUI1ZUw3WnczM0l5?=
- =?utf-8?B?REZpK3dHMkZMbVNzVEJvNjJlNjRZMkVHQzNwMjZDTkdIaFVxTWxiRkhiRVhr?=
- =?utf-8?B?UnZ1dmo3a3M4L2xwamYyUUhWcG1tUVBWQmRxZUhqVFY0cm8yVS81L1loeWsx?=
- =?utf-8?B?QU95U1NGUmlQdUg2ZzhueUJMcWVMazhxVWx2Wk11VHJSNlgreWwzUWJUWmpj?=
- =?utf-8?B?WnVvUFkvcTFHcDFQSWVuRzJKb1J4WjR2YXQ3cW9qNWJmVjRjYW5jSW9yVmwy?=
- =?utf-8?B?OEM4VzJON2EzaE9uYlZUZk8xUm1MVUdNTmtLRlV1RzhiREhyUnFnSU51Y1d4?=
- =?utf-8?B?Y1VycEhGVUo5TVExeFlUOHB5UjBiNzM4Rk5RNThJdmlIemh2YXZYU1ZCSTdR?=
- =?utf-8?B?a0RvUkR2cWp0emlvTkRVN0pRRVdvK3J6Y1ZXcFNRcSt2dlNkTjhqOGdvZWtB?=
- =?utf-8?B?K2V1NlNXK2MxTjdmKy94cVVwK3BOaFowc3ZhcSs5NU1ySTVRUlhyQTIwTU1M?=
- =?utf-8?B?ZkNmRVJSR3A2MGVlajlBNTNkY2JXdTNCeUVxclkxaFo3RUNUT1VLZWg1V0R2?=
- =?utf-8?B?dGJnekFrckNQQVN3R1crbFZKOS9WMUlOYnk4VEFId2FhL2lnMkd6RXZtRE9y?=
- =?utf-8?B?elQzTDVwb2lucjVHNkNGTy83RG4rWjFHMStwa2s1UnVLVTlPbklIdjlpQ0o5?=
- =?utf-8?B?OFBtcE9RUGVCejhlTTYrS0ZvTHRnWjdWYkw2Yk96TU9zT0tpd1pyK0wyTGpy?=
- =?utf-8?B?L0NYenlBS25lcGhNWjUwRVoxL0NJWW5wbjdCbmtGQm1tMGduOGp1bEs1SkRR?=
- =?utf-8?B?N1ZpdGRHUmd5QmxqOHZ6N3ROZ3ordU0wMnJFOHRPcTFOc3I1Z1UyQ1YzaGN5?=
- =?utf-8?B?VVd5UWxta254SWcxbVh1REJXRkp4YWIzY3JJT2pzUDRtZkp5cHVkNllRRk9z?=
- =?utf-8?B?YVVKZ2VhaGVIQloxaXVrYm9xdG50WFlsazJRTElVUnlaQVRsNDErY2xQVTUy?=
- =?utf-8?B?Q21NMDF0UVdwT2xJaUIvdEtRd3BYNndEbHYvdnJyeXV6R3NlektncE5Db00x?=
- =?utf-8?B?ZUFJNURDY2tBcG9OUHZJQ1h3Z2N5MXZjRHJJbGN5MDltWk5mUHAzbXltZWhH?=
- =?utf-8?B?VlliMVBXYU5sNlN3Ym1Bbi9sUmpqRTlzeU9PdC9PVUE0NmloRE1iVldoVTl0?=
- =?utf-8?B?ZGd3UDYrZERWcEMvZk01MU9Qei9tMDVXLzFXYmZBR2kzZCtPeDJIdURPcXdU?=
- =?utf-8?B?VnNIcXBjck0xRmN1Q3VMWERIQ1dXT0hEd3RXeHhncG05eC9xbnhSZ2J6cTJ4?=
- =?utf-8?B?cGIxUEVxOVkrSzEzcER1WWgwK3l0YXVpTUtmNGdBWDYzZlB6bkZBbWVTbTFt?=
- =?utf-8?B?alBUbjBIRy9qczNxNjc5bGg5bXhkUW13Q0NMS2djSkYvODRaSjh4aFpZODRK?=
- =?utf-8?B?RWwrSDFQalhHV2hYeFpPUTBMZ2ZZaTF0QkJxTzdIWmFrSDc1QmZKUlFpRVpn?=
- =?utf-8?B?TTFhRndKaTl3c1lCbjZaWXpncjY4My9Ha0s1SGdrL0dsOEFJVHBucmFyeUd4?=
- =?utf-8?B?NGhJaTQ4VG9jWkxSTC9MSTd2aE9ZZ1ZEUmRPMGhFWXlUQjRtN2ZjanR4STE1?=
- =?utf-8?B?ZWg1Zm54bDF2clZwcldMRTVSa216OEhjN1c5SEp4YlBWTXJ1YXFlSFpXTW4x?=
- =?utf-8?B?L0h5c1hFL2RibnlCdjFsclN4Qzl1S3ZSRU5VQT09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 08:43:49.0037
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ade600c-e53c-42f2-f55f-08ddbd3264a9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397AE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4410
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250707-host1x-syncpt-race-fix-v1-1-28b0776e70bc@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIALKQa2gC/x2MwQqAIBAFfyX23IIaYfQr0UHsVXuxcCOK6N+Tj
+ jMw85AiC5T66qGMU1S2VMDWFcU1pAUsU2FyxrXGG8/rpoe9WO8U94NziOBZLkbT+NnCIbiOSrx
+ nFP2Ph/F9PwA03d9oAAAA
+X-Change-ID: 20250707-host1x-syncpt-race-fix-e337f1e2ea28
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mainak Sen <msen@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
-On Fri, 04 Jul 2025 16:44:42 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.5 release.
-> There are 263 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 06 Jul 2025 12:55:09 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.5-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+From: Mainak Sen <msen@nvidia.com>
 
-All tests passing for Tegra ...
+Fix race condition between host1x_syncpt_alloc()
+and host1x_syncpt_put() by using kref_put_mutex()
+instead of kref_put() + manual mutex locking.
 
-Test results for stable-v6.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    120 tests:	120 pass, 0 fail
+This ensures no thread can acquire the
+syncpt_mutex after the refcount drops to zero
+but before syncpt_release acquires it.
+This prevents races where syncpoints could
+be allocated while still being cleaned up
+from a previous release.
 
-Linux version:	6.15.5-rc2-gf6977c36decb
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+Remove explicit mutex locking in syncpt_release
+as kref_put_mutex() handles this atomically.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mainak Sen <msen@nvidia.com>
+Fixes: f5ba33fb9690 ("gpu: host1x: Reserve VBLANK syncpoints at initialization")
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/syncpt.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Jon
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index f63d14a57a1d950daa1a5864613d7f2fe4d04aa9..acc7d82e0585e83db2da82933ada4c817114b16e 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -345,8 +345,6 @@ static void syncpt_release(struct kref *ref)
+ 
+ 	sp->locked = false;
+ 
+-	mutex_lock(&sp->host->syncpt_mutex);
+-
+ 	host1x_syncpt_base_free(sp->base);
+ 	kfree(sp->name);
+ 	sp->base = NULL;
+@@ -369,7 +367,7 @@ void host1x_syncpt_put(struct host1x_syncpt *sp)
+ 	if (!sp)
+ 		return;
+ 
+-	kref_put(&sp->ref, syncpt_release);
++	kref_put_mutex(&sp->ref, syncpt_release, &sp->host->syncpt_mutex);
+ }
+ EXPORT_SYMBOL(host1x_syncpt_put);
+ 
+
+---
+base-commit: 2aeda9592360c200085898a258c4754bfe879921
+change-id: 20250707-host1x-syncpt-race-fix-e337f1e2ea28
+
