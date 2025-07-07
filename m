@@ -1,200 +1,133 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2073.outbound.protection.outlook.com [40.107.93.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABFD279DC0;
-	Mon,  7 Jul 2025 07:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751874114; cv=fail; b=DfpXMMDV//zj94DJ9V7DJR+pkeoIZBe47iROklwi3soATKqpim+QV34J36NxbAlmsLtYSml9AFps1G0iNrRgQlB5FnYlhQx8lFLwGNLaC+80JFIPbebajHYEOqCfFnMNSgN0z14f/+7DMzId1xhpMujyPp4wjnWKwR1oJ9R79pQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751874114; c=relaxed/simple;
-	bh=fJXzUCLnidTiUO64R6gVGjWIxXnSWhjoH4tgvxs785o=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RpxUpQGZYtQdJFfNzg+Ai19ruWfVWRCWoNmDpi4+WbLF7AsrXxB4pPvawO+9frwruYQ8KKB5MqlvcwyVFxm71gwhYO5UhWE3GL7pL2Jx/1A+4wZezbWoGqk/7vskhzwAOKfLLk3dIQk8mGBHbZnJKAX88xvcJzjCRVaUbTluFh4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=la0mTpdD; arc=fail smtp.client-ip=40.107.93.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8439F275853
+	for <linux-tegra@vger.kernel.org>; Mon,  7 Jul 2025 07:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751874381; cv=none; b=V8+w88qKklwnxj7xIKnHXVLNTBGpgnBbkAYk+Apm/3I+kYK92rYwyb7Vr/2DBeHDa6YVMXIVeo73t4A7lTa/NOBwsTTdYWJAkbr9Xfxhh6mVdt59d621sayKg+/bFR16muO1opB7D2uB5TIFXh/Uqu/HawTHuXGWy2JXp14Mmmw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751874381; c=relaxed/simple;
+	bh=o64n8HoG1i9o095L4gEk8V0ocOswj4uaUVhng4InqrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QknN64cAKr9HqeBL9Kh0Wwd0p2rPly7UHYsRp6dcJ1UXxi0x1D1zeUjFOTixcJXQ/3zSzgPwBVg3THNPigdnfJt95IwgrM08f/HOvSMMwVMK9rowrLy4nVIOT0y21+jKkSWdZfL9yWzypwRM02ryAbkZKOKDthD4E0iF+svlm1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0eU2vdzO; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="la0mTpdD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y8JHWjTbpxcY8BbMwmKkHZ5Ry25FVB3dLd5MBHh4o2uhyI1qxV/mbHhUftfBmrUr3ZI0eJW29urvSlv9PIhudauJHcrnzz4o7KOILwkYjsgXS3wLwd4sXYAOfSzIUjoJHFO3PYYzJKm7s6FXmE2zhSs0kK7y6m1JOc62HJS/nrFkDysCaKvMj457BOQVN2vcfxPzyVimCwPS3ViXCttXIgmnPGUmmHthrwdGqYZmmZVtXQRdOvCDyGh/1OAD/fN6dDQzC9fBDsMqf8OqjD57u+MYd/13nA2G49fLbyT/ap6hvUEASvVxLtoDdRdGU37fiTkfu3XYYje/Ml8CsXyxEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EkT0OowraBkO1wmq1sbXMDsRXG2ErhIPD65aQzAOLUk=;
- b=sHJCLAMBza4RyVxOsUV/3dYwxK9Zolpatgld7+1/Y7gGwu7DRb8xifbSuHRnMuLZTq8kq2gFanelHyM7bZ9HZo53oA4GkWb7efMgY+dFwAahwAqfqtx7PyZkkXRn+zIf9nXB/dbqf4DAnopaxCAgYIR6x564wMROGu48iAdfLm8gel+0heS7A+61o7c9pVVeTHCjGtsE+k6noL4rEmv7ksB09nyb8dv0KoFIKnd26apz3QIiLBpzalQgrk7UyTaxrOgNauc4UXf0jRSPmdzTq3DQ19QxdHwQe//zOFjpwmdvRsft8dSM+JhPsuzl3b8pRZJXVkNptO3kTXmgyx0V+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EkT0OowraBkO1wmq1sbXMDsRXG2ErhIPD65aQzAOLUk=;
- b=la0mTpdDRM86YDG0ThtIkZv99EJxGVcpMWAPQPVS1Hi20sNl3LlapXPaigdlRObzvcPoBpXvPXyObxghqz4ccMprmi+XJDk/n1FOeTbEPiuKrSI3j7axo08HeIzCoWaxWIJegmpnK2KqeCrFmaCRjyFNUTHCFhMHjLlOA83bdUY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DM6PR12MB4337.namprd12.prod.outlook.com (2603:10b6:5:2a9::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.24; Mon, 7 Jul 2025 07:41:50 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8901.018; Mon, 7 Jul 2025
- 07:41:50 +0000
-Message-ID: <d35a1546-e175-4894-94c1-970b5d82487b@amd.com>
-Date: Mon, 7 Jul 2025 13:11:38 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 12/29] iommufd/viommu: Add driver-defined vDEVICE
- support
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
-References: <cover.1751677708.git.nicolinc@nvidia.com>
- <d6fa98ad18a44d3df2ad9c9320f364affa9c03f5.1751677708.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <d6fa98ad18a44d3df2ad9c9320f364affa9c03f5.1751677708.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0099.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:2ac::9) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0eU2vdzO"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451dbe494d6so31168405e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 07 Jul 2025 00:46:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751874378; x=1752479178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RZ+2wJfPgdP5WPc++dQKTvMgEl9z5w1HH5OLhshcQSs=;
+        b=0eU2vdzOQ0Wl2S9F2s6jEqFb/ol7G3W02l7CyhpQmr8Yd/3wSstVJhMCQOrH13aJZz
+         ZV3x5nTD50082GLbcHPJnx0weq71Z0kO4tWqw88JI/3Nkn+blGVpRfreNz5qOEAP1sIO
+         mbtLV7wxinbCETjzY4i/4gsrvY3iezJlN+pe/xDmhRPc2oTiMVRMua2p1QCGyI15irNh
+         BsPgwrOu0BipmGOBR7jfFUf5wA1+WGmegWReGStO22Sk3nXE+cVyC/Ig+AsOBlaCTgQJ
+         gZ+XNxaL16WgBcsThoYlD8wkH94rr5JpuIIHw21u6f/oPPhoNweIJ/+DMjQN9K+z7TpD
+         q37Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751874378; x=1752479178;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RZ+2wJfPgdP5WPc++dQKTvMgEl9z5w1HH5OLhshcQSs=;
+        b=pootyz25wQCmCRi/0KkD7lJBcH1PzyKk9rVNqDaU+/EcUufoKWb4MpeAlktf8ZOa/5
+         RCV/G+2IZGb4C3SIpMczjom9UjkTttJz8adQ8T8qIlHJZ/VEQYIQN2xKmzAQaIUmAtf2
+         59Yml7ZfmLc/9O9niCM0n1NhABZiW9uinu+21OG5Xh13QPImYIuX5Tzh7SpymbKJUQEB
+         ihMXC/4UTbaoIOymtanOH4+FAgquxRKPJelnhUH0R44UKwcxfW/O+0KF/0RtqF7L9z8k
+         iKZru18Ul0i0Xf5rMfwqP8cuD1A9P6k+Zjei9P9Ma2OnMsowE72uhFnQ6uPUY4sI3q5d
+         09zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Oo5/BeEWPNE+xhWCnyio5BEz539UJj/MDDITdRJJZgLJrWayhWe8HCOF8gKN2geeKM4qpLMXoKXVRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhinDG9xbg/PK2Y3C7PnORS903IMFDeg3+DIW87zq6b982k/Tv
+	hdeIsR4ty6Jy4cTRoysFToIYV1sKPV8DnjsEMJAn4i4euufXmEIPilUmuNxq+aKr5n4=
+X-Gm-Gg: ASbGnctuyv1QvnQRMH2pgeWUNa2IALSKpZWzKa6xFZ+sfdzSHjjutRdLuy7bMUAd2Kn
+	ury7VVbkJZpiTmUKvaz1G/isuYOKZgbQ3Xt1lrwX11OfZn9J16xtcwHGOelgKCJqpEaaGwHoJWC
+	qqucZ30jyW0al+sRzCTheWQogkLjmJY9QhDtEAp1kZFrfW+FInC1MsZYTuCrao81nOCJz+i1yzW
+	2jz9MF7S+eJmUWo8/kTPk2Rjh83WgjC4EvoOnw1If0FdZjlSMoaJDynBnoqTlH/KVBxkf+Pc5Nc
+	dwzOmbhshXkNHaCDOmhZ2xgv7Rgnnl/YUFktllkWNDtmC1GoTyRnBnDcoGVIJMo=
+X-Google-Smtp-Source: AGHT+IGTaLLGKNXhhZgLe2AjuiYxPCN/bEhBq84ie1Igf5JBLfyMw4WewC+BXOddVp59zT0kTEeIWg==
+X-Received: by 2002:a05:600c:1c21:b0:43c:fcbc:9680 with SMTP id 5b1f17b1804b1-454b4eb8326mr94737935e9.25.1751874377684;
+        Mon, 07 Jul 2025 00:46:17 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3cf3:a61f:85ed:69db])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b161e8fcsm105474075e9.7.2025.07.07.00.46.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 00:46:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Robert Richter <rric@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: Re: [PATCH 00/12] gpio: use new GPIO line value setter callbacks
+Date: Mon,  7 Jul 2025 09:46:15 +0200
+Message-ID: <175187437017.12064.15350480191939974588.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250702-gpiochip-set-rv-gpio-round3-v1-0-0d23be74f71d@linaro.org>
+References: <20250702-gpiochip-set-rv-gpio-round3-v1-0-0d23be74f71d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DM6PR12MB4337:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a2d7b07-be52-4d44-bf42-08ddbd29bc36
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K1FadHgzeWliK0orR3FLWEo1RXNGR0NyaG0xQlkyVTg2VVRZVUdITW5wcWRh?=
- =?utf-8?B?K2FobUxmOGFXMERYdWg3KzV1MnIrY0NMbGlFeG16OWRJbXhqa1RjUTNoUGhy?=
- =?utf-8?B?WkpxVkk2ekJPRWk3blZQV3g3V1Q4UFNydnVpL1FWM2xwUnV0aXZtYlhlTSti?=
- =?utf-8?B?UkZUb09SY0J3VkFwQU1LRmQ4aldNek9MM0t6aDJCRkcvRFNwdXJRemt3Y3lo?=
- =?utf-8?B?RWk1SG5ZS2lmVjczcUxQMThJUzRzeTRyRFJkUUpqQVd4SVc1TFpiNmtOc1F1?=
- =?utf-8?B?RkcwTWhTci9ZaTJxcktCbGxMUTE5UnhwOFJ2M3h2UEV5NGxzdWRUOFMzc2hH?=
- =?utf-8?B?WDVQYmRVTzd0Wmp6c0VOZHhJR2NFUEt4S2NzNnpjZVNLMWFJdnRTeW04RG0w?=
- =?utf-8?B?djdFMVh3Rk5yL0szVHBUcXFSYVA2elFxalhTTmk5SVlmbEh2c1VETUtjWDc1?=
- =?utf-8?B?cWhiM0Fqem9BeW5QZHg0Q3lpVFRMd1NOKzdTS2FhYkxkWSttbi9sbmJWblUy?=
- =?utf-8?B?OHJGTGhCK2dhc1F6VFpkZGh4aUZKSmliTEJ4VEEvNG41TXEwRSt1djQvb2VB?=
- =?utf-8?B?UWtPMnYvTVkraUpSZTdGdytqbnhQc0RZZC9QYVBtOUh1KzUvZ0plUHB1enJK?=
- =?utf-8?B?RENyL0Z0S1k2NktiS3BvdG9YNVltR2JqOUxwWnNYbC82d2J4UVFzdWJDdFlN?=
- =?utf-8?B?cnNNbWp0SzhlbXdYc3FkZzNEaWpqRHpwY2RMU0xQNGRTcS9ERjh3SGtML0Zj?=
- =?utf-8?B?aEdaZmdaUCtkbXgyTzYxYVBMZ0tXdDJGMU8rYzRDd3Npc0VqUEhLVHBhS2NZ?=
- =?utf-8?B?akR1bHRTbldpWHNKSmRIUnN5RGxZWmZlbGVwekd4QVFKRnBpejNGamd5U2ph?=
- =?utf-8?B?L0F4aEl5eEI5ZHVZZ3dHY0w4NFRRQjZ6YnU3OHcwdENOUGtyQjZMRUxCUURv?=
- =?utf-8?B?YmRneXZpUXhBdzlEdHAxaExsS05jRlFwZUgzNWczNmlETWFYTTIyRlB6TExU?=
- =?utf-8?B?YWI4OWN4TEtaV1BvTlNTd1lIT3pHL0gwaEpPQzNlWFltSkk0OVJvQUdjUzlQ?=
- =?utf-8?B?QUpZbjVwRHlKRXJZdzdZY0g5MHNtdGQvSEFMdlNwdi9LL09uRUpGWGRMYXNw?=
- =?utf-8?B?Qm9sQjNicVhsL2hUS1FHR0NFczVvcllHVFhIekxNY2JGcEVHVFdMYWcyQTAy?=
- =?utf-8?B?MEs5aVNVbjRzSndGdHpSYmptZExmcW9TTG94djhwYkg0a09aZWtKcTg1WC9D?=
- =?utf-8?B?R3RPRzlxcStOMkxGQkNTdWV6aGhkNTcyMlFsM010OHBiaVdKVmgzRERBUGFp?=
- =?utf-8?B?NUZRdndGTEZ2Z3ZQUG5vcXJsVmw1K1pPSlBIOTBuWDhReDlWQXZrTVEwSkth?=
- =?utf-8?B?UWREVlR2akVvaVF1NHY1MDJiaW1seE04OGt6ZG5wb2pVZnlENzhtMnVNUXV3?=
- =?utf-8?B?MmNSZXQvSEtueGlJaEl3bmpYSmFIWWtDaW1KdHM0SlE0TnVxZFgrN2N3dWdh?=
- =?utf-8?B?aGZCSWRhSkpPZ2N3dmF2dVRKUGtvcEpBSjFHTWxaSzZGNW96UTQxRzZQNVVI?=
- =?utf-8?B?bVZFOUVqY24zcjd1ZEVlYkdyT0FqZWJGbUw1dnAyUVg3L2Q0OVpZU3lENGs0?=
- =?utf-8?B?SkRjQlIrbkVidW1mb2NFSnJvNnVBT1FneVJwUDl1VC9SRXdidXJiWUk5VFRN?=
- =?utf-8?B?NG0wSG9mMGZpVm9Qam9sY2NnMlBCU1BqZ3hwaGlQTlptM2RxL09PN3R5VnJl?=
- =?utf-8?B?ZTA5d3hyZC9PL1cvaWRDeVBueGlDSXNUbWVxOWw3Q29vUEFjVUxYaER0aEJG?=
- =?utf-8?B?ZEpWTXdMbTRTQ0NMamZJOEpHOWVSMnJtQzQzdU5QY0t3cXNDOUEyYWtiZTM5?=
- =?utf-8?B?eFN6RWVyTU9JamhmdFFZUktHTTB5cHliSmlva3JoVjkybWszQXpqU3VEMS9X?=
- =?utf-8?Q?WCi/CQ7UF28=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aWVzeWg1bDVFdndiSGl5WUVadTliVURndFBTeGJWYVB2UG1MK3M3ZUgvcG9D?=
- =?utf-8?B?VEJOQXpWTWVad3kvci8rZU5mVTNIR1ZEaTFIbzErOGVDNUo4d29qY1dLaFFv?=
- =?utf-8?B?ZmNubE14ZHJkcUUvamU1NzBXaytLNmNMWEw3bjY1djlVamRNTjBwWkVkcDZO?=
- =?utf-8?B?aDlnNnIxY3g3QWpOZHVRUjNvUGRjeTFQNjE4czhELzgraFBGa1NuQjJNeGVI?=
- =?utf-8?B?SjJicEUzd0swR0FlZFlGSnJaTzJYYS9IaERweUp1QS9mcDF1eDVqckFBaGRy?=
- =?utf-8?B?ZmFlT0NucEZtZUhnYUx0MEY5WFN6OEl1eDRORDNXbjQrL1JsMnMvOGlUeHJT?=
- =?utf-8?B?ZE9wcUIyYjdwV3NUNFViSmwrVTg4bHdnREdWUDZpL2JiWmZwK1pSanIzUXQx?=
- =?utf-8?B?YkR5SkU1R0k0L2FTeS9CTmNIenIvczErRE5ObVVxb2IvSkE5WXJaN3JCbHdr?=
- =?utf-8?B?L0MxTDhLUU5JV1ArUW54amVjSXg1NDdkVWF6SDU3OStRZ3RaRXUwNkJjdmFz?=
- =?utf-8?B?VDNzR1FwSkxXcWZCaURRTWI4YU54VGFFeXBRdWJrZ2R4aEh6WXNWS0ZJeWRz?=
- =?utf-8?B?VkVBbG8xd0t2Qkt3ODM3UzlVWmZjd1RXaDRRK2VRL2k3bnlTZkU0RTdRMUNn?=
- =?utf-8?B?Nlg2aDcySFg0RU1RdjM3L1hodEpnc3Zva0FLSldodThvT0FnLzgzZG1pZE5O?=
- =?utf-8?B?STcwcmplMDJoL1A1TFVQdlF6ZWc5MHRtV0M4TUVqWmN0M1VYS0NpM01oczBB?=
- =?utf-8?B?MGV6eW05MW1POVlZcS9uT2lVVXdtYlhDZG9ZdnAzTVV1KzBLTkp4V3FEUmJV?=
- =?utf-8?B?ZmVFb3h2a01QRlNTd3YrZzRoZXJFdVpOVVQ1SXMvMVlheXhrcGhjYVBscW1S?=
- =?utf-8?B?SFRrZG9XN2RadUZicXlDcUpGR2tja3JoYzZhVXpxK2pWWW9tTUYzWnl3Rkcr?=
- =?utf-8?B?NjR4NXlOVHZMTCtHcm5iMGhMeU9xc0V6RFpGSzRMcnR3eDZQckVVMHJudVVi?=
- =?utf-8?B?QWs2VS8vY3pZZUx1bWVwd2szODRodGZPQjlxM2Z3VjM0anV5OHpJaHppRzlN?=
- =?utf-8?B?bjl3U3UwcUhPQjVMYmZsMlNCZVpwbG5hMGVXVWtuSEcyUVZHdkh6WU5OQjdJ?=
- =?utf-8?B?eGxTclo1Rng2Y0xndEd1WHorT1o3NjNRRWxyZGNKdzg1ZGE2c2E0RDZvNDNr?=
- =?utf-8?B?bkZBVkc5VUhYaEw4bHN5d1o1U0pJTDFIYlBSMEVSYnRPTFZEVmNiWW0vRlNi?=
- =?utf-8?B?c3BFTlp3K3pucFVmbWZNdU85YzZCQ01GZCtxSVhjUW5Vak9vL2dpeTNjcjhx?=
- =?utf-8?B?dHlDdXhmQUdIR0ZVbGI4SVRKVzFlQ2RiQldGWFpJQW4zcFo3MmM5UktmQWpn?=
- =?utf-8?B?UDdIN1Ezditmd0NzMU5KRThlNEdYN3graWFERnRaSkRmMnA2a1NqbDdRcFJ3?=
- =?utf-8?B?c2o4QkpHamxja0pNV2hUREpPejRxd0FQUDQzWlRtb0g0dSs5VDlOSmFmWkxw?=
- =?utf-8?B?b0dDTDRJaVd1ajAzSVFSS0FpTE52TmtCb3pmUkRMdG1tMHRWdEQxOVRWeEw1?=
- =?utf-8?B?OFNVMVVBMWZxNUNHeXVKd0xrM3h4ckNUb2FiNERsbXp2M1RsQTFKMStMbSs1?=
- =?utf-8?B?a0NaeXFvYkdRWlNFd29xQlJQYkNjNVpuaG83S3l0Nk1rUzVNcVkvdzhsTEdH?=
- =?utf-8?B?a1NvWjFFLzl0S2lqY1B0VGZQR0JNM2xaUS9kUm5TM3FxR2prZWx5bG5HVXhv?=
- =?utf-8?B?OEhPTXVLSS9CVmdlREcydnhqME9CT1RsRnA5SEsxdEMwY1VFTXc0TUc3K1k5?=
- =?utf-8?B?Y0tjeVIyeXJoUzc4TzZ1SmtwOTNOdE5UQ0JxSTlCQjd5SDRibHpZNzJDNDI4?=
- =?utf-8?B?RXljcWhYQVFFZXVobWVnbXAzYWhva3dnY2pKN3pQNEl1NTM2NE1qRzVoRnNw?=
- =?utf-8?B?Ujc0TUF3VlNUNXc0NzFMUFV5enAyT0xWckMzQWtuOTVicU9oSG9DWEtvR1VL?=
- =?utf-8?B?ejdlRWtGSUVnZEcweXgySldrb2JJeHN4eDJPbU00NHNMZkVEeEc4M2ZkRmIy?=
- =?utf-8?B?Q3VPWkk5dmRvMFBsWm9mem9Na2ZlcDNaSU1nemdFc2JaczR5SUxSZ0FocVVz?=
- =?utf-8?Q?ek5xsA2ejzAPEjb6vEsMKo0at?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a2d7b07-be52-4d44-bf42-08ddbd29bc36
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 07:41:50.6960
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SXrYbCc6b0hTZekp1sTU5VewIV2T+YnDkWNEHABXTSggabWxjuLJsPXcO8VOuj9xTJiiPrWdFtRC5iHRg02rZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4337
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-
-On 7/5/2025 6:43 AM, Nicolin Chen wrote:
-> NVIDIA VCMDQ driver will have a driver-defined vDEVICE structure and do
-> some HW configurations with that.
+On Wed, 02 Jul 2025 11:14:01 +0200, Bartosz Golaszewski wrote:
+> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+> values") added new line setter callbacks to struct gpio_chip. They allow
+> to indicate failures to callers. We're in the process of converting all
+> GPIO controllers to using them before removing the old ones. This series
+> converts another round of GPIO drivers.
 > 
-> To allow IOMMU drivers to define their own vDEVICE structures, move the
-> struct iommufd_vdevice to the public header and provide a pair of viommu
-> ops, similar to get_viommu_size and viommu_init.
 > 
-> Doing this, however, creates a new window between the vDEVICE allocation
-> and its driver-level initialization, during which an abort could happen
-> but it can't invoke a driver destroy function from the struct viommu_ops
-> since the driver structure isn't initialized yet. vIOMMU object doesn't
-> have this problem, since its destroy op is set via the viommu_ops by the
-> driver viommu_init function. Thus, vDEVICE should do something similar:
-> add a destroy function pointer inside the struct iommufd_vdevice instead
-> of the struct iommufd_viommu_ops.
-> 
-> Note that there is unlikely a use case for a type dependent vDEVICE, so
-> a static vdevice_size is probably enough for the near term instead of a
-> get_vdevice_size function op.
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> [...]
 
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+Applied, thanks!
 
--Vasant
+[01/12] gpio: tegra186: don't call the set() callback directly
+        https://git.kernel.org/brgl/linux/c/47c228d9fc9fe7e3b6f0e7f88f40779f0bb96469
+[02/12] gpio: tegra186: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/871e1aee00298fccbda04eacd9e3bb5f46f446b9
+[03/12] gpio: tegra: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/8a81d128e1377a7662d0913bc5013eb8a90c3e33
+[04/12] gpio: thunderx: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/ecf0c0278f4799f6af245131f02dbb8587f87d29
+[05/12] gpio: timberdale: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/dd66f8862f8418d989a8e342ff7af26bf4a0ae8f
+[06/12] gpio: tpic2810: remove unneeded callbacks
+        https://git.kernel.org/brgl/linux/c/00c337cc68c34302fc0af2d9ac47be5c638d4a78
+[07/12] gpio: tpic2810: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/4ffdd9d8a37eaf4e25855e1038b9e1091401c252
+[08/12] gpio: tps65086: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/2a5be7a80b3b1036fba5dae13dd55c97fb7eabaa
+[09/12] gpio: tps65218: remove unneeded callbacks
+        https://git.kernel.org/brgl/linux/c/913cbf8a0d4b0554d66cdc608b231cdf2401a496
+[10/12] gpio: tps65218: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/4ca81a1f3a46603986cbdd11348433b0746ce483
+[11/12] gpio: tps65219: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/fc0e4091afa9b6c02f1cc2ddec75b248c25cefe6
+[12/12] gpio: tps6586x: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/e3ec7ad5ab139ad9e0ed8931ba562f95698c3b2f
 
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
