@@ -1,63 +1,63 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E4A2BDC06;
-	Tue,  8 Jul 2025 08:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27E12BE053;
+	Tue,  8 Jul 2025 08:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963310; cv=none; b=Hl91mczRsxUMJgLeJrqC+T2Bt9LRGAE1X+1IyNKKg7etcn5azhKG9NS1dynapRdDBTfagy2+kU3sicgsKAg8siNTJ1ltHEWZWVBt6omBgy7L741B4GNazC5AINkKVpOt6ZmTG6pqdzOMtF/D8KAsc1l7k8lt8/IvksBWOO/b2vk=
+	t=1751963312; cv=none; b=pS2lOMGVQyQ5TSSUpFOZWJaqQYlpSfotwZrTdwHkB4lzUx94N2hbVs8nqjU++JYE9pAlgKwbeonuPrMD08n2m5U+gmJBTgbrCdg1nY8yFoBFYQLwsR9OywiyOgKfkPpySgl2ip/zfN/B0vGKZyw1cqwJvNsJz6pSVm7gYbY4Zh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963310; c=relaxed/simple;
-	bh=BAszpT53EvwYJ9SjB16QzPApCtcdJtZB5nD84OOHbuE=;
+	s=arc-20240116; t=1751963312; c=relaxed/simple;
+	bh=thZx/B16725krqNG88NVn4yyd/QHJKujDFO0V1LTLdo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UZhFTlWVzCeIwmrA4J3t2YEZmq7hl+0bdYJDxOO1hoq8raaHpf8h+DpJGMUFnsBEk2YOrCAzw+LuCcPoxkRTCl/aUyeEkCkwxrUvSCg1gHwLrNa/YRG9ca4F1wJz0Dt9+0k3cBPYPxbUMCp1OX1ozd4a2y8Px7bZvDTFVRmpSVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNqEl+gT; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=XHFAqAP+3ntgTSUPQ7ZafYjCFq950lheR/aIzD8wgZiZrL81Xf1iN5ZYuw1qpTqV+XhU8Id9p3u+GU7opwrKmYeMgkxcCL1J/uWsDysd2vNpiItCB/Wu01hmo6GWk0of8w/2C/5Az+8lctIBCes8vWOrPBzk57VKK3Z7uMSmQ4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwWhUPMc; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNqEl+gT"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so3184675f8f.0;
-        Tue, 08 Jul 2025 01:28:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwWhUPMc"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-451d7b50815so32960595e9.2;
+        Tue, 08 Jul 2025 01:28:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751963307; x=1752568107; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751963309; x=1752568109; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MjtCRFWFffW7pi1vnTbfF8R7o1inZ//6KtfO8wbs4Mk=;
-        b=GNqEl+gT97TKvtgS4f9XjRvhvzXaUoe+RN7VtLcRvItJxOOM/QT810H3puHI8QpJd0
-         Ny2UDLn9DyHk2xzXhfrC0lnv52MbDI3BSQgiYnh7zwvv2NCr0TJVK50OltmUOqfL8cDe
-         sNzEMzXd81QgpwcchsdokNvvzIBY9x9QkPn4mG71G7kxnHWhyxHvW/wfSwoprD+qNw42
-         lVrCjVlmfI/1F1Ys8oMnruocfBOVDSH8SE+hapCwaSMCviOPUn14tA5SPzNhMxefkLib
-         BDanYGuVgHmXQCZeIdFVdySKAQq0CohxBe0ndDq6JbPu4vKbg9EqBKb5cY4/uucC1DrC
-         Jj2Q==
+        bh=e3A242zS5MYAQYfJ5usGXncBXPwZ1AAMz4fXvSN5Omk=;
+        b=cwWhUPMcKhHx4Mzjj7ULv0pEKYNRu2aLg1H2VV6IbyGj2Xx1n60tXYbcsCPirEn1Rw
+         30EPnPhUgg6njJ7kG6vkEocBevUjAv7tEnG9uN5c7/86BVhxUoGOlGWo7FYHe/CtjcN/
+         IOiiqHxVj/dD03oEVUUjSXL0IjC0gfXHrZrZast90Y39EEtFAIEWL8yGepss9EJ8FUfb
+         zk3YcSiP50Ct4cFKhxHeHYFoinMpKEjBCeVbdY8ZsU4MgpP1ki6E7KgRCgM4K7tqJUEz
+         AXN3eqzMY3FxHDu7D0Gb1126IR10usxRillBZIXnGYMyYhySrAQos2KLBlR6ETYlhBdq
+         2Xxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751963307; x=1752568107;
+        d=1e100.net; s=20230601; t=1751963309; x=1752568109;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MjtCRFWFffW7pi1vnTbfF8R7o1inZ//6KtfO8wbs4Mk=;
-        b=OEFEcaZ6J+pE1K3i5BZj6wswnjI5SNP1qA4oiLa1lvy9VFLQAGCUIu9nIGTKlp+yIZ
-         f0Ddi/UIG5tb9NPviuzor5i/ck/9gjjLZXXBGb6O/NcsGsdrCyWdYkbGO7nLGfW9bT2P
-         e0qFs4kymLkKc4Uo/DUMJB/f0usgWCwCWgbTNMQCdFpTxag9MULXlpvZHzQiZiM2TK4t
-         QOvPUU3GWN3K67O8vfjG+b6BnJjjzBVuZoHAvdgdqsn3/ln94Q0qSUevFHerI2BJxtTA
-         uHf4WOPa2XWMGG4Dp1JQNBYos0/xJtAkogyJ/6nXgHzkYMjS9dkNaXRG+kGZh51uisUd
-         Vj5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDGUVzxOQjOZvKE++jPguL8g2zR17mdVoLrI5wb6Hz9D0kxKcuZdLcfDBkoF36x9lOn1d3duKoYQag@vger.kernel.org, AJvYcCVKk++mTQd++qs5QL+N96nyeK6vWy15fKMcrliqjt84faG30rXsW7rZ3diRxq/vFH6vtKLIyIlgpSaTYww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE53y6ECADodjKFdNyvoT7y8qEUsnBj3kNKQgpXtU0G25rYvLt
-	lP1yXj2Xd5MhuyN5Roc2wLxRrYEEdUZx4erR8OWlCmg2Xh1pSrMkC9BB
-X-Gm-Gg: ASbGncsUtdEScopG2Ez7Orasgit6ERAv1KUzPYjFPQQFefovF3ZhvzjyIS9as8o9oh5
-	/7CzHTaCfbHJUh2XfBNrQLchrx5y8PV47qZ2O4iGJu71C+DSv4JG4r693nC1xjsPmQJ1PeITJx5
-	XayG4X6RHfbH5V3F0UJT6Wdy5SbxImGdcUopfFBIBdmz2pSI8l3tQ4JdeVioKXo9X4KVphWb+gl
-	nhHpDc2EdgAXW/Hv8J6vNBvwFTS9OjQZLE74PAnkHZf0/XfIkSIwuWi5XbhqJoFBZwUfTJkyj7E
-	0ZiT2xqQVyzwLNlzBaKcsxXKlzw7RKG/KkaJDuiieVFPnMSVJH2pDJYpQmL96U5JcwkmexahChj
-	R/ve4j8lvabi5fqFYE/GjrA8TGqAsQFGDU8ciPgzsONzDw2gPNP/tWA==
-X-Google-Smtp-Source: AGHT+IEwEr9ZMYu+ucjTyJNWFnMG6wJX59s5qnFOf9Rk+CQvr9zKaNfPUVT47iH8O2QDS+2ETbkW4A==
-X-Received: by 2002:a05:6000:2c03:b0:3b1:a735:e6bb with SMTP id ffacd0b85a97d-3b5ddfb893bmr1457603f8f.4.1751963306857;
-        Tue, 08 Jul 2025 01:28:26 -0700 (PDT)
+        bh=e3A242zS5MYAQYfJ5usGXncBXPwZ1AAMz4fXvSN5Omk=;
+        b=SwAo+d/un1lpYEVvnT2eimeir3sVBlaPCVJa2VXVts6FF9tBNAL4RC+vd/0aMYNQ2T
+         A8HbEaFu9SeKbpu6HPZXhWNA72S2EFU1r1n6xR52AX4F9YS+MJXFY1DI0CIebNtR7xTR
+         tMxC+z/5wzAGuAtrNjgcEPeJv+6UpA0doM9hMgVRZpBcPCCYdoVwccITT9YxA0fwKBm2
+         CxgiLc+sLVqoxg73jUIKqQyRwGH27T8Ofq4G2QYFMFnOteb08KxH8XxmOY8mOZglF6I2
+         NPr2ly+7vBKwZt63/8dRGqtZJx7Mk6Y2oEuGxkZpH0rJAUqFn+iQ2OQZG5dl/9jZmgRy
+         AO9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVxYL08slEW5C6VftTSbQqE0fJsx8XVEwpaJdgFo5C7vfUCy66v+nJ8egQyFAWY2s/5TNB00g0TW+nP@vger.kernel.org, AJvYcCWSKiQSpWV+Vr1bH55ecN/90yu/7PF0Yksm54d9QkQP3mJJSQBPe+geB877N4A0t6CwUK2YBL4yhgI6KjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5AcIPmwUaGGS5PYr8LoeIJpTpyl6PaZ53TAiB3pLikVOWyp+P
+	R8aJk3+9GvUP3ZuKHafI2Aha2+a4gvrHVPnx+AMV8o++WuLzlqMat/4b46b2wQ==
+X-Gm-Gg: ASbGncsJS4K9x+h9M/oFL3Kn3kzRCiWHoRz9G29KVfmZpNFVCM83zRzmeTP7mKEZ0G4
+	esH1Ld384lCIUf79kIZwl2AnzdtzBj3qLvnQ5C683tSYtasLZQoQ9wwT8XyQaSLDbLi8Ha3Ri/K
+	RvFcx4XbtBvdL2kLTZkzjPpFS3Jv5+W7lIymrXaa47g80K228EINEEkT5t/yt+pjFeaR2izr47/
+	OawJu0ej2qQvGSXq+9YnGywm9et2XnxZRO6Ia7QQan+N3R8xQ/WZ64ePbtbEvDaEmUpN6foFshN
+	BtHC1riRQIHm87leeu3cZ1XsFFxlM+7ATkPurM5fVWKp3k9unl384qCDyL0wA8VK42+HcSmdkJ6
+	p9fSogF5VCHGESYhAxegUkG59nnjt8oHG9775kdEakQzAQl4oy8osnQ==
+X-Google-Smtp-Source: AGHT+IFqMZRDLhvnw8G2AnPyFJea5WWnS/+DnHR/RTAqsR+1cKvrrb5iYIN0wdm0IoMdGl5fRhTgcg==
+X-Received: by 2002:a05:600c:1549:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-454b3122455mr168049345e9.15.1751963308819;
+        Tue, 08 Jul 2025 01:28:28 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cd45061csm14579635e9.15.2025.07.08.01.28.25
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b47285c4f9sm12208359f8f.88.2025.07.08.01.28.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 01:28:25 -0700 (PDT)
+        Tue, 08 Jul 2025 01:28:27 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh@kernel.org>,
@@ -66,9 +66,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/5] firmware: tegra: Fix IVC dependency problems
-Date: Tue,  8 Jul 2025 10:28:12 +0200
-Message-ID: <20250708082814.1491230-4-thierry.reding@gmail.com>
+Subject: [PATCH v2 4/5] firmware: tegra: bpmp: Add support for Tegra264
+Date: Tue,  8 Jul 2025 10:28:13 +0200
+Message-ID: <20250708082814.1491230-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250708082814.1491230-1-thierry.reding@gmail.com>
 References: <20250708082814.1491230-1-thierry.reding@gmail.com>
@@ -82,42 +82,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-The IVC code is library code that other drivers need to select if they
-need that library. However, if the symbol is user-selectable this can
-lead to conflicts.
-
-Fix this by making the symbol only selectable for COMPILE_TEST and add
-a select TEGRA_IVC to TEGRA_BPMP, which is currently the only user.
+Support for Tegra264 depends on the Tegra186 support, so make sure the
+latter is enabled.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/firmware/tegra/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/firmware/tegra/bpmp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index cde1ab8bd9d1..91f2320c0d0f 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -2,7 +2,7 @@
- menu "Tegra firmware driver"
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index c3a1dc344961..e74bba7ccc44 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -836,7 +836,8 @@ static const struct dev_pm_ops tegra_bpmp_pm_ops = {
  
- config TEGRA_IVC
--	bool "Tegra IVC protocol"
-+	bool "Tegra IVC protocol" if COMPILE_TEST
- 	depends on ARCH_TEGRA
- 	help
- 	  IVC (Inter-VM Communication) protocol is part of the IPC
-@@ -13,8 +13,9 @@ config TEGRA_IVC
- 
- config TEGRA_BPMP
- 	bool "Tegra BPMP driver"
--	depends on ARCH_TEGRA && TEGRA_HSP_MBOX && TEGRA_IVC
-+	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
- 	depends on !CPU_BIG_ENDIAN
-+	select TEGRA_IVC
- 	help
- 	  BPMP (Boot and Power Management Processor) is designed to off-loading
- 	  the PM functions which include clock/DVFS/thermal/power from the CPU.
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+     IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC) || \
++    IS_ENABLED(CONFIG_ARCH_TEGRA_264_SOC)
+ static const struct tegra_bpmp_soc tegra186_soc = {
+ 	.channels = {
+ 		.cpu_tx = {
+@@ -884,7 +885,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
+ static const struct of_device_id tegra_bpmp_match[] = {
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+     IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC) || \
++    IS_ENABLED(CONFIG_ARCH_TEGRA_264_SOC)
+ 	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
+ #endif
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
 -- 
 2.50.0
 
