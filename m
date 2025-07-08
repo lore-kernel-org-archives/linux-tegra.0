@@ -1,125 +1,113 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAC828B3EB
-	for <linux-tegra@vger.kernel.org>; Mon,  7 Jul 2025 22:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B0172623;
+	Tue,  8 Jul 2025 08:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751925837; cv=none; b=ZWZt9aWNQwdx3p69tFFU48fJPWfmV6y3Osq2pq/H2Tv7wsC34gyQA9ZdIcBEkGvbS+zPwo04uhxMP0apSifPSkt7SsXvG4aQ1F4jBxiPYl8Hggj4iBRSL8MLh8Bl/ez+87veBAt4vob4KraJoXwbFXb2Jsw4Qtg5oQ1pL3pHFzE=
+	t=1751963304; cv=none; b=kx3TFyCukASQGQ255klGDktCqIDZ9u5Qy0Rv4KQxT58l6WN5EO3RFEmSaM9YeSZBByV4VHHn0zEoKoX7zretyFn69cPw5FmTROpaXolY0DRqHPRrTNVGiO/o6JJkzfMdCyq0OjEs54XpszZzLc5VzeXhulvIVLUDsnc+v8ZRJcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751925837; c=relaxed/simple;
-	bh=3+ZHbKkksN3tcAI2z+bM1ZZYWOFLSi7aPdLQlGUbAMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FX4PANCdPOYga1c48JVGEKOP0u3viVYVheRHe/a4kcYvhChJ4kfMcDAUIne2eVS8Kqg/8zmRl9Xjr1vUm54Gf88wvUZkjxkrJTQ5i5JbsQSAFC/m4qO14QK65gMnm9cyfZkfCTPoOUekYHst4c4SP0LpyOlE1tJP7oqiuL505jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BXyhrt5s; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751963304; c=relaxed/simple;
+	bh=fcsYySkyKk0DP0Aq4Is2D10xkXND8OyAUsiHqbhcgGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jm01qGzCZwUHOvEuWLZvzRrIERn12mazarjfacjC/9brhjbjrJDYcEgglV7zonY2tsx3dZeKtJlQ7sUV5Pl+NzoNUOOlKzZW54MErpqQ/0WdYwW53cs8/LXu2nvIEDS7PhxrOxwSbOooK6SCOYZQ8Me04rbaqwChgMk0+QgN+Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMlE4PHK; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BXyhrt5s"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so32874225e9.3
-        for <linux-tegra@vger.kernel.org>; Mon, 07 Jul 2025 15:03:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMlE4PHK"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso1789252f8f.0;
+        Tue, 08 Jul 2025 01:28:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751925834; x=1752530634; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dogAwfSQpS99lvjgTk8yq+RnVhaWd2O8XC5gsnxqeJI=;
-        b=BXyhrt5sZRiJXJEOzXZ5P1vJMKHA8QkHATKEsnergl99L75/XMzF8iARIrSYOitZQz
-         ECH75mYMd7qYnR0a0WD7biW0X+T8Wt7gcw7i0n7jJuuE62p0GDKG+iTAxvQozX6CO86V
-         ztLc0MKu4xfmKQLX42Kk9lXx+fV3ARE3aX1XEIo5shGIODYrwedXQLGo10CZdBWPxSYg
-         q75nbiRUp8/7RiF6vfbrcRYDKDYeYCR8Y/FYPLAjuJYsJraLksurkTQ5Cn2fjGHcYAO3
-         gr1C+3AOD6ujkcgQDdI5Y9mecZmBLiYIzMES+JcS8XhDBuG2z1o3miMQk8zBl8PtricF
-         mY0Q==
+        d=gmail.com; s=20230601; t=1751963301; x=1752568101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uuu8lpFeY80ClgGsq/Km2nu3i+uX/eGJHhg+l4rKngw=;
+        b=SMlE4PHKYS4aj4VjCJm+PaBqjE7wqpwQjMa/d7WeB94Zyy1NjjxYd3k2XZ/TOGfZRe
+         7PqXr977Zr7zosgU4HdAYfc7ztf0P4fdO1mgJjFifTdofEFW2H5JMuCOAm0e8PEiBpQ6
+         /lYFQco11gzNYsiHrfTi+OHZ59KI9Fj3dTiDVBZ0xjXnACihvN0nJcAnC14bpNVhQPv7
+         h9PMyHuz+ZJWi9LlQQiddDkh1SUKx2guXmLuFtYxahe7/KfII/rAD4iT9XL7JY07v5kc
+         FUk0+2eU0uiROk1gcYhTMDHjMevfyy/Ea+nhsN6IQ5pxOUCF9ZLVA38Lyg8AcWKScHvz
+         bdjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751925834; x=1752530634;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dogAwfSQpS99lvjgTk8yq+RnVhaWd2O8XC5gsnxqeJI=;
-        b=H0wee+jBtCjzzru98Ge5Dg2n34ZFIPNC54NTH4z8UamktGfUwyJqcQDFwcLnwEWjMH
-         jkZYmbDZlTQSrB7QTyKV4QlBszYwYM6huKjafpSILOGODvgpo/bzUZOrplbFxGxuy2cX
-         1Hpk7/R70B8bML/QM2gw2JoJgkJT33yewJWGudiCmpFEoEk6PIbLChPByp64OKKq9Uqj
-         hMY6+izT28hnFEEhtmuwBFm8onT/Qlq6lBpDUpcWVEz22JZ/j5s5pBvjfwScCxDvR+6g
-         Ro22kAoHh+Iknx7rF+BQHCgd9N/SB5DRD9Kf3+Zkdi9iXw28dBPxPhFB+gz0oRg0QGFx
-         pORg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlyA94/PwBVj1Vm8qdkW0Fbt69yOD7DakQTiJRvuEP/2m1yt+Hj2mn7p4ELqNWQWLNhvrBmhJ0QdROSw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxAOq/ZtNwg8u8PC+VUpywrYZTQLHZ6P4oVnUU3BzjNq85CEE+
-	3uapFv6QYuUhR0nm1cnx3/q8jnKOxXHaSHVMQ16XBltkpdBwsXMXiTmMvTNxRf4Jtge7LiL+mf8
-	oufe3
-X-Gm-Gg: ASbGncsiUbIrbFv7UyYYhIh7bkdbw0/yeqOkHAawSlXs5pUO49BsR2oAlfl5skEdivP
-	ezhVGHdGpYdA8uGyZRbXAQjEptM9sO0LhHNAWSb/qJDa1clm4sKiVEwKPh+q/qxJZH7aSO4iPzn
-	YD9juIRZLAYOx95MX4350LxV+ezOyLmRiDsCAWsl08g63yPkoDDwyw1NgGfyso7cj8LBh3I1ngD
-	4RhaE/dDBwi7OmZjgdmmiPjjiIyiIMtQbz533sC3x/xtQFRvLALM4+r5ssDWTiwQPomyCWEc2KT
-	efcuo8sYnB9iHTfDaRBgFSlLU2sGtmYvf9/Ohm9lFaIR1iw8Y9e+RZlTMWwYpXUiysoDy4bag8e
-	qFg6N5SEZ5AafCejE8Iu6SXItmgwXSRNLoJzS
-X-Google-Smtp-Source: AGHT+IGB3xOpoLWZizaIy6CWYyRq8Lhxm8frKGFEmvzu/zW7r5k6ohcmzl5fHAvHUJyguH+pkTOB3Q==
-X-Received: by 2002:a05:600c:4706:b0:454:a37a:db67 with SMTP id 5b1f17b1804b1-454b4ead1c5mr145585835e9.17.1751925833699;
-        Mon, 07 Jul 2025 15:03:53 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454cd38fb04sm3927855e9.8.2025.07.07.15.03.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 15:03:53 -0700 (PDT)
-Message-ID: <5e8714a9-cd2c-4dfb-a624-8a1adba91da1@linaro.org>
-Date: Tue, 8 Jul 2025 00:03:52 +0200
+        d=1e100.net; s=20230601; t=1751963301; x=1752568101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uuu8lpFeY80ClgGsq/Km2nu3i+uX/eGJHhg+l4rKngw=;
+        b=ic/39yXsARLySRVhQbr1qbWxTDYXhrI02MuXIgFGjaSETsvKxYOfaOkP3R8QnnHp7e
+         cKDw/ulrA4idY9J3R7ALHy5duwGXDTqa4gL+1PEW74ucRJvVnDXW5wcWoS28bUPOyl/H
+         617t+bQpQW62cL0jyd8gJ13hY0lGk7bvvRYfIzGLsvQidEiczikS+FYFJoig4CEnoF88
+         cNLkR3zbm3GEinBJ5+ByBeZyQULs2JfHzBzmUFIwlYsDmq6EH97oKd12BwTRNXNLfAch
+         kof5ANd/MHpbHLTxac5RB6gY26umcFQVGP3vWB5UnrIEVyO+yn1YNeUYzUVQj95yGyPn
+         PDuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8NtG0/bPvLmGnbANLPY5x7r5ywPwabcELkWMTcSDKQYwVpy7YR7VMxeK5ap65jVMY5gPeo4OfN6KT@vger.kernel.org, AJvYcCV/gcvk/S0gT6AkRAvzS7OngPErMu9Zx4W/QL+oZgJxILQ73f0GGpDEUb421AkhkUaD8OIeibaWDmdTSDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgc2y4tJrz2KiMTY01up2q2WxkuAoxSy9iTu+E4lZVpiuTHFcz
+	tZiXBMnfz45bIP9oq8ksqAQQsTqDpLfHfu7nrjW2CiYlcEeoKvkYQct3
+X-Gm-Gg: ASbGncsHrAit34QFPeRdUHJAkZ/HVDolBVDgfK04cJEWCanBDbtnqcBr1Z8fHjEcvX9
+	wSGQQqeBXqd22vOuJXPY5D3lggKWmjEeX8d5A0BJpeWV74eRbm5XJAL6K0Vsv8Ok8nSGaN1nTjG
+	2CrTQ23/yY80uR8RYp7OFzd7IYNUt+BXtGYkeO3zW4Osou77+BvA0zmpd/1GgMgQw7II5C1aZVy
+	jwCc3AnD/yTc3xzKWcebw5ZKxdg9ogP3IAJ+1PmMeZVZ3sePpgvsup02qJxP9DwlH68X/PmIs2+
+	xpBPkDurqltlTsEKQPgKp6PtXLBlUTrgh2sZXMT67uTdZ6QSyOkRNpwD+XAEAFDCeUiSiEItvqV
+	5wEcyld2qEdjdkQPzK7iXI/fN65zHO2ZVXFyp8rYAqgg9+5oNlOP5ZQ==
+X-Google-Smtp-Source: AGHT+IEMixIAPuGtPEDuQ4OfLFoWm2PdLTuS6TyGGJxnF1mVvyiT8xcKYff9ghRZA8Ouj+E6IW2n6A==
+X-Received: by 2002:a5d:5c11:0:b0:3a4:dd8e:e16b with SMTP id ffacd0b85a97d-3b5dde9588amr1635900f8f.20.1751963300788;
+        Tue, 08 Jul 2025 01:28:20 -0700 (PDT)
+Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b47285c9f9sm12515888f8f.93.2025.07.08.01.28.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 01:28:19 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/5] firmware: tegra: bpmp: Add support for Tegra264
+Date: Tue,  8 Jul 2025 10:28:09 +0200
+Message-ID: <20250708082814.1491230-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: timer-tegra186: Enable WDT at probe
-To: Jon Hunter <jonathanh@nvidia.com>, Kartik Rajput <kkartik@nvidia.com>
-Cc: tglx@linutronix.de, thierry.reding@gmail.com,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20250703110415.232741-1-kkartik@nvidia.com>
- <aGuYuHx5qlKCur8P@mai.linaro.org>
- <58d948d3-bbc9-4fca-9393-ce995a4e2567@nvidia.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <58d948d3-bbc9-4fca-9393-ce995a4e2567@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 07/07/2025 23:19, Jon Hunter wrote:
-> 
-> On 07/07/2025 10:51, Daniel Lezcano wrote:
->> On Thu, Jul 03, 2025 at 04:34:15PM +0530, Kartik Rajput wrote:
->>> Currently, if the system crashes or hangs during kernel boot before
->>> userspace initializes and configures the watchdog timer, then the
->>> watchdog won’t be able to recover the system as it’s not running. This
->>> becomes crucial during an over-the-air update, where if the newly
->>> updated kernel crashes on boot, the watchdog is needed to reset the
->>> device and boot into an alternative system partition. If the watchdog
->>> is disabled in such scenarios, it can lead to the system getting
->>> bricked.
->>>
->>> Enable the WDT during driver probe to allow recovery from any crash/hang
->>> seen during early kernel boot. Also, disable interrupts once userspace
->>> starts pinging the watchdog.
->>
->> Please resend with proper recipients (linux-watchdog@, Wim Van
->> Sebroeck, Guenter Roeck) and the changelog.
-> 
-> ACK.
-> 
->> Can someone take the opportunity to split this watchdog code and move
->> it in the proper watchdog drivers directory ?
-> 
-> I understand that this was mentioned before, but Thierry previously 
-> objected to this for this particular driver [0].
+From: Thierry Reding <treding@nvidia.com>
 
-Yes but meanwhile we found that the auxiliary device is designed for 
-this situation.
+This extends support for the BPMP to the Tegra264 generation of chips.
+Most of the BPMP is similar to earlier generations, but new features are
+added and old ones deprecated, so a new DT compatible string is added.
 
-> [0] https://lore.kernel.org/linux- 
-> tegra/4ks74upuufmt2ibh5ur5zpazvfj66ak4gyq7v4rtz2zi2u5wsi@rls64ws3rukp/
-> 
+Note that this series is a more logical regrouping of patches sent out
+earlier. Patch 1 was already reviewed, but I've included it here for the
+sake of completeness. Patch 2 addresses review comments from Krzysztof.
+Patches 3-5 contain some minor Kconfig issues as well as the Tegra264
+support in the driver.
 
+Thierry
+
+Thierry Reding (5):
+  dt-bindings: firmware: Document Tegra264 BPMP
+  dt-bindings: Add Tegra264 clock and reset definitions
+  firmware: tegra: Fix IVC dependency problems
+  firmware: tegra: bpmp: Add support for Tegra264
+  arm64: defconfig: Enable Tegra HSP and BPMP
+
+ .../firmware/nvidia,tegra186-bpmp.yaml        |   1 +
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/firmware/tegra/Kconfig                |   5 +-
+ drivers/firmware/tegra/bpmp.c                 |   6 +-
+ drivers/soc/tegra/Kconfig                     |   9 -
+ include/dt-bindings/clock/nvidia,tegra264.h   | 466 ++++++++++++++++++
+ include/dt-bindings/reset/nvidia,tegra264.h   |  92 ++++
+ 7 files changed, 568 insertions(+), 13 deletions(-)
+ create mode 100644 include/dt-bindings/clock/nvidia,tegra264.h
+ create mode 100644 include/dt-bindings/reset/nvidia,tegra264.h
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.50.0
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
