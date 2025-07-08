@@ -1,63 +1,63 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65C52D879D;
-	Tue,  8 Jul 2025 10:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E9A2D94B8;
+	Tue,  8 Jul 2025 10:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751971979; cv=none; b=ZHHErk3SrrRx6UtIQf/dNeY3SKy9xnPdGljxltQAYliceouy8umBeUvi/hl62fb/BEN9V0RkVJOt7ZgJw12SVMNoZo9bk7oGYG9IucPdCkitfplhlHXQ/9gC016WH7Yrie25b99/0DmHKCt/TEbWu+/FHUx10wOGQFaVGorgjkY=
+	t=1751971981; cv=none; b=jZStCgqzEPWafx+wL60exjVW4JfqxA1PFWhF+N0YArYotRnYh7Bkehwfdb7/6k1TwSq052kW9zNflakLpLH60WX5Sx69g2FNvDNoUMK5KAo8/JCcEE2N+AdDS2jLr0wtLyj/wSsvAduuk+bo3e+9eWwiCO4ZNC2g7iG09nvl5po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751971979; c=relaxed/simple;
-	bh=2eQyf22UoW/JY7lUXzFCcT065FDHxsenTZVcJ1bpU8Q=;
+	s=arc-20240116; t=1751971981; c=relaxed/simple;
+	bh=wFL4tHSGiOOJzXA+bjTWPDFzM+ODfFvpq9CN5R0HKxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o1kh0ZBmAgvN0xF/pR/hZcAYU50Chl6TCeWHNUkLX+Tq+/JLr9twY3KDj4f/oVLtOfVye+ViXzjtC8XSdhvnCXJq2iHcD31ggvtImsrlYl0sWtxbtQs0f7gp1OEZudYa2QiA9s0NF0w4C4MWgo6V71dWcKoeRBTkXJRjpTv+Ijg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZtHJnsSg; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=K+djiNppxY/OpXlO3Tt4gGHnF52wrW7ox3RaOt5tADTv/OwJw3ujysoLhh1w1ohwPIb9H/+4u3cD24uhrVrM2wo9/gsnp3zIFoFOglWXs2oh3T+aPIlFw4zB9zKq5NVscxYi2uE61dTWqv0JZDrCdvMJ8QE1HuQAIXF1sKSvEkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fqsb5OHs; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtHJnsSg"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-453634d8609so28542485e9.3;
-        Tue, 08 Jul 2025 03:52:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fqsb5OHs"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso3151373f8f.1;
+        Tue, 08 Jul 2025 03:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751971976; x=1752576776; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751971978; x=1752576778; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hW5KGfWASYsJDMXjc47a4qAMcbCATDg5AN8b8q+DmhE=;
-        b=ZtHJnsSgX2npzGCxFRyYqHZrGHpzfyQbENkWpUGqnBIq5CbyIrMeJaLiBEzi8x/6Fj
-         rRzcFE3IOT+mF0qeNe0WsSi1WFu4DhLlU+APalCQAwGKqNlWzy0FVdE/+2c1JzNcY1Kl
-         +YOVTX+8EJ5fJAHlp14rnanRwSS/3Loccf7xuBh15PiSTm1boEcf0F7iRYn4IgJwfPHw
-         26LtpyxXkExoWUAhoF9aoJjC2gqXqJzE2LR4q8iONTEtyuG+3jxXXin0t/dkikjGidl4
-         PuZTKMS7kwu31+mxPd2UZohY/ftOcsL1n5Swhhpu9QF6eEyznNuo8X1E+Zi541Ed9+p6
-         q1mQ==
+        bh=U6BwtkGrMGqdXkBGmjPybywm4Smjd9tEeGYA2g+BXUg=;
+        b=Fqsb5OHsOwA2VtaLDBkJ7UpB5pReAbdiW8z4CxLgwQkUFcJSH+SyUZGCWnWtLjGYEA
+         VqG05LbLeTKH0hcBEwXAyi9Bc8erMmfxA14MMX4aQufDQWYKiWjUypnAA6zPcX8v1/Dc
+         NZMBKeAb7UGfEMcavGRsD4GNQ3TDTGY7i7NOKDG57IHk7l40QnVoA5KnmpfFcN6/Z/hD
+         3s36zqbJryIcLCFvD6FlqVzTRPnuQ9/zXLIVCm8jJvq86zHlcqQIZlGPYfiEgNNeo8SC
+         j01tMnscS8HHpcwg5MyPZeeI+GOiEY7QvpTGGivTCsRS7Hj1huyXAT0oZjR98G+3L+YX
+         2aXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751971976; x=1752576776;
+        d=1e100.net; s=20230601; t=1751971978; x=1752576778;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hW5KGfWASYsJDMXjc47a4qAMcbCATDg5AN8b8q+DmhE=;
-        b=gBkvAECbnGGbna9yleMjMIBHXDQrl15xukWmfyVsaQMSlWR2yIdmb7ChJBjRPoze5T
-         0ny0uSdpn0odE2sa25ASZnUNQ6Dab8R1OlpRHclueUMOv+55mJIWr9wpQ0FRPaJUTeQj
-         CWCgyXsnwMzh0BThlaWoUG7NnDgbWg4UIkpzn5Iz/W/bsD7XnoPfH5u2XCQBmd5MNg/S
-         ZRN8ld+v1+pRf0+XF+pnasWiN5twrXLOzUVl2T8BLhrZKIptf9dCr8hOm3WWlU+gtobn
-         mjDxCQ0b77LA3N+ck/B5ZDWElzrtG9y3musNbFky29vi1vZ1Mb57uZW/ke9//BOlGqdH
-         I7Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrsfxYMogo1jirpw6bnind5Nc9MU3OLBppIQaEkQP5wFaqY+j8ryXpUVOLd4bBLTy7WhRP5CXoo3c/qEX2@vger.kernel.org, AJvYcCWhaQfHdQNnFS2ShU7j649R2etB5iPsEyxEjhKn7HxBGyd5YSxQSq9MbObKg+xZBuIoOBtBFUp03eSgw3U=@vger.kernel.org, AJvYcCXn9FqwOr29FGuNQDSyMt7ouARFRxutgwLoMLb16Z5rEjQJP6DzYEZIdNtHeyrgidklHkuxE/eocIZ9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8U8nn+x/GDFWjcp7gNS68s4OwICHS14hk1p4ZCijl9L2jBqt8
-	Ukp63cM4ckWRk1qgnP1dZPnbEqM9ymUKBhs+CuI4kmw/j0mjXzGEKQJi
-X-Gm-Gg: ASbGncvyHd84euunzTfUYqjHvnDGwyzf1NBBSiQDwlJFa8uN67/wcHFnc3YvhoyBw8w
-	pkNMnTzXcZL2xMBN7dXkdPCtO6H1SqRoi4f8/NkyO8pzKzbhgFJyLYzjkp+PJmgGSiPv7eXf5/7
-	sM52SKXuMoPimHczEpUH5RyhL2/5BJ7zUPkBhhtF+zPYn/axI6EWuUi+Qo53deZSIQoOnw/p/Vk
-	pDcaSlO9VNm/B6Znr4QjMK2jgQZEU8qPCqiwf48PzAdm7nsLBEXpddahfOxjsoer5XJBBZ9SPEQ
-	JAHr/nvLX9jZ5xUgWMZ+WWsznSCDtZ0qwW7/ss4NYaUrZUdjrEqtPnE7hbOcPqjSNiOfLJyVuB8
-	zRSTP1puKy5Yb1ehBAX497r4rrYRVRCm5j0c2NJV8SP9dPJy+wtGtnQ==
-X-Google-Smtp-Source: AGHT+IE727F4YYWl8TIHyfkECK4+zEvdaXZW7Mi6Sw9excQ3aRVypHJegd7uGChNTW2FedcuiNlHDA==
-X-Received: by 2002:a05:600c:a00e:b0:43c:fe90:1282 with SMTP id 5b1f17b1804b1-454cd4baeb6mr24153325e9.7.1751971975891;
-        Tue, 08 Jul 2025 03:52:55 -0700 (PDT)
+        bh=U6BwtkGrMGqdXkBGmjPybywm4Smjd9tEeGYA2g+BXUg=;
+        b=EeQLg/2thip0vIXUbeuI0HYWKv5LVES0RVYU/5L/nD/KHl46WJ23n5fKd0QvWW/sdC
+         ZdTjvgbK8614933gnTLH+yEpHtfqE81pGAqrVh1Bu0kMJRK1ENWUWCaw7WcuQrhZgnvt
+         A0+A1E2MXR9ZG8Rf15361+/3H3TlH/7kpKaPpaPtkLH3vHxsqxExiGSCQVFWxYCM8qMz
+         /ebueB+CjJgpKzUKBS63UZmdwz3qUgw72PuYrGwuic9LkxvbuYBbdYb4nTb7LB0NTrxA
+         +13NgihX4F//3MNAmskmQD0OntEaXs+zbp9zSnos2yCHgQlyKEP71x150Xi3Rle7f5jx
+         3xQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXFO7/aEv1hnnSwFTnVEOQoEfmn1inh2cipen3JfeaqejnCX7kQbwxVKq+a4KDn85Qorm1uzlsjHFWHEut@vger.kernel.org, AJvYcCVg2Ukx8XQLUTz9i5zj+Otv0GTjavml/nzHvzlACBa+izgAYTquwUW9F0XGE8AGdP6n1de+D4G0gSpx@vger.kernel.org, AJvYcCWi45fyY3CEasfXAtNdz8+r9eKUioj/V3uJoEe3jlFEMkXFYgEot94WK76bvTV12mJ+tkbkTXja2rU6m3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR+Jm4DilFpWY+9th2957ai2EyBsG5rCGx9PwBXfCwBb7ipJ6C
+	VzqIH6fH+AfdhdKZAAar5p2Sat/VlRz8c9AIqqkdsnaxZy/Hp/MFOwYP
+X-Gm-Gg: ASbGncuQEwksknehwFx/8fBJY7wb0sRf7SC05pC2WnkrWByRaKd5DpSw48HhRDKRBEV
+	wJ2Oih6I1Cmz67x+9z8Pl/OeOoc0SqKBLNVwsqS0jY9xstwAz9CiL6AbQrw0Vev5UMDRlRqIxI/
+	VdKimIQY2AZxbv3oWIBbNCPq677CyaXI2rfx91H2MYxrVuscet4X8J223XPG3kisJot3z5o2wXZ
+	A1KbW1yMznhZqbkkK7tPyu+DkBMh60jIoDCBC7+XC0Yj9WPpSDCz6deDx60RJqit1OK3RsgXvM5
+	gkcy3+sc5yWbXHQj6AKjeRFA4EEuqCItKGu9zp/1V3+EW7kFDa+DSmCohcJbC+qZ6M86hDxqO4k
+	Nbd0bUnJyftvbzo+llHK9wyEoFtcQYPgQ4dGs/ZRBOxvDzZ7RC/r9hA==
+X-Google-Smtp-Source: AGHT+IGqH7r7zZU79aaAI3o+F1K83fqEdV726V+vc7XIXVdHUbZ9t0iNGGEs77zpBL4KOGjWdxdEOw==
+X-Received: by 2002:a5d:6f13:0:b0:3b3:9cc4:4bc0 with SMTP id ffacd0b85a97d-3b4970315f0mr12440440f8f.32.1751971977864;
+        Tue, 08 Jul 2025 03:52:57 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cd49df05sm18104395e9.33.2025.07.08.03.52.54
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b47030ba54sm12527859f8f.8.2025.07.08.03.52.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 03:52:54 -0700 (PDT)
+        Tue, 08 Jul 2025 03:52:56 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>
@@ -67,9 +67,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] dt-bindings: memory: tegra: Add Tegra264 definitions
-Date: Tue,  8 Jul 2025 12:52:43 +0200
-Message-ID: <20250708105245.1516143-3-thierry.reding@gmail.com>
+Subject: [PATCH 3/4] dt-bindings: memory: tegra: Add Tegra264 stream IDs
+Date: Tue,  8 Jul 2025 12:52:44 +0200
+Message-ID: <20250708105245.1516143-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250708105245.1516143-1-thierry.reding@gmail.com>
 References: <20250708105245.1516143-1-thierry.reding@gmail.com>
@@ -81,112 +81,78 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Sumit Gupta <sumitg@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Add memory client ID defines for use by the interconnects property in
-the device tree and tegra_mc_client table in the MC driver. Note that
-these IDs are defined by the hardware, so the numbering doesn't start
-at 0 and contains holes.
+Add the stream IDs for various hardware blocks found on Tegra264. These
+are allocated as blocks of 256 IDs and each block can be subdivided for
+additional fine-grained isolation if needed.
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- include/dt-bindings/memory/nvidia,tegra264.h | 86 ++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
+ include/dt-bindings/memory/nvidia,tegra264.h | 50 ++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
 diff --git a/include/dt-bindings/memory/nvidia,tegra264.h b/include/dt-bindings/memory/nvidia,tegra264.h
-new file mode 100644
-index 000000000000..d6cb0c9698f2
---- /dev/null
+index d6cb0c9698f2..521405c01f84 100644
+--- a/include/dt-bindings/memory/nvidia,tegra264.h
 +++ b/include/dt-bindings/memory/nvidia,tegra264.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/* Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved. */
-+
-+#ifndef DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H
-+#define DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H
+@@ -4,6 +4,56 @@
+ #ifndef DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H
+ #define DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H
+ 
++#define TEGRA264_SID(x) ((x) << 8)
 +
 +/*
-+ * memory client IDs
++ * SMMU stream IDs
 + */
 +
-+/* HOST1X read client */
-+#define TEGRA264_MEMORY_CLIENT_HOST1XR		0x16
-+/* VIC read client */
-+#define TEGRA264_MEMORY_CLIENT_VICR		0x6c
-+/* VIC Write client */
-+#define TEGRA264_MEMORY_CLIENT_VICW		0x6d
-+/* VI R5 Write client */
-+#define TEGRA264_MEMORY_CLIENT_VIW		0x72
-+#define TEGRA264_MEMORY_CLIENT_NVDECSRD2MC	0x78
-+#define TEGRA264_MEMORY_CLIENT_NVDECSWR2MC	0x79
-+/* Audio processor(APE) Read client */
-+#define TEGRA264_MEMORY_CLIENT_APER		0x7a
-+/* Audio processor(APE) Write client */
-+#define TEGRA264_MEMORY_CLIENT_APEW		0x7b
-+/* Audio DMA Read client */
-+#define TEGRA264_MEMORY_CLIENT_APEDMAR		0x9f
-+/* Audio DMA Write client */
-+#define TEGRA264_MEMORY_CLIENT_APEDMAW		0xa0
-+#define TEGRA264_MEMORY_CLIENT_GPUR02MC		0xb6
-+#define TEGRA264_MEMORY_CLIENT_GPUW02MC		0xb7
-+/* VI Falcon Read client */
-+#define TEGRA264_MEMORY_CLIENT_VIFALCONR	0xbc
-+/* VI Falcon Write client */
-+#define TEGRA264_MEMORY_CLIENT_VIFALCONW	0xbd
-+/* Read Client of RCE */
-+#define TEGRA264_MEMORY_CLIENT_RCER		0xd2
-+/* Write client of RCE */
-+#define TEGRA264_MEMORY_CLIENT_RCEW		0xd3
-+/* PCIE0/MSI Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE0W		0xd9
-+/* PCIE1/RPX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE1R		0xda
-+/* PCIE1/RPX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE1W		0xdb
-+/* PCIE2/DMX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE2AR		0xdc
-+/* PCIE2/DMX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE2AW		0xdd
-+/* PCIE3/RPX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE3R		0xde
-+/* PCIE3/RPX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE3W		0xdf
-+/* PCIE4/DMX8 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE4R		0xe0
-+/* PCIE4/DMX8 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE4W		0xe1
-+/* PCIE5/DMX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE5R		0xe2
-+/* PCIE5/DMX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE5W		0xe3
-+/* UFS Read client */
-+#define TEGRA264_MEMORY_CLIENT_UFSR		0x15c
-+/* UFS write client */
-+#define TEGRA264_MEMORY_CLIENT_UFSW		0x15d
-+/* HDA Read client */
-+#define TEGRA264_MEMORY_CLIENT_HDAR		0x17c
-+/* HDA Write client */
-+#define TEGRA264_MEMORY_CLIENT_HDAW		0x17d
-+/* Disp ISO Read Client */
-+#define TEGRA264_MEMORY_CLIENT_DISPR		0x182
-+/* MGBE0 Read mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE0R		0x1a2
-+/* MGBE0 Write mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE0W		0x1a3
-+/* MGBE1 Read mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE1R		0x1a4
-+/* MGBE1 Write mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE1W		0x1a5
-+/* VI1 R5 Write client */
-+#define TEGRA264_MEMORY_CLIENT_VI1W		0x1a6
-+/* SDMMC0 Read mccif */
-+#define TEGRA264_MEMORY_CLIENT_SDMMC0R		0x1c2
-+/* SDMMC0 Write mccif */
-+#define TEGRA264_MEMORY_CLIENT_SDMMC0W		0x1c3
++#define TEGRA264_SID_AON       TEGRA264_SID(0x01)
++#define TEGRA264_SID_APE       TEGRA264_SID(0x02)
++#define TEGRA264_SID_ETR       TEGRA264_SID(0x03)
++#define TEGRA264_SID_BPMP      TEGRA264_SID(0x04)
++#define TEGRA264_SID_DCE       TEGRA264_SID(0x05)
++#define TEGRA264_SID_EQOS      TEGRA264_SID(0x06)
++#define TEGRA264_SID_GPCDMA    TEGRA264_SID(0x08)
++#define TEGRA264_SID_DISP      TEGRA264_SID(0x09)
++#define TEGRA264_SID_HDA       TEGRA264_SID(0x0a)
++#define TEGRA264_SID_HOST1X    TEGRA264_SID(0x0b)
++#define TEGRA264_SID_ISP0      TEGRA264_SID(0x0c)
++#define TEGRA264_SID_ISP1      TEGRA264_SID(0x0d)
++#define TEGRA264_SID_PMA0      TEGRA264_SID(0x0e)
++#define TEGRA264_SID_FSI0      TEGRA264_SID(0x0f)
++#define TEGRA264_SID_FSI1      TEGRA264_SID(0x10)
++#define TEGRA264_SID_PVA       TEGRA264_SID(0x11)
++#define TEGRA264_SID_SDMMC0    TEGRA264_SID(0x12)
++#define TEGRA264_SID_MGBE0     TEGRA264_SID(0x13)
++#define TEGRA264_SID_MGBE1     TEGRA264_SID(0x14)
++#define TEGRA264_SID_MGBE2     TEGRA264_SID(0x15)
++#define TEGRA264_SID_MGBE3     TEGRA264_SID(0x16)
++#define TEGRA264_SID_MSSSEQ    TEGRA264_SID(0x17)
++#define TEGRA264_SID_SE        TEGRA264_SID(0x18)
++#define TEGRA264_SID_SEU1      TEGRA264_SID(0x19)
++#define TEGRA264_SID_SEU2      TEGRA264_SID(0x1a)
++#define TEGRA264_SID_SEU3      TEGRA264_SID(0x1b)
++#define TEGRA264_SID_PSC       TEGRA264_SID(0x1c)
++#define TEGRA264_SID_OESP      TEGRA264_SID(0x23)
++#define TEGRA264_SID_SB        TEGRA264_SID(0x24)
++#define TEGRA264_SID_XSPI0     TEGRA264_SID(0x25)
++#define TEGRA264_SID_TSEC      TEGRA264_SID(0x29)
++#define TEGRA264_SID_UFS       TEGRA264_SID(0x2a)
++#define TEGRA264_SID_RCE       TEGRA264_SID(0x2b)
++#define TEGRA264_SID_RCE1      TEGRA264_SID(0x2c)
++#define TEGRA264_SID_VI        TEGRA264_SID(0x2e)
++#define TEGRA264_SID_VI1       TEGRA264_SID(0x2f)
++#define TEGRA264_SID_VIC       TEGRA264_SID(0x30)
++#define TEGRA264_SID_XUSB_DEV  TEGRA264_SID(0x32)
++#define TEGRA264_SID_XUSB_DEV1 TEGRA264_SID(0x33)
++#define TEGRA264_SID_XUSB_DEV2 TEGRA264_SID(0x34)
++#define TEGRA264_SID_XUSB_DEV3 TEGRA264_SID(0x35)
++#define TEGRA264_SID_XUSB_DEV4 TEGRA264_SID(0x36)
++#define TEGRA264_SID_XUSB_DEV5 TEGRA264_SID(0x37)
 +
-+#endif /* DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H */
+ /*
+  * memory client IDs
+  */
 -- 
 2.50.0
 
