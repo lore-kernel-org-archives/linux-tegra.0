@@ -1,119 +1,110 @@
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E682206B5;
-	Tue,  8 Jul 2025 12:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617A42DEA86;
+	Tue,  8 Jul 2025 14:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751977115; cv=none; b=R49WTqYI7dSYrEjAknWtvwL8cYOXDMbJl0EjoybrlmN8c1lHf15saAaszF78AdWMJMESGwxAqGDrKvU2LFug3Ra3Da1v6iGBbHNW16poSLITrsz6nSWyd4vusLM7gJZkFvylXVJSemW0n8fVHUW6/SgGuy6ytYa7eWp35Kc3sQw=
+	t=1751983311; cv=none; b=B48DjhBoGVles8LanRI1rvYzAEOGtCrlVG2ez8uepxCVa2m1h8Pe0rC3ei5qSsp8pa0mzcxlWtqNRMDSVrfgyFZYyNec9qQwtRyzAAjtRJGbyjGz6Jt8WAvvpTpeSnRu7CK03tT6Nxn++zYEdVNNEkJb2ooK/n/KDU+jlvRGWnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751977115; c=relaxed/simple;
-	bh=Y8xP9SdKZLP3je4LPIUIBHgdiASDR0ILUs1BEaZPbm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F/+FcIYqsBoZcpcotjbcVRr2b0nuvY50q85QnaysXJvoRRj6dyz/VFdQegHk00uZkWq7FPDL1kEy07KKVPmyCrr8249azaTDmgwLTGbrhXa6/j8w3Ghib/s5szizVT11J6B+09zHfDUvjQBLI9ApxjbDf2YPdoYb4wRtDYceG0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=m3sJDprV; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+	s=arc-20240116; t=1751983311; c=relaxed/simple;
+	bh=UYDAFPQOo8Df1no4NcJ8qGhOe6976wPrcOFUkWX2DJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eEsmpFO2Ik7EcWJQAPtEdubDqR/A3tMJNoXfBLXz3MRxPd53ogpW4vJmQpTW6wIxsQ3um7mI2Yb6IssjpiOyjL/ZIj5QS6a9EaSEjI06fHVjrJeF0qGylK3islpAIoQgiVa+2gqYhlw734WjckgOk+KxrHqRP2qp67MMIko54K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Lgo3sV9+; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="m3sJDprV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=8bA1fIZoxmI2vdgHJBtDrQp+hI4tTUxQ2x0sAD1aEPc=; b=m3sJDprV7VZHfn82zBvK+jT12s
-	wWc7w2h4nQpN2SfPw0KWFeTXTVEOyo00attfAG5exm5/qPNcS/WiH2tqrnIqk7OUfvE7JfMk22M0w
-	mE4ElSLBZzhnX5uVVZrb4rirH5A8ufUgfU+Le0J2IrWGJDTJhIqDW1o5bmOMa1quhS5aSdhGuwMkR
-	PHPbfC+LFzpnfvhEEyM1hgUukj5lofkn1boWPana0GURbaobd6J8dUBeqpB4YVFCsxmyEzNAz40Hj
-	53EhFOXd8ajTkoz/g9mEbzi+8jaHEac36CEXXsB3jw2m8wB6SKmI5T5BFH6bzPuGSEYSTNrZh6PqI
-	dMBVdinw==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f] (helo=senjougahara.localdomain)
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uZ7HH-008UTB-3A;
-	Tue, 08 Jul 2025 15:18:28 +0300
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Date: Tue, 08 Jul 2025 21:18:08 +0900
-Subject: [PATCH] gpu: host1x: Allow loading tegra-drm without enabled
- engines
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Lgo3sV9+"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 474CE431F1;
+	Tue,  8 Jul 2025 14:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751983301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mKpow068b4y6O1gxSiix706lmsCcguNU+95VkipNyxc=;
+	b=Lgo3sV9+gKq1MzSb3ze4M4OEbuhr7FakwYPT9tazV9qSlmudZFOkdpZL8GO9QMEqZ42kj/
+	TZK8iAyz+zdfEKAnswjR/DFDa+8UttlvUSpLXuLMo28qib/q8BHdgHWoSR5lncXXryezzZ
+	LfnN+w7w7M2RrYSuVdZ9mCQA0CZvSthCoMrWtHddMHMabJsD7Pc1Q5M6BKscmIhMkRszqa
+	dLsqM27GXSASr7zHaVHqculMu1nSRGWIaWPhVHaeEjE8HlnzKmebCrSn0EB88zyoSK2Xqz
+	cytfNarTG/DIfgCIPHsawnykOc8QT1UWUKLDp+f4SMAGN64QSJs+ZqyRl+gA/A==
+Date: Tue, 8 Jul 2025 16:01:09 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Douglas Anderson
+ <dianders@chromium.org>, Lucas Stach <l.stach@pengutronix.de>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
+ Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Laurentiu
+ Palcu <laurentiu.palcu@oss.nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Qiang Yu
+ <yuq825@gmail.com>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Boris
+ Brezillon <boris.brezillon@collabora.com>, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
+ <kernel-list@raspberrypi.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@oss.qualcomm.com>, Damon Ding
+ <damon.ding@rock-chips.com>, Ayushi Makhija <quic_amakhija@quicinc.com>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, imx@lists.linux.dev,
+ lima@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 20/80] drivers: drm: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250708160109.08055641@booty>
+In-Reply-To: <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+	<20250704075413.3218307-1-sakari.ailus@linux.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-host1x-allow-no-subdevs-v1-1-93c66c251f03@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAH8MbWgC/x3MTQqAIBBA4avErBuwKJSuEi20phoIDac/kO6et
- PwW7yUQikwCXZEg0sXCwWdUZQHjav1CyFM21KpulVYG1yBH9aDdtnCjDyinm+gSnE3jnHaNsVZ
- DrvdIMz//uR/e9wMDsUXDaQAAAA==
-X-Change-ID: 20250708-host1x-allow-no-subdevs-f84bb7b48aa7
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Vamsee Vardhan Thummala <vthummala@nvidia.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqfedtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelheeufeetjeeigeeutdeiueelgeetkeeffeetgeeivdelleejhffhgefgjeelkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepkeejrdduvddtrddvudekrddvtdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeejrdduvddtrddvudekrddvtdejpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeehjedprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ efnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-From: Vamsee Vardhan Thummala <vthummala@nvidia.com>
+On Fri,  4 Jul 2025 10:54:13 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-Add support to register host1x devices without requiring subdevices.
-This ensures syncpoint functionality remains available even when engine
-subdevices are not present.
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+>=20
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Add softdep for tegra-drm to make userspace interface available
-without module autoloading through device tree entries.
+With the cleanups required by Laurent and Ma=C3=ADra:
 
-Signed-off-by: Vamsee Vardhan Thummala <vthummala@nvidia.com>
-[mperttunen@nvidia.com: some rewording]
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/bus.c | 12 ++++++++++++
- drivers/gpu/host1x/dev.c |  1 +
- 2 files changed, 13 insertions(+)
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 344cc9e741c1357420240467754fd151926b3bd5..723a80895cd43bde840adf8d26812e82d12385ab 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -471,6 +471,18 @@ static int host1x_device_add(struct host1x *host1x,
- 
- 	mutex_unlock(&clients_lock);
- 
-+	/*
-+	 * Add device even if there are no subdevs to ensure syncpoint functionality
-+	 * is available regardless of whether any engine subdevices are present
-+	 */
-+	if (list_empty(&device->subdevs)) {
-+		err = device_add(&device->dev);
-+		if (err < 0)
-+			dev_err(&device->dev, "failed to add device: %d\n", err);
-+		else
-+			device->registered = true;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 1f93e5e276c0835eac2f713ffcd60a9db8db2c21..e1a9246d35f4b7685dd828c53eaf3910a5ef739e 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -821,6 +821,7 @@ u64 host1x_get_dma_mask(struct host1x *host1x)
- }
- EXPORT_SYMBOL(host1x_get_dma_mask);
- 
-+MODULE_SOFTDEP("post: tegra-drm");
- MODULE_AUTHOR("Thierry Reding <thierry.reding@avionic-design.de>");
- MODULE_AUTHOR("Terje Bergstrom <tbergstrom@nvidia.com>");
- MODULE_DESCRIPTION("Host1x driver for Tegra products");
-
----
-base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
-change-id: 20250708-host1x-allow-no-subdevs-f84bb7b48aa7
-
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
