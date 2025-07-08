@@ -1,151 +1,157 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36C02BDC0A;
-	Tue,  8 Jul 2025 08:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0AF2BE7C0;
+	Tue,  8 Jul 2025 08:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963314; cv=none; b=Og7TLRNCI1keMl4bUaMhQaf75TCcPtSjqZLjjTHXBODCYgiPKJ4ShSdxrzKicAa9xOFPLTClgRY39Jzx/AvzcXK8nq0NWvRXkUP7oF3I/FG7MK+KGkOF51+xGg3fKmDmuUkkJP85Kv2oGvHgUJNmEKgyX7aLoPja1KjYWpKB8Rg=
+	t=1751964638; cv=none; b=UH7SPCFKlV2W75wHmOCRO0SSBv+8vOo7iocgLSo5LboLqVnUmXz2DW0h6AIYXvZ5M9w34cwMquaSl5WWEsNCiqjg7K8eu7nCxzimTCtJp31nBtWRMUGf5kqDW7KqqJ/EMRLtvT6e5HCl9WNqXQffmyqTq2ZlUjt/AckORsMf+Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963314; c=relaxed/simple;
-	bh=MZk7Vnnr6ov3WEk0f8LuzqJF9X3WQZ4Que2PEJuj+ro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KQZHzGi4Mx+Vjpa3YiTd0bflYbjPabmQwbk0NW75FnZzJUKnFzS+tcK9SzEFiKJGYVi/bAvdvbTLNnXPTvlPXCl5JSbotnnHcNxCK85a3R8Bey7F9N0MuSDIO93SPw54S489NpS0r7lLIry8dn2vK+n4nCehUGnKwB4kR/W/Icc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJXcMEH8; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJXcMEH8"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-453647147c6so38168045e9.2;
-        Tue, 08 Jul 2025 01:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751963311; x=1752568111; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1LLhAPy7Ghblj+iKtj5iTpzCPso9B2g0bt1tZli2WU0=;
-        b=SJXcMEH8pYU6LQTKnGgJMByClxrnFdhr8ym2vdLehUBB0EOHuadSuVMcZziZLPTvOD
-         f2FDzwdOzGvVRCt5VL/rz4ydbl7Eroesq+138TqQtPMZUoKqD3ejrZwznCQ02xmo+Q7L
-         FUrbftUVmLHHi5+A1i5dc1e9zgCDwSFR4qpHT2bGysGrpRMNZl1XVGeK+f8xNnv6Fpbj
-         jsTA6ksbZsjG9zJmt7OLF5i9hsUZCNOXcPg6OIqZV9dcJpqpsXTzDewGJvfBrSvaTefn
-         QPXUx3PPb/Ipzr2FobmzFI2IsTK4FwmgZod/j9uwKNfVHEFaTq8/M7hd/iQ+r9wLYJXt
-         hMOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751963311; x=1752568111;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1LLhAPy7Ghblj+iKtj5iTpzCPso9B2g0bt1tZli2WU0=;
-        b=bJGyFhv802jmwNytCGms/+CAIyA2nvOS6IwLTAmLI+pfmbSWk551e4ycWOVj33jsrF
-         tpn+aRkQwm0qSSJ/FJ+/Ve6jKE2Kk9HluOIqSiUSZpU1kDxnDLzHchDND5BVzR1rQ9Yy
-         XnBSaTItgZmKIcEidB03TfoC2mRXucd/yzwG0GATGPW1gN5SQbVu52u1c0Pee7Exq3UZ
-         nH6yiYMWtYX4BOb4Epeb6kOo8AgxeMSdqQn8ITwVadwUeGzuTiZ1UsMIt9XiPAfpYqdg
-         SLwiIlpDiKxZksiLzQmQnxQIrmRvYAJWOBY5FKN4fMq10BP4dpsLfNvPnLXh5bxKFgPx
-         H9pg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+48jRLrCrBofiDUDkNuLik5YgVT382qrvzrdDw+3ppyU0yL7aRmT/mzE1a6CDs+mcsUljL+E10Qtv@vger.kernel.org, AJvYcCUluZozJkgIExUGw01/Wj45qIaMzh6ZqxT/vUmKchD38n3y4o6l8D7Nk54wsZIU+J8rt5NYpN3pjcPLZ6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZuLgVAyA6JHmOo+KstjRceIMkShqMxkMk39J/F4qyR4VahIhi
-	n4dUnfr9ZZ3nd0/Nw9H5IuUjP4cj4cznUtXliYs7G1WngbZ1gJGqespd
-X-Gm-Gg: ASbGnctznFTAAnjB9c6WsUf7OlvLwAJA/ho7dsYqfROpEj5ODq/IsjOmCAEH6baHlwo
-	RHzbO+yKZuGRXMCAsj1bdRRVf9oiDJum9pfBGIJeaRoHExYZXn22162Ro7tQtKNszAzMLxg0Fhq
-	cPXDw2HF6xUcIcEodT+sBpjtmhn+WZz67hmOEW1yv+qssN55RD7+R+aFqp1pU1FG5Iv+A41N8qZ
-	Y7tTt72oWL3rhoMfpvR0l8ReYie+wbfqApwEez9rwF8uR+pyZYnedPPHoA9+9oUWsoYC5YA4jwW
-	EkZWBpuwPoKenXFGTFBr5bowPVdRrcA1qs8Q+ntFU4LY525IHnN/YmbnmaQ14cSI7e9hj+wYz0Z
-	hnKOTU6tCK5lynrmUQ5M1Ng+IIO9hcwD3FFxd2/1sZPRmP8d6yWQuMw==
-X-Google-Smtp-Source: AGHT+IHsG5bw/pBz6eaAWGeZj02Dv5we6LevnW+89zASDG10jYaRM7fq8/KA3dUlltDsd0/UFjrNHw==
-X-Received: by 2002:a05:600c:c055:b0:43d:745a:5a50 with SMTP id 5b1f17b1804b1-454cdb340bcmr9487975e9.19.1751963310869;
-        Tue, 08 Jul 2025 01:28:30 -0700 (PDT)
-Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b471b97339sm12478583f8f.64.2025.07.08.01.28.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 01:28:29 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 5/5] arm64: defconfig: Enable Tegra HSP and BPMP
-Date: Tue,  8 Jul 2025 10:28:14 +0200
-Message-ID: <20250708082814.1491230-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250708082814.1491230-1-thierry.reding@gmail.com>
-References: <20250708082814.1491230-1-thierry.reding@gmail.com>
+	s=arc-20240116; t=1751964638; c=relaxed/simple;
+	bh=HnfC2Ek4S+K72bSDC+9duLI+YxwkJ49GQ4nMLtuXbks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fQgSvFZmIZzKsHtA1B/8NBAZosWwmHae6KQB6HsWHbZCcDHITaJVE9W7zzKLgdMksX2h9WggdwaABaBkMPIOADY98U5L5pkyFxMTmiCl2rnbvSkhk70AU4vkCI7KEeeFbqYM8DHMGMbuix1LnbdyTL5jdcQ/PmMBB+rDhUULeDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bbvWt1LYQz9sfF;
+	Tue,  8 Jul 2025 10:33:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id DoqHkokhU4QF; Tue,  8 Jul 2025 10:33:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bbvWt0c9qz9sXD;
+	Tue,  8 Jul 2025 10:33:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0EC098B76C;
+	Tue,  8 Jul 2025 10:33:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id s3ivdJfLK1Dw; Tue,  8 Jul 2025 10:33:29 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D09838B763;
+	Tue,  8 Jul 2025 10:33:29 +0200 (CEST)
+Message-ID: <907f875e-5ed0-4eca-b285-ebb7e47137ce@csgroup.eu>
+Date: Tue, 8 Jul 2025 10:33:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: Use dev_fwnode()
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Qiang Zhao <qiang.zhao@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-tegra@vger.kernel.org
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+ <20250611104348.192092-19-jirislaby@kernel.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250611104348.192092-19-jirislaby@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Thierry Reding <treding@nvidia.com>
+Hi,
 
-Selecting the IVC, HSP and BPMP drivers via Kconfig is problematic
-because it can create conflicting configurations. Instead, enable them
-in the default configuration.
+Le 11/06/2025 à 12:43, Jiri Slaby (SUSE) a écrit :
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linuxppc-dev@lists.ozlabs.org
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+There must be something wrong with this patch. b4 shazam applies a 
+different patch.
+
+$ b4 shazam -l -s --single-message --no-parent 
+20250611104348.192092-19-jirislaby@kernel.org
+Single-message mode, ignoring any follow-ups
+Grabbing thread from 
+lore.kernel.org/all/20250611104348.192092-19-jirislaby@kernel.org/t.mbox.gz
+Breaking thread to remove parents of 
+20250611104348.192092-19-jirislaby@kernel.org
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+   Added from v2: 1 patches
+Analyzing 25 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+Analyzing 22 code-review messages
+Will use the latest revision: v2
+You can pick other revisions using the -vN flag
+Checking attestation on all messages, may take a moment...
 ---
- arch/arm64/configs/defconfig | 2 ++
- drivers/soc/tegra/Kconfig    | 9 ---------
- 2 files changed, 2 insertions(+), 9 deletions(-)
+   ✓ [PATCH v2] iio: adc: stm32-adc: Use dev_fwnode()
+     + Reviewed-by: David Lechner <dlechner@baylibre.com> (✗ 
+DKIM/baylibre-com.20230601.gappssmtp.com)
+     + Link: 
+https://lore.kernel.org/r/20250612084627.217341-1-jirislaby@kernel.org
+     + Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+   ---
+   ✓ Signed: DKIM/kernel.org
+---
+Total patches: 1
+---
+Application de  iio: adc: stm32-adc: Use dev_fwnode()
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 739b19302865..2cf2886a1940 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -267,6 +267,7 @@ CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
- CONFIG_QCOM_QSEECOM=y
- CONFIG_QCOM_QSEECOM_UEFISECAPP=y
- CONFIG_EXYNOS_ACPM_PROTOCOL=m
-+CONFIG_TEGRA_BPMP=y
- CONFIG_GNSS=m
- CONFIG_GNSS_MTK_SERIAL=m
- CONFIG_MTD=y
-@@ -1456,6 +1457,7 @@ CONFIG_BCM2835_MBOX=y
- CONFIG_QCOM_APCS_IPC=y
- CONFIG_MTK_ADSP_MBOX=m
- CONFIG_QCOM_CPUCP_MBOX=m
-+CONFIG_TEGRA_HSP_MBOX=y
- CONFIG_QCOM_IPCC=y
- CONFIG_ROCKCHIP_IOMMU=y
- CONFIG_TEGRA_IOMMU_SMMU=y
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index bc532cbe32e7..9392c2c43cc8 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -97,9 +97,6 @@ config ARCH_TEGRA_186_SOC
- 	bool "NVIDIA Tegra186 SoC"
- 	depends on !CPU_BIG_ENDIAN
- 	select MAILBOX
--	select TEGRA_BPMP
--	select TEGRA_HSP_MBOX
--	select TEGRA_IVC
- 	select SOC_TEGRA_PMC
- 	help
- 	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 features a
-@@ -114,9 +111,6 @@ config ARCH_TEGRA_194_SOC
- 	depends on !CPU_BIG_ENDIAN
- 	select MAILBOX
- 	select PINCTRL_TEGRA194
--	select TEGRA_BPMP
--	select TEGRA_HSP_MBOX
--	select TEGRA_IVC
- 	select SOC_TEGRA_PMC
- 	help
- 	  Enable support for the NVIDIA Tegra194 SoC.
-@@ -126,9 +120,6 @@ config ARCH_TEGRA_234_SOC
- 	depends on !CPU_BIG_ENDIAN
- 	select MAILBOX
- 	select PINCTRL_TEGRA234
--	select TEGRA_BPMP
--	select TEGRA_HSP_MBOX
--	select TEGRA_IVC
- 	select SOC_TEGRA_PMC
- 	help
- 	  Enable support for the NVIDIA Tegra234 SoC.
--- 
-2.50.0
+You must have posted another patch with the same message ID. I had to 
+apply it manually.
+
+Christophe
+
+> 
+> ---
+> Cc: linux-tegra@vger.kernel.org
+> ---
+>   drivers/soc/fsl/qe/qe_ic.c | 3 +--
+>   drivers/soc/tegra/pmc.c    | 3 +--
+>   2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+> index 4068b501a3a3..943911053af6 100644
+> --- a/drivers/soc/fsl/qe/qe_ic.c
+> +++ b/drivers/soc/fsl/qe/qe_ic.c
+> @@ -407,7 +407,6 @@ static int qe_ic_init(struct platform_device *pdev)
+>   	void (*high_handler)(struct irq_desc *desc);
+>   	struct qe_ic *qe_ic;
+>   	struct resource *res;
+> -	struct device_node *node = pdev->dev.of_node;
+>   
+>   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>   	if (res == NULL) {
+> @@ -441,7 +440,7 @@ static int qe_ic_init(struct platform_device *pdev)
+>   		high_handler = NULL;
+>   	}
+>   
+> -	qe_ic->irqhost = irq_domain_create_linear(of_fwnode_handle(node), NR_QE_IC_INTS,
+> +	qe_ic->irqhost = irq_domain_create_linear(dev_fwnode(&pdev->dev), NR_QE_IC_INTS,
+>   						  &qe_ic_host_ops, qe_ic);
+>   	if (qe_ic->irqhost == NULL) {
+>   		dev_err(dev, "failed to add irq domain\n");
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index e0d67bfe955c..9543bee0c321 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -2500,8 +2500,7 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+>   	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+>   	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+>   
+> -	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96,
+> -						  of_fwnode_handle(pmc->dev->of_node),
+> +	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96, dev_fwnode(pmc->dev),
+>   						  &tegra_pmc_irq_domain_ops, pmc);
+>   	if (!pmc->domain) {
+>   		dev_err(pmc->dev, "failed to allocate domain\n");
 
