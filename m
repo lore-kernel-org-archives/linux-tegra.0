@@ -1,95 +1,89 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A79E270571;
-	Wed,  9 Jul 2025 07:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CF2238C21
+	for <linux-tegra@vger.kernel.org>; Wed,  9 Jul 2025 08:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046653; cv=none; b=rBqQguLY3LOC4uLcu3Wz7klEiCxLHbkcje0E/2eVY9g4xCxgZm5fUF1lygIQy4v+0tel1bWy/MGJisowyaFN7NHQCZv+Gp7GQcw+2AFxB5+2/L6q9Z1DPOJMvDIMzdoem0VZqlr9USOLa6xqHC4pW20ybjV1xb8aG3X95/xmgIY=
+	t=1752048765; cv=none; b=B6AMAWB3rJGkAfJsKlsfJGs6wNVj21jzG1tJy8cHZou+8oRZCoRXKHQ8FRUxySoPWgWbuyVwmqQZcuCXMg7M8kRHgWgYtehgFvHH3Nq6ybf5MfBh+XcGtoOVMjhlJ38xZmzJTYtmPWIj7Mc3RAIcoq9C4FmkmFIC+JALo1+wXzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046653; c=relaxed/simple;
-	bh=5Hw8uxVpG1hL8S1/m9wGfNL7FjeTsp4wejtoaL7KFio=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SwboTMP76FF/AOhLlH3NnzmAAdTCCIlZ7+NFIosds84LWEndd0LpZAQ0XT88qhxYh3E3jMW+XOmpFouECRYbXN2Z7XavV35O3SpjLqdqvR+E64sutTOoyT3be6X6B2hONfo3/pxOa+BtQO3tYOe42bUGThqKIzsohYXcINCfFTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8d86ccde5c9711f0b29709d653e92f7d-20250709
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:f5b0fa55-d4f5-4f00-b4f2-17c5ae71e058,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:6493067,CLOUDID:66fff60b5285348d44b45525df5bbab8,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:5,IP:n
-	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
-	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8d86ccde5c9711f0b29709d653e92f7d-20250709
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 718022128; Wed, 09 Jul 2025 15:37:23 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH 2/2] clk: tegra: periph: Make tegra_clk_periph_ops static
-Date: Wed,  9 Jul 2025 15:37:14 +0800
-Message-Id: <bda59ad46afae6e7484edf8e2f7bf23ceafe51e9.1752046270.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1752046270.git.xiaopei01@kylinos.cn>
-References: <cover.1752046270.git.xiaopei01@kylinos.cn>
+	s=arc-20240116; t=1752048765; c=relaxed/simple;
+	bh=/zZwSYh2vU/5k39pFJ6jmYxsKtGH5f1vixahgGk51Zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSai9pOSgeQiEidZEqWEGRMrxWzVkAgLN8SBOwo1RlUhoQSg2bAnv95F63nKMUImWf/Uecc39Y9vaw1JVMysBhUj6gh8vNxC7tG9E65LCw4+L/H/TpK12NP+YNerobHEKOksKd2oAETEZWEqeIleyAcyuAGQqqlRhtomsbyATbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xEBgJEku; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xEBgJEku"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23636167afeso52650715ad.3
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Jul 2025 01:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752048763; x=1752653563; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5RyC7LXvFVaBKX4nsxZCPQg0l7p2DFOwCn7njR7ZoLI=;
+        b=xEBgJEkuEF3a4t4DRNaa1vtbDBhD3XroghoTzlHEBI9yVTv4GCxJ+iylZfjv2LgWN3
+         +qCyFzLO1DDUWrJaHhKVPy5TA8jF14GIhxtUmmbj10uaPlhplF2XmSxlJsBw3EOMQ+Vi
+         rTl5I9f79weQ4mO5oSIUyzYaaX49LrtfNZO6mqHLi3SbicuY1lTq0+g9EAHlIH8dPtSU
+         imEcD7Xe6Hn0xYnPiUDj2PWfHoEpWt0J6E/1z68jpYIZ6b3+i8Azh/2oBXVrz2Kvkf3x
+         Ih+q5XJlYyDfJzo2a354RF7ouo6OiyfmN9ClPjRFFoKDfbgGgRRYwVRElpIo5f3c6qDi
+         A/yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752048763; x=1752653563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5RyC7LXvFVaBKX4nsxZCPQg0l7p2DFOwCn7njR7ZoLI=;
+        b=MI36uVIrugYMyTb6AHNwYGM90MbOmg5YeCoKeUPCXZWsomFfH7hXuKpfvLqCFYHPLn
+         PDRbgkHKIgUZnUld6dqYsl3JJAEr9DqTlSXalE8zzw1WbBexVjNuWMEgvUiM0RVixsBf
+         2GSQmgIYlFb/no5mKUX64t/1IcHPB7/MQkITdNmJ85vycYZAq2jdQGAYypdZGPZ/YYqz
+         mtOGjdTqxaZKaz8XHvFZV97Vr3HO8GxW2dRWZT+fDN0ekbyfUbhId1ZV/BQk7O5+m48d
+         ykP/w2nDXYq9v/GXxJ/O/jTjpK3uZtgQTVXL4IWW+rI9h0RKIBaD8AJ8bbm612ujLXqB
+         4pFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTpjRa0M/yuhbn0JCZpyCQdHIKZklBVlePhxMYXbPsd3MMfQ1j+4WCosTh+Kcw1XmXHSUTOgeE2db7VQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJIDbMHK07Tt0povD6HDQwnycRAnvl5Hzlt2n+Dy/p0Ommd1ZM
+	Jozd8XTicVVshzRmGjs+o4Hy5nERVL9ppxx5V8ELXs+W+XuonbvDlq7Pgq8FCKt7O9c=
+X-Gm-Gg: ASbGncuFpmjva3kzz5pLweodDx5d2g1JcYeUjS/iE4tEEL0AmUvqFBzKLGqgHte1YGB
+	XdUJgCLga6cdbRRBKSXb87YVTHkPJw7jzXE4xHUnw7PQNlVM3/OHv3qOjh7JW5ZiQp+Tg36HuEd
+	MagDYkjDFzGxQCZaoAFk+Bhd1tSsy7M0tahu9tRaxEwGNq4UE0Q1UHqz2csHNh18C7WU9/ul6gw
+	4/GLRE/kAufEb31eaw+LAwORqeBcJMyfwZVr3RE+Iylxf0fhAm0GKrE69ecn+aw1qQV9KFdy+L1
+	/HPj+hYLek8I2kQ9AqQTfyTMoxEcQ6ug32QuHHuSGQAQN0VXjWbA81cKsZjJK9Oqt/2QDLMAdQ=
+	=
+X-Google-Smtp-Source: AGHT+IFiRMnSHmNBvUClpBlaNrV3TBD2G3A1eITscwtWGj20grwDeZwpsDQEjZBDH9aGNpfCQqSsrw==
+X-Received: by 2002:a17:902:c412:b0:234:bca7:2920 with SMTP id d9443c01a7336-23ddb2e82a8mr32305155ad.24.1752048763584;
+        Wed, 09 Jul 2025 01:12:43 -0700 (PDT)
+Received: from localhost ([122.172.81.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8457e673sm139950205ad.174.2025.07.09.01.12.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 01:12:42 -0700 (PDT)
+Date: Wed, 9 Jul 2025 13:42:40 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: webgeek1234@gmail.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] Support building tegra124-cpufreq as a module
+Message-ID: <20250709081240.wycbxl6fc2mmkmlz@vireshk-i7>
+References: <20250707-tegra124-cpufreq-v6-0-fe69c0f9bbab@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707-tegra124-cpufreq-v6-0-fe69c0f9bbab@gmail.com>
 
-Reduce symbol visibility by converting tegra_clk_periph_ops to static.
-Removed the extern declaration from clk.h as the symbol is now locally
-scoped to clk-periph.c.
+On 07-07-25, 16:17, Aaron Kling via B4 Relay wrote:
+> This adds remove and exit routines that were not previously needed when
+> this was only available builtin.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- drivers/clk/tegra/clk-periph.c | 2 +-
- drivers/clk/tegra/clk.h        | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+Applied. Thanks.
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index c9fc52a36fce..fa0cd7bb8ee6 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -132,7 +132,7 @@ static void clk_periph_restore_context(struct clk_hw *hw)
- 	clk_periph_set_parent(hw, parent_id);
- }
- 
--const struct clk_ops tegra_clk_periph_ops = {
-+static const struct clk_ops tegra_clk_periph_ops = {
- 	.get_parent = clk_periph_get_parent,
- 	.set_parent = clk_periph_set_parent,
- 	.recalc_rate = clk_periph_recalc_rate,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 5d80d8b79b8e..9ea839af14bc 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -629,7 +629,6 @@ struct tegra_clk_periph {
- 
- #define TEGRA_CLK_PERIPH_MAGIC 0x18221223
- 
--extern const struct clk_ops tegra_clk_periph_ops;
- struct clk *tegra_clk_register_periph(const char *name,
- 		const char * const *parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
 -- 
-2.25.1
-
+viresh
