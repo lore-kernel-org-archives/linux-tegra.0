@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC9D1CD1E4;
-	Wed,  9 Jul 2025 18:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDE11CD1E4;
+	Wed,  9 Jul 2025 18:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085195; cv=none; b=U4jzQigZ3uocl9ekCS9o6P+Bk+eJJmPSZxtyzQGUa/qOjQ7Ra2P2/Ba5CHuIyVGi7LuZ6FBSxQn5Uvx2rsHNgxXU7K8Y8s2BicZr8xDwil9m2St2Kj+RagOt8IiRUlyWFvKJ62T/1fwgd8WYxKNqe426Qu9xf1EtFDh13dlhpFY=
+	t=1752085249; cv=none; b=iIRHTgBNxNl8jyi0kiuGgE+9hFi1ubSl9yJBb/cpcWvaNKn6hi0eXYB9jQTuO7nJDwrRI8q0tP1wFRtCD2HUTJ006BH75Q9a811bOUCgK2KbxYLfAk6Oa9qtl/d85u77mrGnHRqwtKNuVnUtk8cYsAEN7pk+6NYYaebxxHxt8g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085195; c=relaxed/simple;
-	bh=owaHyy4rlyoW7dGQHzYKf39H7GnNGRv0PmQBon9CO+o=;
+	s=arc-20240116; t=1752085249; c=relaxed/simple;
+	bh=iU2khfOq8TtAsNVbNyK0YTjfnDhed6o0+fDA0OLTJes=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=avV1h+9SMvvEK1Ry0uEjsZJgXZZs1rBM8as+qK2JSQl747YCw5Omu2f+LJ8ItVBbI7sf0sQZ2dZ3Nc84KQvO3SsaF1uMlRRLCytvHd85fnNhiaW5IOMark1BVpjQOnOhhEaHPoRN0+8EYylvsnEgH+jz1sxTM666iNyTy4NLsxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiYQR0k4; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EBRKRoHxE4H5aXtHSxnT46ztzOfOz7yba+K1UdgY+RYGoVdsx0t1asP923R9OjumcyfDsQhhEbeZXhNRPTl8jDxsORdTy6agZwITvD6SuC18gaEhwAbu2b+As8lKRVtpmBiNMlvnD8Wp/9ZEATXlW3/+wj5PKLhZIDAg0xKHNqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpDD+um2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiYQR0k4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A186C4CEEF;
-	Wed,  9 Jul 2025 18:19:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpDD+um2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA5B9C4CEEF;
+	Wed,  9 Jul 2025 18:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752085195;
-	bh=owaHyy4rlyoW7dGQHzYKf39H7GnNGRv0PmQBon9CO+o=;
+	s=k20201202; t=1752085248;
+	bh=iU2khfOq8TtAsNVbNyK0YTjfnDhed6o0+fDA0OLTJes=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fiYQR0k4Ce5sGepy9U4Ufckw3gM7jexgSstL0oYtAeyFGXd3sI6LGbBHjbpAC6fSY
-	 O7OxAqKr7CSopXsgC0wWnRQNJSYsoV+u5K4bsbJ9JXxdNBhAPEW0Fu5fB6/Y5Vww/z
-	 lT5on/2wBn5t2Fg0ex3jmje9yxwzo2MP/rAanX+5gfCeo5HozVF/7kHqE8HC8ZEB31
-	 +JpnPpzM7fHYPhoMJutHDvOYn1FdeOvLYHF/PEkcRMEmddrJ0DZ73Zr/7DjNv0dBL5
-	 3L7Y/cz/ra4Z8gC9p6SqnMeB0domlcEwfiduAc/NDRy/PmkGEZkmbKIEN4MxNV8+hI
-	 dM+ip0p8A7DzQ==
-Message-ID: <abbfc54d-96af-4e9d-8c2c-8965aa99076b@kernel.org>
-Date: Wed, 9 Jul 2025 20:19:51 +0200
+	b=TpDD+um2ESDf/K/aalG0a/ps60hao9FrKw9khzIW8mmTEk0RbJ3FE8IYGG5+Qzx0g
+	 jCkBH8NMRn1At3lVSZxUsZjlqvVIqMY4NCj72P0ZVk+V5ag+A+qYRzUs1qccFjdbF5
+	 +R45RHe4MRyEohs6al0VYW41yrYIjOqdeCSKdNCs8cZBhQGeR0ZEMCOJeWrmLArhQT
+	 Co4f1HNpD0M3VyGFv/lm8RPE8F3/g3O/WyNvP70Gy6UFSsdtPp8K8kRWbqSmyPO6nJ
+	 jszbEBPhTcArmPI87t3835YzASYTfWkaUhJ+6Alhu4q9UifEpqMo7IHNtX7VCpTeRY
+	 86JvXHrNZbovw==
+Message-ID: <7aa9bfb0-0d2c-4e7c-9bfb-58934d305f0f@kernel.org>
+Date: Wed, 9 Jul 2025 20:20:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,13 +35,13 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: memory: tegra: Add Tegra264 support
+Subject: Re: [PATCH 2/4] dt-bindings: memory: tegra: Add Tegra264 definitions
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250708105245.1516143-1-thierry.reding@gmail.com>
- <20250708105245.1516143-2-thierry.reding@gmail.com>
+ <20250708105245.1516143-3-thierry.reding@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,105 +87,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250708105245.1516143-2-thierry.reding@gmail.com>
+In-Reply-To: <20250708105245.1516143-3-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/07/2025 12:52, Thierry Reding wrote:
->    interrupts:
-> -    items:
-> -      - description: MC general interrupt
-> +    minItems: 1
-> +    maxItems: 8
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 8
->  
->    "#address-cells":
->      const: 2
-> @@ -74,6 +79,7 @@ patternProperties:
->                - nvidia,tegra186-emc
->                - nvidia,tegra194-emc
->                - nvidia,tegra234-emc
-> +              - nvidia,tegra264-emc
->  
->        reg:
->          minItems: 1
-> @@ -127,6 +133,15 @@ patternProperties:
->              reg:
->                minItems: 2
->  
-> +      - if:
-> +          properties:
-> +            compatible:
-> +              const: nvidia,tegra264-emc
-> +        then:
-> +          properties:
-> +            reg:
-> +              minItems: 2
-> +
->      additionalProperties: false
->  
->      required:
-> @@ -220,6 +235,52 @@ allOf:
->              - const: ch14
->              - const: ch15
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: nvidia,tegra264-mc
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 17
+> From: Sumit Gupta <sumitg@nvidia.com>
+> 
+> Add memory client ID defines for use by the interconnects property in
+> the device tree and tegra_mc_client table in the MC driver. Note that
+> these IDs are defined by the hardware, so the numbering doesn't start
+> at 0 and contains holes.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  include/dt-bindings/memory/nvidia,tegra264.h | 86 ++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
+> 
 
-Missing maxItems
-
-> +          description: 17 memory controller channels
-> +
-> +        reg-names:
-> +          items:
-> +            - const: broadcast
-> +            - const: ch0
-> +            - const: ch1
-> +            - const: ch2
-> +            - const: ch3
-> +            - const: ch4
-> +            - const: ch5
-> +            - const: ch6
-> +            - const: ch7
-> +            - const: ch8
-> +            - const: ch9
-> +            - const: ch10
-> +            - const: ch11
-> +            - const: ch12
-> +            - const: ch13
-> +            - const: ch14
-> +            - const: ch15
-> +
-> +        interrupts:
-> +          minItems: 8
-> +          maxItems: 8
-> +          description: One interrupt line for each MC component
-> +
-> +        interrupt-names:
-> +          items:
-> +            - const: mcf
-> +            - const: hub1
-> +            - const: hub2
-> +            - const: hub3
-> +            - const: hub4
-> +            - const: hub5
-> +            - const: sbs
-> +            - const: channel
-
-
-Missing constraints for interrupts and interrupt-names for all other
-variants. Now this patch claims they all have 8 interrupts with any name.
-
-
+This looks like values for new MC added in patch #1, so this should be
+squashed there. If this not the case, commit msg should be more obvious
+on that.
 
 Best regards,
 Krzysztof
