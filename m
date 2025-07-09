@@ -1,63 +1,63 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E21F257435;
-	Wed,  9 Jul 2025 22:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1ED2586EF;
+	Wed,  9 Jul 2025 22:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752099720; cv=none; b=n+/0ymmOLhGgFbpiugy0uHE01qBPdvWuzgD+YMHQtW9bbon9QsX1p9ck1PFA5/k3UHFpPslnCvfCdrYSwqZIa/Nyl93DYi3oQUoHa4GBBbum9giePAjhv/oqvTxFV07nZiDCdcPB89i57dhh6N6Q2ygATGmMU0b3xXk1WQjcG2U=
+	t=1752099722; cv=none; b=FAmvodYJQEEKzIuGnhlPCTZ2zolX9GU+YzH0uHF+4XMEGtrCIIyl/HsWTq/7+rxSF3OuY37q3fk4yWLzv/H/jZ/dR0rb6SSmNqXIeYYp0wStgjtlKnTwf5J7lKu/5VxiaoCYdgtV7y6bJiqKxRu4OAgsCevlY5PvY6rCRk0j538=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752099720; c=relaxed/simple;
-	bh=MuVwd3qsZP9sX5kFIvnhB9e7qPm0DNKH4F/2GCuykvg=;
+	s=arc-20240116; t=1752099722; c=relaxed/simple;
+	bh=5/0jAujaEqAM5kVCht07cuykQyvnGeNYc3pxvAFMfVA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TRhoLYltvo7wsjNJaNzexuB4p39w+dbGnIVvzPR5z9gUuP5s0GTBtqkEWtoc+DY8Dpp0hGWtAMuA2Ss5rsb0ZF5YEeKziLYyRb17nXRv+2VwlsuWrC3oqYmIRk+JSkQ6yKQdZW0103FzTUXmA9XtLaemNltGn+du+gSzw85CJVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdaN3VEs; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=S8W+P3WGA2uCJZPBWGbjUt+MgwvdG4ux5ztQzfbTlnd6vOanMLL67G7EjePeLtuc3yInNdha6IWdLiHod//4P1tN8MZTHGvkpdvjQZ7SHunyKdEUcKHeXNwULhWQYLY1GSl27j26OsET0FR1womecP8s055NX9xPsYagX8W8aRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahMPKann; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdaN3VEs"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-453634d8609so1930525e9.3;
-        Wed, 09 Jul 2025 15:21:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahMPKann"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso2323635e9.2;
+        Wed, 09 Jul 2025 15:22:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752099717; x=1752704517; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752099719; x=1752704519; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YP/RBJzrYqxFcCb5hogwcHg8lpSNtTgTE+4LYKKy4RI=;
-        b=SdaN3VEsbYY6vUZ8RTKD2+z4lDQhgCO/kPWBy9+VCIn0/Kd7PLNa2rlQg10c6FBiZ/
-         SHvH9jDrDIvH7bL/DaaVJaqqm31DaiHVKJnEJyin13WG9Gxi7nmdGM9rW9rz+JUfm0er
-         hMPvzKYQlMek25xqdc0/lS1LFxELwsbCf1GYKC/4gIc8YklU5pj48JmUiyOV5naefgDW
-         EvqyOKyQgBJXDdud005IYn45NggCv8CwzD5IqJoaHarHKUFTG3FMQY7TkRGvOJLxXrBk
-         2jHfbTVcKCdO4prZP4yaWZ0kHBFOpq+OJ93A7H8fZl3Ay1fWL4Lt9gfM6edXhKkA22+z
-         YjAQ==
+        bh=rWp9UpZ6Jv5k+pmwwAXd8UaI0Vx7UAEeJy7Th/K4m6E=;
+        b=ahMPKannhPuW0EAP5F2yLUvZ3pKoa51Qqxquzpd9smVfNQtbdDft+mA+AmzM0RqnAu
+         ltgVjH9hdqgFN3RdXZlI20X2Ww2ctPF2NsD5BcydAAEgVgj9Q39LAJ1J+MZEU0PuWlz2
+         wZ01gfZMnhCo49vY6gBDJLlv4BD+c1bXsHkKbWx5KEL/ibxbLUILmCDgNUtybrsWBn9q
+         YMBLjX0ROC2sEI6AE+Bt0AXJtAeu8FeIyMcuH7HHi4b3j50jiV5h8fkvKsIa/NSX9vi2
+         GntPVkE1zxlQni33QlUk+SnfNJTybrBy5aaRI1h3vm0ksk2+DDsnpAfjLBOO0pEdiT9V
+         mTsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752099717; x=1752704517;
+        d=1e100.net; s=20230601; t=1752099719; x=1752704519;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YP/RBJzrYqxFcCb5hogwcHg8lpSNtTgTE+4LYKKy4RI=;
-        b=r8PeGjjbMM1BQubgJEu442+YxEe2HmkOZrqd1vfQXe1hVM80w2zqbgDiisu4bWQElD
-         8mfHJAh8vw/Dhm2U9t3rXhcrGBjI5yYhDwa02g/KgcC5WsGYw/zaX5eR1apCOTmfffj/
-         ISXA1YkMspKNuNCZ4EkAcGeM1JhCgSjc2hHiCnQCQ2pqC/U6swbcGOeuHrESnFri4InO
-         0osf4PQxHZ5cmiiYENZpKK/D//8XgKPeMyBF9M+LS57aipEHloE5SKV/MCReOUOpNGaT
-         mJeuIuq5UUKlqbx3cvKD1pxGJ/Wf22X1F/kgYdcI7rrWeKf+Hm7Ik92zosCp6R5i5aHM
-         4MLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfQqDh9G9XLFHUwK0CyrVghVvRkdq16oVdGThm38MhHCSRl863iCeX9K7LwzOxCmOAOj00wfIthYJaIOaf@vger.kernel.org, AJvYcCWiM+5UiBH7VZ/ajB1kqakE8nbWbMTM3FDf+xX8iaf7EwrySOs3VbsUO1zR5SZ/EWTnt7LPINyt+ply@vger.kernel.org, AJvYcCXkMxzvi3eoKG+etacBIoYvs37VzIDq6OBP1M1AFuWEY60yECxx1Gf3GIBvA/I0wHy1zNqqhSSJHIOYLOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs5u+KJ5BEonMl7N7evWnY1q4OKSy2tvmtFEvdt05QcgJis4+A
-	UuU/NaA5GrWjNMx5WUZ5xuFtpQ3qQXHMPtSCNFUNw1btT0ieMwS4t+2j
-X-Gm-Gg: ASbGncsIg+N8FcS4uUzUwPk16cwoSQ09TVsSSWzRJSXTX9c+BJ+uxgyUX/iPz5GX4cN
-	NkrxQ2k8+69KJaJWISGp0yLfMVaQKgpsj1qbDulh68CyGzr/QqjrvhCdyVwq/lDZ+GiUG6PDQld
-	yRyKCQCkFPQk49MCjw6JrE7jqOdlajbaLF/vTx9LLu7xdI64xB4wB4rHD0JaIlnrF8son+fGko1
-	fId/CO1j3eAffF3pVDSX0HApy1gz0eX37mp6bTmF4DREcwENNoCJ5x9kuTJWR4sSaH3ueRevKiD
-	JKYC7NUM/DE7Qf9/1/yTVCIGgYnHdboMh4kItpE73vzKuZgDc1zkB3qsJSY9Xdol7/hclvs+VHA
-	pRiSyz4KtRDl6EXH6r7Lfe1oTFFvop0D/ty28ByrWguMVJ9aYzgQ2SQ==
-X-Google-Smtp-Source: AGHT+IFzydvA82wvqaqBE4IR0sN8b48o4WwlWi1q2m3nbfUE9vKoSCJcbeFYa2FT8cIBalfVvqg+Vg==
-X-Received: by 2002:a05:600c:3b01:b0:453:7bd:2e30 with SMTP id 5b1f17b1804b1-454d539002emr42346935e9.29.1752099716437;
-        Wed, 09 Jul 2025 15:21:56 -0700 (PDT)
+        bh=rWp9UpZ6Jv5k+pmwwAXd8UaI0Vx7UAEeJy7Th/K4m6E=;
+        b=W0vRoFM5EVck8NYMAu0yl4c7j+UJGeYdNh2O6+xVQU5aMa9LZ/570BKJilgmAkOGXS
+         Y2casPGb5XCC9zHJqnmYWTiz2U33rnGLJGLa7PemM3d0lGg/3e4latrLyJjxh9EvyCv8
+         1GCUh60avhEiQgtqgl2UYT0HC0LJxDRSgUNo2HadsIhh4a0SjtjLXcEYPFAZa5VD2zu9
+         XyQwP3XhgpZNN4lvMbOokJuZgeRako65shB+ePON6Bz4GA2Fj+Mlamxuou/v7P3kVkFX
+         2HM9Lbdi0Lp0IWuKeEX7TSxlNbFmt2t61/jtxDwBn50Ryg71PjlWFZau/0AADgN9uheb
+         O86Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvs8gsm0Yhk07zTr6nH5htR2Gi6Gr0swnYCYLjaMvyibeKEPqp2+1lwohKA36Q4Smk7iMokO3YponD@vger.kernel.org, AJvYcCVVqZCfOROZLAxPdQuk7iJTXLt2mFp90YQLFo1CYhz6pdPHJDCQdMLDW1ZL6OE+a3Fq2AhoCSDsNGqahFe0@vger.kernel.org, AJvYcCXH+RJVjsDYENJlsokB0+FqHdHE8b3rH+LO6f6DDCT5VI+MIe/o/0z1a8xoAWetpLeSA3VzLhtJ9d8rwP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytKPhn701A1TDntHWZt6r+CWKSyHzIi1u/Y+DhijSaWdM2Y9No
+	mk25EyFUMfKQFXvKXfoEdVUTySF8m+p4rYAMdZVdyq3CW19VICYPPXK/
+X-Gm-Gg: ASbGncuCa+PpqittVGnRQdHSxXLzeTNc8Q9MKXPrpZCkAQDVpCxfwbmNKfcb4HkP1Wx
+	OdqrxgJaBGK5au/Dvm6/tbW+hJdJYgj58qe5VoXVlJa2i/XB0cvr7qW8ccTgP5VuYpGI9EtgZfx
+	JI6oAebeZrO2VUxT1SPsLRNX4yTtWkS+TBwjgXSpS2VUDKlbNTSWVDe5DfHFWnCTGGnjFNSPHrX
+	F3BH3kkfLVnejCPf8xNw2geUwWH10l79zZpdrSWpCLgggcQFvPYdGNHOYpzWUWVRUXqh1svpVWE
+	37Ye4wQHnNVWrgaUX36fYeNcmJUqvDhJyZcAR5C0JlQDkBVh1QSx6/A/ZncfCHUyxsWxBnuayP9
+	WncAQ6fgb7IQhHxvZNN0PbB+kV1PNOxg8eaA77hCCqIXYg/z+tqZZ5A==
+X-Google-Smtp-Source: AGHT+IHFj9vTFfeJ0xwJPdcmHths+RCYwosVl04z/Dll3lBoHgKy5VibJPaNj0+ViTQb/gys1WbBnw==
+X-Received: by 2002:a05:600c:674f:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-454db868133mr10040185e9.21.1752099718674;
+        Wed, 09 Jul 2025 15:21:58 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454dd439051sm1089815e9.8.2025.07.09.15.21.54
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454dd439051sm1090465e9.8.2025.07.09.15.21.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 15:21:54 -0700 (PDT)
+        Wed, 09 Jul 2025 15:21:57 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>
@@ -65,10 +65,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: memory: tegra: Add Tegra264 support
-Date: Thu, 10 Jul 2025 00:21:46 +0200
-Message-ID: <20250709222147.3758356-2-thierry.reding@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 2/2] memory: tegra: Add Tegra264 MC and EMC support
+Date: Thu, 10 Jul 2025 00:21:47 +0200
+Message-ID: <20250709222147.3758356-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250709222147.3758356-1-thierry.reding@gmail.com>
 References: <20250709222147.3758356-1-thierry.reding@gmail.com>
@@ -82,313 +83,539 @@ Content-Transfer-Encoding: 8bit
 
 From: Sumit Gupta <sumitg@nvidia.com>
 
-Add bindings for the Memory Controller (MC) and External Memory
-Controller (EMC) found on the Tegra264 SoC. Tegra264 SoC has a different
-number of interrupt lines for MC sub-units: UCF_SOC, hub, hub common,
-syncpoint and MC channel. The total number of interrupt lines is eight.
-Update maxItems for MC interrupts accordingly.
+Add support to enable Memory Controller (MC) and External Memory
+Controller (EMC) drivers for Tegra264. The nodes for MC and EMC are
+mostly the same as Tegra234 but differ in number of channels and
+interrupt numbers.
 
-This also adds a header containing the memory client ID definitions that
-are used by the interconnects property in DT and the tegra_mc_client
-table in the MC driver. These IDs are defined by the hardware, so the
-numbering doesn't start at 0 and contains holes. Also added are the
-stream IDs for various hardware blocks found on Tegra264. These are
-allocated as blocks of 256 IDs and each block can be subdivided for
-additional fine-grained isolation if needed.
+The patch also adds the bandwidth manager definitions required for
+Tegra264 and uses them to populate the memory client table. All of
+these are needed to properly enable memory interconnect (ICC) support.
 
 Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-[treding@nvidia.com: add SMMU stream IDs, squash patches]
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- add interrupts and interrupt-names constraints for previous chips
-- add missing maxItems for reg property on Tegra264
-- squash memory client IDs and stream IDs patches
+ drivers/memory/tegra/Makefile         |   2 +
+ drivers/memory/tegra/mc.c             |   5 +-
+ drivers/memory/tegra/mc.h             |   9 +-
+ drivers/memory/tegra/tegra186-emc.c   |   5 +-
+ drivers/memory/tegra/tegra186.c       |  17 +-
+ drivers/memory/tegra/tegra264-bwmgr.h |  50 ++++
+ drivers/memory/tegra/tegra264.c       | 313 ++++++++++++++++++++++++++
+ 7 files changed, 395 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra264-bwmgr.h
+ create mode 100644 drivers/memory/tegra/tegra264.c
 
- .../nvidia,tegra186-mc.yaml                   |  84 ++++++++++-
- include/dt-bindings/memory/nvidia,tegra264.h  | 136 ++++++++++++++++++
- 2 files changed, 218 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
-
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-index 935d63d181d9..b901f1b3e0fc 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-@@ -32,6 +32,7 @@ properties:
-           - nvidia,tegra186-mc
-           - nvidia,tegra194-mc
-           - nvidia,tegra234-mc
-+          - nvidia,tegra264-mc
+diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
+index 0750847dac3c..6334601e6120 100644
+--- a/drivers/memory/tegra/Makefile
++++ b/drivers/memory/tegra/Makefile
+@@ -10,6 +10,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
+ tegra-mc-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
+ tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra194.o
+ tegra-mc-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186.o tegra234.o
++tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
  
-   reg:
-     minItems: 6
-@@ -42,8 +43,12 @@ properties:
-     maxItems: 18
+ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
  
-   interrupts:
--    items:
--      - description: MC general interrupt
-+    minItems: 1
-+    maxItems: 8
-+
-+  interrupt-names:
-+    minItems: 1
-+    maxItems: 8
+@@ -21,5 +22,6 @@ obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186-emc.o
++obj-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186-emc.o
  
-   "#address-cells":
-     const: 2
-@@ -74,6 +79,7 @@ patternProperties:
-               - nvidia,tegra186-emc
-               - nvidia,tegra194-emc
-               - nvidia,tegra234-emc
-+              - nvidia,tegra264-emc
+ tegra210-emc-y := tegra210-emc-core.o tegra210-emc-cc-r21021.o
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index bd5b58f1fd42..6edb210287dc 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
  
-       reg:
-         minItems: 1
-@@ -127,6 +133,15 @@ patternProperties:
-             reg:
-               minItems: 2
+ #include <linux/clk.h>
+@@ -48,6 +48,9 @@ static const struct of_device_id tegra_mc_of_match[] = {
+ #endif
+ #ifdef CONFIG_ARCH_TEGRA_234_SOC
+ 	{ .compatible = "nvidia,tegra234-mc", .data = &tegra234_mc_soc },
++#endif
++#ifdef CONFIG_ARCH_TEGRA_264_SOC
++	{ .compatible = "nvidia,tegra264-mc", .data = &tegra264_mc_soc },
+ #endif
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index c3f6655bec60..1d97cf4d3a94 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
  
-+      - if:
-+          properties:
-+            compatible:
-+              const: nvidia,tegra264-emc
-+        then:
-+          properties:
-+            reg:
-+              minItems: 2
-+
-     additionalProperties: false
+ #ifndef MEMORY_TEGRA_MC_H
+@@ -182,6 +182,10 @@ extern const struct tegra_mc_soc tegra194_mc_soc;
+ extern const struct tegra_mc_soc tegra234_mc_soc;
+ #endif
  
-     required:
-@@ -158,6 +173,12 @@ allOf:
-             - const: ch2
-             - const: ch3
++#ifdef CONFIG_ARCH_TEGRA_264_SOC
++extern const struct tegra_mc_soc tegra264_mc_soc;
++#endif
++
+ #if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_114_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+@@ -193,7 +197,8 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
  
-+        interrupts:
-+          items:
-+            - description: MC general interrupt
-+
-+        interrupt-names: false
-+
-   - if:
-       properties:
-         compatible:
-@@ -189,6 +210,12 @@ allOf:
-             - const: ch14
-             - const: ch15
+ #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+-    defined(CONFIG_ARCH_TEGRA_234_SOC)
++    defined(CONFIG_ARCH_TEGRA_234_SOC) || \
++    defined(CONFIG_ARCH_TEGRA_264_SOC)
+ extern const struct tegra_mc_ops tegra186_mc_ops;
+ #endif
  
-+        interrupts:
-+          items:
-+            - description: MC general interrupt
-+
-+        interrupt-names: false
-+
-   - if:
-       properties:
-         compatible:
-@@ -220,6 +247,59 @@ allOf:
-             - const: ch14
-             - const: ch15
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index bc807d7fcd4e..d6cd90c7ad53 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2019 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2019-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
  
-+        interrupts:
-+          items:
-+            - description: MC general interrupt
-+
-+        interrupt-names: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: nvidia,tegra264-mc
-+    then:
-+      properties:
-+        reg:
-+          minItems: 17
-+          maxItems: 17
-+          description: 17 memory controller channels
-+
-+        reg-names:
-+          items:
-+            - const: broadcast
-+            - const: ch0
-+            - const: ch1
-+            - const: ch2
-+            - const: ch3
-+            - const: ch4
-+            - const: ch5
-+            - const: ch6
-+            - const: ch7
-+            - const: ch8
-+            - const: ch9
-+            - const: ch10
-+            - const: ch11
-+            - const: ch12
-+            - const: ch13
-+            - const: ch14
-+            - const: ch15
-+
-+        interrupts:
-+          minItems: 8
-+          maxItems: 8
-+          description: One interrupt line for each MC component
-+
-+        interrupt-names:
-+          items:
-+            - const: mcf
-+            - const: hub1
-+            - const: hub2
-+            - const: hub3
-+            - const: hub4
-+            - const: hub5
-+            - const: sbs
-+            - const: channel
-+
- additionalProperties: false
+ #include <linux/clk.h>
+@@ -393,6 +393,9 @@ static const struct of_device_id tegra186_emc_of_match[] = {
+ #endif
+ #if defined(CONFIG_ARCH_TEGRA_234_SOC)
+ 	{ .compatible = "nvidia,tegra234-emc" },
++#endif
++#if defined(CONFIG_ARCH_TEGRA_264_SOC)
++	{ .compatible = "nvidia,tegra264-emc" },
+ #endif
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index 1b3183951bfe..aee11457bf8e 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2017-2021 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2017-2025 NVIDIA CORPORATION.  All rights reserved.
+  */
  
- required:
-diff --git a/include/dt-bindings/memory/nvidia,tegra264.h b/include/dt-bindings/memory/nvidia,tegra264.h
+ #include <linux/io.h>
+@@ -26,11 +26,24 @@
+ static int tegra186_mc_probe(struct tegra_mc *mc)
+ {
+ 	struct platform_device *pdev = to_platform_device(mc->dev);
++	struct resource *res;
+ 	unsigned int i;
+ 	char name[8];
+ 	int err;
+ 
+-	mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
++	/*
++	 * From Tegra264, the SID region is not present in MC node and BROADCAST is first.
++	 * The common function 'tegra_mc_probe()' already maps first region entry from DT.
++	 * Check if the SID region is present in DT then map BROADCAST. Otherwise, consider
++	 * the first entry mapped in mc probe as the BROADCAST region. This is done to avoid
++	 * mapping the region twice when SID is not present and keep backward compatibility.
++	 */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sid");
++	if (res)
++		mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
++	else
++		mc->bcast_ch_regs = mc->regs;
++
+ 	if (IS_ERR(mc->bcast_ch_regs)) {
+ 		if (PTR_ERR(mc->bcast_ch_regs) == -EINVAL) {
+ 			dev_warn(&pdev->dev,
+diff --git a/drivers/memory/tegra/tegra264-bwmgr.h b/drivers/memory/tegra/tegra264-bwmgr.h
 new file mode 100644
-index 000000000000..521405c01f84
+index 000000000000..93bfceaac9c8
 --- /dev/null
-+++ b/include/dt-bindings/memory/nvidia,tegra264.h
-@@ -0,0 +1,136 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/* Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved. */
++++ b/drivers/memory/tegra/tegra264-bwmgr.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/* Copyright (C) 2025 NVIDIA CORPORATION.  All rights reserved. */
 +
-+#ifndef DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H
-+#define DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H
++#ifndef MEMORY_TEGRA_TEGRA264_BWMGR_H
++#define MEMORY_TEGRA_TEGRA264_BWMGR_H
 +
-+#define TEGRA264_SID(x) ((x) << 8)
++#define TEGRA264_BWMGR_ICC_PRIMARY	1
++#define TEGRA264_BWMGR_DEBUG		2
++#define TEGRA264_BWMGR_CPU_CLUSTER0	3
++#define TEGRA264_BWMGR_CPU_CLUSTER1	4
++#define TEGRA264_BWMGR_CPU_CLUSTER2	5
++#define TEGRA264_BWMGR_CPU_CLUSTER3	6
++#define TEGRA264_BWMGR_CPU_CLUSTER4	7
++#define TEGRA264_BWMGR_CPU_CLUSTER5	8
++#define TEGRA264_BWMGR_CPU_CLUSTER6	9
++#define TEGRA264_BWMGR_CACTMON		10
++#define TEGRA264_BWMGR_DISPLAY		11
++#define TEGRA264_BWMGR_VI		12
++#define TEGRA264_BWMGR_APE		13
++#define TEGRA264_BWMGR_VIFAL		14
++#define TEGRA264_BWMGR_GPU		15
++#define TEGRA264_BWMGR_EQOS		16
++#define TEGRA264_BWMGR_PCIE_0		17
++#define TEGRA264_BWMGR_PCIE_1		18
++#define TEGRA264_BWMGR_PCIE_2		19
++#define TEGRA264_BWMGR_PCIE_3		20
++#define TEGRA264_BWMGR_PCIE_4		21
++#define TEGRA264_BWMGR_PCIE_5		22
++#define TEGRA264_BWMGR_SDMMC_1		23
++#define TEGRA264_BWMGR_SDMMC_2		24
++#define TEGRA264_BWMGR_NVDEC		25
++#define TEGRA264_BWMGR_NVENC		26
++#define TEGRA264_BWMGR_NVJPG_0		27
++#define TEGRA264_BWMGR_NVJPG_1		28
++#define TEGRA264_BWMGR_OFAA		29
++#define TEGRA264_BWMGR_XUSB_HOST	30
++#define TEGRA264_BWMGR_XUSB_DEV		31
++#define TEGRA264_BWMGR_TSEC		32
++#define TEGRA264_BWMGR_VIC		33
++#define TEGRA264_BWMGR_APEDMA		34
++#define TEGRA264_BWMGR_SE		35
++#define TEGRA264_BWMGR_ISP		36
++#define TEGRA264_BWMGR_HDA		37
++#define TEGRA264_BWMGR_VI2FAL		38
++#define TEGRA264_BWMGR_VI2		39
++#define TEGRA264_BWMGR_RCE		40
++#define TEGRA264_BWMGR_PVA		41
++#define TEGRA264_BWMGR_NVPMODEL		42
 +
++#endif
+diff --git a/drivers/memory/tegra/tegra264.c b/drivers/memory/tegra/tegra264.c
+new file mode 100644
+index 000000000000..5203e6c11372
+--- /dev/null
++++ b/drivers/memory/tegra/tegra264.c
+@@ -0,0 +1,313 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * SMMU stream IDs
++ * Copyright (C) 2025, NVIDIA CORPORATION.  All rights reserved.
 + */
 +
-+#define TEGRA264_SID_AON       TEGRA264_SID(0x01)
-+#define TEGRA264_SID_APE       TEGRA264_SID(0x02)
-+#define TEGRA264_SID_ETR       TEGRA264_SID(0x03)
-+#define TEGRA264_SID_BPMP      TEGRA264_SID(0x04)
-+#define TEGRA264_SID_DCE       TEGRA264_SID(0x05)
-+#define TEGRA264_SID_EQOS      TEGRA264_SID(0x06)
-+#define TEGRA264_SID_GPCDMA    TEGRA264_SID(0x08)
-+#define TEGRA264_SID_DISP      TEGRA264_SID(0x09)
-+#define TEGRA264_SID_HDA       TEGRA264_SID(0x0a)
-+#define TEGRA264_SID_HOST1X    TEGRA264_SID(0x0b)
-+#define TEGRA264_SID_ISP0      TEGRA264_SID(0x0c)
-+#define TEGRA264_SID_ISP1      TEGRA264_SID(0x0d)
-+#define TEGRA264_SID_PMA0      TEGRA264_SID(0x0e)
-+#define TEGRA264_SID_FSI0      TEGRA264_SID(0x0f)
-+#define TEGRA264_SID_FSI1      TEGRA264_SID(0x10)
-+#define TEGRA264_SID_PVA       TEGRA264_SID(0x11)
-+#define TEGRA264_SID_SDMMC0    TEGRA264_SID(0x12)
-+#define TEGRA264_SID_MGBE0     TEGRA264_SID(0x13)
-+#define TEGRA264_SID_MGBE1     TEGRA264_SID(0x14)
-+#define TEGRA264_SID_MGBE2     TEGRA264_SID(0x15)
-+#define TEGRA264_SID_MGBE3     TEGRA264_SID(0x16)
-+#define TEGRA264_SID_MSSSEQ    TEGRA264_SID(0x17)
-+#define TEGRA264_SID_SE        TEGRA264_SID(0x18)
-+#define TEGRA264_SID_SEU1      TEGRA264_SID(0x19)
-+#define TEGRA264_SID_SEU2      TEGRA264_SID(0x1a)
-+#define TEGRA264_SID_SEU3      TEGRA264_SID(0x1b)
-+#define TEGRA264_SID_PSC       TEGRA264_SID(0x1c)
-+#define TEGRA264_SID_OESP      TEGRA264_SID(0x23)
-+#define TEGRA264_SID_SB        TEGRA264_SID(0x24)
-+#define TEGRA264_SID_XSPI0     TEGRA264_SID(0x25)
-+#define TEGRA264_SID_TSEC      TEGRA264_SID(0x29)
-+#define TEGRA264_SID_UFS       TEGRA264_SID(0x2a)
-+#define TEGRA264_SID_RCE       TEGRA264_SID(0x2b)
-+#define TEGRA264_SID_RCE1      TEGRA264_SID(0x2c)
-+#define TEGRA264_SID_VI        TEGRA264_SID(0x2e)
-+#define TEGRA264_SID_VI1       TEGRA264_SID(0x2f)
-+#define TEGRA264_SID_VIC       TEGRA264_SID(0x30)
-+#define TEGRA264_SID_XUSB_DEV  TEGRA264_SID(0x32)
-+#define TEGRA264_SID_XUSB_DEV1 TEGRA264_SID(0x33)
-+#define TEGRA264_SID_XUSB_DEV2 TEGRA264_SID(0x34)
-+#define TEGRA264_SID_XUSB_DEV3 TEGRA264_SID(0x35)
-+#define TEGRA264_SID_XUSB_DEV4 TEGRA264_SID(0x36)
-+#define TEGRA264_SID_XUSB_DEV5 TEGRA264_SID(0x37)
++#include <dt-bindings/memory/nvidia,tegra264.h>
++
++#include <linux/interconnect.h>
++#include <linux/of_device.h>
++#include <linux/tegra-icc.h>
++
++#include <soc/tegra/bpmp.h>
++#include <soc/tegra/mc.h>
++
++#include "mc.h"
++#include "tegra264-bwmgr.h"
 +
 +/*
-+ * memory client IDs
++ * MC Client entries are sorted in the increasing order of the
++ * override and security register offsets.
 + */
++static const struct tegra_mc_client tegra264_mc_clients[] = {
++	{
++		.id = TEGRA264_MEMORY_CLIENT_HDAR,
++		.name = "hdar",
++		.bpmp_id = TEGRA264_BWMGR_HDA,
++		.type = TEGRA_ICC_ISO_AUDIO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_HDAW,
++		.name = "hdaw",
++		.bpmp_id = TEGRA264_BWMGR_HDA,
++		.type = TEGRA_ICC_ISO_AUDIO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_MGBE0R,
++		.name = "mgbe0r",
++		.bpmp_id = TEGRA264_BWMGR_EQOS,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_MGBE0W,
++		.name = "mgbe0w",
++		.bpmp_id = TEGRA264_BWMGR_EQOS,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_MGBE1R,
++		.name = "mgbe1r",
++		.bpmp_id = TEGRA264_BWMGR_EQOS,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_MGBE1W,
++		.name = "mgbe1w",
++		.bpmp_id = TEGRA264_BWMGR_EQOS,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_SDMMC0R,
++		.name = "sdmmc0r",
++		.bpmp_id = TEGRA264_BWMGR_SDMMC_1,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_SDMMC0W,
++		.name = "sdmmc0w",
++		.bpmp_id = TEGRA264_BWMGR_SDMMC_1,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_VICR,
++		.name = "vicr",
++		.bpmp_id = TEGRA264_BWMGR_VIC,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_VICW,
++		.name = "vicw",
++		.bpmp_id = TEGRA264_BWMGR_VIC,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_APER,
++		.name = "aper",
++		.bpmp_id = TEGRA264_BWMGR_APE,
++		.type = TEGRA_ICC_ISO_AUDIO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_APEW,
++		.name = "apew",
++		.bpmp_id = TEGRA264_BWMGR_APE,
++		.type = TEGRA_ICC_ISO_AUDIO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_APEDMAR,
++		.name = "apedmar",
++		.bpmp_id = TEGRA264_BWMGR_APEDMA,
++		.type = TEGRA_ICC_ISO_AUDIO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_APEDMAW,
++		.name = "apedmaw",
++		.bpmp_id = TEGRA264_BWMGR_APEDMA,
++		.type = TEGRA_ICC_ISO_AUDIO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_VIFALCONR,
++		.name = "vifalconr",
++		.bpmp_id = TEGRA264_BWMGR_VIFAL,
++		.type = TEGRA_ICC_ISO_VIFAL,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_VIFALCONW,
++		.name = "vifalconw",
++		.bpmp_id = TEGRA264_BWMGR_VIFAL,
++		.type = TEGRA_ICC_ISO_VIFAL,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_RCER,
++		.name = "rcer",
++		.bpmp_id = TEGRA264_BWMGR_RCE,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_RCEW,
++		.name = "rcew",
++		.bpmp_id = TEGRA264_BWMGR_RCE,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE0W,
++		.name = "pcie0w",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_0,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE1R,
++		.name = "pcie1r",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_1,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE1W,
++		.name = "pcie1w",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_1,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE2AR,
++		.name = "pcie2ar",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_2,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE2AW,
++		.name = "pcie2aw",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_2,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE3R,
++		.name = "pcie3r",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_3,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE3W,
++		.name = "pcie3w",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_3,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE4R,
++		.name = "pcie4r",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_4,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE4W,
++		.name = "pcie4w",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_4,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE5R,
++		.name = "pcie5r",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_5,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_PCIE5W,
++		.name = "pcie5w",
++		.bpmp_id = TEGRA264_BWMGR_PCIE_5,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_GPUR02MC,
++		.name = "gpur02mc",
++		.bpmp_id = TEGRA264_BWMGR_GPU,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_GPUW02MC,
++		.name = "gpuw02mc",
++		.bpmp_id = TEGRA264_BWMGR_GPU,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_NVDECSRD2MC,
++		.name = "nvdecsrd2mc",
++		.bpmp_id = TEGRA264_BWMGR_NVDEC,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA264_MEMORY_CLIENT_NVDECSWR2MC,
++		.name = "nvdecswr2mc",
++		.bpmp_id = TEGRA264_BWMGR_NVDEC,
++		.type = TEGRA_ICC_NISO,
++	},
++};
 +
-+/* HOST1X read client */
-+#define TEGRA264_MEMORY_CLIENT_HOST1XR		0x16
-+/* VIC read client */
-+#define TEGRA264_MEMORY_CLIENT_VICR		0x6c
-+/* VIC Write client */
-+#define TEGRA264_MEMORY_CLIENT_VICW		0x6d
-+/* VI R5 Write client */
-+#define TEGRA264_MEMORY_CLIENT_VIW		0x72
-+#define TEGRA264_MEMORY_CLIENT_NVDECSRD2MC	0x78
-+#define TEGRA264_MEMORY_CLIENT_NVDECSWR2MC	0x79
-+/* Audio processor(APE) Read client */
-+#define TEGRA264_MEMORY_CLIENT_APER		0x7a
-+/* Audio processor(APE) Write client */
-+#define TEGRA264_MEMORY_CLIENT_APEW		0x7b
-+/* Audio DMA Read client */
-+#define TEGRA264_MEMORY_CLIENT_APEDMAR		0x9f
-+/* Audio DMA Write client */
-+#define TEGRA264_MEMORY_CLIENT_APEDMAW		0xa0
-+#define TEGRA264_MEMORY_CLIENT_GPUR02MC		0xb6
-+#define TEGRA264_MEMORY_CLIENT_GPUW02MC		0xb7
-+/* VI Falcon Read client */
-+#define TEGRA264_MEMORY_CLIENT_VIFALCONR	0xbc
-+/* VI Falcon Write client */
-+#define TEGRA264_MEMORY_CLIENT_VIFALCONW	0xbd
-+/* Read Client of RCE */
-+#define TEGRA264_MEMORY_CLIENT_RCER		0xd2
-+/* Write client of RCE */
-+#define TEGRA264_MEMORY_CLIENT_RCEW		0xd3
-+/* PCIE0/MSI Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE0W		0xd9
-+/* PCIE1/RPX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE1R		0xda
-+/* PCIE1/RPX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE1W		0xdb
-+/* PCIE2/DMX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE2AR		0xdc
-+/* PCIE2/DMX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE2AW		0xdd
-+/* PCIE3/RPX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE3R		0xde
-+/* PCIE3/RPX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE3W		0xdf
-+/* PCIE4/DMX8 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE4R		0xe0
-+/* PCIE4/DMX8 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE4W		0xe1
-+/* PCIE5/DMX4 Read clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE5R		0xe2
-+/* PCIE5/DMX4 Write clients */
-+#define TEGRA264_MEMORY_CLIENT_PCIE5W		0xe3
-+/* UFS Read client */
-+#define TEGRA264_MEMORY_CLIENT_UFSR		0x15c
-+/* UFS write client */
-+#define TEGRA264_MEMORY_CLIENT_UFSW		0x15d
-+/* HDA Read client */
-+#define TEGRA264_MEMORY_CLIENT_HDAR		0x17c
-+/* HDA Write client */
-+#define TEGRA264_MEMORY_CLIENT_HDAW		0x17d
-+/* Disp ISO Read Client */
-+#define TEGRA264_MEMORY_CLIENT_DISPR		0x182
-+/* MGBE0 Read mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE0R		0x1a2
-+/* MGBE0 Write mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE0W		0x1a3
-+/* MGBE1 Read mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE1R		0x1a4
-+/* MGBE1 Write mccif */
-+#define TEGRA264_MEMORY_CLIENT_MGBE1W		0x1a5
-+/* VI1 R5 Write client */
-+#define TEGRA264_MEMORY_CLIENT_VI1W		0x1a6
-+/* SDMMC0 Read mccif */
-+#define TEGRA264_MEMORY_CLIENT_SDMMC0R		0x1c2
-+/* SDMMC0 Write mccif */
-+#define TEGRA264_MEMORY_CLIENT_SDMMC0W		0x1c3
++/*
++ * tegra264_mc_icc_set() - Pass MC client info to the BPMP-FW
++ * @src: ICC node for Memory Controller's (MC) Client
++ * @dst: ICC node for Memory Controller (MC)
++ *
++ * Passing the current request info from the MC to the BPMP-FW where
++ * LA and PTSA registers are accessed and the final EMC freq is set
++ * based on client_id, type, latency and bandwidth.
++ * icc_set_bw() makes set_bw calls for both MC and EMC providers in
++ * sequence. Both the calls are protected by 'mutex_lock(&icc_lock)'.
++ * So, the data passed won't be updated by concurrent set calls from
++ * other clients.
++ */
++static int tegra264_mc_icc_set(struct icc_node *src, struct icc_node *dst)
++{
++	struct tegra_mc *mc = icc_provider_to_tegra_mc(dst->provider);
++	struct mrq_bwmgr_int_request bwmgr_req = { 0 };
++	struct mrq_bwmgr_int_response bwmgr_resp = { 0 };
++	const struct tegra_mc_client *pclient = src->data;
++	struct tegra_bpmp_message msg;
++	int ret;
 +
-+#endif /* DT_BINDINGS_MEMORY_NVIDIA_TEGRA264_H */
++	/*
++	 * Same Src and Dst node will happen during boot from icc_node_add().
++	 * This can be used to pre-initialize and set bandwidth for all clients
++	 * before their drivers are loaded. We are skipping this case as for us,
++	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
++	 */
++	if (src->id == dst->id)
++		return 0;
++
++	if (!mc->bwmgr_mrq_supported)
++		return 0;
++
++	if (!mc->bpmp) {
++		dev_err(mc->dev, "BPMP reference NULL\n");
++		return -ENOENT;
++	}
++
++	if (pclient->type == TEGRA_ICC_NISO)
++		bwmgr_req.bwmgr_calc_set_req.niso_bw = src->avg_bw;
++	else
++		bwmgr_req.bwmgr_calc_set_req.iso_bw = src->avg_bw;
++
++	bwmgr_req.bwmgr_calc_set_req.client_id = pclient->bpmp_id;
++
++	bwmgr_req.cmd = CMD_BWMGR_INT_CALC_AND_SET;
++	bwmgr_req.bwmgr_calc_set_req.mc_floor = src->peak_bw;
++	bwmgr_req.bwmgr_calc_set_req.floor_unit = BWMGR_INT_UNIT_KBPS;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.mrq = MRQ_BWMGR_INT;
++	msg.tx.data = &bwmgr_req;
++	msg.tx.size = sizeof(bwmgr_req);
++	msg.rx.data = &bwmgr_resp;
++	msg.rx.size = sizeof(bwmgr_resp);
++
++	ret = tegra_bpmp_transfer(mc->bpmp, &msg);
++	if (ret < 0) {
++		dev_err(mc->dev, "BPMP transfer failed: %d\n", ret);
++		goto error;
++	}
++	if (msg.rx.ret < 0) {
++		pr_err("failed to set bandwidth for %u: %d\n",
++		       bwmgr_req.bwmgr_calc_set_req.client_id, msg.rx.ret);
++		ret = -EINVAL;
++	}
++
++error:
++	return ret;
++}
++
++static int tegra264_mc_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
++				     u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
++{
++	struct icc_provider *p = node->provider;
++	struct tegra_mc *mc = icc_provider_to_tegra_mc(p);
++
++	if (!mc->bwmgr_mrq_supported)
++		return 0;
++
++	*agg_avg += avg_bw;
++	*agg_peak = max(*agg_peak, peak_bw);
++
++	return 0;
++}
++
++static int tegra264_mc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
++{
++	*avg = 0;
++	*peak = 0;
++
++	return 0;
++}
++
++static const struct tegra_mc_icc_ops tegra264_mc_icc_ops = {
++	.xlate = tegra_mc_icc_xlate,
++	.aggregate = tegra264_mc_icc_aggregate,
++	.get_bw = tegra264_mc_icc_get_init_bw,
++	.set = tegra264_mc_icc_set,
++};
++
++const struct tegra_mc_soc tegra264_mc_soc = {
++	.num_clients = ARRAY_SIZE(tegra264_mc_clients),
++	.clients = tegra264_mc_clients,
++	.num_address_bits = 40,
++	.num_channels = 16,
++	.client_id_mask = 0x1ff,
++	.intmask = MC_INT_DECERR_ROUTE_SANITY |
++		   MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
++		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
++	.has_addr_hi_reg = true,
++	.ops = &tegra186_mc_ops,
++	.icc_ops = &tegra264_mc_icc_ops,
++	.ch_intmask = 0x0000ff00,
++	.global_intstatus_channel_shift = 8,
++	/*
++	 * Additionally, there are lite carveouts but those are not currently
++	 * supported.
++	 */
++	.num_carveouts = 32,
++};
 -- 
 2.50.0
 
