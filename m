@@ -1,77 +1,75 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91A272E7C;
-	Wed,  9 Jul 2025 12:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AF528FAAC;
+	Wed,  9 Jul 2025 12:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752063627; cv=none; b=AcQ+voS85H6CdeHNZSDC9Je2fCc05MCKkQXXt9lN3RQwVZJepmvGuhJzMoL+DmLAhJZf6Utn8RJc0t+6i9KOebdCYZl1PU6+AT7xAqETGDSoczOX2KPvepCl57r8YsT7WAtAtyxkSwc4ax4ripoixVA8z3+Q9RQL2uxLO6kRYm8=
+	t=1752063728; cv=none; b=sdxS4kgPYfPab/BBk6eidfWZJ4bYxSR/YYzISQ+MAXGBDgcLThYM0D5R/h9RXz8i3GtLbwyLZgB8Pw2UoOVVAXxwIZqXprpTnBtY4Rhm+m/j0dxOGerk+A7FNls4GcIJoE2kddp5UpxykLSofZcwrVZmRKHF3Sq9/5zL0EtOxds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752063627; c=relaxed/simple;
-	bh=vTxSr4OcEFLxV9myZXbp9oq5itZ0+F6vLpEgCoNxz0c=;
+	s=arc-20240116; t=1752063728; c=relaxed/simple;
+	bh=m5kEpDlp3vF40VA1rhIyPl+AoQu/8JiBzjUyE5Efm2A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eh5XRydl6DEAR87nDzuc93e9Kxl1eb+Mei+6hCU1DR6ZBkbOnrEJDyDbyqtauKTrtK0HHBw2AJEBiQkD+HoCKGkMPLy0bEZi7MmK/I3neDFv9kFIVYl1z1Ar2rJmL8+vqrmLz6kNRZkkK/jXukHLSQDdv21ZGWIrpr4v3lxaGaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8iMRGjl; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version:Content-Type; b=qkgBNDPuslNoB/2YvQRokH++dCJWahCgvgNN9Ao2tRaEUoi0mBCTffLlVFSGNbOMM9NIMGk2E6CMw4FRPdfIlFvOtbnZExqz8EgwzmsLpj+PCYKfYLfZDPU2y/HxYlPhSWxAbLLBydG7wmMthxuqz/vhAsrBxeNh7D+VTi5Ow1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Va+r68/e; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8iMRGjl"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453608ed113so60052305e9.0;
-        Wed, 09 Jul 2025 05:20:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Va+r68/e"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a503d9ef59so4171552f8f.3;
+        Wed, 09 Jul 2025 05:22:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752063624; x=1752668424; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752063725; x=1752668525; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Cz5QQgif2TZ+psnMb6iWbzxnGr67pPa/3dM5Lbz5MrE=;
-        b=d8iMRGjlpsoQSYGNCgiS70Fl3oETvYM/A7xkTiNhtIR4LkY6pJH3iEFEjcXC93y+1+
-         xHLr59PESgkT9Fh8hDuwmxbNiMT1I66491NBjZnu5s58Mwat041cfhJif2f39VtQifE6
-         gndJcFbh4qRc+P8HraWHXVO8cz1SsLanPHMnI5YbuCl1n2u+Y1ui/muziyLvHN97nkm5
-         gXfbLCr714SGnWlJWfszS6RCbvVP4xqqF1cmA00/G/mb6/SZxoZ0DLqjbvIRVs4I8fB/
-         VqlVmjrUG6sYoIhorO6C/dA9RhnB6j4sZQz7KRf508BQura1tuxCTciMRPeS46R6j+FU
-         sTLQ==
+        bh=2AjhO5fjoOIL8dVF+sjsL9u1AY0VQCppxhDhCfveEvQ=;
+        b=Va+r68/eH+IhoX1is7XAsQXjRdik3sGwvG0y0SrApkh/cF3s1nOOkWLxTFaAeS3/TW
+         +eSxYjxgPColalyfpwVvWk0aLGRlxOh/Jx9BJhNooawl46YWimNR62LRXW3778jefrbl
+         L07VDL+gTSzAT/vWsy75jdFJvNO6Fj5BPEqssIBNEld/GdImQdkmFOPdt5E+JdUMhSQR
+         0nnlisj4HTt/1U7QMiICslae5tRbFNL84imDGFNoS0K91yAuf9ZosmRxg4Z93WdhgbD5
+         Ku8GIYXkF/CAiOZFiPDAr0wBy168+7Jib8RpVyBRh2i9qw6fM+e9M0W0Lv+rmzMPQ+4e
+         Xs8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752063624; x=1752668424;
+        d=1e100.net; s=20230601; t=1752063725; x=1752668525;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cz5QQgif2TZ+psnMb6iWbzxnGr67pPa/3dM5Lbz5MrE=;
-        b=OUQOwAZeIeXiLg7Jt9vxR4LhRfgo6JxRT9Z6D8+spPIjEM5g8cpZvvQtOIivZbIZuq
-         mY855Zxv7NyYY85kVoMo7clsQOik4thtFMSLf6x9y0CXOOvIRzKGlUHDWRJfwSLBpvCr
-         bYZnjUFoli4C+uo7Iy8ocKpp3nQVkE2pV0QM2t0Ka/0qbOq3W1xJ7VfLZdzUF9vvDHPz
-         wDSeoo+XnLzdgRLQmGwAVadnkZyO/NSgkvtEvnB9Jb6NFcJcddM1SfXKs2+VN+fe9eK4
-         fBCPjZa3ukY5DFLPgp2M4pD7HtgcdhhFvzvMpV3lkzQVSHFOWY+/TUf1A3q/Vs8z3zeN
-         vnZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsWPUeKMBtcJF0MnFhW2dsYX1yn6dLr/GTBYkG2aZHD3yyflSCwKfMEWH/S3NJgEh98sLp0OtVH2fF/Io=@vger.kernel.org, AJvYcCVpB23B9Cshd3+3PX9weIP4QpVy2piFqvVRRSQlGcDQV3g2ADfIWwGW+E8wR80Pdi4Bg+e/lNwYtAjBxHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsJmDNPr+VBBpI/ZVTSLxKYLqdyIncNJDqxqtKE6z6wJXCH8lO
-	NLwCcHzq5WCQeWNc5Mk5i2G3FoybiMW/+yJ36diAJzdOaxjLS31M+pNN
-X-Gm-Gg: ASbGncv9aiBxww/ZxmAznbYYdggLNjIFNp9OOgSM76X2ZBEbNDLHp/NtOTSDCZzMd/Q
-	cMteN3Ohf6KTOB43VdWJ3Uc4GBqE9HKWbDCDvkbsk8CCf70i5YUI0d0He6ep/TZ4cRt1FcbOP8G
-	lChBbFDStf9IZwMKB2WtpEfq6RSD2WWLr8yFVqd5OqMbKx4y713oXbETeJqQnY46IeS8ZUdTrcw
-	IhkP1D51OPIJTI8xs0x/PRsUhv9Dsl3i4CwckT+gsp1PFofGRr9U+HqMFbdO04wwJy83GO89hZb
-	Ovq1d/byjuJSItbVICFw90FOyHgz5WQynGKY653SWT4PYdsAr03Bf67uQX//5k9MtD8/gFz0fIo
-	iFnROdJa+9HCZt0gKNeE280U3x1J7eDy8q1yCrF01h3IUooNpo2zb9A==
-X-Google-Smtp-Source: AGHT+IH6QLMupQyvz6K1xZUyeINn+lP3CNsWV0TExX1rWT3sPHY0i+kJ1Ij7hqhRt1VAgldCxPijDA==
-X-Received: by 2002:a05:6000:2087:b0:3a6:f30b:2dd6 with SMTP id ffacd0b85a97d-3b5e44f5a13mr1981376f8f.26.1752063623787;
-        Wed, 09 Jul 2025 05:20:23 -0700 (PDT)
+        bh=2AjhO5fjoOIL8dVF+sjsL9u1AY0VQCppxhDhCfveEvQ=;
+        b=WpBuK6sS1SyUiF1JFCFthRelPT6hEKtQdjdgwIhO4mkzF/FEgqIXRZFjkQgugIFWdi
+         7Pob4JZ5sEDVY1HoMJxyN1k9chMklnFr7u3ELQ36ry0KQlnNDWG1u+hodlhx6W8NNO2S
+         kvOVVGuT3S760uvVVQWEjAVYygMfZyE2yfxNlMJqZFssHVvcrG1X1tNdzRcwNqS78GaW
+         /R/P1hvaCyvVuqJ9uM67QKX18xJGi9Jf1Ir1uAh+gf3elj7juBKy2NHC8FJ0ZHCFgeoH
+         O6zc24rmqIo2bbo7a6mL1v6o88F6VZSIUJ0/k+GC2fWv42h8i5oqNrG7dXOZ6Bc0HQEO
+         BbfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhMduz3jmaLECSqbF6RTNly85AAE8adjs8KkQ/W1hsPvb9nrWW4isFUM9D7xllVviAyAfMDlsGHaTlweo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr6YdrxfCzfzVq99Prwyz4ZdTyDRH/yVagpGbLM2PUjkxTAiYW
+	d0FjHInBWPfrpGykzRbK3tDr5oDt6Zdo+TjEy+6pS34hq+8v3VmZQebN
+X-Gm-Gg: ASbGncvcxbTHrKHumq0RvawfjFmtRCnCJyggfOFdO2DF9tcQPuGfwC2NxqhbAdF5R7F
+	MPQdFw5mDrSEOijVKJXkrQwpOpJ0YS92DkS+4EQQGqVbfQ+bpii0sDxikERr0oVxqb+ZVzWqZ3S
+	nu+09B9dFBXIid3PZid6kzPVHLylB6oHpwaBkwmNAAVyqp0xY9WyKFrnYft3IEkD1a6lN4+/N2C
+	Hspk1UsefjSbwgf7Q9okN/nabRznl1wYK1zmjHcA9BEVs7KNX1qsrxq6QcUNc1jpHsigEKfykMg
+	tAvl4nGTaeajKqe8Bz27tTMlBcZcN5x77hN6/SovDg00FQEh7UmcTI05Tmoh8HT+MS3HUoOSFCv
+	bX0qSNn3COQH35XRF22WbWVWMYB2DcAk2mSE5zVMHpY28gKW4l0g56w==
+X-Google-Smtp-Source: AGHT+IEjgKCuEKWXjSpPe3p/Gn5aDMZ1rk3eGja+6fIWwh7wxGWk1PeGLJprfYTyXycma/nWexj/WA==
+X-Received: by 2002:a5d:588c:0:b0:3a4:d6ed:8e00 with SMTP id ffacd0b85a97d-3b5e4537e82mr1887735f8f.33.1752063725041;
+        Wed, 09 Jul 2025 05:22:05 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b4708d0aa0sm16013292f8f.34.2025.07.09.05.20.22
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b471b9671asm15843835f8f.53.2025.07.09.05.22.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 05:20:22 -0700 (PDT)
+        Wed, 09 Jul 2025 05:22:04 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <thierry.reding@gmail.com>,
+To: Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: tegra: Use io memcpy to write to iram
-Date: Wed,  9 Jul 2025 14:20:20 +0200
-Message-ID: <175206361431.1595082.8917361083602390778.b4-ty@nvidia.com>
+Subject: Re: [PATCH] firmware: tegra: bpmp: Use of_reserved_mem_region_to_resource() for "memory-region"
+Date: Wed,  9 Jul 2025 14:22:02 +0200
+Message-ID: <175206371320.1595609.4620745017655016486.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
-References: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
+In-Reply-To: <20250703183434.2073375-1-robh@kernel.org>
+References: <20250703183434.2073375-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -84,16 +82,16 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Thu, 22 May 2025 11:11:24 -0500, Aaron Kling wrote:
-> Kasan crashes the kernel trying to check boundaries when using the
-> normal memcpy.
+On Thu, 03 Jul 2025 13:34:34 -0500, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() function to
+> handle "memory-region" properties.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] ARM: tegra: Use io memcpy to write to iram
-      commit: 4110a4d95bf0bebd8ccaaeb93988dc9c08bd7d6a
+[1/1] firmware: tegra: bpmp: Use of_reserved_mem_region_to_resource() for "memory-region"
+      commit: dbe4efea38d0a79ed58069499368e08b815952c6
 
 Best regards,
 -- 
