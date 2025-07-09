@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05FE42A99;
-	Wed,  9 Jul 2025 18:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC9D1CD1E4;
+	Wed,  9 Jul 2025 18:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085085; cv=none; b=eSRtYzqMgkbrJ44wrvfx9S0LD0+YoebNo7BWAjqBT1eE5cD6T7VIN0QUshXdfUXTh0bxVWyIoseDhTsQg0zvMU8FKFyBDZSM5zF6pWgBEQd3iqhBZ7MdTxrYJuhl4JNw0Ehfv5mHQBGbyR0M+0mp9iKs1qrnbmwBbv5eQGLjf3c=
+	t=1752085195; cv=none; b=U4jzQigZ3uocl9ekCS9o6P+Bk+eJJmPSZxtyzQGUa/qOjQ7Ra2P2/Ba5CHuIyVGi7LuZ6FBSxQn5Uvx2rsHNgxXU7K8Y8s2BicZr8xDwil9m2St2Kj+RagOt8IiRUlyWFvKJ62T/1fwgd8WYxKNqe426Qu9xf1EtFDh13dlhpFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085085; c=relaxed/simple;
-	bh=S6zZ5G800kN21belO3KkHrdTmOtxbk5yt+VXUtC+gDw=;
+	s=arc-20240116; t=1752085195; c=relaxed/simple;
+	bh=owaHyy4rlyoW7dGQHzYKf39H7GnNGRv0PmQBon9CO+o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TkRx2XgbfXmkShjTizdb/Lx5Bf+W8YUOI2NrtPq7H5YvnKwIxRzWEhLXb9/D2/vWxcGjgV1K+mjPINhHvk7cUCa9jnqHUaAYiPDy97/xOfp20Sc1xFh8G7UTZI2izDsdJ84JPVCysQCv03dRCSZRLfAKuIrTWSGxNPCFBdv8yJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJkuOg3C; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=avV1h+9SMvvEK1Ry0uEjsZJgXZZs1rBM8as+qK2JSQl747YCw5Omu2f+LJ8ItVBbI7sf0sQZ2dZ3Nc84KQvO3SsaF1uMlRRLCytvHd85fnNhiaW5IOMark1BVpjQOnOhhEaHPoRN0+8EYylvsnEgH+jz1sxTM666iNyTy4NLsxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiYQR0k4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJkuOg3C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FFC2C4CEEF;
-	Wed,  9 Jul 2025 18:18:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiYQR0k4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A186C4CEEF;
+	Wed,  9 Jul 2025 18:19:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752085085;
-	bh=S6zZ5G800kN21belO3KkHrdTmOtxbk5yt+VXUtC+gDw=;
+	s=k20201202; t=1752085195;
+	bh=owaHyy4rlyoW7dGQHzYKf39H7GnNGRv0PmQBon9CO+o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FJkuOg3COKN7dPW4oz/ySDbAABNsJ13Cii/J71dixJEjfe0KBNp92mCrjzTgklLMy
-	 OibKFiSXySXtDhDCBKT+m5a7EayRNOU1lBSuGBg/iiedtgYmcHoKMmi1qUjwKJxDIS
-	 Zl9MwlMlcu4ndDLvw3Di5jyWZkQ57zya2+kUlj20yCaPLcuga/boz7A22wDfRRTIcZ
-	 5frOLbxu0JIp4Vyurdo102elpIUkJrsWQKRmX0aLpD+5J/Dg6o3iEZFRuS+qo0tmsR
-	 0MrDGQYV5jyWta9AlC9Sxo5pnXQq+lgfv3SgiQu5zUaNDnYhYm3CPRaiiqdhkxfHHc
-	 +H3CkSmD0ybdw==
-Message-ID: <c80bf310-8cee-4a44-8e01-472bfee1933f@kernel.org>
-Date: Wed, 9 Jul 2025 20:18:01 +0200
+	b=fiYQR0k4Ce5sGepy9U4Ufckw3gM7jexgSstL0oYtAeyFGXd3sI6LGbBHjbpAC6fSY
+	 O7OxAqKr7CSopXsgC0wWnRQNJSYsoV+u5K4bsbJ9JXxdNBhAPEW0Fu5fB6/Y5Vww/z
+	 lT5on/2wBn5t2Fg0ex3jmje9yxwzo2MP/rAanX+5gfCeo5HozVF/7kHqE8HC8ZEB31
+	 +JpnPpzM7fHYPhoMJutHDvOYn1FdeOvLYHF/PEkcRMEmddrJ0DZ73Zr/7DjNv0dBL5
+	 3L7Y/cz/ra4Z8gC9p6SqnMeB0domlcEwfiduAc/NDRy/PmkGEZkmbKIEN4MxNV8+hI
+	 dM+ip0p8A7DzQ==
+Message-ID: <abbfc54d-96af-4e9d-8c2c-8965aa99076b@kernel.org>
+Date: Wed, 9 Jul 2025 20:19:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,13 +35,13 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] memory: tegra: Add Tegra264 support
+Subject: Re: [PATCH 1/4] dt-bindings: memory: tegra: Add Tegra264 support
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250708105245.1516143-1-thierry.reding@gmail.com>
- <dnwxijowryyoaanvzcz4cfkpt2cejx4mnfu772utkt66fdrelk@n2prert7km4y>
+ <20250708105245.1516143-2-thierry.reding@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,58 +87,105 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <dnwxijowryyoaanvzcz4cfkpt2cejx4mnfu772utkt66fdrelk@n2prert7km4y>
+In-Reply-To: <20250708105245.1516143-2-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/07/2025 14:18, Thierry Reding wrote:
-> On Tue, Jul 08, 2025 at 12:52:41PM +0200, Thierry Reding wrote:
->> From: Thierry Reding <treding@nvidia.com>
->>
->> This set of patches extends the DT bindings for the memory controller
->> and external memory controller for Tegra264 and add the necessary DT
->> headers with memory client and stream ID definitions.
->>
->> The driver changes in patch 4 are mostly an extension of existing code
->> and the bulk consists of the memory client table for the new chip as
->> well as the bandwidth manager calculations.
->>
->> Thierry
->>
->> Sumit Gupta (3):
->>   dt-bindings: memory: tegra: Add Tegra264 support
->>   dt-bindings: memory: tegra: Add Tegra264 definitions
->>   memory: tegra: Add Tegra264 MC and EMC support
->>
->> Thierry Reding (1):
->>   dt-bindings: memory: tegra: Add Tegra264 stream IDs
->>
->>  .../nvidia,tegra186-mc.yaml                   |  65 +++-
->>  drivers/memory/tegra/Makefile                 |   2 +
->>  drivers/memory/tegra/mc.c                     |   5 +-
->>  drivers/memory/tegra/mc.h                     |   9 +-
->>  drivers/memory/tegra/tegra186-emc.c           |   5 +-
->>  drivers/memory/tegra/tegra186.c               |  17 +-
->>  drivers/memory/tegra/tegra264-bwmgr.h         |  50 +++
->>  drivers/memory/tegra/tegra264.c               | 313 ++++++++++++++++++
->>  include/dt-bindings/memory/nvidia,tegra264.h  | 136 ++++++++
->>  9 files changed, 594 insertions(+), 8 deletions(-)
->>  create mode 100644 drivers/memory/tegra/tegra264-bwmgr.h
->>  create mode 100644 drivers/memory/tegra/tegra264.c
->>  create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
-> 
-> Krzysztof,
-> 
-> There's a dependency between this series and a series adding device tree
-> files for Tegra264 (both the driver and DTS files include the memory
-> client IDs in dt-bindings/memory/nvidia,tegra264.h), so I think it'd be
-> easiest for me to take the driver patches here through the Tegra tree as
-> well.
-> 
-> Let me know if that works for you or not.
+On 08/07/2025 12:52, Thierry Reding wrote:
+>    interrupts:
+> -    items:
+> -      - description: MC general interrupt
+> +    minItems: 1
+> +    maxItems: 8
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 8
+>  
+>    "#address-cells":
+>      const: 2
+> @@ -74,6 +79,7 @@ patternProperties:
+>                - nvidia,tegra186-emc
+>                - nvidia,tegra194-emc
+>                - nvidia,tegra234-emc
+> +              - nvidia,tegra264-emc
+>  
+>        reg:
+>          minItems: 1
+> @@ -127,6 +133,15 @@ patternProperties:
+>              reg:
+>                minItems: 2
+>  
+> +      - if:
+> +          properties:
+> +            compatible:
+> +              const: nvidia,tegra264-emc
+> +        then:
+> +          properties:
+> +            reg:
+> +              minItems: 2
+> +
+>      additionalProperties: false
+>  
+>      required:
+> @@ -220,6 +235,52 @@ allOf:
+>              - const: ch14
+>              - const: ch15
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: nvidia,tegra264-mc
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 17
 
-Works for me. I don't have anything for Tegra memory controllers and
-it's close to end of cycle. Let me look at the patches and ack/comment.
+Missing maxItems
+
+> +          description: 17 memory controller channels
+> +
+> +        reg-names:
+> +          items:
+> +            - const: broadcast
+> +            - const: ch0
+> +            - const: ch1
+> +            - const: ch2
+> +            - const: ch3
+> +            - const: ch4
+> +            - const: ch5
+> +            - const: ch6
+> +            - const: ch7
+> +            - const: ch8
+> +            - const: ch9
+> +            - const: ch10
+> +            - const: ch11
+> +            - const: ch12
+> +            - const: ch13
+> +            - const: ch14
+> +            - const: ch15
+> +
+> +        interrupts:
+> +          minItems: 8
+> +          maxItems: 8
+> +          description: One interrupt line for each MC component
+> +
+> +        interrupt-names:
+> +          items:
+> +            - const: mcf
+> +            - const: hub1
+> +            - const: hub2
+> +            - const: hub3
+> +            - const: hub4
+> +            - const: hub5
+> +            - const: sbs
+> +            - const: channel
+
+
+Missing constraints for interrupts and interrupt-names for all other
+variants. Now this patch claims they all have 8 interrupts with any name.
+
+
 
 Best regards,
 Krzysztof
