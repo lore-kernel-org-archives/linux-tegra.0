@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCB21CD1E4;
-	Wed,  9 Jul 2025 18:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4435721767A;
+	Wed,  9 Jul 2025 18:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085317; cv=none; b=LUhrYp3NSXXEQtbY2Ljz5D8DiiTMEh4EWKegNI3Q4Mch92hcwm4NyCmhpM8mFbvZiDGBr3RLkLFW9F4mvwf905JQlg0KuRA5q9lMMizxCsmkI3i14vvlr6WkLoZ3nb9sBm4xlLEgNH1EDwFFZ7GAHvBz+h3FYmErhvjBH9cZyDE=
+	t=1752085389; cv=none; b=NaQP3Sgy/GBOMilrf3jVG3s21kH/P9zWe+bgT8RfgGBJX8qOtfSISj1dHE7kd6Tqk7bj7AuLxAEYe6MWL6bGGk4CkH5m62o/NbFkzxnEkH/YuPWsxXYgwO/l4q7SgepWlCwG145FqLLPphe2nwqzJZyW2HplG+oQeZ9gm5GELuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085317; c=relaxed/simple;
-	bh=zCLosCbqcbu8LWKSJFCagUHVsow14fqR17eqPbdoL6g=;
+	s=arc-20240116; t=1752085389; c=relaxed/simple;
+	bh=H2gAt1JAj605GNuag3wMKgRumE9Q6a78O+xJcW+jX9Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+aPYESUnk+hIJf7dXljmT0RD8r7puFGVziPPwZxG7G/1ODY6eAmbf8rNAdFG2JRwe9WKtRLlUmmOZfNrL672e+iHcFzm9gBC5EyHCHkY5ASKo4Wuj6NInUbYlqT0gXHr51+7kjlmlvQa70lN7AjtXlWtFxgLGLP88pKi47GH/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXSUZhT6; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=gYy2N04c9ZgteZ+ADk145SSbjW6BWoBZCwAkCd31LOraMqCILnAasAuddxlNc5Smj1U7gGXPBWOagNOC+I+iFirfCRwApz6K6qbjTbMNHs0imcoVw7kz2PAem6WYY5Dfz5HXPoT3GIFBbWrkONxO7WAwJRDM2iZ3vfgDtYKjeYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUS/0Qb+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXSUZhT6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFD3C4CEEF;
-	Wed,  9 Jul 2025 18:21:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUS/0Qb+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD10C4CEEF;
+	Wed,  9 Jul 2025 18:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752085317;
-	bh=zCLosCbqcbu8LWKSJFCagUHVsow14fqR17eqPbdoL6g=;
+	s=k20201202; t=1752085388;
+	bh=H2gAt1JAj605GNuag3wMKgRumE9Q6a78O+xJcW+jX9Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EXSUZhT6BAr72mLCTddP9e5v7MvCnhM0o9HeAvOnd2f+3oxwGzv7ZH5TkdaxcAMqb
-	 SO6al1GnNmC1fsMBpGzOIJx+oix8tLd08XE2TX8wAH+o31H402+maNSL6Ai1xySBVR
-	 QddwEwdn5nEiz9oMvRWWa2SUQPodk66GycVro84K7DXPkspITCWM5GSE8YsygjYTXc
-	 Ij/8xvuEzI/UBpWc2JB4fPPj+wM/pgzmV8MI9bACLnUgMQPBfkUdt2mEgORUJ+qNHO
-	 f/1JSKpDx+QGdeqRNfV+ghIM9T9EyoWrhjZSO0NmqgMp5DE+caxy12pLd/OC101IKm
-	 UdbYCY/sCov/w==
-Message-ID: <34bec0c6-6539-415f-b18b-b0c70c1b93b8@kernel.org>
-Date: Wed, 9 Jul 2025 20:21:53 +0200
+	b=fUS/0Qb+34ZPp2I5MiJwY5fg7EwpNbq3HlZaoLR/BHQ3WgVaTKwJCPQoj5ODCeEgV
+	 iFAxSJPafDAU8nWBohxkZbULO6v1JaLRzY+4E/6Vc764pU8F0S2HR2OugtETBiktMj
+	 7PZ5ji2ctG6QMhZhAav0UpP8Rc20euOtIY/jr01eDrr2oPqCVnMCRYpV7wZQSyMGNb
+	 MreO2mx42QGIrQ+YvkverVt3CuVscGS3e/QccRg/CeRgEXP8vnI2P6rX/4HMWkzVBz
+	 CKzqWnOQZFV1mOH07dTDReOgXlq7zWXtiZb/ulwQfjton2WCtNNfgGxPzNjN0ittsB
+	 fWdbPXjBet5yA==
+Message-ID: <149f75a3-a8c2-4459-b425-56881f0100ac@kernel.org>
+Date: Wed, 9 Jul 2025 20:23:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,13 +35,13 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: memory: tegra: Add Tegra264 stream IDs
+Subject: Re: [PATCH 4/4] memory: tegra: Add Tegra264 MC and EMC support
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250708105245.1516143-1-thierry.reding@gmail.com>
- <20250708105245.1516143-4-thierry.reding@gmail.com>
+ <20250708105245.1516143-5-thierry.reding@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,25 +87,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250708105245.1516143-4-thierry.reding@gmail.com>
+In-Reply-To: <20250708105245.1516143-5-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/07/2025 12:52, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+> From: Sumit Gupta <sumitg@nvidia.com>
 > 
-> Add the stream IDs for various hardware blocks found on Tegra264. These
-> are allocated as blocks of 256 IDs and each block can be subdivided for
-> additional fine-grained isolation if needed.
+> Add support to enable Memory Controller (MC) and External Memory
+> Controller (EMC) drivers for Tegra264. The nodes for MC and EMC are
+> mostly the same as Tegra234 but differ in number of channels and
+> interrupt numbers.
 > 
+> The patch also adds the bandwidth manager definitions required for
+> Tegra264 and uses them to populate the memory client table. All of
+> these are needed to properly enable memory interconnect (ICC) support.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  include/dt-bindings/memory/nvidia,tegra264.h | 50 ++++++++++++++++++++
 
-Please squash it (you can take authorship and add co-developed), but
-adding given bindings and bindings header for new device is one patch.
-Not three.
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
