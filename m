@@ -1,96 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34343194A44;
-	Wed,  9 Jul 2025 07:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47242701CF;
+	Wed,  9 Jul 2025 07:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752045570; cv=none; b=tKMHeZcD4vbN9hcBt+Z5X79/dSaziUZKREn+DoK9SpLDGKmuh3e6SMECzeOdcjdpMcJJ5SmmxM0h1Jl42yLfYNzVp+M0TqmAA2oWbFasDMqRXdZbLhcBrcdiw62o2MIMVnR9g6M62be8xzHMAyJMutxPBb/kaelxObqKw9pxRzM=
+	t=1752046651; cv=none; b=mc+cXppSSO4BCexXku9ipRv9D1Nzln/4HcucpX283PA5VUsyLiu8C7XoHWh7Cd+ChgoF+ZcoGQdx81LCnm5GdPlcpp6AjKyaWMvvgO1rvRxUzB/SZFRkKpSTGrb6Or/cCsUsCejBsYGYH0hhpGL/Qf24CnujxO+XMaRuKy7TSSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752045570; c=relaxed/simple;
-	bh=+FdXl/ZUySz07xGC7GHXbM2oS9c+ddkk471S2TEye3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0yukm1q1+H+bEG9wzgfwnjyzvIEHPWpvoyNoGOGQlzL1TcTpf5vZCPmeboT5PY2t+kom8HCD78gLGF/Kdrbws+Lgd6LPbRvQ3Hw2Xs9nA/Tonva69javlXnbYHK2MHx99Eg9S70IokMN1WUle+e+3b60XahpT6knEnbvgxPeqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNHNUYlS; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNHNUYlS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E7DC4AF0B;
-	Wed,  9 Jul 2025 07:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752045569;
-	bh=+FdXl/ZUySz07xGC7GHXbM2oS9c+ddkk471S2TEye3U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tNHNUYlS0Dno8NlxGiVtmf+nX9FCL9PqikVT7Ggh48NCRYiRp7DnkwPSOSBDiQ0Tn
-	 nlph1Co3ANHylobkj8OO6qaF5BPzIByJlae3jKvQV7XVUO1Qe/5/uh19SCzgc1qMJa
-	 /fkFRdkkXpxH7tvtxo6uOrRytzjrzgapE2y6BHSUAxhWs7vexg71KMTjq2YSnWGUgz
-	 dh+MF8Q8iSdvcbx1P1KxydlAp5sefNjH320lMOysA6VVfirS+6eyQQOPsxRVMrOnQD
-	 G2YjLfHXdEGwGe79wcTsfwGsO8fYKB03oAQ+6fJfK2DAK/x1etLez17UAAZi5wQp/r
-	 LL0r5E/NK0Guw==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72c09f8369cso1736096a34.3;
-        Wed, 09 Jul 2025 00:19:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZmbqhWdshGqrYwN05NNtoE/qT9hET05H/rpxNp54IfuG/pb31wse2NgnhVn+YVEua5vevDhQIa/M=@vger.kernel.org, AJvYcCUikZ3dsiZtK71K5n6KWeGYWZG2hcKkLftd/hIE26hf0d7c1P115LUci6s4+sf2m9Jc0YNsBO1QoyRZEY4=@vger.kernel.org, AJvYcCWZQb77GtTKfdweU8DP2gkSllROT7TS23BIiDfimRgZetTQKgoPiPk7EW+W2bgJPXU1A8JfFbUEKurTCTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVRVviV1QOFqOmsQUg9gBV3j4XnopWLXkZDOxnlxAakWYIiYRi
-	ZNvieArzL3DbJnv8uB6W/bjjEv+UQp8ts8lWBNd2EivaSJQbpxl0XyoZo36BaqFUNi8TABchao4
-	fomxqkttAaggfeeKDn9p18fMwSp+R8rw=
-X-Google-Smtp-Source: AGHT+IFxc2jjH4fZ/YiHTM/JJ7mtVD0WJzVbdnfdT9Jxzbb+gc/4LF1PBuGm4dK3onCF9pnZwyZmwK1temDraGP9tUI=
-X-Received: by 2002:a05:6830:2d84:b0:73b:1efa:5f5b with SMTP id
- 46e09a7af769-73ce65b7ddemr786127a34.28.1752045569014; Wed, 09 Jul 2025
- 00:19:29 -0700 (PDT)
+	s=arc-20240116; t=1752046651; c=relaxed/simple;
+	bh=IjSrjdNtmHL+N2O99cfJAn4xL9zLPbOT/G/24/kQF2g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KqJuKHJyOjjZkDis4+OjGZqxBzPFUlGLc0cszug8/DQTQyu4qckdIy+inyqjnH+TuotsAumR4aujr0r+V0h9RRrZn2nNlm1cQwYpm1cmSN/ajt3qu/90n6bSGwmj8mBVBpppMxb+QyrB730CgLwfPBt2QxsrnukYn3El/KGbjhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8b232ad25c9711f0b29709d653e92f7d-20250709
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:671cc0ad-07af-4dc5-93c7-30c2cc216fa8,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:c4ef1a4188eeeec107fe2f569979e5e6,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8b232ad25c9711f0b29709d653e92f7d-20250709
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 228079291; Wed, 09 Jul 2025 15:37:19 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH 0/2] clean up in tegra clk
+Date: Wed,  9 Jul 2025 15:37:12 +0800
+Message-Id: <cover.1752046270.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707-tegra124-cpufreq-v6-0-fe69c0f9bbab@gmail.com> <20250707-tegra124-cpufreq-v6-1-fe69c0f9bbab@gmail.com>
-In-Reply-To: <20250707-tegra124-cpufreq-v6-1-fe69c0f9bbab@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Jul 2025 09:19:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gAGTx7cpesJfhz2q+CzHQh6OJfA2bzC1BB-QOL6QWpEg@mail.gmail.com>
-X-Gm-Features: Ac12FXzE54UiOt_Hcf4GJ9n7Sh3G5Qxpxjz126toJvIu-R91hcvgLxTDWb0sq4w
-Message-ID: <CAJZ5v0gAGTx7cpesJfhz2q+CzHQh6OJfA2bzC1BB-QOL6QWpEg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] cpufreq: Export disable_cpufreq()
-To: webgeek1234@gmail.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 7, 2025 at 11:17=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> This is used by the tegra124-cpufreq driver.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/cpufreq/cpufreq.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 0cf5a320bb5e864709b259249fb1af8bfbc0b04b..78cddc78ee98630f99ccc332c=
-64c94f437297177 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -109,6 +109,7 @@ void disable_cpufreq(void)
->  {
->         off =3D 1;
->  }
-> +EXPORT_SYMBOL_GPL(disable_cpufreq);
+1.Fix error handling and resolve unsigned compare
+2.Make tegra_clk_periph_ops static
 
-Please add an empty line here.
+Pei Xiao (2):
+  clk: tegra: periph: Fix error handling and resolve unsigned compare
+    warning
+  clk: tegra: periph: Make tegra_clk_periph_ops static
 
-With that, feel free to add
+ drivers/clk/tegra/clk-periph.c | 6 +++---
+ drivers/clk/tegra/clk.h        | 1 -
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+-- 
+2.25.1
 
-to this patch.
-
->  static DEFINE_MUTEX(cpufreq_governor_mutex);
->
->  bool have_governor_per_policy(void)
->
-> --
