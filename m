@@ -1,117 +1,125 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41045242D73
-	for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 09:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F829345A;
+	Thu, 10 Jul 2025 09:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752138272; cv=none; b=mR/3z0r96nP5OPWLlPnqCITwLbaUNp/aA3kWfmeC2ehnWJSWwFdveXyEwSM31u1KzjZLT4+Ski7DpApqJe8oDiGBTbfQTCSrlwVl4aYqIJ8SAvam1H9KBVeRYNHpAUnPiSaPhUKIGpZu6MIwKvJmSsag32lb7WGLemuOeRQ4n1s=
+	t=1752139289; cv=none; b=ErLvGNy5uHfRxuwWJQ4ctGLJvZxP8LlNTNj69MtnWugikU6g6DE0RJCNfbcWu25RQqVHnlsC8Y3n9Lj52lshyV0sGsJIiD+BOvtD8HXJ21947KfGTTsKliGwB//cWPRnKGZXGc870bApSkT9QojYN/C+3x+MWoizkIF6CkSWHvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752138272; c=relaxed/simple;
-	bh=UHq0Bpn2ipr+kaNHbOBnceI/82zqPsegalrxYbyF9JQ=;
+	s=arc-20240116; t=1752139289; c=relaxed/simple;
+	bh=aTcOifgKeVOo1BUVCcufR3MG9mr0xg/Uq+4OS714JN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5P0Fj2Atlr7C9HUBTDcB0sZngOAdyWfjzX30anUD2XHQG2T/eBjq+/ppITY4FeVhTJiE8HxiLvQl/Z6ca24otjRxnGziGoZvTtXTNaDRkGSHC/pgnfPJOHM5Ixkp/TkYMbDRS9tyBtaMazQ7VMXVacJXHF4eamHz9x06TXxm0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q2tHaLO0; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=gVop1vuGclsS/QZNy8kXAJYbbVMUFvU3lx1abz421qyfcAYbYfJfbzy8l/mSF5o+RNwTuaCwCTUzcwpJ3QXUHUOpH9yfT2fO4dYXdzl7nlJqGEzZo0LUthTYhxVaYENrBcalncFfX2miUdsfB5/xncb07/FM+YrML8JvUNF/u0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=l1quA2DE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q2tHaLO0"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2357c61cda7so100525ad.1
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 02:04:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="l1quA2DE"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752138270; x=1752743070; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DjeE3o0RxHj2yfYkiiw6nT6qNxm9Jz3LUgLh8cuza0U=;
-        b=q2tHaLO0JwJQ5bongibZo+qyz5ekqZ1B7+ZzIl0Hp0cgpT5tCUtLQpWoRNxrqXHaDq
-         XZZHx2GAI39rw2fndy91wknVr0WpnqxZb0bxbClc7KTYC6/MeO/BoZrOewWVhivDG0+a
-         oKD9CO5eqrTUl5rBBU/DQAvf49ZC8LA/IMDuesfvoBZeMdElfxgDlV1V4ufNveRGeA83
-         Yu8TVlY0uT3zodR+kOCQIEXMzYNklpjFXG6Ji5BfAkXSnwG26yXGhEFS61mbYTEUg2Gf
-         q3EQjzMfjynI0a7gfrivfWN2cy6nGAX3fZfofoLKnTzvOiDQqXuWtL3MBfgen5tb9Vmh
-         3XuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752138270; x=1752743070;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DjeE3o0RxHj2yfYkiiw6nT6qNxm9Jz3LUgLh8cuza0U=;
-        b=fIBwSTaO5Eq0W4jqlMq4KJt4AY2VK8yc2nGhzOir7XNvj/uS9ZdWx6i41yy6pQk6B9
-         w/Q6ydofC6o7C8a2AsPdDBusCd0Gm30gGLu1Fs0Mp38cj1HpWG67zhcfklYD1L0Pei9o
-         x0Pf6ftThk7pTT4NY58QZNpJ/s8Oc2pdZCQqczpYYF2hjwX+ZmnGjqeoKSTKk1EjJwyo
-         j8uyxg36la72CtMcdvpxX7RhZIFF11SwvH1Sl3ZscC7i+x18rZX6hTx9mpH/y7+ttfPo
-         ALQfzVH7PChP5IR5MwPyHk8YH+a7yFm1Y6itS71hMxd59zR3XF/N3fESYEjdJBCFzzMX
-         bg3g==
-X-Forwarded-Encrypted: i=1; AJvYcCW6vYSH+qAGfkZgLgAKceDBhEDepL9ctMPm0T5Sv7zv6JFQ0TylDJDpb29ITDmkB4grvXnqN+q48B8u+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8u7cHdn6gBegBZfqpDS/2O9gBK0vzqOEVo+RC7j1J12Kp0FBW
-	Jhv2NEZ+QkLNtFzOwj8ZKpxTDT2Rc5ZycER5hdCs1Bk5jcobpjQCUsSWvzCWaR3bcA==
-X-Gm-Gg: ASbGnctQU7FJhD+xTceA0iu4UD22VebjkQf772xzlm6vbqH5dse4Ix6GU8nhN65Gm7N
-	P6shYG+U0MaGmB1/cXqSlKaM2RG2w6dSEcXuewZ2g9yioBmG89Xg5/4I1CPWFZf34AFoZ362IBI
-	PhvnjJ4tUA/CeZQqtMEVGXdQrZPjrozzsxd6SvPhmDKk2p/B098wFpvxmcqk2iBWDzzMB0EChUV
-	VMLjn2x57Hu1mQZ4oGNMQSnkZEtqYsB7nhXGQGErwKiWENR+1d+NXRBza6mAdDotlAgf/6qH/qT
-	WKSdNWKC4yLiwai+j+uIdDWnMUpSW9TITO4Pd0wImq2tB0x8cilTLDCTTfWpxNCjTRJUw0hLHJ5
-	yehB/tKzOpue/0hkQ9ceZ
-X-Google-Smtp-Source: AGHT+IEUCwoHbQmo67knPJ74PmLn5sw1tOh05zzgGXqHLIH2hLihrsg/DC4THre9sZfOvA98I9mneg==
-X-Received: by 2002:a17:902:f547:b0:215:65f3:27ef with SMTP id d9443c01a7336-23de372b90dmr2361415ad.12.1752138270075;
-        Thu, 10 Jul 2025 02:04:30 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f49502sm1369146b3a.115.2025.07.10.02.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 02:04:28 -0700 (PDT)
-Date: Thu, 10 Jul 2025 09:04:19 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
-	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
-	vasant.hegde@amd.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v7 27/28] iommu/tegra241-cmdqv: Add user-space use support
-Message-ID: <aG-CE0jUxK4k1FMb@google.com>
-References: <aGRmaOORg-YDfncY@google.com>
- <aGRozoIDIlgl9H9x@Asurada-Nvidia>
- <aGR55PUBnwb8qT8U@google.com>
- <aGSBTpY0nkdp2TTL@Asurada-Nvidia>
- <aGSNmf5Q82xEbDpX@google.com>
- <20250702180541.GD1139770@nvidia.com>
- <aGaXqwzfLwsgCH6n@google.com>
- <20250703175532.GF1209783@nvidia.com>
- <aGbQipeSn0aZnwZU@google.com>
- <20250704125012.GK1209783@nvidia.com>
+	d=gibson.dropbear.id.au; s=202506; t=1752139210;
+	bh=HfT7iDuh3LiR16pu2N8FA8HCpxbEywHzXQ8Qi+G4v1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1quA2DEbh3sElQ5//lO3Tsop/74InuSr/4Lc9MCHYaz/QcsBqgBBqeaoXnR/cV2u
+	 lhH/TlK/R2JPPE/fv58m0x8dmOaBpviicNMAqnQWsXNbzsFSWTowuNfQ5mtOoyPkqk
+	 Mnbrrx8q0ECOgCXrnHfV516MMtyKVWGzrbipE7BYsDJrVr04moxcR96fua0ZeJKybF
+	 6Dr6NrZxDbj4Z3lTTioWKqJxh+DLDf8+ChKllsBz0zjn/cExnvLVLwPU+cgyCULbM/
+	 2uBumDxlcL+3Uo6N4S1S+fh2wZkBsOucYyU/5rzj9dyG4SH6v8lxFRXjqEnhCEIJDO
+	 vUeWqOj3IXKJA==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4bd8Sp1wqSz4x3q; Thu, 10 Jul 2025 19:20:10 +1000 (AEST)
+Date: Thu, 10 Jul 2025 19:17:48 +1000
+From: David Gidson <david@gibson.dropbear.id.au>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] checks: Fix detection of 'i2c-bus' node
+Message-ID: <aG-FPE9rBRqhq70h@zatzit>
+References: <20250709142452.249492-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yCSc6OZWW0AuejUe"
+Content-Disposition: inline
+In-Reply-To: <20250709142452.249492-1-jonathanh@nvidia.com>
+
+
+--yCSc6OZWW0AuejUe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704125012.GK1209783@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 04, 2025 at 09:50:12AM -0300, Jason Gunthorpe wrote:
-> On Thu, Jul 03, 2025 at 06:48:42PM +0000, Pranjal Shrivastava wrote:
-> 
-> > Ahh, thanks for this, that saved a lot of my time! And yes, I see some
-> > functions in eventq.c calling the iopf_group_response which settles the
-> > CMD_RESUME. So.. I assume these resume commands would be trapped and
-> > *actually* executed through this or a similar path for vPRI. 
-> 
-> Yes, that is what Intel did. PRI has to be tracked in the kernel
-> because we have to ack requests eventually. If the VMM crashes the
-> kernel has to ack everything and try to clean up.
-> 
+On Wed, Jul 09, 2025 at 03:24:52PM +0100, Jon Hunter wrote:
+> If an I2C controller has a 'i2c-bus' child node, then the function
+> check_i2c_bus_bridge() does not detect this as expected and warnings
+> such as the following are observed:
+>=20
+>  Warning (i2c_bus_bridge): /example-0/i2c@7000c000: \
+>      incorrect #address-cells for I2C bus
+>  Warning (i2c_bus_bridge): /example-0/i2c@7000c000: \
+>      incorrect #size-cells for I2C bus
+>=20
+> These warnings occur because the '#address-cells' and '#size-cells' are
+> not directly present under the I2C controller node but the 'i2c-bus'
+> child node. The function check_i2c_bus_bridge() does not detect this
+> because it is using the parent node's 'basenamelen' and not the child
+> node's 'basenamelen' when comparing the child node name with 'i2c-bus'.
+> The parent node's 'basenamelen' is shorter ('i2c') than 'i2c-bus' and so
+> the strprefixeq() test fails. Fix this by using the child node
+> 'basenamelen' when comparing the child node name.
+>=20
+> Fixes: 53a1bd546905 ("checks: add I2C bus checks")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-I see.. thanks for clarifying!
+Merged, thanks.
 
-> Also SMMUv3 does not support PRI today, just stall.
-> 
+> ---
+>  checks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/checks.c b/checks.c
+> index 123f2eb425f4..7e3fed5005b3 100644
+> --- a/checks.c
+> +++ b/checks.c
+> @@ -1024,7 +1024,7 @@ static void check_i2c_bus_bridge(struct check *c, s=
+truct dt_info *dti, struct no
+>  	} else if (strprefixeq(node->name, node->basenamelen, "i2c")) {
+>  		struct node *child;
+>  		for_each_child(node, child) {
+> -			if (strprefixeq(child->name, node->basenamelen, "i2c-bus"))
+> +			if (strprefixeq(child->name, child->basenamelen, "i2c-bus"))
+>  				return;
+>  		}
+>  		node->bus =3D &i2c_bus;
 
-Ack. Thanks!
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
 
-> Jason
-Praan
+--yCSc6OZWW0AuejUe
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmhvhSwACgkQzQJF27ox
+2Gd26A/4i1INuUVnYIhUjSa7EnBNB+F6YLtDjjcc7ux8idax3svy4Nlv5dP9FYLD
+tjcXfKYptZaKejhntmFIpUgKlGhquvH762/96A9KrYlFT3NaPAg1nQu9aEZFRCXz
+meuoSgGZjVMUblzj2XwJ7g+wYb6fdMVal6STw+Jm6ExHJDrauCng1VKcOK1Shoec
+aX1BvUlElLvSyoOOc41oBgxqgorNopVnj9rcFsY7AJ/EByBl1kRntnxfrlWktqV1
+QTuajgId8dLZpU7PpSCHLEmofFyr2uqF1kmIoPq99KOuWRnpEXwZlWfb8D4K3a6V
+MurHhDohFGa12KQrMS7xOoUi1ZD+NEB9ACkqsTX833bGGhmpXdkeY+VeAOHKbi9Y
+hWXxVBS23hV7jZrc548zpdBvCXRw0xor5MerxgcYuNZ6eNXpE1XJfxWul3xfBOhD
+GdF8uekdinN8A1MojAG0nXqYGppqL10SPYxCI/PjanKCsOcVQUPaQUo35Oeo5cJl
+t2K1Nl/2ilDc/P4eiEuHlDx4G5Z3Rtx6TWa3iX5x307mxGwC+mzRF2/+ZVkocfsk
++CybUGCGY2vq2yUEgB1gUMg5xtXpx1XDHRJhgGeTBCGzGUvnJHX2UylOdal24oLE
+sQ9RhZ+3bBc/tU2ayw9jgePl4gV/Kc/u0i7q5ibvjfUBDX5Ucg==
+=ID+b
+-----END PGP SIGNATURE-----
+
+--yCSc6OZWW0AuejUe--
