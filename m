@@ -1,72 +1,72 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A967E2C0323
-	for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 21:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00BC2C08BF
+	for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 21:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752183959; cv=none; b=N0dtxlzvIacF4vF8ksgzPm++J/y3LE9MUIfcUsc3+K1WAbedsMPPC+38gVqD5sMk8Iv6UoAMV93j5SuWg0Narv+TDurvb/ll/awD2e2N4taMXXn4Fp44DeEm6SlSEbSz4GHN+w2KJCQsdhr+yAjof9TRfhiWhG9Ho+bOISBvlAk=
+	t=1752183962; cv=none; b=eMIQNXDxrOyzpcfoB1NeLztC1NoKyoMheEfSG//oMBXCrH0HCQW1T4nqvjX3RsNlZGR/nXbuItQOwTEYuD3qok+vSeN7f6+0+jz7v3u4cdmoHCm6ioU/9z3wuko2Ukqa+bjFyDUIfHXPQ8ySpkusBTkhjybci1Xi6o5zPNZm350=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752183959; c=relaxed/simple;
-	bh=KPpqxrbRKKtVjqm1nuEddEThifN10snLNmWpwUh/Uvs=;
+	s=arc-20240116; t=1752183962; c=relaxed/simple;
+	bh=I1wqJdRTlHmsA0JfGk/JJDZ1BDeSSBu3qnl9x/JMS/0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d2O65HlxEbeY7f47fOuIH3txhb4F50RVEUaCRHrAgm5qo3/b6L+JQx4dSfqK8CArt8o4d1ImtrWPymXfALMQtuHL4Ui8XJh6M9Y4BJEuA5707KzBjUiibDXVXAr2PFZdZoiDC9bCOAdyeKFHf3u8WuLzFd5UL0rb7vSh2OVSuVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFMAuN1c; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=GjxYoPv8FdX+xRQn3GvxJYoDzCcKUvIIvHI7Ao4CoVAO1bx8E+X85qieqFmn+sJkcBrm7xF9S8Y94r4fHRRGaI1jAwL6Edj0siOT4OzH75c0+KESdhm11Ox5jI4k+C6mu+a4zmH25OkOOWLzpImFech043uNX2nxxafjwHlPuho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T34/lqL2; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFMAuN1c"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T34/lqL2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752183956;
+	s=mimecast20190719; t=1752183959;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SiuANl0911cYF+BhoCl7EPbqAqIzSbNjca7mdJo3NkA=;
-	b=HFMAuN1cTh4564yEBH/I1XlKLUcISxV/IeQZDms87+LsB7p9kPYcJkcXKOXNlWuxkKxQf/
-	w/5SdpuPosCZcEw1tnUtdtl2lLYV2hpiAYv4/WkFQjZf9R4fii8OZDGYceY/bJidBbP4ns
-	+mocbU6vaTabcvObFFiHKgxsfKZ3PLQ=
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
- [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=nucAiqEHmLyRkEarV6UrpWZn+zxmDdNtayNZWpsFgMk=;
+	b=T34/lqL2nydEF7Zf9aB5qXT7sx3zLCQopNB4sX1018qDg94540AoGJy4jFxDlASx9LIJce
+	3qwsjDJVOp2n5baQXW6NpltThPhM9AxPAX34FzSplbf3tcIBJ6KHExKQ3jYswDI+GT7VI8
+	X1qqzIdUquatjtKJGdgAr28AQ91Gfgg=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-XS_g9oqFM-2kLM6yRx3-1Q-1; Thu, 10 Jul 2025 17:45:55 -0400
-X-MC-Unique: XS_g9oqFM-2kLM6yRx3-1Q-1
-X-Mimecast-MFC-AGG-ID: XS_g9oqFM-2kLM6yRx3-1Q_1752183955
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-40b6a97ccb9so1028313b6e.0
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 14:45:55 -0700 (PDT)
+ us-mta-342-yy3XLDfqOrysEtIKeglMgw-1; Thu, 10 Jul 2025 17:45:58 -0400
+X-MC-Unique: yy3XLDfqOrysEtIKeglMgw-1
+X-Mimecast-MFC-AGG-ID: yy3XLDfqOrysEtIKeglMgw_1752183957
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-73b2cbafc50so680241a34.1
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 14:45:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752183955; x=1752788755;
+        d=1e100.net; s=20230601; t=1752183957; x=1752788757;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SiuANl0911cYF+BhoCl7EPbqAqIzSbNjca7mdJo3NkA=;
-        b=IDtlxAGeLcE4/11RI4MvVdzkW1/kJ9PNLbRdDW/H9IL+jP0zdqyHBFT3o44tOFbnN3
-         YzyGelkwPjCcx30WhTmXAmqv9HKW7iqFm1M6WP3EKqrhu4BKY8XpoS3jTwx4ED/u6c+d
-         N+hpPgJPKSGUphLAlsF1bImk4jvXytQFmcNNTVxMWN5d0Rs0HzDlgqILZ/d0tWWX3c75
-         /pmLU6WZb2DXKwSCVia08Cfgm1La4NeOtxZUS5GHH1e+IPtyUZD0+jFtTZkzYJlYueut
-         JmhANYKwTd21BSxTKkkQjbWDeu9PvoUAeV5AZNFdC8O5ke8mCBMR5vH4y+WT6F2bKPAC
-         Hgrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVGKki/bB4O/M8fXQhMvvx9UEg1li0Oq3y++zfq+IdPow0ZGF3Xm9d+EBv8E20mgI5O/N4HQPz01AlWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhWsdujnVXX/hQOuUTJXZRMW7fCBeWvRk26A1PIgMzpHRfgkfG
-	wvaER3kf3YRvz3eUotpqSor94pPFunSKhhvn78MwouX5nUjNQfl2aiTT8cje9sgdHuy/RVhxUOd
-	SRoruXqd3QpxFfg/+1OmPxQ97Avl0HEOKokH4v0fjSbXrOZeIK1sxt1pWpRjP7AuN
-X-Gm-Gg: ASbGncv5DzMhdq4OkM3+qYO80Hex5hObnWWFJhSVeunaWePWWkGUlesnkPCxMAHKJhO
-	bThxiDIlSXS0SKiABj4p90/mzSA+PD+pKggtqd2Y86pqzWTKr2npMiy6wgvJRHMsZHnUUHbS/Oh
-	Y9690ll/ABGRYFCqZjGbKW65v9Z+AiVNoYbKWkJ1KO3qIjdusVz66wfa/1WSnmJrFFj6/+vN4vr
-	zlufeUPXaorRUzdBF6YGAi1h2wK1MJXOZsMhnXfguyjwA2qqplXncLG8IGdlo1YaSOSS3OZrzNd
-	Y3RfURSUDPOCXQP2PR2tVto78FJlQ9g6Pwd5hXhA6sHC
-X-Received: by 2002:a05:6808:4fe3:b0:407:77e9:a104 with SMTP id 5614622812f47-4151017fdabmr894460b6e.17.1752183954846;
-        Thu, 10 Jul 2025 14:45:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsgW24lNzV6jS3iGpzMSHW5KHXnsxCI6LXpGqmrnkTpsx3BaTOZsXCDQI+JDSCYr9GcAZDTA==
-X-Received: by 2002:a05:6808:4fe3:b0:407:77e9:a104 with SMTP id 5614622812f47-4151017fdabmr894442b6e.17.1752183954370;
-        Thu, 10 Jul 2025 14:45:54 -0700 (PDT)
+        bh=nucAiqEHmLyRkEarV6UrpWZn+zxmDdNtayNZWpsFgMk=;
+        b=jcghdhkp24Zgrqir4+snX+gH5VPlstPANENFMI+3AC5l5jnQmGS30Bid50zki3+joR
+         iR7flA5BWg7PzH0ZJujKwm/tDs/wVBxPUprv5I6TwxCExEGkJ6Od4EFG4/LewQtd3Q5F
+         K4YowxpLIbK8RLHUtfeqzFG87mvmh4hWi31pHTHK2Yhr4zMIN1Dup0wVlErGtPs+3kGr
+         4H2QBE1jHwt84FDzWC7KPc/aLSX0Oq1ZMiGLQk17UdQFudjiM7ykkS1I9Ki9VXLffSxB
+         6BaCxNdjIIHjfzwO8yIfHEq2hWIGIel1wIdKbzcw2A/WzdBhhZXCLbjPOmOmismSHPL/
+         ISCA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2+GD6RHcE/sBs+bZ+ym5uClttl6FbsgMR6guhHmIbXzqLY4JbPrWhOjo/y/Yr0QGxtBFu55FUaABoqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHwkMNn57E8/IqtTinNfsvMBrZLzSwYLzZ5wvIu5a023jaqaDY
+	8it3Er3xDiHsJc5RLO9eeyAlEOUj9qoZtlqd6lpZn4AajDyzi3qZhkx7hX8Ol06Q/e3ij93B70j
+	awHVH7N1QrQpnjBku9/CIhsDdy5G26abnB2SQNWPdbFEZRirwhUhilxJP7Z38Htxl
+X-Gm-Gg: ASbGnctPkB7gATKKcaqjnXavhPIygv9GVzIVmnjcb0oesYBJMWmmKLLkpKM46YNpwNu
+	t09D3nBtJWvzxn0mOcqBGPSFp84/b55YYDvxnoaRjxh/Z0efVCtrRSY33e3OeQAcENsTHypR0CF
+	bFas2wXs+clTkXI/tfgk3Iql0PlxlYHH7YXJ6odm3TpYUCc45qLNd/AV0jlSwwrzIPJUpE4Sq5n
+	Z/wPFJFvyzMsXidLH/LtFQVZPivQUtPg3O5yIJYN5wuknkY3qYG0rj9tfIFJnNxysAf2l5TFb9q
+	AmBZ9eIuwYpq0qvJxPupik/dXZRvXaa9Xgzrka199tlW
+X-Received: by 2002:a05:6808:2226:b0:404:f14a:1345 with SMTP id 5614622812f47-415397b8ebemr368522b6e.20.1752183957597;
+        Thu, 10 Jul 2025 14:45:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWEP2MgO/8eqDff063pLtnLKOVnMsnlx9GHlQHKfB8kyjNWeAH1eCP83ViI1B7NZhjtnja7w==
+X-Received: by 2002:a05:6808:2226:b0:404:f14a:1345 with SMTP id 5614622812f47-415397b8ebemr368506b6e.20.1752183957279;
+        Thu, 10 Jul 2025 14:45:57 -0700 (PDT)
 Received: from [10.144.155.224] ([2600:382:8102:a87a:c1c4:9ad5:f0c:c0f7])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-41419baa00dsm345483b6e.22.2025.07.10.14.45.50
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-41419baa00dsm345483b6e.22.2025.07.10.14.45.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:45:53 -0700 (PDT)
+        Thu, 10 Jul 2025 14:45:56 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 17:45:16 -0400
-Subject: [PATCH 4/6] clk: tegra: pll: convert from round_rate() to
+Date: Thu, 10 Jul 2025 17:45:17 -0400
+Subject: [PATCH 5/6] clk: tegra: super: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-clk-tegra-round-rate-v1-4-e48ac3df4279@redhat.com>
+Message-Id: <20250710-clk-tegra-round-rate-v1-5-e48ac3df4279@redhat.com>
 References: <20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com>
 In-Reply-To: <20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com>
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
@@ -87,168 +87,48 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>,
 Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752183937; l=5341;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752183937; l=1155;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=KPpqxrbRKKtVjqm1nuEddEThifN10snLNmWpwUh/Uvs=;
- b=yzOoQ3uzLNxqoYnFziSeszgFxpPsWTe7tkm4m/HTchEdsPmjZ3XQkmqaNSIzmmbMQ6U1VsYAE
- f/NUcfe/LUbCUPqAKhArpAtwhdj4Q5kmOsH0mNm09fzJyqbuwWp2H3P
+ bh=I1wqJdRTlHmsA0JfGk/JJDZ1BDeSSBu3qnl9x/JMS/0=;
+ b=s5APECrNqiizBVwMlalLDtRZ3SpRDdcPiKfaj0y9VcfIFUCFyQZEhBT5BFX/kdGsIxOqzrrtJ
+ Hkl52GAjk2dBJ84qohh+Oz5jt6wQrPKFHVA2ds6+s9SV+v9RKvTGQDM
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
 The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+round_rate() to determine_rate().
+
+Note that this change also requires the same migration to
+drivers/clk/tegra/clk-divider.c.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/tegra/clk-pll.c | 52 +++++++++++++++++++++++++++------------------
- 1 file changed, 31 insertions(+), 21 deletions(-)
+ drivers/clk/tegra/clk-super.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 100b5d9b7e26e906f71963152ad50bd0a89d14d6..591b9f0c155a033ab46fbb0a1de742efed560b5c 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -840,8 +840,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
--static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--			unsigned long *prate)
-+static int clk_pll_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 7ec47942720c5aa43f35107369b42804f4847b97..51fb356e770eeaea9d26ef48f298dbc00e164732 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -147,17 +147,10 @@ static int clk_super_determine_rate(struct clk_hw *hw,
  {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
-@@ -849,15 +849,20 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (pll->params->flags & TEGRA_PLL_FIXED) {
- 		/* PLLM/MB are used for memory; we do not change rate */
- 		if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
--			return clk_hw_get_rate(hw);
--		return pll->params->fixed_rate;
-+			req->rate = clk_hw_get_rate(hw);
-+		else
-+			req->rate = pll->params->fixed_rate;
-+
-+		return 0;
- 	}
+ 	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
+ 	struct clk_hw *div_hw = &super->frac_div.hw;
+-	unsigned long rate;
  
--	if (_get_table_rate(hw, &cfg, rate, *prate) &&
--	    pll->params->calc_rate(hw, &cfg, rate, *prate))
-+	if (_get_table_rate(hw, &cfg, req->rate, req->best_parent_rate) &&
-+	    pll->params->calc_rate(hw, &cfg, req->rate, req->best_parent_rate))
- 		return -EINVAL;
+ 	__clk_hw_set_clk(div_hw, hw);
  
--	return cfg.output_rate;
-+	req->rate = cfg.output_rate;
-+
-+	return 0;
+-	rate = super->div_ops->round_rate(div_hw, req->rate,
+-					  &req->best_parent_rate);
+-	if (rate < 0)
+-		return rate;
+-
+-	req->rate = rate;
+-	return 0;
++	return super->div_ops->determine_rate(div_hw, req);
  }
  
- static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-@@ -1057,7 +1062,7 @@ const struct clk_ops tegra_clk_pll_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_round_rate,
-+	.determine_rate = clk_pll_determine_rate,
- 	.set_rate = clk_pll_set_rate,
- 	.restore_context = tegra_clk_pll_restore_context,
- };
-@@ -1195,7 +1200,7 @@ static const struct clk_ops tegra_clk_pllu_ops = {
- 	.enable = clk_pllu_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_round_rate,
-+	.determine_rate = clk_pll_determine_rate,
- 	.set_rate = clk_pll_set_rate,
- };
- 
-@@ -1353,15 +1358,15 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
--static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *prate)
-+static int clk_pll_ramp_determine_rate(struct clk_hw *hw,
-+				       struct clk_rate_request *req)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
- 	int ret, p_div;
--	u64 output_rate = *prate;
-+	u64 output_rate = req->best_parent_rate;
- 
--	ret = _pll_ramp_calc_pll(hw, &cfg, rate, *prate);
-+	ret = _pll_ramp_calc_pll(hw, &cfg, req->rate, req->best_parent_rate);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -1375,7 +1380,9 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	output_rate *= cfg.n;
- 	do_div(output_rate, cfg.m * p_div);
- 
--	return output_rate;
-+	req->rate = output_rate;
-+
-+	return 0;
- }
- 
- static void _pllcx_strobe(struct tegra_clk_pll *pll)
-@@ -1598,12 +1605,15 @@ static unsigned long clk_pllre_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
--static long clk_pllre_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *prate)
-+static int clk_pllre_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 
--	return _pllre_calc_rate(pll, NULL, rate, *prate);
-+	req->rate = _pllre_calc_rate(pll, NULL, req->rate,
-+				     req->best_parent_rate);
-+
-+	return 0;
- }
- 
- static int clk_plle_tegra114_enable(struct clk_hw *hw)
-@@ -2003,7 +2013,7 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
-+	.determine_rate = clk_pll_ramp_determine_rate,
- 	.set_rate = clk_pllxc_set_rate,
- };
- 
-@@ -2012,7 +2022,7 @@ static const struct clk_ops tegra_clk_pllc_ops = {
- 	.enable = clk_pllc_enable,
- 	.disable = clk_pllc_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
-+	.determine_rate = clk_pll_ramp_determine_rate,
- 	.set_rate = clk_pllc_set_rate,
- };
- 
-@@ -2021,7 +2031,7 @@ static const struct clk_ops tegra_clk_pllre_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pllre_recalc_rate,
--	.round_rate = clk_pllre_round_rate,
-+	.determine_rate = clk_pllre_determine_rate,
- 	.set_rate = clk_pllre_set_rate,
- };
- 
-@@ -2321,7 +2331,7 @@ static const struct clk_ops tegra_clk_pllss_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
-+	.determine_rate = clk_pll_ramp_determine_rate,
- 	.set_rate = clk_pllxc_set_rate,
- 	.restore_context = tegra_clk_pll_restore_context,
- };
+ static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
 
 -- 
 2.50.0
