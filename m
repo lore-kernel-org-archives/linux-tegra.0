@@ -1,105 +1,74 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB407233735;
-	Fri, 11 Jul 2025 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4E72E763B;
+	Fri, 11 Jul 2025 15:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752246786; cv=none; b=DyzBY6qVD3W8XTVJor8gTCtYlNfotqGF0J99WbCEmauRG3i2QXrYpMcXAdMa2fSuX6fSpIrPz+xJ2K2H8zZF79BiZlLKQicBJvgoeQfQoNNrW3t1wNJ7XJNB8m6p6k61QAl/jWeLSGovn65e/5DIAmd2pyOWgw9nabClhW6dDbk=
+	t=1752249579; cv=none; b=uQb+pXj8joJhlus/cpZyCXbVyy4yZiJoahFPOWf7+uq6Q2yw/Ih8mtRN8MiFO7qBabAfVuGIEgel0DVVof832Tuq65vECaALCWldxfUcm2xfXE+3aPmP16M2+sqEcg+RXo78b/uK7CLc+PFX0Fgw/qXiCllTOWVv/T7u2E8hg0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752246786; c=relaxed/simple;
-	bh=q/RB3T4NCx2mfktuCajttlN1cebWGHKE8LCUcHligxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cbXOHSPdce8ejdNtwsFQ+hAiKKpwTceweE/TjfDQr2ywUwZBKnYf5lO4QZ4i3vvrLf6UV5mk5YEYFDJGBmAuLOMsf/QC1chxcywpDUI5s+Keg48hDGJLzhzxJfcX7BPKT0DBlB4paAal27Mn4EZrML7cEFzTDDxWzH7A6S3M7zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aDRVxxZA; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752249579; c=relaxed/simple;
+	bh=J/74gCWCb/fJuIw7/PGqtuWPe+wLtBGrToknQ/QYwTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7dXt4a4+Zt02eaDeY3f9oxhOWIgAHYhjZEWSiv0txDTTsTrb+idfhOuMLwwCCeg74f3RzkTMCOcvasm7RuWn5mM67lgZRSrjCUOI0NiNpn0ykxxFfejZUaxtpuyEWApHfbvaSj5IhjhKKQifjfIjdV95Wnrjd/A1WZBOl8XsPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBqfEIH8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDRVxxZA"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b5e6bfb427so1187536f8f.2;
-        Fri, 11 Jul 2025 08:13:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752246783; x=1752851583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qXJpzlNACVXWafUvsi+X5T2XzAH4b/rfmaXYOvRW2yE=;
-        b=aDRVxxZADzI4M5y+iI3ts11Kka9Lz4s/8XXCKX/OcHyTw2PNtNJjXeGU88kmPSRLlS
-         sFtUv9bPmZvz95P0wI2EtchXLGEzqOIzb5S9DMsPNztYFK2gZPHpsD/1+qY3tlpah8Z4
-         cc5CAYQDrVyYENEgWRKldymdmoFjXxD6HS4SW+WyPlkEciSOweoDFsDbNQCgfQZI2yQx
-         qahXFWp6FhBIulHVJasV6WzpbmkfckXa0i4uicHZpMSFMIJw3rZx0bBZGnHnhl00OkaT
-         P75eKQzcu0dxR96Hzvxdq90E8ckqutS5KLzeccyvKGRw5DCGZooOF6uR3a2U1mTBUeOf
-         7qwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752246783; x=1752851583;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qXJpzlNACVXWafUvsi+X5T2XzAH4b/rfmaXYOvRW2yE=;
-        b=AJi2Cd12L/x/zioC6szp6o/vVI69NKXjdUTO56vfG3CsJyg4v04x6HqKRgpgOGgSYo
-         wDG7U8Tu4xTxog/hxej0UpBWQreHYyEOQo3WUaWKlzGuZLi/VRU/drX2pu45fRB+1O9M
-         PS/2UgSWHLwrkSWsH0dzRZddh86JK3W6hl1Ud7ZS+MtMXIeP1Jbmt/viybQzN9XDeLHg
-         vAeo75C315jhmIGhqYrR7Xfxcc5RJ8vrLfQfyBFkPtdolB3Q1tKXIt938O+vYIXr0znn
-         GQYeTDxdYAyEjQuyjHmACETtfIK5sAg5hEBkueVq3bP3bBxw8MDV8A3sRAswLBqqPk1U
-         LgXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe6Y3M8fGu8X4e4PEJ/MjrhazSS3ySZgzrmFtTwWZ2uMfc60LGml0jdX4ogHWWefq64fC5Li9W4sTIiW0=@vger.kernel.org, AJvYcCV6AXq8JcsXpOasTTL+NOGdzlBYUcJcwlteW//auwZ6xFtfkn5F5Vi1vf5JGR9gcvksFYwlery0HbdV6K4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+CESlWLzTr7n9M437kSOAdE8yI1lUuctbjAoOnNL2VROTMFg6
-	YFyzfLHxLnb7RxHWnTEG2jAfJCHWpwJZ/ZFwVt+/6iKMmOdEN18kQGMw
-X-Gm-Gg: ASbGncvf5UfaNvy2Tf6//rdM5nSs6seE9X5a9c9fxYYROMls9LPerPl+u1qTWSbLt64
-	PSWskE8sXOqUkf9QgWvD9c7pt/njoOxZSSFoQ7nmfu82+kHl5eKO0eC+wEI+iON1KsaM0UEO/Rn
-	npv5vD6indDkhifnzap1/Xe151ISsNWzuD/9evpaLFo6rTJZ5J8aZxmkM5rQeOv7HTLnsR4DubS
-	LSg7TXooI1AUYyntJ4sCTEHN0BVWde82jQHuR4UDxkN13Yodfrs2YS7Wb+DfmzWlU6bTFMX24k7
-	rmA5Io8Bl/YszWConNxeRtYYKS/NWuXQBrCezaNeglydw1PyE65amhXBTVFBc4HX5DvCLMevVOe
-	XmeqYNgaaFAcRX+6UW36Od/l4OO9kvIfxDzb7ANXGPoovMfUMYhHsi/Mrllu2PQnXHRIALAI8CT
-	MxZXbi44EMfaze+A==
-X-Google-Smtp-Source: AGHT+IFOTiocf3bWWwb3sZqqqXMFKkwzRjlS3w64CsnVh7GxOlw08mXVJTYF0IRmpYr7oQ+jzhLyiQ==
-X-Received: by 2002:a05:6000:e06:b0:3a5:1cc5:4a17 with SMTP id ffacd0b85a97d-3b5f18d835emr2549650f8f.42.1752246782911;
-        Fri, 11 Jul 2025 08:13:02 -0700 (PDT)
-Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e0d77asm4814537f8f.58.2025.07.11.08.13.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 08:13:02 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Maxim Schwalm <maxim.schwalm@gmail.com>,
-	David Heidelberg <david@ixit.cz>,
-	Ion Agorria <ion@agorria.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] ARM: tegra: Add device-tree for Asus Portable AiO P1801-T
-Date: Fri, 11 Jul 2025 17:13:00 +0200
-Message-ID: <175224673040.1549549.3672790381996460184.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250616073947.13675-1-clamor95@gmail.com>
-References: <20250616073947.13675-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBqfEIH8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C68C4CEED;
+	Fri, 11 Jul 2025 15:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752249579;
+	bh=J/74gCWCb/fJuIw7/PGqtuWPe+wLtBGrToknQ/QYwTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MBqfEIH8IwfxJFLK7PjScX0mNBkSFYMlhgBJRavsH1/3f2gnaO39+XVemJIJFrDu0
+	 wj0I2zRspvmo8qrzKyhWEGjczhasCSQeunoikcsOyFrIae7zB6Mr/iVS9sZI+bZsv1
+	 n87FZhymxfQdOFogPYZB3z2CvI468A7Vb8GYEsNlusqaYq2zCgmZFgU8veaw6nSfaP
+	 5iD+F0C0YzVquq6/TAYEhMZTHJAqDpBzkTPYC/COnyXaDauBeGXbngDXKoqK0YjfNc
+	 Mrpgn/KoJqhqDDTfAXBw8Usv6FDNSFnmXhWX1IxVCl6T36v5iZr8Ldl+gQfNoOKQss
+	 4aclURnsSZUfA==
+Date: Fri, 11 Jul 2025 17:59:35 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Akhil R <akhilrajeev@nvidia.com>, digetx@gmail.com, 
+	jonathanh@nvidia.com, ldewangan@nvidia.com, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, p.zabel@pengutronix.de, 
+	thierry.reding@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	krzk+dt@kernel.org, robh@kernel.org
+Subject: Re: [PATCH v6 1/3] i2c: tegra: Fix reset error handling with ACPI
+Message-ID: <wuggyfzqeljlinbcanvlu7pxq5orjdg37az3trbrxdiufk5byi@jbkeihqkozkv>
+References: <20250710131206.2316-1-akhilrajeev@nvidia.com>
+ <20250710131206.2316-2-akhilrajeev@nvidia.com>
+ <aG_FJZQjNbV-OnGc@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aG_FJZQjNbV-OnGc@smile.fi.intel.com>
 
-From: Thierry Reding <treding@nvidia.com>
+Hi Akhil,
 
-
-On Mon, 16 Jun 2025 10:39:45 +0300, Svyatoslav Ryhel wrote:
-> Add a device-tree for the Asus Portable AiO P1801-T, which is a NVIDIA
-> Tegra30-based 2-in-1 detachable tablet, originally running Android.
+On Thu, Jul 10, 2025 at 04:50:29PM +0300, Andy Shevchenko wrote:
+> On Thu, Jul 10, 2025 at 06:42:04PM +0530, Akhil R wrote:
+> > The acpi_evaluate_object() returns an ACPI error code and not
+> > Linux one. For the some platforms the err will have positive code
+> > which may be interpreted incorrectly. Use device_reset for reset
 > 
-> Device tree contains "mstar,tsumu88adt3-lf-1" compatible, a simple bridge
-> which was submitted a while ago here [1] but was not applied yet.
-> 
-> [1] https://lore.kernel.org/lkml/CAPVz0n1udjVZY3400hYMY07DjNKfOt4bwpW6He6A4qo_3pXtqQ@mail.gmail.com/T/#mb50632e269d89275d97c485037da8893239b5410
-> 
-> [...]
+> device_reset()
 
-Applied, thanks!
+no need to resend, I can fix it.
 
-Thierry
+Andi
+
+> > control which handles it correctly.
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
