@@ -1,77 +1,86 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363C321B9C1;
-	Fri, 11 Jul 2025 12:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9FE154423;
+	Fri, 11 Jul 2025 15:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752238281; cv=none; b=LpR+DBIcbjwvlWG9DP0zdiG7OC7zEtGNiH7ARgeChLEzwXDg6YnvrslmIlAvz5r1d1mepAv/MX3gPkzTB1BFZIjuRLbVg7kf0qNtwJxRlpHJ6aHwSiryaBXh5NqtOo6n1nKHk6QNNvB6M4OPCx98U1jHV2gE7uCMX52IIXt0DKI=
+	t=1752246726; cv=none; b=qgpB2mKDzHvGKRHdgYAA3bbmNFT2N5k5SQUmDedNl0prfpYiwatxX0/m7z1f1+5mtvzUoizuyXeKxlCIc8fYN7f9ljz1AtZqAnGL7XW5FX3rd/SHIWaPSIq6ig+vtqWYHQaZzwiv9WUay4jO3jWmMO7J1g+a9cJ38FZMkzkoM1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752238281; c=relaxed/simple;
-	bh=VfyM7iLFEMis1DtUKT2+DGLeCNPteqNHQaFzfra7ouE=;
+	s=arc-20240116; t=1752246726; c=relaxed/simple;
+	bh=iVUdtKHsIH9j6954iC4BjCq8Kw47teU5CX0hHrJrfME=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jz/jDi/ksPcGCMKIvGt+lKo9j7W8i7XELwSDKWxdLLtlGWpyZaDsmK3ptRQrIXk+GC0O/SNwmnTvxWIxx09M80ZlSaPE/CqWfiapqDQLG+5/M+DDKC3imeRNU6f3fFy6A+XkAfcYoXKa56oC2srGthdK4SjtU5VjQZZYPlfLlTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLRuJKPz; arc=none smtp.client-ip=209.85.221.43
+	 MIME-Version:Content-Type; b=USzP6pGhWYq07p0qQ0IxM467yww7W88TYwZ1FvryGfdjcKC7gxu/Y+4vhaoqwuBjxHXS+XN6Ff6I8awwX6B4gxsvE3UklxOX9Up1TKX2dddDs+9jiCRAH+ZL1itNdNeN3SfKz5dxOvMetzG72e9Lbqt7qOgJqW9UoDExakgAcKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mlk5A6WU; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLRuJKPz"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso1257000f8f.2;
-        Fri, 11 Jul 2025 05:51:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mlk5A6WU"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so5433365e9.3;
+        Fri, 11 Jul 2025 08:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752238278; x=1752843078; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752246723; x=1752851523; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dk6zTWd45C25u9HaNPVhxh1YehFcfpLwf2Fe3wJuBxc=;
-        b=ZLRuJKPzBpkeSbaNAfyY10549+v4kcHDU6LEOB+QANkrhUB4CW1+Aqx4qnAzn9MSUI
-         FmqWULbzgwjz9ViPN8RqECkzHllW+fUpie82ZWCl2wJ7C2GvUUQdEPC6HrlRxtFSNfPE
-         EZi2cdvBY0QbVbkorRywIKHAqxrUIK9gONE3Za7FdvoBVAirHOKeQ+xhl/uGuw32MG89
-         ieaaxdasqUWpSC+WSHmA6aae4/YOd5VDpcMRX9cU2HHMlKpwT3Bq+qQYA8sGGO30i404
-         pw2h183FP5zePFcd3gfFwnFGbbllrSHa+O3WJ9ATVbdHhxOTB8Dl6DqLN3Wt9svchRIJ
-         0cqA==
+        bh=gJaPm1lMunBuJsIarfrEFBdm2bsr8m/Si3CqGhSSbGg=;
+        b=Mlk5A6WUgrLnzRmvn+1nP3Nw0iUOnNXGsbAF8MfGHfgmnchoxzJKxKO1ubmaTIbTr/
+         FVaIkVD6VMzqHNFalncPR01xGVJJxfzrMRZxVaKeaLNF+uxml/IXcs4XAT7daKGZ7QAx
+         w76D7OHknoNOnhocYpZko6Zn5EY4VT4FhmvQm2kAjlK1ZXw3ltkDhaNuyzFYsXep1QtS
+         pm6HzfLS/6YDWb4Oog2l9I7KoZGv6HtUWyyemUwz7y4cf5pmxZhrBwYdHwvz7d0vol0T
+         ZlO8QZb9eEejydH0i2H9JuezPesTlKO4meE+v7sMiFj63rIB9GmaPDGeiYLom7PBoxgw
+         Qp6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752238278; x=1752843078;
+        d=1e100.net; s=20230601; t=1752246723; x=1752851523;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dk6zTWd45C25u9HaNPVhxh1YehFcfpLwf2Fe3wJuBxc=;
-        b=DP3Fid6+0UkxGFh0AETFKLCjDlVA5lBPdsWPBb2C2gzRR85n8EcssBiDBtTkhr0m1a
-         JaWEN7YoQXmWyPrNOSNA5d/E1LpDwnYt4NS47dxzLhuN/3uuLaTgCrwsYjNTybQ+rqsU
-         NvApRGFQ+mf2/AXGghjaHWeB0D69DftXcfKEsJ3hmqxFHsIxC4v0D0TptFaaJe0/EtxA
-         GkOry+USu5PzrI/lMH2ORzJcU53GyLW1GiwaBdrnnnURPoUlw7gAeCQoagn/pESWJy3c
-         XftQEBt+sXRjBkEBwZS9aoaIIimc6vS3uQVLvrKtuzcYeAgqiQ9Bo6c2TaLTHerAJAMI
-         5JeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmeChZbS5+0fwx5ECK1JcV1hoIoNgnyP6VXE6bvrc8AuzNxR7Vrj9aHJlK+fXJsSaPx8K2xyTePFsJxqA=@vger.kernel.org, AJvYcCW1OEnv/LrBNLJxhgBKAHxZcIwOdtixEz9FFsvIkviFYVv3kKrPucms19yGUyBdAVTpefDDSlrZEC3BBEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsX82yxl/yvHkFWOJ0ynfXfvl/wWHSYFJBRdIE4bbc3VN30aQ2
-	jOj3ahAhojlv8JQdNYDuVUntz8BatDidr3sY4fCUYVociwrOKf+R2c0V
-X-Gm-Gg: ASbGncu95NPAh0vWFal4+lf/AKvmLGkGeS3/TSWcHYK8KiRJoc1Qb3XGxXpJ3f0a2gO
-	8qn0rl25l7Hof/WziUCJS2uGnZyfeyaD8N4R+WD8wpU5ZWbQrqbgwlTe3Ni+uICB12LaVgZwHoB
-	88rNFtDfzfQYVYlAeYtKJ9b5r+ruxzDpy/BqqsnsOd5qWxjCatdETHydyxrZ8UXXZvRSMQTc1xB
-	gzSqvdtK5DQeBk2Q8CZZqOFCZTx6TN30U1FFSSTpba0ADvDwGl0Fcfhq2L4uNVLfWLrO05KxO/Q
-	TmtLHYYh7yOU+/a/uxGWOJGDQ0AHC3QNs67TJ6nF398weuRHaHiovdvr7GwhpfWSv9orgmmBvsl
-	OgVzBTdMUMdOqY++Rk2iZhMqYNdws3hoi5LnlAtr2Oyw2b7OVSgd9uRSdyuN9zcVPsLeAWixdZ6
-	Yf9D9EeXhzta8ZrQ==
-X-Google-Smtp-Source: AGHT+IGFNHZKH6/2cOt4nmSVTfZihS5QXXGQYUEZ5NHbaKMojMw+b9IsjH8Lnni8LzZ8nBaHTeakWw==
-X-Received: by 2002:a05:6000:23c7:b0:3a4:e387:c0bb with SMTP id ffacd0b85a97d-3b5f18e27damr2229282f8f.59.1752238278187;
-        Fri, 11 Jul 2025 05:51:18 -0700 (PDT)
+        bh=gJaPm1lMunBuJsIarfrEFBdm2bsr8m/Si3CqGhSSbGg=;
+        b=W3INKwwtQMxu558CCU07B7EQpSxkE2bWbV9Ie4xwVytn1VVm0hGJjKKdoGAObadQNx
+         XKluz2e1zjDbNkArEBoj2E/c7dQGwixKV2QbK5WAGNcCTEsuRqYpE+ZdZor1iIHfUO39
+         TYv5HbbB0dsWvWRo5kJzTnMZjgExqXNEz40eqh9co+LoOKi9v0LVljCAp2X3U/1kWBUz
+         2McOVIozdW15bAJiBooavktYqBN6wj02s43zkkfPgV6fOPVqIFGmNONgJXUkVathgEnL
+         xVe/ZtkQu60G+JGS4WkzA7NPkURtGAbTKGoUGIsJiga2vHQxzEgCS43txh4CeOPBDrEB
+         GgoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIDYhtUOYUlyeY++pzEoaIOPNpCQA04+kgVOihR0PcoZNAK7TWErAU7YxJ+tsx6g2swsB4jogrHa97sIo=@vger.kernel.org, AJvYcCV2kxPDw4aapbs266o8Kuoj9QDI2+SuNws8rWkiVJPjOsCExZhJ3peQlZgL8CGuA3XuryI3eUijKgcU@vger.kernel.org, AJvYcCXWY54UtixXQp72RRbTTt5bQkl/OrhSIxtvWsbM3wBhdveybowgv7ngNqZXAITXSaGfCp1fpRm20vxoYl7y@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd1v6YYfbN4gibrzU5fqWCzOk7wZ80o94AS6rj81r06mP7S6Wi
+	i6FtL7Tks0t1zMktrjjfAOticdkTEOrPiLLM1xxAqNEr6kFIpWZTnM/Z
+X-Gm-Gg: ASbGnctP2LJ0/06jSLXsCyDibHmQtwzonTBeY6NkcAlkID5dLxbP1o2Eu0sGySIAi9z
+	9YZcaGK8vuYiCuSf1ERcr/dL2UcLWUYNU4TJDeJoWfraw3Po76NZyxmSEOPM77W0vqii3xiOjht
+	YQ/ONeu9Cv2SHeyYKi8Mkc7hKLaIV0faNgqcC68B7466FwByN7iC+qFuJozeU0ystlbDeiXIYe2
+	IE8c88x51uwZMQNTiom/bvRb27vljAtqPSN5Ok/wJigzZRRGrwGmuJAXDXyPdVMxtnFvjxbMXrI
+	i+ezdojL7rXuxKURp3XfcHq8f0bDtRdvDLQGMaa+zgF6BgRZcBmTghsJh5b+aJTLkisUuD+tZfA
+	/a1s8LCXncU+LdIC4xzdzRteLLFsbyuRX/fryqzMs5CbS4btZcYXUn4rrN1ZGIRKHaL3l5DIIdw
+	rV8ywsDlNdMq8muQ==
+X-Google-Smtp-Source: AGHT+IGXPzQSYE2XvE2dWikKvOgW4Jyizw9TRoNhVOE879ukI6LU+6xfeZ58AxAiebEynIiujRR5Kw==
+X-Received: by 2002:a05:600c:828a:b0:43d:9d5:474d with SMTP id 5b1f17b1804b1-455c6197d55mr29457315e9.0.1752246723185;
+        Fri, 11 Jul 2025 08:12:03 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e0d76fsm4478061f8f.64.2025.07.11.05.51.16
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454dd537c6fsm50415865e9.21.2025.07.11.08.12.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 05:51:16 -0700 (PDT)
+        Fri, 11 Jul 2025 08:12:02 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
+To: Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: tegra: bpmp: fix build failure for tegra264-only config
-Date: Fri, 11 Jul 2025 14:51:11 +0200
-Message-ID: <175223825748.296981.8763315213459609754.b4-ty@nvidia.com>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 0/4] power: supply: add support for Pegatron Chagall battery
+Date: Fri, 11 Jul 2025 17:11:59 +0200
+Message-ID: <175224669831.1544516.5588804600832488421.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250711082409.1398497-1-arnd@kernel.org>
-References: <20250711082409.1398497-1-arnd@kernel.org>
+In-Reply-To: <20250429061803.9581-1-clamor95@gmail.com>
+References: <20250429061803.9581-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -84,20 +93,16 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Fri, 11 Jul 2025 10:24:03 +0200, Arnd Bergmann wrote:
-> The definition of tegra186_bpmp_ops was not updated in sync with the use
-> in bpmp.c:
+On Tue, 29 Apr 2025 09:17:58 +0300, Svyatoslav Ryhel wrote:
+> The Pegatron Chagall is an Android tablet utilizing a customized Cypress
+> CG7153AM microcontroller (MCU) as its battery fuel gauge. It supports a
+> single-cell battery and features a dual-color charging LED.
 > 
-> drivers/firmware/tegra/bpmp.c:856:17: error: 'tegra186_bpmp_ops' undeclared here (not in a function); did you mean 'tegra_bpmp_ops'?
->   856 |         .ops = &tegra186_bpmp_ops,
-> aarch64-linux-ld: drivers/firmware/tegra/bpmp.o:(.rodata+0x2f0): undefined reference to `tegra186_bpmp_ops'
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] firmware: tegra: bpmp: fix build failure for tegra264-only config
-      commit: 83f96a7eaaf0e3ac1b1447f74a8d3b2213187b6e
+[4/4] ARM: tegra: chagall: Add embedded controller node
+      commit: 3c2c00572fc3e0b128f75c7ce9c3f70ca457cc3b
 
 Best regards,
 -- 
