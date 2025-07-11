@@ -1,161 +1,80 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56A295DB4
-	for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 21:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A088239E8A;
+	Fri, 11 Jul 2025 08:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752183965; cv=none; b=Ihnp2y+XyLov4gzLuy0JwqP88orS19TN3lHrTL9hlaJ5mNwJMx228sjczqBXtPQU3/3rhkvDgOD9gmOG/TuxiOZhjq1nGioqTGfVnHN3wQp+I2G4P5Ii5tW59wcoF6J+QDeBMGeyNUUYHS0bmW2ZfZ7DETHDyNtWR1Fz2+XjlIw=
+	t=1752221960; cv=none; b=MKK/Ni52IdbTSJHUi8CJZ/tYNQxNnndFoIwI/8e0u/8vKaRXutQzTAOl6C46tL5dLHdw3PGt70R25WF5Ha5iBoowf0bU8fj9rZpcx/GOr6sXIyE879hXNqY+KsgFB02ZcIp7jV5AxOm3tHTiD3o4lFlIKqJ+sy8HICrsJprpTSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752183965; c=relaxed/simple;
-	bh=WwQJN6ZawKi/951hM5T5RhPYqORrBWNZQWoglB5Pfsc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MmMSegNJ/03zHCirfDeBwm+SN5hFKUiw+jNpYUnJnsKMfggS30GwUg1VfoCXCcaj6YGE9qqmN/IclFpDYh6+v2yMYKzA9ohZnc8zJ2kIJvUtdwT351kPif6ji1y1UnNH12ExcpkgSWyqbSPA/hMHX3yDK9DuiVSoGz4GFg1+Cqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QlPBICJ9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1752221960; c=relaxed/simple;
+	bh=V3jxKjfzTwxvOHUVtiDmMg3cUtNkjjUxzoxMinlHiMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rL8pEQ1Y8cUxab7PZix+E9MhFKNCSWigNxcptoBzSBiHgiSrOa+4qAbMQAZX30ODIUw2NMYwCU+jd5kKGWO0GNwrzK/tIWKfXSKZqsN3s1bPaa1VF1YGsWzm7VxoP9eDsORKU4169B+y9IoZgnp/j9Bxbz4zj0qR7UfmCv9SHOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzdIeXUT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QlPBICJ9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752183963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aBk0yxGrEunv5/A/4cPrErNnsvMiKw7TX8vV/spqNxg=;
-	b=QlPBICJ9ePJdJFxTjE7ZO5RTXi9QQxpucKtWsybIdiPb6OqOvXlP0EpXjBDIcMzBvd8x2v
-	ilVeN2wqIQSjPfmi5dWpxEv/ErQlGeh7Bb/seEyZ+ay8LKzxxuBF4jPwMtg0AH1mQVhqZj
-	Q8qfeu0jek5JlD0NRaJIiJszLajXWjQ=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-79-xLfob1HyMW-SHck_eVvN_w-1; Thu, 10 Jul 2025 17:46:02 -0400
-X-MC-Unique: xLfob1HyMW-SHck_eVvN_w-1
-X-Mimecast-MFC-AGG-ID: xLfob1HyMW-SHck_eVvN_w_1752183961
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-40b99df0c1dso446257b6e.1
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jul 2025 14:46:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752183961; x=1752788761;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aBk0yxGrEunv5/A/4cPrErNnsvMiKw7TX8vV/spqNxg=;
-        b=omiFaH2RNFutOt8m5Wr13yNPnXy4fPoRDlaKeAqOXUwMTNoF84i/dbPyip+hkTKMNz
-         b7g3rGHAt+yS0knJo0Sq1hiLPCLcPv/11TvxGuq7OAAggABohBs/2oGgn+xHHa8AS4zj
-         NNm8aRkcDGGTY4NgUOXAy3nr9HYY+OLqv3cG3xYXMWl8DUdAsCnGQie7ogw2nxQj8E1f
-         jHasY6OHYQExDI88TD9FcLiMeHdKx53XrrqGTfAuvnaXAHgEAXSIogDWOafmAc/0tBMK
-         FbEQHHE/H/M7OHIQjeFRCgXVX0zARTqmDuc33VtcIDO7pCNzTg5OtaX7NiXlhalvByIh
-         jv7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYQnbdRmCbe+okYS8AYl3jNbVlAeRVaoYItxzwj14gtI6T0N919i+0Mm1YGCvRUtmfvFPVXc1MPpS4Jg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx69P+ZLAwkjpdB6BK+DAYNl5mgjvm5XRrV/RZRJMXepSVC0l32
-	+zsJCllR7eKcPrxmYBaXlTp9CI09Hpl2Boe+/X9fuNMKXfySrvbERjHkb1q3h8dRIojwRpsLkIV
-	Lm1FwFnKyQF44oi/8C7pF93y++/xPjq8hUjlhdmNbPe+sIzMrAosNZM7OaN7PPuoX
-X-Gm-Gg: ASbGncviVt3jxVSVcvr+qG2h20VEmlMmyKIq1MAqmdtCCFXicfU77HGE789J/Sk7LNr
-	KTw5mxd3tG4/p0VjTgmr9I9sy3g9F0zJTErAGkqpjmmIwumjJ0n7xY9s2LBBgHGvTVhYw5cY+Go
-	FKjusreEQ/OxRjs4youanDEDR0KUQM85z4AerrW0Oh3WlxWro8uLhg+5hj+5k7/YTHUmFZXO0ql
-	WLf+Duoshn0MCcvZSbduD0BEk3hIJjuDLipW1lybwWYTK3IpJ1cJDTRrvX0pMjq1XV21XTWZeHo
-	TRDp6gLiebDgIt2K8iK4jeOT1ft/5/aDUfVLKBtyr3Dl
-X-Received: by 2002:a05:6808:1a0b:b0:40b:9361:cd69 with SMTP id 5614622812f47-4150dc2c900mr839383b6e.15.1752183961229;
-        Thu, 10 Jul 2025 14:46:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaRi2JdektnIiRyrF7MFlrXgAYDJZGe2gepSu0dNLxidhMxjuCa2Kk4y2JM8gnTkqE8elb0g==
-X-Received: by 2002:a05:6808:1a0b:b0:40b:9361:cd69 with SMTP id 5614622812f47-4150dc2c900mr839364b6e.15.1752183960869;
-        Thu, 10 Jul 2025 14:46:00 -0700 (PDT)
-Received: from [10.144.155.224] ([2600:382:8102:a87a:c1c4:9ad5:f0c:c0f7])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-41419baa00dsm345483b6e.22.2025.07.10.14.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:46:00 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 17:45:18 -0400
-Subject: [PATCH 6/6] clk: tegra: tegra210-emc: convert from round_rate() to
- determine_rate()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzdIeXUT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2E39C4CEED;
+	Fri, 11 Jul 2025 08:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752221958;
+	bh=V3jxKjfzTwxvOHUVtiDmMg3cUtNkjjUxzoxMinlHiMI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HzdIeXUT3mx2OUYKTdI6WH3WbU0kcocM3xImbRaF52z3/NuwV3KZCPTHObzR4POQq
+	 7L1xRi95QFGL9ZlfucS8PF3CcN4XoDorGKgMsnBrTpMxp2xAUhPuyk9z1U2Z+qvQrr
+	 Ib6H4vPLlPOpbY87FlnEQpERU7IL70m7OTNtBafzCjFh70Pa4ND74qGw7CPb4kisfr
+	 sC2WoWNAWFdUylPsOAwezsIFWeFneDvO8ThkCDyyY79M2gWdm2avFreBw/Q31JjRCT
+	 Jj3SNlA3ptAbB2SrIP0ZY1fXZ83kflKUU/wuoDRgVcpDz6bzBEe7o63a7Cnxto+/s6
+	 c01NDgz0RirCA==
+Date: Fri, 11 Jul 2025 10:19:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: memory: tegra: Add Tegra264 support
+Message-ID: <20250711-noisy-mellow-reindeer-72a4fe@krzk-bin>
+References: <20250709222147.3758356-1-thierry.reding@gmail.com>
+ <20250709222147.3758356-2-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-clk-tegra-round-rate-v1-6-e48ac3df4279@redhat.com>
-References: <20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com>
-In-Reply-To: <20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752183937; l=2229;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=WwQJN6ZawKi/951hM5T5RhPYqORrBWNZQWoglB5Pfsc=;
- b=CVLu9H8KuBI4I8blZ+et/1D2flCxkr06u0XAQIT3E96eHM/iwdbt1AHiUiyMoBmVw91uLXXZS
- XXHUcotXL7SDJKhMQRwAo/LmG74X9VHGq1pvNWaQqus2eL19renJKMZ
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250709222147.3758356-2-thierry.reding@gmail.com>
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+On Thu, Jul 10, 2025 at 12:21:46AM +0200, Thierry Reding wrote:
+> From: Sumit Gupta <sumitg@nvidia.com>
+> 
+> Add bindings for the Memory Controller (MC) and External Memory
+> Controller (EMC) found on the Tegra264 SoC. Tegra264 SoC has a different
+> number of interrupt lines for MC sub-units: UCF_SOC, hub, hub common,
+> syncpoint and MC channel. The total number of interrupt lines is eight.
+> Update maxItems for MC interrupts accordingly.
+> 
+> This also adds a header containing the memory client ID definitions that
+> are used by the interconnects property in DT and the tegra_mc_client
+> table in the MC driver. These IDs are defined by the hardware, so the
+> numbering doesn't start at 0 and contains holes. Also added are the
+> stream IDs for various hardware blocks found on Tegra264. These are
+> allocated as blocks of 256 IDs and each block can be subdivided for
+> additional fine-grained isolation if needed.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> [treding@nvidia.com: add SMMU stream IDs, squash patches]
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - add interrupts and interrupt-names constraints for previous chips
+> - add missing maxItems for reg property on Tegra264
+> - squash memory client IDs and stream IDs patches
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/tegra/clk-tegra210-emc.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
-index 672ca8c184d2c6e9a7f26c07d036f3359af42bc4..fbf3c894eb56e3e702f0a1f67511463dc9d98643 100644
---- a/drivers/clk/tegra/clk-tegra210-emc.c
-+++ b/drivers/clk/tegra/clk-tegra210-emc.c
-@@ -86,22 +86,30 @@ static unsigned long tegra210_clk_emc_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP(parent_rate * 2, div);
- }
- 
--static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
--					unsigned long *prate)
-+static int tegra210_clk_emc_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
- {
- 	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
- 	struct tegra210_clk_emc_provider *provider = emc->provider;
- 	unsigned int i;
- 
--	if (!provider || !provider->configs || provider->num_configs == 0)
--		return clk_hw_get_rate(hw);
-+	if (!provider || !provider->configs || provider->num_configs == 0) {
-+		req->rate = clk_hw_get_rate(hw);
-+
-+		return 0;
-+	}
- 
- 	for (i = 0; i < provider->num_configs; i++) {
--		if (provider->configs[i].rate >= rate)
--			return provider->configs[i].rate;
-+		if (provider->configs[i].rate >= req->rate) {
-+			req->rate = provider->configs[i].rate;
-+
-+			return 0;
-+		}
- 	}
- 
--	return provider->configs[i - 1].rate;
-+	req->rate = provider->configs[i - 1].rate;
-+
-+	return 0;
- }
- 
- static struct clk *tegra210_clk_emc_find_parent(struct tegra210_clk_emc *emc,
-@@ -259,7 +267,7 @@ static int tegra210_clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
- static const struct clk_ops tegra210_clk_emc_ops = {
- 	.get_parent = tegra210_clk_emc_get_parent,
- 	.recalc_rate = tegra210_clk_emc_recalc_rate,
--	.round_rate = tegra210_clk_emc_round_rate,
-+	.determine_rate = tegra210_clk_emc_determine_rate,
- 	.set_rate = tegra210_clk_emc_set_rate,
- };
- 
+(also as an Ack)
 
--- 
-2.50.0
+Best regards,
+Krzysztof
 
