@@ -1,45 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7D1149C4A;
-	Fri, 11 Jul 2025 16:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5573627A91D;
+	Fri, 11 Jul 2025 16:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752249650; cv=none; b=ltBOYLKY3HbJbssIq4jkHbmXUtm1iXFU+94+25ar0+/UQXobZGmL7QzTX91h2I7iudaUb0R+1GDBMcJYjIZXRPX81Jyr6EkGB8Hh1Jy4dSAWC4BjBUGf2iqGrn5lNfx3+8QZPQgu6oBfLBXJlX10EnEsBz8lB5fDWHM8dqLFrno=
+	t=1752250475; cv=none; b=EYgE52+XwH8M6RK/kkDyq5CL4iT5ztCyHmrhxyOCJw8RE2BWUVqVE0SFNmsUiTqYC37MXg/eSmvmH3g7qhUBc/BB6r6szE636qJFCHafmkmI/RZx+qz8PR6dNHm9RFhrjIdXRi/CcgsNR7xvH8DMPUZzFJzZYLh+7iHSgmZJIFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752249650; c=relaxed/simple;
-	bh=nakvtkAYRCu5QQhjHX805Oih22xwG4vhtQD+uJsWIdw=;
+	s=arc-20240116; t=1752250475; c=relaxed/simple;
+	bh=GmeNQXQW8OBcvcvO6HZildjusv3m9QHJ5AApHT58lZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELKMbyUh7tYVbqKeSSsnCr6pBA2QoUVj/3i7B9hKJYgyk4eSdNZ1Kgdenyn1misMftuDrdGg9ock907zoMazOAUUoxihjF+AQhqXwi3Ek/0bmgcOoILEyOu+mg9U5brt4laGaNUTvhcb7vxiiONjLFqk5lg0cTPds8Sh31/XlTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzUleDm2; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEbV3Zo936yeDfKstY3qSl5Jn8x8+HyASDNN8T/sYYeDYWuzY6fDUzAXh3AyNqUCRA/zI3Ymqpfnj1FdiyyPq/Vl3tadOCADxxZiTrIxNaNFRCBoU7RjFT/OesvHGA7IxAoTw3xKYybWUpjviMU/8utjSawL0vyyh0xKODw7z4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apaK87ld; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzUleDm2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F837C4CEED;
-	Fri, 11 Jul 2025 16:00:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apaK87ld"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C421C4CEF5;
+	Fri, 11 Jul 2025 16:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752249649;
-	bh=nakvtkAYRCu5QQhjHX805Oih22xwG4vhtQD+uJsWIdw=;
+	s=k20201202; t=1752250475;
+	bh=GmeNQXQW8OBcvcvO6HZildjusv3m9QHJ5AApHT58lZ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzUleDm2HLMr0yEUvT1iBR5Ceix7aO3u+pQyCuxrAwm7vE462lzkGmuIqEzfBdt4W
-	 Dgu42sJjuM7USAJLhVFoPTA4N/UvLsYEXmrhJ7uyvORDv8uC0NR0wyAsyTwcJ6PBbW
-	 QEHd8zr4/zVvdkeQHofE0x87vGMclkVK8OOcC7wYRevOuFV5GlR8s+NrkUkV5WJL0P
-	 GT5J0hP1FY1l2rPU6nQnnk/N3PZ4gpVCaNtKMpZEw9ztPoE2fssMACc29T/U5ngjoM
-	 djMHuYOHztWgI3Rqh7IgAA0/i/IIr+mQ+25KlWTAKMEuGx1a0ZTy4SmpvgP0emV2rP
-	 rSpMBd53gg6kg==
-Date: Fri, 11 Jul 2025 18:00:45 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Akhil R <akhilrajeev@nvidia.com>, digetx@gmail.com, 
-	jonathanh@nvidia.com, ldewangan@nvidia.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, p.zabel@pengutronix.de, 
-	thierry.reding@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	krzk+dt@kernel.org, robh@kernel.org
-Subject: Re: [PATCH v6 2/3] i2c: tegra: Use internal reset when reset
- property is not available
-Message-ID: <iqx5wzywy2x66n2y36mx4fckrr7wy4lqu3dsejcovghjtmgoz7@zwslylpivy3q>
-References: <20250710131206.2316-1-akhilrajeev@nvidia.com>
- <20250710131206.2316-3-akhilrajeev@nvidia.com>
- <aG_FvfN6xXuULolK@smile.fi.intel.com>
+	b=apaK87ldOYn5FK2tDeGRDePprHq+beg+q9HsLOWJ2j13cMBCS6+mx0WcltPJsdS3w
+	 CzYun59+ByQ3TdmVIVWrGlL/W8WcIzaPbfTXsbA5FtiIxqz5ZbhVvShMT6Uf9cL0PN
+	 4ytZp94nPA10Y7DtWLizwiEYUSknZl+OyAs0DUYaItDecpCuVhE4QDWkqNIHSJi7sp
+	 LWi25pGc9/uHHZ07X+TmzULZC8hajpmCywurY5p6K7szAY7mgPFz6xddS8AdBVgpm6
+	 fmH0Ugvb/IhmTZU+IPSaCKy2NvVBQrpYO4pajykZ1XzB949TL/eMqMY5t9EE4AzX1R
+	 jyy6Psd53fAxQ==
+Date: Fri, 11 Jul 2025 17:14:27 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v9 23/29] iommu/arm-smmu-v3-iommufd: Add vsmmu_size/type
+ and vsmmu_init impl ops
+Message-ID: <aHE4Y-fbucm-j-yi@willie-the-truck>
+References: <cover.1752126748.git.nicolinc@nvidia.com>
+ <375ac2b056764534bb7c10ecc4f34a0bae82b108.1752126748.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,60 +53,61 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aG_FvfN6xXuULolK@smile.fi.intel.com>
+In-Reply-To: <375ac2b056764534bb7c10ecc4f34a0bae82b108.1752126748.git.nicolinc@nvidia.com>
 
-Hi Akhil,
+Hey Nicolin,
 
-On Thu, Jul 10, 2025 at 04:53:01PM +0300, Andy Shevchenko wrote:
-> On Thu, Jul 10, 2025 at 06:42:05PM +0530, Akhil R wrote:
-> > For controllers that has an internal software reset, make the reset
-> > property optional. This provides and option to use I2C in systems
-> > that choose to restrict reset control from Linux or not to implement
-> > the ACPI _RST method.
-> > 
-> > Internal reset was not required when the reset control was mandatory.
-> > But on platforms where the resets are outside the control of Linux,
-> > this had to be implemented by just returning success from BPMP or with
-> > an empty _RST method in the ACPI table, basically ignoring the reset.
-> > 
-> > While the internal reset is not identical to the hard reset of the
-> > controller, this will reset all the internal state of the controller
-> > including FIFOs. This may slightly alter the behaviour in systems
-> > which were ignoring the reset but it should not cause any functional
-> > difference since all the required I2C registers are configured after
-> > this reset, just as in boot. Considering that this sequence is hit
-> > during the boot or during the I2C recovery path from an error, the
-> > internal reset provides a better alternative than just ignoring the
-> > reset.
+On Wed, Jul 09, 2025 at 10:59:15PM -0700, Nicolin Chen wrote:
+> An impl driver might want to allocate its own type of vIOMMU object or the
+> standard IOMMU_VIOMMU_TYPE_ARM_SMMUV3 by setting up its own SW/HW bits, as
+> the tegra241-cmdqv driver will add IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV.
 > 
-> ...
+> Add vsmmu_size/type and vsmmu_init to struct arm_smmu_impl_ops. Prioritize
+> them in arm_smmu_get_viommu_size() and arm_vsmmu_init().
 > 
-> I would perhaps expand the comment here to explain ENOENT check and what do we
-> do in this case. (Note, no rewriting of the existing, just adding a paragraph)
+> Reviewed-by: Pranjal Shrivastava <praan@google.com>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 5 +++++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 8 ++++++++
+>  2 files changed, 13 insertions(+)
 > 
-> 	*
-> 	* In case ... we compare with -ENOENT ...
-> 	* ...
-> 	*/
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index c1ced4d4b6d1..6183f212539a 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -16,6 +16,7 @@
+>  #include <linux/sizes.h>
+>  
+>  struct arm_smmu_device;
+> +struct arm_vsmmu;
+>  
+>  /* MMIO registers */
+>  #define ARM_SMMU_IDR0			0x0
+> @@ -720,6 +721,10 @@ struct arm_smmu_impl_ops {
+>  	int (*init_structures)(struct arm_smmu_device *smmu);
+>  	struct arm_smmu_cmdq *(*get_secondary_cmdq)(
+>  		struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
+> +	const size_t vsmmu_size;
+> +	const enum iommu_viommu_type vsmmu_type;
+> +	int (*vsmmu_init)(struct arm_vsmmu *vsmmu,
+> +			  const struct iommu_user_data *user_data);
 
-If you write it here I can expand your comment before merging.
+It would be nice to avoid adding data members to the ops structure, if
+at all possible. The easiest thing would probably be to add a function
+for getting the vsmmu size and then pushing the two checks against
+'vsmmu_type' down into the impl_ops callbacks so that:
 
-Or if you prefer sending a v7 is still fine.
+  1. If the type is IOMMU_VIOMMU_TYPE_ARM_SMMUV3, we don't bother with
+     the impl_ops at all in arm_vsmmu_init() and arm_smmu_get_viommu_size()
 
-Thanks,
-Andi
+  2. Otherwise, we pass the type into the impl_ops and they can check it
 
-> >  	err = device_reset(i2c_dev->dev);
-> > +	if (err == -ENOENT)
-> > +		err = tegra_i2c_master_reset(i2c_dev);
-> 
-> >  	WARN_ON_ONCE(err);
-> 
-> Other that that, LGTM,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Of course, that can be a patch on top of the series as there's no point
+respinning the whole just for this.
+
+Cheers,
+
+Will
