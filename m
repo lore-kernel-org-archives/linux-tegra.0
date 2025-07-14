@@ -1,154 +1,124 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4B6212B0A;
-	Mon, 14 Jul 2025 06:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A81194A60
+	for <linux-tegra@vger.kernel.org>; Mon, 14 Jul 2025 06:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752473552; cv=none; b=jvPGSBOYcQOCRuA7rMhwHDTa2c1mfKxrxrm1GtQawSDVzoFTVrtZAIM5X7bshYFilf9S78kzYGExzYyg4j/zTwF+ncANHs2n2Ti4W3j+Rb2WjVoJIokJmYXyozGHA1wIejF1+aH7kvOZVXKz+CYMgS6oAP3gnH5J8+Db58m8wzg=
+	t=1752474110; cv=none; b=adg+goQvsRnXYd+HNWbWOczKAbcLVrXNreDAzwAJmXVC3zbQ2p0ZKKeMbgs6MqCZ6mtEMeuJ3jxlyt+r3MV9onogGhpJiGZYHo/OobjRZc72ZyjFl2fh+b5oX/xihANQOP7QVNnsDxuw627BmOVppGmTwq0S2csey/t4w8D/7Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752473552; c=relaxed/simple;
-	bh=GCvuFIHfHnTY+lLbeieHAjb6PL9SdLYd5HNTQR33Wzg=;
+	s=arc-20240116; t=1752474110; c=relaxed/simple;
+	bh=/iHl+rhXPlidkDSTTehzr5QIvE4hvjYKuG0VZN/dHAo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VeoghloAyfWQE41SClqTJFHeB73yQpVIhmuxph+brYa8xWldjZPEsrhcMvrXCoRBTFz2UH/KdgiZqNHNAUdV3yFyrXukzgbGNJzBtO2BvvIjTYCpM/JRzp6Htz/LmzfpsDDc63H5WgkLv4EkUFO22KQkoUXqgRbbvmqUkfY3i1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKugY+EC; arc=none smtp.client-ip=209.85.208.180
+	 To:Cc:Content-Type; b=LbihOsESTfa3Pkc75bVhobJMzKIsKoOdTvAnbGSM6yFgJ0zRJ37gCvJ/N7KLLhD/qIzzBrplusfw0K/xmbBdO/CVF3m0AO1+IeyteKgMH8T+Vkf7ZLPOZvuyk+RxJ1hLUNic2lcku95/h50366VVDBsTvWi+m3oDY+GJ+huXCHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QwPZVDGk; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKugY+EC"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32f144d0db8so26256521fa.0;
-        Sun, 13 Jul 2025 23:12:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwPZVDGk"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553dceb342fso3522655e87.0
+        for <linux-tegra@vger.kernel.org>; Sun, 13 Jul 2025 23:21:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752473548; x=1753078348; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752474107; x=1753078907; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4HclH83NzlDxFp3WCu9k+tiTs4nj/yAfFDR01jNUC5M=;
-        b=nKugY+ECmULHuFBnZTezniRPGThSqsFexy1m1l8HZGSM/7PRbTvABsU3HYv6Lk52Uk
-         Ysk5W7KI6hQnrpVCxUdyo4r0kS+pdTMhIJXlNeio9dtA5WRSoOd1pZkxDQNLdAZor8eo
-         qwyKYmomhbD9QkAz01Gr92QTQdCRcHyeEVsDZsmpecqHrYJT5eiztrm/B6A5plJbIVXg
-         31duqjZWcHJhjozHL7oGLl6kr26cguPPSzp7EI4OvsCtP6jtDl37HABgdkDdkN4fOu2r
-         dP5umGnjP+LdgA7jf64BD9BgxBohFUMZ8IGeN8Vv1ORx8LEZN057dalkv9adGMPKjozy
-         mzKg==
+        bh=NMcDFrszB7BFuQatwGIR7E8jzDiCC9l7KQJ0Bboywxk=;
+        b=QwPZVDGkOsmixMndKgAB7NOgCKjWnW14AaXtRfIOQjheUnbrIpcKEmCj+BrHxaBZw+
+         0ZuCB467EJuWIK53L6tGc6P67G23UXlibA7rzEbOI+5QT2ML4qywbDPUKM7QYTIMMUC1
+         TH0RTewx2EJEwqwPMHWJs8vSs8dCqcMbHRK7zQYiDALXi0EB1tQcmVOUfAgnT6s4ho3j
+         9vsSZ8qcRmlzPz4nNoaxwFCcwRk422MJe+oVemmWvdx2EkfvxoPZ9T9rsCRrjKqKsuDe
+         TTll3CUlTD8bvyI7YJ0ZQ5RhAf+e3SgevOcDe1k43OpjeIJcscba38aGL6oOvkkMjps9
+         hDMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752473548; x=1753078348;
+        d=1e100.net; s=20230601; t=1752474107; x=1753078907;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4HclH83NzlDxFp3WCu9k+tiTs4nj/yAfFDR01jNUC5M=;
-        b=WlTlYjJPhDeUwbmwLTecV/n36CAS0okYxau+f6UqQLV8lrxNp24OwC5KAezRkbCyWr
-         cq1EedDqCauYcuRHctwuXvDUrA0ycfuDa0TjLUK3oNkQmXuMgLRip9KCn/ppelbSCLpP
-         p3HvkFR40aZDZwhrsE6PdmlcNdrblnqFZ5z45a1cjQM+yjGwDILD7flWD4n5h3fycxVh
-         Spu5m4fl2YbNCVTf7vh4wrcfVdSq5qHDaTHmwD1jzKmsoWZHAHxZSl1C6QXBZPRb8Fli
-         FqORFjlT2Fb/VK6vnhI66uvr7vmYI/V9Me/EmcCYBvyzj7KhCMMMme1awnQKhZo1ZssT
-         ZVyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBNbaPkEEE3Wo4jJjPgTp8P4TlC1IQAKkg20rJnuXU6N2IOgPMIuGY+raG/WHsqzSsio9H8bk0jY+hiX8=@vger.kernel.org, AJvYcCUqtvWcrRfpsGN17b41ean25RH+JiFZ7RHpnn7J9mkTeholc4Eob8t9jRIwL0UC9sWLrYWjkYp9V6ye@vger.kernel.org, AJvYcCWiF1suW3LLxNbgXGXwcx88/mpx0I9qHpstatMUqoSW3yE/Pj6bceS4vamSq2MgZ6vuF8t7mbgVYaM=@vger.kernel.org, AJvYcCXEJJZYBxxGGKBCutmfC0P1PCXSWmzq8ry7235T6xbw+kl4tuSSc5+4+9VwLlMVZ8+hMCXEDQXEDyPoQNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0LFUl1J6XucQHa/SLe1l2i17z9JsrbptXMNzvyySq9EzVt98n
-	3eXnJeqbGBb2Bdv1mt6dI29eWUC7UAobBdsUmFwYLQDRbb6O4KZbu990lZmqOOE08NYbdB4fBCT
-	Re03XHpf9UR24uhh6rWvPgv7YZrORJwM=
-X-Gm-Gg: ASbGncuLW79G96YJMT3PiUyvQG5l/yAcM6ONfD9ni44/6iTn1Pxk7VF7APRyvB7Qk8W
-	jirMox6hIasBA1NQqxeUCZsAqQk2Hagr6ovWO9cDOcEpw6PrYOyXovcvGWC4l7auwaB2K4QAxum
-	1BwPMxwum/UdCBUkoYzJy/j7d2snsUP9Q88uUIPVteIdYJ8gtlEdul7ADswbmfT4tbW8g2sz/ue
-	iF4Fc0=
-X-Google-Smtp-Source: AGHT+IEEmZLhzLOHhcNX69E4EEM1Zr6whZ6ca7n1lHdYKFmEhiFtuzgKib+HMpneZvKeFl2cpxv/6S8jqM6l32aEim0=
-X-Received: by 2002:a2e:a902:0:b0:32b:a9a4:cd58 with SMTP id
- 38308e7fff4ca-33052279345mr39539821fa.15.1752473548356; Sun, 13 Jul 2025
- 23:12:28 -0700 (PDT)
+        bh=NMcDFrszB7BFuQatwGIR7E8jzDiCC9l7KQJ0Bboywxk=;
+        b=ROTXyC5SKbfLF3DStPrpUqc0cnElF6+4BEsB/mpVJY1geven3rIpYj+za6cLiBb6Jq
+         qwstgBIkiO5B3C24oIuA0OVcc4dlguLV+XoCZ5DBt9+ozpDjUPlc3leuSJzA/qYdwk9G
+         7/VTGv29n7VNfXn+BmWLGhIVwz2EatgXUbO3+HV5FIULaWCapRxaL7P9xTlMFwksmLCx
+         YxhdZynY3gTT1jVyvu0HkiwtxY316uqioCi/C4PKl00qMP9HOhjRs1/qamy5dYT2+Kf9
+         LVqXMNW1F6XQ9SgcanIYUyZyhpLMbP4U/gFHyjJQMWKkRxQt5h2BYPrsCfa/boRU36J7
+         1cTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMvN0ihEqhQI8GsUGwJTa5NyRR6dcFkzO+W5tS6nITCa/KuUTDybRI/EhF+NqZUxEamSqDubgkcIchSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTRKA32szi6P0vd+WSpjweK6gbzO4I6hzZfHv7XI1ukNDvvRo2
+	2ajfPc25sjzHaKlVfuVhn4UOQsy3KgHLIuFhOc+XIywloVrG/3ilbjadmSdIXHybpzd6uzknz7n
+	h/YZZg6eBUcaGMHcUfXyt4TBnRCn0/O8=
+X-Gm-Gg: ASbGnctdiSZfypME1SAcP7FQyuAVRd9D8dwOEV6UMOQ9zsjuUCI9gFWoKvD70oGkYNQ
+	Grus+RE5X3xfO/rFVK/80f2ScDgcDRHnxJsg7QoDFtjzKEpyxpHXY16w5inRjqdrlnhrUlfIz/v
+	9K4aG3BuymF/lIX9dvu5lbHuBtVSk4xNwwNBZpMmGVCxJd4ocXvyl+N8qhQqiG2LFibDNNulkCV
+	Xjh6ro=
+X-Google-Smtp-Source: AGHT+IFWVz8WAEdY4MFLH6mIRktnZV2UUEvj2vW5u3GVRS/LRLOe4YVWhz2OUGtIppThjVjmKfTMUPvfSa1uTIrvDm8=
+X-Received: by 2002:ac2:4e04:0:b0:553:35ad:2f45 with SMTP id
+ 2adb3069b0e04-55a04647c67mr3428833e87.50.1752474106887; Sun, 13 Jul 2025
+ 23:21:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com>
- <nz76wk5yqytag255jijxlyuodzpo3fm6d5coxutqrd7tgomzxm@pwzvpv4frjxu> <CALHNRZ9WYJef8+QyCfpkxLhUj_KRY=kZisEwq=arrTxXXfCknA@mail.gmail.com>
-In-Reply-To: <CALHNRZ9WYJef8+QyCfpkxLhUj_KRY=kZisEwq=arrTxXXfCknA@mail.gmail.com>
+References: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
+ <73cbbuahttztsfkz36ndl7mla5dswo4wjqvzvuuajfuuxdo3gn@eiq3q2jniajw> <CALHNRZ_Tf=EPpPCpc60SF=um1oZ7gDnWdBxCfD=GrXUo6sOwOg@mail.gmail.com>
+In-Reply-To: <CALHNRZ_Tf=EPpPCpc60SF=um1oZ7gDnWdBxCfD=GrXUo6sOwOg@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 14 Jul 2025 01:12:16 -0500
-X-Gm-Features: Ac12FXxzicaLORWlI4imvwogYPOLZV3Z9geQKHYOjwVJ4Ej31UmrR1MncJN4u1E
-Message-ID: <CALHNRZ84Xj=_HqrFWnYHdV-A9YM4yu2FhfYgHy4-sR65tsYbUA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] PCI: tegra: Allow building as a module
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+Date: Mon, 14 Jul 2025 01:21:35 -0500
+X-Gm-Features: Ac12FXxHhU535sSxGMqj8HLKTWwZ2N5D52tbVB_NOD4AK-HpBsFTa3Sx8NU5Oic
+Message-ID: <CALHNRZ9FE-WppDo02u3SkYjUkgtEpxj=H1V2pT_Stmtze3THpw@mail.gmail.com>
+Subject: Re: [BUG] cpufreq: tegra186: Denver cores do not register
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 30, 2025 at 1:31=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+On Mon, Jun 30, 2025 at 2:39=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
  wrote:
 >
-> On Fri, Jun 13, 2025 at 1:17=E2=80=AFAM Manivannan Sadhasivam <mani@kerne=
-l.org> wrote:
+> On Tue, Jun 10, 2025 at 4:20=E2=80=AFAM Thierry Reding <thierry.reding@gm=
+ail.com> wrote:
 > >
-> > On Wed, May 07, 2025 at 10:25:51PM -0500, Aaron Kling via B4 Relay wrot=
-e:
+> > On Sun, Jun 08, 2025 at 10:09:01PM -0500, Aaron Kling wrote:
+> > > The boot logs when using the L4T r32.7.6 boot stack without u-boot sh=
+ow:
+> > >
+> > > [    2.648162] cpufreq: cpufreq_policy_online: ->get() failed
+> > >
+> > > I have traced this down to ndiv [0] being read as 0 for cpus 1 and 2.
+> > > Prior to "Share policy per cluster" [1], this would also fail for cpu
+> > > 3, one of the a57 cores; but with the policy for 3 being shared with
+> > > 0, the driver no longer tries to read its registers directly. This
+> > > issue has existed since at least 6.1, which is the earliest I've trie=
+d
+> > > to use Tegra186 on a mainline kernel.
+> > >
+> > > I've tried to compare this driver to the downstream 4.9 version, whic=
+h
+> > > does work as expected, but I do not see any differences to the
+> > > register offsets being read. If I hardcode ndiv to 35 for the failing
+> > > cpus to match what the downstream driver gets and what the other cpus
+> > > get with this driver, scaling appears to work properly. But that's no=
+t
+> > > a proper fix. Does anyone know why the registers for cpus 1-3 aren't
+> > > read properly while 0,4-5 are?
+> > >
+> > > Sincerely,
+> > > Aaron Kling
+> > >
+> > > [0] https://github.com/torvalds/linux/blob/19272b37aa4f83ca52bdf9c16d=
+5d81bdd1354494/drivers/cpufreq/tegra186-cpufreq.c#L117
+> > > [1] https://github.com/torvalds/linux/commit/be4ae8c19492cd6d5de61ccb=
+34ffb3f5ede5eec8
 > >
-> > You should always add the context of the series in the cover letter.
+> > Adding Sumit who usually knows this kind of thing.
 > >
-> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > ---
-> > > Changes in v6:
-> > > - Remove unused debugfs cleanup function, as caught by kernel ci
-> > > - Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-=
-0-827aaac998ba@gmail.com
-> > >
-> > > Changes in v5:
-> > > - Copy commit message exactly word for word on patch 1, as required b=
-y reviewer
-> > > - Delete remove callback in patch 3, per request
-> > > - Don't clean up debugfs, per request, which drops patch 4 entirely
-> > > - Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-=
-0-088b552c4b1a@gmail.com
-> > >
-> > > Changes in v4:
-> > > - Updated commit messages for patches 1 and 2, per review
-> > > - Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-=
-0-556a49732d70@gmail.com
-> > >
-> > > Changes in v3:
-> > > - Add patch to drop remove callback, per request
-> > > - Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-=
-0-c11a4b912446@gmail.com
-> > >
-> > > Changes in v2:
-> > > - Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
-> > >   building pci-tegra as a module for arm
-> > > - Drop module exit to prevent module unloading, as requested
-> > > - Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-=
-0-c0a1f831354a@gmail.com
-> > >
-> > > ---
-> > > Aaron Kling (3):
-> > >       irqdomain: Export irq_domain_free_irqs
-> > >       cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
-> >
-> > I need an ACK from the cpuidle maintainers to take these 3 patches thro=
-ugh PCI
-> > tree.
+> > Thierry
 >
-> Reminder about this series. I'm normally interacting with the tegra
-> maintainers, but I don't particularly care which tree it goes through
-> as long as something that works gets merged. So, can one of the
-> cpuidle maintainers take a quick look through this, please?
->
-> Aaron
+> Friendly reminder about this question.
 
-There's been no responses here for a month. If no cpuidle maintainers
-wish to respond, then what?
-
-It makes more sense to me to take this through the tegra tree. But
-Thierry had concerns about removing functionality that was confirmed
-working. Manivannan, if this was to go through the tegra tree, would
-you still block this conversion if it didn't drop the unplug/unload
-functionality? There's many existing drivers, including one for newer
-tegra archs, that are unloadable modules that would be affected by the
-IRQ concern. I don't want to cause friction here, but I do want to get
-this merged before the next LTS, so I can use it for my projects.
+Re-reminder about this question. Even a 'I don't know' and 'works on
+the regression bench' would be useful. Though I would have followup
+questions if this issue doesn't happen on the benches.
 
 Aaron
