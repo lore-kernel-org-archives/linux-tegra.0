@@ -1,192 +1,158 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A1D37160;
-	Mon, 14 Jul 2025 06:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F05E17736;
+	Mon, 14 Jul 2025 06:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752472894; cv=none; b=bT0+kzaOTH5P2e8+dIjONlJKde3wMWHPNLxm9oA+tQWKQ/oTVNlQtgWbZJRJ7a85YQMmrp+JOBWPmB7SmTAxbPAbsMNmInE2wlGUv4hFsRzXriexhjqmPkRi15INFXFRDvlfkUgeLqWHu1GgGML/c2EpoHy5KtPl+mZRV50PXRM=
+	t=1752473328; cv=none; b=KqN1gdTR6K3yTi8L5FqNRy786Esgr/kNBX6jpG+KMSWWCyxl2IsfqKi+uER3Jw91Icv2yHq9ynHRdpe3eNhLI8r5IxYwyepMZ7jhCckdzOO6fWD52WVIptHh8Q+yaISZRTSRhekK28gUEuQ866xOB+CXmjh9Cxaaizk3G5edVH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752472894; c=relaxed/simple;
-	bh=KSutYYpzj12A8Clp1V3EpFhK6twa9mZjwopcGDUMZ88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XnOsFMrMIxoj4cT1UjDd2aSQuv7CCib8lZhKs95d6UN/DIpV1MGvuZcgtqV5auQmWahNyKTKuFOdbB7zZ8NgCTuTX9SUt5HhXXj76QDoqp1QWC3gHUAfl9Ne8Sojrk9+tOEr0iH3ZSwC64MnS4zKh4L+zWvviGCs4oIkh3ft6P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpYLgY21; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752473328; c=relaxed/simple;
+	bh=IT52CMMNQVZe/JpsyeRDyVjFNpZ1hXZyOCPsnriWGuY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hQeTcZ/KiF3ujRi3wVOfAdtXCxUu78/FQqg112QL9Vngr6Fqsi4/Zyjeriw0uIRoO2wDhf0d9CAbeTKsnWvvm+1WeDaeHWRyqTJ/QztsTObAFC+d6K0a5QFHigy67n2DHx8ZuMlSTMjcVlJR5sAu6C+hLrRyzigWvbXe/fWRoI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=aDQRSUNA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NMOIB9oI; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpYLgY21"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-558f7472d64so3957663e87.0;
-        Sun, 13 Jul 2025 23:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752472891; x=1753077691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KSutYYpzj12A8Clp1V3EpFhK6twa9mZjwopcGDUMZ88=;
-        b=jpYLgY21+XDh96iUmqxsqEalfky21jMjlACP2W1b6GOCwOLKrmEqcFPXmW4GWj9XeS
-         WyE1pfnaAv/G7EopgYNLXD+ct3h34qCIHCOpanx+920fVnewgzW+Nn+AnEhJLsKJUkcy
-         8mWcIWKunAs1Q25zHFoFstBH7X/WgURFP65t3ROz6K96xhuPzbbXGwmJFKJYNC4rzPSo
-         LSNeh9wSjRBjJgZXuE8uS5IyeqE7aqv6ZCBTJKrl6msyXFn2CWQTsABUyWiXz13nAbs3
-         zMLghYc5cf++zyQUZC+pykBeyW/1l+IrG684RhXd7mSM6VoplQnSo4CrER3UWSyM+os0
-         leLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752472891; x=1753077691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KSutYYpzj12A8Clp1V3EpFhK6twa9mZjwopcGDUMZ88=;
-        b=IMGymLnWDhb2WqMAcyITTdXl/QLz91R3Rz32dy2BatSzXqN0SNSu8+4YN/mevaDRzr
-         e5cO1v0XAGqYsHeCV9XMc0TIc458vcqXzzwqmKnxrNi3gg6RFhHgbGsOPQ6ytBbt+au1
-         W5SXAEGaXI/lM6Q9rIO+olCmxtOTgjFgPClLHVe+TU6z9Thgdm3AH5S7sj8kNsFocEBq
-         4bbX5aUT4zP7xJe/x0xfwZ6cgdLdVfxr81n76lql0snMzqox7tX5/wPIJkZDb/4PMEX8
-         P8nzYU5KYIGU4qoygzu+Bptfd10q87AjIDoWiqwJPpkXT5xWsU7gDJBaHjamnuP8LoSE
-         OrJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHefiywZiuZNqi2154/asLnzccW1EOo/ls3KxJsb1etie+92Ae4RplwIvxujdL4pe1+Xb/Yq0I1UO4eZ8=@vger.kernel.org, AJvYcCUQjnFEY6xP8LxcK+xV8CxpmkXDw5LedgLJjeSlENr/4ubOfeYq/afqAwAaxG/00ha6gxXMvZTVNRFh@vger.kernel.org, AJvYcCX3OfH9SyouPMKtfsc+hDxeqw6f0JxjUSy7sVKEg86Ye9hDRC/Ux/eZH/bcd47plkRVbrJJ48DFYr/3wViJ/XVR@vger.kernel.org, AJvYcCXrKLBSaBeh3acklGW72f7RI8aYWTdpmOSXdM4O2WKhGGlD3cRl2LbHJJ7xIbnOuBFhOE4NOm9gF67hdoHC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQG+KmVmNBQD7c+FVKeoRM0OtXQKg/+nPBYvPi4zqAFsIC94M+
-	FJcDol+C+Tpj0DcQ0I+VaYfOF1gG6qg/OK99oayMq0pHLP6GTImpSpFBWXJbWRcMZRTUE6ZrVgi
-	vqYgxNRQvT9iTtwpywu0LBTcPt44/4Uc=
-X-Gm-Gg: ASbGncsREDcdcUOYfz0Y2vnU1pFa21kC403SzUCoMr658Y6sOyZQr2bmS+qA9PZ2Owy
-	EYupMkrH2ysxVMfNKrlGLqFA1/i7rwuI5iThBKhI/awbPdPmryz86KzpshIhFUoNb+KjJpOmRAP
-	63x0l60gSoS3JK86ESzRQZvNjKerfA9vUjkBJNmkJdWAQ9ZnDOwWu80S7NOjvPMQefYxp5Lh0S6
-	QDhtJY=
-X-Google-Smtp-Source: AGHT+IFaK4CVePoPSDAN6z50vAdyVoIA95uNU2vm1WeFoylnBGb0O9yoyyrFrkD1jzp77/kg4hC3YqzelAGQlJZiMY4=
-X-Received: by 2002:a05:6512:4004:b0:553:2bdf:8b87 with SMTP id
- 2adb3069b0e04-559006bad5bmr4367708e87.10.1752472890874; Sun, 13 Jul 2025
- 23:01:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="aDQRSUNA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NMOIB9oI"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 75D78EC0453;
+	Mon, 14 Jul 2025 02:08:45 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 14 Jul 2025 02:08:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752473325;
+	 x=1752559725; bh=RC+CFVWd/VWYy7402scfBHaFNOZ1+z4P3lAFBCgGdWQ=; b=
+	aDQRSUNAXm+/DcRr8JHFpYax0uaM0MtbIvLQBkPE0LGP414DcT3gKnoamV8T8SEN
+	xYDBlC2feBCzsPE8RIOl9gJX/ikFb2POYxKMPEA05S+M8ypfatJ8ALGNrb5cALTL
+	KDCKokVRPEcA/wH7mmkvLR21BSJnfsWKsmCPIHbSqW3OM967bPW7ofJ0SSVIqSJx
+	3LMnM/KApSyk04F8E1kcEeNy8Yh8Bz3/lpnj04X5uLq2XaQLMgFVQdx3k352jNpu
+	6MHc13Lzk98yPzAMgNkUOlqeSsAqcThKlOyCRgE+3WdAUM9G2skt5RrdeoJrr4+v
+	WcchmnE45GeMCekZhRbOAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752473325; x=
+	1752559725; bh=RC+CFVWd/VWYy7402scfBHaFNOZ1+z4P3lAFBCgGdWQ=; b=N
+	MOIB9oIK4aFGz/MAFD2nsL3q6bVhYxOa+1rkg2f7yWSgVHnNep35yY+c0xwQzgsP
+	vMRwxeJnGvzwwxmEaQjimrah2ANgib3/waRIs7J0MBff5JWK2BuRG3V/gs48X2mH
+	vlSX0MrI8YV61X2YvowWrBpkGbPwwZgKMONU56Du0DBDjQ5pvBmdCMh/Ak6cISlM
+	7YxINbF6R4HK3hpbeP6adI/ZbzcjdrSk1IZzjIJr2ToCdWjW9MBjV3kknOLRcbC1
+	bAbloGmDZcko0XSzOVQtxTfXl9rd+Dx5DcSZgsIirq7CM+sIpLRzc9Enub5Y6Rzk
+	eo+eEwiVAq6EJ3fdKbTeg==
+X-ME-Sender: <xms:6550aNISqkL_c_gKSI1GS6zwoONBMO-j0aQrHirsA-Dx9-qhip8wJw>
+    <xme:6550aJLL4Ox0N4jUEaYXAg0enHEgZ0Hvj03HUlMKvtRESzvOZlCtNu5UrKmGPZXjZ
+    N-Z2U0G_l8VX-cujzE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehuddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefuddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehvrghsrg
+    hnthdrhhgvghguvgesrghmugdrtghomhdprhgtphhtthhopehrohgsihhnrdhmuhhrphhh
+    hiesrghrmhdrtghomhdprhgtphhtthhopegsrghgrghsughothhmvgesghhmrghilhdrtg
+    homhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmshhhrghvihhtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprh
+    grrghnsehgohhoghhlvgdrtghomhdprhgtphhtthhopeiihhgrnhhgiigvkhhunhduudes
+    hhhurgifvghirdgtohhmpdhrtghpthhtohepugifmhifvdesihhnfhhrrgguvggrugdroh
+    hrgh
+X-ME-Proxy: <xmx:6550aCsD6On8GiPFBuhmhjg2cQ8kX7cKAjv83xfvNnNf8nYQRggg1w>
+    <xmx:6550aKpYGV3_6_Cw9r9zZqL9Q_5umAHi98hyl4oNeTYJZsfFeuThwA>
+    <xmx:6550aEmSWAshMXkV1Pf880BQ9xBOxPKTnOyiXYTu6frVsoV0UZLpTA>
+    <xmx:6550aCT8AC-3Qk2ejJ1a-d5tfh-z3Z7Ik7HcexIq2X1piS7MnP9Efw>
+    <xmx:7Z50aC55r5eujMz0Dvb8Ej99ArwfSU_zftLIRLdUgHJFaXhmzaUc6tH4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AB571700068; Mon, 14 Jul 2025 02:08:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org>
- <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
- <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org> <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
- <CALHNRZ-YZg3cKzRBMGaxRpejFMLSpOOz-FPQEaQVXFpFao40WA@mail.gmail.com>
- <CALHNRZ-jxC5PXqiG4tNShybaU9gZjTz4YT+VXgfQFNQ-Ox7crg@mail.gmail.com>
- <yczvbwanjadyfife3hnp2khxkgs77pokypqkxotlldjskshskt@xckrkfucg6xx>
- <CALHNRZ--ZUxqrXHEnizXC8ddHC5LFA10oH+CgQmOcTt+cJ1CWw@mail.gmail.com>
- <6abdc70c-0def-4cf1-b1f4-ea9bdde4fcb5@kernel.org> <CALHNRZ8=ikQe4L6h9VHpTGm+OFU0iZA_OV6LUP6jDUySBv4+Lg@mail.gmail.com>
- <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
-In-Reply-To: <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 14 Jul 2025 01:01:19 -0500
-X-Gm-Features: Ac12FXzSmllv1_2-S7ZArROlDnlEZ-mxn1jEusIi4cfhaFgSU98vKE9b_xmI7P8
-Message-ID: <CALHNRZ9VEUzU07j_fUWhNnF24y64wkO5_Vun-mf6d_m=Xyx4dA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: T0ce86a4a9bc2801a
+Date: Mon, 14 Jul 2025 08:08:21 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolin Chen" <nicolinc@nvidia.com>, "Jason Gunthorpe" <jgg@nvidia.com>
+Cc: "Kevin Tian" <kevin.tian@intel.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Bagas Sanjaya" <bagasdotme@gmail.com>, "Will Deacon" <will@kernel.org>,
+ "Robin Murphy" <robin.murphy@arm.com>, "Joerg Roedel" <joro@8bytes.org>,
+ "Thierry Reding" <thierry.reding@gmail.com>, vdumpa@nvidia.com,
+ "Jon Hunter" <jonathanh@nvidia.com>, shuah <shuah@kernel.org>,
+ jsnitsel@redhat.com, "Nathan Chancellor" <nathan@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Yi Liu" <yi.l.liu@intel.com>,
+ mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
+ iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ patches@lists.linux.dev, mochs@nvidia.com,
+ "ALOK TIWARI" <alok.a.tiwari@oracle.com>, vasant.hegde@amd.com,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Baolu Lu" <baolu.lu@linux.intel.com>
+Message-Id: <db221336-2694-4fcf-a2b2-8fcb46ba3c9e@app.fastmail.com>
+In-Reply-To: 
+ <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
+References: <cover.1752126748.git.nicolinc@nvidia.com>
+ <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
+Subject: Re: [PATCH v9 17/29] iommufd: Add mmap interface
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 3, 2025 at 2:24=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Mon, Jun 30, 2025 at 01:48:28PM -0500, Aaron Kling wrote:
-> > On Thu, May 29, 2025 at 3:53=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> > >
-> > > On 28/05/2025 19:35, Aaron Kling wrote:
-> > > >>>>
-> > > >>>> Friendly reminder to the Tegra maintainers about this question.
-> > > >>>>
-> > > >>> In lieu of a response from the Tegra subsystem maintainers, I can=
- only
-> > > >>> hazard an assumption, Krzysztof. I presume the pstore carveout is
-> > > >>> bootloader controlled because various stages of the boot stack ca=
-n
-> > > >>> dynamically allocate memory, and this became bootloader controlle=
-d to
-> > > >>> prevent any of those from overwriting pstore. I worry about hardc=
-oding
-> > > >>> an address in the kernel dt, then finding out later that there's =
-an
-> > > >>> in-use configuration that overwrites or corrupts that section of =
-ram
-> > > >>> during boot. What are your thoughts on this? And is there any way=
- for
-> > > >>> this patch to proceed?
-> > > >>
-> > > >> I haven't been able to find anything out about this yet. Generally=
- it's
-> > > >> difficult to get the bootloaders updated for these devices. Tegra1=
-94 and
-> > > >> Tegra234 may be new enough to make an update eventually go into a
-> > > >> release, but for Tegra186 and older, I honestly wouldn't hold my
-> > > >> breath.
-> > > >>
-> > > >> Thierry
-> > > >
-> > > > Krzysztof, based on this response, is there any way or form that th=
-e
-> > > > Tegra186 part of this could be submitted? I can drop the newer
-> > > > platforms from this patch if Thierry can get a response to his othe=
-r
-> > > > reply about how the bootloader could conform.
-> > > >
-> > > I don't NAK it. Eventually it is up to platform maintainer if they
-> > > accept known DTC warnings.
-> > >
-> > > Best regards,
-> > > Krzysztof
-> >
-> > If the decision is up the the tegra maintainers, then Thierry, what's
-> > your thoughts now? What is in this patch should be compatible with
-> > existing l4t and android bootloaders. But it does add a few new dtb
-> > check lines.
->
-> I don't adding new DTC warnings, especially ones that we know up front
-> we can never get rid of. The memory one is a notable exception because
-> the system becomes unusable without it.
->
-> ramoops is not in that same category. While it's certainly nice to have,
-> I don't think it's critical enough to warrant that permanent exception.
-> Where possible I think we need to work to address issues souch as this
-> at the root and fix bootloaders to do the right thing.
->
-> For any cases where we can't fix the bootloaders, I think that's
-> something we have to live with. Having the support for this live in a
-> fork is a fair compromise, I think.
->
-> I know this is frustrating, and it's very painful for me personally
-> because I initially set out to redress a lot of these things and failed
-> to do so.
->
-> However I can't justify accepting endless amounts of quirks upstream,
-> all of which would set a bad precedent, just for the sake of things
-> being upstream.
->
-> Thierry
+On Thu, Jul 10, 2025, at 07:59, Nicolin Chen wrote:
+>  EXPORT_SYMBOL_NS_GPL(_iommufd_object_undepend, "IOMMUFD");
+> 
+> +/*
+> + * Allocate an @offset to return to user space to use for an mmap() 
+> syscall
+> + *
+> + * Driver should use a per-structure helper in include/linux/iommufd.h
+> + */
+> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct 
+> iommufd_object *owner,
+> +			phys_addr_t mmio_addr, size_t length,
+> +			unsigned long *offset)
+> +{
+...
+> +
+> +	/* Skip the first page to ease caller identifying the returned offset 
+> */
+> +	rc = mtree_alloc_range(&ictx->mt_mmap, &startp, immap, immap->length,
+> +			       PAGE_SIZE, PHYS_ADDR_MAX, GFP_KERNEL);
 
-Alright, so to make sure everything is on the same page, let me walk
-through the archs.
 
-T210: This fits within dt check requirements afaik. If I send a v2
-with only t210, would that patch be acceptable? Though, I would like
-to double check that my assumption about the arch is correct. The
-downstream 4.9 kernel does allocations for ramoop I can't quite track
-in the vendor code. I'm assuming that by matching what the downstream
-kernel picks, that it's within a large carveout that the bootloader
-will never touch. I've not seen any corruption in my use of it so far.
-Is this a safe assumption?
+This produces a warning on 32-bit targets with a 64-bit phys_addr_t,
+in practice this would be ARM Cortex-A15 or -A17 systems:
 
-T186: Software support for this arch is eol, so what the bootloader
-does cannot be changed. Presumably no other choice but to relegate to
-a commit in a fork or out of tree patches.
+In file included from include/linux/overflow.h:6,
+                 ...
+                 from drivers/iommu/iommufd/driver.c:4:
+drivers/iommu/iommufd/driver.c: In function '_iommufd_alloc_mmap':
+include/linux/limits.h:11:25: error: conversion from 'long long unsigned int' to 'long unsigned int' changes value from '18446744073709551615' to '4294967295' [-Werror=overflow]
+   11 | #define PHYS_ADDR_MAX   (~(phys_addr_t)0)
+      |                         ^~~~~~~~~~~~~~~~~
+drivers/iommu/iommufd/driver.c:61:43: note: in expansion of macro 'PHYS_ADDR_MAX'
+   61 |                                PAGE_SIZE, PHYS_ADDR_MAX, GFP_KERNEL);
+      |                                           ^~~~~~~~~~~~~
 
-T194: Some software support still exists for this arch in L4T r35. Is
-there any positive feedback on making bootloader changes to meet dt
-check requirements, or is it too late in the cycle?
 
-T234: Still has active software support in L4T r36. But essentially
-the same question as t194.
+The mtree_alloc_range() interface explicitly operates on 'unsigned long'
+address values, so I don't see an immediate workaround for this that would
+make it work on these machines. On the other hand, 
 
-T264: I assume whatever happens for t234 will be mirrored here.
+At the moment, the only drivers that select CONFIG_IOMMUFD_DRIVER
+on 32-bit Arm systems are CONFIG_PDS_VFIO_PCI and CONFIG_MLX5_VFIO_PCI.
+It's probably fine to make all three symbols "depends on 64BIT" for
+now, but I don't know if there may be more drivers like this in the
+future that actually could make sense on embedded systems.
 
-Aaron
+     Arnd
