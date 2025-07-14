@@ -1,123 +1,118 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D08239E60;
-	Mon, 14 Jul 2025 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E288223DDF;
+	Mon, 14 Jul 2025 08:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481201; cv=none; b=ruhj8aPhDg/RsDT8L8Mg6bVjxiQoC4WJHgHBNlJ2LL+si8pczFoi0VUBGXbXopI9RMxvQghNgpNsLiF3wVrNSGwzsCS9a5pq5hU4N6a2Db/gpqCrIwxpmjDgO12byBHR3SZyTBtfpkHPlfDDc1T7jr+myxd92kXLNGA5JnIAGVw=
+	t=1752481393; cv=none; b=EMjmoAm19R4reF5YlnlPJny+BSROzwYSdu9JurRsmVKnFvjaBAahhHuJBkVVJYBxdrCkHT5T9QyBCqxRDQNJuSTVXG63sXjbKwNbk7tiClxaSvnCr/3RwpLvA7Wkv/R02ZzBnqFQbn6wDeBsJ+wPiFr8srQf6sPwztol8Hltam0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481201; c=relaxed/simple;
-	bh=0WLu3kugDvQEYAJMzASy+A5S3YDpXTBXjAaVvNoadTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJDnMyZ+SYDGtCR+T91P+g1YmsBrQk0cWNrGbE8aPptGWdXqShaDABS8zZQv9R8tfZGT999XDJtJ8pD8Rr8co/FkUB9DfRo5XZbEfGQHLa9Le08lqVXqNb/04UuVarSvwAw3pPgAXx3EPVszNyCrjmpJagy5I4/oXWov1YGBYlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=efMNgnF6; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1752481393; c=relaxed/simple;
+	bh=RfqUbaa9s7JOmh2LfjwsNwwwmm0uXMw9G0+7rubVqf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYiJnav/kxEVCZ1VHyfmJ+zFRn1hFMgsp80CsaGJvq9Dnyj9rx8/mJJ2+lGAQBo5nzoJQ1E+k+X0DAZGy69tm0aNSbBJsoHca8/Y2FGrM8iRgiXHE50S5zDYQIPvj297gdRSwHtW0QzTl29/s4uL4+1NgWj0kPlPWsg4D871yjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5Gm9kQO; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="efMNgnF6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752481200; x=1784017200;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0WLu3kugDvQEYAJMzASy+A5S3YDpXTBXjAaVvNoadTA=;
-  b=efMNgnF6dTE5KAuCBByU+ob+DgrnC18kmymeGm/6UCqa0k2n6KfYIiTJ
-   Wo0aQkL39e4mYZ7g8AuhdCRSiZI7hWLW6UayjgFzLpZ1O541ZGkHxPF3j
-   Sz0y91cLKo1JMY2fqIaIzOovTYK4Pq4LDFPPbkmHr8lhYkOAdoOKpv0iC
-   1b1W0tJuQs9XXOKWSjCyMPmYWmxjxP6zvdqjOlALczPPGFsn6ldddIJyB
-   8BD1XXVFgGlDnGZ3tG7uk2nL2xIWlx1+EL11v67ARP7GVazMu2lmRm+hV
-   NtvjoBAEKov81mYi8B/TB3FEuZzHC3WExBKDqtTiO9QeZAvHcy0cJQpqK
-   g==;
-X-CSE-ConnectionGUID: T1yx+kHIRGyUB8sda5iQGQ==
-X-CSE-MsgGUID: m9jTzL9oQq68o6ca5ZhMhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54635679"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="54635679"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:19:59 -0700
-X-CSE-ConnectionGUID: 264lVN+dRIWcEt31tZOKBQ==
-X-CSE-MsgGUID: GzlyscvPQsSewwfa11tumw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="194077901"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:19:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubEPf-0000000FIwb-1pxJ;
-	Mon, 14 Jul 2025 11:19:51 +0300
-Date: Mon, 14 Jul 2025 11:19:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	digetx@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org,
-	ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	p.zabel@pengutronix.de, robh@kernel.org, thierry.reding@gmail.com
-Subject: Re: [PATCH v6 2/3] i2c: tegra: Use internal reset when reset
- property is not available
-Message-ID: <aHS9pzHA1xKXlmaJ@smile.fi.intel.com>
-References: <iqx5wzywy2x66n2y36mx4fckrr7wy4lqu3dsejcovghjtmgoz7@zwslylpivy3q>
- <20250714052226.72876-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5Gm9kQO"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553b6a349ccso4957109e87.0;
+        Mon, 14 Jul 2025 01:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752481390; x=1753086190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6hrDr1ho+LmcOihDF5/afd2FJMkMgiWJJggRREgOis=;
+        b=l5Gm9kQOhNOq8P3wMqU7GZN56IfjuaW/38XOm3/e/CQokank9pGHLTAC/3S3wPtCEe
+         KGW1Ev+3gbCMMC96ghjPI2M0+EiCdLNUqrDWpm89Fa+HdkllBsKWw+4d8LjYaLob4dWD
+         QdkMwYt9Zext5uj2aqR9VrXQeK6NXTc7WSZ1QmMPFedQ6sauFfvL8Z5ggxHYZFNuqGtz
+         I5WEdJb44gBPVeoXpEHV79jMAAFCDoq1nk5jj2id78OeiA3T1huwlDyuX08BV3K8mfcc
+         mWk5yH7v8L5Ar5hcByFPBV12L7VLDauAr9msqTJz6lfZdEchzVCeMP1mXbaSxVzJr/WA
+         iFQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752481390; x=1753086190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y6hrDr1ho+LmcOihDF5/afd2FJMkMgiWJJggRREgOis=;
+        b=tobn41OZRCV2ViYKWt2779kTszWfNF+9jvknShZuJpLF5qT36iiZirfFKG48HN3TsU
+         XmsNdwxPTdlsIszmVZ7jP9D2mRTy5q8JdPXtGOij1zX/BwQAXgZyodfxhvx7Bl7/kl9u
+         13rCuX9puvxyR3jzK66WanN9PTCsE3rn8DbvToNvFYNCp3god1WlYVcp8fu/iMEe2J4Z
+         9e2wtS9mA7/Ejm0grDhOiwn8T4kbOa988f1eo3+lL7ysQneA1L41E8hxG5NE/NZIn57w
+         UguylOuPqilduefuKKjC+vLzde9d5hU8M2vmMd0NxW7Tek+aq7jG5eHv+58nPCmNzn30
+         H/Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfVcOU+4wfIR7ZClZteJrHMdC4ZSQ8gl00o/RVEVEQbUOvTNfoUFR0tA8vB+eMM9GnAkNcc56yVQrP57Cx@vger.kernel.org, AJvYcCWB+p+3rLB0ad0tnIwW1TilBH3XWlOZ8+63I8E8/onDU0gZgtlY7aBtsDuZRhgCws6CdHdpeG98vOLfJNE=@vger.kernel.org, AJvYcCXMs0l03OsaU36qk8C0FMbgDIHqOfZsmy36Tutp71npLYXMNVfMavIlD1kPPu8iczCJxI1GbURPnGze@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyfsebK61BxoPeP3+Z/aSG3/g+ySdmfm4IkDDKJSDOPM4TfrXb
+	Dlaa2+H+ZaLkQGy4TglfTDvJZSRXcsA4LJFDSfUqXsFN+JH6TCSkmNFX
+X-Gm-Gg: ASbGncufocJ2n8i+ksHl5iG+zn3H75BzdFpAxah/IevFFtpACUCUSsTlegEbdhAaIXU
+	7OJSRpsQt42eGygWEm1075cIX01RDwu2C0PXA6PDo8MjmLhkDhWo86FC77ibW0XlOq3yTWN2JiN
+	b2HItVsIVNpP5iZXM9vQrrlU/eGk4txu4l+hW5dVJJZHkSGxx1X9Hw/WxXNoBPA6CiTFwLwTfs0
+	YT5gMO3DXKpOS2hJaduzEtwjMqVjXgaSLbO4ScxDuUvApn5cMkKk8u1Dk8axUbycRrWPo6Tw3Dw
+	nhdPydWNCLxwBk9Z63nPcdQFfO2i1Jr9dItkGZrFx7TX5ztIChE9x8C/QCO2jcNCoHKl5xOpmil
+	nNVyaFG6QhmHUPw==
+X-Google-Smtp-Source: AGHT+IE/cT/hjY2GCM1WSnH0h5q/mZeYUgMYbbjoyfEzTj0kg7wgS9qDCIngeBrTB4ZjtayJ44GjnA==
+X-Received: by 2002:a05:6512:31c8:b0:553:296b:a62 with SMTP id 2adb3069b0e04-55a0448b825mr3586374e87.12.1752481389417;
+        Mon, 14 Jul 2025 01:23:09 -0700 (PDT)
+Received: from xeon.. ([188.163.112.60])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bbd55sm1885717e87.23.2025.07.14.01.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 01:23:08 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] thermal: tegra: add SOCTHERM support for Tegra114
+Date: Mon, 14 Jul 2025 11:22:47 +0300
+Message-ID: <20250714082252.9028-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714052226.72876-1-akhilrajeev@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 10:52:25AM +0530, Akhil R wrote:
-> On Fri, 11 Jul 2025 18:00:45 +0200, Andi Shyti wrote:
+SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
+SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+with Tegra114 and needs only a few slight adjustmets of fuse calibration
+process.
 
-...
+---
+Changes in v2:
+- no changes, resend.
+---
 
-> >> I would perhaps expand the comment here to explain ENOENT check and what do we
-> >> do in this case. (Note, no rewriting of the existing, just adding a paragraph)
-> >> 
-> >> 	*
-> >> 	* In case ... we compare with -ENOENT ...
-> >> 	* ...
-> >> 	*/
-> >
-> > If you write it here I can expand your comment before merging.
-> >
-> > Or if you prefer sending a v7 is still fine.
-> 
-> Hi Andi,
-> 
-> I thought to update the comments as below. Please let me know if this can be
-> folded in. I can send a v7 if that is easier to merge.
-> 
-> 	/*
-> 	 * Reset the controller before initializing it.
-> 	 * In case if device_reset() returns -ENOENT, i.e. when the reset is
-> 	 * not available, the internal software reset will be used if it is
-> 	 * supported by the controller.
-> 	 */
-> 	err = device_reset(i2c_dev->dev);
-> 	if (err == -ENOENT)
-> 		err = tegra_i2c_master_reset(i2c_dev);
-> 
-> 	/*
-> 	 * The reset shouldn't ever fail in practice. The failure will be a
-> 	 * sign of a severe problem that needs to be resolved. Still we don't
-> 	 * want to fail the initialization completely because this may break
-> 	 * kernel boot up since voltage regulators use I2C. Hence, we will
-> 	 * emit a noisy warning on error, which won't stay unnoticed and
-> 	 * won't hose machine entirely.
-> 	 */
-> 	WARN_ON_ONCE(err);
+Svyatoslav Ryhel (5):
+  soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+  dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+    System
+  thermal: tegra: soctherm-fuse: parametrize configuration further
+  thermal: tegra: add Tegra114 specific SOCTHERM driver
+  ARM: tegra: Add SOCTHERM support on Tegra114
 
-Good for me.
+ .../thermal/nvidia,tegra124-soctherm.yaml     |   2 +
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 197 ++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra30.c         | 122 ++++++++++
+ drivers/thermal/tegra/Makefile                |   1 +
+ drivers/thermal/tegra/soctherm-fuse.c         |  33 ++-
+ drivers/thermal/tegra/soctherm.c              |   6 +
+ drivers/thermal/tegra/soctherm.h              |  17 +-
+ drivers/thermal/tegra/tegra114-soctherm.c     | 213 ++++++++++++++++++
+ drivers/thermal/tegra/tegra124-soctherm.c     |   8 +
+ drivers/thermal/tegra/tegra132-soctherm.c     |   8 +
+ drivers/thermal/tegra/tegra210-soctherm.c     |   8 +
+ 11 files changed, 604 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
