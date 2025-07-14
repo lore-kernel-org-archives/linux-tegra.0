@@ -1,364 +1,164 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2071.outbound.protection.outlook.com [40.107.244.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C127523E350;
-	Mon, 14 Jul 2025 08:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481398; cv=none; b=Jx4ipMSBMzgf3sdTRo88CvCXZvqxRMFxQ5sSEtCz2H/qjFvfF5YzeYFBzB7ykXhcpMGbeEZwPM0KVElHztpGANR6jMbrzLC4afNo1xm8F40cskZj/1hKdQGRWJtJ0FkaAhnwWdOZiyiqm+IcJPYQeYvidlzIWuPP7vzunGZv6CE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481398; c=relaxed/simple;
-	bh=HN4x+rGbwFeeGQ9jkNrN2rjGKUNghNgRdAhOiIYBkVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RbtjY2w4YHYZgaHbHFGzKoVVY6UNDE+mZ5BSogRpHUis/kWk4untOQTlT1FuyF05RBOeFhoXh9TzE9nGBwl4xhu/VTKReDkk6jrr9VmIUzRcJeDch5wUaNfY/m5mWON2kIRynuS3T5xQMvQiUUzo2dtSQ2sM0wqT/PtkQr+Vz5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTZupbhV; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C3724291A;
+	Mon, 14 Jul 2025 12:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752494595; cv=fail; b=o3KOZXSc6ik7oE94B8K9kGA/O4p/jHwTcVTOpxf7FkQ1c0NIyManbMkMbejzgU69hwXVxh6/bUzQs5T4QGLDglmyfezrIUaOnhHrZXCK1vfoV+aIY+bDKa3x7IZqOzhRme8Z+liEcs69b9oU/6xeUinuHrJyA6IbqIoPY2RNgfk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752494595; c=relaxed/simple;
+	bh=CubFzVyM4ezL+gbC2osOdmv/xbE94URim6OlYRpCkGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hCMN3C29I8LZVGVWeTJfcBS6o5tMv9DqVgZ7vcGcfxZGwvyG4mkF0VACzO+sscBzdZsgqvk6PosYg5w7U2c9804sD6V7KIX+GlaMNfrbXkytku9/2p6+qTKyE0bmAgIWfAmzs2K+JjIjJvsd1yED1EE+EvLdc1A4sdQwafXWLSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VvQ2V3LO; arc=fail smtp.client-ip=40.107.244.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTZupbhV"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55a10c74f31so1019381e87.1;
-        Mon, 14 Jul 2025 01:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752481394; x=1753086194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n161/sPnFiwcbLYbE50unUbqsgVzUjhparEDLVM1oPc=;
-        b=jTZupbhVunmiPEQMgv0ex3m5ebJLCHdV7n0WyD3TbJ10cDGaLLUKPqGNJrfEo8eSZ6
-         VV0KQ/yaImUQVT2qG/qhWAl7/OmYjJq8LgIpK4qfl5QXy0s4BRwxWLLBgLjBRX145Dv5
-         XibYLN4rAVsG7mhCTMW/yc9FA58aIrQcMGCuxANnfr/zX6kRKFDCk/VwTMe6S7FYAi8X
-         jf9wqIFkG2aoCyoEofODhffdQo3LczmFskB+USVOGJ+N948LoYQPq6ec5ee3sB3kYwEQ
-         vBoBXkXKHn36B/CXglAp44uSigqWcycAXcmyaxhUYGzZAwITqU/d9cnkK8o1LBJW2QE8
-         /Jug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752481394; x=1753086194;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n161/sPnFiwcbLYbE50unUbqsgVzUjhparEDLVM1oPc=;
-        b=ttu/D0Jr8l8c/dJpMwpqQ42XyyKPIjJM2ThK3udV6HGUK5Ug08bqmTBBgaawYd5XqB
-         J8Gjsvxg19659lOdRWml2Nz3zeg4iY5tgINNoMFfw3j5zensukRIxgh5und6NVXjfWea
-         0jqPbtC71J2qLUS+DgQlYHeNWFqriOP20qriBuumlPnRivOX7z8dLndGicqmDfubaPoz
-         L/qRtF1jqH3gxeT/6zMrM/UoJSAeJqBbpci2iJWUBaaox5FrO5mgTOu8qEFavURB6mQu
-         dLjwYUAqbA8J4XhXOC9j+5WlXiJG3EJcwWLXC56kAUL5omKLBUnKeYRCXFfBXlZB8rDE
-         A60A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjNe3Hm5gZl+YpuV5c/EqQhDfLSgzWAcL8+TAlWSy8ibTTcI6XSMwF81zf0UQBnSDa2sSguIeam31UUb2I@vger.kernel.org, AJvYcCW3fXROFxMSilqBLXfo2ilx8iBVZZuvJrVWtWGZXu9DF3vu6rkpr4gK6GLtNjgr8X0VvFKJAfRHIszS@vger.kernel.org, AJvYcCW8RHfjK1KrIbZQCPTANsp8RwmWIa7QDds6D/fsXCx/+hbbPihhmf96dowGMmd/8WbXNfEzOj6AHo8Ik1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu4GJ9ufn1ZHLf5BmeHK5qirpriUTx9PIJOKssadRnQnsL0CDh
-	0NDn35Vk/aQ5DKEOC3Rhz0mZL3fBjJCTqvi0QfaIebacYLu7brJIuB6v
-X-Gm-Gg: ASbGncsWn5ekXk9UVUNX/fdalSLeXSPJV9kppeJwvVdgXbuOhXCAmgu1gQTJM+s3e4j
-	u50mdK+Y1tJzVh5N515OIln81ENOWJyWn4mAyPXN2OcLQG4bugKBvSQEfnhsPMti2d5WEtlPFHh
-	FnWcFORRwdrrxNCIdGzUMIRl5Au1x/G7xrz18QVkdc2mR1Jp8b14JAbIwn6YKn6RRFO5qZ0tHtF
-	W1/5KaS3YAEK8TqcluZk6OETFreb4NNh1im2NGRCObcNFcVf6+Lf8EnvdoVQFuQEaBoAin7+z8u
-	kDuXC2Y0mXx48bFjP2oASt89VJSOGgBC0tzwv3u5ZCeoE1WVX+9oZXF7FIFcC8rgnLxDfiFldaY
-	Ur0zKgEZ4Nejlbw==
-X-Google-Smtp-Source: AGHT+IEUUG5cBKShW5NaWvde+aF8M8RHEwkoUq29euhOPK2At83JPy6xfJiQTYlcS4gbwVfx4SRVug==
-X-Received: by 2002:a05:6512:10d6:b0:553:a3b0:4d2b with SMTP id 2adb3069b0e04-55a044c96cdmr3265169e87.6.1752481393583;
-        Mon, 14 Jul 2025 01:23:13 -0700 (PDT)
-Received: from xeon.. ([188.163.112.60])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bbd55sm1885717e87.23.2025.07.14.01.23.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 01:23:13 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] thermal: tegra: add Tegra114 specific SOCTHERM driver
-Date: Mon, 14 Jul 2025 11:22:51 +0300
-Message-ID: <20250714082252.9028-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250714082252.9028-1-clamor95@gmail.com>
-References: <20250714082252.9028-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VvQ2V3LO"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uejUeptLz2uxsPZh58QPxdEJF2S0wbuW0cgia+jbEHKbmmhEC18jIDsuJ6AVOhfVrF/ajpM2J3jA85aGhD6D1cnn1+jDaeqh+qygP+roS23fDrtX+a3snlxHkUYp+EaNuvniSdw5V3OFyuijsVfC9I83pN9dmi/LyfEcxB5EVJxdFP3QVmypb6wfppXV45GmWMgsY+HhFTI7U2lxjUs79z6Gz7dK3bpFDl6SE5ApZKCghvXvE/qAkwqs1HLENMzpyP93J4pd3SZhYYGzwzxx4dfaVyqjan+8814+KMe+6vr1wOfXQqumGaN7WJ+hFXg38tvvcQm9k6DRG0NLh3E29g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KUhpJOQ0L8l1RlQScd0VmS2sbzIHS3ZRRGMICuaS+uY=;
+ b=aTzc3MVua6W+OxT67NIo/etDdxPWHYhhIPJZMnkaneHoUMtWJRhSIUCnT4GQ5vbRDtrRSfXxjG88V7BB3jIwfp1KsEpwjV8J2LJQqxnWQobSR9lKqVuXn0fX2NXo/w1CxoAlKaf3rQLJRqc0SkZjF81wx6nI5SIjFJTz78M6YwzX8PMJAuN+pBHcXCPfmTjLqx0YSkJLdlLzy3vI04OyDMc4Ymq10G8ijhc6AakCDQJfoeA4gRnwkbiFVvoHh79CC8YjKnQ2whOu8mjkJFTFpAAq9xJoK7khC2jVGKOiEopg+1N352c+EIsS5OPRC7/1GhgKE8+vIOeWz7XGEF99qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KUhpJOQ0L8l1RlQScd0VmS2sbzIHS3ZRRGMICuaS+uY=;
+ b=VvQ2V3LO2U9Q5VkHOpX3a8jEFnP8iXqK0mfxnLLeFa2jXqRgf4UBc4eYDgfpqx/aH9iTSG1e1O+xYDBpfjYz/ZMk3D+WyBPCI2czvA0KjQi7uw24HUua7LCNOje/JSoRTiE53BXan3lA0rVF4UET9rHZeis92kW8eIrzfgGijcG7KRxNEwZQIeAln/HDV1bJcav3Q/SW9+e3VOFmI87W3jxK2ki9T5GlyVu80l/i7FyQxtzY2VTYpJuTwl7Jzk0PSxEHc7Wvv3PBB8xK1M4AyJQBx5G+awgzvrKXVmFj2bjHLewXcNNgdiR7ZtRYMW7ATPD79ktM1TQ6Y7kYRGeBeg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CY8PR12MB7635.namprd12.prod.outlook.com (2603:10b6:930:9e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Mon, 14 Jul
+ 2025 12:03:09 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.033; Mon, 14 Jul 2025
+ 12:03:09 +0000
+Date: Mon, 14 Jul 2025 09:03:08 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, Kevin Tian <kevin.tian@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Thierry Reding <thierry.reding@gmail.com>, vdumpa@nvidia.com,
+	Jon Hunter <jonathanh@nvidia.com>, shuah <shuah@kernel.org>,
+	jsnitsel@redhat.com, Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, Yi Liu <yi.l.liu@intel.com>,
+	mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	patches@lists.linux.dev, mochs@nvidia.com,
+	ALOK TIWARI <alok.a.tiwari@oracle.com>, vasant.hegde@amd.com,
+	David Woodhouse <dwmw2@infradead.org>,
+	Baolu Lu <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v9 17/29] iommufd: Add mmap interface
+Message-ID: <20250714120308.GK1951027@nvidia.com>
+References: <cover.1752126748.git.nicolinc@nvidia.com>
+ <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
+ <db221336-2694-4fcf-a2b2-8fcb46ba3c9e@app.fastmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db221336-2694-4fcf-a2b2-8fcb46ba3c9e@app.fastmail.com>
+X-ClientProxiedBy: MN0PR04CA0030.namprd04.prod.outlook.com
+ (2603:10b6:208:52d::29) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY8PR12MB7635:EE_
+X-MS-Office365-Filtering-Correlation-Id: b08226b9-53b3-414f-2cd3-08ddc2ce6663
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GADXLJKGnBaBIQIKi6dcYYBry8t7Qil2pHba8VoPU4ukZrNql6xlQ6QW98Zq?=
+ =?us-ascii?Q?xrf9Y1pLiL8T33lmRxg7ZI2uOgkWFSZpyKIwsJTs6xaVD9enQEzHQH9iDd4X?=
+ =?us-ascii?Q?9GZLS+FKTH6pmDHoKCc1iWF/lbwfV6Ro1kGDQ3qJ/kOCminvN7shUC+MC60q?=
+ =?us-ascii?Q?V3vr4eAFXQYAWNhnAUo9QpzzQ0Fpn8cTqX2q9IsJTUxO3c3GvDkH1YK9YqW3?=
+ =?us-ascii?Q?2FJg3JMNyRCqcv4pzUecPjKVVQXJnNmpUqaYk6REpWI+SWNREdZKuEKjc+Op?=
+ =?us-ascii?Q?+Z8qeJiiUgRxxB4ietynQX3aAt9z5+DDxBKExjPfZhT5xriU7SmnyzEYMTWZ?=
+ =?us-ascii?Q?UUGLYG7rs3mN38EneVDZYM/bYvOk9WOUXNRoz4g3gyrSGzUyi1Bd86SlgEs2?=
+ =?us-ascii?Q?eRJpbHwlek1o41Cj5LEmyY3wq2xHjjnu4AqSdgRhLn5RxXfijC5hwUpyem6c?=
+ =?us-ascii?Q?ZQqZd5ZJjsctCJ2je3pfN/E11+/VNXT5/s51SqRRXhGXmOUYobqBkp0fVLnH?=
+ =?us-ascii?Q?k4KianGAZWjrzzR0x2d0Ma9JTc5NXW0qieUmB6oApnJEy+t2Bfmwr4EvXAwb?=
+ =?us-ascii?Q?+W05W/7YxYmTm2IgsCSAGW/AeEwq0/0Ku591dy34rHL8+oXhAvMbjY0v/2T1?=
+ =?us-ascii?Q?YM6G0yJDmKyU4g/i9LNyW93FaDE5XFVH2E6gZ33S2yW9K4PBarjUDffHbQY7?=
+ =?us-ascii?Q?52HuNQ1akPjWmp4BLYEkkmRLsvzAf+aIBYZhNexXIwT+uWn0O6gvr3EiPCQw?=
+ =?us-ascii?Q?ltFt9UbXeOlTZ/QoT0LnNOXuBM84wbczT2Ljwahu9nbZkedJd4mKjRtvflq1?=
+ =?us-ascii?Q?ZPx7P3eiQ3nBEowFQcYsvVyKH3sbJsuCGQPaxoQzn84rVpfcT66Okp8fLG11?=
+ =?us-ascii?Q?km3U5ymBT7Xn9vWSPIF/NtSUrvgRzhGfFPkjxAOGcIXbctw+xQ188ixMLED4?=
+ =?us-ascii?Q?n8v+DVAXVYVTwi83m3Vx6MohlzfIE0gxt1CeuE/0S7BFRaUs3Lbf712mMZBa?=
+ =?us-ascii?Q?W5s38bGMWRmqBXYVazMB65OSFdSLZ7mFW/xGowVABjuueP1NKTZ/FJLC5JWF?=
+ =?us-ascii?Q?BI6g/uyZROVTWF10AHPdraKpYCLh2pcuW334LokMyRWNOVRat0t8Jav4eiaL?=
+ =?us-ascii?Q?RDEsc9GGGNpIRZ5IsTp9mPLy7DzoNMcr0iRwWLVuRQcuesWRak6NCNvLVpoo?=
+ =?us-ascii?Q?mM4O3Ce7ShjKMlWHaEvgZanQhRhw0C1Gm6HLNVTCYmKmKfhPWnxhSccKyZlB?=
+ =?us-ascii?Q?01+g2GVF6w8guLOGWglMnqiv/3V17Xc2TTyjSfRG9ZBOVU6Jjz39IPOWccIO?=
+ =?us-ascii?Q?WsHg7oFTg38Iq7A1UsmO1ThRSOakV28rvT59ukpNi0EPb09weecnMu/XJseL?=
+ =?us-ascii?Q?FLh96zxjwXaWruDqB0G8UBirz9L5RGzNgVPrMaVrySWJSxrXaw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?W4g+6YVBBzZ7nddEh6LRZ7D19xDtu8aKz3PkdeISuI6bZaI4pG2UBCVT2hvY?=
+ =?us-ascii?Q?mXdSO6BbvlrYPJ7oES2tMvTsRHA2M68wIDft+vItwVsq50nUsfGn4nmCiR7Q?=
+ =?us-ascii?Q?5PHFmEn/EdQcS1y2rF/oFzZshroAiw0UeDryuQGza8Xsop06Bf7kuqi667LJ?=
+ =?us-ascii?Q?aa47+JW7FeMWzpMNGbpZawB166R642y7Jz0gQ57/U2uCJ0HO7uyD3NBnzo7Z?=
+ =?us-ascii?Q?HoG3fOs0fr+atJi4bq68BIwC04H7T3UWVPxOB3Lqnn4dCsm1NZB1Md0lW3ef?=
+ =?us-ascii?Q?ojiERCfgHVzzYDY+6+v5qD87eV7WSKp1l7mXwJkE26UL6zknVgP/YboMc+SU?=
+ =?us-ascii?Q?iCxZXPiGLSAzGCs4KsXf0lg2KnLGZBAlvLzQgx5M6BSfi2DmvuCdIz+WP0hf?=
+ =?us-ascii?Q?D1XXvVVNRWP06FHviovwzbfWexGtVg8XpYfwPmp0c8of6WYwWUfunw6ctiPC?=
+ =?us-ascii?Q?++3UWpxLC89Nu8/weVO5RACM84+vlB8EcNJ6wd7K56xox5BAsJaJvCsk6xOy?=
+ =?us-ascii?Q?Yyuarltl+DmqwSYmrjDNeZV9b9fFZIjM57fYwmMTXOjRLykQhrRiTpF3uSpp?=
+ =?us-ascii?Q?ysUb+ZMUUaeehy7LO23hXO+dV6d/gQGynNS/wPZ6mWkYBiLgBdF02aIg4FzK?=
+ =?us-ascii?Q?Y8sxwb+TwE8UmX9BAnKft3x8IkcFiAfpyFOCry9YQCSC6IPXWKg9QyH9bfbJ?=
+ =?us-ascii?Q?1goTIwKkg498AwbjQ5fwInGbgpqABboj+3b93/Upgisd3o4RR4q3zq8S1/RN?=
+ =?us-ascii?Q?aMRZZm0Q8BlMm0R5UYt9FP5KC4ITMvEeQ0/j1qR7ayEEXPFvtR5EzSD+k35R?=
+ =?us-ascii?Q?dJEOWGdUxGH4DMGev5R7z7bi7MNZdCcIxhhNMr0aGanBp3CygNKIwwT8RVaH?=
+ =?us-ascii?Q?FDCug+plTpV5cq5hJq/YzsocAqcgrX4q4BNRDbRE7ndwbOONyxaUB4EJVGr6?=
+ =?us-ascii?Q?Ywh8i9CXErEBS5S/USoqvvRNvlewMw/lkrPlka9oqPZcEAEFKqE4h5QT5CH+?=
+ =?us-ascii?Q?l8tNYN3sKQqlz1HcfOsRt1uBuOp9SEA61PNtkRxjI8wD8oSS2yiRy+YB3zzT?=
+ =?us-ascii?Q?azcm0DwZzWITN+HAZTEx/hNfEJAMkBsIF982IrLx0y/EYnj7yRGZEs5gm+Kc?=
+ =?us-ascii?Q?vFhpiHhxwxAv59v1aHY+K01H+5C1bCGFe1HXCNWBYfkprACiox61newSMp4I?=
+ =?us-ascii?Q?8OhLsazPE1SnArYGHky1MfZAe+VheYcMV8GOqpUnY/blfZaTZIAMS3DoV+hE?=
+ =?us-ascii?Q?yOsnyy0Rau4PmVMbCPcWUdlX/6N/7qAAvmlSCniar2PiJmb5tzHD7ASflQJh?=
+ =?us-ascii?Q?8pTPnzwHqMVgp1d8VxSseiJZ3jTM3mCoKxmLvTYmhdfhImajeJXaF9tVnTwu?=
+ =?us-ascii?Q?4EHsSTAgLDlHK5YgkIBIJPjfOQUSmbqAWyterVVy5Y6a/T4DKQwqLvyCvliq?=
+ =?us-ascii?Q?04scDSSVbkeaNJhVXWKrxXVmWdyrlSDxlQLEk0m0JJKXRDR9Jau/jm9RhLck?=
+ =?us-ascii?Q?OjX15Zs9/L6PceGm0tj8++acky4rJAP57khL+fNBHPymBKJNWuWUZzGtzZ/i?=
+ =?us-ascii?Q?Ebm1C6XwCR8oJWqe570=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b08226b9-53b3-414f-2cd3-08ddc2ce6663
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 12:03:09.6236
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zJiu+8HlHZpVtr7QGpUMcQ8HWnilJoEEQfWrU3wubbGdDKfOUDv+93J+UDBL1DCw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7635
 
-Add Tegra114 specific SOCTHERM driver.
-
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/thermal/tegra/Makefile            |   1 +
- drivers/thermal/tegra/soctherm.c          |   6 +
- drivers/thermal/tegra/soctherm.h          |   4 +
- drivers/thermal/tegra/tegra114-soctherm.c | 213 ++++++++++++++++++++++
- 4 files changed, 224 insertions(+)
- create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
-
-diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makefile
-index eb27d194c583..9b3e91f7fb97 100644
---- a/drivers/thermal/tegra/Makefile
-+++ b/drivers/thermal/tegra/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+= tegra-bpmp-thermal.o
- obj-$(CONFIG_TEGRA30_TSENSOR)		+= tegra30-tsensor.o
+On Mon, Jul 14, 2025 at 08:08:21AM +0200, Arnd Bergmann wrote:
  
- tegra-soctherm-y				:= soctherm.o soctherm-fuse.o
-+tegra-soctherm-$(CONFIG_ARCH_TEGRA_114_SOC)	+= tegra114-soctherm.o
- tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+= tegra124-soctherm.o
- tegra-soctherm-$(CONFIG_ARCH_TEGRA_132_SOC)	+= tegra132-soctherm.o
- tegra-soctherm-$(CONFIG_ARCH_TEGRA_210_SOC)	+= tegra210-soctherm.o
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 2c5ddf0db40c..7bdab2add7af 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -2048,6 +2048,12 @@ static void soctherm_init(struct platform_device *pdev)
- }
- 
- static const struct of_device_id tegra_soctherm_of_match[] = {
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+	{
-+		.compatible = "nvidia,tegra114-soctherm",
-+		.data = &tegra114_soctherm,
-+	},
-+#endif
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- 	{
- 		.compatible = "nvidia,tegra124-soctherm",
-diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
-index 6c0e0cc594a5..75ee2a520886 100644
---- a/drivers/thermal/tegra/soctherm.h
-+++ b/drivers/thermal/tegra/soctherm.h
-@@ -148,6 +148,10 @@ int tegra_calc_tsensor_calib(const struct tegra_tsensor *sensor,
- 			     const struct tsensor_shared_calib *shared,
- 			     u32 *calib);
- 
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+extern const struct tegra_soctherm_soc tegra114_soctherm;
-+#endif
-+
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- extern const struct tegra_soctherm_soc tegra124_soctherm;
- #endif
-diff --git a/drivers/thermal/tegra/tegra114-soctherm.c b/drivers/thermal/tegra/tegra114-soctherm.c
-new file mode 100644
-index 000000000000..eca65ec6f8c1
---- /dev/null
-+++ b/drivers/thermal/tegra/tegra114-soctherm.c
-@@ -0,0 +1,213 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2024, Svyatoslav Ryhel <clamor95@gmail.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/thermal/tegra124-soctherm.h>
-+
-+#include "soctherm.h"
-+
-+#define TEGRA114_THERMTRIP_ANY_EN_MASK		(0x1 << 28)
-+#define TEGRA114_THERMTRIP_MEM_EN_MASK		(0x1 << 27)
-+#define TEGRA114_THERMTRIP_GPU_EN_MASK		(0x1 << 26)
-+#define TEGRA114_THERMTRIP_CPU_EN_MASK		(0x1 << 25)
-+#define TEGRA114_THERMTRIP_TSENSE_EN_MASK	(0x1 << 24)
-+#define TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK	(0xff << 16)
-+#define TEGRA114_THERMTRIP_CPU_THRESH_MASK	(0xff << 8)
-+#define TEGRA114_THERMTRIP_TSENSE_THRESH_MASK	0xff
-+
-+#define TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK	(0xff << 17)
-+#define TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK	(0xff << 9)
-+
-+#define TEGRA114_THRESH_GRAIN			1000
-+#define TEGRA114_BPTT				8
-+
-+static const struct tegra_tsensor_configuration tegra114_tsensor_config = {
-+	.tall = 16300,
-+	.tiddq_en = 1,
-+	.ten_count = 1,
-+	.tsample = 163,
-+	.tsample_ate = 655,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_cpu = {
-+	.id = TEGRA124_SOCTHERM_SENSOR_CPU,
-+	.name = "cpu",
-+	.sensor_temp_offset = SENSOR_TEMP1,
-+	.sensor_temp_mask = SENSOR_TEMP1_CPU_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_CPU_MASK,
-+	.pllx_hotspot_diff = 10,
-+	.pllx_hotspot_mask = SENSOR_HOTSPOT_CPU_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_CPU_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_CPU_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_gpu = {
-+	.id = TEGRA124_SOCTHERM_SENSOR_GPU,
-+	.name = "gpu",
-+	.sensor_temp_offset = SENSOR_TEMP1,
-+	.sensor_temp_mask = SENSOR_TEMP1_GPU_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_GPU_MASK,
-+	.pllx_hotspot_diff = 5,
-+	.pllx_hotspot_mask = SENSOR_HOTSPOT_GPU_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_GPU_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_pll = {
-+	.id = TEGRA124_SOCTHERM_SENSOR_PLLX,
-+	.name = "pll",
-+	.sensor_temp_offset = SENSOR_TEMP2,
-+	.sensor_temp_mask = SENSOR_TEMP2_PLLX_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_PLLX_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_TSENSE_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_mem = {
-+	.id = TEGRA124_SOCTHERM_SENSOR_MEM,
-+	.name = "mem",
-+	.sensor_temp_offset = SENSOR_TEMP2,
-+	.sensor_temp_mask = SENSOR_TEMP2_MEM_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_MEM_MASK,
-+	.pllx_hotspot_diff = 0,
-+	.pllx_hotspot_mask = SENSOR_HOTSPOT_MEM_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_MEM_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group *tegra114_tsensor_groups[] = {
-+	&tegra114_tsensor_group_cpu,
-+	&tegra114_tsensor_group_gpu,
-+	&tegra114_tsensor_group_pll,
-+	&tegra114_tsensor_group_mem,
-+};
-+
-+static const struct tegra_tsensor tegra114_tsensors[] = {
-+	{
-+		.name = "cpu0",
-+		.base = 0xc0,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x098,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "cpu1",
-+		.base = 0xe0,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x084,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "cpu2",
-+		.base = 0x100,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x088,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "cpu3",
-+		.base = 0x120,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x12c,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "mem0",
-+		.base = 0x140,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x158,
-+		.fuse_corr_alpha = 1000000,
-+		.fuse_corr_beta = 0,
-+		.group = &tegra114_tsensor_group_mem,
-+	}, {
-+		.name = "mem1",
-+		.base = 0x160,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x15c,
-+		.fuse_corr_alpha = 1000000,
-+		.fuse_corr_beta = 0,
-+		.group = &tegra114_tsensor_group_mem,
-+	}, {
-+		.name = "gpu",
-+		.base = 0x180,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x154,
-+		.fuse_corr_alpha = 1124500,
-+		.fuse_corr_beta = -9793100,
-+		.group = &tegra114_tsensor_group_gpu,
-+	}, {
-+		.name = "pllx",
-+		.base = 0x1a0,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x160,
-+		.fuse_corr_alpha = 1224200,
-+		.fuse_corr_beta = -14665000,
-+		.group = &tegra114_tsensor_group_pll,
-+	},
-+};
-+
-+static const struct tegra_soctherm_fuse tegra114_soctherm_fuse = {
-+	.fuse_base_cp_mask = 0x3ff,
-+	.fuse_base_cp_shift = 0,
-+	.fuse_shift_cp_mask = 0x3f << 10,
-+	.fuse_shift_cp_shift = 10,
-+	.fuse_base_ft_mask = 0x7ff << 16,
-+	.fuse_base_ft_shift = 16,
-+	.fuse_shift_ft_mask = 0x1f << 27,
-+	.fuse_shift_ft_shift = 27,
-+	.fuse_shift_cp_bits = 6,
-+	.fuse_shift_ft_bits = 5,
-+	.fuse_common_reg = FUSE_VSENSOR_CALIB,
-+	.fuse_spare_realignment = 0,
-+	.nominal_calib_cp = NOMINAL_CALIB_CP,
-+	.nominal_calib_ft = T114X_CALIB_FT,
-+	.lower_precision = true,
-+};
-+
-+const struct tegra_soctherm_soc tegra114_soctherm = {
-+	.tsensors = tegra114_tsensors,
-+	.num_tsensors = ARRAY_SIZE(tegra114_tsensors),
-+	.ttgs = tegra114_tsensor_groups,
-+	.num_ttgs = ARRAY_SIZE(tegra114_tsensor_groups),
-+	.tfuse = &tegra114_soctherm_fuse,
-+	.thresh_grain = TEGRA114_THRESH_GRAIN,
-+	.bptt = TEGRA114_BPTT,
-+	.use_ccroc = false,
-+};
--- 
-2.48.1
+> The mtree_alloc_range() interface explicitly operates on 'unsigned long'
+> address values, so I don't see an immediate workaround for this that would
+> make it work on these machines. On the other hand, 
 
+I fixed this already, PHYS_ADDR_MAX was just wrong, it should be
+ULONG_MAX. The thing wasn't a physaddr in the first place.
+
+Jason
