@@ -1,113 +1,156 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16097231C8D
-	for <linux-tegra@vger.kernel.org>; Mon, 14 Jul 2025 21:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4A22D0C7E;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752528870; cv=none; b=lHTcssTKb+2Et5OTo7qypZ09brH07VHraOV+sBLgi3npQjsXV++78lscX+0UlWmYV7ScdGexvuS1m6dKPQsxuAEV4XDIiMgthQCayRT+DVG7WRaRaiVbDA+6pVxAKMV9XlzO8qc7FRcJ61wqI9gS7UMeKRNyCUQ0B8qe0cFfWdE=
+	t=1752552231; cv=none; b=mlT1y7H490t0ktsQc6JdLjUcfWz9FA9a3gzox7V1ramm1DVeykO1uzdvaNI8Qbi+6X/gpDZrls4If+sQ8a66X/tt1oG33GAkKIPWcUJm5MkHBvVdj1idFxQJw3l8sIc9ORWmN+FZRE0eDhuYlEeDhDJWCaDObjbsFBfp1MCUcsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752528870; c=relaxed/simple;
-	bh=BDSxVNaH7DxXtXg4d8lyl7WfXKs0R9S9LaI79MzV4Wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQS4RCQAFyCdb06Z57uvJjlzvWuA7UrtEvdWkNORKoHweNMETjXsoNwDLxIL0r0dSqlfbhcUIDGj4/8IEVvs5pp3Ex3D+N2pEivvnxyOwbcg7SBEr+4pVxcq4JLdt2NPhqNj97WHn/o9mkwM5zYUlR/cpxuyxB8CZpo6UO+O3/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=H64NFIs3; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1752552231; c=relaxed/simple;
+	bh=lJMnWbcy+KGskhz7uaYT1aihHLwVRIM23Hj82ckJ5Po=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BOOKzSihUDA+d87usliQA1sTCkg7x0QVZBQkGeirUA0TFme0KzAbXYoE8zUoNjcy50NG+Jzxn3vz0bosDareJKL//zUtQ4fG3/u2SxqD6xBS2plucToBNs/UTsYL1RPqsc83jg1zipv2OdJ+8/IVxHewGkPhPY2SUwq6R+7mIs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruyyNqaf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="H64NFIs3"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e2c920058fso116021885a.0
-        for <linux-tegra@vger.kernel.org>; Mon, 14 Jul 2025 14:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1752528868; x=1753133668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xjsur9DLBO9lraNK3jQ4gyxveT6GDJ/WoDBpZ+ezdw4=;
-        b=H64NFIs3xudhgaJn2FeR9ukD/krnO0az+jjDzGbWA72hxRYd0nN8hDOKW4Z7lUZYo7
-         40GIXHLOO03/35TnfA7i8poYK2rpRxCWSYBoMmdE0YVB2pCaHWADT77KrwSvkT9vU79+
-         dGqyE7RbOOGPPE/K5G5T1Rs/Go3hydhUIJazHMbDAB1UEjqMVKHZo8FOtqOLVHKeoYBE
-         S5IW1ZmsD3Ay2ycaxcwhmQMkmeWKeCKFn7RpfmXgR53pDkuEne237g+kxlHDeNloDJK1
-         B304JzitB7cbZG+h4AjLPcIvgk3kwGhpCoicnHEXzn8PtAMebPe7JHg9RgCnZancNB5d
-         V/6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752528868; x=1753133668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xjsur9DLBO9lraNK3jQ4gyxveT6GDJ/WoDBpZ+ezdw4=;
-        b=FlXmIlCHMLcxFl8n+gIfd/fQcGiBI0h4l91zdEQpAESsb/a4pXZIRDxyjSmZc1XTRR
-         uRyxi6Dd7vE6bo5Fks3nwFccGOMoJy94as89GsFUYdnpdCf/z7WLoLIovqH9QVfx/YdM
-         QZzUrafJSIIXe8WYPa4geWFhY40bO82ezplNa54K+a5SHIPKG9NSMXD2WCK3mqY2KLRg
-         RX67hEAwM0UMVNcpJeN83agJcK6nMehfgZ+/xob40xXkf6H4w+xDSI3tHETCIBswe+Yb
-         4H/x0g0ChOdmetD7360BGebw2Q4aP9e5MHFSDx0qnCwAsy1+EKY0iA0CkoBbAdsCkF9y
-         8eQA==
-X-Forwarded-Encrypted: i=1; AJvYcCV98rN5YghJlFc04UFWrYHmxtv5OKjuFHRVb7eGhjaDz1u2Jg/rXPqtw2kkoU2Dzi0CXCP0SKk9BMVsoQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAVtHjRag19EYiki/nUXxtbar8VEBZG/RUzADm3j+FnOKdgG/7
-	FLamCmEh00rjVGS1OX+M7/i1a0S5PzHgglWrPBeSgM0PmacY0/6BDREo7R/9wqx7spQ=
-X-Gm-Gg: ASbGncuXACeU1hgfEjAVEl9oNkWzCQI21NHR/5QmujaNzngf3+efTfdu2gqU/G1v2ib
-	xqDLmXtMXHxlNRhUL1VzRtavQyAeZ/pmA7f5vH4gSD96YWQ22TIm9eSZYCV+4G4q/sL4tAXCqxe
-	yc1VwCl6ky4Z+1I/ZuPADpmBJMpBuDmhVVpuwBUppDr1H07NdIojMDo57SQZCuUYXSMQRP3SHT5
-	8nGVp1LyB4TomFS704mWcFwiRtr87pxcNedq72EB/hBRld9jvs2LPGGUaGSthoAzRjzYTmGjSop
-	5ABrBgVii4g/jC81Q1YsS0M5kVl11MG0b+suUAeuCaTbY55ZHcG1ecSXh+NUGIJ4d/zWrzM7hYZ
-	qFWRNgvkKPRNjKr9UZq4THXzWP3iNfdf5g7MJlsTQX5QLYZPPZ4hr0vc8tdxpSD2RfHzr/CBI5Q
-	==
-X-Google-Smtp-Source: AGHT+IFEx3lCJSamFS7GtCIM3DJJbVlIj8bmcaZbUD5CgXC67a7uWIwLe/hJ3o7zuNw/2yCru6JygQ==
-X-Received: by 2002:a05:620a:20cf:b0:7e3:3682:6dee with SMTP id af79cd13be357-7e3378dd518mr183144785a.4.1752528867626;
-        Mon, 14 Jul 2025 14:34:27 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e3357a2f85sm57242685a.14.2025.07.14.14.34.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 14:34:26 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ubQoc-00000008jqs-0p6Q;
-	Mon, 14 Jul 2025 18:34:26 -0300
-Date: Mon, 14 Jul 2025 18:34:26 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Pranjal Shrivastava <praan@google.com>,
-	Nicolin Chen <nicolinc@nvidia.com>, Arnd Bergmann <arnd@arndb.de>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Nate Watterson <nwatterson@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/tegra241-cmdqv: import IOMMUFD module namespace
-Message-ID: <20250714213426.GJ1870174@ziepe.ca>
-References: <20250714205747.3475772-1-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruyyNqaf"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9303AC4CEE3;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752552230;
+	bh=lJMnWbcy+KGskhz7uaYT1aihHLwVRIM23Hj82ckJ5Po=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ruyyNqafKzOGp8V3DxpibLRSDryzwhZkIMQnrvd+cLPU2P6Hk8rWTc9oTChJce9s+
+	 I0UxkSczIfTDHuKV4of4HSi5B8aWuxitjD/KaNZ6aqivVMe0ENdvVZiTveqKSy+I+2
+	 tkMC3Z2TZ24xAR94bGJp+rOpbtETLwdr7blf7g41I6d4A0b0TdYp8amLZs4gcGvfZz
+	 yuHkPi6993gIR/e6RyVwar68GlIcL4muSNTi/xI3cpGkyIamNkxDbIBcrkRT2birJo
+	 FNAIO86EhempjYNvZ/vEhFgWseLLV290acjteEzpA3DKurDVvcaQmqPS40ZWta/FIF
+	 RmTmhbL7Z7sAA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82569C83F1D;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 00/17] arm64: tegra: Add Tegra210B01 support
+Date: Mon, 14 Jul 2025 23:02:43 -0500
+Message-Id: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714205747.3475772-1-arnd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOPSdWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUwNL3RIjQ4MkA0PdZENTk+REgzQLS0sTJaDqgqLUtMwKsEnRsbW1AM3
+ FRUtZAAAA
+X-Change-ID: 20250509-t210b01-c154ca0f8994
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>, Azkali Manad <a.ffcc7@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=3831;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=lJMnWbcy+KGskhz7uaYT1aihHLwVRIM23Hj82ckJ5Po=;
+ b=ad6asFcWywsWGTUc+VsSSdWsJa0QLq14/57QoeJylGYnViVg/FccIfLjDNpPN9eHX4spILcBd
+ kfyTmQg6dL7CVt4Y1+GTPik2zSOUh4Ifu30qdNy0JjH2kvJRTIYPTD2
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Mon, Jul 14, 2025 at 10:57:38PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The tegra variant of smmu-v3 now uses the iommufd mmap interface but
-> is missing the corresponding import:
-> 
-> ERROR: modpost: module arm_smmu_v3 uses symbol _iommufd_object_depend from namespace IOMMUFD, but does not import it.
-> ERROR: modpost: module arm_smmu_v3 uses symbol iommufd_viommu_report_event from namespace IOMMUFD, but does not import it.
-> ERROR: modpost: module arm_smmu_v3 uses symbol _iommufd_destroy_mmap from namespace IOMMUFD, but does not import it.
-> ERROR: modpost: module arm_smmu_v3 uses symbol _iommufd_object_undepend from namespace IOMMUFD, but does not import it.
-> ERROR: modpost: module arm_smmu_v3 uses symbol _iommufd_alloc_mmap from namespace IOMMUFD, but does not import it.
-> 
-> Fixes: b135de24cfc0 ("iommu/tegra241-cmdqv: Add user-space use support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 2 ++
->  1 file changed, 2 insertions(+)
+Also known as Tegra X1+, the Tegra210B01 has higher CPU and GPU clocks
+than the original Tegra210.
 
-Applied thanks
+This series adds Tegra210B01 support to several drivers, as a slight
+extension to the existing Tegra210 support. Then adds a generic soc dtsi
+in the same vein as other tegra archs. And finally adds a barebones
+device dts to be used for dt checks. Further device support will be
+submitted in later series.
 
-Jason
+Earlier internal revisions of this series included changes to the dfll
+driver to support Tegra210B01, but those did not work in testing, thus
+was dropped from the series. A bindings update to match is still in the
+series so the soc dtsi can declare a separate compatible from Tegra210,
+preventing the driver from attempting incorrect initialization on
+Tegra210B01.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (16):
+      dt-bindings: arm: tegra: pmc: Document Tegra210B01
+      dt-bindings: phy: tegra-xusb: Document Tegra210B01
+      dt-bindings: usb: tegra-xusb: Document Tegra210B01
+      dt-bindings: usb: tegra-xudc: Document Tegra210B01
+      dt-bindings: thermal: tegra: Document Tegra210B01
+      dt-bindings: clock: tegra: Document Tegra210B01
+      dt-bindings: clock: tegra124-dfll: Document Tegra210B01
+      dt-bindings: tegra: Document Shield TV 2019
+      phy: tegra: xusb: Add Tegra201B01 Support
+      usb: xhci: tegra: Add Tegra210B01 support
+      usb: gadget: tegra-xudc: Add Tegra210B01 Support
+      thermal: tegra: Add Tegra210B01 Support
+      clk: tegra: Add Tegra210B01 support
+      arm64: tegra: Add BPMP node for Tegra210
+      arm64: tegra: Add Tegra210B01 support
+      arm64: tegra: Add support for NVIDIA Shield TV Pro 2019
+
+Azkali Manad (1):
+      soc/tegra: pmc: Add Tegra210B01 support
+
+ Documentation/devicetree/bindings/arm/tegra.yaml   |    5 +
+ .../bindings/clock/nvidia,tegra124-dfll.txt        |    1 +
+ .../bindings/clock/nvidia,tegra20-car.yaml         |    1 +
+ .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  |    4 +-
+ .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |    5 +-
+ .../bindings/thermal/nvidia,tegra124-soctherm.yaml |    2 +
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml |    2 +
+ .../bindings/usb/nvidia,tegra210-xusb.yaml         |    4 +-
+ arch/arm64/boot/dts/nvidia/Makefile                |    1 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   11 +
+ .../boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts |   10 +
+ arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi  |   70 +
+ arch/arm64/boot/dts/nvidia/tegra210b01.dtsi        |   64 +
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-tegra-periph.c               |    3 +
+ drivers/clk/tegra/clk-tegra210b01.c                | 3758 ++++++++++++++++++++
+ drivers/clk/tegra/clk-utils.c                      |    5 +-
+ drivers/clk/tegra/clk.c                            |   19 +-
+ drivers/clk/tegra/clk.h                            |    6 +
+ drivers/phy/tegra/xusb-tegra210.c                  |   41 +
+ drivers/phy/tegra/xusb.c                           |    4 +
+ drivers/phy/tegra/xusb.h                           |    1 +
+ drivers/soc/tegra/pmc.c                            |  117 +
+ drivers/thermal/tegra/soctherm.c                   |    4 +
+ drivers/thermal/tegra/soctherm.h                   |    1 +
+ drivers/thermal/tegra/tegra210-soctherm.c          |   78 +
+ drivers/usb/gadget/udc/tegra-xudc.c                |   20 +
+ drivers/usb/host/xhci-tegra.c                      |   25 +
+ include/dt-bindings/clock/tegra210-car.h           |    5 +-
+ 29 files changed, 4261 insertions(+), 7 deletions(-)
+---
+base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
+change-id: 20250509-t210b01-c154ca0f8994
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
