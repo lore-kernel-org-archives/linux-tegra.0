@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5102D12F7;
-	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692B12D29AB;
+	Tue, 15 Jul 2025 04:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752552231; cv=none; b=fIUyzXbEBrsj0qnUWxccxIXpl+NecLAhBDfWOOK6hiZUOMx5bSgFJPrqZwOMcKIX0YceJi+W3hRNKodEa0wKT5jRrqEUVRyySSuL123wIGczBEIiLNUdptQ5ar3dMfs3jJzZTrARdaAtFm1zenIoqmRtdhnTY4MuNmy0ZSrNC48=
+	t=1752552231; cv=none; b=jTO13iAbb/88sTIK9q0cat9h0cNIDNQVIB0erUYO1GMh32ugEBrV/216Ba51dk9E+tz4B5Az79asi0npCv6B8zd6C4QdGhNotlDksO+uw9Xs/YXpmVrYcUppx9f9xacbS7s6M2RWt4xkIkgb+LwOV0IXeOgaLlx+xjm4pH95Kyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752552231; c=relaxed/simple;
-	bh=cUIiIvJhVKR9wTYPbfXfeTIQg5AtRje9ukOyLgihg9U=;
+	bh=OPn3szrWlchRd10WmNpX5YnmLoApC1PT+n7eOQGRQ3Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=alJ/FQDDUFPk3laAPASH+2sjUT/3cKK8whj8lrXWRWxhdpv2z2O7lxu1cRTPhJRH3dDPM7urH/AHsueWndV9tRyBW+70OCtOq6C/UIDv4V27sr7AlOpM3BZqfgcLBcHPlNlaxEGBfNGX+rGGXnJTaCAfX4U+2j4P1VAh3WCoqa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n26PIvb4; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=cMkOUBy5TB6ozrfdGN/16H37Wo0Z0hUqG8h+uW3fAbQ9dMbP0DsfbkcLu6kJKk9MvvPs88MujPULkc9EPxib1QZ5zZW0MuXABwLb8jT1wkbg9PW95hN27K3GTvTwQZIBU77g5+rDziWb4cJ82gkM8WMQCvo2ZoEnf8W28YM9pNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpQIOFJK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n26PIvb4"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B2D91C4CEF1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpQIOFJK"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD613C113CF;
 	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752552230;
-	bh=cUIiIvJhVKR9wTYPbfXfeTIQg5AtRje9ukOyLgihg9U=;
+	bh=OPn3szrWlchRd10WmNpX5YnmLoApC1PT+n7eOQGRQ3Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=n26PIvb4/qRccrk4VK8D8f7yyTJgoJ9AlhdK95oMWesMV2CxenfyWZ6CvYZnAtUni
-	 AHRnXQ09iS5lIm8+V7qKlXPDPmrZNY9ncih0GRa+uvoshq2BQfK8h89VkeT+gbPdqD
-	 57psZreqnAldK5Bb7DrHwfqtYRypC8DJPmHd8d/O4ftpqqy6yn0CzXvR13PGXuin3e
-	 kSzqQaODwqBw1Lr483g88U63qngcMuLsjk1+FJVG5IufKQgFcQcXqIlq77u8a7vlrx
-	 vs0IaSo161ckCtR4x+xRMrbKd9KJNSRvmpCdmM0MnOYgccVqG4+9xijgVWc8YnLTCR
-	 F3iMiMB0nq1mA==
+	b=LpQIOFJKMEgkmtCE8ayaMOwhNFgyML2mfvl4MH+zYxwWIIP2B1K5S2/8zBFc8KGXo
+	 wd3FmVOBDPpaGhWGh/Jj1lyyZUbhPhGdbPI7FH+mJ5OsBtHqRmpWUtHFQSzWDkiSp7
+	 bm9CLVLPfswfh54TODjgWekjjTlHwTCWaLh2sbtbIc4i+sXsf/8QWxk9rhp3ZXo/XO
+	 jRGxMb7CnLPlAPva4uyBFMd1BbuAao0/yYtYKaKe7slD6V4HkrgED7H1XMQyrT6iHI
+	 JMPssk4sUf7v3q1K5UroaqmArsIrKOLRL9htTY3cJO3gf/pwYaddF9uFfTULL2TOB1
+	 tomlHrTcJuBEw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A049BC83F21;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33DDC83F22;
 	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 14 Jul 2025 23:02:45 -0500
-Subject: [PATCH 02/17] dt-bindings: phy: tegra-xusb: Document Tegra210B01
+Date: Mon, 14 Jul 2025 23:02:48 -0500
+Subject: [PATCH 05/17] dt-bindings: thermal: tegra: Document Tegra210B01
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-t210b01-v1-2-e3f5f7de5dce@gmail.com>
+Message-Id: <20250714-t210b01-v1-5-e3f5f7de5dce@gmail.com>
 References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
 In-Reply-To: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -63,11 +63,11 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=902;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=1090;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=S+xEmmaI7KPQCg4icSZetTrJ6HEmpTYmTyrR9BWm6U4=;
- b=oFAYJgiq5zAewIvcvuf2FVbJYPXeLMkouUk1sQppnwgw8GP0DTIrtP2bwtLmOSpRKHsvaNZaE
- YHG8qgf5IE+C6GHWWbEeQ8srk1JoAam+kCy8+ezrtbNQqD7GXnW960V
+ bh=05phOL1Dk7sts/Zv8aPXcMDWKmJ0zvrejtZlUljALbM=;
+ b=ERUZlXkxLtaEh2lh/a0ee4xRcCMkPQla+rmLuy5X/T5En0QI7paPtwQZk20opHhYzl/JlsWrB
+ 64PIupUlki9AD0MPObudtulmcSzNSVz8o/rJqeU45DlCIDorqcLcZzP
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -77,28 +77,33 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-Add the compatible string for the Tegra210B01 XUSB PHY
+Add the compatible string for Tegra210B01 SOC_THERM
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- .../devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml          | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml b/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-index e9237c58ce45df7fa25cac861891b3fe76efe83d..e876be8058d6a37cf006351f478d29e6b981c672 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-@@ -42,7 +42,9 @@ description: |
- 
- properties:
-   compatible:
--    const: nvidia,tegra210-xusb-padctl
-+    enum:
-+      - nvidia,tegra210-xusb-padctl
-+      - nvidia,tegra210b01-xusb-padctl
+diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+index 19bb1f324183bb22bc75630798da67fc834920b8..cf47a1f3b3847d4a0371d0bc711638fc5e3b6cd3 100644
+--- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
++++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+@@ -21,6 +21,7 @@ properties:
+       - nvidia,tegra124-soctherm
+       - nvidia,tegra132-soctherm
+       - nvidia,tegra210-soctherm
++      - nvidia,tegra210b01-soctherm
  
    reg:
-     maxItems: 1
+     maxItems: 2
+@@ -207,6 +208,7 @@ allOf:
+             enum:
+               - nvidia,tegra124-soctherm
+               - nvidia,tegra210-soctherm
++              - nvidia,tegra210b01-soctherm
+     then:
+       properties:
+         reg:
 
 -- 
 2.50.0
