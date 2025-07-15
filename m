@@ -1,121 +1,118 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0425192D8A
-	for <linux-tegra@vger.kernel.org>; Tue, 15 Jul 2025 13:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D2D2E49A2
+	for <linux-tegra@vger.kernel.org>; Tue, 15 Jul 2025 13:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585421; cv=none; b=nRQhFQbZUf3SCp+oNOjr1ukA0BuqajJ94mHjRNiR8Pw9dHTmxp+Baco4D+PoxSUmmZhkdlUe/hHsqsf+6AgLBwXCsEfmmqD4GEnqxU2yUVrt8jrG9sKF/4FITugGQHmomiNLhiPfjw/86IPDOcLsWcmkL7tK/hwpsn9HL6BUKEo=
+	t=1752586421; cv=none; b=E65CizQxBdOv6MYB2zyVKC3uQM+2/hJMP9oaZuZ9+X/Fw+2iM7RfS4334PtQAeNHSRIZeEp/lXLOxBQwPcbLjQjQiCHOTt2Xwh7RJ3PPYWAcnPcFm2ZR0JaMVH7Yhxltit2/Th/TIS7jyTI2v2KNdYBl9xdFsEDHicr7eyWngE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585421; c=relaxed/simple;
-	bh=dFmrbwT1IuJaq2eM843QLMLaN8X2ByqM2Iz2JBnmOAs=;
+	s=arc-20240116; t=1752586421; c=relaxed/simple;
+	bh=rzsle0lYd4q3WFkhEa4uKuNyg+mZnvPoF11bTF7RytI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EX0Z3K088ugiKzjAHXYd/g3DT1HhqQObefmosSFbx7DjpDH37RMwVCcU3DyDsZ7pb4zLr6fEER8XvFd0SYOvu9ysnKhe3TP63mI35AAy0FweQ7TOKNyFMbF/IavEvAQbx+TlRsxQH0JiwdqOuQgjrhqvhH5EQtxHDqDU0++Pqdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=fTpF4ECL; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+	 Content-Type:Content-Disposition:In-Reply-To; b=apbQb6sJR/hxur31M61ZGZF74U/eDHLzSGicPzhVkoPbcmxg4jZ+zAr7L95b/8CFVcXQYghJi0HPwhBL8xAkXSAuoI9z2yRtnxkzCoIqe2+2jatqWg0NCLBFB7jOqniBp9vHZv8TyLwkmpRTycTtuYvzjoLYDpPLsLkNNxQJBgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WYThkK26; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fTpF4ECL"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455e6fb8057so41650135e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Jul 2025 06:16:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WYThkK26"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4560d176f97so29121865e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jul 2025 06:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1752585418; x=1753190218; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7oxcnIHUFGM9XgAtLrDfZFgv0IUYHjLuIAuAxAwmdIU=;
-        b=fTpF4ECLdLhE0wD3lXcRZ4KTrWzqmS2nk/co3W/69JNgtY3n/JcPC9Yw/jNkex+g6X
-         uJYeSgx80XvoKQI+pqaYqi2+IoyoRy6jMDLMYaqjPQhk2/R5pme0nwlS0IvuqnJkd7ng
-         d017O5HHtgghu5jtdnnZtZwfUCtDNmMaa6dBo=
+        d=linaro.org; s=google; t=1752586418; x=1753191218; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=z+O2OICZ/PuWhWK3KhlIFVSdYJvPOM1EVW/PgJZfT+M=;
+        b=WYThkK26Z7Ql11GhNHA5izeyQuY5s7b6yi7lhD7yjRlPbvptZHkgeNewrwPcS+pYVw
+         1l1BkwnX00vGRAHEjAovJeF8otaJMtVvU9BZw4/8htpxshpNf1o6zLtJHBvnxOFkW/kU
+         IEMmuSNhu1vsXhTCVi8yXzGGMfDoosNrVZHb4s/K6CjmLsma/rhqmrBBwPw3ElsDaDUB
+         Ud7XP6E2Wh3j88qZKLEgtwfWjNWhyqP8xb+cF2QxPzwcMjywc1lYD/4rDfyzTCJAwk/r
+         zer7cd/bykVGOFHOsxCc66QExUyhYNIJdO3ZhDqAbrhPZDH+cV5c5IHpI7pHLTvDbf+y
+         MOCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585418; x=1753190218;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7oxcnIHUFGM9XgAtLrDfZFgv0IUYHjLuIAuAxAwmdIU=;
-        b=YSOyZQwVeoLhRZSZZQXfmKrmHpKUUc76qAfFCqECxvJxU5wfi2ZZUkpBcwJ2iIEzIR
-         pOEPFBTSwxdWH7/B9MFIR2iyhPeZXpU5X+41ACa6ICnXdIP43+7pXRfUjSTN/bHRO/VD
-         EWJSc25JNV+mcQTQXBZCLeaQqd6bFkLKKhSGYqpU4WobHjFbcQ2c1RefLr6iqKlbKJG8
-         h/DFfbLgFa8LbAvByJA5aOKuYfKEdX44CWubE+qin6x0Z5WgR3aNmpDmNiF9kJ3ZSXP0
-         R8+Yp1JStPZ56KjJfPxak3rqGq8ptZ+9zFYKWzxWdjLKbvywOLK5NkoSLP8pR5LuYipm
-         9DHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWedfpWusPe/2Ok351gMYdjr8WlmT1saU1Lq+Gh/TzdJYyzhUcufPfxKDgUb5aMDHMpBuM+/u2oJps2zg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1zNWJL6SKRe09cirq+uF7gIgjx+6LIT5fCJ91hQw+v5Yot5wI
-	ccyQ4jnhWlbvQK5gDyIKep/MptYqdSEhX+Ewm05yuHf1SeaseKe473VdXLdYFXZNzlo=
-X-Gm-Gg: ASbGncu9pwY4Zyon5R4zWlY2mMDrAHxjuzvK9shTvzGWYbOmCFGUYOBw4OymNUWy1LM
-	n/wI5qmHSzY6Xrbsp2K9tjnsYWEdiM3KEgUroqwMxKqTS5tb7oShRj0XcSGQkGPzQR8jplnrFwH
-	91thILEplDu+s/kXjbEuKUHgyTJcY/Jo8RPOcSW4SKzCo34Thd2pm+rJJIeiVlPTvwr6kfop2WZ
-	gSSDwPV78AoD1Dw9+GpEjeID/gAxqXuD1MzoGRCJttfZ9fUS4jOv+eem+7cHPGutd5vnCrN/Ca3
-	0jX3qEGSLXPs6vfmuZCqb2ZsPA1CihFpvajBD+eyKO2fs+HbMXzhVlB3UHB5EWBtA/zuxVfDZSl
-	5PuuTzPSr/3tuI/1nH/UUWpTKv+qXfze5BQ==
-X-Google-Smtp-Source: AGHT+IF6/YjsEXq6Q2lwzXNbCW3+FTVujjcrP9eO/s3mZxOODp1c3RGVgSacc6YHmi98kBgi2QH/KA==
-X-Received: by 2002:a05:6000:2f81:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b5f2dfdd45mr13263647f8f.37.1752585418009;
-        Tue, 15 Jul 2025 06:16:58 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4561752340esm71577095e9.38.2025.07.15.06.16.57
+        d=1e100.net; s=20230601; t=1752586418; x=1753191218;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+O2OICZ/PuWhWK3KhlIFVSdYJvPOM1EVW/PgJZfT+M=;
+        b=Kfcm9/09qpD2x3XrS6DhA/CIiVqHc8R9nYDFtGuMPMvLWcnTiZ2td6t1thK6uNj27K
+         rRry49XW7lqBR50QXld8OZ50/XySt2ODp4i8LiR9aI/EA659lN6iNnjNPmuUvUvhyhmO
+         qHQIoonzW6uPr7NUnO8m8q0OSpGvEs3ECmXmln//bIyhjv2QbLUPGF8Xp6erGqeDTcIU
+         HLYq/oEvICQKQ1YnO/+rMV3sAfjKo4QVJjLsaQxRVakI9941HBmhdk/rxuerMPzeR5MR
+         KbDXjiJIvvGnNcacIXnYorKM/RbHCQoGGn+yAKtsso76Jj4W89prdYLoDaXBgAZEoIa6
+         U0wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVZxDG/krEjTBPOT6rjLreRhSwAS/pNowco4P5hysEAsfQv90naGMN5lZQafHU6Su5zxJECvty3wUD8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrBL4uEyOQ8r0GM+kAggVCcbprbr6XNVbPzQQYUq4MGLUBrDQc
+	z6hcP+L3Sbg5jO4LSVgwYeemabODrudmF1z+vaY15bm29sz3P9BDPTzoOYDAPl3DAVQ=
+X-Gm-Gg: ASbGncsCEPe9zJ7EjofkbQUziZQqdtgaw5Py/NlA24cwXVaSIe/TGJ186FuCjwMVgf9
+	ncWNXe81JLG0jgAh7q0UJ+X2M0VY0WsRobCX9aWKXCNcpBnofZrgHlQfiNh6PMDBqeKE/2ngQiM
+	nRlP0gSk0rqKjYvn3K/sa69EwxLhWXnFf/Nyj64J/oXo06S85ZPjs5olcnbltlJWWd9w9pyeDhQ
+	rorJv8AjSGybuqF7NhTtIEr7h9clNxDfhyemdnfZMjLg/XD945GFgkJ7vBoA+H1rSe+6rJ6PCqz
+	pstCHUUeGOa85Lp5UxN80vizkOF+olv4larWR1PUn9B//yaztnmKHpNtuNogjHVOpnF5PgEKDLU
+	r7ke7rgkyo/pjxh0pPg/imR3h6I9cvv9jO3vH2tG0eoT8CGjP3UZgRwPwJrdE
+X-Google-Smtp-Source: AGHT+IENtk1fZji7615Bpw3kcLK5xTHsi34/FWdDqEiS6WLHvSySQx5nMasrQRvOYBkeNVG7ZeVurg==
+X-Received: by 2002:a05:600c:4e51:b0:455:eda0:8a8e with SMTP id 5b1f17b1804b1-455eda08c8dmr128078735e9.27.1752586418167;
+        Tue, 15 Jul 2025 06:33:38 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50ded8csm199491555e9.20.2025.07.15.06.33.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 06:16:57 -0700 (PDT)
-Date: Tue, 15 Jul 2025 15:16:55 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
-	simona@ffwll.ch, jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] Revert "drm/tegra: Use dma_buf from GEM object instance"
-Message-ID: <aHZUx4dJw1WtetyQ@phenom.ffwll.local>
-References: <20250715084549.41473-1-tzimmermann@suse.de>
+        Tue, 15 Jul 2025 06:33:37 -0700 (PDT)
+Date: Tue, 15 Jul 2025 15:33:35 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	Amit Kucheria <amitk@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] thermal: Use dev_fwnode()
+Message-ID: <aHZYrxabtU-7l2FB@mai.linaro.org>
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+ <20250611104348.192092-20-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250715084549.41473-1-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 6.12.30-amd64 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611104348.192092-20-jirislaby@kernel.org>
 
-On Tue, Jul 15, 2025 at 10:45:39AM +0200, Thomas Zimmermann wrote:
-> This reverts commit 482c7e296edc0f594e8869a789a40be53c49bd6a.
+On Wed, Jun 11, 2025 at 12:43:48PM +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
 > 
-> The dma_buf field in struct drm_gem_object is not stable over the
-> object instance's lifetime. The field becomes NULL when user space
-> releases the final GEM handle on the buffer object. This resulted
-> in a NULL-pointer deref.
+> So use the dev_fwnode() helper.
 > 
-> Workarounds in commit 5307dce878d4 ("drm/gem: Acquire references on
-> GEM handles for framebuffers") and commit f6bfc9afc751 ("drm/framebuffer:
-> Acquire internal references on GEM handles") only solved the problem
-> partially. They especially don't work for buffer objects without a DRM
-> framebuffer associated.
-> 
-> Hence, this revert to going back to using .import_attach->dmabuf.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
-
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Amit Kucheria <amitk@kernel.org>
+> Cc: Thara Gopinath <thara.gopinath@gmail.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Lukasz Luba <lukasz.luba@arm.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
 > ---
->  drivers/gpu/drm/tegra/gem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index 41a285ec889f..8ede07fb7a21 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -526,7 +526,7 @@ void tegra_bo_free_object(struct drm_gem_object *gem)
->  		if (drm_gem_is_imported(gem)) {
->  			dma_buf_unmap_attachment_unlocked(gem->import_attach, bo->sgt,
->  							  DMA_TO_DEVICE);
-> -			dma_buf_detach(gem->dma_buf, gem->import_attach);
-> +			dma_buf_detach(gem->import_attach->dmabuf, gem->import_attach);
->  		}
->  	}
->  
-> -- 
-> 2.50.0
-> 
+> Cc: linux-pm@vger.kernel.org
+> ---
+
+Applied, thanks
 
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
