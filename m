@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7732D46BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0982D3758;
 	Tue, 15 Jul 2025 04:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752552232; cv=none; b=o1QldWdjkvUOxXQ4MtSqGlRwivPoR3VHIbSvxX29H0Y31hPHOzCCWe5seuKkE+mTLthuuhtzu98iwTTmK4DdssMmOliJFFrSnb2JXOzuZxK1PCPxRlj0yTvx9kQwRLdg/aiAxzOexWptxqRFTPVlWQ5Cb4VaY3IiVURNqbysQNI=
+	t=1752552231; cv=none; b=qbzl2ieGLKhmbh1nuFcbp7spndOXsJO84Z2ZruFNhbupW11deo1Q2KXR0P4wfE3V3YTt4hgXlfoRgOLQkwYhG3/7liVogcX3cenwE/ikAAd5ejXFE3zK2asHddHthOgYabHy097Jxw1saPgLl0hE6uXT00ZcBi5kIJ0TFEAc4KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752552232; c=relaxed/simple;
-	bh=69mT4j9gGXbCwC6IkkO5kcgglBEd5iCH6O4+hlHZFSk=;
+	s=arc-20240116; t=1752552231; c=relaxed/simple;
+	bh=O1H8aQyQkcYZnx7DwkuOzyQf08RWSL8y/htSjyjvz0M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vn6wyN4IXMUWGVz/r0YsVSmZl58mOHmxzwEbVlDPvHwZ9zoldIcAer2i1pA7de3MMyufEi6S/b9h5HOUWpxG8kFOF9DB9XVy3rGEyF4b/F0UDMOuNEBbVjDXx3wEzMZvk/nYy/WkjjYqEoaNs3fJkO+8RqT8E/8S47179+N1Ipc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nigDLP18; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=SdSd7w6XJ8X6eD5FuZXttsHN6zKtPn+VPPFLY2zujSvxXudwp4F17G1nq7Fy79ig+bWveb/xPqo7Xk6CjzRqJqH9YazMbd8J3rWHnon84KXDxb7OGpsmPlklOmNgBvwnLqBBtrh9icDnwP5Ro957A18C4Vood5Cbvp0KyTsb1YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfjXeZo4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nigDLP18"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ABE67C19425;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfjXeZo4"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EA70C2BCAF;
 	Tue, 15 Jul 2025 04:03:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752552231;
-	bh=69mT4j9gGXbCwC6IkkO5kcgglBEd5iCH6O4+hlHZFSk=;
+	bh=O1H8aQyQkcYZnx7DwkuOzyQf08RWSL8y/htSjyjvz0M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nigDLP18VaNEzjJMeF8RvKkLgdk43JpoKP68NQdV+5+Sz/JAALgGnS755n3xsgYr8
-	 HxllM9g7d3B2Pm3BakbZLd4h0wpSSYDCgAOse2N7HOQ3vT8GjvTuMnJydC19ZEHyvZ
-	 JFR4DOL8f8b4PbtpcwK7xG0l5B+2WXZBnQU0vOB65Hzbs7+jYvBxI/WmBhhzjFelo6
-	 04lKCrAHVzSiKoTAkAkM7L6VV2ik8gCOv1AK6S7nepwrzV9S+3EodGdoKqIviLgyZh
-	 I1C/3tnh1oERR1Ge6f0lp8Uyu0S8VuP9OCYvx4+TMzYO7UN4JKzpcnODsOicIT+yGN
-	 6oCNvtf2eFehQ==
+	b=tfjXeZo4Xmw89/4wLwJyqbZ+959BK8nUXefiXQ3aUGbpv2eDtkdHLnEM90GQ8HJQz
+	 LIY/62K34j5h8GgMavZNg0qRrVFHSNjoCSRcrX7FRSYsJlNSqy/daL+ETuD5VmVi2P
+	 kctc0JzLDX+qmzQyPcwR0pxIHmy29ctLQLxaWCZM0abiyO8UOcxsXSQsiaTShPh25T
+	 Oxx6rohI7ucljCy58cr9Bj4YC2UvAS6nM/qqHGN2KgYOXuI5+AiKCt42/vNadtSj0z
+	 H1fa25Uq3qT4IVciePX8BovD3brQE7Tb1dFnT8sW9jQV8Us3DN0we7wt5T3BQ0AqRa
+	 nFGIUIAJiCqqg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F875C83F2E;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56333C83F2F;
 	Tue, 15 Jul 2025 04:03:51 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 14 Jul 2025 23:02:58 -0500
-Subject: [PATCH 15/17] arm64: tegra: Add BPMP node for Tegra210
+Date: Mon, 14 Jul 2025 23:02:54 -0500
+Subject: [PATCH 11/17] usb: xhci: tegra: Add Tegra210B01 support
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-t210b01-v1-15-e3f5f7de5dce@gmail.com>
+Message-Id: <20250714-t210b01-v1-11-e3f5f7de5dce@gmail.com>
 References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
 In-Reply-To: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -63,11 +63,11 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=1355;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=1932;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=EGqGpsmvVUcZ9BC/fErJCUcbZka+SWE7U9kl0UCL2e0=;
- b=mdM9cDjp2UVQwDqZNIt4haw/jqF7QKWVAk+1bKi6m2zSE+O3aSw0x9JGVxpwNHm7atlknU0w/
- CazoxeUkeIQAXH/SGE+z9O1gO9SzReVSRTf5oDW6/2gMtHB7hJriSrp
+ bh=FYMpkpyzM578fnGIvudlc1If8b1f7SqQ00jSgTIDo10=;
+ b=IZGaeuYCPAcdA7HqcAhnztHUBEbuakRfcaUkoGkPrr6y5zD9XB/sAdNRtnBLyEObkWOFTY8rJ
+ HpGkX93861dAVCZYBhothATAUfHwdGyH+JllEFyOyHZAbASs9eIFtb5
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -77,40 +77,55 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-The Tegra210 soc supports bpmp offload for power management among other
-things. This was considered insecure partway through the soc's lifecycle
-and support was removed in the bootloader. However, Tegra210B01 returned
-to using the bpmp. Plus old bootloaders on the original Tegra210 still
-work with the existing driver. So add the node to the common Tegra210
-soc dtsi, but disabled by default.
-
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+This uses a different firmware, but is otherwise compatible with
+Tegra210.
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/usb/host/xhci-tegra.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 402b0ede1472af625d9d9e811f5af306d436cc98..3361de1ab41b37e430d399df2bf77d64226f33e8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -968,6 +968,17 @@ cec@70015000 {
- 		status = "disabled";
- 	};
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 0c7af44d4dae5066e66bd29c961510892b6e1301..aef100415f453fdd95c83cf511a914cf62e3e775 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -2547,6 +2547,30 @@ static const struct tegra_xusb_soc tegra210_soc = {
+ };
+ MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
  
-+	bpmp: bpmp@70016000 {
-+		compatible = "nvidia,tegra210-bpmp";
-+		reg = <0x0 0x70016000 0x0 0x2000
-+		       0x0 0x60001000 0x0 0x1000>;
-+		status = "disabled";
++static const struct tegra_xusb_soc tegra210b01_soc = {
++	.firmware = "nvidia/tegra210b01/xusb.bin",
++	.supply_names = tegra210_supply_names,
++	.num_supplies = ARRAY_SIZE(tegra210_supply_names),
++	.phy_types = tegra210_phy_types,
++	.num_types = ARRAY_SIZE(tegra210_phy_types),
++	.context = &tegra124_xusb_context,
++	.ports = {
++		.usb2 = { .offset = 4, .count = 4, },
++		.hsic = { .offset = 8, .count = 1, },
++		.usb3 = { .offset = 0, .count = 4, },
++	},
++	.scale_ss_clock = false,
++	.has_ipfs = true,
++	.otg_reset_sspi = true,
++	.mbox = {
++		.cmd = 0xe4,
++		.data_in = 0xe8,
++		.data_out = 0xec,
++		.owner = 0xf0,
++	},
++};
++MODULE_FIRMWARE("nvidia/tegra210b01/xusb.bin");
 +
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_EDGE_RISING>,
-+			     <GIC_SPI 4 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "tx", "rx";
-+	};
-+
- 	mc: memory-controller@70019000 {
- 		compatible = "nvidia,tegra210-mc";
- 		reg = <0x0 0x70019000 0x0 0x1000>;
+ static const char * const tegra186_supply_names[] = {
+ };
+ MODULE_FIRMWARE("nvidia/tegra186/xusb.bin");
+@@ -2659,6 +2683,7 @@ static const struct tegra_xusb_soc tegra234_soc = {
+ static const struct of_device_id tegra_xusb_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
+ 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
++	{ .compatible = "nvidia,tegra210b01-xusb", .data = &tegra210b01_soc },
+ 	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
+ 	{ .compatible = "nvidia,tegra194-xusb", .data = &tegra194_soc },
+ 	{ .compatible = "nvidia,tegra234-xusb", .data = &tegra234_soc },
 
 -- 
 2.50.0
