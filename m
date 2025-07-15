@@ -1,112 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F6C2D63F4;
-	Tue, 15 Jul 2025 04:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731CD1F4174
+	for <linux-tegra@vger.kernel.org>; Tue, 15 Jul 2025 08:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752552232; cv=none; b=SD+WCEnSaQEThHiHzPRG171gEQSNPK9ih9Smi9M88gj68J6ZSUq+PMVJNjyjSD0T/67jELTzFFhVYjEBaJ8di12CNk3wrVLqZ0Bho2q8FUQb8G/SylZNWEA9EWyRi8QOXZd1qqAei6sfENLHz8ENB3KVMX4a7KtO+8ni7OIoQ3E=
+	t=1752569343; cv=none; b=IwRqC1WUwJaPIg+WfwUomXU8NeKya4OMO36kb5sn/42M+aT6quJLwOeBswUbhL/Xn5P7hnjWcW3vQsiBDL0+ZLQKRutcWp9DdciVRyBcEf+klrziM4sHrFGbZyWiHTBzNs+AO7GeWOaoxv27118S0tvXtM8l8cD3FcKDmTrHZnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752552232; c=relaxed/simple;
-	bh=htHW6rtHg7NSjIcI/4lWhbhWmP6UNSBw9fjzNoVOG+c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CswJ26wJc+h2/3Y74HKXyCCo/+2u1pqvRTshXQBrpWHZz0L+dUGrA9CjK/AyHFqWv8n8sBcJ13CoLSKmhHvnfgzWa2cjm3lLXdGNIXWNg5+v+h+kOh9HHTk5ZvHo0Ip98JFs2SKFH+/gnOVx9pqiOFoGGwmnUvWBiTe6tbssu7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6O04kvv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752569343; c=relaxed/simple;
+	bh=aNEOlGtkE/BOvdwptLfJzScqCK88H3kGdXKUD6YWhDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DmBrkYUFm841YXem/GI3bGHP991MM6MJ1ozes92k2AJoqAMDiui399pTgxgFvkNMgbWOtM0kIVK7bMgJYFGt/JfDAqzfyIzElTp2GseBeNuUsEsJLWyXBzDXlTdr9kToXRUTvqDwT0XfwDwsyIg76L2QiCuzwuqS/m069+r+EHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gfo+JJ+G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LZrJBSZV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gfo+JJ+G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LZrJBSZV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6O04kvv"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D593FC4AF52;
-	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752552232;
-	bh=htHW6rtHg7NSjIcI/4lWhbhWmP6UNSBw9fjzNoVOG+c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=F6O04kvvIj2entXcpHjijwWVFKNbId5Ft7+2xkar8HPtwglWLAu3b62JxMSlHwvi4
-	 zA3rR33pp+21x37MHL7RkNQJ1oFYUb6dMdO3TV1qebXQBqbcFZq4+bS9gnkzvdHvJg
-	 MJFR8T5Dxoier5Q5BYDKb48TcCQRUb+k2+C5ux4V4pfkaPsTjHZ8cLFNtYpJYeLnhc
-	 9QstN6ruwurdg9vK5u5h6MuH3Hks6QTCq+/7sAUIVdQfwEonZQKr5jez8ZXV60QpAc
-	 c42tgrRMpCrn6xaXDmnWkXXrjhJo2fLQ/UJU+IjrYEuEIKipEwfyrUpK2xRB/N4pDT
-	 +0cg5Obh6xFmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C405BC83F2D;
-	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 14 Jul 2025 23:02:47 -0500
-Subject: [PATCH 04/17] dt-bindings: usb: tegra-xudc: Document Tegra210B01
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gfo+JJ+G";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LZrJBSZV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gfo+JJ+G";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LZrJBSZV"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A80192119E;
+	Tue, 15 Jul 2025 08:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752569339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=DU1fq79ubCUoN2d9zoeCqM45/92JQya01H+jbUSlGvs=;
+	b=gfo+JJ+GxCkegzscCJsMjzLhjVRdnz47pPDILtEV7FWS4Sf97asqP/2S8wEdFvTNzLFEdR
+	oyIj3nYJz1ZMXS0Fqr47NVaqannMbVLM7Q50Sj01skqLuGC1G7qwUYI1rEWGFCHMjoZ6Cw
+	kZpdPsdNBllBbJ1nSKaUUr58k6okfT0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752569339;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=DU1fq79ubCUoN2d9zoeCqM45/92JQya01H+jbUSlGvs=;
+	b=LZrJBSZVjqYBL4CEklT94DwIYYjb0+ITlWVE9HMBaL4EQ5wrKbS/JihzNWMzOWb2pqN1Km
+	Vaj/fLVw4kl0NTCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752569339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=DU1fq79ubCUoN2d9zoeCqM45/92JQya01H+jbUSlGvs=;
+	b=gfo+JJ+GxCkegzscCJsMjzLhjVRdnz47pPDILtEV7FWS4Sf97asqP/2S8wEdFvTNzLFEdR
+	oyIj3nYJz1ZMXS0Fqr47NVaqannMbVLM7Q50Sj01skqLuGC1G7qwUYI1rEWGFCHMjoZ6Cw
+	kZpdPsdNBllBbJ1nSKaUUr58k6okfT0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752569339;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=DU1fq79ubCUoN2d9zoeCqM45/92JQya01H+jbUSlGvs=;
+	b=LZrJBSZVjqYBL4CEklT94DwIYYjb0+ITlWVE9HMBaL4EQ5wrKbS/JihzNWMzOWb2pqN1Km
+	Vaj/fLVw4kl0NTCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 671DE13306;
+	Tue, 15 Jul 2025 08:48:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IKNZF/sVdmgCWwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 15 Jul 2025 08:48:59 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH] Revert "drm/tegra: Use dma_buf from GEM object instance"
+Date: Tue, 15 Jul 2025 10:45:39 +0200
+Message-ID: <20250715084549.41473-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-t210b01-v1-4-e3f5f7de5dce@gmail.com>
-References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
-In-Reply-To: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
- Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=1146;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=Jyy45qLdZDq9DiQVnsxM/Qp0gR79KFt6neXymT4FCWQ=;
- b=TcCa6TVpGjZW7jzTH8gjJ6dgjSh/2EdBKGUTbaM2ZDtD0kBy23zs1eI/CDye8JwKO2xOUgB31
- lQDc77DFvRuA+nPAP4zJoCewfmgWm9F49iS26kbUgAvOq9BDkIfHDPO
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,nvidia.com,ffwll.ch];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
 
-From: Aaron Kling <webgeek1234@gmail.com>
+This reverts commit 482c7e296edc0f594e8869a789a40be53c49bd6a.
 
-Extend the Tegra XUSB controller device tree binding with Tegra210B01
-support.
+The dma_buf field in struct drm_gem_object is not stable over the
+object instance's lifetime. The field becomes NULL when user space
+releases the final GEM handle on the buffer object. This resulted
+in a NULL-pointer deref.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Workarounds in commit 5307dce878d4 ("drm/gem: Acquire references on
+GEM handles for framebuffers") and commit f6bfc9afc751 ("drm/framebuffer:
+Acquire internal references on GEM handles") only solved the problem
+partially. They especially don't work for buffer objects without a DRM
+framebuffer associated.
+
+Hence, this revert to going back to using .import_attach->dmabuf.
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/tegra/gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-index c6e661e8915ca4d3e905331299d981f4d3964314..4574e66e7c1d3d3c918991920bbf4f3ea0ee6ab2 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-@@ -20,6 +20,7 @@ properties:
-     items:
-       - enum:
-           - nvidia,tegra210-xudc # For Tegra210
-+          - nvidia,tegra210b01-xudc # For Tegra210B01
-           - nvidia,tegra186-xudc # For Tegra186
-           - nvidia,tegra194-xudc # For Tegra194
-           - nvidia,tegra234-xudc # For Tegra234
-@@ -130,6 +131,7 @@ allOf:
-           contains:
-             enum:
-               - nvidia,tegra210-xudc
-+              - nvidia,tegra210b01-xudc
-     then:
-       properties:
-         reg:
-
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 41a285ec889f..8ede07fb7a21 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -526,7 +526,7 @@ void tegra_bo_free_object(struct drm_gem_object *gem)
+ 		if (drm_gem_is_imported(gem)) {
+ 			dma_buf_unmap_attachment_unlocked(gem->import_attach, bo->sgt,
+ 							  DMA_TO_DEVICE);
+-			dma_buf_detach(gem->dma_buf, gem->import_attach);
++			dma_buf_detach(gem->import_attach->dmabuf, gem->import_attach);
+ 		}
+ 	}
+ 
 -- 
 2.50.0
-
 
