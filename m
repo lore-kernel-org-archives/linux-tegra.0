@@ -1,233 +1,146 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7259207DF7;
-	Fri, 18 Jul 2025 09:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830118; cv=fail; b=mKJcZ6odABIQ06GJHCSp1mpzrqFOAPPXn12ysOA1jbm8FQzaeTE3ijUoxnV3Fd3WUyF65C66jFXisWrBOg9mUofCNYDCjrwd338uUD7QTT2r7oRpUO7hDYD/H+roiSDfs9pjYhNHzDAYmkvB+KP/Dfw4L4BFmDEdOhINQTG7ovs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830118; c=relaxed/simple;
-	bh=8kiHMG9RPsKWVriwsfuFg4vKOaXKLNxY603FT5hhEv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JiwfwRp17Cg50I5c+6nT85eqJILDBEUr6GYeOqwlupOcLEW3DOYfMA3xtptfsWv92v7TYLK+SgSl4jBTFKhEF0oNmeZjUcsOr3PGFGCowwOjvOhAd9w1nlG6O5GS57Yi9rZkBInUN2OQbm/itZ10WmRakPjw8qoOxRMPtTkuUAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=miiMUrTS; arc=fail smtp.client-ip=40.107.92.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA99F207DF7;
+	Fri, 18 Jul 2025 09:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752830138; cv=none; b=gN/7QwOrUn+yIyPEQvmwX5ONUgDNLoWHiGHyDgYLQVAjroKudG81um96L9GWj/0h2UoPskx/pS9Jb34xKDPvyCHd3Pw8+tN070xcyBkTea4N6WqpY+suCLYV/30lR5ZtE0064ngx5AI1xInypseey85zjydqiykYOI2DZ42RG80=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752830138; c=relaxed/simple;
+	bh=DWQo4N1aIu2PmUq7o9scvFptocvEhoz5JQitCz8agcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nEQTL/PV29DsWvET5n9s9lR6Pol6EkCDNRAKddYau8OzXAUjZpFu9khQmkxgiiwnr9icXZ/2ByoNT9oERmNTJCH86xx45KrATlPxr327YI9/KOH2aln17weYxOYBKT6rDEYckAYUBCn/5fdBaKZkQ+Y62CmdKmkzKz1VyDNQVOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBnvwskM; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="miiMUrTS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wTr++pmX57R80VDftgYSn+d7MBh87Rre+BEyBWI7yRlBKlUU3LExNJwGESN+8oKQhzVLo2SbAIjvep5X59FmWwhiRXZ6NC6c8THLTXq3NfkRVwAJjd+tTlOoEw+D4TdAHVAkaXlivDAFldtSG3pbV7FtSaUmwm4UY5at9XuGaZCHsjzEDx3WTmrIoBv8kqOGzDTJh6jdzZ2AagGmnPt6m5TUnhgpA+j19zTfz0vtyTM0KbDT82DF658GTFe9WMQrucGHGYLgq0BdLVe5bQweieCXBzqu+GccLj8PJDZIj6YoJ2mENtG6SVhxa5fxbC1TSkC6uWYemaWtyyHGju3p4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UcJ5CDv6WCQ03CgUSqUz2dsz6tLJKiCqjhggMCPo21o=;
- b=DpiXZJu1eLWI6S8afLmVOk2XpNiUZMCLD3qCmEbGxDQ6Xir1L3DzR1+b6BprlLcJtU9DuiZTPdyoeetzavYL1zhAy1/hqyDhXNXWyj5GBmBgbfzrgP+pFD6b1xOqn7JAzckwa3UAb8hh8xLT1fxPs7XePhDRXiVnUlB4A3LgxX5qI37268QKorGawgpAJOjlQK4UpaWcVql70M1oNYh2FwXyxWORFbkN1Rg0/pi6lrrgZfcrre1jl+Qt12BiQsLZBzSR5QUKQrTflrgVBW2/a562uBfEndX3fPckq6SblBtVQoTyawINgjskPuKXV888IQ6qYLoVcqQLVm5nJA7Jgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UcJ5CDv6WCQ03CgUSqUz2dsz6tLJKiCqjhggMCPo21o=;
- b=miiMUrTSdGMZ9cNv8zwAW/RZVARLsjiE0t4f/hDapjsAV2uFest1r0Dt9WebScLevqWqLO3gbAkE7WiN6KfQqsDRcCL+8hyCsQHV3Q5JFDx8bjVHQ3NXQMQffT9QUf/mMTbr4ALfiGXIVC2QcvNEBh92/kt0P+8gYqF9MZKVBWDOctMDAZjqsvhw4mjAxoKhy+hLSZ4P3jzk+TAM2AxZfl3hhNHQsT4wMnFB5AehxunXeHe3A1urFzmAKpEkDYuTOEBrqWP4HwqMh0IfczsrM8EjHASEe1ZSHQCsFUpFWqNAy7tlmHoROEQbquuYP08+WiAouou0f8GBmTG6uxXAUw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6478.namprd12.prod.outlook.com (2603:10b6:930:35::19)
- by PH7PR12MB8796.namprd12.prod.outlook.com (2603:10b6:510:272::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 09:15:13 +0000
-Received: from CY5PR12MB6478.namprd12.prod.outlook.com
- ([fe80::35dd:2a5e:d28d:55e7]) by CY5PR12MB6478.namprd12.prod.outlook.com
- ([fe80::35dd:2a5e:d28d:55e7%4]) with mapi id 15.20.8922.028; Fri, 18 Jul 2025
- 09:15:13 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v1 4/5] gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
-Date: Fri, 18 Jul 2025 18:15:08 +0900
-Message-ID: <10778402.NyiUUSuA9g@senjougahara>
-In-Reply-To: <20250717142139.57621-5-clamor95@gmail.com>
-References:
- <20250717142139.57621-1-clamor95@gmail.com>
- <20250717142139.57621-5-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SG2PR01CA0131.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::35) To CY5PR12MB6478.namprd12.prod.outlook.com
- (2603:10b6:930:35::19)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBnvwskM"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a53359dea5so852518f8f.0;
+        Fri, 18 Jul 2025 02:15:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752830135; x=1753434935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NtFKEM0q0llnqDb5hBHfHcNcA7ogog7O4+RwpSiUi+s=;
+        b=DBnvwskMX1T1ms1uQcaXyc53kUfJdsOj8AyQtpRuV6ZFWOcHeAqL3iPK+dJdxH8kGs
+         rHitzCN+ufWGB5OxJRl0NiCdJq0ftPqEkZ2r3xRX0b3ZDTUoW+pyfAWQorWW6CEBUh81
+         hQtvPGvp31ILpK5ujP+LzcnvCI0NiBmbYIRKvWmVWUW2umne1WKKL9ifHfCR5XeRR+KZ
+         NWHqvYBaZujU+bIUFBjfmoEJH9v9PwKAOGaqecAQYWC+wyTLT8YbScjl2w7n0Gh5xc4i
+         oRUoZ/1UPv06TX251241LlucSWOlkQxncOpISkcjVzUVamCq0pj26CInR9HsOLZ72FKg
+         c+HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752830135; x=1753434935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NtFKEM0q0llnqDb5hBHfHcNcA7ogog7O4+RwpSiUi+s=;
+        b=oNNWYfnrgGj/S8LfCxIEdUNNYy+dIgHcimvzm4DlT0cHWxPk7l9ockHVjLBh09ybtl
+         JjcCe5rtSwL/sDmwGOc6MOIcw1lMf+3j9g6eEEA2CVSz3NXDUo49XtEB+THMXtvZJSKi
+         m4BtjHbcNBeP3oIIIvEeXMCd2emMYZQfRs4sePGnmW6bL4ZvGdah9sAy3NP3mvYbXvOB
+         hq2zU/C5BvfLz7THLLt3oGNhdioZNsdA7WrE9cqGqq1xUeXNHzFWbNyRKTNZhtYotZDF
+         HGfzCa2O6fkDtgNKCpX0sYW4azG9gHmYXukdnZsm0FZxIbG80AB/Zo6zpSMwsmuFNcw3
+         jVRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+LLtocAefZwVMrESAnHMFFqIdKunldGm4LsbmMStMBBUeUDNBmWoLhZQk9OtFTDgYtL7xuWBYwo7WZAo=@vger.kernel.org, AJvYcCVJGSgfxN0WhzGrezhrh1aOwraRHwvyaCQrQu3O8AN487y7w03jVjKBapEBFFAdhaXRXUJPg8G7MQytUkfB@vger.kernel.org, AJvYcCVnd3tuljKquATj0xJRcKGzaYhWnOkYsQhx0INwDoo4JCbX8Rp5jkj4CplK2eCv6CdMcK70Gj5NQnEH@vger.kernel.org, AJvYcCX9IeyGjEB5EzGIjC68fzbld19LHySCa30n43R2TsT8ZIDIFPcyK3XyBNXkA6ijD23OLra9ZlevxaVM@vger.kernel.org
+X-Gm-Message-State: AOJu0YycGFXX30Kvl7ThxQ3E976sLajnIXtAyV66mbFfy3UkJDvEtKnr
+	tjk/mJNE2ie8xHgHygVrbbrcl8i+LEbjSv8g3JXOT1eAi3YOOP8oZipgiB4IvoLBaqeHlBz2Ewu
+	xVuh5OvDOegS8HtJJ1FYcujhlwhHHiWg=
+X-Gm-Gg: ASbGnctjLxVRoJWTXIwo1H7vXjyaPX6yvXPcZ12G7IzyxcpooFR9Q4sJfvK0uzYM26U
+	4FpqGzUDgIoGLbWawy8RWPxasZOVROio+pOwMfeXGZKEsx3dVVfl481TOIq5e8EffyyKkNHv08g
+	yGzYcELhRV/vqCoywwo1uJ7w+wA3d20Ji8UfSbTrgVAPkC15zWeVtu22vVaxMZH5zz2GTx6EgM1
+	rO2HhUz
+X-Google-Smtp-Source: AGHT+IFbFV/WrZsVNGTKMIaUnj6VoATdarIKZ5rDIIhGNdW7534p06n1o9brwUTM4SAlEo/IUifRVz1oMt5xHQPbmc4=
+X-Received: by 2002:a05:6000:144b:b0:3b5:dfc2:f0ca with SMTP id
+ ffacd0b85a97d-3b60e53ea17mr8129767f8f.40.1752830134898; Fri, 18 Jul 2025
+ 02:15:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6478:EE_|PH7PR12MB8796:EE_
-X-MS-Office365-Filtering-Correlation-Id: 582cd878-c5ed-4981-dcb7-08ddc5db9a2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YTZFUWVsU0tzajVMR0dpT2hodVc0SFRNUnlQUTMzYUN4T3lxOGpETFI4ZFBV?=
- =?utf-8?B?RGp0UnJPWkpwMGNnRitCcmcrWFdHKy8xdXBPTGw4NzJSQUR6T1h3b1RYeEpN?=
- =?utf-8?B?ckFqM2hLcXVleTYwSTNRNlgrZHRSYkZqMjV0TlZKZzRQOFplRlZQSWZkSWZ6?=
- =?utf-8?B?ZGVsZFZkbDNZL21XRHVKelFYS3diZFkyVWZzOVNFS0RYUjVFdEl6TzVDOWh6?=
- =?utf-8?B?UFJFd0pyWjJqWVl1TFU0d0toVytqUGt2blZ5ZWFRUHIyaTRkdlZIR2dDRFdB?=
- =?utf-8?B?T3pDL1FYMEFkV3M4RjdnSGZuTjc4WW5SWjZ3M3JLazRrZEpOREtZOWNtd1pU?=
- =?utf-8?B?aUQ2STBtdGZ5dXh1SnZHSkRnS3QrRWFSWTQ5dkxZQXFnQS96TTBsTHVuMzBu?=
- =?utf-8?B?ZS9QNWx0cVY4bDhaZGNCdHRjY2RhaHNSaU5zSmFkaFNyUkE1UEZvejdCazJE?=
- =?utf-8?B?d0c5ZHYva2tjcDh4TTBaNmU4SHJVU0s3NytXMHdScHB3SDBsblV2K3c4Szgw?=
- =?utf-8?B?ZnFoR3NpeW1RMHFIL0kxUHZpWTkzYkhlNEFONVNtKzJ3Tm4rSzRIR3J6MDcw?=
- =?utf-8?B?OXE5ZTJTS2o0L081NktoaU1hNlNiLy9Yci9zTGlhOGM2SUgveXZ6cDIrcUJS?=
- =?utf-8?B?N1hJRGduNmVUbGRiT0RoZWIvOXZvR3lTUDI4dHY2a2cwR1QrN0I0TFlRNCtk?=
- =?utf-8?B?NkZSTUp3bzcrdTFicjBrZzV6RnFVNUgxaTNzZ1NCcFkxOUFWeERLcFhKbmdq?=
- =?utf-8?B?RjBnbDFrNHJPaGJkUnJ3cUxCTXVkbGlRSDkwWHBMcUdyNitlUENYMU84NlRX?=
- =?utf-8?B?UEFZN1V3dFk4OUp0UFBBWGt0QWRGaURMY1ZCQWxnSjNJQ01DZFhabGJGdnFW?=
- =?utf-8?B?SEh1Z0N1T1RqMzRQMlJQN2pxRit0bXNaTzZZWjFSSTdUOWNqcUtyUmR3aWJh?=
- =?utf-8?B?SG5Mbm1LdjFxYTJERmczVlZodHZUeHpjdWZ3Y1RVL0o5bi9pY0JjUk0reGJt?=
- =?utf-8?B?SFZGZUwxb0JJZUFIWXhqd3pRcUgwdWJBWTJNbkZlS2dtN2ZnU21ycFpySGRh?=
- =?utf-8?B?N3hJMzUyazFqV1RhZGMyditCV3FqbUJjWTZ4b3hmTmtUMFNSK0lIcFdGRHhD?=
- =?utf-8?B?TWU4S2NqV2tTZkFkRFdreDhvTXk2RUtiNk1Qc2pkUUlGYjJxb0tUQmFqWGpr?=
- =?utf-8?B?S2ZwMllhYjEwNEpzUVBoaG9LRTR6NTNudXRKa0FKTUhaZmVrS05vRjJPTGpI?=
- =?utf-8?B?MG5EU05KMG13TGRWUXlPbWd0eUUySStVZVM5bkpRZmhWOXB3akpaQzYvK0pw?=
- =?utf-8?B?OW5RSlh1WloyVysvRVpTOWlnZXBLcVowdXdIeWVvMndyMVNBVlJSc3JhNG9O?=
- =?utf-8?B?djlqRXFyczBkc1VHeFVyZVVubSt3RnhaR2dsVE9xZUNVMDNIK1MvQmEwbjVQ?=
- =?utf-8?B?MWFUNE9Pb0duTzZUSXFFbUIvSTdyWXRRZUwySGptNjBmckJ3cG1yVWpkOWRh?=
- =?utf-8?B?dkZ0SS81QXBEN1NvYXdPOWZra3E1SHBZS2dNNEY2Mlg3RU5nbGd4OHhTclZl?=
- =?utf-8?B?UHBONDlVOTMwcnpsWUNSeGdpamlWTjdIZlpUVjg2RUJCdyt2OS8reFlYMVNF?=
- =?utf-8?B?ZHUrcC93MnFycnV1b0NUVkIxUkM0QVFGS0RGZGUraHFaTTNvdjVLZjJPV1du?=
- =?utf-8?B?UVlCSDJrNXl3UTYxVGI0TmRYWTJDWTh4UUp6NWVxY1FpZFR4cjRscFNBLzVP?=
- =?utf-8?B?M2liTEJEZXB3UUtCY0dLY1g0eVV4UVNxMXF3Mlp2VkYxalVUUDNwUm93Zytk?=
- =?utf-8?B?Rm9yVWNHc3RnbXQ5eHVMTk5FRzZ6dk51SnBjV2dnNForOWJqbFkyUisyWUlu?=
- =?utf-8?B?S21ua08vdFMyejZ0Qmh0YVNlM0FGVVczN3ZRNTF1SGdoWXlWTFFhcVRnQlFZ?=
- =?utf-8?B?V3pCdzc1NUpSeVM3K2Vlb3lDK0xacy9Wc3lFckpzeHZXTXdRMDNtYmNUcGlh?=
- =?utf-8?B?RGViMzA1dXlBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y085OGg0QUpFVGR2VExBOGJqb3M3WUFJSTd1RTZ4ZzAvcjNXT1REakpJbXln?=
- =?utf-8?B?QUFkc2ZGWHVxWU1mUWx2VkpzdnlGTVYvMFNsem5JY3J2ODJ0RC9YZk1yajFw?=
- =?utf-8?B?WFRqd01TSFI2bEpISG5KenEyUkM3S0gyYnBHYnRnaU44U1VDTEcxRW5LMmV5?=
- =?utf-8?B?Zk1Wbmk0dVEyYWwvcjU5NGxlWVYyUXJlUFVwOUZLNWxnaGtCTjZQN3owendk?=
- =?utf-8?B?eVZCQS9uREVXckl4L0xqODU1ZW56VThwbndETDZZMTJ5dlRySmdvT2Zja0Jy?=
- =?utf-8?B?UUhHSkpPYWxtVUZkZ2w4Q1FhS0dDQ2lVaHNzYlc4SkhnMEt5TkU4aXdpa1h5?=
- =?utf-8?B?M0VDODVEczM1OVFLTVk1MDE4OVhzUndjM1BDTm9sR09iTHlEaWlvM2FlMnVH?=
- =?utf-8?B?ek93NmZNWVpNSkFUTWpDYXZmQ2JuU25qUWYzV1grZndCMk43WUZVRndsK251?=
- =?utf-8?B?b3lheElvaG9NeHFpUlducWd5Wk5wTlc5d3hjUmJIakxLd005NndESlFDZzBT?=
- =?utf-8?B?enZqQ2dyNk8zblNwWW41RjBPV25lTTFlUEtSb3A1WFVzVUY3cS8ycUJzZnh4?=
- =?utf-8?B?a0o4OHl4OEpIUFFMMUNNYnI2VitMVkoxanJmUURiYllDTVBTM1FQYWUvMEVG?=
- =?utf-8?B?Rk9yQXhmUFE0S0x5Q1UzOGZGUDE0MnJUZFRkQ1ZNL2VONHFzM1BmY01nYStx?=
- =?utf-8?B?YzVQNjA4YnM4M1NCNFRIV01tRHB0QTlPUkdSbXVwZWRUMnRsaEx5NXAzYWtk?=
- =?utf-8?B?MDloRU9KNmU4TTVVc0daQ2I1NWxWRGJkR0hwUnVLMkVuZ2d4UnFFUTdIWUZP?=
- =?utf-8?B?RTArRU95aXRNYzUyUXNWMEdiRG9QM2wwODdWSit3TjlRcUkxcEhteGk4WDA2?=
- =?utf-8?B?QXRVd3RxOXZQVlROWkEwbng5YjRQVkU3QkZOYXlJNksyZ0MzZ1NYc2g4VzEr?=
- =?utf-8?B?S3hKTFk1SDNLZXNVVzNvYkJFendyclp5QVB1TjI1eWJiR1d3V1Z4RGVITVFK?=
- =?utf-8?B?SWlXM0plUDU1a1Zpd1RBNVVxYkdIZDhWeFhhakVXck5UMGxLOUlJWlk2aEpV?=
- =?utf-8?B?SnV5QTJvTEFRMEFIeG1Qbzc1Ymp4dHF3b1lNaTlQVjdSQ2Y5KzdJSmV1dmth?=
- =?utf-8?B?VHAza0UzM3kyWUtsZ1pUYzRwV2JNSzFYZGNqSGoweFl6cjlwQ3B2dmRQSkpX?=
- =?utf-8?B?dlRqWlYxVDlTRmZDaGhhSDBob1dmZkdZSGwyblo2anRwc0ppdndkVnBxdG9O?=
- =?utf-8?B?cTlsWkpOM2FMZzVWR1BwUGx2SG5NWHRIT2xrQTN5TzdheVU5bEJWNkZVNzRQ?=
- =?utf-8?B?aC85WE02U0VLVlFJTkNvNWJMSW5jbkY5c0hZWDB5VDdqNGZjS3JpeUZmMXNH?=
- =?utf-8?B?cC81Ukk2QWNuNUpBenZUWEFiTGNucFJUby9CckJueUh5NDQxZlpYNTVJeC8v?=
- =?utf-8?B?RCtXSnJIRmtuYjk1R0Z6OHRsMnNVQmE4blNpRjcvQjREUFhqdzZEMG9veGlU?=
- =?utf-8?B?TitYT0pDTzBieXIvT0VSbVJyNmM5M0Y0N0k2QWhWMGlmTHJZR0t3RUlmM3NH?=
- =?utf-8?B?ZXptWHJiN0ZuZGtxRlVrdUFFTWR3YkZCb1FKaUM0K2h4NlR2WjlvVFFuUkVs?=
- =?utf-8?B?UktRM0NvYjlNU3NyNHp3SWkyTmRWdGpsUjZzTWNBcEExV0lydzFtc1NTQjYy?=
- =?utf-8?B?UTlWOFZEUTJCeW1lZmFQNzF4L1JYdTNHUlBodUZ0blFVbGNGcUU4UDZpR3lL?=
- =?utf-8?B?UFlBQXZTTE1oSENsYXZXb0J1akNUSllBcDdoenY3KytrdDZSbzJ0VjVSSm1p?=
- =?utf-8?B?VDlnWEpuMFo2TnhMZU9kSEpveG9DMVZSOWxVSGJ4U1ZmeU5Md3hpeHFKbUUy?=
- =?utf-8?B?NWZFbHp1THhWamtsa3Rsc3ljRGNnS05tYTkzSGg2WXczdlpFQzVDWWdsa2xW?=
- =?utf-8?B?azUxdExPUDNzeEtQMElMSDI4Y3EvNWh0aHBMUkd1bGprb1NxZ1krYVpvV282?=
- =?utf-8?B?WUp4blgwWkFPUGdNOHRIS2FaZFlOZVE1NWZ1K3NxanVTOEttMUZOVStkalp4?=
- =?utf-8?B?elBXeUtqK3N3QVdzcDBZeEJnbUhNdjBpTHd5c3JoSkUybFJRcmhISjJqZ2xG?=
- =?utf-8?B?V2hINlUzQWQ3ZHE2THVTVmFvanZLbU9kVHFsZGd1dHhFdklaNnNsK2VUb0RP?=
- =?utf-8?B?N2tkM0cwOVZhNUlYeTIrcFptQTNxRDVmOFhUK21iTStSbFpWdW5tUkRwcG5Y?=
- =?utf-8?B?MkQyNkV4dGFYTGtQNXBIbTFaeVVBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 582cd878-c5ed-4981-dcb7-08ddc5db9a2c
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6478.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 09:15:13.3301
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9pl5qrxv2LHiEOSLdp8+pahLGPyc8Oljg6Pju5/N70MLPLVoBYPkqxLeGdsmjpTC+6/HaHI9TCem8pHooe6bTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8796
+References: <20250717142139.57621-1-clamor95@gmail.com> <20250717142139.57621-6-clamor95@gmail.com>
+ <4191623.PYKUYFuaPT@senjougahara>
+In-Reply-To: <4191623.PYKUYFuaPT@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 18 Jul 2025 12:15:23 +0300
+X-Gm-Features: Ac12FXzUeU9Uj9u7cxHHp6Dd6Ir5coldcVfWX0e7hBUUrkEw0TkP5z-Dt_8EOsU
+Message-ID: <CAPVz0n3W1yhrOsiYmYecxtPeYdZiK2_UY7vVc2tiYbYwfWPp7g@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] ARM: tegra: add MIPI calibration binding for Tegra20/Tegra30
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Tegra20/Tegra30 are fully compatible with existing tegra DSI driver apart
+=D0=BF=D1=82, 18 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 12:01 Mikk=
+o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > Add MIPI calibration device node for Tegra20 and Tegra30.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/nvidia/tegra20.dtsi | 14 ++++++++++++++
+> >  arch/arm/boot/dts/nvidia/tegra30.dtsi | 18 ++++++++++++++++++
+> >  2 files changed, 32 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/nvidia/tegra20.dtsi
+> > b/arch/arm/boot/dts/nvidia/tegra20.dtsi index 92d422f83ea4..521261045cc=
+8
+> > 100644
+> > --- a/arch/arm/boot/dts/nvidia/tegra20.dtsi
+> > +++ b/arch/arm/boot/dts/nvidia/tegra20.dtsi
+> > @@ -74,6 +74,16 @@ vi@54080000 {
+> >                       status =3D "disabled";
+> >               };
+> >
+> > +             /* DSI MIPI calibration logic is a part of VI/CSI */
+> > +             mipi: mipi@54080220 {
+> > +                     compatible =3D "nvidia,tegra20-mipi";
+> > +                     reg =3D <0x54080220 0x100>;
+> > +                     clocks =3D <&tegra_car TEGRA20_CLK_VI>,
+> > +                              <&tegra_car TEGRA20_CLK_CSI>;
+> > +                     clock-names =3D "vi", "csi";
+> > +                     #nvidia,mipi-calibrate-cells =3D <1>;
+> > +             };
+> > +
+>
+> As you say in the comment, MIPI calibration on Tegra20/30 is part of VI/C=
+SI.
+> We can't add a "mipi" device here since such a device doesn't exist in th=
+e
+> hardware hierarchy. We already have the VI device in the device tree, so =
+we
+> need to use that.
 
-'apart from'
+I understand your point, but embedding MIPI calibration logic into
+VI/CSI driver will bring up another lever of unnecessary complexity
+and excessive coding. While approach I have proposed preserves
+separation between CSI and DSI and reuses already existing MIPI
+calibration framework.
 
-> clock configuration and MIPI calibration which are addressed by this patc=
-h.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/drm.c |  2 ++
->  drivers/gpu/drm/tegra/dsi.c | 69 ++++++++++++++++++++++---------------
->  drivers/gpu/drm/tegra/dsi.h | 10 ++++++
->  3 files changed, 54 insertions(+), 27 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index 4596073fe28f..5d64cd57e764 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -1359,10 +1359,12 @@ static SIMPLE_DEV_PM_OPS(host1x_drm_pm_ops,
-> host1x_drm_suspend,
->=20
->  static const struct of_device_id host1x_drm_subdevs[] =3D {
->  	{ .compatible =3D "nvidia,tegra20-dc", },
-> +	{ .compatible =3D "nvidia,tegra20-dsi", },
->  	{ .compatible =3D "nvidia,tegra20-hdmi", },
->  	{ .compatible =3D "nvidia,tegra20-gr2d", },
->  	{ .compatible =3D "nvidia,tegra20-gr3d", },
->  	{ .compatible =3D "nvidia,tegra30-dc", },
-> +	{ .compatible =3D "nvidia,tegra30-dsi", },
->  	{ .compatible =3D "nvidia,tegra30-hdmi", },
->  	{ .compatible =3D "nvidia,tegra30-gr2d", },
->  	{ .compatible =3D "nvidia,tegra30-gr3d", },
-> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> index 3f91a24ebef2..85bcb8bee1ae 100644
-> --- a/drivers/gpu/drm/tegra/dsi.c
-> +++ b/drivers/gpu/drm/tegra/dsi.c
-> @@ -662,39 +662,48 @@ static int tegra_dsi_pad_enable(struct tegra_dsi *d=
-si)
-> {
->  	u32 value;
->=20
-> -	value =3D DSI_PAD_CONTROL_VS1_PULLDN(0) | DSI_PAD_CONTROL_VS1_PDIO(0);
-> -	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
-> +	/* Tegra20/30 uses DSIv0 while Tegra114+ uses DSIv1 */
-> +	if (of_device_is_compatible(dsi->dev->of_node, "nvidia,tegra20-dsi")=20
-||
-> +	    of_device_is_compatible(dsi->dev->of_node, "nvidia,tegra30-dsi"))
+>
+> A driver for tegra20-vi already exists in staging/drivers/media/tegra-vid=
+eo.
+> We should aim not to break it. Perhaps bring it out of staging? (At least
+> partially, but then why not the whole thing.)
 
-You need to add "soc data" structures to the of_match table instead of=20
-checking for compatible string in the code itself.
+It does not break VI/CSI, I have a WIP CSI implementation for
+Tegra20/Tegra30 which I hope to submit soon.
 
-Thanks,
-Mikko
-
-
-
-
+>
+> Thanks,
+> Mikko
+>
+>
+>
+>
