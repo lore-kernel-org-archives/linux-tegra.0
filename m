@@ -1,101 +1,101 @@
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7A5BA27
-	for <linux-tegra@vger.kernel.org>; Sun, 20 Jul 2025 18:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAA98F40;
+	Sun, 20 Jul 2025 21:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753034615; cv=none; b=m2gzCZbXhV7g9a7aMTuP1kIpS9mQXkLcKQHkd5r4UdVWqeopjapZYi2xNp2HdB16alWhx6+/yYdiPMU01dLeubeOmLx3BcCcq5Zl9FWW+dKxwCboL70epo4lFKAPfUel1ObWF8vk2TGk/v3ZM+l+/HaPR53o9m+/PkbfSaHv6Ms=
+	t=1753046002; cv=none; b=iB9/GBNjPFfB8UXnJXNyZCgAxcCSKIafe9DlDQPnFunDizsHmAT/vrGzMxUnrzN9dgk1DJk2bC7FVT36UXnyknTU+RKMO+8Ycd/iG2Cc37PtAdAeqp6gyWr5gFBVRgpeK1C9KmNQCTkFeCCPb8reh7dDOZnYwoscwOgLxJ+CMSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753034615; c=relaxed/simple;
-	bh=bhtDgzKsiFjwXyxsdZ/4h48cFPpB3WRr/3arOlv70uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sbhSweK0U7o+BYBqb2J78udVY29QTUIL9HXtx7HYrrPfpJ//1kGg7xif0g2mq36AVIQ6WypfQgxvMLX3r0tHs/DNCTgeU6Y7HH22+8GZoe4xt+yLfFgH6xkhsk2qWjSxFx9j08wT2iFQt0e9DXgsWs+XLa6STeWYPERreykLAnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xBH2ZkKe; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753046002; c=relaxed/simple;
+	bh=NMeW2BcUoS5p1vkk48JdBAcgFbjbmXnE8eXA/e+eiDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l5PYpNJSKda9ouACiuh1EUw5zfNT66Ru96McOFx2yNu+WAE8q3MPHV8IkA94os4iY7kB6tgxSMj7FMc+lmDKrFQU8Ftplm6ZKk+oIraQdf9U8zcsM/WAMNv71VydwW8zv4hou/+NM0tXwh0ZmACimriT2OfuFjsVdYshL7KJgUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFFwD7EG; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xBH2ZkKe"
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-60d6303a11eso1579478eaf.0
-        for <linux-tegra@vger.kernel.org>; Sun, 20 Jul 2025 11:03:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFFwD7EG"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-41baecbdd33so2143031b6e.1;
+        Sun, 20 Jul 2025 14:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753034611; x=1753639411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r1fiTpYldSHzYxGLzWC3f8B8z2BwRBsV2K6tEBNsuDs=;
-        b=xBH2ZkKe6vZ2SWaBOq16rKNtLXvDe+1ddpP1IF5w2qw/f6fVdPIfnfjrG2rfHkT73/
-         O2U/hk+BcXh/p88yINlMSSyAHuzyuVR7exeE7aTPM6Jkl1u1uWasiA6DzLLy5TQtT1Vw
-         DlvSH49dPcQmsvSF/MDhf79oNU+lG9GmCUQ9I62QUExzviuTa2SO9qbPxSXjQXpLw84i
-         IuT/Ch1poQkzE3rG2r6ZaCNhnANV2AVCCauM+kdyyR0n1OSR10kYlbVj1Om7+W8R3LMd
-         tQmBXicF781wCjTHXBqBNQ36i3kEc6KmwCwQGiQAhAX9YJcQSjM9C7Qbw+1vr0SyfIh5
-         T+Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753034611; x=1753639411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753046000; x=1753650800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r1fiTpYldSHzYxGLzWC3f8B8z2BwRBsV2K6tEBNsuDs=;
-        b=aauqxD5KinXTvaL/N/1kgO6NQ+5jt6DGgYLC2+H/Aj5ryvu1Z8dJjDb/4CvRUGWbLl
-         0ou5qg8KkOzvaFy7hUoZX5WEUh9feOxyov4UADIXr03hZK3GbQQ1PU05GlkNJOqFp67+
-         1+Rv7a/zdJvt0hYbTdXJb/Cxj/GmBfkPtKFZd56Dxse/qn5nx8g6Xz8vL41QvumlohyA
-         sA1VEobWJ5kJdL9tz9CrhxhuHqlq37obfCNb72bvY0wxXKMJKh7hk9k5Xu1sA11r1Nbj
-         TSPBtu8SuI1F1Ac297V/fpf1/OrJZFK55HEEsaOsDOH38MnoGsjLPHsyoVNjQdPKMwYe
-         1wPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYh/1+AzZ0wcHEHNQglNcAbKC4yfwiqK7xYYwSpYjuYrFAjxA7rZT75aEid6Mk5n2GQdahsOsiukEpQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9z6WQujNhjIjAlpZcsEV0Xu43x9Oj98SBTW8EzBNXt5I6Gzwd
-	3wFFR2B5gMP8SjaYrmKguX2DHeaBlTC9j71kzbwqM9OwlAVx4UkPVuiYHihjAm5YjqY=
-X-Gm-Gg: ASbGncsVpzdk4yL3N4zVpgFK536uSo94uqMAilri42F52VZo6wbhXXoGZreWgknY+NN
-	1OsrYKrUA5Qs/AmgYg9o7JLekXlTqfTkouF/y0UZN5sedimxL4P3R8oNXvYA6VcZ8pOL6qHnNQE
-	0jY0vOmvC7iAnYEdjHmsmsdfIwfFjK2LdtXX/be9oPNt7Z5ftSApZq7HGwZD5Mm6DQGx1JN2woP
-	1lF2TfWz0RnaFWLvz/Asj8hxqoonPlvERsYIPk6IZelBgcFq+s4g7qfudw4HuPC+H+LuahPrpqx
-	I6hD+YsC2QmMUPR3WIt41OXQlv9qGOLcyFq6jnxHScWvQa2xGSJ2VeBXXRf9mSfgYvDHK35AMXe
-	dWYyxr7Q8S+E=
-X-Google-Smtp-Source: AGHT+IHtyPmRdW+ZxMT8HYDvH7uiKoz3hDXI6p99r4O9UHXEQkAF6dlxkNSdIENOt/+CmTUNtnlwhQ==
-X-Received: by 2002:a05:6820:1e84:b0:615:c779:eaad with SMTP id 006d021491bc7-615c77a0d18mr5159784eaf.7.1753034611515;
-        Sun, 20 Jul 2025 11:03:31 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8369d595sm2250474a34.25.2025.07.20.11.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 11:03:30 -0700 (PDT)
-Date: Sun, 20 Jul 2025 21:03:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: linux-staging@lists.linux.dev, marvin24@gmx.de,
-	gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: Fix incorrect null termination of battery
- manufacturer
-Message-ID: <45476946-f717-49f5-8d21-34ea146bd624@suswa.mountain>
-References: <20250719080755.3954373-1-alok.a.tiwari@oracle.com>
+        bh=o6gErZMJt76V1eqKZ0fc9t2jYBpWpuemhCSqXUz2On8=;
+        b=TFFwD7EGeRt+h9AJJPWjbV1uKa2gKH3vS/z9rxSxoUHBGmEXAS7a0h1r6Xs3Xy6li/
+         OhFAm1p/YZ7nTp3ycyyrh4J7khfJF/llMwAwIAn+x62R2XSkPNjttPCxmGD8ZQO0zRxQ
+         yyDUIVMIDuLOHbPptc+gsmkO5b4Oxj2EZ27rz4r1XQnNmEqLjZUHWa72ij/uIwd8yGIm
+         V0ZzpFSqa8zBn38m1Xe8w+q6BTpgGBaeVreDkHoXXxnI46KtoosiVmAh4pksyM1QDF1+
+         6NAYDv5Pj0hXY2BEoovwatezwn9+JbIZlEEIcApvc/GfSBKRHJpxuVV1B2Gs8LkulgOi
+         RsYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753046000; x=1753650800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o6gErZMJt76V1eqKZ0fc9t2jYBpWpuemhCSqXUz2On8=;
+        b=wEwConHD+Tb6WxDL9tIpkvBP25hDDnBV+CercWaD6traiQn1rHuvTCEiCFETt0vMh7
+         V8XnlYj1YVnvkFUdmbHsvENo9NgVrhjHwHykLFgtBmRUeQGV0Y04gmbftgLdiTDt0+O2
+         4oiimqkLjwGvX1rc+cOn9W3hM7NGMgxtEOZE4gXj/+3YAKt5bQOafxb2Ln/pSyKCZf7M
+         VS0oS1Oh470wbJO8rALXcdw5MErxSwKXUbjZ+x2bpvQrNtx0KPI9rPD5+m6ohXrBr4/6
+         e1P482S3WiFzSeVnyUXbxdFO/kaF/85F7axQJ4uy9WCpIpgTmpv6eRYaEMSOlfh+A20p
+         ijeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqRTYVk5DYU47Vtl0BVlM+j5m8FCTAvv/bbWeYafgWJ8vbNgxpINfVmp9r3Gmsuwd3vvoeWadLJN/2NQ=@vger.kernel.org, AJvYcCV+cDgLTOR7OFFUgRvrYh3E0RkOINWlRAwkK26rULp0BJlx0pS52imLKkgbJFOK9Pdis3xB9QH4zJ+06Lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqloNSmKdXylwyi/FcOh4+xZJs2xOT7o1Jk0AL6G0InvJWm4Xd
+	oL1WCth7dZV/vnuEHHSY/vPDxYtKA5hRlaQNnVkacFit5tQuKctOyVMxkY1RN0yec4pCZSHCF2l
+	C4rP65/hYBUhNF7psPey9i1bmxCfKpYM=
+X-Gm-Gg: ASbGncsOZshUrwHwD1EBaqV6YDYpT13TvMxXalipJgouXw1wUTtvrItcHOI+B5cb76O
+	E45apbK+Il8vixR39xAccGfQ3cJv6a0ulWhbGIH6Q9AjUmNAvUpV6zWxDrotD2w2Mclc3iw0CJq
+	gLc3RTDcZrw7KmQZczGqMUD5UBsluWhM5f7p3yhSo/jkCdDHI907P+XhEgtPw3YjxlTaBLqHlGF
+	7c+s9lp
+X-Google-Smtp-Source: AGHT+IGQBjCiAD9vIQwxV0rJzEKHpmjX4gL4eliT0pjfkXkTEmtGeAlanzndulSYj+eEPQNmRrUoqpol2Hvsi+3CglM=
+X-Received: by 2002:a05:6808:81c7:b0:41f:79f9:1b6b with SMTP id
+ 5614622812f47-41f79f9201emr6057246b6e.34.1753046000383; Sun, 20 Jul 2025
+ 14:13:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719080755.3954373-1-alok.a.tiwari@oracle.com>
+References: <20250618080339.969173-1-joonwonkang@google.com>
+In-Reply-To: <20250618080339.969173-1-joonwonkang@google.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 20 Jul 2025 16:13:09 -0500
+X-Gm-Features: Ac12FXz9vOtA1Fg51kXnXqCTNXVof0pWwc5qQoUQiAq93e2W0_AVQrge6SyFrZM
+Message-ID: <CABb+yY3CBiLpZ1KrD8RFypRgkP9MOzBf1FB+gL2E-qEuSbrj6A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mailbox: Use per-thread completion to fix wrong
+ completion order
+To: Joonwon Kang <joonwonkang@google.com>
+Cc: thierry.reding@gmail.com, alexey.klimov@arm.com, sudeep.holla@arm.com, 
+	jonathanh@nvidia.com, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 19, 2025 at 01:07:42AM -0700, Alok Tiwari wrote:
-> The battery manufacturer string was incorrectly null terminated using
-> bat_model instead of bat_manu. This could result in an unintended
-> write to the wrong field and potentially incorrect behavior.
-> 
-> fixe the issue by correctly null terminating the bat_manu string.
-> 
-> Fixes: 32890b983086 ("Staging: initial version of the nvec driver")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
+On Wed, Jun 18, 2025 at 3:04=E2=80=AFAM Joonwon Kang <joonwonkang@google.co=
+m> wrote:
+>
+> Previously, a sender thread in mbox_send_message() could be woken up at
+> a wrong time in blocking mode. It is because there was only a single
+> completion for a channel whereas messages from multiple threads could be
+> sent in any order; since the shared completion could be signalled in any
+> order, it could wake up a wrong sender thread.
+>
+> This commit resolves the false wake-up issue with the following changes:
+> - Completions are created as many as the number of concurrent sender
+>   threads
+> - A completion is created in a sender thread's stack
+> - Each slot of the message queue, i.e. `msg_data`, contains a pointer to
+>   its target completion
+> - tx_tick() signals the completion of the currently active slot of the
+>   message queue
+>
+> Link: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jaswi=
+nder.singh@linaro.org
 
-Nice.  How did you find this copy and paste bug?  I guess we could write
-a static checker rule that if you do a copy followed by setting a NUL
-terminator, they have to be the same string buffer.
+Is your issue different from what is described in the Link?
 
-KTODO: detect copy and paste bugs setting the NUL terminator
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan capenter
-
+thanks
