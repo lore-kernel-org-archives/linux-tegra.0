@@ -1,109 +1,101 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9651C861B;
-	Sat, 19 Jul 2025 08:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7A5BA27
+	for <linux-tegra@vger.kernel.org>; Sun, 20 Jul 2025 18:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752912513; cv=none; b=ek85a/CjR3HMP8LjjsvhObfwJXPkain4oAnqKbWJvPCnjVI41QJLk7TMNuXTerMt+t8InoYOnnCdZQljtW1agSaIZB97vUClEr3x3ClZsocWXPgQKSVY44s1NyOwP3Eb/jhMpUcptETmwFVeU39rQWsFJG7LDYLRFIyPlO/h6XM=
+	t=1753034615; cv=none; b=m2gzCZbXhV7g9a7aMTuP1kIpS9mQXkLcKQHkd5r4UdVWqeopjapZYi2xNp2HdB16alWhx6+/yYdiPMU01dLeubeOmLx3BcCcq5Zl9FWW+dKxwCboL70epo4lFKAPfUel1ObWF8vk2TGk/v3ZM+l+/HaPR53o9m+/PkbfSaHv6Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752912513; c=relaxed/simple;
-	bh=S5/JOt1zwzydJKMOjWOeud1UrE21DpMjkm5IOD8ntaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=apKeIJVQYQHAsBmwiQeESURhpFVKy1CENb2mKBgrTbUYVmaZ2tVaWxI7E7+z/bSRlqrmVhbTA0b20YjTZBmjTN6L9TMtVkRy0N1dXjKEHY+O/Q7xNeQuO2SIkluCpC08mp3/bDpTBTZfHG8rkmt9QlJ4vvoUhQoqpqkQmxk1P8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kdOVNaUM; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1753034615; c=relaxed/simple;
+	bh=bhtDgzKsiFjwXyxsdZ/4h48cFPpB3WRr/3arOlv70uA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbhSweK0U7o+BYBqb2J78udVY29QTUIL9HXtx7HYrrPfpJ//1kGg7xif0g2mq36AVIQ6WypfQgxvMLX3r0tHs/DNCTgeU6Y7HH22+8GZoe4xt+yLfFgH6xkhsk2qWjSxFx9j08wT2iFQt0e9DXgsWs+XLa6STeWYPERreykLAnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xBH2ZkKe; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kdOVNaUM"
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56J6d6VW012493;
-	Sat, 19 Jul 2025 08:08:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=qClKn6mdeLU8YK6pY2bntGVCNWMLX
-	fNpYKUH8JTwtuU=; b=kdOVNaUMz2GJwMLJQutrkkvNPPuegXPOMbNrlV4O6sZTr
-	wGjraKsEJivEUAq1ttwlzSiKg8QfkEaXoOgx7YMjEnBWu01N54v/R5yvjylMVy49
-	Up+NSX9shtFm5L6xv7e3r/abwYhTXFnPA9+dTeeiLMKSOiTfKIKqxrujamLfWdJm
-	vfj+23sQIEyZ6ab1Q4aOWZYM9NLul3mXIrL/XcQ7C0+ig+iQLhY189zoVPkMqSWX
-	27+Z0FqSLqrm9ExGxIsriOxAAC1Yc/yNcq2kmUKMmA2X3Htxpl89yVuDcy3n8yRi
-	VAZQOa9rhCnakETIaN8cArdX8fiQ4Ng5SN/IfXbbw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e282g3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 19 Jul 2025 08:08:26 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56J61Loa010414;
-	Sat, 19 Jul 2025 08:08:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801t6e1v8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 19 Jul 2025 08:08:25 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56J88PD0001972;
-	Sat, 19 Jul 2025 08:08:25 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4801t6e1v1-1;
-	Sat, 19 Jul 2025 08:08:25 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: linux-staging@lists.linux.dev, marvin24@gmx.de, gregkh@linuxfoundation.org,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: nvec: Fix incorrect null termination of battery manufacturer
-Date: Sat, 19 Jul 2025 01:07:42 -0700
-Message-ID: <20250719080755.3954373-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xBH2ZkKe"
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-60d6303a11eso1579478eaf.0
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Jul 2025 11:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753034611; x=1753639411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r1fiTpYldSHzYxGLzWC3f8B8z2BwRBsV2K6tEBNsuDs=;
+        b=xBH2ZkKe6vZ2SWaBOq16rKNtLXvDe+1ddpP1IF5w2qw/f6fVdPIfnfjrG2rfHkT73/
+         O2U/hk+BcXh/p88yINlMSSyAHuzyuVR7exeE7aTPM6Jkl1u1uWasiA6DzLLy5TQtT1Vw
+         DlvSH49dPcQmsvSF/MDhf79oNU+lG9GmCUQ9I62QUExzviuTa2SO9qbPxSXjQXpLw84i
+         IuT/Ch1poQkzE3rG2r6ZaCNhnANV2AVCCauM+kdyyR0n1OSR10kYlbVj1Om7+W8R3LMd
+         tQmBXicF781wCjTHXBqBNQ36i3kEc6KmwCwQGiQAhAX9YJcQSjM9C7Qbw+1vr0SyfIh5
+         T+Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753034611; x=1753639411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r1fiTpYldSHzYxGLzWC3f8B8z2BwRBsV2K6tEBNsuDs=;
+        b=aauqxD5KinXTvaL/N/1kgO6NQ+5jt6DGgYLC2+H/Aj5ryvu1Z8dJjDb/4CvRUGWbLl
+         0ou5qg8KkOzvaFy7hUoZX5WEUh9feOxyov4UADIXr03hZK3GbQQ1PU05GlkNJOqFp67+
+         1+Rv7a/zdJvt0hYbTdXJb/Cxj/GmBfkPtKFZd56Dxse/qn5nx8g6Xz8vL41QvumlohyA
+         sA1VEobWJ5kJdL9tz9CrhxhuHqlq37obfCNb72bvY0wxXKMJKh7hk9k5Xu1sA11r1Nbj
+         TSPBtu8SuI1F1Ac297V/fpf1/OrJZFK55HEEsaOsDOH38MnoGsjLPHsyoVNjQdPKMwYe
+         1wPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYh/1+AzZ0wcHEHNQglNcAbKC4yfwiqK7xYYwSpYjuYrFAjxA7rZT75aEid6Mk5n2GQdahsOsiukEpQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9z6WQujNhjIjAlpZcsEV0Xu43x9Oj98SBTW8EzBNXt5I6Gzwd
+	3wFFR2B5gMP8SjaYrmKguX2DHeaBlTC9j71kzbwqM9OwlAVx4UkPVuiYHihjAm5YjqY=
+X-Gm-Gg: ASbGncsVpzdk4yL3N4zVpgFK536uSo94uqMAilri42F52VZo6wbhXXoGZreWgknY+NN
+	1OsrYKrUA5Qs/AmgYg9o7JLekXlTqfTkouF/y0UZN5sedimxL4P3R8oNXvYA6VcZ8pOL6qHnNQE
+	0jY0vOmvC7iAnYEdjHmsmsdfIwfFjK2LdtXX/be9oPNt7Z5ftSApZq7HGwZD5Mm6DQGx1JN2woP
+	1lF2TfWz0RnaFWLvz/Asj8hxqoonPlvERsYIPk6IZelBgcFq+s4g7qfudw4HuPC+H+LuahPrpqx
+	I6hD+YsC2QmMUPR3WIt41OXQlv9qGOLcyFq6jnxHScWvQa2xGSJ2VeBXXRf9mSfgYvDHK35AMXe
+	dWYyxr7Q8S+E=
+X-Google-Smtp-Source: AGHT+IHtyPmRdW+ZxMT8HYDvH7uiKoz3hDXI6p99r4O9UHXEQkAF6dlxkNSdIENOt/+CmTUNtnlwhQ==
+X-Received: by 2002:a05:6820:1e84:b0:615:c779:eaad with SMTP id 006d021491bc7-615c77a0d18mr5159784eaf.7.1753034611515;
+        Sun, 20 Jul 2025 11:03:31 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::17c0])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8369d595sm2250474a34.25.2025.07.20.11.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 11:03:30 -0700 (PDT)
+Date: Sun, 20 Jul 2025 21:03:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: linux-staging@lists.linux.dev, marvin24@gmx.de,
+	gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: Fix incorrect null termination of battery
+ manufacturer
+Message-ID: <45476946-f717-49f5-8d21-34ea146bd624@suswa.mountain>
+References: <20250719080755.3954373-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-19_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507190079
-X-Authority-Analysis: v=2.4 cv=WaYMa1hX c=1 sm=1 tr=0 ts=687b527a cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=Hlg3EkAneqA-xDu2zGkA:9
-X-Proofpoint-GUID: hVuef5TfTpm7tgq0sh8EFCCEW7a0KnW4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE5MDA3OCBTYWx0ZWRfXyKOUejxcSl/r
- uPDyDMHKsH2EAnsplS/qexmhCQ2ZxmBs2IG36GdkORr5ssfs+5TPTy83nvU4rBeT6Xmjs1XTxSB
- JmqoWMkSF+nqPaNWHBVHjmdzmxALwneudWoLLunBE0+GYifad44k2+WxUQa/whyIDjk9Md0qj9r
- LcX3zlacsolsI7yx+oZ1M/WA7gsuIp3CKtOXG9b9/DH55lTCpuNuoQJ6BIyI/Q1FdUxrlfEm8o1
- RTZvx22HXDo2X36GDzhgFpjI8zbxEIE8pc8FopGkm4Se9mENAy5IkUX5Ah53NOhZNLk3B8s60WP
- K/9f/gVVUAyWNZphCNTJEddRukJv8srCTm8EQNuGx7krRtv8WNQI5W6jAiVTrgC0GND4U/cOe3F
- hjaJP2CiF+72sz8cqi8jFjoH0vWpvuh8GwUcV3mwUYsozeRCkyzQIakr0Hdt4UVnMCzV7J5R
-X-Proofpoint-ORIG-GUID: hVuef5TfTpm7tgq0sh8EFCCEW7a0KnW4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719080755.3954373-1-alok.a.tiwari@oracle.com>
 
-The battery manufacturer string was incorrectly null terminated using
-bat_model instead of bat_manu. This could result in an unintended
-write to the wrong field and potentially incorrect behavior.
+On Sat, Jul 19, 2025 at 01:07:42AM -0700, Alok Tiwari wrote:
+> The battery manufacturer string was incorrectly null terminated using
+> bat_model instead of bat_manu. This could result in an unintended
+> write to the wrong field and potentially incorrect behavior.
+> 
+> fixe the issue by correctly null terminating the bat_manu string.
+> 
+> Fixes: 32890b983086 ("Staging: initial version of the nvec driver")
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
 
-fixe the issue by correctly null terminating the bat_manu string.
+Nice.  How did you find this copy and paste bug?  I guess we could write
+a static checker rule that if you do a copy followed by setting a NUL
+terminator, they have to be the same string buffer.
 
-Fixes: 32890b983086 ("Staging: initial version of the nvec driver")
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/staging/nvec/nvec_power.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+KTODO: detect copy and paste bugs setting the NUL terminator
 
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index e0e67a3eb7222..2faab9fdedef7 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -194,7 +194,7 @@ static int nvec_power_bat_notifier(struct notifier_block *nb,
- 		break;
- 	case MANUFACTURER:
- 		memcpy(power->bat_manu, &res->plc, res->length - 2);
--		power->bat_model[res->length - 2] = '\0';
-+		power->bat_manu[res->length - 2] = '\0';
- 		break;
- 	case MODEL:
- 		memcpy(power->bat_model, &res->plc, res->length - 2);
--- 
-2.46.0
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan capenter
 
