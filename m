@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082F61F3B9E;
-	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390001FBC92;
+	Mon, 21 Jul 2025 02:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753064241; cv=none; b=n47TA4vvRL3W9V9eOdjqMDXb09lRbURSRTll8/QZ+c3S6Dq/rhj1S43dYOe6NLL4LYsurCDOrL4cw2q8pHhsqpFiy81fjLIodIUbrSSoB+daDBrWx8AbqipJlwgUFPlSRlwgxRPzVIw5Vu66ZIyKrjpJuJFPkhV4BZg7EKsEB00=
+	t=1753064241; cv=none; b=KHPkO+hrLc3g6vePGzOkmJuR2L9lCRUE0QQJRkWs6lFsYn+f0DRocb5SBiRhJH0GdicJ6MbkmQhLcZdmPW7nrQPSBpS9Jsonl9uIcXNdaoYXWplIrSGzM+IKZJzFH5iOlEt8s0xaTyQeRYnPrYWqBk7p/eHsjvZxsFUL+XIl/TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753064241; c=relaxed/simple;
-	bh=ZTv/fjhjELZsx4BTDi8gpF8H8UZzE9gmOjLhh/yxZ6A=;
+	bh=qp9tUPFQuumYksisjGHPVxkd5k0ASmphuZsAeWWISew=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IMJe1RM/d6VGBuyk3z1hoxR6OHynIzMomZsZmSB3RJHd4rVfuUd1LA0hlcqkzJiBg1YW8bQYTWNnUmgNtnswNj1LmqB614A5r9bOHkK4wrnQJCSRT5DulFidkoDce02R35REBFjcuuDfxzooNUgFIANcRD5O5n4h1tpyTBR33xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVkemY3T; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=P89Mtxr4XXkwYGbNk/4ztUK9E+P/eejE4jS4uv/ckjclDVzzdlIMZWnYmaiwfIcHfcXHREkyBtQAjxl3mJ7Mvtt7wFfskOd/NqSuv/0tKgTX1lL29k9BPtsEyiefHGVsR7hr3xpoRuBXhPkSUu22xLFhPVeVPI7IjdfXJwmFG7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMgDu/p/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVkemY3T"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A9E2CC4CEE7;
-	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMgDu/p/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 11D3DC4CEFB;
+	Mon, 21 Jul 2025 02:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753064240;
-	bh=ZTv/fjhjELZsx4BTDi8gpF8H8UZzE9gmOjLhh/yxZ6A=;
+	s=k20201202; t=1753064241;
+	bh=qp9tUPFQuumYksisjGHPVxkd5k0ASmphuZsAeWWISew=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=kVkemY3Tyorn+yYkmfOOWpLqrNOlioQSLQdhjY7g/JSw18OCCT5TRMI5dTa7UqVRG
-	 fO9I8u/lvlUaM1z0fEht6XPnQ47UM960ooMtdHZAKL5BTJxwBGinj2n6Yvxr09GM7D
-	 h60Z6V33wLGYbtI/WNwwBu4BJ1WDZBkmU5RfIQAfNf/Jc7MhUPQ3RQmgq7z92FxkzJ
-	 eTmH3vwr0W7MSx5bqz6GGBEkLqXvG7CkYGOcjhnT/hf4wE1pskqZdRDhjwN0cOtVea
-	 RwCcdoaoGn7VtxkLErVN9ljYbZQ4wnr+sLWmSyI1vTFp1jdTLvFMLKVqHhowDgutCK
-	 QA0XVZlvJm3zw==
+	b=tMgDu/p/Klfmd52jEZH9nxTP+aC83HmY+nR6oQeGSVg5uBa3kCxAoZaEVIUnw+jYb
+	 SZsBa++RzKfCwaNZ+j3WcBs+6UP+yHXz1gypztaN4yBgMC/A2xhh+NDB2K9myD41xQ
+	 ATjxvH+Zx73gKiHfp0Tlw/OdJxnLzFWX0zggRHVhMk7c5lntS3WGR+Gcobvf4ie68a
+	 isNlSXODLgJuON6zBA16+vvN5MOHjnnwIXr3zrVP/HRUqKUkuPez7vybLRyGSmxXNT
+	 NZfA+tO4a7xqDdtIuR7KLWrqkvsbLdJk5ynaMH7Q0BvZ9SvPErjAChgRcFafxMJGVm
+	 rHdv3j5BFVD3A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB77C83F17;
-	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EF1C87FC6;
+	Mon, 21 Jul 2025 02:17:21 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 20 Jul 2025 21:15:02 -0500
-Subject: [PATCH v2 08/17] dt-bindings: tegra: Document Shield TV 2019
+Date: Sun, 20 Jul 2025 21:15:06 -0500
+Subject: [PATCH v2 12/17] usb: gadget: tegra-xudc: Add Tegra210B01 Support
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250720-t210b01-v2-8-9cb209f1edfc@gmail.com>
+Message-Id: <20250720-t210b01-v2-12-9cb209f1edfc@gmail.com>
 References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
 In-Reply-To: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -63,11 +63,11 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753064238; l=1023;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753064238; l=1624;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=jUFLE92y2/PfCSBvqONGStmGuDJvfBuTDqHYcdODYfE=;
- b=8QZhDXxyyxbYWujP3EM+c1w7vC8MFuxCgA84+GksQL8DhJSKxVyanTeWEYaCaUkVOFAwXzVeS
- 8motLEpoEtUDgGNlCjgLRszJ4dtW4IyP+JrFzORzbltXMVA85ITCPNB
+ bh=If0Hje67iTpggX4b+9TtDr2gpSLnQeDIgSv7GE82lsA=;
+ b=+NLKfcfz9GwPFjmm4POLuf7fNqzdg2v20Awvp09SyxlKT8iidTCJEY6/kbi1s15fho1B7xgFC
+ 79xu7pkkJNkA9jyXejvfcidxdaNTNNDuZ7gpJFFUGc8Xq4NrtgP5Gr9
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -77,30 +77,51 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-Add the device tree binding documentation for NVIDIA Shield TV 2019
+It doesn't need some of the workarounds that the original Tegra210 does.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/gadget/udc/tegra-xudc.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 9cae3268a8274fd3a38580939c79a6f21de48a3f..11689e040504c57287a8a742c775070a33dfc0ff 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -174,6 +174,12 @@ properties:
-               - nvidia,p2571
-               - nvidia,p2894-0050-a08
-           - const: nvidia,tegra210
-+      - description: SHIELD TV Pro 2019
-+        items:
-+          - const: nvidia,p2894-0050-a08
-+          - const: nvidia,darcy
-+          - const: nvidia,tegra210b01
-+          - const: nvidia,tegra210
-       - description: Jetson TX2 Developer Kit
-         items:
-           - const: nvidia,p2771-0000
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 2957316fd3d003e8444a825a72d228b7db06febe..1d2fb9bd51c7369dc5d056e49ae184659a40406c 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3652,6 +3652,22 @@ static struct tegra_xudc_soc tegra210_xudc_soc_data = {
+ 	.has_ipfs = true,
+ };
+ 
++static struct tegra_xudc_soc tegra210b01_xudc_soc_data = {
++	.supply_names = tegra210_xudc_supply_names,
++	.num_supplies = ARRAY_SIZE(tegra210_xudc_supply_names),
++	.clock_names = tegra210_xudc_clock_names,
++	.num_clks = ARRAY_SIZE(tegra210_xudc_clock_names),
++	.num_phys = 4,
++	.u1_enable = false,
++	.u2_enable = true,
++	.lpm_enable = false,
++	.invalid_seq_num = false,
++	.pls_quirk = false,
++	.port_reset_quirk = true,
++	.port_speed_quirk = false,
++	.has_ipfs = true,
++};
++
+ static struct tegra_xudc_soc tegra186_xudc_soc_data = {
+ 	.clock_names = tegra186_xudc_clock_names,
+ 	.num_clks = ARRAY_SIZE(tegra186_xudc_clock_names),
+@@ -3698,6 +3714,10 @@ static const struct of_device_id tegra_xudc_of_match[] = {
+ 		.compatible = "nvidia,tegra210-xudc",
+ 		.data = &tegra210_xudc_soc_data
+ 	},
++	{
++		.compatible = "nvidia,tegra210b01-xudc",
++		.data = &tegra210b01_xudc_soc_data
++	},
+ 	{
+ 		.compatible = "nvidia,tegra186-xudc",
+ 		.data = &tegra186_xudc_soc_data
 
 -- 
 2.50.1
