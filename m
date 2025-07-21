@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225AE1F5834;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAFA21CA07;
 	Mon, 21 Jul 2025 02:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753064241; cv=none; b=C4b7gBnzOkN30YWTA2saRt5NUeub09o7KTT13uTg2zR2jeOaAUnN6FoCkgxH+D11bvE0SHFvWdqxUt9osatOQcOA04UJ5u5wP+75tT2n2nUMktJht1a59LMxeVjL/vC6TR6x1b/nSXLjlH/eJP1ga+rGqsXTyGGB1seM0eVnhOs=
+	t=1753064241; cv=none; b=tNdMlOwgDk0NIor7FKJy1VNdFPF80yOrJ54HUZ+fgOV8E3foxUIxY8YSDLYcHph1fQmbmoBSDtQyNrL72x+wAgJ0JGYfn4CyOBl9TyYT1lEvHxKSiQYJI+tG9/4JM/reWYo0kesakb8qhQTN/p10mJEFMFxyS7/FbqHxf4rDdiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753064241; c=relaxed/simple;
-	bh=sA5jK2V5skay2wNZXk62Cnr/WW7u/wNzJuiuJRLLdvg=;
+	bh=0Sl9ne1fNA79gjabf0syuWDSWv557+WLdkh+UrDoEwc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q7UM7YX1NbQpJarV1xH4x8MnGVfXMMm8SGbJ2H2XcC6+XdSpamEXYIq71fMbT2gGZX8at88wO6g+3nPszdT7UsLeKMjsJBOTu759eJ4kXkOVyZbzgFNtVxpgVfbSg6t2oJAD70RDfE+26I+Ml5fnDACTLguggype5wSL1lV7wYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2KQxA5d; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=MPgibWhm149JN//NVJgCs9ahKfzCQx4FqlCQNV5Q95CvF3RWy+iaurUp+srWoKWu/wZwGfNLBoyY4u5RhAFdGAPwOpa96+e2FWlG7/pHafCsRkDlgD84uQoPFQjA+tXDw4h1dMhh5EW27V/NX1Jngjwu8BsATTtXYL64jos+/Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEBvMVGd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2KQxA5d"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F334CC4CEFC;
-	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEBvMVGd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6C964C4CEFC;
+	Mon, 21 Jul 2025 02:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753064241;
-	bh=sA5jK2V5skay2wNZXk62Cnr/WW7u/wNzJuiuJRLLdvg=;
+	bh=0Sl9ne1fNA79gjabf0syuWDSWv557+WLdkh+UrDoEwc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=r2KQxA5dXmLXDwvI1+pikYMX4+MGn6TRE7GyyZdPY5R9v6gRYoVtRZcUc4I6Cg/UA
-	 ilh2fXPD5JNlSj90nC9aSCASBD/mitoM4oP5a1KyWX7kue4jkKxmOS0hezD6bXGhas
-	 9HG16/V1ow0tixKb9rAJBbUXFCIT5hdjwyWRfJEGPbrQManeyuvq1155EYzKSfzrLe
-	 UMHmy/Dnxjb/XpfRPInVrqrv2EIvifJYC4mCHkF8u3n82KPtJtl+CJfQ8ywLYc9CfZ
-	 RemoXk4d/3Rj/ZYlJi3m/IDMNT/N0ayoVymITT9ti9BFpOiWew31EDJzejKwzIy3Tq
-	 +FneX5u52Aj9g==
+	b=iEBvMVGdnmrpx3Gorr8MU9SBlunmSv+vZj9fsDtcAeC0Bw8XXdxqiWxZi08LSbRGY
+	 az9vNgK8NarxoRl4Y3E5RC2OVQLMk+EW+/r6rt0V+THT1g6wBilMDqsW8d4TmDutnN
+	 TO93MYMT+HfrgiWF7uRpa63xTFr8tuLi8NMxk83lulxzatf0uDssNsTuCDZ18J+d4G
+	 5PX6VEKR3jvkVXYmB5j+7Ur/QjxyQgVxVwEWlC9O3gfSc+ohJDGJEhCoMmKG7S3gjG
+	 p16IamcvwtNCoTrauC6wtIDbN0J/2TP5KHwZNZ9ntpeDNQhjL5AMXTYMoaZ1VPKUN8
+	 SpafUfr2VGuQw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2EDC87FC5;
-	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63029C87FC6;
+	Mon, 21 Jul 2025 02:17:21 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 20 Jul 2025 21:15:05 -0500
-Subject: [PATCH v2 11/17] usb: xhci: tegra: Add Tegra210B01 support
+Date: Sun, 20 Jul 2025 21:15:11 -0500
+Subject: [PATCH v2 17/17] arm64: tegra: Add support for NVIDIA Shield TV
+ Pro 2019
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250720-t210b01-v2-11-9cb209f1edfc@gmail.com>
+Message-Id: <20250720-t210b01-v2-17-9cb209f1edfc@gmail.com>
 References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
 In-Reply-To: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -63,11 +64,11 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753064238; l=1932;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753064238; l=3522;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=u4MyJKHAAFOoAMSOmgjeS/X4Ejtyfwszu/1wKGnsxoU=;
- b=tA5ONdEvrWoKhcaOrjdxpAymCR/aSkTi7yRM2gWunDmn7Rfg89bxZ6y9P9BZUVGXYItGvdMIK
- THthuPCQNTZDg9m/LCrcMj5i8gKD9gNXwhqI4lIdLRhxYhZM+8sjUYJ
+ bh=lBbPA4YnfIve2RzYnMMZrMuioshaXo0K/YzU1CSGgG0=;
+ b=uZ18x9hPOETwB5r3x1VYui41gkdHxgunkMehPDkapwffmjyk9Z9GL845wi0QzejmISzNQ7Qte
+ Wh8pVLrwHUIC3gw1diFucLnJPehp2XDs65AuWnzCj/LV+jaGFCmrF1V
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -77,55 +78,123 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-This uses a different firmware, but is otherwise compatible with
-Tegra210.
----
- drivers/usb/host/xhci-tegra.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Add initial device-tree support for NVIDIA Shield TV Pro 2019 (a.k.a
+MDarcy) based up the Tegra210B01 SoC with 3 GiB of LPDDR4 RAM.
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 0c7af44d4dae5066e66bd29c961510892b6e1301..aef100415f453fdd95c83cf511a914cf62e3e775 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -2547,6 +2547,30 @@ static const struct tegra_xusb_soc tegra210_soc = {
- };
- MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
- 
-+static const struct tegra_xusb_soc tegra210b01_soc = {
-+	.firmware = "nvidia/tegra210b01/xusb.bin",
-+	.supply_names = tegra210_supply_names,
-+	.num_supplies = ARRAY_SIZE(tegra210_supply_names),
-+	.phy_types = tegra210_phy_types,
-+	.num_types = ARRAY_SIZE(tegra210_phy_types),
-+	.context = &tegra124_xusb_context,
-+	.ports = {
-+		.usb2 = { .offset = 4, .count = 4, },
-+		.hsic = { .offset = 8, .count = 1, },
-+		.usb3 = { .offset = 0, .count = 4, },
-+	},
-+	.scale_ss_clock = false,
-+	.has_ipfs = true,
-+	.otg_reset_sspi = true,
-+	.mbox = {
-+		.cmd = 0xe4,
-+		.data_in = 0xe8,
-+		.data_out = 0xec,
-+		.owner = 0xf0,
-+	},
-+};
-+MODULE_FIRMWARE("nvidia/tegra210b01/xusb.bin");
+This is very basic, intended for checking initial Tegra210B01 support.
+More complete support for the device will be added later.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ arch/arm64/boot/dts/nvidia/Makefile                |  1 +
+ .../boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts | 10 ++++
+ arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi  | 70 ++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+index 0fbb8a494dba5089d9b7243e766bd6028b7f3744..bc6f3e268020b6fdbc90b2fb2ec1daf30c80af0e 100644
+--- a/arch/arm64/boot/dts/nvidia/Makefile
++++ b/arch/arm64/boot/dts/nvidia/Makefile
+@@ -20,6 +20,7 @@ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p3450-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2894-0050-a08.dtb
++dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210b01-p2894-0050-a08.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-p2771-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-p3509-0000+p3636-0001.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p2972-0000.dtb
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts b/arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..f18266b3d8ae341feaef5a1a911752f6a5ce2d0f
+--- /dev/null
++++ b/arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
 +
- static const char * const tegra186_supply_names[] = {
- };
- MODULE_FIRMWARE("nvidia/tegra186/xusb.bin");
-@@ -2659,6 +2683,7 @@ static const struct tegra_xusb_soc tegra234_soc = {
- static const struct of_device_id tegra_xusb_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
- 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
-+	{ .compatible = "nvidia,tegra210b01-xusb", .data = &tegra210b01_soc },
- 	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
- 	{ .compatible = "nvidia,tegra194-xusb", .data = &tegra194_soc },
- 	{ .compatible = "nvidia,tegra234-xusb", .data = &tegra234_soc },
++#include "tegra210b01-p2894.dtsi"
++
++/ {
++	model = "NVIDIA Shield TV Pro 2019";
++	compatible = "nvidia,p2894-0050-a08", "nvidia,darcy", "nvidia,tegra210b01",
++		"nvidia,tegra210";
++};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..97c9bd8f293539e76d57b6cfee49c60fb482d6ab
+--- /dev/null
++++ b/arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "tegra210b01.dtsi"
++
++/ {
++	aliases {
++		serial0 = &uarta;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x0 0xc0000000>;
++	};
++
++	serial@70006000 {
++		/delete-property/ dmas;
++		/delete-property/ dma-names;
++		status = "okay";
++	};
++
++	pmc@7000e400 {
++		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <0>;
++		nvidia,cpu-pwr-good-time = <0>;
++		nvidia,cpu-pwr-off-time = <0>;
++		nvidia,core-pwr-good-time = <4587 3876>;
++		nvidia,core-pwr-off-time = <39065>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
++		status = "okay";
++	};
++
++	mmc@700b0600 {
++		bus-width = <8>;
++		non-removable;
++		status = "okay";
++	};
++
++	clk32k_in: clock-32k {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
++	cpus {
++		cpu@0 {
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++};
 
 -- 
 2.50.1
