@@ -1,45 +1,45 @@
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EA42882D9
-	for <linux-tegra@vger.kernel.org>; Tue, 22 Jul 2025 06:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E3B28937F
+	for <linux-tegra@vger.kernel.org>; Tue, 22 Jul 2025 06:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753166832; cv=none; b=W6IvcUNVfjnmXLVtNFKMxgbwFYB2vhpan3WkHzzhhhzUuaAVPQVOg4ucc8CWZ/rDD3mWctGEncvw4CcauuN7hukERrjd1yGj4iZ5BecOIu2yQsCLIq2F+okACOxWW5KuN4Y7fnNouGxNhiJH3w5RJw/y5NDRErSE1cSHs//FcXI=
+	t=1753167037; cv=none; b=AdygOBH/U46NFTIg55Xz9MzxV7XBtgmPq4wyQstixUKpcOuuh/9UF/kfBWARUgEetLSyRb7ufa4a5Kee4aVH63uQO0oTgrsmuX9cqJrcciADS1vhtFXAGe2idDLL0/CH4tZSZ2wS/J3GovukHXCeCmMuTzxo9syaFaGkAxtc1j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753166832; c=relaxed/simple;
-	bh=3RU0EM2yrhX6vG1aK1rAx1DDUdpNEspUVOmfbgBX6ME=;
+	s=arc-20240116; t=1753167037; c=relaxed/simple;
+	bh=b+1B+Wn7HNOWmy4ymusRgiKtdV+zyXXU8YbrbkuG2KM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=t9BBlNzkKh62YRduq7nFSxvuGJzfou6Wc6Kq9iqOjmoDWR5DzmgZBhmQUkmunZSawhDrQqkCiH0XDlT5WTjqPGMYC8mg8RLffZ4WcjClSLsgFhyWCmb3zveNSnOp+Sg88yf0O375ISrijErRDrH1pZ9tBpqy+tK9v6K9bfUyF18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFFwD7EG reason="signature verification failed"; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=HUlt31nZQ6oXfBay+ctPV3odIfaOlCLX1F4cYch2TyTzHlGOPaIunoQP8XrXJRPVgIUSdns+bgQ1Y3ad6Q8YBGa32M8c6jFVpBr2ZBQi2bkUjxpZ2BB4ESMVsYVSjrWu3GaH3iH4DHdQEM2HRc+/Co7f7kkc9vjQQLP4NB5pKOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFFwD7EG reason="signature verification failed"; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFFwD7EG"
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31366819969so4748551a91.0
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Jul 2025 23:47:11 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74d15d90cdbso4444957b3a.0
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Jul 2025 23:50:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753166830; x=1753771630;
+        d=1e100.net; s=20230601; t=1753167036; x=1753771836;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :precedence:mime-version:list-unsubscribe:list-subscribe:list-id
          :in-reply-to:dkim-signature:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jWoDGEfzWdmbPm2lTJARRwOV7MhwsTpQwamKqTA0k9Q=;
-        b=FLdUtix4ku1V+cjDNCggYzunycar/zW93h7YWYNXskxe9B2lmDOmTEYO3Ya4lW3b9f
-         +sVL6x0OqRkXgk596JMySAvRoxrH+m91cNH5keObnY6o77LqEanAKX+WEBmtLxTP76wp
-         Q2OKxW7yGAflPyoa3RPwDj+70a64vr2aqw/SqwfUisn8fNM0gi+Q8uLQsYz0bPz/cG0V
-         rgt3um1S7/1UMcKD4J3gasbMWjzq15ymAI/t882zvXKMESa6TAm51e+O8Ufsm8IT24Yz
-         YqEfwhBGvfRPYIr9Gj2hVsv20RCd74Pvt0U8DygwPb8LEBZlaL9YEdZ2O3jfhVlXMGjR
-         NWKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXg6sBOmBjtN5STKLULROEQpoF6+5H1jCDzuvxJczDIFirriUH7H657zBOfaX0mbqpXP+IFoN/kYR7eA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIADgAOXVAsJZTnSllQktPjNEd548+ImCRE4ZAfWDNe4JuJvo+
-	ewu1kz3qXIF42Lp4PnzIPbC80xhIR4q2d/MSTdsm0DMP9mu0d5xqcoJQyQkw1xk6ePL82RL/ERn
-	p2i1yXIbvol0/bXhKmvFn4qUICQ==
-X-Received: from pjk3.prod.google.com ([2002:a17:90b:5583:b0:31c:2fe4:33be])
+        bh=L4fsLwxmK2ZnQnVdh655BQ3QV8h38rfOFwSvZPlcffU=;
+        b=ErA2FuY1HlMoZdiBqYFIFL/DbGRXefp0LlXw9b9Nd2Kt/inNbKKbS3seHyfikjs5vM
+         9ErZpzqV0cxbfoWATb6Fa0fvxBZRYBb1qUbScl/jS8hn1B5xf1/FfvcPTAjaYxEEZUVS
+         V9ChZsW8VfPbDAFCPQfSLBsnQQpgBmuoT5HcIQso+yBl1gsvBGb+3lhVUxnhdk/ci+7v
+         aE8GKQhPZTLBPtIPQb14GXuV8Bnxgkj4oPrVq5BxzvRqxyMcgEgt7nKNRggPG2yfZI3h
+         C/pDzNvNb1I9o38ydCFf+fn6P6gdYiWhLvZhHcl+kV7+T7xh1iIFsaq8F8AsoAexaCzc
+         +RbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlhFD8bdKanlfn1u1n3F1ie/JrtCM+qNeyu9jemHhwkqS4XbMnhIC79lCL1AjzS7XgUvEqpVsXrS9WNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT79z5dzSZGSxo0Mj6a4IsbQPMQSpYIUnTf8wnvZrDZWEIR0JJ
+	P6BUrn4iOHbxG5+6XGIBwU76zyrCq9S1aLZSQVBZ8TMW1eLHabqGyHrMzkJJtCELVsDR/3xkn5R
+	KxO73hJHpoNds58v+qEnuGlCTjA==
+X-Received: from pfblu8.prod.google.com ([2002:a05:6a00:7488:b0:746:3244:f1e6])
  (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3d08:b0:311:c93b:3ca2 with SMTP id 98e67ed59e1d1-31c9e6e96fdmr30976117a91.6.1753166830565;
- Mon, 21 Jul 2025 23:47:10 -0700 (PDT)
-Date: Tue, 22 Jul 2025 06:46:59 +0000
+ 2002:a05:6a20:4304:b0:236:5ceb:b9d with SMTP id adf61e73a8af0-23811d5ac1emr34751483637.5.1753167035810;
+ Mon, 21 Jul 2025 23:50:35 -0700 (PDT)
+Date: Tue, 22 Jul 2025 06:50:32 +0000
 Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20230601;
  t=1753046000; x=1753650800; darn=vger.kernel.org; h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
@@ -79,13 +79,12 @@ Message-ID: <CABb+yY3CBiLpZ1KrD8RFypRgkP9MOzBf1FB+gL2E-qEuSbrj6A@mail.gmail.com>
 Subject: Re: [PATCH 1/2] mailbox: Use per-thread completion to fix wrong
  completion order
 From: Joonwon Kang <joonwonkang@google.com>
-To: joonwonkang@google.com
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, thierry.reding@gmail.com, 
-	alexey.klimov@arm.com, sudeep.holla@arm.com, jonathanh@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: jassisinghbrar@gmail.com, Joonwon Kang <joonwonkang@google.com>
+Cc: alexey.klimov@arm.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, sudeep.holla@arm.com, thierry.reding@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-ID: <20250722064659.0YmNFioPmqKoJy1xcbtQfC52fa8epcCNiaFS7EMdLLA@z>
+Message-ID: <20250722065032.kNKtdCYYv-_whFH6EutPssLTf8OGkpt4A-UdcKZqYuY@z>
 
 From: Jassi Brar <jassisinghbrar@gmail.com>
 
@@ -110,9 +109,9 @@ m> wrote:
 >> Link: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jasw=
 i>nder.singh@linaro.org
 >
->Is your issue different from what is described in the Link?
+> Is your issue different from what is described in the Link?
 >
->thanks
+> thanks
 
 The issue is the same, but the solution is different.
 
