@@ -1,96 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C54262FED;
-	Fri, 25 Jul 2025 07:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD03253F12;
+	Fri, 25 Jul 2025 08:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429240; cv=none; b=qAG2ELza+0g4OfHnfYCTB8hqzFtFaEo7JkKW5SVF4gYqaCWkD1w04koJ510YjOrgbPB6N4PZu/CI5gjctZI4ia7cwEtUVGhBEyh83HLJbRpNmpLxHDJGjWRZlWUyv67Z+psc5I1xBNI6iESaocVaI2r0KE8DFlrZNx/iTI8mYrI=
+	t=1753430998; cv=none; b=hW5GfGueesoeqv96acVilbDE1WhRe2JnRN+hL62Sd2Q+aSdy3hQZUdtPiSDSaRYj+g1jA0kRukoP1NECmEswf0T8WBzivF/zf6S/vWbYEW81DGHBur31uO8hGg4Omys0FHqMW7m0MOryR7BGhhvlymUN9EF9OBjN6ayoneBRDSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429240; c=relaxed/simple;
-	bh=mQb7ii/iz5xvC8IcCbRWR06c9PIGYpUz0dlyEmD+2U4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=IrXK8GJJNn8nzDG3gWMQ+oNLspgg9E+86B6W9yCbkM35V7P4t+MRMBBPrE4NHS3HaOO41U/n3Qm8URN1Jnur6VUlzR29PsFfts0nwwrAGVDUb2V2ZEpWbMpN8IQFG2w1lcUuOLLYSMJux2jMHNvmMl7rpQfImRsozYZn0Ecq/sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XH2AO74M; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753430998; c=relaxed/simple;
+	bh=yOEF3pbrz4Kx9Yvk4LzkBbXrI6GwPwnuHpZ0B+OKRpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sU5hcBKm1PV0gfkRynK0qUHn7fXQCDeaf5CLrAqEthx1BASVzSATFO/W477ZMCNlmutG1wcQqWMrDSeRbl/M9HDs2vuGSeKSf7cwbByq8qvYpjV5IsLZEAbIeTDF7ZzvZBjDx5r6xfdKIlZzs/fw3pmgkk0384eXUXDcGxYrtkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RAPrugMY; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XH2AO74M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D1BDC4CEE7;
-	Fri, 25 Jul 2025 07:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753429235;
-	bh=mQb7ii/iz5xvC8IcCbRWR06c9PIGYpUz0dlyEmD+2U4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=XH2AO74M+7RES9iiESI6Vto2I7IXUo4PR6MniKzpyZPWXPo399sCeL0XtLqdNKVQR
-	 0UpE3tn+NM6YrWvu4dF2C94dp/IpHuIer7qL+f5Az6Gw38VG5ILuwt4QSxK0KVp2MW
-	 +JnwfXA92D06mfKcu+vdtr9jwnaqGV1EqmAbw6/D43khBpKNdyUORaCOrYrGkFlEyT
-	 xiiBOS90s3m3SorOlWZW2StNm26M0SP6M8DHSkxl5XP70mEf5l/p83QsNsVDRsUKJr
-	 t/Rvw0OuqdyQkHKLakxF2tSFG7cvkM/U2QPMo07cSwLFd6pot26Ix3xgn463DAITuw
-	 cwt7Q2CuDXW/w==
-Date: Fri, 25 Jul 2025 02:40:34 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RAPrugMY"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E1A7E443AB;
+	Fri, 25 Jul 2025 08:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753430988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ptbYJ8jnyRK4joUoCr7OOdtZ5ECC4czwvLjcYQx+OrI=;
+	b=RAPrugMYfyP6vElz0cdX04uv2YJ8z9gJ7sIJtCfDcY/oCekpcJwubei/qeuokr3XNJYMMc
+	0IlZ80zS8mox/m7Qq/LG0C/YzZihWgvye1/suNr78Fhw9YlWyKKp42txuSd/HjokWEpxp6
+	Tpw6YEdIscZONSAn2c5ONLuq8jOQWVvjymFst1FcG+jJuK7SBdeR/gnXDrYPqwHH/yiD6r
+	4uVHoL3odpCueiCJvfbBKXw63pkb3U9jbB4Z2D2wv9ystb7QtX8ujouTc1s4m7CrI5pHkS
+	6fAS97VhfnckAa4JjywL4hRbQXc5wRpEryYkEScCBmuYkPYmE5EZnBeW6h1ZLw==
+Date: Fri, 25 Jul 2025 10:09:43 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: "A.T. Jefferies" <alextjefferies@gmail.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com,
+ mchehab@kernel.org, gregkh@linuxfoundation.org,
+ linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: media: tegra-video: use BIT() macro instead of
+ shift
+Message-ID: <20250725100943.0a974c7c@booty>
+In-Reply-To: <20250723231757.15443-1-alextjefferies@gmail.com>
+References: <20250723231757.15443-1-alextjefferies@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-tegra@vger.kernel.org, nm@ti.com, andersson@kernel.org, 
- krzk+dt@kernel.org, linux-mmc@vger.kernel.org, kyarlagadda@nvidia.com, 
- thierry.reding@gmail.com, linux-i2c@vger.kernel.org, sjg@chromium.org, 
- andi.shyti@kernel.org, conor+dt@kernel.org, ulf.hansson@linaro.org, 
- devicetree@vger.kernel.org, jonathanh@nvidia.com
-To: Rajesh Gumasta <rgumasta@nvidia.com>
-In-Reply-To: <20250725052225.23510-3-rgumasta@nvidia.com>
-References: <20250725052225.23510-1-rgumasta@nvidia.com>
- <20250725052225.23510-3-rgumasta@nvidia.com>
-Message-Id: <175342923470.141295.13172940562486185515.robh@kernel.org>
-Subject: Re: [PATCH V3 2/3] dt-binding: i2c: nvidia,tegra20-i2c: Add
- register-setting support
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfedtudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepfeejrdduiedurdduvdegrddugeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepfeejrdduiedurdduvdegrddugeeipdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrlhgvgihtjhgvfhhfvghrihgvshesghhmrghilhdrtghomhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopehskhhomhgrthhinhgvnhhisehnvhhiughirgdrtghomhdprhgtphhtthhopehmt
+ ghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqthgvghhrrgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Hello A.T. Jefferies,
 
-On Fri, 25 Jul 2025 10:52:24 +0530, Rajesh Gumasta wrote:
-> Add register setting support for the NVIDIA Tegra20 I2C controllers. An
-> i2c-controller-common.yaml binding document has been added a top-level
-> binding document so that all I2C controllers can use this binding. This
-> new binding document defines some generic register setting properties
-> for I2C and some standard I2C operating modes that the register settings
-> need to be programmed for. This new binding document is used by the
-> NVIDIA Tegra20 I2C binding to enable the use of the 'reg-settings'
-> binding for this device.
+On Wed, 23 Jul 2025 23:17:57 +0000
+"A.T. Jefferies" <alextjefferies@gmail.com> wrote:
+
+> Replace two instances of (1 << X) with BIT(X) in tegra20.c to follow
+> kernel coding style guidelines and improve clarity. The BIT() macro
+> also ensures proper type handling for larger shifts.
 > 
-> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+> Signed-off-by: A.T. Jefferies <alextjefferies@gmail.com>
 > ---
->  .../bindings/i2c/i2c-controller-common.yaml   | 73 +++++++++++++++++++
->  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 64 +++++++++++++++-
->  2 files changed, 134 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-controller-common.yaml
+>  drivers/staging/media/tegra-video/tegra20.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
+> index 7b8f8f810b35..1473f1b1f203 100644
+> --- a/drivers/staging/media/tegra-video/tegra20.c
+> +++ b/drivers/staging/media/tegra-video/tegra20.c
+> @@ -42,7 +42,7 @@
+>  #define       VI_INPUT_BT656				BIT(25)
+>  #define       VI_INPUT_YUV_INPUT_FORMAT_SFT		8  /* bits [9:8] */
+>  #define       VI_INPUT_YUV_INPUT_FORMAT_UYVY		(0 << VI_INPUT_YUV_INPUT_FORMAT_SFT)
+> -#define       VI_INPUT_YUV_INPUT_FORMAT_VYUY		(1 << VI_INPUT_YUV_INPUT_FORMAT_SFT)
+> +#define       VI_INPUT_YUV_INPUT_FORMAT_VYUY		BIT(VI_INPUT_YUV_INPUT_FORMAT_SFT)
+>  #define       VI_INPUT_YUV_INPUT_FORMAT_YUYV		(2 << VI_INPUT_YUV_INPUT_FORMAT_SFT)
+>  #define       VI_INPUT_YUV_INPUT_FORMAT_YVYU		(3 << VI_INPUT_YUV_INPUT_FORMAT_SFT)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thanks for your patch. However I'm afraid I don't think this is a good
+idea. 1 is just one out of 4 possible values out of 4 possible values
+for a multi-bit register field. All the 4 should use the same style.
 
-yamllint warnings/errors:
+BIT() is perfect for single-bit register fields. It's not for multi-bit
+fields.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.example.dts:24.22-73.11: Warning (i2c_bus_bridge): /example-0/i2c@7000c000: incorrect #address-cells for I2C bus
-Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.example.dts:24.22-73.11: Warning (i2c_bus_bridge): /example-0/i2c@7000c000: incorrect #size-cells for I2C bus
-Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'i2c_bus_bridge'
+Luca
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250725052225.23510-3-rgumasta@nvidia.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
