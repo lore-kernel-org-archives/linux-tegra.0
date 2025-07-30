@@ -1,117 +1,124 @@
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7132D6623;
-	Wed, 30 Jul 2025 13:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0C52D8DA6;
+	Wed, 30 Jul 2025 13:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883450; cv=none; b=MLmmrXehaYgtGFJUjomG3i2aQ5wN0mwX4lvixJTNE8dsiAcjrpw5RnHwJQ2PnWDyr0H5CVuoJ6oPsJYnm10v8xU1HVqa5+wNWxRwc9IfLMCIKkvX7ho8bS1RzTEi7Z6sS2J3rTvcYRV+hlfuqrl9eXaPbFrbW7RlGL+mSyEBIfA=
+	t=1753883721; cv=none; b=SEv3YFY0zrM/TsVxxUd/9QfRWNrdFUXxyWJCLVpLIw55YtX+IgA1KSSfgRjjGSASJQu9Rw3UvKoKJn0WJYn2VQQGjjsVbiompCs5K8nH+j0GjOAzptKuCM/5gNx0ZOSewzbBAGy9BfoeE+mHv9y9VG2hVcORA1Fs6kgOPCkjt7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883450; c=relaxed/simple;
-	bh=J7dvpyIoCy9NIKCBj4b8RMd8iL7yTVA0V2WKCp0lX20=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nWPi0NEGUxwWFh/LE+yxUfLeZWiiLcySHimHp78u1B1trA9WXooX96WKg67udp6YH1RROgKSejizt0MGodGLzaWd5OAh20k4JnD/jaROK0zeFSynWemSER+zKtMiXBvKvALoPLGGEucB/U10ruk86KcAmUI4rhobPKt/nJSwrmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bsYDJ1Vh3z9srp;
-	Wed, 30 Jul 2025 15:37:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id hTOaUPuVAapB; Wed, 30 Jul 2025 15:37:20 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsYDC13bxz9st0;
-	Wed, 30 Jul 2025 15:37:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1EEA78B76E;
-	Wed, 30 Jul 2025 15:37:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id rpERR39Nzj83; Wed, 30 Jul 2025 15:37:15 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EA4F58B763;
-	Wed, 30 Jul 2025 15:37:14 +0200 (CEST)
-Message-ID: <5553bad0-2bd1-41c0-966f-98a0a4acbb23@csgroup.eu>
-Date: Wed, 30 Jul 2025 15:37:14 +0200
+	s=arc-20240116; t=1753883721; c=relaxed/simple;
+	bh=YU/dW/YfvlTH/hER2tJp/xqGvn1giFSqovo//0fzglE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C7LRqH1rWf/ASqN6UZiNgcwGLHQS/JSmysgKO8B754BoETJtWpwW6mn1Y/8wWJLQMFbHYZDAsIQotHTJjX3k0G5jq45la+B9I1K6Hl7/MGOgXRYR85Ac3HNEVWcTIoJab4PKpsaGggGjsltbdQZ53bDkunxZe6gF1omYBFmWhnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5Rawgom; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5Rawgom"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a54700a46eso3295887f8f.1;
+        Wed, 30 Jul 2025 06:55:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753883716; x=1754488516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDRUrR7jLFhjPK5l5cm5SkFUJ3UJ78G28JJkY+HeZyU=;
+        b=C5Rawgomg+cfd5gLvtMmmvQ9d8KxfV5VdfHvcvH6ZB6lhw5gOdKCBXFN44sp3/8y5J
+         IHgtskMXKvy9d668I4d0t3mJzDigl2vmrSJjJwNNRi5S/uwqphK4oDywR0Ce3tUBa4lZ
+         CxM4jY8dgCf998URg2H9AaUKFWUj5ESIIPnpX3hcdTYgzHLTmXoQOYQRI0YxbA96Io9X
+         X+pXOicMLLW/M9ZyhuoyNoLQR+LTh0MG7AlIhthn3Io8urJWBa3a+gl5MQ5RXdJ/ZUcS
+         MZTWaDoZP6D77DaL98oJqV6JZm0KzsPTEFBoq4EzHytwkSHqeOIA9hZ+7oEQ1aAr5/J2
+         yLrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753883716; x=1754488516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lDRUrR7jLFhjPK5l5cm5SkFUJ3UJ78G28JJkY+HeZyU=;
+        b=jHHEwBVh9bk8WL8i63LTu6keeUpgGa5EsuPCYaaYrOIHitK9VzWWnnFhZIxsnoLAbZ
+         HITOLIGWurKjfvfOKY/hvNLo5ZaO8pWJyl6/jU+MFFp5O/iNZgXmftAcGaN1yQFmjxs0
+         /JVnK5lSvGR09VMpg3PYYVBsLKaQQomYXfr2vIUimIbyaKs53hNrJvRhMybwJcWoGaEH
+         OREyWUIuDpK1nRmN+XhpdngjxOwppOlYE7C9BPgOr6+7lRYFkxoGFGjiBWeCgwgWibkp
+         v6RuVxnUDPjRSsfbKjLs1X7A4diUFHYJ1dsiXubDyIBEjagwqpnPH8I7kBjE7dAJaXQJ
+         6xlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/MjNvnhFkFOARVn6wN55hxAWBnR0lIDnZ2uhTWZLLpz/HBxf20q3eZFfEsms30wImwV6KrF/GZLHkxoU=@vger.kernel.org, AJvYcCV/Z2POQ2NQDY+BVprGrbTqhZar9ZVW558dtbaNzHfhJFYrh5X9GoRjZS87rUSoPYmOSASNLlKzxh5Gj1I=@vger.kernel.org, AJvYcCXIAR+9FlqLU1R+WfKSqVk4QfWTkCWp/OQldSj4+ew8MpG7AxHkJyu0ce0LAsX+pRRQJDFprfG2fRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvpajSpZYr0yK4aHLwInEWQFhQRPMBdsopfPXY35PX+m/tq9Qj
+	qLeLWOq1kiLcaGtY8Ee8uCfIeAodKcgf2LpUJ7iqkjydRkjhb9v9KihU
+X-Gm-Gg: ASbGncsCVFFI7oFyqdi93OgS/Cv0TiBB4iW5kkSCkJvi2DcrQPZ8uxTg+LhiyonySwA
+	gKghpYeoXZyyjJzvpZmltzHHJ9exYdhdrWa5+tD0FyjiL8g6EL0J4ZiXNgMKxZ/HNM932JVStDN
+	6b8iu94LQKf4Nk8T4XnDKmB3XHSx4VdRWxMuCo+wjnfQs2BZQHawTGhMYojgnsXP57zAWq7I+kF
+	+ZjVJyuRTg3LQvthAT8q7syLMdu/HZS9s3Aay8+1Plt3fe0hylMm+opjx2OX0YaJDtbc0LdwDN1
+	9/CHm+ypV7KoUR2rXcPKj5jJFLWLOefbQY81vlTOCQymmADqS6UHEzhhIhDti4MbyN6kPenowKn
+	ToV9viOL5HKPd8mL3DXaX
+X-Google-Smtp-Source: AGHT+IG84gA8NDQL60kl/IRMOVr/pEda4caIsf6Y3Ezh+Bzhl38QjVGbmdzGZ66AzfHUoXZVqkeigA==
+X-Received: by 2002:a05:6000:40df:b0:3b7:8228:7a35 with SMTP id ffacd0b85a97d-3b794ff8988mr2691890f8f.46.1753883716203;
+        Wed, 30 Jul 2025 06:55:16 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778eba147sm15966246f8f.27.2025.07.30.06.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 06:55:15 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] thermal: tegra: Fix dereference of pointer tz before it is null checked
+Date: Wed, 30 Jul 2025 14:54:41 +0100
+Message-ID: <20250730135441.2078022-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: Use dev_fwnode()
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, Qiang Zhao <qiang.zhao@nxp.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-tegra@vger.kernel.org
-References: <20250611104348.192092-1-jirislaby@kernel.org>
- <20250611104348.192092-19-jirislaby@kernel.org>
- <907f875e-5ed0-4eca-b285-ebb7e47137ce@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <907f875e-5ed0-4eca-b285-ebb7e47137ce@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Currently pointer tz is dereferenced before it is being null checked
+leading to a potential null pointer deferernce issue. Fix this by
+only defererencing it once it has been null checked.
 
+Fixes: 6fc2e1a5f98f ("thermal/drivers/tegra: Switch to new of API")
 
-Le 08/07/2025 à 10:33, Christophe Leroy a écrit :
-> Hi,
-> 
-> Le 11/06/2025 à 12:43, Jiri Slaby (SUSE) a écrit :
->> irq_domain_create_simple() takes fwnode as the first argument. It can be
->> extracted from the struct device using dev_fwnode() helper instead of
->> using of_node with of_fwnode_handle().
->>
->> So use the dev_fwnode() helper.
->>
->> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
->> Cc: Qiang Zhao <qiang.zhao@nxp.com>
->> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Cc: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linuxppc-dev@lists.ozlabs.org
-> 
-> There must be something wrong with this patch. b4 shazam applies a 
-> different patch.
-> 
-> $ b4 shazam -l -s --single-message --no-parent 20250611104348.192092-19- 
-> jirislaby@kernel.org
-> Single-message mode, ignoring any follow-ups
-> Grabbing thread from lore.kernel.org/all/20250611104348.192092-19- 
-> jirislaby@kernel.org/t.mbox.gz
-> Breaking thread to remove parents of 20250611104348.192092-19- 
-> jirislaby@kernel.org
-> Checking for newer revisions
-> Grabbing search results from lore.kernel.org
->    Added from v2: 1 patches
-> Analyzing 25 messages in the thread
-> Looking for additional code-review trailers on lore.kernel.org
-> Analyzing 22 code-review messages
-> Will use the latest revision: v2
-> You can pick other revisions using the -vN flag
-> Checking attestation on all messages, may take a moment...
-> ---
->    ✓ [PATCH v2] iio: adc: stm32-adc: Use dev_fwnode()
->      + Reviewed-by: David Lechner <dlechner@baylibre.com> (✗ DKIM/ 
-> baylibre-com.20230601.gappssmtp.com)
->      + Link: https://lore.kernel.org/r/20250612084627.217341-1- 
-> jirislaby@kernel.org
->      + Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->    ---
->    ✓ Signed: DKIM/kernel.org
-> ---
-> Total patches: 1
-> ---
-> Application de  iio: adc: stm32-adc: Use dev_fwnode()
-> 
-> You must have posted another patch with the same message ID. I had to 
-> apply it manually.
-> 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/thermal/tegra/soctherm.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Applied (Manually), thanks!
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 53a5c649f4b1..53fa6099b67f 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -585,14 +585,19 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
+ static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz,
+ 					const struct thermal_trip *trip, int temp)
+ {
+-	struct tegra_thermctl_zone *zone = thermal_zone_device_priv(tz);
+-	struct tegra_soctherm *ts = zone->ts;
+-	const struct tegra_tsensor_group *sg = zone->sg;
+-	struct device *dev = zone->dev;
++	struct tegra_thermctl_zone *zone;
++	struct tegra_soctherm *ts;
++	const struct tegra_tsensor_group *sg;
++	struct device *dev;
+ 
+ 	if (!tz)
+ 		return -EINVAL;
+ 
++	zone = thermal_zone_device_priv(tz);
++	ts = zone->ts;
++	sg = zone->sg;
++	dev = zone->dev;
++
+ 	if (trip->type == THERMAL_TRIP_CRITICAL) {
+ 		/*
+ 		 * If thermtrips property is set in DT,
+-- 
+2.50.0
+
