@@ -1,172 +1,228 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7461F1301
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Jul 2025 07:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B9F26D4F9;
+	Wed, 30 Jul 2025 09:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859061; cv=none; b=KW6yqaX9EqmOFQ2jalqvmHzoYMWCvpMPJtG6IUAEUpd7vi6LMU8kDLEybrPsYio3uBtbFSM3kHZsJF4CF8jwdpjfKSLl5p9hzQtBnRCB1DauGX1MXI/WKyqQf3Ud+RwgE18nyduDwyXVHPBi4IEf7Fv1Dr2IN+iobYsgHvg+gaA=
+	t=1753868068; cv=none; b=g2PJORVj1fHCcNah+9TOz1kAPRqVKoYqHBYBsEW+TcPz0c1JMZnc3G8hpG0o1E1F9lEhExKCR+lJhvBSzLMCAQ+GzPT/mkmfGSWSOfhL7xhUR3Qa012PeeU7kmoGETwzyKzPYOb4JNaLoJ1fvDR6ZHU7jAAGwvqifixFRBjvfWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859061; c=relaxed/simple;
-	bh=ejF5a+NRIOf1oWrPc8RSvxPJC407uoRHPB/IPhVhqf8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cUUCjvynanDhu7HNj+qFhnFFfKnN/gE4KM8CdZ1qANI80qWIKrVIaHYV663g7c+lRN6lVdklVwaQYOoctDD+QxyNPp7KDu22izq3sJhvv5m+GoD+cpKpgFbGCBHaV3o/sn83GWXxYEkY7nRuQtXgWxwg9mVRryO7iQTj+J/Fkpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eq53piXu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1753868068; c=relaxed/simple;
+	bh=CIVuQYfavwb/2ra5GsD9SGItvqbBHNthKR9qvQvzOGI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F3TEofKNqz0g3c03dE9qltvrtdv0Pp5TYf3dvh5xX+vDu5wmpH1RGXACxl7hOGoS9xqxnYZLPx99Ady9hU0iTfc6npreCUfqEq7lTdZFP9gbWE+qsYuRS9gM/gG8V4AKyxTpQ/oghO82xhAlU9WTNO5DNwwwVZfPa3E3cYP1M0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mn3mWr7a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eq53piXu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753859059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7EgCjCwSAoWT6dP7WChm7aBhbHSl4JFbz/gKARLGAAw=;
-	b=eq53piXuM76oRDb2kbphVPCmP4x32e4Irja029oBvEiaxov/bHl5Gt6Z12oEVTMUeWXm3i
-	pFr7a60R+Vh1MyynzRD1tMEeIuIh/QETZVXSwr/BBZuaMf3yTdkbnxBcuuEdBhp3VfNsMN
-	ua60Ws8jVJVZUCcenKN1EaCXU8/8xJE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-FD2KDoovPFCBDuof1ZKS8g-1; Wed, 30 Jul 2025 03:04:14 -0400
-X-MC-Unique: FD2KDoovPFCBDuof1ZKS8g-1
-X-Mimecast-MFC-AGG-ID: FD2KDoovPFCBDuof1ZKS8g_1753859053
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b78b88ecfeso1433771f8f.3
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Jul 2025 00:04:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753859053; x=1754463853;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7EgCjCwSAoWT6dP7WChm7aBhbHSl4JFbz/gKARLGAAw=;
-        b=qb3TnyD2+pk1FwdOak0yjhnyY7EvRUmFNbjzPgqOR3JXe8IuJr75/BRlYBSIH3fxkF
-         pv8GdoxDLai+tVQsH6tXYyfudlZHQaO3Bd0HJEy0D/gEKrLkga1DF0tu2V/7G1uABxx4
-         ydAI7HcH1sWGtLE3QoVEY8tGSneQ75SBUUf6PoMoywSJKf376ZqodartWqLFW58H4EJ8
-         NOiFv3HtguRuAsZFi4JNKTe0qmi0YiIrKKV/ZpwgXxXRnftLf2nA12Sr/uWU/10/pPvk
-         1jyoXfc1OxxfKd9EHWxuoIoWF/nC2eSkJXbjzNKuQUcIh+C683jpgu9XXTI9taRkG0Rg
-         9jxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHuqWV+o1yD5mtA8IZHqph0OAxqkyD967DEsNHxvHu5YNfY4/b6kobMkpaKioWe7nfspkTOJcZ/iuueA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQvji+cNs4ZrZpXJvPppIvuPyBoLLdhcdyqUyn2hMqRvxaIhWX
-	9YGaBDzVVKZDjVXTD9bCETzUfvrK3iREW+rFPiDsMVwC/0RyPMZQibxeQusnPKnYFhdIf4eyJT1
-	KdtAYmf+EyCGi8moz5JFwni+7w/QWpKx7MkOyv6aRJW3lhmDXdHElP/2hyOGhcvyg
-X-Gm-Gg: ASbGncuyZKXMIGi1aDjfC0Ef4iw96Mmxv9cW2gPND+ebsbmnFPbCkrfn6vlBRV5ZiBT
-	TNIlTRi0vxDMtpvJSurC6kbS0ZL6PTQDGDQ6SjFPHTmSWTA9RUCL7+uZN4bQD3e9WCU7wmpfqoy
-	CHR9ut4m2hOUCKUUgDw4u5jeY3bBM6Evr0r/rxvSJ0AMV62gR2Qm/Bh1S+eZCQ6852aIX1lBRBQ
-	K7YoT2Fnmeq1ScLrGl56G4N+LvTs+1Iiat3wvTfBbxsPzV81bL9TWMw6dEx4nE67VotnQNVT9M2
-	PK0PR8yEoG5aUXo3sP8Pvfftkrsa4WEg6vl/EV8GbIG8B64I5sJ4uwJO5IKXREbZsgZztmEEGIK
-	nHx0=
-X-Received: by 2002:a05:6000:178c:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b794ffdafbmr1455233f8f.37.1753859052964;
-        Wed, 30 Jul 2025 00:04:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNUbYGDL0unBoGUvLAcwoshm16lk2z/rlSxU4KYNEG/RVgWXaLcOgnhaU/dRAgxynEmknJng==
-X-Received: by 2002:a05:6000:178c:b0:3a3:7baf:f06a with SMTP id ffacd0b85a97d-3b794ffdafbmr1455181f8f.37.1753859052432;
-        Wed, 30 Jul 2025 00:04:12 -0700 (PDT)
-Received: from [192.168.0.6] (ltea-047-064-115-093.pools.arcor-ip.net. [47.64.115.93])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78b78f5edsm7115817f8f.28.2025.07.30.00.04.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 00:04:11 -0700 (PDT)
-Message-ID: <532f5e18-8613-454c-8497-8c224360ebbf@redhat.com>
-Date: Wed, 30 Jul 2025 09:04:09 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mn3mWr7a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B05A0C4CEE7;
+	Wed, 30 Jul 2025 09:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753868067;
+	bh=CIVuQYfavwb/2ra5GsD9SGItvqbBHNthKR9qvQvzOGI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=mn3mWr7aA9V5VQdmoPI1MDwUFqmYcbYou3spQN0mTpS2xY/Q2IAmer8ElcJzAHti+
+	 KDI3Je9i5rYwxmc1Uu6frvKz5aCvEdeIaJV5v0eUbJgOtZmLFLXve2bcmizzIvgMEn
+	 zQqsAseUiBNcc0woER4J692Ev/4bp7WTpJQJ+R/ErEE5f9CVblx7OIN1CZA/zM/LZx
+	 ZgtSmBLu8mJcqqTFok+wdPrjTWQ4KU23lsYRxK+U5FL/RLAIYBgwxmTvJMoFOzaETL
+	 y6mDyNH5gHTpUEo+vdF56kw6vXYSq/gBDMHez4n+nx7iA96Ye8h3ttmX3XshWhq+mw
+	 OFIlGH+1lL8JQ==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [RFC PATCH 0/6] Allow DMA consumers to pass a cookie to providers'
+ of_xlate
+Date: Wed, 30 Jul 2025 11:33:27 +0200
+Message-Id: <20250730-topic-dma_genise_cookie-v1-0-b505c1238f9f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in
- uapi headers
-From: Thomas Huth <thuth@redhat.com>
-To: linux-arm-kernel@lists.infradead.org, Russell King <linux@armlinux.org.uk>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20250703173859.246664-1-thuth@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <20250703173859.246664-1-thuth@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOfmiWgC/x3MTQqAIBBA4avErBO0P6mrRETpaEOkoRFBePek5
+ bd474WIgTDCULwQ8KZI3mWIsgC1Lc4iI50NFa9aLkXDLn+SYvpYZouOIs7K+52QdZ1WK5emNrq
+ HXJ8BDT3/eZxS+gB+aeXZaQAAAA==
+X-Change-ID: 20250714-topic-dma_genise_cookie-66dcb07f3fd9
+To: Vinod Koul <vkoul@kernel.org>, Sven Peter <sven@kernel.org>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, 
+ Ludovic Desroches <ludovic.desroches@microchip.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
+ Viresh Kumar <vireshk@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Taichi Sugaya <sugaya.taichi@socionext.com>, 
+ Takao Orito <orito.takao@socionext.com>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Daniel Mack <daniel@zonque.org>, 
+ Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Am=C3=A9lie_Delaunay?= <amelie.delaunay@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, 
+ Viken Dadhaniya <quic_vdadhani@quicinc.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+ imx@lists.linux.dev, linux-actions@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ linux-spi@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753868049; l=5799;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=CIVuQYfavwb/2ra5GsD9SGItvqbBHNthKR9qvQvzOGI=;
+ b=va5fmQm0vcHgbpGnfydpzko+HQU0+0iHNYCXm7WHYjVRwugQO/jlg6FABqOs3xChvtQiLtHfX
+ nwgfqitX8ihAL4cqD4UZZ9Xblo1yiqYPkj39iyy4q4XnXfktK7X59k3
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 03/07/2025 19.38, Thomas Huth wrote:
-> The kernel Makefiles define the __ASSEMBLY__ macro to provide
-> a way to use headers in both, assembler and C source code.
-> However, all the supported versions of the GCC and Clang compilers
-> also define the macro __ASSEMBLER__ automatically already when compiling
-> assembly code, so some kernel headers are using __ASSEMBLER__ instead.
-> With regards to userspace code, this seems also to be constant source
-> of confusion, see for example these links here:
-> 
->   https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
->   https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
->   https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
->   https://github.com/riscv-software-src/opensbi/issues/199
-> 
-> To avoid confusion in the future, it would make sense to standardize
-> on the macro that gets defined by the compiler, so this patch series
-> changes all occurances of __ASSEMBLY__ into __ASSEMBLER__.
-> 
-> I split the patches per architecture to ease the review, and I also
-> split the uapi headers from the normal ones in case we decide that
-> uapi needs to be treated differently from the normal headers here.
+The DMA subsystem attempts to make it theoretically possible to pair
+any DMA block with any user. While that's convenient from a
+codebase sanity perspective, some blocks are more intertwined.
 
-Friendly ping! The patches should still apply cleanly, I think.
+One such case is the Qualcomm GENI, where each wrapper contains a
+number of Serial Engine instances, each one of which can be programmed
+to support a different protocol (such as I2C, I3C, SPI, UART, etc.).
 
-  Thomas
+The GPI DMA it's designed together with, needs to receive the ID of the
+protocol that's in use, to adjust its behavior accordingly. Currently,
+that's done through passing that ID through device tree, with each
+Serial Engine expressed NUM_PROTOCOL times, resulting in terrible
+dt-bindings that are full of useless copypasta.
 
+Currently, the DT looks like:
+
+i2c@foobar {
+	compatible = "qcom,geni-i2c";
+	dmas = <&gpi_dma1 0 0 QCOM_GPI_I2C>,
+	       <&gpi_dma1 1 0 QCOM_GPI_I2C>;
+	// actual hw description
+};
+
+spi@foobar {
+        compatible = "qcom,geni-spi";
+        dmas = <&gpi_dma1 0 1 QCOM_GPI_SPI>,
+               <&gpi_dma1 1 1 QCOM_GPI_SPI>;
+	// actual, identical hw description
+};
+
+Which is manageable when there's two of them. Unfortunately, we're
+in the double digits range nowadays.
+
+This series attempts to cut down on that through making the last cell
+unnecessary, moving the purely-SW data that the current protocol ID is
+into the driver.
+
+The mass of_xlate signature change is a little unfortunate, let me know
+if it can be avoided somehow..
+
+Attaching the relevant dt-bindings change and converting one platform
+over as an example.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (6):
+      dt-bindings: dma: qcom,gpi: Retire passing the protocol ID
+      dmaengine: Make of_dma_request_slave_channel pass a cookie to of_xlate
+      dmaengine: qcom: gpi: Accept protocol ID hints
+      i2c: qcom-geni: Hint GENI protocol ID to GPI DMA
+      spi: geni-qcom: Hint GENI protocol ID to GPI DMA
+      arm64: dts: qcom: x1e80100: Remove GENI protocol ID from DMA cells
+
+ .../devicetree/bindings/dma/qcom,gpi.yaml          |   5 +-
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 198 ++++++++++-----------
+ drivers/dma/amba-pl08x.c                           |   3 +-
+ drivers/dma/apple-admac.c                          |   3 +-
+ drivers/dma/at_hdmac.c                             |   6 +-
+ drivers/dma/at_xdmac.c                             |   3 +-
+ drivers/dma/bcm2835-dma.c                          |   3 +-
+ drivers/dma/dma-jz4780.c                           |   3 +-
+ drivers/dma/dmaengine.c                            |  20 ++-
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c     |   3 +-
+ drivers/dma/dw/of.c                                |   3 +-
+ drivers/dma/ep93xx_dma.c                           |   6 +-
+ drivers/dma/fsl-edma-main.c                        |   6 +-
+ drivers/dma/img-mdc-dma.c                          |   3 +-
+ drivers/dma/imx-dma.c                              |   3 +-
+ drivers/dma/imx-sdma.c                             |   3 +-
+ drivers/dma/lgm/lgm-dma.c                          |   3 +-
+ drivers/dma/milbeaut-hdmac.c                       |   4 +-
+ drivers/dma/mmp_pdma.c                             |   3 +-
+ drivers/dma/mmp_tdma.c                             |   3 +-
+ drivers/dma/moxart-dma.c                           |   3 +-
+ drivers/dma/mxs-dma.c                              |   3 +-
+ drivers/dma/nbpfaxi.c                              |   3 +-
+ drivers/dma/of-dma.c                               |  18 +-
+ drivers/dma/owl-dma.c                              |   3 +-
+ drivers/dma/pl330.c                                |   3 +-
+ drivers/dma/pxa_dma.c                              |   3 +-
+ drivers/dma/qcom/bam_dma.c                         |   3 +-
+ drivers/dma/qcom/gpi.c                             |  16 +-
+ drivers/dma/qcom/qcom_adm.c                        |   3 +-
+ drivers/dma/sh/rcar-dmac.c                         |   3 +-
+ drivers/dma/sh/rz-dmac.c                           |   3 +-
+ drivers/dma/sh/usb-dmac.c                          |   3 +-
+ drivers/dma/st_fdma.c                              |   3 +-
+ drivers/dma/ste_dma40.c                            |   3 +-
+ drivers/dma/stm32/stm32-dma.c                      |   3 +-
+ drivers/dma/stm32/stm32-dma3.c                     |   4 +-
+ drivers/dma/stm32/stm32-mdma.c                     |   3 +-
+ drivers/dma/sun4i-dma.c                            |   3 +-
+ drivers/dma/sun6i-dma.c                            |   3 +-
+ drivers/dma/tegra186-gpc-dma.c                     |   3 +-
+ drivers/dma/tegra20-apb-dma.c                      |   3 +-
+ drivers/dma/tegra210-adma.c                        |   3 +-
+ drivers/dma/ti/cppi41.c                            |   3 +-
+ drivers/dma/ti/edma.c                              |   3 +-
+ drivers/dma/ti/k3-udma.c                           |   3 +-
+ drivers/dma/uniphier-xdmac.c                       |   3 +-
+ drivers/dma/xilinx/xilinx_dma.c                    |   3 +-
+ drivers/dma/xilinx/xilinx_dpdma.c                  |   3 +-
+ drivers/dma/xilinx/zynqmp_dma.c                    |   3 +-
+ drivers/i2c/busses/i2c-qcom-geni.c                 |   4 +-
+ drivers/spi/spi-geni-qcom.c                        |   4 +-
+ include/linux/dmaengine.h                          |   7 +
+ include/linux/of_dma.h                             |  16 +-
+ sound/soc/apple/mca.c                              |   2 +-
+ sound/soc/renesas/rcar/dma.c                       |   2 +-
+ 56 files changed, 261 insertions(+), 177 deletions(-)
+---
+base-commit: 79fb37f39b77bbf9a56304e9af843cd93a7a1916
+change-id: 20250714-topic-dma_genise_cookie-66dcb07f3fd9
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
