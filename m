@@ -1,442 +1,185 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011047.outbound.protection.outlook.com [52.101.70.47])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F14F1F1505;
-	Wed, 30 Jul 2025 18:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341361F1537;
+	Wed, 30 Jul 2025 20:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900702; cv=fail; b=UILvtjceEX0W5Ca0Shf0QPpEU7AcDYyde+2JXqj+HnQNnGCJbOWJ6pgaSQgyCsAZxaQd4cJvV9QyJT4pe0BB7nzU+m5goxisCO0vn+839haWk40dAjqY2RLr5rpV5CUbgRTYKFbYdKo7ErHkYf5JL6Rq7xYy27yDuETk43kWhyE=
+	t=1753906240; cv=fail; b=pFi0hHalHD+KwWpdCv4AadJo+BnwTOLt9XkJdtTlfBSf2tlilK1pRKR981FbmTKKasQG70qNx5TqatnhfNgRn3dQ+lu9YeNm5LaX10gKqacNnz1pziz4AE5lRGTcnZhKSKUbGrp/bknuI5Dff9VsICkWJvDGG7K7lXlJdD6p05g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900702; c=relaxed/simple;
-	bh=OxNlSVFbZfK5UHIhnmyT8DyqkfAypypsMOXO2WOJj8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=S1DsWhBfBskmUSN5O7rUlPZUHPwV83v13vSmgEuPwOXK3ISP9qkVlv+kpfuGmQKE3T0o4VRezlUB6GSVP3KdHMfTvPLdY9jc3t8rZaWsvX5SsJo1s95NkS0gXeMgi7nKcF3FCz/4u0npUH2IRr+dTEaj2nTrvwBLZXzYG/iEc+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OCQKvrzW; arc=fail smtp.client-ip=52.101.70.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1753906240; c=relaxed/simple;
+	bh=B9SKvoOoxOyG6mdcg5Sz2w4K4Q5GaACBKnybPzCpdrQ=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=awRb5nwD+YMv0C38Rx3depcU2C88PV0riB1ss8V3QgpWa1MH/we13tgDuzuGzSOT2tYiX+YqatY9b4vsGuo6nHzPG8D9s6TKlpmAnmLSEndvJMdiDUzWvPwGhGfWPFvtld17pS2Ae3CqaqDi+hXLvsoAvMuqyeWQN8uWjj/Gu9U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QUuP1wrw; arc=fail smtp.client-ip=40.107.243.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OCQKvrzW"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QUuP1wrw"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TIQuzhm4gNCNIFEmXfcqA8lXO8qbXD/V7mknBKWsYV7ENWfwTKmQHnPEWhC/j/YPumDJtgGbywAoBVYs+TrjUnwMw9kuOzwYos1iJtWZY/chp9vtp4XMdx8EENCrKnJLBglpSs4tmHmhuVD+g0nwDQbgsKdZj0yhmNUC0YLzhog/PhW7gvx3RrCwtidwtbv/Ay7EXbas/qAcplY25GedGVdt0jMXS/aav6QAgPeewi6NbNdjGnyzIS4egOHpmYqWpggdB1I7zR9yKgUPutBfC3kWUgOA0uLrmCdceyEe5/OCQIKJkc4BVirpjf1fUjEo/ZNlzu/4q23tM+4MBUpygA==
+ b=pvogfrzxDPvTaYxRtnvZlVCdjpBgk4QUznh0UVdh/DfzTjh+csautNi2E0Fb8/auquHLb+SC25dyIWAkdZ34EeB70Z/Dl3fL2Rrb2YtBp0vtrbcLSqnMpgPJ5XFjWMQEVBddshaupqeiULCMMi7GyOpRdz9QE0SL5bhmsVoARnypMkGTXcchuLhNl0NFbIqlWqDMKn08ZGhFWU87JtYEiQzmJ44g8B4h7ETiYs3vcHlKwX+BqARGoZVmTI5j9QWxPUQD1pDwnoFvnglwF2b6Se27WHUMWegGey8U4jrm5Q3zUNyrklIVVCD4a8bJePbyQM5Zs+iriVRThbfcD+QYXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ow4E2QxbxTPTx/+loy6vtXsS4kRIFkT5NJfeMcr6Ns4=;
- b=ff5aojeERQ4k/6/qdpHyocjf/XS1/wi09tjbOEhQcQWCi0BX/TiAu/73ZMpD2M16/Dj2ozY99r8zzikWfekqaSggeHqM7r7agZ0Me+oNh22rk6eplVdiEv/6cMcsYCnu9JLGyXSaCK+g45iqkY2zzDKLqZNAcca6rZqI4A2s4MltGmmZMGL5M1OFchs6wUZCzc7OEJMkKqX13ATu8BXNvym+QThAWIvdSevGUZm2jSOcNxNEopQHGbNVn6Di5g8p2tO0KAYSnGq8xx/fsPmZGW96Qt9YiLI+ZdupgJnhHDONtHka59nLNU5pOIW2e3N9kCglPZqWA3m9wYqL9Jb8vA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=7/RNhBtyFGyWZRS05H3MG4GrxM4cYn5lqc6z33+JWvo=;
+ b=Gk7a4LWAtfQ6fL08NZCCMFoYJIdulICpSqwNzW6wkn7OxSy2KRWn1uZPZ18Lsxg/kZwGUQVlcbvfZdtUjXepWmXhnn4vDrdC5LEvzGKXnYJKlX4xq1xKZ08KyGUQdekKdbfHNzW1uDAq+RW2Q85H6xwrSyBviv/j2UrJvKF86LgiIbcQjYwsqKcCBlYo+Y2/mcBZ9LBDqs3Yn/CcineiNwpzUhXlzRuMIQL39L3VfQcFDBrDJd9vy8ujBu+UVGTYC/bDu4d3gK+U6/vKMpfNxRYgmlxb7JH1jU84JO/G2YbmjErJePFtBw3Q1zxu9M0SnPIEsTIO7A2+6qnPalyDBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ow4E2QxbxTPTx/+loy6vtXsS4kRIFkT5NJfeMcr6Ns4=;
- b=OCQKvrzW5tTEZPiL4jhOgl/zxHUoqfqDUvKjCiosKqQi6SyWOejn72EnEhDWjPfb5BIKsLusPB5IBbmxyJ6gdJxWFUtxflI8l/qfX+Dxt/h88XRGjmBhbEVnTf3thviBEoBWtPbtXj23E4Y+bwbldalzXiD9bfFh3JnvfODl+dsa/W4iiXEUGXBIYNmqph1iHe0Lqu8T4HHqiQOAQMf+qIjdkqRG5SW7DagvtH06qwhKjlHMLhSrDdBkgCmPU65lrGcpc36NE2WHi/ZvbYC1FKRTwg86S0oSefNTJDY1HL0vnk5xI+7NfO1ZC9fMcoe5Xnjt7TM6wrBcZfdnfUYr+A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA1PR04MB10723.eurprd04.prod.outlook.com (2603:10a6:102:491::22) with
+ bh=7/RNhBtyFGyWZRS05H3MG4GrxM4cYn5lqc6z33+JWvo=;
+ b=QUuP1wrwBVXx6hniaOgBAssxO1QFudCT4n0y5e8Jbw8ndoktAP9JVBx+tb/T+Ev1UKSqCxG5whxLAJ4EaQeM5ymiIhUPPMeNhaoTKsGf3LG+u8G4vZ/Xvmyb5O/BFwwfjAbkMzCGj/bUTgn2+6vKP2OijVD5i8SO5iv3njnGU4SnsFa5DGfbXXXljoIkCHvMSjGw6/eRuak0z99IJCpHaGZrzYY+5kYTEovemzl4zb7ryfo8BwJPsqAJWEzLxFow1ymkUhLEGTyo27oVYDWErT+7A/ETlRzl5ebAzhA+ZGPOQVy6qDmBaYJhp2P5jpZdOF/u0HTmv9YOWM5F0RXvjQ==
+Received: from SJ0P220CA0008.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::17)
+ by CH2PR12MB4229.namprd12.prod.outlook.com (2603:10b6:610:a5::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Wed, 30 Jul
- 2025 18:38:16 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8989.011; Wed, 30 Jul 2025
- 18:38:16 +0000
-Date: Wed, 30 Jul 2025 14:37:54 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	=?iso-8859-1?Q?Am=E9lie?= Delaunay <amelie.delaunay@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linux-actions@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 2/6] dmaengine: Make of_dma_request_slave_channel
- pass a cookie to of_xlate
-Message-ID: <aIpmgpXME1BmThxU@lizhi-Precision-Tower-5810>
-References: <20250730-topic-dma_genise_cookie-v1-0-b505c1238f9f@oss.qualcomm.com>
- <20250730-topic-dma_genise_cookie-v1-2-b505c1238f9f@oss.qualcomm.com>
- <aIpKz495WI1SJTeB@lizhi-Precision-Tower-5810>
- <20250730180417.GC21430@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730180417.GC21430@pendragon.ideasonboard.com>
-X-ClientProxiedBy: SJ2PR07CA0009.namprd07.prod.outlook.com
- (2603:10b6:a03:505::6) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Wed, 30 Jul
+ 2025 20:10:35 +0000
+Received: from SJ5PEPF00000205.namprd05.prod.outlook.com
+ (2603:10b6:a03:41b:cafe::e6) by SJ0P220CA0008.outlook.office365.com
+ (2603:10b6:a03:41b::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Wed,
+ 30 Jul 2025 20:10:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF00000205.mail.protection.outlook.com (10.167.244.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.10 via Frontend Transport; Wed, 30 Jul 2025 20:10:35 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 30 Jul
+ 2025 13:10:14 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 30 Jul
+ 2025 13:10:11 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 30 Jul 2025 13:10:10 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 00/76] 6.6.101-rc1 review
+In-Reply-To: <20250730093226.854413920@linuxfoundation.org>
+References: <20250730093226.854413920@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <7f80ec7c-650b-419c-85d5-f61faad518d2@rnnvmail201.nvidia.com>
+Date: Wed, 30 Jul 2025 13:10:10 -0700
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10723:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e69cf81-b665-4cda-18ff-08ddcf983f4b
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000205:EE_|CH2PR12MB4229:EE_
+X-MS-Office365-Filtering-Correlation-Id: 623414af-47d0-4875-9269-08ddcfa524f3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|376014|52116014|366016|19092799006|1800799024|38350700014|41080700001;
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?xXuoMVdSP8ixNHwu/35qkXvlmxORnoCgPeNhosTIV8U7OtTvilbrSxTWAZGf?=
- =?us-ascii?Q?BgIJV/gj4VubQsvpFYP+lpOnvTqO5a8dTVwzvqlAydAZf2zrlwsYjUmgrimK?=
- =?us-ascii?Q?skP3g3+7mHBcsZ/5FVgsFlVFPKEd8qubheCqyqwEm6kCktR2DpwyU6ms1Trw?=
- =?us-ascii?Q?JdyXaCqUzGLG0kgYWZ5ilfcyU5HL5xaXotRAcPbAoIxCCd/c24rmbeed8bJD?=
- =?us-ascii?Q?uJXKn/CSPcUWRL4AswKtvXNze1C3lkOSFUO79Z6W4U2kyDIAN2YpgCGmdBi2?=
- =?us-ascii?Q?/uk+KTOyFEcon4Oa+tPiSksdTApCl/9SptjwHDFDV94rZnxgu3wQ5lYqOBbK?=
- =?us-ascii?Q?o0hqA4S3ivvTWCnHw41bywIZQX8JWRT5r1zttm6coInVEwtVPEz0TjlDNCJ+?=
- =?us-ascii?Q?RsFF4NTi7cRLvDBRRX1FSWJrbMYcfwvs91BqC0RPz/RKmeGPduVr0CQF6VYz?=
- =?us-ascii?Q?H6YFzXRwJm+sg9lCvVxnwGW9ie6oZJ7/aID2B9RKWFDttubWgCrmC0VSVQpv?=
- =?us-ascii?Q?MsHm9Wd3lPBczvJ8z4vwRhsd3WX+LzlDDNEPHYmiVvkt3fKFzDbcCPU820d/?=
- =?us-ascii?Q?Cm1R6zzixEBNWjoMCoFlKCZ7j38TtjFdr1VuW/ksg+rSflQUgMHzvfTRao81?=
- =?us-ascii?Q?lzbqjt+mu/HNiYlGFUC/reX4QKdIZyOkEUJzFuzDA70NakAUzXibHc3825hp?=
- =?us-ascii?Q?1mOi2cINDSvBlP/3VwUlwyB114NwJLSOGQaiTDNEUK3kFJEP3PADcbAsv8D/?=
- =?us-ascii?Q?MUu/oL8dbPspy6NeKjTGs0LK5FYImo4J80FHEet8bxHZ5yCHFPXWVTVy2JZ/?=
- =?us-ascii?Q?lkcwyp4k1MEuXXAHGmOPHwEp2SaA6GTZY0uGyqRC/JhTc1Evrbmf8F7L5OTb?=
- =?us-ascii?Q?Ke3y2JE71hLfashSpEvWn8vZ12XSDp92VA2o1gC5mdkiYO4jqlr++0CS1dUk?=
- =?us-ascii?Q?YsPvg/wDd5Y/FWyom/8z5OgQdvxI2nTW2ZkQlS2nRc2MnFyaLZQFqNbNhsas?=
- =?us-ascii?Q?FjmSrevcINAJ+fm9qO1Zx0Z1yikOClHvgtECdIz9Kmxjr+tNPp82yPg4u+EN?=
- =?us-ascii?Q?GtrvlKmScEv879GY/PH6Nv4YIXcHNJb4VWKE2prUPhc8Hu+KKSg4Shwr6xSE?=
- =?us-ascii?Q?NfJlHXp/p2vj6+g80jbZgnh5rMg/HX7zVsFst507VEAPaDSwj4/JHh00jwZv?=
- =?us-ascii?Q?V4GyQAYxPMSlDZ5+lohDEN2bQtRjxakxsoHZ8V2Sv9kPieMk8taKi7Th5gln?=
- =?us-ascii?Q?l4Bx85ZwqnyPzxzczbrLh27fp5CwiGK2VYjOdqlEAvRylDXyylxrx/5V8d+0?=
- =?us-ascii?Q?+/S6XXPyxDx+6LWWBilYKSRWun/Cl/S4U9Yg/2MZbJVZtZ8qXapFQS55jlSR?=
- =?us-ascii?Q?dPtGICPw/2IjGGtVRplOQretTtPf2qdUXgwmnTm+tS4+G8scjAtozKXV/jX5?=
- =?us-ascii?Q?6giSn1+BmsICrU5NYMcmLm/1fDMxK06ZrIHlL16R9/ezvhpdcMKBw/2TFUsW?=
- =?us-ascii?Q?9wwtsFW2VJ0tGfbh+gElHb/Bgcx8mR4qYwGo?=
+	=?utf-8?B?NktTMlpjVGd3VnQ3Tkp6cTV2U3AvdEZlMGlxWEpwd283dTFOTEZxNEozalVY?=
+ =?utf-8?B?UDZneTdEWDlnWUZ0UTdnRGlheUN0S3c0VDY1V09DMzBNK1JxUnpyUGgvMFVF?=
+ =?utf-8?B?OFdSMXZsNGNneUFDNmlTVndFT2lDb2FIZ1N0MkVZNjFKa2hCM3lIT0Z0bWpq?=
+ =?utf-8?B?bjM3bmVGaURUTmRyN21zTjJvSnFlRnNvdDVzcHZjVWh5Wk0zcU9iYUd6SDhP?=
+ =?utf-8?B?ekN5UXZ4UXJzUkp0T2oydkZTQklESm1kcmpxSkxYWXdwei8yL0YzZGJPcmhD?=
+ =?utf-8?B?Rlo2ZUpvdDJBTmU4OWU5bkQvRnhjMkFjdHpJdU1sM3FSRWZEd3FrUEhIS2tt?=
+ =?utf-8?B?dk4yMUd5anR1SDd3Kzh6K0xOcE9Oam41MGl1aTUya3Ewd2krYVVURElpZFZp?=
+ =?utf-8?B?Wm1ZbHEyRk1ZZ1ArUDVlYVlaQWlnaXJOTm5Pd29aREsrbG50S2dmWVM2NXQy?=
+ =?utf-8?B?bFpRS1NZRDNwbmN2MlBaMXZpRFZHZDg5YTJNZ2U3WjY5Q0ZvRUFPSUF1R0dn?=
+ =?utf-8?B?cnZCWmY5SmJ5dVZuYmFXRXR3cExHZThHeGJUN0FQcUNTdG0yMFBGRkg3YWlj?=
+ =?utf-8?B?dERGSjErckV1UnVHQVVJZFI1UmhLU0R2ZDU0RkxEZ2JuQ3ZxWFpSMlA1bDVN?=
+ =?utf-8?B?SysreGh0UllCNjRSTjhoUDRQYkpITUErTzZoREhTUG53T0ZYeDFjSHZua21j?=
+ =?utf-8?B?TmFyaWNSTG5qZUEzYkNEOGd5VE1oSlhOMzM3T2Uya1BOT0Nhdy9qN3F6TU54?=
+ =?utf-8?B?b0orNnQxN0ZsSEV2UUJLT1hNeW9VdW5xQ25sVjBJKzJFMXc0dWZvbGVDWW1N?=
+ =?utf-8?B?Q1N1L0RZNG4rYzRCSXo3S3NvN2hjRjRZVlNjOU8rZ3JGSmVqTXZlUlpuOGFE?=
+ =?utf-8?B?SWgybnpxTENFZnRXYURkL2N1YTcwN01TRTdIUENpZVEwOGliRm0vUnNNcDBD?=
+ =?utf-8?B?YXBCQU9tUXRSYjN1anMydUFTS3ZoMjZscnQ2RmVZOXczVnBDRW1xMURSY3FC?=
+ =?utf-8?B?TDhtTHpEeXBDb3dwZ0ZyOC9CeHkzZFppOWRWRGNpZk9VK3VEWUU0aVdMWDMz?=
+ =?utf-8?B?TXJxVk1kY1hLRVc3dS9ORWJMcXdMTUl3MlNsQkdCOUJkc2xpRHZPVzE2dzRF?=
+ =?utf-8?B?NW1LaXhmNWpBMld2M0MwMjlzdFVTN3pPZC9ja2trbllOenpPUUI0NFJac3NB?=
+ =?utf-8?B?dlhvVkIrdlBFaHNXcTBaT2duQkpobHp6SjhTRFM5NGRlTVBFdnE0UkhaNlBj?=
+ =?utf-8?B?dmtMYi9sZzBWSnlwWFVuc0JlSlB0RWswS2R0SmNqQ0tEdDg2NGFaS2lRSUdx?=
+ =?utf-8?B?UHdZb1FkaGlSZVFRb0p4bWJMRGYxeEpKdis2TmVFV3NNNFpxM3FmbU5JZWta?=
+ =?utf-8?B?ZWJUcWRIWW9pUHpZYjFpVWRZbU1BdFkraW5iREVaTUZxME1WdG1YYjZzaUpG?=
+ =?utf-8?B?ZzdBcWVXQXhQVU1NbkUxb0JHVFNITldvOUg4NWYxbUh3R3hwR01uUVFJWFRn?=
+ =?utf-8?B?QXdDdEV4WkpMZ1YwaDk1ZnpyN242M25hK0dYRFMrYmljQVpnM3I0b0tLK2Y2?=
+ =?utf-8?B?OXNXaHNpdW9nK2c2QkFrRVd0eVA1dlBPbkN6WDJGR1EyYnNuaVREMUlDWTE0?=
+ =?utf-8?B?U3ZSSkE4ejRPUWovYnJ3VlhYVEZNRGNZK242VWhldW1zemZzSjBLVXFVOC9J?=
+ =?utf-8?B?UkIwdGZBRFJ3bGE3VmVuUTNGQmJlZEt2Y2haU3dsVnhreG53TU4xSUF5aEcr?=
+ =?utf-8?B?WE85OTlUT0R5YUdnbEFWdU03Qm55Qi96TlVKU1FDTFo5a04zdk9FTUJrVC9w?=
+ =?utf-8?B?bFJxL21GbUdPN1lqMC9hZzFsa2toeUZDL01IbTBwMTRtOVVXbXlITU1zM3h5?=
+ =?utf-8?B?VGVleUFmKy9NajkrQ3pQZjIxQ2NYdnp0R2RTZk9BZDVQelpzL0VKbEVIU3M4?=
+ =?utf-8?B?dHVWd0pwWStaeHVaV0NzV1B1M0ZpTTB1Slh5d1EwK1M3eUxtZ0FnNVVLTnp1?=
+ =?utf-8?B?MkMvM3g0R3kyUTRhMXJQVS85ZTFzNE50U3VVK0JtT1RyVWdKQlpIUGNWWjhM?=
+ =?utf-8?B?ZExLcnVSeVVwVTZtR3JZa2J3eitZUU5tRlcwQT09?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(19092799006)(1800799024)(38350700014)(41080700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?erfhfvzrvw1TaC9WAxiw09hnkl301cjc/Y4Au/lINap3xVSqVFn+pQMTMyVu?=
- =?us-ascii?Q?3eNDRRnq01hNc9BC/KrEmCGePQFmh7R3vqurottySAhRzLVBVrwZB0WbRxmA?=
- =?us-ascii?Q?6DNYvoN8hoBTbz0D4CwM3lRtpeJ2YEfOJECVzfAQ3pwZlpZHL9lSYx6QVKeR?=
- =?us-ascii?Q?kQbmmuNP5P4IigTLQOHeMXKa7J0m1VEi2kTjHQHqKETwHmNELoT46gC8O5EJ?=
- =?us-ascii?Q?ZolZo8D+cqcpJ83z8jLkofcTdI+N9whnlxoHBK9DCGy42xK1REJlzy04MFTZ?=
- =?us-ascii?Q?basEm4RLMHKMn6XCZFS3ZoIltViGB3/FJ/KI4FWwHuQeVEDjEmDMnVGIt92E?=
- =?us-ascii?Q?DNW0jKtrmsCuF9CQjHGeo2VRSYA/F1Hd75/6XhAmcYVORobBO9rMSioUDmxk?=
- =?us-ascii?Q?gYcDTHwaVCOJz7Zx77rgfTcoHhqti6q32FMcM+yt17K5DuoJTkk7sphoOBg9?=
- =?us-ascii?Q?X+q7KHd/RYwXYdau9ggDomrD55+uddPOj8uHt9cbXNutaP8eZEP7BJ6WZqu2?=
- =?us-ascii?Q?Fj6gXmwSnUly4BhJ8rkuuLVkdIlmliwcVLBVJwApWOMjCyFFI99eeHT7kJc/?=
- =?us-ascii?Q?PQbEbyH3qLVu8ul1xmL56UsGG/UdbTSQK9BQHNyfHpyuw39VFVx53ycUA9D2?=
- =?us-ascii?Q?jj0+Vmb1xQMjBgruT1IQl0sGXRHIxmIlC3GuhDWA6w8XfUsZWb/+dSuCbb29?=
- =?us-ascii?Q?87C3+Z81GdoPXJsu6/cXT7V4lEEQbOFx7dFFyMjGHUh/L9Ej2T+5gUbRIwUC?=
- =?us-ascii?Q?2PN6Cc/lQq3AtsVrPrwll76VSzjxPapreYgQwHx+19PUd32gaaAfLtfO13xW?=
- =?us-ascii?Q?sa1E88DYwKTH1dr39hFf2WRywo1A+JCN5veAczHSsaXkGl6xi+7HYPOlz7xx?=
- =?us-ascii?Q?UhkftVIttekJvJpIhPy35yw8Fi9XrtC3sR92ytrn51fvRz9eQuUKwtveHV8/?=
- =?us-ascii?Q?E3EbwkW4e9qkzlC/5CXF+p/qGV2cFN6IEt+Z27G8fm4AgyDHN7J2hW8nj/pP?=
- =?us-ascii?Q?ze1naBXCDwwdoAcNfY1LuuiYNszsmSklUHvGkAD4kqRuEqQDXSl6fbE6bffx?=
- =?us-ascii?Q?fXgOD6RwwTJnDNvS0IoCL7NWN2sDrs8KXDKpNM8OfFgtLs2MvRgv3YER8ors?=
- =?us-ascii?Q?HJr1Dx8i3X2iJZPFMrWPGFOAZLyxU06pCNxpPqR70gibR3fp9X8cgTeko24O?=
- =?us-ascii?Q?BjRwPQ92LV5ZT/WTU0f+YQOc2eHHv6CtQhJ22AKtPRixqHUb+jK7KkiJ01pw?=
- =?us-ascii?Q?sHv2Pqp8W7Pgy/rT76UZ5Ajq83ZHvEO6isCT0tt0wA8wpBx+ZS7h9mhrbunq?=
- =?us-ascii?Q?KGeXrcpVEcTcx0SDjgOlozXJOXbvIZRmabe1RLfBX3x/YsFnoqRGVR8UvLsG?=
- =?us-ascii?Q?i6a/voQTkxZeVQhghzT//LtQe6TO6TEmEbEAz69+IY8Z84aBZ+16yWxPvVtr?=
- =?us-ascii?Q?PE7gLJG+2cg9FQdLB48Abf4vx7N53+XAV4X8+PouyIgd9TGwHY3+WwDF7mVx?=
- =?us-ascii?Q?a/RS2n5LPO6u13A+g3wf0l+RZPBlwW2vuEkD4YVOGWjnQXyyVtyQKdB004JK?=
- =?us-ascii?Q?XUXGq9M0U1IkggFowxfNB9clRmLVJTRmxggHGBip?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e69cf81-b665-4cda-18ff-08ddcf983f4b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 18:38:16.2735
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 20:10:35.2320
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T5jLR84cUhbLtriAiKz1D0Osymb8O4Q5auaBHM35G9jyb4NqQULBWyzJQdvyVXXWYnBqHOtmOGj+z2lxjY250g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10723
+X-MS-Exchange-CrossTenant-Network-Message-Id: 623414af-47d0-4875-9269-08ddcfa524f3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000205.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4229
 
-On Wed, Jul 30, 2025 at 09:04:17PM +0300, Laurent Pinchart wrote:
-> On Wed, Jul 30, 2025 at 12:39:43PM -0400, Frank Li wrote:
-> > On Wed, Jul 30, 2025 at 11:33:29AM +0200, Konrad Dybcio wrote:
-> > > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > >
-> > > The DMA subsystem attempts to make it theoretically possible to pair
-> > > any DMA block with any user. While that's convenient from a
-> > > codebase sanity perspective, some blocks are more intertwined.
-> > >
-> > > One such case is the Qualcomm GENI, where each wrapper contains a
-> > > number of Serial Engine instances, each one of which can be programmed
-> > > to support a different protocol (such as I2C, I3C, SPI, UART, etc.).
-> > >
-> > > The GPI DMA it's designed together with, needs to receive the ID of the
-> > > protocol that's in use, to adjust its behavior accordingly. Currently,
-> > > that's done through passing that ID through device tree, with each
-> > > Serial Engine expressed NUM_PROTOCOL times, resulting in terrible
-> > > dt-bindings that are full of useless copypasta.
-> > >
-> > > In a step to cut down on that, let the DMA user give the engine driver
-> > > a hint at request time.
-> > >
-> > > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > > ---
-> > >  drivers/dma/amba-pl08x.c                       |  3 ++-
-> > >  drivers/dma/apple-admac.c                      |  3 ++-
-> > >  drivers/dma/at_hdmac.c                         |  6 ++++--
-> > >  drivers/dma/at_xdmac.c                         |  3 ++-
-> > >  drivers/dma/bcm2835-dma.c                      |  3 ++-
-> > >  drivers/dma/dma-jz4780.c                       |  3 ++-
-> > >  drivers/dma/dmaengine.c                        | 20 +++++++++++++++++---
-> > >  drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c |  3 ++-
-> > >  drivers/dma/dw/of.c                            |  3 ++-
-> > >  drivers/dma/ep93xx_dma.c                       |  6 ++++--
-> > >  drivers/dma/fsl-edma-main.c                    |  6 ++++--
-> > >  drivers/dma/img-mdc-dma.c                      |  3 ++-
-> > >  drivers/dma/imx-dma.c                          |  3 ++-
-> > >  drivers/dma/imx-sdma.c                         |  3 ++-
-> > >  drivers/dma/lgm/lgm-dma.c                      |  3 ++-
-> > >  drivers/dma/milbeaut-hdmac.c                   |  4 +++-
-> > >  drivers/dma/mmp_pdma.c                         |  3 ++-
-> > >  drivers/dma/mmp_tdma.c                         |  3 ++-
-> > >  drivers/dma/moxart-dma.c                       |  3 ++-
-> > >  drivers/dma/mxs-dma.c                          |  3 ++-
-> > >  drivers/dma/nbpfaxi.c                          |  3 ++-
-> > >  drivers/dma/of-dma.c                           | 18 +++++++++++-------
-> > >  drivers/dma/owl-dma.c                          |  3 ++-
-> > >  drivers/dma/pl330.c                            |  3 ++-
-> > >  drivers/dma/pxa_dma.c                          |  3 ++-
-> > >  drivers/dma/qcom/bam_dma.c                     |  3 ++-
-> > >  drivers/dma/qcom/gpi.c                         |  3 ++-
-> > >  drivers/dma/qcom/qcom_adm.c                    |  3 ++-
-> > >  drivers/dma/sh/rcar-dmac.c                     |  3 ++-
-> > >  drivers/dma/sh/rz-dmac.c                       |  3 ++-
-> > >  drivers/dma/sh/usb-dmac.c                      |  3 ++-
-> > >  drivers/dma/st_fdma.c                          |  3 ++-
-> > >  drivers/dma/ste_dma40.c                        |  3 ++-
-> > >  drivers/dma/stm32/stm32-dma.c                  |  3 ++-
-> > >  drivers/dma/stm32/stm32-dma3.c                 |  4 +++-
-> > >  drivers/dma/stm32/stm32-mdma.c                 |  3 ++-
-> > >  drivers/dma/sun4i-dma.c                        |  3 ++-
-> > >  drivers/dma/sun6i-dma.c                        |  3 ++-
-> > >  drivers/dma/tegra186-gpc-dma.c                 |  3 ++-
-> > >  drivers/dma/tegra20-apb-dma.c                  |  3 ++-
-> > >  drivers/dma/tegra210-adma.c                    |  3 ++-
-> > >  drivers/dma/ti/cppi41.c                        |  3 ++-
-> > >  drivers/dma/ti/edma.c                          |  3 ++-
-> > >  drivers/dma/ti/k3-udma.c                       |  3 ++-
-> > >  drivers/dma/uniphier-xdmac.c                   |  3 ++-
-> > >  drivers/dma/xilinx/xilinx_dma.c                |  3 ++-
-> > >  drivers/dma/xilinx/xilinx_dpdma.c              |  3 ++-
-> > >  drivers/dma/xilinx/zynqmp_dma.c                |  3 ++-
-> > >  include/linux/dmaengine.h                      |  7 +++++++
-> > >  include/linux/of_dma.h                         | 16 +++++++++-------
-> > >  sound/soc/apple/mca.c                          |  2 +-
-> > >  sound/soc/renesas/rcar/dma.c                   |  2 +-
-> > >  52 files changed, 146 insertions(+), 68 deletions(-)
-> > >
-> > > diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-> >
-> > ...
-> >
-> > >  						const char *name)
-> > >  {
-> > > diff --git a/include/linux/of_dma.h b/include/linux/of_dma.h
-> > > index fd706cdf255c61c82ce30ef9a2c44930bef34bc8..9f9bc4207b85d48d73c25aad4b362e7c84c01756 100644
-> > > --- a/include/linux/of_dma.h
-> > > +++ b/include/linux/of_dma.h
-> > > @@ -19,7 +19,7 @@ struct of_dma {
-> > >  	struct list_head	of_dma_controllers;
-> > >  	struct device_node	*of_node;
-> > >  	struct dma_chan		*(*of_dma_xlate)
-> > > -				(struct of_phandle_args *, struct of_dma *);
-> > > +				(struct of_phandle_args *, struct of_dma *, void *);
-> >
-> > I suggest pass down more informaiton, like client's dev point. So we can
-> > auto create device link between client's dev and dma chan's device.
->
-> Is .of_dma_xlate() really the right place to do that ? If you want to
-> create a device link for PM reasons, isn't it better created when the
-> channel is requested ? It should also be removed when the channel is
-> freed.
+On Wed, 30 Jul 2025 11:34:53 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.101 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I remember just need record client device pointer here.
+All tests passing for Tegra ...
 
->
-> >
-> > DMA Engineer device
-> >    DMA chan device
-> >        consumer clients' device.
-> >
-> > If consumer device runtime pm suspend can auto trigger DMA chan's device's
-> > runtime pm function.
-> >
-> > It will simplifly DMA engine's run time pm manage. Currently many DMA run
-> > time pm implement as, runtime_pm_get() when alloc and runtime_pm_put() at
-> > free channel.  But many devices request dma channel at probe, which make
-> > dma engine work at always 'on' state.
-> >
-> > But ideally, dma chan should be resume only when it is used to transfer.
->
-> This is exactly what I was going to mention after reading the last
-> paragraph. Is there anything that prevents a DMA engine driver to
-> perform a rutime PM get() when a transfer is submitted
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    120 tests:	120 pass, 0 fail
 
-DMA description is a queue, It is hard to track each descriptor submit and
-finished. espcially cycle buffer case.
+Linux version:	6.6.101-rc1-g1a25720a319a
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-And according to dma engine API defination, submit a descriptor not
-neccessary to turn on clock, maybe just pure software operation, such as
-enqueue it to a software list.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Many driver call dmaengine_submit() in irq context,  submit new descriptor
-when previous descriptor finished. runtime_pm_get() can NOT be called in
-atomic context.
-
-And some driver submit many descripor advance. Only issue_transfer() is
-actually trigger hardware to start transfer.
-
-Some client use cycle descripor, such audio devices.  Some audio devices
-have not free descriptor at their run time suspend function, just disable
-audio devices's clocks.  Audio devices run time suspend, which means no
-one use this dma channel, dma channel can auto suspend if built device link
-between audio device and dma chan devices.
-
-Some DMA client have not devices, such as memory to memory. for this kind
-case, it need keep chan always on.
-
-issue_transfer() can be call in atomic context. but trigger hardware transfer
-need clock and runtime_pm_get() can't be called in atomic context.
-
-Most case issue_transfer() is call in irq handle, which means device should
-already be in runtime resume statue.  DMA engine can safely access their
-register if using device link.
-
-Frank
-
-> and a put() when
-> it completes ? (Logically speaking, the actual implementation would
-> likely be a bit different in drivers, but the result would be similar.)
->
-> > >  	void			*(*of_dma_route_allocate)
-> > >  				(struct of_phandle_args *, struct of_dma *);
-> > >  	struct dma_router	*dma_router;
-> > > @@ -34,7 +34,7 @@ struct of_dma_filter_info {
-> > >  #ifdef CONFIG_DMA_OF
-> > >  extern int of_dma_controller_register(struct device_node *np,
-> > >  		struct dma_chan *(*of_dma_xlate)
-> > > -		(struct of_phandle_args *, struct of_dma *),
-> > > +		(struct of_phandle_args *, struct of_dma *, void *),
-> > >  		void *data);
-> > >  extern void of_dma_controller_free(struct device_node *np);
-> > >
-> > > @@ -45,16 +45,17 @@ extern int of_dma_router_register(struct device_node *np,
-> > >  #define of_dma_router_free of_dma_controller_free
-> > >
-> > >  extern struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
-> > > -						     const char *name);
-> > > +						     const char *name,
-> > > +						     void *data);
-> > >  extern struct dma_chan *of_dma_simple_xlate(struct of_phandle_args *dma_spec,
-> > > -		struct of_dma *ofdma);
-> > > +		struct of_dma *ofdma, void *data);
-> > >  extern struct dma_chan *of_dma_xlate_by_chan_id(struct of_phandle_args *dma_spec,
-> > > -		struct of_dma *ofdma);
-> > > +		struct of_dma *ofdma, void *data);
-> > >
-> > >  #else
-> > >  static inline int of_dma_controller_register(struct device_node *np,
-> > >  		struct dma_chan *(*of_dma_xlate)
-> > > -		(struct of_phandle_args *, struct of_dma *),
-> > > +		(struct of_phandle_args *, struct of_dma *, void *),
-> > >  		void *data)
-> > >  {
-> > >  	return -ENODEV;
-> > > @@ -75,7 +76,8 @@ static inline int of_dma_router_register(struct device_node *np,
-> > >  #define of_dma_router_free of_dma_controller_free
-> > >
-> > >  static inline struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
-> > > -						     const char *name)
-> > > +							    const char *name,
-> > > +							    void *data)
-> > >  {
-> > >  	return ERR_PTR(-ENODEV);
-> > >  }
-> > > diff --git a/sound/soc/apple/mca.c b/sound/soc/apple/mca.c
-> > > index 5dd24ab90d0f052bb48f451cf009dc2e9128014d..43d48e4ac8161ee9955120fe64f7b911bfdfe1ca 100644
-> > > --- a/sound/soc/apple/mca.c
-> > > +++ b/sound/soc/apple/mca.c
-> > > @@ -926,7 +926,7 @@ static struct dma_chan *mca_request_dma_channel(struct mca_cluster *cl, unsigned
-> > >  	char *name = devm_kasprintf(cl->host->dev, GFP_KERNEL,
-> > >  				    is_tx ? "tx%da" : "rx%db", cl->no);
-> > >  #endif
-> > > -	return of_dma_request_slave_channel(cl->host->dev->of_node, name);
-> > > +	return of_dma_request_slave_channel(cl->host->dev->of_node, name, NULL);
-> > >
-> > >  }
-> > >
-> > > diff --git a/sound/soc/renesas/rcar/dma.c b/sound/soc/renesas/rcar/dma.c
-> > > index 2035ce06fe4c4aeaa8620d817910a5319732fa58..dcbff2fc61a0472adea226371016a128563b3cd0 100644
-> > > --- a/sound/soc/renesas/rcar/dma.c
-> > > +++ b/sound/soc/renesas/rcar/dma.c
-> > > @@ -204,7 +204,7 @@ struct dma_chan *rsnd_dma_request_channel(struct device_node *of_node, char *nam
-> > >  		}
-> > >
-> > >  		if (i == rsnd_mod_id_raw(mod) && (!chan))
-> > > -			chan = of_dma_request_slave_channel(np, x);
-> > > +			chan = of_dma_request_slave_channel(np, x, NULL);
-> > >  		i++;
-> > >  	}
-> > >
->
-> --
-> Regards,
->
-> Laurent Pinchart
+Jon
