@@ -1,151 +1,139 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CC12110E;
-	Thu, 31 Jul 2025 21:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA57262FDE;
+	Thu, 31 Jul 2025 21:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753997792; cv=none; b=lANo3bztOZvgaoVAXc34nms1rqWRBo9cWOZTRdaG8w1rMNW//wLLiZwzxV5uEOSClxZoOnB8hQlwZObRJDzXre9pMbhd/9XP8U1QTo9OtHLeaGUlKLNFaB7BTJ9w/pmkFbr6o+L0vUMA2Y6v1rYFOX1LyT6l4iFrWxwGUlZGQRI=
+	t=1753997884; cv=none; b=j16228zU4IieiIu4EZdFh+OKoZnGl47GYM+8JkSigXD/kBxRIuzvAS607x7q1Z64u1PiViJowIiNKH7utQg0G4Hua21HS/FrER8AUmLySxQCovCWo3jCWzFLOC+xw4DnJ47MlWJxrlO+pBJFlOO0yoyWo+k+2whlhiye9GpaFCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753997792; c=relaxed/simple;
-	bh=jYZaaLLhQJOzhRa9jxsL/R+vLcUjY54sdHto+cPAk0s=;
+	s=arc-20240116; t=1753997884; c=relaxed/simple;
+	bh=fxQhyH81gMDusUgkzNvGxXbmdOqw1108QIrqJNCo7tc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lNuuaOMsu9+LcDL8N5lrw1I0MJONI4whytbcECIj25iPZRGMlscj/Fb0icTH51kz7OJLlMMCxu2Zh9cFLyKmN9KRCXKkbWnX4yZegB1NFaGw47GNm0GYcwfWhOPpkQy56EOvi7rjaAUnBLr2msFmDBfVCcveAxuQxUZ45zReIjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mke8HT1Y; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=j0ooG6Lec6X7q3zRQoOZki5SnD42AJErnE9+UbqnTt7u9ZPiwVP7eUSHdosm0KKXlbPY62KnJH2rEVJomtpo34UHbTr6nFUSlq0CuE2LrGzrXIA14zd4swjkJKX1VJdNYP9qAtVyMwl1Y1sjpfQpvMmddG7AwZz+HIN37ZybyyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+dUY7r/; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mke8HT1Y"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553d771435fso1453444e87.3;
-        Thu, 31 Jul 2025 14:36:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+dUY7r/"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33216091f46so1873261fa.3;
+        Thu, 31 Jul 2025 14:38:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753997789; x=1754602589; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753997881; x=1754602681; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FrvaokmJFjtrt8aO0z9fEjiF8NzdgfTwRbQs48SsHeA=;
-        b=Mke8HT1YuL0seKGt88eXqA7Dy4dd/iyNOoJ46U621sAggoZ2ohmbXylsVMieMVAvDw
-         Qq9yX5O4cg5P8TaIMxKzhWfVLCsfVqSvuxHf2ezu6OizTbit4fNUxndSJVKbPyMFHQf+
-         wwWPYqH88k9Mb80e7XQUNPJTxMDcu99wCN3aeb2sPToUftG68NyJL47XCvwXDp+A7+sP
-         WqnLMNVRlOt69wCCNHfzRO0V8d46v35HbhMvwYpPOoWKtVIjMwr2wVCFvUbqCMloCyiF
-         70oBQHPF6Zd3LUFxjyijLaJHK2xkXf7c7+ASxlSk/hUKk0bbq0x2NHYJofjmXKAdB97Q
-         HYCw==
+        bh=fxQhyH81gMDusUgkzNvGxXbmdOqw1108QIrqJNCo7tc=;
+        b=F+dUY7r/B6FWiiPJpdmymqStWIvTARsc0s07aU7XZZwzzAJvG5U02Mb8G8ngtzdTKj
+         sNxwbqhONvixKcqwBCYpcO/q8teEgtV14NYQt9DtQG3pQn58LCJJJscyFUdNHk51XN5E
+         V/n9sYCdGhuYH2VblCze2baZHKO2hJ7bwDnP6UPWtZGZ/w5agQKUtV4HD2wRMCARX15u
+         PkvT2OGdFVqd9TeFOFDDDfZTJt+gaVubKpm6N6TUAuRwlU7NKg7jm81ZuAnZD4pQf3FK
+         mVynRb3WJywUAfaTCGCV9NcD500sltIrviTPI53YTlQVz7VMwJMYIUg0ADrrmsC2ujpJ
+         6WQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753997789; x=1754602589;
+        d=1e100.net; s=20230601; t=1753997881; x=1754602681;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FrvaokmJFjtrt8aO0z9fEjiF8NzdgfTwRbQs48SsHeA=;
-        b=lvCAUr8ERisALydjca9Y+NF7iB7JA3HnOQp2NjW/jCZSDf4q3B4kvLnSWqrvrzHnxm
-         s79hiwQNIXIe+IWTj01CSLyWnzF4L++N3zpiixXYSQWefypaexnXn6OOsxQQT+HlFKzt
-         JHCc7HedQ2SoTKbMDZOFjPt0iykr4reEYfJ/MeUeLPYbCHz40wf28KHc5Lr2R+opS6N+
-         IArZSJvEsBlTekeV9WUYrMjBCFZfxpBA22QahmUCvz8agNEcXMjXvAIIJxDn24Wgi/cx
-         2nEOoqbapna5vsvAOofNvCgqDU4+fewm9IuM1/QSlt35B7vhgXrz682w/9MQTJFLBRrI
-         W96g==
-X-Forwarded-Encrypted: i=1; AJvYcCVTD2+tRnJU2TbXa3rNH4dEqjvepEf5FPNu6I3zbywg7QDH3SjiYz/karieLPSKtJuQDmdRx+QjGGVJ@vger.kernel.org, AJvYcCW4zRN9nCt3wkg5k/f0dTDheVbiuq5kwj+xstlczbRD/qWlfY597U3oQK7grXy1H1bzRgEHPNXP+SFU6J0A@vger.kernel.org, AJvYcCX5ZUBUsNo53U+MShl/C9nW6cipXFk/8QV8Et9wC66FN4fCsm0Pw3h0NF3+SlTKdjgCemUGA1OAfod8qjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiJwFiORLMb4RK7u3J3JwkDLz4FSMOuuUpnKQ/71YbndWvLGOn
-	08QWMhjp1k5YoEMCEKZYQ0tWOoRhVzjQ5qAAXTjDLaRG6TXvQG7B85Pp7DLg6tV/8fK7w6x+Mkz
-	ZawYg9AI1RzLNY7AtHkGqdmbLeo0hARij4uGbxu4=
-X-Gm-Gg: ASbGncvUQEphcyQLug+BDWa3qzqud7DyXEMzc1qbXs0kP3hNeMAXPYDa12ll4D/xoOR
-	M0YVTNRakV2LECX3J7ug19q/YjXjw24paGRIR1s3sZ3eTXGo9GAGWDDtzHro5h7Hxc9QeiUd0rV
-	U180RTMNq016NfqL7pL31osRa7pnepVxK9eTSWZKJHCQNk31ZERgJTppZkQhdEzH4Ax2L+0VdIB
-	Zcl2mw=
-X-Google-Smtp-Source: AGHT+IE4gWHGrDzM+gIuepWweGiJ4ZDUm9b2AlwwsTNYUCehjfNOSMm8AGQeadwx1rgMYmqvFw3rXM+c2FL3U5yCxYM=
-X-Received: by 2002:a05:6512:3f22:b0:55b:8849:425d with SMTP id
- 2adb3069b0e04-55b884943ddmr1512564e87.38.1753997788977; Thu, 31 Jul 2025
- 14:36:28 -0700 (PDT)
+        bh=fxQhyH81gMDusUgkzNvGxXbmdOqw1108QIrqJNCo7tc=;
+        b=RSOS4Lz1o6ommVe58Du06NvFHLmBuW4L4hmUrQpMQK8XQT+rAih5QrzlZUzEKMTdt/
+         G0weZnitEWiUSZZEwc52dAmPl9g0Po/dYU/Sz/6jKaQ1y/HxB5+Xto8l2/R86/P70CWg
+         uxjjVlctYpq6TOLkrblc0lIYMHlHwMdAbOcquVjwK+rw78qFC/SLr6ekcvsR9fUpEr5Z
+         jKcbs1AlHkTHDkAmvTj4LL7qcU9mEFB8wkHsHWkm6NXXNtcliWkTnSU5sa34C0218ZIz
+         G0QUJfKIKhh2oyKDFX5oYDcGLX0Wj8wT/ajTD/5ohLKyvyGR8SZiI25zw0uQCCZPznKS
+         9FhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE9peoNYG0ChHZigmTyhd+87d0/FYr5pFEio5k9oNcgmRicAKwrVPCC1lkgr44CWq9M4QOwWPDSgGkCwA=@vger.kernel.org, AJvYcCUPszLxvcqs6zVSL5bPvx+T5+KWW3la0Ynxz0gFdoa3ypTASH3CcNgLv6YKW/9LOeim25gm+0IWWf/T@vger.kernel.org, AJvYcCWJ52QQQI371pCn6lPzU4OHmCTJYfsgPnB6IAoyCqgqnzvm284GjzsHHxk/kohk+jooGPFBzoz3BpX9pHhH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvUX/9iKQl1UzcwVP/AEkaeb8J2HFj9Nn+RX+oe7jdK5jIx0Y6
+	kTd8uVOB7wWXBf8+CxqOb3MuqLNDRwaYhxDZCfNcDtaJ991rBaRhLOIncJZNXa+F9+VU6nd8EX3
+	gxCkq3ynSftxfyGvpJv48X+08cze4yz/9s0p3/E0=
+X-Gm-Gg: ASbGncsd6REK/RQOVvtPtsJqALSUypIXuvGDFLRjAXe6Gn1roVPZWii3Bpr7ObPyWMy
+	uQLWuWd1FYIDdHyueSruyZkCESl6/v2LmFkh5+/GFikonFV7QVS4woVHB1tCgqEAivTI2sQhvs3
+	oAOkH0jIoxfw+cPhD1Id0VJEFDvsAgenfWS65v7oOYmQhzJyfnXCZWmjHjXc/Ml2J4wcwejY8ql
+	6d3rCs=
+X-Google-Smtp-Source: AGHT+IEJCT2qxDgw3SpRtOydXhP4DiKpGRWhxMHsHHLZ9RzOEqJLVTyJVvXMGxwl/u4CxLBc6c8dDaMh/+lNPWCy5wY=
+X-Received: by 2002:a2e:a593:0:b0:32a:6aa0:2173 with SMTP id
+ 38308e7fff4ca-33224bbead1mr30607341fa.20.1753997880741; Thu, 31 Jul 2025
+ 14:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
- <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
- <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com> <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
-In-Reply-To: <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
+References: <20250526-p3450-mts-bug-v1-1-78500613f02c@gmail.com>
+ <CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8Jg_3itwQ@mail.gmail.com>
+ <nuicekbfdgjbfudtlul74ifsqckfg6itybb76bkzuaxfcp5ve5@yevlttgtobxy>
+ <CABr+WTnn2qOXEMCiRDywySAxn0UeKAcx5XOJNpn731tXxbCPDQ@mail.gmail.com>
+ <CALHNRZ_T_-FDOhLsjr7Vm3V0ekKkLCtv+Lt0x07133Cq+62cfQ@mail.gmail.com> <CALHNRZ-133F5-AdqLdnyXac3tFRir2+zamUXaSamUiw14aWwVQ@mail.gmail.com>
+In-Reply-To: <CALHNRZ-133F5-AdqLdnyXac3tFRir2+zamUXaSamUiw14aWwVQ@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 31 Jul 2025 16:36:17 -0500
-X-Gm-Features: Ac12FXxq9I_G8y-hwyd40-4DJctpWI_xVFmG2sw5MjV0LHTMkgtYBDm4xwEJz3I
-Message-ID: <CALHNRZ-HTFz38xZFsbpG6C3r_xDQTLNOZWPX21TzNPaLyxf6Xw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+Date: Thu, 31 Jul 2025 16:37:46 -0500
+X-Gm-Features: Ac12FXxrizWOPdtFFaCCT26YQOnvoCLA-GZ1xPWytkCST3pYZOBHPx2vG4KdIP4
+Message-ID: <CALHNRZ_6Kf3wGkSY7_Sb9UpFX0qnrPEvKcvMxdRk2dNjj=gxPw@mail.gmail.com>
+Subject: Re: [PATCH RFC] arm64: tegra: Add reserved-memory node for P3450
+To: Nicolas Chauvet <kwizart@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 12:35=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com=
+On Mon, Jul 14, 2025 at 12:39=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com=
 > wrote:
 >
-> On Mon, Jun 30, 2025 at 2:27=E2=80=AFPM Aaron Kling <webgeek1234@gmail.co=
+> On Thu, Jul 3, 2025 at 11:40=E2=80=AFAM Aaron Kling <webgeek1234@gmail.co=
 m> wrote:
 > >
-> > On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234@gmail=
-.com> wrote:
+> > On Thu, Jul 3, 2025 at 11:24=E2=80=AFAM Nicolas Chauvet <kwizart@gmail.=
+com> wrote:
 > > >
-> > > On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
-> > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > Le jeu. 3 juil. 2025 =C3=A0 13:00, Thierry Reding
+> > > <thierry.reding@gmail.com> a =C3=A9crit :
 > > > >
-> > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > >
-> > > > The p3509 carrier board does not connect the id gpio. Prior to this=
-, the
-> > > > gpio role switch driver could not detect the mode of the otg port.
-> > > >
-> > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > ---
-> > > >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 1 =
--
-> > > >  1 file changed, 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0=
-001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > > > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df355b=
-bcb691ef99b0d0c9d504e 100644
-> > > > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > > > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > > > @@ -669,7 +669,6 @@ connector {
-> > > >                                         vbus-gpios =3D <&gpio
-> > > >                                                       TEGRA186_MAIN=
-_GPIO(L, 4)
-> > > >                                                       GPIO_ACTIVE_L=
-OW>;
-> > > > -                                       id-gpios =3D <&pmic 0 GPIO_=
-ACTIVE_HIGH>;
-> > > >                                 };
-> > > >                         };
-> > > >
-> > > >
-> > > > ---
-> > > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> > > > change-id: 20250513-tx2nx-role-switch-37ec55d25189
-> > > >
-> > > > Best regards,
-> > > > --
-> > > > Aaron Kling <webgeek1234@gmail.com>
-> > > >
-> > > >
+> > > > On Mon, May 26, 2025 at 02:07:35PM -0500, Aaron Kling wrote:
+> > > > > On Mon, May 26, 2025 at 2:06=E2=80=AFPM Aaron Kling via B4 Relay
+> > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > > > >
+> > > > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > > > >
+> > > > > > The Tegra210 L4T bootloader ram training will corrupt the in-ra=
+m kernel
+> > > > > > dt if no reserved-memory node exists. This prevents said bootlo=
+ader from
+> > > > > > being able to boot a kernel without this node, unless a chainlo=
+aded
+> > > > > > bootloader loads the dt. Add the node to eliminate the requirem=
+ent for
+> > > > > > extra boot stages.
 > > >
-> > > Friendly reminder about this patch.
+> > > Is there any particular reason why this applies on jetson-nano but no=
+t
+> > > jetson-tx1 (or any other l4t based boards ?)
 > >
-> > Re-reminder about this patch.
+> > I answered that in my first reply to this patch. This does also apply
+> > to p2371-2180, aka the Jetson TX1 devkit, but I don't need it for my
+> > use case because it is supported by the android bootloader. To my
+> > knowledge, there are not any other supported t210 devices that use the
+> > l4t bootloader. And this is not a problem on other archs. If there's a
+> > desire, I can replicate this to p2371-2180 and send a v2 without the
+> > rfc tag. Probably better to do so for consistency anyways.
+> >
+> > > I wonder if it would be enough to boot an upstream kernel with the l4=
+t
+> > > bootloader (and no chainloaded upstream u-boot) as I cannot do the
+> > > other way for some reason (using fedora based upstream u-boot cannot
+> > > boot downstream l4t kernel anymore)
+> >
+> > Mmm, I'm not sure. I can boot a mainline kernel on the l4t bootloader
+> > without u-boot after this patch. But my use case is android. I've also
+> > booted a simple busybox initramfs to do non-android verification of
+> > changes. But I've not booted a full Linux distro.
 >
-> Yet another reminder about this patch. It's been over two months
-> without a response and many other patches have been pulled in the
-> meantime.
+> Reminder about this series since it wasn't picked up in the recent
+> staging for 6.17-rc1. Should I mirror the change to p2371-2180 in a
+> new patchset or should this get picked up as is?
 
-Reminder yet again about this patch. It's now been two and a half
-months without even an acknowledgement from the maintainers.
-
-This one is getting annoying. What does it take to get a response from
-the tegra subsystem maintainers? Does time have to be pre-allocated by
-the company to look at patches that aren't from @nvidia.com's? Are
-there certain times during a development cycle? When responses happen,
-it seems like there's a lot of activity. But then everything goes
-silent again for months. I've not seen any pattern to it so far and
-it's becoming extremely frustrating.
+Reminder about this question.
 
 Aaron
