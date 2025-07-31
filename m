@@ -1,138 +1,161 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788192676CD
-	for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 21:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072B9246BD7;
+	Thu, 31 Jul 2025 21:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753998567; cv=none; b=mvj+D2xx56pYKJjHxCUq9aVn6EHVKZEbqRVWQXQAQq9NE9wWPMq5ICHmUIJ2SexbBQRK9YIx+d+bQ9FebalIjenxcdXmC5L3niNg5ebh2FxwIIrdIQ6jaxh56KYJa3qoRsQAE6TC8U6NFN1Bgs59dsxLFyCdKZIg7gCvYTXzkvo=
+	t=1753999170; cv=none; b=i/53LWbaHibAemDA1jl5bvHhMWd9FpxtPGNvdzZRGDfF77pf+ZM87LMunhiSwrIhz4LaHwANf1ktwnywIa1lEmWoYMa0cvforDAHxN9Qf5MYsbjKWEbXYu/+CAJRV5TG2tSPiAnf9i7y/tjYIFyHNiuAjTVJmEng92l+n0ictxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753998567; c=relaxed/simple;
-	bh=TxD+9rojK1RgzdLtnmu4LcUnXijBj9O4CO1tWf7eoKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5mB/OCyyyAzu+cvo6uNldBHr1YKwLkl5MTCyiv2SPTXx5ahPtwnheQPP6lunzgaeZg8+G5fnnSCR5MtybZ/KrjzPUprHw/weF23J5FOy+T6Ti0OY5bPoIYdFJgFs/LNgeJlRvyiV+Do6Awm4wRLJcC0KOTS1ik2g6p0yRUcJfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QV9yLurG; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753999170; c=relaxed/simple;
+	bh=PbT0lVg7+nffEx9KE6DhWbXKwrEe1ngsB9+NqasUVCI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SwnzhA6GOe7I1cK8BY5Z53OMhK+gLho958dXa1pB9XdzNvsUSYm34jxQMiq4E8EaYGttY2RBMsDhOSyYVQC3w062jt8xJoVYPfx4nJwPoV674CVOjNOiqveTmNyt4HEPmF4UR+yTDhRmLI5rmrIdXNTAjuWA9dWjJhJHfzk74Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5JHR1ll; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QV9yLurG"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553d771435fso1461263e87.3
-        for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 14:49:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753998563; x=1754603363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4c29f/vxp+ZpDvU68i/43QALO7bFZz1jNRt6jP0X7NA=;
-        b=QV9yLurGs7i0GiuVLiIKrdn3/F3a4ZR4MbnrGtRFpR13A3GPvOJWrZ1Vlntrsff8DR
-         gm/h+9+pvAw/wVPr4Qpd/ecBPpDFv7wd5YGf35lMd14KwqBvRCEg6pj+tYSZNv1Ifi0p
-         NW6K2EhmuBc1bnDQwfw+5ypQhCE9OLhRHLLZgLFxT8bqNCeUe79+2g18tNMtiH+WhOKP
-         s7J69v88E9Rj4C3oGYjyx52x1HFzk8IHDVlcR2zXyPkILSAUPrRsr1z/0nKI5bxE4FfF
-         mGxLt4/bFTK65vknehiFKWKAo/nYFzrW2zzl6GXURAye62LQtp8yt0KxugMXHTtI/0zE
-         jXWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753998563; x=1754603363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4c29f/vxp+ZpDvU68i/43QALO7bFZz1jNRt6jP0X7NA=;
-        b=nQ67uAm5FPKmvn5OjNXY8cPlUn7PZl9RWxIsas2tfpsb+42IhEjgda115C4JeJy1tv
-         cC10qR6dNfC2a9IRphPe6s2Gt1X3+/5WzaQ7HnRKg7H13VH9L5clJE+7kG7rTnUAwCnE
-         NM6WKn4onOZZLXMHjCMa3OHTAHfUHFbqlN2lYToDL22XhsCpm49UPgofgGNgsxQSL1xf
-         uA6J7DDeieQ0+KcmAOfPYiwvVQlt4UYv9xYASqcWrzjVofw9UCDzOkFVSiXPKdidyqsa
-         ywBaWoMvtuwnFwwMQ63Xw84q974V67QoRCz5iRZmOP0DHb5n2cdzjS+Z2S0EwQWGcdQt
-         dEBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWTBWd2TuVvrddfwqSVdL9qOwKJfly0mxBWTArEEYOdGM/HNIzwLM99uncT/+T/Uvb4dpaEmi268cy2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxopSZnt07EeKB/IHuPKvSyykvx3jZvdS+HX5P76u7J8zhQGpw
-	oNxBTfXj/8QX8oNsg/bf0cBk7aWHba98kDlxRdHqxj8tKTrW0xoT7j5OjajebPc5ppSbx2r3i7i
-	uh3YzkOyHO9EHuyydo9EVCgr0M2nVGxmYl62taUY=
-X-Gm-Gg: ASbGnctTf7DOh86ASg25zAnfPxQS+Wf3aEfHQ2/xok0RoopcbnhVWxPt6QWPzV7ImgV
-	uDplSF6qfMorWT0ofLacjVKJJ+BLDMHWUVXMKOuwutfUwijGT8mpGIk6W1HVoNxmlzAofNBwCRE
-	4zaTfOJGEROVBGw+BwatyGdtGIj2hgrCaVIvLJmnYnXU7HWvjD0icd3rKOQkfCYAJTKwBBF5v6h
-	08yfT0=
-X-Google-Smtp-Source: AGHT+IF8D2sr/JiAiNQTvCUOQZFl5OBjpor79Ab1Io8iaTM5luEmiS7GuwPXDeGMqChiRY13xfc1+DO2GGb+vvD7SCo=
-X-Received: by 2002:a05:6512:3f0e:b0:553:522f:61c9 with SMTP id
- 2adb3069b0e04-55b7bffc76dmr2724433e87.1.1753998563396; Thu, 31 Jul 2025
- 14:49:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5JHR1ll"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9F3CC4CEFA;
+	Thu, 31 Jul 2025 21:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753999169;
+	bh=PbT0lVg7+nffEx9KE6DhWbXKwrEe1ngsB9+NqasUVCI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=e5JHR1ll6MptrfN85F0zITDx2mvvwyYiLJ6s8RlS2Zn9tvUcP08g4+JNjY44DHt3H
+	 vx3U1rHgFGKSkGg7/vskamVihPJm7lT54v+81ufdOZqtE6jCUy+ENCDJcZonRzFuYm
+	 8IoB8UjA5lPYhUvzS+faB4xgp/0V+EiABiJ8vtU9tP+69U6218lq+IjLsGmCVanWIw
+	 iHm1cOHTkk/vgP9zdz22RVQu3lBNKSVkmmozkxt4yFw70/xQgI0ucSkqV+zNJPW3Cn
+	 L00Gf2RD9Z6X3oBJtHVbq7mRq1jQ7G4k1gF2BhvRw860lZYQQ0+z9UMDM1l0tMYcGk
+	 DSIn+ApDnF0Dg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF713C87FD2;
+	Thu, 31 Jul 2025 21:59:29 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Thu, 31 Jul 2025 16:59:26 -0500
+Subject: [PATCH v7 3/3] PCI: tegra: Allow building as a module
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=495g4+dNLzwjbg@mail.gmail.com>
- <73cbbuahttztsfkz36ndl7mla5dswo4wjqvzvuuajfuuxdo3gn@eiq3q2jniajw>
- <CALHNRZ_Tf=EPpPCpc60SF=um1oZ7gDnWdBxCfD=GrXUo6sOwOg@mail.gmail.com> <CALHNRZ9FE-WppDo02u3SkYjUkgtEpxj=H1V2pT_Stmtze3THpw@mail.gmail.com>
-In-Reply-To: <CALHNRZ9FE-WppDo02u3SkYjUkgtEpxj=H1V2pT_Stmtze3THpw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250731-pci-tegra-module-v7-3-cad4b088b8fb@gmail.com>
+References: <20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com>
+In-Reply-To: <20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753999168; l=2994;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=NwL1zgJJcNaVJMzJ4xbw0cEqWe0gRrA6/IT+IAjXFD0=;
+ b=Hx8LT+bsI6wEqRQWtMV1xj/rCHIxQHr0EGrVFgqMOAZ06cbWwoRRXKHoXQuYwJimkhWxRNDBq
+ zBC82thbtqnBHEyBd9EIgxwJqnKoUfNVULsJGILBhNI5JvNIZQr8JGJ
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 31 Jul 2025 16:49:12 -0500
-X-Gm-Features: Ac12FXxf42lpDlxks88XBTIlM2tgKHzzS6Sc2FtLG4xCJl4cCq_xiZCx6tV9Jd4
-Message-ID: <CALHNRZ9LPpkwwVy517DdzOuHi4zhFuxdkYS5sQJsiSq9vuohhA@mail.gmail.com>
-Subject: Re: [BUG] cpufreq: tegra186: Denver cores do not register
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 1:21=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
->
-> On Mon, Jun 30, 2025 at 2:39=E2=80=AFPM Aaron Kling <webgeek1234@gmail.co=
-m> wrote:
-> >
-> > On Tue, Jun 10, 2025 at 4:20=E2=80=AFAM Thierry Reding <thierry.reding@=
-gmail.com> wrote:
-> > >
-> > > On Sun, Jun 08, 2025 at 10:09:01PM -0500, Aaron Kling wrote:
-> > > > The boot logs when using the L4T r32.7.6 boot stack without u-boot =
-show:
-> > > >
-> > > > [    2.648162] cpufreq: cpufreq_policy_online: ->get() failed
-> > > >
-> > > > I have traced this down to ndiv [0] being read as 0 for cpus 1 and =
-2.
-> > > > Prior to "Share policy per cluster" [1], this would also fail for c=
-pu
-> > > > 3, one of the a57 cores; but with the policy for 3 being shared wit=
-h
-> > > > 0, the driver no longer tries to read its registers directly. This
-> > > > issue has existed since at least 6.1, which is the earliest I've tr=
-ied
-> > > > to use Tegra186 on a mainline kernel.
-> > > >
-> > > > I've tried to compare this driver to the downstream 4.9 version, wh=
-ich
-> > > > does work as expected, but I do not see any differences to the
-> > > > register offsets being read. If I hardcode ndiv to 35 for the faili=
-ng
-> > > > cpus to match what the downstream driver gets and what the other cp=
-us
-> > > > get with this driver, scaling appears to work properly. But that's =
-not
-> > > > a proper fix. Does anyone know why the registers for cpus 1-3 aren'=
-t
-> > > > read properly while 0,4-5 are?
-> > > >
-> > > > Sincerely,
-> > > > Aaron Kling
-> > > >
-> > > > [0] https://github.com/torvalds/linux/blob/19272b37aa4f83ca52bdf9c1=
-6d5d81bdd1354494/drivers/cpufreq/tegra186-cpufreq.c#L117
-> > > > [1] https://github.com/torvalds/linux/commit/be4ae8c19492cd6d5de61c=
-cb34ffb3f5ede5eec8
-> > >
-> > > Adding Sumit who usually knows this kind of thing.
-> > >
-> > > Thierry
-> >
-> > Friendly reminder about this question.
->
-> Re-reminder about this question. Even a 'I don't know' and 'works on
-> the regression bench' would be useful. Though I would have followup
-> questions if this issue doesn't happen on the benches.
->
-> Aaron
+This changes the module macro back to builtin, which does not define an
+exit function. This will prevent the module from being unloaded. There
+are concerns with modules not cleaning up IRQs on unload, thus this
+needs specifically disallowed. The remove callback is also dropped as it
+is unused.
 
-Re-re-reminder about this question and the followup question.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/pci/controller/Kconfig     |  2 +-
+ drivers/pci/controller/pci-tegra.c | 35 ++++-------------------------------
+ 2 files changed, 5 insertions(+), 32 deletions(-)
 
-Aaron
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index 886f6f43a895f8f56ce3bcabbea382b6cd3b15c2..abdc17ff7b8f54c6b1cd3ee6556753f68ae546e9 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -225,7 +225,7 @@ config PCI_HYPERV_INTERFACE
+ 	  driver.
+ 
+ config PCI_TEGRA
+-	bool "NVIDIA Tegra PCIe controller"
++	tristate "NVIDIA Tegra PCIe controller"
+ 	depends on ARCH_TEGRA || COMPILE_TEST
+ 	depends on PCI_MSI
+ 	select IRQ_MSI_LIB
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 467ddc701adce28c5edeb6d1b423ce56068f069a..c020822bdf0b72c4cc56817a9e689256b964e9cd 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2546,12 +2546,6 @@ static const struct seq_operations tegra_pcie_ports_sops = {
+ 
+ DEFINE_SEQ_ATTRIBUTE(tegra_pcie_ports);
+ 
+-static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
+-{
+-	debugfs_remove_recursive(pcie->debugfs);
+-	pcie->debugfs = NULL;
+-}
+-
+ static void tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
+ {
+ 	pcie->debugfs = debugfs_create_dir("pcie", NULL);
+@@ -2625,29 +2619,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static void tegra_pcie_remove(struct platform_device *pdev)
+-{
+-	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
+-	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+-	struct tegra_pcie_port *port, *tmp;
+-
+-	if (IS_ENABLED(CONFIG_DEBUG_FS))
+-		tegra_pcie_debugfs_exit(pcie);
+-
+-	pci_stop_root_bus(host->bus);
+-	pci_remove_root_bus(host->bus);
+-	pm_runtime_put_sync(pcie->dev);
+-	pm_runtime_disable(pcie->dev);
+-
+-	if (IS_ENABLED(CONFIG_PCI_MSI))
+-		tegra_pcie_msi_teardown(pcie);
+-
+-	tegra_pcie_put_resources(pcie);
+-
+-	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+-		tegra_pcie_port_free(port);
+-}
+-
+ static int tegra_pcie_pm_suspend(struct device *dev)
+ {
+ 	struct tegra_pcie *pcie = dev_get_drvdata(dev);
+@@ -2751,6 +2722,8 @@ static struct platform_driver tegra_pcie_driver = {
+ 		.pm = &tegra_pcie_pm_ops,
+ 	},
+ 	.probe = tegra_pcie_probe,
+-	.remove = tegra_pcie_remove,
+ };
+-module_platform_driver(tegra_pcie_driver);
++builtin_platform_driver(tegra_pcie_driver);
++MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
++MODULE_DESCRIPTION("NVIDIA PCI host controller driver");
++MODULE_LICENSE("GPL");
+
+-- 
+2.50.1
+
+
