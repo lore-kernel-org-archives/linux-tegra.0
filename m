@@ -1,72 +1,74 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA79213E89;
-	Thu, 31 Jul 2025 21:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEE525A2BF;
+	Thu, 31 Jul 2025 21:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753998025; cv=none; b=n3WSHXW1G3gbFp4HOcG+vYLRg1DMKSZCJ8x2S9PzIZVFpTsi7F9mtNY4EZrrfcNafQwkyxMpk/w+rneYgkvThChllzbcmR4lZrG8vj9zCYWGAYLzN46BDecGDozFXKInsgJoaHgcV5NKw8ItkD9IEol53AZheUJmy4vUrhQ/zxc=
+	t=1753998078; cv=none; b=TwFl3DIUSw6pSkuGhm3tJhxF0MIjnJyYvWNSCJ0Sjl/PyMcntIDzGTXp8c/BVggeHgfxQWE1x9CulPz3dcWDIgkcpHxni9h0xnjUoVqRpjIyOmhJcSD10fZs2SqZS+1XTpwxOupG8HxTyTzI1Upd7xOy4AE1VSIZCkLGcTgaYyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753998025; c=relaxed/simple;
-	bh=g9C7f4/NamjEq9bbxW2RtwQtfUwkLaMh38JA8Z+lWME=;
+	s=arc-20240116; t=1753998078; c=relaxed/simple;
+	bh=9mI4N8u3ScAJggIMZMmZ/Ya+KZ+m5teUXO1GFzmVIDo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qbOW472wwcdXRy0EJgBdCPnFCG7CMZsIbBq1wYNmgxkI/NsUgoWF8K9BGpR5dRC8ZjlEKjfQajtcKkvGijCMl6ksSm4cNxKAlr72cu4+wT9RMl+dIbff5hRLcIe+A0eWnNj2Y7Z2VWmL0G7aiu/d4Dddemn85kr7ni/uqhJXMBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHx4qHE1; arc=none smtp.client-ip=209.85.208.169
+	 To:Cc:Content-Type; b=T2m2At+Vea/pExX6XTxXKZFMc8GNzrccymZqERIu6OiPhZzNihTlrZdB84JZQQzTpmjO5fEQV+v4e8rY4wYstsNs23NeJGBZ1G/bb0fNmr2HrgOWTh0oNk+GAHVkcW6JQL5NImjxmMaz+IU47LH0vqjKqwUkiwFotUTw3GmBo9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oo0sHqk5; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHx4qHE1"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3322fef6d72so7547851fa.0;
-        Thu, 31 Jul 2025 14:40:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oo0sHqk5"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b8e6eb691so291615e87.1;
+        Thu, 31 Jul 2025 14:41:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753998021; x=1754602821; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753998075; x=1754602875; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8QtGhZs2srmlQhaTfv88KdFGJoQGcdL3FTrplLzIh9o=;
-        b=OHx4qHE1Ff9+JIEI5MmjvSH6JjZCGeYO2sIF87s8E4LKaxjtPff2FDs2bbjpbf7TmQ
-         eht5bZI8NIiQoEjKq46BjY6Pw+Qn0f1qk4CGvRxA1UYn4lp72Y71dCwLFWc7IDeyLQK+
-         gZHgKTMl05dpYobDHP5SCJkWC6JqTVLsnCmzZ4eLOUMtXKWdrGJ8yoKYlZODWGlf2F9Y
-         xFAGnH6p+SG6Zxe/lN1jlw21jYU/n3vPgH6iRJrYxBGSSvjvXc/vQcDECMRrAOSIfUlw
-         mDLlGYoLzytMAOIlKfB5WYCTfsVX6dcunI+N35ggILnSwvz3Fy8mX3tUhLkdZzCyYkBq
-         2JOg==
+        bh=Gvf0Xa6p5M9PIWK0J0OeMh9XD7bPno2rlXopEdLIN/c=;
+        b=Oo0sHqk5eI314WcMqRWQDNehjXn7SXAOlc1qBwo/3L4h5Wf3ZDEbdPVBs/YLq8U4O8
+         cmrRN25PC0ZQG8qteIhug1dk9X6eXJ/nV+Cb6P8Shof3Xmc38bmnPlfbx/rafqxgYiiT
+         Hv29+5b/s+nCxhs3ReZ9X8AapS8rTX6eD42SfE9uK/6noKBXaMzkx0bMFGBp/kQLYu6Q
+         rSkwlsvp9GQcw0NGcd3cEHR3fRF3XMB/+qGnmmJRMA6s1UcACd6EHqPXEd8vRj6jwCD7
+         mgmVtZqx7Q9e3y49PQJZCivBzYQE/+1+U9btKQ/r1LFHE6KZEz3iVlCzmgcSo0eQpOUm
+         xCyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753998021; x=1754602821;
+        d=1e100.net; s=20230601; t=1753998075; x=1754602875;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8QtGhZs2srmlQhaTfv88KdFGJoQGcdL3FTrplLzIh9o=;
-        b=dpLljWi/Rv+gQHzW3BE47dnP8wouh3xAC/W3IYpGs1JCyPD+jhpC50VWndLzz7QxNK
-         8JVpePgBYxQHc4A0TcG1YbbeW2I3xpccKMeyGAjOksso0HDKbQbq2tRz9cTZQo8XaUTr
-         stkhdas8M8fa/lSZoc+9608gYpcbehNUOLtRXRSOu28sscVn6dOWDWFTDeYqtgKQoDck
-         gIZl/eyTP++sxFLj+vxPyGL48YoWg9L1DTqbWEQeqJYZIGjSzTbHH4xDgPcTCWbjruxN
-         Bm7TgSNlq2tsr76s+VnQ4o9ji2z8GBhEx6N6PHaw2/4QWKXkZkYZmBvZD08HmVt8vmID
-         00Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9zER31d/kaUoAylPNHsePw5qhU5/ZtZQVPDkR7NaSNG8V6jlIHCAHPRCaft0IsfYueG+1fk3BHDM/DdSd@vger.kernel.org, AJvYcCWkirMhJP7vPuCVn1mZuvHO8vKNX+heVBA3jdp7030yConPEUHibRbXTR+AZXIB3xktycPP6MsoOn1w@vger.kernel.org, AJvYcCXzflG9/elwcOQOVKklOTFuCaoTurc6xfZmZTLTaCWXwzp46KG0WQVWHqqfm+RSChfsIslBjeYJcCNTsjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9VfTV7xpKlvnxJHTTaahH7tEokGk7k7IPgxwdoigy9pPn+g68
-	x6LVQy6YD6tm3YC7OeFxLWVEKtldQ/OHt0k0qzKRWsdgOq/i+0ytnsIgclWGejK+532ESY62EyA
-	k+svZWiAzuLwrN/bG+1Ifrk/IyhjQ/VCnIgHoTt8=
-X-Gm-Gg: ASbGnctLtC2F0cuTGmtrsGJSYJr+cICPh39ySdiEDAy8yiVBl20B5AX6DHCZuVMBrNr
-	X4BoADrlh8W0TKYPpUW8Lq1x9jkvP5e/ZAOaX9YEIMldustN72xa+t8hIE2oSL9sgPvNGwgUyxH
-	Nv4xBeRUNpUzD6tG2VSibvbBUNz9F4SZ1xzYRzTpYrdjrxNbG/MUgAA4CxGqOW0o2pPLuhvm5H8
-	0sAY4Q=
-X-Google-Smtp-Source: AGHT+IElN+FIpsd2J0WRiDT4CWwAotPcep9zR7TyWwQz36spG9/MrdE91/BSM58CI35VCr+PcKXhAcaNn7z8pOYaM78=
-X-Received: by 2002:a05:6512:15a3:b0:553:263d:ab90 with SMTP id
- 2adb3069b0e04-55b7c0041f2mr2769883e87.18.1753998021253; Thu, 31 Jul 2025
- 14:40:21 -0700 (PDT)
+        bh=Gvf0Xa6p5M9PIWK0J0OeMh9XD7bPno2rlXopEdLIN/c=;
+        b=nAg2u0TTTi4mhop+WlGEM1J9a/6iKqsnWFkwEVSluhS+PROsRwwxbwuvIIfb3dFDAd
+         KobD07Uh6j9HRYRnqXr0Ff0m434sHh9r2QR4xGjCX97a/INzw+AzYYGCgD9b1kwJHzYP
+         h05zZ9PXDPbtAACghs2zuDkmg9NsFPz8h0Rg8XMutrhZGv0+cQkTXZtKt2ES6CkLT3QH
+         0IY3N2BB8Phso38V+pVqdYZzGwAhKgLSeFkKk+pax/pSAFn2Z9OQasWa7x7CIp144kYZ
+         Kxp0VFjLuQ3o8Mmk9AE4aBnNmSdTEs6UlCCPQ+Bz2/8aeh3W4dhV4V5QYs5nMxwqYLgN
+         06AA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Kl/wwFJYFoL7Pm6x238UWLzjie//221v8c/048JTSOWExMttVNVCJbOZRf+4FcBgRomZ4yAkLI1e+pA=@vger.kernel.org, AJvYcCWajjgVVyt5G0iA9LyGNVGa01dObNwnTHH5jRbZ2IlJIi6Fi+VKJPZqnkPxi6UNBvHTXQqWEiBGhBE1mzB7@vger.kernel.org, AJvYcCXBbU6cCEDq9IlSNKOFlUzAl3avCQVGTUKzVaJZH3ASOVzEi0fMmb6JH8WhvnRGYOjuj9km1w1/ZRxN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsI0YScMe2e81923hSLM1Q3pqqRArJz+9xseHh1P0pliwZXEr3
+	7kQqcTMG15AF6A7k+wWVv7/Nmq6rlBeLHtf+dcfFN092JNOmgQrD9c+6oYGvf0kLkEeT9wJjhRg
+	8iAjheswMgNy8xGSjNPdLE1YrA3P0oHM=
+X-Gm-Gg: ASbGncuLQFW6Bt5tURvCa9l3lf/pffXhPQ1omyQhvt3ayuedovpnNr5DqJHpJsqRvZi
+	zgA3I4PticgOSCFXbRHIg/zUIDFwOQ2b/xsvShoGbcM3t3g2J5OKdpnbozGCisY76MmWQArPT/G
+	si1Uc+Lc4jZqlVoMk+IqitBX22IGpxAfHOl4HVeXaLNRtGZzGdO+UNUfkKBz2Fm0jYAwAVqaf+C
+	Ikx6L0=
+X-Google-Smtp-Source: AGHT+IEzhbXF5hB4kA6lGGKpx7iYWvGq6kBdJrcpVjjd1Yhw709h2IxteNo15t9eMVEXh4iscqM4v1KgRudKCQHUiFk=
+X-Received: by 2002:ac2:4e14:0:b0:553:a77f:9c47 with SMTP id
+ 2adb3069b0e04-55b7c084834mr2238747e87.30.1753998074395; Thu, 31 Jul 2025
+ 14:41:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250526-p3450-otg-v1-1-acb80ca2dc63@gmail.com> <CALHNRZ-pE4EA=x-7LuJev60=aOwGt2eDf9mGVHWJ8SPGisBchg@mail.gmail.com>
-In-Reply-To: <CALHNRZ-pE4EA=x-7LuJev60=aOwGt2eDf9mGVHWJ8SPGisBchg@mail.gmail.com>
+References: <20250611-p3452-v2-0-fd2679706c63@gmail.com> <CALHNRZ9tjJo3LRmpaGsEsf2=Him0O2J-ZaJf4UZ8bcbz1119BQ@mail.gmail.com>
+ <CALHNRZ-mUb1Yv6WTeq50ddBS209uWUkv2ivdEMqfBBUtw+SU2Q@mail.gmail.com>
+In-Reply-To: <CALHNRZ-mUb1Yv6WTeq50ddBS209uWUkv2ivdEMqfBBUtw+SU2Q@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 31 Jul 2025 16:40:05 -0500
-X-Gm-Features: Ac12FXw56s_NT2GacikX5J5EJ6FNZ9rvz6qR61PvGkrAr-Xj1IEPIZhEqHbqCfQ
-Message-ID: <CALHNRZ_W6gQknMr=eKEcB6-k5HBBkE6JfJ9LFntX9L+NTo5hUQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Set usb micro-b port to otg mode on P3450
+Date: Thu, 31 Jul 2025 16:41:03 -0500
+X-Gm-Features: Ac12FXzL93mWunH4cqtyZKP0uBS9ByxG4KjbmltB2NDeCi9ZRpI_e50ftvAJMzo
+Message-ID: <CALHNRZ9H=kPLAJ-YZN8n307uAMbGYOHF55-Tc5=uN_y46USYBg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer
+ Kit support
 To: webgeek1234@gmail.com
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
@@ -75,49 +77,47 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 30, 2025 at 2:35=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
+On Mon, Jul 14, 2025 at 12:36=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com=
+> wrote:
 >
-> On Mon, May 26, 2025 at 8:22=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> On Mon, Jun 30, 2025 at 2:37=E2=80=AFPM Aaron Kling <webgeek1234@gmail.co=
+m> wrote:
 > >
-> > From: Aaron Kling <webgeek1234@gmail.com>
+> > On Wed, Jun 11, 2025 at 1:53=E2=80=AFPM Aaron Kling via B4 Relay
+> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > >
+> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > ---
+> > > Changes in v2:
+> > > - Fix usb power supply to align with downstream power tree
+> > > - Control vdd_hdmi with gpio pa6 and delete unused vdd_hub_3v3 to avo=
+id
+> > >   conflicts
+> > > - Link to v1: https://lore.kernel.org/r/20250608-p3452-v1-0-4c2c1d7e4=
+310@gmail.com
+> > >
+> > > ---
+> > > Aaron Kling (2):
+> > >       dt-bindings: arm: tegra: Document Jetson Nano Devkits
+> > >       arm64: tegra: Add NVIDIA Jetson Nano 2GB Developer Kit support
+> > >
+> > >  Documentation/devicetree/bindings/arm/tegra.yaml   |  5 ++
+> > >  arch/arm64/boot/dts/nvidia/Makefile                |  2 +
+> > >  arch/arm64/boot/dts/nvidia/tegra210-p3541-0000.dts | 59 ++++++++++++=
+++++++++++
+> > >  3 files changed, 66 insertions(+)
+> > > ---
+> > > base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> > > change-id: 20250513-p3452-059708ca9993
+> > >
+> > > Best regards,
+> > > --
+> > > Aaron Kling <webgeek1234@gmail.com>
 > >
-> > The usb micro-b port on p3450 is capable of otg and doesn't need
-> > hardcoded to peripheral. No other supported tegra device is set up like
-> > this, so align for consistency.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/=
-arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> > index 0ecdd7243b2eb1abba9adbe9a404b226c29b85ef..019484a271c396edc30200e=
-8592c713455a8e1a4 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> > @@ -514,7 +514,7 @@ pcie-6 {
-> >                 ports {
-> >                         usb2-0 {
-> >                                 status =3D "okay";
-> > -                               mode =3D "peripheral";
-> > +                               mode =3D "otg";
-> >                                 usb-role-switch;
-> >
-> >                                 vbus-supply =3D <&vdd_5v0_usb>;
-> >
-> > ---
-> > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> > change-id: 20250513-p3450-otg-b947f31843d8
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
+> > Friendly reminder about this series.
 >
-> Friendly reminder about this patch.
+> Re-reminder about this series.
 
-Re-reminder about this patch.
+Yet another reminder about this series.
 
 Aaron
