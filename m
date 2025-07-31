@@ -1,64 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625901DD88F
-	for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 16:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4750423644F
+	for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 16:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753979306; cv=none; b=MoMSrfmFB16zg+Cj56OJHR9JcwZ35HohV+D69wPaGI5XR20EIMEJdEfOJ9woa/O3M7sQEesCpPBeumONsJg8d6Oq97Dg+S8NR68Ii8ZvOQD6tp85IDvMMsUfUHxI8ibj7IyQRW4JC3b/5aZ4eRcA0EA4YRcLePb3IX28BZBMOwU=
+	t=1753979365; cv=none; b=EtAmJGq2veTuUiTL3HHsZsTOtjSCyCsUVJ9s/Id0VRwIVoAn0njIJ5dzpz3wOq0+WjsZNL0wndmwJr9YBcIgPHYtnhY8j6P+Np12nmbp7Hg2ZPIzDlfvfvQAKaziKTwbAE83uplyccv+PL901+9Yqb4xX1HlwwP64PNjp+y6PBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753979306; c=relaxed/simple;
-	bh=YtuzjCU41wJEnFoFcwq5nanMAlcjcrWVpheE/tRBn00=;
+	s=arc-20240116; t=1753979365; c=relaxed/simple;
+	bh=pTAemJ0yh0Pc1HDNRdAZitGZHWrrrmXazPzQFXeUMWc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UvdD6rV+eDoOTFKMso80QhDD8nHjw5pYOU9OS0YLbaz4AlAqTyKH8QxaqIKp/xZc2mycTvsCXI6HZI8d6CI4AftwhhUwRuH6TFzdvYwZazaJ9dGsUyQ1hd3iSYbhDKnpykyqfwSwSZDdKwi4jt4LgItywJH1q0qb5RIMHvRGiF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sc29dnC+; arc=none smtp.client-ip=209.85.128.46
+	 Content-Type:MIME-Version; b=XR+SOdhJG10h7jhz781+ZqUaO6in4yQyULjON+YpDAy9QSK3ZXT6VDCWbfdpdt+FFQmHQwM3Ez4nEepLe8jfWGpVi649QPtuNmDqBy/fE67/T+b4KksVQ/h6JXNPjYDQjJnNA+IDLr2Ow7x2paKDnpeu4gPB0fPoL9+7k2EVm+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzjXuOFx; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sc29dnC+"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4589180b266so6176465e9.3
-        for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 09:28:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzjXuOFx"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so574892f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 09:29:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753979303; x=1754584103; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753979362; x=1754584162; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tUQuX9EcTmyMXIDhh04yCMIk3QAsrMOgdgEviKTt1/Q=;
-        b=Sc29dnC+kIMSROHM7dwVI3QV2NqptVf/DggwdX/d4qdkwBLeV6ypMvslX9bIlHjmYK
-         3PXgntQC27brPXHcOUZ5Qm23XZzBdks9uflPbmV5DFcECK3yr8Io/U+OuZoo3Y3aWaDH
-         nYz//FFsvXdOfjayDeARsIz+9g4IDWZf9P957TBH6V+DmqicwhM76DJ25GjO5V01KAKk
-         mMvCNYthAGUG3G64f4/lTvUhbPxajwRBR1nRCe1tor0L6xhiRvA8ZGD9jZMWTYoaAsmA
-         CMEixfq5ByvtbvvQcnm59ht/+wTxl/9ITH+eTgZwbKObEk4yvtR77sSOlfbMFsDymlcJ
-         4VBw==
+        bh=7GrfhnOllGO/ZBhleTB8LJWdBObsKh2pIJ95KhExliA=;
+        b=DzjXuOFxzHAaBcvPpydX//64zKSv11fi22h9IMTUDtqpWHzW9PdC3qy71bCi7R5Jju
+         bk7fM42KJrqwsDaM51tE8b0xiNo+BB2KssDWr2jYADRWQ1WEfvNwpfqHWJh0vWnu3rlx
+         F3MXYpmuMBzrOQVvRJMs/8/DJdEe4DOWvXwCFlLpP38vyjaCwsErrknKnV//o3/dYQcw
+         qyrgNyOJ8M2/98sEaYDWUcXo0K6yZkHMSLIkt2M7NUH1HPWnnqGctma98Gqw0sIMO+UK
+         YruKrQz60WxWfw9g9Pis34wmlYFChax6ppBuIDj2pHJv21wTDsVKo/p6lMJrJFvoEH/y
+         8jDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753979303; x=1754584103;
+        d=1e100.net; s=20230601; t=1753979362; x=1754584162;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tUQuX9EcTmyMXIDhh04yCMIk3QAsrMOgdgEviKTt1/Q=;
-        b=oJEiRrrc3QrTlPfAi6ucgQk6/CgtvK0xFA/l3XDLBLZ1/nFRjjUZaR3huMKQ4/77hO
-         J4OVpb8Xi/IaJlzqXeN8QEWt5mATbki8FPWtT9C4S+moAaU1fWhcylc9pCwDEarqd3rC
-         NpU6GdJJ3zjhyvrOv6Rixqt78UoxHGiCbYgNRLvtAl7RXVbn+5PNeeKoPYpUifRvmyQM
-         tK4k3PgYVQCanWQuJK+BdF1dlhiA532xyxdU+Nq6V8RwMKF9vs63B1xQ6NpojWmwOEcC
-         PcH17ecFVO/gXY+J2g3LJ3lRUPzvjQLc0s+htt/JC9Kr7hGPfcUDNp0vHYZJmckBJXUX
-         MmxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Mpm1q0YSr0yk1mQG0V6SSATxllIsaTmGJFYlu0/BgtEQdvIjuPw9UnQsl92pBHqD4gg/DyK/htJCZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOzPQPUAYbv/8U6nj4Rzu8QF3ytcqUHBMeofkG6etqtgCjvpaI
-	em0n/isyUViAz5cxTvLI2HpHWG/LRlGkKnSxAx+TU1stYU1nEDS1gKJutOf4wg==
-X-Gm-Gg: ASbGnct9gEgD9OF4xr/D4w28hzRN3TuOAqn3+rOJtsLlPSnbj9ydbuHoghQcusZ+au7
-	G6CXTQFx2oxlupKOSzcVX7O3211CgEvU4LE9+8Jwm5CaXG7OHPc33QmLFSlHEqGRmWgF/fpyngB
-	RtDZ9wQbgdMnnn9fhWgAPxSFUhUc+Yga1Z1jNtJr1t17KVchsGI1DGrIGZ5ZqqrwRZ7OFZX2Jrd
-	KrTN42DxVWclJE/ssMfgYbeTz4Wht5bRDVk8UJn6vGfeztOT+xaDlv1ukco1fmiAb+t6y035ugC
-	LLnVYD84HTJZl2YRR4G7j/QCYb4/5QeTyXs1mjc55hDkwi7/pUuHjGkZhBWzgG+/a+MIz3Z6xdz
-	HXJPRyocBgNjpen4cazyl/t8SWGlG1nKdV7RFR0yHK3orolf2EuOAr1d874IPW7i3S//xND8vg/
-	FAMF9gcOlnrU4daA==
-X-Google-Smtp-Source: AGHT+IHcEzUc5fmL7aR35NqQbifBaImO098SauslIIzWmoLzT9eyyd/1zs4+hdMyqVtFP+GuFPg+aw==
-X-Received: by 2002:a05:600c:c4a3:b0:450:6b55:cf91 with SMTP id 5b1f17b1804b1-45892b94d5emr69940185e9.6.1753979302184;
-        Thu, 31 Jul 2025 09:28:22 -0700 (PDT)
+        bh=7GrfhnOllGO/ZBhleTB8LJWdBObsKh2pIJ95KhExliA=;
+        b=xA/ria/SL4e5Tb8uvNnhi+fhY8Za93jgaIaKVlTz9yxcRckvHkJXqJRxzxsy78ZeQ7
+         gt+lhCEUhJ8dY3n5/lrDgu8jZORiaT6t6av6Nwuy5a8UIK+Iz2IQO4mkg1cQU8VCnX7E
+         Pbx6Ic1Oxa0PlAzUionfvX/jPSe9fIkATc0wKzLtJjActB4Kps7WgAl0SFEQaTL5cG82
+         FJU9UwWilQowDum6/7RxpCr+Hj/S0UEiEHbkhfipX72bgAVA9giXDw5auLJQ1dyborsp
+         TKWsPi9efOaQGZTu5riff1QR/XQ2Qr6sC3KjzSOdQVuDSCI/p4+3w/ofYHQIZtHHyPiu
+         HPIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcS5Mpmwq+r66SIsddg/cRiNFjUrXZXn06Hdzu+jA+FM9BRHNXpyHE6Q4xlDns5NlE+dXZ9VZcZCF0rg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkpSJ3ev5Ow3SqUDiEWwKRauUqGfvK/DaH5WEYxdUOQwe96A6v
+	vfNO+CaLZYWmX2KfYadrUDfKGzBD3NvpLA9YjRds+UkeI/4eOrQjRuHy
+X-Gm-Gg: ASbGncsTnACLhrNiC56KbC4oMswaAsJv92NSjCiLKAatKfxBipfV6V+D8a7pVGCORqs
+	2vAd/DQdSkzU9Mpvvs5pRb7Ht/shP+A6cMXApaPEnjdfy5vt4YTdJTCV6iSV+9Xbpdklca9KIxM
+	NN0IuQa2FrgXJSrrDDT7IesVdph9FzlRdjb0FuvrjD2fwWevOJwIVt9PPS7ICq7ImbHhaonqp/L
+	S4Y04I8F5n+DiIhnTAw6LKdnP5ng5S6/MH8I/3gyUPo6X6NmSK0vIIcnmSbzplSrat1xh5e0vSR
+	w1uHx25Mso/YrvI8MmWxCuNRwA8g66/fYzA1/F2o/wY7NnBJNkKzUNSg2vUbjSGVG/vFjsUInTw
+	rcU7j/o2u3zOB9tKizy2YC+A/Sqt5/qZ0lfUxE/9XUgi4cq5f88nxBgprfhR3W/siCxG74NcuUp
+	WikHcwuI/I+sPcrg==
+X-Google-Smtp-Source: AGHT+IFgEWwFjomsToqFVgplkYJcpc+0XO5/g/a4wp5+gHc+xPLMaQiVmjOvF4+UjzxA5M7HDt25xg==
+X-Received: by 2002:a5d:5d09:0:b0:3b7:8af8:b91d with SMTP id ffacd0b85a97d-3b7950286f0mr6927192f8f.35.1753979362041;
+        Thu, 31 Jul 2025 09:29:22 -0700 (PDT)
 Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589edfcdc3sm32989405e9.12.2025.07.31.09.28.20
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4534b3sm2849619f8f.47.2025.07.31.09.29.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 09:28:20 -0700 (PDT)
+        Thu, 31 Jul 2025 09:29:21 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -66,12 +66,12 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL v2] dt-bindings: Changes for v6.17-rc1
-Date: Thu, 31 Jul 2025 18:28:17 +0200
-Message-ID: <20250731162819.3329735-1-thierry.reding@gmail.com>
+Subject: [GIT PULL v3] arm64: tegra: Device tree changes for v6.17-rc1
+Date: Thu, 31 Jul 2025 18:29:18 +0200
+Message-ID: <20250731162920.3329820-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250711220943.2389322-3-thierry.reding@gmail.com>
-References: <20250711220943.2389322-3-thierry.reding@gmail.com>
+In-Reply-To: <20250724060202.2942616-1-thierry.reding@gmail.com>
+References: <20250724060202.2942616-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -89,54 +89,53 @@ The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.17-dt-bindings-v2
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.17-arm64-dt-v3
 
-for you to fetch changes up to 6f8dcceb29a9d3169dbe23d3516783139544de91:
+for you to fetch changes up to c36049da6c903b732f238eb6fd13c2051fac96cd:
 
-  dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0 binding (2025-07-29 17:08:47 +0200)
+  arm64: tegra: Remove numa-node-id properties (2025-07-31 18:18:02 +0200)
+
+This should be equivalent to v1 with a patch on top to remove some
+numa-node-id properties that were added by mistake. This should be
+equivalent, content-wise, to v2 but doesn't have the dependency on
+the extended dt-bindings branch that I had added in v2.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v6.17-rc1
+arm64: tegra: Device tree changes for v6.17-rc1
 
-This contains one more bindings patch that fell through the cracks and
-that's needed to properly validate the new Tegra264 device trees.
+This contains an extra patch that drops numa-node-id properties that
+were added to the Tegra264 DT files by mistake.
 
 ----------------------------------------------------------------
-Maxim Schwalm (2):
-      dt-bindings: arm: tegra: Add Asus VivoTab RT TF600T
-      dt-bindings: arm: tegra: Add Asus Portable AiO P1801-T
-
-Sumit Gupta (2):
+Sumit Gupta (1):
       dt-bindings: memory: tegra: Add Tegra264 support
-      dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0 binding
 
-Thierry Reding (9):
-      dt-bindings: tegra: pmc: Add Tegra264 compatible
-      dt-bindings: mailbox: tegra-hsp: Bump number of shared interrupts
-      dt-bindings: mailbox: tegra-hsp: Properly sort compatible string list
-      dt-bindings: firmware: Document Tegra264 BPMP
-      dt-bindings: misc: Document Tegra264 APBMISC compatible
-      dt-bindings: dma: Add Tegra264 compatible string
-      dt-bindings: rtc: tegra: Document Tegra264 RTC
-      dt-bindings: tegra: Document P3971-0089+P3834-0008 Platform
-      dt-bindings: Add Tegra264 clock and reset definitions
+Thierry Reding (5):
+      Merge branch 'for-6.17/dt-bindings' into for-6.17/arm64/dt
+      arm64: tegra: Add Tegra264 support
+      arm64: tegra: Add memory controller on Tegra264
+      arm64: tegra: Add p3971-0089+p3834-0008 support
+      arm64: tegra: Remove numa-node-id properties
 
- Documentation/devicetree/bindings/arm/tegra.yaml   |  13 +
- .../bindings/arm/tegra/nvidia,tegra186-pmc.yaml    |   1 +
- .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |   4 +
- .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      |   1 +
- .../bindings/firmware/nvidia,tegra186-bpmp.yaml    |   1 +
- .../bindings/mailbox/nvidia,tegra186-hsp.yaml      |  28 +-
- .../memory-controllers/nvidia,tegra186-mc.yaml     |  84 +++-
- .../bindings/misc/nvidia,tegra186-misc.yaml        |   1 +
- .../bindings/rtc/nvidia,tegra20-rtc.yaml           |   1 +
- include/dt-bindings/clock/nvidia,tegra264.h        | 466 +++++++++++++++++++++
- include/dt-bindings/memory/nvidia,tegra264.h       | 136 ++++++
- include/dt-bindings/reset/nvidia,tegra264.h        |  92 ++++
- 12 files changed, 822 insertions(+), 6 deletions(-)
- create mode 100644 include/dt-bindings/clock/nvidia,tegra264.h
+ .../memory-controllers/nvidia,tegra186-mc.yaml     |  84 ++++-
+ arch/arm64/boot/dts/nvidia/Makefile                |   2 +
+ .../arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi |   7 +
+ arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi     |  30 ++
+ .../dts/nvidia/tegra264-p3971-0089+p3834-0008.dts  |  11 +
+ .../boot/dts/nvidia/tegra264-p3971-0089+p3834.dtsi |  14 +
+ .../arm64/boot/dts/nvidia/tegra264-p3971-0089.dtsi |   3 +
+ arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi     |   4 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi           | 412 +++++++++++++++++++++
+ include/dt-bindings/memory/nvidia,tegra264.h       | 136 +++++++
+ 10 files changed, 701 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971-0089.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra264.dtsi
  create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
- create mode 100644 include/dt-bindings/reset/nvidia,tegra264.h
