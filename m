@@ -1,67 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01BB22FF2E;
-	Thu, 31 Jul 2025 17:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1613917DFE7
+	for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 21:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753983435; cv=none; b=jYJ+MvibBavrqlLrN+5hHSQdruOO5scu3SrzmR+kBa+w7vd1DR7UogzyRU075FR2uFL/yn0iLNhdpkudA2k4UaHBRHYEaDxZarmIsfmVMPyuHbGMEQpuaourZQ4gCFiIayRKJmT+IfvSbRWRdKrXx1lNoWJn9YpOPJcxtiWdxuI=
+	t=1753996968; cv=none; b=iXwd5pkYUWEstJV/tB5iDmcYBp5VBqtDhGnxyyxQ85n54yqNO97wyf/+JGQIUJPo69oJ4N04KpuqNpuE+dlIp8E52aItsD8fEFKc/mrl1RM2n5JnBkEwm2r8mpuTdpMVO+V9mKXMih/qvYtIx/h0x/HtnWU01whiERkpdjC5kXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753983435; c=relaxed/simple;
-	bh=ywlvPM717dLhVttjQEnvzvv1noJR+G4RB/Fn/JLZAQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C19i+FqgOVIKR+c2theVg/FmWDg/Qo1wpAizT8dX7KL+bEnRZXsnVOprGqEfrleEppL0YvWjODxHAu/MFAr713MeYqNy3waHInY3byZDW8HMkwd1EiEjPmb6LkPOAZAHEZsnc9QOthpqUepadNcIm+j9DNerlc0ZPnDsCdN7dmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAvimPmH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753996968; c=relaxed/simple;
+	bh=h6uPXWKE4LGLvz9j7oE3cBkxKmNbvJCKBz0w+rcFDM8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=B7mDLtMqmR5AX5ptp1siPXyUR7qggOK4DgXyL7g/DQAhwwy//NvYSxuM/5E5gMdzBvppDhHqT9wU71AQUTAijqwqe3uQD6Zudgz4BCHLvhEFITr2o8KTuuUyxXrKKN6gYYm0R1LnDShbV5IB+JjMuUHnpcjS4Fr8ayBC2mCrlJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSu5FCBq; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAvimPmH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E45C4CEEF;
-	Thu, 31 Jul 2025 17:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753983435;
-	bh=ywlvPM717dLhVttjQEnvzvv1noJR+G4RB/Fn/JLZAQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VAvimPmHvyHLSkWLKue9aYm6eJpiGPpaftzUIyA9Socrc35CEJARj3SDFWyC7zyN5
-	 mLg6zpHtK0spOpe68k8DIW6eNaU6lqLm/8oIEs/j1FBp/ppvB84kRIL9X5Z6ySTi0i
-	 V4x9QfOhfQZCfm9jSTPawAYLXx6rAlXG5Z70GXudBwLIAmH9waUUaV/cYd3T19ejPl
-	 iIhYHsxs6YwbJnjwQMakrL2z6DtiUCWEF+5p/hhaQXs3GcHrVh7HDquISrlXvqNQ7u
-	 eAPIPfCmvrfMgIoTarFV4P7bLhXM0UXEmNjSz8b4C6cnTzmiBi/d8bv7XOEgbD0iJ2
-	 +LEK98xsdgrTw==
-Date: Thu, 31 Jul 2025 12:37:14 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: linux-i2c@vger.kernel.org, andi.shyti@kernel.org, digetx@gmail.com,
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-	ldewangan@nvidia.com, conor+dt@kernel.org, thierry.reding@gmail.com,
-	linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-	krzk+dt@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: i2c: nvidia,tegra20-i2c: Add Tegra256
- I2C compatible
-Message-ID: <175398343346.2270652.1269106467992234487.robh@kernel.org>
-References: <20250731091122.53921-1-akhilrajeev@nvidia.com>
- <20250731091122.53921-2-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSu5FCBq"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b5931037eso11235031fa.2
+        for <linux-tegra@vger.kernel.org>; Thu, 31 Jul 2025 14:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753996964; x=1754601764; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h6uPXWKE4LGLvz9j7oE3cBkxKmNbvJCKBz0w+rcFDM8=;
+        b=FSu5FCBqWtfAgtoYo7Vv9MKw/ziayGtTx4WrPbIbiKKml09wPtLZdjUxl5Y/9XOADT
+         4e/oi3hCPWPex/fKPZuzwoZpBhBpm6xIfWAqyKQiRvxIEXma3GigEGjlEUhceYnz4zJT
+         sGhBMEaH0QdmfIMZmfurqc7fbRng+Y4E4SlRLukwGDwWeHnGuBefCgdpWB0epMXPhre9
+         jkK93a1PYdSyRIEsosI903k6oiyMiB0m2DdX2KwaQrsn0CzGMNnFr8zhnihr3S0FfMyn
+         DdAkaAKzNstzkGuNqz3rXuGITs1aBzzqtT3fZd4kbDKRQ/ODFhTBjjla5ZSN0WruYYfU
+         Wi4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753996964; x=1754601764;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h6uPXWKE4LGLvz9j7oE3cBkxKmNbvJCKBz0w+rcFDM8=;
+        b=MBAOyMqfrnIztmZKWFlrRLvDG9yGBEl0cnsozyyIjHlt0ZYgdZoDG8j3LrFXzr3058
+         WYETwC56WKFXF536s00fLRMGmQ0v7AKzViW6+DjHAm3koHJ8PcKck+i5hAEals5EVbLE
+         vhQz5e//HWMVR/fpsq9cmQ6LOCJuqF2Xk3DQ6OCV1yXImGcZzvN0PLYAK26+ejZ5DKo7
+         x+CCRz8h7Jd5wfIB3CdO5Pc0oM3cmL1VaYcdahsle1WzaBx1MDqFWVuHeNDGxm2Ooilj
+         1vjiYhEhz1UFOW2bsdLkK0zECC73K8GgPYBb16/U/2jMDQl6ClKRyuNpglmbpxy9uzVv
+         pVyA==
+X-Gm-Message-State: AOJu0Yw2b1DDMt6Ny8rgas948Yw69+PxNwFdJ4RjZW4wzShlUev7jasQ
+	Ii3RAb+PdftfaY1eEpEVP9tq4oVnBbqu1i7k+rdP+hhCjVpGoqLL3zNtGpivLQsDu0NhO8aiI8q
+	JlOOnxj8o0ae6jZngGNaKff9WomUpQEj2RtYNey8=
+X-Gm-Gg: ASbGnctjpAY88qfE0m/NPCKvt+XDNiJKVq2bhv41i/vhP4XHou7vBvnAHMt4/uscZKl
+	dpi3p3ErAzr39tydUrB+55T+s1sZ444mAiJ9fdvIA/r8S1fmc6yyYndqEGf1jOhAKvJqsP0+EsO
+	MebTv2ElDW9Uzvd/gTWTiNTmeUqjdc5a/mrgPC0B+0x1MdRCWVT7cYDEyMZ/0ENhtJtKkETFde8
+	cjRaAnioKxccMMO4Q==
+X-Google-Smtp-Source: AGHT+IFR6MXPuUAohjjneuFFoh6ijwnnepA/iCQSQzF4KjwvxAQl0MBWkVqRYgrPIskVgC+b8wamfMMz8mM70lG5WwA=
+X-Received: by 2002:a05:651c:1109:20b0:32b:7149:9396 with SMTP id
+ 38308e7fff4ca-33224c5ab93mr15066521fa.41.1753996963687; Thu, 31 Jul 2025
+ 14:22:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731091122.53921-2-akhilrajeev@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 31 Jul 2025 16:22:32 -0500
+X-Gm-Features: Ac12FXwOWR21dz0MR18VJUE0137D3QGw9RQlAUvTwo3Lga2XN_wAlbMc_DtTIfw
+Message-ID: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
+Subject: [REQUEST] Release Firmware to Match Current Driver Support
+To: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+This was originally discussed on the freedesktop issue tracker [0],
+but there hasn't been a response there in 6 months. So I'm reopening
+the discussion here.
 
-On Thu, 31 Jul 2025 14:41:21 +0530, Akhil R wrote:
-> Add compatible for Tegra256 I2C controllers. Tegra256 consists of
-> 8 generic Tegra I2C controllers similar to previous generations.
-> The parent clock frequency is different in these controllers and
-> hence the timing parameter values are different from the previous
-> ones.
-> 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  .../devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml         | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+* Nvdec firmware. The driver has been in the kernel for over three
+years and there's still no available freely licensed firmware to use
+with it.
+* T234 vic firmware. The driver has supported the arch for almost
+three years and freely licensed firmware still isn't available.
+* Nvjpg firmware. The driver is awaiting final approval, probably
+worth it to release the firmware with everything else.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+* T194 nouveau firmware. This does not have driver support, but there
+has been some interest in working on it. Making the firmware
+available, even if it isn't merged to linux-firmware, would be one
+less blocker for someone that doesn't work at Nvidia to work on
+support.
 
+Aaron Kling
+
+[0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
