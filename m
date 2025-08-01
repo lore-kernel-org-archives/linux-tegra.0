@@ -1,123 +1,89 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C67264A83;
-	Fri,  1 Aug 2025 17:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAAC28CF70;
+	Fri,  1 Aug 2025 19:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754070097; cv=none; b=PFwOHeMaVMbXt0E+NnkwqMUoop3R9r5xv5rBpZw/uVCln5FeTn5rNemKYVEJyusEt+BI76LntDuVWvbKqs73qpmcf0uW4cx263Z0J7frr+vww3Q4l1CknlEApq+8yiojlh10R5x19MwG8KZeKRwVij+qWmRfUh+wtaKlCafDnCo=
+	t=1754076905; cv=none; b=YqHML+k3gUVqw+yOYiFGU1wqdX8U/Z4ZjCQrqMxZ8YFCX4DnjmQm/mwRMGCuBvIuGs9GTUVHHjiOI5CfVvlSfTocEyu6wxRE0GoJVN6oWZn0gpbbk/ApwTNPJBVf0k0ffCqX7hfInUeFAXpK2Hnpl41s6vNAcF6daTjeqdmy+d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754070097; c=relaxed/simple;
-	bh=iof5uvS5Qt9ud+acUuSX7Xq1xUhIO7S324Ypng3zcTE=;
-	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
-	 Message-Id:Date; b=Xc2MQLM71eBjY4Vjb8hBCkEYAg6LWTYBa8G2BKcYqsF1TyDZ6gcYqvqreswcpox+wp3oguPfYMIAfWh5zk8/6cUaSgnR78ULUYnkzlPVtMqX8qgOuviEvBViQchQX3us2L1dXcR//gkPx5u3i1rVBkOoVQMBhM30lx6dmvonpBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GNL1+IYy; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1754076905; c=relaxed/simple;
+	bh=IJSAXcvh17DdROpZVcOX4dIvpsH4xqwZwXk4qGePwgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksJ8MelfchhxR7lXS2gKrd04/+rWty/5Asn/N6SZHglW9h0MeUIX+wJaquyp3R6TXRL87MEvSm1tlLyknCSm8xA+wWXfqi5eN0564IkONCGOE/fFYjT6VuCT35yFoSzZRophqHHULWss7UNP8hN0Fo0XsKo6LzWJe3dPM6BZd1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lt2ZvjEP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GNL1+IYy"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
-	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
-	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=xTBb/AKF/oJGoi7LY6md+Zn5yzHGPw7lcCLN9w/FXzc=; b=GNL1+IYytfpMPR+RB6ID7kHh/x
-	Rr5VOlWkSWBJMyV1+xGq9Wz+uCXFX6XQnaRFviXXVR+3+hb6jIzSumGlRxvJ7f5fdhrQiaAWuHZ+K
-	rr2LYpNZU1ICR76PS7H1hlGW0R1+wBVaYFEf4JQ5o/s322ZJZMf0EPeBvmmCIHJNHDSRiKvAO/wy8
-	JptceiNRzFLa5R0nLiRSxfEkOwSZgr5+SI03mSYFZvkOHMZROx6Y87VcQVBD3nI3Ybfh1Jh3t64B0
-	RdFCPBPYWBBXfJzPVbBjw6S/qc83bXYBrXQ1GG3sDqN71SIyY1GU46O2hqvpHEr92OpQX3acUDWj3
-	UtlPSyCA==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:50548 helo=rmk-PC.armlinux.org.uk)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <rmk@armlinux.org.uk>)
-	id 1uhtkz-0006pD-0x;
-	Fri, 01 Aug 2025 18:41:25 +0100
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1uhtkH-007KDZ-JT; Fri, 01 Aug 2025 18:40:41 +0100
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-To: Jonathan Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lt2ZvjEP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E5CC4CEE7;
+	Fri,  1 Aug 2025 19:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754076904;
+	bh=IJSAXcvh17DdROpZVcOX4dIvpsH4xqwZwXk4qGePwgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lt2ZvjEPl7yj2gTknYlTaX51NOHCsLy+g5fuSqVaMJJf/I+8ObC+lXdyBBTnVp3WY
+	 jEeGe0BKj9hwch/ZoRAanxaKbG7BUBwtZ/2foY6dAvSIxTGdrWAdIU25b6YzfLU3D2
+	 Tq0PuTs3xrrkw3htHeMvIgbgv2DDDjBijVz0Bx/vT8E3P5jJy9jJwcw4YeEl0Cb9U7
+	 oxcSiGhStLDepPLlfHue7sQ84ht/FEAJ2r+pRFeNIPzDwlMIdEO5HOpcYYvfkk3MIu
+	 +yiBOilisubeD+hOFNPBDI+tK3WltNO+rBljSX5fXYMgcodSK1Ij1HeSG/Ly4e+tLP
+	 W+G9w9yngdM1Q==
+Date: Fri, 1 Aug 2025 20:34:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Haotien Hsu <haotienh@nvidia.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-tegra@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: gadget: tegra-xudc: fix PM use count underflow
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Brad Griffis <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+	Vedant Deshpande <vedantd@nvidia.com>,
+	Akhil R <akhilrajeev@nvidia.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
+	Jui Chang Kuo <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>,
+	WK Tsai <wtsai@nvidia.com>
+Subject: Re: [PATCH 1/4] dt-bindings: usb: Add wake-up support for Tegra234
+ XUSB host controller
+Message-ID: <20250801-blend-lyricist-e2b88ee1f7e5@spud>
+References: <20250801095748.385437-1-haotienh@nvidia.com>
+ <20250801095748.385437-2-haotienh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="X8oP1zOql6xeq+n0"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1uhtkH-007KDZ-JT@rmk-PC.armlinux.org.uk>
-Sender: Russell King <rmk@armlinux.org.uk>
-Date: Fri, 01 Aug 2025 18:40:41 +0100
+In-Reply-To: <20250801095748.385437-2-haotienh@nvidia.com>
 
-Upon resume from system suspend, the PM runtime core issues the
-following warning:
 
-tegra-xudc 3550000.usb: Runtime PM usage count underflow!
+--X8oP1zOql6xeq+n0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is because tegra_xudc_resume() unconditionally calls
-schedule_work(&xudc->usb_role_sw_work) whether or not anything has
-changed, which causes tegra_xudc_device_mode_off() to be called
-even when we're already in that mode.
+On Fri, Aug 01, 2025 at 05:57:45PM +0800, Haotien Hsu wrote:
+> Populate USB wake events for Tegra234 XUSB host controller.
+> These wake-up events are optional to maintain backward compatibility and
+> because the USB controller does not require them for normal operation.
+>=20
+> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
 
-Keep track of the current state of "device_mode", and only schedule
-this work if it has changed from the hardware state on resume.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- drivers/usb/gadget/udc/tegra-xudc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+--X8oP1zOql6xeq+n0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 2957316fd3d0..1d3085cc9d22 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -502,6 +502,7 @@ struct tegra_xudc {
- 	struct clk_bulk_data *clks;
- 
- 	bool device_mode;
-+	bool current_device_mode;
- 	struct work_struct usb_role_sw_work;
- 
- 	struct phy **usb3_phy;
-@@ -715,6 +716,8 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
- 
- 	phy_set_mode_ext(xudc->curr_utmi_phy, PHY_MODE_USB_OTG,
- 			 USB_ROLE_DEVICE);
-+
-+	xudc->current_device_mode = true;
- }
- 
- static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
-@@ -725,6 +728,8 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
- 
- 	dev_dbg(xudc->dev, "device mode off\n");
- 
-+	xudc->current_device_mode = false;
-+
- 	connected = !!(xudc_readl(xudc, PORTSC) & PORTSC_CCS);
- 
- 	reinit_completion(&xudc->disconnect_complete);
-@@ -4044,10 +4049,10 @@ static int __maybe_unused tegra_xudc_resume(struct device *dev)
- 
- 	spin_lock_irqsave(&xudc->lock, flags);
- 	xudc->suspended = false;
-+	if (xudc->device_mode != xudc->current_device_mode)
-+		schedule_work(&xudc->usb_role_sw_work);
- 	spin_unlock_irqrestore(&xudc->lock, flags);
- 
--	schedule_work(&xudc->usb_role_sw_work);
--
- 	pm_runtime_enable(dev);
- 
- 	return 0;
--- 
-2.30.2
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaI0W4QAKCRB4tDGHoIJi
+0kltAQDiyFLBVNnXXpakSrzAUlPjFjlw68v7Rchf9l6RTNvK2AEA69U+MzqIyMOe
+s0VHAdcFO5kUImxsdN2tIk7bvWDoMwQ=
+=jXbq
+-----END PGP SIGNATURE-----
+
+--X8oP1zOql6xeq+n0--
