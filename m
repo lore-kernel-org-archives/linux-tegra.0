@@ -1,140 +1,123 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC341E5219
-	for <linux-tegra@vger.kernel.org>; Fri,  1 Aug 2025 17:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C67264A83;
+	Fri,  1 Aug 2025 17:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754068940; cv=none; b=nZMMEQQSwhlbhJfgMfvJNF9Km0SA8lce9sz2pRSheIl2TFLhb2RH6G6eY+aA+IGgGkzW2V7P2fTp4JtViPih5RLXIejwRmBQEJ8csgnghsCLs/0vVqdy0vs8q6ZGbuTfRLJ5m29t7as+KdWnUOwKJxQjAZ7+reK1y65wTAn8rag=
+	t=1754070097; cv=none; b=PFwOHeMaVMbXt0E+NnkwqMUoop3R9r5xv5rBpZw/uVCln5FeTn5rNemKYVEJyusEt+BI76LntDuVWvbKqs73qpmcf0uW4cx263Z0J7frr+vww3Q4l1CknlEApq+8yiojlh10R5x19MwG8KZeKRwVij+qWmRfUh+wtaKlCafDnCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754068940; c=relaxed/simple;
-	bh=F4U3zLqHM8NpqW1pxXipEfzZi7+0Ycu/7mQRmHJXjNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jt15EM2zoNDUmJQCBEtaLoOnhZEdl1TIMT0LsU4ebNgfI0fbAg5u5nxA7EZgzrpkRycw1sbuT67i7+OlYnhAjkZ4DPbu7L6Tz46YNkdVJqsVa2DRM5NnaRiuJ5ioy7618XDf36IY6mVDOujE4eyhfj96EsS1q7MNZYdkiwE/3U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h1LrvfmU; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1754070097; c=relaxed/simple;
+	bh=iof5uvS5Qt9ud+acUuSX7Xq1xUhIO7S324Ypng3zcTE=;
+	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
+	 Message-Id:Date; b=Xc2MQLM71eBjY4Vjb8hBCkEYAg6LWTYBa8G2BKcYqsF1TyDZ6gcYqvqreswcpox+wp3oguPfYMIAfWh5zk8/6cUaSgnR78ULUYnkzlPVtMqX8qgOuviEvBViQchQX3us2L1dXcR//gkPx5u3i1rVBkOoVQMBhM30lx6dmvonpBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GNL1+IYy; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h1LrvfmU"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4561ca74829so12338845e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 01 Aug 2025 10:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754068937; x=1754673737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3M/PDNKda01rnV3OeJ4NocScrvK7XCljjn5Nn7NUvKM=;
-        b=h1LrvfmUw0OzSRB7ak5Wyus2nhqdj3beFoANdHEK0uZycmnGOVSVVJXNMmqaqU22bl
-         DFmjBQo5Bc8Q+8YBEuNao6NHaG8eVvLHUTZe8HpuZfUZCzL1Z4PAjumZ5BmvDX3p1hQA
-         DPNIzrMHpeeFslE9ri0bFdkM5kSZf90Xpdi8RZmyFyP6l/1oj4h6SQf123y4XHAOnm3D
-         LdB2v0AXA/6z0d5MQtxWjACaG+Pt8W5QamRAe0kVfCoBjajHXnTk2HGShraEqlHk+G1k
-         sPB7aQ5Im3BxE3IxypSDj+LQi/bKdCc+C07por9MFdL85QUe2zclk33INcvYiGoFCAjw
-         EoZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754068937; x=1754673737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3M/PDNKda01rnV3OeJ4NocScrvK7XCljjn5Nn7NUvKM=;
-        b=QE0zcXgJXiKeod7JARic5QB1j8Gxyvvt1OEiIMi3nafjxprtotQmWC2VbEeQj7C0R0
-         zk54SXK+aqJ4D44M0N6DBhJ9BkqSD4kYZOlkT2CGYJ/K/G3t2kRG2qkQHQIyYUnxbaQm
-         0YUn12LP9C9EFw1dVyj4wQAhL32muhPPrGPj4AtQzDthjmtz7mML271lrLKunOIc1kuv
-         Lqr1iXxrmQGFG/H1boCXECOhlmoJ5BjIlVhkfpSiekJKEbPa9Tc27A/yYks5XzKUevIp
-         pirvJA/V7E9nzW8EQch4olM3DlSt1QXOZjTDgMTvrXYBAbSgJKrLeKmSVZhofN9qkTPp
-         d/FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw4fZhsS6+J2xNvOGitnUqj3q6eH4UIRr0kORl+5dK3tmbhXEEag8YkbCp+88i7lS9ehFmBZAYlA69KA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzow7XASJONUOnavFrp8yB3uCGRt8nhNWASGe0pCQVoQEvmljeJ
-	Uoyao0LjlUyiQI21rJ/0JIZyeiNb+ngFZgaPB/5cawWgj+CI6TnWw13TIoq1f9Wgvn4=
-X-Gm-Gg: ASbGncuQ3LfHPx0MVN968mKnq8hliJwsyNOLqJ6NsfCRM2JQ6tOvAc7isJThkEjc3dJ
-	sQai0Ry8M4hozTwZHHyOxmR95CBwnp36yOk7ZFlCnS6R1e5K2szOTDGwblVOUmu/gqISMS5TfO+
-	ZgG5rHmqcvhsYtO1di4xgHMrWhAYtH2mRplHEcPLr8LYgRWx16lrkXDviOuKsg53i1SY3VL1Vkt
-	S2ZItYZMW9HwAq2QmpftJpr0gxAIRJR1TEw0406XFIDUSzNIDgiz+saFR3hCvgq4LSbtV+VEzem
-	IBvAz3i6GPJ23tJhlgIyaLmQWK+KZgJ9PZO/FQplfLbdNSqI5q2uuw+4uPZ5O00fWS8uYml0CDC
-	eBXaFaFY0VYBfrEJq+WnPHPIIMPMbW4SHTWk43je6WG9X5voWY9x/H1on7HxB7g==
-X-Google-Smtp-Source: AGHT+IEr7UdyBNz9mF08fNxf3R1Ysej2mqN5c0NMeUJedJILvrCdFfPD3tDpMYty7zL96HPHkqBLJQ==
-X-Received: by 2002:a05:600c:1554:b0:456:1611:cea5 with SMTP id 5b1f17b1804b1-458b6b58472mr716105e9.18.1754068936946;
-        Fri, 01 Aug 2025 10:22:16 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c453ab0sm6681912f8f.44.2025.08.01.10.22.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 10:22:16 -0700 (PDT)
-Message-ID: <d29b1e05-f783-44ed-a2e3-585a191ec426@linaro.org>
-Date: Fri, 1 Aug 2025 19:22:15 +0200
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GNL1+IYy"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
+	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xTBb/AKF/oJGoi7LY6md+Zn5yzHGPw7lcCLN9w/FXzc=; b=GNL1+IYytfpMPR+RB6ID7kHh/x
+	Rr5VOlWkSWBJMyV1+xGq9Wz+uCXFX6XQnaRFviXXVR+3+hb6jIzSumGlRxvJ7f5fdhrQiaAWuHZ+K
+	rr2LYpNZU1ICR76PS7H1hlGW0R1+wBVaYFEf4JQ5o/s322ZJZMf0EPeBvmmCIHJNHDSRiKvAO/wy8
+	JptceiNRzFLa5R0nLiRSxfEkOwSZgr5+SI03mSYFZvkOHMZROx6Y87VcQVBD3nI3Ybfh1Jh3t64B0
+	RdFCPBPYWBBXfJzPVbBjw6S/qc83bXYBrXQ1GG3sDqN71SIyY1GU46O2hqvpHEr92OpQX3acUDWj3
+	UtlPSyCA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:50548 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1uhtkz-0006pD-0x;
+	Fri, 01 Aug 2025 18:41:25 +0100
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1uhtkH-007KDZ-JT; Fri, 01 Aug 2025 18:40:41 +0100
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Jonathan Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] usb: gadget: tegra-xudc: fix PM use count underflow
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] thermal: tegra: Fix dereference of pointer tz
- before it is null checked
-To: Colin Ian King <colin.i.king@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250730135441.2078022-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250730135441.2078022-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1uhtkH-007KDZ-JT@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Fri, 01 Aug 2025 18:40:41 +0100
 
-On 30/07/2025 15:54, Colin Ian King wrote:
-> Currently pointer tz is dereferenced before it is being null checked
-> leading to a potential null pointer deferernce issue. Fix this by
-> only defererencing it once it has been null checked.
+Upon resume from system suspend, the PM runtime core issues the
+following warning:
 
-Actually the callback should assume tz is never NULL because the caller 
-does:
+tegra-xudc 3550000.usb: Runtime PM usage count underflow!
 
-	ret = tz->ops.set_trip_temp(tz, trip, temp);
+This is because tegra_xudc_resume() unconditionally calls
+schedule_work(&xudc->usb_role_sw_work) whether or not anything has
+changed, which causes tegra_xudc_device_mode_off() to be called
+even when we're already in that mode.
 
-So removing the NULL pointer check is safe here.
+Keep track of the current state of "device_mode", and only schedule
+this work if it has changed from the hardware state on resume.
 
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-> Fixes: 6fc2e1a5f98f ("thermal/drivers/tegra: Switch to new of API")
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/thermal/tegra/soctherm.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> index 53a5c649f4b1..53fa6099b67f 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -585,14 +585,19 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
->   static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz,
->   					const struct thermal_trip *trip, int temp)
->   {
-> -	struct tegra_thermctl_zone *zone = thermal_zone_device_priv(tz);
-> -	struct tegra_soctherm *ts = zone->ts;
-> -	const struct tegra_tsensor_group *sg = zone->sg;
-> -	struct device *dev = zone->dev;
-> +	struct tegra_thermctl_zone *zone;
-> +	struct tegra_soctherm *ts;
-> +	const struct tegra_tsensor_group *sg;
-> +	struct device *dev;
->   
->   	if (!tz)
->   		return -EINVAL;
->   
-> +	zone = thermal_zone_device_priv(tz);
-> +	ts = zone->ts;
-> +	sg = zone->sg;
-> +	dev = zone->dev;
-> +
->   	if (trip->type == THERMAL_TRIP_CRITICAL) {
->   		/*
->   		 * If thermtrips property is set in DT,
-
-
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 2957316fd3d0..1d3085cc9d22 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -502,6 +502,7 @@ struct tegra_xudc {
+ 	struct clk_bulk_data *clks;
+ 
+ 	bool device_mode;
++	bool current_device_mode;
+ 	struct work_struct usb_role_sw_work;
+ 
+ 	struct phy **usb3_phy;
+@@ -715,6 +716,8 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
+ 
+ 	phy_set_mode_ext(xudc->curr_utmi_phy, PHY_MODE_USB_OTG,
+ 			 USB_ROLE_DEVICE);
++
++	xudc->current_device_mode = true;
+ }
+ 
+ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
+@@ -725,6 +728,8 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
+ 
+ 	dev_dbg(xudc->dev, "device mode off\n");
+ 
++	xudc->current_device_mode = false;
++
+ 	connected = !!(xudc_readl(xudc, PORTSC) & PORTSC_CCS);
+ 
+ 	reinit_completion(&xudc->disconnect_complete);
+@@ -4044,10 +4049,10 @@ static int __maybe_unused tegra_xudc_resume(struct device *dev)
+ 
+ 	spin_lock_irqsave(&xudc->lock, flags);
+ 	xudc->suspended = false;
++	if (xudc->device_mode != xudc->current_device_mode)
++		schedule_work(&xudc->usb_role_sw_work);
+ 	spin_unlock_irqrestore(&xudc->lock, flags);
+ 
+-	schedule_work(&xudc->usb_role_sw_work);
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	return 0;
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.30.2
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
