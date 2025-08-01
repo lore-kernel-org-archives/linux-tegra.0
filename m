@@ -1,69 +1,74 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0091917D0
-	for <linux-tegra@vger.kernel.org>; Fri,  1 Aug 2025 09:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2E31917D0;
+	Fri,  1 Aug 2025 09:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754042169; cv=none; b=rRsstp7tnC8GSS6YxfFoO/Qf+AecMnGPJgIKiAv3i22Rh7Fs5rjyGgYdE3vlnkQvKlBSaRBkHfCFqtx9sC8MV4m7M2lhdd3+H/Ol/Cl1BXcnQPyHAuzVVm1CMTM+HBtlo28U313+XovRsLLSL9LRYaGnymNXvtjUSgfc+eeOUus=
+	t=1754042186; cv=none; b=k8iKbPLuSphG0ZuSB7+D0q+tyDpRNxc0nvZe9eydnVNkJ02oTi94pCWbsGytSDv6MaapLmVs835xyTuqLgeUxh3gMmCoA/90qasxjPTjQVkZbmoKQwMONio7slUnmOvK5e+85Zl8+dfK0DFBlfv38bBdzA/d7U/Gfs3Em03/br0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754042169; c=relaxed/simple;
-	bh=2N4MghImP63kJG3AYZ0iFt3q/vrTrw1QatrAObmdhR4=;
+	s=arc-20240116; t=1754042186; c=relaxed/simple;
+	bh=lQYzrkD+Px1qyVM1ZME3/oSd7U2c3OhzoOEJV5E/d3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mr1kBURRpSz6/EOANaL7rCFOB9nJyRT5eYiPh1LnKDLH/9QRV3ENe5Vzan20Dr0K0BcBOJOwu/iPgyezuyI3kC2OFzwKExvKY+0rJ4kDiIdNQEyTHatdyc13kci3TGVBIhEPOPi6YopO/H/M6Ls6RmkktMl+MA6CqHAhp7brDuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kmu8NsMn; arc=none smtp.client-ip=209.85.128.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=lb5n2m4mjapqMUpJ5W9lNch6talnsVk6ts2MoQ2KSYi7vg0CH6YBxqdD8f1Hos0FlEe/SaaQX/miPy9G77FPS+SvtSFYNxWZVGhtMOCoF4Q1XtvD0F9gvF2tO3feaSPjGGVnSTkvtXGPaVT/PIlBr/fvSOKLclFu4/mNfWJ6S1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyC/BOnP; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kmu8NsMn"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45896cf24ebso6778105e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 01 Aug 2025 02:56:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyC/BOnP"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b78127c5d1so996332f8f.3;
+        Fri, 01 Aug 2025 02:56:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754042166; x=1754646966; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754042183; x=1754646983; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2N4MghImP63kJG3AYZ0iFt3q/vrTrw1QatrAObmdhR4=;
-        b=Kmu8NsMn0busLWFIU75l5THsoOiQQbXqA7jZCWx4QpYKGv7dLpSnIvmRiklHe8LfLz
-         P9OcSe+1sQuqnXuf+RHSpalgngHgyfmA6+mJQK9Qe8CSIYDf+d9BJaWUeMG0BlfC7XZY
-         k5vrVQre88gSwLk38J92+rjl73xDpJpW8cBJWIT6cKP0QvZ/+FN12EYx17dijHBfLnvM
-         LPtGrniyNXItl59xxE5+KWdOFKdAlXuJ2HWqSu6S2FtfgdNvAP05cs4QYzf6uynkEkM4
-         hVolwBdpUg1FT4214nhtVqGZ8egzUd6WwYOAsGpwVb4gxYgi4L5bHJtUlPKorBTGp1oa
-         szwQ==
+        bh=j0kfRiLHjJiKlOrEJoRAigC4AQ+3jmJWpddEgaBCKBg=;
+        b=TyC/BOnPoRee6QQWxUCgT8UdNW+rCLt80RJ5TCwBh8TxL4SU4bCoPOYmCkS6FLl8iN
+         chBvNbZHj4Fa2PJQXJEABjyhViAueSsUli/AwtyxXHIn6t11uTIRmVUpUAjiqk89RKig
+         h57YY6RtXcxgJgkBKR9Fg7k+U7u7SbLomZ9Zy3HyvPhOfOCvFy1Q3KSozB7lu7d78xiY
+         4/IE6fJjWoMRwLqI4OH7eAyZSxuuZjkaWA4I4pMF+EW+IyPW5tv4b2xr25wrzZUjFiQd
+         7R/THfRJvQNd0jnVKG+0YHbw+D+naizs4EHSi6hECeRqSYnhx65fq7B6oA0tiOV6u3Ju
+         hRwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754042166; x=1754646966;
+        d=1e100.net; s=20230601; t=1754042183; x=1754646983;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2N4MghImP63kJG3AYZ0iFt3q/vrTrw1QatrAObmdhR4=;
-        b=RcwYB72CuKs2CB1YCVx3wOPvIAUuFdH7Ni+jTuQseYlZmYDiO/g1iEnmGk0nk3dDSl
-         /hPGihZUbVqMQYGTowTiBFCkiibEN09qPbIs9Ci+eiSgaJ4pSz6mt5pQZX3rMqy6FAna
-         OPGbPIE/HLWYsB7rRNH0vjR8poyMgz/wr/NQT0/NL8JTaxtz5StKh9qQsYCKKLCHMJzU
-         cfrFlK8wF2i2Fk0F/7Rbp2xid59f6ovON/5c8QuIM/SxFyjIfJHKs5lTTj2uNJu7Qn8K
-         jJFHqj2Mn6wuPgRRQRqZTNlUa0YVpv01CP9pfXzRRwTFFjQ7EN50zmZR7mH1/YbnQOwL
-         rdyQ==
-X-Gm-Message-State: AOJu0Yx9bTlCs+ET4T/2r6hLKTS64cNv/ebI8gXe63MLFWzrJH1P9lo7
-	tyq3r3IsFz8fv6FDIa8e25lzfVeXIlebB3nCA1Gkimu99AZEdclwkLKRmCFG0w==
-X-Gm-Gg: ASbGnctKDrQjtz3txMrU4Ilo4FAgrf6p+fO93ArSg6MjOXwGnyOyqKgd5nsayOh7WX+
-	CMpmNQSbqZqInHxS4QM+U2Gz8Gf3FKB/Jlad4PPFnxJFrAsnAj6e0jYpMl+87RBG5dOSvEyQaya
-	aHnNV9NGE09EMupRHg0NNK6vnyWT/h5/tkYu+DO7NQqVGma19pAIrrdKwtLoVhWw26xJg2BD80H
-	CzlQ7UVbmXqlM40uQRCUpM4p1wNCS52z77jLEP3pq1I1aKxtPdinLX5qyAn6eTAhRRN8Cgic/us
-	4TKdPAFKEe4DV9nZ77I7P1v4FHVQ7WE0yEuxLPVPfzGNZUAMw8cgy+q2vVzAf7oS1YDJvQSjHrT
-	h3J2HnTt/0OqXXLB0BE69RL/UGDSrRCgANRc4ZpevFN79nd7aXAiYCD56uOpefIXOXWOjfQ1dED
-	gWz9ba6VgG
-X-Google-Smtp-Source: AGHT+IG9UzKHdYYLkDhnp0NGGhXk4ot/1Cn1TkOPL7zAuieewSW1z4C7TNFp1WpT7vHGbxO7GL9zHw==
-X-Received: by 2002:a05:600c:810a:b0:456:d1c:ef38 with SMTP id 5b1f17b1804b1-45892bcfb0fmr97918705e9.24.1754042165917;
-        Fri, 01 Aug 2025 02:56:05 -0700 (PDT)
+        bh=j0kfRiLHjJiKlOrEJoRAigC4AQ+3jmJWpddEgaBCKBg=;
+        b=j0ltY8BTJw1b1EsQpLclg5UuULbL0p28xUMNYAcrCPPq8tAXExHI0TnE7wfHwRVszA
+         HtPZUVbBDqAX96620TMGCEQE8lqDct4+X2t4FB3t7uuxwU7eU8aLGrHuZKS0cPn5HUy+
+         vr5BZngapq3+IO1/Iv5weeNlqcdo8j1Pt0Vf1c1Sg1Igdtwzjw9R+M2AICx0NQVWT0Dg
+         nvLkn57gLfyR+CiqjhuQvSqmNR2az69AOVz7LgdIh0ftX2soIKNfQwgVlfF2zAgPRgTh
+         FKv30b7MaUwW6watXrYRbJkz8tDFgu+Y9lT4mqR+sGGe9DhJ8svGHuIAj5+wQC0ZxaAG
+         Tr9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXBUDuShd0ApB7/EAL6DfxpIIfKf87XF/faZ2f4gdiagqvgYGTxTrRRsuNJx4d3jKIg8OWxOh2kDkU@vger.kernel.org, AJvYcCWFOgCmt3zh64suf1iym7RRRVgRj+uugVlA8IgLmz8lVrh1AHcxy9q3/kJsFxPNdguDlOh9eK076nvGxbM=@vger.kernel.org, AJvYcCWNqaLyNx/3aYF0+IjWo+rJ7azDkSwd85AjEsmO2eJz3pCxhXZHiMgEGJwlGQVfsnVvvt8CvexakOdqtpyZ@vger.kernel.org, AJvYcCXDgpwH/og1hrgq+3ztmtoNyQyKs5i+ZXWVeLDESUyUYo9hXJxXbDHaPewZHr88HPz9yDsI+Kr5q96p@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiI+zR30CuGNGfdQ2xXzrqH1w85FeRWyNlY93VbcG/+m1tjdcP
+	N0YM6YS+1WE3pQtAjCzI3yG2Je59XBL6zCDiYe3pe0ua9t8jxJSudqzM3RN2eQ==
+X-Gm-Gg: ASbGnctfkLm8zb2DTRZ2bWFa0XFr+QUbxr89O8uW4aoLyBImdnPY3WTzT8V+V2jVs12
+	T8El/DBR4aTKzrveIhjpgRvQhnQHHA+qUsCQ8am5FzXo9iFsZONULlTm79ikaGWukGa2Xu9TtXJ
+	bV0lJKRnAkwwxjNTOXiGFkgLH1JDFvD6A9LdjsKtp7MUjThA1dkaUkXvGgLRC5a9LHj2rT9Kp4h
+	6sZQCxIp2e+x5Zmwv6GKdZ6vfwoqm1TqSFJGFuHeOYnGrnHzfNbP/2JFdaK3iinDAFPk+pSLd9f
+	H7EMzcdpE5vSIW3vpUASi6+37GJ45Vzc/PfCfbmF51M+IgA+H/L6OMQVWOa42nap/l9rxHgVtNa
+	BxK1jChD11vlogKLKhom4cetKn6Py0oinIvWnShc8XoxaGKTMOVaJkbMUQZAgKsJLEQCHfTbrGW
+	3Sv9daDoSG
+X-Google-Smtp-Source: AGHT+IGElgkAj8MkFDsWsxMthPnhdGte3qm9LcW5uxm/KQfn17nwPXBb/8cTW7G5VEEbXAh7JeEj0g==
+X-Received: by 2002:a05:6000:2a0b:b0:3b8:d519:3ec7 with SMTP id ffacd0b85a97d-3b8d519401fmr1221944f8f.13.1754042183281;
+        Fri, 01 Aug 2025 02:56:23 -0700 (PDT)
 Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abe18sm5313010f8f.2.2025.08.01.02.56.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf54bdsm61770995e9.6.2025.08.01.02.56.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:56:04 -0700 (PDT)
-Date: Fri, 1 Aug 2025 11:56:03 +0200
+        Fri, 01 Aug 2025 02:56:21 -0700 (PDT)
+Date: Fri, 1 Aug 2025 11:56:20 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
-Message-ID: <4vpqn2iv23pejsx4uxt7p2ojwy67pdzy5bihce7zpnp766f56j@2sr3d4fw4qwp>
-References: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	digetx@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	ldewangan@nvidia.com, robh@kernel.org
+Subject: Re: [PATCH 2/2] i2c: tegra: Add Tegra256 support
+Message-ID: <5j6kkegbnhjek64ucr7j4oj7qpxumjnekhm3d3ub7rvgrbgcj2@xvswbccar4u5>
+References: <20250731091122.53921-1-akhilrajeev@nvidia.com>
+ <20250731091122.53921-3-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -71,64 +76,48 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vlfsfd44axgboum5"
+	protocol="application/pgp-signature"; boundary="7v55t2jggqofz3sp"
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
+In-Reply-To: <20250731091122.53921-3-akhilrajeev@nvidia.com>
 
 
---vlfsfd44axgboum5
+--7v55t2jggqofz3sp
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
+Subject: Re: [PATCH 2/2] i2c: tegra: Add Tegra256 support
 MIME-Version: 1.0
 
-On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
-> This was originally discussed on the freedesktop issue tracker [0],
-> but there hasn't been a response there in 6 months. So I'm reopening
-> the discussion here.
+On Thu, Jul 31, 2025 at 02:41:22PM +0530, Akhil R wrote:
+> Add compatible and the hardware struct for Tegra256. Tegra256 controllers
+> use a different parent clock. Hence the timing parameters are different
+> from the previous generations to meet the expected frequencies.
 >=20
-> * Nvdec firmware. The driver has been in the kernel for over three
-> years and there's still no available freely licensed firmware to use
-> with it.
-> * T234 vic firmware. The driver has supported the arch for almost
-> three years and freely licensed firmware still isn't available.
-> * Nvjpg firmware. The driver is awaiting final approval, probably
-> worth it to release the firmware with everything else.
->=20
-> * T194 nouveau firmware. This does not have driver support, but there
-> has been some interest in working on it. Making the firmware
-> available, even if it isn't merged to linux-firmware, would be one
-> less blocker for someone that doesn't work at Nvidia to work on
-> support.
->=20
-> Aaron Kling
->=20
-> [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 
-I will continue to look into this, but it'll not be high priority. Too
-many other things going on.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---vlfsfd44axgboum5
+--7v55t2jggqofz3sp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMjzIACgkQ3SOs138+
-s6FEgxAAvkvwgsHX5l3cO+2rIhmom6ekBp42IgcJkTbTecA71u6Z2ubDlsoEfcOM
-UgC+Sx3gSP98C8xN2pKJxxYRH6tOKNdp1gXjehSRc6R5ZFw1wpbocdS01UugoGBc
-KSa/+iA6jBSda7rRMR6UqV/9CRFbGRsGwVBNbyK4uv7EIEIj5biUTU7nn0tLOcLK
-fgZgRyo+CjmRExhogYEOFtWmQi8cpPvhaYIzb2NiGvYbi09wfEOUra3DjxBQoe3j
-rCDWAKRVXqfz0IpFcLXhAe4qi2ZZrhEwk+o9c1P/qHaBVO6vTFBvgG6z/6nI9aI8
-N668iOizUE5MGDEepkPq3vo1YtsYUbfNHYqjTzyGbO5ZIJ48EYZ9DjTB7zU06MlA
-57nU7TfYv/Ox+ZuiuwH+PgX9fox1/t6zO+FAw5xR8evSC8C6DXZKhcE9ALkUI2fr
-H47kpBSmexklIIrFxGtuCDk/gUjo8aHe4/ND0MWKoy7kfhuKi4IkvUfJaOkr2uGa
-7qURVLlJKp1T5u5aPOUZZG+QoWL8iSNbq2BYM5y9Sk7Nd9SbutNpxWMaXig2tZ+D
-lspW+2vja6djQdfAgPRF/FngnmuLmxI6Niq0QSvZKdydlJIuyeG6t1n+lGxtQBnS
-Vzxq6D4q01zVUZh9Lsgn+x5iqQ3B9jfM1nXuomfa9+fjSklSSuA=
-=HsSE
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMj0QACgkQ3SOs138+
+s6HqIhAAgKLm58hnyCD3m9KGJlfOvJCaM7UwHyze83lFmLTCicZUIhyGXbNqTjln
+eeIr4OBJaRPGMnsd2TgfOPHHtAH4KLjT6nI84Syq/NSc3SRU60nT+9ZKz3cO2bew
+6Tv8oHZlNjFg49iG/a3W1fB0aJ1dNeclFQHgUDG7OyvAEmePGuCWSdl6mzFSyq8Q
+eQ2OIJsr5lxoDUMpt2s/bCO+yG1dVUEaO8fWfQNfVHvARlIVBMH0nWBP27jmBArM
+4NyJ7rWUUMyL3ejaXQSF22xgUrrIWKozP1Fslab9XxPFqdOEj2IkcmlQVAu3Qw7e
+/l9qiOsCMI0NfyKINm9NU9MEyr9iVkh+6h1ZhPt9KZIh1WVK/p5pBXd4fcxUse+1
+dFul8GyZ7+u+3G338Wgb+3CY0zrRDgA67DClO2WjwEqPfHdzI9hykOS4nB+ACRI5
+HYy1gfvnt2pwqLk7HCpdRbHjr0QCpIiwCpPrz2WuGfDqrPJUwmiPqkZOgTjbGlUq
+I0kB//A5YBnEqZnMBFVQ/NqVgvFRVcZ2kIdy7RNbg4ZHRxNvqdnUNzQgnGylTIh8
+afA9O4V0WHlLjYHgLhQbh/MHlYOOS6gJ35jr/ZwqXtGH3U1WAyn8Aq3oGtZww6dd
+s9VBj0SvSqOOWXt1/X+XPyu6YbyN4VlnNBEPxp6IYeeJziqx8BQ=
+=7yKx
 -----END PGP SIGNATURE-----
 
---vlfsfd44axgboum5--
+--7v55t2jggqofz3sp--
