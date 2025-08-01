@@ -1,83 +1,69 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5972E22DFB8;
-	Fri,  1 Aug 2025 09:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0091917D0
+	for <linux-tegra@vger.kernel.org>; Fri,  1 Aug 2025 09:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754041803; cv=none; b=gPHSqDiR2qGopnthhXPS4OZ9mucQDIqrv/5kVj/BcxMdgzljGp4sjUBTUYvdOfS/ABHqxWGuj8f6RVfHXJvnAv8EWj5vYN/G+Hk/dnuKVWl+6AUbdhEWxl/TZQbLGBz1oAsYM8AZ6IsiAZeR2XHrZXkMILPM6ze9BWUPjF2B1ck=
+	t=1754042169; cv=none; b=rRsstp7tnC8GSS6YxfFoO/Qf+AecMnGPJgIKiAv3i22Rh7Fs5rjyGgYdE3vlnkQvKlBSaRBkHfCFqtx9sC8MV4m7M2lhdd3+H/Ol/Cl1BXcnQPyHAuzVVm1CMTM+HBtlo28U313+XovRsLLSL9LRYaGnymNXvtjUSgfc+eeOUus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754041803; c=relaxed/simple;
-	bh=QB7yktojV4SmiuIB2Em5vaLnXdNR8TBgORvLFQ22RrI=;
+	s=arc-20240116; t=1754042169; c=relaxed/simple;
+	bh=2N4MghImP63kJG3AYZ0iFt3q/vrTrw1QatrAObmdhR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xloq0ctAox9JKIcZbaPTdFMet4q7CopDwBmzf88L/pq+FRyYogVuxYFyfXV5r0ayZ72i18g9T22iK2Wfuvsw9DFd3rWx8lIvFs4c1OyE8+AxgXYBywSsxv+v2G0Nxf6hg1OSBlxc4pyOrpZqKwqgM4XXvCI0XdMI5+vw8PlfEPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKnp0afs; arc=none smtp.client-ip=209.85.128.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mr1kBURRpSz6/EOANaL7rCFOB9nJyRT5eYiPh1LnKDLH/9QRV3ENe5Vzan20Dr0K0BcBOJOwu/iPgyezuyI3kC2OFzwKExvKY+0rJ4kDiIdNQEyTHatdyc13kci3TGVBIhEPOPi6YopO/H/M6Ls6RmkktMl+MA6CqHAhp7brDuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kmu8NsMn; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKnp0afs"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso8202555e9.3;
-        Fri, 01 Aug 2025 02:50:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kmu8NsMn"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45896cf24ebso6778105e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 01 Aug 2025 02:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754041800; x=1754646600; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754042166; x=1754646966; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QB7yktojV4SmiuIB2Em5vaLnXdNR8TBgORvLFQ22RrI=;
-        b=HKnp0afsVA4vPj7RB8S7xNdz8VOQ9mshR5hiUWekxp42G071yUPOMf1/p99Z6nrt6X
-         3hKnm+PRUXxFFOuf/ekjWUSEdrO3luDR40/hyrTH6RajgmYRi8w3AVhPPJ7stj6/VsZm
-         DxtLj/s21Ce1F081nTSDToaMA8zQwccceTuiXPPZZtKo1rD0hIWVjpcUS2bkQRC9Frgp
-         BqlqGYOLOYhnYKeK2dlHUjoQ0sgE2H9acnnoHWzWVZnddvUAigadT6YJoA+7DhnzCajd
-         gDF0dz9snYgr22JiTI5nqmwh/8b4wYjHSflwSvFe9LBzhfmujIF/O27//yHc0NNDu13M
-         5tDQ==
+        bh=2N4MghImP63kJG3AYZ0iFt3q/vrTrw1QatrAObmdhR4=;
+        b=Kmu8NsMn0busLWFIU75l5THsoOiQQbXqA7jZCWx4QpYKGv7dLpSnIvmRiklHe8LfLz
+         P9OcSe+1sQuqnXuf+RHSpalgngHgyfmA6+mJQK9Qe8CSIYDf+d9BJaWUeMG0BlfC7XZY
+         k5vrVQre88gSwLk38J92+rjl73xDpJpW8cBJWIT6cKP0QvZ/+FN12EYx17dijHBfLnvM
+         LPtGrniyNXItl59xxE5+KWdOFKdAlXuJ2HWqSu6S2FtfgdNvAP05cs4QYzf6uynkEkM4
+         hVolwBdpUg1FT4214nhtVqGZ8egzUd6WwYOAsGpwVb4gxYgi4L5bHJtUlPKorBTGp1oa
+         szwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754041800; x=1754646600;
+        d=1e100.net; s=20230601; t=1754042166; x=1754646966;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QB7yktojV4SmiuIB2Em5vaLnXdNR8TBgORvLFQ22RrI=;
-        b=Rb0vWJC9ooh0YXFMAP3tzcSQib+9hZ6JpT4OZd8Vs3JGB07Ff7EHAxb89wfBWB3TX9
-         YXJBDd2Cx01npGxx8e41JhdG4oxnoRALnZdqYIApLgpw3WthA7I897LncySs5MWpG/HN
-         0xmyYvqEdPrv6DW3Wj/ucqwHlSatxxbnc7g+9ipnJyVCCafaqY3qzgw+LeO0MgMWt0oB
-         3TTNHZqkmMBgY8LvG7vQGbuRiopB+dJb0/m4Bqzb2HjQXajBZxYWLRowAaWixsfFzUKJ
-         x2WE7a4rA4SgXX/DIGivoEhV5f+09FApbRmT3lkHd6AoaTkaku/r41h+FMT/7Bu8itsd
-         wqdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9nH+0v3iRor330Juvl4BxZMpSaY3St3HApl8y5xVHh2CaxP++F8Xcfb/CwKoIv6czO1UNYZybkE0XPGAekUwM@vger.kernel.org, AJvYcCUKJ1z0usa9DyQJgcIwtS7FQSAqlnXjZQDMt4grwR4yfV3uz1sBjT0PCphD4vCHPk4dESIPiufXSWPuNPE=@vger.kernel.org, AJvYcCV/D9CrTOt7ZePHloM7IfIakVGUVuGGRAdexRdz/nGTCepiDcPzDUvh8qBxxNrFuB77Q82mNl6sbDYj@vger.kernel.org, AJvYcCVJXst12TegiwTKMuDxolSwp9zjosO8AJQxYYfnr9O8m8rQXAPUOrEq/kfwgtP+m1ekoV2H1mOD+IfvK56m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi3TYLUNaVZ7YSdyLKSsbhkYBv+YW3MX1bGUqsdB7DLM8/ebi/
-	OgkWtFQmJrPMndKp47P9LsUeMiGjvr2fPIWOnmhxwka6rwCmL/Uh23zL
-X-Gm-Gg: ASbGncv/FyXC78eE4hUfluCcJ/Aq0mHkC5UM2dqbtWiuqPYaR6hVRpRczA+5qtxW3k0
-	OsB43pkA5VbfhiH6lluuKpwlYQH9US8GZcfXJi/10zQOcQdCGM24Fdf84bXqe+DWErc3KA0fN/A
-	jUzroVDu1osf5W0SdsLDQq0Im0pv7B0eREjUiqlcdv1YqJb/a/CEwp7q790anksnNn9OMbWYlqd
-	w6CQbq1UjkR1rOWuwIRngddLgw1UYmUtGYbOdJupBPIFX+llIvKR+o5Npb5PjJIqe2JkIsWM1RZ
-	ufj7wod2Hr1dz70yOdugm3FLzmdO5fu3CpWyOXyCMW8tb/cZQgaMTJBlDZt6LBxOcIFMeqSE58T
-	kevbtxG2fPp7zLHBrCv8RaKpVvHfgGQSKLh4NtlNjHXfMehuKFXYu36C1W7nl3ZQP82LBC7h9iK
-	iJM9S477KM
-X-Google-Smtp-Source: AGHT+IGM1VbcACYVMzznygtA8YnBMiWc/770n/UqPcXfYjRmcqZqIg2si3EXfeB1ZBYpCKSU7rfNXg==
-X-Received: by 2002:a05:600c:3ba6:b0:450:cf42:7565 with SMTP id 5b1f17b1804b1-45892bce8c7mr82868975e9.23.1754041799445;
-        Fri, 01 Aug 2025 02:49:59 -0700 (PDT)
+        bh=2N4MghImP63kJG3AYZ0iFt3q/vrTrw1QatrAObmdhR4=;
+        b=RcwYB72CuKs2CB1YCVx3wOPvIAUuFdH7Ni+jTuQseYlZmYDiO/g1iEnmGk0nk3dDSl
+         /hPGihZUbVqMQYGTowTiBFCkiibEN09qPbIs9Ci+eiSgaJ4pSz6mt5pQZX3rMqy6FAna
+         OPGbPIE/HLWYsB7rRNH0vjR8poyMgz/wr/NQT0/NL8JTaxtz5StKh9qQsYCKKLCHMJzU
+         cfrFlK8wF2i2Fk0F/7Rbp2xid59f6ovON/5c8QuIM/SxFyjIfJHKs5lTTj2uNJu7Qn8K
+         jJFHqj2Mn6wuPgRRQRqZTNlUa0YVpv01CP9pfXzRRwTFFjQ7EN50zmZR7mH1/YbnQOwL
+         rdyQ==
+X-Gm-Message-State: AOJu0Yx9bTlCs+ET4T/2r6hLKTS64cNv/ebI8gXe63MLFWzrJH1P9lo7
+	tyq3r3IsFz8fv6FDIa8e25lzfVeXIlebB3nCA1Gkimu99AZEdclwkLKRmCFG0w==
+X-Gm-Gg: ASbGnctKDrQjtz3txMrU4Ilo4FAgrf6p+fO93ArSg6MjOXwGnyOyqKgd5nsayOh7WX+
+	CMpmNQSbqZqInHxS4QM+U2Gz8Gf3FKB/Jlad4PPFnxJFrAsnAj6e0jYpMl+87RBG5dOSvEyQaya
+	aHnNV9NGE09EMupRHg0NNK6vnyWT/h5/tkYu+DO7NQqVGma19pAIrrdKwtLoVhWw26xJg2BD80H
+	CzlQ7UVbmXqlM40uQRCUpM4p1wNCS52z77jLEP3pq1I1aKxtPdinLX5qyAn6eTAhRRN8Cgic/us
+	4TKdPAFKEe4DV9nZ77I7P1v4FHVQ7WE0yEuxLPVPfzGNZUAMw8cgy+q2vVzAf7oS1YDJvQSjHrT
+	h3J2HnTt/0OqXXLB0BE69RL/UGDSrRCgANRc4ZpevFN79nd7aXAiYCD56uOpefIXOXWOjfQ1dED
+	gWz9ba6VgG
+X-Google-Smtp-Source: AGHT+IG9UzKHdYYLkDhnp0NGGhXk4ot/1Cn1TkOPL7zAuieewSW1z4C7TNFp1WpT7vHGbxO7GL9zHw==
+X-Received: by 2002:a05:600c:810a:b0:456:d1c:ef38 with SMTP id 5b1f17b1804b1-45892bcfb0fmr97918705e9.24.1754042165917;
+        Fri, 01 Aug 2025 02:56:05 -0700 (PDT)
 Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953f887asm99109165e9.29.2025.08.01.02.49.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abe18sm5313010f8f.2.2025.08.01.02.56.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:49:58 -0700 (PDT)
-Date: Fri, 1 Aug 2025 11:49:56 +0200
+        Fri, 01 Aug 2025 02:56:04 -0700 (PDT)
+Date: Fri, 1 Aug 2025 11:56:03 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-Message-ID: <m2jfr3glrivqykyblgk2beagrtbfxyqcoqb3bowadixpcduauj@cqw6resa3uhn>
-References: <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org>
- <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
- <CALHNRZ-YZg3cKzRBMGaxRpejFMLSpOOz-FPQEaQVXFpFao40WA@mail.gmail.com>
- <CALHNRZ-jxC5PXqiG4tNShybaU9gZjTz4YT+VXgfQFNQ-Ox7crg@mail.gmail.com>
- <yczvbwanjadyfife3hnp2khxkgs77pokypqkxotlldjskshskt@xckrkfucg6xx>
- <CALHNRZ--ZUxqrXHEnizXC8ddHC5LFA10oH+CgQmOcTt+cJ1CWw@mail.gmail.com>
- <6abdc70c-0def-4cf1-b1f4-ea9bdde4fcb5@kernel.org>
- <CALHNRZ8=ikQe4L6h9VHpTGm+OFU0iZA_OV6LUP6jDUySBv4+Lg@mail.gmail.com>
- <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
- <CALHNRZ9VEUzU07j_fUWhNnF24y64wkO5_Vun-mf6d_m=Xyx4dA@mail.gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
+Message-ID: <4vpqn2iv23pejsx4uxt7p2ojwy67pdzy5bihce7zpnp766f56j@2sr3d4fw4qwp>
+References: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -85,157 +71,64 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wjc6ud3w4refol5k"
+	protocol="application/pgp-signature"; boundary="vlfsfd44axgboum5"
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ9VEUzU07j_fUWhNnF24y64wkO5_Vun-mf6d_m=Xyx4dA@mail.gmail.com>
+In-Reply-To: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
 
 
---wjc6ud3w4refol5k
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--vlfsfd44axgboum5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
+Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
 MIME-Version: 1.0
 
-On Mon, Jul 14, 2025 at 01:01:19AM -0500, Aaron Kling wrote:
-> On Thu, Jul 3, 2025 at 2:24=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Mon, Jun 30, 2025 at 01:48:28PM -0500, Aaron Kling wrote:
-> > > On Thu, May 29, 2025 at 3:53=E2=80=AFAM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> > > >
-> > > > On 28/05/2025 19:35, Aaron Kling wrote:
-> > > > >>>>
-> > > > >>>> Friendly reminder to the Tegra maintainers about this question.
-> > > > >>>>
-> > > > >>> In lieu of a response from the Tegra subsystem maintainers, I c=
-an only
-> > > > >>> hazard an assumption, Krzysztof. I presume the pstore carveout =
-is
-> > > > >>> bootloader controlled because various stages of the boot stack =
-can
-> > > > >>> dynamically allocate memory, and this became bootloader control=
-led to
-> > > > >>> prevent any of those from overwriting pstore. I worry about har=
-dcoding
-> > > > >>> an address in the kernel dt, then finding out later that there'=
-s an
-> > > > >>> in-use configuration that overwrites or corrupts that section o=
-f ram
-> > > > >>> during boot. What are your thoughts on this? And is there any w=
-ay for
-> > > > >>> this patch to proceed?
-> > > > >>
-> > > > >> I haven't been able to find anything out about this yet. General=
-ly it's
-> > > > >> difficult to get the bootloaders updated for these devices. Tegr=
-a194 and
-> > > > >> Tegra234 may be new enough to make an update eventually go into a
-> > > > >> release, but for Tegra186 and older, I honestly wouldn't hold my
-> > > > >> breath.
-> > > > >>
-> > > > >> Thierry
-> > > > >
-> > > > > Krzysztof, based on this response, is there any way or form that =
-the
-> > > > > Tegra186 part of this could be submitted? I can drop the newer
-> > > > > platforms from this patch if Thierry can get a response to his ot=
-her
-> > > > > reply about how the bootloader could conform.
-> > > > >
-> > > > I don't NAK it. Eventually it is up to platform maintainer if they
-> > > > accept known DTC warnings.
-> > > >
-> > > > Best regards,
-> > > > Krzysztof
-> > >
-> > > If the decision is up the the tegra maintainers, then Thierry, what's
-> > > your thoughts now? What is in this patch should be compatible with
-> > > existing l4t and android bootloaders. But it does add a few new dtb
-> > > check lines.
-> >
-> > I don't adding new DTC warnings, especially ones that we know up front
-> > we can never get rid of. The memory one is a notable exception because
-> > the system becomes unusable without it.
-> >
-> > ramoops is not in that same category. While it's certainly nice to have,
-> > I don't think it's critical enough to warrant that permanent exception.
-> > Where possible I think we need to work to address issues souch as this
-> > at the root and fix bootloaders to do the right thing.
-> >
-> > For any cases where we can't fix the bootloaders, I think that's
-> > something we have to live with. Having the support for this live in a
-> > fork is a fair compromise, I think.
-> >
-> > I know this is frustrating, and it's very painful for me personally
-> > because I initially set out to redress a lot of these things and failed
-> > to do so.
-> >
-> > However I can't justify accepting endless amounts of quirks upstream,
-> > all of which would set a bad precedent, just for the sake of things
-> > being upstream.
-> >
-> > Thierry
+On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
+> This was originally discussed on the freedesktop issue tracker [0],
+> but there hasn't been a response there in 6 months. So I'm reopening
+> the discussion here.
 >=20
-> Alright, so to make sure everything is on the same page, let me walk
-> through the archs.
+> * Nvdec firmware. The driver has been in the kernel for over three
+> years and there's still no available freely licensed firmware to use
+> with it.
+> * T234 vic firmware. The driver has supported the arch for almost
+> three years and freely licensed firmware still isn't available.
+> * Nvjpg firmware. The driver is awaiting final approval, probably
+> worth it to release the firmware with everything else.
 >=20
-> T210: This fits within dt check requirements afaik. If I send a v2
-> with only t210, would that patch be acceptable? Though, I would like
-> to double check that my assumption about the arch is correct. The
-> downstream 4.9 kernel does allocations for ramoop I can't quite track
-> in the vendor code. I'm assuming that by matching what the downstream
-> kernel picks, that it's within a large carveout that the bootloader
-> will never touch. I've not seen any corruption in my use of it so far.
-> Is this a safe assumption?
-
-I haven't looked into ramoops support at all yet, so I don't know how
-this is handled. If we can find out where exactly this memory is and
-that it's guaranteed to be static, then maybe we can hardcode this. If
-not, I don't think there's much of a chance to get anything in.
-
-> T186: Software support for this arch is eol, so what the bootloader
-> does cannot be changed. Presumably no other choice but to relegate to
-> a commit in a fork or out of tree patches.
-
-Sounds about right.
-
-> T194: Some software support still exists for this arch in L4T r35. Is
-> there any positive feedback on making bootloader changes to meet dt
-> check requirements, or is it too late in the cycle?
+> * T194 nouveau firmware. This does not have driver support, but there
+> has been some interest in working on it. Making the firmware
+> available, even if it isn't merged to linux-firmware, would be one
+> less blocker for someone that doesn't work at Nvidia to work on
+> support.
 >=20
-> T234: Still has active software support in L4T r36. But essentially
-> the same question as t194.
+> Aaron Kling
+>=20
+> [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
 
-We can probably fix things for these two generations.
-
-> T264: I assume whatever happens for t234 will be mirrored here.
-
-Yes. We do try to incrementally improve things on newer generations, so
-anything we fix for Tegra194/Tegra234 I expect will be done for Tegra264
-and later chips, too.
+I will continue to look into this, but it'll not be high priority. Too
+many other things going on.
 
 Thierry
 
---wjc6ud3w4refol5k
+--vlfsfd44axgboum5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMjcQACgkQ3SOs138+
-s6EXbxAAp/2ISBeceWrB2Fi/iGZ1o81c0FJnyu3V3xrJS/qzF188lvcMdeLQ2bsN
-AqQxJ8JP1bl5MEpJ2gcJ+W/0DadKxIJGyxVEUPHblZK+A2V/6V8ha5HLJ0/cdgV2
-Z7yWTiDQx4rZgK+ojKqXcjnS+xFC0WXNkYz5dvhzZsFOIneH7/vywTgmX8j83bhU
-UZ5YrtyD9aeQcJH5ttB9TCcFOPcK/PeZrbBEDudmPk0GFJWPCCr6OEtoSO6r7Hpi
-U5mCt/FfMrGe15ko3YB+YSXbofd9SMQIVtUxJgQtihrZAWX9fS7Ccc1EdKhIHDNg
-3P3T1LzNFRAuf6wID6AELgWJQuBZMuaBGBnjRKf1z5+8ilyncXJOR/e2QHNZQDyl
-XwatXoFrMJb0+MgjD5zwD5jyZKDTT7Y3oSZQlOTvdRt52q6gPCW7jLJwQhUdPX7s
-3xXwByUP7UuxZAMAMGLQmXNEOy3wPHihgRTG1xuhXufjiTpqKga5LG/PjKouD+P3
-20CG53EmBhQF6p/MlYcxClJAGRJgpp0Vnr9eUSoNEesEof5olkPWFBmTUME6xyLo
-kjfLbVIfQZWuhougWjNf+MFLRB5Y/GbbaDPp09lma78iwO6NTZvim69q4LLSrreM
-3VizxRCsbmnvu2UdkY9fiSWnT7WCAwpM4eSY7U/LdxKoiUjqMes=
-=7rs+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMjzIACgkQ3SOs138+
+s6FEgxAAvkvwgsHX5l3cO+2rIhmom6ekBp42IgcJkTbTecA71u6Z2ubDlsoEfcOM
+UgC+Sx3gSP98C8xN2pKJxxYRH6tOKNdp1gXjehSRc6R5ZFw1wpbocdS01UugoGBc
+KSa/+iA6jBSda7rRMR6UqV/9CRFbGRsGwVBNbyK4uv7EIEIj5biUTU7nn0tLOcLK
+fgZgRyo+CjmRExhogYEOFtWmQi8cpPvhaYIzb2NiGvYbi09wfEOUra3DjxBQoe3j
+rCDWAKRVXqfz0IpFcLXhAe4qi2ZZrhEwk+o9c1P/qHaBVO6vTFBvgG6z/6nI9aI8
+N668iOizUE5MGDEepkPq3vo1YtsYUbfNHYqjTzyGbO5ZIJ48EYZ9DjTB7zU06MlA
+57nU7TfYv/Ox+ZuiuwH+PgX9fox1/t6zO+FAw5xR8evSC8C6DXZKhcE9ALkUI2fr
+H47kpBSmexklIIrFxGtuCDk/gUjo8aHe4/ND0MWKoy7kfhuKi4IkvUfJaOkr2uGa
+7qURVLlJKp1T5u5aPOUZZG+QoWL8iSNbq2BYM5y9Sk7Nd9SbutNpxWMaXig2tZ+D
+lspW+2vja6djQdfAgPRF/FngnmuLmxI6Niq0QSvZKdydlJIuyeG6t1n+lGxtQBnS
+Vzxq6D4q01zVUZh9Lsgn+x5iqQ3B9jfM1nXuomfa9+fjSklSSuA=
+=HsSE
 -----END PGP SIGNATURE-----
 
---wjc6ud3w4refol5k--
+--vlfsfd44axgboum5--
