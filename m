@@ -1,79 +1,75 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A1E1F4181;
-	Fri,  1 Aug 2025 09:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE061F4181;
+	Fri,  1 Aug 2025 09:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754041201; cv=none; b=i9VZz3ylP/4Iftcorb993zVm5D+BI737PM9HhJEcfbboAdx3FcgJXZx7W91Pa1hjXn43WpJGvyZ7sYdgwcEwAgIR+qAWgtfnc0M4zb1Ou8gImO2BadUNG91Eb6mL+0pkIJc/VLsAI4LT4znsELvxVIg57huP58MA9anEWjXiYRQ=
+	t=1754041284; cv=none; b=fITNYnWJYajCyBX/Wh77hFkGoNIqLTZ/C5oAqrPPXMkl98WSQc2pRG9tsMBeCcdT4E0UiabVkDonNj6n7S/w2WP0G7pQeg+5VDjCz11rD1NQXRvQ3YXBdpOIE81dKj9RYyUslRB56z2VSmLgei8jKLJtkcdljJ5pqsC782xWXg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754041201; c=relaxed/simple;
-	bh=hBn//WsE1x04zKyOGbDGjGAYww+kot9pe0dE+1BfnX4=;
+	s=arc-20240116; t=1754041284; c=relaxed/simple;
+	bh=1XRQTmBVY/C8lvd630rQY+Pi7ol9kgViSh8ZUn9QFV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLcP7MfMamuQt9qbyqOYGhxcSlQMTjGHmtx4/p1drRao0/3Wj9egoq/YGyHJRd6ioIm4RiSlywj3ojFz6T7qMz3dAAyVUj1D5d5lzElPeyFPbBxsW1Yb7lHQuKH74juRjPzb6ys+PDxW/lx5CQp1qI0MhYAaQA9frCrU2oiFMvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrRe8T5t; arc=none smtp.client-ip=209.85.128.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyJd3Nwi24JQ0XDVf6FkXp2lfJ7Yjg9SvxAZgqGDeLWxMmWSf3w1j0tumMo5I4rHIG1HhFTJpqn0CJICILP9Zmkg+5tZIgs24VTGc0wV34DA4g6vuR71tTmisBS6NCYRJuBV+0bEaC1E65evVRQI93AXzI5qAond0Lf79Gv8c6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LD0hKx7U; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrRe8T5t"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-454f428038eso12690845e9.2;
-        Fri, 01 Aug 2025 02:39:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LD0hKx7U"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso2614385e9.3;
+        Fri, 01 Aug 2025 02:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754041197; x=1754645997; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754041279; x=1754646079; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hBn//WsE1x04zKyOGbDGjGAYww+kot9pe0dE+1BfnX4=;
-        b=WrRe8T5tnz8bG8o7OuZ8i+mOuR+P74hnEKMCL1b3C4ZlTjj39zm/BfxCiCU+iSkqH0
-         0HyKU2k3iECUXg70z3t9APJ1jk7IhTPxo63gTf4+1h+BAEId7v4wrZ7pZWpg5jz0FRbQ
-         aAJvn/q2meqMG6fv8e6HxZaf3RnWvSqCMDvISIWZ8K2oaE1Q/WAcJ8FUXWNNqeSEFykB
-         CYN0nk5Clwuwe7kyshdgdjV8qNJi4L1nErqBZGyJCpGalfHKcIpntdJR4d2BnK0fTPbh
-         mUTfUbiKG6ikvF1Woft+2Iyxl/1WWoAOh8XOuh0XsRPrez29tP1ngpOCW3FeN5UHcnq1
-         bs6g==
+        bh=5ZxZ7CnxaolLUHvjE5pPI+1OJP0c0lW+5ryeS5aMQz4=;
+        b=LD0hKx7UjyvScGNX4+dpxyw/TsobB8j/Nkt/T+Yf1YJuRMOoN2UFEE63Pvwfqj6Bfk
+         WONwMS9PQ69WpgGUfi3v3HPMYerm0RH886w7+Xp3QQXke+kU+Sj9sxcZyBRVLXd1VN09
+         dnuMth28f4/KDs0WlExEHKrj4R/kFmpmtOo8FCt/IlidthsLUdPA0zKPrviETH/UiE7f
+         rusBmDn6+5AfyeEW3g6MTTcIImL1i4VS7/O8PeJjIJsl1qLP9sLVsemQUdo4LFE6ibT5
+         NAEZDHRnT6mPZmCbZDFQeiVUmptLHYdfXzRk7+EzVfy4K6scHMwUI2he7fDUKU0btHWU
+         H/rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754041197; x=1754645997;
+        d=1e100.net; s=20230601; t=1754041279; x=1754646079;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hBn//WsE1x04zKyOGbDGjGAYww+kot9pe0dE+1BfnX4=;
-        b=lyt+Fi7yXiHIflRR10TcgV7jg2SlT+eNYYUU7jaC16MEOGAwW673QnMU5T+AdnDaNv
-         zEWKMvZIxc/4+N5xHPVmcMQ6Fim+NHeSfonymT1BjspOtJJxZaC2RYKRRrqFm6JV07uf
-         IIfMxxBJp88p9yqEYeIKjY+Q8EmHQGUEoHeoYZqp3aOheWWhd3tzcf/uad30pH8VkMxZ
-         8qLkIYK7kiCncAPSx8MeYQa5y+nuKivmCkzEbCbvamtQg5WgiYhYguf+SbD1CkmK/F2R
-         C4t3i7pU27eBZNCBnmRn2YGmNFzwtX9RwGAWcxi7A6K6uvku8erW7Gu5949TMWfDIHEK
-         LCmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6/jBDEJG8jOC1KMooG4w1W8LTk+wclHU0CQZrMOgEUnT9n40ieILZcyYmyAvexa9Hq6E59DJ2+c0t9L/m@vger.kernel.org, AJvYcCXFZr5Q4LFCNESogQzFgTltdWrLViiXOP8OuNYA8uUitw8yrv0Qpz0M2d6u4E/FsqsJ8ChjiRNGuV0E@vger.kernel.org, AJvYcCXORYF8xErxsjhxKpuPuD+0SjhPwcDJeGHVuKffVXsEOY34lQBy+R6fPfimjyv9VMMnc8B0txgqK6kQfFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqWKVdVjFNJkQaLsVTJp23fIPvVV3D4MWELbUaZKUzocZ36nzK
-	2g4dqEVenEGh1s8ulaMoocy4LtLHYDptSB8GXsb3rweLCX4eorozcwouv8ugHw==
-X-Gm-Gg: ASbGncugCeE90Hd3U11xlg/p39f4eeNSFpez72yYluqJtUCXjtzPCHpVY9M2FgL+3yG
-	Oy0weJ6/TF7iwX/bRH88po7FJ8vG/cyCkEU4eZAgEtOVIET43q9dIWwZwM7PiVFSn0/LIjD+zS5
-	qWV79UNP+ZhoaYcF8madrSmTI+f3CwOU76Ag0u/586wCL/20TCYjDUUt8SElvjidvPtd4Zc/iNE
-	XPTawqLBILMAPGlK9mM0TR1esfySY0EgQ9FclccWQ+7ru5UwTr6IZNAJR+lFlQ+L8o6FZcLWyfG
-	dMXW88N6SbylHwQmCpC/QkoF31ZSAmShPvyrXkfOK3dhwTozpPX2sJTZ7WmlscL4uzCixErq0qU
-	JPxRLeLHTEiLBLdizs2bne5fV4wSx6od9lChxf3sW31CSB97UtPpwCSVvbNUmoQuJfjmQMQu1em
-	oZ0E20aa9S
-X-Google-Smtp-Source: AGHT+IHE8Eexm42LgwgZ0rmkWO50Mm9e/qaPhJAIWts/kwUqYPsIA/nvVSs/tPL9agk+CZU7xo1syA==
-X-Received: by 2002:a05:600c:4e87:b0:456:1d34:97a with SMTP id 5b1f17b1804b1-458aa325515mr18400365e9.9.1754041196544;
-        Fri, 01 Aug 2025 02:39:56 -0700 (PDT)
+        bh=5ZxZ7CnxaolLUHvjE5pPI+1OJP0c0lW+5ryeS5aMQz4=;
+        b=hSY/xttDKQ+JVZcL77yXgkHxlYn081QpRy3fY63N0dA7IMbBZtUgwFlktmCp627l36
+         Q32AF5gVbeg4Lk4c9fp17NzWUrivL4eB/D9RvwOZpTvD+d1vf4YPLD0tLn3KeH4VLYEE
+         S565rfAlv4JDZxqnNfnewooFk5o196co4n9WXV+aNTCRQ8R2PxwGQ4BgBdP1ilOSndA/
+         6EllP0aPi1yxVkDA/+jOjSWA/OXHnfkg6S2yPW/MwoltkuNJbGH+BBE8qYLdbc5otBTU
+         WCnzK2ap3nHrPnm4NJ/LdWgzDIyQL/zyVAtM3V161BxnWqaVpzM1B1DKL/tuUInJaR9d
+         LtBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVepLRearmu0pps5TNqu2FV2cFIShvtkr5dFwNd41ntqo1p8YuBOcAyEI3kqziqL2SYQ84F8LA/JtvwWkDz@vger.kernel.org, AJvYcCVuRKF45axIs2nBUji7xIPuLJkF+i5h2h+QBEHE1fBWYSztAat4Ob/aIU2fAfKiAgHygmf+PfE6NK5QnGg=@vger.kernel.org, AJvYcCXb0uoXKI4lxOvboCTwhVVJhkvvKNGtc6F9p+JLgqz+tZf6ufcIebrsRaWb3N4AXCNrMO/LFkuUbIwi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK6WB7nVoeays0Ncx5OXqNq2HO/UFWAuLepn+32ZVKPDHsszR/
+	CEEtSj03DhFHKFPxai+eFbJC98OJkPtc63A4lVBjoYXP62/hqx1ihTQL
+X-Gm-Gg: ASbGncudASgZcpPriUi5FmITjrDTWlnaPiC6z3cp55YgWnaCWblyxgCKFoxCu3xRz0m
+	08X5/3ZA/Fx0UrU+Mq4+NakDwmbwe2tF5PXpZPqAKm7/BalSg/SWeJitGzF5L/ESeBBHVfIWtNv
+	G2UJHKKJ4pnoogvETJAyvRBhK5B+VIJpjNlHYCLXp0npnsnZ1ghRxrowb6y3Y5A6QMJ/a4iS0mt
+	9b5U5KNUm8hbI9+9MFSG/ccfnTxl/Fmaart1+jjC7jSBLeK8LUX0tM4TlZB6B+DG2nG96xxGGBZ
+	8xMrWf4nlZHOPF07bNzupqG1d7L1WLE9TZnh1Dj8JOwEDdXIbpD2SKETyQIIqW51+LumzHx9ZZ7
+	2Lm/rF3Cc3hGniduL42uVh3AyySMxlH9nShvraAmlOFOULGTAsLQMZFKaMAvsEPIaLyfjf3mjQh
+	EBZucX70rr
+X-Google-Smtp-Source: AGHT+IH8hpcjl7UFWSZGS2Va0A4Uh7FqNKkY6Wd6XewUEATvRMrndnXnTx+8lOJnsWwrCeG6sdUEpA==
+X-Received: by 2002:a05:600c:1c8f:b0:458:a7b6:c683 with SMTP id 5b1f17b1804b1-458a7b6c904mr33871205e9.1.1754041279395;
+        Fri, 01 Aug 2025 02:41:19 -0700 (PDT)
 Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edfc8bcsm59474825e9.9.2025.08.01.02.39.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953e9b1csm93456635e9.22.2025.08.01.02.41.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:39:55 -0700 (PDT)
-Date: Fri, 1 Aug 2025 11:39:53 +0200
+        Fri, 01 Aug 2025 02:41:18 -0700 (PDT)
+Date: Fri, 1 Aug 2025 11:41:16 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Nicolas Chauvet <kwizart@gmail.com>, Rob Herring <robh@kernel.org>, 
+Cc: Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] arm64: tegra: Add reserved-memory node for P3450
-Message-ID: <pm5wrq5awpfokvw2eimzj3r2b2x7bhdd4x4kg4c7vhkti6sp5u@aetnoqlqjrfk>
-References: <20250526-p3450-mts-bug-v1-1-78500613f02c@gmail.com>
- <CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8Jg_3itwQ@mail.gmail.com>
- <nuicekbfdgjbfudtlul74ifsqckfg6itybb76bkzuaxfcp5ve5@yevlttgtobxy>
- <CABr+WTnn2qOXEMCiRDywySAxn0UeKAcx5XOJNpn731tXxbCPDQ@mail.gmail.com>
- <CALHNRZ_T_-FDOhLsjr7Vm3V0ekKkLCtv+Lt0x07133Cq+62cfQ@mail.gmail.com>
- <CALHNRZ-133F5-AdqLdnyXac3tFRir2+zamUXaSamUiw14aWwVQ@mail.gmail.com>
- <CALHNRZ_6Kf3wGkSY7_Sb9UpFX0qnrPEvKcvMxdRk2dNjj=gxPw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Set usb micro-b port to otg mode on P3450
+Message-ID: <iiooyryqjbfutvyycrk4wxgkhow42bnks7ndkkqy2zujv47bly@2f3sgagl6yte>
+References: <20250526-p3450-otg-v1-1-acb80ca2dc63@gmail.com>
+ <CALHNRZ-pE4EA=x-7LuJev60=aOwGt2eDf9mGVHWJ8SPGisBchg@mail.gmail.com>
+ <CALHNRZ_W6gQknMr=eKEcB6-k5HBBkE6JfJ9LFntX9L+NTo5hUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,99 +77,90 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s6gur245a3cs2thn"
+	protocol="application/pgp-signature"; boundary="43nnu2n5b25ewkps"
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ_6Kf3wGkSY7_Sb9UpFX0qnrPEvKcvMxdRk2dNjj=gxPw@mail.gmail.com>
+In-Reply-To: <CALHNRZ_W6gQknMr=eKEcB6-k5HBBkE6JfJ9LFntX9L+NTo5hUQ@mail.gmail.com>
 
 
---s6gur245a3cs2thn
+--43nnu2n5b25ewkps
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC] arm64: tegra: Add reserved-memory node for P3450
+Subject: Re: [PATCH] arm64: tegra: Set usb micro-b port to otg mode on P3450
 MIME-Version: 1.0
 
-On Thu, Jul 31, 2025 at 04:37:46PM -0500, Aaron Kling wrote:
-> On Mon, Jul 14, 2025 at 12:39=E2=80=AFAM Aaron Kling <webgeek1234@gmail.c=
-om> wrote:
+On Thu, Jul 31, 2025 at 04:40:05PM -0500, Aaron Kling wrote:
+> On Mon, Jun 30, 2025 at 2:35=E2=80=AFPM Aaron Kling <webgeek1234@gmail.co=
+m> wrote:
 > >
-> > On Thu, Jul 3, 2025 at 11:40=E2=80=AFAM Aaron Kling <webgeek1234@gmail.=
-com> wrote:
+> > On Mon, May 26, 2025 at 8:22=E2=80=AFPM Aaron Kling via B4 Relay
+> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
 > > >
-> > > On Thu, Jul 3, 2025 at 11:24=E2=80=AFAM Nicolas Chauvet <kwizart@gmai=
-l.com> wrote:
-> > > >
-> > > > Le jeu. 3 juil. 2025 =C3=A0 13:00, Thierry Reding
-> > > > <thierry.reding@gmail.com> a =C3=A9crit :
-> > > > >
-> > > > > On Mon, May 26, 2025 at 02:07:35PM -0500, Aaron Kling wrote:
-> > > > > > On Mon, May 26, 2025 at 2:06=E2=80=AFPM Aaron Kling via B4 Relay
-> > > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > > > >
-> > > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > >
-> > > > > > > The Tegra210 L4T bootloader ram training will corrupt the in-=
-ram kernel
-> > > > > > > dt if no reserved-memory node exists. This prevents said boot=
-loader from
-> > > > > > > being able to boot a kernel without this node, unless a chain=
-loaded
-> > > > > > > bootloader loads the dt. Add the node to eliminate the requir=
-ement for
-> > > > > > > extra boot stages.
-> > > >
-> > > > Is there any particular reason why this applies on jetson-nano but =
-not
-> > > > jetson-tx1 (or any other l4t based boards ?)
+> > > From: Aaron Kling <webgeek1234@gmail.com>
 > > >
-> > > I answered that in my first reply to this patch. This does also apply
-> > > to p2371-2180, aka the Jetson TX1 devkit, but I don't need it for my
-> > > use case because it is supported by the android bootloader. To my
-> > > knowledge, there are not any other supported t210 devices that use the
-> > > l4t bootloader. And this is not a problem on other archs. If there's a
-> > > desire, I can replicate this to p2371-2180 and send a v2 without the
-> > > rfc tag. Probably better to do so for consistency anyways.
+> > > The usb micro-b port on p3450 is capable of otg and doesn't need
+> > > hardcoded to peripheral. No other supported tegra device is set up li=
+ke
+> > > this, so align for consistency.
 > > >
-> > > > I wonder if it would be enough to boot an upstream kernel with the =
-l4t
-> > > > bootloader (and no chainloaded upstream u-boot) as I cannot do the
-> > > > other way for some reason (using fedora based upstream u-boot cannot
-> > > > boot downstream l4t kernel anymore)
+> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > ---
+> > >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > >
-> > > Mmm, I'm not sure. I can boot a mainline kernel on the l4t bootloader
-> > > without u-boot after this patch. But my use case is android. I've also
-> > > booted a simple busybox initramfs to do non-android verification of
-> > > changes. But I've not booted a full Linux distro.
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arc=
+h/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > > index 0ecdd7243b2eb1abba9adbe9a404b226c29b85ef..019484a271c396edc3020=
+0e8592c713455a8e1a4 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > > @@ -514,7 +514,7 @@ pcie-6 {
+> > >                 ports {
+> > >                         usb2-0 {
+> > >                                 status =3D "okay";
+> > > -                               mode =3D "peripheral";
+> > > +                               mode =3D "otg";
+> > >                                 usb-role-switch;
+> > >
+> > >                                 vbus-supply =3D <&vdd_5v0_usb>;
+> > >
+> > > ---
+> > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
+> > > change-id: 20250513-p3450-otg-b947f31843d8
+> > >
+> > > Best regards,
+> > > --
+> > > Aaron Kling <webgeek1234@gmail.com>
 > >
-> > Reminder about this series since it wasn't picked up in the recent
-> > staging for 6.17-rc1. Should I mirror the change to p2371-2180 in a
-> > new patchset or should this get picked up as is?
+> > Friendly reminder about this patch.
+>=20
+> Re-reminder about this patch.
 
-Sorry, this somehow didn't show up in my list of things to look at in
-patchwork. Yes, please add another patch that adds this on Jetson TX1 so
-that we handle this uniformly everywhere.
+Sorry for missing this earlier. We're in the middle of the merge window
+now, so I can't apply this to a tree that feeds into linux-next, but I
+will pick it up once the merge window closes.
 
 Thanks,
 Thierry
 
---s6gur245a3cs2thn
+--43nnu2n5b25ewkps
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMi2kACgkQ3SOs138+
-s6F8aA//VXK6znOUaFzj0+JwvDT+R1eRh7hd6G/GDtV32eErwNDER+dKG/t8SXVm
-Wef3CsSt346JF9oqOqKlTNewO76ZFNtiVkCnpWKAGoi1q4LZUF26hraNRe4pmjMK
-QekqZpd0iu/WdyiYy7ECF6wG6Hsw85ChRWtkviXk1Y88xfF1YjklHJjJcSS/qJAC
-hUwiGnOx0QUTfi4iTjTeGsVglIQLl6AnjMnZ+EO+itWeStxKR64lzX4EZTxY8M2w
-0+CLYAavFMWQEZHlISo2mbYOH2VCJtgHEzGMb9ToSkJCix1NNFKlzou4o0Nn2kcD
-xJlCoVFytAhplVYnqyb5qZOizCEaMY00XvKhpscZ16gCaYA/2tWBcF3NcEwE2Rp/
-BGBIInG3xtFwzNDMtLG3GtcCbF3p2SrFJM6gYncHSPFI6lQdiMyNuLJfAdj9cvRw
-vgP0LkiLqbuIt5mfA2QOHxiXbWXvvnOIrHLEnEjhnG+vTLqmNlu32HeFVDyEww5E
-eMpGE+tVNKMJMi8TTQLMc4YS+JWsM9TJRUsjbNLVfVfT/9oKDamxfWngBzO/VUJW
-hvZW3UEOaXzSMleUF/umcUafxW1Uv3ovIqN5AQrpHs+ddNG1XGc/PjeS+b9VmRpl
-ZEHWssCPYqWxIXTlBwaUSZZffdouaK+FfIr+q6chueBSKWNR2i4=
-=GooN
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMi7wACgkQ3SOs138+
+s6HWig//VmfQsEITzheWm2JTTGjtYvL4GQQCsDbtn00LFKYm6NuDD1z5KsKeAfB5
+gtYiAKoTyHBQCAPA/CRFVVYjdwrTfGY0qISikZrzDpTSxpQRNb4o849Ge1NxHBPW
+j0zy0+gqZWbnrYNV1WdOibnB0GhT5FliHdB4kioRO9CD4K6rT0EtOAI/XXkqGqPr
+Cg+RqK4XlOX5giOyEehBiVGNATRG0oU/NX2+fMP0Hf2+NXXBkqF83s4odEu5saEV
+FI6cnTwjDFxmhqlpKv+N3g5/4IssQfBOMztTd0z1/zq0ylZVLoUOUi44h/NsFP1w
+erjDkrcNjFHjPCsH8A3th4plcwoDG2VOTworMw4lZ1F1WQgovbyA16DWf8y9ELQU
+0aJp3DBV+k4sDS/pgejQKW+Qhz24mlrxzIzY7ZnA6fez4F5+vwYT63ehbZXDR7jA
+vU3ALNkbfG5pj3QhiVyxLIA4alr4aqThOiwT9Ao9LdMc8Ct3KkIiKbIK0FQJ4JgE
+BJuhZ+KhfcSnV1aAEB3xzc+H3esNTkDMDDrwcaVbVXCPqSxyNlhxM9P6BdqlvXrL
+bJI8HVTfbrFtCbgmoibF0LbejPv6YBENQIfSKy4ZCVhfvuMr3mN6zL4jLueaJUip
+6wITp/wf0SI0aSiApiOIkE1et8/PDiGUw5Pe8C9hC8qLHmUfsbM=
+=F434
 -----END PGP SIGNATURE-----
 
---s6gur245a3cs2thn--
+--43nnu2n5b25ewkps--
