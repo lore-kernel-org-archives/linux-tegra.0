@@ -1,45 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A3C184540;
-	Mon,  4 Aug 2025 00:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91881FDD;
+	Mon,  4 Aug 2025 00:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267369; cv=none; b=Up/iu5vfurtdYDly8XStsO3ZaWklhW4PC+7EPcmZLwVsp7p+NADrGoaMqBIoKZRWo1KcWF2EELdeS/rq1xvkU4Scaz0n5U1KCnhdMq531uBlFfHtFoEMd6T3DvVMgN5YxmuQPuvc9D15gnvYcUD1GZME0nRyoqynnEVI6L6Logs=
+	t=1754267549; cv=none; b=JnQOEu01+LhfWNvkKh3oRIvbCU9CK1LfoiPHB9AuqWRPlWbmZQvTcC2ABNEkry8nnvh/vx7PgxDRQvkIrNrGzTrHrhuuMBqJru4OSz0p8wE/CNG5VsCAlEyw4e1NPQwcRX4STtHpeaknsyo1sEZjb6m6F4TX3ww5xfIRoe6WGE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267369; c=relaxed/simple;
-	bh=c14/7h2BR8AnkqUWruedKzxdC1c/Vm1opCnop1/jvqg=;
+	s=arc-20240116; t=1754267549; c=relaxed/simple;
+	bh=F90JFq2DA2hyVOvaTR4oDxz+L1hPDd0NDSpOfIUY/Ww=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jkabIC/gmQojjaGz3RSj9uAnuXVVE0YK0tpLPNnavMDQ1Iz7H+OHzXN2urtZ/lm08ziQwgsIuU3cLMYOnS+/ClilPYELwvWsABzy3YLATChQyxaLrmNk9dQesYJjugau7gTa0uefxLLa7BFOfyVn551QIHAQ/T1hKh4BmwnIaRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=md4gQXuw; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Vq/XKYB8cOs4hHzS9CqEKKQa7KL1tkGq+8zZ5ZnGbPqAwJo9wiGDI/ugaqjcyW9LqbYw/VZ9tjxF02StjVtonu5zv5fOu9EfXP0Qjk3TuZ5vLrz521EIjOyBhc9wxB+ufdp5MfUkHeVxrGzX30kCWzRUTYUHHBToykMuKEtXmiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrgmkQGG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="md4gQXuw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C604BC4CEF0;
-	Mon,  4 Aug 2025 00:29:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrgmkQGG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5CFC4CEF0;
+	Mon,  4 Aug 2025 00:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267369;
-	bh=c14/7h2BR8AnkqUWruedKzxdC1c/Vm1opCnop1/jvqg=;
+	s=k20201202; t=1754267548;
+	bh=F90JFq2DA2hyVOvaTR4oDxz+L1hPDd0NDSpOfIUY/Ww=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=md4gQXuwB8vQ5U3tBO9bP53lusC1kEFUFgow2kMHnz/YChI05D5VrTf0mU5TjgiK0
-	 GZ6H6P6TpX8Ka1DyePlK+twRFF8YjjrHHQZ6CNTeVQ8lJVn4iuo6q4VkeSduqrVGfV
-	 Xo1SgaOO76r3z8YsNcA+Br30MDvCYXNPMGEhk1yJWWuEr9N5xBcEjjwlLsXrpGi4A8
-	 7Co0zxWJkIzdwsVbXu3SvKx/6yOOHU4Sc3LEmWEeLUc0L5C/Pz4N62KvUAWC43AkN7
-	 QXNPV5s5atQRd02xaywhCtRI/y3RN1RFUPSLLAhKoOfslEbE0ost7sUhrBxD6tplkL
-	 Z72tvpc99yOsQ==
+	b=JrgmkQGGOKI9yqHLx7++FV96xwbjw0ZpoY4UUL1l3SgNeTROODFhJDSDSbfR7wi3d
+	 3Le4AOVfFFtoI1N4f3SGAmTvE0FzRJQoqUs0CDG1/jIU/nmNeI01z5qBXdF+vRMk33
+	 9bLnG/EZkFClycGoQwrvNewzzLYSTzsxoMt+K9RsQOrPkI2eapB6UKh8qFdh/4dFhj
+	 hgEkoQ6bbUhapTLRApZP+MRwqADFgBQqf112fUwHfg8gURXk+gI8GLxwpT8vIowTH5
+	 MwO7Vi01hZVvzBGBfbTkZtAedgsAFobzu42pOJXU81ehzVlElYEYdU92JOJJ+q24Ij
+	 TUwcftkKTM4KQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>,
+Cc: Aaron Kling <webgeek1234@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
 	thierry.reding@gmail.com,
 	jonathanh@nvidia.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 39/80] firmware: tegra: Fix IVC dependency problems
-Date: Sun,  3 Aug 2025 20:27:06 -0400
-Message-Id: <20250804002747.3617039-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 28/69] ARM: tegra: Use I/O memcpy to write to IRAM
+Date: Sun,  3 Aug 2025 20:30:38 -0400
+Message-Id: <20250804003119.3620476-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804002747.3617039-1-sashal@kernel.org>
-References: <20250804002747.3617039-1-sashal@kernel.org>
+In-Reply-To: <20250804003119.3620476-1-sashal@kernel.org>
+References: <20250804003119.3620476-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,114 +50,87 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15.9
+X-stable-base: Linux 6.12.41
 Content-Transfer-Encoding: 8bit
 
-From: Thierry Reding <treding@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
 
-[ Upstream commit 78eb18020a88a4eed15f5af7700ed570642ff8f1 ]
+[ Upstream commit 398e67e0f5ae04b29bcc9cbf342e339fe9d3f6f1 ]
 
-The IVC code is library code that other drivers need to select if they
-need that library. However, if the symbol is user-selectable this can
-lead to conflicts.
+Kasan crashes the kernel trying to check boundaries when using the
+normal memcpy.
 
-Fix this by making the symbol only selectable for COMPILE_TEST and add
-a select TEGRA_IVC to TEGRA_BPMP, which is currently the only user.
-
-Link: https://lore.kernel.org/r/20250506133118.1011777-10-thierry.reding@gmail.com
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Link: https://lore.kernel.org/r/20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
+Based on my analysis of this commit, here's my determination:
+
 **Backport Status: YES**
 
-This commit is suitable for backporting to stable kernel trees. Here's
-an extensive analysis based on the commit message and code changes:
+This commit should be backported to stable kernel trees for the
+following reasons:
 
-## Analysis
+1. **Fixes a real crash/bug**: The commit fixes a KASAN (Kernel Address
+   Sanitizer) crash that occurs when using regular `memcpy()` to write
+   to IRAM (Internal RAM). This is a functional bug that causes kernel
+   crashes when KASAN is enabled.
 
-### 1. Bug Fix Nature
-The commit fixes a genuine Kconfig dependency problem where TEGRA_IVC
-being user-selectable can lead to configuration conflicts. The commit
-message explicitly states "The IVC code is library code that other
-drivers need to select if they need that library. However, if the symbol
-is user-selectable this can lead to conflicts."
+2. **Small and contained fix**: The change is minimal - it simply
+   replaces `memcpy()` with `memcpy_toio()` on line 66 of arch/arm/mach-
+   tegra/reset.c. This is a one-line change that doesn't alter any logic
+   or introduce new features.
 
-### 2. Size and Scope
-The fix is minimal and contained - only 4 lines changed in a single
-Kconfig file:
-- Line 5: Changed `bool "Tegra IVC protocol"` to `bool "Tegra IVC
-  protocol" if COMPILE_TEST`
-- Line 16: Removed `TEGRA_IVC` from the depends line
-- Line 18: Added `select TEGRA_IVC`
+3. **Follows proper I/O memory access patterns**: The fix is technically
+   correct. According to the kernel documentation in
+   Documentation/driver-api/device-io.rst, I/O memory regions (which
+   IRAM is mapped as via `IO_ADDRESS()`) should be accessed using
+   I/O-specific functions like `memcpy_toio()` rather than regular
+   `memcpy()`. The documentation explicitly states: "Do not use memset
+   or memcpy on IO addresses; they are not guaranteed to copy data in
+   order."
 
-### 3. No Major Side Effects
-The change doesn't introduce any functional modifications to the code
-itself. It only changes how the Kconfig symbol is selected:
-- TEGRA_IVC becomes non-user-selectable (except for COMPILE_TEST)
-- TEGRA_BPMP now explicitly selects TEGRA_IVC instead of depending on it
+4. **No architectural changes**: The commit doesn't introduce any
+   architectural changes or new functionality. It's purely a bug fix
+   that corrects improper memory access.
 
-### 4. No Architectural Changes
-This is purely a Kconfig dependency fix with no changes to the actual
-driver implementation or kernel architecture.
+5. **Minimal risk of regression**: Since this change only affects how
+   data is copied to IRAM during the Tegra CPU reset handler
+   initialization, and uses the proper kernel API for I/O memory access,
+   the risk of introducing new issues is very low.
 
-### 5. Critical Subsystem Impact
-While this touches firmware drivers, the change is limited to
-configuration logic and doesn't modify any runtime behavior.
+6. **Platform-specific but important**: While this fix is specific to
+   ARM Tegra platforms, it fixes a crash that would affect any Tegra
+   system running with KASAN enabled. This is important for developers
+   and users who rely on KASAN for debugging.
 
-### 6. Stable Tree Considerations
-Based on my investigation:
-- TEGRA_IVC is indeed library code (as seen in
-  drivers/firmware/tegra/ivc.c)
-- Multiple SoC configs (ARCH_TEGRA_186_SOC, ARCH_TEGRA_194_SOC,
-  ARCH_TEGRA_234_SOC) also select TEGRA_IVC
-- Currently, TEGRA_BPMP appears to be the only driver module using the
-  IVC library functions directly
-- The library exports functions like `tegra_ivc_*` that are used by BPMP
+The fact that `iram_base` is obtained through `IO_ADDRESS()` macro
+clearly indicates this is I/O mapped memory that requires I/O-specific
+accessors. KASAN correctly identified this misuse and crashed to prevent
+potential issues. The fix properly uses `memcpy_toio()` which is
+designed for copying to I/O memory regions and won't trigger KASAN
+checks for regular memory access.
 
-### 7. Risk Assessment
-The risk is minimal because:
-- The change converts a user-visible dependency into an automatic
-  selection
-- This prevents users from creating invalid configurations
-- The actual IVC and BPMP code remains unchanged
-- The fix aligns with standard kernel practice for library code (should
-  be selected, not user-configurable)
+ arch/arm/mach-tegra/reset.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is a classic example of a good stable backport candidate: it fixes
-a real configuration issue that could cause build problems, the fix is
-small and contained, and it doesn't introduce any functional changes or
-risks to the kernel operation.
-
- drivers/firmware/tegra/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index cde1ab8bd9d1..91f2320c0d0f 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -2,7 +2,7 @@
- menu "Tegra firmware driver"
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index d5c805adf7a8..ea706fac6358 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -63,7 +63,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	BUG_ON(is_enabled);
+ 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
  
- config TEGRA_IVC
--	bool "Tegra IVC protocol"
-+	bool "Tegra IVC protocol" if COMPILE_TEST
- 	depends on ARCH_TEGRA
- 	help
- 	  IVC (Inter-VM Communication) protocol is part of the IPC
-@@ -13,8 +13,9 @@ config TEGRA_IVC
+-	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
++	memcpy_toio(iram_base, (void *)__tegra_cpu_reset_handler_start,
+ 			tegra_cpu_reset_handler_size);
  
- config TEGRA_BPMP
- 	bool "Tegra BPMP driver"
--	depends on ARCH_TEGRA && TEGRA_HSP_MBOX && TEGRA_IVC
-+	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
- 	depends on !CPU_BIG_ENDIAN
-+	select TEGRA_IVC
- 	help
- 	  BPMP (Boot and Power Management Processor) is designed to off-loading
- 	  the PM functions which include clock/DVFS/thermal/power from the CPU.
+ 	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
 -- 
 2.39.5
 
