@@ -1,49 +1,30 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011012.outbound.protection.outlook.com [52.101.125.12])
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2FD1F4617;
-	Mon,  4 Aug 2025 10:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754301763; cv=fail; b=SN//PIGvRui28esBLPjmGzLdQJMKCg+4NQmEezb6D//9WQb1IBYyFBk5TGILrdgUWSFPETPBgjOjz/SR7goXILfWUdnpBpl5uW8B5VtkUbKGP+wcBZXfmujWWHBwrm9o6uHmUUGqcRQhicX47iwTAn6RrOJ1cNI8lq4kCna4mUo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754301763; c=relaxed/simple;
-	bh=9XKGpgBmERDlkL9z2XZ1h2iCr/LllBgDFS9GFiymk0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=F//6DLkoGfv3JGnZWZFaFcnIzk/ik0SKXfCUDh6K+3zqPoFrJkQxY+yjRVZ1vZ4bVlj7UQO/CUwPm6xWO4q4bwi67Xfjv98zCGDYLyuQ3tdu92iKDYkyhI/lVagV1JcKtUwfwg1LU189GJA7Z29x5bECEV/pOltGRTy7GhuSpAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=KVe4Ltf6; arc=fail smtp.client-ip=52.101.125.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="KVe4Ltf6"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pv3vIsGWq8Cds6UA9NxxrO2u4MS5eneXoYWQ7mpHKC599ToKQI6mMAwLWKx1WNRSqHviLN3BUwt4UcILkIrBvsKpOnma/VbFYTQG0vHw7IY7NHvThMKPk3gw6aK3XErSabs+x2ZzvSm18dNvGnQyCkGefWGSyEBmk9dM0dyoWkDJgIy1+BDIKsG/5oWk3h6ErD7RWHQiCmNUn2fXNevRO98O4b5u8bxx2aqRcl9VcRRGT3dQCLfra5XepLrSJ2N5i8p6ixaVcUwo4R0XmwbZoqw9tsO09L4ReiqB2bYT6b9fYcSbuKAygyNno0jNPUN3+D+BHzTQBPe5GIU8BlshRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LahB2slSphuLvkWzngb3sjn8vTJACjVcm2Z5KzBk35w=;
- b=WqSzWt4PB1Z1c8EuXxg/+7QM9s+LdptSVdP87mLLzeeRQpFPmyYoeGKKnhGXYzSeTRdchNwhq77NT6PNEMIasyKAHcDJCWsLG5hsiVfSg2XO7F9+/uYqA6UfOcs76C4Mrt7b3UIUoN16d55QGVB20T5roajlVYRbXkC25yyDqoKhP9GvBRSR3j1Ryv6nqfsctjudzDFGe9ORlifZHOrXBqwnLlHXl8/JxNnjiskOVaF5UFfwpsbGwIpH8twmdIzx1UMUjBeYV7IB+mB9ztGpgUuGAOyf8uu7yjYt8onvxYO1B+wbDyJFzm41wHNdB6/gm8h/HTxem0Q/Uwiht3RU+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LahB2slSphuLvkWzngb3sjn8vTJACjVcm2Z5KzBk35w=;
- b=KVe4Ltf6kbSs60KbSfjSMnIXdw43+XNmTn+FOJA0CPtplOB60KtvthdJWCBVoxsieGxxDDM+n+urJ4yrjwty93+I15SF64TM8vaCd+6/P/LIDFzEdi+lRHDtyjfBilExY71QNS+M1qA7bbANF8geTwoD4Jb/4D7OLe9pjh0Z77o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OS3PR01MB6657.jpnprd01.prod.outlook.com (2603:1096:604:10b::10)
- by TYYPR01MB10592.jpnprd01.prod.outlook.com (2603:1096:400:30e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 10:02:35 +0000
-Received: from OS3PR01MB6657.jpnprd01.prod.outlook.com
- ([fe80::8575:e22a:3c44:76f0]) by OS3PR01MB6657.jpnprd01.prod.outlook.com
- ([fe80::8575:e22a:3c44:76f0%5]) with mapi id 15.20.8989.017; Mon, 4 Aug 2025
- 10:02:30 +0000
-Date: Mon, 4 Aug 2025 12:01:47 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B54C1552FA;
+	Mon,  4 Aug 2025 22:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754344836; cv=none; b=uykE8BQPN8aephsshyXxgCuhbsToJextdpx/7tP5nSZdNmGoQQVtUTU0NQtQQacwxz1bne6LCbQO+tgKL0JlrtTnstRz05KunJmLSln2uIeYKyGy2awTI6611fwYCFv4BzIXQGauwzfSeB44PHLXp8/FLN1xAu3txvXatW2XBlg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754344836; c=relaxed/simple;
+	bh=OkqY7SFjrArg66oQlEL4f7x/72BougKos8SuncqmGO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMvDuUviYz8tB2i6hOasdGobIdIkoaQuLygNV8lrP1qI69GGHGpXHQFcyu3H/n/8z1lTYn2nE3Y1GS1wuIN3tiaK9XaD7rriRtxYN+frEYItve2l1+y/UenY0oz0oiqZDFdHNHUKDe+tPQzoFCu6Dk9thGoyd6w85woDuKo+vEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 496D91F00078;
+	Mon,  4 Aug 2025 21:59:48 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id ACAE6B0118D; Mon,  4 Aug 2025 21:59:39 +0000 (UTC)
+X-Spam-Level: 
+Received: from shepard (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id 02B54B01170;
+	Mon,  4 Aug 2025 21:59:27 +0000 (UTC)
+Date: Mon, 4 Aug 2025 23:59:25 +0200
+From: Paul Kocialkowski <paulk@sys-base.io>
 To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
@@ -117,8 +98,7 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
 	Steve Longerbeam <slongerbeam@gmail.com>,
 	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
 	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
 	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
 	Corentin Labbe <clabbe@baylibre.com>,
@@ -137,141 +117,219 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-rockchip@lists.infradead.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 18/65] media: rzg2l-cru: Do not set file->private_data
-Message-ID: <aJCFC-_F6l7Z40A2@tom-desktop>
+Subject: Re: [PATCH 54/65] media: hantro: Access v4l2_fh from
+ file->private_data
+Message-ID: <aJEtPd_-IzQZVBfl@shepard>
 References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-18-eb140ddd6a9d@ideasonboard.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250802-media-private-data-v1-18-eb140ddd6a9d@ideasonboard.com>
-X-ClientProxiedBy: FR0P281CA0211.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ac::6) To OS3PR01MB6657.jpnprd01.prod.outlook.com
- (2603:1096:604:10b::10)
+ <20250802-media-private-data-v1-54-eb140ddd6a9d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3PR01MB6657:EE_|TYYPR01MB10592:EE_
-X-MS-Office365-Filtering-Correlation-Id: 307728cb-3ea2-46b9-e7e6-08ddd33e058c
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?4Dx7cqXSiPRwV//Bkm4NvhTALZy+WVjuKm+Pm8V7LAVPPNryn2VtFRizi56C?=
- =?us-ascii?Q?fKUDZnARKg8UBkemz+AzfGjyRf0HYRsL6iepBv++wz6d7eMLQU3k/3JAwLOO?=
- =?us-ascii?Q?7NE8W8iiwLXczmM8yTkuIoVtBLAULOvsnT6CNNKlsr8f0+L4JH+gwJSSubrT?=
- =?us-ascii?Q?tVj4KkD4ZXbMDHhTgwoI44yxWcAg1FxscqBsNs7Rr7yvkv6/OM0xluPkzwNU?=
- =?us-ascii?Q?zF4zF9Je2MEJgI8susgGqa31ugP8cKseg8Uy1bnj3ILqww6frv423Gb3ldKK?=
- =?us-ascii?Q?0tWV/5/8qzD6sbfo+P7pGf+Rer0n/Aeva+Nl93YorqpKlS+nToE2o64l6qnF?=
- =?us-ascii?Q?2Rp8bYlMwrNIQA1J02PjBW/9OkmaiOCtJeTt4q7oH4D4bJcTyfWAEjjLzLX3?=
- =?us-ascii?Q?BLL5U4zwC3iTwFz8yWb3DUcpOp7RbGIw8HFFzcw1BGxRhXQat/SUJb/+oNKt?=
- =?us-ascii?Q?tCvo5dqg9u4UorRuOHBGnvBfIp0kyRYgXKq7Try8WxuY9mJCDlzxb745acVk?=
- =?us-ascii?Q?i1zLkeGlfhU5wtbmRFqMTH08ZIh7fEdZrqe6rfgDkByx4I79dKslqrQN1iNV?=
- =?us-ascii?Q?3FPDwuPvrDOF/H0xIyhw9h7OfAAMZPtRm4dALm2lY9hBr98Rkymm+Sj+Dw2V?=
- =?us-ascii?Q?51WjlXslO8eLzcQNECkY3gLTFpzlYQjIgBRvzwWqqdmkdp24xPz2O4USAOSU?=
- =?us-ascii?Q?fDN0YYnrn6Jc9DsPl4qeHKTJrHSuYruGIrfhf0LmDtuPQaXrUrPpejPhwTyv?=
- =?us-ascii?Q?atahvHYztWdBQ/beoPI1aeM6NcyGgI/JpH5gCGnUDQlmIYLTeGinDzJRAAVH?=
- =?us-ascii?Q?6aObM2X+BKkUwPXj99/QjSjF2K3+MDQbJsfgYdXnuwfzP7YwOgmYrWyqT+44?=
- =?us-ascii?Q?of2faiJcqTNOELt8uvLg80btrnavoCKYDyIevSKL3/jkcuY0sbTFdAP4CEAl?=
- =?us-ascii?Q?QZKJ6K7+h620ssWcY1b56p8tLdDGyGp49J4vQspTJRIpN/zNLLV6vUhVBmaT?=
- =?us-ascii?Q?emOqL1qaXQ0jcxEC4xNAcBcZZTPoEQni/Q05JyUjgKaXIZ04AZ/4OUU7Pl92?=
- =?us-ascii?Q?yRLA9DwSZ+Ng2/LpkSV0PtBKkS6PmUFHUldGxafBdlcOL5yZoD/Z49UyGcxX?=
- =?us-ascii?Q?A1K+nXOrFPLu1eqpKqfictpv1224UtnBUC0O7bgGJZPhy2ekVoqtNrhSFmTY?=
- =?us-ascii?Q?DTCaYb+PTyEZ22v3/xVXX3JhXSpuaeyOBx59lnq56dK8Y3pFfw7owUxsEq+m?=
- =?us-ascii?Q?BkBYoWgKFVbtc60gb1BLei5M15tPo6ZdmQSzVxclUYOjoT1jRXygviniyhSV?=
- =?us-ascii?Q?8JiEOwrO0lmotPtseztgHCY1ZseTzzrcMn156rjcZf1AEnm5ofQ0apOd2Q2o?=
- =?us-ascii?Q?ToXhaf2x4zEpS5SrUte34nGFrw1aW7mDc7bosO5H4cxzSiggyYUTu3HyiLyA?=
- =?us-ascii?Q?+6QuLX8j5bjvl434bzJnhSpRgrLYVMSu9IC+cUGOo8rzUcFag6fzfA=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6657.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?zA8P+PgdMNbUjR1PxzpoQ6auR+oZd8Bjlg1yrwVN/IVj4Jgl15N46MS2iwXr?=
- =?us-ascii?Q?TqzH+FZHcmwmkiVLhQC4xdhwbw/Unlj7A+A7PcUT2t/EmVkFRJjyy0//GpvZ?=
- =?us-ascii?Q?koY/WyvT189BXwRp5pik/o1kGJPxboL2FkQHCYTZeJWTqYLBfAkZ+RFQWhCu?=
- =?us-ascii?Q?SsyYD5ilxkGVX4Vej4P4P+TbEJ2Zlb5EraO1ErtDqtBCjR/al3X1AgPV3mSk?=
- =?us-ascii?Q?OVnwRuDsamRr4o++x3s57Aglky7L5xAmp3Vu305Q7y52i1NlWL7L5Jm/w1Rs?=
- =?us-ascii?Q?qdmGju62JPqo4mgMPN2vNdF9jaqt+PUlcJD0X6i/kpP/BDxbBMSJJY3AEwba?=
- =?us-ascii?Q?vXYxy+4OtvokyPKJtFZ3gnQTP1b67ghjwAYMNzyGl4DeeFnhLgnJlq2yQRnO?=
- =?us-ascii?Q?nFYx7SplQe6lIWOWsNYB/TUKF/A37I8bkN2dorEH6xv1gpFKyyhlepz+c0/J?=
- =?us-ascii?Q?dfYTPoOeXXrtPSM2GcNO4Av7HizTSUCsC4Sft09JvoiL8/A4+tKy33lcouii?=
- =?us-ascii?Q?fOjIelK5W4UgMb4mnblR/5pYIhq/ePgiitPPF1USCA0BqayW5PUCngBxAH1U?=
- =?us-ascii?Q?/LMIjZaTnUsBuv1edppIirCxayLjXFCyUDlfM3KRjJUVKLo8hNsCY0nSjgQ9?=
- =?us-ascii?Q?DpNEyJlpVf+YBYKLcpekWZOS19QjnAuiV6BlLxAtJhy/OYk6t5vvYUlYnHTg?=
- =?us-ascii?Q?cyAN3K0tdgf+cPuYzBDSoq8GpiiSlUgDnyAc1e5v0sEAVkDFUdQ4vWIpV1j/?=
- =?us-ascii?Q?Xw1k/52fbEDMAY8gIjds7wwNf7pRfsuJiPDdj4mBBETeXLNfPIoxFDo0x8wO?=
- =?us-ascii?Q?r+1HNpno/4BwAYqfxTcfmVHc3Br5VDHjRDj6LQdVbV2lI5O9qukNxiwdEgnF?=
- =?us-ascii?Q?gl6a3CZtXF3JdXIRGBkVlDCciLEqj836AtVwRtl6UVB9vL8436rvoLDXW7yF?=
- =?us-ascii?Q?c5Cq+pfQWJ5QxAgPSi4SPkIUOlYwynNyuMKfs6ItsxpllHKcxzAxbxw0Ki5m?=
- =?us-ascii?Q?6wiN7YNEpP3KXl+A1alepUJbevqozjVB9jikPeX808l4ENPEBi9tsd3RlyU9?=
- =?us-ascii?Q?ADBNqeQVPV4vEPxOKze2FiNErpvaE6kJtmh4ixBZCvcl9XuX7Utear62Z5dC?=
- =?us-ascii?Q?fXEQFGlc3o4beZBJVfSMtcUCXGK5Wgrcl6REC6SUIjnQCo8c/wZgymbwoQ4W?=
- =?us-ascii?Q?FD8I0LOXj+gFMr4ss2acB+4NNNYGiClSGuF4OimWVTfzddqpyeIeypIy/Ic1?=
- =?us-ascii?Q?Lx3uT2Z6u3wKAIdfCH7LiHDT/pIz+Ltc7o2RYohvWRPaedKd//A5j/pOOHpN?=
- =?us-ascii?Q?trhJq7E0CMFa9iGU/FUDzx1Vci59XRb5RqwZGrQlSE0D+0I7SU/korkAl2UJ?=
- =?us-ascii?Q?hn2WTjXjNQaciOx/BsiWJADeZ31++Mf+dWAlMrOj7dohoX+BkYiMTRWprbcV?=
- =?us-ascii?Q?weXYJCbPT+Rv7WxeihliK9/XdnlPl2UmyyUAFIaWF9l7L18wpOgDRrO3tMfb?=
- =?us-ascii?Q?IF+jTYK+Lf28lh2bzl4KIn1XiCBkbhlx7ZW5EN+9JbQWj6JKywYQ1+tnG2wh?=
- =?us-ascii?Q?pfxb/vgcGxb/3KLaoRfqL9MgL2CW+QdevK6uIBg1zxISthw2T2VKwrSTxkLs?=
- =?us-ascii?Q?iAH/rgv0Xv4LSd0MslrrAX4=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 307728cb-3ea2-46b9-e7e6-08ddd33e058c
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6657.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 10:02:29.8933
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3pSRknQ0n8XPfQ4gqt0vPrscjvGNKuxE8mB/ymud16XA4kfBKrXtSpN/6U6jIYPOL8jwNWXGziPjIOtPI9pbTzbOE9KPk3W/a6rHqSTf2Q/NavODphSN7cpOtpdJelvW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB10592
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/6X2y1A/1uo421sv"
+Content-Disposition: inline
+In-Reply-To: <20250802-media-private-data-v1-54-eb140ddd6a9d@ideasonboard.com>
 
-Hi Jacopo,
-Thank you for the patch!
 
-On Sat, Aug 02, 2025 at 11:22:40AM +0200, Jacopo Mondi wrote:
-> The RZ G2/L CRU driver sets file->private_data to the driver-specific
+--/6X2y1A/1uo421sv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The RZ/G2L
+Hi,
 
-> structure, but the following call to v4l2_fh_open() overwrites it
-> with a pointer to the just allocated v4l2_fh.
-> 
-> Remove the mis-leading assignment in the driver.
-> 
+Very nice cleanup, glad to see this abstracted away from drivers!
+
+Reviewed-by: Paul Kocialkowski <paulk@sys-base.io>
+
+All the best,
+
+Paul
+
+On Sat 02 Aug 25, 11:23, Jacopo Mondi wrote:
+> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>=20
+> To prepare for the introduction of video_device_state as second argument
+> of the v4l2_ioctl_ops handler, access the v4l2_fh from
+> file->private_data instead of using void *priv.
+>=20
+> The file->private_data is initialized to point to the v4l2_fh
+> by the usage of v4l2_fh_init() in the v4l2_file_operations.open()
+> handler.
+>=20
+> While at it remove the only left user of fh_to_ctx() and remove
+> the macro completely.
+>=20
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-Apart from that:
-
-Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-
 > ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index a8817a7066b22f8a8dd1fdab50efabc486e4dfdb..941badc90ff55c5225644f88de1d70239eb3a247 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -1078,7 +1078,6 @@ static int rzg2l_cru_open(struct file *file)
->  	if (ret)
->  		return ret;
->  
-> -	file->private_data = cru;
->  	ret = v4l2_fh_open(file);
->  	if (ret)
->  		goto err_unlock;
-> 
-> -- 
+>  drivers/media/platform/verisilicon/hantro.h      |  5 -----
+>  drivers/media/platform/verisilicon/hantro_v4l2.c | 22 +++++++++++-------=
+----
+>  2 files changed, 11 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/verisilicon/hantro.h b/drivers/media/=
+platform/verisilicon/hantro.h
+> index 0f10714f1953945472e11d8c8ad87f8ec009b39f..e0fdc4535b2d73c5260057b0a=
+89aee67a4732dd2 100644
+> --- a/drivers/media/platform/verisilicon/hantro.h
+> +++ b/drivers/media/platform/verisilicon/hantro.h
+> @@ -382,11 +382,6 @@ extern int hantro_debug;
+>  	pr_err("%s:%d: " fmt, __func__, __LINE__, ##args)
+> =20
+>  /* Structure access helpers. */
+> -static __always_inline struct hantro_ctx *fh_to_ctx(struct v4l2_fh *fh)
+> -{
+> -	return container_of(fh, struct hantro_ctx, fh);
+> -}
+> -
+>  static __always_inline struct hantro_ctx *file_to_ctx(struct file *filp)
+>  {
+>  	return container_of(file_to_v4l2_fh(filp), struct hantro_ctx, fh);
+> diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/m=
+edia/platform/verisilicon/hantro_v4l2.c
+> index 7c3515cf7d64a090adfb8d8aff368f9a617f8c8a..6bcd892e7bb49c654aae58416=
+64d68c1692064bd 100644
+> --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
+> +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> @@ -185,7 +185,7 @@ static int vidioc_querycap(struct file *file, void *p=
+riv,
+>  static int vidioc_enum_framesizes(struct file *file, void *priv,
+>  				  struct v4l2_frmsizeenum *fsize)
+>  {
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+>  	const struct hantro_fmt *fmt;
+> =20
+>  	fmt =3D hantro_find_format(ctx, fsize->pixel_format);
+> @@ -217,7 +217,7 @@ static int vidioc_enum_fmt(struct file *file, void *p=
+riv,
+>  			   struct v4l2_fmtdesc *f, bool capture)
+> =20
+>  {
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+>  	const struct hantro_fmt *fmt, *formats;
+>  	unsigned int num_fmts, i, j =3D 0;
+>  	bool skip_mode_none, enum_all_formats;
+> @@ -297,7 +297,7 @@ static int vidioc_g_fmt_out_mplane(struct file *file,=
+ void *priv,
+>  				   struct v4l2_format *f)
+>  {
+>  	struct v4l2_pix_format_mplane *pix_mp =3D &f->fmt.pix_mp;
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+> =20
+>  	vpu_debug(4, "f->type =3D %d\n", f->type);
+> =20
+> @@ -310,7 +310,7 @@ static int vidioc_g_fmt_cap_mplane(struct file *file,=
+ void *priv,
+>  				   struct v4l2_format *f)
+>  {
+>  	struct v4l2_pix_format_mplane *pix_mp =3D &f->fmt.pix_mp;
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+> =20
+>  	vpu_debug(4, "f->type =3D %d\n", f->type);
+> =20
+> @@ -398,13 +398,13 @@ static int hantro_try_fmt(const struct hantro_ctx *=
+ctx,
+>  static int vidioc_try_fmt_cap_mplane(struct file *file, void *priv,
+>  				     struct v4l2_format *f)
+>  {
+> -	return hantro_try_fmt(fh_to_ctx(priv), &f->fmt.pix_mp, f->type);
+> +	return hantro_try_fmt(file_to_ctx(file), &f->fmt.pix_mp, f->type);
+>  }
+> =20
+>  static int vidioc_try_fmt_out_mplane(struct file *file, void *priv,
+>  				     struct v4l2_format *f)
+>  {
+> -	return hantro_try_fmt(fh_to_ctx(priv), &f->fmt.pix_mp, f->type);
+> +	return hantro_try_fmt(file_to_ctx(file), &f->fmt.pix_mp, f->type);
+>  }
+> =20
+>  static void
+> @@ -648,19 +648,19 @@ static int hantro_set_fmt_cap(struct hantro_ctx *ct=
+x,
+>  static int
+>  vidioc_s_fmt_out_mplane(struct file *file, void *priv, struct v4l2_forma=
+t *f)
+>  {
+> -	return hantro_set_fmt_out(fh_to_ctx(priv), &f->fmt.pix_mp, HANTRO_AUTO_=
+POSTPROC);
+> +	return hantro_set_fmt_out(file_to_ctx(file), &f->fmt.pix_mp, HANTRO_AUT=
+O_POSTPROC);
+>  }
+> =20
+>  static int
+>  vidioc_s_fmt_cap_mplane(struct file *file, void *priv, struct v4l2_forma=
+t *f)
+>  {
+> -	return hantro_set_fmt_cap(fh_to_ctx(priv), &f->fmt.pix_mp);
+> +	return hantro_set_fmt_cap(file_to_ctx(file), &f->fmt.pix_mp);
+>  }
+> =20
+>  static int vidioc_g_selection(struct file *file, void *priv,
+>  			      struct v4l2_selection *sel)
+>  {
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+> =20
+>  	/* Crop only supported on source. */
+>  	if (!ctx->is_encoder ||
+> @@ -691,7 +691,7 @@ static int vidioc_g_selection(struct file *file, void=
+ *priv,
+>  static int vidioc_s_selection(struct file *file, void *priv,
+>  			      struct v4l2_selection *sel)
+>  {
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+>  	struct v4l2_rect *rect =3D &sel->r;
+>  	struct vb2_queue *vq;
+> =20
+> @@ -738,7 +738,7 @@ static const struct v4l2_event hantro_eos_event =3D {
+>  static int vidioc_encoder_cmd(struct file *file, void *priv,
+>  			      struct v4l2_encoder_cmd *ec)
+>  {
+> -	struct hantro_ctx *ctx =3D fh_to_ctx(priv);
+> +	struct hantro_ctx *ctx =3D file_to_ctx(file);
+>  	int ret;
+> =20
+>  	ret =3D v4l2_m2m_ioctl_try_encoder_cmd(file, priv, ec);
+>=20
+> --=20
 > 2.49.0
-> 
+>=20
 
-Thanks & Regards,
-Tommaso
+--=20
+Paul Kocialkowski,
 
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
+
+Expert in multimedia, graphics and embedded hardware support with Linux.
+
+--/6X2y1A/1uo421sv
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmiRLT0ACgkQhP3B6o/u
+lQzrNQ//exzkeWe4akWNjtSBn1Bl653EfO7v/aMS3Y3CCAKwErQrOulake7C7uWp
+FWmge5iMC9U/bJjnJn6lW9WfRnVUXmp5akqOeWHMSQNTJOKjpKKu2vbmpqvYuw8/
+EZ2UXBGtg72QjRVuzMJ+SE6pK4JPFM8d4TgJxzk49W5ABja+ipgEbdccHOOiSC6+
+uFVnPmJI1kOcxLhh4CLeJsq2rbT56LiAWFj/BcsoRnz0+2o3/E8FL3f2KG5T4/Hj
+6hZjsZySX3X+bwDVFBhMXv1d/ecgXPjUrdhj2kM+v50DMAu1jbz9aNM1kFzxA01q
+9uh4AeSC65gQ8YnjC8mUo9BH/9JWzvf8SsGLTqLfDxkaHZcs5dIfqvNkmTs+sAM9
+syJ2hplhAYUk20Pn/AAda2drxoqYYnUjt6R+UOaVcaJMLIr2z8CS60rWr2+Uwhpd
+njA1mv/Zih/rq8uNN8l+j4DAQabNh8g/LPeroTO0/eF5WsPTvZM/BKtKrJgoy3Rv
+E+C0EwaEiCNxZH9vUSmqw/DkWRX2CBe6NoDzUGwjWGJeSAjSCgbklwdyUuhKaJq0
+MTDz/VZ2xLIMFm8RRFfYBjKohUK+RXA2OHHst4bQGq0rvjqtJo9yd3UzIFz+ww+L
+VpD0vh+lndjqAQHcpftyzMcgB6AVADDZydaRUFdLGm9OHaeZA5k=
+=4/Uq
+-----END PGP SIGNATURE-----
+
+--/6X2y1A/1uo421sv--
