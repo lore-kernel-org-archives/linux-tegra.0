@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F351A7260B;
-	Mon,  4 Aug 2025 00:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB5B15A8;
+	Mon,  4 Aug 2025 00:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754268080; cv=none; b=Ge5a8i5CXrDgUjEYlFtO2hYkuj3sNKHN67RXYhf7tJcwUUWYoP265EXUwGhMj5jm+XJWJvhP+7QLa3AU2UXPFd/dN6uiULE9BqgBwKyMrYJmb+PblbSfecwahGrnhejGU5G75jviifJ+BnEOkyFJmbGP+9eOGSaxvnvvHJQ1bNw=
+	t=1754268175; cv=none; b=nzPo2fNmSpBFBbIjWIggc2f4ny+1DZAzSIot9DuVye8R7D9vvV6Ms/gm0fxQkWtQtqE8QNIw26psomtK99VzzxDVQ0zYciaEDolq3za1Nk9pWbCdHbQDn0/SmbFTgRggB1gRgRslk0WalQtkkn0W9193p7l9WLt5yBI3ObJv41s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754268080; c=relaxed/simple;
-	bh=F90JFq2DA2hyVOvaTR4oDxz+L1hPDd0NDSpOfIUY/Ww=;
+	s=arc-20240116; t=1754268175; c=relaxed/simple;
+	bh=p84uElI19tzMUUIT5etlzGEn5Fgc5wv3uiIUGG96L8c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AKcVsRO7oEPNsbDXsmXif/sjhkcihBQd9sgEXUCbOL2uloXpyDJwSHOtfShVlZnpWsMg7BdZRaDgGdYmhnM9+ZTeWDZ+NT73nYLWno5GOXnaGU+raa+D+a2dEQJFb9iQ0fi21D5MH7IPQcRftwYG9R/eoYrKB5qDVtx1IVoBlvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KeM4a/mk; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=encjjW9n1LUWPnH4EM9RqfqTTAT5VRcpHrKZy6dyfBSuztBgg8EgmydSlNkbeYPZuUWH5Coebseai3O7NBrjFmpfX7zI1G9EznMQDfxIYEmPMLHgxTxqeaoE0P/Vm8pcib3V+NF6mSCQ6ZVfD6AgUITrIsxwvgvZUk1ajyuD9i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwTt1zR6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KeM4a/mk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3349EC4CEEB;
-	Mon,  4 Aug 2025 00:41:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwTt1zR6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC4FC4CEF0;
+	Mon,  4 Aug 2025 00:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754268079;
-	bh=F90JFq2DA2hyVOvaTR4oDxz+L1hPDd0NDSpOfIUY/Ww=;
+	s=k20201202; t=1754268175;
+	bh=p84uElI19tzMUUIT5etlzGEn5Fgc5wv3uiIUGG96L8c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KeM4a/mk/cWkEHVF4qeISSRRfekUlnMJI7BUkPx2Lr1C7PcwuPasGTt0aKCm4aaHx
-	 yFgLBqdkgeRlu4Tz8r9pWywHFsAac0kRohNDQm/ACV86kEX/XGBeie07SLkhCN0lrf
-	 mgAzCox6O9Jw8Yav2z1zcY9AwrF9YbHYCP6Or8Cm6cr3Flu4VrX0Kv9xpcP8qtQm6B
-	 37qkebZUWe2BfOxx4XfO8ydoZ8I4FmiVImXB6PgYCWcqCJ8SaA6luEvPs+uj7wbNyR
-	 XrdnSJagPVOmTf5olBjLhZbjPV7w5O+0hPM4DNFZmTe4sPHXBbp1qOy2YeeT/VUQe+
-	 rpTRFcmcA7pPA==
+	b=bwTt1zR6bFQ++h089Qv3JoJiUuXuatgJBrGMv0HOL0M8Srtp/kTIr4GVM2nfgtMm6
+	 9zvZlVNNww0tsE4l3gg56spJ6vXzJVFUgkGxo0fNPtn/d40U6ZpJKtbgM2SSp79EyC
+	 zSqA2bNpWl3slkoQDngAD5LzbwXZzsCUFIUmQrEcHIkvNzm92gJNlbNYkZI1XPKCkU
+	 v/q92eZnOjk38x3f/PadSuUiZnpB9p359KcS2jGYJoUt4VRgQqFJuLvn8BJgtzND7U
+	 1MrL8XwRo9oEXrgrxo8gXhKBjRMFwYy3lgf7sD2rRXQiozM11oAOK3mmg47R/Rxok1
+	 q52FXptu0/miw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: Aaron Kling <webgeek1234@gmail.com>,
 	jonathanh@nvidia.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 15/39] ARM: tegra: Use I/O memcpy to write to IRAM
-Date: Sun,  3 Aug 2025 20:40:17 -0400
-Message-Id: <20250804004041.3628812-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 12/28] ARM: tegra: Use I/O memcpy to write to IRAM
+Date: Sun,  3 Aug 2025 20:42:11 -0400
+Message-Id: <20250804004227.3630243-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804004041.3628812-1-sashal@kernel.org>
-References: <20250804004041.3628812-1-sashal@kernel.org>
+In-Reply-To: <20250804004227.3630243-1-sashal@kernel.org>
+References: <20250804004227.3630243-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.240
+X-stable-base: Linux 5.4.296
 Content-Transfer-Encoding: 8bit
 
 From: Aaron Kling <webgeek1234@gmail.com>
@@ -119,7 +119,7 @@ checks for regular memory access.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index d5c805adf7a8..ea706fac6358 100644
+index 76a65df42d10..dce0cb1fdd6f 100644
 --- a/arch/arm/mach-tegra/reset.c
 +++ b/arch/arm/mach-tegra/reset.c
 @@ -63,7 +63,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
