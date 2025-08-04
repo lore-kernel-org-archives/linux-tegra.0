@@ -1,136 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB5B15A8;
-	Mon,  4 Aug 2025 00:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EE1220F24;
+	Mon,  4 Aug 2025 03:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754268175; cv=none; b=nzPo2fNmSpBFBbIjWIggc2f4ny+1DZAzSIot9DuVye8R7D9vvV6Ms/gm0fxQkWtQtqE8QNIw26psomtK99VzzxDVQ0zYciaEDolq3za1Nk9pWbCdHbQDn0/SmbFTgRggB1gRgRslk0WalQtkkn0W9193p7l9WLt5yBI3ObJv41s=
+	t=1754277277; cv=none; b=NkQGm9TbaQtttys6lej4GgNfm2C2VldJI0cgRgyt1eMYFw/j2d8dHzOMHw1m8BlPDsObtCug8VWbKvOGrmQ6R1iTLgLFIKKhJVutWBIl060/BDdu34VpFpuwjhs+LDbTAxk8TAdnhXTLiTAxav3yVHqSPnh8VUkpxeksy1YZl2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754268175; c=relaxed/simple;
-	bh=p84uElI19tzMUUIT5etlzGEn5Fgc5wv3uiIUGG96L8c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=encjjW9n1LUWPnH4EM9RqfqTTAT5VRcpHrKZy6dyfBSuztBgg8EgmydSlNkbeYPZuUWH5Coebseai3O7NBrjFmpfX7zI1G9EznMQDfxIYEmPMLHgxTxqeaoE0P/Vm8pcib3V+NF6mSCQ6ZVfD6AgUITrIsxwvgvZUk1ajyuD9i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwTt1zR6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754277277; c=relaxed/simple;
+	bh=5qCGnzZe9zvgxj9r6imoUz73U1Eb0b2h8O09bbJ/Y2g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cJ3qBDVfAI9iI9wZmbWX/Ta+dPJzQdqP29qE95vpYVDTIalxfIhel06hB1GkLvR1SCXIBRSTabJwvEcNSQeUR0W08MxRLZDZtUwBAdaD87D8KKmfA5+15zRSWlmdtYjE3D8QBFwf9T6C5FqVEkA06zh9oac6gwMzQu/ZZEJLRjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZQLOQY/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwTt1zR6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC4FC4CEF0;
-	Mon,  4 Aug 2025 00:42:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZQLOQY/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 88C90C4CEEB;
+	Mon,  4 Aug 2025 03:14:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754268175;
-	bh=p84uElI19tzMUUIT5etlzGEn5Fgc5wv3uiIUGG96L8c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bwTt1zR6bFQ++h089Qv3JoJiUuXuatgJBrGMv0HOL0M8Srtp/kTIr4GVM2nfgtMm6
-	 9zvZlVNNww0tsE4l3gg56spJ6vXzJVFUgkGxo0fNPtn/d40U6ZpJKtbgM2SSp79EyC
-	 zSqA2bNpWl3slkoQDngAD5LzbwXZzsCUFIUmQrEcHIkvNzm92gJNlbNYkZI1XPKCkU
-	 v/q92eZnOjk38x3f/PadSuUiZnpB9p359KcS2jGYJoUt4VRgQqFJuLvn8BJgtzND7U
-	 1MrL8XwRo9oEXrgrxo8gXhKBjRMFwYy3lgf7sD2rRXQiozM11oAOK3mmg47R/Rxok1
-	 q52FXptu0/miw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Aaron Kling <webgeek1234@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Sasha Levin <sashal@kernel.org>,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 12/28] ARM: tegra: Use I/O memcpy to write to IRAM
-Date: Sun,  3 Aug 2025 20:42:11 -0400
-Message-Id: <20250804004227.3630243-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804004227.3630243-1-sashal@kernel.org>
-References: <20250804004227.3630243-1-sashal@kernel.org>
+	s=k20201202; t=1754277276;
+	bh=5qCGnzZe9zvgxj9r6imoUz73U1Eb0b2h8O09bbJ/Y2g=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=DZQLOQY/0YJLu6deNLtqlTkEtvjgoJ7GPvRsEsFyYtXJpyaPySpZqcNwCKraaoAmf
+	 SfuwbnuJ+roPVFfn6Y4uKEEYB6/BPjfYUqS9SRUehlOz4UmmqMwzURwE8cFi0+BctD
+	 M+T5SoO1VDj5hX+6OP5Z/ehLKQenBWcS2kk8Ry82GljW1kZ5P90xk2FX+iMbfG8Q/r
+	 yLmAMLim7rFhBfSxcGbcsZzj1AW54Mbt0+1t+PRJXmtab5Gc6bCP0q/Dg3q3Dd1uTW
+	 RjCoancdu0Sl7FW23YPwWDYZf9qhTqjX4anBidzL5xxmxcjXMzytavE4jJ/qeMOCXc
+	 SQWagWs/pNzwA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D0BC87FDA;
+	Mon,  4 Aug 2025 03:14:36 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/2] arm64: tegra: Add reserved-memory node to L4T
+ Tegra210 devices
+Date: Sun, 03 Aug 2025 22:14:29 -0500
+Message-Id: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.296
-Content-Transfer-Encoding: 8bit
-
-From: Aaron Kling <webgeek1234@gmail.com>
-
-[ Upstream commit 398e67e0f5ae04b29bcc9cbf342e339fe9d3f6f1 ]
-
-Kasan crashes the kernel trying to check boundaries when using the
-normal memcpy.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJUlkGgC/3XMQQ6CMBCF4auQWTtm2lJUVt7DsKi1hUmEkhaJh
+ vTuVvYu/5e8b4PkIrsEbbVBdCsnDlMJeajADmbqHfKjNEiSmrRscFa1JhyXhPdXjyTVpTZeCU8
+ GymeOzvN7925d6YHTEuJn51fxW/9Jq0CBp7MmaoTyJO21Hw0/jzaM0OWcv/HWwteqAAAA
+X-Change-ID: 20250526-p3450-mts-bug-02394af31f0a
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754277275; l=658;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=5qCGnzZe9zvgxj9r6imoUz73U1Eb0b2h8O09bbJ/Y2g=;
+ b=pSOcHwoDz3dMPNGO3EBVF8hNPXY0FTEmFRMdwmLLuZK4t52CGSGCYMO5ek9RFNStpLCjWHZnx
+ RTHKqJ2rGZcDj4CDggmQLTfHHBSpSfQp0c/rv26FJhxcFVKzHo6wF5j
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-Link: https://lore.kernel.org/r/20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+Changes in v2:
+- Add patch for P2180
+- Link to v1: https://lore.kernel.org/r/20250526-p3450-mts-bug-v1-1-78500613f02c@gmail.com
 
-LLM Generated explanations, may be completely bogus:
+---
+Aaron Kling (2):
+      arm64: tegra: Add reserved-memory node for P3450
+      arm64: tegra: Add reserved-memory node for P2180
 
-Based on my analysis of this commit, here's my determination:
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 6 ++++++
+ 2 files changed, 12 insertions(+)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250526-p3450-mts-bug-02394af31f0a
 
-**Backport Status: YES**
-
-This commit should be backported to stable kernel trees for the
-following reasons:
-
-1. **Fixes a real crash/bug**: The commit fixes a KASAN (Kernel Address
-   Sanitizer) crash that occurs when using regular `memcpy()` to write
-   to IRAM (Internal RAM). This is a functional bug that causes kernel
-   crashes when KASAN is enabled.
-
-2. **Small and contained fix**: The change is minimal - it simply
-   replaces `memcpy()` with `memcpy_toio()` on line 66 of arch/arm/mach-
-   tegra/reset.c. This is a one-line change that doesn't alter any logic
-   or introduce new features.
-
-3. **Follows proper I/O memory access patterns**: The fix is technically
-   correct. According to the kernel documentation in
-   Documentation/driver-api/device-io.rst, I/O memory regions (which
-   IRAM is mapped as via `IO_ADDRESS()`) should be accessed using
-   I/O-specific functions like `memcpy_toio()` rather than regular
-   `memcpy()`. The documentation explicitly states: "Do not use memset
-   or memcpy on IO addresses; they are not guaranteed to copy data in
-   order."
-
-4. **No architectural changes**: The commit doesn't introduce any
-   architectural changes or new functionality. It's purely a bug fix
-   that corrects improper memory access.
-
-5. **Minimal risk of regression**: Since this change only affects how
-   data is copied to IRAM during the Tegra CPU reset handler
-   initialization, and uses the proper kernel API for I/O memory access,
-   the risk of introducing new issues is very low.
-
-6. **Platform-specific but important**: While this fix is specific to
-   ARM Tegra platforms, it fixes a crash that would affect any Tegra
-   system running with KASAN enabled. This is important for developers
-   and users who rely on KASAN for debugging.
-
-The fact that `iram_base` is obtained through `IO_ADDRESS()` macro
-clearly indicates this is I/O mapped memory that requires I/O-specific
-accessors. KASAN correctly identified this misuse and crashed to prevent
-potential issues. The fix properly uses `memcpy_toio()` which is
-designed for copying to I/O memory regions and won't trigger KASAN
-checks for regular memory access.
-
- arch/arm/mach-tegra/reset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index 76a65df42d10..dce0cb1fdd6f 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -63,7 +63,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 	BUG_ON(is_enabled);
- 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
- 
--	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
-+	memcpy_toio(iram_base, (void *)__tegra_cpu_reset_handler_start,
- 			tegra_cpu_reset_handler_size);
- 
- 	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
+Best regards,
 -- 
-2.39.5
+Aaron Kling <webgeek1234@gmail.com>
+
 
