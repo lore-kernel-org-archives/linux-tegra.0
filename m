@@ -1,289 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AD123FC4C;
-	Wed,  6 Aug 2025 10:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC8B28C033
+	for <linux-tegra@vger.kernel.org>; Wed,  6 Aug 2025 11:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754475847; cv=none; b=XkwRRFRgZt4HPki0UTArTS8dLh9L823eepoEvGYlVA15oIcIkg0LVa+QAX9jRKy94bdMD/HIQ+HGuQUi69WqaNYei0uuVEgFCHMABJUr7dS/wql/wPuOcPNsL2IbL4AyV5cw+IrYNNXFkmstFUdVrkoJZN+b+Bpih1Yr5ng903E=
+	t=1754480574; cv=none; b=RafNBwgJk9kQ4hnVVh94QIqxjxj1Ecwj6NGnaVb32MH6RmLodPUtduMwZH4fju6Rc6ouC1TQ2BhZ3fi2vF9KnQFEUaV4LfxrwNwm8F/vQnh8CNLSqrvX+akuYIFC0aljZqj/7c6S+e8W6iRkCON7vs3YTIJ7seJO0A1oNm0B5WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754475847; c=relaxed/simple;
-	bh=l70ptxZLQqmas0XfEsGv6By1cn6ZG33TtWo6AIwUVzY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a5DNFNG4YvwatJvJI72jUJbrarB1GPvwARQt3KK6TrI4o+LkADy4RRLo19LMC25g9civvXukMVyIuqEZ7Q026i3hR2Icx2ZMa0Gf7pwIH4hmBE7GBkzaO2D4wRM3uQS2xQyb8c82pg9sr5dIfG85zK4uek/HamfdkZmZ1Pej/20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrWPG7JK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754480574; c=relaxed/simple;
+	bh=dIuMbChax19Ylgozi2/YYp5RJcWPLz4U8pu8z/Y4RNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aAEsnQWZnrJihfNhDH0teylNqvTpx9k+mPsJD+74VmQOtNPR7ajjrZfmV18jyTe7ZrI7gocxBxvrcQuFFeszgqHz9MVHx5JiXOHTkLzhEqaCagRSPnj/QYDIukNbnidN4Xvmsj0NOP7pGZJrqqPy0EzKO9ShQktuawznSWnXsVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X73u82jk; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrWPG7JK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554E6C4CEE7;
-	Wed,  6 Aug 2025 10:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754475846;
-	bh=l70ptxZLQqmas0XfEsGv6By1cn6ZG33TtWo6AIwUVzY=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=JrWPG7JKmLOWiqyPyPHBEwdNSOhBgbgwZKlr53ch1KYUqMW5NJhgqWGt37Bfpu5kz
-	 qlK/s7XBDhAWY0ePEoJGylQwPvPthAY1cgG03gzQ0xnpLyNfYH9Ltn6bRO9o6VKIgv
-	 8mL/VP5WkpU6/u8BHdtm+iCND03lhAl9fYMzEq00cNwYjcE4kn4g2K7GUjcU1SxcIh
-	 oRJMiMZbiPrzXULl22miQXDKokgCLeq9OBsipp+PpQccKHMl2ra3uH+9Je0d/Du/UB
-	 W2HdU2A3sG91p4NrtXbhl0f8Q5lRZPdIG4rgH0nDKYqpAltVKIDHkj/Whd+ALlZqaM
-	 XT3W88x3kCbog==
-Message-ID: <5840e9b2-4940-4343-9f55-58ad3dfb7075@kernel.org>
-Date: Wed, 6 Aug 2025 12:23:44 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X73u82jk"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459d40d16bdso23463005e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Aug 2025 04:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754480570; x=1755085370; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hgVOaKqfJ1Iikaw7FfQ1AWXCe8QxX1J0n0ZHcaKhcJQ=;
+        b=X73u82jk0ycPwPGOSiDMUxpXC9p3qMDmNspROg7ETrxA0iwLe1LGMRHbL9B712jhmA
+         uA2AtiTe27xgW58XNmoLFhwDPLbtrEmxrqSQPZuAEC2o6q32egfDv7WOuvH/+mrosN/f
+         UdKnBaPmguJGaQCjhhWzXZpRUPGQ4vzQSnLMJwXpklDzUZ7VjY+y94N44yL3vkp9fDzK
+         lieEONxhBPpjHoODBw+94VZH3OFGeShMGEVpkP1YJUdW9W6/x+P5I1+suRDC4uPi+P7B
+         qkXvFd/l7CYlJ7iHNRsaNqEs6X5T/rvw0JC/OWQ7bA0xtaN26hKGoRr1jVKI6oGPBs0+
+         N7Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754480570; x=1755085370;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hgVOaKqfJ1Iikaw7FfQ1AWXCe8QxX1J0n0ZHcaKhcJQ=;
+        b=Z2n3W1+VC8qJDXUvQZJeYEvoP25V8SjWKrZhklRQXSHR71IKQBw3uETey/xvNNH3cV
+         SvP5YmC/ezHYh9gqzLFTidD3MPCht5TQIuba/S01LL0NORPUgRJFWGV8OGLJFBYj+t+u
+         Vyc69o8f8qS29e9QhxIu82xjjC31HaC/ER6ruAO4EeWZG9oQKMz5vmwb9PNhCys5G3H9
+         fqgjBTmDeYlMUK4y6pxlDfxFQDXg8mB+75NZfLkmple1du4XU5ZdYyg/39hDsqYvTsAQ
+         CS596HuUSt0vYoKCDYieDbr2PHlsQMJxcrzAYr1+XOUvjkV7dsuFftnX8lBhd7vhXx0Y
+         MyFQ==
+X-Gm-Message-State: AOJu0YxwLx3jZhM/Fa2Ljn0G2e/r7Z+1PR86YosKJFLOsm30p8rMzxeC
+	wkG8vuloL412uJef23u5gjVMJ64EWlsYIqjWBzqpzUBI1P165ol2kyjQbcTf/PZgDB9pcNYmqa2
+	yqU1k
+X-Gm-Gg: ASbGncsCk4rgidLVPkUJc1o3duczpOkqLj6TmwQO23zU30/F5i1O1Ab4X3WM8eZ+S8Q
+	orAfGLmxjUM1VNu9s4kglI9fcohFrwLBwlr5yBEOi+KQczEsyiBvjHtfgdW1oLJ11+A5SXL/S73
+	r5m5XlrNyBGvDJJMazWgx7yHHIPWYH8mPAl5YrwqK1M5foo0s3WGKeJuwc8xWNYpMiPx51urseW
+	ziNnKdS6NEocnNhfCabvah+TchiCwtOh1GCAE1bNkova1wzwcQ0l5EmVgLMYffg0MiMdqS4TmoO
+	YE3IeTwPXrXlZ2o/eO5NzlkusyZq+rVeoXmoy8R30xPQXtsVFxSkPRVii1gzeU+QzYikT9kqaK2
+	wfUImVEgfDqPfjerbQfFlA2GAelU=
+X-Google-Smtp-Source: AGHT+IEIvpPRvCnImRsnPnk+REhA0YcEXrHzYAYHNH6pJfP38v3i7JE3rb8d9qf16OmBD6ho/cBxUQ==
+X-Received: by 2002:a05:600c:6385:b0:459:e048:af42 with SMTP id 5b1f17b1804b1-459e7986998mr19494615e9.24.1754480570157;
+        Wed, 06 Aug 2025 04:42:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b95f4sm22628445f8f.23.2025.08.06.04.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 04:42:49 -0700 (PDT)
+Date: Wed, 6 Aug 2025 14:42:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+Subject: [bug report] drm/tegra: Implement job submission part of new UAPI
+Message-ID: <aJM_te551jUwnRv7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
- custom functions
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
- <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
- Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
- Hans de Goede <hansg@kernel.org>,
- Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- Christian Gromm <christian.gromm@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
- <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
- Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
- Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
- Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
- <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
- <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Corentin Labbe <clabbe@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
- <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
- <20250806094822.GA24768@pendragon.ideasonboard.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250806094822.GA24768@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 06/08/2025 11:48, Laurent Pinchart wrote:
-> Hi Hans,
-> 
-> On Wed, Aug 06, 2025 at 10:16:37AM +0200, Hans Verkuil wrote:
->> On 02/08/2025 11:22, Jacopo Mondi wrote:
->>> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>
->>> Accessing file->private_data manually to retrieve the v4l2_fh pointer is
->>> error-prone, as the field is a void * and will happily cast implicitly
->>> to any pointer type.
->>>
->>> Replace all remaining locations that read the v4l2_fh pointer directly
->>> from file->private_data and cast it to driver-specific file handle
->>> structures with driver-specific functions that use file_to_v4l2_fh() and
->>> perform the same cast.
->>>
->>> No functional change is intended, this only paves the way to remove
->>> direct accesses to file->private_data and make V4L2 drivers safer.
->>> Other accesses to the field will be addressed separately.
->>>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->>> ---
->>>  drivers/media/pci/ivtv/ivtv-driver.h               |  5 ++++
->>>  drivers/media/pci/ivtv/ivtv-fileops.c              | 10 +++----
->>>  drivers/media/pci/ivtv/ivtv-ioctl.c                |  8 +++---
->>>  drivers/media/platform/allegro-dvt/allegro-core.c  |  7 ++++-
->>>  drivers/media/platform/amlogic/meson-ge2d/ge2d.c   |  8 ++++--
->>>  .../media/platform/chips-media/coda/coda-common.c  |  7 ++++-
->>>  .../platform/chips-media/wave5/wave5-helper.c      |  2 +-
->>>  .../media/platform/chips-media/wave5/wave5-vpu.h   |  5 ++++
->>>  drivers/media/platform/m2m-deinterlace.c           |  7 ++++-
->>>  .../media/platform/mediatek/jpeg/mtk_jpeg_core.c   |  7 ++++-
->>>  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c  |  7 ++++-
->>>  .../media/platform/mediatek/mdp3/mtk-mdp3-m2m.c    |  7 ++++-
->>>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c   |  2 +-
->>>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h   |  5 ++++
->>>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   |  2 +-
->>>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h   |  5 ++++
->>>  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c     |  7 ++++-
->>>  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c |  7 ++++-
->>>  drivers/media/platform/nxp/mx2_emmaprp.c           |  7 ++++-
->>>  drivers/media/platform/renesas/rcar_fdp1.c         |  7 ++++-
->>>  drivers/media/platform/renesas/rcar_jpu.c          |  7 ++++-
->>>  drivers/media/platform/rockchip/rga/rga.c          |  3 +--
->>>  drivers/media/platform/rockchip/rga/rga.h          |  5 ++++
->>>  drivers/media/platform/rockchip/rkvdec/rkvdec.c    |  2 +-
->>>  drivers/media/platform/rockchip/rkvdec/rkvdec.h    |  5 ++++
->>>  .../media/platform/samsung/exynos-gsc/gsc-core.h   |  6 +++++
->>>  .../media/platform/samsung/exynos-gsc/gsc-m2m.c    |  6 ++---
->>>  .../media/platform/samsung/exynos4-is/fimc-core.h  |  5 ++++
->>>  .../media/platform/samsung/exynos4-is/fimc-m2m.c   |  2 +-
->>>  drivers/media/platform/samsung/s5p-g2d/g2d.c       |  7 +++--
->>>  .../media/platform/samsung/s5p-jpeg/jpeg-core.c    |  9 +++++--
->>>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   |  6 ++---
->>>  .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  6 +++++
->>>  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c   |  7 ++++-
->>>  drivers/media/platform/st/sti/delta/delta-v4l2.c   | 26 +++++++++++-------
->>>  drivers/media/platform/st/sti/hva/hva-v4l2.c       | 31 ++++++++++++----------
->>>  drivers/media/platform/st/sti/hva/hva.h            |  2 --
->>>  drivers/media/platform/st/stm32/dma2d/dma2d.c      |  7 +++--
->>>  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c   |  3 +--
->>>  .../platform/sunxi/sun8i-rotate/sun8i_rotate.c     |  3 +--
->>>  drivers/media/platform/ti/omap3isp/ispvideo.c      |  4 +--
->>>  drivers/media/platform/ti/omap3isp/ispvideo.h      |  6 +++++
->>>  drivers/media/platform/verisilicon/hantro.h        |  5 ++++
->>>  drivers/media/platform/verisilicon/hantro_drv.c    |  3 +--
->>>  drivers/staging/media/imx/imx-media-csc-scaler.c   |  7 ++++-
->>>  drivers/staging/media/meson/vdec/vdec.c            | 24 ++++++-----------
->>>  drivers/staging/media/meson/vdec/vdec.h            |  5 ++++
->>>  drivers/staging/media/sunxi/cedrus/cedrus.c        |  3 +--
->>>  drivers/staging/media/sunxi/cedrus/cedrus.h        |  5 ++++
->>>  drivers/staging/media/sunxi/cedrus/cedrus_video.c  |  5 ----
->>>  50 files changed, 237 insertions(+), 100 deletions(-)
->>>
->>> diff --git a/drivers/media/pci/ivtv/ivtv-driver.h b/drivers/media/pci/ivtv/ivtv-driver.h
->>> index a6ffa99e16bc64a5b7d3e48c1ab32b49a7989242..cad548b28e360ecfe2bcb9fcb5d12cd8823c3727 100644
->>> --- a/drivers/media/pci/ivtv/ivtv-driver.h
->>> +++ b/drivers/media/pci/ivtv/ivtv-driver.h
->>> @@ -388,6 +388,11 @@ static inline struct ivtv_open_id *fh2id(struct v4l2_fh *fh)
->>>  	return container_of(fh, struct ivtv_open_id, fh);
->>>  }
->>>  
->>> +static inline struct ivtv_open_id *file2id(struct file *filp)
->>> +{
->>> +	return container_of(file_to_v4l2_fh(filp), struct ivtv_open_id, fh);
->>
->> Why not write:
->>
->> 	return fh2id(file_to_v4l2_fh(filp));
->>
->> Same for all other drivers that do this. I prefer to have the contained_of()
->> in just one place.
-> 
-> Because fh2id gets removed in "[PATCH 57/65] media: ivtv: Access v4l2_fh
-> from file". I can use it in this patch and drop it later, would you
-> prefer that ?
+Hello Mikko Perttunen,
 
-Based on the irc discussion some drivers need both, so yes, I prefer that the
-file2foo inline calls the fh2foo inline.
+Commit 13abe0bb15ce ("drm/tegra: Implement job submission part of new
+UAPI") from Jun 10, 2021 (linux-next), leads to the following Smatch
+static checker warning:
 
-Regards,
+	drivers/gpu/drm/tegra/submit.c:541 tegra_drm_ioctl_channel_submit()
+	warn: save dma_fence_wait_timeout() returns to signed long
 
-	Hans
+drivers/gpu/drm/tegra/submit.c
+    509 int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+    510                                    struct drm_file *file)
+    511 {
+    512         struct tegra_drm_file *fpriv = file->driver_priv;
+    513         struct drm_tegra_channel_submit *args = data;
+    514         struct tegra_drm_submit_data *job_data;
+    515         struct drm_syncobj *syncobj = NULL;
+    516         struct tegra_drm_context *context;
+    517         struct host1x_job *job;
+    518         struct gather_bo *bo;
+    519         u32 i;
+    520         int err;
+    521 
+    522         mutex_lock(&fpriv->lock);
+    523 
+    524         context = xa_load(&fpriv->contexts, args->context);
+    525         if (!context) {
+    526                 mutex_unlock(&fpriv->lock);
+    527                 pr_err_ratelimited("%s: %s: invalid channel context '%#x'", __func__,
+    528                                    current->comm, args->context);
+    529                 return -EINVAL;
+    530         }
+    531 
+    532         if (args->syncobj_in) {
+    533                 struct dma_fence *fence;
+    534 
+    535                 err = drm_syncobj_find_fence(file, args->syncobj_in, 0, 0, &fence);
+    536                 if (err) {
+    537                         SUBMIT_ERR(context, "invalid syncobj_in '%#x'", args->syncobj_in);
+    538                         goto unlock;
+    539                 }
+    540 
+--> 541                 err = dma_fence_wait_timeout(fence, true, msecs_to_jiffies(10000));
+    542                 dma_fence_put(fence);
+    543                 if (err) {
 
-> 
->>> +}
->>> +
->>>  struct yuv_frame_info
->>>  {
->>>  	u32 update;
->>
->> <snip>
->>
->>> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
->>> index 1f134e08923a528cc676f825da68951c97ac2f25..74977f3ae4844022c04de877f31b4fc6aaac0749 100644
->>> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
->>> +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
->>> @@ -302,6 +302,11 @@ struct allegro_channel {
->>>  	unsigned int error;
->>>  };
->>>  
->>> +static inline struct allegro_channel *file_to_channel(struct file *filp)
->>> +{
->>> +	return container_of(file_to_v4l2_fh(filp), struct allegro_channel, fh);
->>> +}
->>> +
->>>  static inline int
->>>  allegro_channel_get_i_frame_qp(struct allegro_channel *channel)
->>>  {
->>> @@ -3229,7 +3234,7 @@ static int allegro_open(struct file *file)
->>>  
->>>  static int allegro_release(struct file *file)
->>>  {
->>> -	struct allegro_channel *channel = fh_to_channel(file->private_data);
->>> +	struct allegro_channel *channel = file_to_channel(file);
->>
->> So a file_to_channel inline function was added, but it is used in just one
->> place.
->>
->> I would prefer to just drop the inline function and instead write:
->>
->> 	struct allegro_channel *channel = fh_to_channel(file_to_v4l2_fh(file));
->>
->> If this is needed in two or more places, then the extra inline makes sense,
->> but it is a fairly common pattern that it is only needed in the release function.
->>
->> Adding a new inline just for that seems overkill to me.
-> 
-> file_to_channel() gets used in more places in "[PATCH 29/65] media:
-> allegro: Access v4l2_fh from file", where fh_to_channel() is dropped.
-> I'd rather keep it in this patch instead of having to modify the
-> allegro_release() function in patch 29/65.
-> 
->>>  
->>>  	v4l2_m2m_ctx_release(channel->fh.m2m_ctx);
->>>  
-> 
+This checking is wrong.  dma_fence_wait_timeout() returns a non-zero positive
+value on success so tt should be something like:
 
+	if (err <= 0) {
+		err = err ?: -ETIMEDOUT;
+
+Except dma_fence_wait_timeout() can also return custom error codes so maybe
+something more complicated is needed.  This bug seems pretty severe, so it's
+strange that it hasn't been detected in testing.
+
+
+    544                         SUBMIT_ERR(context, "wait for syncobj_in timed out");
+    545                         goto unlock;
+    546                 }
+    547         }
+    548 
+
+[ snip ]
+
+    674 
+    675         kfree(job_data);
+    676 put_bo:
+    677         gather_bo_put(&bo->base);
+    678 unlock:
+    679         if (syncobj)
+    680                 drm_syncobj_put(syncobj);
+    681 
+    682         mutex_unlock(&fpriv->lock);
+    683         return err;
+    684 }
+
+regards,
+dan carpenter
