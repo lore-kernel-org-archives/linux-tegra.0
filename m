@@ -1,391 +1,160 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E801F1306;
-	Fri,  8 Aug 2025 06:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754634634; cv=none; b=geodAv2WxrTvjSx5F+XDmoTy68puTiqH1EQZGu+XoiliyH8QgAtwSsHo1VCkfFVutyvbVi4QpFyIyZ4mNipJ/a9OT7VzVYzzYd6AVuVZnF7/Z9M/e5jr8j4O3A5gt7ZUYvVBZYZLTxAHp1dyi69/B00My0RJ0IYR1XePs0Dvzf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754634634; c=relaxed/simple;
-	bh=2sZclBUIchMgOI2BfV6AOvaczH7sNa7CyFdTx87lVcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJsST49+5uog5kV2/lr94XjSVUpPOiviZ1BtMsrxc9O1FQHuOMbY9YkiqDxgbRyUDi79p6AUiDG/tsnP1EUqXTWNuBYyNzM19FN1bNNM+pOFKaLqdrjGOtEz5Kzbp/uqIsy/rXsiKC/xlWl5DxuhonkOhx8TnSoEuWpdTPKzqoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oumdgnpI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C69B14885D;
+	Fri,  8 Aug 2025 06:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754636343; cv=fail; b=AZRHfuraIc0QjsjebZg1z7OjMkOOm2G9W1O4gNzHdpwZcO2Rg5VY4BiR8JvkLkXtu8dCkc6SeRiq2GAZwgI4h70UOC1v9ADfKFLewKqcfvO3IWqfwivd0jGYIKNZKZJe3MVmI+biXuFMMY7RXUjjPEYcSo9vXZoBVRMbdBJneXo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754636343; c=relaxed/simple;
+	bh=x7Q1NH1Z+0cwvulr2jB7F9UMZu0jTfX3xPgj/Vv+aMs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ipzpPMnnDftuuPk9G2rB8mlQiz96lPWagS2zzb1lq4E1YfUSV01tKE1TCKIl8OEUt1Bs0TxlPf7S47SgdXxOIxBYmkadWvJqt09b7kgDlOMZNFyKs/ODl2vrYSUzAqHw2CFs7aZg2at02GGzyTe0Q3f9ObDU7C8PO854XcYVSpc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hww0ZkH1; arc=fail smtp.client-ip=40.107.220.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oumdgnpI"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5463C1648;
-	Fri,  8 Aug 2025 08:29:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754634577;
-	bh=2sZclBUIchMgOI2BfV6AOvaczH7sNa7CyFdTx87lVcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oumdgnpIcDsNg0djHYTq38XzQUF1TkgCzet42UojtjhitVip2QZCrbg2zqqcByvlX
-	 baY/CA6Dhgx81mz9UqbNHHcJrX7kQLHr2Qwr0A9FfGL8DNPlEjbIJ+qzZwZn4Bu7WR
-	 q6Pt/CjukSiWCSaMGBxXRzbtMbKI+d/wrxnUndSo=
-Date: Fri, 8 Aug 2025 09:30:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 27/65] media: Reset file->private_data to NULL in
- v4l2_fh_del()
-Message-ID: <20250808063011.GJ11583@pendragon.ideasonboard.com>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
- <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
- <20250807085003.GE11583@pendragon.ideasonboard.com>
- <20250807170004.GG11583@pendragon.ideasonboard.com>
- <20250807202553.GB28610@pendragon.ideasonboard.com>
- <7605f778-6b20-47e4-bd65-7a0d85fff736@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hww0ZkH1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s0u5eqNKnVl+0KgnZtPiUOMlsiJuCxJogl1+1zW9hD+S6r5w8P69fIXi+a7pOqUjGATHo2hePITza5dCf50ArO1wVjQWarBNCoG5xBHNZwg7t9E2sEJwWyFurf0DQ3NakJQM9Cnu2P4FGx1zAKm3Oxq13kvmJslnZNit16rp4seo+fRW8NU0BQlRy9ZNr13cKvDwVtvJ8UXEqNFY6ke5CjmoNbJSpdEC3f2Qs2FR2yLOwjiBYH/PGDOW7aNmnolDiM+F+Gr+FAv3zyI+fGItVvB5T1ETM6H3mMjoz0rHrfgTRiQJ8F1s1pU/Uvdn/tEKuADQ64P7ejEw4Ckh7jseqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AsacZYbPrTA/8JEzozA29vVI2ygdMyPMzX5wlJG8I7c=;
+ b=OqoMLAiPabp5nRaWDADyYhkx0p9MPtuJHx01r3S3KD+zlyBfwEl4QcwL4e2u/S3U0NtU89Ppb29+FJzDkuHMgTIIodK0CHFR2+JHVmbstvAa0Drb3JTGAuYTGB5IKkz+TyOa3ebdhuFrNEYoGdtJZ+CcvaWFg/yVGH2bR+T6PW2fZQjc4bEYOdzA36zveLyD/yoVt0QGAC2y1Bpe5AxSdJpKElISCczfZnb1QrubdPR+TdwQornFuWMTanPlS1hkpE2A3OFIyy3DWoZkG1qNPp7si9jSajB0zMKtZG64S62dgP58Yj6f6nThT3WS9PCwICXa7aRrMn1skJ2B+S8Waw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AsacZYbPrTA/8JEzozA29vVI2ygdMyPMzX5wlJG8I7c=;
+ b=hww0ZkH1BbE59+UF2kamTlWl63GRbFlKX3mHDUs9nz9fksn29mXNEFkhJBtsgGci3psu/GEFoICBfSFIWjdfkktcLwRjqLCtGAvx8Rcy4dQa3edE1hoJcUY3swJMRU92Rek+QTv2PxsiQlrCPrFGNRf56IeHARyd7ytt+kqfPIkOez7X9yHvgVBfNgs9laHnLGDMpUa1OYtltgua5av+Tqlw9eRfdjHrTccoPS6/S2b378IQlrouel67VY5E8japeFtH+Z9pno+RunbdIraxXhzJ4iI8PJHRN2oYVpzLqroDjXH+91BkWWQubryYqMzRSiPwzhf81qIJk7zRN2QnLw==
+Received: from BYAPR07CA0067.namprd07.prod.outlook.com (2603:10b6:a03:60::44)
+ by PH7PR12MB9075.namprd12.prod.outlook.com (2603:10b6:510:2f0::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 06:58:58 +0000
+Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:60:cafe::fb) by BYAPR07CA0067.outlook.office365.com
+ (2603:10b6:a03:60::44) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.16 via Frontend Transport; Fri,
+ 8 Aug 2025 06:58:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.8 via Frontend Transport; Fri, 8 Aug 2025 06:58:58 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 7 Aug
+ 2025 23:58:45 -0700
+Received: from 553356c-lcelt.nvidia.com (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 7 Aug 2025 23:58:40 -0700
+From: Haotien Hsu <haotienh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, Mathias Nyman <mathias.nyman@intel.com>,
+	"Brad Griffis" <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+	"Vedant Deshpande" <vedantd@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, <linux-usb@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Haotien Hsu <haotienh@nvidia.com>, Henry Lin <henryl@nvidia.com>, "Jui
+ Chang Kuo" <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>, WK Tsai
+	<wtsai@nvidia.com>
+Subject: [PATCH v2 0/4] Support USB wakeup function for Tegra234
+Date: Fri, 8 Aug 2025 14:57:29 +0800
+Message-ID: <20250808065733.347264-1-haotienh@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7605f778-6b20-47e4-bd65-7a0d85fff736@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|PH7PR12MB9075:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3efd6fed-3a83-4847-0286-08ddd6490c2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yu2XldUMjcmUz6fQ06kE1zncXwgzB0apVwyPYNSh07Ko3ip6q83D3h7NPTAR?=
+ =?us-ascii?Q?IUz07VUvJluC93QMpaWya+CDRZWssy+YvhC2QsYNsUPpJ4fKXm399SVhe2n4?=
+ =?us-ascii?Q?JlN32JxZRbt6bk0Mm8PER/Q11IWCSeeSFPAp++e/nJM9Fr0ObI2L+X42gVuF?=
+ =?us-ascii?Q?wV6B3I89yF3md5D3aYv2r0qIsEizN7Z3nvUsTD+HZj1oV6Sf9y046yzqHGBh?=
+ =?us-ascii?Q?5jWYtK56xiq9kACpzK3hD7YElkfmRC69rGfKuYpDLFTtL8DYu1+ifqOleokJ?=
+ =?us-ascii?Q?+SsZYU/agXezHeINjEDvamckvD0IuY4m8KUutjE3S8l9dFoBGP+GgyD+vIxr?=
+ =?us-ascii?Q?aMuW79McQ+HAcnd1EoEXir5ZQ5sBErzS3R9R5SerT6swRHYo9dtX0iDDtJqs?=
+ =?us-ascii?Q?0jEkNJdyYOrWwq63iEwAxMWnvW/cB+RQgSML6TjnE8xLfltrPiwUs4o/apfi?=
+ =?us-ascii?Q?1TM4Zx1YMo6d4kmnh3FcBrDQVvAmj8ZCkMMZVDgAXqdYWRwvnAJilH4KW6ls?=
+ =?us-ascii?Q?/HAEensf2PRPJJTVFBV35SssSL7jV9dRe9UpniYHSXKRu5vjJk+mXeV6Iq/W?=
+ =?us-ascii?Q?AsSfB0I3NNShcVMhsjGn01GBpR0QHWrWrHVSert0cqBRk2STt/5xFnWVnLtI?=
+ =?us-ascii?Q?ehkcZoJhHirbcdKZvKU9vJsrCgMVEA+21Gnpmw4Tl1Ba0YsVGHge2iYh6gs5?=
+ =?us-ascii?Q?K824ycvkp/Zsno+51r6xvaLR3PJ55DXSb7Yefku3e3dpJt72dYMTM8AvcmdJ?=
+ =?us-ascii?Q?w9QjDxEPx/W7nySE/xAhJXfkfd3p3a6metiNWiLlvTYJz90KWPSXwgzrSgMU?=
+ =?us-ascii?Q?h7MKW41rJhm4GfZ000avzpttq0hx4LqTZqzQFyvjFjX/ohd+gEIt2TdPkkzh?=
+ =?us-ascii?Q?H6OoX1S/WhBwPHEsQcNyNxvextZB8/ovtjaqAf5cZ3A9yrGjA66q2vAQwhWz?=
+ =?us-ascii?Q?R4aiObCZdcxfBWeam3OZ+a8RfPM9stg6OUM/1BBdngdtvrtsAyfSEFaXFyjg?=
+ =?us-ascii?Q?8xESYqoNuUlUxELbA5puV08PJcQh9JWD77/+jLuTO93QimBwKINN6vbSNoc+?=
+ =?us-ascii?Q?9cS2Iio0oq1vpE2TaGtrg7FHDmJEzwiNVDz3za+kD2dYFcIj0CyCSW2VTwnE?=
+ =?us-ascii?Q?zIwhhcbTcS+OOntYR1yFrZoTvJncBSPu6F7X02guSNb5RlXNnzN/iOEHo/xz?=
+ =?us-ascii?Q?7VXXVsTso0Ppc+eEFwLIjFuQQUOe/GaIbyPQ8RGb56432rEINGgUJkzfxbBh?=
+ =?us-ascii?Q?3n0KNFjJ73l/d4jQfFBdDN0woliutJZXShoJvGhUN/FloGZoU7gPdS3yzQ1y?=
+ =?us-ascii?Q?9bwEWNa8Ela4fM1y7h18/pEpNMH/4UfexZ+grnp20mBuVlpu621S3PASR+Ya?=
+ =?us-ascii?Q?Z6ibEiVO9pTYOAE0ycTbWLASJ3GixqQslojoySJPhqW84bZcsJI4FnDH7/nK?=
+ =?us-ascii?Q?T/D89DVoFmrv4i10kKTxbe5NLTKJdHeN9UYbMpgCoamCP620c8AqTsFNVFxx?=
+ =?us-ascii?Q?RTFLtS+wSDLZYufIZGrqneiiD5hNVmGxR1bApi5iYFsVjRTnM//Rxs0QDQ?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 06:58:58.0508
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3efd6fed-3a83-4847-0286-08ddd6490c2a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9075
 
-On Thu, Aug 07, 2025 at 10:51:27PM +0200, Hans Verkuil wrote:
-> On 07/08/2025 22:25, Laurent Pinchart wrote:
-> > On Thu, Aug 07, 2025 at 08:00:06PM +0300, Laurent Pinchart wrote:
-> >> On Thu, Aug 07, 2025 at 11:50:07AM +0300, Laurent Pinchart wrote:
-> >>> On Wed, Aug 06, 2025 at 02:45:14PM +0200, Hans Verkuil wrote:
-> >>>> On 02/08/2025 11:22, Jacopo Mondi wrote:
-> >>>>> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>>
-> >>>>> Multiple drivers that use v4l2_fh and call v4l2_fh_del() manually reset
-> >>>>> the file->private_data pointer to NULL in their video device .release()
-> >>>>> file operation handler. Move the code to the v4l2_fh_del() function to
-> >>>>> avoid direct access to file->private_data in drivers. This requires
-> >>>>> adding a file pointer argument to the function.
-> >>>>>
-> >>>>> Changes to drivers have been generated with the following coccinelle
-> >>>>> semantic patch:
-> >>>>>
-> >>>>> @@
-> >>>>> expression fh;
-> >>>>> identifier filp;
-> >>>>> identifier release;
-> >>>>> type ret;
-> >>>>> @@
-> >>>>> ret release(..., struct file *filp, ...)
-> >>>>> {
-> >>>>> 	<...
-> >>>>> -	filp->private_data = NULL;
-> >>>>> 	...
-> >>>>> -	v4l2_fh_del(fh);
-> >>>>> +	v4l2_fh_del(fh, filp);
-> >>>>> 	...>
-> >>>>> }
-> >>>>>
-> >>>>> @@
-> >>>>> expression fh;
-> >>>>> identifier filp;
-> >>>>> identifier release;
-> >>>>> type ret;
-> >>>>> @@
-> >>>>> ret release(..., struct file *filp, ...)
-> >>>>> {
-> >>>>> 	<...
-> >>>>> -	v4l2_fh_del(fh);
-> >>>>> +	v4l2_fh_del(fh, filp);
-> >>>>> 	...
-> >>>>> -	filp->private_data = NULL;
-> >>>>> 	...>
-> >>>>> }
-> >>>>>
-> >>>>> @@
-> >>>>> expression fh;
-> >>>>> identifier filp;
-> >>>>> identifier release;
-> >>>>> type ret;
-> >>>>> @@
-> >>>>> ret release(..., struct file *filp, ...)
-> >>>>> {
-> >>>>> 	<...
-> >>>>> -	v4l2_fh_del(fh);
-> >>>>> +	v4l2_fh_del(fh, filp);
-> >>>>> 	...>
-> >>>>> }
-> >>>>>
-> >>>>> Manual changes have been applied to Documentation/ to update the usage
-> >>>>> patterns, to drivers/media/v4l2-core/v4l2-fh.c to update the
-> >>>>> v4l2_fh_del() prototype and reset file->private_data, and to
-> >>>>> include/media/v4l2-fh.h to update the v4l2_fh_del() function prototype
-> >>>>> and its documentation.
-> >>>>>
-> >>>>> Additionally, white space issues have been fixed manually in
-> >>>>> drivers/usb/gadget/function/uvc_v4l2.c
-> >>>>>
-> >>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >>>>> ---
-> >>>>>  Documentation/driver-api/media/v4l2-fh.rst                         | 4 ++--
-> >>>>>  Documentation/translations/zh_CN/video4linux/v4l2-framework.txt    | 4 ++--
-> >>>>>  drivers/media/pci/cx18/cx18-fileops.c                              | 4 ++--
-> >>>>>  drivers/media/pci/ivtv/ivtv-fileops.c                              | 4 ++--
-> >>>>>  drivers/media/pci/saa7164/saa7164-encoder.c                        | 2 +-
-> >>>>>  drivers/media/pci/saa7164/saa7164-vbi.c                            | 2 +-
-> >>>>>  drivers/media/platform/allegro-dvt/allegro-core.c                  | 2 +-
-> >>>>>  drivers/media/platform/amlogic/meson-ge2d/ge2d.c                   | 2 +-
-> >>>>>  drivers/media/platform/amphion/vpu_v4l2.c                          | 4 ++--
-> >>>>>  drivers/media/platform/chips-media/coda/coda-common.c              | 4 ++--
-> >>>>>  drivers/media/platform/chips-media/wave5/wave5-helper.c            | 2 +-
-> >>>>>  drivers/media/platform/imagination/e5010-jpeg-enc.c                | 4 ++--
-> >>>>>  drivers/media/platform/m2m-deinterlace.c                           | 2 +-
-> >>>>>  drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c               | 4 ++--
-> >>>>>  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c                  | 4 ++--
-> >>>>>  drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c                | 4 ++--
-> >>>>>  .../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c    | 4 ++--
-> >>>>>  .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c    | 4 ++--
-> >>>>>  drivers/media/platform/nvidia/tegra-vde/v4l2.c                     | 2 +-
-> >>>>>  drivers/media/platform/nxp/dw100/dw100.c                           | 2 +-
-> >>>>>  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                     | 4 ++--
-> >>>>>  drivers/media/platform/nxp/imx-pxp.c                               | 2 +-
-> >>>>>  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c                 | 2 +-
-> >>>>>  drivers/media/platform/nxp/mx2_emmaprp.c                           | 2 +-
-> >>>>>  drivers/media/platform/qcom/iris/iris_vidc.c                       | 3 +--
-> >>>>>  drivers/media/platform/qcom/venus/core.c                           | 2 +-
-> >>>>>  drivers/media/platform/renesas/rcar_fdp1.c                         | 2 +-
-> >>>>>  drivers/media/platform/renesas/rcar_jpu.c                          | 4 ++--
-> >>>>>  drivers/media/platform/renesas/vsp1/vsp1_video.c                   | 2 +-
-> >>>>>  drivers/media/platform/rockchip/rga/rga.c                          | 2 +-
-> >>>>>  drivers/media/platform/rockchip/rkvdec/rkvdec.c                    | 2 +-
-> >>>>>  drivers/media/platform/samsung/exynos-gsc/gsc-m2m.c                | 4 ++--
-> >>>>>  drivers/media/platform/samsung/exynos4-is/fimc-m2m.c               | 4 ++--
-> >>>>>  drivers/media/platform/samsung/s5p-g2d/g2d.c                       | 2 +-
-> >>>>>  drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c                | 4 ++--
-> >>>>>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c                   | 4 ++--
-> >>>>>  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c                   | 4 ++--
-> >>>>>  drivers/media/platform/st/sti/delta/delta-v4l2.c                   | 4 ++--
-> >>>>>  drivers/media/platform/st/sti/hva/hva-v4l2.c                       | 4 ++--
-> >>>>>  drivers/media/platform/st/stm32/dma2d/dma2d.c                      | 2 +-
-> >>>>>  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c                   | 2 +-
-> >>>>>  drivers/media/platform/sunxi/sun8i-rotate/sun8i_rotate.c           | 2 +-
-> >>>>>  drivers/media/platform/ti/omap3isp/ispvideo.c                      | 5 ++---
-> >>>>>  drivers/media/platform/ti/vpe/vpe.c                                | 2 +-
-> >>>>>  drivers/media/platform/verisilicon/hantro_drv.c                    | 4 ++--
-> >>>>>  drivers/media/test-drivers/vicodec/vicodec-core.c                  | 2 +-
-> >>>>>  drivers/media/test-drivers/vim2m.c                                 | 2 +-
-> >>>>>  drivers/media/test-drivers/visl/visl-core.c                        | 2 +-
-> >>>>>  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c                           | 3 +--
-> >>>>>  drivers/media/v4l2-core/v4l2-fh.c                                  | 7 ++++---
-> >>>>>  drivers/media/v4l2-core/v4l2-subdev.c                              | 5 ++---
-> >>>>>  drivers/staging/media/imx/imx-media-csc-scaler.c                   | 4 ++--
-> >>>>>  drivers/staging/media/meson/vdec/vdec.c                            | 2 +-
-> >>>>>  drivers/staging/media/sunxi/cedrus/cedrus.c                        | 2 +-
-> >>>>>  drivers/staging/most/video/video.c                                 | 4 ++--
-> >>>>>  drivers/usb/gadget/function/uvc_v4l2.c                             | 3 +--
-> >>>>>  include/media/v4l2-fh.h                                            | 5 ++++-
-> >>>>>  57 files changed, 89 insertions(+), 90 deletions(-)
-> >>>>>
-> >>>>
-> >>>> <snip>
-> >>>>
-> >>>>> diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
-> >>>>> index b59b1084d8cdf1b62da12879e21dbe56c2109648..df3ba9d4674bd25626cfcddc2d0cb28c233e3cc3 100644
-> >>>>> --- a/drivers/media/v4l2-core/v4l2-fh.c
-> >>>>> +++ b/drivers/media/v4l2-core/v4l2-fh.c
-> >>>>> @@ -67,7 +67,7 @@ int v4l2_fh_open(struct file *filp)
-> >>>>>  }
-> >>>>>  EXPORT_SYMBOL_GPL(v4l2_fh_open);
-> >>>>>  
-> >>>>> -void v4l2_fh_del(struct v4l2_fh *fh)
-> >>>>> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp)
-> >>>>
-> >>>> Instead of adding a second argument, perhaps it is better to
-> >>>> just provide the filp pointer. After all, you can get the v4l2_fh
-> >>>> from filp->private_data.
-> >>>>
-> >>>> It simplifies the code a bit.
-> >>>
-> >>> That's an interesting idea. I'll give it a try.
-> >>
-> >> We end up with code like (e.g. in v4l2_fh_release(), with similar
-> >> constructs in lots of drivers)
-> >>
-> >> 	if (fh) {
-> >> 		v4l2_fh_del(filp);
-> >> 		v4l2_fh_exit(fh);
-> >> 		kfree(fh);
-> >> 	}
-> >>
-> >> compared to
-> >>
-> >> 	if (fh) {
-> >> 		v4l2_fh_del(fh, filp);
-> >> 		v4l2_fh_exit(fh);
-> >> 		kfree(fh);
-> >> 	}
-> >>
-> >> with the existing patch. I find the fact that v4l2_fh_del() takes a
-> >> different pointer than v4l2_fh_exit() a bit disturbing. If you think
-> >> it's better I'll drop the fh argument in v2.
-> > 
-> > I gave it a try, and looking at the function prototype, its
-> > documentation, the imbalance with v4l2_fh_add(), and the code in the
-> > callers, I think keeping both arguments would look cleaner. Please tell
-> > me if you feel strongly about this, I can still submit a patch to drop
-> > the argument. It can very easily be scripted with coccinelle and doesn't
-> > conflict with the rest of the series, so it could also be done later.
-> 
-> Looking at all the drivers that call v4l2_fh_del/exit I always see v4l2_fh_del()
-> directly followed by v4l2_fh_exit(). I think it would make a lot of sense to just
-> combine the two as a single function: v4l2_fh_del_exit(filp).
-> 
-> That simplifies the code and solves the imbalance.
+This patch series enables USB wakeup for Tegra234.
 
-I'll try that as a separate patch on top of this one. Keeping the two
-separate will ease review (both patches will be simpler, and will be
-generated by coccinelle), and will also make it easier to drop the
-second patch if we decide it's not the way to go.
+Haotien Hsu (4):
+  dt-bindings: usb: Add wake-up support for Tegra234 XUSB host
+    controller
+  arm64: tegra: Add interrupts for Tegra234 USB wake events
+  soc/tegra: pmc: Add USB wake events for Tegra234
+  usb: xhci: tegra: Support USB wakeup function for Tegra234
 
-> >>>>>  {
-> >>>>>  	unsigned long flags;
-> >>>>>  
-> >>>>> @@ -75,6 +75,8 @@ void v4l2_fh_del(struct v4l2_fh *fh)
-> >>>>>  	list_del_init(&fh->list);
-> >>>>>  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
-> >>>>>  	v4l2_prio_close(fh->vdev->prio, fh->prio);
-> >>>>> +
-> >>>>> +	filp->private_data = NULL;
-> >>>>>  }
-> >>>>>  EXPORT_SYMBOL_GPL(v4l2_fh_del);
-> >>>>>  
-> >>>>> @@ -94,10 +96,9 @@ int v4l2_fh_release(struct file *filp)
-> >>>>>  	struct v4l2_fh *fh = file_to_v4l2_fh(filp);
-> >>>>>  
-> >>>>>  	if (fh) {
-> >>>>> -		v4l2_fh_del(fh);
-> >>>>> +		v4l2_fh_del(fh, filp);
-> >>>>>  		v4l2_fh_exit(fh);
-> >>>>>  		kfree(fh);
-> >>>>> -		filp->private_data = NULL;
-> >>>>>  	}
-> >>>>>  	return 0;
-> >>>>>  }
-> >>>>
-> >>>> <snip>
-> >>>>
-> >>>>> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
-> >>>>> index d8fcf49f10e09452b73499f4a9bd1285bc2835a5..5e4c761635120608e0b588e0b0daf63e69588d38 100644
-> >>>>> --- a/include/media/v4l2-fh.h
-> >>>>> +++ b/include/media/v4l2-fh.h
-> >>>>> @@ -114,12 +114,15 @@ int v4l2_fh_open(struct file *filp);
-> >>>>>   * v4l2_fh_del - Remove file handle from the list of file handles.
-> >>>>>   *
-> >>>>>   * @fh: pointer to &struct v4l2_fh
-> >>>>> + * @filp: pointer to &struct file associated with @fh
-> >>>>> + *
-> >>>>> + * The function resets filp->private_data to NULL.
-> >>>>>   *
-> >>>>>   * .. note::
-> >>>>>   *    Must be called in v4l2_file_operations->release\(\) handler if the driver
-> >>>>>   *    uses &struct v4l2_fh.
-> >>>>>   */
-> >>>>> -void v4l2_fh_del(struct v4l2_fh *fh);
-> >>>>> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp);
-> >>>>>  
-> >>>>>  /**
-> >>>>>   * v4l2_fh_exit - Release resources related to a file handle.
+ .../bindings/usb/nvidia,tegra234-xusb.yaml    | 28 ++++++-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 11 ++-
+ drivers/soc/tegra/pmc.c                       |  7 ++
+ drivers/usb/host/xhci-tegra.c                 | 82 ++++++++++++++++++-
+ 4 files changed, 122 insertions(+), 6 deletions(-)
 
+---
+V1->V2
+- Add the Acked-by tag to the commit message for patch 1.
+- Fix the -Wunused-variable warning in xhci-tegra.c.
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
