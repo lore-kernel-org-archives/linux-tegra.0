@@ -1,225 +1,185 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179D1239E82
-	for <linux-tegra@vger.kernel.org>; Mon, 11 Aug 2025 10:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621492D3755
+	for <linux-tegra@vger.kernel.org>; Mon, 11 Aug 2025 12:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908684; cv=none; b=W2Y8c3Eqpg1NdEFTRt4cUSMK6xV5JCmZUoA/GqyR19Uohi6qHeauq0s5Remh9elVPOgrWRtUQYOFgMqOv6XJ5kuyRIpA1+5fcQ840k1FKrqv+E/EgwFo7IBK3eMvdtIl7lVBZPjf8kXO+FDR69XGYI9RlnEV8ojzEQWaVygph+0=
+	t=1754914301; cv=none; b=WliCeahKqOnextrmSIwQAYBOF/PCTE1nVAMwNyuKPCXTJHwPtVZ8VUCZZw28e4HkiAEP+EJCVUbtk8cqXvGsClL52cNbUFSH2RVwHnuruRO2UvWLxd4XNtGhKFSXe939FXMpbpoOyAUqV4wIYYBE+6zImVSQLraSvppcD6Rqr68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908684; c=relaxed/simple;
-	bh=XZHF0n8H867XHlXPQx2Z568uWIDx/pPp7gDATLqqwAU=;
+	s=arc-20240116; t=1754914301; c=relaxed/simple;
+	bh=FMBflEgyu2zzYW/76/uBzy1KMkgr26r6YycYcOX43po=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6zIMme6GBximMcJ/gFSkgbGKDU48LngohrEi+0yVdntdgGD+zj680yKj2zSLRmR5NvBf2nn6AC3kExHMi/ksYReodIQy5wDmQhm5Z8NORodXFUQ6SGPvEWK6YKqOSGCUNUWkfu86u4nlFL42yqgm89teMgwVHj0FLaoFW0bKfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBVNPWfY; arc=none smtp.client-ip=209.85.219.175
+	 To:Cc:Content-Type; b=QVwgtAxaB/UvpahsG7BK1N29InrptBYiLEWH19I7gg8XVXzFYJR82EtumTPLholNWaiARR0IUd5CcRsU0JglHXWz6691NRba7pDPnXS/D+QwktxcyG5rxeUSIxFzFTYYB9QbykfdP+2xw1/BbmVChUJ6SBXuIkAwiHxjrPe5S4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0GZ093D; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBVNPWfY"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e9066f408efso909206276.3
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Aug 2025 03:38:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0GZ093D"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71bfdf75cd2so15748887b3.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Aug 2025 05:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754908682; x=1755513482; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754914298; x=1755519098; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ffyxwyw8addnqKr26EOluv0zD0sB03PTkKSi1k3qjZ0=;
-        b=QBVNPWfYUnVjJ/h2dKDHPWriO8EQtwd0AvO27RuUkrfBtDPZy92FelwHid+WzJFgi4
-         brOEozdk3dQKdj7UIM7t7hS2OLbduf9EbuYPdZdCmuG4ywN8z8km1C+bFgFwTIkx/gxn
-         h2riOr9VOOHw0j8gc69gPcOUs+amtmJxn9FAkAqKZr1lj8nRQfBFJIVHlSRgh/38Ecoo
-         ejS+WpKVOsPiWLDn4UNDIM0I8zYeeot6nBf6h31Pt7bd1ctpe8nubteSxJrQ7S1REICP
-         JFTEMUjusEQ2fKzWkePMKe+qMMzktJ7rYc/9tT1iCLlBkwO9SPYHEzusW+uw57gm2H4W
-         e07A==
+        bh=yzaS0HPLQ+JNoWDWc+qdmiWk51Wkp8ZaIZKSPb/Tu1s=;
+        b=r0GZ093DzH45obxjIGTuS3+ogzAieVZwbrWTWg96/UhTSc5IQYF/kwjOUVm5fPcX59
+         LwFPLn6dqVZwpRDfSeZ3BnfOot3QvEO6zPNnAFnlpLBkzIXrZqcX1/3xt5z3so+JM6jM
+         EMlYOajxZAhuPwkDb4dFU86gOq+XNDutQJC5a0uuy70XkLm2p0NdYP3DpvuRATvGGN2u
+         NaQuN92axv6LVCfmTBhKTHm4SohouGaB2Je2SLMXbgTTT3G533XMj/zJG5FClz9/mXfD
+         Nbyp0YCHm941UCFn9lfrsMdEfIs77qptm6roxgmcAnMZp7eH2BosqOew9hP2gd2LaIEU
+         UaRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754908682; x=1755513482;
+        d=1e100.net; s=20230601; t=1754914298; x=1755519098;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ffyxwyw8addnqKr26EOluv0zD0sB03PTkKSi1k3qjZ0=;
-        b=r8hIHbhfjYDPUgfQ/wVKHJ8J/CIueaXlcoING2mfjAEbwJDbCfVpI+K7ZsQtzyx14+
-         ToBC7bXwgkesHD+91vuIn2dV1s2yzfqnX44sLLvA+X7S0EmqHkWnpQAZRzJpNvnGL8SO
-         QpjQnnalW0TTI2qNwiuTMD2B8POMvgXY2ajfRJ23sX96ibzsvlsFmWUpnbBUVVpcn1LO
-         KuwpIM44TT2lGDsB73L4/WnRnP7XDlWMmyk44BF8cqeQfafGPU90aq8T4PhX32Z6Ka0o
-         a47u1uoY24qqrERLKoIZpy5B4JkbSgRVujtG64Y0DlBkiChtvaCj9NrdZPeyqisqeGsp
-         AKwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWsRsiIYoZPHszyUW4dLNLWzMOvci9xoSVuYiw96/sZFfbaasw43g9rgwgCo6opglfw77EKIw1DQQpoQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YznQV36+yU2BazRmJAKURcZ/KBVb1+ufHk9dur4oDUyKrqRcT0d
-	rFtpsCOFHe3dJgDNq48YvzP9oapl/wMaZBM4WiSVnbM6cGPLzHVUw2n86ovpQDVVqQDLUb3iHOD
-	TEHhZsxJnPVk+YJAdCZH3LerXw+R1IQmvSRb8K++5XA==
-X-Gm-Gg: ASbGncu9al1a04/OIuY86X36uTXZxvzHL6M6C53clFzLFyzK3V16CAXr8Pdw++cVY+i
-	4tFUYNBrzdgB+qA9RfYL8pvYugrAVAuIYvJndj7wFnj9uh6wwNtDuhX4cu57Y6o+N4ZOCc8462G
-	FzB2Bc0HuVxFplMLcXzV/pZ6XAxwi7LMcGb7JPZS3rUg8NC7K+23cED+Yh3kROvEh+Lz73G9h1s
-	c7zf0Q0
-X-Google-Smtp-Source: AGHT+IHq7z8MGrZL9eQUvunOFR10BiyWjOBDwC6IHPp2y0K4MhVzM8oV5A4a9S2mJl00/AReb6Fgx328t2eQplBjq1o=
-X-Received: by 2002:a05:690c:a4c1:20b0:71c:bf3:afb5 with SMTP id
- 00721157ae682-71c0bf3b6b5mr61002717b3.17.1754908681687; Mon, 11 Aug 2025
- 03:38:01 -0700 (PDT)
+        bh=yzaS0HPLQ+JNoWDWc+qdmiWk51Wkp8ZaIZKSPb/Tu1s=;
+        b=MsK9zjUCsVgNC9HkcLITQWfSu7AheZm6FMxyazEX9MkocBAiLB3qRNfZQn2cIjPXIL
+         3/8ythzvRtP6OGKjNQbCTwi8pk7YWCVF3oT7FyXdX9EoLKnyMP6jMy/d4+F5fv/5JL7n
+         NeCf6+ph8hps/wnvB+Bl6U7iDMYjgLwtunDT2FZk/zdd8SK7xRrbRsn8reqTLpvCdSxc
+         iZArTl0MaiV/+ae2KZ32CEuWFuIk0zj3TM3U4PcN+8DpiPZZMWgRxD1228Yul1gYhMYe
+         jsh/BB+/YzCn4LGiiYTynvwFWQfpunn5jlfRYy5p/zaDPEVSRwcEZv4gYHF8nh/1rGK/
+         2E6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWavp9HNo6UvIs461KdttSQ6AAP+qJywvANP0oz51F1GQ70G36WXrbFVgaXVhU5gDHDyoKsrdz570D3gQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxPHQwyIrMfH/wR4bJ3zF/UlAI6jLjL5e5jdCjto4Uj1xYiEtc
+	sWN0dXgeK/LnWQSmMsTQyLr58bsxZnq9iM/wWCvpbFd/LIrSvSFlpiQqm1WT3KQ3PYcNhiHjxyz
+	bYDtg7a0OhFb2bOWMXra2QhoXrucwsmuxAcKZ3vFavQ==
+X-Gm-Gg: ASbGncumvNB2ZdhXL07BX9Zx/Kcoq4QAQQOAUxP71pngyLo6zO4hwxHDI0mrdybjpJG
+	OPvGOuI21RWNCK6twF0zEcx+wpwwUsIognSPRAQZBUmC04H4JR2hZB+4AO+FcOQxugH3W+11tn8
+	HRgqmqQLGb+wOpJBVocmRzt/3Esx0vyWXxAcElWqOVAJXQK7pAg6BnaMBXC1oxkj3eB2jkFamBv
+	Xw+i3sp0Xrp0NvQ2XY=
+X-Google-Smtp-Source: AGHT+IFMbaZrjleZ5vGz4D0X/pSaNmB18k653oOaNMk9YxEBIuCeDG7q8giRICX/XDvm2Zo/8TtZ5RzGGv6KOI1cErc=
+X-Received: by 2002:a05:690c:4b89:b0:71b:7126:65a with SMTP id
+ 00721157ae682-71bf1a9c5admr150740997b3.2.1754914298150; Mon, 11 Aug 2025
+ 05:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731121832.213671-1-jonathanh@nvidia.com>
-In-Reply-To: <20250731121832.213671-1-jonathanh@nvidia.com>
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <20250701114733.636510-21-ulf.hansson@linaro.org> <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
+In-Reply-To: <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 11 Aug 2025 12:37:25 +0200
-X-Gm-Features: Ac12FXwal9A2ewQ1W53HjXWlcznLW4YwFGVrs-kYpRR0tXOk-MhSRWh0vo7aZ1s
-Message-ID: <CAPDyKFr+uVDYBMvsN+L9XPToaD+Wr9P=SnnXyKB6ucqQ7se=7A@mail.gmail.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Ensure power-domains are in a known state
+Date: Mon, 11 Aug 2025 14:11:02 +0200
+X-Gm-Features: Ac12FXyNISadS8h7_-q3TDdgflMKzfkI6TZV-B6W1wySvd9OmSLdra87f6EZkBk
+Message-ID: <CAPDyKFqSyP3e=JRFYEuFefWVN5SYJWULU8SKzXmrThvyiVGXgg@mail.gmail.com>
+Subject: Re: [PATCH v3 20/24] pmdomain: core: Default to use
+ of_genpd_sync_state() for genpd providers
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 31 Jul 2025 at 14:18, Jon Hunter <jonathanh@nvidia.com> wrote:
+On Thu, 31 Jul 2025 at 17:07, Jon Hunter <jonathanh@nvidia.com> wrote:
 >
-> After commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on
-> until late_initcall_sync") was applied, the Tegra210 Jetson TX1 board
-> failed to boot. Looking into this issue, before this commit was applied,
-> if any of the Tegra power-domains were in 'on' state when the kernel
-> booted, they were being turned off by the genpd core before any driver
-> had chance to request them. This was purely by luck and a consequence of
-> the power-domains being turned off earlier during boot. After this
-> commit was applied, any power-domains in the 'on' state are kept on for
-> longer during boot and therefore, may never transitioned to the off
-> state before they are requested/used. The hang on the Tegra210 Jetson
-> TX1 is caused because devices in some power-domains are accessed without
-> the power-domain being turned off and on, indicating that the
-> power-domain is not in a completely on state.
+> Hi Ulf,
 >
-> From reviewing the Tegra PMC driver code, if a power-domain is in the
-> 'on' state there is no guarantee that all the necessary clocks
-> associated with the power-domain are on and even if they are they would
-> not have been requested via the clock framework and so could be turned
-> off later. Some power-domains also have a 'clamping' register that needs
-> to be configured as well. In short, if a power-domain is already 'on' it
-> is difficult to know if it has been configured correctly. Given that the
-> power-domains happened to be switched off during boot previously, to
-> ensure that they are in a good known state on boot, fix this by
-> switching off any power-domains that are on initially when registering
-> the power-domains with the genpd framework.
+> On 01/07/2025 12:47, Ulf Hansson wrote:
+> > Unless the typical platform driver that act as genpd provider, has its own
+> > ->sync_state() callback implemented let's default to use
+> > of_genpd_sync_state().
+> >
+> > More precisely, while adding a genpd OF provider let's assign the
+> > ->sync_state() callback, in case the fwnode has a device and its driver
+> > doesn't have the ->sync_state() set already. In this way the typical
+> > platform driver doesn't need to assign ->sync_state(), unless it has some
+> > additional things to manage beyond genpds.
+> >
+> > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
+> > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >   drivers/pmdomain/core.c | 9 +++++++++
+> >   1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > index ca47f91b9e91..5cef6de60c72 100644
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -2600,6 +2600,11 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
+> >       return ret;
+> >   }
+> >
+> > +static void genpd_sync_state(struct device *dev)
+> > +{
+> > +     return of_genpd_sync_state(dev->of_node);
+> > +}
+> > +
+> >   /**
+> >    * of_genpd_add_provider_simple() - Register a simple PM domain provider
+> >    * @np: Device node pointer associated with the PM domain provider.
+> > @@ -2628,6 +2633,8 @@ int of_genpd_add_provider_simple(struct device_node *np,
+> >       if (!dev && !genpd_is_no_sync_state(genpd)) {
+> >               genpd->sync_state = GENPD_SYNC_STATE_SIMPLE;
+> >               device_set_node(&genpd->dev, fwnode);
+> > +     } else {
+> > +             dev_set_drv_sync_state(dev, genpd_sync_state);
+> >       }
+> >
+> >       put_device(dev);
+> > @@ -2700,6 +2707,8 @@ int of_genpd_add_provider_onecell(struct device_node *np,
+> >       dev = get_dev_from_fwnode(fwnode);
+> >       if (!dev)
+> >               sync_state = true;
+> > +     else
+> > +             dev_set_drv_sync_state(dev, genpd_sync_state);
+> >
+> >       put_device(dev);
+> >
 >
-> Note that commit 05cfb988a4d0 ("soc/tegra: pmc: Initialise resets
-> associated with a power partition") updated the
-> tegra_powergate_of_get_resets() function to pass the 'off' to ensure
-> that the resets for the power-domain are in the correct state on boot.
-> However, now that we may power off a domain on boot, if it is on, it is
-> better to move this logic into the tegra_powergate_add() function so
-> that there is a single place where we are handling the initial state of
-> the power-domain.
+> Following this change I am seeing the following warning on our Tegra194
+> devices ...
 >
-> Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 17000000.gpu
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 3960000.cec
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 15380000.nvjpg
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 154c0000.nvenc
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 15a80000.nvenc
+>
+> Per your change [0], the 'GENPD_FLAG_NO_SYNC_STATE' is set for Tegra
+> and so should Tegra be using of_genpd_sync_state() by default?
 
-Thanks for looking into this!
+This is a different power-domain provider (bpmp) in
+drivers/firmware/tegra/bpmp.c and
+drivers/pmdomain/tegra/powergate-bpmp.c.
 
-I have picked this up via my pmdomain tree and applied it as a fix
-with a stable tag. Please let me know if you prefer to take this via
-your soc tree instead.
+For the bpmp we don't need GENPD_FLAG_NO_SYNC_STATE, as the
+power-domain provider is described along with the
+"nvidia,tegra186-bpmp" compatible string. In the other case
+(drivers/soc/tegra/pmc.c) the "core-domain" and "powergates" are
+described through child-nodes, while ->sync_state() is managed by the
+parent-device-node.
 
-That said, I guess we have some use-cases on Tegra where it actually
-would make sense to allow powered-on PM-domains to stay on during
-boot. Although, at this point, it seems better to deal with those on a
-case by case basis, as improvements on top.
+In the bpmp case there is no ->sync_state() callback assigned, which
+means genpd decides to assign a default one.
+
+The reason for the warnings above is because we are still waiting for
+those devices to be probed, hence the ->sync_state() callback is still
+waiting to be invoked. Enforcing ->sync_state() callback to be invoked
+can be done via user-space if that is needed.
+
+Did that make sense?
+
+>
+> Thanks
+> Jon
+>
+> [0] https://lore.kernel.org/all/20250701114733.636510-10-ulf.hansson@linaro.org/
+> --
+> nvpublic
+>
 
 Kind regards
 Uffe
-
-
-> ---
-> Please note the commit hash 13a4b7fb6260 is based upon the current hash
-> in -next. I have used the initial commit that added genpd support for
-> Tegra in the fixes-tag because this issue has really existed since this
-> was implemented.
->
->  drivers/soc/tegra/pmc.c | 51 +++++++++++++++++++++++------------------
->  1 file changed, 29 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 2a5f24ee858c..034a2a535a1e 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1232,7 +1232,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
->  }
->
->  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
-> -                                        struct device_node *np, bool off)
-> +                                        struct device_node *np)
->  {
->         struct device *dev = pg->pmc->dev;
->         int err;
-> @@ -1247,22 +1247,6 @@ static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
->         err = reset_control_acquire(pg->reset);
->         if (err < 0) {
->                 pr_err("failed to acquire resets: %d\n", err);
-> -               goto out;
-> -       }
-> -
-> -       if (off) {
-> -               err = reset_control_assert(pg->reset);
-> -       } else {
-> -               err = reset_control_deassert(pg->reset);
-> -               if (err < 0)
-> -                       goto out;
-> -
-> -               reset_control_release(pg->reset);
-> -       }
-> -
-> -out:
-> -       if (err) {
-> -               reset_control_release(pg->reset);
->                 reset_control_put(pg->reset);
->         }
->
-> @@ -1308,20 +1292,43 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
->                 goto set_available;
->         }
->
-> -       err = tegra_powergate_of_get_resets(pg, np, off);
-> +       err = tegra_powergate_of_get_resets(pg, np);
->         if (err < 0) {
->                 dev_err(dev, "failed to get resets for %pOFn: %d\n", np, err);
->                 goto remove_clks;
->         }
->
-> -       if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
-> -               if (off)
-> -                       WARN_ON(tegra_powergate_power_up(pg, true));
-> +       /*
-> +        * If the power-domain is off, then ensure the resets are asserted.
-> +        * If the power-domain is on, then power down to ensure that when is
-> +        * it turned on the power-domain, clocks and resets are all in the
-> +        * expected state.
-> +        */
-> +       if (off) {
-> +               err = reset_control_assert(pg->reset);
-> +               if (err) {
-> +                       pr_err("failed to assert resets: %d\n", err);
-> +                       goto remove_resets;
-> +               }
-> +       } else {
-> +               err = tegra_powergate_power_down(pg);
-> +               if (err) {
-> +                       dev_err(dev, "failed to turn off PM domain %s: %d\n",
-> +                               pg->genpd.name, err);
-> +                       goto remove_resets;
-> +               }
-> +       }
->
-> +       /*
-> +        * If PM_GENERIC_DOMAINS is not enabled, power-on
-> +        * the domain and skip the genpd registration.
-> +        */
-> +       if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
-> +               WARN_ON(tegra_powergate_power_up(pg, true));
->                 goto remove_resets;
->         }
->
-> -       err = pm_genpd_init(&pg->genpd, NULL, off);
-> +       err = pm_genpd_init(&pg->genpd, NULL, true);
->         if (err < 0) {
->                 dev_err(dev, "failed to initialise PM domain %pOFn: %d\n", np,
->                        err);
-> --
-> 2.43.0
->
