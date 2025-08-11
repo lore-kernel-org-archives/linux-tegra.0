@@ -1,142 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E862E403;
-	Mon, 11 Aug 2025 08:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179D1239E82
+	for <linux-tegra@vger.kernel.org>; Mon, 11 Aug 2025 10:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754901602; cv=none; b=O6e9deHncAI/NazIkUHTlVsz20v1WEG3aul1L2qTQVAjeCt3NqE8p77FIknNrFt4RDwdIkDJPZ3p5NAJpSAyqpE//l9kwrUT3Zsn3iy72ojyNEr+NipriNFVSi+UCz64wXo1oVw4i7OOJlp12/LwcQiZO6r5mhnfpQTy4Chqozw=
+	t=1754908684; cv=none; b=W2Y8c3Eqpg1NdEFTRt4cUSMK6xV5JCmZUoA/GqyR19Uohi6qHeauq0s5Remh9elVPOgrWRtUQYOFgMqOv6XJ5kuyRIpA1+5fcQ840k1FKrqv+E/EgwFo7IBK3eMvdtIl7lVBZPjf8kXO+FDR69XGYI9RlnEV8ojzEQWaVygph+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754901602; c=relaxed/simple;
-	bh=c3uZDQ29t1JT8dcjGpyix3cqNKJcplSF6+QdS1A4w3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OpTth1PabDxlykDqlOE4qBcQczUzOUqVF5SaBk20IyDKvfcv2B0P0s38/UfcO6M+JSZVM8WzxkKCT5OJLQ9dUF5ZwYG86/4g4nMcDYrUidZizovW2+VK29AIhQLuOitlqwArFS8pk9J6l/QeJY2ZvQdRKUVfH1llW+uom8tNpZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuhAcoNu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754908684; c=relaxed/simple;
+	bh=XZHF0n8H867XHlXPQx2Z568uWIDx/pPp7gDATLqqwAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P6zIMme6GBximMcJ/gFSkgbGKDU48LngohrEi+0yVdntdgGD+zj680yKj2zSLRmR5NvBf2nn6AC3kExHMi/ksYReodIQy5wDmQhm5Z8NORodXFUQ6SGPvEWK6YKqOSGCUNUWkfu86u4nlFL42yqgm89teMgwVHj0FLaoFW0bKfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBVNPWfY; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuhAcoNu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320EDC4CEED;
-	Mon, 11 Aug 2025 08:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754901602;
-	bh=c3uZDQ29t1JT8dcjGpyix3cqNKJcplSF6+QdS1A4w3Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RuhAcoNuHXe1cf0EzIBsJoWx/ZrMO2a8KMKODyyh6586bxB2cC0Tzql1cVE0exata
-	 u83MhbjrQbK3FAbAj21SJIwrLbG7OPJkNUZi4RsvFodZzZS/8FfOR9Uep/55vKiojA
-	 YXxXfjuSgaVWDUxZv+4xVs8s4S8VFYqblGYvK1MXORIZn5qKXewM//AyKKANT85Mi3
-	 Hb45oiATvBX9ym+xtJ9sMav3TzfGKz7BW6qJGNwY7TfCfGZUF2M8Ii+/l0qskU4FEi
-	 UxBF1r9zHsllqdKYzooty0aymEOrRrSGX8URnoX9WI4kwq/WgHLrTAogNcwyJxNLUk
-	 UTzBnzd9kn8fw==
-Message-ID: <d7fb073f-2b3a-4662-a196-794b6baff307@kernel.org>
-Date: Mon, 11 Aug 2025 10:39:58 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBVNPWfY"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e9066f408efso909206276.3
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Aug 2025 03:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754908682; x=1755513482; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffyxwyw8addnqKr26EOluv0zD0sB03PTkKSi1k3qjZ0=;
+        b=QBVNPWfYUnVjJ/h2dKDHPWriO8EQtwd0AvO27RuUkrfBtDPZy92FelwHid+WzJFgi4
+         brOEozdk3dQKdj7UIM7t7hS2OLbduf9EbuYPdZdCmuG4ywN8z8km1C+bFgFwTIkx/gxn
+         h2riOr9VOOHw0j8gc69gPcOUs+amtmJxn9FAkAqKZr1lj8nRQfBFJIVHlSRgh/38Ecoo
+         ejS+WpKVOsPiWLDn4UNDIM0I8zYeeot6nBf6h31Pt7bd1ctpe8nubteSxJrQ7S1REICP
+         JFTEMUjusEQ2fKzWkePMKe+qMMzktJ7rYc/9tT1iCLlBkwO9SPYHEzusW+uw57gm2H4W
+         e07A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754908682; x=1755513482;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ffyxwyw8addnqKr26EOluv0zD0sB03PTkKSi1k3qjZ0=;
+        b=r8hIHbhfjYDPUgfQ/wVKHJ8J/CIueaXlcoING2mfjAEbwJDbCfVpI+K7ZsQtzyx14+
+         ToBC7bXwgkesHD+91vuIn2dV1s2yzfqnX44sLLvA+X7S0EmqHkWnpQAZRzJpNvnGL8SO
+         QpjQnnalW0TTI2qNwiuTMD2B8POMvgXY2ajfRJ23sX96ibzsvlsFmWUpnbBUVVpcn1LO
+         KuwpIM44TT2lGDsB73L4/WnRnP7XDlWMmyk44BF8cqeQfafGPU90aq8T4PhX32Z6Ka0o
+         a47u1uoY24qqrERLKoIZpy5B4JkbSgRVujtG64Y0DlBkiChtvaCj9NrdZPeyqisqeGsp
+         AKwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWsRsiIYoZPHszyUW4dLNLWzMOvci9xoSVuYiw96/sZFfbaasw43g9rgwgCo6opglfw77EKIw1DQQpoQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznQV36+yU2BazRmJAKURcZ/KBVb1+ufHk9dur4oDUyKrqRcT0d
+	rFtpsCOFHe3dJgDNq48YvzP9oapl/wMaZBM4WiSVnbM6cGPLzHVUw2n86ovpQDVVqQDLUb3iHOD
+	TEHhZsxJnPVk+YJAdCZH3LerXw+R1IQmvSRb8K++5XA==
+X-Gm-Gg: ASbGncu9al1a04/OIuY86X36uTXZxvzHL6M6C53clFzLFyzK3V16CAXr8Pdw++cVY+i
+	4tFUYNBrzdgB+qA9RfYL8pvYugrAVAuIYvJndj7wFnj9uh6wwNtDuhX4cu57Y6o+N4ZOCc8462G
+	FzB2Bc0HuVxFplMLcXzV/pZ6XAxwi7LMcGb7JPZS3rUg8NC7K+23cED+Yh3kROvEh+Lz73G9h1s
+	c7zf0Q0
+X-Google-Smtp-Source: AGHT+IHq7z8MGrZL9eQUvunOFR10BiyWjOBDwC6IHPp2y0K4MhVzM8oV5A4a9S2mJl00/AReb6Fgx328t2eQplBjq1o=
+X-Received: by 2002:a05:690c:a4c1:20b0:71c:bf3:afb5 with SMTP id
+ 00721157ae682-71c0bf3b6b5mr61002717b3.17.1754908681687; Mon, 11 Aug 2025
+ 03:38:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: display: tegra: document EPP, ISP,
- MPE and TSEC for Tegra114+
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250504092324.10802-1-clamor95@gmail.com>
- <20250504092324.10802-2-clamor95@gmail.com>
- <20250512162439.GA3441216-robh@kernel.org>
- <CAPVz0n0j-pMRgP0Kgfq=hHDQRRqF0Jvq_XqwTtnKo1hAUr4cHw@mail.gmail.com>
- <bc98d732-ea41-45bf-a269-f4f691243914@kernel.org>
- <CAPVz0n13OB5fk1TySCP13h7ZotMERCMK=Tp1xTTVgA-qFrJNTw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAPVz0n13OB5fk1TySCP13h7ZotMERCMK=Tp1xTTVgA-qFrJNTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250731121832.213671-1-jonathanh@nvidia.com>
+In-Reply-To: <20250731121832.213671-1-jonathanh@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 11 Aug 2025 12:37:25 +0200
+X-Gm-Features: Ac12FXwal9A2ewQ1W53HjXWlcznLW4YwFGVrs-kYpRR0tXOk-MhSRWh0vo7aZ1s
+Message-ID: <CAPDyKFr+uVDYBMvsN+L9XPToaD+Wr9P=SnnXyKB6ucqQ7se=7A@mail.gmail.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Ensure power-domains are in a known state
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/08/2025 10:15, Svyatoslav Ryhel wrote:
-> пн, 11 серп. 2025 р. о 11:11 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>
->> On 11/08/2025 10:01, Svyatoslav Ryhel wrote:
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  interrupts:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  clocks:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  clock-names:
->>>>> +    items:
->>>>> +      - const: tsec
->>>>
->>>> Drop -names properties if there is only 1.
->>>
->>> This is added to cover existing binding in tegra210 tree
->>
->> Existing binding? In what tree? This is mainline, we work only on
->> mainline and that's a new binding, so you cannot use argument that there
->> is broken code using it. Otherwise what stops anyone to push broken code
->> and then claim binding has to look because "existing code has something
->> like that"?
->>
-> 
-> It seems that your words and action do not add up
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm64/boot/dts/nvidia/tegra210.dtsi?h=v6.17-rc1#n181
+On Thu, 31 Jul 2025 at 14:18, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> After commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on
+> until late_initcall_sync") was applied, the Tegra210 Jetson TX1 board
+> failed to boot. Looking into this issue, before this commit was applied,
+> if any of the Tegra power-domains were in 'on' state when the kernel
+> booted, they were being turned off by the genpd core before any driver
+> had chance to request them. This was purely by luck and a consequence of
+> the power-domains being turned off earlier during boot. After this
+> commit was applied, any power-domains in the 'on' state are kept on for
+> longer during boot and therefore, may never transitioned to the off
+> state before they are requested/used. The hang on the Tegra210 Jetson
+> TX1 is caused because devices in some power-domains are accessed without
+> the power-domain being turned off and on, indicating that the
+> power-domain is not in a completely on state.
+>
+> From reviewing the Tegra PMC driver code, if a power-domain is in the
+> 'on' state there is no guarantee that all the necessary clocks
+> associated with the power-domain are on and even if they are they would
+> not have been requested via the clock framework and so could be turned
+> off later. Some power-domains also have a 'clamping' register that needs
+> to be configured as well. In short, if a power-domain is already 'on' it
+> is difficult to know if it has been configured correctly. Given that the
+> power-domains happened to be switched off during boot previously, to
+> ensure that they are in a good known state on boot, fix this by
+> switching off any power-domains that are on initially when registering
+> the power-domains with the genpd framework.
+>
+> Note that commit 05cfb988a4d0 ("soc/tegra: pmc: Initialise resets
+> associated with a power partition") updated the
+> tegra_powergate_of_get_resets() function to pass the 'off' to ensure
+> that the resets for the power-domain are in the correct state on boot.
+> However, now that we may power off a domain on boot, if it is on, it is
+> better to move this logic into the tegra_powergate_add() function so
+> that there is a single place where we are handling the initial state of
+> the power-domain.
+>
+> Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-You said binding, now you point DTS...
+Thanks for looking into this!
 
-Anyway, what action does not add up? Which part - you cannot use
-argument of existing code as rule for new bindings - is not clear?
+I have picked this up via my pmdomain tree and applied it as a fix
+with a stable tag. Please let me know if you prefer to take this via
+your soc tree instead.
 
-I am really fed up with your tone, so I won't be continuing here. I have
-you longer explanation but it's just waste of my time.
+That said, I guess we have some use-cases on Tegra where it actually
+would make sense to allow powered-on PM-domains to stay on during
+boot. Although, at this point, it seems better to deal with those on a
+case by case basis, as improvements on top.
 
-Best regards,
-Krzysztof
+Kind regards
+Uffe
+
+
+> ---
+> Please note the commit hash 13a4b7fb6260 is based upon the current hash
+> in -next. I have used the initial commit that added genpd support for
+> Tegra in the fixes-tag because this issue has really existed since this
+> was implemented.
+>
+>  drivers/soc/tegra/pmc.c | 51 +++++++++++++++++++++++------------------
+>  1 file changed, 29 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 2a5f24ee858c..034a2a535a1e 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1232,7 +1232,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+>  }
+>
+>  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+> -                                        struct device_node *np, bool off)
+> +                                        struct device_node *np)
+>  {
+>         struct device *dev = pg->pmc->dev;
+>         int err;
+> @@ -1247,22 +1247,6 @@ static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+>         err = reset_control_acquire(pg->reset);
+>         if (err < 0) {
+>                 pr_err("failed to acquire resets: %d\n", err);
+> -               goto out;
+> -       }
+> -
+> -       if (off) {
+> -               err = reset_control_assert(pg->reset);
+> -       } else {
+> -               err = reset_control_deassert(pg->reset);
+> -               if (err < 0)
+> -                       goto out;
+> -
+> -               reset_control_release(pg->reset);
+> -       }
+> -
+> -out:
+> -       if (err) {
+> -               reset_control_release(pg->reset);
+>                 reset_control_put(pg->reset);
+>         }
+>
+> @@ -1308,20 +1292,43 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+>                 goto set_available;
+>         }
+>
+> -       err = tegra_powergate_of_get_resets(pg, np, off);
+> +       err = tegra_powergate_of_get_resets(pg, np);
+>         if (err < 0) {
+>                 dev_err(dev, "failed to get resets for %pOFn: %d\n", np, err);
+>                 goto remove_clks;
+>         }
+>
+> -       if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
+> -               if (off)
+> -                       WARN_ON(tegra_powergate_power_up(pg, true));
+> +       /*
+> +        * If the power-domain is off, then ensure the resets are asserted.
+> +        * If the power-domain is on, then power down to ensure that when is
+> +        * it turned on the power-domain, clocks and resets are all in the
+> +        * expected state.
+> +        */
+> +       if (off) {
+> +               err = reset_control_assert(pg->reset);
+> +               if (err) {
+> +                       pr_err("failed to assert resets: %d\n", err);
+> +                       goto remove_resets;
+> +               }
+> +       } else {
+> +               err = tegra_powergate_power_down(pg);
+> +               if (err) {
+> +                       dev_err(dev, "failed to turn off PM domain %s: %d\n",
+> +                               pg->genpd.name, err);
+> +                       goto remove_resets;
+> +               }
+> +       }
+>
+> +       /*
+> +        * If PM_GENERIC_DOMAINS is not enabled, power-on
+> +        * the domain and skip the genpd registration.
+> +        */
+> +       if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
+> +               WARN_ON(tegra_powergate_power_up(pg, true));
+>                 goto remove_resets;
+>         }
+>
+> -       err = pm_genpd_init(&pg->genpd, NULL, off);
+> +       err = pm_genpd_init(&pg->genpd, NULL, true);
+>         if (err < 0) {
+>                 dev_err(dev, "failed to initialise PM domain %pOFn: %d\n", np,
+>                        err);
+> --
+> 2.43.0
+>
