@@ -1,28 +1,28 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2071.outbound.protection.outlook.com [40.107.236.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D12E284F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967232E2841;
 	Tue, 12 Aug 2025 23:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.53
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755041917; cv=fail; b=FB+P198hxSDvrfiDoYJsHpf3M025Qfz+YroegyYTcyRaOwO6skA4MwRIkT1N5yvSKYtEQOnQ+Vzjbj6TOUOsSYqJWmQpm95GuCFBnOIXG+ui5y/SstmBFXmFNLzBHBE6Wtfx3c45m7FBiVG7TwjM2d8q95HnZBJK/siYwkcL2hs=
+	t=1755041919; cv=fail; b=HNOsXyTyUR1hLkVG/CsQAiYZcWCEfUTnxqu63tBPcKIXeFgDL5KjzZmwgl2dk1+7RvavSnbBScoV3u/BoPHFBaRdMoEmGOb4TI2BuzU/SMp1y9LjZHBcIoFL5hdr8ZP5KeIYkFbV/biz+Mfu4CFZxF1NFsm07xhLiS/Af6VDinE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755041917; c=relaxed/simple;
-	bh=xhOubbpUQLz3Y/SDTa36Ypd8wE0Ldxke9IWsJ5ycwzE=;
+	s=arc-20240116; t=1755041919; c=relaxed/simple;
+	bh=ofRgUBVyGEA2F5IfZd6c5rpxQ8fHhTIdOmodKP80trA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WUSQXk85zrv+HpZYF0l2/9xHtRD1zSY/EiYdlq8tOPvfucsMWYnsKy/25tHo0MBFuKtQRvVovPBty8jasyAfq6c/BqNzFumnfd0srJxJtnvXK2i6wTOXWj9rBIYdACcKLFwB0svyG/cHVNIPI5AYvobAUdfoAdWsik5lsLHgcAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a7pY77NV; arc=fail smtp.client-ip=40.107.93.53
+	 MIME-Version:Content-Type; b=gS0WhtOjIsM5R+okkRavhsF7e394tbD0HeicyZapUjfsUUsArmNfdt9TG4jpqxKkhUvJ2zVi9gD2Yyklib3bIs36KHzGI0C8oGk/2yPxY73feVD8o3nAjXvtA7fNMtbgMQOFiaJ50Jv9FQ/MrKoHwIJOjY93qi6cHTH4lEb4wnM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RlxhnSpB; arc=fail smtp.client-ip=40.107.236.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a7pY77NV"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RlxhnSpB"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eUi7xjiYH7533Oig9+AuOy3h//uoZAscKBuuc44dFh/alq3zXUQ/py8Ow8r1eX1D7xUkICqzNgKFJGPkrpdzXupipWOWfEVPh5XM64H5gsRVvm57imfV8VPtpmL1+4u3FlMCpm9I1Heaxd71xLo8D48SVLTLhI2N6M1Y8nl9+wRpNAMuWKAN3Z9JkqZZ1L72JlwkmqVTak5+CK1r4H+OijDLl+1L8Ee+Z3QYWS/SbXtc2wjrCkDw8QbXyVx3lAUkOAy4+6Kj7t/f5voiTrlV7NkhIvMRxAx/I6GorwsIGTu1pTS/3G95N2bApwrmZzcRjyG+V+RNo6MjgvVWTme8RQ==
+ b=o3ks3NTP/+e5p8jtpJkaEZTzXK3KHoq1du9q+0WxRuqmkOK3gppVy0Jt3v6lErFQFN6b57xfUMh5ICN/saI6TEyzMZqG8npjl8veFfrWZNEvYj5+tUWVk/2CbK3P2xOXl+j/wYalHxxiBDpkMJwkFXFG0xiU9qhdDkfHdyewJSZ+zvxnF6ZfIGVYYzixzbFHR86UbWbILD8nW9iSJEKquk3K0ty1o9IWRV9iCOPCSnNr4i0HD+vbZFSO0kDzYAcPyYIbFeLAXcMX+m5dntVajmBG5dr/OpR/NIIM+v7DALn900vizhNRj8PPvaTM5ohQPnxIwHtBW3+d7rrv/8JjMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VRVTO5TYKLQpXiJhmRSHeF6dodri11gdX5oSZiEhqSg=;
- b=K9OpGsVLwIRRnyxnbQNm1wtx5KRbD8Htt2Hao4L3rv2TmkM0JK+ufhJUGkcLbBfY+k5ArdjtYBerSAJurdOZNx58RoUUtwTZdWvxQQz+JUR2SOS2BXkJjJQQ2d+fqVbOGLrioV064x39slBiuDz0MhXhbTt9W4UnMcCm4/olILUOzVmqUZJvDxOiAkkRLr3DJiI+/6Ilg2sduz6N5cY2WwqLvbjSYLYJXlp2z7g74+Yt/xvXPl7nhcTulbH5B57UnBy5GWmJ3kNxpsGNz3j5P1VzC+HBzZwMlJ6m0puoGy/n5ehlQ1z6jUvCYAO+y7jZ3TDyG0OaSC6Hxo9HaWiOSA==
+ bh=NdUp20CwHo0CxEW1RUJltgWW6FBhD3qOFzZIfSD7jvY=;
+ b=as0SZCTMGmj/ig9AKwy1bIVsmUkDKfspIdtQ4i749ArWaaKMnsxX9Dy1amGvxaLLgZhEWqdYBdQR7J6pOa++7E3BPjqh75cAh2RArSdSynr2N5aaEzX3IeZV1iruxr/n7NEDwUG/QYMaTC9jdSC/RFNl42JtLifvkcxkXyB5YaOCKUtmQ3TR9Z0G+dnCUVnuO47+uFKkwXLwHTKxcbvwnf/DJxCm3LQAVD9EzFbBRYt+Myuqw8y3d2XibZf6GzKyNgMoKyPjAvJKYqpW7j15kJBt9JJQfYaubnTyPf0qnu20n4xcJnVA1qipDi4ZcXKFycziT2HvJbnmvH1DnfJxbA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VRVTO5TYKLQpXiJhmRSHeF6dodri11gdX5oSZiEhqSg=;
- b=a7pY77NVFMxKVpMEhYtAx6bkwQkQO60XwqB8qmziSsFG0t0vkrTfslcKnY9kfoR7qaFVEW+mvMU1IMyeWK9q3cBFzUMPinf0aVnAM1CZWhc/Q0wLBgHI3PbjkknNcYrUsySIAs7S9qyBbqNav96iA2Uk2kcs/j5a4gEVZoSnJjwOWDUuB4ZBCu0b+vtqH/LQohw8Tsm985meJC4sjk1vFWCVBsluQefDV1859768LBvxjZ3uvGfizz4hoqy+oF9JLzelIkmdcjIV8UbB93dZAUY0Q2To77taMvQK4ArQ3yziRjEdo+CXu8EbmsAPMOu1cL0PhhNooxA6F0NpB/5jmw==
-Received: from MW4PR04CA0323.namprd04.prod.outlook.com (2603:10b6:303:82::28)
- by DM4PR12MB8569.namprd12.prod.outlook.com (2603:10b6:8:18a::16) with
+ bh=NdUp20CwHo0CxEW1RUJltgWW6FBhD3qOFzZIfSD7jvY=;
+ b=RlxhnSpBfUSRjqAVsTA5cqB/sNBWEUdP2Wb1ByrCXOvs3v219J1ecosAK1E+ZbKOCaN8KfVjbROf6MF0DHNsJj2PdoFtOP3QChy5qr8vG4EPJ1q/GtrILs7lz+63r6svumo3A2sW1IySjI/qlbhp/7R7HaRKKlxZVjxDpINoN0b0V1QtK7o7Spohy1Z3t6yJTaRZ6Mer+RBjQvczCPKeTVE6/n+xoy9F3v5wI/87aCCoIn7i9rwLaf/khcOcDn5bhwopIiSv9LumxlinS9l0mVWlqMvesgCngLHASpoI9uBwDrHpQyiVjLbzviOuJAvKbe29hkHoFbxRxDDyBCbMBw==
+Received: from MW4PR04CA0314.namprd04.prod.outlook.com (2603:10b6:303:82::19)
+ by SJ5PPF6375781D1.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::995) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Tue, 12 Aug
- 2025 23:38:31 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Tue, 12 Aug
+ 2025 23:38:27 +0000
 Received: from MWH0EPF000971E8.namprd02.prod.outlook.com
- (2603:10b6:303:82:cafe::52) by MW4PR04CA0323.outlook.office365.com
- (2603:10b6:303:82::28) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:303:82:cafe::f9) by MW4PR04CA0314.outlook.office365.com
+ (2603:10b6:303:82::19) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.14 via Frontend Transport; Tue,
- 12 Aug 2025 23:38:30 +0000
+ 12 Aug 2025 23:38:27 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -51,18 +51,18 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.118.233) by
  MWH0EPF000971E8.mail.protection.outlook.com (10.167.243.68) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 23:38:30 +0000
+ 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 23:38:27 +0000
 Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
  (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 12 Aug
- 2025 16:38:16 -0700
+ 2025 16:38:13 -0700
 Received: from drhqmail202.nvidia.com (10.126.190.181) by
  drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 12 Aug 2025 16:38:16 -0700
+ 15.2.1544.14; Tue, 12 Aug 2025 16:38:13 -0700
 Received: from build-bwicaksono-focal-20241114.internal (10.127.8.12) by
  mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14
- via Frontend Transport; Tue, 12 Aug 2025 16:38:16 -0700
+ via Frontend Transport; Tue, 12 Aug 2025 16:38:13 -0700
 From: Besar Wicaksono <bwicaksono@nvidia.com>
 To: <will@kernel.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
@@ -71,9 +71,9 @@ CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<mark.rutland@arm.com>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
 	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <sdonthineni@nvidia.com>, "Besar
  Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH 5/5] perf/arm_cspmu: nvidia: Add pmevfiltr2 support
-Date: Tue, 12 Aug 2025 23:34:11 +0000
-Message-ID: <20250812233411.1694012-6-bwicaksono@nvidia.com>
+Subject: [PATCH 4/5] perf/arm_cspmu: nvidia: Add revision id matching
+Date: Tue, 12 Aug 2025 23:34:10 +0000
+Message-ID: <20250812233411.1694012-5-bwicaksono@nvidia.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250812233411.1694012-1-bwicaksono@nvidia.com>
 References: <20250812233411.1694012-1-bwicaksono@nvidia.com>
@@ -88,332 +88,143 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E8:EE_|DM4PR12MB8569:EE_
-X-MS-Office365-Filtering-Correlation-Id: cfd6033c-1df6-4382-a6b4-08ddd9f95846
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E8:EE_|SJ5PPF6375781D1:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1484f458-7248-493a-8133-08ddd9f9565a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IwCaLgg/yKAxuK+uUvGGFNP9Jut+yddtmmcC0YR4064jXJJZEHdLkmnWBHEW?=
- =?us-ascii?Q?mC3NIoFqqcFgGKO4jLhf2kYRrcPYfsiIS0usYJnpOFZCob0hZeM9/mpmBLcT?=
- =?us-ascii?Q?SRIdrtnValFR3f22M8vjWGJ03yza38lTeZZ32+I0CoyoNW0Iv2k/SPS2agbS?=
- =?us-ascii?Q?pyor9X6ASdcIfvr767dD0FS0n5a+YmTT4HZUdAto+Wjl+1hKDSl2OEtXFalY?=
- =?us-ascii?Q?WEoQytT+2j74lWWbiFcTuaHt8j4VusG9/O1geXhXsNOFBJy6mXdD7UkP7D4r?=
- =?us-ascii?Q?FrvJdnSl3KRDtER4dpXI7duUgpGs11Dh5+D0/Q4s57oLjVCiJovPyCx6P8yX?=
- =?us-ascii?Q?A/n1TfYDI7zOx1V0zRVXlEKDAR76oPco1IdnPwoM3HQnTYpfcqowx1Fm0tdJ?=
- =?us-ascii?Q?K84DsLvahD7lfqd0o7ToThFkZAn2q3OvrWCcnSBvds1EesuqOHtaL1+NisXz?=
- =?us-ascii?Q?mpq5bn4gs8kd9wj/MwIbYsOiyTt3+gWCTC+LOUpNE6vEJoO4hDKi9bB3eU50?=
- =?us-ascii?Q?36SXFhTFzeCNRsbYKQf4j7ApLY4MzwVfiN3OsNgQa1734jFA+bV5yQSC+WST?=
- =?us-ascii?Q?cJa8IInotjKxuRztzYVWy0KNOi0RxHB7xbZDo1U8dZ0FiIA9ti8szzdspcb5?=
- =?us-ascii?Q?m8Z7uRy4tS2xDU1PJ/BfgBBrXKF1m6k2qDudAtcHrVeCNFvAdBWD1X7VSfgo?=
- =?us-ascii?Q?uHpRmKGecGDI2bYcrrxqusjHEHxMrRD0Dfs4OftH5Bo3dKtzQUBZIidoLQ5I?=
- =?us-ascii?Q?5pOi5FU9oxYT1t1dfndfEtkaM7C9G73Fok31yXhuTn8aavoXdyxl7zhsUwOC?=
- =?us-ascii?Q?94WFpxsBD7UhfdeuKm6SGnlux5AL4PuR/qSXLSQftcV2ftFcz9ayNQ2/K3WK?=
- =?us-ascii?Q?/r607dEC1W1Z75VQdimahFkHckihYI0OzDCubOBO8zNu5lZ4k+u5BKmzvVLb?=
- =?us-ascii?Q?YWaeM+g/H6JCqx2u7WqFwUEx5NVUDnALJhx1puwaNertpLuWi/KY+asAqv7e?=
- =?us-ascii?Q?sSvZWN/uSmTleGf8mjoPiLOOUFYgm54QrWwHTah5oLwPJurfWQ6nzpJk8Kpd?=
- =?us-ascii?Q?CXMnKpyXGwzm3TFajycBuNel/KRsOBwaeOf2V+THx/jrQMKo0gjORH1Bcgrb?=
- =?us-ascii?Q?6peM45ni1j060mNRP3C2l8Oh2ZQj5bokL6vap4cAznx0chVL8gKOhAkseHOd?=
- =?us-ascii?Q?v2UW2hF7tJXQOh5rczx36mE/y64m8tI8ht0um1aHmiauP7oq/6Y2Jkwv+kQi?=
- =?us-ascii?Q?WwbkBD+29sJMCRtGbH4jrlGVLswpA8pXtgHjR5ZXPbJ1rjxTJgM9W4NkbQUV?=
- =?us-ascii?Q?tv9G2NSteTznjY69ejCSwx59pGC0KvpfRZ+lPDBt0WW6JBEDvFl4r5CTtAnS?=
- =?us-ascii?Q?jlL2VOu3O0UAED0GRm3/tLYyM4qerFSNDkOoQV7zgAca7ThfasmWlElfOCZm?=
- =?us-ascii?Q?eKOt9T1CQ1fxDN2vtbTi65uRCfPR3u0XRxOJAagPROP05oiBLQ65zyoYbjZD?=
- =?us-ascii?Q?wbNYNOKldxZdcJ8sFSkhJ3CNFXx2ond9SGjA?=
+	=?us-ascii?Q?61Bx7bUUdob2hcz6dY3DZBUeUQ4/qL9jZ0R6YAC93R4MbHO7d6E+mzPPhB99?=
+ =?us-ascii?Q?WbhGtIjP85DF1ZzPnqUZZCIMeBJcVCGRuRnhUWniNjVFgB/7TdLHP1qP4jJd?=
+ =?us-ascii?Q?eoNw7rFre2BRRsA/jFvhMmeZOJele/okHxIP9NohcxtHPgB4GtGTPU607WAq?=
+ =?us-ascii?Q?otAF/GWqPqJatl9qyskwWsGdl7OfTdg882+cyJqWWHiKeVqd9MSBqXc2YSTY?=
+ =?us-ascii?Q?079XKucGhJCq5stI+V8XxM7H35YBKSMTzwb9Zqcw1NUzD/D/5w9o+1of1jEz?=
+ =?us-ascii?Q?rspidohe5HXG4Sx6oYAWWC4Eoah9Sd4e7LoxWgEOm07UuV6Bu3ZVFCnoqeHE?=
+ =?us-ascii?Q?7xtqkU4WVOJKPCw2j3+B96lM/ne/eqUK/F225tQa/KMJ5GnexY/CK1CcBBwA?=
+ =?us-ascii?Q?cI7zoFpSByDPz0Gni44uQXQq4kS6cyRwSXdsw2EkdcjEKXbI4sTPQKBn7DvH?=
+ =?us-ascii?Q?xQIpumocZJNjTvKwj+2Ode8k7yWiasdVc/fwN4m8Tk1YBixsrm0phBA+dLIx?=
+ =?us-ascii?Q?bhU5GQ/y4b9FIQSn3znJOmbPFCeRyQSGgoPnNaXK98GexZvFMb+UxyP4PUXs?=
+ =?us-ascii?Q?ZIe4qVUtYGnqCnw50KDjJyp1HUAi+N3FFlnvDHPuriNPd1XwUpcTJs0vxE9o?=
+ =?us-ascii?Q?e9clRg8HTx3zOhUXS/HdeaA/S7xbeFDCp/UtOTEdI0Jq3olljB3ZlH+0MbY0?=
+ =?us-ascii?Q?LHj5W6Xm/GT7KOZgnUeDtXMSSxSRfhJ2IJxWBkgrZCtQPBMO9rDQwSeWPFY6?=
+ =?us-ascii?Q?YFcgPTiCaUoBfbXgue0P995qjz3q0j8z21jzKNscy6pxojF/xnsi/1MR7BP/?=
+ =?us-ascii?Q?066TnDYXenAHS6A2g5IzVRLE4R4r/dviWPdGrr4ae4/Tg/WpUZmnmsErkFVe?=
+ =?us-ascii?Q?GDmwg2Exipy8kTl4pfCNYOtTaa9EmOr41gDh4P8SzQI7+dXi56CYO/TRcfjm?=
+ =?us-ascii?Q?W7G1A0Xa2zWEViVJxv4vpDrxUGTyqJQdoPh9A7GCXvNAqVGBRjGiqorgXEv0?=
+ =?us-ascii?Q?Cf3jg7PoZv3by4/jPiofLpBd3Y2GZ39TlGwDEmtc1uI9B8AgZ8OHN9psRvO9?=
+ =?us-ascii?Q?kXCzrXd1+rZ+1TPckpDce9OkrMSdfx2rx8mb5O3QipMUKAyZxObnMx+QpGmO?=
+ =?us-ascii?Q?uZQdYyfuXcjblXNDsW2uwy08Lyul97WkCS9Tn9eUtg5JiRJxGfmVgvSjHIgT?=
+ =?us-ascii?Q?UJMwJEXTMnBYuzxcs6bm2PK2KDYXdiFYS2U8sm97gJRhk9fs2RWBEJvhKH2r?=
+ =?us-ascii?Q?9GBazR/vhYa23e6GowTGPP3T1axcV+/ra/NTV7+Zuxhlkd53FZ3VWwCxIktv?=
+ =?us-ascii?Q?4MwP+zUUxQqsElvUxSVP1Kuv6CRm/qp2W82kLfpOmVo0zHo1YoUXYEO5szYj?=
+ =?us-ascii?Q?zbsy5q121I9vtfp6H2l+cksNnFC/hAOhmhHb0V7rT6jnDGSgD+0asaAMkn9C?=
+ =?us-ascii?Q?2FaKyh8nEXsrVgsUWaxOXbQeCLnonraQwCsvmvNDVJzyopJLtAaZKE4DPd4p?=
+ =?us-ascii?Q?ZcW1ACUauLgMZGEtcpsTSbm5fH1orUQVUNbp?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 23:38:30.7283
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 23:38:27.4470
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfd6033c-1df6-4382-a6b4-08ddd9f95846
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1484f458-7248-493a-8133-08ddd9f9565a
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MWH0EPF000971E8.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8569
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF6375781D1
 
-Support NVIDIA PMU that utilizes the optional event filter2 register.
+Distinguish NVIDIA devices by revision and variant bits
+in PMIIDR register in addition to product id.
 
 Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 ---
- drivers/perf/arm_cspmu/nvidia_cspmu.c | 176 +++++++++++++++++++-------
- 1 file changed, 133 insertions(+), 43 deletions(-)
+ drivers/perf/arm_cspmu/nvidia_cspmu.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-index ac91dc46501d..e06a06d3407b 100644
+index b6cec351a142..ac91dc46501d 100644
 --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
 +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-@@ -40,10 +40,21 @@
+@@ -23,7 +23,7 @@
  
- struct nv_cspmu_ctx {
- 	const char *name;
--	u32 filter_mask;
--	u32 filter_default_val;
-+
- 	struct attribute **event_attr;
- 	struct attribute **format_attr;
-+
-+	u32 filter_mask;
-+	u32 filter_default_val;
-+	u32 filter2_mask;
-+	u32 filter2_default_val;
-+
-+	u32 (*get_filter)(const struct perf_event *event);
-+	u32 (*get_filter2)(const struct perf_event *event);
-+
-+	void *data;
-+
-+	int (*init_data)(struct arm_cspmu *cspmu);
- };
+ #define NV_GENERIC_FILTER_ID_MASK    GENMASK_ULL(31, 0)
  
- static struct attribute *scf_pmu_event_attrs[] = {
-@@ -144,6 +155,7 @@ static struct attribute *cnvlink_pmu_format_attrs[] = {
- static struct attribute *generic_pmu_format_attrs[] = {
- 	ARM_CSPMU_FORMAT_EVENT_ATTR,
- 	ARM_CSPMU_FORMAT_FILTER_ATTR,
-+	ARM_CSPMU_FORMAT_FILTER2_ATTR,
- 	NULL,
- };
+-#define NV_PRODID_MASK               GENMASK(31, 0)
++#define NV_PRODID_MASK	(PMIIDR_PRODUCTID | PMIIDR_VARIANT | PMIIDR_REVISION)
  
-@@ -184,13 +196,36 @@ static u32 nv_cspmu_event_filter(const struct perf_event *event)
- 	return filter_val;
- }
+ #define NV_FORMAT_NAME_GENERIC	0
  
-+static u32 nv_cspmu_event_filter2(const struct perf_event *event)
-+{
-+	const struct nv_cspmu_ctx *ctx =
-+		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
-+
-+	const u32 filter_val = event->attr.config2 & ctx->filter2_mask;
-+
-+	if (filter_val == 0)
-+		return ctx->filter2_default_val;
-+
-+	return filter_val;
-+}
-+
- static void nv_cspmu_set_ev_filter(struct arm_cspmu *cspmu,
- 				   const struct perf_event *event)
- {
--	u32 filter = nv_cspmu_event_filter(event);
--	u32 offset = PMEVFILTR + (4 * event->hw.idx);
-+	u32 filter, offset;
-+	const struct nv_cspmu_ctx *ctx =
-+		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
-+	offset = 4 * event->hw.idx;
- 
--	writel(filter, cspmu->base0 + offset);
-+	if (ctx->get_filter) {
-+		filter = ctx->get_filter(event);
-+		writel(filter, cspmu->base0 + PMEVFILTR + offset);
-+	}
-+
-+	if (ctx->get_filter2) {
-+		filter = ctx->get_filter2(event);
-+		writel(filter, cspmu->base0 + PMEVFILT2R + offset);
-+	}
- }
- 
- static void nv_cspmu_set_cc_filter(struct arm_cspmu *cspmu,
-@@ -210,74 +245,120 @@ enum nv_cspmu_name_fmt {
- struct nv_cspmu_match {
- 	u32 prodid;
- 	u32 prodid_mask;
--	u64 filter_mask;
--	u32 filter_default_val;
- 	const char *name_pattern;
- 	enum nv_cspmu_name_fmt name_fmt;
--	struct attribute **event_attr;
--	struct attribute **format_attr;
-+	struct nv_cspmu_ctx template_ctx;
-+	struct arm_cspmu_impl_ops ops;
- };
+@@ -220,7 +220,7 @@ struct nv_cspmu_match {
  
  static const struct nv_cspmu_match nv_cspmu_match[] = {
  	{
- 	  .prodid = 0x10300000,
+-	  .prodid = 0x103,
++	  .prodid = 0x10300000,
  	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = NV_PCIE_FILTER_ID_MASK,
--	  .filter_default_val = NV_PCIE_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_pcie_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
--	  .event_attr = mcf_pmu_event_attrs,
--	  .format_attr = pcie_pmu_format_attrs
-+	  .template_ctx = {
-+		.event_attr = mcf_pmu_event_attrs,
-+		.format_attr = pcie_pmu_format_attrs,
-+		.filter_mask = NV_PCIE_FILTER_ID_MASK,
-+		.filter_default_val = NV_PCIE_FILTER_ID_MASK,
-+		.filter2_mask = 0x0,
-+		.filter2_default_val = 0x0,
-+		.get_filter = nv_cspmu_event_filter,
-+		.get_filter2 = NULL,
-+		.data = NULL,
-+		.init_data = NULL
-+	  },
+ 	  .filter_mask = NV_PCIE_FILTER_ID_MASK,
+ 	  .filter_default_val = NV_PCIE_FILTER_ID_MASK,
+@@ -230,7 +230,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
+ 	  .format_attr = pcie_pmu_format_attrs
  	},
  	{
- 	  .prodid = 0x10400000,
+-	  .prodid = 0x104,
++	  .prodid = 0x10400000,
  	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
--	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_nvlink_c2c1_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
--	  .event_attr = mcf_pmu_event_attrs,
--	  .format_attr = nvlink_c2c_pmu_format_attrs
-+	  .template_ctx = {
-+		.event_attr = mcf_pmu_event_attrs,
-+		.format_attr = nvlink_c2c_pmu_format_attrs,
-+		.filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
-+		.filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
-+		.filter2_mask = 0x0,
-+		.filter2_default_val = 0x0,
-+		.get_filter = nv_cspmu_event_filter,
-+		.get_filter2 = NULL,
-+		.data = NULL,
-+		.init_data = NULL
-+	  },
+ 	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
+ 	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
+@@ -240,7 +240,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
+ 	  .format_attr = nvlink_c2c_pmu_format_attrs
  	},
  	{
- 	  .prodid = 0x10500000,
+-	  .prodid = 0x105,
++	  .prodid = 0x10500000,
  	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
--	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_nvlink_c2c0_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
--	  .event_attr = mcf_pmu_event_attrs,
--	  .format_attr = nvlink_c2c_pmu_format_attrs
-+	  .template_ctx = {
-+		.event_attr = mcf_pmu_event_attrs,
-+		.format_attr = nvlink_c2c_pmu_format_attrs,
-+		.filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
-+		.filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
-+		.filter2_mask = 0x0,
-+		.filter2_default_val = 0x0,
-+		.get_filter = nv_cspmu_event_filter,
-+		.get_filter2 = NULL,
-+		.data = NULL,
-+		.init_data = NULL
-+	  },
+ 	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
+ 	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
+@@ -250,7 +250,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
+ 	  .format_attr = nvlink_c2c_pmu_format_attrs
  	},
  	{
- 	  .prodid = 0x10600000,
+-	  .prodid = 0x106,
++	  .prodid = 0x10600000,
  	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = NV_CNVL_FILTER_ID_MASK,
--	  .filter_default_val = NV_CNVL_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_cnvlink_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
--	  .event_attr = mcf_pmu_event_attrs,
--	  .format_attr = cnvlink_pmu_format_attrs
-+	  .template_ctx = {
-+		.event_attr = mcf_pmu_event_attrs,
-+		.format_attr = cnvlink_pmu_format_attrs,
-+		.filter_mask = NV_CNVL_FILTER_ID_MASK,
-+		.filter_default_val = NV_CNVL_FILTER_ID_MASK,
-+		.filter2_mask = 0x0,
-+		.filter2_default_val = 0x0,
-+		.get_filter = nv_cspmu_event_filter,
-+		.get_filter2 = NULL,
-+		.data = NULL,
-+		.init_data = NULL
-+	  },
+ 	  .filter_mask = NV_CNVL_FILTER_ID_MASK,
+ 	  .filter_default_val = NV_CNVL_FILTER_ID_MASK,
+@@ -260,7 +260,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
+ 	  .format_attr = cnvlink_pmu_format_attrs
  	},
  	{
- 	  .prodid = 0x2CF00000,
+-	  .prodid = 0x2CF,
++	  .prodid = 0x2CF00000,
  	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = 0x0,
--	  .filter_default_val = 0x0,
- 	  .name_pattern = "nvidia_scf_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
--	  .event_attr = scf_pmu_event_attrs,
--	  .format_attr = scf_pmu_format_attrs
-+	  .template_ctx = {
-+		.event_attr = scf_pmu_event_attrs,
-+		.format_attr = scf_pmu_format_attrs,
-+		.filter_mask = 0x0,
-+		.filter_default_val = 0x0,
-+		.filter2_mask = 0x0,
-+		.filter2_default_val = 0x0,
-+		.get_filter = nv_cspmu_event_filter,
-+		.get_filter2 = NULL,
-+		.data = NULL,
-+		.init_data = NULL
-+	  },
- 	},
- 	{
- 	  .prodid = 0,
- 	  .prodid_mask = 0,
--	  .filter_mask = NV_GENERIC_FILTER_ID_MASK,
--	  .filter_default_val = NV_GENERIC_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_uncore_pmu_%u",
- 	  .name_fmt = NAME_FMT_GENERIC,
--	  .event_attr = generic_pmu_event_attrs,
--	  .format_attr = generic_pmu_format_attrs
-+	  .template_ctx = {
-+		.event_attr = generic_pmu_event_attrs,
-+		.format_attr = generic_pmu_format_attrs,
-+		.filter_mask = NV_GENERIC_FILTER_ID_MASK,
-+		.filter_default_val = NV_GENERIC_FILTER_ID_MASK,
-+		.filter2_mask = NV_GENERIC_FILTER_ID_MASK,
-+		.filter2_default_val = NV_GENERIC_FILTER_ID_MASK,
-+		.get_filter = nv_cspmu_event_filter,
-+		.get_filter2 = nv_cspmu_event_filter2,
-+		.data = NULL,
-+		.init_data = NULL
-+	  },
- 	},
- };
+ 	  .filter_mask = 0x0,
+ 	  .filter_default_val = 0x0,
+@@ -312,7 +312,6 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
  
-@@ -310,6 +391,14 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
- 	return name;
- }
- 
-+#define SET_OP(name, impl, match, default_op) \
-+	do { \
-+		if (match->ops.name) \
-+			impl->name = match->ops.name; \
-+		else if (default_op != NULL) \
-+			impl->name = default_op; \
-+	} while (false)
-+
  static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
  {
+-	u32 prodid;
  	struct nv_cspmu_ctx *ctx;
-@@ -330,20 +419,21 @@ static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
+ 	struct device *dev = cspmu->dev;
+ 	struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
+@@ -322,13 +321,12 @@ static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+-	prodid = FIELD_GET(PMIIDR_PRODUCTID, cspmu->impl.pmiidr);
+-
+ 	/* Find matching PMU. */
+ 	for (; match->prodid; match++) {
+ 		const u32 prodid_mask = match->prodid_mask;
+ 
+-		if ((match->prodid & prodid_mask) == (prodid & prodid_mask))
++		if ((match->prodid & prodid_mask) ==
++		    (cspmu->impl.pmiidr & prodid_mask))
  			break;
  	}
  
--	ctx->name		= nv_cspmu_format_name(cspmu, match);
--	ctx->filter_mask	= match->filter_mask;
--	ctx->filter_default_val = match->filter_default_val;
--	ctx->event_attr		= match->event_attr;
--	ctx->format_attr	= match->format_attr;
-+	/* Initialize the context with the matched template. */
-+	memcpy(ctx, &match->template_ctx, sizeof(struct nv_cspmu_ctx));
-+	ctx->name = nv_cspmu_format_name(cspmu, match);
- 
- 	cspmu->impl.ctx = ctx;
- 
- 	/* NVIDIA specific callbacks. */
--	impl_ops->set_cc_filter			= nv_cspmu_set_cc_filter;
--	impl_ops->set_ev_filter			= nv_cspmu_set_ev_filter;
--	impl_ops->get_event_attrs		= nv_cspmu_get_event_attrs;
--	impl_ops->get_format_attrs		= nv_cspmu_get_format_attrs;
--	impl_ops->get_name			= nv_cspmu_get_name;
-+	SET_OP(set_cc_filter, impl_ops, match, nv_cspmu_set_cc_filter);
-+	SET_OP(set_ev_filter, impl_ops, match, nv_cspmu_set_ev_filter);
-+	SET_OP(get_event_attrs, impl_ops, match, nv_cspmu_get_event_attrs);
-+	SET_OP(get_format_attrs, impl_ops, match, nv_cspmu_get_format_attrs);
-+	SET_OP(get_name, impl_ops, match, nv_cspmu_get_name);
-+
-+	if (ctx->init_data)
-+		return ctx->init_data(cspmu);
- 
- 	return 0;
- }
 -- 
 2.47.0
 
