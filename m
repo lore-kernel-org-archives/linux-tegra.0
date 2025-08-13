@@ -1,218 +1,186 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2061.outbound.protection.outlook.com [40.107.236.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C472214818
-	for <linux-tegra@vger.kernel.org>; Wed, 13 Aug 2025 13:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090047; cv=none; b=iel00Yvwpax9SDc+yV/9qHlLk0kQhS/wUtEd5DGWr35mv4CZk1k11SP1DYKGjZKdrUKyRPvjKM2wwbUEddOR/t9HqQGu1ZYVIv94x0a6Y8x4OHGlSOJn4gM5enU4wODFnTct9hXReK44a/3lnJ6WiJ5N6huX94tc3g2/tszq/VI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090047; c=relaxed/simple;
-	bh=Eacqepwje0vml54GTJE6PC8bZ+Y6sjD1UPdztT0uh8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TlBPjywymdrU6eOoDQTR9TtsfvWJL8uBuqpMPYW5kVuf9UWDB/CE6FeZJB76xHaeFnRERoZkCu1SSgNaBmNaXwmZQnj+JstHHZMndTuPEeA1WVVvF0kwqOCWSfLrzTSOlV10iEj40VNP+rL7goRnGRF57dZhWGliNqX3Nwm1PsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PyD1dqBL; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694DC280A56;
+	Wed, 13 Aug 2025 15:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755100093; cv=fail; b=Y8E/H7bNeroI4IN8y0KHusS+peBER/4PCEJywVs4wmaD/mdA5zC8ZhdEMx3RNHuZcsB23rovyU72xOAA5dTXt9rpGEJfH859J5Z3sUkxhVPse5cxl4j+F0Yl/mO0xAs30x/V1aYCfeyEp/U6HZhAViI9WlLQs2hjvGbYxD0ZsUI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755100093; c=relaxed/simple;
+	bh=OwJwLhtjwpB0yE5p73nXqs3hyAn7B8GBVrtdNjiDhoI=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=QtPwBub5UypGrH4h0CHtK32GVgH6YWz/4fwAc6BIvSNWUMhNkzOwwPzTpWKOA+PHSBbos5VI+GW83MeifoteLuOqxuuOgN4Ta21hWRfADTrMc7Rfqtng/FsrhXigZVFynip2BK3nNwBef9SdPEUtVgEesPjeBRB41vFH6c3VeKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YKa12+g7; arc=fail smtp.client-ip=40.107.236.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PyD1dqBL"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b78a034f17so5027799f8f.2
-        for <linux-tegra@vger.kernel.org>; Wed, 13 Aug 2025 06:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755090043; x=1755694843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PeR748Kqcp8Ecn+7OwBivcVoxs7eFxEnihqMB/P4pQo=;
-        b=PyD1dqBL1ISMEX5Obq1wtEvKtjoI4qB2GC0NQzFTa9jM1+equLntZaK4Z9lHAJFAru
-         uMoDU8B8PrS/tP+7gnR/lhUXVSbmWUcA/t24SjFGCNOsWzwMNudrFFAdAK1ojwk2e6Fj
-         cR4bUrfQ062JgC12Wz+iLbUKBFocyBZj7k622jItMYu+bIUZezefOnEmPo3suzDhQg1C
-         65NNYW0JZKpuRUVDurSOqbNfAChF9GbXk5QSYi/kWK3EUHT2LReBQ7z2OM8NLAJcCZv1
-         pBRTp32XbCaPUPB5EYeddoJOfqw4OF+tElNtzHq2kl/xcDHajO2fJU5BL/J6Kjja+jYu
-         ZSdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755090043; x=1755694843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PeR748Kqcp8Ecn+7OwBivcVoxs7eFxEnihqMB/P4pQo=;
-        b=LxAJlkvTXrawKMkZr4mSSUzqfcK7t07fmb8y7QHEydXQ4fWUFkV/K+QMeJfoc0KThl
-         Y1tZ5nVwGKuxLNwT4t9TyJ6pjXFKfJdGynRCHDX69T0FSN7+TYly+M3DKOkDiPr2oQ8T
-         6ZIZ3VxjYK1dEx/MRKYyLyDAdwFTq7F8gj3T3YWsEpNfpEAgNFui6bCO7Voj1m6dAvkS
-         8dqxH8RF1xTfgEIf5LaN0EB74/E7vRStjgnE1T2c2H4lHmhoRcFiHlS/ZHJ6KiX2ueFS
-         qKcyYrbYUA/DVJ5kCegQw2KBo8E2a8uZzY8YCzMBV/76JwsYLX7/rf6sU5ByX1oMUTWD
-         UOEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTOntf8Pbd/1xtFPTs3/UaoYi7FotENjSP6TDBPyyBumGA6agsLPqQrJvJYxKzvURJzTTKTZRaOfDMXg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZq9Z1IYOio8yOqgI3X4LJjhw6buLJFWS8oRKy5WrHujOFo1Um
-	MkEVqt04UZDyvWzWiI4knppa4EtQ/y7yQSFBYyVz/m+R9c0+H9zvaQXLl5u39/xzXFY=
-X-Gm-Gg: ASbGnctU/h+cCiCovMbqg6bh0Bb6hvmcVrpLvqWbJq2INlhXmtFzn4UeOQ6MWmUGooU
-	D8LRy+LL63UCNHC07QfF0/96X56xS8DazkntkyDE1J2d6UYDebRDD9k4z7vbQou/uwzW5jMVhDj
-	yvxnocCsGCMRbJrs6YU/S6EFRrL+qkgksdf26cWQBg2EcrcM3Dvvau5LlxEO1TU6LKGPuNeqwth
-	20QxTpnCE/XuT4SSCE1pixguQfSNmPSexRg0RJZCYpBCYLDZLX68IeQukv/cG8htCN2ov8fhqV6
-	gA7PCy0f0dRSLTO6iZ4HG7mA1B43XJu0Zy8lQz0KUwHJXxWOt7hYrDPl32HDPgVN4W/KDHWC/U+
-	z7KL7JRqsTdnv5bptmpWhJ7uYBBo4UdSNrNgosV00cdup1wsmw476VdYlIIcfGw==
-X-Google-Smtp-Source: AGHT+IGVgvf1Uge8sHIDUuFP1oPvQwNSsudB+wr24LhPfVIfTvW2P80/tIqYbrFHm8v3paEcs2k0Bw==
-X-Received: by 2002:a5d:5f95:0:b0:3b7:8dd7:55ad with SMTP id ffacd0b85a97d-3b917f14804mr2270522f8f.39.1755090042622;
-        Wed, 13 Aug 2025 06:00:42 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c3abed3sm47465915f8f.10.2025.08.13.06.00.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 06:00:42 -0700 (PDT)
-Message-ID: <5a4e8480-a291-409d-acc3-f053d4e99981@linaro.org>
-Date: Wed, 13 Aug 2025 15:00:40 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YKa12+g7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UVq9LNr7teu9aFn1HKA/QiLpa9yByQASa3G39L52IevyicEc85oCvdP9mn2bV7jxtIMcaEbLGwsetHu6PZeHOjT7CQNYvB71El8e6+p2gV/UCvgjpb5+nBD+eH2HVBJNn2GDW4OiagHAeYeoAVZqgfH9ctWg94kM9HfxNJ1SPKgv+fwaszbdhGsF32mupm03pO78Vs+XzccKjscr1F8WiIxNGr0W4gMcaIMC/9tjSTN4HPiBXKTiI5wgII6vzaAV916Nvzjay9w0xlbnn0Z8UoZ1emXlXLblo7KB0vMN+QqWs/rHAsYFgOywo8CzleM+VBqxwIqIGuUF4hYTgYERfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j1AYzArpDB2nJtsLwajLpk8Y3LJoPb1a4WxIZWpFqmE=;
+ b=lf/D9L3n6VIxKAmy4mIePty6AVRJkSUiZuq/MXqll8CERD6HO9i9uWhwpo6VT9bHDsJsrutLlGDePqdBpHgdkVBALqxyOxjEfPwkeMnJm3R2erzsER4mKt7788wNDoCQaoyUlpRtGjj4wydY2G+GTGBoL0QrzmEljK/jxHuH1Iis13YUrjxqRP3sv/h8ko+pUIJ3BKHmoxDDsZm6/yPR6pGKclco3vH5e9IhMyJ2f5ESFvBAYuRZgPqjQKUie0HNLrdJ8plHmm3NMRfHCFKqyQYSP8mzj81Q5b8PKd3xhZciN6JhpMKoDp3+t0wVmbUX2rpz0Gh1lqZ979e4Zyj6pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j1AYzArpDB2nJtsLwajLpk8Y3LJoPb1a4WxIZWpFqmE=;
+ b=YKa12+g7eoAHcpAxVVOv+yX/MRKm5K0lZScOILT1puV+5QoAvYj7A1Z8g5/YcqOM8yWYKEINSdnoj4xlg1BUfIeEd4HA4hJ4ejGwlM1978geTMZXF7C11A4pwNJekL2KlhT30CgYU4mkN64BC0gRBCVzQd9dVHWMrPjs4hGcMxhnO3qrAWZI2tfNkNt5bOUhDtVMIm8mQuh1H2SCT95Pswg2ROpUNf5xHgHSN2a1cpbS4nifUoGR3LHMpMjnNbw+Kc4ipLBjAzvQ95n1PsIp95tCWPFYu52Qpl4FhHu4hNiZTa4uD4CvpBmG9gOTxEPN6vw072wpIacqbY1Ihc9ScA==
+Received: from MW4PR03CA0017.namprd03.prod.outlook.com (2603:10b6:303:8f::22)
+ by MN2PR12MB4077.namprd12.prod.outlook.com (2603:10b6:208:1da::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
+ 2025 15:48:09 +0000
+Received: from SJ1PEPF00001CEB.namprd03.prod.outlook.com
+ (2603:10b6:303:8f:cafe::30) by MW4PR03CA0017.outlook.office365.com
+ (2603:10b6:303:8f::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.14 via Frontend Transport; Wed,
+ 13 Aug 2025 15:48:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF00001CEB.mail.protection.outlook.com (10.167.242.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Wed, 13 Aug 2025 15:48:08 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 13 Aug
+ 2025 08:47:54 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 13 Aug
+ 2025 08:47:43 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 13 Aug 2025 08:47:43 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <achill@achill.org>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/253] 6.1.148-rc1 review
+In-Reply-To: <20250812172948.675299901@linuxfoundation.org>
+References: <20250812172948.675299901@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Setting the scene to convert the timers into
- modules
-To: tglx@linutronix.de
-Cc: Jim Cromie <jim.cromie@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Marco Elver <elver@google.com>, Nam Cao <namcao@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, John Stulz <jstultz@google.com>,
- Will McVicker <willmcvicker@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Saravan Kanna <saravanak@google.com>
-References: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <5d8c35fc-0764-4905-9ca6-9232c3d816fa@rnnvmail203.nvidia.com>
+Date: Wed, 13 Aug 2025 08:47:43 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CEB:EE_|MN2PR12MB4077:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1dd3c6c8-9548-448d-2f3b-08ddda80ccf9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZWk4RENMdFpXRVZuSUtyalkvc0lQcEQzcW9DNVhIeDVtdmFGR0w4dGJxYW4y?=
+ =?utf-8?B?N05ydlFiVE03NDU2VDY4SmdjendmZFdQR2VzNWVoZmZ2VFdScERFQXpxVSsw?=
+ =?utf-8?B?UmorNUZOVVVCbGFSOWljdzFWOWx5djVQU2NTUElRZ1RHRDZCVHlvV2pCa3Q3?=
+ =?utf-8?B?NkJxaGdyaEhsZ0phV0xSM1FzaTc0N2xYdVlpdG84UHNvVXdPbzFWVFFnMkpF?=
+ =?utf-8?B?bzFVZ0ZBS1hVb0EzcUw5cUZCcnJjeHdPemloVFltdTZtTnNsK3U2elNuYkFX?=
+ =?utf-8?B?dFdzcS9iak1vb2ZzczFwcjdEQncvMHlYaEJkUnZQOEFMTGJoTVdxREV3YzFk?=
+ =?utf-8?B?NS9yZUN4QXJlcnQySjJGazZmU29ZMEpvb3I5RGd1NlNob01aMkd3bTFVekhW?=
+ =?utf-8?B?QTZNTDVpdEVXL0lNT1BJb0NCS2NTanA5cDFIaGpBcHBXVlA4N3hCZUhiQ0hu?=
+ =?utf-8?B?TUF3bS9icDRlTUIwemJEZWFxbWVNM0lTWDZlcVRzZ2lBVTJrTnVPcE9QSmtR?=
+ =?utf-8?B?YnNCSi9mVTMrak5aLzI3QXpaY3A1VHkzVHgwZ1o3TkZYMWFnNTVZZEduTGMw?=
+ =?utf-8?B?R0drNzB5K0gyRThKL2NaUG4wckxzZkRiK2pXdVpiaG1QekVQWnlUU3A3NGpJ?=
+ =?utf-8?B?YTFzbkJkWDlKVDYwNzBQRXdHVFp5cG56Q0tldGE3SkZqc2FLUzk1ZUUxVlNj?=
+ =?utf-8?B?MStvMGZVc25HQmREZXNINTlkV2RlWExuMDNIWEFncHBZQy8zOFJYUkhzYk9a?=
+ =?utf-8?B?bThXV2FjV2w1RDY4djJ0NXd0TXVxOGIxRFFsNDFoRjU3WER6QTc3bWRKUys3?=
+ =?utf-8?B?Q3pIVjNjZW0yTXNyaDhDN0hyYjBnZ3NQVlNhRmlpV0JHMHFuOU5GZi9pTG42?=
+ =?utf-8?B?aVJ2Mk9ldU9YcEVCa2c0cGdtUU9IVmpyNnkvd053Q1JTMUFOeDFRKzlTOEF4?=
+ =?utf-8?B?VDQ2ZmdkVXZTYjhSY01aVG1YRUlMdmZvTGxMeGNPS2RNb29IRW0rM0pUaStN?=
+ =?utf-8?B?VkVGYkJrbjRDekp2TkhEQ3BIejBVMlE2b2xOS050Rk56cTdaRTVtd0xUUEFn?=
+ =?utf-8?B?c0hBNlU3Q3NVbnZUdU1DN1owcUVKOGVOVnE4V0sxaTdKeTRuYjcwamV1TnVu?=
+ =?utf-8?B?WmtxSzc1eWROYktCeWxUeHg2UWt1cDFLNHZONytBZzlybWVkbkxYNDBkR2hV?=
+ =?utf-8?B?YTdsUnNTT1VmY2o0T21UNytQVDRUOEp3SzZycTdtTWVSWDRuckFDRnYxajBw?=
+ =?utf-8?B?V0tPYUFMOG1HS3VxcEwzOVJOKzFvN2NyWDZUV2hjL2JyMGg3UjZnenBZNDdl?=
+ =?utf-8?B?Q1B4SGRrQW5KazNpZy9kZnpjTHZac1lNV0NoSHZVczBkbVpkMnlNQk00SkV0?=
+ =?utf-8?B?UC9KT1BoQXZpNVhJVUtZM2lDWlkreUdKaWVpK2h4M00zRVltOGhJcjJXU281?=
+ =?utf-8?B?TUFESVJGZ1dOejlhNXFxenBTOVd2VHhpZUU0eVJkeitUQmZUK1NRclVRcDRX?=
+ =?utf-8?B?RkZ3Nlo0c2hncCtCOFNYMjhDZzRZY1lrSDJjRFg2bGFGK21CcG8yOStrbE8r?=
+ =?utf-8?B?d3ZManlSRExJQWxHWU1GWjZBcFFIS0pQNC9TallJcU9OYXl5MkFwR3ZueWUy?=
+ =?utf-8?B?SWExNm85dE9RYjRtcXczc0NKTVBVVlRkSndyMEVPQ2dSU3ZLT3loeFFDRmM5?=
+ =?utf-8?B?RktUVDlxclZxN0NUNlExY3NMeUo1NDZyQXhmRllYLzhVek1zdjVqeHVWSmli?=
+ =?utf-8?B?WXFpT0FicjZQOWtOSjg3aTZwRDZxRmp0ckxmeWtqNldwTUMxTWxKd09YUmcw?=
+ =?utf-8?B?R042U012a2FFL3RKSkt2YmdGRmNRUWp6TGdEWVh3RzAyUzgreDZqYjJJemNF?=
+ =?utf-8?B?Ty9OREpyUEpTRmdXWDhiVmNrTmJobHBXU09DaFl6ZW1ic0d6UnRqZURlRGZr?=
+ =?utf-8?B?UlVWamc2NWtPb1d0eXJUNG1sR0VCQ0swQlVFUzZHQThTZDIwN0FBQWFTYW1m?=
+ =?utf-8?B?dXVLZTMyRDZza2U3K0dmVGNDWG5YYjdYcGZTamljT0JpVXlpcERLVE11ajFo?=
+ =?utf-8?B?T09OWnJiK0pKNmRMSUo4azJIZE9RK25kNm5Jdz09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 15:48:08.5365
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dd3c6c8-9548-448d-2f3b-08ddda80ccf9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CEB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4077
 
+On Tue, 12 Aug 2025 19:26:28 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.148 release.
+> There are 253 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 14 Aug 2025 17:27:05 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.148-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Hi Thomas,
+All tests passing for Tegra ...
 
-was this series dropped ?
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    119 tests:	119 pass, 0 fail
 
-I'm not able to find it in v6.17-rc1 but it is in the master branch of 
-the tip tree (v6.16-rc7)
+Linux version:	6.1.148-rc1-g7bc1f1e9d73f
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-On 02/06/2025 17:18, Daniel Lezcano wrote:
-> The timer drivers are all compiled-in. The initial pre-requisite is to
-> have them available as soon as possible in the boot process. While
-> this statement made sense a long time ago, the platforms have today
-> multiple timers for different purposes along with architected timers
-> which are initialized very early. For example, a timer can be used as
-> a backup timer when the local timers are belonging to a power domain
-> which is shutted down, or used a watchdog timer when the counter are
-> shared, or also as a pulse width modulation counter. Another use case
-> is the platform user may want to switch to a timer different from the
-> architected timers because they have interesting characteristics in
-> the context of a dedicated platform (eg. automotive).
-> 
-> In some existing drivers, there is already the code to load and unload
-> a timer driver even if the Kconfig does not allow that. It means, the
-> need is there but partially upstream.
-> 
-> There were multiple attempts to configure the timer drivers into
-> modules but it faced the fact that we were unsure if it is correctly
-> supported by the time framework.
-> 
-> After investigating deeper in the core code it appears we have
-> everything set for the modularization of the timer drivers.
-> 
->   - When a clocksource is registered with a better rating, the current
->     clocksource is swapped with the new one. The userspace allows to
->     change the current clocksource via sysfs
-> 
->   - A clocksource can be unregistered
-> 
->   - When a clockevent is registered with a better rating, it becomes
->     the active one
-> 
->   - A clockevent can not be unregistered
-> 
-> A timer driver can be loaded later because of all the supported
-> above. However unloading is unsupported because a clockevent can not
-> be unregistered and that will lead to a crash.
-> 
-> But if the timer driver has the module owner set, the core framework
-> will handle the refcount correctly and will prevent to unload the
-> module if a clockevent is registered. All the refcounting is working
-> in different use cases.
-> 
->   - A clocksource is the current clocksource, the refcount is held
-> 
->   - A current clocksource is switched to another one, the refcount is
->     released
-> 
->   - A broadcast timer is registered, the refcount is held
-> 
->   - A local timer is registered, the refcount is held
-> 
-> Consequently, it is possible to unload a module which is only used as
-> a clocksource. As soon as a clockevent is registered, the refcount is
-> held and can not be released thus preventing the module to be
-> unloaded.
-> 
-> That mechanism ensure it is safe to convert the different timer
-> drivers into modules.
-> 
-> This series adds the module owner in the different driver which are
-> initialized with the module_platform_driver() function and export the
-> symbols for the sched_clock_register() function.
-> 
-> Cc: Jim Cromie <jim.cromie@gmail.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Nam Cao <namcao@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-sunxi@lists.linux.dev
-> Cc: linux-tegra@vger.kernel.org
-> Cc: John Stulz <jstultz@google.com>
-> Cc: Will McVicker <willmcvicker@google.com>
-> Cc: Peter Griffin <peter.griffin@linaro.org>
-> Cc: Saravan Kanna <saravanak@google.com>
-> 
-> 
-> Daniel Lezcano (7):
->    clocksource/drivers/scx200: Add module owner
->    clocksource/drivers/stm32-lp: Add module owner
->    clocksource/drivers/sun5i: Add module owner
->    clocksource/drivers/tegra186: Add module owner
->    clocksource/drivers/stm: Add module owner
->    clocksource/drivers/cs5535: Add module owner
->    time: Export symbol for sched_clock register function
-> 
->   drivers/clocksource/scx200_hrt.c     | 1 +
->   drivers/clocksource/timer-cs5535.c   | 1 +
->   drivers/clocksource/timer-nxp-stm.c  | 2 ++
->   drivers/clocksource/timer-stm32-lp.c | 1 +
->   drivers/clocksource/timer-sun5i.c    | 2 ++
->   drivers/clocksource/timer-tegra186.c | 3 +++
->   kernel/time/sched_clock.c            | 4 ++--
->   7 files changed, 12 insertions(+), 2 deletions(-)
-> 
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Jon
