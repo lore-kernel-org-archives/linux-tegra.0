@@ -1,80 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23DC21B8F8;
-	Thu, 14 Aug 2025 15:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603B82417D9;
+	Thu, 14 Aug 2025 15:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184945; cv=none; b=FELCA+8+ycKjej30vbfppdnkX5WMbzO/eOZdfzhWIjrRNjqcg/FFFKgMFmcA5xNcx4ZN6mm1SoZX2ym3LbO5IDnzctXQf7fg9APyXXbFQ/nK6ndMMuTTlQG4vTIVgrQCFmGmkKmLNPhG9QCmE8r7GdTmSCjzVUUm3WPmK1sJ3Dw=
+	t=1755185782; cv=none; b=UOcH1oaV7P1PeU5J2H0FEmxiwrkVYnJQefCDjYJRUumSGzQPgUk9lgL1pwqlj3rRhMw2Vy6Sns7Hj6tXZy0Lt/kO/AtDl22NT37G6d6NfPl1d6A1BKJdfu0PJ015caReiownOWwKJCGQqFVjlWSwHh+ZSACr1m4Fb17hI33T1Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184945; c=relaxed/simple;
-	bh=+1gG3qlmSkwGj/oU7QDjRpIhc3oEnnm/tmA6uBQL3RM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cs1wWXAEuPNmup7uIxyGeAhkTgYN8QnweHD10xjpvwDCb9+g+x6k36rhbmZyESfeSMqgLuu54HuNb31OZZwMJTuUdfucNBu1MFZqY51IAjSZdgGy6+LxgHEBw1jULu4gludpLa3e2X1FEgtgS0RnmpNYEdai46LODuXu8PgqPtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADc/SI9Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755185782; c=relaxed/simple;
+	bh=fIObf5r+EmdA5oHG6zfbCH3/ZfYEQP33Abj3Xq5UHgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tIhHPUm8tf4NjYvo0eWaHLuHnGN0ZQylu5zgwfzzosa5YjqpXEH7YvZ+UULcMVCodGC3LQE6b95VtOMg/zReS7PyXpszyiQ6R/9YVXXQ1sfp70pZr6j8BJ7aM19QrLzn24/EFbIllyJsI1o5EFlrZhhdTKc6VJ8hwJIpfANoJqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JVlp0Gps; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADc/SI9Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6F4C4CEED;
-	Thu, 14 Aug 2025 15:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755184945;
-	bh=+1gG3qlmSkwGj/oU7QDjRpIhc3oEnnm/tmA6uBQL3RM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ADc/SI9Q0CYssF6iFsm297aNyk1X6W440Rz5x0B4uZTlf+1C9/uPnCAOGKoLVtNx8
-	 BXgqtIH5mtJ2x1DVi7VOHNwN0OXGRKGYDuxxqXu1FrRjkPZBSoFxyTFwahAIuClCPl
-	 P+rmyyNu73fEtq/Sln4AvPPzuoOjXqEjiiGcXgLVPTgBecTMUrANB5meFaQ2eOpu/T
-	 iseg9h80RM7Gcxj4KW4NSx6IiFoMGYQypKzhbOpPoN/4EtYNfNJyuIdf/lwTn8A8QI
-	 sfTNB3+B5xqYGoLB8BWBjsstV/B7JwE/sZji54A4TQitt1NhVOlaoTtyj5BC51pUKA
-	 rO0m5xEihJbEQ==
-From: Niklas Cassel <cassel@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Niklas Cassel <cassel@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 13/13] PCI: tegra194: Drop superfluous pci_epc_features initialization
-Date: Thu, 14 Aug 2025 17:21:32 +0200
-Message-ID: <20250814152119.1562063-28-cassel@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250814152119.1562063-15-cassel@kernel.org>
-References: <20250814152119.1562063-15-cassel@kernel.org>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JVlp0Gps"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6E8C4CEED;
+	Thu, 14 Aug 2025 15:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755185781;
+	bh=fIObf5r+EmdA5oHG6zfbCH3/ZfYEQP33Abj3Xq5UHgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JVlp0GpsLTHCrcTIZbwiZa+bI1uh5hfNIws9NaTfmNZi45NelE0A5kBalt5eTRWT3
+	 kKJVRYdShn0C1FBZcqYBXIR9mN66fCijPvLZtX3UQ6MP6rAyLn6ikIGxlaaZD4YVCJ
+	 FGTBce/Od8S+L+53orjzjWUtE76T06iuMAhgnCfA=
+Date: Thu, 14 Aug 2025 17:36:18 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: achill@achill.org, akpm@linux-foundation.org, broonie@kernel.org,
+	conor@kernel.org, f.fainelli@gmail.com, hargar@microsoft.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux@roeck-us.net, lkft-triage@lists.linaro.org,
+	patches@kernelci.org, patches@lists.linux.dev, pavel@denx.de,
+	rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+	stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re:
+Message-ID: <2025081451-afloat-raisin-7cee@gregkh>
+References: <b892ae8b-c784-4e8c-a5aa-006e0a9c9362@rnnvmail205.nvidia.com>
+ <20250813172545.310023-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=945; i=cassel@kernel.org; h=from:subject; bh=+1gG3qlmSkwGj/oU7QDjRpIhc3oEnnm/tmA6uBQL3RM=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDLm/vspwigcseZin6jWJ7uQY9pGZuJ1gs+D3h7U8ohhi O6deeVuRykLgxgXg6yYIovvD5f9xd3uU44r3rGBmcPKBDKEgYtTACayuIHhf47pCY/PK3O0OSrE sh7MlVs6IbBxzvfpy3gP+XEYGrrYijIyLLJZ8iQ0iVt5e8xOA+PPAlP3H3NalLQ6f7v9rjMqkbX vuAE=
-X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250813172545.310023-1-jonathanh@nvidia.com>
 
-struct pci_epc_features has static storage duration, so all struct members
-are zero initialized implicitly. Thus, remove explicit zero initialization
-of struct members.
+On Wed, Aug 13, 2025 at 06:25:32PM +0100, Jon Hunter wrote:
+> On Wed, Aug 13, 2025 at 08:48:28AM -0700, Jon Hunter wrote:
+> > On Tue, 12 Aug 2025 19:43:28 +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.15.10 release.
+> > > There are 480 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
+> > > or in the git tree and branch at:
+> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > Failures detected for Tegra ...
+> > 
+> > Test results for stable-v6.15:
+> >     10 builds:	10 pass, 0 fail
+> >     28 boots:	28 pass, 0 fail
+> >     120 tests:	119 pass, 1 fail
+> > 
+> > Linux version:	6.15.10-rc1-g2510f67e2e34
+> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >                 tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+> >                 tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+> >                 tegra210-p2371-2180, tegra210-p3450-0000,
+> >                 tegra30-cardhu-a04
+> > 
+> > Test failures:	tegra194-p2972-0000: boot.py
+> 
+> I am seeing the following kernel warning for both linux-6.15.y and linux-6.16.y …
+> 
+>  WARNING KERN sched: DL replenish lagged too much
+> 
+> I believe that this is introduced by …
+> 
+> Peter Zijlstra <peterz@infradead.org>
+>     sched/deadline: Less agressive dl_server handling
+> 
+> This has been reported here: https://lore.kernel.org/all/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com/
 
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 2 --
- 1 file changed, 2 deletions(-)
+I've now dropped this.
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4f26086f25da..0e413857649f 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1998,8 +1998,6 @@ static int tegra_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 
- static const struct pci_epc_features tegra_pcie_epc_features = {
- 	.linkup_notifier = true,
--	.msi_capable = false,
--	.msix_capable = false,
- 	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = SZ_1M,
- 			.only_64bit = true, },
- 	.bar[BAR_1] = { .type = BAR_RESERVED, },
--- 
-2.50.1
+Is that causing the test failure for you?
 
+thanks,
+
+greg k-h
