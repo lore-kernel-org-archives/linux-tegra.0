@@ -1,53 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123822797BA;
-	Thu, 14 Aug 2025 21:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F28245020;
+	Fri, 15 Aug 2025 05:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755207697; cv=none; b=UGqV8qIisizdnuKsgLAX/MGO5TdfTQPyLmteNohrKy4feJ9AFHcYG0fgfgC/JEbbmPXphcxdnqO+TAfq+9kvqmXW+bBgxImn26ccQj3God7puFNulDJmt9ZMyRfV3KtAGIScC2DDgmZiqQjqUQEpYd6tASzOG18pHY+f7ZTVPNg=
+	t=1755234725; cv=none; b=E2yBgV+VCK3xr3mSU8BbYMII9pLqLMPP8zMmQDodQMLWlWn0yUly2VYHjrZDW9iGfVZhdi2qimhXUTTjceAXRamfH6R+qDu4uPl+3F8NXf2LQBrNpdtzDv0K4jTdwVJxo0BBiMYxdSTfIIcqta/zkwaq0WOAEV1pXmnyO2Ica/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755207697; c=relaxed/simple;
-	bh=L0W28G9AstwMamKC1/QPTjtg2Chvse9UFYqxpJi5Ua0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=p4hjq7TRC4o4Weq/+Gi4GOWM+k5l14ih+vz1qIQzHBdn8OopJSIbLwUKA42uYh8WM4DvE3sKuDazQuN21OD7MXPoEK91j1yMNRnqN2zEKfgaPpVnqWaFYfYo9ui4ff/uTYrQEYbID/s5ntIZVnPOnW4y0jwQzWqs7pEEPY6HTt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQy1QfcY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755234725; c=relaxed/simple;
+	bh=piFJDMoWgMoAcz5ZrOxOxHNp2cNxC29xMo9DwzCJmRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dsE92wQ1fA7XtsdgP/vcxWzR00/dlf8Nmx/raXF8dlMUiLWgTljL9eVsEYcvTFWLjSUL7ARCHR/np7hqoWPf6E9J3AmB8dsZSVe6CqQqARrm9xuxp9mV3xfxE3Z+BG2NkLY790eqB78dWDHUpd9ENJ7COrTv/pn8+5uOH5bXr/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8h1RDPw; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQy1QfcY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD6DC4CEED;
-	Thu, 14 Aug 2025 21:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755207696;
-	bh=L0W28G9AstwMamKC1/QPTjtg2Chvse9UFYqxpJi5Ua0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fQy1QfcYi6G3NyoT6dV/uFuKhUVwGc/zgCUhIHB2O/gGhcZTYoiyBSRAJMoTtW6IH
-	 Mv8JRu4/L8/krgBguoxJiTDbfYh02bpG6YasNnvVaqEGUmr6eeWSq76Jnm7AC0yZDq
-	 /WBcdFDcqbPbvmfgkXscAksouv7UA++PYNWKCCVfwh98wMOa47Pt783bYrtexfMYX2
-	 Ly9jLXoCjQSquoOoAyH/yrUrkhpAgzN6e0myG8IkavImtvB6FzxkSgBnnYqcUTHWJ2
-	 MZDPcSs60Rrmyh1TFHy0DG8YFTg64dPkMI1EOs4v/lqgdBeB6xdiuRpt7kjDZ72e7f
-	 dGgF+Yoo3357g==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8h1RDPw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755234724; x=1786770724;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=piFJDMoWgMoAcz5ZrOxOxHNp2cNxC29xMo9DwzCJmRM=;
+  b=n8h1RDPwgubFjM4uC5h8bpQqxyknnlL0YxZBHxqITuri/5B+A0OhXw41
+   uqHyDeExnn5TRa3fDn3zIILalV8IWxOKFc8rcSQ7HhtjVQn7jsYNn4dk5
+   EdUdRfRNiHzXr8ZAj7hWYsY3/1Qk1iPYBSwQHK6Z4xGW1qBqxA3pbu4v/
+   l36EnTHiJX1psKU5wGPkmduARKNBcyZi/gphB2PHbpXTfeLMYDHCO+Fmc
+   Frq+M/j66QIDWJ7DAsNiRJVLK8WQcq3/Q6LpHD9S6EodzbrLjgOGNSkW2
+   Eb9GsiK4436Td1ci950LXAF0Hbxjfwb0K39f7UI/0irc+ygxrqf2mv3hX
+   w==;
+X-CSE-ConnectionGUID: vW3KyP2FSg6f25rN1OVg1w==
+X-CSE-MsgGUID: KVABhgCgTnq2Vqx9wXLJqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68646434"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="68646434"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:12:03 -0700
+X-CSE-ConnectionGUID: z3XLWN8JSkSewaRE53xizA==
+X-CSE-MsgGUID: k+jCi0MrTzK5WA2i0FqSdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="197786291"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 22:11:57 -0700
+Message-ID: <eb248b73-7fb6-47cd-9e10-5c54ca2391b2@linux.intel.com>
+Date: Fri, 15 Aug 2025 13:09:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-References: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] clk: tegra: Remove redundant semicolons
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jonathan Hunter <jonathanh@nvidia.com>, Liao Yuanhong <liaoyuanhong@vivo.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Date: Thu, 14 Aug 2025 14:41:35 -0700
-Message-ID: <175520769592.11333.15146346000732948341@lazor>
-User-Agent: alot/0.11
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] iommu: Lock group->mutex in iommu_deferred_attach
+To: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
+ joro@8bytes.org, bhelgaas@google.com, jgg@nvidia.com
+Cc: will@kernel.org, robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
+ yi.l.liu@intel.com, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
+ vsethi@nvidia.com, helgaas@kernel.org, etzhao1900@gmail.com
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <44783ca52e17a9ca0ce7acfe8daae3edc3d7b45b.1754952762.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <44783ca52e17a9ca0ce7acfe8daae3edc3d7b45b.1754952762.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Liao Yuanhong (2025-08-13 02:40:03)
-> Remove unnecessary semicolons.
->=20
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+On 8/12/25 06:59, Nicolin Chen wrote:
+> The iommu_deferred_attach() is a runtime asynchronous function called by
+> iommu-dma function, which could race against other attach functions if it
+> accesses something in the dev->iommu_group.
+> 
+> So, grab the mutex to guard __iommu_attach_device() like other callers.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
+>   drivers/iommu/iommu.c | 13 ++++++++++---
+>   1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 060ebe330ee16..1e0116bce0762 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -2144,10 +2144,17 @@ EXPORT_SYMBOL_GPL(iommu_attach_device);
+>   
+>   int iommu_deferred_attach(struct device *dev, struct iommu_domain *domain)
+>   {
+> -	if (dev->iommu && dev->iommu->attach_deferred)
+> -		return __iommu_attach_device(domain, dev);
+> +	/*
+> +	 * This is called on the dma mapping fast path so avoid locking. This is
+> +	 * racy, but we have an expectation that the driver will setup its DMAs
 
-Applied to clk-next
+Why not making it like this,
+
+int iommu_deferred_attach(struct device *dev, struct iommu_domain *domain)
+{
+         /* Caller must be a probed driver on dev */
+         if (!dev->iommu_group)
+                 return 0;
+
+         guard(mutex)(&dev->iommu_group->mutex);
+         if (!dev->iommu->attach_deferred)
+                 return 0;
+
+         return __iommu_attach_device(domain, dev);
+}
+
+?
+
+> +	 * inside probe while being single threaded to avoid racing.
+> +	 */
+> +	if (!dev->iommu || !dev->iommu->attach_deferred)
+> +		return 0;
+>   
+> -	return 0;
+> +	guard(mutex)(&dev->iommu_group->mutex);
+> +
+> +	return __iommu_attach_device(domain, dev);
+>   }
+>   
+>   void iommu_detach_device(struct iommu_domain *domain, struct device *dev)
+
+Thanks,
+baolu
