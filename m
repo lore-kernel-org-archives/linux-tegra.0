@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736131F4168;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69ED1FFC41;
 	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755323659; cv=none; b=qO34zxekJsuNJEwB17ZanO4oT05ijtKhiOYBRC2/YKgHf4He1LYj9eJcZqM584G6uQhbH5M8CB3c6U5WRknkIf1ok9+XIlbG6WK0EQZl3THjc4HB0ixFbXG6nMQHxZ9zg7dcdx4QgcbfGmHdL8Qt+7Txtv4b7wZj2UPhle1v8KY=
+	t=1755323660; cv=none; b=IG7yBvLox28e2tQ26hEftPbPyyYBDKG1zmLdQADMvRooDH2FLWSEGADYV70F38HT2TNUpoIjNFPqaoVqXHvdkVdtwMjjX5l7grxtUl8bBhVP8Mld3hSzsdy95xDWTIKrY7isjhT9w6dRciBXWL6ncXnuETOjWBArNK1TiHM0j7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755323659; c=relaxed/simple;
-	bh=a3kdVSUIQtyMHNIPp2pI/HbOTfJTuX5FsLAVp+ykcJM=;
+	s=arc-20240116; t=1755323660; c=relaxed/simple;
+	bh=v9/DprQXu1Orp8O2tW51C5gJxOsix4kY869zpymYn20=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=exL0TPAiq3OX1DnhXa6NoWPe0xthiwKhOpbRn2lE95/LDsFQcTJ0mF5zUEjRH/EBCYjP25F7iu86xZqDIPjA4qzUr1u4sDRU2clPxonMS5KgsiRO6Xuay5QT9nv4RmcpINmdl9nlw8lYLk5Iym3uzsFneslgA69J3fOOW99PDKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KsSo7QHM; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=kavr93jh7K4JqjwEX0+l99ZEJMEycHWQK29T4Oso19x8RE3FykY3RsMujB8JF1uFkD5ChTW39IaQ3ALcy6X+00XXxZvODO0Shc7/Zy8gZxZYWjm2Blla6oJb7jIzmzMprS7pyB9HiCF/gGytQeaE9uSsrMMIOTJanOM/XnFL7i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKXGWhuf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KsSo7QHM"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 324E7C4CEF8;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKXGWhuf"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B851C4CEFC;
 	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755323659;
-	bh=a3kdVSUIQtyMHNIPp2pI/HbOTfJTuX5FsLAVp+ykcJM=;
+	bh=v9/DprQXu1Orp8O2tW51C5gJxOsix4kY869zpymYn20=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=KsSo7QHML9fMQUtymVRVdXoZzUPhQe71lmX37b2YW4+AQQG9fixHChhJdAVUni6hP
-	 7xatm+I5d+2lAZ/32MwiTj3WmbK21FA5V2USOyzFaJSVGYwhvUkRyy3UmYvO1KoUb6
-	 iMgoj2IVkwYu4JpIGKaWzRIeFHfyUoEWKOqR3UWv7487xnpB0BaT2j/ZWtyqTT4JP7
-	 WGhdN9+faTyt10M98pkhKLLsDEkooB7Nz5ycFZj/v3xZ/KWpZM7A2LJ4IMc6ypT9Cr
-	 2ZxdU+Cl4WxfSv3gGIMgxmi5Wfbj10FzN7TmLqNjWqp71/znmlzYLG+ZSBllYljwDC
-	 WTNcSnGknb1kg==
+	b=RKXGWhufXinkH7S7ODTw2OU/BXCIQyjsaO83N16UgK4XRGbdNKIdLwvlJURE1FOY6
+	 aTcT3ak3405nBvlDIHBuzSkBkrma/ddOeZ49zYL53ChGZwtU6NwDZ9zt7erwZ/7wUG
+	 ydY6heDuAuaDjtWZfyFQrWIPD4E5gpdFXO/ebAVbAxKsTHkk8SXggeskgjltRoORfU
+	 ZgLs0tGXGDU17sjdvhReiUnQJDnoz2Kgbp8LVndEBsosWartPcDoEcsF0oefPcpwln
+	 0yRXuMcSqPMQqnFoKuI3FQ8JVBAKtNqBkms6ZfXle/kAzZt9XfZT/zB1JtZCZvJOJc
+	 1IyOSCXPbAxmg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 256F7CA0EED;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3378ACA0EE9;
 	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sat, 16 Aug 2025 00:53:36 -0500
-Subject: [PATCH 4/5] clk: tegra: dfll: Support limiting max clock per
- device
+Date: Sat, 16 Aug 2025 00:53:37 -0500
+Subject: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-tegra210-speedo-v1-4-a981360adc27@gmail.com>
+Message-Id: <20250816-tegra210-speedo-v1-5-a981360adc27@gmail.com>
 References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
 In-Reply-To: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -56,11 +55,11 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=1449;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=935;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=F+yoRA15M31xbQIkPC6+4/poN2QJpx1PWxc/bXVO320=;
- b=sTV9RkNktfketMdtjuEkak8xkFZnoPszZGHh0v811QDSMTwmDGvJcopPKY1LzaYtIHzfBNHjB
- hRnt+C6cfP4AOceWHEFlJfKImaM+xDoRl0w16UCBz4iG2j9tBImXSRL
+ bh=JtR2frb8U61WYYSqhxHsZ+WqeNipPuKmeW1w+OFmzpU=;
+ b=c8aF1tlFVKvuMAgjpH17Vx+W6YJ9ly6+2UZTmDmo879riiX6BemOb25Mah5RxcSAtHIDCI+VW
+ kPtnx+v5hAcB7G6R9kog0SaaaP/PtAG4t6pc175XEY1HjM4RniK+1dA
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -70,41 +69,27 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-Some devices like the Jetson Nano report a cpu speedo value that scales
-past the capabilities of the cpu. This allows limiting the maximum
-scaling to a lower value within the table.
+P3450's cpu is only rated for 1.4 GHz while the CVB table it uses tries
+to scale to 1.5 GHz. Set an appropriate limit on the maximum scaling
+frequency.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 0251618b82c8321724ba0aec7a5bd90b2c2ffaf2..0c84f7e85baaa96fee005a1c9a5dd6afbd1875fa 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -556,6 +556,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
- 	const struct dfll_fcpu_data *fcpu_data;
- 	struct rail_alignment align;
-+	u32 max_freq;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index ec0e84cb83ef9bf8f0e52e2958db33666813917c..10f878d3f50815d1f0297d15669048ab9cad73ee 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -594,6 +594,7 @@ clock@70110000 {
+ 		nvidia,droop-ctrl = <0x00000f00>;
+ 		nvidia,force-mode = <1>;
+ 		nvidia,sample-rate = <25000>;
++		nvidia,dfll-max-freq = <1479000000>;
  
- 	fcpu_data = of_device_get_match_data(&pdev->dev);
- 	if (!fcpu_data)
-@@ -589,7 +590,12 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 			return err;
- 	}
- 
--	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
-+	if (!of_property_read_u32(pdev->dev.of_node,
-+				 "nvidia,dfll-max-freq",
-+				 &max_freq))
-+		soc->max_freq = max_freq;
-+	else
-+		soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
- 
- 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
- 					   fcpu_data->cpu_cvb_tables_size,
+ 		nvidia,pwm-min-microvolts = <708000>;
+ 		nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
 
 -- 
 2.50.1
