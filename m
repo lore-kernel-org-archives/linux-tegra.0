@@ -1,33 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654951C5D4B;
-	Sat, 16 Aug 2025 08:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B162DEA7D;
+	Sat, 16 Aug 2025 14:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755332519; cv=none; b=ZF2orsE/nloiTGGGFWLujptuTEPSDOgN4cez242/IWaW2/2Gmgp/MDOOeeOLbTUeZTy9++0to1kWUKnwnSZBrJ/QLILedxZ8j+7zBzD/X4x8ZPLx8Bx7iq+34EgOHR5+OLB1zwM7iFxVxOHsVxcL0vtiKzsTmmiNClZEcbcahMw=
+	t=1755355025; cv=none; b=gH7w7OcwHjf7TIzNcI1vyxw2Bs0G0xQh2otqXYdHfYhVIEshr5tA5Y6zrq2zO32f3RrIJLETHPu5FTH0GbbQa8NJ8K1pV1w5XTo3MHDOflWu6LPBW1rNfTRWJuZu0Rad3zoamtcaQJF29pIdmIF9CXTamJ/C9Xwv6k/q2Z/hYAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755332519; c=relaxed/simple;
-	bh=Ecgw6+STTi9kx0zSogBa652g8EHVNw0w8FcFqDRNx78=;
+	s=arc-20240116; t=1755355025; c=relaxed/simple;
+	bh=RjN4QVjquicEAYrAUjr8pIPXz+RTQcjkbloqRD42w70=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7/4Lnv9U7OB7eGl672ybHiNmle1oRoYPaeyrx8Tzin8EcDgrxK4hNuFxYw4UIGgNovY8xknZ+/Jpbal1j5ukDUzfqa+9X1slnRJrQrkxAviuyuWehwlUzliabwGCfO7dEqSlG/sCT5t6lPh8Lo2qqxL/tIMDZOBvn2MT0FX2Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3FmVHNK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=I3BJOIukFVa0nAXq4SKU2jvvf2SHDfqqiF68ClbeiGeYvdto0sqOhzYhOmWdN47wtCOrBRjeJe2z/Pdx2iFtFzw/uhmEX83hugDzjj+0ak4lSE5rOc5nvRtE5tPwfbdOCABCufDwQCzXy0TkDjiMm9l87o+yzYLtIs9yAJmLr88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mD6Pjsqm; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3FmVHNK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3215BC4CEEF;
-	Sat, 16 Aug 2025 08:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755332518;
-	bh=Ecgw6+STTi9kx0zSogBa652g8EHVNw0w8FcFqDRNx78=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k3FmVHNKYCPySqeFxH/sHLMUuQeDb4w4V0zMV6P7iD/sgPpt8UokEB7tGSGwBnWTh
-	 slrwfbi3Yf6JNcPMCJbOyU4bfr+JmNJzrpoI0dl19tCShPWRrfYDGzmQg2iXoC0cl0
-	 guruGzpD0pkLCJo7gywLkHtTnWd8vbtfNS0mRWWDjyiuBYtP5UabfhUFFPR5VXwy2p
-	 xFLiJgm5kYo7EVWBKRLmMXx91VkJwuprFIa4cshEKVLJvDrOq7z7k/+dVur5CpTya8
-	 LenM1t5TVwQJmA07O6xLw3W5+d/qp8MYRJiIQEWS9v/onD/YsVtJXA5sC9t0z0ZuFm
-	 4QC2WYXIuxJKA==
-Message-ID: <cc3e798e-bb66-4e91-8fda-d1c8fcecf301@kernel.org>
-Date: Sat, 16 Aug 2025 10:21:53 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mD6Pjsqm"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f92a69d4so21207991fa.2;
+        Sat, 16 Aug 2025 07:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755355022; x=1755959822; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rcnY7bKyH0HRgtUBQ1xnHjEnIRmtANVbkGy9/T4atBM=;
+        b=mD6Pjsqme+qxEL2tVPk/cayr0e0nN33yDSEEHqfNHVmJB0PODEhEeMb2+l9Uz2Ysif
+         K4TFEyDYFe0p7VOc0pX/C9U9+xUcBVdTBR7LLLjl24x7IE5kTDs9LdJcDegvza9OBCdx
+         38lpT3hMtU+XrZsKbq8t8LA+wXNSI2JsXGwJdNAROjQjw6cT/T7As67CdOub7yK79gZ8
+         EjsQpPHw41vcQF/Tv7wqla7xGfEkxJxKoDIMhPCVmNGbB20pfr3lAIwobLsHXzRs9FTi
+         uDM4UolzJKYgt0lbf4ql7jtdM3z2NNuWnb7IkBuroi9b2GyeaUlPRCQotqic1PClsqLC
+         9ZQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755355022; x=1755959822;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcnY7bKyH0HRgtUBQ1xnHjEnIRmtANVbkGy9/T4atBM=;
+        b=IDPlRryzpNF/w/s+FYCQpx0enXloQ19Ftz9wY2VAvTuratFpBayfHPiw99K2/zw5gU
+         nHhDZdrITgbd/ErRp+5xqvPuxa4NzsfbkR2muwiuDAIgxP+6S3ixFMpSKZo3I2sGOg7d
+         DOivXrbW2oHXtWDgnfgNQB8Gd1e6hGAyZTMcrEq1S5dwf1BkvGoSwPi0/Qs1e79Mp1Co
+         p7ZXPNG/Kc0NX+1ZMEHmEWkQZfTHHfnCDS0bKQdHeiZomR+yT7pArMdCZ5xPHNA3uTl8
+         tVU4SJuax9FRZYqFOGA8cjYbS4k+TS59HqdXirHmcaNlUk+Yj8KL8VaIjcTRR4JpThoo
+         3C3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4kk8YhsoMolrhtExHVIkIEXtIfMhSwRhniUCWPFVJDByTUZoY1/RU5xwETQ1wcB/YNBNrvrZoD3qXib2P@vger.kernel.org, AJvYcCUGxT3JXdb2Kwv+xAAEC8NS6R1J1wJHr8aHFiohZz7vExC2yksyxRgwpqE5Jwe51rCwS8GufqLmI4Dv@vger.kernel.org, AJvYcCUIlY5z7jd7BUaUrLiw9fiB1v5oPKt0Ru/FPFVwReB7b9vta7j2ublwdWLC6WBNjQOIcZn8bee12PSk7MM=@vger.kernel.org, AJvYcCUm7z/G9bvoN0zcTc70SowfeARi+ppBBsegwLwevGMAAcNg1jHXIAzUTvq9lvnkpmt7dT/Du2oMiZfZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzz/KTuY0zcxenzDMs4L79wQ5huLUpPtjsI97zBvGe2tG/x9HP
+	c1DRogvZkqT9ZdPG10OUCetc0bzPv/eCnVBwR+vyQox+O6k6LuUpTa7T
+X-Gm-Gg: ASbGncsb+tfukcLTNyar4s5XEkU92xDYiUXKSC1ZcbOniCHuRkSO60Q4ksdG2Msb3a0
+	OFQaYIirQ22Am84tZVGFcNlxPAAXwetlbIAUCyGL3LbR+aC2DR1zoQgz1/1uuexHW2YGtyaXOyc
+	wFsbxpMGe3mgUIKn9kBNP9c6cHfa6KiOvjW/EdwVb81hCV8+8fMwciC31qwtC9879op36i9Fesu
+	A6twFbI/2PDPJsyPrWoS47CApD/IF+U3nIVcUqnuIjS08tgdNF6xTNK0qqmBIP3Hzu1HGgrcy5f
+	eBV/kgFnqwX+oFf0NPQTeNH3XuzexZjg+LcC07zNKv5uA2y5mNVGV7kG7RoAzrM/MVALKQxwb/P
+	8oFaKrtL8bT1Bz/e4eYK9jmEP0aEwab2vqTPAlLrr14UgcoKFipUKNEGqdQKAYw==
+X-Google-Smtp-Source: AGHT+IE4k/iMe+Rm9RA0iN191EI9xn/ofj5LgLs+Sdk7/lrkrwQ3CSU1gIuS9Ybyz5OPre4cVGIQ4Q==
+X-Received: by 2002:a2e:a588:0:b0:332:51ee:237d with SMTP id 38308e7fff4ca-33409841f80mr13479911fa.12.1755355021589;
+        Sat, 16 Aug 2025 07:37:01 -0700 (PDT)
+Received: from [192.168.2.19] (109-252-159-193.dynamic.spd-mgts.ru. [109.252.159.193])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-3340a604c1dsm10279661fa.43.2025.08.16.07.36.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Aug 2025 07:37:01 -0700 (PDT)
+Message-ID: <83755868-09b3-4bd1-8b40-0a4b9f497d2f@gmail.com>
+Date: Sat, 16 Aug 2025 17:36:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,99 +67,42 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to
- limit frequency
-To: webgeek1234@gmail.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>,
+Subject: Re: [PATCH v1 3/5] gpu/drm: host1x: mipi: add Tegra20/Tegra30 MIPI
+ calibration logic
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
  Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thierry Reding <treding@nvidia.com>
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
- <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ linux-clk@vger.kernel.org
+References: <20250717142139.57621-1-clamor95@gmail.com>
+ <20250717142139.57621-4-clamor95@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20250717142139.57621-4-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/08/2025 07:53, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
-> 
-> Some devices report a cpu speedo value that corresponds to a table that
-> scales beyond the chips capability. This allows devices to set a lower
-> limit.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..6cdbabc1f036a767bdc8e5df64eeff34171a3b85 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> @@ -70,6 +70,9 @@ Required properties for PWM mode:
->    - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
->    - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+17.07.2025 17:21, Svyatoslav Ryhel пишет:
+> @@ -525,6 +599,14 @@ static int tegra_mipi_probe(struct platform_device *pdev)
+>  		return PTR_ERR(mipi->clk);
+>  	}
 >  
-> +Optional properties for limiting frequency:
-> +- nvidia,dfll-max-freq: Maximum scaling frequency.
+> +	if (mipi->soc->dsi_v0) {
+> +		mipi->csi_clk = devm_clk_get_prepared(&pdev->dev, "csi");
+> +		if (IS_ERR(mipi->csi_clk)) {
 
+Doesn't look like the clock needs to be prepared. Normally, you would
+need to have clock prepared if clock is enabled/disabled from a context
+that can't sleep, like under spinlock or in IRQ handler. AFAICT, this
+not the case here.
 
-1. Frequency is in units.
-2. OPP defines it already, doesn't it?
-3. You need to convert file to DT schema first. No new properties are
-allowed in text.
-
-
-
-Best regards,
-Krzysztof
