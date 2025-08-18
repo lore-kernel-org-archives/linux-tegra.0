@@ -1,113 +1,120 @@
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A977425CC73;
-	Mon, 18 Aug 2025 15:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEE735A2B9;
+	Mon, 18 Aug 2025 17:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531426; cv=none; b=X4IvGB3zvUnZApIAYgsoBk5Vp4Oq5Ek8IUTzO3z07snqAcuD5EcojcxrUqAtvQL11jxsqr2pArrjs5vLq+G8nSaJK28tZtzLzt6+s1ne3noGXA09wUTjz8AhIPCA7THax5mFnBO5CYsSpEhzqXCkwxWiso1s6ULi2FOoQBqQEiU=
+	t=1755536452; cv=none; b=SlYhPc6SBfuPe+nGRomNrMzzi+wyQlXytfQqA0Ifat6NBeUw2HsLiUeIbKe+Upyr62A4kmiJ1bqHWIFpLrAxKm28r5OmplgeuNbaskHfGHzycUn5ngwlChbvnBTKIH7QUAMibVtPV1694+aoKCQVL+tdJl+9Q+eb+uoDXOyfl6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531426; c=relaxed/simple;
-	bh=k/H8oG8FJ/KNAXVFQEahMziIkd6GKMRM8pwD91rQQ9g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CF2UtvMXuYmGdDKPUPZHUkAlROafjMoQaDohCZJtWPbuBmZSbMAZU6Rwa75zbIKNWO1O5mHKXHXG1sXmX1A0fEd/yFFEeM62A9MNMC+0NEIdtPo+DHmK3/v2wE0J6tVjMk2DnFjamdd8r1VMAYdtpsYwn9ZxgCnDlHyAD1Y0AbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-50f85ec0885so2982920137.0;
-        Mon, 18 Aug 2025 08:37:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755531423; x=1756136223;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KPnXyjQyRiPNxWrfvyKTF8MriephV3eeN7jOjaXGjKk=;
-        b=qijQ+Pz5O5TWt8aICVsVtvdNF9SZexQRzNW9RSAXykJq/P+5LJ1RU7Nhq4CGNTU/WR
-         c5UZN+GX8Z8f3AdNbD4XNXottGZ1v3tdUFMigyQSLPpova7Se3aocQ3yzx/2VRTcygQB
-         YyH91pxZ6pZndSoae4ePPZGv1mAjJAVtCjei/ufrExMcRsQzzfwtmcrNu1/MZnOU8onF
-         VR36a+q5o9n4CXcoGUaeeeu4aNhptLRUBtxxg1lscM1c5nAAZGAt+IVtOQC7qHN2pTsz
-         XrmXKaJl1SwEGIgY9peRtry1ssF8nrtQtz/1plkmboMshrJ1P74jxuXKHNrLs7DExmDC
-         tRjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVafoTRl0YwmpD/8+0L1C+CiWjUnHquRKJ5pCFsN9mTRZOYytHUwzJPJ0ZZu4rT18lPy3HFmWffn/qMc60=@vger.kernel.org, AJvYcCWtLMsxaAoW2BxNn7vTUQAZ8EPUYWNZvbFiw3Fyi5qdJNER5lYXDrdsHStN/t6WuUdLMilpdoy5hkRTPRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMqPShmCjgmv9+XJoh8COQfY6qbkfS799ibHLKOlT7L1e5Fpym
-	GbWs8uPZy00A1vtGQjQBdatxItgRg8kdclZEZ0gVJBxFpHbVFwUdUh2pFsdFJrEV
-X-Gm-Gg: ASbGnctaaCoyEFMMoZZwkOSS44Z2MMtMPdBcVtx1DXY60tSNXPPpUTpIeVTTc49dBFW
-	keYEGtd8gzUhZ3dDo8/grwGy3mCA+xyhSAfRvh0gwipmpsHRltL583r691WEXyAfI+NMB6DhzV0
-	ZLl3XySYuoKDIjNgS4jmWxPkhhO3Be1L2hVhxhOEPFnwmpPsIWnBn4CuvkX5mabw/TYQBq2GpoB
-	l5YtUytc8GG0m5WxBGwkLRvrbNM4Uv+u2BQDM9ap6zfVeZhm/zeFVfn9izyJTBoXKRFoMkQFyco
-	mygmHT6oHrydmFbGiN3T2uIoLX2jPwwVAqi4o3z0koI6aN0k263G1OEIN76w1u7wjf0bqGY4j3g
-	5k8mQVrzDfC3B2mHvZU98d1x2V85pRZSkMSOBGka24IIyGL7ZDAydBnOupH8p
-X-Google-Smtp-Source: AGHT+IE1p7HQE8jcxTfzSEQChtRQi3fjUTieEsJ3XZr+Wd3o420HqePGkwqGoVlsC5jP6lBF/6L2sA==
-X-Received: by 2002:a05:6102:dc8:b0:4e6:f7e9:c4a5 with SMTP id ada2fe7eead31-5126d30d22emr4633194137.22.1755531423212;
-        Mon, 18 Aug 2025 08:37:03 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127f2269e4sm2067681137.10.2025.08.18.08.37.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 08:37:02 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-50f85ec0885so2982906137.0;
-        Mon, 18 Aug 2025 08:37:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEwDJEqfAfy6D15Du+khIY9xDuVitnmwYop31nzThrYoxuGXsmmF7RxpqivkAx+ZkGx86gkrBJOhhk2cA=@vger.kernel.org, AJvYcCWbXuXl9sMOqO0IMCSqLT48XkKO5gA/FN96DlJhCHPlzUrMiPt5ArbNbcU3hUd5Da3IOyfL/Pke4AIGl8A=@vger.kernel.org
-X-Received: by 2002:a05:6102:4a84:b0:4ec:b2cc:de60 with SMTP id
- ada2fe7eead31-5126af22cf7mr5384089137.11.1755531422341; Mon, 18 Aug 2025
- 08:37:02 -0700 (PDT)
+	s=arc-20240116; t=1755536452; c=relaxed/simple;
+	bh=FnEIBDDE8n0PsWTHyu7mM01/bgnMCKkNcQpwfrnPb1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjEZq978nv9EAVznTG86CPjalERDypLkQ+phVwHgjgwEqjBMjHLzfUTvJvU0NA/gwBAe0Jei7pMKLwNboGlK4W5hfdfOI6zkXuJjQmCkKG+7YdaHnR2ZXwVEzR2Aw6v0UwghW0G4k2LFi6Apszi6YZqrfsvdraBoU0CtfyMuZ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWLuNN6m; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWLuNN6m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A46EC4CEEB;
+	Mon, 18 Aug 2025 17:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755536451;
+	bh=FnEIBDDE8n0PsWTHyu7mM01/bgnMCKkNcQpwfrnPb1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EWLuNN6mPszrPCinR0csQZqdoCEnEH1zON0lv62oTm33yiHDoLTpVZu/iOj7bN3Ql
+	 JqFRdjcti4mi4KvFcNoL2LLKoNm+fvfdBMHPtAkeUisc9c1cKpCKqFgaIT0WCZhiL5
+	 rbh9JpOu+stEXvz6jZacF4+4dwi2iR3JGW6zonuMqZfxvwi2XQW7BuOG+mNBUinf9L
+	 mqPmzLTQ3/1dbZiIyKacSzrBFOSU4lp2+0nXKsyZYql+DT8hbIC9XPR9dFBK/R9yDT
+	 6fZhtDSBx8iDO0c5BNyAS5F3HyHFOm9iZqbNla7UlR/KvufjOJXcw9JwZ91u71se0p
+	 cUXShKn7kXPRw==
+Date: Mon, 18 Aug 2025 18:00:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jon Hunter <jonathanh@nvidia.com>, Sheetal <sheetal@nvidia.com>,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: power: Add power domain IDs for Tegra264
+Message-ID: <20250818-citizen-doornail-324327bc3942@spud>
+References: <20250818135241.3407180-1-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
-In-Reply-To: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 17:36:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXQfUCYdt-PJX8rYP3bf8Z_ea3Obgunm-_7KmJxMrU_fQ@mail.gmail.com>
-X-Gm-Features: Ac12FXw4gbFdT9fnsf3GhA6Uid_mXhbaQ1tCt30kMl8rgK4UTMaDn8DaYsPtEDE
-Message-ID: <CAMuHMdXQfUCYdt-PJX8rYP3bf8Z_ea3Obgunm-_7KmJxMrU_fQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: nvec: Silence unused argument warning in
- NVEC_PHD macro
-To: Mohammed Guermoud <mohammed.guermoud@gmail.com>
-Cc: marvin24@gmx.de, gregkh@linuxfoundation.org, ac100@lists.launchpad.net, 
-	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DLKZrvpokEs9J5w9"
+Content-Disposition: inline
+In-Reply-To: <20250818135241.3407180-1-thierry.reding@gmail.com>
 
-Hi Mohammed,
 
-On Mon, 18 Aug 2025 at 17:10, Mohammed Guermoud
-<mohammed.guermoud@gmail.com> wrote:
-> The NVEC_PHD macro was defined with three arguments (str, buf, len)
-> that were not used in its empty body, causing a compiler warning.
->
-> This patch silences the warning by explicitly casting the unused
-> arguments to (void), making the intent clear without changing
-> functionality.
->
-> Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+--DLKZrvpokEs9J5w9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+On Mon, Aug 18, 2025 at 03:52:41PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Add the set of power domain IDs available on the Tegra264 SoC so that
+> they can be used in device tree files.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../power/nvidia,tegra264-powergate.h         | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 include/dt-bindings/power/nvidia,tegra264-powergate.h
+>=20
+> diff --git a/include/dt-bindings/power/nvidia,tegra264-powergate.h b/incl=
+ude/dt-bindings/power/nvidia,tegra264-powergate.h
+> new file mode 100644
+> index 000000000000..344c669e4a52
+> --- /dev/null
+> +++ b/include/dt-bindings/power/nvidia,tegra264-powergate.h
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)  */
+> +/* Copyright (c) 2022-2024, NVIDIA CORPORATION.  All rights reserved. */
+> +
+> +#ifndef DT_BINDINGS_POWER_NVIDIA_TEGRA264_H
+> +#define DT_BINDINGS_POWER_NVIDIA_TEGRA264_H
+> +
+> +#define TEGRA264_POWER_DOMAIN_DISP	1
+> +#define TEGRA264_POWER_DOMAIN_AUD	2
+> +/* reserved 3:9 */
+> +#define TEGRA264_POWER_DOMAIN_XUSB_SS	10
+> +#define TEGRA264_POWER_DOMAIN_XUSB_DEV	11
+> +#define TEGRA264_POWER_DOMAIN_XUSB_HOST	12
+> +#define TEGRA264_POWER_DOMAIN_MGBE0	13
+> +#define TEGRA264_POWER_DOMAIN_MGBE1	14
+> +#define TEGRA264_POWER_DOMAIN_MGBE2	15
+> +#define TEGRA264_POWER_DOMAIN_MGBE3	16
+> +#define TEGRA264_POWER_DOMAIN_VI	17
+> +#define TEGRA264_POWER_DOMAIN_VIC	18
+> +#define TEGRA264_POWER_DOMAIN_ISP0	19
+> +#define TEGRA264_POWER_DOMAIN_ISP1	20
+> +#define TEGRA264_POWER_DOMAIN_PVA0	21
+> +#define TEGRA264_POWER_DOMAIN_GPU	22
+> +
 
-> --- a/drivers/staging/nvec/nvec_ps2.c
-> +++ b/drivers/staging/nvec/nvec_ps2.c
-> @@ -28,7 +28,7 @@
->         print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
->                         16, 1, buf, len, false)
->  #else
-> -#define NVEC_PHD(str, buf, len) do { } while (0)
-> +#define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
->  #endif
->
->  enum ps2_subcmds {
+> +#define TEGRA264_POWER_DOMAIN_MAX	22
 
-The proper solution would be to remove the custom NVEC_PHD() macro (and
-NVEC_PS2_DEBUG), and just call print_hex_dump_debug() directly instead.
+This shouldn't be here, if you need it put it in the driver.
 
-Gr{oetje,eeting}s,
+> +
+> +#endif /* DT_BINDINGS_POWER_NVIDIA_TEGRA264_H */
+> --=20
+> 2.50.0
+>=20
 
-                        Geert
+--DLKZrvpokEs9J5w9
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKNcPwAKCRB4tDGHoIJi
+0lpmAQC5KSH2O8yF/DfXzw4MFm9Zt9tTCv1qQb0isRxXv1CfugEA98+zHqY8Uvk6
+Q0lKLlNKSjtOReo4gqG3yUde16xWgAc=
+=kJ+7
+-----END PGP SIGNATURE-----
+
+--DLKZrvpokEs9J5w9--
