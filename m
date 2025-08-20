@@ -1,96 +1,142 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C5521B9FD
-	for <linux-tegra@vger.kernel.org>; Wed, 20 Aug 2025 06:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6495A242D72;
+	Wed, 20 Aug 2025 11:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755671482; cv=none; b=sjausCVLvyI3nMXbXn9lQ0tdgj9nU2aMvnvoCKDvNnwvizmto0DUQG4xLX4ZHF1niexKdzUUNONhAUgBHNBvbaqOQogevGh9x/30IgN4vdmBFiMSk8cvgUg4HuROtQtWPVe+C+N2XAzStRjYZt2KqOHvoK3GsRyyph/4HxN1324=
+	t=1755690181; cv=none; b=JhD7dqUuZw2uxo3O+8TrVGdsuOsfpe0G6BB6KBpX5ORoo9SHWLq+74OIOzocMrINlQnN7ZrVMXV8bJbHZVO4swnlHmuigVysVOfjigyfZl0bpZjFxEmOIh4JTcpacTilyLjAftIOuw9QqCviXhybKOAj7Bk+ZGVUotQOhNCuZpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755671482; c=relaxed/simple;
-	bh=/zY5PMOi310ktVYGpnYfeiQf9K4srfJWKah+xam5yrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdwJ9NNnxBfFxxMHzc30pfRAbINVBxHZIzwCLsj3w0dNpJsizLm8LGXv1juUU4d1UwAQJW6hDDX9sIyq5qD6IHZf/q4PjtkuSNkzx9W0r/S3jhFzhdfNLjM8q9lG4DCy9yo3IGm9seUnLKG2JcjbYqWMDlrpLSvf0UYZ4K5GMU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A8brhnrO; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755690181; c=relaxed/simple;
+	bh=0nOC8WD4XjC1p1Onq7FgBg1DbdXb/Ajql1bTdvsPtn0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f2pbhlbFOk3KgX5FJqp/jnSKr/5VakxRPrKHQKoDMtu0PA31pzCbfqVmH885b6jjPBFOvTbpbj+Ecl9bLYSEh4dcVE3qMYBVpYXb1HLEN+s4ZcIdqfJqqbrxr9mj8SPkvOnyvIs8jqx1DnFJlbCBRMCcr7GvFoobYImGv5wJx2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjfNk6M5; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A8brhnrO"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0c8867so50217295e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Aug 2025 23:31:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjfNk6M5"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb7acfde3so916004566b.3;
+        Wed, 20 Aug 2025 04:42:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755671479; x=1756276279; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zm2V1odyqTiqeUQ144+lcYOoX8xxycxwVvudsLtseZg=;
-        b=A8brhnrOQxnEZFyuTyfbF7e48dRJyo6tdkw8dfDNYcC9AQT3dnQLwpAj+wP888IXW0
-         7f004OI1t4NHmPO4jtu3CmWTA+vKsawnXSk5fpMqjk2nWT3Pz8GB8mLPknVh75h2Rx69
-         jSI9TJSJntxHayXZ03tlHDCAzgEDrIW/HJLnmWLGsvNDsvYkr3LAUYPa+ipoJzilJpVT
-         940/copLF9WrQKGIhxDirVBOOj2GMps58SmaIQcQKE6aA0NkGlpE/fOtMF2h1GhPvXnG
-         cgxbhhYNjvUIhSv28p1vnC93nciRU6dOcYXL9rOdgbfVV8Hkl4IBCEpIPZQW9lbyPz45
-         iU6g==
+        d=gmail.com; s=20230601; t=1755690177; x=1756294977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KULDlNgkmvRvA7vpAhRs9doDkFcWkJMR6necqXvdLkM=;
+        b=QjfNk6M5FL9VkRW1rmfP7JwnQeSRdGNjszcBKjfoVqqd+gEH3cuhE02pIrTTlTJlxZ
+         29kuo8RsqFt53TuL6N99aaF28zRoOF4xVu6fz9BZozCacl8I/tzCDNnn47ODnDPi/fmu
+         6XzhpUOkyLrLQpgM2xJb4IA7cr546/HrSVpG1nVThFlhMOHo+3Xhm51y5cTYYoJE47H6
+         50RSaoogB+nBZ+yve+e7uUw3XWqlSnkQ/HLqF7q7Oi6OLsoWHY0hfC+bFKxbCOhuu+Et
+         bNBXm+n5VrgMnLeNLgEmsEMpYT0j5xD7VGP/SBsH26fWC3D0EzIekfIyI/mVWMoFucCN
+         edqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755671479; x=1756276279;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zm2V1odyqTiqeUQ144+lcYOoX8xxycxwVvudsLtseZg=;
-        b=U1TD6hfF2LOVSX9O94DDWvbNLtaDrUISFgIQr2ndqx4jMJw70JYxY6kuL11n/DF6eN
-         r4F6yibcvDIfqTneS/k2j6yi7mgKQukAJexXiS927YBtBzY/sj8afaZPOZ5rNa1W0GfG
-         aNb75ViVA438vpSZj/KKuR4NwTEs/N2o1ngvAEZ1/Od+VB+79ognAV7YpPGC8Amrk/SZ
-         vpCTqnzv0GFqaR8nJ5M7Y5dbENMbHBUeC0yK0Z/ZiF/iNF2hXpeRZeu6mY9jmZQGvFGA
-         YpibCaxb554mKJzaAHdiUmPfPE+iiXVKXUP1GbvZeASNQ2Hu+PMwt4COos/ZwSyDpyze
-         VL7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAeHizs7SjyWfo0Evj9jpXTH+SyRVHWETkjnJRJBmJ6i1c8vNa/U/cwpZ56YD1EZmxHeI1PUL+6RhfWA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFjMp8yvwcdvj9VhJAT1XAleMInvN3LubE8haX4XDVdehUbFhz
-	W/Tchh8Y0TStp6u/6qmasR5y9msYCdiHqoPd3R1dEP67HUrvpa8tVauO/aLWSOYIbV8=
-X-Gm-Gg: ASbGncumhBS9fuDkdpr0lZG6/E9kLYTNIwrs9lKsC2OVsp3DqxObAOoOY5+tlHMiel8
-	568SpxOexQwTkc8xgYE/PJgGwt3n5NxXB/9Z/+uWg/cS8Perfo8iFvV3aoQHCDC0ihRCrjzOPa1
-	ysDhq8hVkAl0MqjxpoNbF6nHzG3PUN/WfK/Sm6bjLSkV6XOCD1q+Oux8PRzsCaBIbtrOO1j1B4Y
-	u0xbm2DRL1A1fEROV4NkkBimp2SzLrglho+CpGMjzGD1TgF7QnAFimqoHXkZZZN/sbmQB8wb/wd
-	fZ+KqZl02kT9p2M4W7qCfBzopWC6a8UjUFuIqvfO4JmmJ96w08rtPkRYAYWkdz4Ar0Z97rAh7bU
-	sVXK8MAyTPv1r51FYmk3fMUTRSLQegXwdpcusAawUC1EiCcumuWXbVQ==
-X-Google-Smtp-Source: AGHT+IHD67e0X5QiTWO18n/Hjm63pK2HXsKittHH1LjgztM5w2vz+Tz+Iiy0mNFamv15+XzTSBAF8A==
-X-Received: by 2002:a05:600c:4fcd:b0:458:add2:d4b4 with SMTP id 5b1f17b1804b1-45b479a3e26mr11414505e9.12.1755671479001;
-        Tue, 19 Aug 2025 23:31:19 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b47cac162sm17779485e9.20.2025.08.19.23.31.17
+        d=1e100.net; s=20230601; t=1755690177; x=1756294977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KULDlNgkmvRvA7vpAhRs9doDkFcWkJMR6necqXvdLkM=;
+        b=F3kur6ctOBbcfP8HK1B8qxay53/HangpRbDpTv1367Wnu3eDmnOj+ZQUIm1rSQyyr6
+         x579QYr2jqk2dq54LihFz82NiJyjIyglWshUGMiDEbSGu0SGtmC4VvZYkvYd7Ey5vRZL
+         JzgwRAQHmcPkRT4Hwaja6St68eq6AAvoc0eiBXvvwyHgtBYTIuLF/0ZiHBM5g1EDTuxF
+         0n+OGJDj+LdOh2w78/bEoV2s6b3EruZJscjz+g5Ris1ZRW1OsruvtZ/r0DPYUxj3RyAY
+         rOd1pzH6oxjmOkVkQvPHo7IYbUXfBp7gP7H2qhXhJkP0wCVJ2ejJnROo+60RHPXIqfMS
+         9dcA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2yVa55Al4yjs06bSUDpfsynOosLs2ykBqfAxUR6Y6Ad5ngsiv88UE8OG21RW10McPsGiZf+LHcALt@vger.kernel.org, AJvYcCWLDHVzrNs9lu7LFwohmd8M0+kxJS7XTjj0VBUKbJAOZzhi98qgQUVrbeeQEHFwn+4MFiopJuuowhi1nZFz@vger.kernel.org, AJvYcCWeHDrkoKfun7viGVtR4p/MISC++J6KvJWhBK/jK1MBIHEqf1CKBLug0qfnstEtrMKqowgLzXrezVDGH0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyj5vPPg+gmHUiP9D6xHScTvtgHywJIS3PZwkUUj3B2yVNeXwt
+	jvUKnQ35/8omXzBwY4FycXCXwj1QjeBgtKlXK0U8feBvrraUNGbSnq43
+X-Gm-Gg: ASbGncuD7uH17jMTK+YGjQSb9V6t3tgayzjOScaVQtxhokzNWUzLt6hUwTwG7DAPzYi
+	a969kMJ3o5q4EerCe0wFd9PLtEuX2OxshzqD0LjLDrCTjguHCR6ofz+2t93+QT/rCH7lueETfID
+	4jxIwvPPJsCTxPRiR8ynR9gzbWvFi8ScdYF/HQLEFEnyNIF9RFAk5AUrl20bWgn5HwfoFT9CebN
+	dhrBDVuuXAiTG19tMI3z58BlQqahl44wZYRJ/MiWVjn10HDnnxmRaZOiCLExmap/BkBjarfS6oe
+	x+Bw9cCdY6WpFgw0yyTFkDJq7a2dUbwu6hW/IiQImbwh4VOJ6SWxCTSaiRL/BxIAf6WLoGYek85
+	znLXpDxkJ2Za9FA==
+X-Google-Smtp-Source: AGHT+IG/hefWtYD1eWDIgqXND7NoDeahDYRYO+aregWjbaemborHNsSsAqKvTHzqRzE275+MxG7UTQ==
+X-Received: by 2002:a17:907:7e81:b0:afd:c31c:2488 with SMTP id a640c23a62f3a-afdf01ba466mr190898066b.39.1755690176321;
+        Wed, 20 Aug 2025 04:42:56 -0700 (PDT)
+Received: from xeon.. ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4ca695sm161769566b.90.2025.08.20.04.42.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 23:31:18 -0700 (PDT)
-Date: Wed, 20 Aug 2025 09:31:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mohammed Guermoud <mohammed.guermoud@gmail.com>
-Cc: marvin24@gmx.de, gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+        Wed, 20 Aug 2025 04:42:55 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] staging: nvec: Remove unused NVEC_PHD macro
-Message-ID: <aKVrsrvMrTEgAY4R@stanley.mountain>
-References: <20250819194430.4525-1-mohammed.guermoud@gmail.com>
+Subject: [PATCH v3 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+Date: Wed, 20 Aug 2025 14:42:25 +0300
+Message-ID: <20250820114231.150441-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819194430.4525-1-mohammed.guermoud@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 08:44:30PM +0100, Mohammed Guermoud wrote:
-> The NVEC_PHD macro is a debugging helper that is only enabled when
-> NVEC_PS2_DEBUG is defined. As this flag is never defined in the kernel,
-> the macro and all of its call sites are dead code.
-> 
-> As suggested by Greg Kroah-Hartman, removing the code is the cleanest
-> solution.
-> 
-> Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
-> ---
+SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
+SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+with Tegra114 and needs only a few slight adjustmets of fuse calibration
+process.
 
-Thanks!
+---
+Changes in v2:
+- no changes, resend.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Changes in v3:
+- expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
+  configuration further" commit
+- changes title of "thermal: tegra: soctherm-fuse: parametrize
+  configuration further" to "thermal: tegra: soctherm-fuse: prepare
+  calibration for Tegra114 support"
+- Tegra11x > Tegra114 and Tegra12x > Tegra124
+- ft and cp shift bits dropped
+- clarified tegra114 precision
+- lower_precision > use_lower_precision
+- nominal calibration ft and cp hardcoded into SoC specific structures
+- added tegra114-soctherm header into dt-bindings
+---
 
-regards,
-dan carpenter
+Svyatoslav Ryhel (6):
+  soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+  dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+    System
+  thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
+    support
+  dt-bindings: thermal: tegra: add Tegra114 soctherm header
+  thermal: tegra: add Tegra114 specific SOCTHERM driver
+  ARM: tegra: Add SOCTHERM support on Tegra114
+
+ .../thermal/nvidia,tegra124-soctherm.yaml     |   2 +
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 197 ++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra30.c         | 122 ++++++++++
+ drivers/thermal/tegra/Makefile                |   1 +
+ drivers/thermal/tegra/soctherm-fuse.c         |  31 ++-
+ drivers/thermal/tegra/soctherm.c              |   6 +
+ drivers/thermal/tegra/soctherm.h              |  12 +-
+ drivers/thermal/tegra/tegra114-soctherm.c     | 211 ++++++++++++++++++
+ drivers/thermal/tegra/tegra124-soctherm.c     |   6 +
+ drivers/thermal/tegra/tegra132-soctherm.c     |   6 +
+ drivers/thermal/tegra/tegra210-soctherm.c     |   6 +
+ .../dt-bindings/thermal/tegra114-soctherm.h   |  20 ++
+ 12 files changed, 610 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
+ create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
+
+-- 
+2.48.1
 
