@@ -1,351 +1,175 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013033.outbound.protection.outlook.com [40.107.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A74E2F5307;
-	Wed, 20 Aug 2025 11:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690189; cv=none; b=QkA9wLT2FI95pd9RsBdGSaX75DFLs3aU5vrc8aotiojtEvQogUWV4F+pA3cS8NTDRWRxKatdiSuHuLzM1L2RcJPQIYXuWZLY1T2k/K/8oEcKYLKhdvsByWNMr3dV0xQb3AornH3HkEOGkyynTTj6+W5Gm/zBlaZZOamZ70XYhnE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690189; c=relaxed/simple;
-	bh=3SRUxUwtu2/OABIaUtBynxiU7DmXOz1RmnCOODQVZfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p/8vn/bZUzcVIq0R25pujk9Tnf7HZzaAJNnaDAEly+1S+uu8IbKhq9W44o0Nv3C/HVWuEtGJmrc1YilzYHpaCQJ0YTRAMytE9rqf8WDZaBBp6f3Dyi9pUG9M6iXVdUnAiN70aYbb2fz5NAJi+Stey5n5QfWjcHXV3B2QgEshC30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8JNzrVj; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3352EBDE0;
+	Wed, 20 Aug 2025 12:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755693489; cv=fail; b=A9U/24P91ftZQAgWMhuI9EmBJPgU/2lHbxjqCNrQuf/eLldVeM7SWL/PK/j/FKGxVKGpe2ARz6srWwmyQTPUl/bZM7u8/A8iM0MSL0gt7QFQxDTz4BnU2viph6v2Y4tiomSRrrHEC1RcNImXG9IRnB5o/HAVl5hT2LstCZmmlE4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755693489; c=relaxed/simple;
+	bh=mo8PvlVNZ3Xi9Ug+ldNygfQMUT3Ck6Wqx2TT2t0QlyM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=DpGZscI4h/5M1jweQte49ePtnVAsu678vNRAikwNgjbaz8ONYLD7T9vxKXhG3TakrkldL+haTqc77MuvjL+Z5HqpOW8hw8+3v/YnQpmKRPLqFsPT5jrle1YajlOIRJpIG6gZWdzFG3TGGG8UCN5E9azoUd0kLSM/WdjrMKalmmI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gBxZT6Qe; arc=fail smtp.client-ip=40.107.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8JNzrVj"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b690517so9592627a12.1;
-        Wed, 20 Aug 2025 04:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755690185; x=1756294985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QWbApeSuKNHR33R0EFawYahQbF8nPR5Jr4AKqmYg5qo=;
-        b=g8JNzrVj/NrHyf9VpQg6Ix5zddE+Za7T9Q5nXUyWSoR1uHF6JSalre1OgxQqPxKuKE
-         iFQUw6BKnz5nEZWwhwyxy9A1qjHMAntAd5OKkkqCuWtY9KUR/+nqnrqFAphkMaS5iAty
-         nxoGmq98AD81x5oWjpbsYQTIuyU73pOY/2PZfBGQjuUEQPMbOI5oQr1VWbX36rY4kUqJ
-         IdJuiD3sRhOMRm6k/ArSuTwglyisutiTeLfb5fxdpmRMtWz8Z0i102S/m6Voei7zDOZ1
-         bbubnfwGxpSe8KIDLfMXFeQ+Abj/A9s2ZZzJAqwI8h4a8PKSMl0V5nzhxFTnrv4iHKqc
-         D+FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690185; x=1756294985;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QWbApeSuKNHR33R0EFawYahQbF8nPR5Jr4AKqmYg5qo=;
-        b=ktlkvz97z0ZTubvgq06pOOOgQkKK2klKAhFZRTlwW95tx6gNgUkGdF4rzEdDEAf7Du
-         4ldJ5t0k27SXMbt+10YErBncYzRqevFiTis26rnGQMa3H3N1DL5kSnNEUTu8PkHEC+5J
-         L4QV8FPDOAAu5cViURb19iTSEyY3S+hoppoDtv01yLLpjMJevNDfO4u+I/ihMkMkqaQA
-         9egoEH4CZUWRBd/dcuWOjGEl49HfqxFzJEsJMNdLTJzYQ50RV28H/KjoVfnAT4LWwfcz
-         4QAMr7fzfwlvULNpk8Dvu7E3qYqf7Vf7+BrW9jfDo1cgvkQKYgQS3wXn8KVdqV34urgU
-         k9ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUL8tqT4Ic2UQvzXjt7NBtfqiARdjJD9dUUc+kXrPrtprolr/LZWGH5J9VLH5nddxS+Tq/JGsdkFwicf3Y=@vger.kernel.org, AJvYcCUjwq9BCMC2v0+OtLKz4hU03Ja9XAIcXRZGrR2My/u2eMUdYwopaIEywktKWmtsCizYFh/X4Vstrsf2@vger.kernel.org, AJvYcCXMCdMj4C54IcT2m8MKMOBk3rIvitnxxRiFA6BJkY1BRXyPEB16KYcfimdzLYnE6E/Uy9HBzWN9bOWnAVWo@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqLuqMSuH56mixcj49deitRuMyQuZc5aC4aZ4B8d3pBC8qc0Za
-	7KXCkldTIl4+bZGFRU1dlrQ0TJ8x0WXZyRgAKntOpgJIqYmOAmf8Bwk0
-X-Gm-Gg: ASbGncsDQouFH7l0Rmkia/0aG0VElN6U0XRwbsatJE3NEJ5o848++DI0SO+AGZuC86s
-	hizEETo6wfsZ8NDf+qCaajc3qM7nQxvuez0ojfDf7gHDX1AcdePUeTeSeRuHFPxTJa/IwYOAgG5
-	qT97ZtpKaqIuGxsIW7zvWARMBD/XqWu5Zpx6Vi4OaA/7ksNQ16Tc1IHTytcGtR/BYciGhBXHXAE
-	fUSFmnWW10pmiiXfUWPKTVyq49gSsRS9Z2KyKFKWlre1BO9isW3dzKd4LdkAYeXeqnNAN1+ME6F
-	TPWDRXbCFD2Xdh2QirkN7Y3Md2njJudNM1jTB66RyFxfgjog0/nioj+AJ9n5ohi7ZIoE6aHhtO6
-	BGvVAiGRophyZEw==
-X-Google-Smtp-Source: AGHT+IEAWJ6W3ynq0KlM+esaiuS1ibm+fZyVXcSbmZgIXfZtk1ihUS+V94rNIK9Rcu6kL3WIibXAfw==
-X-Received: by 2002:a17:907:9626:b0:afc:a330:e423 with SMTP id a640c23a62f3a-afdf01a7b32mr181014066b.42.1755690184151;
-        Wed, 20 Aug 2025 04:43:04 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4ca695sm161769566b.90.2025.08.20.04.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 04:43:03 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gBxZT6Qe"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rAjBHnz//UFI1BHgs3QQ6ICzGkFEK7Z6dRWZxkESWmDCsSYrkgQLNJnHbs/ZzASGPDLhRNJ0vm4qGLh5E8LR2OLsxwfwBFpWMDkVVtxM7nRo0j9gfcQylPGTR6SpwDjr3DUbbs8HX8I3GJcpel1+t6LI7yfP7snyYHGKlS99gBDzI6+/zsFPmiMxa6QZLgJqN8u9gRscA9PEgO6FePDYPG2KqssjW5qHlLaAlNYNRQf8oafKT2VhRot0tKNqT/kFBOMqQzyPWTHbYnGLzgQBFXPI46XfJQRXGrlqj5xfJURFNBsMHU5vFYQXeFT6SKS5zVBpkgrISN62dqP5fLjKsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5UbJbCMRRdrVMhWppMFhzNWTEDVGchRpt/6bb5Xk7XU=;
+ b=nZVDIeXtTbuo0tiQ03Ma3LSvWyJYU6ctBPlSfM2+IGKG7lqCPs2RiXz/wI9N1qiAk1hEgPYxSr3j5WQ671Zkx0uPd5Hkc1BXau7BNeQcW6FG4z+AyyEx+frD89hrt3Gii6IRqD0ZbyjlE4B+R9ALwJ9YuCcpror3/mXpVRiGhssprpJZeHDqgRA/lhqhwv1J3k/6g10IK8yAga4ckuG2ltcZbt9s6hpJUcHawpU9k3+CCivL/Ja4V39qDI1ngj1I+CkiRo+8gSH0QXsvejn2EgOK3XVZ2uHGr16GdUUa+2iZASrZiprHSy5wAlgdlBQW+U+pw9iADnf4jeOOHCdQzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5UbJbCMRRdrVMhWppMFhzNWTEDVGchRpt/6bb5Xk7XU=;
+ b=gBxZT6QeluUl7MJtvXTT0DHQJYy41AsG6BLqZeRZHHJxQUlNfqWm1IisV6Tpk9PphExbHRHbRMqLJGRNhzTFbgZ5+MKYNZ4h6BBW7TEhEUVuCwgiyRzcy+ICFwEzXQKpJVv6agE9eJmElycnNdpr1ucTJEXWHuzdn1OOObGPt4MiCdIY8YGLTCI1v/z2E9D2ly4eyoIC16QDDcZzVTGp2RN4xX+HE+U6yQP/71B3qa0zJxuUGq+6GDQa6UpWy2HdpPFpfUxnu+/XByHCakz5CHB7rQne2kZJ8Q3t6t384Nw0SIf7KG+aICdMXMSB5W3QBT27EFoHcLuJ0S2Ca8TU4A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by KL1PR06MB6448.apcprd06.prod.outlook.com (2603:1096:820:f2::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
+ 2025 12:38:05 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
+ 12:38:03 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Akhil R <akhilrajeev@nvidia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] ARM: tegra: Add SOCTHERM support on Tegra114
-Date: Wed, 20 Aug 2025 14:42:31 +0300
-Message-ID: <20250820114231.150441-7-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250820114231.150441-1-clamor95@gmail.com>
-References: <20250820114231.150441-1-clamor95@gmail.com>
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] crypto: tegra - Remove the use of dev_err_probe()
+Date: Wed, 20 Aug 2025 20:37:52 +0800
+Message-Id: <20250820123752.473172-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGBP274CA0015.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::27)
+ To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR06MB6448:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68607ab4-e245-488e-f449-08dddfe66787
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WpNDcMdobQLjGNDQb6rnLsY31SFE4EgHuHdCgDiJH3UyEXpfxrOgp7PNx+W7?=
+ =?us-ascii?Q?V8S9hgXmKT0w5inIstaeZ2sVPH3OxLKK6DBz8HmEZi07YSAgirn5g/IYeJgC?=
+ =?us-ascii?Q?ouBZn3fzgGi6KcEspCIAhvtfRwwtvmwSzS1f8Ep2KLOjm6z1v+czSvYEe2u+?=
+ =?us-ascii?Q?nSP/RK0V7K8yvWhq/xQS/hVjp/gQMKsKGYsU/roelcFD/WuP8BOvjIf+P2hV?=
+ =?us-ascii?Q?7P8T8pwKGwxvVEfun3kobO24j8LLVvovL4COaqysahMqoIx0+rFTBNHod1Vj?=
+ =?us-ascii?Q?5xBBC4JHusa2wr2dhXa0Pts+lYRSHyKe58DZvNhaFjr/8+LutFdBxC+of24E?=
+ =?us-ascii?Q?5th1vDoSWKfjRG8ExcIoWloH5SEKgKchgixitm+qoErNwiJc2tVdDnqlOMTn?=
+ =?us-ascii?Q?Kxs9ZAMby3UKcFNCwCGeZSaxEScGIAERXQc6vKok2qXf49cCsF+wzJxjUAyC?=
+ =?us-ascii?Q?02klh4bUkgvVtx48NIXwrP23JM1QJi3EPWcQSCziNrA04Em4+VQUgVQpgyK4?=
+ =?us-ascii?Q?Z66ZpqU95EWKcoGe3SxbNOSvE3ftk5iCHxqvueWGjJ0tZ/5zWwnbEv/17n2q?=
+ =?us-ascii?Q?v3TJ4B710FKMXZa6tPP396X6Q45+DLkcOVYxx97/6bSPUtUvBS5+xhy2zaLd?=
+ =?us-ascii?Q?X4wqMcrXnQN6hBRala3IaZgO5v1V6RiWVICiq7JCSLtWjSnYhcAFXsjf9F3i?=
+ =?us-ascii?Q?6w81knux9/lkJ0Kq+3O0RGmHtBxU9nI6PzkF4/N1c6+iC75K/C++omsev+T2?=
+ =?us-ascii?Q?u25pMtXsy3PQx6DEgr5Id4hnup/J7CRYECIFyDV5Yl1J6miECwHjDTwoKhtU?=
+ =?us-ascii?Q?0c4QnzVbF9wUP+11UsiZzi5hNjAdho/0TEXBrgQMY9yj1KhxzI4t/RGj4szz?=
+ =?us-ascii?Q?zLZWkQSKDAy06gvZVdABcTt7Y2DFCViKpVeBr0qItrMiWE0hSrLq7pV5WZ8A?=
+ =?us-ascii?Q?2Lz+s+Deo+fR2igtfRFTmzxIcLmjeGVKBBfA6TvgxyW/69i9yXaKSWnhVk50?=
+ =?us-ascii?Q?vxak105qq3Ed9BpdzZIB2sTScNMF4OddN/BvwMwhMzzuTkMXFsd630HZ92We?=
+ =?us-ascii?Q?8gk5f6tP1l3rOCo2FH/vtLsZ0VycFWryzIdf1cI/Bkmpek+jXAkV/GuWQgW2?=
+ =?us-ascii?Q?UehTY2AMGuBcVT7GkF14+bXE8YE4VD++2hPQlmI1lze9I8fhGjt9jcXzdj0Z?=
+ =?us-ascii?Q?61cVY9SJpYw650UgQCakMAkBKIw3QbJuowXVtqE52uWuQXdKTAhEi2RKwU+s?=
+ =?us-ascii?Q?Ajo10n6qi3QQ27bD+PdC3KWjq+ovOJeq794YAdnJFjPJbJJZjvXwHfhpE80Z?=
+ =?us-ascii?Q?d7FvlK+aNYd6924RuiwoJlsrfucrJlWPBA5FJ2lczBDl60qLYTI23ZC42orF?=
+ =?us-ascii?Q?kdqHaulMA4mPB8iJvMDoS0JiS/yM/SQPVYV3iPv2aJ3UJ79Ut3Qj4YPUWO63?=
+ =?us-ascii?Q?UQw8UnGHv1/i4IwCDAAs/QfYLtjaInh9V112unimi+lCb7WIUdCNCagd9739?=
+ =?us-ascii?Q?aZhOKZEzm0YjPoA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xhaiIF2IvdjFHu2P5KaNWm7GSahAwndQOU3/RmII2NbUxTshwC2iiDEQG2Se?=
+ =?us-ascii?Q?C2fW8FpI4XgxhrsXn9WjQSV7Gii1hCxJG99Q+5Q407iup5paFfbpHnyPXJd5?=
+ =?us-ascii?Q?pq4OjcOi+xHW6kEXWP1nVIqoy277Hrij1KD6rvxXcBXej7Qzg22Mym/3TdKa?=
+ =?us-ascii?Q?ezXwwyGzseyNaAbAs2rxJQLGVjtvzW+tAB/9NB8hS4yc20wO0GMLWxMbvv5b?=
+ =?us-ascii?Q?bE6iPMY9xrFGyLVocVXU/Wsqldw6Ymk9R/6wILG1xrGQTANNCyOk63CaJ3y+?=
+ =?us-ascii?Q?WB8ds+rlZVUqT/HQtCfvkNIInP0KUHC1QcPOF4ERdwUCexE+Un3ygnex7Jzx?=
+ =?us-ascii?Q?Y7s1L/OpgBsCiG9Xhk4Hd27/dD0zuitIsGdCwc28zSZCSuHNZkZPcK36eWca?=
+ =?us-ascii?Q?apZITqBsnPRA6JcfgnRtoHW20b0xFpch0M8ptoCgYJY/U12V6zUtitd81pGm?=
+ =?us-ascii?Q?ADvTqHFVLTlte7LsGAL69eYG/GnZyWUVAn0aghW0TpC3aA7JbsHP9HyA9JxD?=
+ =?us-ascii?Q?XI3YDym4YgFJFUriLZNgzP8lRe/FY9XffVagPV/oR5USJbwJN+zN37pWMyKc?=
+ =?us-ascii?Q?UkkDrvblWm6xTC8biYadulTUSU0cL56OZBealR2zhmbg/Jh6a8K4FXx8ngTS?=
+ =?us-ascii?Q?LHJUy3Cn0xxGC1+9zaoeJz4xTH0+qyGI+xjvuI77Kahe7hyRwpIpK4hzaIqm?=
+ =?us-ascii?Q?BLm88Cn1ZFQ1REGEswSRkkbIiRW1s8Pg+fHbQ7tRdQ//MBftF4ziBA7mP53L?=
+ =?us-ascii?Q?AszfpEAe6hzte9NH6qWrqhcJE8B3H7l680fhvycQwwarnJ38Jq/oO2P8MwZ5?=
+ =?us-ascii?Q?fgTzz1hWuYk680UChM8nbgnM47OuvTezeQZVpfVvv4Ye9zJwTFkGVMwEo6C8?=
+ =?us-ascii?Q?X429ubXcxbeZGv5fDD87HNcji1KI1o4rx8QXToElEP3kqrNmO4D3suXAl7dx?=
+ =?us-ascii?Q?vGXNPmRHC6OkZ/nMQJueY9V/LOJGMd00T2C9jXO3EHvyGYa57/KqWIxPdVNp?=
+ =?us-ascii?Q?F4AA9/YicVSAvTmWqmSAeOQM4iLDFaNewL86+Mq3EyQ+2kjNfSe/fT2VccK4?=
+ =?us-ascii?Q?t/L3T9WuDK5CEkkXYuqKv1lyg8p5CUK2zSB406zfZ/bilTqfANs6zpRwEzZl?=
+ =?us-ascii?Q?s+P//q/gyDZDL3kuCGwb5YqAYEPPGN9vQcMq+z/huW4C+e+pNxL654QkKYVy?=
+ =?us-ascii?Q?vmpAFU0mvbBUy/RdTfZtPOk6eED3HZpgvfN+SemT4Y4pLGmq7SEK7nWI3gHL?=
+ =?us-ascii?Q?liCPGnaH1l+qM1huLiMx48Ep8X2hytF7fi21Lnl2qb2SjptQLcF/yAv4v0FS?=
+ =?us-ascii?Q?1Qt56vY3p5lhJFm8z/3nC5YlZbMyfZ/qWrD/ucYI1PoBU3v9bc86ka9u4NYJ?=
+ =?us-ascii?Q?u32CDngbPDvs8LP12/j93E6Qko73t5SoDXS15KWyRX41CFdhpdvz6l9xpOJk?=
+ =?us-ascii?Q?fqNxw9dDrcXzh3CBCWvu00RU5rhVeOpOsGWCC0vOFJIwXfJJEozYT6tDiUXf?=
+ =?us-ascii?Q?mB6WOM6cWhCny4Kii41AAT/3BV7B1sUZrc7Q/VsHsmbqlZzAega0iVnkZWiK?=
+ =?us-ascii?Q?InngieQRFny0IZYM56sF38nQPMW/1kDn8R+RsQxa?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68607ab4-e245-488e-f449-08dddfe66787
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 12:38:03.1243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dDKGGoNXJUWukZ44484by/LHgqY1DLApBHgXkBXBM2tDqZx5iAzX41QUnxm+ODtP/cq7QIQhli3+KGbmJ+uDpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6448
 
-Add SOCTHERM and thermal zones nodes into common Tegra 4 device tree.
+Logging messages that show some type of "out of memory" error are generally
+unnecessary as there is a generic message and a stack dump done by the
+memory subsystem. These messages generally increase kernel size without
+much added value[1].
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
+remove the useless call to dev_err_probe(), and just return the value
+instead.
+
+[1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
+
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 197 +++++++++++++++++++++++++
- 1 file changed, 197 insertions(+)
+ drivers/crypto/tegra/tegra-se-main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 3ee51d7f3935..d9c51e6900d8 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/tegra114-car.h>
-+#include <dt-bindings/thermal/tegra114-soctherm.h>
- #include <dt-bindings/soc/tegra-pmc.h>
+diff --git a/drivers/crypto/tegra/tegra-se-main.c b/drivers/crypto/tegra/tegra-se-main.c
+index 1c94f1de0546..7237f14eaf5a 100644
+--- a/drivers/crypto/tegra/tegra-se-main.c
++++ b/drivers/crypto/tegra/tegra-se-main.c
+@@ -310,7 +310,7 @@ static int tegra_se_probe(struct platform_device *pdev)
  
- / {
-@@ -694,6 +695,46 @@ mipi: mipi@700e3000 {
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
+ 	se->engine = crypto_engine_alloc_init(dev, 0);
+ 	if (!se->engine)
+-		return dev_err_probe(dev, -ENOMEM, "failed to init crypto engine\n");
++		return -ENOMEM;
  
-+	soctherm: thermal-sensor@700e2000 {
-+		compatible = "nvidia,tegra114-soctherm";
-+		reg = <0x700e2000 0x600>, /* SOC_THERM reg_base */
-+		      <0x60006000 0x400>; /* CAR reg_base */
-+		reg-names = "soctherm-reg", "car-reg";
-+		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "thermal", "edp";
-+		clocks = <&tegra_car TEGRA114_CLK_TSENSOR>,
-+			 <&tegra_car TEGRA114_CLK_SOC_THERM>;
-+		clock-names = "tsensor", "soctherm";
-+		resets = <&tegra_car 78>;
-+		reset-names = "soctherm";
-+
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_TSENSOR>,
-+				  <&tegra_car TEGRA114_CLK_SOC_THERM>;
-+		assigned-clock-rates = <500000>, <51000000>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_CLK_M>,
-+					 <&tegra_car TEGRA114_CLK_PLL_P>;
-+
-+		#thermal-sensor-cells = <1>;
-+
-+		throttle-cfgs {
-+			throttle_heavy: heavy {
-+				nvidia,priority = <100>;
-+				nvidia,cpu-throt-percent = <80>;
-+				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
-+				#cooling-cells = <2>;
-+			};
-+
-+			throttle_light: light {
-+				nvidia,priority = <80>;
-+				nvidia,cpu-throt-percent = <50>;
-+				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_MED>;
-+				#cooling-cells = <2>;
-+			};
-+		};
-+	};
-+
- 	dfll: clock@70110000 {
- 		compatible = "nvidia,tegra114-dfll";
- 		reg = <0x70110000 0x100>, /* DFLL control */
-@@ -858,24 +899,28 @@ cpu0: cpu@0 {
- 			clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
- 			/* FIXME: what's the actual transition time? */
- 			clock-latency = <300000>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <2>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <3>;
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
-@@ -888,6 +933,158 @@ pmu {
- 		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA114_SOCTHERM_SENSOR_CPU>;
-+
-+			trips {
-+				cpu-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				cpu_throttle_trip: cpu-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				cpu_balanced_trip: cpu-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_throttle_trip>;
-+					cooling-device = <&throttle_heavy 1 1>;
-+				};
-+
-+				map1 {
-+					trip = <&cpu_balanced_trip>;
-+					cooling-device = <&throttle_light 1 1>;
-+				};
-+			};
-+		};
-+
-+		mem-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA114_SOCTHERM_SENSOR_MEM>;
-+
-+			trips {
-+				mem-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				mem_throttle_trip: mem-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				mem_balanced_trip: mem-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				/*
-+				 * There are currently no cooling maps,
-+				 * because there are no cooling devices.
-+				 */
-+			};
-+		};
-+
-+		gpu-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA114_SOCTHERM_SENSOR_GPU>;
-+
-+			trips {
-+				gpu-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				gpu_throttle_trip: gpu-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				gpu_balanced_trip: gpu-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu_throttle_trip>;
-+					cooling-device = <&throttle_heavy 1 1>;
-+				};
-+
-+				map1 {
-+					trip = <&gpu_balanced_trip>;
-+					cooling-device = <&throttle_light 1 1>;
-+				};
-+			};
-+		};
-+
-+		pllx-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA114_SOCTHERM_SENSOR_PLLX>;
-+
-+			trips {
-+				pllx-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				pllx_throttle_trip: pllx-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				pllx_balanced_trip: pllx-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				/*
-+				 * There are currently no cooling maps,
-+				 * because there are no cooling devices.
-+				 */
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts =
+ 	ret = crypto_engine_start(se->engine);
+ 	if (ret) {
 -- 
-2.48.1
+2.34.1
 
