@@ -1,137 +1,115 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD4A28505F;
-	Fri, 22 Aug 2025 05:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BD92135AD
+	for <linux-tegra@vger.kernel.org>; Fri, 22 Aug 2025 06:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755840085; cv=none; b=RMtP1gdAndZ12sSsqFjBs5dTHGBVNzHpxSZmj3bDo+TPtCYp+AjYaSER8NTdVjq4oycz/NZ2sjLbe6rjp4IZNIf1XgAwUM6KJZS2mdpqJm4/m3OKTR3Nn6JSqYLFJBYoh+yOiv7uInTfX+y4bAvGpgTOkLm02hHljEo5zB5KAbQ=
+	t=1755842476; cv=none; b=sLJoGkWkgMFXG2PNQMK+f3ZyFgc8cE2bo/dCCjd/DicpsT/jBHT5XGi83uwPejDyQ1khwhN/QPzUZmry4Oop74GwSCnzTr3d6MnckSTMrPlpgYbhuPI+r/7I9tCiCL71RU3VMFT+9SpAYfwi3BJTBivlHLO4hqjdqntSiZ/sF0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755840085; c=relaxed/simple;
-	bh=Dhq1EKRGFfvC0kDVCsgNN7STDq697m7sI8COfgZ3d7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jKsCo4ZzSs8hqRGf++wZOhgno7iBPrMhnIUHlQxCYYTIBm0X0fQYtEfTL60AhW6lMIlgK7KJyJDHm2Ke3j+hCx7DNuSNN4mIEk4x3PAcZf8h+zyG9pY7u84uzknT3CD1ehYjtiipOrOgk65qINjWaEgLXysCbNx6+XjaLIAPQEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/iCU1SY; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755842476; c=relaxed/simple;
+	bh=ad//YqRuqcgA9+9HNp21ouEBFeL3tbh2npiiulR9Ais=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RUsPY7mag4cHqIcGhhT+Qf1qlQtbaNSI58+J+p+EeZ28iC9g3Zfz3CoYKnA1S4YZRMdNG23H9VaE+AbYf4RNfLHEuex+HdkpSg37R8Ml982OihOn9jtqyiSY/AN6hGdLQK1sqKzs/QbAYsrCHc0OzWZJfh9MMWsyBGwoLDW5GJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=JlBq4Bc1; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/iCU1SY"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso1427916f8f.2;
-        Thu, 21 Aug 2025 22:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755840079; x=1756444879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TvKEBQ7yPvPn1i4lpaL5alLsJpeWrgoaDHAdkYx11l8=;
-        b=m/iCU1SYRu718c6/x/8TpawGrR2G2KzAH/C51S8PLBBJiQJwZCKUZHQA0kC1ShxFvz
-         /qE1Q/X6+nUm6XdxWC+1hGXljcQJHNI6M/2I8Bv/XmHk8Y/S/Y7vqD+AZn+HUna1MnKP
-         9ZJzH+A1eYx90h90WxUUWa0VQC98aCHfhPlWhsGWnPv3AjJBQC7wIOmJPofBcEyaYx0m
-         Vo6dCDDSe4XR1J2R++ZREU+tXsqz8E0xWC+rqnXICsJKLlGnpD5YrDe+RlnnO4Kg+Jky
-         K7aqWzM6A/wnaEi0BiEDMR0/9jNzkx6DL+BbQzWmzrfowo8vF/9GrnJ+tIm40BBZQt6L
-         vjUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755840079; x=1756444879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TvKEBQ7yPvPn1i4lpaL5alLsJpeWrgoaDHAdkYx11l8=;
-        b=YkRE8lFtfGC/t87b5RbofzT5aRFLtLdz7D8WqamOX1DMFLkTuKO75tk0aptUM6MyWg
-         Z5eeTfTtBQKhhoZ355fVrK8Smo20/pv6Y5fuyaLWK8ATYU5JhoRMNT5dr3iGMcnz/BBD
-         lCg3mhu7+wFDSEyBkudLDGNz3U7aWxDyoPLtyGLYUwgZVcKGQJL0KPhBHy03uV9e5D08
-         8wY9t9rwwKBONDety1Lim6gMFtReuDqvbsmQtjlKSN8xmwWnkp0howFehl1ebQrwPjCj
-         fGWQBl2tXW2mXADrM3iGnV4fbdBumPsfiXB5IFAIdO/useH9E3LPZlVszwuNewf8NeNo
-         PqyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKVvzsCgab6F1th+yCqLs1WlqCIK2DGUYWgz9xjXSCsCTBrKJMgKEJGNdwoX4AwEr8c2PahCUdGqV1h+hU@vger.kernel.org, AJvYcCWfLb2w3CBuhAE7JK3RWawoilp6A0pwq7Iz7ErgAZ4++j5eeMD7WBqRbyiQsQfNtk0M0cOg8cdAW5Kqqu0=@vger.kernel.org, AJvYcCXYSL8kX2tKA5OmiTz2/q6kEXgQe3CZg8k/5tZMCJUpHHKWv4dpenETTAG8GdQfmvB62nPNSsFo63s=@vger.kernel.org, AJvYcCXltKUZa25oaQ9UMl6GqB0ZXR1fez6Z25Fu+siF+b9zFuz45s5IVwo5VqaHqMWyitO8LH6CEswtobY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK/NGyEKpaNQYmXt1EpFKHQX0DqEj2X5TWUvPTLbS9qH8Hw9wx
-	zbRFOZj8ezfjG3jIpOr7rtKQmZ0+iua9fv5qtjHIUXijkm7NwmaxX4HjDGxhM3w1mcuJ+F1z/A0
-	I4ToJxeps4ewTGV4V2MHk/hnmyQZxARs=
-X-Gm-Gg: ASbGncvpISFwkoizkgq6QFNhA7b0iJTwceujTvFdNbcK20Hs30ij3ZJGf6qh25p8Sf6
-	bEeXEze43g3+j/wRsZu3zv8n3fcK8bQ034Qf2SeKRt6U9+DSUFY6LnhSjSGJCkpC75VajnCskm9
-	vMpYjII6XHLsChItrngPJk68naOv5AiDXKYr9NRt3AQL3L+htRuh1licQghnUL+RpWmpSWtZZJO
-	b/EfNzO
-X-Google-Smtp-Source: AGHT+IHhSYM0k9SEsMbFsBYZmOGa9t1h6A8KV8hrooA4h0OepLG5bv3p8xVbgieNLPz08xT6yLEXjRsFtXNtt8Gd+nY=
-X-Received: by 2002:a05:6000:26cb:b0:3b9:1c80:e1ce with SMTP id
- ffacd0b85a97d-3c5dc540663mr842412f8f.36.1755840078612; Thu, 21 Aug 2025
- 22:21:18 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="JlBq4Bc1"
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id B12881014909
+	for <linux-tegra@vger.kernel.org>; Fri, 22 Aug 2025 11:30:57 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in B12881014909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755842457; bh=ad//YqRuqcgA9+9HNp21ouEBFeL3tbh2npiiulR9Ais=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JlBq4Bc1VX5qi4rxA210yBYM40hFnPGYn2STswNeBUCIpz0eLNQbUv+yEeWwr70Nr
+	 0WRZKIbJX7HwTyzTa74i7p0AF1DtRmzLA4HXqH5EYmAYh8SBAinL3txwRIVkFih8DW
+	 sBMDVfLI1MHfuPmh9+hVStDK2U1oOXAb48lthIDY=
+Received: (qmail 31112 invoked by uid 510); 22 Aug 2025 11:30:57 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.492516 secs; 22 Aug 2025 11:30:57 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 22 Aug 2025 11:30:54 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id A5FC034155C;
+	Fri, 22 Aug 2025 11:30:53 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 6EF8B1E81562;
+	Fri, 22 Aug 2025 11:30:53 +0530 (IST)
+Date: Fri, 22 Aug 2025 11:30:48 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: thierry.reding@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] gpu: host1x: use dev_err_probe() in probe path
+Message-ID: <aKgHkAWW0puXbZkv@bhairav-test.ee.iitb.ac.in>
+References: <aIbBFQqgZalOMc6r@bhairav-test.ee.iitb.ac.in>
+ <6346652.lOV4Wx5bFT@senjougahara>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321095556.91425-1-clamor95@gmail.com> <20250321095556.91425-2-clamor95@gmail.com>
- <1914341.atdPhlSkOF@senjougahara>
-In-Reply-To: <1914341.atdPhlSkOF@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 22 Aug 2025 08:21:07 +0300
-X-Gm-Features: Ac12FXxmta7mBPhCxb7W9OiXb4BXH_cyVWGMx9ucUxlZujEVGMRlnBeWr0rx2Ho
-Message-ID: <CAPVz0n0zuvXxT=G18ujhV26nbvuCKtyXNC3cxenxGuj8wHWZ8w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] drivers: cpufreq: add Tegra 4 support
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6346652.lOV4Wx5bFT@senjougahara>
 
-=D0=BF=D1=82, 22 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 05:5=
-8 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Friday, March 21, 2025 6:55=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Tegra 4 is fully compatible with existing Tegra K1 cpufreq driver.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On Fri, Aug 22, 2025 at 12:18:38PM +0900, Mikko Perttunen wrote:
+> On Monday, July 28, 2025 9:15 AM Akhilesh Patil wrote:
+> > Use dev_err_probe() helper as recommended by core driver model in
+> > drivers/base/core.c to handle deferred probe error. Improve code
+> > consistency and debuggability using standard helper.
+> > 
+> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 > > ---
-> >  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
-> >  drivers/cpufreq/tegra124-cpufreq.c   | 5 +++--
-> >  2 files changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > b/drivers/cpufreq/cpufreq-dt-platdev.c index 18942bfe9c95..7d15a1224d37
-> > 100644
-> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > @@ -140,6 +140,7 @@ static const struct of_device_id blocklist[] __init=
-const
-> > =3D {
-> >
-> >       { .compatible =3D "nvidia,tegra20", },
-> >       { .compatible =3D "nvidia,tegra30", },
-> > +     { .compatible =3D "nvidia,tegra114", },
-> >       { .compatible =3D "nvidia,tegra124", },
-> >       { .compatible =3D "nvidia,tegra210", },
-> >       { .compatible =3D "nvidia,tegra234", },
-> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c
-> > b/drivers/cpufreq/tegra124-cpufreq.c index 514146d98bca..6ff2ccc08e5e
-> > 100644
-> > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > @@ -189,8 +189,9 @@ static int __init tegra_cpufreq_init(void)
-> >       int ret;
-> >       struct platform_device *pdev;
-> >
-> > -     if (!(of_machine_is_compatible("nvidia,tegra124") ||
-> > -             of_machine_is_compatible("nvidia,tegra210")))
-> > +     if (!(of_machine_is_compatible("nvidia,tegra114") ||
-> > +           of_machine_is_compatible("nvidia,tegra124") ||
-> > +           of_machine_is_compatible("nvidia,tegra210")))
-> >               return -ENODEV;
-> >
-> >       /*
->
-> I also prefer using Tegra114 and Tegra124 in the commit message, perhaps =
-with
-> the marketing names in parentheses, as the chip IDs are more consistent a=
-nd
-> (IMO) easier to decipher than the product names.
->
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
->
+> >  drivers/gpu/host1x/dev.c | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+> > index 1f93e5e276c0..e6f3cbeb9ae5 100644
+> > --- a/drivers/gpu/host1x/dev.c
+> > +++ b/drivers/gpu/host1x/dev.c
+> > @@ -587,11 +587,7 @@ static int host1x_probe(struct platform_device *pdev)
+> >  	host->clk = devm_clk_get(&pdev->dev, NULL);
+> >  	if (IS_ERR(host->clk)) {
+> >  		err = PTR_ERR(host->clk);
+> > -
+> > -		if (err != -EPROBE_DEFER)
+> > -			dev_err(&pdev->dev, "failed to get clock: %d\n", 
+> err);
+> > -
+> > -		return err;
+> > +		return dev_err_probe(&pdev->dev, err, "failed to get clock: 
+> %d\n", err);
+> 
+> AIUI, dev_err_probe already prints err, so we don't need to repeat it in the 
+> message. With that, PTR_ERR(host->clk) can also be inlined into the 
+> dev_err_probe call.
+ACK. Thanks for the review.
+Posted v2 addressing this with 6.17-rc2 rebased build tested.
 
-Yes, this was applied in v2 already and all other my Tegra patches,
-this exact commit was already picked from v2.
+Regards,
+Akhilesh
+> 
+> Cheers,
+> Mikko
+> 
+> >  	}
+> > 
+> >  	err = host1x_get_resets(host);
+> 
+> 
+> 
+> 
