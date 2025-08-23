@@ -1,47 +1,46 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2064.outbound.protection.outlook.com [40.107.237.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40008299A90;
-	Fri, 22 Aug 2025 18:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5270772623;
+	Sat, 23 Aug 2025 05:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755888689; cv=fail; b=JHl++kcOezy8Rvp1KP5yLVN7yYkxVeyi/luPakHa2nV51Rtoz1A53dDpGDyhyc4DZjVjnxv2zjLGfVKQAmxUBbNTlCtbH58E2c74ZMevBj2XdrIhwcuTt/9rCocKAitij55HcXme2tTV2t/q7wRXQRP9EVwOqtNjXAnxDlr8JwE=
+	t=1755928482; cv=fail; b=nQztR/StO6fJZ3J+adh3cp6p0iTtLjzc5gFSl3SNVS0T6Ckn+OzBEaDH+De3O1M6RqBSBwMKuUO47+0bPbb8DKDKPalzy4BJppIkmNzaAgHpJBgbEgX7FQFZgkHgBxfoS79G617+cua6K1Wkmzyj0OSsO8FSnXYALACSf2RDxCY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755888689; c=relaxed/simple;
-	bh=1rAnXX0H2ON1Lh20LfT2X+K0gIMJKJ2V63+5lj75nhk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTS17zXqRFeictWaXxY9mXc5N8PWaEqaqpoJNgJ+YEIo9FMBH9EvKa03b+0twgQmBtssfpFBacLUQ6GE42w3/jIgGAMd6KYAixiXMLRN5mcqr/cS9eRs5lAfqByNy39AiYud1hl+J4bcbOXlhq131MpQzKDraEqAzWQ288SjBn8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RjEAWOvJ; arc=fail smtp.client-ip=40.107.237.82
+	s=arc-20240116; t=1755928482; c=relaxed/simple;
+	bh=rffq+vue7snYRw2eKBYXsUUIYfAYUE3GS8ZHVBbXN+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g5bCjEfhIy6JKNxbsk2BdGPnJKMvJtRplM70WLt8RFhn+VpqNfmxUPpm39kn7gYu7ZOpw0XQ+AI/22pzRFYd9rcOl92C+vsTZmBUdKPxEyyhjH32fSB996GW8vo3O1AAs0xs9SBbAqE6Ah3gqyDgY+LdNKAjB37JWOE3g96a4XI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SfDl/FXJ; arc=fail smtp.client-ip=40.107.237.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RjEAWOvJ"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SfDl/FXJ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pTWsjEZ+/0EndzCwcvH9w6ArGbgEdDKdzl8eSaAz9xg9deOnQc8GD6vZfr57eVu6Bs3eIqxRb1/aKZVR8mQk87Vd42HkAZdR7FPEh5VJA7/+VANH6thE6t5o6NbjgL2dnmDtctI8CYRzq+M0F33TGcTxvuuzA8jnMV+zVHE+xyR5KQ39J/DTbRHlmguo9vtaeLQ35RRX2lG821oyXn2J5xZKnRm4uIesM3dTDf5UOLLVO3qXZzamVx6PcTv3y6ZpzvHWausFWi/jSXOgG0MykGgncousvTyAYgi3ixAd1HfwOq4mB+8fj+N9w9L6Mlmd2p3ZoB+SpHg6G5pBcz72fg==
+ b=RxqrtBPGomWf5mnZdc77I9vwXMyLJFfNOLCbx/OTssdG0vNg0ZeNZ4XK3X/38imgn2HMn0CHCKyaHX2+g+c8nbJACHp+dnggRt9L1tLl+Wf7CUuiHWVjmMr7SG3UzGBTxHGLFXN1bHJDqNZ58jS2u4HE/spchO0gfrBavMjk1SNZ/03fzGDfJ02rurdXj2qLoBex5mYCULG13U3saE33AZgBbxSOvsnCyfvxpEsxHf5AflNtPHe3IHu5+mqSZNohCcO3IPuqoMnqHHaZ8cOtziGNJdFPWeJCVwoLKnfsGLRHxqYLVHMMBXjoTPoOwjb3kTWeDFO32DAcx6+QjJJZEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XqsAVqx2D9fPf18hSHoZHOjMqFsEIFJD0EpmkHZBGjU=;
- b=c27a7TbfigbI4OkO9I8N9C2JO/JOKOvX1ua9M5DKDv2HlqcBo2Y60l2KGgUMt324hS/s14TETlul9zfFaTxIJ49oTaBfsp/pXg+wUhpWgf0BaEV96nG3JLOeNv4ox8WP/v3UAPppt/vS3WYqva09z/J6epa/xrf8Xb87p4DUIQpARhkro8GypH7dzeTza4AC2VdylJfwMW/p1/JSBMHVWAiV4ueuHq+Z33ckc+uYJT1EuI411KVeHcQSD/a8jqEca/jdpwrvj5uBqiGhX3eF0pDW58+A1PzcFTmtnM6IOmXaedeFkIVPpcxycPVrGiyOsjoTgcsm9l10gC9iwp9U9w==
+ bh=2zLDAxFuR1nhX9ouCMMdeyE/NFgm67wYyEQHjlwfFdk=;
+ b=uF9nQt6hc+gbgduQt2mrl0oZ5wlREPF5dJWGF2m9mZZHe5weTOPW7xSQVqdWxcByT+DcAHi2lp3U45RN3mrKBUlTvWLV+4Y9VAr50OSbzh3fnJuLxYf0oXt+9rWrvj32X+uFeBX0wcdl+3jM2qzdoljCJQ44ywrRirIfV1dZRsp3Ir5EoKpUl2fynfNWPZX6ProqMlkjKEgn//smziSHruBRThZ/vWI/BsaeOMj6KIfdnFL5OAnLiZGzGUtKvVplFHTPkp4FBsR12ik/wr75E/nx5jJZlIEUpgqLU3AKX8Ve9m3dMBT/bl2OMYV87m5tLsU4Eq+j67evkHYyCeqD6w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XqsAVqx2D9fPf18hSHoZHOjMqFsEIFJD0EpmkHZBGjU=;
- b=RjEAWOvJg8Fu0AGHqv+UtRlOiU6BrBAXL0eiEP9HETxmxyKg1FirCZ3DCqgr2cNRpIfkSFWJ5Tcuvwz4ZuvfGBbaorj1SbO/ohnpal6UNvxe+M2esQ6e1kLOf+j16B3QpDgZ9HBBt+B4ICzLRDA+RBPk8M9EStpY8PpHC4E+BgTk0yfYDtEhXzh0b+GriCuEgVVIrkfM6Ex8ybGYWxbJcRvtwvrt41NhRhhCdwK1PkSaPrGjmeyhia6RiKHDaSLLE8NulPDTtQtAKIg1UHce/nDRzUrnoGdL7kiSAIrKkkD1YChuuL4JODJbaB1gDrNaMWlJBB4zPksOjW+AkUW+zg==
-Received: from MW4PR02CA0003.namprd02.prod.outlook.com (2603:10b6:303:16d::30)
- by DS4PR12MB9658.namprd12.prod.outlook.com (2603:10b6:8:280::14) with
+ bh=2zLDAxFuR1nhX9ouCMMdeyE/NFgm67wYyEQHjlwfFdk=;
+ b=SfDl/FXJOaB5N7ppn1Nb5ITP2l4jwgygrvyU9ivONt2Ku2fsIhJ+XVmbUKfuJZ+kSx6nLVeKOMUR6hVSTRgTMnEunGLM63YDZlX7Er+eaCzOXcXMSYMf8hVW73uxPiEYDgfSoFD3uAsZP/ByaJuzESt5v2pQjnza3uZWc41mTN4qR6Ty0P6MZL5wUj8OWhHFqspMcYz26+CWfG92cPhYd7e7NjQ9V4EWg97J0w+LD9wPs9xfFS6JVfzeDalQmaADqG9oa02jF9EpQzsBn0JUOyNMqkhvFI2myPjf84Ed/FPlBVkPQWBaHn8/CqDJHr9TB3TsySEByrYLMxWzP53DGQ==
+Received: from BL1PR13CA0131.namprd13.prod.outlook.com (2603:10b6:208:2bb::16)
+ by SA1PR12MB7366.namprd12.prod.outlook.com (2603:10b6:806:2b3::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Fri, 22 Aug
- 2025 18:51:24 +0000
-Received: from CO1PEPF000042AA.namprd03.prod.outlook.com
- (2603:10b6:303:16d:cafe::92) by MW4PR02CA0003.outlook.office365.com
- (2603:10b6:303:16d::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.18 via Frontend Transport; Fri,
- 22 Aug 2025 18:51:23 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Sat, 23 Aug
+ 2025 05:54:35 +0000
+Received: from BN2PEPF000055DA.namprd21.prod.outlook.com
+ (2603:10b6:208:2bb:cafe::97) by BL1PR13CA0131.outlook.office365.com
+ (2603:10b6:208:2bb::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.9 via Frontend Transport; Sat,
+ 23 Aug 2025 05:54:35 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -49,169 +48,164 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000042AA.mail.protection.outlook.com (10.167.243.39) with Microsoft
+ BN2PEPF000055DA.mail.protection.outlook.com (10.167.245.4) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Fri, 22 Aug 2025 18:51:23 +0000
+ 15.20.9094.0 via Frontend Transport; Sat, 23 Aug 2025 05:54:34 +0000
 Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
- 2025 11:51:02 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ 2025 22:54:27 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 22 Aug
- 2025 11:51:01 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 22 Aug 2025 11:50:59 -0700
-Date: Fri, 22 Aug 2025 11:50:58 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Ethan Zhao <etzhao1900@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <bhelgaas@google.com>, <will@kernel.org>,
-	<robin.clark@oss.qualcomm.com>, <yong.wu@mediatek.com>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <kevin.tian@intel.com>,
-	<yi.l.liu@intel.com>, <baolu.lu@linux.intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<patches@lists.linux.dev>, <pjaroszynski@nvidia.com>, <vsethi@nvidia.com>,
-	<helgaas@kernel.org>
-Subject: Re: [PATCH v3 5/5] pci: Suspend iommu function prior to resetting a
- device
-Message-ID: <aKi8EqEp1DKG+h38@Asurada-Nvidia>
-References: <cover.1754952762.git.nicolinc@nvidia.com>
- <3749cd6a1430ac36d1af1fadaa4d90ceffef9c62.1754952762.git.nicolinc@nvidia.com>
- <550635db-00ce-410e-add0-77c1a75adb11@gmail.com>
- <aKTzq6SLGB22Xq5b@Asurada-Nvidia>
- <20250821130741.GL802098@nvidia.com>
- <aKgPr3mUcIsd1iuT@Asurada-Nvidia>
- <20250822140821.GE1311579@nvidia.com>
+ 2025 22:54:26 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Fri, 22 Aug 2025 22:54:22 -0700
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <pshete@nvidia.com>
+Subject: [PATCH 1/2] dt-bindings: gpio: Add Tegra256 support
+Date: Sat, 23 Aug 2025 11:24:19 +0530
+Message-ID: <20250823055420.24664-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250822140821.GE1311579@nvidia.com>
+Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AA:EE_|DS4PR12MB9658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c9d1356-26f5-4af7-21e8-08dde1ace464
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DA:EE_|SA1PR12MB7366:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba7c46cd-2c69-491f-4ca0-08dde20989c8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|82310400026|376014;
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?F9NqNtOQk/XokkfZEOw6E09rWDMnPzWrkLZ6Zy26tNzb2zWG+yZ4ZOOGIrRy?=
- =?us-ascii?Q?OOVS2vR4nr+G1oykLPvNivO7z6tk1VXYdCJ1W18Bl/pdQiLWYKMpn3rPAyrm?=
- =?us-ascii?Q?uaC6jKfNyV/fZnNxixvPafcSanajs0v6R09XpmTqhknpqolCjSX4CU7tpPGk?=
- =?us-ascii?Q?oSKOTdHpk/VbaqFmPqpAsyKgR2AnNBP1s5rB3gNFhuKd2ZigIhztk4kcbHeU?=
- =?us-ascii?Q?OVw3HQoBtfXHjyG3b/dZdqLsLewLy662iLMl1sPof8pehXLKizpbVpH38Eed?=
- =?us-ascii?Q?1Mw/4RGVExlN9DFw1AsZADwsaTuTbveoG5mY9D67fhWqeok+kP94xTPHm26+?=
- =?us-ascii?Q?hJyxjqpviUuHRH2uinFZ8u3yrk8ARIm3WfVMI8PCiO8HBJ4qnUK624XmiYa9?=
- =?us-ascii?Q?jK2+KEtGG0ISahiZb21ThzLHYb1yeCeJ2Q3InPDinCOYXxRe5jUJekJq5jxR?=
- =?us-ascii?Q?TX7L27YG7IWbrhhg6R7wOMrgO+0UL638+CiQEzHfhCF6k8hpwoP0YeM8nkl5?=
- =?us-ascii?Q?w6u0rgJNaAG9tfZL/ayj8apoNyBgh9FDhw3kkFBBYJ7kmSde98fHd6QqFB8C?=
- =?us-ascii?Q?hP9mNsfr2MP3g04ziDFRHFGZgpGOtsVV/YRcVEznkCLpmVU3cTHazsffRlsm?=
- =?us-ascii?Q?cLuYSyUBz3e1ApMnrsTQiq0vwwX5I6Pw8NeL2L756Fmute1bWDPcsK8Vb+VK?=
- =?us-ascii?Q?BvH9scCS/MmC5zHUpP7yYy7jgknbU/oSWCmxhvRoUT3YrEjQEYALeDCVPlV9?=
- =?us-ascii?Q?4CghCW1RdptgsTmxzQ2tcctLOUYKLww6GZgx6yD+EzCmqcU5p1BMQ1GsiLJ1?=
- =?us-ascii?Q?wRUUtFfzH+lAoSqoOwOXxqS5EO7PPttMbQoKsiXy7TZ+vYBben/2fFIFg7yn?=
- =?us-ascii?Q?LhjZEG8UdWJVFZdFCyMmVWSoWovBtJCZ0MX49nu2lNxPKfzyMFIy45WjNBQQ?=
- =?us-ascii?Q?fniVgHXEiK+Z//uQt41ySM0rRAIE6gkQna/qIn71Q1rzjZoY4F30bKuZ4OK6?=
- =?us-ascii?Q?Xn0PHAzPmhjLQ3JL43pam/dIfu3UPm1zh9cE24Vn+Y53WfrN/QvptCGxUKvu?=
- =?us-ascii?Q?UBte+0EYMC6QFf+b9Bebp7bgW4rnURFPlJz1JJ8+zkixrIMNdrLqXD99eDSo?=
- =?us-ascii?Q?qzmWtmeQZHAInMnBA7BMhtVoa/jxuKMe/BKqSjuhJ7FmYbjtygKyYpqHBnFY?=
- =?us-ascii?Q?ne9eeGVNIaSG6JVMcyMmSH7OriOQI26hs2P+vm1zXvAQf4SphbH5BPuZcojq?=
- =?us-ascii?Q?5FH7h5pt61bWEWF4sWawU0I0dgakZHD8gpw7RjC7HKWldEqJjWpFw9WP61Oe?=
- =?us-ascii?Q?NDZSqKHn2sLb54zOayn6YfsCbZYV72yskXUjBU8ehdWjrZdTquFChsU/Av9e?=
- =?us-ascii?Q?FgL8e1NbhFB6U8RihNEASIrZBZEklNQH9xYtpvUVNU2fJCSWgp4UtAlNMlyF?=
- =?us-ascii?Q?qNqZqSIzERLtTvX478NZ5iSq9y4llOn/7i/oplz+MZm44nH4Gz7Y/gdqDk89?=
- =?us-ascii?Q?qka5toPAmz3+MnqmSNI9mGWa9TN9WeYWtDY8?=
+	=?us-ascii?Q?R4gbPyCHlPPFHCP8hm662jMz0x0UIZlWX0mXJyubA7ypgZ/uE4W+pGewMQk4?=
+ =?us-ascii?Q?jR2cY/qGqdHOEcG5xhpSxZ8MpKCsvGsTZ7FFtxBFLs0VvWyM8baZITJzYkSC?=
+ =?us-ascii?Q?ReBz6kM901t/6a6+tZtXL2dSwgjm6nFMc3HR/sy5U31hPOxu3rnNKcol+bpO?=
+ =?us-ascii?Q?YJiWONrCJAyMCexl+f2lXwGTwgcwctqKTxqW3hjFAQT8aATWYzwn+1hShEIx?=
+ =?us-ascii?Q?hltvYNNxnChv3PAN+c/jMFQ/MjvXyHdVhym+E012GF9k1M3YiceuKvLIXm2n?=
+ =?us-ascii?Q?+ny6xxHcituT1ry/LOHQ2R2/11SHlsgIBuueJFpSAxfXLHKC77U2hLvBs7NH?=
+ =?us-ascii?Q?KjoZWyrSU5ja9KntkEsURRz7M+04/T/ea2EgGKYiY1uannV473SEHYzcUb7q?=
+ =?us-ascii?Q?IteK0qnOkJ/ZQauENWH/Cp0VBX7By0U0DXpT9gktca8dF0+6okB4G/Orp9eb?=
+ =?us-ascii?Q?6UXq61T93bihdqt5a3SgzNlxB3Myw2BgvmIGMU9P89OhckB0Wi6wd2rcyw1Q?=
+ =?us-ascii?Q?hHQcKCuldIvORbzxzs6o3BYO72sYPH/n/2HSRFwvB8JmhjFiMIm4eoJdtmGg?=
+ =?us-ascii?Q?iUx23pPVqSUW2uzBCYkq6TYG5UBQ2JUH1XHTxDiySHYn0U+awPpcxJTQXs4k?=
+ =?us-ascii?Q?lqrEmvRKfBttHwgSG8+vDehgsoi+k6dfXHxDCPQWq12RJrjsENkiHf0Ieur0?=
+ =?us-ascii?Q?3PcCMpNjULaWvNYOHHqFt666NgtQ7kGuAdV+wcAR0lwXsRrngsCcoS2C4lKW?=
+ =?us-ascii?Q?1tzZP0kr+b5PBS7srq6j+QoK7DiaJb6RcqqQA31mZ2lut2cG0/CDKOCcz/Th?=
+ =?us-ascii?Q?cq9IN+EDB6vS55D5w5+hB6+mSCtdeSZ4w8Kq1E1yMT0KKZ1ZF5vK7tM5jyiG?=
+ =?us-ascii?Q?6OzUMe05OkdWzuXhs5GLl7DKZ7zwfMRvvtWOXvKfZJ12r9ijwh9cyBTLyUO7?=
+ =?us-ascii?Q?pwUKbiNmAc1kVOobkjfW0U+M8VMKzmlpq2r/Bwv8lKSLt8E6oX9t+0o9SK/R?=
+ =?us-ascii?Q?LZwjcJA1vRV0OZMynPI43ZNuXxihf3kwm8WSx35UBPpsgFBnY9dS0TibaEuk?=
+ =?us-ascii?Q?g5TX1Ei6YmRDY4XZJ9COK/F+ppeKO99wdUPbc9xn4Kt93YCsxIYp7C6KJX/p?=
+ =?us-ascii?Q?yNgwyUdNtpayWFiVxmP6Es87OCmVuOA7JEUc8B+0NNMPBozT++K6SWelMnnH?=
+ =?us-ascii?Q?+LrjAHrd09jal1Ll0umdU7lx+RGnOkrchB5K2f7UC3MBjJzU2opqceNJel6e?=
+ =?us-ascii?Q?48VYjz29watJGRf0jHeBkoY3Yxpvuf/igMQNX/nT7d66wVsBf7G+j+pVZYYr?=
+ =?us-ascii?Q?yVCzdu3yJngPylKkv+/QcXiv4xF5AuaEkhIj6Pf5I2KfqehKwlrMGucz95If?=
+ =?us-ascii?Q?ix58r0r6aTtWjIWkuG3Rl8Xwpw8U9+OrsIo71TP8o1d7lZqfLTERA1n7/B4O?=
+ =?us-ascii?Q?/Nkj2VTr+u+gewHg2OzwLzYF7v8E3y51GCQDJvLjlA2kVAqdTC6PbUcDTr6E?=
+ =?us-ascii?Q?vsOXTcE0JYjuJRSGNAER0+COTq6J7ePrlLpNXeXNPgyBwwQalb9EDTFvTg?=
+ =?us-ascii?Q?=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2025 18:51:23.7474
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2025 05:54:34.8884
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c9d1356-26f5-4af7-21e8-08dde1ace464
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba7c46cd-2c69-491f-4ca0-08dde20989c8
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AA.namprd03.prod.outlook.com
+	BN2PEPF000055DA.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9658
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7366
 
-On Fri, Aug 22, 2025 at 11:08:21AM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 21, 2025 at 11:35:27PM -0700, Nicolin Chen wrote:
-> > On Thu, Aug 21, 2025 at 10:07:41AM -0300, Jason Gunthorpe wrote:
-> > > On Tue, Aug 19, 2025 at 02:59:07PM -0700, Nicolin Chen wrote:
-> > > >  c) multiple pci_devs with their own RIDs
-> > > > 
-> > > >     In this case, either FLR or IOMMU only resets the PF. That
-> > > >     being said, VFs might be affected since PF is resetting?
-> > > >     If there is an issue, I don't see it coming from the IOMMU-
-> > > >     level reset..
-> > > 
-> > > It would still allow the ATS issue from the VF side. The VF could be
-> > > pushing an invalidation during the PF reset that will get clobbered.
-> > > 
-> > > I haven't fully checked but I think Linux doesn't really (easially?)
-> > > allow resetting a PF while a VF is present...
-> > 
-> > Hmm, what if the PF encountered some fault? Does Linux have a choice
-> > not to reset PF?
-> 
-> Upon more reflect I guess outside VFIO I seem to remember the SRIOV
-> reset to the PFs will clobber the VFs too and then restore the SRIOV
-> configuration in config space to bring them back.
+Extend the existing Tegra186 GPIO controller device tree bindings with
+support for the GPIO controller found on Tegra256. The number of pins is
+slightly different, but the programming model remains the same
 
-Yea, I see ci_restore_iov_state() called in pci_restore_state().
+Add a new header, include/dt-bindings/gpio/tegra256-gpio.h,
+that defines port IDs as well as the TEGRA256_MAIN_GPIO() helper,
+both of which are used in conjunction to create a unique specifier
+for each pin. The OS can reconstruct the port ID and pin from
+these values to determine the register region for the corresponding
+GPIO. However, the OS does not use the macro definitions in this file.
 
-> > > Arguably if the PF is reset the VFs should have their translations
-> > > blocked too.
-> > 
-> > Yea, that sounds plausible to me. But, prior to that (an IOMMU-level
-> > reset), should VFs be first reset at the PCI level?
-> 
-> PF reset of a SRIOV PF disables the VFs and effectively resets them
-> already.
+The symbolic names help associate these GPIO specifiers with the names
+used in the technical documentation available for the chip.
 
-Yea, I was expecting something like a SW reset routine, for each VF,
-which would invoke iommu_dev_reset_prepare/_done() individually.
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+ .../bindings/gpio/nvidia,tegra186-gpio.yaml   |  2 ++
+ include/dt-bindings/gpio/tegra256-gpio.h      | 28 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/tegra256-gpio.h
 
-Without that, iommu_dev_reset_prepare/_done() has to iterate all VFs
-internally and block them.
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+index 065f5761a93f..2bd620a1099b 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -85,6 +85,7 @@ properties:
+       - nvidia,tegra194-gpio-aon
+       - nvidia,tegra234-gpio
+       - nvidia,tegra234-gpio-aon
++      - nvidia,tegra256-gpio
+ 
+   reg-names:
+     items:
+@@ -155,6 +156,7 @@ allOf:
+               - nvidia,tegra186-gpio
+               - nvidia,tegra194-gpio
+               - nvidia,tegra234-gpio
++              - nvidia,tegra256-gpio
+     then:
+       properties:
+         interrupts:
+diff --git a/include/dt-bindings/gpio/tegra256-gpio.h b/include/dt-bindings/gpio/tegra256-gpio.h
+new file mode 100644
+index 000000000000..a0353a302aeb
+--- /dev/null
++++ b/include/dt-bindings/gpio/tegra256-gpio.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved. */
++
++/*
++ * This header provides constants for the nvidia,tegra256-gpio DT binding.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID.
++ * The macros below provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA256_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA256_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA256_MAIN_GPIO_PORT_A 0
++#define TEGRA256_MAIN_GPIO_PORT_B 1
++#define TEGRA256_MAIN_GPIO_PORT_C 2
++#define TEGRA256_MAIN_GPIO_PORT_D 3
++
++#define TEGRA256_MAIN_GPIO(port, offset) \
++		((TEGRA256_MAIN_GPIO_PORT_##port * 8) + (offset))
++
++#endif
++
+-- 
+2.17.1
 
-> But reaching out to mangle the translation of the VFs means you do
-> have to take care not to disrupt anything else the VF owning driver is
-> doing since it is fully unaware of this. Ie it could be reattaching to
-> something else concurrently.
-
-Hmm, and this is tricky now..
-
-The current version allows deferring the concurrent attach during a
-reset. But, as Kevin pointed out, we may have no choice but to fail
-any concurrent attach with -EBUSY, because a deferred attach might
-fail due to incompatibility triggering a WARN_ON only in done().
-
-This isn't likely a problem for PF, as we can expect its driver not
-to do an insane concurrent attach during a reset. But it would be a
-very sane case for a VF. So if its driver doesn't retry or defer an
-EBUSY-ed attach properly, it would not be restored successfully..
-
-It feels like we need a no-fail re-attach operation, or at least an
-unlikely-to-fail one. I recall years ago we tried a can_attach op
-to test the compatibility but it didn't get merged. Maybe we'd need
-it so that a concurrent attach can test compatibility, allowing the
-re-attach in iommu_dev_reset_done() to more likely succeed.
-
-Thanks
-Nicolin
