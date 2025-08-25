@@ -1,82 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1F2FE059;
-	Mon, 25 Aug 2025 16:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A904279788;
+	Mon, 25 Aug 2025 18:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756139566; cv=none; b=q7F1Lns91e6CmKfa+kv4+JZciGcU0awnjuVLDyr2Negb2kPRn8pAwRZCFUUBtC/uv1ekQT7vEE/X+VAA36jJyS5MMELtTy3UyuLRR5rNxroIKrAQlITe6wY0ZweQkDP4BYBI0Xq/tPP3pKPueyk7+p5qPauyy6UeqS10juR7qDY=
+	t=1756146851; cv=none; b=e+3JofjxEBRmzqKQMPpj53I75iQnirnKDrk90vx6ffvyjWEL01kElmf3r66kZveW4h1N6MwgBRnfwHDumkzUwxqrTKLadC0qTBeKS29xxNnnaxtMCik6rF8vWjy/KOjMhpgMs/sgj0cPBO9Ckz4OfqSfI+NlJLNRYq8KdXJB+oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756139566; c=relaxed/simple;
-	bh=zxHmMRw5/sY4qKaSFZbZXzsqqlDUBxYTyqhzcESdego=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLjnYZa6G52SF3908rUS9YIcSoVxKTnuIcN/noD4efX3YeTte0CpocMmZepdf9nD0OaDWTjZL/KqgoquhSYRApOsr2WUMiPBCqT2IsWQDmHgDbJXJ05IJ5Af91bZ6XV5okgJ8IP5rPDtVU8F88feX+XZpCX05cP19aGAUZR6agY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CICHkMkk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756146851; c=relaxed/simple;
+	bh=Ht6Ty4HMgHXkptKsvwVhVc6YUizCpYenVMcNjJ3Igh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ttm2ALLaw9QDSGumRX5Zjczi9yOGdiBR+dPUb7hHwdJCxLiXq/OI6u0jv8aYUgHC8DUKPy8/OV3UpTGYh09cK0VIoRsOk+B7R9niT+6TV1A4gkTj9pH1gr/GgA/c5Yq41zzDWFkAyCsBeixTvwSp1VNAaf8t4YiA8CZvFfAWACI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8n0lf5Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CICHkMkk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E72FC4CEED;
-	Mon, 25 Aug 2025 16:32:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8n0lf5Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D8BC4CEF1;
+	Mon, 25 Aug 2025 18:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756139566;
-	bh=zxHmMRw5/sY4qKaSFZbZXzsqqlDUBxYTyqhzcESdego=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CICHkMkkEU+tjKP+MqFEALd3NOdg5W+pElM+0WrIhPjTS6gvBVpk4YyHGw8b9c2G7
-	 D00hZB+RDGmjmf0Zy6Pqpo6llOt2tJXjZeYxygHGe9bo6dmAp6YfArRcXVi9rYmYmy
-	 Nwg3WaISziM97mmNyca5dsnxVT+JJ//QDcaKyASMHtCmV6TEvwbcQOqyNubkA/PgHm
-	 /PIa1chyi6bDCXNEPh8+nIEZihs/0rcDegmUfHxxIP/05Q1kwq1YyDmhNdpcHV3arw
-	 6jp0f8vKZ6Eub9iONvptvqABRZsCoGkYTBoTnkqkNP5z1UViNxCNEymcSUKf4yxppU
-	 1vvCfy5pbJN0w==
-Date: Mon, 25 Aug 2025 17:32:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] dt-bindings: thermal: add Tegra114 soctherm header
-Message-ID: <20250825-subtext-humorist-56ad14987b18@spud>
-References: <20250825104026.127911-1-clamor95@gmail.com>
- <20250825104026.127911-5-clamor95@gmail.com>
+	s=k20201202; t=1756146850;
+	bh=Ht6Ty4HMgHXkptKsvwVhVc6YUizCpYenVMcNjJ3Igh4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F8n0lf5YKeHt/GO6Xj7K7p1qqX6rfSeF2zPNsWMx+codVZ+d2dyL6ZM2ceQe5Z+bf
+	 hcWig4vuK+f8Z3pa/tCPP+WOC4txtC9G5UQC8f3PmM94edV1Nb22Inf2ReEE76bOyz
+	 vqbvTO2wv0qDlZrWSAWN4bT+9D2AlmoW9bPXCslKXpJKmJZ1AhRKneVOcGNOyvXm9O
+	 QIdsrytl4dt71qeO4+sPHZTVvDTnfC50HiPkiCdzReLpHrikX/vGbqstvInoPlTLwC
+	 1sRNr0EtKuIaXjheocguQ8g3MnEb7x+8itq5jCwRqZF1JuzSvWKw6+VampOE7xDWKs
+	 AZfgWzdtfjWIw==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74381ee9bc9so3629612a34.1;
+        Mon, 25 Aug 2025 11:34:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUINPynOL4E1FRx5Z6BDEJMv+OyeBO6H647D+0UCcZESosL1SuK8JZfNAeGYZeiQv587lo9fxp/OAo=@vger.kernel.org, AJvYcCVtDarQP85ySNHYAi/7ShAls1zffv+EZosSL6DVa1D7dkMiJfN4mju7zgKTOnvHE/LJXeYCBU+HVxLt@vger.kernel.org, AJvYcCWa2i0B9kbnkxOioXgBGqIl7xAsZFfo0Uz9D1W0gMqQYdtZBcst1nE+6Mx8f1Rol9Z9zaXFk689JsqBW7I=@vger.kernel.org, AJvYcCWlDvQ8HZCPllAsqMnz1SWvoooLyYYM9E/xJ0+S2JEIxy0+SWhs3sbj/MEctr+gJIqRv6drGIEQcOixHZnL@vger.kernel.org, AJvYcCX39rGIyxX0MF1jW/sw5daP4/SUxdOoNepPuKNK7JRHI4wvYscDGsONQG8hbMLYJ9My0h5UVt+GpKhw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAeAGWGaGmobIUGUQfiQJN27Nj8qEgZwMw/eetA+rKTWRB/wxb
+	KIv36rMXhYHMmiwjLf2sj3Ikj9ey1WrtTUD5mypxbvqHSC7ZDwUsDoms74e+exu6AYuzz91AbNV
+	NWSWAM0FPK6RdA9B45e3UnCWOAaFRRns=
+X-Google-Smtp-Source: AGHT+IHOdqhSf16jWGRcPAvbxlN2ZXUmIBB2uN/1WgJfcSLIG0m4VCECUYlhKbhCRJEh4XlchnV+Lnmjn5HMlKfQ8Mk=
+X-Received: by 2002:a05:6830:d89:b0:742:fadb:1cfe with SMTP id
+ 46e09a7af769-74500a6c5c9mr5751454a34.23.1756146850090; Mon, 25 Aug 2025
+ 11:34:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7tazrZqeQK2No255"
-Content-Disposition: inline
-In-Reply-To: <20250825104026.127911-5-clamor95@gmail.com>
+References: <20250823200121.1320197-1-sumitg@nvidia.com> <20250823200121.1320197-2-sumitg@nvidia.com>
+In-Reply-To: <20250823200121.1320197-2-sumitg@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Aug 2025 20:33:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jXq48petXAcf1prb5iuHbh3i8XREJBscs88xs5RY_j=A@mail.gmail.com>
+X-Gm-Features: Ac12FXzGQmMPPTj9b7D4No9vjaMddzqO9PMsplBUU_t1OqXhbaRHMZ7Y9l1HfgA
+Message-ID: <CAJZ5v0jXq48petXAcf1prb5iuHbh3i8XREJBscs88xs5RY_j=A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] ACPI: CPPC: add perf control read API and clarify naming
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org, 
+	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com, 
+	zhenglifeng1@huawei.com, ray.huang@amd.com, gautham.shenoy@amd.com, 
+	mario.limonciello@amd.com, perry.yuan@amd.com, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Aug 23, 2025 at 10:02=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wr=
+ote:
+>
+> Add cppc_get_perf_ctrls() to read performance control register values.
+> Rename existing APIs for clarity as:
+> - To distinguish between:
+>   - Feedback counters (fb_ctrs): Read-only performance monitoring data.
+>   - Performance controls (perf_ctrls): Read-write config registers.
+> - cppc_set_epp_perf() updates both EPP and Autonomous Selection.
+>
+> API's renamed:
+> - cppc_set_perf() to cppc_set_perf_ctrls().
+> - cppc_get_perf_ctrs() to cppc_get_perf_fb_ctrs().
+> - cppc_get_perf_ctrs_sample() to cppc_get_perf_fb_ctrs_sample().
+> - cppc_set_epp_perf() to cppc_set_epp_and_autosel().
 
---7tazrZqeQK2No255
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Remove redundant energy_perf field from 'struct cppc_perf_caps' since
+> the same information is available in 'struct cppc_perf_ctrls' which is
+> actively used.
+>
+> All existing callers are updated to maintain compatibility.
 
+First, this is too much in one patch IMV and second, I honestly don't
+see a reason for the renames above.
 
+This generally makes tracking the code changes history harder.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---7tazrZqeQK2No255
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKyQKAAKCRB4tDGHoIJi
-0hNPAP0ZgYlArdqscbq1qWB/DsuZSnXLM/hf1evnYblufG+cdQD/YqSFvmrtGVLV
-7kJhUCGCQ+v7FNibpnCq6pTJpwLnKgs=
-=Cqzt
------END PGP SIGNATURE-----
-
---7tazrZqeQK2No255--
+Thanks!
