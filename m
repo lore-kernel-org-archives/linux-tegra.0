@@ -1,121 +1,114 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291CF1CEAC2;
-	Tue, 26 Aug 2025 07:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE05C2248A4;
+	Tue, 26 Aug 2025 08:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756192677; cv=none; b=FUg6mQLiN/E6kEFwHsCb1ZeDG1FoNvAS464iqwPMv+TRohO1M6cfjRCVKMRP7HNy/zkGuDXCsGhvZ6ZOUVJPk3AW7mGh6yNmp8BAjmgGvOFv/AUsF7U78p4owCoS6SG175jKScZLPcfzKukkpBSQ+6K4mETLCfc/wwJEkDdRHOE=
+	t=1756196517; cv=none; b=ZmgNjEeiqHTevgZlPpeVdjoje8CrBOIvmmIldl2WbV4mO6bA4+Accjw5x+woyN9ZvZLgOgAhDLG3+/DAuR1QFg14uU1Fow766nLXOl5S4Iq2BFIIUdw+SFpvfiQnk+TrqlcK4HIIB1U7kf55+lgX2USDjxYyMWHqiC7SCzIFv0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756192677; c=relaxed/simple;
-	bh=YRgjxHWGx0sm+DrsEHB20sbddHUAvH5kG7RAji1bxw8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pEkw4Btaum7sG+0XfIV7n3ar9VDuiSSNhLDFkAH4r6dHhqpGNsghF9qW/itQqnZ11wrWM9xCfwQsRYjZv4HRx/lzhd4mFcTiW6onibvOKaFgJHyd4G+uTDXe9eSeTvU5T1PdsghQm8s/ZPmKKDaMeEYvkGvexonJhjrhkK9B8AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArjZKrN3; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756196517; c=relaxed/simple;
+	bh=++2PjwJEEwBxL9LIrwZfgoSlA5C8UFPJSDTEaWItn50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ejx4zopHsX9vjF3yUqGUytA5tZ5ejcNrWAhJiC1ojKhfx/6e8v7ZDDEalKr0n0GV+rxPDTlU+xIgsy6EmqrEKGFa3dOrbjh9I4SBweEIuxoCiIkmzgm12JHLm58KTyh7lU8LPNu9ONG99NCcBJ8hmsBo9f0rJj4sEmH6FlCTzKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIlJa3zM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArjZKrN3"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-333f92a69d4so38030081fa.2;
-        Tue, 26 Aug 2025 00:17:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756192674; x=1756797474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YRgjxHWGx0sm+DrsEHB20sbddHUAvH5kG7RAji1bxw8=;
-        b=ArjZKrN3qZDZHSWjj4fL4BHDDYr5P4wdE2JiktOhUqbTMP9k4loAqLZZeetv6X/7Gn
-         JGnAdTqU5+kRM4qxI0ep8KuZfXMDAwRavNN11tL5t/Z+082e80565cOSCGCtviEzFYH5
-         Om0nlyOhDvtDT1Ty8Las6ESOoFm1Kik00tx7B9DTm9aiBosglQ7/0RYmkis/Aa+tNzjj
-         Y5O6ZFZYHgu7Ci2NTLGIKVn/n+uMHA4xuzTYHALFK5woJhgIsmqUEwsXIBTLsHuDnEDP
-         RWjbZOKLPZOQpFXOeDDCBGzWNRpTVxioWjT5gdLaza2L1Sly+mojlBqPWjJ3VT4KzCG4
-         EuyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756192674; x=1756797474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YRgjxHWGx0sm+DrsEHB20sbddHUAvH5kG7RAji1bxw8=;
-        b=fShFD/hFmvaLOHSH/INn/xekJipndM/3EV0XTmTxidN34JplDiSjfPIpKbhNwtU/pc
-         Smi0LXu0dtYOd9/nMexx6XuPgStsL03MLNoQej4dBX3+AW5cYO5GwAnoLu67+kJS//IF
-         7gThsEQLgK72kSO1B7e3pigvjedDHpFZJKjPy5hrLKw6wHoYXtS1iC+QswUq0wvPIjIU
-         6czYMY8O8nElveaHe9IBTZnw649ecliPWKH6S686+kg09fBHWHgUX6uPIuLW5989fZnU
-         21UFdT1o1IuZB+GIfAAx73UmTa0INQ5ErhR/ErP+Hjsa7ZbxQ7ulweqWqLAL+bVRU3V+
-         mTUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT2WqE8s/BdARz0t0ZyNhspqX65KfgKNKNqJBSuAzVeZ8RUlwRHi0wV5O+KAAgTp5rSurKwrftgD0Wb+M=@vger.kernel.org, AJvYcCVb+3zT990J33s7N1zBUnIPhv2k7qAJB7d3BBz+Mj9DeV8WN7ILtlNUWPMQWEkznKR881S+PyK5qgBWdvg=@vger.kernel.org, AJvYcCWt1w+udS7attN12uunpSKSD7emdqessLLJX5ycNc9RIy359ACR9+V4Nj87FM33+s6Uluw/f24UnxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg91Iu+EAfSN7rDsZ/u5WtS3HQtgWKQQJiEw7Pwel+V8O2/yqP
-	Mx5S3IfG5rRcchs9X3+0zTL2pzRdrjyv3lmjluYkTkm6aUKAFeN2AXxzX8frtFOVbrZzBCv5Lnp
-	qhLJPAbHBQ2Gi3JIo4RHrls3gcANFWIw=
-X-Gm-Gg: ASbGnct6G5aUP7ML1ry+3yz9ES9A705lSFaYYVJ3YrUk0RS/9KNi9laOaUGtiHodnMj
-	SQEfgvXqIb2cbmOlGzF0aQrTeDRZZgLXdMQO9vb4VpauX/P0kBYvtePZJwi0A7GmPRJ1HmcPno8
-	ZwV5Be1zgEigLSmtlh7nwqcVTbs/l5pGGpWi1fN3E17GRGYEp3fH8PPIyaPFsMe2ja8fIaMLE9o
-	ZD9L7mWh/ukUEZTQQ==
-X-Google-Smtp-Source: AGHT+IGfTjMTFaJeXNnkMRpfv5ianH6N4g5+7UuQNvCIsLnQlNqu0cDp8GJerw9dH+q9DCMcpodGRYFrSvJPoqvnMi4=
-X-Received: by 2002:a05:651c:304d:b0:32a:c14b:7d95 with SMTP id
- 38308e7fff4ca-33650fc9ccemr31652321fa.20.1756192673883; Tue, 26 Aug 2025
- 00:17:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIlJa3zM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DEDC4CEF1;
+	Tue, 26 Aug 2025 08:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756196516;
+	bh=++2PjwJEEwBxL9LIrwZfgoSlA5C8UFPJSDTEaWItn50=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nIlJa3zMdens3WbCVlvngdFtUZhn8PdxSMbEzG1BRDq5rv6qErZw+W1xMGVb/wAhY
+	 1wJb1FKdOWHu7KrBWTKcGGx6rUF6eE3LXy6LzJWhSCSS75c9+pcHHBbV9h+VfoGx2X
+	 +Vz3vGH+/XYeuJWcas/IzSsTae3J8LNW11bnvOBTnaVRZf9wyvT3OkA2xg/oaZ7hDk
+	 sb1tH843Mtj5V9zjhBq/59aEd1aF2cT6P65ESqMb9k+E0eYn5SY04RIdJHymLEmbNb
+	 7Z2sXuRTaXPM4raE6QhLT/riV2dbhlAlIRF6oXJAJd3+9GPrzUTfQpmrOgJrk82h2Q
+	 a7B8WuFq8iy7w==
+Message-ID: <2ef333b7-2c4c-4c06-b90f-5dfa8af41e36@kernel.org>
+Date: Tue, 26 Aug 2025 10:21:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825-tegra186-cpufreq-ndiv-v1-1-4669bf8f2992@gmail.com>
- <CALHNRZ8oaGaAhMVVzfeNf+M+-OvMnCnMd-fRdffmOSTBZiEXCQ@mail.gmail.com> <2325429.iZASKD2KPV@senjougahara>
-In-Reply-To: <2325429.iZASKD2KPV@senjougahara>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 26 Aug 2025 02:17:42 -0500
-X-Gm-Features: Ac12FXzhTw64z9ytVZyAaPNZ9y_0Q90vFsq7OuSpHiqP53-mgbnKIywtdtAt8Yk
-Message-ID: <CALHNRZ8HfD+ftrQSJJLE_vsxGq3xyPxD3=m6Xg=LQKXR1nZvPQ@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: tegra186: Default divider to 35 if register read fails
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: reset: add Tegra114 car header
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Mikko Perttunen
+ <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250826061117.63643-1-clamor95@gmail.com>
+ <20250826061117.63643-2-clamor95@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250826061117.63643-2-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 11:48=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia=
-.com> wrote:
->
-> On Monday, August 25, 2025 2:08=E2=80=AFPM Aaron Kling wrote:
-> > On Mon, Aug 25, 2025 at 12:03=E2=80=AFAM Aaron Kling via B4 Relay
-> >
-> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > From: Aaron Kling <webgeek1234@gmail.com>
-> > >
-> > > Several of the cores fail to read any registers and thus fail to
-> > > initialize cpufreq. With shared policies, this only affects the Denve=
-r
->
-> By failing to read any registers, do you just mean that they read as 0?
+On 26/08/2025 08:11, Svyatoslav Ryhel wrote:
+> Binding values for special resets that are placed starting from
+> software-defined index 160 in line with other chips.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
+NAK
 
-Yes, that is correct.
+You got comments last time and you completely ignored them.
 
-> I suspect the issue may be that the EDVD_COREx_VOLT_FREQ registers are ju=
-st
-> used to request VF transitions. If no one has requested anything, the reg=
-ister
-> will be at its reset value, zero.
->
-> AIUI, in downstream, the driver retrieves the CPU clock rate by measuring=
- it
-> instead of calculating it from an NDIV value, hence it would not run into=
- this
-> issue. I think the conclusion would be that if the register reads as zero=
-, we
-> cannot assume any clock rate. Is it possible to tell the cpufreq framewor=
-k
-> that we don't know the rate and it should ask us to set the rate to somet=
-hing?
-> Or otherwise at probe time do this by ourselves.
+Best regards,
+Krzysztof
 
-This is a very helpful pointer. If I initialize all cores to their
-respective base frequencies during probe, the subsequent get's work as
-intended. I want to do a little more verification before sending in
-another patch as I also found another issue with my previous shared
-policy patch. I will submit a new series once that is done, so this
-patch can be abandoned.
-
-Aaron
