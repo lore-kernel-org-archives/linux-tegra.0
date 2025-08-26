@@ -1,179 +1,185 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2081.outbound.protection.outlook.com [40.107.102.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FB4275AF8;
-	Tue, 26 Aug 2025 15:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756222199; cv=none; b=AgehIOYxZtjAedSHLyyTAVrAvwVZGSAjGaQm6K+q68TB+VzQk7PoSezQx719i9nBEMbTdfDoQ4k6oief2rsvJ0frJSW03mXrNz54EllaJCf2/bvaz8OxFnqA+TIMgrYUy8fNrTQSUpdWBHR2rggsZ28+ammtM1NRzE5fr5mAq4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756222199; c=relaxed/simple;
-	bh=cdZAbBYNcAIBqjuHfaxsx0jOau8nyLs0VgU9qmU9ovE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqaDE6n8tTgiFelG7x+y9PQKXedsoDHEkepI0dFGLu6dGMjWYtTybkEoRz241/0WyO8zuBFOZ9qrftOF8ugoTet49sEmOZt6F/u5NvYkUFHkgrmhXVdduMOYcmZuZamBW98eNI77B/ll3Qvr/k88lqt8WJdZli+ydbLgWp/PYuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMiQZtOn; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA22C29DB88;
+	Tue, 26 Aug 2025 17:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756230240; cv=fail; b=MICU7DLylUoeG8BHuWyVpjyR6JPO8Ny3V4onTQnNDWFHT/ONTyWZw7gZIXYjXFg0EHpGhC+ECGUtOmf9iNQBCFSa+rXysloXGM0oclsM72s5gG5VqnrdVCmci1pVyoymNYnCzgTeIdotMz8J+7TvEgkHZJ1/NhGfQPsQnWg/nfc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756230240; c=relaxed/simple;
+	bh=6egyvUzAr9oSGAYf4YWLPTIGmpFXSQ+OY3vnuF4hdEQ=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=HQah1zhfgHzOPElfBBHDXPZ0YzjOuJEvNRqJGUivx5M3Odd0RLSgjQUFZaDZtAOjuXGIWmDHDXjKyUOqXPG0ndN8k6sDnGV4qgBJHtIzwRMLCRQIzPfivoIYaE8xUEcq3TDgMsmxWgRM9z/9fOKy5MZaHBfnCoJ5gy7kkv+lzbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Kc8zGdnr; arc=fail smtp.client-ip=40.107.102.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMiQZtOn"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3c4e9efb88aso3153050f8f.2;
-        Tue, 26 Aug 2025 08:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756222196; x=1756826996; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cdZAbBYNcAIBqjuHfaxsx0jOau8nyLs0VgU9qmU9ovE=;
-        b=bMiQZtOnDGffaNae2zoM02lXJm0lVT4uYwGoX2p4y4rQEhhr0aRbNj8wkFOKGOuIw2
-         r+ePcHXZoiuRZhNVa1EqbHeLjOmgpS3cOwnqYR2W15KLNsJDYHiJUmc3i92OGeF5gOj2
-         PxsKEIiUEtXewMCG+OI2AOjP7MYBn+5gw1NcTlbcIrovRdQ/KBCZIlqTcWVCy4gq3I+E
-         1eqRNdfsorEhvTdgtiNgEegNOdAZwf8byLwKRoHnpO90joYqcwG85/AOEWm6k3o4pYr/
-         9SlFBr0CEWiNa/+0tnTg7HT+lslyDC0uER6cGua7DEJpsitiT819JTGSr9Xo/E9FV4i+
-         +BDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756222196; x=1756826996;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cdZAbBYNcAIBqjuHfaxsx0jOau8nyLs0VgU9qmU9ovE=;
-        b=GgRfSRJc0/DwJEXupylUvESDlbopRbeUILqxB5gm2i+PUrqEn9qPc3WEczuZSRpTUV
-         4LiBQAOzzX9hEhz86ALX1J00UFnoBliOZ9XrO96ybL2SvHUdVXjOvBxET5jNDyZyjGup
-         IdzPc4SMrh4Dgp5rDVxQtDm0tpRrC83LyNioVEjSX90JFfp679rIaJ3eHnMLtg50KdR6
-         u8ikovoiFEoLGZAPoPVmz2kXf9NEPml9RMo6VEZ0T74ubHJC4q1jpQjUYAZTYQ7Tw31i
-         0TOiJZyEAyx7A4O3XsKAhOR/r03cD9+HjjYSjQTk+9Mr0nsKm3Ut97X1WXl2g/+kkQhs
-         3ZSw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7pTxqWOyQ9yeuPceH2X++nTUxq2TCFWT4bGmk6VsOE7p5eMtpRuObypgO4Aq48tmOvdHh5FmNH75Hmmg=@vger.kernel.org, AJvYcCWRNkCPd5zWEN0KvMBWH4LPGdU84bM40TfZWrNHBVCZPzsGTI6v8vmBds1vji9w5n4k/czA5JjTgq8e6cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxCc+BX0PZR1P7gB4exQfwrvutqLS2kPmLE9gOC9BujQQXH4WN
-	6K4S4cMsrjDg5C5vUrCRUpmgtMrXeflEecQn573rHfcserLx1qyWxV6y
-X-Gm-Gg: ASbGncvHlwl/vyL8biOoWsDLALarcwZpI/3hNir0qYPSux0Ksmic6gHlsXUws9k9ZCG
-	6fUI+w42c46RgPlsXd8wqK38998h03cXqUcqsCgqZE0cjKGyVAGPoiCmwWk8LihVDLs0zMwkDRL
-	O4v/8+JWVdtOH3qajDLFA4KKtxxLQl1mdMFlQ/TbgCVI8us4C4jGSp0x4j/tmPYRAcNZTRv+V/5
-	wyQ7TI/L6Dv21lNHbh9qNN8HQwk2sAKbfp3rtmhvvyNxPDlRUb/QiMo6ktCb75Y6x++5qgiLmLz
-	RWXtU+Wxjg/hIB5WB+c8/vn2OfmC7/21mbTPqr/L25K1Faji/ROqEs8Cvpr2PxdnEDy5410SJm0
-	L9ZFEKwY+ao4JdlFUqCNC5WHvqeT8uvsiIT3GVHmNoM9WJ9+v6NNnP4VB1xHBp83H0QtiqRbq01
-	N22yqd4ZkO5SxQ0pS5fzo=
-X-Google-Smtp-Source: AGHT+IGLXIM9W2WuBw5JktkgzEZ7AUbO0CB7mmCye6JDHjueGoccX5wbLqZC2YfqOof691xXdtIc9w==
-X-Received: by 2002:a5d:5f50:0:b0:3c8:6200:3385 with SMTP id ffacd0b85a97d-3c8620034d2mr7067869f8f.29.1756222195340;
-        Tue, 26 Aug 2025 08:29:55 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4b9e2asm18172838f8f.6.2025.08.26.08.29.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 08:29:53 -0700 (PDT)
-Date: Tue, 26 Aug 2025 17:29:51 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: pmc: Ensure power-domains are in a known state
-Message-ID: <sgsi4wia74nbvme4ik27waec2yuipbw7hfh7jyygxlbfhvsc5q@4onfx46nle56>
-References: <20250731121832.213671-1-jonathanh@nvidia.com>
- <CAPDyKFr+uVDYBMvsN+L9XPToaD+Wr9P=SnnXyKB6ucqQ7se=7A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Kc8zGdnr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cEguU9/yWLP6ixF8Y0BT0jaJYWw+kr0ds1e+EFp4t0QOaezE3nW9yavNCoCDvbPgwgZpJKafaPoYroJOFCEBDNN/JXcIe7iRg62YL+WAL/nykhsUVl7AMmMgYZpQ6rdxaKcZsN9ZB7Xidj76uLm7OmYw8nnrRXaSxKaqPLVW6VmaCXU/e7lICGtqROyj8NMH1ewvFp//em99bsE3caWE6P8c5Q4V4yhodR+HKTI4qWUaxe9s0/wtyis3xlhVYSDBLEd2e4HDKU9JmHJRO6RHPMjTFILwvCj1CLVcrYCl1mslys10qp62Uy+YicRRWZ83x3QJxpRuc1Mm0W1A5Pcz8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QAylrhHiL/xjFfW6C5Qx9wwYVvokgdawf1k/cOQqw7o=;
+ b=yDd+2f1fC7wd58sEMygdr79juE7Z3GHjSpPWIvl4fiO75ZRgsMcYR6uMvilpmgud4omdgOW/BrtG8WyLUn6Jo+cavbteDDaLp/XeVU4VzZ4I9AhD6AN0Ty5C9olYQVVjx5Bb5UajoWXt/Bmm0L38V1v2+0uB8VOMvxIIXMG80Aji41xQAHyV1ebt22Q4qEmfrvVfkcphALl5rVFzQw5vNS0k3SdSf2RxJWAAS0gNMQlTGdWhxwKtE7HH+9Fk56kPi3QxqQYkc4wAYJUCmEa3SijVZNJG89EY/hY1pHMCMeU4nlJrXVlAFb8Qk15iylyqcFt/tMqplYIM/N33S1Vb9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QAylrhHiL/xjFfW6C5Qx9wwYVvokgdawf1k/cOQqw7o=;
+ b=Kc8zGdnrTcaQlVDqkhoLIUQw3+0HmCmfvzCszzu/D9H/ZsJbwsPcUu1zW9SOBffw5QKsmwHfARBpQ1E7QiM0az4ShbWl60nxBw7tK33gxMf3aUvIwwuwQgLnnauZIe3KYP7pHsO2KS0QdET191su9+gq/kdbe1nnb4S23QBAZugYOGjc4wTx/9Nb7ImTlz2uVTr8QQPQYesd2I9CnZIFZ0dcqcRlk1c01VbzEDyFoX+1jTDDJEOtdGruk+nGDqwNstXk9c1uRGVIADK5bHlP0pUqPavEYCe5S62N2Lp0jir7qNp9g+UCUqEhZs1fIbGwrSdc0Tvg7w6XTXsgNIv0aA==
+Received: from MN0PR05CA0014.namprd05.prod.outlook.com (2603:10b6:208:52c::25)
+ by DS0PR12MB7850.namprd12.prod.outlook.com (2603:10b6:8:146::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
+ 2025 17:43:53 +0000
+Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
+ (2603:10b6:208:52c:cafe::fe) by MN0PR05CA0014.outlook.office365.com
+ (2603:10b6:208:52c::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.13 via Frontend Transport; Tue,
+ 26 Aug 2025 17:43:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 17:43:52 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 26 Aug
+ 2025 10:43:31 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 26 Aug
+ 2025 10:43:31 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 26 Aug 2025 10:43:30 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <achill@achill.org>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/523] 5.10.241-rc1 review
+In-Reply-To: <20250826110924.562212281@linuxfoundation.org>
+References: <20250826110924.562212281@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6z37v2e7krj5payp"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr+uVDYBMvsN+L9XPToaD+Wr9P=SnnXyKB6ucqQ7se=7A@mail.gmail.com>
+Message-ID: <8331510a-3e2d-4be7-960e-c0b4ae5af6cc@rnnvmail201.nvidia.com>
+Date: Tue, 26 Aug 2025 10:43:30 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|DS0PR12MB7850:EE_
+X-MS-Office365-Filtering-Correlation-Id: ecb5bae0-9007-417f-5fb3-08dde4c81f83
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MTdBeXk0bWVBdWZEanpsQ3NRcE1tcjhKSXpsM3kyUzhTQ2JiY25rMVFKNVpq?=
+ =?utf-8?B?dW0wMzhWZlh5M2hXZWQ3aXVtTkZOdlVWOUJKL0ZINGdmQ01xTnZ4TWZKL1hF?=
+ =?utf-8?B?KzdQMmYvV0t2V2JVZUlLQnlxMmI2UkM5ZVp5MDQ3eGZ3NmMyUlE0cS9KSXBx?=
+ =?utf-8?B?dmV4amU5dHJjQW9TVEI5bHpJbEJCYUFEQWZ6ZUM4M2hLSzNZcklQTUhxTVhV?=
+ =?utf-8?B?Mk9lNFNSZW9BQlZZZlIvMEx2QjNQVkZ6Ynl4d1JHTWxrV2I5SzN3eWF3ZWgz?=
+ =?utf-8?B?YnFhTWs3cGx5YzJjUXZEamROczJIMkJxSjFpekpOemFuR0VQWi9sRnhDeUt2?=
+ =?utf-8?B?N2VpbjFlS1Bxb210NUdjbmx5Y2l1SXlyYXBtYWhSQ0dXVy9HTHpFMFF2bUUz?=
+ =?utf-8?B?SWNwRVVIN2V1ZTBONmlEam9QRWZWY0ljM1o1bmxYMkJvVW4rWk1ndjFydVo4?=
+ =?utf-8?B?ZkY4NzNnQm0yNUNROFhyOGZ1VFhsZ0FWMXhqMVE4VGtBK2NhSy9VZ2hYOU1z?=
+ =?utf-8?B?YWRLY0FvTVVjWjZjSE5WOVNFeEJGckJTZkF3dXh5anJ2by9tUEdlaVBXRGtI?=
+ =?utf-8?B?VTBBbUJIUzVPT0NrU1hzN3pvb3A1dDRxM1l4Zk1uUWd4b1RWRFp3NWNJREp3?=
+ =?utf-8?B?ZjZVTVY4L3UySWtHT2Y3ak0yVmZlQ056bFFvSDZPaW50VkNZRHd0bnhlU1Rn?=
+ =?utf-8?B?NDlQK2d5Wm12ZnJFaklRcXNzMFI1Zzc4Uk1jQndvb3NPekVmVnBsY3lRcmlS?=
+ =?utf-8?B?aXNod3NpcEhhR1Fsclo3U05sYlEwZ09vRUZSbFEwUkVRVkIwY2F3RE5IeUZR?=
+ =?utf-8?B?MlFoNUFTMFA5cnVhT1ZWZjlZemRLZE0rL25wQVpsRmN1a1hsUW9qejFDUUZt?=
+ =?utf-8?B?VTVMcmxMSDZmbGY0d0xRdkNXVHJMMEJMSGZQUDlrUDZQMm5jMU1pSndrck1W?=
+ =?utf-8?B?cWUraUY0S0Y2MlpPMTRpdDJkZ1NMY3dZQ1hqRkJuSndpOHNkSk5CMVNLMk04?=
+ =?utf-8?B?MlhNdmJ5SFBKbktLRmtlcFhTT2RGNW0vaGZmdHREZ2I0K01uOVFFaGxjNGFx?=
+ =?utf-8?B?MnJVRzludDFsSDZRZGNBWjFhVlAxY3Nkdm10Q3hrUXovZ0lPVW5VM1B4Zktl?=
+ =?utf-8?B?cEthTWVSY0hEQmNsS1ZkVFpWcFVEODZjTzhWVEFLOFdQS1g1dndNamQ1dEh6?=
+ =?utf-8?B?VlNGVVY0a0NJM3BYNVg1SURBU0hBNlBabk5XLzM1TU1sNHFhOUdZbzRvaWla?=
+ =?utf-8?B?bDhuL2MxNVpzZzhmenpCUUxmditTVmVQRHM5QTRsT1ZNNzA0Rm9LOXM2eXFJ?=
+ =?utf-8?B?Mk5VeG9TNWF5bGJ2YVREb3NVbWNkaUpZOW11cU05UFkvdFEzNUFkTFZNMy9H?=
+ =?utf-8?B?QmlzcTdESHJQeTU2R1RyelhZVnNWbEM5b09SbGtnMFNKeml2NFNKdXlYRlZQ?=
+ =?utf-8?B?SXhPMjhXSzY2Y2dDc3NraFdqRUN3Q3J3dHRkeHJVbGh3b3BYZGNiUEVXUmdY?=
+ =?utf-8?B?b0g3Z0FEcDMwSmhuL2JqT2FhQ3Z0YisxVjM0SlY4TGN2STdSdXh6MnhiSUQr?=
+ =?utf-8?B?VExvTllvSTBwQ2MzRmJvQUNYSW1xTUlBb0pPMjd6d2ZKakpXVlNGNkRxSnkw?=
+ =?utf-8?B?bFZ6Q1ZrUjFScGNlY2lyN2pxSkFFR0tZTENjNCtIOFFLVTFQNjRnVHhCeU1m?=
+ =?utf-8?B?NkpRODJBNVRIdDNwVGZnZnR2ZEd4cExnR0hTQVdMWkd3Qlo4dVBiakdRRnBy?=
+ =?utf-8?B?S0VjSUZ2YWRjeTl4Z2JPZndsUjVUcmRzQVJxWEh1ZEhyalVYeS9ZSFhrckdp?=
+ =?utf-8?B?RkxhSWM3V1UwNUhITlBNUlZCMndkejlTOFRvMnM5SU1YM01seU05OWc2Q3RI?=
+ =?utf-8?B?UE93dzZDL1A0dHdJeGR4cVhwT1Vmc2J4RDE2QythbDMvT2MzaWhyRXQzeU4r?=
+ =?utf-8?B?cm55WExjRWxFbUZsVmpFWUpaREtoYy90aHhITkdVWVdUSE5PSTVaMWxxTU85?=
+ =?utf-8?B?OW5WdjVyTXRPWWlSdVJDSFVsN1d0RWFEOTRWVXdkcEFjSXJzVkx0b04wY2Z5?=
+ =?utf-8?B?TDRVOHcrRWJSWmVzNXhqa0FQZGw2ZFB0L1poQT09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 17:43:52.7846
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecb5bae0-9007-417f-5fb3-08dde4c81f83
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7850
 
+On Tue, 26 Aug 2025 13:03:30 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.241 release.
+> There are 523 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 28 Aug 2025 11:08:19 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.241-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---6z37v2e7krj5payp
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] soc/tegra: pmc: Ensure power-domains are in a known state
-MIME-Version: 1.0
+All tests passing for Tegra ...
 
-On Mon, Aug 11, 2025 at 12:37:25PM +0200, Ulf Hansson wrote:
-> On Thu, 31 Jul 2025 at 14:18, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >
-> > After commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on
-> > until late_initcall_sync") was applied, the Tegra210 Jetson TX1 board
-> > failed to boot. Looking into this issue, before this commit was applied,
-> > if any of the Tegra power-domains were in 'on' state when the kernel
-> > booted, they were being turned off by the genpd core before any driver
-> > had chance to request them. This was purely by luck and a consequence of
-> > the power-domains being turned off earlier during boot. After this
-> > commit was applied, any power-domains in the 'on' state are kept on for
-> > longer during boot and therefore, may never transitioned to the off
-> > state before they are requested/used. The hang on the Tegra210 Jetson
-> > TX1 is caused because devices in some power-domains are accessed without
-> > the power-domain being turned off and on, indicating that the
-> > power-domain is not in a completely on state.
-> >
-> > From reviewing the Tegra PMC driver code, if a power-domain is in the
-> > 'on' state there is no guarantee that all the necessary clocks
-> > associated with the power-domain are on and even if they are they would
-> > not have been requested via the clock framework and so could be turned
-> > off later. Some power-domains also have a 'clamping' register that needs
-> > to be configured as well. In short, if a power-domain is already 'on' it
-> > is difficult to know if it has been configured correctly. Given that the
-> > power-domains happened to be switched off during boot previously, to
-> > ensure that they are in a good known state on boot, fix this by
-> > switching off any power-domains that are on initially when registering
-> > the power-domains with the genpd framework.
-> >
-> > Note that commit 05cfb988a4d0 ("soc/tegra: pmc: Initialise resets
-> > associated with a power partition") updated the
-> > tegra_powergate_of_get_resets() function to pass the 'off' to ensure
-> > that the resets for the power-domain are in the correct state on boot.
-> > However, now that we may power off a domain on boot, if it is on, it is
-> > better to move this logic into the tegra_powergate_add() function so
-> > that there is a single place where we are handling the initial state of
-> > the power-domain.
-> >
-> > Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
-> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->=20
-> Thanks for looking into this!
->=20
-> I have picked this up via my pmdomain tree and applied it as a fix
-> with a stable tag. Please let me know if you prefer to take this via
-> your soc tree instead.
->=20
-> That said, I guess we have some use-cases on Tegra where it actually
-> would make sense to allow powered-on PM-domains to stay on during
-> boot. Although, at this point, it seems better to deal with those on a
-> case by case basis, as improvements on top.
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    67 tests:	67 pass, 0 fail
 
-We're actually running into one of these cases right now. This happens
-for display hardware where we have simple-framebuffer device tree nodes
-that are meant to allow a seamless transition from the firmware's early
-framebuffer to the Linux framebuffer. But since Jon's patch disables all
-of the power domains, the seamless transition no longer works.
+Linux version:	5.10.241-rc1-gd8db2c8f2fff
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-I suppose we could argue that seamless display is less important than
-systems booting, so I'm inclined to say we want to keep this patch to
-fix the earlier regression and then apply a fix on top to address the
-issue with the early display.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Do you have any thoughts on how to deal with specific power domains that
-should remain powered on during boot? Ideally it would be something
-standard, but worst case we can also special-case in the Tegra PMC
-driver.
-
-Thierry
-
---6z37v2e7krj5payp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmit0u8ACgkQ3SOs138+
-s6FFixAAqJoloa2yc6CVKOEehp+GcldydxFiQL1s28pKd6Gus3xbRu+uJYxzWsc/
-HpZevLIrRExLv8cB3vdHP0Iw+fOiuy9Aecop2NJyfmGCtmdkE+TOWIIEeX872V/g
-iY6RRV00xLgTHL9Gdrx83Rv+nUKwm5M/fw6Zga2Cq8xpE//fkfE0cPBnWrwAYqMa
-TjchEyim7frnm1+ju210QC8B3uNVqpG5sPpDmYMRYO4e8jFzJjbfKf9ovU8rVU9M
-hmE/cHaA+bJ7Rz6+A3YxHpoPYvcthpN94AakeLSrqVgVLkHsz+7Po5+9CdEJW3cU
-qpk9MYPm1GiQCo4I3bXe/SGjaKVpPjVTEtaZ2+ZIIsZ5KiRXjtjhjbHh58or2TQz
-8Vs7hlSFeOvSkGHWeNoAfJZ6c9yZzb/y+NV8L7ESSHcRzu2JqXWMC9gTxcxYv9DG
-7eUiXQrRpyKemfIH64qbryUMmhUFYjKnrAfu15BFrWZx6pPiC+SUwf0xXWqE/Ky+
-dpRbLymVt4k1EtfCPsBTpUhXnGZPzIjWFKU3WEUxX2qUO65QAMSL5i8jTBvmQqQq
-Lu3JtQGFSuSMOassZdb6b9GDmx/g39JEjEKH35SRpMB5uZXfXtdoQRJe0AiBAFZa
-kfWlqt19lzQ2HH0G+M/ooMqWOxalDPdI34ijbEpv8JKhD8Sjhik=
-=hev8
------END PGP SIGNATURE-----
-
---6z37v2e7krj5payp--
+Jon
