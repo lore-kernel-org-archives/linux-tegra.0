@@ -1,110 +1,174 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3672FF16A;
-	Wed, 27 Aug 2025 11:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A9535A2A4
+	for <linux-tegra@vger.kernel.org>; Wed, 27 Aug 2025 14:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294679; cv=none; b=uAkEER4W/zjAC1IaGXiv//eSkyXX0rDOjQZqdaWUHABhTA/XIN7aXhV+DFovg76GMu/V+TUXnKh+9Ha7z7GkCR9+K13tzc+66MV8YTNyhI6kVXRos3m6/dBmMO5gjTWG61J7lIf5HTonLavGCeZj4BNnDQ6iKKUnFMi/dfKeuVM=
+	t=1756303996; cv=none; b=fH9Aj1MQP8TNtgkXnjVFPsEMkHLDf2dDePw8eliaw+dz9zZYl3JRGDAAJnOIZrJClSWEzWseYqXEqaobgi1WTJaeC9Di+YAPGuV4Nu1TdPf7CQ7CkUKSajNRlOoSy9sCtRWY+0aqF/xxgF9ghk/Zbt765H5A0bMJ8GhloI9aLlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294679; c=relaxed/simple;
-	bh=/tQ/wqmHmUwYAheMmvjzfMN49kXQJ+eJ8SBjzDv8EJo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lGiDGiROMoyMXYkWeSE0j2RivR8PIyOJXhe3hrcMEbmXhbhQqTN10lU1mQ7prKnsjkPP8jpw7He0A3rbIL/WeS1FdXw8OhN1YS2On7wlTyw2dfEf2l1/K0loZjkgq9GdT9UB2mL2tX/k3QQKk3DGSqGOsmTjxO5TpEH6GrktldU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOOw4n3Q; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756303996; c=relaxed/simple;
+	bh=DbwcQqcSgOgf9ZSwsPbdu37ylfuV2VigX8RYWvus3Uo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ja5Yg71Csr01MH4mUbiOXjkILxbZ1E1GjT8hsI1JBpcvexOpZSolmuFqWaLS/wPFv6i4nSqiOmueBGRKlW3rTDjBYPZ5jDLUZFCCaKzbR8zr4wyhBwyd2IPgSr3ix+c62noHDGZY4Xzq4jBB61TaY8A1AU9V7HPb+SP3pKIfFn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWTiy0/i; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOOw4n3Q"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afeba8e759eso149695466b.3;
-        Wed, 27 Aug 2025 04:37:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWTiy0/i"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-246cf6af36dso39640105ad.0
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Aug 2025 07:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756294676; x=1756899476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P0C9hmh4vnRqesYo5DwgFCTzSzopjMLbL20csj4cb7I=;
-        b=KOOw4n3QvsckK1wMjAaIuM8D9Ba+OI6k9Zf8vK6KK3jIJabKq0QKdtwTLnnQEe19mZ
-         2fddi8UDaUfIrCiXYe+/vICmdZOtwjqp84Yb03c88DJpiOuZenMpUkG3LyZEDoWq33zH
-         I90tDgWvExHos4LuID0E+PGWgjH0izlFotyvBCvxOPAqYfK/pk0Hg86vrtaXUWZb7qMI
-         nqeu9OPP6GitFO4M8Qk+RcV6auCewRTXhMvmwG/R4cQ6VkPvDP5GeLNWDmCNaEsldLrP
-         d96U2bzf1dKCbzGTdIaP1EHMgzVAEPUcNjc12uOzqvHjt1xQ9pscC+aE7b6uvTf2+U9M
-         uIAA==
+        d=google.com; s=20230601; t=1756303993; x=1756908793; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oT9Qx0pL0526DK73EqyoLYw0wsYmSjn2bOtkKWj9+LI=;
+        b=dWTiy0/irckCaQzk1WuEdn1/rIGs7BUH5HtaVC4UoJeOx0TpCeqeE6kk77pxAcqrnj
+         8LojKUuALAEpPlTJymXuhPzon4uOCNgzVgt0TkOgA6Z6gJ5ao7qNO5a0VaRMShCbvqEb
+         7Z62nl5DvJ20RiK5OTGZ86B3DOv8vFnsYY+sJzLivJ/iGpVMmBOsweBiRfyJ/72qPJCX
+         PwBUcRJOon6Uj9jfopwF3gsWHxnnuYseo58d2oMPKXgA5TBeCfN+sZsEs6MYpfkwete7
+         EjDMl/KFvG2qvR/qwNw21N6nT6u+87ofdLzjCfMKz7iNC8r3Su2x+Dx8A/RBkzH8CXtw
+         fv/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756294676; x=1756899476;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P0C9hmh4vnRqesYo5DwgFCTzSzopjMLbL20csj4cb7I=;
-        b=oD74mB82SxuGFahJ8C3hUpuyTsQqnBjJ1HNtVlnccnTSn+R4dECxJsABFr1FdZLqFb
-         CCJ73wjavUSSjLnxwYa3Wi0+kQclvhw3oo+FpqL/+VmYdmlvQK2nLBeVwxLGei9T5gaJ
-         dg01xzqwoZO/c530FZalpq76vdEBmWFbFCHEeFGAEtY5JD0qaXHW7TroJb8MCEs+GLPU
-         NQEF3uGWlMbmUq66fFsKx5h8/DvnixBIxN0UVBte3phSH0BlUIxoqVoQ9Yxg0UsmCYuw
-         vttSsvXnjf+yOsc8NT5GUpq6V2U8E0P5HCEF+C8S59SGgL08GpeCBOyr82MFM6Tme5rZ
-         t0Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXgM/ZvY953DAeSaRHzuhwdZkSR5gCTmdDedkGjZLccVYXdIV3pcTNvHJlYOYP7fHNLYxLz3vEijo58fg4=@vger.kernel.org, AJvYcCXwPns3+gfqz+pNOryvnBHrWMKBQo0Q83aL/9SMc934YywSPhzMD4VVJXoGb8e+/GfdvqbFNqPy/JASVqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM4jsAjaIAeDLx+mgeKXNTQunwppzJEOSAw+T0E2VPEtKpR0z8
-	83bOnqt1CCJF1L2HI8csG1WyYdkUj9+qdKv3FYEY5bqfgsCRFjVrUqJ5
-X-Gm-Gg: ASbGncsyWXtMfGv3YBfpR0FPkTzdqG8hSQ1xN2zNYkN5V/1Vu5I9weQ5el4+bifCp5m
-	hbmNCm997jpzrpmZb6Yyt+G9TPzPesrE//0KgtyC3KsZt5uZi3BCb38JYKt+iAf8AHFaH99O5wj
-	58Nre/hNMiNLXN0SC1JXwrz8o3SclK7xtQnGT8PEKjPBngPNaVHV8JWE8aE7RoSQj59sHtXv6GJ
-	kFjfeMyAHiTTYlp0sWzz0NGx8RhdF1f8JplToSFw4VW33JfM+m/RSUggl2BmYv/Y9eSUKHkXdVb
-	xgXtc9S29RUYqctbaQPMG4jEJQRNnhBtQlAEq41CuDlfZxLLg6UOy0DLP+N+VtMnIcEMNXBOMgQ
-	ISzB2rKpi70ero/ZXFmea1IQl
-X-Google-Smtp-Source: AGHT+IGQYZNygmBI+7r9v6ROe7yL1PjnQiRPO0EJIa0L6acLDhkeVvZvHqdPYJRJr7MWuMmq2BiClg==
-X-Received: by 2002:a17:907:1c17:b0:af9:1184:68b3 with SMTP id a640c23a62f3a-afe296358ebmr1875534866b.55.1756294675912;
-        Wed, 27 Aug 2025 04:37:55 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm675607866b.105.2025.08.27.04.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 04:37:55 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] arm64: tegra210: drop redundant clock and reset names from TSEC node
-Date: Wed, 27 Aug 2025 14:37:34 +0300
-Message-ID: <20250827113734.52162-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250827113734.52162-1-clamor95@gmail.com>
-References: <20250827113734.52162-1-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1756303993; x=1756908793;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oT9Qx0pL0526DK73EqyoLYw0wsYmSjn2bOtkKWj9+LI=;
+        b=iRhdfV92XIvlOCq46WFD98LUOzoe1huLoPOAvTaiURxmRQ4EiI5X8GiH43pXDSsxZa
+         7Q88yx+QgtYuXTrrnL5wuBvoDQtzAZaEyIht4mfr36Eh4M9Wvl0KlSgTjw8WHyx82sV/
+         O6FMtS9upVZsbUk5SOM14EIaXaetQ9ItK9vx7EnoVJmD4tHNWgXMNtBVuUlaTPc49bGT
+         luk3JZ8hY+lNlDGEHZ6n1ZNS91vV0gHK869yoychpFtvR/fDrDEYfCw//2gaDDQfHHnq
+         EbbtdgB3l+Yh2E6lSOXzM+eRtbCBjeRJpwmsvR2xCmgMLDEKXA/jH2NGa9ux0giRu2RY
+         2xWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGWwUXKv7yAb0nNBByY302ox/WL4Wcjhn7oKCc9u6cNSjffq19xOwrFIG0j/PJqXBZSqHs9be035FjFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyojYIo2d31scAGdByVE1AUrQulfzXUv7yNFTqC5wXNfmaRVLVV
+	D+Vd83zrQsZcg8Muck95RMyWdNSdtAFJ/5FV1gl9cE3djAaVBb8hnNI5LBIoXTtstCbwUZ9qSe4
+	ADuXqFg==
+X-Google-Smtp-Source: AGHT+IGTSg2J3odWqRi5DzWDmdBYNRXtpWLMNIy0mlgNYPFM/YLwHCJkE7ruCavXPIcZq+6RDeJTdDhPxa4=
+X-Received: from plan10.prod.google.com ([2002:a17:903:404a:b0:248:7792:b8da])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a8e:b0:246:620:a0b9
+ with SMTP id d9443c01a7336-2462efcaaa3mr229124795ad.61.1756303993097; Wed, 27
+ Aug 2025 07:13:13 -0700 (PDT)
+Date: Wed, 27 Aug 2025 07:13:11 -0700
+In-Reply-To: <20250827023202.10310-3-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn> <20250827023202.10310-3-zhangzihuan@kylinos.cn>
+Message-ID: <aK8Sd30K64mbN1Nt@google.com>
+Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
+ policy reference
+From: Sean Christopherson <seanjc@google.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Markus Mayer <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Clock and reset names are not needed if node contains only one clocks and
-one reset.
+On Wed, Aug 27, 2025, Zihuan Zhang wrote:
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  arch/x86/kvm/x86.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a1c49bc681c4..2a825f4ec701 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -9492,16 +9492,14 @@ static void kvm_timer_init(void)
+>  		max_tsc_khz = tsc_khz;
+>  
+>  		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+> -			struct cpufreq_policy *policy;
+> +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>  			int cpu;
+>  
+>  			cpu = get_cpu();
+>  			policy = cpufreq_cpu_get(cpu);
+> -			if (policy) {
+> -				if (policy->cpuinfo.max_freq)
+> -					max_tsc_khz = policy->cpuinfo.max_freq;
+> -				cpufreq_cpu_put(policy);
+> -			}
+> +			if (policy && policy->cpuinfo.max_freq)
+> +				max_tsc_khz = policy->cpuinfo.max_freq;
+> +
+>  			put_cpu();
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_policy() until
+policy goes out of scope, and so using __free() means the code is effectively:
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 942e3a0f81ed..cbe54c4e5da8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -183,9 +183,7 @@ tsec@54100000 {
- 			reg = <0x0 0x54100000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA210_CLK_TSEC>;
--			clock-names = "tsec";
- 			resets = <&tegra_car 83>;
--			reset-names = "tsec";
- 			status = "disabled";
- 		};
- 
--- 
-2.48.1
+		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+			struct cpufreq_policy *policy;
+			int cpu;
 
+			cpu = get_cpu();
+			policy = cpufreq_cpu_get(cpu);
+			if (policy && policy->cpuinfo.max_freq)
+				max_tsc_khz = policy->cpuinfo.max_freq;
+			put_cpu();
+
+			if (policy)
+				cpufreq_cpu_put(policy);
+		}
+
+That's "fine" because the policy isn't truly referenced after preemption is
+disabled, the lifecycle of the policy doesn't rely on preemption being disabled,
+and KVM doesn't actually care which CPU is used to get the max frequency, i.e.
+this would technically be "fine" too:
+
+		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+			struct cpufreq_policy *policy;
+			int cpu;
+
+			cpu = get_cpu();
+			policy = cpufreq_cpu_get(cpu);
+			put_cpu();
+
+			if (policy && policy->cpuinfo.max_freq)
+				max_tsc_khz = policy->cpuinfo.max_freq;
+
+			if (policy)
+				cpufreq_cpu_put(policy);
+		}
+
+But given that the code we have today is perfectly readable, I don't see any
+reason to switch to __free() given that's it's technically flawed.  So I'm very
+strongly inclined to skip this patch and keep things as-is.
