@@ -1,193 +1,153 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8841C8606;
-	Wed, 27 Aug 2025 05:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94AA287273;
+	Wed, 27 Aug 2025 05:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756272112; cv=none; b=Qh5bVGCaSM0yB3q3ybZ2GQ7x5zEyX5EHjSn8h44pQJ/uTpox5vmf0eYACypqhomUBkOp4Cc2T9SRzgtWVCNXSYo8wRdLQBqRocTr4gnqsWnYA9RnIiWRu2WRdoCvSZ8EIOQjiUX6WhqXNFg276Gf/Nm/sGyV3mdVUQ9WhenH5X8=
+	t=1756274097; cv=none; b=Ua82v+S+adU8C6+uVFw7biJVlNMxbmxVAOYYkotjldkknlNxswT6cPdkpSk7XLwk7br5BMDGHHdjTuy7qACrKfzNSkc3ghgmNgjZBALcEWay+mq08AA0aPEt2utuFrQFI1T1VmAcQmQAd5KLvEJVHSpMsdBZ51W5VyoEQPz06qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756272112; c=relaxed/simple;
-	bh=VRExz2y98Y4Bks79KG62576slKCC55TnEApk2y1mwr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tIoi6M2AwxybqbpN8FbmxuGC8FwZbC5JgWsOgZWrB8e8vfYxXFTwuiHDmkkFwttWXtkfWP8gepo3QdJi5IY5Unve19ebj+zWwmSmTatCwoRRULQwx/c9OlupSCObHyzzFDDtuCYY87g9e319J89rKCOISGuepNfMZ3ICqdJgTz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b68a31cc830511f0b29709d653e92f7d-20250827
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:34726253-5bea-4e9b-b07f-349fa0556763,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f8fed63546234af68ef13bd91ef320cf,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b68a31cc830511f0b29709d653e92f7d-20250827
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1509111154; Wed, 27 Aug 2025 13:21:40 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A2851E008FAA;
-	Wed, 27 Aug 2025 13:21:40 +0800 (CST)
-X-ns-mid: postfix-68AE95E4-5407809
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 0D64DE008FA3;
-	Wed, 27 Aug 2025 13:21:25 +0800 (CST)
-Message-ID: <773da273-4ab7-4672-b4d7-f9c560f3fccc@kylinos.cn>
-Date: Wed, 27 Aug 2025 13:21:25 +0800
+	s=arc-20240116; t=1756274097; c=relaxed/simple;
+	bh=8eROKf5S0VMq51uDrP4Ccww8z69TnWPueZiuLEnNzMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OfQYuojg+oGsbzWYYY6YDp5QIMhTSTrnx+89eJj+xF9TNpB4LxiRuyOFuGNmgNk3YZkpoWvgaOLh4eiN59TaOKMClOYQ61cn4o9DmlIVevoIk7xJL27CqjapIrmnc91BiO5B8dONZdZBrWo2GiO2UTyzmKl/ZF9TCRYCwYZJTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiJQ/rjj; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiJQ/rjj"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f499c7f0cso2408191e87.0;
+        Tue, 26 Aug 2025 22:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756274093; x=1756878893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m8n1j89CvjN5ZFEbdFGzttMH7tyzPC+isNQLY6VZ0w0=;
+        b=NiJQ/rjjB1cOxvwYSOr41aeZa0HgSKuAbKrug4sqFj/qMV/I05+oY1g9rEjfdHr1HR
+         VqS1GWx4mC8MLFrqo1naF+p3gwE59vZHfpyEtP3brcwn0cwCnye+V8za5uoWuCxX3h+Y
+         KWjzOV96M3vdTeABWrH0d8gKchPgPXu1qyYXoX2AV1Oxnn0iWA693N9+7SAkG3CQX9Ie
+         eVu4+KVuDJHLv0WTjn1yr8Sxia6A4xy28sGRDIfjo9rzU4yE1GJkcmtGbFAyeMm/X74z
+         AO9m3SjVNz5oXIwLjdNbE3thPFDV30rc7K5rSpUd8oKRycjRRPzcgP0zLRfBRmDOGVwa
+         do2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756274093; x=1756878893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m8n1j89CvjN5ZFEbdFGzttMH7tyzPC+isNQLY6VZ0w0=;
+        b=d8q4Bfs2yq50o1TbcGAuSGwakwG+q29xSN1eAfy14IbOS/etQi0tmU8eZmGu0W+K2u
+         XfBqYCgFhzMSI9LLPlFQp9MwuRp577VGwbISRR+34xH31Yeleu5xl96dd1D43cSCKT5q
+         X3Y2jfdoOIt5saSYxMxO2ZyTznpXDG+XgAZHHvGFkclqVB7/uuQBOV+ouLPzBk3DjGEo
+         V5vJK4jb0TcjyYDpPTa4C1ZDOT6+8d5z6gFDGs+wnCwdPyeypa5sLABSID1m5OWOChgP
+         ZQmBBy5xU8chyQkz2gj3fQAQtDgRgmMtepM4t6k+ioO7+mKloUQbzCmY0bucquC1LPIE
+         x3xw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1giFfrbS3DKefCbAzdh2nKkkA10BUIm9tKQywakjcgNaUqexSyE3Qz8YoZIrKcQ9fd7E54E5jbXB7x/U=@vger.kernel.org, AJvYcCUXXMaqGVCRZrVzI31ochacr2AYpNO9e9kYGIamR0W8WKDqNa3wpDD7WGF6PW0Jwkuq5FPVajhPbdxiuVk=@vger.kernel.org, AJvYcCXj9/VlVLcrK4+hVOwSKnFcZwJmD/TqDk+wYcrO93iIi+1pVoU/8X7uBe/rz7yJ+5LGXw4vnPLvuAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFjPGH5Sjn6LJiBowwc0W8aDMRpMhrvrQz6CKKwXJFXDgbQokj
+	bb/BgBD+z1VV1jcqgdVq2O0WUH+Jx3E9AAj+ss0PVpYFj8WfnE6oL09C+xLC6DpwRymofkg0eYZ
+	kBULXPunFCf8bUbZbE6znV4X5sup2ubw=
+X-Gm-Gg: ASbGncvjo5Jt2gbZQFouHSYz2sU7uJ/jyk2971PA/Ccb1cjNngV0aFebdizpx3OUDwz
+	lIhKzz0wDbAP06L2Ljlcrs40hTsD/r9UmlR2pudglpsmykRZR5Kkxaz8fpTvho4/Ve5YzR7pXo4
+	VFS9kAeQw2T+kC2/LKp/uudTlclAbBso7QM7tKPKXpBlivTtHVtsKMCUOcAu+eMKYbjZQqUe0kp
+	XVZK7Q89mcr1q4AHbbeQ9ugurD9
+X-Google-Smtp-Source: AGHT+IHNbW4SO/xBJ0LMEH+gXwKwnl/GVQ4u+pDvk847J5bPbkQbK4PsfsRLx2GNcufPD1Q3bNVfi4pbQWjgy5kT/Vk=
+X-Received: by 2002:a05:6512:1451:20b0:55f:3996:4f82 with SMTP id
+ 2adb3069b0e04-55f399650cfmr2395180e87.1.1756274092506; Tue, 26 Aug 2025
+ 22:54:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/18] powercap: dtpm_cpu: Use
- __free(put_cpufreq_policy) for policy reference
-To: "Rafael J . wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
- <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827035056.353772-1-zhangzihuan@kylinos.cn>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250827035056.353772-1-zhangzihuan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com>
+ <20250826-tegra186-cpufreq-fixes-v1-2-97f98d3e0adb@gmail.com> <24066927.6Emhk5qWAg@senjougahara>
+In-Reply-To: <24066927.6Emhk5qWAg@senjougahara>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Wed, 27 Aug 2025 00:54:41 -0500
+X-Gm-Features: Ac12FXy6I9yuststMLMbu0a9gFKQlY2gGlFE3HWxValsmuH9e5xd_3-3x7Zc26U
+Message-ID: <CALHNRZ8SfAZHm5PszA0uCbr0QUYFSkdayVwEwjgRYX2JT0xhfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cpufreq: tegra186: Initialize all cores to base frequencies
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Aaron Kling <luceoscutum@gmail.com>, Sumit Gupta <sumitg@nvidia.com>, 
+	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=E5=9C=A8 2025/8/27 11:50, Zihuan Zhang =E5=86=99=E9=81=93:
+On Tue, Aug 26, 2025 at 9:09=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.=
+com> wrote:
+>
+> On Wednesday, August 27, 2025 5:16=E2=80=AFAM Aaron Kling via B4 Relay wr=
+ote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > During initialization, the EDVD_COREx_VOLT_FREQ registers for some core=
+s
+> > are still at reset values and not reflecting the actual frequency. This
+> > causes get calls to fail. Set all cores to their respective base
+> > frequency during probe to initialize the registers to working values.
+> >
+> > Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  drivers/cpufreq/tegra186-cpufreq.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c
+> > b/drivers/cpufreq/tegra186-cpufreq.c index
+> > 6c394b429b6182faffabf222e5af501393dbbba9..ef288705f00b0918d0f8963ef9cc9=
+fc53
+> > be88091 100644 --- a/drivers/cpufreq/tegra186-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
+> > @@ -229,7 +229,8 @@ static int tegra186_cpufreq_probe(struct platform_d=
+evice
+> > *pdev) {
+> >       struct tegra186_cpufreq_data *data;
+> >       struct tegra_bpmp *bpmp;
+> > -     unsigned int i =3D 0, err;
+> > +     unsigned int i =3D 0, err, edvd_offset;
+> > +     u32 edvd_val, cpu;
+> >
+> >       data =3D devm_kzalloc(&pdev->dev,
+> >                           struct_size(data, clusters,
+> TEGRA186_NUM_CLUSTERS),
+> > @@ -257,6 +258,14 @@ static int tegra186_cpufreq_probe(struct
+> > platform_device *pdev) err =3D PTR_ERR(cluster->table);
+> >                       goto put_bpmp;
+> >               }
+> > +
+> > +             for (cpu =3D 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
+> > +                     if (data->cpus[cpu].bpmp_cluster_id =3D=3D i) {
+> > +                             edvd_val =3D cluster->table[0].driver_dat=
+a;
+> > +                             edvd_offset =3D data->cpus[cpu].edvd_offs=
+et;
+> > +                             writel(edvd_val, data->regs +
+> edvd_offset);
+> > +                     }
+> > +             }
+> >       }
+> >
+> >       tegra186_cpufreq_driver.driver_data =3D data;
+>
+> Looks OK, but I think it might be better to set the frequency to Fmax ins=
+tead
+> of Fmin to avoid any slowdown during boot.
 
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->   drivers/powercap/dtpm_cpu.c | 24 +++++++-----------------
->   1 file changed, 7 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
-> index 99390ec1481f..65117569d0f3 100644
-> --- a/drivers/powercap/dtpm_cpu.c
-> +++ b/drivers/powercap/dtpm_cpu.c
-> @@ -144,19 +144,16 @@ static int update_pd_power_uw(struct dtpm *dtpm)
->   static void pd_release(struct dtpm *dtpm)
->   {
->   	struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
-> -	struct cpufreq_policy *policy;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
->  =20
->   	if (freq_qos_request_active(&dtpm_cpu->qos_req))
->   		freq_qos_remove_request(&dtpm_cpu->qos_req);
->  =20
->   	policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
-> -	if (policy) {
-> +	if (policy)
->   		for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
->   			per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL;
->  =20
-> -		cpufreq_cpu_put(policy);
-> -	}
-> -
->   	kfree(dtpm_cpu);
->   }
->  =20
-> @@ -192,7 +189,7 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
->   static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
->   {
->   	struct dtpm_cpu *dtpm_cpu;
-> -	struct cpufreq_policy *policy;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
->   	struct em_perf_state *table;
->   	struct em_perf_domain *pd;
->   	char name[CPUFREQ_NAME_LEN];
-> @@ -207,16 +204,12 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm =
-*parent)
->   		return 0;
->  =20
->   	pd =3D em_cpu_get(cpu);
-> -	if (!pd || em_is_artificial(pd)) {
-> -		ret =3D -EINVAL;
-> -		goto release_policy;
-> -	}
-> +	if (!pd || em_is_artificial(pd))
-> +		return -EINVAL;
->  =20
->   	dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
-> -	if (!dtpm_cpu) {
-> -		ret =3D -ENOMEM;
-> -		goto release_policy;
-> -	}
-> +	if (!dtpm_cpu)
-> +		return -ENOMEM;
->  =20
->   	dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
->   	dtpm_cpu->cpu =3D cpu;
-> @@ -239,7 +232,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
->   	if (ret < 0)
->   		goto out_dtpm_unregister;
->  =20
-> -	cpufreq_cpu_put(policy);
->   	return 0;
->  =20
->   out_dtpm_unregister:
-> @@ -251,8 +243,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
->   		per_cpu(dtpm_per_cpu, cpu) =3D NULL;
->   	kfree(dtpm_cpu);
->  =20
-> -release_policy:
-> -	cpufreq_cpu_put(policy);
->   	return ret;
->   }
->  =20
-I accidentally sent a duplicate patch in the series.
-Please ignore the extra one, sorry for the noise.
+I considered this, but I'm somewhat skittish about setting Fmax by
+default due to seeing instability across different tegra archs and
+finding out that the t210 devkits have been factory overclocked on
+mainline for the last six years [0]. That may be less of a problem on
+t186+ with the bpmp having more tight control over stuff, but... yeah,
+I'm still wary. But on the other hand, I set performance governor on
+boot for my android builds and have not seen any obvious cpu related
+instability on p2771 or p3636+p3509, so that might be okay. If you
+still think Fmax is better, I'll update and send a v2.
+
+Aaron
+
+[0] https://lore.kernel.org/all/20250816-tegra210-speedo-v1-0-a981360adc27@=
+gmail.com/
