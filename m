@@ -1,61 +1,63 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E470520B7EE;
-	Wed, 27 Aug 2025 11:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D2328153A;
+	Wed, 27 Aug 2025 11:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294675; cv=none; b=YXYjCFkg3nW8x6LlkmE7ELE8rhCpbOfhaEVMPR07UawxGtZQVbYQ1Qe+PHgoAEyKvOthxyiZqkp7AdMJAZgDA/+FUD6cSUv6ppkXm1TY448aw1dniXQl8/69AphoSLO3Sa3EMK7/oZuajnD4G9NTxolDktZAK0RQdLcfJsXR4Xw=
+	t=1756294676; cv=none; b=I1Rzf+hGG8i6avtLSIgj8lk0CczusQaXqOh/S3nh7Z0ahCGCveuv5vMRXaZ+Sd+RrPITOXsaMjy8MCQ4DiWBAUHMnHdkXBe8xHEazZLC6+BFPX5cDbpimaXO7fqjZZhkULfio3H4PVNTb5K5ZK5Fk6w81CEQBUcPG4Ne/o6p2BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294675; c=relaxed/simple;
-	bh=TI1ysOXPP4hVMHn60o6TUG3RYzs3fDZDuOhKElmj1NM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G88QSRJRMtFlFMNGzZTmoJCRdELQJR3dHJHnlVXdSd9JEiOh3bum8kO14RuWbkaLUef6RURz8npKtPNikVob17pTrWK7dLjmWXUshz9Q5PayyB7yvBgk3swQk1c+yL+8IOLMd+5L+V6ASxcOKORS+2GdtrH6EIy+S/5Prd/fG2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GL7w5nlP; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1756294676; c=relaxed/simple;
+	bh=i4MgcvSNSXhpXwA0Joq8AfSjh70ku920C9QSWoCf6JQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SJbJxbg77x9Spl6pJyv4rBsh95Lqd9Vt1WuerowtFFXp6Zr56DouyEF7W3cCYwDn3nQ/JGHLAAeLG8gkBaNCZuOf1E0Dowr1bmHbok58Duj4ktjj3raUM2uEk2HZ+AQfYWlXJR6Cqd1HpS6z48tTklq0VL4Phfl6x9erczcWMxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M4mdYF3h; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GL7w5nlP"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb78ead12so937392066b.1;
-        Wed, 27 Aug 2025 04:37:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4mdYF3h"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afe9f6caf9eso330228466b.3;
+        Wed, 27 Aug 2025 04:37:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756294672; x=1756899472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e0TL/ekeJOQg26wztgmTDgEuvDo0zmkivmyNIAbPqQQ=;
-        b=GL7w5nlPUIdbA8H4Z9LvljoS05tAmolNg9FdLTQb5LUMcCPno5uq1Q6cLkrzTlsKCA
-         27wIYt4wmapobS5a0riCF+vqRS4VAGrF7KMStix/Yd1eQLPz8za8Es02GVuLpbN/f5Ex
-         H4iy1XBPjyLn0vYbJa1Mz59nkEEPcWSIIy+hOLPZ1SypsDBC825/P5FJlKoEGkUcsUdj
-         jrnomwyzX4bmpD3SioD8MY+NP7zjZAFzrdOEBhE9MKcNuc+qVP2NmG3h3+EYG0WXa5QF
-         kR+erzbaniWgVRDIIx1up8+Y8SDjwL/y61/Du/TFgk+TUz0Nu8WGjV6rhZhllSj2jgtV
-         gt6Q==
+        d=gmail.com; s=20230601; t=1756294673; x=1756899473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eZCwVIm0BBUrI1isOlAHhb9IAUffQYjBbbKB31CrfK4=;
+        b=M4mdYF3hkU2CYKrt7JKsUSlZjQ0G2OEAJ+FTgSS2nE2Wf3tBS9yMdLqwMo8cPAss+A
+         ShwNRR2UwBQLSqJu5laeXAfuysly4lDpQWu6wBD2XJxxVge5NY9DBDh93Lf9rEEa0qmb
+         IfGxMT0xjv8IeWvmVx/z0liIA+dslIQwIuBK/zu81Mte84RDyY4PzxHF1BXtc6Xyxwh3
+         huaK10Wf3jleSDN8qmstScaBlvgFq6CpHFtwYBXRHOAbcnm4kieY7IJpCpdfCIg+OVQz
+         nHZTZxA+Z1ow8wS1MOGGB7meFvE2PIkfU2KXHNlFe/NWt2M6VOhh/TyPVDq7JAk4KPI4
+         V8LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756294672; x=1756899472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e0TL/ekeJOQg26wztgmTDgEuvDo0zmkivmyNIAbPqQQ=;
-        b=qvIAp0YimWE/al0L9l08nVGUuuNQvEJ6WLQadjFPQALIloHHom8xs+9WVDgF+IM8V6
-         N+DB9Et92ehpgI0MJy//s7DKQhb0B4/NhvN5anPzTXQ/oPR1I+Demcj+YG/yl5+nvjPo
-         T1GhIwJEZxbzqxYSnHQ6dA1qEEvLND2FvV6aYKzkw1GVb3Q3CHgI1XMKV0n25y1DX/I7
-         l/NlzrCfE5bP3C+ahc8uisD7U0T30nNITGGU+Y/Zvv11nwEpiMwAlFq+B9hGGOkmD3R2
-         DXt3BY/B32aRRS4Za1tCWgl5edwIjvFs3FMHQsrnXH+Eg799Gl2hNuTV0lpeozpAiXIA
-         B+FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWWsrHVRjSnx2tSKDXjUuhnL+yy9c2Z/xU+aM4YPaa8on5SGVOPUYudSmNSS4r/+1gHrXIQ0dV1ezWADA=@vger.kernel.org, AJvYcCWU51tX8JeEx34nhGM2rdftAaq6ENTU3brrFg26IV8uoGOSJFTtXXWjxGrWlIn7OVkcmj07EIq0S6KqaBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Gdh8Zoyvs57em/VBL/V3RonoE7qu9oTimbdCfC/ldA6uD9iE
-	pbFsJKmk/BOMb1Qy/y0JWEFyHp/bCGpHJTH9sl5ThD+mAMIKM6E10HL4
-X-Gm-Gg: ASbGnctqV0sZyQDRHtLAHHobW1aEkFKrX7oQl1t05XRJDUrbNIcFCGpo5KRwCQu8QKE
-	a25jZKaw50lCeqw+5gmWCel687nY/XLEIikRyNlZ217chu1EgoAjsP0xsyO0wHrpB+IK7oibQ59
-	w47MNDxUzxPXUsqO1kaskChjiKxHnmSXfX83V7+6IZ/u59k410WXkeNWsIZOyDe99zwDixgS3FI
-	My/brl/mf2vf5lUkYfwZJOBTWI8sVLfwt43WTMpTMHBMP+8YzewMJ3NMPGB6ef7xnd/2o+cCwSX
-	fsd3MBqOVG3DNVjVEPi+XvsyqErK5JmuaKk6Va2CXc+6sQcgKY524UXBaTzv2hlGfLwF/Ejbw2Z
-	HpgslGEgp582p4lle/glCvo/ngk+yeuGqAxc=
-X-Google-Smtp-Source: AGHT+IEHKp7wptHFcLrBt3UnI/jHvsdzwxscNBgxQZxapqmiUONBatuiJfqrhX7xGiGufIrkshgtCw==
-X-Received: by 2002:a17:906:f5a7:b0:afe:ad45:acf5 with SMTP id a640c23a62f3a-afead45ad78mr436922466b.34.1756294671995;
-        Wed, 27 Aug 2025 04:37:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756294673; x=1756899473;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eZCwVIm0BBUrI1isOlAHhb9IAUffQYjBbbKB31CrfK4=;
+        b=W7K1s3dEsqlulBSqJGXxNYK3y/KVX0xPXLIZb6iL2t4VyC0bu+CwebUtwQm1YZVmlj
+         hms3dDDzrbaLoDNp+ooqbmDiFo3bR2R0g7uR9YxRc25zgDODPLFLHxnuQhjm6RINa81j
+         QBryT+pAJiP8ZIhHdxTeMTO5x3UvyI38UOsVNYesvBp7DeipFB9vb6TktsjgJSLF52+D
+         tDjbNBgoJ8FOt7eVkAl9dr+g7A2cQGfmN7faiQEbDhGiNh4RQi+VQoMjrqewglzW+sgU
+         ve5pJ5yaGLNaf3IefQ2AIu4cEZfawK002zNOyfJlC+Uka3bPYcktKf5dedDk3mmnGfmF
+         lTBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz7WrGEDHGDFH9aN/+vi9izGOYf4zzCie0w2ja8qpyro6BdaP7jCB/8/6+aFFQy7k7KKWldME227z0+0E=@vger.kernel.org, AJvYcCXwFQ4Rb7DmnhMCopzrnkgLLlKuVFFHZ7i7s4BWVsX1X8JT1BdWVAcFiTqCrKDcgpVRrtqdqifZm1CSHWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSrAmm8Dln9sFfG+hnn11QCZyozk6qMUiMRLp1T3Og2YD1VDiV
+	tOqTbyHmw5oPnnVn0EZ7tbUBM+i7POIMS115Quz6CySd+QutRaaAy+75
+X-Gm-Gg: ASbGncsimwAKdkXynZM9/rlNdU0YeJ1pdaL9ka6TDg8gVOwkGiEKd+J5YiDXhdMD03M
+	v58PyOIq86o1LSeYB1pt+B2kzNNu0BIycWpUhW3fl9ocT/WqXY0j7YGXTNZ6DjqQt04ffINdZ0Y
+	Len3kliQR4J0sCZC+URorDdq9yshz28g1pp5Z/zDeQDTTk6eiD5aW57Frmumhq6TBd+5exxWraV
+	87pYfbeR/dqVCthZbj+b9jQHXLIArrbbSta0LW3sgccXopr17Zzn6gdMMuYXJLKrAvBl6fMR/uf
+	qb+wMN+PDs0EgU4TkSXqQuxWuj0v7CvXvADrt7Ib8BP5mvczxadK31pkQiLo3mFlvuf1lWC7Oef
+	oh1aG3qaz+wYGQvjTFpiqhnXU
+X-Google-Smtp-Source: AGHT+IGJAxA4KBmmOR5bXwz703ra8BVtkjyV3qAc6z7tzN3EEb88a0QUSgAh9xLVP7HTf08aVPv3tg==
+X-Received: by 2002:a17:907:72d4:b0:afa:17ef:be34 with SMTP id a640c23a62f3a-afe28ffbe95mr1695113866b.5.1756294672936;
+        Wed, 27 Aug 2025 04:37:52 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm675607866b.105.2025.08.27.04.37.51
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm675607866b.105.2025.08.27.04.37.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 04:37:51 -0700 (PDT)
+        Wed, 27 Aug 2025 04:37:52 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -67,10 +69,12 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/4] ARM: tegra: complete Tegra 4 and Tegra K1 device trees
-Date: Wed, 27 Aug 2025 14:37:30 +0300
-Message-ID: <20250827113734.52162-1-clamor95@gmail.com>
+Subject: [PATCH v5 1/4] dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for Tegra114+
+Date: Wed, 27 Aug 2025 14:37:31 +0300
+Message-ID: <20250827113734.52162-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250827113734.52162-1-clamor95@gmail.com>
+References: <20250827113734.52162-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,54 +83,175 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Complete T114 and T124 device trees.
+The current EPP, ISP and MPE schemas are largely compatible with Tegra114+,
+requiring only minor adjustments. Additionally, the TSEC schema for the
+Security engine, which is available from Tegra114 onwards, is included.
 
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v5:
-- dropped clock and reset names from TSEC schema
-- removed clock and reset names from device nodes
-
-Changes in v4:
-- configured tsec schema to cover Tegra210 TSEC as well
-- added required to tsec schema
-- reset-names preserved for consistency with other host1x devices and align with T210
-- added clock-names to align with T210
-- operating-points-v2 check https://lore.kernel.org/lkml/20230119131033.117324-1-krzysztof.kozlowski@linaro.org/
-
-Changes in v3:
-- added tsec description
-- swapped compatible back to use enum
-- clock and reset description dropped, added maxItems: 1
-- reset-names preserved for consistency with other host1x devices
-- dropped interconnects and interconnect-names
-- dropped isp nodename
-- dropped multiple rest names for mpe/msenc
-- dropped tegra114 msenc example
-- fixed reset name in second isp in t124 dtsi
-
-Changes in v2:
-- dropped accepted commits
-- added EPP, MPE and ISP compatibility for T114 and T124
-- added TSEC schema
----
-
-Svyatoslav Ryhel (4):
-  dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for
-    Tegra114+
-  ARM: tegra114: add missing HOST1X device nodes
-  ARM: tegra124: add missing HOST1X device nodes
-  arm64: tegra210: drop redundant clock and reset names from TSEC node
-
  .../display/tegra/nvidia,tegra114-tsec.yaml   | 68 +++++++++++++++++++
  .../display/tegra/nvidia,tegra20-epp.yaml     | 14 ++--
  .../display/tegra/nvidia,tegra20-isp.yaml     | 15 ++--
  .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
- arch/arm/boot/dts/nvidia/tegra114.dtsi        | 64 +++++++++++++++++
- arch/arm/boot/dts/nvidia/tegra124.dtsi        | 64 +++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  2 -
- 7 files changed, 230 insertions(+), 15 deletions(-)
+ 4 files changed, 102 insertions(+), 13 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
 
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+new file mode 100644
+index 000000000000..2c4d519a1bb7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra114-tsec.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra Security co-processor
++
++maintainers:
++  - Svyatoslav Ryhel <clamor95@gmail.com>
++  - Thierry Reding <thierry.reding@gmail.com>
++
++description: Tegra Security co-processor, an embedded security processor used
++  mainly to manage the HDCP encryption and keys on the HDMI link.
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - nvidia,tegra114-tsec
++          - nvidia,tegra124-tsec
++          - nvidia,tegra210-tsec
++
++      - items:
++          - const: nvidia,tegra132-tsec
++          - const: nvidia,tegra124-tsec
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  iommus:
++    maxItems: 1
++
++  operating-points-v2: true
++
++  power-domains:
++    maxItems: 1
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - resets
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra114-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    tsec@54500000 {
++        compatible = "nvidia,tegra114-tsec";
++        reg = <0x54500000 0x00040000>;
++        interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car TEGRA114_CLK_TSEC>;
++        resets = <&tegra_car TEGRA114_CLK_TSEC>;
++    };
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
+index 3c095a5491fe..334f5531b243 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
+@@ -15,10 +15,16 @@ properties:
+     pattern: "^epp@[0-9a-f]+$"
+ 
+   compatible:
+-    enum:
+-      - nvidia,tegra20-epp
+-      - nvidia,tegra30-epp
+-      - nvidia,tegra114-epp
++    oneOf:
++      - enum:
++          - nvidia,tegra20-epp
++          - nvidia,tegra30-epp
++          - nvidia,tegra114-epp
++          - nvidia,tegra124-epp
++
++      - items:
++          - const: nvidia,tegra132-epp
++          - const: nvidia,tegra124-epp
+ 
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
+index 3bc3b22e98e1..ee25b5e6f1a2 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
+@@ -12,10 +12,17 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - nvidia,tegra20-isp
+-      - nvidia,tegra30-isp
+-      - nvidia,tegra210-isp
++    oneOf:
++      - enum:
++          - nvidia,tegra20-isp
++          - nvidia,tegra30-isp
++          - nvidia,tegra114-isp
++          - nvidia,tegra124-isp
++          - nvidia,tegra210-isp
++
++      - items:
++          - const: nvidia,tegra132-isp
++          - const: nvidia,tegra124-isp
+ 
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+index 2cd3e60cd0a8..36b76fa8f525 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+@@ -12,13 +12,21 @@ maintainers:
+ 
+ properties:
+   $nodename:
+-    pattern: "^mpe@[0-9a-f]+$"
++    oneOf:
++      - pattern: "^mpe@[0-9a-f]+$"
++      - pattern: "^msenc@[0-9a-f]+$"
+ 
+   compatible:
+-    enum:
+-      - nvidia,tegra20-mpe
+-      - nvidia,tegra30-mpe
+-      - nvidia,tegra114-mpe
++    oneOf:
++      - enum:
++          - nvidia,tegra20-mpe
++          - nvidia,tegra30-mpe
++          - nvidia,tegra114-msenc
++          - nvidia,tegra124-msenc
++
++      - items:
++          - const: nvidia,tegra132-msenc
++          - const: nvidia,tegra124-msenc
+ 
+   reg:
+     maxItems: 1
 -- 
 2.48.1
 
