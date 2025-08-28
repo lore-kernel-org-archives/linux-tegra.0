@@ -1,324 +1,385 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2053.outbound.protection.outlook.com [40.107.95.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDCF30BF7E;
-	Thu, 28 Aug 2025 10:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376600; cv=none; b=WSHy2DzMgBKtbnD6EllPmhLCUXrVKmQDDartoKsczKLkNc4HT6QbpNRshMNh24jyufxne7q8CHAk8LOKpZDHWELpSg6jcLLKl9SeQr0Oz/GUKlk4/+k/hjgTZcbrKrTdGi8F3o76PApoHryLQihzIifLgPBPBR3SY+BUVlI0MzA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376600; c=relaxed/simple;
-	bh=LPWSWIXlLuMB2c9Lle24BbirXI6SQ1/LxkXgluudhmg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LKsNEEnxGcGaEQ/CJnfqRY/XDIVjnhYqhNuVSyIXMklWMvcWTAGvV4FgGxiDzTHwHhp27zb0vT1kLO/Q4qxyhYIMfXgSRDnJM27J6/66ODBVFPiAiuYL9d95USLS1Xq7Fb4H2TCiRfEnyemcg5DldnzKSgtNfrLoqOmPO19dMus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5eVtvSr; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0914026561D;
+	Thu, 28 Aug 2025 10:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756376914; cv=fail; b=DZ10YBy/KMvYi0NRPv8hSZU1DCLMzycW32nUFvu3bzV3pPFA9FlyleTdlBtps/FpBej9E7tlKjaSGs4eGPsZEU5Bkj0KA9cL8njiyRM7g1X6Xe/qxzx4tFvu1yR3aACLhtRaO+lv2ixwWaQStWPFK7eb1x+x5HtdmhJJ9UKiZf0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756376914; c=relaxed/simple;
+	bh=k5oispw7vHD3EA8txEn+Z0QsHcEsfJ96NWFff1dnJSQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UdnvQwbiqSj8zIEcSvJQTSuO4YLRhE8MWd6Bg2TMDsz8uWQJ+gixC75kahmJzrc3/xrlccb+vfQIiF4p6TEKMZ0ggaVgDLpZwxoxHUA8KRP3daiQNHcg8vzoPV9CUD+P+na1Qi1mBoLuBZm7VAS7P+EGQ/hpznKH9OchzPFwaq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sNDtXN0J; arc=fail smtp.client-ip=40.107.95.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5eVtvSr"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3c98b309804so491497f8f.1;
-        Thu, 28 Aug 2025 03:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756376597; x=1756981397; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vGYnQxoVRT6FoRMhhpzyK8mY4CvkA0DsYv69RLHz9Bk=;
-        b=h5eVtvSr9URTBiFlPWfIDLQf6bqUuASmQu+1BJxu7U25UMrTF97SitYL2yCFmmdqDN
-         pGsxXB1V/AT+Asl3yAynbG/tgELIs4eFuMnKSEBCCkh2pqxZ8DDv/SIl2SJat/oEyFPk
-         W2o5CCwf+i6oELzYK7lLg652stJs+G8bH+SpGq8RJjOHescCeBxcOMd1nVepP69NPEuV
-         oU2ooStOEWi+/8IqMqoCoPLs6kUD1/htVvQUNQ/PjJSSafLshXh+MkbqNoqVgywJ7CqV
-         VFSoYwqqYMM427GqFuwzjHtnRb0FI8SPX30tRmGwJCzxu7wpc4nm4egbf+yBhg6o3Tut
-         iftA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756376597; x=1756981397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vGYnQxoVRT6FoRMhhpzyK8mY4CvkA0DsYv69RLHz9Bk=;
-        b=Ze3GAIbtPCiyr2bZ9XOj5pEW3KeqP8wWy1O/dxNu7ktpPgxn06eoRSuqDlZ5whFW1p
-         YH7bnIWQMMrmP2E0VkdWbgicaZORkgDTBysefyvGSif0dsMrPkm+64BhcZoy28veANPH
-         vcqo2lSxQAnF0Nk7Y8nlcGkggKsxXfhD7lUbYYPlzPG6r5Qzv8PR5jpSDYu1w+AKvfSN
-         uChK7XZ232rO8Hk42RlTOhekwkgwkcoBl3kknHZG9+Yr7e6yDQS6Sx3AIbcd/INU5TYa
-         faNl+XvvcLLkXR5YYW3dIiE+G9bLFa2g9H7c31sAV4i/10FsH3uABmk+a9r6WbsPb9cg
-         TeGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUsTBs5JCySjxDwm3d+j0+bI30vVjxTwS/86pi3/bFfwvU1Oc5/W3SBhCLG/5ChIl4KmEdFHCAW+wiayFR@vger.kernel.org, AJvYcCUhlvQ4a/uc/RVtlDGmq5wBELxPvySOFYAblbbMTyOtBJAzhWyyvWE3MfrGLokfXerkeftIVBMgbqa6@vger.kernel.org, AJvYcCUzUwcb1sNyrN08LryjLady0EBa/ahJta72t7KTyB5iceqxNbZcG7ja3m02oKMEV81d0/X6aV3wpxf8@vger.kernel.org, AJvYcCVsE0fCn1HXyaM1D6W0O5rlArPYA6m5VW/NG6v0X04KspyjmuxQ4qTtCwKQ5WtVBB8EmzZR0IhQfZCOrMI=@vger.kernel.org, AJvYcCXpDlMHaEzgcc4yOf2lh5Pm3PRVMVe31RU+YFyuiwTBeCOhjPC8aUgk6zXhUC+grZ6Dit+6Cs9XWCbpN6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxugeqyH8FNjscYwvmiiwXOaX8EdbVoWvp6CDXbMVgwRSkTVB+
-	3pSy26Vc7nhMK63Cd8ApruFGzA9ScUUJ0uEjWHxyfoa/fKdqjC9rk7snF1kBYNE/UrH6z4YT0yn
-	Cg1iL1GSnPHrgB5AIpDcyTtRNMvZLqwE=
-X-Gm-Gg: ASbGncu65xhFA4OOvNR5DJ9hKvCXBgcANjG+4LyzTVSlO/a/0xtkVI2ksD6GD6Nyl1D
-	J1kFy4lvOVxroa4CCv3tOxtsRLIgitzFSPyUGmxzKICNZ2q8ozc31yKCvNfWrXgRHxhIh/ZPn75
-	eeBTkBmFbpochhDLreAXNSG/ov0rn/30xPoZz34eWsjKNA5QokIhey7dvAGyM8AK+vfGrSkrxWC
-	ORexjwq
-X-Google-Smtp-Source: AGHT+IFJEv9zxqfpx7q5UQXcYfMYfW9nwtmCrUwOTbez89F++l6zSO42XLVHFVGUVX7jveQxdxPjqpHfUNYnLFDLt4k=
-X-Received: by 2002:a05:6000:2903:b0:3c0:3fcb:ed77 with SMTP id
- ffacd0b85a97d-3c5dcb11e67mr15482144f8f.47.1756376596525; Thu, 28 Aug 2025
- 03:23:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sNDtXN0J"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FXysmPFgcaUUO+amHC9XD+KMDBzS9U/6OxyHWM8hmzfVyGud1c0JNxtbu2DXqNvGC4hBDygwDlQWJFSCORSjvpU2mejCGcwVBeKDjpy98kyFU8PzbBNVYltSdW55B22xZ22opmz05lyH2Y148eDhGqyvmoxpcMp3ytvD1kTF3mXmWVNl8vaIZW5snxVQQEFa46gT2P0p8Y6ztrdLkrkHaP/YIcg6vKeKkFDPpSwQrHG/n6qb8jsidjvYG7HSntdXxwBe07uYj7sSkbS203u1YiwKleWbsLJ9Y/o7/4Dwhoey6vhn0WFi4GEu0OHhArpokXk1ceZRNteQsNLBL31Icw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lOkThfPG0hiGIP7qx4ze1X2X0CUmAAZ8P9Cpd8Olm5M=;
+ b=zEH6g0j5qmKs5Pa4b6j40bFlTCYydXLuqaHNYXKho4xAL5RV259z9IXcmTBItC/weED1T4uJy8Fr6/BJBJySCWjXqlKtPac8v1UNDVGktR+9BZUETrHnEXkDGgxcJXT3T2Sii/BKsOyG+hECu5KxkATnKtV/aO6e8IFJB+bd5CFFk/9V4M3wqi9J5nWauPOQc5BKjPmBkChoa6WyzWazN/V8832uqtUrWb3l6U61q61FktglOCNIQR/pvXLk6WGB+QD8V4KSeAUXDToPFUFDnsD1V9aNA41lhMOKbnDK/vgqyuKZpP9MvxIzTkQ0X9VSWZmPuoC3EU27driCoMONVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lOkThfPG0hiGIP7qx4ze1X2X0CUmAAZ8P9Cpd8Olm5M=;
+ b=sNDtXN0JI0Ls/QVYjwTcM7NOACyJoxG22kttHAYnW6pDuqZWm9RfmQk7vo1CYP0E4TqAsDU2tqjKNTyi7cO1Rx2gZD1XUKBwU2cb/pR7+c2p3qbd4rrTU6qkP2UAeq08o1ay8RjFy1cTzMaEtmSTThmZz8T1o0CYO4KFU/c78PcOceAJhMQ/NlMPl3wviGKRwAvZA322IC7bLPqGV7unV8DboXOozKDFCET3EMqOuaR5rHiRh9R7t5u4Ph4hYfiN2ddW2PuFyikZgZ8PuCcPp7G90CgzLiDLQKYRa4HCRynErRvfVsHzv+ySD6ka7CErYV09EpkMPL1KsR+mE8RO7w==
+Received: from CH0P221CA0044.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:11d::27)
+ by BL1PR12MB5852.namprd12.prod.outlook.com (2603:10b6:208:397::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.22; Thu, 28 Aug
+ 2025 10:28:20 +0000
+Received: from CH3PEPF00000010.namprd04.prod.outlook.com
+ (2603:10b6:610:11d::4) by CH0P221CA0044.outlook.office365.com
+ (2603:10b6:610:11d::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.17 via Frontend Transport; Thu,
+ 28 Aug 2025 10:28:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH3PEPF00000010.mail.protection.outlook.com (10.167.244.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Thu, 28 Aug 2025 10:28:19 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 28 Aug
+ 2025 03:28:10 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 28 Aug 2025 03:28:10 -0700
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 28 Aug 2025 03:28:07 -0700
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <kkartik@nvidia.com>
+Subject: [PATCH] arm64: tegra: Add I2C nodes for Tegra264
+Date: Thu, 28 Aug 2025 15:58:03 +0530
+Message-ID: <20250828102803.497871-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819121631.84280-1-clamor95@gmail.com> <1797126.QkHrqEjB74@senjougahara>
- <CAPVz0n2JdRXQ7oUJqXkmGO+EPZTq3t6k8HY7pWHT3eAVXj9T3w@mail.gmail.com> <2263218.C4sosBPzcN@senjougahara>
-In-Reply-To: <2263218.C4sosBPzcN@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 28 Aug 2025 13:23:04 +0300
-X-Gm-Features: Ac12FXy741KXHMVpFaUwCes3wVnK2leeDs9abz6-2fqepf747-p4Rm2m7_S9AUc
-Message-ID: <CAPVz0n3AvQaFrpeyUODpqOwkxxinjWgMQTgqvD4hAZvdqprVdA@mail.gmail.com>
-Subject: Re: [PATCH v1 01/19] clk: tegra: init CSUS clock for Tegra20 and Tegra30
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000010:EE_|BL1PR12MB5852:EE_
+X-MS-Office365-Filtering-Correlation-Id: a98a09d9-2003-4048-5e35-08dde61d9be5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tO9lkK5XRct0ExE49dG3MGJCJNfs4OiLSNul+N7s4AX26ffrVhT45dTtmpxD?=
+ =?us-ascii?Q?7pz2wi3f7y6NSoG88+7N/KODjbklTGIU97gwsmhz+vebffc/SsFe7pc0xqZE?=
+ =?us-ascii?Q?lyToK/eHMdFDVMKN97XsAWeAegxGl6N9a9mgIYNWUg2AtH/DddmWkNvZIi5y?=
+ =?us-ascii?Q?WPs4qLiWMIv8qQnKE50vOtZWxIcv5AxkACF/NO1lH5oQY+6RV/z6Ezn1RdDU?=
+ =?us-ascii?Q?Q4yELGgshR6luZxoUIMYRSrvFRCXagtB95bmn81OGi5dUlRuSsZvF69pCLwR?=
+ =?us-ascii?Q?xb/tdD4lkjZdSb8CO/AHepj4ebashn+XbhBHUvYsTrcfynZsW9S9Panu429d?=
+ =?us-ascii?Q?dBE34SWa1sWl43TT6FCmoW+bfRgmr0CmxMfUyEiK/j+8wp/BbfMUuzCM4X+q?=
+ =?us-ascii?Q?TjTFg048456wFTabC5KrJnmuyGSBCaI4emiQ7qsoKI00R5hF1mWcjkldoBvT?=
+ =?us-ascii?Q?gbtSOjx0IBGEWUYE4kxCvaeUhcDIi1I0VbKjSu6PSwtS7DbroKTVGOZMT/2S?=
+ =?us-ascii?Q?3aFXfY0qO/5Yp5Y0nq5gDWk9ZBE49nNU8YQgCDoHzqzpvH/oTpubnFk15Cx7?=
+ =?us-ascii?Q?JLRqERb5/IRwzOyrrUZ7+KtcNS03R+jqMYRjXUlMqqEQENOBJsOmepYFCZvV?=
+ =?us-ascii?Q?AtW6p64NlFZ8lphdtuycWKhHHLdLSwoFytjkK7tRvafQnR5LhlQYZf3Osbls?=
+ =?us-ascii?Q?tBRqf4TLZkZiIPvhMx3OiwI+eVj3xBcUfHn8ne3j0z24l0IOVXv023fNkqmp?=
+ =?us-ascii?Q?wFxxfGxCph+clNLz7u8n/X98plASS9rDRwV/an7yvdplJeIFoDDx3dR0BOoe?=
+ =?us-ascii?Q?RWV4hbwPz6yt57wO7ZPQ5OGZ+/GIHdcwOwXzCpPzk1vFM+8sVWJwz5XjhuiT?=
+ =?us-ascii?Q?mJGFmoVOh3rzXbHRcDX50TN7dqv8ULwnqHLZ4651Nicdhanhtp/IrVdH+6lK?=
+ =?us-ascii?Q?UGxpSjX7WBFbBhuRl6TvJ0DOvZPmUDbW4/QQDkCzh/s1nNRweFzWQaH5cPvs?=
+ =?us-ascii?Q?6dtyZvo1uAdHqNdGwj84PtQxaJMLYNFogwuM1yXZcFFrsYdFN3L5/wUnEZPA?=
+ =?us-ascii?Q?F/utnlTLpc3ph9DG17r/y6MUBfpB+1hyZeyOKQtiVc88EjdG8VhuxICjV2fg?=
+ =?us-ascii?Q?YWJjYpFGdwd0r0/Sr2T2HG4LXbuQWRrjxB7sJS1IuIBJmP5IDtSyn69/GYJf?=
+ =?us-ascii?Q?3MtUlD8Wa4LXZSno4xrpf2OlEDLOf9dzne+MkzjuCEMV3CUWVIrR1W5S6Ppg?=
+ =?us-ascii?Q?I1w1ThOGIIrTXb+RckCOpzxbC0mJfQ+5YoN5u0o48WDQ80vrj8T75XNuQNjH?=
+ =?us-ascii?Q?+C+UuXtxzDVGS+R4cYfTnT5X8JexEOU6vLoEfRjK56xlX1sqowUvX53Y1Z67?=
+ =?us-ascii?Q?hCSTJHdyZQzj+5ipDcPbAJlMatJsCrsMVmyjb3KUC8OF5TQygmS9AgJlSebW?=
+ =?us-ascii?Q?lr0XaRXIYVXjUYZaTvNXDD8ZC+iqAWv+pCg3dJ0cUVIBIcFFUTGeLfvvJ9Ao?=
+ =?us-ascii?Q?J5KuyigzwEmSU+EcSGdcPwDTwev2fsMUK5iW?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 10:28:19.9031
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a98a09d9-2003-4048-5e35-08dde61d9be5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000010.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5852
 
-=D1=87=D1=82, 28 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 13:1=
-5 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, August 28, 2025 5:28=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D1=87=D1=82, 28 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE =
-11:13 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > On Wednesday, August 27, 2025 7:45=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > =D1=81=D1=80, 27 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=
-=BE 13:36 Mikko Perttunen <mperttunen@nvidia.com>
-> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > On Wednesday, August 27, 2025 1:32=E2=80=AFPM Svyatoslav wrote:
-> > > > > > 27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80. 07=
-:09:45 GMT+03:00, Mikko Perttunen
-> > > > >
-> > > > > <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > >On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel w=
-rote:
-> > > > > > >> CSUS clock is required to be enabled on camera device
-> > > > > > >> configuration
-> > > > > > >> or
-> > > > > > >> else camera module refuses to initiate properly.
-> > > > > > >>
-> > > > > > >> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > >> ---
-> > > > > > >>
-> > > > > > >>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> > > > > > >>  drivers/clk/tegra/clk-tegra30.c | 1 +
-> > > > > > >>  2 files changed, 2 insertions(+)
-> > > > > > >>
-> > > > > > >> diff --git a/drivers/clk/tegra/clk-tegra20.c
-> > > > > > >> b/drivers/clk/tegra/clk-tegra20.c index
-> > > > > > >> 551ef0cf0c9a..42f8150c6110
-> > > > > > >> 100644
-> > > > > > >> --- a/drivers/clk/tegra/clk-tegra20.c
-> > > > > > >> +++ b/drivers/clk/tegra/clk-tegra20.c
-> > > > > > >> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table
-> > > > > > >> init_table[]
-> > > > > > >> =3D {
-> > > > > > >>
-> > > > > > >>    { TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > > > > > >>    { TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > > > > > >>    { TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> > > > > > >>
-> > > > > > >> +  { TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
-> > > > > > >>
-> > > > > > >>    /* must be the last entry */
-> > > > > > >>    { TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> > > > > > >>
-> > > > > > >>  };
-> > > > > > >>
-> > > > > > >> diff --git a/drivers/clk/tegra/clk-tegra30.c
-> > > > > > >> b/drivers/clk/tegra/clk-tegra30.c index
-> > > > > > >> 82a8cb9545eb..70e85e2949e0
-> > > > > > >> 100644
-> > > > > > >> --- a/drivers/clk/tegra/clk-tegra30.c
-> > > > > > >> +++ b/drivers/clk/tegra/clk-tegra30.c
-> > > > > > >> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table
-> > > > > > >> init_table[]
-> > > > > > >> =3D {
-> > > > > > >>
-> > > > > > >>    { TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
-> > > > > > >>    { TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, =
-0 },
-> > > > > > >>    { TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
-> > > > > > >>
-> > > > > > >> +  { TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
-> > > > > > >>
-> > > > > > >>    /* must be the last entry */
-> > > > > > >>    { TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
-> > > > > > >>
-> > > > > > >>  };
-> > > > > > >
-> > > > > > >I looked into what this clock does and it seems to be a gate f=
-or
-> > > > > > >the
-> > > > > > >CSUS
-> > > > > > >pin, which provides an output clock for camera sensors (VI MCL=
-K).
-> > > > > > >Default
-> > > > > > >source seems to be PLLC_OUT1. It would be good to note that on=
- the
-> > > > > > >commit
-> > > > > > >message, as I can't find any documentation about the CSUS cloc=
-k
-> > > > > > >elsewhere.
-> > > > > > >
-> > > > > > >What is the 6MHz rate based on?
-> > > > > >
-> > > > > > 6mhz is the statistic value which I was not able to alter while
-> > > > > > testing.
-> > > > > > I
-> > > > > > have tried 12mhz and 24mhz too but it remained 6mhz, so I left =
-it
-> > > > > > 6mhz.
-> > > > > >
-> > > > > > >Since this seems to be a clock consumed by the sensor, it seem=
-s to
-> > > > > > >me
-> > > > > > >that
-> > > > > > >rather than making it always on, we could point to it in the
-> > > > > > >sensor's
-> > > > > > >device tree entry.
-> > > > > >
-> > > > > > Sensor device tree uses vi_sensor as clocks source and sensor
-> > > > > > drivers
-> > > > > > don't
-> > > > > > support multiple linked clocks.
-> > > > >
-> > > > > AIUI vi_sensor is an internal clock so the sensor cannot be recei=
-ving
-> > > > > it
-> > > > > directly. Perhaps the sensor is actually connected to csus, and t=
-he
-> > > > > reason
-> > > > > we need to enable it is to allow the vi_sensor clock to pass thro=
-ugh
-> > > > > the
-> > > > > csus gate?
-> > > > >
-> > > > > That leaves the question of why the csus pad would be muxed to
-> > > > > vi_sensor
-> > > > > by
-> > > > > default, but perhaps there's an explanation for that.
-> > > >
-> > > > From downstream T30 sources csus and vi_sensor are always called in
-> > > > pair (6MHz csus and 24MHz for vi_sensor), naturally I assumed that
-> > > > latter is used as camera reference clock since most sensors has
-> > > > reference clock around 24 MHz
-> > >
-> > > It's possible that the csus pad is still outputting 24MHz. The pinmux
-> > > options for the csus pad are various clocks, so it would seem logical
-> > > that the clock source for the pad is one of those clocks. However, on=
- the
-> > > clock framework side, the csus clock is just a gate. What I'm confuse=
-d
-> > > about is that since on the clock framework side the parent of csus is
-> > > currently set to clk_m, I don't know why setting the rate of csus wou=
-ld
-> > > affect the output of the pad, given clk_m is not one of the options f=
-or
-> > > the pinmux.
-> > >
-> > > It's be good to verify the register value for the csus pinmux to see =
-where
-> > > it thinks the clock is coming from, and then check how that matches w=
-ith
-> > > what we are seeing.
-> >
-> > TRM does not provide such data, it has only register address with
-> > layout for it as a plain pad control, that register has only DRVDN,
-> > DRVUP, SLWR and SLWF and I don't see a way to decode clock value or
-> > parent or anything similar. If you give me a method I will calculate
-> > those values.
->
-> I notice that on Tegra20, there is a mux pingroup called 'csus', which ha=
-s the
-> mux options PLLC_OUT1, PLLP_OUT2, PLLP_OUT3, and VI_SENSOR_CLK (based on
-> upstream pinctrl-tegra20.c). The TRM also says 'Enable clock to SUS pad.'
-> about the CSUS (or SUS) clock.
->
-> On Tegra30, however, which I guess you refer to, I guess mux pingroups ar=
-e
-> gone and each pin has its own mux (again looking at upstream pinctrl-
-> tegra30.c). vi_mclk_pt1 is now its own mux with the options VI, VI_ALT1,
-> VI_ALT2, VI_ALT3. The drive group for this pin is still called csus, so b=
-y
-> that name it only has the drive settings as you mention.
->
-> Are you testing on Tegra20, Tegra30, or both?
->
+Add I2C nodes for Tegra264.
 
-I am testing on Tegra30 since I did not have compatible Tegra20 device
-(with supported camera).
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi | 225 +++++++++++++++++++++++
+ 1 file changed, 225 insertions(+)
 
-> I've looked at some Tegra30 schematics, and they show a signal called VI_=
-MCLK
-> being routed to CSI cameras.
->
-> >
-> > Another theory is that maybe csus is used for VIP cameras only and
-> > vi_sensor is used for CSI cameras, but they both have to be on in
-> > order to work correctly. Csus was removed from Tegra114 along with
-> > VIP, might not be a coincidence. Moreover, T124 uses vi_sensor as
-> > camera mclk source.
->
-> I see the CSUS clock still on Tegra124 based on the upstream kernel. Ther=
-e is
-> also a CAM_MCLK pin. It seems Tegra30 has both VI_MCLK and CAM_MCLK pins,
-> which both can output the clock. After Tegra30 there is only CAM_MCLK.
->
-> Looking at L4T r21, in tegra12_clocks.c, it defines the clocks mclk and m=
-clk2.
-> There is a comment on mclk saying:
->
->                        .clk_num =3D 92, /* csus */
->
-> whereas mclk2 is vim2_clk. These clocks are indeed defined as gates, with
-> vi_sensor / vi_sensor2 as parent, set_rate being passed onto the parent.
->
-> All of that wasn't very coherently written, but to summarize my thoughts:
->
-> On Tegra30, we have
-> - Pins vi_mclk and cam_mclk. Both can only source from (vi_)mclk which al=
-so
-> goes by name csus. The mclk/csus clock is a clock gate with vi_sensor as
-> parent.
-> On Tegra114 and later,
-> - Same situation, but vi_mclk is gone, so instead we have cam_mclk (possi=
-bly
-> multiple with associated mclkN and vi_sensorN clocks)
-> On Tegra20,
-> - The vi_mclk pin has a variety of mux options, one of which is VI_SENSOR=
-_CLK.
-> I expect this to correspond to the same behavior as later chips, i.e. sou=
-rces
-> from the csus(/mclk) clock, which sources from vi_sensor.
->
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+index e02659efa233..872a69553e3c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+@@ -148,6 +148,36 @@ uart0: serial@c5f0000 {
+ 			status = "disabled";
+ 		};
+ 
++		i2c2: i2c@c600000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x0 0x0c600000 0x0 0x10000>;
++			interrupts = <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_AON_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLAON>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_AON_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLAON>;
++			resets = <&bpmp TEGRA264_RESET_I2C2>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c3: i2c@c610000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x0 0x0c610000 0x0 0x10000>;
++			interrupts = <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_AON_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLAON>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_AON_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLAON>;
++			resets = <&bpmp TEGRA264_RESET_I2C3>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
+ 		pmc: pmc@c800000 {
+ 			compatible = "nvidia,tegra264-pmc";
+ 			reg = <0x0 0x0c800000 0x0 0x100000>,
+@@ -272,6 +302,201 @@ smmu4: iommu@b000000 {
+ 			dma-coherent;
+ 		};
+ 
++		i2c14: i2c@c410000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c410000 0x0 0x10000>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C14>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c15: i2c@c420000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c420000 0x0 0x10000>;
++			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C15>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c16: i2c@c430000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c430000 0x0 0x10000>;
++			interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C16>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c0: i2c@c630000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c630000 0x0 0x10000>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C0>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c1: i2c@c640000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c640000 0x0 0x10000>;
++			interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C1>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c4: i2c@c650000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c650000 0x0 0x10000>;
++			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C4>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c6: i2c@c670000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c670000 0x0 0x10000>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C6>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c7: i2c@c680000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c680000 0x0 0x10000>;
++			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C7>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c8: i2c@c690000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c690000 0x0 0x10000>;
++			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C8>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c9: i2c@c6a0000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c6a0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C9>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c10: i2c@c6b0000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c6b0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C10>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c11: i2c@c6c0000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c6c0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C11>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
++		i2c12: i2c@c6d0000 {
++			compatible = "nvidia,tegra264-i2c";
++			reg = <0x00 0x0c6d0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <400000>;
++			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
++				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			clock-names = "div-clk", "parent";
++			assigned-clocks = <&bpmp TEGRA264_CLK_TOP_I2C>;
++			assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLP_OUT0>;
++			resets = <&bpmp TEGRA264_RESET_I2C12>;
++			reset-names = "i2c";
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@46000000 {
+ 			compatible = "arm,gic-v3";
+ 			reg = <0x00 0x46000000 0x0 0x010000>, /* GICD */
+-- 
+2.43.0
 
-While this is all quite interesting, how to configure this properly?
-
-> >
-> > Here is a fragment of Tegra124 clock tree (dumped from Mi pad 1)
-> >
-> >          pll_p                                 on     13  x34      4080=
-00000
-> > vi_sensor2                       $ off    0   3.0      136000000 mclk2
-> >                    $ off    0            136000000 vi_sensor
-> >         $ off    0   3.0      136000000 mclk                          $=
- off
-> >    0            136000000
-> > > > > > >Cheers,
-> > > > > > >Mikko
->
->
->
->
