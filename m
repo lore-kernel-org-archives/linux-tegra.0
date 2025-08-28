@@ -1,61 +1,63 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C242737F3;
-	Thu, 28 Aug 2025 05:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F197273808;
+	Thu, 28 Aug 2025 05:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756359866; cv=none; b=PFuMiqKXhGZkFKRJyGwV5+7YlfpnjF6pqJfCkrk/ed0RNcEIdJNCIfBHIq/qcjSqIHZeyH7gW6lbPH8WsesS1riGnidLrNYx8CRJnjMrxNkHp1n04sJwhexadnMOFKdZ/G1c/LxxU31CMZB5lZ+m2RW3eNR7VmNxkpMnlaB7DkY=
+	t=1756359867; cv=none; b=EqHfIoLWz2ufQSBkykMTTxBLwVXxWyF4iaBJtAhxLv80+PdWfj/l8sxiCFnL9szTk43PbrGA3M0G0VpeZu2jh6UBN3o2KIotKp3MGQcXeYEVnvnsFw19Gq3d9l8LtX9mOC1N9hpSQLhjDyVRS8CUi+H3+9MmQEICYxROWDa8M3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756359866; c=relaxed/simple;
-	bh=SVm/66f36wSgvenSHIMpwxxA7rJfcYwK08iUz6qNS2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NgKLdwn/C0Fx7f6Sw+zzOjV7GRs8jmbiGyFXU25psuOStZ75pWQAYKS4kCjYWsbVLPVBMnF35ikAvAp7OdewPbX5jtJNWIEvtSI8rZXvNnqXHrM3iMAEDQOL9Fwt4PGX5touIX8TFLK2Unb1Fj2X30Wcsd6nWz7qftuYI9X/jl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqtTM4mE; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1756359867; c=relaxed/simple;
+	bh=96edCYZ/EaTjrgkJOXR/cEUQzco83yGGUYqlBhsOXFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ciYLrX0IJbVwHD5+UwQWKfjfwmS7azfN1FECyfbf6b/tYt4uIHSwKrcmV2UapEoUWoOk3I39aiMyNUGj495YT5dq7QyZT+9ryk8iMCyjVryTGagcvHXprZg7U5FNXAf13T+3F36VyadcWoZMO/fMiH8EDlJGK9FIOuqrr384wTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmXb3of8; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqtTM4mE"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so596411a12.0;
-        Wed, 27 Aug 2025 22:44:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmXb3of8"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61cd1046d42so686904a12.3;
+        Wed, 27 Aug 2025 22:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756359863; x=1756964663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcSGivFSD4OuXx5N66G1KDt1FmdrP6jEVEJ6HZ0n2To=;
-        b=DqtTM4mEDO7gt7S3ueSWOOzeVNFIzQtoLBGPFkuMONJGT0fC/lnTF6G+aAbjXghh0/
-         WDkNpFDJzg2JwDfbTwPXq8/X9SbsfTADT83V6LvkiRgGqkq8dwE3ubMPPQ8IaEqUxgUH
-         00y72Hl0YL5imNPmD0NR16xH/LJwoTnduQllXTGfAYfLDz74OY/Xkci4QQpeC65Zwb3S
-         El3Ym43Z7Bi9mQrbQorOV9W6f1CIEmvnNqtYZkjzu0/7x/I3Vv/KmZ45SFASVclRECWG
-         vTTNC92+QJ+cpIs/MoWdGFITHOMoBVx/DYBvDMrNu3GDNAvR3SX2xNa41MBGdxT02cFR
-         DNWQ==
+        d=gmail.com; s=20230601; t=1756359864; x=1756964664; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K6o/Zimb3QVL23u1xpZEyW/FGO4vWjtp/1DqQ0zMljE=;
+        b=MmXb3of8q+YlQ7ES5F6mpYyGXdePsvqEJENew0EkYYXSIwXtj9PiatNVgmKBHg6O1+
+         gV4Ev6y/HoILEdhtEytupOwQB7/EANGdq5RAL6LEnpYSVHiuCD7iT/v7DS+6v2Zo14ns
+         KSpdtF6DidFPwLOPwf2eo2IOkFjlqFbNZrJqRc+AAJrhijRCud2Gc+Do4iypAeNWHaHC
+         wA3gUuBu56jyYmI3nAN3geWXigqrcAVua62n9LUON3vr/9u6GPd+VoGbjgms4PFsliYR
+         Nsr7wiWz5teORNblatz4/GvSKA79qK1HN0U4i43yKY59QhH7QXHfMnZc4smtfOEgILaE
+         6Xuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756359863; x=1756964663;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QcSGivFSD4OuXx5N66G1KDt1FmdrP6jEVEJ6HZ0n2To=;
-        b=HZZKO0ICW6rF/E7gAGboUx1c3CHZ+0V/GS8e2ROPdFFP3X+LTpBoBXA1QzLjrTbt3y
-         BytBqU8H186ph+545CgnEGv+Yj+P78fphh0WSctE2hOWSR77XGrx+nuDyvnEkH5Fw+79
-         fEbryT0R6nq8TbWZs+nDhr8tVPHO75m5sZfVQAibjtKw2Ca2CxdBxkLRNRzoPAqoS75Q
-         19g+LA1XqlG+oDV8gM+K4M9IjB6R4VfoWcGBmN508ZqzEZKhH/wThi0Cw1u6qE+6pfSl
-         O/cYNvGoyXp5FsCBrqgLZXPGIpp/R2sh2YTHq3lwQQ847QCLWJ1bXpMxJEvHkG2oFgt5
-         mJ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Emp9c4Vv2vmgkDG+yPt0Gw8w+CSBWAmdPyDb5IhFqtcJZFCLRjvhR+9A5g7KGUE5PVsKt9vvJqnxWts=@vger.kernel.org, AJvYcCVDy2Fhs34LfbC9tay41S/LbWYkZguACpv85Taa5cWUEILxpoN+/iRV1I+gncB/sii16L1IkbXniLnbaMBu@vger.kernel.org, AJvYcCXt1ekCVppcO66RBc/18zUKS02QfVu0nxbd5NEm/LRFG8ibphiNyrXDz9VKmMp6BO6SCAVmD5LS/94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5U68RvDKIAzq6l98ZWUqP5DukknpB3TKCo1aIYHVsnCN+nhDD
-	SPrEyjMYfKbklXpFTsR0Msfe9PpyT9JoSm8gOvWSg7lJaq26Ma71XGyS
-X-Gm-Gg: ASbGncvGPPURLiudaF9AstRsJhHftnDOBAROakwlWkOLHYhuyNd4ovRgHH0v9B/Z12W
-	kavATmgSa1s8YW7/rNtcUMeJtcUozVCmXuoC6P2WsxsGoPBiYARvk4L/UYMu3shucnZWnwRXkG1
-	X40T5IgFUm2Dw6LlkfT3dhlRuPf4GUJFb+rfqvxTr9kEfeFgsZ66UWKubvD6kxjS0NqUr+CuEwW
-	i00w5wgE2sbwEJW7L7ZB1ApQXBtx37b2M62ynNcgHxPmuOPYsYXbIUFEOQq9oe8Fv9TGr2NmcA0
-	TModSfD+zuQ7I/qJMNV/KL0xzhQtn0VY4Fxuf+izLb1+n8GSWMPu7WWnvWU3nTLmsIss/dmxLre
-	lrbieq7ufj40OJg==
-X-Google-Smtp-Source: AGHT+IFtcxH3zxd8aYow9gXMQsfmYAfh4wBFQfjq4IBvLJ+tK7MVsPB6uKxjlRpyveKHwrvoaAe7+g==
-X-Received: by 2002:a05:6402:52ca:b0:618:afa:70f7 with SMTP id 4fb4d7f45d1cf-61c1b490275mr18123976a12.12.1756359863165;
-        Wed, 27 Aug 2025 22:44:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756359864; x=1756964664;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K6o/Zimb3QVL23u1xpZEyW/FGO4vWjtp/1DqQ0zMljE=;
+        b=n8uxTrejZD65xHuMyECNdXSk79/ov9gTAJ0PCjvZCt8UAWpctrKBYcz8YSKQh6BaWZ
+         ttayHCFAJupVui8ePW+jgjzYI2A4QRStoQdWctGJ9uyoiIfyD0koShHU4r4JwIQCPsgX
+         n0VhfLnXinxu2sgH34Ms53R+xIbDFU6NTjlX5K5u4sH1uMMK+rV9hQNJTxPDhV5zpxxw
+         GllPF6pR9zwfJeREj8/GYxKsthKVW1jw3o0uHYtVDyCM1umExYCQD3+cVMr9OsxpZiw3
+         wSi9V8WobWF865xrNDk87x7KUgHoFfz29Mr/G7YuQMK78BLywYnglnqfSFoFHOQwlt/x
+         UJGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDWpGkaLzEjibU3M+S3pMaqGITY0ACzB6DfP3EGuye3iXUhm5/XamXy5EMa5bDLGIX3fKPhzVuyaGVTC0D@vger.kernel.org, AJvYcCX5K37xWs2U+rx87yevSEN4H2w7Ts4cUcS7P/wyl6vZzt+hScJ3vC0gBCuveAt7WjyYswF2tNXTrn8=@vger.kernel.org, AJvYcCXSRFhSikfNIAh9mLl4QuyyJ1a0VKE2U/pHCDA34oRLRh6WQX/FI4S6Zv46KopyvtjS/niDlDamgysDrsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyryrcSAlujF1e+yz2QumHugzqnayukg57iNGLbtU2xlQlpMyF5
+	I7JwppEBjpF7tKmBe3KwCictWgaZd/ZPZDGqqlF4YbMIIsqarBnh9UoX
+X-Gm-Gg: ASbGncvAaI7QlVShtbgJo5IBza8WwBIBnooqzSX+USFa5F8p4RyKSxckVAOWug+DcjQ
+	aH/aouR+FJwmjmJDSYG54A/II4Y8Hi4WGNEfEi6TRmZnOVcnvRlcyMIl5NCxfsvVbmRnEwpthOw
+	Z6T+aywtgbRIVgHu/U0/BzDzCv3qh/+aYxXqqgCd/H5oC9b2tNMtrkas5aHKiXNvZGICPcuIXF4
+	izaUaMqQvW3O+2kn57VvIU1nv7gAzo8Wxb2Zv0fumpw4FJBs9pWmqiqC+A+lYF0BLUxx87v0nCJ
+	GNL5eK96NtXvADB/nDguN2+4hGWy5ja6x2+C19ZDubB7ZI/OAPHgVWOpNlevHlXRYxErAh83ruv
+	k8Bao8vLE9ndih028SEHNDd08
+X-Google-Smtp-Source: AGHT+IExIqmyqwtJ8qbngtgtYqgIBUhSPtMOSfWiRKn7+rE5u91qLkEv0/hIPHClbNfEmHsfmqZZHQ==
+X-Received: by 2002:a05:6402:1e8e:b0:61c:24da:c76 with SMTP id 4fb4d7f45d1cf-61c24da1352mr16101470a12.9.1756359864320;
+        Wed, 27 Aug 2025 22:44:24 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cbbdac051sm2102841a12.29.2025.08.27.22.44.21
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cbbdac051sm2102841a12.29.2025.08.27.22.44.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 22:44:22 -0700 (PDT)
+        Wed, 27 Aug 2025 22:44:23 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Thierry Reding <treding@nvidia.com>,
@@ -73,10 +75,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v4 0/4] clk: tegra: add DFLL support for Tegra114
-Date: Thu, 28 Aug 2025 08:43:59 +0300
-Message-ID: <20250828054403.7112-1-clamor95@gmail.com>
+Subject: [PATCH v4 1/4] dt-bindings: reset: add Tegra114 car header
+Date: Thu, 28 Aug 2025 08:44:00 +0300
+Message-ID: <20250828054403.7112-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250828054403.7112-1-clamor95@gmail.com>
+References: <20250828054403.7112-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -85,41 +89,47 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
-a ring oscillator and translates voltage changes into frequency
-compensation changes needed to prevent the CPU from failing and is
-essential for correct CPU frequency scaling.
+The way that resets are handled on these Tegra devices is that there is a
+set of peripheral clocks & resets which are paired up. This is because they
+are laid out in banks within the CAR (clock and reset) controller. In most
+cases we're referring to those resets, so you'll often see a clock ID used
+in conjection with the same reset ID for a given IP block.
 
+In addition to those peripheral resets, there are a number of extra resets
+that don't have a corresponding clock and which are exposed in registers
+outside of the peripheral banks, but still part of the CAR. To support
+those "special" registers, the TEGRA*_RESET() is used to denote resets
+outside of the regular peripheral resets. Essentially it defines the offset
+within the CAR at which special resets start. In the above case, Tegra114
+has 5 banks with 32 peripheral resets each. The first special reset,
+TEGRA114_RESET(0), therefore gets ID 5 * 32 + 0 = 160.
+
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-Changes in v2:
-- dropped 'drivers:' from commit title
-- aligned naming to Tegra114
-
-Changes in v3:
-- add DFLL support for Tegra 114 was split into dt header addition,
-  DFLL reset configuration and CVB tables implementation.
-- added cleaner commit message to dt header commit
-- added T210_ prefixes to Tegra210 CVB table macros
-
-Changes in v4:
-- expanded commit message of car header adding commit
----
-
-Svyatoslav Ryhel (4):
-  dt-bindings: reset: add Tegra114 car header
-  clk: tegra: add DFLL DVCO reset control for Tegra114
-  clk: tegra: dfll: add CVB tables for Tegra114
-  ARM: tegra: Add DFLL clock support for Tegra114
-
- arch/arm/boot/dts/nvidia/tegra114.dtsi     |  33 +++++
- drivers/clk/tegra/Kconfig                  |   2 +-
- drivers/clk/tegra/clk-tegra114.c           |  30 +++-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 +++++++++++++++++----
- drivers/clk/tegra/clk.h                    |   2 -
- include/dt-bindings/reset/tegra114-car.h   |  13 ++
- 6 files changed, 204 insertions(+), 34 deletions(-)
+ include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
  create mode 100644 include/dt-bindings/reset/tegra114-car.h
 
+diff --git a/include/dt-bindings/reset/tegra114-car.h b/include/dt-bindings/reset/tegra114-car.h
+new file mode 100644
+index 000000000000..d7908d810ddf
+--- /dev/null
++++ b/include/dt-bindings/reset/tegra114-car.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * This header provides Tegra114-specific constants for binding
++ * nvidia,tegra114-car.
++ */
++
++#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
++#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
++
++#define TEGRA114_RESET(x)		(5 * 32 + (x))
++#define TEGRA114_RST_DFLL_DVCO		TEGRA114_RESET(0)
++
++#endif	/* _DT_BINDINGS_RESET_TEGRA114_CAR_H */
 -- 
 2.48.1
 
