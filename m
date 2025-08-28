@@ -1,179 +1,237 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F32D9ECD
-	for <linux-tegra@vger.kernel.org>; Wed, 27 Aug 2025 22:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F44171CD;
+	Thu, 28 Aug 2025 01:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756333715; cv=none; b=CGRHR5K7Jdu4E1vrdNvtOkPHkE2pbcgOXC/4Kcfxs1Ri7+uMRLx2B6YH53JbtY7+XaPNjKcQjPGniRBn1Lf+uwmBenosXyv8mfzAVm2uxL0HbCJFCUmqo0u/knuHdnRmygKGmefg2OlwGrkiamEMtBMHf31Y/joiCB54pRUZwDU=
+	t=1756343909; cv=none; b=HMDsn2Y/PBg6VtuA2PZMLCAI/TvvwsyXAAU7W43pnZaPob1htbkGzYGm4lcnugXE9n2l9JVFUhM87sI4ZCDZWXb5RzBUp17wGb9aaWE3uxShhUM5a34tUEl9oulnlGv2z9Ax27aU03Vuj/uljoIJBC20YgaUOsrgbfSQeC3xtLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756333715; c=relaxed/simple;
-	bh=Enfpdt0lrNqevhutRfiz1sNVpTDatf+D/XBiia59tWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tRys5Aa71IK14U4byd9blD79awOTOGyh6VNR0IgPL5kC/xRyvfEaLAMPwGzbf+JKhHj+O1TG0tfa6fHSsuJZQ7DNqRJXrhy8EN5t0V0xMAMXjhjzK5v8HybIkHM2bE8rBdm6zeiE2oMnqLVVeOPPMa6l4ePTzM7hefTwEf0u1Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ksBOx0Fa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ksBOx0Fa"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RGQ8Nj029193
-	for <linux-tegra@vger.kernel.org>; Wed, 27 Aug 2025 22:28:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=LcrLZoaMuieBwoDNhdy1YKKE
-	PmtaqIZQcasiCx3hw8M=; b=ksBOx0FaLwkdk0t38aj7T0xGmpchr04zFiJSkZgZ
-	Ba64KDw1scqklvR5h9sPhUMIU5Lm2ULbS+dB0sk27byD5zxz1LdT8vRZaUw1mIEL
-	xh0i2qoc9SiowpsxDWLGj59eU9BUKYNTd+Lt+SZ/9us8XpkdePkPbROX9L0c1Nis
-	xuzdRsy97JbgBGv09uGR8V2gtRSajQOd+AstxEjUOr+Q/Lp78EBk7+sbA+6J7rxg
-	ssnXa5MEdmfrn2nI2mdVDxwzLzHHqhlfufrgyew42L4gAJrqTf9p2WsvRy8xNAKa
-	HZ7JFU2mS/Vczvql0G9Re9yqBmoUE7SgnNjvTTRqpyeYxg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5w2x97g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Wed, 27 Aug 2025 22:28:33 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109919a51so11583331cf.0
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Aug 2025 15:28:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756333712; x=1756938512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcrLZoaMuieBwoDNhdy1YKKEPmtaqIZQcasiCx3hw8M=;
-        b=oXb8uH8QmTSaZ2/J8V32ZgRhCzeqH3gWpisHoQu3EmpcUxvhid1/adX8BhA9RZdhyl
-         pGd2KbXr7uSe3kMuMFo0ebryqWjvzz/6ICKbAI1YQ4Nmk7ShbDZjsDEnEbUlgrMZD9eo
-         +mJSqMGNZGYoFlYZP0ftqxkSdF+QT+WTVUe9VFYk09rMVpuSIxyME1Ot61h2h4X6pAo8
-         yCrvEs/6r5Xpfhg0UC/iDWdF+04kInikJ2hV2xmA6wlCPDtPN1KXrU5q6r9Hy12pVpw9
-         MARhx+lmqLsyft6mFCFqQRgbzMrF75DnddltWxPXAL/AsNRMhKZWjKNUfNe6Yre2ddrO
-         KIog==
-X-Forwarded-Encrypted: i=1; AJvYcCVCyYRRrkCv/lyGWbrF4AMYB8HGhb5Jz5c4cZHn0KYL1aLGUKYf8LUqCsTPWqL17n6283NmW2fX2TWqvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVew+SMn02Z0OkzpHt/Uj9opmoEX6nrCH5D3lB6M33jzEpOt1p
-	BTwoqjcsZiO8QoijST190nsstY4q9DBaYt6R3LXbTXYyuLjpjqJNvMsXvT2lWuJbkeZQWA11YRu
-	aNheuaHYCKcAEzuF88xSzfo7D4EjPPikTZX07aW4eSipATD2+YASJVQx9Nzf0/dNUeg==
-X-Gm-Gg: ASbGnctXyHbhaaA421GQOYYMRkzEUkyQTo8vgUXlQKjiqhuUairTvMXkyuNtLoewcyo
-	Nc6SM6sNYqNL/rBqXJqPyBXd25eFVPGE7ZwYEJ13ocbO5gxc+8Fa87ogSZyOHi18+IQE9Ek6qvk
-	J+Jc7wRGdv+FKD2r9o4La6r8179WUbVslCReblHylh9kmby2b4x/rhaXh0oycTgftmEsTOPUg7X
-	YwHDOTsbz7L/QPea5X9MgMwqNja81B+gscnn0vimCLB/jZj0wpv1dE93mQGvHNsMFV+XUHBPQZ4
-	dHAmpMYo8zc3aCrWg2wNXTk7tegDC0xYiGYTiOAUm4SUsW0E2fuu+r27j6Y06nQfqRg/4TFUtOs
-	D7qEOS+I0aK4jACz87MrK62/ka0eHsNIFCVJ54damZUCO7sSg+3es
-X-Received: by 2002:a05:622a:cd:b0:4b2:dfc5:fbee with SMTP id d75a77b69052e-4b2dfc5fdb1mr105541621cf.32.1756333712511;
-        Wed, 27 Aug 2025 15:28:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5nmdIbVBTqmW1BSWH9OY/lezBX2PorYOAsLp+HwXKOdiRgVyGEp2e8fxZ/9eVS1zmC9A+GQ==
-X-Received: by 2002:a05:622a:cd:b0:4b2:dfc5:fbee with SMTP id d75a77b69052e-4b2dfc5fdb1mr105541351cf.32.1756333712052;
-        Wed, 27 Aug 2025 15:28:32 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c13debsm2882288e87.57.2025.08.27.15.28.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 15:28:31 -0700 (PDT)
-Date: Thu, 28 Aug 2025 01:28:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Louis Chauvet <louis.chauvet@bootlin.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Manikandan Muralidharan <manikandan.m@microchip.com>,
-        Dharma Balasubiramani <dharma.b@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Liu Ying <victor.liu@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        Paul Kocialkowski <paulk@sys-base.io>,
-        Sui Jingfeng <suijingfeng@loongson.cn>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hansg@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 04/39] drm/atomic: Remove unused
- drm_atomic_get_existing_connector_state()
-Message-ID: <a3hwkno4nemddbmaz6dayd24rmqcr3zxujrvsspnulrivntxjz@o3tm6o4mc6nt>
-References: <20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org>
- <20250825-drm-no-more-existing-state-v1-4-f08ccd9f85c9@kernel.org>
+	s=arc-20240116; t=1756343909; c=relaxed/simple;
+	bh=myl0EaGXtPN9ag/FBmAimw3CQLTYe4gU8K8nL8q3iWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uhSPHNUsT/ccEBUUFSDYMo+Mj8JSEIR/1A5e3mdvVVhKTaCqYBUYRlaSJB2ogZkYGcTBik5FZYGewVtU6I2j2mHLlX0W7zvxe/obssD2aIsP7J0A96rLtBLDoQWgG5MHaM35u96yKeE3XCeDQ/TqDOFEHNP/1YXtaOKD4k9mnHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: deda1fd283ac11f0b29709d653e92f7d-20250828
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:313dc0fa-5767-4174-8339-9d5292a4d083,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:782deb1ffb303a915a22c188ccfd91f7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: deda1fd283ac11f0b29709d653e92f7d-20250828
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1864367721; Thu, 28 Aug 2025 09:18:14 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id BC284E008FAC;
+	Thu, 28 Aug 2025 09:18:13 +0800 (CST)
+X-ns-mid: postfix-68AFAE55-102998148
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id A869CE008FAB;
+	Thu, 28 Aug 2025 09:18:00 +0800 (CST)
+Message-ID: <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
+Date: Thu, 28 Aug 2025 09:17:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-drm-no-more-existing-state-v1-4-f08ccd9f85c9@kernel.org>
-X-Authority-Analysis: v=2.4 cv=Z/vsHGRA c=1 sm=1 tr=0 ts=68af8691 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=ROUmOPvenB7E6LXmrzQA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX3sdgohI8rzVQ
- Bgr2huNgC+Wm793gEO83/DzkVN1qdH7vhqjMJKhOSKuW9+zgzg56tkQbq6vYEvCIeQAAMUktgct
- YjAzt6zh+v/jdCZfl7Uzynvu05a2LBgRWTaRP3N27GbJGAN1Oud6robREJGMFIglpql+Yp7uoVJ
- nzYnSIebxLztc+1uHsKDgc5zGqJrj8IedyRmt/wuIbhHAIM380qzSR+mrdXlLIge4uQvl4Dzo0W
- Vmz+qtvM6bBIv+o9xaksPogClAJHZjBPAx8CAseBc9qxt+PExXTF3rVmDkP5zhdn8ZaSKb9j6b7
- C5clxX33UWfxItV1XYRtMco9QFQvtV3KxPegBU7hSmQhv3uRe0V6tty5FlU0bUUTg/the3LbIr8
- l3ZsjSIP
-X-Proofpoint-GUID: BGAU5iudDoHWN1VIXHTa_cxVoZ_x27W7
-X-Proofpoint-ORIG-GUID: BGAU5iudDoHWN1VIXHTa_cxVoZ_x27W7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 malwarescore=0 phishscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
+ policy reference
+To: Sean Christopherson <seanjc@google.com>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
+ <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-3-zhangzihuan@kylinos.cn> <aK8Sd30K64mbN1Nt@google.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <aK8Sd30K64mbN1Nt@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 03:43:09PM +0200, Maxime Ripard wrote:
-> The drm_atomic_get_existing_connector_state() function is deprecated and
-> isn't used anymore, so let's remove it.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  include/drm/drm_atomic.h | 23 -----------------------
->  1 file changed, 23 deletions(-)
-> 
+Hi,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+=E5=9C=A8 2025/8/27 22:13, Sean Christopherson =E5=86=99=E9=81=93:
+> On Wed, Aug 27, 2025, Zihuan Zhang wrote:
+>> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+>> annotation for policy references. This reduces the risk of reference
+>> counting mistakes and aligns the code with the latest kernel style.
+>>
+>> No functional change intended.
+>>
+>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>> ---
+>>   arch/x86/kvm/x86.c | 10 ++++------
+>>   1 file changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index a1c49bc681c4..2a825f4ec701 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -9492,16 +9492,14 @@ static void kvm_timer_init(void)
+>>   		max_tsc_khz =3D tsc_khz;
+>>  =20
+>>   		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+>> -			struct cpufreq_policy *policy;
+>> +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>   			int cpu;
+>>  =20
+>>   			cpu =3D get_cpu();
+>>   			policy =3D cpufreq_cpu_get(cpu);
+>> -			if (policy) {
+>> -				if (policy->cpuinfo.max_freq)
+>> -					max_tsc_khz =3D policy->cpuinfo.max_freq;
+>> -				cpufreq_cpu_put(policy);
+>> -			}
+>> +			if (policy && policy->cpuinfo.max_freq)
+>> +				max_tsc_khz =3D policy->cpuinfo.max_freq;
+>> +
+>>   			put_cpu();
+> Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_poli=
+cy() until
+> policy goes out of scope, and so using __free() means the code is effec=
+tively:
+>
+> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+> 			struct cpufreq_policy *policy;
+> 			int cpu;
+>
+> 			cpu =3D get_cpu();
+> 			policy =3D cpufreq_cpu_get(cpu);
+> 			if (policy && policy->cpuinfo.max_freq)
+> 				max_tsc_khz =3D policy->cpuinfo.max_freq;
+> 			put_cpu();
+>
+> 			if (policy)
+> 				cpufreq_cpu_put(policy);
+> 		}
+>
+> That's "fine" because the policy isn't truly referenced after preemptio=
+n is
+> disabled, the lifecycle of the policy doesn't rely on preemption being =
+disabled,
+> and KVM doesn't actually care which CPU is used to get the max frequenc=
+y, i.e.
+> this would technically be "fine" too:
+>
+> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+> 			struct cpufreq_policy *policy;
+> 			int cpu;
+>
+> 			cpu =3D get_cpu();
+> 			policy =3D cpufreq_cpu_get(cpu);
+> 			put_cpu();
+>
+> 			if (policy && policy->cpuinfo.max_freq)
+> 				max_tsc_khz =3D policy->cpuinfo.max_freq;
+>
+> 			if (policy)
+> 				cpufreq_cpu_put(policy);
+> 		}
+>
+> But given that the code we have today is perfectly readable, I don't se=
+e any
+> reason to switch to __free() given that's it's technically flawed.  So =
+I'm very
+> strongly inclined to skip this patch and keep things as-is.
 
 
--- 
-With best wishes
-Dmitry
+Yes, this will indeed change the execution order.
+Can you accept that? Personally, I don=E2=80=99t think it=E2=80=99s ideal=
+ either.
+
+		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+  			int cpu;
+			cpu =3D get_cpu();
+			{
+				struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_=
+cpu_get(cpu);
+				if (policy && policy->cpuinfo.max_freq)
+					max_tsc_khz =3D policy->cpuinfo.max_freq;
+			}
+			put_cpu();
+
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 }
+
+Other places may also have the same issue,
+
+maybe we should consider introducing a macro to handle this properly,
+so that initialization and cleanup are well defined without changing
+the existing order unexpected.
+
+like this:
+
+#define WITH_CPUFREQ_POLICY(cpu) {\
+
+for(struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D  \
+			cpufreq_cpu_get(cpu);			\
+			policy;)
+
+Then Use it:
+
+		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+  			int cpu;
+			cpu =3D get_cpu();
+			WITH_CPUFREQ_POLICY(cpu){
+				if (policy->cpuinfo.max_freq)
+					max_tsc_khz =3D policy->cpuinfo.max_freq;
+			}
+			put_cpu();
+
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 }
+
