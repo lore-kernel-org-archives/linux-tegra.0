@@ -1,70 +1,69 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2088.outbound.protection.outlook.com [40.107.244.88])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905A42D6410;
-	Thu, 28 Aug 2025 07:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2031F8AC5;
+	Thu, 28 Aug 2025 07:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756367425; cv=fail; b=DI6BSUjLnwx9CWlXJWXhXTAG5LvZCh35q0V5teNVlRNGSm3Si8vP0Czd+s19TNHhPu6EhEpNiKMfuiwM//CsiQG7gwqInBjnNTWgD04V4eLuHVzzmqAxk9vQ4MrnRI5T+q6FyVRIlfTfqL6uIUTurleVyhkaVHXB3PjepEDyG/Y=
+	t=1756367891; cv=fail; b=qERMvylx1GOcEXu/ulEL4zR2zNon+2Q8iTegRPhGfGiMX0NKGVujUDsdfvu4TZJ97MK3B30oEfHldQ64XBqTPjI/4hamKr8yM5fPVrlwMZFm0B/lsMqCSUw2V/XxELRtK6dFo3KC/6VEK2QfbFzSf9t+V2act2S2z/apzoyhscw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756367425; c=relaxed/simple;
-	bh=JSfjI14bMqEmMwEYHv0QvqMwBQo3Z03WHBfkCMbNuTc=;
+	s=arc-20240116; t=1756367891; c=relaxed/simple;
+	bh=W4FtYF+4TAVZf25OjwnsOYYFFlTC7+mqrArZMTfU46g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hcpnFiOjyPmiTsRvx/ofIfZAaJh046U1Km7d3j852lE6GHz/t9oSneOThxn6s5qVR03tc8raUIFNGjbpqZO82UoFfBZ12YkqTBSacHFnWZ1ooyweAp9DEjIsXi+Mp7Xlj7AYIWC7jwFV57rRDR+uEp+RDT+DNf3EFFMZqQYS3iU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CnSDtaLU; arc=fail smtp.client-ip=40.107.244.88
+	 Content-Type:MIME-Version; b=TkRbXgEdlUev8ZIxE3EI/no2eJvaaI18W0/PNHXIPCLX+QTvNkkvypk00QhCzuRUAL065Xj7nghZJSS2/BBHzwialAlqPc7eU9cQor2C9yd5ptr73FzRZwK9YyVF+t+c4Rw5sAIHUSo/v4MYhpWtL5+z9ITw6wuln0qxxsA9oAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cY9fu5nO; arc=fail smtp.client-ip=40.107.220.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CnSDtaLU"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cY9fu5nO"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k8X7AlBR4PgwSF1tu+RLiMHFK2rxEG5h74E27DUiP7gVlZ2j2o7fGfmjzICMwV3BPY8NUZCdoga4UsEb76OL69sUaGgGhWD0CotMwf98h9bqX2OeY8Ja6pOsSCwcLq8Ax/goO18OQKWflsaz/cJ6HK8wWZdBY2lFlr2s6x5K3HyE/P6/QD5ZWO50kcgDySSn6Ukpd0xOs9QTuySa4ckgimg6u6rm9SOQzJ6XFr7EHbhyszaBtTU434SBozFbbXxeRBf6OVP0AUq5+LTsiokAGwI45vz5jFpTzKV3e2uNle94HwQaFjRFepOf4muw7vwVa4mfSO1XYL+CE2JvrRQuvg==
+ b=Bw43iuBP1gBjRGmXcNDychEzsZV0vL+O7Ta6Lrr3NgRRALAFwOXgE4vO+hDB1CiOuWB7F9PKMz7oRmfxbMwgGB61SvV+ce54edsGBPzNHzHowFjDfJXIE6ABwDYVBWAMKh58omB9Hbbps0/Wko6S/jt4ri6BYwRT9qU/xGp1eEYRoC86GXtyxxxCZYhbZrQFEv+dWVXOva2M9PZm8EZFRjBJAd9jA/xr5p/RtIm6KEXOw8tu85dUJzkeD3qxe63iZa9y8ml69hzkR1KjdPAygwENuMuMe9O6B0LKblTTCu2NeFlEu7Ay1r+tcx35YxF8u+BF1IvsOHDhyE7KSfMI9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gm61o8ZrY8BDXC6SxmAe7FPNhX90qZPO7kJo5cttH9E=;
- b=tE7yN2CP3/rzTSvjpw8415xmxT7UUBH+ZTd6PItbz/Ruvoyfm2TQCtsAhso+XFRnO5w9flZcOyQq5vDyUq1FexDyAdqrM+E0RrIrjw6SvoI/OYXDQEilpEBMIxRwJv1AVJatdwN/tqJDFs4O3HzqS+sTmm8ATKI8aZ+xfxxhDvkzdysvaGLARjacl2wyL7oG6tU9YWNn5jdeujGut85bzbHlKQ9eQSpNS24qLIi946Vu79oo131Dohgy2Ecfngjvv3Z90GaOvMq7AxzVPr/K0jmpqzj62QJVbkXcuI+S2VHsFliCbeoIfCgISEgEw7FeH50H8yC9ny82MIZkEM9v0g==
+ bh=eUnkCgTQfiH5CbXaOvxbwiRkKsMMhQ57KQrea7VEGNY=;
+ b=yNhmwddfkDgsHWb1ZcZtxksHj8XE2aPPqVL4jMHngQiOiUWcdtCeuQMt/WKfF8/w06lEsWy6OCFjxzZwRHtebdUmAdOAmlGIrrhV61hlQRo2atQo5bJU6CYcxI/q+VFU72ZGkmJ9O3AUxHzE/Om7fXu6h1wsmB9lHSdwoPivzq9m/+lPhJM6tLWXX7OvtnaMhTC/RAJ6pufFCp6aXCsUhj+HxXktsTWX9KNTTaLjK6cCW1DWEbRBLbhpCEy8L7VbAkC7sKRklu++4W+pwp7mZtdaUUiqDbp7+F0E29ZdzyENdn7qLJ/wRM07ZuZFrK9Y+SddhgS7F53JVQyclTHlxg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gm61o8ZrY8BDXC6SxmAe7FPNhX90qZPO7kJo5cttH9E=;
- b=CnSDtaLUbxuARF7gM/3z9Wd9Qg4Vyo7X6hh/f1Ig5S5+AnK5piL7CLV4irQxO5SRzn8Yu38fbRXZF1FpsYkvLbrjWsmZI1kAvw2L02LNDI8NFrMHFiLo/yp/AL9p6i3EDgI6cq4rpTvBViIJfsr2xjPdORXKRWdUaHb0KkCTnlsuTd8zT/qZ9kZKjYaGlatf27z2gUVe9QUXi3nBWjfjNr4P0z55jzMsHdnK/SF7vboVpm+bdpMhX5JvMO7SrrO73BbMU7mzCEoRyvP7NDEMbZRP9gtzOJFJJLKf5q2lho3vKZsrukY1PrY69C0bdeZ4j8KLcj4Pn3/X77SSM+0z6Q==
+ bh=eUnkCgTQfiH5CbXaOvxbwiRkKsMMhQ57KQrea7VEGNY=;
+ b=cY9fu5nOGzPR54Vtsxs2yyu9DBORmUJ2MSeBOFZxTQIqdyJI2yIT7Qlc5IHs68TfGgZNNzkuqfkQyXso59Un7Xb7FwMsnwM1fxE1tUZaB4/bPyoEBcZPIdHmf/kS2tKQ0ltQV1ue0tyeOgOA2D7hT0VmKvzoV2N45VCL6g5VCwIvRqePQ9kW8Gs639M6SpjyA8stpGDXoWQClAmzni0jAVYfCoGooK0ePFmV3L4Le+grljHKyIfO8qgGJA5GJgluEMkIKwEgS+Qj1WxA2amCbMngNtwhKOh0dWwrVO4SELTgokQt13KEEdDnrd6GfR6kAYMOA/gs1hu/67a7rHbY7w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
  PH7PR12MB9076.namprd12.prod.outlook.com (2603:10b6:510:2f6::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.22; Thu, 28 Aug
- 2025 07:50:17 +0000
+ 2025 07:58:02 +0000
 Received: from DM4PR12MB6494.namprd12.prod.outlook.com
  ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
  ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 07:50:17 +0000
+ 07:58:02 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Thierry Reding <thierry.reding@gmail.com>,
  Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: reset: add Tegra114 car header
-Date: Thu, 28 Aug 2025 16:50:03 +0900
-Message-ID: <1865189.3VsfAaAtOV@senjougahara>
-In-Reply-To: <53b596e5-42da-418c-addf-d53fd12c528c@kernel.org>
+ Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v5 5/6] thermal: tegra: add Tegra114 specific SOCTHERM driver
+Date: Thu, 28 Aug 2025 16:57:59 +0900
+Message-ID: <3366819.oiGErgHkdL@senjougahara>
+In-Reply-To: <20250828055104.8073-6-clamor95@gmail.com>
 References:
- <20250828054403.7112-1-clamor95@gmail.com>
- <20250828054403.7112-2-clamor95@gmail.com>
- <53b596e5-42da-418c-addf-d53fd12c528c@kernel.org>
+ <20250828055104.8073-1-clamor95@gmail.com>
+ <20250828055104.8073-6-clamor95@gmail.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP301CA0073.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::11) To DM4PR12MB6494.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCP286CA0082.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::6) To DM4PR12MB6494.namprd12.prod.outlook.com
  (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -74,160 +73,411 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|PH7PR12MB9076:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2154916-82e9-4b36-d372-08dde607877a
+X-MS-Office365-Filtering-Correlation-Id: 6eae2be2-b0e9-449a-11cb-08dde6089ced
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003|7053199007|921020;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TnFYQzF0eG5OaUxlbENTSy9VMTlYRTJwT3BWOEdjZXczMHdZU05vb0xnUGxW?=
- =?utf-8?B?eUVqTXZTVWgydDl6cVFRWXdEZ0ptdEJyczVNNzIzajgrTzFMNE1xQkpMakZr?=
- =?utf-8?B?TlAzRGpQWjhUZS9aRE1kVHl3eGVibzk4NFFYMEs1U0N4MW0yTzlUOUMrcmlW?=
- =?utf-8?B?aDlOMkxKbm5MV1pCVXN1cU83MVZhSis5MzJsL0ZtK0R0SjVFdlQwZDltMEFr?=
- =?utf-8?B?TWNkdVMyV2piWmhzV2drQVhSUmlueGlDRHc5eXZ6ZENaUVdFVkdsamtrU1Vt?=
- =?utf-8?B?QTBVaWo5eFFiS3Y1OURuWVdENHVSRFBhU285aGtpNi9WOFlvT09HR0RJL2dU?=
- =?utf-8?B?T2pyMWYza2JDSzFsT3l2SjJkSEZoWVJUR2lZTWk5NlN3cWRMRGlOTVo2dGZN?=
- =?utf-8?B?VlBNc3AzV245UHJXUWNnbXFaMUxIcGMyaFB4QnBSV2I3YXZoS1ZHVmNTZzVD?=
- =?utf-8?B?MldVYVZVODJ4VkRpd0tGUVVoeG5XS2wrS3RLM3VIeFZTZ0RPSTk5dFdlYlFJ?=
- =?utf-8?B?TytHbUhZZjZ0cjNMOXAyNVZ4eGVrc2dQWU1RYm8vQ0hpcnJBVWdEN3JTcjZw?=
- =?utf-8?B?ZXlvQXExMUNOSDJHdDVkZGlFTDF4NzFDckJQWkhQK2Uxb1hGenlSVVJlZTFB?=
- =?utf-8?B?NXFTOTlZQXlvYldicU5CajQ2UU5RUUIwRmN3bEgzQTNKc25aeHFtbTNuZ1RJ?=
- =?utf-8?B?ZGFna2xGS1M5bnVydXRjV2dPRnU3eEExWGlJQUN3N1RxNGVvVEpUVjg5dkty?=
- =?utf-8?B?TkgvQktKV3dkaTlWMXVCL0tSb3UvaUVBbE1rSlBZYkNxNU05TTFIa24wcUpP?=
- =?utf-8?B?akhJZ1l6TXc1ZXA2c3lCdXBicnVuWDFvQTJGWFlRNjhXOEFmeFRpQTRKOHpz?=
- =?utf-8?B?MFhnMUdQK3RidWozN21JNStCWWNLWGpjeVJCTi80b1lncnZUMElBVkUwMEtt?=
- =?utf-8?B?N01DTDRrWW1odEJiU1NHOUt2NUZ5OGZ6MEpKVUZLVmZodDg0REpRTWZSTXN3?=
- =?utf-8?B?SS9ZNXd4Q21KaDFKSzRWbU5sb2V5MmxPU1hkZGpsWTlMbDJmL1ZRQXJPZDlt?=
- =?utf-8?B?cjdOVHYvNTdMc3RyWUdHbXlEM0pUemsrR0FRb3NMMlNUY0paZlYxOEErZWZM?=
- =?utf-8?B?bEJjMzBwUkROUWtjeHhpSXN4Y2pYR2JQZ080NEZrWklFVHhrS3JOZVJOTXFk?=
- =?utf-8?B?dFIxc293TGxWNis5M0ZpM1BEdVhkUGc2QzZITXJYakxNbG51U0k4aHFyVzR2?=
- =?utf-8?B?eXF2aDlhUlRzMVU5Mjh1NzFBOG1qT2xVK0dXRUdvcnhsZ2FWdlorQ0tWek1G?=
- =?utf-8?B?N3Q2WmV1RmlVRFJCQWhYdisvRlJOS1YvN3N3Ynlpb25hWUVwMC9zcjVDbUhG?=
- =?utf-8?B?eko3R01vQnNrZldBUzllTzd3d1JXSHRxWUhtMStQVjFDZTNwZUpvTUF2N1Zn?=
- =?utf-8?B?V2JwUldNcjNkVFBBQTRhaWFrVlBTLytoS2lGL1A4azVDYlU0U0FiNEF5N282?=
- =?utf-8?B?WXFPUUNmam10RERuZlZyYUZWdkVyankvd2VpNndXS1JxNU1qMldDQU5TY0FC?=
- =?utf-8?B?UldNemlwaUhyZEQ1SGsrNmwrY2JQU3JmV0VTUndYWndsb01oenNzdW9oUjVj?=
- =?utf-8?B?bVFpOXBVVmVCN21PM2Q4cFp5QjA0L0ZQU2xvU0Fzc1ZCL3E2eERzeGEzSXNL?=
- =?utf-8?B?RU0zSjhNcDZBUXE0SllBWG14UG5NMFllSkVpWU1YT1FmazZ4cklJWWpRSHc5?=
- =?utf-8?B?d1hZUFhrWVd3WG1oeEVBOURvRnMzZ0xlNGx1clJDUms0WlIzUGozeGtoREFq?=
- =?utf-8?B?UzMzVVQzSTFUajBXaWM4MkhaOUViVkhhcklyN21jMEVCWUN4cTl4Um5HNTU1?=
- =?utf-8?B?dWw2bmdqWGQrTndNaXBDZVdRMHV3Mzg5ZnJITWZSSkFxTnpheTFOdGE1d2xr?=
- =?utf-8?B?Sjd4SnhRUEZuWWQrUy9nQTlyU0hrcWloTHo4SVhIcTVENlI3MG16MCtPa2FL?=
- =?utf-8?B?ZXJ3djB4aWJBPT0=?=
+	=?utf-8?B?NTEycXNaWHpFcUZZcXZGRTIrckdqbTVBUGNXN0xaeDdiMVNZdlROZytqV0tH?=
+ =?utf-8?B?VG1sRHZ6cUhtSnFNYzZmMXZrTkJwemdTY01FRVFONWpqaS80eGRmTGNUelpL?=
+ =?utf-8?B?OEczeDEzYUlsMThmcDMycWVySlJnQ1JHaDdjT1hDZTczZ1dxa2Y3amhMNklj?=
+ =?utf-8?B?VVJBRmJKTzlUS0ptV1djRXRuV092T1c5MjU4T1NGZDA1K2ZkczczcUltYy9o?=
+ =?utf-8?B?dWRXTkJCTkRveTlvQnRReWE5SHBVS2p3SEFOb2RCK0I1R3k5dHVIazNaMHQ2?=
+ =?utf-8?B?Njl2NW5XRyt2K3h0N3VtbDVFdWx5aWppWGF4WHQyV2lVTlVueko3VGNmbG5z?=
+ =?utf-8?B?ckJOZ3BiajhuTUhmTGhDU1Q3RXJQSmhlY1Y3VUZ3V2ZrNmVwWEs5Q3RCZ3VR?=
+ =?utf-8?B?cHlEaUc2bmZDSitFQ2dkRmxXUFlYRXR6SEh4aWtFR2hqM0ZHRVZsTDMwYWJL?=
+ =?utf-8?B?MjNWR0pxWUEweUZUOFZMUDBITnp6K2VtTXBzVjhxVnlqeWc4eE1zaGJCeTEr?=
+ =?utf-8?B?elIyVnRHWjFvdjZUbm8ydmQrRFJUWFNPS1U1RzV5TUhUY2tLU2tkSWZHc0Fv?=
+ =?utf-8?B?UUtESis1QjhCa2FUL1JNU2FuK2VxNjErUStLaGgxdXVETFF5WTJsb2E0RWIx?=
+ =?utf-8?B?UzJNOE9Rd1BDVzJlQUcvNnBpUlZDakNabmJuMkozVVVSRWlnaFUrdW51cnE3?=
+ =?utf-8?B?MXBSelVuazViVFptdk5WMDRKSm5aRmJrRFFoWkpvazd3RjNqQ3FxdVJETVM3?=
+ =?utf-8?B?U0E4enhNeUQ3R3JTTUVmS1B0bWFkR0djQys5Q3hjakEvZm5QWkdNTHJ1djNn?=
+ =?utf-8?B?ajNCM0c4TEZwODFEMzJWTlBCSWJheUtDWGhDN1o2VGdESWtqWXE2RU56Q2h3?=
+ =?utf-8?B?Uy8wRWE4S0xYNGdFbFhYRTNTeSs2VzVNdmlzaVB6cDhCRE5WMUpYTGx1WEVX?=
+ =?utf-8?B?ZjNOcVUxdEdSek1TTjFaVklma09oOFdIN1dxYks2RkRoMnlLa0FoSm8yTGtS?=
+ =?utf-8?B?bnJMMTRxT0lDanl6ZFRGT3ZnRXNHOGYrUU1pY2tzV1dleFEzazZCd3puM04w?=
+ =?utf-8?B?Q29sbHVKbUNjNm1BWjNadUEvbnc5c2ZLMjAyYVRmODNvUmhTZElIVGhsRmtD?=
+ =?utf-8?B?MEpmbC8yYXd5SnlzTWp3bGtVZVdyeXM0T0xWaVZXUk1RdzZTZG1ibURNRXZa?=
+ =?utf-8?B?NXNKbmwxZjNNYW5LZTJyMUdzK3EwVzdCWU1ZMGNDekRDSlhURlFhT1VXTmJU?=
+ =?utf-8?B?T09Vd2s2a0JnK3RvZkxKQzNTZVNETmxaS1BHSCsxOHNXNHFOU3NaSVFnUXQx?=
+ =?utf-8?B?U0pteU5idXdmUnhzUjZqTm5BazFwcHNOSVpRZnNHWnoxNDJtc3RwWExDMG5J?=
+ =?utf-8?B?OHVBaTg5dENBY1R3Yjc5RmIzN0ZqMjJMekNNVVJSMEJIYmVqeFVac1Uza3dl?=
+ =?utf-8?B?WkRySVhpdC9peUVKMFhMZ3JZK1R5UUZFb1V2eWk1TlA4Nzh5NGRYbUtzc0hQ?=
+ =?utf-8?B?TmhVbVBUZlBvUU1uUTlVbCttYTRNM3M5Z3htN1luK3VDQ2IybjJXRHVtaG1w?=
+ =?utf-8?B?U05JZ1crWDZacjN1K1M1ZXNibmhCWnpzcjV0ZGl1azMyTEtoVUUzY3lYajI5?=
+ =?utf-8?B?NXprWWNKekV2UVNkcEVFNWJCWXhMTFdDN2tTZkVrZTRNL1NVbzVlVWkvOUdM?=
+ =?utf-8?B?N2FPQnVESDQ2bXA5ZzlDZTVrYk10cU05RXIzdnNpV3VVNUVjcGZNRUZ0Nnha?=
+ =?utf-8?B?WHBsMnIrbWt4SllzQUl3dUVYUFJYRE1MUG5UMmhxalluajQ1MWhJNy9YY1Ja?=
+ =?utf-8?B?anpNcG9yWWxoa2xYVEhia0trY1BSQ01xeGhpYVY1R0kxa3JmMGZwZ1h5VEo3?=
+ =?utf-8?B?dmZJc0w1ZGpOZklpeHV1SlVoOEthRTJBZ01KRmxsVFVOeTg1Y2syOHF5ZzM5?=
+ =?utf-8?Q?reFoF7jBcmCLJa59BYvzTxhRFX+mYp80?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003)(7053199007)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TnFtQ05uMVJUQmJXSkp3NWZKQnYyRVdWRUN3S2gzR0ZEdVd0cms0MnJlQzNr?=
- =?utf-8?B?N3FIUG82UDF3ZFBzaVVNY2F4SVNMa1ZsUUJDdDhZYWM0N3BQMUZsTHY1cCs5?=
- =?utf-8?B?b0x2S0N2UGEySVhYMXVTOVFHYkI3RHM3Y05wMEl5Y2hZamVINjJEcnZuNW1j?=
- =?utf-8?B?WERWbDBrczJEbEZFL0RwbXo5c2JRSk5jZXBsVi9tcTB3T3hRaklxdmVmbHNP?=
- =?utf-8?B?Z2ZRQ2hGN0JBQ2RFSmFxNVl4SzF5cXZzRW1CZ1JCMzR0cHBIbW01MzdESmtG?=
- =?utf-8?B?S2RybzdmMVVyRzhHdWVkQ2ZnTUFVMFZLdURGTzJxSEpZUmhlRmt1WDc1eGg2?=
- =?utf-8?B?TzJLNldHSzNqUXBhVG8zdlBpTTVLemNxVnk1UkFHT2FaYnVEVlVUbnd2ZCtE?=
- =?utf-8?B?cXhCZnlIYWkwWFBWSloyMlBDdG1tRHIzVElHTTFMcHJ0T0o3SHJoSWJoU0Y5?=
- =?utf-8?B?ZGV2TFA1VEYwMUN5OXFNdnhXdHZSTDY3SzY3Q1N1azNENGYrdnNDdGQ3djJ3?=
- =?utf-8?B?RGRVTGt2K1lQVi9saDFhSjNXYURPdngzdUxkbzhNcGRDaW5ZNWNxakRSQ3BR?=
- =?utf-8?B?VXU2bThaK212MUhjK2Q2aWptWFpMTnlsN0pzZkVpWitnQ3QyQWx5TnZLSHBa?=
- =?utf-8?B?M09RZHh4WTNtLzRER3Fyd0NLdFJyTW04MEQrbzdKNGtEMUtqbndNTFEzSkNW?=
- =?utf-8?B?bzd0TUppU1JRWXQza1BHbVJIUi9YVDBCYmtaTXNoNzJNSkp0MEs0TUdKZkg1?=
- =?utf-8?B?VXVhZG91amZxMW9iYU4xNXc5STFpa2c2RDh5dEFiTVdrY0QvamJ5d1RTcmsz?=
- =?utf-8?B?R2xKVEV6QWVwMjRWYXluYkgyUVMzQ21mYzcxYzFNN1YvUHVCR1FPbkZoQUpY?=
- =?utf-8?B?OEwzZWFuVUNkODg2MUE1QmVycGJCSENCMHZoQXpTTTI1WHBsYk85WnFsTFll?=
- =?utf-8?B?cXNLM01OT3h6VHgyeDZkMHQrM1UrajAvc3B4aFdlZ1VSZnhOa1JwWVJ6d1Qv?=
- =?utf-8?B?RHZWYzRFRzUyeXIwRnJZMyttRjU3ZWk4ZWI2U2RLckJiZlJoUDQyUVZwNjNq?=
- =?utf-8?B?cVY3RWQ2TFBhWDVBM3R5NUwrdUFKb1VvSGJMRm9lK3lBWDJOSmhNQmlFVjBR?=
- =?utf-8?B?eTdjZlpJVE4vNCtHMGN0NzA1VFl4WUhPTjNBR2ZESHcvQkFZNTN2dzMycUJS?=
- =?utf-8?B?ZlZReGdNTGgzODdQT0JwcU03aDNVblNES29GZ2RpTzFxczRTSFIyMmJtVHJ2?=
- =?utf-8?B?NnRVTUU3cTVlNzNkQjNRalg2dERsd3VRQzlsUlFBUnlCYkIxYWxsKzV5WDJ2?=
- =?utf-8?B?ZnFBT2pkcTRKSnpVVlEzUThEdTh4T0IvYk5aVGFjMDg2NFF5OHIvdGx3SDZx?=
- =?utf-8?B?bkdGYkl2Q25xRTIzdzZZZXJMdzgxNDZIdi9od0h4YUltVGZ4UU11RmU4SnUx?=
- =?utf-8?B?QmFwOFIzVEp5Y0tNUVU4RWdYR0xxWG9uZ25qYlFHYVc4VnhPdm50NUo0dnNM?=
- =?utf-8?B?YnlvRVorKzZFNlFFa0dKcndlbm9BS0djTXFnbUNmYng3ZDhsTTVXSW1kTnZY?=
- =?utf-8?B?bGYveDhaTk04ZDZreHFZY2YxdjJCelVwQ04yeU1zQzIyZm9SaytScFpEK1c1?=
- =?utf-8?B?TjlKZnlkU1cvcW51UTdwUEJpOUJ2WEkxbHlWOGp6U3R1VkdFUVh3SUdSSEZT?=
- =?utf-8?B?Z0plL1VRWUJNSVdhRmNPUmRRN3R6RXFYWmovNkZ0QVdXSU96ekNDTzhoNUdp?=
- =?utf-8?B?WFVrbjR6WitHSGRuQnMwRHhKL0FSb0ludTArMWFWaEJ4OWhrZ3MrRk1nR2lu?=
- =?utf-8?B?aWJjb0RVZTdxVlZJdFBTVGR4Zi9LWm85VXNPSmhBSUV6dWRzTnQ0OUtKQW1s?=
- =?utf-8?B?V1pKQ0c1b0pGdmdndlJ6Zm9kY3NweEhPVW9xZW1TdWpqekUva29RaUVDb2JP?=
- =?utf-8?B?bnVhZkpXSTB3MXRpQXdVWE9XQlkyVjBZbmEwa1ZQRW9XR0p0eUtxZ28xSi9D?=
- =?utf-8?B?Q0VhdXBIU0EzSlRCWmx2c0FXUlJMalNVSENRUjJPcWFMVUY0ckxSVlNuSVlH?=
- =?utf-8?B?MExIMTd0NzVEemNydDdpc3BRcWJnVU5nL3U2M3ZkVzU2RzJCZWYvdFBrYjJ6?=
- =?utf-8?B?OGFITnMwVUZ6U3pzVysyeXBQYmYzSGtZbnVFTWtZdWRlcUFpM1pISVdjNzVW?=
- =?utf-8?B?eWhFMGVwN0Jxb0JHd0RrZDF1U1hVLzhFa0ducExrNUJTanFqSEhwbmREejha?=
- =?utf-8?B?NUswUVJGYXFpcmJ3dFBpMk1kLzB3PT0=?=
+	=?utf-8?B?Vjd3aXdhL01PRWg4U2hUY21DV3kvSGhFeFRha0UycTZ4STZCRms5azFJK3Qr?=
+ =?utf-8?B?bWpXTWJYb1dtdmI5eS9lQkdGci9YN2xOYmdLZkNyaWFQNE80OG05QUptcENN?=
+ =?utf-8?B?cElYOS93aFpkWDNSSE9ubUFiUzIyMVZWMXlVM09GNmRGbSs4VWlCbnZPalVF?=
+ =?utf-8?B?R1pCN2xRelFjL1JkOENESkMyNlNWL1B3aUlLaDF3TDlqODhYcEZCSGJSV1hn?=
+ =?utf-8?B?Wm5xUXlUTllJQVpTcnQrTytvSXhXS3YzVmNib1h6cWh4b2dyUnVKQmlLdHEy?=
+ =?utf-8?B?T0JWRE5aS3dQSmZlSHpYNUx3YmIrV2s0QS9vSmpHWFFIWDI2VXVVc2Q4U3VP?=
+ =?utf-8?B?cjJ0OG5HeVdTV2xCSC91L3F5RGxDVzNZSklBcW9WOXFjSDZyY3ZUbDBPcUE1?=
+ =?utf-8?B?eDJ4NlIwQWtnZ3RuT2djK2Y0VURPdHNCOGlmQklEY3dsdzgyeUN2MnA3dUdx?=
+ =?utf-8?B?Tkg3T1hMQnZRYld1cVpVckxjUGZOQi8vNERPdHZRU2dUUWlOckpwM1ZEd0ZG?=
+ =?utf-8?B?UzlyTElGazhMTWJjSmt5WmMySlljN21sR3VIb2s1TStiOGFWcnQrbEJuTTNT?=
+ =?utf-8?B?UUR1VkZmSy9WdW5mazcwSnlJbzd2RkxIM3BqNkJWc3VmSEplVkRxckZVVDUz?=
+ =?utf-8?B?MmRrdVEzWEU0elFaQ2RKVGNzMlM1NmNSVCtSd2NDY2t4N2RaZjBSOW5qV3N2?=
+ =?utf-8?B?Yk1DWkZLdEFJNnRVUUNKMG1JY2ZKVXNwa3NQay9uRXZXQXVnL1FKdHZGMUJu?=
+ =?utf-8?B?NFUwMStPQjhvcWNabHZjeVM3REFZOEhGYXBWTFQ0UXdFZGN0U0g1RjkvMngz?=
+ =?utf-8?B?bE9tVWtmYWJnQjlpdnJuc1VkblBxbFFramdrVlNEbkJZOUxPaHR6c1JNcmlx?=
+ =?utf-8?B?WEQ0YmsvZUxYR3Jtazl2dVJuaWxNbnFoemlqelkxc2xtSEJiei9CTHFIUy9L?=
+ =?utf-8?B?TC9LZkpmL2VBNm9xODZkaTZzZGlIRndmRndiRFdYL3JibHR1aFVhRVl1V1dw?=
+ =?utf-8?B?U2RQZ0IrVTJHWTRYQ1ZLN3loZzZaNHVjdkZLM0pGd1dUTTQ5cWV3VEdYTDZj?=
+ =?utf-8?B?ZUFhaENIc2QzNW5xVW8zQUJyNHd2UVQxamxhdytXbXAwRnhOREdYUGlwUm5K?=
+ =?utf-8?B?UFpGWXQ1WUN5MkczelBNMDd3WlorT215WXFPOUxkVnlEdDVRUUZ2ZEhhYW1y?=
+ =?utf-8?B?YWFuaVJ1T1lJdEltVDdNWnY1aG1qbS9SQjFuOWxORE9EaTRoTjJtY0dONktv?=
+ =?utf-8?B?QlJ5ZlRKaW83bk9OeFJ3K1RmZzFHQnhnOHpjNmtrdjNheGFYVjJQRU9CaGR3?=
+ =?utf-8?B?VWxYcW1xUTN4WnJEWDU1QTF0NFllc2IrQkJ3WTN1YmJrWFJBTWNyczNzVVd2?=
+ =?utf-8?B?M2QxQmllbjB2Y1B1NEFxZ2lzdHNiZDMybnI2VFdnS2tFRGRyYXEraUt3a3Jo?=
+ =?utf-8?B?b1VJdGtSU05lQ3hHRlh3VDZNckxUWUdwK2xEZGFZcGlrYysrbzhtTnlJaUxI?=
+ =?utf-8?B?MXk0V2V6cWd4akpOT1BBNmtNekFPbG51UjM0UUtMcU1BcEZjSDduRS9lZWdy?=
+ =?utf-8?B?R3pJZFFkcUxjZysveVpxOUtCY1ptWU1iVVlKaDVTbWtUVzc2S1NZN2ZlZXpz?=
+ =?utf-8?B?dzU3RWNqRjdMWjdNRGkvNnkrdDBIY1dzeUxQYjlWNlYxamkvYlp5dzdIcXhi?=
+ =?utf-8?B?cVNBNDl5MENoNlRCZmVYUFg1Vk9qSkR1bFVYYitwTlM4TkF3UEQzcmpTV0cz?=
+ =?utf-8?B?N2VxVW5rbFdXK3NrMmU0NGJScmZqdnQxbUNKYWR6VWdxTCtiNGp2MWZzWE5N?=
+ =?utf-8?B?cjVYdmhCMXlZTE9qRENOQXRwUGQ4VzlZbDBualBjRTN5SWlWQVFISGZpZnlY?=
+ =?utf-8?B?dXdWWGVWVjFHM08ycUJwblZEUUMyeUtnZ3VJVGRtMFZpdEVEMEw3Q3drMGFk?=
+ =?utf-8?B?UFZkekgzQkxzb0ZFMUZCU3VseHpLZkZlUE5LT2Y2QmwvMXArWXE4K1VxNUVL?=
+ =?utf-8?B?UEVMUkJ4TDFWM2JHejlET0JDMUphb0VhbllVK01sQWc2NDFZWEpsbkJmakJr?=
+ =?utf-8?B?OTd4V0xPTCs0dllwWWhDK3lGVmQ3VWUrOGRVNFVpMm41K09VcGNGVG81WHdW?=
+ =?utf-8?B?Sm13MEN3MFBxZUI0ZkVpR3JnQzg0dnRYQUdvVEdlS0xXNkVGNU9TUzRaaXc2?=
+ =?utf-8?B?WFczbm84STNzRWhGbWNoalhRVDVwbjlFcU1Pc3hFOVZ4N3FrSXZTT0c3RU1P?=
+ =?utf-8?B?dURzUVBhSDVLTVZmL29vRENUbkp3PT0=?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2154916-82e9-4b36-d372-08dde607877a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6eae2be2-b0e9-449a-11cb-08dde6089ced
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 07:50:16.9895
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 07:58:02.5993
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wv1G2EhJtLw7vVbdSqzzX0PU1FumKrUYyiZKOrUnOSrIi28Np2D9/nU1x8bm+/CEn4ektssEEt3pPEEUaDPpLQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: pknYdol3OUwJfPwPBkqL3P9bo6BCuT60Q6rY8RyJrbuOwSmmlPoLCdDRTzljl5eWyduH8UuquRH36Qfk21Gs8w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9076
 
-On Thursday, August 28, 2025 4:19=E2=80=AFPM Krzysztof Kozlowski wrote:
-> On 28/08/2025 07:44, Svyatoslav Ryhel wrote:
-> > The way that resets are handled on these Tegra devices is that there is=
- a
-> > set of peripheral clocks & resets which are paired up. This is because
-> > they
-> > are laid out in banks within the CAR (clock and reset) controller. In m=
-ost
-> > cases we're referring to those resets, so you'll often see a clock ID u=
-sed
-> > in conjection with the same reset ID for a given IP block.
-> >=20
-> > In addition to those peripheral resets, there are a number of extra res=
-ets
-> > that don't have a corresponding clock and which are exposed in register=
-s
-> > outside of the peripheral banks, but still part of the CAR. To support
-> > those "special" registers, the TEGRA*_RESET() is used to denote resets
-> > outside of the regular peripheral resets. Essentially it defines the
-> > offset
-> > within the CAR at which special resets start. In the above case, Tegra1=
-14
-> > has 5 banks with 32 peripheral resets each. The first special reset,
-> > TEGRA114_RESET(0), therefore gets ID 5 * 32 + 0 =3D 160.
-> >=20
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > ---
-> >=20
-> >  include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >  create mode 100644 include/dt-bindings/reset/tegra114-car.h
-> >=20
-> > diff --git a/include/dt-bindings/reset/tegra114-car.h
-> > b/include/dt-bindings/reset/tegra114-car.h new file mode 100644
-> > index 000000000000..d7908d810ddf
-> > --- /dev/null
-> > +++ b/include/dt-bindings/reset/tegra114-car.h
+On Thursday, August 28, 2025 2:51=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Add Tegra114 specific SOCTHERM driver.
 >=20
-> Still incorrectly named. Use full compatible, just like the other file
-> where we already switched to recommended format (see also writing binding=
-s).
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/thermal/tegra/Makefile            |   1 +
+>  drivers/thermal/tegra/soctherm.c          |  13 ++
+>  drivers/thermal/tegra/soctherm.h          |   4 +
+>  drivers/thermal/tegra/tegra114-soctherm.c | 209 ++++++++++++++++++++++
+>  4 files changed, 227 insertions(+)
+>  create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
 >=20
-> I asked for this at v1 and then reminded about unresolved comments at v3.
+> diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makef=
+ile
+> index eb27d194c583..9b3e91f7fb97 100644
+> --- a/drivers/thermal/tegra/Makefile
+> +++ b/drivers/thermal/tegra/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+=3D tegra-bpmp-thermal.=
+o
+>  obj-$(CONFIG_TEGRA30_TSENSOR)		+=3D tegra30-tsensor.o
 >=20
-
-Ah, I guess you mean using 'nvidia,tegra114-car.h'? At least I hadn't reali=
-zed=20
-practice had changed to include the vendor prefix.
-
-It can be said that 'tegra114-car.h' is also based on the compatible, so I=
-=20
-hadn't quite understood the original comment.
-
-Mikko
-
+>  tegra-soctherm-y				:=3D soctherm.o soctherm-
+fuse.o
+> +tegra-soctherm-$(CONFIG_ARCH_TEGRA_114_SOC)	+=3D tegra114-soctherm.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D tegra124-soctherm.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_132_SOC)	+=3D tegra132-soctherm.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_210_SOC)	+=3D tegra210-soctherm.o
+> diff --git a/drivers/thermal/tegra/soctherm.c
+> b/drivers/thermal/tegra/soctherm.c index 926f1052e6de..bd1919f70860 10064=
+4
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/reset.h>
+>  #include <linux/thermal.h>
 >=20
-> Best regards,
-> Krzysztof
+> +#include <dt-bindings/thermal/tegra114-soctherm.h>
+>  #include <dt-bindings/thermal/tegra124-soctherm.h>
+>=20
+>  #include "../thermal_core.h"
+> @@ -357,6 +358,12 @@ struct soctherm_oc_irq_chip_data {
+>=20
+>  static struct soctherm_oc_irq_chip_data soc_irq_cdata;
+>=20
+> +/* Ensure that TEGRA114_* and TEGRA124_* counterparts are equal */
+> +static_assert(TEGRA114_SOCTHERM_SENSOR_CPU =3D=3D
+> TEGRA124_SOCTHERM_SENSOR_CPU); +static_assert(TEGRA114_SOCTHERM_SENSOR_ME=
+M
+> =3D=3D TEGRA124_SOCTHERM_SENSOR_MEM);
+> +static_assert(TEGRA114_SOCTHERM_SENSOR_GPU =3D=3D
+> TEGRA124_SOCTHERM_SENSOR_GPU); +static_assert(TEGRA114_SOCTHERM_SENSOR_PL=
+LX
+> =3D=3D TEGRA124_SOCTHERM_SENSOR_PLLX); +
+>  /**
+>   * ccroc_writel() - writes a value to a CCROC register
+>   * @ts: pointer to a struct tegra_soctherm
+> @@ -2048,6 +2055,12 @@ static void soctherm_init(struct platform_device
+> *pdev) }
+>=20
+>  static const struct of_device_id tegra_soctherm_of_match[] =3D {
+> +#ifdef CONFIG_ARCH_TEGRA_114_SOC
+> +	{
+> +		.compatible =3D "nvidia,tegra114-soctherm",
+> +		.data =3D &tegra114_soctherm,
+> +	},
+> +#endif
+>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
+>  	{
+>  		.compatible =3D "nvidia,tegra124-soctherm",
+> diff --git a/drivers/thermal/tegra/soctherm.h
+> b/drivers/thermal/tegra/soctherm.h index 083388094fd4..aa4af9268b05 10064=
+4
+> --- a/drivers/thermal/tegra/soctherm.h
+> +++ b/drivers/thermal/tegra/soctherm.h
+> @@ -142,6 +142,10 @@ int tegra_calc_tsensor_calib(const struct tegra_tsen=
+sor
+> *sensor, const struct tsensor_shared_calib *shared,
+>  			     u32 *calib);
+>=20
+> +#ifdef CONFIG_ARCH_TEGRA_114_SOC
+> +extern const struct tegra_soctherm_soc tegra114_soctherm;
+> +#endif
+> +
+>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
+>  extern const struct tegra_soctherm_soc tegra124_soctherm;
+>  #endif
+> diff --git a/drivers/thermal/tegra/tegra114-soctherm.c
+> b/drivers/thermal/tegra/tegra114-soctherm.c new file mode 100644
+> index 000000000000..688104f28052
+> --- /dev/null
+> +++ b/drivers/thermal/tegra/tegra114-soctherm.c
+> @@ -0,0 +1,209 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2024, Svyatoslav Ryhel <clamor95@gmail.com>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <dt-bindings/thermal/tegra114-soctherm.h>
+> +
+> +#include "soctherm.h"
+> +
+> +#define TEGRA114_THERMTRIP_ANY_EN_MASK		(0x1 << 28)
+> +#define TEGRA114_THERMTRIP_MEM_EN_MASK		(0x1 << 27)
+> +#define TEGRA114_THERMTRIP_GPU_EN_MASK		(0x1 << 26)
+> +#define TEGRA114_THERMTRIP_CPU_EN_MASK		(0x1 << 25)
+> +#define TEGRA114_THERMTRIP_TSENSE_EN_MASK	(0x1 << 24)
+> +#define TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK	(0xff << 16)
+> +#define TEGRA114_THERMTRIP_CPU_THRESH_MASK	(0xff << 8)
+> +#define TEGRA114_THERMTRIP_TSENSE_THRESH_MASK	0xff
+> +
+> +#define TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK	(0xff << 17)
+> +#define TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK	(0xff << 9)
+> +
+> +#define TEGRA114_THRESH_GRAIN			1000
+> +#define TEGRA114_BPTT				8
+> +
+> +static const struct tegra_tsensor_configuration tegra114_tsensor_config =
+=3D {
+> +	.tall =3D 16300,
+> +	.tiddq_en =3D 1,
+> +	.ten_count =3D 1,
+> +	.tsample =3D 163,
+> +	.tsample_ate =3D 655,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_cpu =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_CPU,
+> +	.name =3D "cpu",
+> +	.sensor_temp_offset =3D SENSOR_TEMP1,
+> +	.sensor_temp_mask =3D SENSOR_TEMP1_CPU_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_CPU_MASK,
+> +	.pllx_hotspot_diff =3D 6,
+> +	.pllx_hotspot_mask =3D SENSOR_HOTSPOT_CPU_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_CPU_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_CPU_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_CPU_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_CPU,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_gpu =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_GPU,
+> +	.name =3D "gpu",
+> +	.sensor_temp_offset =3D SENSOR_TEMP1,
+> +	.sensor_temp_mask =3D SENSOR_TEMP1_GPU_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_GPU_MASK,
+> +	.pllx_hotspot_diff =3D 6,
+> +	.pllx_hotspot_mask =3D SENSOR_HOTSPOT_GPU_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_GPU_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_GPU_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_GPU,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_pll =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_PLLX,
+> +	.name =3D "pll",
+> +	.sensor_temp_offset =3D SENSOR_TEMP2,
+> +	.sensor_temp_mask =3D SENSOR_TEMP2_PLLX_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_PLLX_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_TSENSE_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_TSENSE_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_TSENSE_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_TSENSE,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_mem =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_MEM,
+> +	.name =3D "mem",
+> +	.sensor_temp_offset =3D SENSOR_TEMP2,
+> +	.sensor_temp_mask =3D SENSOR_TEMP2_MEM_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_MEM_MASK,
+> +	.pllx_hotspot_diff =3D 0,
+> +	.pllx_hotspot_mask =3D SENSOR_HOTSPOT_MEM_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_MEM_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_MEM_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_MEM,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group *tegra114_tsensor_groups[] =3D {
+> +	&tegra114_tsensor_group_cpu,
+> +	&tegra114_tsensor_group_gpu,
+> +	&tegra114_tsensor_group_pll,
+> +	&tegra114_tsensor_group_mem,
+> +};
+> +
+> +static const struct tegra_tsensor tegra114_tsensors[] =3D {
+> +	{
+> +		.name =3D "cpu0",
+> +		.base =3D 0xc0,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x098,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "cpu1",
+> +		.base =3D 0xe0,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x084,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "cpu2",
+> +		.base =3D 0x100,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x088,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "cpu3",
+> +		.base =3D 0x120,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x12c,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "mem0",
+> +		.base =3D 0x140,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x158,
+> +		.fuse_corr_alpha =3D 1000000,
+> +		.fuse_corr_beta =3D 0,
+> +		.group =3D &tegra114_tsensor_group_mem,
+> +	}, {
+> +		.name =3D "mem1",
+> +		.base =3D 0x160,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x15c,
+> +		.fuse_corr_alpha =3D 1000000,
+> +		.fuse_corr_beta =3D 0,
+> +		.group =3D &tegra114_tsensor_group_mem,
+> +	}, {
+> +		.name =3D "gpu",
+> +		.base =3D 0x180,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x154,
+> +		.fuse_corr_alpha =3D 1124500,
+> +		.fuse_corr_beta =3D -9793100,
+> +		.group =3D &tegra114_tsensor_group_gpu,
+> +	}, {
+> +		.name =3D "pllx",
+> +		.base =3D 0x1a0,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x160,
+> +		.fuse_corr_alpha =3D 1224200,
+> +		.fuse_corr_beta =3D -14665000,
+> +		.group =3D &tegra114_tsensor_group_pll,
+> +	},
+> +};
+> +
+> +static const struct tegra_soctherm_fuse tegra114_soctherm_fuse =3D {
+> +	.fuse_base_cp_mask =3D 0x3ff,
+> +	.fuse_base_cp_shift =3D 0,
+> +	.fuse_shift_cp_mask =3D 0x3f << 10,
+> +	.fuse_shift_cp_shift =3D 10,
+> +	.fuse_base_ft_mask =3D 0x7ff << 16,
+> +	.fuse_base_ft_shift =3D 16,
+> +	.fuse_shift_ft_mask =3D 0x1f << 27,
+> +	.fuse_shift_ft_shift =3D 27,
+> +	.fuse_common_reg =3D FUSE_VSENSOR_CALIB,
+> +	.fuse_spare_realignment =3D 0,
+> +	.nominal_calib_ft =3D 90,
+> +};
+> +
+> +const struct tegra_soctherm_soc tegra114_soctherm =3D {
+> +	.tsensors =3D tegra114_tsensors,
+> +	.num_tsensors =3D ARRAY_SIZE(tegra114_tsensors),
+> +	.ttgs =3D tegra114_tsensor_groups,
+> +	.num_ttgs =3D ARRAY_SIZE(tegra114_tsensor_groups),
+> +	.tfuse =3D &tegra114_soctherm_fuse,
+> +	.thresh_grain =3D TEGRA114_THRESH_GRAIN,
+> +	.bptt =3D TEGRA114_BPTT,
+> +	.use_ccroc =3D false,
+> +};
 
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
 
 
