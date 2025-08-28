@@ -1,256 +1,168 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E210527A916;
-	Thu, 28 Aug 2025 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DA82EB84B;
+	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756369734; cv=none; b=UZEzui34uSersGRyXNHwUHMJV7bedICMCT/Z/iynKeawKOrwioe2zgpyfhm/KgQFhPTkundBccwYAeo181Mo07QKui/trEZ6ze3MgH+3hVc9zFdLgP78qkUAoTm3qt8ZGTc7bmAyZU57fmR15KbT3LiglSHdXISPuSrkO5tVjsg=
+	t=1756374016; cv=none; b=iwEIK4KeeaGfMHdEU8Lj1tFeodlS6BEiMM6yWI5BUC5hf3TC8n8Tz+HBx1lItXruWPZ7llX7sbdAN1cyJ9VBpvM9Mk2/zQkV+4nCoQ++x/J4zLblpTYfFImS6ZY93C3NIZ0m+Bu3sCzchPtgNDiybSFOhtS6mSHDpFqzLq/MVrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756369734; c=relaxed/simple;
-	bh=Vwlx1B2RIxcw9WvdPojixfbJpz0CfKRwKo/O7mkUyag=;
+	s=arc-20240116; t=1756374016; c=relaxed/simple;
+	bh=Cl0m1kDKpWeagimjoCyJC2nNVcFJOKHXK8N9AWWvIRE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ex920fxFz4jg3rh/6Si0z6wGG0l8Nt38seHK+eJAlJLoaGZDcF69z/anNMmeDCBykhan/1ntDU26e3+bxxPpQ1g6w1JDzUjqn1oCxrIyAsdBkoPQ0xW63s4Ad/YQ1FNdqta0yYmNfBv01qqZbAkHnS1pCAijny5CwsUAKht3Xlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6PROBxo; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=PWjtMwHik0IV1dxaOdgqBsNcnTrTTzRXi0xgmGTD70kRkbs85J1F6ZZl0+Qt+6t8HMN0NpxvqxK1HGg0ONZmXhDIPAE+X64uh+FnnERGPWPFsphMPWTReCE+VzzXEOoU2OLQnTao2V0WJuIVE7KflxadzHBZr67z9z3IPUyUOpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ89yqsM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6PROBxo"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c79f0a5c5fso550748f8f.1;
-        Thu, 28 Aug 2025 01:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756369731; x=1756974531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hpesnFJVyd+1WSElG1QxZ3KYR404x+XI1vMOvjb/mRc=;
-        b=c6PROBxo7hs2bsGXFdVzgqo+Ti569vt80MEy6hXdYsmqxpGyImrWM/7BZ/eWxAKJbS
-         ID3BoR+8xIWvdFxXXD9qA4h5WEVHoLNljikXS7XvUrFYR2BMiSMLvQfhKBa5jwe78vBs
-         DhHCLS195ItUxw+/9GEBjxFd+l1Q2eYf5yP7Bf+NnGUb/NpW988PwuwtJ9nkbRkDWA5C
-         8ZkAWHO/iWYg6dXbv2CX9pW3VEjKVjbs4cwIZp3WHZQ1hMWtL9UcmybmRn4liAoZ48fR
-         AEuIBH+McPbx0gVjBPnczivwxsXXxaPC/ikUQ7+ySQR1SELReRoCEl2itJtShe2lYzr4
-         nXHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756369731; x=1756974531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hpesnFJVyd+1WSElG1QxZ3KYR404x+XI1vMOvjb/mRc=;
-        b=BjpKwAoucSTJVKUwg3RWwTTJ+8Nf4CPJQ+1fz1CZt9NpPi9hH5dg8TQKZmCfNTMibj
-         kq+bJoeBYROb8e88qs3jUe8uGQjvDuid633wKT6K8TnR/lBR3ZpBWvos73ftzRy8BzQg
-         2e1a1fhLJhksXwt7h6TO1gC8I/gYY+7uaAawL7hSDh1LlkvNqtQn7mVxcfhGzEMLcah4
-         byo3Sn/CXCICfqeDLBZ6ztX2rfRCTHNVYtLVuLbCw4ibdI7fPmmnEegOWWwxQzHIFYf+
-         amrLNziU+X2S9bb2vOM4pcP7cJFoGUIfLE4TTLOFLC5/HwW6p36Ztie41TrazEjwXdIY
-         aaKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4csJsN9df8x9AqRm/OZ9Synd1jg/0yssg5xKuzrl7oDSlzbnl4Qs1Da3huf7RTs+vrhVIWKQk26F/nU4=@vger.kernel.org, AJvYcCVAMxLB0F/EYFNtv+JDLVd8aJbOYgyfI4vFSUxjuwuT0aenQgFS5jAdOFqzaMRcZHIgn6yw+7dImgVR@vger.kernel.org, AJvYcCVtXoNCTpe5gX46TQ/Cl5IBXG/HqetbygIiyJfONqVDCJlhnqQeLICz0+cqLO6XWeMvcoAQNWdgTXRIMTXR@vger.kernel.org, AJvYcCXRmvpSUB+KmlqNN7XPhNryMIgWtdW17FZSvkvk4EGCc82lt6x3L6ofkVYK/xlHaMHMDzj5ncHggOD/@vger.kernel.org, AJvYcCXvfzA8zOzTUrVNRAnAztRygGYnkqU0w0gD2bQlLvM69d3MYsYDJ5dBMXQUb+b2ON42onNUy1AtDmlMq1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEmFJlL0fpPPUxcMtgu2TM6fQ6sUePXi1oNXlGHrMu2hY+kSAv
-	iJ5IOu2yeKPzTPiMfxBi263hpGfT/JIq74uOafTUk6DFXhu5rvrKPuEnIXMtdtD+5lZbB2Iu842
-	0nOmaTmTeHUwAoJdsSc9k+JgTDdKHvWk=
-X-Gm-Gg: ASbGnctXgvCSPD0EyQQzgXWu05AiEqcylMQe2IRHrkv5UMAEZcPQ6umQSOTZJL/7OcO
-	kwD2D7PwMkT+ad/hxcxShSEDF+lOL74ImZaTZArWkGrLSCJFwhyd8KtVDruASh/tQXmq5p9rCzX
-	V8ehKxDRKQYZqmYPUGaCANKA0R/0tuUJ3reR8kBi4hgqNHh2E8+y/sQ+sH6mJPhzahdfehGT2eA
-	OLSIlMq
-X-Google-Smtp-Source: AGHT+IEJN93L6OfvheJ8qpGeyaKj7tInl9kGXKXiH50G67UoeYFDF1fUrz/n9HhBgSCb3G8VFX6qHSDcNMLXJ+92l0A=
-X-Received: by 2002:a05:6000:2404:b0:3b8:d30c:885f with SMTP id
- ffacd0b85a97d-3c5dcefe32fmr18408263f8f.53.1756369731058; Thu, 28 Aug 2025
- 01:28:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ89yqsM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4004EC4CEFC;
+	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756374016;
+	bh=Cl0m1kDKpWeagimjoCyJC2nNVcFJOKHXK8N9AWWvIRE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JJ89yqsM/siAb1VR6ZJU3bEFaUkNGoy0qdWneQKwaNTbKw9v5mNgvGxJA28E63mh8
+	 Upq25haYXC1EwPZL5mZ2pA6J2O7jYs80WZygAwabYpOC504atc6SOmn/XDviZLtv/u
+	 Dkhv5fJWuapG9S8NjjHS5krDPTFQktzMc6uGIyrrf1CtjntEwSY+BeVohNBKzjYck9
+	 vc8aBvirQTUlJJbQyNuCJvdcB69O+ndDUle/uzIu+YrtfNIQ654vov6hDZekcrOcRL
+	 5uf6Pz1m20Ccro9eZRk6B2A29o17/4zQC0wXfU4vOxKUBk+cvk6B8LwZnfbzjU2bLw
+	 ryOgMyPpw3vEg==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30cceb3be82so715373fac.2;
+        Thu, 28 Aug 2025 02:40:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUiFB/UFu1N0ZnTKqAR7jDshLPTAg829ij5rlYHMqEp0u+M0AexWFNC6Z0A9xtUVlB/4C/t5aWw7p4=@vger.kernel.org, AJvYcCUkdycEW+9kHgwCMXHAfsTYsQg7+nVyxfoFXzHpuCA+6wOzZEwyqCsaVnYfeP5Futxnp8PQ6yp3HMNYu4FfKrA40zo=@vger.kernel.org, AJvYcCUonPOnRlFo0mcqL06BWkPneOaJaoFtYJ/3pQN0UaQa5GX5CuGhNTkeor21j6cm+pnvKn4sX+9bjW6FmA==@vger.kernel.org, AJvYcCVg0FZ36TSQTocwz39aZnj+tMLerFOnWM3RSBcdmaywU++sUxnJfshcvJgh6ban6qTKwTY=@vger.kernel.org, AJvYcCVrAlxbM0F2b08GxzUuVtkTqrn/qpsDWwFWiyYTQCIewtyl8sQJHizLCHbKu0B66FT6nZIHLFGG7vta7Ks=@vger.kernel.org, AJvYcCWAbMVIHu07tKcHSJf7ms/QsimIqVEov6fjquvTp0vh00re5kqmzTR0L1XlpvcvTc2U22108FxeAThheWon@vger.kernel.org, AJvYcCWWvyVqMAfLAIERec1CbZopIXgz3939IyGJrvhnG3XBoclOzEZ0BCOI0IdGIAtQDt1iu+kKGsopsAJ5Xg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcYOLKt6QaZkOk/lPYhKCw6defQgFSYtvm2N5RzBzJ07O9zzjl
+	5pYX8kCJtJOVz0HeV+mYwNTVRO9VgoOrFcR79jcXMGiKKD/9Il3lGjNBfgjyzybS6RGjje//IpG
+	HpxPet1FnS7beFeV5beoUZ6unk9N4U0g=
+X-Google-Smtp-Source: AGHT+IGV4ScW5OAU3iglUFz6GOl/SaxSbnlEKhbCLP2wFA8xAwCena16hSLRSa/lAp17g1juuguW4VQdAzFwj9/LUxc=
+X-Received: by 2002:a05:6870:9710:b0:310:b613:5fdb with SMTP id
+ 586e51a60fabf-314dcb575e6mr9287838fac.7.1756374014938; Thu, 28 Aug 2025
+ 02:40:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819121631.84280-1-clamor95@gmail.com> <14287352.RDIVbhacDa@senjougahara>
- <CAPVz0n0kCBAh7W0R766A_dXbcM3E=EoSXemuc0_rOm+Qch-a+Q@mail.gmail.com> <1797126.QkHrqEjB74@senjougahara>
-In-Reply-To: <1797126.QkHrqEjB74@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 28 Aug 2025 11:28:39 +0300
-X-Gm-Features: Ac12FXwopYF2CtbbHk1IPKIyjENT7P73gzlS4ZXYPFXyHgOEBnSGW1bYV8ES_VQ
-Message-ID: <CAPVz0n2JdRXQ7oUJqXkmGO+EPZTq3t6k8HY7pWHT3eAVXj9T3w@mail.gmail.com>
-Subject: Re: [PATCH v1 01/19] clk: tegra: init CSUS clock for Tegra20 and Tegra30
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-staging@lists.linux.dev
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn> <20250827023202.10310-4-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250827023202.10310-4-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 28 Aug 2025 11:40:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyk8AzMIpXHgrT8Z1UHGDrWUNjtTLP9mZxojpyASBCiNu69qRn54WdH-2Y
+Message-ID: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/18] ACPI: processor: thermal: Use
+ __free(put_cpufreq_policy) for policy reference
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer <mmayer@broadcom.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D1=87=D1=82, 28 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 11:1=
-3 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On Wed, Aug 27, 2025 at 4:33=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
+n> wrote:
 >
-> On Wednesday, August 27, 2025 7:45=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 27 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE =
-13:36 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > On Wednesday, August 27, 2025 1:32=E2=80=AFPM Svyatoslav wrote:
-> > > > 27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80. 07:09:=
-45 GMT+03:00, Mikko Perttunen
-> > >
-> > > <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote=
-:
-> > > > >> CSUS clock is required to be enabled on camera device configurat=
-ion
-> > > > >> or
-> > > > >> else camera module refuses to initiate properly.
-> > > > >>
-> > > > >> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > >> ---
-> > > > >>
-> > > > >>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> > > > >>  drivers/clk/tegra/clk-tegra30.c | 1 +
-> > > > >>  2 files changed, 2 insertions(+)
-> > > > >>
-> > > > >> diff --git a/drivers/clk/tegra/clk-tegra20.c
-> > > > >> b/drivers/clk/tegra/clk-tegra20.c index 551ef0cf0c9a..42f8150c61=
-10
-> > > > >> 100644
-> > > > >> --- a/drivers/clk/tegra/clk-tegra20.c
-> > > > >> +++ b/drivers/clk/tegra/clk-tegra20.c
-> > > > >> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table init_ta=
-ble[]
-> > > > >> =3D {
-> > > > >>
-> > > > >>    { TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > > > >>    { TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > > > >>    { TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> > > > >>
-> > > > >> +  { TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
-> > > > >>
-> > > > >>    /* must be the last entry */
-> > > > >>    { TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> > > > >>
-> > > > >>  };
-> > > > >>
-> > > > >> diff --git a/drivers/clk/tegra/clk-tegra30.c
-> > > > >> b/drivers/clk/tegra/clk-tegra30.c index 82a8cb9545eb..70e85e2949=
-e0
-> > > > >> 100644
-> > > > >> --- a/drivers/clk/tegra/clk-tegra30.c
-> > > > >> +++ b/drivers/clk/tegra/clk-tegra30.c
-> > > > >> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_ta=
-ble[]
-> > > > >> =3D {
-> > > > >>
-> > > > >>    { TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
-> > > > >>    { TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
-> > > > >>    { TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
-> > > > >>
-> > > > >> +  { TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
-> > > > >>
-> > > > >>    /* must be the last entry */
-> > > > >>    { TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
-> > > > >>
-> > > > >>  };
-> > > > >
-> > > > >I looked into what this clock does and it seems to be a gate for t=
-he
-> > > > >CSUS
-> > > > >pin, which provides an output clock for camera sensors (VI MCLK).
-> > > > >Default
-> > > > >source seems to be PLLC_OUT1. It would be good to note that on the
-> > > > >commit
-> > > > >message, as I can't find any documentation about the CSUS clock
-> > > > >elsewhere.
-> > > > >
-> > > > >What is the 6MHz rate based on?
-> > > >
-> > > > 6mhz is the statistic value which I was not able to alter while tes=
-ting.
-> > > > I
-> > > > have tried 12mhz and 24mhz too but it remained 6mhz, so I left it 6=
-mhz.
-> > > >
-> > > > >Since this seems to be a clock consumed by the sensor, it seems to=
- me
-> > > > >that
-> > > > >rather than making it always on, we could point to it in the senso=
-r's
-> > > > >device tree entry.
-> > > >
-> > > > Sensor device tree uses vi_sensor as clocks source and sensor drive=
-rs
-> > > > don't
-> > > > support multiple linked clocks.
-> > >
-> > > AIUI vi_sensor is an internal clock so the sensor cannot be receiving=
- it
-> > > directly. Perhaps the sensor is actually connected to csus, and the r=
-eason
-> > > we need to enable it is to allow the vi_sensor clock to pass through =
-the
-> > > csus gate?
-> > >
-> > > That leaves the question of why the csus pad would be muxed to vi_sen=
-sor
-> > > by
-> > > default, but perhaps there's an explanation for that.
-> >
-> > From downstream T30 sources csus and vi_sensor are always called in
-> > pair (6MHz csus and 24MHz for vi_sensor), naturally I assumed that
-> > latter is used as camera reference clock since most sensors has
-> > reference clock around 24 MHz
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
 >
-> It's possible that the csus pad is still outputting 24MHz. The pinmux opt=
-ions
-> for the csus pad are various clocks, so it would seem logical that the cl=
-ock
-> source for the pad is one of those clocks. However, on the clock framewor=
-k
-> side, the csus clock is just a gate. What I'm confused about is that sinc=
-e on
-> the clock framework side the parent of csus is currently set to clk_m, I =
-don't
-> know why setting the rate of csus would affect the output of the pad, giv=
-en
-> clk_m is not one of the options for the pinmux.
+> No functional change intended.
 >
-> It's be good to verify the register value for the csus pinmux to see wher=
-e it
-> thinks the clock is coming from, and then check how that matches with wha=
-t we
-> are seeing.
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/acpi/processor_thermal.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 >
+> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_th=
+ermal.c
+> index 1219adb11ab9..f99ed0812934 100644
+> --- a/drivers/acpi/processor_thermal.c
+> +++ b/drivers/acpi/processor_thermal.c
+> @@ -64,17 +64,13 @@ static int phys_package_first_cpu(int cpu)
+>
+>  static int cpu_has_cpufreq(unsigned int cpu)
+>  {
+> -       struct cpufreq_policy *policy;
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>
+>         if (!acpi_processor_cpufreq_init)
+>                 return 0;
+>
+>         policy =3D cpufreq_cpu_get(cpu);
+> -       if (policy) {
+> -               cpufreq_cpu_put(policy);
+> -               return 1;
+> -       }
+> -       return 0;
+> +       return !!policy;
 
-TRM does not provide such data, it has only register address with
-layout for it as a plain pad control, that register has only DRVDN,
-DRVUP, SLWR and SLWF and I don't see a way to decode clock value or
-parent or anything similar. If you give me a method I will calculate
-those values.
+If you want to make this change, please also change the return type of
+the function to bool.
 
-Another theory is that maybe csus is used for VIP cameras only and
-vi_sensor is used for CSI cameras, but they both have to be on in
-order to work correctly. Csus was removed from Tegra114 along with
-VIP, might not be a coincidence. Moreover, T124 uses vi_sensor as
-camera mclk source.
+>  }
+>
+>  static int cpufreq_get_max_state(unsigned int cpu)
+> @@ -95,7 +91,7 @@ static int cpufreq_get_cur_state(unsigned int cpu)
+>
+>  static int cpufreq_set_cur_state(unsigned int cpu, int state)
+>  {
+> -       struct cpufreq_policy *policy;
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
 
-Here is a fragment of Tegra124 clock tree (dumped from Mi pad 1)
+This isn't correct AFAICS at least formally because the scope of the
+variable is the whole function, so it won't get out of scope at the
+point where you want cpufreq_cpu_put() to be called.
 
-         pll_p                                 on     13  x34      40800000=
-0
-            vi_sensor2                       $ off    0   3.0      13600000=
-0
-               mclk2                         $ off    0            13600000=
-0
-            vi_sensor                        $ off    0   3.0      13600000=
-0
-               mclk                          $ off    0            13600000=
-0
+The policy variable should be defined in the block following the "for"
+loop (and actually all of the local variables except for "i" can be
+defined there).
 
-> >
-> > > > >Cheers,
-> > > > >Mikko
+Or better still, please move that block to a separate function
+containing all of the requisite local variable definitions and call
+that function for each online CPU.
+
+>         struct acpi_processor *pr;
+>         unsigned long max_freq;
+>         int i, ret;
+> @@ -127,8 +123,6 @@ static int cpufreq_set_cur_state(unsigned int cpu, in=
+t state)
+>                 max_freq =3D (policy->cpuinfo.max_freq *
+>                             (100 - reduction_step(i) * cpufreq_thermal_re=
+duction_pctg)) / 100;
 >
->
->
->
+> -               cpufreq_cpu_put(policy);
+> -
+>                 ret =3D freq_qos_update_request(&pr->thermal_req, max_fre=
+q);
+>                 if (ret < 0) {
+>                         pr_warn("Failed to update thermal freq constraint=
+: CPU%d (%d)\n",
+> --
