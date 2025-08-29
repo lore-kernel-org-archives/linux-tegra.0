@@ -1,161 +1,163 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96FA317715;
-	Fri, 29 Aug 2025 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E37320398;
+	Fri, 29 Aug 2025 14:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470185; cv=none; b=TLf08DU2wNNvIpq1lH9DwxIMaUYzhuayI9vr4YIZ4Q/FbXufiexfsj2DyMdS/WG/sNlGT3i2TEg0I39CLlccE+I7BXyg2Z/D5GIhbriJ4pEyg52HsSVpkYR7INbqnZeiXxlkbbi2GgmkIhONEU3Wx7nY5RklrBtYzVF7xyFktUs=
+	t=1756477653; cv=none; b=UTTctJxGhOke+7E36Sof7bbIFlUIf8trjRjWwzwox8/wUvIAqryEcjbbWIK3Y6Z3PpwKegjNLxcdyWF1bGdXLVCwafUlCljhgRWg4ecITS5+JX4gDANoBOVz4elyZf5iK55zi7vYAR9PitT6OceWisp1uyoSipyHUrJUxDBm0AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470185; c=relaxed/simple;
-	bh=MXUu9QPmMd3rT7yOj7o+ms6cmx2K03QYdIn0E/ZLtF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OwNrE/giFPdLBUxMepXyXRf2mooG8eapBnNrZgaFBbCZ7RRh3VEwsLha2vDbeMU0KqGZolU7+xFX+R21yClwjL53r4M2AbLzlM99zVNeQwNDkzYGKlkUymNezK+RX0f0fbjsdInt32mVZd5ryL3AKXTqnGxSqXtlt9/W+9c1qyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5WpQMN7; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756477653; c=relaxed/simple;
+	bh=jdMGIFYvqok3uA+n6cH3bsInCw2c3K7K0ooHXrgGJ1U=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=IDQHuNPM4RyncQi87WvvtVCq/ZxAnj1r125Kx01k3+P/MnGsWLvIWayTZczCR+NhAEamaw59+9rC9Q34gdM4HdOqnqjH86jBdZWxtQr/f6MPqdk8khCh+LdX6lGJU/9nPYg+W0cVYZCYnEtmhDY3BQjNnbC/DwcnN4xJSy96iLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzWVE9Rs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5WpQMN7"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afe9358fe77so257325566b.1;
-        Fri, 29 Aug 2025 05:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756470182; x=1757074982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QV/43b5wZcr7oH1WYrVSWi9FWU3xmsqmK7c9FuV3Om4=;
-        b=H5WpQMN7V8d4tzjyimoWHoqELUiaBaEjES+VoiPogF/yRdSBjPtgmDZWNGGxXbJhj5
-         Ti72+CPKskT2fmQMePMG+J4FYhij5sWJPiFURaJ1AvXCFclOVSn7HDEPqpHqFimKBzJd
-         uWeFldfBLjk/1RYAR5f5yD7PxHjk61ZBRPfgyYFzCLzV06JYkpjNbugMeDqfp8rDvIEH
-         9m7a/uUR6wK7kwL2GPYqyz/GLPIpWF3tdBWYQZlsDzwV/OEW9TeWEUfxK0NbnSruDPrl
-         jdiG7yqw9jlS7jFYDM7XsSvI/GxW2hrF4/1C8P0aMPwr/PYRX4J/Wioqwaxz1evsPYmY
-         ACeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756470182; x=1757074982;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QV/43b5wZcr7oH1WYrVSWi9FWU3xmsqmK7c9FuV3Om4=;
-        b=GPaOkied5dZ9ju8LZUmZQPNdXZ10RRfwrlqBjD8CSMHE5WoDMVygWE6oqfSiRP4gL4
-         oA2nE7ZjXIDwga9VSaCuy8WC4mNn0l6oKjhhW0IHIROUqUWyHQ2RPJW14IBcCpvhx5u/
-         wk/w8pTl1Tnrx/R8KRLm7U9GiGPUEY8blwNJV28zVlnpIiq/CjnRVhzcN/PmP8gf7qha
-         bXbfvNlrjzirBGZ+gU0TlP3yU7A6t1p+dhx8LHRaZG9GIIDOB0jn6KGiaLPlmR0/lcDg
-         PLwafaOPn56ypP4BGj11fis6hIq0IoEymM1e9FOsEkLujodi7Tft+mRYQlKJL2vRpiHl
-         gQFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDCiALGy6vNYO4aGBSPOnminD0O1diZEZd4KGxR4w8SdVIileJ7/KO5n+y6Z0UTPUU4EMVmmrcCJExSVQz@vger.kernel.org, AJvYcCXEYWuCZnZOLKtulOfxq0x/di3YwC4LNzxXxBrS5BfD2peEhDLPvmbVngB8hhH1SVJm4VeZrFTnBec=@vger.kernel.org, AJvYcCXdw78i9dqWmwYxBQKZM8G8D/oPVghB4nNycVotoHjj59rrnHagZa7JOGb+qci9snOrc6hxhvU8zLGHOp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIMqYUVgtjAoYW7sGYXYOthjC+0heoE5RHeiEV6ZziOvkRw+Ya
-	5MLZuT11318wjSPLliEzSVIV6T5FZaZJqBLz5Sdkknzl9RCT9J3QWuJA
-X-Gm-Gg: ASbGncuKylG5OuNCOc7AyCpsP4IEwimMUdyFtKNf1P8QQPaQfrQSdZcVJq5SNQIKIKz
-	Rd/DikTAQYO5jotGMaF9whMgGuBYUEU9A6x4N47gxk7VzD1+4zZmexbIj+E/mJuABhp0FmzQtd7
-	Iaa5qZTVaFQqlJRh6Fz1LaImXUlWmNYCPwJUh87EGX67nCiIzXo/jR2QQ7oH5cduC8O/9saTVZ7
-	YrBlDuiJzr3xYW2xMBKHuJwakd2ensFTC9XwnzZkcUpgpdk2wYYPQdJ9ntBzlhO6Z6khxdGk5B9
-	r8qNSaI0N6xYSokOyWiI8Hsi9rsvXDUOINUE+L7EuIgZeBeXHcO8aeUPMUPQDtKXgzMpKvApxcW
-	AUc64cbYZCyjtCaj+yhZtBTPo
-X-Google-Smtp-Source: AGHT+IGvpJb6E7O7Cx1ORoFMxIhbdRAYFHmg2T22N2yoFC3HZ0zze+lDuibNTZqMBpYt2X2E/gXPrQ==
-X-Received: by 2002:a17:907:2d2c:b0:ad8:a935:b905 with SMTP id a640c23a62f3a-afe29031d11mr2364154966b.22.1756470181806;
-        Fri, 29 Aug 2025 05:23:01 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd7047sm188662166b.51.2025.08.29.05.23.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 05:23:01 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v5 4/4] ARM: tegra: Add DFLL clock support for Tegra114
-Date: Fri, 29 Aug 2025 15:22:34 +0300
-Message-ID: <20250829122235.119745-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
-References: <20250829122235.119745-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzWVE9Rs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F62C4CEF0;
+	Fri, 29 Aug 2025 14:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756477653;
+	bh=jdMGIFYvqok3uA+n6cH3bsInCw2c3K7K0ooHXrgGJ1U=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=YzWVE9RsQzaSpE4jk9MGB//vhdQsZu5JE+4l04yvIfF/YwQ/7xcbG16/JeuoH3I0c
+	 LbC8J40v0qexfI6zvFacHuR+/376z8qx0QFB5uVN/ZKRQJ6iEqLpoNkogB2r14KEpl
+	 L+vogIZb+fugNejwwe/tAECuNdZWTCGsqNuquK0h9oDCEezZpAdNxPt3DMEmLhAYpL
+	 6EZXh+GDvrgLLY5/4ogAgTJpzQjQxQG5YuYhpuw9rGl9C/uoC2RQnJf0bNTsUlxbIu
+	 K8F1tM2eLUQ/DNkzq0z4uctGJn1ACv+m6kkyhAV4bx2xldO9XsnyDkSVsBSjYVqyH5
+	 VGeqkEYN7nr2g==
+Date: Fri, 29 Aug 2025 09:27:31 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, 
+ Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, 
+ Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
+ MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com>
+References: <20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com>
+Message-Id: <175647746367.734475.9455841505261457639.robh@kernel.org>
+Subject: Re: [PATCH RFC 0/7] Support Tegra210 actmon for dynamic EMC
+ scaling
 
-Add DFLL clock node to common Tegra114 device tree along with clocks
-property to cpu node.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+On Thu, 28 Aug 2025 23:01:26 -0500, Aaron Kling wrote:
+> This series adds interconnect support to tegra210 MC and EMC, then
+> enables actmon. This enables dynamic emc scaling.
+> 
+> This series is marked RFC for two reasons:
+> 
+> 1) Calculating rate from bandwidth usage results in double the expected
+>    rate. I thought this might be due to the ram being 64-bit, but the
+>    related CFG5 register reports 32-bit on both p2371-2180 and
+>    p3450-0000. I'm using the calculation used for Tegra124 and haven't
+>    seen seen anything obviously different between the ram handling on
+>    these archs to cause a different result. I have considered that the
+>    number of channels might affect the reporting, and factoring in that
+>    variable does result in the correct rate, but I don't want to assume
+>    that's correct without confirmation.
+> 
+> 2) I am seeing intermittent instability when transitioning to rates of
+>    204 MHz or below on p2371-2180. I have noted that if the first
+>    transition to such a state works, then it continues to work for the
+>    rest of that boot cycle. But the kernel will often panic the first
+>    time it tries to downclock. I suspect this is a pre-existing issue
+>    only brought to light now because nothing would ever lower the clock
+>    rate previously.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Aaron Kling (7):
+>       dt-bindings: memory: tegra210: Add memory client IDs
+>       dt-bindings: devfreq: tegra30-actmon: Add Tegra124 fallback for Tegra210
+>       soc: tegra: fuse: speedo-tegra210: Add soc speedo 2
+>       memory: tegra210: Support interconnect framework
+>       arm64: tegra: tegra210: Add actmon
+>       arm64: tegra: Add interconnect properties to Tegra210 device-tree
+>       arm64: tegra: Add OPP tables on Tegra210
+> 
+>  .../bindings/devfreq/nvidia,tegra30-actmon.yaml    |  13 +-
+>  .../boot/dts/nvidia/tegra210-peripherals-opp.dtsi  | 135 ++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  43 ++++
+>  drivers/memory/tegra/Kconfig                       |   1 +
+>  drivers/memory/tegra/tegra210-emc-core.c           | 276 ++++++++++++++++++++-
+>  drivers/memory/tegra/tegra210-emc.h                |  25 ++
+>  drivers/memory/tegra/tegra210.c                    |  81 ++++++
+>  drivers/soc/tegra/fuse/speedo-tegra210.c           |   1 +
+>  include/dt-bindings/memory/tegra210-mc.h           |  58 +++++
+>  9 files changed, 626 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250822-t210-actmon-34904ce7ed0c
+> prerequisite-change-id: 20250812-tegra210-speedo-470691e8b8cc:v1
+> prerequisite-patch-id: 81859c81abbe79aed1cfbc95b4f5bcdc5637d6bd
+> prerequisite-patch-id: 98bda8855bcc57c59b2231b7808d4478301afe68
+> prerequisite-patch-id: 6e0b69d42ea542dc9f58b410abd5974644f75dc4
+> prerequisite-patch-id: 9e3b9b2fdb8d9c2264dfa7641d1aec84fb7aedd9
+> prerequisite-patch-id: ef4bcc4ddba7898b188fb3fc6e414a2662183f91
+> 
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
+> 
+> 
+> 
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 4caf2073c556..a2a50f959927 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra114-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/nvidia,tegra114-car.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
-@@ -693,6 +694,29 @@ mipi: mipi@700e3000 {
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra114-dfll";
-+		reg = <0x70110000 0x100>, /* DFLL control */
-+		      <0x70110000 0x100>, /* I2C output control */
-+		      <0x70110100 0x100>, /* Integrated I2C controller */
-+		      <0x70110200 0x100>; /* Look-up table RAM */
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA114_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA114_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA114_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA114_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,cf = <10>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		status = "disabled";
-+	};
-+
- 	mmc@78000000 {
- 		compatible = "nvidia,tegra114-sdhci";
- 		reg = <0x78000000 0x200>;
-@@ -824,6 +848,15 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
-+
-+			clocks = <&tegra_car TEGRA114_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA114_CLK_CCLK_LP>,
-+				 <&tegra_car TEGRA114_CLK_PLL_X>,
-+				 <&tegra_car TEGRA114_CLK_PLL_P>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-+			/* FIXME: what's the actual transition time? */
-+			clock-latency = <300000>;
- 		};
- 
- 		cpu1: cpu@1 {
--- 
-2.48.1
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+ Deps: looking for dependencies matching 5 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to limit frequency
+ Deps: Applying prerequisite patch: [PATCH 2/5] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+ Deps: Applying prerequisite patch: [PATCH 3/5] soc: tegra: fuse: speedo-tegra210: Add sku 0x8F
+ Deps: Applying prerequisite patch: [PATCH 4/5] clk: tegra: dfll: Support limiting max clock per device
+ Deps: Applying prerequisite patch: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com:
+
+arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2571.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+
+
+
+
 
