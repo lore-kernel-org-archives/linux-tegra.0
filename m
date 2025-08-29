@@ -1,91 +1,106 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D497C1E50E;
-	Fri, 29 Aug 2025 01:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFDA2063E7;
+	Fri, 29 Aug 2025 02:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756430200; cv=none; b=Al0MR3AJrtSNQB0sT1xGGxOpzzS4vRd31AY40j+pVR71jA0onWAvAiaJU/XJZgyYIByY+hzaZTJMIHD8BlpElGTfEO7zyMwZc5V0X2ZWMErhIH/gKNRCqliCIK1VJX/OsHxqeASehRMLcfnjINyWwgcLKUAor26sW/8MqEmLJI4=
+	t=1756435696; cv=none; b=jAlRY6xBOJDFzxjYdn1IJHZPVhOJ73TWC95Q6evVlgMVmA9s0ItnRUt5/loJYqv2LgfExittZdpmtI3d7EVxwjendWzbEGVHfz4XQVKuDnSP2HHL3VH5whkCUcBitgIH4SGqdoLhck1hDLKQGKAbw5Je+zeoPhgIlE8lSty1rqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756430200; c=relaxed/simple;
-	bh=jyNEnstPpCxpbVZvmvw4NKKFu1d004FKb28fyp+CFGs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lD2tA21EayqmgzBYeEOtCt/KTxiN8bG8paTSVhK1YuPJ8Ng+yt3AApRpJTXWNyhcPIAPb2flsbGpf7awU88IJoC2/4tAdZuJEu+eD7p6apyRYO8DrJkM/WbTV7GPD2Tmdow9prILfasXis5kF6U3rltl6Rvp4f/I5joGyuPqszM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ca8b0a90847511f0b29709d653e92f7d-20250829
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c6144118-40f8-4290-a542-c021c54fe52c,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:6493067,CLOUDID:c35cdfd2d88bc5c26236ec2aee26221b,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: ca8b0a90847511f0b29709d653e92f7d-20250829
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1134852438; Fri, 29 Aug 2025 09:16:29 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: sboyd@kernel.org,
-	thierry.reding@gmail.com,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH] clk: tegra: super: Fix error handling and resolve unsigned compare warning
-Date: Fri, 29 Aug 2025 09:16:24 +0800
-Message-Id: <03d0c47832c7a0fdc19733d15077197ad2c54946.1756430095.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756435696; c=relaxed/simple;
+	bh=qYSyZU0PA0XW8kSg/t1otLbzZhDMJW98vrjp/AywmYY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=h10BEoXZUOndcDGM83MIIbzCAxNKLBnN4erMSca5xO72CtGeDKqd6RH7afJ8NiAq+QLD5AR9lAFM1SJ56cWMsmssQTEYBwzOFtALPbtkva6pHiJSMdFtUvm4C5a8gBuW8hzfLNOLOWwEIGv4PWKENWEykCemTwd0KllzlpJl6MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sowRI7hP; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sowRI7hP"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C2E63C4CEF4;
+	Fri, 29 Aug 2025 02:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756435694;
+	bh=qYSyZU0PA0XW8kSg/t1otLbzZhDMJW98vrjp/AywmYY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=sowRI7hP+x2FxYgxDFIeoLZIvrvGkiNI49PwYBcaIeFYqGkbImg/eUp6pno/XoSY7
+	 88e0qrlddeMcxeO9kumSfn59rebBc8fTyzlBp68FkseTSZiNlkIZpO7QTRdm0VJ1Bm
+	 fniXPFgOtX/KmZTCu0zTCQe+CROay+mfC7waw86dF3vkMgtk5qXpTxGiNKTjL8EUpr
+	 y0ow1nFUTfYuD1xLcVWBix53S3t0QJnMEv7+hH219+fDhQUb/maBmSKu14on+B6/PO
+	 0Bld6iqpucGxbE04VZsERJJnrYaOT9SHATDDiAv5PvklVV4YK8oo6oA2NPfDq1FFfW
+	 Scl62u6tyUyXA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1449CA0FF2;
+	Fri, 29 Aug 2025 02:48:14 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Thu, 28 Aug 2025 21:48:12 -0500
+Subject: [PATCH v3 1/2] cpufreq: tegra186: Set target frequency for all
+ cpus in policy
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250828-tegra186-cpufreq-fixes-v3-1-23a7341db254@gmail.com>
+References: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
+In-Reply-To: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <luceoscutum@gmail.com>, 
+ Sumit Gupta <sumitg@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756435694; l=1316;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=WE4FtNYlrqayHn8j1oFAZqsXZWGEdS20pQxJDsMXhig=;
+ b=eX63CknQru1S9ScBVAAvE2jn9EMqUnwPIR3trdgDZRJ42UBJNtMQWNBfnnKUI+Bqv82BOfKWW
+ +B/pO7FaNXqDPYDRtV/qzv2i3sHVPyHgMBPX5N71Y+YICOH4MvhikEl
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-./drivers/clk/tegra/clk-super.c:156:5-9: WARNING:
-        Unsigned expression compared with zero: rate < 0
+From: Aaron Kling <webgeek1234@gmail.com>
 
-The unsigned long 'rate' variable caused:
-- Incorrect handling of negative errors
-- Compile warning: "Unsigned expression compared with zero"
+The original commit set all cores in a cluster to a shared policy, but
+did not update set_target to apply a frequency change to all cores for
+the policy. This caused most cores to remain stuck at their boot
+frequency.
 
-Fix by changing to long type and adding req->rate cast.
-
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+Fixes: be4ae8c19492 ("cpufreq: tegra186: Share policy per cluster")
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/clk/tegra/clk-super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/cpufreq/tegra186-cpufreq.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 7ec47942720c..643b3cb83cd0 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -147,7 +147,7 @@ static int clk_super_determine_rate(struct clk_hw *hw,
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index cbabb726c6645d2e5f1857a47e5643c8552d1933..6c394b429b6182faffabf222e5af501393dbbba9 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -93,10 +93,14 @@ static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
  {
- 	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
- 	struct clk_hw *div_hw = &super->frac_div.hw;
--	unsigned long rate;
-+	long rate;
+ 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+ 	struct cpufreq_frequency_table *tbl = policy->freq_table + index;
+-	unsigned int edvd_offset = data->cpus[policy->cpu].edvd_offset;
++	unsigned int edvd_offset;
+ 	u32 edvd_val = tbl->driver_data;
++	u32 cpu;
  
- 	__clk_hw_set_clk(div_hw, hw);
+-	writel(edvd_val, data->regs + edvd_offset);
++	for_each_cpu(cpu, policy->cpus) {
++		edvd_offset = data->cpus[cpu].edvd_offset;
++		writel(edvd_val, data->regs + edvd_offset);
++	}
  
-@@ -156,7 +156,7 @@ static int clk_super_determine_rate(struct clk_hw *hw,
- 	if (rate < 0)
- 		return rate;
- 
--	req->rate = rate;
-+	req->rate = (unsigned long)rate;
  	return 0;
  }
- 
+
 -- 
-2.25.1
+2.50.1
+
 
