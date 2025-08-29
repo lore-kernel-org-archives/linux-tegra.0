@@ -1,78 +1,119 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF91F5434
-	for <linux-tegra@vger.kernel.org>; Fri, 29 Aug 2025 05:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0EB21C16A
+	for <linux-tegra@vger.kernel.org>; Fri, 29 Aug 2025 05:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756445957; cv=none; b=vEKHKcyC0C2YP7QocmAVJjzPPV/X6GGrOCK/Ahpr78sdFRsj2W2cBiG4PJJ6KRNf8GZbtKzO+KoLtoe+TBWeYWetxSl5tXa4dCL8fIQtACc9deuaRPgzQ48eAJn7riQaJ6/369alR9CU91IefIr9iSReVdANpsfRbNrlfz349R8=
+	t=1756447190; cv=none; b=SjGPMp7cRHAigHGPYyT6tr+Xc7y64nA8bnpySh3FWRE1qD/DYJHj5BwiLuZD8QAzUaJV1kPIyEnHdbfXoC3UAaY/3C6FUX2qlafoKqbDbIgetUEwjrf/uJpd3g7+jomaRSUKeuBEZSM7R4Vz6FZvnxzoH7CbTb7p3BLfE5SOXMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756445957; c=relaxed/simple;
-	bh=dBEimnyqFErvRDaw6n29Zwqdf1lNF2xCJ+zGmMqLgvU=;
+	s=arc-20240116; t=1756447190; c=relaxed/simple;
+	bh=3Us6gLaZK2VccDGA6IMnqvs0nFzgbS6I49Q/8l1+6ks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U765ptXsvhcaTKzYFAlYubpseBDuPGrR9xPLL8O+3lRFs/cn3DHToWLkm+cmeQ3QIB/nITAntDQybhk/WQjNXMUvuwUWdQmdAtXIl1JdZlbTQsX8yBC7RX864bp+40MVQZf5Mhe0vPIzTdseXKpMz7tWM/p+jHP5SS3tOCJbRRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hj6cmJL0; arc=none smtp.client-ip=209.85.216.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjJj/y72cyuez4dkU/yWpJr3vnrGPyrdHROaN5mIRiGHUQDWV70qnvjusJRf73KRmxrtUsp9qQjQ7TvXdjetX6U8CAr6i4WCltu86ID7v2+nP7Q42YDO4fhFhDAKqyeQIWpFT7NaaeiDbmS/vt2u76IG8Mfu8s8mEPvQqheD5zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p514Sl+B; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hj6cmJL0"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-327b657924dso1169754a91.0
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Aug 2025 22:39:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p514Sl+B"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7704f3c4708so2117094b3a.1
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Aug 2025 22:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756445954; x=1757050754; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756447188; x=1757051988; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3XBNZun+DsWEuFjpuYogmLUWGnvKNXpUg6KanJ2bj/Q=;
-        b=Hj6cmJL0o65D4jSVKTCop8q9jjPVpuVMtdw9hYW8Ph5XWjRS//PNmeIxoWBdVW9Jv4
-         /Xb90mE4UKkDq3wSRaOvmi6YFd+8TPr5ks0O6/dBgqy52Xiz3bvpd9YbQnk7A4DtWiuz
-         iRrOUqgrU/hJzyE1VEIlVkTpLSnq/5ht0lO5JyO0Ctl8qnOPW9Je91zW2B6cpHBg6js1
-         VTuWfuDyYyFbajMvq6I/CudkidUcWBPnT0P4BNyMlqRspbHcENEUGoC8dytemgSVUngW
-         7QSQSDT2j06bfgrZmbFpoz9xl40HypYhMemk9wewECi5RPf/PxUdTh3Ufd+KmV2JwRLi
-         XPgg==
+        bh=Csp0y2UiuYBIoSGq3QglK9zewj1/hbg1F372AFvl94U=;
+        b=p514Sl+BuFb2jJ5R5DjvdPuZbJD/3N094aXwj3h0r/jhqjJ8E7yP+k817tMndGWuRR
+         FJyrpnjrOC1v44RKZW8+hYv/s/oQyyrlN51j6gPDRgosyonW7nobHk+dEVSc4NB36Yw4
+         PuqLoIM2bQWrSvT363c+fY0yOV3vZSKbC+7dp3aQmV8szSfmyrtVMuT0C6uReUSabLLQ
+         QNCTGNg39LLVhpXBLI27D+yN4JWIztFIMPiYxMxgFB1nTSvmERBka41rfpTaGJms0EBS
+         6QVx0xOpRrajJT7Gzpak3rJcIdO5m+Vx4yWFoMbU026CqovfiV44HAzTUMYSrkn9uYWg
+         J/Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756445954; x=1757050754;
+        d=1e100.net; s=20230601; t=1756447188; x=1757051988;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3XBNZun+DsWEuFjpuYogmLUWGnvKNXpUg6KanJ2bj/Q=;
-        b=StrXssh7lNbc8NtZQ0zC7C/RkLoDNVbJbsIlhjns/YxNfcZAftR3VqQ4uSIudmglrc
-         zXI5ThpGtnDoBvj04iuLwByvABmdloEDgOhrzAMFnn2x3RQHISsCByxh/GHNm6ilLXjY
-         uf/TaSDdrxvFf4ijnVUDKqGBFdMzevG7Tu+nd94uxihxp3D6GKT88KZdOjvI4AJKsb5l
-         6Wy//p7tQd+Ip/Z5Htzxcc3dZXJV9xOTqxfP47jb+tBQMG32HfY4qZ5EjhlA09OtxoJL
-         /au2kBA6Ih6V6mxxQocJSVMAeq4lSdx7RmFVI7sqf4NbVZFGMd+VK9oTz0+aF/04Jl45
-         gF8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHQXUH/mV04pTERpd5RRzKFw9cVidedJjA58zjUASYuGZ3mqM8tfwkWOuy/B3DKpeEETLQiJYw2InV7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUq0Nyb32WaeQilAQkmcpAUP5Ckn2LpuAPNiqSBUIViCVqr+px
-	3ERsgDn0IGcCD/XkLUcCYwaKqmzWh+DZsbE5D00om+ry+5umx3vzU7wwxp4XD/vLR74=
-X-Gm-Gg: ASbGncvUEHEL/RA7nUqHRwwT0nhQvcGn4wCyxX1r5wfVbmjm4ZgHBFrJDTQZYUKJ+Ul
-	io9yDQP93sHWirm2MG4VM93IgpgMb0wGp253zDrZGow25/D9l9zdJ4AHwu/hVFBasuX6K4yWjgD
-	mJVK25A8GxQK11Wcb2vT5Ulhgi95LHglvL9V+l4GwavYnqZNPXfUQ8DWXV+NTmHjxq6cfFP1Pu/
-	yKqLWCdgvZfGT/6cPmp8IuE+0i7+pRv5aKsBo1M5oukOG2186wKBTMoBa0r+OjGqujuY/XHfsIj
-	2mCuC3CGE8D6CcRFUVPmruLSNjNag4YD0ydRwtvr+gKQLXc9aSP2+v6EDj60vVsaVqtsgT0jVrC
-	ybSNDUci1+6oYzg9ie3+1OXqDU2Nj5Tl8qNg=
-X-Google-Smtp-Source: AGHT+IF2FBDuAslWQRB95r2d29vZcZOpSZcreczLMQg0tt9Qhwo66M6nj6sHGldIm2UhdvS/fRstfQ==
-X-Received: by 2002:a17:90b:2e8c:b0:327:e34e:eb15 with SMTP id 98e67ed59e1d1-327e34eed3cmr2048590a91.2.1756445954282;
-        Thu, 28 Aug 2025 22:39:14 -0700 (PDT)
+        bh=Csp0y2UiuYBIoSGq3QglK9zewj1/hbg1F372AFvl94U=;
+        b=J9q/pp/sx2HNklHLclE/MOCX1tyNtWn1XXpml9SpvYY2+R2xkq1W9CXbCNkuM88FLr
+         RcWycu+1mZ+ZuSCTiUWVYfGMQe3nu9eOgOF8wq86PwRQPEzXcpHpkfpZiqk5CRqgu0oS
+         p6X7Ox5Vo+5STBTPkKGId0aeUYPoPJJdYCMG44zFw8ZUk3qhAx1EAOX++yO/WpLVvgKN
+         gJIDR+mfgUmDZPuCQlBuDAaeqlElCx6EbxiUGQ71NVUMZ0P0kgE3DYvzAjEvmx7YZG24
+         dBZj/mDU4N0ItcM2h30JlaRW7bavbOQFblU38Q1LOeErIjJiyjf5KHNrRaVCaNscrdR2
+         UlnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOML9PtfyuPE3GxKxXI3ab7FTXfMUQ/sgw/1OuO2b7gU4+p0VT+6wyDJx09U2Y6/jgKu/SNQuxOkYdWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLv/Tdxxt0fzzj8SO8Xpeiv0Vge1ODLh8hGMO2wvv+p+Sqtlqg
+	JY4JU9Cf2drrecVnluKyAvqN5DE2cmKMAvj0gTIu/eUjnDlvaDuUN6Q+CzBtAPGtZgA=
+X-Gm-Gg: ASbGncuq0OvYkdHKLBgvEsBtsCcO0RsThQUHPjtMTPqqDZ45j2EFAJHYXfayCrwypGG
+	uVD8RSfPNf1yYBDwtAFmsTlIg8yQaocfCs7SV4/4O18akycrXeuM06xvjxGIcuBvANTs/7dleT1
+	1TGFi8qHcpUaXNHHVVIW5BGqt4ei8maD8gCKL1qqRhgqRty4klPIIE9/ZoAQhSrSGwaMe9oq7ZF
+	nFJQu2awBc38qvegbBrh40RxzL2227tHnTiOKYOdnlS+XWAdKNQ7Bewo7RmGjkfKrdfwuMou0gG
+	9i6oxISZsvvSYOs0Fdh3bstuR8xNAKFmbiZ4Q1tQbfxVuHbXSlcq+qmnLiq7LFfvydNe0f3xVx1
+	wOGbyHekqDg6xzYOnmdoLsocxhpH2umGEWEA=
+X-Google-Smtp-Source: AGHT+IFsar3WOaSA9RKNM7TPFf9gG0iXTxdUF2CW8raU1SyelgEQswrlDbapLb2rA7PUFkb3M17NCQ==
+X-Received: by 2002:a05:6a00:10d5:b0:772:2850:783d with SMTP id d2e1a72fcca58-772285079c4mr3285667b3a.22.1756447188084;
+        Thu, 28 Aug 2025 22:59:48 -0700 (PDT)
 Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327d8f66f16sm1493229a91.0.2025.08.28.22.39.13
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b14c1sm1263485b3a.31.2025.08.28.22.59.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 22:39:13 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:09:11 +0530
+        Thu, 28 Aug 2025 22:59:47 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:29:44 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: webgeek1234@gmail.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <luceoscutum@gmail.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>,
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
 	Sumit Gupta <sumitg@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v3 2/2] cpufreq: tegra186: Initialize all cores to max
- frequencies
-Message-ID: <20250829053911.pzrkfvzes3bsrvtm@vireshk-i7>
-References: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
- <20250828-tegra186-cpufreq-fixes-v3-2-23a7341db254@gmail.com>
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
+	x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/18] cpufreq: brcmstb-avs-cpufreq: Use
+ __free(put_cpufreq_policy) for policy reference
+Message-ID: <20250829055944.ragfnh62q2cuew3e@vireshk-i7>
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-5-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,105 +122,21 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828-tegra186-cpufreq-fixes-v3-2-23a7341db254@gmail.com>
+In-Reply-To: <20250827023202.10310-5-zhangzihuan@kylinos.cn>
 
-On 28-08-25, 21:48, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
+On 27-08-25, 10:31, Zihuan Zhang wrote:
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
 > 
-> During initialization, the EDVD_COREx_VOLT_FREQ registers for some cores
-> are still at reset values and not reflecting the actual frequency. This
-> causes get calls to fail. Set all cores to their respective max
-> frequency during probe to initialize the registers to working values.
+> No functional change intended.
 > 
-> Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 > ---
->  drivers/cpufreq/tegra186-cpufreq.c | 27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-> index 6c394b429b6182faffabf222e5af501393dbbba9..bd94beebc4cc2fe6870e13ca55343cedb9729e99 100644
-> --- a/drivers/cpufreq/tegra186-cpufreq.c
-> +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> @@ -138,13 +138,14 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
->  
->  static struct cpufreq_frequency_table *init_vhint_table(
->  	struct platform_device *pdev, struct tegra_bpmp *bpmp,
-> -	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id)
-> +	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
-> +	int *num_rates)
->  {
->  	struct cpufreq_frequency_table *table;
->  	struct mrq_cpu_vhint_request req;
->  	struct tegra_bpmp_message msg;
->  	struct cpu_vhint_data *data;
-> -	int err, i, j, num_rates = 0;
-> +	int err, i, j;
->  	dma_addr_t phys;
->  	void *virt;
->  
-> @@ -174,6 +175,7 @@ static struct cpufreq_frequency_table *init_vhint_table(
->  		goto free;
->  	}
->  
-> +	*num_rates = 0;
->  	for (i = data->vfloor; i <= data->vceil; i++) {
->  		u16 ndiv = data->ndiv[i];
->  
-> @@ -184,10 +186,10 @@ static struct cpufreq_frequency_table *init_vhint_table(
->  		if (i > 0 && ndiv == data->ndiv[i - 1])
->  			continue;
->  
-> -		num_rates++;
-> +		(*num_rates)++;
->  	}
->  
-> -	table = devm_kcalloc(&pdev->dev, num_rates + 1, sizeof(*table),
-> +	table = devm_kcalloc(&pdev->dev, *num_rates + 1, sizeof(*table),
->  			     GFP_KERNEL);
->  	if (!table) {
->  		table = ERR_PTR(-ENOMEM);
-> @@ -229,7 +231,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
->  {
->  	struct tegra186_cpufreq_data *data;
->  	struct tegra_bpmp *bpmp;
-> -	unsigned int i = 0, err;
-> +	unsigned int i = 0, err, edvd_offset;
-> +	int num_rates = 0;
+>  drivers/cpufreq/brcmstb-avs-cpufreq.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-You don't need to initialize this AFAICT.
-
-> +	u32 edvd_val, cpu;
->  
->  	data = devm_kzalloc(&pdev->dev,
->  			    struct_size(data, clusters, TEGRA186_NUM_CLUSTERS),
-> @@ -252,10 +256,21 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
->  	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
->  		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
->  
-> -		cluster->table = init_vhint_table(pdev, bpmp, cluster, i);
-> +		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &num_rates);
->  		if (IS_ERR(cluster->table)) {
->  			err = PTR_ERR(cluster->table);
->  			goto put_bpmp;
-> +		} else if (!num_rates) {
-> +			err = -EINVAL;
-> +			goto put_bpmp;
-> +		}
-> +
-> +		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-> +			if (data->cpus[cpu].bpmp_cluster_id == i) {
-> +				edvd_val = cluster->table[num_rates - 1].driver_data;
-> +				edvd_offset = data->cpus[cpu].edvd_offset;
-> +				writel(edvd_val, data->regs + edvd_offset);
-> +			}
->  		}
->  	}
->  
-> 
-> -- 
-> 2.50.1
-> 
+Applied. Thanks.
 
 -- 
 viresh
