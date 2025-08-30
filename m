@@ -1,41 +1,51 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3356D32039E;
-	Fri, 29 Aug 2025 17:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8D722069E;
+	Sat, 30 Aug 2025 08:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756490074; cv=none; b=pK8d3hhN2oOzbAox/SpR0398stCgPLDX6eeFgCEJfCblFTOmuUgGFpW3oexoOocL/nMHEYEHEUXTWVnt+2dY8MYFcERqJp7ttl0cVjtJhXEXIEcAIMCR5Vq3+vdCzfa2mXzhkhG6owCBAkH6xz7CM3bLFs7GjB+JHzvvbiTjca8=
+	t=1756543965; cv=none; b=IcCIDgcJdLHKw9HIDEvxbO2xBTVmn86UMKJAquxZQLa6ksEwSCXjXfJIKiGVoxyWPrmjk0/nEOa+0RALJEUatp273pdNccJh526z33tlyiEG43TuGhX/6yajukDEotqcLyRfV+U2eLm+zsY7hZuN6CyyaGwcEtVkEtX55kR/l30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756490074; c=relaxed/simple;
-	bh=6AMtLeSzxZjLb9taqmNr9VlQdnGb/3gKOTYQN+BTxC8=;
+	s=arc-20240116; t=1756543965; c=relaxed/simple;
+	bh=rd/o4/OyD/ySAPFW4eUGtHJTW2JgGPNByUsxuSjjnz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOLe+ioBTKa5liseFwxEX+fi5PXbrvVpwDBCQZ39Ln77AjE9V7GujP1Vm8/CUITkyrnRe5b0Jl4fJGEL9fKV+GCRNyHDouXzmAo2aal18R3L6yzchv4ECGsp+OmY1+eiLnIF+VBBC55M8zWupsipp/cJJrDKRW0Kt1+7+82jz9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fj8/F44e; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=enIEWJeoCZij73x5UC1KlY+yEAAcFTSCFVFMntHabJA7m7LaGe1SlQGExzN7ejKoFJ3yGyot44qv9gzA3/HdzaxFkWCxTxcfNKX6CUarPf/EOt29QMo5eZWezsKs2CVXRcZb9dITBCHvY6i8NO+vxUpSiJgWGMLSiq3qqNBs6BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=otM6fVJu; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fj8/F44e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76920C4CEF0;
-	Fri, 29 Aug 2025 17:54:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756490073;
-	bh=6AMtLeSzxZjLb9taqmNr9VlQdnGb/3gKOTYQN+BTxC8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fj8/F44ePwOiEpzX7wGdjY+fbZOuwlTOudyHkofUMW0EPLkZJUKsZ+fz0I2K+Ueoq
-	 qevMt+rnf4GBgiv3Nsy+TuP3MYurq8OlHFkqgKbfy0SVC2CLCyvt2y+G46SI7ldys4
-	 ldc8QLTdNkKjSP2KtA9gS5M5CI2zeC8j3ZF2iDS+uEZZSP/HCqdTXP8UaPLYRZvVqL
-	 5bQbkzgw/pWnrsOSG9CiWwI+ks3kvjFDClOkp3JZw5cGJMSXHme9TlqL6ME0OBmFO0
-	 H7UlK5eDdNVl9VtuAtr8LKY+hOFnWboWBH8oK8Cj3SnThk0Rn4doYIuzXZiu0RdxAB
-	 Vb3tgTwuCynIg==
-Date: Fri, 29 Aug 2025 12:54:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>, Sheetal <sheetal@nvidia.com>,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: power: Add power domain IDs for Tegra264
-Message-ID: <20250829175432.GA1070947-robh@kernel.org>
-References: <20250828112924.3773782-1-thierry.reding@gmail.com>
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="otM6fVJu"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ajAWVKs9NbJNbqqlIPXVheqqrPUbKsxDEiFluZnyDN4=; b=otM6fVJuOv6s4MJp41SSFkdwYN
+	hvC6ndW56AYqEq3avp52tWvPvomL0rbXpvQAcRMV+LP8El8pFFRyjp2oQoDzJIAnzN2AyUXILCWsb
+	N4/A4GOUwM5+3r3vQzkpTlCJoQcsM1tXLtZuA+CfH36D/hO6ZXLa14jF+/Q0owM8kmJLlJUZtY4UF
+	4feFQNeOp4DNVJwX/jEuwi5cW8GmEitN5wXIOO2pYTAGZaSA25v9YvJOs5qcyD64xOxxxuwlAJ06a
+	4FATW5IWAtXKX289hCbDzO3lEV95zG1Ocn3Pt7xAVpuMFEzLoTNaHZIZox2Yz1w5qadSL9cdCbSUf
+	05hiIzgA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1usH4g-0017Cu-29;
+	Sat, 30 Aug 2025 16:52:36 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 30 Aug 2025 16:52:35 +0800
+Date: Sat, 30 Aug 2025 16:52:35 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Akhil R <akhilrajeev@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	"open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: tegra - Remove the use of dev_err_probe()
+Message-ID: <aLK708AFrXsYtOSP@gondor.apana.org.au>
+References: <20250820123752.473172-1-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,57 +54,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828112924.3773782-1-thierry.reding@gmail.com>
+In-Reply-To: <20250820123752.473172-1-liaoyuanhong@vivo.com>
 
-On Thu, Aug 28, 2025 at 01:29:24PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Wed, Aug 20, 2025 at 08:37:52PM +0800, Liao Yuanhong wrote:
+> Logging messages that show some type of "out of memory" error are generally
+> unnecessary as there is a generic message and a stack dump done by the
+> memory subsystem. These messages generally increase kernel size without
+> much added value[1].
 > 
-> Add the set of power domain IDs available on the Tegra264 SoC so that
-> they can be used in device tree files.
-
-What binding is this part of? 'git grep nvidia,tegra264-powergate' gives 
-nothing.
-
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
+> remove the useless call to dev_err_probe(), and just return the value
+> instead.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> [1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 > ---
-> Changes in v2:
-> - remove _MAX definition since it isn't needed
-> 
->  .../power/nvidia,tegra264-powergate.h         | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 include/dt-bindings/power/nvidia,tegra264-powergate.h
-> 
-> diff --git a/include/dt-bindings/power/nvidia,tegra264-powergate.h b/include/dt-bindings/power/nvidia,tegra264-powergate.h
-> new file mode 100644
-> index 000000000000..1e2acd50c099
-> --- /dev/null
-> +++ b/include/dt-bindings/power/nvidia,tegra264-powergate.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)  */
-> +/* Copyright (c) 2022-2024, NVIDIA CORPORATION.  All rights reserved. */
-> +
-> +#ifndef DT_BINDINGS_POWER_NVIDIA_TEGRA264_H
-> +#define DT_BINDINGS_POWER_NVIDIA_TEGRA264_H
-> +
-> +#define TEGRA264_POWER_DOMAIN_DISP	1
-> +#define TEGRA264_POWER_DOMAIN_AUD	2
-> +/* reserved 3:9 */
-> +#define TEGRA264_POWER_DOMAIN_XUSB_SS	10
-> +#define TEGRA264_POWER_DOMAIN_XUSB_DEV	11
-> +#define TEGRA264_POWER_DOMAIN_XUSB_HOST	12
-> +#define TEGRA264_POWER_DOMAIN_MGBE0	13
-> +#define TEGRA264_POWER_DOMAIN_MGBE1	14
-> +#define TEGRA264_POWER_DOMAIN_MGBE2	15
-> +#define TEGRA264_POWER_DOMAIN_MGBE3	16
-> +#define TEGRA264_POWER_DOMAIN_VI	17
-> +#define TEGRA264_POWER_DOMAIN_VIC	18
-> +#define TEGRA264_POWER_DOMAIN_ISP0	19
-> +#define TEGRA264_POWER_DOMAIN_ISP1	20
-> +#define TEGRA264_POWER_DOMAIN_PVA0	21
-> +#define TEGRA264_POWER_DOMAIN_GPU	22
-> +
-> +#endif /* DT_BINDINGS_POWER_NVIDIA_TEGRA264_H */
-> -- 
-> 2.50.0
-> 
+>  drivers/crypto/tegra/tegra-se-main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
