@@ -1,80 +1,85 @@
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8D722069E;
-	Sat, 30 Aug 2025 08:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C27E1B2186;
+	Sun, 31 Aug 2025 11:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756543965; cv=none; b=IcCIDgcJdLHKw9HIDEvxbO2xBTVmn86UMKJAquxZQLa6ksEwSCXjXfJIKiGVoxyWPrmjk0/nEOa+0RALJEUatp273pdNccJh526z33tlyiEG43TuGhX/6yajukDEotqcLyRfV+U2eLm+zsY7hZuN6CyyaGwcEtVkEtX55kR/l30=
+	t=1756639216; cv=none; b=DWtatc2NbCXQU8Xv8s0U5y/CtD43jon/Qzz8laW7BBv/W7RlwevkUWjIRSgvP5QUvpnoQJIDGarkjYUtW0fLSSInZYffKWWIP8FFQ/bW9z5aApV8p3g6rhJM0aUYpaQC3vejKQVatPW9Z69uq3u0KCfRdv9AMb+8pAffu+cy1tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756543965; c=relaxed/simple;
-	bh=rd/o4/OyD/ySAPFW4eUGtHJTW2JgGPNByUsxuSjjnz0=;
+	s=arc-20240116; t=1756639216; c=relaxed/simple;
+	bh=UzT7xj/bbfHi7nArp4mCwWSZ0oHnfBIV0P7CWeu148E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=enIEWJeoCZij73x5UC1KlY+yEAAcFTSCFVFMntHabJA7m7LaGe1SlQGExzN7ejKoFJ3yGyot44qv9gzA3/HdzaxFkWCxTxcfNKX6CUarPf/EOt29QMo5eZWezsKs2CVXRcZb9dITBCHvY6i8NO+vxUpSiJgWGMLSiq3qqNBs6BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=otM6fVJu; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	 Content-Type:Content-Disposition:In-Reply-To; b=UM33bIjGYy2h6730cqzaGwO0izjhdI22TFjLhB7UYmnexzNvqvDSBWIlKdu0/E6mjSAz6hlzDaXTm2TJKpzW1jB5GMjSs3OK45EYr/1dfPqEW1tga1weebhjlvE3T6EenbfmaHdKp66/GpsB/jwcO9aZk26DHdzZGQKH/zIjSjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY8jpMau; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="otM6fVJu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ajAWVKs9NbJNbqqlIPXVheqqrPUbKsxDEiFluZnyDN4=; b=otM6fVJuOv6s4MJp41SSFkdwYN
-	hvC6ndW56AYqEq3avp52tWvPvomL0rbXpvQAcRMV+LP8El8pFFRyjp2oQoDzJIAnzN2AyUXILCWsb
-	N4/A4GOUwM5+3r3vQzkpTlCJoQcsM1tXLtZuA+CfH36D/hO6ZXLa14jF+/Q0owM8kmJLlJUZtY4UF
-	4feFQNeOp4DNVJwX/jEuwi5cW8GmEitN5wXIOO2pYTAGZaSA25v9YvJOs5qcyD64xOxxxuwlAJ06a
-	4FATW5IWAtXKX289hCbDzO3lEV95zG1Ocn3Pt7xAVpuMFEzLoTNaHZIZox2Yz1w5qadSL9cdCbSUf
-	05hiIzgA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1usH4g-0017Cu-29;
-	Sat, 30 Aug 2025 16:52:36 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 30 Aug 2025 16:52:35 +0800
-Date: Sat, 30 Aug 2025 16:52:35 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Akhil R <akhilrajeev@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: tegra - Remove the use of dev_err_probe()
-Message-ID: <aLK708AFrXsYtOSP@gondor.apana.org.au>
-References: <20250820123752.473172-1-liaoyuanhong@vivo.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY8jpMau"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0C5AC4CEED;
+	Sun, 31 Aug 2025 11:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756639215;
+	bh=UzT7xj/bbfHi7nArp4mCwWSZ0oHnfBIV0P7CWeu148E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JY8jpMauZ2GUkGBm/jlBC3gW6URueV8ERNKm6dOcTyqlfCj9pEMXTTduwcsXTlIFw
+	 +rmoD54zD092QEYtjJfyN9WTf99pYpp2moBhg9pyC5tDMGf30/UNzpCyd5riLdFTUk
+	 Jpm8QPkolPUYmSpdHBcmy1Mc6LCdHHPx1mUmS2/ovG9ZUVdzTNC31c3IQCeM19+/Z/
+	 G9JFo+3YRrzKDnAWVHKKfOTdu/HnZjD7c3agKnh8B3htu+mEsq6FnvMv0tS9Pkaqqt
+	 HD5kDR+JPMVXWrQoM28CPqAbgoMtY84olz/l2e3QlV/2+AOkKy2wAcuT+EO6sAdS7Y
+	 EaPfM6AIQCimg==
+Date: Sun, 31 Aug 2025 16:50:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: thierry.reding@gmail.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra: fix devm_kcalloc argument order for
+ port->phys allocation
+Message-ID: <6yaka4sjghyq727gyhlf3usu24amj3q46ckh24ukvx4kuffmfm@d3nwn34zwijt>
+References: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820123752.473172-1-liaoyuanhong@vivo.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
 
-On Wed, Aug 20, 2025 at 08:37:52PM +0800, Liao Yuanhong wrote:
-> Logging messages that show some type of "out of memory" error are generally
-> unnecessary as there is a generic message and a stack dump done by the
-> memory subsystem. These messages generally increase kernel size without
-> much added value[1].
+On Tue, Aug 19, 2025 at 08:04:08AM GMT, Alok Tiwari wrote:
+> Fix incorrect argument order in devm_kcalloc() when allocating
+> port->phys, The original call used sizeof(phy) as the number of
+> elements and port->lanes as the element size, which is reversed.
+> While this happens to produce the correct total allocation size with
+> current pointer size and lane counts, the argument order is wrong.
 > 
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-> remove the useless call to dev_err_probe(), and just return the value
-> instead.
-> 
-> [1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+
+Missing Fixes tag. I'll add it while applying.
+
+- Mani
+
 > ---
->  drivers/crypto/tegra/tegra-se-main.c | 2 +-
+>  drivers/pci/controller/pci-tegra.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 467ddc701adc..bb88767a3797 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -1344,7 +1344,7 @@ static int tegra_pcie_port_get_phys(struct tegra_pcie_port *port)
+>  	unsigned int i;
+>  	int err;
+>  
+> -	port->phys = devm_kcalloc(dev, sizeof(phy), port->lanes, GFP_KERNEL);
+> +	port->phys = devm_kcalloc(dev, port->lanes, sizeof(phy), GFP_KERNEL);
+>  	if (!port->phys)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.50.1
+> 
 
-Patch applied.  Thanks.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+மணிவண்ணன் சதாசிவம்
