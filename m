@@ -1,70 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC493594E;
-	Sun, 31 Aug 2025 11:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8AF45029;
+	Sun, 31 Aug 2025 19:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756639513; cv=none; b=KKPeqzVF9CJ+amDESUxVYP9I4qU89PcX8Vv3XA/SCcVRcyqzvG8JK+qx6ygUeYx3XbgO4p4TZh3DvbEmwQh77oOhrd/Wo9UCxIHK777F2qHM4xYjyltAgOjWh2lg5Svzn59zqjVBshBTniWACw9/XJIEgNeWH6v7qAul6pT21fs=
+	t=1756666865; cv=none; b=LODkv0MP1tdZJW8tIeEKE5Ob+InmmPHCiJnREdzy6wrnG/EDve90aTBEB/ArytIZOGIo3cAIRjM3Q8bZLO35KE/f+8JL9GoRaSkiqtp6B3rn46P3GKbzV8tGNUBbSBo4EXEbLz2+tEkhCtcjPg18Nl84KpXVtNEQuLrtFwkgtP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756639513; c=relaxed/simple;
-	bh=JStuAIPlMtGfKJp2bwD1DKRz7pxXs0A3UVt9pauzxZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=df29MTrmenzVrO7J7bXOY0MRPoQmM50QJbwkHu5YBPM3txFc8KK2La+BmY707VgPxsr5WWPIxhujNQN4ZGBXKDkP9AcXw39zAdR/Z3nIaZZ3j9JN38fX615LAwYWWU+96hczGizZwJG/lonOV/GvwWR5BgZBVKY62083vZQQujg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCP0TgPY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756666865; c=relaxed/simple;
+	bh=x9x4yAjQdc9OshEv6rCBbv0t6jvRuV9OYkiqBmKru68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MCtuFXA/8cqEHofB3R6wuvDwVcWz6MAy3vTdUVj3vf/YQWMsXhnIST1aCxSQjg5WbNG0aYGpgv7PlqjgfUv29SqXq9hpLlDTAeJaE4terAUNbNhvaJOu993jRHXbSAk+35S7+yQN2D6vUcGJFxYS/hrKmLZK+DesBb9Xk/TsD2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YhQi2lmJ; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCP0TgPY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8318EC4CEED;
-	Sun, 31 Aug 2025 11:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756639512;
-	bh=JStuAIPlMtGfKJp2bwD1DKRz7pxXs0A3UVt9pauzxZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=eCP0TgPYlXUhLpybuJnnKcnr9qsAqB4cibbV1YF/AUW7IlbFoBAg7hS/B4rh89GPa
-	 owH+xc9Tbb9YU69wWWUO0n/92IuYwY9t9VNuNh16PASs7p2r0QQOydx+EIwc9y/gqi
-	 DWLjDlwiiDymrL7CQ46173bIJQoC8CtdA6i9H1d1jMYjgLCSSFQHGDmEFQQH31dBE2
-	 Y4bNKXSjJiBe77Poyk2md9m3HQ2cplhQn3XSV0QeyKFIUF53LThkk1UzxOKsHAgEl/
-	 OX0ggjQ153qIfhgdOSuZn0o/GFosz8u8sDDRAp1b3YX7YueSAPCyNLbn8RGZ8LfuwC
-	 ZH/kjYI6wLoRQ==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: thierry.reding@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
- robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com, 
- linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, 
- Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
-References: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH] PCI: tegra: fix devm_kcalloc argument order for
- port->phys allocation
-Message-Id: <175663950907.10641.11353619819769419728.b4-ty@kernel.org>
-Date: Sun, 31 Aug 2025 16:55:09 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhQi2lmJ"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so3557938a91.1;
+        Sun, 31 Aug 2025 12:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756666863; x=1757271663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vrYs9YxYEtBoI7/YEgRrxmn25mpmua4Qc6VJAZZuAA0=;
+        b=YhQi2lmJQDCH8UQxKKjh7XDj6nsUhRrWdwZc1/PM8z8EZaE87lbX0rgJ/LFTQ6pM8X
+         ZPJT8fq0mqynHuAM0jpXepuUFDY30GUo1nhPywFpA504jMQKaQLhcMq6tSBsIohSlTWP
+         fNJGKb8LJ7UrHzPpqfrUznv6iXvQzW98rWpurOeF5wLCnOtohQ0LiFgP+N3IsRank4m1
+         3jrArrGc5rdbUdwHdBD00qJ1arzqBJNpUXq8ddGysJQMmd6YNZMHbOPuMc6IFxtKOAUx
+         VUx+jLYHgfaNO5pZ3UjFZ4Hmp+OJgvl3siQmUbV4jlH5T0kWwV+BgDroiSAOSBEz9v3x
+         6vYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756666863; x=1757271663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vrYs9YxYEtBoI7/YEgRrxmn25mpmua4Qc6VJAZZuAA0=;
+        b=C6TwWlZP3wHmzL891Kiq0P7ZfOoiZlmqEoHcZntyXNk+8FaVLDi7CTDgaglI01/+gd
+         P4AVfyHJpEJ0J21CUcuAlfmuaU5Wp0+lWIb43LaxgjNv1R4r+z8zKvbOBinzvLBNJ8zb
+         YGGFdxerJM+kJrRsrjEqTeBmr/EdHzmphZhm12mGY2Vc5I4PG9eaifYEhTy2pDUCzwuT
+         HccAzbvigk3eDi6vc3g9r7Qsiso4SsLfJnofDt2HXO7SCvKxOMskOcrCCz625AjrSlX/
+         rfU3wfvGGV9EFQlN7KrbmE0tzotC9MtVLHI1/n2lmoRxxNVU9Tf4gINkIeADCDOzIaJM
+         lM8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUsozHyldltb3uFBIJGR2VO7bBsxV3tAb/bExDBdz3th+Li97ZsXJYa+tzGkvc3cNF2H7DnnSywCeX99jc=@vger.kernel.org, AJvYcCWK/quMDd8uivkfV60Kh+SV6W4euQKZdP3EBxwIXy/moaIASDUG/n3EnQR29kpS+SNAUHEnFXYaFI/3Hts=@vger.kernel.org, AJvYcCWd/LL8d2TeI00tVYavv2GQhOzmvNv/DnoFQysCHaNn3GRSi+sgMT5vm4eyPiTqJwCRC/+3hnkC/vgc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNMCXVT1LaHa68JWfVBSDPbmfW+z+UagXlKpPWod+fuX25dgIm
+	gwQxuvyxFq2D2zjRODZiMgHvzdEjDc1J0936BDsWQTT+GQvZ8sdWgdbm
+X-Gm-Gg: ASbGnctYKVRTRPQZ0ClF4smBmsyXfMR2Djhm5l3j6Ni8NFwNAbrDIUAIyLf5EUnx0Wg
+	L5cz1Eah5R+qc3rB5r81llnDVOW5z2WkXKN12HjgHrgevTEuuxk6595ni+MPEPLkzdp65cJBu2k
+	lW42Q/g5fJIQwr62mjY9wII3PUKJPpM+nX6SrAN+Y964acP4NlCTjR/gXwjDxksTEaAT+LhGbny
+	fJW4r6f8nBRYfb3VCAVj6fRQOSXoLbBBU+4IumzseHH0eHi9jO0AWEwj5+c6nqgNrIjhA58x1LL
+	t17RmNoGIp4qITsCQJiD5tUw/cUOVigGEBIznVje5hCm1Uu8A724gaOiKBHDb7J2Is/9flCqgVc
+	YDWsEZrfrPj89YjGddjbA
+X-Google-Smtp-Source: AGHT+IEcNVi2o7VXme1/DBaqQT0UJas35BqIHk2Q4/LySdHxKGnn+iZMqV4YwVhzoo0U97CVXz6YIA==
+X-Received: by 2002:a17:902:c406:b0:231:d0da:5e1f with SMTP id d9443c01a7336-24944aefe1dmr60484695ad.21.1756666862940;
+        Sun, 31 Aug 2025 12:01:02 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.216])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490372723fsm81118355ad.39.2025.08.31.12.00.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 12:01:02 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org (open list:PCI DRIVER FOR NVIDIA TEGRA),
+	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR NVIDIA TEGRA),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [RFC v1 0/2] PCI: tegra: A couple of cleanups
+Date: Mon,  1 Sep 2025 00:30:49 +0530
+Message-ID: <20250831190055.7952-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+
+Hi All,
+
+This small series provides two cleanup patches for the Tegra PCIe driver. 
+The overall goal is to replace custom, open-coded logic with standard
+kernel helper functions.
+
+These changes improve the driver's readability and maintainability by 
+everaging modern, well-tested APIs for clock management and register
+polling.
+
+Thanks
+-Anand 
+
+Anand Moon (2):
+  PCI: tegra: Simplify clock handling by using clk_bulk*() functions
+  PCI: tegra: Use readl_poll_timeout() for link status polling
+
+ drivers/pci/controller/pci-tegra.c | 109 +++++++----------------------
+ 1 file changed, 27 insertions(+), 82 deletions(-)
 
 
-On Tue, 19 Aug 2025 08:04:08 -0700, Alok Tiwari wrote:
-> Fix incorrect argument order in devm_kcalloc() when allocating
-> port->phys, The original call used sizeof(phy) as the number of
-> elements and port->lanes as the element size, which is reversed.
-> While this happens to produce the correct total allocation size with
-> current pointer size and lane counts, the argument order is wrong.
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] PCI: tegra: fix devm_kcalloc argument order for port->phys allocation
-      commit: b69f898bf94b374a97d367459ff2fb52b4ab8829
-
-Best regards,
+base-commit: 5c3b3264e5858813632031ba58bcd6e1eeb3b214
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
+2.50.1
 
