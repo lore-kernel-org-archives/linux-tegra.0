@@ -1,120 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B8F255F5C;
-	Mon,  1 Sep 2025 19:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD38279334
+	for <linux-tegra@vger.kernel.org>; Mon,  1 Sep 2025 21:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756753251; cv=none; b=h/BYHUuMdu/1+hUjk2tvs+3pzXpfE8AgVF8YVeZLv8vrSIWGtnUnLvc+UiLpDAyClVrXBiYnGjafy9gtI/Y4ElVJ+qOFWxHwLgopnz0u6D+5JhkE5i+MKVVEvHHhNo8z2CHNBJnb+n46YTkQjMd2Q8fZubtZRku9tJT34ksG2YU=
+	t=1756761658; cv=none; b=ECd16VVJu7+i1hrlT8uxHRNhGZpObwWZBODpD7RTDGKtBefyMf2I2N6ByGEbcwJ/ecqZoIpmbTqwjbOBVLInNfLz5hEM1jOTK8yQjrB9ZF658T2JE13P/Ad2cK4QViUOv4Ti9XjfInJAxjygu9dVUVriq1iLCvewP+xwPdWBaPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756753251; c=relaxed/simple;
-	bh=ZYcVa6pfew9PsKaI1xeXZkcLuBBn9KyqN+Fvtm6NigE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iFOOTYDnXgOC3966cGc2DkIhkfdJ+8LprM+XgCkbWk5GpumjL43k1smtJ7JehSbwvyhjvs/EKiz+C/5HPqY6G+7EnEDMvbCDYoY9WlWRBg30Qk6SaKmEMYwAkSNs0stfLT35qp1TZLe3L1RTCzhnLJwIXjY4Hzz7SwgKgGJmTAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYASmNv7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756761658; c=relaxed/simple;
+	bh=bLtQIaf7dyK1Q0ReCFdhXcy1IETUE3HCnqp1Qq2l6SE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lZFKBnSIJ3a1wVki52VmFo8GPoqpMWI1mZDfoCWGoyoG7A2ms3oPb94RxeQ3VgCpui6quwMjLjZjuKWgFtIvM2HjEHwSHWpUki5ngVcRHHRtp/taYcIEkJOs/gh5aYQ9IMcDa0HPZvjLgyq95k5m5eTcyx8ApihGSI5W6WSwtjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=prGBy7V1; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYASmNv7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB1EC4CEFD;
-	Mon,  1 Sep 2025 19:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756753250;
-	bh=ZYcVa6pfew9PsKaI1xeXZkcLuBBn9KyqN+Fvtm6NigE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GYASmNv7BXhIajZZoRvb4roQdeLOHe6DZu39BcO1fk3XdoM5eh0VcfQtL0m3quuCc
-	 VfY4RDvrJWzYdoloiXZ/XMOyb4IB/7MMqZ3ghTJuyJZRW1PUgkkBbgY8P8JDOArlJq
-	 cXkUAIQvYhsH8rYA6x3c30QbChvUVyxG/UaEM3AIgw10wa8gAYZQ0yaXhuW019nYPq
-	 QZo68hY25IpTFJm1aTzpcT3Qlgk+Q6Li0ieGq05XQ4rps9rWq76W2uTFb/2Qgrh7rb
-	 g9ntoHeNuOJYgLM88vGuTC8GhWhQK0luo8wjjwGvatzvam+tBPCx3FDu8zAaztdpgb
-	 0yOsZCtsOz68A==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca7a46so1594431a34.2;
-        Mon, 01 Sep 2025 12:00:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJowj0XZxUqRWTJdUfNeM3puIr6LUHU01MMotlg4y9+zSyx5byRhwwYkVo7twG43M1y6GZoz+3qHdPlAw=@vger.kernel.org, AJvYcCVOFva7j06wBRntkPIloSY6XSBaMB0Un11iIEWqUVva9RJl82Yu4Qz4B3jWTr31ijlc+A/XROI522A=@vger.kernel.org, AJvYcCWCUAWptoHsmgVcUI+ZqQ6vs7MW47UfJISdoZIVOmg+Om+roCV7TLJCbKfwUOBhp+j208Uy/0RCllDy@vger.kernel.org, AJvYcCWpKVhUjRh39OfgOoJdVGA3UOhl6vjj7h5kalO2Q8nrDWY7FcDWEq3JcdBVnqe2HQAIgc7ZlX2g7pZM@vger.kernel.org, AJvYcCXZRWh8KyF7fuN6waQwvuLqacb3XfoEYCyrPfvsRxkoXvjhtMT/K8DM9FjQFemkxvkwJlb+A5VKcuhuZNvb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5yb8uKr3+52nG1hhZH8qxRcrVMsjcQ2N3H6vFazznrilGlOEw
-	gszJQcSWLxdbHZobI/VqJg56yHDkv7iH/kZTj4p1G1YqWGF6FE5PSn1oXbFo4+ARwdN8CkCluUn
-	HcVsYgPkpVErTNqqIZmoCB+42jzVEtcc=
-X-Google-Smtp-Source: AGHT+IF5SaCmHwNGeJ545FabBGFRvWTGFT8zu6kM/v3+zLeQSnjYj3JgLDBA/Na6A5xsnHIoN5OKyg7BUGvdwPDyFD4=
-X-Received: by 2002:a05:6830:6aa3:b0:745:46d6:e73f with SMTP id
- 46e09a7af769-74569d764bamr4473355a34.1.1756753249708; Mon, 01 Sep 2025
- 12:00:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="prGBy7V1"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cG1xn6wN4z9tVj;
+	Mon,  1 Sep 2025 23:20:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1756761646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7jkYr+WUzboPryPVnYCdKAKPTcuqZmMnMRi94vAHDVM=;
+	b=prGBy7V1SNTz2F05Do+Xdlspgc+CTHgOjW3vtJYvVzpTO4WEgdfsMaSYdlD3IbZgMiP4j6
+	RC4jEk2SqbaCTrLPxNk5/P/tmoh//nqgN+ZpYMOeUVgyfu0D5f/Z1S/lMhXf9d0NYdX0Jz
+	m8vv65gX+/s8in/9E2ibrH+yaxy6XRR/gVIuM5Ytrl+RVEUTv/VeRHnqfWrbGrWdDPJwnC
+	TAeqLamb7qagXup3qAKLmIiQrxIcaIV8ulQ0Tm9wS2RWtWae7XZOjU6ba7qMCMReVGQVpf
+	9K/om2H98PdCM1oftZEHjSY1n8BEo1Kd+evHqmz21sm6bHdsx+gcMS4CH/pK7g==
+From: Brahmajit Das <listout@listout.xyz>
+To: linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jonathanh@nvidia.com
+Subject: [PATCH] =?UTF-8?q?drm/tegra:=20hdmi:=20sor:=20Fix=20error:=20vari?= =?UTF-8?q?able=20=E2=80=98j=E2=80=99=20set=20but=20not=20used?=
+Date: Tue,  2 Sep 2025 02:50:20 +0530
+Message-ID: <20250901212020.3757519-1-listout@listout.xyz>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250823200121.1320197-1-sumitg@nvidia.com> <20250823200121.1320197-2-sumitg@nvidia.com>
- <CAJZ5v0jXq48petXAcf1prb5iuHbh3i8XREJBscs88xs5RY_j=A@mail.gmail.com> <694a85ad-8b55-42e9-91fe-06d40fe8facd@nvidia.com>
-In-Reply-To: <694a85ad-8b55-42e9-91fe-06d40fe8facd@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 21:00:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ipt=zDDORjuHzuerfLryZO5NE1RpPfnADeWEqi6kyv6Q@mail.gmail.com>
-X-Gm-Features: Ac12FXyb-_bL-3aCu5Q9p5j1OqNhu9RwBJNUi80YwR1oSvxk_jkaXysXbT37dzA
-Message-ID: <CAJZ5v0ipt=zDDORjuHzuerfLryZO5NE1RpPfnADeWEqi6kyv6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] ACPI: CPPC: add perf control read API and clarify naming
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, lenb@kernel.org, 
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com, 
-	zhenglifeng1@huawei.com, ray.huang@amd.com, gautham.shenoy@amd.com, 
-	mario.limonciello@amd.com, perry.yuan@amd.com, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 1, 2025 at 3:46=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wrot=
-e:
->
->
-> On 26/08/25 00:03, Rafael J. Wysocki wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Sat, Aug 23, 2025 at 10:02=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com=
-> wrote:
-> >> Add cppc_get_perf_ctrls() to read performance control register values.
-> >> Rename existing APIs for clarity as:
-> >> - To distinguish between:
-> >>    - Feedback counters (fb_ctrs): Read-only performance monitoring dat=
-a.
-> >>    - Performance controls (perf_ctrls): Read-write config registers.
-> >> - cppc_set_epp_perf() updates both EPP and Autonomous Selection.
-> >>
-> >> API's renamed:
-> >> - cppc_set_perf() to cppc_set_perf_ctrls().
-> >> - cppc_get_perf_ctrs() to cppc_get_perf_fb_ctrs().
-> >> - cppc_get_perf_ctrs_sample() to cppc_get_perf_fb_ctrs_sample().
-> >> - cppc_set_epp_perf() to cppc_set_epp_and_autosel().
-> >> Remove redundant energy_perf field from 'struct cppc_perf_caps' since
-> >> the same information is available in 'struct cppc_perf_ctrls' which is
-> >> actively used.
-> >>
-> >> All existing callers are updated to maintain compatibility.
-> >
-> > First, this is too much in one patch IMV and second, I honestly don't
-> > see a reason for the renames above.
-> >
-> > This generally makes tracking the code changes history harder.
-> >
-> > Thanks!
->
-> Did the renaming for clarity and better readability.
-> If we don't want to do that then i can drop the renaming and keep other
-> changes.
+The variable j is set, however never used in or outside the loop, thus
+resulting in dead code.
+Building with GCC 16 results in a build error due to
+-Werror=unused-but-set-variable= enabled by default.
+This patch clean up the dead code and fixes the build error.
 
-Please do.
+Example build log:
+drivers/gpu/drm/tegra/sor.c:1867:19: error: variable ‘j’ set but not used [-Werror=unused-but-set-variable=]
+ 1867 |         size_t i, j;
+      |                   ^
 
-> Also, split this patch into two as below:
->          Patch1: Add cppc_get_perf() API.
->
->          Patch2:
->            - Update both EPP and Autonomous Selection in
-> cppc_set_epp_perf().
->            - Remove redundant energy_perf field from 'struct
-> cppc_perf_caps'.
+Signed-off-by: Brahmajit Das <listout@listout.xyz>
+---
+ drivers/gpu/drm/tegra/hdmi.c | 4 ++--
+ drivers/gpu/drm/tegra/sor.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Sounds reasonable to me.
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 8cd2969e7d4b..c4820f5e7658 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -658,7 +658,7 @@ static void tegra_hdmi_write_infopack(struct tegra_hdmi *hdmi, const void *data,
+ {
+ 	const u8 *ptr = data;
+ 	unsigned long offset;
+-	size_t i, j;
++	size_t i;
+ 	u32 value;
+ 
+ 	switch (ptr[0]) {
+@@ -691,7 +691,7 @@ static void tegra_hdmi_write_infopack(struct tegra_hdmi *hdmi, const void *data,
+ 	 * - subpack_low: bytes 0 - 3
+ 	 * - subpack_high: bytes 4 - 6 (with byte 7 padded to 0x00)
+ 	 */
+-	for (i = 3, j = 0; i < size; i += 7, j += 8) {
++	for (i = 3; i < size; i += 7) {
+ 		size_t rem = size - i, num = min_t(size_t, rem, 4);
+ 
+ 		value = tegra_hdmi_subpack(&ptr[i], num);
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 21f3dfdcc5c9..bc7dd562cf6b 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1864,7 +1864,7 @@ static void tegra_sor_hdmi_write_infopack(struct tegra_sor *sor,
+ {
+ 	const u8 *ptr = data;
+ 	unsigned long offset;
+-	size_t i, j;
++	size_t i;
+ 	u32 value;
+ 
+ 	switch (ptr[0]) {
+@@ -1897,7 +1897,7 @@ static void tegra_sor_hdmi_write_infopack(struct tegra_sor *sor,
+ 	 * - subpack_low: bytes 0 - 3
+ 	 * - subpack_high: bytes 4 - 6 (with byte 7 padded to 0x00)
+ 	 */
+-	for (i = 3, j = 0; i < size; i += 7, j += 8) {
++	for (i = 3; i < size; i += 7) {
+ 		size_t rem = size - i, num = min_t(size_t, rem, 4);
+ 
+ 		value = tegra_sor_hdmi_subpack(&ptr[i], num);
+-- 
+2.51.0
 
-Thanks!
