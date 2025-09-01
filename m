@@ -1,438 +1,648 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2070.outbound.protection.outlook.com [40.107.102.70])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3AB274FDB;
-	Sun, 31 Aug 2025 23:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756683200; cv=fail; b=THx+zEVdLWac6q0PDqVZgFsrRcKTf+0mYkt2gwaKDRga+v8NT0Tb/9kfEfWNwsHfLzFKz5NOr4T51zsxUoqsQU2O2R1vLnfBlQLQU4n9lwGV/zDjACeGMtO0fbPzmkgmmjD4e6KaIIZfPn6icxOD5bLyy9MleyeDrhSz8qBcKt8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756683200; c=relaxed/simple;
-	bh=Jp9sAvHL6CX98353pWEllyNpXDMmNK8irA/KH0Z2yZg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y/Na+wvBX67LNjTswPIns2LNN1mUWP67EE0eVwoq1Wo5dx5TlWvobMC0sLnOdQVhYwMA3ivj1jBQn2aV7ueX5GhI7a7IR8qHJDFAdhvk7FnAvKzuKOGPwxmokRlFam8NvsvxMQ4rAQFFUMUUl5t32zQTucMod/xx01exN6n4GAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OKKAfkN4; arc=fail smtp.client-ip=40.107.102.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B0A1E5B73;
+	Mon,  1 Sep 2025 03:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756696968; cv=none; b=qAXlI6jtcvB1km6ofPn0zclejAr0kIgPaAavBEE+Xwy9HjpiSoCutRmTXcVfvLw7FsIbJz9R8A/9rJsaVWBV7GzhAJHfHRnxSOjFtj6JZjVXH1qmX2sdRKnqCWBsVqtN0wYS0j8fYAKiquvC8UxZL4rfZbt+mbC1H9q98ELODj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756696968; c=relaxed/simple;
+	bh=StUO5VnhJhQRZVLn1enpkS9EijuU3kKL+eiOOBaeQXs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QyLCz5Pe9YCyd0kQmoju/78bwRs6dBM1wFfSovB0WX/l+VICPzgBUt6iBXdMRYVutT525e/HIH3pke344/ejD+8flxCV3f89GhfX73l27yjr6E51juofeL8tHFAtjMelX8+NDatsDKu9vHvRYPN4ZGV1roHcyIV8li9WAEeFzoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0m1TxZS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OKKAfkN4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZFcGyiEh9noqs9S0RlRu87ofpYInhqitxRYb3u4tFi7rkDbmJSwX5utrMbcibCaX8WarAd8HyioN3f4xVsWugoDXsMOe46MiGto2BWKORJWEoDQjLJxyoT/S9a5U1v4KeWvcRbF21JHn6YlyKh05wbXDw1xfmUh3Qg8Dv8qxcy39yPHY7k6LU+Tus2wKIXkUFAwRqlfD7HlkUQ7qnikgk6EPS6MiMZxdlITojbBKjxzpCKhDzog30Y9jUFqZefhndWA3bIjE/IoSDt3umcklE+ELUaSbFT6N8fNt+L0dlE8WWU3lCRWJN+rFblgn5VZ0/fl2sCVY3QPOBnEP+iHPYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t7XAfQegnIapW7HTU9nrmLiGfFWJaStkTZMtYA/OKR8=;
- b=wmj6xEUWvErqOB2MfLaSqZbs5fwBSMH94zqcPaGu5w9IZQi1ttIsf49qxneLbk+xn+cKFBNI9IySbSTQk0yniwRgMRFaq4kZ8Ob2QrTwmWvo4HAYF85dcak+nFxfFEqu6B+PSyXVUYW6yZzKnA3/eK+JBHvqjgppTkqM2YbPieADZi57f5wOXVLdYIiEpmEFaMQIqcs66flcUurYccSStdQAuecyA4XbNzPHX5bKYtSIVGUF3AM5yKeULQGLgr6lRZr7sFofLeE8W6DttCBWz/VF7ZXq/MqgvFH3zuvMfTs6qp1AJbNjVUzxZWgRN2CdujwgzV+C4snhGXo6C+lUCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=8bytes.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t7XAfQegnIapW7HTU9nrmLiGfFWJaStkTZMtYA/OKR8=;
- b=OKKAfkN4gYh7FYE13VwyUVlwLzOP7IXwdcMlonZjMqpUr90U0lRinAnLswM2kAfGt/Og1YrcOjn0AI0sqUhzJY6MFjS9zW0lmfTQKJk/MtjVy7I0tr8HufOhIKzFljUS9tUsLCt0arW3cree9/75IlRaOl+ZrK83MQpkJRpck7R7SqumRX4MzkDubY62EJ7R+RSxw7PLJRu2pbGJO6JexS2oquWZ7N5GX2r5vUem2HWuCGkraLsnA3PgOMBGK4zssmlAta93xCoY/oHXxtBRyV/wwSwmD0KqeLmYTh68e7t8DULugvH619Hpn6YnUFfaaNUpOA6DCaqle3VxFwlrdQ==
-Received: from BY5PR13CA0014.namprd13.prod.outlook.com (2603:10b6:a03:180::27)
- by IA1PR12MB7520.namprd12.prod.outlook.com (2603:10b6:208:42f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Sun, 31 Aug
- 2025 23:33:13 +0000
-Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
- (2603:10b6:a03:180:cafe::3) by BY5PR13CA0014.outlook.office365.com
- (2603:10b6:a03:180::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.15 via Frontend Transport; Sun,
- 31 Aug 2025 23:33:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.14 via Frontend Transport; Sun, 31 Aug 2025 23:33:12 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 31 Aug
- 2025 16:32:51 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 31 Aug
- 2025 16:32:50 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Sun, 31 Aug 2025 16:32:46 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <joro@8bytes.org>, <jgg@nvidia.com>, <bhelgaas@google.com>
-CC: <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <sven@kernel.org>, <j@jannau.net>,
-	<alyssa@rosenzweig.io>, <neal@gompa.dev>, <robin.clark@oss.qualcomm.com>,
-	<m.szyprowski@samsung.com>, <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <kevin.tian@intel.com>,
-	<yong.wu@mediatek.com>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <tjeznach@rivosinc.com>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<alex@ghiti.fr>, <heiko@sntech.de>, <schnelle@linux.ibm.com>,
-	<mjrosato@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>,
-	<orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
-	<zhang.lyra@gmail.com>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-	<samuel@sholland.org>, <jean-philippe@linaro.org>, <rafael@kernel.org>,
-	<lenb@kernel.org>, <yi.l.liu@intel.com>, <cwabbott0@gmail.com>,
-	<quic_pbrahma@quicinc.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-tegra@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<linux-acpi@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<patches@lists.linux.dev>, <vsethi@nvidia.com>, <helgaas@kernel.org>,
-	<etzhao1900@gmail.com>
-Subject: [PATCH v4 7/7] pci: Suspend iommu function prior to resetting a device
-Date: Sun, 31 Aug 2025 16:31:59 -0700
-Message-ID: <cbceeb65dd248fd06e5665dbcb6df4484b2d8958.1756682135.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1756682135.git.nicolinc@nvidia.com>
-References: <cover.1756682135.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0m1TxZS"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 525BDC4CEF0;
+	Mon,  1 Sep 2025 03:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756696968;
+	bh=StUO5VnhJhQRZVLn1enpkS9EijuU3kKL+eiOOBaeQXs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=i0m1TxZSSnC/OxLH80SkMF9g3QlpfYwVDzF82LT7nXzMTSo1G7+rA3RKdRNDuema+
+	 DxzZqaGIzOLQPiY6+hfB/SzpuFukiSjXbEDfl+UcPZfiY9TQBctuEchAckEb/UZXx5
+	 KblOJJnWprBcJ4sLuFxpYsxS20lQ2B53soVrD/K41/KDmL3Gbdk+tENAR1ubt1t19R
+	 zOAXTINOvtg3h0mgktWxqULhhogV27sagagxl7zrubYQXaA41YCXQavTe8pU78wGEa
+	 etE34QEBAsqX3+YXiZzc4mpAnbajV0pz6Ik1AeIWWN5ZY0L4cZr3gxreiMmVgy5WkY
+	 UyMjK4UBvaAPQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4059DCA0FFD;
+	Mon,  1 Sep 2025 03:22:48 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sun, 31 Aug 2025 22:22:25 -0500
+Subject: [PATCH] drm/nouveau: Support devfreq for Tegra
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|IA1PR12MB7520:EE_
-X-MS-Office365-Filtering-Correlation-Id: e96c6974-ef33-4031-2b67-08dde8e6c061
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sJNl4fQixJTM+mpj0B9nZbfPWHbarYkGcbAg4fePGMtvlMyFYdi5LMDtrQ6r?=
- =?us-ascii?Q?OiiUhNJ7IgLYGG4e+VvMs7ABpEf4pt2CHt6VFbcnGEz0hLOuZklOr82DP6EF?=
- =?us-ascii?Q?HKYhuQX1THvnoeD2ssE3YLiXOVNEAun6CxYMwZZuuNbfPdyPyt+oBWTr4FSc?=
- =?us-ascii?Q?95qLDJy726RxaejX7D2P3SMolhz1Dd7bXt8LSlRPdsEkGPcYT1YOG/8sPjZ8?=
- =?us-ascii?Q?zTwY+CigYrzuZoqJmZkjovqX5WTu/M4YQmS1xUijyhd2Nf4diWpd6cnNRoHO?=
- =?us-ascii?Q?Y2Riv82hW/KkqLlqnihwtZuDffZOF4KBRCAr6eqOqLLNS+LCE1bx3cOqYn12?=
- =?us-ascii?Q?OqeI0IppOrKOBDT/AVj9mVZ+l5GqVBLvcg2M0JptNjiaedmqeDk8N058Iihg?=
- =?us-ascii?Q?cx9SKjoBdTFZbgVEoeYXUNAGtXP47ORBDgLlVJi2Z7xKrFQ6yWQPme19NRey?=
- =?us-ascii?Q?7w8khm355UpENIFWb/LTy09X9BIDWaX+WNRgWvoCr/0PyUrrKww/MM8MpBfq?=
- =?us-ascii?Q?uJdG3/iwumwMrI58nnR7fgJ3jc/qPQJdv2DxFS8EY1rhmMSpKbT8joM05NaY?=
- =?us-ascii?Q?/yqEdhez79nl1Q3pq7d20fs/eSLnV2QXlDgWWEOuTJ+gbGRvDQocP0hR0LDC?=
- =?us-ascii?Q?gmYbnCj4CqjtUGUoSXN++sWNqCVjU7IAGzq6BOqC3RloMLHv9EglC5ovaSfN?=
- =?us-ascii?Q?GHFtLm3xnZNIN8oFERplH41XaVx7gpSd/6MNWRHSIMMN6jOsAjxgxDTxW51D?=
- =?us-ascii?Q?SlXE41oNEKtsr0+mrUks/go1zoxWoLsdYG797rqpENn2sIW76eJSZr74BGmT?=
- =?us-ascii?Q?nCZiKnpGQdW42u5KiH5hocm7hYX1fNZndwLrXEDfc5ANewGZYXSCkU2TDX1G?=
- =?us-ascii?Q?GORrbdz/O8PyS7XX61Aa/QLhTU72oBmHVlAbkz83g8ofmYO8G1uoIQypIrSD?=
- =?us-ascii?Q?5vu0DBkpgBwasjZnRSSu+4zrik61dbnUGe9CsOg1HdAanXfIkjOLhHrjs7OX?=
- =?us-ascii?Q?s5DymIIhw3+n47USZkBIwkAxfoJto2JsDo/2x+5hzHLKeOys/Z5sHRA0z1/O?=
- =?us-ascii?Q?UAgH3YECNmtpUZwALX9uG5mxSu1ctcYsmizFbSUjuZTJy1PAHi893BZPEGeT?=
- =?us-ascii?Q?jeRX7RStkbfPwRepw8vD9hJenjj89wTr18riXWh5BV8rOrlNMTA7MOSsivTi?=
- =?us-ascii?Q?IkaiIPFNgpxZ5d+jQcqJoNjgYjQ4hPtjwGUwz9c7WbQoEAMEnHvglKMhLdWB?=
- =?us-ascii?Q?KrKMgU/WzNrZfqRZ6YErB8F7hxxNmOYKHYl1IbBtgDoEEGCq+v0EjVTu9jdN?=
- =?us-ascii?Q?M1BkX47OXHzmZnv/HID0mBylnGAH3PiBBiaAG7ZZ922Ai3BWL/Pr8X07wFub?=
- =?us-ascii?Q?uIDgeGtbFNO9ChVMO5ISnqKbGye+njJnviJVE4ZG+su2LlYetM6KqezRLHvu?=
- =?us-ascii?Q?EJ00yySqzxzPjOjHCfK/V4QWi1hjH2LqQBXztx0Cy+OePobj28Xh66qmeTKS?=
- =?us-ascii?Q?E9bywo03XOa031v3EBWHt6c7Xf+l9LdlpKre?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2025 23:33:12.2393
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e96c6974-ef33-4031-2b67-08dde8e6c061
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE30.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7520
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250831-gk20a-devfreq-v1-1-c25a8f1169a8@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHARtWgC/02OSw7CMBBDr1LNmkiTT5umV0FdJOlMiaAfUqiQE
+ HcnohsWXjzLtvyGjXKiDbrqDZn2tKVlLiBPFcSLn0cSaSgMClWNrUYxXhV6MdDOme6CtGOrnQ/
+ SSSidNROn12/v3B9cYs8y+zhMCH4jEZdpSo+uitIGW2PQfnBsalahYUtFbBrrWmOUMYzBwf+dr
+ jrOKCXGVWIQmeJtiVdhbWDdINa+bbpdQf/5fAHxV/GN4AAAAA==
+X-Change-ID: 20250830-gk20a-devfreq-e39f739ab191
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756696967; l=20029;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=Xr6hXQu4yzVCR1Bkrqzjln5SWhf5njgdwi7PmzNazsM=;
+ b=WJj5Skx/w1G03phy8wC70SdoCzGiH4vX0bhPpB4tjeKRuluNXXs6VFhfkZPnm55D7k38MER4r
+ /3EgcC1+B0PAdL8YkrFXegFVChSyVB3RjWEBBM/dNUyhK2in4I+1ciZ
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-PCIe permits a device to ignore ATS invalidation TLPs, while processing a
-reset. This creates a problem visible to the OS where an ATS invalidation
-command will time out: e.g. an SVA domain will have no coordination with a
-reset event and can racily issue ATS invalidations to a resetting device.
+From: Aaron Kling <webgeek1234@gmail.com>
 
-The PCIe spec in sec 10.3.1 IMPLEMENTATION NOTE recommends to disable and
-block ATS before initiating a Function Level Reset. It also mentions that
-other reset methods could have the same vulnerability as well.
+Using pmu counters for usage stats. This enables dynamic frequency
+scaling on all of the currently supported Tegra gpus.
 
-Now iommu_dev_reset_prepare/done() helpers are introduced for this matter.
-Use them in all the existing reset functions, which will attach the device
-to an IOMMU_DOMAIN_BLOCKED during a reset, so as to allow IOMMU driver to:
- - invoke pci_disable_ats() and pci_enable_ats(), if necessary
- - wait for all ATS invalidations to complete
- - stop issuing new ATS invalidations
- - fence any incoming ATS queries
+The register offsets are valid for gk20a, gm20b, gp10b, and gv11b. If
+support is added for ga10b, this will need rearchitected.
 
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/pci/pci.h      |  2 ++
- drivers/pci/pci-acpi.c | 12 ++++++--
- drivers/pci/pci.c      | 68 ++++++++++++++++++++++++++++++++++++++----
- drivers/pci/quirks.c   | 18 ++++++++++-
- 4 files changed, 92 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/nouveau/Kconfig                    |   1 +
+ drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h  |   2 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c         |  20 ++
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   4 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild     |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h    |   1 +
+ .../drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c    | 319 +++++++++++++++++++++
+ .../drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h    |  24 ++
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h    |   1 +
+ 12 files changed, 388 insertions(+)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 34f65d69662e9..9700ebca55771 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -106,6 +106,8 @@ void pci_init_reset_methods(struct pci_dev *dev);
- int pci_bridge_secondary_bus_reset(struct pci_dev *dev);
- int pci_bus_error_reset(struct pci_dev *dev);
- int __pci_reset_bus(struct pci_bus *bus);
-+int pci_reset_iommu_prepare(struct pci_dev *dev);
-+void pci_reset_iommu_done(struct pci_dev *dev);
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index d1587639ebb04f904d57bcc09933d1e3662594d3..803b9eb234b7b51fa2e55b778a864622ccadbcef 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -28,6 +28,7 @@ config DRM_NOUVEAU
+ 	select THERMAL if ACPI && X86
+ 	select ACPI_VIDEO if ACPI && X86
+ 	select SND_HDA_COMPONENT if SND_HDA_CORE
++	select PM_DEVFREQ if ARCH_TEGRA
+ 	help
+ 	  Choose this option for open-source NVIDIA support.
  
- struct pci_cap_saved_data {
- 	u16		cap_nr;
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index ddb25960ea47d..3291424730824 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -969,6 +969,7 @@ void pci_set_acpi_fwnode(struct pci_dev *dev)
- int pci_dev_acpi_reset(struct pci_dev *dev, bool probe)
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h b/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
+index 22f74fc88cd7554334e68bdf2eb72c31848e0304..57bc542780bbe5ffc5c30f18c139cb099b6d07ed 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
+@@ -9,6 +9,8 @@ struct nvkm_device_tegra {
+ 	struct nvkm_device device;
+ 	struct platform_device *pdev;
+ 
++	void __iomem *regs;
++
+ 	struct reset_control *rst;
+ 	struct clk *clk;
+ 	struct clk *clk_ref;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_platform.c b/drivers/gpu/drm/nouveau/nouveau_platform.c
+index a5ce8eb4a3be7a20988ea5515e8b58b1801e5842..164aaf09112b6617da2d42899d0fbf9ff75fc4af 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_platform.c
++++ b/drivers/gpu/drm/nouveau/nouveau_platform.c
+@@ -21,6 +21,8 @@
+  */
+ #include "nouveau_platform.h"
+ 
++#include <nvkm/subdev/clk/gk20a_devfreq.h>
++
+ static int nouveau_platform_probe(struct platform_device *pdev)
  {
- 	acpi_handle handle = ACPI_HANDLE(&dev->dev);
-+	int ret = 0;
+ 	const struct nvkm_device_tegra_func *func;
+@@ -43,6 +45,21 @@ static void nouveau_platform_remove(struct platform_device *pdev)
+ 	nouveau_drm_device_remove(drm);
+ }
  
- 	if (!handle || !acpi_has_method(handle, "_RST"))
- 		return -ENOTTY;
-@@ -976,12 +977,19 @@ int pci_dev_acpi_reset(struct pci_dev *dev, bool probe)
- 	if (probe)
- 		return 0;
++#ifdef CONFIG_PM_SLEEP
++static int nouveau_suspend(struct device *dev)
++{
++	return gk20a_devfreq_suspend(dev);
++}
++
++static int nouveau_resume(struct device *dev)
++{
++	return gk20a_devfreq_resume(dev);
++}
++
++static SIMPLE_DEV_PM_OPS(nouveau_pm_ops, nouveau_suspend,
++			 nouveau_resume);
++#endif
++
+ #if IS_ENABLED(CONFIG_OF)
+ static const struct nvkm_device_tegra_func gk20a_platform_data = {
+ 	.iommu_bit = 34,
+@@ -84,6 +101,9 @@ struct platform_driver nouveau_platform_driver = {
+ 	.driver = {
+ 		.name = "nouveau",
+ 		.of_match_table = of_match_ptr(nouveau_platform_match),
++#ifdef CONFIG_PM_SLEEP
++		.pm = &nouveau_pm_ops,
++#endif
+ 	},
+ 	.probe = nouveau_platform_probe,
+ 	.remove = nouveau_platform_remove,
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 114e50ca18270c90c32ad85f8bd8469740a950cb..03aa6f09ec89345225c302f7e5943055d9b715ba 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -259,6 +259,10 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
+ 	tdev->func = func;
+ 	tdev->pdev = pdev;
  
-+	ret = pci_reset_iommu_prepare(dev);
++	tdev->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(tdev->regs))
++		return PTR_ERR(tdev->regs);
++
+ 	if (func->require_vdd) {
+ 		tdev->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 		if (IS_ERR(tdev->vdd)) {
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+index 9fe394740f568909de71a8c420cc8b6d8dc2235f..be8f3283ee16f88842e3f0444a63e69cb149d2e0 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+@@ -11,6 +11,7 @@ nvkm-y += nvkm/subdev/clk/gk104.o
+ nvkm-y += nvkm/subdev/clk/gk20a.o
+ nvkm-y += nvkm/subdev/clk/gm20b.o
+ nvkm-y += nvkm/subdev/clk/gp10b.o
++nvkm-$(CONFIG_PM_DEVFREQ) += nvkm/subdev/clk/gk20a_devfreq.o
+ 
+ nvkm-y += nvkm/subdev/clk/pllnv04.o
+ nvkm-y += nvkm/subdev/clk/pllgt215.o
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
+index d573fb0917fc535437a0b81bc3d88c56b036fb22..65f5d0f1f3bfcf88df68db32a3764e0868bcd6e5 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
+@@ -23,6 +23,7 @@
+  *
+  */
+ #include "priv.h"
++#include "gk20a_devfreq.h"
+ #include "gk20a.h"
+ 
+ #include <core/tegra.h>
+@@ -589,6 +590,10 @@ gk20a_clk_init(struct nvkm_clk *base)
+ 		return ret;
+ 	}
+ 
++	ret = gk20a_devfreq_init(base, &clk->devfreq);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h
+index 286413ff4a9ec7f2273c9446ac7a15eb1a843aeb..ea5b0bab4ccec6e4999531593c2cb03de7599c74 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h
+@@ -118,6 +118,7 @@ struct gk20a_clk {
+ 	const struct gk20a_clk_pllg_params *params;
+ 	struct gk20a_pll pll;
+ 	u32 parent_rate;
++	struct gk20a_devfreq *devfreq;
+ 
+ 	u32 (*div_to_pl)(u32);
+ 	u32 (*pl_to_div)(u32);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..8362b1d9cc1fd7aeceba04f83b28d0d73db467dd
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c
+@@ -0,0 +1,319 @@
++// SPDX-License-Identifier: MIT
++#include <linux/clk.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++
++#include <drm/drm_managed.h>
++
++#include <subdev/clk.h>
++
++#include "nouveau_drv.h"
++#include "nouveau_chan.h"
++#include "priv.h"
++#include "gk20a_devfreq.h"
++#include "gk20a.h"
++#include "gp10b.h"
++
++#define PMU_BUSY_CYCLES_NORM_MAX		1000U
++
++#define PWR_PMU_IDLE_COUNTER_TOTAL		0U
++#define PWR_PMU_IDLE_COUNTER_BUSY		4U
++
++#define PWR_PMU_IDLE_COUNT_REG_OFFSET		0x0010A508U
++#define PWR_PMU_IDLE_COUNT_REG_SIZE		16U
++#define PWR_PMU_IDLE_COUNT_MASK			0x7FFFFFFFU
++#define PWR_PMU_IDLE_COUNT_RESET_VALUE		(0x1U << 31U)
++
++#define PWR_PMU_IDLE_INTR_REG_OFFSET		0x0010A9E8U
++#define PWR_PMU_IDLE_INTR_ENABLE_VALUE		0U
++
++#define PWR_PMU_IDLE_INTR_STATUS_REG_OFFSET	0x0010A9ECU
++#define PWR_PMU_IDLE_INTR_STATUS_MASK		0x00000001U
++#define PWR_PMU_IDLE_INTR_STATUS_RESET_VALUE	0x1U
++
++#define PWR_PMU_IDLE_THRESHOLD_REG_OFFSET	0x0010A8A0U
++#define PWR_PMU_IDLE_THRESHOLD_REG_SIZE		4U
++#define PWR_PMU_IDLE_THRESHOLD_MAX_VALUE	0x7FFFFFFFU
++
++#define PWR_PMU_IDLE_CTRL_REG_OFFSET		0x0010A50CU
++#define PWR_PMU_IDLE_CTRL_REG_SIZE		16U
++#define PWR_PMU_IDLE_CTRL_VALUE_MASK		0x3U
++#define PWR_PMU_IDLE_CTRL_VALUE_BUSY		0x2U
++#define PWR_PMU_IDLE_CTRL_VALUE_ALWAYS		0x3U
++#define PWR_PMU_IDLE_CTRL_FILTER_MASK		(0x1U << 2)
++#define PWR_PMU_IDLE_CTRL_FILTER_DISABLED	0x0U
++
++#define PWR_PMU_IDLE_MASK_REG_OFFSET		0x0010A504U
++#define PWR_PMU_IDLE_MASK_REG_SIZE		16U
++#define PWM_PMU_IDLE_MASK_GR_ENABLED		0x1U
++#define PWM_PMU_IDLE_MASK_CE_2_ENABLED		0x200000U
++
++/**
++ * struct gk20a_devfreq - Device frequency management
++ */
++struct gk20a_devfreq {
++	/** @devfreq: devfreq device. */
++	struct devfreq *devfreq;
++
++	/** @regs: Device registers. */
++	void __iomem *regs;
++
++	/** @gov_data: Governor data. */
++	struct devfreq_simple_ondemand_data gov_data;
++
++	/** @busy_time: Busy time. */
++	ktime_t busy_time;
++
++	/** @total_time: Total time. */
++	ktime_t total_time;
++
++	/** @time_last_update: Last update time. */
++	ktime_t time_last_update;
++};
++
++static struct gk20a_devfreq *dev_to_gk20a_devfreq(struct device *dev)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct nvkm_subdev *subdev = nvkm_device_subdev(drm->nvkm, NVKM_SUBDEV_CLK, 0);
++	struct nvkm_clk *base = nvkm_clk(subdev);
++
++	switch (drm->nvkm->chipset) {
++	case 0x13b: return gp10b_clk(base)->devfreq; break;
++	default: return gk20a_clk(base)->devfreq; break;
++	}
++}
++
++static void gk20a_pmu_init_perfmon_counter(struct gk20a_devfreq *gdevfreq)
++{
++	u32 data;
++
++	// Set pmu idle intr status bit on total counter overflow
++	writel(PWR_PMU_IDLE_INTR_ENABLE_VALUE,
++	       gdevfreq->regs + PWR_PMU_IDLE_INTR_REG_OFFSET);
++
++	writel(PWR_PMU_IDLE_THRESHOLD_MAX_VALUE,
++	       gdevfreq->regs + PWR_PMU_IDLE_THRESHOLD_REG_OFFSET +
++	       (PWR_PMU_IDLE_COUNTER_TOTAL * PWR_PMU_IDLE_THRESHOLD_REG_SIZE));
++
++	// Setup counter for total cycles
++	data = readl(gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_TOTAL * PWR_PMU_IDLE_CTRL_REG_SIZE));
++	data &= ~(PWR_PMU_IDLE_CTRL_VALUE_MASK | PWR_PMU_IDLE_CTRL_FILTER_MASK);
++	data |= PWR_PMU_IDLE_CTRL_VALUE_ALWAYS | PWR_PMU_IDLE_CTRL_FILTER_DISABLED;
++	writel(data, gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_TOTAL * PWR_PMU_IDLE_CTRL_REG_SIZE));
++
++	// Setup counter for busy cycles
++	writel(PWM_PMU_IDLE_MASK_GR_ENABLED | PWM_PMU_IDLE_MASK_CE_2_ENABLED,
++	       gdevfreq->regs + PWR_PMU_IDLE_MASK_REG_OFFSET +
++	       (PWR_PMU_IDLE_COUNTER_BUSY * PWR_PMU_IDLE_MASK_REG_SIZE));
++
++	data = readl(gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_BUSY * PWR_PMU_IDLE_CTRL_REG_SIZE));
++	data &= ~(PWR_PMU_IDLE_CTRL_VALUE_MASK | PWR_PMU_IDLE_CTRL_FILTER_MASK);
++	data |= PWR_PMU_IDLE_CTRL_VALUE_BUSY | PWR_PMU_IDLE_CTRL_FILTER_DISABLED;
++	writel(data, gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_BUSY * PWR_PMU_IDLE_CTRL_REG_SIZE));
++}
++
++static u32 gk20a_pmu_read_idle_counter(struct gk20a_devfreq *gdevfreq, u32 counter_id)
++{
++	u32 ret;
++
++	ret = readl(gdevfreq->regs + PWR_PMU_IDLE_COUNT_REG_OFFSET +
++		    (counter_id * PWR_PMU_IDLE_COUNT_REG_SIZE));
++
++	return ret & PWR_PMU_IDLE_COUNT_MASK;
++}
++
++static void gk20a_pmu_reset_idle_counter(struct gk20a_devfreq *gdevfreq, u32 counter_id)
++{
++	writel(PWR_PMU_IDLE_COUNT_RESET_VALUE, gdevfreq->regs + PWR_PMU_IDLE_COUNT_REG_OFFSET +
++					       (counter_id * PWR_PMU_IDLE_COUNT_REG_SIZE));
++}
++
++static u32 gk20a_pmu_read_idle_intr_status(struct gk20a_devfreq *gdevfreq)
++{
++	u32 ret;
++
++	ret = readl(gdevfreq->regs + PWR_PMU_IDLE_INTR_STATUS_REG_OFFSET);
++
++	return ret & PWR_PMU_IDLE_INTR_STATUS_MASK;
++}
++
++static void gk20a_pmu_clear_idle_intr_status(struct gk20a_devfreq *gdevfreq)
++{
++	writel(PWR_PMU_IDLE_INTR_STATUS_RESET_VALUE,
++	       gdevfreq->regs + PWR_PMU_IDLE_INTR_STATUS_REG_OFFSET);
++}
++
++static void gk20a_devfreq_update_utilization(struct gk20a_devfreq *gdevfreq)
++{
++	ktime_t now, last;
++	u64 busy_cycles, total_cycles;
++	u32 norm, intr_status;
++
++	now = ktime_get();
++	last = gdevfreq->time_last_update;
++	gdevfreq->total_time = ktime_us_delta(now, last);
++
++	busy_cycles = gk20a_pmu_read_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_BUSY);
++	total_cycles = gk20a_pmu_read_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_TOTAL);
++	intr_status = gk20a_pmu_read_idle_intr_status(gdevfreq);
++
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_BUSY);
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_TOTAL);
++
++	if (intr_status != 0UL) {
++		norm = PMU_BUSY_CYCLES_NORM_MAX;
++		gk20a_pmu_clear_idle_intr_status(gdevfreq);
++	} else if (total_cycles == 0ULL || busy_cycles > total_cycles) {
++		norm = PMU_BUSY_CYCLES_NORM_MAX;
++	} else {
++		norm = (u32)(busy_cycles * PMU_BUSY_CYCLES_NORM_MAX
++				/ total_cycles);
++	}
++
++	gdevfreq->busy_time = (gdevfreq->total_time * norm) / PMU_BUSY_CYCLES_NORM_MAX;
++	gdevfreq->time_last_update = now;
++}
++
++static int gk20a_devfreq_target(struct device *dev, unsigned long *freq,
++				  u32 flags)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct nvkm_subdev *subdev = nvkm_device_subdev(drm->nvkm, NVKM_SUBDEV_CLK, 0);
++	struct nvkm_clk *base = nvkm_clk(subdev);
++	struct nvkm_pstate *pstates = base->func->pstates;
++	int nr_pstates = base->func->nr_pstates;
++	int i, ret;
++
++	for (i = 0; i < nr_pstates - 1; i++)
++		if (pstates[i].base.domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV >= *freq)
++			break;
++
++	ret = nvkm_clk_ustate(base, pstates[i].pstate, 0);
++	ret |= nvkm_clk_ustate(base, pstates[i].pstate, 1);
 +	if (ret) {
-+		pci_err(dev, "failed to stop IOMMU\n");
++		nvkm_error(subdev, "cannot update clock\n");
 +		return ret;
 +	}
 +
- 	if (ACPI_FAILURE(acpi_evaluate_object(handle, "_RST", NULL, NULL))) {
- 		pci_warn(dev, "ACPI _RST failed\n");
--		return -ENOTTY;
-+		ret = -ENOTTY;
- 	}
- 
--	return 0;
-+	pci_reset_iommu_done(dev);
-+	return ret;
- }
- 
- bool acpi_pci_power_manageable(struct pci_dev *dev)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index b0f4d98036cdd..b4ca44ea6f494 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -13,6 +13,7 @@
- #include <linux/delay.h>
- #include <linux/dmi.h>
- #include <linux/init.h>
-+#include <linux/iommu.h>
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/pci.h>
-@@ -25,6 +26,7 @@
- #include <linux/logic_pio.h>
- #include <linux/device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/pci-ats.h>
- #include <linux/pci_hotplug.h>
- #include <linux/vmalloc.h>
- #include <asm/dma.h>
-@@ -95,6 +97,23 @@ bool pci_reset_supported(struct pci_dev *dev)
- 	return dev->reset_methods[0] != 0;
- }
- 
-+/*
-+ * Per PCIe r6.3, sec 10.3.1 IMPLEMENTATION NOTE, software disables ATS before
-+ * initiating a reset. Notify the iommu driver that enabled ATS.
-+ */
-+int pci_reset_iommu_prepare(struct pci_dev *dev)
-+{
-+	if (pci_ats_supported(dev))
-+		return iommu_dev_reset_prepare(&dev->dev);
++	*freq = pstates[i].base.domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV;
++
 +	return 0;
 +}
 +
-+void pci_reset_iommu_done(struct pci_dev *dev)
++static int gk20a_devfreq_get_cur_freq(struct device *dev, unsigned long *freq)
 +{
-+	if (pci_ats_supported(dev))
-+		iommu_dev_reset_done(&dev->dev);
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct nvkm_subdev *subdev = nvkm_device_subdev(drm->nvkm, NVKM_SUBDEV_CLK, 0);
++	struct nvkm_clk *base = nvkm_clk(subdev);
++
++	*freq = nvkm_clk_read(base, nv_clk_src_gpc) * GK20A_CLK_GPC_MDIV;
++
++	return 0;
 +}
 +
- #ifdef CONFIG_PCI_DOMAINS
- int pci_domains_supported = 1;
- #endif
-@@ -4529,13 +4548,22 @@ EXPORT_SYMBOL(pci_wait_for_pending_transaction);
-  */
- int pcie_flr(struct pci_dev *dev)
- {
-+	int ret = 0;
-+
- 	if (!pci_wait_for_pending_transaction(dev))
- 		pci_err(dev, "timed out waiting for pending transaction; performing function level reset anyway\n");
- 
-+	/* Have to call it after waiting for pending DMA transaction */
-+	ret = pci_reset_iommu_prepare(dev);
-+	if (ret) {
-+		pci_err(dev, "failed to stop IOMMU\n");
-+		return ret;
-+	}
-+
- 	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_BCR_FLR);
- 
- 	if (dev->imm_ready)
--		return 0;
-+		goto done;
- 
- 	/*
- 	 * Per PCIe r4.0, sec 6.6.2, a device must complete an FLR within
-@@ -4544,7 +4572,10 @@ int pcie_flr(struct pci_dev *dev)
- 	 */
- 	msleep(100);
- 
--	return pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
-+	ret = pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
-+done:
-+	pci_reset_iommu_done(dev);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(pcie_flr);
- 
-@@ -4572,6 +4603,7 @@ EXPORT_SYMBOL_GPL(pcie_reset_flr);
- 
- static int pci_af_flr(struct pci_dev *dev, bool probe)
- {
-+	int ret = 0;
- 	int pos;
- 	u8 cap;
- 
-@@ -4598,10 +4630,17 @@ static int pci_af_flr(struct pci_dev *dev, bool probe)
- 				 PCI_AF_STATUS_TP << 8))
- 		pci_err(dev, "timed out waiting for pending transaction; performing AF function level reset anyway\n");
- 
-+	/* Have to call it after waiting for pending DMA transaction */
-+	ret = pci_reset_iommu_prepare(dev);
-+	if (ret) {
-+		pci_err(dev, "failed to stop IOMMU\n");
-+		return ret;
-+	}
-+
- 	pci_write_config_byte(dev, pos + PCI_AF_CTRL, PCI_AF_CTRL_FLR);
- 
- 	if (dev->imm_ready)
--		return 0;
-+		goto done;
- 
- 	/*
- 	 * Per Advanced Capabilities for Conventional PCI ECN, 13 April 2006,
-@@ -4611,7 +4650,10 @@ static int pci_af_flr(struct pci_dev *dev, bool probe)
- 	 */
- 	msleep(100);
- 
--	return pci_dev_wait(dev, "AF_FLR", PCIE_RESET_READY_POLL_MS);
-+	ret = pci_dev_wait(dev, "AF_FLR", PCIE_RESET_READY_POLL_MS);
-+done:
-+	pci_reset_iommu_done(dev);
-+	return ret;
- }
- 
- /**
-@@ -4632,6 +4674,7 @@ static int pci_af_flr(struct pci_dev *dev, bool probe)
- static int pci_pm_reset(struct pci_dev *dev, bool probe)
- {
- 	u16 csr;
-+	int ret;
- 
- 	if (!dev->pm_cap || dev->dev_flags & PCI_DEV_FLAGS_NO_PM_RESET)
- 		return -ENOTTY;
-@@ -4646,6 +4689,12 @@ static int pci_pm_reset(struct pci_dev *dev, bool probe)
- 	if (dev->current_state != PCI_D0)
- 		return -EINVAL;
- 
-+	ret = pci_reset_iommu_prepare(dev);
-+	if (ret) {
-+		pci_err(dev, "failed to stop IOMMU\n");
-+		return ret;
-+	}
-+
- 	csr &= ~PCI_PM_CTRL_STATE_MASK;
- 	csr |= PCI_D3hot;
- 	pci_write_config_word(dev, dev->pm_cap + PCI_PM_CTRL, csr);
-@@ -4656,7 +4705,9 @@ static int pci_pm_reset(struct pci_dev *dev, bool probe)
- 	pci_write_config_word(dev, dev->pm_cap + PCI_PM_CTRL, csr);
- 	pci_dev_d3_sleep(dev);
- 
--	return pci_dev_wait(dev, "PM D3hot->D0", PCIE_RESET_READY_POLL_MS);
-+	ret = pci_dev_wait(dev, "PM D3hot->D0", PCIE_RESET_READY_POLL_MS);
-+	pci_reset_iommu_done(dev);
-+	return ret;
- }
- 
- /**
-@@ -5111,6 +5162,12 @@ static int cxl_reset_bus_function(struct pci_dev *dev, bool probe)
- 	if (rc)
- 		return -ENOTTY;
- 
-+	rc = pci_reset_iommu_prepare(dev);
-+	if (rc) {
-+		pci_err(dev, "failed to stop IOMMU\n");
-+		return rc;
-+	}
-+
- 	if (reg & PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR) {
- 		val = reg;
- 	} else {
-@@ -5125,6 +5182,7 @@ static int cxl_reset_bus_function(struct pci_dev *dev, bool probe)
- 		pci_write_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_CTL,
- 				      reg);
- 
-+	pci_reset_iommu_done(dev);
- 	return rc;
- }
- 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index d97335a401930..c1c32e57fe267 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4225,6 +4225,22 @@ static const struct pci_dev_reset_methods pci_dev_reset_methods[] = {
- 	{ 0 }
- };
- 
-+static int __pci_dev_specific_reset(struct pci_dev *dev, bool probe,
-+				    const struct pci_dev_reset_methods *i)
++static void gk20a_devfreq_reset(struct gk20a_devfreq *gdevfreq)
 +{
-+	int ret;
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_BUSY);
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_TOTAL);
++	gk20a_pmu_clear_idle_intr_status(gdevfreq);
 +
-+	ret = pci_reset_iommu_prepare(dev);
-+	if (ret) {
-+		pci_err(dev, "failed to stop IOMMU\n");
-+		return ret;
-+	}
-+
-+	ret = i->reset(dev, probe);
-+	pci_reset_iommu_done(dev);
-+	return ret;
++	gdevfreq->busy_time = 0;
++	gdevfreq->total_time = 0;
++	gdevfreq->time_last_update = ktime_get();
 +}
 +
- /*
-  * These device-specific reset methods are here rather than in a driver
-  * because when a host assigns a device to a guest VM, the host may need
-@@ -4239,7 +4255,7 @@ int pci_dev_specific_reset(struct pci_dev *dev, bool probe)
- 		     i->vendor == (u16)PCI_ANY_ID) &&
- 		    (i->device == dev->device ||
- 		     i->device == (u16)PCI_ANY_ID))
--			return i->reset(dev, probe);
-+			return __pci_dev_specific_reset(dev, probe, i);
++static int gk20a_devfreq_get_dev_status(struct device *dev,
++					struct devfreq_dev_status *status)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct gk20a_devfreq *gdevfreq = dev_to_gk20a_devfreq(dev);
++
++	gk20a_devfreq_get_cur_freq(dev, &status->current_frequency);
++
++	gk20a_devfreq_update_utilization(gdevfreq);
++
++	status->busy_time = ktime_to_ns(gdevfreq->busy_time);
++	status->total_time = ktime_to_ns(gdevfreq->total_time);
++
++	gk20a_devfreq_reset(gdevfreq);
++
++	NV_DEBUG(drm, "busy %lu total %lu %lu %% freq %lu MHz\n",
++		 status->busy_time, status->total_time,
++		 status->busy_time / (status->total_time / 100),
++		 status->current_frequency / 1000 / 1000);
++
++	return 0;
++}
++
++static struct devfreq_dev_profile gk20a_devfreq_profile = {
++	.timer = DEVFREQ_TIMER_DELAYED,
++	.polling_ms = 50,
++	.target = gk20a_devfreq_target,
++	.get_cur_freq = gk20a_devfreq_get_cur_freq,
++	.get_dev_status = gk20a_devfreq_get_dev_status,
++};
++
++int gk20a_devfreq_init(struct nvkm_clk *base, struct gk20a_devfreq **gdevfreq)
++{
++	struct nvkm_device *device = base->subdev.device;
++	struct nouveau_drm *drm = dev_get_drvdata(device->dev);
++	struct nvkm_device_tegra *tdev = device->func->tegra(device);
++	struct nvkm_pstate *pstates = base->func->pstates;
++	int nr_pstates = base->func->nr_pstates;
++	struct gk20a_devfreq *new_gdevfreq;
++	int i;
++
++	new_gdevfreq = drmm_kzalloc(drm->dev, sizeof(struct gk20a_devfreq), GFP_KERNEL);
++	if (!new_gdevfreq)
++		return -ENOMEM;
++
++	new_gdevfreq->regs = tdev->regs;
++
++	for (i = 0; i < nr_pstates; i++)
++		dev_pm_opp_add(base->subdev.device->dev,
++			       pstates[i].base.domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV, 0);
++
++	gk20a_pmu_init_perfmon_counter(new_gdevfreq);
++	gk20a_devfreq_reset(new_gdevfreq);
++
++	gk20a_devfreq_profile.initial_freq =
++		nvkm_clk_read(base, nv_clk_src_gpc) * GK20A_CLK_GPC_MDIV;
++
++	new_gdevfreq->gov_data.upthreshold = 45;
++	new_gdevfreq->gov_data.downdifferential = 5;
++
++	new_gdevfreq->devfreq = devm_devfreq_add_device(device->dev,
++							&gk20a_devfreq_profile,
++							DEVFREQ_GOV_SIMPLE_ONDEMAND,
++							&new_gdevfreq->gov_data);
++	if (IS_ERR(new_gdevfreq->devfreq))
++		return PTR_ERR(new_gdevfreq->devfreq);
++
++	*gdevfreq = new_gdevfreq;
++
++	return 0;
++}
++
++int gk20a_devfreq_resume(struct device *dev)
++{
++	struct gk20a_devfreq *gdevfreq = dev_to_gk20a_devfreq(dev);
++
++	if (!gdevfreq || !gdevfreq->devfreq)
++		return 0;
++
++	return devfreq_resume_device(gdevfreq->devfreq);
++}
++
++int gk20a_devfreq_suspend(struct device *dev)
++{
++	struct gk20a_devfreq *gdevfreq = dev_to_gk20a_devfreq(dev);
++
++	if (!gdevfreq || !gdevfreq->devfreq)
++		return 0;
++
++	return devfreq_suspend_device(gdevfreq->devfreq);
++}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..5b7ca8a7a5cdc050872743ea940efef6f033b7b9
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: MIT */
++#ifndef __GK20A_DEVFREQ_H__
++#define __GK20A_DEVFREQ_H__
++
++#include <linux/devfreq.h>
++
++struct gk20a_devfreq;
++
++#if defined(CONFIG_PM_DEVFREQ)
++int gk20a_devfreq_init(struct nvkm_clk *base, struct gk20a_devfreq **devfreq);
++
++int gk20a_devfreq_resume(struct device *dev);
++int gk20a_devfreq_suspend(struct device *dev);
++#else
++static inline int gk20a_devfreq_init(struct nvkm_clk *base, struct gk20a_devfreq **devfreq)
++{
++	return 0;
++}
++
++static inline int gk20a_devfreq_resume(struct device dev) { return 0; }
++static inline int gk20a_devfreq_suspend(struct device *dev) { return 0; }
++#endif /* CONFIG_PM_DEVFREQ */
++
++#endif /* __GK20A_DEVFREQ_H__ */
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c
+index 7c33542f651b2ad011967a1e6ca8003b7b2e6fc5..fa8ca53acbd1a298c26444f23570bd4ca039d328 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c
+@@ -27,6 +27,7 @@
+ #include <core/tegra.h>
+ 
+ #include "priv.h"
++#include "gk20a_devfreq.h"
+ #include "gk20a.h"
+ 
+ #define GPCPLL_CFG_SYNC_MODE	BIT(2)
+@@ -869,6 +870,10 @@ gm20b_clk_init(struct nvkm_clk *base)
+ 		return ret;
  	}
  
- 	return -ENOTTY;
++	ret = gk20a_devfreq_init(base, &clk->devfreq);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+index a0be53ffeb4479e4c229bd6bde86bb6bdb082b56..492b62c0ee9633c08538330f1106cf01d6b62771 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+@@ -5,6 +5,7 @@
+ #include <core/tegra.h>
+ 
+ #include "priv.h"
++#include "gk20a_devfreq.h"
+ #include "gk20a.h"
+ #include "gp10b.h"
+ 
+@@ -23,6 +24,10 @@ gp10b_clk_init(struct nvkm_clk *base)
+ 		return ret;
+ 	}
+ 
++	ret = gk20a_devfreq_init(base, &clk->devfreq);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+index 2f65a921a426e3f6339a31e964397f6eefa50250..1dd1c550484be7c643e86a6105d7282c536fe7ed 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+@@ -5,6 +5,7 @@
+ struct gp10b_clk {
+ 	/* currently applied parameters */
+ 	struct nvkm_clk base;
++	struct gk20a_devfreq *devfreq;
+ 	struct clk *clk;
+ 	u32 rate;
+ 
+
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250830-gk20a-devfreq-e39f739ab191
+prerequisite-change-id: 20250822-gp10b-reclock-77bf36005a86:v2
+prerequisite-patch-id: c4a76f247e85ffbcb8b7e1c4736764796754c3b4
+
+Best regards,
 -- 
-2.43.0
+Aaron Kling <webgeek1234@gmail.com>
+
 
