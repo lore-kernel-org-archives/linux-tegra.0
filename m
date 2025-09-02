@@ -1,73 +1,33 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E9F270552
-	for <linux-tegra@vger.kernel.org>; Tue,  2 Sep 2025 19:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF707342CA5;
+	Tue,  2 Sep 2025 19:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756839872; cv=none; b=Zjmjw9pqiaUNHF4jLuRxrrkqjWKJsmy3qsysLpRNJEp7094xs+4NuKieFubSs3izVIDU2nRrvi0Sh/hk/13WF0bqkP4Bpx3ZNUzGLafD0EWr5twMVznLqRl7PZUdyTuwuoNw26cJ/hIcR5BKnO6NJS7tRvGxfFFGneGID+XfgAY=
+	t=1756842492; cv=none; b=Olsc74HPWy+DX5SN8LupJf2Q7R8rRdynvWw1+PLH1WBfNWgSdctu8bFj+bj8iczBtqIFcc2N3f4oTAS5Xbi4tQdPMHjtQc+j1W8nEp7X8ghXS0XkIAyYWeOU9qEn5gopogbzWDlXT2aG7x4ZlBZxGXJSRGra7R1cYHKQPnT94Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756839872; c=relaxed/simple;
-	bh=QqaVNvulk0xedvJaOU8+kp2l8TnarTA2bdwLvtGz7mY=;
+	s=arc-20240116; t=1756842492; c=relaxed/simple;
+	bh=zpo0LfmwxyVWeY+SLgON3XGbp12XD/VDfJvwqrln8kM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UwXNhJkY7k4R8/Lg/wmelvk6xUO5IGfwrLGUFgqBII7Z2b8lq4TsVim7AEGR+i42jvUeCo326oOehcImdEiJ1m75uuWU8ta9G6Wz/oLhsvVCrO3c1TsAw0eqpy0zHTBpjQuJpc6VKP/A3SuagsvQK5vDAevcAMqPaQqYaygYjKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=crk5aPwb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 In-Reply-To:Content-Type; b=r+nN7DWDvnN2gbtC3FFibE5ZJ/dYy1ar2EV8fNpQQj2+Rjr5TTeC/IgFMbHjx2zx9qkU1kPpx8gAWyx120Yer1g3bpntjldcC0hJ/pmX0T9rJzYBlSqWGT16K46eHU9El07+ZKFZ2TRxNBGaL6eazVQzUMIFLFcxaqQ+Ej23IuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DM21A8Eq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="crk5aPwb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756839869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KTRbTb03LTpsY+kMi3vTzUOF7OI46/nmbSDtqXQsQaA=;
-	b=crk5aPwbMVZ/yTUdtV16p6dP/2yrBtCFaemRUYXPnzp9mx7jl1PFVGwjrkYWmh81FsmPB+
-	By9bPV+Z+QGxTzlaRBsob5MJbTjSio4dnM3meDBNQpxKqMSRvxT+nGAacMdaegJaZtGjS8
-	l9MfRrScZilDBNgaGXazFBGS+BqMkm0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-346-i_mCV6muPyaSU_A6vjrYhQ-1; Tue, 02 Sep 2025 15:04:28 -0400
-X-MC-Unique: i_mCV6muPyaSU_A6vjrYhQ-1
-X-Mimecast-MFC-AGG-ID: i_mCV6muPyaSU_A6vjrYhQ_1756839867
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b8dde54c1so14927745e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Sep 2025 12:04:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756839867; x=1757444667;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KTRbTb03LTpsY+kMi3vTzUOF7OI46/nmbSDtqXQsQaA=;
-        b=tHDuXnViCZcim/GS2GtdBG0ExKqq9aRhyGBr3YmS+fGdYD+3L/pzCWObCbNWbRlM0d
-         UPOT/UXMfDtwxmZ2tpqeOwETNZ8TwLxGtCA9bwB6q82TMGv5vk3R9B33/BG9HqIvK1c0
-         DmT4rsBUw/5q6OBzeDLmQ7PiHpJx94fB1XotCtZ5ymb1jf0OJLoE6FSYwB/Y/alWCX4g
-         tkYrGQGj4G4P94aoyRISBI2bM7/H8j3JTpotAGoqYSUFdx7eyUe9Swb+g1LjixooT8fX
-         t9PaKACMS4aG2+M/39iczQ9aSbD9w/Z8pAOMoqxNk0Zg/qEMwCAiL8DemPBg9XjmIly0
-         057g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7kRe40rrjOXdTj1yZLMGlYXyNXFO/zh0CA1+AVVSZxhhv0BjCl5NoStEsCNOw0BXBiy3bhK4IAVwUgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgfR585pY9SJLsLQO6Gze3Z+js/Q2tjQdUwgLJlH28YLO29uhb
-	CQCB8oROv/2ruBo+lzwLNsZmdzJakIvpy9C94GEatOVmWN6syxk/g9V8xCt59pLDhoz2GrEnkuD
-	pmwiPShhUpkbTM8eigsSrj6J1+PI0QJSeitoUbdqItliBW6i/pVZnnSyjVb30mt5v
-X-Gm-Gg: ASbGnctxuJjtc5AncGepNDxq7AUW4EkDQS2WlpBRoJMH3Vh8Il77SWPD0b8DiX8lUcd
-	e7TGOHjBneYeNk6Pbu9kJvMePnNtq3eJdAuv49qKsuJJj3yR5sq4N8p+nRvkUrY6LoxdSLhCDFU
-	wfmsi5wYof5QVpBiUIfXC8UdgnpNOV1bm3AfcetV6UC3rN8gR4Qi1UaRxKFMWzHG8jguOaUaHOv
-	85Z5+z/sJDCfPZuK82eciUJiHIgZxKS7PWwPlGHULGYan69CPgNrBQ/5m6e5x8R2E9dfrZ/z20I
-	ZJY3jZTtHnFH+Mozkwm4cTv/TGwDg/PSiKjb/he/Ve41512T9XmkDVZXhUlJ/zkrt5Naxp1wZvL
-	rkaiVMNYW/c5lPck3WWEo/jqk6Gmu8+D+9uovxV8uISxScJ9vV9hksam4vB+xmrVJ8Yk=
-X-Received: by 2002:a05:600c:3543:b0:45b:8822:d683 with SMTP id 5b1f17b1804b1-45b88321c6dmr85814285e9.4.1756839866911;
-        Tue, 02 Sep 2025 12:04:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4ZcW8yeA944p6sSftrTNNVzyMJNCGA2g5/WkaSIdV2mLjEgNupS0gXkk9kO1eEWTw0bxfSw==
-X-Received: by 2002:a05:600c:3543:b0:45b:8822:d683 with SMTP id 5b1f17b1804b1-45b88321c6dmr85814075e9.4.1756839866506;
-        Tue, 02 Sep 2025 12:04:26 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e886619sm205500415e9.15.2025.09.02.12.04.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 12:04:25 -0700 (PDT)
-Message-ID: <e513c127-d4f4-4e93-8d4b-23d1e4fdceb5@redhat.com>
-Date: Tue, 2 Sep 2025 21:04:24 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DM21A8Eq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353B0C4CEED;
+	Tue,  2 Sep 2025 19:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756842491;
+	bh=zpo0LfmwxyVWeY+SLgON3XGbp12XD/VDfJvwqrln8kM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DM21A8EqyRTJsduYnMXLa+1Ki4G/laXH+KbDq2ncmjw/z/tUhbquM8fsLgzuW/HU1
+	 wwJOYjmlhl0Qc3nW8LFcex/d02WMKEAqwR8tmwu/U5/kqp0P0hLDRuqluFsAmUnZ6K
+	 /Ghw87c20Tqm9I0mOCgXJu77E/wQnrrm0O4GXwREwm2+eHQVAABDkBukPKgxNFz+g2
+	 QVqANSUeq1WgJ8kKWKSd0cNbpfWUKTUmLQBcaADA33N1AcB0PbnAz5zRCPPk9Jr8tl
+	 LP4u5TKMjU2DJHD1rjMLYGO3eQ0v2GHvA1C5exEp3L9UF6HrVkXJwecMcGnvsc6WO0
+	 1muNtpfiBlSng==
+Message-ID: <64a744bd-0f62-498b-8886-a5338fd8410c@kernel.org>
+Date: Tue, 2 Sep 2025 14:48:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,119 +35,420 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] mm/cma: Allow dynamically creating CMA areas
-To: Frank van der Linden <fvdl@google.com>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- linux-mm@kvack.org
-References: <20250902154630.4032984-1-thierry.reding@gmail.com>
- <20250902154630.4032984-4-thierry.reding@gmail.com>
- <CAPTztWa7kcx8bBEJEKvnjcD4v1-eDLVxMd9C10XiBQi4CDLfHg@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 7/7] cpufreq: CPPC: add autonomous mode boot parameter
+ support
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
+ corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com,
+ ray.huang@amd.com, gautham.shenoy@amd.com, perry.yuan@amd.com,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ bbasu@nvidia.com
+References: <20250823200121.1320197-1-sumitg@nvidia.com>
+ <20250823200121.1320197-8-sumitg@nvidia.com>
+ <507095d6-512a-4561-bc90-12a34a43302a@amd.com>
+ <30b46202-d377-4455-9551-5874e1e9f104@nvidia.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAPTztWa7kcx8bBEJEKvnjcD4v1-eDLVxMd9C10XiBQi4CDLfHg@mail.gmail.com>
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <30b46202-d377-4455-9551-5874e1e9f104@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
->> +>> +struct cma *__init cma_create(phys_addr_t base, phys_addr_t size,
->> +                             unsigned int order_per_bit, const char *name)
->> +{
->> +       struct cma *cma;
->> +       int ret;
->> +
->> +       ret = cma_check_memory(base, size);
->> +       if (ret < 0)
->> +               return ERR_PTR(ret);
->> +
->> +       cma = kzalloc(sizeof(*cma), GFP_KERNEL);
->> +       if (!cma)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       cma_init_area(cma, name, size, order_per_bit);
->> +       cma->ranges[0].base_pfn = PFN_DOWN(base);
->> +       cma->ranges[0].early_pfn = PFN_DOWN(base);
->> +       cma->ranges[0].count = cma->count;
->> +       cma->nranges = 1;
->> +
->> +       cma_activate_area(cma);
->> +
->> +       return cma;
->> +}
->> +
->> +void cma_free(struct cma *cma)
->> +{
->> +       kfree(cma);
->> +}
->> --
->> 2.50.0
+On 9/1/2025 8:37 AM, Sumit Gupta wrote:
+> 
+> On 26/08/25 00:10, Mario Limonciello wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 8/23/2025 3:01 PM, Sumit Gupta wrote:
+>>> Add kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable CPPC
+>>> autonomous performance selection at system startup. When autonomous mode
+>>> is enabled, the hardware automatically adjusts CPU performance based on
+>>> workload demands using Energy Performance Preference (EPP) hints from
+>>> the OS.
+>>>
+>>> This parameter allows to configure the autonomous mode on all CPUs
+>>> without requiring runtime sysfs manipulation if the 'auto_sel' register
+>>> is present.
+>>>
+>>> When auto_sel_mode=1:
+>>> - All CPUs are configured for autonomous operation during driver init
+>>> - EPP is set to performance preference (0x0) by default
+>>> - Min/max performance bounds use defaults
+>>> - CPU frequency scaling is handled by hardware rather than OS
+>>>
+>>> Also ensure that when autonomous mode is active, the set_target callback
+>>> returns early since hardware controls frequency scaling directly.
+>>>
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>> ---
+>>>   .../admin-guide/kernel-parameters.txt         |  12 ++
+>>>   drivers/cpufreq/cppc_cpufreq.c                | 171 ++++++++++++++++--
+>>>   2 files changed, 168 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/ 
+>>> Documentation/admin-guide/kernel-parameters.txt
+>>> index 86f395f2933b..ea58deb88c36 100644
+>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>> @@ -911,6 +911,18 @@
+>>>                       Format:
+>>> <first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
+>>>
+>>> +     cppc_cpufreq.auto_sel_mode=
+>>> +                     [CPU_FREQ] Autonomous Performance Level Selection.
+>>> +                     When Autonomous selection is enabled, then the 
+>>> hardware is
+>>> +                     allowed to autonomously select the CPU frequency.
+>>> +                     In Autonomous mode, Energy Performance 
+>>> Preference(EPP)
+>>> +                     provides input to the hardware to favour 
+>>> performance (0x0)
+>>> +                     or energy efficiency (0xff).
+>>> +                     Format: <bool>
+>>> +                     Default: disabled.
+>>> +                     0: force disabled
+>>> +                     1: force enabled
+>>
+>> I don't think you can actually force enable.  If the hardware doesn't
+>> support it, setting 1 won't do anything.
+>>
+>> IoW really setting 1 is "enable if supported".
+>>
+> 
+> Yes, will change in v3.
 > 
 > 
-> I agree that supporting dynamic CMA areas would be good. However, by
-> doing it like this, these CMA areas are invisible to the rest of the
-> system. E.g. cma_for_each_area() does not know about them. It seems a
-> bit inconsistent that there will now be some areas that are globally
-> known, and some that are not.
+>>> +
+>>>       cpuidle.off=1   [CPU_IDLE]
+>>>                       disable the cpuidle sub-system
+>>>
+>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/ 
+>>> cppc_cpufreq.c
+>>> index 5e1bbb5f67b8..bbf654c56ff9 100644
+>>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>>> @@ -27,6 +27,8 @@
+>>>   #include <acpi/cppc_acpi.h>
+>>>
+>>>   static struct cpufreq_driver cppc_cpufreq_driver;
+>>> +/* Autonomous Selection */
+>>> +static bool auto_sel_mode;
+>>>
+>>>   #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
+>>>   static enum {
+>>> @@ -272,6 +274,14 @@ static int cppc_cpufreq_set_target(struct 
+>>> cpufreq_policy *policy,
+>>>       freqs.old = policy->cur;
+>>>       freqs.new = target_freq;
+>>>
+>>> +     /*
+>>> +      * In autonomous mode, hardware handles frequency scaling directly
+>>> +      * based on workload demands and EPP hints, so OS frequency 
+>>> requests
+>>> +      * are not needed.
+>>> +      */
+>>> +     if (cpu_data->perf_caps.auto_sel)
+>>> +             return ret;
+>>> +
+>>>       cpufreq_freq_transition_begin(policy, &freqs);
+>>>       ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>>>       cpufreq_freq_transition_end(policy, &freqs, ret != 0);
+>>> @@ -555,6 +565,12 @@ static struct cppc_cpudata 
+>>> *cppc_cpufreq_get_cpu_data(unsigned int cpu)
+>>>               goto free_mask;
+>>>       }
+>>>
+>>> +     ret = cppc_get_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>>> +     if (ret) {
+>>> +             pr_debug("Err reading CPU%d perf ctrls: ret:%d\n", cpu, 
+>>> ret);
+>>> +             goto free_mask;
+>>> +     }
+>>> +
+>>>       return cpu_data;
+>>>
+>>>   free_mask:
+>>> @@ -642,6 +658,79 @@ static int cppc_cpufreq_set_max_perf(struct 
+>>> cpufreq_policy *policy, u64 val,
+>>>       return (ret == -EOPNOTSUPP) ? 0 : ret;
+>>>   }
+>>>
+>>> +static int cppc_cpufreq_update_autosel_epp(struct cpufreq_policy 
+>>> *policy, int auto_sel, u32 epp)
+>>> +{
+>>> +     struct cppc_cpudata *cpu_data = policy->driver_data;
+>>> +     unsigned int cpu = policy->cpu;
+>>> +     int ret;
+>>> +
+>>> +     pr_debug("cpu%d: curr epp:%u, curr mode:%u, new epp:%u, new 
+>>> mode:%d\n", cpu,
+>>> +              cpu_data->perf_ctrls.energy_perf, cpu_data- 
+>>> >perf_caps.auto_sel, epp, auto_sel);
+>>> +
+>>> +     mutex_lock(&cppc_cpufreq_update_autosel_config_lock);
+>>
+>> As I noticed below a case you missed the mutex unlock, this feels like a
+>> good candidate for
+>>
+>> guard(mutex)();
+>>
+> 
+> I will check about 'guard(mutex)()' and change accordingly in v3.
+> 
+>>> +
+>>> +     ret = cppc_set_epp(cpu, epp);
+>>> +     if (ret) {
+>>> +             pr_warn("failed to set energy_perf for cpu:%d (%d)\n", 
+>>> cpu, ret);
+>>> +             goto out;
+>>> +     }
+>>> +     cpu_data->perf_ctrls.energy_perf = epp;
+>>> +
+>>> +     ret = cppc_set_auto_sel(cpu, auto_sel);
+>>> +     if (ret) {
+>>> +             pr_warn("failed to set auto_sel for cpu:%d (%d)\n", 
+>>> cpu, ret);
+>>> +             return ret;
+>>
+>> Looks like a case that you didn't unlock the mutex.
+> 
+> ACK.
+> 
+>>
+>>> +     }
+>>> +     cpu_data->perf_caps.auto_sel = auto_sel;
+>>> +
+>>> +out:
+>>> + mutex_unlock(&cppc_cpufreq_update_autosel_config_lock);
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +static int cppc_cpufreq_update_autosel_mperf_ctrls(struct 
+>>> cpufreq_policy *policy, u32 min_p,
+>>> +                                                u32 max_p, bool 
+>>> update_reg, bool update_policy)
+>>> +{
+>>> +     struct cppc_cpudata *cpu_data = policy->driver_data;
+>>> +     unsigned int cpu = policy->cpu;
+>>> +     int ret;
+>>> +
+>>> +     pr_debug("cpu%d: curr max_perf:%u, curr min_perf:%u, new 
+>>> max_perf:%u, new min_perf:%u\n",
+>>> +              cpu, cpu_data->perf_ctrls.max_perf, cpu_data- 
+>>> >perf_ctrls.min_perf, max_p, min_p);
+>>> +
+>>> +     ret = cppc_cpufreq_set_min_perf(policy, min_p, update_reg, 
+>>> update_policy);
+>>> +     if (ret) {
+>>> +             pr_debug("failed to set min_perf for cpu:%d (%d)\n", 
+>>> cpu, ret);
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     ret = cppc_cpufreq_set_max_perf(policy, max_p, update_reg, 
+>>> update_policy);
+>>> +     if (ret) {
+>>> +             pr_debug("failed to set max_perf for cpu:%d (%d)\n", 
+>>> cpu, ret);
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +static int cppc_cpufreq_update_autosel_configs(struct cpufreq_policy 
+>>> *policy, int auto_sel,
+>>> +                                            u32 epp, u32 min_perf, 
+>>> u32 max_perf,
+>>> +                                            bool update_reg, bool 
+>>> update_policy)
+>>> +{
+>>> +     int ret;
+>>> +
+>>> +     ret = cppc_cpufreq_update_autosel_mperf_ctrls(policy, min_perf, 
+>>> max_perf,
+>>> +                                                   update_reg, 
+>>> update_policy);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     ret = cppc_cpufreq_update_autosel_epp(policy, auto_sel, epp);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>>   static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>>>   {
+>>>       unsigned int cpu = policy->cpu;
+>>> @@ -710,11 +799,28 @@ static int cppc_cpufreq_cpu_init(struct 
+>>> cpufreq_policy *policy)
+>>>       policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
+>>>       cpu_data->perf_ctrls.desired_perf = caps->highest_perf;
+>>>
+>>> -     ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>>> -     if (ret) {
+>>> -             pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+>>> -                      caps->highest_perf, cpu, ret);
+>>> -             goto out;
+>>> +     if (cpu_data->perf_caps.auto_sel) {
+>>> +             ret = cppc_set_enable(cpu, true);
+>>> +             if (ret) {
+>>> +                     pr_err("Failed to enable CPPC on cpu%d (%d)\n", 
+>>> cpu, ret);
+>>> +                     goto out;
+>>> +             }
+>>> +
+>>> +             ret = cppc_cpufreq_update_autosel_configs(policy, true,
+>>> + CPPC_EPP_PERFORMANCE_PREF,
+>>> + caps->lowest_nonlinear_perf,
+>>> + caps->nominal_perf, true, false);
+>>> +             if (ret) {
+>>> +                     pr_debug("Failed to update autosel configs on 
+>>> CPU%d(%d)\n", cpu, ret);
+>>> +                     goto out;
+>>> +             }
+>>> +     } else {
+>>> +             ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>>> +             if (ret) {
+>>> +                     pr_debug("Err setting perf value:%d on CPU:%d. 
+>>> ret:%d\n",
+>>> +                              caps->highest_perf, cpu, ret);
+>>> +                     goto out;
+>>> +             }
+>>>       }
+>>>
+>>>       cppc_cpufreq_cpu_fie_init(policy);
+>>> @@ -736,6 +842,13 @@ static void cppc_cpufreq_cpu_exit(struct 
+>>> cpufreq_policy *policy)
+>>>
+>>>       cpu_data->perf_ctrls.desired_perf = caps->lowest_perf;
+>>>
+>>> +     if (cpu_data->perf_caps.auto_sel) {
+>>> +             ret = cppc_cpufreq_update_autosel_epp(policy, false,
+>>> + CPPC_EPP_ENERGY_EFFICIENCY_PREF);
+>>> +             if (ret)
+>>> +                     return;
+>>> +     }
+>>> +
+>>>       ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
+>>>       if (ret)
+>>>               pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+>>> @@ -920,17 +1033,10 @@ static ssize_t store_auto_select(struct 
+>>> cpufreq_policy *policy,
+>>>        * On enabling auto_select: set min/max_perf register and 
+>>> update policy.
+>>>        * On disabling auto_select: update only policy.
+>>>        */
+>>> -     ret = cppc_cpufreq_set_min_perf(policy, min_perf, update_reg, 
+>>> true);
+>>> -     if (ret) {
+>>> -             pr_warn("failed to %s update min policy for cpu:%d 
+>>> (%d)\n",
+>>> -                     val > 0 ? "set min_perf and" : "", cpu, ret);
+>>> -             return ret;
+>>> -     }
+>>> -
+>>> -     ret = cppc_cpufreq_set_max_perf(policy, max_perf, update_reg, 
+>>> true);
+>>> +     ret = cppc_cpufreq_update_autosel_mperf_ctrls(policy, min_perf, 
+>>> max_perf, update_reg, true);
+>>>       if (ret) {
+>>> -             pr_warn("failed to %s update max policy for cpu:%d 
+>>> (%d)\n",
+>>> -                     val > 0 ? "set max_perf and" : "", cpu, ret);
+>>> +             pr_warn("failed to %s update policy for cpu:%d (%d)\n",
+>>> +                     val > 0 ? "set min/max_perf and" : "", cpu, ret);
+>>>               return ret;
+>>>       }
+>>>
+>>> @@ -1139,13 +1245,44 @@ static struct cpufreq_driver 
+>>> cppc_cpufreq_driver = {
+>>>       .name = "cppc_cpufreq",
+>>>   };
+>>>
+>>> +static void cppc_cpufreq_set_epp_autosel_allcpus(bool auto_sel, u64 
+>>> epp)
+>>> +{
+>>> +     int cpu, ret;
+>>> +
+>>> +     for_each_present_cpu(cpu) {
+>>> +             ret = cppc_set_epp(cpu, epp);
+>>> +             if (ret)
+>>> +                     pr_debug("failed to set energy_perf for cpu:%d 
+>>> (%d)\n", cpu, ret);
+>>> +
+>>> +             ret = cppc_set_auto_sel(cpu, auto_sel);
+>>> +             if (ret)
+>>> +                     pr_debug("failed to set auto_sel for cpu:%d 
+>>> (%d)\n", cpu, ret);
+>>> +     }
+>>> +}
+>>> +
+>>>   static int __init cppc_cpufreq_init(void)
+>>>   {
+>>> +     bool auto_sel;
+>>>       int ret;
+>>>
+>>>       if (!acpi_cpc_valid())
+>>>               return -ENODEV;
+>>>
+>>> +     if (auto_sel_mode) {
+>>> +             /*
+>>> +              * Check if autonomous selection is supported by 
+>>> testing CPU 0.
+>>> +              * If supported, enable autonomous mode on all CPUs.
+>>> +              */
+>>> +             ret = cppc_get_auto_sel(0, &auto_sel);
+>>> +             if (!ret) {
+>>> +                     pr_info("Enabling autonomous mode on all CPUs\n");
+>>> +                     cppc_cpufreq_set_epp_autosel_allcpus(true, 
+>>> CPPC_EPP_PERFORMANCE_PREF);
+>>> +             } else {
+>>> +                     pr_warn("Autonomous selection not supported, 
+>>> disabling auto_sel_mode\n");
+>>> +                     auto_sel_mode = false;
+>>> +             }
+>>> +     }
+>>> +
+>>>       cppc_freq_invariance_init();
+>>>       populate_efficiency_class();
+>>>
+>>> @@ -1160,8 +1297,12 @@ static void __exit cppc_cpufreq_exit(void)
+>>>   {
+>>>       cpufreq_unregister_driver(&cppc_cpufreq_driver);
+>>>       cppc_freq_invariance_exit();
+>>> +     auto_sel_mode = 0;
+>>>   }
+>>>
+>>> +module_param(auto_sel_mode, bool, 0000);
+>>> +MODULE_PARM_DESC(auto_sel_mode, "Enable Autonomous Performance Level 
+>>> Selection");
+>>
+>> Why default to disabled?  As a precaution?  We enable EPP by default in
+>> the *-pstate drivers if the hardware supports it, I would think it makes
+>> sense here too.
+>>
+> 
+> Kept disabled by default both as precaution and to enable it based on 
+> preference.
+> Someone may want to try different config values during bringup, 
+> verification etc.
 
-Yeah, I'm not a fan of that.
+I personally don't think that bringup software should dictate the steady 
+state decision.  Bringup can trivially have a custom kernel command line 
+that disables it.
 
-What is the big problem we are trying to solve here? Why do they have to 
-be dynamic, why do they even have to support freeing?
+Otherwise this means that the "worries of stability" translate into a 
+custom kernel command line option on all production hardware.
 
--- 
-Cheers
+So I feel once you're happy with it on a variety of hardware you should 
+consider a patch for enabling it by default at some point.
 
-David / dhildenb
+
 
