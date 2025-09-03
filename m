@@ -1,141 +1,146 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468661F7575;
-	Wed,  3 Sep 2025 15:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBC32253FB
+	for <linux-tegra@vger.kernel.org>; Wed,  3 Sep 2025 15:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912321; cv=none; b=cMH+OUKRLKxLCTtEjnPGdGUFWUjEf5isi1zaBePQitaUZ/8qKR8lqovMiYWLRFfgIr1YgopXNdNC1dAWx9MqLNwoZBVJyv4XWfSl7DURazeUS9ByzdoQVkzdXSNJyn0Y4vesgECq0xuqtBhgRI4ItjEETvtGMYQqR+qVNejPMqk=
+	t=1756912534; cv=none; b=TVvlluA7JrDw/y35UQUIRBuHjcva15iSg4lUKSTSXoiuoyiCQolJEKW55uP0XS9GNzj8113OsCfH7TSLETLWgj2e6HxLiWujrzu/boetjVylhR6Qj1ylXtqUxX3QDm1aylvWaIlfzK7QUCglZuMj5SMZeTkKpG6sbRM82B57hwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912321; c=relaxed/simple;
-	bh=fuzzdqflWKxJG/2KMhMC5oLTglkqDdupgl8/Aw9toTA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=plIj5bLt/4NOuW20jekEKHU2A/CCA/cL9OdZ7nkXDk6fB3N9ixk26i1bU4vjyJ1DJGaTvBCcqipyJXpTdJFMeBktpwhQ0B1anYhoFIDqNS+5/rUC1LtA8VuQI5FfZl101C3Q9YIhzmUiVUhu36PYzHF5TUTshfayGEXeoDA+lVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pomIhLVH; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1756912534; c=relaxed/simple;
+	bh=P/K1i7FofzljhrSueDv/pWynCeqTvU5xHXstL0F7owk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tw5R6mBgnKqOG+26/5GzQ+3atZ8e6LFAT2KmSUdgT6kJNJQ233TipWRGBFDds4ZuIF+g1fzGNWUPKwqGYHBsX3ykZHKtqfLkgPHlSBCd+pIdlZQTDl1Ob3VRUo22Th2X2kvdo0NRtaF8iP2WzmxlfBxFBavGWmtL9PWEAyxPiOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bGp6VlD/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pomIhLVH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756912313; x=1757517113; i=markus.elfring@web.de;
-	bh=fuzzdqflWKxJG/2KMhMC5oLTglkqDdupgl8/Aw9toTA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pomIhLVH9JpLeqymo/d6RPIY+zdP+2nKSmCeyVnbvLEg4q1/gsmMg/guDps1k41B
-	 +1MG5242Xe1kxgnvY2XMqi/zP4ewofH8eLUTZ6ikkiouSW2bq+WMSZUZSDNgvliHR
-	 sujKAllYvopJCy6rZjj/I5hH2jyUdrnARm7njF0LHZ8+rTWBabtvbXf4hAv2bisa4
-	 5IR2idZTifeY39ZhbTGgW4QtlURq9vc193j7aE7evXZG7knJyhrTWQSkUdb1F+wrp
-	 SQSUVLTcUZwkNZh9qWQT/gKlYh4bfBJzGbb0nZOzPjg+pyViTNM56UZjVv1Xreivb
-	 R9WBQp/p6cAnIhD3Pg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.225]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1VL-1uKTzy0p7H-00ed5L; Wed, 03
- Sep 2025 17:11:53 +0200
-Message-ID: <a111df8d-0e1a-49d0-8bd4-9b41c60151d6@web.de>
-Date: Wed, 3 Sep 2025 17:11:51 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bGp6VlD/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756912531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8cne1IA1KPb6ZTLi6iYFaT1l8FItUau4GOBy9fEXnFU=;
+	b=bGp6VlD/KU/FvjGj/4RKX0xjJcdMbjVfWrZidgeTycl63dnvbPqOOELLbjx8yVgbf0mrXD
+	TOsSm5l+CjdPh/n4iQpWdzVXl/t7QnQO3JscnHKotE8kM7hp42+QjJmpKmOGPQghCftdoX
+	HXNi2NknKVfKlktffc6W3SSePWwByFU=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-145-pZ3tQX1YNvqqk3-coPpcHA-1; Wed, 03 Sep 2025 11:15:30 -0400
+X-MC-Unique: pZ3tQX1YNvqqk3-coPpcHA-1
+X-Mimecast-MFC-AGG-ID: pZ3tQX1YNvqqk3-coPpcHA_1756912530
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70fa9206690so17767096d6.0
+        for <linux-tegra@vger.kernel.org>; Wed, 03 Sep 2025 08:15:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756912529; x=1757517329;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8cne1IA1KPb6ZTLi6iYFaT1l8FItUau4GOBy9fEXnFU=;
+        b=ogVRvjxK8TA5Vs4CRrCOPZPCh/Vd5oNTVrCqL3XnZFp7aCEk5ZdHfT2ohLj6UwgD5Z
+         iFuUJZ6DWsJHAifLwBAEGTaQAToHKgCCuEzy80K+CkGI+IA8iEsIc9+INWMhMyD4lH8Q
+         BQZO7jyiTG6lhjRTKZoTahM/s8cTN0OF0ojQmScqwUJnc+M9Tg+WYFV+SjpMQIFRW9h7
+         s82vxbseLwt3P1hzI7ORKhYSTtkQBTaTPRizUEskH+f8KdUbvZQLbD1UWkCWkrGmm43N
+         tZFxOa0myNsptykFRw7sMa+IrknO7W1EyRA6repwrtUW9Xk60ET1qA5/94JG2URoXi2j
+         3F7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzP2TmL+pR//t42sDrJN37ml6ajrfl2RwfkRLRRfPfZhiG4PacB4uhVxAh5t1jf4tdkoGYARV3YxeUdQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4iuyOZ3lZKsFnhGRZchyONOLXC2L0yUnB+Z16CmNMQvR8ukw9
+	mLlP8AKF7TgkjC2rNhF6bN9DVAO+8Sm+EauCKZUq+0pH0+6IddRN9VBrubYgFDcXy4LCdss42hh
+	XNdjJsvh+9zyenrm1s6TguPtgMvCyqUvVggyQZ5kaIwdJmmp3918Yotik6XNbVbiTSt4r1478wd
+	7pcej+9f8d3Zkzx8YAQRgCYd2VbvnZgoBIsSpawCsecqMLyeM=
+X-Gm-Gg: ASbGncsLGMCExEHMChdAk8+PzsOEC1sflfEp53cm15Cy9CRPVaxaioI0Sjln5RgshSv
+	jF4HZjZJqsjXKXi3CDYgfe+3ymBDUPmMjWH1kKRwhQSMFRCKJ7kSR+xQVmTLtxh+wpbJgrIUfpJ
+	XFeIooCN9x0HUkjf2X7ZtbCl5RZbyd+9SwhrGb7eWfLYHju9hn89P5EEkBVo5nct7ukvX7zH9Wv
+	I2t0isicpVfsqz5qlwbOHO6rd/ANGqtIHYM27HKHZiZQTwq/XpwT9cwGiBeXN/NfIlElSCtdNvM
+	RKwXYSovLfOYy+dpXk33NKGnsl8dx9B5EfsW86n/tthscJb0kbXu8dZjdDFMhcYZ1MARykcExJ4
+	=
+X-Received: by 2002:ad4:5bab:0:b0:714:36b2:a260 with SMTP id 6a1803df08f44-71436b2aa69mr119383976d6.0.1756912528607;
+        Wed, 03 Sep 2025 08:15:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKzf82nm21b07pPChbmaSLNG0cWMiPFqfO23yrmL4+PQzlGJM4jozMFEYUd/hUiknVHZDi9g==
+X-Received: by 2002:ad4:5bab:0:b0:714:36b2:a260 with SMTP id 6a1803df08f44-71436b2aa69mr119383076d6.0.1756912527470;
+        Wed, 03 Sep 2025 08:15:27 -0700 (PDT)
+Received: from [10.12.114.224] ([2600:382:850c:786a:ff8e:13a:e47c:3472])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de16sm30827706d6.3.2025.09.03.08.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 08:15:26 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Date: Wed, 03 Sep 2025 11:15:02 -0400
+Subject: [PATCH v2 1/6] clk: tegra: audio-sync: convert from round_rate()
+ to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Miaoqian Lin <linmq006@gmail.com>, linux-tegra@vger.kernel.org,
- linux-phy@lists.infradead.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- JC Kuo <jckuo@nvidia.com>, Johan Hovold <johan@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>
-References: <20250903045241.2489993-1-linmq006@gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb-tegra210: Fix reference leaks in
- tegra210_xusb_padctl_probe
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250903045241.2489993-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Vto5T7HMuhv4kLXfZikyR3WNBfDL8qO34gg6b1ELJlzDUv8vfLa
- MukUXfM+HWys/C+U+aQZX/H8YkvmBGqLW7DhJ7ZDnvTs2iv0Bknv4wBFyW6END5Qwhu/9AP
- 208f+MuTguFgnN3u/q1uQVd0qOz68xngXnz63F2ESBouG3iBoKhB1xF3SE7rA0j3QiC/761
- Fofy/dGCA9Dy6s/USFqhQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:34rJf0QV/6o=;z/hqGl9fupoaEARWp5RfPr3rCkc
- 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
+Message-Id: <20250903-clk-tegra-round-rate-v2-v2-1-3126d321d4e4@redhat.com>
+References: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
+In-Reply-To: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756912523; l=1671;
+ i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
+ bh=P/K1i7FofzljhrSueDv/pWynCeqTvU5xHXstL0F7owk=;
+ b=WIU9TP1V3lwK1E6Bzl3annZF1C3X/dJCzNEowbNKKUGh/2qhcuD2XUgjQlh59rAwf72D6j2EZ
+ zPdaX3KzhjGCwHySbROqsYWV6u1zxKdS6xuPBft/N1d2s+VikDW4r19
+X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
+ pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-> Add missing of_node_put() and put_device() calls to release references.
+The round_rate() clk ops is deprecated, so migrate this driver from
+round_rate() to determine_rate() using the Coccinelle semantic patch
+on the cover letter of this series.
 
-See also the commit bca065733afd1e3a89a02f05ffe14e966cd5f78e ("phy: tegra: xusb:
-fix device and OF node leak at probe") by Johan Hovold.
+Link: https://lore.kernel.org/r/20250710-clk-tegra-round-rate-v1-1-e48ac3df4279@redhat.com
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/tegra/clk-audio-sync.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
+index 2c4bb96eae16e2d4da8740d4596cdb562fd65e73..468a4403f147a2bfbff65b34df8b80a0095eed15 100644
+--- a/drivers/clk/tegra/clk-audio-sync.c
++++ b/drivers/clk/tegra/clk-audio-sync.c
+@@ -17,15 +17,15 @@ static unsigned long clk_sync_source_recalc_rate(struct clk_hw *hw,
+ 	return sync->rate;
+ }
+ 
+-static long clk_sync_source_round_rate(struct clk_hw *hw, unsigned long rate,
+-				       unsigned long *prate)
++static int clk_sync_source_determine_rate(struct clk_hw *hw,
++					  struct clk_rate_request *req)
+ {
+ 	struct tegra_clk_sync_source *sync = to_clk_sync_source(hw);
+ 
+-	if (rate > sync->max_rate)
++	if (req->rate > sync->max_rate)
+ 		return -EINVAL;
+ 	else
+-		return rate;
++		return 0;
+ }
+ 
+ static int clk_sync_source_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -38,7 +38,7 @@ static int clk_sync_source_set_rate(struct clk_hw *hw, unsigned long rate,
+ }
+ 
+ const struct clk_ops tegra_clk_sync_source_ops = {
+-	.round_rate = clk_sync_source_round_rate,
++	.determine_rate = clk_sync_source_determine_rate,
+ 	.set_rate = clk_sync_source_set_rate,
+ 	.recalc_rate = clk_sync_source_recalc_rate,
+ };
+
+-- 
+2.50.1
+
