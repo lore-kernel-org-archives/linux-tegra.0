@@ -1,258 +1,156 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C100E24E016
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Sep 2025 15:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB53E28151C;
+	Wed,  3 Sep 2025 15:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912582; cv=none; b=Qx7eG9nnwRuxDDI3EBlEfiMu1sAG0N4W+d7k2pYuutlkBNh3kcJEB1lrNyvLtgecmZZvI1HYc9h/zGNphpZ+auUWhhOlvzMHM5ELLAyiTRHZSl604Xh3nfZTi+7Ujn/ycSpDoSWYX4F5h0Y1OvO7vcHoCbRbc73MsEAvksLPn2U=
+	t=1756913893; cv=none; b=qOllBEQuuQNCHBlxsziy4tpv6InLODrUgD/X0ZFNDya5mUQHGPUdPpd33Qtpsqd+X6sBK5NgafaB/Jkuz72zd/tGnknGtJ8d8qM57XJd31OlemxMJJRizi0hrXyjH4+Jsn9MnkmWzStDS2qnIYncR6xe8p8LeioRdy12KWH6m7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912582; c=relaxed/simple;
-	bh=43sEbwhMVLXr4Ugy2k4lhtQIjlFVPQRMntWIuVLuAbk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J+f59tGaqNv/GDY5p/GRFNmtbJayfoZ+qEKN6/nAPJyMrftt1EU9yUgXEg2eXeWcB/h0x2yFHv2XAkgu81ctuj/nu0LDr74KMhGWRFGTyfsyHJYSab4IH2MF8Dz1weT0nMUH8wstZ4vY5roztVmqTAvjJNBnuEDWaOG+ZHRZ5SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QjE8Jx/f; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1756913893; c=relaxed/simple;
+	bh=VPbwCRLjCS0JlRjDhk1ZHzDpInRFzDVXs0glfOj9Nmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5aflz/MMbbbMRdFmcM0DcN41IMvxcVh+4I9vIUQWAy5RyQ/cgiHEKRk1BzFaPq07Z8T8XQiDFLTlKpE2+xWY1jLok6fW/H9ymPkGYi+iNIfPT2N5+5XARPV2aGmNyxTa1NUGrRAMD7uwaAJk1T6BbeiToetbwd81ETGxYziKzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DofudDW5; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QjE8Jx/f"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756912579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x9cuOYxu0U7DIdqQ6OT/K5slwo9p+cHFbhRnmBL6l1o=;
-	b=QjE8Jx/fVfB2qFR5m1a6XhLEGqm7T5o7+dna1xJ6VQOHBKp9qYlgn69Af8Cjn7eO0vjVKj
-	7Y/q+x7caFK1ZFWQcLCEb39upgS2F7+HszFt5bQWyAxyyiwOpqwTGdsxz3u/NFAtgM2OHs
-	xCr+CDCwrL5JCkdjEExL/g5czQybOo0=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-50-WD2_KqLDNAuhTsfZeP55uQ-1; Wed, 03 Sep 2025 11:16:18 -0400
-X-MC-Unique: WD2_KqLDNAuhTsfZeP55uQ-1
-X-Mimecast-MFC-AGG-ID: WD2_KqLDNAuhTsfZeP55uQ_1756912578
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-726aec6cf9fso10807146d6.1
-        for <linux-tegra@vger.kernel.org>; Wed, 03 Sep 2025 08:16:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DofudDW5"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b89147cfbso633465e9.3;
+        Wed, 03 Sep 2025 08:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756913890; x=1757518690; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPbwCRLjCS0JlRjDhk1ZHzDpInRFzDVXs0glfOj9Nmk=;
+        b=DofudDW52HX0q+5z13B4Q/PvnEMbULyTVLwUvsJP2PAV/yjfYlHCDRIgDX/bTtsL42
+         LQerHgLGKc8EA2OE5B6g6DXxmkHs0Cpc83VE4DNTlFlJbb4GX5gd2lg+Orcg+7wnoofE
+         2UkQcmRVAD0RBEww99covA9Npi8/e/XEa3v7o/Sv7SfA4m3iCELwuM7GrHaLNA3XV+Uc
+         Mq5S6EhMUf7hUh2ozuwSht+E383etEWguqCUdIlQdjxkjglZ8WuClx69LZqhkjUfmxjz
+         2CwzZc1IG3xhZL2ystWH/AGTt9EMLPRkNXA/gexQSLlApkUNNzMuGhvX797uL1A9x6lp
+         f1qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756912577; x=1757517377;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x9cuOYxu0U7DIdqQ6OT/K5slwo9p+cHFbhRnmBL6l1o=;
-        b=EdcD8zamiAz4U9FHjL+AIIFL00gzm2lwso3k8z+zRw9qULJSsIGr9pzQRNodcYSmFF
-         Gp9sd4/yCbMlyqg3bWZGGhTzO/I7SPSqNjgDYFLVbhuy9rDuXuC3uqg1j43RRzNz8y2j
-         PW18DKKYGZnRpmH3uoQYKl/Xn+eNh1lilJNt/k0QbbgiVnvWV84ArK8kjPXf4Z6898Jn
-         ZtSikfOf/ZEAAXbrvO5iXCoqdT8UijmdJTz4L+giyzITXHgG6Q/7VGP2w9fqBqjlG/0a
-         PjOr/ftxjhY3pJQq1QHe4m94XfXKIQNILLkN0tniufYw2XbeV5RyJYUpyHtu3feLRpCn
-         Z9Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvcNXlIC0gWgZhyRLMuuz7D0jRjLDkVqQLrfWtG0w3JQAvYRSzl11eh6Tbto/wxOlnfMqZRaOCANmLhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbKdNErNevFPnLfORLUTc9yUl8vFzxuN406E+6JVLMNUAtlq3V
-	8DeNfT6CzRejdkm7pt6DxAyS1h53baycwYpaYAtwaV86wQp8vKLBZ1GhN371oXtS+q78FdEKzFq
-	5jIFJhKOuw3bWJ5bSt74KeOOfLeZPOl4AUp/0Q40w54A+LX57WYJbueyfS0Ww9Y6YZZ0cM34SRb
-	w/muCcIPxfFmzBmni4mWTCVhKIOQ/j1P7ESmWTB+M4UOswt0I=
-X-Gm-Gg: ASbGnct8IpLh9IqoEzBVJcRJQzCJdoqfDrhN2u6FxwGyskV+inr14lM5yz0kbKO7gsS
-	5VvneFCdycNReDl2G9xQ49VmFdzyk6eGX9P1BETVAM3tFhkywoHzXuIUa8YdVu2giNe2ZJVyT+Y
-	undvpjpJLop9f6p16vJUVMWUx2HR4Sn8cpcxlV1TfUZ/l+ztEvppLpNXKbj1NqjkDUzvyPsz1Jm
-	SWzJTJl5u1JaLygQdTFhUO2PJxSlZ0dPlnIlQWn353JanBh08B+TDyBfLVg1TcMc9usGNG+oC3w
-	+GhROn96N9VPgq5IoGgv8oVB32un3NuG3SG5bpGDqfruI+448mrtMdJjf8wRooqut2HXsj2Jeb4
-	=
-X-Received: by 2002:ad4:4eeb:0:b0:70d:961c:bb0e with SMTP id 6a1803df08f44-70fac9202d8mr197041846d6.58.1756912559385;
-        Wed, 03 Sep 2025 08:15:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnqDjIqsiZca+ggH4RMjYaXqAO0ErU7lwak2EX2JoTANTpehd9a2V8hc1liqn8FqdeAjJJmQ==
-X-Received: by 2002:ad4:4eeb:0:b0:70d:961c:bb0e with SMTP id 6a1803df08f44-70fac9202d8mr197013286d6.58.1756912536653;
-        Wed, 03 Sep 2025 08:15:36 -0700 (PDT)
-Received: from [10.12.114.224] ([2600:382:850c:786a:ff8e:13a:e47c:3472])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de16sm30827706d6.3.2025.09.03.08.15.33
+        d=1e100.net; s=20230601; t=1756913890; x=1757518690;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VPbwCRLjCS0JlRjDhk1ZHzDpInRFzDVXs0glfOj9Nmk=;
+        b=VDhYPEO/7z0J7rKLmYprhmuAww31ZKJYP3C2h/VNi1MyIFM77da2PX/zAE2nPS4ryB
+         GPkc4Ewxz/fFLnbTDPnJf2GEtBbAZE6qdjZEGISqSF0dimlBc3OTzsPIMUMDr9JwP6G3
+         cjAZee8Yq0GIf+J/IPkrZomjWZQSi54Vh8ldkMjKWyBEGTI8uqaw5g1XEUXPvIL+wCqJ
+         6nHNtF5T2rK2m9JMgnICGryWXkz+maK+7hm5Lp+F4ygvLBDh6iIA45g4LSjtJJFjH2qt
+         WrovdBkeLBo5eZrhOToY5ZDja5cYwoKCxAtCNRoWcS0WEgZee9CLZzOmVbmjboS7HwKS
+         05HA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyulWrLjVigKa52Etxs9qEQUfAABEwm3+SJNEnJTrheDFlUCC2EiRV/MZIOa8D+vHNDy9JNH/mWxtX@vger.kernel.org, AJvYcCXu2ZkEtqqrSKQ4jzgHUILZLbMLsLMUw1RVRPdmuBfOYY229lA70oRn+QM8+Rq+4LJKETERa/x1ILmUw/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcilK4VeKXNPasdznhi/J9C4lG8opIFDGuQilzcMsJ95koVZ1X
+	vO2NEcmQqbJjSKqIu4KQHMsRnUGmCcm2aGZ9g2EtqeNKdLwbDvDnLilj
+X-Gm-Gg: ASbGncvsxy/Gsyv3i1v6xIBNRMFiz0NDXpPCsjEQOxZUHNaXPetP/DPfD7pPVQIVQtS
+	mUGND5HDlIurwGzfis/EeKoDTASM5AkxSJXklJUTlMLXrO+DGlBbVTZ10LiceB91oHAJhw04A2U
+	xPaHgKV6/KILxvDBC4dG4i17Sbbvpx8qTyFUngomNuGziS3y/0KxZuY4FRt995PZKrSidtNFEZG
+	+evBm4TMmJt/SpCwNUhRgI8rE06Od2iVTVM4nVGifckS2hIA85Y+OwYrTUL3tWEiDagso+VD44f
+	+6ugrLyPlysnKgdJwvDH1lExMOe0sBVN8Ub2Ae2hOliCGUL3eeR0V06SK9i22/fffMfYzChF3Qq
+	XdiohFRmIIbSv6/Z37BtHCsKHfvf9ggEjCcxPimD0lHXrGtvLCkvqfrcYAMG36InafBHMwSJcIi
+	7/ekJBg1gZESLwr+x/DV4=
+X-Google-Smtp-Source: AGHT+IFJMszbSGSF1PbWonv1NoW4j1E7tepFW666Fw1sEE/F4ZJzmOwpg3R8c/5zqgWpxpRXy3A2Sg==
+X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr68840825e9.23.1756913889833;
+        Wed, 03 Sep 2025 08:38:09 -0700 (PDT)
+Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9c234b24sm59432145e9.16.2025.09.03.08.38.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 08:15:34 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 03 Sep 2025 11:15:05 -0400
-Subject: [PATCH v2 4/6] clk: tegra: pll: convert from round_rate() to
- determine_rate()
+        Wed, 03 Sep 2025 08:38:08 -0700 (PDT)
+Date: Wed, 3 Sep 2025 17:38:06 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: John Stultz <jstultz@google.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCH 4/9] dma-buf: heaps: Add debugfs support
+Message-ID: <e6twhwxi55eesb7xirei7wezzb77qjiji2mccgqlziisjzl3q5@3ny5e6lbgebz>
+References: <20250902154630.4032984-1-thierry.reding@gmail.com>
+ <20250902154630.4032984-5-thierry.reding@gmail.com>
+ <CANDhNCoM4RFX-QccF7xT=+-tduGj9OZ_8SgrTVyRucMwyVc73Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-clk-tegra-round-rate-v2-v2-4-3126d321d4e4@redhat.com>
-References: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
-In-Reply-To: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756912523; l=5433;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=43sEbwhMVLXr4Ugy2k4lhtQIjlFVPQRMntWIuVLuAbk=;
- b=rpRJizWaPvqeE8fyxaXKWGMOtJvlvuOaw1CCwjSgxH0jKIiYpjpuikcEEp7O69HVv0KF16BxN
- TXt73fGvnjOAYUe30HyZWWwnRS3516J0fBBdhdXNA86DnGkXxGPj02D
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sulytsn4e2thgtl4"
+Content-Disposition: inline
+In-Reply-To: <CANDhNCoM4RFX-QccF7xT=+-tduGj9OZ_8SgrTVyRucMwyVc73Q@mail.gmail.com>
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
 
-Link: https://lore.kernel.org/r/20250710-clk-tegra-round-rate-v1-4-e48ac3df4279@redhat.com
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/tegra/clk-pll.c | 52 +++++++++++++++++++++++++++------------------
- 1 file changed, 31 insertions(+), 21 deletions(-)
+--sulytsn4e2thgtl4
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/9] dma-buf: heaps: Add debugfs support
+MIME-Version: 1.0
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 100b5d9b7e26e906f71963152ad50bd0a89d14d6..591b9f0c155a033ab46fbb0a1de742efed560b5c 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -840,8 +840,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
--static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--			unsigned long *prate)
-+static int clk_pll_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
-@@ -849,15 +849,20 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (pll->params->flags & TEGRA_PLL_FIXED) {
- 		/* PLLM/MB are used for memory; we do not change rate */
- 		if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
--			return clk_hw_get_rate(hw);
--		return pll->params->fixed_rate;
-+			req->rate = clk_hw_get_rate(hw);
-+		else
-+			req->rate = pll->params->fixed_rate;
-+
-+		return 0;
- 	}
- 
--	if (_get_table_rate(hw, &cfg, rate, *prate) &&
--	    pll->params->calc_rate(hw, &cfg, rate, *prate))
-+	if (_get_table_rate(hw, &cfg, req->rate, req->best_parent_rate) &&
-+	    pll->params->calc_rate(hw, &cfg, req->rate, req->best_parent_rate))
- 		return -EINVAL;
- 
--	return cfg.output_rate;
-+	req->rate = cfg.output_rate;
-+
-+	return 0;
- }
- 
- static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-@@ -1057,7 +1062,7 @@ const struct clk_ops tegra_clk_pll_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_round_rate,
-+	.determine_rate = clk_pll_determine_rate,
- 	.set_rate = clk_pll_set_rate,
- 	.restore_context = tegra_clk_pll_restore_context,
- };
-@@ -1195,7 +1200,7 @@ static const struct clk_ops tegra_clk_pllu_ops = {
- 	.enable = clk_pllu_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_round_rate,
-+	.determine_rate = clk_pll_determine_rate,
- 	.set_rate = clk_pll_set_rate,
- };
- 
-@@ -1353,15 +1358,15 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
--static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *prate)
-+static int clk_pll_ramp_determine_rate(struct clk_hw *hw,
-+				       struct clk_rate_request *req)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
- 	int ret, p_div;
--	u64 output_rate = *prate;
-+	u64 output_rate = req->best_parent_rate;
- 
--	ret = _pll_ramp_calc_pll(hw, &cfg, rate, *prate);
-+	ret = _pll_ramp_calc_pll(hw, &cfg, req->rate, req->best_parent_rate);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -1375,7 +1380,9 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	output_rate *= cfg.n;
- 	do_div(output_rate, cfg.m * p_div);
- 
--	return output_rate;
-+	req->rate = output_rate;
-+
-+	return 0;
- }
- 
- static void _pllcx_strobe(struct tegra_clk_pll *pll)
-@@ -1598,12 +1605,15 @@ static unsigned long clk_pllre_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
--static long clk_pllre_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *prate)
-+static int clk_pllre_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 
--	return _pllre_calc_rate(pll, NULL, rate, *prate);
-+	req->rate = _pllre_calc_rate(pll, NULL, req->rate,
-+				     req->best_parent_rate);
-+
-+	return 0;
- }
- 
- static int clk_plle_tegra114_enable(struct clk_hw *hw)
-@@ -2003,7 +2013,7 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
-+	.determine_rate = clk_pll_ramp_determine_rate,
- 	.set_rate = clk_pllxc_set_rate,
- };
- 
-@@ -2012,7 +2022,7 @@ static const struct clk_ops tegra_clk_pllc_ops = {
- 	.enable = clk_pllc_enable,
- 	.disable = clk_pllc_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
-+	.determine_rate = clk_pll_ramp_determine_rate,
- 	.set_rate = clk_pllc_set_rate,
- };
- 
-@@ -2021,7 +2031,7 @@ static const struct clk_ops tegra_clk_pllre_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pllre_recalc_rate,
--	.round_rate = clk_pllre_round_rate,
-+	.determine_rate = clk_pllre_determine_rate,
- 	.set_rate = clk_pllre_set_rate,
- };
- 
-@@ -2321,7 +2331,7 @@ static const struct clk_ops tegra_clk_pllss_ops = {
- 	.enable = clk_pll_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
-+	.determine_rate = clk_pll_ramp_determine_rate,
- 	.set_rate = clk_pllxc_set_rate,
- 	.restore_context = tegra_clk_pll_restore_context,
- };
+On Tue, Sep 02, 2025 at 03:37:45PM -0700, John Stultz wrote:
+> On Tue, Sep 2, 2025 at 8:46=E2=80=AFAM Thierry Reding <thierry.reding@gma=
+il.com> wrote:
+> >
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Add a callback to struct dma_heap_ops that heap providers can implement
+> > to show information about the state of the heap in debugfs. A top-level
+> > directory named "dma_heap" is created in debugfs and individual files
+> > will be named after the heaps.
+> >
+>=20
+> I know its debugfs, but this feels a little loosey-goosey as an uAPI.
 
--- 
-2.50.1
+Well, the whole point of debugfs is that it's not really an ABI. Nothing
+should ever rely on the presence of these files.
 
+> Is there any expected format for the show function?
+>=20
+> What would other dmabuf heaps ideally export via this interface?
+
+I've thought about this a bit and I'm not sure it makes sense to
+standardize on this. I think on one hand having a list of buffers
+exported by the dma-buf heap is probably the lowest common denominator,
+but then there might be a bunch of other things that are very heap-
+specific that some heap might want to export.
+
+> Is there some consistent dma_heap-ish concept for it to justify it
+> being under a dma_heap directory, and not just an independent debugfs
+> file for the driver implementing the dmabuf heap?
+
+Well, I think just the fact that it's a dma-heap would qualify its
+corresponding debugfs to be in a well-known location. We could of course
+pick some arbitrary location, but that's just a recipe for chaos because
+then everybody puts these whereever they want. There's really no
+standard place for driver-specific debugfs files to go, so putting it
+into some "subsystem"-specific directory seems like the better option.
+
+Thierry
+
+--sulytsn4e2thgtl4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmi4YNsACgkQ3SOs138+
+s6FLbg//VYHy8TOrGMpDWro/ULEXXUAldaCb7nmtSEpNIXvKqfV5j9D/dcMLpLtY
+LC53YPVnMm9g5c6mZ0w7DfUU5q+qAwCe2mvhA+Fm3UaRF2jMKhD/5LG4rk7ELWsL
+Xb3raJAlnNFO9AHgE7oEwGYjF8q94yEiAZHNO62j1kxJ00CpZCxyG2rie7iaTAMh
+VToay43MFoIv9ulrESaonZk84vL4HzYJZIZXeIgjs+mS0BmFH5fxvCPerNuiG4gf
+Z4N4cCDGWfJ+EYFuMZ3p2pbLivKlTqI3QdihV8BO13OMaADW7vmSPMdDzYSgQ/R9
+KdwIIctBlRpiGYOJCPb83kZFsFXwU4Cvnfc3HJDTjwLwlbIrAFTlPnyhL9eWEeZD
+oD4Jdnf/tHXH9tFJUEZ+cPA8mCHjMrnL3mTItfYILkvaGuZGRRdacy5fyICO0fbv
+xB0k9rSgPfwlafKgaHj3wQD02D1qmGZqATxAVYXu/RT682hMAYX8JJS5ar64fQ35
+esRjjoSdlzaVisao/gog2ThKdoPsThxcMXcM4nHHMfkd+wURKomTszYl8lZGew3Y
+dzUR7jKgI/rPUUUpBD7D+cPzNy5p2JzoQMPoBtKMPOOq6tQ1BXYJgXZtfW8DO1T6
+QgUM6P7kdw0Dce+0PdZOD3TvkpPucxyqZlLA13ZLCYeW8xZKwsk=
+=6VMq
+-----END PGP SIGNATURE-----
+
+--sulytsn4e2thgtl4--
