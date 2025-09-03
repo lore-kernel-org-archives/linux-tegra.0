@@ -1,253 +1,233 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2067.outbound.protection.outlook.com [40.107.96.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987AF20110B
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Sep 2025 05:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875674; cv=none; b=t8VDe8+lsNx7NGkf2E7oJGHp1EjggFGqgABB3F96uQftMuuMfdrx3gJS97kG3aECEdpzGsAxfvhf4CPZ3Rqlnu7XjranCfFVe4EZq4cnBtpFakkei//532S7E/YuNJwJlcP7/DEmUAF6vzz5ANdrZbWZzGA51KMxXBMI6sIOT9Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875674; c=relaxed/simple;
-	bh=AA71B8NJreCeVVfvGx3ZjcSsqstB/8899jp3oGDVKl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ob9kt5Gi9tOChFu442JsMKzp5Hl+cSUMMJ4xCzHxkopBBSrZ0JZIMsyfsDt4RE+lBvSS1KbB3SkXKwnPcIoK7sjafd7mFphq2MBeaObIKa++tx8RgEbZGtUkxSK7o1jHHESnyjcDmt0msbo0mUgmesycWBJv5zH8tJgF6IxKkLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hYQArQHw; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B5A2BD5B2;
+	Wed,  3 Sep 2025 05:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756878646; cv=fail; b=mXBBj0l9eCVgbKdvklyWiKKd+qQ4wbv4j6lkuGKWLz1sPO+xJ7kJ9wyWlj/tfzSfLqT8SGCZC+70tgcJbs5lHTTZPJERKCUpNiMhIgdLcHPH3wJFmCeV/esbzzYLm769n25N2DikfF7piKqtOFb+XX2p9kM0zWaY8HSPHsQJe68=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756878646; c=relaxed/simple;
+	bh=Er3vWOK1ojGx/a5P9CMZms1lj1i2CwdaqV5J88h93as=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=El+8W1WnL82B23JTQ/3W8g6rNFgvdx4iL5W8ZUXL+PMTTiUjWsS46/1zDtaoRburtHU0zcSDYrYqBRiRnZMe4pPRO68xmxk5+BStzyA6NET60iaTz0IJ6eq+JAt4ban+b6oiNY1IDeV1LPMCXOh1VQuwAmZ2lnMEYulva56TbVQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KMAvzyN3; arc=fail smtp.client-ip=40.107.96.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hYQArQHw"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7722bcb989aso3493192b3a.1
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Sep 2025 22:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756875671; x=1757480471; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KmFmkMrKYl0vhT4WYXXBO9G8/vtPS0Slb6J+QwEqB6g=;
-        b=hYQArQHw5FqM6MRzKpwhLQs6uyco7npUFPL8FCy44ZWc5P6Al/pkEUj5E/hFv5sgTJ
-         ahYLtIFcPMbcuBHENGmH1dr5FcCz4dGx/KGuXWc/wQVZYQVoNhLuG4qnFhCvBdEcA4Oe
-         1DiiM11+OhP3DXL01mzVSnwAgPoWM8hZyiZw90YJrWxnvzqmmdAtVtdLrcj6nNqJRvI2
-         bHgTVkRbB723aPJf7lgOfCpNn0jUfE5LOb9THXwBtswCk5bBzPfqZfEP4kxqgdSTBF0y
-         yHGQYfN2qXWoiK4uJjSOh4GF2lABJfvaG39NTY0sOyM3jkyMM+1ZmnTmvzEHRYJ02JQl
-         BNFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756875671; x=1757480471;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KmFmkMrKYl0vhT4WYXXBO9G8/vtPS0Slb6J+QwEqB6g=;
-        b=mQsnBo6cDIH4QkgVDadYVlXIvoC0u+/YjRoshQ8mvhdDMSwTmGRW4Opk73nkUrzmO2
-         SXXrkl+aQ2LWVYryuEwsLM6fOtEcs5jnpQEYH800FTCHansvdgs4plQzmUkh9evIBMji
-         lD86mKGZI5htKjPahtctQdoytiQAWqi+e3Bp7190CE6OCb61wtOYpvYf6dH223q7VlKu
-         3TIT9tICjHXcdxfIlvufv9SCa3qMct8a1nJT8f+H3cBFscM38kGJLrJfZrk3vZ21cAjN
-         jg0OQG5hUp+sbBRVlTD5aPTPSyYXPnb5YBLrUomRrk6CbCfOSKG2S+fhAx1aMmRwSf0d
-         zABQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu7Rys0niIaoWUVRwJz2+gUVfVJqj2ZdWGzLxUEhAeZABK29962IA/2okSKN0X5RECgVaBkq1Vs5GSRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDI2V+IMO4RMHASwhEmWUwNm5NXCvG53xDlx5am7nF/1XE80BD
-	KSdAvnOP9y0GeuZYAjKTLv1aAxtHhXn/hBG9yGTsPLOfyHMkR5BEIsCT5bAiM5ICg0E=
-X-Gm-Gg: ASbGncvoEdnv6QjB56wdDjo5/Yeiqf/cOp8SA3OSs8nxcAT9cOIv85LiHQq2Ti3F4HV
-	bOve+waoj37Rfpy3gImmvwVGr/PZr4MY1D1In+4LWRfzH76ERmvzYo3g8qmNPb+wW527k66f2TY
-	/vdAPWgoiV6t2KLpz4uPwF2uG5tYLmAcpv4AEnfcfW0nJBxT/TeSlTuKx1Ih0ra1bXNuIf3I36i
-	MvpU26LGZfX3wVOUFRQfpEpFG6YhCsl+imnqTWEyeLFncmt8P0A36syMMyBi3vNDV0Xfk1n/rA6
-	TSLviT42k6oJS9EMQx5+lGHcHDM5QTP3Jl6k2ZYue3nJ2iO+vpCEHLOF+DMIhpYddbr41ylnYEz
-	7bkmS5AypZMu/tLqpYBsPXUtFwvCRtAEBMCE=
-X-Google-Smtp-Source: AGHT+IGBPOnffDQd9Eaf1t/UFpYoHDGA4fA/SJ0Q0vJYXBrk8WH+r8HctNJ+gmV4xFNP8bM8q1PPuQ==
-X-Received: by 2002:a05:6a00:180a:b0:772:ce8:d894 with SMTP id d2e1a72fcca58-7723e3e3aeamr18055742b3a.29.1756875670745;
-        Tue, 02 Sep 2025 22:01:10 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77241f08b3asm11404056b3a.28.2025.09.02.22.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 22:01:09 -0700 (PDT)
-Date: Wed, 3 Sep 2025 10:31:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Aaron Kling <webgeek1234@gmail.com>, Sumit Gupta <sumitg@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 3/8] cpufreq: tegra186: add OPP support and set bandwidth
-Message-ID: <20250903050107.sbri6snqrzq4hale@vireshk-i7>
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250831-tegra186-icc-v1-3-607ddc53b507@gmail.com>
- <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
- <CALHNRZ_EbtHSXaDQ+1gGf3HjdyW5Q54EDN901-r8A_aXLbDJkw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KMAvzyN3"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cJl+Au2z8XAcjNmR/zXuGYuqkmuSMEPEdQm79xU8XfYZZdQs3h7gk143BM2BuNIFKvdNvtE7MyHl+eiXWvP8bgY42yfyy8Q/Yqc8glKRHXHVs5K2cgd6n45vU4I+5uuOFBMycziDKx1PVjyIK1vCRnxXvJBowEUyEP79MzvgdFGGzvxFW1rSZs4bKQpT+WFb1XbrpxMxXTxtNRwt1C7no6YomPxSKxvDycapXtO0w7UC1ygM05W7qUK/U8n8dOLeFz4fawDeKOXEBgRu/jKjxDA7zXWWsOlHBPf+f/633hlWu51n0bN596YZPDSRJsKcvStJV357iUHRUJHblO+fEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7zctHxL3QTIIHT+StpOwFlMbmLRisQlGp3syi4ryJDY=;
+ b=eRKo7SAH0n/7LLOuGjKM7BRAkkbtEVH4d5V6PSPuKA06JqtGxtRWaUb3dQR5bdH2r1dpgqAzBSOuV3nyBtm4pzO/bxVt7rT1nNIPWr+dC+Gpw0XidBq4Tm9nKgwrzHY/pFfTtNYa9kJj5RzDSMiofy9vMNR0e3LQv97+y2CuxRZVEHx0BDQr7POXYxQ9xHaBUAFPbpELBQw68rF9zdgSSnV4hMp1xqcM+Bhf8iCpn6U+Lk/gHr+VbL37b5+6lnYmJXjkVQvpcizRE7A319v4hkjhKPEtWu9GpiY9Huyp4xir2awRJjeEkO6lYnDdF1NefCIf+DuBHLi4zPuh3bjcbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7zctHxL3QTIIHT+StpOwFlMbmLRisQlGp3syi4ryJDY=;
+ b=KMAvzyN3szO3CZNrahMH5aGl0D80Ik4rwMUfv/xCpXMuvQ+PAAQGd9hLfzKYhFjmwFgX4bGqKqrmx+G9o5ebieoECu9FqbeJT7KFGyhvwZMf5BvlavsbZ5NHfOtEDKWO8tZePQfWbcH2/O+vitLnzdl2gZ++n8RrEHSe4KA4SKkOmhMgaaXvGhpe26Mzy4EVhQGL2fXhO9aPR8is6tX3pAcBby2egJdAHSeN0ZPntF1XvJgErIcgXJSz4jXJjIGWkM8M/ZNwLeP1c1E7SwOoV/os7kjZcuZ6rVYcxyLLLCxzBoVJy+03p+2MlKAtXqdOc+yygV7f7SOlKe/aMbjwGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SJ1PR12MB6145.namprd12.prod.outlook.com (2603:10b6:a03:45c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 05:50:42 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
+ 05:50:42 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, webgeek1234@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
+Subject: Re: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
+Date: Wed, 03 Sep 2025 14:50:37 +0900
+Message-ID: <7006329.Sb9uPGUboI@senjougahara>
+In-Reply-To: <20250816-tegra210-speedo-v1-5-a981360adc27@gmail.com>
+References:
+ <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+ <20250816-tegra210-speedo-v1-5-a981360adc27@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0186.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:382::14) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALHNRZ_EbtHSXaDQ+1gGf3HjdyW5Q54EDN901-r8A_aXLbDJkw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SJ1PR12MB6145:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac5a6efa-34aa-46a2-40c3-08ddeaadd13f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WTczeERBTzV3UlVYSWxZSGNLNy9FMjhqUjNoY1NzN1pkOWQxbGxMUWtDWFdJ?=
+ =?utf-8?B?TURPcUlzZzZ0cURVRDBFbHl3Wm9MVG5Cc3JnVFVSSWhCUnVzNi9XdnJSanR4?=
+ =?utf-8?B?WTRTK1JWeE1RbGFvK3NGRVNmeW03Q1FJN0VXZDNuamR5a3hPK2Jqc2VSUjJw?=
+ =?utf-8?B?STBnR1Zad3ovY3oySUlMMVQ4ZGMxaE9xM1BqM0tFWUJ5UkZaREFOUEZ6TzVQ?=
+ =?utf-8?B?M2F2S0JsRTdWVk0xejRBRHUvRVlBSURsUVdERGtCeGIxRHBSL2UvRWxKNmZn?=
+ =?utf-8?B?UnBmWkR0NTRlbjlKSWY0L1ZhaThvYS9ncW1VYlZiMFNmTElqa3NPN1V2c3hu?=
+ =?utf-8?B?MUwxLytndE5ibVdsektEcmh2OXM1T1pvUFg4M2FKTWVZZFBNbUdwWnRmT1Jj?=
+ =?utf-8?B?VVhML1IyMDRlZWZ2NGl2dGdQeE8xN1luN3VXVEF0ekJ2SFRQQlZyYWRsZUhT?=
+ =?utf-8?B?QW53Q2FOOEhkeWg3M1RIR1kxSEhUeTRDKzd1M0FPVDBRRGhpd0FxVVJEbTAz?=
+ =?utf-8?B?Z2QvQkhYTnVXdXBGRmtTQWcxazFmaTROeXRWclZVRzBNRUZJeHc5U05jQ1Fi?=
+ =?utf-8?B?K0lWQVE4QUc5cDZOVDhDRnRoL3pZMk5sWERTYWlwV3pEMnlXaGFpNTRTMXJL?=
+ =?utf-8?B?NGJIdE5nSmQ5UkdtakdteGdZUFlzd25xQVJvTENaNDhsRVZmTWVYQVZockdv?=
+ =?utf-8?B?M0pjRWtaYThrY3JWdGpZUWNWU0ZReHV3MTJvZ2kwcmsySVVDYktIVEpRUjVH?=
+ =?utf-8?B?QklYSndNUVBvc3ZTM1JsZ3p4OEQySVJUaDEwczN6a2J4VUgzdURvQVFQZDFG?=
+ =?utf-8?B?Y2ZJS3k3ekJnbzZPUllya0xrRjZ2THdvNTlCQW5nd012RkdHcUhvY3Y1akV5?=
+ =?utf-8?B?M1MxL3FGOG5PdlJDY2w0VldZRDErcSt2ZXZSd2UyK3QvWXZTMUdWdndXYXIy?=
+ =?utf-8?B?bWZlY2IzOUkvcWpNK3VOSnBRNFBQMXlWb2toVDdGRi9sQzZZNWowUmhLdFc0?=
+ =?utf-8?B?Qi9tU2V5Y0RlUTFhSjBYRHhXV1JOY0UwV0pOYkZ2bXNrdUkwanV4Umk2cDBz?=
+ =?utf-8?B?dVJkL2dDUkFMd2R1aXVVNFFrakVZVWRla056d0d5M2tZWVBzSE5MWlcxL3dq?=
+ =?utf-8?B?bmUybnpjYjhFdmR5WWo2UUJTTkQzVWc3UmUzTVNFWFFTZ1JHbmcyN28vUzVC?=
+ =?utf-8?B?UjdFYmtOSFJVVjZVTXJaaVBtTkNvOE9NTE5yVE1aM3J4aVRtbDlseElEUVFn?=
+ =?utf-8?B?SkppTmdoVS94SnN5bSt5MlZia1dhNVd4SlVGLzdvclpOcHIxQ0RjcWs4MXgr?=
+ =?utf-8?B?WlRCa1VvZVdLOGZXdnpZT3JPdzNvU2laUk5RT1EvdHYxV0svTS9tSHR1WVhP?=
+ =?utf-8?B?eCs1Y2hUZVlxMG1zaTZKQ0tnQytDTG9qa20vVHUwQ2Y1bVd6cWpFakpkTzR5?=
+ =?utf-8?B?N1VZSXVnejY5T3llVkxlRXdXcU9OcVB1QUNyV1BkN3puWmlzMlFESGhsUndX?=
+ =?utf-8?B?aVliNmZlU09GUHkvY2JWTGplV3JJZU9GVkVxdWd0cUYxd3AvZXMrZ2I0WUVI?=
+ =?utf-8?B?UXJyRWN6dENEZUZhWHNhNDRKWmFhL1dhZnR4ODFTbFBhclNQNTRERFdnemd3?=
+ =?utf-8?B?RldqOHJNS3JvNW1lbSs5ejU1U1J4M1hlSklxQ1Z4QWJZb0lZekNXQ3BPRStN?=
+ =?utf-8?B?YWNrMzBRL29taW9ETC9sZzV4Skd6S1BGUnNiU0Z5WGJIdTdEa3prTnZLeWxt?=
+ =?utf-8?B?U1VWU1ZsT0VFUWVwQW1nR0VETkY2aWFaK2lHT3JJcWczeHlsV3NSRVdMTTNn?=
+ =?utf-8?B?UElYTlpDV0ZJZUJnaEpEWG1OcWhCUWpCU2JKS3dlK3FCbnZHYTIzNnNoUDZs?=
+ =?utf-8?B?OVJIS21oOFJFWDRWczZZeFZrd2QzeUxvK1U3Y2twNyt6OGN0dmsyR2RLQVc4?=
+ =?utf-8?B?bXVCM1lLcjdVeGUwSFJnYmRJQkVUY3BtL05WdUF0aHlFdUZyd2hkTXN4NU9W?=
+ =?utf-8?B?eDIvemVCd2FRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RkY2MnZEaUlvL1lFdTMwSUo4N0ZGNGFGYTRtWXd4aDEzK0pjVDFKR0JuMzZV?=
+ =?utf-8?B?OGl6WlhLV01sNzhmNlRYNEQyUnVpdC9yTnU3L0U3U3JBcDU0UHlQT2tnNzNw?=
+ =?utf-8?B?akRrQnlETVkyeHpBSEZ2UGM0OEtWbTNpQkhlaDFPb2VnT2FVNFhBbTl1b0Zj?=
+ =?utf-8?B?Zm1CUUFFZWxMb0FxNHdQT0pBcjBsaXB4OWtvcVhpaW43YTBaeGd6bWZINnlU?=
+ =?utf-8?B?Rk9rUmorRWVQaUtZNGl5aTZON3FwOW1Pa1BSckJsMEdiejI5SllHVzdWQTFQ?=
+ =?utf-8?B?eGsvMlVvRitaVlRoQ2szeVpBNG5YckNZYnBMNTF5dERzalJ2UFpLTGN5L1JS?=
+ =?utf-8?B?QjJ0clRoRHNwVVBtU1EwMkV4WVNWdDhQTFdwUVRLMmVSVU5IUEZXNElIVVd2?=
+ =?utf-8?B?a2M3WldjSXMySFZLd2tnczhrNkdONUZRMVA2REVaa0M4MHNZTTFwdzFlODVk?=
+ =?utf-8?B?OG9SYyt1c0JaN1lzajFidlJ3TWNBS2JiakowZDJBcG9rSWE4V25KY01wZ0ph?=
+ =?utf-8?B?cHNnOGhOS2szajBldnJFOXgzc3gzVGNGcWlWY2dpeUdha3ZBQm83OW1Ib0dN?=
+ =?utf-8?B?OWtETVhJZWdFZk5tYm94VjdNdm5PODJUZVVQVTBybXc4ZGxWa0daMTVoSTlV?=
+ =?utf-8?B?dXpTcC9aUFcyOVRhQ0wxVU8rUUhOb3hicExyRnh5SGNob3VOam9KbmlYMUpW?=
+ =?utf-8?B?cjJoOFZBYWpUbEZhNEpKSHQ1WG4zQm56T01PUXM0ZnlmbDY4S3pBUlJNY2Rw?=
+ =?utf-8?B?cm5MWDJGZjdHd3lCb0tFMzBEQXIwU3AvYnNBVXFyWXRqNEs0N2NLek9JaVJi?=
+ =?utf-8?B?b1RHVVU5ekhod0pkSlhWWTdmMlhuemJWaDdheCtkZXdjbEMyMTNZdVZpWXpU?=
+ =?utf-8?B?UW1tVnFlRXQyd3R4R093WlI4VDFVODNUTU9DM0J0YlVHaUt6bTlOcG96VDBz?=
+ =?utf-8?B?SHltd3NGWDRvUSt6TlhlN1plNWJRMHZ2TjZxOGFKUGI4U0M4dUN1bXkwMHla?=
+ =?utf-8?B?bE1kRVhBSWcwc0RYU1FSZ2VsR2l6eW91SzdGOFFPenRmN0xvQzhBWUdKZGt2?=
+ =?utf-8?B?UDNSV3FycHpvNEhPVWk5d2xkMDFSQjNXZ3R0Ny81NVdVV2lCZWtRNndYdnFH?=
+ =?utf-8?B?MXVHcytTRkE5NmpETEJXVm5VS2dGL2FwYkRsVEFJSVFQcGpDUVFrSUVpUHVs?=
+ =?utf-8?B?UjhtV0V2R3hiRE55Yms3WXdUNkNHaGxEb0YvM3J2MFVoRXAxdjN0WDNxdlJq?=
+ =?utf-8?B?TmNLOWJyM0N1aVU3TzI1RE44TlN1ZDN3b3BIZWRKQ0hWMGswL0VQTG03N3FB?=
+ =?utf-8?B?THFEeEFzeFZwVUpRbzVkUWNuMXpiMlo2WjFRUjBRbm5BT04rNzRBOHh1Yzky?=
+ =?utf-8?B?M1oxN3l4UnYwem9DNnhlV1dhTW5WYzUwQlowd0ZiVU9pWHNHd2dQWnY0WW1q?=
+ =?utf-8?B?RFZWOE1qK2N5cnI1b2Y1bXRYYzRRQ0RpQmZDUnJEUXJIeDlhK1YwbDY0b2NN?=
+ =?utf-8?B?Y3hnVko3R3VIMjhadjcwMEtGamhHbUgvTXdxYXdQdm92MXVXYW1najYyQjRK?=
+ =?utf-8?B?ZlVobytIOVJ3d1J1N0RLcldHRm01QXdtTU5OUnUxSWEreVZoWkZRZE5PNnNl?=
+ =?utf-8?B?WWRjcXVDVHR0am80WldQYUExb1diNy9nNlh4bGlKMTBqOW5HRFQxNHBCeU1S?=
+ =?utf-8?B?RlJhNDVaazAvdklvSGtaR1NHMWpZTXgrZXorY01xc3cwUFk1VWl3NEg5cmow?=
+ =?utf-8?B?RjVsZlNId2pONVM5ck0vaHBKNHMyMXpKdnlSeXRDMndETU01UUJaNnEydEpr?=
+ =?utf-8?B?MjF3NS9HMFVzdU50YURHZ1ZFR1hVK3hFTnY1OW54K2pvdEpjamZzQnh1TDJQ?=
+ =?utf-8?B?bjZDeVBNc3BVRjB5VTdjbFk4OGVWcERiQUx3UDlqRmg1dHFpaEZtWStjWEtn?=
+ =?utf-8?B?L3lzejRRQnVNam5PbGc5Z3dXcVJwUGo5d1JsS3VvOUhSdk5VSktIY0ZsVTdF?=
+ =?utf-8?B?dVNmQkVFcmJQY1JuczlWZnkrUWNEQ0hvcXFKSC9oK2R1Ykg0REhraDExeTlw?=
+ =?utf-8?B?ZmwxV3E4bTdXcit3Ui9SWGY4T1BMaXcxV1pOa0lyN2dRWTRUOGlQellmakdw?=
+ =?utf-8?B?QzdpMGt0TWh5aUladUpscUdGaTBicjZvUkIydEZoejlDVC84MTN1a2ZtWjhn?=
+ =?utf-8?B?NVBBWXg0Rm9OL01lakU0UDdTdzhYcUJ1NUVCaVdUOHJMQmNnZy8yMURyOE1C?=
+ =?utf-8?B?REFzeDZwT2U1TmNJNG55cElnV1ZnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac5a6efa-34aa-46a2-40c3-08ddeaadd13f
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 05:50:41.9433
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xAcCE0CFqpDlxSSNA2hVhajbYFcLK/9/lgWKwxa99T3rhKI5uoDTCjmYwy+sklkyAhVmdxB4XgdeWnF2D/Rn+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6145
 
-+Sumit
+On Saturday, August 16, 2025 2:53=E2=80=AFPM Aaron Kling via B4 Relay wrote=
+:
+> From: Aaron Kling <webgeek1234@gmail.com>
+>=20
+> P3450's cpu is only rated for 1.4 GHz while the CVB table it uses tries
+> to scale to 1.5 GHz. Set an appropriate limit on the maximum scaling
+> frequency.
 
-On 02-09-25, 12:21, Aaron Kling wrote:
-> On Mon, Sep 1, 2025 at 12:53 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On 31-08-25, 22:33, Aaron Kling via B4 Relay wrote:
-> > > +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
-> > > +{
-> > > +     struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-> > > +     struct dev_pm_opp *opp;
-> > > +     struct device *dev;
-> > > +     int ret;
-> > > +
-> > > +     dev = get_cpu_device(policy->cpu);
-> > > +     if (!dev)
-> > > +             return -ENODEV;
-> > > +
-> > > +     opp = dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
-> > > +     if (IS_ERR(opp))
-> > > +             return PTR_ERR(opp);
-> > > +
-> > > +     ret = dev_pm_opp_set_opp(dev, opp);
-> >
-> > Won't it be easier to use dev_pm_opp_set_rate() instead ?
-> 
-> I'm not very familiar with the opp system. If I read correctly,
-> dev_pm_opp_set_rate() will round to the closest rate while this code
-> will fail if the exact rate isn't found. This code is based on the
-> existing tegra194-cpufreq driver. And I'm unsure if this was done for
-> a reason.
+Looking at downstream, from what I can tell, the CPU's maximum frequency is=
+ indeed 1.55GHz under normal conditions. However, at temperatures over 90C,=
+ its voltage is limited to 1090mV. Reference:
 
-Sumit, any explanation for this ?
+static struct dvfs_therm_limits
+tegra210_core_therm_caps_ucm2[MAX_THERMAL_LIMITS] =3D {
+        {86, 1090},
+        {0, 0},
+};
+(rel-32 kernel-4.9/drivers/soc/tegra/tegra210-dvfs.c)
 
-> I have seen unexpected rates returned from clk_round_rate in
-> the development of this topic, so that could be related.
+Here the throttling is set at 86C, I suppose to give some margin.
 
-Right, but we should end up configuring a valid rate from the OPP
-table.
+1090mV perfectly matches the 1.479GHz operating point defined in the upstre=
+am kernel. So it seems to me that rather than setting a maximum frequency, =
+we would need temperature dependent DVFS. Or, at least as a first step, we =
+could have the driver just always limit the maximum frequency so it fits un=
+der the thermal cap voltage -- the temperature limit is rather high, after =
+all.
 
-> > > +static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
-> > > +                                         struct cpufreq_frequency_table *bpmp_lut,
-> > > +                                         struct cpufreq_frequency_table **opp_table)
-> > > +{
-> > > +     struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-> > > +     struct cpufreq_frequency_table *freq_table = NULL;
-> > > +     struct cpufreq_frequency_table *pos;
-> > > +     struct device *cpu_dev;
-> > > +     struct dev_pm_opp *opp;
-> > > +     unsigned long rate;
-> > > +     int ret, max_opps;
-> > > +     int j = 0;
-> > > +
-> > > +     cpu_dev = get_cpu_device(policy->cpu);
-> > > +     if (!cpu_dev) {
-> > > +             pr_err("%s: failed to get cpu%d device\n", __func__, policy->cpu);
-> > > +             return -ENODEV;
-> > > +     }
-> > > +
-> > > +     /* Initialize OPP table mentioned in operating-points-v2 property in DT */
-> > > +     ret = dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
-> > > +     if (!ret) {
-> >
-> > If you handle the error case here, then the below can move out of the
-> > if/else block.
-> 
-> I'd prefer not to deviate too much from the tegra194-cpufreq code this
-> is based on, so the drivers can be more easily kept in parity to each
-> other.
+If you have other information, please do tell.
 
-I am not sure if that is really important here. The kernel normally
-contains code in this format:
+Incidentally, some of the CVB tables in the upstream kernel seem to ignore =
+speedo (I assume they are conservative) while rel-32 has different tables. =
+So the upstream kernel is probably running at slightly unnecessarily high v=
+oltages.
 
-if (err)
-        return;
+Cheers,
+Mikko
 
-keep-working;
+>=20
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/ar=
+m64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> index ec0e84cb83ef9bf8f0e52e2958db33666813917c..10f878d3f50815d1f0297d156=
+69048ab9cad73ee 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> @@ -594,6 +594,7 @@ clock@70110000 {
+>  		nvidia,droop-ctrl =3D <0x00000f00>;
+>  		nvidia,force-mode =3D <1>;
+>  		nvidia,sample-rate =3D <25000>;
+> +		nvidia,dfll-max-freq =3D <1479000000>;
+> =20
+>  		nvidia,pwm-min-microvolts =3D <708000>;
+>  		nvidia,pwm-period-nanoseconds =3D <2500>; /* 2.5us */
+>=20
+>=20
 
-If you want both the drivers to have similar code, then maybe that
-code should be moved to another file and used by both. But we
-shouldn't keep them same when we feel that we can do better.
 
-> But I will look at making this a bit cleaner as per this and
-> the next comment.
 
-Thanks.
 
-> > > +             max_opps = dev_pm_opp_get_opp_count(cpu_dev);
-> > > +             if (max_opps <= 0) {
-> > > +                     dev_err(cpu_dev, "Failed to add OPPs\n");
-> > > +                     return max_opps;
-> > > +             }
-> > > +
-> > > +             /* Disable all opps and cross-validate against LUT later */
-> > > +             for (rate = 0; ; rate++) {
-> >
-> > Maybe using while(1) would be more readable ?
-> >
-> > > +                     opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
-> > > +                     if (IS_ERR(opp))
-> > > +                             break;
-> > > +
-> > > +                     dev_pm_opp_put(opp);
-> > > +                     dev_pm_opp_disable(cpu_dev, rate);
-> > > +             }
-> > > +     } else {
-> > > +             dev_err(cpu_dev, "Invalid or empty opp table in device tree\n");
-> > > +             data->icc_dram_bw_scaling = false;
-> > > +             return ret;
-> > > +     }
-> > > +
-> > > +     freq_table = kcalloc((max_opps + 1), sizeof(*freq_table), GFP_KERNEL);
-> > > +     if (!freq_table)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     /*
-> > > +      * Cross check the frequencies from BPMP-FW LUT against the OPP's present in DT.
-> > > +      * Enable only those DT OPP's which are present in LUT also.
-> > > +      */
-> > > +     cpufreq_for_each_valid_entry(pos, bpmp_lut) {
-> > > +             opp = dev_pm_opp_find_freq_exact(cpu_dev, pos->frequency * KHZ, false);
-> > > +             if (IS_ERR(opp))
-> > > +                     continue;
-> > > +
-> > > +             dev_pm_opp_put(opp);
-> > > +
-> > > +             ret = dev_pm_opp_enable(cpu_dev, pos->frequency * KHZ);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> > > +
-> > > +             freq_table[j].driver_data = pos->driver_data;
-> > > +             freq_table[j].frequency = pos->frequency;
-> > > +             j++;
-> > > +     }
-> > > +
-> > > +     freq_table[j].driver_data = pos->driver_data;
-> > > +     freq_table[j].frequency = CPUFREQ_TABLE_END;
-> > > +
-> > > +     *opp_table = &freq_table[0];
-> > > +
-> > > +     dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
-> > > +
-> > > +     tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
-> >
-> > Maybe a comment on why exactly you are changing the freq here ?
-
-I meant bandwidth here.
-
-> To my knowledge, this does not change any clocks. The intent here is
-> to prime the interconnect data. In the pre-req series, there's a
-> change that sets all clocks to max frequency during probe. Then my use
-> case involves setting performance governor by default on some boots.
-> During testing, I noticed that the interconnect data provided by this
-> driver was all zeroes. Which led me to notice that set_bw is only
-> called when the target frequency changes. Which wasn't happening
-> because clocks were already set to max. If my understanding here is
-> wrong or there's a better way to handle this, I will fix it.
-
-There are a lot of synchronization issues here because we are trying
-to set clk and bw separately. I guess other variables, like regulator,
-level, etc. (if used) will also be out of sync here.
-
-I think the right way to fix this would be to call set-opp for the
-device, so all the variables are configured properly.
-
--- 
-viresh
