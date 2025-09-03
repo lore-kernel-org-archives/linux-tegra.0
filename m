@@ -1,174 +1,144 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D272E2845;
-	Wed,  3 Sep 2025 08:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766FA274FDB;
+	Wed,  3 Sep 2025 11:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886491; cv=none; b=YR0lbNWWCsou/FXvXft9WQw9VivGqDPSqwL/oJAW26BHAKtmAyRS7ZtE2WpOhPVyo7E6cnbCunNwRAEowbWrCfHT/OA7+IMF4Lok/fpDQLNstDo5HyjArLikOswWCLgtkJHA0AhkjGRf4LOkZuJ1H2UdYwBXNjGomlOHqB+BsUM=
+	t=1756898513; cv=none; b=mB2HRZaUi5kdQ8uZ5TMoxZj506jVhhFCC4klq36hb7Zk/xV2yqq95FbgoTgOIiN6qByZ8F8BzKIjw5o2IPrxdtYI2OXKQvq0/xNBmneBMR+cBMA4oULQmDqSvIqY4PI2tjQ5CSDqzT7Zm0FN98rzg86b16iwMxkLKG4TMZGszVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886491; c=relaxed/simple;
-	bh=5adYNtw8eeCPBlwESfeKES9xQnEhpvXhnoWbYivNGTA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6+avpvIcwxb11UwLu9tPBX60ZzJgM3c2qegk2gd0KM+figjfGhs5Cf4bBafXJB39zn/DWX8EwG8jIduJ7JGQB4xgDIln3YupULKtKst5URD8DDJWss2S50enK9rdOWXHUTc8FzKbctbGH7E1mbkeMm92BnJ0rYKTNskvGofaq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGLfcg+m; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756898513; c=relaxed/simple;
+	bh=ND06E395q6iJZo+iubvby4YjESA3sJwwe4VdYkaj21o=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GUfTq8Q77E6P2dW+yOxrVg6lbydVi/AEb8ga5OhWkl+dG9wgBaLvUQaGDMJ8YIKLUPUd8OaOYFjcKcby6ugDJlgl6lufqZn7TouIN7fkjBf7/a96Fi082+pxhZmKC6Bcwqkeky3emJDySHQihezfVBbploekG/Q45SQP1QCaEas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jVqdXL23; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGLfcg+m"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336ce4a894cso28021311fa.1;
-        Wed, 03 Sep 2025 01:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756886487; x=1757491287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NZeYwMyzCuzis//8vlsX2RpvnF5aLJyp6/ELWk/TlGY=;
-        b=OGLfcg+mTA/AHgW1hHVjAsj4F3EwvzysbUspHyLcQdJNOzcIbAO17IR/MZUjKj171y
-         0VZL1MQESYDhfy7cbC2eOhgRFc79ruldiCBbTpQi6jfmoA96xqG9Nkoh8IlofiTK9PaK
-         b/jc9TiQwimoqx/zJdbk7NkKKTXg1VZW5DyqaXBt9uEQcTON1vHvtKGdM7bhf3/R+j4i
-         mjKbXDu1kTIKmYDvwIfVNjRUgoZRTM2bYap25IZA190wOeyo2LhmsjElehe0EYBYdY46
-         /27/SfwQIohgMAtZcKcDEiwpzvszL1/c0XcvatCJzkdC+CIqNvWfe86NAoWHTDDJH122
-         sofA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756886487; x=1757491287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NZeYwMyzCuzis//8vlsX2RpvnF5aLJyp6/ELWk/TlGY=;
-        b=MxIcS3AIqWBDk6hAy4bOn7z56YISEBMExgRtwC9R/e8nJsWdYhy0nltXgm3Fq5DESa
-         w1/+YqlO4hqRIqnquQ715JsDjkZ/G8baymeVXIMwhxNtMnuf7WqES19Rsd2tMtGXvutl
-         vNgGd1eIEl5vX6wJkkAitzNOUfr/NIKXEwnXBG81sPx3IThK+4zElt1A/iIT8P1hMEsM
-         7QXdhVMzMm/NFAy6elFXzaDiMQtsWzqR6HdD1tIfUmOZgfGObc24iQfgJEr/y87TU7mq
-         VvEaYMoLAt0cP41FuUYqwbyhGlT5peAHH8Sl5qXa5Rb8FzeyRpijFm+UtRUty6BLxWTx
-         eRMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ99UqecZv4dYRTELYCJpaIUMjL0cEPWwn4xBIIGSgiouWv7X/mwn3NWJIuITjYZQLIBwVMw1tIrsR@vger.kernel.org, AJvYcCWVROk+FcVm7i83c7Ix76EN+Fyvh33HZ4uIZK+GLJG27s4cOOJDqON8DH2rY+pKZgQm2JNdTPGmk+q6o6u+@vger.kernel.org, AJvYcCX8JQ7G5eIhdMbMm95+nZoh+Ol10oZrBEATdBxhQ+VfX/kiYD+eqNDB+r9X9UqaWKdKMkyZ5tGEA+O4HAY=@vger.kernel.org, AJvYcCXl+6JYZIk27CH09czBLM/u2rtVYCZBqvOmWWpmoY4vV9ZNrQGVwm+iQYF7t3ew6ZqXpo4O0lM7lTOn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6P1tHDa71zzCUc6cuDmBjVPBqBGDK44j6OwUmPaymbxXc1vDF
-	xO++V9WItwyToB4owc31PEI7J1f09FwF+U+yULOfdS6oYtqNiThaUtmX9B0g+eepS7MzQRiDGG7
-	rENEi5kLyAF3T5Ip1hL0PKwMZ/fb+SYo=
-X-Gm-Gg: ASbGncu942lJdqSXJYzX/hm/FWbHAN12cw140pA9Fa/4UZ1xQvuN32p8K2WXnEBwMNy
-	yfz1pewl3DRaf8E2QFRubmliCdrfhhe5rCthUbixSznubqVTLh+Lt100eEassspRd+jFOv+0Nup
-	21uqCTg+G8mbYwbbhkzNmJ1Gyw2eBWjql5UFJBb5EVBEvQo43UX/fBGQeJFSuRiVCl90KzfiAn4
-	q2G6d8=
-X-Google-Smtp-Source: AGHT+IEI3I+GxVBPOF8gc7J4Oqd1/t5YV0Bte28WUjFe0d65Vgbk1ymjWZhh2AJoHnXTXqniFHPbds6D5HMab52iYDU=
-X-Received: by 2002:a2e:a54a:0:b0:336:e199:6d87 with SMTP id
- 38308e7fff4ca-336e19972ffmr29514141fa.13.1756886486085; Wed, 03 Sep 2025
- 01:01:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jVqdXL23"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756898502; x=1757503302; i=markus.elfring@web.de;
+	bh=ND06E395q6iJZo+iubvby4YjESA3sJwwe4VdYkaj21o=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jVqdXL23S7bpGIOTCJ/w404I8PtUR8Ejp841gmnZ+80VTFJ5+1tXjPV3C7qA+a6Z
+	 CGP0VBeJBvGblB5DWMU3OP+zSoZqwEVtb4JQbA6BZvM8L7RGTUF/SOuD2eCUr1/ZA
+	 CPfuI1RW7q2mW2CupP+gaHA+eyyH6Go9gPN4vN4Zof7Jv1gKyf67OgKDCBoI3duL4
+	 0alu9jg0J+BrhIsW7Bux+kLNbwmSMCW8rNJRWTnLOpaqVb+V1Qk61x95HGPBK5Ncy
+	 AoBHBCPitzQ59pCybCL3Z68GelJA0+w65ROglDwbyJTmR3gA/ucZxUpjmi5fpL1+f
+	 5Fa004cOod1YS7WX+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.225]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzkOL-1uYGZD1Q1p-00uXRw; Wed, 03
+ Sep 2025 13:21:42 +0200
+Message-ID: <c044573b-0fdc-48a2-91e3-63af1c830253@web.de>
+Date: Wed, 3 Sep 2025 13:21:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
- <7006329.Sb9uPGUboI@senjougahara> <CALHNRZ8pn9shfq6PdeVe+CEzbq9wu-Vv6UDvD19=MsFrZQsBKg@mail.gmail.com>
- <26156028.ouqheUzb2q@senjougahara>
-In-Reply-To: <26156028.ouqheUzb2q@senjougahara>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 3 Sep 2025 03:01:14 -0500
-X-Gm-Features: Ac12FXxmKZYRO3zLyOtCmaUxx74vfBoK6p_zw0GKyByqvrfdOXN-TWzcf3hp-tk
-Message-ID: <CALHNRZ894WcNaAuLFoDLwJ8mXDRM8PzdqRFzcyYUMPy+0q0nMw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Miaoqian Lin <linmq006@gmail.com>, linux-tegra@vger.kernel.org,
+ linux-phy@lists.infradead.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>
+References: <20250903045241.2489993-1-linmq006@gmail.com>
+Subject: Re: [PATCH] phy: tegra: xusb-tegra210: Fix reference leaks in
+ tegra210_xusb_padctl_probe
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250903045241.2489993-1-linmq006@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nN/LiDaCYvRWjO0F26eEFj6xu+z5SvDSnft/C3hST3PmxdfkPN/
+ YIq8Bj4/7TNpmmPaQm4Ltyq9KvC19Qx0pfOuw0BKJZKSvuiwXJPhxN9bjEtHrPxQgbtocXl
+ Z7bobBAL2J9NHVroZBCqjKoppY/XEsSXxgoWtjPjEzZUxRkE+z6fW5Bcuh/ZFxD2HvH8tCY
+ pj6mMuErPIy37yCVgriUQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JGxEJv4CHqM=;9pYBoRZA0m92SX/ijM383sOWEO+
+ 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
 
-On Wed, Sep 3, 2025 at 2:29=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.c=
-om> wrote:
->
-> On Wednesday, September 3, 2025 3:28=E2=80=AFPM Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 12:50=E2=80=AFAM Mikko Perttunen <mperttunen@nvi=
-dia.com> wrote:
-> > >
-> > > On Saturday, August 16, 2025 2:53=E2=80=AFPM Aaron Kling via B4 Relay=
- wrote:
-> > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > >
-> > > > P3450's cpu is only rated for 1.4 GHz while the CVB table it uses t=
-ries
-> > > > to scale to 1.5 GHz. Set an appropriate limit on the maximum scalin=
-g
-> > > > frequency.
-> > >
-> > > Looking at downstream, from what I can tell, the CPU's maximum freque=
-ncy is indeed 1.55GHz under normal conditions. However, at temperatures ove=
-r 90C, its voltage is limited to 1090mV. Reference:
-> > >
-> > > static struct dvfs_therm_limits
-> > > tegra210_core_therm_caps_ucm2[MAX_THERMAL_LIMITS] =3D {
-> > >         {86, 1090},
-> > >         {0, 0},
-> > > };
-> > > (rel-32 kernel-4.9/drivers/soc/tegra/tegra210-dvfs.c)
-> > >
-> > > Here the throttling is set at 86C, I suppose to give some margin.
-> > >
-> > > 1090mV perfectly matches the 1.479GHz operating point defined in the =
-upstream kernel. So it seems to me that rather than setting a maximum frequ=
-ency, we would need temperature dependent DVFS. Or, at least as a first ste=
-p, we could have the driver just always limit the maximum frequency so it f=
-its under the thermal cap voltage -- the temperature limit is rather high, =
-after all.
-> > >
-> > > If you have other information, please do tell.
-> >
-> > I am basing on this line in the downstream porg dt repo:
-> >
-> > nvidia,dfll-max-freq-khz =3D <1479000>;
-> > (tegra-l4t-r32.7.6_good kernel-dts/tegra210-porg-p3448-common.dtsi)
-> >
-> > Which in the downstream dfll driver limits the max frequency it will us=
-e:
-> >
-> >         max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
-> >         if (!of_property_read_u32(pdev->dev.of_node, "nvidia,dfll-max-f=
-req-khz",
-> >                                   &f))
-> >                 max_freq =3D min(max_freq, f * 1000UL);
-> > (tegra-l4t-r32.7.6_good drivers/clk/tegra/clk-tegra124-dfll-fcpu.c)
-> >
-> > If I read the commit history correctly, it does appear that this limit
-> > was set because the always-on use case was failing thermal tests. I
-> > couldn't say if it was intentional that this throttling was applied to
-> > all use cases or not, but that is what appears to have happened. Hence
-> > trying to replicate here in an effort to squash stability issues.
->
-> I can't see any reference to failing thermal tests. Can to point to the c=
-ommit?
+> Add missing of_node_put() and put_device() calls to release references.
 
-In the porg dt repo, commit hash d1326f08, which adds the
-nvidia,dfll-max-freq-khz property, the message body states: "Set
-CPU/GPU Fmax limit for 24x7 105C UCM." I read that to mean that the
-24x7 always-on use case model was failing to stay under 105C unless
-the cpu and gpu frequencies were limited. Is that an incorrect
-reading? 105C is kind of a crazy number anyways, beyond the soctherm
-critical shutdown temperature.
+How do you think about to increase the application of scope-based resource=
+ management?
 
-> I looked into why this was added for porg -- it does not seem to be relat=
-ed to reliability, but more so consistency of performance. I don't think th=
-at's a huge concern for upstream -- though in any case we should be capping=
- the frequency in the DFLL driver for now since we don't support dynamic th=
-ermal capping.
 
-So the whole conversation winds around to: The change is valid, but
-the commit message needs better justification?
+=E2=80=A6
+> Found through static analysis by =E2=80=A6
 
-As a side note: I'm still chasing multiple stability issues on various
-t210 devices. Though, the only one I've seen on p3450/p3541 is that
-nouveau intermittently fails to init the gpu. Just hangs on probe and
-eventually something times out, stack traces, and causes a panic
-reboot. Seems to be about a 50/50 chance for me, but works fine if
-probe succeeds. For another dev, it only works once in a blue moon,
-but still dies shortly thereafter even if probe works. I thought it
-might be related to the cpu/gpu getting 'overclocked'. But even after
-this series, the problem persists. So maybe me calling this underclock
-a stability fix is inaccurate. But stability issues still exist.
+Which concrete software tools would be involved for this purpose?
 
-Aaron
+Regards,
+Markus
