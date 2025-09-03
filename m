@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F31D2D3750;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3842D5410;
 	Wed,  3 Sep 2025 19:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927823; cv=none; b=NnDmzx1y6sHPjV72NEk7Yea1zioV1ex4Aft0ouzJJeKBQ21ccgTYvPT48Nbt2+pQR8AfegaYadB2StIIjnn6tCgMo1AlbIFVzspXy6G3kZ6XuxfaEztLTk8aNnhIsurfFdfbTqS+X7QzKL6qi4LynYtpU9bwwJTuLfJoPialrlA=
+	t=1756927823; cv=none; b=gfm0TD47eMQsX5wq8ssBnmQWuT8xZGAcdDsP8oGxYboaIji3Wk6/Jpw6MX/iQZyP34cpvOln3j/M7BC43CyGK+8WK5W9ENG+Tvm7GX98c3ncEDD8Ej77TH6082OZE3JhMcXHGDcYslDkb6fICg5Ip9je1UnMuic8F2CT3sgSp+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756927823; c=relaxed/simple;
-	bh=JUppoQ9npu9DVIYJDijPMBBHVSyQ+ANuSoJqzrpc8AU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PU08qEe/6VtIW7TtcMOsCrcOhuVzaU20JQisWay9qaRPKkvgwWAwBwJn087VdTxxxKruBCd6MBDwno+yNoN9hADphA9Os6OqAvgONw7qnki4v10jfVhQQ9wiym2lslC8tYYzIAxcEuIOkVyX+LViW3hYxgRd34q5LYlybRBjZP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2qCiPNx; arc=none smtp.client-ip=10.30.226.201
+	bh=3Ho4dQOZpk+HfDT50JDRPnGFGqzr/4gvezzMHb1Uyn8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=E3NXbg4Y3LMTMfkdfDBV1gQnWTCx4G9A8xT1vXRvK2n5L69UNRhd9g5YPULVQtvRMmFgc4XA6A7zY8Xa24SQlijcCaNldZuya353t8kpMsxzd60lRoqhqVB+vHhXeBToMs6+FWgEftUR2IOn9AZ5tbjo6P3lfL3OPbaI/rLNiWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXm8pPW9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2qCiPNx"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D79C5C4CEF1;
-	Wed,  3 Sep 2025 19:30:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXm8pPW9"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 06260C4CEF4;
+	Wed,  3 Sep 2025 19:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756927822;
-	bh=JUppoQ9npu9DVIYJDijPMBBHVSyQ+ANuSoJqzrpc8AU=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=j2qCiPNxYDgkXqFu1vBEGr1569flwxiOv5c4+W2v2tFxpEJbMpPFkoYbM73twvwsd
-	 shy/CSS0xWGnaFIIpEyau+RpmNE8QMZ6yaHURbfdbtlI6B/jekTg8WXES7hkkmPxsQ
-	 D5nL9OPuKcNldllOBOXS4ksUWAfgPLdYTJ+QgZlOfQxEXrM6EoR70u08B6TB+BPP47
-	 ctIY4Z1JZwheBwt5BYoFf5GrW+9iniK6XP1+q1iDxLF3MxTrc3tzVpTgIqlilSVi8U
-	 NQqnKVQbx9Nd7BTBKbpAzO2Ejw7wFYtDY0AFWgzow3dsrFi/ftUlKCNP/EF3rJC/cO
-	 OEyfVFObFxWPg==
+	s=k20201202; t=1756927823;
+	bh=3Ho4dQOZpk+HfDT50JDRPnGFGqzr/4gvezzMHb1Uyn8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=NXm8pPW9AK2Kw0erK7SSLUxkp+sz18WP0XsB+mam3ia9+HF5FdTmpkF/0gU9eLUeu
+	 dmorJ68Dr6R+nPyagi0OeadDfqJvOEspip0Cz30cduGAE24Xp4wPj11cb+tDgIjUTt
+	 gEM+hVWyHFxJkehRuFsBrsy2h8mBB00gPXT9OQgDmyIakkblmcQnC08wEEqXED94UN
+	 qT9v+3bpriA7OTGR3wkE3AEKSdktvmzcK2nRJkquZ1R/Ecy5c13eGYDYi7fog+uVqi
+	 FYBvwSxk5PxC3BBnGIfMjdJ2xrrq4PeGbqqphoZU+DmQIXxauSjls+wCnVXsfrW7tJ
+	 hqqWjkK/1OLww==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF26ACA1012;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED35ECA1014;
 	Wed,  3 Sep 2025 19:30:22 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH v2 0/4] Properly Limit Tegra210 Clock Rates
-Date: Wed, 03 Sep 2025 14:30:15 -0500
-Message-Id: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com>
+Date: Wed, 03 Sep 2025 14:30:17 -0500
+Subject: [PATCH v2 2/4] soc: tegra: fuse: speedo-tegra210: Update speedo
+ ids
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,11 +41,9 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEiXuGgC/2WNwQ7CIBAFf6XZsxhApbQn/8P0gLDSTWxpoCGah
- n8Xm3jyOJO8eRskjIQJ+maDiJkShbmCPDRgRzN7ZOQqg+TywrWQbEUfjRScpQXRBXZuueoE6ru
- 2Fupqifig1168DZVHSmuI7/0gi6/9tdRfKwvGmem0OClunJXt1U+GnkcbJhhKKR/GQdY0rgAAA
- A==
-X-Change-ID: 20250812-tegra210-speedo-470691e8b8cc
+Message-Id: <20250903-tegra210-speedo-v2-2-89e6f86b8942@gmail.com>
+References: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com>
+In-Reply-To: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -57,11 +56,11 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756927822; l=1429;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756927822; l=2732;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=JUppoQ9npu9DVIYJDijPMBBHVSyQ+ANuSoJqzrpc8AU=;
- b=gqdrIp+Er4EjmHuTZsTCVAYnpCIzJZCtLeIHXNzToXG73rRAqIXhtjsR/yYXkhVEyWZkHVd3m
- lfTrELHYHgKC0DvHZjjFIj74lkvOQBmqSKvNknBVewztG1ZeYfQXrgS
+ bh=+rnEMK4ZcZWLWnEqy8xfvGYxMDKH6aqGlW/aWu1EMXw=;
+ b=Rtw4En8Nol3b3Pqyu9BdJK0rwTTTt5os7DFLrd70wJVDMZn+cLzJ4pMTGtnLG2QIX3EIyXxZX
+ OH5UL6xYH9NDsYsEC1n7Yz/o+OUdc3oGJttdKKm2NHAlahOQuhPPMbP
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -69,39 +68,101 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
-all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
+From: Aaron Kling <webgeek1234@gmail.com>
+
+Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
+code supports 11 ids and nouveau supports 5. This aligns with what the
+downstream vendor kernel supports. Align skus with the downstream list.
+
+The Tegra210 CVB tables were added in the first referenced fixes commit.
+Since then, all Tegra210 socs have tried to scale to 1.9 GHz, when the
 supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
 Overclocking should not be the default state.
 
+Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
+Fixes: 579db6e5d9b8 ("arm64: tegra: Enable DFLL support on Jetson Nano")
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
-Changes in v2:
-- Define units in patch 1
-- Update patch 1 commit message to better explain the need
-- Pull all downstream sku's into patch 2, which eliminates patch 3
-- Update patch 4 commit message to indicate the limit is due to thermal
-  constraints.
-- Link to v1: https://lore.kernel.org/r/20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com
+ drivers/soc/tegra/fuse/speedo-tegra210.c | 62 ++++++++++++++++++++++----------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
 
----
-Aaron Kling (4):
-      dt-bindings: clock: tegra124-dfll: Add property to limit frequency
-      soc: tegra: fuse: speedo-tegra210: Update speedo ids
-      clk: tegra: dfll: Support limiting max clock per device
-      arm64: tegra: Limit max cpu frequency on P3450
+diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
+index 695d0b7f9a8abe53c497155603147420cda40b63..60356159e00d2059e55eaacba27b5ca63bf96c90 100644
+--- a/drivers/soc/tegra/fuse/speedo-tegra210.c
++++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
+@@ -65,27 +65,51 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
+ 	sku_info->gpu_speedo_id = 0;
+ 	*threshold = THRESHOLD_INDEX_0;
+ 
+-	switch (sku) {
+-	case 0x00: /* Engineering SKU */
+-	case 0x01: /* Engineering SKU */
+-	case 0x07:
+-	case 0x17:
+-	case 0x27:
+-		if (speedo_rev >= 2)
++	if (speedo_rev >= 2) {
++		switch (sku) {
++		case 0x00: /* Engineering SKU */
++		case 0x01: /* Engineering SKU */
++		case 0x13:
++			sku_info->cpu_speedo_id = 5;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x07:
++		case 0x17:
++		case 0x1F:
++			sku_info->cpu_speedo_id = 7;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x27:
++			sku_info->cpu_speedo_id = 1;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x83:
++			sku_info->cpu_speedo_id = 3;
++			sku_info->gpu_speedo_id = 3;
++			break;
++
++		case 0x87:
++			sku_info->cpu_speedo_id = 2;
+ 			sku_info->gpu_speedo_id = 1;
+-		break;
+-
+-	case 0x13:
+-		if (speedo_rev >= 2)
+-			sku_info->gpu_speedo_id = 1;
+-
+-		sku_info->cpu_speedo_id = 1;
+-		break;
+-
+-	default:
++			break;
++
++		case 0x8F:
++			sku_info->cpu_speedo_id = 9;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		default:
++			pr_err("Tegra210: unknown revision 2 or newer SKU %#04x\n", sku);
++			/* Using the default for the error case */
++			break;
++		}
++	} else if (sku == 0x00 || sku == 0x01 || sku == 0x07 || sku == 0x13 || sku == 0x17) {
++		sku_info->gpu_speedo_id = 1;
++	} else {
+ 		pr_err("Tegra210: unknown SKU %#04x\n", sku);
+-		/* Using the default for the error case */
+-		break;
+ 	}
+ }
+ 
 
- .../bindings/clock/nvidia,tegra124-dfll.txt        |  3 ++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  1 +
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  8 ++-
- drivers/soc/tegra/fuse/speedo-tegra210.c           | 62 +++++++++++++++-------
- 4 files changed, 54 insertions(+), 20 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250812-tegra210-speedo-470691e8b8cc
-
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+2.50.1
 
 
