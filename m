@@ -1,131 +1,136 @@
 Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FEE350D68;
-	Wed,  3 Sep 2025 17:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B2243968
+	for <linux-tegra@vger.kernel.org>; Wed,  3 Sep 2025 18:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756922303; cv=none; b=r6EH+disiK2bRkJqRyEQpXJPja/QO1EsuTxp5x/Kmj2UFkOY6GdNeaSDPjf4ish3y5t/E+jr24H80QQ+2wGDUWdPEFLj6yTCiWbYBpTB10Pro0RN7kotDBmRZbRoFFZkfnsiK4Mlr5zIY1Rpl1SHpNCES5RvWMWiZIrR+t4qQaM=
+	t=1756925334; cv=none; b=YVa+8mg+56JjfBP1xz5U8pEPp9YjlNXFtDEIo0NYzx+E534lllQUcg9CR5fxM+DV0/8s94UcuS7oHgktWXmapgQ/p7HiqkLfS3YOrZc/8AhN+MRAa5GPrxCaYFTArK761XWLyp/GSzzIk83GHCGz25tNuc7MDKr/jtmm458mVOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756922303; c=relaxed/simple;
-	bh=wY2bW8fq3Ft+chy83Xdc3EUaRkyWqSV3KeQlYOmD67I=;
+	s=arc-20240116; t=1756925334; c=relaxed/simple;
+	bh=SpKd2275sVbG0K2FZVdjWp6/Z18/FkDT3HL6WWRqaEg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pGZcZXK15jqsS+quS5clWaqowRatBccJhvObaTSHfHD4rkAkwWjdrpA4W3m8UewyLduPAv8WeIr8+KCYn3VgveHar0w2JHhfsRKLEH59Xhhqjx55EsuuPa3KlGzyx5kArW8uQ7ZBw5AILxuVFlpBguR6Z0kMvv3eGV+c4uLmmgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/XGKVsA; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=boqYSoSqPncqitfVZ8vE+AhYyqBZJTiZVqsoQYKFpWxoUy1qe2QFhYaxcLDx4V0OjqVne037M0+TuyVqgxAEPo832XA4GSd/NCoPdAXdcE+fu+8g/y0SmWGfEKrgsP77t1SSunEbbjW84FOGyXDy0irBW9Tk4ztify3BbSwC6A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u8NVAyIs; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/XGKVsA"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f6aef1a7dso129486e87.0;
-        Wed, 03 Sep 2025 10:58:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u8NVAyIs"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so159978e87.2
+        for <linux-tegra@vger.kernel.org>; Wed, 03 Sep 2025 11:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756922299; x=1757527099; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756925331; x=1757530131; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rVkerZVITJ75R1A8DbL3xIDB9OLG8LafZy9yCcs7YDc=;
-        b=R/XGKVsAjk2uFVa62AQTvsgPPfs/vpYpTsgqy8/7KlpB2EP+Qt418KPUQuk37aaKNm
-         psyvyvJ62ItDrZrqflivCqyBcfypp1Caff6wA3h6Z1UwgJhaxFS6cLDkgmmLbqgplwzs
-         mAc2N7/NUUaC1Sdt2BAplcMjRPhY6425aGwDpDrewRjeVL+UJkAanqijLv6XwJF9scDz
-         v2K71sIQau6hJdgpVPoWhthKomEZbm+lj9bZukBdzBWhPEos+cpD/N+XZk3D4XqwliRC
-         EV23Ku6vk5XJOi/2p9ez6A8B3rvSkGM6NBMlB+iZtHuFxyiUOS+yDSPf6IcpMh2Z16vk
-         JPYw==
+        bh=SpKd2275sVbG0K2FZVdjWp6/Z18/FkDT3HL6WWRqaEg=;
+        b=u8NVAyIssw3t9zRxrhEdCcCnI4vtKVD3XlZ8yldVYCetM4tNhB0ojB5yEjQxdYcZuL
+         uFxVqeYQDEjhtuNrfOywtvaNsI6gXtpWnZlzB2hXk5AIEddfdLGLuZDRF+gCiJEMUkAf
+         JqlhATiGlk7Lnq6JWFSlXJXDmCRfEua9X0gLEPfKI8WKslnejCzheeHVmE+Od2m/uoIc
+         6vN/cRkO50PPj4x7WrupBb8vXri+i+HdeU5j11AudTTqqjvVXWwXsh/fV5qdOIVIDSRb
+         /A8OVPt/C90ULjKekIvYcWxNBN/kncF+w5tANejOL88gaVainBq4Ay7i8dXHSwQnp+PQ
+         TqlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756922299; x=1757527099;
+        d=1e100.net; s=20230601; t=1756925331; x=1757530131;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rVkerZVITJ75R1A8DbL3xIDB9OLG8LafZy9yCcs7YDc=;
-        b=OAd4iif4NaB7sHxMwGV7i3L+6S5MqWciG6zOowo/SK0gaUFnrrODB8GzznBUO5Q7il
-         gkv++LrqpxB4B5IEBDHVN5JjLgoInDNCnyiiRpkOvfMlAHEE2yQqUSZgQxiN1AMQ5i64
-         MaaCFx8YE6nQx3ha7nW5nM0VCzAwQEMiOzhyx759L1zLwj31RGNX2IbtOW+VnLYgLc3C
-         +vT9oLM+ib0PgDrz2iyzFuzc6tnnm9Xmi/VIh+HeAYj+5ibF7v8nKS2tNw3nODaFb5TT
-         iEEf/qmEUizQ4rUyUtUWCRTqMHHZwaCFoImz+3qXgXpz5HDtBZ9kDsO1Z3pc4Y5jjkE3
-         eZbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVoARWKPVBsH6aQOhXt1SLUUs0DwUs+4RicvVL49PkEWEe4ORU5lwR2SaC7y03neI+nMqUm267AdhwbbEj@vger.kernel.org, AJvYcCUhTFlutrGmdNE2QV/dOlfteCIQF9DrJKnt8BJ7G6WxkLUinhWaVn+yr54ifspA4NAXsEKGY7ymrhO0WWc=@vger.kernel.org, AJvYcCUvVwavXIsUCJEp/80XdJ/0SubDTY5BPFlsKliQmnQKAsUjCeQ3GAOWYApGm/rdwbXNFfSfaHh/ZxD2@vger.kernel.org, AJvYcCWBWvcUbhs5zYyb/boeLR7dGVU8qmbx09RDcFwqv/1kVOTiuR2y3CDbDEXbQhP7SU/zguAwdhUoE8OSow==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCR/u+5Lt7hc8MjrbdQWgyvCzMktjlA7wNnF8BROtgTOHGDGFq
-	SQQcCnwDBcBZp2gFiXFVau+HRaeIcC05Icay3w1/i4xn8i6c0jtm41NVT32RE2eI+A3eFGmz4A9
-	0GDOW2SlvZ5xzO8FHPenw/fNt55R+0F8=
-X-Gm-Gg: ASbGncu8BNpiic4mGKJaRUG4/vIua51yqF5w98VF2L9g+lZDdygXUVvFqwJ/PJY7jzA
-	cdSO4+jiMb/5W3TjZ4WxOttBBS5Yaq0FwEeO8CByiXlg88dlzKXwOMKb7a1QioUmngOYew8EZlS
-	CHo2D0jWYPHpnQIVubmD2HTe6nm8bnd3Zss3vwUXfIAb0VmVuWhctYCSXIulJF+rkFOo8RrS0Ft
-	E7hMjbazsFgOoejRg==
-X-Google-Smtp-Source: AGHT+IEM3391jGaZ5H7KUN2s6kIYrcivIvySSHlaVz037M26bpuhJ5pwlWQPEBWsLq32weOR5d9HjCh3JN3yqFD4VuU=
-X-Received: by 2002:a05:6512:258c:b0:55f:6c72:b70d with SMTP id
- 2adb3069b0e04-55f709f6057mr4422732e87.48.1756922298765; Wed, 03 Sep 2025
- 10:58:18 -0700 (PDT)
+        bh=SpKd2275sVbG0K2FZVdjWp6/Z18/FkDT3HL6WWRqaEg=;
+        b=ZKwoOHyotIYkCksl50DKOagThru22fguifklElpQQZj6Ds5kfDKfvi62a/Rqafjjbf
+         XLOP1rnJstWI3xyIBfYYZu1AEzz+aDGULVICOZoDSLCTvmxxeHMP5JLqMJ9rL4SQ9JNt
+         /q8Nkd5TwKbSeyk44pq/OBYhLv9tA8UtTxgTJqvX8nagZXnK+UrJsl540B9CJaSku11i
+         NF8cyq/eEpL8LBGbEAdmwuCYIQYbjZVh12iuTWCMobH6iiFMS0fWxlhpDmU7A25/3ikv
+         R3B66Pp9AZXVb7vCP/mbenRCaTkzJIijiK09PpexdXsvkCqaKTQC95+AG19D8nCFMtlM
+         cw5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5TtnHfxyECWS4o0WfMZxEFVsxUiJRJrjDW4v9mWSxnxoNefg6SnH0OuPcG/gzkH5gdzxjbG5Z11VBvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs/3YoXGZa0BIhVeBdxAfF5639o6C+qODlrVerAw2sqcr0ZMjM
+	JfrBCDLampOu3lLSK4+MaNzZnw8Duin36ODWcxH1Ia15E76eb8KXJQ5tIEeXMGeGPN9A5jfL9j1
+	6DbTGRuNfKTFqsfb+IjjsXAI7sJAUWcK+VHJc7I0=
+X-Gm-Gg: ASbGnctC+NK8WIHbFOP3eEmTbG0WwE/OJOGAoOIZPlZEUzpVIDaBDWWo9EMwEFrthO8
+	5BdFXVNvqs0Ev9M0BoxqF3nchjyJEJ0RqqlD0VaKRTLNWeAWY8ACdUIz5NPMik01wsT46woDvU6
+	Gu6Ec650uk7U8TnX9xgNXIQ73t4NwbTGc+39oQoXNzdZlufRBuWDxxREMUc2786UP9VFJeesFEc
+	5waqTO5lJ/LHM5xdVwqacXsWApyEvTrFv2JzjDps4I=
+X-Google-Smtp-Source: AGHT+IF5G/J215zB6F+3YqHgBGUMzaMxIb8FdX2l9xOBS14z2EjkTnAnD4URRw2r/tfzfVxdowvkPYNpzRoqDhW7JLg=
+X-Received: by 2002:a05:6512:660a:b0:55f:595f:9a31 with SMTP id
+ 2adb3069b0e04-55f709747b3mr4044420e87.51.1756925330683; Wed, 03 Sep 2025
+ 11:48:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
- <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
- <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com> <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
-In-Reply-To: <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 3 Sep 2025 12:58:06 -0500
-X-Gm-Features: Ac12FXwYT3HuWemAngCiQwse3I0_AJd8-Hn-0mwSL6IgfLf-ieUlbAGMCMdMG4Q
-Message-ID: <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+References: <20250902154630.4032984-1-thierry.reding@gmail.com>
+ <20250902154630.4032984-5-thierry.reding@gmail.com> <CANDhNCoM4RFX-QccF7xT=+-tduGj9OZ_8SgrTVyRucMwyVc73Q@mail.gmail.com>
+ <e6twhwxi55eesb7xirei7wezzb77qjiji2mccgqlziisjzl3q5@3ny5e6lbgebz>
+In-Reply-To: <e6twhwxi55eesb7xirei7wezzb77qjiji2mccgqlziisjzl3q5@3ny5e6lbgebz>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 3 Sep 2025 11:48:38 -0700
+X-Gm-Features: Ac12FXyfpojM7sYEH_SV5iPkXzxCBmlghsM38HwpGdBEBMQS7yemN51cEMcgCs0
+Message-ID: <CANDhNCrO21O_URa1iHuroOoG-g61DL7uvECTwVxiuitCTi=i4g@mail.gmail.com>
+Subject: Re: [PATCH 4/9] dma-buf: heaps: Add debugfs support
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>, dri-devel@lists.freedesktop.org, 
 	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 1:55=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
-org> wrote:
+On Wed, Sep 3, 2025 at 8:38=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
 >
-> On Wed, Sep 3, 2025 at 6:54=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com=
-> wrote:
-> > On Tue, Aug 19, 2025 at 6:30=E2=80=AFAM Linus Walleij <linus.walleij@li=
-naro.org> wrote:
+> On Tue, Sep 02, 2025 at 03:37:45PM -0700, John Stultz wrote:
+> > On Tue, Sep 2, 2025 at 8:46=E2=80=AFAM Thierry Reding <thierry.reding@g=
+mail.com> wrote:
 > > >
-> > > On Tue, Aug 12, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
-> > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
 > > >
-> > > > This series adds support for Tegra186 pin control, based on a downs=
-tream
-> > > > driver, updated to match the existing Tegra194 driver.
-> > > >
-> > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > (...)
-> > > > Aaron Kling (3):
-> > > >       dt-bindings: pinctrl: Document Tegra186 pin controllers
-> > > >       pinctrl: tegra: Add Tegra186 pinmux driver
+> > > Add a callback to struct dma_heap_ops that heap providers can impleme=
+nt
+> > > to show information about the state of the heap in debugfs. A top-lev=
+el
+> > > directory named "dma_heap" is created in debugfs and individual files
+> > > will be named after the heaps.
 > > >
-> > > These two applied to the pin control git tree.
 > >
-> > On patch 3, Mikko noted that I accidentally amended the formatting
-> > changes intended for patch 2 into patch 3. Linus, since you've already
-> > picked this up to your tree, is it too late to fix this properly in a
-> > new revision? It doesn't appear to have made it to the main tree yet.
-> > Or do I need to send in a fixup?
+> > I know its debugfs, but this feels a little loosey-goosey as an uAPI.
 >
-> It's one of the first drivers I merged with plenty of other stuff on top
-> so I can't amend it, just send a fixup based on my "devel" branch
-> (or linux-next, it should work too).
+> Well, the whole point of debugfs is that it's not really an ABI. Nothing
+> should ever rely on the presence of these files.
+>
+> > Is there any expected format for the show function?
+> >
+> > What would other dmabuf heaps ideally export via this interface?
+>
+> I've thought about this a bit and I'm not sure it makes sense to
+> standardize on this. I think on one hand having a list of buffers
+> exported by the dma-buf heap is probably the lowest common denominator,
+> but then there might be a bunch of other things that are very heap-
+> specific that some heap might want to export.
+>
+> > Is there some consistent dma_heap-ish concept for it to justify it
+> > being under a dma_heap directory, and not just an independent debugfs
+> > file for the driver implementing the dmabuf heap?
+>
+> Well, I think just the fact that it's a dma-heap would qualify its
+> corresponding debugfs to be in a well-known location. We could of course
+> pick some arbitrary location, but that's just a recipe for chaos because
+> then everybody puts these whereever they want. There's really no
+> standard place for driver-specific debugfs files to go, so putting it
+> into some "subsystem"-specific directory seems like the better option.
 
-I am highly confused now. When I went to make the fixup series, the
-fixup didn't apply. Looking at next-20250903 [0], pinctrl-tegra186.c
-looks like I wanted it to, the base commit has all the format fixes.
-Which doesn't match the commit on this series. Which leads me to a
-couple questions:
+Ok, I guess I was thinking if the files are organizationally cohesive
+to be under the dma-heap directory, they ought to have some
+consistency between them.
 
-1) Does anyone know what happened? I'm not particularly a fan of not
-knowing why something happened, even if it's beneficial at the time.
+But I can see your perspective here that organizing the driver
+specific debug files in a directory helps with folks finding and
+identifying it.
 
-2) What should I do with the dt commit now? Ask the Tegra subsystem
-maintainer to do a manual fixup when pulling? Even without a manual
-fixup, the bad part of the commit would fall out when getting applied
-on top of next.
-
-Aaron
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tre=
-e/drivers/pinctrl/tegra/pinctrl-tegra186.c?h=3Dnext-20250903
+Thanks for clarifying!
+-john
