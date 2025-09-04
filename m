@@ -1,140 +1,89 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C633128CC;
-	Thu,  4 Sep 2025 17:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C58A1E7C03;
+	Thu,  4 Sep 2025 19:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008193; cv=none; b=tlvUE25LIyQSFUAgjQyf/AVngdlO8u8Rz42EdwHiQn8M5+ko7+Fm9x026zXk2uBSLZmFRznH8CcLFLTi0ADviwdk5V7esa7yWbvSLfB93K/ibxyQiQneyXKke8BUGaJ50QncE12J87iudeMlYNgqyicDtyC/iV3MdcXkYAx6dtU=
+	t=1757014617; cv=none; b=V1EUdfkggK82WE3ydw1G9A2NJxtYURAr1r00bS+Y51hqU9o/MAWlJWmxhW3isF9UYNHzpMaxrWnfvREc4ntR+siE97AOnFDQsmdoL9tQHEbhqj0jHh5tJW/wMZ30kFaw1rCXeOFrE7WNvzVCeg71j+mY7nQK7D0pP0VuaYZnILA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008193; c=relaxed/simple;
-	bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQK8SSpOAsEXT9DhacEYyrjhZ1xD4jbBgsuTVTgb54UhzOM+dY1g6ZNAJ3DQOL8rMxlXB/inibZQAqNl11uyUZidNF3yst1Smr5WJcb2hbeqryRuaDs6k8Tqxa7ytwdmoGebWwR36NVsEYnMtx0B09/K0xhAm2RI7d9k27/L0iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evZN+BCJ; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757014617; c=relaxed/simple;
+	bh=TMssmfr6Ux793m0iP09iig4VNiue9TXEr6uOT9wRYhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0u1nCsOKUW1u7Xy7sVR+Uuok/4FtZDMYz3NOVH7H33VfuQq9f5LDArKYY+zN41x7mflCrBghCF/l5N7g153wkkgJsQdqhXu/5WntYkAKCeRhcrZIcw6U8AOLajOBbqN8zd8/uvoLzSlHE+aNIqvOkBDPxJxqpgFhkY/+RrkF0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJImzx5c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evZN+BCJ"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f92d60ddso11847731fa.3;
-        Thu, 04 Sep 2025 10:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757008189; x=1757612989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
-        b=evZN+BCJIrgR+DFdcgMy45ij4uajXQHpNyY0ZPYu9d5yBAclw/pTXYbVubo1sgdXYO
-         UR+6Rplh67axriipwjwwBF725VAr7SqPEhh5tcBCjbR0RZLXnij5T08kxByLeCIWkzww
-         1PYsQ0S989CGAuErYyg+g0FCJi4RoKpKiKU7igmRlmi2F28sOY/zLoO5CuTnXvsNK7uu
-         hjuIVSITORjZBhzYkljF7bDmIBrmS1XS4KsikEmDWszPRW/0+J/LK6WsOhNtACbMMQnG
-         A8uVpVlAV85u20brieWTkYwZ0qRKny3PcWLMftRThPH+xnrOuQCq1aMfqLXL8d0f3guG
-         uvig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757008189; x=1757612989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
-        b=NDAYs9xozJQrik89fceWegPJ/C+gWKKhgy4qae78acaimy4jnAwi69uGFPp8lPqIG6
-         ggju94B1t8JGxGeTM6WQPvHUrNI/6uXWDndphNbuWLihs8TjPY4REcurPUKgDMxkQlIA
-         EUT3molCyBGaz1COd2t8Hvqskcl3gRc6A4JJWgg96LN1KbOGLkb2KRWmLJOneDOgQLy6
-         ZMAT7c2FP1Q6LBaU1duvxK4ZDk7Q8fFqCQXd+fjNL/meq//rocOgbQntNaVMMlzKfSXO
-         DcGh0DWCWBrsQ8FW8bRvtSJXIEWcw3CTKrucyYuGMwWkal5BLd+3WOWgxG603ndlyRfY
-         DjGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUo5WgbL8rTWkg5Iz1nw3v3/CvxFPveyClnqYIHeynA3aUwOwXZ1X1NdwZiV1ysUBLeUoE1/rkCi40Q@vger.kernel.org, AJvYcCV/EFKP9dUkDK8nWmJZqdNGsvDQVV0Mh7yj8U0OnalJb0ckm1oOtsifPzEGY3po8/CjQR4ILZx47oR7U9s5@vger.kernel.org, AJvYcCVPZIJJ1uIF306B8RmiTuZ+eawhSncjO2ykBB4wj9VRSuMzwIOJxsq6PLPagr3bFrH+lPI4xlrL8rg=@vger.kernel.org, AJvYcCWms9lW7sdtS0hapVIOWS4RrQbKMuy6kK6vT3TH3gmFOStLpd1E+JL5qhCUsq8nDTOdWyklrZkpNK/w4x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp9es5ACgbxxZg5BkHS2RgT6Aiv6K2/UuHLdeLQykPLUjv6uRm
-	hD3nEpP9LSfG3twV7/Wfua/CBVJEzoBiWqwZ7Obc6sY7qTfbN2vPzazjHRpf1Ce5cLry4EMZu9x
-	y4eSp8mgxLEl6Qpa7A2q5Dl7h6MkQXXU=
-X-Gm-Gg: ASbGncttFGYTp75UoTIe7oHt19nh8GR7lckiV0vILVfT5pNwDBkar1wTBQxcZo9aUH4
-	s2uCB84OVxPK2+ud+PGHwZAWxSEUaapZyZ01XcVfSHWLaY4w5vEI36SOG2eQOEQhisqcpX/7SAs
-	WevErVYEoQgcPYGeWTxMcUW2UDAzU9CHGFlnUZovfR29gKBdYlYOCk8Pph0F5ITzvx8CNPU3jQY
-	XynMiU=
-X-Google-Smtp-Source: AGHT+IH7QIHZ0cpl1bQSa5L4Bb5DytTvCb/2gvt8Gsq4gOq49faXMoYH00vGZ0ZJuXaKzDud/8jnwgq3KDUTQ3B7Nx0=
-X-Received: by 2002:a2e:a4d8:0:b0:32a:6e20:7cdb with SMTP id
- 38308e7fff4ca-336ca997e26mr43184441fa.17.1757008188845; Thu, 04 Sep 2025
- 10:49:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJImzx5c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D15C4CEF0;
+	Thu,  4 Sep 2025 19:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757014616;
+	bh=TMssmfr6Ux793m0iP09iig4VNiue9TXEr6uOT9wRYhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fJImzx5cDuiFeFmQSL8Cyu3xRKCrBD5sWxQ2Le0I56vnWdKFpLMCT9y4LXGoheCjY
+	 4QXC73XnTdYebcEo6/pf8gFMHgBckDeHAWJZqcFBUqPxRioOBJ2dgjHTIQOvMSR63/
+	 Vj2OYKwyMhFyQKyWSesD1d1jyIJalsxs2MCgcLsH0or3Y4TV+865UTp08IPD22zelf
+	 0BnaGNyTHvcENumpYw+yYS7iIbt5ZlgecRkzUL6UeZVlBJIFeA+nalxm8fHJvaVO7b
+	 ncJCn3Ii2lUfLgLSoQDYzdV9qlDC3t/LlpqncfplJHQK3SkUqn9zsWdvx7lY7kegTl
+	 WcjCbI5grRBuQ==
+Date: Thu, 4 Sep 2025 14:34:35 -0500
+From: Rob Herring <robh@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Joseph Lo <josephl@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: tegra124-dfll: Add property
+ to limit frequency
+Message-ID: <20250904191702.GA42937-robh@kernel.org>
+References: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com>
+ <20250903-tegra210-speedo-v2-1-89e6f86b8942@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250902-glittering-toucan-of-feminism-95fd9f@kuoka> <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
- <47c7adc9-fa91-4d4e-9be4-912623c627d6@kernel.org> <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
- <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
-In-Reply-To: <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 4 Sep 2025 12:49:37 -0500
-X-Gm-Features: Ac12FXymL814iB6fXAOm_7ikLix-XDwcIFwbTiMJt5Sq938zGMyGgX9ZoGVSnow
-Message-ID: <CALHNRZ-iGASiVknUFJXJ8OkYYrG+0VMTistreDAG38WytHmEPQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on Tegra186/Tegra194
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-tegra210-speedo-v2-1-89e6f86b8942@gmail.com>
 
-On Thu, Sep 4, 2025 at 3:19=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 03/09/2025 08:37, Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 1:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >>
-> >> On 02/09/2025 18:51, Aaron Kling wrote:
-> >>> On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>>>
-> >>>> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
-> >>>>> This series borrows the concept used on Tegra234 to scale EMC based=
- on
-> >>>>> CPU frequency and applies it to Tegra186 and Tegra194. Except that =
-the
-> >>>>> bpmp on those archs does not support bandwidth manager, so the scal=
-ing
-> >>>>> iteself is handled similar to how Tegra124 currently works.
-> >>>>>
-> >>>>
-> >>>> Three different subsystems and no single explanation of dependencies=
- and
-> >>>> how this can be merged.
-> >>>
-> >>> The only cross-subsystem hard dependency is that patches 5 and 6 need
-> >>> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
-> >>> operate as expected, but there should not be compile compile or probe
-> >>> failures if those are out of order. How would you expect this to be
-> >>> presented in a cover letter?
-> >>
-> >> Also, placing cpufreq patch between two memory controller patches mean=
-s
-> >> you really make it more difficult to apply it for the maintainers.
-> >> Really, think thoroughly how this patchset is supposed to be read.
-> >
-> > This is making me more confused. My understanding was that a series
-> > like this that has binding, driver, and dt changes would flow like
-> > that: all bindings first, all driver changes in the middle, and all dt
->
-> You mix completely independent subsystems, that's the main problem.
-> Don't send v3 before you understand it or we finish the discussion here.
->
-> > changes last. Are you suggesting that this should be: cpufreq driver
-> > -> bindings -> memory drivers -> dt? Are the bindings supposed to be
-> > pulled with the driver changes? I had understood those to be managed
-> > separately.
-> What does the submitting patches doc in DT say?
+On Wed, Sep 03, 2025 at 02:30:16PM -0500, Aaron Kling wrote:
+> The dfll driver generates opp tables based on internal CVB tables
+> instead of using dt opp tables. Some devices such as the Jetson Nano
+> require limiting the max frequency even further than the corresponding
+> CVB table allows in order to maintain thermal limits.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..8a049b684f962f2b06209a47866711b92c15c085 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> @@ -70,6 +70,9 @@ Required properties for PWM mode:
+>    - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+>    - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+>  
+> +Optional properties for limiting frequency:
+> +- nvidia,dfll-max-freq: Maximum scaling frequency in hertz.
 
-The only relevant snippet I see is:
-"The Documentation/ portion of the patch should come in the series
-before the code implementing the binding."
+Use standard unit suffix: nvidia,dfll-max-hz
 
-I had got it in my head that all bindings should go first as a
-separate subsystem, not just docs. I will double check all series
-before sending new revisions.
-
-Aaron
+> +
+>  Example for I2C:
+>  
+>  clock@70110000 {
+> 
+> -- 
+> 2.50.1
+> 
