@@ -1,152 +1,169 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47265464D;
-	Thu,  4 Sep 2025 12:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5A72F5333;
+	Thu,  4 Sep 2025 13:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756990131; cv=none; b=mDc4R8mAKZIlRYDksP0Yqg3nXj+BSQ3EBavIp0H6m+KDj703I8KxR+v5YoKk0IKKkysjjpQ3XYGulK19/ewZpiKI0Fl2RY7SqxmXHkUlPg9fH5cwSkQ5qvf1JXROsYCWlqVWYAAgHTTnNbmVqWhcFBYVNrKCKy/AqONoRyYvxZA=
+	t=1756991368; cv=none; b=ZHLI5wm5vkHH/Xf5oKzl/lvqwU/vJj9j2BxipyXolZ4M0iFPuheIRkQ3iw6hpdP6PzZANQUCWNic1vBnrmowIdjoLdceMbJipBTwFOlLghb3sXlfqB/WXJRh/+l0XzkI3l++gvPeaIZb4kafJgXrntXGVK2Z49/SBp3ek2FCmQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756990131; c=relaxed/simple;
-	bh=X4XQaMvtFiSI0o01k9Y+U2kGWuRSS1mgykufRyzX2Kg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q+O1Uo2wS2kVLZLCecCsNe9MhByiLafmH/WF5Pm8kCyMwYWu/iY78DO8vOz+KiE+BZIdQuDDWlKBI5xLR+ky8mMBqrFlCMckNd47jIrbO2F3v28wn9j6KZI9WyUhaLLsM7GKNCnGIxmvVOb0Bbx5LjodEWMnmyTy0jgHFfsbI5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aXbzv+W2; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1756991368; c=relaxed/simple;
+	bh=CEkGmN+eH+9br4VN/3hyHqhPwZ4rUpjB9RWfPNGjp+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0ESVm3s96bCfTEDaCliIa3mLTjE3ugWujhoLha8yRFw59RPjcoPuzxVOp2qUiJzH7RCwILZwwQ94jm6hY5lgegtVmzj8JiR2NwzKQEqwCJj7LuDKxGl/l2xF2Q3LJTe219/GlPArHv0eWqmN9JDPgA+LodBys88UkLMMP9+dMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MaPreMtL; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXbzv+W2"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3da4c14a5f9so1328543f8f.0;
-        Thu, 04 Sep 2025 05:48:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaPreMtL"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3cf991e8bb8so727410f8f.2;
+        Thu, 04 Sep 2025 06:09:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756990128; x=1757594928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WZVlyZjRKsXifjqY1UL5f20VbSu7xNc630lWHOD2+kc=;
-        b=aXbzv+W2dYUYFJJrQ4io41Oh80Vdok1hgaIBFfMNkFyynIR6jEN2P6TSQ8v0UQSkjA
-         XvDxqw19qjt3drCDNmk9G/KINRwXMUzED290wvKmwcrnyWJ7n3zCKFaOlRDEvJ/q0PLD
-         tp1IDJ2Xum2zXJkvaaub/C3hu+KBuUQFH3E4efAU9NyMMDtL5S+/Mys2zbqDi+Fney+A
-         bR+SGhxrcrpQaVn/d3bFavJBiLUJyNTBbINZGNXqn04S/TEFZVYPpAx6Vi/2RIA+uF6d
-         IK/zBXCKHo/atJAo8FXmMhxQJYflGT6+di8Pq11m2IfKqJzJxv1hVr3tPd74/l6ZSE1e
-         y6HA==
+        d=gmail.com; s=20230601; t=1756991364; x=1757596164; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6hnoEkRgYt1VB/BhJ9Gz7UNyqHPo14C0inEKe2HRcF0=;
+        b=MaPreMtLXj7qMFOHg2FaRTLvJfaCNRXK11j6SueS6o/8aRDit6G5HZ77pFguFTPsLp
+         N0WsHmvnYu8nUXJQub7UfhihE3GfeLggOMMz0UXE3y0YOIaI5adISvpQhJvfI2sUwKol
+         QiouEjj6XPRVagZLwxkfHclUoArWoI/kUC272eQInrGkebLsdCyY9Nkx2b4eW7GuamPX
+         MHw0FDJmFbTTLBHltpbHmUqmQBGcdV0+rIw514fUSIr15ZCB8966BxjV84RQ6V2tnqOo
+         K8UfwPF/zF6MjBrRHfmSATmHoy4Oz/66WrE17XhW7r1AssY3Tz7DzjRfW830sytNLmpa
+         Piyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756990128; x=1757594928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WZVlyZjRKsXifjqY1UL5f20VbSu7xNc630lWHOD2+kc=;
-        b=Polyn0fbKxDAXd8VMes1buHJwL9w0Vrlb0gW4anSmCdWcYIv69csxkHx5Nsqx+7heK
-         j9YKnTcIPTpAmQT2DqiApoUnYEFyitne9JKrV+Fc/pKvjsXZJcewdwNeq/l8nqMZbaPD
-         xI7eIPnSIYgpfiLUXLU3Z+3BMoetDa8B+rES0wWlBj8F+Owa3cWgmBcrSDCFqs7u15pI
-         me3wTskg6ndiVWqu0E4cQBoUstypGqQ0gJNzcq02S288qN6FrBCdxVunuj8HcQgqZlnM
-         9Q323VzciHAAivpTiiJJXnD2UJGQd4toDiRVr9LD6SQAPpcdbrmDT1KjmMKmAUFFWMe/
-         Rh4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULQoUtnzRHmAps6yJ5Ts6Q2Ja+tdaLgVF0wqqTL4iMyT9TjY/QiCYahpXPxLKDRuGFBymIhEpN6PA1Abn1@vger.kernel.org, AJvYcCV6dGxnbYR2Bvka0WUO4UDMpi+7BnBt+LNMDOFL0mrdfFx0tHzDJ8hzwTSqjAqOKS2mEk7VVArapgvH01w=@vger.kernel.org, AJvYcCWXwGJExayHwvvxSCzzu/THNH4slnyFCOukU17ZaOvb99YfjikEXOngbcIYY5kL3veqi1VXx4FhqC56@vger.kernel.org, AJvYcCXatUo1nuHR6hz6iyZwozuzz6vocvEx8jZA61K2d+AeA6hHP6pzmHc3xBhZN6GRWwOCuEl3741Uq9RXRCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7a9b2RNrI1mJnBQ8swzP4NM0dDq56DyaJmmITBdnM5IdqsHLC
-	orCaCX7BXS4Gdae3VUu7D24eT3R8lpX0oKuqHIIQ0iKCaEqAivySkUnNqNQEkQ62SLyC4UMDBsV
-	gqYoqglyhktuzBv/MOla5meVDydQOiKU=
-X-Gm-Gg: ASbGnctUKB94+7WSeh9cr8l6DDHsJRKYREaXMAWz/AWoRot80HVeRbpX6BdVsGRL0hS
-	jJy0pWylT8SF1ufNmYxHGgzu2T3PHCm+kZaEgqimH+6EcxLUZqeS/XgKVXoLNAtn/MEZDaOzjyL
-	ekDW1F8WqAimPjzVe8ZsxJavJLKR0qbD48yi3Kzezazm+5k6u5S800Ean5PPB5IlEST+tVU+Ok0
-	N9jlKWy/WPBZmFolQ7i35VAebPd0Q==
-X-Google-Smtp-Source: AGHT+IHJgb5ZK3/x3D0k4RvP5eDU3ZpKPFmw0GCoXPu4nPhadRVrgI33bU76aO+Qn842wznMLbls7IyO86ZUoYmBKJY=
-X-Received: by 2002:a05:6000:26d1:b0:3e0:b982:ca49 with SMTP id
- ffacd0b85a97d-3e0b982d0acmr2131607f8f.2.1756990127686; Thu, 04 Sep 2025
- 05:48:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756991364; x=1757596164;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6hnoEkRgYt1VB/BhJ9Gz7UNyqHPo14C0inEKe2HRcF0=;
+        b=H8trZ27S5UifutmlbBSKgCLja9eh/D5wDSW+PHlwkPlvnqnQ0qZdGXh9ScJwA7eDSQ
+         PbHpkc8yypgeSsI+L9Eep7FEucDFOdj8O9JvejvFuGEmjwnCc3i/1px68yC4YLtByaV8
+         0u5Xf2eeLyWrEMAs4ox0m4NQ2BXoXGgb40KXzzvjwEBx8F/IJkQebh/JiT84TS+PeVzK
+         8zi4QAfvPsvHTinznULD+78KbhK6UmT7erfBeSIxtCPQXAHLUqPynLBuO0tPpMbCIToD
+         zg0OLVAeWWl8ZqsaPdjqijVcw1aSuMQgdZflHkjiC7iL+QaBAczc+7aztdipbCfRFfaK
+         9g6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVC2yrv0wocWK5PxB647wSH1Wr0Bchd6j69GbQTPFzA7n8el2Wg3SBc1LSB/XTKvQKltkwi3UUS0WoKig==@vger.kernel.org, AJvYcCVu+t6g3IPul8E9rljhja3g13KkXqjyTyM7TdyEG3+RLkhFMsodU6X7vY/W27zTKYcMYG+732GbNPW1oxuh@vger.kernel.org, AJvYcCXAQgjgVCROxfi8fFFsyd8DyXlhI44Qm/fxp9hkD8aGvgmlaprfrBlKmdfq/kwjnSyjOQ5G8+qBtHFG0B0=@vger.kernel.org, AJvYcCXNLOufWSfbmlNa0nkd4or6YlZ2PXSxQjjymPA+KfnfYlvZ1lqDtmFqfVRHRLX2yWBP7SLQFMprJdEU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh9r2MUv3PCjg0RXcbzUVszJZUnPyLfub/8zpPeudhy/FDyfHu
+	uKFjLY2uyHqk7RIn8cxxnzAqr8QZPAcjKx4YAh6KjOWvME/qLf6Pn6/y
+X-Gm-Gg: ASbGncssAKaA9rdTEWhuGPfxp7OY/nmtoyL/rlnowWvBTbrpQYoXYS3TWoFPSOQfVPZ
+	pU8dDMjrqlFu00U73WrbyzJrKY87nlIbFJ0SBQ++GtDejKe0GnuUswmQHHmWxEWryQdxseGqQ31
+	H897DK4KjuWmSmVMdcHt1E7llSqrR8dput9gESxWnoBz16EEyhqvXLVktWn6IC1uMmpHwNLJpEz
+	1212fLCFEn61t25qHUzJN8Q1uPoGZCgi16xPzF+LANZ20T4pR+rSh+teTySziB/UPVBgBPi7Ysp
+	T/edszeysw4HoYtz20GeO+imOCilYzJuIAeWg4FPKDgEWGIQAygdx4Ezk5Ik1/IQR1Ca66lnMaD
+	KiE5R1X1ya4G2wcxeYx3K3t7MxHp6rhxbfWsBqR9Kv+TZheY5nXtz9+upiFxrpjXT6hcnJOJW6+
+	t34ro3RZeIxhkHlcIdb9c=
+X-Google-Smtp-Source: AGHT+IFWMN7swaLNK+wnZQ+3fREEzQC21iZytwCjaGlZNL1G853b7yiEMxqpjuXMqzSm3k04KQ7Neg==
+X-Received: by 2002:a05:6000:1ac8:b0:3d1:9202:9e with SMTP id ffacd0b85a97d-3d1de4bb305mr16267989f8f.36.1756991364377;
+        Thu, 04 Sep 2025 06:09:24 -0700 (PDT)
+Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3deb99d10a0sm6155456f8f.37.2025.09.04.06.09.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 06:09:23 -0700 (PDT)
+Date: Thu, 4 Sep 2025 15:09:21 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
+Message-ID: <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
+References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
+ <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
+ <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com>
+ <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
+ <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903161947.109328-1-clamor95@gmail.com> <20250903161947.109328-2-clamor95@gmail.com>
- <75wc4lutipb7uszkqfuakjl7iqsygjif4df5phosifkgi3serc@t75jpefbbbcs>
-In-Reply-To: <75wc4lutipb7uszkqfuakjl7iqsygjif4df5phosifkgi3serc@t75jpefbbbcs>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 4 Sep 2025 15:48:36 +0300
-X-Gm-Features: Ac12FXyqolMHhcEVaWO6TF_qYRS1ymxnZW7Xsug83f2VeNBvmBV6FfcI9PTDfjY
-Message-ID: <CAPVz0n0b7wAZXQc9inET6+pQUnp-GRVF+ojwSDENmu5yxHgW9w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] input: rmi4: fix RMI_2D clipping
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y3cbsqasrarpcn4l"
+Content-Disposition: inline
+In-Reply-To: <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com>
+
+
+--y3cbsqasrarpcn4l
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
+MIME-Version: 1.0
 
-=D1=87=D1=82, 4 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 14:58 Dmitr=
-y Torokhov <dmitry.torokhov@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi Svyatoslav,
->
-> On Wed, Sep 03, 2025 at 07:19:45PM +0300, Svyatoslav Ryhel wrote:
-> > From: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
+On Wed, Sep 03, 2025 at 12:58:06PM -0500, Aaron Kling wrote:
+> On Wed, Sep 3, 2025 at 1:55=E2=80=AFAM Linus Walleij <linus.walleij@linar=
+o.org> wrote:
 > >
-> > The physical max_y value was overridden with a clip_y_max value. This
-> > caused problems when inverting/flipping the screen. Further it messed u=
-p
-> > calculation of resolution.
+> > On Wed, Sep 3, 2025 at 6:54=E2=80=AFAM Aaron Kling <webgeek1234@gmail.c=
+om> wrote:
+> > > On Tue, Aug 19, 2025 at 6:30=E2=80=AFAM Linus Walleij <linus.walleij@=
+linaro.org> wrote:
+> > > >
+> > > > On Tue, Aug 12, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
+> > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > >
+> > > > > This series adds support for Tegra186 pin control, based on a dow=
+nstream
+> > > > > driver, updated to match the existing Tegra194 driver.
+> > > > >
+> > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > > (...)
+> > > > > Aaron Kling (3):
+> > > > >       dt-bindings: pinctrl: Document Tegra186 pin controllers
+> > > > >       pinctrl: tegra: Add Tegra186 pinmux driver
+> > > >
+> > > > These two applied to the pin control git tree.
+> > >
+> > > On patch 3, Mikko noted that I accidentally amended the formatting
+> > > changes intended for patch 2 into patch 3. Linus, since you've already
+> > > picked this up to your tree, is it too late to fix this properly in a
+> > > new revision? It doesn't appear to have made it to the main tree yet.
+> > > Or do I need to send in a fixup?
 > >
-> > Signed-off-by: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/input/rmi4/rmi_2d_sensor.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/input/rmi4/rmi_2d_sensor.c b/drivers/input/rmi4/rm=
-i_2d_sensor.c
-> > index b7fe6eb35a4e..b4762b3c8b24 100644
-> > --- a/drivers/input/rmi4/rmi_2d_sensor.c
-> > +++ b/drivers/input/rmi4/rmi_2d_sensor.c
-> > @@ -56,7 +56,7 @@ void rmi_2d_sensor_abs_process(struct rmi_2d_sensor *=
-sensor,
-> >               obj->x =3D min(sensor->max_x, obj->x);
-> >
-> >       if (axis_align->clip_y_high)
-> > -             obj->y =3D  min(sensor->max_y, obj->y);
-> > +             obj->y =3D  min(axis_align->clip_y_high, obj->y);
-> >
-> >       sensor->tracking_pos[slot].x =3D obj->x;
-> >       sensor->tracking_pos[slot].y =3D obj->y;
-> > @@ -149,13 +149,12 @@ static void rmi_2d_sensor_set_input_params(struct=
- rmi_2d_sensor *sensor)
-> >
-> >               sensor->min_y =3D sensor->axis_align.clip_y_low;
-> >               if (sensor->axis_align.clip_y_high)
-> > -                     sensor->max_y =3D min(sensor->max_y,
-> > +                     max_y =3D min(sensor->max_y,
->
-> I see that you want to have sensor->max_y to carry maximum coordinate
-> the sensor is capable of reporting, so that flipping works properly. If
-> this is the case you should also be deleting sensor->min_y and always
-> use 0 in its place, otherwise there is inconsistency.
->
-> You also need to deal with X coordinate in the similar fashion.
->
-> >                               sensor->axis_align.clip_y_high);
-> >
-> >               set_bit(EV_ABS, input->evbit);
-> >
-> >               max_x =3D sensor->max_x;
-> > -             max_y =3D sensor->max_y;
->
-> This makes max_y potentially uninitialized.
->
-> >               if (sensor->axis_align.swap_axes)
-> >                       swap(max_x, max_y);
-> >               input_set_abs_params(input, ABS_MT_POSITION_X, 0, max_x, =
-0, 0);
->
-> I am unconvinced that using raw sensor coordinates to calculate
-> resolution is a good idea. It has potential to regress existing users.
->
-> Thanks.
->
+> > It's one of the first drivers I merged with plenty of other stuff on top
+> > so I can't amend it, just send a fixup based on my "devel" branch
+> > (or linux-next, it should work too).
+>=20
+> I am highly confused now. When I went to make the fixup series, the
+> fixup didn't apply. Looking at next-20250903 [0], pinctrl-tegra186.c
+> looks like I wanted it to, the base commit has all the format fixes.
+> Which doesn't match the commit on this series. Which leads me to a
+> couple questions:
+>=20
+> 1) Does anyone know what happened? I'm not particularly a fan of not
+> knowing why something happened, even if it's beneficial at the time.
 
-I will take a deeper look, thank you for review.
+Maybe auto-formatting or something else that Linus did?
 
-> --
-> Dmitry
+> 2) What should I do with the dt commit now? Ask the Tegra subsystem
+> maintainer to do a manual fixup when pulling? Even without a manual
+> fixup, the bad part of the commit would fall out when getting applied
+> on top of next.
+
+I can drop the extra hunks when applying, no need to do anything.
+
+Thierry
+
+--y3cbsqasrarpcn4l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmi5j30ACgkQ3SOs138+
+s6Gx3BAAsVp4U/76YecvVcNkWzqZG1qR/e//wbvhrVA4MPWnA0vtDgUClKCKNax4
+cZwaV+CrRL1bYCjmwlS0hJipu13+iAQyKd6wdessvKUs6SIyN7SM/E4bg6n6Bnq5
+IhcbJpyYEk40j+PKriLSN3PF08lKiqiPKjLfU8OSBo62KzeUEJhwXlJF55FzARbt
+xxjSbjzs5Act7IVFijefweHsoL29OaNDmr+e1qVpRLjqoV5U2CNJ+fNjrB3s7qwq
+CBODSlw2swfF2d9Z8D7WkxHFSvNLihThfgSxO2aaQpDrePznr2emsVr3esjiNma8
+4hckBxmrJgntGjRxrPq0P+/ycxXE5i55F6pCtnw0jlBgy1zZ9nTHlOBDem6KBMUa
+YVamLfRPNM12hXA+iZRaib6R8i6N5vUplcc8B11zU39dVpkHMPPixJHerdTZaZD6
+chiZArTYQ9HCutLwzcGuXEinZZeG15qpHIA/CW98MXV9rd/gBm62JT0g8aUjXBHm
+Ogu1AeTL3wEDgN+ffMdLd5Xs/dKR2d6/1G7i4fiyklmiTU6Hi+TQEDYKpE0xyJsG
+UpIq2N+mWsxH2rbcHyc3ixMc09tJGiStLqVS4pPPzRexUW5BB7PPh+O8nwCUoFgA
++ZTVZgEjKcMcoefLWvDnEuDMLHM4NWtZSKT4u6dequPkfEgauY8=
+=743D
+-----END PGP SIGNATURE-----
+
+--y3cbsqasrarpcn4l--
