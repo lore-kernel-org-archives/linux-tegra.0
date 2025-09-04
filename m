@@ -1,185 +1,185 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAC413C695;
-	Thu,  4 Sep 2025 01:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8471C6B4;
+	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756950929; cv=none; b=rn3BwDXZio24umEJ+DnSuiUB2lCDFJBWylaDpIiUOgyRj60519FhBdfj2RjQnro5elOArmov1OFuFgzl/I0idtlSGaeiFhZvN7UgTTVowGuoxkaGSQLHI8KrctmATt35zJ2ouZeffulrU7jT9zaKvqeX+FkxHY4pSQZOq0B/3A4=
+	t=1756951148; cv=none; b=XfUgn5bJ6oG+l0xMBNRdSvg5Ka1izkk8qaHfmx8T8WdcuU+k4GOel2UfDRR2FZKR/MaAeW9xb37kXSwDeJSGRUgK5Wu/tKO/HaHDfSzUEY6UF0LAAtQB0Go2sd229z3plToYCXkIZ4Bok1BdyMGehYDtgJ8qC2LuAvDacidCxzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756950929; c=relaxed/simple;
-	bh=z1CwDMrW/wZw91lPM0+5CsrDOfUzBV77U9GCkhvrhsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXE9i/LW5JOlGGtA9llsi4BiTmWyuwJJO0owmO3c//OYtGSXDEaxEsI2QaNvzgWxROsOURj+x+3D9xOxH1r1I7XIiFvhqzcrgUJ4ckbxVxkmjjUXNb514gPfEYM6LcNHMMiKB4iviAtn/6xDmdOoHwLbyJfpEK6QlGkCX8o4WrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aL/IhOv0; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756951148; c=relaxed/simple;
+	bh=COr4rVD1Rbl6LzzAujkyKf5egCLVDLyy5/J9/B88ioE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M87KBzW3VumrUcu6cK6iNZaPp8eA9h5pKk2rq6ovg39yc7rwIdA0fmZGLm/mAPKiJIVr3fLsXAw2gm3Ac9RQhpr3CFbjifJgtq7UMcYc/YlsFMBQxnibAgusLbuTV1WSLOI3RGD2Ylk1zwOtQf7p75APMkAZ6GUA5r+WWo9UK5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/E7rQoc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aL/IhOv0"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so558214e87.2;
-        Wed, 03 Sep 2025 18:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756950925; x=1757555725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLG0DSgHB2AINxOoZVWx4bl4S5WlCeyWoCbSypykd+g=;
-        b=aL/IhOv0cXwQuLLTztfwHYALL9C7fyUTZn0+ff8lKvICoOV7ZUA7MDM/Y0t1fsAEKR
-         eFjfUBlD81xSz7JNignvxKUuV0urWyP4hwpXmdo8caNywGz0ICufaByg3n/C5ECwuqMB
-         K3MTtlZJa8577xU9Qxg8ZUF8wmgpR1PM30Qxmof+UtlgdTNyPPHBNcli3Z5CGkMcR32v
-         347aYcMzxIG3+obVVDSzVp0WcgwTT8Jj6yFip72/GM2MO3n2Jrt44XWuxN9TvuwnseJ0
-         R0HdR4II5YFZ9vRwfldpcDHmDA3RYDKXXR6OYDE+U+SSs6Ecl9+mut3PtT1+qQNewZPX
-         RVew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756950925; x=1757555725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HLG0DSgHB2AINxOoZVWx4bl4S5WlCeyWoCbSypykd+g=;
-        b=jRHxm6jLwLWps2ldAyRAFCLFEq8rUTXBhx6IFnfHtLHYAiPr4JySgpwMA7Eh0oXby2
-         J10toR6eJVfNzsplmF7OrPX6SFwZHRPw4mr/FAPJCuHvCJ3DT1ptAGwuQNeO3toPPHbQ
-         5UozRFlQnfhZMCPieAS2kxX7kERBWsm5Beq4uJP7VubaznPNTtOsjWabupXEugXcqdAe
-         nIoZzII0ZBK+XDGSucsp8jvwNbxxzDFPb0UCLZqpX6w5sDclA417TY56Nb3h9fULu++h
-         Z1PHQ0As5LroNEgLvjbEtlKORcXy1GnPL/EfROZrcFTTB73WwAUWeo3BppphKp8n+mLs
-         +iLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNk2i8mQFEBu8Mm4bJ//555D8/GjjKZONkgbSkH5dt/OWcRGRUDo4l02Ye6ck9LyjHbQxeRqsKg4/b@vger.kernel.org, AJvYcCVTSXttzgzBdcq8R2LBbe+HdxEJSVlcw1Qm5beoACseyPuES6XBVpsnPrJF8xAnA9iIlWEJWT+uIYpb@vger.kernel.org, AJvYcCWJKNGF+6iMk91xnalwX2gRqTRt5HpPbqD9DB0rBcDDeL1+nCdd94VVWyHugtjuTbAlDIs00Sp3/WQy2O5l@vger.kernel.org, AJvYcCWsxvn4RqEBneYj6L9XMrzKl8oBK4CCUtBZrJmt5hNDd6OGPtfs9yaAusvWRCQxSHnxHNpIZVg9DsKtTu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+nYtz5WhRg1phZmwaXtqpv4atR7bHxEZI1L5A4X/rwI4CxoAE
-	5HF3JPOUS7sDIqLr8yEM0RA+Gof7/Hu/AEwCmJJnDHN/plIrgWDW16VjudRraBtUjfk7SEGngJE
-	+P6XFPcQ5VgfDe7G/87OupVLizNyiAxw=
-X-Gm-Gg: ASbGncupKd/joF8KFLDJL5pnwnU+Y1c5YBD5WUa2bDwQfiuwZpzVQ8HlGdmXCoCACGy
-	RaeZTI3KD2j+RMj8brLYTaR2CQ3Hi8KbvyJ7ZwamKUbYeNCf0+QKOwMSk9U98TQNZgPpYDzGd7+
-	28GnjVBJC99uQ/7YLlqoaUDqqjN0RUOY2+dv5XHd8G8QIg51l/CMva4XukCBu8SyoomUnrRbcJH
-	gxCR8FgzkhHLqqs6g==
-X-Google-Smtp-Source: AGHT+IGz1wtV+gVZ44/7zWYiZepuh0kLYJU7upNdtxprFKlXRf79bTKOD6aQgFkhooo9LOubQDnW3P4JtM6aNPVl4CA=
-X-Received: by 2002:a05:6512:1417:b0:560:8c58:6cd7 with SMTP id
- 2adb3069b0e04-5608c587036mr1348684e87.5.1756950925157; Wed, 03 Sep 2025
- 18:55:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/E7rQoc"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D8E6C4CEE7;
+	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756951148;
+	bh=COr4rVD1Rbl6LzzAujkyKf5egCLVDLyy5/J9/B88ioE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=V/E7rQoc3zvXbaVDNlvicgIqxzFopvyJbGOyfG+yQrPjKML8krjMLFNquXRU9MiOY
+	 3QGGoTrEXU4rS5uj5mzf3+6UZhbvwrDj+oYwpWuBrKgdibaMQEuvp9R4ORcqKPL/Cs
+	 uWDsG3KxksO8CofaHld0CAqkvGJDlE4Xx28unZY8YqP2Wl3goZNYnpvB3NRVfAHzVV
+	 pvx2gz4Di428GC3VlbBAaefL39yq9LARibXsAs0QRejzA5CQ/N/fEPsiwqgDzfh+48
+	 rtMf1EUPHZ3XZ2hKfduVe0cpVMH5+vfwdRUcPkk4cOamL0X8rT7vgL0LUeMwKVvIZm
+	 MyRp5CXCj152g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1912ACA1015;
+	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Wed, 03 Sep 2025 20:58:58 -0500
+Subject: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
- <26156028.ouqheUzb2q@senjougahara> <CALHNRZ894WcNaAuLFoDLwJ8mXDRM8PzdqRFzcyYUMPy+0q0nMw@mail.gmail.com>
- <8194755.G0QQBjFxQf@senjougahara>
-In-Reply-To: <8194755.G0QQBjFxQf@senjougahara>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGHyuGgC/2WN0QqDIBhGXyW8nkN/m+mu9h5jF2Z/JawMDdmI3
+ n0WjA26PB+c8y0kYnAYybVYSMDkovNjBnEqiO3N2CF1TWYCDC5McaAzdsEAZzROiI2nZcWk5qh
+ qZS3J1hSwda+9eH9k7l2cfXjvB4lv67clD63EKaNGKy4kM42F6tYNxj3P1g9kayX4+ZqJow/ZV
+ xplq2StdAn//rquH8g0yjLuAAAA
+X-Change-ID: 20250812-tegra210-speedo-470691e8b8cc
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756951147; l=3689;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=RDXctTbmGxlSSv4dmzycEd2KLlflflCn0kxYFTnBz+U=;
+ b=e6WTY/oNHOtWBHpCY4U/f+KyFymNrmKE7TuAmaL9HV0ch8628dgXWr2YCOEiRnI8eQ3sdrRBB
+ oEnwbVA1IRzAAjIT2T/b6WlLzgS7mARcpaXNSHpvnUnSoy9k/suKWRw
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 3 Sep 2025 20:55:14 -0500
-X-Gm-Features: Ac12FXxLT_e5MU2fnTigOv2SVdMZCKSueXgLw3o0A0mxrhqQ6JHy32mW3xL3eNo
-Message-ID: <CALHNRZ-59esnHPeQ6XD3CUAOFUMB4gAF6XxikrQ+iwsPWObfYA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 7:56=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.c=
-om> wrote:
->
-> On Wednesday, September 3, 2025 5:01=E2=80=AFPM Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 2:29=E2=80=AFAM Mikko Perttunen <mperttunen@nvid=
-ia.com> wrote:
-> > >
-> > > On Wednesday, September 3, 2025 3:28=E2=80=AFPM Aaron Kling wrote:
-> > > > On Wed, Sep 3, 2025 at 12:50=E2=80=AFAM Mikko Perttunen <mperttunen=
-@nvidia.com> wrote:
-> > > > >
-> > > > > On Saturday, August 16, 2025 2:53=E2=80=AFPM Aaron Kling via B4 R=
-elay wrote:
-> > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > >
-> > > > > > P3450's cpu is only rated for 1.4 GHz while the CVB table it us=
-es tries
-> > > > > > to scale to 1.5 GHz. Set an appropriate limit on the maximum sc=
-aling
-> > > > > > frequency.
-> > > > >
-> > > > > Looking at downstream, from what I can tell, the CPU's maximum fr=
-equency is indeed 1.55GHz under normal conditions. However, at temperatures=
- over 90C, its voltage is limited to 1090mV. Reference:
-> > > > >
-> > > > > static struct dvfs_therm_limits
-> > > > > tegra210_core_therm_caps_ucm2[MAX_THERMAL_LIMITS] =3D {
-> > > > >         {86, 1090},
-> > > > >         {0, 0},
-> > > > > };
-> > > > > (rel-32 kernel-4.9/drivers/soc/tegra/tegra210-dvfs.c)
-> > > > >
-> > > > > Here the throttling is set at 86C, I suppose to give some margin.
-> > > > >
-> > > > > 1090mV perfectly matches the 1.479GHz operating point defined in =
-the upstream kernel. So it seems to me that rather than setting a maximum f=
-requency, we would need temperature dependent DVFS. Or, at least as a first=
- step, we could have the driver just always limit the maximum frequency so =
-it fits under the thermal cap voltage -- the temperature limit is rather hi=
-gh, after all.
-> > > > >
-> > > > > If you have other information, please do tell.
-> > > >
-> > > > I am basing on this line in the downstream porg dt repo:
-> > > >
-> > > > nvidia,dfll-max-freq-khz =3D <1479000>;
-> > > > (tegra-l4t-r32.7.6_good kernel-dts/tegra210-porg-p3448-common.dtsi)
-> > > >
-> > > > Which in the downstream dfll driver limits the max frequency it wil=
-l use:
-> > > >
-> > > >         max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
-> > > >         if (!of_property_read_u32(pdev->dev.of_node, "nvidia,dfll-m=
-ax-freq-khz",
-> > > >                                   &f))
-> > > >                 max_freq =3D min(max_freq, f * 1000UL);
-> > > > (tegra-l4t-r32.7.6_good drivers/clk/tegra/clk-tegra124-dfll-fcpu.c)
-> > > >
-> > > > If I read the commit history correctly, it does appear that this li=
-mit
-> > > > was set because the always-on use case was failing thermal tests. I
-> > > > couldn't say if it was intentional that this throttling was applied=
- to
-> > > > all use cases or not, but that is what appears to have happened. He=
-nce
-> > > > trying to replicate here in an effort to squash stability issues.
-> > >
-> > > I can't see any reference to failing thermal tests. Can to point to t=
-he commit?
-> >
-> > In the porg dt repo, commit hash d1326f08, which adds the
-> > nvidia,dfll-max-freq-khz property, the message body states: "Set
-> > CPU/GPU Fmax limit for 24x7 105C UCM." I read that to mean that the
-> > 24x7 always-on use case model was failing to stay under 105C unless
-> > the cpu and gpu frequencies were limited. Is that an incorrect
-> > reading? 105C is kind of a crazy number anyways, beyond the soctherm
-> > critical shutdown temperature.
->
-> What that's (trying) to say is that it sets the CPU's Fmax to the limit s=
-pecified by the 24x7 105C UCM profile, which is the 1090mV i.e. 1.4GHz limi=
-t. The profile is called that because it's normally used for the 90C-105C t=
-emperature range.
->
-> >
-> > > I looked into why this was added for porg -- it does not seem to be r=
-elated to reliability, but more so consistency of performance. I don't thin=
-k that's a huge concern for upstream -- though in any case we should be cap=
-ping the frequency in the DFLL driver for now since we don't support dynami=
-c thermal capping.
-> >
-> > So the whole conversation winds around to: The change is valid, but
-> > the commit message needs better justification?
->
-> In my opinion, there is no need to add the device tree property in upstre=
-am. The CPU is designed to work at 1.5GHz under 90C, and 1.4GHz between 90C=
- to 105C. I think this is a bit of a downstream-ism and not something we sh=
-ould add in upstream. If the user wants to underclock, then that should be =
-through the cpufreq governor or such mechanism.
+Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
+code supports 11 ids and nouveau supports 5. This aligns with what the
+downstream vendor kernel supports. Align skus with the downstream list.
 
-Ah, alright. I'll drop property handling and send a new revision.
-Which reduces this to only the speedo-tegra210 patch.
+The Tegra210 CVB tables were added in the first referenced fixes commit.
+Since then, all Tegra210 socs have tried to scale to 1.9 GHz, when the
+supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
+Overclocking should not be the default state.
 
-Aaron
+Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
+Fixes: 579db6e5d9b8 ("arm64: tegra: Enable DFLL support on Jetson Nano")
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
+all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
+supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
+Overclocking should not be the default state.
+---
+Changes in v3:
+- Drop all patches related to limiting cpu frequency from a dt property
+- Link to v2: https://lore.kernel.org/r/20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com
+
+Changes in v2:
+- Define units in patch 1
+- Update patch 1 commit message to better explain the need
+- Pull all downstream sku's into patch 2, which eliminates patch 3
+- Update patch 4 commit message to indicate the limit is due to thermal
+  constraints.
+- Link to v1: https://lore.kernel.org/r/20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com
+---
+ drivers/soc/tegra/fuse/speedo-tegra210.c | 62 ++++++++++++++++++++++----------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
+index 695d0b7f9a8abe53c497155603147420cda40b63..60356159e00d2059e55eaacba27b5ca63bf96c90 100644
+--- a/drivers/soc/tegra/fuse/speedo-tegra210.c
++++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
+@@ -65,27 +65,51 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
+ 	sku_info->gpu_speedo_id = 0;
+ 	*threshold = THRESHOLD_INDEX_0;
+ 
+-	switch (sku) {
+-	case 0x00: /* Engineering SKU */
+-	case 0x01: /* Engineering SKU */
+-	case 0x07:
+-	case 0x17:
+-	case 0x27:
+-		if (speedo_rev >= 2)
++	if (speedo_rev >= 2) {
++		switch (sku) {
++		case 0x00: /* Engineering SKU */
++		case 0x01: /* Engineering SKU */
++		case 0x13:
++			sku_info->cpu_speedo_id = 5;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x07:
++		case 0x17:
++		case 0x1F:
++			sku_info->cpu_speedo_id = 7;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x27:
++			sku_info->cpu_speedo_id = 1;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x83:
++			sku_info->cpu_speedo_id = 3;
++			sku_info->gpu_speedo_id = 3;
++			break;
++
++		case 0x87:
++			sku_info->cpu_speedo_id = 2;
+ 			sku_info->gpu_speedo_id = 1;
+-		break;
+-
+-	case 0x13:
+-		if (speedo_rev >= 2)
+-			sku_info->gpu_speedo_id = 1;
+-
+-		sku_info->cpu_speedo_id = 1;
+-		break;
+-
+-	default:
++			break;
++
++		case 0x8F:
++			sku_info->cpu_speedo_id = 9;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		default:
++			pr_err("Tegra210: unknown revision 2 or newer SKU %#04x\n", sku);
++			/* Using the default for the error case */
++			break;
++		}
++	} else if (sku == 0x00 || sku == 0x01 || sku == 0x07 || sku == 0x13 || sku == 0x17) {
++		sku_info->gpu_speedo_id = 1;
++	} else {
+ 		pr_err("Tegra210: unknown SKU %#04x\n", sku);
+-		/* Using the default for the error case */
+-		break;
+ 	}
+ }
+ 
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250812-tegra210-speedo-470691e8b8cc
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
