@@ -1,114 +1,140 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7033130DEB9;
-	Thu,  4 Sep 2025 17:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C633128CC;
+	Thu,  4 Sep 2025 17:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757007255; cv=none; b=QokNynjqkD9hEPlQh3G2/Ld5DDLOxV6n2JMia+fyEVvJ+KrmSfOYX7UoJyzE5rwFRxBfigoPYUSiatevmP3RFdq40Xs1pn9mVUo0E2ek+AkflAMRupPHWUbICXYeV24RJUY3sAynHDFsOWL1MoAxAkdiMV5ge7tUoghjNB8SkyE=
+	t=1757008193; cv=none; b=tlvUE25LIyQSFUAgjQyf/AVngdlO8u8Rz42EdwHiQn8M5+ko7+Fm9x026zXk2uBSLZmFRznH8CcLFLTi0ADviwdk5V7esa7yWbvSLfB93K/ibxyQiQneyXKke8BUGaJ50QncE12J87iudeMlYNgqyicDtyC/iV3MdcXkYAx6dtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757007255; c=relaxed/simple;
-	bh=vg3wcZJSqg8X2qWxc+QQvGgnohKB6dM5FFkxClK79TE=;
+	s=arc-20240116; t=1757008193; c=relaxed/simple;
+	bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eGaJhpmp5Zap/OeU3eLPTUx/IKcA4uK8Sjh0cBsZAv/lxmwP04lPPvhkrzj/9UzwfB1O5wOAVVVoOyQy9gCmZ8mR1sbroZgpn8tX5vBD7qYYMInpjC3fOViNKuODjHwknnJhOi7WNH/4dtgoa2aZU8yo5oDs2YBXRFdeAsLlscU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G0U/RKLg; arc=none smtp.client-ip=209.85.208.171
+	 To:Cc:Content-Type; b=OQK8SSpOAsEXT9DhacEYyrjhZ1xD4jbBgsuTVTgb54UhzOM+dY1g6ZNAJ3DQOL8rMxlXB/inibZQAqNl11uyUZidNF3yst1Smr5WJcb2hbeqryRuaDs6k8Tqxa7ytwdmoGebWwR36NVsEYnMtx0B09/K0xhAm2RI7d9k27/L0iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evZN+BCJ; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0U/RKLg"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-336bbcebca9so10114011fa.1;
-        Thu, 04 Sep 2025 10:34:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evZN+BCJ"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f92d60ddso11847731fa.3;
+        Thu, 04 Sep 2025 10:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757007251; x=1757612051; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757008189; x=1757612989; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uA9ux8UKonoPKigO5MQWrXEczFOUCm7WnSMHi2V7kOs=;
-        b=G0U/RKLgxWuLTjvLEeCD5AHetL1Cac8tU0xcqpwpQ9NCzV6c1Ow1SF0v1fY32c7Zk+
-         ze8SbaPVgPVQIfBVvhC4Tbp9bCZm/tz7enc5VvVecGhjTbATL2zeUo7tLa9V57L+axPn
-         +O/Gq/ChSxH0Ddl562wmIZuH4A7GvVJyKQlVn4mfHWSuh9yKyh7nmlAdcLjAyfbyJpMO
-         KlUo+SLcp6aRsZe2MSHx9udJfjYf7aM7LWSP2kqKyyUVRH5QoWm3Ya9zQKt/qd+WB8FG
-         lLqvHq4ZQfJEnmGTbFAbotltFUnamR3151cV2x3gwc8HUu7+UGzN192TJjyMyzzXsM6y
-         Uuhw==
+        bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
+        b=evZN+BCJIrgR+DFdcgMy45ij4uajXQHpNyY0ZPYu9d5yBAclw/pTXYbVubo1sgdXYO
+         UR+6Rplh67axriipwjwwBF725VAr7SqPEhh5tcBCjbR0RZLXnij5T08kxByLeCIWkzww
+         1PYsQ0S989CGAuErYyg+g0FCJi4RoKpKiKU7igmRlmi2F28sOY/zLoO5CuTnXvsNK7uu
+         hjuIVSITORjZBhzYkljF7bDmIBrmS1XS4KsikEmDWszPRW/0+J/LK6WsOhNtACbMMQnG
+         A8uVpVlAV85u20brieWTkYwZ0qRKny3PcWLMftRThPH+xnrOuQCq1aMfqLXL8d0f3guG
+         uvig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757007251; x=1757612051;
+        d=1e100.net; s=20230601; t=1757008189; x=1757612989;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uA9ux8UKonoPKigO5MQWrXEczFOUCm7WnSMHi2V7kOs=;
-        b=ehalLz9JaxO4K7/n3jiRAzfcjg8VEMvjfKouQWuJr55FtDmheuGZpAbxOmDgoBtV1q
-         goWnUcJfd04J6CXJO7MJyHcOJe2u0H9H+eSM2u+JNa/NO7i5zJG2MYIbCiZS3LK5ZIrU
-         3iPkIwFJC1Z+tfIup3UEzF4vkPwdxz3rgQzI2jGHt57bxE0wxa+fesbSVqAixb7F8ZKN
-         nH7PMimntheOwoFIWoz6F8BJMyPxfVf+K7KllkyPKEuBxw+HPO77EhRl4ISV8P07uYkb
-         W+J802snSzZVz2L1vmiFHoTeqxz55i44NnMpAia4Ic3rEw8bRMKIud3vaxe+Hc51ytnh
-         w8lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHmbf4NKqvCXXVCOeguL778fvl971KnNmrLSOIivEFCnOqLkTYbszeXMfnvWD3iOx6bNOr/ch871DdIKU=@vger.kernel.org, AJvYcCVHzE1l27N9A9MXSUoCeK/xCDjJtp6hgDEyUPM7V3XpGNgM+ONBLk7Bm3R8c1hcuvrkD9EMDFKhwQ9dqQLS@vger.kernel.org, AJvYcCWBxNAE62OlFA2Za1afKrEnLM6JYdl3lg+TSD2wgXi0Kc0T0SpNBrxeBs9H8D0wFoqNKsammmK3gtU=@vger.kernel.org, AJvYcCWPWdj5+csAtEERXKThOwbNAcuK8hOmwWrTN/lf2jiB7SeT+usRjHzEUks7aF819wKdkx5xQXqLKNc2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNonNcGGCYzQSyckI3F2tvZODKoUmHzwC1b0gAvUVIOBs06Mdk
-	d3AYGZ5HwzvGvonRXpJcx5IjMCISqfx5dOdJs5+JoFHcGLYs+b1IgoYo8BrkbEmdamAMG1s9gYJ
-	OVUBrJttJG2+FN2KbDR9VNOt6CI8gKxw=
-X-Gm-Gg: ASbGncsIbrkE3RUF8dBXpJMKqtic8zU3DD0QMCz9iO4cZJeTmY0jQz6ny9+LWF/jyIv
-	Hi5MMz75TpD7B7URqDxrEy82OPK+fx5SCuWvwpTQvu+cuY+7sXw4KySdsSGCnrEB5lyws/jF/w1
-	Al8+VB0meUkIDr/2kymHpuwrFiliGGn8GymbxV71B4PEppis+1cPqA9kitjxcLF2KNleM5H0WQI
-	UuSs4k=
-X-Google-Smtp-Source: AGHT+IEVUJRpcbZwgED/QiP7FIenFSTN3uZTs7NjgqtHuy38aI9X4JtDL3vFRokSUUmmF9T4/tLnYXRgTCYRkt/EV0g=
-X-Received: by 2002:a05:651c:2225:b0:338:d42:2a73 with SMTP id
- 38308e7fff4ca-3380d422d6bmr16120741fa.45.1757007251199; Thu, 04 Sep 2025
- 10:34:11 -0700 (PDT)
+        bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
+        b=NDAYs9xozJQrik89fceWegPJ/C+gWKKhgy4qae78acaimy4jnAwi69uGFPp8lPqIG6
+         ggju94B1t8JGxGeTM6WQPvHUrNI/6uXWDndphNbuWLihs8TjPY4REcurPUKgDMxkQlIA
+         EUT3molCyBGaz1COd2t8Hvqskcl3gRc6A4JJWgg96LN1KbOGLkb2KRWmLJOneDOgQLy6
+         ZMAT7c2FP1Q6LBaU1duvxK4ZDk7Q8fFqCQXd+fjNL/meq//rocOgbQntNaVMMlzKfSXO
+         DcGh0DWCWBrsQ8FW8bRvtSJXIEWcw3CTKrucyYuGMwWkal5BLd+3WOWgxG603ndlyRfY
+         DjGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUo5WgbL8rTWkg5Iz1nw3v3/CvxFPveyClnqYIHeynA3aUwOwXZ1X1NdwZiV1ysUBLeUoE1/rkCi40Q@vger.kernel.org, AJvYcCV/EFKP9dUkDK8nWmJZqdNGsvDQVV0Mh7yj8U0OnalJb0ckm1oOtsifPzEGY3po8/CjQR4ILZx47oR7U9s5@vger.kernel.org, AJvYcCVPZIJJ1uIF306B8RmiTuZ+eawhSncjO2ykBB4wj9VRSuMzwIOJxsq6PLPagr3bFrH+lPI4xlrL8rg=@vger.kernel.org, AJvYcCWms9lW7sdtS0hapVIOWS4RrQbKMuy6kK6vT3TH3gmFOStLpd1E+JL5qhCUsq8nDTOdWyklrZkpNK/w4x0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp9es5ACgbxxZg5BkHS2RgT6Aiv6K2/UuHLdeLQykPLUjv6uRm
+	hD3nEpP9LSfG3twV7/Wfua/CBVJEzoBiWqwZ7Obc6sY7qTfbN2vPzazjHRpf1Ce5cLry4EMZu9x
+	y4eSp8mgxLEl6Qpa7A2q5Dl7h6MkQXXU=
+X-Gm-Gg: ASbGncttFGYTp75UoTIe7oHt19nh8GR7lckiV0vILVfT5pNwDBkar1wTBQxcZo9aUH4
+	s2uCB84OVxPK2+ud+PGHwZAWxSEUaapZyZ01XcVfSHWLaY4w5vEI36SOG2eQOEQhisqcpX/7SAs
+	WevErVYEoQgcPYGeWTxMcUW2UDAzU9CHGFlnUZovfR29gKBdYlYOCk8Pph0F5ITzvx8CNPU3jQY
+	XynMiU=
+X-Google-Smtp-Source: AGHT+IH7QIHZ0cpl1bQSa5L4Bb5DytTvCb/2gvt8Gsq4gOq49faXMoYH00vGZ0ZJuXaKzDud/8jnwgq3KDUTQ3B7Nx0=
+X-Received: by 2002:a2e:a4d8:0:b0:32a:6e20:7cdb with SMTP id
+ 38308e7fff4ca-336ca997e26mr43184441fa.17.1757008188845; Thu, 04 Sep 2025
+ 10:49:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com> <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
-In-Reply-To: <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+ <20250902-glittering-toucan-of-feminism-95fd9f@kuoka> <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
+ <47c7adc9-fa91-4d4e-9be4-912623c627d6@kernel.org> <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
+ <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
+In-Reply-To: <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 4 Sep 2025 12:33:59 -0500
-X-Gm-Features: Ac12FXxwzZ9fRsiVjllICyBepKiyjgpVzqaz8XGelevmoho2Wvp1gIMAGVPYBqk
-Message-ID: <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: memory: tegra210: Add memory client IDs
+Date: Thu, 4 Sep 2025 12:49:37 -0500
+X-Gm-Features: Ac12FXymL814iB6fXAOm_7ikLix-XDwcIFwbTiMJt5Sq938zGMyGgX9ZoGVSnow
+Message-ID: <CALHNRZ-iGASiVknUFJXJ8OkYYrG+0VMTistreDAG38WytHmEPQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on Tegra186/Tegra194
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 3:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+On Thu, Sep 4, 2025 at 3:19=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
 > wrote:
 >
-> On Wed, Sep 03, 2025 at 02:50:07PM -0500, Aaron Kling wrote:
-> > Each memory client has unique hardware ID, add these IDs.
+> On 03/09/2025 08:37, Aaron Kling wrote:
+> > On Wed, Sep 3, 2025 at 1:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >>
+> >> On 02/09/2025 18:51, Aaron Kling wrote:
+> >>> On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> >>>>
+> >>>> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
+> >>>>> This series borrows the concept used on Tegra234 to scale EMC based=
+ on
+> >>>>> CPU frequency and applies it to Tegra186 and Tegra194. Except that =
+the
+> >>>>> bpmp on those archs does not support bandwidth manager, so the scal=
+ing
+> >>>>> iteself is handled similar to how Tegra124 currently works.
+> >>>>>
+> >>>>
+> >>>> Three different subsystems and no single explanation of dependencies=
+ and
+> >>>> how this can be merged.
+> >>>
+> >>> The only cross-subsystem hard dependency is that patches 5 and 6 need
+> >>> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
+> >>> operate as expected, but there should not be compile compile or probe
+> >>> failures if those are out of order. How would you expect this to be
+> >>> presented in a cover letter?
+> >>
+> >> Also, placing cpufreq patch between two memory controller patches mean=
+s
+> >> you really make it more difficult to apply it for the maintainers.
+> >> Really, think thoroughly how this patchset is supposed to be read.
 > >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  include/dt-bindings/memory/tegra210-mc.h | 58 ++++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 58 insertions(+)
-> >
-> > diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bind=
-ings/memory/tegra210-mc.h
-> > index 5e082547f1794cba1f72872782e04d8747863b6d..48474942a000e049142014e=
-3bcc132b88bf1a92d 100644
-> > --- a/include/dt-bindings/memory/tegra210-mc.h
-> > +++ b/include/dt-bindings/memory/tegra210-mc.h
-> > @@ -75,4 +75,62 @@
-> >  #define TEGRA210_MC_RESET_ETR                28
-> >  #define TEGRA210_MC_RESET_TSECB              29
-> >
-> > +#define TEGRA210_MC_PTCR             0
+> > This is making me more confused. My understanding was that a series
+> > like this that has binding, driver, and dt changes would flow like
+> > that: all bindings first, all driver changes in the middle, and all dt
 >
-> There is no driver user of this ABI, so does not look like a binding.
+> You mix completely independent subsystems, that's the main problem.
+> Don't send v3 before you understand it or we finish the discussion here.
 >
-> You have entire commit msg to clarify such unusual things, like lack of
-> users. Please use it.
+> > changes last. Are you suggesting that this should be: cpufreq driver
+> > -> bindings -> memory drivers -> dt? Are the bindings supposed to be
+> > pulled with the driver changes? I had understood those to be managed
+> > separately.
+> What does the submitting patches doc in DT say?
 
-The tegra210-mc driver has these hardcoded and should probably be
-updated to use the bindings instead, but I think that's outside of the
-scope of this series. I will clarify such in the updated message.
+The only relevant snippet I see is:
+"The Documentation/ portion of the patch should come in the series
+before the code implementing the binding."
+
+I had got it in my head that all bindings should go first as a
+separate subsystem, not just docs. I will double check all series
+before sending new revisions.
 
 Aaron
