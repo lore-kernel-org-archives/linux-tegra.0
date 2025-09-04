@@ -1,185 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8471C6B4;
-	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2B31CEAA3
+	for <linux-tegra@vger.kernel.org>; Thu,  4 Sep 2025 05:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756951148; cv=none; b=XfUgn5bJ6oG+l0xMBNRdSvg5Ka1izkk8qaHfmx8T8WdcuU+k4GOel2UfDRR2FZKR/MaAeW9xb37kXSwDeJSGRUgK5Wu/tKO/HaHDfSzUEY6UF0LAAtQB0Go2sd229z3plToYCXkIZ4Bok1BdyMGehYDtgJ8qC2LuAvDacidCxzQ=
+	t=1756962243; cv=none; b=OlKM7la8N4KidLLlO6ST7iJEhnudwp4vPglayuutpxGFCo9l6rPUe8Eb8LfA3/q5vX+Oy+wdEzjE8TN3si6hC+zD4Ukf4sCYgrlCTXe39k1IUbGhmVzrWavn2bKGqPlzFHVhFWK67h6sMT4nX1QEBI3UvpfVGdCPnsoTaMCrA/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756951148; c=relaxed/simple;
-	bh=COr4rVD1Rbl6LzzAujkyKf5egCLVDLyy5/J9/B88ioE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M87KBzW3VumrUcu6cK6iNZaPp8eA9h5pKk2rq6ovg39yc7rwIdA0fmZGLm/mAPKiJIVr3fLsXAw2gm3Ac9RQhpr3CFbjifJgtq7UMcYc/YlsFMBQxnibAgusLbuTV1WSLOI3RGD2Ylk1zwOtQf7p75APMkAZ6GUA5r+WWo9UK5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/E7rQoc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756962243; c=relaxed/simple;
+	bh=VN0eu04X+Blerv8n91iWc1v8Qm+cbzBBmKAIxRg+pTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3yG1spcPPw9951jjibocv35oGO7fvALML7dHiBaDFQTIxEp5vWlxE32DPau+QCIoIIou2PdR3YkvMnk3NsUP9Pm1mQy/4vPx303tS+arBLTr6aQeDFRzfQZNORzsn/CeNcBaAWyzPc4D9Drf09u+qHI1o9mFQfhGhcr+WNvGrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zg6zZdZj; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/E7rQoc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D8E6C4CEE7;
-	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756951148;
-	bh=COr4rVD1Rbl6LzzAujkyKf5egCLVDLyy5/J9/B88ioE=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=V/E7rQoc3zvXbaVDNlvicgIqxzFopvyJbGOyfG+yQrPjKML8krjMLFNquXRU9MiOY
-	 3QGGoTrEXU4rS5uj5mzf3+6UZhbvwrDj+oYwpWuBrKgdibaMQEuvp9R4ORcqKPL/Cs
-	 uWDsG3KxksO8CofaHld0CAqkvGJDlE4Xx28unZY8YqP2Wl3goZNYnpvB3NRVfAHzVV
-	 pvx2gz4Di428GC3VlbBAaefL39yq9LARibXsAs0QRejzA5CQ/N/fEPsiwqgDzfh+48
-	 rtMf1EUPHZ3XZ2hKfduVe0cpVMH5+vfwdRUcPkk4cOamL0X8rT7vgL0LUeMwKVvIZm
-	 MyRp5CXCj152g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1912ACA1015;
-	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Wed, 03 Sep 2025 20:58:58 -0500
-Subject: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zg6zZdZj"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7725fb32e1bso756507b3a.1
+        for <linux-tegra@vger.kernel.org>; Wed, 03 Sep 2025 22:04:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756962241; x=1757567041; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PUDDmkRugVO/LR/xckcLSLxhh+WNZoJcwv9OrEHQ+Q0=;
+        b=zg6zZdZjAMwDbXBOanb68YdKX9lsOQCVoGk2abp698AT7KFDZKQzONPHjJoYFqvOFc
+         ial8mIUePKWdcRyK77IlSvgcEGdIgjTF3cIVMw5J1qqp1IMgseto7BNwsXT/78VsECsL
+         8yD6T56kxi0eRhw5s3guONTwS0LpUynSNrDUndp6Q1CCTJ6LXjijPxzKZsnlCeO7HFlX
+         b32C1R7x6J63nLw11uJvFuOj3+3zeh8AgpAxotFNA/OiVM+YeuwDotSmvGf+ap+wiwRp
+         ZGQb7nBaOyD825skL28vn+QUm+4VaBTkdPCTgePlZ20y0PaYRmQDywJJNyHyi/7WNtzC
+         5oOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756962241; x=1757567041;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PUDDmkRugVO/LR/xckcLSLxhh+WNZoJcwv9OrEHQ+Q0=;
+        b=bnj+pv46uhsrgJKym1qL8aAF4aGSuYAkLIDfsnldRSEUFq6mHds4VgWZID3VtzAYe4
+         qmn2heyIUbaTsmL6WTMY3j2Fkm69SEpFDEEFXBw07h0TET+bLsOBt4vWtjfp6WI+ydts
+         9Fk+ZUWeuI621li4IFkYGUmteidmJgqYPyPFzXFbKxiyHZgjkfqQD1Kj8xo2MHaQiBZ9
+         9CBX88dO8g1NYmQknaJkrg4APP110SRoHz2dA955yOF1BLiXp7Oiz4Y2trcK7Z1fiZRR
+         p52Df8X4nqgFR7R77X+yWH0YrcvJwai5PVBSKf0p9TDk7suNwkAeRnyGOZ8XQoc8uM3c
+         Supg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhR7+CmxMcl+m+7NXOF4E9DHdGVQ1919l9VDXym1CAUMifvEKtJ9LDKboGC07PO39DQh85YbiltUEQzw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6r9MUH0Ge446NfTuNmpzQBIv7ZxbpyWhCn8q7L4mbx2WSOWD9
+	Qsoum29ha6lwLL4MCMFNhBP11r3iFebxv7Ea4uDhLOb3APqi2KqYpICyX0JsJyf9rhE=
+X-Gm-Gg: ASbGncs24Qlk4KS2990WS5g/ppCqVmbrBBonJK0x2mjki31f6ti04F2/fmfYSlnAFkK
+	OBaDf++dPEK0NLa6+iGrZC/ckTQAtXxFKA1TsIswamJZNefXuw+L8DV2zy1R5EaoHuA0PJ8IFk3
+	yP0CL5NlCN7Cij0vYyJ62n9a79ugTAMuqdBHhKNqZpbchst6fWmP6Vkm9Q3btWYtA0pZdPq5g6s
+	HIoFdIpSq4pN+PGvslQTaBIIHgOx/UoAFdmBDmVNuUx1o8Rigm287t4YMAZB0gAmjxoJw7esqsJ
+	YL9uyokRSN5YmiRlG5IAkgBVZfC6RAOlvHa1uiHvNSWWLsmPwayXmFJpoYRH4AG1X3stNmktF0h
+	VuxI1KJWQE10GWIB2CoIZAOu+jKxR+tyuGO4=
+X-Google-Smtp-Source: AGHT+IHag2U9U1XvmmR0U1C9VDKS1Bo6WCQfCQMDOrQGMz82TQz7MiXq1aOJIWslun3n5e6SZdxUJw==
+X-Received: by 2002:a05:6a00:2e2a:b0:772:65b2:99b6 with SMTP id d2e1a72fcca58-77265b29bb8mr15449714b3a.25.1756962241631;
+        Wed, 03 Sep 2025 22:04:01 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7723427c127sm16918405b3a.62.2025.09.03.22.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 22:04:00 -0700 (PDT)
+Date: Thu, 4 Sep 2025 10:33:58 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: webgeek1234@gmail.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Aaron Kling <luceoscutum@gmail.com>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v3 0/2] cpufreq: tegra186: Fix initialization and scaling
+Message-ID: <20250904050358.kj7gxypu5mmov4f7@vireshk-i7>
+References: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGHyuGgC/2WN0QqDIBhGXyW8nkN/m+mu9h5jF2Z/JawMDdmI3
- n0WjA26PB+c8y0kYnAYybVYSMDkovNjBnEqiO3N2CF1TWYCDC5McaAzdsEAZzROiI2nZcWk5qh
- qZS3J1hSwda+9eH9k7l2cfXjvB4lv67clD63EKaNGKy4kM42F6tYNxj3P1g9kayX4+ZqJow/ZV
- xplq2StdAn//rquH8g0yjLuAAAA
-X-Change-ID: 20250812-tegra210-speedo-470691e8b8cc
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756951147; l=3689;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=RDXctTbmGxlSSv4dmzycEd2KLlflflCn0kxYFTnBz+U=;
- b=e6WTY/oNHOtWBHpCY4U/f+KyFymNrmKE7TuAmaL9HV0ch8628dgXWr2YCOEiRnI8eQ3sdrRBB
- oEnwbVA1IRzAAjIT2T/b6WlLzgS7mARcpaXNSHpvnUnSoy9k/suKWRw
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On 28-08-25, 21:48, Aaron Kling via B4 Relay wrote:
+> This series fixes an issue with shared policy per cluster not scaling
+> all cpus and with some cores being initialized by the subsystem.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v3:
+> - Use more clearly named variables in patch 2
+> - In patch 2, fail probe if no cpu rates reported by bpmp
+> - Link to v2: https://lore.kernel.org/r/20250828-tegra186-cpufreq-fixes-v2-0-fcffe4de1e15@gmail.com
 
-Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
-code supports 11 ids and nouveau supports 5. This aligns with what the
-downstream vendor kernel supports. Align skus with the downstream list.
+Would be nice to get an Ack from one of the Tegra maintainers before I
+apply this.
 
-The Tegra210 CVB tables were added in the first referenced fixes commit.
-Since then, all Tegra210 socs have tried to scale to 1.9 GHz, when the
-supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
-Overclocking should not be the default state.
-
-Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
-Fixes: 579db6e5d9b8 ("arm64: tegra: Enable DFLL support on Jetson Nano")
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
-The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
-all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
-supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
-Overclocking should not be the default state.
----
-Changes in v3:
-- Drop all patches related to limiting cpu frequency from a dt property
-- Link to v2: https://lore.kernel.org/r/20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com
-
-Changes in v2:
-- Define units in patch 1
-- Update patch 1 commit message to better explain the need
-- Pull all downstream sku's into patch 2, which eliminates patch 3
-- Update patch 4 commit message to indicate the limit is due to thermal
-  constraints.
-- Link to v1: https://lore.kernel.org/r/20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com
----
- drivers/soc/tegra/fuse/speedo-tegra210.c | 62 ++++++++++++++++++++++----------
- 1 file changed, 43 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
-index 695d0b7f9a8abe53c497155603147420cda40b63..60356159e00d2059e55eaacba27b5ca63bf96c90 100644
---- a/drivers/soc/tegra/fuse/speedo-tegra210.c
-+++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
-@@ -65,27 +65,51 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
- 	sku_info->gpu_speedo_id = 0;
- 	*threshold = THRESHOLD_INDEX_0;
- 
--	switch (sku) {
--	case 0x00: /* Engineering SKU */
--	case 0x01: /* Engineering SKU */
--	case 0x07:
--	case 0x17:
--	case 0x27:
--		if (speedo_rev >= 2)
-+	if (speedo_rev >= 2) {
-+		switch (sku) {
-+		case 0x00: /* Engineering SKU */
-+		case 0x01: /* Engineering SKU */
-+		case 0x13:
-+			sku_info->cpu_speedo_id = 5;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		case 0x07:
-+		case 0x17:
-+		case 0x1F:
-+			sku_info->cpu_speedo_id = 7;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		case 0x27:
-+			sku_info->cpu_speedo_id = 1;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		case 0x83:
-+			sku_info->cpu_speedo_id = 3;
-+			sku_info->gpu_speedo_id = 3;
-+			break;
-+
-+		case 0x87:
-+			sku_info->cpu_speedo_id = 2;
- 			sku_info->gpu_speedo_id = 1;
--		break;
--
--	case 0x13:
--		if (speedo_rev >= 2)
--			sku_info->gpu_speedo_id = 1;
--
--		sku_info->cpu_speedo_id = 1;
--		break;
--
--	default:
-+			break;
-+
-+		case 0x8F:
-+			sku_info->cpu_speedo_id = 9;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		default:
-+			pr_err("Tegra210: unknown revision 2 or newer SKU %#04x\n", sku);
-+			/* Using the default for the error case */
-+			break;
-+		}
-+	} else if (sku == 0x00 || sku == 0x01 || sku == 0x07 || sku == 0x13 || sku == 0x17) {
-+		sku_info->gpu_speedo_id = 1;
-+	} else {
- 		pr_err("Tegra210: unknown SKU %#04x\n", sku);
--		/* Using the default for the error case */
--		break;
- 	}
- }
- 
-
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250812-tegra210-speedo-470691e8b8cc
-
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
-
-
+viresh
