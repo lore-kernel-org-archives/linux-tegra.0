@@ -1,228 +1,229 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9486229B02;
-	Fri,  5 Sep 2025 05:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757050174; cv=none; b=CKi53va6OZn9jl5m3Zh7e2odfdXA1Z8yLSKGmf5x6xLWy+RRr5BkSkU9yywHsE6TqrQ2zWjXWzM6Akd2rIAKLYu9PzDIi4Ar0AipoSa6BE9mOy5ZFNq+sxfH/hFQOYqg+jKYRvzzYTRbGyNnUwRchxXmkdjiQIt2RTHt6gfIBDw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757050174; c=relaxed/simple;
-	bh=+GGeWtzOnhlywY1SautnLIfVlb/W/eBi0k6tGAU9xmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9cZYUZnc0LiIveoagefEe8GHWhZl/o3Y0l6u3xTSARJ5F62wbGHfL7KdI332xNn+Mw65ll4R/TV3MkLlh6/zXr7oAxhfcRvrB9Lq2hDXt1ZCr3v6EQoXjSz7pwb614FUURWmz+p+k9l5p8gSC2l80wQy/r2ZVV6wCHuKTuBOho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W00GLw71; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C542AD2F;
+	Fri,  5 Sep 2025 06:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757054434; cv=fail; b=QcyZdZrWQLHDnLbZfEVGndienQ0im8dUxBvEpgJGlZxRf+aJZPlMDrGAhBKnXXTDBEUTPPJFMLDCpJ1USxGUMKuMFS3Y5/B5oOCDps7a1Abd1C4xa3CpVNl5rua71pgo5nUKI/FD2BlyU18qykYghMnJwbE3h1DivqFDihwgfjE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757054434; c=relaxed/simple;
+	bh=akcnCJXAoMhpX4kh/ue4rJVh3TkKnlnb2RsruNB+JEM=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EwB6LRjqbTCCipfJjgG3BiUC035rtDl/MQBXnMnd4yZzqR2x+1/KrqIwTJNzdrCiVoY2h0tIwadxmTCOQK7qrufk1cfH65cBIPy55tM3IH1weLqpVmaHYEb99pM+MqxVXH9cjtVJ31AEZf/mj74+gEy1BY1+g+Y4KhG37ENKCF8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ikedSMYI; arc=fail smtp.client-ip=40.107.220.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W00GLw71"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757050173; x=1788586173;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+GGeWtzOnhlywY1SautnLIfVlb/W/eBi0k6tGAU9xmE=;
-  b=W00GLw71hzfX2HfeNO36bLjsMZ4fccn1kxnzjObAlbgvl35oVfhCdSlj
-   UtKkg8vxNwxVFnNIgPNxdhkbxTy6zKd27Ld90tulmFMC7G70IlF+ZzQA5
-   /SpkC1URu8d3YB4b7r6IqG1NqKIk3rpSJNZurAOH6mQufWpKxHjNw1n5U
-   YhjMc2bCBXUJ1TB9cJk4Q6JHJG2aRrAd0oh9W/HJtkYGcGcPwPArrMmcQ
-   BeYxqImAMX1gisVliwj3SmgQgrxqo+w+a95Gs3MrND5yKaJrOnb4JsNA9
-   rUURNtFq9OV2hAYQ6ds+toINuATdYHOXX26C5EzXkGGRZEJisJwKfgazY
-   Q==;
-X-CSE-ConnectionGUID: ld9yZ2DIShiaPKaNmWbzmg==
-X-CSE-MsgGUID: SK/yG/8wSNe42I0a847DPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59509162"
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="59509162"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:29:32 -0700
-X-CSE-ConnectionGUID: Zu57G14KQ228dbPwUZN39g==
-X-CSE-MsgGUID: QRofuRMxRbCSJ9Zg5SFtLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="176412850"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 04 Sep 2025 22:29:27 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuP0m-00003X-31;
-	Fri, 05 Sep 2025 05:29:24 +0000
-Date: Fri, 5 Sep 2025 13:29:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 5/9] dma-buf: heaps: Add support for Tegra VPR
-Message-ID: <202509051316.Hlzf9HAw-lkp@intel.com>
-References: <20250902154630.4032984-6-thierry.reding@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ikedSMYI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RHJ98+u3jLnERBkH88GEGKyJH5DztVFlomicKc+tlbApB4xwB1/iq+c2yPXSUw6eFEqtXtcrbC55e8JZb21hzvnYEWQPe4Sr4IWgugKkCvUaqLEAnGsNVOOPfmoC2T4Dl/JOip/hBLDCFW1CPzF9NzlaWt2oQ0mwVB7jQKeubCGXgapxuXKYK64hv6orTyXQGemLtFf4rxWn2E6HhJOk4a7Tc4KvVl82WJcNX/inbQqiYV2un4skKaNqZaRalGjxiFsrgTq7uJTIwCoG8btBVD9NbC0YCvJWu/BrD5J3thu69M9GMWmc9R5rYtKyQ0HdRJB9Pgqc6NNwrVPMuE9H8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fm+ya+5qRm6FDwMyNSBfmZvx9Xxyqaducj6C8aah0AQ=;
+ b=RviMUXJfHkrw0+7pJhnCtQ0hShq1I4pYA0Dlaq3Y1B8ddjp8gMODb3KyMzhHSb+7VNzcmRdgxoxsP6IFtQxOquCT62+2qmd8Ow6d841P0mcJb44WSc4EShpEOGIHlyFYU4awH9/9jCbwtPRKJm77pDeQYF4cZgV4LnUSK0dar7Twg3jIz0C/BBA4YUi/vdXiZw2v+LNu6ehHcaZqR69ecEsQIanTQEFXrELguUCDbFqNgjpQ04I5710mgbYR7H+PVtFO6QsgCP0HE7Ruphw4rQ2NHUQuAfQsiKXBaq0AKwXLTxElaseWk3OzwKA3OKUcsKeKJVuGPNiD4eqKDk4MHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fm+ya+5qRm6FDwMyNSBfmZvx9Xxyqaducj6C8aah0AQ=;
+ b=ikedSMYIlIv0KE07eCnPQynT+maIl+bC8cWe6mKbRcKmNNhHcW+3QsPEwDu1/p7z7aPlyjMkguzqPu67ITHPNOV91LIBNKATbgPHCWqsYlxoeM/s9OhDcz1vfYQJKXbGHnTDN6UTaNa7d3GnnG9tDWpLSzTMTSgsJg4ZtS0VOm/CdI5F1W2wJnzeUSMSigEtqivfr10U3uml2bRnQ/VJHEB9y5xraCMB2646XC3dsKWPPBuoOfbqsXWahHDfIEZJiuvbPMvScHQTDPO2Wtfm3bm1l/s/SlHO3tzCdAhATGbcvkuAvZxq5eX4C3ElMaG4/I7sWD3U31mdpAoiStriYw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH8PR12MB9768.namprd12.prod.outlook.com (2603:10b6:610:260::9)
+ by PH7PR12MB9102.namprd12.prod.outlook.com (2603:10b6:510:2f8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Fri, 5 Sep
+ 2025 06:40:28 +0000
+Received: from CH8PR12MB9768.namprd12.prod.outlook.com
+ ([fe80::f7db:9f0:a574:1abf]) by CH8PR12MB9768.namprd12.prod.outlook.com
+ ([fe80::f7db:9f0:a574:1abf%7]) with mapi id 15.20.9094.016; Fri, 5 Sep 2025
+ 06:40:22 +0000
+Message-ID: <6a8e717c-b8db-4d0e-af97-4a355af177f9@nvidia.com>
+Date: Fri, 5 Sep 2025 12:10:14 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] dt-bindings: rtc: Document NVIDIA VRS RTC
+From: Shubhi Garg <shgarg@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250723130343.2861866-1-shgarg@nvidia.com>
+ <20250723130343.2861866-2-shgarg@nvidia.com>
+ <20250724-peridot-chachalaca-of-progress-a9f2ee@kuoka>
+ <2c59e665-6415-460b-8ff8-c06f8d94f9eb@nvidia.com>
+ <f69a76c5-157d-4cb4-bf46-1acdb6a87319@kernel.org>
+ <0d70270e-2290-47f4-87d1-9a11019fa169@nvidia.com>
+ <424cd602-412f-4981-9b7f-9d04d769b3c7@nvidia.com>
+ <5ccb15d2-0e9f-438d-9243-6f237b8a1918@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <5ccb15d2-0e9f-438d-9243-6f237b8a1918@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0P287CA0012.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:d9::11) To CH8PR12MB9768.namprd12.prod.outlook.com
+ (2603:10b6:610:260::9)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902154630.4032984-6-thierry.reding@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH8PR12MB9768:EE_|PH7PR12MB9102:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3da4878d-413f-49a9-2a30-08ddec471630
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RlArNmlnelUvUnNuYnhyNjNiUllKSEpZekRjNDJEUkhuWWE3VGw5RTlUbWtQ?=
+ =?utf-8?B?Mk9nTWNtVlEzbWRtRTFMeFgzRndLdHVsZTB0K05BalR2enQ0U1hISFlXcmxD?=
+ =?utf-8?B?My9rWlg3T0MxTVRxdGJGamdMV3ZDNzU4ZWZwb0JJYkQ3YjZVTm04MW5IZWdp?=
+ =?utf-8?B?ZkYrUWFUSldUbmU0SWRvZnZZNFQ3cGtCMUQvbjRmVlFVcUpIc1Nmdkg4Nklo?=
+ =?utf-8?B?Vi92aXptOHU0ajN1NWl3bW93SnNmZmUxeGJac3FnTUxxSkNCR1kyejlkcXhm?=
+ =?utf-8?B?TFMvK3lzZWxGL1p1dWVmQlZ0T295OFB1NlBqa2VTRDFNNHp4STJ5MENjZFdk?=
+ =?utf-8?B?R3dLUVhBekRPZDdZc2k4NUV5RFp2SEpFaGlmMjVQWm5TY05tdG0vYjZKN1Ns?=
+ =?utf-8?B?VStDWWNiZmVvSlpZL2w4bUtUWk1PV2dlOHN2R0pzbmhvY1hQZytHcWdiWG4y?=
+ =?utf-8?B?TW80b0hpbEVqUU5VTnBDUEdMS3FXVkMvWDhhc0p4VTVsc1laeGVLUWlNdEp0?=
+ =?utf-8?B?YjlVdURmd3JzYmwybjRvS2pKdW5YbDRZWFlsUmREK2Q0Qmxla3prTWREb241?=
+ =?utf-8?B?bml4aEViZEx2dm1GMVJuK0kyL0FlOWxYRE4rbEU1RFVxcEx2eG9NU0pRUVhq?=
+ =?utf-8?B?eHgxZGxaMVhqa29jUzZqSE9CS0VsL285MEdMSFFrWHFPdEVXM3ZKc1dqdTFl?=
+ =?utf-8?B?TTJOUUhQT3pWYlhTaDB5SENtbzVOYVNqS0xrNkI0WEYvRVN3ZGp2S2VHcmdI?=
+ =?utf-8?B?UE1VWTNNbnRsVjRwZHY5N2JRemxsZXRQc2xlaFRsWFRmQUdPUkdWSXhmc0Nl?=
+ =?utf-8?B?RDNwZnhLTzRzS25qWjJMSjZFTTNXbDBSY3NKeHowcHIrVVRvM0E5S1JtQ2Fu?=
+ =?utf-8?B?RkpkdXJlakFYWnZWOG5IY3lZSE1qK0I3VHVYMG1YZ1ZId0xYMWFsRVlIL1RG?=
+ =?utf-8?B?K2tDblZGeGd1SXJSWXlnS054Zy92TUMzUTk5KzFIeXhES3hLMmF1a2dYS0Mx?=
+ =?utf-8?B?U1p4NkxyOStpNHRxVmtGenlKSTFZS2JGQVhHYXZZQ1hoNG5EY3hzSW9jc21R?=
+ =?utf-8?B?bHJmcTdtR09GSXRLa1BpWVdnZkhjZlFuMU9kUG43dFNvbGFWTmloSm5ISTRh?=
+ =?utf-8?B?c2R3bnE3Z0Z1R09hSnRHWmJKTU5BUVJFakFEbzVXVmV0TDVBcDBxWWFOOUl2?=
+ =?utf-8?B?NnB1Nmd3OVhNenpJNnE4U0NmTVQwV2xjbFZMQmhqSEtrV2QzMm1FSVh6MzZp?=
+ =?utf-8?B?YVQzWFEzNEtEMU91S1pjZGR3RUFuQWxTV2RmWlQ5N2NweUtuTzM1cml6eEpm?=
+ =?utf-8?B?M0s0dUszd2dvQzIzOXZwTFUvMytQQS9RNFZEZmVJME4xL0kyeGV6Qm5JaERK?=
+ =?utf-8?B?WXhJVmdlc1BoR3cxcDRqL3F2d3hkM21OUXRIVU8ySWZPaDNEQmh1SVRSVXZU?=
+ =?utf-8?B?TmxEZkZ5R21TUERmT2FxMnZpNFZPWWRBekFyTTBBWWNRa0srUVc5Q29tN2w1?=
+ =?utf-8?B?QzRqQWlXSmgranJxWkQ4VU8vVUwrK2RKb1JXbnFFS1ZET2VScG0wZVExN2Rq?=
+ =?utf-8?B?MFFIMk55ZVgxVmhja2p3eVhLTkpraGdJM1o3TlFlV3RhNXUxWVp3ZlVzYUNH?=
+ =?utf-8?B?aC92YjdRK1F3ZmJxQi9FQ2V3NzNyb3h1ZzVXdkYwVzFFSXNSTjRTMWM0UmI4?=
+ =?utf-8?B?ZTZYV1BQNSt3bGgxd0VORDNlbzRkNlh3OWhYZ0NKWUtCVzJDcUlSNlVlQ1Qv?=
+ =?utf-8?B?Z2xuU1hRWWZld0lSanczWVBMV0wxdU1vQjZKcXdwMlZydmhZL0tTQ0NNTDBh?=
+ =?utf-8?B?aWs1SDdDY1U0MDZiRjFUclR2amkzOWROMUE4ZUYxRlllclBoWm1BMVl3Yktt?=
+ =?utf-8?B?aWs1NG9HeGVnaGJRb05rakFJUVFkdmEyYVJvcjBoWG9IeEVnY1dnV28zbkw1?=
+ =?utf-8?Q?vlP1sgZAlGU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH8PR12MB9768.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NTNqOURUWWR0bXlKL1BWc3hPRnNvZXo1VlZ0UTE4T2J3OXlqbUZhblVIV2Np?=
+ =?utf-8?B?WlRwWE9PSGVLZVZhYUQvSk1aQ2hSb1doR0NFU1BQUU81bnVtamZQTjVEN1hM?=
+ =?utf-8?B?TDJIa0Y4VTBObEVwMG5yellxdW9QK2NWcTNCNWpJMjgwOTVxRDNoU2h3cG9V?=
+ =?utf-8?B?TS9WbTFuOEwvRFgwbzc0dEJVYm5yS3d3Sk9yMGtLNGRJWEhNeWc2YWhWVjAz?=
+ =?utf-8?B?NlNKYzNQRnVreVo0MVZ1ZzU5WmczV3RPRE5DWnlNOHVqZ0lNU2ZPdU1PblV0?=
+ =?utf-8?B?azVvSVJOQk45Uk9mTDhRK0IyRmUzb0h2dWZwbGhldlN2VVRXKzdkdk1RZWww?=
+ =?utf-8?B?ME1ybnV2MmFsSEgxSXhBRnU0cG5scyttM0E5SFNoaUNYeUNvakJZSmVGVG1v?=
+ =?utf-8?B?TUlybnpRYk0xTlNqejdsTWVoUlVXWmhQdmZUYzAvR3drZ3N3L0NvTXBWWVlX?=
+ =?utf-8?B?QzBpNE5JUjBXaU4wODUvTGlQcXRJUzVjeUNraVprb29ZSzF2WGQybVVLVGNj?=
+ =?utf-8?B?cmcvZzIyekxINDhxQXB1UHZvVy9WSFdMWVlKR3RXVUpqVnkyaTgwSGpPdGM4?=
+ =?utf-8?B?RkhYZGI3YTFCTlhiTUVrWDJYRVIzdGRIUHJ5bFNHZFdYQ1lwQVVxcmlNcENB?=
+ =?utf-8?B?cjRYR1JwYnJMRFpxcnJNK3lLVkk3WjJBampWSlp0dU00RzNnQkJFb2NnenhC?=
+ =?utf-8?B?cTFEVk5EMmR4NGlHcE5maDZ5a29TQW9UL0szTnFtbzZ6eWF0ekc2TG50U3Bm?=
+ =?utf-8?B?Rysvc2piVDVYMHYzQjAwd2NzcUkrcXZOMXdHcU1zYm5yaDZOVlF0cVc1eW83?=
+ =?utf-8?B?RmIybi9OMFZDWFpXcjN4bnk1bFM4bWlPbGtya1h1QnlHeWJIZmhhYWNoZnJt?=
+ =?utf-8?B?NCswNlphdlFMZFFkQmFjdWxGeGxZQmZ0dUF4a3hEelJKczMvRmFiSHpWbU5i?=
+ =?utf-8?B?U21Cd3JPUy9DZkYyQnBJZXhJVG9vVFRreFROMi8yRHNKY3QzTnF6VW1JYlpp?=
+ =?utf-8?B?akdTU2ZvUyt5VTdaNEtKWTJ4bjdwcFI4Qlo2RFNLMGZCODhFVHpIQ2RwZmhi?=
+ =?utf-8?B?Unk4MEtjWXNRSjl0U3pHUTJWM1N1NkNGOWppbndRYVNNY3ErSFdJSlA2Mkht?=
+ =?utf-8?B?Ym0yZ0JzcVJBUWphNmloS0MrSjBqSXdnR1lyL0xQR0pNaFdBSW1sSS8zTTg4?=
+ =?utf-8?B?c1JHaGRKTG9xWHl3K3Q2U0JRSmxLVnZ0TDZManB3aHRZN2QzWTQ1YWFENEdh?=
+ =?utf-8?B?V1hzV09nODFNMDEzTWZJQk9iTzRhQTBLNUZhcE5RTmN1OE8zN3FOMjdJMTQz?=
+ =?utf-8?B?cFF2d2xsV2pwcW42Z1diRFI4US8ycVdvU0dWcG0rd2toRkdSWUoyRld1K20y?=
+ =?utf-8?B?K1p3ckMvakRNSmhiRjVBU3BXYlg2Ti8vZEx1RjViMVNaaWlSNmZhNllpMmhT?=
+ =?utf-8?B?ajN4QTc0ekFsZ25nUk9URzJMM2d0WTdnM1lPeUQrRm43bllLeWwwWmJCMTFK?=
+ =?utf-8?B?MXp4UmJ4YlBETHRSdk83RllwenpvNkpVOExxNnZuZHA0ZUpmRGZLTmpkMmQ2?=
+ =?utf-8?B?SE5mSDRBNEhnOGlJYkZPaDMvUTUyNU9GRHFMenE2V0xGeVVjRzZwYXpSNlFy?=
+ =?utf-8?B?b3lSWjRnMktCTktqeUgrcTdDaGNMUjYyNGdIU2N2U0ZJNm5PcS9xdEJVZnN4?=
+ =?utf-8?B?V3dLZzlxZmkrV1RQb05FNi9QREIrbWJERFcrWFpaeXR0VlZKRTkwUTNiNjd2?=
+ =?utf-8?B?eTRHdjIxbWZoNll3R3Y2Y0lSbnhjUTNwRFdLMWs3RlhQeCtidnpGc0Z4VHlu?=
+ =?utf-8?B?ZGRJRjlPL0puZTJsQ2RSOUhicWVLQ3V3aW5RcFZpWWJLMWhyMGFTc0N3MW5u?=
+ =?utf-8?B?TkdWNTlKZHpQMk5zbDNGZiszRjhBTitxSWZLeGtSY2VGTmloT2hZWGtOVkVh?=
+ =?utf-8?B?OFBxbFFKL1hkRkN2VGt2bFpwTEc5Y3pCYU1FQjM4bHhFQW4vYis4dnJTSG1z?=
+ =?utf-8?B?Qnc5cHdEWVNnMXVKOEtQMGtrVnlCdGhWMXpUWFo5am1PbmY4U3AwNWwxcnhD?=
+ =?utf-8?B?MGVwZzdqQXB5N2psdVd4M2d4MkdnRWdKUzI1THZINGFMZUFvT1RUZUtoSSt2?=
+ =?utf-8?Q?KWqZ43CUqi9jgiXLmE9Upe7lt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3da4878d-413f-49a9-2a30-08ddec471630
+X-MS-Exchange-CrossTenant-AuthSource: CH8PR12MB9768.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 06:40:21.9112
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: E/KXrpY/j64PzQoyB3xmILgMt1HTrSLmDXt5b8RVORWjS42dMnFgHwrt4d/B5j310p+9Nkika7VY9lBhz0bEEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9102
 
-Hi Thierry,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20250902]
-[also build test ERROR on v6.17-rc4]
-[cannot apply to robh/for-next akpm-mm/mm-everything tegra/for-next linus/master v6.17-rc4 v6.17-rc3 v6.17-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Reding/dt-bindings-reserved-memory-Document-Tegra-VPR/20250902-235038
-base:   next-20250902
-patch link:    https://lore.kernel.org/r/20250902154630.4032984-6-thierry.reding%40gmail.com
-patch subject: [PATCH 5/9] dma-buf: heaps: Add support for Tegra VPR
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250905/202509051316.Hlzf9HAw-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509051316.Hlzf9HAw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509051316.Hlzf9HAw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/dma-buf/heaps/tegra-vpr.c:158:26: error: called object type 'void *' is not a function or function pointer
-     158 |                 err = pm_generic_freeze(node->dev);
-         |                       ~~~~~~~~~~~~~~~~~^
-   drivers/dma-buf/heaps/tegra-vpr.c:175:24: error: called object type 'void *' is not a function or function pointer
-     175 |                 err = pm_generic_thaw(node->dev);
-         |                       ~~~~~~~~~~~~~~~^
-   drivers/dma-buf/heaps/tegra-vpr.c:192:14: error: call to undeclared function '__ptep_get'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     192 |         pte_t pte = __ptep_get(ptep);
-         |                     ^
-   drivers/dma-buf/heaps/tegra-vpr.c:192:14: note: did you mean 'ptep_get'?
-   include/linux/pgtable.h:338:21: note: 'ptep_get' declared here
-     338 | static inline pte_t ptep_get(pte_t *ptep)
-         |                     ^
-   drivers/dma-buf/heaps/tegra-vpr.c:192:8: error: initializing 'pte_t' with an expression of incompatible type 'int'
-     192 |         pte_t pte = __ptep_get(ptep);
-         |               ^     ~~~~~~~~~~~~~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c:194:36: error: use of undeclared identifier 'PROT_NORMAL'; did you mean 'ZONE_NORMAL'?
-     194 |         pte = clear_pte_bit(pte, __pgprot(PROT_NORMAL));
-         |                                           ^~~~~~~~~~~
-         |                                           ZONE_NORMAL
-   arch/s390/include/asm/page.h:122:36: note: expanded from macro '__pgprot'
-     122 | #define __pgprot(x)     ((pgprot_t) { (x) } )
-         |                                        ^
-   include/linux/mmzone.h:806:2: note: 'ZONE_NORMAL' declared here
-     806 |         ZONE_NORMAL,
-         |         ^
-   drivers/dma-buf/heaps/tegra-vpr.c:195:34: error: use of undeclared identifier 'PROT_DEVICE_nGnRnE'
-     195 |         pte = set_pte_bit(pte, __pgprot(PROT_DEVICE_nGnRnE));
-         |                                         ^
-   drivers/dma-buf/heaps/tegra-vpr.c:197:2: error: call to undeclared function '__set_pte'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     197 |         __set_pte(ptep, pte);
-         |         ^
-   drivers/dma-buf/heaps/tegra-vpr.c:197:2: note: did you mean 'set_pte'?
-   arch/s390/include/asm/pgtable.h:1041:20: note: 'set_pte' declared here
-    1041 | static inline void set_pte(pte_t *ptep, pte_t pte)
-         |                    ^
-   drivers/dma-buf/heaps/tegra-vpr.c:205:14: error: call to undeclared function '__ptep_get'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     205 |         pte_t pte = __ptep_get(ptep);
-         |                     ^
-   drivers/dma-buf/heaps/tegra-vpr.c:205:8: error: initializing 'pte_t' with an expression of incompatible type 'int'
-     205 |         pte_t pte = __ptep_get(ptep);
-         |               ^     ~~~~~~~~~~~~~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c:207:36: error: use of undeclared identifier 'PROT_DEVICE_nGnRnE'
-     207 |         pte = clear_pte_bit(pte, __pgprot(PROT_DEVICE_nGnRnE));
-         |                                           ^
-   drivers/dma-buf/heaps/tegra-vpr.c:208:34: error: use of undeclared identifier 'PROT_NORMAL'; did you mean 'ZONE_NORMAL'?
-     208 |         pte = set_pte_bit(pte, __pgprot(PROT_NORMAL));
-         |                                         ^~~~~~~~~~~
-         |                                         ZONE_NORMAL
-   arch/s390/include/asm/page.h:122:36: note: expanded from macro '__pgprot'
-     122 | #define __pgprot(x)     ((pgprot_t) { (x) } )
-         |                                        ^
-   include/linux/mmzone.h:806:2: note: 'ZONE_NORMAL' declared here
-     806 |         ZONE_NORMAL,
-         |         ^
-   drivers/dma-buf/heaps/tegra-vpr.c:210:2: error: call to undeclared function '__set_pte'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     210 |         __set_pte(ptep, pte);
-         |         ^
-   12 errors generated.
 
 
-vim +158 drivers/dma-buf/heaps/tegra-vpr.c
+On 05/08/25 11:48 am, Shubhi Garg wrote:
+> 
+> 
+> On 25/07/25 7:09 pm, Shubhi Garg wrote:
+>>
+>> On 24/07/25 4:20 pm, Jon Hunter wrote:
+>>>
+>>> On 24/07/2025 11:06, Krzysztof Kozlowski wrote:
+>>>> On 24/07/2025 11:41, Jon Hunter wrote:
+>>>>>
+>>>>> On 24/07/2025 08:59, Krzysztof Kozlowski wrote:
+>>>>>> On Wed, Jul 23, 2025 at 01:03:40PM +0000, Shubhi Garg wrote:
+>>>>>>> +description:
+>>>>>>> +  NVIDIA VRS (Voltage Regulator Specification) RTC provides 
+>>>>>>> 32kHz RTC clock
+>>>>>>> +  support with backup battery for system timing. It provides 
+>>>>>>> alarm functionality
+>>>>>>> +  to wake system from suspend and shutdown state. The device 
+>>>>>>> also acts as an
+>>>>>>> +  interrupt controller for managing interrupts from the VRS.
+>>>>>>> +
+>>>>>>> +properties:
+>>>>>>> +  compatible:
+>>>>>>> +    const: nvidia,vrs10-rtc
+>>>>>>
+>>>>>> Nothing improved. You never replied to comments and then replaced one
+>>>>>> redundant word into other redundant word.
+>>>>>>
+>>>>>> Respond to review or implement it fully, not partially.
+>>>>>>
+>>>>>> Or add COMPLETE bindings, not partial ones. See writing bindings doc.
+>>>>>
+>>>>> OK, right so the DT binding should describe the overall PMIC device,
+>>>>> even though the driver needs to support the RTC.
+>> VRS-10 is the device name. VRS-10 has an I2C interface and implements 
+>> a Power Sequencer,
+>> RTC , 32kHZ clock output. From software perspective, we are handling 
+>> VRS-10 interrupts and
+>> providing RTC driver support. I will add complete VRS-10 information 
+>> in bindings.
+> 
+> VRS-10 hardware specifications are completely designed by NVIDIA.
+> NVIDIA is getting chip manufactured by multiple vendors.
+> Therefore, part number and vendor ID varies on each NVIDIA platform 
+> revisions.
+> But, our software is independent of vendor details.
+> So, is it okay to keep compatible string as "nvidia, vrs-10" in VRS-10 
+> RTC driver ?
+> 
+> 
 
-   135	
-   136	static int tegra_vpr_resize(struct tegra_vpr *vpr)
-   137	{
-   138		struct tegra_vpr_device *node;
-   139		phys_addr_t base, size;
-   140		int err;
-   141	
-   142		err = tegra_vpr_get_extents(vpr, &base, &size);
-   143		if (err < 0) {
-   144			pr_err("%s(): failed to get VPR extents: %d\n", __func__, err);
-   145			return err;
-   146		}
-   147	
-   148		if (vpr->use_freezer) {
-   149			err = freeze_processes();
-   150			if (err < 0) {
-   151				pr_err("%s(): failed to freeze processes: %d\n",
-   152				       __func__, err);
-   153				return err;
-   154			}
-   155		}
-   156	
-   157		list_for_each_entry(node, &vpr->devices, node) {
- > 158			err = pm_generic_freeze(node->dev);
-   159			if (err < 0) {
-   160				pr_err("failed to runtime suspend %s\n",
-   161				       dev_name(node->dev));
-   162				continue;
-   163			}
-   164		}
-   165	
-   166		trace_tegra_vpr_set(base, size);
-   167	
-   168		err = tegra_vpr_set(base, size);
-   169		if (err < 0) {
-   170			pr_err("failed to secure VPR: %d\n", err);
-   171			return err;
-   172		}
-   173	
-   174		list_for_each_entry(node, &vpr->devices, node) {
-   175			err = pm_generic_thaw(node->dev);
-   176			if (err < 0) {
-   177				pr_err("failed to runtime resume %s\n",
-   178				       dev_name(node->dev));
-   179				continue;
-   180			}
-   181		}
-   182	
-   183		if (vpr->use_freezer)
-   184			thaw_processes();
-   185	
-   186		return 0;
-   187	}
-   188	
+I plan to use the compatible string "nvidia,vrs-10" for this device as 
+there has been no further feedback.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Shubhi
+
