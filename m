@@ -1,145 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2D62D3220;
-	Fri,  5 Sep 2025 06:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44FD2EF65E;
+	Fri,  5 Sep 2025 07:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055574; cv=none; b=QZwVEZNUcswm/65YmNIEioO3Y6FDMsGXXMlpAR1jX7wAyiqVybHPtlK1aiWLHFk1C6U1EbgzwwzEh3NWbXJzVsK05UmSgM02ExkVfZyoxFXBC8rrfS6uz92DjQZKm24V71cQJDBcbd7Oefk/7VOzgk4Fm4hzOcuHA9fYgdkBFZ0=
+	t=1757056737; cv=none; b=SL6Vs1izZ8Qo6u/oO4RRjHFXRgo9/Wr4brKfq1Q4+ONDle8Jv+ZJq3ioJD/BW4H4txRKjDTNgS1esnZm8s+ij2x5YlfR4M1b0zrcZQKHpVUfoE3xT0FMP8EfK6Ds7xV41+nR6r8OSVXSUfexQCMnOTXif1+YbuKQhSnxVSNySRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055574; c=relaxed/simple;
-	bh=cugq+qw3GpO8v3/zvxw4Zv8vTWDCt+fAotQhmHLxXiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aC4mLq6uyIwYRNcECVcCFv+5cY70BHuBRQ7jSIuTTeJC1hKe1hzg4kwurfUiMg5anQtS9L6ixAm3atLLAl7YVfCMofAJnC8bICyAylZV5YNE8imjyp41Mw7UwTWZ6RbYqtTNKeQqfwqr6xGUlI6r4JWW7tzeCGQchD7oSb9aEgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CF4binMN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757056737; c=relaxed/simple;
+	bh=H223aX43nK1pPdfcIo1BT3fCYy/tXf6As0jPOBfabl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zj1QyGT+aFBk9Pq24ppRXOfYrw79bkBBCX2WOsQA4O6ly5fEiiYhcj6iaZb/04RItgb6MapvQfCuJo4ASSsYTMoA9/AWIycnMwweLSUgLWrb4603fkbQtZeCryvTBn4GaNG0PrySP0YpiJ2b0hLQLSFYxFbAI/fA+PxVa8Wudt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StwrOGC2; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CF4binMN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C8CC4CEF1;
-	Fri,  5 Sep 2025 06:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757055574;
-	bh=cugq+qw3GpO8v3/zvxw4Zv8vTWDCt+fAotQhmHLxXiY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CF4binMNIxiWGtuuQhlwzvCc8J+tQLefHXAmP/4jLna/lyTqrOrP/MM+f/iZsI3Xg
-	 8Ns6FSBRCjnyqRr3EllKTVhjAGqUGoepfpf5wB0Bh0nWrIx4P62B4A4cYZV/1ahs9X
-	 7EjbQ7iUYVhfHGLHkbr8LqwA3CdK670OU0aiogzMt+kpNmF7x1kJDXmTMl1qsI+6wz
-	 7lpajlijr7zG9v8ybLc4stzG1Z0h2yzN10V+hpWFJogtvX97f3FPgwjEgykRpIYZjq
-	 m6VXZtH592HS4jrN6unhF6tLxKDBBTg5uHTLVKEEWDPB6bbaGkQz8qBWTYKZsZA9f/
-	 40aNz3qwrTpuw==
-Message-ID: <3c463028-65b2-462e-b933-9ccb3fb37e0e@kernel.org>
-Date: Fri, 5 Sep 2025 08:59:29 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StwrOGC2"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3381df3b950so6780071fa.0;
+        Fri, 05 Sep 2025 00:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757056734; x=1757661534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VJz7bdBnKBg2ceOJglorHSW6LY+Qn3Rzkau42ItVYOM=;
+        b=StwrOGC2mqJaZCD13znqfA7bngAt8MvjhWrDO5fyKQS7egU18qhNNXOhyCMzh5p5IC
+         zXWXhAO566zsp9efhkd1xDdbEUhPqg9bhIybE0Qq1mcbGVw0Y+0adUtUsi/+x5xXBu8M
+         P0RWLMzsoisujMpaJCG4nZY9CJ2WFZ+czv+HkYK2iMMzzhimz4bdRGzg/GNki9dY+vSS
+         ESj2J1fwoaNeQoLLrHIt74kMWNBwV2HQfCxhb0fEji8vyMpZWu4PYkvm45jzuwhzgSTg
+         nXbKSNLyWfCBaekvOOlIvyKN84l3TtlDSSI3s+j4BWU5k7Q9oEXyM1cs2zSnJgPfYuot
+         dD0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757056734; x=1757661534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VJz7bdBnKBg2ceOJglorHSW6LY+Qn3Rzkau42ItVYOM=;
+        b=QEuzVqN4jJ4waFTlmOXVKNFuCDTt+t/5ASX9u6lwF8NKuZY1bCIZWs9UhssKcXaQey
+         KVdUPLfhJBhqB7cx8zLiPnbudnGVzVpRuR0ROGgIi7eY/eolUrWBhlyvpMGNRBS3zMab
+         2IQs5hM8q5NUHnbVKaOua6tSly+LTDO8dEjfT2P8HBAvcH17KWofzEDzzmin9rQJL2aP
+         lxxy73Mwi8tGddVH9QUHL1FWMLvoroqokkmFx3MRc0GFA7Bg0L6xh92mxeDppEdjTTnF
+         Wi+Hb+eVYYmFjW+q8MbgNauCejLNIDWSqYQ+x9NoFqAmDP+mX0t1xx1bVrHdbky1ZnuI
+         6PyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Z88TwiM1dFROUOO4B++04SH/x1y1pD6G6PofBffFqTeYcOxIIlOAJsbbd6XpRu2VOzKCyUCtDpnsEGY=@vger.kernel.org, AJvYcCX1/6DguGsJZYXfvRvsTlE8OIVU7u8TXMHrakdAnQI5tAv7HyK+kxxiKU5EZDBmgC5EsOPgUhZbds/8@vger.kernel.org, AJvYcCXSL8oxGQyh2j01WGmpBMhpUHWTCtQ/Qz+09w56fWG8muOw/q9PtIRNZAjjmz91aRMvgZNcwsZByDw=@vger.kernel.org, AJvYcCXxVHN4sEBVjuxMfECsj1nIs5MCwD0ZPNRUtvtbbmDisWHimR2X7mcMLs8wAzbUa5OBPJ0i0KXsmY2m3giq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDnmY3d9vobz2z7/gwoNBVlYurjS4+ZofqQeHBkPXHfwLqLQpa
+	jURd8EdZwBk44MSU9X4Ml2kyU0JOqrmbobXlF8r++lqmUWcrshSKK/E8j/ET8mjeQbDkfAOw2hT
+	ofMgz31mVPVpi7jUgcrC1IADi4jVK8hY=
+X-Gm-Gg: ASbGnctUmfVc+lwWtStvhJgzoXmERf3dB+Iy0N8ovaujF0OdKv3IeTaXrgQuca2dXVw
+	pW8bb3hb0Om6hUvWJcFvHy+05IJL80nxWGXfkiUMifyU6xau/7SaVspAunn5iT38sbJCvSYNJc5
+	cvYa60q1hWCXNy6f6PSGVhZr4QLC2yIhmDFGmTzBsxNaZ0Fe7mFBLijj//z3UHUUq6Wqc4V3CVu
+	kEoelc=
+X-Google-Smtp-Source: AGHT+IG+iAZiL5a9vcVJGPUFdWSDn5K9xZdjUYWNJPmKZX7IPVD8EN9zuBxiYf7HfJEJRgarXPnKa9oD6EzDEGdw/jE=
+X-Received: by 2002:a05:651c:b06:b0:336:c310:6ff9 with SMTP id
+ 38308e7fff4ca-336ca9cd8cemr56466581fa.19.1757056733511; Fri, 05 Sep 2025
+ 00:18:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] memory: tegra210: Support interconnect framework
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
 References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-5-e0d534d4f8ea@gmail.com>
- <20250904-aloof-cow-of-speed-ad5fe5@kuoka>
- <CALHNRZ-A6L1s_Uc0cO-+akHyzHGkb4bkYd0pNKX96DqJfOBp9g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CALHNRZ-A6L1s_Uc0cO-+akHyzHGkb4bkYd0pNKX96DqJfOBp9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com> <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
+ <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com> <c64f09f5-440f-411d-b2f1-6c85b9adffb7@kernel.org>
+In-Reply-To: <c64f09f5-440f-411d-b2f1-6c85b9adffb7@kernel.org>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Fri, 5 Sep 2025 02:18:41 -0500
+X-Gm-Features: Ac12FXwJhmydf2_U-hTVI9iShWSyeWRBVWI7bOIm9DBcxoS9hWma7UNAMb0hcxA
+Message-ID: <CALHNRZ8apdrTK_77bS05=NA_F6_fjoyySNbgS6UDLBp2pLhJpg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: memory: tegra210: Add memory client IDs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/09/2025 19:28, Aaron Kling wrote:
->>> +
->>> +static int tegra_emc_opp_table_init(struct tegra210_emc *emc)
->>> +{
->>> +     u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
->>> +     struct dev_pm_opp *opp;
->>> +     unsigned long rate;
->>> +     int opp_token, err, max_opps, i;
->>> +
->>> +     err = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
->>> +     if (err < 0) {
->>> +             dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
->>> +             return err;
->>> +     }
->>> +     opp_token = err;
->>> +
->>> +     err = dev_pm_opp_of_add_table(emc->dev);
->>> +     if (err) {
->>> +             if (err == -ENODEV)
->>> +                     dev_err(emc->dev, "OPP table not found, please update your device tree\n");
->>
->> So this looks like the actual ABI break.
-> 
-> Okay, so let's discuss this. For reference, I based this patch off the
-> tegra124 change [0], which also caused an abi break. I know past
+On Fri, Sep 5, 2025 at 1:56=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 04/09/2025 19:33, Aaron Kling wrote:
+> > On Thu, Sep 4, 2025 at 3:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >>
+> >> On Wed, Sep 03, 2025 at 02:50:07PM -0500, Aaron Kling wrote:
+> >>> Each memory client has unique hardware ID, add these IDs.
+> >>>
+> >>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> >>> ---
+> >>>  include/dt-bindings/memory/tegra210-mc.h | 58 ++++++++++++++++++++++=
+++++++++++
+> >>>  1 file changed, 58 insertions(+)
+> >>>
+> >>> diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bi=
+ndings/memory/tegra210-mc.h
+> >>> index 5e082547f1794cba1f72872782e04d8747863b6d..48474942a000e04914201=
+4e3bcc132b88bf1a92d 100644
+> >>> --- a/include/dt-bindings/memory/tegra210-mc.h
+> >>> +++ b/include/dt-bindings/memory/tegra210-mc.h
+> >>> @@ -75,4 +75,62 @@
+> >>>  #define TEGRA210_MC_RESET_ETR                28
+> >>>  #define TEGRA210_MC_RESET_TSECB              29
+> >>>
+> >>> +#define TEGRA210_MC_PTCR             0
+> >>
+> >> There is no driver user of this ABI, so does not look like a binding.
+> >>
+> >> You have entire commit msg to clarify such unusual things, like lack o=
+f
+> >> users. Please use it.
+> >
+> > The tegra210-mc driver has these hardcoded and should probably be
+> > updated to use the bindings instead, but I think that's outside of the
+> > scope of this series. I will clarify such in the updated message.
+>
+> If you introduce the binding, change the drivers to use it. Otherwise
+> there is no point benefit in this binding, really.
 
-That was almost 5 years ago and we also got stricter what we require in
-the commit msg. It's also documented in writing bindings.
+Ack. I was adding the bindings to avoid magic numbers in the dt
+commits at the end of this series. But I can update the mc driver as
+well.
 
-> changes don't justify current mistakes, but this is the context. This
-> series adds all new required dt properties to the arch common dtsi, so
-> any newly compiled dtb will work. Any old dtb with a new kernel would
-> fail to probe, however. I think it would be safe to just skip the
-
-That's the ABI break.
-
-> interconnect init if the opp table init returns ENODEV, then let probe
-> succeed, but I would have to verify that. Do I need to do that and
-> drop the new requires from the binding?
-
-The best would be yes, make it optional in the binding as well.
-
-Best regards,
-Krzysztof
+Aaron
