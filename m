@@ -1,135 +1,112 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA80B15D5B6;
-	Sat,  6 Sep 2025 17:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EA825B1C5;
+	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757179337; cv=none; b=uXqvMqJip1EgWAy7ZwlcPhj51Kh3e/Yt489K//k3+E2HsOZuL2gUckd5KZOohvf6R+RihmiujWOUvU+Q70rJwRHe4KBqTBJT9dvySiIdYgC96C9lLJ1+VtrddX6hNbEMx6CA8DEDtmFA5TyJkFg5NbfQo7dns/2Kmr+K/QjPqxk=
+	t=1757186268; cv=none; b=QLAZwZzc8XTNWwtB00FZAIBlcFA6ZFLOL3WKCo/u1yQz5sZUZUUVBM2rfSxJhr+fu9P8be/BhAjJPxSdSakI6U1UalJfhVBzDZUfDTHEzjaqjnYrDskIFq2gdPvDHjdEbZjmvnGg526heDwY46peQbe996zB9rULxAQ6p58J+eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757179337; c=relaxed/simple;
-	bh=GEjc/MZiSs5pA+NLyK1ocRIWX/r07ZJrV7YSReaHnLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ucsc0Ln7sjDBjvb91x/SMl/aKISe7tYcAsn3aPtaiv/qEGwkRQXeHTD8mXPayNiL22knb4dJCizVFrrm9dkd60slDMpDa2Wp6O+7/5vzWlKusGfXt1+oT8z7044Nt0qld8ZIwdCsxSA6md1iqlPGtvV9l4PzlWX8RNumaqHc1GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcRTwoQe; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757186268; c=relaxed/simple;
+	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=kFtM5W8XU4lMmyp4ADCVVaQya+ze6TJWx7I4iWKdBe3G25i8CaYbLbcrK9thdfq6+3JiyDK276yj//aDJW7ZD40fCC3MwRFQOo2uz3spdnQZ0khgSQtqmaGEpEJ+YgAabWuFibbtBLWKms2dHFazVUZb0SkVEDcWzUoMTYjrrtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRmMeziJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcRTwoQe"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-337cc414358so26404861fa.3;
-        Sat, 06 Sep 2025 10:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757179334; x=1757784134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SLBswoadtY/Z1Rk6E4ozam6v04Xnc0YdjRNFILOtZyE=;
-        b=ZcRTwoQe3h+uBR4IR5TzfldISycKzJOIZgqn9QPBTPeHUogOwuJuYcNq9T/X57Guv+
-         gBrX8jHoGcHq1RpMO4W5iUWLsfZOglrqLKOwFPnvRzqBvmGJF64jU5lfmnjIlykfsM8o
-         e3kr2qTa2SVbts25JbI6ANFJA1DZWutwVFUx0I28zLqpeeumjBnFx1hhJGBwvVobg4Gv
-         QqjmuFaSl8WxwSujQM/1t/P2eAT6v+3SWhzsFLWWHM0t7EoLakayL0ef9JYoTVk+qyaV
-         aJ/kiHjjlwoXpyX0tlxDjb4C1Esd+bwSuNjeMr6EWczDgABXGSNcdrr3t4/YZ0reh2J/
-         ZuGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757179334; x=1757784134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SLBswoadtY/Z1Rk6E4ozam6v04Xnc0YdjRNFILOtZyE=;
-        b=PoMOHHVfbDd/g11JNV9ja+5lzbGF1PTykBl2C+THZs8x9Ac9/rNpAHtqcCXU565FBH
-         gNePl9EqUHGxjnHoI/rU6oAOMUnEKDsRhjNefHHPhJ9VuVrTcC0Zr5WVycuNW/E2Gb/S
-         FmLkT+6vQiwKiR3Vp7QfU2Yh8I7WGcEjZq+VM3/JyEnHHI5wASE5/9u8JwLV4PbWbhRf
-         3CvfEZtoVdST3Qf0ojkpEz9heT1FfGTA7xJety5rPHs3CIl6A3nvNLRLEd9tEJWRgu7x
-         IEilyqwszfXXkg1yLYMOC8mZhYZ7uNmGT1Y5/C+zkZaAQoPugXLrTaGTDNPUr6+iuCCo
-         LCuA==
-X-Forwarded-Encrypted: i=1; AJvYcCU41S8XL+nmzVfBgOZ9zEyw4DeV3NVrRCvSoTRt5DnaFAzL2SRtVa/fCS2JVzHv2VArptOdBjgBzbo8BKZD@vger.kernel.org, AJvYcCUdsyFSFVSa6g0M8z7FkTBaeNNETLqLzxg9pT2Wi9wWJzliJexHMnQun1Zu/yDCx6QFcqHqwfQDf9Y=@vger.kernel.org, AJvYcCUw6s/VuT7TGw+PnUNL42eYi4Iv0rdmq7/Lz2Iu1D/KDyObAb8Dcqd3dcw/w9Jqb5fvthSWvruPnpAx@vger.kernel.org, AJvYcCWWnkgwT5tgDEb7iPckkMWjTprgomop5LJATv7OmDvdrRRoSi4xy1UxiKK5mhhTeWgYznqsSj8yJ2G9N5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCBOt/++rXcq4I9p2EnjeVmL0CZuIH8h/J/UdoWfQdxAVFfn4j
-	miAgANuK9rxZqhPkYBD3mhXS9n1xKFm7sNd/vOo/kGwI5mCDULMGknWANQz9DbPoyQ8zL5+szkp
-	AZ/7V28MZ+I49qVTETXGqHuF5wQAMQVw=
-X-Gm-Gg: ASbGncvbN+ujHR5+kJBXcU3/rwUeQ6s2RDIpJj0LEiaKCIc/hKtfKEgyT6RXLYEVKk9
-	iA/arEMXpYZMxy3pKaPqHqETPxWcVlOIVxIUhjWVpxkWrx8buOhWJgTN+aYc9s0WB6joNWjpg49
-	39SJtZp0dbV5Cxq0pxeupHonl0yx+RDLGNNckIZBT6ne0uiXBKW1Hj74XPAIqJUidYJGydAYhAn
-	iyQe1g7G8I08bx/vQ==
-X-Google-Smtp-Source: AGHT+IGUttnd6bDIZZjIggXw9ycYs2qWr2c6QGeJLhOasz1kEwDXyb69WjepMI4Phdw9wN75p2CmHZHYwxDU9qdmFR0=
-X-Received: by 2002:a2e:b8c9:0:b0:338:f:5ce9 with SMTP id 38308e7fff4ca-33b52891a56mr8562581fa.20.1757179333524;
- Sat, 06 Sep 2025 10:22:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRmMeziJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C21C4CEE7;
+	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757186268;
+	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=PRmMeziJu1HlJ53s8cvAtqN3495uZxs/Jtw+3b/wl/tpByw8ltRq0GtkKT5oNdf+C
+	 TAPPZz4RcsGIf/NRUAbhLQ1RSKhHGo5C/s6RGcWQE/PKHndd2wjq1zei3fsjuYZt5+
+	 /FxHE04rv5z6gL73pOHTaHTdlXmCUpjihD9LfZFQMUecsAMq/3zSKISSdOJQxTCN3f
+	 4Gw5xhCv7blWlgh30jQ+SKks6wMMmRv7JcZkwuBNy6dCHZBlWltomYuPA1N4Xy687k
+	 lv4lhcd9mWTWgfRbJ0jk8MKkaJeRUwkodnUSY+8hO/LuGvKxnmLYLtAH8FJfzD1M7P
+	 mYZfDluqIseqQ==
+Date: Sat, 06 Sep 2025 14:17:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-3-e0d534d4f8ea@gmail.com> <20250904-groovy-sheep-of-wizardry-ad0ae9@kuoka>
-In-Reply-To: <20250904-groovy-sheep-of-wizardry-ad0ae9@kuoka>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sat, 6 Sep 2025 12:22:02 -0500
-X-Gm-Features: Ac12FXzXqB-Wxx7_0jaBO62-jVTmudr9H9J1HjyTysGTyoh4yJxcTiHR8B2v-C0
-Message-ID: <CALHNRZ-3paF4jEVJCbaWt3S3BYLdDT2tHo9K6XrB-eiB6qSEHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] dt-bindings: memory: tegra210: emc: Document OPP
- table and interconnect
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Charan Pedumuru <charan.pedumuru@gmail.com>, 
+ =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>, 
+ Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Dmitry Osipenko <digetx@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250906135345.241229-5-clamor95@gmail.com>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-5-clamor95@gmail.com>
+Message-Id: <175718505408.1618397.11958757465445078243.robh@kernel.org>
+Subject: Re: [PATCH v2 04/23] dt-bindings: display: tegra: document Tegra30
+ VI and VIP
 
-On Thu, Sep 4, 2025 at 3:11=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Wed, Sep 03, 2025 at 02:50:09PM -0500, Aaron Kling wrote:
-> > These are needed for dynamic frequency scaling of the EMC controller.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml    | 13 +++++=
-++++++++
-> >  1 file changed, 13 insertions(+)
->
-> I asked to order patches within patchset in some logical way. First
-> patch was memory, second other, third again memory.
->
-> There are no dependencies explained, so this looks like groupping
-> unrelated patches, therefore SPLIT finally the patchset per subsystem.
->
-> >
-> > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidi=
-a,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/=
-nvidia,tegra210-emc.yaml
-> > index bc8477e7ab193b7880bb681037985f3fccebf02f..6cc1c7fc7a328bd18c7c0be=
-b535c1ff918bcdb2a 100644
-> > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-210-emc.yaml
-> > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-210-emc.yaml
-> > @@ -33,6 +33,9 @@ properties:
-> >      items:
-> >        - description: EMC general interrupt
-> >
-> > +  "#interconnect-cells":
-> > +    const: 0
-> > +
-> >    memory-region:
-> >      maxItems: 1
-> >      description:
-> > @@ -44,12 +47,19 @@ properties:
-> >      description:
-> >        phandle of the memory controller node
-> >
-> > +  operating-points-v2:
-> > +    description:
-> > +      Should contain freqs and voltages and opp-supported-hw property,=
- which
-> > +      is a bitfield indicating SoC speedo ID mask.
-> > +
->
-> No opp-table?
 
-All other tegra devices have the opp tables in standalone nodes, not
-as subnodes to their users. I followed that style here, see patch 8.
+On Sat, 06 Sep 2025 16:53:25 +0300, Svyatoslav Ryhel wrote:
+> Existing Parallel VI interface schema for Tegra20 is fully compatible with
+> Tegra30; hence, lets reuse it by setting fallback for Tegra30.
+> 
+> Adjust existing VI schema to reflect that Tegra20 VI is compatible with
+> Tegra30 by setting a fallback for Tegra30. Additionally, switch to using
+> an enum instead of list of const.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra20-vi.yaml      | 19 ++++++++++++-------
+>  .../display/tegra/nvidia,tegra20-vip.yaml     |  9 +++++++--
+>  2 files changed, 19 insertions(+), 9 deletions(-)
+> 
 
-Aaron
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: 'anyOf' conditional failed, one must be fixed:
+	'one0f' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
+	'type' was expected
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: Additional properties are not allowed ('one0f' was unexpected)
+	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250906135345.241229-5-clamor95@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
