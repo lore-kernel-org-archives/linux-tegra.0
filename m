@@ -1,171 +1,104 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C7F1A255C;
-	Sat,  6 Sep 2025 05:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C126317E4;
+	Sat,  6 Sep 2025 06:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757137323; cv=none; b=ZBIvoaUres88n68Sfs+LZFonS5r/iEW2Kw/Z1cSt/eRixxQT7CAEJLpMkUOIM9rEk4zLkb5+SmjfLKtbANC0ylRcBwrB+jjHgL8LXPAx0HXiNVtY3fcEkthbxjfxy5P+++rIbpLtsW0n8xrAbeR/pjbpniTVg9ZDYy2ZYa60Z8E=
+	t=1757140195; cv=none; b=EozUPGt31z4dQiBoctbA08RNHZh1iOXGSzOr37XkYzZhcUpQ+c+IX+U9xVDa2LwxAuLKzg9FPqWUNMrg5oUYpENgjZsyxzue2CP0VJZ5AEcBOz9vkJHjlKsyHgIydBnTAQ2RdUY5AvcdqisTsj81bLXd4gUOWvWlgf+8d42Oxzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757137323; c=relaxed/simple;
-	bh=rK0a45cyPDU1+P/ijKgLaA8dHdauWPWjRPDDmwW1Tw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRfCADxei2HuK7WqQ7uvzsSs7z0mHBHFLTq/vik7qcgX0T2JY3Kivv07lR91RXrjVm8q2EYQKzhCurU+CprlyVQQ5MvwIEICLqxOHF3Oen3klKZBLdLVSdkdi5wNxCEAhR+Jhk451Tt3cd4ivL4+sc5hpH+PpYUdQ+3oI0k7qjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PCJGlK+J; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1757140195; c=relaxed/simple;
+	bh=xNjwqIhiJgduAnJeM3sgzEDOGHO4ZeHCQP4TwyE6qvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LLTdequKkOgZs8OfroDI8aVbtAnTPC4WDX8oi+A8+K3RJnHP0315apJ/cWIVkuI0uWON9zcLYz1MO8qfEj6nvIjMFZvUPc3s6/r+m3aPJtae6dCNAUC0ukrdSFuESlVvPFSNhOUjL94KpN6ElAPqjYvMITXKi/6W276YXG83pBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlZFEC/m; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PCJGlK+J"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757137322; x=1788673322;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rK0a45cyPDU1+P/ijKgLaA8dHdauWPWjRPDDmwW1Tw0=;
-  b=PCJGlK+JHrMeG3G9HUNC8XrpOHmlai+haZuZSiZhx0qNd7452keq/1eS
-   ERYXo0N39GdJioU40AWdlHcxiudHLcobNdcyMBCVBK0mgTYHmPO5hevMT
-   Wqty3q/owcwrCWcXrTgTGyDwTokoMGbMxHyreLG8zTkz0dTxW9FC4OTKl
-   YoCp2UvkX+2e6Dsn6AQauHrdLOcmNTAoVOH60iUl8msfdLKtbD9TPc8DN
-   lcWtHPvr5zkjFd0PKgPpLJywH+feaEkiZofH7Acl73kOcKb6wUV7CdOuh
-   tSDtIZ0K1hoiNFFF3Njw+09aSAUahjmVOu08A90MbKDrQTI2xb7YxLH13
-   Q==;
-X-CSE-ConnectionGUID: El0dpIWdRMageYdPx5OKNA==
-X-CSE-MsgGUID: APIKvlMfQ6uKl/vxBRQAvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="70910694"
-X-IronPort-AV: E=Sophos;i="6.18,243,1751266800"; 
-   d="scan'208";a="70910694"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 22:42:02 -0700
-X-CSE-ConnectionGUID: zgFDTCoTRVuvZAD8qs+F1Q==
-X-CSE-MsgGUID: UMvaLGJdTWitpbBwnk2U9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,243,1751266800"; 
-   d="scan'208";a="176411187"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 05 Sep 2025 22:41:59 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uulgS-0001Ed-2P;
-	Sat, 06 Sep 2025 05:41:56 +0000
-Date: Sat, 6 Sep 2025 13:41:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlZFEC/m"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7ad815ceso3129731e87.3;
+        Fri, 05 Sep 2025 23:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757140192; x=1757744992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DDM4l0XQr6gpl/CwK5RQ/t9x2ic7b6u6nG+2cUDQpm8=;
+        b=GlZFEC/mEwyTBRf1/ZjVhSe3QYlhjvIBYID9GAx+uFrUUPG3ygM6r6LQtdupEn2M/k
+         TiNx8uHDfQa+gQ/B+Ac5QV/KWEjJPfgJnhTunFa3D33wAJf+BRrwIvXpvEHqBx+XXsgA
+         Fd0EGxIwMzpJ56LF08Saw5QfreqL6558ZGrciA4oZLixg5PzAWw+76aLK962QUbyb9Vc
+         3DVqzmBGsbceONbvgukiegg6I1oKgRpn7JXdI3dLzAL7+JQtdHiSEpK2Bj8GIkoCGwYk
+         +xsw1DnfgOxaK+d+wIDp6y+3XXtVq07M/L+UssLPLddpJrvtUfYBzfPH35CJYKMmJQ+H
+         rT5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757140192; x=1757744992;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DDM4l0XQr6gpl/CwK5RQ/t9x2ic7b6u6nG+2cUDQpm8=;
+        b=cV9LatB4l4VNFVhdSo9umF5Oy7dmgD8aY5SNlVByItqspZVG9hF0meHqS2aNIX98ph
+         aZYmoAb5pbIiPme1T3sn5wuqnybwr/iuC5cBF2E70TeNcRwOJAzfK03KqfbkULKZfQUJ
+         a1EUE1RWawAqS85QqSkbHYrnKQjGaJuR92488EyRNK9B5EBxvZIszoUsH9zgXzjxK4Gz
+         2NG5Wkv31IYj+XsokD/EmQSOhWtvPvzjI9bN5xdQqubjy11cqWquDybHQnKjyhuC6JMR
+         pR6tdgZvavc2mNc5k9arZoMn4MC/9tqC7F4tKkoTJ4TP7OT+6OK4lzifyvv+xbX3+kYY
+         p4CA==
+X-Forwarded-Encrypted: i=1; AJvYcCWp/3w/hSBGWRY3AtUo4NB4zj4efmnwGMnssLBwgN4Uc+hSaSmcsIkCNKxH7+MblpkqTMlxsfng15MnFf8=@vger.kernel.org, AJvYcCXwQohr3T8s+hzUyzfMtzz7LF8hoXkI3UKjlVZvCC9Vynr5mVvnG7wzRCyakE+RR89yp83Ez7V1z0Amj6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH0R27HdabxzZz0ghCgwO5K5ZYqgqrj9U079p3l9i1z9/CDN9O
+	hu05rtrC9h1go4P78mUvJtVUCzP+j4Si0lzN4AcA6y0oJEBy/FXSlACdr2y4eA==
+X-Gm-Gg: ASbGncuVn+pClntOSLYBk5+bw8do1Y1X79Su9Tbn8OVhL+iqRbMFiCGQhCUyDf79Gv9
+	KSGLPOcR6NWxmM9nlf0s6+tGnb/1ErC0nh2Qu4xaTLtjm/le8b2G/X5HO1ycQnsfCnS7K9ce2QB
+	zmOTqlNPJlXeWy1LPc5kvjD2OY/5Nll7MVR8jzy4XrMp2QpIG9hzjNlVe+PkS/QOr5mLzqAVqjq
+	yabhT87Au5ZEJySbHcl2NEhdflLn1e0uzS5hPbCPLxVRkOBn74VSmD2jZ1Bm1w3lOhIR9ENeC3W
+	K0EtpyAVPk4dFvL6Ueq11nuOqTunumNo72TV4pkLIXUyyZPE0hA/R5avWWi42eWnnaluge6cZdP
+	ORX3cMnEum1ITfy6GCJymQiAF
+X-Google-Smtp-Source: AGHT+IHx5SUOLz4xxIxdvTMv2D9c5CCtCCVe8BTkyCUM7MimJD0op3PpYt4TOpsdiqkxga2JDcoskg==
+X-Received: by 2002:a05:6512:3b9e:b0:55f:4d51:7ef4 with SMTP id 2adb3069b0e04-562603a2244mr405799e87.24.1757140191487;
+        Fri, 05 Sep 2025 23:29:51 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608abb7c74sm2178737e87.54.2025.09.05.23.29.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 23:29:51 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Dmitry Osipenko <digetx@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Maxim Schwalm <maxim.schwalm@gmail.com>,
+	Ion Agorria <ion@agorria.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] usb: phy: tegra: use phy type directly
-Message-ID: <202509061310.SU5Tf105-lkp@intel.com>
-References: <20250904163238.238105-2-clamor95@gmail.com>
+Subject: [PATCH v1 0/4] ARM: tegra: add support for ASUS Eee Pad Slider SL101
+Date: Sat,  6 Sep 2025 09:29:30 +0300
+Message-ID: <20250906062934.6637-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904163238.238105-2-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Svyatoslav,
+Add support for ASUS Eee Pad Slider SL101 along with a few device tree
+adjustments for Tegra20 based ASUS Transformers.
 
-kernel test robot noticed the following build warnings:
+Svyatoslav Ryhel (4):
+  ARM: tegra: transformer-20: add missing magnetometer interrupt
+  ARM: tegra: transformer-20: fix audio-codec interrupt
+  dt-bindings: arm: tegra: Add ASUS TF101G and SL101
+  ARM: tegra: add support for ASUS Eee Pad Slider SL101
 
-[auto build test WARNING on tegra/for-next]
-[cannot apply to usb/usb-testing usb/usb-next usb/usb-linus staging/staging-testing staging/staging-next staging/staging-linus linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/usb-phy-tegra-use-phy-type-directly/20250905-003521
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250904163238.238105-2-clamor95%40gmail.com
-patch subject: [PATCH v1 1/2] usb: phy: tegra: use phy type directly
-config: i386-buildonly-randconfig-006-20250906 (https://download.01.org/0day-ci/archive/20250906/202509061310.SU5Tf105-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250906/202509061310.SU5Tf105-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509061310.SU5Tf105-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/usb/phy/phy-tegra-usb.c:874:2: warning: variable 'err' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
-     874 |         default:
-         |         ^~~~~~~
-   drivers/usb/phy/phy-tegra-usb.c:878:6: note: uninitialized use occurs here
-     878 |         if (err)
-         |             ^~~
-   include/linux/compiler.h:55:47: note: expanded from macro 'if'
-      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-         |                                               ^~~~
-   include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                    ^~~~
-   drivers/usb/phy/phy-tegra-usb.c:860:9: note: initialize the variable 'err' to silence this warning
-     860 |         int err;
-         |                ^
-         |                 = 0
-   drivers/usb/phy/phy-tegra-usb.c:905:2: warning: variable 'err' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
-     905 |         default:
-         |         ^~~~~~~
-   drivers/usb/phy/phy-tegra-usb.c:909:6: note: uninitialized use occurs here
-     909 |         if (err)
-         |             ^~~
-   include/linux/compiler.h:55:47: note: expanded from macro 'if'
-      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-         |                                               ^~~~
-   include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                    ^~~~
-   drivers/usb/phy/phy-tegra-usb.c:891:9: note: initialize the variable 'err' to silence this warning
-     891 |         int err;
-         |                ^
-         |                 = 0
-   2 warnings generated.
-
-
-vim +/err +874 drivers/usb/phy/phy-tegra-usb.c
-
-   857	
-   858	static int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
-   859	{
-   860		int err;
-   861	
-   862		if (phy->powered_on)
-   863			return 0;
-   864	
-   865		switch (phy->phy_type) {
-   866		case USBPHY_INTERFACE_MODE_UTMI:
-   867			err = utmi_phy_power_on(phy);
-   868			break;
-   869	
-   870		case USBPHY_INTERFACE_MODE_ULPI:
-   871			err = ulpi_phy_power_on(phy);
-   872			break;
-   873	
- > 874		default:
-   875			break;
-   876		}
-   877	
-   878		if (err)
-   879			return err;
-   880	
-   881		phy->powered_on = true;
-   882	
-   883		/* Let PHY settle down */
-   884		usleep_range(2000, 2500);
-   885	
-   886		return 0;
-   887	}
-   888	
+ .../devicetree/bindings/arm/tegra.yaml        |    8 +-
+ arch/arm/boot/dts/nvidia/Makefile             |    1 +
+ .../boot/dts/nvidia/tegra20-asus-sl101.dts    |   61 +
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    | 1251 +---------------
+ .../tegra20-asus-transformer-common.dtsi      | 1268 +++++++++++++++++
+ 5 files changed, 1339 insertions(+), 1250 deletions(-)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
