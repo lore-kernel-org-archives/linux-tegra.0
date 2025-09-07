@@ -1,132 +1,167 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141FC18859B;
-	Sun,  7 Sep 2025 09:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989072848BE;
+	Sun,  7 Sep 2025 18:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757238215; cv=none; b=jAy2UQda0TU+6X1DAeM2sA/ggjy8/UZNUTqBHLZ2eyoHLHMQI8au0FKI41wq1IXbAKIEXvC9KYnlAZYKdnnNcTQCVvnChUjcQale0QJC/As3rgfV90qpdHxLsqomMuk9J1SU7r0y4Hborv2XHwpd1gUhLKpVs9ml5e3ms3vRxnw=
+	t=1757269552; cv=none; b=jJjIyNi8zIhzsUaC/h1iGVmVMvZC28zycV6vc4p80tDv7M2TWnyDxwTv8CNbeZUqzsjBAC9lbOXWjm01sxDeJjBQSte6MdmXAB556wQXGKbCRhQwMpLdvNp1nba/Jxew+jk1GeF9llf63M1/fReKOrydEA1fycyZYJFabVAsDKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757238215; c=relaxed/simple;
-	bh=TDwoEokmsEniRL5mzV7C3NbddClADMi8vSACqfJXWVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JfvoL7T+N5Am72/49hapkLyV8cc8ft8t+9Gm4Z2HdoTULHNrF4oz6R1lXqjx7wxc16PRXuPCMVeUYWBaCL+wu5Aj+qR/HBb7oQoQwYU4XdR1+YK52u8PdwJZsDx93V9f8EwLD2cl9Q5GYxzKyMbplkHvw6T1QSxF8VQlZ/zzqNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai+6Qnk6; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757269552; c=relaxed/simple;
+	bh=+sPc4sDK0wQ3cmQOVkoJCkycDz+H3zqsPZnLmuVLGP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gJH/OGAgqGHFrkUdeLvL1pmQTducuP0a1Y6Y0fQ5gycaBPGVop4VtbsQfdzmeZDmdQoJIdARBO+XKqFoZGFdouw9S7Ulw6anmqmT+bgIlSnKcv9zsklAuQpCnpP2Mb9T5oF40rYzqhjtw9+U/KBIYTyN1WpNo3CUX0COWUe6HJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFSTt8Wz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai+6Qnk6"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45de56a042dso781585e9.3;
-        Sun, 07 Sep 2025 02:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757238212; x=1757843012; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GZ/X6GOEUsW9+IFkzRBAiysCMqpUBrDHjoEhck1HoOk=;
-        b=ai+6Qnk63Rp8rNYsCTVbWIM84CwcryJS89kXfWZwcqn2JWjTOUHCAREaNd+RUa1cua
-         IDaE/2Yki9/VbS5OGOz7nCgnRM+CGOBK33Ir3UcU//JrKNX/dklO92rZl8qlKevUV0bo
-         qVyvHB6Kmpf0EZSoxkz1WYzNmKGHJcDz6vkBcZZ/ZkyENEVEkM7JqTbVqVMbuqZKEuVU
-         KuAhm5z+gSQJTC8mjizfTw0/JwzAcSat6wShjL06XHZIf1g+MiPMsnm9dxiGENUK4NO6
-         iS98855/lL8wykV+LBkTuEBKsdDKaQjqNshuPaSD7lAaqdQYadAFO0d1gWI+/YZMcMFk
-         XJFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757238212; x=1757843012;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GZ/X6GOEUsW9+IFkzRBAiysCMqpUBrDHjoEhck1HoOk=;
-        b=BTZv3L1hr+Y889XSMcaOf3GkPCvJAAAbiOKbda6LHuSuDZonAy5u0aiNPBKnzRlr4b
-         3wP2obZrlBear7xq6AppY/udqAo7Dqbpsq6v0GYYeamsaomek6EDPwN0nv3626MyPqlc
-         y2AOJqbUS2EHuJuYKjRipkRoXCBU/+Gp/BI6rZyNL35FmzbC1MRQ41xW8t9OoYlZzlWR
-         xE28i564KisnA0wXivUYFIC4dyVlDqkHmybnyFJDGzoE8a7S9PcmeQJtAq/+xw6llQQG
-         fr39CHT4ZqZtrWdmWR5KoVmW1zGYTcAfciNyk0vN3BtjxBCXVKeml9ZV9f+sdu9GfttC
-         upog==
-X-Forwarded-Encrypted: i=1; AJvYcCVo4xVxV+XzxOOjpncfK2TVmjrxN8sydiXen26Igq4fF26wawDqE+W+WH+GzGWv1cdSaEozlThtgytorr/4@vger.kernel.org, AJvYcCWAf3v6wr6WAeT3Y5jFuBlAFvZtyMSOsPQhak5NsiWCC23v5yf9r6LdpNtl3EW5PX5xSGJovNougFB6@vger.kernel.org, AJvYcCXA+U1bZai8GrBEyx+WkG/eVJbE26n9+Qv39ZateYIW/kW56K3odM9vOLwTcpGgQHgoJB/koxN2PSgM@vger.kernel.org, AJvYcCXVTFVN3IXOwy4aTrNz895U8NHQi03nhxhzfislvT9WVNVgZrXUVg+9S2WCaHJ/I3OP750sKwxnx7I6dqo=@vger.kernel.org, AJvYcCXxKw1bzQF9yD3nmsZ/iqljp7/jCysDmFtzz2HrcAXWXruzkLaO+y2ZcHkOtGC9sBvzPVL3zuvKjBtrMck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJPhBUjNoEn0IcXHZWcJs/GxxTZbVqXGlgfAT0e72iedk64Spy
-	LTDe4Uh9gv1psPhizSqaZgpga1Xvd1spouxxFypX7xg7a4d8zCsXTInoti3x0heSoPYWqEhZQbt
-	jh2Orr8Szw0079yzirLCIeDly5Z6PK90=
-X-Gm-Gg: ASbGnctVJG21w+jI9IA7rwU9PvGwvIuSmYTJrwlTvzFs421pM3xQnwUKjKKPY96K5TV
-	MilSZrLyXpk2RmfoUUL2rSOEyupcPYh4vWqK/s/CV3O240oKE1AW4PWXhuzVBCOMHt0XcwBQDze
-	aFtOwqqwkVuTSmH8cUlKv96+DAP6/gtmVSmuyu1dRiki02t4kQTNez3YQrYkjY98q6QnkQJ0lP4
-	QVO/wIi
-X-Google-Smtp-Source: AGHT+IFPqig/UhEDyt4I8/2ZJlpITCSmd+DYWg5033ITXHJTPMBD050/gyXsr+9sNyIaTUs7NwKlwoEiYgPtX0PKgHs=
-X-Received: by 2002:a05:600c:3b25:b0:45b:9a41:5d58 with SMTP id
- 5b1f17b1804b1-45dddea60cbmr35564895e9.4.1757238212151; Sun, 07 Sep 2025
- 02:43:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFSTt8Wz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA2ABC4CEF0;
+	Sun,  7 Sep 2025 18:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757269551;
+	bh=+sPc4sDK0wQ3cmQOVkoJCkycDz+H3zqsPZnLmuVLGP0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZFSTt8WzBlU+uDrfxX7pbDbhYtk1O+2qUpgrIi4l2CNZmuIceUTKRQnvYHAkdHc+b
+	 L7GcHRr0bhRYiEnqbS5cTcfhWii6UYrdf9C5VjlD5lCmlCnmsleEOwwp4/P8C+2bOV
+	 TrajnyZaNT5/9ZTadAqZ0IQJkd1dHt3VI40EyRfpgkJpB4csIhxnV9twM4jBVOlWgM
+	 0MPtFYDwUDmC7YwH1ZMWzA/GwFTiIEMU8XIJ33Fcag6v66i8aJ4Vq/4ommEmxPT6eO
+	 tl+PZqGY5RxsvMQpoL/SxJu+QS06GSpPh34281hNk60GrU7YmGNn2efN+ZSffPPU3F
+	 N5f0hH7C0KN2A==
+Message-ID: <d4b0a933-a623-4a67-8898-d7c35604bb16@kernel.org>
+Date: Sun, 7 Sep 2025 20:25:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-3-clamor95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/23] dt-bindings: clock: tegra30: Add IDs for CSI pad
+ clocks
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Mikko Perttunen
+ <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Osipenko <digetx@gmail.com>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?=
+ <jonasschwoebel@yahoo.de>, Charan Pedumuru <charan.pedumuru@gmail.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-3-clamor95@gmail.com>
  <20250907-arboreal-aquatic-gopher-686643@kuoka>
-In-Reply-To: <20250907-arboreal-aquatic-gopher-686643@kuoka>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sun, 7 Sep 2025 12:43:20 +0300
-X-Gm-Features: AS18NWARBXRzhLtN6n3ce6WfDFCnzLq5yKlMbMSeV1CuL4QdfN0Ud8kVvzMMu8Y
-Message-ID: <CAPVz0n0obwSFDup2n9R9SQNsOZw1Dm0G=2ifv=D7zyw=89+uYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 02/23] dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <CAPVz0n0obwSFDup2n9R9SQNsOZw1Dm0G=2ifv=D7zyw=89+uYQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAPVz0n0obwSFDup2n9R9SQNsOZw1Dm0G=2ifv=D7zyw=89+uYQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-=D0=BD=D0=B4, 7 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 12:34 Krzys=
-ztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Sat, Sep 06, 2025 at 04:53:23PM +0300, Svyatoslav Ryhel wrote:
-> > Tegra30 has CSI pad clock enable bits embedded into PLLD/PLLD2 register=
-s.
-> > Add ids for these clocks. Additionally, move TEGRA30_CLK_CLK_MAX into
-> > clk-tegra30 source.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra30.c         | 1 +
-> >  include/dt-bindings/clock/tegra30-car.h | 3 ++-
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-te=
-gra30.c
-> > index ca367184e185..ca738bc64615 100644
-> > --- a/drivers/clk/tegra/clk-tegra30.c
-> > +++ b/drivers/clk/tegra/clk-tegra30.c
-> > @@ -53,6 +53,7 @@
-> >  #define SYSTEM_CLK_RATE 0x030
-> >
-> >  #define TEGRA30_CLK_PERIPH_BANKS     5
-> > +#define TEGRA30_CLK_CLK_MAX          311
->
-> Unused define drop.
->
+On 07/09/2025 11:43, Svyatoslav Ryhel wrote:
+> нд, 7 вер. 2025 р. о 12:34 Krzysztof Kozlowski <krzk@kernel.org> пише:
+>>
+>> On Sat, Sep 06, 2025 at 04:53:23PM +0300, Svyatoslav Ryhel wrote:
+>>> Tegra30 has CSI pad clock enable bits embedded into PLLD/PLLD2 registers.
+>>> Add ids for these clocks. Additionally, move TEGRA30_CLK_CLK_MAX into
+>>> clk-tegra30 source.
+>>>
+>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>> ---
+>>>  drivers/clk/tegra/clk-tegra30.c         | 1 +
+>>>  include/dt-bindings/clock/tegra30-car.h | 3 ++-
+>>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+>>> index ca367184e185..ca738bc64615 100644
+>>> --- a/drivers/clk/tegra/clk-tegra30.c
+>>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>>> @@ -53,6 +53,7 @@
+>>>  #define SYSTEM_CLK_RATE 0x030
+>>>
+>>>  #define TEGRA30_CLK_PERIPH_BANKS     5
+>>> +#define TEGRA30_CLK_CLK_MAX          311
+>>
+>> Unused define drop.
+>>
+> 
+> Specify, your comment is not clear.
+> 
+>> Also, don't mix bindings and drivers. You cannot create such
+>> dependencies.
+> 
+> I literally did what you told me to do! TEGRA30_CLK_CLK_MAX was
+> removed from binding, but it is used by the driver, so how you propose
 
-Specify, your comment is not clear.
 
-> Also, don't mix bindings and drivers. You cannot create such
-> dependencies.
+I missed that you remove here old CLK_MAX... well, you did it quite
+different than all other cases leading to driver-binding dependency.
+Really, I thought you will just fix it immediately after my feedback and
+then new bindings come later, just like we did for every other SoC.
 
-I literally did what you told me to do! TEGRA30_CLK_CLK_MAX was
-removed from binding, but it is used by the driver, so how you propose
-to handle this without redefining TEGRA30_CLK_CLK_MAX and breaking
-build with missing TEGRA30_CLK_CLK_MAX?
+> to handle this without redefining TEGRA30_CLK_CLK_MAX and breaking
+> build with missing TEGRA30_CLK_CLK_MAX?
+There is really no problem there and if you put here at least some
+effort you would see how everyone else did it - add define to the driver
+in cleanup series, month ago or so and then change bindings.
 
->
-> Best regards,
-> Krzysztof
->
+Fine to do it that way
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+
+Best regards,
+Krzysztof
