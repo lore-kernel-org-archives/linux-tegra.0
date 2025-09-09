@@ -1,152 +1,268 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF642AA9;
-	Tue,  9 Sep 2025 05:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2835D2264A3;
+	Tue,  9 Sep 2025 05:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757394019; cv=none; b=eOcKHl69KNyfzfwi8pEbcqJG4f6x5fzMmzfFsJx7cjtaL8Uj6qTucjDW8GL3TFYKIc2gfY/iscK4z3kId4B9ytYRaTXhjk+MW+8wga7S+IR9Pl04Lp+CIii03U1VcK7YlAqESwZfMsP5GYTj+AddMp/xzljqHz0jxS8yFH4BnWc=
+	t=1757396607; cv=none; b=MmDj47+rBolCKGESlTjKdMtqeKO1OJxW7J1FnmiqOqB5a5HqEGnY70Dqk97bmCVGRwdhanAQRAS/sdiI/9FdrjZbcQSKfLRiNWEagjl0FobE4E69bIDUIw9/PFFBy+U3CH+y35px1dCbZxlj7lCZn1sbvM/PVuFPdV2z+B8VDaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757394019; c=relaxed/simple;
-	bh=3XIAo2qpHvA4WmYscSECteBG0QYxRHh63STV9gp+gFY=;
+	s=arc-20240116; t=1757396607; c=relaxed/simple;
+	bh=1JLWB9NxHUYB0N6l6hiWHN/rHGZX8pA98KRFRV3h72Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J8LRlXch2HnVVlNkGMURdi0wvNV9J86CI6EBnRIGGLQ/fdIgBZtYbS0aQSrc+I97EpqVR6/mrrLC1vftcp01MtFFSVGYrxkTMumysTMviU2TNHTTLhMCW9J6Xk7GlXOwyGNC67czJ+6scH2NviKVizuQdLveQJ6x7MJgwdp03oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTcn689R; arc=none smtp.client-ip=209.85.221.53
+	 To:Cc:Content-Type; b=BnK/y7+WK0HFsjrfvspZiWsSzUZGQo5WwpUX3cYQavjb58REXcNtUHS1NKSfY/1Mc5L4aa5w1dlRSILharBRZfQiextWXn6oIUTsE3wSgPb1CeiucoL6jUcq+fEsWyRSoaE5JFFtosuf4iVgl/WmSOkpN10zxEKEl8oyDX+QPjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dD0f0QVu; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTcn689R"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3dae49b117bso4479567f8f.1;
-        Mon, 08 Sep 2025 22:00:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dD0f0QVu"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-336ce4a894cso39182451fa.1;
+        Mon, 08 Sep 2025 22:43:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757394016; x=1757998816; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757396603; x=1758001403; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JvWoQumFNTmdVD16AHMfCOQayYv4kB4ZtuuQ9k6C1e0=;
-        b=NTcn689RNixfD/f9O232OsLX9/iIYvGdACoF3N3SozZXe6qVPkl153kZGaL1HrOSij
-         OmW9QB3EHkNS08C/msWsDSgQLUNfs+RlPtkMpvFPNl/zt+RfRgqKexbtTmAcGmeB1CmN
-         GnNqSSIf7+DZQMJQwC8upAA8FeChUv6bGM0f3ULQgvdDg+xL4OVFsHHeEvZXXO+QAi2K
-         xHi/Y6hcrymDuf3kfkpYEwCH9wMtersSz9/L+C30cSBJzoGnuytdF8F+rMHf+k0bCCU/
-         SrV6PxmOA+nFQ5DS8y9co87pf/skOmQtJ4zKxGv1+MNcqrtHEo6jK0W/YRCBw/xMtWTw
-         lcng==
+        bh=1G6Fm4HNrV/bD2bs71ctmqkCh2KbDqFBUWnpt06ckp8=;
+        b=dD0f0QVu+U2TUvR2HlvPKN28OTip5jypb4FQsReRkc+vu7jR7Xma+gmriEnOkjAXsz
+         sYzE9+AvHYT1vVkzG3D62rV0xM21drBwrfO78mc96dzkiqY3bJScMfiYTYY0KE4rKEbN
+         CE37Aqz8eJDJYrHq7hS6ziVA51r3FbLPFzn9VdsXueCw64YKRoPXwcrxVr4OFXGExMEk
+         21bfoEQ+rkrU2HyDkFZw73XyfW3wCIobhFUKsIxlmbs1LqchM5i7bYjAvXUgVJMzU3Jk
+         2g9sQ0wMspD3ysl9TPqxcP3FncDgq9iV0nbXEi7k6bkMA8lTQgOThdvmN3yum5lKX1tG
+         9bYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757394016; x=1757998816;
+        d=1e100.net; s=20230601; t=1757396603; x=1758001403;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JvWoQumFNTmdVD16AHMfCOQayYv4kB4ZtuuQ9k6C1e0=;
-        b=UfUmNxZUqCipPyqxASJMQ1P8jpBh1HuSoPJQAjS+5uansjLJJHR2zNqfWd2VF2f18h
-         2u9Dk2jISWBj7sUotdMJfNCRJJ8SPD98aKVXxVg1XsdhIIc6w2GLDmBx7UkQk/NukQDs
-         NAzxwiA//6GDYNAB6nGGOoGyLmyXG4teCFhqYrim2RdhsomsArk7OUsCzfv+fo7akNpl
-         JTSCvrR/6JngU3jQG9Dj+RI8dVeUBuPMnGvUr151it9b0WLCJ15wVps1vHrMyDsPuy3B
-         3NGVKL7ctZTk130hF4QBgu5iXsyDCYX1EtPiypD59KOn1IXr49LcPyJzKrIp0+JdFj9e
-         VRjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgBuVE9RITNA+PiiFN3RMJ5b7seWA2esPMulrdW5CkDa4qkTwCwLs4nWxspztYGLI8wnZpIi+DI7fpX17u@vger.kernel.org, AJvYcCUk9XQ1Io5d04LXGzSaTK9xEPKzmWH/dApoywjE5Yy6eAqDnU8kpQ3P1FbvhoCfunkCuQpR/+i3ThO0@vger.kernel.org, AJvYcCVUIXCg5MgA7CzjItJY4kyxjo13c6mYP7dr/cC+wV83mNB9QWOMcc8z1/LMO9oYuX8c5ZDetUIPU1bunf0=@vger.kernel.org, AJvYcCW/uWTheNw8lOxi6LWl7FFovZqWj1qc4ygChkcG73TJc8TFicuMzQaIuOAvs4PxgDKw6fzXh6mt4tauBY4=@vger.kernel.org, AJvYcCWBRMxW8U73k2PJe+ezzLNjsnkW1EsrA37KWpVcCg15AHgiB/UY/Gr2fFeB2H/LEOznYmSzKL8O62qJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysa1/cFw5SzF2/ZN5+4yaYn4jNgOMZyeG3+8xollgVCigrxNYB
-	gYtmOGbOBC3VODBiZAjfoFwD8AYJ8o2ptbWxMjlJuo0RuH2NswHgn1ttioOa5XEIW2lynhIVh7z
-	byPCl70KcyIsiixQrVLmehUfTpwBoOWI=
-X-Gm-Gg: ASbGncsxjf08uRSiOtRSSKoYH+NEm+7+cJgs9PdBBlmLbO6o0540zQ0DC0avO7IlgzC
-	jnIXOCvxaIvn9Yqo9OJoQRCirecUmucH1A9avWqyoJrF5EiuL9IHbFnlztgDKGjAnovfWNjIxO+
-	7dGxD7hHkTN3srovL8JRAk3t2IeDfoUbxR5lojF9JmIeFrUJmSDAVQvK4ke5abbUna4G5XlLRep
-	CTkOyLhRIV1T67t/XY=
-X-Google-Smtp-Source: AGHT+IG2zjYHyHxDrSFyGdWaycUP0DnV1hIepEsmw6nSgmsn9ogr9jjPFRCaYQPTy+roxHGLBD5nuBqHvVP9q4sOQgU=
-X-Received: by 2002:a05:6000:26ce:b0:3cb:3ca5:870b with SMTP id
- ffacd0b85a97d-3e64c1c2b58mr9289210f8f.44.1757394015848; Mon, 08 Sep 2025
- 22:00:15 -0700 (PDT)
+        bh=1G6Fm4HNrV/bD2bs71ctmqkCh2KbDqFBUWnpt06ckp8=;
+        b=Qnxq5nbm5sR5TrmiHLBw1HW/woV7Wa2qPHAQKsLmr55v+RVz/4MrICCasZc8oekyLx
+         17UYedrJX2UIowfbFKF/9PHG0jDesL5qlIbSZTX/PyLUmmecubpfAUvfcfykxBDYBX8i
+         XZHD2kwsGZonDhsavA5i0jxFnzJHhrdB+nDBWjtKkG/+26sJQcShqOYZwsFvRyQfYM3/
+         s0PgEAjQ+JZiwXbQq+j1RJVbKsmRVSBvo9HGXn+My2xo4eIclmIaXT5bYkHAUNaqooU4
+         c2k8YRa6Kf6yGIKGnOeVkzzYLgxsCSBjOnOkXZVdRnN+D3qDQJZUV3CF/cdZTac2w1yK
+         mACQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCMueoYooEoDlCynrcGFBrhAeiPlswMDvmcxl//sGNzZRwbBZ4YVRjUH7mzCW5hiVEuZxTxjLt7kQ=@vger.kernel.org, AJvYcCXH1Jsn6p83EfFzz1Q5fGBImRtI1ma0ZkLbGm2Oi0qps0SylfQnvErWbamtDxvPqhaq/Y4PiMb4aZEF@vger.kernel.org, AJvYcCXJ5Kg+DlYI7HbguHsAJSAFKlvmUJixaqxQtmQSwiPztmxWMRekNlz0EmrSWD3cdTD3tgSoN4yXcGSqZFhd@vger.kernel.org, AJvYcCXQqSfm8NiNSg5uEeu68XeWDL2j1eVfnzhwD/8GGPf5K57IieN60OPGfCCljACeTs4jCKs0PvkDIQNSxCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv3ACKzqjFUHNUgOSSuE60nkJBmn933VuQQ0auw1Cp2mahME7P
+	PXe2gkuJlGckJci0iQk8rTXQzeoRuEsfLxx66i6wFbtoMcLjsf23YDtt1+3Klqb9I8v2Pi9VeLP
+	+adJPhutb1vesM1RgVvFy/NNJORScd4EcI/Tx4io=
+X-Gm-Gg: ASbGncspXHrqxldgqooC43lDjhI3YSrTom24WjTA1gRak29xvW88gr5GLbEcqgH8pp5
+	IxrC34gg8xjFzkPUpHRDexrej2R9FxMFjmcHO//JvSY++O+wYRkqxIp2a/q0XTpz5Gx4SAcYAxb
+	KVDbLEnlbdbbApdT0iLjEx+xlHFa4DItHkIfMHDOY7fo2bhI9BtlgWGyaNhmgBBbZt90NI2DZN1
+	mCl7iAC7G/6SCyanA==
+X-Google-Smtp-Source: AGHT+IFnQAtfbNXUxujuvpaZBVeXodUsf4RXFRUXQ8ktfLXToDvcxeXnGxXIgaFmJAGt6UaM90HbCfaGi6DB9sgP+uA=
+X-Received: by 2002:a2e:be9e:0:b0:337:e190:6814 with SMTP id
+ 38308e7fff4ca-33b5cfd0d57mr33329871fa.20.1757396602983; Mon, 08 Sep 2025
+ 22:43:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-13-clamor95@gmail.com>
- <20250909005729.GA2330015-robh@kernel.org>
-In-Reply-To: <20250909005729.GA2330015-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 9 Sep 2025 08:00:04 +0300
-X-Gm-Features: AS18NWBubeuZYVIrBS9Y3gvos_QkcU48-UEb6DN0-0PA-mnw9dcMiO5insdn20M
-Message-ID: <CAPVz0n0PhzjsJSKp9P7amG36V+E_dLFXAgJqtTPx4cfH0m5BXQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/23] dt-bindings: display: tegra: move
- avdd-dsi-csi-supply from VI to CSI
-To: Rob Herring <robh@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+ <20250831-tegra186-icc-v1-3-607ddc53b507@gmail.com> <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
+ <CALHNRZ_EbtHSXaDQ+1gGf3HjdyW5Q54EDN901-r8A_aXLbDJkw@mail.gmail.com> <20250903050107.sbri6snqrzq4hale@vireshk-i7>
+In-Reply-To: <20250903050107.sbri6snqrzq4hale@vireshk-i7>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 9 Sep 2025 00:43:11 -0500
+X-Gm-Features: Ac12FXzAJuPe-CvFuYuufxqv80GNsivKH6j8HchajG_Xb4CMnT3WaKxDxqCkLXs
+Message-ID: <CALHNRZ-qkhDc5uO8g18T97RgHZCQ59Zh2Vn+yEX-W3+GSfj_sA@mail.gmail.com>
+Subject: Re: [PATCH 3/8] cpufreq: tegra186: add OPP support and set bandwidth
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sumit Gupta <sumitg@nvidia.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=B2=D1=82, 9 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 03:57 Rob H=
-erring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Wed, Sep 3, 2025 at 12:01=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
 >
-> On Sat, Sep 06, 2025 at 04:53:33PM +0300, Svyatoslav Ryhel wrote:
-> > The avdd-dsi-csi-supply is CSI power supply, it has nothing to do with =
-VI,
-> > like same supply is used with DSI and has nothing to do with DC. Move i=
-t
-> > to correct place.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml   | 3 ---
-> >  .../devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml | 3 +++
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra20-vi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra=
-20-vi.yaml
-> > index dd67d4162884..bb138277d5e8 100644
-> > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi=
-.yaml
-> > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi=
-.yaml
-> > @@ -75,9 +75,6 @@ properties:
-> >    ranges:
-> >      maxItems: 1
-> >
-> > -  avdd-dsi-csi-supply:
-> > -    description: DSI/CSI power supply. Must supply 1.2 V.
-> > -
-> >    vip:
-> >      $ref: /schemas/display/tegra/nvidia,tegra20-vip.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra210-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra210-csi.yaml
-> > index fa07a40d1004..37f6129c9c92 100644
-> > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-c=
-si.yaml
-> > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-c=
-si.yaml
-> > @@ -37,6 +37,9 @@ properties:
-> >        - const: cile
-> >        - const: csi_tpg
-> >
-> > +  avdd-dsi-csi-supply:
-> > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> +Sumit
 >
-> On further thought, why does this have 'dsi' in the name at all. If it
-> happens to be the same supply for DSI and CSI, that's an SoC integration
-> detail. The name here should be local to the module. Perhaps
-> 'avdd-supply' is enough? Fine to rename it as you are breaking the ABI
-> moving it anyways.
+> On 02-09-25, 12:21, Aaron Kling wrote:
+> > On Mon, Sep 1, 2025 at 12:53=E2=80=AFAM Viresh Kumar <viresh.kumar@lina=
+ro.org> wrote:
+> > > On 31-08-25, 22:33, Aaron Kling via B4 Relay wrote:
+> > > > +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, uns=
+igned long freq_khz)
+> > > > +{
+> > > > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_dat=
+a();
+> > > > +     struct dev_pm_opp *opp;
+> > > > +     struct device *dev;
+> > > > +     int ret;
+> > > > +
+> > > > +     dev =3D get_cpu_device(policy->cpu);
+> > > > +     if (!dev)
+> > > > +             return -ENODEV;
+> > > > +
+> > > > +     opp =3D dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true)=
+;
+> > > > +     if (IS_ERR(opp))
+> > > > +             return PTR_ERR(opp);
+> > > > +
+> > > > +     ret =3D dev_pm_opp_set_opp(dev, opp);
+> > >
+> > > Won't it be easier to use dev_pm_opp_set_rate() instead ?
+> >
+> > I'm not very familiar with the opp system. If I read correctly,
+> > dev_pm_opp_set_rate() will round to the closest rate while this code
+> > will fail if the exact rate isn't found. This code is based on the
+> > existing tegra194-cpufreq driver. And I'm unsure if this was done for
+> > a reason.
 >
+> Sumit, any explanation for this ?
+>
+> > I have seen unexpected rates returned from clk_round_rate in
+> > the development of this topic, so that could be related.
+>
+> Right, but we should end up configuring a valid rate from the OPP
+> table.
+>
+> > > > +static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy =
+*policy,
+> > > > +                                         struct cpufreq_frequency_=
+table *bpmp_lut,
+> > > > +                                         struct cpufreq_frequency_=
+table **opp_table)
+> > > > +{
+> > > > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_dat=
+a();
+> > > > +     struct cpufreq_frequency_table *freq_table =3D NULL;
+> > > > +     struct cpufreq_frequency_table *pos;
+> > > > +     struct device *cpu_dev;
+> > > > +     struct dev_pm_opp *opp;
+> > > > +     unsigned long rate;
+> > > > +     int ret, max_opps;
+> > > > +     int j =3D 0;
+> > > > +
+> > > > +     cpu_dev =3D get_cpu_device(policy->cpu);
+> > > > +     if (!cpu_dev) {
+> > > > +             pr_err("%s: failed to get cpu%d device\n", __func__, =
+policy->cpu);
+> > > > +             return -ENODEV;
+> > > > +     }
+> > > > +
+> > > > +     /* Initialize OPP table mentioned in operating-points-v2 prop=
+erty in DT */
+> > > > +     ret =3D dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
+> > > > +     if (!ret) {
+> > >
+> > > If you handle the error case here, then the below can move out of the
+> > > if/else block.
+> >
+> > I'd prefer not to deviate too much from the tegra194-cpufreq code this
+> > is based on, so the drivers can be more easily kept in parity to each
+> > other.
+>
+> I am not sure if that is really important here. The kernel normally
+> contains code in this format:
+>
+> if (err)
+>         return;
+>
+> keep-working;
+>
+> If you want both the drivers to have similar code, then maybe that
+> code should be moved to another file and used by both. But we
+> shouldn't keep them same when we feel that we can do better.
+>
+> > But I will look at making this a bit cleaner as per this and
+> > the next comment.
+>
+> Thanks.
+>
+> > > > +             max_opps =3D dev_pm_opp_get_opp_count(cpu_dev);
+> > > > +             if (max_opps <=3D 0) {
+> > > > +                     dev_err(cpu_dev, "Failed to add OPPs\n");
+> > > > +                     return max_opps;
+> > > > +             }
+> > > > +
+> > > > +             /* Disable all opps and cross-validate against LUT la=
+ter */
+> > > > +             for (rate =3D 0; ; rate++) {
+> > >
+> > > Maybe using while(1) would be more readable ?
+> > >
+> > > > +                     opp =3D dev_pm_opp_find_freq_ceil(cpu_dev, &r=
+ate);
+> > > > +                     if (IS_ERR(opp))
+> > > > +                             break;
+> > > > +
+> > > > +                     dev_pm_opp_put(opp);
+> > > > +                     dev_pm_opp_disable(cpu_dev, rate);
+> > > > +             }
+> > > > +     } else {
+> > > > +             dev_err(cpu_dev, "Invalid or empty opp table in devic=
+e tree\n");
+> > > > +             data->icc_dram_bw_scaling =3D false;
+> > > > +             return ret;
+> > > > +     }
+> > > > +
+> > > > +     freq_table =3D kcalloc((max_opps + 1), sizeof(*freq_table), G=
+FP_KERNEL);
+> > > > +     if (!freq_table)
+> > > > +             return -ENOMEM;
+> > > > +
+> > > > +     /*
+> > > > +      * Cross check the frequencies from BPMP-FW LUT against the O=
+PP's present in DT.
+> > > > +      * Enable only those DT OPP's which are present in LUT also.
+> > > > +      */
+> > > > +     cpufreq_for_each_valid_entry(pos, bpmp_lut) {
+> > > > +             opp =3D dev_pm_opp_find_freq_exact(cpu_dev, pos->freq=
+uency * KHZ, false);
+> > > > +             if (IS_ERR(opp))
+> > > > +                     continue;
+> > > > +
+> > > > +             dev_pm_opp_put(opp);
+> > > > +
+> > > > +             ret =3D dev_pm_opp_enable(cpu_dev, pos->frequency * K=
+HZ);
+> > > > +             if (ret < 0)
+> > > > +                     return ret;
+> > > > +
+> > > > +             freq_table[j].driver_data =3D pos->driver_data;
+> > > > +             freq_table[j].frequency =3D pos->frequency;
+> > > > +             j++;
+> > > > +     }
+> > > > +
+> > > > +     freq_table[j].driver_data =3D pos->driver_data;
+> > > > +     freq_table[j].frequency =3D CPUFREQ_TABLE_END;
+> > > > +
+> > > > +     *opp_table =3D &freq_table[0];
+> > > > +
+> > > > +     dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
+> > > > +
+> > > > +     tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
+> > >
+> > > Maybe a comment on why exactly you are changing the freq here ?
+>
+> I meant bandwidth here.
+>
+> > To my knowledge, this does not change any clocks. The intent here is
+> > to prime the interconnect data. In the pre-req series, there's a
+> > change that sets all clocks to max frequency during probe. Then my use
+> > case involves setting performance governor by default on some boots.
+> > During testing, I noticed that the interconnect data provided by this
+> > driver was all zeroes. Which led me to notice that set_bw is only
+> > called when the target frequency changes. Which wasn't happening
+> > because clocks were already set to max. If my understanding here is
+> > wrong or there's a better way to handle this, I will fix it.
+>
+> There are a lot of synchronization issues here because we are trying
+> to set clk and bw separately. I guess other variables, like regulator,
+> level, etc. (if used) will also be out of sync here.
+>
+> I think the right way to fix this would be to call set-opp for the
+> device, so all the variables are configured properly.
 
-Not only this supply is common for DSI and CSI, on all schematics I
-have seem so far input for this supply on CSI block is always called
-avdd-dsi-csi and supply is named accordingly. This patch aims not to
-rename supply, which has correct naming IMHO, but to place it in
-correct place - CSI, not VI as it is ATM.
+That's what the tegra_cpufreq_set_bw function does. Matches the passed
+frequency in the opp table and calls dev_pm_opp_set_opp.
 
-> Rob
+Aaron
