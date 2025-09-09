@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32783019B1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F422A3019CE;
 	Tue,  9 Sep 2025 06:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398894; cv=none; b=eWWeW/xeV+O7uc9WNDELvfc0cNAbMCrkmOiS92RR3OUPgwjNhAhK5xunaNfPGGU4mMkvUGy4vQdItrMxz1QoCESUZkxiKKx6ZfDWsEMgoLLMoDhmn3NYNR1f03zpG2HNlgr0unQx/9F/WDYG9Iec9aQwz/UI2VfX8OKa67+tFYo=
+	t=1757398895; cv=none; b=kxRLiRjmAgyEJSZOsjYWu3O4g5rRizdgzRHPlpZRO+258zvqCOKzylmtIkgIesWS+N4v3Tri4KymfZgdDQUFiJXrA7aI8KyO3kmWukttWuZq7qZ7KvowI6RNfUhfx+EfA4HgtuevCogJUkZBOAsgn+Arh7mBmdJZ3dbAZjkwL48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398894; c=relaxed/simple;
-	bh=Z0ytwrdU8Zy3z2M0PKSyDzd7L21tYMFmz7LhDS59cwE=;
+	s=arc-20240116; t=1757398895; c=relaxed/simple;
+	bh=BKe3rw3YctsLXqkrtMOW6fQhzekowbwuSEaXRAbhv5A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L/SdGEg8/zWdl71Hnhj6qg2c0eZpiblW60oG23XhIvFy2FenzmpAb/lSijQ1Vtx/WuFSh8IgIa3GzgBqmdoncvNeVeyNSCj3UAD+ZCTU8uLVqoDW8T1UYg5twRGV6wWgQ0Rwp6mrsjUVCMgDfCaTJFzqdynnLQ+zq7/QIzNCedQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ8But7X; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=J/NS3rk9gJpNAjybYj0dX7y6on07TC8rEQZ2JpD433xJjOQFKfNkSlDIRhq/6usAdPGpyf6zDdo7NS1rKFF0wI7s8d6U6R5gkpul0R3a3W+EmQTwJoAO2E1c7KH4eEqGqpDIrj0tb90kIP3USeyAnfdHvVToFpKui1AphQMFCqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwEDmB7z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ8But7X"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 64140C4CEF5;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwEDmB7z"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AA2CC4CEFC;
 	Tue,  9 Sep 2025 06:21:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1757398894;
-	bh=Z0ytwrdU8Zy3z2M0PKSyDzd7L21tYMFmz7LhDS59cwE=;
+	bh=BKe3rw3YctsLXqkrtMOW6fQhzekowbwuSEaXRAbhv5A=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bZ8But7XpEdM+O/nEpWaE4EqqmQxWTBG0Zw9lfAoLKwMk+uW0b3UDzuayBjrjT3Dw
-	 GaAK3fqXvGGOGH1hxJ4nCuuNO3C1NBFflAU8LJx8ed0uFRC3zJJt5dn/M85cGu6ZGQ
-	 HFbf+GEaklaJqOkHhL4LedngS2tQMptp+68ejI+BNYXE6Y30H6+7oLm+4XcoqsVbjO
-	 Z4r9Yht3df+HdZ13rh6i5z+phXHbaJhFEKFu5ZVe4y3w5cSrQFghVQr8fCP1o0+GnB
-	 IgtiKhyE1MkZCMx5wrM6ogMdwSenCcnf4Mfzb+SdLAg5VyAcjBJo4qt7Okakj0S3yK
-	 hWzN8Qcsbzhyw==
+	b=NwEDmB7zcmc2QgvSD6A6qc2f7u0+i5Z81+s2OSVMolYjIBd9tjIzhIC1M+Q52Pbf6
+	 2nTsWAw948753i+Jw2o5LhAmEf8SL0GC1WOwypRo60RRewgGGAUQUFCnxp6q3tcou6
+	 r4lxn46f93mbAz2Kngpt9P5RCVbmBfhsCsKTZjzqxGXn+Nm2SH6kAI5A26W8ZnqZ1n
+	 CvHzA0/tbsE1bpXsi532atZ8J6R9xkMHh5hlDfNxsp1fgznqKNn/N4NSiTMwlb/Mde
+	 VHiObO5BeGkldb+KiWkawInHJorfTgZAcLh6jOnaQGqc+UskznFt1nr0UafqEdeGpc
+	 nrWShxyjTKXvg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B41CA0FED;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EB1CAC587;
 	Tue,  9 Sep 2025 06:21:34 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 09 Sep 2025 01:21:29 -0500
-Subject: [PATCH v2 1/8] cpufreq: tegra186: add OPP support and set
- bandwidth
+Date: Tue, 09 Sep 2025 01:21:32 -0500
+Subject: [PATCH v2 4/8] memory: tegra186-emc: Support non-bpmp icc scaling
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-tegra186-icc-v2-1-09413724e781@gmail.com>
+Message-Id: <20250909-tegra186-icc-v2-4-09413724e781@gmail.com>
 References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
 In-Reply-To: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -55,11 +54,11 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757398893; l=8394;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757398893; l=5749;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=NZJsduZw7/XAh0XqzH09l51I14O7mE+MWIT2CwMrZHU=;
- b=wpYKN2+155wE9rOglp8skrW+dF+DGagpC4ATWh1bDpEXMRmb7dscSkWfTgvLj2L3Vh4ML/2AT
- Mm/KZJxG939BhNPSmmqcslI+vKwxEurNYTC1xPXaxlqRYpyknxmKUSG
+ bh=nugNxNxYRHTU1Ah7DRFanUlqmkAHHZfFkwW/lWONkrk=;
+ b=UadDwcZLXXoMx0yghu0dODBC3ueT0DxULOvz3Bqp11m0TEcHZxc1eBEWl4sonh8p1lcBgKkPI
+ RSIMdXhFJ43D4+TLGM/0DOKKu+T3A2ugLYn2I47lPa1t0YBrsOJJsOV
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -69,262 +68,201 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-Add support to use OPP table from DT in Tegra186 cpufreq driver.
-Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
-Cross check the OPP's present in DT against the LUT from BPMP-FW
-and enable only those DT OPP's which are present in LUT also.
-
-The OPP table in DT has CPU Frequency to bandwidth mapping where
-the bandwidth value is per MC channel. DRAM bandwidth depends on the
-number of MC channels which can vary as per the boot configuration.
-This per channel bandwidth from OPP table will be later converted by
-MC driver to final bandwidth value by multiplying with number of
-channels before being handled in the EMC driver.
-
-If OPP table is not present in DT, then use the LUT from BPMP-FW
-directy as the CPU frequency table and not do the DRAM frequency
-scaling which is same as the current behavior.
+This adds support for dynamic frequency scaling of external memory on
+devices with bpmp firmware that does not support bwmgr.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/cpufreq/tegra186-cpufreq.c | 152 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 145 insertions(+), 7 deletions(-)
+ drivers/memory/tegra/tegra186-emc.c | 132 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 130 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index bd94beebc4cc2fe6870e13ca55343cedb9729e99..cb7a033e8ae6e81b18bbf3bc63632c631e99129b 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/units.h>
- 
- #include <soc/tegra/bpmp.h>
- #include <soc/tegra/bpmp-abi.h>
-@@ -58,7 +59,7 @@ static const struct tegra186_cpufreq_cpu tegra186_cpus[] = {
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index d6cd90c7ad5380a9ff9052a60f62c9bcc4fdac5f..1711f2e85ad07692feb8f6f14c8c2b10ea42fde5 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -18,6 +18,17 @@ struct tegra186_emc_dvfs {
+ 	unsigned long rate;
  };
  
- struct tegra186_cpufreq_cluster {
--	struct cpufreq_frequency_table *table;
-+	struct cpufreq_frequency_table *bpmp_lut;
- 	u32 ref_clk_khz;
- 	u32 div;
- };
-@@ -66,16 +67,121 @@ struct tegra186_cpufreq_cluster {
- struct tegra186_cpufreq_data {
- 	void __iomem *regs;
- 	const struct tegra186_cpufreq_cpu *cpus;
-+	bool icc_dram_bw_scaling;
- 	struct tegra186_cpufreq_cluster clusters[];
- };
++enum emc_rate_request_type {
++	EMC_RATE_DEBUG,
++	EMC_RATE_ICC,
++	EMC_RATE_TYPE_MAX,
++};
++
++struct emc_rate_request {
++	unsigned long min_rate;
++	unsigned long max_rate;
++};
++
+ struct tegra186_emc {
+ 	struct tegra_bpmp *bpmp;
+ 	struct device *dev;
+@@ -33,8 +44,90 @@ struct tegra186_emc {
+ 	} debugfs;
  
-+static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
-+{
-+	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-+	struct dev_pm_opp *opp __free(put_opp);
-+	struct device *dev;
-+	int ret;
-+
-+	dev = get_cpu_device(policy->cpu);
-+	if (!dev)
-+		return -ENODEV;
-+
-+	opp = dev_pm_opp_find_freq_exact(dev, freq_khz * HZ_PER_KHZ, true);
-+	if (IS_ERR(opp))
-+		return PTR_ERR(opp);
-+
-+	ret = dev_pm_opp_set_opp(dev, opp);
-+	if (ret)
-+		data->icc_dram_bw_scaling = false;
-+
-+	return ret;
-+}
-+
-+static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
-+					    struct cpufreq_frequency_table *bpmp_lut,
-+					    struct cpufreq_frequency_table **opp_table)
-+{
-+	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-+	struct cpufreq_frequency_table *freq_table = NULL;
-+	struct cpufreq_frequency_table *pos;
-+	struct device *cpu_dev;
-+	unsigned long rate;
-+	int ret, max_opps;
-+	int j = 0;
-+
-+	cpu_dev = get_cpu_device(policy->cpu);
-+	if (!cpu_dev) {
-+		pr_err("%s: failed to get cpu%d device\n", __func__, policy->cpu);
-+		return -ENODEV;
-+	}
-+
-+	/* Initialize OPP table mentioned in operating-points-v2 property in DT */
-+	ret = dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
-+	if (ret) {
-+		dev_err(cpu_dev, "Invalid or empty opp table in device tree\n");
-+		data->icc_dram_bw_scaling = false;
-+		return ret;
-+	}
-+
-+	max_opps = dev_pm_opp_get_opp_count(cpu_dev);
-+	if (max_opps <= 0) {
-+		dev_err(cpu_dev, "Failed to add OPPs\n");
-+		return max_opps;
-+	}
-+
-+	/* Disable all opps and cross-validate against LUT later */
-+	for (rate = 0; ; rate++) {
-+		struct dev_pm_opp *opp __free(put_opp);
-+
-+		opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
-+		if (IS_ERR(opp))
-+			break;
-+
-+		dev_pm_opp_disable(cpu_dev, rate);
-+	}
-+
-+	freq_table = kcalloc((max_opps + 1), sizeof(*freq_table), GFP_KERNEL);
-+	if (!freq_table)
-+		return -ENOMEM;
+ 	struct icc_provider provider;
 +
 +	/*
-+	 * Cross check the frequencies from BPMP-FW LUT against the OPP's present in DT.
-+	 * Enable only those DT OPP's which are present in LUT also.
++	 * There are multiple sources in the EMC driver which could request
++	 * a min/max clock rate, these rates are contained in this array.
 +	 */
-+	cpufreq_for_each_valid_entry(pos, bpmp_lut) {
-+		struct dev_pm_opp *opp __free(put_opp);
++	struct emc_rate_request requested_rate[EMC_RATE_TYPE_MAX];
 +
-+		opp = dev_pm_opp_find_freq_exact(cpu_dev, pos->frequency * HZ_PER_KHZ, false);
-+		if (IS_ERR(opp))
-+			continue;
++	/* protect shared rate-change code path */
++	struct mutex rate_lock;
+ };
+ 
++static void tegra_emc_rate_requests_init(struct tegra186_emc *emc)
++{
++	unsigned int i;
 +
-+		ret = dev_pm_opp_enable(cpu_dev, pos->frequency * HZ_PER_KHZ);
-+		if (ret < 0)
-+			return ret;
-+
-+		freq_table[j].driver_data = pos->driver_data;
-+		freq_table[j].frequency = pos->frequency;
-+		j++;
++	for (i = 0; i < EMC_RATE_TYPE_MAX; i++) {
++		emc->requested_rate[i].min_rate = 0;
++		emc->requested_rate[i].max_rate = ULONG_MAX;
 +	}
-+
-+	freq_table[j].driver_data = pos->driver_data;
-+	freq_table[j].frequency = CPUFREQ_TABLE_END;
-+
-+	*opp_table = &freq_table[0];
-+
-+	dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
-+
-+	/* Prime interconnect data */
-+	tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
-+
-+	return ret;
 +}
 +
- static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
- 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-+	struct cpufreq_frequency_table *freq_table;
-+	struct cpufreq_frequency_table *bpmp_lut;
- 	u32 cpu;
-+	int ret;
- 
--	policy->freq_table = data->clusters[cluster].table;
- 	policy->cpuinfo.transition_latency = 300 * 1000;
- 	policy->driver_data = NULL;
- 
-@@ -85,6 +191,20 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- 			cpumask_set_cpu(cpu, policy->cpus);
- 	}
- 
-+	bpmp_lut = data->clusters[cluster].bpmp_lut;
++static int emc_request_rate(struct tegra186_emc *emc,
++			    unsigned long new_min_rate,
++			    unsigned long new_max_rate,
++			    enum emc_rate_request_type type)
++{
++	struct emc_rate_request *req = emc->requested_rate;
++	unsigned long min_rate = 0, max_rate = ULONG_MAX;
++	unsigned int i;
++	int err;
 +
-+	if (data->icc_dram_bw_scaling) {
-+		ret = tegra_cpufreq_init_cpufreq_table(policy, bpmp_lut, &freq_table);
-+		if (!ret) {
-+			policy->freq_table = freq_table;
-+			return 0;
++	/* select minimum and maximum rates among the requested rates */
++	for (i = 0; i < EMC_RATE_TYPE_MAX; i++, req++) {
++		if (i == type) {
++			min_rate = max(new_min_rate, min_rate);
++			max_rate = min(new_max_rate, max_rate);
++		} else {
++			min_rate = max(req->min_rate, min_rate);
++			max_rate = min(req->max_rate, max_rate);
 +		}
 +	}
 +
-+	data->icc_dram_bw_scaling = false;
-+	policy->freq_table = bpmp_lut;
-+	pr_info("OPP tables missing from DT, EMC frequency scaling disabled\n");
++	if (min_rate > max_rate) {
++		dev_err_ratelimited(emc->dev, "%s: type %u: out of range: %lu %lu\n",
++				    __func__, type, min_rate, max_rate);
++		return -ERANGE;
++	}
 +
++	err = clk_set_rate(emc->clk, min_rate);
++	if (err)
++		return err;
++
++	emc->requested_rate[type].min_rate = new_min_rate;
++	emc->requested_rate[type].max_rate = new_max_rate;
++
++	return 0;
++}
++
++static int emc_set_min_rate(struct tegra186_emc *emc, unsigned long rate,
++			    enum emc_rate_request_type type)
++{
++	struct emc_rate_request *req = &emc->requested_rate[type];
++	int ret;
++
++	mutex_lock(&emc->rate_lock);
++	ret = emc_request_rate(emc, rate, req->max_rate, type);
++	mutex_unlock(&emc->rate_lock);
++
++	return ret;
++}
++
++static int emc_set_max_rate(struct tegra186_emc *emc, unsigned long rate,
++			    enum emc_rate_request_type type)
++{
++	struct emc_rate_request *req = &emc->requested_rate[type];
++	int ret;
++
++	mutex_lock(&emc->rate_lock);
++	ret = emc_request_rate(emc, req->min_rate, rate, type);
++	mutex_unlock(&emc->rate_lock);
++
++	return ret;
++}
++
+ /*
+  * debugfs interface
+  *
+@@ -107,7 +200,7 @@ static int tegra186_emc_debug_min_rate_set(void *data, u64 rate)
+ 	if (!tegra186_emc_validate_rate(emc, rate))
+ 		return -EINVAL;
+ 
+-	err = clk_set_min_rate(emc->clk, rate);
++	err = emc_set_min_rate(emc, rate, EMC_RATE_DEBUG);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -137,7 +230,7 @@ static int tegra186_emc_debug_max_rate_set(void *data, u64 rate)
+ 	if (!tegra186_emc_validate_rate(emc, rate))
+ 		return -EINVAL;
+ 
+-	err = clk_set_max_rate(emc->clk, rate);
++	err = emc_set_max_rate(emc, rate, EMC_RATE_DEBUG);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -217,6 +310,12 @@ static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
  	return 0;
  }
  
-@@ -102,6 +222,10 @@ static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
- 		writel(edvd_val, data->regs + edvd_offset);
- 	}
- 
-+	if (data->icc_dram_bw_scaling)
-+		tegra_cpufreq_set_bw(policy, tbl->frequency);
++static inline struct tegra186_emc *
++to_tegra186_emc_provider(struct icc_provider *provider)
++{
++	return container_of(provider, struct tegra186_emc, provider);
++}
 +
-+
- 	return 0;
- }
- 
-@@ -136,7 +260,7 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
- 	.init = tegra186_cpufreq_init,
- };
- 
--static struct cpufreq_frequency_table *init_vhint_table(
-+static struct cpufreq_frequency_table *tegra_cpufreq_bpmp_read_lut(
- 	struct platform_device *pdev, struct tegra_bpmp *bpmp,
- 	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
- 	int *num_rates)
-@@ -231,6 +355,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+ /*
+  * tegra_emc_icc_set_bw() - Set BW api for EMC provider
+  * @src: ICC node for External Memory Controller (EMC)
+@@ -227,6 +326,33 @@ static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
+  */
+ static int tegra_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
  {
- 	struct tegra186_cpufreq_data *data;
- 	struct tegra_bpmp *bpmp;
-+	struct device *cpu_dev;
- 	unsigned int i = 0, err, edvd_offset;
- 	int num_rates = 0;
- 	u32 edvd_val, cpu;
-@@ -256,9 +381,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
- 		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
- 
--		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &num_rates);
--		if (IS_ERR(cluster->table)) {
--			err = PTR_ERR(cluster->table);
-+		cluster->bpmp_lut = tegra_cpufreq_bpmp_read_lut(pdev, bpmp, cluster, i, &num_rates);
-+		if (IS_ERR(cluster->bpmp_lut)) {
-+			err = PTR_ERR(cluster->bpmp_lut);
- 			goto put_bpmp;
- 		} else if (!num_rates) {
- 			err = -EINVAL;
-@@ -267,7 +392,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 
- 		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
- 			if (data->cpus[cpu].bpmp_cluster_id == i) {
--				edvd_val = cluster->table[num_rates - 1].driver_data;
-+				edvd_val = cluster->bpmp_lut[num_rates - 1].driver_data;
- 				edvd_offset = data->cpus[cpu].edvd_offset;
- 				writel(edvd_val, data->regs + edvd_offset);
- 			}
-@@ -276,6 +401,19 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 
- 	tegra186_cpufreq_driver.driver_data = data;
- 
-+	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev) {
-+		err = -EPROBE_DEFER;
-+		goto put_bpmp;
-+	}
++	struct tegra186_emc *emc = to_tegra186_emc_provider(dst->provider);
++	struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
++	unsigned long long peak_bw = icc_units_to_bps(dst->peak_bw);
++	unsigned long long avg_bw = icc_units_to_bps(dst->avg_bw);
++	unsigned long long rate = max(avg_bw, peak_bw);
++	const unsigned int ddr = 2;
++	int err;
 +
-+	if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
-+		err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
-+		if (!err)
-+			data->icc_dram_bw_scaling = true;
-+	}
++	/*
++	 * Do nothing here if bwmgr is supported in BPMP-FW. BPMP-FW sets the final
++	 * Freq based on the passed values.
++	 */
++	if (mc->bwmgr_mrq_supported)
++		return 0;
 +
- 	err = cpufreq_register_driver(&tegra186_cpufreq_driver);
++	/*
++	 * Tegra186 EMC runs on a clock rate of SDRAM bus. This means that
++	 * EMC clock rate is twice smaller than the peak data rate because
++	 * data is sampled on both EMC clock edges.
++	 */
++	do_div(rate, ddr);
++	rate = min_t(u64, rate, U32_MAX);
++
++	err = emc_set_min_rate(emc, rate, EMC_RATE_ICC);
++	if (err)
++		return err;
++
+ 	return 0;
+ }
  
- put_bpmp:
+@@ -334,6 +460,8 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, emc);
+ 	emc->dev = &pdev->dev;
+ 
++	tegra_emc_rate_requests_init(emc);
++
+ 	if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_EMC_DVFS_LATENCY)) {
+ 		err = tegra186_emc_get_emc_dvfs_latency(emc);
+ 		if (err)
 
 -- 
 2.50.1
