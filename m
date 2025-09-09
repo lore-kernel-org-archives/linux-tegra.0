@@ -1,63 +1,63 @@
 Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878AE309EF8;
-	Tue,  9 Sep 2025 07:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995E8309EFA;
+	Tue,  9 Sep 2025 07:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403241; cv=none; b=ejNIAhHItDQeIJzB9CQ0ejHyI4My3lwdOw/s2dQoIsMsIpBPWfodbXEVP8CVf7O/6+mmF+eSL3l6zv13zvgmS2QSXaNZJhpNTCl8mCFNR5D0k3HvWwdw2Dqqs6M1vZYF9VhmODNbYIJe3C8iCPF4PQM5t/8ub5vE3GJz4YgQ3Os=
+	t=1757403242; cv=none; b=rJ1M36KCykQNk+Z1ICDNL8IOkRUx8aHEDnY7irPZN3R1cFxKQcYQ3D2X8hlA2217o7M36IJXXW/b7r7d56jG3FLbQfUu4dWv+VO7bd5oNsEP+l19Aa0rM4LAwEj2Qi6SEMXV3bbkpWDOS2EOmQWxeeknUv2TfwY7H89+HIP41fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403241; c=relaxed/simple;
-	bh=veQ9/3VO6iMznCoUt98pm7IfBkLnXS6jvf70DOTw9Hs=;
+	s=arc-20240116; t=1757403242; c=relaxed/simple;
+	bh=ggGdRmXLBbjArTvqcF72EClkwv1lqIc94ZhVFK9wFgQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oPDq32zAg1g0DGvSuBkGlzFjeg8EilEAiawsWHLRP+Rv8t3+sMKXEIz2jfyKd2uiCtCmD/GWi9d+OmTKnBV0MQap5WcYuRuWkm3BKe45GHaKgx9kfU2ENwEjSpdfTrD9K6VIGF45uTV1CzhJ5uDuONMcgkCoBBMj9H9uw9+KSVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jESmtp7Q; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version; b=pjUkVAZTGnSz6vV6+Z7Qgl5O5B/iRc6Chg83K3nqPWWpVdwC/Ik1woTiFOiqc1iwRE/k6Tdjg6b3BU7DPQrDuQIypnGXuXQ+4U1B2MFjzxH9VC3iUw336rYzK3dYfzVkPEgtwrcHyH4M9c+IeErmmqd/U1PfnftOsnccC3nxRXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7/QIzLz; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jESmtp7Q"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-33ca74c62acso19248101fa.1;
-        Tue, 09 Sep 2025 00:33:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7/QIzLz"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-33c9efd65eeso20141881fa.3;
+        Tue, 09 Sep 2025 00:33:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757403237; x=1758008037; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757403238; x=1758008038; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DQrz/QPYOHYsP4Cfl9B2GTYZm08Xl/E70LbUu7rauuk=;
-        b=jESmtp7QEs/YsbwX803onOtqul2n6igf9BVV2X7AUeuoINAtk7pLd++R1ThKG9yS5b
-         EWisFPgOSGF4KpRRUizo9aVGKFdE6FDF49DcuVjbMpEqWEdMi/VX9hbTFngqZzd0+c0b
-         Yts8ybo27twlnYwwqDBJfGts7zDxD+L9gkaPbbKmiKEVe58YcGE3a0nXmj5GqBklWrQ+
-         5T5hNq85V4/LxU4JGTGz8g/3EN8RUO+6PD1ad7EPdX1yz1GoTS1NKoc0SyQQt+EPZkaQ
-         wyQRm48nYJWBFn4X6kF95XmzlSb/o+ynU2lta8z+XKxPW+eKA5/qKoqEpYCy4A8TFPmX
-         WS4A==
+        bh=vYiswRj/QaYbkwuLO6ropupZ4HLa9+N1VAg/V5RUYGk=;
+        b=a7/QIzLzSIxma+TBe6YDSP2sNRNMZxsOjYLtUq0zQf/e3nIfRrMHQvZJC61PqBpbEX
+         a9WuKidH/6ZCjWi3cFm7b/6Cs458OC7XKoZRhJlUEjvPP5ZuLHXFwzKecqrxio6jXVMX
+         6iYzAGrbngRpCO3KIJw08VDoh7TK50GRok21ijBuxXsFQR8XQlEf0S6Pk2l/Om/NrlTY
+         bPk8YuL7vX+HaQwdhr3+JvMvW6zPADw252YTMo3txUn/HzihRDAKiBoWdxJ8MSBOqLkc
+         wDxHuQsD7K+tS48xiN0hxLQO1iK2mY+UUKda3JiYOJfI0IhCwEjPr/J8Cd3T2GGEkhvt
+         bhjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757403237; x=1758008037;
+        d=1e100.net; s=20230601; t=1757403238; x=1758008038;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DQrz/QPYOHYsP4Cfl9B2GTYZm08Xl/E70LbUu7rauuk=;
-        b=R6VmQkVS97S/JaWV97KuK+EhdRpmjHUDWWJQuJo0lzFzL/7RQC2n3i2+FjAsz1K62C
-         8j18T5jK6frmQVqxIbk4fcJvpELkovMtH8n0aoBXQ4vJ/fOD269xhSJCqTLtT3urXitA
-         idabJD1ZGdQ9GtDkHFLAGIh1m5gnAT98jMwOe7bF2d8nkzM2Y1V+ncdHDG0n5D5S1tUI
-         GeS+/urD3KZS6me5Z/PhQAIfbMqSF5T2lnDnmshKmN6zO96KHxoezc8f91V1moulztWL
-         xQ/3vuuXpnOo619mF2+jiv17lV/X1kwrIu4dR+Hdb4C1RWXHgIhPnClBqj2+VwKOKwCs
-         ge4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKPyiFwTjW6ZMkPDMbuV5rG/MJEASHlEnKN8flRv9wFTQ+X5IpmawbhpbqeQdwvrUb5lkkkqRPHfJtY/8=@vger.kernel.org, AJvYcCV30+Zz6Rh70VVXwaRQfOrz0pbPuQCXWYRNog2ONKuRebuhrWdL+npyzwgN255mfwfsrRT33fPj7kbhGhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwp0HXZd4Nsham1d1umJea5dfI4gGkJ3V9iT1JEJuI48drPmgE
-	ueRgB+XhUIuA2PQvPBOjgW1Ufhh+eJrHsaN79pZ9ga9pKhqy9S9+VA6G
-X-Gm-Gg: ASbGncvFgs+C6WgnoAKTLZ+HmK7e4sNeqQLoDShnMpkFcdN2z+Be+v9ctRMqD4FHRZM
-	53/IgXeO2T74O3T2GA1hLSlFkf2Uwt9tSfnN890KhjRY89hxLR/ssMMYS11THMyDIpy+aj244Zj
-	/xvjuT+ZqkWmo78wh/lQfYxhEO3BkhZ+yvniRifmdlOh1xHaDIwfekXuNTfkau50G4QRCdNUHMK
-	8VdyyQhI5XTo9rzxttKeieBC6fkOTWUBTm5Lk1WkTdzXo6IPpoRtMPhMFdGpEyQ+4GkIJNKaagE
-	xWjjerJTJ3jNp0yOMzG5X31MfQVzmFcNak/YWAir0CwTTS5mSM1u1L3+jEY2Xs7a9BW7/SNxGAZ
-	RS3Q9X6BRA2wcXWf0olElOsTH
-X-Google-Smtp-Source: AGHT+IG7b409ZZaz9WYBpWBHJXflu4ExPWhaJ6oRz2uN0iqNOX7r4BIF3k+etTXLQ89f4RpIzZD6Hw==
-X-Received: by 2002:a05:651c:3254:20b0:336:8369:d028 with SMTP id 38308e7fff4ca-33b553ae52dmr25007991fa.43.1757403236352;
-        Tue, 09 Sep 2025 00:33:56 -0700 (PDT)
+        bh=vYiswRj/QaYbkwuLO6ropupZ4HLa9+N1VAg/V5RUYGk=;
+        b=xVUr/D+bl8oaudUv/zRKoiUHksJSIV+YFrm3AydqjKj59huW9lKU7bcydWrwB4PjJR
+         qytgCksFeBLm2JJIvprRDYM1AoT7j/C/9o+PLZN1YALrjfnsMkUGZiDkj4fefx81poi+
+         75RssQUTYqDeUQS7xi0EsWnAxD+DNt28u6ucwKiKtrBSRsQ0/hWSzkoIxuuS9az3ylvg
+         q3FAuhoC4rWYxaYAOVh9KUYge1h3DU6tU0rxsEGS0WcToYpdBk88qR4vQQc0v4g4wKAy
+         6WTRl6vA280YMnAz2kuLO0k0Af5FrPPVTtsFRP5thEKkvXkWVw9PsXzyCUMA0XqPpMIc
+         MnZw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/r3NXRtQ5NLEiAuGbaTBpdj3tgwS3dhkugIA2+kZC9jaa26f8IyNqHlFTspWtefRuLSV6eaHGcnMFdaE=@vger.kernel.org, AJvYcCWhsZfiJl6jpXYGev9r/PB8hv7B5qFK7lP323mMLBReqYkZ86o46In3thdtG70fKJmGwR7IYYOd2j/CwMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+iwpfhj1Ho/1kdHimulla/yHa1tP+f4sQ3YSp0gHVhewvntiz
+	LooL6PT+5TOHkL+Rv7GTex6eXuifuuzVLSSJ04qkZjVlPuZ6yzwwXkfy
+X-Gm-Gg: ASbGncuQU4YBKOVGxEVWOr7Wm+4uOU1c96iUjNi2EZXPdTDHRQo8EpYlkiN4iemo8Bs
+	ZVK/BiDU4c5ETMdH+cQyhYeQQhLc3FL8MpRKk3d/wYK8JcsExQQyG+ZIzQL04JXi7hGdtwG4IBB
+	Th+tBqdV5HbHVCRq//PMZrBz44zdkcyKSmviswGRJsrrdcWftwfrplAGCYAPCbSiNxKOpD5ZZEq
+	nFfBYpV/dAkOt555wQaX6Zx4ykXla1o+MhTos53oCGqtoFPExNdZE4q6d/JXiY8YQt2HyAWGQHZ
+	zuruPkM1/BtxNl0ArgiPvLFftDv+0SJcsHml2riydz1+kGUSL7F6B83M11ELSnlZqSuh4d2yZPq
+	7RawK5caegFIlIw==
+X-Google-Smtp-Source: AGHT+IElpt1mNRwwWKhQpfkwc63KOwvW3rDRSy5Rcmjz1QUiR7+paKgXpx8Z2+qnNuoRZk5EjISFSA==
+X-Received: by 2002:a05:651c:41c5:10b0:338:7f3:a757 with SMTP id 38308e7fff4ca-33b57862674mr23066631fa.10.1757403237229;
+        Tue, 09 Sep 2025 00:33:57 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c91a6bsm37542721fa.21.2025.09.09.00.33.55
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c91a6bsm37542721fa.21.2025.09.09.00.33.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 00:33:55 -0700 (PDT)
+        Tue, 09 Sep 2025 00:33:56 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Thierry Reding <treding@nvidia.com>,
@@ -69,9 +69,9 @@ To: Thierry Reding <thierry.reding@gmail.com>,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] gpu/drm: tegra: dsi: make SOL delay calculation mode independent
-Date: Tue,  9 Sep 2025 10:33:34 +0300
-Message-ID: <20250909073335.91531-2-clamor95@gmail.com>
+Subject: [PATCH v1 2/2] gpu/drm: tegra: dsi: calculate packet parameters for video mode
+Date: Tue,  9 Sep 2025 10:33:35 +0300
+Message-ID: <20250909073335.91531-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250909073335.91531-1-clamor95@gmail.com>
 References: <20250909073335.91531-1-clamor95@gmail.com>
@@ -83,75 +83,41 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move SOL delay calculation outside of video mode conditions.
+Calculate packet parameters for video mode same way it is done or
+command mode, by halving timings plugged into equations.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/gpu/drm/tegra/dsi.c | 41 +++++++++++++++----------------------
- 1 file changed, 17 insertions(+), 24 deletions(-)
+ drivers/gpu/drm/tegra/dsi.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index 924611061cfa..aab555a2eb68 100644
+index aab555a2eb68..1ec3f03d2577 100644
 --- a/drivers/gpu/drm/tegra/dsi.c
 +++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -560,11 +560,6 @@ static void tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
- 		tegra_dsi_writel(dsi, hact << 16 | hbp, DSI_PKT_LEN_2_3);
- 		tegra_dsi_writel(dsi, hfp, DSI_PKT_LEN_4_5);
- 		tegra_dsi_writel(dsi, 0x0f0f << 16, DSI_PKT_LEN_6_7);
--
--		/* set SOL delay (for non-burst mode only) */
--		tegra_dsi_writel(dsi, 8 * mul / div, DSI_SOL_DELAY);
--
--		/* TODO: implement ganged mode */
- 	} else {
- 		u16 bytes;
+@@ -545,12 +545,19 @@ static void tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
+ 		/* horizontal back porch */
+ 		hbp = (mode->htotal - mode->hsync_end) * mul / div;
  
-@@ -586,28 +581,26 @@ static void tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
- 		value = MIPI_DCS_WRITE_MEMORY_START << 8 |
- 			MIPI_DCS_WRITE_MEMORY_CONTINUE;
- 		tegra_dsi_writel(dsi, value, DSI_DCS_CMDS);
-+	}
- 
--		/* set SOL delay */
--		if (dsi->master || dsi->slave) {
--			unsigned long delay, bclk, bclk_ganged;
--			unsigned int lanes = state->lanes;
+-		if ((dsi->flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) == 0)
+-			hbp += hsw;
 -
--			/* SOL to valid, valid to FIFO and FIFO write delay */
--			delay = 4 + 4 + 2;
--			delay = DIV_ROUND_UP(delay * mul, div * lanes);
--			/* FIFO read delay */
--			delay = delay + 6;
--
--			bclk = DIV_ROUND_UP(mode->htotal * mul, div * lanes);
--			bclk_ganged = DIV_ROUND_UP(bclk * lanes / 2, lanes);
--			value = bclk - bclk_ganged + delay + 20;
--		} else {
--			/* TODO: revisit for non-ganged mode */
--			value = 8 * mul / div;
--		}
-+	/* set SOL delay */
-+	if (dsi->master || dsi->slave) {
-+		unsigned long delay, bclk, bclk_ganged;
-+		unsigned int lanes = state->lanes;
+ 		/* horizontal front porch */
+ 		hfp = (mode->hsync_start - mode->hdisplay) * mul / div;
  
--		tegra_dsi_writel(dsi, value, DSI_SOL_DELAY);
-+		/* SOL to valid, valid to FIFO and FIFO write delay */
-+		delay = 4 + 4 + 2;
-+		delay = DIV_ROUND_UP(delay * mul, div * lanes);
-+		/* FIFO read delay */
-+		delay = delay + 6;
++		if (dsi->master || dsi->slave) {
++			hact /= 2;
++			hsw /= 2;
++			hbp /= 2;
++			hfp /= 2;
++		}
 +
-+		bclk = DIV_ROUND_UP(mode->htotal * mul, div * lanes);
-+		bclk_ganged = DIV_ROUND_UP(bclk * lanes / 2, lanes);
-+		value = bclk - bclk_ganged + delay + 20;
-+	} else {
-+		value = 8 * mul / div;
- 	}
-+	tegra_dsi_writel(dsi, value, DSI_SOL_DELAY);
- 
- 	if (dsi->slave) {
- 		tegra_dsi_configure(dsi->slave, pipe, mode);
++		if ((dsi->flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) == 0)
++			hbp += hsw;
++
+ 		/* subtract packet overhead */
+ 		hsw -= 10;
+ 		hbp -= 14;
 -- 
 2.48.1
 
