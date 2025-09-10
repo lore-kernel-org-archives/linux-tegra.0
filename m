@@ -1,131 +1,78 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E264F2DCC1C;
-	Wed, 10 Sep 2025 21:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2068324C068;
+	Wed, 10 Sep 2025 21:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757540149; cv=none; b=il94IRYTTRX+jof4/D1VdEx8pwnfKGLbteUzLYMmuz8fuj8+2V84jRGHxCzs9FI9jLvpf6Jvsci7W3Y0HJ65rc9YE4e0/sMZJBBxr5RGBuFMBibycEAo5iqy0NJkWCHl6dygFlVkvCFuDH4SZJNQau2yeoBlrmC9BDg+IznRiw8=
+	t=1757541562; cv=none; b=taV/2sCPMW5Z3bkKcUxxXb5PX63ZG+CezIPiqdCUygQMWL7LKUAF/nhkDlVkaoNx5GheKqZx/lIl9Lw0JkL8b3XYQZyknSIU9V7VGi0vrJE37aUH/2CM4XcBJC+ADEWDcCXytzqHCypzePdsQwjn+ClnNpTRPqzXhQmfcJcFz1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757540149; c=relaxed/simple;
-	bh=qjBjUv5snqHXXynANQ0UNS91NtSdBGR+HOLxkT2GCF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BdSbKkXV/jjuLHNv40CX3OzygaxgLMcRA+yDpX/Wf5gv/CLxqa7WjtUUhslncjGfSd98NHzvjmQXjnTHRIivVTmxVRo4J+lVVVCn7utMI55Nm2ehKzpkOT2BgFUwPecORiViTBNHoJN9HiT505vPxlu3g5GM152uCOLM+YmBNWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNkmLWoP; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757541562; c=relaxed/simple;
+	bh=jnJrw4KvMaS+1IPKppeQ27NtdlHsDVhqXF9fQR8RGgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EuNWT1QFS4Smy0zHIKJGIG/gpWo57K+7TqUl5SjDyrx03n9J3iCDnEACivGDuOPTQEhrihfaJLwwJk+5lRB29AxdkczAYRqBtjruSmsngNs6ZpSzi6H2gnIWfcv4Xjqoni6tQ7XvMlYjo918AXLCsWZw+UvkhkmU20eH2+oGHBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4Xu4S9R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNkmLWoP"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e751508f21so73264f8f.0;
-        Wed, 10 Sep 2025 14:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757540146; x=1758144946; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1uZ4Gecv3Q3BldTcSK34g4YoCJ5ltF3zPUz6IX1qhgs=;
-        b=fNkmLWoPvlJWqwjBKGBtfDSeKUugvt/4iNIZllSCkcroGYZzoTrt6HwuUg6txTA/vL
-         kJrnKin8/8vxX5Whk4cjcIUksTfqlVfuQWKPqzu32OTZLh5DrYT5ISkdVpxljNPwSN0P
-         VHsG6WpjOmTaDw63/69ttg0GQPlRA9aFuCpF2K2oSppuwScuCNjKgkGjg0g586AW1V0N
-         9ugQpVy8oC/3WIwNawxVmqv3TqaEcVJnkjv1QgYSJ9jUy/cwPJqGOXrIdgWHKlj3jZAg
-         zJ6M0XyFFXKpd5U6gUcDSeBRvH7ZlmDM5n3El7CID2uzm7KhJ2//OpiV66u0IuYxNQIi
-         Vy+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757540146; x=1758144946;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1uZ4Gecv3Q3BldTcSK34g4YoCJ5ltF3zPUz6IX1qhgs=;
-        b=uf2YWl+IqilcCoyFI2frMYF+ltz3L004Ov/E1jqewRAOn7hKxe9ikmEY1m9GzogCEJ
-         zEjsIDpyGYwUJCsYv/1faBnUxeWcIjBnxQEv5jnLFaYx54bDx8ChoqmmX66D/e7sd22J
-         5iWHujCsHeJx59NuppOuK5o6mWTZxYFkOzc+ppvpUz7vr6ciBArPKpLZYsh3zLVSjyz0
-         lZjXsPdCMIJuRqB7+Xb9Jsou6A1+DEonfd3g/fzR5u2sxUzLUkzrGjIwdpg5thGqmKr5
-         amdD482UPhs6NFif5ul+qTQ2fwM+DAaaKLKKV6pe7nzuxqqrkwcSqsEl8ktrqQro7n/Q
-         LBSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1EmeMgHFzF/kKh0fz1/wP5SRAxzXqmc2I9VjkIGqDaiY/h6BLD5OruZvUzJ2heNtJyCItN9Kg8nVXmKA=@vger.kernel.org, AJvYcCXECnb1KbyFLIfnVRFdXbO3h67YD5RVYVOEOBWK6CKnBx+yim/F+jqIi14D4OuYCN9BPuYaL1CG24USP3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPhfJ0JsOJygKah4wdGBB5SZKEHHHQNWI2/4RpRQO8UqzBEC8c
-	03hZ+HIWBK8BPaTUriWqCI7kgAupLmGTtd5jqIO6SPHzo6uGifmpz0DF
-X-Gm-Gg: ASbGncupjD1nioxkRbiTkFGBecloQslh9fIbh8UhYBewmGQgAuGuEILt5hL1O54JeAZ
-	BWos2Lp2YfotaTbuifFLCBl/nJ8RsKrGPGo5I1+YEYHJbdICWYINuFt0GlAlXt5B3DqEKn9JseX
-	UsLvwbIPjsKfmGQYRTsFozrZInJGQBpU7FwQ0txwwhHB1V8Dl3q7Nz/ct60Wlshen7qmN/080XD
-	7zRnhqjcyS7DsriaOYT300qSEBVrIGdV2atJbcaLCEtN3EdfNeMJ6Zb6mCE+4CKMmkWDPg6BAnM
-	9ZZ7j1n5RuF1xUf9/N7aFwihKFP3ZWLynhwBHjkanRo9Z7PXPy7Y3ep5KXYqk50aYcYK3ZfUOku
-	vEk3uwDHDDMtmSPhMdVNlV+JWuR/I
-X-Google-Smtp-Source: AGHT+IFs1IObFmSvEQSjOTKOvzzXzWVoiuuIoqFs4VlqyZQPeQAZsT/ju7a+bazAtF4B6KrU8nfmmQ==
-X-Received: by 2002:a05:6000:2186:b0:3e7:4071:186e with SMTP id ffacd0b85a97d-3e740711d5bmr8851748f8f.4.1757540146183;
-        Wed, 10 Sep 2025 14:35:46 -0700 (PDT)
-Received: from pc.. ([105.163.1.135])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238832sm8073502f8f.31.2025.09.10.14.35.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 14:35:44 -0700 (PDT)
-From: Erick Karanja <karanja99erick@gmail.com>
-To: ldewangan@nvidia.com,
-	broonie@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	julia.lawall@inria.fr,
-	Erick Karanja <karanja99erick@gmail.com>
-Subject: [PATCH] spi: Replace lock/unlock patterns to guard
-Date: Thu, 11 Sep 2025 00:35:37 +0300
-Message-ID: <20250910213537.553673-1-karanja99erick@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4Xu4S9R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D91C4CEEB;
+	Wed, 10 Sep 2025 21:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757541561;
+	bh=jnJrw4KvMaS+1IPKppeQ27NtdlHsDVhqXF9fQR8RGgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l4Xu4S9Rx2yS1fg0DyEmfsdAATj6pBjYSTrWyIO+bkMb7V9O9rrNnImNLLBLz9S5X
+	 WiJm40QSMq2rrTfu8zhLmQ8O5lvjpMz7mGYoFJJ7smLkUnD6fx84/X1tEom3Fp3fGx
+	 xqI+PQN9c0XYGvYmJHu5QWE/pgfcKrjny1rJ5ssLyi7EQFSeQnfaBXA9KN8MVkFhck
+	 q6x9t/fE+muCSwNHgf/Bgc0FZMrjZfyCurERST7CAEtZLGK1ZzT6IxXg2N7OzXWwye
+	 NGHYqMBxENG75DZ8SafyMzOYWhwVzMg3rGZ8zYyfJvLBFBmDv/Vh1z+ItGJk4D3FXV
+	 33C07vnV5U5Gw==
+Date: Wed, 10 Sep 2025 22:59:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, julia.lawall@inria.fr
+Subject: Re: [PATCH] spi: Replace lock/unlock patterns to guard
+Message-ID: <ddb8f91b-3110-4d17-afcb-fa9199e128ac@sirena.org.uk>
+References: <20250910213537.553673-1-karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="g4o6fT5DfXvnE0Lv"
+Content-Disposition: inline
+In-Reply-To: <20250910213537.553673-1-karanja99erick@gmail.com>
+X-Cookie: I think my career is ruined!
 
-Replace lock/unlock pattern with guard cleanup macro.
-This simplifies the code flow path by replacing the conditional
-jump with an early return.
 
-Generated-by: Coccinelle SmPL
+--g4o6fT5DfXvnE0Lv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
----
- drivers/spi/spi-tegra20-sflash.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+On Thu, Sep 11, 2025 at 12:35:37AM +0300, Erick Karanja wrote:
+> Replace lock/unlock pattern with guard cleanup macro.
+> This simplifies the code flow path by replacing the conditional
+> jump with an early return.
 
-diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
-index d5c8ee20b8e5..5367aee56545 100644
---- a/drivers/spi/spi-tegra20-sflash.c
-+++ b/drivers/spi/spi-tegra20-sflash.c
-@@ -359,7 +359,7 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_sflash_data *tsd)
- {
- 	struct spi_transfer *t = tsd->curr_xfer;
- 
--	spin_lock(&tsd->lock);
-+	guard(spinlock)(&tsd->lock);
- 	if (tsd->tx_status || tsd->rx_status || (tsd->status_reg & SPI_BSY)) {
- 		dev_err(tsd->dev,
- 			"CpuXfer ERROR bit set 0x%x\n", tsd->status_reg);
-@@ -370,7 +370,7 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_sflash_data *tsd)
- 		udelay(2);
- 		reset_control_deassert(tsd->rst);
- 		complete(&tsd->xfer_completion);
--		goto exit;
-+		return IRQ_HANDLED;
- 	}
- 
- 	if (tsd->cur_direction & DATA_DIR_RX)
-@@ -383,13 +383,11 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_sflash_data *tsd)
- 
- 	if (tsd->cur_pos == t->len) {
- 		complete(&tsd->xfer_completion);
--		goto exit;
-+		return IRQ_HANDLED;
- 	}
- 
- 	tegra_sflash_calculate_curr_xfer_param(tsd->cur_spi, tsd, t);
- 	tegra_sflash_start_cpu_based_transfer(tsd, t);
--exit:
--	spin_unlock(&tsd->lock);
- 	return IRQ_HANDLED;
- }
- 
--- 
-2.43.0
+Seriously, please fix your subject lines to follow the style for the
+subsystem and distinguish between the patches.
 
+--g4o6fT5DfXvnE0Lv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjB9LQACgkQJNaLcl1U
+h9A+4wf/ehY93JmhJYn6SG0Nl6s/Hcg+5EtbWr6R2/2du+TYhzuWW0AUYqMrpvQH
+eFc6rauyPxfpqBgaKaGEot5JftJdgjts6rR6gWFMYvTgp9fXnYu8FFvzq0waKTrf
+U5jb6d0A4qqF6B1HBtNg51TtCd2lyS4I7InrYiurYiWCAy+x2a2Cun12AVfu58sX
+ZRTtz31xzJgC5tv7jaPYJczW2rqJ8dzfeni4tu71WIIA+uujMtAB6XsFQ5zY9OO/
+YX45VL+mfqs6gzzSgvgwe0tNI6Pu8BCHvEHC3NxCR8iEL8IyDFPiEiNiQnxBiQwJ
+rqgqPdZOsLayTPIUjigHH6s6l31u1Q==
+=m26Q
+-----END PGP SIGNATURE-----
+
+--g4o6fT5DfXvnE0Lv--
