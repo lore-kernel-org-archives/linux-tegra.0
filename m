@@ -1,67 +1,67 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BC831578A
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Sep 2025 10:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53EF3168F8
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Sep 2025 10:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501062; cv=none; b=s2c3nTYjDcmIkRPWUN1U3gJUBEpS+H2Rdl8hfyXKTNK7h4Rm7g9lQxhVrveTHVz1StnBzzEX8ku88kwWgfuPENwiJF75KmL/G+a8+7CX690PZq5/1QpOm4CqkV96ILhKKaAM0PY5lGIxgw2tZ+EmNFsP3T2bLLS4qXINaSGp4K4=
+	t=1757501063; cv=none; b=ly5eqh1kchxBJr+fcjxEWYZzfCd5Q/m84BAoEUKaxebTFgJgX8Sdk8Mglg7gCEd789plGcPD1J5sE4mDXpl83CHyOcCrgassdMSue4qvuS5UDkppmzjd+ysHRNmQsBh1og4a6faompIplWshzonaLuCPUAwRI7vpdypUfJKIRGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501062; c=relaxed/simple;
-	bh=56WhvEjp/PteZn0tyO9c/SCroF1xJwxk2BOxQgVeGvo=;
+	s=arc-20240116; t=1757501063; c=relaxed/simple;
+	bh=9uLbL4CfehXgK0FgR1jl+4z97FyCLswBjlNfgLA3G44=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YXxWwXZUBqElcLin/PDuoUKc6PK1piu8ROv+mGkZUsqIKifNoUG+mFiFzXuRki4e2u1fCFj1ZpSOYDDf0yAdJGx1vBjNMiykwSzZTHGr5srO8c3AAtbbvhTzS+oEfItajyHO597Z3LggY3ZMYYRWgDhcf+QR1AEdwEucLLrf1xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v8Xyx6Oh; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:To:Cc; b=nQ4uumNv9WeTrDgfx89ICNiG/48oKruZ0wys67Zrou+YuAFaqGDPQ7Qdx71XfAUKOCZ2az/4GAnlbWGp2PLQG8jNXc054dTFMvm/VAhkzHwb0EtBrIFRj0FuZDSwVqhcYoxO7H9PAh3rAk/oTJ5tNPrzXhrhcFTW2jzUGol6JHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jp5UqNS1; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v8Xyx6Oh"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6217d0a194eso962366a12.1
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Sep 2025 03:44:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jp5UqNS1"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6217d0a194eso962373a12.1
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Sep 2025 03:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757501059; x=1758105859; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757501060; x=1758105860; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3WpkGEUpfxQBkF0AFg2VeVRpKBfctEX+Z1irkwx05L8=;
-        b=v8Xyx6OhWZfUI16FjuVlsNQQP0+fcoTorSx6YqPQTj9ZT32BQjn4E1hB6G3k+FRXiM
-         mOz622H5FWzkCHQF+2cQoXTp7BEaXTpiMCI7ey9CRC7zUIWK+hrIyXwaffojRTOgP2dD
-         QswEIshQu1z8DUqDfFvj4zEKKMh3z3+OQ+aRHi/f6rxZledk8wHJOKjaUOUI+b9ph5Yx
-         JxTFneM+0RbMdq3pcKSKHuxEbsJmkY6ZKggAx9A7+RLkPBpVGjHRmbP3pJQB7X/Vjp8c
-         ZmuVZ7Z6ynN/EyGbko2xq8RH3mfm69rgnoSl782AE1WWW3Kn2SxIUtDp3fdwqYJFl8+f
-         INtg==
+        bh=cqRItD2bt3js5TTmQrynwO8hQqUf0mH+3ap8vOPgmc0=;
+        b=Jp5UqNS1eN9d8Wbrq5dRSOoFAUz0ZBrPhdanqQrMnlfWE4ePAOF/vuh35Bd5fRorXW
+         7g27a+HIrInmcLsfJZHiN2D4A301ZvDEtdymFly6NW+PL87dNv2fqQi2NJEQl/cK0Xtz
+         nbcO+JtKzfi3jaNo/EpyvbwTtR6WXs1cDe6n8zrBWNnHAaONPeYHhbZaUdg4C4GhCnhA
+         EvhNicI5/ploCgnA4zMPrfqE/BXugHucamzWZLH5fJ+fqplgqkEy/Qpv1roPX9ZAnl4w
+         ZrcgUTycHeeeq40bwKEgTtgeCdbFIMLg9Sk17/DxioVruW7e2ACJTmAohGBb69Ivcg6B
+         rOvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757501059; x=1758105859;
+        d=1e100.net; s=20230601; t=1757501060; x=1758105860;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3WpkGEUpfxQBkF0AFg2VeVRpKBfctEX+Z1irkwx05L8=;
-        b=WaCIxHf5AOVyN4rH+OBvuGIzhE1IoASVopGE69sEZkwFDXwM888FrJwbkqdZTcc190
-         CpNcbpXSvx5/kTzf8Lu5ShtwEZjKAwqaWyNFHkjQAGMJEHxBQuFjWZMYFzntzxWI45J/
-         St83VCVSEHbHT2CWQ5+1ylijlDMFmWaJg/rTno6qebMSKSjot6eDMyljkX5zzF3G7424
-         MDYn1PA+pyFW9P5Aztl+/GN1fe3QVchg9rgpqHVd44o78QjECHvbOBnV5vbRz251JZUz
-         WSAZClhrffuJspBmRg1MyebNkvaBNOHDyL7xta5g/jAAgXp0nuasIVkGTX0477O3RAZ+
-         ChoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEN731hbyuUxbhMh0Dr8+/pl+wOGK6Eqx7wDrnoZukaTcWiTWEi5JUqz0unMufYNiKUFRZxg8a1h8qkw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgYshmYmCra4fP0hBjyzwjQy15Fsr6XwyKY4lkTu8jmzK/xHyJ
-	vpmhnxgEV9KV7Jghsqb94Cr4AeCBIAOPZGwKxX8D4L+U22zmPmirLqHjZsUTGvmRuYM=
-X-Gm-Gg: ASbGnctRSoVache5B9eCNSdNVGLq/zrhIb+GmgbpYWylNZ80qHrmEBfV0CIUuKxZe+q
-	qufI9eE5oNznSr7AUiLzbWckkxH6k4M+GcIL9Qp7Kc5GgB/qgBdPaARrNEnQyYyNXIWu6lcZw+4
-	mBTPDCvkFKp3xf0BbVAS4vITrsdXQYc/GD/n2D1PXzz7CS6X9yqPmNkIlbLYpkRvW/yquxFMyN9
-	emsq3DXkDvi2Cm+fKwGWoqdAoeaDTFS0cfMh7crIFU1AECp8DvkR+aFnP2dM7xltPr4tg2LpWDZ
-	vk6Y2ONNCmyiagNMutUO8OWNdiMAF2WnRTtQ+iBwKozJ7ZuyK0z6NRfV2zsn81VqJ2ZhSFCDmBC
-	Sp9nLCbLEjT5c9GyIvtHVWlgetQBTPvO4NTHAy94=
-X-Google-Smtp-Source: AGHT+IGmbydVAXx0O1nO/LcVNbJRNPbs1dnLdhKWCpImMs9fWBcF+2UQFXqS28+DcfFfA7bKKjPXVQ==
-X-Received: by 2002:a05:6402:26cf:b0:62c:af05:580d with SMTP id 4fb4d7f45d1cf-62caf055e13mr1859074a12.0.1757501058894;
-        Wed, 10 Sep 2025 03:44:18 -0700 (PDT)
+        bh=cqRItD2bt3js5TTmQrynwO8hQqUf0mH+3ap8vOPgmc0=;
+        b=miGB8AcVRaM5DVKknyNC9UdYyQrq6chnMCLKJOk3PSosRtLuQuUUq6nNJLGMjimR6m
+         4KoDx8e6du9APjdya9noC5t/OuSWakTPxzOdKqknK33iVjXN8XkBjeeQ/JoovGrVHpIk
+         ihIZ33XK71m5pPZ4M5yl/fjUciV7PPmQsITQs1PS+1Y05A7lowq0lw09j4/LC2nv9sX6
+         MLYdlBfN4HB6KyhsQRFHMwCPMdLV8zw/T/ItU7Xr+iPLPipkeIMU7Dd0phTylnew9BZf
+         ESY2KVV56NMDsfUm1WVdSu+6ZwGCjMQ3u+u2Qj8fO/NSShc72uRwAsAqmqCXsXGgDgpD
+         biSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz44JD57AqOhZYsAFYixsq1iU7iKCLm5wQi1RI3rOcEXQGeGt0oWmcNCEj/62iSRteQLC4S/DgVHuErw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtGdm6BtqUmKU7bg9vJ6/WaVv7PbfQwHaqM+UCcG5lhe+1dtDI
+	4LRjla8/TYEva3QMLqyQiHqzmaWODsEc5Fp57LgnkHCHtgPmuXD0UywGmarttdJ0xWY=
+X-Gm-Gg: ASbGnct6m+L5Pnla+84zl0DT0uhJpHD4fu1XIOwiNywQtIim1o5mlX3+FWnQnDVJGk5
+	oUVVA9W1a3irJ5IAuLRZnIZke4CAonSLQrqErVwRw3S/AjA7GTzfiDFgw2C/TQhcSi2E+mKJMTr
+	JUeGDi8NkwmAvd8Ha2AlkPkNydR5/f62GF7HUtecvurX3Lv2wIvEtywo9nDFX/FIGrVFKqrMtGA
+	8S0ZhKPz1Am4W7Y7OpAFbBVWaKSklvcmdEqEwiESu0tBgiUe4ALER7PnU4gIZq/nPK2WIdeZODx
+	Hc40kj0eU67Tae63/vuwUugeii+TAgSNKk41Q4pWxb6qr010ZFjLgDAVEC57Paxq1iLEOLGGhpo
+	oiD4J5lI87MsQ5ZQRFF2HclUdY14PQ91DMTY55OE=
+X-Google-Smtp-Source: AGHT+IEpTQEtThVJ24rqHPh2z2AuC0Jni6hadwlzpRBmk8LSW8tMLyniWOtwKNncJCF0pQQNoWuS9Q==
+X-Received: by 2002:a05:6402:325b:b0:62d:c7b9:b149 with SMTP id 4fb4d7f45d1cf-62dc7b9b348mr461877a12.2.1757501060110;
+        Wed, 10 Sep 2025 03:44:20 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm3144890a12.46.2025.09.10.03.44.17
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm3144890a12.46.2025.09.10.03.44.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 03:44:18 -0700 (PDT)
+        Wed, 10 Sep 2025 03:44:19 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 10 Sep 2025 12:44:01 +0200
-Subject: [PATCH 05/13] memory: tegra30-emc: Do not print error on
- icc_node_create() failure
+Date: Wed, 10 Sep 2025 12:44:02 +0200
+Subject: [PATCH 06/13] memory: tegra30-emc: Simplify and handle deferred
+ probe with dev_err_probe()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -69,8 +69,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250910-memory-tegra-cleanup-v1-5-023c33a2d997@linaro.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250910-memory-tegra-cleanup-v1-6-023c33a2d997@linaro.org>
 References: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
 In-Reply-To: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -80,58 +80,83 @@ Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
  Aaron Kling <webgeek1234@gmail.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1222;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2183;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=56WhvEjp/PteZn0tyO9c/SCroF1xJwxk2BOxQgVeGvo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowVZyO+TuUxzmlqng1BKznkSRk7w9OsWLK/p8K
- zUsczbtGrKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMFWcgAKCRDBN2bmhouD
- 1+FBD/oCk0CGj9IKqnKbHQqr23NwdJ0d7KodNCecjJFeUmLJb+KSe/+DY0vl79lZ1xVRYpLE+LA
- EsSRrMBrUpL0TdA8CoKV+BEPoOvAU6tH+0aBo4a5QtxaLGUrAPknhVzCdrRkFprTCDn0AiEAWpp
- 3Cp9KgMoBP8jNpDCBIzAeegCdvIefuirTdCCtcVtsgJRYMAj8wULIqBmzSn1SIDedUEWwDNdobh
- URLbwWh329ak05l/ER3pqFTic+uKRsbroNi9HtqwWhzvAMB51w+xjywlPAn1k9izh3CH5Sk2B2F
- A/VY9ZBmMueD08O+T6I1OkvZHN+GfNMs2I+3mUkqHw8BCGzlaID+zhxrYORpStIofMbcd+iwsa2
- yhX2/3NdJTmLjcg9JaH31PK9uPD+jyFYbxHmYjvkxocH5thY5Hs75Z/tTZ1LYf2DnUdX88cUrB8
- dXZSSFw2/rN96VIzEk0mfHIISQk/g9kh8cyasxiL1+pPZQxnPilATe2o+/m/ilEuIq9OWbRF9ib
- pNZdHZnOhCm0Eh3tEWHMh1yCZ9QBW7gqrR2LaUM9bcNlah9m9gwSQAsR8MTxJsJEEVqYc3gt/wt
- jzbzczwZFx06Ux6ZDhe+9JAUwd0zC7LunbOvzACuQFEhWSuPtQINQFmFu+mo4ycUqIq0Kv2nYMZ
- Tn/jEx7SFZo8p+w==
+ bh=9uLbL4CfehXgK0FgR1jl+4z97FyCLswBjlNfgLA3G44=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowVZz3v9AbJoO2ZDaH8ze2R7RA8EtirBgZASnh
+ lSu5ws/TJGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMFWcwAKCRDBN2bmhouD
+ 14nSD/4n+XU86XSAKNv1sV0NhsLqho9+ahJdat/d4NoY2PTqmvCcWi8fnFuAUo6QzycsCIAxofq
+ eDJI/DYitrW42nBMAZZfM5SkaNohsY9bXviojcRLC6KQ5zTHaWF09EHEGUtcBGIEzCyc5A1HPtb
+ PtooA36aEQHm9X2+K0qJrgdJKsk2Qpd3hrnFuUGRLgPx3gfenJFhvGLdH1WJWXo9lketY7ynjFC
+ zyxbRvNoh+RRL6I+OgfQEX13zQSnOiWGP1FvLEccsDb0NIjUF+r6dPdTwZF55acqS7H7YiV1gdw
+ jSLNeJWNzneRwHnHpviy7G+CJcGWbWlnqsF0Frn9zE8YPPuXIZMCJYjmclspe028FfeH6zLx70J
+ BpqlOSpJFi9niVl9N++TVp02WgXaOwi4H/3N5fe1PB2yIdF2ZRC4/t7akwrOIHTCakfRej4jNoe
+ H+8595OGsv2r93lquQoel4cHXJAwRvYUep4D6KWI9zWWFQy2Tl+YykeUCVj2Pp50jSrGldLRnP2
+ g+9L4um2sAqgEsI6Khk2aqSUNai4B0gHWcnCwEqkVSyRN/saXktQ6wGHe+Ee5UtXrGxjKtoUHdq
+ HTm17+Qzxz/P6r82SMkLMqjzsAYY+J9Tfe+IctJSCAIrKNID0aBryJTLj8IyHViNm63tam+zvkp
+ bLx2I71sqNEs7Ng==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-icc_node_create() is alloc-like function, so no need to print error
-messages on its failure.  Dropping one label makes the code a bit
-simpler.
+Certain calls, like clk_get, can cause probe deferral and driver should
+handle it.  Use dev_err_probe() to fix that and also change other
+non-deferred errors cases to make the code simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/tegra/tegra30-emc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 921dce1b8bc6382ea66d70ad0f2a12283316ad90..c96aa63a5aa085a409ae7ec901d2a210748f5bcb 100644
+index c96aa63a5aa085a409ae7ec901d2a210748f5bcb..cca386af423e9647266878ce6cd1bcec09c8eba4 100644
 --- a/drivers/memory/tegra/tegra30-emc.c
 +++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -1534,10 +1534,8 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- 
- 	/* create External Memory Controller node */
- 	node = icc_node_create(TEGRA_ICC_EMC);
--	if (IS_ERR(node)) {
--		err = PTR_ERR(node);
--		goto err_msg;
--	}
-+	if (IS_ERR(node))
-+		return PTR_ERR(node);
- 
- 	node->name = "External Memory Controller";
- 	icc_node_add(node, &emc->provider);
-@@ -1565,7 +1563,6 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+@@ -1563,9 +1563,8 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
  
  remove_nodes:
  	icc_nodes_remove(&emc->provider);
--err_msg:
- 	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
+-	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
  
- 	return err;
+-	return err;
++	return dev_err_probe(emc->dev, err, "failed to initialize ICC\n");
+ }
+ 
+ static void devm_tegra_emc_unset_callback(void *data)
+@@ -1592,16 +1591,13 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
+ 		return err;
+ 
+ 	emc->clk = devm_clk_get(emc->dev, NULL);
+-	if (IS_ERR(emc->clk)) {
+-		dev_err(emc->dev, "failed to get EMC clock: %pe\n", emc->clk);
+-		return PTR_ERR(emc->clk);
+-	}
++	if (IS_ERR(emc->clk))
++		return dev_err_probe(emc->dev, PTR_ERR(emc->clk),
++				     "failed to get EMC clock\n");
+ 
+ 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
+-	if (err) {
+-		dev_err(emc->dev, "failed to register clk notifier: %d\n", err);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(emc->dev, err, "failed to register clk notifier\n");
+ 
+ 	err = devm_add_action_or_reset(emc->dev,
+ 				       devm_tegra_emc_unreg_clk_notifier, emc);
+@@ -1654,10 +1650,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 
+ 	err = devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr, 0,
+ 			       dev_name(&pdev->dev), emc);
+-	if (err) {
+-		dev_err(&pdev->dev, "failed to request irq: %d\n", err);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(&pdev->dev, err, "failed to request irq\n");
+ 
+ 	err = tegra_emc_init_clk(emc);
+ 	if (err)
 
 -- 
 2.48.1
