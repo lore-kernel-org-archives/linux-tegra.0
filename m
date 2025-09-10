@@ -1,138 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC7D2D0C70;
-	Wed, 10 Sep 2025 10:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD4C269CF1
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Sep 2025 10:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498823; cv=none; b=ENPuoz5jPburdzf+xpeXiEd/4Y7ePJNLL8U6OAvFh+mWgTGpi6SXPzk/eMqJmYtcl/++hH+SbAbgLJj38LpzeRk+Gnnkd0xVEeanIhnJXnLyOR1/nTKBhM+DtYsqiHZypE5W4l7NkpK5rpcAhHU0RDUH+Eesfl5hmGlKYO/e15Y=
+	t=1757501056; cv=none; b=E0moFkqLQGFlMfuR8lopJnT36QuFrwnjx802g/EH4bt3x+PSVHr6H0firz77kpwAEjCDfvi6cF0QXkrdo1PjhJalEubG/dzbfJU4gnpPDCNj3pc+Sy9ctW2hEiLs91M86YrwKjPWfxkQPQun5gIW73nwq1E1Yu7H1dZ843TQwXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498823; c=relaxed/simple;
-	bh=bHOkbfoglu20OsidKx3GRDgVTnTvVZg5G5i+OzcZ9TA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hWHCHpQLuKsF/87BQid5H1OSUNvqcioXt/jqtpbpWG44nnfp6n7H6JUV2eBJ4MRh+w+twnXrDfn5agET+WyKOY1q2LDe8igsgR9C1pV915YhcCG6Z2ZuBJvs+ovK0icP5EVGOLyoIHJMOucnq5KfnKDOviIbYF9t6vVq9t1AZ+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfEWANyh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757501056; c=relaxed/simple;
+	bh=YZxvDIdDmY/3wxxRt0NldmRCMJltF2rY8Dt82GASgFM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D9VKdGlSp+sGEW9kiafYFpk0rkN/L8h5DXHWLPVL8jC+iYIEcrZlhiyoTW0l7339OMTfq4GtE6OjTDDeb9Xo7RL682SYoME6EpkSHlqNtYoNtpmKBlQ8VJsNY+4DKWTfAas000t9tUIPgluHWb10X6IAgxaelmNwZUyL22kSPSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SLcMzggF; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfEWANyh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD22C4CEF0;
-	Wed, 10 Sep 2025 10:06:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757498823;
-	bh=bHOkbfoglu20OsidKx3GRDgVTnTvVZg5G5i+OzcZ9TA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=gfEWANyhcndb+iDDjT6bxslN884orK37WwGYszcygpPb0lLCeuWbcBEVylAiRhpcl
-	 nSsQS1AYjt/OxMRt8CzNoNHOihjpbFHI9Sqb0fugAGTnuWLQU3Yn3oh3ApUBxGIv/d
-	 7YfakKDEZ+rK8G0zwip3eSomjBKtr3jRk0qJf6XwM08yDiHb0JnfdbmyoGeRmzN38a
-	 AL9B4/XHH2EQneLMhXJcblNPuGw0GkooblfAzOI2lLFHYOcX7zNyOmC9SYigyrONxc
-	 9s0uHUXSjlESdD6hNX2kRDf3A47vypCcMmWhi0AmmPwZ36HIsqrlEPvfd374e6ji+X
-	 iYWWARVrmqL3g==
-Message-ID: <c1b0bffe-f5d4-4d71-bfb6-b047d3d2866e@kernel.org>
-Date: Wed, 10 Sep 2025 12:06:58 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SLcMzggF"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61cafa0a38aso1201104a12.0
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Sep 2025 03:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757501053; x=1758105853; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/Qjry/G+jx8lqtwVy7XKrhJZHtvYwgGNx73zxEK2OU=;
+        b=SLcMzggFsN0iR9lxTRmP/2s65nrVyl5WjbPw+GFo/Kr5B9bP/AUDbpWgxXfAELkUJj
+         o2Y3yqfU9SNsjxFhS1sJydxN3U/l4lBRhh+cy07ZWj56hWP2ZUcNJnKIVkuD/3vg2Mja
+         PDYg+rYfgi6zund0kQ4M7cZc7ntQmrJFXLzFGwrGMEz9N9er+R2GcGohRf9Juw3s5ugG
+         kXaHY69UwHAFX9Pq4KYujJEYCP0QOhwpoLK70TuxHE9xEzcJY/UkXOtiWEwVxXbKas07
+         GhRL66716hCHK3/gEFeYCwqn525n82DJGrT3Ye+UW1I5AS27S9M8GkdlMWCk+cDtNy8Y
+         SEWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757501053; x=1758105853;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C/Qjry/G+jx8lqtwVy7XKrhJZHtvYwgGNx73zxEK2OU=;
+        b=Klmf30nyOQ6EkzAd0ZbvcEHtMDMXXxX8n9h82b4u/bICgLk8x6x1Sn3r3om3GzFzH+
+         6eQDis/3qjVYs/GP4QyJFMvCkfDd1uvS3s1qRRQVjhmXXY34rrzz9YsANJrpTmhOmuXg
+         hj+yTVilpMayKWGXUFin5/GsA71CKlc/Ee8EmQW6+p2hCYy6+/vzeZ3oDlkgGhOe/myd
+         sWE753J02vph5eO47fzCLc39fG6XnpIWZhra3wJ9W2Nl/eRg+C+4cdNFRFPSxRm7NO/Y
+         YgU4o4QojJnOg2pf9cBZra04vSACqFLQThc36mP6v0OqXGEH6wyYueUJbgdliBHWIpA9
+         NxAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIgLZcvGuvVp9lmKfFCR7MDN651X/sGAg8scQC0lG7Dal1vt9j/B/vM1JWDmEjWMRAYWYcUsWhL64gFQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YymY665+Pumuzsp0HzFs2IkCgN1OeYAvgxWiCJtX8O8WIVTW208
+	ltOghCTom7GV2i76s+Qb5xqt4jtjY9bMrGh52eTn5nmXw9pjTicc4BhMUNtFip4DV3EKlQd04H5
+	8Phv4
+X-Gm-Gg: ASbGncssjZg7Yjeu8UtCM3uaoiJyf2Nm2FfjYWlFpAu6Bv/S1uWTHoOXzey/WrRM+qg
+	lSzm60CiDCK+Kpd2JwKE9excYPdt8rCJuDzzB9US4J3KEJVIt1mLCf4875d8qtSQF1aPwULiRQc
+	2Wr1z9LvV2Ameg56bfiaEhpT6XXWnle1hPKwwO8a/iXVeQg6FSbYTwdqWumqz/rEn2Lx3s6NSFv
+	l8ZxMr+lhjhv3o31jeBjHJMPsbnrJyY4SCFh9XDh5e+e4jN+i0xvXdiz75Rf+jmO0b2pygNWn7H
+	qZaXszUxZX2kCsbpTmWdyBgqzxQoaRzNmuDyeKxEaLhLFNt0ZPGHTtij4fI7TDfDPwRLJK6hcD5
+	SssU+n5t9UZRxw2SAUS2Va8+a205xmx3TP5QCs6w=
+X-Google-Smtp-Source: AGHT+IERk52gGCs3n+Z3B8VRz2Pi8NLtvk77MiGr+3goAnlVYOxa6u6adOOxLhuUzAHo0UCVOp8sVQ==
+X-Received: by 2002:a05:6402:358f:b0:628:28ee:942 with SMTP id 4fb4d7f45d1cf-62828ee0affmr5454092a12.4.1757501052935;
+        Wed, 10 Sep 2025 03:44:12 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm3144890a12.46.2025.09.10.03.44.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 03:44:11 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/13] memory: tegra: Several cleanups
+Date: Wed, 10 Sep 2025 12:43:56 +0200
+Message-Id: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] memory: tegra210: Support interconnect framework
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250906-t210-actmon-v3-0-1403365d571e@gmail.com>
- <20250906-t210-actmon-v3-5-1403365d571e@gmail.com>
- <29ec10fa-1ca4-43eb-a865-7219d39c7140@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <29ec10fa-1ca4-43eb-a865-7219d39c7140@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGxWwWgC/x3MwQpAQBCA4VfRnE3tEuFV5DAYTLE0i0je3eb4H
+ f7/Ac8q7KGKHlA+xcvqAmwcQTeRGxmlD4bEJJkprcGFl1Vv3HlUwm5mcseGtiXTZ0ORt5RCSDf
+ lQa5/Wzfv+wEv03+sZgAAAA==
+X-Change-ID: 20250910-memory-tegra-cleanup-1ba0d5f86ba3
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1671;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=YZxvDIdDmY/3wxxRt0NldmRCMJltF2rY8Dt82GASgFM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowVZuUVkFXe7gVcwAH9KeTVa2HVPVE407M13tn
+ a5vjctr+u+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMFWbgAKCRDBN2bmhouD
+ 10ItD/4lrQLY0Pk6xsuHa6nY1eY8cSuEpFxxCdwano2xVA/V2xublblvXIk/HDzm6E/SGCqnSi0
+ T7j943THyR5qMjgiD2Er5DzLlkx1eF5JXx15djOcaBhxv/3pKqBuDccjbuXpweNWmfjYZ0ruFfc
+ aaIEz0ReAoCclxAFUsAsYrehasRtK+SB4JCH5cntboGaWPOG8W8KPg0vKVIAbQ7LEYgkSGP4jZh
+ hN5XLeLDAC6yBhAG29raJOqlRIS3Wc28/tv+gA1EaahtIFRwVr4FrD08yvA0KvR+sXxucqvvxZx
+ gEwHRy0QAo20UnqbcE+vL8SnNnJK5n3r2fKI2Gt2pQ8TSiWh5KcVD6/VAmpIXxkpN+ezZHd1Ian
+ bDLtF0v8Gbhzhtp7n2mgDSYBzIAwMHEyma7XycSbnDccnRADXQDorSzl2e1pxSLxYFbIhuYckr8
+ G/k65Qh6yyklmop+n28IYkDV1qH43iPJf/tkxmgJWilgkyVSIBN6rj6CX9jGHTj5ui/6EA5VBs1
+ J+n3XP83wj9bGt9mU/p0HN5sKQoLfpaI68GnCqnPNSGNfCM2zvZpabT7wDPvUWY8VELyc2cEgLG
+ ftwXYEUqWhTBKbpJdN+h9ob8yJBuFxaC1peKpw1W0dfinLJRsBIt7bBGBmxHqiTV0NeYRwNHkh3
+ BoWVqwVcrOlrJ5Q==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On 10/09/2025 11:39, Krzysztof Kozlowski wrote:
-> On 06/09/2025 22:16, Aaron Kling via B4 Relay wrote:
->> +
->> +static int tegra_emc_interconnect_init(struct tegra210_emc *emc)
->> +{
->> +	const struct tegra_mc_soc *soc = emc->mc->soc;
->> +	struct icc_node *node;
->> +	int err;
->> +
->> +	emc->icc_provider.dev = emc->dev;
->> +	emc->icc_provider.set = emc_icc_set;
->> +	emc->icc_provider.data = &emc->icc_provider;
->> +	emc->icc_provider.aggregate = soc->icc_ops->aggregate;
->> +	emc->icc_provider.xlate_extended = emc_of_icc_xlate_extended;
->> +	emc->icc_provider.get_bw = tegra_emc_icc_get_init_bw;
->> +
->> +	icc_provider_init(&emc->icc_provider);
->> +
->> +	/* create External Memory Controller node */
->> +	node = icc_node_create(TEGRA_ICC_EMC);
->> +	if (IS_ERR(node)) {
->> +		err = PTR_ERR(node);
->> +		goto err_msg;
-> 
-> return dev_err_probe
-
-
-I will send patches to fix existing code. I also found some more issues
-which I would like to implement here.
-
-I apologize for coming with all this at v3. I should point out things a
-bit earlier, although how this patchset was organized also affected review.
-
-Anyway my comments are mostly non-critical things, so v3 is late to
-bring these, I understand. That's on me. I appreciate your work and
-please do not get discouraged with my comments.
+Few cleanups for Tegra MC/EMC drivers:
+Deferred probe, few simplifyings and function name unification.
 
 Best regards,
 Krzysztof
+
+---
+Krzysztof Kozlowski (13):
+      memory: tegra124-emc: Simplify return of emc_init()
+      memory: tegra124-emc: Do not print error on icc_node_create() failure
+      memory: tegra186-emc: Do not print error on icc_node_create() failure
+      memory: tegra20-emc: Do not print error on icc_node_create() failure
+      memory: tegra30-emc: Do not print error on icc_node_create() failure
+      memory: tegra30-emc: Simplify and handle deferred probe with dev_err_probe()
+      memory: tegra20-emc: Simplify and handle deferred probe with dev_err_probe()
+      memory: tegra186-emc: Simplify and handle deferred probe with dev_err_probe()
+      memory: tegra124-emc: Simplify and handle deferred probe with dev_err_probe()
+      memory: tegra124-emc: Add the SoC model prefix to functions
+      memory: tegra186-emc: Add the SoC model prefix to functions
+      memory: tegra20-emc: Add the SoC model prefix to functions
+      memory: tegra30-emc: Add the SoC model prefix to functions
+
+ drivers/memory/tegra/tegra124-emc.c | 140 +++++++++++++++------------------
+ drivers/memory/tegra/tegra186-emc.c |  39 ++++------
+ drivers/memory/tegra/tegra20-emc.c  | 150 +++++++++++++++++-------------------
+ drivers/memory/tegra/tegra30-emc.c  | 119 +++++++++++++---------------
+ 4 files changed, 207 insertions(+), 241 deletions(-)
+---
+base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
+change-id: 20250910-memory-tegra-cleanup-1ba0d5f86ba3
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
