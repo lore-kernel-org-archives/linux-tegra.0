@@ -1,158 +1,152 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27C535CEBB
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 17:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7846B3F9C5
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 18:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757611354; cv=none; b=lew2MhyN1dvSR4HRu4jtO3pC1ypfdjiObVcHL/RnBzMFI/hCtuDJOEGVYYWh4pdveClQs7GdDaSi1IA8GYfBzsRmuBLCmLmdWPIcVgkwnOA/qkhslMkszooNboyZDg0NvrW5nYf5L/Hwb8KfRAFEaWHa2ZMkeCF856Zi+g7UUaM=
+	t=1757616977; cv=none; b=uBFFcAziO3Hh2HOIojS+V1VgFoivM22V4R8t21QKWGiGVa3EQiI+D+M+75cYvnApa4vjFFlLXuTqm0I1nnKUuzrlx/56+wop3H3FEMTFa7r+cdarUecX8wW/jTDcHW3J/no833+x2U3iFiJMKjDv8jNyeTL8jOJ6tLSWQmp6aqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757611354; c=relaxed/simple;
-	bh=6SGthHS4qrvYOf3o0liwoAGvJXCeYkPogYQn1CUGiwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uz9nOFmBjRjX/OPRceKJOUp5IfLdObsmJyV04J6vqZZX7xces0i+DLuEJjlvBG4+bCXCGD1f0xa6abzYTUmLPXKE1F954MGy5qTK0N2AICWCaPgUVDmUshPzXPXVbxsWrIx7/pCUCYM1XW6TNuhKoAu9tEM1kkHaJesk8eZbU38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrD2ri/X; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757616977; c=relaxed/simple;
+	bh=G9PVOicImObvMdXVVb+6plfEYjjJkzKtfTB6xhY7oiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ezugph3W/+Ae8rvc/t6LhU5KADhH21m0O9a0tj2EGFxVFOUtXQLszm64LweLRsU7uUqQr+RZqLEycq95robNvXW3c0MaN72mgweNngp2EAiTQ+hT01Otn27wvGyt+iGpkR1gAvG470lt3lWIk7eekZl/X1JYqv00fDw0K1psma0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mzr2+QVj; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrD2ri/X"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e07ffffb87so603214f8f.2
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 10:22:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mzr2+QVj"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e7622483beso604573f8f.3
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 11:56:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757611350; x=1758216150; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=al+SGVJLrQ5Ai/9RbesG/7WJAj4tFEzw9mmlTmlbQoY=;
-        b=NrD2ri/X+HgTLoJdS5cK3jk/4XvZ/tr7aKsdf6UxEr52HXyXTc1RGcHizDLthifJcd
-         bES/yBJ9mtCLx3aUJ5G9XNO44NLVj5t8DkPubgRI64qkdUuVM5PMvqFLiVy3CZlY9Rx0
-         ErfvxL7JWpX7xgAHdZrLJ/346oPk1AZ8ep7R01fTjmEtErwZzpSJW3SMQQh4F+BXaJrU
-         dr7Wb9EPHMb5gGnBq5MzpVjzwJyooz6WAtLyyv2Qo6IPBnrdTtTVWk+AyD0zTa1wtUXI
-         6on7dzQIFFdfISzzhnvQ6hsCr2JMYsk7LC1tO7Nf9jOdAwQOSJc/hvLNhEaGZ0zF/4nd
-         LAqA==
+        d=linaro.org; s=google; t=1757616974; x=1758221774; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rekHjTbST2J3gdgDOG8ibNuPO2c1lzAXyA1v5TU/iWo=;
+        b=mzr2+QVj6hfChvNZtEBi7N5IVkR8wG7RNXuLgNFMC1IuIAL8olZtuyX110M3WscCYR
+         XshgRYC6teY+fUJVGfbApIzhhVw2A8kyQXoJikTwdYIhmhuCYZ8MnCB5f+EjpFdCHdar
+         1rSNYn9dEiMQ8nOxDIr1UC3fwQIRRJIQJVklQHgqT2XnJHvXls1AjqC1Ykzd9A4bIC/c
+         G5pv1G3Wt14KqtCmIf5pCV3hGXhL5oY0/ow4I34/qeitfkOEjDkO2a9gZdAxBbF3uBcI
+         MJFHSIpBNjanXcyu6Dflur/p2VQCxT7MUuo7QsAYygrq4lBNHu798a4d+Ueo90JtTROf
+         BWIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757611350; x=1758216150;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=al+SGVJLrQ5Ai/9RbesG/7WJAj4tFEzw9mmlTmlbQoY=;
-        b=CA8aoGrk1jHL/s8lZpSJLSbBjGh2ccy0E+8nLRo2zLCGl21Q2YgXsQvZFRUlNjsVEX
-         XvGqrg9l21Jwrn7at/Mu/1WYxC6rhRjx6yrrZpGSH9vFm582SVaD1ZCslji0E94Gb5WU
-         Td5IiXZFE0Q2UldLLd7cEu/TXGS9/x+Y7Xkj/bN0MY5A5UOw1rjtOGG9JWrTDDr9qUjH
-         FhUBGwnUZg+f8lpsQ8UOBd2LWSSfoD6BxWw+fndOZ87e3di1LbdHaMwjS2tHK24oMtSw
-         qBC/pxkZJoE4/aIHeYTBUYZZDtvrFgT080A1S3CIG498AoA1jEyOWe/ehj6TnUuNRAJX
-         H4GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnrHpXRhcraTuyVOw04k/fpxjtA5LIxuAOAGfa4Y9H09WD5lfAbnKkFWB2qKMrLsp9dbmjZyF+nhLRVw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZJUAI3vu1wiHESO1xKY2epVbrDAJe4PKFzk4VHVFC98dm9aEs
-	p8Zo+Syj7L4PKZ8pxE037znN1rSHmHddTTmXL51Slwhliyspfdzo+iLW
-X-Gm-Gg: ASbGncsvgwudDifPvFn8vdWWSEafIuHViTq+gFE3vlQRmfV8wiae75hLjqvolrtLQJT
-	hg6kJvREpaJTNGS4ijJLJ07Xv9Aj5+WAlHsRFEbEZ3HIR/uH5B3gD+PxJOD+UaLPF3vwi5EOBFa
-	uMpffuoh605j7i5noNNvXPh53hmD0+glUzn3hcHaQQsjw9Hdk/6xr7mlyEOJe2UDbCM+M2zrODP
-	ytD9lbgzqyptQ/yVic+1FZji/MQ5ToOHN6s58ASJn/0L2V5dn+0/cPf/+aoYOlo3z/O3p0tkiDX
-	vTRuQf0jixB6xRbQa3bZMQoEErmWIGs7mnNsVEA6/MeCU3SR8KMLrccoKgOQRO2W5nKkHZruWNm
-	faK4uFPL0QTSnIEJodub55a5nVw4B2B1tGdGvDHwUMxGb9EK5ZUe2ViGqS17wgmMdAzTTeZS9Rg
-	TYOudGEjnM
-X-Google-Smtp-Source: AGHT+IEkwCAU/UDUcPwD0Y2oC6Cjayd4uEvKVlhGx0N1h1LmikPqq6SKErYIBBoArS7lWmOvMtPcYw==
-X-Received: by 2002:a05:6000:26c1:b0:3e3:2c0b:dc3d with SMTP id ffacd0b85a97d-3e7657b9cdcmr160359f8f.17.1757611349960;
-        Thu, 11 Sep 2025 10:22:29 -0700 (PDT)
-Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607e13f4sm3156998f8f.57.2025.09.11.10.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 10:22:28 -0700 (PDT)
-Date: Thu, 11 Sep 2025 19:22:26 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, 
-	Svyatoslav Ryhel <clamor95@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
-Message-ID: <o6agzaasqcnfibvtf5hgvjxlbrcgz4ulld657xfduhitk465pd@l27ge5ilkpjv>
-References: <20250829122235.119745-1-clamor95@gmail.com>
- <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
+        d=1e100.net; s=20230601; t=1757616974; x=1758221774;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rekHjTbST2J3gdgDOG8ibNuPO2c1lzAXyA1v5TU/iWo=;
+        b=umE9dSC+/Y2jqaB/hAV1pE1VxAYMk4xISnJvpoEshiE8wcGNpekcyGo9hyb/g0RX5p
+         SzPHzC1gFZOOOL+hmP/22/9M3jKDuv15emKku9wCpizb3PXHhmOke65R2Q62Vp+bZAAW
+         Z7nxgFjRJ60+rl2jyrm19AIw/c21MY9FvcVSudgGnkChwlb/2D2npww3fWEguauhw3mN
+         fKM8RfljIKaxh1x18jZUuhBAky7EnDQWujiLJh7YnMMux/na1VoST5lCuoFteTcFE/oN
+         HMfvw8y+/kbe/91Uc7gVJnUNjlg2nk6C3AC1YmOzeKtvrI/wHSHmBe3TJ2J5LbUNqjCG
+         aHsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ66LFX+Wcpd+21I5f2ZYP3c8UrwtZ4MHj1y4egbQlzAHslyM4p5poRUW7HmD9vq+99n+SiGfJ4WtRfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsdm1AALTSzaeL5UaPakIwwbnJfZ1sBBCtPpaCe7Abz4/0AEcl
+	YDzU4rDGrPiWm/4LZQ63sVVEzkyfiPeicvnkM0LB06cDDwKJKoRQOdRjBPyjYgWZtKk=
+X-Gm-Gg: ASbGnctcaMUfvWOrbwWhXoWMywi6HLkwn8RYT6cfWR7eU7e5OFmnZ75AEVjNSWKwIDp
+	Jv63xoOaK6HK2NVfITLzmkHCdWbefBoS4L8yjqdP907daPY2nYReBSSHW5WPXeIAlu0k2ZANogm
+	sVnvgzwb2ZF+K6Qw1PsJd78W96YSeTyplcjRPwyvR5wlz9kutxvrhF44UDhZn/W9+NmYScEE2aq
+	BydbQu3fhXbJuQqBPZOm6kVoWbxg1FtawR7EOwSYIOdoL0RcSo2ExR9bhdFLsRXHWhTgjUd79Sx
+	ClTjsrI8FRoLb3n+p2LQnApNb3VJNGUlQ5Itq0VcaxbeNZ9mTpgE7qHKwMydFtWjmfku+9Wj89W
+	fVZey+y7sNEHZVsYhZxpb8IvYwTOvspPL8loWLQfU5/irr8krR/WOB8//dmwDwlWucPth91qzYY
+	OOjZhqDW4aYK98
+X-Google-Smtp-Source: AGHT+IEuCngj6El+msipl1V3catUDI1SMJQ5OlW0Wjxj8ggiY+iRRQHMDi9h8+t5G0p3xbR8aE2/SQ==
+X-Received: by 2002:a05:6000:2509:b0:3d9:70cc:6dd0 with SMTP id ffacd0b85a97d-3e765a05342mr397079f8f.33.1757616973832;
+        Thu, 11 Sep 2025 11:56:13 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:d521:838e:7c69:f457? ([2a05:6e02:1041:c10:d521:838e:7c69:f457])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45e016b5c5dsm37360275e9.14.2025.09.11.11.56.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 11:56:13 -0700 (PDT)
+Message-ID: <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
+Date: Thu, 11 Sep 2025 20:56:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4m23ttv7p46bf745"
-Content-Disposition: inline
-In-Reply-To: <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250828055104.8073-1-clamor95@gmail.com>
+ <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 11/09/2025 18:27, Thierry Reding wrote:
+> On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
+>> SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
+>> SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+>> with Tegra114 and needs only a few slight adjustmets of fuse calibration
+>> process.
+>>
+>> ---
+>> Changes in v2:
+>> - no changes, resend.
+>>
+>> Changes in v3:
+>> - expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
+>>    configuration further" commit
+>> - changes title of "thermal: tegra: soctherm-fuse: parametrize
+>>    configuration further" to "thermal: tegra: soctherm-fuse: prepare
+>>    calibration for Tegra114 support"
+>> - Tegra11x > Tegra114 and Tegra12x > Tegra124
+>> - ft and cp shift bits dropped
+>> - clarified tegra114 precision
+>> - lower_precision > use_lower_precision
+>> - nominal calibration ft and cp hardcoded into SoC specific structures
+>> - added tegra114-soctherm header into dt-bindings
+>>
+>> Changes in v4:
+>> - fixed Tegra124/132/210 cp mask
+>> - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
+>> - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
+>> - adjusted soctherm node and inclusions in tegra114.dtsi
+>> - dropped use_lower_presision and nominal_calib_cp options
+>>
+>> Changes in v5:
+>> - fixed CPU and GPU hotspot offset values
+>> - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
+>>    counterparts are equal
+>> ---
+>>
+>> Svyatoslav Ryhel (6):
+>>    soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+>>    dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+>>      System
+>>    thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
+>>      support
+>>    dt-bindings: thermal: add Tegra114 soctherm header
+>>    thermal: tegra: add Tegra114 specific SOCTHERM driver
+>>    ARM: tegra: Add SOCTHERM support on Tegra114
+> 
+> Hi Daniel,
+> 
+> there's a build-time dependency on patch 4 in both patches 5 and 6. Do
+> you want to pick up patches 2-5 from this series and I pick up patch 1
+> and hold off on applying patch 6 until after the merge window? We could
+> also do a shared branch, but it may not be worth the extra hassle.
 
---4m23ttv7p46bf745
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
-MIME-Version: 1.0
+I can take the patches 2-5. Regarding a shared branch or wait for the 
+next version, I would prefer the latter
 
-On Mon, Sep 01, 2025 at 04:57:37PM +0200, Thierry Reding wrote:
-> On Fri, Aug 29, 2025 at 03:22:30PM +0300, Svyatoslav Ryhel wrote:
-> > DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
-> > a ring oscillator and translates voltage changes into frequency
-> > compensation changes needed to prevent the CPU from failing and is
-> > essential for correct CPU frequency scaling.
-> >=20
-> > ---
-> > Changes in v2:
-> > - dropped 'drivers:' from commit title
-> > - aligned naming to Tegra114
-> >=20
-> > Changes in v3:
-> > - add DFLL support for Tegra 114 was split into dt header addition,
-> >   DFLL reset configuration and CVB tables implementation.
-> > - added cleaner commit message to dt header commit
-> > - added T210_ prefixes to Tegra210 CVB table macros
-> >=20
-> > Changes in v4:
-> > - expanded commit message of car header adding commit
-> >=20
-> > Changes in v5:
-> > - renamed tegra114-car.h to nvidia,tegra114-car.h
-> > ---
-> >=20
-> > Svyatoslav Ryhel (4):
-> >   dt-bindings: reset: add Tegra114 car header
-> >   clk: tegra: add DFLL DVCO reset control for Tegra114
-> >   clk: tegra: dfll: add CVB tables for Tegra114
-> >   ARM: tegra: Add DFLL clock support for Tegra114
->=20
-> Hi Michael, Stephen,
->=20
-> Given the cross-dependency between the dt-bindings header, the driver
-> and the DT, do you want me to pick this up into the Tegra tree and
-> resolve the dependency there?
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-I've applied these four patches to the Tegra tree now and plan to send
-the drivers/clk bits to you as a pull request. Let me know if you have
-any objections.
-
-Thanks,
-Thierry
-
---4m23ttv7p46bf745
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjDBVIACgkQ3SOs138+
-s6EsbhAAveaZCF46Un/jnPJTP0ZvUFKqK9n8UqAdtzZLD+01XEz7gWGYGh3c7296
-Exo4ShFpAdHtu0ebHjCPd7xNk97wRwKMx8VxhjBST4RBW7hqZSjs/b4ErAY0i7Ya
-qnLXVUTqJxMD8RjinA0ndzyIzxp2VBRKQlhC/9EUkHBE5BPWcndfrGtwy2mWL417
-iDSLGZiGx+XT9a2XKV04kioYJbgfPASIvDKJU9XtLTVKU238rvhfolLhuZGsN8eE
-Fgadt1EwK7msPvrVJZVgp9SiM9riqzVHfIPnPcUC9fLvHjiVjBeSzXuH/88yYObE
-+xdh0n77T2iNhwvV2g403iWvmmkDHc2ofy7NP37cvj87p+FsAGnFF5Fss4zpfxl9
-pzRYn6EuYS1dm9KNGRvphvOqSCzUeOooFEMSz+UuH9v5WpauW8njKUk5TZDPoHaX
-LxRg5de6hCkoN4sntE4MLyJKMuu67IkG8/RyKNF0Uxv9S75URyk3a89doNr/nqoN
-CK5aaxRrmR9W8l573himO4rrVw/A/x8CwR52HZrXBXwj0X4ILbRMQVVjPppLdeg6
-/BZFb5jUWFfFNz0x2Ws/IkojZprXFsoaMu1i5fTmkLbPOWUmkMj7neP1lDtvmxCS
-p4ZPhDJA6UHCnzCRCEOLd2he0jSxufBBNXjZdv9jo5i8PpGeq6g=
-=F/Cm
------END PGP SIGNATURE-----
-
---4m23ttv7p46bf745--
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
