@@ -1,122 +1,111 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFFB3570AA;
-	Thu, 11 Sep 2025 16:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ED635AABA
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 16:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606622; cv=none; b=eukq72YuUDEXOYL+3wc5jH4V1ZAQ/i6QRp/5N/0863TZcafXzfAkMvrh3tETu2gkOoBOGgBcw+CH278dfkTUSNbUi/Q16LknYAPIanBSzgKHxnq6CZ/r1zxZHatRiTPZPmioDjkoGfVkwQCmevGkkyh03YtLTLljWPJx5sa7Jl0=
+	t=1757607667; cv=none; b=r6gf0V4NBh2/nJaZcYRcxbHWGvJPRxUBjYSacBLDmqDSXDcWywKgK94KZq527sXWZX+xU0rIQ626rpDu2CtUmkmk3ymtd/njSF3BFxVlRsY8Z7L/jkC3AxNI/AlQ+kv4lw8NDpS/BzW6vR4FSVpoy/e+p8d4D+oZ1RIlocPPC94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606622; c=relaxed/simple;
-	bh=ad1+GlOebaA4Dc7BMXCco+gstM8+RUWWlpqN5ZlppNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YGQgIzuY7elsRQUI6ibptJ47BfarPkq020awTto3W9nBM87ejn5ScQR90Ii94f0t8TVwLMOWPmqFuKit0JDSMVi3SFxhD+eopzhAl3zSgVS0i2IMfYT77gbXNDILJU2fHkloWLYaM5wUn3rQvgaXa8Mt67soBogESFxP1HKmiWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlwUJn2t; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1757607667; c=relaxed/simple;
+	bh=xylUB0Rc4c6OgDv9OHVYrt3+LG83H7TowALVvxEYyFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hetdg3xDsTs5ghry/jhhTCXk/5nsdulUJYYS3c4VWrxKtRbpIAEdGOzD4rk/YzJ0n699m6GAXvsmt1uyyXaD3fTVJ5VkTf+RZfbG7LzAmWnbY0NDTOJVR3KNfJOYpkXo7cB2YpFz2AsMYkGh2Bg4aB0eoZ+Hu2lv/lQAUwKUQjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlHoMuDq; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlwUJn2t"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so8037465e9.0;
-        Thu, 11 Sep 2025 09:03:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlHoMuDq"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so8679255e9.1
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 09:21:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757606619; x=1758211419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757607664; x=1758212464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kV+vM5AtMDqiziiosp5lKYMmFySjFk/a9glOkvxYm9c=;
-        b=PlwUJn2tWhi/A9iRsILp8PW67z6MYhhtFtJNKZssdAdcnZqzya9T+tnhrBN2dYaOqa
-         zSIuk5Pwbkt3WOcQH/St9i2GGIlgdBfkCtwB/6pyIRPr6U2Bh8HLnlEBhIAVfSwfRZOB
-         qSV1bHwms1p6ydvzVlZksaPdvdBFZCzgDGGRa9JlDoqDVOa08yX2kDRXo3hdSP2wdpy+
-         4DXBg98qji+BShDhFd4cq5G0++f61ovBNB03uFnd6k6Hmbcyr/Dxk7RkkFLYn+h9goFS
-         eOpVW29piHuClLsuinWEwPKdMIkUXHQ7A5nn6QVixBqh6Qki+XctnW8tCmpvFo2u1gwH
-         mm9A==
+        bh=2FDisvDBiIy/KslMUdjYzdNmjgvVdihkRNeWbLiPYzM=;
+        b=TlHoMuDqXljCIT/j1fYdFAv+srZzJcfFe7XrDmCgfwnplvVw1rLMYUrGWWZGjeiTPm
+         wt7mVmD3QseXu/NbUlKkgT2Yliq9VVPkqV5wB5QTLDSutbUKB+t0K5tgR4fklyqug5F0
+         uui4Mlhn78zNbjwnOqp01S4JDpM6zIUbjt1TzThdaMQS5sfWhKl8GyxlnjMC9XBgtKcs
+         u+16pURnD/OMa43m8CsXTZE3sCE7P7+FrO4FCG4T7KlZNjrdmdqCv1jSlKa925VAcrR8
+         hBSL5GnINwLawx7GHlUZ9gTeN6BUa0YK/AMO1Lgt8Nmr7xzhOKvh0wHuu/8sYTmiz1JM
+         nP3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757606619; x=1758211419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757607664; x=1758212464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kV+vM5AtMDqiziiosp5lKYMmFySjFk/a9glOkvxYm9c=;
-        b=qhwKPtxZrBu26lMrX/ot2L4mte4UkXApxn4Yx+0471S6i2B6hbGbohPNAypLN5pYj2
-         UDXlP17at9lkKVfIvjwuQWgAVJI3i8AGXrobdOpTVsjr3HtVRqOPVzNK7r6chbKhWXXX
-         Mi3+Qy5wtyeBAmI46e5+HB3NUfTjszztCx5ukc+rgyUBJub03DbVDeZN4tnMF/+WKJ7X
-         EMAjkCjuZm1JWLSaWWXVag5S7rfUJ+lsAerB2QyZB8d+jQAvNv2NTqkAkJMb1FuLnP5U
-         pE3/jcKmpBUpX/z9WKQ4fwnVjE//cYd5NLGngAbwschDfa5gfkMCe5Wv3g4pYhR/0P3I
-         mgVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5pBBm2jrcPreOu/urSNx/nAGxNKLGedpYH+m00N76uAEA2ORY8aAdvqJCL6hPsht6/ruSTbm6DyAq@vger.kernel.org, AJvYcCU7PxC/0jEdRZ4I+uKdAL1eVCUatrL99voaWOWNrRTgds1aXEEhhV5WkwSt3JcACRqd+Ya0C3fJrgQ+5Jg=@vger.kernel.org, AJvYcCUNgXFwBg5zPmLdkogE4H0qG89AMlvp2E3Qpqq3KyEjD48l0fydz2CN2/2dESdtxHVkyrj8d7tMvLKq3hUc@vger.kernel.org, AJvYcCUoy7mmWvwi1zr+r7vSHEKP7K3wjnZ9x6arfDNPMHvmjq8CVq+0bi3mKEOe7KJ2pRG+fzBSM/UU0yc3@vger.kernel.org, AJvYcCVubqL2pPpdOGdpbYhRJRGY7B0v/bUgGfqudznfjOJg7DObj7x80Nea/7+GyjRjew1MSzp5xSIjcQK/R/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbaYu8YOG/X0zRSsyQAgekXV+/dvQqCAKGA1oe6cHd/VFRADLY
-	pH6Kr5RmtlkvlDfJDRTgE0WE5/cp7gp9+557yvDikBExOlB/TZFUjYkM
-X-Gm-Gg: ASbGncvzxIJRemoOHpzwVoDZ+iCUo34rlUA4o5cysD3BGpJoXRuGelqlxbJ6svg+zOg
-	tvg9LcegXuDyUWZM/rRRLmjztR+nDwWlHydcru6bxpLJT77oIm6hwWoXKisl0Eikru40urAP5ly
-	AHL4T/mjkpahil6nNxcNs/0+J4XCOBqY1sXcNybZoazrAvpWK/ut0bIhOtIr2pRwVWx4hcFlUel
-	lyPhkSTRi2l/l465mv3toRushBK6QBUI5MfYzv5eXs4/pWXDfTuNNsx9fn1N2l+cV99fUGbbEy2
-	rvrJ5dnFiAPm2HxHSvlQdK6v+Z1YLAomz5e39FZcd+Lw+48BhUDJawhWkAriQGwSnWmqgLGdMWY
-	GA/oqzaxsYf0jHF0TwU712wEilhikX8QriRjspidEoJxkhdJD9zcl4SkkFw6rnpeQtrGMvwzkFw
-	9UfiCCd6exMhokdA==
-X-Google-Smtp-Source: AGHT+IFkmvpn+ZMkR/ME/h210TOWfj/zRgJxKTOHh3DWlG10Yj3oOfPv3c1/HhofEdM287nETYtnIw==
-X-Received: by 2002:a05:600c:5d1:b0:45d:d86b:b386 with SMTP id 5b1f17b1804b1-45dfd5eec3bmr25128185e9.14.1757606618353;
-        Thu, 11 Sep 2025 09:03:38 -0700 (PDT)
-Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e017c0643sm30454515e9.23.2025.09.11.09.03.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:03:37 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: (subset) [PATCH v2 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
-Date: Thu, 11 Sep 2025 18:03:30 +0200
-Message-ID: <175760648464.2794963.6510932759569440897.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250906135345.241229-1-clamor95@gmail.com>
-References: <20250906135345.241229-1-clamor95@gmail.com>
+        bh=2FDisvDBiIy/KslMUdjYzdNmjgvVdihkRNeWbLiPYzM=;
+        b=qYMhw2Mq3r+HYClraUSkUzjOwEdMuMi1TK7YE/RXR7f2Kbpj6nuXucSlIe7dWNnthW
+         fMwWf0WRiPWZt4LbEm0dllvlEOauEMrq1MDqj7sjuVgHJKpAjrAx/rdf/hVDeOucZNzu
+         DNFTES6kfH+BfyxR5jxGAHA+EnAg7fSvecFw5+9aKSsZZV6opalhWXaqvP36ebb2AiJ8
+         JjuWBxJAxtZ6JlkimVOBx82NT/yU62MDY9TwI2eykQbntfleQTGUjt4/K5aBnjz2Qn9n
+         z4Y9ks07kkScFbJ0exJq/nll2R9/i1FWP593s7AcNnbM+Ednbafn9eaiud8OBoMkXIDC
+         0JEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL5LLYm/ASwGKps1aTFsTX+9ZuPZXVFCKn3MQbiUqSNacqpLfTXxY0tI7ZrYt9Phgd0BvSj9D67kJdXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjTNm2CrMUYPQLcyUNsXoy/hErnQdY/PhFlw42S7qHBfFLYdUS
+	yMUozBgivgJNvpt+lFR4ECt+yQUFL6N/RBidaTBMzzlpLFm/Xfst5BJ/t7dcL1l3ap+xyX0QZLP
+	zkuremTdyoIB/RQV6v/VX5GnebEraya8=
+X-Gm-Gg: ASbGnct/ymGXVEblde9Ye1FJXZF6RnNIvwdBceTxSa1ET4e5NW5uX7s6jIGJmhvINce
+	3pMc6LJcLbILH+QMHQvibn9/qdUjYtwugG4GUr5CpV0hWf8E1xf+X1rpB9yxrZyqYvhkf4R8+hD
+	OCL1SBsBziIKz6t/i+Ftrv2fpWQSU++MACtWMxFhKHZSSa2GV3Hz3Xh0JBHGGEG0A0K2T4HKjty
+	8nRgakpE7sdwdqjnoM=
+X-Google-Smtp-Source: AGHT+IEDBVdK5maGi6tjqvhg+QJyFP96pMLfaZDihKOWpBcWXhhNS0z2CKzjyZk6w4tKay6WVukI753YnJu1NEM7QYs=
+X-Received: by 2002:a5d:5d05:0:b0:3d2:9cbf:5b73 with SMTP id
+ ffacd0b85a97d-3e636d8fb29mr15720485f8f.6.1757607663373; Thu, 11 Sep 2025
+ 09:21:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250909074958.92704-1-clamor95@gmail.com> <20250909074958.92704-3-clamor95@gmail.com>
+ <2tmlhaymx73frvv3qv7qvaagzwvh3cepringiyvhsmqrdgfy5i@fvspt74y6nj7>
+In-Reply-To: <2tmlhaymx73frvv3qv7qvaagzwvh3cepringiyvhsmqrdgfy5i@fvspt74y6nj7>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 11 Sep 2025 19:20:51 +0300
+X-Gm-Features: AS18NWAVp107axZCb6wtJXjw2YDOpvtl2OIKPBZAVHxfMbzOvuoCwQiLPFAse6Y
+Message-ID: <CAPVz0n0WjOaBrn=stpwjhT-fZ-K7_YQHDUnuKUccZaqLJGXJ-A@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] ARM: tegra: add device-tree for Xiaomi Mi Pad (A0101)
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Ion Agorria <ion@agorria.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Thierry Reding <treding@nvidia.com>
+=D1=87=D1=82, 11 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:00 Thie=
+rry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, Sep 09, 2025 at 10:49:58AM +0300, Svyatoslav Ryhel wrote:
+> [...]
+> > diff --git a/arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts b/arch/=
+arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
+> [...]
+> > +     host1x@50000000 {
+> > +             dsia: dsi@54300000 {
+> > +                     status =3D "okay";
+> > +
+> > +                     avdd-dsi-csi-supply =3D <&avdd_dsi_csi>;
+> > +                     nvidia,ganged-mode =3D <&dsib>;
+> > +
+> > +                     panel@0 {
+> > +                             compatible =3D "sharp,lq079l1sx01";
+> > +                             reg =3D <0>;
+>
+> Looks like there are no bindings for this panel and I don't see any
+> patches anywhere that add them. Am I looking in the wrong places?
+>
 
+It seems that there are no archive yet with panel patch, this is a
+schema part from patchwork
+https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202509090738=
+31.91881-2-clamor95@gmail.com/
 
-On Sat, 06 Sep 2025 16:53:21 +0300, Svyatoslav Ryhel wrote:
-> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
-> with a set of changes required for that.
-> 
+I would ask you to NOT pick the tree commit yet, I have a few
+improvements for it and would like to send v2. Meanwhile, bindings
+related with this tree should be approved.
 
-Applied, thanks!
-
-[12/23] dt-bindings: display: tegra: move avdd-dsi-csi-supply from VI to CSI
-        (no commit info)
-
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+> Thierry
