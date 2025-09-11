@@ -1,78 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2068324C068;
-	Wed, 10 Sep 2025 21:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55732253B71;
+	Thu, 11 Sep 2025 09:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757541562; cv=none; b=taV/2sCPMW5Z3bkKcUxxXb5PX63ZG+CezIPiqdCUygQMWL7LKUAF/nhkDlVkaoNx5GheKqZx/lIl9Lw0JkL8b3XYQZyknSIU9V7VGi0vrJE37aUH/2CM4XcBJC+ADEWDcCXytzqHCypzePdsQwjn+ClnNpTRPqzXhQmfcJcFz1Y=
+	t=1757583030; cv=none; b=Tc3NfmgrEP/8obdVq2b2OKkLL+9ufUjh2bwk1ULfd811K8AduVm0vZEp6YCv7m5RGOSuGD/woMEyFXZtqdYtVOO3X30F4gINESuwAXmyUX4/avQLVXhp2vLqCKT1OvXRExfAKaxNbvSp0yTIGcoZQDJb4VSWBNT9I9RVcLUN/2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757541562; c=relaxed/simple;
-	bh=jnJrw4KvMaS+1IPKppeQ27NtdlHsDVhqXF9fQR8RGgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuNWT1QFS4Smy0zHIKJGIG/gpWo57K+7TqUl5SjDyrx03n9J3iCDnEACivGDuOPTQEhrihfaJLwwJk+5lRB29AxdkczAYRqBtjruSmsngNs6ZpSzi6H2gnIWfcv4Xjqoni6tQ7XvMlYjo918AXLCsWZw+UvkhkmU20eH2+oGHBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4Xu4S9R; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757583030; c=relaxed/simple;
+	bh=XlD4WoOFeyYCMS23BhK7vxcJp2Nn2UT84D4twDMVang=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i0u5chzloFDqqH4nweNXcZ+nTfFJ4h7t2stEsEd8xbdH76fl0LxjxocXnTEa8YlK2rFiKLkh+zz/fw7buMcwe1V4Mja+yqmKkgrhFpYZFZd9a2BHwStdLorwl4RKuv1gBZQ9GqNntZDWFveMFWbqdxFAJbYNv0l0NzalJt7k31M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtWet2gn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4Xu4S9R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D91C4CEEB;
-	Wed, 10 Sep 2025 21:59:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtWet2gn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C68C4CEF7;
+	Thu, 11 Sep 2025 09:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757541561;
-	bh=jnJrw4KvMaS+1IPKppeQ27NtdlHsDVhqXF9fQR8RGgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l4Xu4S9Rx2yS1fg0DyEmfsdAATj6pBjYSTrWyIO+bkMb7V9O9rrNnImNLLBLz9S5X
-	 WiJm40QSMq2rrTfu8zhLmQ8O5lvjpMz7mGYoFJJ7smLkUnD6fx84/X1tEom3Fp3fGx
-	 xqI+PQN9c0XYGvYmJHu5QWE/pgfcKrjny1rJ5ssLyi7EQFSeQnfaBXA9KN8MVkFhck
-	 q6x9t/fE+muCSwNHgf/Bgc0FZMrjZfyCurERST7CAEtZLGK1ZzT6IxXg2N7OzXWwye
-	 NGHYqMBxENG75DZ8SafyMzOYWhwVzMg3rGZ8zYyfJvLBFBmDv/Vh1z+ItGJk4D3FXV
-	 33C07vnV5U5Gw==
-Date: Wed, 10 Sep 2025 22:59:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Erick Karanja <karanja99erick@gmail.com>
-Cc: ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, julia.lawall@inria.fr
-Subject: Re: [PATCH] spi: Replace lock/unlock patterns to guard
-Message-ID: <ddb8f91b-3110-4d17-afcb-fa9199e128ac@sirena.org.uk>
-References: <20250910213537.553673-1-karanja99erick@gmail.com>
+	s=k20201202; t=1757583030;
+	bh=XlD4WoOFeyYCMS23BhK7vxcJp2Nn2UT84D4twDMVang=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FtWet2gnnN5HpKYLZEDrkwvr1gA7DtHdix0DvbJsNaDiChQprN9AUHb6MK7Jrcgt0
+	 CNBxI7aSfmEn5XN/Gk9y3TB9T9E5XUhhLySh5JufXB5mELaodbIFia2LX4IiffM2UD
+	 0x7glvuIKcblHccUsh4lAaBE1Vtcf7CGvf6CyFLGLcaFL0Rc3zpRF4XbJhx5itrSRM
+	 EtV3lNJvtfQ9WwTDWvGvITCxjI3G1zpmwGmn3ro8/mBcsCCO5F2A4nvm7jbOImzmkj
+	 bd6cpnO3yNmc0R4xUKbDKHgP+d/ukNnoPuAspsMCBbqBKsOVSur2TFBT0wUUrTfz5R
+	 AsvHgRvuMj/Gw==
+From: Niklas Cassel <cassel@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Nagarjuna Kristam <nkristam@nvidia.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] PCI: tegra194: Fix duplicate pll disable
+Date: Thu, 11 Sep 2025 11:30:22 +0200
+Message-ID: <20250911093021.1454385-2-cassel@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g4o6fT5DfXvnE0Lv"
-Content-Disposition: inline
-In-Reply-To: <20250910213537.553673-1-karanja99erick@gmail.com>
-X-Cookie: I think my career is ruined!
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1463; i=cassel@kernel.org; h=from:subject; bh=M648GLrR928m0wVvWYgbmCdhyWQ+VTim/YBmiK/5wC4=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDIOTVubvrunRvNWRYs+L5/NJ5n2L7nyxnru0wPknBk2r /RpDTPtKGVhEONikBVTZPH94bK/uNt9ynHFOzYwc1iZQIYwcHEKwET2ZjH8lW96raOozld69puK Widb3tXGxax3fix7xdiWrFq8n+P3f0aGjjVftjgzGvPOjvh/yMv9m07qP5kG/ydLUvN+TUu6az2 ZAQA=
+X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+Content-Transfer-Encoding: 8bit
 
+From: Nagarjuna Kristam <nkristam@nvidia.com>
 
---g4o6fT5DfXvnE0Lv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+During PERST# assertion tegra_pcie_bpmp_set_pll_state() is currently
+called twice.
 
-On Thu, Sep 11, 2025 at 12:35:37AM +0300, Erick Karanja wrote:
-> Replace lock/unlock pattern with guard cleanup macro.
-> This simplifies the code flow path by replacing the conditional
-> jump with an early return.
+pex_ep_event_pex_rst_assert() should do the opposite of
+pex_ep_event_pex_rst_deassert(), so it is obvious that the duplicate
+tegra_pcie_bpmp_set_pll_state() is a mistake, and that the duplicate
+tegra_pcie_bpmp_set_pll_state() call should instead be a call to
+tegra_pcie_bpmp_set_ctrl_state().
 
-Seriously, please fix your subject lines to follow the style for the
-subsystem and distinguish between the patches.
+With this, the uninitialization sequence also matches that of
+tegra_pcie_unconfig_controller().
 
---g4o6fT5DfXvnE0Lv
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+[cassel: improve commit log]
+Signed-off-by: Niklas Cassel <cassel@kernel.org>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4f26086f25daf..0c0734aa14b68 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1722,9 +1722,9 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+ 				ret);
+ 	}
+ 
+-	ret = tegra_pcie_bpmp_set_pll_state(pcie, false);
++	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to turn off UPHY: %d\n", ret);
++		dev_err(pcie->dev, "Failed to disable controller: %d\n", ret);
+ 
+ 	pcie->ep_state = EP_STATE_DISABLED;
+ 	dev_dbg(pcie->dev, "Uninitialization of endpoint is completed\n");
+-- 
+2.51.0
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjB9LQACgkQJNaLcl1U
-h9A+4wf/ehY93JmhJYn6SG0Nl6s/Hcg+5EtbWr6R2/2du+TYhzuWW0AUYqMrpvQH
-eFc6rauyPxfpqBgaKaGEot5JftJdgjts6rR6gWFMYvTgp9fXnYu8FFvzq0waKTrf
-U5jb6d0A4qqF6B1HBtNg51TtCd2lyS4I7InrYiurYiWCAy+x2a2Cun12AVfu58sX
-ZRTtz31xzJgC5tv7jaPYJczW2rqJ8dzfeni4tu71WIIA+uujMtAB6XsFQ5zY9OO/
-YX45VL+mfqs6gzzSgvgwe0tNI6Pu8BCHvEHC3NxCR8iEL8IyDFPiEiNiQnxBiQwJ
-rqgqPdZOsLayTPIUjigHH6s6l31u1Q==
-=m26Q
------END PGP SIGNATURE-----
-
---g4o6fT5DfXvnE0Lv--
