@@ -1,170 +1,103 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7903570CB
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 16:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79726369990
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 17:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757608061; cv=none; b=gilVFd+CKA31iui94BmK71DFONS1CtevJS3q1poiddrfauiZxQdCcucJ3KmTKTGq/+dPXJ5E+lc8Sq9/CVoU7J1XKJBpN4sMQa2Jd9LIe7LEz7n563OFoIzMRMaj1t9/w3/r5asb6esHuuuGshG5RE/Ckl3/yBXjPwlUCg/JriY=
+	t=1757610942; cv=none; b=DevbpfUPRUuYbaHO4/UU/03EttHIN96gR6PoI+pCcWpH1HgmLeACCGPqY0cWaDXOmZWoDyH71gGpPxx4vcq6pj8OOg/A1oehgUf9/BS71sGzVPiXPK0BdRGoFeWuT0d6oGzC5sizFCmutbnibIfOYL5HWUy4QMKMGncflte/2XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757608061; c=relaxed/simple;
-	bh=F2DS23IYCKCbmxYGqz7wOiytR/HeVWVXloi3B1Ce1Yk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nApNcsPkk2YAjtsz3WT+N4d/sxsDnl7yJByPMbFJ9pFvb0ZYNEHHDQyscmCbfF1n/a7YS4NE5/194h+mOz/qKAZhOKlxL+lO+d2n4zuHEckAdOEERAnkwkHB4r0viVptt67sM0eM+avpjxBOZQTy6KT43gGCWIr0t28KlGKxneI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kASjJZEd; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1757610942; c=relaxed/simple;
+	bh=MW96MT2H5e5odG8AsWjgHCe+BWBDJHJDIscXEc3BAJo=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IsTZjGmhsEhdI2jkK5m7fvlA43rUxYjcPDynFkvVVzWisCF0hqeU6yhnsYkaKnf0tEPslFysPC/ILxK4E5e2RTBht1MFbGIQ7/8BrNqRZY/r4unUKI25sJDZshK7f6lkzeUagn6iIlmzfWLKxsRL6v2HbPj/RQj59HJsqE9wrMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCgDyLnk; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kASjJZEd"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3e34dbc38easo550210f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 09:27:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCgDyLnk"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso7483075e9.3
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Sep 2025 10:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757608058; x=1758212858; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uulERqXtmIIqPZaJPSJ878rKAqm1x84Yk9KDro0jsvU=;
-        b=kASjJZEdP0cbIDzYcLg9sGvkF4FaGGpolCqBBbF9AitTsFR+UWL7BF6wq1fAYTlSnI
-         PBUa202MgLrfKnxGE42F9NLSItdx3jr63W08GJ8g7cF0XWmsbu4ZxjPOQqfKnqfIExf9
-         hyOguAGPrQvLoo02tNOkLYK/RGGh5bhIewI/GRggzhrc762NzxhBUfcv0M0Ih+4ieMJZ
-         5/dDJFeFO6a93VR90KJMJLjVqNyD/xRaALTKwRA1wN6Ar1xb/YgdJ6AxBs+205lnJTZz
-         5KImcKPRAHpnQ5EJenCZIsv0DdEePlLRNSlcLcnWzTEgiEFMxafky+gX3sZ3U1L/tUg7
-         +bBQ==
+        d=gmail.com; s=20230601; t=1757610939; x=1758215739; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GlBu2NprIg2+aIhadTPHpgKffn2YpAgdyJg8kJsiv00=;
+        b=RCgDyLnkxm9gXTQV/vazW9m9XgBISOx35hfWYIQZ/SoQvDaTdDtEVMaGzM4UTVfgO2
+         XXydGuMlPGlt5qE6iYMeEcvazJfFxgUhPOOAjorDBxMSEIrrwyNAOqECGDd8e1NSosfE
+         zNt061KCNbdE6OjcXKzP979fAw3HaySEyLx3mPzBkGD+cdV+M4+tUKaxTudeWWr95eCK
+         q2RMBLGn3aiUt739yu1v32Z/pZcQ5pyWFPFqzrBcskz8Ni1tESaCIl4j/K6pBN6c2zCS
+         eA90K8CuK0fgn75ERW0fHTR4Ha22z6iJDa5GusmY30U80RFsyeIrLLy15SwtjKtJrK4f
+         mHTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757608058; x=1758212858;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uulERqXtmIIqPZaJPSJ878rKAqm1x84Yk9KDro0jsvU=;
-        b=XFctmdxo3hS9X7ttb69n+r0wFIj7wHnTPUTIs8GgszrkYReKwtcfhQvpbslfSp3QVI
-         koYVdMRh3eb0NdVKLGM6YR05Q+SI2WJ5ybcfHi8RNcvxFme+HcStKfd92yIJrPVfoB2l
-         rnwO/zwUeKm9aYaH8ONOp5VpsINSwzWdi4NciH9+NdNNJlZM5JdlsmR2KY6xt8oesYz3
-         1Ja8b+lkF7xK4Jp92qrJHBSpD3WdHHz5b5EMvhICEksiVMUJ9kj0zYK+pLc4A05Aomkw
-         ZfSn4awK/gkHWcx0MIWbwIcSKTrfJP81XzEHMdevLv0RSHEv8rIJxX18MtEJndbEl/4W
-         s8rw==
-X-Forwarded-Encrypted: i=1; AJvYcCULdUwbUJ5as5sJoc3zNoRKmOP4EbXh+9XF/V9e0tPrIPbp7poVCEBbKifyXRtcGH/3Mca6gc96+OQOYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxBdSaWvmZupilVlwXF+c/GHVt9oH/tWCQUrTKosuC6NRUs3Fv
-	OuWCq6K8SABuli4VUsXR0etm0QS2Mt44tG19pLcuT8Bq9ExQiNZzQ3zj
-X-Gm-Gg: ASbGncuK0xUA7PwjZkSWtMk8uzbGibHD5exJ2AOD5hwf5Fi/DnuHuyon1JWEgGIgeML
-	yQDiYD8gVy+x7wOxFj3opuVjysBDZLdSxHTqf7uHgKHvgA0NSiJfzVNGN9CBu2Yqj2ROP4zxYFw
-	OWf12vuUtTaMSKysthn0ig+lx/xItCXNMOq2cWnmdYHTiIqH1fFSYSJ5ViON6mbwHl5gij+1ZHW
-	ZXhYlRftFEYHgkLIOC+Vr/pgGFDQ3ivEFQGXi4CTMOjWHZvysOmqbn8VS+YsYtlAzNhypvgyBaW
-	OhAoo7kAiGmz58z1qxWdvL4fEkvNxrY/eY5mdxMkgfVWopUHJqypr+8yCilCWtRq6j/PtPo5Jo3
-	Jn25HykkfCYbTSOKITNlzbfKEi5SCkgRoryTCBad2mIS9bPPT0m/xRNOt0O8EWV+W66zYjs5F7+
-	/i4Cl6Q0Gr2Y1BOaSmCKI=
-X-Google-Smtp-Source: AGHT+IFFi32QxzOdl2cjeDTiavFcpcxdyTuhwR2Hej9Pf5mnYeNRpH6Xd3E7OQUxqcTWFSZ1jF/clA==
-X-Received: by 2002:a05:6000:24c5:b0:3e7:615a:17de with SMTP id ffacd0b85a97d-3e7615a1b81mr2212313f8f.47.1757608058345;
-        Thu, 11 Sep 2025 09:27:38 -0700 (PDT)
-Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e03718c64sm28987815e9.3.2025.09.11.09.27.36
+        d=1e100.net; s=20230601; t=1757610939; x=1758215739;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GlBu2NprIg2+aIhadTPHpgKffn2YpAgdyJg8kJsiv00=;
+        b=AsWpCJz2TzfjRt5sQfIwYZHXPUTIekKRiUMKAyTlz3dWafaSc5pI59X8Auzd/l1C/c
+         Wvbads9XNMiH+14scH+fxrbetmMVRQvC2n8wCa9dUORdvsAQU+28+Dbq0M0KDWDk+CAc
+         ZEJ4L1y65vVsdKaaSst9Esm8LYLGV2bGqYtPQkrOkEMF9FOKWXkXECD9tVVIt+Bpb6m6
+         hipizz5ecW3vZQhu9rBnziBvoQ5f+Q3YBunJB3QPCLUi+Jx8YfdXTebQHVYeunl37jrm
+         AJLELDZY6HryF6+4073gXfTPZNtL3B1TDGy0k+aKlgeZOHDj47m8f/X6nBBxkBaDWgaK
+         Iugw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjaj0OvjLrlJdeuIXgwFZZv5//Pj+nvTqLQv2KCoEsL9U9eUD7hBIQTWCkSeO9vf30hmdjSKcQkMmh9Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznZ6NB9GKcxLtNejbqfEEkyg49ZLPwOBv4wQ9hZKFnBD+Y10rU
+	5rkDU0IzOt9HwFbMRBwKXqd8rKbbOodqq/QD9QvWMl1otb+o2tEguiWo
+X-Gm-Gg: ASbGncsVAdSd51pcnpH4hA5o2DBlnjGNvZvJ+gNI3JXLyf5lQltrAp/lvPC5kEeuUG5
+	0i+1d59+0VdLNOD1Dk9YQ5S1yOi7eaxXdINR7y0fc///2ugxsi7pmlvMtnuKCnDVL+smuIdPGjT
+	p7HXdjR888fWON90ADDyojxsJjuwoqXRg9q9AfJTvlNME+D/tVMElD/fDWG0cbeGq6eV2ugM1/o
+	eiElkC9u5CjX7bilAhAEB8iy/HtKMrYuT6WGpJkR07vTmZewyNZR/vAaGKQcGAs92RP+6vxoKHN
+	I9B7MUmCi2ASN5trl7KvbBcm3ZgZLJE9CdRGR7er8GrgyQ8ZTensC4pQ0N7cfoJUEAxEdmM+FTr
+	yp7/jeQnK4pDnWHPZP1o/ehnwCBXJIivvdUWadjzmwppvcW0ZhLhDEVByqRpwLV8VaCjXVbftLL
+	8wOzbTdVQuTcfHb12ClwJQcuMy
+X-Google-Smtp-Source: AGHT+IFyNITYXanMUiTOVy2Osl5V4I64mGYalEHfEOcAOQH9B7h6enLV0/I+HA9A714OXMrpa16Evg==
+X-Received: by 2002:a7b:c4d0:0:b0:45c:b601:660a with SMTP id 5b1f17b1804b1-45f211f2fb3mr1627565e9.23.1757610938657;
+        Thu, 11 Sep 2025 10:15:38 -0700 (PDT)
+Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e037c3ce5sm30198205e9.16.2025.09.11.10.15.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:27:37 -0700 (PDT)
-Date: Thu, 11 Sep 2025 18:27:35 +0200
+        Thu, 11 Sep 2025 10:15:37 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
-Message-ID: <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
-References: <20250828055104.8073-1-clamor95@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: Re: [PATCH] clk: tegra: Remove redundant semicolons
+Date: Thu, 11 Sep 2025 19:15:32 +0200
+Message-ID: <175761090509.3229177.9207716245913935287.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250813094003.552308-1-liaoyuanhong@vivo.com>
+References: <20250813094003.552308-1-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qlavv32ljfhhfudc"
-Content-Disposition: inline
-In-Reply-To: <20250828055104.8073-1-clamor95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Thierry Reding <treding@nvidia.com>
 
 
---qlavv32ljfhhfudc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
-MIME-Version: 1.0
+On Wed, 13 Aug 2025 17:40:03 +0800, Liao Yuanhong wrote:
+> Remove unnecessary semicolons.
+> 
+> 
 
-On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
-> SOCTHERM is thermal sensor and thermal throttling controller found in Teg=
-ra
-> SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
-> with Tegra114 and needs only a few slight adjustmets of fuse calibration
-> process.
->=20
-> ---
-> Changes in v2:
-> - no changes, resend.
->=20
-> Changes in v3:
-> - expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
->   configuration further" commit
-> - changes title of "thermal: tegra: soctherm-fuse: parametrize
->   configuration further" to "thermal: tegra: soctherm-fuse: prepare
->   calibration for Tegra114 support"
-> - Tegra11x > Tegra114 and Tegra12x > Tegra124
-> - ft and cp shift bits dropped
-> - clarified tegra114 precision
-> - lower_precision > use_lower_precision
-> - nominal calibration ft and cp hardcoded into SoC specific structures
-> - added tegra114-soctherm header into dt-bindings
->=20
-> Changes in v4:
-> - fixed Tegra124/132/210 cp mask
-> - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
-> - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
-> - adjusted soctherm node and inclusions in tegra114.dtsi
-> - dropped use_lower_presision and nominal_calib_cp options
->=20
-> Changes in v5:
-> - fixed CPU and GPU hotspot offset values
-> - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
->   counterparts are equal
-> ---
->=20
-> Svyatoslav Ryhel (6):
->   soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
->   dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
->     System
->   thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
->     support
->   dt-bindings: thermal: add Tegra114 soctherm header
->   thermal: tegra: add Tegra114 specific SOCTHERM driver
->   ARM: tegra: Add SOCTHERM support on Tegra114
+Applied, thanks!
 
-Hi Daniel,
+[1/1] clk: tegra: Remove redundant semicolons
+      commit: 8ec061e72f15da80df10d4cf29777556992074e1
 
-there's a build-time dependency on patch 4 in both patches 5 and 6. Do
-you want to pick up patches 2-5 from this series and I pick up patch 1
-and hold off on applying patch 6 until after the merge window? We could
-also do a shared branch, but it may not be worth the extra hassle.
-
-Thanks,
-Thierry
-
---qlavv32ljfhhfudc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjC+HMACgkQ3SOs138+
-s6FmAQ//Xha5LNouKuDOjR1aWxRbsRfL60ImU88sqfgV4EX+BNrWtnWif8KYz0Pp
-vZJ41PUNxz6Hw62m8AhnxrjQEkmMKpXD8ditYLTwTsYrxD5CO70SYBc4mWt54lg4
-bcfULRDLSbCdDa5tGnovhPXnGUCM1JM19YbOVlBUXu2YhSVR3BBzXzKW/PsLUx9F
-ccT90oxtd8m4eTFFiKBXkzgK0UsV0cB0MicKygDwGCQbtEl1SrN9rhYzBJF0XldI
-7vS4j8CuMSx/Ia6C3mZQKh4a9Tjp7NCfmEb9HiwTzclvJFDt9BcbgbnumZKzrfUh
-DIfPF245ye3Xea9+tDLOmdtzhrGx3kwQ9D6yRtrFHFSroJd+d0ScSoj3SsIbHz4e
-krFuYnm/9lM1IekTTCYWGgUOmrE2UNk3qlwInDpl1oUJh7S0if62YxsCBunypIKI
-NFw6D7JrEFkUm+fnTSYPKZ9tUl9WsdadpxJN0EMezLEcf9Nti9WeWwvPgTSbZlTW
-M0IbTWH17CWaIo//mK00xa8m96cZVC5qjGmUFIBSCd1J0yJwLw+S4lqYXckufdsg
-xi2uqkA1RQ6Vmt+t0xceanoZsLPnOo7xPuR1bSf+KhyYsWf4g3LKi9HWOWSSn6nx
-0jPMGnKTwXzxUj1LEV1B2teXeefp3iFh8vINM890oVlPIhUPWts=
-=QXXu
------END PGP SIGNATURE-----
-
---qlavv32ljfhhfudc--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
