@@ -1,35 +1,35 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933571DBB13
-	for <linux-tegra@vger.kernel.org>; Fri, 12 Sep 2025 22:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEA921019C
+	for <linux-tegra@vger.kernel.org>; Fri, 12 Sep 2025 22:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757716412; cv=none; b=gdTuT05z0rgG1yJx0GpAqqtvXh+SZRAEjorstK+IdvYz6goqaR1yN6Wt871c/o5CY1+h7eWFx5rZu2hZ/G0z4HklUAOXzTgwAGNSk9yIKsx9M0pBUNiu8mgdoNSuVbHsRikHVMTMybFQcNhxIQOY4Y+x7I9LTR4PLpyx3r1IHoc=
+	t=1757716417; cv=none; b=XOE6fQ204RTl074FStrI9wPuCFE7KONfoTHm04DJpYWNGi6j2/urqzlFTV3bmrXZKv1GX978jdYUFxc4/m7YvWg+opVGuqU+aglCyHYucCzogfFYb+lOEQVlzCYRHKiuoINTVCqgxrd1txcCQIwGbmCCrupda2MFslAPgeKo+wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757716412; c=relaxed/simple;
-	bh=MI9hMQ752mJMu7gs9Oryud/LU3YHRG7X/1OmDN7XfrE=;
+	s=arc-20240116; t=1757716417; c=relaxed/simple;
+	bh=XAdtu2bAi4sOTeuz5ngUGzTwS3XsFoaZiTi58qZgMLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AKPRRiPQ0xewCiwDYqopzYs5D61jVsoBp8b20wq4FdQP00e6oM3NOiP2mceENM0qBjLQEUZC9P7YKDxrS03kaJbXmp61XshfUTsnD2A1XyG0UQpcQA1y3Jy/XOJMUM0njI51E7ZoZnLHMRrMnMHcmubk0N7RTEj1/9+AmAuL0rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XapbjQvM; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=IOUYCt8wTPlICkLZyFDGvgn96k3EqwUlRxvQKOn5reTm+OWLkrsZivv/4ZflGZrNKnhzKx5Iu91vJwRFEmKLuVxS+ikeK0eW6ZhhAv2KfOvJzEotJaOVEr/b7mVFLOCZ6rKjNuYOzZzhL3JxvESgEuW74EcFLFgt0BFAg0nhd/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LXQEQ561; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XapbjQvM"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LXQEQ561"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=MI9h
-	MQ752mJMu7gs9Oryud/LU3YHRG7X/1OmDN7XfrE=; b=XapbjQvMYPuDDXbyIaro
-	/fJvJSEX85Crp9R2M9orvhBtGwj5fZSRcsZdsB6K/0eONNwHKBlCEJoRtkAENYyO
-	6187CjeMs8icBkiBGgXqBE5GpOvJqfncyGFQp1R5feLCOGyXalqaqKWaV1KM/cmN
-	2zFoAxAx9KOm4eGQSUILRD6Dta8MBSzqJy9FjTQ/pkuPBDLkrCRlBIfG4X/uWHx1
-	InWdE/fr4TyPLLpTC7bFyOY6INEFamrO5h1cQAlozfLaefkCXTstIhpelc8P+o/Y
-	1+g958v+79wQPb+nRHW8otcPXOXYjOLiEK9yIFXuIQAcuAPcPPlvYxkHXYQ4+FUN
-	Sg==
-Received: (qmail 1505220 invoked from network); 13 Sep 2025 00:33:28 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:33:28 +0200
-X-UD-Smtp-Session: l3s3148p1@O/4fPqI+BIQgAQnoAHJ8AC93OVDMgFWg
-Date: Sat, 13 Sep 2025 00:33:27 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=XAdt
+	u2bAi4sOTeuz5ngUGzTwS3XsFoaZiTi58qZgMLg=; b=LXQEQ561QHjVRWu+sBzr
+	f8/tdS4guI1wa5Lo2FeCX0/NuGobrBNHA/wbMzkEMACgCHMpRLKyGg0b6F8QPZib
+	y46UlqFLeXh+r178P/yISivHdER5VVvSQkREGDuY/h+UdNUcFIzFP5T7jK9SPm5z
+	anRZWhtbYzoTYWpb9XG3+5uJFExpXeH6N2/ZE1JYKyGl/shcy1oFiFPnR5ftug6I
+	uZ7566/21GNhHKNasVVtJF3vYm8gem6ngxJMfdY7Y23olLb7x+lETh/g24WCP1fK
+	kNesdRPB3cNqFL46z5LQWCFVJegPp3dsDAahTmLo4C2AzwrbvTR1OxpcKJHlRoM/
+	bg==
+Received: (qmail 1505294 invoked from network); 13 Sep 2025 00:33:34 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:33:34 +0200
+X-UD-Smtp-Session: l3s3148p1@vvN2PqI+EIQgAQnoAHJ8AC93OVDMgFWg
+Date: Sat, 13 Sep 2025 00:33:33 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Akhil R <akhilrajeev@nvidia.com>
 Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
@@ -37,11 +37,10 @@ Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
 	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org, ldewangan@nvidia.com, robh@kernel.org,
 	thierry.reding@gmail.com, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH RESEND 1/2] dt-bindings: i2c: nvidia,tegra20-i2c: Add
- Tegra256 I2C compatible
-Message-ID: <aMSft58OybS1IEpA@shikoro>
+Subject: Re: [PATCH RESEND 2/2] i2c: tegra: Add Tegra256 support
+Message-ID: <aMSfvWpxur6nPVq7@shikoro>
 References: <20250818043345.65899-1-akhilrajeev@nvidia.com>
- <20250818043345.65899-2-akhilrajeev@nvidia.com>
+ <20250818043345.65899-3-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -49,49 +48,46 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ivnUMvcJNX3IfZiw"
+	protocol="application/pgp-signature"; boundary="dM/kChvv04Z/JsdG"
 Content-Disposition: inline
-In-Reply-To: <20250818043345.65899-2-akhilrajeev@nvidia.com>
+In-Reply-To: <20250818043345.65899-3-akhilrajeev@nvidia.com>
 
 
---ivnUMvcJNX3IfZiw
+--dM/kChvv04Z/JsdG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 10:03:44AM +0530, Akhil R wrote:
-> Add compatible for Tegra256 I2C controllers. Tegra256 consists of
-> 8 generic Tegra I2C controllers similar to previous generations.
-> The parent clock frequency is different in these controllers and
-> hence the timing parameter values are different from the previous
-> ones.
+On Mon, Aug 18, 2025 at 10:03:45AM +0530, Akhil R wrote:
+> Add compatible and the hardware struct for Tegra256. Tegra256 controllers
+> use a different parent clock. Hence the timing parameters are different
+> from the previous generations to meet the expected frequencies.
 >=20
 > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 > Acked-by: Thierry Reding <treding@nvidia.com>
 >=20
 
 Applied to for-next, thanks!
 
 
---ivnUMvcJNX3IfZiw
+--dM/kChvv04Z/JsdG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjEn7cACgkQFA3kzBSg
-KbZusA/+OBUNAhHfzoQQYBe3CujtYLvtKXh3wx2I3fxwX/CC739vx0tq5gNnr2CT
-fxJZ4Pv+taoNx2ey0WYOOqX5nSVBmT9FkROsUmssui4EeBJ3FxtYUflJ6ewGY109
-NWXBIACL+ICiR+PmAYLxkR8vi+48QPJpImiYAgxswxYjA1XF4m8Fm5RfXvgvSyYB
-AkKYNoYktembLHxKE9VolA6CxMl6PAbkC8EDrlD+te6AL26BzqaUNUudaukI7eWl
-gXCBAjjy3Xw7AWhZLuW07PJtgDu5xU0eFKQtrkHFJ/sMYQ2ud/4VIo5FnyeGgOSI
-ImOWrMy1P2Vh1dfps4B9nWgZDh0idd1eHG8L7p0X1zcRaDyLeeq/I8Nh3oxdtZvb
-Y1dKBGlRzbGkMvZ1PwoIbed/VteNOFTNn1eW03JSaXK4uErkg8W9f7f1wNwGyYYV
-4JdlEOYpLwhO/RjUchMF85J3yU4qViNvN48g6jTggBz3+MknGgosJqw+kCVTW9VX
-C6ZrYeYHDvoWuYYj8Opc6wunNSWPojDWNQSJe9QToYV+FzI60SkQWjDvg6pZT7nT
-U7mRM0UvR0xZODFtVBpX9wA8V4rAR6bZtyY6v3mxqf1V8Xwh0FHOftdeo4Di8cgC
-QHU/j7hz9cFM8EAm5uw6DMKxSslZzR9CXFCVTMAihyWp3a3S5Tg=
-=7U4B
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjEn70ACgkQFA3kzBSg
+KbYc0A//f4jC0BLjTJDmADL5sJ/whNLEeFuLuiJLOkKTtJhpmvHY0vozOVebiU9O
+TG+d3NOAtu1Twvwnwofuxaqq8JkfsyXShsu4jyha9MX558TfJKW31XRQv1M9vhfU
+odm6SnNCzBNpTuiuu2HAVjR3fikOp8gVzVJuLEH0FINi7fBlcQLsTIaEjZ+ovUax
+YisUg1XD4l6WKzQ0hSxeAZDXfTCPcYw+Y1hVsGBNUhGNzH/C6BvGprm3d4t9vujD
+Zk8j6pja8k7WfJvgXGe69gcArHytqOXZu5FfPOEOvaC8KeZywY3T5aXzgc4KgX8Y
+LbMlUbtcb6FmPcdjycdxSbKnVFxT1AcyrqneCzLQjLtJSPmO8OHEme1JXNnaGOIx
+8ap2wOXBgzZL76OJjQ86Y1Z6YEp2SRTeCSYNL8q1UU8tj+I4CSk8L5rnvpqfVbmd
+qE0y8hH+lO4XHis8l7u1TPx1Ciqd5ChMQzY6eQbkZFcNe1bvhsOKHosPLLM2jArT
+0oRCiSiw6Z9MtZP+F/glyDxFSl/VfPBuDLEYQsbEpjnNAw3IJ8qFXmDh8o2wr1OQ
+8o3/4T3h4xvhIa7zAryS39pDv6YESVBMcAjhSobcT/z+a/gc2SA+Qqur0ahmov3Y
+19wEji9I30+XP9k34A81mpaTv+A0m7O3u4rF1S8OxZJWTqg3U2o=
+=nQ5g
 -----END PGP SIGNATURE-----
 
---ivnUMvcJNX3IfZiw--
+--dM/kChvv04Z/JsdG--
