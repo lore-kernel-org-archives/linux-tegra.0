@@ -1,78 +1,78 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F13199FB2
-	for <linux-tegra@vger.kernel.org>; Fri, 12 Sep 2025 10:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317BE2E8B6C
+	for <linux-tegra@vger.kernel.org>; Fri, 12 Sep 2025 10:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757672824; cv=none; b=YCcY8bpWrftWlaYtkRJUauvWv0kf6qZvv3z2XkQ5MxuX30NzLlq+8EoPat0c1Dt6y7YLfRhx/36Ekf7PCVM4NrcCyWrSQiWePzHesyyy5bizlMWgKPg7OSKneDqI/bD9cSAajGha++jX51GeBb+R/MHJaqYJ97aycpUz2u+yjQE=
+	t=1757672905; cv=none; b=HBvpjp7QHzY/CnGsKThGIaWuSiQa5CDRbG4us3EV8Y5vxd0IafLIHdBKhighg1dlMya7CTzBsvgrp2tm9kBh3568BdDhzbESj8Wl5dzI2os34kz6hxFhboDgE04bLkj4b24LVD0x7FfPZXyvqLXSZ+e2dkgMY28OpIdf/gAzXd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757672824; c=relaxed/simple;
-	bh=a/aXEMGb2BQDbPqE+kiC0jbKGYkUHUoAmyib1xRnP7E=;
+	s=arc-20240116; t=1757672905; c=relaxed/simple;
+	bh=EBD8IpI6A0wAsbVRfB4i9rlCjO4G0tJXxd7ni7KvAx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvfxadkrQ/wA3ndfscxGsfO0rOWOOjPq2QxRWHz/qpWu115M1pKNvCHnVJRYuTbKT1+6Da9naL3pdlcJMNhSqyiO3KbeCZij1cOUTaordolAS3zhbfN9Ru8hbs4tVGqGYyPigXFR73UoPEiE7kPWdlic/Ga6vE6zi8qmxyNs8jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RE/4tV7Y; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=Erg1J0e9ED4bpyOMrslDfjW8RxLbE+41EZPSalw82gpLXtAmmAGmzeCn/bXZgw83hykROpkBNWeNJMcDqLxNnFkdRs9C+EgHoGvp2xYegr7C1lEzwLu69k0km4BDGpBUaS6uAEQq0svcba9UeBY+YFSc7XnNZyNa3ZM4mmjY6TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i31HVHOG; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RE/4tV7Y"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso11415625e9.3
-        for <linux-tegra@vger.kernel.org>; Fri, 12 Sep 2025 03:27:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i31HVHOG"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso18056875e9.0
+        for <linux-tegra@vger.kernel.org>; Fri, 12 Sep 2025 03:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757672820; x=1758277620; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757672902; x=1758277702; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VEszHJ67kocets8ry4iAcIkKEULLubcUd+fSnC0UnKU=;
-        b=RE/4tV7Y4LN1WirJdE64Tp/ROSNGu6T/IPF8AWszaNqFeUgZ4g9RRu3L7R0vMVrSLC
-         b7STZLa6vCwgdwWH+PHLS43tYUH2ZDlw8aGtXfrIytZqmSZtVQLO6kzKs8wGfaKm0H8M
-         PelDnxWJMlXosRGSXMStlKlYViy8YK/aTQxQr6iioGid3HseYrmuQfNGXjISFeriBXwq
-         p1m8ciQPoGUfeDJElUI7TbEbQ/pTyu+ICiWk29phNLUfr9ErSc664eoZAtGjdxrZgQex
-         xWAnr0E3ExmtnGeVo5exREB6d1uQLFxlv9KgrwrWcNqgH1iUDapR25WsZESydkT9uQma
-         e7tQ==
+        bh=JA1IUMCbOH/Rs2R4k6eNlR5l2tk1K0Ele5rCkcSibNU=;
+        b=i31HVHOG+qiCsjTxKfAtyKpyk1qeBGSRqDqMwmYqFDBa8ciMMR0or+gMPviXHF81pt
+         ZHSNk4CZM9J53PwdbJ1c7TkYTSCl/eQyt2CllOb8KMpWAB8KNy1eOWsrMOETj9x0ZcxH
+         3V6DtG1+EWUc7eKbJoEJqFNXbUUYWlDkaLI0MkNCfeKFX6wlMue8W6clzBjPLaJWBQOo
+         8cswCJm9MNqfMWP4i4C+FH488NOuBWyj9tiNa4k+SI3T/+JoYYsvIK+7IePor6FFkyqr
+         wU4cJUJUBlOYHevTy8p9HsL6QLu8OWvwnEhX5Y0N8gl6vM6/jtuzdNLO7EInFZxkNZge
+         opow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757672820; x=1758277620;
+        d=1e100.net; s=20230601; t=1757672902; x=1758277702;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VEszHJ67kocets8ry4iAcIkKEULLubcUd+fSnC0UnKU=;
-        b=qOncH0HH17dqwcFHn2mWTXqXRCwY7MVei/FSDTTtIxfGmo+bfwggkV3h/ctn8hT6NP
-         +aD9hWXDCX+vg6QmyMSL1xdQQE8qPtWlW5zw6XH7jePX7QD3xuaLBPvZVbbLiYAaW0t3
-         Cgo8crhC7EIWd7ya39sONEDFd//PUsKgYoi0tbfo4ZdTe8DMLoqKzwMmqpl6MOgji4Y1
-         ZJA/SrLdFVgwI6L+wcKfsVPldTRHWhCtVCmNkdPE+g4PxRyFniNVBIs5jZI8CA4D9Kgu
-         oabJ51/rqeKbVFt4XqO4W055T2zCZmuiXfgUdZxWUsdJx304Xl4hxPyiouGeRDBSD2Sq
-         baGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyFQRcAxTZIlTE2sbGkVGeZUsIjF8xVpWj+Tq9Rds/DLtvt1Xe5TecJeudnoM4LZ2qgS8+XUQWjrwZYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyqk14UuNgkUzClHjvLtpruaYR3Qq/3jDY5oX2b+jktxQiDlBB
-	R5loADWiCOVj12+K4Ffc0d2Om5/Q4nU8ttgrP+Y0QWNhhrSPHBVapymh
-X-Gm-Gg: ASbGncsrZUoJoaEaQSsT/BkaPoBbkrHRPX23LUC6thHltSy5PvkNwh9fSZTiSSHa5jT
-	p4LE2om1QWJf1ZEPqUfop3k9QOa+0FbPbTp7A8AtPpBy6MQJD4xd5O0XNzMSZduX0phnpFNW1B5
-	EnI8oQB5ni04FqQ3QSF98ALR/bgBCa/lEvgdxkIR7FFUWveooVxwadnaxY2EpA4dhgX9Y2Q317s
-	kW8QzDFY0eYv9NTjxHiQT2xZ27tghlKTZ3qwOh0baGOQ/FHiF7I+pOK1p7JHXbx8hIdkYmStyWE
-	X5SD6GT+SEGAKwlBNDzDEmpLBdWo7Vflr//y21Is+EljNBbAVGMzRNbS+kAU4CNjuswVOl/U3xV
-	bfmJtvRPZDw1AD5etWOx79iRfq3NpZVw+qj5nbOqK8WlXNCa3uJaPS6r3LVDiiQnZ+D6eYAnN4Q
-	ykYvznyastxwU1t5mnQpM=
-X-Google-Smtp-Source: AGHT+IEbyHndbn+wwznPnv5dSbk1PDx0bdvxUnNmyX0t9tVPgFtH6+RjNOs4QbIfK49oM38shQc3wQ==
-X-Received: by 2002:a05:600c:354e:b0:45d:dbf4:8882 with SMTP id 5b1f17b1804b1-45f215641afmr19183295e9.28.1757672819578;
-        Fri, 12 Sep 2025 03:26:59 -0700 (PDT)
+        bh=JA1IUMCbOH/Rs2R4k6eNlR5l2tk1K0Ele5rCkcSibNU=;
+        b=iwNNzFbCvM5OAAvHN3WnbLKA9Y8/irs0XR2fc09LfNWLZFmiUUB/7s/RkYS8ko5jUj
+         fCD9htPqQ4CpA4gTKrGdv0Zh4qVl8XXy0NlNURhrccOyFiAImyqWuz5i+K2x2n6moS2F
+         ZUjmYAi5BkQCRNdxk0YA2g9qxKxlxWOiP/wjYABYQG3IITdRWfkWp9Dwr4YseP9bzXKn
+         CcYneK+gr2uOWpzMGEVuEVGGa6r4Fi5XpBr6ijPS1mtBQtcco6yXXFDSWOQOLCTaz8Ea
+         ywx9hZoJFTiwV+QSyXHaUK12DgEehTfBDoWqcr0AsQLSlOKoy3e0sJTK3axS/ysKW+cp
+         qvDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAwFyR7LAZlLfoqjWf4KGgy2Ms+psijo1EqkTtuFn8gwWbE8fvb8U/vMqtTuyF93ISBtLge0OnScTLPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgWwnsYkWl36aa92oiLTkD4AqQLDmQNwH+P3HX2tRzSNsgZod2
+	6fr6CrAlFmjVM/K64Ri9PGLVctCXwwsKePC4x93Qh/B1MKdVUyeqzbmaZ/o95w==
+X-Gm-Gg: ASbGncvx3JPNqTneGFDBHAu8Q5AjrdLGoRfzt6EEMW7l/RwJFqU63S/SMFzKOOEby0s
+	qQRphxuMz2GprW3CqBwhBGsjmqTRTeytMNNwxfeFSTcnZ8m9sX/ny+4uWJ7NHiHuIdxCi5Lawdw
+	3EKfbyK9h1fvxK5+lmRwig4l2zMNT+CEuDOSGWQ/iv73QmV4vGHeGA0huzaVPXkoieqX+9Bk8Xu
+	L2k+STQnQsTg0D1mWaZBgfVoCFbpk5tkBy/pG6kA1Ps8jMaRc8NBPK1vlWpc4nca23+1LSQMrjO
+	chRrn4CmsdZJyrXRvEOayhdx3sMeJBUzGufdN0CC8JMgQFyjVrbwa6elucPgk68TF3F3k1E6z8j
+	9b/at7GTdUgOP3SYCLnOtFIVloZbFJPBXb9gVl/TwaLl4wQUeEO2BABqCaI776Bp+LVajLo5tl1
+	oWcsh0d+jS/PEg37+NyTk=
+X-Google-Smtp-Source: AGHT+IF4AEGaMMn/CUIZmhYMMaPgBH8SYmjhY2GIRnf93okgdn9S+OTIILcyErnNpIWu0CDXM/Slfg==
+X-Received: by 2002:a05:6000:3109:b0:3e6:116a:8fe1 with SMTP id ffacd0b85a97d-3e765a16066mr2111938f8f.61.1757672902386;
+        Fri, 12 Sep 2025 03:28:22 -0700 (PDT)
 Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd415sm6002552f8f.30.2025.09.12.03.26.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607d7b67sm6041450f8f.49.2025.09.12.03.28.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 03:26:58 -0700 (PDT)
-Date: Fri, 12 Sep 2025 12:26:56 +0200
+        Fri, 12 Sep 2025 03:28:21 -0700 (PDT)
+Date: Fri, 12 Sep 2025 12:28:19 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
-Message-ID: <amc5e3sffmwqguivwch6b5vtmlgu5dlwxm7bsrn6nd3rllbvxg@koqmavn6uuy5>
-References: <20250828055104.8073-1-clamor95@gmail.com>
- <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
- <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Ion Agorria <ion@agorria.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] ARM: tegra: add device-tree for Xiaomi Mi Pad
+ (A0101)
+Message-ID: <cj5vagef2b6nga7vrfk5ulall3zbnlftekguqn4iydu6ow2zam@ucoqrk2e4pg7>
+References: <20250909074958.92704-1-clamor95@gmail.com>
+ <20250909074958.92704-3-clamor95@gmail.com>
+ <2tmlhaymx73frvv3qv7qvaagzwvh3cepringiyvhsmqrdgfy5i@fvspt74y6nj7>
+ <CAPVz0n0WjOaBrn=stpwjhT-fZ-K7_YQHDUnuKUccZaqLJGXJ-A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,103 +80,74 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="77pu5semdcfvsxfi"
+	protocol="application/pgp-signature"; boundary="mahnu5no6cnokx6g"
 Content-Disposition: inline
-In-Reply-To: <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
+In-Reply-To: <CAPVz0n0WjOaBrn=stpwjhT-fZ-K7_YQHDUnuKUccZaqLJGXJ-A@mail.gmail.com>
 
 
---77pu5semdcfvsxfi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--mahnu5no6cnokx6g
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+Subject: Re: [PATCH v1 2/2] ARM: tegra: add device-tree for Xiaomi Mi Pad
+ (A0101)
 MIME-Version: 1.0
 
-On Thu, Sep 11, 2025 at 08:56:12PM +0200, Daniel Lezcano wrote:
-> On 11/09/2025 18:27, Thierry Reding wrote:
-> > On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
-> > > SOCTHERM is thermal sensor and thermal throttling controller found in=
- Tegra
-> > > SoC starting from Tegra114. Existing Tegra124 setup is mostly compati=
-ble
-> > > with Tegra114 and needs only a few slight adjustmets of fuse calibrat=
-ion
-> > > process.
-> > >=20
-> > > ---
-> > > Changes in v2:
-> > > - no changes, resend.
-> > >=20
-> > > Changes in v3:
-> > > - expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
-> > >    configuration further" commit
-> > > - changes title of "thermal: tegra: soctherm-fuse: parametrize
-> > >    configuration further" to "thermal: tegra: soctherm-fuse: prepare
-> > >    calibration for Tegra114 support"
-> > > - Tegra11x > Tegra114 and Tegra12x > Tegra124
-> > > - ft and cp shift bits dropped
-> > > - clarified tegra114 precision
-> > > - lower_precision > use_lower_precision
-> > > - nominal calibration ft and cp hardcoded into SoC specific structures
-> > > - added tegra114-soctherm header into dt-bindings
-> > >=20
-> > > Changes in v4:
-> > > - fixed Tegra124/132/210 cp mask
-> > > - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
-> > > - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
-> > > - adjusted soctherm node and inclusions in tegra114.dtsi
-> > > - dropped use_lower_presision and nominal_calib_cp options
-> > >=20
-> > > Changes in v5:
-> > > - fixed CPU and GPU hotspot offset values
-> > > - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
-> > >    counterparts are equal
-> > > ---
-> > >=20
-> > > Svyatoslav Ryhel (6):
-> > >    soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
-> > >    dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
-> > >      System
-> > >    thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
-> > >      support
-> > >    dt-bindings: thermal: add Tegra114 soctherm header
-> > >    thermal: tegra: add Tegra114 specific SOCTHERM driver
-> > >    ARM: tegra: Add SOCTHERM support on Tegra114
-> >=20
-> > Hi Daniel,
-> >=20
-> > there's a build-time dependency on patch 4 in both patches 5 and 6. Do
-> > you want to pick up patches 2-5 from this series and I pick up patch 1
-> > and hold off on applying patch 6 until after the merge window? We could
-> > also do a shared branch, but it may not be worth the extra hassle.
+On Thu, Sep 11, 2025 at 07:20:51PM +0300, Svyatoslav Ryhel wrote:
+> =D1=87=D1=82, 11 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:00 Th=
+ierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Tue, Sep 09, 2025 at 10:49:58AM +0300, Svyatoslav Ryhel wrote:
+> > [...]
+> > > diff --git a/arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts b/arc=
+h/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
+> > [...]
+> > > +     host1x@50000000 {
+> > > +             dsia: dsi@54300000 {
+> > > +                     status =3D "okay";
+> > > +
+> > > +                     avdd-dsi-csi-supply =3D <&avdd_dsi_csi>;
+> > > +                     nvidia,ganged-mode =3D <&dsib>;
+> > > +
+> > > +                     panel@0 {
+> > > +                             compatible =3D "sharp,lq079l1sx01";
+> > > +                             reg =3D <0>;
+> >
+> > Looks like there are no bindings for this panel and I don't see any
+> > patches anywhere that add them. Am I looking in the wrong places?
+> >
 >=20
-> I can take the patches 2-5. Regarding a shared branch or wait for the next
-> version, I would prefer the latter
+> It seems that there are no archive yet with panel patch, this is a
+> schema part from patchwork
+> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/2025090907=
+3831.91881-2-clamor95@gmail.com/
+>=20
+> I would ask you to NOT pick the tree commit yet, I have a few
+> improvements for it and would like to send v2. Meanwhile, bindings
+> related with this tree should be approved.
 
-Alright, let's do it that way. I've picked up patch 1. If you take
-patches 2-5 now I'll pick up patch 6 once v6.18-rc1 has released.
+Alright, I'll just merge patch 1 for now.
 
-Thanks,
 Thierry
 
---77pu5semdcfvsxfi
+--mahnu5no6cnokx6g
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjD9XAACgkQ3SOs138+
-s6Gb2w/9FzFuO93dIq8o6wF8l7bzhiJ1Xadi6emh4ye9NQ/Xzu9S1KPszf+WaJYl
-WQPyLCxBFvFb3BuARreuZbgnbM37jEW2N+JZbpbOE7Mq8cfXUPJ0xcR3hO7a6YiY
-R9xDYSVAvFpAAxPlUU07wYRswWpQHRUk2kiFO8goc0m17/kd2nbiwhdYVzRg3wrJ
-YC2ZX9m/3l7TmsVd29NfEdKV4nW5FRH2v3aSi+IScXwjObd0oHo4ygrruccMbCPk
-RSRSXCqvEpol7cpx7kY+jCJTQ5h7lLrewycb1P8Dwxvz89ER9mtk+F5kwJiACGgN
-G3OeAaN9H9z/yuidIrgczHu1k1NezHBE3e9pytu7XHBlvC44Is/hOeGn3Wr+KBux
-as8CB/cfKSAnIn6SaXCbgxfHqQrBlO+FvTWWpN/6HYz+KRQQD42pz7AdhOMeAuCG
-Q+9sExxgd5M8BHZIdLpHvTalHbseuZm3kQdMJgfqCQdwGXgM6rCBaq2XN9loILdk
-6F/JNKe5ktkTT6DGtmDjXGfHKWrVa6oQ0F5MXo63EDHUwdPZVPBj3BQfAtRBbMjo
-mJQmDcOwACPS7wnW9wuDyJdPdllXRajiRIwt1j4nrYms7kVnOoikJf81msUwRucc
-ze5Fz4UK2uARv4qMX0qNDms6am7uL9DG+kWRaIFWUeERiSOmbDo=
-=ilf2
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjD9cMACgkQ3SOs138+
+s6HcYA//fFhnevw+HejFG5AQMygj1lfdsYEaYVqqZpwPo/PmuwghOBAx/0p/8Hpf
+LwmLxnw+NL9pPsnMBxWEGLJ2GKKEaFhEhB/gxDc+yBHeFG9filV+Id7pWGqu9sgv
+j2J8Rff/m+b66oCYTcgniAoA9H7iX/qINpegc4PZW6Igi/Tcv7A9Az7kVT4ewJqv
+IB93bhzn7M1jVjeOvkNHwBcM3D9jv7Z58XWSt6hDGbvltAJmHw3YMZtIg+YeYo/a
+Ga76QVmuZw8RpX7qIEUTDojFSEyV7sQSlQ1nli53OhQGQAaEzTh0JH+L/OLN0LUK
+X/PjX2PbVkNMt2fPKiHGtclPyo7HVQ/WwLqrTXS41SkZ4hs2BcfV6C3zzjObxSvp
+9EQIOojvp88cDO4+ZwhOkhD5FgPl4TYX40XPsQwS9tWfJk+42FQG+Sw9mVTUkdwa
+uccs7o7NmSDhPwAfoab653BQ4b6540LIa48R+IKn5n49gvnlCG8NTsGLwyC6LeZZ
+doROR9LbaTectrXEzhvCLzS1yxv9Zg6zUwGXndVFfGrmA/0aTuf++hcX6WqQJM4t
+chCeOjVu/a4vQl4BCgoO+qUZxzthArITUq61buTMhv8n923TAvC/BkUrvad74ZqV
+t4avlQTng2WtWgKMjisM2jjiWUD24eGRSArTSEKfTZ05Yb3R2eg=
+=0NYn
 -----END PGP SIGNATURE-----
 
---77pu5semdcfvsxfi--
+--mahnu5no6cnokx6g--
