@@ -1,64 +1,64 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB31027465C
-	for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 06:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FE425A352
+	for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 06:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757831978; cv=none; b=NFN5GdKY/mIO6uSyaBo59gVGAbHPT6+gsN42Uj0EjggC8JSodCSQv+8Nq3Iop4ySdME8XpBNIYU37kMM1BuDQ4PL+bLB1mC7EFQJH1WhOaWSxVJkQ+iaOwhK3FeJZhnEA4AMGl4xCMbDR8QA9z9VAXXF6NFaXTNTveaQ5ufGm1o=
+	t=1757831980; cv=none; b=RtPqzRmXQSPCjxZY0CJgjc1xaQOwf9kSQ/gKLi6dUEFuYSHM6pAPYNXY7rxlPBkjjR9WGUztsLY8vSbdSI4qnLC77Vo7KoDH+pVh5BUNQ+TvlD4m3kTIUrQ6L976htqcDUrXPDP7TF+ux6Ca1n+mVNngMQuFsg6WQo4RstUBSK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757831978; c=relaxed/simple;
-	bh=FBMpkEG3xuVEi6X8+YIzbjr4P6M5NPjehQ/mvrGD7Jc=;
+	s=arc-20240116; t=1757831980; c=relaxed/simple;
+	bh=bsOd8EVRaDr6WTbWAnHzgvTOV9nC656Hbrq4fioi2hs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kcCd1Dn2ZJj532hPwvp+fYDjYbcBjTnnQC8knQEghq0O11z3izT31n5KUnq408+/uoOioG14UaWfMoX+O1FXOTYjBp+GQqqZrcYTZNJfPVFNQ41hLHm8Fn1odERQH0eXFudbMyvr0QOC5vCrT7/H5vRQecUCfC7rAa/08WuBu+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jo317COh; arc=none smtp.client-ip=209.85.128.51
+	 Content-Type:MIME-Version; b=ikDlHDm15y/QsOrCikFlJYG57YXfqYNJq2FH0OmdxBvLPIIOneg2rzNWUbiR6CZ6lEbSmk7fVkeansh4FjW4sGEtToFu/PYlJ+yI9xq3jwTMKu/bbM7Ukg4VB3Q/TPdKpf8G2XGXp7dPpXxCr2y24Dnmm8kg2zakShbHlW+8FBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWs9637q; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jo317COh"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so1579345e9.1
-        for <linux-tegra@vger.kernel.org>; Sat, 13 Sep 2025 23:39:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWs9637q"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3e751508f21so2027150f8f.0
+        for <linux-tegra@vger.kernel.org>; Sat, 13 Sep 2025 23:39:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757831975; x=1758436775; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757831977; x=1758436777; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iROJ2tx36gbrZBejvZUL/Zr/rsiyI59LCcbHtmzoHL4=;
-        b=Jo317COhm6jjtvXfj0tf1oRrC45g3Fi8z2IAEZNQ3foKgZe45RaZ3aQxkcjujB9NTh
-         9jADJl1VDNisa/4ySkK1rzGZRE5djvdAasoECx0S/hiOn7Fd/fkepU1ZapffwsB6zzaR
-         8CnXgcfvP5l9/bCI9JwMKj8pSh8065ncg5Rwa2AAsh4qg/+L/FwQTLJKtyrOUXCZFNZS
-         p54ncEpSl2gtlXw3kAlKLZpDAu7+R/0U9FIaIguISb9kDGQFjFo1EH9B2i08ox9q8AP1
-         cLmMcar9Ag336axW3E7OiUj3cVAPCyZ42JwXjX3TsbRWyO9Jhear6KgYDRAjle+DkRYT
-         OYiQ==
+        bh=UcBio7jHPm6Tt90nNr36duLDMqdkUZVCgN2oNQY+Gdc=;
+        b=cWs9637q8csA+Kdl5x4BNv403ROJVlWuNFuBtuDKKKJ8BH4yZ7sQil882tRDyN1u4r
+         SSE7tMs7y+7f73C4M59v3Qo9u0iAIGsgLiJ+Z/9pzA/tg9vt+pGkEJmdLYViXS0Zs395
+         PpIIvJHbXfzc+rIG+x/g6CO+Hyq6rCcPw+7e13NJvlF7w6vMBJUlsTAwZ5PmeDpgHmpw
+         /AaBEpgAjeM1sX1g0hmAQXvUsibBEuQm7XKS7wxozsPCMCqLdqAlTSPqtCTv8WkXsY5Q
+         Y+YJFawOoEGq5VPAeaIdBDk/uMdtUk2+Wt8EcDrc/PYW3jsD2C48RUc+4KgBHY0BavfB
+         EDEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757831975; x=1758436775;
+        d=1e100.net; s=20230601; t=1757831977; x=1758436777;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iROJ2tx36gbrZBejvZUL/Zr/rsiyI59LCcbHtmzoHL4=;
-        b=haW75ZVQyYVVHXxSffDG8tP2X0+iTZjtFfA2s4q8uuUEE7iW844/IWcAEaV1K8Fx3T
-         GMfxeNhVwqPx9gqN6uoTH6uSebIR7Jcs0w53GuYmb+m2qcae75rJeC/2ExPs+8be1QGf
-         mXw8uqunMvMfpQ7fuSrzT1xyPF9JS9hB8f8XhhXEd3/Mz7vXC3jIEOCSa5okE53NNXKJ
-         AdHX4+myLfmfF+UPt9gdbuQ0yklcXZetLC7i1o1kyyvms7QBwoDDAkIQDyp0MRLEdrTd
-         eFxGIza5FSqbopZh8TBGoCUekcouws9YGBLJH5gQ9zYx1r+dmjVK2//5GIRPc+7RUv+y
-         sIdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE1Fud7IG6PJNe7rBXpBsE9fcTUhf30PJBwxcvGbLNlLKBn6NooUe6DctSWDZptw44CS+3fI64xYZXnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxltXnNmMXfOMiZsC5BhfArF8No7xImOXaWyKM9+wSWuK+P4fr3
-	sd+XxvYVMFO04fWmkpMqkW59rc7OG9JJsix0lyagTmMjaG8uEqyqjaIb
-X-Gm-Gg: ASbGnct04xKWVTVoYiPBOBLthgpYh5qcKoFWWb15x0FalFX76joTBnIlTNLdoajJ/DJ
-	1YATuRZ8itL52mG5Zqebpj3eYCBTevfIAAtITOvIEQEaQcgI3UTFcLngdKVKs4FBvBm9ZIujoB/
-	bcy/40O61FIHMIT7gChOONCDL8gPY+m2CvnybB7CegRNEzrhbHwQi4oXge5ubk6pg8ioVWr9tCk
-	Fp6nfEEdSgCpu6J+o8NO2JfEmTndV1w2M4CVKaNeijBpIA9R9jQfSV2TaEUt3o0u+sCJIVDlEsK
-	JNg1pUDDDQg/QQcoKYblfadsqVBrjjVs06MRgwiFmVlFSYleNg77jNOF1rfanNjJ6G7GEo217Sz
-	nONwFlYKk6WmHoOVuQzKggr2dl/iNcHsgtVSkLwWZ4vJsrFI7qbMVFgIkbgW7n7GU5GPCUotrLY
-	Xtz6bSNAVyfvXWWg==
-X-Google-Smtp-Source: AGHT+IFW+rB6aGFLs4VDxuSN9TMDXFvYUKQVvW3JHgJgSZD/moUw8NiHIlbWSVkHBC+L1vElMhYi0A==
-X-Received: by 2002:a05:600c:6610:b0:45d:cfa4:ce10 with SMTP id 5b1f17b1804b1-45f2128d4c1mr71751335e9.10.1757831975159;
-        Sat, 13 Sep 2025 23:39:35 -0700 (PDT)
+        bh=UcBio7jHPm6Tt90nNr36duLDMqdkUZVCgN2oNQY+Gdc=;
+        b=n299I8VuikI9PtNltAxojfBcVivsHvasBU+Vj8vOKgJnvZbtYGmdR/X+YulDqCd8cO
+         qhBepEX0mdJFvM3/0brFENmWAW6cc8qPeaQBK/Zku5cSmPEMca8j95csJ7jc20UOQpAA
+         08DfVZNAgPoLPmXg3X5X3nPDjWizw1nFt0WBDp0wFhePDZ1Kv7zPsI/g8R+1rvV3A7GE
+         BIFqx9oNeNNGWaV4zKmxH0BLpkh0dcmkqqnFlpLRY/aO+h5UBvtkHpJUUQNkxvT1wFYp
+         8lUP8Vzoy0Az8oLEVXguWRxc0UnMXMohkQXFqRIU8Dv4TIKVbmJRe9WI0KcO0V97jRrB
+         NZtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWC6xu3qX+S/ld3gw7AFzV56bocyyb9xYnVSxnQ05tMvbHZlad+lP+quIW3e9lJiTmLj7GHgPrCg1O7eA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzduSDymSYxluFfUY/qhiYel/FaJd+KkJ09X1qnCvqfy2uzuOCY
+	g32DZiEOjL/uXc23JIWAvlk1Dq5Vg8ZSiiYbRFUh8YiJDyYfl1r/t/kB
+X-Gm-Gg: ASbGnctUNCIT0KvyBpYScvKCP3355UbRlkYQcyi86AvkIW7c0RKdAGdFnLLok8A4hq4
+	G0N/t9g8Keqr4GTyVqWGXJl8XdJSc1rB6f5sASaZfl+i1BDXr3rikpopB1KLhyhLxFzIT37qmgh
+	hfMoKDbzTcZzOzKSZmqYwChgui4J+1kbgQee3VXM9IOUNyo51VP4XZX+r8i2DT/3MJWUbaM3VMS
+	Sut6DOMYlC+9XDLokyqY8vb4b4Nd+r7c2WixXoo62fAbqtTmohBHWJZdMYNhJ/Z/1n+ykrIFcPz
+	CwHOxuVChHelCZCTxjgz3snG34VlU04SDn7MG+MMNq450wcYqk48PG0bYMcFKdunjXybSgyNgcF
+	5T2BfPVGqWp1gilubY7F+ydlp233W3f0anh2vipLN68w+x3uklYkfRxxuaxKY13gv0TKqDXIWjR
+	N0lJRMXvdth+dbtA==
+X-Google-Smtp-Source: AGHT+IHymrOL+tTeViZP10RPGLwsdPflgferYQ5FgiwTqzzZ3HJC28XlDRAnkYKailfHPno4A8dELw==
+X-Received: by 2002:a05:6000:40e0:b0:3e9:4fe4:2619 with SMTP id ffacd0b85a97d-3e94fe45cbemr2544297f8f.25.1757831977436;
+        Sat, 13 Sep 2025 23:39:37 -0700 (PDT)
 Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e015313a0sm66917115e9.4.2025.09.13.23.39.33
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e82f647b83sm5778948f8f.20.2025.09.13.23.39.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 23:39:33 -0700 (PDT)
+        Sat, 13 Sep 2025 23:39:36 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -66,9 +66,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/4] ARM: tegra: Device tree changes for v6.18-rc1
-Date: Sun, 14 Sep 2025 08:39:24 +0200
-Message-ID: <20250914063927.89981-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/4] arm64: tegra: Device tree changes for v6.18-rc1
+Date: Sun, 14 Sep 2025 08:39:25 +0200
+Message-ID: <20250914063927.89981-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250914063927.89981-1-thierry.reding@gmail.com>
 References: <20250914063927.89981-1-thierry.reding@gmail.com>
@@ -89,40 +89,28 @@ The following changes since commit 04f27a0fda6b6be104531eeb95d07ef1b3a72af8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.18-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.18-arm64-dt
 
-for you to fetch changes up to 73e23d3bd7220847c3b1554ebe29221f84a01e95:
+for you to fetch changes up to e1899da95f59240ed2d4a51d7a89c8b77c45ff06:
 
-  ARM: tegra: add support for ASUS Eee Pad Slider SL101 (2025-09-11 18:30:46 +0200)
+  arm64: tegra: Add I2C nodes for Tegra264 (2025-09-11 18:35:23 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v6.18-rc1
+arm64: tegra: Device tree changes for v6.18-rc1
 
-Add DFLL support on Tegra114, fix some issues on Transformer and P880
-devices and add support for the ASUS Eee Pad Slider SL101.
+Add I2C nodes for Tegra264. These are currently unused but are needed
+for subsequent audio patches, as well as various monitoring and other
+auxiliary chips.
 
 ----------------------------------------------------------------
-Jonas Schwöbel (1):
-      ARM: tegra: p880: set correct touchscreen clipping
-
-Svyatoslav Ryhel (4):
-      ARM: tegra: Add DFLL clock support for Tegra114
-      ARM: tegra: transformer-20: add missing magnetometer interrupt
-      ARM: tegra: transformer-20: fix audio-codec interrupt
-      ARM: tegra: add support for ASUS Eee Pad Slider SL101
+Kartik Rajput (1):
+      arm64: tegra: Add I2C nodes for Tegra264
 
 Thierry Reding (1):
-      Merge branch 'for-6.18/dt-bindings' into for-6.18/arm/dt
+      Merge branch 'for-6.18/dt-bindings' into for-6.18/arm64/dt
 
- arch/arm/boot/dts/nvidia/Makefile                  |    1 +
- arch/arm/boot/dts/nvidia/tegra114.dtsi             |   33 +
- arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts    |   61 +
- arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts    | 1251 +------------------
- .../nvidia/tegra20-asus-transformer-common.dtsi    | 1268 ++++++++++++++++++++
- arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts       |    4 +-
- 6 files changed, 1368 insertions(+), 1250 deletions(-)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts
- create mode 100644 arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi | 225 +++++++++++++++++++++++++++++++
+ 1 file changed, 225 insertions(+)
