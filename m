@@ -1,72 +1,77 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F88323C503
-	for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 06:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B6C1EBFF7
+	for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 13:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757832013; cv=none; b=FmZvtFQnzhxJiM7YevIz2jvQeNNqHyM4iV2pkWegQDbSSSflDNXiMi0FvCW7oOzDz86JvE6YyBxpVMSWpqy3nFCIMHF2773RNv3kflb/KItx4Ex3Rh8UL+I63WLL4ZW1aKKIX6TF4uiXqqiZuRmA2Sd+fdiPQFxjWuMFxQ1bufU=
+	t=1757858316; cv=none; b=eNMfi4BP9Ha+Z8ZMtUlB3iP1ROR6gIyVvc6npvEJP+4M5BK1x3iALfRCnSFLpHmcB3db+tknScbDYoZuKMBWLMGleia6GWlD/7ji/9UspPCLYSYDnmWVSkNkztcmu1AeZsh/uYySPOJ6nuqBIIZ8FPntQqEoJJjzI05VMSTjXb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757832013; c=relaxed/simple;
-	bh=9OIG5orqFsNwab6LqC4uN8hef6QGTi9NSan+WeIbQu4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XI1SQYQStu4eBaDV3WJ4xw9Mft+Mb5PLczpMgWuiKBfhLUtbudQzeOu45HPFUkJAtTllmcyDtF0OY0qRZ6OfHUbyvT3TDJoAZDp2PEbibDI0bV8se1LViowtqQ5lNohHjFWW4iy2ZzPA5XvQhG4plcEFpyP9rvS1xvnFBUhgfcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Og5oG9Yp; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1757858316; c=relaxed/simple;
+	bh=3DSZ9s2DANNYKPQcKLUe3zmJ00fltppqFY17S2kZcZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bu81Bn87orHvdZYI9PFV7m5j7BdFMD/e96vsDQZHicLRkR9A6potDA19DE09p2QnSbTbqFxgsDrvxfoHlYrPPrAhF+pK+EiUAYQNDdaLrsvD4c7UI5oR7xLXAuZfQyakEE8HIY4ZpvQWGl2zwZ8We2z+9zouAO+m1WVnZMv8BoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDUvw4qs; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Og5oG9Yp"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e8123c07d7so516285f8f.0
-        for <linux-tegra@vger.kernel.org>; Sat, 13 Sep 2025 23:40:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDUvw4qs"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f6f434c96so3767501e87.2
+        for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 06:58:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757832010; x=1758436810; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757858313; x=1758463113; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mGq6925/jIdr2ZHYK/3/QTpUPif8QL9XSz6t8qLpUGs=;
-        b=Og5oG9YpbYzNpCuki7TA79vIrw7ug+aWCFkUlCPUUm7SEFocs+OkDnoRFr4ZU7ZpSI
-         WB5WEkmtWslv0mgt3TuuaAepagLClWUAj1KEsYSMeuLtQX/WIUpEvkSwOkJJ78c1+xFH
-         jipaeElv41VHggVe2WohmVTtF3uqa5aqSfLCadOmYd8/TJ6VbrtCGmPCyRC0azi1YQz7
-         bwmOEozkX00Etv1xNv2wncyky4PJcVzwDgc7VJSpEpS7ZUH0tQLqf5KnJ+NP8MFmYnif
-         npTxxp4Kus/oMfvDDB7j5s75eHB23jzlfIxOn7nxLiYWGuz8wR3EZX0f4LTTZoAIE6NX
-         q/5Q==
+        bh=b+JQ4r5PDj4R8lIryIhg8A2awcNjFM3HKh2AWh4qFhM=;
+        b=RDUvw4qsobREc+/PrbaOLt53JHsLSTS8BorgyAoc9o1bDfKERofr3+OKziaOM/5Q4g
+         xjWSEjC+3Z5+i7IC0SFEDddDUgJ050oRHvaJVeXK6+1DZ8HOLBDAs8yr4yHGhjGqnaR5
+         vXb+/QjCEicKDo7i47sy0keZo/hkDX9UCcMCE0d3lAtwQm9UO09/bUtk1DrWEU81BH4N
+         Ld7/VsQk1Mxc33Nf6tMGI0R6CzcEZag3+M1dHooSh9ARpX+Qk+Cm6QNgLsHwiFTmGdUg
+         LHp+E0dm1jPbloruIoyaNLFVGsBcEhQi3hzRKI4dP9oAlckAYsb53tGXuSRoZkDeHF32
+         kdUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757832010; x=1758436810;
+        d=1e100.net; s=20230601; t=1757858313; x=1758463113;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mGq6925/jIdr2ZHYK/3/QTpUPif8QL9XSz6t8qLpUGs=;
-        b=Mv+RopWArE9IIyqgdowsDe7crX/KfTeONsSOf9wVf5+RpoDBlAtUDeeqD1H7HPZ71p
-         3W3pKvg4tXz2jar6DDnJPO/0dJL18BOn+X4DhrS/rhvWkZKvJIy4SVHZNH3bYBXKDM1u
-         A7JW6lNrwKwl51pBEMetnxp5D1V+FCaf8n5puv4P/tZpBiKJ/NIRY4O/NwJUdHjhfPZI
-         RrkhkrYf8EgPlvHzbECQSqBYDKjFHzrceBh3fTDJYPpvR6c7O8ZH+f/2u/yanaXV1Wxv
-         JcRaalFgf1GW80otCCMG6Mvg0SQDA4AHoLAUc49XAkcpPq8JvR7H+SpeFHDfx9frCsPt
-         CMXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX+zC0b/0BdAClUfk74faTnF4yTrHTGdZt49LlkGvBOrdGwfZ+VFGpsqPUcW5/x6RINgCkWAI5R1aUiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEy5QC7zpmznoTanLzZno8MPGc9fkJShRdc0vPu7Zs7pJZpp66
-	j0aElpeJpA6vS8JJ+borDTzsBqOyyZPXQO2oxVPTzlMPKLPo+ILRLNSm
-X-Gm-Gg: ASbGncty5hsJMhW5LAYKV5/kDTS9Qed7rHA5DpJVDdLeSS8XyYLedAXiwmWFaeLqx4x
-	YBK2mKej8L3pJyjxlC/j7vJ/HIqbDw9nNBl8tg6McKyEn28AATDchEfXsHymdCqoaoGfKyYm29k
-	eDTh3zreG2Ou82bpuCgIhez+n6BwyLH5IIr6yUdP0jV679QhpR/uto/3k+Kb9pTb/vehXmJrOJH
-	cp93ayO3xZUOFpxL7fkRZyROwfTvFPKAFd/cL0P8FPWgSwI8Tn4VoOcM84oLIgxZ183j45NNdoX
-	g35kxNnONrpCt3ORAIHqFzr+8ywIn0BtNSIZYHNmNXpsdt+v0eCB+vrDCPJySKUByM/9HGctiQn
-	dLu9/MJcqVq0qBcfqRP5MAbl/IAWyBZ29qZCNbIUOBa59GDy/O4rk3u1X26ndyNJnaoveUf5F4p
-	UTKntQDETe7wmeTg==
-X-Google-Smtp-Source: AGHT+IEkwFzC+MAQUOBOjx0qfNXQf1qYrih4ukqOKlPrqTVHxFCuNkIgRI4Eu4SBNCQ28PSsd3XSvQ==
-X-Received: by 2002:a05:6000:2489:b0:3e0:34f4:31f9 with SMTP id ffacd0b85a97d-3e765792ff9mr6535584f8f.1.1757832009742;
-        Sat, 13 Sep 2025 23:40:09 -0700 (PDT)
-Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e7607cd43csm12396259f8f.29.2025.09.13.23.40.07
+        bh=b+JQ4r5PDj4R8lIryIhg8A2awcNjFM3HKh2AWh4qFhM=;
+        b=oQ/oQXXVba6a8YlbUTHPmtuEbwtwHddQCp5SeTBv5osUuFa0OdABUHylcXYSF5sSk8
+         snI9qSHgjSumnrxcx2IEfq5rhWdaLCJMgrTi2HW58jXyB7SDPsjY2opwgIqEyN4SNtG5
+         0/YGEXsJXZj9hlnadb5teH4w4A2whoXCaGY6yap6/TRWJCIrZhDeeZxyq3WQJPbqiBdN
+         093s6h63TjBgNxs13xCof7hPZQQ3uK9jy7mTNekLADxAan+boKMgVIhzxXb0/2B4i9cq
+         WJGIrPsMIufHirR5dB/gi5nHrNr99GtkDNfayf0OnDZNM6pYiK/od5fB6RFQhzNv9AyU
+         WYWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWR152MecyLFDvzNOf1twg2rSvgaKo8/0TQ0qo5FKoMXa6+ghq2xoj/7vFndcShpnOorGDhHh0zU/zE/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKGoewZ6cG5waA5k1FCrpcpWoOJMR3LhUAc9Z+ZX3n9/GqV2KY
+	wp174V3XX7OOlA9xbbIwU2tHTFiPp0whbnnoGZrmYg5Ed7ub+MWWsqrg
+X-Gm-Gg: ASbGnctyNBT2p01F4nxocCrJWxV2ptBNGYL7isYtO9iQTi5A/znJCEu0JagY2EmjCsu
+	CLp6/w34HrITZt1cknmYjh8TEX7g+otM5gYQM9ny0CIjhjXPyytrPf4pF+g/HB16nzXSwXZ6pTm
+	ZRwwK2AawvXXD6VURlxUiqcOZ4rMYqZ6c64p6GTHENf/IkkOF8Bi4La4odaPg+6RqA2wc6ZaQQ9
+	Co6BHi7i/Lv66TmeDSjNvM4jb4GPpMqiLbFAlaWwU177REc4mOyDLluTtR6TXI12bHIXsxxZX2t
+	NP3KRoU5mDIe8MCML/18SpgFXrKk+D7geADR7b6yhI1OjLzRG5x6qIbfnCSPhUF+TVxjtpw6+9Z
+	Sw4LQG5R2wh+AmuySyNE/0Xos
+X-Google-Smtp-Source: AGHT+IExdpXunQGol+DW1knCbeObDIX+rDrTqqxE2omvrrj3UQ5Dw9nR9gQ4rjIZz1H0Y2IylfO9jw==
+X-Received: by 2002:a05:6512:3d09:b0:55f:4512:7206 with SMTP id 2adb3069b0e04-5705212662bmr2889867e87.50.1757858313003;
+        Sun, 14 Sep 2025 06:58:33 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5701c93cc05sm2320551e87.114.2025.09.14.06.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 23:40:08 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v6.18-rc1
-Date: Sun, 14 Sep 2025 08:40:04 +0200
-Message-ID: <20250914064006.90225-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.50.0
-Content-Type: text/plain; charset="utf-8"
+        Sun, 14 Sep 2025 06:58:32 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Ion Agorria <ion@agorria.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] ARM: tegra: add support for Xiaomi Mi Pad (A0101)
+Date: Sun, 14 Sep 2025 16:57:52 +0300
+Message-ID: <20250914135753.94277-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,43 +80,41 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Mike, Stephen,
+The Mi Pad is a tablet computer based on Nvidia Tegra K1 SoC which
+originally ran the Android operating system. The Mi Pad has a 7.9" IPS
+display with 1536 x 2048 (324 ppi) resolution. 2 GB of RAM and 16/64 GB of
+internal memory that can be supplemented with a microSDXC card giving up
+to 128 GB of additional storage.
 
-The following changes since commit 04f27a0fda6b6be104531eeb95d07ef1b3a72af8:
+This patchset includes some schema changes not yet applied. They can be
+found here:
+- https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250909143432.121323-2-clamor95@gmail.com/
+- https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912065146.28059-2-clamor95@gmail.com/
+- https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912064253.26346-2-clamor95@gmail.com/
 
-  dt-bindings: arm: tegra: Add ASUS TF101G and SL101 (2025-09-11 18:28:57 +0200)
+---
+Changes in v2:
+- added fuel gauge interrupt
+- added CE gpio for charger
+- removed always-on for vdd_gpu
+- improved pinmux configuration
+- added camera regulators
+- removed usb@70090000 (already disabled in common tree)
+- set correct modes for mmc devices
+- removed thermistor thermal zone (not used by mocha)
+- fixed pmc interrupt polarity (removed interrupt inverted prop)
+- configured OTG support
+- removed bluetooth reset-gpios
+---
 
-are available in the Git repository at:
+Svyatoslav Ryhel (1):
+  ARM: tegra: add device-tree for Xiaomi Mi Pad (A0101)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-6.18-clk
+ arch/arm/boot/dts/nvidia/Makefile             |    3 +-
+ .../boot/dts/nvidia/tegra124-xiaomi-mocha.dts | 2790 +++++++++++++++++
+ 2 files changed, 2792 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
 
-for you to fetch changes up to 5aba939e80f439c1a67adb6d9cae23cc72db7ef9:
+-- 
+2.48.1
 
-  clk: tegra: dfll: Add CVB tables for Tegra114 (2025-09-14 08:23:28 +0200)
-
-This depends on the dt-bindings branch because of the DT header file
-that the driver includes.
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-clk: tegra: Changes for v6.18-rc1
-
-Add DFLL support on Tegra114. This is quite similar to the existing
-Tegra124 support and most of the code can be reused, except for the
-CVB frequency tables.
-
-----------------------------------------------------------------
-Svyatoslav Ryhel (2):
-      clk: tegra: Add DFLL DVCO reset control for Tegra114
-      clk: tegra: dfll: Add CVB tables for Tegra114
-
-Thierry Reding (1):
-      Merge branch 'for-6.18/dt-bindings' into for-6.18/clk
-
- drivers/clk/tegra/Kconfig                  |   2 +-
- drivers/clk/tegra/clk-tegra114.c           |  30 +++++-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 ++++++++++++++++++++++++-----
- drivers/clk/tegra/clk.h                    |   2 -
- 4 files changed, 158 insertions(+), 34 deletions(-)
