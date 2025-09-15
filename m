@@ -1,46 +1,44 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E8A2FD7D3;
-	Mon, 15 Sep 2025 11:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE842765FF
+	for <linux-tegra@vger.kernel.org>; Mon, 15 Sep 2025 11:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936822; cv=none; b=QQZ5noEJAFt8shdT6ErQH8jlua098t8gTA3MXmF9dV14uYNGblmBFFosz7BbmfeJfL4ymOnl8beHANHaQBQfR7JAORgNNXRJC4/JHg2//F4WJeV9erGtHhuG1t96W7Qe0YM1/zEQql7LAxYMaDNZUwfDDlFfda3K4/2233MUsjg=
+	t=1757937416; cv=none; b=OLiO0m59v2kIqYeSxp4oiO61yCTwDBDpnWYOzEhzp2IG6i5G+5XhU53LcO1O/2odKYSgoJ1jMgWe8gXlTHSXT69S7pNBlR7fEx0ZRMrzQU22sSR0aPWut5KN4R91wVln7tz2ELg8kdPfM4MIxdNapgfF97AZFOCtdD5J0sdrSBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936822; c=relaxed/simple;
-	bh=YH1lYv37rvuaCIt3LkdDU2QwLfCom7OlCQhnjTrSLaM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VEeHkUMpCK2Vjh/pizfvGUcT6Ts3aKN+ey54bcsrGEQMDc4lILiL5P6F11QM7YHdpI9NgRJ89zkLqQOxr3RCUoQ+9OqXrkp1iVd7usBzhrj57GzrFyGbyBlot1qtnuuVO+E+Esqi0/y1cKQtJThktaYDM5/S8Am4qMIwKGPxaJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Uv9pjGXI; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1757937416; c=relaxed/simple;
+	bh=fA4MlAIn7P1pBX/89vOZIi4pnvENU8A6OalvZ9lhyUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g9rYqei2eSvze7tfamBecldZ0XuRj3CkY8VfY7e7OSZ4XYqaoHifNxRTt+0XMHDKI26L6WMuDcZBXwvSocD+Aads/Aka3vEuErbFs8D/2S8WfwDYB5Ensbx965AgI4voaxltHlCbq1Y8FTpglWOmzelARp0x6U2RWGRuQCYQbLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m7lzQF6b; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Uv9pjGXI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=g7
-	bBZ08Y30YBsmASg69y6dlkae34XywuX+RyAixm0dw=; b=Uv9pjGXIfw6UMFCeeb
-	EnxoUMEgtn/DY1qMT70OwSudd4X4Z+5NciXB5gJ/EOAS2oMrNiLtO3tr0HssMl9F
-	a1ZU1aJoub1DSeWasHglvtxlfhVhQc+Bhy+irzCK7LjVfm9R0Aqtt1rMVoJZQD7c
-	ERGLzvZOnLNH717HkflvjNZ04=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgAnhAuW_Mdoi3VIDA--.37972S4;
-	Mon, 15 Sep 2025 19:46:31 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linmq006@gmail.com
-Cc: linux-clk@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m7lzQF6b"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757937410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JVVGhrqsmL4odmIDg4NNn1VRpJaq1RD433dc/e6m7/I=;
+	b=m7lzQF6bpIU0zWTJt4VYQVIVA5KoWH3Oha1hmVSrZEtMQYWjg3kW7Hm+dYfGTh8JudNVrJ
+	fSL4UxEAOoeJsp2jwXemfRNXbxPh4LGp9Jdd44m4/7CLvDvRzdeGP8Nc/kJm+va1WRSJG8
+	68Ts/yJrq7PM2lIdeI/peOOK5+IueG0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Dmitry Osipenko <digetx@gmail.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-pm@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: tegra: tegra124-emc: Fix a reference leak in emc_ensure_emc_driver()
-Date: Mon, 15 Sep 2025 19:46:29 +0800
-Message-Id: <20250915114629.174472-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PM / devfreq: tegra30: use designated initializers for tegra_actmon_emc_ratio
+Date: Mon, 15 Sep 2025 13:55:55 +0200
+Message-ID: <20250915115554.2150603-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,39 +46,42 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgAnhAuW_Mdoi3VIDA--.37972S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jw1DXry5XF1DCF43Jr4kXrb_yoWDZrbEkF
-	4jv3s7Xw45Cr1UCF15Gr4fZryIyFn8WF4vvFy7tFZ3G345ur45Xr45ursakrnIg3yDCa4D
-	WF10g398Gr98CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMsjjDUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEBnJbmjH+kpShwAAsk
+X-Migadu-Flow: FLOW_OUT
 
-put_device() is only called on the error path, causing a reference leak
-on the success path. Fix this by calling put_device() once pdev is no
-longer needed.
+Switch actmon_emc_ratios[] to the more modern and flexible designated
+initializers. This improves readability and allows struct fields to be
+reordered.
 
-Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/clk/tegra/clk-tegra124-emc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 2a6db0434281..b9f2f47ec6e5 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -197,8 +197,9 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
- 	tegra->emc_node = NULL;
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 4a4f0106ab9d..890990e03335 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -206,13 +206,13 @@ struct tegra_actmon_emc_ratio {
+ };
  
- 	tegra->emc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
-+
- 	if (!tegra->emc) {
--		put_device(&pdev->dev);
- 		pr_err("%s: cannot find EMC driver\n", __func__);
- 		return NULL;
- 	}
+ static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+-	{ 1400000,    KHZ_MAX },
+-	{ 1200000,    750000 },
+-	{ 1100000,    600000 },
+-	{ 1000000,    500000 },
+-	{  800000,    375000 },
+-	{  500000,    200000 },
+-	{  250000,    100000 },
++	{ .cpu_freq = 1400000, .emc_freq = KHZ_MAX },
++	{ .cpu_freq = 1200000, .emc_freq = 750000 },
++	{ .cpu_freq = 1100000, .emc_freq = 600000 },
++	{ .cpu_freq = 1000000, .emc_freq = 500000 },
++	{ .cpu_freq =  800000, .emc_freq = 375000 },
++	{ .cpu_freq =  500000, .emc_freq = 200000 },
++	{ .cpu_freq =  250000, .emc_freq = 100000 },
+ };
+ 
+ static u32 actmon_readl(struct tegra_devfreq *tegra, u32 offset)
 -- 
-2.25.1
+2.51.0
 
