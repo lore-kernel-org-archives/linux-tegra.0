@@ -1,182 +1,230 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22811FE45A
-	for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 14:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E8719DF4F;
+	Mon, 15 Sep 2025 05:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757859886; cv=none; b=uZ1QxjOR3cahp3iatWSU3f9h18qz/F1CLswwykbGWziEpDJrYPmGZN7yFRoIkKpTFSrVObk7nfsizFemvj5oEpmOPrOSKxWZ/fxZT/MHEdgJKsjIkweDOmf0HGQ/HsNOupvr1boyeakxa3KYQxK1/9LfRYVjNzbXjHr3f50+5Zo=
+	t=1757915267; cv=none; b=alx37r38IgOSeZBFRIW0pnWbywn6T1kEHgKfmidA/2HVx1DB7XAqL9bVYv5gR0PBVNtoyEwTKIAhvXbkEAHjEiMBi/FunHaEkbJPaUVqAiEzyij3uIL8PB8DEgO6D98OK32FsXqeVLUGYxl0o1UjAYytctbfiReBgKMiFwCoT/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757859886; c=relaxed/simple;
-	bh=W9lhcPQWYJCkan7KXgFZubDkcctJGU3MKVzKoE7qJJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h5Fqxl4kH/10+JwOHZoi2pdSrK1D4x3udep0LoAk6gchXs203aM4to1UeQLkEXZhiyf1qs1Hyo5t9jzGr2eIkF+73ND76tSRCp6GteK9lZJAE6wEtW7mNsePTmtAjkdEKAEjZsZYieuo/NLNBCTeh7l8ZgwORImpJZTZuwIAFXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOUlbR7E; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757915267; c=relaxed/simple;
+	bh=uhq5A4HqOzycNT0EguqVROkMdKzAY8x3LE2Z7OEXVXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SmEndwrq6P/abuSaLd/mJg0z3CQOmc3t/nmqg2+VZcfVuW+Hs0JTrJi/POqGpnQnB9T2uGrx6ptp7cocRoN1Ou+/vJP9/V7eU393TcDklsynY+wo8+kvzKoh+ADr56vKN2bnANAFYoj2GW9AGyP2YuDr0zw3d2dG99YlelpSARk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YrO2N/Fi; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOUlbR7E"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57171d58ebfso1672366e87.0
-        for <linux-tegra@vger.kernel.org>; Sun, 14 Sep 2025 07:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757859883; x=1758464683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AOL0NG0zrkRA/YQSYESdMqzkPZLcb4cVfP68XzHxZyE=;
-        b=OOUlbR7EyCHxqtSIAxrA+u/f/9oGKZIcudmDCPjEcQBVLCDI46rpKpnHLYnsXq+zrJ
-         His8MFiZVkZpPkF1bwSyESdD6vVYgblpPc2oW0U5Y++ajqWwIEQ7g1D61bRz67Bshkh5
-         tfQpVB8vUflQK+Us/F9cqM/SnGwqTg25YKHO9KTdbvrv8QBeeMyfbf4hxpeJOUq51ovI
-         IYqg2Fv87XpIus0qgP0CAA6EFC9AhfaSartmhoXeny2dEqWigG5RPxueWkf96BamFY44
-         DJhc4dGvH/z8ulLn2y/GMkVdKiBipYt47/L3SgiQz12P64u6a00VtSy+0mBoeIezf9Do
-         s+vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757859883; x=1758464683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AOL0NG0zrkRA/YQSYESdMqzkPZLcb4cVfP68XzHxZyE=;
-        b=Ebt/xXv9mB1v2N5rd3U7hmhC6VnjXjChq4lzz+/KyUjn2TSK7w3fTD8DS1a44X5EhU
-         31gIeR/JNBs0BT3tnauNk2HVOYFaDnYJZaw2XES67UmGhrdAkfzsIt1xT3t3U+vOCBoa
-         t2ekHBUzEUfRgOSnvRbzmTmkORUGf0rk1xGVzPWiHXgr9oWj4Q17GCPoWs00iBScDD5d
-         UF5ZXQUx+7FtQAjTXNn7Y7STFD2zPcvk7LeFNE8vFPg6XefvgGn24GQ+ZEelbEEGX/7q
-         ft5T/VmQgRnTPOKQdJOtmw+siCWBjSQ7tZVYBqQHadNsjC0W0kw8QzMk+ZprsCGiFaui
-         adgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcR5QVyXJHh79Eph+k2MHGMkN+KzBbscKRYwl8S/GZ2bEJI47ytOwsNiVVhfYlZ1Qq2+sZJaaKowin9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNMmGaRWwcqZrp+x5WgPyABJYxfapYaY2aWGfyUYofdq0rlWsD
-	ev42L9t6a2oi+thA25g2I9CZ5ga/AV31hTexeAs/b9fTK849InuKgVJfaOBYNPzdefKr2vTtuW8
-	PSxgYTfsRUqWbY5yLJ8Dq+fc+aCYr97E=
-X-Gm-Gg: ASbGncsAzRi9XvmuELm8gN7pE5RcX4RsKyUd2cvUx2nr1OvuFdA2xcmqrYYOpsFbdu3
-	LYjdlUtJeJxpzXl1DsLMwg6Shf66CXdkwf4tlUyHjpy2VB9qQDjcMv14+2tznyg8ZWOnquBSoGf
-	ocOhjhotfv7VdZPqVKy/e5QUHGdomQld23EKRbekz41fizNwKe2u7kZOwrwlh5h+jN2UhyhFOjd
-	d7FNCRaIdQSeoif8w==
-X-Google-Smtp-Source: AGHT+IGlv2ax57xdAxcgpKY7t6yHDH97U54LvSlSNzVOFQKCGM9THTfZg99iHUHNfg3ngRBiUo+Ka2Gu4jNs1BVijrs=
-X-Received: by 2002:a05:6512:1256:b0:55f:6bc8:19b7 with SMTP id
- 2adb3069b0e04-56d79b23437mr4070925e87.15.1757859882794; Sun, 14 Sep 2025
- 07:24:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YrO2N/Fi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757915265; x=1789451265;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uhq5A4HqOzycNT0EguqVROkMdKzAY8x3LE2Z7OEXVXw=;
+  b=YrO2N/FiQbeNOJfR4qQJdbcF+L4ch2iAeSTrQW0uj55LPQBbu4/53ioz
+   BnCLZ9IiXI/eRJ9NszYQyVik3nWIzG+bfeoGOJ7O6apT6ILpOeHT92gg6
+   o3wQq5HSHrD+91yVIBRNaeoQ9OMY+JJOmccak1MlahxiQ00Fjb8pBJKTr
+   8j9yfJtKfEmYJqJMMlGEb5HuUX6N1dmpOi7jGde/QXjsjCSGHUcwSSiHn
+   IB73avXP84CbYiLvingBKbUEwKLMUO664XlAZ8jfvi4vvGYGhL+J/ChbU
+   uRZqIAr0yhlcsiCMyZMyjqr+7cD624QN+U1rZu5UbnAtYtxP2hgxjeKdf
+   Q==;
+X-CSE-ConnectionGUID: UN/Cfw9kQtCSkl8yTyusZg==
+X-CSE-MsgGUID: HqH6ix8dSH+y7yVsKNUYuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="60264268"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="60264268"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 22:47:44 -0700
+X-CSE-ConnectionGUID: gjM+2CUiQFKjW+x4di8vSw==
+X-CSE-MsgGUID: sYKP41NqQxW0tIoaUO1RTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="174598032"
+Received: from lkp-server02.sh.intel.com (HELO 0f80bf6f8d53) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 14 Sep 2025 22:47:37 -0700
+Received: from kbuild by 0f80bf6f8d53 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uy23O-00002V-38;
+	Mon, 15 Sep 2025 05:47:10 +0000
+Date: Mon, 15 Sep 2025 13:46:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 23/23] staging: media: tegra-video: add CSI support
+ for Tegra20 and Tegra30
+Message-ID: <202509151319.M4lQXwA8-lkp@intel.com>
+References: <20250906135345.241229-24-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
- <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
- <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com>
- <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
- <CALHNRZ-HTFz38xZFsbpG6C3r_xDQTLNOZWPX21TzNPaLyxf6Xw@mail.gmail.com>
- <xmirimw2guubgrf6umt4qiknpyjaepkrx4oggcmaffoyd5sli2@kzewnjv3bkjf> <CALHNRZ9uJ9g6BGhUmBaaMM3DhQDh7mTtqKKr0A98X-5V4ompEg@mail.gmail.com>
-In-Reply-To: <CALHNRZ9uJ9g6BGhUmBaaMM3DhQDh7mTtqKKr0A98X-5V4ompEg@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sun, 14 Sep 2025 09:24:31 -0500
-X-Gm-Features: Ac12FXy5JXU7gOyeU6ClkGO-LvqM22dVNb4lFs5nwsHzDncJiwk16On4YrZpLD0
-Message-ID: <CALHNRZ-7LFz=C70hWBPox2EYD-t=Cs-buN+N=4xVGaNHg41ahg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906135345.241229-24-clamor95@gmail.com>
 
-On Mon, Aug 18, 2025 at 1:56=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
->
-> On Fri, Aug 1, 2025 at 4:43=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Thu, Jul 31, 2025 at 04:36:17PM -0500, Aaron Kling wrote:
-> > > On Mon, Jul 14, 2025 at 12:35=E2=80=AFAM Aaron Kling <webgeek1234@gma=
-il.com> wrote:
-> > > >
-> > > > On Mon, Jun 30, 2025 at 2:27=E2=80=AFPM Aaron Kling <webgeek1234@gm=
-ail.com> wrote:
-> > > > >
-> > > > > On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234=
-@gmail.com> wrote:
-> > > > > >
-> > > > > > On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Rela=
-y
-> > > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > > > >
-> > > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > >
-> > > > > > > The p3509 carrier board does not connect the id gpio. Prior t=
-o this, the
-> > > > > > > gpio role switch driver could not detect the mode of the otg =
-port.
-> > > > > > >
-> > > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > > ---
-> > > > > > >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dt=
-s | 1 -
-> > > > > > >  1 file changed, 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p=
-3636-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.d=
-ts
-> > > > > > > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409=
-df355bbcb691ef99b0d0c9d504e 100644
-> > > > > > > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-00=
-01.dts
-> > > > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-00=
-01.dts
-> > > > > > > @@ -669,7 +669,6 @@ connector {
-> > > > > > >                                         vbus-gpios =3D <&gpio
-> > > > > > >                                                       TEGRA18=
-6_MAIN_GPIO(L, 4)
-> > > > > > >                                                       GPIO_AC=
-TIVE_LOW>;
-> > > > > > > -                                       id-gpios =3D <&pmic 0=
- GPIO_ACTIVE_HIGH>;
-> > > > > > >                                 };
-> > > > > > >                         };
-> > > > > > >
-> > > > > > >
-> > > > > > > ---
-> > > > > > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> > > > > > > change-id: 20250513-tx2nx-role-switch-37ec55d25189
-> > > > > > >
-> > > > > > > Best regards,
-> > > > > > > --
-> > > > > > > Aaron Kling <webgeek1234@gmail.com>
-> > > > > > >
-> > > > > > >
-> > > > > >
-> > > > > > Friendly reminder about this patch.
-> > > > >
-> > > > > Re-reminder about this patch.
-> > > >
-> > > > Yet another reminder about this patch. It's been over two months
-> > > > without a response and many other patches have been pulled in the
-> > > > meantime.
-> > >
-> > > Reminder yet again about this patch. It's now been two and a half
-> > > months without even an acknowledgement from the maintainers.
-> > >
-> > > This one is getting annoying. What does it take to get a response fro=
-m
-> > > the tegra subsystem maintainers? Does time have to be pre-allocated b=
-y
-> > > the company to look at patches that aren't from @nvidia.com's? Are
-> > > there certain times during a development cycle? When responses happen=
-,
-> > > it seems like there's a lot of activity. But then everything goes
-> > > silent again for months. I've not seen any pattern to it so far and
-> > > it's becoming extremely frustrating.
-> >
-> > Just people being busy. Nothing more, nothing less. I'll pick this up
-> > once the merge window closes.
->
-> If I understand correctly, the merge window closed on August 10th. And
-> I still haven't seen any movement on open patches. If everything
-> unrelated is on hold until after Tegra264 launch or something like
-> that, it would be nice to at least set that expectation instead of
-> everything being held arbitrarily in suspense.
+Hi Svyatoslav,
 
-Is there any intent to pick up this or any of my other pending patches
-for 6.18? Once again, I see many other things queued for 6.18-rc1, but
-not this. This was sent in before 6.16-rc1, and now looks to be missed
-even on 6.18.
+kernel test robot noticed the following build warnings:
 
-Aaron
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on robh/for-next clk/clk-next linus/master v6.17-rc6]
+[cannot apply to next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/clk-tegra-set-CSUS-as-vi_sensors-gate-for-Tegra20-Tegra30-and-Tegra114/20250906-215750
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250906135345.241229-24-clamor95%40gmail.com
+patch subject: [PATCH v2 23/23] staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
+config: arm-randconfig-r131-20250915 (https://download.01.org/0day-ci/archive/20250915/202509151319.M4lQXwA8-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 21857ae337e0892a5522b6e7337899caa61de2a6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250915/202509151319.M4lQXwA8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509151319.M4lQXwA8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from <built-in>:3:
+   In file included from include/linux/compiler_types.h:171:
+   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
+      28 | #define __SANITIZE_ADDRESS__
+         |         ^
+   <built-in>:366:9: note: previous definition is here
+     366 | #define __SANITIZE_ADDRESS__ 1
+         |         ^
+>> drivers/staging/media/tegra-video/tegra20.c:909:6: warning: variable 'pp' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     909 |         if (ret < 0) {
+         |             ^~~~~~~
+   drivers/staging/media/tegra-video/tegra20.c:923:53: note: uninitialized use occurs here
+     923 |         tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
+         |                                                            ^~
+   drivers/staging/media/tegra-video/tegra20.c:909:2: note: remove the 'if' if its condition is always false
+     909 |         if (ret < 0) {
+         |         ^~~~~~~~~~~~~~
+     910 |                 dev_warn(csi->dev, "MIPI calibration status timeout!\n");
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     911 |                 goto exit;
+         |                 ~~~~~~~~~~
+     912 |         }
+         |         ~
+   drivers/staging/media/tegra-video/tegra20.c:900:6: warning: variable 'pp' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     900 |         if (ret < 0) {
+         |             ^~~~~~~
+   drivers/staging/media/tegra-video/tegra20.c:923:53: note: uninitialized use occurs here
+     923 |         tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
+         |                                                            ^~
+   drivers/staging/media/tegra-video/tegra20.c:900:2: note: remove the 'if' if its condition is always false
+     900 |         if (ret < 0) {
+         |         ^~~~~~~~~~~~~~
+     901 |                 dev_warn(csi->dev, "MIPI calibration timeout!\n");
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     902 |                 goto exit;
+         |                 ~~~~~~~~~~
+     903 |         }
+         |         ~
+   drivers/staging/media/tegra-video/tegra20.c:886:15: note: initialize the variable 'pp' to silence this warning
+     886 |         u32 value, pp, cil;
+         |                      ^
+         |                       = 0
+   3 warnings generated.
+
+
+vim +909 drivers/staging/media/tegra-video/tegra20.c
+
+   880	
+   881	static int tegra20_finish_pad_calibration(struct tegra_mipi_device *mipi)
+   882	{
+   883		struct tegra_csi *csi = mipi->csi;
+   884		void __iomem *cil_status_reg = csi->iomem + TEGRA_CSI_CSI_CIL_STATUS;
+   885		unsigned int port = mipi->pads;
+   886		u32 value, pp, cil;
+   887		int ret;
+   888	
+   889		/* This part is only for CSI */
+   890		if (port > PORT_B) {
+   891			pm_runtime_put(csi->dev);
+   892	
+   893			return 0;
+   894		}
+   895	
+   896		guard(mutex)(&csi->mipi_lock);
+   897	
+   898		ret = readl_relaxed_poll_timeout(cil_status_reg, value,
+   899						 value & CSI_MIPI_AUTO_CAL_DONE, 50, 250000);
+   900		if (ret < 0) {
+   901			dev_warn(csi->dev, "MIPI calibration timeout!\n");
+   902			goto exit;
+   903		}
+   904	
+   905		/* clear status */
+   906		tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, value);
+   907		ret = readl_relaxed_poll_timeout(cil_status_reg, value,
+   908						 !(value & CSI_MIPI_AUTO_CAL_DONE), 50, 250000);
+ > 909		if (ret < 0) {
+   910			dev_warn(csi->dev, "MIPI calibration status timeout!\n");
+   911			goto exit;
+   912		}
+   913	
+   914		pp = tegra20_mipi_read(mipi, TEGRA_CSI_CSI_PIXEL_PARSER_STATUS);
+   915		cil = tegra20_mipi_read(mipi, TEGRA_CSI_CSI_CIL_STATUS);
+   916		if (pp | cil) {
+   917			dev_warn(csi->dev, "Calibration status not been cleared!\n");
+   918			ret = -EINVAL;
+   919			goto exit;
+   920		}
+   921	
+   922	exit:
+   923		tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
+   924	
+   925		/* un-select to avoid interference with DSI */
+   926		tegra20_mipi_write(mipi, TEGRA_CSI_CILB_MIPI_CAL_CONFIG,
+   927				   CSI_CIL_MIPI_CAL_HSPDOS(0) |
+   928				   CSI_CIL_MIPI_CAL_HSPUOS(0) |
+   929				   CSI_CIL_MIPI_CAL_TERMOS(4));
+   930	
+   931		tegra20_mipi_write(mipi, TEGRA_CSI_CILA_MIPI_CAL_CONFIG,
+   932				   CSI_CIL_MIPI_CAL_NOISE_FLT(0xa) |
+   933				   CSI_CIL_MIPI_CAL_PRESCALE(0x2) |
+   934				   CSI_CIL_MIPI_CAL_HSPDOS(0) |
+   935				   CSI_CIL_MIPI_CAL_HSPUOS(0) |
+   936				   CSI_CIL_MIPI_CAL_TERMOS(4));
+   937	
+   938		pm_runtime_put(csi->dev);
+   939	
+   940		return ret;
+   941	}
+   942	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
