@@ -1,177 +1,143 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55452371E82
-	for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 16:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982D9253359
+	for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 17:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758039907; cv=none; b=Mq78yQehkJHxqdho7c69rPdRKeRjkQa/ZaL2KsVfsroIB+KSElqfIThDNF+oXQzU//RX81IxgLKdP8ZLjSlD5xN8SAM1wUsgee2vETTBvwe7rAgqfe6d+aEd3+RXAz7vI2nIZdCDfGxjdCNJPRlHKd/jIxq30zG5/hBxzmMfPxQ=
+	t=1758043449; cv=none; b=WPvy8/l7y/0O67Y1blhHXeu7qKcPm4zLnPM82kY29gvUfAV8921xPanqs1egJD5U9Sbesj4ZdNiM4vhjby6a2sdx7hYkBVrAHW/S7Mr/kBIloyD64nKmtbq43PZFKBrJBo/ig9DBu6boHcR+01KTx/LoBj6SoJ/q+erTlQklCf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758039907; c=relaxed/simple;
-	bh=4bZfUcu3hp/JB4J0y/5p9andv/NKPL6V7hMbzL5vopg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PBmvL2EPk3TRqnCp3wSBW0zx/fGJPpjiz2RU+KA8lcJlqLsPAqQYpn2JgTJG9tFxcD/Bb+0HXvItmawrKDgLDBtdqD6HoiJ9PBvMPHSvwbx+D3X/DKSMTCvsMudp1QpXwtnh1DKou6D8tfJ0t0SpWTDNOL8B9IS9j/MRTarfyJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKfx5b2C; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758043449; c=relaxed/simple;
+	bh=MMRDsv7F3L4iVwuItvJKhX/lkgNUMkwNnqMAXa51eJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4uvfHp5ITsdynMQoaDqAscMj6/ADh/Fh1+17D2tNJY7kurKfbHqlMpOVJT91hqIqs7R4zLDcXrAnfULQsv9i0EjnzGL0P/vy+1XR9OsNuw8VSv4oT+ZlPh0fc214DIgeZvWHHvi14lGHgM6uJhWdOr6NPvr4ZHunzl9QgjuuSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YbShnk+E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKfx5b2C"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so54647135e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 09:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758039904; x=1758644704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DU6pi+jQiHmP3RrytVdY83shq/RxcYi5dWlcWv2Gn9U=;
-        b=PKfx5b2Cr8wbMLdOGmQAVDpmUwQqc2ALiO9uql+bNly8gmsyRonj5IF1PBcUtSf4XO
-         SZmX+3Q1qe7E61CXabv8n59ncUjfQ+kisE+5MMBo8Zne/Cw/mTB29ydqq4Jkx9MQDvQJ
-         XdONhkbOaa95HJbmgAAa9pDEPhJbZb6uzttBdph6yFIvi79ruf7yvHlPGecrf4cOjTgF
-         gYrvMF/osBn0jHtVzHwR2mCzWoJEC2Q2eGttLIINhsjzg59JkGPbiDWIyAJG1Yc1rtkF
-         IXnIUbccneyvl9UiTebHvztkWsAiZZV8XQJvpZZ6MYZM6DWhqqDQVFybD5GFCDuQm1C/
-         7dbg==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YbShnk+E"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GABBIn005278
+	for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 17:24:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hVJaMFI5Gjh/Baa5ktag1wf6
+	hKqheSFU5lQBIMVpCak=; b=YbShnk+EmtE1J0PdqrUXlMR+1KrcppSpR9QOdcfx
+	fj4qZNAWj+IZv+8RcHn1hpjzU66oZC40SA7f04qf+CDhhq8H9bYYo/wZ7jYUVZaq
+	h1RwDTq5GFgmxYF62pTFCSmBB2b9IXCtGSo7uTrbvxAGwTwukAxxXClxD9J/eZOl
+	XQjLp9wAisqLN6fuFIqaLIfDg5atgGfwrvF3PKbavB++hlCR88kSHiTxQFykL0ic
+	Qb3Dbi+AiumxI4pOvug33UALfQkPAXpCC6GqWGlfE7gaFVt5QE8gcBi2+jH0se/I
+	rGoN/uePn//t1HPlsOq1bYYKLx3LK8gKKqsnaDAY9r4RSw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496g5n5g8t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 17:24:06 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5f818eea9so109596711cf.2
+        for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 10:24:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758039904; x=1758644704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DU6pi+jQiHmP3RrytVdY83shq/RxcYi5dWlcWv2Gn9U=;
-        b=wv9JQvvWzANa83HFILjXbvqUv50cECnLhSA8fffI7pNcv7nJtlh+54fr4LPr2EZaWI
-         jk57R8GC/JwIJ5kcOgd8V3nTgMYMRzeUhB3LVJYZZKA55P41bbi+AT9jylqEeo98B5//
-         dN0OXrPRhMAbMitx06w5RIbbW5romsmZYBCHDheBVwtdmk6YcuvWs3H8zwyETPgpuQL9
-         nT/iTvk6/hU1vTyJ7kpuXMz/XfNV74LRii+21ALiGsP0T4a7QbbXjXtz8C7cPnQ5xU9s
-         AxHvRuRSsKQC42stCkpdhjzpZq6cnf0+7qqzEYC5YRkFuNF7iBKTQyMpyt6HCIrHVpMk
-         cLYA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8JBZazloPaPDpOTv8oMjSVCENuodsxF26zQTjI/kULuQb1xCnLfj1wxfnNTT6vIEs/CSzBRoijQZZrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEXqmqkUSZgJ/IQ1HUPHeyaZ2V7iJcmlmxIc657LCsaluQj9f6
-	YYXfUqBRLUiWJfThiYnrU58xOoB+c4VEStzP5Sdaf7brr+ZFjFcJzUHjsU70gzrcYAn8OZje8E5
-	tVah2/r6ARO5aZyzzsrLoYO8I9u46EYA=
-X-Gm-Gg: ASbGncu9ZdnWVZrRouJWQd5wtR1uIJ1iuiiopMYHOjOGjE9gAPZbHRnA4a1YHc6gQB0
-	ZPSQSgBKR7RcFt75r7qsvykQfZJ26pYbYL2WBv4my6q0tuxckVDhQPOb0pamz+uPNjPTo2rCTVy
-	Pf5zgpFWtDL/913e+oiSwQmrcjPzcIAj2tZyID5jFCfnqD/Irgqkknd5OAN2GU35KfHBJFXREkq
-	P5IQtF6
-X-Google-Smtp-Source: AGHT+IFnC+ZB8Y8EWWSgcq7DryM/idg50aJ/eE+AB8zfjBLAVoKc5lX8wjY+HH9LKTM1j4AoLgwSfNow1JOz5yHjF94=
-X-Received: by 2002:a7b:c857:0:b0:45b:7be1:be1f with SMTP id
- 5b1f17b1804b1-45f211f300dmr100112085e9.32.1758039903439; Tue, 16 Sep 2025
- 09:25:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758043445; x=1758648245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hVJaMFI5Gjh/Baa5ktag1wf6hKqheSFU5lQBIMVpCak=;
+        b=SNPn1zE2nz+TiicovBhvTkLzkO2c7QEaIE8ZhueuISZI6j+lSDDdYhMPSGK5EWkvsY
+         whP6Q33uRRT2fihaO6xgu9xusx1qciosDR1E4/Jy7xgNyQbBpjFiGMgK5tZq11CP/YaH
+         ux0JhtOwP3v85tMvt5reAxogONLdtdUQRTLmI8OlV9AOEWTbLnCrW7nYNpYlksaAQq4p
+         gWwApADcQwhExGbNx+oPv6pl/9wr37v45+6KBx+c1O91hDI2F5PxA2q9ENoo8klah9aq
+         HDpVlNXU1zda9rTNUv+7YOn0X8nn/7nB40gjf2qI77KLmYOrmgjZp/A9hwCOA3TkoJH+
+         fMXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMtFw9Euk7MbSciXMndN9f4PaQuKqKB32iC1vYfRkJoOg9yVTYQG+zJirlSyTE0cpFG6pyS0+lUAd07w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4+c/3A53rzT0YRVZDRU0toqFu0salaeO6KrOhwLOLIeC1cJcK
+	IDTEeZLJYqekxnzkMXJ84VxDNF0kg9/03emArWssIBrs8qtLuokH353x9Au8BLYT9ZxsydEgvPh
+	VHphCyEfT+fLxWgaJZkuUMQm1rhsNSZIfZ+q2g7DOceJmnv2ottupp29pjqiBAG+nZg==
+X-Gm-Gg: ASbGncv8z0OBfwXA1B6pZB4mR67DcnuAhXgNdD+lctKgBScoeeDmMkQRI6cvNeNICMv
+	xAmwWsSk63q1k6c+pbHVH93i4Ds6X5AKAjaHAt4vMb0AdA4w3D4Tvaepc3NgLAF5NvKBCAci4MZ
+	nOtNt9vWEeWtuqa++TVQ+ycBmFoWm4rAvRrmhBjPLRtwtujk8keQWHoIylU7zzZk2jgDwEShTIV
+	8+9FfQMweeHu6CRxAv9eNP30lQ0P6HPMjXE9xRpUZp/t9uekCxCcHricddUGl4t1Tng0DPQexcJ
+	zVLIlystXfd7r/VLYQXmRqGlulMKi2YM8RPoJNiCQWALIYZshh+U8eN8a4ZfpW2QZgHXK6cLKJF
+	M7h10I8adcQN3TNAaebchjAXtm2Ju+LNKtRZh04mUjXEy8c+rq9qo
+X-Received: by 2002:a05:622a:5e05:b0:4b3:4a3a:48b8 with SMTP id d75a77b69052e-4b788414644mr167556591cf.73.1758043445414;
+        Tue, 16 Sep 2025 10:24:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGr6odQMGAixWJo4XzHRfYcfzQgqZWK3iutuTIsVhQhJR9bb22IYTwsejar9wedxbDu/asfUw==
+X-Received: by 2002:a05:622a:5e05:b0:4b3:4a3a:48b8 with SMTP id d75a77b69052e-4b788414644mr167556171cf.73.1758043444718;
+        Tue, 16 Sep 2025 10:24:04 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1b2a925dsm33908831fa.46.2025.09.16.10.24.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 10:24:03 -0700 (PDT)
+Date: Tue, 16 Sep 2025 20:24:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Robie Basak <robibasa@qti.qualcomm.com>
+Subject: Re: [PATCH] devreq: move governor.h to a public header location
+Message-ID: <3shtevnohqcwjr7zho75brhx3ffbluwtaimzst2kkonohdzlwu@2myszcxun3gl>
+References: <20250903-governor-public-v1-1-111abd89a89a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-12-clamor95@gmail.com>
- <20250916180418.3fa270a9@booty>
-In-Reply-To: <20250916180418.3fa270a9@booty>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 16 Sep 2025 19:24:52 +0300
-X-Gm-Features: AS18NWDUsY2rg2kwucuKEpR6QKEKIqi67u-AOuSpm9Dlzkb81_NunB_TLA1wgsc
-Message-ID: <CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
-Subject: Re: [PATCH v2 11/23] staging: media: tegra-video: csi: add a check to tegra_channel_get_remote_csi_subdev
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-governor-public-v1-1-111abd89a89a@oss.qualcomm.com>
+X-Proofpoint-GUID: yI5syUJYjreWJygaz6WJATH69pUBToZi
+X-Proofpoint-ORIG-GUID: yI5syUJYjreWJygaz6WJATH69pUBToZi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NyBTYWx0ZWRfXy/k4cGl5bBkA
+ 08Vc26C0RUQReOO9QtMZgsu5hHf/n3/mJmiRwW5rBOrQvgRl4RtISF2WlUtyynp8up0V0BtuTXc
+ /YUcGt7VrCF9efPmAIW+V0qnQ0HTFkfeFUzR+Ka3WOacxslelciegb+tVxrrXW3bzJWB+E5/9Nf
+ qWRPIxjCJ3yxYm5pSPa+rsdbf7L8oGDALajjF1XoK/zbA14QqHHdC+OtPgUQp6cl4RckqrGpoTw
+ hF3sK+9v0nNEOCvnZeiWaFYADdJ0qgoUq1biezhPxXCQTO2UOv6Lg2e+K0ztatQjbNhwEAL5b5e
+ FBDnfwdFnwFSUjsM4QKDCsvy3bhVQCBA48juu5WuDuFloarrghF257aN3odeRW1bezPMjivhR73
+ e+zwi/hN
+X-Authority-Analysis: v=2.4 cv=SaD3duRu c=1 sm=1 tr=0 ts=68c99d36 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=N0a9waa89YCdHAc7B7sA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 malwarescore=0 phishscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150087
 
-=D0=B2=D1=82, 16 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:04 Luca=
- Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hello Svyatoslav,
->
-> On Sat,  6 Sep 2025 16:53:32 +0300
-> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
->
-> > By default tegra_channel_get_remote_csi_subdev returns next device in p=
-ipe
-> > assuming it is CSI but in case of Tegra20 and Tegra30 it can also be VI=
-P
-> > or even HOST. Lets check if returned device is actually CSI by comparin=
-g
-> > subdevice operations.
->
-> This is just for extra safety, or is there a real case where the lack
-> of this check creates some issues in your use case?
->
-> > --- a/drivers/staging/media/tegra-video/csi.c
-> > +++ b/drivers/staging/media/tegra-video/csi.c
-> > @@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_ops =
-=3D {
-> >       .pad    =3D &tegra_csi_pad_ops,
-> >  };
-> >
-> > +struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra_v=
-i_channel *chan)
-> > +{
-> > +     struct media_pad *pad;
-> > +     struct v4l2_subdev *subdev;
-> > +
-> > +     pad =3D media_pad_remote_pad_first(&chan->pad);
-> > +     if (!pad)
-> > +             return NULL;
-> > +
-> > +     subdev =3D media_entity_to_v4l2_subdev(pad->entity);
-> > +     if (!subdev)
-> > +             return NULL;
-> > +
-> > +     return subdev->ops =3D=3D &tegra_csi_ops ? subdev : NULL;
-> > +}
->
-> I tested your series on a Tegra20 with a parallel camera, so using the
-> VIP for parallel input.
->
-> The added check on subdev->ops breaks probing the video device:
->
->   tegra-vi 54080000.vi: failed to setup channel controls: -19
->   tegra-vi 54080000.vi: failed to register channel 0 notifier: -19
->
-> This is because tegra20_chan_capture_kthread_start() is also calling
-> tegra_channel_get_remote_csi_subdev(), but when using VIP subdev->ops
-> points to tegra_vip_ops, not tegra_csi_ops.
->
+On Wed, Sep 03, 2025 at 04:43:04PM +0300, Dmitry Baryshkov wrote:
+> Some device drivers (and out-of-tree modules) might want to define
+> device-specific device governors. Rather than restricting all of them to
+> be a part of drivers/devfreq/ (which is not possible for out-of-tree
+> drivers anyway) move governor.h to include/linux/devfreq-governor.h and
+> update all drivers to use it.
+> 
+> The devfreq_cpu_data is only used internally, by the passive governor,
+> so it is moved to the driver source rather than being a part of the
+> public interface.
+> 
+> Reported-by: Robie Basak <robibasa@qti.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/devfreq/devfreq.c                          |  2 +-
+>  drivers/devfreq/governor_passive.c                 | 27 +++++++++++++++++-
+>  drivers/devfreq/governor_performance.c             |  2 +-
+>  drivers/devfreq/governor_powersave.c               |  2 +-
+>  drivers/devfreq/governor_simpleondemand.c          |  2 +-
+>  drivers/devfreq/governor_userspace.c               |  2 +-
+>  drivers/devfreq/hisi_uncore_freq.c                 |  3 +-
+>  drivers/devfreq/tegra30-devfreq.c                  |  3 +-
+>  .../governor.h => include/linux/devfreq-governor.h | 33 +++-------------------
+>  9 files changed, 37 insertions(+), 39 deletions(-)
+> 
 
-Your assumption is wrong. 'tegra_channel_get_remote_csi_subdev' is
-designed to get next device which is expected to be CSI, NOT VIP
-(obviously, Tegra210 has no VIP). It seems that VIP implementation did
-not take into account that CSI even exists.  -19 errors are due to
-tegra_vi_graph_notify_complete not able to get next media device in
-the line. Correct approach would be to add similar helper for VIP and
-check if next device is VIP. Since I have no devices with VIP support
-I could not test this properly. I can add this in next iteration if
-you are willing to test.
+Gracious ping, I haven't heard anything back.
 
-Best regards,
-Svyatoslav R.
-
-> Surely the "csi" infix in the function name here is misleading. At
-> quick glance I don't see a good reason for its presence however, as the
-> callers are not CSI-specific.
->
-> If such quick analysis is correct, instead of this diff we should:
->  * not move the function out of vi.c
->  * rename the function toremove the "_csi" infix
->  * if a check is really needed (see comment above), maybe extend it:
->    return (subdev->ops =3D=3D &tegra_csi_ops ||
->            subdev->ops =3D=3D &tegra_vip_ops) ? subdev : NULL;
->
-> Let me know your thoughts.
->
-> Best regards,
-> Luca
->
-> --
-> Luca Ceresoli, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+-- 
+With best wishes
+Dmitry
