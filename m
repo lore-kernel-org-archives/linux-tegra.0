@@ -1,93 +1,140 @@
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C08F1DF261
-	for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 12:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812BD27B341;
+	Tue, 16 Sep 2025 16:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026516; cv=none; b=TCwQvfzwloQ6P274iI/VCRnG+9pgQm8KgvGyJlzCnPpwjmHURYt64pq+CvhBIrMobuY8aHtUHa8KjCUAt7hILg8OCz42ZTJxNdTuWWJC11GZDOM1S3K1/Wc78Fn3CM8bDZXhM3AVolVGpnRy8DQleHmEQZwVGVLRploabQJAw8o=
+	t=1758038682; cv=none; b=osjLPnJVZKYLq7E4bgqmEORD8fKOhvEZCIWF9sO41rvFXtT2BKPlYw5c+acLHdwt1f6C5lAldRGxA6vFMmOJiXngoEq/vzN2OsVPNeQ+R2YXZCFurcnv8AQLuoulZI89VxbHEbG4oNbwDuCOYrtdmtqdvxNxqWM+PNX840IEtyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026516; c=relaxed/simple;
-	bh=xV6c4xU+fLhW9GO5Uf+hdtT9Gy4K5wxlXEfxI6H2CKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ut8HzmB07OWPf6NCPnJDKTt6GQ+EvTBiKN3EYvEi8/IBPSzWt3G6nGsIC6jme15FLGBvtIi37lIsG4GkPauGNUrqAqc9DD36rKHWjzLzPKwlsWFC6WgbceK8FtlKMlqkCj67oWULAVSqFQPMWiPSX+I04Z2HVcRd4RnN0UdPbTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p1BHP+kF; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1758038682; c=relaxed/simple;
+	bh=Vpj/ZPeAXBeK4WdPAjf9FQM/YijTGlDKkl7iFSRySZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c2sPLFsVLWGlPol1/NLxBfSnJOCQIwGOiQRArZtVI6DRF1sXb+bTTXe6Mjfvh7ONqKpr9Cug33T+fgp4m3wvgjBQNGZlAVtcq3o4Ki5d99bWk+qn56udkzRxUsihvsIipsWI8E/97V66MoIIgvJazPg3mByQcNgPH+ftSi8Dems=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=elDbqYYt; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p1BHP+kF"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758026511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bPCT1+TcCxAxBd09Xa6o7zuOImvO2FpODExXiYxCmOw=;
-	b=p1BHP+kFWiRNGPEZuCadMZQDTJ9B6l+VcKizdydVaak8Mo7dRFDvV1i4/H88/8aljzECUV
-	hhZ/FaeGwBe3lqoApCLVQGDkCMODzWeV+ud1mZ8F8Lc56UtcgEUfUcWMnXwLlF755EwaBq
-	X/Cb1cywqKnWDOyZ2uv2yILieL0bjZs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Dmitry Osipenko <digetx@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PM / devfreq: tegra30: use min to simplify actmon_cpu_to_emc_rate
-Date: Tue, 16 Sep 2025 14:40:58 +0200
-Message-ID: <20250916124059.2489125-1-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="elDbqYYt"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 3F96AC8F462;
+	Tue, 16 Sep 2025 16:04:22 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7A4066061E;
+	Tue, 16 Sep 2025 16:04:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BA90102F17AD;
+	Tue, 16 Sep 2025 18:04:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758038676; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=P0fHfaim/HxGgy6ytMRt2/vtoxjkypDzQwdM+C1DBwA=;
+	b=elDbqYYtqyeNzXfOqXZqcXEQ0oPEniTdP+uNCXMrcDyg40LHzXv9zpec3/QfRAnh7E2zZr
+	GI/wvHXLKI1Wf75+r6aSUOpnLQa+gLLUH/uKpwjmGrnigzal67HVLXr4H4+/tvhqWrHcko
+	vzOJVUjuUjECocWNaRO1xrRn0GFQAP7vTRrSXTLbCMlklPikcKc+kzEGKLLpotCzTOjpih
+	xPmCcnX7gWvMyZHMrFNPhm39kGje8lowND9XrFmu0TsZpYJ4h5yKura1/9qlG988BaE58Z
+	ws7aCEXGGbwtPhDPJvwBP0RdcOY1bXaPzmMpXRn3/YxVit1Ibtwo0Fc7UDkyYA==
+Date: Tue, 16 Sep 2025 18:04:18 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
+ <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
+ <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
+ <digetx@gmail.com>, Jonas =?UTF-8?B?U2Nod8O2YmVs?=
+ <jonasschwoebel@yahoo.de>, Charan Pedumuru <charan.pedumuru@gmail.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 11/23] staging: media: tegra-video: csi: add a check
+ to tegra_channel_get_remote_csi_subdev
+Message-ID: <20250916180418.3fa270a9@booty>
+In-Reply-To: <20250906135345.241229-12-clamor95@gmail.com>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+	<20250906135345.241229-12-clamor95@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Use min() to improve the readability of actmon_cpu_to_emc_rate() and
-remove any unnecessary curly braces.
+Hello Svyatoslav,
 
-No functional changes intended.
+On Sat,  6 Sep 2025 16:53:32 +0300
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/devfreq/tegra30-devfreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+> By default tegra_channel_get_remote_csi_subdev returns next device in pipe
+> assuming it is CSI but in case of Tegra20 and Tegra30 it can also be VIP
+> or even HOST. Lets check if returned device is actually CSI by comparing
+> subdevice operations.
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 890990e03335..a4041b9d0052 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -326,14 +327,9 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
- 	unsigned int i;
- 	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
- 
--	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
--		if (cpu_freq >= ratio->cpu_freq) {
--			if (ratio->emc_freq >= tegra->max_freq)
--				return tegra->max_freq;
--			else
--				return ratio->emc_freq;
--		}
--	}
-+	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++)
-+		if (cpu_freq >= ratio->cpu_freq)
-+			return min(ratio->emc_freq, tegra->max_freq);
- 
- 	return 0;
- }
+This is just for extra safety, or is there a real case where the lack
+of this check creates some issues in your use case?
+
+> --- a/drivers/staging/media/tegra-video/csi.c
+> +++ b/drivers/staging/media/tegra-video/csi.c
+> @@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_ops = {
+>  	.pad    = &tegra_csi_pad_ops,
+>  };
+>  
+> +struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra_vi_channel *chan)
+> +{
+> +	struct media_pad *pad;
+> +	struct v4l2_subdev *subdev;
+> +
+> +	pad = media_pad_remote_pad_first(&chan->pad);
+> +	if (!pad)
+> +		return NULL;
+> +
+> +	subdev = media_entity_to_v4l2_subdev(pad->entity);
+> +	if (!subdev)
+> +		return NULL;
+> +
+> +	return subdev->ops == &tegra_csi_ops ? subdev : NULL;
+> +}
+
+I tested your series on a Tegra20 with a parallel camera, so using the
+VIP for parallel input.
+
+The added check on subdev->ops breaks probing the video device:
+
+  tegra-vi 54080000.vi: failed to setup channel controls: -19
+  tegra-vi 54080000.vi: failed to register channel 0 notifier: -19
+
+This is because tegra20_chan_capture_kthread_start() is also calling
+tegra_channel_get_remote_csi_subdev(), but when using VIP subdev->ops
+points to tegra_vip_ops, not tegra_csi_ops.
+
+Surely the "csi" infix in the function name here is misleading. At
+quick glance I don't see a good reason for its presence however, as the
+callers are not CSI-specific.
+
+If such quick analysis is correct, instead of this diff we should:
+ * not move the function out of vi.c
+ * rename the function toremove the "_csi" infix
+ * if a check is really needed (see comment above), maybe extend it:
+   return (subdev->ops == &tegra_csi_ops ||
+           subdev->ops == &tegra_vip_ops) ? subdev : NULL;
+
+Let me know your thoughts.
+
+Best regards,
+Luca
+
 -- 
-2.51.0
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
