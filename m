@@ -1,203 +1,167 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3329B2877F0;
-	Wed, 17 Sep 2025 07:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940BB271440
+	for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 07:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758093929; cv=none; b=SDUwU2x7PzILqWVG9BkCeb0U1X9TBbcivgwR6Ky7Ija+ARuEuX+sj5Psq6ZPjNg5br4pJFPwG3GNQtQKdWrRhCjQ+ZTl3CUDF/GjYPayO1nF+GLdvWRaa006haIHyhSeg7j0dH8xIBPR/lBz7P5YpgVK/8czI7t/Ndq1pLRd578=
+	t=1758095158; cv=none; b=GVTrD2zjtk3JuSk6aU+HlUZR0Uat2UFH2pCPDLZcUvbDR0zQTEJDWI5zybPP3AjhuVNOsiIsmX3XLbkSuPsv2Y6pi/0mtZB2YZSwBc4Tc2I2tkido1lYYrqDFj4BtkM6mW9/pb441/3J1UBW9pLg9KB0pBnTiIjFYBc25wRZzAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758093929; c=relaxed/simple;
-	bh=K05yOHkQJxqh+1NnuwPgO9RURX/RB+Vt4f5T83pIFBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cOzt82jOH/0B+KAUfsfTKlIk71SDt9HR1A+kCvLE/yfKk1OGTRHxst/dP4UxlZz0YeTkKC9vn4bDYr5ef7s8xEFzRBm3ibBT7lP5NH//wJs2zR6uFmtKJuMF44vNyM8q8si3FwNuvj+J168QkEhK7hQJcoOlZAMQ5TeLUZDM/eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jrv27L5J; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1758095158; c=relaxed/simple;
+	bh=SlDlinNGQSd4RKi+Cnb+PiszIRO+bkn3SZ1hom0FQ/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EIN14Dndlz+puKNq0pmrTExU1JM/ZgTbeyIShCHtCJgQEQEB4p/dqROafRmIeWW2/K9T72LiiyDEr9SLNRezoVyN8peIxAHd02px1VAP+1Qwc88EeWKHUTEvRrI+NJ4PVDNw+KkQ1L0JLsoCngnCiTyQT9Otht99l4diY6oXv9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2bA9PIi; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jrv27L5J"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 2753E4E40C9D;
-	Wed, 17 Sep 2025 07:25:24 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D65826063E;
-	Wed, 17 Sep 2025 07:25:23 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC40D102F179E;
-	Wed, 17 Sep 2025 09:25:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758093922; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GZJ8sPcO3Cf+QQuAdpx3fIteLOXORrAouzZNLpZWsvA=;
-	b=jrv27L5Jlz6dFN0ujcqzXwnK9gIQ1V0dU4tBuCf7OAqdaZnjc+2nbXry5EnSBiMZaAbLom
-	wVs2Vf2NuaQszYM42A4SDHQ05Sj1/hMzk3EaNUmjjfUauDW/2rzgXhkgINxRtunslVub4l
-	DPzS0A9pFPlibNVRTWdiauuPeWqDO8rAQhXtCdkSCKYboxRBUz4WJcwwWjO/q8aR8Vd71Z
-	iTbiTGCmU+bnx+SqevI3I5XDZuMrB+uaOd8hLDjJbkoeiC9bGLBpk7ygAhXsTFp9rFBDK9
-	2lY9ODIJng2lK1cHK/jbGHlwJhwpLbaydfsVka6ga0llgK4aNRWk+xlAU2QRrA==
-Date: Wed, 17 Sep 2025 09:25:06 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
- <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
- <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
- <digetx@gmail.com>, Jonas =?UTF-8?B?U2Nod8O2YmVs?=
- <jonasschwoebel@yahoo.de>, Charan Pedumuru <charan.pedumuru@gmail.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 11/23] staging: media: tegra-video: csi: add a check
- to tegra_channel_get_remote_csi_subdev
-Message-ID: <20250917092506.311c314c@booty>
-In-Reply-To: <CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
-References: <20250906135345.241229-1-clamor95@gmail.com>
-	<20250906135345.241229-12-clamor95@gmail.com>
-	<20250916180418.3fa270a9@booty>
-	<CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2bA9PIi"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so7527735a12.1
+        for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 00:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758095155; x=1758699955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/PV3sQX3P2aZwX4RWrb0glEbtXd1xtTrstBqiLxQHM=;
+        b=Z2bA9PIiL8GrdzEus/SWx08BwSEjAJQIN+1c3/BShmtv3WbO/mh3elFr+i9ZolKs+i
+         alsLMzd6uiwNUUHhNQTb5plrpj/nB/AmuD86O5+CDYO+rW4CIKAcFksGUZsf2BQgMwFp
+         c3kRy2R9GZnoYg1tfREdg4tMET3ZebNkiDylvHmSrGBtcxwHJVGbOr851GX37GFt0vGw
+         NMv1QIdARyPCzZhdOFtckwB0Vm/DDOq/+y7kqNs0VI8by5CGNRAqL9SGl+ke83ndq6Kf
+         W/xWszcYOAzZktXImJCNZvN48P3mdcJTH0hKI2fHcoX0tTEzAm0ibelI/kH27JlIRsKm
+         ElzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758095155; x=1758699955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/PV3sQX3P2aZwX4RWrb0glEbtXd1xtTrstBqiLxQHM=;
+        b=j9/TVhqjBOyMtuLLgHkMPR+gKlHCINnEYtyxGD+PJcyOs+krdxaylDHDCfJkmOkOYb
+         LMrezMUVrPFoAyVRkF3HPL/REi1y37mM5jgBg6sUgmknhdDEPLJAtS6e9EYnEZUHv7j8
+         5P3puVcJFTbXmMA6ZwqNDbKLl8geuA4F+jxh12LU75yO73FmzEN30EC51IIJ8CK9k9aF
+         k6wZqYhHlwyHHqd9sbeNVPjalFXsTMuyd7SVYjUAFfZ1PARcLfsAIRDSSTIpC+awOg7b
+         UzrGCbqUlyn2yb/Aai1+Nhn+X2tChsTIHOi4Gjrcw9VM+ZU6mTW35qafvLGc0Ricr86r
+         pscA==
+X-Forwarded-Encrypted: i=1; AJvYcCWI9qHNVFfAkR3S4tkBojAOBH5O1GgDW/z1wqIFx3SaDPcl0DMkx8oMVD3tbgwBI6TGkDOIj4F9YJ9anA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5gXeByCMcfqqbKYVjDfH5cEPc9BrXQHeLvJLKVN/IxFi7Vg+4
+	X2Umua1OlGdAobSHkwGrCUHN0NIP6LmaGVkklMF8rUJZ8oeCDFqzbrZCxwJSIPlGpEmTH4fcHfr
+	qJxAj2YSlavpLHaVOhocmDcCOrGGIdGM=
+X-Gm-Gg: ASbGncvJUYWJgvdrB1LtWzqc+4Aoqz/S85feN37D1vdzJrTQfOa5iW7MCTzc9ZPq4FP
+	MaZ5Me3JAxwDVebamwhV+kY0aS7yZ1m0jgFlORvKBjPPdBpx5hqZ6YO68mkHxf146BV7MH7j3xH
+	fK9+VEYqtsNicXx5c3Oumd4KhTyDbOcryX5MjQAfqR/Nixq7m6uzdqegNzSoNq8nxE7wHe1TokQ
+	QYf4g==
+X-Google-Smtp-Source: AGHT+IE9zwmB6T7HEwi/+2ayzNjx1SmehnWY6rCgBsjF2Nwg90YsxIP+l4GYaGbvKGpfrd7ZhTKSZ48vhQWnDoaNQa8=
+X-Received: by 2002:a17:906:f59b:b0:b07:c6ad:9e4a with SMTP id
+ a640c23a62f3a-b1bb216c252mr145352066b.15.1758095154712; Wed, 17 Sep 2025
+ 00:45:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250831190055.7952-1-linux.amoon@gmail.com> <20250831190055.7952-3-linux.amoon@gmail.com>
+ <23013855.EfDdHjke4D@senjougahara>
+In-Reply-To: <23013855.EfDdHjke4D@senjougahara>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 17 Sep 2025 13:15:38 +0530
+X-Gm-Features: AS18NWCJA1J4Xmz0s7LUPixHFdxkhk-KMYeQL9MPiR3KsxNtmZnw_0SMpEnwE18
+Message-ID: <CANAwSgT615R32WTBzi2-8FYntmaxbmVRLmA3yi+=4ryH43aaWQ@mail.gmail.com>
+Subject: Re: [RFC v1 2/2] PCI: tegra: Use readl_poll_timeout() for link status polling
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, 
+	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Svyatoslav,
+Hi Mikko,
 
-On Tue, 16 Sep 2025 19:24:52 +0300
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+Thanks for your review comments.
 
-> =D0=B2=D1=82, 16 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:04 Lu=
-ca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On Wed, 17 Sept 2025 at 08:51, Mikko Perttunen <mperttunen@nvidia.com> wrot=
+e:
+>
+> On Monday, September 1, 2025 4:00=E2=80=AFAM Anand Moon wrote:
+> > Replace the manual `do-while` polling loops with the readl_poll_timeout=
+()
+> > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
+> > during link bring-up. This simplifies the code by removing the open-cod=
+ed
+> > timeout logic in favor of the standard, more robust iopoll framework.
+> > The change improves readability and reduces code duplication.
 > >
-> > Hello Svyatoslav,
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  drivers/pci/controller/pci-tegra.c | 38 ++++++++++++------------------
+> >  1 file changed, 15 insertions(+), 23 deletions(-)
 > >
-> > On Sat,  6 Sep 2025 16:53:32 +0300
-> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > =20
-> > > By default tegra_channel_get_remote_csi_subdev returns next device in=
- pipe
-> > > assuming it is CSI but in case of Tegra20 and Tegra30 it can also be =
-VIP
-> > > or even HOST. Lets check if returned device is actually CSI by compar=
-ing
-> > > subdevice operations. =20
+> > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controlle=
+r/pci-tegra.c
+> > index 3841489198b64..8e850f7c84e40 100644
+> > --- a/drivers/pci/controller/pci-tegra.c
+> > +++ b/drivers/pci/controller/pci-tegra.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/irqchip/chained_irq.h>
+> >  #include <linux/irqchip/irq-msi-lib.h>
+> >  #include <linux/irqdomain.h>
+> > +#include <linux/iopoll.h>
+>
+> There is already an iopoll.h include in this file, so this adds a duplica=
+te.
+>
+Opps, I missed this in rebasing my code.
+
+> >  #include <linux/kernel.h>
+> >  #include <linux/init.h>
+> >  #include <linux/module.h>
+> > @@ -2157,37 +2158,28 @@ static bool tegra_pcie_port_check_link(struct t=
+egra_pcie_port *port)
+> >       value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
+> >       writel(value, port->base + RP_PRIV_MISC);
 > >
-> > This is just for extra safety, or is there a real case where the lack
-> > of this check creates some issues in your use case?
-> > =20
-> > > --- a/drivers/staging/media/tegra-video/csi.c
-> > > +++ b/drivers/staging/media/tegra-video/csi.c
-> > > @@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_op=
-s =3D {
-> > >       .pad    =3D &tegra_csi_pad_ops,
-> > >  };
-> > >
-> > > +struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra=
-_vi_channel *chan)
-> > > +{
-> > > +     struct media_pad *pad;
-> > > +     struct v4l2_subdev *subdev;
-> > > +
-> > > +     pad =3D media_pad_remote_pad_first(&chan->pad);
-> > > +     if (!pad)
-> > > +             return NULL;
-> > > +
-> > > +     subdev =3D media_entity_to_v4l2_subdev(pad->entity);
-> > > +     if (!subdev)
-> > > +             return NULL;
-> > > +
-> > > +     return subdev->ops =3D=3D &tegra_csi_ops ? subdev : NULL;
-> > > +} =20
+> > -     do {
+> > -             unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
+> > -
+> > -             do {
+> > -                     value =3D readl(port->base + RP_VEND_XP);
+> > -
+> > -                     if (value & RP_VEND_XP_DL_UP)
+> > -                             break;
+> > -
+> > -                     usleep_range(1000, 2000);
+> > -             } while (--timeout);
+> > +     while (retries--) {
+> > +             int err;
 > >
-> > I tested your series on a Tegra20 with a parallel camera, so using the
-> > VIP for parallel input.
-> >
-> > The added check on subdev->ops breaks probing the video device:
-> >
-> >   tegra-vi 54080000.vi: failed to setup channel controls: -19
-> >   tegra-vi 54080000.vi: failed to register channel 0 notifier: -19
-> >
-> > This is because tegra20_chan_capture_kthread_start() is also calling
-> > tegra_channel_get_remote_csi_subdev(), but when using VIP subdev->ops
-> > points to tegra_vip_ops, not tegra_csi_ops.
-> > =20
->=20
-> Your assumption is wrong. 'tegra_channel_get_remote_csi_subdev' is
-> designed to get next device which is expected to be CSI, NOT VIP
-> (obviously, Tegra210 has no VIP). It seems that VIP implementation did
-> not take into account that CSI even exists.
+> > -             if (!timeout) {
+> > +             err =3D readl_poll_timeout(port->base + RP_VEND_XP, value=
+,
+> > +                                      value & RP_VEND_XP_DL_UP,
+> > +                                      1000,
+> > +                                      TEGRA_PCIE_LINKUP_TIMEOUT * 1000=
+);
+>
+> The logic change here looks OK to me. This makes the timeout 200ms (TEGRA=
+_PCIE_LINKUP_TIMEOUT is 200). Previously, the code looped 200 times with a =
+1 to 2ms sleep on each iteration. So the timeout could have been longer tha=
+n 200ms previously, but not in a way that could be relied on.
 
-IIRC it's rather the initial VI implementation was meant to be open to
-supporting both VIP and CSI but some CSI assumptions sneaked in. Which
-is somewhat unavoidable if only CSI could be tested, isn't it? So I had
-to change some when adding VIP (trying hard myself to not break CSI and
-T210).
+You're right; the original usleep_range(1000, 2000) had a variable sleep ti=
+me.
+To replicate the worst-case behavior of the old loop, the
+readl_poll_timeout should
+use a delay_us of 1000 and a timeout_us that matches the original
+maximum duration.
+Since the previous code looped 200 times with a maximum 2ms sleep,
+the correct timeout is 400ms, so update (TEGRA_PCIE_LINKUP_TIMEOUT * 2000).
+or increase TEGRA_PCIE_LINKUP_TIMEOUT to 400.
 
->  -19 errors are due to
-> tegra_vi_graph_notify_complete not able to get next media device in
-> the line. Correct approach would be to add similar helper for VIP and
-> check if next device is VIP.
+Are these changes ok with you?
 
-I think it's almost correct.
-
-tegra_channel_get_remote_csi_subdev() is called:
- * in vi.c, where it is expeted to return either a CSI or VIP subdev
- * in tegra210.c, which apparently supports CSI only=20
-   (I don't know whether the hardware has parallel input)
- * in tegra20.c [added by patch 23 in this series] where only a CSI
-   subdev is wanted
-
-Based on that,  you're right that we need two functions, but they
-should be:
-
- 1. one to return the remote subdev, be it CSI or VIP
-    a. perhaps called tegra_channel_get_remote_subdev()
-    b. perhaps in vi.c
-    c. not checking subdev->ops (or checking for csi||vip)
- 2. one to return the remote subdev, only if it is CSI
-    a. perhaps called tegra_channel_get_remote_csi_subdev()
-    b. perhaps in csi.c
-    c. checking subdev->ops =3D=3D tegra_csi_ops
-
-The function in mainline as of now complies with 2a, 1b, 1c, so it is a
-hybrid.
-
-In other words, what I propose is:
-
- * rename the current tegra_channel_get_remote_csi_subdev()
-   to remove the "_csi" infix, so the name reflects what it does
-   - optionally add the check for (csi||vip)
- * add tegra_channel_get_remote_csi_subdev() for where a CSI-only
-   subdev is needed: that's exactly the function you are adding to csi.c
-   in this patch
-
-Does it look correct?
-
-> Since I have no devices with VIP support
-> I could not test this properly.
-
-Of course, no problem. I can test it (but I cannot test CSI).
-
-> I can add this in next iteration if
-> you are willing to test.
-
-Yes, please do, thanks.
-
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thank
+-Anand
