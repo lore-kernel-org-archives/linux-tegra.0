@@ -1,210 +1,230 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010062.outbound.protection.outlook.com [52.101.85.62])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B702DCC1A;
-	Wed, 17 Sep 2025 14:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118104; cv=fail; b=T/hXYsgJPFPAUOYSwsh0+fFqjQJCiRA60tkwehku88KanglkV2uubJyU80LZvXWW5QCNJAUBzAB67/glXta57OLlA+o3VsHr0mm48K56mnMuAq/ECiNiT4FQMfuPDUm+05iPSW5W70f9+HuyS9cVZMnSIxfvy6Z9+sJgCPBmEQY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118104; c=relaxed/simple;
-	bh=DeSr4Jy4vMAbvEHVKTBnHu8xrMAunS9HuptWBBawhBc=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=E67l9ut9K8T5SEquZMaef1gdzJYuT3Nl25N4Y7cG2QCUwSSlNHfEL6b0Z4J5shsWdSZSIwOFatwwk9eaPTtKboCgMi64TS5yscF/LGPn0+pfZDs8jrsgGjznuIuVjtgsQboayR+66x0RW4Op+jprxsx7A+AJaXV7LuyjiRxdQag=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GXyxELBt; arc=fail smtp.client-ip=52.101.85.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDBD323F68;
+	Wed, 17 Sep 2025 14:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758120372; cv=none; b=lSLy1EoMskaZSpkenGp1LEYsnGD8YnAiokuHy7SbQiCbZXij3dwtERi5ndg3M6il6Qqni6Xt7I81F/m4ZzxTPyfIqauEaFxXJYykt0wmuXICI8Du2PENg3UhIVafaf1k0GBlu47T8geJzWnNsq2pAPgjhrnvIk/XTqVR5MwFnu8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758120372; c=relaxed/simple;
+	bh=QiXOszuUJaheRV8S9Arrs3CKQDXneHf83M7ZXth8QR4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=R4nUwT2jQbo68gOJaBL73t34/NFRBkYZCwADSS174Bt5aWyjWJVfOPrAi6dJrW149GUiYmNf+2eGstFLVLyLpgUoe8NEY0xFfJv8PW77axrhJsuyR35ZTjAhlKqB3n1kw1tQRUbR4kRyPVSdxFCJWbRAO9jrDrldxQmSItUksHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIwa8x9g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GXyxELBt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uIHebp367sTHr3eI8tSu2gH1548Eob3JSNFdwk498EoVX3APH6cIE3pXEDRmQn0iorlznofPp8+gIUjRAhweOZJe8E8MHtksu1wDVYKgCXJ8sNvIEbHHuEBa8v3FH/FvE9jsg2t6D0EzxTjE6m+c54LPvH9gmEfRUOr59A+m0XKYaVpFqn7Z63523KizqYtf88IAB1rSZQETU8rWRmDqhMW1V22AenoKjnK0lDtQDmjq/C8zWOcpFlBCjjyXuFxKovxNkXmMmz0UIoWDD/gwFCIFPCBF/7EMOhxyySfIkMjJJGe0AqFk8IM4ATDojykiN/g1F3Zm/OCOWlOj6gh76w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+HVAmnWA8jz4nXXIo6adun9l2sqLj+rPbw4dajJDfAs=;
- b=f9gAHGxE6ASYOjJYt6L7lBKZroWZhpqRx8Rc/ggoUjArSv+bpCs+wtpM3AvLKIB1osEUHpLUVSIfithfuEnQFjNkTyeekIz7Vaw0na9f70+6v48Lrw9vwKEvBS2GKjoTLSnNyRXbL+WvGyhz8xe9Fu+8xsbdKkeqkDjUE3NAnqewvjKtwvAIJevHFRtSg83gR2iWDVq5Mu9A10ly3dTkorQVv+qe4g3YZ23rUEbihxMcuLSpupoiApDAOV/LyngdsNAPQvaPm5AtHbSE8JJunxX++bC0HiXuN8bwPsWogK4mFrEfE7XQAk5I0K5ErUyAkeeIzuIVPWbg1rJodxuIpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+HVAmnWA8jz4nXXIo6adun9l2sqLj+rPbw4dajJDfAs=;
- b=GXyxELBtA7q924X+vT5Rf0mZkxlFWC4Hu/3T2ccfG6HuYCWv6MBj9Jmh0qAh/GvBdYru9K33+auQzrvA5rW6BsoG+ylnk2Xwtk/oIOmdJfn+uf5UgnmF4gLwWIf3zLsiIIg7TyP/VCc+rYLRaRRkTh0ydzcGCOkkCLRhG8/KKpyymIycRrEeG23iMQUOs9pYXmca9v4XMocJBzjGBJ66DiQZW20Ig5XS9L+GDCnaAJpMHg50wKqzYM/a6/1dR0aGiKgFaqb+Gsr1khV7hKnlOQPy1a2+wy+1/WDkjWFiSztvenoXrPlfQPUneKBIR41YzI9IsK1+wzvY2k2BKrk9hg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by DS0PR12MB6560.namprd12.prod.outlook.com (2603:10b6:8:d0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 14:08:09 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
- 14:08:09 +0000
-Message-ID: <d336ce08-4e35-4c14-9f5d-e777f7d91cc3@nvidia.com>
-Date: Wed, 17 Sep 2025 15:08:03 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/4] i2c: tegra: Do not configure DMA if not supported
-To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
- andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
- digetx@gmail.com, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250917085650.594279-1-kkartik@nvidia.com>
- <20250917085650.594279-2-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250917085650.594279-2-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0052.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:310::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIwa8x9g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC381C4CEF0;
+	Wed, 17 Sep 2025 14:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758120371;
+	bh=QiXOszuUJaheRV8S9Arrs3CKQDXneHf83M7ZXth8QR4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=MIwa8x9gHctSBJzz9zwPFWbclfLYWnLFUCKoJnI+49+anpgrnykmOdyUjTTvAbLkZ
+	 82mnCK4D4uDWlw4RIpC+5ERBSM1P5SR4ciJanNbxduEky/QciqERoB1qq1NED9XiSn
+	 66gB6tkJyjfAZDQrfQPzBle3VfJkdjxsSS4F24ej1n2WfyFEDXrDtnYMz1BhYgvAdE
+	 6O7kyVki6zaIYpXNAPRNVkX6gb9dEBPhchv6lIWzdkQjoqjXmsB015AvkbAdSVuJ0y
+	 aCJsawhoW8KjCtbxUdJx5ZTtm6WpZb6XyJBaNjU+g23ptMjyxWCIj1Z9Ci9qorSl8d
+	 Fy0HzdBvAOIKA==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v4 00/39] drm/atomic: Get rid of existing states (not
+ really)
+Date: Wed, 17 Sep 2025 16:45:41 +0200
+Message-Id: <20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS0PR12MB6560:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7ca639c-03ad-4efe-8f39-08ddf5f3a186
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|10070799003|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c0lzUWhvMUJRWTl6Z09TVG9rMG5BV0NkZFlyd1NpZnR0SDNXeVBld0ZOczgx?=
- =?utf-8?B?b2dnRXRma20wWUpIM0FjZWhIR3FUQnhxVWw3UDVzRm5zanJzOTNnVHhGQnZm?=
- =?utf-8?B?UWw5Q29iQi9zYUZML1UwK1Vmd3paeXRKNWVTYUdHTGNsa1pMcU55V2NIY1pX?=
- =?utf-8?B?VXhPSVhUMjBQMy9qaWh3MGZnU2RBRzliY0RnMitOTmlrUnNvOEdDdkRXcjF1?=
- =?utf-8?B?NjFydkxueWhmQXVkWUo0cmdHUlN0Q096RTVlNTdiWlE0bGVQUTVTY2VDWFRh?=
- =?utf-8?B?ODNab05QL3k4VEozNm02T1ZkTzA0alppdTB0aDVaNGVnM1ZzSzlJaE9aZjRo?=
- =?utf-8?B?YlNKSk5rcEtQckRyZzNTaVFETDlBQXBNbjNUSmozMjFoc0pPRSswTTF3dzhu?=
- =?utf-8?B?eS9xMDdYOHRVWUU5enVBczlpUDJPUVVHN0xoQ3dSaDVqRjd5OCtyNEJpNzVn?=
- =?utf-8?B?Z1p0a09BM3hLcWRVczZWSUhWWVFlRmNXaXB5dEVuR1hFZ2dsTmFWK1JsNTlu?=
- =?utf-8?B?VHgyOWVXM3N5c2RxUGkzb1JZUE5KSi9yVGFrald1UzMxWDQ4Wkx4KzFUaFY0?=
- =?utf-8?B?WUMvRlNPT3hRZUgrK043amwzbVhxUU5NS2dKOWYvNDY0Vkdqc25KZDlqSkhR?=
- =?utf-8?B?d1IrUjZxY254TW5TQlYwMml5bEt5N0JidUxYRGNCeVhDQ01NL1pCUHdPSTlN?=
- =?utf-8?B?dkk0Yk1jN3JreDdFb0o3SjE0dk1GaEFYRTQyeFpSRW9kbVc0b2VsdERBSGVa?=
- =?utf-8?B?djRqVWdaQVFiamJZVDNScGN6TlAya2xNeXNUSkJTOFNJSEZJRVd0WFBXQVhl?=
- =?utf-8?B?aGdieU9tWnhLVkIxZVUvSUZ6TXBqekg3T0ZIZmpYNTRpbmZ3d1lLQUovRUoy?=
- =?utf-8?B?OEZkSklOUENzZ0RmdENadFM5NS93OENXZ3FXMlZ6QlNqenBRVEtmdzlNWXVk?=
- =?utf-8?B?WGlReXpETEF2MmlPUTRCd1E4S2RoaFRqWlM4b0s3Mjl6TDF1Tm1ka1FpQS9y?=
- =?utf-8?B?ZlA2eGNLbVFPVHdzazFWTTJIekk4WXUvSHk2cGgxMlhBQmJ2NFZMdFRxYkRh?=
- =?utf-8?B?V2F0aDBkNENBUDZBYU8yYUlncTFEdGVzMHUvUkZXZU5pcEVzUS9xK0EveWdY?=
- =?utf-8?B?VU55Y0pBcmRVemtKNkpTOGVGVEJtdnloNUMydS9vUWFxMDBBVk9pTjhFN3Fv?=
- =?utf-8?B?bGtpa2d6VGRPVmZhbFNJVWtRcGVkKzFENUloeWtpd2lsN3J3bUVmZkVPVWtt?=
- =?utf-8?B?TDZsZU9maXpmb1lzdmI0dDdjbFNtdUxuT21idnRDeGVTREtSRDVDazNySlpm?=
- =?utf-8?B?NGJYbkJQdWltaGZCb0VzbmdxM2UxaDFwMWdudlkvWnY0RmJyZHg2TXBVbjc5?=
- =?utf-8?B?akw4T2FxTWhRT25mQjVaajVxa0twdkZxQk5uYWhoZGtzc1ZqamxlQlZ0R25j?=
- =?utf-8?B?dkNITk9kWnJTMEdLNkEzaHVadWhGQkhhaHhLMVVNdnFqQ1ZXY3NEZ3RpbTBy?=
- =?utf-8?B?UXFrQmo5dmVIOHRodCtLaWU1ekpEMUdZSnlZdzBxdXBsamF2UzhlSkVQc005?=
- =?utf-8?B?MHRjanhwOEJDZEtYL0ZwUGpma3FjdVVaamtYQU41YjNSOHRFK1FoL1ZmdGZu?=
- =?utf-8?B?MkVTUldEWG1nMGhoeDV1UEMxT2MxYUVRalFIallmQVYzN2kya0ppeDMrcnFI?=
- =?utf-8?B?bDdJVEZYKzRKN3IybWwyTFhTUlJ3MVZDUlZ5QkpFT2tNMXJWd0RzUzBxZnJz?=
- =?utf-8?B?Wnh6bmFKbERSSTlnbHVMZFQySTBLdCtpRXZ0QWFmODJZMGd0cUxMOVpYNEcw?=
- =?utf-8?B?eVVKaTliK1h1dGQwVnlKZjQ1RWprS0pkQko5ajJTSWVLQmhYblNLeGMvWlFs?=
- =?utf-8?B?V0FERCtWMXhjSGhzRmlmOWlCb3FkMEtjVktNV3ZSU0hhRzdibmhQK0ZTZzBx?=
- =?utf-8?B?aXFySWFyUUgxYUlkVW9iOTN3N2Z2TjZ4eVRIRFkycGVqK24xY2pRd1hwK1JC?=
- =?utf-8?B?MDNKcGx3Z1BRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(10070799003)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NnZ0SkRmZSt5dWFtTUY2OXFTaTVtUDdIb3p0dzVCQWh5UmYyQUhITGtpanpl?=
- =?utf-8?B?bU9yd3pYZ3p1V0NKamZ0WEo2S3ZWSWRnVi96Q05Qa2IzeDdxVDZTY0VrVEVm?=
- =?utf-8?B?T3llczV6R2JGYnZaMEN3UGpqL002S1d4eGN5aWY5L0hrKzZ4YlJwdnVnRkQx?=
- =?utf-8?B?R0VqdE1JNlFLSXNlRHZRZW8rcE1DWjExTnVsR1dhUXhkam9lQlZRVVh3VnYw?=
- =?utf-8?B?ZG1nUkQ2UWV4R002VXN6QTdma3kvN3NGWllnakdscUd2ejN0ZXFjTnRCOUJs?=
- =?utf-8?B?RzhTSW1HL05ZNzBrSzZDOVhrbnB3OUhiQTZpMmgwdFQySHRCcnJVSmsxV1hX?=
- =?utf-8?B?dzBLQ25sZWV5V2ZqN3RtZFJQd29jaEpJcll1U253YXdHZFMzM3lBZTROQk1F?=
- =?utf-8?B?M0ErcXNIMUNaZFFxeHp5WU5DT01jMVVCcy9mbVgzTWYzSkhnelUxOEVOT0Vt?=
- =?utf-8?B?YnRYTW5sUkFETHFSZjBpUHhvcHZ3dG1FTFBIVytxWXhDNjVtcTF5eU5Ib2Yw?=
- =?utf-8?B?RzlXbVo5d0poaU43dG4xa0FWY1VIWWZmdTNNUDQwVVFnSzgvTVFDcGlmV3pD?=
- =?utf-8?B?clhpVDVwa21oaE5FZk9ETHR0YWJZQUR0ak5YNU9CYUc3cUN5OFdISE4vKzRw?=
- =?utf-8?B?RG9oaHdqMzBaNDZlaERnV3FHaXhKTTcrd09aVUp0Rm5GZkczeExTMDBPeXM1?=
- =?utf-8?B?cnVnNHRkbEdhMXN5bmVFUFNaeDZjRldjUXpPWVc1TThIV3k1dUt4bmJjUzZz?=
- =?utf-8?B?ZzFpK21acG9FZmQrenJuTXBCRG5leUtTMkxBRHpiMUVraVdxdlJLZFk5VllQ?=
- =?utf-8?B?WTRBdERQTS8reDZFNVRhbHBxbXptSVNLeGZyRGxNSmhCZFpNUW9UQTBqYTJQ?=
- =?utf-8?B?UllBelc2dzRIcjYyak4wYUlwRmtxK2dFU04raWRCWUhjSVJFVlkyM0JFeUUw?=
- =?utf-8?B?RmgwWGNMU3lyOWlJd1RFcXlOa3B6R21pQS9pMUQzK3FDa0xpa0lmQmlIaGlX?=
- =?utf-8?B?REVtSXlWSGt0cnFidVBhRkxiOXZWTjN2Y0g4dGd6SkZIQkwwUFlLeStUTStu?=
- =?utf-8?B?UGVqckhOU2F0eVltTEZkbHRlUUlNT1RlTzNnYTdYQkZMbXJuWnVNY3QwMkph?=
- =?utf-8?B?ZldQWEVQRnBxNGlVcE1SeFlUeE04OTJMd3ZGSitsSm82N2RvcWhqSFVjRnRs?=
- =?utf-8?B?c0JXdGp2eDBzL0djQU9Ud0lBNFhaK0JWTXdCUWZTdjVOYWR0TWt5a0dJWXhi?=
- =?utf-8?B?dU8rRUpPS0dTaUpuT1NHN2pvV29LRFpYay9RMGNSaWY1VGYzYzBBY3VtRzl1?=
- =?utf-8?B?YW02aGswelkzQk9SVHQzeEwwdlNGNXBHem95T1JJSUx4SFFHOHRtSEVsWlUv?=
- =?utf-8?B?K1RQMHc3UE56NjFjSHdhM0Y3SytFSVRGTTFPUWF0cXpCaVdGRUhPSU5MaGNr?=
- =?utf-8?B?bGlCenM2dlNFNVdWeDNaMUFQN0c0UXJhSXQwOTRHTEEwbUhUTGM3TXFBdnlF?=
- =?utf-8?B?TFI3WEozTG5ITmEwY1U1T3V6aUltekJRWXFpTGZUY2NEWWU3ekExVTJCLzE1?=
- =?utf-8?B?VjhtV255VG4yeHFmaWZUbkdRNVVOL0lwNUZ4amFrSGIxZ3pHUlJYclgwWnQr?=
- =?utf-8?B?WUFHREs2MVRVUXJrYjNaZnllZWh4Ny95R2Y1TVgxZ05VazVDd3VxSkpMNENV?=
- =?utf-8?B?c2Q3NHd3dmUvQUw3WDgrK1E0d1lRdWpHL0wyVExIQVBnMGNRU3U2VGNpQ2o0?=
- =?utf-8?B?N1F0ZjZzM3dzTktpV2tIdXFtbGVqY0Fxc25HQnZVa2h0bEFRdjdEaWZ1NU5r?=
- =?utf-8?B?MFdvY1dkNCt4U1loN1R2clZyOFhjTVFrK3I4Y09BOFdLcU04aXhTdEsxTkZk?=
- =?utf-8?B?aTNzdi9HUTU3WTNQUXpsckcyTlpBOS9TWnRQYXpnazhHd01YczhrcnRsRGJX?=
- =?utf-8?B?TTQ0ckt1d0JNYWxnVnIydGhBcHllVGVZcUdPeGZTcHRrUXMxOUozS2RCYVM1?=
- =?utf-8?B?TGRZMXlIckxsN3Y3V1haZjQ0azdQU2IrVEZGcWJFZ1hEYmg1OHZXQVBKc01W?=
- =?utf-8?B?djlnWkt6a01UdDNycVd2eFRjbDd3TGFYNjZieGVISEExSE1QUXllODRRWG9Y?=
- =?utf-8?B?M0h1cW9WcWtUTTB5VkNZd3V6TFJUMlFTMVNpRGdhNUlsNWp5OWk4cjY0RC8y?=
- =?utf-8?B?RnUwMGMyL3lDSi9OM2VrMFdEeFMvbVBmM1ppYStNU09yUU5UVG1LaS9FSmFU?=
- =?utf-8?B?eWRkenpMbnRzMUJValdkbXNvRll3PT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7ca639c-03ad-4efe-8f39-08ddf5f3a186
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 14:08:09.5434
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Btrpmx1IPiZbfOnvSUpHakvn1W9UKn2u9FMWh3Lb502NUesZAkAWKql9XGfml9EoSxVCgiQDV0p4KzC7k7KqRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6560
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJXJymgC/43NQQ6CMBCF4auQrh1TWgvUlfcwLqCdQqO2piUEQ
+ 7i7hY0aE+Lyf5l8M5GIwWIkx2wiAQcbrXcpDruMqK52LYLVqQmjTNCKCdDhDs7D3QcEHG3srWs
+ h9nWPIBvOBFN5zXlDEvAIaOy44udL6i5d+/Bcfw35sv7FDjlQMLRSSktTCSVPVwwOb3sfWrK4A
+ 3tbkrJNiyVLo6yMEqbQRfFj8U9Lblo8Wbkq61LLgirOv6x5nl/BcxAsXQEAAA==
+X-Change-ID: 20250825-drm-no-more-existing-state-9b3252c1a33b
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Edmund Dea <edmund.j.dea@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+ Sui Jingfeng <suijingfeng@loongson.cn>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, linux-rockchip@lists.infradead.org, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Hans de Goede <hansg@kernel.org>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5910; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=QiXOszuUJaheRV8S9Arrs3CKQDXneHf83M7ZXth8QR4=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBmnTs7nOfS799mbr9bv3QWVn5ovvPrUukglLeninLOyA
+ R/m/WFW65jKwiDMySArpsjyRCbs9PL2xVUO9it/wMxhZQIZwsDFKQATMeJlbHgVHJux/5lLmPAb
+ rsdT1NM0Dn/JDXOK3CIpESl7v+b+5x1ai+viVEpeF7X81Wy2KQtqZWyYybN97q7MiwaiXzYWJTp
+ ZHKzc3xN17e/JKRb7Pqd0/KjmNtjwSJFdl1GqyGg2q73RpDcA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
+Hi,
 
-On 17/09/2025 09:56, Kartik Rajput wrote:
-> On Tegra264, not all I2C controllers have the necessary interface to
-> GPC DMA, this causes failures when function tegra_i2c_init_dma()
-> is called.
-> 
-> Ensure that "dmas" device-tree property is present before initializing
-> DMA in function tegra_i2c_init_dma().
-> 
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
-> v2 -> v4:
-> 	* Add debug print if DMA is not supported by the I2C controller.
-> v1 -> v2:
-> 	* Update commit message to clarify that some I2C controllers may
-> 	  not have the necessary interface to GPC DMA.
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index e533460bccc3..d908e5e3f0af 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -446,6 +446,11 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
->   	u32 *dma_buf;
->   	int err;
->   
-> +	if (!of_property_present(i2c_dev->dev->of_node, "dmas")) {
-> +		dev_dbg(i2c_dev->dev, "DMA not available, falling back to PIO\n");
-> +		return 0;
-> +	}
-> +
->   	if (IS_VI(i2c_dev))
->   		return 0;
->   
+Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+accessors.
 
-No issue with this change, but we have a few checks for DMA support in 
-this function and so it would be nice to have them altogether.
+The initial intent was to remove the __drm_*_state->state pointer to
+only rely on old and new states, but we still need it now to know which
+of the two we need to free: if a state has not been committed (either
+dropped or checked only), then we need to free the new one, if it has
+been committed we need to free the old state. 
 
-Jon
+Thus, the state pointer is kept (and documented) only to point to the
+state we should free eventually.
 
+All users have been converted to the relevant old or new state
+accessors.  
+
+This was tested on tidss.
+
+Let me know what you think,
+Maxime
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v4:
+- Fix ingenic
+- Rebased on latest drm-misc-next tag
+- Link to v3: https://lore.kernel.org/r/20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org
+
+Changes in v3:
+- Added an armada rework patch
+- Added an ingenic fix
+- Collected tags
+- Rebased on latest drm-misc-next tag
+- Link to v2: https://lore.kernel.org/r/20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org
+
+Changes in v2:
+- Dropped the first and second patches
+- Reworked the recipient list to be nicer with SMTPs
+- Link to v1: https://lore.kernel.org/r/20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org
+
+---
+Maxime Ripard (39):
+      drm/atomic: Convert drm_atomic_get_connector_state() to use new connector state
+      drm/atomic: Remove unused drm_atomic_get_existing_connector_state()
+      drm/atomic: Document __drm_connectors_state state pointer
+      drm/atomic: Convert __drm_atomic_get_current_plane_state() to modern accessor
+      drm/atomic: Convert drm_atomic_get_plane_state() to use new plane state
+      drm/vkms: Convert vkms_crtc_atomic_check() to use new plane state
+      drm/tilcdc: crtc: Use drm_atomic_helper_check_crtc_primary_plane()
+      drm/atomic: Remove unused drm_atomic_get_existing_plane_state()
+      drm/atomic: Document __drm_planes_state state pointer
+      drm/atomic: Convert drm_atomic_get_crtc_state() to use new connector state
+      drm/ingenic: ipu: Switch to drm_atomic_get_new_crtc_state()
+      drm/arm/malidp: Switch to drm_atomic_get_new_crtc_state()
+      drm/armada: Drop always true condition in atomic_check
+      drm/armada: Switch to drm_atomic_get_new_crtc_state()
+      drm/atmel-hlcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/exynos: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dc: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dcss: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-ipuv3: Switch to drm_atomic_get_new_crtc_state()
+      drm/ingenic: Switch to drm_atomic_get_new_crtc_state()
+      drm/kmb: Switch to drm_atomic_get_new_crtc_state()
+      drm/logicvc: Switch to drm_atomic_get_new_crtc_state()
+      drm/loongson: Switch to drm_atomic_get_new_crtc_state()
+      drm/mediatek: Switch to drm_atomic_get_new_crtc_state()
+      drm/msm/mdp5: Switch to drm_atomic_get_new_crtc_state()
+      drm/omap: Switch to drm_atomic_get_new_crtc_state()
+      drm/rockchip: Switch to drm_atomic_get_new_crtc_state()
+      drm/sun4i: Switch to drm_atomic_get_new_crtc_state()
+      drm/tegra: Switch to drm_atomic_get_new_crtc_state()
+      drm/tilcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/vboxvideo: Switch to drm_atomic_get_new_crtc_state()
+      drm/vc4: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Switch to drm_atomic_get_new_crtc_state()
+      drm/framebuffer: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Remove unused drm_atomic_get_existing_crtc_state()
+      drm/atomic: Document __drm_crtcs_state state pointer
+      drm/ingenic: crtc: Switch to ingenic_drm_get_new_priv_state()
+      drm/atomic: Convert drm_atomic_get_private_obj_state() to use new plane state
+      drm/atomic: Document __drm_private_objs_state state pointer
+
+ drivers/gpu/drm/arm/malidp_planes.c             |   2 +-
+ drivers/gpu/drm/armada/armada_plane.c           |   7 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+ drivers/gpu/drm/drm_atomic.c                    |  21 ++--
+ drivers/gpu/drm/drm_framebuffer.c               |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c       |   2 +-
+ drivers/gpu/drm/imx/dc/dc-plane.c               |   2 +-
+ drivers/gpu/drm/imx/dcss/dcss-plane.c           |   4 +-
+ drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c         |   3 +-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c       |  13 ++-
+ drivers/gpu/drm/ingenic/ingenic-ipu.c           |   4 +-
+ drivers/gpu/drm/kmb/kmb_plane.c                 |   3 +-
+ drivers/gpu/drm/logicvc/logicvc_layer.c         |   4 +-
+ drivers/gpu/drm/loongson/lsdc_plane.c           |   2 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c            |   3 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c      |   7 +-
+ drivers/gpu/drm/omapdrm/omap_plane.c            |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |   6 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c    |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c          |   3 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c          |   3 +-
+ drivers/gpu/drm/tegra/dc.c                      |   2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c            |   9 +-
+ drivers/gpu/drm/tilcdc/tilcdc_plane.c           |   3 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c           |   8 +-
+ drivers/gpu/drm/vc4/vc4_plane.c                 |   6 +-
+ drivers/gpu/drm/vkms/vkms_crtc.c                |   4 +-
+ include/drm/drm_atomic.h                        | 144 ++++++++++++------------
+ 28 files changed, 132 insertions(+), 141 deletions(-)
+---
+base-commit: 91494dee1091a14d91da6bcb39e12a907765c793
+change-id: 20250825-drm-no-more-existing-state-9b3252c1a33b
+
+Best regards,
 -- 
-nvpublic
+Maxime Ripard <mripard@kernel.org>
 
