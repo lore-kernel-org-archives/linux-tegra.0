@@ -1,101 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AF12C235A
-	for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 14:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B74D2FE582
+	for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 18:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120453; cv=none; b=UuA7Tiz2x/jgN/ZXqYyQ9/30qmk7qK3CvAk0NqEpbZQkkYkI+3Fvh3hOhVxORdPb28gd4Y0M6WEcFg4hMtQmbGBP4931T8nOEueDQpdVcd93XTeAbAsK+Q+i36zkmDiO+9bxVvY/K6qO0vAW6/j6hAG3tLcqd2i4KDRZW6Asri4=
+	t=1758133615; cv=none; b=igomT6sN4nKhk6+a2oR6huqKuJm1N7EG4ldV+r5Ab/x3X9S03BE3GzGJT+nRS35HvKa65HHiqyzTGF3jFuJGl9OClkDpPOeFgVHuuLdN/5mRtTEIGMopFj9dsHKhyrheRXI9nvi4bmi6ilNz7VAt3dhvw44anG0GqhG0ikNue+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120453; c=relaxed/simple;
-	bh=3CoE1GJH0VwHBAmjRypgbLmKrahNnnzJwlvIYSMZLLs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ACOR2HijGBGlavP1fn8dUSpMHmhJGzHhI3WPAbOTtWv7sKgqesca/sPYEJ0YBuWlp0wyWgWWiRiZuh6EWk9BvMxiDTwhgXn6DtesHBH7TywSwUKInosC3z6E2cSSf75U0WgxQs1ezBHC5e/7XC5Uya/h4PMS7K4E0Y5AZDrUrjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izIozhuT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758133615; c=relaxed/simple;
+	bh=VOindL3lSQlV+EU8bzBVqCefJiskGRsvr4EyQUGkHpw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pij5vlOR4V8aCR+LH/pwQY4ZULSm/Sqtlq/OazaIDXhFRrBntOJ3WgV7xPQx+P0mHPI6xdPQ9ppbz5JjrxWYRvI88+hZbDGDCHyjxqW1z9C1DwxxaOe69Oj5cGIu9vFp8/NoTx4MINEQyb+RZZYVhSEBhXEDd7A28/DC2j6tPb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+4sa/i/; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izIozhuT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A60E1C4CEF7;
-	Wed, 17 Sep 2025 14:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758120453;
-	bh=3CoE1GJH0VwHBAmjRypgbLmKrahNnnzJwlvIYSMZLLs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=izIozhuTRq5JzzXAv5qpvj/31GxWmxb9STZ4F416iNzJqmVHp+GBt18v46ho+1R+R
-	 MrBK9aHgYdoBv28bzQcFYmOXposA63apR1ZCOsTnR/CGIaPe/nU9TNdNHdd1VpCEsG
-	 fOnn7eRRWD1ivHdyrbbsj3LDzg9sY+W2Pe27oAtq9Jgg4bnd3Xs9MhV4KxZiX3SNG/
-	 1yzDn996MDyX22aHTBMmUehBIUQUr70d3KlCL7jZ3e5UlXWxyCdmBoCvEIlEOhnwCn
-	 hp8Ysy9g9NFDvliWPJYA3XRWRwAXE5uw/07CMWA0rsJGt+Z4HgoFvqkuWwusmQGMkO
-	 kfAyvM6v6dO3g==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Wed, 17 Sep 2025 16:46:10 +0200
-Subject: [PATCH v4 29/39] drm/tegra: Switch to
- drm_atomic_get_new_crtc_state()
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+4sa/i/"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62f261a128cso84165a12.2
+        for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 11:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758133613; x=1758738413; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KE5vzhXPDe/Jivh+qVVI2ieYJwT4ugymYXPAOJdscp4=;
+        b=k+4sa/i/7kn93DZNGN4Qvx3feW/CX14EfRmaW1leB8pHlXkIofY3oxG18NfrdelQ6E
+         jKxMmjgj/7XZJBfpqm2oBgMM9N2p7H4HOXdk4ursgjqZsiWSzKQpvIBPDnVMtcpFPwhL
+         YYZw6CIW4Pwq5M2m7mSy8MTUfdGLc2MRUO56z0p0rTgIjeHgIik8c2qj7X1r3QXfrCdA
+         v76RQwNv6ejZPNvUMrWuBu1nKGn33GjEKz+yS9Ai1sWhQ5v3n6lsYcbjsRsb+P2aYlLq
+         B9P1omqeani/0S3TQH5ydUJDrnecwoDZU3D8Ngc1JMoJEcoPAYN8iblIKWBPmIlE7q0l
+         wjXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758133613; x=1758738413;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KE5vzhXPDe/Jivh+qVVI2ieYJwT4ugymYXPAOJdscp4=;
+        b=CJtDldZudzibCdeqRTqvKMGm+lR2kd87WZpa6UgeVFxZHkgtkOdqZOV4kfBT51opnc
+         U3NVVZRT23ezfWKseU5WDOwOqwKL53pPete0L+mGu6X/P/3zTtRxQWlQ/tz88SY/wvUV
+         0wZtIc30PjbMmY8g1zqP65mqMFJK+PPBN7Xc7zkjomuBa6L8c1rkNQui1oN0Td2EYh14
+         VULSwvjzHwiNhckxscdF/H8yZobSUQke7DdP6wGey/Jr7m+W0k49GWC0MC6hYB86ihpr
+         VyH/LE6L6W7cMlPaYpczPwBLTl9K2vYyKwL4enxeeYGypHAX2mFBHg9m0yq/ghTTXt6O
+         ndAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiuGp+tkDjetlj6CoOMOFiPvTykx46aqvJWYJt3DyRUEum28NN/QN7Qvq4rfVN0oRJ2UlHovHfTy2qcw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjx4NUpSRGUHiB6BRG3OqopMMu7twW0/JAdki2mog0qUqTNPYA
+	4NpDYV9XwJcS9FskoiQs9je9w4jGPj03RmXfCNelimtVStRy1liPV+iCGaGCRQKITE52Q2lZfLb
+	UIHJ4tFp+T+tMYMt9p+hDYq9KI3b35uE=
+X-Gm-Gg: ASbGncsOVcu923ZFGmOUCeWP1aIboXwf38z4uf7jkdFzbxC2h13RWkzk9dJ2aQBjpO4
+	yw0F72JxKkmglfCH1AraD0icVmC9T/GgNhVYPLgFfm0RuJH2VdCh72ahJj2SD3mcyKiYlzPJ0QX
+	3biU+xLZaY45fz3Z1YFAXHQFwAssjC0h4DfCKTJR8zaLBYqvkllmteWv9dhnzM/BINBcDDdWQBk
+	fcOnEo12Z7v1784
+X-Google-Smtp-Source: AGHT+IGEkC4e+jpdiaw/hjRvLoVCqkr7yflYqLNKY/nMRIxPb09k+z4AWhjNOjTproo2SENLd11XurMp8ldAQeOkPHM=
+X-Received: by 2002:a05:6402:1ecb:b0:62f:897e:f10c with SMTP id
+ 4fb4d7f45d1cf-62f897ef2f1mr3046469a12.35.1758133612406; Wed, 17 Sep 2025
+ 11:26:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250917-drm-no-more-existing-state-v4-29-5d4b9889c3c8@kernel.org>
-References: <20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org>
-In-Reply-To: <20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1494; i=mripard@kernel.org;
- h=from:subject:message-id; bh=3CoE1GJH0VwHBAmjRypgbLmKrahNnnzJwlvIYSMZLLs=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBmnTq6RZb4e/NHcyPHEkutcki9FQ61//j5070FJ9rO/d
- ysNYrJsOqayMAhzMsiKKbI8kQk7vbx9cZWD/cofMHNYmUCGMHBxCsBEqu4xNlwxrVmiMm/elZX/
- nl8utX/y9rJRzYm7h+wXsWVaMBkrcCntYeGKVr6uf33euviTZy02xDE29J7ZfpCLtfvqSasTx1Y
- qW1cePvQ/YnPgTZWaKgUrNbvAU2f9rDrCL8dO3Gv4+Jb56a6jAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+References: <20250831190055.7952-1-linux.amoon@gmail.com> <20250831190055.7952-2-linux.amoon@gmail.com>
+ <a743fd19-d54b-450f-a4db-8efc21acf22a@nvidia.com>
+In-Reply-To: <a743fd19-d54b-450f-a4db-8efc21acf22a@nvidia.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 17 Sep 2025 23:56:35 +0530
+X-Gm-Features: AS18NWCdYdMNTArMBqsuADdCuXSmojDCTvOV6KkCt_TLO4kj7BWmpqiyqyTAfVE
+Message-ID: <CANAwSgS-Oq7iXDtiWM0W8NZ2q=BcCGviJAUdscWJRvyxLsw0CQ@mail.gmail.com>
+Subject: Re: [RFC v1 1/2] PCI: tegra: Simplify clock handling by using
+ clk_bulk*() functions
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, 
+	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The tegra atomic_check implementation uses the deprecated
-drm_atomic_get_existing_crtc_state() helper.
+Hi Jon,
 
-This hook is called as part of the global atomic_check, thus before the
-states are swapped. The existing state thus points to the new state, and
-we can use drm_atomic_get_new_crtc_state() instead.
-
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-To: Thierry Reding <thierry.reding@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-To: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
----
- drivers/gpu/drm/tegra/dc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 59d5c1ba145a82f62c1835da574867084da98106..0f80da3544c9b3a239c43740c05f007711bc728b 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1031,11 +1031,11 @@ static int tegra_cursor_atomic_async_check(struct drm_plane *plane, struct drm_a
- 	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(state, plane);
- 	struct drm_crtc_state *crtc_state;
- 	int min_scale, max_scale;
- 	int err;
- 
--	crtc_state = drm_atomic_get_existing_crtc_state(state, new_state->crtc);
-+	crtc_state = drm_atomic_get_new_crtc_state(state, new_state->crtc);
- 	if (WARN_ON(!crtc_state))
- 		return -EINVAL;
- 
- 	if (!crtc_state->active)
- 		return -EINVAL;
-
--- 
-2.50.1
-
+On Wed, 17 Sept 2025 at 19:14, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 31/08/2025 20:00, Anand Moon wrote:
+> > Currently, the driver acquires clocks and prepare/enable/disable/unprepare
+> > the clocks individually thereby making the driver complex to read.
+> >
+> > The driver can be simplified by using the clk_bulk*() APIs.
+> >
+> > Use:
+> >    - devm_clk_bulk_get_all() API to acquire all the clocks
+> >    - clk_bulk_prepare_enable() to prepare/enable clocks
+> >    - clk_bulk_disable_unprepare() APIs to disable/unprepare them in bulk
+> >
+> > As part of this cleanup, the legacy has_cml_clk flag and explicit handling
+> > of individual clocks (pex, afi, pll_e, cml) are removed. Clock sequencing
+> > is now implicitly determined by the order defined in the device tree,
+> > eliminating hardcoded logic and improving maintainability.
+>
+> What platforms have you tested this change on?
+>
+I'm using a Jetson Nano 4GB model as my test platform.
+> Thanks
+> Jon
+Thanks
+-Anand
