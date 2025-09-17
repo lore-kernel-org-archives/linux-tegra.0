@@ -1,270 +1,308 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011009.outbound.protection.outlook.com [40.93.194.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43EE1B0420;
-	Wed, 17 Sep 2025 01:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758072747; cv=none; b=nzQ942r9qF/8R2w1ul3dYDJ648LTEkoex0hoJXbde0Y2lIwRQ4FZmdFvjz+vXH+nziD8B1cTxI1gPH0jXhjTQRj2sBDwH/P9MRk33DEgqk44NpRhSG14iNj9X8jF/6qHNHTrTOm/zNSQxSS8D1hDQvloXSSf1kCQ/Jfs6M+DWrc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758072747; c=relaxed/simple;
-	bh=MHYXX+maQt+yNNoV4sySF8Ud1Yazp2UesOEqM/XEqF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKgyk1C742PVrIvaSuSmqaamSn2NswM5AHS+95wX/GOBuykHeIm6W9ael8dS3PW4O/dPferaocLUgP/nD/3JBUSK3TSAUuENoBubERM4m7/BOOqf9d66acdNDLQPC4hm6ebrORs32bOQ3icjsb2Hjt1t8pjFhDUJOzz27OOJzaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZDx9sit; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21798191F91;
+	Wed, 17 Sep 2025 01:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758073742; cv=fail; b=KU+olicSFtI4YJfhydmzj4Q3qGk6y/v5umjh7kEHFxMTYp8BgrE1W8DqB96fFTw/X7sv2eGkHHUHKcLgS8pIds9z+TmWgx8pzXx4W2FJJfliBlyeDQlgIPbUW8AfbaNHn4CirbG0FAQwsiRf1jp/2nhKiJKy9ncfmg2CfV7S6vI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758073742; c=relaxed/simple;
+	bh=2u0TYCYY9SMXWX5A+qkJmOCwOGKuiobEVuvDR1i1F34=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=S7sOenf8WqxrXkjfjOb7qwIyDTnerCip2tx29P57CEPptHcA8ckY7I0GiulyRRbIjgpa0gP/a7pju5aAxVpfm28jed3vJMWHh457tE6ZhT/VD6T4TiCi6zm13p4i6+8Ps7gTB5PsVllcXRF3d2BmveCN/HjP3s/Mnq22Lk6A3Vw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X2eTsBtl; arc=fail smtp.client-ip=40.93.194.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZDx9sit"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758072746; x=1789608746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MHYXX+maQt+yNNoV4sySF8Ud1Yazp2UesOEqM/XEqF0=;
-  b=AZDx9sitCjXiJFSauADRbJhGsldsI2wkGgStkoO/2kg09pVj42FuuBwL
-   pu2nz83quUfJkYqtAHhHYvawUTAc7ngJ7mFXGNQYgxWpQwZtsePHES5dF
-   bWSfB1lv7IkpzwOGLG9VS5cRgm5zbuOfphr3k2gzhuPQiIUHjqLOO1yJd
-   tUyCzNyxR5cOw07i3mtoRKVKXloFzvHZ1q8drqe0kEDwBf80uhVmZRHMP
-   ZumW8du7v2MU4vxrguA1GLQPpajt+m26gFcvW6MuI/3ZhS9Yki9CXg0Hv
-   y2vwlTym7XOSPnq2dH2HLcyAfYLQuhUAaXG7UwhuvaN2HX6o3GNKD65+J
-   w==;
-X-CSE-ConnectionGUID: vaYAqPZfRQy5Us5ghIhPbQ==
-X-CSE-MsgGUID: uoOLg1cyTtehzhpITHm6BQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60285237"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60285237"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 18:32:25 -0700
-X-CSE-ConnectionGUID: 4dTkLNgKQ5KKnjFMkNa9cQ==
-X-CSE-MsgGUID: CqnzzZMPSoiNjt9v7wy2uA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,270,1751266800"; 
-   d="scan'208";a="175534829"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 16 Sep 2025 18:32:22 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyh1w-0000wh-2U;
-	Wed, 17 Sep 2025 01:32:20 +0000
-Date: Wed, 17 Sep 2025 09:32:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ketan Patil <ketanp@nvidia.com>, krzk@kernel.org,
-	thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Ketan Patil <ketanp@nvidia.com>
-Subject: Re: [PATCH 4/4] memory: tegra: Add MC error logging support for
- Tegra264
-Message-ID: <202509170901.kyczSOdx-lkp@intel.com>
-References: <20250916051754.39250-5-ketanp@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X2eTsBtl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tzm+Y4Y0Eam1ci97rveLP6jdCnYEPj0mk3JOJkz0T/q6TVXm18NweOzCzxZOg33YpK5gnUk07CwqK5FjxUqyW3x5hT3kZBEVv6iEu1QfkKu0uwxjUkpcUakHH9tiks3vEADajdEkCWcZhym0gyAx7k0lrKgT+3ADiuET+1BGP5EQ1rP3XPPHmReryN+4I+4QIG4wfkPe6QwptIeinmjyRw57KLyHfx0been23ZinJcjeLqpItNVVVUAtmDOAald4XAAuavB3kz/kwPb1X+SkB7lhWUv8KD3lQrlfqKr30a6rREqxNJLrOEMQ7llQJwVOI7Yo0sLa6JAOAYmEBHKfhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ei0ZyeuWeRpgSypNasx/EXQ9MTks+FXYGSrCV/O9Www=;
+ b=Nek17VSVHAYsXCAXkYWrORUbQ+rqv4OGkeuANjwyS3Tbj2UZiLCZ2Xb/OmLTtyVF4vnksWhHVEs9VyJKNPKq/+g5Vw/DJS1tRJOGVnlRKJMQeEiVL/CJiPI5SaedbdgU5QhR2i41WBs6BMy9MDMP1F2mTKnNf1q7786zVzVCdTp5doahOlTwF7n3mmZ8efJGcJkS0vGQpZASi+jodzSOVRmsaojLnCPWkWVZJDGQFdqz3N6RU8MHbMBx6+VHO58U8vDDpniZNrCHOsMeUfeXNT/E+EKoTlUp0q3vRr8q1XwhSYHm670oaD6CnEDeTz+pKYdJtJpI9loFgsqFtiLamA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ei0ZyeuWeRpgSypNasx/EXQ9MTks+FXYGSrCV/O9Www=;
+ b=X2eTsBtl8JunqxTGjDU2YfvvVzagxtTQeS9wbR7ZQXGpiN93VB6U0YpAMufIdWndAqKo85HMqkiCpxa/1vxhHbv162MnWDC7p3A5fU/L/X7VJQrECnrVSRRxL2vQy2tUtwMCWyMscEkfYZNN45x3m2336HPGKOaSFdNi4/3oViCp70fvOQz/xRABQJ4V1hP/uKzPM7kEZf/qgdfgJAkSlk6SMfyG/aUfJHY4adsujRBEe27IoHN1vGWicAaGUFbZMbaSe2BFsxmyITMsRbbPq7KOoQZ7wz2zxcEcy/OAJDfttMta07d6S7l/wNTwgyNhGrLT6foEsWQIsxhswhtWFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ PH0PR12MB7010.namprd12.prod.outlook.com (2603:10b6:510:21c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 01:48:56 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
+ 01:48:56 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Date: Wed, 17 Sep 2025 10:48:30 +0900
+Subject: [PATCH v2] gpu: host1x: Syncpoint interrupt performance
+ optimization
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250917-host1x-syncpt-irq-perf-v2-1-736ef69b1347@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIAG0TymgC/4WNQQ6CMBBFr0Jm7ZgOpCCuvIdhgXSQWdhC2zQQw
+ t2tXMD81fvJf3+HwF44wL3YwXOSIM5mKC8FDFNv34xiMkOpSq0a1eDkQqQVw2aHOaL4BWf2I/a
+ kXmTaiiozQh7PnkdZT/GzyzxJiM5v50+iX/tXmQhzaqMr1lTfWv2wSYz018F9oDuO4wvWGQpzv
+ QAAAA==
+X-Change-ID: 20250707-host1x-syncpt-irq-perf-a10b1d9313df
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYWP286CA0018.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:178::8) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916051754.39250-5-ketanp@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|PH0PR12MB7010:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03a7cd28-9983-4eba-b0bd-08ddf58c5d0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cEN3VXY5end1d3JsQyt3Y0lwN0FGMnFpeG45REJhd29ZY21veGFETm8rREJj?=
+ =?utf-8?B?cG1IZHBaNU13b1NNT0ZiVWttbzQyek5YYStqNTl5cmhueVdxVVZCTUI2Tk00?=
+ =?utf-8?B?SFhIb1NOTWtkS2NsQVBpSHBQbTkzZ29lTDBuNitHTUpzWXM4RllxcU1xa2VR?=
+ =?utf-8?B?UllNZ0c1THU2Q1VKcnB3aFFFVkd3Ykk1d2grcE1pRDRIaVkzZmVJaWNUUHlI?=
+ =?utf-8?B?OTBKWXhkQXdVaDNSR3FRVVFBQ1lDMU80V1FHNFlmUmQ2WjVmeC9BenpkQVhy?=
+ =?utf-8?B?UGI3a0ZTR2RvQXRsbFhueU43dHQ0WklSK1lpZmRlTlBPalJtemFJMlh1S0Vi?=
+ =?utf-8?B?a2NWQ1JZYzNjOHRIRVRHM0NzbFE5VmhacnVvdG93NjNPeFNqTmlxWm1SbWtZ?=
+ =?utf-8?B?NENhV3BvR3NlK1ZWWUk3bWI0UWtRWmxBd2x0dWZGNkVHZHhnMWgvYk9uUVJI?=
+ =?utf-8?B?bkFjUGVKd2I3TFN0WUJMS3FGZjVYTVppVHhiQ2RHNWM5NDlob2c4aVREZ0JX?=
+ =?utf-8?B?OHlLU0JObVY4YXpIQUdBdk1zUHBDRjhpNnNWT0pSZzZtUUIvQVJ6bnROYUJp?=
+ =?utf-8?B?Ui9qOWlZQXd2b1ptRUF2cWlUMjljdTRORlcyaU42VG0wQjFFcTVwMlFWcW0v?=
+ =?utf-8?B?clZIWlovWFF2bGc2U2xuTldXRm5hd2Y0NWlQWng2V2xEd1FZL0xkdXZBcTl6?=
+ =?utf-8?B?eTNRclBOYXhnV1pkOCtTcFJaT2M3YStwckhtdjkzaG9ITE94TEJ4aE0xcWhm?=
+ =?utf-8?B?WkVZTmtPaFdydlBQUlpZbDQwYS9aOGhldzJoNWJmQVhENUovdkMxYXVxK3Rv?=
+ =?utf-8?B?SWJ3aG55Zi9CeG9WYjcrR3hRb2Q4ZmhSUEtHRGZLMFVtVmw1YzRRYUNkd2Zp?=
+ =?utf-8?B?RWV1R29Zc2syNGxoUmxKMndzajk3YW5WS2lZNDNhKzhiOTVuaHJZTFpJamI1?=
+ =?utf-8?B?U0ZmVXgzSlJycmh1WUh5WVZoYlgxUHdnTm5tb29OV0dtalhEcUtrSk1jVUNx?=
+ =?utf-8?B?TlZDa1VjZCtjVm9BZjdiM2dRSE1TVEliUU9PYkNSVnJoRUpHaENUVzRydWJ6?=
+ =?utf-8?B?OU15TEZCL3RjdkNndCtCT2F4WFZCNDJzMTFqM2RJcFVTOUwzNnZPbjFtM3BF?=
+ =?utf-8?B?aVBPQ1dCcU0xcEpIOEY1ZWhWemFLaU5na1hwekhFSm1EMVd5eDdhMWlTN3dy?=
+ =?utf-8?B?YTVSdTg4cENHd3Y5aUlDN28zbHBFZFdvTzF4WW5uYWtpZitrMGgwWXJDeSsw?=
+ =?utf-8?B?YWdxclcrVzQ5Uk1TdGw3ditGOWxLcTdtV2I4anFIUStnRzhyZzRrc0ltcllC?=
+ =?utf-8?B?dWhRUUsyQkFXWUlTWWkxY3hycFdjNUZwTXdnaFRkTG4vSVBBb01uVi9xUFVC?=
+ =?utf-8?B?YURiRlVWNjZqdExXS0VGMFkvQ0U0eUlBYm9hdG1NQkFFYWpYdTVBeE5QSHhk?=
+ =?utf-8?B?enh1dkFpMWhyYzVmSmhBY2VSVS9pOEVVMHFhMkpGQjdoUlAyRFdWOVl0YmYx?=
+ =?utf-8?B?TTBaQm5xdXY4VDBLL1BQT3VGNkxreVNtZ29idTB2RURDNU85K1RoVXRTOU84?=
+ =?utf-8?B?SVVDMzVqblUwRlQ5c21sQmdMZFhINWdnaVJXaVMxSVpDZVFuTHZLcmZvODYw?=
+ =?utf-8?B?TWdmNncveWwvU24xZlovVDF3dUhaQm9sV3ZZSGNadUozSG1HSlZ4TGY5VmlP?=
+ =?utf-8?B?Ujg2MTZBUUoyUkRHbUtML2tEMVlSdnloQlRJajRrUHBhUGU2WERyUENNd0F2?=
+ =?utf-8?B?d3dhQURRUSsvYmJGb0RGY0ZRTmNweXpXZEhhZTNldWllTVovVU80V0tZcHIr?=
+ =?utf-8?B?K21vTmllR1FHOXpoZzR6Q2VPcnY4UHdhYXNjVkt6Y1hBeUxFNkNvUlBOWVc5?=
+ =?utf-8?B?Q1MwVFk5NTRsKzVaRktmRTVLOUJQQXJ4U0dzMlFVSklEaFB1b1dnTVEzc25B?=
+ =?utf-8?Q?/Lz8xBGqFFQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TFFXZUFmdXo1MGJkSXZ5bGhBdHJwZkRmb2NGNnR3TklIU0NGeXVTTXo4K29V?=
+ =?utf-8?B?YjVnbnkzdGo3ZFdFeU8zSkM2WHhqenh5TTZiZDFXMklYV1pkZWU4NFpoN0s1?=
+ =?utf-8?B?SFZGV1hxSDBqMmdmT3QzRDRXOFpXTjNVTE5jRU04dkdob0JmRjZpdWNVMldy?=
+ =?utf-8?B?dW8wR01UNTVqRmlTSFVoVSs5N3pQSXlmc0svUHhkQ0ZmK3E4MHEzYzVhdW1E?=
+ =?utf-8?B?NzBrZnJVMXFmZU0vNVB5TkkzVWFMTWNwTUxYWE5jaFhmQTlaNlN5OFRHYXdW?=
+ =?utf-8?B?bGRSZ3pXdmtRSEpqT2NrMWcwcUU0bFkxeGRnTExDVit6eTRIRDNWRlU2aUJn?=
+ =?utf-8?B?UUNEYWhrbW5jNlhaUm5hS0pHZ2ducUVia1FWQURxMWtrVzhnUG9TTWZIQzA4?=
+ =?utf-8?B?ZGxqZC9MQlJLdlVJZ0hwWm1QUjgzSTVCRkgyVXlYR2pzSTVnT1liaHFWcDh1?=
+ =?utf-8?B?QTY3QkxoMlUxTnlpN2FoY2NTY3BDTno2c3FJZGZxSUh2MExGdW9hL2pUNmt6?=
+ =?utf-8?B?RjQySStJRkFkRW5iVnBVYmtOcU1HNzhvNmNBMTkxWW5qdzVmWDZDb3BqOFlL?=
+ =?utf-8?B?a2RRc0M4ZjUyVGZ6VE01NUhNTlg0a3Zab3A4cXlDY01wTFl4NTFaY3VUMGVz?=
+ =?utf-8?B?U29NL3ZpVnY3dGQ4UXVLa2FnaWhmY0tOaWoxUTQrbG1INnU1djBKZFFkcGVZ?=
+ =?utf-8?B?VFo5OUtYclJRdHNkRGtqYVgwa3VNajIybm1taXVlbkRuL090cXRqelNsNnQ2?=
+ =?utf-8?B?Tm9aK3I2ZnBuWjdVRnBDMzF3dXArdEZGRjRITXNBbURLZi9CSFZwZXFheVdy?=
+ =?utf-8?B?L1JheVVPYjFpcll2VG10SGozTnBwbmxiM0srVzFWemRZVHZ0U2hXQkZ3bUZ6?=
+ =?utf-8?B?WjR3UTZNek9RY0k1TlJ6LzJjSU50VlVMVFJXWCtTYnpIVldtM0RkVExUL1Y1?=
+ =?utf-8?B?QmlhbDhoUFIxRHpIUlEyUlU5c0hibDFoSFFhcHNHcWV2MUFOdDVxSzJDcEtV?=
+ =?utf-8?B?b2FHbElrcnJ5RnlnanVLc2x4c1FwOXgzcWtnVHNpeHFtKzFha3FIVE1EczRn?=
+ =?utf-8?B?VEtxTXJENEdsR3ZkUU1qMVBRU21peDBoOUdGcE1pS0VGWVNCUlYyeWMvSGFy?=
+ =?utf-8?B?VHBZeVFWZmhsdWlPcmQ2QVMydzlpNVZySWovS3R3aXlPR3Z5N09yb0d0YWVx?=
+ =?utf-8?B?aHV5Z0d5cUQ2QW1KRmVrSzFCSVR0bk1rWTBxK3NibXlsUXBuZ0Z4dSt5UTVL?=
+ =?utf-8?B?SW5zb1A4d0xkR2VPU3Q5MXNJMzA3ZURhNjRsOEhjSWtHV3RMVEMzMU1MaGFj?=
+ =?utf-8?B?Tml1Q2s3WW9nQkMyTWhuL0xuWVpNSC82NlV3MkZ2TkhPWjVPSzFHTnBXejZw?=
+ =?utf-8?B?aUlwdVJRQVVZaXdJaVJHVmJSYklkWjVvdUhvL1lUL2RMY2Rva2ZKeGQ1NUNU?=
+ =?utf-8?B?R2M4ZzNLUUpIazRoSFNxVzAxQUt2c1BweThBSng5a1B1RUF6cGUxUlZZQVJR?=
+ =?utf-8?B?T3hGOTBlRFNvN0hBMGMxQ2w1UWJQUEJLZnd4eHRxbUlGSmljT09aU2c2VThO?=
+ =?utf-8?B?UFhWQXI0dExZQjAyTVlEL0VwZFZmcXdhZFQ1d1BUZHk4NkhmWVpCY2Nna052?=
+ =?utf-8?B?VnNJU20vd3k0cWhyN25PaXRseUxybTg3WlRxT252UXMvTEtPVzFRd0Vqa1JG?=
+ =?utf-8?B?S1RUNlFCL1JjRG5GS040NE5uZ3daTU5rSzVrNDFicUZKMTZpSGdSRmdCOERm?=
+ =?utf-8?B?TWdQZXhVUnV6NHFsemgvMHdJeXd1Y2g2cHBUSW0xTVBCL1NuYmNsNUJlRlp1?=
+ =?utf-8?B?Y2FiTkhpZ0FubjJJdXhrd25iK0xWRmRMY0VtVnZGR09BYVJKcCttTXBndGtm?=
+ =?utf-8?B?UzhNZVlUUXdRd21pRlRjMm8ybm55U05pUW52cWxLTUhmdWxsQnZ2NHpmN1cr?=
+ =?utf-8?B?aEtDMElHb1J0MnpteEluR3lTNGZIQ2diZnhaUk1UV1V1Z0haTHVHTlFpQ1FX?=
+ =?utf-8?B?Ti9VQlVuQ1dybVBxWENmR3RqWkFQZFRmNHBhQmVZcDFIWHkxcldCamJhSy9V?=
+ =?utf-8?B?azRFUzU1VHovZHRvb1lvSUFLNTRnSXlWdDYyRExHNHM1L2pTVEowZFh3bzk2?=
+ =?utf-8?B?b25pcDV2ZmNOd2VoV3FYR216dGx3SlRMZFlNTk9yNzRnR05SRk5sZ25zTStD?=
+ =?utf-8?B?TmRQQUpIR0lZL3F6RDI4VFRmbDlTMW5MZEdnVlhIc3RQanFyeWRaVytnenBY?=
+ =?utf-8?B?cDc4RmJ4RWxOZGV1RzhpUFJYdndBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03a7cd28-9983-4eba-b0bd-08ddf58c5d0d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 01:48:56.3941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +ZnzH23OECUHvbTHEZWV9b2p0vPxaZcmLa0qNdnmvd7rWaIWhklHgoykv8GXtIJo+J8s8d8wFwxeFGGF5bpxLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7010
 
-Hi Ketan,
+Optimize performance of syncpoint interrupt handling by reading
+the status register in 64-bit chunks when possible, and skipping
+processing when the read value is zero.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+Changes in v2:
+- Pass register value as unsigned long to use with for_each_set_bit
+- Add unaligned register handling for Tegra186/194
+- Link to v1: https://lore.kernel.org/r/20250707-host1x-syncpt-irq-perf-v1-1-16d53e516895@nvidia.com
+---
+ drivers/gpu/host1x/dev.c        |  9 +++++++
+ drivers/gpu/host1x/dev.h        |  3 +++
+ drivers/gpu/host1x/hw/intr_hw.c | 56 ++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 59 insertions(+), 9 deletions(-)
 
-[auto build test WARNING on tegra/for-next]
-[also build test WARNING on krzk-mem-ctrl/for-next linus/master v6.17-rc6 next-20250916]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 1f93e5e276c0835eac2f713ffcd60a9db8db2c21..80380b6138276877be9709048c15da85d079f977 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -71,6 +71,15 @@ u32 host1x_sync_readl(struct host1x *host1x, u32 r)
+ 	return readl(sync_regs + r);
+ }
+ 
++#ifdef CONFIG_64BIT
++u64 host1x_sync_readq(struct host1x *host1x, u32 r)
++{
++	void __iomem *sync_regs = host1x->regs + host1x->info->sync_offset;
++
++	return readq(sync_regs + r);
++}
++#endif
++
+ void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r)
+ {
+ 	writel(v, ch->regs + r);
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index d3855a1c6b472a9bd289c753d79906463e6bcdb4..ef44618ed88a128bae9ab712bf49f8abc0f3b778 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -179,6 +179,9 @@ void host1x_hypervisor_writel(struct host1x *host1x, u32 v, u32 r);
+ u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
+ void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r);
+ u32 host1x_sync_readl(struct host1x *host1x, u32 r);
++#ifdef CONFIG_64BIT
++u64 host1x_sync_readq(struct host1x *host1x, u32 r);
++#endif
+ void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r);
+ u32 host1x_ch_readl(struct host1x_channel *ch, u32 r);
+ 
+diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
+index 415f8d7e42021b791550ca719adafa088cd34101..aad4435256ba4257f19a20c02bfa552229b62c55 100644
+--- a/drivers/gpu/host1x/hw/intr_hw.c
++++ b/drivers/gpu/host1x/hw/intr_hw.c
+@@ -11,26 +11,64 @@
+ #include "../intr.h"
+ #include "../dev.h"
+ 
++static void process_32_syncpts(struct host1x *host, unsigned long val, u32 reg_offset)
++{
++	unsigned int id;
++
++	if (!val)
++		return;
++
++	host1x_sync_writel(host, val, HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(reg_offset));
++	host1x_sync_writel(host, val, HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(reg_offset));
++
++	for_each_set_bit(id, &val, 32)
++		host1x_intr_handle_interrupt(host, reg_offset * 32 + id);
++}
++
+ static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
+ {
+ 	struct host1x_intr_irq_data *irq_data = dev_id;
+ 	struct host1x *host = irq_data->host;
+ 	unsigned long reg;
+-	unsigned int i, id;
++	unsigned int i;
+ 
++#if !defined(CONFIG_64BIT)
+ 	for (i = irq_data->offset; i < DIV_ROUND_UP(host->info->nb_pts, 32);
+ 	     i += host->num_syncpt_irqs) {
+ 		reg = host1x_sync_readl(host,
+ 			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
+ 
+-		host1x_sync_writel(host, reg,
+-			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
+-		host1x_sync_writel(host, reg,
++		process_32_syncpts(host, reg, i);
++	}
++#elif HOST1X_HW == 6 || HOST1X_HW == 7
++	/*
++	 * Tegra186 and Tegra194 have the first INT_STATUS register not 64-bit aligned,
++	 * and only have one interrupt line.
++	 */
++	reg = host1x_sync_readl(host, HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(0));
++	process_32_syncpts(host, reg, 0);
++
++	for (i = 1; i < (host->info->nb_pts / 32) - 1; i += 2) {
++		reg = host1x_sync_readq(host,
+ 			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
+ 
+-		for_each_set_bit(id, &reg, 32)
+-			host1x_intr_handle_interrupt(host, i * 32 + id);
++		process_32_syncpts(host, lower_32_bits(reg), i);
++		process_32_syncpts(host, upper_32_bits(reg), i+1);
++	}
++
++	reg = host1x_sync_readl(host, HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
++	process_32_syncpts(host, reg, i);
++#else
++	/* All 64-bit capable SoCs have number of syncpoints divisible by 64 */
++	for (i = irq_data->offset; i < DIV_ROUND_UP(host->info->nb_pts, 64);
++	     i += host->num_syncpt_irqs) {
++		reg = host1x_sync_readq(host,
++			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i*2));
++
++		process_32_syncpts(host, lower_32_bits(reg), i*2+0);
++		process_32_syncpts(host, upper_32_bits(reg), i*2+1);
+ 	}
++#endif
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -68,12 +106,12 @@ host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
+ 
+ 	/*
+ 	 * Program threshold interrupt destination among 8 lines per VM,
+-	 * per syncpoint. For each group of 32 syncpoints (corresponding to one
+-	 * interrupt status register), direct to one interrupt line, going
++	 * per syncpoint. For each group of 64 syncpoints (corresponding to two
++	 * interrupt status registers), direct to one interrupt line, going
+ 	 * around in a round robin fashion.
+ 	 */
+ 	for (id = 0; id < host->info->nb_pts; id++) {
+-		u32 reg_offset = id / 32;
++		u32 reg_offset = id / 64;
+ 		u32 irq_index = reg_offset % host->num_syncpt_irqs;
+ 
+ 		host1x_sync_writel(host, irq_index, HOST1X_SYNC_SYNCPT_INTR_DEST(id));
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ketan-Patil/memory-tegra-Group-mc-err-related-registers/20250916-132118
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250916051754.39250-5-ketanp%40nvidia.com
-patch subject: [PATCH 4/4] memory: tegra: Add MC error logging support for Tegra264
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250917/202509170901.kyczSOdx-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250917/202509170901.kyczSOdx-lkp@intel.com/reproduce)
+---
+base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
+change-id: 20250707-host1x-syncpt-irq-perf-a10b1d9313df
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509170901.kyczSOdx-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/memory/tegra/tegra264.c:406:3: warning: variable 'addr_reg' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
-     406 |                 default:
-         |                 ^~~~~~~
-   drivers/memory/tegra/tegra264.c:424:39: note: uninitialized use occurs here
-     424 |                 addr_val = mc_ch_readl(mc, channel, addr_reg);
-         |                                                     ^~~~~~~~
-   drivers/memory/tegra/tegra264.c:332:44: note: initialize the variable 'addr_reg' to silence this warning
-     332 |                 u32 status_reg, status1_reg = 0, addr_reg, addr_hi_reg = 0;
-         |                                                          ^
-         |                                                           = 0
->> drivers/memory/tegra/tegra264.c:406:3: warning: variable 'status_reg' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
-     406 |                 default:
-         |                 ^~~~~~~
-   drivers/memory/tegra/tegra264.c:411:36: note: uninitialized use occurs here
-     411 |                 value = mc_ch_readl(mc, channel, status_reg);
-         |                                                  ^~~~~~~~~~
-   drivers/memory/tegra/tegra264.c:332:17: note: initialize the variable 'status_reg' to silence this warning
-     332 |                 u32 status_reg, status1_reg = 0, addr_reg, addr_hi_reg = 0;
-         |                               ^
-         |                                = 0
-   2 warnings generated.
-
-
-vim +/addr_reg +406 drivers/memory/tegra/tegra264.c
-
-   324	
-   325	static void mcf_log_fault(struct tegra_mc *mc, u32 channel, unsigned long mcf_ch_intstatus)
-   326	{
-   327		unsigned int bit;
-   328	
-   329		for_each_set_bit(bit, &mcf_ch_intstatus, 32) {
-   330			const char *error = tegra264_mc_status_names[bit] ?: "unknown";
-   331			u32 intmask = BIT(bit);
-   332			u32 status_reg, status1_reg = 0, addr_reg, addr_hi_reg = 0;
-   333			u32 addr_val, value, client_id, i, addr_hi_shift = 0, addr_hi_mask = 0, status1;
-   334			const char *direction, *secure;
-   335			const char *client = "unknown", *desc = "NA";
-   336			phys_addr_t addr = 0;
-   337			bool is_gsc = false, err_type_valid = false, err_rt_type_valid = false;
-   338			u8 type;
-   339			u32 mc_rw_bit = MC_ERR_STATUS_RW, mc_sec_bit = MC_ERR_STATUS_SECURITY;
-   340	
-   341			switch (intmask) {
-   342			case MC_INT_DECERR_EMEM:
-   343				status_reg = mc->soc->mc_regs->mc_err_status;
-   344				addr_reg = mc->soc->mc_regs->mc_err_add;
-   345				addr_hi_reg = mc->soc->mc_regs->mc_err_add_hi;
-   346				err_type_valid = true;
-   347				break;
-   348	
-   349			case MC_INT_SECURITY_VIOLATION:
-   350				status_reg = mc->soc->mc_regs->mc_err_status;
-   351				addr_reg = mc->soc->mc_regs->mc_err_add;
-   352				addr_hi_reg = mc->soc->mc_regs->mc_err_add_hi;
-   353				err_type_valid = true;
-   354				break;
-   355	
-   356			case MC_INT_DECERR_VPR:
-   357				status_reg = mc->soc->mc_regs->mc_err_vpr_status;
-   358				addr_reg = mc->soc->mc_regs->mc_err_vpr_add;
-   359				addr_hi_shift = MC_ERR_STATUS_ADR_HI_SHIFT;
-   360				addr_hi_mask = mc->soc->mc_addr_hi_mask;
-   361				break;
-   362	
-   363			case MC_INT_SECERR_SEC:
-   364				status_reg = mc->soc->mc_regs->mc_err_sec_status;
-   365				addr_reg = mc->soc->mc_regs->mc_err_sec_add;
-   366				addr_hi_shift = MC_ERR_STATUS_ADR_HI_SHIFT;
-   367				addr_hi_mask = mc->soc->mc_addr_hi_mask;
-   368				break;
-   369	
-   370			case MC_INT_DECERR_MTS:
-   371				status_reg = mc->soc->mc_regs->mc_err_mts_status;
-   372				addr_reg = mc->soc->mc_regs->mc_err_mts_add;
-   373				addr_hi_shift = MC_ERR_STATUS_ADR_HI_SHIFT;
-   374				addr_hi_mask = mc->soc->mc_addr_hi_mask;
-   375				break;
-   376	
-   377			case MC_INT_DECERR_GENERALIZED_CARVEOUT:
-   378				status_reg = mc->soc->mc_regs->mc_err_gen_co_status;
-   379				status1_reg = MC_ERR_GENERALIZED_CARVEOUT_STATUS_1_0;
-   380				addr_reg = mc->soc->mc_regs->mc_err_gen_co_add;
-   381				addr_hi_shift = MC_ERR_STATUS_GSC_ADR_HI_SHIFT;
-   382				addr_hi_mask = MC_ERR_STATUS_GSC_ADR_HI_MASK;
-   383				is_gsc = true;
-   384				break;
-   385	
-   386			case MC_INT_DECERR_ROUTE_SANITY:
-   387				status_reg = mc->soc->mc_regs->mc_err_route_status;
-   388				addr_reg = mc->soc->mc_regs->mc_err_route_add;
-   389				addr_hi_shift = MC_ERR_STATUS_RT_ADR_HI_SHIFT;
-   390				addr_hi_mask = mc->soc->mc_addr_hi_mask;
-   391				mc_sec_bit = MC_ERR_ROUTE_SANITY_SEC;
-   392				mc_rw_bit = MC_ERR_ROUTE_SANITY_RW;
-   393				err_rt_type_valid = true;
-   394				break;
-   395	
-   396			case MC_INT_DECERR_ROUTE_SANITY_GIC_MSI:
-   397				status_reg = mc->soc->mc_regs->mc_err_route_status;
-   398				addr_reg = mc->soc->mc_regs->mc_err_route_add;
-   399				addr_hi_shift = MC_ERR_STATUS_RT_ADR_HI_SHIFT;
-   400				addr_hi_mask = mc->soc->mc_addr_hi_mask;
-   401				mc_sec_bit = MC_ERR_ROUTE_SANITY_SEC;
-   402				mc_rw_bit = MC_ERR_ROUTE_SANITY_RW;
-   403				err_rt_type_valid = true;
-   404				break;
-   405	
- > 406			default:
-   407				dev_err_ratelimited(mc->dev, "Incorrect MC interrupt mask\n");
-   408				break;
-   409			}
-   410	
-   411			value = mc_ch_readl(mc, channel, status_reg);
-   412			if (addr_hi_reg) {
-   413				addr = mc_ch_readl(mc, channel, addr_hi_reg);
-   414			} else {
-   415				if (!is_gsc) {
-   416					addr = ((value >> addr_hi_shift) & addr_hi_mask);
-   417				} else {
-   418					status1 = mc_ch_readl(mc, channel, status1_reg);
-   419					addr = ((status1 >> addr_hi_shift) & addr_hi_mask);
-   420				}
-   421			}
-   422	
-   423			addr <<= 32;
-   424			addr_val = mc_ch_readl(mc, channel, addr_reg);
-   425			addr |= addr_val;
-   426	
-   427			if (value & mc_rw_bit)
-   428				direction = "write";
-   429			else
-   430				direction = "read";
-   431	
-   432			if (value & mc_sec_bit)
-   433				secure = "secure";
-   434			else
-   435				secure = "non-secure";
-   436	
-   437			client_id = value & mc->soc->client_id_mask;
-   438			for (i = 0; i < mc->soc->num_clients; i++) {
-   439				if (mc->soc->clients[i].id == client_id) {
-   440					client = mc->soc->clients[i].name;
-   441					break;
-   442				}
-   443			}
-   444	
-   445			if (err_type_valid) {
-   446				type = (value & mc->soc->mc_err_status_type_mask) >>
-   447						MC_ERR_STATUS_TYPE_SHIFT;
-   448				desc = tegra264_mc_error_names[type];
-   449			} else if (err_rt_type_valid) {
-   450				type = (value & MC_ERR_STATUS_RT_TYPE_MASK) >>
-   451					MC_ERR_STATUS_RT_TYPE_SHIFT;
-   452				desc = tegra_rt_error_names[type];
-   453			}
-   454	
-   455			dev_err_ratelimited(mc->dev, "%s: %s %s @%pa: %s (%s)\n",
-   456					    client, secure, direction, &addr, error, desc);
-   457			if (is_gsc) {
-   458				dev_err_ratelimited(mc->dev, "gsc_apr_id=%u gsc_co_apr_id=%u\n",
-   459						    ((status1 >> ERR_GENERALIZED_APERTURE_ID_SHIFT)
-   460						    & ERR_GENERALIZED_APERTURE_ID_MASK),
-   461						    ((status1 >> ERR_GENERALIZED_CARVEOUT_APERTURE_ID_SHIFT)
-   462						    & ERR_GENERALIZED_CARVEOUT_APERTURE_ID_MASK));
-   463			}
-   464		}
-   465	
-   466		/* clear interrupts */
-   467		mc_ch_writel(mc, channel, mcf_ch_intstatus, MCF_INTSTATUS_0);
-   468	}
-   469	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
