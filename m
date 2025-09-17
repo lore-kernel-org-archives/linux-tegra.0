@@ -1,65 +1,64 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013064.outbound.protection.outlook.com [40.107.201.64])
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012011.outbound.protection.outlook.com [40.107.200.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5CF126BF7;
-	Wed, 17 Sep 2025 13:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D336E31A80C;
+	Wed, 17 Sep 2025 13:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115000; cv=fail; b=J+9heNIxbhUmr2CtHr6tC51876maiJyjwV9pk4gAN+RwzrEVQH1coioSIlDdjrmbF+Bp4jrQLyrqEdZ4Iup5GYuSHJ6+Y9rHL7YE990P0zMklY6jBOIQo14gxtHmwOifmog00btKzPUuJE0YvEN0T4YKpnJscF6b4X2obgy0L7c=
+	t=1758116207; cv=fail; b=Niydmya2fQv7lrUIvxjtFNhcX8npvrzVBmmN2WwBUvzR5S2MjaZMwxBTbTXfOm0uQuqPlgpwdove5FV7LO/C0IiKSL1n/MJrZHpat77pWBAknq3ehM9d6f/uFRcszLTCLJE+aqVFLsFEePSVSDIlH1wO9hIasQwWt/3cBwNpnuE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115000; c=relaxed/simple;
-	bh=OIPP+HcCYhBLh2M92zF/4JR73iDITzxoStFX0sCt30Y=;
+	s=arc-20240116; t=1758116207; c=relaxed/simple;
+	bh=v4m1Ja5f7rXctt0xZbgR/RorRFR2J6dvPgX8ZZhEN2Y=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SUTzjQPcY83jPMxbOgtifDFbMeUK5E3DmArBA1194J0rJ5Uz76dVt6huubYgdNtr5EqVqgj8UHUKY1hrnbrsF/KmrmccpBykO4pgy1KMIAxvSXlGwGZikRe39eke51mcLC6pvNUU2dudJxAGtqcj8dBq41O2aSmFyKIcMfGJ25A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wg1r2Nqg; arc=fail smtp.client-ip=40.107.201.64
+	 Content-Type:MIME-Version; b=QEi81dQ0y9qYBbefoBFy+lLazloQIkbq2rUneUvEgHgoLPZoTzVCihmTYFGGNziJoXEa8X2t4wAIKxE2jXSiUxLeItYQaWg/+cCOkK0mVRujqEqDLA6JGl+kikAuXz8v8HIZTCsqJG0y97e1TRy4JZ7qcVcT51MuEFeurPt7isU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SuEvidoW; arc=fail smtp.client-ip=40.107.200.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wg1r2Nqg"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SuEvidoW"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eL1+6HzyVC0nrgQtU+LGYxVkRzfdGUGlQkXDNxLs1+WUqkOBReTjjCnxDKF5pifrEITx+RQc+xzdSKb6yrPW4E3TZQ1jZuxTsCkuT/OmzDJNjAK972tlYxS3N25dTPNMMwvjiCbofcQnBnvVqTMycS7ctNFpvAUm3JzrAXMl4SijLWzBkEj4baSxRSaUva8/V2J+bBxHf52lKvvHoP69I6KCj6Is7T1Cdm0GPHybtoiWKYC5CM3sdSJEK6ioCg2Ko8laddKYoLUzmjdTfkT242YRPJRbuzwNFDPEJFlMlsqP1tNXFBEo/it+VISL1fBdRjP3y2YeUCndWcpeGC3mzw==
+ b=NO4Nk0y7yWBLFslBTFFp3QM2oE4gNC0ljYxOjFXUcn4fnpI3TN2hkNrPijuQATdxBeh51MyDV1YMJVRENnkI5okngyab54HZYpm9f5lj+5B93374VjFgt/Nz+H0CEvo2diLgewyCh7QTI18Pqhmh6tN8/elX2cwTmJpiP8VIbVjaue/m0EvWQGD68G/7tGDMbU4IwkaqSodc8ZFWnVgbfpbu6TsthJtY8n9V5DRZxt2hYZevCfwX0EBcYaOZ+h1zCO6CpCDjL88eeQtAlwy1gDYX6eKOu72d/KJbgk9VEKbWp5R71LUhab7+DgFH+n6DYAQRP4kClW2ZAlxgmLprvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AG/1xOpQQ3Xx3nOljqsW0oo0QWMD54UwsZE/D0O5B4I=;
- b=nqBlGWXgFvCe1T2nglIwAy/hDVLQQoKX6MXk0k8j60RVQHCjXrGQBl2I+Y2ooY0T4RW4wyMkMdgA2eThNMylkrjaJyCULl0LVow7eDMCncBSq7SXG0FFMhwZZPPdTD5hc5/+1sb+aVxM5U9ve70t8A5d/sKibA/gFxlp1SSbkJRazpy+hUJssOIYvzKX7pBX1e62BhdiKD/OaNP8lwmWsE1hw5lJ44fSflwoWiIaGTHVwfxIgKtYA29pZNYm0I7SOMRzFKigVZh2LDCJBZRBFAMWHwVpFJ4NernJZ3yyZbn/Ic/+WahUSBh5RliUIAZV7WcFIL60p5IUEdgvoZt1nw==
+ bh=ePu4Hs4WSZfoUsPdjV9k0Q4lWPPEy1B1GEYaL00pYqE=;
+ b=fRICegg5297zF+DDbeaVQuOb2lccWwY3o+pFCvNxybN0RRCII9HywR7UNY1r3jX9YbUZ9gnHeHDHMUer7YmFLZknyilyf0ms1U/znFnbkJ8rypcgfR+93UhSHZ6rCH5NWevrKN+SG4YcrACLOwqJW/gTGYqoo6j91WlLL9SQSXXFUD6rPMS5f8oeLcVp2IT0hQzLm5nNYQJIE9MxYAx72kImbo1YSF9EqujfGtWfq4KVzWMECIyCl8iDPK94lIW84a3CH5ewa4QYgBekAc7vLzsEC/QPP6Nb/8VDZsKU4zQvnQaKHgatZF4spJ7PDkrYYUIaXmGWP00EmGRO8rWcAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AG/1xOpQQ3Xx3nOljqsW0oo0QWMD54UwsZE/D0O5B4I=;
- b=Wg1r2Nqg/5E2RriMcNN/qP1R4PFBPNzLpTC8HkdHLLtHttYP7g7wqxrzjTlvqeybWGazLkmwfd88CoNkb2Kwnrc+nk2jEvCuEtr0iS0aOs26kB/7KN/Up6Rh4z32KHxNraLfUnJ0Be0CM6QSM5POiKN+6SLglKfDFZdaGN9VN8WyOtJSCiF6+ayS0FnfNEFA0kTWIt6/3E5spphODAPoqlDbu1hCN/iHIqISSLApFSFtNQCBR4/hsByfBsy26IOe94PBRwNkt9lQo9wd7acJp5r8xnn8JuWXavJBYO+TXCTEy+aBAhoB6kePgSMj8l3I/tY8+ZtBqROB35ndGRbnow==
+ bh=ePu4Hs4WSZfoUsPdjV9k0Q4lWPPEy1B1GEYaL00pYqE=;
+ b=SuEvidoWkLdkcOyinhG6YSzdNaY/I8Bf70iuQzRfIfA++e9T/clcTBFpPIwSOMFZ8rBCwYs4exYrtmBClanGW46WQsa5yiWAl7EsMlwBYSpjTodpP7l//M6/dbmnLNhvICd5b8zcOkXnHRL/XIkN5+sPzM38opqSX9QWJim+NUPjkuNbbVw7uUIgb98M9g+xDsCvDXFXYu8ediWudSn1cLPfsOXxMACfa0bF97mkLrKl1xqX06sT3NH1hxpNMIdnJL+xWrvbkVuvOSQLHgGx5ksC5WddLwDOdeckh36PpLngc/5plxgdI9vPEPEYjKvPWa+zo1niLxoHnNhHzffgLw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by BL3PR12MB6404.namprd12.prod.outlook.com (2603:10b6:208:3b4::5) with
+ by DS5PPFFF21E27DC.namprd12.prod.outlook.com (2603:10b6:f:fc00::66b) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Wed, 17 Sep
- 2025 13:16:30 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
+ 2025 13:36:40 +0000
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
- 13:16:30 +0000
-Message-ID: <c16477c8-95e9-4e07-9202-042b1070c76f@nvidia.com>
-Date: Wed, 17 Sep 2025 14:16:25 +0100
+ 13:36:39 +0000
+Message-ID: <a3833c6b-5574-4aaf-86cc-66c10801ff3a@nvidia.com>
+Date: Wed, 17 Sep 2025 14:36:34 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc/tegra: pmc: Ensure power-domains are in a known state
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250731121832.213671-1-jonathanh@nvidia.com>
- <CAPDyKFr+uVDYBMvsN+L9XPToaD+Wr9P=SnnXyKB6ucqQ7se=7A@mail.gmail.com>
- <sgsi4wia74nbvme4ik27waec2yuipbw7hfh7jyygxlbfhvsc5q@4onfx46nle56>
- <CAPDyKFpVohjP4bkSkxxOXiEsbWqWNa2GFRdDbQ7YC60NyC=c9A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
+To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
 From: Jon Hunter <jonathanh@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <CAPDyKFpVohjP4bkSkxxOXiEsbWqWNa2GFRdDbQ7YC60NyC=c9A@mail.gmail.com>
+In-Reply-To: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0037.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::6) To SJ2PR12MB8784.namprd12.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0618.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::20) To SJ2PR12MB8784.namprd12.prod.outlook.com
  (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -68,178 +67,133 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|BL3PR12MB6404:EE_
-X-MS-Office365-Filtering-Correlation-Id: 20e25a84-ecaf-482e-c584-08ddf5ec6a44
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS5PPFFF21E27DC:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ffd8b83-1f36-481a-b339-08ddf5ef3afc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjFndkxXbXdEMFgyWkY1VkN4UlA3RFNWUlhqa3JiSlUzdWEzTHNVVWljUG5l?=
- =?utf-8?B?N2lwalVWTnlSdi9Jc2Y1bzNtSXFiekpYdjllZW40R1duMVd0Z1ZOcWhHTGw1?=
- =?utf-8?B?eW9vSG9YS0tRcldOV01uMTVmUkpkaUpiUDNyWTd3SjlJUzZYM1BQQkpydEdy?=
- =?utf-8?B?bU5JTUQzM1RVaUU0VXFFNFFNd0VKaVBGUzhTek5ZWThBWWg5ZmduSDBzTWNa?=
- =?utf-8?B?TW02YVBBNUlaaFZXSFN6d2M4ZGd3SERubGpvcHc0S0ZyTzZZQWdCMTVVM090?=
- =?utf-8?B?SFRRT2JyVkhNOVdNRnFhcnhHbk5nMW9FTVdKYTNPVDFnR213SHhMRE9aM2pJ?=
- =?utf-8?B?ZmZSSmpVTVcvaDdzVFJNOGVzaGZYY2o3cWtUMTVWU0N5cXdEL3psZWt1QnhR?=
- =?utf-8?B?SHJKSUMwKzZPNWo4M0VWbFFQL3hpSVNRb3o1Z2gzdGxQNnlQQ0dkekhhbUNI?=
- =?utf-8?B?emxuckZGVnJpQTRZZzhXM0VTTkdLS2lOelNrQzh1NnRTMVBiaGdaMWc4YzVW?=
- =?utf-8?B?aVF4aDVwM0FnY2p4cS9EZkxERmdseHY0SjdQbmpwRndIS0pLdm5TYkkzS3Zt?=
- =?utf-8?B?V0Y4cWdsSElzaUVBSnl6ZWZyVklGblJ1S1FwU2FlRmxtMC9GUnQ2STBaU25H?=
- =?utf-8?B?TUxwcEpOTTF1NEw5RGxybHlTb3graWNiS3hWcWdGODdLNWpOandUd0NZWFg3?=
- =?utf-8?B?TmJtSDVVeFgraTVzUTM5QUxCaE9OcHdISjU4OUJPZVhad2MvOURqVDg0VW9Z?=
- =?utf-8?B?NlJsZ1BRd2dBeHRteW9VcURwOEJ0Um42eTFyRVFabTdxN0FScjgrZk5LN1cy?=
- =?utf-8?B?alYzQjVTUGdLK3oxYlBkeUxYcnlVZWNTcGl1TVA4NXZKMXU0bVNNZVVEUWxl?=
- =?utf-8?B?Q1cxZ2dvU3pZcXE0Ny95SjBST1lyeUFzbGtXcllvejFldlRRVWVFOWVUbXE0?=
- =?utf-8?B?WW9TekxEUlJRNW1JUytEK1FjOE1YMUsreUZUdlNZb1RPTTd1ZW5mQnYvaXcx?=
- =?utf-8?B?K2xqNmE2dzBwcm5KQWV2UCthc2FkY0J4UStxWkFEL08xb0xVamVEbFRVcUtT?=
- =?utf-8?B?TDdiZlFudWNCOURnRDI5WHZZTDlSbjZZMW9xU3FDOTVwUnBwUXpwczNNOTRU?=
- =?utf-8?B?aGdSam10MEV4S0N2WWozZlpkcEtSdno5M2w3Y1RkbmlWeUpzMG9ISGhETFEy?=
- =?utf-8?B?RGc4cEZ2eFZmZHJ0NFhMdVhvU1pvL0ZVcnJrQnp4bkJCcjFiUXhHN0taUlNq?=
- =?utf-8?B?djA3MXh1QmJBckQxcFJsak5MUThYTmE2RXZKaWZuRUhUVzBUTWs5amdKdmtR?=
- =?utf-8?B?dHVZQk1FYWRVNmlPaU16a3ZaVTNvRDREVnZIQlZYVkRERHVDVnNmODZ3VWZT?=
- =?utf-8?B?Qmk1UjFqL0tzK0dkSGFId3Vkdnd3aXF1enRNT3g4MlNlZ0cvaDV4cG5lOW85?=
- =?utf-8?B?cVBSdzJkYWEyZDg3NGhiR3p3OXdHNzhURitLLy91UkRzWm5xMllTN0tFR3JJ?=
- =?utf-8?B?a1cxeVpjTFQ5SytlK1IxckRSLzE5S3RSTGdlbjkxSFJkS1lhY2NtSHFTNU9O?=
- =?utf-8?B?RlhuVG5KNHNFQ3dpQ1NvUHJHTEhyeHMxbTdwOUZOSG9QZTA4aU8wVXllTHdq?=
- =?utf-8?B?a3E3UUhQRTVINTZiZEVHM3lhaWRVQXBVQXV1anF3Y0VIODhuRUpEdmJaaytw?=
- =?utf-8?B?dzZhLzFHOGc4VGtJMUtCamlLeDZrWnZFRWd0SlN3Yzlxd0NsMFYyUWQzNFZQ?=
- =?utf-8?B?SnUxSlVVN2pYeFZPeWtycUNRWHpWZm5obUd4LytKdGw3dVl4YVlyU3Q5cGJQ?=
- =?utf-8?B?b3VGdG1Sb0dLUlRQR0NnTlk0bVN1aUpwWTB1UFowR1E1MlFSdFdhdnZ0Wnlv?=
- =?utf-8?B?UTdKdVREMWxmZFRuUUJQU09OQStNVFRta1dhbFlUZFUweCtxRVRLNEFoSmxS?=
- =?utf-8?Q?q3TgEHovDr0=3D?=
+	=?utf-8?B?dHg3T2trZXdqelVrV21YVDRXWTVoSWFxS0R2aDlteElReGtJc1dtNStTeEdR?=
+ =?utf-8?B?N3lvYTk3Ykx0S0l6N0QrbE1wOWhHemEzRU9xbksraElkSjBrelFYYmNQSWdk?=
+ =?utf-8?B?S3B6ZVV5MTI1bFVNenpFU1FXeEQxNGE4a1N4Q2loaTg4OGVVTXR2eTBSd2tW?=
+ =?utf-8?B?RFR1WmVINnUxOG1XalRtamdQVmQwTVJmV1FYSmZxSEdOSnVHV2hoS0o5VnBn?=
+ =?utf-8?B?WEpRTVJjRzBJQjZXd2VlVElraENSdGZoQ2tnMUVhSDRBNmc3azRSZE1qeEda?=
+ =?utf-8?B?VjQvQlFWVlNBYzhRdzhQcjhwZ09KWC9WOU1sSGVJR1NlaFd5bVBtSFlOZ05n?=
+ =?utf-8?B?cEtDRTg3azM2ZG51ZVBEOVIya05Uem9wOU1XcDVpNmVybWF5eVY0bUE5N3o0?=
+ =?utf-8?B?VVVORHBLQ2VDWTlTQ0JxRHpvZmduOFl3RWQyRzRCUVcrOFNNSUN5S2Z6djY5?=
+ =?utf-8?B?WE41TWVTSGZjQTJMZDVWdDlXNXJzUXlVZmNCMVMxeFJmM2szeDRsem5seVFE?=
+ =?utf-8?B?eWlWZ1B6Wkh5d1EwN3FmbE13d1FPR0hzNWtWTERYUDIxUlhLZHEwaWdJaWo1?=
+ =?utf-8?B?WWRNNXJER1JZWHVpYURrWk9uQXBKaXM3UFNqaS9ZZzVWWWZyV1NXU3hCMVl5?=
+ =?utf-8?B?WklIL0NZT0ZXUmR2V2ExM3FvL3VTWnI5bGc1aS9QdUpIRVhnbDJEUjZiN1lo?=
+ =?utf-8?B?WFZoYTVTTHdyMWhoSWJnYy80SFdycEFRUHhWQldnRmtkWExrbFZaVmhxOGJk?=
+ =?utf-8?B?akdWMEVpOG93aGVGdXo2L2thKzNBZEMwb05YZ0xLcTgyN3cvREVuSHJqNlRx?=
+ =?utf-8?B?TnlNamRRQW1lWTVKSVk5WGVnUHpGY0RsdUZteHZxN2d2NDc4dk85NmpxV3Yx?=
+ =?utf-8?B?d1lmU1JTTURYeHVoTGY1TWx2Y2NjeVpZUmNGVnJRWkFCYmt3b3BaNWIyZzM3?=
+ =?utf-8?B?cVkvZFdBUGl6UUFuWnlTVzZaOTR4b1dWYnhDZVhFYkM1YzNvN2VOMkdQenlq?=
+ =?utf-8?B?TWdiZWZVVVFvVnJjTTVZS1FtUmp1bXJ2ZHlmY1dXQVdlMkRUMEJoc29ZamND?=
+ =?utf-8?B?MVo5Ny9vRFk2MlhTMWFLd3RTdit2S0ZXZFpway8zejdGdEtFUGhlVUg3RHBZ?=
+ =?utf-8?B?ZkI2SHhMSWY3Uk9POVorNTluMjVPZFlDcUQyUXp3TUxiREpjcjJsa3E2cFQx?=
+ =?utf-8?B?UFFBN0dxQUhzZmZuekpVdE9PaE9xTnV3VUZIMVVWVjFPS1UvaXk4VkppNXdZ?=
+ =?utf-8?B?SzhVd2Nib2gySFAyWW5TT0U5WnA5dVQvRStERmVKeHZPQ0o0Q0lmNFJWT1FB?=
+ =?utf-8?B?VTRFUUxSZXB5YTNDcVpnbUVQOGcxdlgyUHFMYjdza0lXeU9vQnpVcVVqNkdp?=
+ =?utf-8?B?aTNCNnVIOVprNHRKd1JjdUREbmxUUVk2cjIrenZSSHpVUEZaN2hQZ1R2cS9s?=
+ =?utf-8?B?OFlrNzR3TU9CMTZMTitucVFXTUtRbzNkekNPYnFmdU9QL0k5bEQ0eFhscWQ5?=
+ =?utf-8?B?ZUZZSXF6Q2tybVVQTkEzSlhnbXVRdmdjbmVLUVpRWDZzbVhpTWh2MlMrWStz?=
+ =?utf-8?B?Q3AvWWVZeEtncnhRdGIreGx1bmN3d1UvblNRRGNBdkErN0FXeko2bVVuQ256?=
+ =?utf-8?B?a1dLaGtYNGdoditOSk4reTF2VktJZ1FjaUNwbXZmVDNBRXhBeXJIS3hsZyth?=
+ =?utf-8?B?aWlpOU9jWjRRRUd3bWZuWHkweVB5a3hzd1FpZGJtUEk2RE1sRWdMQXkzMnQy?=
+ =?utf-8?B?SlBxd3RZU0o4bHE4V2tEMVNGUkVsdEtVTHdBWjdaVGd4MWRqdXlhYnJaeFJZ?=
+ =?utf-8?B?WDc1QkFPUnZZcEJGUThpMVBua3BTWEE2SVgwRm12aUhsK2hXZE9sU1dBTVhD?=
+ =?utf-8?B?djB0RWNkOVRYbWU3NjZPV1ZxOEJ3L0UrOExSTFFIUHVha2c3dDF0WUh1NnFy?=
+ =?utf-8?Q?GnhPGUiP4Ag=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TE9IN1BtNUZINm9IcDl4RXI5bGRobWwvd0xRRU5XU3B3VVZOQ01pS2QzN2RR?=
- =?utf-8?B?SW5LbWFIT3g3NTBSR1BPbXRYd1FVcHV2b0lENHliaXZvdEdBT1dCNEJlck5E?=
- =?utf-8?B?U0lHSEE4Q01uY3pjZEdjcFQybVVnb0hybmc1RFlNY1VGMW4xdDhWbzdkdVNp?=
- =?utf-8?B?REx6NU8yYmhTMis5NjhWeFhEWGZPQWtyVmhsOFUydm1zVDZ3K1BjNHlac3pl?=
- =?utf-8?B?T1JUUGlyZHI0QVowS1JzRUVOdU93dUpmdzMzNVJTRlF3UUd2SWRCU2tzQmZU?=
- =?utf-8?B?S212SlVOd1lXUCtqQ3dSZU1CRTY2OHl2RHNYalJuRjBTcVVwMzBqNjNSWUgr?=
- =?utf-8?B?b0tFVGRhczhNb0tWWGtXc1JnRGIxekY2V2hncWs0M0FrbVEwZzM1bWdybjk1?=
- =?utf-8?B?Q3k1YXlqL0k4Tk1kaTNXVHlNYTZqYTVpWi9GOWJyUUV3Uk1OenRDUDJzclgz?=
- =?utf-8?B?SkloWE1QZnlDWTZKWVUyNVAydEczcUJLODdDTGJHNlF5NElhZEh4VHVWZGNK?=
- =?utf-8?B?N0J2T1NiYTVZZ2lRTi9TU1JrUE92U2J2bXZqRWk4ZUlFWTNMMmxMVGw5dXRL?=
- =?utf-8?B?MFFBSi92MWNDb05vNy81THVLRDJWd1UzZytIUmp2TzlWbDlHYXY1bTAwNjU1?=
- =?utf-8?B?RnhpV1BOSzZTRm0rbHpUS0dYL0VZalVnRmMyc3BiQmlOVmFtcUJ6TVY2YzJM?=
- =?utf-8?B?NGd5L3FEV0ZoVzVGRkU5dml6aGYwSUo3QzdRQVBnVWYyTzQ0OGg1MFdEekE0?=
- =?utf-8?B?VnMvYmhUNFNaSmJCSFNBOVFYUlFWRWUvaGZqTjBGUUlmamh5Y1VnQys3SDI2?=
- =?utf-8?B?VWtkckFQQVo1cGxGWnFvSjBGQlhibklScTNyRzFONHp4TzVraUxOb3JPM3Fh?=
- =?utf-8?B?RUdzRDQrcmlSZWRxMVk2WkR2ZHJRYnFwekpLYnhTVVZpajJBcE5lc0IzRHUw?=
- =?utf-8?B?VmJnNGRGQWpVZ0tQcXgzVDk1bmVDY2ZkZnFhb3NxWlhBQUFPRFIwM213YnlF?=
- =?utf-8?B?b0ZMOVNrNGRLRHljWG1iL3YrTmVPVGd4dkFKZzVHckN6OENoMENFcnc4QjQx?=
- =?utf-8?B?T2NrVVZmTUZtTDBvSlNJSThPa3ZTcHRxS012ZGxwMXRrMUlKN2FIL3lkU1B2?=
- =?utf-8?B?aUNRRUxSUVRIdUowd0VuRW4rbCthWnhVNm9OZHBXdjVleTBsQ1gwbUl5dFdD?=
- =?utf-8?B?R3VKMGJ3QldEeXFFTEc5WllOeU1ESURKZzBKZjd3eXN5ZU1RajhiUkdPUDBn?=
- =?utf-8?B?clZRSFlSbGRkeHFjbk5vNzRmV1FlMUhvZXFWTlBGOWxuLzI1YzVQZGhDRlFz?=
- =?utf-8?B?L2lCQnd4V0UveDA4a2F2Zjl5SHY3cGk1UW1DSmdOSVVhTG1DbGZjMnlnczFQ?=
- =?utf-8?B?cHBwdEwvOXlZSWIrWk0rdkU0blJxZVl4U1p6SVp6S3d1VGtmcWlsS1pIZWJ2?=
- =?utf-8?B?dE9kZ21TQ2lTOVBtNkF2ZEU3dlJPNFV3RVJ0UFJPUkpIYnN5QWVSU0x5OWxY?=
- =?utf-8?B?UHE5Y253dmFSaThJZXMwWTE3UjN5ZEl2QjNuV2lMeGc5U1k5SXhmb1dJWUxW?=
- =?utf-8?B?Z2JndFBnVDNMWERhUUgzbll1cEhVNmZrV0gwVVdyOHdsejR6c0dDZTB3T1A5?=
- =?utf-8?B?TzB4eCtHQzg5UnN4ZjR4YzhadmdxZE9yZjdTUFNDeklLQXkzdisxVTI5R1Iv?=
- =?utf-8?B?Y2RFWTh6WVpXdzdZamoyNG84RkI1ZXg1aDBhOUVick8wMFhqVW54T0Q2Wmxl?=
- =?utf-8?B?UnRoZENrREIrMlY5NThOUW8wcGx1WjVrMXN0VHhYUTVacVpLV1BZTWd4WHl4?=
- =?utf-8?B?RzcvMTNEQloxT0ZVd2ptVzJaMnV2YXEvdmJUa2ZkSjhsM2dsc01OZERMM2cr?=
- =?utf-8?B?bHhJL1g4M0JRU2lhaEN3OHI1N0Nia25OT1BrU3F0d0tVR3VseVdud2dzNnB5?=
- =?utf-8?B?Q1ZQWUpVeUxXTnpkMUYzRkd0ZXMvUnJ2OE84OU5zQURKSGJrSnpwSXRTWWxV?=
- =?utf-8?B?RHlFUXF5dVU4VG5LZ1ZPSkFjN1lwUUJFalFrTEM2QXpHL0dyWVpibDh5YW1L?=
- =?utf-8?B?STA1UHd1ejVjckw3enFpTnB1ZXJPRmdlcUhsZVNmczdmaHhUL01SaGRHRzdW?=
- =?utf-8?B?S0ttREp4VXh0dWNLUEJKKzJ2N1MrbE9NRnpGYkRhL1cxNjlUUlZTcERYTzN4?=
- =?utf-8?Q?OMbp4L5pLzCLF7drlR/xgE9q1M7/oqcHyxgDFOS3wBd2?=
+	=?utf-8?B?cmdreDNrNk1Ma3ZIMmh0bFR4TkpFYkM1VXkydlBLZWVzUUU0STNYenE0YUxp?=
+ =?utf-8?B?SUgxU01mbVVmSHZYbjdJRTR2aCtCUktVcVp2NkorR2pYV1N5dnVtK1NCV0FE?=
+ =?utf-8?B?NlRRL0RrS2o3QU1KTzdtNzRtTm15WENGV0RkcWd3eDJQYStZZXVQeVFPMllO?=
+ =?utf-8?B?NVFUZzVIOHg5ZjhIOE9KOE5NemZveUtjdTBGM2hJNm1WZ1U2VXhNVU8xQW83?=
+ =?utf-8?B?a0txcEtPakdnOHpmOWR2OWJWSnpLcHdvNVJPdEE0cjgyaWhNbG4yQWxWbGp3?=
+ =?utf-8?B?SnpYSS9RUURMazJMa2xBZ3M1OFVQaWl0dVNJT0NGdjFKaFR4UEVjc09HME9T?=
+ =?utf-8?B?NFBaSHk0VU5OZVRGSWVScDVRallxY1dIeHpFdEVmT0Vmb2d6Zm1pN0Z3cHNI?=
+ =?utf-8?B?TUcyVVBIdGVsTmFIblFYeVFsZTJMeWVUZ2ZtWjlPMnRLN1VFaEwvQ2FValZU?=
+ =?utf-8?B?Y1F5ZXhXblIxZFFsbCtlTm9TWGhGMzlUMzBsenh1c0FmK0NsN3VqUmkzZ2Vh?=
+ =?utf-8?B?WTR4Nk1seExFMXgzL0Z2U3ppd2NlQldSMlYzWTFKMGVMMWNjcmhDU2xwTzcv?=
+ =?utf-8?B?WmRnZU1QYUJrbU1kR1NIeTA2VGllemJsaitxaHlzVGMrSjExYUJ2WUJyTUNi?=
+ =?utf-8?B?QlN2NnUyTE44ZSsrekNybFJFK1B0LzV1N2poVlVRT24vTzZQZWNJdDh6V1Zx?=
+ =?utf-8?B?dXpxYUZuR2F6MXFkQnBGMDIvY1Z5U0NqV0piZGc1b0lCZS9QYkg3NVN2VlVJ?=
+ =?utf-8?B?d3R1MUVOMWRFbkgyQzVyK1FBazliTGRzSU52OHlaYjJxd3NYZFE2U0xackpu?=
+ =?utf-8?B?dzk3anh3Z0pjSUlwUGtlZnZOTUxTSUw2cUZ1c2JuL25zNU42OVFuYTNwcXJr?=
+ =?utf-8?B?RStobEFpODNmMDVoVFlCc0hJS2JmcHY1TEM0Y2tTanNId0dLbXR0NzJzMlhL?=
+ =?utf-8?B?aVpHTmNQZnkwem9laHZyZDlmOGVyUkV6anBMYnpVZWFHOStBVUMyb1pCcEtl?=
+ =?utf-8?B?bTBkTzlSL045VUFudHNWeWNQYStWYWw3QldxTHE4MVpHbktTZEVRWlk3WVAw?=
+ =?utf-8?B?b2tjMTdIem5TMUVaR0Q5eUNhQXJiek1OelZyTTlsRTJCUHROMGZMbDZqY2x5?=
+ =?utf-8?B?YjJmU1dsL2I3ck4yWm9UV2VKRkNQbDRrUE5MdXRJcTBGOE5MQkFrREt3OUlJ?=
+ =?utf-8?B?c1g3c1ZBbWdVZnZ3VzJXRzUrNkk5bm1Ka3IzeWptTWhsek01OXFTdnlxd3VP?=
+ =?utf-8?B?Z1pqR3dVZURSam1sWG43QnFPc3p4RDFvSnBJTk1zNTRGSVB4R0Uya2hsMjVi?=
+ =?utf-8?B?QTVoRzVYZzljMU1vOGxIVjVVZlFwTHR1SmpxMjlRVWZ3ZUFMVG9OVEkxMDFw?=
+ =?utf-8?B?N0VCcmtPa3AzOE1UVDRjekR5cXJkMXJDb1BISWhxYXI0MUgyeVU3Q0c0aWpH?=
+ =?utf-8?B?d1J0RzlvWWlmZWFQMEt5Nk5NeGkrOWRFSFQ2Rkd4cTNsMU5EbkloWDZIK0xn?=
+ =?utf-8?B?TGowWkszQ1JUQ0NycnJvU24zK0FlMm9PUzUwZmtieXlTOVFnMm1qVGhSNzdB?=
+ =?utf-8?B?Yndqek81dWlCUXhxKzI1WG1GOU1Nem02b3pTcFJMMWRORldjQU5KVzloeGtr?=
+ =?utf-8?B?L2E4b1gxMjIyMDA4R2YvVEZNUGFKdUQyTDhvUU8yTmVDVXozOG5HN2Zqdk5H?=
+ =?utf-8?B?WC8rTDU3SUNnTGEvcmVzdDV0WEJJd1lkdnBDSXIvN2ZPb1hrR1VQbk9Ob1o0?=
+ =?utf-8?B?WFIxYS9CY21jcDNQMEFMYlFtSVovNnRCbkZMVWVQRkNkeFQycXdlWDNtOTVT?=
+ =?utf-8?B?cDRqUTZQcTNrek1PcHhNY1Jpd05lYVVYbHZ3cWQ5OFRPam5yOEF0RW03YTAx?=
+ =?utf-8?B?eWVGOXdjVUhMZHh1L0ZyWmxyY0M1QmkybTNuOU9ja2ZkditTc01GbitIRDJT?=
+ =?utf-8?B?OTYvR3F2VE9ldVFUdTUrdEFmbmJZb0RQSVN1L3lGMXdWcE1tN1pWUzZiQlFk?=
+ =?utf-8?B?aFFPRlFqbUdrc0RUZGtFc1p3UTJTK2d0OHBkY1IrOXFrbldrb2ZObndBRk5C?=
+ =?utf-8?B?SHN6eUpVb2ErQXpNOFgrcy9ZcDIzZnhqN0xRM2w2VTdpM3dEb2JmUCtuNWx3?=
+ =?utf-8?B?ekdidy9GUXQ3aGgxUml3aGkzWk9QVDJpSHdWa0RhN2V6blVtNFNTcXJzOXRw?=
+ =?utf-8?Q?SKQe+yiKyWzvvT5tgfhZN1qJ9AVQ1lHdPw9XkzAKNfR+?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20e25a84-ecaf-482e-c584-08ddf5ec6a44
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ffd8b83-1f36-481a-b339-08ddf5ef3afc
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 13:16:30.1751
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 13:36:39.5673
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LSBPykinK6Nfxbdws7vI8R3DIzXplEaxc1/y8gZ9iGs0RULkylo+Z75xIue5ORA134kqr+oRoacftbTqa7JbNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6404
+X-MS-Exchange-CrossTenant-UserPrincipalName: S2Syul4meZW3C7PVVT4dTUSjXjr1c4qV/0aGG0s/T3JawnCRpdctST4IF5xwxYjzB5ObiwgsRe93N7trLG+nGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFFF21E27DC
 
 
-On 12/09/2025 15:13, Ulf Hansson wrote:
-> On Tue, 26 Aug 2025 at 17:29, Thierry Reding <thierry.reding@gmail.com> wrote:
->>
->> On Mon, Aug 11, 2025 at 12:37:25PM +0200, Ulf Hansson wrote:
->>> On Thu, 31 Jul 2025 at 14:18, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>
->>>> After commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on
->>>> until late_initcall_sync") was applied, the Tegra210 Jetson TX1 board
->>>> failed to boot. Looking into this issue, before this commit was applied,
->>>> if any of the Tegra power-domains were in 'on' state when the kernel
->>>> booted, they were being turned off by the genpd core before any driver
->>>> had chance to request them. This was purely by luck and a consequence of
->>>> the power-domains being turned off earlier during boot. After this
->>>> commit was applied, any power-domains in the 'on' state are kept on for
->>>> longer during boot and therefore, may never transitioned to the off
->>>> state before they are requested/used. The hang on the Tegra210 Jetson
->>>> TX1 is caused because devices in some power-domains are accessed without
->>>> the power-domain being turned off and on, indicating that the
->>>> power-domain is not in a completely on state.
->>>>
->>>>  From reviewing the Tegra PMC driver code, if a power-domain is in the
->>>> 'on' state there is no guarantee that all the necessary clocks
->>>> associated with the power-domain are on and even if they are they would
->>>> not have been requested via the clock framework and so could be turned
->>>> off later. Some power-domains also have a 'clamping' register that needs
->>>> to be configured as well. In short, if a power-domain is already 'on' it
->>>> is difficult to know if it has been configured correctly. Given that the
->>>> power-domains happened to be switched off during boot previously, to
->>>> ensure that they are in a good known state on boot, fix this by
->>>> switching off any power-domains that are on initially when registering
->>>> the power-domains with the genpd framework.
->>>>
->>>> Note that commit 05cfb988a4d0 ("soc/tegra: pmc: Initialise resets
->>>> associated with a power partition") updated the
->>>> tegra_powergate_of_get_resets() function to pass the 'off' to ensure
->>>> that the resets for the power-domain are in the correct state on boot.
->>>> However, now that we may power off a domain on boot, if it is on, it is
->>>> better to move this logic into the tegra_powergate_add() function so
->>>> that there is a single place where we are handling the initial state of
->>>> the power-domain.
->>>>
->>>> Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> Thanks for looking into this!
->>>
->>> I have picked this up via my pmdomain tree and applied it as a fix
->>> with a stable tag. Please let me know if you prefer to take this via
->>> your soc tree instead.
->>>
->>> That said, I guess we have some use-cases on Tegra where it actually
->>> would make sense to allow powered-on PM-domains to stay on during
->>> boot. Although, at this point, it seems better to deal with those on a
->>> case by case basis, as improvements on top.
->>
->> We're actually running into one of these cases right now. This happens
->> for display hardware where we have simple-framebuffer device tree nodes
->> that are meant to allow a seamless transition from the firmware's early
->> framebuffer to the Linux framebuffer. But since Jon's patch disables all
->> of the power domains, the seamless transition no longer works.
->>
->> I suppose we could argue that seamless display is less important than
->> systems booting, so I'm inclined to say we want to keep this patch to
->> fix the earlier regression and then apply a fix on top to address the
->> issue with the early display.
->>
->> Do you have any thoughts on how to deal with specific power domains that
->> should remain powered on during boot? Ideally it would be something
->> standard, but worst case we can also special-case in the Tegra PMC
->> driver.
+
+On 13/05/2025 22:10, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 > 
-> Does it work to leave that particular PM domain for the display powered-on?
+> The p3509 carrier board does not connect the id gpio. Prior to this, the
+> gpio role switch driver could not detect the mode of the otg port.
 > 
-> Genpd should deal with this then, by simply leaving the PM domain on,
-> until the consumers of it have been probed.
 
-I need to check that but that could be a good idea.
+We should add a fixes tag here.
 
-Thanks
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>   arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df355bbcb691ef99b0d0c9d504e 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> @@ -669,7 +669,6 @@ connector {
+>   					vbus-gpios = <&gpio
+>   						      TEGRA186_MAIN_GPIO(L, 4)
+>   						      GPIO_ACTIVE_LOW>;
+> -					id-gpios = <&pmic 0 GPIO_ACTIVE_HIGH>;
+>   				};
+>   			};
+>   
+
+Otherwise looks good to me.
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
 Jon
 
 -- 
