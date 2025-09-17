@@ -1,234 +1,203 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013008.outbound.protection.outlook.com [40.107.201.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D8C266B52
-	for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 03:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758081244; cv=fail; b=dQOSVaIixYNHP87CqFSKreXFEFfKIFGpm7O6vwSgcLvRiuiAm41rkPjoQtu7bqK1e6G91JUepjeBWvJI1i24ozPfejjxlA2rTtbgItaogmBkT7uaiKr73m3T9MpoP6A7vdfoE+vcDGY23BjS+9Il4EZO/+xtcKBYiLr8pdITPSI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758081244; c=relaxed/simple;
-	bh=39p4ba1rx4OFwG+qB+iLtOOTJ8w33zzEAg2g8utl+dI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lUP9fSYrnoYWMKR98MXwnbY1bqNjwEF4WKDQUi7Iypy7ebb/iabVUDommuelAuTTtjcZXrE5L91mAIQoxj5kKMDK3qNkO0WsT2RaznQJJAeWjj60tN31uCCJsIprqCBpMfEe/lf7PngNKu+dl4OVzJ5wcqY06ksmrrsR0OgWEOA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z71521IY; arc=fail smtp.client-ip=40.107.201.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A162E1F0D
+	for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 04:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758082161; cv=none; b=ZgyaNVoM0zqalIMbKq6ciWjPb21w5r8Km41WJCfPplBUEB11poYiXI3Ym/VF1uKX+zQEHQIP/UPHtarRzpI6oGbIWj986rvbd55lCyVTY7sLyjiNEBoy7GQRtsr4Q+fEl1txo2j3ByiSZW5hI03flcrar9d+wcaiqAINP4bBJzg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758082161; c=relaxed/simple;
+	bh=2bvp36KmupZNMGpps/OrSOzUI8/fL5Jg26VYq8D4SCQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=rigkoQxg2yHnsymEhHTu+wmG8ZDdisYwmJnOeHC3L9BnRjZ0C2rQsYDOXVPIEchp8ccfyIrlMVVZnt7mj1ace148r0EAtqGhpX9tYNiRr2voVm0wBwMrgn4ZWlEpFffRbaNDX7DVo8esHVfXlZM3Ch7GPLSSid9amd2koPIcuC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3ALYzd+; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z71521IY"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vWPjIFVtfNVfReXhHu5yYo7lW5Yv0HiiQBAHtYunpseUN8VXpWAC7o0MytJzbc/1B33trsYK4IFBVZBnA0VRradXU3QnfPFbY9PIJaXMlsyjAS/dD3b5aV7tPFySLOAmC4r4Hr+BGj+VjGav+qCbDuPluD6M9thlOKfj7oirHVlVOQfw6iVrTvh3gubSm1kDCe/LX5IncQEjYqjPpVTCJI73bgGXo4M7Rh7k8DBE4UrdeACnIeKr+E45kosuDrNJDvavRrvrihZSjP1jpxsydmwoHTP1zV9d4XzhOD8f+UR5uzAPnq4YlFwepYpjEKv2Vr7siR5g2WNA1yhAk5sSHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Whx/O0xhkmg1H8Ed4utNPDv2ldNCw/d3yyIzbHWPpYI=;
- b=ZkkmVp6zj1b/C8dv4DhSXnzEETD+kP9OAf6quGM0V2uYVrdTC7nW5CCPCpoIvy7gRYFWGuCtdqz3HXK8sFqxJZW6o81YUjOXRdUewsPB74iNDep6q/l/H+2D8iFoc8CD2Cd6JiEi0CFXjU1EMJy+ELGYyO0bhNBk8TNamAXcc4X7VJpCilq8iTPzHkfOEk20WW8vAv0y4hgDyDqkoVRjpfb10J4bg+eURPgPtkoYh4MrDawOq4D1ntCBl1c9/G2/A8Xp5ibdmN8buGcwwwPLd0TT5ZySzPFCdKC/59Qqnbrb/rIJbp1ov6aPv9ejq0KhO3vfZZouwG85tMIGBndINA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Whx/O0xhkmg1H8Ed4utNPDv2ldNCw/d3yyIzbHWPpYI=;
- b=Z71521IYanSlEdhPiMlEgZ1C7O/AXudjo0z5TWCeQpcb0o+S8JUae11se55haQ0RioPSI3UdhxvN94YACRo+5+ChFbrsARrB+MCkgU9xAQJaz9N30Qdz5K+8D1G2TDXFndnZ5RFzbQ36Wy72ydU6RTyDqrw/CkOtw7qN2gRJtdG/PbDby8KGPpm2v2A4EQc8mhsKe6X5NVGOPkjCAgWtx0C3HuPo7M40VAp3Wua4xO94JlX3+c+Lv6m8UnGUd+bIZqE4ct7xHgO6GtzZhpLs2dR9KKra3MKtudfdj2oyFJB314F21/9iv1EKsTw+FWD0BuLPXrBkRSevh9PSqN4Ucg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- PH7PR12MB6393.namprd12.prod.outlook.com (2603:10b6:510:1ff::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Wed, 17 Sep
- 2025 03:53:58 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
- 03:53:58 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Brahmajit Das <listout@listout.xyz>
-Cc: thierry.reding@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- jonathanh@nvidia.com
-Subject:
- Re: [PATCH] drm/tegra: hdmi: sor: Fix error: variable
- =?UTF-8?B?4oCYauKAmQ==?= set but not used
-Date: Wed, 17 Sep 2025 12:53:55 +0900
-Message-ID: <6392398.DvuYhMxLoT@senjougahara>
-In-Reply-To: <20250901212020.3757519-1-listout@listout.xyz>
-References: <20250901212020.3757519-1-listout@listout.xyz>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP301CA0086.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7b::12) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3ALYzd+"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f753ec672so6829566e87.2
+        for <linux-tegra@vger.kernel.org>; Tue, 16 Sep 2025 21:09:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758082158; x=1758686958; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q/acXbEK2et4Won7Kyik166aN82Qa/n/alnFQdbkk5E=;
+        b=j3ALYzd+Jcb9vvj7AyWTJ00G8UlU9HrlgBa4J8x/3solwanhEssZRyKJYc3nBeF/+a
+         8jQAY8PGqU2hBhpSHGtC6ip19/zFTANpoxOLkHHNSMAmHMPB1YwnZa9nWkEYKhqrWszo
+         nzdIMlj7w0m89rnVhWkqCdxCRXqaMRg9oQn7Vpl9twvScDN2AfYCDFQd62Y5l8mrZBAW
+         99qW2dEDM5nq/RP/pEpGiOLtsg4kwoo6cnevr6wBwKVlukIyt/A/4TGB+FPDUN2JrkBi
+         U7fGRSCNXlY1Qan4oKsbLrCo8AKwSy05uUBmX75SP2hOW+KFa4NFSPSzB2kJ3eM4vLo1
+         soFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758082158; x=1758686958;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/acXbEK2et4Won7Kyik166aN82Qa/n/alnFQdbkk5E=;
+        b=Kv2XRrUlEQnmUMCL40nW/dK03V0tYFHpj49k8JZpgBtBiZW5WsVWWq1dTBNHmWozgr
+         qE3EjX43HZrrO13smqc14fDH29wkdUZYD4HieLzKfmOw5Ow2seAN3Xdk4C2aebI1cENm
+         aMrk4KphNyrBSn5chKJla0pRpUCmahy4UKHHM0kpM9rS8yCjalQjsj8LQWP9q/4Xmgcj
+         uwYVeiSDc0F7FhhvWlpWc66dumL9wvJokLq3RclyHvw0niHpW3NvAaQXNTVTcfg6AnxI
+         szzL9PyTCjC5vJqPrT/68EQfKH0BQ8SpiPQVeE7qAJmQuj14myvMPSympPm0udypGw83
+         xDsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXObztW4MYU7vSLAJlwChO6dRsKdvpyVBbnhjzlqM5DE2dT8nYGmFWzx17VldLezkU7kK3skWrn9TQKtQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkZJkp95DU+Ox8mrU5Vnm71N5MUfLXjIbRbJIzyILT3W6N20EL
+	mYdJXdtqV+mSuIyXHw8RUSrPHVQuBVne9bA8nkjEiglYAg5+bAdVwn6o
+X-Gm-Gg: ASbGncs0pjTuUerIVxJ+ZkC5tagtWE+X3+Hwqpf2LHl3gsCkRlqSanNeNWxIHXryGvB
+	b0Pw4/ZLzM3sYmMZ0Fh5EKB+TRCawsDrbTyaNkmtanut83m0cnXuL8/Acs3sME7Kj7sgovDHw1u
+	yO4XUlsAjrMkkxjT/yjh8Z25sbtpaIK5NVY2W1Kcxz605nPpBpSdUmWyK0bs6Wd3wbTrEFy6ozV
+	kFxfwDQ4VTyzizNM/lUsJtXWZU/Z93mTlQhZ96J6XKfayL8hGHxJbX55IcCimdi3HdbelYoWftD
+	TA68k25pmQZtRbGctnEhffnIgO3JfZNF8aNz0wZyIk0MM3GVt0PQcPSBgx4pEjV1EAz6zGbhgdB
+	ONIVmigiBCkHYABTBa8mj
+X-Google-Smtp-Source: AGHT+IEIFuayZdeViGaGheXPYMm/8ps877mpBKcVhq8OkNInnOAYSkaIc1jQt5+Wq4pUfsLEPGLoUg==
+X-Received: by 2002:a05:6512:6509:b0:571:1bdc:14d9 with SMTP id 2adb3069b0e04-57798943ce3mr200142e87.24.1758082157893;
+        Tue, 16 Sep 2025 21:09:17 -0700 (PDT)
+Received: from [127.0.0.1] ([178.137.222.126])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e64fa715asm4910278e87.123.2025.09.16.21.09.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 21:09:17 -0700 (PDT)
+Date: Wed, 17 Sep 2025 07:09:13 +0300
+From: Svyatoslav <clamor95@gmail.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <treding@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+CC: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] ARM: tegra114: add missing HOST1X device nodes
+User-Agent: K-9 Mail for Android
+In-Reply-To: <3549625.aeNJFYEL58@senjougahara>
+References: <20250827113734.52162-1-clamor95@gmail.com> <20250827113734.52162-3-clamor95@gmail.com> <3549625.aeNJFYEL58@senjougahara>
+Message-ID: <FF69608E-EE3A-40E3-A02B-A6BF8FDE4800@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|PH7PR12MB6393:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1f215c2-e206-4b29-4b38-08ddf59dd4b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NkYvSVJLb21DNFJ2SEUyR00zdlM4MW52cUJBaElzV1BqWDBMR2hlN2ZRNTZl?=
- =?utf-8?B?MkNxSDErL1dHWVZXKzkzMGJmVmw5bjR6S0pQUUlvM3llUkcvc0RaWjRTTlVM?=
- =?utf-8?B?cjhTVEhYNDN1Sjl3VVB3N1FVL3hibTR0anRQcWlVOE92ek5iSHhndTB0QlMv?=
- =?utf-8?B?empsYVBaMC92K2cxNEV0YlQza1Fpa2oyYXpBZ0U3WGpqajBGVzlFajBVNmM1?=
- =?utf-8?B?djdNYS92bWlWSjZqbTRiblpSV2hFSU9taXcvRlN6alFHU0RWOGpiQ1VUN2hr?=
- =?utf-8?B?ZXEvUDFaTUo0RmZPcG9ibTVlRGlOZFRXVDFaR2Fkd1N4OVNFaHJWRFB1NXVQ?=
- =?utf-8?B?U0VIYTJuR0YrYTRpbW1RcnQxWG9TektIekUralZCdjVwVkdPWUlrNm5ZK0FV?=
- =?utf-8?B?cXNFeUI5VzEvRHo3OWpTVTNuNTl2UjJtNDlGNngvbU4wOGlpdHo0ckJMek5l?=
- =?utf-8?B?c05vOUVZVHRBbitVc3VreUVwWldCV2NHVEVkMlNpbXduTlREQjJ1c040cXpM?=
- =?utf-8?B?cEFJSy8xcThrSzdxMXRnK09COEx0eTNENlhidjdMM3ZaQnAzTnlTRXkxZjhY?=
- =?utf-8?B?V2hqOElkS0dVR25qaWxsSGdiaXQwRTZRdGVXcmt0WW9LVytJS1RLTW9HaTFZ?=
- =?utf-8?B?bDMwZlVFYUpnZWIrMXZjSUtYWWE4NGRSMzVjblgydG5LWm1oYVpScW9CSmMx?=
- =?utf-8?B?L1lIdmlaNEFYa1dSeUsxanNiVFRqNVdCeGtaU0RFOVJHcXNweU9ITFBCbDVN?=
- =?utf-8?B?Yjk3ZHU2ZVJFMkM4ZWYyWVN3bVA5TnFxYUhsRmRHUTFDaEo1d1pDNnJPS21o?=
- =?utf-8?B?QUF2NmtWYnVQWmVzUC9IYmdKSkxLamc4dHo2YVJoMHpHajE4RHJaZnl5VXQ3?=
- =?utf-8?B?STN5QVJQb0xQdjJHQVM1VDhvV2lJMFRnZGFXOHlTdjR1SytHY3I5UzJ0U1pS?=
- =?utf-8?B?ejQ5UWcrZ2ttRDcrMkJ6Z0s2dmhvTWRCVmpkQU5pVS8rR2VBZDQxZVhKaDdY?=
- =?utf-8?B?TktRcDU5WVdXQ1krRWtHY3ByRU1iUWNkTWJYUnZ5TE9vY29EN1lpd1UxY1BI?=
- =?utf-8?B?aCtzWi9jQ25VTEtxZXFocVpHR3pYUlV3NDZSYnhITWZKRklQeVI5R21VT0tV?=
- =?utf-8?B?TEIxOHhpK2JNN2hJWlA5SjBUS3ZpdWdQdHptZWw3RnVmSHBUZ3BoUkxYZ2xy?=
- =?utf-8?B?NWpaZzhybUJlQUhMcWhQVXNPdkdrd3J1SUVLakkvVG9kUzVUdnJ0VTQ0VXRS?=
- =?utf-8?B?MHE4WnZ6UTZNa2ZmV1JsWVBoRTBHMVBxTm1PcDdrZ3Vka2d3RHJPUncxNFVu?=
- =?utf-8?B?UStIVzB4SnRNanpldGl3YVhjaFgvOFJHQThET2ptZW9lN2MvYytqYUtuYy9E?=
- =?utf-8?B?b1ZkaFRTNDhjRDFaSXc4SHJacjV5STlFZGFTT0VoNzlsajViL3poK0J4dzFx?=
- =?utf-8?B?UUNqTU5VOEgxK0xMNlI1TjNxUFYrYlZ4ZEdXS3VpQkFsWFZYMFRqcWFkd21n?=
- =?utf-8?B?Skc1aldsZTcrNVNtVkNxQUZ4cHV3N0wrV3ZOYXEzQTRQbStCNVlOaDZ6cjRG?=
- =?utf-8?B?NVBNU0JnSmpnZ0xCQWNVSC96cXErM0szUVhGM0xycjEvMnRtYjJNcU9VTEVR?=
- =?utf-8?B?RXRIY3NoQU5LdHRkd0VZdnloQ3o1ak9jcXNCaWx6QkFOdzFCeHUrcUFaNUFM?=
- =?utf-8?B?Yjl3ZEVTVjNMZzRuTTZqMnBWVzlMeEVpM05sSEtJaUZWZlQrRHlzajZiVU1W?=
- =?utf-8?B?OUk0blByRS8xY2tyWUZKc2dWWVVpbkplZlU0SU9tUWJXWG1LVDUxVDhsdzgw?=
- =?utf-8?B?dE1sM0MvUjg3aGRiMEcwNHZ6TkYzUUZ3d2Fwd0svaDQ0NWJCR3NDbVdONGsz?=
- =?utf-8?B?QmJUQjdtcWR0cFBkQUFCZ3o5KytIeDBwMFNmSWJPeXFPd3RZRGw4a01zeEZr?=
- =?utf-8?Q?lKFOOEURKBo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OVNVRHZNL0R0TWszSDhxQTNsVGRRaXUvWklXcFpUUGRoby9IVzN3Mjd2VStU?=
- =?utf-8?B?K3VDaFhvN3BOMEFjSGFPb2Q1bHk4T3RmaFlQQlc3WWV5cWhXZkpMUEhBYmFp?=
- =?utf-8?B?Vk9CaDUxZ2hEY2FpNUQvUFRCQXorVDVUUnV3NC9hVnVuVmJnanQxRGczZVVo?=
- =?utf-8?B?RFo0RU9CcXpybWpUdzBsMEtNbElOMDlLdXZ6TDFwdGtydTZicFhybnJhWm01?=
- =?utf-8?B?bE5HQXV6Nk5VT3RqdENhMnVSeVAyTG16SWVDUjZDU2MwUStGQ0VPbHpLNUp3?=
- =?utf-8?B?aW9YL2NjY1gvdkdteXRYZmRnN0pkdm9vZ0ZnRi9uSURGM0tMNjZRa2tjMFdI?=
- =?utf-8?B?ZjlTOE91cCtNT1ZPREh0VFJ5RmxJUFlNZzMvOHV5SEpXNjdPdHpQOXRrMDdH?=
- =?utf-8?B?ZGJBZmhqTXJmdzZyQTRTcTFJR0dLMk5jRXpVVDkvNmpEOEdmWmNiR1ZCQ0hE?=
- =?utf-8?B?ZkljTUwyUDZKNlo5S2lRanlhaEV2dUtCZTdGNlFyQ1U0b2w1eEFkYjBoQXN2?=
- =?utf-8?B?bjRJa25EOU16aFdCbkpRb282azZaZmJqN1BpOE9KNHgzYWRJZzFHTTFyM0Ji?=
- =?utf-8?B?TCtYb2xEMTIvMDJwdmJ1U0ZrQ2hvdjdlTEJjaVlmZ2hGbzdyMCszNitxQm50?=
- =?utf-8?B?aVNTcm5sRjFieXN5NDhSZ2VReFJ0WmZRRXByNkFPUjI5dHQrR01kcG5hbDZr?=
- =?utf-8?B?anF1OHRzanFxRG5jTXN1SnBJN2s0WU91bXpZaVJtVjhtWWttVkhCbEt0bzBj?=
- =?utf-8?B?THdUUlBkTzJ0Z3JhREFWQ25LeUx1K2dyMmxBTk9FYTF1QlozRzhSb1hxTnR3?=
- =?utf-8?B?WjV3a3V1aElvTkwxWXRmNGgxY016QzVlSVF0TkNDSjMvZUF3NmJRN3NKa1E3?=
- =?utf-8?B?ZFRmMWdWb3RSMkxWM2VXNjlSdUpFa3Z1aThUNDFpYXJGSkJzcWJPOTN1VHNW?=
- =?utf-8?B?MFhlVWVkeVRndnZxVFFXNTZkK2VJbU9XU2hWWjF3Vm1SQkhROG5XTkxsUW5x?=
- =?utf-8?B?dEpzSU5kWHY0ZE9JK2VzY0tueE9sZUp5M0xvcGNmVFVhNkxEQ01zZlVnOFlH?=
- =?utf-8?B?SmtjR0JEQi9XSEc4WGJFTFBYZXNuTEU5NUtYUWE0N1UwVStQc3JOd1hXUE93?=
- =?utf-8?B?MjlXbGRtQW1CSFdPS1MxWWRFK3FkVHZ4NXZNRVYvV2l2M3FhZzJLbVBPSlhy?=
- =?utf-8?B?NFRMUWlnTW50OVNZb2U5OVhFbnMvYWk0WmlHOGVIV3NQcGdJZWs4clVPZDZq?=
- =?utf-8?B?eklobHUzRDFlVlpzWlFWUFMySnJ5dFNseWpFMW9xdUNiYXJDbWNPaUY0M3VN?=
- =?utf-8?B?di9pcFNHaDBZZW5HdHJMdnVmUXRUZVozS08yT205cytWWnJHUWo1SmJ4RXA3?=
- =?utf-8?B?OUxUT25zUDlLYXMxMVBhczBubGJwV1c1SzNQVjA4bGZ0aGR4d1FrSm9vR2ps?=
- =?utf-8?B?QVJjY2l1eGkvMFNZYVA2OWJ6YjY5SFZVNmFRWjZtUW15emYrRStHKzZEODhw?=
- =?utf-8?B?cE41aVVySFMvZUdjRFo5R0lJQVY5RmNzTklVNmJqRHNwd1h1TnE0MkhwNTA1?=
- =?utf-8?B?ejFibG5nUWRRRFVFdTFCQk9sV1FQcDZqci9ZNXF3OCtXK3FSeE9Odi9vaTdK?=
- =?utf-8?B?NUJPcVNVVGllNHVuS0IyTjZrY09aQ1FDaVV0WHBGQkd1M1U0ZkdFMlBUNGVw?=
- =?utf-8?B?S3h6YzdDcU15b3lDNmJtbmpKS1BnUEhLRGxBcUdpMllVVEJwTmFLTU9kWGZC?=
- =?utf-8?B?V0tzTG0rcVlKTzJUZjNjTDMzOXJOb3h1eTUwOWk0SXo0WnFvaUtlYnh3Y1lH?=
- =?utf-8?B?b3FVejBWczlmd1NubVhRNGJtOE9QbmRwL2ovdU5sMGNVK0g1MklNUkdWenpM?=
- =?utf-8?B?RUhmQzNnZElMSzhsQXNwZSt1ZWEyRjcrTnlIamRWSktrdGV2NmFCcHBUTHht?=
- =?utf-8?B?ZXRaSDZtUzJJaURxWm11ZFBFM0pneWoxZHNPenpOUHc0SDVmelZ5ZkpBcW4r?=
- =?utf-8?B?a2ZrQUNSeHZzNGE4bC9SV2cwK1M5UEt5Z04xUnpVWlN4aWhCUy9meWh3bzQ3?=
- =?utf-8?B?SDk2QlpNeGRuTWJhWHY1aDh4TFdKaHZsSmN5Ti9mUlFBZ2dSdnoreXJvTnlw?=
- =?utf-8?B?ZktiZkRYQnhUVlZlVWllT212NFRiODJzcUN4ZEczM2trSndIeUU3ZUEwM3Fw?=
- =?utf-8?B?UG03VmlpUTdqMmdkbU1GemltUlNiUmlyNGM3NFgwaWNNU2UxRHVpYlljdDdR?=
- =?utf-8?B?OWFjeS9BSVZIOGNJNFkvRktzTVNBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1f215c2-e206-4b29-4b38-08ddf59dd4b1
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 03:53:58.5381
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zYuJKy9JxZ/Zyx4mBPsdNdT64uqH9OQ+dWcxPgL7q9DbkRsjAmpBRQRFlU9f711h+1BVv6xwlaPogExShv6bYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6393
-
-On Tuesday, September 2, 2025 6:20=E2=80=AFAM Brahmajit Das wrote:
-> The variable j is set, however never used in or outside the loop, thus
-> resulting in dead code.
-> Building with GCC 16 results in a build error due to
-> -Werror=3Dunused-but-set-variable=3D enabled by default.
-> This patch clean up the dead code and fixes the build error.
->=20
-> Example build log:
-> drivers/gpu/drm/tegra/sor.c:1867:19: error: variable =E2=80=98j=E2=80=99 =
-set but not used [-Werror=3Dunused-but-set-variable=3D]
->  1867 |         size_t i, j;
->       |                   ^
->=20
-> Signed-off-by: Brahmajit Das <listout@listout.xyz>
-> ---
->  drivers/gpu/drm/tegra/hdmi.c | 4 ++--
->  drivers/gpu/drm/tegra/sor.c  | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-> index 8cd2969e7d4b..c4820f5e7658 100644
-> --- a/drivers/gpu/drm/tegra/hdmi.c
-> +++ b/drivers/gpu/drm/tegra/hdmi.c
-> @@ -658,7 +658,7 @@ static void tegra_hdmi_write_infopack(struct tegra_hd=
-mi *hdmi, const void *data,
->  {
->  	const u8 *ptr =3D data;
->  	unsigned long offset;
-> -	size_t i, j;
-> +	size_t i;
->  	u32 value;
-> =20
->  	switch (ptr[0]) {
-> @@ -691,7 +691,7 @@ static void tegra_hdmi_write_infopack(struct tegra_hd=
-mi *hdmi, const void *data,
->  	 * - subpack_low: bytes 0 - 3
->  	 * - subpack_high: bytes 4 - 6 (with byte 7 padded to 0x00)
->  	 */
-> -	for (i =3D 3, j =3D 0; i < size; i +=3D 7, j +=3D 8) {
-> +	for (i =3D 3; i < size; i +=3D 7) {
->  		size_t rem =3D size - i, num =3D min_t(size_t, rem, 4);
-> =20
->  		value =3D tegra_hdmi_subpack(&ptr[i], num);
-> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-> index 21f3dfdcc5c9..bc7dd562cf6b 100644
-> --- a/drivers/gpu/drm/tegra/sor.c
-> +++ b/drivers/gpu/drm/tegra/sor.c
-> @@ -1864,7 +1864,7 @@ static void tegra_sor_hdmi_write_infopack(struct te=
-gra_sor *sor,
->  {
->  	const u8 *ptr =3D data;
->  	unsigned long offset;
-> -	size_t i, j;
-> +	size_t i;
->  	u32 value;
-> =20
->  	switch (ptr[0]) {
-> @@ -1897,7 +1897,7 @@ static void tegra_sor_hdmi_write_infopack(struct te=
-gra_sor *sor,
->  	 * - subpack_low: bytes 0 - 3
->  	 * - subpack_high: bytes 4 - 6 (with byte 7 padded to 0x00)
->  	 */
-> -	for (i =3D 3, j =3D 0; i < size; i +=3D 7, j +=3D 8) {
-> +	for (i =3D 3; i < size; i +=3D 7) {
->  		size_t rem =3D size - i, num =3D min_t(size_t, rem, 4);
-> =20
->  		value =3D tegra_sor_hdmi_subpack(&ptr[i], num);
->=20
-
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
+17 =D0=B2=D0=B5=D1=80=D0=B5=D1=81=D0=BD=D1=8F 2025=E2=80=AF=D1=80=2E 05:44=
+:42 GMT+03:00, Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=
+=D0=B5:
+>On Wednesday, August 27, 2025 8:37=E2=80=AFPM Svyatoslav Ryhel wrote:
+>> Add nodes for devices on the HOST1X bus: VI, EPP, ISP, MSENC and TSEC=
+=2E
+>>=20
+>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
+>> ---
+>>  arch/arm/boot/dts/nvidia/tegra114=2Edtsi | 64 ++++++++++++++++++++++++=
+++
+>>  1 file changed, 64 insertions(+)
+>>=20
+>> diff --git a/arch/arm/boot/dts/nvidia/tegra114=2Edtsi b/arch/arm/boot/d=
+ts/nvidia/tegra114=2Edtsi
+>> index 4caf2073c556=2E=2E8600a5c52be9 100644
+>> --- a/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
+>> +++ b/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
+>> @@ -47,6 +47,45 @@ host1x@50000000 {
+>> =20
+>>  		ranges =3D <0x54000000 0x54000000 0x01000000>;
+>> =20
+>> +		vi@54080000 {
+>> +			compatible =3D "nvidia,tegra114-vi";
+>> +			reg =3D <0x54080000 0x00040000>;
+>> +			interrupts =3D <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks =3D <&tegra_car TEGRA114_CLK_VI>;
+>> +			resets =3D <&tegra_car 20>;
+>> +			reset-names =3D "vi";
+>
+>You are adding reset-names here, but in the last patch you're removing it=
+ where there's only one reset?
+
+I am not "adding" it, it is present in the existing schema and I am making=
+ node accordingly=2E I have no intention to touch schema unless it is absol=
+utely necessary=2E
+
+>> +
+>> +			iommus =3D <&mc TEGRA_SWGROUP_VI>;
+>> +
+>> +			status =3D "disabled";
+>> +		};
+>> +
+>> +		epp@540c0000 {
+>> +			compatible =3D "nvidia,tegra114-epp";
+>> +			reg =3D <0x540c0000 0x00040000>;
+>> +			interrupts =3D <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks =3D <&tegra_car TEGRA114_CLK_EPP>;
+>> +			resets =3D <&tegra_car TEGRA114_CLK_EPP>;
+>> +			reset-names =3D "epp";
+>> +
+>> +			iommus =3D <&mc TEGRA_SWGROUP_EPP>;
+>> +
+>> +			status =3D "disabled";
+>> +		};
+>> +
+>> +		isp@54100000 {
+>> +			compatible =3D "nvidia,tegra114-isp";
+>> +			reg =3D <0x54100000 0x00040000>;
+>> +			interrupts =3D <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks =3D <&tegra_car TEGRA114_CLK_ISP>;
+>> +			resets =3D <&tegra_car TEGRA114_CLK_ISP>;
+>> +			reset-names =3D "isp";
+>> +
+>> +			iommus =3D <&mc TEGRA_SWGROUP_ISP>;
+>> +
+>> +			status =3D "disabled";
+>> +		};
+>> +
+>>  		gr2d@54140000 {
+>>  			compatible =3D "nvidia,tegra114-gr2d";
+>>  			reg =3D <0x54140000 0x00040000>;
+>> @@ -149,6 +188,31 @@ dsib: dsi@54400000 {
+>>  			#address-cells =3D <1>;
+>>  			#size-cells =3D <0>;
+>>  		};
+>> +
+>> +		msenc@544c0000 {
+>> +			compatible =3D "nvidia,tegra114-msenc";
+>> +			reg =3D <0x544c0000 0x00040000>;
+>> +			interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks =3D <&tegra_car TEGRA114_CLK_MSENC>;
+>> +			resets =3D <&tegra_car TEGRA114_CLK_MSENC>;
+>> +			reset-names =3D "mpe";
+>
+>FWIW, I think 'msenc' is the appropriate name to use on Tegra114/Tegra124=
+=2E I believe MPE is a remnant from older chips, even if some downstream (a=
+nd I guess upstreaming) naming still uses it=2E
+>
+
+Same here, I am making those according to schema and I will not touch it i=
+f not neceserry=2E
+
+>> +
+>> +			iommus =3D <&mc TEGRA_SWGROUP_MSENC>;
+>> +
+>> +			status =3D "disabled";
+>> +		};
+>> +
+>> +		tsec@54500000 {
+>> +			compatible =3D "nvidia,tegra114-tsec";
+>> +			reg =3D <0x54500000 0x00040000>;
+>> +			interrupts =3D <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks =3D <&tegra_car TEGRA114_CLK_TSEC>;
+>> +			resets =3D <&tegra_car TEGRA114_CLK_TSEC>;
+>> +
+>> +			iommus =3D <&mc TEGRA_SWGROUP_TSEC>;
+>> +
+>> +			status =3D "disabled";
+>> +		};
+>>  	};
+>> =20
+>>  	gic: interrupt-controller@50041000 {
+>>=20
+>
+>
+>
