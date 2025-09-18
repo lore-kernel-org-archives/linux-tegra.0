@@ -1,186 +1,210 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012053.outbound.protection.outlook.com [40.107.209.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C442F1DE3B7
-	for <linux-tegra@vger.kernel.org>; Thu, 18 Sep 2025 04:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758169272; cv=none; b=SYz0IXwZsuNqwHnxt/gCK+CH30Za6/VPnjwncqU11ZrKPTTaqJB+csMI/xbCpFXgCDSGKdWroXkLJ5xvxUw3B+hap/jtKRWmEyGOHNIddYo07YYbKZSADgfJWyMNuuv9e+hGIvxwI64WeslkXk3d3zfxKf/gMKnqzcehy5PInX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758169272; c=relaxed/simple;
-	bh=wwUTfpgFTTFeVIeA3HvEyt8lD+0NCAt6/nZZX43t/zY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYZ5YMBYwf85gCQmi0Cf90gQLfC7qNr6pyV+g4Ge5kcF0kNcfbgK3P+kJ5QVXeQHTbKz/UC/NshvhOC5ikjbDS4Ep+ctUvWIo9fLSBeQN+Ul3Fy9r0AQxVsneGdEDIBU8zgSpI5FimhCHSbXoZqZhDSAVPom53O4gcol/aqUGWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPeKbOw4; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E880A2E7651;
+	Thu, 18 Sep 2025 07:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758179445; cv=fail; b=Ix6Rc18i1rojJ4vUs7D+GuY+N2NqP/FN8FqKhAoFO9j07X07M0QF9rOKgfvBULA3oHfafZNBiWMZYTpGVP/4paY24AsKRphICOjB9eiAv0WlitUadpl1xthRIiX3uoEjrY0Bw+KrPFsYoKqDJ1ec4S3bzTZ+UNreG4EuJ/H+hZw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758179445; c=relaxed/simple;
+	bh=L9kHUg/4FYSZMhNnu4hwx4DtyUL4l8ReMcUzYjIxO7k=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z9E9Cdm17UNagKrMNJMssceeuIjWyIrPIFoq6B3Vuwzm/P6rCcMrKFnalfcGC3VIBVDVgcLoHabKv4CgG8qopK/PAGLeJd9i4GBsouajUns5b4meo32Vel3GSRzTBGjginFYZ4Xu4N7eFRJ1Us8HsRhhAUlGTZWivXnBXw++jJs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FKhgoygv; arc=fail smtp.client-ip=40.107.209.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPeKbOw4"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62598fcf41aso704266a12.3
-        for <linux-tegra@vger.kernel.org>; Wed, 17 Sep 2025 21:21:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758169269; x=1758774069; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ny1HQiEcENCOtkJNg0PG0b5MvsVRzcAHMWDep89VyTg=;
-        b=dPeKbOw4nb/x+mRdiCWPZnh6mE3UOHRvuzYcKvvnWoBBJNg9V5NZMXuT4ItMT9ajLN
-         VJKDzCq7AQUwK10AmWiE3fWOiBZWxd5Pagfz+rorzmDZvH9rhEg41RGf2t/SHNlFIMMC
-         3Oq+34ntBAtycqZhNj3BwJZWLw0nTuoK8SpkAHhTpL0hclaHaCi+4m8iFCa6Wy1c6+St
-         SOtPdGT1ogivGLWWM2xJkcEC5Hqf/ytAklQ5C4Z+1Ug/U0vaIYQGMwGOkQvwA2bE5aN2
-         nICcdkgyAGkogPkWyH6W7HHq2f0dOSd3UpaBJ2C3AsKBAHBrRBJ4Vzk/Ymn1JKvRt122
-         Q6VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758169269; x=1758774069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ny1HQiEcENCOtkJNg0PG0b5MvsVRzcAHMWDep89VyTg=;
-        b=uElIPC53GAqvMuN1IbZznFV2p6Q6tLxlsTW2UvJQssdZ5ZKnMVHxYZO7SdYmMtdzih
-         WVjj/4wY+Yx8KW9iXosESWnJJvfkz7JqlphLazEMk6PTbDD6yeYfxs0IE2/0ywoQvZTd
-         y5acv5/hFbv4wGAHk8QQtMHYzuJOrgEmCfcbgZDQkOdW5hwhEGFzVeF/2ErLsFxYZhvw
-         iMlFRI5xj3Lgd2lpMvGVG4OcrKwWP9Nw7+Djk9964Z5fS8FATS10JFNH8DIje92GH7ZT
-         7VCwXf0MbnEQ1w/6nVT0NDRV6J/5QiPl2U+sSqKoKak7Bh9tVUNcDm241PJiFHF42AUn
-         rK4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxc2Sq5edBpcQd9jJmsaIRY9jSBwQjzXK+8FKTGhkNCrJvQ98qu/hvPMpAZPZEgg1gNVao6XX47icxIA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVz8gpVDr+MawI+1PsIvb/H4op5CwdvaBFOmR8mwNhF+0zoGHB
-	M9S+nIifIj0+8xRpX/7CfLLv7swhIRG+dpX0ZOqaSyrvwpRc51I6XRKzdXqv6QrFUQLldKoHpAt
-	gLByC6Dcxjc78FVh4JQBzTHQRQaFrHuI=
-X-Gm-Gg: ASbGncsb8aP1lT9hEouea6Vv+PupkuUDvyzi4rQLkRPgf08RT0+7/0Yi/JoEPTegSAd
-	z2cNp9e1/IwiRx4rawyL7NUHFOVMP9zx/kksOBzUjRgaejcJoGUAtzDq6zmTAJy6QDhdQV3C3Ym
-	idEINJw2c4l7QDjC7d65O/XzFwhuzHWmxMbbN3SCN16PXHUdz9dGOQ2Tks+TNjK+Sw6IDDqCA17
-	ma1fsbFD8t0p67J3hID1dpO
-X-Google-Smtp-Source: AGHT+IHQkCwsXuX6L9zBPwExMzHBNUPpNvQAlnsEUMHzaCH2oi/nwoPCs6EiLF4N20Ttx3AjieyFlYIGee1WBT0Kfeg=
-X-Received: by 2002:a05:6402:1e8f:b0:62f:4be5:2286 with SMTP id
- 4fb4d7f45d1cf-62f83a0ee2amr4490852a12.8.1758169268839; Wed, 17 Sep 2025
- 21:21:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FKhgoygv"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gia5OliiDm60rxBUBu8zB8avc2sCuoOFJ/s/GD/aQDcxdAlBUCPaAGibQk8gUVUD78EjGNl2biDlCgT2tTvAlyBwlMVZ6gz4ycZxJcXOlScUVRTzd0sXiN4peXYkBouS7Yv80bXLrhFbAUMGhg4Pa8IUgPY/pVeH2OT4N8buq/pVITq3CQ6q3JJXUbiFWqr2ZKF02MSoddkojIQQq14Z4EnwlO9TAUFZ9fMMT32YRGhI1UI7aI6jC8eRBgvwtC4sOWLN/ORPEcptFNi+jaTvNM5sjVqZLL3TBhvwCo8/u/V24KAWQwz+bhwveveAIjcxrhuB7V8XTZ7ZHVWMlJ2jVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ih7s1ocYU/PoA4a8cFHBkJd0yMnk1drI5I6UmwtrXMc=;
+ b=J4EoT8NKuXZ86b9pelMo+AiC5DRnvQuY7pWjCUq29dNXAL/qDR/cUNh1n9uhTNCnxOUxX3tH6zZiaUkBYL97VYkoCaBY18MQWaFLJQUoXMl3rXU5QrfKd6F/aJ5Jjczl/+Qh8NErSxhKDjypmOGNiURIMIFKqEKPHbQZm5IWdoMLxj29MbVEM0ZGhZUoml9Hg/8RpGYFW8v1HdsOPTl8vOGJtZVvF7IvWAmjN02E1TDVHQtwZu1yngVmhYZ9iaMGkXu0f6z7+rRX1Q+3IgYvqi929huQmpTSeOVo5LY5b1Z7NO4kX9zRgl5bkar8PdTAOPUd7e017Y58GRMIrkiFIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ih7s1ocYU/PoA4a8cFHBkJd0yMnk1drI5I6UmwtrXMc=;
+ b=FKhgoygvr7jmdTQkuxAU3lXqLNZ11AXVgC0gcCmzF6pjvvh8VB9zezvHpqIwMdCXB8jtQpBgoi1XnNdlJKP6qDr8YhNjodRGIaHlpODESlnUk3gc9RIiX5XsdwZph5roniEexZlpqqa+UrGQITEdUY9fCQ68bhtwUeCKqDxx+WLipSnY4rakakDYsOR0H8RBFKR4FMAY106HXtrds+h0sskemFWKalsXRNSruh0Olf0Q1USWhB2ZveQhsnyXKKDOPGlXwG4fZNUePb9cgfYf8IPjan0i6XltBfigK4P0290NgniV2GwFQl/yRWWcEcsRCTJ3bMAFJhEISdhn7xZUGA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
+ by MW4PR12MB6777.namprd12.prod.outlook.com (2603:10b6:303:1e9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
+ 2025 07:10:40 +0000
+Received: from MN0PR12MB5716.namprd12.prod.outlook.com
+ ([fe80::1770:161a:675f:7861]) by MN0PR12MB5716.namprd12.prod.outlook.com
+ ([fe80::1770:161a:675f:7861%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 07:10:40 +0000
+Message-ID: <21f71c22-8957-43cc-a99b-158366467654@nvidia.com>
+Date: Thu, 18 Sep 2025 12:40:18 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/4] i2c: tegra: Do not configure DMA if not supported
+To: Jon Hunter <jonathanh@nvidia.com>, akhilrajeev@nvidia.com,
+ andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
+ digetx@gmail.com, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250917085650.594279-1-kkartik@nvidia.com>
+ <20250917085650.594279-2-kkartik@nvidia.com>
+ <d336ce08-4e35-4c14-9f5d-e777f7d91cc3@nvidia.com>
+Content-Language: en-US
+From: Kartik Rajput <kkartik@nvidia.com>
+In-Reply-To: <d336ce08-4e35-4c14-9f5d-e777f7d91cc3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN4P287CA0043.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:271::6) To MN0PR12MB5716.namprd12.prod.outlook.com
+ (2603:10b6:208:373::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831190055.7952-1-linux.amoon@gmail.com> <23013855.EfDdHjke4D@senjougahara>
- <CANAwSgT615R32WTBzi2-8FYntmaxbmVRLmA3yi+=4ryH43aaWQ@mail.gmail.com> <5148887.LvFx2qVVIh@senjougahara>
-In-Reply-To: <5148887.LvFx2qVVIh@senjougahara>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 18 Sep 2025 09:50:52 +0530
-X-Gm-Features: AS18NWDn3DS2rKSBHVVo3X9YV3RO_V2fpVtiVzKrKiqe1kYi7AKprfTDJ4_0Zls
-Message-ID: <CANAwSgS38WRRFPoYoBfzOXZDp3inCJNLGPfbkSWTXTpW7V2tcg@mail.gmail.com>
-Subject: Re: [RFC v1 2/2] PCI: tegra: Use readl_poll_timeout() for link status polling
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, 
-	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|MW4PR12MB6777:EE_
+X-MS-Office365-Filtering-Correlation-Id: ffae81f3-a554-4239-9fca-08ddf6827936
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qm9CeFVobkZORUZDOWZRaU01ZjZ2MnZJVGpFNEZ4U2JKeWVMZ3h4Qk9Jc0lL?=
+ =?utf-8?B?MVp6Nm5Nb2E4eTBNb0xCNTg4UzJiOEV2L3JoVEZVeW93SWZrSm81by9GT21w?=
+ =?utf-8?B?VUdEaXVlUVBHR05hNkpmR0dMcFlycDgyUkxQbmh2ZnRUbmhTL1V1VUZOUVlU?=
+ =?utf-8?B?VFRTZDZRQXRNMWEya2xlMGJmaUI0bEVDRnJjTkpXdFd3bHFmNFhjS3A3N1Zs?=
+ =?utf-8?B?Z2d4WnBMTUJ6MWs3T1ZjNkRHRDZ3QXhIM1dXTFR2aVZiSStTR1Y5bTV0eDRF?=
+ =?utf-8?B?SUR3a1JOcHpFTGRkMUhtNjFyK3YvWTVsNzh4MXRsSU5OeU1nSm5tU0t3emVt?=
+ =?utf-8?B?UStnVGp4L1ZPRU9LWUcxcjAxd0gwQytUT1VwT21PalBSWTJVQkhUSEl3WlZM?=
+ =?utf-8?B?TDJmZHNqQ3JLekFjbk9xODd0OC9zZEp2azhuTDhiMVQ2cTRPMzFDSU5QNklG?=
+ =?utf-8?B?ZE5KZzVtQWVtUDUyTnVGMmVHWkUyb0FxMjQ4VEtyR21qanRxc3lFMk10TSt6?=
+ =?utf-8?B?bzJtZEh3SVJoU3NGcWJpS25pamNvZXZNU3hFZk5CMmVRbmF6eFExbXZTRmpB?=
+ =?utf-8?B?LzF6YW5QMGQrRHJZZmhZT1o0LzBOZkdIVkd6dCtOTEw4WktoZzAwQWF3ZlIy?=
+ =?utf-8?B?blN1NnV5TTV1ZmZ4S2tVRUYzS0NwRXN3Ym0wSy9Lam9jWEJhS3h6NGEvTVNq?=
+ =?utf-8?B?UEdIelEzUjE5SklQaW80dFpxcm9BVXdCdFFaV0NkamphNXRaVkVIa1VCNUJK?=
+ =?utf-8?B?ejV1MHJTOXVtdFlhaTZaa0RUTkMyd2tzcHhCSmtnczl5ZmNoWXBrU0x6SFpL?=
+ =?utf-8?B?dTU5V0ZHOENXZitRQ2xTSmVGL01oNGxaOGwvSzR6RzU4T1JRUkh1WGIwZnhF?=
+ =?utf-8?B?c1o3d3M0bTFvYmNDdmZmekxZeXhyQktFcFpncEhCSUpNMHM2MUVXVkZMTDNP?=
+ =?utf-8?B?Qk5MaFBsWUNlVDJiZzN4WVNVRXZuWHU5eHl6ZVhJOGRMcFdFOTVjdnNmWVQ2?=
+ =?utf-8?B?RDJPUkhRYzdQMlZPZzRwUE5lbXVUampMS0ZkcDAzNTNVWEtUL2lJdmN1RDBD?=
+ =?utf-8?B?MTM4b3F1SzZMVTI3N2MwdnVqb1RwREJkT0pSQndMQWdoRFRvRmoxT083WjBQ?=
+ =?utf-8?B?Z2l3aEVjOXZzK05KWFh6SzNka05xKzJMekZuanh0TGFrQVNqTCtRSXlTZ2RB?=
+ =?utf-8?B?akxEaCtlbFdsZXZvUWcveDhtV0RNVU4zTmpzL3RnKzJ1NkNhU3dyYVJpVlAx?=
+ =?utf-8?B?QlFmUXlESUl1dmlOL3hpbXd4VVZEbXhZZEFTc1NtN0xZSk5uRExjYWJTWEEx?=
+ =?utf-8?B?N2lpWWpmM0w0VExyeHZhVDBFTUE3YmpYRmJlOU5ac0pTTmQ5ODFmZFdUSENP?=
+ =?utf-8?B?UEZWUlJ3OXUxai93YkNLakJyRis0a3U0bXFwQU9IU0JKSHk1bW1wTHZVOEJO?=
+ =?utf-8?B?eXdTZXZRQ0YzRnBSWkVHMlVicml0ZlJrZzg4OG96N0xSbnc0NTdxdnpDbUZl?=
+ =?utf-8?B?TDdLWEI4dEgxRm1SU2hNcS9lL3ExUFZHbFhYMjZYd1loVm95QWF5c1E2dmVC?=
+ =?utf-8?B?ekFiS1FGc1JkTjArR0NUMmJOYTdVa0pZTUF3VjJzczZUZzRpY0hNbWZ6K3Ja?=
+ =?utf-8?B?SFhucTVJSGxnQ0JoM0xrbW4rdHNuQkI1aFgxQmRoNHRRZG5KN3p6Zm5MTk93?=
+ =?utf-8?B?Z29Fa1VEZDZRWkFsM0dxbk1heFpMWlRuT25NTG1Nbm50c3hXLytHOFN3TXZG?=
+ =?utf-8?B?amVIaktaWHZ2Uy9McEdXbXM3THlhdnE3TVI3SDNnTmlYMUF4dDBwL2pHVERI?=
+ =?utf-8?B?bXNxWEhlNURaWlJ3d0ZCaDZGK0RDb0htQ3JIdDF5MmJkOVJiYjUwNjFIck9N?=
+ =?utf-8?B?ZXFraElHWkJrYmVjdFR2YlUzNnVjOUxYNVNvZ2xJTWtUTURGSjRQbGZPWTla?=
+ =?utf-8?B?TFF5bHFzMnMwZ2pMT0tVSFJzTzVkVjFWKzVUSlZObS92T05WcEtoSnZlaDVv?=
+ =?utf-8?B?R0w5RWhmSTV3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cnJMYXpzUktLcCsxdnhBVWl1eUViZC93VXc5UWJVZFBieWNRT0tjZGx6UkVz?=
+ =?utf-8?B?Y0RMQkw1alNlZFJicHRFS3RmQzVwdm9PTUtySDVZOEtSeXp0WU5LcmIyOElt?=
+ =?utf-8?B?bldZM2ZESGtLQ0U1end3bVFmeDB5ZVpsaXpkVjdSMGFBK3Z6dkpUUzkrTlB0?=
+ =?utf-8?B?RUdEVCtib1I4d09NMERKUEU0U2R5YWdRdnlQTTBDZlVNWGNkZ3M1T3BuZUtP?=
+ =?utf-8?B?U1U1ak45MkpPSVMzcElpY1ZKV2hNb0U0T3lHcVpuUENwNzM5UHM1VGE4WEpp?=
+ =?utf-8?B?ZnVTZURzZVJvdU43NUsvL0V5VzR2U2J1L21ESDFqQWRScHhTaUJ1R1BTUnFG?=
+ =?utf-8?B?Mkx6UmovbWpUMHVTalY3ZWdEU2taQ21zVm1aN0o2ZEcvZjRjSUFaT0phaWhs?=
+ =?utf-8?B?Tmg5ZFhCNVVDMk8zNmVzQnExdEJ6Sy9lSXlkNG1pSTlpNzgxeXNBM2lFZHJs?=
+ =?utf-8?B?Mkw5YzFRcWcwNmoyUUl3M0lOZDRDZGF4b2d2OHV0OXZOaXlrY0RmVWZ6NHdQ?=
+ =?utf-8?B?MG1UcGF0VDlYMHBGL05rcFZoSXR4aHpJQm5pZEEvZ05RTkdkRWpHaHY0NzhF?=
+ =?utf-8?B?U2M0amVOZEo4Q09LZzlEOUlpYmdlTHBvRVdoSGhQZW9oR01WeDFoOHpxb1VH?=
+ =?utf-8?B?WExmbGpsWXg0N1VvckNaSHN3RDJpZEVNeDRLekpVZFpvbUdwbzdlbWFqZU0x?=
+ =?utf-8?B?MDVQQVZ6QXVDNG5yL0Q1Y25JQ0s0NnhJdkxnSGtYQUwvVFJ6M0VYRUtaTEh1?=
+ =?utf-8?B?K1N4WFd3Vmw4NkpVRG9rUERacCtNZ3FpZmtaYndwZnd5MVYvMW9URW0rMzRi?=
+ =?utf-8?B?Uk1QTHp3Mk5RelMraDI3SGhtRytLMWtrUW1KMWc4Nitvb21SbFVHdG4wTHE1?=
+ =?utf-8?B?QlpvTGNnZkRGMXlGNUVURnBKZlBoRVh4ckJqaGJjWkkrbGZ2SGYvaGdYY1M4?=
+ =?utf-8?B?ZjR6cG5KamY1UWlnaVI4eUkxK0Fsb094QkZXR09lUG1CeXJzTEFBY2FaMHFS?=
+ =?utf-8?B?MW1Sa1gyK2ZrSHFDQjlkb3A3SmZZWnFaRmZTVWpQRERaa0FLbVFrODVGSGw3?=
+ =?utf-8?B?Vytoa0F5R3cycVpRU2tsRXJTMkh3R1k2aFlzRG9xMWVBK0Q1dXUvNmIvQnFZ?=
+ =?utf-8?B?cVZVTWpQb3o2Q1FUSzN4VzRjOExtbEwvUGlrWVJmcEVPdHlQUVJrS1dmczkw?=
+ =?utf-8?B?cnR2NS9LWVp1VFBEQkJxQnBxZ29rbENMSHFoREkyMmorTlVBZjY3eGhFYm1J?=
+ =?utf-8?B?VnZWaEp1ODl1SklZVm1GNGt0b0tZb0s5UE5UYnZMampSdEFtMVR0MDNTbHFY?=
+ =?utf-8?B?cnlpMG5KZzlmM1RPZDBLTk45L291WjVtdmdsVmVYY01LQ2E4ZWlxcDFhbS9a?=
+ =?utf-8?B?UTlFSTVFVWNFVXliQzhjOU9tYWJKVDI5R1JoaVNWNC9aSmJla1ZyWXBIKzQ4?=
+ =?utf-8?B?MmdremFkZTRESWdTOUtqVzYxa09mL0Y3bE5XelNid0xGbDlHVXA5aGZ0L29G?=
+ =?utf-8?B?WHdCdzZqVHpHMDBnbjF0ZndLUnZqZlZWMFg4RWRCcElzcmVheGhLSEZOVzlv?=
+ =?utf-8?B?MkR3S1Aya24rblJ1bS96MnpSNFRUbUt5b0RvNDE0Q0RRcDVQZkZQak9odXU0?=
+ =?utf-8?B?dmt2SllmTjFpejdJR3dHRXgrVTZYckxiYnNTSklLd1psTG50OW1lTWtWemdz?=
+ =?utf-8?B?QVFqZ2p6TlR5L21wL2RnTFV2WmM0bEg4dnlWSGVFQXF0YjM4YkVJK1ExSDRF?=
+ =?utf-8?B?by9KSnNQRkdHa0xnZ0pnQXgwVFhzclkyNW9OS3hGbTlhcjR5WTk0Mm82MGw1?=
+ =?utf-8?B?RDFHU3ZZUEhMd1RYRU5ZVUdzWCtkajcxdWZxZlUzR2xYSm1zZy83cDg2TmRP?=
+ =?utf-8?B?WFlxcCtsdG9kaWFUUCtwSGRJeWNXQnd1MVloQU5vM3hlL1IyR2JUT1ZWZmx3?=
+ =?utf-8?B?NnliK2w5bitzRzhCSzExbzI0RzMrUjAyelk1Q3BnKzFuSUFnTjc4dE4zZUtR?=
+ =?utf-8?B?YmNZOHdEMFlRREhFbEUrQXNxNm8zZkZ6NWtIeVRDb3FkTmRNOXFVaDh1d0NU?=
+ =?utf-8?B?YzhSSU9JcTVDeXduVUdaeUpBU3Bwa0Z4S2E3MFlNR1RyMG1QR2xPdmN6d2xR?=
+ =?utf-8?Q?QZzonxL/Um0rUYfIKKpt/+LGc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffae81f3-a554-4239-9fca-08ddf6827936
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5716.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 07:10:40.0187
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bIpvyHM4Wmjp3+PszG1ZXCKMvBUOMsqkA6IUD6EJjSBcIu4D97RCPb3QJZkgzfvZAhZ7pROhgbzDu5nXErMykg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6777
 
-Hi Mikko,
+On 17/09/25 19:38, Jon Hunter wrote:
+> 
+> On 17/09/2025 09:56, Kartik Rajput wrote:
+>> On Tegra264, not all I2C controllers have the necessary interface to
+>> GPC DMA, this causes failures when function tegra_i2c_init_dma()
+>> is called.
+>>
+>> Ensure that "dmas" device-tree property is present before initializing
+>> DMA in function tegra_i2c_init_dma().
+>>
+>> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+>> ---
+>> v2 -> v4:
+>>     * Add debug print if DMA is not supported by the I2C controller.
+>> v1 -> v2:
+>>     * Update commit message to clarify that some I2C controllers may
+>>       not have the necessary interface to GPC DMA.
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index e533460bccc3..d908e5e3f0af 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -446,6 +446,11 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+>>       u32 *dma_buf;
+>>       int err;
+>> +    if (!of_property_present(i2c_dev->dev->of_node, "dmas")) {
+>> +        dev_dbg(i2c_dev->dev, "DMA not available, falling back to PIO\n");
+>> +        return 0;
+>> +    }
+>> +
+>>       if (IS_VI(i2c_dev))
+>>           return 0;
+> 
+> No issue with this change, but we have a few checks for DMA support in this function and so it would be nice to have them altogether.
+> 
+> Jon
+> 
 
-On Thu, 18 Sept 2025 at 06:56, Mikko Perttunen <mperttunen@nvidia.com> wrot=
-e:
->
-> On Wednesday, September 17, 2025 4:45=E2=80=AFPM Anand Moon wrote:
-> > Hi Mikko,
-> >
-> > Thanks for your review comments.
-> >
-> > On Wed, 17 Sept 2025 at 08:51, Mikko Perttunen <mperttunen@nvidia.com> =
-wrote:
-> > >
-> > > On Monday, September 1, 2025 4:00=E2=80=AFAM Anand Moon wrote:
-> > > > Replace the manual `do-while` polling loops with the readl_poll_tim=
-eout()
-> > > > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
-> > > > during link bring-up. This simplifies the code by removing the open=
--coded
-> > > > timeout logic in favor of the standard, more robust iopoll framewor=
-k.
-> > > > The change improves readability and reduces code duplication.
-> > > >
-> > > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > > ---
-> > > >  drivers/pci/controller/pci-tegra.c | 38 ++++++++++++--------------=
-----
-> > > >  1 file changed, 15 insertions(+), 23 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/contr=
-oller/pci-tegra.c
-> > > > index 3841489198b64..8e850f7c84e40 100644
-> > > > --- a/drivers/pci/controller/pci-tegra.c
-> > > > +++ b/drivers/pci/controller/pci-tegra.c
-> > > > @@ -24,6 +24,7 @@
-> > > >  #include <linux/irqchip/chained_irq.h>
-> > > >  #include <linux/irqchip/irq-msi-lib.h>
-> > > >  #include <linux/irqdomain.h>
-> > > > +#include <linux/iopoll.h>
-> > >
-> > > There is already an iopoll.h include in this file, so this adds a dup=
-licate.
-> > >
-> > Opps, I missed this in rebasing my code.
-> >
-> > > >  #include <linux/kernel.h>
-> > > >  #include <linux/init.h>
-> > > >  #include <linux/module.h>
-> > > > @@ -2157,37 +2158,28 @@ static bool tegra_pcie_port_check_link(stru=
-ct tegra_pcie_port *port)
-> > > >       value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
-> > > >       writel(value, port->base + RP_PRIV_MISC);
-> > > >
-> > > > -     do {
-> > > > -             unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
-> > > > -
-> > > > -             do {
-> > > > -                     value =3D readl(port->base + RP_VEND_XP);
-> > > > -
-> > > > -                     if (value & RP_VEND_XP_DL_UP)
-> > > > -                             break;
-> > > > -
-> > > > -                     usleep_range(1000, 2000);
-> > > > -             } while (--timeout);
-> > > > +     while (retries--) {
-> > > > +             int err;
-> > > >
-> > > > -             if (!timeout) {
-> > > > +             err =3D readl_poll_timeout(port->base + RP_VEND_XP, v=
-alue,
-> > > > +                                      value & RP_VEND_XP_DL_UP,
-> > > > +                                      1000,
-> > > > +                                      TEGRA_PCIE_LINKUP_TIMEOUT * =
-1000);
-> > >
-> > > The logic change here looks OK to me. This makes the timeout 200ms (T=
-EGRA_PCIE_LINKUP_TIMEOUT is 200). Previously, the code looped 200 times wit=
-h a 1 to 2ms sleep on each iteration. So the timeout could have been longer=
- than 200ms previously, but not in a way that could be relied on.
-> >
-> > You're right; the original usleep_range(1000, 2000) had a variable slee=
-p time.
-> > To replicate the worst-case behavior of the old loop, the
-> > readl_poll_timeout should
-> > use a delay_us of 1000 and a timeout_us that matches the original
-> > maximum duration.
-> > Since the previous code looped 200 times with a maximum 2ms sleep,
-> > the correct timeout is 400ms, so update (TEGRA_PCIE_LINKUP_TIMEOUT * 20=
-00).
-> > or increase TEGRA_PCIE_LINKUP_TIMEOUT to 400.
-> >
-> > Are these changes ok with you?
->
-> I think the code is fine as is. Before, the shortest the timeout could be=
- was 200ms, i.e. there should be no situation where we need a timeout longe=
-r than that, or otherwise that would fail randomly depending on the sleep d=
-uration. So I think the 200ms is correct here and the only change necessary=
- is the removal of the second iopoll.h
->
-Thanks for your input. I'll remove the header in the next version.
-> Cheers,
-> Mikko
->
-Thanks
--Anand
+Ack.
+
+Thanks,
+Kartik
+
