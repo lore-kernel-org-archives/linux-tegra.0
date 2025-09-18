@@ -1,276 +1,3500 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012013.outbound.protection.outlook.com [52.101.48.13])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010054.outbound.protection.outlook.com [52.101.193.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA152FF666;
-	Thu, 18 Sep 2025 10:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214902FFF98;
+	Thu, 18 Sep 2025 10:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190885; cv=fail; b=GX5vjKKYGPGks/5w3bO8FNNU/sUM2xn90hCiyrr0FnDLhL0rRMEtY+h8WmoZ0KI8EStEeFcBsbT0lPJ7u2tqQmRsJEDhHu8X1yry9DW5Uf89J6YWFQiSsnjtQJU3m3oKTu6n4Y1QPENd3nl+r5Kkd5FeU/7OLMrW5iAiha7xWUo=
+	t=1758190900; cv=fail; b=X2WsMBUXOzw76yrqetFMZzgispYdc8o/fs/PfYIqGJqarvAPnCdSiNttALJB+UMCO0/FuT86InSWHWoEZsfhGmXmjJwk14XpGtPLPhawN0+xFfzSt0X+oS/j3sw1BhuSTb8VcGZiHuH//rZW59lor7waWg3np4lsTOOPM+WBx5k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758190885; c=relaxed/simple;
-	bh=Tn7ENYjzHz1+RoURlwk+2sVYTDsnXtInWR5nFwkCrD0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KQ2ya7sOOB35ebu7Zv/jPwUFIXKBX8FeRiGHJD39ttUzWw0aheg0nKP9ZN0PQeExRcnSTbLvOdfkLCyDDUad7xc9oz8CkpX2f/oUmvankDRexc6b2LSDdGy+Bp0vk7+vKywZZgcT/5gCnVqmonS8lMlyxt+Lf+rOKixKeIMF82I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XIHIFPA5; arc=fail smtp.client-ip=52.101.48.13
+	s=arc-20240116; t=1758190900; c=relaxed/simple;
+	bh=oWblNlPzvCxMFnILCtKpbRjUwoBckzJ4lVxrmkY4ahU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gFGLs/V7ZIKuPgLumc5Op2oKLSxA6NCCxGJN/IJQeLEsCJcBZYJnHj1KVjMp2+yKU1NM+dY3sb9XsUU8g60jNEZj1vznN481HvWu6pQntnGH7Mq+TCHf46988vea0f0pQ80cSzCCrNly4+Zo+QEfv9CzZ/koTY4YoKX0UvhVYws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TC1FADeP; arc=fail smtp.client-ip=52.101.193.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XIHIFPA5"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TC1FADeP"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=srJEBvaP/oKe8tefIgLYO5AhzKhAYC25UtWnbQihnpfSjs9hmqXe7e0LyYybPzd+fZzSeuS485EcobJWRglmgz9tnzMVbnLuHwdcBqbByxhHrmtvV5hC4WydEDclTDamSn5IxFOIuWOfsGOcz8L1hrMQhhU7bdR9LbnB+1IaMxkhNAy9c2RifxyK+YE0Bun+N+rE4DLN9XN95dhsaI9JrAnwNK++axmN7nu7zR6c89MVcylOpWk2VhMgvhnOud9Vjdg+lAN0kLqDyl1O24VfYR1G6++ABwrEhfJMuXH2wvCdqbXJjvHZAgW/JPMEYZ7WGOUNnFH/X1Pt6ENvpTTYFg==
+ b=vdqY1Myb4oncErl3cRRhfUfH07U+i8k5rQ9J66VZfQDDetqhEyTZaxYWBqfGbTkSUF1TjsJq9tysgMI7lU6L0p8IPQweofDn3Pp6MDCCaQRTS6wEXeIihpqJ3uYtEnofIXGAn/p6n1ubXLZ7KwDPTUgkm0bczNQdxpvhaQ7Wp2uLLDiaS5YB5/7y/hvW1N+VVcfijs2MIzOoZJcsMOPA683BdHIvjjJ0iocuvGdLf9uoL6sl4dZRhZlLRVP9dhT6z371CSqYmAs6sjh31Jd5cdaY8OCDoGCUYnSWfWDxRW5HIXJqHCzEtkiBaYr0Hd1OK7Pg7KT4nPy6xrLDTvMKAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+7N0RSCwy2Qm96ceYg4g+DEpfHVAT/3JDNoGnmJeaDY=;
- b=ejLL15HJh5JRKVLepaNCgDl/L18Q4TLbXUC/TnR0HgEFz8XpSOmCqqnjx2dbTaISMRHS7XdPJuxQNrKpg7H2zrbvJo+jrC10vTdh8p3aztPW85TLWlaR2u9919L1o0JfyynElYYBifd7LJt0c0QxmJ6vIPk+XNnhBCz3GFwduXDLcgHf3DueC3OWiwY/QX3M45bFLI370Bzol17oA+jUfjbB4gSv5N1tO9H+w6tInfDM3nPey5gInVI+S5ZZS+uaGIjdy9waNhnGnA/KY23m5qNRIZvhwvlQNMaWWRHiJq/8TZVBNgc1NzIqCsTU4FwWgQXx/kB+AB19Euwqoseo5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=Fz88UuEL8h55Cii56f5mK/nG6c3X2KGJPyZuqt6Pok8=;
+ b=gccmwENWapycA1B7SKJnyswStygCrLXPlUcJQV4O2qkehgDQpHCzweOmdhDyoQqqDKxlDXx2AdR8PZV8vRC+SLzXoPNZ42hBsQSjEDamHCmaEvsMWwALDjIA0nkgAQjr7WiFGSnQ+yvM/qyAxQbNHd7IdFSz0hu2Ht09bDNyQozDtG4gqkTgv2zfxp1JmTY6SNh5fhhPcXOMYp7CYepIu9R2gxIgM0o661dDQViXOAO+7U/T9D6Ob7NdvoejxebzYZ9Sae8iST080B9MLucZkqODdHyE6uWoa/LM7jC+alpnib2MsH7oAgKamybwT2AkvSUZ/9gy8B/TtYMr3Dv/BA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+7N0RSCwy2Qm96ceYg4g+DEpfHVAT/3JDNoGnmJeaDY=;
- b=XIHIFPA5XU2ry1jfrvzhdwszXdThSZugwM60WbrL66JnPIdjueESyGyT4E46s+qassDvFhlTXYY7v8NajStX3TjyAs9IjI4qs27I+P0WAW/UsQglYBe6nsQ+kNXD3uu8TK2QnR/+2ApEfdVPfWg3Xuziqt8ON1/Rq9w26NhP//EESTbV3wbCmJJiYDxKE9+D0koF6CdK199bNKiaRGX6dnbFHuZhETOomkK7OGYz408RSj7TyIAAp6094O4PPO7E8mmnN/vwgLxvtjHUhgttUzNZ/VCz9dMeMlwGC6YcBWFCDyfoP0XqNa8xhMSFwU1oTdLry4PT1o/D3WlNFVVVWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by IA0PR12MB9012.namprd12.prod.outlook.com (2603:10b6:208:485::22) with
+ bh=Fz88UuEL8h55Cii56f5mK/nG6c3X2KGJPyZuqt6Pok8=;
+ b=TC1FADeP3eVf5039qq3v+Cz9Qi89I+/WhWx5VqMu3V5W2zt+dBy7sB/AzUmDRPdp3ESyii2xvV05goAroBEvdpDxBgqRom4wa8Q4lVGFzqU9QO2RF+t6Mg0jHBLkLkT3V0/vZLTZcfBzGS57CIrlx6saPYLXgl9TJbnKEitx7JoOY5ifSp2eCYsJ/EamgO+QCTcmDx6bBQo891fFztKpNX/mwNp6y0UjWskEiSftPUmE3YuUWJWPDfcp+1CKc1W1DrnwInkat+FceN1fqnag+99g/eh5gHLUDvOfWi3nMmo3iphgNV4V9XfJnoBYgc2jdmZQHTTuYC/P9Scyxr/T/Q==
+Received: from PH8PR07CA0016.namprd07.prod.outlook.com (2603:10b6:510:2cd::24)
+ by SJ2PR12MB8873.namprd12.prod.outlook.com (2603:10b6:a03:53d::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 10:21:20 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.9115.022; Thu, 18 Sep 2025
- 10:21:20 +0000
-Message-ID: <af2462af-5b6e-4eb1-b1a3-59ec5f96f1d6@nvidia.com>
-Date: Thu, 18 Sep 2025 11:21:14 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/4] i2c: tegra: Add HS mode support
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- digetx@gmail.com, kkartik@nvidia.com, krzk+dt@kernel.org,
- ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, robh@kernel.org,
- thierry.reding@gmail.com
-References: <bceeb247-a8db-4ee7-9c7c-ea2f521ef376@nvidia.com>
- <20250918100452.9478-1-akhilrajeev@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250918100452.9478-1-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0463.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1aa::18) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+ 2025 10:21:09 +0000
+Received: from SN1PEPF0002BA50.namprd03.prod.outlook.com
+ (2603:10b6:510:2cd:cafe::4d) by PH8PR07CA0016.outlook.office365.com
+ (2603:10b6:510:2cd::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Thu,
+ 18 Sep 2025 10:21:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF0002BA50.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Thu, 18 Sep 2025 10:21:09 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 18 Sep
+ 2025 03:20:51 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 18 Sep
+ 2025 03:20:50 -0700
+Received: from sheetal.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 18 Sep 2025 03:20:45 -0700
+From: "Sheetal ." <sheetal@nvidia.com>
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Thierry
+ Reding" <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, "Mark
+ Brown" <broonie@kernel.org>
+CC: Jonathan Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
+	<dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sound@vger.kernel.org>,
+	sheetal <sheetal@nvidia.com>
+Subject: [PATCH 4/4] arm64: tegra: Add tegra264 audio support
+Date: Thu, 18 Sep 2025 15:50:09 +0530
+Message-ID: <20250918102009.1519588-5-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250918102009.1519588-1-sheetal@nvidia.com>
+References: <20250918102009.1519588-1-sheetal@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|IA0PR12MB9012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ea592b6-fd21-4f44-aa63-08ddf69d1c8b
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA50:EE_|SJ2PR12MB8873:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2759e1b-b606-4e69-66ae-08ddf69d15fd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K1k0TTAwMExVMTJPSnFQWFdOV2V5UitWOHZiaEVsU2treFJOWGJhZjlWdDdY?=
- =?utf-8?B?SHZHekVEc2I0Z2dXZndFL2hyT0tmbmVGTVk0NXFyM0x6ZmIvM29TR0o3K0hx?=
- =?utf-8?B?L2dpeGVKWTd3S2ExS3VtbkpwMUVBZmVsK21NNEVURElCQlFvOWx5MHB2MFl0?=
- =?utf-8?B?TXFPaC9QdU9iNjliREQvZjZmd2VNaGtPRzhybUV3WGV0cWszZkFGTWJjbGkv?=
- =?utf-8?B?UnRxUU1RcXZsemJtckd6aTdIZnZxTjB2QjdwWHVoWm1vcUtQc1F2Q1Y3R1lL?=
- =?utf-8?B?NEZmNXVrZjVwdXRvd3dUQmdwaXFvVEhDak92b2N2Q3gxZzI5d2x0L1NpMXJX?=
- =?utf-8?B?bnVUMk4xYlZsSE5iRGJFVit5NG9UcVRWRnljU1F6UmhTK3pMaXlqUHhXM09S?=
- =?utf-8?B?TndoYXFFcTJMY2VBS3ArWGd5ZHVHZDB0Sm9PRmdSOXdZMmtsc2owdmlNclR0?=
- =?utf-8?B?QjJQQjlhR0NsZFFUL3FHakIzTWVvRW0yandRWGt1Q1paM3FkalhFZ2Y1NGFO?=
- =?utf-8?B?YTVtU3FkellvZEdoQnVlWmNPNGlqWFIrYXhDbmtPZk95bGorTHo3RUxtSGZz?=
- =?utf-8?B?c1NEOXRadStkZVR5enN2ZUFSb0cxOXI3ZWJOVEg0eW1RZjNrTHQyYXNkYW9u?=
- =?utf-8?B?d0thZDlrUmd0RTlsSnlXUGtaMUtYMTNrWUtuOFdkVjNPSWlLVCtyOEg4NGFZ?=
- =?utf-8?B?U3ZFUXA2LzlpUE45czljSG1naytaZlR5SWg0bWx3cGlFWFp6OGZXc2FpWEJH?=
- =?utf-8?B?SnlVaVlzT3Z2SzJ5UlpxQnJnSitJMFRaRllVKzFHaHlvc2s2WGt3d3gya0tE?=
- =?utf-8?B?cGtLOTREWGxSRjJwL1ZSN3dwdFFYK1d5TkUxcHFnekVJVk5QWVVTNGlnaUdU?=
- =?utf-8?B?K2RiYzc0akZ5UjA1ZU85R0NLVU4rYURwME9pTFNkQVM4ckUwSVhtajROYnI3?=
- =?utf-8?B?TDhTMGdnZzl6KzhyMTZRRlUzRXY2WWhtbXVOZHFTVmVzVFNiNjg4aFlHcTNK?=
- =?utf-8?B?MU13TllTbDFha0hWR0djUkNVaGo4WGpUOWZWbmN2OVZXdWNjYWRpOTJ6RDVY?=
- =?utf-8?B?d1BMZ0dlUTE0aG1qOUUvazRlRWNHT0VOYXROUEZ3QjYvUGRCYlh2WVhGSCtx?=
- =?utf-8?B?T2srL2U1V2ZJdmd6ekg3dmhLaS8zdHdCbVFjdS8wQVR4bFZyWm9yM1BXMzE4?=
- =?utf-8?B?aTMwTWtsR1RLNThZUnl6Sk1RcU42K0pBanBmVVo5QWNBYTRVVjZPZ2JpMW5t?=
- =?utf-8?B?ODIvRFpLWlBaWEZXWk9FVHcrRWpJQ1YzZDdqcG9QSjRZYmtFTCtnN21DaG1z?=
- =?utf-8?B?SlA0U1hyU3NROUxlc1VPVlVuYkJHbCtnMGNZM0FIdC8rSUh0ZS95TFZzd0dO?=
- =?utf-8?B?YjZJQ1haUTgxb2l5LzltT0NHR25EaC9zK0thSVc2OWRLMWtMSUtYU3psZ2d1?=
- =?utf-8?B?bTRyNGVCQjNqVU9MTVJ4ajZkb3k2eVZvcXVMUnU4QWxWYlFXOFdQZ0E2U2tl?=
- =?utf-8?B?YUQ1dzRkc25uc2xLa1hnTG9YMVlUZnpseHJLWjMvTFJGeno0L2tUOWRPTFpB?=
- =?utf-8?B?dHNiNXUyVXBzdmdhR25mbEFLbEFxck5pVndJT3BVdXJjTjdheHhKWUwzaFhl?=
- =?utf-8?B?Wi8vZ2pOekhYcGpubkJpTk13bzBoN1dDOXcrdE5DWHZWM2tDZy91dWFQekI1?=
- =?utf-8?B?SHMvcDVmeHlzclNBZmdDNHAwZ0RyNkpDOEtrUGJrUlpuaVFGTTliYkFuTVVi?=
- =?utf-8?B?ckhlTE1kYWV5V3JkYVlXK0tFSldoNER3RUxjRVFvQVo5am04L2VmbFNqdHh6?=
- =?utf-8?B?SDljTWxsNHZmT0tyZ0czRnlHZ29ZeFlSR3pHZTJjbmZOcWQzSXRRdjBjWnBW?=
- =?utf-8?B?bnR2eDlSU3ViYWw4Y005V09ycHVqYjY0Z1dWTEErTk5Ec0MwLzhLNEU2YkNW?=
- =?utf-8?Q?WiNMCHiMGP4=3D?=
+	=?us-ascii?Q?gzydDXhX21icgx62LnL6MYr1gatgtjlborlC7YOk80Y+WSBcASc30wd63xHf?=
+ =?us-ascii?Q?ub+BBItfyzIoWRKB8q3s8tQ7VFc1f+LeTeFddpXfAVLXfAeQhG/7J0ZfEnYg?=
+ =?us-ascii?Q?PYUOinUlIdEuHXkXs+esNH/I0a5UaCTWRK2+io+Ht4bDL4Vci1K4JW8BhYOP?=
+ =?us-ascii?Q?un7Zhels40DKoZMPUv/Tebn7OcTtJtPq5mmWyAdOVC9Th5MFP4PAY/bmb/pa?=
+ =?us-ascii?Q?iDaei1rBFzrc5IKhxXX8iIX8OWkEO5CEVMFrIkgNzugmZ4sC/jpD6ixx4kVQ?=
+ =?us-ascii?Q?vWp/31CEs0GxtJLcTVZI5sfB4GoWlyoXLxJc6GkhgS7tcmosS01ZYa201hQR?=
+ =?us-ascii?Q?ZmUjr6A6DiRrHt3GxBaPWJuDZEUUSrQ4OCZ7ZTV56UFqminuChLdDlwCuayO?=
+ =?us-ascii?Q?6xDWZsCMJbgKXa12n6Oj77/g3GXC64RYkesTBRe3g95XiXGj13UVahciDLIF?=
+ =?us-ascii?Q?bFLvCyEx/ToaDJAj9rxLOW18wGCEZPtRJn8U5+aSdQQbBZiNQVJcqK0jGcTH?=
+ =?us-ascii?Q?npirprnyu23k455lPo7XITW3N6yp/cU3yuCPqvCnXhV/odePFja8vrQ4NZzH?=
+ =?us-ascii?Q?pEp6awb4iA9JKIUgSktNX8dFUZO4P94X/PcjK5BKxso+aQCGPM9KpFme8RYc?=
+ =?us-ascii?Q?RtFtn0Ty6BCIlJWPiXow22uA9nJLSSpoAv2/FxfJGnt9O7YDKF5vWo4xjuPs?=
+ =?us-ascii?Q?s1Iv4LRKY8+SRdMjQMnNW2Ehyt2Gc5i1ONuRRLFr7c05Qmg0/OHlnkeAM0Hk?=
+ =?us-ascii?Q?6FIZQaHjI0FiL4UtVcHPQTfpFAhbtrnK1XyENOWQyUfr25MAwiIpnATmJ8fu?=
+ =?us-ascii?Q?VGcfhAS0Z/VB/mMRcYVzu6SjsivIwd4Cf/xMXzYLtfXLBxNthBCHe5xUaN5F?=
+ =?us-ascii?Q?OQ8zbUNORXW92QrFktBSQADOdnuUdrqwukI16iBfOFGYP520k51OtXJywaki?=
+ =?us-ascii?Q?8zAIvGjoaBbEVwchDO4N4nt5H8qEffvdIt7sxPTiqc/TbQ48ufyuAsj+7T10?=
+ =?us-ascii?Q?W29WBAW6lAVtwZWC8ttgv/bqEFz7BH2aYgwX1Xyi6qNZYrj6L3ktOBopjpWh?=
+ =?us-ascii?Q?f/7nIHmQDTFRjLAUmep72ilaG5YqiW2bw/fzgirIY40PFFVzprFr1kc9qKRU?=
+ =?us-ascii?Q?M4HgslsAu7LlDikKIZMF54CmIKet8OXn8BdrbeGLO4oyKgrc7IxTvvsWwYAd?=
+ =?us-ascii?Q?VfDvxPEK1msTYeJXP1ock4CsgPIy+teblQIEs0bWygwTtTJBR5f1NgTPOB7p?=
+ =?us-ascii?Q?5CQq0paKmU4knzfCY9YVFLSzgHo74c7YzPl/5sMtdFSjNoKUqZBNP78lBMRS?=
+ =?us-ascii?Q?2t+YriZ3xpE0NbFL3uq9jDSEbuc7/5kB7mq3JVp7RwYZVcye1NEzjzkzY84p?=
+ =?us-ascii?Q?+CjrUQa87WQS+rdixZ4pOW06IanQETIV9Md+8o7zAR/OZ5gN6vqGIpydZb6k?=
+ =?us-ascii?Q?JAm9xWabAoTPSICWQbJ+r0cOx02O2bfBsXtpWlU0Lo3hC0TNAoYg2iht9V6J?=
+ =?us-ascii?Q?EqIJsUTYdzZ/g3QFSN1MNBZSldfQpKrcLD6W?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VnZtYlpYVFEyQXRFQ0s3dXU0L1BHYndsZW5ZSWNhLy9idjcyeVlUd2g5QWN1?=
- =?utf-8?B?YWl1RXZFRm9jdDkwU0tOWktaOGFveHk5Ym5Oa3poZWdkemZFSnY0UmFhT1lF?=
- =?utf-8?B?cHdOM2lYRSt5Z2lzdnlBek14VTVXbnUzUjZBRDJ2ZDNNNStGeXMrU2w4ZXVS?=
- =?utf-8?B?YVZQWGcyak5sU2RNOUZ5L01FU3dhcEd4WVJGc2Frc1loMm5BVEhmb3J3Yzha?=
- =?utf-8?B?STdjQUNmd3owL3hPVG1yeFFRMmVWT3VsOHNmRm9UM3FXTDYxdEYrWVpjMEJi?=
- =?utf-8?B?blJIMXY0Q3BScWs1dnFxckFZWThVTEszcWI5bjBRZkpJa3QvbVFtWmRSWXZv?=
- =?utf-8?B?YkJid2NSNGlDNzEwV3hRejc1RlJscDlqSVJWaWFHaldVZmM4eWl4N0QrSHBs?=
- =?utf-8?B?RFBXYmRVME54MmhUMSsrNTY3cDh0MlQ3M2JjRVFTOHhTZTQ1N2xCMUZnWDhV?=
- =?utf-8?B?cFNNWlRmaUNRTkpuck80Q2YxejVRK2NKaXcxRzRObFlFMXYyeUVyT0UybmxP?=
- =?utf-8?B?S1h2TnhZc2dQbERnQ0dRL1VuQi90SDJRSEVtSlJsVnU1SU96MVhjbTVDajFq?=
- =?utf-8?B?djBPaEdaZG9IajhGc0wzVVRKN0FpU3M5dmM5bWJML2tPVFZoYXZRbWViWmt3?=
- =?utf-8?B?R014Wkw5K1B0RlFFNzFqNGcvNkhsUEQza3pxcWlTTzZud2VxWW9zbE9NbzNV?=
- =?utf-8?B?eG9iYWt0eU9rKzF5dGZYNnBPZUllTlRQQWNqa2dPMnF2U01OM1c0OVQ4VkZJ?=
- =?utf-8?B?ZG04TUVreTZUSm9oV0FEVVE4aVAvdzlSeTlrVWFLVlNoU2Q5NU5EVVFJb3hy?=
- =?utf-8?B?MTlSb1d6TWpSTkV4Qk5hbFB2RmtFaXR3UlBjS3NLbUJhdTVmeER0U0tJaktH?=
- =?utf-8?B?QTd5UUlBa2x0VDZndTFucVZFZGVjVHI0S2JpRXdOeTRuNTFwRWlhOHVWNlJC?=
- =?utf-8?B?OHpaTTJTMm14eGc1QXlhaldubzlPaVc0OG1rN0RHUlBZd2g1YnBLQUhlQnVx?=
- =?utf-8?B?bXBwMUlyRm92M0Z5TG05cVc5TDlNN2MrSklrOUJ1M0o5cjZXczNRYzYydDFM?=
- =?utf-8?B?MENsbUY1VjNDMmpnKyszWDBzWlVhOG1Zc29vMWY1UHZsdjUwNm0ycnhLcTMz?=
- =?utf-8?B?bkFqTnFXMkVkSlo3K1hVSVh5TU00YWNpNUc2bFdTWGEwdDAzMVNsMzNKcmJB?=
- =?utf-8?B?ekpwV096dG45cnpWTTAzVHJjc2hWbnpkL3oyTkdDcWF5U1M5VkxsdDRib3ZJ?=
- =?utf-8?B?YVZUeTQ0c2dXZWU3SC8wQkwvS25XS2hQRlBnWFh1bnJwb2MxV01yNFcxK2R0?=
- =?utf-8?B?dWN6VTE4a2QvK01OVG5KNXdFZmtwTkdlOWd5VndOaFRkQzVjMGoxSkxqdGVD?=
- =?utf-8?B?aFIyZGl0L0dHdVo0YUVoM3p3d2MxVXIxdUpUM3RLN092VWlLL3NIajlrMzlP?=
- =?utf-8?B?UUQwaUszL1UxWHZlNXJhYVVjTHhnbHlnU2Rxd0pLaktmUHcyUXBxa1FPbkEr?=
- =?utf-8?B?cGRVei9sWkNrdWZvV0cyWGZjNWx2QnZUMllFeWV2N3I2ZWtFSGFuallGWUsw?=
- =?utf-8?B?R2U0STY4NHEzY2xuOXpjVFJadjB0NVNPM3ovMHRuOEM5NExBTzJ6OHQ1L3pv?=
- =?utf-8?B?bkhPMXRicUVDNnJZMmZiOFdQOExPMlVValh2Rlc2a1Y1QTRMNnJZS1Y4ajIv?=
- =?utf-8?B?cGw0b3lDcmtTV2hjRTlBdWRzbm13M3BIbEFoV0FGdmljVkhKdXdMMDU5d0Uw?=
- =?utf-8?B?eW1jU012RHlWdkxjVURuQjJUTGV5UzlIUkFJRWFOajFYMlk3ZkxiQ1JKalVv?=
- =?utf-8?B?M2o1OVlLZEtEdUgyLzNicnM5eWJGYzIzNDRocFA5c1VrZVJnZ2RUV3lmdVYv?=
- =?utf-8?B?UlhidUJ1WDNmUkU2Sy9zVUpHcDFwdHAzeDN4ZXIxQ1ZpT0E2NWwwc2xGbzZN?=
- =?utf-8?B?Z2s5TEZPWFlub2g4QUdQRmtqRDgvbHpMcGdwNnFRV2tRUGgvTVlhak9hWXhK?=
- =?utf-8?B?M3pmeFh2bnFVYjJyS0ZNNER0bWJLNENuRzlPOGxpUWs5QU9CR1pRbkNKYmtw?=
- =?utf-8?B?b3p6MFg0WnovaHNpUlhEM0FOU3ZCdlNya1NweC9sb1l5VGNKL1pzNFRzZTQz?=
- =?utf-8?B?SkpyK2ZYM3VqZzFHYnVxR1d2UHZYanhwN1A0UEpkTFhFNlZQT2RpVTRxbWNS?=
- =?utf-8?B?d0E9PQ==?=
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ea592b6-fd21-4f44-aa63-08ddf69d1c8b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 10:21:20.6697
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 10:21:09.4156
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2759e1b-b606-4e69-66ae-08ddf69d15fd
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vOhChoIuPkazvW0lbFPqlMd0g/PxKpklz0f/+r9d0he07s2EEOsYROgV3YB9F2g0KOIzJ4pYP9uUaUb0v6bl0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB9012
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA50.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8873
 
+From: sheetal <sheetal@nvidia.com>
 
-On 18/09/2025 11:04, Akhil R wrote:
-> 
-> On Wed, 17 Sep 2025 14:59:54 +0100, Jon Hunter wrote:
->> On 17/09/2025 09:56, Kartik Rajput wrote:
->>> From: Akhil R <akhilrajeev@nvidia.com>
->>>
->>> Add support for HS (High Speed) mode transfers, which is supported by
->>> Tegra194 onwards.
->>>
->>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
->>> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
->>> ---
->>> v3 -> v5:
->>> 	* Set has_hs_mode_support to false for unsupported SoCs.
->>> v2 -> v3:
->>> 	* Document tlow_hs_mode and thigh_hs_mode.
->>> v1 -> v2:
->>> 	* Document has_hs_mode_support.
->>> 	* Add a check to set the frequency to fastmode+ if the device
->>> 	  does not support HS mode but the requested frequency is more
->>> 	  than fastmode+.
->>> ---
->>>    drivers/i2c/busses/i2c-tegra.c | 33 +++++++++++++++++++++++++++++++++
->>>    1 file changed, 33 insertions(+)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->>> index d908e5e3f0af..6f816de8b3af 100644
->>> --- a/drivers/i2c/busses/i2c-tegra.c
->>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>> @@ -91,6 +91,7 @@
->>>    #define I2C_HEADER_IE_ENABLE			BIT(17)
->>>    #define I2C_HEADER_REPEAT_START			BIT(16)
->>>    #define I2C_HEADER_CONTINUE_XFER		BIT(15)
->>> +#define I2C_HEADER_HS_MODE			BIT(22)
->>>    #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
->>>    
->>>    #define I2C_BUS_CLEAR_CNFG			0x084
->>> @@ -198,6 +199,8 @@ enum msg_end_type {
->>>     * @thigh_std_mode: High period of the clock in standard mode.
->>>     * @tlow_fast_fastplus_mode: Low period of the clock in fast/fast-plus modes.
->>>     * @thigh_fast_fastplus_mode: High period of the clock in fast/fast-plus modes.
->>> + * @tlow_hs_mode: Low period of the clock in HS mode.
->>> + * @thigh_hs_mode: High period of the clock in HS mode.
->>>     * @setup_hold_time_std_mode: Setup and hold time for start and stop conditions
->>>     *		in standard mode.
->>>     * @setup_hold_time_fast_fast_plus_mode: Setup and hold time for start and stop
->>> @@ -206,6 +209,7 @@ enum msg_end_type {
->>>     *		in HS mode.
->>>     * @has_interface_timing_reg: Has interface timing register to program the tuned
->>>     *		timing settings.
->>> + * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
->>>     */
->>>    struct tegra_i2c_hw_feature {
->>>    	bool has_continue_xfer_support;
->>> @@ -226,10 +230,13 @@ struct tegra_i2c_hw_feature {
->>>    	u32 thigh_std_mode;
->>>    	u32 tlow_fast_fastplus_mode;
->>>    	u32 thigh_fast_fastplus_mode;
->>> +	u32 tlow_hs_mode;
->>> +	u32 thigh_hs_mode;
->>>    	u32 setup_hold_time_std_mode;
->>>    	u32 setup_hold_time_fast_fast_plus_mode;
->>>    	u32 setup_hold_time_hs_mode;
->>>    	bool has_interface_timing_reg;
->>> +	bool has_hs_mode_support;
->>>    };
->>>    
->>>    /**
->>> @@ -717,6 +724,20 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->>>    	if (i2c_dev->hw->has_interface_timing_reg && tsu_thd)
->>>    		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
->>>    
->>> +	/* Write HS mode registers. These will get used only for HS mode*/
->>> +	if (i2c_dev->hw->has_hs_mode_support) {
->>> +		tlow = i2c_dev->hw->tlow_hs_mode;
->>> +		thigh = i2c_dev->hw->thigh_hs_mode;
->>> +		tsu_thd = i2c_dev->hw->setup_hold_time_hs_mode;
->>> +
->>> +		val = FIELD_PREP(I2C_HS_INTERFACE_TIMING_THIGH, thigh) |
->>> +			FIELD_PREP(I2C_HS_INTERFACE_TIMING_TLOW, tlow);
->>> +		i2c_writel(i2c_dev, val, I2C_HS_INTERFACE_TIMING_0);
->>> +		i2c_writel(i2c_dev, tsu_thd, I2C_HS_INTERFACE_TIMING_1);
->>> +	} else if (t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ) {
->>> +		t->bus_freq_hz = I2C_MAX_FAST_MODE_PLUS_FREQ;
->>
->> No mention in the changelog about this part. Looks like this is a fallback.
->>
->> Should all of this be handled in the case statement for t->bus_freq_hz?
->>
-> 
-> HS mode timing parameters are programmed in registers different from the other
-> speed modes. These registers does not affect the timing in other speed modes.
-> HS mode registers being used or not is determined by the packet header.
-> 
-> We may also want to program the regular timing registers, because it will be
-> used for the master code byte to transition to HS mode.
-> 
-> So, I guess, even if we move this to the switch statement, we might end up
-> doing something similar outside it.
+- Add the audio devices for the tegra264 SoC in the tegra264.dtsi file,
+  which includes sound, HDA and APE(Audio Processing Engine) subsystem
+  nodes.
+  APE subsystem includes,
+   - I/O interfaces such as I2S, DMIC and DSPK (all the available
+     instances).
+   - HW accelerators such as ASRC, OPE, MVC, SFC, AMX, ADX and Mixer (all
+     the available instances).
+   - ADMA controller and Interrupt controllers.
 
+- Enable the audio nodes in tegra264-p3971.dtsi platform DT file.
 
-The 'tlow', 'thigh' and 'tsu_thd' are configured under the case 
-statement and so seems logical to also configure these for HS mode under 
-this too. I see that there are different timing registers for HS mode, 
-but right now looks like we are programming both the normal ones and HS 
-ones. Do both need to be programmed for HS mode?
+Signed-off-by: sheetal <sheetal@nvidia.com>
+---
+ .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  106 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 3190 +++++++++++++++++
+ 2 files changed, 3296 insertions(+)
 
-Jon
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
+index 6b6259b7310f..1fcfac2066ae 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264-p3971.dtsi
+@@ -1,4 +1,110 @@
+ // SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+ 
+ / {
++	bus@0 {
++		aconnect@9000000 {
++			status = "okay";
++
++			dma-controller@9440000 {
++				status = "okay";
++			};
++
++			ahub@9630000 {
++				status = "okay";
++
++				i2s@9280000 {
++					status = "okay";
++				};
++
++				i2s@9290000 {
++					status = "okay";
++				};
++
++				i2s@92b0000 {
++					status = "okay";
++				};
++			};
++
++			interrupt-controller@9960000 {
++				status = "okay";
++			};
++		};
++
++		hda@88090b0000 {
++			nvidia,model = "NVIDIA Jetson Thor AGX HDA";
++			status = "okay";
++		};
++	};
++
++	sound {
++		status = "okay";
++
++		dais = /* ADMAIF (FE) Ports */
++		       <&admaif0_port>, <&admaif1_port>, <&admaif2_port>, <&admaif3_port>,
++		       <&admaif4_port>, <&admaif5_port>, <&admaif6_port>, <&admaif7_port>,
++		       <&admaif8_port>, <&admaif9_port>, <&admaif10_port>, <&admaif11_port>,
++		       <&admaif12_port>, <&admaif13_port>, <&admaif14_port>, <&admaif15_port>,
++		       <&admaif16_port>, <&admaif17_port>, <&admaif18_port>, <&admaif19_port>,
++		       <&admaif20_port>, <&admaif21_port>, <&admaif22_port>, <&admaif23_port>,
++		       <&admaif24_port>, <&admaif25_port>, <&admaif26_port>, <&admaif27_port>,
++		       <&admaif28_port>, <&admaif29_port>, <&admaif30_port>, <&admaif31_port>,
++		       /* XBAR Ports */
++		       <&xbar_i2s1_port>, <&xbar_i2s2_port>, <&xbar_i2s4_port>,
++		       <&xbar_sfc1_in_port>, <&xbar_sfc2_in_port>,
++		       <&xbar_sfc3_in_port>, <&xbar_sfc4_in_port>,
++		       <&xbar_mvc1_in_port>, <&xbar_mvc2_in_port>,
++		       <&xbar_amx1_in1_port>, <&xbar_amx1_in2_port>,
++		       <&xbar_amx1_in3_port>, <&xbar_amx1_in4_port>,
++		       <&xbar_amx2_in1_port>, <&xbar_amx2_in2_port>,
++		       <&xbar_amx2_in3_port>, <&xbar_amx2_in4_port>,
++		       <&xbar_amx3_in1_port>, <&xbar_amx3_in2_port>,
++		       <&xbar_amx3_in3_port>, <&xbar_amx3_in4_port>,
++		       <&xbar_amx4_in1_port>, <&xbar_amx4_in2_port>,
++		       <&xbar_amx4_in3_port>, <&xbar_amx4_in4_port>,
++		       <&xbar_amx5_in1_port>, <&xbar_amx5_in2_port>,
++		       <&xbar_amx5_in3_port>, <&xbar_amx5_in4_port>,
++		       <&xbar_amx6_in1_port>, <&xbar_amx6_in2_port>,
++		       <&xbar_amx6_in3_port>, <&xbar_amx6_in4_port>,
++		       <&xbar_adx1_in_port>, <&xbar_adx2_in_port>,
++		       <&xbar_adx3_in_port>, <&xbar_adx4_in_port>,
++		       <&xbar_adx5_in_port>, <&xbar_adx6_in_port>,
++		       <&xbar_mix_in1_port>, <&xbar_mix_in2_port>,
++		       <&xbar_mix_in3_port>, <&xbar_mix_in4_port>,
++		       <&xbar_mix_in5_port>, <&xbar_mix_in6_port>,
++		       <&xbar_mix_in7_port>, <&xbar_mix_in8_port>,
++		       <&xbar_mix_in9_port>, <&xbar_mix_in10_port>,
++		       <&xbar_asrc_in1_port>, <&xbar_asrc_in2_port>,
++		       <&xbar_asrc_in3_port>, <&xbar_asrc_in4_port>,
++		       <&xbar_asrc_in5_port>, <&xbar_asrc_in6_port>,
++		       <&xbar_asrc_in7_port>,
++		       <&xbar_ope1_in_port>,
++		       /* HW accelerators */
++		       <&sfc1_out_port>, <&sfc2_out_port>,
++		       <&sfc3_out_port>, <&sfc4_out_port>,
++		       <&mvc1_out_port>, <&mvc2_out_port>,
++		       <&amx1_out_port>, <&amx2_out_port>,
++		       <&amx3_out_port>, <&amx4_out_port>,
++		       <&amx5_out_port>, <&amx6_out_port>,
++		       <&adx1_out1_port>, <&adx1_out2_port>,
++		       <&adx1_out3_port>, <&adx1_out4_port>,
++		       <&adx2_out1_port>, <&adx2_out2_port>,
++		       <&adx2_out3_port>, <&adx2_out4_port>,
++		       <&adx3_out1_port>, <&adx3_out2_port>,
++		       <&adx3_out3_port>, <&adx3_out4_port>,
++		       <&adx4_out1_port>, <&adx4_out2_port>,
++		       <&adx4_out3_port>, <&adx4_out4_port>,
++		       <&adx5_out1_port>, <&adx5_out2_port>,
++		       <&adx5_out3_port>, <&adx5_out4_port>,
++		       <&adx6_out1_port>, <&adx6_out2_port>,
++		       <&adx6_out3_port>, <&adx6_out4_port>,
++		       <&mix_out1_port>, <&mix_out2_port>, <&mix_out3_port>,
++		       <&mix_out4_port>, <&mix_out5_port>,
++		       <&asrc_out1_port>, <&asrc_out2_port>, <&asrc_out3_port>,
++		       <&asrc_out4_port>, <&asrc_out5_port>, <&asrc_out6_port>,
++		       <&ope1_out_port>,
++		       /* BE I/O Ports */
++		       <&i2s1_port>, <&i2s2_port>, <&i2s4_port>;
++
++		label = "NVIDIA Jetson Thor AGX APE";
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+index e02659efa233..49eed7fc16e7 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
+ #include <dt-bindings/memory/nvidia,tegra264.h>
+ #include <dt-bindings/reset/nvidia,tegra264.h>
++#include <dt-bindings/power/nvidia,tegra264-powergate.h>
+ 
+ / {
+ 	compatible = "nvidia,tegra264";
+@@ -49,6 +50,3163 @@ timer@8000000 {
+ 			status = "disabled";
+ 		};
+ 
++		aconnect@9000000 {
++			compatible = "nvidia,tegra264-aconnect",
++					"nvidia,tegra210-aconnect";
++			clocks = <&bpmp TEGRA264_CLK_APE>,
++				<&bpmp TEGRA264_CLK_ADSP>;
++			clock-names = "ape", "apb2ape";
++			power-domains = <&bpmp TEGRA264_POWER_DOMAIN_AUD>;
++			status = "disabled";
++
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x9000000 0x0 0x9000000 0x0 0x2000000>;
++
++			adma: dma-controller@9440000 {
++				compatible = "nvidia,tegra264-adma";
++				reg = <0x0 0x9440000 0x0 0xb0000>;
++				interrupt-parent = <&agic_page0>;
++				interrupts = <GIC_SPI 0x90 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x91 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x92 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x93 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x94 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x95 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x96 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x97 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x98 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x99 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x9a IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x9b IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x9c IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x9d IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x9e IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0x9f IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa0 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa1 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa2 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa3 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa4 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa5 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa6 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa7 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa8 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xa9 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xaa IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xab IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xac IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xad IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xae IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xaf IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb0 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb1 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb2 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb3 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb4 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb5 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb6 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb7 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb8 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xb9 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xba IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xbb IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xbc IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xbd IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xbe IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xbf IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc0 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc1 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc2 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc3 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc4 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc5 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc6 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc7 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc8 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xc9 IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xca IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xcb IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xcc IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xcd IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xce IRQ_TYPE_LEVEL_HIGH>,
++					   <GIC_SPI 0xcf IRQ_TYPE_LEVEL_HIGH>;
++				#dma-cells = <1>;
++				clocks = <&bpmp TEGRA264_CLK_AHUB>;
++				clock-names = "d_audio";
++				status = "disabled";
++			};
++
++			tegra_ahub: ahub@9630000 {
++				compatible = "nvidia,tegra264-ahub";
++				reg = <0x0 0x9630000 0x0 0x10000>;
++				clocks = <&bpmp TEGRA264_CLK_AHUB>;
++				clock-names = "ahub";
++				assigned-clocks = <&bpmp TEGRA264_CLK_AHUB>;
++				assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLAON_APE>;
++				status = "disabled";
++
++				#address-cells = <2>;
++				#size-cells = <2>;
++				/* ADMA is under AHUB range, its excluded in the defined range */
++				ranges = <0x0 0x9280000 0x0 0x9280000 0x0 0x1c0000>,
++					<0x0 0x9510000 0x0 0x9510000 0x0 0x370000>;
++
++				tegra_i2s1: i2s@9280000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x9280000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S1>,
++					       <&bpmp TEGRA264_CLK_I2S1_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S1>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S1";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s1_cif: endpoint {
++								remote-endpoint = <&xbar_i2s1>;
++							};
++						};
++
++						i2s1_port: port@1 {
++							reg = <1>;
++
++							i2s1_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s2: i2s@9290000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x9290000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S2>,
++						 <&bpmp TEGRA264_CLK_I2S2_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S2>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S2";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s2_cif: endpoint {
++								remote-endpoint = <&xbar_i2s2>;
++							};
++						};
++
++						i2s2_port: port@1 {
++							reg = <1>;
++
++							i2s2_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s3: i2s@92a0000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x92a0000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S3>,
++					       <&bpmp TEGRA264_CLK_I2S3_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S3>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S3";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s3_cif: endpoint {
++								remote-endpoint = <&xbar_i2s3>;
++							};
++						};
++
++						i2s3_port: port@1 {
++							reg = <1>;
++
++							i2s3_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s4: i2s@92b0000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x92b0000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S4>,
++					       <&bpmp TEGRA264_CLK_I2S4_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S4>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S4";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s4_cif: endpoint {
++								remote-endpoint = <&xbar_i2s4>;
++							};
++						};
++
++						i2s4_port: port@1 {
++							reg = <1>;
++
++							i2s4_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s5: i2s@92c0000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x92c0000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S5>,
++					       <&bpmp TEGRA264_CLK_I2S5_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S5>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S5";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s5_cif: endpoint {
++								remote-endpoint = <&xbar_i2s5>;
++							};
++						};
++
++						i2s5_port: port@1 {
++							reg = <1>;
++
++							i2s5_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s6: i2s@92d0000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x92d0000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S6>,
++					       <&bpmp TEGRA264_CLK_I2S6_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S6>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S6";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s6_cif: endpoint {
++								remote-endpoint = <&xbar_i2s6>;
++							};
++						};
++
++						i2s6_port: port@1 {
++							reg = <1>;
++
++							i2s6_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s7: i2s@92e0000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x92e0000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S7>,
++					       <&bpmp TEGRA264_CLK_I2S7_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S7>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S7";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s7_cif: endpoint {
++								remote-endpoint = <&xbar_i2s7>;
++							};
++						};
++
++						i2s7_port: port@1 {
++							reg = <1>;
++
++							i2s7_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_i2s8: i2s@92f0000 {
++					compatible = "nvidia,tegra264-i2s";
++					reg = <0x0 0x92f0000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_I2S8>,
++					       <&bpmp TEGRA264_CLK_I2S8_SCLK_IN>;
++					clock-names = "i2s", "sync_input";
++					assigned-clocks = <&bpmp TEGRA264_CLK_I2S8>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <1536000>;
++					sound-name-prefix = "I2S8";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s8_cif: endpoint {
++								remote-endpoint = <&xbar_i2s8>;
++							};
++						};
++
++						i2s8_port: port@1 {
++							reg = <1>;
++
++							i2s8_dap: endpoint {
++								dai-format = "i2s";
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_dmic1: dmic@9300000 {
++					compatible = "nvidia,tegra264-dmic",
++							"nvidia,tegra210-dmic";
++					reg = <0x0 0x9300000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_DMIC1>;
++					clock-names = "dmic";
++					assigned-clocks = <&bpmp TEGRA264_CLK_DMIC1>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <3072000>;
++					sound-name-prefix = "DMIC1";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dmic1_cif: endpoint {
++								remote-endpoint = <&xbar_dmic1>;
++							};
++						};
++
++						dmic1_port: port@1 {
++							reg = <1>;
++
++							dmic1_dap: endpoint {
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_dmic2: dmic@9310000 {
++					compatible = "nvidia,tegra264-dmic",
++						   "nvidia,tegra210-dmic";
++					reg = <0x0 0x9310000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_DMIC1>;
++					clock-names = "dmic";
++					assigned-clocks = <&bpmp TEGRA264_CLK_DMIC1>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <3072000>;
++					sound-name-prefix = "DMIC2";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dmic2_cif: endpoint {
++								remote-endpoint = <&xbar_dmic2>;
++							};
++						};
++
++						dmic2_port: port@1 {
++							reg = <1>;
++
++							dmic2_dap: endpoint {
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_dspk1: dspk@9380000 {
++					compatible = "nvidia,tegra264-dspk",
++							"nvidia,tegra186-dspk";
++					reg = <0x0 0x9380000 0x0 0x10000>;
++					clocks = <&bpmp TEGRA264_CLK_DSPK1>;
++					clock-names = "dspk";
++					assigned-clocks = <&bpmp TEGRA264_CLK_DSPK1>;
++					assigned-clock-parents = <&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++					assigned-clock-rates = <12288000>;
++					sound-name-prefix = "DSPK1";
++					status = "disabled";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dspk1_cif: endpoint {
++								remote-endpoint = <&xbar_dspk1>;
++							};
++						};
++
++						dspk1_port: port@1 {
++							reg = <1>;
++
++							dspk1_dap: endpoint {
++								/* placeholder for external codec */
++							};
++						};
++					};
++				};
++
++				tegra_amx1: amx@9510000 {
++					compatible = "nvidia,tegra264-amx";
++					reg = <0x0 0x9510000 0x0 0x10000>;
++					sound-name-prefix = "AMX1";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							amx1_in1: endpoint {
++								remote-endpoint = <&xbar_amx1_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <1>;
++
++							amx1_in2: endpoint {
++								remote-endpoint = <&xbar_amx1_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <2>;
++
++							amx1_in3: endpoint {
++								remote-endpoint = <&xbar_amx1_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <3>;
++
++							amx1_in4: endpoint {
++								remote-endpoint = <&xbar_amx1_in4>;
++							};
++						};
++
++						amx1_out_port: port@4 {
++							reg = <4>;
++
++							amx1_out: endpoint {
++								remote-endpoint = <&xbar_amx1_out>;
++							};
++						};
++					};
++				};
++
++				tegra_amx2: amx@9520000 {
++					compatible = "nvidia,tegra264-amx";
++					reg = <0x0 0x9520000 0x0 0x10000>;
++					sound-name-prefix = "AMX2";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							amx2_in1: endpoint {
++								remote-endpoint = <&xbar_amx2_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <1>;
++
++							amx2_in2: endpoint {
++								remote-endpoint = <&xbar_amx2_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <2>;
++
++							amx2_in3: endpoint {
++								remote-endpoint = <&xbar_amx2_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <3>;
++
++							amx2_in4: endpoint {
++								remote-endpoint = <&xbar_amx2_in4>;
++							};
++						};
++
++						amx2_out_port: port@4 {
++							reg = <4>;
++
++							amx2_out: endpoint {
++								remote-endpoint = <&xbar_amx2_out>;
++							};
++						};
++					};
++				};
++
++				tegra_amx3: amx@9530000 {
++					compatible = "nvidia,tegra264-amx";
++					reg = <0x0 0x9530000 0x0 0x10000>;
++					sound-name-prefix = "AMX3";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							amx3_in1: endpoint {
++								remote-endpoint = <&xbar_amx3_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <1>;
++
++							amx3_in2: endpoint {
++								remote-endpoint = <&xbar_amx3_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <2>;
++
++							amx3_in3: endpoint {
++								remote-endpoint = <&xbar_amx3_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <3>;
++
++							amx3_in4: endpoint {
++								remote-endpoint = <&xbar_amx3_in4>;
++							};
++						};
++
++						amx3_out_port: port@4 {
++							reg = <4>;
++
++							amx3_out: endpoint {
++								remote-endpoint = <&xbar_amx3_out>;
++							};
++						};
++					};
++				};
++
++				tegra_amx4: amx@9540000 {
++					compatible = "nvidia,tegra264-amx";
++					reg = <0x0 0x9540000 0x0 0x10000>;
++					sound-name-prefix = "AMX4";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							amx4_in1: endpoint {
++								remote-endpoint = <&xbar_amx4_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <1>;
++
++							amx4_in2: endpoint {
++								remote-endpoint = <&xbar_amx4_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <2>;
++
++							amx4_in3: endpoint {
++								remote-endpoint = <&xbar_amx4_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <3>;
++
++							amx4_in4: endpoint {
++								remote-endpoint = <&xbar_amx4_in4>;
++							};
++						};
++
++						amx4_out_port: port@4 {
++							reg = <4>;
++
++							amx4_out: endpoint {
++								remote-endpoint = <&xbar_amx4_out>;
++							};
++						};
++					};
++				};
++
++				tegra_amx5: amx@9550000 {
++					compatible = "nvidia,tegra264-amx";
++					reg = <0x0 0x9550000 0x0 0x10000>;
++					sound-name-prefix = "AMX5";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							amx5_in1: endpoint {
++								remote-endpoint = <&xbar_amx5_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <1>;
++
++							amx5_in2: endpoint {
++								remote-endpoint = <&xbar_amx5_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <2>;
++
++							amx5_in3: endpoint {
++								remote-endpoint = <&xbar_amx5_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <3>;
++
++							amx5_in4: endpoint {
++								remote-endpoint = <&xbar_amx5_in4>;
++							};
++						};
++
++						amx5_out_port: port@4 {
++							reg = <4>;
++
++							amx5_out: endpoint {
++								remote-endpoint = <&xbar_amx5_out>;
++							};
++						};
++					};
++				};
++
++				tegra_amx6: amx@9560000 {
++					compatible = "nvidia,tegra264-amx";
++					reg = <0x0 0x9560000 0x0 0x10000>;
++					sound-name-prefix = "AMX6";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							amx6_in1: endpoint {
++								remote-endpoint = <&xbar_amx6_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <1>;
++
++							amx6_in2: endpoint {
++								remote-endpoint = <&xbar_amx6_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <2>;
++
++							amx6_in3: endpoint {
++								remote-endpoint = <&xbar_amx6_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <3>;
++
++							amx6_in4: endpoint {
++								remote-endpoint = <&xbar_amx6_in4>;
++							};
++						};
++
++						amx6_out_port: port@4 {
++							reg = <4>;
++
++							amx6_out: endpoint {
++								remote-endpoint = <&xbar_amx6_out>;
++							};
++						};
++					};
++				};
++
++				tegra_adx1: adx@9590000 {
++					compatible = "nvidia,tegra264-adx";
++					reg = <0x0 0x9590000 0x0 0x10000>;
++					sound-name-prefix = "ADX1";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							adx1_in: endpoint {
++								remote-endpoint = <&xbar_adx1_in>;
++							};
++						};
++
++						adx1_out1_port: port@1 {
++							reg = <1>;
++
++							adx1_out1: endpoint {
++								remote-endpoint = <&xbar_adx1_out1>;
++							};
++						};
++
++						adx1_out2_port: port@2 {
++							reg = <2>;
++
++							adx1_out2: endpoint {
++								remote-endpoint = <&xbar_adx1_out2>;
++							};
++						};
++
++						adx1_out3_port: port@3 {
++							reg = <3>;
++
++							adx1_out3: endpoint {
++								remote-endpoint = <&xbar_adx1_out3>;
++							};
++						};
++
++						adx1_out4_port: port@4 {
++							reg = <4>;
++
++							adx1_out4: endpoint {
++								remote-endpoint = <&xbar_adx1_out4>;
++							};
++						};
++					};
++				};
++
++				tegra_adx2: adx@95a0000 {
++					compatible = "nvidia,tegra264-adx";
++					reg = <0x0 0x95a0000 0x0 0x10000>;
++					sound-name-prefix = "ADX2";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							adx2_in: endpoint {
++								remote-endpoint = <&xbar_adx2_in>;
++							};
++						};
++
++						adx2_out1_port: port@1 {
++							reg = <1>;
++
++							adx2_out1: endpoint {
++								remote-endpoint = <&xbar_adx2_out1>;
++							};
++						};
++
++						adx2_out2_port: port@2 {
++							reg = <2>;
++
++							adx2_out2: endpoint {
++								remote-endpoint = <&xbar_adx2_out2>;
++							};
++						};
++
++						adx2_out3_port: port@3 {
++							reg = <3>;
++
++							adx2_out3: endpoint {
++								remote-endpoint = <&xbar_adx2_out3>;
++							};
++						};
++
++						adx2_out4_port: port@4 {
++							reg = <4>;
++
++							adx2_out4: endpoint {
++								remote-endpoint = <&xbar_adx2_out4>;
++							};
++						};
++					};
++				};
++
++				tegra_adx3: adx@95b0000 {
++					compatible = "nvidia,tegra264-adx";
++					reg = <0x0 0x95b0000 0x0 0x10000>;
++					sound-name-prefix = "ADX3";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							adx3_in: endpoint {
++								remote-endpoint = <&xbar_adx3_in>;
++							};
++						};
++
++						adx3_out1_port: port@1 {
++							reg = <1>;
++
++							adx3_out1: endpoint {
++								remote-endpoint = <&xbar_adx3_out1>;
++							};
++						};
++
++						adx3_out2_port: port@2 {
++							reg = <2>;
++
++							adx3_out2: endpoint {
++								remote-endpoint = <&xbar_adx3_out2>;
++							};
++						};
++
++						adx3_out3_port: port@3 {
++							reg = <3>;
++
++							adx3_out3: endpoint {
++								remote-endpoint = <&xbar_adx3_out3>;
++							};
++						};
++
++						adx3_out4_port: port@4 {
++							reg = <4>;
++
++							adx3_out4: endpoint {
++								remote-endpoint = <&xbar_adx3_out4>;
++							};
++						};
++					};
++				};
++
++				tegra_adx4: adx@95c0000 {
++					compatible = "nvidia,tegra264-adx";
++					reg = <0x0 0x95c0000 0x0 0x10000>;
++					sound-name-prefix = "ADX4";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							adx4_in: endpoint {
++								remote-endpoint = <&xbar_adx4_in>;
++							};
++						};
++
++						adx4_out1_port: port@1 {
++							reg = <1>;
++
++							adx4_out1: endpoint {
++								remote-endpoint = <&xbar_adx4_out1>;
++							};
++						};
++
++						adx4_out2_port: port@2 {
++							reg = <2>;
++
++							adx4_out2: endpoint {
++								remote-endpoint = <&xbar_adx4_out2>;
++							};
++						};
++
++						adx4_out3_port: port@3 {
++							reg = <3>;
++
++							adx4_out3: endpoint {
++								remote-endpoint = <&xbar_adx4_out3>;
++							};
++						};
++
++						adx4_out4_port: port@4 {
++							reg = <4>;
++
++							adx4_out4: endpoint {
++								remote-endpoint = <&xbar_adx4_out4>;
++							};
++						};
++					};
++				};
++
++				tegra_adx5: adx@95d0000 {
++					compatible = "nvidia,tegra264-adx";
++					reg = <0x0 0x95d0000 0x0 0x10000>;
++					sound-name-prefix = "ADX5";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							adx5_in: endpoint {
++								remote-endpoint = <&xbar_adx5_in>;
++							};
++						};
++
++						adx5_out1_port: port@1 {
++							reg = <1>;
++
++							adx5_out1: endpoint {
++								remote-endpoint = <&xbar_adx5_out1>;
++							};
++						};
++
++						adx5_out2_port: port@2 {
++							reg = <2>;
++
++							adx5_out2: endpoint {
++								remote-endpoint = <&xbar_adx5_out2>;
++							};
++						};
++
++						adx5_out3_port: port@3 {
++							reg = <3>;
++
++							adx5_out3: endpoint {
++								remote-endpoint = <&xbar_adx5_out3>;
++							};
++						};
++
++						adx5_out4_port: port@4 {
++							reg = <4>;
++
++							adx5_out4: endpoint {
++								remote-endpoint = <&xbar_adx5_out4>;
++							};
++						};
++					};
++				};
++
++				tegra_adx6: adx@95e0000 {
++					compatible = "nvidia,tegra264-adx";
++					reg = <0x0 0x95e0000 0x0 0x10000>;
++					sound-name-prefix = "ADX6";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							adx6_in: endpoint {
++								remote-endpoint = <&xbar_adx6_in>;
++							};
++						};
++
++						adx6_out1_port: port@1 {
++							reg = <1>;
++
++							adx6_out1: endpoint {
++								remote-endpoint = <&xbar_adx6_out1>;
++							};
++						};
++
++						adx6_out2_port: port@2 {
++							reg = <2>;
++
++							adx6_out2: endpoint {
++								remote-endpoint = <&xbar_adx6_out2>;
++							};
++						};
++
++						adx6_out3_port: port@3 {
++							reg = <3>;
++
++							adx6_out3: endpoint {
++								remote-endpoint = <&xbar_adx6_out3>;
++							};
++						};
++
++						adx6_out4_port: port@4 {
++							reg = <4>;
++
++							adx6_out4: endpoint {
++								remote-endpoint = <&xbar_adx6_out4>;
++							};
++						};
++					};
++				};
++
++				tegra_admaif: admaif@9610000 {
++					compatible = "nvidia,tegra264-admaif";
++					reg = <0x0 0x9610000 0x0 0x10000>;
++					dmas = <&adma 1>, <&adma 1>,
++					     <&adma 2>, <&adma 2>,
++					     <&adma 3>, <&adma 3>,
++					     <&adma 4>, <&adma 4>,
++					     <&adma 5>, <&adma 5>,
++					     <&adma 6>, <&adma 6>,
++					     <&adma 7>, <&adma 7>,
++					     <&adma 8>, <&adma 8>,
++					     <&adma 9>, <&adma 9>,
++					     <&adma 10>, <&adma 10>,
++					     <&adma 11>, <&adma 11>,
++					     <&adma 12>, <&adma 12>,
++					     <&adma 13>, <&adma 13>,
++					     <&adma 14>, <&adma 14>,
++					     <&adma 15>, <&adma 15>,
++					     <&adma 16>, <&adma 16>,
++					     <&adma 17>, <&adma 17>,
++					     <&adma 18>, <&adma 18>,
++					     <&adma 19>, <&adma 19>,
++					     <&adma 20>, <&adma 20>,
++					     <&adma 21>, <&adma 21>,
++					     <&adma 22>, <&adma 22>,
++					     <&adma 23>, <&adma 23>,
++					     <&adma 24>, <&adma 24>,
++					     <&adma 25>, <&adma 25>,
++					     <&adma 26>, <&adma 26>,
++					     <&adma 27>, <&adma 27>,
++					     <&adma 28>, <&adma 28>,
++					     <&adma 29>, <&adma 29>,
++					     <&adma 30>, <&adma 30>,
++					     <&adma 31>, <&adma 31>,
++					     <&adma 32>, <&adma 32>;
++					dma-names = "rx1", "tx1",
++						"rx2", "tx2",
++						"rx3", "tx3",
++						"rx4", "tx4",
++						"rx5", "tx5",
++						"rx6", "tx6",
++						"rx7", "tx7",
++						"rx8", "tx8",
++						"rx9", "tx9",
++						"rx10", "tx10",
++						"rx11", "tx11",
++						"rx12", "tx12",
++						"rx13", "tx13",
++						"rx14", "tx14",
++						"rx15", "tx15",
++						"rx16", "tx16",
++						"rx17", "tx17",
++						"rx18", "tx18",
++						"rx19", "tx19",
++						"rx20", "tx20",
++						"rx21", "tx21",
++						"rx22", "tx22",
++						"rx23", "tx23",
++						"rx24", "tx24",
++						"rx25", "tx25",
++						"rx26", "tx26",
++						"rx27", "tx27",
++						"rx28", "tx28",
++						"rx29", "tx29",
++						"rx30", "tx30",
++						"rx31", "tx31",
++						"rx32", "tx32";
++
++					 interconnects =
++						<&mc TEGRA264_MEMORY_CLIENT_APEDMAR &emc>,
++						<&mc TEGRA264_MEMORY_CLIENT_APEDMAW &emc>;
++						interconnect-names = "dma-mem", "write";
++
++					iommus = <&smmu1 TEGRA264_SID_APE>;
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						admaif0_port: port@0 {
++							reg = <0x0>;
++
++							admaif0: endpoint {
++								remote-endpoint = <&xbar_admaif0>;
++							};
++						};
++
++						admaif1_port: port@1 {
++							reg = <0x1>;
++
++							admaif1: endpoint {
++								remote-endpoint = <&xbar_admaif1>;
++							};
++						};
++
++						admaif2_port: port@2 {
++							reg = <0x2>;
++
++							admaif2: endpoint {
++								remote-endpoint = <&xbar_admaif2>;
++							};
++						};
++
++						admaif3_port: port@3 {
++							reg = <0x3>;
++
++							admaif3: endpoint {
++								remote-endpoint = <&xbar_admaif3>;
++							};
++						};
++
++						admaif4_port: port@4 {
++							reg = <0x4>;
++
++							admaif4: endpoint {
++								remote-endpoint = <&xbar_admaif4>;
++							};
++						};
++
++						admaif5_port: port@5 {
++							reg = <0x5>;
++
++							admaif5: endpoint {
++								remote-endpoint = <&xbar_admaif5>;
++							};
++						};
++
++						admaif6_port: port@6 {
++							reg = <0x6>;
++
++							admaif6: endpoint {
++								remote-endpoint = <&xbar_admaif6>;
++							};
++						};
++
++						admaif7_port: port@7 {
++							reg = <0x7>;
++
++							admaif7: endpoint {
++								remote-endpoint = <&xbar_admaif7>;
++							};
++						};
++
++						admaif8_port: port@8 {
++							reg = <0x8>;
++
++							admaif8: endpoint {
++								remote-endpoint = <&xbar_admaif8>;
++							};
++						};
++
++						admaif9_port: port@9 {
++							reg = <0x9>;
++
++							admaif9: endpoint {
++								remote-endpoint = <&xbar_admaif9>;
++							};
++						};
++
++						admaif10_port: port@a {
++							reg = <0xa>;
++
++							admaif10: endpoint {
++								remote-endpoint = <&xbar_admaif10>;
++							};
++						};
++
++						admaif11_port: port@b {
++							reg = <0xb>;
++
++							admaif11: endpoint {
++								remote-endpoint = <&xbar_admaif11>;
++							};
++						};
++
++						admaif12_port: port@c {
++							reg = <0xc>;
++
++							admaif12: endpoint {
++								remote-endpoint = <&xbar_admaif12>;
++							};
++						};
++
++						admaif13_port: port@d {
++							reg = <0xd>;
++
++							admaif13: endpoint {
++								remote-endpoint = <&xbar_admaif13>;
++							};
++						};
++
++						admaif14_port: port@e {
++							reg = <0xe>;
++
++							admaif14: endpoint {
++								remote-endpoint = <&xbar_admaif14>;
++							};
++						};
++
++						admaif15_port: port@f {
++							reg = <0xf>;
++
++							admaif15: endpoint {
++								remote-endpoint = <&xbar_admaif15>;
++							};
++						};
++
++						admaif16_port: port@10 {
++							reg = <0x10>;
++
++							admaif16: endpoint {
++								remote-endpoint = <&xbar_admaif16>;
++							};
++						};
++
++						admaif17_port: port@11 {
++							reg = <0x11>;
++
++							admaif17: endpoint {
++								remote-endpoint = <&xbar_admaif17>;
++							};
++						};
++
++						admaif18_port: port@12 {
++							reg = <0x12>;
++
++							admaif18: endpoint {
++								remote-endpoint = <&xbar_admaif18>;
++							};
++						};
++
++						admaif19_port: port@13 {
++							reg = <0x13>;
++
++							admaif19: endpoint {
++								remote-endpoint = <&xbar_admaif19>;
++							};
++						};
++
++						admaif20_port: port@14 {
++							reg = <0x14>;
++
++							admaif20: endpoint {
++								remote-endpoint = <&xbar_admaif20>;
++							};
++						};
++
++						admaif21_port: port@15 {
++							reg = <0x15>;
++
++							admaif21: endpoint {
++								remote-endpoint = <&xbar_admaif21>;
++							};
++						};
++
++						admaif22_port: port@16 {
++							reg = <0x16>;
++
++							admaif22: endpoint {
++								remote-endpoint = <&xbar_admaif22>;
++							};
++						};
++
++						admaif23_port: port@17 {
++							reg = <0x17>;
++
++							admaif23: endpoint {
++								remote-endpoint = <&xbar_admaif23>;
++							};
++						};
++
++						admaif24_port: port@18 {
++							reg = <0x18>;
++
++							admaif24: endpoint {
++								remote-endpoint = <&xbar_admaif24>;
++							};
++						};
++
++						admaif25_port: port@19 {
++							reg = <0x19>;
++
++							admaif25: endpoint {
++								remote-endpoint = <&xbar_admaif25>;
++							};
++						};
++
++						admaif26_port: port@1a {
++							reg = <0x1a>;
++
++							admaif26: endpoint {
++								remote-endpoint = <&xbar_admaif26>;
++							};
++						};
++
++						admaif27_port: port@1b {
++							reg = <0x1b>;
++
++							admaif27: endpoint {
++								remote-endpoint = <&xbar_admaif27>;
++							};
++						};
++
++						admaif28_port: port@1c {
++							reg = <0x1c>;
++
++							admaif28: endpoint {
++								remote-endpoint = <&xbar_admaif28>;
++							};
++						};
++
++						admaif29_port: port@1d {
++							reg = <0x1d>;
++
++							admaif29: endpoint {
++								remote-endpoint = <&xbar_admaif29>;
++							};
++						};
++
++						admaif30_port: port@1e {
++							reg = <0x1e>;
++
++							admaif30: endpoint {
++								remote-endpoint = <&xbar_admaif30>;
++							};
++						};
++
++						admaif31_port: port@1f {
++							reg = <0x1f>;
++
++							admaif31: endpoint {
++								remote-endpoint = <&xbar_admaif31>;
++							};
++						};
++					};
++				};
++
++				tegra_sfc1: sfc@9700000 {
++					compatible = "nvidia,tegra264-sfc",
++							"nvidia,tegra210-sfc";
++					reg = <0x0 0x9700000 0x0 0x10000>;
++					sound-name-prefix = "SFC1";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							sfc1_cif_in: endpoint {
++								remote-endpoint = <&xbar_sfc1_in>;
++							};
++						};
++
++						sfc1_out_port: port@1 {
++							reg = <1>;
++
++							sfc1_cif_out: endpoint {
++								remote-endpoint = <&xbar_sfc1_out>;
++							};
++						};
++					};
++				};
++
++				tegra_sfc2: sfc@9710000 {
++					compatible = "nvidia,tegra264-sfc",
++							"nvidia,tegra210-sfc";
++					reg = <0x0 0x9710000 0x0 0x10000>;
++					sound-name-prefix = "SFC2";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							sfc2_cif_in: endpoint {
++								remote-endpoint = <&xbar_sfc2_in>;
++							};
++						};
++
++						sfc2_out_port: port@1 {
++							reg = <1>;
++
++							sfc2_cif_out: endpoint {
++								remote-endpoint = <&xbar_sfc2_out>;
++							};
++						};
++					};
++				};
++
++				tegra_sfc3: sfc@9720000 {
++					compatible = "nvidia,tegra264-sfc",
++							"nvidia,tegra210-sfc";
++					reg = <0x0 0x9720000 0x0 0x10000>;
++					sound-name-prefix = "SFC3";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							sfc3_cif_in: endpoint {
++								remote-endpoint = <&xbar_sfc3_in>;
++							};
++						};
++
++						sfc3_out_port: port@1 {
++							reg = <1>;
++
++							sfc3_cif_out: endpoint {
++								remote-endpoint = <&xbar_sfc3_out>;
++							};
++						};
++					};
++				};
++
++				tegra_sfc4: sfc@9730000 {
++					compatible = "nvidia,tegra264-sfc",
++							"nvidia,tegra210-sfc";
++					reg = <0x0 0x9730000 0x0 0x10000>;
++					sound-name-prefix = "SFC4";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							sfc4_cif_in: endpoint {
++								remote-endpoint = <&xbar_sfc4_in>;
++							};
++						};
++
++						sfc4_out_port: port@1 {
++							reg = <1>;
++
++							sfc4_cif_out: endpoint {
++								remote-endpoint = <&xbar_sfc4_out>;
++							};
++						};
++					};
++				};
++
++				tegra_ope1: processing-engine@9780000 {
++					compatible = "nvidia,tegra264-ope",
++							"nvidia,tegra210-ope";
++					reg = <0x0 0x9780000 0x0 0x10000>;
++					#address-cells = <2>;
++					#size-cells = <2>;
++					ranges = <0x0 0x9780000 0x0 0x9780000 0x0 0x30000>;
++					sound-name-prefix = "OPE1";
++
++					equalizer@9790000 {
++						compatible = "nvidia,tegra264-peq",
++								"nvidia,tegra210-peq";
++						reg = <0x0 0x9790000 0x0 0x10000>;
++					};
++
++					dynamic-range-compressor@97a0000 {
++						compatible = "nvidia,tegra264-mbdrc",
++								"nvidia,tegra210-mbdrc";
++						reg = <0x0 0x97a0000 0x0 0x10000>;
++					};
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0x0>;
++
++							ope1_cif_in_ep: endpoint {
++								remote-endpoint =
++									<&xbar_ope1_in_ep>;
++							};
++						};
++
++						ope1_out_port: port@1 {
++							reg = <0x1>;
++
++							ope1_cif_out_ep: endpoint {
++								remote-endpoint =
++									<&xbar_ope1_out_ep>;
++							};
++						};
++					};
++				};
++
++				tegra_mvc1: mvc@9800000 {
++					compatible = "nvidia,tegra264-mvc",
++							"nvidia,tegra210-mvc";
++					reg = <0x0 0x9800000 0x0 0x10000>;
++					sound-name-prefix = "MVC1";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							mvc1_cif_in: endpoint {
++								remote-endpoint = <&xbar_mvc1_in>;
++							};
++						};
++
++						mvc1_out_port: port@1 {
++							reg = <1>;
++
++							mvc1_cif_out: endpoint {
++								remote-endpoint = <&xbar_mvc1_out>;
++							};
++						};
++					};
++				};
++
++				tegra_mvc2: mvc@9810000 {
++					compatible = "nvidia,tegra264-mvc",
++							"nvidia,tegra210-mvc";
++					reg = <0x0 0x9810000 0x0 0x10000>;
++					sound-name-prefix = "MVC2";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							mvc2_cif_in: endpoint {
++								remote-endpoint = <&xbar_mvc2_in>;
++							};
++						};
++
++						mvc2_out_port: port@1 {
++							reg = <1>;
++
++							mvc2_cif_out: endpoint {
++								remote-endpoint = <&xbar_mvc2_out>;
++							};
++						};
++					};
++				};
++
++				tegra_amixer: amixer@9820000 {
++					compatible = "nvidia,tegra264-amixer",
++							"nvidia,tegra210-amixer";
++					reg = <0x0 0x9820000 0x0 0x10000>;
++					sound-name-prefix = "MIXER1";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0x0>;
++
++							mix_in1: endpoint {
++								remote-endpoint = <&xbar_mix_in1>;
++							};
++						};
++
++						port@1 {
++							reg = <0x1>;
++
++							mix_in2: endpoint {
++								remote-endpoint = <&xbar_mix_in2>;
++							};
++						};
++
++						port@2 {
++							reg = <0x2>;
++
++							mix_in3: endpoint {
++								remote-endpoint = <&xbar_mix_in3>;
++							};
++						};
++
++						port@3 {
++							reg = <0x3>;
++
++							mix_in4: endpoint {
++								remote-endpoint = <&xbar_mix_in4>;
++							};
++						};
++
++						port@4 {
++							reg = <0x4>;
++
++							mix_in5: endpoint {
++								remote-endpoint = <&xbar_mix_in5>;
++							};
++						};
++
++						port@5 {
++							reg = <0x5>;
++
++							mix_in6: endpoint {
++								remote-endpoint = <&xbar_mix_in6>;
++							};
++						};
++
++						port@6 {
++							reg = <0x6>;
++
++							mix_in7: endpoint {
++								remote-endpoint = <&xbar_mix_in7>;
++							};
++						};
++
++						port@7 {
++							reg = <0x7>;
++
++							mix_in8: endpoint {
++								remote-endpoint = <&xbar_mix_in8>;
++							};
++						};
++
++						port@8 {
++							reg = <0x8>;
++
++							mix_in9: endpoint {
++								remote-endpoint = <&xbar_mix_in9>;
++							};
++						};
++
++						port@9 {
++							reg = <0x9>;
++
++							mix_in10: endpoint {
++								remote-endpoint = <&xbar_mix_in10>;
++							};
++						};
++
++						mix_out1_port: port@a {
++							reg = <0xa>;
++
++							mix_out1: endpoint {
++								remote-endpoint = <&xbar_mix_out1>;
++							};
++						};
++
++						mix_out2_port: port@b {
++							reg = <0xb>;
++
++							mix_out2: endpoint {
++								remote-endpoint = <&xbar_mix_out2>;
++							};
++						};
++
++						mix_out3_port: port@c {
++							reg = <0xc>;
++
++							mix_out3: endpoint {
++								remote-endpoint = <&xbar_mix_out3>;
++							};
++						};
++
++						mix_out4_port: port@d {
++							reg = <0xd>;
++
++							mix_out4: endpoint {
++								remote-endpoint = <&xbar_mix_out4>;
++							};
++						};
++
++						mix_out5_port: port@e {
++							reg = <0xe>;
++
++							mix_out5: endpoint {
++								remote-endpoint = <&xbar_mix_out5>;
++							};
++						};
++					};
++				};
++
++				tegra_asrc: asrc@9850000 {
++					compatible = "nvidia,tegra264-asrc";
++					reg = <0x0 0x9850000 0x0 0x10000>;
++					sound-name-prefix = "ASRC1";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0x0>;
++
++							asrc_in1_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in1_ep>;
++							};
++						};
++
++						port@1 {
++							reg = <0x1>;
++
++							asrc_in2_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in2_ep>;
++							};
++						};
++
++						port@2 {
++							reg = <0x2>;
++
++							asrc_in3_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in3_ep>;
++							};
++						};
++
++						port@3 {
++							reg = <0x3>;
++
++							asrc_in4_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in4_ep>;
++							};
++						};
++
++						port@4 {
++							reg = <0x4>;
++
++							asrc_in5_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in5_ep>;
++							};
++						};
++
++						port@5 {
++							reg = <0x5>;
++
++							asrc_in6_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in6_ep>;
++							};
++						};
++
++						port@6 {
++							reg = <0x6>;
++
++							asrc_in7_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_in7_ep>;
++							};
++						};
++
++						asrc_out1_port: port@7 {
++							reg = <0x7>;
++
++							asrc_out1_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_out1_ep>;
++							};
++						};
++
++						asrc_out2_port: port@8 {
++							reg = <0x8>;
++
++							asrc_out2_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_out2_ep>;
++							};
++						};
++
++						asrc_out3_port: port@9 {
++							reg = <0x9>;
++
++							asrc_out3_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_out3_ep>;
++							};
++						};
++
++						asrc_out4_port: port@a {
++							reg = <0xa>;
++
++							asrc_out4_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_out4_ep>;
++							};
++						};
++
++						asrc_out5_port: port@b {
++							reg = <0xb>;
++
++							asrc_out5_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_out5_ep>;
++							};
++						};
++
++						asrc_out6_port:	port@c {
++							reg = <0xc>;
++
++							asrc_out6_ep: endpoint {
++								remote-endpoint =
++									<&xbar_asrc_out6_ep>;
++							};
++						};
++					};
++				};
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0x0>;
++
++						xbar_admaif0: endpoint {
++							remote-endpoint = <&admaif0>;
++						};
++					};
++
++					port@1 {
++						reg = <0x1>;
++
++						xbar_admaif1: endpoint {
++							remote-endpoint = <&admaif1>;
++						};
++					};
++
++					port@2 {
++						reg = <0x2>;
++
++						xbar_admaif2: endpoint {
++							remote-endpoint = <&admaif2>;
++						};
++					};
++
++					port@3 {
++						reg = <0x3>;
++
++						xbar_admaif3: endpoint {
++							remote-endpoint = <&admaif3>;
++						};
++					};
++
++					port@4 {
++						reg = <0x4>;
++
++						xbar_admaif4: endpoint {
++							remote-endpoint = <&admaif4>;
++						};
++					};
++
++					port@5 {
++						reg = <0x5>;
++
++						xbar_admaif5: endpoint {
++							remote-endpoint = <&admaif5>;
++						};
++					};
++
++					port@6 {
++						reg = <0x6>;
++
++						xbar_admaif6: endpoint {
++							remote-endpoint = <&admaif6>;
++						};
++					};
++
++					port@7 {
++						reg = <0x7>;
++
++						xbar_admaif7: endpoint {
++							remote-endpoint = <&admaif7>;
++						};
++					};
++
++					port@8 {
++						reg = <0x8>;
++
++						xbar_admaif8: endpoint {
++							remote-endpoint = <&admaif8>;
++						};
++					};
++
++					port@9 {
++						reg = <0x9>;
++
++						xbar_admaif9: endpoint {
++							remote-endpoint = <&admaif9>;
++						};
++					};
++
++					port@a {
++						reg = <0xa>;
++
++						xbar_admaif10: endpoint {
++							remote-endpoint = <&admaif10>;
++						};
++					};
++
++					port@b {
++						reg = <0xb>;
++
++						xbar_admaif11: endpoint {
++							remote-endpoint = <&admaif11>;
++						};
++					};
++
++					port@c {
++						reg = <0xc>;
++
++						xbar_admaif12: endpoint {
++							remote-endpoint = <&admaif12>;
++						};
++					};
++
++					port@d {
++						reg = <0xd>;
++
++						xbar_admaif13: endpoint {
++							remote-endpoint = <&admaif13>;
++						};
++					};
++
++					port@e {
++						reg = <0xe>;
++
++						xbar_admaif14: endpoint {
++							remote-endpoint = <&admaif14>;
++						};
++					};
++
++					port@f {
++						reg = <0xf>;
++
++						xbar_admaif15: endpoint {
++							remote-endpoint = <&admaif15>;
++						};
++					};
++
++					port@10 {
++						reg = <0x10>;
++
++						xbar_admaif16: endpoint {
++							remote-endpoint = <&admaif16>;
++						};
++					};
++
++					port@11 {
++						reg = <0x11>;
++
++						xbar_admaif17: endpoint {
++							remote-endpoint = <&admaif17>;
++						};
++					};
++
++					port@12 {
++						reg = <0x12>;
++
++						xbar_admaif18: endpoint {
++							remote-endpoint = <&admaif18>;
++						};
++					};
++
++					port@13 {
++						reg = <0x13>;
++
++						xbar_admaif19: endpoint {
++							remote-endpoint = <&admaif19>;
++						};
++					};
++
++					port@14 {
++						reg = <0x14>;
++
++						xbar_admaif20: endpoint {
++							remote-endpoint = <&admaif20>;
++						};
++					};
++
++					port@15 {
++						reg = <0x15>;
++
++						xbar_admaif21: endpoint {
++							remote-endpoint = <&admaif21>;
++						};
++					};
++
++					port@16 {
++						reg = <0x16>;
++
++						xbar_admaif22: endpoint {
++							remote-endpoint = <&admaif22>;
++						};
++					};
++
++					port@17 {
++						reg = <0x17>;
++
++						xbar_admaif23: endpoint {
++							remote-endpoint = <&admaif23>;
++						};
++					};
++
++					port@18 {
++						reg = <0x18>;
++
++						xbar_admaif24: endpoint {
++							remote-endpoint = <&admaif24>;
++						};
++					};
++
++					port@19 {
++						reg = <0x19>;
++
++						xbar_admaif25: endpoint {
++							remote-endpoint = <&admaif25>;
++						};
++					};
++
++					port@1a {
++						reg = <0x1a>;
++
++						xbar_admaif26: endpoint {
++							remote-endpoint = <&admaif26>;
++						};
++					};
++
++					port@1b {
++						reg = <0x1b>;
++
++						xbar_admaif27: endpoint {
++							remote-endpoint = <&admaif27>;
++						};
++					};
++
++					port@1c {
++						reg = <0x1c>;
++
++						xbar_admaif28: endpoint {
++							remote-endpoint = <&admaif28>;
++						};
++					};
++
++					port@1d {
++						reg = <0x1d>;
++
++						xbar_admaif29: endpoint {
++							remote-endpoint = <&admaif29>;
++						};
++					};
++
++					port@1e {
++						reg = <0x1e>;
++
++						xbar_admaif30: endpoint {
++							remote-endpoint = <&admaif30>;
++						};
++					};
++
++					port@1f {
++						reg = <0x1f>;
++
++						xbar_admaif31: endpoint {
++							remote-endpoint = <&admaif31>;
++						};
++					};
++
++					xbar_i2s1_port: port@20 {
++						reg = <0x20>;
++
++						xbar_i2s1: endpoint {
++							remote-endpoint = <&i2s1_cif>;
++						};
++					};
++
++					xbar_i2s2_port: port@21 {
++						reg = <0x21>;
++
++						xbar_i2s2: endpoint {
++							remote-endpoint = <&i2s2_cif>;
++						};
++					};
++
++					xbar_i2s3_port: port@22 {
++						reg = <0x22>;
++
++						xbar_i2s3: endpoint {
++							remote-endpoint = <&i2s3_cif>;
++						};
++					};
++
++					xbar_i2s4_port: port@23 {
++						reg = <0x23>;
++
++						xbar_i2s4: endpoint {
++							remote-endpoint = <&i2s4_cif>;
++						};
++					};
++
++					xbar_i2s5_port: port@24 {
++						reg = <0x24>;
++
++						xbar_i2s5: endpoint {
++							remote-endpoint = <&i2s5_cif>;
++						};
++					};
++
++					xbar_i2s6_port: port@25 {
++						reg = <0x25>;
++
++						xbar_i2s6: endpoint {
++							remote-endpoint = <&i2s6_cif>;
++						};
++					};
++
++					xbar_i2s7_port: port@26 {
++						reg = <0x26>;
++
++						xbar_i2s7: endpoint {
++							remote-endpoint = <&i2s7_cif>;
++						};
++					};
++
++					xbar_i2s8_port: port@27 {
++						reg = <0x27>;
++
++						xbar_i2s8: endpoint {
++							remote-endpoint = <&i2s8_cif>;
++						};
++					};
++
++					xbar_dmic1_port: port@28 {
++						reg = <0x28>;
++
++						xbar_dmic1: endpoint {
++							remote-endpoint = <&dmic1_cif>;
++						};
++					};
++
++					xbar_dmic2_port: port@29 {
++						reg = <0x29>;
++
++						xbar_dmic2: endpoint {
++							remote-endpoint = <&dmic2_cif>;
++						};
++					};
++
++					xbar_dspk1_port: port@2a {
++						reg = <0x2a>;
++
++						xbar_dspk1: endpoint {
++							remote-endpoint = <&dspk1_cif>;
++						};
++					};
++
++					xbar_sfc1_in_port: port@2b {
++						reg = <0x2b>;
++
++						xbar_sfc1_in: endpoint {
++							remote-endpoint = <&sfc1_cif_in>;
++						};
++					};
++
++					port@2c {
++						reg = <0x2c>;
++
++						xbar_sfc1_out: endpoint {
++							remote-endpoint = <&sfc1_cif_out>;
++						};
++					};
++
++					xbar_sfc2_in_port: port@2d {
++						reg = <0x2d>;
++
++						xbar_sfc2_in: endpoint {
++							remote-endpoint = <&sfc2_cif_in>;
++						};
++					};
++
++					port@2e {
++						reg = <0x2e>;
++
++						xbar_sfc2_out: endpoint {
++							remote-endpoint = <&sfc2_cif_out>;
++						};
++					};
++
++					xbar_sfc3_in_port: port@2f {
++						reg = <0x2f>;
++
++						xbar_sfc3_in: endpoint {
++							remote-endpoint = <&sfc3_cif_in>;
++						};
++					};
++
++					port@30 {
++						reg = <0x30>;
++
++						xbar_sfc3_out: endpoint {
++							remote-endpoint = <&sfc3_cif_out>;
++						};
++					};
++
++					xbar_sfc4_in_port: port@31 {
++						reg = <0x31>;
++
++						xbar_sfc4_in: endpoint {
++							remote-endpoint = <&sfc4_cif_in>;
++						};
++					};
++
++					port@32 {
++						reg = <0x32>;
++
++						xbar_sfc4_out: endpoint {
++							remote-endpoint = <&sfc4_cif_out>;
++						};
++					};
++
++					xbar_mvc1_in_port: port@33 {
++						reg = <0x33>;
++
++						xbar_mvc1_in: endpoint {
++							remote-endpoint = <&mvc1_cif_in>;
++						};
++					};
++
++					port@34 {
++						reg = <0x34>;
++
++						xbar_mvc1_out: endpoint {
++							remote-endpoint = <&mvc1_cif_out>;
++						};
++					};
++
++					xbar_mvc2_in_port: port@35 {
++						reg = <0x35>;
++
++						xbar_mvc2_in: endpoint {
++							remote-endpoint = <&mvc2_cif_in>;
++						};
++					};
++
++					port@36 {
++						reg = <0x36>;
++
++						xbar_mvc2_out: endpoint {
++							remote-endpoint = <&mvc2_cif_out>;
++						};
++					};
++
++					xbar_amx1_in1_port: port@37 {
++						reg = <0x37>;
++
++						xbar_amx1_in1: endpoint {
++							remote-endpoint = <&amx1_in1>;
++						};
++					};
++
++					xbar_amx1_in2_port: port@38 {
++						reg = <0x38>;
++
++						xbar_amx1_in2: endpoint {
++							remote-endpoint = <&amx1_in2>;
++						};
++					};
++
++					xbar_amx1_in3_port: port@39 {
++						reg = <0x39>;
++
++						xbar_amx1_in3: endpoint {
++							remote-endpoint = <&amx1_in3>;
++						};
++					};
++
++					xbar_amx1_in4_port: port@3a {
++						reg = <0x3a>;
++
++						xbar_amx1_in4: endpoint {
++							remote-endpoint = <&amx1_in4>;
++						};
++					};
++
++					port@3b {
++						reg = <0x3b>;
++
++						xbar_amx1_out: endpoint {
++							remote-endpoint = <&amx1_out>;
++						};
++					};
++
++					xbar_amx2_in1_port: port@3c {
++						reg = <0x3c>;
++
++						xbar_amx2_in1: endpoint {
++							remote-endpoint = <&amx2_in1>;
++						};
++					};
++
++					xbar_amx2_in2_port: port@3d {
++						reg = <0x3d>;
++
++						xbar_amx2_in2: endpoint {
++							remote-endpoint = <&amx2_in2>;
++						};
++					};
++
++					xbar_amx2_in3_port: port@3e {
++						reg = <0x3e>;
++
++						xbar_amx2_in3: endpoint {
++							remote-endpoint = <&amx2_in3>;
++						};
++					};
++
++					xbar_amx2_in4_port: port@3f {
++						reg = <0x3f>;
++
++						xbar_amx2_in4: endpoint {
++							remote-endpoint = <&amx2_in4>;
++						};
++					};
++
++					port@40 {
++						reg = <0x40>;
++
++						xbar_amx2_out: endpoint {
++							remote-endpoint = <&amx2_out>;
++						};
++					};
++
++					xbar_amx3_in1_port: port@41 {
++						reg = <0x41>;
++
++						xbar_amx3_in1: endpoint {
++							remote-endpoint = <&amx3_in1>;
++						};
++					};
++
++					xbar_amx3_in2_port: port@42 {
++						reg = <0x42>;
++
++						xbar_amx3_in2: endpoint {
++							remote-endpoint = <&amx3_in2>;
++						};
++					};
++
++					xbar_amx3_in3_port: port@43 {
++						reg = <0x43>;
++
++						xbar_amx3_in3: endpoint {
++							remote-endpoint = <&amx3_in3>;
++						};
++					};
++
++					xbar_amx3_in4_port: port@44 {
++						reg = <0x44>;
++
++						xbar_amx3_in4: endpoint {
++							remote-endpoint = <&amx3_in4>;
++						};
++					};
++
++					port@45 {
++						reg = <0x45>;
++
++						xbar_amx3_out: endpoint {
++							remote-endpoint = <&amx3_out>;
++						};
++					};
++
++					xbar_amx4_in1_port: port@46 {
++						reg = <0x46>;
++
++						xbar_amx4_in1: endpoint {
++							remote-endpoint = <&amx4_in1>;
++						};
++					};
++
++					xbar_amx4_in2_port: port@47 {
++						reg = <0x47>;
++
++						xbar_amx4_in2: endpoint {
++							remote-endpoint = <&amx4_in2>;
++						};
++					};
++
++					xbar_amx4_in3_port: port@48 {
++						reg = <0x48>;
++
++						xbar_amx4_in3: endpoint {
++							remote-endpoint = <&amx4_in3>;
++						};
++					};
++
++					xbar_amx4_in4_port: port@49 {
++						reg = <0x49>;
++
++						xbar_amx4_in4: endpoint {
++							remote-endpoint = <&amx4_in4>;
++						};
++					};
++
++					port@4a {
++						reg = <0x4a>;
++
++						xbar_amx4_out: endpoint {
++							remote-endpoint = <&amx4_out>;
++						};
++					};
++
++					xbar_amx5_in1_port: port@4b {
++						reg = <0x4b>;
++
++						xbar_amx5_in1: endpoint {
++							remote-endpoint = <&amx5_in1>;
++						};
++					};
++
++					xbar_amx5_in2_port: port@4c {
++						reg = <0x4c>;
++
++						xbar_amx5_in2: endpoint {
++							remote-endpoint = <&amx5_in2>;
++						};
++					};
++
++					xbar_amx5_in3_port: port@4d {
++						reg = <0x4d>;
++
++						xbar_amx5_in3: endpoint {
++							remote-endpoint = <&amx5_in3>;
++						};
++					};
++
++					xbar_amx5_in4_port: port@4e {
++						reg = <0x4e>;
++
++						xbar_amx5_in4: endpoint {
++							remote-endpoint = <&amx5_in4>;
++						};
++					};
++
++					port@4f {
++						reg = <0x4f>;
++
++						xbar_amx5_out: endpoint {
++							remote-endpoint = <&amx5_out>;
++						};
++					};
++
++					xbar_amx6_in1_port: port@50 {
++						reg = <0x50>;
++
++						xbar_amx6_in1: endpoint {
++							remote-endpoint = <&amx6_in1>;
++						};
++					};
++
++					xbar_amx6_in2_port: port@51 {
++						reg = <0x51>;
++
++						xbar_amx6_in2: endpoint {
++							remote-endpoint = <&amx6_in2>;
++						};
++					};
++
++					xbar_amx6_in3_port: port@52 {
++						reg = <0x52>;
++
++						xbar_amx6_in3: endpoint {
++							remote-endpoint = <&amx6_in3>;
++						};
++					};
++
++					xbar_amx6_in4_port: port@53 {
++						reg = <0x53>;
++
++						xbar_amx6_in4: endpoint {
++							remote-endpoint = <&amx6_in4>;
++						};
++					};
++
++					port@54 {
++						reg = <0x54>;
++
++						xbar_amx6_out: endpoint {
++							remote-endpoint = <&amx6_out>;
++						};
++					};
++
++					xbar_adx1_in_port: port@55 {
++						reg = <0x55>;
++
++						xbar_adx1_in: endpoint {
++							remote-endpoint = <&adx1_in>;
++						};
++					};
++
++					port@56 {
++						reg = <0x56>;
++
++						xbar_adx1_out1: endpoint {
++							remote-endpoint = <&adx1_out1>;
++						};
++					};
++
++					port@57 {
++						reg = <0x57>;
++
++						xbar_adx1_out2: endpoint {
++							remote-endpoint = <&adx1_out2>;
++						};
++					};
++
++					port@58 {
++						reg = <0x58>;
++
++						xbar_adx1_out3: endpoint {
++							remote-endpoint = <&adx1_out3>;
++						};
++					};
++
++					port@59 {
++						reg = <0x59>;
++
++						xbar_adx1_out4: endpoint {
++							remote-endpoint = <&adx1_out4>;
++						};
++					};
++
++					xbar_adx2_in_port: port@5a {
++						reg = <0x5a>;
++
++						xbar_adx2_in: endpoint {
++							remote-endpoint = <&adx2_in>;
++						};
++					};
++
++					port@5b {
++						reg = <0x5b>;
++
++						xbar_adx2_out1: endpoint {
++							remote-endpoint = <&adx2_out1>;
++						};
++					};
++
++					port@5c {
++						reg = <0x5c>;
++
++						xbar_adx2_out2: endpoint {
++							remote-endpoint = <&adx2_out2>;
++						};
++					};
++
++					port@5d {
++						reg = <0x5d>;
++
++						xbar_adx2_out3: endpoint {
++							remote-endpoint = <&adx2_out3>;
++						};
++					};
++
++					port@5e {
++						reg = <0x5e>;
++
++						xbar_adx2_out4: endpoint {
++							remote-endpoint = <&adx2_out4>;
++						};
++					};
++
++					xbar_adx3_in_port: port@5f {
++						reg = <0x5f>;
++
++						xbar_adx3_in: endpoint {
++							remote-endpoint = <&adx3_in>;
++						};
++					};
++
++					port@60 {
++						reg = <0x60>;
++
++						xbar_adx3_out1: endpoint {
++							remote-endpoint = <&adx3_out1>;
++						};
++					};
++
++					port@61 {
++						reg = <0x61>;
++
++						xbar_adx3_out2: endpoint {
++							remote-endpoint = <&adx3_out2>;
++						};
++					};
++
++					port@62 {
++						reg = <0x62>;
++
++						xbar_adx3_out3: endpoint {
++							remote-endpoint = <&adx3_out3>;
++						};
++					};
++
++					port@63 {
++						reg = <0x63>;
++
++						xbar_adx3_out4: endpoint {
++							remote-endpoint = <&adx3_out4>;
++						};
++					};
++
++					xbar_adx4_in_port: port@64 {
++						reg = <0x64>;
++
++						xbar_adx4_in: endpoint {
++							remote-endpoint = <&adx4_in>;
++						};
++					};
++
++					port@65 {
++						reg = <0x65>;
++
++						xbar_adx4_out1: endpoint {
++							remote-endpoint = <&adx4_out1>;
++						};
++					};
++
++					port@66 {
++						reg = <0x66>;
++
++						xbar_adx4_out2: endpoint {
++							remote-endpoint = <&adx4_out2>;
++						};
++					};
++
++					port@67 {
++						reg = <0x67>;
++
++						xbar_adx4_out3: endpoint {
++							remote-endpoint = <&adx4_out3>;
++						};
++					};
++
++					port@68 {
++						reg = <0x68>;
++
++						xbar_adx4_out4: endpoint {
++							remote-endpoint = <&adx4_out4>;
++						};
++					};
++
++					xbar_adx5_in_port: port@69 {
++						reg = <0x69>;
++
++						xbar_adx5_in: endpoint {
++							remote-endpoint = <&adx5_in>;
++						};
++					};
++
++					port@6a {
++						reg = <0x6a>;
++
++						xbar_adx5_out1: endpoint {
++							remote-endpoint = <&adx5_out1>;
++						};
++					};
++
++					port@6b {
++						reg = <0x6b>;
++
++						xbar_adx5_out2: endpoint {
++							remote-endpoint = <&adx5_out2>;
++						};
++					};
++
++					port@6c {
++						reg = <0x6c>;
++
++						xbar_adx5_out3: endpoint {
++							remote-endpoint = <&adx5_out3>;
++						};
++					};
++
++					port@6d {
++						reg = <0x6d>;
++
++						xbar_adx5_out4: endpoint {
++							remote-endpoint = <&adx5_out4>;
++						};
++					};
++
++					xbar_adx6_in_port: port@6e {
++						reg = <0x6e>;
++
++						xbar_adx6_in: endpoint {
++							remote-endpoint = <&adx6_in>;
++						};
++					};
++
++					port@6f {
++						reg = <0x6f>;
++
++						xbar_adx6_out1: endpoint {
++							remote-endpoint = <&adx6_out1>;
++						};
++					};
++
++					port@70 {
++						reg = <0x70>;
++
++						xbar_adx6_out2: endpoint {
++							remote-endpoint = <&adx6_out2>;
++						};
++					};
++
++					port@71 {
++						reg = <0x71>;
++
++						xbar_adx6_out3: endpoint {
++							remote-endpoint = <&adx6_out3>;
++						};
++					};
++
++					port@72 {
++						reg = <0x72>;
++
++						xbar_adx6_out4: endpoint {
++							remote-endpoint = <&adx6_out4>;
++						};
++					};
++
++					xbar_mix_in1_port: port@73 {
++						reg = <0x73>;
++
++						xbar_mix_in1: endpoint {
++							remote-endpoint = <&mix_in1>;
++						};
++					};
++
++					xbar_mix_in2_port: port@74 {
++						reg = <0x74>;
++
++						xbar_mix_in2: endpoint {
++							remote-endpoint = <&mix_in2>;
++						};
++					};
++
++					xbar_mix_in3_port: port@75 {
++						reg = <0x75>;
++
++						xbar_mix_in3: endpoint {
++							remote-endpoint = <&mix_in3>;
++						};
++					};
++
++					xbar_mix_in4_port: port@76 {
++						reg = <0x76>;
++
++						xbar_mix_in4: endpoint {
++							remote-endpoint = <&mix_in4>;
++						};
++					};
++
++					xbar_mix_in5_port: port@77 {
++						reg = <0x77>;
++
++						xbar_mix_in5: endpoint {
++							remote-endpoint = <&mix_in5>;
++						};
++					};
++
++					xbar_mix_in6_port: port@78 {
++						reg = <0x78>;
++
++						xbar_mix_in6: endpoint {
++							remote-endpoint = <&mix_in6>;
++						};
++					};
++
++					xbar_mix_in7_port: port@79 {
++						reg = <0x79>;
++
++						xbar_mix_in7: endpoint {
++							remote-endpoint = <&mix_in7>;
++						};
++					};
++
++					xbar_mix_in8_port: port@7a {
++						reg = <0x7a>;
++
++						xbar_mix_in8: endpoint {
++							remote-endpoint = <&mix_in8>;
++						};
++					};
++
++					xbar_mix_in9_port: port@7b {
++						reg = <0x7b>;
++
++						xbar_mix_in9: endpoint {
++							remote-endpoint = <&mix_in9>;
++						};
++					};
++
++					xbar_mix_in10_port: port@7c {
++						reg = <0x7c>;
++
++						xbar_mix_in10: endpoint {
++							remote-endpoint = <&mix_in10>;
++						};
++					};
++
++					port@7d {
++						reg = <0x7d>;
++
++						xbar_mix_out1: endpoint {
++							remote-endpoint = <&mix_out1>;
++						};
++					};
++
++					port@7e {
++						reg = <0x7e>;
++
++						xbar_mix_out2: endpoint {
++							remote-endpoint = <&mix_out2>;
++						};
++					};
++
++					port@7f {
++						reg = <0x7f>;
++
++						xbar_mix_out3: endpoint {
++							remote-endpoint = <&mix_out3>;
++						};
++					};
++
++					port@80 {
++						reg = <0x80>;
++
++						xbar_mix_out4: endpoint {
++							remote-endpoint = <&mix_out4>;
++						};
++					};
++
++					port@81 {
++						reg = <0x81>;
++
++						xbar_mix_out5: endpoint {
++							remote-endpoint = <&mix_out5>;
++						};
++					};
++
++					xbar_asrc_in1_port: port@82 {
++						reg = <0x82>;
++
++						xbar_asrc_in1_ep: endpoint {
++							remote-endpoint = <&asrc_in1_ep>;
++						};
++					};
++
++					port@83 {
++						reg = <0x83>;
++
++						xbar_asrc_out1_ep: endpoint {
++							remote-endpoint = <&asrc_out1_ep>;
++						};
++					};
++
++					xbar_asrc_in2_port: port@84 {
++						reg = <0x84>;
++
++						xbar_asrc_in2_ep: endpoint {
++							remote-endpoint = <&asrc_in2_ep>;
++						};
++					};
++
++					port@85 {
++						reg = <0x85>;
++
++						xbar_asrc_out2_ep: endpoint {
++							remote-endpoint = <&asrc_out2_ep>;
++						};
++					};
++
++					xbar_asrc_in3_port: port@86 {
++						reg = <0x86>;
++
++						xbar_asrc_in3_ep: endpoint {
++							remote-endpoint = <&asrc_in3_ep>;
++						};
++					};
++
++					port@87 {
++						reg = <0x87>;
++
++						xbar_asrc_out3_ep: endpoint {
++							remote-endpoint = <&asrc_out3_ep>;
++						};
++					};
++
++					xbar_asrc_in4_port: port@88 {
++						reg = <0x88>;
++
++						xbar_asrc_in4_ep: endpoint {
++							remote-endpoint = <&asrc_in4_ep>;
++						};
++					};
++
++					port@89 {
++						reg = <0x89>;
++
++						xbar_asrc_out4_ep: endpoint {
++							remote-endpoint = <&asrc_out4_ep>;
++						};
++					};
++
++					xbar_asrc_in5_port: port@8a {
++						reg = <0x8a>;
++
++						xbar_asrc_in5_ep: endpoint {
++							remote-endpoint = <&asrc_in5_ep>;
++						};
++					};
++
++					port@8b {
++						reg = <0x8b>;
++
++						xbar_asrc_out5_ep: endpoint {
++							remote-endpoint = <&asrc_out5_ep>;
++						};
++					};
++
++					xbar_asrc_in6_port: port@8c {
++						reg = <0x8c>;
++
++						xbar_asrc_in6_ep: endpoint {
++							remote-endpoint = <&asrc_in6_ep>;
++						};
++					};
++
++					port@8d {
++						reg = <0x8d>;
++
++						xbar_asrc_out6_ep: endpoint {
++							remote-endpoint = <&asrc_out6_ep>;
++						};
++					};
++
++					xbar_asrc_in7_port: port@8e {
++						reg = <0x8e>;
++
++						xbar_asrc_in7_ep: endpoint {
++							remote-endpoint = <&asrc_in7_ep>;
++						};
++					};
++
++					xbar_ope1_in_port: port@8f {
++						reg = <0x8f>;
++
++						xbar_ope1_in_ep: endpoint {
++							remote-endpoint = <&ope1_cif_in_ep>;
++						};
++					};
++
++					port@90 {
++						reg = <0x90>;
++
++						xbar_ope1_out_ep: endpoint {
++							remote-endpoint = <&ope1_cif_out_ep>;
++						};
++					};
++				};
++			};
++
++			agic_page0: interrupt-controller@9960000 {
++				compatible = "nvidia,tegra264-agic",
++						"nvidia,tegra210-agic";
++				#interrupt-cells = <3>;
++				interrupt-controller;
++				reg = <0x0 0x9961000 0x0 0x1000>,
++					<0x0 0x9962000 0x0 0x1000>;
++				interrupts = <GIC_SPI 0x230
++					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++				clocks = <&bpmp TEGRA264_CLK_ADSP>;
++				clock-names = "clk";
++				status = "disabled";
++			};
++
++			agic_page1: interrupt-controller@9970000 {
++				compatible = "nvidia,tegra264-agic",
++					   "nvidia,tegra210-agic";
++				#interrupt-cells = <3>;
++				interrupt-controller;
++				reg = <0x0 0x9971000 0x0 0x1000>,
++					<0x0 0x9972000 0x0 0x1000>;
++				interrupts = <GIC_SPI 0x231
++					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++				clocks = <&bpmp TEGRA264_CLK_ADSP>;
++				clock-names = "clk";
++				status = "disabled";
++			};
++
++			agic_page2: interrupt-controller@9980000 {
++				compatible = "nvidia,tegra264-agic",
++						"nvidia,tegra210-agic";
++				#interrupt-cells = <3>;
++				interrupt-controller;
++				reg = <0x0 0x9981000 0x0 0x1000>,
++					<0x0 0x9982000 0x0 0x1000>;
++				interrupts = <GIC_SPI 0x232
++					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++				clocks = <&bpmp TEGRA264_CLK_ADSP>;
++				clock-names = "clk";
++				status = "disabled";
++			};
++
++			agic_page3: interrupt-controller@9990000 {
++				compatible = "nvidia,tegra264-agic",
++						"nvidia,tegra210-agic";
++				#interrupt-cells = <3>;
++				interrupt-controller;
++				reg = <0x0 0x9991000 0x0 0x1000>,
++					<0x0 0x9992000 0x0 0x1000>;
++				interrupts = <GIC_SPI 0x233
++					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++				clocks = <&bpmp TEGRA264_CLK_ADSP>;
++				clock-names = "clk";
++				status = "disabled";
++			};
++
++			agic_page4: interrupt-controller@99a0000 {
++				compatible = "nvidia,tegra264-agic",
++						"nvidia,tegra210-agic";
++				#interrupt-cells = <3>;
++				interrupt-controller;
++				reg = <0x0 0x99a1000 0x0 0x1000>,
++					<0x0 0x99a2000 0x0 0x1000>;
++				interrupts = <GIC_SPI 0x234
++					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++				clocks = <&bpmp TEGRA264_CLK_ADSP>;
++				clock-names = "clk";
++				status = "disabled";
++			};
++
++			agic_page5: interrupt-controller@99b0000 {
++				compatible = "nvidia,tegra264-agic",
++						"nvidia,tegra210-agic";
++				#interrupt-cells = <3>;
++				interrupt-controller;
++				reg = <0x0 0x99b1000 0x0 0x1000>,
++					<0x0 0x99b2000 0x0 0x1000>;
++				interrupts = <GIC_SPI 0x235
++					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++				clocks = <&bpmp TEGRA264_CLK_ADSP>;
++				clock-names = "clk";
++				status = "disabled";
++			};
++		};
++
+ 		gpcdma: dma-controller@8400000 {
+ 			compatible = "nvidia,tegra264-gpcdma", "nvidia,tegra186-gpcdma";
+ 			reg = <0x0 0x08400000 0x0 0x210000>;
+@@ -159,6 +3317,22 @@ pmc: pmc@c800000 {
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 		};
++
++		hda@88090b0000 {
++			compatible = "nvidia,tegra264-hda";
++			reg = <0x88 0x90b0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA264_CLK_AZA_2XBIT>;
++			clock-names = "hda";
++			resets = <&bpmp TEGRA264_RESET_HDA>,
++				 <&bpmp TEGRA264_RESET_HDACODEC>;
++			reset-names = "hda", "hda2codec_2x";
++			interconnects = <&mc TEGRA264_MEMORY_CLIENT_HDAR &emc>,
++					<&mc TEGRA264_MEMORY_CLIENT_HDAW &emc>;
++			interconnect-names = "dma-mem", "write";
++			iommus = <&smmu3 TEGRA264_SID_HDA>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	/* TOP_MMIO */
+@@ -400,6 +3574,22 @@ psci {
+ 		method = "smc";
+ 	};
+ 
++	sound {
++		compatible = "nvidia,tegra264-audio-graph-card";
++
++		clocks = <&bpmp TEGRA264_CLK_PLLA1>,
++				<&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++		clock-names = "pll_a", "plla_out0";
++		assigned-clocks = <&bpmp TEGRA264_CLK_PLLA1>,
++			<&bpmp TEGRA264_CLK_PLLA1_OUT1>,
++			<&bpmp TEGRA264_CLK_AUD_MCLK>;
++		assigned-clock-parents = <0>,
++			<&bpmp TEGRA264_CLK_PLLA1>,
++			<&bpmp TEGRA264_CLK_PLLA1_OUT1>;
++
++		status = "disabled";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
 -- 
-nvpublic
+2.34.1
 
