@@ -1,494 +1,108 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2482940B
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 08:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1600D25B2FE
+	for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 09:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758272189; cv=none; b=NmoSabRhLn3n8uL4uF1z5N5208UCgRerlE1GaCT4X8LGR+QHAqdxEQj7uYCXfqwDq15Znysv8c03iDmn+8spXssxIiOopDNeBfMPiNzpz0ekoNVDtWroIQADq2ABvXiR+DNmm1yHoXhPoaVUvNnCg8MCqANxvy7TcV7ndU1wWCo=
+	t=1758274240; cv=none; b=i/K7W1E58YZKL4NnGjpQrTNdosLCJGAAk8cGH4665bVZiWFDJ0Z3192TsEYz2p/99ng0AdfzM48DH+cJPJdXaWr5N0n9ygDX0aL3EDCeg/5ek1DFdyHhJzFguCqUlCI20QrAjQMXoMsUlqlG9wT/zYu/oKX1osEFF/ivdTQ/NoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758272189; c=relaxed/simple;
-	bh=z/6qpk03KVjxeDfqIiXD/LZFo4d650cslx/EbSCIBj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GGWEDOQiTleEaieK5gg8jrshKt/yrnMyRRHcoiRiFoF3GWykNx+8C68OzhXP+dm5xLrfeXreeQ9QXieGLYjvyzBdhsBMXdfYgqpIn3AcJDlyrTxgOl3IrVzUkpz/LeXyQCH1ly9GtdnRcsCijLku3sALEgcEWEwfoGEo1IJ/LvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kF7ybM3K; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1758274240; c=relaxed/simple;
+	bh=avDTXxWThbmAjC1QHoBfYODid9NjOrfOHkrQc9E/jS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lvzsjTee2qDCXh/f2BFvIbahAvnw0jIaO1wGUGwG8qAsFoTK/AQAtagdYRTpnWZi+SPKZ5ClGoRB/hk6Yj73Kg/ozPcUhGBT03v1DBc4xTwtyM7zmxtG3OSe4f1e1ghwUC95QUKgcvIP4HOXMT/kDzREmKtt31BSFv03UPkINzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSPH3nRM; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kF7ybM3K"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so177835f8f.3
-        for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 01:56:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSPH3nRM"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso1386202f8f.3
+        for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 02:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758272186; x=1758876986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b3SjolQB/965DSj8U4lOYkQfWCLlEcwDrVdjMZu0fvY=;
-        b=kF7ybM3K43hlC3ZdJoiUip+d/N01Pmw/BteJEx5HN6GR4N6LqQr0Zc4jmcG/Z10l4E
-         xbuluHaUH4tRBFklCmdRmUWglsz4DnCUMHtM9ZtNCD+SDMJy2DMnqqHK4P2YAHvWMUPk
-         Qywk3r2TKbdXh271Y0HsvxBfrUq6JiC5IZckXcuvA3xSdNjlh1khQAakSRiLyn2/tTIM
-         Za5QiR3cbzHi3rvcdTG+jzFoDn7lTIGr/JglSakUPd7HvuyQI4i2PROP1sTDlxKeBYiG
-         kh++Q+ce7+qn08Uhjwd0oHuCTxKb97TM+LMMVSMC1FJYSqT8xSeQLIE00BZJ8bvqdYTd
-         GnJg==
+        d=gmail.com; s=20230601; t=1758274237; x=1758879037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=shAUV/4fLe8epMbZhEjkFrhPpzpShVnyKXxo1s/wp4I=;
+        b=XSPH3nRMrD9tGuEpsIO8UVRCeAm1yTfKYoDjwl8ssdKqtSL2BepVrOtoo4xkz4q0Zq
+         laGY2DliaIBPNAH37GMrWgLbYPqcfeBMeAMnlEqCTrs0dB3TJDXCLI14roDGBSTp5GVx
+         35Q79jeO74uUNJCwodFJUeBjFz99URG3iRnOvYWRZktjDJTrfE4Cdiiqxg05Co6fyLeE
+         TnME7oy164pkR/elBZ4va0Z+r5YzKPXYSXqaeboILDh3ZW1op4g9THOtnwRh2n4pyiJm
+         AQVHvn29ey5BnvugEFaAJqFKPHJcIG/JnjrQHAV/XiuIffcbQzqjwi76S/qheJFfv0rO
+         ynJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758272186; x=1758876986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b3SjolQB/965DSj8U4lOYkQfWCLlEcwDrVdjMZu0fvY=;
-        b=o9y/coD1A8UVKwcM37l+9COxiElM3Q+l5pbJ/PqBB1fIsBGKZ7PvEG//vYITNL2kj2
-         zPOx3Sw9xw6KS6PWp7fhkDeXcocc18Oi0yM1UW9um457Llu6rxpFEJY+DZ0FSAnbdQIT
-         o1SRFhzTTdKbiV3tEyyCOYvlFGnL15RfwhHyLlpol8bZE/M4vw/s05ACu4QemBmf2t43
-         rn1Kfp7b9lUeeRjgbQYD+5EUkjL+POpSThmyvc4iYPpZCGj4q1i0+pRrN1UKmFgaXKhT
-         +LKQEyfQd3H4jI6T1gigrwhgo6yr4Tkj0FASZK7yFfnFy150OKe6J52fRy651zSEtLfI
-         AILw==
-X-Forwarded-Encrypted: i=1; AJvYcCWybYYiPxlZttsuc3PrMt06fkscGKFU5YSAVIC7uaZdyKYpKT4IXH7Z+NIOmZgWCjXbyFujLJeSjiQVnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFMXLtp7V8NE4G9pJ6YedkfPSb44oLVfoa1KDQaPovZ9YtNWE3
-	oTeLhMzUxh+mQHu+5k6JYscdxHVFmw3/CvhLxkK6qIqaqyrFpFmIEBstlJHbMnbkaVjlDq18czh
-	K0sMAq5nWJ2k4Fs+l74pEBr1ae+tbNRs=
-X-Gm-Gg: ASbGnctXMNFEXACizm/n22rgniS9at0P0nKCbbQ/5I+gVEUAZPJpCu5/YUt4R38SVDc
-	q3mMMaMAA+v3nywjh8Aj/TYjwnYNTEyQwm+gNDPUExhH7iec5K9EdNw4JLQUuCADwIbIyqcMUIq
-	LSw3ddXmVZgYkT4wPvBvN/F2YnEoGKJUoYaA+v5rT6/uw9NgRMxsCGgXrkXOysoYRnnsV68wj59
-	fJZG2bZ
-X-Google-Smtp-Source: AGHT+IFSRgoyAcfBMBdxJ3/Mg94CU1V7AfyoCIGOSWF2v2XWjSF8VBHtPZaoUW2eW5N/CrVldqiF9YYHWb26kL7t4bw=
-X-Received: by 2002:a05:6000:310f:b0:3ee:152e:676e with SMTP id
- ffacd0b85a97d-3ee7b9dcd9emr1716992f8f.11.1758272185363; Fri, 19 Sep 2025
- 01:56:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758274237; x=1758879037;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=shAUV/4fLe8epMbZhEjkFrhPpzpShVnyKXxo1s/wp4I=;
+        b=V9GZ9dgofmAHDF0oL0YhGssGf3RXnSIqlGW7gKAijaz6tpxNSYwTsGM3R+Lle804Z1
+         J73eGBqXrLAZIpuAmHDz70Xsy2MpI6sc+5z/p9CWqjpXcPyx22EY7Z4rEnCEu9Igde54
+         2kINPkMGfsWaTLtYrloD7ZjN/wY9hSlqLUOWQE0QFu/Sm27MEwoUf8ibcbVykPYK7IMY
+         94ujaT+5I7zAxARxcdzB2FqBbCgPcxeUUR93E+yS10X5VO24lDCFdnkmWzANkrLwNn4s
+         kPZiH/QKTDG8hMeS7o6BGhu8nrx60iEHcbTcfXGPTT2OIRauk+9afvVijPt5gsw6UeqL
+         jYOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXmqDEwYWn9aIKhnclbBQdeeElgGBxxNnkBDfVU3G3mT5WBEsEVwxHUmAfeQ41ASKZnf+wyz/TyHKlGQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG/53uGJ4+tOPNSPjzG7LReNGodnaKIlNJCBkFv/wJWCRwjcX0
+	qYDyYy7FSG5nuq528J3kLukSqEEV4cMVcPHvxB7i8jrwI61TQgwv9x8O
+X-Gm-Gg: ASbGncstldZwOfOiukt/3KPZsWJdoMItFFUZj+oawG4tDT2otZhDG328FTIh+A3mp/1
+	5uyjZ34xgGn6YT0Wh6BdhlCXsgyXtJY2pVK43UtlhkfeEujGon4dPPDHOMKkZPy04QC/vCWI+u5
+	ckn811/0ducUEfuuOqETHXO34YDeJgZlYT7PRpGBQrq+2T5qh+rpm8bsraCS2WSa/J66AUeaDM2
+	WtUNK365/wptPl7UgRJuhBnCq0iXfs6ROpPj8j398ogsQQQJsy6Q7+AaY93CplUCE0DmwJs5b24
+	WpgBGQ0HtW2f8L5PkL8kCPFROsYzoxXiQCtqL2X8qhm0TU/0kFXDB9nID7VunOxYNmnlCdPX9qA
+	pURW91MzJXu0rlmwCltW34XCuGmqKNbl4FtHSxIaWlBCyyS0bmNhIYrZ2adhINpW9ULToCy0jCF
+	sChrM16y6gNkLCqw==
+X-Google-Smtp-Source: AGHT+IEc2Z9yh5Xo4qu7XSr+O293iGaa2p4oGxQBjn1/Zv3QlzQilSw5ukGaWfDe5r0j6EsTMEOZxQ==
+X-Received: by 2002:a05:6000:1ac9:b0:3e2:b2f0:6e57 with SMTP id ffacd0b85a97d-3ee83da0688mr2182377f8f.36.1758274237120;
+        Fri, 19 Sep 2025 02:30:37 -0700 (PDT)
+Received: from localhost (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee0fbc7284sm7083373f8f.33.2025.09.19.02.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 02:30:35 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] firmware: tegra: Fixes for v6.17
+Date: Fri, 19 Sep 2025 11:30:33 +0200
+Message-ID: <20250919093034.2747884-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.50.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-10-clamor95@gmail.com>
- <4792993.1IzOArtZ34@senjougahara> <CAPVz0n2BpSeZkoT1YV9q5bkOCkjSvOwAXNVGgM4wPUqV3jyxgg@mail.gmail.com>
-In-Reply-To: <CAPVz0n2BpSeZkoT1YV9q5bkOCkjSvOwAXNVGgM4wPUqV3jyxgg@mail.gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 19 Sep 2025 11:56:14 +0300
-X-Gm-Features: AS18NWBH4VHm807-uapHCiTJGO5ngwX3Ep54IEurA9hHeb7dua-mj3pRKJUHO0c
-Message-ID: <CAPVz0n1XBAXj=x0jJNbKURUY3NJEyS3dFONsFeXaUzbx9W0y_g@mail.gmail.com>
-Subject: Re: [PATCH v2 09/23] gpu: host1x: convert MIPI to use operations
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-=D0=BF=D1=82, 19 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:58 Svya=
-toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> =D0=BF=D1=82, 19 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:47 Mi=
-kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > This commit converts the existing MIPI code to use operations, which =
-is a
-> > > necessary step for the Tegra20/Tegra30 SoCs. Additionally, it creates=
- a
-> > > dedicated header file, tegra-mipi-cal.h, to contain the MIPI calibrat=
-ion
-> > > functions, improving code organization and readability.
-> >
-> > I'd write out "operation function pointers", at least the first time. J=
-ust "operations" isn't clear to me.
-> >
-> > Please write the commit message in imperative mood (like you've done in=
- other patches).
-> >
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/tegra/dsi.c             |   1 +
-> > >  drivers/gpu/host1x/mipi.c               |  40 +++------
-> > >  drivers/staging/media/tegra-video/csi.c |   1 +
-> > >  include/linux/host1x.h                  |  10 ---
-> > >  include/linux/tegra-mipi-cal.h          | 111 ++++++++++++++++++++++=
-++
-> > >  5 files changed, 126 insertions(+), 37 deletions(-)
-> > >  create mode 100644 include/linux/tegra-mipi-cal.h
-> > >
-> > > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.=
-c
-> > > index 64f12a85a9dd..278bf2c85524 100644
-> > > --- a/drivers/gpu/drm/tegra/dsi.c
-> > > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > > @@ -14,6 +14,7 @@
-> > >  #include <linux/pm_runtime.h>
-> > >  #include <linux/regulator/consumer.h>
-> > >  #include <linux/reset.h>
-> > > +#include <linux/tegra-mipi-cal.h>
-> > >
-> > >  #include <video/mipi_display.h>
-> > >
-> > > diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-> > > index e51b43dd15a3..2fa339a428f3 100644
-> > > --- a/drivers/gpu/host1x/mipi.c
-> > > +++ b/drivers/gpu/host1x/mipi.c
-> > > @@ -27,6 +27,7 @@
-> > >  #include <linux/of_platform.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/slab.h>
-> > > +#include <linux/tegra-mipi-cal.h>
-> > >
-> > >  #include "dev.h"
-> > >
-> > > @@ -116,23 +117,6 @@ struct tegra_mipi_soc {
-> > >       u8 hsclkpuos;
-> > >  };
-> > >
-> > > -struct tegra_mipi {
-> > > -     const struct tegra_mipi_soc *soc;
-> > > -     struct device *dev;
-> > > -     void __iomem *regs;
-> > > -     struct mutex lock;
-> > > -     struct clk *clk;
-> > > -
-> > > -     unsigned long usage_count;
-> > > -};
-> > > -
-> > > -struct tegra_mipi_device {
-> > > -     struct platform_device *pdev;
-> > > -     struct tegra_mipi *mipi;
-> > > -     struct device *device;
-> > > -     unsigned long pads;
-> > > -};
-> > > -
-> > >  static inline u32 tegra_mipi_readl(struct tegra_mipi *mipi,
-> > >                                  unsigned long offset)
-> > >  {
-> > > @@ -261,7 +245,7 @@ void tegra_mipi_free(struct tegra_mipi_device *de=
-vice)
-> > >  }
-> > >  EXPORT_SYMBOL(tegra_mipi_free);
-> > >
-> > > -int tegra_mipi_enable(struct tegra_mipi_device *dev)
-> > > +static int tegra114_mipi_enable(struct tegra_mipi_device *dev)
-> > >  {
-> > >       int err =3D 0;
-> > >
-> > > @@ -273,11 +257,9 @@ int tegra_mipi_enable(struct tegra_mipi_device *=
-dev)
-> > >       mutex_unlock(&dev->mipi->lock);
-> > >
-> > >       return err;
-> > > -
-> > >  }
-> > > -EXPORT_SYMBOL(tegra_mipi_enable);
-> > >
-> > > -int tegra_mipi_disable(struct tegra_mipi_device *dev)
-> > > +static int tegra114_mipi_disable(struct tegra_mipi_device *dev)
-> > >  {
-> > >       int err =3D 0;
-> > >
-> > > @@ -289,11 +271,9 @@ int tegra_mipi_disable(struct tegra_mipi_device =
-*dev)
-> > >       mutex_unlock(&dev->mipi->lock);
-> > >
-> > >       return err;
-> > > -
-> > >  }
-> > > -EXPORT_SYMBOL(tegra_mipi_disable);
-> > >
-> > > -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device)
-> > > +static int tegra114_mipi_finish_calibration(struct tegra_mipi_device=
- *device)
-> > >  {
-> > >       struct tegra_mipi *mipi =3D device->mipi;
-> > >       void __iomem *status_reg =3D mipi->regs + (MIPI_CAL_STATUS << 2=
-);
-> > > @@ -309,9 +289,8 @@ int tegra_mipi_finish_calibration(struct tegra_mi=
-pi_device *device)
-> > >
-> > >       return err;
-> > >  }
-> > > -EXPORT_SYMBOL(tegra_mipi_finish_calibration);
-> > >
-> > > -int tegra_mipi_start_calibration(struct tegra_mipi_device *device)
-> > > +static int tegra114_mipi_start_calibration(struct tegra_mipi_device =
-*device)
-> > >  {
-> > >       const struct tegra_mipi_soc *soc =3D device->mipi->soc;
-> > >       unsigned int i;
-> > > @@ -384,7 +363,13 @@ int tegra_mipi_start_calibration(struct tegra_mi=
-pi_device *device)
-> > >
-> > >       return 0;
-> > >  }
-> > > -EXPORT_SYMBOL(tegra_mipi_start_calibration);
-> > > +
-> > > +static const struct tegra_mipi_ops tegra114_mipi_ops =3D {
-> > > +     .tegra_mipi_enable =3D tegra114_mipi_enable,
-> > > +     .tegra_mipi_disable =3D tegra114_mipi_disable,
-> > > +     .tegra_mipi_start_calibration =3D tegra114_mipi_start_calibrati=
-on,
-> > > +     .tegra_mipi_finish_calibration =3D tegra114_mipi_finish_calibra=
-tion,
-> > > +};
-> > >
-> > >  static const struct tegra_mipi_pad tegra114_mipi_pads[] =3D {
-> > >       { .data =3D MIPI_CAL_CONFIG_CSIA },
-> > > @@ -512,6 +497,7 @@ static int tegra_mipi_probe(struct platform_devic=
-e *pdev)
-> > >
-> > >       mipi->soc =3D match->data;
-> > >       mipi->dev =3D &pdev->dev;
-> > > +     mipi->ops =3D &tegra114_mipi_ops;
-> > >
-> > >       mipi->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, =
-NULL);
-> > >       if (IS_ERR(mipi->regs))
-> > > diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/stagin=
-g/media/tegra-video/csi.c
-> > > index 74c92db1032f..9e3bd6109781 100644
-> > > --- a/drivers/staging/media/tegra-video/csi.c
-> > > +++ b/drivers/staging/media/tegra-video/csi.c
-> > > @@ -12,6 +12,7 @@
-> > >  #include <linux/of_graph.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_runtime.h>
-> > > +#include <linux/tegra-mipi-cal.h>
-> > >
-> > >  #include <media/v4l2-fwnode.h>
-> > >
-> > > diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> > > index 9fa9c30a34e6..b1c6514859d3 100644
-> > > --- a/include/linux/host1x.h
-> > > +++ b/include/linux/host1x.h
-> > > @@ -453,16 +453,6 @@ void host1x_client_unregister(struct host1x_clie=
-nt *client);
-> > >  int host1x_client_suspend(struct host1x_client *client);
-> > >  int host1x_client_resume(struct host1x_client *client);
-> > >
-> > > -struct tegra_mipi_device;
-> > > -
-> > > -struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> > > -                                          struct device_node *np);
-> > > -void tegra_mipi_free(struct tegra_mipi_device *device);
-> > > -int tegra_mipi_enable(struct tegra_mipi_device *device);
-> > > -int tegra_mipi_disable(struct tegra_mipi_device *device);
-> > > -int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
-> > > -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
-> > > -
-> > >  /* host1x memory contexts */
-> > >
-> > >  struct host1x_memory_context {
-> > > diff --git a/include/linux/tegra-mipi-cal.h b/include/linux/tegra-mip=
-i-cal.h
-> > > new file mode 100644
-> > > index 000000000000..2bfdbfd3cb77
-> > > --- /dev/null
-> > > +++ b/include/linux/tegra-mipi-cal.h
-> > > @@ -0,0 +1,111 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +
-> > > +#ifndef __TEGRA_MIPI_CAL_H_
-> > > +#define __TEGRA_MIPI_CAL_H_
-> > > +
-> > > +struct tegra_mipi {
-> > > +     const struct tegra_mipi_soc *soc;
-> > > +     const struct tegra_mipi_ops *ops;
-> > > +     struct device *dev;
-> > > +     void __iomem *regs;
-> > > +     struct mutex lock;
-> > > +     struct clk *clk;
-> > > +
-> > > +     unsigned long usage_count;
-> > > +};
-> > > +
-> > > +struct tegra_mipi_device {
-> > > +     struct platform_device *pdev;
-> > > +     struct tegra_mipi *mipi;
-> > > +     struct device *device;
-> > > +     unsigned long pads;
-> > > +};
-> >
-> > We should avoid putting implementation details / chip-specific things i=
-n the public header. Here's a sketch of what I'm thinking about:
-> >
-> > --- tegra-mipi-cal.h:
-> >
-> > struct tegra_mipi_device;
-> >
-> > struct tegra_mipi_ops {
-> >         // ...
-> > };
-> >
-> > int tegra_mipi_add_provider(struct device_node *np, struct tegra_mipi_o=
-ps *ops);
-> >
-> > int tegra_mipi_enable(...);
-> > // ...
-> >
-> > --- host1x/mipi.c:
-> >
-> > // move tegra114-mipi specific stuff to a new file, e.g. host1x/tegra11=
-4-mipi.c
-> >
-> > struct tegra_mipi_device {
-> >         struct tegra_mipi_ops *ops;
-> >         struct platform_device *pdev;
-> > };
-> >
-> > /* only need to support one provider */
-> > static struct {
-> >         struct device_node *np;
-> >         struct tegra_mipi_ops *ops;
-> > } provider;
-> >
-> > int tegra_mipi_add_provider(struct device_node *np, struct tegra_mipi_o=
-ps *ops)
-> > {
-> >         if (provider.np)
-> >                 return -EBUSY;
-> >
-> >         provider.np =3D np;
-> >         provider.ops =3D ops;
-> >
-> >         return 0;
-> > }
-> >
-> > struct tegra_mipi_device *tegra_mipi_request(struct *device, struct dev=
-ice_node *np)
-> > {
-> >         struct device_node *phandle_np =3D /* ... */;
-> >         struct platform_device *pdev;
-> >         struct tegra_mipi_device *mipidev;
-> >
-> >         if (provider.np !=3D phandle_np)
-> >                 return -ENODEV;
-> >
-> >         pdev =3D /* ... */;
-> >
-> >         mipidev =3D kzalloc(...);
-> >         mipidev->ops =3D provider.ops;
-> >         mipidev->pdev =3D pdev;
-> >         mipidev->cells =3D phandle_cells;
-> >
-> >         return mipidev;
-> > }
-> >
-> > int tegra_mipi_enable(struct tegra_mipi_device *device)
-> > {
-> >         return device->ops->enable(platform_get_drvdata(device->pdev), =
-device->cells);
-> > }
-> >
-> > > +
-> > > +/**
-> > > + * Operations for Tegra MIPI calibration device
-> > > + */
-> > > +struct tegra_mipi_ops {
-> > > +     /**
-> > > +      * @tegra_mipi_enable:
-> > > +      *
-> > > +      * Enable MIPI calibration device
-> > > +      */
-> > > +     int (*tegra_mipi_enable)(struct tegra_mipi_device *device);
-> >
-> > The tegra_mipi_ prefix should be dropped for the field names.
-> >
-> > > +
-> > > +     /**
-> > > +      * @tegra_mipi_disable:
-> > > +      *
-> > > +      * Disable MIPI calibration device
-> > > +      */
-> > > +     int (*tegra_mipi_disable)(struct tegra_mipi_device *device);
-> > > +
-> > > +     /**
-> > > +      * @tegra_mipi_start_calibration:
-> > > +      *
-> > > +      * Start MIPI calibration
-> > > +      */
-> > > +     int (*tegra_mipi_start_calibration)(struct tegra_mipi_device *d=
-evice);
-> > > +
-> > > +     /**
-> > > +      * @tegra_mipi_finish_calibration:
-> > > +      *
-> > > +      * Finish MIPI calibration
-> > > +      */
-> > > +     int (*tegra_mipi_finish_calibration)(struct tegra_mipi_device *=
-device);
-> > > +};
-> > > +
-> > > +struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> > > +                                          struct device_node *np);
-> > > +
-> > > +void tegra_mipi_free(struct tegra_mipi_device *device);
-> > > +
-> > > +static inline int tegra_mipi_enable(struct tegra_mipi_device *device=
-)
-> > > +{
-> > > +     /* Tegra114+ has a dedicated MIPI calibration block */
-> > > +     if (device->mipi) {
-> > > +             if (!device->mipi->ops->tegra_mipi_enable)
-> > > +                     return 0;
-> > > +
-> > > +             return device->mipi->ops->tegra_mipi_enable(device);
-> > > +     }
-> > > +
-> > > +     return -ENOSYS;
-> > > +}
-> > > +
-> > > +static inline int tegra_mipi_disable(struct tegra_mipi_device *devic=
-e)
-> > > +{
-> > > +     if (device->mipi) {
-> > > +             if (!device->mipi->ops->tegra_mipi_disable)
-> > > +                     return 0;
-> > > +
-> > > +             return device->mipi->ops->tegra_mipi_disable(device);
-> > > +     }
-> > > +
-> > > +     return -ENOSYS;
-> > > +}
-> > > +
-> > > +static inline int tegra_mipi_start_calibration(struct tegra_mipi_dev=
-ice *device)
-> > > +{
-> > > +     if (device->mipi) {
-> > > +             if (!device->mipi->ops->tegra_mipi_start_calibration)
-> > > +                     return 0;
-> > > +
-> > > +             return device->mipi->ops->tegra_mipi_start_calibration(=
-device);
-> > > +     }
-> > > +
-> > > +     return -ENOSYS;
-> > > +}
-> > > +
-> > > +static inline int tegra_mipi_finish_calibration(struct tegra_mipi_de=
-vice *device)
-> > > +{
-> > > +     if (device->mipi) {
-> > > +             if (!device->mipi->ops->tegra_mipi_finish_calibration)
-> > > +                     return 0;
-> > > +
-> > > +             return device->mipi->ops->tegra_mipi_finish_calibration=
-(device);
-> > > +     }
-> > > +
-> > > +     return -ENOSYS;
-> > > +}
-> > > +
-> > > +#endif /* __TEGRA_MIPI_CAL_H_ */
-> > >
-> >
->
-> All this is good, but how to include into this CSI? Adding support for
-> CSI is why I am even touching this at the first place.
+Hi ARM SoC maintainers,
 
-Nevermind, I have figured it all out.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.17-firmware-fixes
+
+for you to fetch changes up to 6131690df4adae33e01c0b51b9b78b3e8ed3b76f:
+
+  firmware: tegra: Do not warn on missing memory-region property (2025-09-15 18:28:09 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+firmware: tegra: Fixes for v6.17
+
+This contains a simple patch to avoid a warning in the case where the
+optional memory-region property is missing.
+
+----------------------------------------------------------------
+Thierry Reding (1):
+      firmware: tegra: Do not warn on missing memory-region property
+
+ drivers/firmware/tegra/bpmp-tegra186.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
