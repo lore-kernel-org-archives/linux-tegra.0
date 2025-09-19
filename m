@@ -1,45 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE60530F524;
-	Fri, 19 Sep 2025 12:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F5F1B21BD;
+	Fri, 19 Sep 2025 13:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758283777; cv=none; b=pZQrC1Zh96y9e2uZD3PBAV30xdcw6aPr3avLEqoKnX+HS6DNI1eRl/bIAah8rLbZnPMpBmFtpnrVw5ZdpRG3oqjPo9QTrHuNIR0G0ZCuh+SgRbry9eyLmuORIe/axX4YaqlFeNzEE3RmFoXVOvBFH2zTxJQ4lwzJl+jaujC3aig=
+	t=1758287817; cv=none; b=UHQxv+IikDyOEaqQrjLHfW+7gsaoT0Fro/J1nm5V4blp/XWTy6jp6ZGZFkcSzfjnvY2eVyKraerqmkbr8CglPbxuxVE5Wu/TThvM0LLQchfhnR4skKjNyIOFvQyfAbr6BXIH2wyxr5Y5ExcuVU0qqTnqRv4SB8lAAeyIzV2iM24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758283777; c=relaxed/simple;
-	bh=nE7CjEN93m/oNEp01yjvabEyJ+B5r4NoAiMXwlhLc/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MLldyqOSXUkmSrki7nRiFxeRNeN8HWVBBZasPwWjsKFzVWjTKGhWBhZ7uEd4pJ/8lpbxmZ35tEpuDIIKi8hQl4KPT5yFVpoHUat599mBSlDtgUzXvG/5asNu04gOzz6N/IqXYwKj6iFAVG4FT3dJefWSel1dLCCB1z4DzOZTRHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Me5hewL/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758287817; c=relaxed/simple;
+	bh=/eFfU0hGF05pJwVzBmAFJn19mo9Ahj7F3snFSc4GoGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9fQHSlzOfWoAFTkmkL0Wlud455lGEEpIa4/IESvNyZ0zZJtzQWyVRkaGo66MDaGYA/a9hcxWUO2DR/9hfHdZXxrEW2fdSCg9jQCVR+y6mLcc3qi6mBlrcrDWmhv8JAEe+yD71pxNh9A9qmog+LVzPaTku+O2kdzUBWRe43Ivwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kh2VgatM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Me5hewL/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 819F9C4CEF5;
-	Fri, 19 Sep 2025 12:09:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh2VgatM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5261DC4CEF1;
+	Fri, 19 Sep 2025 13:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758283776;
-	bh=nE7CjEN93m/oNEp01yjvabEyJ+B5r4NoAiMXwlhLc/8=;
+	s=k20201202; t=1758287817;
+	bh=/eFfU0hGF05pJwVzBmAFJn19mo9Ahj7F3snFSc4GoGY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Me5hewL/k3EeKjVQYOUuogz2PZblV4MmAzBgaBDxLfYkF5HY0dmPs3MKpUSzl/B/9
-	 Kw/vwxr2qXCXDHZj+bn0ToK1jsBzugmXv47ADfz9aZbxDXzarCpBOl2oJsQlfULEHt
-	 KgJxkrFkp+iiV8e7za/5AstpS0DGp7E81a6MOH2RpfW3WP+3ZHQONcGq/4lM7Yvfa6
-	 Zi3RfixcJCE4a+csZfZKyJUCvosY4HrviUEjCtwnfLSIKtE/e/5KNmcpJhhx6He1LS
-	 8RYPOlYYJJhubdkoSDhFGwBsLcF+jmDhLmy/GyNUTJNN/w3WYD9r6C1oKgo9aLxx4l
-	 dpCngTsdKg1zQ==
+	b=kh2VgatMzWfOelfU2ZMCvt98U4+EHk3aSAViqAknGtfmeRT0URRNu9lgklvKlSqcO
+	 3ZwISDxedTOEKYdkJ5t5RtkMsMeI28fbHfvfEjcy7pTvkRecEUO4jeBdS26juaHlFH
+	 /I/3/sYVUCdyUpsEO6EWGaZL+o2I1oey7SY6TRZbRUiYz2v6lf/2swytaefi0Tm4d7
+	 NE4JAOKEhRdhV1/T1sLri16MNy17f5emoIQzud/Gb8a06vSFRnSoL8Zd0vS4kNQlis
+	 2ZZxmpo9zTQ+l6eDZVHYGz1WYkMQEgQjYCIU81wN8kw85FMltu3M5QWWLP6pKxxvuN
+	 E3jcdp1Gdzvtw==
 From: Niklas Cassel <cassel@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>
 Cc: Vidya Sagar <vidyas@nvidia.com>,
 	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Gautham Srinivasan <gauthams@nvidia.com>,
 	Niklas Cassel <cassel@kernel.org>,
-	devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v2] arm64: tegra: Add pinctrl definition for PCIe C4 EP
-Date: Fri, 19 Sep 2025 14:09:21 +0200
-Message-ID: <20250919120920.158497-2-cassel@kernel.org>
+Subject: [PATCH] PCI: tegra194: Reset BARs when running in PCIe endpoint mode
+Date: Fri, 19 Sep 2025 15:16:47 +0200
+Message-ID: <20250919131646.167330-2-cassel@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -47,67 +48,67 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2153; i=cassel@kernel.org; h=from:subject; bh=b7UFFXM/Z0jGgN9vk/3tLaIbV3dnpxJW0BAe/naqpWw=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDLOun+YHtP49O2RFMc9EdMOvArIzly7uX9jyt17f1i2+ P35zq54p6OUhUGMi0FWTJHF94fL/uJu9ynHFe/YwMxhZQIZwsDFKQATmf+SkeFmzzPBjYtrz1++ 6lCxw/+503Obz2x/dkoEaU398tq4eVI4I0PbxMfXDrt7hD6+kXqq7+uKPK68xXwWxza5brBnu7H n0jxeAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2228; i=cassel@kernel.org; h=from:subject; bh=/eFfU0hGF05pJwVzBmAFJn19mo9Ahj7F3snFSc4GoGY=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDLOhu9rb4nV3L7cqqTjpFz+CjN1Lg6bR+Vb3pjnzHGae VflSn9ERykLgxgXg6yYIovvD5f9xd3uU44r3rGBmcPKBDKEgYtTACYyfT/DH/7LCoHX1x1xcVpw IvW8TPTtOMvfcccyZGY+S+Apnbt4dzHDP63HtVPPdR11bTnHf0tC5/zD+FWma9a9siqcwCS3zJf FgQ8A
 X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
 Content-Transfer-Encoding: 8bit
 
-From: Gautham Srinivasan <gauthams@nvidia.com>
+Tegra already defines all BARs expect for BAR0 as BAR_RESERVED.
+This is sufficient for pci-epf-test to not allocate backing memory and to
+not call set_bar() for those BARs.
 
-Commit 0580286d0d22 ("arm64: tegra: Add Tegra234 PCIe C4 EP definition")
-added the device tree entry "pcie-ep@14160000" for C4 endpoint. However,
-it missed pinctrl definition. Without the pinctl definition, the C4
-endpoint of Jetson Orin Nano does not work. Add the missing definition.
+However, the host side driver, pci_endpoint_test, simply does an ioremap
+for all enabled BARs, and will run tests against all enabled BARs.
 
-Signed-off-by: Gautham Srinivasan <gauthams@nvidia.com>
-[cassel: Add to the existing nodes instead of creating new ones.
-Remove non-existing nvidia,lpdr property. Rename node to match dtschema.]
+After running the BARs tests (which will write to all enabled BARs), the
+inbound address translation is broken.
+This is because the tegra controller exposes the ATU Port Logic Structure
+in BAR4. So when BAR4 is written, the inbound address translation settings
+get overwritten.
+
+To avoid this, implement the dw_pcie_ep_ops .init() callback and start off
+by disabling all BARs (pci-epf-test will later enable/configure BARs that
+are not defined as BAR_RESERVED).
+
+This matches the behavior of other PCIe endpoint drivers:
+dra7xx, imx6, layerscape-ep, artpec6, dw-rockchip, qcom-ep, rcar-gen4, and
+uniphier-ep.
+
+With this, the PCI endpoint kselftest test case CONSECUTIVE_BAR_TEST
+(which was specifically made to detect address translation issues) passes.
+
 Signed-off-by: Niklas Cassel <cassel@kernel.org>
 ---
-Changes since v1:
--Remove non-existing nvidia,lpdr pinmux property.
--Rename pex_rst_c4_in to pinmux-pex-rst-c4-in to match dtschema requirement.
+ drivers/pci/controller/dwc/pcie-tegra194.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index df034dbb82853..2df89ad9ffdd0 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/power/tegra234-powergate.h>
- #include <dt-bindings/reset/tegra234-reset.h>
- #include <dt-bindings/thermal/tegra234-bpmp-thermal.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra.h>
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4f26086f25daf..9488805ecf608 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1941,6 +1941,15 @@ static irqreturn_t tegra_pcie_ep_pex_rst_irq(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
  
- / {
- 	compatible = "nvidia,tegra234";
-@@ -127,6 +128,16 @@ gpio: gpio@2200000 {
- 		pinmux: pinmux@2430000 {
- 			compatible = "nvidia,tegra234-pinmux";
- 			reg = <0x0 0x2430000 0x0 0x19100>;
++static void tegra_pcie_ep_init(struct dw_pcie_ep *ep)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	enum pci_barno bar;
 +
-+			pex_rst_c4_in_state: pinmux-pex-rst-c4-in {
-+				pex_rst {
-+					nvidia,pins = "pex_l4_rst_n_pl1";
-+					nvidia,function = "rsvd1";
-+					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+					nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				};
-+			};
- 		};
++	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
++		dw_pcie_ep_reset_bar(pci, bar);
++};
++
+ static int tegra_pcie_ep_raise_intx_irq(struct tegra_pcie_dw *pcie, u16 irq)
+ {
+ 	/* Tegra194 supports only INTA */
+@@ -2017,6 +2026,7 @@ tegra_pcie_ep_get_features(struct dw_pcie_ep *ep)
+ }
  
- 		gpcdma: dma-controller@2600000 {
-@@ -4881,6 +4892,8 @@ pcie-ep@14160000 {
- 			       <&bpmp TEGRA234_RESET_PEX0_CORE_4>;
- 			reset-names = "apb", "core";
- 
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pex_rst_c4_in_state>;
- 			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;  /* controller interrupt */
- 			interrupt-names = "intr";
- 			nvidia,bpmp = <&bpmp 4>;
+ static const struct dw_pcie_ep_ops pcie_ep_ops = {
++	.init = tegra_pcie_ep_init,
+ 	.raise_irq = tegra_pcie_ep_raise_irq,
+ 	.get_features = tegra_pcie_ep_get_features,
+ };
 -- 
 2.51.0
 
