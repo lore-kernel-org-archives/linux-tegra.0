@@ -1,116 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352D123BCF3;
-	Fri, 19 Sep 2025 17:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA4C3164D0;
+	Fri, 19 Sep 2025 17:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758301407; cv=none; b=d4c/HBpkbXHu6jfwf04v1+SXMoY5mRg/1G9F0lJ46lo+xX9j/VtFX/ysEzf0a/rPdvypoObVKTSULbANYa/lSI5BHmmER2GgdE0WDsrkIAnYdJMETyOdO8fZsljCIPDKYkNd069ssxwqIFDGuqCMOzsAjoPGTcw2jMp9dFEnjy8=
+	t=1758302055; cv=none; b=np8zEbzoZWUeDBE76ifImX7HhTYz/JAtRjxXhuxqTb+9rqheYOsZ5pG9wrpXZiH1YoU23kGZd9VKuuQKec/tGCbi83hBefaRpocGGLd2HrcYo+7OELrlyblydXql3BPaRp7Lwg4k8CWtB7HOtg41BWiveu3BBXgZzGuTZM4wsdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758301407; c=relaxed/simple;
-	bh=XonsKYVNSdFYHakbEe/LhsEfPPCqo2ymfS/gOBOQ3ZY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LpuRdjiK4hoD7wVQ5H5rZata+idSEKD28EcuCcT9lTgJaR41QSVj2qQRRqg0Nt7ngo7tsaPNy/5oU6gmRWPJ5g28FpAB4AP08mtutW7gQr8IZ0hnCt1gdHWbmc9Wo/DIEiGy8TzMHc0rZO1j9yN/jaLfUybpo8tTJaHB91wmIxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZ0mR3po; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758302055; c=relaxed/simple;
+	bh=c0gay8liZZpMxu1wbo/3pb8Be4pbY2davSvmv8BnEJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFyldCesqVDM5uY+elyBTvffFHKo/X4gVE5+qFV3VyVZciPkCaRHWzvyBjPfE3DYVIsoqG+g7/7UnbJDklezlnCsG0Q3dra5I5Lje/KiHaon0BSYNZAVrfFNZCBiNolSI4clBwDWjtN0WZcs5xev7p8wUKTbJwDZ9esTRsVW3as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJXDwZan; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZ0mR3po"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66448C4CEF0;
-	Fri, 19 Sep 2025 17:03:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJXDwZan"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C52AC4CEF0;
+	Fri, 19 Sep 2025 17:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758301406;
-	bh=XonsKYVNSdFYHakbEe/LhsEfPPCqo2ymfS/gOBOQ3ZY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=rZ0mR3poa4/HeyiSP/hLHouk1dz6EpDPOIy6nd/gEzyYNrB+ZOjkF8I5BTJk9vFVO
-	 foZQsgKvISkJsbzGxpk2PtYlIlo1fmGUj0shQC5+f1YAXEXw+mvaA1NglDfxUEFIja
-	 12stfNaqaNwK9+qmQYez2CE8Dii1HTyQET3psYoOuj1GPNgCt1VJFg3dsPhimxpNPS
-	 3rdr3xBTH1FQtxZsF7KrwN7ll+5MUBgEK3V+yvZY1GhRbvNJUmfWkCWGA3ee07WCWv
-	 eN32ORC9qaxBSfuZxnp0pV39m3qYXvxLlVpDW+WdNY3cOh/MS1O/Z0kE79xxjp81j+
-	 PWbxOhRhcMW5A==
-Date: Fri, 19 Sep 2025 12:03:25 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1758302054;
+	bh=c0gay8liZZpMxu1wbo/3pb8Be4pbY2davSvmv8BnEJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJXDwZanWpXWP5Do08/3QVhVXL89GUZA1HPkV51OYg377z0Fe/444cGrHCuTR10ps
+	 636xFSIKiAgDkhPcrOHt4v0y8xhioVCW3f0tX9YKs9B1N1eXJlK9HUeqoGmrIvJeI4
+	 HujOfz5pAJXJoHujLadevvUFi0MpMNtOTaYiozH/FBMyhbIySWZYClQRhGFvtOS5YN
+	 ZTMXIGjIKRjQjJftN2dCsvpwSsrMIjx76x5SlR95ooFUDC77sYxatB0vdG3qmEY9zJ
+	 fiVREZvmXEBpZeXcFVd+wHrI6W+p37119nsB27BZd7fl8MadCEG/WqqpaTzwx5i8UW
+	 vZau7bct/kD1A==
+Date: Fri, 19 Sep 2025 18:14:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, Prathamesh Shete <pshete@nvidia.com>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Tegra410 support
+Message-ID: <20250919-undusted-distrust-ff5e2f25cdd5@spud>
+References: <20250919093627.605059-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rtc@vger.kernel.org, Will Deacon <will@kernel.org>, 
- linux-tegra@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Lee Jones <lee@kernel.org>
-To: Shubhi Garg <shgarg@nvidia.com>
-In-Reply-To: <20250919140217.10531-1-shgarg@nvidia.com>
-References: <20250919140217.10531-1-shgarg@nvidia.com>
-Message-Id: <175830104426.1375460.11123738770317069175.robh@kernel.org>
-Subject: Re: [PATCH v6 2/4] arm64: tegra: Add device-tree node for NVVRS
- RTC
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kGXcB5rXmwo+NFQF"
+Content-Disposition: inline
+In-Reply-To: <20250919093627.605059-1-kkartik@nvidia.com>
 
 
-On Fri, 19 Sep 2025 14:02:17 +0000, Shubhi Garg wrote:
-> Add NVIDIA VRS (Voltage Regulator Specification) RTC device tree node for
-> Tegra234 P3701 and P3767 platforms. Assign VRS RTC as primary RTC (rtc0).
-> 
-> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
+--kGXcB5rXmwo+NFQF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 19, 2025 at 03:06:26PM +0530, Kartik Rajput wrote:
+> From: Prathamesh Shete <pshete@nvidia.com>
+>=20
+> Add the port definitions for the main GPIO controller found on
+> Tegra410.
+>=20
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 > ---
-> 
-> v6:
-> - compatible name fixes to "nvidia,vrs-10"
-> - changed dtb node name to pmic@3c
-> 
-> v5:
-> - changed dtb node name to rtc@3c
-> 
-> v4:
-> - fixed device tree node name to "pmic@3c" in aliases
-> 
-> v3:
-> - fixed device tree node name to generic "pmic@3c"
-> 
-> v2:
-> - added alias to assign VRS RTC to rtc0
-> - removed status node from VRS DTB node
-> 
->  arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi | 11 +++++++++++
->  arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi | 15 +++++++++++++++
->  2 files changed, 26 insertions(+)
-> 
 
+Why are you modifying a binding header for devicetree when the driver
+only appear to grow acpi support?
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+>  include/dt-bindings/gpio/tegra410-gpio.h | 37 ++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 include/dt-bindings/gpio/tegra410-gpio.h
+>=20
+> diff --git a/include/dt-bindings/gpio/tegra410-gpio.h b/include/dt-bindin=
+gs/gpio/tegra410-gpio.h
+> new file mode 100644
+> index 000000000000..e4d042fbacb2
+> --- /dev/null
+> +++ b/include/dt-bindings/gpio/tegra410-gpio.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved. */
+> +
+> +/*
+> + * This header provides constants for the nvidia,tegra410-gpio DT bindin=
+g.
+> + *
+> + * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros b=
+elow
+> + * provide names for this.
+> + *
+> + * The second cell contains standard flag values specified in gpio.h.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_GPIO_TEGRA410_GPIO_H
+> +#define _DT_BINDINGS_GPIO_TEGRA410_GPIO_H
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +
+> +/* GPIOs implemented by main GPIO controller */
+> +#define TEGRA410_MAIN_GPIO_PORT_A	0
+> +#define TEGRA410_MAIN_GPIO_PORT_B	1
+> +#define TEGRA410_MAIN_GPIO_PORT_C	2
+> +#define TEGRA410_MAIN_GPIO_PORT_D	3
+> +#define TEGRA410_MAIN_GPIO_PORT_E	4
+> +#define TEGRA410_MAIN_GPIO_PORT_I	5
+> +#define TEGRA410_MAIN_GPIO_PORT_J	6
+> +#define TEGRA410_MAIN_GPIO_PORT_K	7
+> +#define TEGRA410_MAIN_GPIO_PORT_L	8
+> +#define TEGRA410_MAIN_GPIO_PORT_M	9
+> +#define TEGRA410_MAIN_GPIO_PORT_N	10
+> +#define TEGRA410_MAIN_GPIO_PORT_P	11
+> +#define TEGRA410_MAIN_GPIO_PORT_Q	12
+> +#define TEGRA410_MAIN_GPIO_PORT_R	13
+> +
+> +#define TEGRA410_MAIN_GPIO(port, offset) \
+> +	((TEGRA410_MAIN_GPIO_PORT_##port * 8) + (offset))
+> +
+> +#endif
+> --=20
+> 2.43.0
+>=20
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+--kGXcB5rXmwo+NFQF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+-----BEGIN PGP SIGNATURE-----
 
-  pip3 install dtschema --upgrade
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaM2PYQAKCRB4tDGHoIJi
+0trLAP9bcGoUEpo7TdiJs3G3/B2yydrsGsY4grCq2LDCik57HQD/dNmzzLduEroE
+XE97oc5867oQXWzTv5RrnFMADaPRVQs=
+=e47o
+-----END PGP SIGNATURE-----
 
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250919 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250919140217.10531-1-shgarg@nvidia.com:
-
-arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dtb: /bpmp/i2c/pmic@3c: failed to match any schema with compatible: ['nvidia,vrs-10']
-arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0008.dtb: /bpmp/i2c/pmic@3c: failed to match any schema with compatible: ['nvidia,vrs-10']
-arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dtb: /bpmp/i2c/pmic@3c: failed to match any schema with compatible: ['nvidia,vrs-10']
-arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dtb: /bpmp/i2c/pmic@3c: failed to match any schema with compatible: ['nvidia,vrs-10']
-arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb: /bpmp/i2c/pmic@3c: failed to match any schema with compatible: ['nvidia,vrs-10']
-
-
-
-
-
+--kGXcB5rXmwo+NFQF--
