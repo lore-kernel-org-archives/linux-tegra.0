@@ -1,387 +1,331 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011005.outbound.protection.outlook.com [40.107.208.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EB225CC40
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 17:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758302472; cv=none; b=ixdWNB6tLLtxQsm+93tz/Sb3stP/zNltWCdslLaWLdSWmyaoXpN0vCLSKfzggJ0srw3+8oiCq00PaFgN7u9WfYY7WEq8jtWYwMiwdR3n/XAZd8emfAp8cHzc1H2O4yA+cgtT9AdSOt87tubDfduSdDET9mNJqjeGDHZqXtw4/2o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758302472; c=relaxed/simple;
-	bh=BnykSKnbxL/JbVG4C2eSeMxrGBCa+WojSF98CVVbJBU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oualkSJhFCs1uPLwZhfl/Mw07B+uoN1OwY+J+xpCSvOKsSMZa0Mua5gl6f3rbcdc4WWe4FBy0Odj5SWe/ptWionjsoyw56CC/HO8Sgw4YstGme/9FHZFEkmL2squ6AwqQM8fekLZWQgIe6hs8Xr1MH8Rd3MdYK4oVyOJa7KOm/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NwscmKcX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB292D374D;
+	Fri, 19 Sep 2025 22:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758322092; cv=fail; b=avN/8MYWh73S8qw5EKkznV9/aoBMWnTjAW+d1lzkPHk8+e0Olq3y5N7y/mQOu3r39xACrpUUhxdx2FdCFaEKd1/L3vQGwFIYfIS2B0hVOnLcnATGL2MjMF/xHeIxDXsqQz9VijYXA5cU/4RZTFAwrLdym/qltW2GKpaZiY4mGo8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758322092; c=relaxed/simple;
+	bh=z0rg/nNHqd1A2hJOGUuYi0fSmeZ9TUTYKbS6FNtzzLs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=itEK4wF0U3Wb2i5d9uL3IQneGpuAc8hLa0iupzraHgveE+YRwgAIk1fF29cPPgqhv//m9JWr3IotYX7jWrNbgW6kIuTQnwpWPQDCFIY1jbvkF2IK4Ul5qd/3Z7uZBF6PRrPd4iuJ/klKnCIRijYv5XLtYWD6C4mlraFlbsqoavc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Nk8tBQ+u; arc=fail smtp.client-ip=40.107.208.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NwscmKcX"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JEl91N021413
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 17:21:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=kxVNKbUzAJV99X9dS/+gmi
-	7NdsiUJfq4YgJmO8sKUp8=; b=NwscmKcX9Orgtckc3FVnSWRjrXacPIID7ZzxjZ
-	joPpAUIMdp3ncl716dr+7KTk42qi2JQxSEBiLvDYg1GRN2sShViQeFIqDB/BJmCN
-	0r0CjcP+D0JRpU9cgJID96xMaoE9+szUT6VI+wXXZ2Gu5Q13pDYpblPHK0C2/wKF
-	WtUyVV7d0CxVKy1U2swytQHj6lMhsfrY3DbPvpf4g28PKQ/BBdRaB/rkjf4x68eh
-	T+M7mXxwxsGxemlqFOuaJ8F2k6JVO200kkeLm/HyZlQSc4Zry36Fq/wEVoqZ9UeS
-	f9J1CCaibeUIYdryqo8zPVL00QbNM2q3mQ6XljdmlM3JiGkA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy5k97q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 17:21:09 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4bf85835856so37803901cf.1
-        for <linux-tegra@vger.kernel.org>; Fri, 19 Sep 2025 10:21:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758302469; x=1758907269;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kxVNKbUzAJV99X9dS/+gmi7NdsiUJfq4YgJmO8sKUp8=;
-        b=Sun7CsvE7K4Ki43AE7p178lrQj0mhnsbK4L4nVyeBcYipSjdE35GtJUNtxg2szvYHR
-         s05+/0kmnJp+MQVcqgnCg3BcABJ5e5spuiuOB+b9rjJleXfWDS9iusVuieE5FLRAmwFw
-         S+OHZAvrjWBHdcmRd4/GuLl2FsF1olCIcY6K0i799NWthzc8IFmCspwn6yCm1uS2+Z83
-         8QG/FAuGjNIV5ReoT/wjgqfduhV2eQqRLH5JghiabwlBpwTD9bGd8aYPCGi3YJRfKQ3p
-         2Ufc8zJIX2PFDcrXoDi4AVMDms+s3zdHdQRxTXq4xjeKAzihjcf7fVGt5j4ytgRCCZW/
-         4lEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUy+LpyqS8Hir6nITumy7yE8j4GNFUoMOcPv3ZPZGivUt/5mEc9UfylyCnDMpSlXZnzy5PLMmYPwL6Zgw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3dTZAHFH8qZtGXmp3407tB4dmNZJZpcpPARWQDj4ULXRBms/M
-	+gU9h7yTUZ4X3Er6JNQE1V1n6MSibhMua1Rq7OUPcucc/VdFywP4OCVPMTgu2FryGolV2MbG1nY
-	v3yKLSbSLTrH2aJ2+tVMozjPUOQ8CU1X1Pa4ZqCld2sIn1X8Udo0qPvOX+Qmp6GoE1Q==
-X-Gm-Gg: ASbGncv5ngdNuZtL4+cMGfHiyAKcUa1bAXTG5wGVmWIW7mz3R4ZshF+mRRgqRF5Xm1S
-	cm7AkcOIQv9C/D6q5Zt1BcMGyY7fz2w+0l6/tU5d+li+fS4gu1BnGmaTDsPcPRB/3F5uXYQppft
-	qUXTEdMN24qN3LRk6EsVT/R6nViozg8EhOzBOv/lWeLT+wRhuxuEu8csVSXnAWQJtGQzmdfftqm
-	N7iEThofbdNinUY4e+svkjmmqx+puTixDET8nZ9/Fa+99L+7SA/f6s/nz8J/qxLPf14vZI/aDFL
-	TXz0tJxgUPUxkaBCw2e/Grxhqyb+mT0QkzrwdLeieQrDxikTwgqH/+e+HJ1RBd3RpxQ1WWETjKc
-	NYtsmNmsUGYDW2Qk/uGfn6wXu0iRe0lc7Df6D8jWuFA+Vimz+je5R
-X-Received: by 2002:a05:622a:a6c4:b0:4b7:ad70:238b with SMTP id d75a77b69052e-4bfb25ec815mr60645681cf.32.1758302466988;
-        Fri, 19 Sep 2025 10:21:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4d98CBOBqf2FaOXuHvtl4BnNL0RixaCIYvrS+wV5YsTKL6WDAJme6mX7DEYtUHRmlOxiN0Q==
-X-Received: by 2002:a05:622a:a6c4:b0:4b7:ad70:238b with SMTP id d75a77b69052e-4bfb25ec815mr60645051cf.32.1758302466296;
-        Fri, 19 Sep 2025 10:21:06 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a25d7309sm13737241fa.15.2025.09.19.10.21.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 10:21:05 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 19 Sep 2025 20:21:00 +0300
-Subject: [PATCH v2] devfreq: move governor.h to a public header location
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Nk8tBQ+u"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YQCnhAd4ogXwluZATUxNvL5CuJR9NfAIGtCxJmkOS9qd7VXJ0KePD7HMQhpY6Pjjc5IlRPamYbT83DeTnguHDu4agsEEj4cKY5Sq27dWtGMsyim9QgVzIU07XkHAyuO9gN04LWbmgz1/IzbC9b8ziDpAVR6Bh/djMaeK1sf4N9aZw9k7az4/6d4QTc2MMlyEtcOoQrzcnESGvXn0TiV0jtG9q18Agz6QEEUxENmlIDxeT/QtTgurwy4bpKL50xD0xRPAQDeGdfVBid4QSVv+qjilRAfnd9DtSZd6wizlRhg0k+Ui+Dwl/STv1pADyT/kY4dUUcaL9z1nX51gq/iDXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dsweyLScKXuoF/HTxi11r8BjDMX9bNlmMBgK3Adk0Zo=;
+ b=vzBcwDnrnzv52hSMpqcY20PDITYl+RxPOIAJJwvcQCgv2cEx5VbuyBcbiYjc4BBH1VpRa1Z3Q6UEkl4pCl6uym56AEgKT/u5//Wgo3PPsL5iBE5/U+4qqlwTy+h/ENvnht7Zb6FYCqIbgo7j3JInczPnOumSDOZd+WZ0zYXyvyYbgWHIPMA0etCs8INjkUC2xss/4VQiVMBRVUl3iF6CE054BAGi6InsP02+tDka8zRHJiTXTmn2txk+RBY5XD3Wfp2T+ZA+Cd1ajGlNXiiqLspRYbWel28NKsZImfSpYv8MEKs8F7mzDw7CK1MSDdOgapo4xXKYiitY0FALAuhXmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=csie.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dsweyLScKXuoF/HTxi11r8BjDMX9bNlmMBgK3Adk0Zo=;
+ b=Nk8tBQ+uFXO5QDs1h4oP4TcPb98iU4vhhVjeHNFZcmj5qKnOuCsDmRgpFKA1r/e1k+X2Fsk14Fg4B17Lka0mpRtg+8Z9e0mSw0ettXHDt2p+GmTjJlqhAIyQF1dGG5pWu1aG4Eav1PdgUo/4uNerAgkC9RmI9d1PkYh2eVc0deu6mvv+OEy9hLkK8VlpTzdUz+18nHSElGhYL/wDWelYnpfzWUOkB5xIbtGVb8G8pFa2VAdDn2OhCFLvcpNx9ZdEZYJZvz0Mkv5CC62/HLOL212VNhdePDdOjeCFo7QzIYoRGRqzK+uKfuRlPXlwuYlZPNSsqIW+TfBmQef0m/UHBA==
+Received: from MN2PR08CA0005.namprd08.prod.outlook.com (2603:10b6:208:239::10)
+ by DS7PR12MB6190.namprd12.prod.outlook.com (2603:10b6:8:99::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
+ 2025 22:48:05 +0000
+Received: from BL6PEPF0001AB71.namprd02.prod.outlook.com
+ (2603:10b6:208:239:cafe::94) by MN2PR08CA0005.outlook.office365.com
+ (2603:10b6:208:239::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.16 via Frontend Transport; Fri,
+ 19 Sep 2025 22:48:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL6PEPF0001AB71.mail.protection.outlook.com (10.167.242.164) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 22:48:03 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 19 Sep
+ 2025 15:47:54 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 19 Sep 2025 15:47:53 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 19 Sep 2025 15:47:51 -0700
+Date: Fri, 19 Sep 2025 15:47:49 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: "Tian, Kevin" <kevin.tian@intel.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>, "sven@kernel.org"
+	<sven@kernel.org>, "j@jannau.net" <j@jannau.net>, "alyssa@rosenzweig.io"
+	<alyssa@rosenzweig.io>, "neal@gompa.dev" <neal@gompa.dev>,
+	"robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
+	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "krzk@kernel.org"
+	<krzk@kernel.org>, "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+	"dwmw2@infradead.org" <dwmw2@infradead.org>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>, "yong.wu@mediatek.com" <yong.wu@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>, "tjeznach@rivosinc.com"
+	<tjeznach@rivosinc.com>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "alex@ghiti.fr"
+	<alex@ghiti.fr>, "heiko@sntech.de" <heiko@sntech.de>,
+	"schnelle@linux.ibm.com" <schnelle@linux.ibm.com>, "mjrosato@linux.ibm.com"
+	<mjrosato@linux.ibm.com>, "gerald.schaefer@linux.ibm.com"
+	<gerald.schaefer@linux.ibm.com>, "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"zhang.lyra@gmail.com" <zhang.lyra@gmail.com>, "wens@csie.org"
+	<wens@csie.org>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+	"samuel@sholland.org" <samuel@sholland.org>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"cwabbott0@gmail.com" <cwabbott0@gmail.com>, "quic_pbrahma@quicinc.com"
+	<quic_pbrahma@quicinc.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
+	<linux-rockchip@lists.infradead.org>, "linux-s390@vger.kernel.org"
+	<linux-s390@vger.kernel.org>, "linux-sunxi@lists.linux.dev"
+	<linux-sunxi@lists.linux.dev>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "virtualization@lists.linux.dev"
+	<virtualization@lists.linux.dev>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>, "Sethi, Vikram" <vsethi@nvidia.com>,
+	"helgaas@kernel.org" <helgaas@kernel.org>, "etzhao1900@gmail.com"
+	<etzhao1900@gmail.com>
+Subject: Re: [PATCH v4 1/7] iommu/arm-smmu-v3: Add release_domain to attach
+ prior to release_dev()
+Message-ID: <aM3dlQH0rk74w2CH@Asurada-Nvidia>
+References: <cover.1756682135.git.nicolinc@nvidia.com>
+ <c6bc114e438779129a891408af7d997bf6c28b5b.1756682135.git.nicolinc@nvidia.com>
+ <BL1PR11MB5271767F92289C1D1207D8188C08A@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <20250915123515.GE1024672@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-governor-public-v2-1-37e117ac0060@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAPuQzWgC/3WNQQqDMBBFryKzbiRJKyRd9R7FRUyiDqjRpIYWy
- d07dV9mGHgf5v0Dko/oE9yrA6LPmDAsBPJSgR3NMniGjhgklw3X/MqGkH1cQmTr3k1omdPW3YR
- WvWoU0NcafY/v0/hsiUdMrxA/Z0EWv/S/KwtGI4TpnNKG9hFSqrfdTDbMc00H2lLKF/ZLUTi1A
- AAA
-X-Change-ID: 20250903-governor-public-d9cd4198f858
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Robie Basak <robibasa@qti.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8969;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=BnykSKnbxL/JbVG4C2eSeMxrGBCa+WojSF98CVVbJBU=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBozZEBhVKPQ9g1zZIP+co09QhudTAVGqHOjB+NN
- 9PiH3VUg46JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaM2RAQAKCRCLPIo+Aiko
- 1a4CB/9vza4es6gtD0/SDV0ZoohF521+lQIW3hMvrnTfXYtedHzj3OMGwBiAEZphEQQbXgJEx63
- nYimJfZnGaxTlCZb3UZE6GasGwC8kVdPAQrYjoBzW/cZzTeQXbooxkU641RwJJDjZ37kAk+5/1N
- w3TWJkiDMMM1wIWhyseicx9WjRHi9SGKAKJNwe14kBAGEMfNVG6zjDrgLNoDrwLnBq6rjGE/fnw
- FlvHOSGsdA8D66U7/ix25D4CaNg8W/HjkPxlso9R/qkLv4BIULtj4w+nWo7NKoMR4CSUWgFJjJ6
- ojfuwFkoU0WC8fwg5e64128fHVLN+aKLYjjnuRSD4+R2qMuR
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: 6fXTKMOmTg-IXGe8YICxZ6HI2lI0METs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX68b37Tp7pwOe
- UNfcrNcRKmzepszsp2bpKItn/VoS8eKv57ga2382+w41f/3fMANOI7JQGwMsr2gCdbY4Rz+cZ6h
- 6RMOkVVTRmgpI85VhiQocoAtaFqq/mFRHT+v2lOhHLQUmlTU8v2gUmCKT9HRreWaPPaHb9KCUJ6
- BIHyh7N+MCxbzDKrP6C8AGW54MZW9ft8U6w4UdifAC9w6oydWs7Pa18g7RS0Jmj10MRayrzRzGd
- pwzmbJqZDAMhdG3up4zDO2MysdpcyWkSQ01Hq1ttdqE+GzZ8rsKiATaKKrWTqpB5cN3AfcxUIeb
- 3O+ZVPpkkgkD516qqdt0JHMsI9uls/Xlrs4zJTb3aJ82i/oyZBYyixcE+sKI/lk1vB5fUCMumTZ
- RqCid+f1
-X-Authority-Analysis: v=2.4 cv=Y+f4sgeN c=1 sm=1 tr=0 ts=68cd9105 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Ikd4Dj_1AAAA:8
- a=hD80L64hAAAA:8 a=rlKpfLgfwYsX6qVZeg8A:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: 6fXTKMOmTg-IXGe8YICxZ6HI2lI0METs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
- malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250915123515.GE1024672@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB71:EE_|DS7PR12MB6190:EE_
+X-MS-Office365-Filtering-Correlation-Id: d68a65b7-1329-45b8-f457-08ddf7ce97f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZCl7tuhenDwOjfT4C6k5OaH6jJnCVYRVJJ/KHeIjeC9EsGiFHyc5afTmTlIW?=
+ =?us-ascii?Q?ENDm7euUQvCiGuYNxyV3jhsxfOuyk2mm68G6RKusBpc6cNY2SvWmD/PceP5s?=
+ =?us-ascii?Q?ILsCTo/fw9M61EMgWT3Xq70TPkK9eZ+XMQhGlpRKZvC+UMKXsJVYGgcLKLrP?=
+ =?us-ascii?Q?MqYHnFVZNN8soiM8wld4Pq+fvZRpPJsw2FfpNd+Na2xw1yLj3MN6b46yr9Rf?=
+ =?us-ascii?Q?OPUUoNzsIV/DECDDlemLTudPe54sQ0pcqjNDctjwsNEfyxM9vRgd4p9uUiLz?=
+ =?us-ascii?Q?MNp49MijbMTXc9H/83Jt5oily6K4iiNoDMADunVft87jt1Lwzvh95NEPdrWq?=
+ =?us-ascii?Q?VN05/eQ1/NTkAFjCCJIDfYGJpAvDtMo01kwhqfaiPLzOAS5tqOFzU/vo56lz?=
+ =?us-ascii?Q?QWwj0H0hIo61O0Qr5rgcOHvz5MOwiOspnI3ZUb8UQ3AJnHWIwpn1qyYh/wSL?=
+ =?us-ascii?Q?IEmW6HhqhTOC925Q6LLbaGmmNKOT4mdMJtSOwmkJSET+CeX++fF2ZvYClJBA?=
+ =?us-ascii?Q?0UrafQwa87lat7/eyWxGmOHNc/Tkn/Ld4zyIYnj0+qfQmr5YtIZdIKOkZry8?=
+ =?us-ascii?Q?nEi17l3OBwmyO3FoNB39M26l5UKhrayVTKhbQ+ClkHyz7EIUX54Vp6bVa+g+?=
+ =?us-ascii?Q?f6uPWGB+RuYa1O/iLNiiuu6Kh6bevIbK19XyQF/HdsJVggQp5CiQJN99pbHm?=
+ =?us-ascii?Q?eRyY/AdYKHyQG/m6pfRfKKp7boXDGZRWgfeAmADNvxO5T6B5O/NZPpFFdGTG?=
+ =?us-ascii?Q?0VMgkuOhlR6UZs6LNyHg55bMq3zmnUeXBOsgQQwRYBQuTI88Ma8SbmPlkb4F?=
+ =?us-ascii?Q?N9uVAXz5P2TjIwzlw+da2i0LepoRfyOc75Aeh2a0yYQxEL5iTDbseAP1zNYR?=
+ =?us-ascii?Q?Nay9l5K3xk97tFnis6/A87bc0oTbw9IHqcWVW9A+jsU+hmezkP4JFUUqlAze?=
+ =?us-ascii?Q?YsjS/Tpf0Xhd8VZsDEsQWFBZdboxYSt4n/YY96Kg5rpLg0gGk2ljk+i7pjGC?=
+ =?us-ascii?Q?98MuzqrdFlNeM1X8xB/cjL7FjgDiHKx2+s9EbRvxwuzS+vNtAtDfpLJ8lK/0?=
+ =?us-ascii?Q?5TjCQyxCUtrrmPr8hTop4qYhHxI4Gj4//wpZUAqIJVHjW6G6bXPKBr3jJHhl?=
+ =?us-ascii?Q?B9d4EPF8Y2RZOzmR4T+pmNdfC0qzr4RtzYDhNeUm4/JhoBEycwteOWZRup8c?=
+ =?us-ascii?Q?vbEUBCUWfmE7Vd8l8VxbShUWTUg0hx0JCXJ63DYOKh+9eq7Hd9hb7llKD6j/?=
+ =?us-ascii?Q?vfVHg1i5I1Cg6Lo2zjhcI2czR/ZE41Q1HZlRZhEALcAJQ7crqxGhZspAQmrq?=
+ =?us-ascii?Q?atn4ObUj/DPicbUZZ52OekvPKff4V47N62uymEwiGY3UU8Nw+zB+dtFGcLAJ?=
+ =?us-ascii?Q?c/bpQZ7vRlx1JJhbOmeImBLnEBCaSnjQB5QrbObXnM3Yat5980+v4fgT+Zt+?=
+ =?us-ascii?Q?Qz65tXHdCUteEQC/Q1zSTJJ1IDnes2T4gFFdGQiD39fC1eTmrYpgyOIUNLf9?=
+ =?us-ascii?Q?m9YsTgu+SZEnAtyd2p1vazP9VhADdN4oDwG7?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 22:48:03.9741
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d68a65b7-1329-45b8-f457-08ddf7ce97f4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB71.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6190
 
-Some device drivers (and out-of-tree modules) might want to define
-device-specific device governors. Rather than restricting all of them to
-be a part of drivers/devfreq/ (which is not possible for out-of-tree
-drivers anyway) move governor.h to include/linux/devfreq-governor.h and
-update all drivers to use it.
+On Mon, Sep 15, 2025 at 09:35:15AM -0300, Jason Gunthorpe wrote:
+> On Fri, Sep 12, 2025 at 09:33:06AM +0000, Tian, Kevin wrote:
+> > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > Sent: Monday, September 1, 2025 7:32 AM
+> > > 
+> > > +static int arm_smmu_attach_dev_release(struct iommu_domain *domain,
+> > > +				       struct device *dev)
+> > > +{
+> > > +	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+> > > +
+> > > +	WARN_ON(master->iopf_refcount);
+> 
+> This doesn't look right anymore..
+> 
+> Now that iopf is managed automatically it technically doesn't go to
+> zero until the attaches below:
 
-The devfreq_cpu_data is only used internally, by the passive governor,
-so it is moved to the driver source rather than being a part of the
-public interface.
+I will leave this WARN_ON in the arm_smmu_release_device(), while
+having a release_domain to call arm_smmu_attach_dev_blocked():
 
-Reported-by: Robie Basak <robibasa@qti.qualcomm.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
-Changes in v2:
-- Fixed typo in commit subject (Mikko Perttunen)
-- Link to v1: https://lore.kernel.org/r/20250903-governor-public-v1-1-111abd89a89a@oss.qualcomm.com
----
- drivers/devfreq/devfreq.c                          |  2 +-
- drivers/devfreq/governor_passive.c                 | 27 +++++++++++++++++-
- drivers/devfreq/governor_performance.c             |  2 +-
- drivers/devfreq/governor_powersave.c               |  2 +-
- drivers/devfreq/governor_simpleondemand.c          |  2 +-
- drivers/devfreq/governor_userspace.c               |  2 +-
- drivers/devfreq/hisi_uncore_freq.c                 |  3 +-
- drivers/devfreq/tegra30-devfreq.c                  |  3 +-
- .../governor.h => include/linux/devfreq-governor.h | 33 +++-------------------
- 9 files changed, 37 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 2e8d01d47f6996a634a8ad5ddf20c5a68d1a299d..00979f2e0e276a05ee073dcf5cd8e930bdd539fb 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -20,6 +20,7 @@
- #include <linux/stat.h>
- #include <linux/pm_opp.h>
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/workqueue.h>
- #include <linux/platform_device.h>
- #include <linux/list.h>
-@@ -28,7 +29,6 @@
- #include <linux/of.h>
- #include <linux/pm_qos.h>
- #include <linux/units.h>
--#include "governor.h"
+-----------------------------------------------------------------
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 2a8b46b948f05..3b21790938d24 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -3291,6 +3291,16 @@ static struct iommu_domain arm_smmu_blocked_domain = {
+ 	.ops = &arm_smmu_blocked_ops,
+ };
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/devfreq.h>
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 953cf9a1e9f7f93804cc889db38883bf97ae005d..8cd6f9a59f6422ccd138ff4b264dc8a547ad574f 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -14,8 +14,33 @@
- #include <linux/slab.h>
- #include <linux/device.h>
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/units.h>
--#include "governor.h"
-+
-+/**
-+ * struct devfreq_cpu_data - Hold the per-cpu data
-+ * @node:	list node
-+ * @dev:	reference to cpu device.
-+ * @first_cpu:	the cpumask of the first cpu of a policy.
-+ * @opp_table:	reference to cpu opp table.
-+ * @cur_freq:	the current frequency of the cpu.
-+ * @min_freq:	the min frequency of the cpu.
-+ * @max_freq:	the max frequency of the cpu.
-+ *
-+ * This structure stores the required cpu_data of a cpu.
-+ * This is auto-populated by the governor.
-+ */
-+struct devfreq_cpu_data {
-+	struct list_head node;
-+
-+	struct device *dev;
-+	unsigned int first_cpu;
-+
-+	struct opp_table *opp_table;
-+	unsigned int cur_freq;
-+	unsigned int min_freq;
-+	unsigned int max_freq;
++/* Same as arm_smmu_blocked_ops but less set_dev_pasid */
++static const struct iommu_domain_ops arm_smmu_release_ops = {
++	.attach_dev = arm_smmu_attach_dev_blocked,
 +};
++
++static struct iommu_domain arm_smmu_release_domain = {
++	.type = IOMMU_DOMAIN_BLOCKED,
++	.ops = &arm_smmu_release_ops,
++};
++
+ static struct iommu_domain *
+ arm_smmu_domain_alloc_paging_flags(struct device *dev, u32 flags,
+ 				   const struct iommu_user_data *user_data)
+@@ -3582,12 +3592,6 @@ static void arm_smmu_release_device(struct device *dev)
  
- static struct devfreq_cpu_data *
- get_parent_cpu_data(struct devfreq_passive_data *p_data,
-diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-index 2e4e981446fa8ea39f65b09dddff198c0b8e3338..fdb22bf512cf134d75f1eaf3edb80e562dd28bec 100644
---- a/drivers/devfreq/governor_performance.c
-+++ b/drivers/devfreq/governor_performance.c
-@@ -7,8 +7,8 @@
-  */
+ 	WARN_ON(master->iopf_refcount);
  
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/module.h>
--#include "governor.h"
- 
- static int devfreq_performance_func(struct devfreq *df,
- 				    unsigned long *freq)
-diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-index f059e881480465b051f27d740348adaf779aebf0..ee2d6ec8a512248f070b2c5bee8146320b7be312 100644
---- a/drivers/devfreq/governor_powersave.c
-+++ b/drivers/devfreq/governor_powersave.c
-@@ -7,8 +7,8 @@
-  */
- 
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/module.h>
--#include "governor.h"
- 
- static int devfreq_powersave_func(struct devfreq *df,
- 				  unsigned long *freq)
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index c234357363675508c12732a08c1cd26c349039d1..9c69b96df5f97306e9be46aa6bb1d9d2f8e58490 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -9,8 +9,8 @@
- #include <linux/errno.h>
- #include <linux/module.h>
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/math64.h>
--#include "governor.h"
- 
- /* Default constants for DevFreq-Simple-Ondemand (DFSO) */
- #define DFSO_UPTHRESHOLD	(90)
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index 175de0c0b50e087861313060eab70a35b757fd20..395174f93960d0762456238654f4d356e21cf57c 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -9,11 +9,11 @@
- #include <linux/slab.h>
- #include <linux/device.h>
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/kstrtox.h>
- #include <linux/pm.h>
- #include <linux/mutex.h>
- #include <linux/module.h>
--#include "governor.h"
- 
- struct userspace_data {
- 	unsigned long user_frequency;
-diff --git a/drivers/devfreq/hisi_uncore_freq.c b/drivers/devfreq/hisi_uncore_freq.c
-index 96d1815059e32c4e70a1d3c257655cc6b162f745..b8e4621c57ebc76513e4eba978aa54f2b884e210 100644
---- a/drivers/devfreq/hisi_uncore_freq.c
-+++ b/drivers/devfreq/hisi_uncore_freq.c
-@@ -9,6 +9,7 @@
- #include <linux/bits.h>
- #include <linux/cleanup.h>
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/device.h>
- #include <linux/dev_printk.h>
- #include <linux/errno.h>
-@@ -26,8 +27,6 @@
- #include <linux/units.h>
- #include <acpi/pcc.h>
- 
--#include "governor.h"
+-	/* Put the STE back to what arm_smmu_init_strtab() sets */
+-	if (dev->iommu->require_direct)
+-		arm_smmu_attach_dev_identity(&arm_smmu_identity_domain, dev);
+-	else
+-		arm_smmu_attach_dev_blocked(&arm_smmu_blocked_domain, dev);
 -
- struct hisi_uncore_pcc_data {
- 	u16 status;
- 	u16 resv;
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 4a4f0106ab9ddcfb106a1860370cbf8a3579322a..77cbb204087c970c1fec0c1597b1e76c1a11b390 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -9,6 +9,7 @@
- #include <linux/clk.h>
- #include <linux/cpufreq.h>
- #include <linux/devfreq.h>
-+#include <linux/devfreq-governor.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -21,8 +22,6 @@
- 
- #include <soc/tegra/fuse.h>
- 
--#include "governor.h"
--
- #define ACTMON_GLB_STATUS					0x0
- #define ACTMON_GLB_PERIOD_CTRL					0x4
- 
-diff --git a/drivers/devfreq/governor.h b/include/linux/devfreq-governor.h
-similarity index 80%
-rename from drivers/devfreq/governor.h
-rename to include/linux/devfreq-governor.h
-index 0adfebc0467a3db39278814fa66d2b1f25d61f7a..dfdd0160a29f35f5608575b07b450cf5157420ff 100644
---- a/drivers/devfreq/governor.h
-+++ b/include/linux/devfreq-governor.h
-@@ -5,11 +5,11 @@
-  * Copyright (C) 2011 Samsung Electronics
-  *	MyungJoo Ham <myungjoo.ham@samsung.com>
-  *
-- * This header is for devfreq governors in drivers/devfreq/
-+ * This header is for devfreq governors
-  */
- 
--#ifndef _GOVERNOR_H
--#define _GOVERNOR_H
-+#ifndef __LINUX_DEVFREQ_DEVFREQ_H__
-+#define __LINUX_DEVFREQ_DEVFREQ_H__
- 
- #include <linux/devfreq.h>
- 
-@@ -47,31 +47,6 @@
- #define DEVFREQ_GOV_ATTR_POLLING_INTERVAL		BIT(0)
- #define DEVFREQ_GOV_ATTR_TIMER				BIT(1)
- 
--/**
-- * struct devfreq_cpu_data - Hold the per-cpu data
-- * @node:	list node
-- * @dev:	reference to cpu device.
-- * @first_cpu:	the cpumask of the first cpu of a policy.
-- * @opp_table:	reference to cpu opp table.
-- * @cur_freq:	the current frequency of the cpu.
-- * @min_freq:	the min frequency of the cpu.
-- * @max_freq:	the max frequency of the cpu.
-- *
-- * This structure stores the required cpu_data of a cpu.
-- * This is auto-populated by the governor.
-- */
--struct devfreq_cpu_data {
--	struct list_head node;
--
--	struct device *dev;
--	unsigned int first_cpu;
--
--	struct opp_table *opp_table;
--	unsigned int cur_freq;
--	unsigned int min_freq;
--	unsigned int max_freq;
--};
--
- /**
-  * struct devfreq_governor - Devfreq policy governor
-  * @node:		list node - contains registered devfreq governors
-@@ -124,4 +99,4 @@ static inline int devfreq_update_stats(struct devfreq *df)
- 
- 	return df->profile->get_dev_status(df->dev.parent, &df->last_status);
- }
--#endif /* _GOVERNOR_H */
-+#endif /* __LINUX_DEVFREQ_DEVFREQ_H__ */
+ 	arm_smmu_disable_pasid(master);
+ 	arm_smmu_remove_master(master);
+ 	if (arm_smmu_cdtab_allocated(&master->cd_table))
+@@ -3678,6 +3682,7 @@ static int arm_smmu_def_domain_type(struct device *dev)
+ static const struct iommu_ops arm_smmu_ops = {
+ 	.identity_domain	= &arm_smmu_identity_domain,
+ 	.blocked_domain		= &arm_smmu_blocked_domain,
++	.release_domain		= &arm_smmu_release_domain,
+ 	.capable		= arm_smmu_capable,
+ 	.hw_info		= arm_smmu_hw_info,
+ 	.domain_alloc_sva       = arm_smmu_sva_domain_alloc,
+-----------------------------------------------------------------
 
+> > > +
+> > > +	/* Put the STE back to what arm_smmu_init_strtab() sets */
+> > > +	if (dev->iommu->require_direct)
+> > > +
+> > > 	arm_smmu_attach_dev_identity(&arm_smmu_identity_domain,
+> > > dev);
+> > > +	else
+> > > +
+> > > 	arm_smmu_attach_dev_blocked(&arm_smmu_blocked_domain,
+> > > dev);
+> 
+> And I'd argue the attaches internally should have the assertion. If no
+> pasids and blocked/identity the iopf == 0.
+
+Ack. I will try a separate SMMU patch from this series.
+
+> Also, I don't think this should be in the smmu driver, every driver
+> should have this same logic, it is part of the definition of RMR
+> Let's put it in the core code:
+
+Ack. Adding this patch prior to the SMMU release_domain:
+
+-----------------------------------------------------------------
+From: Jason Gunthorpe <jgg@nvidia.com>
+Date: Fri, 19 Sep 2025 22:26:45 +0000
+Subject: [PATCH] iommu: Use identity_domain as release_domain for
+ require_direct
+
+If dev->iommu->require_direct is set, the core prevent attaching a BLOCKED
+domains entirely in __iommu_device_set_domain():
+
+	if (dev->iommu->require_direct &&
+	    (new_domain->type == IOMMU_DOMAIN_BLOCKED ||
+	     new_domain == group->blocking_domain)) {
+		dev_warn(dev, "....");
+		return -EINVAL;
+	}
+
+Thus, in most sane cases, the above will never convert BLOCKED to IDENTITY
+in order to preserve the RMRs (direct mappings).
+
+A similar situation would happen to the release_domain: while driver might
+have set it to a BLOCKED domain, replace it with an IDENTITY for RMRs.
+
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 ---
-base-commit: 8cd53fb40a304576fa86ba985f3045d5c55b0ae3
-change-id: 20250903-governor-public-d9cd4198f858
+ drivers/iommu/iommu.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 08ba7b929580f..438458b465cac 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -516,8 +516,20 @@ static void iommu_deinit_device(struct device *dev)
+ 	 * Regardless, if a delayed attach never occurred, then the release
+ 	 * should still avoid touching any hardware configuration either.
+ 	 */
+-	if (!dev->iommu->attach_deferred && ops->release_domain)
+-		ops->release_domain->ops->attach_dev(ops->release_domain, dev);
++	if (!dev->iommu->attach_deferred && ops->release_domain) {
++		struct iommu_domain *release_domain = ops->release_domain;
++
++		/*
++		 * If the device requires direct mappings then it should not
++		 * be parked on a BLOCKED domain during release as that would
++		 * break the direct mappings.
++		 */
++		if (dev->iommu->require_direct && ops->identity_domain &&
++		    release_domain == ops->blocked_domain)
++			release_domain = ops->identity_domain;
++
++		release_domain->ops->attach_dev(release_domain, dev);
++	}
+ 
+ 	if (ops->release_device)
+ 		ops->release_device(dev);
 -- 
-With best wishes
-Dmitry
+2.43.0
 
+-----------------------------------------------------------------
+
+Thanks
+Nicolin
