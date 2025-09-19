@@ -1,114 +1,244 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013020.outbound.protection.outlook.com [40.107.201.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F5F1B21BD;
-	Fri, 19 Sep 2025 13:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758287817; cv=none; b=UHQxv+IikDyOEaqQrjLHfW+7gsaoT0Fro/J1nm5V4blp/XWTy6jp6ZGZFkcSzfjnvY2eVyKraerqmkbr8CglPbxuxVE5Wu/TThvM0LLQchfhnR4skKjNyIOFvQyfAbr6BXIH2wyxr5Y5ExcuVU0qqTnqRv4SB8lAAeyIzV2iM24=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758287817; c=relaxed/simple;
-	bh=/eFfU0hGF05pJwVzBmAFJn19mo9Ahj7F3snFSc4GoGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9fQHSlzOfWoAFTkmkL0Wlud455lGEEpIa4/IESvNyZ0zZJtzQWyVRkaGo66MDaGYA/a9hcxWUO2DR/9hfHdZXxrEW2fdSCg9jQCVR+y6mLcc3qi6mBlrcrDWmhv8JAEe+yD71pxNh9A9qmog+LVzPaTku+O2kdzUBWRe43Ivwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kh2VgatM; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D22C30DD2E;
+	Fri, 19 Sep 2025 14:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758290414; cv=fail; b=k/to0sZGRf6HsotK2VC2LFHAvFpV4WVt9j6QEVB8iwDZiyXaFHhK8TCXWuMDQExMvwfLp6XS/BQg+k069LqzAueGG96pbvgT099lPpOkwB8pK6fYDX3VMwwxWVarSO6Bil/y0QjkvmDv9FHlEFMy1YH5GD7tRdvsc9QEB/SRHEU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758290414; c=relaxed/simple;
+	bh=nZd7ldzpjJ+hvyUUpixQsaKrJ41jKT0NWghzW93QJGo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o8WfT0Zxf33UwlSQt6QbBTeqz2g/hXYU+722EARYoFlIpBWuqQuhzjvy5P685U3bqRv3H4bGvvlUET87gtFYbHYnRxpAdNLz02OVCXBnm4BHXXAwJYBsV1jmOfuxpIGEfnZTvKoGhtqIWdzXfMM6AO+Xul6/PYlHRa2oF/VjQNM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=szwD/i+X; arc=fail smtp.client-ip=40.107.201.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh2VgatM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5261DC4CEF1;
-	Fri, 19 Sep 2025 13:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758287817;
-	bh=/eFfU0hGF05pJwVzBmAFJn19mo9Ahj7F3snFSc4GoGY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kh2VgatMzWfOelfU2ZMCvt98U4+EHk3aSAViqAknGtfmeRT0URRNu9lgklvKlSqcO
-	 3ZwISDxedTOEKYdkJ5t5RtkMsMeI28fbHfvfEjcy7pTvkRecEUO4jeBdS26juaHlFH
-	 /I/3/sYVUCdyUpsEO6EWGaZL+o2I1oey7SY6TRZbRUiYz2v6lf/2swytaefi0Tm4d7
-	 NE4JAOKEhRdhV1/T1sLri16MNy17f5emoIQzud/Gb8a06vSFRnSoL8Zd0vS4kNQlis
-	 2ZZxmpo9zTQ+l6eDZVHYGz1WYkMQEgQjYCIU81wN8kw85FMltu3M5QWWLP6pKxxvuN
-	 E3jcdp1Gdzvtw==
-From: Niklas Cassel <cassel@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] PCI: tegra194: Reset BARs when running in PCIe endpoint mode
-Date: Fri, 19 Sep 2025 15:16:47 +0200
-Message-ID: <20250919131646.167330-2-cassel@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="szwD/i+X"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SPeYMI14VpzGUFh+eylP7CSaY0Nxg303NbNsNZAgzTFLvRl1a2Cm0HhrfH5xqN0I8Gekk8jASvmmUyKyg8iXSiMH0VvzNSjwQ4ik2XEvNbbzRhx0+R5brcsy+rtiXRG22bwghQTpQrKVtg1gabcQC1jcD3qhL+UPiZUqDNT9vIRut1vDGPMQ63su96oAaGkm5D1QzZODmRcxcQ7FCrdroA8HabeYNweQxkiRaG+5lRwyJzSkZnVhoVJjuYfat0jN4BgKE7NdGuOn47GEdTCRYO+OSb634o7/YFtnW7S8fYB+ZN+legNMZSB9C7ZzJ+S6AsnEOGFP5IZaNJWQ/vtcJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EQ5T4+41W/4V7StdUWtOL2Qhltzg655cTeqA6T6LmJs=;
+ b=NddNatSTW9vZY6PdZS8/j1cMjo14XnLN+/6EA4y5qGlI8xLFsyAdHEjAYgPmwvQbdu9huz7egRgOiM3UYhKEegM/3p87z0a9M7CqviEJ9pxTETtgTEKYrzSkgwYiPDAqqPj9+nxj8zzNGDMYeOTch7c/FkU5AyD8AjPXXuvep44/qJyUWgTS49wkOE5+UrziI8EirDVPv4mHq5H4O5mHFLgSEaTb/pGrLu38x/+brKVnzL1yf6CEmSa7VbGtwhK/7slh47wzmEPMH9eSjC3Mux9hQMhycUvzUQJfkahOCbok/1e+zmtktvTPHFYqBqZXA26Dr9Z1MA00SAsEDbaCXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EQ5T4+41W/4V7StdUWtOL2Qhltzg655cTeqA6T6LmJs=;
+ b=szwD/i+XyJJMHPWmZxLggpqBwfC9JUhF+c7ckcXr1tw3BfPHje2ENFFhJIOfbtHYcSbQWTiGPc0ZHqUvAkZs68N/FWLtlsXBDtxSDdiqAwajvjPDabMNBWnJr6uJ7564g8JGWwRRzAPn7hO3aK+JnkWhP57Ra824gkHfwosS6YuwUGjAMdjF0lHbNxYv0lj8B55BlPA15tWKaLYvFC9jOp8kOVf9r7NiVL2GTrUW1qudgy5jaWzgaG7+LQfqjA66A1fgqxBFfT5m3c0HgtlaEopftAfWHi3lG61ldQi3YukDxidLmc9mllBgNMIU+GED1B0RGb3bCeZ9YZa4tDCrnw==
+Received: from DS7PR05CA0029.namprd05.prod.outlook.com (2603:10b6:5:3b9::34)
+ by SA1PR12MB7127.namprd12.prod.outlook.com (2603:10b6:806:29e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
+ 2025 14:00:06 +0000
+Received: from DS1PEPF0001708F.namprd03.prod.outlook.com
+ (2603:10b6:5:3b9:cafe::9f) by DS7PR05CA0029.outlook.office365.com
+ (2603:10b6:5:3b9::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.15 via Frontend Transport; Fri,
+ 19 Sep 2025 14:00:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF0001708F.mail.protection.outlook.com (10.167.17.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 14:00:06 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 19 Sep
+ 2025 06:59:54 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 19 Sep
+ 2025 06:59:53 -0700
+Received: from build-shgarg-noble-20250919.internal (10.127.8.11) by
+ mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via
+ Frontend Transport; Fri, 19 Sep 2025 06:59:52 -0700
+From: Shubhi Garg <shgarg@nvidia.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, "Alexandre
+ Belloni" <alexandre.belloni@bootlin.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-rtc@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Shubhi Garg
+	<shgarg@nvidia.com>
+Subject: [PATCH v6 1/4] dt-bindings: rtc: Document NVIDIA VRS RTC
+Date: Fri, 19 Sep 2025 13:59:50 +0000
+Message-ID: <20250919135950.10403-1-shgarg@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2228; i=cassel@kernel.org; h=from:subject; bh=/eFfU0hGF05pJwVzBmAFJn19mo9Ahj7F3snFSc4GoGY=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDLOhu9rb4nV3L7cqqTjpFz+CjN1Lg6bR+Vb3pjnzHGae VflSn9ERykLgxgXg6yYIovvD5f9xd3uU44r3rGBmcPKBDKEgYtTACYyfT/DH/7LCoHX1x1xcVpw IvW8TPTtOMvfcccyZGY+S+Apnbt4dzHDP63HtVPPdR11bTnHf0tC5/zD+FWma9a9siqcwCS3zJf FgQ8A
-X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001708F:EE_|SA1PR12MB7127:EE_
+X-MS-Office365-Filtering-Correlation-Id: c444b18d-cb7c-4e56-83b2-08ddf784d68f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TKq8dtJNuMhNpO0hkWfayLaEvpzGXwXQEp7tujHwg8eeZth982PmyYZ4Z1Yh?=
+ =?us-ascii?Q?4Hn4VEcmkTQ5PD+yxQ9OQZxkqxt4BeHY7KIOzRFDUm2rT8QdF4iEudxxXMkb?=
+ =?us-ascii?Q?IgZ1Z8N0x+2qcafCIDYIQqBEkTomwJsvK4pzZnV4DoSZQLRKR1Q1FiCk7Tgu?=
+ =?us-ascii?Q?4ChlZstrkkR17a3fS9hu0fpC3AYc5mHLUyW2Vgi9KsnjHV8sjpgkEoGEcJ1w?=
+ =?us-ascii?Q?qbZ7uJiwegMpNsfmbt3tl4/C6RSzrqjsZLeNAItDW5t8/8Z8Z0GdofaKVucP?=
+ =?us-ascii?Q?I/5OaC49UwgMAerEXvqh7jt7JqU7yCnFVdBZrPiw986lYIsUT0LmxFNAfVza?=
+ =?us-ascii?Q?USXFeMrfnXU+yauLGLq356gpRmc3FHLdb8RpHOhCZ35i45fxNUUvITNLWicx?=
+ =?us-ascii?Q?QebezsmwmFZJ7cluqGNdfYHb4SoGKT/R/PxhGuCNpLuIXqWmQOKK1NAKD7wK?=
+ =?us-ascii?Q?zVMPnyR4DWTq5584AbB7+43KlPOPYJV0yDoQuD16ROZsAM1+1Ymk+Roq3Dqq?=
+ =?us-ascii?Q?6WjjaJ1hq/1ycbxq0I98atIBSRp2AYs4HeIkOOHfwYFqnjHeVR4S/JuhQBgw?=
+ =?us-ascii?Q?pQeIggx+o+GcigOslP+GoT2R8Ya735BXETWyal6WolmtzdaNJUowfIrjJK1i?=
+ =?us-ascii?Q?4BSYoxqCqjkt8mGbCugfPMUntlExLbVHk1v/NCVA6FDAEEi2ViKrF9hNltU5?=
+ =?us-ascii?Q?9doc1KcOTGD7BZqH63WVqFV1YFGAkyjEYvcQGw5mOFdxtHly7RHfOVFKQvty?=
+ =?us-ascii?Q?yV7dbzQp67oO/PMiZBei07/4Rteyx8pf4y7IWIhzhcqwupBZGnsRALzrvz6D?=
+ =?us-ascii?Q?pgx2qwe0eIJYuPwtEaLuuiYySj0DQ3SRr9/4V2EkgYL5/WDdmjaAxq6jyPN6?=
+ =?us-ascii?Q?K4HPxDIQig2G3lixDNU/0JBNZqr1d8MXoFFL3rLElpSDjp88fHMYQpl8NJ7H?=
+ =?us-ascii?Q?OE7meL9cHGbnUxMVNKHW2PBgT153zM51ogS3XiZilScs68LUHKgNcKpRERUn?=
+ =?us-ascii?Q?RGQrKAnphfNxJq6nReUX0Y7YGm59ssgis0fL3KhxvSbbUcmQsj+lOZgWwX1i?=
+ =?us-ascii?Q?J2TLb+gegnhyK5uszW9jL/EqpRgB9ivYtyyijBlWxegCOWDqGh+02yZC2vfH?=
+ =?us-ascii?Q?AYyYN/H56kTbXwJ0uQOjsdG13I+Z4QS2byf/1Chrm0rlH2abyqABE43Ir8WV?=
+ =?us-ascii?Q?L9aMBdfxydDvcT1Dqb80KhOsWPxj7M0mTECcjLC6AiRBbsJnkbYtARPhJvBv?=
+ =?us-ascii?Q?ZjnrJZOpPsr4pcs9DIANLyWGC/iAp4nLjn5yDmilcZkn/NEaKYVQ4Y+ZCRVs?=
+ =?us-ascii?Q?0IPYC5MziwfACljBwufHvBhpxTeMQ2HFfMv9+frgqRaQPBm1fFfI7upg6ADU?=
+ =?us-ascii?Q?HjvlCsR8EOhNaGPkGxCoAJbXqrxktBuCaRVHH1xA1IoLaLOrFXLHt95XVlnp?=
+ =?us-ascii?Q?+WH4YixndKxL3NgkQ3olPCs3gYVajtj8R4KVrG9lLYPzKNCg7Q+uosQf6kTb?=
+ =?us-ascii?Q?9R+VulxxhYxIx0eFxjbkUvUys+cDhLgOpK+4?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 14:00:06.1948
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c444b18d-cb7c-4e56-83b2-08ddf784d68f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001708F.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7127
 
-Tegra already defines all BARs expect for BAR0 as BAR_RESERVED.
-This is sufficient for pci-epf-test to not allocate backing memory and to
-not call set_bar() for those BARs.
+Add device tree bindings for NVIDIA VRS (Voltage Regulator Specification)
+RTC device. NVIDIA VRS is a Power Management IC (PMIC) that implements a
+power sequencing solution with I2C interface. The device includes RTC
+which provides functionality to get/set system time, retain system
+time across boot, wake system from suspend and shutdown state.
 
-However, the host side driver, pci_endpoint_test, simply does an ioremap
-for all enabled BARs, and will run tests against all enabled BARs.
+Supported platforms:
+- NVIDIA Jetson AGX Orin Developer Kit
+- NVIDIA IGX Orin Development Kit
+- NVIDIA Jetson Orin NX Developer Kit
+- NVIDIA Jetson Orin Nano Developer Kit
 
-After running the BARs tests (which will write to all enabled BARs), the
-inbound address translation is broken.
-This is because the tegra controller exposes the ATU Port Logic Structure
-in BAR4. So when BAR4 is written, the inbound address translation settings
-get overwritten.
-
-To avoid this, implement the dw_pcie_ep_ops .init() callback and start off
-by disabling all BARs (pci-epf-test will later enable/configure BARs that
-are not defined as BAR_RESERVED).
-
-This matches the behavior of other PCIe endpoint drivers:
-dra7xx, imx6, layerscape-ep, artpec6, dw-rockchip, qcom-ep, rcar-gen4, and
-uniphier-ep.
-
-With this, the PCI endpoint kselftest test case CONSECUTIVE_BAR_TEST
-(which was specifically made to detect address translation issues) passes.
-
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
+Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4f26086f25daf..9488805ecf608 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1941,6 +1941,15 @@ static irqreturn_t tegra_pcie_ep_pex_rst_irq(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
-+static void tegra_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
+v6:
+- compatible name fixes to "nvidia,vrs-10"
+- changed dtb node name to pmic@3c
+
+v5:
+- moved device tree bindings from mfd to rtc
+- changed dtb node name to rtc@3c
+- changed compatible string to "nvidia,vrs10-rtc"
+
+v4:
+- no changes
+
+v3:
+- fixed device tree node name to generic "pmic@3c"
+- fixed indentation
+
+v2:
+- fixed copyrights
+- updated description with RTC information
+- added status node in dtb node example
+
+ .../bindings/rtc/nvidia,vrs10-rtc.yaml        | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/nvidia,vrs10-rtc.yaml
+
+diff --git a/Documentation/devicetree/bindings/rtc/nvidia,vrs10-rtc.yaml b/Documentation/devicetree/bindings/rtc/nvidia,vrs10-rtc.yaml
+new file mode 100644
+index 000000000000..e8f3c25607e0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/nvidia,vrs10-rtc.yaml
+@@ -0,0 +1,59 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/nvidia,vrs10-rtc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+};
++title: NVIDIA Voltage Regulator Specification Real Time Clock
 +
- static int tegra_pcie_ep_raise_intx_irq(struct tegra_pcie_dw *pcie, u16 irq)
- {
- 	/* Tegra194 supports only INTA */
-@@ -2017,6 +2026,7 @@ tegra_pcie_ep_get_features(struct dw_pcie_ep *ep)
- }
- 
- static const struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.init = tegra_pcie_ep_init,
- 	.raise_irq = tegra_pcie_ep_raise_irq,
- 	.get_features = tegra_pcie_ep_get_features,
- };
++maintainers:
++  - Shubhi Garg <shgarg@nvidia.com>
++
++description:
++  NVIDIA VRS-10 (Voltage Regulator Specification) is a Power Management IC
++  (PMIC) that implements a power sequencing solution with I2C interface.
++  The device includes a real-time clock (RTC) with 32kHz clock output and
++  backup battery support, alarm functionality for system wake-up from
++  suspend and shutdown states, OTP memory for power sequencing configuration,
++  and an interrupt controller for managing VRS events.
++
++properties:
++  compatible:
++    const: nvidia,vrs-10
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@3c {
++            compatible = "nvidia,vrs-10";
++            reg = <0x3c>;
++            interrupt-parent = <&pmc>;
++            interrupts = <24 IRQ_TYPE_LEVEL_LOW>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++        };
++    };
 -- 
-2.51.0
+2.43.0
 
