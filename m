@@ -1,222 +1,145 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC08277CBC
-	for <linux-tegra@vger.kernel.org>; Sat, 20 Sep 2025 10:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF66420FAA4;
+	Sat, 20 Sep 2025 15:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758365378; cv=none; b=QyVLMATbfqhnE2SkjwOUx2KU2WW88ifxkmDSaPik+8jpRaPrdSFHiCwMFVV9jxoGpqZzV9qcWShzmFo40Lf4vzxVJRMR1XXeVaFn7YcOhzTZgXu2W7K8E7GAl3QGaYe0/O87PVenlbBr9t6uhWjtlOxrTN5qqIUXMXqDP7nlL5o=
+	t=1758382293; cv=none; b=toIMISjUeuPPRqXbaPhQgfWqzmcPiWf2HQahpD2LC9zSLTCrC4DgprETC0CK8oOxSFKdKNyKm/YJtCnle0+5jhKS4LDDmo9i3WvDn9Qj9+da0/78ZPhrJVGsCBr6qF/0PvKn6HM4JyHrmR1Kpb6CMVS9SnTsc0U9rO768ikke1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758365378; c=relaxed/simple;
-	bh=LeD+Kp6HPaiggwjhXT1KWVi4MySo4T2YgcXx0PkGZ0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P3NGKBPFeYPnjwx4tMjRug9VLaSTSWP4cdyMzMdXr3QYHoC3S6ZmcvFVF8NURObZnCkQAQCMl3H7+sIKeEVw26roDvjsQ9drPP8XejPpl/9qBX1Zoqxf1qX7+MFj4S3BJ3My3Yh0hicce30Z3+hbo6kQuhQPqJaO7sGEktyjeAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfJ7Pqhg; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758382293; c=relaxed/simple;
+	bh=gZqX2H7n0UEtTkfIc/RuIFUydJoKJ53JhCKjq8fs61I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dszTiz+BPn9SwKKgdwW5wbZvaLbpN0yMX6w8yl95UCWrZwNv7gUpX8cxLopK9koSNyM6y4UuOoVu5CJw8qyBz4IgDUaXAyhCopDFb0t8xOSkrC4QC4a/LL0krRwNKQNb4ZvtxWm4lSv4jZfkrcCsSDeBO131R4nUOl0iL+OXNJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIX0LMHj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfJ7Pqhg"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0473327e70so531733566b.3
-        for <linux-tegra@vger.kernel.org>; Sat, 20 Sep 2025 03:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758365374; x=1758970174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
-        b=SfJ7PqhgZVJ+4gZgkx39NxdBt6ecJ8Je+/R2RnpVcyJ1mh0Mg5wN9hEWtiz/U+ol/i
-         6xl6kfNmxTZ2qIqEGykSR04lEEtwKCSGR5NXGTF4yDAk4qLt7np57BxE0mDAe1yP2Lia
-         utCH1acPEzLmrbNThBQmQFSHWNp+UEKGp+Axle/NwGr/KuqgIVgMdG3wvWFv6Fp3LQKW
-         2lrIQLaK7siis5vnnC1xqBsKrjH+7t/SvzudRdjD/7xzfXa+RIJEY2r4VFm+UtAhAGji
-         rRF7cixkOlb6cdPMfZSuUjBhacCAXl24tEoML9fjvK2b3nj/y2Di8WDq6BZ6EmCgNDti
-         GjSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758365374; x=1758970174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
-        b=qUCaTMGunkql6cpw1iwl7+UWgJx3gpW9VlCZhYaIGYuCyO9Vj2IGc+ttG+t0aFU2Ag
-         07QCO3lWSsqsPVE0VfwOXb1v20vtCIUmJBcV9NqhCr8I9c76CYwWjKZkwEa8Ob3jbSMD
-         GJnToeLyxAZPqT/YLvr0H0psb8bb/+QvJfKJX3LDec5zUH12kF9fnHWSKh/rU17ocGX1
-         pkB0gBlEHbGgmpyIaSe1OWnqPN+XenVBVR3djsWjSzfCTBL6mrBSdkzBkWhHLmVRnGuW
-         WqazmIl35ChG0UGwMl+qptqGNtViVal0uZLDC2jwQvwFAMBiwNk9fWjqpxam3E+d4c7B
-         0bgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMcKi1GKXH6WHk0C6yViCxC/yXu3Z2ljaq1H/UtE1L/Nu3+1FKQhtavTHpuQ98Qn+cDdzuuen0colsCA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6xVz3qyTozOwf1sNs3Z7U/TqNBp3vsaAEqbctVutUwb4rcqPF
-	4vc5g+hh5CqLjF06OF/JmbzxWcU5DPfmhnBZAag4yeiZeNQUuIJ1Zb0o2Kk1gM1O36wVHurPm+L
-	tnonpxM4M2dnj5xb21pwHdxyECeedwqY=
-X-Gm-Gg: ASbGncs2tM3DGhUmQ6BXYT9ZEWpLo2ze72NOoaOrDpq6D/+gPk7si2OVkaquAaY0lfD
-	K0WCjoTZWp5dOkCEdJFw0iWCLBLIeofVx+9tT+eDzwEy1GcSNcBzfPYssKKbrQ/d8k9Wd3kgh0w
-	UAZvohJ40zJLVisq4hOgFNmZ9iIqv3umftWlTtQ47NGx76J/IzCyHsbALRvOQX8an7sVIxlX0DL
-	nSfCQw=
-X-Google-Smtp-Source: AGHT+IHHbhBTYGUaEQMbVjyA0lAj2luPxy2XsbzoJZ2rvsPEEjKDVfN8Ekg2zTb0h70UHa/ky/mxQ7DHX1RPk/WuHD8=
-X-Received: by 2002:a17:907:2d86:b0:afe:f418:2294 with SMTP id
- a640c23a62f3a-b24f4cd1612mr662812666b.49.1758365373591; Sat, 20 Sep 2025
- 03:49:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIX0LMHj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4053C4CEEB;
+	Sat, 20 Sep 2025 15:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758382293;
+	bh=gZqX2H7n0UEtTkfIc/RuIFUydJoKJ53JhCKjq8fs61I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XIX0LMHjsoHEyzTGaCYxixYg/Gw83ThsAZygSvEaBKxB3QAttPZRy5Z5T6IClHXRC
+	 olHdCvvT6rKD4clpBS4qlS04R4l3x8CVtMi4eXr5xOdsPwsbtVQwkuhI0iCCStPnIK
+	 N7mJHmHsspXygmYRaj80SyI6wixBkhQRIM/1nvln5Pm9ES1nS2DVELgScy9p8GgNVl
+	 ptIIqHMZJy6wF6b4BsKaFNAicBYBm4KQf6aflaSJ3m56dcsEd6oyDeWmNRpWQLb+XZ
+	 K8k0Cz9iDa/i4/SgNKr30Gu6rliPyEZ1F1bNQcQ7Bs1X0e4oHtQX3RCs/ddWw7eqiL
+	 riIc565RExgYA==
+Date: Sat, 20 Sep 2025 21:01:25 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, 
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra194: Handle errors in BPMP response
+Message-ID: <lvchydppqdxm4hy4kogkzinz4w2hllvsihg2ehvueth25sxi53@feqxeedvrs2o>
+References: <20250911122728.1465254-2-cassel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
-In-Reply-To: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 20 Sep 2025 13:48:57 +0300
-X-Gm-Features: AS18NWAsgghzm2kBTHVAUWgTvM4Rjv6fz5BEJyNeWi6WNSHflPsd2h04LFjYcyQ
-Message-ID: <CAHp75Vfx9kyP-rVtfvyyMK4VH+oiRVjP1fZOtbVH14iLh98Jxw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] media: Introduce video device state management
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, 
-	Ricardo Ribalda <ribalda@chromium.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Hans de Goede <hansg@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick@shmanahar.org>, 
-	Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Matt Ranostay <matt@ranostay.sg>, Andy Walls <awalls@md.metrocast.net>, 
-	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
-	Dan Scally <djrscally@gmail.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
-	Martin Tuma <martin.tuma@digiteqautomotive.com>, 
-	Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey_utkin@fastmail.com>, 
-	Ismael Luceno <ismael@iodev.co.uk>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
-	Corentin Labbe <clabbe@baylibre.com>, Michael Tretter <m.tretter@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Keke Li <keke.li@amlogic.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ming Qian <ming.qian@nxp.com>, 
-	Zhou Peng <eagle.zhou@nxp.com>, Eddie James <eajames@linux.ibm.com>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Eugen Hristev <eugen.hristev@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Nas Chung <nas.chung@chipsnmedia.com>, Jackson Lee <jackson.lee@chipsnmedia.com>, 
-	Devarsh Thakkar <devarsht@ti.com>, Bin Liu <bin.liu@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, 
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
-	Yunfei Dong <yunfei.dong@mediatek.com>, Joseph Liu <kwliu@nuvoton.com>, 
-	Marvin Lin <kflin@nuvoton.com>, Dmitry Osipenko <digetx@gmail.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>, Mirela Rabulea <mirela.rabulea@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
-	Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Robert Foss <rfoss@kernel.org>, 
-	Todor Tomov <todor.too@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Jacob Chen <jacob-chen@iotwrt.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Dafna Hirschfeld <dafna@fastmail.com>, 
-	Detlev Casanova <detlev.casanova@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	=?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
-	Hugues Fruchet <hugues.fruchet@foss.st.com>, 
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Maxime Ripard <mripard@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Yong Deng <yong.deng@magewell.com>, 
-	Paul Kocialkowski <paulk@sys-base.io>, Shreeya Patel <shreeya.patel@collabora.com>, 
-	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
-	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, Jai Luthra <jai.luthra@linux.dev>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Michal Simek <michal.simek@amd.com>, 
-	Alexey Klimov <alexey.klimov@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Michael Krufky <mkrufky@linuxtv.org>, Mike Isely <isely@pobox.com>, Andy Shevchenko <andy@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steve Longerbeam <slongerbeam@gmail.com>, 
-	Jack Zhu <jack.zhu@starfivetech.com>, 
-	Changhuang Liang <changhuang.liang@starfivetech.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
-	Christian Gromm <christian.gromm@microchip.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Plamen Atanasov <tigerment@mail.bg>, Sean Young <sean@mess.org>, 
-	Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Jiasheng Jiang <jiashengjiangcool@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
-	Matthew Majewski <mattwmajewski@gmail.com>, Yunseong Kim <ysk@kzalloc.com>, Chen Ni <nichen@iscas.ac.cn>, 
-	Fabio Luongo <f.langufo.l@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Yang Yingliang <yangyingliang@huawei.com>, Ludwig Disterhof <ludwig@disterhof.eu>, 
-	"Everest K.C." <everestkc@everestkc.com.np>, Stefan Wahren <wahrenst@gmx.net>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Akash Kumar <quic_akakum@quicinc.com>, 
-	linux-input@vger.kernel.org, mjpeg-users@lists.sourceforge.net, 
-	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
-	kernel@collabora.com, linux-staging@lists.linux.dev, 
-	linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250911122728.1465254-2-cassel@kernel.org>
 
-On Fri, Sep 19, 2025 at 12:57=E2=80=AFPM Jai Luthra <jai.luthra@ideasonboar=
-d.com> wrote:
->
-> Hi,
->
-> This patch series introduces state management for video devices.
->
-> Currently, V4L2 subdevices have a well-established state management
-> system [1] that allows the framework to store the subdevice state
-> at a central location.
->
-> Video devices however lack this, leading to inconsistent state handling
-> across drivers and making it difficult to implement features like
-> hardware multiplexing in complex media pipelines [2].
->
-> The series is composed of three parts:
->
-> - Core Infrastructure (PATCH 1-4)
->         Introduces the basic state structure, try state support,
->         initialization callbacks, and driver helpers
-> - Framework Integration (PATCH 5-7)
->         Integrates state passing through the ioctl wrappers and driver
->         implementations
-> - Driver Examples (PATCH 8-10)
->         Use the state to store formats in TI J721E CSI2RX and Rockchip
->         RKISP1 drivers
->
-> This should also provide a foundation for drivers to extend or subclass
-> the state structure with device-specific variables in future.
->
-> I have tested capture and format negotiation with the converted drivers
-> on SK AM62A (j721e-csi2rx) and Debix Model A (rkisp1).
->
-> [1]: https://lore.kernel.org/linux-media/20210610145606.3468235-1-tomi.va=
-lkeinen@ideasonboard.com/
-> [2]: https://lore.kernel.org/linux-media/20250724-multicontext-mainline-2=
-025-v2-0-c9b316773486@ideasonboard.com/
+On Thu, Sep 11, 2025 at 02:27:29PM +0200, Niklas Cassel wrote:
+> From: Vidya Sagar <vidyas@nvidia.com>
+> 
+> The return value from tegra_bpmp_transfer() indicates the success or
+> failure of the IPC transaction with BPMP. If the transaction
+> succeeded, we also need to check the actual command's result code.
+> 
+> If a host deasserts PERST without providing a refclock, enabling the PHY
+> (via a tegra_bpmp_transfer() call) will silently fail, however, because
+> we are lacking error handling, pex_ep_event_pex_rst_deassert() will still
+> set pcie->ep_state = EP_STATE_ENABLED.
+> 
 
-When you add a Cc list., do it after the '---' (three minus signs)
-line, otherwise that huge unneeded noise will become part of the
-commit message.
+How can a host deassert PERST# without providing refclk? As per the CEM spec
+r4.0, sec 2.2, refclk should be active at least TPERST-CLK before PERST# is
+deasserted.
 
+So does this controller violate the spec? Even so, I don't know how an endpoint
+could function if it relies on the host for refclk.
 
---=20
-With Best Regards,
-Andy Shevchenko
+- Mani
+
+> Because of this, any succeeding PERST deassertion will incorrectly be a
+> no-op (because of the pcie->ep_state == EP_STATE_ENABLED check in
+> pex_ep_event_pex_rst_deassert()), even if the host does provide a refclock
+> during the succeeding PERST deassertion.
+> 
+> Add error handling to tegra_bpmp_transfer(), such that the pcie->ep_state
+> can not get out of sync with reality, which will incorrectly cause the
+> driver to think that it has been successfully initialized, which
+> incorrectly makes future calls to pex_ep_event_pex_rst_deassert() a no-op.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> [cassel: improve commit log]
+> Signed-off-by: Niklas Cassel <cassel@kernel.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 0c0734aa14b68..8c5c370dbba5e 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1214,6 +1214,7 @@ static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
+>  	struct mrq_uphy_response resp;
+>  	struct tegra_bpmp_message msg;
+>  	struct mrq_uphy_request req;
+> +	int err;
+>  
+>  	/*
+>  	 * Controller-5 doesn't need to have its state set by BPMP-FW in
+> @@ -1236,7 +1237,13 @@ static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
+>  	msg.rx.data = &resp;
+>  	msg.rx.size = sizeof(resp);
+>  
+> -	return tegra_bpmp_transfer(pcie->bpmp, &msg);
+> +	err = tegra_bpmp_transfer(pcie->bpmp, &msg);
+> +	if (err)
+> +		return err;
+> +	if (msg.rx.ret)
+> +		return -EINVAL;
+> +
+> +	return 0;
+>  }
+>  
+>  static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
+> @@ -1245,6 +1252,7 @@ static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
+>  	struct mrq_uphy_response resp;
+>  	struct tegra_bpmp_message msg;
+>  	struct mrq_uphy_request req;
+> +	int err;
+>  
+>  	memset(&req, 0, sizeof(req));
+>  	memset(&resp, 0, sizeof(resp));
+> @@ -1264,7 +1272,13 @@ static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
+>  	msg.rx.data = &resp;
+>  	msg.rx.size = sizeof(resp);
+>  
+> -	return tegra_bpmp_transfer(pcie->bpmp, &msg);
+> +	err = tegra_bpmp_transfer(pcie->bpmp, &msg);
+> +	if (err)
+> +		return err;
+> +	if (msg.rx.ret)
+> +		return -EINVAL;
+> +
+> +	return 0;
+>  }
+>  
+>  static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
+> -- 
+> 2.51.0
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
