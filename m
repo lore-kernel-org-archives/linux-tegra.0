@@ -1,200 +1,180 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010067.outbound.protection.outlook.com [52.101.201.67])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5CB2D6417;
-	Fri, 19 Sep 2025 23:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758323719; cv=fail; b=o8/coqwX146XZXGbl1n8L3IW5L0ty5dMJjl63pZg/RvGuOlTbUDGYip1CpFv2iZtKbti8JOLVRnwHlPdEiq5pcNjeznI8vtQBXvDk7u6/i62V+XDhVun44mUiDwjJPHGoqxfpmrhMOlPIWxiR0E8crWtWs37R4YV+mw/7W1khjU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758323719; c=relaxed/simple;
-	bh=wcqjjk6lozDghnN+UvGHfG8MoN3H3NJkbdPet8xqZbY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENOZFFwIIIxiDAceB5pCSF7UkSBBhAhRmxetTHxrHIFt+GxQVfr0txWeNS+49vIaDFjfi8St9qN23JFcw5C0Z6n0UZLQI4LZqRewvoaqFtabdk0p49aWuipkLja6ukQY+NHMWcQZj3FnVXSy60VmYlk4X69o3OM1+BCHYTfWoRA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z5nDeVFS; arc=fail smtp.client-ip=52.101.201.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFDB1E9B1C;
+	Sat, 20 Sep 2025 02:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758334200; cv=none; b=EBkFDe2VMRrO/Y0S1hBcnRv/h38uE82l0nU2hDJFM3L02IIJ0Y452IWQ7SXdh15Uz1MxIpBsfLxBKj7d23GjGZZFtX7FbWTet/3FrIAIeEZczcE77U+F2wcdV5ukoi99AYMSEye5MRQWaGpKm7ROwOjGosToCJ0Z46+grepDGMQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758334200; c=relaxed/simple;
+	bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KztCuLrenTaZvE/gsyczPWLVZc0m+5NXaYfp2amQhF1NX6TAJE6D2Er+Mqj73s/nX3Np3BGogjN3o5neYEbWvJ6+eMBTJlnawxAL3BvmEQQt9Q3N4bYW3hiwYoaaFaFoEoXsoUNuqN6qbOVEWJQnELQESSGFQ2CaaOf196MJ7Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhXrxvAH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z5nDeVFS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yVLxc6Tmdiw/FvVnwMrbXK3FEdg1e7PeHwUpip7vV7kUGHgmidCEUfSMmU2z9V+yH3gTzWLI8MV4ZppCEykhYA17hIeG+Ow4lahiOXq/8Hh1IBcy8nV8q4Ldy3v2/uSF1A1gV/+5jaYCtN0H+VRYeorikj+pg3ELFvMh3sQEYQYDBncH3StZS5qbcbty23z/7Q2j4p2aJ6vIxJ++Nzz5Kkm4YwcYLKKH5VMqcNZ6PT8XV6qN4dIgO5Sd/CattsO7Er5LBbZ/LPlNxry2D8W7RIjxLrlcfBIwOf5uIQsBHXI9GTQ9NN/dZa7rPeiuMM0dk+PNZx4Rs2+Z2a8XOm6zZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c/Qg5mfPam+hZ4EzvkfwG8c/nFVyTqd8/nbtNYm2gGE=;
- b=dk5e89/Z9K3MtAwRfF/tP8REgyftc3njeRaMF49WrALYvVNiypy2maA2WHE/XMI7JSBWig6YJCHgAS5o/fIh64tuh9pcMIcJZFtK0zFc1e0H8di9/O7b5Oy90lXJsFo/DxXeCWjcRjJXp4c7mRfvJ7kNtEVL4Um+Kw6TOBNcGa6YDtmnbnupKQv8MEFGqBKqS1h7F8BCKrJNJucEjMkr9FdmDCqqsOLWSGWExtEbjl39Yscm8K4IelPxkLlPa78ByNUU/yr2fC7iLbRQ1Se86x1WA3YQY2aJ7Es1bMp/CvFyv4FvT9tHL/Kskh2MTwg1CyPBMkXBTPV5lVOga0o0gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c/Qg5mfPam+hZ4EzvkfwG8c/nFVyTqd8/nbtNYm2gGE=;
- b=Z5nDeVFSm4/8za0PjwMKAGBCJFzhToMnDWyo3aPsm9u3eOL6gvBzHQNeOMqfv2MKSNZ8moMtKn4AUgIb5zYuMA/v4haOqVXgKBM5xADMZYOqdOUJCgiq2n0cyQyoRRseUCyplCmN0EyX+ROTnQ6X5F/XsuNQqoBpJPObfuDT1poSG6dFMXrPvgjdHC4zRBYxOId9XYHadioAjkCZHEeN7wxyiPF+zIYU0YsBwLS10GNrRC6rBEIXkj7cgYgNLHqSCsAIA8nz/HiB/L/xl/rKRqMkLaE760HnvwFcfgCAZEkbsKZkLnEvT3E5UvXPcbIucwB/rH75Qq/18HvixpjFeg==
-Received: from PH7P220CA0080.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32c::23)
- by SJ2PR12MB8011.namprd12.prod.outlook.com (2603:10b6:a03:4c8::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 23:15:13 +0000
-Received: from CY4PEPF0000EE37.namprd05.prod.outlook.com
- (2603:10b6:510:32c:cafe::5) by PH7P220CA0080.outlook.office365.com
- (2603:10b6:510:32c::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Fri,
- 19 Sep 2025 23:15:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EE37.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 23:15:12 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 19 Sep
- 2025 16:14:48 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 19 Sep
- 2025 16:14:48 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 19 Sep 2025 16:14:44 -0700
-Date: Fri, 19 Sep 2025 16:14:43 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "joro@8bytes.org" <joro@8bytes.org>, "jgg@nvidia.com" <jgg@nvidia.com>,
-	"bhelgaas@google.com" <bhelgaas@google.com>, "suravee.suthikulpanit@amd.com"
-	<suravee.suthikulpanit@amd.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "sven@kernel.org"
-	<sven@kernel.org>, "j@jannau.net" <j@jannau.net>, "alyssa@rosenzweig.io"
-	<alyssa@rosenzweig.io>, "neal@gompa.dev" <neal@gompa.dev>,
-	"robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "krzk@kernel.org"
-	<krzk@kernel.org>, "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-	"dwmw2@infradead.org" <dwmw2@infradead.org>, "baolu.lu@linux.intel.com"
-	<baolu.lu@linux.intel.com>, "yong.wu@mediatek.com" <yong.wu@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>, "tjeznach@rivosinc.com"
-	<tjeznach@rivosinc.com>, "paul.walmsley@sifive.com"
-	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "alex@ghiti.fr"
-	<alex@ghiti.fr>, "heiko@sntech.de" <heiko@sntech.de>,
-	"schnelle@linux.ibm.com" <schnelle@linux.ibm.com>, "mjrosato@linux.ibm.com"
-	<mjrosato@linux.ibm.com>, "gerald.schaefer@linux.ibm.com"
-	<gerald.schaefer@linux.ibm.com>, "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"zhang.lyra@gmail.com" <zhang.lyra@gmail.com>, "wens@csie.org"
-	<wens@csie.org>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
-	"samuel@sholland.org" <samuel@sholland.org>, "jean-philippe@linaro.org"
-	<jean-philippe@linaro.org>, "rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"cwabbott0@gmail.com" <cwabbott0@gmail.com>, "quic_pbrahma@quicinc.com"
-	<quic_pbrahma@quicinc.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-s390@vger.kernel.org"
-	<linux-s390@vger.kernel.org>, "linux-sunxi@lists.linux.dev"
-	<linux-sunxi@lists.linux.dev>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "virtualization@lists.linux.dev"
-	<virtualization@lists.linux.dev>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>, "Sethi, Vikram" <vsethi@nvidia.com>,
-	"helgaas@kernel.org" <helgaas@kernel.org>, "etzhao1900@gmail.com"
-	<etzhao1900@gmail.com>
-Subject: Re: [PATCH v4 5/7] iommu: Add iommu_get_domain_for_dev_locked()
- helper
-Message-ID: <aM3j48Xqlfvh44fm@Asurada-Nvidia>
-References: <cover.1756682135.git.nicolinc@nvidia.com>
- <c9daeafb9046bed9e915fdafe20fe28a8c427d29.1756682135.git.nicolinc@nvidia.com>
- <BL1PR11MB527129A9BBF84BAC106B327E8C08A@BL1PR11MB5271.namprd11.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhXrxvAH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758334199; x=1789870199;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
+  b=DhXrxvAHph5SBG8JRzlWzoyT62ku2VvJrgqUUy1GZ3Wure33huupGfB3
+   iRg+IXX7Gf51SiK0FKUT4SHmPmK509Z0/QL4dTu9ZOFuWGa6cqU9VT6Xh
+   ywONKLXUu1bA6htKQ/m701S3qg+ZRLQMSGwqVllXR2Rg/1PYBEXtkvuuI
+   VA7uNxNgKESJICaPhWlFLs3wEWooVlRIFe1U4uMMCK0kfBj78x68RCYfe
+   v3eY7BxhogoE865FVBeRNtUHwoMj6Aos6llP69ZooEX6L60yIlp2yATmG
+   P7gS22S+EFccYblZa+vMb96Is/W9Xr1TMeeQYN8Bwwg4g0M1x9cCwqfs0
+   Q==;
+X-CSE-ConnectionGUID: HYKFpfa4QueTDjGXskAv1A==
+X-CSE-MsgGUID: amtTjqL7Spmtu3AKATjrSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="64501703"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="64501703"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 19:09:58 -0700
+X-CSE-ConnectionGUID: tKmWcZo7REuUUBFq1zMauw==
+X-CSE-MsgGUID: m2q2elODTl6a8KnPC+GAdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="176795181"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2025 19:09:55 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzn2u-0004xn-2m;
+	Sat, 20 Sep 2025 02:09:52 +0000
+Date: Sat, 20 Sep 2025 10:09:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>, alexandre.belloni@bootlin.com,
+	thierry.reding@gmail.com, jonathanh@nvidia.com,
+	andriy.shevchenko@linux.intel.com, linux-rtc@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Kartik Rajput <kkartik@nvidia.com>
+Subject: Re: [PATCH] rtc: tegra: Add ACPI support
+Message-ID: <202509200953.uZOl24Is-lkp@intel.com>
+References: <20250919111232.605405-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BL1PR11MB527129A9BBF84BAC106B327E8C08A@BL1PR11MB5271.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE37:EE_|SJ2PR12MB8011:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba7ef5ec-8489-4649-31ee-08ddf7d262e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0GACN3qznxKYjXD0FFz200NahW22jOhyIzG6IkToK6aNz4roLC4njGUBQ7O+?=
- =?us-ascii?Q?0bVI02WX4bTxYRj7B6ZAKmBRzZsjzRT/+Gj2l0Anmpsob7+ywbMsVPzRiLTG?=
- =?us-ascii?Q?+wVg3y9DI6fAsVFlaPx42zVew39AyYgNP53XK7/DumnZX0k8ZOac1i5c6nCd?=
- =?us-ascii?Q?FaASQGIREDofqtXzipg6hpSn/PXnG/No58E1RTXI0NsvtDBSpYdWXVeHAaXT?=
- =?us-ascii?Q?1u+oc+5orfcC+22qgG+/Jw1Qrf6PWJ3kSuWlvgun4sD9m5qVqI1Qa563zp7J?=
- =?us-ascii?Q?mB1iXpGq8E0gTZ7qoIuDcJ5pXc6Y0c6b/Xqr7RJqVDs8Ctj9+q7Fr52MNAYB?=
- =?us-ascii?Q?gImTxMG3yGj08V+SY9ZgfUZEpRQPW8jCdzrmcFItjuscuXrTiKgTG9ygTeCi?=
- =?us-ascii?Q?WU5v1Kvv846bF2OgXsCEo96yadl6om6J81wLKmjxDnYrgAhERZTyGpGK+ucN?=
- =?us-ascii?Q?+9teWY76j9A+VWBTSeo1QJP3TWltPwGXVSye8r8t2qQbY77txY7FxNA301a1?=
- =?us-ascii?Q?PlRnVPGfDZuT3xjgQW1z+L2F5UMXTZQc9R/cdzd3wNqwGf+2yVTrV3CFkN+V?=
- =?us-ascii?Q?mYUeOiu70zbBvWQmvnhpfhfxmAZ5peAUXt5EVATs/CXJqax9iBgVBHlKs0LX?=
- =?us-ascii?Q?dyuXMpGkQfS2+OP9tlMDlLy2vgwZD9kwaaus61TWl4ppXIL6X7LceuZ9k2CY?=
- =?us-ascii?Q?e+sn2FrDr2eR1MKp3WEgVEbIJrjJp0xT0yVNZZJjd9NQOR/bf5dO/G+Z/z7G?=
- =?us-ascii?Q?IUrl4h90jPKe+4S8CCmCqnzasW22EEk7FhLcQgNVGIB2SlX+uYoEAUjRbIM9?=
- =?us-ascii?Q?n1qeMYLlepjrsjXclxsmJ+9D4hxU0tKydycmvPjaTfYt8Zkilt8ewgkqbnHm?=
- =?us-ascii?Q?lPkeBVXquQKWcF5u2YfWgayK8MJACn9cFVTIWug18Y6T+KCeFWnGClbRvvk2?=
- =?us-ascii?Q?dRv0jpVfgvghR7kuLef3SOhmN+zTGsJxJvEXMRH+L28NsawwMbeY4utnRuok?=
- =?us-ascii?Q?qTgo7LNOMnoZkLPENR12buZ25ZRWGRqSDivO0plIrHhodWa52cUlH4CMA7Fr?=
- =?us-ascii?Q?+JytRQ9IlsTL1KfTDCM6ZXhe/MxCvj9zD4VCdQxs62kmJ5hLWTyBEHpLK568?=
- =?us-ascii?Q?g+DXIe7TzlwWjbY7EldpAnzwKmcEqph20ERzKGrTqzBo7E5iFpgHqFjy3gel?=
- =?us-ascii?Q?enphqiSnQih6DRB6MIDHiQg/jdOH5yJdjoL/+CGX94xNWwY0mDr8GSJBrBl9?=
- =?us-ascii?Q?x0k4wxlC69NQrH2WNdIJ9J5DfbH8vWdrYAB6ciu0KNNH6mRZ8898mPUcfKZy?=
- =?us-ascii?Q?6ifxYbYlIXZpco+8+DCUW6YsACx9gmZkPm0XWxk1KdJ5J506VyzjXjBWHs2/?=
- =?us-ascii?Q?K1UaqcZKYzlUoOUCR4o75fHE/Ml9lPQyc49hsHxtK081yaMrPW3lxHYkZSXj?=
- =?us-ascii?Q?mTpzo8Ukc/R6GQQ1RtyU3eIY4BImq1aMouCCEQueplRSZlEc4AIj7niAVIlI?=
- =?us-ascii?Q?jM4lmV5ZXb4+D3afQruBDGO8Ap1GBEbVbj2T?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 23:15:12.8569
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba7ef5ec-8489-4649-31ee-08ddf7d262e5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE37.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8011
+In-Reply-To: <20250919111232.605405-1-kkartik@nvidia.com>
 
-On Fri, Sep 12, 2025 at 09:36:38AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Monday, September 1, 2025 7:32 AM
-> > 
-> > 
-> > +/* Caller must be a general/external function that isn't an IOMMU callback
-> > */
-> >  struct iommu_domain *iommu_get_domain_for_dev(struct device *dev)
-> >  {
-> 
-> 'general function' is not easy to get its meaning. just keep 'external'?
+Hi Kartik,
 
-This is still one internal function use this:
-drivers/iommu/dma-iommu.c:1785:	    iommu_deferred_attach(dev, iommu_get_domain_for_dev(dev)))
+kernel test robot noticed the following build errors:
 
-So, it's not completely "external" :-/
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on abelloni/rtc-next linus/master v6.17-rc6 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks
-Nicolin
+url:    https://github.com/intel-lab-lkp/linux/commits/Kartik-Rajput/rtc-tegra-Add-ACPI-support/20250919-191553
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250919111232.605405-1-kkartik%40nvidia.com
+patch subject: [PATCH] rtc: tegra: Add ACPI support
+config: arm-randconfig-001-20250920 (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509200953.uZOl24Is-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/rtc/rtc-tegra.c: In function 'tegra_rtc_probe':
+>> drivers/rtc/rtc-tegra.c:310:13: error: implicit declaration of function 'is_of_node'; did you mean 'dev_of_node'? [-Werror=implicit-function-declaration]
+     310 |         if (is_of_node(dev_fwnode(&pdev->dev))) {
+         |             ^~~~~~~~~~
+         |             dev_of_node
+   cc1: some warnings being treated as errors
+
+
+vim +310 drivers/rtc/rtc-tegra.c
+
+   283	
+   284	static int tegra_rtc_probe(struct platform_device *pdev)
+   285	{
+   286		struct tegra_rtc_info *info;
+   287		int ret;
+   288	
+   289		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+   290		if (!info)
+   291			return -ENOMEM;
+   292	
+   293		info->base = devm_platform_ioremap_resource(pdev, 0);
+   294		if (IS_ERR(info->base))
+   295			return PTR_ERR(info->base);
+   296	
+   297		ret = platform_get_irq(pdev, 0);
+   298		if (ret <= 0)
+   299			return ret;
+   300	
+   301		info->irq = ret;
+   302	
+   303		info->rtc = devm_rtc_allocate_device(&pdev->dev);
+   304		if (IS_ERR(info->rtc))
+   305			return PTR_ERR(info->rtc);
+   306	
+   307		info->rtc->ops = &tegra_rtc_ops;
+   308		info->rtc->range_max = U32_MAX;
+   309	
+ > 310		if (is_of_node(dev_fwnode(&pdev->dev))) {
+   311			info->clk = devm_clk_get(&pdev->dev, NULL);
+   312			if (IS_ERR(info->clk))
+   313				return PTR_ERR(info->clk);
+   314	
+   315			ret = clk_prepare_enable(info->clk);
+   316			if (ret < 0)
+   317				return ret;
+   318		}
+   319	
+   320		/* set context info */
+   321		info->pdev = pdev;
+   322		spin_lock_init(&info->lock);
+   323	
+   324		platform_set_drvdata(pdev, info);
+   325	
+   326		/* clear out the hardware */
+   327		writel(0, info->base + TEGRA_RTC_REG_SECONDS_ALARM0);
+   328		writel(0xffffffff, info->base + TEGRA_RTC_REG_INTR_STATUS);
+   329		writel(0, info->base + TEGRA_RTC_REG_INTR_MASK);
+   330	
+   331		device_init_wakeup(&pdev->dev, true);
+   332	
+   333		ret = devm_request_irq(&pdev->dev, info->irq, tegra_rtc_irq_handler,
+   334				       IRQF_TRIGGER_HIGH, dev_name(&pdev->dev),
+   335				       &pdev->dev);
+   336		if (ret) {
+   337			dev_err(&pdev->dev, "failed to request interrupt: %d\n", ret);
+   338			goto disable_clk;
+   339		}
+   340	
+   341		ret = devm_rtc_register_device(info->rtc);
+   342		if (ret)
+   343			goto disable_clk;
+   344	
+   345		dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
+   346	
+   347		return 0;
+   348	
+   349	disable_clk:
+   350		if (is_of_node(dev_fwnode(&pdev->dev)))
+   351			clk_disable_unprepare(info->clk);
+   352		return ret;
+   353	}
+   354	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
