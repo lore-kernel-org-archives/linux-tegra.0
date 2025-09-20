@@ -1,180 +1,222 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFDB1E9B1C;
-	Sat, 20 Sep 2025 02:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC08277CBC
+	for <linux-tegra@vger.kernel.org>; Sat, 20 Sep 2025 10:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758334200; cv=none; b=EBkFDe2VMRrO/Y0S1hBcnRv/h38uE82l0nU2hDJFM3L02IIJ0Y452IWQ7SXdh15Uz1MxIpBsfLxBKj7d23GjGZZFtX7FbWTet/3FrIAIeEZczcE77U+F2wcdV5ukoi99AYMSEye5MRQWaGpKm7ROwOjGosToCJ0Z46+grepDGMQ=
+	t=1758365378; cv=none; b=QyVLMATbfqhnE2SkjwOUx2KU2WW88ifxkmDSaPik+8jpRaPrdSFHiCwMFVV9jxoGpqZzV9qcWShzmFo40Lf4vzxVJRMR1XXeVaFn7YcOhzTZgXu2W7K8E7GAl3QGaYe0/O87PVenlbBr9t6uhWjtlOxrTN5qqIUXMXqDP7nlL5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758334200; c=relaxed/simple;
-	bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KztCuLrenTaZvE/gsyczPWLVZc0m+5NXaYfp2amQhF1NX6TAJE6D2Er+Mqj73s/nX3Np3BGogjN3o5neYEbWvJ6+eMBTJlnawxAL3BvmEQQt9Q3N4bYW3hiwYoaaFaFoEoXsoUNuqN6qbOVEWJQnELQESSGFQ2CaaOf196MJ7Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhXrxvAH; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1758365378; c=relaxed/simple;
+	bh=LeD+Kp6HPaiggwjhXT1KWVi4MySo4T2YgcXx0PkGZ0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3NGKBPFeYPnjwx4tMjRug9VLaSTSWP4cdyMzMdXr3QYHoC3S6ZmcvFVF8NURObZnCkQAQCMl3H7+sIKeEVw26roDvjsQ9drPP8XejPpl/9qBX1Zoqxf1qX7+MFj4S3BJ3My3Yh0hicce30Z3+hbo6kQuhQPqJaO7sGEktyjeAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfJ7Pqhg; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhXrxvAH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758334199; x=1789870199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
-  b=DhXrxvAHph5SBG8JRzlWzoyT62ku2VvJrgqUUy1GZ3Wure33huupGfB3
-   iRg+IXX7Gf51SiK0FKUT4SHmPmK509Z0/QL4dTu9ZOFuWGa6cqU9VT6Xh
-   ywONKLXUu1bA6htKQ/m701S3qg+ZRLQMSGwqVllXR2Rg/1PYBEXtkvuuI
-   VA7uNxNgKESJICaPhWlFLs3wEWooVlRIFe1U4uMMCK0kfBj78x68RCYfe
-   v3eY7BxhogoE865FVBeRNtUHwoMj6Aos6llP69ZooEX6L60yIlp2yATmG
-   P7gS22S+EFccYblZa+vMb96Is/W9Xr1TMeeQYN8Bwwg4g0M1x9cCwqfs0
-   Q==;
-X-CSE-ConnectionGUID: HYKFpfa4QueTDjGXskAv1A==
-X-CSE-MsgGUID: amtTjqL7Spmtu3AKATjrSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="64501703"
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="64501703"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 19:09:58 -0700
-X-CSE-ConnectionGUID: tKmWcZo7REuUUBFq1zMauw==
-X-CSE-MsgGUID: m2q2elODTl6a8KnPC+GAdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="176795181"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2025 19:09:55 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzn2u-0004xn-2m;
-	Sat, 20 Sep 2025 02:09:52 +0000
-Date: Sat, 20 Sep 2025 10:09:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kartik Rajput <kkartik@nvidia.com>, alexandre.belloni@bootlin.com,
-	thierry.reding@gmail.com, jonathanh@nvidia.com,
-	andriy.shevchenko@linux.intel.com, linux-rtc@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Kartik Rajput <kkartik@nvidia.com>
-Subject: Re: [PATCH] rtc: tegra: Add ACPI support
-Message-ID: <202509200953.uZOl24Is-lkp@intel.com>
-References: <20250919111232.605405-1-kkartik@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfJ7Pqhg"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0473327e70so531733566b.3
+        for <linux-tegra@vger.kernel.org>; Sat, 20 Sep 2025 03:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758365374; x=1758970174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
+        b=SfJ7PqhgZVJ+4gZgkx39NxdBt6ecJ8Je+/R2RnpVcyJ1mh0Mg5wN9hEWtiz/U+ol/i
+         6xl6kfNmxTZ2qIqEGykSR04lEEtwKCSGR5NXGTF4yDAk4qLt7np57BxE0mDAe1yP2Lia
+         utCH1acPEzLmrbNThBQmQFSHWNp+UEKGp+Axle/NwGr/KuqgIVgMdG3wvWFv6Fp3LQKW
+         2lrIQLaK7siis5vnnC1xqBsKrjH+7t/SvzudRdjD/7xzfXa+RIJEY2r4VFm+UtAhAGji
+         rRF7cixkOlb6cdPMfZSuUjBhacCAXl24tEoML9fjvK2b3nj/y2Di8WDq6BZ6EmCgNDti
+         GjSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758365374; x=1758970174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
+        b=qUCaTMGunkql6cpw1iwl7+UWgJx3gpW9VlCZhYaIGYuCyO9Vj2IGc+ttG+t0aFU2Ag
+         07QCO3lWSsqsPVE0VfwOXb1v20vtCIUmJBcV9NqhCr8I9c76CYwWjKZkwEa8Ob3jbSMD
+         GJnToeLyxAZPqT/YLvr0H0psb8bb/+QvJfKJX3LDec5zUH12kF9fnHWSKh/rU17ocGX1
+         pkB0gBlEHbGgmpyIaSe1OWnqPN+XenVBVR3djsWjSzfCTBL6mrBSdkzBkWhHLmVRnGuW
+         WqazmIl35ChG0UGwMl+qptqGNtViVal0uZLDC2jwQvwFAMBiwNk9fWjqpxam3E+d4c7B
+         0bgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMcKi1GKXH6WHk0C6yViCxC/yXu3Z2ljaq1H/UtE1L/Nu3+1FKQhtavTHpuQ98Qn+cDdzuuen0colsCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6xVz3qyTozOwf1sNs3Z7U/TqNBp3vsaAEqbctVutUwb4rcqPF
+	4vc5g+hh5CqLjF06OF/JmbzxWcU5DPfmhnBZAag4yeiZeNQUuIJ1Zb0o2Kk1gM1O36wVHurPm+L
+	tnonpxM4M2dnj5xb21pwHdxyECeedwqY=
+X-Gm-Gg: ASbGncs2tM3DGhUmQ6BXYT9ZEWpLo2ze72NOoaOrDpq6D/+gPk7si2OVkaquAaY0lfD
+	K0WCjoTZWp5dOkCEdJFw0iWCLBLIeofVx+9tT+eDzwEy1GcSNcBzfPYssKKbrQ/d8k9Wd3kgh0w
+	UAZvohJ40zJLVisq4hOgFNmZ9iIqv3umftWlTtQ47NGx76J/IzCyHsbALRvOQX8an7sVIxlX0DL
+	nSfCQw=
+X-Google-Smtp-Source: AGHT+IHHbhBTYGUaEQMbVjyA0lAj2luPxy2XsbzoJZ2rvsPEEjKDVfN8Ekg2zTb0h70UHa/ky/mxQ7DHX1RPk/WuHD8=
+X-Received: by 2002:a17:907:2d86:b0:afe:f418:2294 with SMTP id
+ a640c23a62f3a-b24f4cd1612mr662812666b.49.1758365373591; Sat, 20 Sep 2025
+ 03:49:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919111232.605405-1-kkartik@nvidia.com>
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+In-Reply-To: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 20 Sep 2025 13:48:57 +0300
+X-Gm-Features: AS18NWAsgghzm2kBTHVAUWgTvM4Rjv6fz5BEJyNeWi6WNSHflPsd2h04LFjYcyQ
+Message-ID: <CAHp75Vfx9kyP-rVtfvyyMK4VH+oiRVjP1fZOtbVH14iLh98Jxw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] media: Introduce video device state management
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, 
+	Ricardo Ribalda <ribalda@chromium.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Hans de Goede <hansg@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick@shmanahar.org>, 
+	Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Matt Ranostay <matt@ranostay.sg>, Andy Walls <awalls@md.metrocast.net>, 
+	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
+	Dan Scally <djrscally@gmail.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+	Martin Tuma <martin.tuma@digiteqautomotive.com>, 
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey_utkin@fastmail.com>, 
+	Ismael Luceno <ismael@iodev.co.uk>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Corentin Labbe <clabbe@baylibre.com>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Keke Li <keke.li@amlogic.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ming Qian <ming.qian@nxp.com>, 
+	Zhou Peng <eagle.zhou@nxp.com>, Eddie James <eajames@linux.ibm.com>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Eugen Hristev <eugen.hristev@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Nas Chung <nas.chung@chipsnmedia.com>, Jackson Lee <jackson.lee@chipsnmedia.com>, 
+	Devarsh Thakkar <devarsht@ti.com>, Bin Liu <bin.liu@mediatek.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, 
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
+	Yunfei Dong <yunfei.dong@mediatek.com>, Joseph Liu <kwliu@nuvoton.com>, 
+	Marvin Lin <kflin@nuvoton.com>, Dmitry Osipenko <digetx@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>, Mirela Rabulea <mirela.rabulea@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
+	Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Jacob Chen <jacob-chen@iotwrt.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	=?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
+	Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Maxime Ripard <mripard@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Yong Deng <yong.deng@magewell.com>, 
+	Paul Kocialkowski <paulk@sys-base.io>, Shreeya Patel <shreeya.patel@collabora.com>, 
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, Jai Luthra <jai.luthra@linux.dev>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Michal Simek <michal.simek@amd.com>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Michael Krufky <mkrufky@linuxtv.org>, Mike Isely <isely@pobox.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steve Longerbeam <slongerbeam@gmail.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, 
+	Changhuang Liang <changhuang.liang@starfivetech.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
+	Christian Gromm <christian.gromm@microchip.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Plamen Atanasov <tigerment@mail.bg>, Sean Young <sean@mess.org>, 
+	Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Jiasheng Jiang <jiashengjiangcool@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	Matthew Majewski <mattwmajewski@gmail.com>, Yunseong Kim <ysk@kzalloc.com>, Chen Ni <nichen@iscas.ac.cn>, 
+	Fabio Luongo <f.langufo.l@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Yang Yingliang <yangyingliang@huawei.com>, Ludwig Disterhof <ludwig@disterhof.eu>, 
+	"Everest K.C." <everestkc@everestkc.com.np>, Stefan Wahren <wahrenst@gmx.net>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Akash Kumar <quic_akakum@quicinc.com>, 
+	linux-input@vger.kernel.org, mjpeg-users@lists.sourceforge.net, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	kernel@collabora.com, linux-staging@lists.linux.dev, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kartik,
+On Fri, Sep 19, 2025 at 12:57=E2=80=AFPM Jai Luthra <jai.luthra@ideasonboar=
+d.com> wrote:
+>
+> Hi,
+>
+> This patch series introduces state management for video devices.
+>
+> Currently, V4L2 subdevices have a well-established state management
+> system [1] that allows the framework to store the subdevice state
+> at a central location.
+>
+> Video devices however lack this, leading to inconsistent state handling
+> across drivers and making it difficult to implement features like
+> hardware multiplexing in complex media pipelines [2].
+>
+> The series is composed of three parts:
+>
+> - Core Infrastructure (PATCH 1-4)
+>         Introduces the basic state structure, try state support,
+>         initialization callbacks, and driver helpers
+> - Framework Integration (PATCH 5-7)
+>         Integrates state passing through the ioctl wrappers and driver
+>         implementations
+> - Driver Examples (PATCH 8-10)
+>         Use the state to store formats in TI J721E CSI2RX and Rockchip
+>         RKISP1 drivers
+>
+> This should also provide a foundation for drivers to extend or subclass
+> the state structure with device-specific variables in future.
+>
+> I have tested capture and format negotiation with the converted drivers
+> on SK AM62A (j721e-csi2rx) and Debix Model A (rkisp1).
+>
+> [1]: https://lore.kernel.org/linux-media/20210610145606.3468235-1-tomi.va=
+lkeinen@ideasonboard.com/
+> [2]: https://lore.kernel.org/linux-media/20250724-multicontext-mainline-2=
+025-v2-0-c9b316773486@ideasonboard.com/
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on tegra/for-next]
-[also build test ERROR on abelloni/rtc-next linus/master v6.17-rc6 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kartik-Rajput/rtc-tegra-Add-ACPI-support/20250919-191553
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250919111232.605405-1-kkartik%40nvidia.com
-patch subject: [PATCH] rtc: tegra: Add ACPI support
-config: arm-randconfig-001-20250920 (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509200953.uZOl24Is-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/rtc/rtc-tegra.c: In function 'tegra_rtc_probe':
->> drivers/rtc/rtc-tegra.c:310:13: error: implicit declaration of function 'is_of_node'; did you mean 'dev_of_node'? [-Werror=implicit-function-declaration]
-     310 |         if (is_of_node(dev_fwnode(&pdev->dev))) {
-         |             ^~~~~~~~~~
-         |             dev_of_node
-   cc1: some warnings being treated as errors
+When you add a Cc list., do it after the '---' (three minus signs)
+line, otherwise that huge unneeded noise will become part of the
+commit message.
 
 
-vim +310 drivers/rtc/rtc-tegra.c
-
-   283	
-   284	static int tegra_rtc_probe(struct platform_device *pdev)
-   285	{
-   286		struct tegra_rtc_info *info;
-   287		int ret;
-   288	
-   289		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-   290		if (!info)
-   291			return -ENOMEM;
-   292	
-   293		info->base = devm_platform_ioremap_resource(pdev, 0);
-   294		if (IS_ERR(info->base))
-   295			return PTR_ERR(info->base);
-   296	
-   297		ret = platform_get_irq(pdev, 0);
-   298		if (ret <= 0)
-   299			return ret;
-   300	
-   301		info->irq = ret;
-   302	
-   303		info->rtc = devm_rtc_allocate_device(&pdev->dev);
-   304		if (IS_ERR(info->rtc))
-   305			return PTR_ERR(info->rtc);
-   306	
-   307		info->rtc->ops = &tegra_rtc_ops;
-   308		info->rtc->range_max = U32_MAX;
-   309	
- > 310		if (is_of_node(dev_fwnode(&pdev->dev))) {
-   311			info->clk = devm_clk_get(&pdev->dev, NULL);
-   312			if (IS_ERR(info->clk))
-   313				return PTR_ERR(info->clk);
-   314	
-   315			ret = clk_prepare_enable(info->clk);
-   316			if (ret < 0)
-   317				return ret;
-   318		}
-   319	
-   320		/* set context info */
-   321		info->pdev = pdev;
-   322		spin_lock_init(&info->lock);
-   323	
-   324		platform_set_drvdata(pdev, info);
-   325	
-   326		/* clear out the hardware */
-   327		writel(0, info->base + TEGRA_RTC_REG_SECONDS_ALARM0);
-   328		writel(0xffffffff, info->base + TEGRA_RTC_REG_INTR_STATUS);
-   329		writel(0, info->base + TEGRA_RTC_REG_INTR_MASK);
-   330	
-   331		device_init_wakeup(&pdev->dev, true);
-   332	
-   333		ret = devm_request_irq(&pdev->dev, info->irq, tegra_rtc_irq_handler,
-   334				       IRQF_TRIGGER_HIGH, dev_name(&pdev->dev),
-   335				       &pdev->dev);
-   336		if (ret) {
-   337			dev_err(&pdev->dev, "failed to request interrupt: %d\n", ret);
-   338			goto disable_clk;
-   339		}
-   340	
-   341		ret = devm_rtc_register_device(info->rtc);
-   342		if (ret)
-   343			goto disable_clk;
-   344	
-   345		dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
-   346	
-   347		return 0;
-   348	
-   349	disable_clk:
-   350		if (is_of_node(dev_fwnode(&pdev->dev)))
-   351			clk_disable_unprepare(info->clk);
-   352		return ret;
-   353	}
-   354	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+With Best Regards,
+Andy Shevchenko
