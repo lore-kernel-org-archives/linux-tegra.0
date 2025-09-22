@@ -1,184 +1,160 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0838624DCE2;
-	Mon, 22 Sep 2025 15:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BBEEEC0;
+	Mon, 22 Sep 2025 16:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758553732; cv=none; b=Ma7s/6EBUSgrGV7zGLjQFf5NFjWnRDKnT1oTrLg0VEWhoEBFTW/EyZgbLh2X8p8lTtqFBtNBAd7DNFO3Qhg8BTfFBgsFhppxm3DGOZD2YACguf37nHjEmlcnPeHJ1Ku5a9cEvlknvJH/7HhrY1J96YGocK3nEc5pAt0g3HsLeuo=
+	t=1758556842; cv=none; b=AIZ2Twy7mX9OonUwN+0jFUW1thnaZD1nPNEp3UWCfonmIKl0B1OtGkJlM6neEzHeSyF76GuzsUKUEAMTx9jbcprE6YIvvwy+hNB2NmQIbTal4u9sNVEgCj1kB3AxvnUnFjqoaiV3KhhWnaaofJBfut36hb+Pkj2Hymsb9AN/+t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758553732; c=relaxed/simple;
-	bh=Zbs78Nc1dg8s/oapblfN+yFQqJ1eep5DVjpPreRzEY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WuRoM7BGF7CNi8rk53rAkBXu4UtSP4Lz+xuA2xgwRiKBFZkfnRJ3oMwJi8BXre6c4wsiei4oAUF0FJcMMLPeZTRhUCtSbL4Y7QlJGfgEr4VqdhJucnUUAMhJVX/QPU/EYUOgXG14uFBDf13KdUi0JzydKqADqw7icrkfqcjLAVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=q0eZveY3; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=I1uIievU; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1758556842; c=relaxed/simple;
+	bh=gurdba/DTsv3U8QqRqFzecsKxs5zCX7qM3Ox+fJp8HQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9O8i0M1XgZQJ3dHgAVlIeBe+ihdoVNDWiNdnnDKgewTJQJXbNsQ+iKwoB9SV9qgNa3AREVUEnWt7/KNwDLOOvK0gdGUlcafjMafpd/Zitm9PI+c2G/vG4+77ecgt7Pkb31mQmNHhB40tSLS4mbvWarauct1hZgK9QM8AaxbELk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W59gmQgd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="q0eZveY3";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="I1uIievU"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cVmhp1t38z9tfK;
-	Mon, 22 Sep 2025 17:08:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758553722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2ZMASazH2tqE9wH24FtNKE/H5QmQBrIjyM7uFPibD+k=;
-	b=q0eZveY3sj2xA1anv2vds2ex+MgpP2WyGgrGyqlHLbeqF6p/NiPwGP8PgFctEyZhNB96a9
-	LfpGD25L2XBxusql168syZPtIjoMPIXWNKTeS4GxyefPyTa5qdl1AA3eGQKnMvbCPxmMVF
-	aL54RecCJiawIHTsiIK6dVUykJ6RJHMFZHvMVFNs9vGyEiAL6zQhUK2gLy3vV4y6HVuH9U
-	MpDd5yxUo3Nu/ze/o/gV/KPbc6AO+y1ZoVXxsYp3n5pYNGqw9+nKPCYg5V+D3YHpZ2bTHF
-	LknDQp7JOwg/dX3VzsVcIzghrS6lIIqQabftaUs3NfM4JAXOk0pknxuqOPyX/Q==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=I1uIievU;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758553719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2ZMASazH2tqE9wH24FtNKE/H5QmQBrIjyM7uFPibD+k=;
-	b=I1uIievUjGylN+Zyk+3v84KBYNIbG+ktUB11DnxOBuxk5AOxv5v4xEkp7cAwRSpzYQBqMr
-	hATfRqE1rjp5GLR7Nq9+uwzB3CG6ssZb5ZF6QzRixMri6mZ4OlyL1qLdTH3NUoLWnNCg1E
-	KKbN5A2PQtfy8QPaIR/MKiPv0M079KtMhzEAnz58PVdB3d9GzIqlH9/SC/3axiq9OaYDJv
-	nTMCxoS+U7crQ26bkShW3R4aO5fZUEeNXN4DmnxjB7UI6EMNxnVWXYldMu45+k2OFfKKwf
-	P9kw+z5T5Q1Ith/WLn1ss5KhlBkHc1jua+9rJMB3/q9r893iVeFOLF0MwPvpzg==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W59gmQgd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9312AC4CEF0;
+	Mon, 22 Sep 2025 16:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758556841;
+	bh=gurdba/DTsv3U8QqRqFzecsKxs5zCX7qM3Ox+fJp8HQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W59gmQgdPctUTyG45puWTxq4a/dcWAgxGUxdASo4fqk9kIAuo1Rt7L2MuotxNYoXc
+	 d2mdX20+NU+uYrvBRpOP35HueZEPXa7tm1Nh9WfiRXsINRqceeJtjKa0unyUJxZeal
+	 8AH3YVieOZfp9JNU/+2eoIghAA+oVyl9J6DwjrWAO+fiBAlfrReDQFyj9BxJwWfHzH
+	 gQiHTxe7IW8YqgfHN/OKpw4Cy8Cgyi+3TO8Im/87UNo1FTzHY3ZTs86UA914UbJu89
+	 8brQy3zw1JZG/eoAXFcyfTDGpQMvPswjmFwBazEjpPUfF6Zcoo2qk4Vn6Xbi4r/H0u
+	 P/912Bgy/W3Nw==
+Date: Mon, 22 Sep 2025 11:00:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] PCI: tegra: Convert struct tegra_msi mask_lock into raw spinlock
-Date: Mon, 22 Sep 2025 17:07:48 +0200
-Message-ID: <20250922150811.88450-1-marek.vasut+renesas@mailbox.org>
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
+ Controller
+Message-ID: <20250922160040.GA92842-robh@kernel.org>
+References: <20250915080157.28195-1-clamor95@gmail.com>
+ <20250915080157.28195-4-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: e023a2e4296406a9770
-X-MBO-RS-META: g99nkdyejwjh34us8r1hnna15cgyjkxf
-X-Rspamd-Queue-Id: 4cVmhp1t38z9tfK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915080157.28195-4-clamor95@gmail.com>
 
-The tegra_msi_irq_unmask() function may be called from a PCI driver
-request_threaded_irq() function. This triggers kernel/irq/manage.c
-__setup_irq() which locks raw spinlock &desc->lock descriptor lock
-and with that descriptor lock held, calls tegra_msi_irq_unmask().
+On Mon, Sep 15, 2025 at 11:01:49AM +0300, Svyatoslav Ryhel wrote:
+> Add Tegra114 support into existing Tegra124 MC schema with the most
+> notable difference in the amount of EMEM timings.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../nvidia,tegra124-mc.yaml                   | 97 ++++++++++++++-----
+>  1 file changed, 74 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> index 7b18b4d11e0a..9cc9360d3bd0 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> @@ -19,7 +19,9 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: nvidia,tegra124-mc
+> +    enum:
+> +      - nvidia,tegra114-mc
+> +      - nvidia,tegra124-mc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -64,29 +66,10 @@ patternProperties:
+>  
+>            nvidia,emem-configuration:
+>              $ref: /schemas/types.yaml#/definitions/uint32-array
+> -            description: |
+> +            description:
+>                Values to be written to the EMEM register block. See section
+> -              "15.6.1 MC Registers" in the TRM.
+> -            items:
+> -              - description: MC_EMEM_ARB_CFG
+> -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> -              - description: MC_EMEM_ARB_TIMING_RCD
+> -              - description: MC_EMEM_ARB_TIMING_RP
+> -              - description: MC_EMEM_ARB_TIMING_RC
+> -              - description: MC_EMEM_ARB_TIMING_RAS
+> -              - description: MC_EMEM_ARB_TIMING_FAW
+> -              - description: MC_EMEM_ARB_TIMING_RRD
+> -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> -              - description: MC_EMEM_ARB_TIMING_R2R
+> -              - description: MC_EMEM_ARB_TIMING_W2W
+> -              - description: MC_EMEM_ARB_TIMING_R2W
+> -              - description: MC_EMEM_ARB_TIMING_W2R
+> -              - description: MC_EMEM_ARB_DA_TURNS
+> -              - description: MC_EMEM_ARB_DA_COVERS
+> -              - description: MC_EMEM_ARB_MISC0
+> -              - description: MC_EMEM_ARB_MISC1
+> -              - description: MC_EMEM_ARB_RING1_THROTTLE
+> +              "20.11.1 MC Registers" in the Tegea114 TRM or
+> +              "15.6.1 MC Registers" in the Tegra124 TRM.
+>  
+>          required:
+>            - clock-frequency
+> @@ -109,6 +92,74 @@ required:
+>    - "#iommu-cells"
+>    - "#interconnect-cells"
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra114-mc
+> +    then:
+> +      patternProperties:
+> +        "^emc-timings-[0-9]+$":
+> +          patternProperties:
+> +            "^timing-[0-9]+$":
+> +              properties:
+> +                nvidia,emem-configuration:
+> +                  items:
+> +                    - description: MC_EMEM_ARB_CFG
+> +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> +                    - description: MC_EMEM_ARB_TIMING_RCD
+> +                    - description: MC_EMEM_ARB_TIMING_RP
+> +                    - description: MC_EMEM_ARB_TIMING_RC
+> +                    - description: MC_EMEM_ARB_TIMING_RAS
+> +                    - description: MC_EMEM_ARB_TIMING_FAW
+> +                    - description: MC_EMEM_ARB_TIMING_RRD
+> +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_R2R
+> +                    - description: MC_EMEM_ARB_TIMING_W2W
+> +                    - description: MC_EMEM_ARB_TIMING_R2W
+> +                    - description: MC_EMEM_ARB_TIMING_W2R
+> +                    - description: MC_EMEM_ARB_DA_TURNS
+> +                    - description: MC_EMEM_ARB_DA_COVERS
+> +                    - description: MC_EMEM_ARB_MISC0
+> +                    - description: MC_EMEM_ARB_RING1_THROTTLE
 
-Since the &desc->lock descriptor lock is a raw spinlock , and the
-tegra_msi .mask_lock is not a raw spinlock, this setup triggers
-'BUG: Invalid wait context' with CONFIG_PROVE_RAW_LOCK_NESTING=y .
+Like I said before, I don't think it is worth enumerating the list of 
+registers for every variant. If you want to define the length 
+(minItems/maxItems), then that is fine.
 
-Use scoped_guard() to simplify the locking.
-
-Fixes: 2c99e55f7955 ("PCI: tegra: Convert to MSI domains")
-Cc: stable@vger.kernel.org
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
----
-NOTE: I don't have tegra hardware to test, this is based on input from Geert
-      https://patchwork.kernel.org/project/linux-pci/patch/20250909162707.13927-2-marek.vasut+renesas@mailbox.org/#26574451
----
- drivers/pci/controller/pci-tegra.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index bb88767a37979..942ddfca3bf6b 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/cleanup.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/export.h>
-@@ -270,7 +271,7 @@ struct tegra_msi {
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
- 	struct irq_domain *domain;
- 	struct mutex map_lock;
--	spinlock_t mask_lock;
-+	raw_spinlock_t mask_lock;
- 	void *virt;
- 	dma_addr_t phys;
- 	int irq;
-@@ -1581,14 +1582,13 @@ static void tegra_msi_irq_mask(struct irq_data *d)
- 	struct tegra_msi *msi = irq_data_get_irq_chip_data(d);
- 	struct tegra_pcie *pcie = msi_to_pcie(msi);
- 	unsigned int index = d->hwirq / 32;
--	unsigned long flags;
- 	u32 value;
- 
--	spin_lock_irqsave(&msi->mask_lock, flags);
--	value = afi_readl(pcie, AFI_MSI_EN_VEC(index));
--	value &= ~BIT(d->hwirq % 32);
--	afi_writel(pcie, value, AFI_MSI_EN_VEC(index));
--	spin_unlock_irqrestore(&msi->mask_lock, flags);
-+	scoped_guard(raw_spinlock_irqsave, &msi->mask_lock) {
-+		value = afi_readl(pcie, AFI_MSI_EN_VEC(index));
-+		value &= ~BIT(d->hwirq % 32);
-+		afi_writel(pcie, value, AFI_MSI_EN_VEC(index));
-+	}
- }
- 
- static void tegra_msi_irq_unmask(struct irq_data *d)
-@@ -1596,14 +1596,13 @@ static void tegra_msi_irq_unmask(struct irq_data *d)
- 	struct tegra_msi *msi = irq_data_get_irq_chip_data(d);
- 	struct tegra_pcie *pcie = msi_to_pcie(msi);
- 	unsigned int index = d->hwirq / 32;
--	unsigned long flags;
- 	u32 value;
- 
--	spin_lock_irqsave(&msi->mask_lock, flags);
--	value = afi_readl(pcie, AFI_MSI_EN_VEC(index));
--	value |= BIT(d->hwirq % 32);
--	afi_writel(pcie, value, AFI_MSI_EN_VEC(index));
--	spin_unlock_irqrestore(&msi->mask_lock, flags);
-+	scoped_guard(raw_spinlock_irqsave, &msi->mask_lock) {
-+		value = afi_readl(pcie, AFI_MSI_EN_VEC(index));
-+		value |= BIT(d->hwirq % 32);
-+		afi_writel(pcie, value, AFI_MSI_EN_VEC(index));
-+	}
- }
- 
- static void tegra_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
-@@ -1711,7 +1710,7 @@ static int tegra_pcie_msi_setup(struct tegra_pcie *pcie)
- 	int err;
- 
- 	mutex_init(&msi->map_lock);
--	spin_lock_init(&msi->mask_lock);
-+	raw_spin_lock_init(&msi->mask_lock);
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		err = tegra_allocate_domains(msi);
--- 
-2.51.0
-
+Rob
