@@ -1,419 +1,342 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010003.outbound.protection.outlook.com [52.101.193.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5525430DECF;
-	Tue, 23 Sep 2025 06:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607461; cv=fail; b=PPx2dqYuXzd2sKGQ3G0eYnE3T24Jz8RLE4NgWX9X7aeaMyXP5doTbm9uW9wl/DyJRYsBIudgJYTm5ulatNqgAkPSk/kyotnozkHeay6wrPtxOqds5UxL94zLjOAImqFmoJmg/c83gf3jDzb3ppxwLkKgvhorO9tM9wcikJ1qhl8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758607461; c=relaxed/simple;
-	bh=uIdKApU6mIvTlCJjYUt2er9qJ1lPORrts1rErF1iyDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mx6occmaz/s5AVvFIj8wXFNt2jVn8sZDQl1fGqiIQrqBkbwY1MEcX1vlLR8W3Ff3Ajut8idEfvtV+4H9ntPPwoyIGlc2uLpGv1Y/MS5/v4Ue29c13T+kzB/i1/I9PW9yUUmX2lSuoFzwIr6yKZs0Evko/rvt3JEUTJNXt6mQvCM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eMbh2+Zs; arc=fail smtp.client-ip=52.101.193.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ECF30E834
+	for <linux-tegra@vger.kernel.org>; Tue, 23 Sep 2025 06:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758607888; cv=none; b=W7f3U971mBZo/UNZ0djqbnDMnxl3mcGS0OxbUvzCGXiJvULrKjLdDogk8BiFweb51PWp+WRgWC5jipJrCHDOqsb4kiwf1KNZLWCQk52K2EKJGxwZ2jRXiEAtPutD6KOmRETb7M9xJ2fvyqKV8K99CBqrNRZIzFqX6E/UY/Ks8tY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758607888; c=relaxed/simple;
+	bh=wqE//xXjG/9enyu06X/XpnA9P6xidXRuB3EznxD890E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o49V2tjE20GAfDdsU5sUsLiPpfI608v31RUdLpVJb623tJiSYc9MD/icI/dY3wDfv3xA88GyhGj2nU9M5xzZc9GE+Jf5SrhHggduPUsfRQkWJVaeRXWkdrFmfHBmOLxqEuCV0P619odOrpJjimk8ux/jEpwYSqLVTMA80cGzgbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9sywnaN; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eMbh2+Zs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yW2zRgVJ27D+b2J3XXAegmLsE/2AAJabl5p2W8kMlKv5kAMdKff+rVy7j8VIrTprkJ9LQOTEggRBVIAXtVK7DVXdtpnIwgS2YUTW5rao3dByiu/rsPMcbeYhwpEZbg4NC4TVGbbpQvnLyQDsAXMEftNiTWABuEjB+h9UMczgEGqFF133TD38XjQcL9efw3HgYFHPi7gSkQduxxyT3zY60PU9wBU9lR1A39yv/TMFRgIwkrw/XhGBuQ6QQk3LFJiddxmvCE7hJWUNrz3p3SO/ltSxs+6q5ydNg2+mlXLzPWvtJWpCYBHJ1dNXQdwy84ziSGSiXkIGPXDzdoOLCgBRvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ge+vDOMbBlUkJXcGgzVWDnAOSBHpUu57ob+lgHfSWe4=;
- b=pYXakNMUmk64BZ/Lt4G8A3xQfhCa6vUiaXAl5ORVWuiRzqHM9GfqgpfM7XoLhJEc8E7WIMKQjedT2iNKQfC5LM42MnDKhkiuEYu3gBj0kY2e7+C1jqMp7MGJf7z04O3LGnHg5voEghagCXwXHyfg3Up5ZP+FrMYd2J8A4AKwmIoWhVTY9ocR1BrXW2O+yPow3XPgElZ8sWW0A36E6j3aMwhhEkAko2gKIACMGFxEc1IE3D01rFfSifjOS111a0h5f8xZD3PpSiKfnMcU+8SiiD7xwxBUFr4M4HnhfF0nlwU+db8dvwR92qeCbWM3yTos8HBvzNLBDyxXyTZlS8237g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ge+vDOMbBlUkJXcGgzVWDnAOSBHpUu57ob+lgHfSWe4=;
- b=eMbh2+ZsmkS1grpOyJBX+xcVAmfslzfr/YtV0eU2SD8Py/bAHJIrJf19rsdPk44sO7ZFB6rcHKDsI/CWewh/mmlJD7ml/ZUJuqB7WNLxcmUpGJK7yt6sIlHoKPz1rFWkNm4Cg2VamHG2NXPZAMvbKxfy83k6wzsHuEA7yqTBk+TjF/oPVG/c3r0c6yuLOHkwdriw3Ibq/GxFYPQ6StyMl7b3tz7hghS1WN9bSmSBRakppX7PCaaOtxQuS+VFryclWUjspeWtMzI8WYyo+ar4tAVnZRoGmwi/PGUgMrLZgHiADvWMWhVB16jiHLW/PSJS7cAvMiog9K3YlT3pXGQI4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- DS5PPFDB3A23D1A.namprd12.prod.outlook.com (2603:10b6:f:fc00::663) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Tue, 23 Sep
- 2025 06:04:15 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 06:04:15 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
- Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v2 16/23] staging: media: tegra-video: tegra20: simplify format
- align calculations
-Date: Tue, 23 Sep 2025 15:03:57 +0900
-Message-ID: <7680340.18pcnM708K@senjougahara>
-In-Reply-To:
- <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com>
-References:
- <20250906135345.241229-1-clamor95@gmail.com>
- <3074302.Sgy9Pd6rRy@senjougahara>
- <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0037.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:29d::12) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9sywnaN"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46c889b310dso21332285e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 22 Sep 2025 23:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758607884; x=1759212684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=df0O5cfEZsPuYIfSKJgwSBHv7jw65fDKH5euNcKl0U8=;
+        b=j9sywnaNJeiwVdlSOASLjawKOOKU/GjmbLa/A/3LT6jc8qMYl0G9ETGNt8GSUDdvHA
+         MYOke/lKU+Cu7vK9CJ8Crooee85WW0MJpEOrAdn/Y7J18MOBl/DucBcc+MgQe1+axT+v
+         ut313PH5cvzQ0N83El+T2LBav0b5lfdGJBMtnFbCn3uBq6gkl1JRc6cs/jmYKWinQdfZ
+         36505ImiyxudB2LixR3c4h7atGfjlMKJQqgVkYKnsdwAml1xu9EztQ7UINB6b3n2ooPx
+         57kUMNExZjR9BNNq99tKWUkuOVkm3jnO384/5Q+frWi4Wf0o4TEkZrir/WDLxJQhRZiH
+         a35w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758607884; x=1759212684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=df0O5cfEZsPuYIfSKJgwSBHv7jw65fDKH5euNcKl0U8=;
+        b=HXtRkePjDnt/tHcIEchSeG/xmPthDP084aM1MOGUXuPeGHihFvm7ShgISwITIJKpbZ
+         2cNW/M4GYTxB2IBpx3mR3BVV53eGF5pVHJlnXWinkvBQv4i6bjv8/9t4sN3T6ZDCXDYb
+         u3Ky7Jov7QsrLVGXcBmYMBsuOEkT0iXHy8Bf6GUChsjIC42o+dK+etzqOmT5PVcXw6lg
+         iT19oDFkG0+fpstHso89Ju6b5jOzmoXHxQdzs6dnpyU70wgnHcsXb+rqDU75shzC1Tbu
+         vbZxaSvHGi/kyD+lYDWx70b6/1ihpWXir2k7+yVPecxTa6gE92Fhn1jP0XezR4YqNqdB
+         zNsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL3rTSCN4IzRiyC0BULgUJySTSsK2Ibo1DMMC62IfDKWiekypmXH3kKt9qjZGFTw4TATk7knOAunntaA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF4BddNxpQLi7Uv8a2sZSPBaBVxxwX6EIaVbX+qObGSj1e3qWw
+	v9If8pm2nwadeOG66XbYv2cVrYogizetnit+6usoffjVQjmRqNCjHg/PLcxL1OeVjAsl4wXrftc
+	BNf7pIOGtsUmc4LtpYAHxeIv9xIasLw8=
+X-Gm-Gg: ASbGncuD3Jno7+6Wh4evHp6CYRnSqa13J06LB4totaiWS1x+jisAH6ikXFhnICdpt31
+	tWM/sUgYNbgCV/a5L2eWYz9a1Za6BJu+lQ4NU/s4AA909CXWGCOIDGhTIjzgutja9PjC9ZgjBj2
+	ZkFL/7SroQXII2NG4qnCOhDjSOwc2hX4q5nMPalVVKBFjIgOQrwdvhwyUekVlkcWqgKdHdWwlPb
+	zt3CK0L
+X-Google-Smtp-Source: AGHT+IHBSpjHfy2Q6q3z9LYXbKVWlYO8Qx27BR2vb+eB7bqLChBlxXgoI1PiDjykMrE3rras4dWInJgZFxiyTNggXpE=
+X-Received: by 2002:a05:600c:6305:b0:46e:1a60:c995 with SMTP id
+ 5b1f17b1804b1-46e1e1122e4mr10672545e9.2.1758607883820; Mon, 22 Sep 2025
+ 23:11:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|DS5PPFDB3A23D1A:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d0f73a1-ac55-4d81-ba9a-08ddfa67066d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z1ZNUTRsUjdlWFA2S2NQMmV2bnlNZG05MVR3MVJ6eVZjZDhkVjRRZElxWk1h?=
- =?utf-8?B?bVFsbmZiUlRaaFNpbE1zL2d5OEphc2drb2tPNTNreXZZWlpwZ2ozMk1vblkv?=
- =?utf-8?B?UWpHYVdjL2ErVzh0SnZiS1lSUU5MTjZJcFp0OXNFb1BhN2RwV1FnaVNHMC9x?=
- =?utf-8?B?SWVNWDhHQzJXRDlZeHJkRGNkcjV1c3UrbGh5S2JGd0thbVBRTjJqSFhvWHhN?=
- =?utf-8?B?bGN2Wk9OYVJCSW9QUlgrN0dicG9ja3phbFV5aEpIYnFhWVlBWlNCTjVtajFt?=
- =?utf-8?B?N2ZuL09NSGFNWG1QZjV5Y1FXc1ZBcXVENkovKzcxYy96ZVRSYm5aN3pvMHR1?=
- =?utf-8?B?dlpoQVFRUVo5cFZyMDJHVGJuK1gySkVueWNtT2ZlZzdjRVhGdnh6YXB5eStz?=
- =?utf-8?B?L3B2NW1xMjlPY0dNbEszemNDbFBCVzFnN2lSb3BSQ3JBYkhzSTNSd29NQk9F?=
- =?utf-8?B?QzhuMXIrVGgvTnpPU1Z1U2FlT3pLdVQ3NVYwSGJ3c0lnMTNjWTJMYnlYanF3?=
- =?utf-8?B?U2JqVXJNRnR1YUFwa2R2TDhJZDhqdE51eUNLdE5tRnVFSi9qNHFNeFVieUZZ?=
- =?utf-8?B?YjBwYVR3OHM1b1hLSUpHOW9Nb3lzS1BsSVUxUzZzdDE5RXdJOHRwMEhJKzYy?=
- =?utf-8?B?bm9QQ2IvMDJhVDNmdjVxQm5PYm0vVk9OVWVzOXdWUjBROUVaTnMyRUV3ZmJT?=
- =?utf-8?B?VHFIcWlkY1FmS0p2dUR0aXBZekxMazJIVndzRkxuY0VydUVBSlBZaG50QzhY?=
- =?utf-8?B?L29VVi9ra2pvMTkwMEJzZ1lrdEFIK0xlalBES2RvRldYOGVLTjNMQkw0TU1k?=
- =?utf-8?B?bmxHREIyaVAyUHZCcnBVcEFrd2swSWh1N1hJcm9rbEs3aGNlTWRpeGJmWWZU?=
- =?utf-8?B?N09CeXRPUVFDWGxyaExPSG9aUU5NbVEyWE5PRGUxVFpTWDdvUUJ4b1Y0NkQ5?=
- =?utf-8?B?VCttZmx4TXV4ZFpObFA3c0wrSzliYmltVENFMUZxOXFSOG1ZdlROaERIaVBR?=
- =?utf-8?B?TC9PQXZzU01wSkg0cEdOVXBrYllrWHRVbkdIcGlQSjhGYnMwUUFnVU1vSmtR?=
- =?utf-8?B?MHlSY28xempzbGYvekRub3dhQWp4ZzE0ODY2ZmJxRU95S1NhVXFCd0Y2a0Js?=
- =?utf-8?B?VllPd3J3OVJTYkwvdzA2bmlKSWJ0Yk53enZJb3YxNFFYTUdqZXhFVlNHMVNZ?=
- =?utf-8?B?ckw3RFhPKytBOGVDNmd3Z1FIUGVCM1VKRFpVeTU5VXR5b1Bqa21BTnJSTktD?=
- =?utf-8?B?cW9DNitoc1lXL0pmZVhCcGNSK1Bpd0ZEK05KVU5mbmVhYXNuN0dvdVlLcUtS?=
- =?utf-8?B?QnZ0anBPajBnMDdhaWFyYVVQM3luTTVLSTMzSFNOVmovYzNrUHVFa3IyVnVG?=
- =?utf-8?B?R3dQYjFLTGMzZGUxWEFNTWYweDQwMk1oNmZzTUFGaEVKQUxucytNRVRNalBq?=
- =?utf-8?B?WVBwV0hkTm1tMm1jemxTMitibzNIN2dhQU5SVmNRcmUraUpzVXg3UEdLOTQr?=
- =?utf-8?B?am5QRmlVaHBwWVVDSk1MOUk4YVdzZHZOdFJheTFMOEQ4eWNETG9GU2VZWnhz?=
- =?utf-8?B?QWxZSWlGYWVORGQrUlZnN2Znc0NXUmRpbWRLQVowOTFMYWp4V2p0WGxmZTZM?=
- =?utf-8?B?WTBqNmVLM280dTZVMGE2T1hCZkJtSVhDRWlmUlA5dmord2JwOE5DeS9yRSth?=
- =?utf-8?B?UEp1cUdiVFNlMTlDQUp5NGduTnU4QjNOc2Izbm1VaG55WVFuekJpUXRpamky?=
- =?utf-8?B?RGVHL2ZRMk0xSVN0WmFtSGRtem12NWRjd0tZNGprczlkb2pDUGhRS3psQlEz?=
- =?utf-8?B?VG1qaUtYaWZIV3hyQmdheFhHZTkrM1N0YWJ5Um10eEI3d01PTDdHVWVNcHFS?=
- =?utf-8?B?Q3VpRWd5eGpCU0JsQ05PaTUzcWRZRGVsU29aRGc4NTB2N1hyaXljWDJYK1ho?=
- =?utf-8?Q?Vrrk0/yCiU8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QkZFaTFFY2lTVDlhUGwwd2VUcStMbGRwV2FpSUNUaGRjVklrQ1ZhNXY1WXht?=
- =?utf-8?B?U21WZGdFaElLMXFOVVA2bXl3K3k4dmFYQ1JFRzkvMWRCQWExVVRQVjA1N3Ji?=
- =?utf-8?B?Y3daeGIzcytUNWVjdzdvcEFZNitic09HcWpobk1MRHBtS3k0YnppYUtNY1JJ?=
- =?utf-8?B?c09uODM2VmVUYmtuWS9UNVNqZ2dZWTIrNitKTGVzZE01VllXYyswQmlZY0FG?=
- =?utf-8?B?WGw0Wkp5MkJIcE1kcERNVkJNc0wrREMvaHBuajNvY2tKRTc1ZkNlVVBhMVZ0?=
- =?utf-8?B?V0ltRXl3cy9sR3U2Y0swc2NES1lpcERCU3ppWTZyNDZoWEU5eWJpZUdaRm9u?=
- =?utf-8?B?MmZoV2dFMTB2bUh0bWZ1TXNIYnJWWDhWbXk0djJiK25OUnRRZkdvNnJtcXNI?=
- =?utf-8?B?dDQrSkVWbGFNRmZldWpIeTlRSDBraEJkWllOb01ucUpMQ204UUZpUjBuRlJl?=
- =?utf-8?B?bkJDcmJ0cURPc2pkSWpOeGsxb0F6cVhySXJMaXB0UGFLd0hvSm5TM3lhQUhm?=
- =?utf-8?B?Y05vTG5INDZmekprRHVrd29yc2Y1M01nMUpNMTRnQXY1RHB2OTNOcTJLaFVw?=
- =?utf-8?B?bzBWZCtLVUs3Vy9DZ1BvNlVXdWh0OE50UWVSdkNoejdWUW5FQmt3K0g3V1ZH?=
- =?utf-8?B?TjlkMmZvOTB4ZTlHTDNOVDNMakNZMmg4cFhmQVNDUXUvUGYyVzVEQkFJTVRK?=
- =?utf-8?B?TlNFSmhGVDhQS0hPWU1zOTl0VGhjMmhxbVlrS05HRmtYWDlYUHVYRjRKa3lo?=
- =?utf-8?B?Vi9rVmUrT2Q2TFA4WVZ2TXVjajVWSnFKWlpvMVQ2NnZQdnBjckVNVElxSmE1?=
- =?utf-8?B?RXBHMW12dldZVjRmVXNTYTRBVHJleTIydXd2SHF5cXdDU0JmSitMSzB5TEpw?=
- =?utf-8?B?V1MzRWRGV3pvejFSZDlMNG1JVXVLUlVtRUsvcTUwemd5Ly9OaG5YRjdKL0xJ?=
- =?utf-8?B?RlpHVFJpU0M2M2pjMXVCUWdVcmxBN2d3RldSNkhMSlIrQ25tQzFDMmY4QW9o?=
- =?utf-8?B?TlU4MCtNTFdFNHdEclJXWm4vcGhxNGZ4WGFvMnRhb0pBK0p1ZnltQ0ZKbWJ1?=
- =?utf-8?B?SzFtcjR1UHpUSFRoWnRMWnpVMUhMeHJxaXhKV0liWnR4Rko1RHZDY09xMDh3?=
- =?utf-8?B?OWk3dE90SU1VSWN2OVQzMzdEV0h6RXZiY2ZkUkNrSGpOcU9tVDRRd2ZTOHp4?=
- =?utf-8?B?TFBqU3dWMFh1NXBQTGI4WGdpdExzOCtwdWdJa21KVzN0THFhWWZSTkJRQ1hX?=
- =?utf-8?B?dlJpUURSUDBScjd4RXp1SjI1aHRadHVrZU1VV1VxVEgvUjBLcjBWeW8wQVNR?=
- =?utf-8?B?ejhBNjQ0YmNxZnhUNFQ4V0QyVzZNejdJcVlpZlJCTWhnVFdweGdMNE5rM0lm?=
- =?utf-8?B?NnpwdjFUVjdQTmZUTVF3ME5PS2NXV1psOGROT0lxN2pCZFR4K3BHTWZlNHo2?=
- =?utf-8?B?U3V5dmM5UEdhS3JaM3k0SHJ0VzRHUTNDT1Z1TWJQNCtaWHA5UVpmVUMwczZE?=
- =?utf-8?B?TEM0ek9MVlhMR3NDSlgwbU1HaXBubTZDK1lJd2lOc0xCS1NCZ0pOTms3VmNn?=
- =?utf-8?B?YUJXTEFjQ2dwOS9vVEtyK0xrZGk1MWdDS0lMb0lhcGVuK2dSSFJLcHd6TTFN?=
- =?utf-8?B?d0dJQTFGam91WmZGcmlOK0FhZUZoVXgybjZzS1JVa1l6bThoNmpWUE1lK2to?=
- =?utf-8?B?TEhDRzBsM3I0c3lzZnFmOE0xdHBVdGVmazFTN3htNFgrTytweEdpRjc5dytF?=
- =?utf-8?B?Q0xOZ040OEt1c04rREM1c0Y4UWZhb1BmaUFUZGJPN3pqMnFQVWxsRVN2eXp4?=
- =?utf-8?B?aXBCS0hUeW1ERU9YUm5tTGlWZ1dUNURFNHdMUTBuell6b3lrMkNkaTdtbEJm?=
- =?utf-8?B?UjgyaU9pSS9WL0llc3RoMGVjclZxMHR2ait6V3k0c3RQdzVwVmYvNk1YLzFr?=
- =?utf-8?B?bmp3OUtYaWNsakhlLzlZOXJDdDVaZjJuemZkZ3RIYmRGUG9hS0xpOXZsaFRY?=
- =?utf-8?B?b0VBeWw3L2ZIdnJPWlVienhEZjRqbHo1aWVySUhudWZ5cnRKTFArZEE4QW1J?=
- =?utf-8?B?UFVCdDg5ZVZ5UDRqRTIwY09CNUc2dnN0ZGh2WnFHd0hvTGNLQnhQWFByU0RR?=
- =?utf-8?B?SHQvMTVVNUxQNEhrOFc4U0ExUU1wdWhhUyswOWJNUWhDei9lQ014QTdMZWhV?=
- =?utf-8?B?Z1FZd0w1WUdvcHVkNGZKeHpIWks3ZFdJNC9YcVd3aUprSS9iVVBuQ0VIMjJn?=
- =?utf-8?B?dm9NRTl4UXhjcC9CclUvRE1ESUdBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d0f73a1-ac55-4d81-ba9a-08ddfa67066d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 06:04:15.4982
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u6Dx700leyO84wqE1Abt7OpaJUJu5kN1w/Ei+TW0cg3CmD0FXE6k8oXXHcshAM6R2kr2MZb7xv3HHCXGbcImFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFDB3A23D1A
+References: <20250906135345.241229-1-clamor95@gmail.com> <3074302.Sgy9Pd6rRy@senjougahara>
+ <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com> <7680340.18pcnM708K@senjougahara>
+In-Reply-To: <7680340.18pcnM708K@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 23 Sep 2025 09:11:12 +0300
+X-Gm-Features: AS18NWBVjttzeBZfLbhRARnUraFXXX8nh5TTiRUlvy0pbzFRoAj4ko8xGSDHW9w
+Message-ID: <CAPVz0n2iRVBf0+BwdV6Le2FhY8xERqbtsyeff26Dh44mKsTy6A@mail.gmail.com>
+Subject: Re: [PATCH v2 16/23] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, September 22, 2025 4:36=E2=80=AFPM Svyatoslav Ryhel wrote:
-> =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:27 Mi=
-kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Monday, September 22, 2025 3:30=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:2=
-3 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > On Monday, September 22, 2025 2:13=E2=80=AFPM Svyatoslav Ryhel wrot=
-e:
-> > > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE =
-07:44 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > >
-> > > > > > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhe=
-l wrote:
-> > > > > > > Simplify format align calculations by slightly modifying supp=
-orted formats
-> > > > > > > structure.
-> > > > > > >
-> > > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > > ---
-> > > > > > >  drivers/staging/media/tegra-video/tegra20.c | 41 ++++++++---=
-----------
-> > > > > > >  1 file changed, 16 insertions(+), 25 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/dr=
-ivers/staging/media/tegra-video/tegra20.c
-> > > > > > > index 6e0b3b728623..781c4e8ec856 100644
-> > > > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v4l=
-2_pix_format *pix, unsigned int bpp)
-> > > > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  =
-TEGRA20_MAX_WIDTH);
-> > > > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, =
-TEGRA20_MAX_HEIGHT);
-> > > > > > >
-> > > > > > > -     switch (pix->pixelformat) {
-> > > > > > > -     case V4L2_PIX_FMT_UYVY:
-> > > > > > > -     case V4L2_PIX_FMT_VYUY:
-> > > > > > > -     case V4L2_PIX_FMT_YUYV:
-> > > > > > > -     case V4L2_PIX_FMT_YVYU:
-> > > > > > > -             pix->bytesperline =3D roundup(pix->width, 2) * =
-2;
-> > > > > > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2 *=
- pix->height;
-> > > > > > > -             break;
-> > > > > > > -     case V4L2_PIX_FMT_YUV420:
-> > > > > > > -     case V4L2_PIX_FMT_YVU420:
-> > > > > > > -             pix->bytesperline =3D roundup(pix->width, 8);
-> > > > > > > -             pix->sizeimage =3D roundup(pix->width, 8) * pix=
-->height * 3 / 2;
-> > > > > > > -             break;
-> > > > > > > -     }
-> > > > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, 8)=
-;
-> > > > > >
-> > > > > > Assuming the bpp is coming from the format table below, this ch=
-anges the value of bytesperline for planar formats. With this it'll be (wid=
-th * 12) / 8 i.e. width * 3/2, which doesn't sound right.
-> > > > > >
+=D0=B2=D1=82, 23 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:04 Mikk=
+o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Monday, September 22, 2025 4:36=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:27 =
+Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Monday, September 22, 2025 3:30=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09=
+:23 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
 > > > > >
-> > > > > Downstream uses soc_mbus_bytes_per_line for this calculation whic=
-h was
-> > > > > deprecated some time ago, here is a fragment
+> > > > > On Monday, September 22, 2025 2:13=E2=80=AFPM Svyatoslav Ryhel wr=
+ote:
+> > > > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=
+=BE 07:44 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > > > > >
+> > > > > > > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ry=
+hel wrote:
+> > > > > > > > Simplify format align calculations by slightly modifying su=
+pported formats
+> > > > > > > > structure.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > > > > ---
+> > > > > > > >  drivers/staging/media/tegra-video/tegra20.c | 41 ++++++++-=
+------------
+> > > > > > > >  1 file changed, 16 insertions(+), 25 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/=
+drivers/staging/media/tegra-video/tegra20.c
+> > > > > > > > index 6e0b3b728623..781c4e8ec856 100644
+> > > > > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > > > > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > > > > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v=
+4l2_pix_format *pix, unsigned int bpp)
+> > > > > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,=
+  TEGRA20_MAX_WIDTH);
+> > > > > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT=
+, TEGRA20_MAX_HEIGHT);
+> > > > > > > >
+> > > > > > > > -     switch (pix->pixelformat) {
+> > > > > > > > -     case V4L2_PIX_FMT_UYVY:
+> > > > > > > > -     case V4L2_PIX_FMT_VYUY:
+> > > > > > > > -     case V4L2_PIX_FMT_YUYV:
+> > > > > > > > -     case V4L2_PIX_FMT_YVYU:
+> > > > > > > > -             pix->bytesperline =3D roundup(pix->width, 2) =
+* 2;
+> > > > > > > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2=
+ * pix->height;
+> > > > > > > > -             break;
+> > > > > > > > -     case V4L2_PIX_FMT_YUV420:
+> > > > > > > > -     case V4L2_PIX_FMT_YVU420:
+> > > > > > > > -             pix->bytesperline =3D roundup(pix->width, 8);
+> > > > > > > > -             pix->sizeimage =3D roundup(pix->width, 8) * p=
+ix->height * 3 / 2;
+> > > > > > > > -             break;
+> > > > > > > > -     }
+> > > > > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, =
+8);
+> > > > > > >
+> > > > > > > Assuming the bpp is coming from the format table below, this =
+changes the value of bytesperline for planar formats. With this it'll be (w=
+idth * 12) / 8 i.e. width * 3/2, which doesn't sound right.
+> > > > > > >
+> > > > > >
+> > > > > > Downstream uses soc_mbus_bytes_per_line for this calculation wh=
+ich was
+> > > > > > deprecated some time ago, here is a fragment
+> > > > > >
+> > > > > > s32 soc_mbus_bytes_per_line(u32 width, const struct soc_mbus_pi=
+xelfmt *mf)
+> > > > > > {
+> > > > > >  if (mf->fourcc =3D=3D V4L2_PIX_FMT_JPEG)
+> > > > > >  return 0;
+> > > > > >
+> > > > > >  if (mf->layout !=3D SOC_MBUS_LAYOUT_PACKED)
+> > > > > >  return width * mf->bits_per_sample / 8;
+> > > > > >
+> > > > > >  switch (mf->packing) {
+> > > > > >  case SOC_MBUS_PACKING_NONE:
+> > > > > >   return width * mf->bits_per_sample / 8;
+> > > > > >  case SOC_MBUS_PACKING_2X8_PADHI:
+> > > > > >  case SOC_MBUS_PACKING_2X8_PADLO:
+> > > > > >  case SOC_MBUS_PACKING_EXTEND16:
+> > > > > >   return width * 2;
+> > > > > >  case SOC_MBUS_PACKING_1_5X8:
+> > > > > >   return width * 3 / 2;
+> > > > > >  case SOC_MBUS_PACKING_VARIABLE:
+> > > > > >   return 0;
+> > > > > >  }
+> > > > > >    return -EINVAL;
+> > > > > > }
+> > > > > >
+> > > > > > V4L2_PIX_FMT_YUV420 and V4L2_PIX_FMT_YVU420 are classified as
+> > > > > > SOC_MBUS_PACKING_1_5X8 hence we get width * 3/2
 > > > > >
-> > > > > s32 soc_mbus_bytes_per_line(u32 width, const struct soc_mbus_pixe=
-lfmt *mf)
+> > > > > Googling this brings up the entry
+> > > > >
 > > > > > {
-> > > > >  if (mf->fourcc =3D=3D V4L2_PIX_FMT_JPEG)
-> > > > >  return 0;
-> > > > >
-> > > > >  if (mf->layout !=3D SOC_MBUS_LAYOUT_PACKED)
-> > > > >  return width * mf->bits_per_sample / 8;
-> > > > >
-> > > > >  switch (mf->packing) {
-> > > > >  case SOC_MBUS_PACKING_NONE:
-> > > > >   return width * mf->bits_per_sample / 8;
-> > > > >  case SOC_MBUS_PACKING_2X8_PADHI:
-> > > > >  case SOC_MBUS_PACKING_2X8_PADLO:
-> > > > >  case SOC_MBUS_PACKING_EXTEND16:
-> > > > >   return width * 2;
-> > > > >  case SOC_MBUS_PACKING_1_5X8:
-> > > > >   return width * 3 / 2;
-> > > > >  case SOC_MBUS_PACKING_VARIABLE:
-> > > > >   return 0;
-> > > > >  }
-> > > > >    return -EINVAL;
+> > > > >         .code =3D V4L2_MBUS_FMT_YUYV8_1_5X8,
+> > > > >         .fmt =3D {
+> > > > >                 .fourcc                 =3D V4L2_PIX_FMT_YUV420,
+> > > > >                 .name                   =3D "YUYV 4:2:0",
+> > > > >                 .bits_per_sample                =3D 8,
+> > > > >                 .packing                        =3D SOC_MBUS_PACK=
+ING_1_5X8,
+> > > > >                 .order                  =3D SOC_MBUS_ORDER_LE,
+> > > > >                 .layout                 =3D SOC_MBUS_LAYOUT_PACKE=
+D,
+> > > > >         },
 > > > > > }
 > > > > >
-> > > > > V4L2_PIX_FMT_YUV420 and V4L2_PIX_FMT_YVU420 are classified as
-> > > > > SOC_MBUS_PACKING_1_5X8 hence we get width * 3/2
-> > > >
-> > > > Googling this brings up the entry
-> > > >
-> > > > {
-> > > >         .code =3D V4L2_MBUS_FMT_YUYV8_1_5X8,
-> > > >         .fmt =3D {
-> > > >                 .fourcc                 =3D V4L2_PIX_FMT_YUV420,
-> > > >                 .name                   =3D "YUYV 4:2:0",
-> > > >                 .bits_per_sample                =3D 8,
-> > > >                 .packing                        =3D SOC_MBUS_PACKIN=
-G_1_5X8,
-> > > >                 .order                  =3D SOC_MBUS_ORDER_LE,
-> > > >                 .layout                 =3D SOC_MBUS_LAYOUT_PACKED,
-> > > >         },
-> > > > }
-> > > >
-> > > > which matches that you're describing. It doesn't make sense to me, =
-since it at the same time specifies PIX_FMT_YUV420 (which is planar with 3 =
-planes, as documented by include/uapi/linux/videodev2.h), and LAYOUT_PACKED
-> > > >
-> > > > /**
-> > > >  * enum soc_mbus_layout - planes layout in memory
-> > > >  * @SOC_MBUS_LAYOUT_PACKED:             color components packed
-> > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_U_V:      YUV components stored in 3 =
-planes (4:2:2)
-> > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_C:        YUV components stored in a =
-luma and a
-> > > >  *                                      chroma plane (C plane is ha=
-lf the size
-> > > >  *                                      of Y plane)
-> > > >  * @SOC_MBUS_LAYOUT_PLANAR_Y_C:         YUV components stored in a =
-luma and a
-> > > >  *                                      chroma plane (C plane is th=
-e same size
-> > > >  *                                      as Y plane)
-> > > >  */
-> > > > enum soc_mbus_layout {
-> > > >         SOC_MBUS_LAYOUT_PACKED =3D 0,
-> > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_U_V,
-> > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_C,
-> > > >         SOC_MBUS_LAYOUT_PLANAR_Y_C,
-> > > > };
-> > > >
-> > > > i.e. non-planar. The code in the driver is handling it as three pla=
-nes as well, with addresses VB0_BASE_ADDRESS/VB0_BASE_ADDRESS_U/VB0_BASE_AD=
-DRESS_V. Since the planes are separate, there should be no need to have mor=
-e than 'width' samples per line.
-> > > >
-> > >
-> > > I did not invent this, I have just simplified this calculation from
-> > > downstream, output values remain same. I have no cameras which can
-> > > output V4L2_PIX_FMT_YUV420 or V4L2_PIX_FMT_YVU420 so I cannot test if
-> > > this works either. Other YUV and RAW formats were tested on real HW
-> > > and work perfectly fine.
-> >
-> > My understanding from the code was, that the MEDIA_BUS_FMT_ formats lis=
-ted in the video format table refer to the input formats from the camera, a=
-nd the V4L2_PIX_FMT_ formats to output formats from VI. Hence VI could inpu=
-t UYVY8_2X8 and write to memory in YUV420. The code dealing with V4L2_PIX_F=
-MT_ values seems to be related to the output to memory. Is it possible to t=
-est this (your camera -> VI converts to YUV420) or am I mistaken?
-> >
->=20
-> Camera I am testing with has no YUV420 options available and from what
-> I can tell there is no way to force VI to output in YUV420 unless
-> camera supports it. Any format manipulations should requite hooking up
-> ISP, or am I missing smth?
-
-From a quick look at the spec it looks to me like for YUV422 packed input f=
-ormats specifically, VI should be able to convert to YUV420. If that were n=
-ot the case, e.g. 'TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),'=
- would not make sense anyway as it's talking about both YUV422 packed input=
- data and then also YUV420.
-
->=20
-> > It's certainly possible that the current code is functional -- if bytes=
-perline is set to a too large value and that information flows to userspace=
-, it could still read the buffer. It would just waste memory.
-> >
-> > >
+> > > > > which matches that you're describing. It doesn't make sense to me=
+, since it at the same time specifies PIX_FMT_YUV420 (which is planar with =
+3 planes, as documented by include/uapi/linux/videodev2.h), and LAYOUT_PACK=
+ED
 > > > > >
-> > > > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
-> > > > > > >  }
-> > > > > > >
-> > > > > > >  /*
-> > > > > > > @@ -576,20 +564,23 @@ static const struct tegra_vi_ops tegra2=
-0_vi_ops =3D {
-> > > > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
-> > > > > > >  };
-> > > > > > >
-> > > > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
-> > > > > > > -{                                                    \
-> > > > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
-> > > > > > > -     .bpp     =3D BPP,                                 \
-> > > > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
-> > > > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, B=
-PP, FOURCC)      \
-> > > > > > > +{                                                           =
-         \
-> > > > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,        =
-           \
-> > > > > > > +     .bit_width      =3D BIT_WIDTH,                         =
-           \
-> > > > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,         =
-           \
-> > > > > > > +     .bpp            =3D BPP,                               =
-           \
-> > > > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,             =
-           \
-> > > > > > >  }
-> > > > > > >
-> > > > > > >  static const struct tegra_video_format tegra20_video_formats=
-[] =3D {
-> > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
-> > > > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
-> > > > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
-> > > > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
-> > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
-> > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
-> > > > > > > +     /* YUV422 */
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
-> > > > > > >  };
-> > > > > > >
-> > > > > > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
-> > > > > > >
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > >
+> > > > > /**
+> > > > >  * enum soc_mbus_layout - planes layout in memory
+> > > > >  * @SOC_MBUS_LAYOUT_PACKED:             color components packed
+> > > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_U_V:      YUV components stored in =
+3 planes (4:2:2)
+> > > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_C:        YUV components stored in =
+a luma and a
+> > > > >  *                                      chroma plane (C plane is =
+half the size
+> > > > >  *                                      of Y plane)
+> > > > >  * @SOC_MBUS_LAYOUT_PLANAR_Y_C:         YUV components stored in =
+a luma and a
+> > > > >  *                                      chroma plane (C plane is =
+the same size
+> > > > >  *                                      as Y plane)
+> > > > >  */
+> > > > > enum soc_mbus_layout {
+> > > > >         SOC_MBUS_LAYOUT_PACKED =3D 0,
+> > > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_U_V,
+> > > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_C,
+> > > > >         SOC_MBUS_LAYOUT_PLANAR_Y_C,
+> > > > > };
+> > > > >
+> > > > > i.e. non-planar. The code in the driver is handling it as three p=
+lanes as well, with addresses VB0_BASE_ADDRESS/VB0_BASE_ADDRESS_U/VB0_BASE_=
+ADDRESS_V. Since the planes are separate, there should be no need to have m=
+ore than 'width' samples per line.
+> > > > >
 > > > >
+> > > > I did not invent this, I have just simplified this calculation from
+> > > > downstream, output values remain same. I have no cameras which can
+> > > > output V4L2_PIX_FMT_YUV420 or V4L2_PIX_FMT_YVU420 so I cannot test =
+if
+> > > > this works either. Other YUV and RAW formats were tested on real HW
+> > > > and work perfectly fine.
+> > >
+> > > My understanding from the code was, that the MEDIA_BUS_FMT_ formats l=
+isted in the video format table refer to the input formats from the camera,=
+ and the V4L2_PIX_FMT_ formats to output formats from VI. Hence VI could in=
+put UYVY8_2X8 and write to memory in YUV420. The code dealing with V4L2_PIX=
+_FMT_ values seems to be related to the output to memory. Is it possible to=
+ test this (your camera -> VI converts to YUV420) or am I mistaken?
+> > >
+> >
+> > Camera I am testing with has no YUV420 options available and from what
+> > I can tell there is no way to force VI to output in YUV420 unless
+> > camera supports it. Any format manipulations should requite hooking up
+> > ISP, or am I missing smth?
+>
+> From a quick look at the spec it looks to me like for YUV422 packed input=
+ formats specifically, VI should be able to convert to YUV420. If that were=
+ not the case, e.g. 'TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420)=
+,' would not make sense anyway as it's talking about both YUV422 packed inp=
+ut data and then also YUV420.
+>
+
+After additional checking you are correct, VI should be able to
+perform YUV442 to YUV440. One of the reasons why VI is not exposing
+YUV440 may be video-centric nature of the driver, so that it exposes
+only formats supported by camera and VI. I will double check which
+formats video device exposes. What should I test exactly?
+
+> >
+> > > It's certainly possible that the current code is functional -- if byt=
+esperline is set to a too large value and that information flows to userspa=
+ce, it could still read the buffer. It would just waste memory.
+> > >
 > > > >
-> > > >
-> > > >
-> >
-> >
-> >
-> >
-
-
-
-
+> > > > > >
+> > > > > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > >  /*
+> > > > > > > > @@ -576,20 +564,23 @@ static const struct tegra_vi_ops tegr=
+a20_vi_ops =3D {
+> > > > > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
+> > > > > > > >  };
+> > > > > > > >
+> > > > > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
+> > > > > > > > -{                                                    \
+> > > > > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
+> > > > > > > > -     .bpp     =3D BPP,                                 \
+> > > > > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
+> > > > > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE,=
+ BPP, FOURCC)      \
+> > > > > > > > +{                                                         =
+           \
+> > > > > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,      =
+             \
+> > > > > > > > +     .bit_width      =3D BIT_WIDTH,                       =
+             \
+> > > > > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,       =
+             \
+> > > > > > > > +     .bpp            =3D BPP,                             =
+             \
+> > > > > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,           =
+             \
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > >  static const struct tegra_video_format tegra20_video_forma=
+ts[] =3D {
+> > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
+> > > > > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
+> > > > > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
+> > > > > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
+> > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
+> > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
+> > > > > > > > +     /* YUV422 */
+> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
+> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
+> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
+> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
+> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420=
+),
+> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420=
+),
+> > > > > > > >  };
+> > > > > > > >
+> > > > > > > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
+> > > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > >
+> > >
+> > >
+> > >
+>
+>
+>
+>
