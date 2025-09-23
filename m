@@ -1,383 +1,190 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB591B423C;
-	Tue, 23 Sep 2025 15:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DAA2F90EA;
+	Tue, 23 Sep 2025 16:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642064; cv=none; b=mYEStnYSWDWlbMIVbXT4MrD35p1cMM/x36ObiqEImpPEc9gb8w0CUCSpPBSWc5Nv6VzbGTsruI+dl/64WJdM37npkNElz7Q3RMR6WLbE5Kd/42LYfXXTvZZ9G9KCyRTICbLjQHKi3Bk/tnHrST47CVV9dOUm2F+H2umJg9VAue0=
+	t=1758646692; cv=none; b=sv8dc5Bt3beZdTziO6aAPEeUUq36wMsMGhfiwymmu7HwI62+3CTQHJQzTo3jUgCQ/A7O84Nltnlj1VegCKij/DFfCrYBhOyzVW+Q9YrbnSd3CyldKRR9iBPrPwqPBewfx39y2168LxnmSKKykLRyS6jRqfy8mEwmdKZntH7gs7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642064; c=relaxed/simple;
-	bh=cACrfqWg25l/iYQSJFhtVnbCEWxiQEtu5DRwgu44ukU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvYAu1m86Knj+qyjldOiCDkvllQ2OMcOmDIqp4UcbT8EvXoGiJKPRdM8ehZDZm+gEdrHy+RqUuAYA36SS9sbCcSzvrzBuEfuzZWTmzbiYucTYDoJdLUeZwLHv9ZDiIHa9iaVVLRV9J/QEFUbWY74M9UrSXbmjiL11wufCnvM3yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D6j4Z0+K; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1758646692; c=relaxed/simple;
+	bh=KYJzykyrRmeDBScIUj6YJCymPAepZ3baXdoOSniMjsk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L9WSCLFZ0L/EqsbJ78BAMMUKEOTlhkh2f02CD/ZSHq4jCkc3QKfFSTdeZyk75sUm3DyYVktpyoqNq/Bp1i8GIFstTtTiiC2NiDvl5HL2bLQvsUb0nPAuN0qfzr2zq7cS9YExxsxdUzcNHczjeq+wU9MoYqaW0cRPFTJXcdrUyMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgCw0uSB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D6j4Z0+K"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 0FB084E40C78;
-	Tue, 23 Sep 2025 15:40:53 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D839960690;
-	Tue, 23 Sep 2025 15:40:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 91187102F1960;
-	Tue, 23 Sep 2025 17:40:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758642052; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=B8fRR2aJ/eyeHiuDlU1x25moOhg9RitGZKqikYnDMdI=;
-	b=D6j4Z0+KoQ4HRpZjE+nkK2FQivQ1dSRfumFHnpIrO/qWLcALZFBydRIpwqAO2H8bNj+Nvn
-	OZR65wzg7C+RDl9p/BUslV10CHpcuD8F5Wl8hO0T44Npvs5z23qK5vct4S7HAcgQcZpi28
-	1kHuRlj8FA34KXgwNUrRJfbfSdQIGg5J3BVme6lTsbKZafGA4R8Bu9KOo0LV7Mq0q/W2UF
-	9POSnDH2NqAu3kTCnvVtCZs4CScWUZJLOPu196fYHaz8Ya6003pwj5S+P2X8AiWsj8mrCo
-	8+Kw90Pf4Yt+hXuOyzzW9sdkO9MV7l6VhBlATJ+mTOJ+t/lrjDcRySAlrTbddA==
-Date: Tue, 23 Sep 2025 17:40:48 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Shubhi Garg <shgarg@nvidia.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v6 3/4] rtc: nvvrs: add NVIDIA VRS RTC device driver
-Message-ID: <202509231540480daf8b56@mail.local>
-References: <20250919140229.10546-1-shgarg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgCw0uSB"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 85E34C4CEF7;
+	Tue, 23 Sep 2025 16:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758646691;
+	bh=KYJzykyrRmeDBScIUj6YJCymPAepZ3baXdoOSniMjsk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=lgCw0uSBX2cenkBGbachKlzTBRNMRveXRZhpFq7hU2fSm0/TX3nj0b5K0ZfLHAkq0
+	 m3Cl5xiUYB+VpOKEMTNFCq/uJ9SkOdOiMvKK8KcOC1j9IGE7PaytNlEAad8fpG8Vdt
+	 /yAVSZbfONFS5lwA7C3WsEnWB795qicHptLncl35NEWfFdjnDEKtJo2YrOh0I9Mnjb
+	 bqTQHFlyiE5duhF5BHAsJOlfuj5B48135U5YP/CFmQetysspxfzYuD2pAh2ApUTx4O
+	 N8vkKsTdzli93z9X9WBq6Tk2mSCLF1oSdxYKNjlT8XDrMjz9L6/ZckClo0i9sGTOe7
+	 25E1ETR7do40A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F0BCAC5A5;
+	Tue, 23 Sep 2025 16:58:11 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Tue, 23 Sep 2025 11:58:05 -0500
+Subject: [PATCH v4] soc: tegra: fuse: speedo-tegra210: Update speedo ids
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919140229.10546-1-shgarg@nvidia.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250923-tegra210-speedo-v4-1-c12b5400ca91@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJzR0mgC/4XN0QqCMBTG8VeRXbc422xuXfUe0cWcRx2kk02kE
+ N+9KUSRF11+B37/M5OIwWEk52wmAScXne/TyA8Zsa3pG6SuSptw4CdQjNMRm2A4AxoHxMrTvAC
+ pGapSWUuSGgLW7rEVr7e0WxdHH57bg4mt13dL7loTo0CNVkxIMJXlxaXpjLsfre/I2pr4x2sQe
+ 8+TVxplrWSpdM5/vfjjBWW0EAgaoS5LIb/9siwvliuo2C4BAAA=
+X-Change-ID: 20250812-tegra210-speedo-470691e8b8cc
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758646690; l=3907;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=SiEd93vSO5dn+t0YuAV9jSFCu4bFUsC1WsQK0UT2860=;
+ b=z3Ik+c+D6z1y4LobgQ55xWUWutuIQY5AVuHWT0YUc83dy4lmfL8kqHbiVg63RVspaYXAU3gaE
+ nKvrwDjo0OCDkjhTJobYFeOIJH98Xbaxj0GBuLf43Kbr3vIfYNMzBLb
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On 19/09/2025 14:02:29+0000, Shubhi Garg wrote:
-> +static int nvvrs_rtc_enable_alarm(struct nvvrs_rtc_info *info)
-> +{
-> +	int ret;
-> +
-> +	/* Set RTC_WAKE bit for autonomous wake from sleep */
-> +	ret = nvvrs_update_bits(info, NVVRS_REG_CTL_2, NVVRS_REG_CTL_2_RTC_WAKE,
-> +				NVVRS_REG_CTL_2_RTC_WAKE);
-> +	if (ret < 0) {
-> +		dev_err(info->dev, "Failed to set RTC_WAKE bit (%d)\n", ret);
+From: Aaron Kling <webgeek1234@gmail.com>
 
-This should be either a dev_dbg or removed
+Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
+code supports 11 ids and nouveau supports 5. This aligns with what the
+downstream vendor kernel supports. Align skus with the downstream list.
 
-> +		return ret;
-> +	}
-> +
-> +	/* Set RTC_PU bit for autonomous wake from shutdown */
-> +	ret = nvvrs_update_bits(info, NVVRS_REG_CTL_2, NVVRS_REG_CTL_2_RTC_PU,
-> +				NVVRS_REG_CTL_2_RTC_PU);
-> +	if (ret < 0) {
-> +		dev_err(info->dev, "Failed to set RTC_PU bit (%d)\n", ret);
+The Tegra210 CVB tables were added in the first referenced fixes commit.
+Since then, all Tegra210 socs have tried to scale to 1.9 GHz, when the
+supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
+Overclocking should not be the default state.
 
-Ditto
+Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
+Fixes: 579db6e5d9b8 ("arm64: tegra: Enable DFLL support on Jetson Nano")
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
+all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
+supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
+Overclocking should not be the default state.
+---
+Changes in v4:
+- Check soc chip revision instead of speedo revision in speedo id
+  conversion
+- Link to v3: https://lore.kernel.org/r/20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com
 
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int nvvrs_rtc_disable_alarm(struct nvvrs_rtc_info *info)
-> +{
-> +	struct i2c_client *client = info->client;
-> +	u8 val[4];
-> +	int ret;
-> +
-> +	/* Clear RTC_WAKE bit */
-> +	ret = nvvrs_update_bits(info, NVVRS_REG_CTL_2, NVVRS_REG_CTL_2_RTC_WAKE,
-> +				0);
-> +	if (ret < 0) {
-> +		dev_err(info->dev, "Failed to clear RTC_WAKE bit (%d)\n", ret);
+Changes in v3:
+- Drop all patches related to limiting cpu frequency from a dt property
+- Link to v2: https://lore.kernel.org/r/20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com
 
-Ditto
+Changes in v2:
+- Define units in patch 1
+- Update patch 1 commit message to better explain the need
+- Pull all downstream sku's into patch 2, which eliminates patch 3
+- Update patch 4 commit message to indicate the limit is due to thermal
+  constraints.
+- Link to v1: https://lore.kernel.org/r/20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com
+---
+ drivers/soc/tegra/fuse/speedo-tegra210.c | 62 ++++++++++++++++++++++----------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
 
-> +		return ret;
-> +	}
-> +
-> +	/* Clear RTC_PU bit */
-> +	ret = nvvrs_update_bits(info, NVVRS_REG_CTL_2, NVVRS_REG_CTL_2_RTC_PU,
-> +				0);
-> +	if (ret < 0) {
-> +		dev_err(info->dev, "Failed to clear RTC_PU bit (%d)\n", ret);
+diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
+index 695d0b7f9a8abe53c497155603147420cda40b63..a8cc3632977230fbfda0f8c3bfa7b7b25c2378fe 100644
+--- a/drivers/soc/tegra/fuse/speedo-tegra210.c
++++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
+@@ -65,27 +65,51 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
+ 	sku_info->gpu_speedo_id = 0;
+ 	*threshold = THRESHOLD_INDEX_0;
+ 
+-	switch (sku) {
+-	case 0x00: /* Engineering SKU */
+-	case 0x01: /* Engineering SKU */
+-	case 0x07:
+-	case 0x17:
+-	case 0x27:
+-		if (speedo_rev >= 2)
++	if (sku_info->revision >= TEGRA_REVISION_A02) {
++		switch (sku) {
++		case 0x00: /* Engineering SKU */
++		case 0x01: /* Engineering SKU */
++		case 0x13:
++			sku_info->cpu_speedo_id = 5;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x07:
++		case 0x17:
++		case 0x1F:
++			sku_info->cpu_speedo_id = 7;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x27:
++			sku_info->cpu_speedo_id = 1;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		case 0x83:
++			sku_info->cpu_speedo_id = 3;
++			sku_info->gpu_speedo_id = 3;
++			break;
++
++		case 0x87:
++			sku_info->cpu_speedo_id = 2;
+ 			sku_info->gpu_speedo_id = 1;
+-		break;
+-
+-	case 0x13:
+-		if (speedo_rev >= 2)
+-			sku_info->gpu_speedo_id = 1;
+-
+-		sku_info->cpu_speedo_id = 1;
+-		break;
+-
+-	default:
++			break;
++
++		case 0x8F:
++			sku_info->cpu_speedo_id = 9;
++			sku_info->gpu_speedo_id = 2;
++			break;
++
++		default:
++			pr_err("Tegra210: unknown revision 2 or newer SKU %#04x\n", sku);
++			/* Using the default for the error case */
++			break;
++		}
++	} else if (sku == 0x00 || sku == 0x01 || sku == 0x07 || sku == 0x13 || sku == 0x17) {
++		sku_info->gpu_speedo_id = 1;
++	} else {
+ 		pr_err("Tegra210: unknown SKU %#04x\n", sku);
+-		/* Using the default for the error case */
+-		break;
+ 	}
+ }
+ 
 
-Ditto
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250812-tegra210-speedo-470691e8b8cc
 
-> +		return ret;
-> +	}
-> +
-> +	/* Write ALARM_RESET_VAL in RTC Alarm register to disable alarm */
-> +	val[0] = 0xff;
-> +	val[1] = 0xff;
-> +	val[2] = 0xff;
-> +	val[3] = 0xff;
-> +
-> +	ret = nvvrs_rtc_write_alarm(client, val);
-> +	if (ret < 0)
-> +		dev_err(info->dev, "Failed to disable Alarm (%d)\n", ret);
-
-Ditto
-
-> +
-> +	return 0;
-
-Plus it fails but then returns 0
-
-> +}
-> +
-> +static int nvvrs_rtc_read_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
-> +	time64_t secs = 0;
-> +	int ret;
-> +	u8 val;
-> +
-> +	mutex_lock(&info->lock);
-
-This lock is unnecessary once you use rtc_lock/rtc_unlock in the IRQ
-handler.
-
-> +
-> +	/*
-> +	 * Multi-byte transfers are not supported with PEC enabled
-> +	 * Read MSB first to avoid coherency issues
-> +	 */
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_T3);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	secs |= (time64_t)val << 24;
-> +
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_T2);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	secs |= (time64_t)val << 16;
-> +
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_T1);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	secs |= (time64_t)val << 8;
-> +
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_T0);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	secs |= val;
-> +
-> +	rtc_time64_to_tm(secs, tm);
-> +	ret = 0;
-> +out:
-> +	mutex_unlock(&info->lock);
-> +	return ret;
-> +}
-> +
-> +static int nvvrs_rtc_set_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
-> +	time64_t secs;
-> +	u8 time[4];
-> +	int ret;
-> +
-> +	mutex_lock(&info->lock);
-
-Ditto
-
-> +
-> +	secs = rtc_tm_to_time64(tm);
-> +	time[0] = secs & 0xff;
-> +	time[1] = (secs >> 8) & 0xff;
-> +	time[2] = (secs >> 16) & 0xff;
-> +	time[3] = (secs >> 24) & 0xff;
-> +
-> +	ret = i2c_smbus_write_byte_data(info->client, NVVRS_REG_RTC_T3, time[3]);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = i2c_smbus_write_byte_data(info->client, NVVRS_REG_RTC_T2, time[2]);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = i2c_smbus_write_byte_data(info->client, NVVRS_REG_RTC_T1, time[1]);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = i2c_smbus_write_byte_data(info->client, NVVRS_REG_RTC_T0, time[0]);
-> +out:
-> +	mutex_unlock(&info->lock);
-> +	return ret;
-> +}
-> +
-> +static int nvvrs_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-> +{
-> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
-> +	time64_t alarm_val = 0;
-> +	int ret;
-> +	u8 val;
-> +
-> +	mutex_lock(&info->lock);
-
-Ditto
-
-> +
-> +	/* Multi-byte transfers are not supported with PEC enabled */
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_A3);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	alarm_val |= (time64_t)val << 24;
-> +
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_A2);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	alarm_val |= (time64_t)val << 16;
-> +
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_A1);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	alarm_val |= (time64_t)val << 8;
-> +
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_RTC_A0);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	val = (u8)ret;
-> +	alarm_val |= val;
-> +
-> +	if (alarm_val == ALARM_RESET_VAL)
-> +		alrm->enabled = 0;
-> +	else
-> +		alrm->enabled = 1;
-> +
-> +	rtc_time64_to_tm(alarm_val, &alrm->time);
-> +	ret = 0;
-> +out:
-> +	mutex_unlock(&info->lock);
-> +	return ret;
-> +}
-> +
-> +static int nvvrs_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-> +{
-> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
-> +	time64_t secs;
-> +	u8 time[4];
-> +	int ret;
-> +
-> +	mutex_lock(&info->lock);
-> +
-
-Ditto
-
-> +	if (!alrm->enabled) {
-> +		ret = nvvrs_rtc_disable_alarm(info);
-> +		if (ret < 0)
-> +			goto out;
-> +	}
-> +
-> +	ret = nvvrs_rtc_enable_alarm(info);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	secs = rtc_tm_to_time64(&alrm->time);
-> +	time[0] = secs & 0xff;
-> +	time[1] = (secs >> 8) & 0xff;
-> +	time[2] = (secs >> 16) & 0xff;
-> +	time[3] = (secs >> 24) & 0xff;
-> +
-> +	ret = nvvrs_rtc_write_alarm(info->client, time);
-> +
-> +out:
-> +	mutex_unlock(&info->lock);
-> +	return ret;
-> +}
-> +
-> +static int nvvrs_pseq_irq_clear(struct nvvrs_rtc_info *info)
-> +{
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	for (i = 0; i < NVVRS_IRQ_REG_COUNT; i++) {
-> +		ret = i2c_smbus_read_byte_data(info->client,
-> +					       NVVRS_REG_INT_SRC1 + i);
-> +		if (ret < 0) {
-> +			dev_err(info->dev, "Failed to read INT_SRC%d : %d\n",
-> +				i + 1, ret);
-> +			return ret;
-> +		}
-> +
-> +		ret = i2c_smbus_write_byte_data(info->client,
-> +						NVVRS_REG_INT_SRC1 + i,
-> +						(u8)ret);
-> +		if (ret < 0) {
-> +			dev_err(info->dev, "Failed to clear INT_SRC%d : %d\n",
-> +				i + 1, ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t nvvrs_rtc_irq_handler(int irq, void *data)
-> +{
-> +	struct nvvrs_rtc_info *info = data;
-> +	int ret;
-> +
-> +	/* Check for RTC alarm interrupt */
-> +	ret = i2c_smbus_read_byte_data(info->client, NVVRS_REG_INT_SRC1);
-> +	if (ret < 0) {
-> +		dev_err(info->dev, "Failed to read INT_SRC1: %d\n", ret);
-
-dev_dbg or remove
-
-> +		return IRQ_NONE;
-> +	}
-> +
-> +	if (ret & NVVRS_INT_SRC1_RTC_MASK) {
-> +		rtc_lock(info->rtc);
-> +		rtc_update_irq(info->rtc, 1, RTC_IRQF | RTC_AF);
-> +		rtc_unlock(info->rtc);
-> +	}
-> +
-> +	/* Clear all interrupts */
-> +	if (nvvrs_pseq_irq_clear(info) < 0)
-> +		return IRQ_NONE;
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-
-
-> diff --git a/include/linux/rtc/rtc-nvidia-vrs10.h b/include/linux/rtc/rtc-nvidia-vrs10.h
-> new file mode 100644
-> index 000000000000..3c9c46abf555
-> --- /dev/null
-> +++ b/include/linux/rtc/rtc-nvidia-vrs10.h
-
-Just to be sure, do you expect to use this include in another driver?
-Else you should merge it back in the c file.
-
-
+Best regards,
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Aaron Kling <webgeek1234@gmail.com>
+
+
