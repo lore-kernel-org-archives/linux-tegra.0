@@ -1,61 +1,63 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EFA2E1EF4
-	for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 15:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633782E229E
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 15:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813435; cv=none; b=O6aAqmM+lKSbYvI4t7t4+ZtaNkEDk2KqCTpUcy3dfLSskz2BeHGgMfozCOztplxhJLgrIyKRMxYTA6zkTX9fsEz0WYihD63AD6Ckh6uxnJnRu3jLC7lVKQrewdnaae2kSJ4Q2R/n8KUe9DxsH2xPjl8DNDWwtwDrl7dbEauC0c4=
+	t=1758813438; cv=none; b=GMZEgarmfmEisnEnJRlpGg6oHGLVuvqIpJfr3JXxVCzQ9ScZaFuhQ0F/ot4HMBv7RpC5JHkC4fFZVPmUWMNHj5Th6MDlsroFXb6okJ/3eXZSFGi7FvrlrQGSdlz5MS6RVv9CeH/Mcrv8XuOotG5XkdXS/i6OS0rSSofoWYSTpv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813435; c=relaxed/simple;
-	bh=EPmeZ+AxYQt1ZQC0Ek7FvFMD0viWXbKOiFp56gi1mFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uvDiZZ/vS1VAbI22fKbq4I4ktTYJaRwETTAuGvVOvxHFXkBgNrCFoitT6y2JnE495x78NDbWUd2T1qBpyHNPKtb5LsDWJzHgn0FhcEwl9kgLFeDtNPBNwxTOI6YaNklny70tPfhwj3ier8L1gQIDrHJY58v1X+DskSE0eahvcXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhVbf6sv; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1758813438; c=relaxed/simple;
+	bh=LTR5RjKsGAR9+bAH5aId8zdbd/J2WS7Jbf7jhnjHh2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SMtdaXMfP2VbTX61elXT/0bJIs60ZkToFjShUOwYQ6fOyaHHKRCKw8YRqbT7/bHvlH52Vta7ER+kBKsLhqlPecO4hKqcq2p1qX5Aql7Ilao8n8G+0kUzrm3JyTy1xudO76Px4SkekwYRYMBl9p7imRrN6tVVyTJ+rncv3bitWxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1uDbu77; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhVbf6sv"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57e03279bfeso1447922e87.0
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 08:17:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1uDbu77"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57e03279bfeso1447982e87.0
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 08:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758813432; x=1759418232; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7v32IEPJq83+rFpTKepQApZcwbjn1LGuorJ9QJ5gMjI=;
-        b=nhVbf6svSPK93SBpCUsW1QtYeCNo/XMUyoqZONzdN3kn2s2P1SghA8S/UtxjXYZ1gJ
-         sJ3+XPEBIXTVpGXF+sPe3SJPKUBJ4h7z2QVFf6NeH6oibE+XDdJBQUFuEpgGDX16L3+G
-         KwJFF2FRLqn/zo6VcUsgP9oO47C0JqBp55BndpGYDc0ccXsfx6PhKBOTyKuIWJbwjzvf
-         8ifunal0v8LMcUMupXrAvCBQtzw2Y3fktWbydKmj25hj9ijx3PtrVhDPwVZp0COAeLx4
-         txp6cfAnxs+J4ePWSUlr4JyBdC4z7CLBuMG/qnhoux+XjX6cXdYOywSMOn2DlABpS+eq
-         JZHg==
+        d=gmail.com; s=20230601; t=1758813433; x=1759418233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FJzhHcbSPGNSkO+dGiry0FKeUcEvrlbPDe9AtAO0DK8=;
+        b=K1uDbu77WSv0HxacMx488ZnU5xoTpHDBKdFRxXT/7c2H/3eLZ81POpaTjAGNm+rbl1
+         Donz9uH9ttZCwr2cjqc3h27JknDA/4l/8PYK9aJvpo+7Jex4WpCBiol0QskHJEdAoO74
+         Kq6e/up/YAgkpf4pRZtF0ZZ2qi+ZbBU47eTbTX2UabiyO/w4R5xrsptTPJtqqKERgL+Z
+         SMmyg5JC05QvMhHPWUDXDleVOvC8LwQXwxe5RGKMxyt+zK7KuchEZpE6VBbIgEriMhqU
+         Xoa67d9xmAsQY+VUp3x893qKgun80SCoEejepVAHn30LY5EsnM8aiEg3iL95++oFIQOM
+         1xeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813432; x=1759418232;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7v32IEPJq83+rFpTKepQApZcwbjn1LGuorJ9QJ5gMjI=;
-        b=WCvJAvIC+g7Jwz86oDSeEU78YKEVmUyjUaxmS4AYhnQ5KZXomI+WnZDA8FE95keNvM
-         Zof+aG6nRZg1pIydMKJycwGZCIUyQgZRRZZQNc4qbBUfJNAXC0he/bbYh0dkyqDOG1Ew
-         ilD9zu6iYKtQK/xmKLoTl+FsSROgA88yr0fKoT4bnGnw3OrcTs/09fgnORF3NaTOxrx2
-         1t2U6yVOQiUiUiiOdxY3oBExYO2QvaeiouAqXsSnLS5NWA9+eVKFRrJbbKvSaNHrJCMP
-         kcaeNz9+cvFir3YdVr2yhWbGrzLtpydcbraXT2Ee9tRY9AbeR9Gsz4yRVLIZ9sCvuTeV
-         sygQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeviv05dVwMMDHKL87WFCzHMrVGvV3udVmb/uAMB3yLrhEeY63qUlQuDv92I4i2HiNNtAcHVe3jed/oA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr22o9US4SBJjIC1fDQV/s20xbHYZG5rXb2u2LXfjRLQ82b+mn
-	cTBYoRoIIKSn9FdQ9g841TsNb+SuklzHrd6KJfdgjGgFTe5GHCN+QhBE
-X-Gm-Gg: ASbGncuIB8gBMsJ+W3/sWcoxjQozUBYMDksleI2Aj5inxiUjS4ScH/hjvjRYrdgQwPl
-	7CkhtVf+fdjAMJX0XqewpOq8FZ6ap+2RG2erN2v/aHYebRY3+gnk6D5gZV+ENUCNLpUu81ScTPN
-	sz7Y8iOWtbPwgynviv0cwriZjWYTxvl+GfZgd57RrrkNdiU+8ePZSXsi/vUQWBWj66QANIdDFYd
-	9fCDv1Z+yQF4q+f9Hh9iFefzlIOLirfjQXORTlzUy1SvrEcY4+50Ti3SRrT4uIjd2vE9UdlOUAy
-	8er41QiqcmTocp//TmIFOgGyHCeFKeUcAC111+hbRBwgGJe5SG0Z4/aocWgg1Ocd0BNxRSo6wPZ
-	QihUGUyfKa7gefA==
-X-Google-Smtp-Source: AGHT+IE3EnxRGgkHHyis8Weimvr/QO/NiYq/0dZgZmiN2yuGCI3D2oO1tpnAY+bLbNeA0ytCv5wrfw==
-X-Received: by 2002:a05:6512:3a93:b0:55f:3ae4:fe57 with SMTP id 2adb3069b0e04-58306abf6a1mr938344e87.20.1758813431368;
-        Thu, 25 Sep 2025 08:17:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758813433; x=1759418233;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FJzhHcbSPGNSkO+dGiry0FKeUcEvrlbPDe9AtAO0DK8=;
+        b=DJR7DHxzNirIiFfXP/RdCmuJ3dLfK00CQLiLynDx2kWongZGaoBSbj0ZNdfsVaep/6
+         LOGaG3/Y3fw5Kf89F316E1aZOSoHI8Djfi9iuyuOzIvk8ipBjTS6e3cCYk6YRzmjfTAf
+         QtV9kTDIMx8dQrV+iMQH/NaCZI4c5mjE59OQEf9PdBkIRLzROk9i2OYtvofBgzLWg6Hw
+         b1qrhT590LOhHbMrjyKl96QJ/3+z/iRTKRDanWuNmV5arrrAVM+lVORZi8ktYrNwnrcS
+         ggV/8Kf9H+YrwOCXJpJY3nWGCSwediptJP+ztu1GTdkayTKF3wLE/G3YPPj7gqPEir9/
+         18Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqQ9v9RkjtEtIJyO5+F74mjBghmagycYh/ab9aCeyXNpaRbjPbYN2baQCUBfB+AyH6YYGI23JCCBTv6w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIRIH8nUMJJoK6VujU9aI8RwZAQPgMuuN8gS5xQkH6UMvIbfLY
+	Z2kTxZfN7zk7DnZEns2/jXGcHIMPl7H0fgACRu4z5Q+6NrwTvlabbist
+X-Gm-Gg: ASbGncuEJtcg2+Fsn1JWh2/khaX1z45HEMgABnL9ya+t+h7aEEltiQ4kwcgVTgBKsb2
+	S2gNL15pUEM2azFbJqZFqy146zYkvxPgMT4pIpAN2JIIA8Q5PTp72tYn6C+n2z+89gotvVvfXh1
+	zu/EcxJi3+iCwzvkyNFWv7IHVTXxG3FdH7uBLMVRNu306z6Cil9Au1ee1/Y6av8dTSEOUfu+Kwm
+	nAuFV3Xefxvq66fgPaC/R4OSkeE7aew0utLxE/DSO9PE8FUUmSRXqotDabXhyhgzHjW8PrZJcKT
+	DkF/x5WdMEsvB39ReJwuLyUiuwNp8cRgTyoNF4L+rU7gTuZx1WNN/OI+6v07VswA1Lf/uH01ETr
+	j9rrFkEdwRIUaPQ==
+X-Google-Smtp-Source: AGHT+IFjiCsZyMZctlgolAlUOqm2uE7h1i2QBpyvCdGrkX6sgsV89T72gDOmbWkuD7pZo1TQUKEzMA==
+X-Received: by 2002:a05:6512:10cf:b0:579:5d8e:1629 with SMTP id 2adb3069b0e04-58305298285mr1034646e87.12.1758813433178;
+        Thu, 25 Sep 2025 08:17:13 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.09
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:17:10 -0700 (PDT)
+        Thu, 25 Sep 2025 08:17:12 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
@@ -91,122 +93,157 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v3 00/22] tegra-video: add CSI support for Tegra20 and Tegra30
-Date: Thu, 25 Sep 2025 18:16:26 +0300
-Message-ID: <20250925151648.79510-1-clamor95@gmail.com>
+Subject: [PATCH v3 01/22] clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and Tegra114
+Date: Thu, 25 Sep 2025 18:16:27 +0300
+Message-ID: <20250925151648.79510-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250925151648.79510-1-clamor95@gmail.com>
+References: <20250925151648.79510-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
-with a set of changes required for that.
+The CSUS clock is a clock gate for the output clock signal primarily
+sourced from the VI_SENSOR clock. This clock signal is used as an input
+MCLK clock for cameras.
 
+Unlike later Tegra SoCs, the Tegra 20 can change its CSUS parent, which is
+why csus_mux is added in a similar way to how CDEV1 and CDEV2 are handled.
+
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- vi_sensor gated through csus
-- TEGRA30_CLK_CLK_MAX moved to clk-tegra30
-- adjusted commit titles and messages
-- clk_register_clkdev dropped from pad clock registration
-- removed tegra30-vi/vip and used tegra20 fallback
-- added separate csi schema for tegra20-csi and tegra30-csi
-- fixet number of VI channels
-- adjusted tegra_vi_out naming
-- fixed yuv_input_format to main_input_format
-- MIPI calibration refsctored for Tegra114+ and added support for
-  pre-Tegra114 to use CSI as a MIPI calibration device
-- switched ENOMEM to EBUSY
-- added check into tegra_channel_get_remote_csi_subdev
-- moved avdd-dsi-csi-supply into CSI
-- next_fs_sp_idx > next_fs_sp_value
-- removed host1x_syncpt_incr from framecounted syncpoint
-- csi subdev request moved before frame cycle
+ drivers/clk/tegra/clk-tegra114.c        |  7 ++++++-
+ drivers/clk/tegra/clk-tegra20.c         | 20 +++++++++++++-------
+ drivers/clk/tegra/clk-tegra30.c         |  7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra20.c |  7 +++++++
+ 4 files changed, 32 insertions(+), 9 deletions(-)
 
-Changes in v3:
-- tegra20 and tegra30 csi schema merged
-- removed unneeded properties and requirements from schema
-- improved vendor specific properties description
-- added tegra20 csus parent mux
-- improved commit descriptions
-- redesigned MIPI-calibration to expose less SoC related data into header
-- commit "staging: media: tegra-video: csi: add support for SoCs with integrated
-  MIPI calibration" dropped as unneeded
-- improved tegra_channel_get_remote_device_subdev logic
-- avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
-- software syncpoint counters switched to direct reading
-- adjusted planar formats offset calculation
----
-
-Svyatoslav Ryhel (22):
-  clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
-    Tegra114
-  dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
-  clk: tegra30: add CSI pad clock gates
-  dt-bindings: display: tegra: document Tegra30 VI and VIP
-  staging: media: tegra-video: expand VI and VIP support to Tegra30
-  staging: media: tegra-video: vi: adjust get_selection op check
-  staging: media: tegra-video: vi: add flip controls only if no source
-    controls are provided
-  staging: media: tegra-video: csi: move CSI helpers to header
-  gpu: host1x: convert MIPI to use operation function pointers
-  staging: media: tegra-video: vi: improve logic of source requesting
-  staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
-    CSI
-  arm64: tegra: move avdd-dsi-csi-supply into CSI node
-  staging: media: tegra-video: tegra20: set correct maximum width and
-    height
-  staging: media: tegra-video: tegra20: add support for second output of
-    VI
-  staging: media: tegra-video: tegra20: simplify format align
-    calculations
-  staging: media: tegra-video: tegra20: set VI HW revision
-  staging: media: tegra-video: tegra20: increase maximum VI clock
-    frequency
-  staging: media: tegra-video: tegra20: expand format support with
-    RAW8/10 and YUV422 1X16
-  staging: media: tegra-video: tegra20: adjust luma buffer stride
-  dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
-  ARM: tegra: add CSI nodes for Tegra20 and Tegra30
-  staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
-
- .../display/tegra/nvidia,tegra20-csi.yaml     | 135 +++
- .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
- .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
- arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
- arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
- .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
- .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
- drivers/clk/tegra/clk-tegra114.c              |   7 +-
- drivers/clk/tegra/clk-tegra20.c               |  20 +-
- drivers/clk/tegra/clk-tegra30.c               |  21 +-
- drivers/gpu/drm/tegra/dsi.c                   |   1 +
- drivers/gpu/host1x/Makefile                   |   1 +
- drivers/gpu/host1x/dev.c                      |   2 +
- drivers/gpu/host1x/dev.h                      |   2 +
- drivers/gpu/host1x/mipi.c                     | 501 +----------
- drivers/gpu/host1x/tegra114-mipi.c            | 483 ++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra20.c       |   7 +
- drivers/staging/media/tegra-video/Makefile    |   1 +
- drivers/staging/media/tegra-video/csi.c       |  66 +-
- drivers/staging/media/tegra-video/csi.h       |  16 +
- drivers/staging/media/tegra-video/tegra20.c   | 828 +++++++++++++++---
- drivers/staging/media/tegra-video/vi.c        |  56 +-
- drivers/staging/media/tegra-video/vi.h        |   9 +-
- drivers/staging/media/tegra-video/video.c     |   8 +-
- drivers/staging/media/tegra-video/vip.c       |   4 +-
- include/dt-bindings/clock/tegra30-car.h       |   3 +-
- include/linux/host1x.h                        |  10 -
- include/linux/tegra-mipi-cal.h                |  56 ++
- 28 files changed, 1648 insertions(+), 668 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
- create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
- create mode 100644 include/linux/tegra-mipi-cal.h
-
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 186b0b81c1ec..00282b0d3763 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -691,7 +691,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_tsec] = { .dt_id = TEGRA114_CLK_TSEC, .present = true },
+ 	[tegra_clk_xusb_host] = { .dt_id = TEGRA114_CLK_XUSB_HOST, .present = true },
+ 	[tegra_clk_msenc] = { .dt_id = TEGRA114_CLK_MSENC, .present = true },
+-	[tegra_clk_csus] = { .dt_id = TEGRA114_CLK_CSUS, .present = true },
+ 	[tegra_clk_mselect] = { .dt_id = TEGRA114_CLK_MSELECT, .present = true },
+ 	[tegra_clk_tsensor] = { .dt_id = TEGRA114_CLK_TSENSOR, .present = true },
+ 	[tegra_clk_i2s3] = { .dt_id = TEGRA114_CLK_I2S3, .present = true },
+@@ -1047,6 +1046,12 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+ 					     0, 82, periph_clk_enb_refcnt);
+ 	clks[TEGRA114_CLK_DSIB] = clk;
+ 
++	/* csus */
++	clk = tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
++					     clk_base, 0, TEGRA114_CLK_CSUS,
++					     periph_clk_enb_refcnt);
++	clks[TEGRA114_CLK_CSUS] = clk;
++
+ 	/* emc mux */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 2c58ce25af75..d8d5afeb6f9b 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -530,7 +530,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA20_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA20_CLK_TIMER, .present = true },
+ 	[tegra_clk_kbc] = { .dt_id = TEGRA20_CLK_KBC, .present = true },
+-	[tegra_clk_csus] = { .dt_id = TEGRA20_CLK_CSUS, .present = true },
+ 	[tegra_clk_vcp] = { .dt_id = TEGRA20_CLK_VCP, .present = true },
+ 	[tegra_clk_bsea] = { .dt_id = TEGRA20_CLK_BSEA, .present = true },
+ 	[tegra_clk_bsev] = { .dt_id = TEGRA20_CLK_BSEV, .present = true },
+@@ -834,6 +833,12 @@ static void __init tegra20_periph_clk_init(void)
+ 				    clk_base, 0, 93, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV2] = clk;
+ 
++	/* csus */
++	clk = tegra_clk_register_periph_gate("csus", "csus_mux", 0,
++					     clk_base, 0, TEGRA20_CLK_CSUS,
++					     periph_clk_enb_refcnt);
++	clks[TEGRA20_CLK_CSUS] = clk;
++
+ 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
+ 		data = &tegra_periph_clk_list[i];
+ 		clk = tegra_clk_register_periph_data(clk_base, data);
+@@ -1093,14 +1098,15 @@ static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
+ 	hw = __clk_get_hw(clk);
+ 
+ 	/*
+-	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
+-	 * clock is created by the pinctrl driver. It is possible for clk user
+-	 * to request these clocks before pinctrl driver got probed and hence
+-	 * user will get an orphaned clock. That might be undesirable because
+-	 * user may expect parent clock to be enabled by the child.
++	 * Tegra20 CDEV1, CDEV2 and CSUS clocks are a bit special case, their
++	 * parent clock is created by the pinctrl driver. It is possible for
++	 * clk user to request these clocks before pinctrl driver got probed
++	 * and hence user will get an orphaned clock. That might be undesirable
++	 * because user may expect parent clock to be enabled by the child.
+ 	 */
+ 	if (clkspec->args[0] == TEGRA20_CLK_CDEV1 ||
+-	    clkspec->args[0] == TEGRA20_CLK_CDEV2) {
++	    clkspec->args[0] == TEGRA20_CLK_CDEV2 ||
++	    clkspec->args[0] == TEGRA20_CLK_CSUS) {
+ 		parent_hw = clk_hw_get_parent(hw);
+ 		if (!parent_hw)
+ 			return ERR_PTR(-EPROBE_DEFER);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 82a8cb9545eb..ca367184e185 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -779,7 +779,6 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA30_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA30_CLK_TIMER, .present = true },
+ 	[tegra_clk_kbc] = { .dt_id = TEGRA30_CLK_KBC, .present = true },
+-	[tegra_clk_csus] = { .dt_id = TEGRA30_CLK_CSUS, .present = true },
+ 	[tegra_clk_vcp] = { .dt_id = TEGRA30_CLK_VCP, .present = true },
+ 	[tegra_clk_bsea] = { .dt_id = TEGRA30_CLK_BSEA, .present = true },
+ 	[tegra_clk_bsev] = { .dt_id = TEGRA30_CLK_BSEV, .present = true },
+@@ -1008,6 +1007,12 @@ static void __init tegra30_periph_clk_init(void)
+ 				    0, 48, periph_clk_enb_refcnt);
+ 	clks[TEGRA30_CLK_DSIA] = clk;
+ 
++	/* csus */
++	clk = tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
++					     clk_base, 0, TEGRA30_CLK_CSUS,
++					     periph_clk_enb_refcnt);
++	clks[TEGRA30_CLK_CSUS] = clk;
++
+ 	/* pcie */
+ 	clk = tegra_clk_register_periph_gate("pcie", "clk_m", 0, clk_base, 0,
+ 				    70, periph_clk_enb_refcnt);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index 737fc2000f66..437e0ac091cc 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -2230,6 +2230,10 @@ static const char *cdev2_parents[] = {
+ 	"dev2_osc_div", "hclk", "pclk", "pll_p_out4",
+ };
+ 
++static const char *csus_parents[] = {
++	"pll_c_out1", "pll_p_out2", "pll_p_out3", "vi_sensor",
++};
++
+ static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
+ {
+ 	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
+@@ -2239,6 +2243,9 @@ static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
+ 
+ 	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
+ 			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
++
++	clk_register_mux(NULL, "csus_mux", csus_parents, 4, 0,
++			 pmx->regs[1] + 0x8, 6, 2, CLK_MUX_READ_ONLY, NULL);
+ }
+ 
+ static int tegra20_pinctrl_probe(struct platform_device *pdev)
 -- 
 2.48.1
 
