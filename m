@@ -1,79 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B9C1DE4EF;
-	Thu, 25 Sep 2025 15:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EFA2E1EF4
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 15:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812496; cv=none; b=kuaEyM4ItGjHB8Wj5n2yBPYjOpH34NBApWKxXAwvPMDhukDrz3RJz6bw2KYKVrSQ0VVwD4kVhxoy3kGYzs74r3j8iwuottmYZd8VEesix/3PEVciY7WR9RuDlSewOttl5o73b94/13qUWB2pO49SLIAPx4fcRXCPbYH9+9IFE9M=
+	t=1758813435; cv=none; b=O6aAqmM+lKSbYvI4t7t4+ZtaNkEDk2KqCTpUcy3dfLSskz2BeHGgMfozCOztplxhJLgrIyKRMxYTA6zkTX9fsEz0WYihD63AD6Ckh6uxnJnRu3jLC7lVKQrewdnaae2kSJ4Q2R/n8KUe9DxsH2xPjl8DNDWwtwDrl7dbEauC0c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812496; c=relaxed/simple;
-	bh=HBMKAro78ZNFv7LCJEgpDLhewdaAREFXTDxX6fc0Jhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iIr0yjD3wLTnoM8kbRKCTNMLzgmJWdth9EbOVm9MYA9UvSaMrTWxTQPRfNcUcmHZE3j67EIWcqXJ8rPoMGmjdkrYnXhyGAKGKLSdkVP7Ufqbz3dFmImSu1UXif4j3NJ9NZ6mPAISYpfLRZvkUlkvgQZb52hoJNITZm1SqdQHl9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9eZagnl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758813435; c=relaxed/simple;
+	bh=EPmeZ+AxYQt1ZQC0Ek7FvFMD0viWXbKOiFp56gi1mFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uvDiZZ/vS1VAbI22fKbq4I4ktTYJaRwETTAuGvVOvxHFXkBgNrCFoitT6y2JnE495x78NDbWUd2T1qBpyHNPKtb5LsDWJzHgn0FhcEwl9kgLFeDtNPBNwxTOI6YaNklny70tPfhwj3ier8L1gQIDrHJY58v1X+DskSE0eahvcXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhVbf6sv; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9eZagnl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5E9C4CEF0;
-	Thu, 25 Sep 2025 15:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758812495;
-	bh=HBMKAro78ZNFv7LCJEgpDLhewdaAREFXTDxX6fc0Jhs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=p9eZagnlb2exRZ2TXxx1d+IN8AQ9UQQV0/BCt/ggJaBfaroEU1/1ZuvHZMSg4eaYd
-	 LKlBmZuLlu2Ws+UmQFmxbPZNzbtMpQ3URJtJBSo58Ofi3m222QQvISk10f+w4UAi7N
-	 foNhjRRTZRgEoorRWw29WG85c2bumHhhQ2J9QBG1SPceJ74C4fXTNCw1VmuvDXTBp8
-	 X/n1mmnYRLUw43do55pprykU9rV7Ll+3aC+SjuN5XslGg7r+fyJ4+KOTkpx6OtGeXW
-	 UwbpISMl1uHvTSHDNn4TPw2SXNOAO/MLiOeQbW943gdtqCqss+JCAoYVCWbBNXObEN
-	 dPBrwS2W8c74A==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v1nTM-000000006Jh-3Oke;
-	Thu, 25 Sep 2025 17:01:28 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Russell King <linux@armlinux.org.uk>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhVbf6sv"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57e03279bfeso1447922e87.0
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 08:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758813432; x=1759418232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7v32IEPJq83+rFpTKepQApZcwbjn1LGuorJ9QJ5gMjI=;
+        b=nhVbf6svSPK93SBpCUsW1QtYeCNo/XMUyoqZONzdN3kn2s2P1SghA8S/UtxjXYZ1gJ
+         sJ3+XPEBIXTVpGXF+sPe3SJPKUBJ4h7z2QVFf6NeH6oibE+XDdJBQUFuEpgGDX16L3+G
+         KwJFF2FRLqn/zo6VcUsgP9oO47C0JqBp55BndpGYDc0ccXsfx6PhKBOTyKuIWJbwjzvf
+         8ifunal0v8LMcUMupXrAvCBQtzw2Y3fktWbydKmj25hj9ijx3PtrVhDPwVZp0COAeLx4
+         txp6cfAnxs+J4ePWSUlr4JyBdC4z7CLBuMG/qnhoux+XjX6cXdYOywSMOn2DlABpS+eq
+         JZHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758813432; x=1759418232;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7v32IEPJq83+rFpTKepQApZcwbjn1LGuorJ9QJ5gMjI=;
+        b=WCvJAvIC+g7Jwz86oDSeEU78YKEVmUyjUaxmS4AYhnQ5KZXomI+WnZDA8FE95keNvM
+         Zof+aG6nRZg1pIydMKJycwGZCIUyQgZRRZZQNc4qbBUfJNAXC0he/bbYh0dkyqDOG1Ew
+         ilD9zu6iYKtQK/xmKLoTl+FsSROgA88yr0fKoT4bnGnw3OrcTs/09fgnORF3NaTOxrx2
+         1t2U6yVOQiUiUiiOdxY3oBExYO2QvaeiouAqXsSnLS5NWA9+eVKFRrJbbKvSaNHrJCMP
+         kcaeNz9+cvFir3YdVr2yhWbGrzLtpydcbraXT2Ee9tRY9AbeR9Gsz4yRVLIZ9sCvuTeV
+         sygQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeviv05dVwMMDHKL87WFCzHMrVGvV3udVmb/uAMB3yLrhEeY63qUlQuDv92I4i2HiNNtAcHVe3jed/oA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr22o9US4SBJjIC1fDQV/s20xbHYZG5rXb2u2LXfjRLQ82b+mn
+	cTBYoRoIIKSn9FdQ9g841TsNb+SuklzHrd6KJfdgjGgFTe5GHCN+QhBE
+X-Gm-Gg: ASbGncuIB8gBMsJ+W3/sWcoxjQozUBYMDksleI2Aj5inxiUjS4ScH/hjvjRYrdgQwPl
+	7CkhtVf+fdjAMJX0XqewpOq8FZ6ap+2RG2erN2v/aHYebRY3+gnk6D5gZV+ENUCNLpUu81ScTPN
+	sz7Y8iOWtbPwgynviv0cwriZjWYTxvl+GfZgd57RrrkNdiU+8ePZSXsi/vUQWBWj66QANIdDFYd
+	9fCDv1Z+yQF4q+f9Hh9iFefzlIOLirfjQXORTlzUy1SvrEcY4+50Ti3SRrT4uIjd2vE9UdlOUAy
+	8er41QiqcmTocp//TmIFOgGyHCeFKeUcAC111+hbRBwgGJe5SG0Z4/aocWgg1Ocd0BNxRSo6wPZ
+	QihUGUyfKa7gefA==
+X-Google-Smtp-Source: AGHT+IE3EnxRGgkHHyis8Weimvr/QO/NiYq/0dZgZmiN2yuGCI3D2oO1tpnAY+bLbNeA0ytCv5wrfw==
+X-Received: by 2002:a05:6512:3a93:b0:55f:3ae4:fe57 with SMTP id 2adb3069b0e04-58306abf6a1mr938344e87.20.1758813431368;
+        Thu, 25 Sep 2025 08:17:11 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 08:17:10 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Aaron Kling <webgeek1234@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] amba: tegra-ahb: fix device leak on smmu enable
-Date: Thu, 25 Sep 2025 17:00:07 +0200
-Message-ID: <20250925150007.24173-1-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
+	linux-media@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v3 00/22] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Thu, 25 Sep 2025 18:16:26 +0300
+Message-ID: <20250925151648.79510-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Make sure to drop the reference taken to the ahb platform device when
-looking up its driver data while enabling the smmu.
+Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+with a set of changes required for that.
 
-Note that holding a reference to a device does not prevent its driver
-data from going away.
-
-Fixes: 89c788bab1f0 ("ARM: tegra: Add SMMU enabler in AHB")
-Cc: stable@vger.kernel.org	# 3.5
-Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/amba/tegra-ahb.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- vi_sensor gated through csus
+- TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+- adjusted commit titles and messages
+- clk_register_clkdev dropped from pad clock registration
+- removed tegra30-vi/vip and used tegra20 fallback
+- added separate csi schema for tegra20-csi and tegra30-csi
+- fixet number of VI channels
+- adjusted tegra_vi_out naming
+- fixed yuv_input_format to main_input_format
+- MIPI calibration refsctored for Tegra114+ and added support for
+  pre-Tegra114 to use CSI as a MIPI calibration device
+- switched ENOMEM to EBUSY
+- added check into tegra_channel_get_remote_csi_subdev
+- moved avdd-dsi-csi-supply into CSI
+- next_fs_sp_idx > next_fs_sp_value
+- removed host1x_syncpt_incr from framecounted syncpoint
+- csi subdev request moved before frame cycle
 
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index c0e8b765522d..f23c3ed01810 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -144,6 +144,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
- 	if (!dev)
- 		return -EPROBE_DEFER;
- 	ahb = dev_get_drvdata(dev);
-+	put_device(dev);
- 	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
- 	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
- 	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
+Changes in v3:
+- tegra20 and tegra30 csi schema merged
+- removed unneeded properties and requirements from schema
+- improved vendor specific properties description
+- added tegra20 csus parent mux
+- improved commit descriptions
+- redesigned MIPI-calibration to expose less SoC related data into header
+- commit "staging: media: tegra-video: csi: add support for SoCs with integrated
+  MIPI calibration" dropped as unneeded
+- improved tegra_channel_get_remote_device_subdev logic
+- avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+- software syncpoint counters switched to direct reading
+- adjusted planar formats offset calculation
+---
+
+Svyatoslav Ryhel (22):
+  clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
+    Tegra114
+  dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+  clk: tegra30: add CSI pad clock gates
+  dt-bindings: display: tegra: document Tegra30 VI and VIP
+  staging: media: tegra-video: expand VI and VIP support to Tegra30
+  staging: media: tegra-video: vi: adjust get_selection op check
+  staging: media: tegra-video: vi: add flip controls only if no source
+    controls are provided
+  staging: media: tegra-video: csi: move CSI helpers to header
+  gpu: host1x: convert MIPI to use operation function pointers
+  staging: media: tegra-video: vi: improve logic of source requesting
+  staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+    CSI
+  arm64: tegra: move avdd-dsi-csi-supply into CSI node
+  staging: media: tegra-video: tegra20: set correct maximum width and
+    height
+  staging: media: tegra-video: tegra20: add support for second output of
+    VI
+  staging: media: tegra-video: tegra20: simplify format align
+    calculations
+  staging: media: tegra-video: tegra20: set VI HW revision
+  staging: media: tegra-video: tegra20: increase maximum VI clock
+    frequency
+  staging: media: tegra-video: tegra20: expand format support with
+    RAW8/10 and YUV422 1X16
+  staging: media: tegra-video: tegra20: adjust luma buffer stride
+  dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
+  ARM: tegra: add CSI nodes for Tegra20 and Tegra30
+  staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
+
+ .../display/tegra/nvidia,tegra20-csi.yaml     | 135 +++
+ .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
+ .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
+ arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
+ arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
+ .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
+ .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
+ drivers/clk/tegra/clk-tegra114.c              |   7 +-
+ drivers/clk/tegra/clk-tegra20.c               |  20 +-
+ drivers/clk/tegra/clk-tegra30.c               |  21 +-
+ drivers/gpu/drm/tegra/dsi.c                   |   1 +
+ drivers/gpu/host1x/Makefile                   |   1 +
+ drivers/gpu/host1x/dev.c                      |   2 +
+ drivers/gpu/host1x/dev.h                      |   2 +
+ drivers/gpu/host1x/mipi.c                     | 501 +----------
+ drivers/gpu/host1x/tegra114-mipi.c            | 483 ++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra20.c       |   7 +
+ drivers/staging/media/tegra-video/Makefile    |   1 +
+ drivers/staging/media/tegra-video/csi.c       |  66 +-
+ drivers/staging/media/tegra-video/csi.h       |  16 +
+ drivers/staging/media/tegra-video/tegra20.c   | 828 +++++++++++++++---
+ drivers/staging/media/tegra-video/vi.c        |  56 +-
+ drivers/staging/media/tegra-video/vi.h        |   9 +-
+ drivers/staging/media/tegra-video/video.c     |   8 +-
+ drivers/staging/media/tegra-video/vip.c       |   4 +-
+ include/dt-bindings/clock/tegra30-car.h       |   3 +-
+ include/linux/host1x.h                        |  10 -
+ include/linux/tegra-mipi-cal.h                |  56 ++
+ 28 files changed, 1648 insertions(+), 668 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+ create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+ create mode 100644 include/linux/tegra-mipi-cal.h
+
 -- 
-2.49.1
+2.48.1
 
