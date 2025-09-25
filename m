@@ -1,63 +1,63 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE1730BBA1
-	for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 15:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB82E6CBB
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 15:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813458; cv=none; b=gu5O7EFSIuKEwoAiPbsijH4Khsb7yAU0sj2lpP4bOan6UPgMF6Y/glt8x2w0iF3MJ2hM43LRuVkTKEG87v3QRenwWwY8SP87wSEXJl0zjPfH19lbF3oVWe2Q1RhhD6mQjyOD77I+Q8D2s/BRGaPK4+ICI/JtlU70p3KIv8E+aP4=
+	t=1758813459; cv=none; b=AQZ5P+KIyWZ3B6wuIjuN3IpdbgWVbBoHYvAmxKQ7y47DinRd2F0+kAI3yP3C0GkI/1PPzgoFA/5zFjmoAlIBimBhW75m4kWnEnZbdurLYmcxBkPBAYKaYfE9n2JLmsckR7kIaPT60mbROfsKeAUZeq7cFK2tHh6D0JZ9unI2Bjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813458; c=relaxed/simple;
-	bh=J7izVaKPM1ps20wr6OTScdC6fJEWehyUv1o5AkzlcjI=;
+	s=arc-20240116; t=1758813459; c=relaxed/simple;
+	bh=RyMqVUMoRxnLE2+LH/uDoKbsjsXYMu268PiHdfObUHs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=COadTLmFriulkU1e8DUnW/k5AFC22qMLdyNUXC20EiSUCdbwfDrmB/bg4X/DD4lydSDl4Hp/CfwjbXJ0eGFwnjXa54ZwysT0uO325n4PHCRGSgsDaIqToaDIq1vvRTc+DDrgZkUUbTyWyXn3BKGmGP8F2dqW99qBSpz3Z6L/QpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCxFmuy9; arc=none smtp.client-ip=209.85.167.41
+	 MIME-Version; b=nQjY6hSeUCk8ImGKpchYN8CqgSU5/cgQyXg75NQK5ve3SPBg5FzFed+Tan744KppqidoLG4UxZAuJx3GR4WTTBEeEhEkkBqgknQuhs8I3dHIWYx3Mxb/uLLEvoKeVrcdL9TBTAjazeONerMCSy/WVE9Wa3EorSbUP/vB41h1yno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LV5T8NIk; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCxFmuy9"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57992ba129eso1244881e87.3
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 08:17:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LV5T8NIk"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57b8fc6097fso1344308e87.1
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Sep 2025 08:17:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758813453; x=1759418253; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758813454; x=1759418254; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C3BqohOGg+vh6fUFPn6hdSt72tlOBF+v0LkjnbZ1rhI=;
-        b=VCxFmuy9fKwOJRFSU/JASyXJ5UL/UCL1eM9+kOGLj9QUfN8scfO5knlbzdYFz3CiUF
-         1KoRm1jBf9tZg2Gtv5zUhXvQ5s8KsYMy+ytFDerborOhX4jYf/wnDTiTtIG5yaf3D3W2
-         SJkXhZo9qDI8yclQSflwogoaDWUwy5bXoBBqqky5E89tyURbSQByyHncC0c/W8DXSxCi
-         FTQ+ICv/c00GevI17Ph2hMIrQTf6gAuEra183m86l9xSyABOfle6MMbZDdzIp+3NCkk9
-         Pk9v02NEu+Xcm3ITNeKXqkr1ZEpW0G6d1icD8suAo8YzHGdj7qcgEqU0eFrVegv9Z8XM
-         rVQA==
+        bh=hswO6VHAbXRS9t5lyAgR5F2WC+ilzEfgsXiR8FyXf7w=;
+        b=LV5T8NIkVevZs5a5PGuIdIdvYnfOFYkiZ4h/AN0UhOoCmDcpbiquC6ADTbljAnYxyD
+         xp53rDpV9d4SdI22mL7UIV8kN3k3KOljaMFnRbecfSPipwLbX0IQ9yiHeTg5/z+rHYKU
+         R0RejQEO0SHmzpkXgg4tu/VLxVaZvqBEW+yYjTUQUgSROw4AkoSO7jWVU0V/LCW3utT4
+         MjxrIVVEHiL3YJAmEBkmYfI8Nh2pOS14i/tClsAcIHeHAAItABagqteZOIEb/dN1+t0C
+         yaiDOQHonJ5upSXl5vLq2qe7cC4BR/4SQRS9hJ+GZ0KkApF9UhtPiYs6s9WHdokzZQU4
+         fWMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813453; x=1759418253;
+        d=1e100.net; s=20230601; t=1758813454; x=1759418254;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C3BqohOGg+vh6fUFPn6hdSt72tlOBF+v0LkjnbZ1rhI=;
-        b=jxKPN4HTtc5q9kdjVrmBt0K7mHDI1kdxI+ANAo2QgiE3M0ES7CXVFuuX62jg/kAt2y
-         W/IM+0V9Oy0Snr/exDCN1+N0sV64UUTAkRWPy7MqHVEMOSLq0Ffr/FYYgUdlHtJkPZle
-         bRVcu66rwdPssglU1Ai35XAR/zSUy4JoKPyDFxHS84DYqRaC/N7Nn0Z0UbdiMktKC6x8
-         irCgH03/h0FZP8TBPg1C/35qotNt5JoWiyYYOVYTaFsJhdbSb7YR+HrBaDPt6yrKKbny
-         TkYwzy0Fm+A4ewAGTFiluEoGKrKN38j0PB81/zCIp6973JbLgUcfylMy/WPz94J+tpJu
-         rcnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXP12H89pu+b1E9HroRonS+1YoRlM3ABM8CQdsfHZLCUiS0qh/4HIdaBxeD2KFOUccszSeOjzkwN0rKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx68mjkmQ1B4x8YqlYxB89ctIBkrbX/M51MgyzGWPzYqpISHHlb
-	R1I28PEkGrOytN2+ua9id7jRJBfMxsSESwpqM8bf2cwHSAKZayam45Wp
-X-Gm-Gg: ASbGncujrnOjoB8ggfYDEkFWk+zeQvekY41mPqDUc3OJBsgIXHLy4/5fBHtep8ESjTn
-	7fQFIUymMXWJwgL9se+o5B86jBYINVj3HAgI+85NtqQvIrHGD+1/Bhhaej+/Z9QpZQkZnI7qxrd
-	MMEIpa7js13aSjX1hV8TU8Qmi5zyIzv5/sIsy+o2YK3XIDIgiMPTt1SfPZchflwLHGERCi0yRLi
-	ylP/wu3V+Zbxi15zlkXmiTHWqupog97cCKHhSnxPrRbL9oKMT9hHy6CuivjCC/MlbinmCvLZUsH
-	z85DoJzlZ652HUVaKl5PO7phdQwNHQp0xK1RFg+G3poMiaDF5zSSk7Dk/xIzfsiwynHOJ7xthWf
-	l3y0OBVog60poKQ==
-X-Google-Smtp-Source: AGHT+IGK++i2dbsoBub16rSwg8Y61Fa1WoKo+NmQGOT7b2HQy8IsigN1Ldy/HuzqUEX4JSs3hgUwJw==
-X-Received: by 2002:a05:6512:6188:b0:55f:49ab:884a with SMTP id 2adb3069b0e04-582d12fde4dmr1009677e87.21.1758813452520;
-        Thu, 25 Sep 2025 08:17:32 -0700 (PDT)
+        bh=hswO6VHAbXRS9t5lyAgR5F2WC+ilzEfgsXiR8FyXf7w=;
+        b=TyFcyfVsoipnbLpJCSAntGln8JyPQIeUGA7CidPXMeFFQbZrhvH8wVwgo/JOUdXCBh
+         g+Cepima+uviqnJ+07yKvkkM5gs/XY3jzoFiHuGb/tuRYGssloh1SavSA5jGnH5U1PHj
+         3KSSHwPKi2EmbrzFvM+67x0QXivsEJEYrsUZQKz3soD+gPbth8nGeMghyNPqOHBM7/7F
+         DQu0MIXO3hKhEzG8SxkPnY1UMp2x9rHTnAds46F/nEXSAkWV5EglZis0SRS89K462cT9
+         dcy8Iw9sYVgAnTgzGxonSIJF0vES/57W8iqABX1hcdZqoYio1sp4ORiwNvW9aEW7rKwO
+         fvRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7sZtLTn0Xe8fmKsoZ1ik2U/YQTcBOjPYy4CFwOM7UNDipHXQfRvWjTL0oSdh4pjwfvQHgYcgQhRud6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1NKSCPcbedGn/zuLjg7pCyXxEMEvf/FUL3+0EcmvNL5umDfeZ
+	+E8NW90R+5dsEoB6YfGGxLvFkKnHgawezmgHL/oGggLVxNyFRV53Pzz9
+X-Gm-Gg: ASbGnct/g8oaS3ZTDTis6I/OuGj0WDrlcT/DSFEbqCpDPs60/CZxa1UTBR7gMFyNaLT
+	47nQgIwIiYWo8rk46fg8fPpuJejUByUyM2uKvs/Tu/CeH8spio9AyyCvGPzJfDDy8GWkjTe9zFV
+	rWXqyji0XpKLI+ItJeHgJN1WFBRy4sHiMbcuca85yxizpOA+rMl6RWFiTqfkXIi3zsKuCyfpqDY
+	5TIxM2F8eDnxuNEk3i/uFzfwZ4m26WBbtgA5OSf8B0x03e1ukODdBhpjgZXiJJEsngjNMXTMW5F
+	3vPvW/PzyDdUzXkrqfx9437EURjaU99FvRT6LQIYlO/rYB85AGcBTHzhamHBzwLuoR7E36AYKvB
+	2QPACyN6c6C9rRg==
+X-Google-Smtp-Source: AGHT+IG7KKCjilkRoVVQO6eRQmwua4ImxUfDI3+PmQybBw/b1Fvta80npFLTel5v2tEHntPHpbmfnw==
+X-Received: by 2002:a05:6512:1392:b0:573:68fd:7ad2 with SMTP id 2adb3069b0e04-582d25840c9mr1251932e87.35.1758813454230;
+        Thu, 25 Sep 2025 08:17:34 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.30
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:17:32 -0700 (PDT)
+        Thu, 25 Sep 2025 08:17:33 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
@@ -93,9 +93,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v3 12/22] arm64: tegra: move avdd-dsi-csi-supply into CSI node
-Date: Thu, 25 Sep 2025 18:16:38 +0300
-Message-ID: <20250925151648.79510-13-clamor95@gmail.com>
+Subject: [PATCH v3 13/22] staging: media: tegra-video: tegra20: set correct maximum width and height
+Date: Thu, 25 Sep 2025 18:16:39 +0300
+Message-ID: <20250925151648.79510-14-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250925151648.79510-1-clamor95@gmail.com>
 References: <20250925151648.79510-1-clamor95@gmail.com>
@@ -107,48 +107,34 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-avdd-dsi-csi-supply belongs in CSI node, not VI.
+Maximum width and height for Tegra20 and Tegra30 is determined by
+respective register field, rounded down to factor of 2, which is 8191U
+rounded down to 8190U.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 4 ++--
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/media/tegra-video/tegra20.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 584461f3a619..4a64fe510f03 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -20,10 +20,10 @@ dpaux@54040000 {
- 		vi@54080000 {
- 			status = "okay";
+diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
+index 7b8f8f810b35..3e2d746638b6 100644
+--- a/drivers/staging/media/tegra-video/tegra20.c
++++ b/drivers/staging/media/tegra-video/tegra20.c
+@@ -23,11 +23,10 @@
  
--			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
--
- 			csi@838 {
- 				status = "okay";
-+
-+				avdd-dsi-csi-supply = <&vdd_dsi_csi>;
- 			};
- 		};
+ #define TEGRA_VI_SYNCPT_WAIT_TIMEOUT			msecs_to_jiffies(200)
  
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index ec0e84cb83ef..f1d2606d9808 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -64,10 +64,10 @@ dpaux@54040000 {
- 		vi@54080000 {
- 			status = "okay";
+-/* This are just good-sense numbers. The actual min/max is not documented. */
+ #define TEGRA20_MIN_WIDTH	32U
++#define TEGRA20_MAX_WIDTH	8190U
+ #define TEGRA20_MIN_HEIGHT	32U
+-#define TEGRA20_MAX_WIDTH	2048U
+-#define TEGRA20_MAX_HEIGHT	2048U
++#define TEGRA20_MAX_HEIGHT	8190U
  
--			avdd-dsi-csi-supply = <&vdd_sys_1v2>;
--
- 			csi@838 {
- 				status = "okay";
-+
-+				avdd-dsi-csi-supply = <&vdd_sys_1v2>;
- 			};
- 		};
- 
+ /* --------------------------------------------------------------------------
+  * Registers
 -- 
 2.48.1
 
