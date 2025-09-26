@@ -1,483 +1,214 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012015.outbound.protection.outlook.com [40.107.209.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFC52FB987
-	for <linux-tegra@vger.kernel.org>; Fri, 26 Sep 2025 13:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758894992; cv=none; b=UKyG3//J3hEKwYKZZhuyj208W0lWQani1UyiIjX7JfCaIVO/KdfBdjkabsSDlkZePmWxhvuLdN8jBdS/UVKTCt2lfm4qyjbeFWFSwnXu2CfBWCcltKCu6PARjq08wFR9ty8uzddup1YFS8VHV1ee27e00dIX78cL0l4wWHnHsTk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758894992; c=relaxed/simple;
-	bh=fnFmx+ig5lobTpxBXaOHgpPg+wwrwW4hzaO99H2eNFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IoQkuOWL3VBnFeTonYJmw1cJIoGjsp/0LrvgTI7l4z6tVESafcCwUhqJLwu+FPJlw0Og34tInkALlbFnQM6Y1AYeDEPhDoVmC1L9BRLzaGfYdyj098nzjyMZvelX7o6PuguzRleLav0ZOwbgecunc9YPufiiJS8AzzbJnKY1A8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/ZRqGar; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611CF205AA1;
+	Fri, 26 Sep 2025 15:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758900779; cv=fail; b=ODJB0EGzIlHhgHRfj4MKdv5+fWTVjBQxyI0V2u20J0wQkIch3F/Oo5tBJrsmIvdD/7y86MDP7qsRnmi+kO/tTDKUDbGmQ2DGLGoEiRkSJl6BjAZEgXXb08P1psKUZPcCoP33VAIKVyGPZWBCb6FI9epmZ7CZ+zyVIjofPD8kgEQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758900779; c=relaxed/simple;
+	bh=mF5EyYGMbanII9D7X6j9rGwSrSmb8I4padvUAnmp6CY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YIj0m0hPj74h21G1ZilN2KG06xbN8MZdDkPUKHaCWc6HaepV3IhkK2cVCG9Dz5ngMhpdVVGC/OwVd8e+v8Hqj5XxlHCx26i0oLTSwy7HfqB8poH1mkX4EDYZcR188sAJZDyGMatxBZF6oI7qpRKr2sKdkmoIMvmudSmGAz9oorY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gLwo+Xj3; arc=fail smtp.client-ip=40.107.209.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/ZRqGar"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75570C19422
-	for <linux-tegra@vger.kernel.org>; Fri, 26 Sep 2025 13:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758894992;
-	bh=fnFmx+ig5lobTpxBXaOHgpPg+wwrwW4hzaO99H2eNFo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V/ZRqGarw7YlMYZaOILSSYixS6lH7p6NqDxnDQZotvoVyy/ELD5W9YMuvbShpW8pM
-	 KdxExuhqSeesx2jnA7l9fAK5hXaL0IXK+14HuRMt/M33zHIDSBtHt9lMOiyg4FJbSS
-	 H/5MW64fH3EwgA0IMh23N2pwOyzUijVNWkj4XWbyxETVpnSWEOBINRyGTYFEJlT2VT
-	 fhkqctelyj/hYFWdL59SmlC844kX3WQZnioFTuNInmCEtyqPi45sSdTUzy1ttmmjB6
-	 pnY9w7VZVDuMVGP9+fF39i1dXVsI1O084LtFsW84Qp/eCLZbHouhmUl9XQtwf3VjlI
-	 8V2497nVgbbAA==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62fa99bcfcdso4250130a12.0
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Sep 2025 06:56:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZdmcPf84rGXjlGkw0nG+WzVnwisPMaRyzQz6pR7dR0Pm5U8rMg/sR/SpoWKxVzUaNMU1iy1QheaaxEw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl0af1hBw0uwAoe49/Op6ZINCKahbeaYQEb0O48G0AHc36x3d7
-	UnMRre3tFG8oLFw8pWe4Gc8ukzSkjaY01jSYdxBzEWihhsU4xeAQPMCBhKdzdwnSlI0aGbC3eMU
-	f4DF0tBB3SARjE9QjyYbPxPs7fToAGg==
-X-Google-Smtp-Source: AGHT+IHeVbmYJ3bMf1bJ3+dbRsHIZF/JSZNoyLliQsfKzibMDRH0Ilnls2P5gXXXNssyIIkoxWg+iETkLY8H1f6OIgk=
-X-Received: by 2002:a17:906:dc89:b0:b0d:ff2c:3cd2 with SMTP id
- a640c23a62f3a-b34b74ee790mr936499466b.12.1758894990940; Fri, 26 Sep 2025
- 06:56:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gLwo+Xj3"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A+AAnecGlxzxFlIkr+rDYRafazfkSC0lSwZUMFqp0sE64SeljwBPqr91Hlsjmz6hxrm35INX94EjN0p1NECVfR5ci/9YozIUHFqu2aBpilABiFdkrPar9VBW79IFnd4H1X0dpoDW1iSr+xxwmu53+Pd1zVdUdk6HE9gxlG+mx/ScftCx1CnqIty3ucC4O9oKb3/DEXiJhrXo9wnn7GAPxxT4/u5b8PdDDGgmTGftLCD1Kmr/7vwqD4n8Cs9NLrevpCFw+YqmCd7xYv6vvDk8i8Yfln980MG1iy6xfgan+avIK08D6fHSfkY5Q5wqtPj1oRoyNpIKG4giA8w4SRSKGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xDDYvSAoXno8bQTKbhaGa+gQ/TilHJ4eLnN19KQQMJg=;
+ b=hn2wp2gJn8ACjYsYvQXjI6PRumpvUJGdTezr0AKpzVVYed/Pi9fSp89239fqrHWYyvxn9wDqQ0Obv3IY2XdOQa83A6LUiEro7JanV8kF65PR76pjOEAghAs4c+/9dMQsYkv4tVbhdjswDLTqzf/wgMd1EAQ4Av+IF6QJZNI5D2CMIcucw/U3Pw4BGOTSmcL7EOBOkXAur0hnslliXWE/o6wZIsUwEq3L2cOya/gifG9LKVnSwMFVj4WwUpcJALV9D3tkLwq1cXThXOgjWo9ARiYPtA4vgCAPy8exgfheSL0xYzLUI1tk4Ve/7mHNDn5bPw5a1xQ1MTFei3nvQh3gIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xDDYvSAoXno8bQTKbhaGa+gQ/TilHJ4eLnN19KQQMJg=;
+ b=gLwo+Xj3seYaGzn0VhRBQfa5Gac9NWtuKlg2K7vD8VEN96JYgHYsdBMDQ3OGwhRMlXy5dMTT0OCFHb6Tmcjr07BPXx653X6HgrPx6NsXHVH7WiOnUpTTRLKNeHWxddmI/qGznLS6b+V/6i6db8V9WmN7EEiaouS3dGEune8osDBSm8YDZKv0IzPUxP1Xp0qAJZOMn4zgZoIMnux7xjtO/W12xkku7k2N+g+n4BK4TnigkriskXqRI/EauSMj4YRDNbalumhlVKt/ZpTk63jcr3uCiW068mtvpWxRjY0z5EttX7zHEYL4nXng/zVzza/9RpzvKVum5x9VD/z+Jn+AbQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH0PR12MB8773.namprd12.prod.outlook.com (2603:10b6:510:28d::18)
+ by IA1PR12MB9030.namprd12.prod.outlook.com (2603:10b6:208:3f2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 15:32:55 +0000
+Received: from PH0PR12MB8773.namprd12.prod.outlook.com
+ ([fe80::47a4:8efb:3dca:c296]) by PH0PR12MB8773.namprd12.prod.outlook.com
+ ([fe80::47a4:8efb:3dca:c296%4]) with mapi id 15.20.9160.013; Fri, 26 Sep 2025
+ 15:32:55 +0000
+Message-ID: <be41e552-e626-4923-a9e7-15acbafc19e3@nvidia.com>
+Date: Fri, 26 Sep 2025 16:32:46 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 20/24] pmdomain: core: Default to use
+ of_genpd_sync_state() for genpd providers
+To: Saravana Kannan <saravanak@google.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
+ linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Grzeschik <m.grzeschik@pengutronix.de>,
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ Peng Fan <peng.fan@oss.nxp.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>,
+ Michal Simek <michal.simek@amd.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <20250701114733.636510-21-ulf.hansson@linaro.org>
+ <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
+ <CAPDyKFqSyP3e=JRFYEuFefWVN5SYJWULU8SKzXmrThvyiVGXgg@mail.gmail.com>
+ <a904d953-acb2-44f6-81bd-118f7abd22da@nvidia.com>
+ <614f726c-4d6d-463b-a8b3-26d3df590575@nvidia.com>
+ <CAGETcx9CpOgtPSDK_qPRQ_u58w3fedSFAfFzugXW4eYq2TLECw@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <CAGETcx9CpOgtPSDK_qPRQ_u58w3fedSFAfFzugXW4eYq2TLECw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0043.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2fe::17) To PH0PR12MB8773.namprd12.prod.outlook.com
+ (2603:10b6:510:28d::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926072905.126737-1-linux.amoon@gmail.com> <20250926072905.126737-2-linux.amoon@gmail.com>
-In-Reply-To: <20250926072905.126737-2-linux.amoon@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 26 Sep 2025 08:56:18 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
-X-Gm-Features: AS18NWA0TW7TCBuwoHZZyIjBUxLHoOtqfKbpxOYzyWFBbc_WiOpyrZrNwOSeYlE
-Message-ID: <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
- nvidia,tegra-pcie.txt bindings documentation into a YAML schema
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB8773:EE_|IA1PR12MB9030:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4acdd092-b704-4fcf-905b-08ddfd11f61c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NGRoSVdGYis4TGhvbHpUUDlHQWxlQklRR2d6ZU9lYyt5UDNjTkFza0lKU0J1?=
+ =?utf-8?B?MEk5WjFRcmphMWZ1TUdYSGpqNXl0UXcveU1EVnRJN3RUNXQwOVpWeFJodG1s?=
+ =?utf-8?B?R1FhYU9lQnhTM2cyYmNJSjRNQzdiSm1tbFhjMjZFdzFnZmZXUkFqQk9HcWlG?=
+ =?utf-8?B?RmJ3eVJac1gxaWVTKzB5ZFJtWUs5T0tCN3ZRUzhiWHMwMWR1ZWR6QmUrdUIw?=
+ =?utf-8?B?SUxHSFNJN25CMy9QRXhpa0dQZEo0TitmU3Z5dlRRMzhRSnl4b1JuUHFNQzYz?=
+ =?utf-8?B?eFFycG91NkZPcmtaS3l3K1ZOdWJPWHhXczNkdlhaNkJqblBkU2dDNjNITGpj?=
+ =?utf-8?B?Q0NSRzI4QkJtQmFMN1Ywenkwc3d2Q1daMlEyNFdCc09ESEZzeW50MC9NNjgr?=
+ =?utf-8?B?V2lBK3YxNU9DbStsMzRjb3BHQVR3M1pRNk5NRzdWbnVKeEpueU9kRTRSejBz?=
+ =?utf-8?B?ZGxNSmtlQzJHU2tmSUJiT3pHU1NTUlFPZHA5Y3BySVl1VThUT1NFSGs4bUFt?=
+ =?utf-8?B?bEc2cGd2c2cxMGlnb0ZNVThhMG1XQ1hwdW53TkM2SlhNMkpwRTBzVzJkckkr?=
+ =?utf-8?B?UnIvZHBWMGFQTWxUb3hKNjdWbXkxRHoxa1V5V01iZ1BRUm5WMkZBNHFJQWdV?=
+ =?utf-8?B?L1dUMEhHTlJKR29EdWlYUUlaYkx2VWFvOVowUlB3ZWxkZnZBRkNmcWdLQkpS?=
+ =?utf-8?B?MGF3NDIwZlplbmlPWjY3OUpUY0NsRnZNMzByZ29NaVlPOXBHV0FLdWp1L3Ja?=
+ =?utf-8?B?RTBVUU82UlJ6WWJwWnY0aTk1MzFib3NxWlZrNDNyNXdwalRYZ0pIOXI0U2Yy?=
+ =?utf-8?B?R3c2SERjbjZ4aHh1elgweDF6bjFMS0NLeC9uSlZYMEZTbXd0RzdrNG9FcE9w?=
+ =?utf-8?B?b29waUZtRXFZcERsNFpmR0psV1BWY0dObDFjK0I0WTdzRGpYYXVKaHRTNTlG?=
+ =?utf-8?B?RWRlajR5RFFPWmUzTjZtYm1ISUR1dkFKZ2RDeTRyaUQyWFEyV21wbWsyZm9y?=
+ =?utf-8?B?SlFHelFuZjVCclhKVTZ5bXpGVG9CYUQ3ZnZML3RBb2E5cGNuVmh5UE05OXc1?=
+ =?utf-8?B?QkJFZXFKYXkzUjhaUWpXRG96aVFzUjZKcVdFYkx4NVZyZGQvWjc4L2xRblVr?=
+ =?utf-8?B?T1ppcEgwUHdRTTV6Qnl5U2dnRDhCbzF3cHhiaUR5TnRoTVpibTQrSGZKUXZU?=
+ =?utf-8?B?WkNVRmRtUjV2KzFtNU9tU0RDdkFhV1ZtR28yKytuZTRvWVVBc3E4cnFFY0h4?=
+ =?utf-8?B?dFB2YnlnMSttV21VTjVqRUN0bnR6MVFCOW1PdmtNckFTRVQ1eDNlbzJwTVNW?=
+ =?utf-8?B?b2dKcWUrcHdORkErVFl3Q3RRMGh2WC80UExyVEEzQWdqeldWS1RUQjZFS1ZV?=
+ =?utf-8?B?eHg5R1dadUlMM0FwRzdIY2N0TDlqTkUrUzFXQk9RQWlFWG5UTEJWQjc0RGZV?=
+ =?utf-8?B?UjNJY3BlTVhwMjVFdk9TT0lHUXpHOVZnczQzQmFVbXEzNXRFbks3bG41WGV0?=
+ =?utf-8?B?d1VIK0dET2JTL0hHU0NWc1libk51c0FZMk9mNVdwWWRFSnlhWGdPM041V2pi?=
+ =?utf-8?B?UDQ3MmtHMS9xU0lYMk1ENEFtNXJraVNVd040bGFoazd2dGRMcG11VHJ6WGZQ?=
+ =?utf-8?B?SERmKy81NnplSkdOWndvaHI2clh4dTNDekVKZ2Y0VkU4dGZrdHVKSG9XT28z?=
+ =?utf-8?B?bHhJdVdTWFRQbVZ0V1l5N09XeEJFa1J0Ymh3Y1Z2VUZwNTJ6UmhycEtsWm1F?=
+ =?utf-8?B?d1NteGxlSjU3REZrNWs2VWRZR1UrZ1h6bVkvZHdMMkJNUmRVejZBWjhEd2RW?=
+ =?utf-8?B?bU5iQzY4L3lCM20vcUc4SjBXemo4TzB5NnpkR1FXZ0pJTmRtWGFteUxmSnVD?=
+ =?utf-8?B?Sk00ZHBLWnRWVlVSVGxzMjBNb05menE1MUhGb1JhQkdVam03TDk5eGJtTjd4?=
+ =?utf-8?Q?5grA4P1dgn8Rm+QJE6Ncw6AXq0tB7T/K?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB8773.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Yk5zZ1VlZVRuRnJ0WlZHK05EWE4wNzlZeFQrOUFCd1VjellJS3U4emVsdTVk?=
+ =?utf-8?B?MTh6UzMxdkRtOVR4VmVDdDdyOVNBZ3lMWS9IK0hKZmtqOUZBZ24rTW5aeDJx?=
+ =?utf-8?B?Vm9GR3BTVS9OUHk5QmJFTVFzMkNPZnRneDIyN2diQU13Ymw3TFVEOGtVa3B3?=
+ =?utf-8?B?a29ycHlxUCttY3lDRG5ZUU9INzZtYlJTbW10ZURSVldZRGlIQzArazBYekhE?=
+ =?utf-8?B?ZDBUYmtqNlhEL0RZcUxyUldZcUhZQTBiZ2xMV1E3ZFh2RzZrWEFlZHpwc1FQ?=
+ =?utf-8?B?YWxSdDBRL3JXQWNZY0FOVU9xUWNQM2phTFRwNVRKVGluUWhRQTJuOGRuVWxC?=
+ =?utf-8?B?MlMwRE5xRHd4c3VIUU5oWU1wVGRWam0vWVFBaFJ0ZkQwTlNHcTNIcGE4Y2Jy?=
+ =?utf-8?B?WTBnMnpMdElFaTBtSWVGMkRHZExXSUlaTXFxS3E0d1U4SjRac0V6aFIyNXJX?=
+ =?utf-8?B?YWtjY3ZIdHRDamRtT3dKNmNEOURBRjJTRGNBR1M0ZWlLQUdVWGloS0tzeDhp?=
+ =?utf-8?B?L3NPcGRXa1R0U0lOc3FhaENEU1R2SUR5eHNKTlB2b1k5bEFXSmk4Z2k4WjRY?=
+ =?utf-8?B?Mm9BRGtQSldvb3c3R0pZdXcySFhyRU5BZmJnN004YmlxTEJ5TVloNlFiZC94?=
+ =?utf-8?B?RGpmamtwMTAyYytvWlpYZTd4ZkdkMWd2LzFtQzRtWDFCMlo1UkZwUi84QWNy?=
+ =?utf-8?B?cEFKMFgvaXd2YjZBenVsMy8zL2Rwb0NTK2NabmRFbFFPYWtZUGU1KzRtUmIx?=
+ =?utf-8?B?d1h1ZkZiajY5aVpTNXNUMzdhdFpjVldSeTRTdXVDQk1DL0R6U0J6SzgrQ3Rr?=
+ =?utf-8?B?UlVWUUZySHFYQnZ1dkNORkRKMSs1RlVrSDNTZEllZzBjZ3NRQnQ3U0NEVkt3?=
+ =?utf-8?B?K0dhY1RGWGJqcWZCQXdjemVEaDBEOWFrYnNKY0ZoYlNJeXRhalR4RE9FNDFq?=
+ =?utf-8?B?YlAxQyt4TmExRDFST1NCZVhtNXZBTlhueTBOazNwWUZjbGxzZjJhNmtyZ1Rk?=
+ =?utf-8?B?QWZWQ0hDclVyejNsWU0vNTd2dmpGTGRaSTF1TXFoa0Z3YXBTZ3RMc0FxcmNl?=
+ =?utf-8?B?bGx4MFNOZ0o3bytGN05aZnNxRDA1YTUweEVGQVpiRTE4ZlBwMUNRTmZiSURZ?=
+ =?utf-8?B?OWJ2WEQxeWZEWnlsU1NjOHREWFBBRW9LMTgwWEdsV2JseDVncURqdGUyTHYv?=
+ =?utf-8?B?UzA2RHByQ2dieUd5VmJhUGUwbFpENjdYUlVaZExoU0NWcytOdnJ3VU5tOEVK?=
+ =?utf-8?B?THVHRTVnSmpXZkxZbzhJSXJ0b3hUcURFMlNVWWdWZzRpelZ0Q0lxbTFXL24w?=
+ =?utf-8?B?RWxKenQwend2MGQ2ODJDcEUrZXlIOTFYUUtWeXdkY09NbHF5K2Nleno2enZw?=
+ =?utf-8?B?QzgwVVludkdJTDRZc0NWTUZmSktBRmN4VmZUNDY2b3orSDc2V2tZQUNvV3pj?=
+ =?utf-8?B?NkpNU2hUcElEakVDTFlsczdMODJpV3FQMUJKZ1lDb0VrYnNMVHpuTXlPQWNC?=
+ =?utf-8?B?YkhJZFdpdEtxRWtvRmpmb2NVN2VMRFV3bGEra0lyL1dhZi9NOGt3R1J5QU90?=
+ =?utf-8?B?WlF0Z0FqdGJGTEwydjhFYWNvU0hlQWljanN5UGtFa0pCQmVmTnJIdXd3UFlP?=
+ =?utf-8?B?TS8rT0pEYnptYjNrTGtlbXRGN3diTW9RdEdycU41Y3VLTG40ajdBa3lmL3Vy?=
+ =?utf-8?B?Q21ReHYzd3ZGMHByUEh5dDV6RTA5bnFsS2o0S0NMQ2ZEN2JXTDg5Y3NOMUcz?=
+ =?utf-8?B?SWd6VEJUYmRFUGJCWUt3RHZVQWhLNHZ5ZVoxYWtDQ0dEVnY1UGlnc2VrRHow?=
+ =?utf-8?B?LzR4NDEvV2U2OTNvR1NIRHIxTTZvNk1RdzJRQ01RR04yTW9YT0xib0MxWE0y?=
+ =?utf-8?B?MEczT2NpSGptSzY2bTlrTXlUdjEvVFIrdUE4cklmQ04vdmhQRkwvS1F4VmpX?=
+ =?utf-8?B?S1EyREVpd0dMNmtGWk9MQVZwUWFLNEtwZHJEcXVYN1NQcXk1V3BXMWVlU2Ro?=
+ =?utf-8?B?Sm5vL1JJNXdxUmNPYlU0NG9XYjFlMEZZa2lhZ2pncjIrU1RBaGlBc0lYRlRo?=
+ =?utf-8?B?YnpNc2VKUXp5M04xQ25jMVFGaU5yZElNczhTL1RjSW4vMnZTWWkyOElORDhy?=
+ =?utf-8?B?a3BKczFQNHQxMTJjWjBLUUZBR3dzVDF4Y1dNSkRWQnVJeVJ2cVltZlcxSUkv?=
+ =?utf-8?B?ZDMrRTBsODh4Z01PT1dMZ0s4SzFrSVkwazNLUFVnQVFTQUlOWmxVQ3loYnpR?=
+ =?utf-8?B?dmpnQzJpZnQ4S1pFMFVwbHdrNUlBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4acdd092-b704-4fcf-905b-08ddfd11f61c
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB8773.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 15:32:54.9415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KHtXyx2tJbQbChepPmzMAoJ009q469viqUQGBi2+PNE3dilyQhUZHa+Rz+tG+96T7RIPM6MP/fGeSi804Ghacw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9030
 
-On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@gmail.com> =
-wrote:
->
-> Convert the legacy text-based binding documentation for
-> nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, following
 
-s/YAML/DT/
+On 25/09/2025 23:31, Saravana Kannan wrote:
 
-> the Devicetree Schema format. This improves validation coverage and enabl=
-es
-> dtbs_check compliance for Tegra PCIe nodes.
+...
 
-Your subject needs some work too. 'existing' and 'bindings
-documentation' are redundant.
+>> I have been doing more testing and do see a lot of "tegra-bpmp bpmp:
+>> sync_state() pending due to" on our platforms for basically are driver
+>> that is built as a module.
+> 
+> It being "built as a module" is not reason enough for this warning to
+> happen though. One of the main points of fw_devlink is for things to
+> work just as well with modules.
+> 
+> In this particular system, do you never plan to load the modules? Or
+> is the module load just missing this timeout by a few seconds or
+> something?
 
->
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v1: new patch in this series.
-> ---
->  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 +++++++++++++++++
->  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ------------------
->  2 files changed, 651 insertions(+), 670 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra-pc=
-ie.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra20-=
-pcie.txt
->
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml=
- b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> new file mode 100644
-> index 000000000000..dd8cba125b53
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> @@ -0,0 +1,651 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra PCIe Controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +description: |
+We absolutely do load the drivers. Initially, I observed cases where 
+drivers are missing, but doing more testing with the necessary drivers 
+present, I still see such messages. A lot of our test infrastructure is 
+set up to use NFS for mounting to the rootfs and so I am wondering if 
+that can also be a factor?
 
-Don't need '|'.
+> If these can be turned off, why not turn these off using the sysfs
+> file or the timeout commandline option to turn them off? You are
+> burning power by leaving these on. A warning seems appropriate to me.
 
-> +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20, Tegra30,
-> +  Tegra124, Tegra210, and Tegra186. Supports multiple root ports and
-> +  platform-specific clock, reset, and power supply configurations.
+Again the drivers get loaded, so that shouldn't be the case.
 
-I would suggest not listing every SoC here unless the list is not going to =
-grow.
+Jon
 
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
+-- 
+nvpublic
 
-Only 1 entry here, don't need 'oneOf'.
-
-> +      - items:
-> +          - enum:
-> +              - nvidia,tegra20-pcie
-> +              - nvidia,tegra30-pcie
-> +              - nvidia,tegra124-pcie
-> +              - nvidia,tegra210-pcie
-> +              - nvidia,tegra186-pcie
-> +
-> +  reg:
-> +    items:
-> +      - description: PADS registers
-> +      - description: AFI registers
-> +      - description: Configuration space region
-> +
-> +  reg-names:
-> +    items:
-> +      - const: pads
-> +      - const: afi
-> +      - const: cs
-> +
-> +  device_type:
-> +    const: pci
-
-Drop. This is covered by pci-host-bridge.yaml.
-
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Controller interrupt
-> +      - description: MSI interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: intr
-> +      - const: msi
-> +
-> +  clocks:
-> +    oneOf:
-> +      - items:
-> +          - description: PCIe clock
-> +          - description: AFI clock
-> +          - description: PLL_E clock
-
-Drop this list and add 'minItems: 3'
-
-> +      - items:
-> +          - description: PCIe clock
-> +          - description: AFI clock
-> +          - description: PLL_E clock
-> +          - description: CML clock
-> +
-> +  clock-names:
-> +    oneOf:
-> +      - items:
-> +          - const: pex
-> +          - const: afi
-> +          - const: pll_e
-
-Same here.
-
-> +      - items:
-> +          - const: pex
-> +          - const: afi
-> +          - const: pll_e
-> +          - const: cml
-> +
-> +  resets:
-> +    items:
-> +      - description: PCIe reset
-> +      - description: AFI reset
-> +      - description: PCIe X reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: pex
-> +      - const: afi
-> +      - const: pcie_x
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +    description: |
-> +      A phandle to the node that controls power to the respective PCIe
-> +      controller and a specifier name for the PCIe controller.
-
-Don't need generic descriptions of common properties. Drop.
-
-> +
-> +  interconnects:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    description:
-> +      Should include name of the interconnect path for each interconnect
-> +      entry. Consult TRM documentation for information about available
-> +      memory clients, see DMA CONTROLLER and MEMORY WRITE sections.
-
-You have to document what the names are.
-
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-> +      - const: idle
-> +
-> +  pinctrl-0:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-
-This already has a type. Just 'pinctrl-0: true' is enough.
-
-> +
-> +  pinctrl-1:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  nvidia,num-lanes:
-> +    description: Number of PCIe lanes used
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-The examples show this in child nodes.
-
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra20-pcie
-> +              - nvidia,tegra186-pcie
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-
-3 is already the min, so drop.
-
-> +          maxItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: pex
-> +            - const: afi
-> +            - const: pll_e
-
-Names are already defined, so just 'maxItems: 3'
-
-Same comments apply to the rest...
-
-> +        resets:
-> +          minItems: 3
-> +          maxItems: 3
-> +        reset-names:
-> +          items:
-> +            - const: pex
-> +            - const: afi
-> +            - const: pcie_x
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra30-pcie
-> +              - nvidia,tegra124-pcie
-> +              - nvidia,tegra210-pcie
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 4
-> +          maxItems: 4
-
-Just 'minItems' here.
-
-> +        clock-names:
-> +          items:
-> +            - const: pex
-> +            - const: afi
-> +            - const: pll_e
-> +            - const: cml
-
-And here...
-
-> +        resets:
-> +          minItems: 3
-> +          maxItems: 3
-> +        reset-names:
-> +          items:
-> +            - const: pex
-> +            - const: afi
-> +            - const: pcie_x
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra20-pcie
-> +              - nvidia,tegra30-pcie
-> +              - nvidia,tegra186-pcie
-> +    then:
-> +      required:
-> +        - power-domains
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra186-pcie
-> +    then:
-> +      required:
-> +        - interconnects
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra210-pcie
-> +    then:
-> +      required:
-> +        - pinctrl-names
-> +        - pinctrl-0
-> +        - pinctrl-1
-> +
-> +unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - interrupts
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +  - ranges
-
-Already required by pci-host-bridge.yaml.
-
-> +  - bus-range
-
-Generally, bus-range is only required when there's some h/w issue.
-
-> +  - device_type
-
-Already required by pci-host-bridge.yaml.
-
-> +  - interconnects
-> +  - pinctrl-names
-
-Above you said this was conditional.
-
-> +  - nvidia,num-lanes
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    bus {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <1>;
-> +
-> +        pcie@80003000 {
-> +            compatible =3D "nvidia,tegra20-pcie";
-> +            device_type =3D "pci";
-> +            reg =3D <0x80003000 0x00000800>,
-> +                  <0x80003800 0x00000200>,
-> +                  <0x90000000 0x10000000>;
-> +            reg-names =3D "pads", "afi", "cs";
-> +            interrupts =3D <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
-> +            interrupt-names =3D "intr", "msi";
-> +            interrupt-parent =3D <&intc>;
-> +
-> +            #interrupt-cells =3D <1>;
-> +            interrupt-map-mask =3D <0 0 0 0>;
-> +            interrupt-map =3D <0 0 0 0 &intc GIC_SPI 98 IRQ_TYPE_LEVEL_H=
-IGH>;
-> +
-> +            bus-range =3D <0x00 0xff>;
-> +            #address-cells =3D <3>;
-> +            #size-cells =3D <2>;
-> +
-> +            ranges =3D <0x02000000 0 0x80000000 0x80000000 0 0x00001000>=
-,
-> +                     <0x02000000 0 0x80001000 0x80001000 0 0x00001000>,
-> +                     <0x01000000 0 0          0x82000000 0 0x00010000>,
-> +                     <0x02000000 0 0xa0000000 0xa0000000 0 0x08000000>,
-> +                     <0x42000000 0 0xa8000000 0xa8000000 0 0x18000000>;
-> +
-> +            clocks =3D <&tegra_car 70>,
-> +                     <&tegra_car 72>,
-> +                     <&tegra_car 118>;
-> +            clock-names =3D "pex", "afi", "pll_e";
-> +            resets =3D <&tegra_car 70>,
-> +                     <&tegra_car 72>,
-> +                     <&tegra_car 74>;
-> +            reset-names =3D "pex", "afi", "pcie_x";
-> +            power-domains =3D <&pd_core>;
-> +            operating-points-v2 =3D <&pcie_dvfs_opp_table>;
-> +
-> +            status =3D "disabled";
-
-Examples must be enabled.
-
-> +
-> +            pci@1,0 {
-> +                device_type =3D "pci";
-> +                assigned-addresses =3D <0x82000800 0 0x80000000 0 0x1000=
->;
-> +                reg =3D <0x000800 0 0 0 0>;
-> +                bus-range =3D <0x00 0xff>;
-> +                status =3D "disabled";
-> +
-> +                #address-cells =3D <3>;
-> +                #size-cells =3D <2>;
-> +                ranges;
-> +
-> +                nvidia,num-lanes =3D <2>;
-
-This doesn't match the schema.
-
-> +            };
-> +
-> +            pci@2,0 {
-> +                device_type =3D "pci";
-> +                assigned-addresses =3D <0x82001000 0 0x80001000 0 0x1000=
->;
-> +                reg =3D <0x001000 0 0 0 0>;
-> +                bus-range =3D <0x00 0xff>;
-> +                status =3D "disabled";
-> +
-> +                #address-cells =3D <3>;
-> +                #size-cells =3D <2>;
-> +                ranges;
-> +
-> +                nvidia,num-lanes =3D <2>;
-> +            };
-> +        };
-> +    };
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    bus {
-
-I don't think we need 4 examples.
-
-Rob
