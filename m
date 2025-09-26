@@ -1,467 +1,142 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013050.outbound.protection.outlook.com [40.107.159.50])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B18223705;
-	Fri, 26 Sep 2025 18:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758910345; cv=fail; b=n9Da1T/ZL1nMCaJmdHDd/leL9DfWcV9ZbNG3xeaom9l4SqxmCCUbpZWnNu5ejlGwIq3165E1dh4eCywj+8MLC5S1LJFtWeBP9Wfa3w4mhIFboRKUimwcqZQmsMKS7dagAOmCOqm+e97/XQvJsnNZ05/sNFzKZfl505Wp6TpezE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758910345; c=relaxed/simple;
-	bh=AChC5EzBTKC48XnSdgDvNbJR+jOmj1qyGSiLroI8G8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ARQDf4y9ZVSYV3n9Ums4bXabCRTW8MUGiv4Dyiqc9ou/y+998vWwdmi522UBuc0Y/RBDB/0tNRmWw8giUmaramFsyf832nIlSwqiFMJka1jnepITLO4Zx5wdk3We9DuP2XnmFulsLaRCg6MLgjKKPm6SC3Z2JRR2yDopoA8BrWQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=B4X653Qs; arc=fail smtp.client-ip=40.107.159.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0365F231842;
+	Fri, 26 Sep 2025 19:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758915329; cv=none; b=rtCaTtaoznKjExTL5w1FinrifeifqmrVoOW/w2rIkOMA6I47X9ktFc30HJtwAGlhbBTxR/AWes7U3lofITPK0y2be/H9v4ZhIoxAwaZYTQXA7LsvHI8a9tS9C6T7+e2jSUUlcbWDEp0m0+Iyhhni8z12X9JeILyDD7vvb2CX+Qk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758915329; c=relaxed/simple;
+	bh=Ez8O04TVMHIRGCKH1RLZv4FTMc5LUlJ4PfwBFQ+HxN4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=VpF0lnbYB3OZjvTjzyRCshWAjBuMZ9tSt6vdbHfDe4VIittHDC5SaaUp6DOWy3V+83oQLHZJWsiD0nGVAlC8O/AFG5cNJT7Cw3FZBLn+wtWEIhowOTZ1MEhAn6I4Y3GAPRLxCmWhye1fWbxqNZ3+UyTb4vDHjkHF4cYreeR/nLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tUtyt6xt; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="B4X653Qs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HKFNVonMNByUFLvcw241xR9gZOOldhKWmn57dOZ5K2XZi2MxNDMequ1g2Lrh6Fsd5vRPGUAA7TcBzQkOvVzMlGlakcmdHtW0KbxOy5i6yBQ7viwYevBfy3Z3anp4bJCNVxie16ol2jmhKceLYZVQZXKiYPHT8yGRsBe8vs+aNAr9ThTCk83+X06bPscegty1eOEeKbLfYbdZ0KI56+RZvvx4rNK4wfYRLjWc0Rznzmom3YsIpVL7DQKi10Im+5YjSDIh27AHyd/lTMCk9otXDzrnJa2WxITqzagwlXL1VHWoL1jeqrVKWy748mnCohQJahpkru47Hm6yrZ9U5F8eBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vtt67kG1geaGqCSHT87qrfkxm9TxMKyp888OMKq4qkk=;
- b=arsK/0XLS5aYXRftGkccHjSy63lBo5gmDDdOKNiyUzQkz2wnhE8jXdLU2DRDZh2KX5ZrXEOiESgb2toXOC+CZdV76e9fc54EEMAU4JckKuVdDlhM+561zQvRO2+qFk8fM8y9hv5oIyIwq5eDQvD++Lnlb2LQ7F3hmV3RiJFXr9tyzJCDPDaRqeoLJXCt/z/dnSd0rZ9fjHz6YrtqcspZPIEyOw6rgc+a07zw3ljCSnBKb9FjDXNxHB5sZSY3eR91dJ0OAWxoET3HxwUdsvhoEw0xEEZI17wSQtuJori9NB2sdF4f4y5G04mP62x6dHFeVY9UIlOaTayALprXTPKNwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vtt67kG1geaGqCSHT87qrfkxm9TxMKyp888OMKq4qkk=;
- b=B4X653QskcrPv11eRtBSYnUCI2zFBkBXULhHlO14gGJirXsPmKymPOfPdFTSZeK8I4y5B8tl7K31Nct08hjvj4vLjNYUaKkokb4JeBE4mGPVuBrJMOHUMpoi+KK3O/mQ3wAtFne0D0sWiDkEtpvf5jbZgUU0pb/H+zrfUBOv/cC22IVJ3lXUfbM4mVYulDGUgSRt7/+oeh8vnUpnFzj98UPakKxTMOmem4haGKnMkK8sjOPNpLs2N85jSt/Qz4wrpx1k8u3867Qxdk+zSxY6tC/SGWRvC9YWP+44JeJ5UAm5sSU3t2LUI0me6B8yJUT8VKNj8A6c5UMliryMzoriXg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM9PR04MB8257.eurprd04.prod.outlook.com (2603:10a6:20b:3b6::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
- 2025 18:12:19 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
- 18:12:19 +0000
-Date: Fri, 26 Sep 2025 14:12:04 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/5] PCI: tegra: Simplify clock handling by using
- clk_bulk*() functions
-Message-ID: <aNbXdFPrDr8V2a+1@lizhi-Precision-Tower-5810>
-References: <20250926072905.126737-1-linux.amoon@gmail.com>
- <20250926072905.126737-3-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926072905.126737-3-linux.amoon@gmail.com>
-X-ClientProxiedBy: PH7P220CA0062.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:32c::28) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tUtyt6xt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758915314; x=1759520114; i=markus.elfring@web.de;
+	bh=Ez8O04TVMHIRGCKH1RLZv4FTMc5LUlJ4PfwBFQ+HxN4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tUtyt6xtS+9lO4W3XNq3vQOO+7YLaq2EHga6Gl1VjnpTUQmtdylPaJEnluzq8YvW
+	 gjyev7utoICF/tQTp3+/zDn/sit3OuFYga0mwKzjLeMVFvHD/ew2/5Biem9v6NKCh
+	 AFdppfqfCp3vUUGgTJAc6FTKFMJeilmTBBAm0GCs0pqdlLanbc6GLuY6PcDPLXtDk
+	 o+EHCV5mAQ9FxQWzzWsZvoR8v0zZfdvmInUxe9k1VYuHhijRlvxH7lbNJ+dgHCkPo
+	 cMjV4N8vxkQz1Q6NC0bYxTnyKnQmVr3ht6zhJMC+4drt5yjDLT41Lm4A2hoG0v7B3
+	 GbW9eb3fnHTu/M4pHw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTfol-1uuhHr0sZR-00QLGK; Fri, 26
+ Sep 2025 21:35:14 +0200
+Message-ID: <83091f63-9462-44b9-8089-59af596cc712@web.de>
+Date: Fri, 26 Sep 2025 21:35:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM9PR04MB8257:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2344175-d80a-42c7-e216-08ddfd283b3b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|52116014|376014|7416014|366016|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dmHpbsZ0oPELCar7JynEVT28LayOLUyBe6kzZVxWp80L7/KkTY6fzjvHY3KY?=
- =?us-ascii?Q?FiQeXGQ6P9Wgrh+LmKhyLIB09mFZfN00P+8HdFuv8pbLELhGDLz7Z9tv8hdL?=
- =?us-ascii?Q?zT0cDObMRhBSIHS4MomqZaq/csLzjlN74ZEpHjrvVufdstjy/Ka2REyUfLv6?=
- =?us-ascii?Q?1fYhy68LwDAPtnrmPMyGlLdlqb2NQJWM4UtD07NG+0rdLo2rCGbzq82P5Qhe?=
- =?us-ascii?Q?cmMXclzZL3fEsPpZ9t0fLG+TWlhpUK7caNO/FT0W1sqqkI2MkfOc04Js+Hag?=
- =?us-ascii?Q?U53KXDZPdcFnfHHI5Er64u8788AWEzrkWk+cOWbI2yseBCm7bH+HVdKGS4HN?=
- =?us-ascii?Q?CX8+cMR8Qp6hL+xofjXFV5uiF74BjuZpZfwucImpKPkbjMXCCyx6L0W8+0+T?=
- =?us-ascii?Q?kJqS4f//YhVJfgXZvUYkOazEcifL2BHlWaEtNhqcembwih4RqSSJKI2BW1Bt?=
- =?us-ascii?Q?Ky5ySU0D3teVr+LiVbGztjBm4zsvDjg1JPysqwvWapJ0/UHZ9RE+QfXdcXBs?=
- =?us-ascii?Q?VOxfwvSbjR/APfG//UlIezaxLwBXuF6BlB7HE4YAGd2nk+wVXv+pRZNdvlpa?=
- =?us-ascii?Q?P2uGycHWFLBPOxUnrwA8steCJysG7jp+4Yf4TT7W3DhIRDgHI8ja0JIiEIxH?=
- =?us-ascii?Q?X8NtK3yBgzRR/ki811XrelitaPA6ORTf0azL52fPNCU7LN5RUK2SGSZCfP0H?=
- =?us-ascii?Q?qn58cC3Ga+2beK6BgxXOvCoE2sRD/4GC8W0vL2Eyxhy3cR6mqEXypyZjCDrm?=
- =?us-ascii?Q?uP25xNyaskRsSdLEgH6Q0uFnx8niogsIujkUFb2Vq0g5HXeVIT3/D8cpkGi2?=
- =?us-ascii?Q?+cMuARqlnO3cuZJzMmdqQz6xEutL0YnOHpCnKiXc3NjzQJbVqW7RvckVStxd?=
- =?us-ascii?Q?TOlEjb8AnoxYoA65/QDg+iSsGKW+uiiRwf6YitUkJ6wohe/MinnWhnPwPwHT?=
- =?us-ascii?Q?1RXh8Si+bhx2ZQOK6OvU3w2Qoq+2RaAe/VXZl4HJY0LxKn0AgoTzzwzb30Ha?=
- =?us-ascii?Q?mjZaBYSlNQdgSG3w0z5ZWJVQb9uObPTnjBAt+wXN5xyx0hWuUtJGfwDYEIve?=
- =?us-ascii?Q?Kr0fLrUwHouCZnEkYYLfqmaiYuaopdqaPlmRx9uqzHCeh6lwag//NFIR78Fk?=
- =?us-ascii?Q?sGYEw5xBVg8JDSn6eXVp5BkfNGOjRFtxfAuDONmfnZswIujy7smWEf+RR/5h?=
- =?us-ascii?Q?Y04t+p2RBcvv/7IjCvqQ5zVoQfVg9h1gBc8th2KmRU+Qw0RTk4QjeutJ7j1e?=
- =?us-ascii?Q?H+1zC6ADx+OOgqPyV73nbMVpyRzARx7jF3TnZq9uuppR5t9TKletvZof3oqg?=
- =?us-ascii?Q?2yAJJnqh363a5GbKgWxWEOIi1vQ19KePEp9BLxhqU/mPHo+x7NC51HYo9qr2?=
- =?us-ascii?Q?Dd4Qn/M3us8WWlUgZdr6PdbE0eHkAIaqfli+hBT6f3cAEVvY0maiULnwQcrC?=
- =?us-ascii?Q?WnXX/vmGlOsSG1wT+jsawf1SBSfedzzGh4tKpwMymtWGGo+H++Lqatc448x3?=
- =?us-ascii?Q?Oceyik3LY06e7r4I+SLVeO0ab1MJQls+cG3n?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(52116014)(376014)(7416014)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9sql8JG0Sm3sPGsOOiz+tLzupedIaOqxbdN8wygg9mkKuR+mH0w4Ap0j9Pwg?=
- =?us-ascii?Q?nvxj/LZH9xOWRcwqOLRh+ZBRaEIYfwYvv4TrHcqpBFH8aEwGAo7WEP1/q7ld?=
- =?us-ascii?Q?MBkygmLHgEPBaxyd1VZ5e31NHxS4WMw65hxbNxTZKxPks2ihggniLDpFHwEC?=
- =?us-ascii?Q?bqcMpu2ikoEwunHQa9y69sjclV3GwUFckO3uEZ/He9yGdDn6f6Ib3XkYxcOV?=
- =?us-ascii?Q?yXk/FCeBCT4pIXo0oJK2z7XF9dfwhhRMl5lOaK8enLzkuhg33+ufZ+z/TL17?=
- =?us-ascii?Q?oW2TH03j4YwC611dsT2J3yRl1AN6iFa+urW5twE2M3ycp3LI8bsBQPPNw+iq?=
- =?us-ascii?Q?uWqemZbRwECJy5RvgB+o2a7UIC9AuJ9PVt3VY9Oyl+UAXfeNKNgjs8oXpWxk?=
- =?us-ascii?Q?PfWUvDgStY3UT7QcKhZ03YUktMydjXp6EqGPaTCH59dbvLVPtpb3XVvz9Q3L?=
- =?us-ascii?Q?oeVePYG/usxuoRA2sYiUrhMkN2luVPZd/CNaOFbS3fUPduk2Kk/LLg/Iiu7M?=
- =?us-ascii?Q?Zzzcf7tmuoFLMnKeTEuZ/lw0OW3MNhmv4lH/q7EV3x30gJKJ5xx3dAOqWjtr?=
- =?us-ascii?Q?2hYoaYiV49i4ymm4rdsFHG1Z8zKG4Gu9ZgxZ4w1fgn9qR81PzIRM+TuEyvYA?=
- =?us-ascii?Q?K3bwto3o1HuM4RyJ69iDlDoKKMiGhOcdl+au3vtZregpkw0t79NdBsE7obtW?=
- =?us-ascii?Q?vzsGu49hdFuG4YaNlEUXFJZn4mZLNRjx/SZV8Em/YdpXNqMZ2fWn+DNzB5kQ?=
- =?us-ascii?Q?Wtlo8sAldVH1I5IKe+cd8TwgmNIMQ8Tvlf/amEqXRznCd9k20vtHJ+bAjdyW?=
- =?us-ascii?Q?pmo7m2vkj2xe1NPzkwMZwOKAlX6GUB2coxp1PNkvI0B0JEzfB54SIODdYb1C?=
- =?us-ascii?Q?6hAwdY5Tg0sMmowAoE25r/Z+srjZKdJtYlPuw988mvYRNyoMuCxbgEZzA68n?=
- =?us-ascii?Q?hxyLJAtMB/Etfd9lu3IFUMLYeLT7h0QnZ1oRHSCdODyJncMv3jDyboQJVFQb?=
- =?us-ascii?Q?kA7aG8ls2HzlCErLzogWtqsLpEco2LjhBZ6YApHWhaBaV0hNSaprkc7nWS9W?=
- =?us-ascii?Q?QATFd0RGhcIU/ebvImaxk4QzQHq2KFNjoXluwkboDFKFkU32TESdjs4g4HAM?=
- =?us-ascii?Q?30NPXLqDkJoR9LndgqZPVkCMPftYqAT7ZUW+ZsRqpjDLpzH0vdfwa+lauvY9?=
- =?us-ascii?Q?yZp/NZ1j/rlHCabNxK8Qq9wF/SWVP826oOOliFUQIwM8QA0xobkwX8Xm3nVI?=
- =?us-ascii?Q?Pbb8X+pFF/BZ7rMKrlg43btPXJ83hNZsCL0MhUAhXiuevNJfz6KQ4RxKr65Y?=
- =?us-ascii?Q?jznKhro9ACkyKdx+eQy7p+eWGIVeIfwS6lrrg6RNS/1VlKjfJHpzcqkuTQMF?=
- =?us-ascii?Q?6lu67dgqk+a+xT5wLid8KFFWofmEGdbemEZpjGCFJyvsD0N9efBmHRde0hY7?=
- =?us-ascii?Q?TOG84+I+wWftiEXcMRK5ET5IupxgqUvaiS069G5NULdsMwe1UIwzglUMdaVK?=
- =?us-ascii?Q?8NGqhFAPor9sCWRwMjeGcikSunh8QuJp90MKbZ4siNNEXvCqIjRGEfl1rdqE?=
- =?us-ascii?Q?CJQu8JSl9DjT5V8PHwg=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2344175-d80a-42c7-e216-08ddfd283b3b
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 18:12:19.2645
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SCngIUy7vwzawVggdlV3mJR0YINfptcJ0ZblYl8ymmlPlomMaBjhwYggos3QJO3mlSZg2j99Yi2XSxxtl3aGOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8257
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan@kernel.org>, linux-tegra@vger.kernel.org,
+ Jonathan Hunter <jonathanh@nvidia.com>, Russell King
+ <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250925150007.24173-1-johan@kernel.org>
+Subject: Re: [PATCH] amba: tegra-ahb: fix device leak on smmu enable
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250925150007.24173-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:19Rf9yaobtODFqmWWuVxvvKspow1H+UTU7ocfaS8qymEz4oMBaf
+ HL4MDvs40stb3P3oUJTpncDEHt/DPynzh+kYwGHjaLaGlfzzNPhb38nWsT+/7DK9PlmKM/C
+ zkgNPaPW3OfBNnuTQi9Yswp36r3C4wXlOYo2GJBrg1bSKV4Ds0v4R2DQSSsly7rJVjL1sj9
+ TdZwg04STyNoy5wSTPCXA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wtfFQD5klkg=;e9KiydikxPm+B4upoXP3n8X+wZi
+ 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
 
-On Fri, Sep 26, 2025 at 12:57:43PM +0530, Anand Moon wrote:
-> Currently, the driver acquires clocks and prepare/enable/disable/unprepare
-> the clocks individually thereby making the driver complex to read.
->
-> The driver can be simplified by using the clk_bulk*() APIs.
->
-> Use:
->   - devm_clk_bulk_get() API to acquire all the clocks
->   - clk_bulk_prepare_enable() to prepare/enable clocks
->   - clk_bulk_disable_unprepare() APIs to disable/unprepare them in bulk
->
-> Following change also removes the legacy has_cml_clk flag and its associated
-> conditional logic. Instead, the driver now relies on the clock definitions from
-> the device tree to determine the correct clock sequencing.
-> This reduces hardcoded dependencies and improves the driver's maintainability.
->
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v1: Switch from devm_clk_bulk_get_all() -> devm_clk_bulk_get() with
-> 	fix clks array.
+> Make sure to drop the reference taken to the ahb platform device when
+> looking up its driver data while enabling the smmu.
+=E2=80=A6
 
-why not use devm_clk_bulk_get_all()?
+How do you think about to increase the application of scope-based resource=
+ management?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
+1180
 
-Frank
->
-> nvidia,tegra20-pcie and nvidia,tegra186-pcie uses three clocks
->         pex, afi, pll_e
-> where as nvidia,tegra30-pcie, nvidia,tegra124-pcie, nvidia,tegra210-pcie
-> uses four clks
->         pex, afi, pll_e, cml
-> ---
-> ---
->  drivers/pci/controller/pci-tegra.c | 100 +++++++++++++----------------
->  1 file changed, 45 insertions(+), 55 deletions(-)
->
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index 467ddc701adc..07a61d902eae 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -287,6 +287,8 @@ struct tegra_pcie_port_soc {
->  struct tegra_pcie_soc {
->  	unsigned int num_ports;
->  	const struct tegra_pcie_port_soc *ports;
-> +	const char * const *clk_names;
-> +	unsigned int num_clks;
->  	unsigned int msi_base_shift;
->  	unsigned long afi_pex2_ctrl;
->  	u32 pads_pll_ctl;
-> @@ -297,7 +299,6 @@ struct tegra_pcie_soc {
->  	bool has_pex_clkreq_en;
->  	bool has_pex_bias_ctrl;
->  	bool has_intr_prsnt_sense;
-> -	bool has_cml_clk;
->  	bool has_gen2;
->  	bool force_pca_enable;
->  	bool program_uphy;
-> @@ -330,10 +331,7 @@ struct tegra_pcie {
->
->  	struct resource cs;
->
-> -	struct clk *pex_clk;
-> -	struct clk *afi_clk;
-> -	struct clk *pll_e;
-> -	struct clk *cml_clk;
-> +	struct clk_bulk_data *clks;
->
->  	struct reset_control *pex_rst;
->  	struct reset_control *afi_rst;
-> @@ -1158,10 +1156,7 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
->
->  	reset_control_assert(pcie->afi_rst);
->
-> -	clk_disable_unprepare(pcie->pll_e);
-> -	if (soc->has_cml_clk)
-> -		clk_disable_unprepare(pcie->cml_clk);
-> -	clk_disable_unprepare(pcie->afi_clk);
-> +	clk_bulk_disable_unprepare(soc->num_clks, pcie->clks);
->
->  	if (!dev->pm_domain)
->  		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
-> @@ -1202,35 +1197,16 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
->  		}
->  	}
->
-> -	err = clk_prepare_enable(pcie->afi_clk);
-> +	err = clk_bulk_prepare_enable(soc->num_clks, pcie->clks);
->  	if (err < 0) {
-> -		dev_err(dev, "failed to enable AFI clock: %d\n", err);
-> +		dev_err(dev, "filed to enable clocks: %d\n", err);
->  		goto powergate;
->  	}
->
-> -	if (soc->has_cml_clk) {
-> -		err = clk_prepare_enable(pcie->cml_clk);
-> -		if (err < 0) {
-> -			dev_err(dev, "failed to enable CML clock: %d\n", err);
-> -			goto disable_afi_clk;
-> -		}
-> -	}
-> -
-> -	err = clk_prepare_enable(pcie->pll_e);
-> -	if (err < 0) {
-> -		dev_err(dev, "failed to enable PLLE clock: %d\n", err);
-> -		goto disable_cml_clk;
-> -	}
-> -
->  	reset_control_deassert(pcie->afi_rst);
->
->  	return 0;
->
-> -disable_cml_clk:
-> -	if (soc->has_cml_clk)
-> -		clk_disable_unprepare(pcie->cml_clk);
-> -disable_afi_clk:
-> -	clk_disable_unprepare(pcie->afi_clk);
->  powergate:
->  	if (!dev->pm_domain)
->  		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
-> @@ -1255,26 +1231,21 @@ static int tegra_pcie_clocks_get(struct tegra_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
->  	const struct tegra_pcie_soc *soc = pcie->soc;
-> +	int ret, i;
->
-> -	pcie->pex_clk = devm_clk_get(dev, "pex");
-> -	if (IS_ERR(pcie->pex_clk))
-> -		return PTR_ERR(pcie->pex_clk);
-> -
-> -	pcie->afi_clk = devm_clk_get(dev, "afi");
-> -	if (IS_ERR(pcie->afi_clk))
-> -		return PTR_ERR(pcie->afi_clk);
-> +	pcie->clks = devm_kcalloc(dev, soc->num_clks, sizeof(*pcie->clks),
-> +				  GFP_KERNEL);
-> +	if (!pcie->clks)
-> +		return -ENOMEM;
->
-> -	pcie->pll_e = devm_clk_get(dev, "pll_e");
-> -	if (IS_ERR(pcie->pll_e))
-> -		return PTR_ERR(pcie->pll_e);
-> +	for (i = 0; i < soc->num_clks; i++)
-> +		pcie->clks[i].id = soc->clk_names[i];
->
-> -	if (soc->has_cml_clk) {
-> -		pcie->cml_clk = devm_clk_get(dev, "cml");
-> -		if (IS_ERR(pcie->cml_clk))
-> -			return PTR_ERR(pcie->cml_clk);
-> -	}
-> +	ret = devm_clk_bulk_get(dev, soc->num_clks, pcie->clks);
-> +	if (ret)
-> +		dev_err(dev, "failed to get PCIe clocks: %d\n", ret);
->
-> -	return 0;
-> +	return ret;
->  }
->
->  static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
-> @@ -2335,9 +2306,17 @@ static const struct tegra_pcie_port_soc tegra20_pcie_ports[] = {
->  	{ .pme.turnoff_bit = 8, .pme.ack_bit = 10 },
->  };
->
-> +static const char * const tegra20_pcie_clks[] = {
-> +	"pex",
-> +	"afi",
-> +	"pll_e",
-> +};
-> +
->  static const struct tegra_pcie_soc tegra20_pcie = {
->  	.num_ports = 2,
->  	.ports = tegra20_pcie_ports,
-> +	.clk_names = tegra20_pcie_clks,
-> +	.num_clks = ARRAY_SIZE(tegra20_pcie_clks),
->  	.msi_base_shift = 0,
->  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
->  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
-> @@ -2345,7 +2324,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->  	.has_pex_clkreq_en = false,
->  	.has_pex_bias_ctrl = false,
->  	.has_intr_prsnt_sense = false,
-> -	.has_cml_clk = false,
->  	.has_gen2 = false,
->  	.force_pca_enable = false,
->  	.program_uphy = true,
-> @@ -2356,6 +2334,13 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->  	.ectl.enable = false,
->  };
->
-> +static const char * const tegra30_pcie_clks[] = {
-> +	"pex",
-> +	"afi",
-> +	"pll_e",
-> +	"cml",
-> +};
-> +
->  static const struct tegra_pcie_port_soc tegra30_pcie_ports[] = {
->  	{ .pme.turnoff_bit =  0, .pme.ack_bit =  5 },
->  	{ .pme.turnoff_bit =  8, .pme.ack_bit = 10 },
-> @@ -2365,6 +2350,8 @@ static const struct tegra_pcie_port_soc tegra30_pcie_ports[] = {
->  static const struct tegra_pcie_soc tegra30_pcie = {
->  	.num_ports = 3,
->  	.ports = tegra30_pcie_ports,
-> +	.clk_names = tegra30_pcie_clks,
-> +	.num_clks = ARRAY_SIZE(tegra30_pcie_clks),
->  	.msi_base_shift = 8,
->  	.afi_pex2_ctrl = 0x128,
->  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
-> @@ -2374,7 +2361,6 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->  	.has_pex_clkreq_en = true,
->  	.has_pex_bias_ctrl = true,
->  	.has_intr_prsnt_sense = true,
-> -	.has_cml_clk = true,
->  	.has_gen2 = false,
->  	.force_pca_enable = false,
->  	.program_uphy = true,
-> @@ -2388,6 +2374,8 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->  static const struct tegra_pcie_soc tegra124_pcie = {
->  	.num_ports = 2,
->  	.ports = tegra20_pcie_ports,
-> +	.clk_names = tegra30_pcie_clks,
-> +	.num_clks = ARRAY_SIZE(tegra30_pcie_clks),
->  	.msi_base_shift = 8,
->  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
->  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
-> @@ -2395,7 +2383,6 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->  	.has_pex_clkreq_en = true,
->  	.has_pex_bias_ctrl = true,
->  	.has_intr_prsnt_sense = true,
-> -	.has_cml_clk = true,
->  	.has_gen2 = true,
->  	.force_pca_enable = false,
->  	.program_uphy = true,
-> @@ -2409,6 +2396,8 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->  static const struct tegra_pcie_soc tegra210_pcie = {
->  	.num_ports = 2,
->  	.ports = tegra20_pcie_ports,
-> +	.clk_names = tegra30_pcie_clks,
-> +	.num_clks = ARRAY_SIZE(tegra30_pcie_clks),
->  	.msi_base_shift = 8,
->  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
->  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
-> @@ -2418,7 +2407,6 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->  	.has_pex_clkreq_en = true,
->  	.has_pex_bias_ctrl = true,
->  	.has_intr_prsnt_sense = true,
-> -	.has_cml_clk = true,
->  	.has_gen2 = true,
->  	.force_pca_enable = true,
->  	.program_uphy = true,
-> @@ -2450,6 +2438,8 @@ static const struct tegra_pcie_port_soc tegra186_pcie_ports[] = {
->  static const struct tegra_pcie_soc tegra186_pcie = {
->  	.num_ports = 3,
->  	.ports = tegra186_pcie_ports,
-> +	.clk_names = tegra20_pcie_clks,
-> +	.num_clks = ARRAY_SIZE(tegra20_pcie_clks),
->  	.msi_base_shift = 8,
->  	.afi_pex2_ctrl = 0x19c,
->  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
-> @@ -2459,7 +2449,6 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->  	.has_pex_clkreq_en = true,
->  	.has_pex_bias_ctrl = true,
->  	.has_intr_prsnt_sense = true,
-> -	.has_cml_clk = false,
->  	.has_gen2 = true,
->  	.force_pca_enable = false,
->  	.program_uphy = false,
-> @@ -2651,6 +2640,7 @@ static void tegra_pcie_remove(struct platform_device *pdev)
->  static int tegra_pcie_pm_suspend(struct device *dev)
->  {
->  	struct tegra_pcie *pcie = dev_get_drvdata(dev);
-> +	const struct tegra_pcie_soc *soc = pcie->soc;
->  	struct tegra_pcie_port *port;
->  	int err;
->
-> @@ -2672,7 +2662,7 @@ static int tegra_pcie_pm_suspend(struct device *dev)
->  	}
->
->  	reset_control_assert(pcie->pex_rst);
-> -	clk_disable_unprepare(pcie->pex_clk);
-> +	clk_bulk_disable_unprepare(soc->num_clks, pcie->clks);
->
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		tegra_pcie_disable_msi(pcie);
-> @@ -2686,6 +2676,7 @@ static int tegra_pcie_pm_suspend(struct device *dev)
->  static int tegra_pcie_pm_resume(struct device *dev)
->  {
->  	struct tegra_pcie *pcie = dev_get_drvdata(dev);
-> +	const struct tegra_pcie_soc *soc = pcie->soc;
->  	int err;
->
->  	err = tegra_pcie_power_on(pcie);
-> @@ -2706,9 +2697,9 @@ static int tegra_pcie_pm_resume(struct device *dev)
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		tegra_pcie_enable_msi(pcie);
->
-> -	err = clk_prepare_enable(pcie->pex_clk);
-> +	err = clk_bulk_prepare_enable(soc->num_clks, pcie->clks);
->  	if (err) {
-> -		dev_err(dev, "failed to enable PEX clock: %d\n", err);
-> +		dev_err(dev, "failed to enable clock: %d\n", err);
->  		goto pex_dpd_enable;
->  	}
->
-> @@ -2729,7 +2720,6 @@ static int tegra_pcie_pm_resume(struct device *dev)
->
->  disable_pex_clk:
->  	reset_control_assert(pcie->pex_rst);
-> -	clk_disable_unprepare(pcie->pex_clk);
->  pex_dpd_enable:
->  	pinctrl_pm_select_idle_state(dev);
->  poweroff:
-> --
-> 2.50.1
->
+Regards,
+Markus
