@@ -1,34 +1,48 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522F233EC;
-	Sun, 28 Sep 2025 02:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665B534BA50;
+	Mon, 29 Sep 2025 04:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759024931; cv=none; b=NlnhrQztiX+DCEV23uBJzgA2KKuXA6F7lA0xvoWxl3mDh1Dc2TpA1EIJPQeBHOoqIK9Gsg7foSargGHzo1GQVGXjyTIRlpOzvbZaqoQ9zVs5BeNBMl48oQH6ki8cslwZSA/DiZYoQvD6McyFqF2LQMvFnsXPhsVl/rp8motMd5E=
+	t=1759120816; cv=none; b=o2SfXX1MeD7yFV/56v6+W6SqSXL3oKEOo/wmRUJoFgug43P9q+t+Jei8T7Om+ChNTLYJH/17V7Z+btxQAV7HoZrJm/Z6NminabS4fc5PJO3UUpBNEqLBo04sot6v8lcUpQ3QevSfgD9NqGejkl03gbvatHXXdllagClN6fLIUPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759024931; c=relaxed/simple;
-	bh=2Ldqunqua+Ct1DWMfYX/V9YnIxX1ZwBCUQtELFEyUpo=;
+	s=arc-20240116; t=1759120816; c=relaxed/simple;
+	bh=uOlE6JF3Wlo/vFJGbhrugJ3aZGyj9ga2nv00JK3gbws=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j4qpjvIDczxapimLq57DmM3xCsePkEpYbLOj2XCBqWcqudErmii6fStjiA6CEJka40Y2CWzCXnU0K01OCb6dE3q26XI4ckeXe2NnUUrQ/kouhmu67bbtSzHBpD80J6x96nZLBCttelWv17kkV0/WQpotY8zcNMyHMmkKMgHSK0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from canpmsgout01.his.huawei.com (unknown [172.19.92.178])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cZ6sL6SMMzWvDH;
-	Sun, 28 Sep 2025 09:57:42 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cZ6xs0Z8mz1T4Gx;
-	Sun, 28 Sep 2025 10:01:37 +0800 (CST)
-Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
-	by mail.maildlp.com (Postfix) with ESMTPS id A39AB180464;
-	Sun, 28 Sep 2025 10:01:57 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
- (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 28 Sep
- 2025 10:01:56 +0800
-Message-ID: <d694df21-235f-422e-ba08-1eb442b376bd@hisilicon.com>
-Date: Sun, 28 Sep 2025 10:01:56 +0800
+	 In-Reply-To:Content-Type; b=ANmcROk0+b7fim+97ljd8S0pHxdf9Z97IiEQzcwjaqEQnCAElXxywUisrXrrRJmXLABOm0wJvCZO7DnUCBeaME4HYr2lAffdQwULtVm3Gbbnm/7ZRYwwhrJ9CfNlpnKKsF7chFocUcU7M4dWRUZ3s1MRzkmn60+nCNW595OyUPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=S9VRc4MP; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="S9VRc4MP"
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58T4e58t2105225;
+	Sun, 28 Sep 2025 23:40:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759120805;
+	bh=7PnRPMQlYyEfPuWVss3mAZp/DtxuUn4FykB5vQK+A5k=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=S9VRc4MPQTUnEHvMtmoyr8I2/wq1U14P59ZGfmvIeuEMGmX27Ho5pqFAx+lR1h+1/
+	 CkPRNjY8I/GTa9mOqXDePumg6vQWX9GJzcyRk74/PhCB2lB+KmdQq7xGZtEXT/yAwT
+	 8/bCNCun5LeKXJwLreL3ftXa8nacaISdr6f1DGSE=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58T4e5he1078855
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sun, 28 Sep 2025 23:40:05 -0500
+Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 28
+ Sep 2025 23:40:04 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Sun, 28 Sep 2025 23:40:04 -0500
+Received: from [172.24.231.164] (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.231.164])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58T4e0mb612567;
+	Sun, 28 Sep 2025 23:40:00 -0500
+Message-ID: <0784441c-9859-4418-a4a7-85ffe3ecf860@ti.com>
+Date: Mon, 29 Sep 2025 10:09:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -36,47 +50,129 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] devreq: move governor.h to a public header location
-To: Jon Hunter <jonathanh@nvidia.com>, Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, Robie Basak
-	<robibasa@qti.qualcomm.com>
-References: <20250903-governor-public-v1-1-111abd89a89a@oss.qualcomm.com>
- <ae509446-4703-43af-a48d-9c72da0b3813@hisilicon.com>
- <25692922-7610-49bc-b33d-c799a13995cb@nvidia.com>
+Subject: Re: [PATCH V3 1/3] dt-binding: Add register-settings binding
+To: Rajesh Gumasta <rgumasta@nvidia.com>, <krzk+dt@kernel.org>,
+        <robh@kernel.org>, <conor+dt@kernel.org>, <andi.shyti@kernel.org>,
+        <ulf.hansson@linaro.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <andersson@kernel.org>, <sjg@chromium.org>, <nm@ti.com>
+References: <20250725052225.23510-1-rgumasta@nvidia.com>
+ <20250725052225.23510-2-rgumasta@nvidia.com>
 Content-Language: en-US
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <25692922-7610-49bc-b33d-c799a13995cb@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Chintan Vankar <c-vankar@ti.com>
+In-Reply-To: <20250725052225.23510-2-rgumasta@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemr500004.china.huawei.com (7.202.195.141)
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hello Rajesh,
 
+On 25/07/25 10:52, Rajesh Gumasta wrote:
+> Add a new device-tree binding for a 'reg-settings' node that can be
+> added to any device. This 'reg-settings' is used to populate register
+> settings that need to be programmed for a given operating mode of the
+> device. An example usage of the 'reg-settings' node is shown below for
+> the NVIDIA Tegra MMC controller which needs to program a specific
+> 'num-tuning-iterations' value in a register field for each operating
+> mode:
+> 
+>    mmc@700b0000 {
+> 
+>      reg-settings {
+> 
+>        default-settings {
+>          /* Default register setting */
+>          nvidia,num-tuning-iterations = <0>;
+>        };
+> 
+>        sdr50 {
+>          /* SDR50 register setting */
+>          nvidia,num-tuning-iterations = <4>;
+>        };
+> 
+>        sdr104 {
+>          /* SDR104 register setting */
+>          nvidia,num-tuning-iterations = <2>;
+>        };
+> 
+>        hs200 {
+>          /* HS200 register setting */
+>          nvidia,num-tuning-iterations = <2>;
+>        };
+>      };
+>    };
+> 
+> The 'reg-settings' child nodes are defined according to the operating
+> modes supported for a given device. Properties within each operating
+> mode are then defined by the bindings for the devices that require them.
+> 
+> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+> ---
+>   .../bindings/regset/register-settings.yaml    | 31 +++++++++++++++++++
+>   1 file changed, 31 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/regset/register-settings.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/regset/register-settings.yaml b/Documentation/devicetree/bindings/regset/register-settings.yaml
+> new file mode 100644
+> index 000000000000..4366cdd72813
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regset/register-settings.yaml
+> @@ -0,0 +1,31 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regset/register-settings.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Register Settings
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> +  - Rajesh Gumasta <rgumasta@nvidia.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +description: |
+> +  Register Settings provides a generic way to specify register configurations
+> +  for any hardware controllers. Settings are specified under a "reg-settings"
+> +  sub-node under the controller device tree node. It allows defining both
+> +  default and operating mode specific register settings in the device tree.
+> +
+> +properties:
+> +  reg-settings:
+> +    type: object
+> +    description: |
+> +      Container node for register settings configurations. Each child node
+> +      represents a specific configuration mode or operating condition.
+> +
+> +    additionalProperties:
+> +      type: object
+> +
+> +additionalProperties: true
 
-On 9/26/2025 6:33 PM, Jon Hunter wrote:
-> 
-> On 26/09/2025 04:16, Jie Zhan wrote:
->>
->> Hi Dmitry,
->>
->> On 9/3/2025 9:43 PM, Dmitry Baryshkov wrote:
->>> Some device drivers (and out-of-tree modules) might want to define
->>> device-specific device governors. Rather than restricting all of them to
->>> be a part of drivers/devfreq/ (which is not possible for out-of-tree
->>> drivers anyway) move governor.h to include/linux/devfreq-governor.h and
->>> update all drivers to use it.
->>
->> For out-of-tree module compilation, can it add drivers/devfreq/ to the
->> include path?
->> I suppose this is unnecessary.
-> 
-> The kernel header/source package created for most linux distros will not included this header because it is internal and so in that case it is necessary.
-> 
-> Jon
-> 
-Got it, thanks.
+Following your series, I would like to bring to your attention that
+Texas Instruments SoCs also have a component which requires similar kind
+of configuration, named Timesync Router(TSR). It enables the
+multiplexing of M inputs to N outputs, where inputs can be selectively
+driven based on N output configuration. A detailed explanation of the
+TSR and our attempts we tried to implement TSR can be found in following
+RFC series:
+https://lore.kernel.org/all/20250605063422.3813260-1-c-vankar@ti.com/
+https://lore.kernel.org/all/20250205160119.136639-1-c-vankar@ti.com/
+
+To implement TSR, the relevant registers must be configured via the
+device tree. We initially assumed that the device could be handled as a
+mux-controller and could be extended in the same subsystem, but it was
+ineffective. Having explored both the approaches, we now plan to
+implement TSR within misc subsystem, which aligns with the dt-bindings
+that you have proposed in this series.
+
+The purpose to replying over this series is to inform you that we also
+have a component requiring configuration as outlined in this series. Let
+us know if you have any suggestions for this.
+
+Regards,
+Chintan.
+
