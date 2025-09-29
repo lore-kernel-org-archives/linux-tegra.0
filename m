@@ -1,154 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5692130BBAC;
-	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DBD30B504
+	for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 16:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159740; cv=none; b=XG9OgbpSAuSYauSqeaYBSIT/q1QmNlcHg0vaOfuh4l/tEuRAm7fl8ewsoo51RuXbDgM28NpipQM2bZ3WWZpg3zwosKbBLX+AJP5ZYG1FaEHHKB+l4fxXMEXSi7bHSC7FKAw0qaZjpagIHfD6a0oTvtQpwQlAFkbWbqv2TIH186I=
+	t=1759162375; cv=none; b=XtJAD8TKSIsHqaQxL12niaTGiGggNQno2crtW27EfHwVmtW4tt+7LH7ea8izx7elRWDPtsEao60PLroqkuHUr2A/GFr6WQd50qrIPRjxUxC1L0heQZ8e5tZ76yHnOzKNvCOUC/lldqUntV8KeUeM00W+PXg1VBL4qebeaEvJv4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159740; c=relaxed/simple;
-	bh=zz+GUmVsy2vB+3ANMPWPbJpVcNFY2jQbjEDvoTACVOw=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ECbCZ7z50cPXil69p3ZOv5n6Q479IOxOeawfq5j6nkAoPx0QWXLWPCBDcgxUd/0q9kKPlk6ft45p+/3r2NbTPnyIsWEDXPXOH/VVm9FhKDVHbg9Fv25EzEC3jrm2qlJXxs2pWP1gxQGTi2PwOeGMwz96nzMm/DtnaWg6Yhvo7EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LieiEkf/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759162375; c=relaxed/simple;
+	bh=Tg4GHAGSujxf07p3BKLBHupxzDzRxA4YhwnGHXjIWqg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YghX/KclhwdBKKUcJLBOZx6OG0MuMBkGwt4yU4c1Hm4bqfwH4RE1eyVABRjS4L49OAzt6vokhxsIS0UAJmfqGUG5uWBNuOyeBddr0AfzSkz+EHThrm7M4vv+AEXCkfGDov1IkJVHUatJiyute4GBnSsRPtYruOpEw3sHRT3aA2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1dUyX8h; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LieiEkf/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D72C116B1;
-	Mon, 29 Sep 2025 15:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759159739;
-	bh=zz+GUmVsy2vB+3ANMPWPbJpVcNFY2jQbjEDvoTACVOw=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=LieiEkf/My5IzhSHvnx4xacBLRykPFVF30XNtrgPaxvt2XruntfGF75FreaDo5sBd
-	 7xIR+u+UDMeWUdKANsMbUYIezK3qC+eBLGFYhBfbwlCZp/dWe7mpLGu1lF2BWlcHIk
-	 A8SYBu5x4+tJ2dvEy1iXzJO04Slrd60iufQ0d5V7EBMv6kxh/iPMaOxV/+77aJZzuC
-	 d61H5tM8BVpft6iJid+miAYFAIBLgkso9EXESl+Cv0Z6HtLz35zjtQ7vjNe/9Yl4ix
-	 4pKSEvUXKrIQLuwqjrlKISh9VE34TmD2amQ3kMZBmQ/MdXd6yUGUQSxnUFTxjndsRh
-	 dvSafSW63W2JA==
-Date: Mon, 29 Sep 2025 10:28:58 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1dUyX8h"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso1667311a12.0
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 09:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759162372; x=1759767172; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKbIiyOJGnPtewg2XGQmyuDm4Je77/TR9Lj2L/HdtYA=;
+        b=c1dUyX8hhJSYyGYODEZJNq541ZKuCw/Gdz7nPQEv/xxNam6/fqe07/DWYBL7kEC3dD
+         EXqzZlE7dPBQT5g3rtAqSJGV1ZiYvgc4lu7IV7GLHHj0kZIjYjIQSF4+9/KP0y2QWiuP
+         2LlFfSPu6WtLuvy7qDyG76i9nDVWNA7cnKynvmukfpOJvIIZUDWmmnAZp0agIUq5QyCC
+         hnjK7f8n0iWjotqiwEQGMwem5PD+yZU/1fcJQDuJQ9b6lYc5A1QfMFc0qLbv7K1w0r/N
+         4gPJW1+MriX792QkKWGr934qmGWJ8fYrUHeg/W07ZQfr6JScdZAQCW0o6H9jxFoka5BT
+         iJaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759162372; x=1759767172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WKbIiyOJGnPtewg2XGQmyuDm4Je77/TR9Lj2L/HdtYA=;
+        b=u8fZXkHEzsrbMKO3VzFCMW8Sd1yXtG+gSTETxj1ToAAsD/aQ6OHF4UxdHbvCu/tkZ3
+         W/Pdxr8Fw6OBt0+y9zfPV9aqGC3nZQLnl04qEILzetlFYz22sQ8IhGVoYtaOvlg0FHgB
+         9INvQCRD7zebGj6cEXsjwlyM3djgZDZhfu0mrvo9fhaU+2hgrV4mpF4FVLrVw1N1bUW7
+         fTQCta5BH+uBA+frbnd2mC+EZHZgXoNz1E+blGlR5DEh0LNRHczpWlS3zToSFq7tHw/2
+         1UgIv2Om7HUVxYb5bjh7AGPjCW44RF3hHd8mJQ8DJvt4ySh2FU0GdSVC7hDFkpS6Twee
+         yyOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXGFJLxWQQU5TCNkw5vsLSCJPNaM0n3V7eriTxQtr7XipNfvkSOyrp7v5VLx2DdHIfx3NWE+33jA/kvQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQgZ/Uj8bvBELUW+84lCa6LUrP/++b4NBgT6pQxLU1pcOYFGIG
+	ME5rxBePnQIzj/gn+20ZaruClIy++0Oy+t7smcthuMCwZmLW4TG8h+NM7jGfvq6UYakhJYFQwDI
+	oObsXkeTwJFA/eJH2r+C2NN6XWgYr4as=
+X-Gm-Gg: ASbGnctJLBgG6OOFifro+JPt/AkTprNyHgpwVwanmPkFbE6jIpOjOQqWQv7WIOV9YJ9
+	p0eL/FYQLeOUsI3u950xFujXyHD+bC+hNnkmdwpmoOU9pPj7cMUyHYVj+QnvifHzzodXaJJHJBF
+	X0i1amkAJQdRvOZRcWusiDlGHTNwz5P2p1+LhYhJTA9wyIiBtdET0j4wSujHE+sL7LtwLvynKr0
+	zXcBtEEKVNnuAad
+X-Google-Smtp-Source: AGHT+IE0lqGvuA/Xz523aRKIL9hmjXUK7+0u8AEeVGECM/7avOtLvinLYTseWMgOs08RG2BDuA8KXOfxxvlTzVs/fE8=
+X-Received: by 2002:a05:6402:3508:b0:61a:7385:29e3 with SMTP id
+ 4fb4d7f45d1cf-6365af5adecmr1127595a12.18.1759162372397; Mon, 29 Sep 2025
+ 09:12:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, 
- linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- dmaengine@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
- Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Liam Girdwood <lgirdwood@gmail.com>
-To: "Sheetal ." <sheetal@nvidia.com>
-In-Reply-To: <20250929105930.1767294-1-sheetal@nvidia.com>
-References: <20250929105930.1767294-1-sheetal@nvidia.com>
-Message-Id: <175915953199.54406.1457670691076635405.robh@kernel.org>
-Subject: Re: [PATCH V2 0/4] Add tegra264 audio device tree support
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-3-linux.amoon@gmail.com> <aNbXdFPrDr8V2a+1@lizhi-Precision-Tower-5810>
+ <CANAwSgT3inDQZ40uFtXwFze2m4hZUvnyKTek3PQ9jb6picgi-A@mail.gmail.com> <aw3flahx3g4exezj5245cgrixasshvf26yibctxsd3l42ygwke@equdzipwspvx>
+In-Reply-To: <aw3flahx3g4exezj5245cgrixasshvf26yibctxsd3l42ygwke@equdzipwspvx>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 29 Sep 2025 21:42:35 +0530
+X-Gm-Features: AS18NWB4VW7y7yX6xXK-2yBG9rF9CezN0Xp1TVzzbBM3LHGAaoA03PQWsyQH6Vg
+Message-ID: <CANAwSgR-sq_jRp7ZQyWxrW_o6vRnCsu7FW77odDzY5xPcMuwEw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] PCI: tegra: Simplify clock handling by using
+ clk_bulk*() functions
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Frank Li <Frank.li@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Manivannan, Jon,
 
-On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
-> From: sheetal <sheetal@nvidia.com>
-> 
-> Add device tree support for tegra264 audio subsystem including:
-> - Binding update for
->   - 64-channel ADMA controller
->   - 32 RX/TX ADMAIF channels
->   - tegra264-agic binding for arm,gic
-> - Add device tree nodes for
->   - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
->     DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
->   - HDA controller
->   - sound
-> 
-> Note:
->  The change is dependent on https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/
-> 
-> ...
-> Changes in V2:
->  - Update the allOf condition in Patch 2/4.
-> 
-> sheetal (4):
->   dt-bindings: dma: Update ADMA bindings for tegra264
->   dt-bindings: sound: Update ADMAIF bindings for tegra264
->   dt-bindings: interrupt-controller: arm,gic: Add tegra264-agic
->   arm64: tegra: Add tegra264 audio support
-> 
->  .../bindings/dma/nvidia,tegra210-adma.yaml    |   15 +-
->  .../interrupt-controller/arm,gic.yaml         |    1 +
->  .../sound/nvidia,tegra210-admaif.yaml         |  106 +-
->  .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  106 +
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 3190 +++++++++++++++++
->  5 files changed, 3377 insertions(+), 41 deletions(-)
-> 
+On Mon, 29 Sept 2025 at 19:31, Manivannan Sadhasivam <mani@kernel.org> wrot=
+e:
+>
+> On Sat, Sep 27, 2025 at 11:20:10AM +0530, Anand Moon wrote:
+> > Hi Frank,
+> >
+> > On Fri, 26 Sept 2025 at 23:42, Frank Li <Frank.li@nxp.com> wrote:
+> > >
+> > > On Fri, Sep 26, 2025 at 12:57:43PM +0530, Anand Moon wrote:
+> > > > Currently, the driver acquires clocks and prepare/enable/disable/un=
+prepare
+> > > > the clocks individually thereby making the driver complex to read.
+> > > >
+> > > > The driver can be simplified by using the clk_bulk*() APIs.
+> > > >
+> > > > Use:
+> > > >   - devm_clk_bulk_get() API to acquire all the clocks
+> > > >   - clk_bulk_prepare_enable() to prepare/enable clocks
+> > > >   - clk_bulk_disable_unprepare() APIs to disable/unprepare them in =
+bulk
+> > > >
+> > > > Following change also removes the legacy has_cml_clk flag and its a=
+ssociated
+> > > > conditional logic. Instead, the driver now relies on the clock defi=
+nitions from
+> > > > the device tree to determine the correct clock sequencing.
+> > > > This reduces hardcoded dependencies and improves the driver's maint=
+ainability.
+> > > >
+> > > > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > > > Cc: Jon Hunter <jonathanh@nvidia.com>
+> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > > ---
+> > > > v1: Switch from devm_clk_bulk_get_all() -> devm_clk_bulk_get() with
+> > > >       fix clks array.
+> > >
+> > > why not use devm_clk_bulk_get_all()?
+> > >
+> > My RFC used this devm_clk_bulk_get_all() which could work for all the S=
+oC,
+> > However, Jon recommended switching to named clocks, following the
+> > approach used in .
+> > but Jon suggested to use clock names as per dwmac-tegra.c driver.
+> >
+>
+> The concern was with validating the DTS files with binding. Since it was =
+in .txt
+> format, validation was not possible. But you are converting it to .yaml, =
+so you
+> can safely use devm_clk_bulk_get_all().
+>
+Yes I would also like to use the previous approach.
+
+> - Mani
+Thanks
+-Anand
+>
 > --
-> 2.34.1
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.17-rc1-57-g635ae6f0a3ad (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250929105930.1767294-1-sheetal@nvidia.com:
-
-In file included from arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi:3,
-                 from arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi:3,
-                 from arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts:5:
-arch/arm64/boot/dts/nvidia/tegra264.dtsi:8:10: fatal error: dt-bindings/power/nvidia,tegra264-powergate.h: No such file or directory
-    8 | #include <dt-bindings/power/nvidia,tegra264-powergate.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/nvidia] Error 2
-make[2]: Target 'arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: nvidia/tegra264-p3971-0089+p3834-0008.dtb] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'nvidia/tegra210-p2371-2180.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p3450-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3737-0000+p3701-0008.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3740-0002+p3701-0008.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3737-0000+p3701-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra186-p2771-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p2371-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra194-p3509-0000+p3668-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3768-0000+p3767-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-sim-vdk.dtb' not remade because of errors.
-make: Target 'nvidia/tegra186-p3509-0000+p3636-0001.dtb' not remade because of errors.
-make: Target 'nvidia/tegra194-p2972-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-smaug.dtb' not remade because of errors.
-make: Target 'nvidia/tegra194-p3509-0000+p3668-0001.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3768-0000+p3767-0005.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p2571.dtb' not remade because of errors.
-make: Target 'nvidia/tegra264-p3971-0089+p3834-0008.dtb' not remade because of errors.
-make: Target 'nvidia/tegra132-norrin.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p2894-0050-a08.dtb' not remade because of errors.
-
-
-
-
-
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
