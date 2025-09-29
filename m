@@ -1,63 +1,63 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFE330B509
-	for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 14:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A74430ACF1
+	for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 14:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155926; cv=none; b=e/VRq3vSLGWCHEMGP7CWvtbfep3wufB5PIcQCRWmFvVuwpR3ZXMi0z745X1cuxvY8rlxK0I6z/zOlBP6C0iUnewa3Tpnn3Kg/nmjyzgr9rC5ApvTnl/XDZAv27rPUDqh843IlpPjOl50JZ7cUqxJehMalUj7khDg76E9lPEAqnE=
+	t=1759155927; cv=none; b=Dlop+dMvcpKPMiwa27DgD9SeKWf6isS8zWP6LyZTKgQwEpCNlMnRm59r7zBXihydT03Laz4r3ZeTeuwUJfwCQcuvysK6ABKGAschcp/lQjlPEKwb1i3bxOhYTY5GpibimeD4XRP59Ir8LkEcCrXoHw1jdK43Ct5BnnpVSNgXWjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155926; c=relaxed/simple;
-	bh=o0ADLZP20Gf+RaCUCo73PsEebUZu5lyI6twUNiTxrps=;
+	s=arc-20240116; t=1759155927; c=relaxed/simple;
+	bh=kebRgWgjU4+QFooisivlKuz8gUSdZe1BvseOgEZtkVM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qDi/sQrEU21XM2Bbrkvz0dfG+Nr4cvowP2K+3P9a9KFJZRkk//snv8lu4nlGwyoGMeMTHntCWYXwBFFwsIO7OGcEB9c8ffU0686v9ekN/Sx1wS0qtuFZ6k6XEOeXqjmYsPB7+O4tJ+t1ZruDQX0+PLWL65izmRrxxU/r1O7ZIMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gR9pNt1I; arc=none smtp.client-ip=209.85.208.174
+	 MIME-Version; b=eHErfD6bW54aAMZb7na+dowfbXrQCs1L7oXXsypqUzO/R57SMgiVgYUkc2NGadnGXLyLa2JEDTZSVUMGQKmALJdbtZ08Iy1IzCeWN4bL+C9VJ3M5YWureDnLuuL1HYHHMTYzCyMvuz2DD9Y/Uj0zxlYEG8V5s2yN7HbLqpURJzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtMI5uC6; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gR9pNt1I"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-371e4858f74so31442431fa.1
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 07:25:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtMI5uC6"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-36a6a397477so45474371fa.3
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 07:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759155922; x=1759760722; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759155924; x=1759760724; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CS1qvZ66jY4Y+/VjejeV3GAhiKWhtdvuL8aLYEGuxs0=;
-        b=gR9pNt1ITyuqcnuBEy4UEjylBMgO6E68nyT55bh1pySUD5Vvb2J4Eh6t/p9qxmierF
-         wHIZmBsicgXcqsTl8XjsVXvfalhLMQZhEhnVfvoc8Cx+J1R1MEkb3PP5V9BbpVQhJe8Z
-         PG2XPTsLQPZ4MQoUdXFAxp2t/HMHoYfVs0DTTwjDNpoMhHQp232oSWUjZY5PGnerwZQQ
-         AQDxECOUWLAeTAzHQn8Q0dCZn27y7UsWcy13hhxkB6KIoGKVtI5MeIQUNF32JA9r0EyD
-         aH+t7GaeKWOA/8oOCvyEoQTGV4xGp1GJkCEWr6CTVwxnkLJo37n3cxWRwPXLM/xK6uvT
-         UfWA==
+        bh=Sh9DAofb5pc+fYQ7Puuw943vV9lmOx/AYaxuS09pAW8=;
+        b=WtMI5uC6qCIVL+3o2yjaN6GakQS4dQ3ghYq8AoaubFoji8dLbIpE8VDiyg+FQErxwj
+         rzKjiSrQkBkD3dlT9FoQASO3jYm4mKIR6ip+XqpuWbz1iSV9ZxKPdTEYPPNieLkpj3Zo
+         pRg9UfsfHdGbPQEmaXuv7fet7SM87LTDGlMD3SbuDXXwz8h2BcENnPVAyFRvH41JDsnu
+         5YaJy2PEMhL/ooWI9OjlKNejiSnB9uV1CrRXAfvTK7/3Pi0FwHLilpjeNkcJWfEm96S5
+         qHU5ManElj/irIG+7Pi9FcFA16Uel9aWRW0k8BpytK2a5mCw9B42LAXZ4/2X6Ud3lfed
+         wHfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759155922; x=1759760722;
+        d=1e100.net; s=20230601; t=1759155924; x=1759760724;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CS1qvZ66jY4Y+/VjejeV3GAhiKWhtdvuL8aLYEGuxs0=;
-        b=QD95IyJ83ym0xAZW1Xu0w3fAvTQJvEvytu4G25aaZeP/lVImGunAXaV+N1zgnIsRTs
-         /4xOzeIIIHRWS0+1NHJlr1ZPBajbLThUI7oME0ndvPbYiKxz8xci/tsRafJ+zkFJkyzA
-         YBhXHz2P7I+rUjvT67pqAQJGvsL6DMtbKciXaJw4XZYwy8RULEzk+ervrJ6TRzJ52S2Q
-         VRMn8TM3fWsrDJ2t8KlaahAKtvuCibOpGS4luM56hM5+xhWpVfmWxzCnHdFIYtv7X3gb
-         7PUivhTWSoX0V6QCJ5h2OLh/vp/bJTvJzYuNWSRNNnimhpi07VmcAINR9+5Gs8rbiBze
-         LiKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiEP+wgIS38l9sbTl27A4ZBj3Q9zcEFxt4RpX+wC3sEfJQ5mM0yF3zyE/B2YN2Jmv6iNqFCWYoEoAsvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Ceu3Xm07IH/Yk7QsBc9vRBgBWne5muKVHBYac23dJNWHwgXC
-	P1pfnzkhVxjyTpJjBO82E21+kchedETi12QqXldNYBgR/Ef8wCY51U3i
-X-Gm-Gg: ASbGncvgEHQDLC5Lohm2p/oxS19ijv2nupULACdvPzKcnG/g+PdjM5cGyqXF5Hj0DZ0
-	wwlDcieTVp00SbaZWYD+kPx9n7c0UiOQgvSlXpo8EhHuuIH4BIqNSG+YOrEFZeaZSh4HAvxryuW
-	OIX6uygxNuLRDsu6+hURZcoQE2IPxMOMig8zcGC+suPNRadLsChbWf4iRSEgAwF0vAM/3gKq1AI
-	78FtKsdz2NxI7M0+MoOlBdWL8TZS8qDv17yGbbQlM6LJ0pZvaFxNfrgiJpoFAGEkh2tPUDzX5TQ
-	J87URFU8XSgR7L+e/tnD7q7pZ8cEl08ETk3oy2x9fuBIpYWNvP3gxIsnNBzxdn6bpmeaWhTMDlA
-	7ol48Vj/pzeD7KIbF/nhoPLF4
-X-Google-Smtp-Source: AGHT+IFG+Ih0xaj7zpJFsK+/+exH1aoBAWLVyYSD//n2Y4fEfbx51EUFKSvnwF0GU5y7LWmXyxKWTg==
-X-Received: by 2002:a05:651c:1581:b0:372:91d2:f659 with SMTP id 38308e7fff4ca-372fa23164bmr2454131fa.3.1759155922087;
-        Mon, 29 Sep 2025 07:25:22 -0700 (PDT)
+        bh=Sh9DAofb5pc+fYQ7Puuw943vV9lmOx/AYaxuS09pAW8=;
+        b=X6Xy42ezSkIvZvoO+bVA9ZKz4Na2935ypjEPCsAjh5xor89RAhZnilfX4WP7N/LSSE
+         MCo4o6C/vnlPJ3l110ge75X6OZrsa3xwZXs10RwsdQ2j2tx62ejoeUqld2/zXpRoz1Un
+         YRYP0qgxp4MuGpT+4IlUpfizDfHDE4zYRCLTC+1uSBaRutfdxznF31nRXqPAFnEDqoSd
+         PfFM2JSFW66qDhK+ucvjcIcT2WqG/FqXblK8NmTHg4GQgeOjRykRzZowCNRMuXwMM/wZ
+         C43EeDlqJxDLaxctwZwjyypiYgAanzU0W1zj/w4fqddMe+iSBepkpgmG/OoXmMpg/nnK
+         Gm8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuqCrretP3EuR2FPS1IcZp5BFO9ihCN2fXhLan3i1HZGtpyR0v6Z9SNhfzkrPBvMKc7Vl6UI4/SfhZRQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzhF42HQxQiTdOl+slDkhZVAB14Kl0az8udgcLFoicwauZ32nZ
+	opieDZP+wZlmRmtRN+7j9ZTnvbBTNULE8LRfbWjlkAeuoJVKIxoU3eIK
+X-Gm-Gg: ASbGncuhQTtjphesBLqaDwyIq5UFfXtOI3/EILUH/F9xArTdYNazzsa9CyLUWkpQuRn
+	EAthG3FQqs77OujsUH42zYKdDBuCa1pHpmju5GMvHQi4pBH5JpHQcWw1B9ElggPal5/C1n3ZoeL
+	OEbcyXlmifOZ9LAErsdP64189nuI8UI8OM5BfIvf2Eh0Ll0v6y9yBToTfHqvu1EHy/zvvdoX5HE
+	Zs/qsKCtlZ8FChKKoLgIZalfU9E1oKXdxQjoxNF80fV8u33cimAJELY4BxI/NvYAUiNMal8MO3s
+	Plq5FjEkLg/mKJYu/tB7P9JhzLATiX/FIqpdkYHdH9SF1Kvu5tDfbKId88+jMlDVuG7C8E1x/3c
+	n5IBEHDco7S8YiQ==
+X-Google-Smtp-Source: AGHT+IHN0V6Vi0aPAu1d9d5AS3VfCD+ATABqrtHWzbt7i5cNrr6oVnwEDNT3Dh/t9jYOyViBE3w5uQ==
+X-Received: by 2002:a2e:be15:0:b0:36a:6540:3ba3 with SMTP id 38308e7fff4ca-36f7f932d9amr49253481fa.39.1759155923254;
+        Mon, 29 Sep 2025 07:25:23 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3728c23e6c1sm13201001fa.52.2025.09.29.07.25.21
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3728c23e6c1sm13201001fa.52.2025.09.29.07.25.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 07:25:21 -0700 (PDT)
+        Mon, 29 Sep 2025 07:25:22 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -78,9 +78,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v1 3/8] ARM: tn7: adjust panel node
-Date: Mon, 29 Sep 2025 17:24:49 +0300
-Message-ID: <20250929142455.24883-4-clamor95@gmail.com>
+Subject: [PATCH v1 4/8] dt-bindings: display: panel: document Samsung LTL106AL01 simple panel
+Date: Mon, 29 Sep 2025 17:24:50 +0300
+Message-ID: <20250929142455.24883-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250929142455.24883-1-clamor95@gmail.com>
 References: <20250929142455.24883-1-clamor95@gmail.com>
@@ -92,52 +92,26 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adjust panel node in Tegra Note 7 according to the updated schema.
+Document Samsung LTL106AL01 simple LVDS panel.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114-tn7.dts | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-index bfbdb345575a..75fbafb4a872 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-@@ -43,7 +43,9 @@ panel@0 {
- 				compatible = "lg,ld070wx3-sl01";
- 				reg = <0>;
- 
--				power-supply = <&vdd_lcd>;
-+				vdd-supply = <&avdd_lcd>;
-+				vcc-supply = <&dvdd_lcd>;
-+
- 				backlight = <&backlight>;
- 			};
- 		};
-@@ -101,11 +103,10 @@ smps45 {
- 						regulator-boot-on;
- 					};
- 
--					smps6 {
-+					avdd_lcd: smps6 {
- 						regulator-name = "va-lcd-hv";
--						regulator-min-microvolt = <3000000>;
--						regulator-max-microvolt = <3000000>;
--						regulator-always-on;
-+						regulator-min-microvolt = <3160000>;
-+						regulator-max-microvolt = <3160000>;
- 						regulator-boot-on;
- 					};
- 
-@@ -325,7 +326,7 @@ lcd_bl_en: regulator-lcden {
- 		regulator-boot-on;
- 	};
- 
--	vdd_lcd: regulator-lcd {
-+	dvdd_lcd: regulator-lcd {
- 		compatible = "regulator-fixed";
- 		regulator-name = "VD_LCD_1V8";
- 		regulator-min-microvolt = <1800000>;
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+index 5542c9229d54..93ddb3823d3d 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+@@ -268,6 +268,8 @@ properties:
+       - rocktech,rk043fn48h
+         # Samsung Electronics 10.1" WXGA (1280x800) TFT LCD panel
+       - samsung,ltl101al01
++        # Samsung Electronics 10.6" FWXGA (1366x768) TFT LCD panel
++      - samsung,ltl106al01
+         # Samsung Electronics 10.1" WSVGA TFT LCD panel
+       - samsung,ltn101nt05
+         # Satoz SAT050AT40H12R2 5.0" WVGA TFT LCD panel
 -- 
 2.48.1
 
