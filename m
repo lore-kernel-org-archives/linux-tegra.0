@@ -1,63 +1,61 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0291307AD2
-	for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 14:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEB825B1FF
+	for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 14:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155923; cv=none; b=FvCLe5g8D1Eo5oURw1Ab+YrujeJHhiJH3GOHsSAY+DBPDDAdTknwnP9dTasFjhJYP17pklFNFWDGBc6bp/sK29Q/ArH66LiWCzEBjISw0cacn3CnhuvrGx5VCDClFNcthJmdaZd4fQ4FxgrWcjzFDhtmnLbjBKuhSe6kSiJhm28=
+	t=1759155924; cv=none; b=pALGcO2EZlKLq+NaFSgAHTtoZJj0smwsJET/ofvqjZ9lO2hXOr5Bfb6CnI/2l+7/edx3wJPpFu9tlBUunH8miuAM5dJ23fz6vgBojzVANAxoIl5qqKua0r2yNl+rLtqK+gsy8NKob4ZvZqxDuPVkS2EGEA+icN8JCxKSPCVmy8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155923; c=relaxed/simple;
-	bh=DvadToblCQTcVIF5apzEvP8l/eXojW3y4KnHvhcpa58=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gqBjwMiqedhSxOYG0EGSanVdRTDgrRJPXkGnVhhBDwAYC8b2hN3T3xOp7+zdp7AWxTZm11s03fvX0hJTy4aYVVNbhDtMyYu2zaWhqNUg1q8Enos4rqrYj7q9y+hBt75VGSEX937AeRyrvj10Dn6ukG12bjdBaTPgbamuWQw3lhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJnclQXG; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1759155924; c=relaxed/simple;
+	bh=K85rkuCudYsXP5pYW/dzKbInwqXPQwsVrWQ5iHSeRC0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dxthOoug2fHQVY1TnXT0j600HC+vL/t8RIFQWbvAM5TEQSCZQQGB1Qb1RoHDWAId+hXmQmGytiFr0xRvPdk9jLv82w+FnOL+Ojk7RproMmHOGjnE6bs3ZgeeTQuMJlYkpomfEBzUaGjwYACDen1Jg3tQQK/zpa224ipmNz2iSpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jguj4Su+; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJnclQXG"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-367444a3e2aso53776781fa.2
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 07:25:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jguj4Su+"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-36bf096b092so65659041fa.1
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 07:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759155920; x=1759760720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eSQFvg/0Op4ijZhmcHNRkV3VuLRSkHnJiSZzYGsOKnU=;
-        b=OJnclQXGYJKJOy4CUU1BZfCMIDJavOaNWwqUn3zRvvGWqpm5VNwuWfvn6z6RMi8cVQ
-         RDt6DM7rOloEXH1RkteIqinwWHlIYw44yWm/TJ79tr5CNd5bnUtU2VCR5We7s73QrkCK
-         3GaCoUqKG4Thw0M951QeAs+kY9HMphisyjeG3b0oZHl1d/ALqy6O8AUPOKYQfnQqj6/D
-         FR804bdUwYCpifu59PjEkv+ke9e6bU2hhT915A9ofPM/XPJolAFJ0UEdCedjHx3tgflZ
-         DIDHqP4c7CDL4gC9AixLXl8Ze58fvgZkkDFtVtjsm5mkBefwx+G1sFUgrWcJKzRE2HE7
-         s7Mw==
+        d=gmail.com; s=20230601; t=1759155919; x=1759760719; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPPg9TIoZPnzthQd8E1VwdjwIEaEjaVDMMssW2mg+cY=;
+        b=jguj4Su+0loOcNAxNNxH55BAURnQfg2SYpHWQNmmQkSF0DVfime/13OeHnO7IWK5GP
+         4CWHbvDOwHLKk5ZfpTkQ8rrLJUat2Y4PRZZSPbm8739wIAbWD8KgAiLns96yYFtuBcTj
+         +H3l6deLYG5MTMzy8wJkeYPzJFCc+4Jumk2r0boyTpTkX+tWyzBmj8vQsIMJqMIgNyxW
+         nlumtuDXW6Zupae6ugyBlfQ5vc74x9IKxVv02sxaITPBAh1UsYZVgsXSK+wHyn9QZcGj
+         laXn3e+7WwJWrW7K47NwUSm0FiMMYI0H0BqhHCXkEQs7fyhYd2uKoAlUnqQ2eZCMSlgu
+         Uspw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759155920; x=1759760720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eSQFvg/0Op4ijZhmcHNRkV3VuLRSkHnJiSZzYGsOKnU=;
-        b=XLhyJ6vSe/y2VaaXf6MWCulxrebGRCbvqBu7xbT1YiCIs2BpxH9ZDDGH0u9D3drGDs
-         5FqdmbJs/vPSvS1hxlbsLkp4UwadXBZ74WcVolLR33o4oeB6Rd4DXAVKdFpb47HBRKA4
-         IqOtd+ngG7LLYLGyUzS5AypdI7fCicVBHcNmH0jal6mxViHdTXl8mQJ8TlzhCyo2hLwB
-         Cent3qdZy2godK413GOrRmaI5d7UuF2k+VdxKdfxnq/4osBEMqa7HWFpZyNTw2I24Mgs
-         8I1opARd606vX0eqgVSdKcwdRLBTmitVq3z0w7ZjUInzBsk1IzC6DL7RxCI9tw8aFBw4
-         XATw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDJcAiVvTGm9cJIZPYMs86YPkrJMk6NWUgtAhr5/8v6L22tfiVghBATxcVKyVPcHYm6r6B81hFlpL1Xg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLBntf5ORwIvinWoCTBJCtcbiDpQxFXBJjeDALdS5kxSiTn0Ma
-	+M1Qe4CoxCkqrM/i9tqK3HuDRyuButiLTg+TPkQDdAPeghSerIbqKmq5
-X-Gm-Gg: ASbGnctcqDCmHACmK6kLT9gE1VXAFPeW3S8qX0QmBrt5YBjGPI0fMr+oWrEEOg+IJFs
-	6ODPpFelJO/vJ94OhhmjG9aMRZQ/Kt8DqVPa7opxKVBx5TF4YLNL76mqyMAUgm8HBHY0d+pzAyC
-	pEKdVa+q2jx9AbnCLaWnJnStA6dnfEmOdx/j/p3si/z/8JHpIYN727XVlX9qr/12S8MO7piXtc/
-	RKeNA8bwvIt2VT3z26ElFt/9/HNvyukbSfBFbPyLXOR41t5xdJCuOnpwCNbuwWjDenCf2N/09tD
-	lt4EcVH1tcd/qUxyYRoIfIF/+e2XPUUXWUdqngOMr5ftGLDy0bZlo/p/gK9DfvO1Vc9YPHJR5in
-	UONCq67Ntdck8Bw==
-X-Google-Smtp-Source: AGHT+IEibrCwJezr+A8wOo2gVwCb6lK72bDzFcB4eV9MZWICPRGwz5lX+FlGpBMGd5346Nlox3jBSw==
-X-Received: by 2002:a2e:a10b:0:b0:372:8ca0:15af with SMTP id 38308e7fff4ca-3728ca01b01mr21960021fa.35.1759155919667;
-        Mon, 29 Sep 2025 07:25:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759155919; x=1759760719;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DPPg9TIoZPnzthQd8E1VwdjwIEaEjaVDMMssW2mg+cY=;
+        b=mvq7FqKQ2sFMnPoXy02nVVaNVtt/q730LPXyUGlKqtIJ1GtweQJ8Is20dziLKJn/hr
+         2+lIjtNAvCoc/gb2COzcJY0Y9KTya7YVBbVsN4pjkBDwYKEABNyzkKHCnpbCNBzaj7JK
+         +6lnhCl7CCBUL7t4bISjZwTorse2b+xHJgkqfYr26A1BtZAerAtPjJFMcWGtcibPTSsM
+         eXW298cJL6UY7LrizTb6q5yLw5ck8aNr+EMF2nNs21XWBUzzJBPBlnBLrJHanS7vd4Mg
+         bjDQAK3gI/4Om+tfiKI3bxfHc6JPwKriCOpzMON8lBTBFpTfFs+yRbvjmI1oSiy3rvww
+         nNkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPOsii/twiPscFyr7QJHNE01e/ByaYJGZTsSIMmHEDtuvkeRzyht9migcFg4yYClIiNkX4ENwyHgxiwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOORHuNdKqsMZO+1iUZ+lo9lEXsgu+XiPzD6L2bNkSgqV7hgQy
+	FZkp4pNtN84aaTm95/mZu8iMEHBflV3ljms4kSL+VzlpLRy3jmo59Vkl
+X-Gm-Gg: ASbGnctoLuFStw+ZJ2PE+pGVuHLc8wAfEKypMGxEWfYGRswlS+AywpRrTcmnWHWr2K8
+	L/oH02GevrfLx805Q2GhXZcsj062cYh1Ta4qdwiO7hyX8J7s7iZWuxc7x6/UioypAQl7Zc4kVB9
+	XKfLmvSKPUpmHZTurc8dOEs25aYPUZML3leajTmv2DLmf01v99RajFgkendHim+WmbjJmgep/50
+	3kr0EcO4sbYeilgaAiwUayz7/KX6OEdmuye/X0VKSIZqSK5te+MtQ5wYKParXJFwiJ4E8pOcAsv
+	3IAuCBMIsg8R1XR2rkG0vjE0vBS1qyzZhsdcMVvGCoJshbDFcNe9A4F0Ax+2KIet5u1mkPDjqKZ
+	ozzdV5As3KtE7Ykz73wZmrx6z9gTuXJR61vE=
+X-Google-Smtp-Source: AGHT+IHxDGpQBwuQkWcBRlcxN2mP+i2I0/l8+XNF8RRMmqOhDyFCD+mEDRiLnbhKmmlYr8NSnFokUA==
+X-Received: by 2002:a05:651c:1986:b0:36d:755f:a6d8 with SMTP id 38308e7fff4ca-36f7d2cb85cmr46262991fa.14.1759155918449;
+        Mon, 29 Sep 2025 07:25:18 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3728c23e6c1sm13201001fa.52.2025.09.29.07.25.18
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3728c23e6c1sm13201001fa.52.2025.09.29.07.25.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 07:25:19 -0700 (PDT)
+        Mon, 29 Sep 2025 07:25:17 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -78,12 +76,10 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG LD070WX3 panel
-Date: Mon, 29 Sep 2025 17:24:47 +0300
-Message-ID: <20250929142455.24883-2-clamor95@gmail.com>
+Subject: [PATCH v1 0/8] Add support for panels found in various Tegra devices
+Date: Mon, 29 Sep 2025 17:24:46 +0300
+Message-ID: <20250929142455.24883-1-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250929142455.24883-1-clamor95@gmail.com>
-References: <20250929142455.24883-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -93,95 +89,39 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which it
-clearly is not. Address this by adding the proper schema for this panel.
+Add support for panels found in various Tegra30 and Tegra114 devices,
+including panels in Tegra Note 7, Surface RT, Surface 2 and Ideapad
+Yoga 11 T30.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
- .../display/panel/panel-simple-dsi.yaml       |  2 -
- 2 files changed, 60 insertions(+), 2 deletions(-)
+Anton Bambura (1):
+  gpu/drm: panel: add Samsung LTL106HL02 MIPI DSI panel driver
+
+Svyatoslav Ryhel (7):
+  dt-bindings: display: panel: properly document LG LD070WX3 panel
+  gpu/drm: panel: add support for LG LD070WX3-SL01 MIPI DSI panel
+  ARM: tn7: adjust panel node
+  dt-bindings: display: panel: document Samsung LTL106AL01 simple panel
+  gpu/drm: panel: simple-panel: add Samsung LTL106AL01 LVDS panel
+    support
+  dt-bindings: display: panel: document Samsung LTL106HL02 MIPI DSI
+    panel
+  gpu/drm: panel-edp: add AUO B116XAN02.0 panel entry
+
+ .../bindings/display/panel/lg,ld070wx3.yaml   |  60 ++++++
+ .../display/panel/panel-simple-dsi.yaml       |   4 +-
+ .../bindings/display/panel/panel-simple.yaml  |   2 +
+ arch/arm/boot/dts/nvidia/tegra114-tn7.dts     |  13 +-
+ drivers/gpu/drm/panel/Kconfig                 |  26 +++
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ drivers/gpu/drm/panel/panel-edp.c             |   1 +
+ drivers/gpu/drm/panel/panel-lg-ld070wx3.c     | 182 ++++++++++++++++++
+ .../gpu/drm/panel/panel-samsung-ltl106hl02.c  | 179 +++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c          |  65 ++++---
+ 10 files changed, 495 insertions(+), 39 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-lg-ld070wx3.c
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c
 
-diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
-new file mode 100644
-index 000000000000..0a82cf311452
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: LG Corporation 7" WXGA TFT LCD panel
-+
-+maintainers:
-+  - Svyatoslav Ryhel <clamor95@gmail.com>
-+
-+allOf:
-+  - $ref: panel-common.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: lg,ld070wx3-sl01
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd-supply: true
-+  vcc-supply: true
-+
-+  backlight: true
-+  port: true
-+
-+required:
-+  - compatible
-+  - vdd-supply
-+  - vcc-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    dsi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        panel@0 {
-+            compatible = "lg,ld070wx3-sl01";
-+            reg = <0>;
-+
-+            vdd-supply = <&vdd_3v3_lcd>;
-+            vcc-supply = <&vcc_1v8_lcd>;
-+
-+            backlight = <&backlight>;
-+
-+            port {
-+                endpoint {
-+                    remote-endpoint = <&dsi0_out>;
-+                };
-+            };
-+        };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-index 9b92a05791cc..f9f1e76a810c 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-@@ -42,8 +42,6 @@ properties:
-       - kingdisplay,kd097d04
-         # LG ACX467AKM-7 4.95" 1080×1920 LCD Panel
-       - lg,acx467akm-7
--        # LG Corporation 7" WXGA TFT LCD panel
--      - lg,ld070wx3-sl01
-         # LG Corporation 5" HD TFT LCD panel
-       - lg,lh500wx1-sd03
-         # Lincoln LCD197 5" 1080x1920 LCD panel
 -- 
 2.48.1
 
