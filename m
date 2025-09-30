@@ -1,119 +1,235 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91382F83D4
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 10:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B022F9D8E;
+	Tue, 30 Sep 2025 11:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759228211; cv=none; b=QXIoqNd5hQXWhltoBg0P95xMBgVyECVIIUyUsPkueDDT8cOKGb6Z054YumzbDGnMR0dPrQqeGufekYGeOaPIjTpqSIGVtBP3ZJiqbEMf3oKJZSAZVzNbfVO/mEMponEdryS5se+0wrDsIxanQr8VGMC75KBgiFuh4akFRvyiDXI=
+	t=1759230004; cv=none; b=bbExXTsfBcFu4hPNBQfoJPzQGWK6D48mdUkrZ0o6e/jCfTt/MTIXKv4MQTGedigz5GR8tmYeqgMmI4CsgNY9OqOscA2iZwtqis+Dm10rHOJdtpv4Z90UviKWkZQ7CRAhlkxyJN1gQd0dQAG5JdXh3fRquzXnZGBa1WLJaQazylA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759228211; c=relaxed/simple;
-	bh=LlAd46X4AMd1hwxDl9JpZBtSvrds+zrXrLm1hCZMZGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpk0fdrHVIPeNBvFI1e2x2oawsjcKGWYaA2z1pruLzepXSkM4z2+ZCvXw4tYbZLh2oZVO041NZXo5MmyV1in7uCVZCFLCVZDocwu8zf6Q9JaRNOGlDGfg71jVGhYse+ckbsQIqDvsplnLemr+MjV2lvy4Z3zdxgpOSy6hDMb1x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qz3uZlMZ; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1759230004; c=relaxed/simple;
+	bh=hl6CpBsFM0yclQLF3Wr1UR3e+Pr0M3yXUJx6ZUgVFTo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WSYuc+M3UiIhWil9LzeCvIgf0lBpGri/ly+LkJoSOZi0qPSGV24hi1IW6e/vZ+ervFZCC8nYioZjEa04+NPE2cZBcUDg+jTttjzyFMeFsex1+zWJ3dYfVKvgo2QymQ3LnURrWfhgGR3Ng5tsS+EH245O8Dc/ajGRCNI/VYu42ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMgAjDFi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qz3uZlMZ"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5507d3ccd8so4957423a12.0
-        for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 03:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759228209; x=1759833009; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Bti2R28/RAVcQBXOrb8jZ4ikDl7tBOWMDlFZn02oZ4=;
-        b=qz3uZlMZevLjFLfnFdPjS7DJyFCcC4z+WUPimXuo8Txym21x+GCXTI6jSzAzhSJs05
-         bj4zWMYDpuxSq0z20B0xjz4iwvmJ3vvi2RxQvyWNqHwm4MwYq1Bf1N47Rf9qhf9D4au9
-         kcCK5wq7ipecWcP3ZZw/VNwIjprmbIqbYn/eoVnkwKIK2CKk62OSjk2c0PfxJJPNkuTi
-         B2NPfix3wcaC3lMK3OskKF0mwPctPFR3wEHDffQGle3cTnWmjkYHn9SOr2exjERnka6b
-         2LWH2ybpP1iFRkIfFtl+DSl9iIkUh299cNZviOViPweK9VawxiS9gle4K3Ktds8eiCjk
-         KzWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759228209; x=1759833009;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Bti2R28/RAVcQBXOrb8jZ4ikDl7tBOWMDlFZn02oZ4=;
-        b=cTkNls1dFg3gKfdlACX1c4zeobG2sUnqupH+P3jJNcBz9t46OP5rwMZOb2v646Tv0b
-         JqkARO01CJ5hBQlTEre6VGxKKf4vil4ltvBZu84ZFTrMjNHY2ztjdb6vq4mXFIPvfQNo
-         O/6Cl5t5skcUSM0fybtvsV4tn3jZ0H4ZxNLEiM3B1xuMeGn4m1QGhUPSrgBoq8yGKgNK
-         eolXu1POTecTMs48LSZkJhC23P/z7DdsGKL0A7T/ny+Y+0A4wv5JYaiGJUCZXVnc5kLN
-         vzoWq7R3E+NAwUuZ2jP+g4jQarrHN5Rb17/X1IT++TbyAxxqY0ccJGrTLggeiumxYbNG
-         DAxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvwF/LGLsDw9trF0o+VowxP4w68wf/Erwl3uU6g7Ah2iXPZy/+h+8w2Oj65wtgPSvQClmflS74SGor6g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXd4sD0/d4+Ikmjw7LLjumyoVz+qz2S+VsrOQgvIUVIn9/tMjF
-	bq+a45G6iAVfYJzMRE9EKSntfOcGEZ1JJqgU7q1I9bXOWGSRHpqISNHKWyr1pjBw/aM=
-X-Gm-Gg: ASbGnctVCLEBBrPV413h1nLxOS5CLdme0GCgEbBupGbM+REpeVxEdvhxVmWJSdh/VAQ
-	nUewFVpnFmFtc4XXV0JMd18570DXipIOYw8jbrDFBo47L8DdlxS04xD/mWAzo+j01YU2AAJExWP
-	gjezg314GuzRtQAPY7GXUMPsNj7b5OjkqHoV9fYkr94F9hKW3PG7bHipvV3KRNSCpA48E3TZyT/
-	IQUbgMnd207dAl6wCkfCrffR3VUb91Cjn1ogAA/I2vN89dwK1gy0d2Iw/DKvEAvJJRvA9Rw4gVn
-	R4s9mOKIkVCd/pFNwMEZL+AG4WMOQfFAz9vpf6YDjpbHFX5kExoFVZxJ1R7cmmxI0djpfXYfy/x
-	MhoNdhzks1fYwFNb5Y0REnEPEctMyU8HCr8C0lI776S7F+TupdrMy1HsqvI8Qyg6DDNd1Dg==
-X-Google-Smtp-Source: AGHT+IGvSXNfKcREmK5xdLdLGpoBcxZHLK9ma2oRLZHFgufwj2uLeXd8vq5DC3f0IouV+OETawQEFA==
-X-Received: by 2002:a17:902:d0c9:b0:24c:da3b:7376 with SMTP id d9443c01a7336-27ed49fb299mr159575375ad.26.1759228209125;
-        Tue, 30 Sep 2025 03:30:09 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ad1fd9sm154739555ad.142.2025.09.30.03.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 03:30:08 -0700 (PDT)
-Date: Tue, 30 Sep 2025 16:00:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: webgeek1234@gmail.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] cpufreq: tegra186: add OPP support and set
- bandwidth
-Message-ID: <20250930103006.octwlx53p2shwq2v@vireshk-i7>
-References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
- <20250909-tegra186-icc-v2-1-09413724e781@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMgAjDFi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51488C4CEF0;
+	Tue, 30 Sep 2025 11:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759230003;
+	bh=hl6CpBsFM0yclQLF3Wr1UR3e+Pr0M3yXUJx6ZUgVFTo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=hMgAjDFiUcHZlHXjNfiivYmi8e8vUVWCi59OcfXv0rRTbwfOXoZRgN9AbmT6dp24I
+	 QG9cauPJW6cadrjxv9LaBeqXg2c41/8Afqvud6K2PeYu5cT41oVL2Rd0dO08HLJ1KN
+	 EzucbmMAqmuZu+7MBn6um5hAXXbmRWnDv/rV8vIGOBaSOEnTsFyZ6ZM571/O9AUMGH
+	 Flap9Gu7hgedgeX22zbtnMoQdL9pkmX/clya9FLtDuexAQAJiXx6m81fUxDWpuNtm+
+	 hQszCjBUs8oMkf3jYBWhJnB4L+H4zNY2ZqKUrJaEKvD8H/JgewXOHCi9u/myHJLxn8
+	 dS3ZTJeRZILEw==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v5 00/39] drm/atomic: Get rid of existing states (not
+ really)
+Date: Tue, 30 Sep 2025 12:59:15 +0200
+Message-Id: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909-tegra186-icc-v2-1-09413724e781@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAO422gC/43NTWrDMBCG4asErTtFP5at6ar3KF3Yo5Ej2khFM
+ iYl+O5VsmlKwHT5fgzPXETlErmKl8NFFF5jjTm1sE8HQccxzQzRtxZaaiudtuDLCVKGUy4MfI5
+ 1iWmGuowLA05GW01qNGYSDfgqHOL5hr+9tz6261y+b79WdV3/xa4KJATpiDwGZwlfP7gk/nzOZ
+ RZXd9W/Fkq9a+lmeUYXyIbe9/2DZe4t3LVMsxQN4+Cxl2TMg9XdWWrYtbpmWd9N6BySIffH2rb
+ tB24+KlipAQAA
+X-Change-ID: 20250825-drm-no-more-existing-state-9b3252c1a33b
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Edmund Dea <edmund.j.dea@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+ Sui Jingfeng <suijingfeng@loongson.cn>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, linux-rockchip@lists.infradead.org, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Hans de Goede <hansg@kernel.org>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6084; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=hl6CpBsFM0yclQLF3Wr1UR3e+Pr0M3yXUJx6ZUgVFTo=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBm3d8j/a/a6xTLbujO7gOmIX8GRFI/Z08TFfa8l/f2wJ
+ 1vwnOCTjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCRo76M9RGT5kX9/PrcYUOU
+ Xc3vVCdrnrZQvp8/9rW2TlB2zd9arHTJpL76n8H01qSDffMSOxbsZayPWzpdcdqEsnkMcZ3Su3a
+ bh9aUT/vo9XJ+SPfni76/f52viFVZ8PjkVV3ZNO+5Bldt9xgAAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On 09-09-25, 01:21, Aaron Kling via B4 Relay wrote:
-> +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
-> +{
-> +	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-> +	struct dev_pm_opp *opp __free(put_opp);
+Hi,
 
-The usage here looks incorrect..
+Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+accessors.
 
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	dev = get_cpu_device(policy->cpu);
-> +	if (!dev)
-> +		return -ENODEV;
+The initial intent was to remove the __drm_*_state->state pointer to
+only rely on old and new states, but we still need it now to know which
+of the two we need to free: if a state has not been committed (either
+dropped or checked only), then we need to free the new one, if it has
+been committed we need to free the old state. 
 
-On failure, we would return from here with a garbage `opp` pointer, which the
-OPP core may try to free ?
+Thus, the state pointer is kept (and documented) only to point to the
+state we should free eventually.
 
-Moving the variable definition here would fix that.
+All users have been converted to the relevant old or new state
+accessors.  
 
-> +
-> +	opp = dev_pm_opp_find_freq_exact(dev, freq_khz * HZ_PER_KHZ, true);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	ret = dev_pm_opp_set_opp(dev, opp);
-> +	if (ret)
-> +		data->icc_dram_bw_scaling = false;
-> +
-> +	return ret;
-> +}
+This was tested on tidss.
 
+Let me know what you think,
+Maxime
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v5:
+- Added some more documentation on state teardown
+- Link to v4: https://lore.kernel.org/r/20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org
+
+Changes in v4:
+- Fix ingenic
+- Rebased on latest drm-misc-next tag
+- Link to v3: https://lore.kernel.org/r/20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org
+
+Changes in v3:
+- Added an armada rework patch
+- Added an ingenic fix
+- Collected tags
+- Rebased on latest drm-misc-next tag
+- Link to v2: https://lore.kernel.org/r/20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org
+
+Changes in v2:
+- Dropped the first and second patches
+- Reworked the recipient list to be nicer with SMTPs
+- Link to v1: https://lore.kernel.org/r/20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org
+
+---
+Maxime Ripard (39):
+      drm/atomic: Convert drm_atomic_get_connector_state() to use new connector state
+      drm/atomic: Remove unused drm_atomic_get_existing_connector_state()
+      drm/atomic: Document __drm_connectors_state state pointer
+      drm/atomic: Convert __drm_atomic_get_current_plane_state() to modern accessor
+      drm/atomic: Convert drm_atomic_get_plane_state() to use new plane state
+      drm/vkms: Convert vkms_crtc_atomic_check() to use new plane state
+      drm/tilcdc: crtc: Use drm_atomic_helper_check_crtc_primary_plane()
+      drm/atomic: Remove unused drm_atomic_get_existing_plane_state()
+      drm/atomic: Document __drm_planes_state state pointer
+      drm/atomic: Convert drm_atomic_get_crtc_state() to use new connector state
+      drm/ingenic: ipu: Switch to drm_atomic_get_new_crtc_state()
+      drm/arm/malidp: Switch to drm_atomic_get_new_crtc_state()
+      drm/armada: Drop always true condition in atomic_check
+      drm/armada: Switch to drm_atomic_get_new_crtc_state()
+      drm/atmel-hlcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/exynos: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dc: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dcss: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-ipuv3: Switch to drm_atomic_get_new_crtc_state()
+      drm/ingenic: Switch to drm_atomic_get_new_crtc_state()
+      drm/kmb: Switch to drm_atomic_get_new_crtc_state()
+      drm/logicvc: Switch to drm_atomic_get_new_crtc_state()
+      drm/loongson: Switch to drm_atomic_get_new_crtc_state()
+      drm/mediatek: Switch to drm_atomic_get_new_crtc_state()
+      drm/msm/mdp5: Switch to drm_atomic_get_new_crtc_state()
+      drm/omap: Switch to drm_atomic_get_new_crtc_state()
+      drm/rockchip: Switch to drm_atomic_get_new_crtc_state()
+      drm/sun4i: Switch to drm_atomic_get_new_crtc_state()
+      drm/tegra: Switch to drm_atomic_get_new_crtc_state()
+      drm/tilcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/vboxvideo: Switch to drm_atomic_get_new_crtc_state()
+      drm/vc4: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Switch to drm_atomic_get_new_crtc_state()
+      drm/framebuffer: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Remove unused drm_atomic_get_existing_crtc_state()
+      drm/atomic: Document __drm_crtcs_state state pointer
+      drm/ingenic: crtc: Switch to ingenic_drm_get_new_priv_state()
+      drm/atomic: Convert drm_atomic_get_private_obj_state() to use new plane state
+      drm/atomic: Document __drm_private_objs_state state pointer
+
+ drivers/gpu/drm/arm/malidp_planes.c             |   2 +-
+ drivers/gpu/drm/armada/armada_plane.c           |   7 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+ drivers/gpu/drm/drm_atomic.c                    |  21 ++--
+ drivers/gpu/drm/drm_framebuffer.c               |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c       |   2 +-
+ drivers/gpu/drm/imx/dc/dc-plane.c               |   2 +-
+ drivers/gpu/drm/imx/dcss/dcss-plane.c           |   4 +-
+ drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c         |   3 +-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c       |  13 +-
+ drivers/gpu/drm/ingenic/ingenic-ipu.c           |   4 +-
+ drivers/gpu/drm/kmb/kmb_plane.c                 |   3 +-
+ drivers/gpu/drm/logicvc/logicvc_layer.c         |   4 +-
+ drivers/gpu/drm/loongson/lsdc_plane.c           |   2 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c            |   3 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c      |   7 +-
+ drivers/gpu/drm/omapdrm/omap_plane.c            |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |   6 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c    |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c          |   3 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c          |   3 +-
+ drivers/gpu/drm/tegra/dc.c                      |   2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c            |   9 +-
+ drivers/gpu/drm/tilcdc/tilcdc_plane.c           |   3 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c           |   8 +-
+ drivers/gpu/drm/vc4/vc4_plane.c                 |   6 +-
+ drivers/gpu/drm/vkms/vkms_crtc.c                |   4 +-
+ include/drm/drm_atomic.h                        | 152 +++++++++++++-----------
+ 28 files changed, 140 insertions(+), 141 deletions(-)
+---
+base-commit: 91494dee1091a14d91da6bcb39e12a907765c793
+change-id: 20250825-drm-no-more-existing-state-9b3252c1a33b
+
+Best regards,
 -- 
-viresh
+Maxime Ripard <mripard@kernel.org>
+
