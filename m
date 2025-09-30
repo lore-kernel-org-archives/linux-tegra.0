@@ -1,84 +1,84 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B54204F99
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 03:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A0617BB21
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 03:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759201640; cv=none; b=qsyiTu05DFJpO4SYra/0zrmyC9Da6qY9TI1HONye4pr4yu2vuKxY8xHqYCYYYkJFn8Sx/5YfQPPgFcQZHMxy3ZPGTZyVSa4y2Kg0Y1BRSZ8YXvq3SRrOAafpUNJ5WerU3h9dkSxzwoF05uhXsniK/atXiW4TvTz//FvMt7DesSg=
+	t=1759202072; cv=none; b=krSvHnaaHxrIfgFbXVbCgD9dZFk0U0MpYhDNVjzFHymbZYpuv+X1oDHz/SBCSsn5AdkiS0azvI1pbvzpuVoHI36kVnDLZa1Q9xcgoz2NHFbjVI+UgbiT1qCxTJaq+eya8HTdVpYFhMQgDnOu0bSumm5t+xWavHyPhe7b3lyQ6KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759201640; c=relaxed/simple;
-	bh=6CYu0yjjLffWbYyT1iuvFnA3aqfZ7582Muoa6RB5CIs=;
+	s=arc-20240116; t=1759202072; c=relaxed/simple;
+	bh=1rGZa6T+nKU9H+9k5FkFiJZWT4Z/x2RL52Cr/CliJfY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R5ELB0iaQ+ur2sqxPpWXe4Cm/iKpnbIcjKB6k3fC0J4RToHFviLeHi+VoAiziZo2WBSlunob62nSrIbtB6xiUnuD6NdtEuqHd9mVHzDSeEfC1UD3gYhIh7yI7Kwg4TtYW7yv7nGFaRsb+ZYgVOH3CJ2nePLUeW64SrkISm/Fez0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CRZpGTyO; arc=none smtp.client-ip=209.85.216.47
+	 To:Cc:Content-Type; b=kCN0VAcaBi9Obsj1ox0zVxb/HzcGbhvRmF1Jz86N4XIB+i4CVl+GIfA+joRHbl1G8aoerczhAas9Z3dXYJjEXC0NndetBZpaOmuaVzWGjXcwzotZie+TKzjRz1j+nnOd1EbVepzfZZevcgTg2geWtAEndbIuwe7BWoYbt2o6hzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PxCNNqkA; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CRZpGTyO"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso5676536a91.0
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 20:07:18 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PxCNNqkA"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-78127433a32so2422641b3a.1
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 20:14:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759201636; x=1759806436; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1759202070; x=1759806870; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gKvNIqyQStmqM1bZBXJ3keviMu+G7jno5fFKkr2O1vg=;
-        b=CRZpGTyOvFRVATJgE2lIk6B1h0LehxPtC7vxmgVIraDqZJO8jtH6L2vL00EZyIGbCR
-         vyv8onUIFvfd3+oBhdNN5ecurB1YDB7izpuF/bYWBD4GXk2eYOkNSE9blUEAuC9RD5Z6
-         bGEPEp1fXR3z31K7A1ZNBafiEGHbo92ffqpNQ=
+        bh=psH8ce2EGDVOVWJJv98yedDgFcZ/vr9lSF0MkEmVn80=;
+        b=PxCNNqkAzE1T/nU7a8BMPdQEYwlaldJeBit/71suljnMDe34GrOGtL/44o4T3XypOw
+         i5F+ENJ56kZfP0HqZUruE7MigXw49w66cQfcL7EAMTzw9+48BHuEb+8eBBRFwWW4GTKz
+         13Jif39Ww0KuJ2KygOtAryBBFgX3n4VmWYgAM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759201636; x=1759806436;
+        d=1e100.net; s=20230601; t=1759202070; x=1759806870;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gKvNIqyQStmqM1bZBXJ3keviMu+G7jno5fFKkr2O1vg=;
-        b=jh8h6fCQq1v+pbcMS7Mc3YdeEvC+M9JOJzeLx8l41y/8WKn8tDcljv9Lenr5HOrL1d
-         RPzOl2xBTUG4xknpHdhKrsOMXO6tH7zAPidyFfbRn3YANUWdo1FYTaPlJGPUF1T2G04r
-         Kj9yHMSEDOQPTlvZcb//3VT54ZYrmG7npSmNvZ0yeYTSv7khRzBNVnpypQ/s6DdIoPnp
-         Bp17YvzxifohV0nWb62VJrYPo5JkbsMPLuedQtYVlM4vMILDp8R2xCw4yL/PP76c3MWv
-         RoAYKRHfQkg8qOti0Dvhn0Q2O00206LhutAs1NeTcWPZJggtRSK4u8SAcwzq/QstW49/
-         /B6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWukSJ46V/szvC30tD6+91DofCHYgtvc8gRWlct0vQjeawqqmZHs/IyGzPBfFHJdUape6SfLsAL2cKcOw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq2hLy2s7aRNjjOEzzsyUGiWuNow/b4btzEZM2yepDd5ueKYK7
-	KUqf3Ndi06xfUm4OTwcuzvV5GDi7q+A4TbhJzH8s8jkvF5RU1aqQNkI1k+Obn22Jz2BVzFkTCON
-	avWA=
-X-Gm-Gg: ASbGncu1dGp8wIFBASi/vCe6SVqGRNcqxQ8d8ZDkAYaXBlaDkg93TA1QRQMYE/WiBBi
-	Pzz7e0y3lHDzFabSxWQg0xMgfTJFjuppd7O/3VAYALwAdVOM93/dL3STDiri9arVtApIfNNnN5A
-	Uo8lAS1J3QjA8K3in90lop/P+wOL6auno5uLeLAgFeEGldw4m9Mz0bx6BuKPAziBBiecYZt3V47
-	HG0jTiGdKNgfFGQGFJraAdSoRkRntciqHDf5b6iO4ITw90v3poe3Q8yd3jqtPkR+jsOtUOotkRJ
-	QapkiTsjsP30oOJPuH4aMqJk7TIaGfDFFxAUZk36mkjNJYDLY80xM/RF1HK0MOAOVxf/S4gb0un
-	pYIEUeDFYNZGBXhpil5wWc3GYQjS4r8XGChbOX+lCGRYVd051jKZ2y1CGr7EzA5xbyoM3ORsTiq
-	tDSYONDzyk4BU3SNTiDGisfanSXzVL6nU=
-X-Google-Smtp-Source: AGHT+IF5ZRs21NoHPMBwPiiXnr5ayzygztN1JnTw4iUW4azR4aOtlNvO2OfmiZPQQ7C2EtuuQ+oIXg==
-X-Received: by 2002:a17:90b:17c4:b0:32b:dbf1:31b7 with SMTP id 98e67ed59e1d1-3342a218452mr18096211a91.2.1759201636307;
-        Mon, 29 Sep 2025 20:07:16 -0700 (PDT)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com. [209.85.216.51])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be235c4sm18690157a91.23.2025.09.29.20.07.15
+        bh=psH8ce2EGDVOVWJJv98yedDgFcZ/vr9lSF0MkEmVn80=;
+        b=pgmY+OP2thyjZme9utxK9T0RTX/p75RH0t30MmnVrwygSFX7Lo1+MhbrYISF3CYTCW
+         VKXM688yakYC5pbUk8Kd/K6eohWCoCDfsGGawmGUse5g4DKuTiCDy6mpYFVhDx2jVvYG
+         dTArCwYN/a8MijsF0igs/N67a3+IT+PqVKrGCmrg70Vye4aIYXoerDwsLrE7UhJhqdNZ
+         rr9COvul7jzGyJLhzAdBLgXYCDqmu3Yf32RFs4ipeZVxAtY7kRGff0mmxaLMszWg6F33
+         i5WOddKxzH9NNBBz6ppAW/AuNeiF7U1XFS0PEZeyuDt8rp52FEXXWC9/obxSuiURsqWR
+         MA2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeoArWEuJqpFCJLx5Jr6JBxojt5kBdZLlQRWUwWMkreyIK5C8BJw/AvlJhvJwXEP9+oj5SPnTbx1hImw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEOkUGED2uR6PsqVXNAt+wVWaY7UMtB1bRjJR+mBLSU9qJAwky
+	SnksCrJcEUhzYkcY27PxwjxS9MgvCqKFgakuLz2oi72Qy79LpMz5klDT3n8jx2I6BY29DBcFl/J
+	UGsc=
+X-Gm-Gg: ASbGncvYy3i3Zt7ZAwisQLb0t9orRFFcZnDqQiDbN8qzaXItTKABNHfwCXx7csJzSwE
+	I3y6KSE7XCrjz2zHUo2ID/SBQDkhzOIXx6a2hgZuEmS+pOwj/YkqD3HJ4k5fvxi8O6MchB0sLmH
+	4ynoC1bbHXy9EELfG0GLKc1vn2oWGY+XTBWZaVHi0Q7hfZDaaVO3qbWMnLHb+099hAc+Y8r3GT2
+	keY9CesUeVQh7bAaaNVUv4kBwujQC1d6GKytvIjGfqfpDbM3N7ZgxbaQ88+E/84hjU5G155Gbps
+	0hPUwq5v0NCeOEg3kMziiaNwF66+BVlf3swkZGIS62qMKxRjjFtCl0w/2yaOYRO157nOa8Nmfxm
+	MBcHNBEsjqheLyzEUrJRbevJqmjbp0yQbDTi/Iwih+wmkD4wZWacQKkO4bJazilU5UsWH/l1sTk
+	u+8S2/wIEda8t401XJi1x8H9vJ
+X-Google-Smtp-Source: AGHT+IG5ddqfmifi5VByaek61GRCoRBitgX4pW6S8Z4zylqmqiKVQsSUQvi7rN7mfypTsbBeOen6Dg==
+X-Received: by 2002:a05:6a20:734e:b0:2ca:1b5:9d4d with SMTP id adf61e73a8af0-2e7bf478afcmr25167395637.2.1759202070064;
+        Mon, 29 Sep 2025 20:14:30 -0700 (PDT)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com. [209.85.215.173])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53ca107sm12350467a12.13.2025.09.29.20.14.29
         for <linux-tegra@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 20:07:15 -0700 (PDT)
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-330a4d4359bso4911783a91.2
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 20:07:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWE2NVRm5EYG6Mnc2y7+GARXpw0ces+bzqixd2Y9qA04hvyxN4b/i0A8rF0kZoAtoSkmCr69HkILz5Lbw==@vger.kernel.org
-X-Received: by 2002:a17:902:f64b:b0:275:f932:8636 with SMTP id
- d9443c01a7336-27ed4a2d54fmr206796235ad.38.1759201634408; Mon, 29 Sep 2025
- 20:07:14 -0700 (PDT)
+        Mon, 29 Sep 2025 20:14:29 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b523fb676efso5287972a12.3
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Sep 2025 20:14:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUizo+UzYjHWzMZK1WkpG+R3E0Lfv3MdOBdt/iQBMUV9ExxUoNaYiBrpLq8HEuNfI/AHXB15ru+klVxMQ==@vger.kernel.org
+X-Received: by 2002:a17:903:1209:b0:27c:56af:88ea with SMTP id
+ d9443c01a7336-27ed4a60a90mr164034935ad.60.1759202068865; Mon, 29 Sep 2025
+ 20:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-2-clamor95@gmail.com>
-In-Reply-To: <20250929142455.24883-2-clamor95@gmail.com>
+References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-3-clamor95@gmail.com>
+In-Reply-To: <20250929142455.24883-3-clamor95@gmail.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 29 Sep 2025 20:07:02 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
-X-Gm-Features: AS18NWCupJdoWovR_kE0x_uWeV-e4Q15rTRpmAHzxBq1v_8sPWAFlU2cXRm8lAs
-Message-ID: <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG
- LD070WX3 panel
+Date: Mon, 29 Sep 2025 20:14:17 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WH5rsQR0vnsdZqfA-K-4AWSyOOfbe3g1H7pYCG0AigZw@mail.gmail.com>
+X-Gm-Features: AS18NWAj5Q6YXwI8UEKn83gnNL36khKZ6enBt8j4y4L77Jpu4EeJviWpKmgJt1I
+Message-ID: <CAD=FV=WH5rsQR0vnsdZqfA-K-4AWSyOOfbe3g1H7pYCG0AigZw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/8] gpu/drm: panel: add support for LG LD070WX3-SL01
+ MIPI DSI panel
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
@@ -96,69 +96,97 @@ Hi,
 On Mon, Sep 29, 2025 at 7:25=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.co=
 m> wrote:
 >
-> LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which i=
-t
-> clearly is not. Address this by adding the proper schema for this panel.
->
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
->  .../display/panel/panel-simple-dsi.yaml       |  2 -
->  2 files changed, 60 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld=
-070wx3.yaml
->
-> diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.=
-yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
-> new file mode 100644
-> index 000000000000..0a82cf311452
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +static int lg_ld070wx3_prepare(struct drm_panel *panel)
+> +{
+> +       struct lg_ld070wx3 *priv =3D to_lg_ld070wx3(panel);
+> +       struct mipi_dsi_multi_context ctx =3D { .dsi =3D priv->dsi };
+> +       struct device *dev =3D panel->dev;
+> +       int ret;
 > +
-> +title: LG Corporation 7" WXGA TFT LCD panel
+> +       ret =3D regulator_bulk_enable(ARRAY_SIZE(priv->supplies), priv->s=
+upplies);
+> +       if (ret < 0) {
+> +               dev_err(dev, "failed to enable power supplies: %d\n", ret=
+);
+> +               return ret;
+> +       }
 > +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +       /*
+> +        * According to spec delay between enabling supply is 0,
+> +        * for regulators to reach required voltage ~5ms needed.
+> +        * MIPI interface signal for setup requires additional
+> +        * 110ms which in total results in 115ms.
+> +        */
+> +       mdelay(115);
 > +
-> +allOf:
-> +  - $ref: panel-common.yaml#
+> +       mipi_dsi_dcs_soft_reset_multi(&ctx);
+> +       mipi_dsi_msleep(&ctx, 20);
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: lg,ld070wx3-sl01
+> +       /* Differential input impedance selection */
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xae, 0x0b);
 > +
-> +  reg:
-> +    maxItems: 1
+> +       /* Enter test mode 1 and 2*/
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xee, 0xea);
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xef, 0x5f);
 > +
-> +  vdd-supply: true
-> +  vcc-supply: true
+> +       /* Increased MIPI CLK driving ability */
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xf2, 0x68);
 > +
-> +  backlight: true
-> +  port: true
+> +       /* Exit test mode 1 and 2 */
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xee, 0x00);
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xef, 0x00);
 > +
-> +required:
-> +  - compatible
-> +  - vdd-supply
-> +  - vcc-supply
+> +       return 0;
 
-I suspect you'll get a NAK here because you're not preserving backward
-compatibility for existing device trees. While there can sometimes be
-reasons to do that, you'd need to provide a very strong justification.
+Shouldn't this return the accumulated error?
 
 
-It seems like instead of breaking compatibility you could just have
-two supplies:
+> +static int lg_ld070wx3_unprepare(struct drm_panel *panel)
+> +{
+> +       struct lg_ld070wx3 *priv =3D to_lg_ld070wx3(panel);
+> +       struct mipi_dsi_multi_context ctx =3D { .dsi =3D priv->dsi };
+> +
+> +       mipi_dsi_dcs_enter_sleep_mode_multi(&ctx);
+> +
 
-* power-supply - The name for the "dvdd" supply.
-* avdd-supply - The name for the "avdd" supply.
+Maybe add some comment about ignoring the accumulated error in the
+context and still doing the sleeps?
 
-...and then you make both of them not "required". Maybe you'd add some
-documentation saying that things might not work 100% correctly if they
-weren't provided but that old device trees didn't specify them?
+
+> +       msleep(50);
+> +
+> +       regulator_bulk_disable(ARRAY_SIZE(priv->supplies), priv->supplies=
+);
+> +
+> +       /* power supply must be off for at least 1s after panel disable *=
+/
+> +       msleep(1000);
+
+Presumably it would be better to keep track of the time you turned it
+off and then make sure you don't turn it on again before that time?
+Otherwise you've got a pretty wasteful delay here.
+
+
+> +static int lg_ld070wx3_probe(struct mipi_dsi_device *dsi)
+> +{
+> +       struct device *dev =3D &dsi->dev;
+> +       struct lg_ld070wx3 *priv;
+> +       int ret;
+> +
+> +       priv =3D devm_drm_panel_alloc(dev, struct lg_ld070wx3, panel,
+> +                                   &lg_ld070wx3_panel_funcs,
+> +                                   DRM_MODE_CONNECTOR_DSI);
+> +       if (IS_ERR(priv))
+> +               return PTR_ERR(priv);
+> +
+> +       priv->supplies[0].supply =3D "vcc";
+> +       priv->supplies[1].supply =3D "vdd";
+> +
+> +       ret =3D devm_regulator_bulk_get(dev, ARRAY_SIZE(priv->supplies), =
+priv->supplies);
+> +       if (ret < 0)
+> +               return dev_err_probe(dev, ret, "failed to get regulators\=
+n");
+
+Better to use devm_regulator_bulk_get_const() so you don't need to
+manually init the supplies?
