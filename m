@@ -1,206 +1,300 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010006.outbound.protection.outlook.com [52.101.56.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAE43043B8;
-	Tue, 30 Sep 2025 15:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759245207; cv=fail; b=TUYYa7GmtWOauNKDG9O9LrKuqpkGXJUwO6V6vb9VkhGzkvDGnx9TWFFXV1CWd0VvydBh6gqD8mfB02mXEr/+DE9j09K2JQdnLGjopMumnrCy+A+Gyvx0RDBWAOylblsfhWnwO2o3xTv3v95+lA/4zhMpuGXmKvuqQAWbzirjRMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759245207; c=relaxed/simple;
-	bh=Las3IO+3hwDqv7SH84fzP7rJG0F66kyDrfa5GCA2RpU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pO5sVX0L5so+cjNWTP4Yml5M10qoMJon624Jnf4ZJmrAWXzMEW0D7Yamo5pJYFMabddwQObYLVC3kQ8ilHCDSyKQPFvK5mZt/xfGxE9tiBRP9heG7NPf7pkY1XRGSoHonjJoyTXXk90QzA45Hc/scFkLviQZu49poM2cFUfnLTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z39ZZb5H; arc=fail smtp.client-ip=52.101.56.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E742472A8
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 16:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759249969; cv=none; b=YOB4lKCw7v9ZMwKksSNYKMqIKaqUsZ9J0UqnKbGZfMeeKxQCu3liGAoZk6uZ5sW/ml3D5tgJOWFuYaswO+9moq2z6HR+pOEUBxXci9srwXjWBf6eUs9i+PviGPzJ7YxlqKBgaecJFfJytjoEQdZsQTtVhkHsVco3JToqPMzLElM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759249969; c=relaxed/simple;
+	bh=oGF9yTei1g4gjv/QnS3yVyRP9PJi1rFlCgAm1v7R6Zo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aouhp9S/4Uj/G+EYopTXAR3dNSmu+BfW37zOYYTUdtDVm3a9kyT9av0sxoMCPGA1BWdWQVB84Z+UmGRoyeh6aAuxeKcMCnO5/n1GvaTAd8pz8pvkCZ82+dFi4K6nI3AppPaOGA9gQFPd7nXYkd8kJYscTi2q8hW962nknh2+rGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7TMdf3c; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z39ZZb5H"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Okcvar9ZhMdbb2iCEXrwA+9TsK3ZR41A1pdYQZ+fnYZyWLmqmF+4P2YXKLgLP3sZNzGlDTMnicOVXbblN1Al1MDYLEdkVuD/hs+s66dtXcUMlhc183JSXLhiwHphtrXDOYtVQ76t2tlbuywLaXpxcdrIPxMirRCwc/6WdAdQ2zULPgsKXQ7EH1KByVWYphVP3bxSPyPdarsWzUS4hYCrswWy9gzDEhD+cH95JaIn2AbLtlxfKuZ6zYcKceW7icITNUjAz3i1wosgHMRE/ma8mtW5EErlenKe3RUuyBumdl01wSa+JNrgLwrzQjfHOE4Nn7tWy6G+YIyjUcjdA/fwIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0FywxxbH4fkQCFFNMZz9SLc77GpqcukMToQ1uA6VZAU=;
- b=Q6Y6P7Fsz85MXtsSpu1Z0b9xt+Wf/WZrEJi0PSrzYCvZA8TU+yJxsXQD+0btlHUcqP/U30U6YhspptaSDThnRByxVmZjHY4QWQjkSU7Yr4gaVm9htmoT/fPGgbONpzBMM4xdQMPFiTIhzcO7w/UwLbyzctCNi/vXwbA2ESYypkqzkjnLltM0JiEOeUUe79zmlnyX51x6ph6OhSR7g3POeDH8SG8E3tW3DwPEasfH63G7MbHEclmscq3AOnvX3WFMP+MCAuayhVqAKhmZI9D+xDvHriQ8SfCT3vlf7fYEieFx2g68SUbuAuEJFcQv2TPTIGLaKpLrN8LDC0qKdeNYNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0FywxxbH4fkQCFFNMZz9SLc77GpqcukMToQ1uA6VZAU=;
- b=Z39ZZb5HYU/oC8wCbKdzEt+rr+PYy2iYF26SOSNxwhfQ+c+TNXCrQrJ7j7PPKeOEcFSsktQ52nl40ApGmnn+LIELHSsklFJWt2Rn239T9SQLrv+iiwnIr5dTZy8P/JplstpfSQ5hPh6IgoofJ5Lwd0ECXqTH1XwWhC9Lj3G6Z/SA1YN3o42FgAlo0ZliVVFY8Xbar3vHngZuFiSXfM5NzcEyE6noEU+g493EXQ4NbetdaAyVqmwaZK0CfQel1/T12p3UYkjZ0ljlKjOOQhlUCUSPBjPwCE2Ry8ZL/jGwbB8RCzcGZ4pZ7OobuyGT9FcDzvUvFpweYudrov+TyHChWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH3PR12MB7572.namprd12.prod.outlook.com (2603:10b6:610:144::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Tue, 30 Sep
- 2025 15:13:21 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 15:13:20 +0000
-Message-ID: <9a4e45df-785b-4620-b86b-92f9121d9dbd@nvidia.com>
-Date: Tue, 30 Sep 2025 16:13:15 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: tegra: Add pinctrl definition for PCIe C4 EP
-To: Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- Gautham Srinivasan <gauthams@nvidia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20250919120920.158497-2-cassel@kernel.org>
- <aNVlhjAcCnGI0ziT@ryzen>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <aNVlhjAcCnGI0ziT@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P265CA0018.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ff::6) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7TMdf3c"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6364eb29e74so4394696a12.0
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 09:32:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759249966; x=1759854766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ywr/T8H21r9AOyqjIoUOVLC27W+yILSMEGkAVkNfxfs=;
+        b=G7TMdf3cbEgC8ruzjQ/JedFDAGQBz35rZtqyh5LkKc7R6XvJOSjv/SM2wBW68YceZY
+         S3NC0IMiV3uWjR5j3McYbz49lEMMfl14gYl/F9Co7IW5p08jZZDq0MxPIrFkrUOSlxoT
+         k6pR0Sn7/9PWhkY40lt9KnJa74j6sAv4GHNHqiFE7Fz25Aff2wOvm6VWBhmCBRbs8C1a
+         3f0t9nE5Xx7B27qVGXyzx2LtkrHA8HlRFWgO+nU/F0Bt9Y0WH8cwkYVQJipQAn3uEW8T
+         LyXY8b5e325zk4Ox3mLdnQjyEPLoWxJTrSY5GQMx39t2vj6UmjedDvc+Ty4fI+/V66uH
+         B1kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759249966; x=1759854766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ywr/T8H21r9AOyqjIoUOVLC27W+yILSMEGkAVkNfxfs=;
+        b=epUoZHOIRy4aLjER9v/g2Myh5NSGtCXCqcqD8s9aGputVekSoVTfpn6hOje0CW0nvA
+         st6ZQd4A6vKMyRdoVakqhyt7DCAibnglw4xmWNp4B+4TiSxkbWDfZDQT13qFCFpiCJ7e
+         iIoVr53RRyH4+bEWeAh22CgR4m1sxXoCI3Kh2F52CTx7a96Xh91HRZrH7XRW999+r2jC
+         6OSGujIZ6KAaeZEiX/CHdRPbBULDkYk38F28qcaQa2R1nTc2cjod3HIJpYlyjfqhsDCE
+         UTAqMlFPw0h04NHtSC+5r9aYGJSKUdaEpjhWM7lBHcNAwU4ys1GPzQbztOz1Vno7vyia
+         8kcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGq1UEHGN/yMpXWUuIZKTk28Y/Pw35kOa2ooGQl5Z2+FXkH2075/TWGLKqJ0/DGu68PrJxnnOiXeZR0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtEwY/TxtTd4VPghSgClHykNGrwGW0YRs4EFKiDnO9zwFP19u5
+	3NzjzvFtg18MG4kJ6GjPa/ee7+dGejCcJKrmkNm5HrzVJYdsxBxrtPKsIei0D1D4hQdVoWAJc6l
+	LQ8UgAAD7KXG/IfBxFDrYdFs+d4a2YSfzlXbs9IE=
+X-Gm-Gg: ASbGncv8EcgAdSIx3CZJmJrO64aKGECLvA/pFxFpIiIZsvnmPXq+f0sPJshJ6mq0K8J
+	/MC5peDNIzM9vu+bamWsAYMWRRj0DsOl8Lq3wR+2dQZikUYO2sPujypFzzdvW9TzBo78RoDCPsC
+	ItM9t/e6/3b5miHEgcH2TdcJ7C0WvmKoJ7B9iUsvyA7d+7ecP4wQkh0P7PN+GdvzDYYgDGM+ub7
+	8ewCJOFEQBPqc1S8dId/yqeEUlw7Q==
+X-Google-Smtp-Source: AGHT+IEJHPU/9y3qBt/SABv++MOXGcN86o3VBfE4lwa8ckg4ceTKcaWY4Edg+8QEKEvz47kn06lNSjx+U7OGCjruhFQ=
+X-Received: by 2002:a05:6402:51c6:b0:634:ba7e:f6c8 with SMTP id
+ 4fb4d7f45d1cf-63678d17922mr511880a12.34.1759249965859; Tue, 30 Sep 2025
+ 09:32:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB7572:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70ad4ed5-515f-4961-fd0a-08de0033e42e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TTZycU55bW9WSUZ1enJ3Lzg4Q043RjZxM2M3aGlvZVREQ1Y2L2ROZzhYbXI1?=
- =?utf-8?B?OTJ3KzNuOXZTRjZwMVlNYnZ0aXJhY0VFcml4OStySDBwWDNtL2NlbEJxeURM?=
- =?utf-8?B?VkNXT2hEaGRYUmpmT0FiWW5XbmFETXpIcjRzYnJxNFBsV0p2WjFUUWw1Z0tG?=
- =?utf-8?B?Q05QQ1JEWTE0NXFVTGZoSWZKeXFTb1IxUmdPZkNlQnBKc3Y3clEwSzE0UXJ0?=
- =?utf-8?B?MDc0QUp1NVFDNXg2WDVKQWlYZFhrOExldkMvNjhaNFJhTkdvN2RqL0REOEFG?=
- =?utf-8?B?aktBQmViM1VVUU90T3VKQ1B4UHB6cUFZUVVLNi93bGMvT3Rnc20rUEptc1pt?=
- =?utf-8?B?UzM4T0ptWHhnRC9POEc4N0VHUkdnRVpWWmM0SWhmU293VHRzbE1Ja3ZNOTEr?=
- =?utf-8?B?U2hkUnU4ODY5dDVHT1F5ekdWSlljeTRYYkRNSWNyclBSaTNWN0pUSkpMYW9G?=
- =?utf-8?B?Yll2MDFWQ3JWQUdvM0kreDRhdkdGa2IrYyt3MldEalVPYnk5YVR2R3NPdy96?=
- =?utf-8?B?M1J2b3R1bCtON2wxWTVsaW5FNDZDWk9XREZIN2JhcXJCcXpic09PR08weS9P?=
- =?utf-8?B?Vkx5UStodytpY2xmcmxScWVINCtJYXp5ZFFSZGRkaDR2QnVqc3dnWVQrWnpQ?=
- =?utf-8?B?bkQvaG5oaEtmMnlKTVZIRExwcDZmMXFYRVkrNUkxMFpheU1IamtpRWdwZFFK?=
- =?utf-8?B?WWE3aEJZcWFWRUZVKzlSUS8vdWpGYlFsZEd3NHh5MUx0MW9UeHl3am5LSHhw?=
- =?utf-8?B?WXIrUkZFaVZOeitnSGRRdkxRd3luSzhZZHFBbjlXODczT29HMHBlandwRUxE?=
- =?utf-8?B?OVBlaWcvemEyZklCTUVaTWJhVnhZTk9SNi9oNzRmekpQRi9tVkJpbStiUFRK?=
- =?utf-8?B?K0s2cUJyV3JYNHZpYzVnaFEzSkxFWWJEak9lOUJNYXlXV3dvSTBBU00yazI0?=
- =?utf-8?B?RmFxS1Z3NVdNTWpBdGg4R3lNczhPZUkzZWtQQi9SRWRobG1yTjFhYjd3VUQz?=
- =?utf-8?B?aHlHZDFJMUUya08vUGxoQ0tyQUlMTVRmcEo4VEJHVTJadEFSbGZBUm44YXNP?=
- =?utf-8?B?S3lsNU8xcTFkdTc1Snl4d2F4ZWFVWlJSREZOMWo5dWZqN0pZbmp1bHBuRFpM?=
- =?utf-8?B?aUc1TVpwSWsvcGsxbTRDRkMrS05YT0hZU25BMGh2Uk9xVXZrajhUelpvaFdP?=
- =?utf-8?B?SUpjc0ZmeEtSTFdqMm5HbHFxL3pYTDJOYXIrbitqVTB3N1NIRUt2Yit3UlZz?=
- =?utf-8?B?TkZxM1ZnRkxLRUQyMVdJaHQreW9Ea3BkS0V6d1pNenJ4NVBxOWY3MGIxZWQ3?=
- =?utf-8?B?cUwwYWlOSzVwMXN1NWdPODhaSFB2R0Y1akprQ2NTdmVRQkdGZEJHc3NvNnNB?=
- =?utf-8?B?MTdyb3F1bTQvMy8zU1RtVFZYVWp5NGRMRDlCMUdRWTRLejQ4OHBycTlYY3cz?=
- =?utf-8?B?OVhlaEIzZnhtLzlHbFFFTEJvMGdqcEd6TUg1SlQ5WnJHb0xaTlRJWWxLdk5O?=
- =?utf-8?B?bVZUYXVRQTBQUkduS0FHVVV6eHgrOFQ0bUErcWU1Nzg1RHljU29NTjFkRlRF?=
- =?utf-8?B?QWpHNENBMkN1djRrY3lQUkdqaG1mZnZtTFlKTlA1bTVZZ04vbzN4eFlRY0RS?=
- =?utf-8?B?YnhhTFRjZzM3c0szNkUvSkJvbFo2WW1aWDRQdlJvTlplOTd5VmpRNDRkL1JG?=
- =?utf-8?B?MHBJRHpjb0hwZDlpczZMVmEwTWpyWXZOUTRkeDhxU3RORFlSbWFVV0pGcDA5?=
- =?utf-8?B?T3FIV2NLQzVLZUR1b2JYQUxHMGZHMDd1Wncvcmpaay9VcGZ4WXFNT2dndU1D?=
- =?utf-8?B?UEh5ajQzZFVGelkwVDcvVmx4OElEZWZYVW42dk5DZWxhU0lCelFwaUNETmJT?=
- =?utf-8?B?M1IzYmFaRVZuVnpsejEvRnBQVWxCTVlLRzFNZGdxd3ZNWjJiQk51d2FDS3Bx?=
- =?utf-8?B?SFFHbmgvVHUralhFSXFYRklnTDdQYWZxS2dZblV0UzVKWUpKRCtBUm4welJL?=
- =?utf-8?B?eW9BMzJiYWJ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YzJRSUVnNU5WZFoyMC9DcmpwQ1A4czlkL0MydllxZmh2eGpXdXZXMG5pcDJG?=
- =?utf-8?B?aHBPcTA5SUprN2Z2VGtZRFpTSVViOTVFZWwyWWZMaW54MXpEZWU1eG1tUEFC?=
- =?utf-8?B?c3c3SW9UblIxNnZUZzFuRXp6RDJ4OUUzY3g1eW1xanZVZnZlMERVdUMyeUk5?=
- =?utf-8?B?SGdxOVpMVVB1bllPWS9OcmJvYklMVUY5ZTFIMlViZjlWWlhBMUM3M0xiaHBj?=
- =?utf-8?B?cHRQNG5iUjVSbHFHWnNiSGtzcjllTEdXWEdWdk9jVmM3SVY2Snh4eDdXZVBG?=
- =?utf-8?B?YndWUWE1YWtRaWRuMjRBRVBwbGZjR1A1cHlSN2NmZkNPdi9qTGpCd1I2aDlD?=
- =?utf-8?B?RjM4TDJnY0xtZm9SWi9EcVJmSXlKR2h4TlpZQkpFeU1Ka0x6cUEvcEs0aFZt?=
- =?utf-8?B?RnRhLzRjejN5UWtxUU9FUXpFc3pvVFlCdnVrMk9yRDIra2VuRGhOU3JUbWd1?=
- =?utf-8?B?cmVlMjR5YWphMlNQRXRyVTVFdjRFZHZWZWNaNHE5K2tLZG8zRVlHUlVTbHNP?=
- =?utf-8?B?QVk0UFI2Z0RKR3FDT0g2b0RzWSsxSEs2RG1lVnhvZUc4MDExaDErbkpFMFp6?=
- =?utf-8?B?SjgxdnhOMUtMZXVTdzBzRzYvQy9hcFBiVTR0TURVczNwd1JSS2hVbzRpMENq?=
- =?utf-8?B?dlNWMmhJVlhXaEx3b0YyZ210Skw2OE9YYk9Pa1g3emRNNG1VZTY0TlRtUFEv?=
- =?utf-8?B?WXB1bFBCNVA0bUtXZUFVb0lSMkk3aWpyVnlzSUN3SXVtZHd6MFFqQk8wM05l?=
- =?utf-8?B?OWdpdkovNnlPWjAxVlMwVDRoYlJXSTRVOGpoeUk3K1UxZHZobkZHZmhrRVF4?=
- =?utf-8?B?UDNQMFNYZ3IxeTlMZUNlc2xFcE5ZdStUVEk3aGFMNFNQSEc2TXJzVWJFYlEr?=
- =?utf-8?B?QjE0alNhRmhraFlZS2JjRGhULzJIb3hFa0R0MEZHSmZvUVJCbjljLzhCWGRV?=
- =?utf-8?B?T0tUY1NsZitlV3lGVWJqU3dESHNudFNrTUV5VDJWcm5TeUxGUnRPSFkwVUVh?=
- =?utf-8?B?b0xNdUs3ditqWUM0ejNkbTBIKzZxUTdXWklyUHBLbnhLMm9PajVOYm40NVdR?=
- =?utf-8?B?SlIyekwvUE9uOVdpS3VYbTRaUHNIdjFIbCt6bS9KcXRTR1VhMzBYUE9kN0hn?=
- =?utf-8?B?QStIYnc1YXUzQ2ZzejZsenZjUWJEZmhhVUV4ODZkd2RuV05iYllzaE9rTGF3?=
- =?utf-8?B?RVg1NHdjUDN4czhnYjEwWkVSb1NGSkdNNkhESld0YlJEbVBDWWc4T0E1RmE2?=
- =?utf-8?B?Mi9iWVZXTjRJWUpoakpKTDBMY2hOYmFKTHRtdTU0Z21LQ0lsTFd0M3AvK24w?=
- =?utf-8?B?cEFNUUc4RDdLSUpUZ0RtNHZQTzdsZmpDQWNwa0JKazlqZmdhQmF0emY0S1Ax?=
- =?utf-8?B?ZVpoSUo1TjBOSlNJd1Ntd0xPWUdIbmdSeGRSMGUxV0o5WlhvTE5peDgyK2l1?=
- =?utf-8?B?Nmw3Wld5T01RcHNyQllLNnpTU0tFNlJGaEIxNEtmUFkzcEtNREUvaGJscmJo?=
- =?utf-8?B?RHdnNkNEQmdDSUp1Wm1pWWlBellyMmJZVUp6TEp3MmJCZXdMUElFYTg2bFRs?=
- =?utf-8?B?cmIzQmMzYnBwcktVaThGS0pXZjYwdld2cUtWd0YyMjhycXRxNE9MeU5KK1hV?=
- =?utf-8?B?V3BNZGRlUFgrcHlZOUI2TFA1T0hRZ0t4SXRZVHdodThBVStOQlJzQVNBVis5?=
- =?utf-8?B?WW9GK2lpS29Oc0FOeTcxNlMrODNDR0M3emxhVExoek43OUxvNnJZd2sya3RV?=
- =?utf-8?B?K0lGakRkRzh6c054QXB6UVJ6Vit0RzlsOUN6NkNQNFVIeW0xVmZodVVha0NR?=
- =?utf-8?B?dzYvRExPTE1iSFh6S1ZRTkdERVgwQm9EQTV3R1lma2NuUVoyalR2aDZUS3RV?=
- =?utf-8?B?RXYrbDh5QVZXU2JEVDY5Q2tJaHBjVzNFVnUvdU10OEV5Vmw5K0w1Ky9GeWo1?=
- =?utf-8?B?cWt1UUhSbWYwOEd6elY3S0djY1c1d0Z6WWlVV2ZxNWhGR1VwYUY5MVFRdC9X?=
- =?utf-8?B?SXBUNGNTTkM0NFRMeFZIUUpuNWFOczdCSVNTdCtxdTJqdGFETEhjSWNrOXh3?=
- =?utf-8?B?dllSaENNRTFmaDV5cllhVS9HQkcwNUdoOWlRUXhCOTRYN3NnTHlPaU1qMGVi?=
- =?utf-8?Q?4XuSzffi93MJDfKQ3jredlvt9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70ad4ed5-515f-4961-fd0a-08de0033e42e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 15:13:20.8322
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +mSM+8kAx0nz341vN7ir6XXv6x3VjTgW/cevamtOPB0yGVCh9ylvG3se9rkQ+XmZmawfKGE/W7jTpKUEjbm6Mw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7572
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
+ <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
+ <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
+ <CANAwSgTuX3t2-SNPe4OAzGuDpL5RotxX8t+Zx+gcwFKdj3ZEng@mail.gmail.com> <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Tue, 30 Sep 2025 22:02:28 +0530
+X-Gm-Features: AS18NWDpwy8wPfpGXTgiB-hfuQbqsocd9S2KZlBOjIaIkDW6NFhuEmGm8l9CeiA
+Message-ID: <CANAwSgTKFSf-EUGSpErdS1Y93AwunFOK7omH4T+gE_z2XttVtw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
+ nvidia,tegra-pcie.txt bindings documentation into a YAML schema
+To: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Rob
 
-On 25/09/2025 16:53, Niklas Cassel wrote:
-> On Fri, Sep 19, 2025 at 02:09:21PM +0200, Niklas Cassel wrote:
->> From: Gautham Srinivasan <gauthams@nvidia.com>
->>
->> Commit 0580286d0d22 ("arm64: tegra: Add Tegra234 PCIe C4 EP definition")
->> added the device tree entry "pcie-ep@14160000" for C4 endpoint. However,
->> it missed pinctrl definition. Without the pinctl definition, the C4
->> endpoint of Jetson Orin Nano does not work. Add the missing definition.
->>
->> Signed-off-by: Gautham Srinivasan <gauthams@nvidia.com>
->> [cassel: Add to the existing nodes instead of creating new ones.
->> Remove non-existing nvidia,lpdr property. Rename node to match dtschema.]
->> Signed-off-by: Niklas Cassel <cassel@kernel.org>
->> ---
->> Changes since v1:
->> -Remove non-existing nvidia,lpdr pinmux property.
->> -Rename pex_rst_c4_in to pinmux-pex-rst-c4-in to match dtschema requirement.
->>
->>   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
-> 
-> Hello Tegra architecture maintainers,
-> 
-> any chance that this could get queued up for 6.18-rc1 ?
-> 
-> The device tree node it modifies pcie-ep@14160000 is marked as disabled
-> by default, so there should be no risk of regressions.
-
-Sorry looks like this missed v6.18-rc1. However, looking at this some 
-more, I believe that this is applicable to all Tegra234 platforms. In 
-fact, I see that we are also missing the pinmux for the other EP devices 
-too [0]. It might make sense to add these all at once to the tegra234.dtsi.
-
-Jon
-
-[0] 
-https://nv-tegra.nvidia.com/r/plugins/gitiles/device/hardware/nvidia/t23x-public-dts/+/refs/heads/rel-36/nv-soc/tegra234-soc-overlay.dtsi
-
--- 
-nvpublic
-
+On Tue, 30 Sept 2025 at 20:07, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Sep 29, 2025 at 10:25=E2=80=AFAM Anand Moon <linux.amoon@gmail.co=
+m> wrote:
+> >
+> > Hi Rob
+> >
+> > On Mon, 29 Sept 2025 at 19:19, Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Mon, Sep 29, 2025 at 2:40=E2=80=AFAM Anand Moon <linux.amoon@gmail=
+.com> wrote:
+> > > >
+> > > > Hi Rob,
+> > > >
+> > > > Thanks for your review comments
+> > > >
+> > > > On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wrote:
+> > > > >
+> > > > > On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@g=
+mail.com> wrote:
+> > > > > >
+> > > > > > Convert the legacy text-based binding documentation for
+> > > > > > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, fo=
+llowing
+> > > > >
+> > > > > s/YAML/DT/
+> > > > >
+> > > > Ok,
+> > > > > > the Devicetree Schema format. This improves validation coverage=
+ and enables
+> > > > > > dtbs_check compliance for Tegra PCIe nodes.
+> > > > >
+> > > > > Your subject needs some work too. 'existing' and 'bindings
+> > > > > documentation' are redundant.
+> > > > >
+> > > > Here is the simplified version
+> > > >
+> > > > dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings documentat=
+ion
+> > > > into a YAML schema
+> > >
+> > > Still doesn't fit on one line and you say bindings twice:
+> > >
+> > > dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
+> > >
+> > Ok
+> > > >
+> > > > Convert the existing text-based DT bindings documentation for the
+> > > > NVIDIA Tegra PCIe host controller to a YAML schema format.
+> > >
+> > > s/YAML/DT/
+> > >
+> > > Lots of things are YAML. Only one thing is DT schema.
+> > Ok, understood.
+> > >
+> > > >
+> > > > > >
+> > > > > > Cc: Jon Hunter <jonathanh@nvidia.com>
+> > > > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > > > > ---
+> > > > > > v1: new patch in this series.
+> > > > > > ---
+> > > > > >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 ++++++++++=
++++++++
+> > > > > >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ----------=
+--------
+> > > > > >  2 files changed, 651 insertions(+), 670 deletions(-)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidi=
+a,tegra-pcie.yaml
+> > > > > >  delete mode 100644 Documentation/devicetree/bindings/pci/nvidi=
+a,tegra20-pcie.txt
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra=
+-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..dd8cba125b53
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.y=
+aml
+> > > > > > @@ -0,0 +1,651 @@
+> > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > > +%YAML 1.2
+> > > > > > +---
+> > > > > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
+> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > +
+> > > > > > +title: NVIDIA Tegra PCIe Controller
+> > > > > > +
+> > > > > > +maintainers:
+> > > > > > +  - Thierry Reding <thierry.reding@gmail.com>
+> > > > > > +  - Jon Hunter <jonathanh@nvidia.com>
+> > > > > > +
+> > > > > > +description: |
+> > > > >
+> > > > > Don't need '|'.
+> > > > >
+> > > > Ok
+> > > > > > +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20,=
+ Tegra30,
+> > > > > > +  Tegra124, Tegra210, and Tegra186. Supports multiple root por=
+ts and
+> > > > > > +  platform-specific clock, reset, and power supply configurati=
+ons.
+> > > > >
+> > > > > I would suggest not listing every SoC here unless the list is not=
+ going to grow.
+> > > > >
+> > > > Here is the short format.
+> > > >   PCIe controller found on NVIDIA Tegra SoCs which supports multipl=
+e
+> > > >   root ports and platform-specific clock, reset, and power supply
+> > > >   configurations.
+> > > > Ok
+> > > > > > +
+> > > > > > +properties:
+> > > > > > +  compatible:
+> > > > > > +    oneOf:
+> > > > >
+> > > > > Only 1 entry here, don't need 'oneOf'.
+> > > >
+> > > > I am observing the following warning if I remove this.
+> > > >
+> > > >  make ARCH=3Darm64 -j$(nproc) dt_binding_check
+> > > > DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,tegr=
+a-pcie.yaml
+> > > >   CHKDT   ./Documentation/devicetree/bindings
+> > > > /media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetre=
+e/bindings/pci/nvidia,tegra-pcie.yaml:
+> > > > properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
+> > > > 'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pci=
+e',
+> > > > 'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
+> > >
+> > > Because you made 'compatible' a list rather than a schema/map/dict.
+> > > IOW, You need to remove the '-' as well.
+> > >
+> > Ok fixed.
+> > >
+> > > > > > +  nvidia,num-lanes:
+> > > > > > +    description: Number of PCIe lanes used
+> > > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > >
+> > > > > The examples show this in child nodes.
+> > > > yes it patternProperties example I missed this.
+> > > >
+> > > > patternProperties:
+> > > >   "^pci@[0-9a-f]+$":
+> > > >     type: object
+> > > >
+> > > >     properties:
+> > > >       reg:
+> > > >         maxItems: 1
+> > > >
+> > > >       nvidia,num-lanes:
+> > > >         description: Number of PCIe lanes used
+> > > >         $ref: /schemas/types.yaml#/definitions/uint32
+> > > >         minimum: 1
+> > > >
+> > > >     unevaluatedProperties: false
+> > >
+> > > What about all the other properties in the child nodes? You need a
+> > > $ref to pci-pci-bridge.yaml as well.
+> > Thanks for the input.
+> >
+> > patternProperties:
+> >   "^pci@[0-9a-f]+$":
+> >     type: object
+> >     allOf:
+> >       - $ref: /schemas/pci/pci-host-bridge.yaml#
+>
+> That's not the one you need. Read my reply again.
+>
+I'm sorry, I missed pci-pci-bridge.yaml
+> >       - properties:
+>
+> properties doesn't need to go under allOf. Actually, don't need allOf
+> here at all.
+>
+> >           reg:
+> >             maxItems: 1
+>
+> >           "#address-cells":
+> >             const: 3
+> >           "#size-cells":
+> >             const: 2
+>
+> These 2 are already defined in the referenced schema.
+Earlier, I had tried to search for these reference schemas,
+but I could not find them.
+>
+> >           nvidia,num-lanes:
+> >             description: Number of PCIe lanes used
+> >             $ref: /schemas/types.yaml#/definitions/uint32
+> >             minimum: 1
+>
+> I assume there's a maximum <=3D16?
+I will check and update
+>
+> blank line here and between all DT properties.
+>
+> >         required:
+> >           - "#address-cells"
+> >           - "#size-cells"
+>
+> These 2 are already required in the referenced schema.
+Ok dropped
+>
+> >           - nvidia,num-lanes
+> >     unevaluatedProperties: false
+> >
+> > > Rob
+Thanks
+-Anand
