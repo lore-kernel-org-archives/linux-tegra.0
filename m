@@ -1,274 +1,214 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557151F237A
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 14:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C613043DC
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 14:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759243045; cv=none; b=oNnJ/CU9FAYD+MMiA62+ABTlDmlj+yIaqXjrQ3H0YMk9bg4YSwnwpIDFcDBIyPkCOuc63YPbsktqEPoZo8bTTnDl/SaApi6LNpEs4qlcwabl1+1m2ZGckD9CWzg6C5gL7CZqBurtlpn9FLfmAHbYTTM+4mtvMKBMVLGB4u0N0BE=
+	t=1759243683; cv=none; b=lCzzH/Bqfpse+RotgV14fP2oPTE4ThLwJX5IUjuPgkgevUaIih7zH76Oc4OYtioS2Q4SclAthVL+psSIVnEEN4CS+yaeNayTlmo5tiVW5IGvkNY6eNPwziPu99VM4D2yH0Pw4HewLSE4L5lNwkQlC8LHqfF3mAV9UlA+510uSj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759243045; c=relaxed/simple;
-	bh=tv8tP3CbvwVbP03SYbdUFItd/4hYvZNZmJe7AJScMmk=;
+	s=arc-20240116; t=1759243683; c=relaxed/simple;
+	bh=/sU89QwPUahqC2xEJ5I3Jkyw0Va84QDHH8CcqKX6H9s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F+CkRzEl+VIAhp1hZzMT0dEY3ddmYFVoY6voUQrEabZKQM3CX94uRMU9h9tzErTdJ4jl2W0kZTWgIt+BR9xcqVXQNVrymbktuDe/9TqfVhPPY2xYqgrrQQTtdK5Z+x3SJt+6tETR81KbE4ISygJ+iiV83BIXOGSqPVT03pbEPOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ispdYJ8v; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=r0BkfzMnqpJt4yCsVZfc1Fvyp6O4l0Z1SfzGLKBgtmmRHLLYEBEcojH3ajU/O/otndIxoPHDROX/j+pePYXZK4PdQLtsS0XBjhyAVFQnetOcmcTa50mkN3PioKjlF4qjLCVprb6+v0ubOMoDtWm4L/UymCivPD1LIDxzweCEKCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxClFIkO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ispdYJ8v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04F27C4AF0B
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 14:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759243045;
-	bh=tv8tP3CbvwVbP03SYbdUFItd/4hYvZNZmJe7AJScMmk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ispdYJ8vdVZXbkBVyhOSQaOGiikySRLfMNskFg2jlCrmWA1VdG1IeuG/BRbSZDXle
-	 WSISY7nbKNL2L9xWve9b0l77/91Pdod2UwOzp4yc+gz5YRywP0BD9kd0j/zPWmEwwM
-	 Bz4CxqheU5E+xsqSV8T7W84vsvhnDzjQLu82Lxn5HADJKwYrsXDYHnGJOjuqt/e/j3
-	 w+1mN6nTdTdyq+PRmxL/wxkNDvcSbXSVDInMPvFTA+bjLFk8edfabiwyklzQO60xyS
-	 aSdLml0y6rn7pwRqdQeNu+4Xk8tZ0eWLVtWHWsLL26u3cHso3WQILgXxeVNgQOO2yS
-	 qEomdo++8sP7Q==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6364eb29e74so4110100a12.0
-        for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 07:37:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJkAu4bsScl20DR5YNBMA/UHaK2YdE2d3knTJYd14pSFB2MfP+fuH3iTTNuIMJI+dJ8LEdyBKXgMfLPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJsGZBLFHFWuTkQ2FoCPlFarlQiTozMEFFyATnUdOQ0laeCR6e
-	8V3oZ1QKqB7OznEBxYijJH9ey8JCQIg0PNIUDkqF2k3BKhT4lbBzZYRWF2MMrM2yitWUocqNryf
-	tHQ5xKvyFsKbK1wWXVC8wh+nUMu2l4g==
-X-Google-Smtp-Source: AGHT+IGgfxlodiz/IYQsAOQn6MLDa6csKlZJbZKJV75KAR1g4FNwPa42/5n0tcTx0LqLcbqk236kB6rAIkWIDfZAheg=
-X-Received: by 2002:a17:907:d19:b0:b46:31be:e8fe with SMTP id
- a640c23a62f3a-b4631ce4b96mr125333766b.11.1759243043364; Tue, 30 Sep 2025
- 07:37:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxClFIkO"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e542196c7so12503145e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 07:48:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759243680; x=1759848480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+uWMswBnAUaMNeL0bXv/Vzh36u4kcyphWPqYjGwjiu8=;
+        b=RxClFIkOTZXV7KwOKDZEswc8JqHlSHY5NS66a834y4fdb3UWTGBft/jWXlc8dh/L6w
+         2o2uxEyPLPjuNdIBKISntIB4aQ6oBVZg0KMiwedZu71Yd3lKNdcHBuixypqFU8frrYZu
+         cx/i56F+ASq2oph+zHPxQ4TCrqoaVYtWcMiBPM2vGguzIT1AZPnYcaKDi/CdCJWed8Ap
+         DmAM+ETo3DAy6nKpQuVcfQ5zUvSuwMx1beXXoGcvUbQeIbTOc660/4kzSNO/t2sWaw5i
+         LJBGy80hsAr1PaJn/NL5PlISEWlEpoKuJTTm4j8I5zTl5znbU8yUQ1JNveui0cNPS0Z/
+         EBkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759243680; x=1759848480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+uWMswBnAUaMNeL0bXv/Vzh36u4kcyphWPqYjGwjiu8=;
+        b=bdRKepB1NcYe1DFOk5jrk9/8OSmtJpeW9+6HxpM/8a8Uwjv7SEwO5UEo8qPkkT6aB7
+         h4IeLxrmGlx2Ifmd9lFwT39kk1cdohZUGCDZInEBtmbVxYLyDNlt4lwV7302ih2+56do
+         cEnFAPqOAdkkVmKqsi47Kf2pAUCxG3QSpPb+i7o621ZH/wCFN/I6bCMDNwTTIaWlrO72
+         CFoK2k8fhNSjhnxbY3yZxcALVVK6TOGV+mKvcQFl9clcfz2ud5H44QeY3UhyTgf1xV3o
+         49bp8kA6N3w8oCOVDKM/rIKUPR6WfquROSdf/YxMdM6EdwB3jhamgS3bRYdtjTVheZtZ
+         ESyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIfiKcuXN0Qd9dP4Eu/i08v52HzejtBI4eFCMIdgxOoitCiJPEmfX7cbH8bUv/KDP9Mlh3QZHY4KFAnQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0aI1lOYzj97gzoZDsKmKYE0FqcdOg44Vh20cBDQ4JkV37MLfe
+	i1XDC+WgkstiCN4Go7nSIQsyAwK4XQKQP6DZ+kIW2smuUNPmHSDS7SDHaIUFBn2hiQtvpCU9yXJ
+	0q5gT/dFW1GcHTazT6cZpporyVwMLyE0=
+X-Gm-Gg: ASbGncscwunJfDOrR89JlhAFrtR44vmwLIU+DcqRGhaA7AOF3sri76ZI65Pjz25TTpt
+	a5dAEqwAlzjsMlTH+/vgD4hBzV7EX7rQH9FyqmOtoxB5/BVxGMkIFKxbHUf5kiHBEXjEIazNEL2
+	IloVST+kcb7SUDGjadrzkBzpxXlw9a78vvtin0z/UnsUc1rEYOdsXTN4l6ayTjY4FyHEVhvdY52
+	/DhH5BCvo6JOu3TycUUWks94TtI4oLm
+X-Google-Smtp-Source: AGHT+IHws2FT4ntqw2aBfyYphiayJTViDr0NCOtRLHShrE7HH9AkcKRZ2uE4KegclrFt6GzjPLHB7HCfhOLqLk8uwho=
+X-Received: by 2002:a05:6000:40dd:b0:401:8707:8a4b with SMTP id
+ ffacd0b85a97d-4240fde589fmr4347238f8f.13.1759243679506; Tue, 30 Sep 2025
+ 07:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926072905.126737-1-linux.amoon@gmail.com>
- <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
- <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
- <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com> <CANAwSgTuX3t2-SNPe4OAzGuDpL5RotxX8t+Zx+gcwFKdj3ZEng@mail.gmail.com>
-In-Reply-To: <CANAwSgTuX3t2-SNPe4OAzGuDpL5RotxX8t+Zx+gcwFKdj3ZEng@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 30 Sep 2025 09:37:11 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
-X-Gm-Features: AS18NWCO_YKNXT00tTFZtChritiXVTRzlLdNG8gyHODI9fKqf3yCIJP6TlxUrps
-Message-ID: <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
- nvidia,tegra-pcie.txt bindings documentation into a YAML schema
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-3-clamor95@gmail.com>
+ <CAD=FV=WH5rsQR0vnsdZqfA-K-4AWSyOOfbe3g1H7pYCG0AigZw@mail.gmail.com>
+ <CAPVz0n2Prw0ZoQhrodobmSpAu7XV6aX=NV=2ee0RwL3H5hWARg@mail.gmail.com> <CAD=FV=XD=L=otnj+YsQ1qEtrO_+wBD-ZYpDNmickcD1tb+6OoA@mail.gmail.com>
+In-Reply-To: <CAD=FV=XD=L=otnj+YsQ1qEtrO_+wBD-ZYpDNmickcD1tb+6OoA@mail.gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 30 Sep 2025 17:47:47 +0300
+X-Gm-Features: AS18NWDDLFPY7QuoEvdlKlGc5VsyjEg3iP3wTpt3AoBP5LXpgO2i_gfVf-6QDQM
+Message-ID: <CAPVz0n1y86mKKvViG9dVN4gkqkbsjcZrFraTtKQ+Tvf4DBJCVw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/8] gpu/drm: panel: add support for LG LD070WX3-SL01
+ MIPI DSI panel
+To: Doug Anderson <dianders@chromium.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2025 at 10:25=E2=80=AFAM Anand Moon <linux.amoon@gmail.com>=
- wrote:
+=D0=B2=D1=82, 30 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 17:34 Doug=
+ Anderson <dianders@chromium.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Hi Rob
+> Hi,
 >
-> On Mon, 29 Sept 2025 at 19:19, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Sep 29, 2025 at 10:13=E2=80=AFPM Svyatoslav Ryhel <clamor95@gmail=
+.com> wrote:
 > >
-> > On Mon, Sep 29, 2025 at 2:40=E2=80=AFAM Anand Moon <linux.amoon@gmail.c=
-om> wrote:
+> > > > +static int lg_ld070wx3_unprepare(struct drm_panel *panel)
+> > > > +{
+> > > > +       struct lg_ld070wx3 *priv =3D to_lg_ld070wx3(panel);
+> > > > +       struct mipi_dsi_multi_context ctx =3D { .dsi =3D priv->dsi =
+};
+> > > > +
+> > > > +       mipi_dsi_dcs_enter_sleep_mode_multi(&ctx);
+> > > > +
 > > >
-> > > Hi Rob,
+> > > Maybe add some comment about ignoring the accumulated error in the
+> > > context and still doing the sleeps?
 > > >
-> > > Thanks for your review comments
-> > >
-> > > On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wrote:
-> > > >
-> > > > On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@gma=
-il.com> wrote:
-> > > > >
-> > > > > Convert the legacy text-based binding documentation for
-> > > > > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, foll=
-owing
-> > > >
-> > > > s/YAML/DT/
-> > > >
-> > > Ok,
-> > > > > the Devicetree Schema format. This improves validation coverage a=
-nd enables
-> > > > > dtbs_check compliance for Tegra PCIe nodes.
-> > > >
-> > > > Your subject needs some work too. 'existing' and 'bindings
-> > > > documentation' are redundant.
-> > > >
-> > > Here is the simplified version
-> > >
-> > > dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings documentatio=
-n
-> > > into a YAML schema
 > >
-> > Still doesn't fit on one line and you say bindings twice:
-> >
-> > dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
-> >
-> Ok
-> > >
-> > > Convert the existing text-based DT bindings documentation for the
-> > > NVIDIA Tegra PCIe host controller to a YAML schema format.
-> >
-> > s/YAML/DT/
-> >
-> > Lots of things are YAML. Only one thing is DT schema.
-> Ok, understood.
-> >
-> > >
-> > > > >
-> > > > > Cc: Jon Hunter <jonathanh@nvidia.com>
-> > > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > > > ---
-> > > > > v1: new patch in this series.
-> > > > > ---
-> > > > >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 ++++++++++++=
-+++++
-> > > > >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ------------=
-------
-> > > > >  2 files changed, 651 insertions(+), 670 deletions(-)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,=
-tegra-pcie.yaml
-> > > > >  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,=
-tegra20-pcie.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra-p=
-cie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..dd8cba125b53
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yam=
-l
-> > > > > @@ -0,0 +1,651 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: NVIDIA Tegra PCIe Controller
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Thierry Reding <thierry.reding@gmail.com>
-> > > > > +  - Jon Hunter <jonathanh@nvidia.com>
-> > > > > +
-> > > > > +description: |
-> > > >
-> > > > Don't need '|'.
-> > > >
-> > > Ok
-> > > > > +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20, T=
-egra30,
-> > > > > +  Tegra124, Tegra210, and Tegra186. Supports multiple root ports=
- and
-> > > > > +  platform-specific clock, reset, and power supply configuration=
-s.
-> > > >
-> > > > I would suggest not listing every SoC here unless the list is not g=
-oing to grow.
-> > > >
-> > > Here is the short format.
-> > >   PCIe controller found on NVIDIA Tegra SoCs which supports multiple
-> > >   root ports and platform-specific clock, reset, and power supply
-> > >   configurations.
-> > > Ok
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    oneOf:
-> > > >
-> > > > Only 1 entry here, don't need 'oneOf'.
-> > >
-> > > I am observing the following warning if I remove this.
-> > >
-> > >  make ARCH=3Darm64 -j$(nproc) dt_binding_check
-> > > DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,tegra-=
-pcie.yaml
-> > >   CHKDT   ./Documentation/devicetree/bindings
-> > > /media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetree/=
-bindings/pci/nvidia,tegra-pcie.yaml:
-> > > properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
-> > > 'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pcie'=
-,
-> > > 'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
-> >
-> > Because you made 'compatible' a list rather than a schema/map/dict.
-> > IOW, You need to remove the '-' as well.
-> >
-> Ok fixed.
-> >
-> > > > > +  nvidia,num-lanes:
-> > > > > +    description: Number of PCIe lanes used
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > >
-> > > > The examples show this in child nodes.
-> > > yes it patternProperties example I missed this.
-> > >
-> > > patternProperties:
-> > >   "^pci@[0-9a-f]+$":
-> > >     type: object
-> > >
-> > >     properties:
-> > >       reg:
-> > >         maxItems: 1
-> > >
-> > >       nvidia,num-lanes:
-> > >         description: Number of PCIe lanes used
-> > >         $ref: /schemas/types.yaml#/definitions/uint32
-> > >         minimum: 1
-> > >
-> > >     unevaluatedProperties: false
-> >
-> > What about all the other properties in the child nodes? You need a
-> > $ref to pci-pci-bridge.yaml as well.
-> Thanks for the input.
+> > Isn't that obvious? Regardless of what command returns power supply
+> > should be turned off, preferably with a set amount of delays (delays
+> > are taken from datasheet) to avoid leaving panel in uncertain state
+> > with power on.
 >
-> patternProperties:
->   "^pci@[0-9a-f]+$":
->     type: object
->     allOf:
->       - $ref: /schemas/pci/pci-host-bridge.yaml#
-
-That's not the one you need. Read my reply again.
-
->       - properties:
-
-properties doesn't need to go under allOf. Actually, don't need allOf
-here at all.
-
->           reg:
->             maxItems: 1
-
->           "#address-cells":
->             const: 3
->           "#size-cells":
->             const: 2
-
-These 2 are already defined in the referenced schema.
-
->           nvidia,num-lanes:
->             description: Number of PCIe lanes used
->             $ref: /schemas/types.yaml#/definitions/uint32
->             minimum: 1
-
-I assume there's a maximum <=3D16?
-
-blank line here and between all DT properties.
-
->         required:
->           - "#address-cells"
->           - "#size-cells"
-
-These 2 are already required in the referenced schema.
-
->           - nvidia,num-lanes
->     unevaluatedProperties: false
+> I won't insist, though IMO any time an error return is purposely
+> ignored a comment about why can be justified.
 >
-> > Rob
 >
-> Thanks
-> -Anand
+> > > > +       msleep(50);
+> > > > +
+> > > > +       regulator_bulk_disable(ARRAY_SIZE(priv->supplies), priv->su=
+pplies);
+> > > > +
+> > > > +       /* power supply must be off for at least 1s after panel dis=
+able */
+> > > > +       msleep(1000);
+> > >
+> > > Presumably it would be better to keep track of the time you turned it
+> > > off and then make sure you don't turn it on again before that time?
+> > > Otherwise you've got a pretty wasteful delay here.
+> > >
+> >
+> > And how do you propose to implement that? Should I use mutex?
+> > Datasheet is clear regarding this, after supply is turned off there
+> > MUST be AT LEAST 1 second of delay before supplies can be turned back
+> > on.
 >
+> You don't really need a mutex since the DRM core will make sure that
+> prepare and unprepare can't be called at the same time. panel-edp
+> implements this. See `unprepared_time` I believe.
+>
+> NOTE: if you want to get really deep into this, it's actually a bit of
+> a complicated topic and I would also encourage you to add an
+
+Please spare me of this, I have enough stuff to work with and have no
+capacity to delve into depth of drm any deeper. In case this panel had
+a reset I would not care about regulators too much, but it already
+gave me too much pain and caused partially reversible damage to itself
+that I am not willing to risk.
+
+> "off-on-delay-us" to the regulator in your device tree (which only
+> works on some regulators but really should be universal). This is
+> important because:
+>
+> 1. The regulator could be shared by other consumers and they could
+> cause violations of this.
+>
+> 2. The regulator could potentially be in either state when Linux starts.
+>
+> 3. The regulator framework could adjust the state of the regulator at
+> regulator probe time.
+>
+> The "off-on-delay-us" handles at least some more of those cases,
+> though I seem to remember that at least a few of them still have rough
+> edges...
+
+regulator may be not fixes and not handled fully by framework, I am
+not wiling to risk.
+
+>
+>
+> > > > +static int lg_ld070wx3_probe(struct mipi_dsi_device *dsi)
+> > > > +{
+> > > > +       struct device *dev =3D &dsi->dev;
+> > > > +       struct lg_ld070wx3 *priv;
+> > > > +       int ret;
+> > > > +
+> > > > +       priv =3D devm_drm_panel_alloc(dev, struct lg_ld070wx3, pane=
+l,
+> > > > +                                   &lg_ld070wx3_panel_funcs,
+> > > > +                                   DRM_MODE_CONNECTOR_DSI);
+> > > > +       if (IS_ERR(priv))
+> > > > +               return PTR_ERR(priv);
+> > > > +
+> > > > +       priv->supplies[0].supply =3D "vcc";
+> > > > +       priv->supplies[1].supply =3D "vdd";
+> > > > +
+> > > > +       ret =3D devm_regulator_bulk_get(dev, ARRAY_SIZE(priv->suppl=
+ies), priv->supplies);
+> > > > +       if (ret < 0)
+> > > > +               return dev_err_probe(dev, ret, "failed to get regul=
+ators\n");
+> > >
+> > > Better to use devm_regulator_bulk_get_const() so you don't need to
+> > > manually init the supplies?
+> >
+> > So you propose to init supplies in the probe? Are you aware that
+> > between probe and panel prepare may be 8-10 seconds, sometimes even
+> > more. Having power supplies enabled without panel configuration may
+> > result in permanent panel damage during that time especially since
+> > panel has no hardware reset mechanism.
+>
+> Maybe look more closely at devm_regulator_bulk_get_const(). Really it
+> should just save you the lines of code:
+>
+>   priv->supplies[0].supply =3D "vcc";
+>   priv->supplies[1].supply =3D "vdd";
+>
+> ...and it lets you put those names in a "static const" table in your
+> driver. All the timings of when regulators are initted should be the
+> same.
+>
+
+Here it is my bad, devm_regulator_bulk_get_const indeed should be
+preferred. I thought you meant devm_regulator_bulk_get_enable which is
+not the case.
+
+> -Doug
