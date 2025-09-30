@@ -1,300 +1,151 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E742472A8
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 16:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFF3223DD6
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 19:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759249969; cv=none; b=YOB4lKCw7v9ZMwKksSNYKMqIKaqUsZ9J0UqnKbGZfMeeKxQCu3liGAoZk6uZ5sW/ml3D5tgJOWFuYaswO+9moq2z6HR+pOEUBxXci9srwXjWBf6eUs9i+PviGPzJ7YxlqKBgaecJFfJytjoEQdZsQTtVhkHsVco3JToqPMzLElM=
+	t=1759260962; cv=none; b=gLxDvRMCubo2TpvuDNf3wetvuQVrl8ssNTDd7nxYvhWfQsyES5+xP2CBPF4XH4LgDQqFk7hcQLwiV4/+ghwrxIkJmRqtCPSvTdV13sG81fa55zLK6ViCIXBjjHZMvmfFTOhVP1cRuJ4QDVknXZtLW3d2R5Xp7NXINUMWuBCTFns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759249969; c=relaxed/simple;
-	bh=oGF9yTei1g4gjv/QnS3yVyRP9PJi1rFlCgAm1v7R6Zo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aouhp9S/4Uj/G+EYopTXAR3dNSmu+BfW37zOYYTUdtDVm3a9kyT9av0sxoMCPGA1BWdWQVB84Z+UmGRoyeh6aAuxeKcMCnO5/n1GvaTAd8pz8pvkCZ82+dFi4K6nI3AppPaOGA9gQFPd7nXYkd8kJYscTi2q8hW962nknh2+rGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7TMdf3c; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1759260962; c=relaxed/simple;
+	bh=Y6ASMnKN0lRfzqLVf3QZa9bH1LtfrSUCRUokUivLfvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XRKkeg/pOBcw2CXhv6Y1DPtrnlUdMHg3oekZ1QyWfTfFrsiIEpNMWbktWKlZGZ7yEBE7RFbRSzSEivZyZOYHq0s8wT8dJh8JpCPm9LeAFAyBtic77EyQQPISNfYWqrEXaHW2knCWUOxHiuX69swTnxPNMAdVGEM+uuoialUi+qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UI9gjTBo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7TMdf3c"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6364eb29e74so4394696a12.0
-        for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 09:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759249966; x=1759854766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ywr/T8H21r9AOyqjIoUOVLC27W+yILSMEGkAVkNfxfs=;
-        b=G7TMdf3cbEgC8ruzjQ/JedFDAGQBz35rZtqyh5LkKc7R6XvJOSjv/SM2wBW68YceZY
-         S3NC0IMiV3uWjR5j3McYbz49lEMMfl14gYl/F9Co7IW5p08jZZDq0MxPIrFkrUOSlxoT
-         k6pR0Sn7/9PWhkY40lt9KnJa74j6sAv4GHNHqiFE7Fz25Aff2wOvm6VWBhmCBRbs8C1a
-         3f0t9nE5Xx7B27qVGXyzx2LtkrHA8HlRFWgO+nU/F0Bt9Y0WH8cwkYVQJipQAn3uEW8T
-         LyXY8b5e325zk4Ox3mLdnQjyEPLoWxJTrSY5GQMx39t2vj6UmjedDvc+Ty4fI+/V66uH
-         B1kg==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UI9gjTBo"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UBWnuI009452
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 19:36:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lvj2v58WhaULcHhKfkj48JWEN5u/Hdq652Y2OxF3nx8=; b=UI9gjTBoXPG5FqK1
+	i9EZzEPIBe4cEDqnrdysIx8PJIqOevx3NoJXnRjIohzIMMjafGjLtNHMiLg2OvlX
+	ObpiXVh4VE0LWHyv8MoHsBIjRg0HQUmyq/8WNkm/g1XOpnRadVt3vOwQzhhby6GX
+	1NzgDujWs3kbAf2Qujma3/qNDL+F2J+ewQ+Jj4tF/z4LrsE3wwUPr9gp3ygQxrAw
+	bv5RiBOk+ykEygkPA5yiaOpanR4I5pQPeycLkrYvSOLCDRuNTeNf34pqtSkiRQMA
+	bZuN53R8YM7jKqSzZHHAtKkPz+8YRflLot4cgYN0DfSBad/6LsCznUoSGrGK3bDb
+	uB/Tug==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977t1b4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 19:36:00 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4de23c3b40aso125201541cf.2
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Sep 2025 12:35:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759249966; x=1759854766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ywr/T8H21r9AOyqjIoUOVLC27W+yILSMEGkAVkNfxfs=;
-        b=epUoZHOIRy4aLjER9v/g2Myh5NSGtCXCqcqD8s9aGputVekSoVTfpn6hOje0CW0nvA
-         st6ZQd4A6vKMyRdoVakqhyt7DCAibnglw4xmWNp4B+4TiSxkbWDfZDQT13qFCFpiCJ7e
-         iIoVr53RRyH4+bEWeAh22CgR4m1sxXoCI3Kh2F52CTx7a96Xh91HRZrH7XRW999+r2jC
-         6OSGujIZ6KAaeZEiX/CHdRPbBULDkYk38F28qcaQa2R1nTc2cjod3HIJpYlyjfqhsDCE
-         UTAqMlFPw0h04NHtSC+5r9aYGJSKUdaEpjhWM7lBHcNAwU4ys1GPzQbztOz1Vno7vyia
-         8kcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGq1UEHGN/yMpXWUuIZKTk28Y/Pw35kOa2ooGQl5Z2+FXkH2075/TWGLKqJ0/DGu68PrJxnnOiXeZR0w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtEwY/TxtTd4VPghSgClHykNGrwGW0YRs4EFKiDnO9zwFP19u5
-	3NzjzvFtg18MG4kJ6GjPa/ee7+dGejCcJKrmkNm5HrzVJYdsxBxrtPKsIei0D1D4hQdVoWAJc6l
-	LQ8UgAAD7KXG/IfBxFDrYdFs+d4a2YSfzlXbs9IE=
-X-Gm-Gg: ASbGncv8EcgAdSIx3CZJmJrO64aKGECLvA/pFxFpIiIZsvnmPXq+f0sPJshJ6mq0K8J
-	/MC5peDNIzM9vu+bamWsAYMWRRj0DsOl8Lq3wR+2dQZikUYO2sPujypFzzdvW9TzBo78RoDCPsC
-	ItM9t/e6/3b5miHEgcH2TdcJ7C0WvmKoJ7B9iUsvyA7d+7ecP4wQkh0P7PN+GdvzDYYgDGM+ub7
-	8ewCJOFEQBPqc1S8dId/yqeEUlw7Q==
-X-Google-Smtp-Source: AGHT+IEJHPU/9y3qBt/SABv++MOXGcN86o3VBfE4lwa8ckg4ceTKcaWY4Edg+8QEKEvz47kn06lNSjx+U7OGCjruhFQ=
-X-Received: by 2002:a05:6402:51c6:b0:634:ba7e:f6c8 with SMTP id
- 4fb4d7f45d1cf-63678d17922mr511880a12.34.1759249965859; Tue, 30 Sep 2025
- 09:32:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759260959; x=1759865759;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lvj2v58WhaULcHhKfkj48JWEN5u/Hdq652Y2OxF3nx8=;
+        b=dy8nbbj4J4Kg+LW9ljWTnPG9ElSZq8H0fTYtLndAj9FnRjc3DNx010DlJvlJfBnk4T
+         Nn8CF+65z9SErnss3PcQ8rClW9b6S8TERs3Yq3hXU4CWZYHVfxbHFdJMyctC3Wlxd0yG
+         T4CgzfWAhGg1S/+9gCiW9uLaq6LjEMLr1A11LnUk/LSTccWnYMsVh+1NBwvs4tyM10XK
+         vinNoua0W2Z/rNhvc1+X5LFIP5zIvN4R0gd3jXCFATm91PxgCueGHXNM4nDcNZeGcI/y
+         w58/6NVgqfbAepbGyv2rSFwiJUsmCMAhjYdLyO8XIqIWZVhFe2eQwQBwbTH6Yr3nTCSS
+         2gzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCXefPJ4zIMkGJ6F3YXT7+FTDxzpZNk9Qd8J2JB6F1n6ZYSbHia2oi1GeRNSLXRM4d/vBicQwZP2UMpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMAWjNbEhpZkUOEson0lXiIB+h3JvJHDzXhqaKqZI57j+VpJfn
+	tPiMV4nTDnNaE7FV5BAw7Vi1rnDE1Y4SRaVYYITpLt+dWWCSUtHyPUi25igCOeuoywWeE4CyT81
+	+KJMHQCnT1s3a1jxjWCd+MGCdR+Cfc1GFwlsU+/iSs9b+F9f8BGkGCpunR3xFP4rvYQ==
+X-Gm-Gg: ASbGncsWHSQVCZTuk9HVHJzrJnsX23JRMr3mXjyu+h2NsUnyu7FMqg0alREIKSW6STE
+	fl4mDAPFEMgzCWe8KNmgCnlNeBo3SVoYWDHye2r1zjP5EE+yHldT81HHJIVTYQ2HiuBK+4H3FCe
+	H296ZEUO9ms3+tmBhJGcJRohzRiSeLFioI+gx2hvbMlbBY63Az5kRlbV3BeBK16WucuOrdY2Skz
+	5yKH+ooa1cSa5z1yTs4g5PO5pZgE+nuHazyh38Zv/6V9Eieke0tu5Lj5Ew4H+KlyIE8GqatjKsK
+	5+mjJavzDmBcvFdYUkZ43cyZH+k5LEXq8vVtPY3GZbOOoHudL2gw/5fZxr44r26jKIuPixIzSFD
+	3T73UyEUijJS1Z9VTctYFmbbzC7gJioqD/ofDRsHIVLOgNqI1XJUXyGmHRA==
+X-Received: by 2002:ac8:5810:0:b0:4e0:76b7:35d5 with SMTP id d75a77b69052e-4e41c733499mr10629191cf.33.1759260958625;
+        Tue, 30 Sep 2025 12:35:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkNxeFgWyXeWrWIAptA6yK8icuvlqTlnU99wi9RboNE56Zpsc59WiRM39V19vXyZGsqKMtwg==
+X-Received: by 2002:ac8:5810:0:b0:4e0:76b7:35d5 with SMTP id d75a77b69052e-4e41c733499mr10628561cf.33.1759260957894;
+        Tue, 30 Sep 2025 12:35:57 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58737e32f5csm2282387e87.0.2025.09.30.12.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 12:35:56 -0700 (PDT)
+Date: Tue, 30 Sep 2025 22:35:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 7/8] gpu/drm: panel: add Samsung LTL106HL02 MIPI DSI
+ panel driver
+Message-ID: <rcx3hpufjmrpzp6tgl75qq5rmk3bcxa6dahl2egpgubu75bpa7@bouekp54w2gh>
+References: <20250929142455.24883-1-clamor95@gmail.com>
+ <20250929142455.24883-8-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926072905.126737-1-linux.amoon@gmail.com>
- <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
- <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
- <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
- <CANAwSgTuX3t2-SNPe4OAzGuDpL5RotxX8t+Zx+gcwFKdj3ZEng@mail.gmail.com> <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
-In-Reply-To: <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 30 Sep 2025 22:02:28 +0530
-X-Gm-Features: AS18NWDpwy8wPfpGXTgiB-hfuQbqsocd9S2KZlBOjIaIkDW6NFhuEmGm8l9CeiA
-Message-ID: <CANAwSgTKFSf-EUGSpErdS1Y93AwunFOK7omH4T+gE_z2XttVtw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
- nvidia,tegra-pcie.txt bindings documentation into a YAML schema
-To: Rob Herring <robh@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250929142455.24883-8-clamor95@gmail.com>
+X-Proofpoint-GUID: CrZcLN7Q_YQwdJBokpFudz-myEGlq7lL
+X-Proofpoint-ORIG-GUID: CrZcLN7Q_YQwdJBokpFudz-myEGlq7lL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfX2w2yA5b0Yo6f
+ S/9UZIJPgM35cwqLRhd6uHxN0+a44IF/2Xd4MMCNmCRNXPjQc33rBz9ps6FRsppwWMUBT50m2hW
+ 4ExgoO6yQK6bF0X8C5wuSFClkOzsuYGalMUcAbd+EkcvfXONVE69iqln+2/o0Nai6Kl15WPdH2X
+ iAmbxj3povy0D6mYfm77HrtNaRxDSHHgCJeRzrqBUWEtnTw9TJ8zzZnkiGfjylUTQklM9IMNV7A
+ 14PR4Fl774++yORevNhBjr0OT2ACgkWzFpGMEIKGcV71brLpujWV9g1djrk5yKQoizyNFnF9ykV
+ NpxoXPoZRusAEXx6Mpzo5bzTsiF6Kpl1ZDYjEdEG1YjBYdfbwVIy8OwJuLr0F4WvZc22/ZYVAd7
+ qJmfrdgoG84zu2tH9fhDCbe6/w/odw==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dc3120 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=yJojWOMRYYMA:10 a=sfOm8-O8AAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=r3kgLuTu-6ezLa8AVuoA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=TvTJqdcANYtsRzA46cdi:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270043
 
-Hi Rob
+On Mon, Sep 29, 2025 at 05:24:53PM +0300, Svyatoslav Ryhel wrote:
+> From: Anton Bambura <jenneron@protonmail.com>
+> 
+> LTL106HL02 is a color active matrix TFT (Thin Film Transistor) liquid
+> crystal display (LCD) that uses amorphous silicon TFT as switching
+> devices. This model is composed of a TFT LCD panel, a driver circuit and a
+> backlight unit. The resolution of a 10.6" contains 1920 x 1080 pixels and
+> can display up to 16,8M color with wide viewing angle.
+> 
+> Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
+> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/gpu/drm/panel/Kconfig                 |  13 ++
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  .../gpu/drm/panel/panel-samsung-ltl106hl02.c  | 179 ++++++++++++++++++
+>  3 files changed, 193 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c
+> 
 
-On Tue, 30 Sept 2025 at 20:07, Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Sep 29, 2025 at 10:25=E2=80=AFAM Anand Moon <linux.amoon@gmail.co=
-m> wrote:
-> >
-> > Hi Rob
-> >
-> > On Mon, 29 Sept 2025 at 19:19, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Mon, Sep 29, 2025 at 2:40=E2=80=AFAM Anand Moon <linux.amoon@gmail=
-.com> wrote:
-> > > >
-> > > > Hi Rob,
-> > > >
-> > > > Thanks for your review comments
-> > > >
-> > > > On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wrote:
-> > > > >
-> > > > > On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@g=
-mail.com> wrote:
-> > > > > >
-> > > > > > Convert the legacy text-based binding documentation for
-> > > > > > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, fo=
-llowing
-> > > > >
-> > > > > s/YAML/DT/
-> > > > >
-> > > > Ok,
-> > > > > > the Devicetree Schema format. This improves validation coverage=
- and enables
-> > > > > > dtbs_check compliance for Tegra PCIe nodes.
-> > > > >
-> > > > > Your subject needs some work too. 'existing' and 'bindings
-> > > > > documentation' are redundant.
-> > > > >
-> > > > Here is the simplified version
-> > > >
-> > > > dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings documentat=
-ion
-> > > > into a YAML schema
-> > >
-> > > Still doesn't fit on one line and you say bindings twice:
-> > >
-> > > dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
-> > >
-> > Ok
-> > > >
-> > > > Convert the existing text-based DT bindings documentation for the
-> > > > NVIDIA Tegra PCIe host controller to a YAML schema format.
-> > >
-> > > s/YAML/DT/
-> > >
-> > > Lots of things are YAML. Only one thing is DT schema.
-> > Ok, understood.
-> > >
-> > > >
-> > > > > >
-> > > > > > Cc: Jon Hunter <jonathanh@nvidia.com>
-> > > > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > > > > ---
-> > > > > > v1: new patch in this series.
-> > > > > > ---
-> > > > > >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 ++++++++++=
-+++++++
-> > > > > >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ----------=
---------
-> > > > > >  2 files changed, 651 insertions(+), 670 deletions(-)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidi=
-a,tegra-pcie.yaml
-> > > > > >  delete mode 100644 Documentation/devicetree/bindings/pci/nvidi=
-a,tegra20-pcie.txt
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra=
--pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..dd8cba125b53
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.y=
-aml
-> > > > > > @@ -0,0 +1,651 @@
-> > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > > +%YAML 1.2
-> > > > > > +---
-> > > > > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
-> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > +
-> > > > > > +title: NVIDIA Tegra PCIe Controller
-> > > > > > +
-> > > > > > +maintainers:
-> > > > > > +  - Thierry Reding <thierry.reding@gmail.com>
-> > > > > > +  - Jon Hunter <jonathanh@nvidia.com>
-> > > > > > +
-> > > > > > +description: |
-> > > > >
-> > > > > Don't need '|'.
-> > > > >
-> > > > Ok
-> > > > > > +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20,=
- Tegra30,
-> > > > > > +  Tegra124, Tegra210, and Tegra186. Supports multiple root por=
-ts and
-> > > > > > +  platform-specific clock, reset, and power supply configurati=
-ons.
-> > > > >
-> > > > > I would suggest not listing every SoC here unless the list is not=
- going to grow.
-> > > > >
-> > > > Here is the short format.
-> > > >   PCIe controller found on NVIDIA Tegra SoCs which supports multipl=
-e
-> > > >   root ports and platform-specific clock, reset, and power supply
-> > > >   configurations.
-> > > > Ok
-> > > > > > +
-> > > > > > +properties:
-> > > > > > +  compatible:
-> > > > > > +    oneOf:
-> > > > >
-> > > > > Only 1 entry here, don't need 'oneOf'.
-> > > >
-> > > > I am observing the following warning if I remove this.
-> > > >
-> > > >  make ARCH=3Darm64 -j$(nproc) dt_binding_check
-> > > > DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,tegr=
-a-pcie.yaml
-> > > >   CHKDT   ./Documentation/devicetree/bindings
-> > > > /media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetre=
-e/bindings/pci/nvidia,tegra-pcie.yaml:
-> > > > properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
-> > > > 'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pci=
-e',
-> > > > 'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
-> > >
-> > > Because you made 'compatible' a list rather than a schema/map/dict.
-> > > IOW, You need to remove the '-' as well.
-> > >
-> > Ok fixed.
-> > >
-> > > > > > +  nvidia,num-lanes:
-> > > > > > +    description: Number of PCIe lanes used
-> > > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > >
-> > > > > The examples show this in child nodes.
-> > > > yes it patternProperties example I missed this.
-> > > >
-> > > > patternProperties:
-> > > >   "^pci@[0-9a-f]+$":
-> > > >     type: object
-> > > >
-> > > >     properties:
-> > > >       reg:
-> > > >         maxItems: 1
-> > > >
-> > > >       nvidia,num-lanes:
-> > > >         description: Number of PCIe lanes used
-> > > >         $ref: /schemas/types.yaml#/definitions/uint32
-> > > >         minimum: 1
-> > > >
-> > > >     unevaluatedProperties: false
-> > >
-> > > What about all the other properties in the child nodes? You need a
-> > > $ref to pci-pci-bridge.yaml as well.
-> > Thanks for the input.
-> >
-> > patternProperties:
-> >   "^pci@[0-9a-f]+$":
-> >     type: object
-> >     allOf:
-> >       - $ref: /schemas/pci/pci-host-bridge.yaml#
->
-> That's not the one you need. Read my reply again.
->
-I'm sorry, I missed pci-pci-bridge.yaml
-> >       - properties:
->
-> properties doesn't need to go under allOf. Actually, don't need allOf
-> here at all.
->
-> >           reg:
-> >             maxItems: 1
->
-> >           "#address-cells":
-> >             const: 3
-> >           "#size-cells":
-> >             const: 2
->
-> These 2 are already defined in the referenced schema.
-Earlier, I had tried to search for these reference schemas,
-but I could not find them.
->
-> >           nvidia,num-lanes:
-> >             description: Number of PCIe lanes used
-> >             $ref: /schemas/types.yaml#/definitions/uint32
-> >             minimum: 1
->
-> I assume there's a maximum <=3D16?
-I will check and update
->
-> blank line here and between all DT properties.
->
-> >         required:
-> >           - "#address-cells"
-> >           - "#size-cells"
->
-> These 2 are already required in the referenced schema.
-Ok dropped
->
-> >           - nvidia,num-lanes
-> >     unevaluatedProperties: false
-> >
-> > > Rob
-Thanks
--Anand
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
