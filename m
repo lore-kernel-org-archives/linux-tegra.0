@@ -1,331 +1,185 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012063.outbound.protection.outlook.com [52.101.53.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D36248F6A
-	for <linux-tegra@vger.kernel.org>; Wed,  1 Oct 2025 08:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759305612; cv=none; b=GFYVQ73H7wudOLwTRo2IFh8jr7UWwA1gQyNu+znSENm5V0TUcrrwTtnA4OM4VXkxppl5X6hdJ6OxQ0ue6hfyd8fBHW7kIjwETCZZ4xBBoq8HTb51q5TSRVKCGyH4LTCXLs/Xf52wsROVB9l8TGilF3SGJNT0Dl1YGJW5BUzeOuE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759305612; c=relaxed/simple;
-	bh=wuUqFF309nz/clCCJyERVSGrY3Se9GNG3k5oDUfh5NQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ANEy1YFBds/drHEtIdGbNEP4CIMRSdO8GFvsfDEkl5RNeXrJlA5+iSVbgGdxaU9YfmvaMQc7oLOJ4FaEaAG8rAMzzU3Cjo4kpSG4jWXwOF1WnkhB6MhKPcHkf0MMaJYnvEyxEMu+3N04tnArAZCB9/t4uQV7IMwNciAPbcMMLwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dz7OD9dV; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB67A2D9EC4;
+	Wed,  1 Oct 2025 09:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759309911; cv=fail; b=Q/iT1x1wwU9fCDn70Vu6ZdjuDGGUAzNmyWQLzNSbOfgzY3Ih0D+pZKBknhDh6I7IdvigAobPdo30uQmjArBGATProyPM/xGv6yqsrkSI8vzzMKdj7FzX4LpP/xhMwamdgzfXFmwxbD8OdqpTYgztLXOU77ZfQcNAMbqpfm2WeCo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759309911; c=relaxed/simple;
+	bh=cpnlZAcevt0UNVKE+iEp18Jsyuw9la3gxIQFYeekg8A=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=pU1uUgliBJ0xVlmZrbXrDlwSfken7O2qHKTKrhifNvC7ShCOMN68xzkDPGQfv6/dadfAsWo7Y2QmokE+gDnj7Mjz7ZDTFyMIAfHGyL5bYPhxQZzTnTrNCX9dhqWc6WJVunjfgBMWCiGRnKGkZTGe5k9koRzaI1MyRArzl1Gc994=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qoC1U2S+; arc=fail smtp.client-ip=52.101.53.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dz7OD9dV"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-421b93ee372so1632238f8f.2
-        for <linux-tegra@vger.kernel.org>; Wed, 01 Oct 2025 01:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759305607; x=1759910407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xgvIhudJPWmmbWLRWY3wSsTAkk+PhaMEZeeL7UN11p4=;
-        b=Dz7OD9dVMbmIjqYN3sANS+OzBloiLXRfqF0sKPh8/+BpLqAB/PoaHFJjD9OELwruJV
-         WclDxscq230Wp4jXXV7zFo+vTj80YAfSKFI7bypj6MK6xPnpyJCqb9ZeFxCcRTuxdqLk
-         KfpEGHRf2weM0lDzbf6mPsHMrDb4rza01vRZemsaLkAzaF0qqp6QpEkbAeaPqsqsEXft
-         637D12VRP0PF8kaedSYuOdfQVGDZvp1/ANKDiQMuGv46Qu1EEDeBKHG0mqYAVyNnxPOE
-         6SThfzyoVWTHTevZIfOtL6m8aIHlEYzCRgWeW1s0FVnxtY/UALjS+jvQShKar2Plndcd
-         uInw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759305607; x=1759910407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xgvIhudJPWmmbWLRWY3wSsTAkk+PhaMEZeeL7UN11p4=;
-        b=eZkI40Xu4L0zE071Y2mLJf3P5jdPrjxNjCdDhkY85LZXy5CNkyXCjswjHf0X4y4Ltk
-         aK78mWsYvRs6wzhNdQ7hOAuSce5PpbTV7nzZIuo8BIlDQZyIbBW7AEJwGn2AwbkwgToK
-         wKOToTP4WB7w9U1ULNrA6h5MdUVhet39G4uRfUyV7TE5k6czG2RC4fkGlO5JEq1txX2m
-         TiBsDoBGtfeyOimSj8R482kZKPvRNm64Aig7ROTwuPp7oPBtwI+Pw85ZsRF/GLH9qfUa
-         M3PCYQUcoFgJd5mldjin2yNXE2lO81mQsI5F4kNetiXlQH7sL7kZeKe/OxIUwIGRGDWf
-         Y4aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURjsvuZXjhziYnujEMXPG1/+f/quQk845rLMREec8V9T+Z5Pjy1B1+rNQJBCXlv4sqoUPyZiFU8vbANw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGQpv7hGeT6TCV0P6vNto2E0sccHbkJyVYUnh1zTxPpPn4ovbR
-	Xp1defvocOpF1NE16PDWV2C9gx8WcBt8dn0Y1vXHV/8/oCnPwec3eKyo1cKOvh9Yx46YKAkNUeO
-	AafJrI9hjjxMVWrkAxFlTYAFDyxjjYMw=
-X-Gm-Gg: ASbGncurrmmSV4UxVa6QmKa9wjBeyMRA0CeuCqM7N4UlL1fgCZiJ60lV7eyJdioNqi5
-	hPIYQnPZEUtxXbKWMQm+rEbhQu/N2kemJ+x0yIRNVG7Uv7ufToOkciyXMpBba1AxkkFhG3+0RvC
-	gxLVOHL3ODBRJN5vYsJlvgerI1JTJGqtZjmn6sB/z/w/brtqAfyFp7IKt0cvnjx+VAoKyLW6thp
-	OHfO+tFtJLOCWMW/XwWTwynpz5ii/Q7
-X-Google-Smtp-Source: AGHT+IEts4aRS1BO8nAXriOkt4I9SxEvvg7R/qEIOy7/ouiuBhu5T7Gq5rXelG1LxyUQL2bgowrpZjpcR+lnlZbahyg=
-X-Received: by 2002:a05:6000:2504:b0:3f5:453:77ea with SMTP id
- ffacd0b85a97d-42557821a3amr1754149f8f.58.1759305606332; Wed, 01 Oct 2025
- 01:00:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qoC1U2S+"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NzY7ZruoXd2uWcRL9Ea+p1QY4i0XJUjFdkvOi7PRUSyhr3Gm0zkgprtL/Q5cstvJmykHjtSivth24//BVN0GsY6qzFDU4gr5DvSLyjQ8hY01ngcOfULSGIQbXX7Yo/e6LLk9Jq5PwDrueAh8zKfkAb4QS1C4xHv/fDWQwSbBm0/RlapxNEKF04uiNEtWgZLjYooyHrtMMjewupC61g8IExA/apY7A9br7Ib4Hjdyz17WwqIL62z7cOGrM6quDQ/BNtJ9nqcpFwlOisX9AcGTtvfinYHRRreysOxrrUgWY7hfr+DHL2ipm3em9kws4q0r7yPrHjU2h7LFHYhqxU+zsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YemrYt0rPpzqLIZsGBZFNUsbE7ANMBys7jDw8mHc5cI=;
+ b=VF2aJD4jgo+NEeINxKXQAZ9r0PfYh9YHxqCQGwyx6uF8s2vweGbzdyI+mjfYJAyJj3pFgbdIhZcB7bGH4DnPC0/knoUT6yIWnC01Q5IqlY9aPXUdPg7p/Yf6Q/GHhg/HAe14H4vzlpei7PKxR3Y9PKEIMway8HfX0MryX1yifvpWNImIgTP85ntN8N2DxbN26X/sOghpoQ5PgWdielFwhSYQ8kCen48sCOJvmunVVVqiceIS8CuAweLYmxSFXhzU6k7SsfH+X86SCB+Ox6+CC0JqrVTIfD4rn/SiuRhi5WCLIo2iNxOJUasAFwsBbWNBbgawVDvUDasAtdyJHVQj+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YemrYt0rPpzqLIZsGBZFNUsbE7ANMBys7jDw8mHc5cI=;
+ b=qoC1U2S+q2CjCIsGTzDQMsDTjMM00s2shKq2/37pvHPFaqAZ4FZ3pBigHy8Rno73jfCHCtDJjaTxgBoXyTFlty/rjTkBUAD8XqPkolSA2HWmWAnpMc3dAOy97ydKoLaaGrq68zjZQ65JRQHLkNf+GEZpYTWLgD6rbNpP8F1n5EOmelm2MzIiZlvpVbAnpcBW7C4t89DromEBW6hyB/J6zZtZqmVDARcl5so5GldiEYPoTrs9IJzceBLjatRmaloLs636rxr5wDEqNa+zlG7vpGitwv+Sw+PIBTMMxtP4Sl4EeR4/B2RDydHcs7Drt3O30uy6wqnTsBD5BT0wg4lnPA==
+Received: from BN9PR03CA0279.namprd03.prod.outlook.com (2603:10b6:408:f5::14)
+ by SA1PR12MB5639.namprd12.prod.outlook.com (2603:10b6:806:22b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
+ 2025 09:11:44 +0000
+Received: from BL6PEPF00022571.namprd02.prod.outlook.com
+ (2603:10b6:408:f5:cafe::a) by BN9PR03CA0279.outlook.office365.com
+ (2603:10b6:408:f5::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.15 via Frontend Transport; Wed,
+ 1 Oct 2025 09:11:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF00022571.mail.protection.outlook.com (10.167.249.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 09:11:44 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 1 Oct
+ 2025 02:11:34 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Wed, 1 Oct 2025 02:11:34 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 1 Oct 2025 02:11:34 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/81] 5.4.300-rc1 review
+In-Reply-To: <20250930143819.654157320@linuxfoundation.org>
+References: <20250930143819.654157320@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925151648.79510-1-clamor95@gmail.com> <CAPVz0n2CRV8d1w1hp-60SQ_caBTFyJE8tJaWerwyEuZHD1p_Nw@mail.gmail.com>
- <CAPVz0n3-VvtjHDPKoFiipYQFx=Xq6hph8WW=xa2UaC7iDf1MyA@mail.gmail.com> <2368735.QZUTf85G27@senjougahara>
-In-Reply-To: <2368735.QZUTf85G27@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 1 Oct 2025 10:59:55 +0300
-X-Gm-Features: AS18NWC8gPCcqZlFeljfn-mUHnB1_xEKqf6p2IcGCjSYer2-1Jw0uJU_jBBnIZw
-Message-ID: <CAPVz0n2pibxHzZS_s2i6ZzP1FEcUYCuH=aP8oM18RoivF4xY9A@mail.gmail.com>
-Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
- format align calculations
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <42dc9bfb-8aeb-429e-adf2-5f1a000284e6@drhqmail202.nvidia.com>
+Date: Wed, 1 Oct 2025 02:11:34 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022571:EE_|SA1PR12MB5639:EE_
+X-MS-Office365-Filtering-Correlation-Id: 995c27df-d6b9-49a9-b7a2-08de00ca8ad7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZWg3Q0lkQTV4Q3lYVXpNMlduTCtGUEJ4aGVCYWl6T0NWK2lFL3U4ZTBrajBs?=
+ =?utf-8?B?M3dZdUlJMzNXSWJoWDBkdzA5WHI0NFV0MTU1SVd3bTU4dWNXY3BUSlE1ZVBt?=
+ =?utf-8?B?TTFuUzM3VDhOSmZrT1I5OXpOc0pEaEVPVnhEK2JCeTBibUIxUmhxOEZSclNT?=
+ =?utf-8?B?V2JPYkFtZ3NZUzg0V2lCankrZXZNZFVDalFrWDRWbW56L1BNME5Ma2xWT1E5?=
+ =?utf-8?B?Tm0ycTRNKzFNZ09Kd3JqQjJBV010RWN4eTY1SzY4S3ZpVE44WDVaNzVFRUlH?=
+ =?utf-8?B?NGV4eC9FRzJKQitLczBmdFBKOHpkTUJZZFdHQVJCWGN2OW5IZGN0NEFjckFQ?=
+ =?utf-8?B?YmQ4T05MTlRVTUo5NmlmZWtScGszaS9HekhzT05scXZIK0JvUGkzZlFSbGpm?=
+ =?utf-8?B?aWQ0N0hRcWlQYWxCYWNIZnMyb0pOYjMzbzVLUjU4WlYrOTZYRE5HUVY0MVY5?=
+ =?utf-8?B?Nlh3SlVJVmQwRHBoZ0hzaitBYW94Z3NoTDI3R2VxaTFyd2tLbmNIbnZMaUlW?=
+ =?utf-8?B?NFJvRUFPMTJ6ZThpNVpZSDVJbmpFUU9FbWM2L0RNZjE0REppMzJkWUdYUEU5?=
+ =?utf-8?B?WTd5dUNsVC9kZUhuNVNLenhUTGtabDBkVGtENHBCbjdaNDgxZU0zQnYrQk5R?=
+ =?utf-8?B?bDJEc1F6SGJzcW1PVmt1ekltcVU1YTBSMmdtWUlrS0wzRUFBZmI2VUxDcVd4?=
+ =?utf-8?B?UTRnOFFzMlg3Z0V5ZWVLVmxIUm53OHRsQ3E2M3R2blRkUWh6U1hHenBzTk1h?=
+ =?utf-8?B?dElOZHp6amZaQWpKWCtoOVppcTJZdk9qSjJ5R0ZIbEp2ZW1yYnAyYzdJdUU0?=
+ =?utf-8?B?L1EyTlQ4UFVxejBUbFQ5ZDkweHZLYTBiTEVDdHptZjl2dnJzOHFiK2RlT2la?=
+ =?utf-8?B?bXQvZ2MvR2pjdThNczRmV3dOelhsamJjd2lxTkVCUFBsQnp6YnprVHozcEhy?=
+ =?utf-8?B?dnVZajhTVHk4NmR2MmV0WXFuZ2x2UzVuTDJoaitQaTR4bnoySVRGVG9kU0RL?=
+ =?utf-8?B?clBUV2IwbzBKeHczQU9SVFd2bzV2WHBpaDJ1ZHVQbkk4UlQwa3A2Q3o0K0Qr?=
+ =?utf-8?B?TCt1a2lkcGFRaWtmelZKaFZ3Y0F0ZWNuYXM4RjZYZHY2ZDRheTNHZlNFWndY?=
+ =?utf-8?B?TG0zT1dURWRtNmxHa0tPVkRmRmZhNkVkRkI2UjFaSzgxMFZFRlhYTXpnMkF6?=
+ =?utf-8?B?NGpmWTN0b1ZLdURjMVo3MG1nYUc5QVBKWEpTdTE0VFBTeCtjTzI1UmRLUTdu?=
+ =?utf-8?B?Qi9DcThmc3IvQzUrb0VDcU02cVhnZGY4d3dBQWZ6L29YZUpZN05KSEZ3VjFT?=
+ =?utf-8?B?SFo4S0tKVGl4a3FsWGYzbWpib2w1RDRSZEhlTE41ZTkweHJEcGdCZU95MzJh?=
+ =?utf-8?B?eDFBTHJxQ3RZaWVVcTdRTnBsQXEreHhOKzhKaThETk1Hb3RBTk42UmMwSTFz?=
+ =?utf-8?B?RHR6aXZrdjhNV1daSXpQQnlVQU1DSU5CRktsWGt2ZmI0TFV1ZHdjYTI3ZFNq?=
+ =?utf-8?B?L1ErYkZnb3hWWS9lRzJucDVRL2tOZWZVWUhYdnhRWldvcENiYW9RbVZpQUd1?=
+ =?utf-8?B?UC9tYUFpQUFBem95Zm84M3F2V21GSVJjNFdreGJpbDRqTy92THFRTUExS3JD?=
+ =?utf-8?B?UUtHOUE3aCttOGl1SEFGWkFrK0N6R2pTNXZ5bXg4elE1TUpJSy8wd0g0QU0x?=
+ =?utf-8?B?U0dlUHJERFBGMUwwN3h3NGxZSWxjaVduYllRMHptdlRCdEFlNXhjQlBKTEFU?=
+ =?utf-8?B?WEFIVDQxYWVFSXVHNi9vdXlYcU1iUGdTVWQyZkN1REhWaDlMblVOeWdiQUNn?=
+ =?utf-8?B?cGNodDlSUU8vc2hFRjdyWlZHOWxFdkVtOXJ2ODFrU3k3OWcvMkt4bjFTTFQy?=
+ =?utf-8?B?cmtxbDRUQkJUdW1nZ2RkY0xhd01TWmtLTjE1SXZjZkd0UTczVUNSWWszNDVN?=
+ =?utf-8?B?MHp6bTR0aVU4ZEtQMnVzQnNXYzlRSzJXNUNSTzRPRlNQMVFUMFp6a0tacExm?=
+ =?utf-8?B?L3RWdWpjQWQyOU1LdUhKbXRhWWtkbW5wMmthcHBBMytlakNNUlBxWmF3WU04?=
+ =?utf-8?B?d2tPbU1tUkNSSEVUUGE1T09BL1ZuY2hkcFZsdjZLRnIza2x0dXNRR3NDdzN4?=
+ =?utf-8?Q?TpOY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 09:11:44.4182
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 995c27df-d6b9-49a9-b7a2-08de00ca8ad7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022571.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5639
 
-=D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:51=
- Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wednesday, October 1, 2025 2:35=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 0=
-8:07 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > =D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE=
- 07:38 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > On Friday, September 26, 2025 12:16=E2=80=AFAM Svyatoslav Ryhel wro=
-te:
-> > > > > Simplify format align calculations by slightly modifying supporte=
-d formats
-> > > > > structure. Adjusted U and V offset calculations for planar format=
-s since
-> > > > > YUV420P bits per pixel is 12 (1 full plane for Y + 2 * 1/4 planes=
- for U
-> > > > > and V) so stride is width * 3/2, but offset must be calculated wi=
-th plain
-> > > > > width since each plain has stride width * 1. This aligns with dow=
-nstream
-> > > >
-> > > > plane
-> > > >
-> > > > > behavior which uses same approach for offset calculations.
-> > > > >
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > ---
-> > > > >  drivers/staging/media/tegra-video/tegra20.c | 58 +++++++++------=
-------
-> > > > >  drivers/staging/media/tegra-video/vi.h      |  3 +-
-> > > > >  2 files changed, 27 insertions(+), 34 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/driver=
-s/staging/media/tegra-video/tegra20.c
-> > > > > index 7c3ff843235d..b7a39723dfc2 100644
-> > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
-> > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
-> > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v4l2_pi=
-x_format *pix, unsigned int bpp)
-> > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  TEGR=
-A20_MAX_WIDTH);
-> > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, TEGR=
-A20_MAX_HEIGHT);
-> > > > >
-> > > > > -     switch (pix->pixelformat) {
-> > > > > -     case V4L2_PIX_FMT_UYVY:
-> > > > > -     case V4L2_PIX_FMT_VYUY:
-> > > > > -     case V4L2_PIX_FMT_YUYV:
-> > > > > -     case V4L2_PIX_FMT_YVYU:
-> > > > > -             pix->bytesperline =3D roundup(pix->width, 2) * 2;
-> > > > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2 * pix=
-->height;
-> > > > > -             break;
-> > > > > -     case V4L2_PIX_FMT_YUV420:
-> > > > > -     case V4L2_PIX_FMT_YVU420:
-> > > > > -             pix->bytesperline =3D roundup(pix->width, 8);
-> > > > > -             pix->sizeimage =3D roundup(pix->width, 8) * pix->he=
-ight * 3 / 2;
-> > > > > -             break;
-> > > > > -     }
-> > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, 8);
-> > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
-> > > > >  }
-> > > > >
-> > > > >  /*
-> > > > > @@ -305,6 +293,7 @@ static void tegra20_channel_queue_setup(struc=
-t tegra_vi_channel *chan)
-> > > > >  {
-> > > > >       unsigned int stride =3D chan->format.bytesperline;
-> > > > >       unsigned int height =3D chan->format.height;
-> > > > > +     unsigned int width =3D chan->format.width;
-> > > > >
-> > > > >       chan->start_offset =3D 0;
-> > > > >
-> > > > > @@ -321,8 +310,8 @@ static void tegra20_channel_queue_setup(struc=
-t tegra_vi_channel *chan)
-> > > > >
-> > > > >       case V4L2_PIX_FMT_YUV420:
-> > > > >       case V4L2_PIX_FMT_YVU420:
-> > > > > -             chan->addr_offset_u =3D stride * height;
-> > > > > -             chan->addr_offset_v =3D chan->addr_offset_u + strid=
-e * height / 4;
-> > > > > +             chan->addr_offset_u =3D width * height;
-> > > > > +             chan->addr_offset_v =3D chan->addr_offset_u + width=
- * height / 4;
-> > > > >
-> > > > >               /* For YVU420, we swap the locations of the U and V=
- planes. */
-> > > > >               if (chan->format.pixelformat =3D=3D V4L2_PIX_FMT_YV=
-U420)
-> > > > > @@ -332,14 +321,14 @@ static void tegra20_channel_queue_setup(str=
-uct tegra_vi_channel *chan)
-> > > > >               chan->start_offset_v =3D chan->addr_offset_v;
-> > > > >
-> > > > >               if (chan->vflip) {
-> > > > > -                     chan->start_offset   +=3D stride * (height =
-- 1);
-> > > > > -                     chan->start_offset_u +=3D (stride / 2) * ((=
-height / 2) - 1);
-> > > > > -                     chan->start_offset_v +=3D (stride / 2) * ((=
-height / 2) - 1);
-> > > > > +                     chan->start_offset   +=3D width * (height -=
- 1);
-> > > > > +                     chan->start_offset_u +=3D (width / 2) * ((h=
-eight / 2) - 1);
-> > > > > +                     chan->start_offset_v +=3D (width / 2) * ((h=
-eight / 2) - 1);
-> > > > >               }
-> > > > >               if (chan->hflip) {
-> > > > > -                     chan->start_offset   +=3D stride - 1;
-> > > > > -                     chan->start_offset_u +=3D (stride / 2) - 1;
-> > > > > -                     chan->start_offset_v +=3D (stride / 2) - 1;
-> > > > > +                     chan->start_offset   +=3D width - 1;
-> > > > > +                     chan->start_offset_u +=3D (width / 2) - 1;
-> > > > > +                     chan->start_offset_v +=3D (width / 2) - 1;
-> > > > >               }
-> > > > >               break;
-> > > > >       }
-> > > > > @@ -576,20 +565,23 @@ static const struct tegra_vi_ops tegra20_vi=
-_ops =3D {
-> > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
-> > > > >  };
-> > > > >
-> > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
-> > > > > -{                                                    \
-> > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
-> > > > > -     .bpp     =3D BPP,                                 \
-> > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
-> > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, BPP, =
-FOURCC)      \
-> > > > > +{                                                               =
-     \
-> > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,            =
-       \
-> > > > > +     .bit_width      =3D BIT_WIDTH,                             =
-       \
-> > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,             =
-       \
-> > > > > +     .bpp            =3D BPP,                                   =
-       \
-> > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,                 =
-       \
-> > > > >  }
-> > > > >
-> > > > >  static const struct tegra_video_format tegra20_video_formats[] =
-=3D {
-> > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
-> > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
-> > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
-> > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
-> > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
-> > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
-> > > > > +     /* YUV422 */
-> > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
-> > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
-> > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
-> > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
-> > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
-> > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
-> > > > >  };
-> > > >
-> > > > Looking at the code, BPP seems to only be used for the line stride =
-(i.e. bytes per line) calculation. I think we should just make it 8 for the=
- planar formats (possibly with an explaining comment). With the current cod=
-e, we end up with 'bytesperline' variables in places not being the actual b=
-ytes per line, which is confusing.
-> > > >
-> > > > Actually, we can then just make the 'bpp' field be bytes per pixel =
-as it was before to avoid the discrepancy with Tegra210.
-> > > >
-> > >
-> > > No, this code is actually cleaner and in sync with what downstream
-> > > does, Tegra210 bytes per pixel is confusing since it totally neglects
-> > > formats with fractional bytes per pixel, it is impossible to set ther=
-e
-> > > 3/2 for example, which is used by YUV420.
-> > >
-> > > According to downstream code bytes_per_line =3D
-> > > soc_mbus_bytes_per_line..., downstream directly name is bytes_per_lin=
-e
-> > > and soc_mbus_bytes_per_line returns width * 3 / 2 which is correct
-> > > calculation (12 bits). Meanwhile for planar formats Tegra has 3
-> > > different buffers so with offset calculation plain width must be used
-> > > (which matches downstream).
-> > >
-> >
-> > If you mean use of BPP by VI, I can propose removing bytesperline and
-> > sizeimage configuration from VI entirely and leave this to per-SoC
-> > fmt_align function which does this already anyway and guards every
-> > time those values are referred. This way there will be no instances
-> > where "places not being the actual bytes per line" comes true.
->
-> Without trying myself, I'm not sure what approach is the cleanest. In any=
- case, the downstream code is just wrong (or incorrectly named), so we shou=
-ldn't defer to it in this matter. I don't see a reason to keep the value '1=
-2' either if it doesn't serve any purpose (admittedly if we changed it to 8=
- or 1, 'bpp' would be a confusing name for it, but explainable with a comme=
-nt and improve-able later) I don't mind having an if/switch statement for t=
-he planar formats to use a '8' as multiplier instead of '12' if we need to =
-keep the '12'. But the main thing I want to avoid is a bytesperline/stride =
-variable that isn't the line stride in bytes.
->
+On Tue, 30 Sep 2025 16:46:02 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.300 release.
+> There are 81 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.300-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I am proposing you a solution, handle bytesperline and sizeimage in
-per-SoC fmt_align function.
+All tests passing for Tegra ...
 
-12 represents amount of bits used per pixel, 8 for Y plane, 2 for U
-plane and 2 for V plane, total is 12. "but explainable with a comment
-and improve-able later" why then we cannot use 12 with a comment? this
-is all arbitrary. Downstream is not wrong from this perspective, you
-don't take into account that YUV420 is planar and it uses 3 planes a
-whole Y plane and 1/4 of U and V which in total results in wigth + 2 *
-1/4 width which is width * 3/2
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    24 boots:	24 pass, 0 fail
+    54 tests:	54 pass, 0 fail
 
-> >
-> > > > >
-> > > > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
-> > > > > diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/sta=
-ging/media/tegra-video/vi.h
-> > > > > index bfadde8858d4..5cbc0606ed6c 100644
-> > > > > --- a/drivers/staging/media/tegra-video/vi.h
-> > > > > +++ b/drivers/staging/media/tegra-video/vi.h
-> > > > > @@ -281,7 +281,8 @@ enum tegra_image_dt {
-> > > > >   * @img_dt: MIPI CSI-2 data type (for CSI-2 only)
-> > > > >   * @bit_width: format width in bits per component (for CSI/Tegra=
-210 only)
-> > > > >   * @code: media bus format code
-> > > > > - * @bpp: bytes per pixel (when stored in memory)
-> > > > > + * @bpp: bytes per pixel (when stored in memory) for Tegra210,
-> > > > > + *    bits per pixel for Tegra20/Tegra30
-> > > > >   * @img_fmt: image format (for CSI/Tegra210 only)
-> > > > >   * @fourcc: V4L2 pixel format FCC identifier
-> > > > >   */
-> > > > >
->
->
->
->
+Linux version:	5.4.300-rc1-ge1a2ff52265e
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
