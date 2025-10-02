@@ -1,196 +1,168 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012032.outbound.protection.outlook.com [40.107.200.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A0D2D0C75
-	for <linux-tegra@vger.kernel.org>; Thu,  2 Oct 2025 08:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759392001; cv=none; b=rf4reSR1Q1uVYAwLP5KOGLvyPZ0+lw4L2Y2woM3fjQwHNRdELjvhjrokMTl6oGudtFR+4mLZNDFA+/6AlePEsBUEoY2VadtpfOKrXSLSUs8WWuh2SRx61Iz1mS9T7P0xaDhze++c3A7Z7e2GSBouYjNzRVPaob6E7LzN4Ppj9gM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759392001; c=relaxed/simple;
-	bh=twdF5Ghf90omLm8FmG8vqty38VLg0uYT52OZEV9+SEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3bohxW6RdCe98QcJosEIdMCxck1LnQ5SbnfgBmaKG7D1m3q8fKejsI7BfjQ5ISeYKK9vD93IGVNnEBEPvpPyP/pEVQlYlBAUCRx/kUjLMNW61WxB1qCT2rvZHy2hdjP6VJYtNHpgNIpbe+5HEQzpQS7OdQVmpf07VmlOp292sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=geW0bfhD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918612F1FE3;
+	Thu,  2 Oct 2025 09:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759395700; cv=fail; b=dSrX5SapCwUc44wQFlksTKiA17osSaCmcNRufDvJqMr+eiJZIu694pscE0zd4n9LDtN3jeAeN68s5xF3zmt4r4WtIEWzRTna1+J2KvwcFmQ/DFbt6nD6220B0RvMWsRP+0aYMYi/MbJfKWR0P62DOUPCDHHV/5Et3r6wJ5Emdak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759395700; c=relaxed/simple;
+	bh=p94hyp3XfWEyLvSu4XAZ8TnVLJVX2HHbWVc7Dsm+UXw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qcj+fXzJf5W7dq7ScMRosGDEgrGPDGBU794ehqwsvSd80taw/qFWnkcHHLLkf05OUmoPnY79RdmgdA0q6TUWeymBjgpuqA3TBABXkO4xI600NdHizZ5WJv905uvk+OabGcweiEEIyvf36vDTOAovkKkTqZERf1qO+ukN541J518=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t2DwO73D; arc=fail smtp.client-ip=40.107.200.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="geW0bfhD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759391999;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twdF5Ghf90omLm8FmG8vqty38VLg0uYT52OZEV9+SEc=;
-	b=geW0bfhD0jXboRg7zA3B5VQX8dYiXvo/f4bk4VrntYbDbQq1/kdpHBU/hLfmi0RORD/3ue
-	dqTO5VnjhlMImAKcUnuPu0QdUo1bDcTrkWxvbMj9BgbVIbVTJAZtWQA3Mr0+nIo7He49Bi
-	6RczjXXZ2sjzzNLQ7TpT+yQphsBb/5U=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-395-cfNjygNbNbO9dS50-i9_Fg-1; Thu, 02 Oct 2025 03:59:57 -0400
-X-MC-Unique: cfNjygNbNbO9dS50-i9_Fg-1
-X-Mimecast-MFC-AGG-ID: cfNjygNbNbO9dS50-i9_Fg_1759391996
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f7b5c27d41so628041f8f.0
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Oct 2025 00:59:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759391996; x=1759996796;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=twdF5Ghf90omLm8FmG8vqty38VLg0uYT52OZEV9+SEc=;
-        b=ATnS44ZRljlub4/qxt/uUjt0s0pN2NJq96x7QLUkLrIK+J8fV0OeTOZemQgINuXp4Y
-         i0oyWjOHxb+KuDnhtQC6CZK5ZWwqPDiqelwL/hDi7nvXbT8RzDh+V14npCEJkytfRSou
-         B1+hZyeHtV1+Rku+TsS68Dsw1xX6R8CYkuXDGmaKkwEkwmmsC28z5Ug9MdMQA30EUSX6
-         A/2OgU7+NoZI7Vn7gejIg+A1C4U0u4E9kw0l3IzpRJQaDs9oZouip5GqhuGS3OuQnPvj
-         +w+bFOsq3ggcYUh4pRYKrpj7SIpGirRwMU8metG5kJ1aSQKxiUtoQfb4CumeGdAFQiZm
-         ApEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVURBfR46SEIta/T6h+/mPhdvkuo6OJ/VVQV5gza6k77vLw0/rs9kwIUKFCsSfW0dRpyXcYDnz0hUNw9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkX/21GnGVK93i/DpXkPGmS+tsStc1PG4m4CT8847TSsihw16o
-	OgX4S6Wwqn6Lwzjrl51B2L6m0ZYQEXQfaVemr+zLxAF+BbVfKY3IKQdu6XPolDOpKHhKMeDHcpE
-	+IJVipuU/vAkG8XXv10p3FOh6gwS3DHeCjVcbuu2Ox5YutowtevM5FR5dZjGvR9lZ
-X-Gm-Gg: ASbGncsdpt2muIA/dTtwjTLOFXRWRyjbs+E+Y3xOtgRg86lvyFFKrgEH5FfwosN1Qaf
-	FU05trqafjZhOhOt17VThNGzDKQMpeWwc8yZSn4+slnL4703TPqECmuD9VovQOj9y+NDQiDVkoe
-	YOZbjm1a0XIWSyoSyLqnQyUEBUzdb2n1r30gFOcAMWSJCPNtOSlxorQJAZBtjYcc1bSI0M6PYmD
-	M0dGS/DezTb9GcZBQYwUXshnm8TK8hh1WbYnu1G6G3BDiMVZ048n+wnu9+AOhGBuLPl0VQKdN7g
-	wjAgAR1jD5lCfWoxU5g+hw==
-X-Received: by 2002:a5d:5f48:0:b0:3e7:617f:8458 with SMTP id ffacd0b85a97d-4255d2ca82cmr1522912f8f.24.1759391996223;
-        Thu, 02 Oct 2025 00:59:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqvfeqwKeBIWk9I362srSwTFSWrOClY9YoEOQMVFqHTivLzqDGGJkfLFwQp6Kk579V7lD3LQ==
-X-Received: by 2002:a5d:5f48:0:b0:3e7:617f:8458 with SMTP id ffacd0b85a97d-4255d2ca82cmr1522879f8f.24.1759391995724;
-        Thu, 02 Oct 2025 00:59:55 -0700 (PDT)
-Received: from localhost ([2a01:e0a:b25:f902::ff])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9719sm2540317f8f.31.2025.10.02.00.59.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 00:59:55 -0700 (PDT)
-Date: Thu, 2 Oct 2025 09:59:54 +0200
-From: Maxime Ripard <mripard@redhat.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: John Stultz <jstultz@google.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
-Subject: Re: [PATCH 4/9] dma-buf: heaps: Add debugfs support
-Message-ID: <20251002-cute-loud-eel-67f9a0@houat>
-References: <20250902154630.4032984-1-thierry.reding@gmail.com>
- <20250902154630.4032984-5-thierry.reding@gmail.com>
- <CANDhNCoM4RFX-QccF7xT=+-tduGj9OZ_8SgrTVyRucMwyVc73Q@mail.gmail.com>
- <e6twhwxi55eesb7xirei7wezzb77qjiji2mccgqlziisjzl3q5@3ny5e6lbgebz>
- <CANDhNCrO21O_URa1iHuroOoG-g61DL7uvECTwVxiuitCTi=i4g@mail.gmail.com>
- <sb76bsg5d45r5qgq4zy3svbh42ydkk4vrh6a7vh73eibvqbfjd@3r4exdhogde6>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t2DwO73D"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oLk+qgzQoep2FxYsOEruIeuwIzR6rvMBok+gjB9WO6lS3r2ZI2PGhvwilTIXy1sY2Pa7xw56l1qrsSGE09W/kMDwOy3ZMOMbf+HidtIaHWOJMg1F9/QWQdaWDEgxSRncw+I68xP/Z9OUrk4eZKeYUA1TxZ5P1UuS9DM/nVo9jPPt3yjPQVMn1SsKtduGSrJNR1oTJbXchzDQd2Qqt+7hCqPQj/na1qvfe4NT1aqgZBon9na71YDQ7kiUmgUczCFZspYARbAJgF97hR4glA2iPha1E/IMT1iXXTRh4M5xHndjC1SdzIYjsTQ9/wsnZ0z2svDT06EQc+F5NUtO94ZLjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Uub1DoONmhJl2Ec+vGUjok6Zxwhpv525+g0UIZfwppQ=;
+ b=O3txpCgA52blqFsPeWrE3Lpy+bFQFM7Ak+VBABjewoInDN8DW7hg6QkuVHsxUtljw1LXyalp933LM46srKHXCrp9FlE/yQe171zZTTiiufNEtvOlXwL5KWHzmonHCF18KMnohWU8vWAb1Omh1WWIUmxo/ekxKXlLT1YtFZbq+Zv7k6+TsnWXaNVZm/wrNBNRpZqhxza71ptswFPA0HcxzKPs76q89jYsJlLb6yv75w7u+O2dAE61llN90WBbEI/CytzJ/wCBeC2WtFooc2mZq9lBJeUgiKH42TKIQ6K3xg8r2M6N0QBqlJcO53FHNL3Duk7QUg/HzEvMZkIz4LcoPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Uub1DoONmhJl2Ec+vGUjok6Zxwhpv525+g0UIZfwppQ=;
+ b=t2DwO73DnIipz4Nq4YPEX0W52SxGEEQc3QqG5BM0Ze5tNfLRU2hJJQqylYhc2uaRC6chEo71EwWLJcMKRmqBM7V+opaGgIiDxdWAxmj33zC8f9y9gMFaEmtT8qvMA2R1Cmakw0SQvsBJ8B66rOOqOsftXZqXb1u8iZvDBRUJlhCkFi8tcms25By7xbBqoksyVNKEeQpOJvpXHwAUrxsHv7pE76T17Oy6XRNcoOAoySLCDijQStgcNScNq5+f+cvVHlsBd+FrANWoyS6XUEAaVRF60aCyQlyEDAXLXiebbnB7XwGU69La1E5smNp2hkZF8NfxHRLBvUPQXzkjn9t+xg==
+Received: from CH5P220CA0021.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1ef::19)
+ by MW3PR12MB4380.namprd12.prod.outlook.com (2603:10b6:303:5a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Thu, 2 Oct
+ 2025 09:01:33 +0000
+Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
+ (2603:10b6:610:1ef:cafe::7f) by CH5P220CA0021.outlook.office365.com
+ (2603:10b6:610:1ef::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.16 via Frontend Transport; Thu,
+ 2 Oct 2025 09:01:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Thu, 2 Oct 2025 09:01:31 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Thu, 2 Oct
+ 2025 02:01:14 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 2 Oct
+ 2025 02:01:14 -0700
+Received: from build-ketanp-bionic-20250813.nvidia.com (10.127.8.10) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Thu, 2 Oct 2025 02:01:14 -0700
+From: Ketan Patil <ketanp@nvidia.com>
+To: <krzk@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ketan Patil
+	<ketanp@nvidia.com>
+Subject: [PATCH v2 0/4] memory: tegra: Add MC error logging support for Tegra264 SoC
+Date: Thu, 2 Oct 2025 09:00:50 +0000
+Message-ID: <20251002090054.1837481-1-ketanp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="wnfwjjw7bbsf5d2u"
-Content-Disposition: inline
-In-Reply-To: <sb76bsg5d45r5qgq4zy3svbh42ydkk4vrh6a7vh73eibvqbfjd@3r4exdhogde6>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|MW3PR12MB4380:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cc18eff-6634-418d-aba5-08de01924825
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HxqYsVlcxJneZKrA1F0VljgHyNhPD1tAis3a5ZL2obWhpFvDA3ddAWO+wJNH?=
+ =?us-ascii?Q?yQ0fZM6J+K/+8ZmUku0BpAUdCOB+l5wC8dVVCZ184dwEkClu6PxAMhjjLcVt?=
+ =?us-ascii?Q?5k+x/LbE3nmoBn3QrAEf5f38HPCK7GiFJvpJW253RtuPO3z2Pp2+LSHm0Cqi?=
+ =?us-ascii?Q?RkrndGhwPSxOJ6ktMtpg4n8t45IXZKYXYEBU5+GTQci5gXGe/86EzuWTeS2P?=
+ =?us-ascii?Q?XCfltVvyVTcZH313Knm2um0r+3PMehhcirlnzDRIx4P9gAggMige4a8NVliN?=
+ =?us-ascii?Q?+je6w8p8B6dbibqMkNWaHrEqlxGvDjR4swlm5QrefKZUUumybJlaxvYDsqqC?=
+ =?us-ascii?Q?xQiJqv4LC0h3jEIT/TZ+gJqHZuIPHwPFF3CJzkiKHgLUh/rBeYmJi2aR2CVn?=
+ =?us-ascii?Q?PWmNt5/QL+wd5KURglcr54P5FNoYk9WSxXEYKf+ZsLJtUMHsX2/TM3HGZa3F?=
+ =?us-ascii?Q?meKJzxEAtKi35QYz7EuekyWwiGDL08CeIygnR7YMeoT6V78TrBy5DYM0qsAJ?=
+ =?us-ascii?Q?mQYlpwVFv8RF+2AQZQzg/tfoxg7+InHTQYFX3O26YEXWmVH9LHmQJh8E0hBZ?=
+ =?us-ascii?Q?wDkkrGvBtMTOqEJomXwsek/J3KjgAdkTCGeRihlTMPanCZyTs2HHANydla2C?=
+ =?us-ascii?Q?q9lF/oznmAKsBspfP2ekEXU1PqO4EhepW7UWJ/IqXpg6srE+UGV3c29CGS0a?=
+ =?us-ascii?Q?UsA0Kd8pbN4oBq+OY5P+dEPZVL0PTlu1Pa4lp5j7CgrRu7C1k+4/aX941zRW?=
+ =?us-ascii?Q?cx7VLaNSdHeW0lbygHwqrYs+eFZGe5ZulGBjbULEXqAorAddtdvZGs1/310t?=
+ =?us-ascii?Q?/Cx7LhtjJFvX9yeiwRQxmn52AviiBhSRu58hXvqS+xfJYlmaE9QKtAJmX0dL?=
+ =?us-ascii?Q?nrYMTPMKpG2LC9p9kU3M5PZyuZLSWnXhdzZSdo+NFGRkc6qpwTertEsnw6ys?=
+ =?us-ascii?Q?F8hrDsAcvT4jtvnKXX520WrnTaPnbHyzxWTqy6x8wE7zj8rKcTgqm5n5/wsL?=
+ =?us-ascii?Q?HQg66AEZ2u9pIV93RN+rJujxqpQj36vLXqVUDPjwS3sVt68HoWeHYlGmksqY?=
+ =?us-ascii?Q?bOrwBihrqYVvnhwV5+UI/BWXyQfH27cZToFbj3lYflBJsu4QAswYTBhoSXKJ?=
+ =?us-ascii?Q?iMbePO5JEea1S2YNgOnw0i0v18AJtyuLlG1+o5CW4zMHlcqhiV4z+ip866nT?=
+ =?us-ascii?Q?7TfJM6Uji3BD3xePLBROZN77HDwnXDmVojnRoQc1BgT9ELsbM6q7DgD74Z5R?=
+ =?us-ascii?Q?M1N7bvVANpZD7RsazisTLV7kRhlidc53MDnRH3VwgXh6+nSmIWVLaQHHdkM9?=
+ =?us-ascii?Q?Q1ee9wKMduTqXX3BkjdUO6CIRet0ul6Kx1O1jD4NsMr+GkBEQt5WpcVPQRK5?=
+ =?us-ascii?Q?4J5FaW8W7hkym2gYiZJ/sDyg++eKGft+m4+5zTCoQeZdk7HdPlk+UqZn2yBS?=
+ =?us-ascii?Q?eHLnaj5fVJWC064yvEif7yKG/KO5sgMncMKguZY9QgrXLvTG6Q7x31Vtu3wZ?=
+ =?us-ascii?Q?UrRZkkawpiT6JZNiohfZACHcsgLN77Ba102HwU8NSNx4VmNbFNihJjPONqFQ?=
+ =?us-ascii?Q?Iu0VAxn49Gh1IaN6jHQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 09:01:31.8890
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cc18eff-6634-418d-aba5-08de01924825
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A348.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4380
 
+In Tegra264, different components from memory subsystems like Memory
+Controller Fabric (MCF), HUB, HUB Common (HUBC), Side Band Shim (SBS)
+and MC Channels have different interrupt lines for receiving memory
+controller error interrupts. This patch set includes changes to add
+support and enable Memory Controller error logging for Tegra264.
 
---wnfwjjw7bbsf5d2u
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/9] dma-buf: heaps: Add debugfs support
-MIME-Version: 1.0
+Ketan Patil (4):
+  memory: tegra: Group mc-err related registers
+  memory: tegra: Group register and fields
+  memory: tegra: Add support for multiple irqs
+  memory: tegra: Add MC error logging support for Tegra264
 
-On Thu, Sep 04, 2025 at 02:04:05PM +0200, Thierry Reding wrote:
-> On Wed, Sep 03, 2025 at 11:48:38AM -0700, John Stultz wrote:
-> > On Wed, Sep 3, 2025 at 8:38=E2=80=AFAM Thierry Reding <thierry.reding@g=
-mail.com> wrote:
-> > >
-> > > On Tue, Sep 02, 2025 at 03:37:45PM -0700, John Stultz wrote:
-> > > > On Tue, Sep 2, 2025 at 8:46=E2=80=AFAM Thierry Reding <thierry.redi=
-ng@gmail.com> wrote:
-> > > > >
-> > > > > From: Thierry Reding <treding@nvidia.com>
-> > > > >
-> > > > > Add a callback to struct dma_heap_ops that heap providers can imp=
-lement
-> > > > > to show information about the state of the heap in debugfs. A top=
--level
-> > > > > directory named "dma_heap" is created in debugfs and individual f=
-iles
-> > > > > will be named after the heaps.
-> > > > >
-> > > >
-> > > > I know its debugfs, but this feels a little loosey-goosey as an uAP=
-I.
-> > >
-> > > Well, the whole point of debugfs is that it's not really an ABI. Noth=
-ing
-> > > should ever rely on the presence of these files.
-> > >
-> > > > Is there any expected format for the show function?
-> > > >
-> > > > What would other dmabuf heaps ideally export via this interface?
-> > >
-> > > I've thought about this a bit and I'm not sure it makes sense to
-> > > standardize on this. I think on one hand having a list of buffers
-> > > exported by the dma-buf heap is probably the lowest common denominato=
-r,
-> > > but then there might be a bunch of other things that are very heap-
-> > > specific that some heap might want to export.
-> > >
-> > > > Is there some consistent dma_heap-ish concept for it to justify it
-> > > > being under a dma_heap directory, and not just an independent debug=
-fs
-> > > > file for the driver implementing the dmabuf heap?
-> > >
-> > > Well, I think just the fact that it's a dma-heap would qualify its
-> > > corresponding debugfs to be in a well-known location. We could of cou=
-rse
-> > > pick some arbitrary location, but that's just a recipe for chaos beca=
-use
-> > > then everybody puts these whereever they want. There's really no
-> > > standard place for driver-specific debugfs files to go, so putting it
-> > > into some "subsystem"-specific directory seems like the better option.
-> >=20
-> > Ok, I guess I was thinking if the files are organizationally cohesive
-> > to be under the dma-heap directory, they ought to have some
-> > consistency between them.
->=20
-> As far as I can tell there's not even enough information in a dma-heap
-> to add any common debugfs snippets. As I mentioned earlier, a list of
-> buffers allocated from a dma-heap is about the only generic piece of
-> information that I can think of, but we don't track these buffers in a
-> generic way. None of the existing heaps do so either seem to be
-> interested in this either.
->=20
-> It's also not like it's very useful information most of the time, it's
-> mainly in this driver so that it can be inspected at runtime to see what
-> the allocation pattern looks like at various stages and maybe help tune
-> the division into chunks.
+---
+Changes in v2:
+- Fixed warning due to use of uninitialized variable by returning back
+from the function
+- Removed unnecessary extern declaration of tegra264_mc_ops
+- Updated tegra20_mc_irq_handlers, tegra264_mc_irq_handlers and
+tegra264_mc_ops to static
 
-It is somewhat useful when we're talking about cgroup though :)
+ drivers/memory/tegra/mc.c       | 125 +++++++---
+ drivers/memory/tegra/mc.h       | 140 +++++++----
+ drivers/memory/tegra/tegra114.c |   3 +-
+ drivers/memory/tegra/tegra124.c |   4 +-
+ drivers/memory/tegra/tegra186.c |  14 +-
+ drivers/memory/tegra/tegra194.c |   5 +-
+ drivers/memory/tegra/tegra20.c  |  20 +-
+ drivers/memory/tegra/tegra210.c |   3 +-
+ drivers/memory/tegra/tegra234.c |   5 +-
+ drivers/memory/tegra/tegra264.c | 407 +++++++++++++++++++++++++++++++-
+ drivers/memory/tegra/tegra30.c  |   5 +-
+ include/soc/tegra/mc.h          |  32 ++-
+ 12 files changed, 662 insertions(+), 101 deletions(-)
 
-I think the buffer tracking / debugging mechanism itself is redundant
-with what dmem/memcg would provide, so we probably want to just enable
-dmem (probably?) here?
-
-Of course, it doesn't help with additional heap specific debugging
-information, so this patch might still have value.
-
-Maxime
-
---wnfwjjw7bbsf5d2u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaN4w+gAKCRAnX84Zoj2+
-drPIAXwN+Pi8yzwK6HH6eGaV4PuBhOENbMJ5om+Sbvf7UIv1i3YsGC9zQ5e+WgxM
-4TB85TUBgMDvDSgCCaar57VP6ejj5nEexJYbycU0O7aIS8YHI8OUUt+RA2Us7hS/
-M7QuNSDL9Q==
-=wm+r
------END PGP SIGNATURE-----
-
---wnfwjjw7bbsf5d2u--
+-- 
+2.17.1
 
