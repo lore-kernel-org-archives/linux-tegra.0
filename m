@@ -1,211 +1,104 @@
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E4315687D
-	for <linux-tegra@vger.kernel.org>; Thu,  2 Oct 2025 21:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3991628FD;
+	Fri,  3 Oct 2025 06:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759440957; cv=none; b=c0YBeVdyKwaXG2rPLxL73QtLwK7MyqOIjQUKHh/YGA23Eb/NLzgwQLGJa0yBf/q+2huyQeTHgqa7U4qh/Yap+C1MM3P82aRvrilBSaSa7w1wm/W54echFZ5wPQ3JCEd+7Fy1ex/voOtZ38SgaBpT1Dh3veyax7n1Ko2j1LXgNik=
+	t=1759472979; cv=none; b=RZ5yXiCk8Nz6P9WCMLuKFWrH6Gt/IDFdq8VorBP2O3b/keExegw4osPKG5dTn5qwX3Iy+761Ja1C/j51Hdo2AQZLTTmLYSFjNM+tRNfQkPqPGR+sHVBgTGYyrsWqi14nSoQaFsztYfy+IOR4ab6Ii+RJK7uL19FBzyv+ahlQdys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759440957; c=relaxed/simple;
-	bh=zMeuhyrGmKv3Vy1hEV7bUGE0hRvsTCbCldYPgrOEYKg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u5zX2Su9WstqILGDBhKXJ6P9bSaKhXXU33PGMcn1yIWWxRHKPV6Xejcw3yC2p4fPbyD61qxVRenJ3XYcKrx6HnvPPgkhut0dLqXK9kDQXnG4hOkJJUaYoa5H2V2ilN2X19qGkAiQhcnsFzWkd7GXtdv7fn3z+25bwVegeXOzBRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QsoxcFIr; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1759472979; c=relaxed/simple;
+	bh=38C6bj4uQk4Gyei3uzTSRu3fqNu3pxRhzppzFyacgU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LROwgfIRPfZFgjJ3Uk8vcte67MvgbeJk0M7jwsejvqtvOzEqyzzmt7cdniUyjWOJgn0zvmXLTV2adr+nCjeSqJhaC0eJP6XD5I8nMXGaCdMBnMdCBvPGKaVUIXBr7CQqd0oOkwNc4xvJv7WGr4woa2FAH8EfVUXHuvSo9eadHzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N4M5dpAF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QsoxcFIr"
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-269af38418aso16694605ad.1
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Oct 2025 14:35:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759440955; x=1760045755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6tb5ZhFKHgn3PI0RL+wA56er2lYPRbzxVlrU7xzkMbM=;
-        b=QsoxcFIr3BVQU74FXe/esoKBYcKYPFE3AuA8P2ZBIJmRZvV1VdGxKV5J9Zqsn4tl2/
-         gh8F6KQ7f2mb+0NfdC+LCDCB1fnkoBK98sJ3qOnA4EDGOdwqHkA/i8D38q9tMY3sT2aY
-         fyaBtHJt86BePWRL9xK2+oi4LblLY2ll0h9Mo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759440955; x=1760045755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6tb5ZhFKHgn3PI0RL+wA56er2lYPRbzxVlrU7xzkMbM=;
-        b=pq1+3vXzsTvnFKrg1pAW6p45kzq347ZPHyVeHvuuDyVIM6XsBCYqBhDb2opM2JXkpx
-         Uh3iQNj/Sf6qXyN/fvIExMHPmij/VE6L8cYnQMvusn3cBdqa8w5NFklH69IB/gvyuZqe
-         K3wRYCnbAL2Vv0QGgMLhZ2MphIoQ4Gcg0sIvPMuh9YFOkN/2f1fcq4ER83Jo/q2v9Yoe
-         V7qITzHA/HR9/7arv1e7sy8e1LbCXJEywwt8H6MQt0zpCockRsAZVf0RHj6hD95E8qPw
-         S8+62wkf8kcc03AwzYUU6+XJ8eJknI+VVF4TnITKnQ6VCPoYTU0cM7t6TfIqg7d6ry5b
-         KXRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTwgHx4c76/hXogIE/MglX7+doVMzp5bcpraRIrQNYxj9reilCrEY/zaQtTFOlM5cYXANhhOZUyihRwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8J5fpB940UwgjgjNtyYS8t+cd9lckHnb0NkXD7hx+vcL2DE0I
-	+MFybE1dm7piQy5GffOGpOSHBmAaMmpLq0eoy3YwW6yxlgqyCmTos5TFEmjrdbOZCOZn3Cxq7Nc
-	uU8XZbg==
-X-Gm-Gg: ASbGnctK7Xf4Q4obG5NeSM7CSOACqUkuBj6xpANlQHy4nAQG9QROtrhVmC5muKnJKQj
-	hTTq3K2pz1BoLfCcmH0jZxtZizR7YbzwQcbn+SHzvRGqYZInQ4lb/2SWZH3iUKeUBvLKb5HFPNT
-	1x+hKwRhAnvoj4aoWo71u334TS9NT8JNe5uf7JgXGLUXxPspju/yRnjAGLoRXgM1zIfaT84m6Xl
-	eWa0vHazYFD9bwZ+If0xrG0O2vaAgmsIMmM4RlLnc36MtHkwymYZg1XKz5u9QgN03VHFFFeGiXo
-	ebkUdPturCcJvELbTb+6fZQZrRQ/RywErJZxEqDFj204mvUryPgbi/A39QIiemgDlQc7woEzzpZ
-	2pVkNtZEXPQLdoNoiQALjskvHAywiQ5/cArHC+WDtQYfdKQuRMTjFEJonpfNJUHNMiOeLp3iYVA
-	+k50N6q9bBuoxkmw==
-X-Google-Smtp-Source: AGHT+IH5dCHA0RFLKl7dyl07KtT9/0DU5qWUpDj/y0ET6RHkaTYDR02EW+hIuRyIQ1xtsByEZiVfwA==
-X-Received: by 2002:a17:903:3d07:b0:268:500:5ec7 with SMTP id d9443c01a7336-28e9a5b9441mr7811395ad.2.1759440955510;
-        Thu, 02 Oct 2025 14:35:55 -0700 (PDT)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com. [209.85.214.175])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1267d7sm30284875ad.49.2025.10.02.14.35.55
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 14:35:55 -0700 (PDT)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2698e4795ebso14436165ad.0
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Oct 2025 14:35:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/RLnUAwzoLWFnQJt+ZUyWvpukINoP+ytg+pRwu828BRg8qjmkbUNY4c2Ax6HU1b5zMniMdo3U0zeE5w==@vger.kernel.org
-X-Received: by 2002:a17:902:ebca:b0:265:604c:17e7 with SMTP id
- d9443c01a7336-28e9a6ff040mr7217865ad.60.1759440954340; Thu, 02 Oct 2025
- 14:35:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N4M5dpAF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759472977; x=1791008977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=38C6bj4uQk4Gyei3uzTSRu3fqNu3pxRhzppzFyacgU8=;
+  b=N4M5dpAFLYJJH5cq+MKYuJJzva5RQWSUt2Or28zWTLec+0hzBRn9s2Yu
+   tBHeLwOFf65HE/Fmy3EwIJkATkFNdW+6HPgxriweD6IKrxKLjTXLT8kj9
+   23SH1yTMSD61SCFRK8VRA7flImB3BZH4tcT2HPXbbasnFwAMKm7/B3Xsn
+   MRi4ORWxw2UcgjP+b6L/goLhqI7oH3LnnmwfiayY+ZH1kMc4muZE5AKoM
+   mRBw2lp6p96VEyqpzCiZMShn+P/gZQEOFeYT72g7Ra0c/1aVscfQl7gTI
+   TsPO2tZXLV2PkCN1DZAeB+Fn35Qvttg8E1oCZSxOP6WfvJrNkDaJABh0h
+   Q==;
+X-CSE-ConnectionGUID: H89W8fCOTTmrHIk4e4f16A==
+X-CSE-MsgGUID: 8MIz9kZeS3C+z+Q8I1DrGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61802320"
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="61802320"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 23:29:36 -0700
+X-CSE-ConnectionGUID: wGF9LlBBTIia2PyQAtwDGw==
+X-CSE-MsgGUID: hyrvbglwRJW7LwB0/3oZsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="179165404"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 02 Oct 2025 23:29:35 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4ZIK-0004NH-29;
+	Fri, 03 Oct 2025 06:29:32 +0000
+Date: Fri, 3 Oct 2025 14:28:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ketan Patil <ketanp@nvidia.com>, krzk@kernel.org,
+	thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Ketan Patil <ketanp@nvidia.com>
+Subject: Re: [PATCH v2 3/4] memory: tegra: Add support for multiple irqs
+Message-ID: <202510031456.NUbQMKPs-lkp@intel.com>
+References: <20251002090054.1837481-4-ketanp@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-2-clamor95@gmail.com>
- <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com> <CAPVz0n23qNrnyP7ttchaCoLit=gBm_++7RX7B8MxR_nx+8LGHw@mail.gmail.com>
-In-Reply-To: <CAPVz0n23qNrnyP7ttchaCoLit=gBm_++7RX7B8MxR_nx+8LGHw@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 2 Oct 2025 14:35:42 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com>
-X-Gm-Features: AS18NWCyCoeGl8UyyLw_R0kuFN-88oe-Wi6XpVX99MGsfcmrycek7SZgv1oi908
-Message-ID: <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG
- LD070WX3 panel
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002090054.1837481-4-ketanp@nvidia.com>
 
-Hi,
+Hi Ketan,
 
-On Mon, Sep 29, 2025 at 10:03=E2=80=AFPM Svyatoslav Ryhel <clamor95@gmail.c=
-om> wrote:
->
-> =D0=B2=D1=82, 30 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 06:12 Do=
-ug Anderson <dianders@chromium.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > Hi,
-> >
-> > On Mon, Sep 29, 2025 at 7:25=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmai=
-l.com> wrote:
-> > >
-> > > LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, whi=
-ch it
-> > > clearly is not. Address this by adding the proper schema for this pan=
-el.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++=
-++
-> > >  .../display/panel/panel-simple-dsi.yaml       |  2 -
-> > >  2 files changed, 60 insertions(+), 2 deletions(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/panel/l=
-g,ld070wx3.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070=
-wx3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
-> > > new file mode 100644
-> > > index 000000000000..0a82cf311452
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yam=
-l
-> > > @@ -0,0 +1,60 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: LG Corporation 7" WXGA TFT LCD panel
-> > > +
-> > > +maintainers:
-> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > +
-> > > +allOf:
-> > > +  - $ref: panel-common.yaml#
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    items:
-> > > +      - const: lg,ld070wx3-sl01
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  vdd-supply: true
-> > > +  vcc-supply: true
-> > > +
-> > > +  backlight: true
-> > > +  port: true
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - vdd-supply
-> > > +  - vcc-supply
-> >
-> > I suspect you'll get a NAK here because you're not preserving backward
-> > compatibility for existing device trees. While there can sometimes be
-> > reasons to do that, you'd need to provide a very strong justification.
-> >
-> >
-> > It seems like instead of breaking compatibility you could just have
-> > two supplies:
-> >
-> > * power-supply - The name for the "dvdd" supply.
-> > * avdd-supply - The name for the "avdd" supply.
-> >
-> > ...and then you make both of them not "required". Maybe you'd add some
-> > documentation saying that things might not work 100% correctly if they
-> > weren't provided but that old device trees didn't specify them?
->
-> Schema describes hardware. If it does not (and in this case it clearly
-> DOES NOT), then such schema should be adjusted according to hardware.
-> If there are any users of such binding, they should be adjusted too
-> (third commit of this patchset does exactly that). Panel datasheet is
-> explicit, panel has ONLY vdd supply and vcc supply, names are taken
-> from there too.
+kernel test robot noticed the following build errors:
 
-I'm more than happy to defer to DT people on this, but the general
-argument is that "device tree" is supposed to remain forever forward
-compatible. In other words, someone could have taken a snapshot of the
-"tegra114-tn7.dts" device tree at any point in time and then shipped
-it in some BIOS. Presumably the old "tegra114-tn7.dts" (for some
-reason) managed to init the panel properly in the past and the idea is
-that there should still be a way to init the panel with the old device
-tree now.
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on linus/master v6.17 next-20251002]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Obviously, that's an ideal version of the world and sometimes
-hard/impossible to make a reality, but it's supposed to be what we
-strive for.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ketan-Patil/memory-tegra-Group-mc-err-related-registers/20251002-171042
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251002090054.1837481-4-ketanp%40nvidia.com
+patch subject: [PATCH v2 3/4] memory: tegra: Add support for multiple irqs
+config: arm64-randconfig-003-20251003 (https://download.01.org/0day-ci/archive/20251003/202510031456.NUbQMKPs-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251003/202510031456.NUbQMKPs-lkp@intel.com/reproduce)
 
-From a more practical standpoint, the dts changes and code changes
-will go through different trees and so making them mutually depend on
-each other can leave people broken if they happen to have one patch
-but not the other.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510031456.NUbQMKPs-lkp@intel.com/
 
-I suppose one way to handle this (if DT people like it) is to keep the
-bindings the way you have it but then add some layer of backward
-compatibility in the driver. It will mean that anyone with the old DTS
-would officially not "validate" properly against the new bindings, but
-I think that could be OK as long as it was explicitly mentioned in the
-commit message. Obviously, though, DT bindings reviewers would have
-the last word there...
+All errors (new ones prefixed by >>):
 
--Doug
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `restore_sigframe':
+   signal.c:(.text+0x1a28): undefined reference to `restore_gcs_context'
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `setup_sigframe':
+   signal.c:(.text+0x2574): undefined reference to `preserve_gcs_context'
+>> aarch64-linux-ld: drivers/memory/tegra/tegra186.o:(.rodata+0xc8): undefined reference to `tegra30_mc_irq_handlers'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
