@@ -1,72 +1,187 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57F7246760;
-	Mon,  6 Oct 2025 21:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849CE11713;
+	Mon,  6 Oct 2025 22:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759786606; cv=none; b=MtztxQi/pklvxwii81DApaWfxtPt56NIAZPyX+9nigebAkdBusLi4j5TjmgTzfTGjzBxFNDnrz6tChJ/eL05CBJpHKBlZS39FP5z2K3Dd0UHNluy2e7POQKrVjheErvUxk3D02WiQoxvfTPyGbhiuybXGAEivtJ+B6ohsJwAjkA=
+	t=1759788789; cv=none; b=kutdEvaZ7CsF5NlWYZB78tjGZeeuSMqsylZaAkcpQRYHgZJbjawjSiph8g+T8EoyKBjFAPQFDVkz/kWl02pUXN/mmLJgcScgfIW0I4+N5oKihD4DX0CQxNB1OpEWR24SqsIawudyfpqkLGalAjfZl9HOp07TgfirCT0gQBrbIqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759786606; c=relaxed/simple;
-	bh=Wc+JgdfB2HdH0elOKIjjG6YIjjzGSAhaMhztbt8QOzw=;
+	s=arc-20240116; t=1759788789; c=relaxed/simple;
+	bh=lIZKgLMniEnisfyXutpns8WCcOXHJQ4ZpCkUFUyy4gQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsqVrfFPX7RWCoU1dwJ6PMHZEMgEMu2AR8czzW5Ejfp2W8evW1v4bB9LU+SJ/xyrc5HBQuVZdiPKfnbvgrhTpsoyjHOINTgi76ydwxJWMIqJ7BGA350wlSgOUlfPtlS+drkFs0PvTkAPtEkWfGvEp3qM9tDJPj8IucNniaYLW/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSJbfBOI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuZViZb3SV9v2EJmG6RRRM42453hhqY3fts1VvpQm6D8c/7qnLexD/GLDCmzM1RTSVavDaZ2oRCr5gctYvE9dSg6EhqTVBhnpj8QjCyYv2nyTQX/4/5BB7RXV8fJ4TkZMWQ+DoZYiJAUXgJAoHvBkH6YAYMDFLYehTFpeOXm1CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOgZx/Uo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSJbfBOI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC37C4CEF5;
-	Mon,  6 Oct 2025 21:36:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOgZx/Uo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E24BC4CEF5;
+	Mon,  6 Oct 2025 22:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759786605;
-	bh=Wc+JgdfB2HdH0elOKIjjG6YIjjzGSAhaMhztbt8QOzw=;
+	s=k20201202; t=1759788789;
+	bh=lIZKgLMniEnisfyXutpns8WCcOXHJQ4ZpCkUFUyy4gQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KSJbfBOIuUhvEerY6D13zJsFE6bPufqjG2fMQYtMuR3GaU9AkOagbe1wXishsyuFy
-	 yaAXw72c0NyBZO6hr3NC0CmWuQGY24hg/26ZlnXngujAGzzAgQRR2gynSYa9jcnx6w
-	 XfMT15F/nDAbc2xPv8iBQadx7suWCBi4BFUennKXJ7XN2Xws9wawVcgtWHrluYdiT4
-	 32TD6Dl3uU5N67rbb4e8EswXaRC2Jt1Nk/s6o7oYi83ekbHZ8YuItbokVV4abiL7RP
-	 cBC96KLw6IWtSUb2fUiBGcJ0a0AHFFdwQ4o/YtlrHiHGqjvZ8MfVtr3NHx3JyU3irR
-	 RN7SUOzG5Waaw==
-Date: Mon, 6 Oct 2025 16:36:44 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	b=bOgZx/Uo5U9Za44Jdifn+4OZRvhMXRfgiynKtMt0lfi97IF0Mtvj21TFBmYm+nl3C
+	 wRJq4U/ZmlNMAZssNRQWS7ofrqhAA6joUVIYhkiDiVeiTnG7Jj8AqOgOW0r+YYTNg/
+	 Bw/pWpjDGkcZdx052IpIumB0nGB7ohX3M/01f2AzEYodUBGY9PxE9lAKkMFEHUhLat
+	 lifbv9uKtfWiMa4OBffuqMQLrc2I+xa1LWw8E8mfjjm8PD4qoEtG/+hL9Aej8FHkKS
+	 IZd/JYW4/gLwhTKTVp1i77d996WDfAnwiooSqzKFBY+N3VuaBVjFk3GSJKNvaIrWE7
+	 KGXMSKmdlPTSg==
+Date: Mon, 6 Oct 2025 17:13:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Sameer Pujar <spujar@nvidia.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	dmaengine@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 2/4] dt-bindings: sound: Update ADMAIF bindings for
- tegra264
-Message-ID: <175978660352.625360.14343154592016440283.robh@kernel.org>
-References: <20250929105930.1767294-1-sheetal@nvidia.com>
- <20250929105930.1767294-3-sheetal@nvidia.com>
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+Message-ID: <20251006221308.GA653118-robh@kernel.org>
+References: <20250929142455.24883-1-clamor95@gmail.com>
+ <20250929142455.24883-2-clamor95@gmail.com>
+ <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
+ <CAPVz0n23qNrnyP7ttchaCoLit=gBm_++7RX7B8MxR_nx+8LGHw@mail.gmail.com>
+ <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250929105930.1767294-3-sheetal@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UCcQ1AweLwNucYP8kNHx+K1UF=VbEZdqE4hXN=bHqGuQ@mail.gmail.com>
 
-
-On Mon, 29 Sep 2025 16:29:28 +0530, Sheetal . wrote:
-> From: sheetal <sheetal@nvidia.com>
+On Thu, Oct 02, 2025 at 02:35:42PM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Update the ADMAIF bindings as tegra264 supports 64 channels, which includes
-> 32 RX and 32 TX channels.
-> 
-> Signed-off-by: sheetal <sheetal@nvidia.com>
-> ---
->  .../sound/nvidia,tegra210-admaif.yaml         | 106 +++++++++++-------
->  1 file changed, 66 insertions(+), 40 deletions(-)
-> 
+> On Mon, Sep 29, 2025 at 10:03 PM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> >
+> > вт, 30 вер. 2025 р. о 06:12 Doug Anderson <dianders@chromium.org> пише:
+> > >
+> > > Hi,
+> > >
+> > > On Mon, Sep 29, 2025 at 7:25 AM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > > >
+> > > > LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which it
+> > > > clearly is not. Address this by adding the proper schema for this panel.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
+> > > >  .../display/panel/panel-simple-dsi.yaml       |  2 -
+> > > >  2 files changed, 60 insertions(+), 2 deletions(-)
+> > > >  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..0a82cf311452
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > > > @@ -0,0 +1,60 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: LG Corporation 7" WXGA TFT LCD panel
+> > > > +
+> > > > +maintainers:
+> > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > +
+> > > > +allOf:
+> > > > +  - $ref: panel-common.yaml#
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    items:
+> > > > +      - const: lg,ld070wx3-sl01
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  vdd-supply: true
+> > > > +  vcc-supply: true
+> > > > +
+> > > > +  backlight: true
+> > > > +  port: true
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - vdd-supply
+> > > > +  - vcc-supply
+> > >
+> > > I suspect you'll get a NAK here because you're not preserving backward
+> > > compatibility for existing device trees. While there can sometimes be
+> > > reasons to do that, you'd need to provide a very strong justification.
+> > >
+> > >
+> > > It seems like instead of breaking compatibility you could just have
+> > > two supplies:
+> > >
+> > > * power-supply - The name for the "dvdd" supply.
+> > > * avdd-supply - The name for the "avdd" supply.
+> > >
+> > > ...and then you make both of them not "required". Maybe you'd add some
+> > > documentation saying that things might not work 100% correctly if they
+> > > weren't provided but that old device trees didn't specify them?
+> >
+> > Schema describes hardware. If it does not (and in this case it clearly
+> > DOES NOT), then such schema should be adjusted according to hardware.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+The priority is:
 
+1) ABI
+2) describe h/w accurately
+
+IMO, if there are 2 rails on the h/w and you have 2 supplies in the DT, 
+then you have described the h/w. names are less important.
+
+> > If there are any users of such binding, they should be adjusted too
+> > (third commit of this patchset does exactly that). Panel datasheet is
+> > explicit, panel has ONLY vdd supply and vcc supply, names are taken
+> > from there too.
+> 
+> I'm more than happy to defer to DT people on this, but the general
+> argument is that "device tree" is supposed to remain forever forward
+> compatible. In other words, someone could have taken a snapshot of the
+> "tegra114-tn7.dts" device tree at any point in time and then shipped
+> it in some BIOS. Presumably the old "tegra114-tn7.dts" (for some
+> reason) managed to init the panel properly in the past and the idea is
+> that there should still be a way to init the panel with the old device
+> tree now.
+> 
+> Obviously, that's an ideal version of the world and sometimes
+> hard/impossible to make a reality, but it's supposed to be what we
+> strive for.
+> 
+> >From a more practical standpoint, the dts changes and code changes
+> will go through different trees and so making them mutually depend on
+> each other can leave people broken if they happen to have one patch
+> but not the other.
+> 
+> I suppose one way to handle this (if DT people like it) is to keep the
+> bindings the way you have it but then add some layer of backward
+> compatibility in the driver. It will mean that anyone with the old DTS
+> would officially not "validate" properly against the new bindings, but
+> I think that could be OK as long as it was explicitly mentioned in the
+> commit message. Obviously, though, DT bindings reviewers would have
+> the last word there...
+
+That's fine, but then I prefer we keep 'power-supply' as deprecated. 
+Then if we ever validate that drivers only use documented properties, 
+it would pass. We already check drivers use documented compatible 
+strings, so that wouldn't be too hard to do.
+
+Rob
