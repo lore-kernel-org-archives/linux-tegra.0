@@ -1,190 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339FA2B9BA;
-	Tue,  7 Oct 2025 01:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E03B1F92E
+	for <linux-tegra@vger.kernel.org>; Tue,  7 Oct 2025 05:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799272; cv=none; b=WdDq8vPyFDYzP5ffdGMJ/65m+stT5yr556rAM9pc3j9msmbQzQ8sITTStipRcTGPyV9Vc+sZAMCBuUSlhCuTDD8Z8Llzg7Qn5jyfTH+mRWh9LpNJXrKZmSoSRsI53UfUQPECSg01XJs+aWgPOQtRbJ5reQhdIeoqVYUnwmkFX0M=
+	t=1759814005; cv=none; b=uS+4LxuiAfu8Z1or6Dvu2+SJ+511Af2kD3+fg+hLGXyONgy2oekc+Vw1jiqvvS6uSZR06SHXV3ue7FXP0vxhoRYxXBfPRQtBj09f/1QOfko+iP84kF8SGfTWD2x6+RGEZ9saTDlCxEMOZymeA+PYSxgPAIkATrZ6IPzPGruonzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799272; c=relaxed/simple;
-	bh=nK6IsY8XXOXC3iEsNBKq4APCgI7iwBgaZHbbITUoa78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1jbPqM0ITfKjH2WfVtCxXhDnDiigrhFVjcdiTCnch7GEXHG8faqI8l5KbMnZgeeTCO+OeGMSpGi6Yx+0U2rZ0EjnfMYyI959aM7tIRV1IRpU6kDMcrKCuAXzoCIF6fVY8BvdyPx1G39BZbUxR5VR/fWvISSHphqOWnCo5ZLZyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHtQ0YFC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759814005; c=relaxed/simple;
+	bh=L5xoEIflpBS7wooM7axyy2VDNqgfrX6E93X+/MuiZN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h3FFUWkCY5BVIy7A3ukGVSUTWziiHOi+pDnWNLgvFrUr1mUge+dmIXxWFkmajKhQf7uswkJmu7zj0cEY6o2mAs52IZRLHIc/4IDZgyhe8jcuuT6YYEdCBeye9rZmEIBV3op3A5SfCR1+3PWabOcDBAEhFdnI55ig1g3F1xtU/Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLGgC25Z; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHtQ0YFC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B8EC4CEF5;
-	Tue,  7 Oct 2025 01:07:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759799271;
-	bh=nK6IsY8XXOXC3iEsNBKq4APCgI7iwBgaZHbbITUoa78=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gHtQ0YFCKBy1lf45EZWeJND8yeZrZBT7/7HNX2VpubpKWLuYidChVNlQy5SaMx8gt
-	 S6FPOb5yOqT0M1x0WJWiugPGWpVY7daM2YTvUp+edMThQIhMXqDl2erHhUkBd3gI9M
-	 GsSZywDM7qIq5Yz+5NapAO5ztQEVs6blHq7SlIW9qxk3Ef90x+YLiCVRhz5Co5aHk/
-	 AQFSKi1d9rFglmGmsozt5KJIksAEXHCYwWCi6Xf7Ilf07l5GifaKKrh2Vu9dOT8BcJ
-	 SRmRtsihag8qNibq0xZHDVaF32MeNC8x3pZS8UJSgKywkxwSmtMhG5ltlhtcBXZSeO
-	 2m27pKypuPTCA==
-Message-ID: <164411f7-7925-491c-a24f-30021cab3f99@kernel.org>
-Date: Tue, 7 Oct 2025 10:07:40 +0900
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLGgC25Z"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3fc36b99e92so4735825f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Oct 2025 22:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759814001; x=1760418801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1pS3XDiQK8f8eyTQX//zdVzSc4GWTW1yqVKROF9NUcQ=;
+        b=MLGgC25ZXEXd9ObP61oNddbu5h/EVLR3ENPvBTbnxgpZJS685STfaphC6v5CRZl7Bx
+         z/qNT8m8A3XqZK9EpDa7BfvtnTl6LKZtDIc3oiz204PzJyoYJik8fVcAk2hgbuRR4HNx
+         MFJhJdFNUgnqXkBGMu5Lw8gwMcKDS9Cy67ujiNhYdmaDEFbdH/Z7M6hNSIlq/0g1sYe+
+         caVLBQrr6T+kUQE9mCk6MzyopBB9gUvDqDq1EoW4jCQxsOlm3WiCgEm3GPXuuJ7KnvIA
+         j2jdArDXBsTqUGYHXerFaryUyu1K7FpZ/w6UFT8ffbYRIa/aw//ICsE64kXkMv29iYXE
+         lsuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759814001; x=1760418801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1pS3XDiQK8f8eyTQX//zdVzSc4GWTW1yqVKROF9NUcQ=;
+        b=Ye35U8jtWOB1N3Dr7PqX5NE2ppPrbHegyg3c3RhCnAypNKa250oPhNrkdHrDUCAkRj
+         Ddc9AvhfCQAQzd8Pc/7XJGUipMHXGkHG3pO4fFi8tizRteesTadcXUD54RHlY0NNM6jp
+         Y8y5QqXBgvUBa7Iksip+tfM8ifVkazYV9sNabusH4LpxGPBQpbBkW9JV2bOoispR8Zza
+         0jwgzNSFirhUogUso+u7Hm293OV1hddvTdQsg3ErVFkAk816bhTDV1SiLgWWXvF7ac8A
+         lzMgtXFXUTgRjjgAJp2IGp9TRzNEGPSlUvN+XQS2xLz/GlaDYh1hyFyW6BIRpVSSqhgt
+         9ssw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGC1yFiq2yAt5+YKvWEc5UG59J2/hTqv64PpdG3baWXU/oWujrEa5ybfK6TpnOxiVZLeujI6y6aUX1zQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0AC51zqiH9M+JsWXTVJlH8JkSD1ESnEa7FvpanlLuhy0USf7u
+	MlTq82FP8ZA0mF+bJGIokXDuKR2CcgoM2sJYHGTTtbSBFd6JekFXafyLC8vrmB0py2v8RrZBdzh
+	2QyCdNRVLD5CymwmEoU1DdstcdD2PmRI=
+X-Gm-Gg: ASbGncsPWJZKfR0Rh/P59fzEzw3tYkn9maA1hAd2p4FZLmGpxYsnw/0girPrCvXCyfv
+	1iZK04zK/X9KjpCX2pnYJWaj031qP5gANUkYOs28w5934hiQKNzAgRtMxCR56jVDNGXg/AAl3vM
+	Pi3tILyU3hWwFos1YYZSQih2InkalR3VJJdcFuZKuh1UlVflpFnv/sV7GaVh6ByyqDqPFIY8yPN
+	zRdWim8NC4Pjnw4c1AHEqKnvMGk6Mz+
+X-Google-Smtp-Source: AGHT+IGV0xtcmM1zsg2OwGtKvJdRiIXrdxpv8K4QHttJAzVgt0D6HfXUccFjYZoOM3q6VTY6zRPYzZjolHquEvhvO7E=
+X-Received: by 2002:a05:6000:26d1:b0:3ec:db87:ff53 with SMTP id
+ ffacd0b85a97d-425829bf154mr1325418f8f.12.1759814001232; Mon, 06 Oct 2025
+ 22:13:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] Add tegra264 audio device tree support
-To: "Sheetal ." <sheetal@nvidia.com>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>,
- linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- dmaengine@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jonathan Hunter
- <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>
-References: <20250929105930.1767294-1-sheetal@nvidia.com>
- <175915953199.54406.1457670691076635405.robh@kernel.org>
- <4cc27ab8-4e59-45b9-9383-183f78da47a6@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4cc27ab8-4e59-45b9-9383-183f78da47a6@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250925151648.79510-1-clamor95@gmail.com> <20250925151648.79510-21-clamor95@gmail.com>
+ <20251002015244.GA2836647-robh@kernel.org> <CAPVz0n1By+akzp0t+GfF9nRzZ27NwYEikXxQ+=M=W2NEGpLNFw@mail.gmail.com>
+ <20251006203148.GA523657-robh@kernel.org>
+In-Reply-To: <20251006203148.GA523657-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 7 Oct 2025 08:13:10 +0300
+X-Gm-Features: AS18NWDkvx6agTucL7VNWr7MeuduCABFIlrIhwhvyaKckkFjZfLI9EvskSqNc_g
+Message-ID: <CAPVz0n3CZTa8eV=gsJdpQ=yQ9sFbVd_vHAEpESP=Y6pE1=cLUw@mail.gmail.com>
+Subject: Re: [PATCH v3 20/22] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+To: Rob Herring <robh@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/09/2025 15:24, Sheetal . wrote:
-> 
-> 
-> On 29-09-2025 20:58, Rob Herring (Arm) wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
->>> From: sheetal <sheetal@nvidia.com>
->>>
->>> Add device tree support for tegra264 audio subsystem including:
->>> - Binding update for
->>>    - 64-channel ADMA controller
->>>    - 32 RX/TX ADMAIF channels
->>>    - tegra264-agic binding for arm,gic
->>> - Add device tree nodes for
->>>    - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
->>>      DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
->>>    - HDA controller
->>>    - sound
->>>
->>> Note:
->>>   The change is dependent on https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/
->>>
->>> ...
->>> Changes in V2:
->>>   - Update the allOf condition in Patch 2/4.
->>>
->>> sheetal (4):
->>>    dt-bindings: dma: Update ADMA bindings for tegra264
->>>    dt-bindings: sound: Update ADMAIF bindings for tegra264
->>>    dt-bindings: interrupt-controller: arm,gic: Add tegra264-agic
->>>    arm64: tegra: Add tegra264 audio support
->>>
->>>   .../bindings/dma/nvidia,tegra210-adma.yaml    |   15 +-
->>>   .../interrupt-controller/arm,gic.yaml         |    1 +
->>>   .../sound/nvidia,tegra210-admaif.yaml         |  106 +-
->>>   .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  106 +
->>>   arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 3190 +++++++++++++++++
->>>   5 files changed, 3377 insertions(+), 41 deletions(-)
->>>
->>> --
->>> 2.34.1
->>>
->>>
->>>
->>
->>
->> My bot found new DTB warnings on the .dts files added or changed in this
->> series.
->>
->> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
->> are fixed by another series. Ultimately, it is up to the platform
->> maintainer whether these warnings are acceptable or not. No need to reply
->> unless the platform maintainer has comments.
->>
->> If you already ran DT checks and didn't see these error(s), then
->> make sure dt-schema is up to date:
->>
->>    pip3 install dtschema --upgrade
->>
->>
->> This patch series was applied (using b4) to base:
->>   Base: attempting to guess base-commit...
->>   Base: tags/v6.17-rc1-57-g635ae6f0a3ad (exact match)
->>
->> If this is not the correct base, please add 'base-commit' tag
->> (or use b4 which does this automatically)
->>
->> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250929105930.1767294-1-sheetal@nvidia.com:
->>
->> In file included from arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi:3,
->>                   from arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi:3,
->>                   from arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts:5:
->> arch/arm64/boot/dts/nvidia/tegra264.dtsi:8:10: fatal error: dt-bindings/power/nvidia,tegra264-powergate.h: No such file or directory
-> 
-> This error is expected.
-> "dt-bindings/power/nvidia,tegra264-powergate.h" file is being added in 
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/, 
-> in the cover letter it is mentioned as dependent of that change in the 
-> 'Note'.
-> 
-If you expect your patch not to be ignored after such feedback, explain
-briefly missing dependency in the patch changelog. Not cover letter.
+=D0=BF=D0=BD, 6 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 23:31=
+ Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Oct 02, 2025 at 08:14:22AM +0300, Svyatoslav Ryhel wrote:
+> > =D1=87=D1=82, 2 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 0=
+4:52 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Thu, Sep 25, 2025 at 06:16:46PM +0300, Svyatoslav Ryhel wrote:
+> > > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++=
+++++
+> > > >  1 file changed, 135 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/display/tegra=
+/nvidia,tegra20-csi.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia=
+,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,=
+tegra20-csi.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..817b3097846b
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra2=
+0-csi.yaml
+> > > > @@ -0,0 +1,135 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-cs=
+i.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: NVIDIA Tegra20 CSI controller
+> > > > +
+> > > > +maintainers:
+> > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - nvidia,tegra20-csi
+> > > > +      - nvidia,tegra30-csi
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clocks: true
+> > > > +  clock-names: true
+> > > > +
+> > > > +  avdd-dsi-csi-supply:
+> > > > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> > > > +
+> > > > +  power-domains:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  "#nvidia,mipi-calibrate-cells":
+> > > > +    description:
+> > > > +      The number of cells in a MIPI calibration specifier. Should =
+be 1.
+> > > > +      The single cell specifies an id of the pad that need to be
+> > > > +      calibrated for a given device. Valid pad ids for receiver wo=
+uld be
+> > > > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    const: 1
+> > >
+> > > Sorry I didn't bring this up before, but is this ever not 1? If it is
+> > > fixed, then you don't really need the property. I prefer it just be
+> > > fixed rather than getting a bunch of vendor specific #foo-cells.
+> > >
+> >
+> > This is not an introduction of property, such property already exists
+> > in Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi=
+.yaml
+> > and is used in multiple device trees. As I have told before, in case
+> > of Tegra30 and Tegra20 CSI block combines mipi calibration function
+> > and CSI function, in Tegra114+ mipi calibration got a dedicated
+> > hardware block which is already supported. This property here is used
+> > to align with mipi-calibration logic used by Tegra114+
+>
+> Okay.
+>
+> You will have to continue to tell me again if my past questions are not
+> addressed in the commit message. A review only last week was 100+
+> patches ago. Don't expect I'll remember nor go re-read prior versions.
+>
 
-You will get this report every time and maintainers might ignore your
-patch, due to unresolved reports from automation.
+That is not a problem, I did not meant to offend you. I will add info
+into commit message.
 
-Best regards,
-Krzysztof
+> Ideally, we don't define the type of a property more than once. So this
+> should really first be moved to its own shared schema that's referenced
+> here and in the original user. Then it is perfectly clear reading the
+> patches that this is not a new property.
+>
+
+I am not sure that creating a dedicated shared schema for a single
+properly which is used by 2 schemas worth it, though, if it is
+preferred, may the refactoring be done in followups later?
+
+> Rob
