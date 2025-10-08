@@ -1,163 +1,145 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012063.outbound.protection.outlook.com [40.107.209.63])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBE51758B;
-	Wed,  8 Oct 2025 11:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922201; cv=fail; b=jRGQp8dh3RgrzAX11TalaTvGIkjofy0LHcpNLaJLIBae4d3DM3fRzMRQLtjTZf38cGpJdwk/kM2DMRowuaO3ypBix/aEEOhVILETghx1IbJB5iEqfISzEsXTHVypllAGstkmVrepRneIMemnXPF8V78nFIDMWHm7zgzTOrMqRPw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922201; c=relaxed/simple;
-	bh=KBxmM+tmtabpCW6k0Yk57T8YcPDl2dn8EVyEqlYFhHk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=siXMCWTXk/OFXZz4pIffhG+YLlKnVrwQBb95o/8Uu/6/e5qPON95IxTQ4gHjoyE9CHD4ZAwj/fFDlO1WahocsJ3WXPi3Sp0Xpd1HXi9rohI7XurS4xcrfupPco0nrBfbrR/I3t3EukOqC6Cj703G6Gk9C2EgO8JLQBj4wHgHn90=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LJJOsAmW; arc=fail smtp.client-ip=40.107.209.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8474D25A2DA;
+	Wed,  8 Oct 2025 12:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759925054; cv=none; b=mcV6MZ+pmskGvr6bgXFWrkcgswH3E6Qa2j/EeA9uvTfFCqxcN8kmYFakFZEaaGvslHJZ7FAqxMsg8oXshS5gvKvKadHZynOWIfm00TzYg7iTCeXxYLZnHR0K16ZwArQrSUaVK1Z69wrWkHmh3hykpEhvHntXqesxTlpE2AW5uXQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759925054; c=relaxed/simple;
+	bh=hp6KAum/wSHP4jTL4LN3EtHOtSRvXYWkShztC5IovwE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B+SPhiwyKMIqlYDzUdGGFHL8SFNnrPELr9YZl40dOaxd42/YiAnTEwgYuk+vRGM+iW2GcKFOee6ik2vQJvrkAKB+UTJtwWn1XiYlLsv2hTrjSRU0d6Sle99DNoZdwmJwqiSq06hKX/27E/F+TY3gPRAKPZG64PdVfcC/vHTjcEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAp33rVW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LJJOsAmW"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ftTBHm3UmST4oYznx4HTLGyR156EKqWIJ1xEkf/YKUe6k8WtAoVfH0+kui3GUnKbIXYxVzEsPca+vbXhdZEU+4JJ4dXG0el9zHmJ0wMv1hx2pqsFeffGVHmY+vd8zSSxQBTS7IAYxu2rwsTcjFpVUELVzRrU/p504lh45VYbEdaxxPAPwHhL2zPWgXnaRdMli72cw5gaPk8Zv9xSkG2pt/VV3O7pgWLMG0wOQijCjp3XamFLfESXszAVfwQt6pnAa2ARGQaUrKPLt/1h1rNIFq/oMmYmcDO1xTl6PwH/zcGsceTvaf+Vl+nd+VOmLZpG7FfaeFjRvhtvJ5Fs8hmAMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l7Ncc0G9UExmJfFX24DXYFeseuvA0glKrxcm8cio/Qg=;
- b=gkIdupxzoqot1BxvgpZrnWx4rQGxaXlNr8gqfFxFRaaXOyMPGVA6y/wL3PlfKlh7qKZA7F45EIU/TU72kwxByczSLRcEiYLaO2dnzcx1fdjMWBDxM4eH+5O/6qwc61C6sdlVRFraP7EjbikXaeM3RJEOL7GgM9J430cMWq+Lx8Ww5Zr4c6AzDGg/aaYXuROMW9qjDSRYqT+bYxuVcp/AWi7BwGRK/TFCkWRRE2srF25HXCOT3qsZoMaYAJkhlYfqkOhzy4QXVWpS8Q71FnDP4+1WHacYVjllydRZaHazbwCFtqgLxVDBtDRA6AIADRLK41h+wF9qH+ihTefbl3Yovw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l7Ncc0G9UExmJfFX24DXYFeseuvA0glKrxcm8cio/Qg=;
- b=LJJOsAmWzJEwp0z1NiGGuC2PM+QdOIR2ETjPlOD0tRkrqc9UKtaifCe45GuP6VUUciws4YIJlXYnx0ZpPmD3SU2E9Oi7Tqn4olNJXWNJ5tm+HtzFef9KuuLDoll1q9h05XooM8LFeEFJtuvq7Hb1zmqrHWkudaPcB/2zhVBYg/K1/ghZYnKviNRRMmab2A5rawQzYOmauDnSmIeWSwV/U4mfdLtA0i0RaeLrmS2PJ761TITpMGe+ldhYP0soU90LijJBNhNuxGZRhQDCuf9In2DcW9nItyGr0rTWG7d225k2LXvugY+PyB3yd92wibnyWkUOjd+aumXYmg3+eIjE9g==
-Received: from SA9PR13CA0061.namprd13.prod.outlook.com (2603:10b6:806:23::6)
- by IA0PR12MB7721.namprd12.prod.outlook.com (2603:10b6:208:433::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
- 2025 11:16:33 +0000
-Received: from SN1PEPF000397B0.namprd05.prod.outlook.com
- (2603:10b6:806:23:cafe::92) by SA9PR13CA0061.outlook.office365.com
- (2603:10b6:806:23::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Wed, 8
- Oct 2025 11:16:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF000397B0.mail.protection.outlook.com (10.167.248.54) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Wed, 8 Oct 2025 11:16:33 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 8 Oct
- 2025 04:16:23 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Wed, 8 Oct 2025 04:16:22 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Wed, 8 Oct 2025 04:16:20 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<sdonthineni@nvidia.com>, <kkartik@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <stable@vger.kernel.org>
-Subject: [PATCH] soc/tegra: fuse: Do not register SoC device on ACPI boot
-Date: Wed, 8 Oct 2025 16:46:18 +0530
-Message-ID: <20251008111618.703516-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAp33rVW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBCCC4CEF4;
+	Wed,  8 Oct 2025 12:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759925053;
+	bh=hp6KAum/wSHP4jTL4LN3EtHOtSRvXYWkShztC5IovwE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KAp33rVWxmgy5qa+lyBrWZ8LAjg5ZJLLOvBvJYVPBMEbiYmR6R+qB7lihj9Gxwdbr
+	 TYlTYpXlcp8jbXTe2IJ29xTovV88AM2+wvPaJr15D8xM0/qRezSv5YdqFBF6NTrvoa
+	 O/z7OWTNNoEDLl2LdTED+vmYWCrArcc8A1gqCKthFCbdBbnstVFC4lFIYsYNtNniij
+	 8BoCxa4p1o0WjpjYrEbfT0C8eKI44ge/sTC6fn02tlhm02vFdCnXeyJy24uz2XK5hN
+	 WVypG/tpimvKGA9fpFAjtklWWdwzGh/EQGioBSzyV6RStgAA5GBeww5kxPr/uK+a/O
+	 jKhQDqOpsSDsw==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH 00/16] drm/atomic: Switch drm_private_obj to reset
+Date: Wed, 08 Oct 2025 14:03:58 +0200
+Message-Id: <20251008-drm-private-obj-reset-v1-0-805ab43ae65a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B0:EE_|IA0PR12MB7721:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7cd507a-57d0-443a-556c-08de065c2383
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PoNjJnZppJ92jBe4tzC1Wdtapokx9EnOaOoeQQNe3tEl/Dw8qgKCYrim03+i?=
- =?us-ascii?Q?cFcieo1Bxu2gqYgzdnKO1WmRzocpyU7P9WZueDuz2GEimHC7qDJSaMFSJ9lJ?=
- =?us-ascii?Q?gA/FFjARZLSoYZUsP/tYP8I93ETJ+x7SdYVbg5j0Dp6DqUCM+SjSrvgVclWq?=
- =?us-ascii?Q?0zV7Yx9My4JRtMVsjVboU6vTeqXRh6WIBJ8jsD1ofjqm61kNmMOxnRltl4u3?=
- =?us-ascii?Q?ELbPIuR6+VfHKZWQBHdCwgdEj/gea7XyI0p4ckSJ4pFWvg7HbIOLFJSAyMfP?=
- =?us-ascii?Q?08911bwaiGgg3Zdjb3Fl5y6TPniXJkDukmFlZQjqpZclczP9Js9ZBdQfdjOm?=
- =?us-ascii?Q?/u3hSDlV2XB2LhHqVjvUlaI2jPidHswsmmTZSp00Bi9vw0Zr5M8CCX88KeVv?=
- =?us-ascii?Q?jspPYwUh9sGoXzSb9dK8cPFp7V55ENNZPWg17eATdtSRhurVJIfZVxMr528s?=
- =?us-ascii?Q?fHLQEFS1U5fPMz/GLwAk31RReo4SqeVqjINpvO0u6S8u4knsXR8dJ1V6viIS?=
- =?us-ascii?Q?IIwuokBfxz6uDzGtbvZG65t7DSY/E1nDs2Wd9jjFWtTsI6I4n8Sn6Qao94wt?=
- =?us-ascii?Q?2tQ3VtnVnArSty0vefgfZG6Vyr3BkdCP5lgQn55UzKptxRIA8AQv4cSLgzwm?=
- =?us-ascii?Q?fju6UqjLkC6+Gi5FMlRpnAGfOiKgD06sVlnKIy2qT62KBxhO0d0QeRAIT4gA?=
- =?us-ascii?Q?RwEXwmcA1phyc0K1ZsGFfsQpYWFTIsLh0rTH6UY2Yu3ZjAvbyVbNpaKUTaIP?=
- =?us-ascii?Q?ku2pyMHCrQd7RJVEzeLPV+1bZYNiQKJgmfZwPwIHe94Uw8T4cvsIlyGmCCBR?=
- =?us-ascii?Q?mHWa0enw0D2ZqWLIX/52aaI0AZukbCcbIDfhcdntiAjEqRJuC2NBCEexoseD?=
- =?us-ascii?Q?taTrn0p/8kXXx5m+YsV2YZI7FBG6PciD1PET/cbNTzdFFrSBtYgNz+b5M+G9?=
- =?us-ascii?Q?EiNi8jawHv/5+OnbjMDVzsQKY+AxBFVytmLRMtDWjFM/O+g6lPPMAckURasG?=
- =?us-ascii?Q?lfcK5H3qZ35G7Pm0sMvMe46PHUmnG+nDf03l4nBStXEsqmncIPvE+aGE3Swg?=
- =?us-ascii?Q?vEZWnrOBMT9iJ4CR3ld4lweDORVi1vJQ6QiTGfOUr/MXnUuK5iQXOOeimsCv?=
- =?us-ascii?Q?4/H2fD/eMe1ezX25LNUuPOlHFveM70wf1qd3YbSmv5U5E1tp3hr3Skz4W9UZ?=
- =?us-ascii?Q?2VvHU5emFGWaOUW7Z7/LfKSjAh7R/Qb2HdNUI3lxm3TTwzoPgkAqoh2Vuu1P?=
- =?us-ascii?Q?VtmGKI49y+m+Rc50lf+9Cx1s9A03D+6VgUX17Y3aSJ0/3YlbAO1P1TG6aNQ6?=
- =?us-ascii?Q?lIfgAWSRFOamIgVITXc5OyYO56YfZkpm2L7+EY8wQaxSfsN6QREbwF2ZEHNw?=
- =?us-ascii?Q?W6bniemC0Z7QgnYkAIYsMCObIMc6jG5CD75+r03ujDl/ymQ5uAb5mQiQrEik?=
- =?us-ascii?Q?rS8spofn3vzK/JFxtU8hpvVOeJr/IOmAXiIi9hTNG78GTvzhUFGRZpE30WU6?=
- =?us-ascii?Q?gQxQvx70O9wa1OacL9w3HauRN3DDKssfAN0lUmWoQPu10s1LXWszi3APbXAh?=
- =?us-ascii?Q?oNzUtjSSJdnzg/FIDkg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 11:16:33.4652
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7cd507a-57d0-443a-556c-08de065c2383
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7721
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC5T5mgC/x3MSwqAMAxF0a1IxgbaoihuRRxUfWoEP6RSBHHvF
+ odncO9DASoI1GQPKaIEOfYEm2c0LH6fwTImkzOutMbUPOrGp0r0F/joV1YEXOxh4arCGld5Su2
+ pmOT+v233vh8PWkNgZwAAAA==
+X-Change-ID: 20251008-drm-private-obj-reset-ae1e2741027a
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ amd-gfx@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ kernel-list@raspberrypi.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3101; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=hp6KAum/wSHP4jTL4LN3EtHOtSRvXYWkShztC5IovwE=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnPgo3mR/6/kzlTdaeC1ITW9Ys8Zy29FZd8ucZHofWIt
+ cOsBF7pjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjARVTbG+uTHT5yPH9sSfzB7
+ ZYjomjUamiGW7pt031QffFr1PcNh3Y7955PMpI6I33j4Ouu89ErPU4wNC7z3vtqjW1P4YP69qH9
+ POS5l2HJNEF/C3qOQsi678sido5GsD+cJFTdt/Fu9ffqx+6sVAQ==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Tegra platforms using ACPI, the SMCCC driver already registers the
-SoC device. This makes the registration performed by the Tegra fuse
-driver redundant.
+Hi,
 
-When booted via ACPI, skip registering the SoC device and suppress
-printing SKU information from the Tegra fuse driver, as this information
-is already provided by the SMCCC driver.
+This series started from my work on the hardware state readout[1], and
+was suggested by Dmitry[2].
 
-Fixes: 972167c69080 ("soc/tegra: fuse: Add ACPI support for Tegra194 and Tegra234")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+This series deal with the fact that drm_private_obj (and thus bridges)
+are not initialized using the same pattern than any other object. This
+series solves that inconsistency by aligning it to what we're doing for
+all the other objects.
+
+This was tested on a TI SK-AM62, with three bridges.
+
+Let me know what you think,
+Maxime
+
+1: https://lore.kernel.org/dri-devel/20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org/
+2: https://lore.kernel.org/dri-devel/zvqtehg66dbrrdmik6ylo2kdk74umfzo5hbfkizwsb352nlyqv@jgouvmbfwa4x/
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 2 --
- 1 file changed, 2 deletions(-)
+Maxime Ripard (16):
+      drm/atomic: Add dev pointer to drm_private_obj
+      drm/atomic: Add reset to drm_private_obj
+      drm/atomic-helper: Add private_obj reset helper
+      drm/bridge: Switch private_obj initialization to reset
+      drm/dp_mst: Switch private_obj initialization to reset
+      drm/dp_tunnel: Switch private_obj initialization to reset
+      drm/amdgpu: Switch private_obj initialization to reset
+      drm/arm: komeda: Switch private_obj initialization to reset
+      drm/ingenic: Switch private_obj initialization to reset
+      drm/msm: mdp5: Switch private_obj initialization to reset
+      drm/msm: dpu1: Switch private_obj initialization to reset
+      drm/omapdrm: Switch private_obj initialization to reset
+      drm/tegra: Switch private_obj initialization to reset
+      drm/vc4: Switch private_obj initialization to reset
+      drm/atomic: Remove state argument to drm_atomic_private_obj_init
+      drm/mode_config: Call private obj reset with the other objects
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index d27667283846..74d2fedea71c 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -182,8 +182,6 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 		}
- 
- 		fuse->soc->init(fuse);
--		tegra_fuse_print_sku_info(&tegra_sku_info);
--		tegra_soc_device_register();
- 
- 		err = tegra_fuse_add_lookups(fuse);
- 		if (err)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  53 ++---
+ .../gpu/drm/arm/display/komeda/komeda_pipeline.h   |   2 +
+ .../drm/arm/display/komeda/komeda_private_obj.c    | 232 +++++++++++++++------
+ drivers/gpu/drm/display/drm_dp_mst_topology.c      |  38 ++--
+ drivers/gpu/drm/display/drm_dp_tunnel.c            |  28 ++-
+ drivers/gpu/drm/drm_atomic.c                       |   6 +-
+ drivers/gpu/drm/drm_atomic_state_helper.c          |  24 +++
+ drivers/gpu/drm/drm_bridge.c                       |  30 +--
+ drivers/gpu/drm/drm_mode_config.c                  |   6 +
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  30 ++-
+ drivers/gpu/drm/ingenic/ingenic-ipu.c              |  30 +--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  30 ++-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  30 ++-
+ drivers/gpu/drm/omapdrm/omap_drv.c                 |  24 ++-
+ drivers/gpu/drm/tegra/hub.c                        |  24 ++-
+ drivers/gpu/drm/vc4/vc4_kms.c                      |  73 +++++--
+ include/drm/drm_atomic.h                           |  15 +-
+ include/drm/drm_atomic_state_helper.h              |   3 +
+ 18 files changed, 473 insertions(+), 205 deletions(-)
+---
+base-commit: aa1c2b073ad23847dd2e7bdc7d30009f34ed7f59
+change-id: 20251008-drm-private-obj-reset-ae1e2741027a
+
+Best regards,
 -- 
-2.43.0
+Maxime Ripard <mripard@kernel.org>
 
