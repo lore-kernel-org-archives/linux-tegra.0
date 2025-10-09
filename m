@@ -1,126 +1,133 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD4315E90;
-	Thu,  9 Oct 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA21225397;
+	Thu,  9 Oct 2025 17:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029379; cv=none; b=m0bvMzMJSbY47XGCtjR6bfW9jtIwcfCZAU3vgVoFidGDH7X1wRHO0hJlx+KB07F9w7i1YeB35LGRuNnCGEezFD0T9U7S/Al66TJd/RXWuwmVFY0c+McIptvKWqvRjtZrDxdmKjqVM03a5gxyMNUJx5ISexKMFE5OaCnFU15MgZ4=
+	t=1760029501; cv=none; b=ZShwPKWKzTjwejIUepog6gDBKbJXORJcoiFTgkxheEtYZ/fkI4RLYZJnZ6E6uNrgY6dQQreRMfoZjDW8XJqvR9P5To4EuoGQGuZZM7V9fL+VhTJYX6iEn7KE7gOROMQj8n08COjRRwCDKDnkp4763EP5k5uuMVve2uCFejE59JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029379; c=relaxed/simple;
-	bh=CuPJwPQaNVIp3hY6I0ilMYciVhwSPCyur8NOlazcDsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJZo5O3Ni+oslnD4tWOfdYaTMnuecX9YKhNSmiuVA0ax9sxDiFo5dxQLjP3R7Xn9IqEmnylahYlVXPGgD704nD2UHaNWP6487CfQsrWvUNLyzIfC4ccmLGHbIkCRiG/1cauh7R1q1KNDFJze1mSG9pcM3HV91J4u5SImmgSGdI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmhMLwPW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760029501; c=relaxed/simple;
+	bh=XwfqM5QHQpVM8Kdpu0a6NtJ56tZ8bqhomvImo9fS3uk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k9ajj3yGrANAQKzkGhyvSZ06smVNVWX1frD4gd7Fsh2SESlL2UeRoYygT/l0u7gk1D52F22Kr1W89Dk7gyeTJ0LXnz8IOeURd+yxFZTMmsx3Uq1e4Q+9wRB274s8CgGoEpSDg3TlKDwx8/rcaJt7HQ0C+6rxBw0GHqIVuvAyRKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEa/QA8O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmhMLwPW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A7DC4CEE7;
-	Thu,  9 Oct 2025 17:02:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEa/QA8O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC1EC4CEE7;
+	Thu,  9 Oct 2025 17:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029378;
-	bh=CuPJwPQaNVIp3hY6I0ilMYciVhwSPCyur8NOlazcDsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gmhMLwPWUgZNhmXKJHZbPHhNG7RPCnqifoKOQeiolKjtiJSUuZiBCpDUWHHH/YZ4g
-	 f9U+fGjqSrDWxVLOBatg3qI67patjZf+MXsbirkV3VMTJVRXgylrUDxqQwLlSTZQiJ
-	 nqxetvkQYaMcc2tbuGiuqUzLWM90TNbG0z00yz2XbvSmXhL1xfPSx7MTzNDz5y8eC0
-	 yw4As8939N37U7HtitFC2C1Mf7a+Dbpj/xuj8veR5/Ez8SaSokPhboNwrW4SJh5uYD
-	 lPkcV4OnOBmp1X4sS5zxKW88sEasIN4KJpAGBf+S5ifI0QRKQEGqh/ZZ0hIyfcfoMv
-	 9KtH2Iplk5qFg==
-Date: Thu, 9 Oct 2025 18:02:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
- and Tegra30 CSI
-Message-ID: <20251009-steerable-babied-7b5f7a2c58da@spud>
-References: <20251008073046.23231-1-clamor95@gmail.com>
- <20251008073046.23231-23-clamor95@gmail.com>
- <20251008-canopener-marsupial-a92355b656ef@spud>
- <20251008-broaden-antennae-02de66094ad3@spud>
- <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+	s=k20201202; t=1760029501;
+	bh=XwfqM5QHQpVM8Kdpu0a6NtJ56tZ8bqhomvImo9fS3uk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kEa/QA8OAig3Qw7EDRe8tDHK9DTEyg9YRFanDbVu/TifAOZdR70nR5TSrWZb0yRMC
+	 YCfwq5nRbbVc7M+8RLJfoi+QYfucS2KZWhxB9qYSBrqKKiU+MMhjzSeyOSfy3P+/oD
+	 72zaq7VQXxsvKYtTmLbcxhDoq+zMKrqXe+3sAFmgbcnynw4CBbtm4XpekMTS4ihHcT
+	 y/XUz7p/FQ65RZ0sgla5djkU85Kd7xPiZpoTfLU34LAkowIUMCQdBur6o03hs/Vwzn
+	 63AjUiee3ZdYEPlz0NGC++Bf9VGPYmMSWbbrO0ISrGJxMkyib9GUjqrwIDf2aq6FRJ
+	 8rCzo7koEks7w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v6u4Z-0000000Chge-0GNv;
+	Thu, 09 Oct 2025 17:04:59 +0000
+Date: Thu, 09 Oct 2025 18:04:58 +0100
+Message-ID: <86o6qgxayt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+In-Reply-To: <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+	<86qzvcxi3j.wl-maz@kernel.org>
+	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HSF292molu88Asuo"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Thu, 09 Oct 2025 17:05:15 +0100,
+Thierry Reding <thierry.reding@gmail.com> wrote:
+> 
+> [1  <text/plain; us-ascii (quoted-printable)>]
+> On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
+> > Hi Thierry,
+> > 
+> > On Thu, 09 Oct 2025 12:38:55 +0100,
+> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > > 
+> > > Which brings me to the actual question: what is the right way to solve
+> > > this? I had, maybe naively, assumed that the default CPU affinity, which
+> > > includes all available CPUs, would be sufficient to have interrupts
+> > > balanced across all of those CPUs, but that doesn't appear to be the
+> > > case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
+> > > in this particular case) from the affinity mask to set the "effective
+> > > affinity", which then dictates where IRQs are handled and where the
+> > > corresponding IRQ thread function is run.
+> > 
+> > There's a (GIC-specific) answer to that, and that's the "1 of N"
+> > distribution model. The problem is that it is a massive headache (it
+> > completely breaks with per-CPU context).
+> 
+> Heh, that started out as a very promising first paragraph but turned
+> ugly very quickly... =)
+> 
+> > We could try and hack this in somehow, but defining a reasonable API
+> > is complicated. The set of CPUs receiving 1:N interrupts is a *global*
+> > set, which means you cannot have one interrupt targeting CPUs 0-1, and
+> > another targeting CPUs 2-3. You can only have a single set for all 1:N
+> > interrupts. How would you define such a set in a platform agnostic
+> > manner so that a random driver could use this? I definitely don't want
+> > to have a GIC-specific API.
+> 
+> I see. I've been thinking that maybe the only way to solve this is using
+> some sort of policy. A very simple policy might be: use CPU 0 as the
+> "default" interrupt (much like it is now) because like you said there
+> might be assumptions built-in that break when the interrupt is scheduled
+> elsewhere. But then let individual drivers opt into the 1:N set, which
+> would perhaps span all available CPUs but the first one. From an API PoV
+> this would just be a flag that's passed to request_irq() (or one of its
+> derivatives).
 
---HSF292molu88Asuo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The $10k question is how do you pick the victim CPUs? I can't see how
+to do it in a reasonable way unless we decide that interrupts that
+have an affinity matching cpu_possible_mask are 1:N. And then we're
+left with wondering what to do about CPU hotplug.
 
-On Thu, Oct 09, 2025 at 08:35:22AM +0300, Svyatoslav Ryhel wrote:
-> =D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:=
-22 Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
-> > > On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
-> > > Of course you'd then have to add minItems: 1 and maxItems: 3 to the
-> > > extracted definitions.
->=20
-> What do you mean by your last statement? Add minItems: 1 and maxItems:
-> 3 like this?
->=20
-> This does to common properties
->   clocks:
->     minItems: 1
->     maxItems: 3
->     items:
->       - description: module clock
->       - description: PAD A clock
->       - description: PAD B clock
->=20
->   clock-names:
->     minItems: 1
->     maxItems: 3
->     items:
->       - const: csi
->       - const: csia-pad
->       - const: csib-pad
+> 
+> > Overall, there is quite a lot of work to be done in this space: the
+> > machine I'm typing this from doesn't have affinity control *at
+> > all*. Any interrupt can target any CPU,
+> 
+> Well, that actually sounds pretty nice for the use-case that we have...
+> 
+> >                                         and if Linux doesn't expect
+> > that, tough.
+> 
+> ... but yeah, it may also break things.
 
-Yes, that is what I meant.
+Yeah. With GICv3, only SPIs can be 1:N, but on this (fruity) box, even
+MSIs can be arbitrarily moved from one CPU to another. This is a
+ticking bomb.
 
---HSF292molu88Asuo
-Content-Type: application/pgp-signature; name="signature.asc"
+I'll see if I can squeeze out some time to look into this -- no
+promises though.
 
------BEGIN PGP SIGNATURE-----
+	M.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfqugAKCRB4tDGHoIJi
-0hG0AP9Mkkygk9Q2BjWzrDg0CFZgtvVwKgrrBLgJV/EnbFfz5AEA1V+4UBvnLGFD
-xZ7p4fN/kJGOCld/pw6BT+OMgI/sUAk=
-=94WG
------END PGP SIGNATURE-----
-
---HSF292molu88Asuo--
+-- 
+Without deviation from the norm, progress is not possible.
