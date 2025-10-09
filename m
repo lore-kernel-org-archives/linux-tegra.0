@@ -1,96 +1,240 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A772940D;
-	Thu,  9 Oct 2025 14:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B1E2F069E;
+	Thu,  9 Oct 2025 15:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020260; cv=none; b=bsnRZhd4TtWUX7WLp9qUJsvY+MCUPQWeKqYvnh5aHVWJEZb6XBcfxU5PbP8v/m/dODlJr80m1Z8e77tzhrOy3ipzhfBFfNi2p9w2V4liFnb/Yh2SHmIo+jUpMSC8br5o2NwMtbconxQ0njdPCiROpMsDjbdf4H9ymFc3g2F2Wao=
+	t=1760025529; cv=none; b=fcbSXXB4rcAQfnTvDdp6/BoDzwh+a6wfhAl0wWLW4mvt9D+sM0NNbb8EG27DycgaSS1CvDBfZkLlZhvbb1bhuKVAYc7zA9iabR8BmVW3vpMJSmN41/98prsMF1J9aSLK8R2MMvjlUSJkzRWyedhIlehJuag1oRvkjCxPGAFj8Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020260; c=relaxed/simple;
-	bh=by7B82JNtuWconqfgRH2IEjHTUBvVgCQlC/h4bYSBsA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AqaCh0p0+lnFP+aOQGRKIkGA7yLnP97XNIgPChM5vlfcawjeyCx4WE7fTokxYXFASrxsWa2sbv4Rx+xSWk0CXzcUk5L2BIRMFiTx7nH+ZOxsDIQLuO+nNy/lQPjVXei0FvTKbiSk0g//E+tiSTWzVCKDfMCpmdqRxw4u8XhQbxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY5mvCf9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760025529; c=relaxed/simple;
+	bh=ZZIxBFUcwOaK5MRt4WZlCsfrNjmgd3wlboFkVO2mY9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WnmCn9LbLA3TqQea545pJ/RT6HoF5avxBfWgFe29q507GasJDc7sQNbCG1GHpuGRRWCpbuuPitZ8QNWoPx9xhix3E6d8dtq3QdHa49pOj6o3lnOEzZuyCo2lsaLxle1xo6feRJ/+/0nAln3AfFb54O4Nm4kgUTkOsVhlEyBv6mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsaPI34R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY5mvCf9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E55DC4CEE7;
-	Thu,  9 Oct 2025 14:30:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsaPI34R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52E7C4CEE7;
+	Thu,  9 Oct 2025 15:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760020259;
-	bh=by7B82JNtuWconqfgRH2IEjHTUBvVgCQlC/h4bYSBsA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dY5mvCf9PB0wbd7hHCmC15O4xQ7B/3eWJp66y7FLCawXvUAS8z8Ga4eByBfPCZnGs
-	 SMRV9o1J0xua7LV3sR0NvPuaXlqnURAuxQnVfDTlqmmNorn25JD0oOSnD3DjrMD505
-	 8iSp5LFsUqRRDTs3Fc380LWy89ZfKzNGGJeMWOwC89bwX2YotWPNw8x/2Gu1Mp2hAa
-	 32vXen4iDp44KhuWGJvP2a7sdVLouPubDhi7px+bbtlS1+l3BuBTfHXhfCQ95ixhKB
-	 f3KBTpvL4E0xT/nfqj/c7aJdytyvRWvMSUeKJCgayHSr7UTnDAU8WQJkybNzi6L6nI
-	 QSLDTzHSRG6GQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v6rfV-0000000CeiY-1hQI;
-	Thu, 09 Oct 2025 14:30:57 +0000
-Date: Thu, 09 Oct 2025 15:30:56 +0100
-Message-ID: <86qzvcxi3j.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1760025529;
+	bh=ZZIxBFUcwOaK5MRt4WZlCsfrNjmgd3wlboFkVO2mY9E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BsaPI34RbiTERwpZkaONtoptYt1RA0gXMurCUAz7nkoKG7av1EQxvOOX0TlOnpbdh
+	 x86k/Y1EKtg9uEMSlgaa+DOUqP4in1AXufjGC8J5g+B4UFD6AoaLaLw679GsliPj3Q
+	 nXY2lx80UiKKkruVgLgWjA/r7nsfspoTJpGALMYIZrGUqa315b/LJganL196nBBdZ9
+	 bM4q/AYcd1u12SpT8ORrONoAupn5QpAxSrIMR7D329+L7nkDWWIZAAWkEr/3heyOwJ
+	 HmAECfOfYhpKl9G3o/rPmtt1KGnXTcHqEB+CxcwTof9mgYUX7tvWbcBbHgWcMPN6yE
+	 fE1Jj6X/7VXPw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	kkartik@nvidia.com,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-5.10] soc/tegra: fuse: Add Tegra114 nvmem cells and fuse lookups
+Date: Thu,  9 Oct 2025 11:54:57 -0400
+Message-ID: <20251009155752.773732-31-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
+References: <20251009155752.773732-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Thierry,
+From: Svyatoslav Ryhel <clamor95@gmail.com>
 
-On Thu, 09 Oct 2025 12:38:55 +0100,
-Thierry Reding <thierry.reding@gmail.com> wrote:
-> 
-> Which brings me to the actual question: what is the right way to solve
-> this? I had, maybe naively, assumed that the default CPU affinity, which
-> includes all available CPUs, would be sufficient to have interrupts
-> balanced across all of those CPUs, but that doesn't appear to be the
-> case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
-> in this particular case) from the affinity mask to set the "effective
-> affinity", which then dictates where IRQs are handled and where the
-> corresponding IRQ thread function is run.
+[ Upstream commit b9c01adedf38c69abb725a60a05305ef70dbce03 ]
 
-There's a (GIC-specific) answer to that, and that's the "1 of N"
-distribution model. The problem is that it is a massive headache (it
-completely breaks with per-CPU context).
+Add missing Tegra114 nvmem cells and fuse lookups which were added for
+Tegra124+ but omitted for Tegra114.
 
-We could try and hack this in somehow, but defining a reasonable API
-is complicated. The set of CPUs receiving 1:N interrupts is a *global*
-set, which means you cannot have one interrupt targeting CPUs 0-1, and
-another targeting CPUs 2-3. You can only have a single set for all 1:N
-interrupts. How would you define such a set in a platform agnostic
-manner so that a random driver could use this? I definitely don't want
-to have a GIC-specific API.
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-Overall, there is quite a lot of work to be done in this space: the
-machine I'm typing this from doesn't have affinity control *at
-all*. Any interrupt can target any CPU, and if Linux doesn't expect
-that, tough.  Don't even think of managed interrupts on that sort of
-systems...
+LLM Generated explanations, may be completely bogus:
 
-	M.
+YES - Restores the Tegra114 nvmem coverage that regressed when the
+driver switched to SoC-specific cell tables.
+- `drivers/soc/tegra/fuse/fuse-tegra30.c:120-236` now defines the
+  Tegra114 fuse cells and lookup table, re-exposing the TSENSOR and XUSB
+  calibration words that lived in the old global list before commit
+  bea06d776d8b2 (“Use SoC specific nvmem cells”). Without these entries
+  the Tegra114 nvmem provider registers with zero cells, so every
+  `nvmem_cell_get()` for legacy device-trees (the whole reason for
+  `nvmem_add_cell_lookups()` in 9f94fadd75d34) falls back to `-ENOENT`,
+  breaking thermal/xusb calibration access that previously worked.
+- `drivers/soc/tegra/fuse/fuse-tegra30.c:244-252` wires those tables
+  into `tegra114_fuse_soc`, so early boot (`tegra_init_fuse()`) and the
+  runtime probe both repopulate the lookups; the offsets match what
+  existing Tegra114 code already reads directly (e.g. speedo data at
+  0x12c/0x134), so the fix is consistent with the silicon layout.
+- Change is data-only for `CONFIG_ARCH_TEGRA_114_SOC`, touching no other
+  SoCs, so the regression fix is low risk and backports cleanly to any
+  stable branch that already has bea06d776d8b2.
 
+This is a straight bug fix with clear user impact (loss of nvmem cells
+on Tegra114) and should be backported.
+
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 122 ++++++++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index e24ab5f7d2bf1..524fa1b0cd3d6 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -117,6 +117,124 @@ const struct tegra_fuse_soc tegra30_fuse_soc = {
+ #endif
+ 
+ #ifdef CONFIG_ARCH_TEGRA_114_SOC
++static const struct nvmem_cell_info tegra114_fuse_cells[] = {
++	{
++		.name = "tsensor-cpu1",
++		.offset = 0x084,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-cpu2",
++		.offset = 0x088,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-common",
++		.offset = 0x08c,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-cpu0",
++		.offset = 0x098,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "xusb-pad-calibration",
++		.offset = 0x0f0,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-cpu3",
++		.offset = 0x12c,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-gpu",
++		.offset = 0x154,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-mem0",
++		.offset = 0x158,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-mem1",
++		.offset = 0x15c,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-pllx",
++		.offset = 0x160,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	},
++};
++
++static const struct nvmem_cell_lookup tegra114_fuse_lookups[] = {
++	{
++		.nvmem_name = "fuse",
++		.cell_name = "xusb-pad-calibration",
++		.dev_id = "7009f000.padctl",
++		.con_id = "calibration",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-common",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "common",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-cpu0",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "cpu0",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-cpu1",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "cpu1",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-cpu2",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "cpu2",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-cpu3",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "cpu3",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-mem0",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "mem0",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-mem1",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "mem1",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-gpu",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "gpu",
++	}, {
++		.nvmem_name = "fuse",
++		.cell_name = "tsensor-pllx",
++		.dev_id = "700e2000.thermal-sensor",
++		.con_id = "pllx",
++	},
++};
++
+ static const struct tegra_fuse_info tegra114_fuse_info = {
+ 	.read = tegra30_fuse_read,
+ 	.size = 0x2a0,
+@@ -127,6 +245,10 @@ const struct tegra_fuse_soc tegra114_fuse_soc = {
+ 	.init = tegra30_fuse_init,
+ 	.speedo_init = tegra114_init_speedo_data,
+ 	.info = &tegra114_fuse_info,
++	.lookups = tegra114_fuse_lookups,
++	.num_lookups = ARRAY_SIZE(tegra114_fuse_lookups),
++	.cells = tegra114_fuse_cells,
++	.num_cells = ARRAY_SIZE(tegra114_fuse_cells),
+ 	.soc_attr_group = &tegra_soc_attr_group,
+ 	.clk_suspend_on = false,
+ };
 -- 
-Without deviation from the norm, progress is not possible.
+2.51.0
+
