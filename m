@@ -1,109 +1,223 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E521E38D;
-	Thu,  9 Oct 2025 00:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E0C1C5F1B
+	for <linux-tegra@vger.kernel.org>; Thu,  9 Oct 2025 05:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759968344; cv=none; b=tz+ZMNq1oY5yEWaUP/8SkBxeO05FABrHoL9zvTpW0377LW/K7eqbk+th4KSjF8kktXk2QSW5c3u1WXbDMBWqplx+VQJ6GhVwwy19VbwDQM2wiPfJkfoVOmaMpSFGJ4fZN7f+rgX1TgN5LFVFMAahaU9ZJya4mg/zIVYm6+50QJo=
+	t=1759986395; cv=none; b=B4zH4wQt9jzj2W1ftB2wa4ZphANFPTqO0Vb+SFSriJ7w7n6A16pezRy/C1hZ6kuLtnHbDiX4T6QysjypiXYyC25PzLzCTdMwEvnBpkglSWPts166NxNaXXwBmdfogAkpUVIKxehRNuNkjJzCXH9h/C740qlskWFyKT+/NLNNXxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759968344; c=relaxed/simple;
-	bh=a5eC/mc+Ab1G1LQjVNYBq9MbchkkbcCS6aNwYhqeir0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9uu4x871zx6FLz2EcwwJniItv+ak1jBJFXa4Sx+9QTWCBM9o6LZ6ZlbpiumXjZjWAvxeDgz2d8o03vUQJfMSHCyU/BCuYwACHt9RoPhoOlystH6UdAE6ghHOzBlLJi1RlWRC+Wz7eWSiS45EdvNFyFUYkXSqVHnSG+GiibuvDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHCP5kO6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759986395; c=relaxed/simple;
+	bh=KGYbVj0SYA7csaFCm338RExp7YkFD+VQLtFHDm1WmW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G8WiYYHQ0EoXcnCvYR2fuhk+fepzogfxz2P1wQwsjWA4m9ckYakwJwlkHmku3QwyQ+MpEaJLlJPIgVt5P65jd1zSEAabY531OzZxkXZJnx85RfWNYajTQccnW6iMVJBEgrXiLLYb28KT//lytsmmj1wE9RgRPqplWvVJa+sMA/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YDh69t0+; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHCP5kO6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E867AC4CEE7;
-	Thu,  9 Oct 2025 00:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759968343;
-	bh=a5eC/mc+Ab1G1LQjVNYBq9MbchkkbcCS6aNwYhqeir0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hHCP5kO6224ynyPwXhK6hxpjphEvD1CijUgKVfdInAvo4ZhjJzAeTapEZZfsgKPFV
-	 hEMgN2pe1zb/xCUzxhDw7ySaX/KDCE8SuiyDt96EmvNZ64jKnFAx0V1QWheQQnUHlw
-	 6+fPIskxoMLhw/vb/l9AN4h46rEVrYGAEJ5xobL2mYZcU+z7u93qjZWOyCPjDNxxc4
-	 +waqh2xEnkKqSEAUG2M8PrQeiD+5IxI4d9N8R8pkA45hGH3aLeZCx3541MqP1OX1Nz
-	 nNJT0nKlQ7Z9hIeD4f0TlxHbDq92s6kNPn1lrSKtVjaegJYKrcod3wZBWiH9/BFVcp
-	 oFNOAciKbTD5A==
-Message-ID: <5d7491b1-8f9a-4040-b854-ff0b94bfd24e@kernel.org>
-Date: Thu, 9 Oct 2025 09:05:34 +0900
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDh69t0+"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-41174604d88so248244f8f.2
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Oct 2025 22:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759986392; x=1760591192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CdHEjQxG+FatWNW5/zKqLPCIUyKLAYeWhQuCe1gPWoU=;
+        b=YDh69t0+rmwsfWzTffPUN//wbJVma9c3310fGP1Bhbvb0WWNeI3A90enu9hpgTl6to
+         CJqDUF2juBWsjfl+o5oTmqlYFfrhJV88DDgmYK+Yjft07zF+jDYYh1q01Ord54hz0y2l
+         DW9yoVUy2uNH9fxMalRPW4FSj7qledjQ88fMKaMsx6Dbl6+AZhRLdixDgA6Jb6tOlbSJ
+         Qn/gtToySWed6AQwe/EhGiv1xRIfZgFreAcFUlWaKhOm9FcNfXKzpQ2fMM31RzlN11LD
+         dWQ618/qYs3T1NPfZM2JVeVB2DHpWWaxFKFWDlr3B8FHoQIC0a0f6Ysjbx/3FzbOUk3a
+         HuMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759986392; x=1760591192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CdHEjQxG+FatWNW5/zKqLPCIUyKLAYeWhQuCe1gPWoU=;
+        b=GyIfb1qId19JT5hyAoKhfIQPY3Q88eaXFZOohMJrWrvPXcTgFRt80hr3I0sEKYN9Gv
+         gHUWbQXgToGicoOuDn6mnJ1q4IHs66+h6gbgLmwiBLJfJGJgnZXflN3a/m7nXlrF87rf
+         Vu+Rzor8OUmff+F2FlVSMm0bDCDxybdWnuJEO+P4wsFtM9u74xEsA5BXmaoD92L0rAhD
+         ZAYKbgb1rMgqkz2/cD5FYSh9OP2yzKLT3nfC+zeax7Y3O1e2G/cAykUohw79wwbZdMo4
+         chlyRulgskMu5AnSwoXtN1Cyc5ZCENBm+iJ/MmvPQwWVbAkYbavjzYvblJzLCWedqeJp
+         efcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHbPPMdeR68TrmU/hF6uW9nbr8+d4ISgI/XiS5NL97NEYnFvtPqPfjombEPz+imzWZ0ksK1EOPwQ7HDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyikTsOV0Yp8qeHznXcCYjQoeKstzaTkVlz4KSWzADnvIu9M7YU
+	DA1mjW7rWTbMeMHsFCCtQ/6OpJ1lB4UxkqU+3IiiA/snzXE1qRhQaVIPcbdmA4rK5SefffQLjEN
+	1EmvGc1LRx6QxYNkXzMcnN2St4thJL6Q=
+X-Gm-Gg: ASbGncv+6VyK8LLxB85wfa1eElG8t6K/XoMfLZAGLp1zGCFJJ0vcmVLkOhz+PNC2Spt
+	twxjCSNvKVmn3t04LRXYFkUcDOE/xnJ7XutWIZ/j1lBUM91APYocQqKaSbtI12CI5RHlGVsgImN
+	OUGwrcriQbF4c1rnEHy2OdT4Jj8pC1JQfl7Zk1V4RzBzYx/RhIqXbJLC5AdaJLorwRvtQW2t4kU
+	jnNtZzyTv/VqyB+mZrlXeFaiy3v6ROz
+X-Google-Smtp-Source: AGHT+IHqYRmivewqb9zg+yu8zGgOx+vqqkeXoxUzMI4NUKSxwIhgIh4uZTenWgZghGln5muMkEwQ0EmS5xQOqziJeM4=
+X-Received: by 2002:a05:6000:603:b0:3ea:4e8b:c96a with SMTP id
+ ffacd0b85a97d-4266e8e64e4mr3654211f8f.57.1759986391521; Wed, 08 Oct 2025
+ 22:06:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] Support dynamic EMC frequency scaling on
- Tegra186/Tegra194
-To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251008082800.67718-1-clamor95@gmail.com> <20251008082800.67718-2-clamor95@gmail.com>
+ <20251008-safely-reach-9274474a2ec8@spud>
+In-Reply-To: <20251008-safely-reach-9274474a2ec8@spud>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 9 Oct 2025 08:06:20 +0300
+X-Gm-Features: AS18NWC-fQyHK-rMvVxkxqV6S0I7hbIVFXE8xA55zUXu7V0ibTLESXEQf_mVWkM
+Message-ID: <CAPVz0n2pbAS3Qjm9WQGvcuJhkNnyjGCyJtVi=VMuUgPoQNE+wA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+To: Conor Dooley <conor@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Douglas Anderson <dianders@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/09/2025 15:21, Aaron Kling via B4 Relay wrote:
-> This series borrows the concept used on Tegra234 to scale EMC based on
-> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
-> bpmp on those archs does not support bandwidth manager, so the scaling
-> iteself is handled similar to how Tegra124 currently works.
-> 
+=D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:11=
+ Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Oct 08, 2025 at 11:27:53AM +0300, Svyatoslav Ryhel wrote:
+> > LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which=
+ it
+> > clearly is not. Address this by adding the proper schema for this panel=
+.
+> >
+> > There is only one user of this panel binding in the mainline Linux kern=
+el,
+> > which is the Nvidia tablet Tegra Note 7. Its panel is broken anyway sin=
+ce
+> > it cannot initialize properly if the bootloader does not leave a
+> > pre-initialized panel. It also cannot suspend or re-initialize properly=
+,
+> > since no DSI configuration is set and it has a loose regulator which
+> > relies on an always-on property rather than being hooked to the panel
+> > where it belongs.
+>
+> I think this is a reasonable justification. For my own enlightenment,
+> what happens if a new kernel uses the old simple-panel devicetree?
+>
 
-Nothing improved:
-https://lore.kernel.org/all/20250902-glittering-toucan-of-feminism-95fd9f@kuoka/
+Since regulator framework provides dummy regulators and compatible
+matches, driver should probe correctly. Panel should still work with
+unpatched device tree until disabling unused regulators/power domains
+kicks in.
 
-Best regards,
-Krzysztof
+> > Tegra Note 7 device tree is adjusted as a part of this series.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
+> >  .../display/panel/panel-simple-dsi.yaml       |  2 -
+> >  2 files changed, 60 insertions(+), 2 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,=
+ld070wx3.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx=
+3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > new file mode 100644
+> > index 000000000000..0a82cf311452
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > @@ -0,0 +1,60 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
+>
+> Could you make the filename match the compatible please?
+
+Filename matches compatible, -XXNN after lg,ld070wx3 indicate
+revision. I have found at least two more -sm01 and -sh01, but since I
+was not able to get datasheet for them I cannot say for sure that they
+fully compatible with this schema.
+
+> With that,
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> Cheers,
+> Conor.
+>
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: LG Corporation 7" WXGA TFT LCD panel
+> > +
+> > +maintainers:
+> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > +
+> > +allOf:
+> > +  - $ref: panel-common.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: lg,ld070wx3-sl01
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply: true
+> > +  vcc-supply: true
+> > +
+> > +  backlight: true
+> > +  port: true
+> > +
+> > +required:
+> > +  - compatible
+> > +  - vdd-supply
+> > +  - vcc-supply
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +
+> > +    dsi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        panel@0 {
+> > +            compatible =3D "lg,ld070wx3-sl01";
+> > +            reg =3D <0>;
+> > +
+> > +            vdd-supply =3D <&vdd_3v3_lcd>;
+> > +            vcc-supply =3D <&vcc_1v8_lcd>;
+> > +
+> > +            backlight =3D <&backlight>;
+> > +
+> > +            port {
+> > +                endpoint {
+> > +                    remote-endpoint =3D <&dsi0_out>;
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > +...
+> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-simp=
+le-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-=
+dsi.yaml
+> > index 9b92a05791cc..f9f1e76a810c 100644
+> > --- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.=
+yaml
+> > +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.=
+yaml
+> > @@ -42,8 +42,6 @@ properties:
+> >        - kingdisplay,kd097d04
+> >          # LG ACX467AKM-7 4.95" 1080=C3=971920 LCD Panel
+> >        - lg,acx467akm-7
+> > -        # LG Corporation 7" WXGA TFT LCD panel
+> > -      - lg,ld070wx3-sl01
+> >          # LG Corporation 5" HD TFT LCD panel
+> >        - lg,lh500wx1-sd03
+> >          # Lincoln LCD197 5" 1080x1920 LCD panel
+> > --
+> > 2.48.1
+> >
