@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA21225397;
-	Thu,  9 Oct 2025 17:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF7A86331;
+	Thu,  9 Oct 2025 18:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029501; cv=none; b=ZShwPKWKzTjwejIUepog6gDBKbJXORJcoiFTgkxheEtYZ/fkI4RLYZJnZ6E6uNrgY6dQQreRMfoZjDW8XJqvR9P5To4EuoGQGuZZM7V9fL+VhTJYX6iEn7KE7gOROMQj8n08COjRRwCDKDnkp4763EP5k5uuMVve2uCFejE59JU=
+	t=1760033485; cv=none; b=uLsQvEx1pXfwu23HNizGIUmNAZJ0EIBCvnuuO8VJaHpUsFhMm/Nbsyv87XL1zX/Ehs5jTKaMcUQ13m9Iax++l1TXDWH8LkoQ7T9/5CoK4eBd9/v6558qQyV+zaP9KnIOUHq7YEzrCXRAekNaiYtP+XZlMK4ADRWf4WMcqSefZ4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029501; c=relaxed/simple;
-	bh=XwfqM5QHQpVM8Kdpu0a6NtJ56tZ8bqhomvImo9fS3uk=;
+	s=arc-20240116; t=1760033485; c=relaxed/simple;
+	bh=hlUxCD4J4wKrqMfCK2tZHP+94pKQeHhn01rtwfEVA+0=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k9ajj3yGrANAQKzkGhyvSZ06smVNVWX1frD4gd7Fsh2SESlL2UeRoYygT/l0u7gk1D52F22Kr1W89Dk7gyeTJ0LXnz8IOeURd+yxFZTMmsx3Uq1e4Q+9wRB274s8CgGoEpSDg3TlKDwx8/rcaJt7HQ0C+6rxBw0GHqIVuvAyRKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEa/QA8O; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=mCx0/xTTxJz8qT/LzM+3IOQ066CeWmHkO/jCm48VGwCQTE/8B1ssC+la7XiBgEE8Lhgp2rHUwqjwW3omwZf/LxLsxeTUnXSQIX2MK4fdpTm1epe00k7002X87TEY7rU8C39AknVlV1i3hoWEkGBYsJ4tIVfqFhrCIVBWzgRp78A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7rsMnYQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEa/QA8O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC1EC4CEE7;
-	Thu,  9 Oct 2025 17:05:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7rsMnYQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC76C4CEE7;
+	Thu,  9 Oct 2025 18:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029501;
-	bh=XwfqM5QHQpVM8Kdpu0a6NtJ56tZ8bqhomvImo9fS3uk=;
+	s=k20201202; t=1760033483;
+	bh=hlUxCD4J4wKrqMfCK2tZHP+94pKQeHhn01rtwfEVA+0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kEa/QA8OAig3Qw7EDRe8tDHK9DTEyg9YRFanDbVu/TifAOZdR70nR5TSrWZb0yRMC
-	 YCfwq5nRbbVc7M+8RLJfoi+QYfucS2KZWhxB9qYSBrqKKiU+MMhjzSeyOSfy3P+/oD
-	 72zaq7VQXxsvKYtTmLbcxhDoq+zMKrqXe+3sAFmgbcnynw4CBbtm4XpekMTS4ihHcT
-	 y/XUz7p/FQ65RZ0sgla5djkU85Kd7xPiZpoTfLU34LAkowIUMCQdBur6o03hs/Vwzn
-	 63AjUiee3ZdYEPlz0NGC++Bf9VGPYmMSWbbrO0ISrGJxMkyib9GUjqrwIDf2aq6FRJ
-	 8rCzo7koEks7w==
+	b=P7rsMnYQIe2oxKy9AoZCEcsQJz+QcTE39ckDM9EGf6ocvyQDR/Us96ky4Zy3AuVq3
+	 bGf3s2TAnLmoIrzvgjIEEtb8L01oTAngNSpBhZ/Lhy4WXxx7q64NOZxAFYTZS6jVoB
+	 vWil0zY8SiZo/FBxDM620JzGHVPMOplVLV0hVZdhNafUz0YaeJsDvSTfGWiTeLnFy8
+	 nreQgyJtYUFRF/DnzxRyiUl/NLuR3ZaaOrVFkLcNdInJdFhyGs4A77WIC8/Ti+lBD5
+	 RmWJlJ0UVSQttoQHBlvsGN+IZXR1CUk/eUNkSFE1nACKjZN+pM77ClPD3DEEDfySSw
+	 sBxRZWkE0+M+A==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <maz@kernel.org>)
-	id 1v6u4Z-0000000Chge-0GNv;
-	Thu, 09 Oct 2025 17:04:59 +0000
-Date: Thu, 09 Oct 2025 18:04:58 +0100
-Message-ID: <86o6qgxayt.wl-maz@kernel.org>
+	id 1v6v6n-0000000CibQ-0EaZ;
+	Thu, 09 Oct 2025 18:11:21 +0000
+Date: Thu, 09 Oct 2025 19:11:20 +0100
+Message-ID: <86ms60x7w7.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>,
@@ -41,10 +41,11 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+In-Reply-To: <86o6qgxayt.wl-maz@kernel.org>
 References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
 	<86qzvcxi3j.wl-maz@kernel.org>
 	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+	<86o6qgxayt.wl-maz@kernel.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -60,74 +61,147 @@ X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vge
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 09 Oct 2025 17:05:15 +0100,
-Thierry Reding <thierry.reding@gmail.com> wrote:
+On Thu, 09 Oct 2025 18:04:58 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
 > 
-> [1  <text/plain; us-ascii (quoted-printable)>]
-> On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
-> > Hi Thierry,
+> On Thu, 09 Oct 2025 17:05:15 +0100,
+> Thierry Reding <thierry.reding@gmail.com> wrote:
 > > 
-> > On Thu, 09 Oct 2025 12:38:55 +0100,
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > [1  <text/plain; us-ascii (quoted-printable)>]
+> > On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
+> > > Hi Thierry,
 > > > 
-> > > Which brings me to the actual question: what is the right way to solve
-> > > this? I had, maybe naively, assumed that the default CPU affinity, which
-> > > includes all available CPUs, would be sufficient to have interrupts
-> > > balanced across all of those CPUs, but that doesn't appear to be the
-> > > case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
-> > > in this particular case) from the affinity mask to set the "effective
-> > > affinity", which then dictates where IRQs are handled and where the
-> > > corresponding IRQ thread function is run.
+> > > On Thu, 09 Oct 2025 12:38:55 +0100,
+> > > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > > > 
+> > > > Which brings me to the actual question: what is the right way to solve
+> > > > this? I had, maybe naively, assumed that the default CPU affinity, which
+> > > > includes all available CPUs, would be sufficient to have interrupts
+> > > > balanced across all of those CPUs, but that doesn't appear to be the
+> > > > case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
+> > > > in this particular case) from the affinity mask to set the "effective
+> > > > affinity", which then dictates where IRQs are handled and where the
+> > > > corresponding IRQ thread function is run.
+> > > 
+> > > There's a (GIC-specific) answer to that, and that's the "1 of N"
+> > > distribution model. The problem is that it is a massive headache (it
+> > > completely breaks with per-CPU context).
 > > 
-> > There's a (GIC-specific) answer to that, and that's the "1 of N"
-> > distribution model. The problem is that it is a massive headache (it
-> > completely breaks with per-CPU context).
+> > Heh, that started out as a very promising first paragraph but turned
+> > ugly very quickly... =)
+> > 
+> > > We could try and hack this in somehow, but defining a reasonable API
+> > > is complicated. The set of CPUs receiving 1:N interrupts is a *global*
+> > > set, which means you cannot have one interrupt targeting CPUs 0-1, and
+> > > another targeting CPUs 2-3. You can only have a single set for all 1:N
+> > > interrupts. How would you define such a set in a platform agnostic
+> > > manner so that a random driver could use this? I definitely don't want
+> > > to have a GIC-specific API.
+> > 
+> > I see. I've been thinking that maybe the only way to solve this is using
+> > some sort of policy. A very simple policy might be: use CPU 0 as the
+> > "default" interrupt (much like it is now) because like you said there
+> > might be assumptions built-in that break when the interrupt is scheduled
+> > elsewhere. But then let individual drivers opt into the 1:N set, which
+> > would perhaps span all available CPUs but the first one. From an API PoV
+> > this would just be a flag that's passed to request_irq() (or one of its
+> > derivatives).
 > 
-> Heh, that started out as a very promising first paragraph but turned
-> ugly very quickly... =)
-> 
-> > We could try and hack this in somehow, but defining a reasonable API
-> > is complicated. The set of CPUs receiving 1:N interrupts is a *global*
-> > set, which means you cannot have one interrupt targeting CPUs 0-1, and
-> > another targeting CPUs 2-3. You can only have a single set for all 1:N
-> > interrupts. How would you define such a set in a platform agnostic
-> > manner so that a random driver could use this? I definitely don't want
-> > to have a GIC-specific API.
-> 
-> I see. I've been thinking that maybe the only way to solve this is using
-> some sort of policy. A very simple policy might be: use CPU 0 as the
-> "default" interrupt (much like it is now) because like you said there
-> might be assumptions built-in that break when the interrupt is scheduled
-> elsewhere. But then let individual drivers opt into the 1:N set, which
-> would perhaps span all available CPUs but the first one. From an API PoV
-> this would just be a flag that's passed to request_irq() (or one of its
-> derivatives).
+> The $10k question is how do you pick the victim CPUs? I can't see how
+> to do it in a reasonable way unless we decide that interrupts that
+> have an affinity matching cpu_possible_mask are 1:N. And then we're
+> left with wondering what to do about CPU hotplug.
 
-The $10k question is how do you pick the victim CPUs? I can't see how
-to do it in a reasonable way unless we decide that interrupts that
-have an affinity matching cpu_possible_mask are 1:N. And then we're
-left with wondering what to do about CPU hotplug.
+For fun and giggles, here's the result of a 5 minute hack. It enables
+1:N distribution on SPIs that have an "all cpus" affinity. It works on
+one machine, doesn't on another -- no idea why yet. YMMV.
 
-> 
-> > Overall, there is quite a lot of work to be done in this space: the
-> > machine I'm typing this from doesn't have affinity control *at
-> > all*. Any interrupt can target any CPU,
-> 
-> Well, that actually sounds pretty nice for the use-case that we have...
-> 
-> >                                         and if Linux doesn't expect
-> > that, tough.
-> 
-> ... but yeah, it may also break things.
-
-Yeah. With GICv3, only SPIs can be 1:N, but on this (fruity) box, even
-MSIs can be arbitrarily moved from one CPU to another. This is a
-ticking bomb.
-
-I'll see if I can squeeze out some time to look into this -- no
-promises though.
+This is of course conditioned on your favourite HW supporting the 1:N
+feature, and it is likely that things will catch fire quickly. It will
+probably make your overall interrupt latency *worse*, but maybe less
+variable. Let me know.
 
 	M.
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index dbeb85677b08c..ab32339b32719 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -67,6 +67,7 @@ struct gic_chip_data {
+ 	u32			nr_redist_regions;
+ 	u64			flags;
+ 	bool			has_rss;
++	bool			has_oon;
+ 	unsigned int		ppi_nr;
+ 	struct partition_desc	**ppi_descs;
+ };
+@@ -1173,9 +1174,10 @@ static void gic_update_rdist_properties(void)
+ 	gic_iterate_rdists(__gic_update_rdist_properties);
+ 	if (WARN_ON(gic_data.ppi_nr == UINT_MAX))
+ 		gic_data.ppi_nr = 0;
+-	pr_info("GICv3 features: %d PPIs%s%s\n",
++	pr_info("GICv3 features: %d PPIs%s%s%s\n",
+ 		gic_data.ppi_nr,
+ 		gic_data.has_rss ? ", RSS" : "",
++		gic_data.has_oon ? ", 1:N" : "",
+ 		gic_data.rdists.has_direct_lpi ? ", DirectLPI" : "");
+ 
+ 	if (gic_data.rdists.has_vlpis)
+@@ -1481,6 +1483,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+ 	u32 offset, index;
+ 	void __iomem *reg;
+ 	int enabled;
++	bool oon;
+ 	u64 val;
+ 
+ 	if (force)
+@@ -1488,6 +1491,8 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+ 	else
+ 		cpu = cpumask_any_and(mask_val, cpu_online_mask);
+ 
++	oon = gic_data.has_oon && cpumask_equal(mask_val, cpu_possible_mask);
++
+ 	if (cpu >= nr_cpu_ids)
+ 		return -EINVAL;
+ 
+@@ -1501,7 +1506,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+ 
+ 	offset = convert_offset_index(d, GICD_IROUTER, &index);
+ 	reg = gic_dist_base(d) + offset + (index * 8);
+-	val = gic_cpu_to_affinity(cpu);
++	val = oon ? GICD_IROUTER_SPI_MODE_ANY : gic_cpu_to_affinity(cpu);
+ 
+ 	gic_write_irouter(val, reg);
+ 
+@@ -1512,7 +1517,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+ 	if (enabled)
+ 		gic_unmask_irq(d);
+ 
+-	irq_data_update_effective_affinity(d, cpumask_of(cpu));
++	irq_data_update_effective_affinity(d, oon ? cpu_possible_mask : cpumask_of(cpu));
+ 
+ 	return IRQ_SET_MASK_OK_DONE;
+ }
+@@ -2114,6 +2119,7 @@ static int __init gic_init_bases(phys_addr_t dist_phys_base,
+ 	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
+ 
+ 	gic_data.has_rss = !!(typer & GICD_TYPER_RSS);
++	gic_data.has_oon = !(typer & GICD_TYPER_No1N);
+ 
+ 	if (typer & GICD_TYPER_MBIS) {
+ 		err = mbi_init(handle, gic_data.domain);
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index 70c0948f978eb..ffbfc1c8d1934 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -80,6 +80,7 @@
+ #define GICD_CTLR_ENABLE_SS_G0		(1U << 0)
+ 
+ #define GICD_TYPER_RSS			(1U << 26)
++#define GICD_TYPER_No1N			(1U << 25)
+ #define GICD_TYPER_LPIS			(1U << 17)
+ #define GICD_TYPER_MBIS			(1U << 16)
+ #define GICD_TYPER_ESPI			(1U << 8)
 
 -- 
 Without deviation from the norm, progress is not possible.
