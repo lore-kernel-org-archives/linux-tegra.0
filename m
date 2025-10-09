@@ -1,130 +1,106 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD68B21C9E5
-	for <linux-tegra@vger.kernel.org>; Thu,  9 Oct 2025 16:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1A51A2545;
+	Thu,  9 Oct 2025 16:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760026244; cv=none; b=uwAnSbhjOYYAvOK5mqyovrMNdSigAFm1s9KRoTb1ancjtBzr9bBKbqkgJVCqJrH9R4kKKNbocR5STCQpY/1IfBJrO+MgdSYWly1B7+IwX7nUCLTiWJx6bFHr/Rf5hZn80VskSbNzbl4q8pp0FVq/9rX6Rd5RXPNA4iVZYcIEkfE=
+	t=1760027615; cv=none; b=ICEXx7Z8JuXpH2J0yRUPfyBtP62JJa+pHeWLX97giC+aqFpkbzNsHkretZQW1GdQZPEjaG9p6o1CHuTzj0dSJPKFJ8ruoKu2GlsxbNV91bi5QZw23ASAC93IzV8v1eGAEmsLkLnU9WBAKFdI9/9yEk1jpEBpseuniXBuc9FxJ0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760026244; c=relaxed/simple;
-	bh=/QroLiiLgmRbmdtmGaHJCJNhy+ofzWFn4TKF76QlkYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Na6MiYDRg9KnP6liGY2IpDonJPSumxuFhdrTcZuymRL16UY9beBxlBwXRWHcrF2ay+Te7lavIuMRs3Umrx5es2nKrNoOQ3mX+QOJU4XtLHZ9PwMToNFtuF6bSiVKzNco/EDwzrC4qwAx9BU2VoAn4vqUqHJSXceKOCKz07N34dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4mwxk0M; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760027615; c=relaxed/simple;
+	bh=ePE6UwXG4mOskOTOs/+qp+ty/ofJpwv5+43knm9orGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4tCrs/E0VczhnsaLR1XRZBayDYb6N6uilZVTw2OxgQnDOFGe1uTpehY33DAPQjNJJB1h7W9OdVRpdPOjufIQ1BSVxL/U9uc1RWxnEzYZi1EVbsaGij5YiU5RxuqBoZnZ/E7zQi/enJLhWyZAw/SJci0q5PMbpLAsduQsG8ivmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgFCYhC1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4mwxk0M"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso713771f8f.0
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Oct 2025 09:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760026241; x=1760631041; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6dY4iN7PdWChYRE0ifRKVqt27FKLXUFTSH3kC0uyt14=;
-        b=Z4mwxk0MvyrZdFXnQKSqPEdN9X1LovenCzi72wyuMoW9OyBRTFTWEyvJ8ePWzQS2PV
-         R/hnO/DJJN2SVVdoQdtJU5Pd1jfrrvoU+0cpzo/bxtH6vq+7X7YWyxFG99iaZpv/4zZG
-         yIg4qP3tGh+eRmUmax33gKdVK343PWNWJYxt20k/ap9PYcMYFgyQT0lp7rlXEcoHs2sK
-         9P6QL2IF5jiYrcH+qK5rpY8t3u1AEGd6imssvgDt5EjjbiY2CmeYVKnJSne4HABuWLGm
-         hYMO0/mhCe+Bv2OmpMHZ0B7juulGXUHFbK6qh/D8GunZ7ZkM2WESbWvpkSQ8xgGuo9MM
-         8NLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760026241; x=1760631041;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6dY4iN7PdWChYRE0ifRKVqt27FKLXUFTSH3kC0uyt14=;
-        b=I+hbaTydPrXiUEauJF77IGyyAQw+lQTEyV6y7vujGKhR6q9fuefDdu8AtrRTJwhj/y
-         wmRwoToZZgjcHnDNoXIio59gPdTrY6qyghvKjvIUiQpRG74b8EFM0TXlKfID3hR+a9xW
-         FZffuhVGCvpVRJTa+R1405zVrIOZ5Gys7+UAStPj2G1EuS+7GePVkDlIp4CDpsdamGj1
-         GM52+xh6skjuT2czB2xKAOE6RyBEh16aH9w+17/573elrHbP4dy6JTErJJIqvB7ssd5r
-         yr1unIPGwqQzdjofYWd6rN8zZemREKrivaFYGKSck8qIHNuIbsOQ7GsWRB4pLXB3alw9
-         5nPA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ZmBGDu4Zi+rUHJf94k+WV47uZD/gpyWwH9U2TTV2lHTXya4RhaK5m1+43e6Mtlf2LPPVHi3WScf4Fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBrWO3qVOUPTAbDBGI8/vf4RxVynHafW2Du2+Bkz8qIIUjfD8N
-	fUrZOWFF5iUpjG/M/7IIVeIPoNdUyH6D2m1Y25/WByze7G5JbJI6UmMH
-X-Gm-Gg: ASbGncueds2UxYWy3/EhkfSk0irX1pF+bxrYoUhvbfZdVMxaTfoSy9Y7AgaWPURILKl
-	bVXe6YOoiD4acFgASOqs0x9z5k9hotEyomQ6rYN2nn5afsYvVBOSHRrdsn1998yXWvbm90b6xs+
-	iWckHwbmvjFUmUZQda9/0aJHwDrfbRJpVv+vRFp2D+6qrlbwktkLEUcCmhzQXJKEz7Yc3x7Oqau
-	dJYMJsYeUhbkCQ83rhMnwBK/y5lYSDuWUULh1idTsynpR5Me0RQv0Em8vIqYkvL2yGDsasWJIP2
-	KNVysnG4msGioZ7zHEuxWLxLHl9hdSv12GAdQfQiBizziIm0AG8ZZ5jUTIVmCLEZoJcPEsTGWCL
-	HWxxZsA9OCzXZXZo/kte2O+/zJ0MLTRqDgGQdMT0I4qe4u7k20ssWSvvUT0/in5h/YQ3z1zNqWq
-	z2hjHYPe+2rZ1sFsnIlvAyC1Tkfrza0fbCb97QV3iEJCNKHsuvgA==
-X-Google-Smtp-Source: AGHT+IFkwHykrA+wYAhn/zJi5eTUQsxL1dfc4QaEW+3rGUYXDO/GVtri/nlITfJ9TCBVb2Nii4lSVQ==
-X-Received: by 2002:a05:6000:2504:b0:3eb:f3de:1a87 with SMTP id ffacd0b85a97d-4266e8e4483mr5631337f8f.56.1760026241085;
-        Thu, 09 Oct 2025 09:10:41 -0700 (PDT)
-Received: from localhost (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426cd9a0310sm47995f8f.45.2025.10.09.09.10.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 09:10:40 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Sheetal <sheetal@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: power: Add power domain IDs for Tegra264
-Date: Thu,  9 Oct 2025 18:10:39 +0200
-Message-ID: <20251009161039.1766845-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgFCYhC1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D439CC4CEE7;
+	Thu,  9 Oct 2025 16:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760027615;
+	bh=ePE6UwXG4mOskOTOs/+qp+ty/ofJpwv5+43knm9orGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lgFCYhC18OgKWlVAJjrJWpnEuF+LkxylxlEYO8KHpNQoQ/spVHSDdaMCD0Q75JwiE
+	 cBMEKsP9rUIoHGctPJn6GfATdwEWuZ4C0bad03DZ9CNIsIzisI3iy4afdkIM/VXN/8
+	 RmnxO7M1WMsT9tIyyq11gIsr5xlWOQQrq436ofLKd11CXSH1Rhf/yDy9qBG1wMkCgL
+	 Uo1gBNSgeTmEdv3cRvMXxuCdYIgalmRgFBkyVeIGRitz57qhPjWd9gx9sT4uipvFjg
+	 Gxe6mR9d00X3XPolwy2wh/wDALvp0RIY/0BoPctJXRNA0VH0hkgsPKcuM78RBsuqER
+	 iBNcM6HB93sKg==
+Date: Thu, 9 Oct 2025 11:33:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Chintan Vankar <c-vankar@ti.com>, Rajesh Gumasta <rgumasta@nvidia.com>,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+	ulf.hansson@linaro.org, thierry.reding@gmail.com,
+	kyarlagadda@nvidia.com, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-mmc@vger.kernel.org, andersson@kernel.org, sjg@chromium.org,
+	nm@ti.com
+Subject: Re: [PATCH V3 1/3] dt-binding: Add register-settings binding
+Message-ID: <20251009163333.GA2452939-robh@kernel.org>
+References: <20250725052225.23510-1-rgumasta@nvidia.com>
+ <20250725052225.23510-2-rgumasta@nvidia.com>
+ <0784441c-9859-4418-a4a7-85ffe3ecf860@ti.com>
+ <d619df1f-813d-4be5-8d24-295455f956de@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d619df1f-813d-4be5-8d24-295455f956de@nvidia.com>
 
-From: Thierry Reding <treding@nvidia.com>
+On Tue, Sep 30, 2025 at 04:01:27PM +0100, Jon Hunter wrote:
+> Hi Chintan,
+> 
+> On 29/09/2025 05:39, Chintan Vankar wrote:
+> 
+> ...
+> 
+> > Following your series, I would like to bring to your attention that
+> > Texas Instruments SoCs also have a component which requires similar kind
+> > of configuration, named Timesync Router(TSR). It enables the
+> > multiplexing of M inputs to N outputs, where inputs can be selectively
+> > driven based on N output configuration. A detailed explanation of the
+> > TSR and our attempts we tried to implement TSR can be found in following
+> > RFC series:
+> > https://lore.kernel.org/all/20250605063422.3813260-1-c-vankar@ti.com/
+> > https://lore.kernel.org/all/20250205160119.136639-1-c-vankar@ti.com/
 
-Add the set of power domain IDs available on the Tegra264 SoC so that
-they can be used in device tree files.
+I fail to see how that is related to this series. I'm not going to 
+study these 2 implementations and imagine how it could be implemented 
+using this series. If the amount of overlap is just 'reg-settings' node, 
+then that's not really enough. More below.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v3:
-- rename to match the nvidia,tegra264-bpmp compatible string
+> > To implement TSR, the relevant registers must be configured via the
+> > device tree. We initially assumed that the device could be handled as a
+> > mux-controller and could be extended in the same subsystem, but it was
+> > ineffective. Having explored both the approaches, we now plan to
+> > implement TSR within misc subsystem, which aligns with the dt-bindings
+> > that you have proposed in this series.
+> > 
+> > The purpose to replying over this series is to inform you that we also
+> > have a component requiring configuration as outlined in this series. Let
+> > us know if you have any suggestions for this.
+> 
+> That's great! Thanks for the feedback.
+> 
+> Rob, Krzysztof, Conor, have you guys had chance to look at this series some
+> more? We are open to re-working it as necessary to address any
+> concerns/comments you have. However, this appears to be stalled at the
+> moment and I am not sure what we should do next to push this forward.
 
-Changes in v2:
-- remove _MAX definition since it isn't needed
+I fail to see what is generic here? There's a generic node name, but 
+that has nothing else common. The 2 examples share nothing because it 
+is all bus specific. But then the bus specific stuff is NVIDIA specific. 
+It's the bus specific part that should be generic (to the bus type) IMO. 
 
- .../dt-bindings/power/nvidia,tegra264-bpmp.h  | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 include/dt-bindings/power/nvidia,tegra264-bpmp.h
+A concrete second user would go a long way to help. Anything "common" 
+from one vendor ends up needing something different from the 2nd user. 
+Somehow that 2nd user always shows up a month later... So the rule is 
+generally I want to see 2 users. Yeah, it's hard to get others to pay 
+attention, but that's not really my problem.
 
-diff --git a/include/dt-bindings/power/nvidia,tegra264-bpmp.h b/include/dt-bindings/power/nvidia,tegra264-bpmp.h
-new file mode 100644
-index 000000000000..2eef4a2a02b0
---- /dev/null
-+++ b/include/dt-bindings/power/nvidia,tegra264-bpmp.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)  */
-+/* Copyright (c) 2022-2024, NVIDIA CORPORATION.  All rights reserved. */
-+
-+#ifndef DT_BINDINGS_POWER_NVIDIA_TEGRA264_BPMP_H
-+#define DT_BINDINGS_POWER_NVIDIA_TEGRA264_BPMP_H
-+
-+#define TEGRA264_POWER_DOMAIN_DISP	1
-+#define TEGRA264_POWER_DOMAIN_AUD	2
-+/* reserved 3:9 */
-+#define TEGRA264_POWER_DOMAIN_XUSB_SS	10
-+#define TEGRA264_POWER_DOMAIN_XUSB_DEV	11
-+#define TEGRA264_POWER_DOMAIN_XUSB_HOST	12
-+#define TEGRA264_POWER_DOMAIN_MGBE0	13
-+#define TEGRA264_POWER_DOMAIN_MGBE1	14
-+#define TEGRA264_POWER_DOMAIN_MGBE2	15
-+#define TEGRA264_POWER_DOMAIN_MGBE3	16
-+#define TEGRA264_POWER_DOMAIN_VI	17
-+#define TEGRA264_POWER_DOMAIN_VIC	18
-+#define TEGRA264_POWER_DOMAIN_ISP0	19
-+#define TEGRA264_POWER_DOMAIN_ISP1	20
-+#define TEGRA264_POWER_DOMAIN_PVA0	21
-+#define TEGRA264_POWER_DOMAIN_GPU	22
-+
-+#endif /* DT_BINDINGS_POWER_NVIDIA_TEGRA264_BPMP_H */
--- 
-2.51.0
-
+Rob
