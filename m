@@ -1,187 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BF2EA174;
-	Thu,  9 Oct 2025 14:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A772940D;
+	Thu,  9 Oct 2025 14:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019787; cv=none; b=S5Yl0SeC0/VvsnV3caznZqqAWScJ8C9D5clRKDnoBxrPty3l8BJIOiEfWN+EmigEX0gpkaKhcVrMHpTRmTb3uS/GS9qVeHjCEnnX092jOPEPqrTAisC7aVHXJHK8JRgkjM7AY9Gs46FT+YHE5zQI4BYZU2Fh4cVCw1fhnLWV1TQ=
+	t=1760020260; cv=none; b=bsnRZhd4TtWUX7WLp9qUJsvY+MCUPQWeKqYvnh5aHVWJEZb6XBcfxU5PbP8v/m/dODlJr80m1Z8e77tzhrOy3ipzhfBFfNi2p9w2V4liFnb/Yh2SHmIo+jUpMSC8br5o2NwMtbconxQ0njdPCiROpMsDjbdf4H9ymFc3g2F2Wao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019787; c=relaxed/simple;
-	bh=Q/tpqVF/xgJnjAYBWiBS25wI4aUpCbn/XAA7fZMFgrY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GFK2IBJB2X5B/9om9gaOAgUzWaOKkOhGT/0LIkbua53tOMPVNl1QfbGwtkuyenVE6FrsG+Jf/jlBPGiUi1RLc2SZvz+1cuFAAUadDLaLYGjHAYM8fceGET+gg+VVn8xSnztQOVpvLVyQVbZFSREquPwj4OEvW73yGPwnZGkD+20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOfh1p2O; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760020260; c=relaxed/simple;
+	bh=by7B82JNtuWconqfgRH2IEjHTUBvVgCQlC/h4bYSBsA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AqaCh0p0+lnFP+aOQGRKIkGA7yLnP97XNIgPChM5vlfcawjeyCx4WE7fTokxYXFASrxsWa2sbv4Rx+xSWk0CXzcUk5L2BIRMFiTx7nH+ZOxsDIQLuO+nNy/lQPjVXei0FvTKbiSk0g//E+tiSTWzVCKDfMCpmdqRxw4u8XhQbxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY5mvCf9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOfh1p2O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6240C4CEE7;
-	Thu,  9 Oct 2025 14:23:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY5mvCf9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E55DC4CEE7;
+	Thu,  9 Oct 2025 14:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760019787;
-	bh=Q/tpqVF/xgJnjAYBWiBS25wI4aUpCbn/XAA7fZMFgrY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MOfh1p2OuzWBGHXBwda4FgBM4gXOBYtfyfvsw7TH1+QHS6vf89xBfMXERGqF+5M9A
-	 niEcs7/nZCtruQnYLhezcMnHoXD1OgoZOlj9IHMaorOHiwIoz/al3/bEk3ugxNVNyA
-	 NvgisOkKUzp9MUw53ZxTye3W3ReCQugTusOgM2uqo9dj5K4WvBmKhVbHeFfuR5z76S
-	 xghFchHiWBgtANnwEUtQfcLrfFIy0DSM6cxxKOwd84tmokByk1FvQVjHH66fYYOGzy
-	 WFdcvSe5vxX+uPcsAvEnimcQ65V2CfFow1nbpen3GIxuW7vdK2a0AFVkO0HXIq7woq
-	 U8kamJHA/wfYw==
-From: Niklas Cassel <cassel@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Vedant Deshpande <vedantd@nvidia.com>
-Cc: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v3] arm64: tegra: Add pinctrl definitions for pcie-ep nodes
-Date: Thu,  9 Oct 2025 16:22:54 +0200
-Message-ID: <20251009142253.2563075-2-cassel@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1760020259;
+	bh=by7B82JNtuWconqfgRH2IEjHTUBvVgCQlC/h4bYSBsA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dY5mvCf9PB0wbd7hHCmC15O4xQ7B/3eWJp66y7FLCawXvUAS8z8Ga4eByBfPCZnGs
+	 SMRV9o1J0xua7LV3sR0NvPuaXlqnURAuxQnVfDTlqmmNorn25JD0oOSnD3DjrMD505
+	 8iSp5LFsUqRRDTs3Fc380LWy89ZfKzNGGJeMWOwC89bwX2YotWPNw8x/2Gu1Mp2hAa
+	 32vXen4iDp44KhuWGJvP2a7sdVLouPubDhi7px+bbtlS1+l3BuBTfHXhfCQ95ixhKB
+	 f3KBTpvL4E0xT/nfqj/c7aJdytyvRWvMSUeKJCgayHSr7UTnDAU8WQJkybNzi6L6nI
+	 QSLDTzHSRG6GQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v6rfV-0000000CeiY-1hQI;
+	Thu, 09 Oct 2025 14:30:57 +0000
+Date: Thu, 09 Oct 2025 15:30:56 +0100
+Message-ID: <86qzvcxi3j.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+In-Reply-To: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4642; i=cassel@kernel.org; h=from:subject; bh=Q/tpqVF/xgJnjAYBWiBS25wI4aUpCbn/XAA7fZMFgrY=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDKeH7UtXaj5Qf+uj06+1FKWJU/kcv5sufPEIu+zfP4V7 +pF0tHnOkpZGMS4GGTFFFl8f7jsL+52n3Jc8Y4NzBxWJpAhDFycAjCRwx8Z/nAV7Pt7KbtY2awi ePLZJwL+06fZSpqfurbMZvm+pWZNng0Mf0V3ihYkiEa/nqF2jlns1VITC2sBI/+qQ9PS+6+tnpI 4iQUA
-X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-When the PCIe controller is running in endpoint mode, the controller
-initialization is triggered by a PERST# (PCIe reset) GPIO deassertion.
+Hi Thierry,
 
-The driver has configured an IRQ to trigger when the PERST# GPIO changes
-state. Without the pinctrl definition, we do not get an IRQ when PERST#
-is deasserted, so the PCIe controller never gets initialized.
+On Thu, 09 Oct 2025 12:38:55 +0100,
+Thierry Reding <thierry.reding@gmail.com> wrote:
+> 
+> Which brings me to the actual question: what is the right way to solve
+> this? I had, maybe naively, assumed that the default CPU affinity, which
+> includes all available CPUs, would be sufficient to have interrupts
+> balanced across all of those CPUs, but that doesn't appear to be the
+> case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
+> in this particular case) from the affinity mask to set the "effective
+> affinity", which then dictates where IRQs are handled and where the
+> corresponding IRQ thread function is run.
 
-Add the missing definitions, so that the controller actually gets
-initialized.
+There's a (GIC-specific) answer to that, and that's the "1 of N"
+distribution model. The problem is that it is a massive headache (it
+completely breaks with per-CPU context).
 
-Fixes: ec142c44b026 ("arm64: tegra: Add P2U and PCIe controller nodes to Tegra234 DT")
-Fixes: 0580286d0d22 ("arm64: tegra: Add Tegra234 PCIe C4 EP definition")
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
----
-Changes since v2:
--Add pinctrl definitions to all pcie-ep nodes, not just C4 controller.
+We could try and hack this in somehow, but defining a reasonable API
+is complicated. The set of CPUs receiving 1:N interrupts is a *global*
+set, which means you cannot have one interrupt targeting CPUs 0-1, and
+another targeting CPUs 2-3. You can only have a single set for all 1:N
+interrupts. How would you define such a set in a platform agnostic
+manner so that a random driver could use this? I definitely don't want
+to have a GIC-specific API.
 
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 57 ++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+Overall, there is quite a lot of work to be done in this space: the
+machine I'm typing this from doesn't have affinity control *at
+all*. Any interrupt can target any CPU, and if Linux doesn't expect
+that, tough.  Don't even think of managed interrupts on that sort of
+systems...
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index df034dbb82853..cc929e1a00744 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/power/tegra234-powergate.h>
- #include <dt-bindings/reset/tegra234-reset.h>
- #include <dt-bindings/thermal/tegra234-bpmp-thermal.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra.h>
- 
- / {
- 	compatible = "nvidia,tegra234";
-@@ -127,6 +128,52 @@ gpio: gpio@2200000 {
- 		pinmux: pinmux@2430000 {
- 			compatible = "nvidia,tegra234-pinmux";
- 			reg = <0x0 0x2430000 0x0 0x19100>;
-+
-+			pex_rst_c4_in_state: pinmux-pex-rst-c4-in {
-+				pex_rst {
-+					nvidia,pins = "pex_l4_rst_n_pl1";
-+					nvidia,function = "rsvd1";
-+					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+					nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				};
-+			};
-+			pex_rst_c5_in_state: pinmux-pex-rst-c5-in {
-+				pex_rst {
-+					nvidia,pins = "pex_l5_rst_n_paf1";
-+					nvidia,function = "rsvd1";
-+					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+					nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				};
-+			};
-+			pex_rst_c6_in_state: pinmux-pex-rst-c6-in {
-+				pex_rst {
-+					nvidia,pins = "pex_l6_rst_n_paf3";
-+					nvidia,function = "rsvd1";
-+					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+					nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				};
-+			};
-+			pex_rst_c7_in_state: pinmux-pex-rst-c7-in {
-+				pex_rst {
-+					nvidia,pins = "pex_l7_rst_n_pag1";
-+					nvidia,function = "rsvd1";
-+					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+					nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				};
-+			};
-+			pex_rst_c10_in_state: pinmux-pex-rst-c10-in {
-+				pex_rst {
-+					nvidia,pins = "pex_l10_rst_n_pag7";
-+					nvidia,function = "rsvd1";
-+					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+					nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				};
-+			};
- 		};
- 
- 		gpcdma: dma-controller@2600000 {
-@@ -4630,6 +4677,8 @@ pcie-ep@140e0000 {
- 				 <&bpmp TEGRA234_RESET_PEX2_CORE_10>;
- 			reset-names = "apb", "core";
- 
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pex_rst_c10_in_state>;
- 			interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
- 			interrupt-names = "intr";
- 
-@@ -4881,6 +4930,8 @@ pcie-ep@14160000 {
- 			       <&bpmp TEGRA234_RESET_PEX0_CORE_4>;
- 			reset-names = "apb", "core";
- 
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pex_rst_c4_in_state>;
- 			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;  /* controller interrupt */
- 			interrupt-names = "intr";
- 			nvidia,bpmp = <&bpmp 4>;
-@@ -5023,6 +5074,8 @@ pcie-ep@141a0000 {
- 				 <&bpmp TEGRA234_RESET_PEX1_CORE_5>;
- 			reset-names = "apb", "core";
- 
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pex_rst_c5_in_state>;
- 			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
- 			interrupt-names = "intr";
- 
-@@ -5115,6 +5168,8 @@ pcie-ep@141c0000 {
- 				 <&bpmp TEGRA234_RESET_PEX1_CORE_6>;
- 			reset-names = "apb", "core";
- 
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pex_rst_c6_in_state>;
- 			interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
- 			interrupt-names = "intr";
- 
-@@ -5207,6 +5262,8 @@ pcie-ep@141e0000 {
- 				 <&bpmp TEGRA234_RESET_PEX2_CORE_7>;
- 			reset-names = "apb", "core";
- 
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pex_rst_c7_in_state>;
- 			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
- 			interrupt-names = "intr";
- 
+	M.
+
 -- 
-2.51.0
-
+Without deviation from the norm, progress is not possible.
