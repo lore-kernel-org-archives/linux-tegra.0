@@ -1,74 +1,74 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7392E25D1F7
-	for <linux-tegra@vger.kernel.org>; Thu,  9 Oct 2025 05:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C31E25F98A
+	for <linux-tegra@vger.kernel.org>; Thu,  9 Oct 2025 05:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759986746; cv=none; b=TAtKaWXabvYRSJdN9/RUEm9of3+5p93JGXdZm2SKghKQF+bR/ao7qayupyEDs0XlyPr7o9Wtu8z8z+iB/9fr1ZO8GueEHxC7Y57MY3iEM3Tel7Mokc6C3YNTO84j6jVAsi40ORj7H5jvUb+dBXrcmCRNXzngpcpijqDPwUDLFAE=
+	t=1759988138; cv=none; b=NSGEOE0pc3/HAoiS/UbqPhj5VuY0+3QVh4ld6gRSWNVmNHl7lz8yCaIb0Bm5B/KAIpDTtNMb+dBEUopu46u3GIGykeahKKMNMzldHOVeD4nxR2pgrq+bwf8cmLcdPNruvfrwB0NLBBIloH+UDxg2DBAiqSHjcR0aYjT3zzzAnBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759986746; c=relaxed/simple;
-	bh=g69ct24MmjxArPvb4htIE2j+DUcuAxYXbKaKt9nNwNo=;
+	s=arc-20240116; t=1759988138; c=relaxed/simple;
+	bh=BTgTHwCRBA2rpvydRjKgExKMcfvUeqSUe1HHihN2Z4g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J22c/Z2NJWU4kJD/MOl6cHFm0zvzba45lpe+sH6vtXBntB9ZFLhrC3vNOWEvbmmJ79JEWyplBVqXeYaAOtNOetyHKwFXL4eYjzW0DByt1PXJPcWYl3Pr5L95EYCI0CMQClXG2IlvZIn582sxz4lnmUdUO3RoSs0BRajquDWiWLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4e7agll; arc=none smtp.client-ip=209.85.221.41
+	 To:Cc:Content-Type; b=T5YsteC4Ibmt0Uz3ZzndqmnGDyyIB14QLAY/InlrfaH/4UhB/rjZqF82sPRcCBeZdw0J0s45gPruPuS6PYh5tZAMCEhSncX1cFZt73qn1sMPAdk1sKKwZP4eB1UZgujTInGPdwGbhxFc77enAsPTWLzHBNpvogqinkqz+68yJH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpCU7CrJ; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4e7agll"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee12807d97so616839f8f.0
-        for <linux-tegra@vger.kernel.org>; Wed, 08 Oct 2025 22:12:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpCU7CrJ"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso470042f8f.3
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Oct 2025 22:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759986743; x=1760591543; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759988134; x=1760592934; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MAc4vwDFuA0RvRFYPmaQPlYUcz1xA/Dd48r7PtXPvic=;
-        b=E4e7agllQnLM6hFBvGfLWoi/8M+39pIb1nkfi5LO3p+AxVNHgLR3GbCculbNlqweyb
-         4csUgn9whveHADhFW0tUQM9mCbCOcCK6H6q7uInewWjCoOXIqxDYzSO5FyOYIadOWBBC
-         9PyZ467fiM+2RJUi0rrIUTwVkf+QbHnmn+EXvQUjbwD4XHDRN+fO/VmWhunTjNK3ZZLG
-         0P72nmZo1zatv4WJd+GMDiFFNY33N/KbfJG/7KB4nEJe4HSU7+GKkVWy+SEwTa6FQORx
-         Ye+hZboIXtSW8y7MHp5jrGq1aKr7qk0EGQch15JzDrYsq6Le0rMB1csCg0FvPfyJktNT
-         Tjug==
+        bh=wojdy8oISaReFb3V/aujCr+dYfQppmzTEbdq6Sq+uyc=;
+        b=cpCU7CrJ7ZCcqy9vu7RSEA/EpVmHnNGwO6NIeZCA8ztS+5lbdoH4JA7bFKb+0oApst
+         ZCtXvd5fJSDdLB6SEfhvxzC/NbKNyEfUNCJoJ2Iz4C/xmF9fvTfZcZvZ5kkFdZ7Y240k
+         5TNrE4EmjSTu+C4FuqTnM1vOeb/bzLjORBXK1gaAlYg438cYaxwcNGRCoTo3hl+YWeEn
+         zssYQh7Lf3mfbVwx9ydOrWwqtN+waicwF1cPc5R25akkudcHxIutk1d9uBVyeAzV/Ktc
+         2H9sYaeK05mRMg00zrqm86840MjZRMarvk5q8XSyrHfsLN8ZxODio1RGzPGEbvCCfyOz
+         u8eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759986743; x=1760591543;
+        d=1e100.net; s=20230601; t=1759988134; x=1760592934;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MAc4vwDFuA0RvRFYPmaQPlYUcz1xA/Dd48r7PtXPvic=;
-        b=pxgIw3Di47IU4wIiUf0BRhOZqSeMNubqxBDnjTVA2sIx6ifUiY5LfzltJvq20dITg1
-         P1oUR8cZaB3U8BvuYHlp4RaBa3tgMKn87DiXkrSrpPqpmCmkftbvpwvLxtJ50WhtI9sh
-         UHtCaE0vn774VMqOIh5ayigPu88BUPb7eFaLgn0LWhk0QIcQ3pq8Z8/O4xdA2WbUPbSc
-         Mn6GYYFwDlNdYTOnqIUr8YmihjsTyweFB+X0Gys5eITOzug5S7LY9wTjF9Zw+n1/29bC
-         5soycRIYpj7yuFhDL+B40q01pDHOG30f5HHeEaPFn9xtZH+39Hw9yFpHVUYhRWC0dcqD
-         QgaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYHsicvJ26DzDBKzrbjn8rogENZs1CvJ9Et/SUauDwvKL8PubRLQR0eDTo6AbLUJpGC6F28ydKOpzKnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7fkj0/qiwgSbv0OuMNs7Yoh2FD7SA4wckbpA71RF0jR/URfs6
-	iq8K75Cu/3PWZYUTiwzbsjsJZKesGlG+7x9opCMsmihkW/053Ea3j6B462rkugWFaFVjcqUsito
-	xyw/B2CQc5wBVtGacPIPaMkmj9ROPOrQ=
-X-Gm-Gg: ASbGncuEkFhallZfPka0jdQq2nzTyrYPuIxUWa+ySX+FUgP5kGApVvzTTXG+FJ7QtuP
-	hM3CEd2tiOUn9pq3qBUTS7Mf3zfBPC/etLPUasFwwMLrCVA6whTjyhRB3Y2h8C1Y49KFA8HUXTX
-	l7slp/xkBsP4mLXBK06DLfGoYu9jv1Rnpfq9CPutv2dDnyc0hr9MYVdNRjrG24ujfMFh4Tqu30g
-	hnHVLF7+BFaZW43gyoDt0KUJ3YA9VKr
-X-Google-Smtp-Source: AGHT+IHEqPFGpsLkjdTJExInkzeCUrYeoBDzsTotN3s9CHFAoYRfgbeWdXnEHXE7zwgYrarYKck5hazoT/ajbub9quM=
-X-Received: by 2002:a05:6000:1a85:b0:3eb:60a6:3167 with SMTP id
- ffacd0b85a97d-4266e8f7f02mr3364005f8f.32.1759986742670; Wed, 08 Oct 2025
- 22:12:22 -0700 (PDT)
+        bh=wojdy8oISaReFb3V/aujCr+dYfQppmzTEbdq6Sq+uyc=;
+        b=XTqx1afazmQjagBa7Wbyb7W4/fUQmTgZErlERLxRC4QV+rNDFgG/ryJAJmMNVv6H1z
+         4h/rdMSKld7a25in2rXet7E8hZgUoSCFxhLAXOGRHPmSeNL0lq6PX8MebUY6s6gZWpry
+         jOxt016/XkMB5s7a36hF9j9Ke3TcFqrHs6EMxdXx6A3UGRiWJmQ0b0zlx2SbTKPDXIvM
+         WWEkAtF6cvhxjawuBnFyRE4ggHPWh+HTIhsUAcf+3pkpAxntezZEp1OCZKpyWcJV453h
+         rR+he4z6iWhhxTxi6CIMkzjmleJhS1Ab/7rzgTe3dPMX65b0VuAGjK0tY9Ctzwi70i5W
+         EsJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxvgYDEsoEMLR0XZxlweBDJn2/lCysUwllfceqRswr21wSn0MlkWEAbCeSsQ0qTsgybMRDLRbRZ7HRdg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt6lboWCfq4gb/WgsHKH7FV+wgqbZGEObjrzKKM3RexEGMtSKa
+	JZcXAM3T7aQIzYIXzdjjpzE9zMIO6cobJ289PGd1UhGlt7yAAYACTGnDMr6ABM19oYGWJQKbZhq
+	iqFw0aRvdR3OqpHx527VWePtIAZAjSi8=
+X-Gm-Gg: ASbGncvnv0WXbj7hFqCmxOoo/5srHqFJcLWpYVK9GknJ7DZWzDsgta7txlVqGus7bz1
+	siVO4ldyC1vXt+YmS5a3MhfVhbUJ6ZISw6p18mYMBRiW+ONCwOf8iZLYNKZuqmSRO817FIv4KeI
+	QgTOcZQqfySMoY4fCjpCjMlq57D3WHwOQRbZ1uvZQdw4KRA7SD6fKoTYFcjG6H3IIg06vq6b+52
+	3PtuSoOujjFpX2tB1aNiNZU32IkR+BFkofG1ClovNA=
+X-Google-Smtp-Source: AGHT+IGSKa0WWY8sQb7NirdhuUY9zlBVWAF8olfr4D2aOoKgmjKIIKXTBxs4oAP40QHdR3v89s2ItSY5dd09ZKpNd5w=
+X-Received: by 2002:a05:6000:186c:b0:3ed:e1d8:bd68 with SMTP id
+ ffacd0b85a97d-42666ac6107mr3102943f8f.7.1759988134193; Wed, 08 Oct 2025
+ 22:35:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008073046.23231-1-clamor95@gmail.com> <20251008073046.23231-12-clamor95@gmail.com>
- <20251008-craving-composite-81aa70b6e882@spud>
-In-Reply-To: <20251008-craving-composite-81aa70b6e882@spud>
+References: <20251008073046.23231-1-clamor95@gmail.com> <20251008073046.23231-23-clamor95@gmail.com>
+ <20251008-canopener-marsupial-a92355b656ef@spud> <20251008-broaden-antennae-02de66094ad3@spud>
+In-Reply-To: <20251008-broaden-antennae-02de66094ad3@spud>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 9 Oct 2025 08:12:11 +0300
-X-Gm-Features: AS18NWCooDACEZg9v1dc4kKxxOAalz7xHeMkJMNqgQiJE_XE0BU4PgbUW_JYKFI
-Message-ID: <CAPVz0n1OEA=WHTzBtVBLQ=6vTAwG_uP1tC3Vbrb67wZDUtyVYA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/24] dt-bindings: display: tegra: document Tegra132
- MIPI calibration device
+Date: Thu, 9 Oct 2025 08:35:22 +0300
+X-Gm-Features: AS18NWAoEWc39K5OD4GIBOR3Awt1LVDq6NQUxGEQwh6PoTXJKtyEajbgSJmBgBo
+Message-ID: <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
 To: Conor Dooley <conor@kernel.org>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -88,45 +88,278 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripar
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:14=
+=D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:22=
  Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On Wed, Oct 08, 2025 at 10:30:33AM +0300, Svyatoslav Ryhel wrote:
-> > Document MIPI calibration device found in Tegra132.
->
-> Could you explain why a fallback is not suitable? The patchset is really
-> too big for me to trivially check that the change is correct.
+> On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
+> > On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
+> > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> > >
+> > > The #nvidia,mipi-calibrate-cells is not an introduction of property, =
+such
+> > > property already exists in nvidia,tegra114-mipi.yaml and is used in
+> > > multiple device trees. In case of Tegra30 and Tegra20 CSI block combi=
+nes
+> > > mipi calibration function and CSI function, in Tegra114+ mipi calibra=
+tion
+> > > got a dedicated hardware block which is already supported. This prope=
+rty
+> > > here is used to align with mipi-calibration logic used by Tegra114+.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++=
+++
+> > >  1 file changed, 135 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
+vidia,tegra20-csi.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,t=
+egra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
+gra20-csi.yaml
+> > > new file mode 100644
+> > > index 000000000000..817b3097846b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-=
+csi.yaml
+> > > @@ -0,0 +1,135 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.=
+yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra20 CSI controller
+> > > +
+> > > +maintainers:
+> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - nvidia,tegra20-csi
+> > > +      - nvidia,tegra30-csi
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks: true
+> > > +  clock-names: true
+> > > +
+> > > +  avdd-dsi-csi-supply:
+> > > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#nvidia,mipi-calibrate-cells":
+> > > +    description:
+> > > +      The number of cells in a MIPI calibration specifier. Should be=
+ 1.
+> > > +      The single cell specifies an id of the pad that need to be
+> > > +      calibrated for a given device. Valid pad ids for receiver woul=
+d be
+> > > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    const: 1
+> > > +
+> > > +  "#address-cells":
+> > > +    const: 1
+> > > +
+> > > +  "#size-cells":
+> > > +    const: 0
+> > > +
+> > > +patternProperties:
+> > > +  "^channel@[0-1]$":
+> > > +    type: object
+> > > +    description: channel 0 represents CSI-A and 1 represents CSI-B
+> > > +    additionalProperties: false
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        maximum: 1
+> > > +
+> > > +      nvidia,mipi-calibrate:
+> > > +        description: Should contain a phandle and a specifier specif=
+ying
+> > > +          which pad is used by this CSI channel and needs to be cali=
+brated.
+> > > +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +
+> > > +      "#address-cells":
+> > > +        const: 1
+> > > +
+> > > +      "#size-cells":
+> > > +        const: 0
+> > > +
+> > > +      port@0:
+> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > +        unevaluatedProperties: false
+> > > +        description: port receiving the video stream from the sensor
+> > > +
+> > > +        properties:
+> > > +          endpoint:
+> > > +            $ref: /schemas/media/video-interfaces.yaml#
+> > > +            unevaluatedProperties: false
+> > > +
+> > > +            required:
+> > > +              - data-lanes
+> > > +
+> > > +      port@1:
+> > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > +        description: port sending the video stream to the VI
+> > > +
+> > > +    required:
+> > > +      - reg
+> > > +      - "#address-cells"
+> > > +      - "#size-cells"
+> > > +      - port@0
+> > > +      - port@1
+> > > +
+> > > +allOf:
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - nvidia,tegra20-csi
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          items:
+> > > +            - description: module clock
+> > > +
+> > > +        clock-names: false
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - nvidia,tegra30-csi
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          items:
+> > > +            - description: module clock
+> > > +            - description: PAD A clock
+> > > +            - description: PAD B clock
+> > > +
+> > > +        clock-names:
+> > > +          items:
+> > > +            - const: csi
+> > > +            - const: csia-pad
+> > > +            - const: csib-pad
+> >
+> > This clocks section seems like it could get simpler. Since the clock
+> > descriptions are shared, and tegra20 has no clock-names, you could just
+> > move the detail of the properties out to where you have the ": true"
+> > stuff (we prefer that properties are defined outside of if/then/else
+> > blocks) and just restrict them here. For tegra20 that'd be
+> >
+> > if:
+> >   properties:
+> >     compatible:
+> >       contains:
+> >         enum:
+> >           - nvidia,tegra20-csi
+> > then:
+> >   properties:
+> >     clocks:
+> >       maxItems: 1
+> >
+> >     clock-names: false
+> >
+> > (although it could easily be maxItems: 1 ?)
+> > and for tegra30
+> >
+> > if:
+> >   properties:
+> >     compatible:
+> >       contains:
+> >         enum:
+> >           - nvidia,tegra30-csi
+> > then:
+> >   properties:
+> >     clocks:
+> >       minItems: 3
+> >
+> >     clock-names:
+> >       maxItems: 3
+> >
+> > Of course you'd then have to add minItems: 1 and maxItems: 3 to the
+> > extracted definitions.
 
-First of all, this compatible already exists in Linux kernel, I have
-just documented it to satisfy warnings. Secondly, each Tegra SoC
-generation has unique set of registers which should be configured.
-They all differ, hence fallback is not suitable here.
+What do you mean by your last statement? Add minItems: 1 and maxItems:
+3 like this?
 
-> With an explanation,
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+This does to common properties
+  clocks:
+    minItems: 1
+    maxItems: 3
+    items:
+      - description: module clock
+      - description: PAD A clock
+      - description: PAD B clock
+
+  clock-names:
+    minItems: 1
+    maxItems: 3
+    items:
+      - const: csi
+      - const: csia-pad
+      - const: csib-pad
+
+This goes to conditional
+ if:
+   properties:
+     compatible:
+       contains:
+         enum:
+           - nvidia,tegra20-csi
+ then:
+   properties:
+     clocks:
+       maxItems: 1
+
+     clock-names: false
+
+ if:
+   properties:
+     compatible:
+       contains:
+         enum:
+           - nvidia,tegra30-csi
+ then:
+   properties:
+     clocks:
+       minItems: 3
+
+     clock-names:
+       maxItems: 3
+
 >
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml  | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra114-mipi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
-gra114-mipi.yaml
-> > index 193ddb105283..9a500f52f01d 100644
-> > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-m=
-ipi.yaml
-> > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-m=
-ipi.yaml
-> > @@ -18,6 +18,7 @@ properties:
-> >      enum:
-> >        - nvidia,tegra114-mipi
-> >        - nvidia,tegra124-mipi
-> > +      - nvidia,tegra132-mipi
-> >        - nvidia,tegra210-mipi
-> >        - nvidia,tegra186-mipi
-> >
-> > --
-> > 2.48.1
-> >
+> Oh, also: if you want clock-names to ever actually be usable, you have
+> to require it. Otherwise a driver must be written to handle it not being
+> there.
+>
+
+Yes, driver takes this into account and handles it.
+
+> > > +additionalProperties: false
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - clocks
+> > > +  - power-domains
+> > > +  - "#address-cells"
+> > > +  - "#size-cells"
+> > > +
+> > > +# see nvidia,tegra20-vi.yaml for an example
+> > > --
+> > > 2.48.1
+> > >
+>
+>
