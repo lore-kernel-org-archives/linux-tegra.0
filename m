@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331A81C3306;
-	Thu,  9 Oct 2025 16:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D362F5468;
+	Thu,  9 Oct 2025 16:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025618; cv=none; b=hXHldVYKVFSYMB5gsALmVuyuNG82sg1Zcjb5J8JtOi3jBKZyHh/KY/0uC1wJBl9p0uvCMwaAigzZkxL7P6SQPcQA6ZCObZPZULSrvVFmPKNOSCvdNKbTZfZD6eefMs7NrnIuO//EbmANq3THHHzifwGQ/ZfJwbXvolmUtlQMDwo=
+	t=1760025651; cv=none; b=dnALH4IL0EtQmtNP6j6v3LZfW9cG9WTxBEvC5W13CMOM6aEP9Zthw7MgAeHowDMVfBc8O7XQ8dPlkUFI7K+5MnIGO5YRmC7yRQSYcY7FaKI5dLzMMNpQib+VB1+Z+0c7D+ShK73WLADqIhNCKsQOFwsZAXGCa7ejUh/G89mwVEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025618; c=relaxed/simple;
-	bh=lUqNOWkVStVFvNhRoMTl1bChPXBkXJIKJJfWe4tv+hQ=;
+	s=arc-20240116; t=1760025651; c=relaxed/simple;
+	bh=egzDP3QBGzqV9GDz82HkQPHKLRF4naIRKYNiIzbx2nw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kITZkrPGY/nBQqyz9XBPJ+tSdwbcholX4J86u6XwEFLRO+S/S++5FA4tTqR9b/zpXZBnIAcPn32hjxD2XZomLEEf3+7Y6rqIsFk3AUn6H37CTAcVVfGzkfKxOgl6OMDeEfBTSZf6JmPvYcRrIrY54bt1ViIeoJ5DCwNer2hbOAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJpvXp82; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=jMxR3OQYLoxi+yXsU69Tx5NjNFgOexLVxf20vvpgnNNFlZ9cE5Zt1LQCVA6VUgUQTenYNQqtrNnDX6B7stagLWSgF+XYYfWOXtaDVFZoyUGiobHBPD0/6Yf+G1UGirxEBptD+N6n1FkTlNlRzbMQEVCb7vi27uKwFwuA4kQcSMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnjbgKqm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJpvXp82"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3204C4CEE7;
-	Thu,  9 Oct 2025 16:00:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnjbgKqm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80908C4CEE7;
+	Thu,  9 Oct 2025 16:00:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760025618;
-	bh=lUqNOWkVStVFvNhRoMTl1bChPXBkXJIKJJfWe4tv+hQ=;
+	s=k20201202; t=1760025650;
+	bh=egzDP3QBGzqV9GDz82HkQPHKLRF4naIRKYNiIzbx2nw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YJpvXp82PcTLGHDYlCOFEsxQACE0uir5Fn3jIiypJaUh63k3xX0fjIdGIJA0eFfep
-	 99IgluaqKcL/lAVTsfprLi+PINppSU0sOIW6hDpLnp6tT5baSTVVyyRF/OE0v8nZPf
-	 11R3bedfEgpwz3Lm2AwtPaCJ3XeviqaaTQmF5kwfLT8DRv1DzKdnK47vmqS6on61Am
-	 Njybmw+txAtrwQ4ZI4ePrqtrTIdRRrjAos0+cm1kvmezXEf80cqvU5X4Jxaq/q3DbR
-	 wbZOSc17G38Xd7TU0wgkRkfBAFlGzEyXJWpMliiQ0UnxqC85G2HSdJirpFr6pK3f7q
-	 LPnWmdE36e8zA==
+	b=EnjbgKqmzNNNZLDMhqb1oMRdscSRP48jA6juHScRm/2B/OHKRvCbwg+y/SGFOvGsn
+	 ND5KzI45INZ+XoKYfpHcb7rMIADFM6Dezv8daXPumT9KdkT2L2IHQntHaciSyitFdn
+	 YLpiaItAvUCWPSHZ+vn5BvmA0TeB76EgyT30KJfE4arJ2aRojsNgfiMRyrD0V69lLC
+	 hmw1xew0tEBwBH3vhSxRQUQ0i0HqMumjeFK0tfrBnSjVGXK4Hg+zt03HxPsrG8US6a
+	 n3I7/A67v9YijeMXewgbQz/SKuDR3JXAPezA1AnP0jDCWWGbwfXVN4JriBC7s/g+xs
+	 VEVialaErl+6Q==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -37,9 +37,9 @@ Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
 	thierry.reding@gmail.com,
 	jonathanh@nvidia.com,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-6.6] ARM: tegra: transformer-20: add missing magnetometer interrupt
-Date: Thu,  9 Oct 2025 11:55:43 -0400
-Message-ID: <20251009155752.773732-77-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.17-6.6] ARM: tegra: transformer-20: fix audio-codec interrupt
+Date: Thu,  9 Oct 2025 11:56:01 -0400
+Message-ID: <20251009155752.773732-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
 References: <20251009155752.773732-1-sashal@kernel.org>
@@ -57,9 +57,10 @@ Content-Transfer-Encoding: 8bit
 
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 
-[ Upstream commit cca41614d15ce2bbc2c661362d3eafe53c9990af ]
+[ Upstream commit 3f973d78d176768fa7456def97f0b9824235024f ]
 
-Add missing interrupt to magnetometer node.
+Correct audio-codec interrupt should be PX3 while PX1 is used for external
+microphone detection.
 
 Tested-by: Winona Schroeer-Smith <wolfizen@wolfizen.net> # ASUS SL101
 Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com> # ASUS TF101
@@ -70,53 +71,48 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
 
 LLM Generated explanations, may be completely bogus:
 
-YES – wiring the AK8974’s data‑ready interrupt into the TF101 device
-tree fixes a real functional gap with minimal risk.
+YES - routing the WM8903 IRQ to PX3 fixes a long-standing wiring bug
+without side effects.
 
-- `arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts:503` gains the
-  missing `interrupt-parent`/`interrupts` pair, finally describing the
-  DRDY line that the hardware routes to GPIO N5; other Tegra20 boards
-  with the same magnetometer already do this (see
-  `arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts:532`), so the
-  change aligns the TF101 description with established practice.
-- The AK8974 driver switches to an interrupt-driven path whenever
-  `i2c->irq` is populated (`drivers/iio/magnetometer/ak8974.c:300`
-  through `drivers/iio/magnetometer/ak8974.c:347`); without this
-  property the TF101 falls back to a tight 6 ms polling loop
-  (`drivers/iio/magnetometer/ak8974.c:350`–`361`), which is both power-
-  inefficient and prone to `-ETIMEDOUT` errors under heavier sampling
-  loads—exactly the kind of user-visible malfunction stable trees aim to
-  eliminate.
-- Because the patch only adds two DT properties, it is completely
-  localized to this board, has no dependency on newer frameworks, keeps
-  the ABI intact, and has already been validated on real ASUS TF101 and
-  SL101 hardware (`Tested-by` tags in the commit).
-- No conflicting pinmux or GPIO consumers were found in the TF101 tree,
-  so backporting will not disturb other peripherals, and older stable
-  kernels already ship the same driver behaviour—meaning the fix drops
-  in cleanly.
+- `arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts:518` currently binds
+  the codec IRQ to `TEGRA_GPIO(X, 1)`, yet `nvidia,mic-det-gpios`
+  already consumes that pin (`arch/arm/boot/dts/nvidia/tegra20-asus-
+  tf101.dts:1210`), so the SoC sees mic-detect instead of codec
+  interrupts and jack events fail.
+- The Tegra audio machine driver requires a separate GPIO for mic detect
+  (`sound/soc/tegra/tegra_asoc_machine.c:459`), while the WM8903 driver
+  depends on its IRQ line for microphone/short detection
+  (`sound/soc/codecs/wm8903.c:1604-1710`); misrouting the IRQ leaves
+  these user-facing features broken.
+- `git blame` traces the bad mapping back to the TF101 DTS introduction
+  in commit `b405066bd3e04`, so every stable release that includes this
+  board inherits the bug.
+- Other Tegra20 WM8903 boards already wire the codec IRQ to PX3 (e.g.
+  `arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts:445`,
+  `arch/arm/boot/dts/nvidia/tegra20-seaboard.dts:344`), matching the
+  hardware layout described by the TF101 maintainers and the commit’s
+  Tested-by reports.
+- The fix is a single DTS line change with verified testers, no
+  dependency on new infrastructure, and aligns with existing pinmux
+  defaults, making it safe to backport while restoring microphone/jack
+  functionality for users.
 
-Given the tangible reliability improvement for existing devices, the
-tiny scope, and demonstrated hardware testing, this is a solid stable
-backport candidate.
-
- arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-index 67764afeb0136..39008816fe5ee 100644
+index 39008816fe5ee..efd8838f9644f 100644
 --- a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-@@ -502,6 +502,9 @@ magnetometer@e {
- 			compatible = "asahi-kasei,ak8974";
- 			reg = <0xe>;
+@@ -518,7 +518,7 @@ wm8903: audio-codec@1a {
+ 			reg = <0x1a>;
  
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(N, 5) IRQ_TYPE_EDGE_RISING>;
-+
- 			avdd-supply = <&vdd_3v3_sys>;
- 			dvdd-supply = <&vdd_1v8_sys>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(X, 1) IRQ_TYPE_EDGE_BOTH>;
++			interrupts = <TEGRA_GPIO(X, 3) IRQ_TYPE_EDGE_BOTH>;
  
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
 -- 
 2.51.0
 
