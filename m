@@ -1,45 +1,47 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF32AD16
-	for <linux-tegra@vger.kernel.org>; Thu,  9 Oct 2025 08:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8034D26CE2E
+	for <linux-tegra@vger.kernel.org>; Thu,  9 Oct 2025 08:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759997521; cv=none; b=TSquXAhqHUPNCHMXb+3vJLFBWS6A+4xC1VSh2BSRDa+7dOz8/PxcKPNua2OOPes885EWLzbal5ORU52B9N3q6dcjlr1LozplRZ3QQWcbyzp2g1u+8nCAkuHdEyQZ3EdUD+r2+dgsAPo1sYGVz46jIAM38xFPKDx94DEFJA6qSVg=
+	t=1759997532; cv=none; b=gqdCmHeq8nAiMpGqd+AcZ5Rh8iTkXA2lWVJZG3teMk1zaiTWKnKCJpSkxPQ2GN52kT6wfcm3fZqxwssPGmYOhEQHJ2uX/A97Hr747P2QD7gqvEVwHhDrCJr4IinXH6gdY4Is0hdafTbpMsQ5sD9GnbIPCZp+T+5jgqjZDzI4KpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759997521; c=relaxed/simple;
-	bh=U8tr+SxRfzwnjqzinRNnRrOKmodEgXSGM2QNYSxJjoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oiaOpQvE+ByIa9k4eXpHANWQEMAwo7Aw7kvknkeZ61pdsv4cPV8+54U5SRH+DQWOz/5aXn5jCaQwOPC+e1rSIgFP3zIYPihJ8tG41A7Be9oIkE6fbgET2s7vCZpN1qSTiaw3vVccMg4ApI4Jk7CdZtanTGRxGDeS8nzpzi90W5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jRhz3tCB; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1759997532; c=relaxed/simple;
+	bh=v6jHRj2p44dI50Gy8JTc+3TQXRkpYgFYA3CXdUteFZo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=o5JnNuVbFUp+MPuRXg4TGRPTEI/vQa2J+SI00Ot1UjQ6dAt++V7bjekI9qS8iC9X5OxdmyTtaaJyHsWMw9DzozcQgdCoCLQGwE/UsO8GZvGT9eyBtC0XtHVmPhfiuH7cjel/gcEOCjq1iE7xRAOhpoj1FvUAKN46hlXt1osCv2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hvz+nQvQ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jRhz3tCB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hvz+nQvQ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759997518;
+	s=mimecast20190719; t=1759997529;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jqAoY235TtK5GopWepk4TStErN4mYa0iReCxaOrqgVE=;
-	b=jRhz3tCBfsLcVkWNkVd4KmsYoYwgPldLJwki3xt15/ysBX9G6k975d2mjXT32wz3DxLSH5
-	+bOc1MvToEbbGw/HP02IX6mpSjX/6AGInAP5++z3bs1MwCouB+szq6Oi049lS4EO1m0NOe
-	RYk8NJ9GKAe6N0cKHBiRRYKtDhpQBaw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h+js+P0Ye4BdT5VIhCxdEayvfzWoe+v2tZC4WwRKU3g=;
+	b=hvz+nQvQNta7PPoCCmVXB4T3lI1oX8pXpVm8WRMhHcIiW3Z2U7AcrRe1+pF9b78OuKThrg
+	Fh6CRXDnp/qW1/Kp3L5nmKPiP3xfevb3n/UBihcl08sV6Kh9jysAXjym23bFIR3IQA2a18
+	YidoWk9l8qxk0T3Zgjcg7Ij5tbMciU8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-12-Oj2DihmQOBaHbKWoRB_-tw-1; Thu,
- 09 Oct 2025 04:11:55 -0400
-X-MC-Unique: Oj2DihmQOBaHbKWoRB_-tw-1
-X-Mimecast-MFC-AGG-ID: Oj2DihmQOBaHbKWoRB_-tw_1759997511
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-173-CmHYUfIZPxeXijOR8Qt1jA-1; Thu,
+ 09 Oct 2025 04:12:05 -0400
+X-MC-Unique: CmHYUfIZPxeXijOR8Qt1jA-1
+X-Mimecast-MFC-AGG-ID: CmHYUfIZPxeXijOR8Qt1jA_1759997522
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE01C1800451;
-	Thu,  9 Oct 2025 08:11:49 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5C7B195609D;
+	Thu,  9 Oct 2025 08:12:01 +0000 (UTC)
 Received: from thuth-p1g4.redhat.com (unknown [10.44.33.54])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5018E1955F22;
-	Thu,  9 Oct 2025 08:11:39 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B64421954128;
+	Thu,  9 Oct 2025 08:11:50 +0000 (UTC)
 From: Thomas Huth <thuth@redhat.com>
 To: Russell King <linux@armlinux.org.uk>,
 	linux-arm-kernel@lists.infradead.org
@@ -69,9 +71,11 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	imx@lists.linux.dev,
 	linux-omap@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 0/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
-Date: Thu,  9 Oct 2025 10:11:35 +0200
-Message-ID: <20251009081137.117411-1-thuth@redhat.com>
+Subject: [PATCH v3 1/2] arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+Date: Thu,  9 Oct 2025 10:11:36 +0200
+Message-ID: <20251009081137.117411-2-thuth@redhat.com>
+In-Reply-To: <20251009081137.117411-1-thuth@redhat.com>
+References: <20251009081137.117411-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,121 +85,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The kernel Makefiles define the __ASSEMBLY__ macro to provide
-a way to use headers in both, assembler and C source code.
-However, all the supported versions of the GCC and Clang compilers
-also define the macro __ASSEMBLER__ automatically already when compiling
-assembly code, so some kernel headers are using __ASSEMBLER__ instead.
-With regards to userspace code, this seems also to be constant source
-of confusion, see for example these links here:
+From: Thomas Huth <thuth@redhat.com>
 
- https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
- https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
- https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
- https://github.com/riscv-software-src/opensbi/issues/199
+__ASSEMBLY__ is only defined by the Makefile of the kernel, so
+this is not really useful for uapi headers (unless the userspace
+Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+gets set automatically by the compiler when compiling assembly
+code.
 
-To avoid confusion in the future, we should standardize on the macro
-that gets defined by the compiler, so this patch series changes all
-occurences of __ASSEMBLY__ into __ASSEMBLER__.
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ arch/arm/include/uapi/asm/ptrace.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I split the patches per architecture to ease the review, and I also
-split the uapi headers from the normal ones in case we decide that
-uapi needs to be treated differently from the normal headers here.
-
-The related cleanup patches for e.g. x86, parisc, sh and arc patches
-already got merged via their specific architecture tree:
-
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=24a295e4ef1ca8
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8a141be3233af7
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cccaea1d66e94b
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e2b6a188625a2b
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9cc646950eefda
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=179e949719fe81
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2cb74be378675c
-
-So please merge the arm patches via the arm tree. Thanks!
-
-v3:
-- Split the arm patches from the global series
-  (see https://lore.kernel.org/all/20250314071013.1575167-1-thuth@redhat.com/)
-- Rebased the patches on linux-next, fixed the conflicts and new occurences
-
-Thomas Huth (2):
-  arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
-  arm: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
-
- arch/arm/include/asm/arch_gicv3.h                |  4 ++--
- arch/arm/include/asm/assembler.h                 |  2 +-
- arch/arm/include/asm/barrier.h                   |  4 ++--
- arch/arm/include/asm/cache.h                     |  2 +-
- arch/arm/include/asm/cp15.h                      |  4 ++--
- arch/arm/include/asm/cputype.h                   |  4 ++--
- arch/arm/include/asm/current.h                   |  4 ++--
- arch/arm/include/asm/delay.h                     |  4 ++--
- arch/arm/include/asm/domain.h                    |  8 ++++----
- arch/arm/include/asm/fpstate.h                   |  2 +-
- arch/arm/include/asm/ftrace.h                    |  6 +++---
- arch/arm/include/asm/hardware/cache-b15-rac.h    |  2 +-
- arch/arm/include/asm/hardware/cache-l2x0.h       |  4 ++--
- arch/arm/include/asm/hardware/dec21285.h         |  2 +-
- arch/arm/include/asm/hardware/ioc.h              |  2 +-
- arch/arm/include/asm/hardware/iomd.h             |  4 ++--
- arch/arm/include/asm/hardware/memc.h             |  2 +-
- arch/arm/include/asm/hwcap.h                     |  2 +-
- arch/arm/include/asm/irq.h                       |  2 +-
- arch/arm/include/asm/jump_label.h                |  4 ++--
- arch/arm/include/asm/kexec.h                     |  4 ++--
- arch/arm/include/asm/kgdb.h                      |  4 ++--
- arch/arm/include/asm/mach/arch.h                 |  2 +-
- arch/arm/include/asm/mcpm.h                      |  4 ++--
- arch/arm/include/asm/memory.h                    |  4 ++--
- arch/arm/include/asm/mpu.h                       |  4 ++--
- arch/arm/include/asm/opcodes.h                   | 12 ++++++------
- arch/arm/include/asm/page.h                      |  4 ++--
- arch/arm/include/asm/pgtable-2level.h            |  4 ++--
- arch/arm/include/asm/pgtable-3level.h            |  4 ++--
- arch/arm/include/asm/pgtable-nommu.h             |  4 ++--
- arch/arm/include/asm/pgtable.h                   | 10 +++++-----
- arch/arm/include/asm/probes.h                    |  4 ++--
- arch/arm/include/asm/proc-fns.h                  |  4 ++--
- arch/arm/include/asm/ptrace.h                    |  4 ++--
- arch/arm/include/asm/system_info.h               |  4 ++--
- arch/arm/include/asm/system_misc.h               |  4 ++--
- arch/arm/include/asm/thread_info.h               |  2 +-
- arch/arm/include/asm/thread_notify.h             |  2 +-
- arch/arm/include/asm/tlbflush.h                  | 10 +++++-----
- arch/arm/include/asm/tls.h                       |  4 ++--
- arch/arm/include/asm/unified.h                   |  6 +++---
- arch/arm/include/asm/unwind.h                    |  4 ++--
- arch/arm/include/asm/v7m.h                       |  4 ++--
- arch/arm/include/asm/vdso.h                      |  4 ++--
- arch/arm/include/asm/vdso/cp15.h                 |  4 ++--
- arch/arm/include/asm/vdso/gettimeofday.h         |  4 ++--
- arch/arm/include/asm/vdso/processor.h            |  4 ++--
- arch/arm/include/asm/vdso/vsyscall.h             |  4 ++--
- arch/arm/include/asm/vfp.h                       |  2 +-
- arch/arm/include/asm/virt.h                      |  4 ++--
- arch/arm/include/uapi/asm/ptrace.h               |  4 ++--
- arch/arm/mach-at91/pm.h                          |  2 +-
- arch/arm/mach-exynos/smc.h                       |  4 ++--
- arch/arm/mach-footbridge/include/mach/hardware.h |  2 +-
- arch/arm/mach-imx/hardware.h                     |  2 +-
- arch/arm/mach-imx/mxc.h                          |  2 +-
- arch/arm/mach-omap2/control.h                    |  8 ++++----
- arch/arm/mach-omap2/soc.h                        |  4 ++--
- arch/arm/mach-omap2/sram.h                       |  4 ++--
- arch/arm/mach-pxa/irqs.h                         |  2 +-
- arch/arm/mach-pxa/pxa-regs.h                     |  2 +-
- arch/arm/mach-s3c/map-base.h                     |  2 +-
- arch/arm/mach-sa1100/include/mach/bitfield.h     |  2 +-
- arch/arm/mach-sa1100/include/mach/hardware.h     |  2 +-
- arch/arm/mach-tegra/reset.h                      |  2 +-
- arch/arm/mach-tegra/sleep.h                      |  2 +-
- arch/arm/tools/gen-mach-types                    |  2 +-
- drivers/memory/emif.h                            |  4 ++--
- include/linux/arm-smccc.h                        |  6 +++---
- 70 files changed, 132 insertions(+), 132 deletions(-)
-
+diff --git a/arch/arm/include/uapi/asm/ptrace.h b/arch/arm/include/uapi/asm/ptrace.h
+index 8896c23ccba78..fb829c96dc2ae 100644
+--- a/arch/arm/include/uapi/asm/ptrace.h
++++ b/arch/arm/include/uapi/asm/ptrace.h
+@@ -119,7 +119,7 @@
+ #define PT_DATA_ADDR		0x10004
+ #define PT_TEXT_END_ADDR	0x10008
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ /*
+  * This struct defines the way the registers are stored on the
+@@ -158,6 +158,6 @@ struct pt_regs {
+ #define ARM_VFPREGS_SIZE ( 32 * 8 /*fpregs*/ + 4 /*fpscr*/ )
+ 
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ #endif /* _UAPI__ASM_ARM_PTRACE_H */
 -- 
 2.51.0
 
