@@ -1,207 +1,203 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF7A86331;
-	Thu,  9 Oct 2025 18:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DC61E500C;
+	Fri, 10 Oct 2025 03:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760033485; cv=none; b=uLsQvEx1pXfwu23HNizGIUmNAZJ0EIBCvnuuO8VJaHpUsFhMm/Nbsyv87XL1zX/Ehs5jTKaMcUQ13m9Iax++l1TXDWH8LkoQ7T9/5CoK4eBd9/v6558qQyV+zaP9KnIOUHq7YEzrCXRAekNaiYtP+XZlMK4ADRWf4WMcqSefZ4U=
+	t=1760066658; cv=none; b=fLGr67b90jdvlyy/NbBqsO+QEP+4crRvavI92U2OjmhROiMbGvAIEjGHL2izwHINPivlFC8b5LZVD0ergbTuHrbgZHUhq29WFkAZUhqSRGRuDz7K7JxQqO0Cbqq/G4Qob51altFKkkQ4iZKsIZbWwFC3ot8cb87eAROCQ5Ne2ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760033485; c=relaxed/simple;
-	bh=hlUxCD4J4wKrqMfCK2tZHP+94pKQeHhn01rtwfEVA+0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mCx0/xTTxJz8qT/LzM+3IOQ066CeWmHkO/jCm48VGwCQTE/8B1ssC+la7XiBgEE8Lhgp2rHUwqjwW3omwZf/LxLsxeTUnXSQIX2MK4fdpTm1epe00k7002X87TEY7rU8C39AknVlV1i3hoWEkGBYsJ4tIVfqFhrCIVBWzgRp78A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7rsMnYQ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7rsMnYQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC76C4CEE7;
-	Thu,  9 Oct 2025 18:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760033483;
-	bh=hlUxCD4J4wKrqMfCK2tZHP+94pKQeHhn01rtwfEVA+0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P7rsMnYQIe2oxKy9AoZCEcsQJz+QcTE39ckDM9EGf6ocvyQDR/Us96ky4Zy3AuVq3
-	 bGf3s2TAnLmoIrzvgjIEEtb8L01oTAngNSpBhZ/Lhy4WXxx7q64NOZxAFYTZS6jVoB
-	 vWil0zY8SiZo/FBxDM620JzGHVPMOplVLV0hVZdhNafUz0YaeJsDvSTfGWiTeLnFy8
-	 nreQgyJtYUFRF/DnzxRyiUl/NLuR3ZaaOrVFkLcNdInJdFhyGs4A77WIC8/Ti+lBD5
-	 RmWJlJ0UVSQttoQHBlvsGN+IZXR1CUk/eUNkSFE1nACKjZN+pM77ClPD3DEEDfySSw
-	 sBxRZWkE0+M+A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v6v6n-0000000CibQ-0EaZ;
-	Thu, 09 Oct 2025 18:11:21 +0000
-Date: Thu, 09 Oct 2025 19:11:20 +0100
-Message-ID: <86ms60x7w7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <86o6qgxayt.wl-maz@kernel.org>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-	<86qzvcxi3j.wl-maz@kernel.org>
-	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-	<86o6qgxayt.wl-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760066658; c=relaxed/simple;
+	bh=3WF4tIRUtvQA2j4EjIaI7q0oYeLt55Dandq5aU/vbhU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=UfumN3kca8YOCfND/bvRvE/OCSUh1l4LGD78YsiqFtGXYW2OBR/DW8EaJIAa1sgqn2S9Zhy1g/SnchxrUhFsOgolSgO/Vzok78hy99Rc/pQiXAeVAA2A1tU037kFitxPxJDusgnzqVmV0/FYQlTItv+nMHAG4C5wNpRl1HZWwLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=113.46.200.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4cjXCB3FGMz1K9Bc;
+	Fri, 10 Oct 2025 11:23:50 +0800 (CST)
+Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
+	by mail.maildlp.com (Postfix) with ESMTPS id CB73F1A0188;
+	Fri, 10 Oct 2025 11:24:06 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
+ (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 10 Oct
+ 2025 11:24:05 +0800
+Message-ID: <bdd0aa7b-d239-420e-8741-b33d73959412@hisilicon.com>
+Date: Fri, 10 Oct 2025 11:24:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Jie Zhan <zhanjie9@hisilicon.com>
+Subject: Re: [PATCH v3 1/8] cpufreq: CPPC: Add generic helpers for sysfs
+ show/store
+To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
+	<corbet@lwn.net>, <pierre.gondois@arm.com>, <zhenglifeng1@huawei.com>,
+	<rdunlap@infradead.org>, <ray.huang@amd.com>, <gautham.shenoy@amd.com>,
+	<mario.limonciello@amd.com>, <perry.yuan@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <bbasu@nvidia.com>
+References: <20251001150104.1275188-1-sumitg@nvidia.com>
+ <20251001150104.1275188-2-sumitg@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251001150104.1275188-2-sumitg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemr500004.china.huawei.com (7.202.195.141)
 
-On Thu, 09 Oct 2025 18:04:58 +0100,
-Marc Zyngier <maz@kernel.org> wrote:
+
+Hi Sumit,
+
+On 10/1/2025 11:00 PM, Sumit Gupta wrote:
+> Add generic show/store helper functions for u64 sysfs attributes:
+> - cppc_cpufreq_sysfs_show_u64()
+> - cppc_cpufreq_sysfs_store_u64()
 > 
-> On Thu, 09 Oct 2025 17:05:15 +0100,
-> Thierry Reding <thierry.reding@gmail.com> wrote:
-> > 
-> > [1  <text/plain; us-ascii (quoted-printable)>]
-> > On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
-> > > Hi Thierry,
-> > > 
-> > > On Thu, 09 Oct 2025 12:38:55 +0100,
-> > > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > > 
-> > > > Which brings me to the actual question: what is the right way to solve
-> > > > this? I had, maybe naively, assumed that the default CPU affinity, which
-> > > > includes all available CPUs, would be sufficient to have interrupts
-> > > > balanced across all of those CPUs, but that doesn't appear to be the
-> > > > case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
-> > > > in this particular case) from the affinity mask to set the "effective
-> > > > affinity", which then dictates where IRQs are handled and where the
-> > > > corresponding IRQ thread function is run.
-> > > 
-> > > There's a (GIC-specific) answer to that, and that's the "1 of N"
-> > > distribution model. The problem is that it is a massive headache (it
-> > > completely breaks with per-CPU context).
-> > 
-> > Heh, that started out as a very promising first paragraph but turned
-> > ugly very quickly... =)
-> > 
-> > > We could try and hack this in somehow, but defining a reasonable API
-> > > is complicated. The set of CPUs receiving 1:N interrupts is a *global*
-> > > set, which means you cannot have one interrupt targeting CPUs 0-1, and
-> > > another targeting CPUs 2-3. You can only have a single set for all 1:N
-> > > interrupts. How would you define such a set in a platform agnostic
-> > > manner so that a random driver could use this? I definitely don't want
-> > > to have a GIC-specific API.
-> > 
-> > I see. I've been thinking that maybe the only way to solve this is using
-> > some sort of policy. A very simple policy might be: use CPU 0 as the
-> > "default" interrupt (much like it is now) because like you said there
-> > might be assumptions built-in that break when the interrupt is scheduled
-> > elsewhere. But then let individual drivers opt into the 1:N set, which
-> > would perhaps span all available CPUs but the first one. From an API PoV
-> > this would just be a flag that's passed to request_irq() (or one of its
-> > derivatives).
+> Refactor auto_act_window and energy_performance_preference_val
+> attributes to use these helpers, eliminating code duplication.
 > 
-> The $10k question is how do you pick the victim CPUs? I can't see how
-> to do it in a reasonable way unless we decide that interrupts that
-> have an affinity matching cpu_possible_mask are 1:N. And then we're
-> left with wondering what to do about CPU hotplug.
+> No functional changes.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+Nice cleanup in general.  Some minor bits inline.
+> ---
+>  drivers/cpufreq/cppc_cpufreq.c | 87 ++++++++++++++--------------------
+>  1 file changed, 35 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 12de0ac7bbaf..732f35096991 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -781,6 +781,36 @@ static int cppc_cpufreq_set_boost(struct cpufreq_policy *policy, int state)
+>  	return 0;
+>  }
+>  
+> +static ssize_t cppc_cpufreq_sysfs_show_u64(unsigned int cpu, int (*get_func)(int, u64 *), char *buf)
+Wrap a bit into 80 chars?
 
-For fun and giggles, here's the result of a 5 minute hack. It enables
-1:N distribution on SPIs that have an "all cpus" affinity. It works on
-one machine, doesn't on another -- no idea why yet. YMMV.
-
-This is of course conditioned on your favourite HW supporting the 1:N
-feature, and it is likely that things will catch fire quickly. It will
-probably make your overall interrupt latency *worse*, but maybe less
-variable. Let me know.
-
-	M.
-
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index dbeb85677b08c..ab32339b32719 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -67,6 +67,7 @@ struct gic_chip_data {
- 	u32			nr_redist_regions;
- 	u64			flags;
- 	bool			has_rss;
-+	bool			has_oon;
- 	unsigned int		ppi_nr;
- 	struct partition_desc	**ppi_descs;
- };
-@@ -1173,9 +1174,10 @@ static void gic_update_rdist_properties(void)
- 	gic_iterate_rdists(__gic_update_rdist_properties);
- 	if (WARN_ON(gic_data.ppi_nr == UINT_MAX))
- 		gic_data.ppi_nr = 0;
--	pr_info("GICv3 features: %d PPIs%s%s\n",
-+	pr_info("GICv3 features: %d PPIs%s%s%s\n",
- 		gic_data.ppi_nr,
- 		gic_data.has_rss ? ", RSS" : "",
-+		gic_data.has_oon ? ", 1:N" : "",
- 		gic_data.rdists.has_direct_lpi ? ", DirectLPI" : "");
- 
- 	if (gic_data.rdists.has_vlpis)
-@@ -1481,6 +1483,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	u32 offset, index;
- 	void __iomem *reg;
- 	int enabled;
-+	bool oon;
- 	u64 val;
- 
- 	if (force)
-@@ -1488,6 +1491,8 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	else
- 		cpu = cpumask_any_and(mask_val, cpu_online_mask);
- 
-+	oon = gic_data.has_oon && cpumask_equal(mask_val, cpu_possible_mask);
-+
- 	if (cpu >= nr_cpu_ids)
- 		return -EINVAL;
- 
-@@ -1501,7 +1506,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 
- 	offset = convert_offset_index(d, GICD_IROUTER, &index);
- 	reg = gic_dist_base(d) + offset + (index * 8);
--	val = gic_cpu_to_affinity(cpu);
-+	val = oon ? GICD_IROUTER_SPI_MODE_ANY : gic_cpu_to_affinity(cpu);
- 
- 	gic_write_irouter(val, reg);
- 
-@@ -1512,7 +1517,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	if (enabled)
- 		gic_unmask_irq(d);
- 
--	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+	irq_data_update_effective_affinity(d, oon ? cpu_possible_mask : cpumask_of(cpu));
- 
- 	return IRQ_SET_MASK_OK_DONE;
- }
-@@ -2114,6 +2119,7 @@ static int __init gic_init_bases(phys_addr_t dist_phys_base,
- 	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
- 
- 	gic_data.has_rss = !!(typer & GICD_TYPER_RSS);
-+	gic_data.has_oon = !(typer & GICD_TYPER_No1N);
- 
- 	if (typer & GICD_TYPER_MBIS) {
- 		err = mbi_init(handle, gic_data.domain);
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 70c0948f978eb..ffbfc1c8d1934 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -80,6 +80,7 @@
- #define GICD_CTLR_ENABLE_SS_G0		(1U << 0)
- 
- #define GICD_TYPER_RSS			(1U << 26)
-+#define GICD_TYPER_No1N			(1U << 25)
- #define GICD_TYPER_LPIS			(1U << 17)
- #define GICD_TYPER_MBIS			(1U << 16)
- #define GICD_TYPER_ESPI			(1U << 8)
-
--- 
-Without deviation from the norm, progress is not possible.
+BTW, trivial but I would prefer a symmetric param order, like:
+show(buf, get_func, cpu)
+store(buf, count, set_func, cpu)
+> +{
+> +	u64 val;
+> +	int ret = get_func(cpu, &val);
+> +
+> +	if (ret == -EOPNOTSUPP)
+> +		return sysfs_emit(buf, "<unsupported>\n");
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "%llu\n", val);
+> +}
+> +
+> +static ssize_t cppc_cpufreq_sysfs_store_u64(const char *buf, size_t count,
+> +					    int (*set_func)(int, u64), unsigned int cpu)
+> +{
+> +	u64 val;
+> +	int ret;
+> +
+> +	if (!buf || !set_func)
+> +		return -EINVAL;
+No need.
+> +
+> +	ret = kstrtou64(buf, 0, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = set_func((int)cpu, val);
+> +	return ret ? ret : count;
+I suppose it's preferred to avoid using ternary operators like this.
+> +}
+> +
+Would be nicer to move cppc_cpufreq_sysfs_show/store_u64() to just above
+where they are used, i.e. just before show_auto_act_window().
+>  static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
+>  {
+>  	struct cppc_cpudata *cpu_data = policy->driver_data;
+> @@ -824,70 +854,23 @@ static ssize_t store_auto_select(struct cpufreq_policy *policy,
+>  
+>  static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
+>  {
+> -	u64 val;
+> -	int ret;
+> -
+> -	ret = cppc_get_auto_act_window(policy->cpu, &val);
+> -
+> -	/* show "<unsupported>" when this register is not supported by cpc */
+> -	if (ret == -EOPNOTSUPP)
+> -		return sysfs_emit(buf, "<unsupported>\n");
+> -
+> -	if (ret)
+> -		return ret;
+> -
+> -	return sysfs_emit(buf, "%llu\n", val);
+> +	return cppc_cpufreq_sysfs_show_u64(policy->cpu, cppc_get_auto_act_window, buf);
+>  }
+>  
+> -static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
+> -				     const char *buf, size_t count)
+> +static ssize_t store_auto_act_window(struct cpufreq_policy *policy, const char *buf, size_t count)
+>  {
+> -	u64 usec;
+> -	int ret;
+> -
+> -	ret = kstrtou64(buf, 0, &usec);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = cppc_set_auto_act_window(policy->cpu, usec);
+> -	if (ret)
+> -		return ret;
+> -
+> -	return count;
+> +	return cppc_cpufreq_sysfs_store_u64(buf, count, cppc_set_auto_act_window, policy->cpu);
+>  }
+>  
+>  static ssize_t show_energy_performance_preference_val(struct cpufreq_policy *policy, char *buf)
+>  {
+> -	u64 val;
+> -	int ret;
+> -
+> -	ret = cppc_get_epp_perf(policy->cpu, &val);
+> -
+> -	/* show "<unsupported>" when this register is not supported by cpc */
+> -	if (ret == -EOPNOTSUPP)
+> -		return sysfs_emit(buf, "<unsupported>\n");
+> -
+> -	if (ret)
+> -		return ret;
+> -
+> -	return sysfs_emit(buf, "%llu\n", val);
+> +	return cppc_cpufreq_sysfs_show_u64(policy->cpu, cppc_get_epp_perf, buf);
+>  }
+>  
+>  static ssize_t store_energy_performance_preference_val(struct cpufreq_policy *policy,
+>  						       const char *buf, size_t count)
+>  {
+> -	u64 val;
+> -	int ret;
+> -
+> -	ret = kstrtou64(buf, 0, &val);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = cppc_set_epp(policy->cpu, val);
+> -	if (ret)
+> -		return ret;
+> -
+> -	return count;
+> +	return cppc_cpufreq_sysfs_store_u64(buf, count, cppc_set_epp, policy->cpu);
+>  }
+>  
+>  cpufreq_freq_attr_ro(freqdomain_cpus);
