@@ -1,274 +1,172 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010041.outbound.protection.outlook.com [52.101.193.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7CE2F83C1
-	for <linux-tegra@vger.kernel.org>; Fri, 10 Oct 2025 15:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108588; cv=none; b=XrLpi5MOJr4k31M9FTZ2rGFBQUSgUssTobQrbERGvKwLbM3VDgmCN8ad/VAzK2Tig425Y0Tlh8SB35itzG7nRvj6NHfUSpxfa0IKdJjTb6LhdQJNGmN4lb48gmhPKIvyplgdKN9MvPULtqY+/3mEDGEpQnrK9ICwSkZXXy+vo4Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108588; c=relaxed/simple;
-	bh=QBfPEo2CsliQpFc48ARAArAhMAqF0amYhuUFGjijoyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKoze482B/S6wUKEDLtNmow0zbbVj7n1stbacHbNQ4otEy1CqceBcgLUxKZ6DG8MeS26btrTdmBWGH4vVqxe2OMFV2Rcvl5YPmSmMyZFZQxGtbARJxnbIyJau756jOL+KTnTLhKBk3tWlp1Z8sbS2xmvQBvqk65rIaDaX8dVpBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcgzY/nC; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A80126E16A;
+	Fri, 10 Oct 2025 15:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760109630; cv=fail; b=VhQFDgaKbcpuabekptOOFnK4h5I7jCTQYaEUomCwsGwgUGl5YDaTXsPkgt9BP4rtOE7MFOlb+uawaeERvfUzWn3hKdBCiHB3BjGvUZGMQWvr0+tBiWQWsZLsMAs7C7YXhLBZGEowh0ZlJSArsdI4yOi1gbRZRfAF4p3zjFpL9Ms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760109630; c=relaxed/simple;
+	bh=ugSOBOyNO5tZ9S+vuYwm76iiXmzUSiq/IJF+l9gCMs0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U62wjNajL5RFQE2VE2syrgQWWy4EI0gYBWv3g0Dn8shf9npU802o6vOxdNLGHgvSUaZXOxq3//CyhYaxzR/2fXhZ705dyuLqJdVvPK95GRoyPd7bVExmFVx1HTWNHfP4lINLUz4lxjhOePSt0iw2ouKXy0yDhU82VtQEV5vqZJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GL04tCLJ; arc=fail smtp.client-ip=52.101.193.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcgzY/nC"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so1874319f8f.0
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Oct 2025 08:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760108585; x=1760713385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RzqW0UIxkLVwrnz5nO9iomry07WZvBjE99qijc6UKPY=;
-        b=ZcgzY/nCZWLW9bRfwsHs388BIJdRHNw3nv8SjxwEXz1JqDMgC02cznakothLdY5TO5
-         6wY4BqScstgp6cY8iBhVGGEjELp5+qtwoiMtWpKfmsl8nYsnT/nfqLZsqLz/IVXAsBVf
-         A2N1QXzk8QsAbb5sJmzlGGDifVil06+7khZfN/88+/XUTNqJQ44I72Nsi4iOmnIuG5xa
-         ZNM+awgxeRKIO7EPG1E5qngCziO5Ki9M8+ICrgNLoOpMMOttVKuyavSn+EdMDb43pBOj
-         2jjT3lXkNlKu/coULOu5xKda7xK4Rj8mMdspQBFI/w0wvEEjI0DwzOy7fkH753mAYRyY
-         b7BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108585; x=1760713385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RzqW0UIxkLVwrnz5nO9iomry07WZvBjE99qijc6UKPY=;
-        b=fzue2D3YVpPH1FWfU8+SxinLIzjzlMRr5Q7cBpcYwj9Gm/0MSml9if6K5hQ0Tii8j8
-         QnB9CzErHicLsBtMkFr4t2NlDXI8eWZVKGWC405T1S9LJLfBUkBMCq8MJNLPZQRitqYK
-         WypKUDt1Ibx5V+PoWK7iq21thWWzK+0IcGiQ+FAlwy+sNbvvXjN3mcx3ivEYq7SQ/5/l
-         zNTktgdbLuopj346ApvwTBilBU6Ticom5TOt3734TShba+OhvHkidPMCEipgFzQdWs/i
-         WnFWXnkhsNNckcy7q3LMiMc1S3xs51A+XwZJMM4dv8wB9z3LbGRaEPiZcC9PGDQ/KIt9
-         p9VA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDZjKLxuE8X/OwpTQNMNH8mBJivPT9gJk7XOELX5GgznbEr/WXTgzbZQLtY0qLfVU+fj8k75Rp64SyYw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw514/O2hcxjZn5FVV9pF+dp07gR6hsRbwT+K16KSa5hiAV5rcR
-	HmHQq0i0nT0AXwwx+3sxDT2UeQnL84Gvj31lILUkj4ginCxF/zxHd42w
-X-Gm-Gg: ASbGncuKiJqgs0swMLeALCYbkHvBxoFpD84Z1gcuNOKtDd9l28oaU4FVTGuCZWl81dH
-	u2VG841AOly1OR0L/2ONOpbiSpEghQKxdZxrHFGRuaTKey6qS2ZEtJi7RWqw2uDhS4Q1fYNcoWL
-	O6X19raxo3G4idrWaIqJRFmQ91xVAk8GJPBN3Hm41fq5l/4NeR5d6Csj7YU3+FaUSYz6LkYtX6F
-	PBseWUCaWondf8ykU/N0fCdal9mTLWRBR3cLxwXFep+jt9gmetTquQAl/fKzagPeXVnRpNIBfzc
-	zTC9WQmzUCQTMpQeVQq/oINwAZlTPJmyxYY0dL09fQZFzBmadLcb2QeameqPbwRqe3XfGbrGSi/
-	YxQFmh1zIqXJNn1ZS1w9C+rjGuy9XowKtmBP0CYMi/OBiM47u8Pq73b0tbPGcvBM/RePXtTBtjR
-	2tuugT8nKXDDhslmkLtBr+WjEjhlh2
-X-Google-Smtp-Source: AGHT+IEvrfkr4Hs8ezky5ByztyOWOZT//8TlXER1hkPoQxMLvS/Q90qX4bw9OAGlwL9NvM581MF52g==
-X-Received: by 2002:a05:6000:186c:b0:3ec:c50c:715b with SMTP id ffacd0b85a97d-4266726d746mr7684721f8f.19.1760108584000;
-        Fri, 10 Oct 2025 08:03:04 -0700 (PDT)
-Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57ccb1sm4665031f8f.8.2025.10.10.08.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 08:03:03 -0700 (PDT)
-Date: Fri, 10 Oct 2025 17:03:01 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-Message-ID: <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
- <86qzvcxi3j.wl-maz@kernel.org>
- <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
- <86o6qgxayt.wl-maz@kernel.org>
- <86ms60x7w7.wl-maz@kernel.org>
- <us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
- <86bjmeyh5m.wl-maz@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GL04tCLJ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P9W2WU+Jas9MML1cHcHWYT8yojVyhVDqbqLoT6LkqBVAkCUN82zbFKe7/B3UQ+xilpgZ9imRgcRuqnoSdib2sX+0P3EJxKg+kY2B07p5ayAIo8xmlwurQttlcr79yu+oK2+efkTb4X5Ex+0V+9zvumx88ukM8CeZ1kYmY1JpBgfdfwyUmGextoaHFIhJHbtqj0eTzfl2woGTeefFAP0e3ilp0oKrASQYSdYgrTgEPspzC8pJZV4GkdhxBtPWZbxV677/RjvisqnDe498q7ulxUfAfzLzqnILn7ThgTWP8Rit7En5wRKdgqOyDHalRgCxJrLE/EoDftWUhoXgMbWydQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Xurme1AlG5ZgnJp3Rv+fwtoAEIeYDZcnugjZfZ5c5Q=;
+ b=Pd+atEKn+IwPy6NBv9z9nY+LR7vxfFBCiizl7SwSBtlAvGaZ/0IwjSlF466W3yHaSGPJzmaR3yXwOUls1m45S16lbhwJE6UB93aHvgb/hbfhrsX1eQQ5q0ogFwfmCbUMx9A5b87SrYngct/0XM6eJfvYUsp+zwcoNaWzQafeQ3XH4NdoSHfS3wmQllCVs7kv/m0vWsm9rqKmoBKe8eE4hC8glYD79W/wxbc3lr9jUidOB7hFC/g0AqLj4hpzHrQB987oWIiwRAiv/RnZqICODxJzjuYMCoayEH1mjLXvD4uI1BSb4P4IHxPFrZ4iEiz5/aa7a5djpWBHrclw4nC3kQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Xurme1AlG5ZgnJp3Rv+fwtoAEIeYDZcnugjZfZ5c5Q=;
+ b=GL04tCLJqNaYtdugdBLx5aXU68ksDyAFm8/hJSyetKV6le9VbSo0LeTexi9lBzHSYY/gch/LIU8JvJeGcSzzFXMyoG0dSuuVtnqIONfEPMeI4MwRE3OfBZ6cK0kxJw6Utvq97C1fYl+IQewYi6+kdnJQvespfyViznIvnDp6WjrvykSFvXSC+4J0KXW7a8UuZHM8AgoUUCJ7qgkQ3pL1/tUYsfDS+36Gg78/VjcJ3Osut8ZAo5Ep0ecawGQNorN00mKiQhCT4eZYUi1dDqbXj9FCY2anYaQ8uJSiuGkjDKbgx6x3k1zpIQDLxcsVi9EemZzpTgxJt39OOpFnpMbCQQ==
+Received: from BY3PR04CA0021.namprd04.prod.outlook.com (2603:10b6:a03:217::26)
+ by DS0PR12MB7969.namprd12.prod.outlook.com (2603:10b6:8:146::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 15:20:26 +0000
+Received: from SJ1PEPF000023D2.namprd02.prod.outlook.com
+ (2603:10b6:a03:217:cafe::90) by BY3PR04CA0021.outlook.office365.com
+ (2603:10b6:a03:217::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Fri,
+ 10 Oct 2025 15:20:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000023D2.mail.protection.outlook.com (10.167.244.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Fri, 10 Oct 2025 15:20:25 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 10 Oct
+ 2025 08:20:07 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Oct
+ 2025 08:20:07 -0700
+Received: from build-va-bionic-20241022.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Fri, 10 Oct 2025 08:20:03 -0700
+From: Vishwaroop A <va@nvidia.com>
+To: Mark Brown <broonie@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Sowjanya
+ Komatineni" <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+	<smangipudi@nvidia.com>, <kyarlagadda@nvidia.com>
+CC: Vishwaroop A <va@nvidia.com>, <linux-spi@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/2] spi: tegra210-quad: Improve timeout handling under high system load
+Date: Fri, 10 Oct 2025 15:19:59 +0000
+Message-ID: <20251010152001.2399799-1-va@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3cjwywdpcegtiyhc"
-Content-Disposition: inline
-In-Reply-To: <86bjmeyh5m.wl-maz@kernel.org>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D2:EE_|DS0PR12MB7969:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6fd9c31f-785e-49a2-d2b4-08de081089e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KAHup9s+QdOz3BNyy8pEyBzAYoI63b/xQuhZ+gcYiTfuouOh0iL/nVkTIroh?=
+ =?us-ascii?Q?dZPXokz8TqFKqb6mTxZj5tjNvY35fQVsibqQW9lcrTXBL1D4ZpRBjouXNp8I?=
+ =?us-ascii?Q?NPlq90b9jJBG1zeClFXXcnDev2WiCbCAEaw94YxC9QAfUji/TNvNaKq0rQep?=
+ =?us-ascii?Q?6PaWtPxdF9HkXNh+G02e2frGjljz60QQANYePAzWb+FuKtUSeujsw2Ps63XA?=
+ =?us-ascii?Q?vUWSEN4WVRRKPqHtp+msUG9oZxkeQ3KcjJWi7CZNonzwiyIDIUfJxpdl4FR3?=
+ =?us-ascii?Q?6DgNkNVrbNl2PcRlMrE2bncQsOUR4fEe365zjZpV6TtWC6ggX5KwM3V5j2ux?=
+ =?us-ascii?Q?HnxOvi2YI4iAUYjP9f98ADeZBrRuKk9kfRHoYFUFkWh2m53T1vf3556Mo/LI?=
+ =?us-ascii?Q?V3p1wxfV2me/cCWNJrQJH3Xj1Nr65q4zKfU2B7wL2tf4hfsLZ52PTNmzln47?=
+ =?us-ascii?Q?zFSIMUf994kI4V4MMgvX1IO9WLbSIpkACQJHZf0NTE+xVRYrf7Qxk+TBIxUZ?=
+ =?us-ascii?Q?GBqRYlBGpBBkh8qUCHR8dKYYPw6ZsGFKkoI0Z7UP2CstENmEkxgKm6U/TkDr?=
+ =?us-ascii?Q?+CrHcF36BwAcM77blbX2A8AuVTn0fc//GJs9KLH+IBEr+aa/ohtcUHTipo48?=
+ =?us-ascii?Q?nKXXo7LLzRi7FiboeVPysg2L8sfXIHScZJXzDSdgIcdn8IdGlKPOQT8+arQJ?=
+ =?us-ascii?Q?Ye27FJ1IHDDYEuQVWzmItZwI7MlZf37+d/BeSgyckG4kZGTX8lgKgTj8A7IT?=
+ =?us-ascii?Q?IPJUrOKq27eXmg3pg2w+3THJumUO0Ae9qkXd6f4052cmKk+BttfC3vZzhoOB?=
+ =?us-ascii?Q?KnL6HK1RRqoscKdiJuTucGUBmAqAHnaEJHtXiWbMWs62855Gw4LyCHmjtxJN?=
+ =?us-ascii?Q?zBnqWzcSh3JwoHLfTK4lBXxkiX2k7l8/ypO6EVyxXOzH+TXeACd2jeycX6CB?=
+ =?us-ascii?Q?dHoWjxz7u2gdEpmc/XS6kESDrpX+gzLLRCdMttFCvE73aaEzYtSkmA718fHV?=
+ =?us-ascii?Q?5AJVjvIb+tGHTcNjv/w7D5zUSVW3OncOXGzOFMX63i1VxgOm8ooeHdJCOP+y?=
+ =?us-ascii?Q?2vRife9cQKmkBNDqOGVj83rlZHt+ky8+GJdtYKvmB1oD8DiW+rqeQ4YERaVc?=
+ =?us-ascii?Q?oV2Lh0YaOcILqFNGyR0IB61N3SfQRcKAF84fHP0uL384lYeNd70OFGpztFmC?=
+ =?us-ascii?Q?s52HBpzhQrdS5ZYgmg6xgCdpn2d8y5eBL5DhxK5GgLpbMpdAwlsldllBJctW?=
+ =?us-ascii?Q?HJXUVAJNnFFaOzNYJAGj2qUlLnsMa3mRbucCmH0fZxBkI1DSqfj6Y9RFOCIE?=
+ =?us-ascii?Q?VUHuSNw0vuV9QPcGmxMvBSjX6+gmRBXJ9DnlkfSU/5HsEFsbzeuC5QdbLGF+?=
+ =?us-ascii?Q?RsmkSBlI+qyxuNoF7UeM2MmJ8P2ni1XDYitXBb/132xjo0LfHOsjhHKtktor?=
+ =?us-ascii?Q?BBM4iHBLivOirZyMRXzCTNdnynzDbFF4Uy7cWfZ6oMBiPj/f9AkSpj6Aa1oH?=
+ =?us-ascii?Q?8SZMq7sKEZkXMOzCLmFgZHCjFINLYaxvR6p4TR6VjxaqUyrX5ppcxtW5ZJkW?=
+ =?us-ascii?Q?m7JlyJKxAmWyVUM+dJ4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 15:20:25.7716
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fd9c31f-785e-49a2-d2b4-08de081089e2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D2.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7969
 
+Hi,
 
---3cjwywdpcegtiyhc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: IRQ thread timeouts and affinity
-MIME-Version: 1.0
+This patch series addresses timeout handling issues in the Tegra QSPI driver
+that occur under high system load conditions. We've observed that when CPUs
+are saturated (due to error injection, RAS firmware activity, or general CPU
+contention), QSPI interrupt handlers can be delayed, causing spurious transfer
+failures even though the hardware completed the operation successfully.
 
-On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
-> On Fri, 10 Oct 2025 14:50:57 +0100,
-> Thierry Reding <thierry.reding@gmail.com> wrote:
-> >=20
-> > On Thu, Oct 09, 2025 at 07:11:20PM +0100, Marc Zyngier wrote:
-> > > On Thu, 09 Oct 2025 18:04:58 +0100,
-> > > Marc Zyngier <maz@kernel.org> wrote:
-> > > >=20
-> > > > On Thu, 09 Oct 2025 17:05:15 +0100,
-> > > > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > > >=20
-> > > > > [1  <text/plain; us-ascii (quoted-printable)>]
-> > > > > On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
-> > > > > > Hi Thierry,
-> > > > > >=20
-> > > > > > On Thu, 09 Oct 2025 12:38:55 +0100,
-> > > > > > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > > > > >=20
-> > > > > > > Which brings me to the actual question: what is the right way=
- to solve
-> > > > > > > this? I had, maybe naively, assumed that the default CPU affi=
-nity, which
-> > > > > > > includes all available CPUs, would be sufficient to have inte=
-rrupts
-> > > > > > > balanced across all of those CPUs, but that doesn't appear to=
- be the
-> > > > > > > case. At least not with the GIC (v3) driver which selects one=
- CPU (CPU 0
-> > > > > > > in this particular case) from the affinity mask to set the "e=
-ffective
-> > > > > > > affinity", which then dictates where IRQs are handled and whe=
-re the
-> > > > > > > corresponding IRQ thread function is run.
-> > > > > >=20
-> > > > > > There's a (GIC-specific) answer to that, and that's the "1 of N"
-> > > > > > distribution model. The problem is that it is a massive headach=
-e (it
-> > > > > > completely breaks with per-CPU context).
-> > > > >=20
-> > > > > Heh, that started out as a very promising first paragraph but tur=
-ned
-> > > > > ugly very quickly... =3D)
-> > > > >=20
-> > > > > > We could try and hack this in somehow, but defining a reasonabl=
-e API
-> > > > > > is complicated. The set of CPUs receiving 1:N interrupts is a *=
-global*
-> > > > > > set, which means you cannot have one interrupt targeting CPUs 0=
--1, and
-> > > > > > another targeting CPUs 2-3. You can only have a single set for =
-all 1:N
-> > > > > > interrupts. How would you define such a set in a platform agnos=
-tic
-> > > > > > manner so that a random driver could use this? I definitely don=
-'t want
-> > > > > > to have a GIC-specific API.
-> > > > >=20
-> > > > > I see. I've been thinking that maybe the only way to solve this i=
-s using
-> > > > > some sort of policy. A very simple policy might be: use CPU 0 as =
-the
-> > > > > "default" interrupt (much like it is now) because like you said t=
-here
-> > > > > might be assumptions built-in that break when the interrupt is sc=
-heduled
-> > > > > elsewhere. But then let individual drivers opt into the 1:N set, =
-which
-> > > > > would perhaps span all available CPUs but the first one. From an =
-API PoV
-> > > > > this would just be a flag that's passed to request_irq() (or one =
-of its
-> > > > > derivatives).
-> > > >=20
-> > > > The $10k question is how do you pick the victim CPUs? I can't see h=
-ow
-> > > > to do it in a reasonable way unless we decide that interrupts that
-> > > > have an affinity matching cpu_possible_mask are 1:N. And then we're
-> > > > left with wondering what to do about CPU hotplug.
-> > >=20
-> > > For fun and giggles, here's the result of a 5 minute hack. It enables
-> > > 1:N distribution on SPIs that have an "all cpus" affinity. It works on
-> > > one machine, doesn't on another -- no idea why yet. YMMV.
-> > >=20
-> > > This is of course conditioned on your favourite HW supporting the 1:N
-> > > feature, and it is likely that things will catch fire quickly. It will
-> > > probably make your overall interrupt latency *worse*, but maybe less
-> > > variable. Let me know.
-> >=20
-> > You might be onto something here. Mind you, I've only done very limited
-> > testing, but the system does boot and the QSPI related timeouts are gone
-> > completely.
->=20
-> Hey, progress.
->=20
-> > Here's some snippets from the boot log that might be interesting:
-> >=20
-> > [    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
-> > [    0.000000] GIC: enabling workaround for GICv3: NVIDIA erratum T241-=
-FABRIC-4
-> > [    0.000000] GIC: enabling workaround for GICv3: ARM64 erratum 2941627
-> > [    0.000000] GICv3: 960 SPIs implemented
-> > [    0.000000] GICv3: 320 Extended SPIs implemented
-> > [    0.000000] Root IRQ handler: gic_handle_irq
-> > [    0.000000] GICv3: GICv3 features: 16 PPIs, 1:N
-> > [    0.000000] GICv3: CPU0: found redistributor 20000 region 0:0x000000=
-0022100000
-> > [...]
-> > [    0.000000] GICv3: using LPI property table @0x0000000101500000
-> > [    0.000000] GICv3: CPU0: using allocated LPI pending table @0x000000=
-0101540000
-> > [...]
-> >=20
-> > There's a bunch of ITS info that I dropped, as well as the same
-> > redistributor and LPI property table block for each of the 288 CPUs.
-> >=20
-> > /proc/interrupts is much too big to paste here, but it looks like the
-> > QSPI interrupts now end up evenly distributed across the first 72 CPUs
-> > in this system. Not sure why 72, but possibly because this is a 4 NUMA
-> > node system with 72 CPUs each, so the CPU mask might've been restricted
-> > to just the first node.
->=20
-> It could well be that your firmware sets GICR_CTLR.DPG1NS on the 3
-> other nodes, and the patch I gave you doesn't try to change that.
-> Check with [1], which does the right thing on that front (it fixed a
-> similar problem on my slightly more modest 12 CPU machine).
->=20
-> > On the face of it this looks quite promising. Where do we go from here?
->=20
-> For a start, you really should consider sending me one of these
-> machines. I have plans for it ;-)
+Patch 1 fixes a stale pointer issue by ensuring curr_xfer is cleared on timeout
+and checked when the IRQ thread finally runs. It also ensures interrupts are
+properly cleared on failure paths.
 
-I'm quite happy with someone else hosting this device, I don't think the
-electrical installation at home could handle it.
+Patch 2 adds hardware status checking on timeout. Before failing a transfer,
+the driver now reads QSPI_TRANS_STATUS to verify if the hardware actually
+completed the operation. If so, it manually invokes the completion handler
+instead of failing the transfer. This distinguishes genuine hardware timeouts
+from delayed/lost interrupts.
 
-It has proven to be quite well suited for kernel builds...
+These changes have been tested in production environments under various high
+load scenarios including RAS testing and CPU saturation workloads.
 
-> > Any areas that we need to test more exhaustively to see if this breaks?
->=20
-> CPU hotplug is the main area of concern, and I'm pretty sure it breaks
-> this distribution mechanism (or the other way around). Another thing
-> is that if firmware isn't aware that 1:N interrupts can (or should)
-> wake-up a CPU from sleep, bad things will happen. Given that nobody
-> uses 1:N, you can bet that any bit of privileged SW (TF-A,
-> hypervisors) is likely to be buggy (I've already spotted bugs in KVM
-> around this).
+Testing:
+- Verified normal operation under light load
+- Tested under heavy CPU load with concurrent workloads
+- Validated with RAS firmware activity and error injection
+- Confirmed no regressions in existing timeout behavior
 
-Okay, I can find out if CPU hotplug is a common use-case on these
-devices, or if we can run some tests with that.
+Thierry Reding (1):
+  spi: tegra210-quad: Fix timeout handling
 
-> The other concern is the shape of the API we would expose to drivers,
-> because I'm not sure we want this sort of "scatter-gun" approach for
-> all SPIs, and I don't know how that translates to other architectures.
->=20
-> Thomas should probably weight in here.
+Vishwaroop A (1):
+  spi: tegra210-quad: Check hardware status on timeout
 
-Yes, it would be interesting to understand how we can make use of this
-in a more generic way.
+ drivers/spi/spi-tegra210-quad.c | 195 ++++++++++++++++++++++++++------
+ 1 file changed, 138 insertions(+), 57 deletions(-)
 
-Thierry
+-- 
+2.34.1
 
---3cjwywdpcegtiyhc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjpICUACgkQ3SOs138+
-s6FDJw//Z8EjXFjdge1TNXnkHtxQK8LSe6eRlQEihBDapQ4FQ6BAOb8NAFUtFIXY
-vxrW11tX8O5PayMJWl/D2Z6cetmE3/rMkCydpfDrtujbI4ZvtxypIP4c7bLqqtSp
-DA5fCfzGW2CrAAZLKCt7kQUmFweJcMb/gn1uKOZfTmbveK59bO/08gTBb5FTvkfJ
-Lptc7t0iuHsvAZThG6IdNKPlFjQRo7Y3fYrDOQODyr7k3vbnriVPb7d4VqfXShnv
-ZpUXwLwieLxR5DtMTYucJ1rzlByUCRFRRKW/XFpi/AiZrgjRV5yX1URDq/eOSYRm
-mJmfO2e15SwgsiQR0BDj2e0esxwTM1p4lsPvkS/tag7v9HchNXLVbaGWu1J1//Lb
-9tIOnwA+YwEeu6b964cxcKWJ8Zal3H/wUTVzxOuyMmYFCl98AetlW22P/41IQIci
-+1FkFb8NckVhkK7+WF+WuvXbJVpiDZuYhTK0gebLg8OjwF0iSCbDUht1mp88wIkF
-M8hme8FQWI40P+9cTQZWiWHsrsWYVUY2f3jN5bJEroXH3yB/HYPhg338WXDUK2IE
-wGLb63qfKxEEita5KJ0anMKIG0v9ka+FFRB4FNgeAi7oV78APjcRXGVcHN5LK5Jh
-rIjE0ozAEbuF5FFfqaaTaAK/V3gYh/A1x8WylRwbHusveJzX8Aw=
-=Pxmi
------END PGP SIGNATURE-----
-
---3cjwywdpcegtiyhc--
