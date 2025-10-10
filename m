@@ -1,73 +1,75 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942F21F03D2
-	for <linux-tegra@vger.kernel.org>; Fri, 10 Oct 2025 13:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E216F288535
+	for <linux-tegra@vger.kernel.org>; Fri, 10 Oct 2025 13:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101448; cv=none; b=JLz02FqwR8X4Poc+NvfndPOLzfYDwdrbUXlDYKrLymVGb2c5WSBSj9aCgj/32aNXUXQyGQZq9rjQp1ipTyjzeFiR442/v1Ug0cPXZ2mmWqPoTguRA14d+gZ8CqKILKaSm1XoaBVMSUsZNNkWxWdw1W1sQFmg9wA8k5U9375xUqQ=
+	t=1760104263; cv=none; b=WyDyKLGfPICXbE/UukIMm+0KneVeLEbpwpXuxKxkyWCLMjRTAIB6NjFvLxXrnOi25tDqB9QlbdhoOVmw1X1xtLicvWxDl9OhU1ZRdJzl/lpWptBpPlRogWMxKBnT7uoaicA5UdRHT+CPQoqCgpqf3/qxOJgweSHBrp5CUV+sGpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101448; c=relaxed/simple;
-	bh=2fBUTn5JHSmdXy1l08iLHS3auLWgcZKX0u7ZoOON8iM=;
+	s=arc-20240116; t=1760104263; c=relaxed/simple;
+	bh=4FDjizrFedYdApV4Kwq5abuNiCsIXR1HSp7V6sP08+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmpRF9Y9zEe7NC5b7o1Zl3/dHuKWsBNfb5fUE2aIqHOlHHXr2sCdFwCZorCgfntb+eqERcF4iuuE9IRuuV/BpwdyQEbq7cwuH2eKfknQeEf4rLvk7p/U3PNyHvIyEvZRBwwrHyvLFtyk9SFA1eM+ZZ6VIlQ5/hoLbAQw4LFoFLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l44pI/Wn; arc=none smtp.client-ip=209.85.128.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAMGXpM0xJYV/0+CU2kRJQYo76s+SAIm9cIfMLGK/4YyQpnO+t+P/W8KL8h1RMDyr+52nS6g+Xa+4r0oLVsIiTc/R3s2dnfXVWHWLzIVlCdDyWMSkZ2xboHkRYaTGpoMeyh6a1qb9NowxtRdhzdMKbl4FFWSMoP4FJCU85k+bkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHkyZrJQ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l44pI/Wn"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e6674caa5so10753805e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Oct 2025 06:04:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHkyZrJQ"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e6674caa5so11026635e9.0
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Oct 2025 06:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760101444; x=1760706244; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760104260; x=1760709060; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GUep6nRJRENnGzYGA7OV1aJqhmKF9x6S8pmHSkpOTbI=;
-        b=l44pI/WnLyK6xvfT5YGbswVVnOFpoG8N07EtSssEpSuMEsomts9BqX3cd6I/NfmVQs
-         LcFTuNrOiCjDHNT2+oZCI/VgdZHUFrXoBR+Zl8FgkijHCef5UfUHeMFQllBK4xkqT9s+
-         m6i40hdKc9K5whxsAmgu0vRIvc7qnejs4GD5xkBuxArNEzaHf1XMlWDpeT+3MOCylYuO
-         iAx3CMLKHNF+GhS0mKmHnnzgAY8xQqWKF/GX3kwAVNDlS+nelIbwFYKergT9Cn+WtXpg
-         6GcxlaO0/rzvZLBnsF3pGAEbsYbhAmgD9//VlqM9PI6IEzTKMmOcMLlPm4sjXhQ+Dvk1
-         389Q==
+        bh=jZ1++ekTPtzW028TaYNKl4rUChmdflgkEaStZQX+AL4=;
+        b=VHkyZrJQpZI9qL/a39nCgLsrlKa2/HKE1rTKGEbA0brjf8kuFhkdC1KfwfFsLNqK35
+         KhEEsquGFk3tPKTBub0HBNNRn4qki4Lbbw3948Iv7ZH8worFZ5B+eS2gJu/h944aQeDt
+         0Gt/XwuP6Br9yeCQm+7mAHWu+ETuZR+oE3xZMaZ5Ub68/C4aHsT242OmDwnIeOtP3k5+
+         8jgiGzMevJa4IQBP+GrdBL6PZLfgujRbVGkJyHWr8LLzku2K0kCf20Nk5vNL2UYxwlBQ
+         +w/6mhv4to4UdLcDsTmCV0MfupR8Aga0XNlV5OMz12XAx83USECdOyXHuV7ETXlGTXYd
+         iM3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760101444; x=1760706244;
+        d=1e100.net; s=20230601; t=1760104260; x=1760709060;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GUep6nRJRENnGzYGA7OV1aJqhmKF9x6S8pmHSkpOTbI=;
-        b=prpH2BpwKfO+8uXvT7yjhUyjTWE5fgvzno+ipg3Y74cbKMynS99GaFODUJOn1fpDp5
-         c3iBb6Yf18JBfXX7FDvBbgCzHyx5Fo6oGHkSxMVj/WGpnhrFRlHPOIQW7cHeH0i7nLsJ
-         ARc55tq8z76J0XydYHSKUHe7WQZRHqGs8XC9VXMCIc4PHF6vSTkCSDvyWcr9nTt0ILWM
-         pyVbYnBojqjeQxdk9LCRmeVenASTc9csXTFXuD0b9ALRL2aMGq76uS9rVj1KyD+Ulyp6
-         lxNOm6GbEdLlN+le8dmSLTkF4UrTdD1i/y9sOkJflZ3yJxkcES1sXAg7+i5BRan8M4Ja
-         UOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGss9SPn4Bv9kRCM3ds9d3J50w/sMpjIbzgZf9xp5qneW+f1xfb8IX8b1oySEBaPuxBidlGKgQN6xr5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKcK/UwrgkzB1Ltm+Lb9BArozERwdZJ5BGjQfZ4EeSnV/e3l2J
-	lQ4lRqknq0oNz3xAPr34/6jxZSUEavORLaEjT+7LSufUZor7RjoAaNjA
-X-Gm-Gg: ASbGnctw/WLE3W7Pf2QhdyhJ8C2nWNMDDLJJaGu5BUk+U2Uk49oEzM8Nb7DP/xAGAi2
-	YkI7BnylqHcylI8tSEejxAiyCslL9FhWGlgWdfrFaxDuDfXp71phz0Usn24HJTzJvLhpR4VK449
-	ymnlUjVrM5mP/6m07INVM0p8F9hP8EodFgIVYKQHATjL81G6ue7slpJYZcTEZBeK18nGNzlEQLd
-	R5a0lvTw9Mvvin55PfII/kWaVDUfiuSJg6B8daCA3RnhErZl3R3F7K8osEIhKalUTqQRoyEVyTs
-	rnVwDvodPEvvgV0knzxtQRdkPoX+3ZEzA4R1AkJIarF0YMVHCGjTJ4d7FTJTxhXaMy/UgEKqTZv
-	wJha4t2/MTBB9N+m5qIKyZUHTCSakOWuaixLn7YPzUSZRz8qeNi7CDgTrwoDEUw0WJ9tRHrhU4D
-	LFFcwzKaQ8IKcphoKWOr88g6G+ZAl6+9BXqSUzpjE=
-X-Google-Smtp-Source: AGHT+IE/ARTh5Bc+/UOnITq0Iw6DNobv8+7UuMp4WV8aSSdfi9Oc51R8SOVJL7vW64ESh0Zm/tV/Gg==
-X-Received: by 2002:a05:600c:6011:b0:45c:b642:87a6 with SMTP id 5b1f17b1804b1-46fa28bbca1mr81018285e9.0.1760101443287;
-        Fri, 10 Oct 2025 06:04:03 -0700 (PDT)
+        bh=jZ1++ekTPtzW028TaYNKl4rUChmdflgkEaStZQX+AL4=;
+        b=qHhN2k2tfQzKaCX7MmzfUHg+M8NY2JfTosU2TlRigr5bxcY5d3l/j9nJbTB9yrvIyY
+         bW4xz14M5iLRLro+oKKQ1RClOQoZ7X2JReSQscBGi2RCQz5shy2B9bXA8+moMgPT0Du4
+         g+f56izt1IrhltReDAFDldq/QlCagOYRr7KI/xvFyRWKOyBcYBiVcTPvSN78WWLG6nu6
+         iZWK26OtnMCdQ/qz+GUvHTJKvpvdglqQPh9xggewD77TZoDyJsF0YaJ9YQxvY2xssfXf
+         sTUGv3QB2joAvDltBrga0xochNf1R4c1KpGss3cPCH1C8T5BSCklGky96GImSkYORRf7
+         0coA==
+X-Forwarded-Encrypted: i=1; AJvYcCV080BqBkKEVJRoOzeCCP7OROs/3YpRU94EPvj/6XepjIF/4zU9NFkWQzETQwy+EDCdn1A2dl6EHyepjg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo35wBnWPxYPN7GjmcqMvgii6Jq0fgiIvlWu/Z6hwTThxUjRIV
+	nNnNzNcPlPa+HymYz5qJRRs5ugAmalF9UeSUSAqTB6ys8E0F87xT+2D8
+X-Gm-Gg: ASbGncvNlzrSeFvyGJ4TxLkQyaw3Bgxa5q9AwcnrgJ0wdP8SBqnOMLMrZ1m6utJSUXD
+	PhXTpcIuUDkLq7zx8fcbDOurzADiQScHH2/sz7mTfrr7af46Fv2pQ7GkN53gkjWnLvbm+rNSaRW
+	M4UqXZEMdyxo4CtC2/7gvtx36P33LQo5W1vtzfp4ITRuq4KyGi4FdTo73ysKmrbRxIAGaSrp8Ln
+	+dLTOIY0fTFuQGpKPIU7qfVtPzb+kzQmmyFatQ4m0SUKnXIRsKzASuue1KcbK5rISN1Z5e+hw0R
+	VqFNeIDuugN94O8thSqVAskyFHmaJIPt9rv/4+TM2YbbznyGNNeG5X1ffT/ULTnoI3TD6PIDnwh
+	x+WpWIVhnbKfXTIabeD4blISBPRtOOdydCvc+egQ2abyRh50Nrax6J+fbyug7WGGF+hA28iUw4o
+	baZ23BG5OdzO48RB0UkNxzfIap7l5Fawht+fOdSAs=
+X-Google-Smtp-Source: AGHT+IEshn5BeHxphWH/iqJ/hWVLW9YiJEVo7JGmJqFmzIvH5+RSg739jHkexUzzwZyAmWc+E2cqig==
+X-Received: by 2002:a05:600c:83c6:b0:45d:dc10:a5ee with SMTP id 5b1f17b1804b1-46fa9ec7727mr82513905e9.15.1760104260021;
+        Fri, 10 Oct 2025 06:51:00 -0700 (PDT)
 Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb48a6069sm46763055e9.20.2025.10.10.06.04.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482ba41sm49385365e9.4.2025.10.10.06.50.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 06:04:01 -0700 (PDT)
-Date: Fri, 10 Oct 2025 15:03:59 +0200
+        Fri, 10 Oct 2025 06:50:58 -0700 (PDT)
+Date: Fri, 10 Oct 2025 15:50:57 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, jonathanh@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Prathamesh Shete <pshete@nvidia.com>, Nathan Hartman <nhartman@nvidia.com>
-Subject: Re: [PATCH v4 2/2] gpio: tegra186: Add support for Tegra410
-Message-ID: <jcfsvqesvpvip3gj5gu625khah3as64lohpevjco5v5mlpekss@tq7u2g4iewsi>
-References: <20251010101331.712553-1-kkartik@nvidia.com>
- <20251010101331.712553-2-kkartik@nvidia.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+Message-ID: <us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+ <86qzvcxi3j.wl-maz@kernel.org>
+ <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+ <86o6qgxayt.wl-maz@kernel.org>
+ <86ms60x7w7.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,68 +77,148 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y3y5hlym57ezrkmm"
+	protocol="application/pgp-signature"; boundary="672rw65c6imvnytk"
 Content-Disposition: inline
-In-Reply-To: <20251010101331.712553-2-kkartik@nvidia.com>
+In-Reply-To: <86ms60x7w7.wl-maz@kernel.org>
 
 
---y3y5hlym57ezrkmm
+--672rw65c6imvnytk
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/2] gpio: tegra186: Add support for Tegra410
+Subject: Re: IRQ thread timeouts and affinity
 MIME-Version: 1.0
 
-On Fri, Oct 10, 2025 at 03:43:31PM +0530, Kartik Rajput wrote:
-> From: Prathamesh Shete <pshete@nvidia.com>
+On Thu, Oct 09, 2025 at 07:11:20PM +0100, Marc Zyngier wrote:
+> On Thu, 09 Oct 2025 18:04:58 +0100,
+> Marc Zyngier <maz@kernel.org> wrote:
+> >=20
+> > On Thu, 09 Oct 2025 17:05:15 +0100,
+> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > >=20
+> > > [1  <text/plain; us-ascii (quoted-printable)>]
+> > > On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
+> > > > Hi Thierry,
+> > > >=20
+> > > > On Thu, 09 Oct 2025 12:38:55 +0100,
+> > > > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > > > >=20
+> > > > > Which brings me to the actual question: what is the right way to =
+solve
+> > > > > this? I had, maybe naively, assumed that the default CPU affinity=
+, which
+> > > > > includes all available CPUs, would be sufficient to have interrup=
+ts
+> > > > > balanced across all of those CPUs, but that doesn't appear to be =
+the
+> > > > > case. At least not with the GIC (v3) driver which selects one CPU=
+ (CPU 0
+> > > > > in this particular case) from the affinity mask to set the "effec=
+tive
+> > > > > affinity", which then dictates where IRQs are handled and where t=
+he
+> > > > > corresponding IRQ thread function is run.
+> > > >=20
+> > > > There's a (GIC-specific) answer to that, and that's the "1 of N"
+> > > > distribution model. The problem is that it is a massive headache (it
+> > > > completely breaks with per-CPU context).
+> > >=20
+> > > Heh, that started out as a very promising first paragraph but turned
+> > > ugly very quickly... =3D)
+> > >=20
+> > > > We could try and hack this in somehow, but defining a reasonable API
+> > > > is complicated. The set of CPUs receiving 1:N interrupts is a *glob=
+al*
+> > > > set, which means you cannot have one interrupt targeting CPUs 0-1, =
+and
+> > > > another targeting CPUs 2-3. You can only have a single set for all =
+1:N
+> > > > interrupts. How would you define such a set in a platform agnostic
+> > > > manner so that a random driver could use this? I definitely don't w=
+ant
+> > > > to have a GIC-specific API.
+> > >=20
+> > > I see. I've been thinking that maybe the only way to solve this is us=
+ing
+> > > some sort of policy. A very simple policy might be: use CPU 0 as the
+> > > "default" interrupt (much like it is now) because like you said there
+> > > might be assumptions built-in that break when the interrupt is schedu=
+led
+> > > elsewhere. But then let individual drivers opt into the 1:N set, which
+> > > would perhaps span all available CPUs but the first one. From an API =
+PoV
+> > > this would just be a flag that's passed to request_irq() (or one of i=
+ts
+> > > derivatives).
+> >=20
+> > The $10k question is how do you pick the victim CPUs? I can't see how
+> > to do it in a reasonable way unless we decide that interrupts that
+> > have an affinity matching cpu_possible_mask are 1:N. And then we're
+> > left with wondering what to do about CPU hotplug.
 >=20
-> Extend the existing Tegra186 GPIO controller driver with support for
-> the GPIO controller found on Tegra410. Tegra410 supports two GPIO
-> controllers referred to as 'COMPUTE' and 'SYSTEM'.
+> For fun and giggles, here's the result of a 5 minute hack. It enables
+> 1:N distribution on SPIs that have an "all cpus" affinity. It works on
+> one machine, doesn't on another -- no idea why yet. YMMV.
 >=20
-> Co-developed-by: Nathan Hartman <nhartman@nvidia.com>
-> Signed-off-by: Nathan Hartman <nhartman@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
-> v3 -> v4:
-> 	* Remove TEGRA410_COMPUTE_GPIO and TEGRA410_SYSTEM_GPIO macros
-> 	  as they are not used.
-> v2 -> v3:
->         * Add a generic TEGRA_GPIO_PORT macro and use it to define
->           TEGRA410_COMPUTE_GPIO_PORT and TEGRA410_SYSTEM_GPIO_PORT.
-> v1 -> v2:
->         * Move Tegra410 GPIO Ports definition to gpio-tegra186.c
->         * Rename Tegra410 Main GPIO as System GPIO.
->         * Add Compute GPIOs.
->         * Update ACPI IDs.
->         * Set instance ID as 0 for SYSTEM and COMPUTE GPIOs.
->         * Added Nathan as co-author for adding compute GPIO support
->           and renaming MAIN GPIOs as SYSTEM GPIOs.
-> ---
->  drivers/gpio/gpio-tegra186.c | 76 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 75 insertions(+), 1 deletion(-)
+> This is of course conditioned on your favourite HW supporting the 1:N
+> feature, and it is likely that things will catch fire quickly. It will
+> probably make your overall interrupt latency *worse*, but maybe less
+> variable. Let me know.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+You might be onto something here. Mind you, I've only done very limited
+testing, but the system does boot and the QSPI related timeouts are gone
+completely.
 
---y3y5hlym57ezrkmm
+Here's some snippets from the boot log that might be interesting:
+
+[    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
+[    0.000000] GIC: enabling workaround for GICv3: NVIDIA erratum T241-FABR=
+IC-4
+[    0.000000] GIC: enabling workaround for GICv3: ARM64 erratum 2941627
+[    0.000000] GICv3: 960 SPIs implemented
+[    0.000000] GICv3: 320 Extended SPIs implemented
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] GICv3: GICv3 features: 16 PPIs, 1:N
+[    0.000000] GICv3: CPU0: found redistributor 20000 region 0:0x0000000022=
+100000
+[...]
+[    0.000000] GICv3: using LPI property table @0x0000000101500000
+[    0.000000] GICv3: CPU0: using allocated LPI pending table @0x0000000101=
+540000
+[...]
+
+There's a bunch of ITS info that I dropped, as well as the same
+redistributor and LPI property table block for each of the 288 CPUs.
+
+/proc/interrupts is much too big to paste here, but it looks like the
+QSPI interrupts now end up evenly distributed across the first 72 CPUs
+in this system. Not sure why 72, but possibly because this is a 4 NUMA
+node system with 72 CPUs each, so the CPU mask might've been restricted
+to just the first node.
+
+On the face of it this looks quite promising. Where do we go from here?
+Any areas that we need to test more exhaustively to see if this breaks?
+
+Thierry
+
+--672rw65c6imvnytk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjpBD8ACgkQ3SOs138+
-s6F57w//URrSrOC1Q7LkrOnqIzjycY+wbsk0E8W+eaDuBt6RlP8R2EyPUquLTKRf
-NtBFtLaGjCwTcUpmOzD0gzlwY/Jjre3OeSZtLdkuwzcmeR8b/BCjz0h/1CXKroF7
-bB8RFJ+Y+i7czGr6J965DjYGw0Ou/rHBQuoi1Ah8AHLGGk1FqgARILV2O/EE+t97
-5gzuqqSkNAeacMb2tZzvObGVK6VXUNtaUBSkZU7N+tbOcuzxq85JYN12vHr0VX/b
-KoHOLsXFI6J0yECazzk333cxJq6GVJn3luT5L/QDQgqYglMuDX7sPs2PvS0cXyVp
-51zp6npK1fNVbB5D0SxT7VOryPmU39H48vnFWkLF7v1Ty/YS+f7jpBUJX+mYVc09
-hVXChW8UdvQ8EKeEALrzhJ0iVRGeamYoaAyaOigbgcN9NI6mX08QeD6VmmY7vncF
-wk6cxt0d9WRXOlOdTbhpWpEXocy/y8ulEV5nxI6xQhqatRIh+BEmNIc3G+cCjJIy
-XTa7p+u6JA54DBU5JHJVILDReNb395cY4+yoVDbCxBqTuypzuV4ovLII6ZYNr5GY
-3jzlsU27Q3cljqkbcHEbpg2GmkK/cu9u9AA8N6vb8ggzLdwUOS0JAPKVKEw2DaRk
-oL4mi+DfX587Tgv5NUdrPNF8vrQM4cpwyAsbIKbuwbwz0xIShec=
-=ZcE3
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjpDz0ACgkQ3SOs138+
+s6FCdg/+LsBNRHyYhyktvtT7AXV0J0dQ7HHiuJ3QqP0h/8/55fq+sj47mXE8oeHe
+oa8Or4UHyaXbKs/h+FyXynELeYObTsrXlu6Bt2tmAzxT+DGOJ2uVw6J7fVpKasN0
+3QSh9o4eTbt8h/bHd4SwvHF3Hc82VMz9KUJyrImVThTil1NI0FEy2OHHzXhc/3ER
+dg5vA+yh6koult84wixmq3C4Fb+3DfgM/zOzB0wTc5Mfe2TwZ48b5++k6Tvj7/hF
+1ThnZq8mxZK6s71ZSVerVXCwAfyF6ehg/jaBCX8fvnWzDIcb3uc9fA1+F5rJ3aTv
+ltPSdj3DykrMHEr3vLvWnQp2qkp+zh7Fp8rv3tg+PaeuDsrfFbxMfTLtBms39QOn
+GBt4I33m7jF3ttit7D8R/oXY1aB/ZWhkigGPvw2MA9hICi16MhUXGV8191e9chtm
+pEaSBKmWEK9vTf/Gf6OvhBjhuuILizuDGTpOuidGmk8wKxTmr0WB/xL5idn/NJbl
+uzw1oz2iL5koIPgMcVjYv8rxKITW/QZxehQ3rUFaTYyeoUoykECb9rJiAmgDL1vo
+4MK3cKMeFZOCgbD4M9kOgZJE1zNRKHKp3G7OTL3NFlgYjZl3wI+Y45+hCWV3v2FJ
+Nv99rdvczPzi9SyLdE3sr81gQP0qYyW9c5UofSEdoQO7oFN7Sdw=
+=b/dB
 -----END PGP SIGNATURE-----
 
---y3y5hlym57ezrkmm--
+--672rw65c6imvnytk--
