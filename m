@@ -1,70 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760F72FFFA3;
-	Fri, 10 Oct 2025 18:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A91DE4CD;
+	Sat, 11 Oct 2025 10:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760121165; cv=none; b=BsYtstiNHkI68fU9Sk7i3zdx2j6aWWESSCcBwlAYv7JiPN6mwmxqtlKO+2/jmQmqd8ZxkCKCwIhLnP+JpMMKaZAFTiHiJZgvL1PjN8N48oni9/Zbf9oPr+dAaXLA5ruZ5UaywWVg0+36woxBwUHhDgwepGk7f4dfLhPe/BbGX2U=
+	t=1760176821; cv=none; b=itGDQDfws2J4GnCp/fbQ3cAxQHpCJnfokR9gLfyz0sESxMXOOz5T5ZqfKyzpaA27KhKYVekuMLBtM/nD5s48/bRjtvMVH37kAUNqxQYHAGkOtCdeYvCNhChLNqd8UAhV7qwX0OsVRhQ5iCFSvv2q7NeRv1uXbCnWqxCROKCtUpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760121165; c=relaxed/simple;
-	bh=LpXP+Phqn+cdhbm8Evf3IC0jNAyxZ576hkSjJWxjMQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTUOEYah648yAGwK6mLwOzi3dXdSp1LVNLRQFvoe11nBf5b3N3+4BteYrdI8uEDhoHyeTi4noytWBdcLUVGVaYBbtsllpW9wGGlawtFFGCVP9Tw+TFcBAIuG9oeMHl+QxdBxiTpBMg2oknX5OB03uUg7S2zriby6pGn9VKI8Lp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ls+4Sxfg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760176821; c=relaxed/simple;
+	bh=7yk3MyybYlBVgFNRCla3ShEZ9hQTXp85epGyYGmllnE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OnxAknfhfjZD25kYW/Sx8KV15QnYVyH/xt7nFu6oxqPx7cJ5HG8McKA1yECKrKmsAR5mfEEixMV4VtpeID/pP8G04qIUu1BsCRtR6LxtsY5ULDQ7FOO9VV0ElVrY5YCgKIllQVprMKSJtUF/Ui8up7XTrkfwwvrtNpg6bbcEWPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipWja8p6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ls+4Sxfg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9DE2C4CEF1;
-	Fri, 10 Oct 2025 18:32:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipWja8p6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07757C4CEF4;
+	Sat, 11 Oct 2025 10:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760121165;
-	bh=LpXP+Phqn+cdhbm8Evf3IC0jNAyxZ576hkSjJWxjMQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ls+4Sxfg13PEDbvr5g3nMNjsm2FimxBved8f8bhplOJ+s/k6U/CKP4LJvRrsDQfm3
-	 gsJrT6TWk8bT56TogVCicKSiR9Ya18/DtPpoGEjwgTIkk44e2FB+ENCw5qNNL+v9vd
-	 gqAZ7YxIjs+4AoNGAFpFN9RA5l6KTQXMz3HIZJeBSp9Z0aHJ+tC9RaSp9/vebsldiu
-	 XsR6AGmkFaE+gQxb6gRMdyi419y/WjVhpkWH7c/dnCxN3xnsAMxDbCmPq6tIm/THae
-	 i4WggD0yUFCeqDasxKqsuHrWnP2Ss1SzR/gfKvV1kiT7ZJQCvNxI3sc0pmpfvzOf22
-	 4TF/POphD2xAA==
-Date: Fri, 10 Oct 2025 13:32:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
+	s=k20201202; t=1760176821;
+	bh=7yk3MyybYlBVgFNRCla3ShEZ9hQTXp85epGyYGmllnE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ipWja8p6NiPSUbYJhlW2Sa3QetWXS8an+AnAX6jaIAiL6o8yPrCeARTxCT73z7Ill
+	 8FBYVVlvvp3/1ja1SR1A1BmoeevXImnndsTQie6tS15RU3qgGrYt9Bm7qqrtBKw2Mo
+	 DAZxK3NbpaLI/zdDVmatyexWWCozkr/ZzzHaE4lhflhkkeulsLgVfOjRnQN5I1mXvF
+	 SptpvrMb1YvBj56OxmBKxXjMZd00DX1/8l44TqwmCpGPvF9ltz32/LB1jfnXDIQfJD
+	 geopXXVCzxhBd6BWlfknTWZlqnUfC5DJ/6sTybJcSOruLlbdaqnOsKD5pUyXAgEUud
+	 hu7d1704Oby6g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v7WOg-0000000D7RR-38KY;
+	Sat, 11 Oct 2025 10:00:18 +0000
+Date: Sat, 11 Oct 2025 11:00:11 +0100
+Message-ID: <87sefpoj10.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sheetal <sheetal@nvidia.com>
-Subject: Re: [PATCH v3] dt-bindings: power: Add power domain IDs for Tegra264
-Message-ID: <176012116255.674236.9766301601538041646.robh@kernel.org>
-References: <20251009161039.1766845-1-thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+In-Reply-To: <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+	<86qzvcxi3j.wl-maz@kernel.org>
+	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+	<86o6qgxayt.wl-maz@kernel.org>
+	<86ms60x7w7.wl-maz@kernel.org>
+	<us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+	<86bjmeyh5m.wl-maz@kernel.org>
+	<graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009161039.1766845-1-thierry.reding@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Fri, 10 Oct 2025 16:03:01 +0100,
+Thierry Reding <thierry.reding@gmail.com> wrote:
+> 
+> On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
+> > 
+> > CPU hotplug is the main area of concern, and I'm pretty sure it breaks
+> > this distribution mechanism (or the other way around). Another thing
+> > is that if firmware isn't aware that 1:N interrupts can (or should)
+> > wake-up a CPU from sleep, bad things will happen. Given that nobody
+> > uses 1:N, you can bet that any bit of privileged SW (TF-A,
+> > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
+> > around this).
+> 
+> Okay, I can find out if CPU hotplug is a common use-case on these
+> devices, or if we can run some tests with that.
 
-On Thu, 09 Oct 2025 18:10:39 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Add the set of power domain IDs available on the Tegra264 SoC so that
-> they can be used in device tree files.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v3:
-> - rename to match the nvidia,tegra264-bpmp compatible string
-> 
-> Changes in v2:
-> - remove _MAX definition since it isn't needed
-> 
->  .../dt-bindings/power/nvidia,tegra264-bpmp.h  | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 include/dt-bindings/power/nvidia,tegra264-bpmp.h
-> 
+It's not so much whether CPU hotplug is of any use to your particular
+box, but whether this has any detrimental impact on *any* machine
+doing CPU hotplug.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+To be clear, this stuff doesn't go in if something breaks, no matter
+how small.
 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
