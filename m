@@ -1,158 +1,128 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2730F26E708
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Oct 2025 16:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A182741DF
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Oct 2025 16:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760372715; cv=none; b=EM2PKICj1eJix0zmehvJSJMR8eNaIkS1ggNaMncfUlDEFmiGS0rtxgF4cude+AGcmEnTMiUyxnWRgmAjp5oSfWeY5fgbohhegLyfkTTt9006Mak4vmkmke4Jmici+WFUqusMdwmfMkRoLzKFFSw9nqGEzMG/C5/PVJiBqGWDCk8=
+	t=1760374697; cv=none; b=iI0RNpqjMQgoCqZBlC8Qv3TDcr6mNIorYCdfHhjyrxt3kqnuPygXeXx+Vkpbg/Fw/aM0gIChBwEQSEF5iAzzexjhve2xr8f81Y8olXfKoZS1TrCzjReBi6u1/jQ6Lr6bMHaOxSbOpkSWQ5hplVyOZYNRe7BMMvGOjrkZNLhlL3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760372715; c=relaxed/simple;
-	bh=Cy1uXxZB1SYXQYaLvBKqrPBCBk/c+HAQzdXcSoZ1C9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WFo0htl32IwU5Y0NuQBG7xQCMIIyfY7KCmjesQH3U/3/5gbZqoc32JurjP6+Ri+I56cLzCAH4X6yCzTl43EDQoVeJ+eRkPG196RoZ0fi+UPkBsxZxxukO813eQ1U46ytuZrwmB0Wd/PfUhcIdO0jdTFNyuAVynCR/PsztSp0+uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oCUOSAm8; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1760374697; c=relaxed/simple;
+	bh=aVbLx3zzuiItcIq6jkvMD/Zgek8sd/MbjhMghYBE0P4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2FtNx0104rat7IkwcoINcWwPnBfirJ9yoPyhQdgSZHuerE3qF1lkQxmkNjTTfET0GRPPxoT/vHuEZ3vS0Sb1N0lrwrL0rRgGujTkq0s2mm0pheETwgttjfqUsY/WGs02SPXvhhk5wze6w3cvc4sbIkuxvJkQ4QOoLp2WMZqEqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M74mFQ9H; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oCUOSAm8"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 8E0EC4E4106C;
-	Mon, 13 Oct 2025 16:25:11 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 60DDA6067B;
-	Mon, 13 Oct 2025 16:25:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 432C3102F2240;
-	Mon, 13 Oct 2025 18:25:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760372709; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=EYvKa1NV3blrMZOG3M4T8TIRo5Q0mosa2RgW0yGH+VY=;
-	b=oCUOSAm8u75+NIooX1Iu/utEPRwF6wSEVsxC2e0orTivV67rSE/EUC+5tgmpm5Ge1G87TX
-	OPWXNK1AU42EfctE/Wk1KxoK2VZ5mZUuLxAH8cIQaowSmFwQIF1j6F11IVvOiA7KhisMhn
-	0c/nR9aeBNArW6i3huyJKvjcxqIZ+rtkn6E4T9bvDIeLEiJXORxK2C/cZ6ylWJLf9EVeCG
-	QbYrjbMehUQRdkjqBRv0drmS2sTBxpgU5N1xcQ5BKN28OB4v3Htu71Uxwp3ZoMUkLJkTEC
-	EtUGmOWANdY7UgjMA4fLDhuQ3Be5whmv8MeZU8dyEbiAoG3E+DKsNuNhfeBvxg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Mon, 13 Oct 2025 18:24:23 +0200
-Subject: [PATCH 2/2] drm_atomic_private_obj_fini: protect private_obj
- removal from list
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M74mFQ9H"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso5077683e87.0
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Oct 2025 09:58:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760374693; x=1760979493; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yugt4TFzKOWVtrp9PcwweappLEqjwwN8AAVbBJj3x48=;
+        b=M74mFQ9HvKukuAyHkZgSoarVInq8g6SVHkIHPYSCFvcdFOtBbcbcTV9eKbDReyG/pp
+         KdIx6qukevvbll49LnzS9pFeCJSWi+xCmLRCDcwb9prvjP4bSnd4UDwzB5srbExk1lxL
+         x6Ink1cLNayjEKBYzdYAvrdxEESaNMvkmRQgDFN5GY4B1rf+KiaiI7A+kHVonyFWCVez
+         +Fpk4WA7G+wwikLP4z49RnQZhQXIcTlo/oQWxlwL3mrXM/6O7MIKLIo5tdZ51Y6vk48v
+         md0bC4aHTnBmdFu6yKm5I9WdA3qqt9bcLHJCcFXERn3shL8P7hWNvhx1xuE8BsHxIom4
+         z1mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760374693; x=1760979493;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yugt4TFzKOWVtrp9PcwweappLEqjwwN8AAVbBJj3x48=;
+        b=b8ol1GgwLN7kQWa16OabYZIB+hJpNZR7rGLiaBDiq5TU4jHLILajAGYqmQNwAhEE+z
+         De+NZdj97+0KgnOx04/NtIm2Vtfhtvr/3jEq6vmNtk7Cnf3izzl0vGXKvi0WJ3qq23DM
+         fgV14ch8JX5vi/8lLPI57c382MxIdjQ1nN10fLQm30iwyNUweUyMkB2Kv6b+8LQ6Olqi
+         uCxjteQ2oyRqq/KcS0/Uab3p20rrTTCjseEKK8CebXyeQ437Luhhou0UvAlRUkU9URST
+         UjU2ZuHHPXxIWZ1+1GKCjmqWegft12HW+iAXO5sJtGMWybU65Nc/+i4c+CmxlzFS+4+Q
+         ouOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkebH4Jl6Igm7fbGzckF/18efpT4IVTZQgeUld4zvto8lzieZEItHwji5K/B2VyXjTnOnCQ4MeSVFxuw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6aGkTFVuJ79is/Xq9z7RbZnGI6E3dhYoM0YeHkJv6V/OR6RCW
+	4GcBi6TKFpUpTe4JD8aj1IrvRP01YGcJ3SUVqdyMe/JdIvgn4fTGblVtuRbvVH5luJY=
+X-Gm-Gg: ASbGncvkjn78ohdNMBYbcrzhJ33eSBoAQG1iS8jjPF4NRlhw3krB7lRvT2zq6BYwbhr
+	8+/uOA/vic20/vILDQ5E2RQDsAoyljxnK83gsauoLCHkDmoBynet1Aj+9Ea6SotRRJSzMDTj5EL
+	UQGPDSGelxDlqaykCv/8rfYWgctlOiPQ462h2T/PnsKg9KPuwzZHlfjxPtxBdfK44j6Oqt1Bquu
+	ttF1ER3PBLnrrNPh4VWx91FpuRETIXZZPVcfcNinqHInAEfKWT/6vrFttNSjsXAChU6e7o2ZXHA
+	bYtxzjYy0pdEqdDIoFlbqSYP47coBBJIrcYCZCf1FjZNRdI3E1XEeSvFCTTmihhmPDvUca/IZnG
+	ys5SZC+IZHwFaAvr3nnPm4jAId3N5k4/kbMWbOrTYf0W4y9ofKiHwxFeS12CHM9yKY/Xo9dXJbg
+	EvdfVLUva6faRd+flw
+X-Google-Smtp-Source: AGHT+IEh5FEGdLJk3FY3nXjUAjtDIVpFAFgTlMg4hJ6GlsiA7ZQHpqXBQCJHQ9JSVuB42SxmUqwjGg==
+X-Received: by 2002:a05:6512:39c3:b0:577:494e:ca63 with SMTP id 2adb3069b0e04-5906d896d59mr5638965e87.12.1760374692389;
+        Mon, 13 Oct 2025 09:58:12 -0700 (PDT)
+Received: from [192.168.2.19] (109-252-159-193.dynamic.spd-mgts.ru. [109.252.159.193])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-5909413ec6csm3376197e87.48.2025.10.13.09.58.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 09:58:11 -0700 (PDT)
+Message-ID: <590984a2-633d-4e68-9601-f379bdc2b8fd@gmail.com>
+Date: Mon, 13 Oct 2025 19:58:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-drm-bridge-atomic-vs-remove-private_obj-v1-2-1fc2e58102e0@bootlin.com>
-References: <20251013-drm-bridge-atomic-vs-remove-private_obj-v1-0-1fc2e58102e0@bootlin.com>
-In-Reply-To: <20251013-drm-bridge-atomic-vs-remove-private_obj-v1-0-1fc2e58102e0@bootlin.com>
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <siqueira@igalia.com>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Liviu Dudau <liviu.dudau@arm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] PM / devfreq: tegra30: use min to simplify
+ actmon_cpu_to_emc_rate
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251013131825.31400-2-thorsten.blum@linux.dev>
+From: Dmitry Osipenko <digetx@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20251013131825.31400-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Currently drm_bridge_detach() expects that the bridge private_obj is not
-locked by a drm_modeset_acquire_ctx, and it warns in case that happens:
+13.10.2025 16:18, Thorsten Blum пишет:
+> Use min() to improve the readability of actmon_cpu_to_emc_rate() and
+> remove any unnecessary curly braces.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/devfreq/tegra30-devfreq.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 4a4f0106ab9d..2c9813bd697e 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/irq.h>
+> +#include <linux/minmax.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -326,14 +327,9 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
+>  	unsigned int i;
+>  	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
+> -		if (cpu_freq >= ratio->cpu_freq) {
+> -			if (ratio->emc_freq >= tegra->max_freq)
+> -				return tegra->max_freq;
+> -			else
+> -				return ratio->emc_freq;
+> -		}
+> -	}
+> +	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++)
+> +		if (cpu_freq >= ratio->cpu_freq)
+> +			return min(ratio->emc_freq, tegra->max_freq);
+>  
+>  	return 0;
+>  }
 
-  drm_bridge_detach()
-  -> drm_atomic_private_obj_fini()
-     -> list_del(&obj->head) // removes priv_obj from
-                             // dev->mode_config.privobj_list
-     -> obj->funcs->atomic_destroy_state()
-     -> drm_modeset_lock_fini(&obj->lock)
-        -> WARN_ON(!list_empty(&lock->head)) // warn if priv_obj->lock
-	                                     // is still in ctx->locked
-
-The expectation is not respected when adding bridge hot-plugging. In such
-case the warning triggers if the bridge is being removed concurrently to an
-operation that locks the private object using a drm_modeset_acquire_ctx,
-such as in this execution scenario:
-
-  CPU0:
-  drm_mode_obj_get_properties_ioctl() // userspace request
-  -> DRM_MODESET_LOCK_ALL_BEGIN()
-  .  -> drm_for_each_privobj() // loop on dev->mode_config.privobj_list
-  .     - lock the privobj mutex
-  .	- add priv_obj->lock to ctx->locked
-  .	  (list of locks to be released)
-  .
-  .                         CPU1:
-  .                         drm_bridge_detach() // bridge hot-unplug
-  .		            -> WARN triggers!
-  .
-  -> DRM_MODESET_LOCK_ALL_END()
-     -> for each lock in ctx->locked
-	- remove priv_obj->lock from ctx->locked
-        - unlock the privobj mutex
-
-Fix this by using DRM_MODESET_LOCK_ALL_BEGIN/END() around the list removal
-in drm_atomic_private_obj_fini(). This ensures that exactly one of these
-happens:
-
- * the concurrent code (e.g. drm_mode_obj_get_properties_ioctl()) acquires
-   all the locks first, so it can execute fully and release the
-   privobj->lock before drm_atomic_private_obj_fini() calls list_del() and
-   before the WARN_ON()
- * drm_atomic_private_obj_fini() acquires all the locks first, so it
-   removes its privobj->lock from the dev->mode_config.privobj_list; the
-   concurrent code will run afterwards and not acquire that lock because it
-   is not present anymore
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/drm_atomic.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 7910dacb269c03a0f3e1785bb864d228a693a1aa..aa13389a8efe06b0f67cdce4699d403906b282be 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -810,7 +810,13 @@ void
- drm_atomic_private_obj_fini(struct drm_device *dev,
- 			    struct drm_private_obj *obj)
- {
-+	struct drm_modeset_acquire_ctx ctx;
-+	int ret = 0;
-+
-+	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, ret);
- 	list_del(&obj->head);
-+	DRM_MODESET_LOCK_ALL_END(dev, ctx, ret);
-+
- 	obj->funcs->atomic_destroy_state(obj, obj->state);
- 	drm_modeset_lock_fini(&obj->lock);
- }
-
--- 
-2.51.0
-
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
