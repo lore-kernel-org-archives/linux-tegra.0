@@ -1,250 +1,182 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010029.outbound.protection.outlook.com [52.101.61.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E920D2F56;
-	Tue, 14 Oct 2025 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436937; cv=fail; b=RIe1NDb3vrZzMuS2zrucGfnJmlXVxepgD0k5M1BjpdB0eS/FzadAWg42fMdrkFAsmeQROH4mHYK3B6weKkIKyYnKdsnWEo/rZLQ+wcRQOSnsClO/f/WIRW7xj7OcpH6xraAFAMUojgTnv62E99iElWx5FRbVp1mzo6tsvGtRbl4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436937; c=relaxed/simple;
-	bh=V9FMSf5sdSxrQJYNLc4FKBwaETbs8xZWEn1VqS+Cs00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=r+U0Nngd45QJLw5Q0ZeqmWGTfcWFeXscj+9Mm60hs2ENkGDHnn2gSlINvrdjryN3fuhoXxYZ52j7RuJweago3tCmH+LXsxhl2LMatbFm1tWt5Dz0K8OrvBRCL+3ZswugWka+WFEzOz8Pdad/5wIHr/D4DvCKDL/c4sMKKdCW+Ws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DlIaN3lm; arc=fail smtp.client-ip=52.101.61.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265B22FAC14
+	for <linux-tegra@vger.kernel.org>; Tue, 14 Oct 2025 10:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760439025; cv=none; b=hRz/OptpYBxdS+0CzuB/RWc05cmtWvWrc66K2/Ej0cFoI3Hr4XXrUCxjIB1mTfwZXQ871vClOPlmJDUaPZfXQ3ygC7LzkR8dqHJbFr5e3LH3aLYF+thWKrocr6yO1UjMCMRoymDZhT2zT//N6QxA+GV+Y6GIV2hc9RtBntF+g9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760439025; c=relaxed/simple;
+	bh=OsAT+//A7xxrcqc3BwTPqIQEwFp06t38UryCM1+xuf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZh1cpLrJeiYCkD1RQEODjZXIpBoipxen7VB+yM1sjqUq9UBgBWklVvR6YBUHZabHlmVClgPs7+xOCrZTxX0Dicsp4c9CI70Pu9119iJdfnH0Ypmo1ABu3CFmXA8Cyn8YAqO0yh3nEqIvSifUF/2U80ydE4d4CbfklNaTrAmQe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP2GU09j; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DlIaN3lm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kInsgDlaFDiZVYoSGR+4ba1oBUoyKQt7ETRsjEZtW874tlgJs1+tVyiF7MiXqouHqeu6dLZQlQQrsWI62chW8jJctFlZvDggvUFsS0Np39vdHCEXE9Gm9zYAnqr7vMQIei/MHobgr0NRFjZ1KTP5W9QvTCA05IxbhSy3kgkGXQrKgzI5KkIoGa+qqfESifqULNKeQHYhakjHWC8Vg6O2KP0ttarZbOzO8J19W3c4UxJh6TC1j3IoRu0colG0C2OKxe8pbMASFQ1GH5z8MFbpXR3mJLztRdbR6RMs7s43zIBVKC50E1p2xwXB5bLfCbL7g01aQ5UDCNB9MZyWYM6wdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BaZM3ZCv2k3rT2U28N3om/a3XnvZlvfWLffh5EMsh4g=;
- b=M5ej2qe4VIQIBnWL4V0bNrsjK7awFj1A5iCDvT2T2F5mthghlHo6Uxayt4RbtLgvECQ0hA6kCyav7aT+Xtfz9LEo2MQgCWzw8u8SCu5KgdpaTn80GM6g/JsTZ2ayrikVL26kIf7RjXTZ2p4CJ/Zj06Q4HN8IeapbcPdDDrL9qNDLhbVJYqNg7CKlFU3503t1iMtrrr6ziLWjGb0HR4Rm/l26nY97IsNFdHo5fzCd10ghN2sl8aZ2ayAPITyeGS04zvBsld1USvkPpxibIp8KaLY1i1SxD/a9xxawUt+vHy13mlMmstoekSjo5xR7OaMSE0UWBDKuKIrz00tTHMBeGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BaZM3ZCv2k3rT2U28N3om/a3XnvZlvfWLffh5EMsh4g=;
- b=DlIaN3lmwtkFvJBvi1gDHmua8Jlt1Yr4mhagYrw3Cmkok/fYJSP6YZZjl+c5svC70jdyN1WOjvaBWw1VchoBWDMicplQRjl+ywbZ5TMSo7JM5emSWbB9o5IH88F8rnonnF/zOLj2visCHn4Gn25cWV4PBESU0MYX/r9nYVYL4n0nLvKqfbPLaARqz8VxaFQ5LsPfxovcCRnojfrl8pb7rcm1ZjspqJCA09M/9KUJcyFSqo/U32OeNLds6aOzMEl8UYNPl7sFtjikWQJGIKMsdaR7Iva4+ksYRP9xE9vcWL5prHSKWWGIP9U6UyDvrNRIEwUnhCq6OkU42hIBTczIog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8317.namprd12.prod.outlook.com (2603:10b6:8:f4::10) by
- MW4PR12MB6753.namprd12.prod.outlook.com (2603:10b6:303:1ec::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 10:15:32 +0000
-Received: from DS0PR12MB8317.namprd12.prod.outlook.com
- ([fe80::8ca4:5dd7:f617:f15c]) by DS0PR12MB8317.namprd12.prod.outlook.com
- ([fe80::8ca4:5dd7:f617:f15c%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 10:15:32 +0000
-Date: Tue, 14 Oct 2025 12:15:25 +0200
-From: Thierry Reding <treding@nvidia.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, 
-	kyarlagadda@nvidia.com, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] spi: tegra210-quad: Fix timeout handling
-Message-ID: <dhbvszhpgmgxqdatbbou3z2mj5bu7vnbr7ko4ufunlycpudsml@6xnz57kowygw>
-X-NVConfidentiality: public
-References: <20251010152001.2399799-1-va@nvidia.com>
- <20251010152001.2399799-2-va@nvidia.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b22zu7prl4mp6eej"
-Content-Disposition: inline
-In-Reply-To: <20251010152001.2399799-2-va@nvidia.com>
-X-ClientProxiedBy: FR4P281CA0147.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b8::7) To DS0PR12MB8317.namprd12.prod.outlook.com
- (2603:10b6:8:f4::10)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP2GU09j"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so33414875e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Oct 2025 03:50:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760439022; x=1761043822; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9oi5CZpumOfRO5UxrA3d1k5hJRdlXZM8E6FYaZHFNcA=;
+        b=SP2GU09jaGj+QUgC0bNK6tbdQSQwOqXxJdTDq/Omm1Q3feuAsVold8AwjWLUri3eTq
+         h3bGtZkpJrBi+1LSg+tUfG/Qy6Bo2r+e229A9ti1iq74NzawjkbRtGv4NDiMumbJwcEG
+         7iKrfOtlk2an8TgL7jJZ4Jo+/IOdzjkatmH0fVLFgm+vlSIZc7eKB9qiz1AUXeEZu5wI
+         rlSyuJuVK4PsZFTyEeN4aN2mf7EDSQaJR0bg7pUtY1Oo9/rWSVRW3tUqCOLM0qpcSJj1
+         UTXhhMXXscGegWB6N9C+62kh2TS3oO6aCDWe+B/2uYhaaPr43H2P8bGbyOFVJzIjgztJ
+         zhhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760439022; x=1761043822;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9oi5CZpumOfRO5UxrA3d1k5hJRdlXZM8E6FYaZHFNcA=;
+        b=mzkwY4TprOrUDzaJcj51+/BbBNotNkrHyDK1APIsVc6kOSMpGvXtZAwM/VA+jEbu2l
+         60h8Rr3bZL49pxDh426RV3ACk3pPqcaus+DF23qJBriapa+QXofzyUsGoqfFzDJuGqtC
+         4EVyoD2sibMORu7rjQ88Fs4nIINtiSTxZF/9uMDdDycoKhIgcPdc65NLSZWHg0nW3o3A
+         FgDHbNcGpU4zeFiZtGIwrc38uQ07ShfNkMEtF8OU89oxXV2RMiLwqt+7EhPKJX3/d3tc
+         Te6VZ0Du2Vknj5zyyo24bBGcPovUpBEx0sJaGK045sFH3J0AByI6nlYfUAWaRAMYXbhV
+         Z6og==
+X-Forwarded-Encrypted: i=1; AJvYcCX7C6tOktXWNXt/C3fFUO80VTQ2vFBhmyEfXjgIBNecRgf30+QwG96Rb0w1uaa1QCaCUD3b7FYTdnBliQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSWlPlbRCIpaU/oWlzRiT8nTSujqMDrXPXnS05nIopRQdt5Frc
+	Hyr634CE90ToDjr/U3v2qwrALpks9kOCP04iP+uboiK9XZZXB6kRfaan
+X-Gm-Gg: ASbGncsLdPSZ72jhcEYirdIH9NOSyuP4uQkJPqPqtW2kHhGpK1uMp8BF3FMRF49AI77
+	GnRIlQDJR+RBzEvz/vgAF6UVvHTdhlGo1uVZr0ESOdLkzrMAZJKk9hyTDpkIHPR03uYPgTtL2ue
+	bFlyBd2S+QArKjJctZ6ei32dckRsdZbfqfbQh7K1sukzJCdKsGqxsKYyiPYgtyhNieHDs61UPV4
+	LtRAmj6nfEbYgeRITMFDe76VXHvT24RCEOh4mwBgxzx7U45+o9DYMToiMUDZ5jQGBeIPUteM3p7
+	ondNGUHggQAJTyqqOaEgASOjRxWQ8jzEnPq/BV9xVVILMaIQrYRvVHjQcv80pko4g0cZzeGjGfn
+	A3Jw8r+Apw7h/hSNLQFhVvmFX9nLq/zcc8pMW2R4HDtTU8mMA1Ye6F8+BEWjxsr/Ysy8ImaOfWi
+	QqMPt9HRaZzdr/MgOVNh2oKt3PVgRD4RRgwjKkXBI=
+X-Google-Smtp-Source: AGHT+IHvthsh5d4gJ2f4pjbU+SaIy+7Qg5DdE7atHEiRKh31T49BVgFbO+XVGKpTwhTDtvlqb5L5oQ==
+X-Received: by 2002:a05:600c:4e01:b0:46e:37fe:f0e6 with SMTP id 5b1f17b1804b1-46fa9b090d0mr198199315e9.30.1760439021936;
+        Tue, 14 Oct 2025 03:50:21 -0700 (PDT)
+Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49be017sm230015965e9.13.2025.10.14.03.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:50:20 -0700 (PDT)
+Date: Tue, 14 Oct 2025 12:50:18 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+Message-ID: <6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+ <86qzvcxi3j.wl-maz@kernel.org>
+ <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+ <86o6qgxayt.wl-maz@kernel.org>
+ <86ms60x7w7.wl-maz@kernel.org>
+ <us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+ <86bjmeyh5m.wl-maz@kernel.org>
+ <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+ <87sefpoj10.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8317:EE_|MW4PR12MB6753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8fcb6f05-ed2a-42a4-a8f6-08de0b0a9b48
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9IGOHK/BVPddTO9OGX/bKUtFGp5cksp0m9lZPC6CzHHL1+/GU7inwth9iHIi?=
- =?us-ascii?Q?n3eudwr6i3wqKf0kiX9FRNcXd/WXpKSE8EJ2VKWLvpb3TIlPQPcpLrKoSjZI?=
- =?us-ascii?Q?lHFoEvHJov0ger/9fEnVfVZXgqDCx+1l4t7nPC7k2MK7ht4Tl/IgsC5SfUsA?=
- =?us-ascii?Q?ndpkkKTK+NN+0KsLdMR46e9vWRRVAuZRevs7QUbmJA343aPe2VYo7kKWNdcn?=
- =?us-ascii?Q?VwCt4skGAwkNXjxic1A1O6oyy5R5wSGeAfkg+rJTQa88te1gsyMKzqpoVM1i?=
- =?us-ascii?Q?9tb6MmjX7vrRwxc6tSE2WfaRpMjUQv6yF1lS61SHxCOHCwqUNg5iUuHz+Q49?=
- =?us-ascii?Q?gdyYVU1ZS6kyq7QQnq8A57EleCz4c2JVL7F1G8PDjMUk5LKWpzBuzn5jNqZ3?=
- =?us-ascii?Q?j5bt3j/82txmyHAxh9Su6Cx058jFXxPBkjwEl2gV3JeXQPlp9AJhPCm9oRZk?=
- =?us-ascii?Q?Sjsh7WZAAmeD13kkPkBwfMPoNngTxMKdOpO7QmhYVuro15rOqFbI+Cdkpq1A?=
- =?us-ascii?Q?Wjq6Geb+Skln6ABUSLTyIRFSnVZHt+efo3DI5KnENOcBwWSuPAeSGHlwGXGG?=
- =?us-ascii?Q?tUyP+VyAdtOlRGgw1m+ALunuzZwKcp/urYR5aoST8nluHoi2wQqQtpAv2nr8?=
- =?us-ascii?Q?HS5bOajiQovvH3A4keJ7nLGpMdesDG1rZDF63mLk2C2XoBtXktWIjiyl/JlA?=
- =?us-ascii?Q?N9atQx8mrXTRX8wOAnloAXvprkZiCoyle7RZLijh6Xgr5EYP+H1RnmD74/41?=
- =?us-ascii?Q?2OKfEEeWwq4+1eTt5frBI3HBg2sKsyhRGYZV6sZhQyRUSxF1NPY0M0QkCQU8?=
- =?us-ascii?Q?pL+PiqdknWktdTqn2XTb2TdT6HxGi55Jx8NytDn1m7twaww8i8YGjfD/HEmk?=
- =?us-ascii?Q?PJ9/RupH0RLRXUlS5PadhyCDi7OXGDL/Xq4oJpHoYtImRwwHVPSFBJcknAAL?=
- =?us-ascii?Q?FrABQx6m9pBvw+kUo2yV/4l35o2y1LHQ8/eNWQEc0cZqPYIQKnty/8wDMt0C?=
- =?us-ascii?Q?1hQ4ByrE6dsR5VnYazDXr0Qbzn7z1gadL8UVkgg8saq2LhpwqX4QDB+js+qS?=
- =?us-ascii?Q?yKaMt9pb/jfL4qRGDF8paykjta12/yzi/yWYvWYZmxbmyv+Ahh2ligmfc6p1?=
- =?us-ascii?Q?ywpNuGr4i+VpiQEdRayXIwRzyFl6dZdxKaRLDwjdXizB/fmVL92ScfTNj0jD?=
- =?us-ascii?Q?96sTEE8AO7TZ2BFeerIu0LBZDt9UW4oOLsUIQJKX9fiZ4Z6/q/vLWVdbUSAR?=
- =?us-ascii?Q?KrctO/Kb70F9+uyg3nkng0hyYjtZUWpoFgjCfjPVosKgyC66t9qSHV0pUKPc?=
- =?us-ascii?Q?bj7fL7tAMZAoDHfgmAqTUnjEtcyl8tBXvtPo5dO7eekppmc0FLndO4QXhuxT?=
- =?us-ascii?Q?g3742YkVbK+KPl/Etftfs+csYQKDFP0fkz4suNdpRGTu32/KQHVy+netj8zy?=
- =?us-ascii?Q?jQYUJ369vr1yFaGWzag+Xn2A485hofEx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OqUDptGZNhrR362vDflcM/NJpbUx8ZMOzlFX1pUPVj1CxnpDaMB/M0/NBhBq?=
- =?us-ascii?Q?SRnsu29CKjmdpnx8rUYBryyCYLEeaZaEPjA41Q9aiFJgT6mws+YUOVXoUrvT?=
- =?us-ascii?Q?h8F7NcpqnGSq58z7cdmBgnbRs2i9pwHP1AsToma6JRORpAZxLVSbFKn+Exls?=
- =?us-ascii?Q?KhIW1dbyK6FVoZqgoYJy+ehA+CeigVGiDvitWoFm3mA2MHrgK505Rv+96ytY?=
- =?us-ascii?Q?0DhzYEWswUq2p4uLZH6Lvv499hYpisSrTCqaC9nVPc15lUasmIoK1nZMwiuE?=
- =?us-ascii?Q?VwQxdOfD6m9fcY2YCsoY7Ayx1CJOC6ziC1NoEI8TO/zmVFAvDf57meyvp04L?=
- =?us-ascii?Q?MpTxbGgFXUAQmGJoBlWrJciBbHWxmpwt0MVipW4Jmx1qYPhkHObCanFswhBn?=
- =?us-ascii?Q?d7stYH5b4M2b8VPxwz14D5gG2XBxY5HKFrK+W6R0ITVO1hbu8hIKFJB4frFP?=
- =?us-ascii?Q?ID7mNKROoeO7d85Fy/M6dlrmnAxPo9W+IM/Kp7PNd76IJUu4krC2hEhBa8D/?=
- =?us-ascii?Q?jsGnQFFne3JTDr20QZUf87ZksUF5A5QmG3MaYU1aVcEPaxwrohoQjvdq5cCO?=
- =?us-ascii?Q?rbyzUeKX8khtDLq/YPuW0CHAZCw474v5cSLBkBSngoA+YhorK2lgk/0uk//A?=
- =?us-ascii?Q?sBT4yN+1Tb40LbFY1b8CpE9Nl0/GxoDb8DeOL02w+4b0QXHUFJvWOVVZqrP2?=
- =?us-ascii?Q?+6DpiAV9ZVlzvw47EWZIikmGYh60j3Bd4Ef3G4a1v/OrWm4mh2l9Gpdn9Bt4?=
- =?us-ascii?Q?uoNkRNjPgfKrfSNOUadC1CIZjKGEfs9fTzvt4VROgSe0FcFtKHs6loSfNTUg?=
- =?us-ascii?Q?f7f6IxcOBQP7e2zqESsGhrzcFgS6VZGt2/W2Y9D0C8QKpxUwBm/FVAS2VLme?=
- =?us-ascii?Q?4DL+RSVXrVfXVJT3xvX434diiJLRpKD1NlEQ1ejmx6hvTiplJ3gnd78gVqj+?=
- =?us-ascii?Q?FlBp3STyLEq4bYg3q5wJ/rl6jVaepHtSrLrrqxYqE2goxLbGhk/WMx+WsB5Y?=
- =?us-ascii?Q?lK4dn3vPPV1O+YJYACG5/bInFs35XpK6LPjz5s/ma66HccN0eyOPIw9z1LHL?=
- =?us-ascii?Q?/0Z7FHORsh2j+yXQf9LzU0gaiK4dGmHL5563l30ieG7EMlGhSxCqBgEYskul?=
- =?us-ascii?Q?FK/kfChN2s6FFKtyWBgWzLFPQMLeHf/XMCm1TlZf7jQ8T0MrZXGebYZxkgUq?=
- =?us-ascii?Q?jhQJs37BfdvRkpJ6JmnCSrqrgZvP/iKwjWoA59Q6W356zsQT4AYtxd2T7iJp?=
- =?us-ascii?Q?Yz3xWzr1TCbOG6AiUf50UDllel4BEw5JeErBzwg/68ua15oWK4Io6QSmVpwr?=
- =?us-ascii?Q?llfpjzc3sxbaCb1eLdcSX9fqEj5lDvDOc34yNYHNRyObs951ZQ+ftb0A4u50?=
- =?us-ascii?Q?WyTESKG8wyf4E/quYQ/9a2e6NXyqBEra3PBIdo/UNJ8jx/QFs7538ukPjGmm?=
- =?us-ascii?Q?mubbpXNLytKYyPQMWt7dnpKYunr9hLrvaooO3s8hLcfJNmJNNcqTZwR9MALS?=
- =?us-ascii?Q?3dbKioQ4EOIl28koq6fONJJjinvorunC6jYY4fGtWGKRoWYdaDAigGsFQwNy?=
- =?us-ascii?Q?JsJPTNZA1yOdrE4wIVhheAg+hRyj5BFD8kBDnij+7Vhc6fAzEiSaAfbCOQKM?=
- =?us-ascii?Q?me/r9TT9yVhsNsVVHPJyfwfCnR4c7NR6fvfQ4gmf6e94?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcb6f05-ed2a-42a4-a8f6-08de0b0a9b48
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8317.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 10:15:31.9228
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PwBlqDJXlQsCeZzQqjfHib6JBoRymFICnhbtYrl6ems+LNj1UX1GqDr5ZGE2i1BRLsTJkPhzOTgFtledQKYddQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6753
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2s53ukplucxdxja3"
+Content-Disposition: inline
+In-Reply-To: <87sefpoj10.wl-maz@kernel.org>
 
---b22zu7prl4mp6eej
+
+--2s53ukplucxdxja3
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/2] spi: tegra210-quad: Fix timeout handling
+Subject: Re: IRQ thread timeouts and affinity
 MIME-Version: 1.0
 
-On Fri, Oct 10, 2025 at 03:20:00PM +0000, Vishwaroop A wrote:
-> When the CPU that the QSPI interrupt handler runs on (typically CPU 0)
-> is excessively busy, it can lead to rare cases of the IRQ thread not
-> running before the transfer timeout is reached.
+On Sat, Oct 11, 2025 at 11:00:11AM +0100, Marc Zyngier wrote:
+> On Fri, 10 Oct 2025 16:03:01 +0100,
+> Thierry Reding <thierry.reding@gmail.com> wrote:
+> >=20
+> > On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
+> > >=20
+> > > CPU hotplug is the main area of concern, and I'm pretty sure it breaks
+> > > this distribution mechanism (or the other way around). Another thing
+> > > is that if firmware isn't aware that 1:N interrupts can (or should)
+> > > wake-up a CPU from sleep, bad things will happen. Given that nobody
+> > > uses 1:N, you can bet that any bit of privileged SW (TF-A,
+> > > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
+> > > around this).
+> >=20
+> > Okay, I can find out if CPU hotplug is a common use-case on these
+> > devices, or if we can run some tests with that.
 >=20
-> While handling the timeouts, any pending transfers are cleaned up and
-> the message that they correspond to is marked as failed, which leaves
-> the curr_xfer field pointing at stale memory.
+> It's not so much whether CPU hotplug is of any use to your particular
+> box, but whether this has any detrimental impact on *any* machine
+> doing CPU hotplug.
 >=20
-> To avoid this, clear curr_xfer to NULL upon timeout and check for this
-> condition when the IRQ thread is finally run.
->=20
-> While at it, also make sure to clear interrupts on failure so that new
-> interrupts can be run.
->=20
-> A better, more involved, fix would move the interrupt clearing into a
-> hard IRQ handler. Ideally we would also want to signal that the IRQ
-> thread no longer needs to be run after the timeout is hit to avoid the
-> extra check for a valid transfer.
->=20
-> Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI c=
-ontroller")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
-> ---
->  drivers/spi/spi-tegra210-quad.c | 31 ++++++++++++++++++++++++-------
->  1 file changed, 24 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-q=
-uad.c
-> index 3be7499db21e..c2f880d08109 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -1024,8 +1024,10 @@ static void tegra_qspi_handle_error(struct tegra_q=
-spi *tqspi)
->  	dev_err(tqspi->dev, "error in transfer, fifo status 0x%08x\n", tqspi->s=
-tatus_reg);
->  	tegra_qspi_dump_regs(tqspi);
->  	tegra_qspi_flush_fifos(tqspi, true);
-> -	if (device_reset(tqspi->dev) < 0)
-> +	if (device_reset(tqspi->dev) < 0) {
->  		dev_warn_once(tqspi->dev, "device reset failed\n");
-> +		tegra_qspi_mask_clear_irq(tqspi);
-> +	}
->  }
-> =20
->  static void tegra_qspi_transfer_end(struct spi_device *spi)
-> @@ -1175,12 +1177,14 @@ static int tegra_qspi_combined_seq_xfer(struct te=
-gra_qspi *tqspi,
->  							  QSPI_DMA_CTL);
->  				}
-> =20
-> -				/* Reset controller if timeout happens */
-> -				if (device_reset(tqspi->dev) < 0)
-> -					dev_warn_once(tqspi->dev,
-> -						      "device reset failed\n");
-> -				ret =3D -EIO;
-> -				goto exit;
-> +			/* Reset controller if timeout happens */
-> +			if (device_reset(tqspi->dev) < 0) {
-> +				dev_warn_once(tqspi->dev,
-> +					      "device reset failed\n");
-> +				tegra_qspi_mask_clear_irq(tqspi);
-> +			}
-> +			ret =3D -EIO;
-> +			goto exit;
+> To be clear, this stuff doesn't go in if something breaks, no matter
+> how small.
 
-Vishwaroop,
+Of course. I do want to find a way to move forward with this, so I'm
+trying to find ways to check what impact this would have in conjunction
+with CPU hotplug.
 
-It looks like somehow this hunk got messed up when you applied the patch
-to your tree. The entire block above needs to remain indented like it
-was. The only addition was the curly brackets and the call to
-tegra_qspi_mask_clear_irq().
+I've done some minimal testing on a Tegra264 device where we have less
+CPUs. With your patch applied, I see that most interrupts are nicely
+distributed across CPUs. I'm going to use the serial interrupt as an
+example since it reliably triggers when I test on a system. Here's an
+extract after boot:
+
+	# cat /proc/interrupts
+	           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5    =
+   CPU6       CPU7
+	 25:         42         44         41         29         37         36    =
+     39         36    GICv3 547 Level     c4e0000.serial
+
+I then took CPU 1 offline:
+
+	# echo 0 > /sys/devices/system/cpu/cpu1/online
+
+After that it looks like the GIC automatically reverts to using the
+first CPU, since after a little while:
+
+	# cat /proc/interrupts
+	           CPU0       CPU2       CPU3       CPU4       CPU5       CPU6    =
+   CPU7
+	 25:        186         66         52         64         58         67    =
+     62    GICv3 547 Level     c4e0000.serial
+
+The interrupt count for CPUs 2-7 no longer increments after taking CPU 1
+offline. Interestingly, bringing CPU 1 back online doesn't have an
+impact, so it doesn't go back to enabling 1:N mode.
+
+Nothing did seem to break. Obviously this doesn't show anything about
+the performance yet, but it looks like at least things don't crash and
+burn.
+
+Anything else that you think I can test? Do we have a way of restoring
+1:N when all CPUs are back online?
 
 Thierry
 
---b22zu7prl4mp6eej
+--2s53ukplucxdxja3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjuIroACgkQ3SOs138+
-s6EzehAAgCLdkFD4kGsefIPxfNIF3HjvYWalHI/ZsITv7BKAWZKrxRldU13jmuOm
-gs5h+QAL3HwLKfLAoOrC9RBd2W/z56uYmC6z4Ab7DXUe4CdFFladO+syykoFu1kE
-TtZYdnL0yue3019gIMAxfqEYG6sRJsFfvInUlha/O7BXcC8zZbkz2rFkqdPf7Wnr
-Ffgr87/8MSaPaf4vaHtWlm+pd5DuBK9XOIGOCehbsEqvrg9zn7nlBSQuPeQawHs8
-96TVzxXw1rmeYs+A9T1RDPuL+pNNMIo4v3pFhmMrjXoc1thDGPVDR9OehwnDmseP
-Dsh9jUms0YqeQUsNsgIdqjBq+AX9WJRYgezITtpwIh8RILqv2kpTEVAiklmKp2fN
-HtaXhJ3s3g4prVVp9T0fvRGhn0D3F+LNHxwMt56oQE+gZy9UYJ4BpzwQbWqph67X
-b2aAyOThTdxGR5h/dIIUVN44vIoAHkNRbBQVmcbfbisqx5OIwG8c1qYOxyAKDYHj
-MsdG7fVtbOz7VhS8ouGQOQHrOs+/Ugn32vKBTF2Qj3mLJdryYCKBtlPFGfse/0VA
-GOTrn1rCuib3KXxHZip0LAtIMfviSRqywgBJc1PHbes4nKRpqVSEkUuV1t+GYGSR
-7IIwTI4z1yrUZhBeTohJ+LFGkW2LyHMkgJJ4L76ACMnvJaIA6mA=
-=UT84
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjuKuYACgkQ3SOs138+
+s6GjZxAAh0EtrqoNH2ELSK/goEd24inBc3Eoe37rgmkFvxq4QmjXZaEktcd2MVKQ
+PpYu00CutOwfzM202AXfZRem5KI2hg8pOLu9ZE/Y0GLaZsMyY9KmefuYNbRpuFFY
+ls/pYtncY0xRPfzF1KpSg/y3UhIt9l67KXjrTLcIgem/RXFhhIVGBbuabbcA0b8N
++3SD9lEqdVWByEB0skf4okYqSZK0aXN4gxBrm8G03fYDuuVtM/w5nvYLJTUMgTJh
+qMS0kNvVX3JOjaXvYt4HGZIcIi6cHLgK3PHAydGQ0A+rBdSRbSycXBF6hGpOViuY
+Cna1CRTsu1X/CPwmKyVRyxx+jfWMV25WEs4wr+LKMePNvcQswJep6jc3eTUEBGCV
+bD10EcJUNKz7jUs+Du7fc5zMY5NNzYmI7PGFGpfOIRr/Fjzwq3KbWIQNfBca5QBr
+aixPjI57v4Z9y58nPt1IDY4mk6jlMzB9p6FfhzRY5VyBChrjS8gnukhs7Heq7l5H
+uwhfVeYjB74NRns+V0Pcb3fKtt8xd6vx3w5U0oZQmhezfs9TITmJc7U3JQkgRNp2
+wApK8ECbCcA56N07U1jB5ihAsS3u/bbqWONgIAg6ldIBOYmBjuGvkNF02E9xNEu/
+SVcGFetyr9+PkcKbDfpVaKfxZPMtUxune9hno2u3QO9bylAQw/0=
+=QFps
 -----END PGP SIGNATURE-----
 
---b22zu7prl4mp6eej--
+--2s53ukplucxdxja3--
