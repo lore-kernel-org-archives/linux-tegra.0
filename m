@@ -1,116 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DC335948;
-	Tue, 14 Oct 2025 17:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888152F7461
+	for <linux-tegra@vger.kernel.org>; Tue, 14 Oct 2025 17:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464013; cv=none; b=VgQykJcuvnN1UYayQHTO2y8jeP10TB2I4aT2/Bnq/hlXoHfzOuCcN7U/TMwElVemEnzK1nMTUH/dQ0RhjXPuZaeQzaRLlHzF/MEEPvaL37ZKI9HURpYf2dc6nBRQc86LOcO6zhJkcWorZjgVZFyQhs4y4hL7XF22zN851Gc0xSw=
+	t=1760464462; cv=none; b=RFERuo3WpAZYwG419LAHQwz5w8/Ar/Dn3K8+E6PgE/ZZARoT6ElpVDy6z/IrFk4XsC80sNaTbtNYxIgLRbKvY7Dbw8d4kkyaud9Ui2onbPZ3ilv6340ERD4LPgIHHmzuy9kijymPqf7BIM3FNtVlJGIMRpaRkntizZQxYGBAwDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464013; c=relaxed/simple;
-	bh=REAJKHktfM5uhBrHBHX1IL3/GQ/UWwWriUYpZT5i0i0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hvjV9hx/imYeOuz9IgJr1yclK5aqzRUb16AhBS/mOl8Fsn2eSYk+AYnZaFLLoBKES4P6gtVbEs7LA9tPw5zoKOFLkI/iDqJJEVtx3xaNnQARkhHBI/aBUexoeT4N1YQwlVM2KnP4pm5rOklKk9Fy4B3TZWj4QilsBtAbWq5afYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlXcBMMJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760464462; c=relaxed/simple;
+	bh=M0ijwDZ3MwE/VJEfiOycDb/wmja5XxYrLbL3ZABStD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q3GIWOWNIK4AWuai7jNPG1EY/yajz/aBoTvCDzUAzh6ITXKv1e8JzC4G7M0npLWZ8zYZri5Uv2xnBnDV/mJrq27pIbEzZFlwdWi4VnUQc/TaUByBrsJjm9M7DrfUKf0n7jz+sgWQDRW3Rs5jIZyTtUOkKaDWXostsO7SdRJCgnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGPwcq7v; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlXcBMMJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886DAC4CEE7;
-	Tue, 14 Oct 2025 17:46:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760464011;
-	bh=REAJKHktfM5uhBrHBHX1IL3/GQ/UWwWriUYpZT5i0i0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XlXcBMMJmLFepolcAl1W6bVqaq58HD498ZbWBeybAD42nc9rMQLs5p9VvaHyTBcPo
-	 9DGEcIdTrGRw7egfcDmil9IEBQxq7nMTU5O2qfbpjrbfgvChGy+2GFp57FeO2lb+Zo
-	 Ed4LeSDr1dAsue6PCdN/xo6t3bgEQbfV1tIkuo1NxeAe0DP39qtrc1hb46Gwu6MaEh
-	 e5ZOAcnKaX2ZGw/fy/geGx1MBZjJyHhooKCNTRux0OLOh55GZXmm51j70H2dKyhzdf
-	 63RB7Kjiha84VMK7NBMNrr/YMZoUzPgjg63dmC4hT0JkNcbK9ram5YmxIBDTa/hHRr
-	 Sy8lWgc5pa1NA==
-Received: from 82-132-215-36.dab.02.net ([82.132.215.36] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v8j6n-0000000DxEH-0qIj;
-	Tue, 14 Oct 2025 17:46:49 +0000
-Date: Tue, 14 Oct 2025 18:46:40 +0100
-Message-ID: <87cy6pxtof.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-	<86qzvcxi3j.wl-maz@kernel.org>
-	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-	<86o6qgxayt.wl-maz@kernel.org>
-	<86ms60x7w7.wl-maz@kernel.org>
-	<us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
-	<86bjmeyh5m.wl-maz@kernel.org>
-	<graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
-	<87sefpoj10.wl-maz@kernel.org>
-	<6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
-	<wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGPwcq7v"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso6483278e87.0
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Oct 2025 10:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760464459; x=1761069259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L34c2igKzAl+y7faUaRQQ6fgbb6gd8h/e7yU5YjEm5c=;
+        b=YGPwcq7vqzwmxRtsw5LhfA/DEOi/SaAE9rRwiYulyjpgtOhqA45ASkqLo9ub50zPbS
+         LH2Qw+i+dG1ngEWASHqwQpc0qixvh2kpGTJ6pZDqwbdDlMwujI8/uTq0uP9Iz8Pext6r
+         2PTelnajsEO2MSHHiLeaIzLtZSSe1rgfqtJgKINjGC431hO4ux1CR+5vN2xRX8fwGKQg
+         cXcLfiCF0Wl0ScByJdUuydSx9STXdKY93Ti/7pMu9UUiFdUxrNWmCyuPjhIN05ASORdr
+         BOYB39r6FpLn/cMljreaZMsUETF7INda2Uat8ckOAYY3k+OXN7Ljc9iq2Q0Ieei/bMcV
+         R2xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760464459; x=1761069259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L34c2igKzAl+y7faUaRQQ6fgbb6gd8h/e7yU5YjEm5c=;
+        b=e/R8qxpbsLAkEey0XK9QCxDrgod6rQbs3PLb6L9Rx8eCLkgjwuoNwyoJiyzzD6md1m
+         xxoKjfIAJKasBAORkp7Q36mIQE+8jWhFyI8w4zu+vYA6AxmX887TUQ9XZZE56vhQ/BRA
+         LoNZdWrSfiDvMcHF0H02iLi5jnoEP+o7iOTHEIpWeoh7e8PXwwtXQfZLMpF6S0xAgFpx
+         F5tQ31+Vd5I3vcjcPMq7tbpu6zKpCjuAsHKxKbg/Cicr0PVpFDwdUcRiVXb67frhwKAd
+         ejoFoAOpyvbxw243OhvwjubrvRuABoYjFxtqG5c5BjaA6WIdJbYVvWPr/oDJwMxmahOv
+         pMyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQgzWCp3MUWKXdtmvKJ+4hu0PCpTFiIvIZ4q9c8UlPOLKujTlWtkhmNXAJUrD/3wBrhyOeFSkSNSDL1A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcE/NwfMfThgwC/55R1Ildlrc6lLmTd8yUxqonN+pMiblROmfg
+	8b3PQSgLW3P0VxXcgPne/dGCb2Jwc11vvuA+5UcBNqPo0M2CPV76Wn2XLuUF06Eqo54z8Gf38kL
+	nsS5bVVFt/D6PzWU9xT5KALTAzB3ktr34EQ==
+X-Gm-Gg: ASbGncvy5HHBMLs5+CdmRKvVaRQdVDLLG8dAwo2KPAps0WaWdasi7MbTHE32PLHXJtf
+	ov6JzJHv85vV3mVD1VkvcXZPanyRmYCIBNMQMxMTlUdr8eZW3R5w0vsfjVrDIA41pVLXMiGlmY3
+	lumzHHltfItEknM6LNX35vzv33+uVVGHSaPewmJ69txQ5ZLT8m/qj8lBYnZw4spwnHh7SKwlckC
+	Vgbt80py4akTKlm1g/bb4l57XxoZcqeDMwf
+X-Google-Smtp-Source: AGHT+IF9+8vhtrxqH7QnmXwbacZFNb3DZNzy7OnXFeJzxvLDNzi7O/QJeqOMolpXCiVF+ZPs25ZX5GVlP4y2ObIM8ds=
+X-Received: by 2002:a05:6512:3b96:b0:58b:114:b7e2 with SMTP id
+ 2adb3069b0e04-5906dae5ef0mr7670933e87.32.1760464458427; Tue, 14 Oct 2025
+ 10:54:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.215.36
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
+ <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
+ <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com>
+ <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
+ <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com> <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
+In-Reply-To: <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 14 Oct 2025 12:54:06 -0500
+X-Gm-Features: AS18NWD7TZf0Odmt-TAH5heuCe6IG8XyPr57Ljb0DD_wuWQD_jZFSXnz2IurYx8
+Message-ID: <CALHNRZ9J2VFLm39wm7+8Le8rt2HpfeHgDOm6mc-s7_Ya8aXe1g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Oct 2025 12:08:22 +0100,
-Thierry Reding <thierry.reding@gmail.com> wrote:
+On Thu, Sep 4, 2025 at 8:09=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
 >
+> On Wed, Sep 03, 2025 at 12:58:06PM -0500, Aaron Kling wrote:
+> > On Wed, Sep 3, 2025 at 1:55=E2=80=AFAM Linus Walleij <linus.walleij@lin=
+aro.org> wrote:
+> > >
+> > > On Wed, Sep 3, 2025 at 6:54=E2=80=AFAM Aaron Kling <webgeek1234@gmail=
+.com> wrote:
+> > > > On Tue, Aug 19, 2025 at 6:30=E2=80=AFAM Linus Walleij <linus.wallei=
+j@linaro.org> wrote:
+> > > > >
+> > > > > On Tue, Aug 12, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
+> > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > > >
+> > > > > > This series adds support for Tegra186 pin control, based on a d=
+ownstream
+> > > > > > driver, updated to match the existing Tegra194 driver.
+> > > > > >
+> > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > > > (...)
+> > > > > > Aaron Kling (3):
+> > > > > >       dt-bindings: pinctrl: Document Tegra186 pin controllers
+> > > > > >       pinctrl: tegra: Add Tegra186 pinmux driver
+> > > > >
+> > > > > These two applied to the pin control git tree.
+> > > >
+> > > > On patch 3, Mikko noted that I accidentally amended the formatting
+> > > > changes intended for patch 2 into patch 3. Linus, since you've alre=
+ady
+> > > > picked this up to your tree, is it too late to fix this properly in=
+ a
+> > > > new revision? It doesn't appear to have made it to the main tree ye=
+t.
+> > > > Or do I need to send in a fixup?
+> > >
+> > > It's one of the first drivers I merged with plenty of other stuff on =
+top
+> > > so I can't amend it, just send a fixup based on my "devel" branch
+> > > (or linux-next, it should work too).
+> >
+> > I am highly confused now. When I went to make the fixup series, the
+> > fixup didn't apply. Looking at next-20250903 [0], pinctrl-tegra186.c
+> > looks like I wanted it to, the base commit has all the format fixes.
+> > Which doesn't match the commit on this series. Which leads me to a
+> > couple questions:
+> >
+> > 1) Does anyone know what happened? I'm not particularly a fan of not
+> > knowing why something happened, even if it's beneficial at the time.
+>
+> Maybe auto-formatting or something else that Linus did?
+>
+> > 2) What should I do with the dt commit now? Ask the Tegra subsystem
+> > maintainer to do a manual fixup when pulling? Even without a manual
+> > fixup, the bad part of the commit would fall out when getting applied
+> > on top of next.
+>
+> I can drop the extra hunks when applying, no need to do anything.
 
-[...]
+Reminder about this series. Patches 1 and 2 are in v6.18-rc1. Patch 3
+is not. And I have seen no indication that it has been picked up or
+will be picked up within the 6.18 cycle.
 
-> > The interrupt count for CPUs 2-7 no longer increments after taking CPU 1
-> > offline. Interestingly, bringing CPU 1 back online doesn't have an
-> > impact, so it doesn't go back to enabling 1:N mode.
-> 
-> Looks like that is because gic_set_affinity() gets called with the new
-> CPU mask when the CPU goes offline, but it's *not* called when the CPU
-> comes back online.
-
-Indeed, because there is no need to change the affinity as far as the
-kernel is concerned -- the interrupt is on an online CPU and all is
-well.
-
-I think that's the point where a per-interrupt flag (let's call it
-IRQ_BCAST for the sake of argument) is required to decide what to
-do. Ideally, IRQ_BCAST would replace any notion of affinity, and you'd
-get the scatter-gun behaviour all the time. Which means no adjustment
-to the affinity on a CPU going offline (everything still works).
-
-But that's assumes a bunch of other things:
-
-- when going offline, at least DPG1NS gets set to make sure this CPU
-  is not a target anymore if not going completely dead (still running
-  secure code, for example). The kernel could do it, but...
-
-- when going idle, should this CPU still be a target of 1:N
-  interrupts? That's a firmware decision what could severely impact
-  power on battery-bound machines if not carefully managed...
-
-- and should a CPU wake up from such an interrupt? Again, that's a
-  firmware decision, and I don't know how existing implementation deal
-  with that stuff.
-
-Someone needs to investigate these things, and work out all of the
-above. That will give us a set of conditions under which we could do
-something.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+Aaron
