@@ -1,104 +1,97 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079C32D24A9;
-	Wed, 15 Oct 2025 15:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C45D202F71;
+	Wed, 15 Oct 2025 16:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760543554; cv=none; b=NeRXwA/q4fmtVaoOoDYQ8VWTgV7vBUJx1id8zjx3+ZQ0XPlxS/KhmZ0ZorpSyHxVwcLUxBrcYIVyIwJ0PlrCGOAK5fR3Yk4eQUCl7Jy18AtDHub/BATgyuReAS9Er1+BTit91YUWuGMDDr6k/qpeAcEW4oxCEqT0GNbF9UgCHdc=
+	t=1760545332; cv=none; b=i9Ymlh9y+vHpkD+WKNFR6ns4fOCqKEYP+OIykcf4g7Jfw5RYpbd2FYl8g4WtMw+QgS5q/p+95UsYPQxwqYzZzxMeDteAnTe9Y5Lp/ZDf9UpdbF8iJkWhWZcsTQEkPRdXLj+A5TJmVzznw17zbJnITZCTe2Kn6wY0gQ1J8zUKu3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760543554; c=relaxed/simple;
-	bh=5GGhoyfGd7C2d9b5NUJVQ1myqkk94R5VJe5ZXBVXC6s=;
-	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
-	 Message-Id:Date; b=n7m74yvDYo++4ZlOe4cUYvXD/NPKlmrJtsBA7WIGI9Hd4Olmuu+r5uJqPjCYE7DrNm9uYJJdC/Sy8mWjAa7SsI8VitG9KCogFHSs1Kn9Te83n0UTGqvB2j3LvHzYrf8m2t2QvwJx0QkMxffGHhuUBghrcWrVG2mwe2Bzp+Jwdt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=QTU+nErw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1760545332; c=relaxed/simple;
+	bh=m5yz6FAGECP9+hJqdl/rehdUmr+YvIiUg5swfLlBFGk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CSvCgqjo5raeKdpK+QY0TDRFEVZ3yZZ6WRDDk2K865+Wd4VzK6TdP3X5JlA971IoKv4JOeQEP0PmMtrbeaeOGTU9IeAt1rDG6AX9KaDXVG4Oq9IK6yhN2xm+hRMQagQrsXovVRdvnMFRWKpX9jRS2RkPj2H/DgIWvLWs7ug1UDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuqpDqa1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QTU+nErw"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
-	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
-	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=E4wJYDIfmOLBHQSkEtkRaWLUCWJYMEH7YngSIcElO/E=; b=QTU+nErwnxECo5Lf1ulzTqueWU
-	UMYy5DDKguxUOe2lRGVzg107MU6dXIg2VA3nP4Ufw3xYbGub/WVwEfQH/NoyQLYwySAxCQDzM7OAw
-	GRdC4pPyGUKdtTKAYl/YC6BSQOWgnyNPZjqyvsrUuX9otYS1b6ufgZaF4VSOlRT6q07mMl96FhaGo
-	aiHOZ27sS5AOEJSCCgP6Nkb3R2rXY+c6Vqb6rlJGHDMYcBec1Ffmz2IId+4ZyDinGmau3T1OfMPNQ
-	2d+2F0l/dkbdWV9o7CuSySZgwd/eycdJxW0oV+DFhYkDdgc9t1BoJKOsw0zin5nAOcrTFhmmNwSpa
-	ey7IpR4A==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:59786 helo=rmk-PC.armlinux.org.uk)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rmk@armlinux.org.uk>)
-	id 1v93nf-0000000057r-0noW;
-	Wed, 15 Oct 2025 16:52:27 +0100
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1v93ne-0000000AmQk-1nHh;
-	Wed, 15 Oct 2025 16:52:26 +0100
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-To: Jonathan Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: Aaron Kling <webgeek1234@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH] arm64: tegra: mark Jetson Xavier NX's PHY as a
- wakeup source
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuqpDqa1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D9C1C4CEF9;
+	Wed, 15 Oct 2025 16:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760545330;
+	bh=m5yz6FAGECP9+hJqdl/rehdUmr+YvIiUg5swfLlBFGk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JuqpDqa1YOpi244K0gRdbMaFRQVKXJFoxEajxUXv4EOncI+NW2gCfk6C6742EorfY
+	 cHWVCgqZ+VehNMHDpgqcrg+YsZ8wvPLEtd8kpVQqJXwNN5RlTzeS1g1PCFgEcH+icC
+	 PWH6v4b1CHP21kyfdHL6+Zeyiq0ElrjtEnBCxhZgzeDKYd4jKKuEa87Nrot6kchddH
+	 gIBee+jSI6kiDRyJVhnZmU8NrwPlqXtUezcSyTgTXy+0cOmIc1pFj6SxDSq2pdG3bw
+	 44Q8/16bVwfAyd4Zy+R27pZ6rdx/fZg3KfvPOeDY4NbvAO1GGUS4kb0CpnyJbzSJSC
+	 oAS6zTG7kSgJQ==
+From: Mark Brown <broonie@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ "Sheetal ." <sheetal@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sameer Pujar <spujar@nvidia.com>, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sound@vger.kernel.org
+In-Reply-To: <20250929105930.1767294-1-sheetal@nvidia.com>
+References: <20250929105930.1767294-1-sheetal@nvidia.com>
+Subject: Re: (subset) [PATCH V2 0/4] Add tegra264 audio device tree support
+Message-Id: <176054532703.196625.10143802503112850077.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 17:22:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1v93ne-0000000AmQk-1nHh@rmk-PC.armlinux.org.uk>
-Sender: Russell King <rmk@armlinux.org.uk>
-Date: Wed, 15 Oct 2025 16:52:26 +0100
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
-Mark the RTL8211F PHY as a wakeup source for the Jetson Xavier NX.
-This allows the reworked RTL8211F driver to know that the PHY is
-wired to wakeup capable hardware, and thus to expose WoL capabilities.
+On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
+> Add device tree support for tegra264 audio subsystem including:
+> - Binding update for
+>   - 64-channel ADMA controller
+>   - 32 RX/TX ADMAIF channels
+>   - tegra264-agic binding for arm,gic
+> - Add device tree nodes for
+>   - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
+>     DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
+>   - HDA controller
+>   - sound
+> 
+> [...]
 
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
-I thought I had already sent this patch out, and I'm sure someone said
-that they had queued it for the merge window, but it wasn't merged. As
-I can't find it in any of my mailboxes, this must be a false memory.
-I'm way too overloaded to properly track anything right now.
+Applied to
 
-It's not a big problem. WoL will go from not being functional in
-previous kernels (and actually causing problems with interrupt
-delivery) to not being supported (ethtool will report so) in v6.18
-without this patch. Options are: merge it into 6.18-rc and have
-functional WoL for 6.18, or wait until the next merge window and
-have WoL working in approx. four months time when 6.19 is released.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Note: the bindings update was already merged in commit a510980e740c
-("dt-bindings: net: realtek,rtl82xx: document wakeup-source property")
-during the recent merge window.
+Thanks!
 
- arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+[2/4] dt-bindings: sound: Update ADMAIF bindings for tegra264
+      commit: 4d410ba9aa275e7990a270f63ce436990ace1bea
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
-index a410fc335fa3..c0f17f8189fa 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
-@@ -42,6 +42,7 @@ phy: ethernet-phy@0 {
- 					interrupt-parent = <&gpio>;
- 					interrupts = <TEGRA194_MAIN_GPIO(G, 4) IRQ_TYPE_LEVEL_LOW>;
- 					#phy-cells = <0>;
-+					wakeup-source;
- 				};
- 			};
- 		};
--- 
-2.47.3
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
