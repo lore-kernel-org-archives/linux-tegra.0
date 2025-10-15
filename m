@@ -1,134 +1,103 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD032D8795
-	for <linux-tegra@vger.kernel.org>; Wed, 15 Oct 2025 08:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8277311966;
+	Wed, 15 Oct 2025 08:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760516452; cv=none; b=C1lAZj/t97mre4t0prYw2pcsSqCKBrtqXe6nZUi3OvlI8Ve6pZsb8+eQzLWEWlyjlYM6DoyPAcdfEyT6ZgmVn68fsa2gbbc4Hl8ZrtgNdhQt5lx++8T4CadC4d11w6a8y9nRgRz71/mDpzrTQy5CRMetS8TK7Uvoo4VeVkHbIzY=
+	t=1760517729; cv=none; b=B/mWtmOkiTLIB7kL478p+CDI5hliXTw4I1QMn0T1dx9t68hijZvau3SD5FszslgNk3IMerW4jAojKXav+Htu4v3S4hjGz7CxwY9ErEQagVtIP1HsaQnCrU3ebab1SEKRT32BT0et+uR+B7Gcitg3j/JdAM5KBax/IN51WRFZbFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760516452; c=relaxed/simple;
-	bh=gdBDLPt4sGdp4vau56vsKCZGKHYOD8ibbTQ+im2l4Ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fac+KNh6eGC16FtDDqW4PoM6byl6NpDlQoZYIM8ewfOEP/BUUFCAnpb1IOqIckJw2bEU+gjJ7+iP3GaVI9NNLLMsOsX6nsZXq+v56wrAJcWqQwtnAsrPWuRE4dBDdYLzqDm06OPIR1d0NCOuaEEuLaG3mKvrIZ2+aGHz8mGzaJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JOfLyAd5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1760517729; c=relaxed/simple;
+	bh=fV/RBD9YP50aumeHVRIkO30zj7FKxJUNbhb9CN7QNxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRSNy47KLUynzolPsK8+VBLNbbYTnLgdw1kh4JAfzrzBwKZYukQ5ruNbtvT0Jq/4B9/wIsNKibxCHt1OFq55fba1ZVwmN3hauZBRH7DQVmMe4EDOfJTlVYwPYBBK+VgnAIcEm04P/LHmC7Gf+MNgQyvCnjInW5QeVXy0XDZ+AqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qd4j6WAd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOfLyAd5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760516449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HU62gMpjIaFZFXMtNGaeiDMNZ4Zv7CCqH8t0PFzlFoY=;
-	b=JOfLyAd5BIsXGsx9Oz7hu9boXLH2G0GAoB0pGg+5hMITbciLUmHJ/pwTqK7nKg5VLJ8CVz
-	GN2unXteq7eMZjrO5FgTys+huHsyPcDK8tBtP21nKcN5v33oRKZnVBZKTTZlET/6ooe6Y0
-	9HL6RXykMK5POxtcNcfVVI8x6vvLa1c=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-380-gzHmvPztNfezCSBVjxhDKw-1; Wed, 15 Oct 2025 04:20:47 -0400
-X-MC-Unique: gzHmvPztNfezCSBVjxhDKw-1
-X-Mimecast-MFC-AGG-ID: gzHmvPztNfezCSBVjxhDKw_1760516447
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e509374dcso27314325e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Oct 2025 01:20:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760516446; x=1761121246;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HU62gMpjIaFZFXMtNGaeiDMNZ4Zv7CCqH8t0PFzlFoY=;
-        b=K8k3sj/+alfd5VK1vj7aVxvZ6CF2rO0mE1UhS/ny+FstP9tpDD2m3xKenE/6oo+lSB
-         BvhHNkoS3YMeKR2NHDFbXTIVz65t3kF44ioFphQV787SZpFQYjSkbdgWuGEoLyqkMFVS
-         XzCwXa7ZSPOUI7hUPTIAaLUi/g+TtDXmuHX0tCJIFCR0B/Hy8MnkFa0nVkb6EbPF+Lgv
-         FudRrM6/72PuClXSDRtY2w/ktcEDkGP36tVWYXY++KtgC4h9d4RQsDnjT3mGX0oBPvU2
-         IPj98XDjzpzPXpImUcc1tYN+gB1GOmXXcyDe3nOT5sQ+hA2IK1leoDxgcFZW+oBF5UsX
-         QXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDO4gZ02YUDEeavbBsHLQpQLYgk97MSQQK4HELC/UEUIF2MCBRi8slsyItuOPDFD/TfDINbvDpdp2SlA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl/1PBz0GkJ3c0vYRtSiArB2GO07Zam8PaZ3n98llAX/3ffWq6
-	gWQrFJ04zXt7rkNoqD3uHOK4pdhLC1UFp7B7QMZE5adaskYj7mOQSHO7c6GLeQBTvj/as0XhlBn
-	DFpIc02VWxoNk5VkbZda2KNA6GDl+NLzyfiidhomLrP5h/RIz5GZRKJjG2Xj9oIpE
-X-Gm-Gg: ASbGncu+jlO1YOlzNQIMNINJM48nI7PtjsZnpOS/QDETlulovERthYyVA10Drmh9Yzp
-	QG/1KGY6QpSJbRKzMHC1uFQ1PT+Rdrp2FwMuYTRssWn025iif4S/Tw33V688DyWjB5RBGk7eNWe
-	MCtw61tfJ/tNiqPPaW7+DZ+fmKhKrZaevmuA6p2grjvxbXM7RptDrKSjyR+9qeXt5DtN6BThuO5
-	wif8iTxoVGfZNgEbmTsjT5gzHdbObHrmw8u5GwNtt83p6yN/UoOdMgEOoU9wO1vXzIDkqIDiIkS
-	VMtuZFwDzbn7Vr32285t5FKOpNLTBs52vIBuVRPREfCk0hXN+HkPmE7BAndgjG5pJYOxvDClXtg
-	0W1mE
-X-Received: by 2002:a05:600d:41c4:b0:471:7a:791a with SMTP id 5b1f17b1804b1-471007a7a96mr9522835e9.7.1760516446522;
-        Wed, 15 Oct 2025 01:20:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKG0piBaN7As1r+PD/K5QtUV2Z28HHZlEUD35iBfCWvoyf69YaDGLCaS5NwDRxAhyjJ4bu3g==
-X-Received: by 2002:a05:600d:41c4:b0:471:7a:791a with SMTP id 5b1f17b1804b1-471007a7a96mr9522475e9.7.1760516446097;
-        Wed, 15 Oct 2025 01:20:46 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482b9absm327503135e9.2.2025.10.15.01.20.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 01:20:45 -0700 (PDT)
-Message-ID: <c85d528c-6787-4023-8883-3519b7498627@redhat.com>
-Date: Wed, 15 Oct 2025 10:20:42 +0200
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qd4j6WAd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8286C4CEF8;
+	Wed, 15 Oct 2025 08:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760517725;
+	bh=fV/RBD9YP50aumeHVRIkO30zj7FKxJUNbhb9CN7QNxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qd4j6WAdTQ6yNehh2rdErjKmkXKpaRAcpQD6NSZ1mhdFH4h90UkwQpl7RdznKemWq
+	 znuTSasG67c4MTdTNUpN8Z9qavIOpR12av5QUAPz7QR1fGmCl9mVrP6ctURbpAZ54I
+	 0ekR3tXbcxc3d3sbkF2G/y24RMi44LOOq7cT+z34=
+Date: Wed, 15 Oct 2025 10:42:02 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 6.1 000/196] 6.1.156-rc1 review
+Message-ID: <2025101540-suffix-paralyses-41b7@gregkh>
+References: <20251013144314.549284796@linuxfoundation.org>
+ <4ad822af-297a-4de0-b676-6963760a8384@rnnvmail201.nvidia.com>
+ <046f08cb-0610-48c9-af24-4804367df177@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] drm/client: Do not free client memory by default
-To: Thomas Zimmermann <tzimmermann@suse.de>, javierm@redhat.com,
- mripard@kernel.org, maarten.lankhorst@linux.intel.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-tegra@vger.kernel.org
-References: <20251009132006.45834-1-tzimmermann@suse.de>
- <20251009132006.45834-5-tzimmermann@suse.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20251009132006.45834-5-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <046f08cb-0610-48c9-af24-4804367df177@nvidia.com>
 
-On 09/10/2025 15:16, Thomas Zimmermann wrote:
-> Make no assumption on the allocation of the client's memory. For
-> example, amdgpu stores a client within another data structures,
-> where it cannot be freed by itself.
+On Tue, Oct 14, 2025 at 02:11:33PM +0100, Jon Hunter wrote:
+> Hi Greg,
 > 
-> The correct place to free the client's memory is the client's free
-> callback. All existing clients implement this.
-
-Thanks, it looks good to me.
-
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-
-
+> On 14/10/2025 14:09, Jon Hunter wrote:
+> > On Mon, 13 Oct 2025 16:42:53 +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.1.156 release.
+> > > There are 196 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.156-rc1.gz
+> > > or in the git tree and branch at:
+> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > Failures detected for Tegra ...
+> > 
+> > Test results for stable-v6.1:
+> >      10 builds:	10 pass, 0 fail
+> >      28 boots:	28 pass, 0 fail
+> >      119 tests:	118 pass, 1 fail
+> > 
+> > Linux version:	6.1.156-rc1-gb9f52894e35f
+> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+> >                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+> >                  tegra210-p2371-2180, tegra210-p3450-0000,
+> >                  tegra30-cardhu-a04
+> > 
+> > Test failures:	tegra194-p2972-0000: boot.py
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/drm_client_event.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_client_event.c b/drivers/gpu/drm/drm_client_event.c
-> index c83196ad8b59..f36fe0392ce6 100644
-> --- a/drivers/gpu/drm/drm_client_event.c
-> +++ b/drivers/gpu/drm/drm_client_event.c
-> @@ -39,12 +39,13 @@ void drm_client_dev_unregister(struct drm_device *dev)
->   	mutex_lock(&dev->clientlist_mutex);
->   	list_for_each_entry_safe(client, tmp, &dev->clientlist, list) {
->   		list_del(&client->list);
-> -		if (client->funcs && client->funcs->unregister) {
-> +		/*
-> +		 * Unregistering consumes and frees the client.
-> +		 */
-> +		if (client->funcs && client->funcs->unregister)
->   			client->funcs->unregister(client);
-> -		} else {
-> +		else
->   			drm_client_release(client);
-> -			kfree(client);
-> -		}
->   	}
->   	mutex_unlock(&dev->clientlist_mutex);
->   }
+> A new kernel warning is observed for this update which is ...
+> 
+>  ERR KERN Early cacheinfo failed, ret = -22
+> 
+> Bisect is pointing to this commit ...
+> 
+> # first bad commit: [988121168f4a3211c7f5e561c24bb0bbe8504565]
+> arch_topology: Build cacheinfo from primary CPU
 
+Thanks for the info, I'll go drop this whole series from the tree now,
+and report this to the submitter and cc: you on it.
+
+greg k-h
