@@ -1,146 +1,128 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888152F7461
-	for <linux-tegra@vger.kernel.org>; Tue, 14 Oct 2025 17:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06982BDC23
+	for <linux-tegra@vger.kernel.org>; Wed, 15 Oct 2025 07:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464462; cv=none; b=RFERuo3WpAZYwG419LAHQwz5w8/Ar/Dn3K8+E6PgE/ZZARoT6ElpVDy6z/IrFk4XsC80sNaTbtNYxIgLRbKvY7Dbw8d4kkyaud9Ui2onbPZ3ilv6340ERD4LPgIHHmzuy9kijymPqf7BIM3FNtVlJGIMRpaRkntizZQxYGBAwDE=
+	t=1760514768; cv=none; b=ik7ZcIaViypHtxYQnn50LPQ/WImaWDfaHQbAC9eiEqaXhb838ThePrZ7EJthEl7DQQOttiltUQNGtz8/y8uMOfMVbxyM5KJiwSto8/lp1Y6BOJriBJD9fhltte+X0m8CaA05MybYoO0twFqIhNOYwGRZnchkToRBHzzrgxhW9io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464462; c=relaxed/simple;
-	bh=M0ijwDZ3MwE/VJEfiOycDb/wmja5XxYrLbL3ZABStD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q3GIWOWNIK4AWuai7jNPG1EY/yajz/aBoTvCDzUAzh6ITXKv1e8JzC4G7M0npLWZ8zYZri5Uv2xnBnDV/mJrq27pIbEzZFlwdWi4VnUQc/TaUByBrsJjm9M7DrfUKf0n7jz+sgWQDRW3Rs5jIZyTtUOkKaDWXostsO7SdRJCgnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGPwcq7v; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760514768; c=relaxed/simple;
+	bh=huaoblDaUm5GV/wEEBTTwjtfX01FRyyrQekiwsqg11k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mrA7T0gcy+6mOd3NpMEUsNvLp3Yl5v/RIPe9+Hs7t8hEQ4RFJvChAVHCjNYp8vxaygvXxp+/9+sHwImTwT2+nl+b2uJUF7j5oek1US4H4V8+xN1pyh6vQ09FmaQaqdsRmpMizSxhoIYlHGupIdCVn6+zU2Ea2j+frO6AwMvsB2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KU1ZYWOy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGPwcq7v"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso6483278e87.0
-        for <linux-tegra@vger.kernel.org>; Tue, 14 Oct 2025 10:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760464459; x=1761069259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L34c2igKzAl+y7faUaRQQ6fgbb6gd8h/e7yU5YjEm5c=;
-        b=YGPwcq7vqzwmxRtsw5LhfA/DEOi/SaAE9rRwiYulyjpgtOhqA45ASkqLo9ub50zPbS
-         LH2Qw+i+dG1ngEWASHqwQpc0qixvh2kpGTJ6pZDqwbdDlMwujI8/uTq0uP9Iz8Pext6r
-         2PTelnajsEO2MSHHiLeaIzLtZSSe1rgfqtJgKINjGC431hO4ux1CR+5vN2xRX8fwGKQg
-         cXcLfiCF0Wl0ScByJdUuydSx9STXdKY93Ti/7pMu9UUiFdUxrNWmCyuPjhIN05ASORdr
-         BOYB39r6FpLn/cMljreaZMsUETF7INda2Uat8ckOAYY3k+OXN7Ljc9iq2Q0Ieei/bMcV
-         R2xw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KU1ZYWOy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760514765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHykXUHzy3P15VrWtRxCqfqVXwzZ2Ylga+RWIrK7dZE=;
+	b=KU1ZYWOyDIwp4S0YN5O9G5v4PiTcyS4tN2OQ/zFd0tL87xUu7N5utJO4rRX6rfjM5Tep26
+	Bu+ls5UIsYWtXP0m1ccwoy7RBnvhQu42i7X6UWwHXKRfzSKKL01F0/My/kbWlUsQI+uqgl
+	mdqwvQiqrlRTGWgul8yBE/ZqBjORHc8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-sUJ57BjXNzSTzLM-LeRkWQ-1; Wed, 15 Oct 2025 03:52:44 -0400
+X-MC-Unique: sUJ57BjXNzSTzLM-LeRkWQ-1
+X-Mimecast-MFC-AGG-ID: sUJ57BjXNzSTzLM-LeRkWQ_1760514763
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e502a37cdso39291125e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Oct 2025 00:52:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760464459; x=1761069259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L34c2igKzAl+y7faUaRQQ6fgbb6gd8h/e7yU5YjEm5c=;
-        b=e/R8qxpbsLAkEey0XK9QCxDrgod6rQbs3PLb6L9Rx8eCLkgjwuoNwyoJiyzzD6md1m
-         xxoKjfIAJKasBAORkp7Q36mIQE+8jWhFyI8w4zu+vYA6AxmX887TUQ9XZZE56vhQ/BRA
-         LoNZdWrSfiDvMcHF0H02iLi5jnoEP+o7iOTHEIpWeoh7e8PXwwtXQfZLMpF6S0xAgFpx
-         F5tQ31+Vd5I3vcjcPMq7tbpu6zKpCjuAsHKxKbg/Cicr0PVpFDwdUcRiVXb67frhwKAd
-         ejoFoAOpyvbxw243OhvwjubrvRuABoYjFxtqG5c5BjaA6WIdJbYVvWPr/oDJwMxmahOv
-         pMyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQgzWCp3MUWKXdtmvKJ+4hu0PCpTFiIvIZ4q9c8UlPOLKujTlWtkhmNXAJUrD/3wBrhyOeFSkSNSDL1A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcE/NwfMfThgwC/55R1Ildlrc6lLmTd8yUxqonN+pMiblROmfg
-	8b3PQSgLW3P0VxXcgPne/dGCb2Jwc11vvuA+5UcBNqPo0M2CPV76Wn2XLuUF06Eqo54z8Gf38kL
-	nsS5bVVFt/D6PzWU9xT5KALTAzB3ktr34EQ==
-X-Gm-Gg: ASbGncvy5HHBMLs5+CdmRKvVaRQdVDLLG8dAwo2KPAps0WaWdasi7MbTHE32PLHXJtf
-	ov6JzJHv85vV3mVD1VkvcXZPanyRmYCIBNMQMxMTlUdr8eZW3R5w0vsfjVrDIA41pVLXMiGlmY3
-	lumzHHltfItEknM6LNX35vzv33+uVVGHSaPewmJ69txQ5ZLT8m/qj8lBYnZw4spwnHh7SKwlckC
-	Vgbt80py4akTKlm1g/bb4l57XxoZcqeDMwf
-X-Google-Smtp-Source: AGHT+IF9+8vhtrxqH7QnmXwbacZFNb3DZNzy7OnXFeJzxvLDNzi7O/QJeqOMolpXCiVF+ZPs25ZX5GVlP4y2ObIM8ds=
-X-Received: by 2002:a05:6512:3b96:b0:58b:114:b7e2 with SMTP id
- 2adb3069b0e04-5906dae5ef0mr7670933e87.32.1760464458427; Tue, 14 Oct 2025
- 10:54:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760514763; x=1761119563;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MHykXUHzy3P15VrWtRxCqfqVXwzZ2Ylga+RWIrK7dZE=;
+        b=jHm4T+OwR023xw8BzBHGP9kIeIZPEOLY4iBGgoUSdJE2VeXRvAH8U7B6SissKxUs/+
+         K6X0/3r95VbkFxK0+jO5hwnJ/dzv0nY7CYh41y0DV6R6kKCiGo3uXZYOr/JMgVIUzJGh
+         VfykhVCa/TJoz+W4wXGbd/HaZzGriy5lk9+pH6XvJvodyOMfXs/GSplBhSbJlaClDHSD
+         1yY63PcaXe7SmycP4A6mcEA38yEUweoBIH1JsaUDao8IoENZ5tuot6yo74C0EAWYEtFd
+         LV2CQ3/WoBJ3AjGyXEpdA/EHkuRscCggvpp7z0xyEnO+aPtmHDOjv+SLg+OEiGVvrUzn
+         n8Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiGbZq4geVzU7GxWAXEKk/SJtiwlcjM6c3tETqyP9pIwLxDA0Y/3ExcTaUoAoHCMXfZ5BXPQaGHkH+fg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKx/+WNFNYhS74Y15b9rwn6WMQAVAkVLnz1mFBdLPAMptykJ/r
+	xpqa1ST7RG4d5RI3V3WR3+WpLc2nCTjJuqQkp4vZU5ZCY1USoqz/Rsv/pDUkBYWpNxycEBl4XvU
+	8seOKyfChxUdSR67DT/JvwWBkY6h6tX5WLC3e42c7LKyxVkJdMHRDreBqO+bXH11e
+X-Gm-Gg: ASbGncsvuRzeYRnPs9mUCZgEtQa03rql+s8vyNEDYneyEREN++6/6kMf+fstQ4d2ocS
+	bFLcqgLQmZjtjouWk2sZ6W3+RHN7/1jP6VW5CoYneBW4jc38p5jBq3PLPJEMffjlC0a5QTVhhEO
+	2CNzWsE8BNxJMNvUfox72qzNW3MVeprgcLvQ5SGGwWIWZKi7j5l77AsEYWZ/A87yh2vwDwFb0hZ
+	h6UxriqNPeVoNdse7IpDTH4+k9jPOdKj1CcoIVXQnDRjKPGlPQxHY7Um1Hm+tGZUvFX5/1H1Yo3
+	DXyseTmXze3LyFIYMe9z1yTbK9320Axu+L1LPxZKFkz/TjMThGLBmIgpj3T6dCvMhlArNKQ+Bv3
+	vdXfS
+X-Received: by 2002:a05:600c:34cc:b0:46e:59dd:1b4d with SMTP id 5b1f17b1804b1-46fa9aa2076mr211303505e9.16.1760514763147;
+        Wed, 15 Oct 2025 00:52:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHW2ZDBPJxUfYCX0H6nLEKOLye2i61674dJQY/ZLYYwFVcv5Uohdp1HeQRReQYkGVWqF+Eh1g==
+X-Received: by 2002:a05:600c:34cc:b0:46e:59dd:1b4d with SMTP id 5b1f17b1804b1-46fa9aa2076mr211303305e9.16.1760514762767;
+        Wed, 15 Oct 2025 00:52:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47106fc97adsm2155395e9.9.2025.10.15.00.52.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 00:52:42 -0700 (PDT)
+Message-ID: <3d07c6ba-02d6-4d3f-8684-65a41b128539@redhat.com>
+Date: Wed, 15 Oct 2025 09:52:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
- <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
- <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com>
- <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
- <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com> <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
-In-Reply-To: <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 14 Oct 2025 12:54:06 -0500
-X-Gm-Features: AS18NWD7TZf0Odmt-TAH5heuCe6IG8XyPr57Ljb0DD_wuWQD_jZFSXnz2IurYx8
-Message-ID: <CALHNRZ9J2VFLm39wm7+8Le8rt2HpfeHgDOm6mc-s7_Ya8aXe1g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] drm/log: Do not hold lock across drm_client_release()
+To: Thomas Zimmermann <tzimmermann@suse.de>, javierm@redhat.com,
+ mripard@kernel.org, maarten.lankhorst@linux.intel.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org
+References: <20251009132006.45834-1-tzimmermann@suse.de>
+ <20251009132006.45834-3-tzimmermann@suse.de>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20251009132006.45834-3-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 4, 2025 at 8:09=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Wed, Sep 03, 2025 at 12:58:06PM -0500, Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 1:55=E2=80=AFAM Linus Walleij <linus.walleij@lin=
-aro.org> wrote:
-> > >
-> > > On Wed, Sep 3, 2025 at 6:54=E2=80=AFAM Aaron Kling <webgeek1234@gmail=
-.com> wrote:
-> > > > On Tue, Aug 19, 2025 at 6:30=E2=80=AFAM Linus Walleij <linus.wallei=
-j@linaro.org> wrote:
-> > > > >
-> > > > > On Tue, Aug 12, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
-> > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > >
-> > > > > > This series adds support for Tegra186 pin control, based on a d=
-ownstream
-> > > > > > driver, updated to match the existing Tegra194 driver.
-> > > > > >
-> > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > > (...)
-> > > > > > Aaron Kling (3):
-> > > > > >       dt-bindings: pinctrl: Document Tegra186 pin controllers
-> > > > > >       pinctrl: tegra: Add Tegra186 pinmux driver
-> > > > >
-> > > > > These two applied to the pin control git tree.
-> > > >
-> > > > On patch 3, Mikko noted that I accidentally amended the formatting
-> > > > changes intended for patch 2 into patch 3. Linus, since you've alre=
-ady
-> > > > picked this up to your tree, is it too late to fix this properly in=
- a
-> > > > new revision? It doesn't appear to have made it to the main tree ye=
-t.
-> > > > Or do I need to send in a fixup?
-> > >
-> > > It's one of the first drivers I merged with plenty of other stuff on =
-top
-> > > so I can't amend it, just send a fixup based on my "devel" branch
-> > > (or linux-next, it should work too).
-> >
-> > I am highly confused now. When I went to make the fixup series, the
-> > fixup didn't apply. Looking at next-20250903 [0], pinctrl-tegra186.c
-> > looks like I wanted it to, the base commit has all the format fixes.
-> > Which doesn't match the commit on this series. Which leads me to a
-> > couple questions:
-> >
-> > 1) Does anyone know what happened? I'm not particularly a fan of not
-> > knowing why something happened, even if it's beneficial at the time.
->
-> Maybe auto-formatting or something else that Linus did?
->
-> > 2) What should I do with the dt commit now? Ask the Tegra subsystem
-> > maintainer to do a manual fixup when pulling? Even without a manual
-> > fixup, the bad part of the commit would fall out when getting applied
-> > on top of next.
->
-> I can drop the extra hunks when applying, no need to do anything.
+On 09/10/2025 15:16, Thomas Zimmermann wrote:
+> When calling drm_client_release(), the client is already quiescent.
+> Internal locks should therefore be dropped before the caller releases
+> the client.
+> 
+> In the case of the DRM log, concurrency originates from the console or
+> from client events. The console has been unregistered in the previous
+> line. The caller of the unregister callback, drm_log_client_unregister(),
+> holds clientlist_mutex from struct drm_device to protect against concurrent
+> client events. It is therefore safe to release the client without holding
+> locks.
 
-Reminder about this series. Patches 1 and 2 are in v6.18-rc1. Patch 3
-is not. And I have seen no indication that it has been picked up or
-will be picked up within the 6.18 cycle.
+Thanks, I agree, it should be safe to move drm_client_release() after 
+the lock.
 
-Aaron
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>   drivers/gpu/drm/clients/drm_log.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/clients/drm_log.c b/drivers/gpu/drm/clients/drm_log.c
+> index d239f1e3c456..116e0ef9ae5d 100644
+> --- a/drivers/gpu/drm/clients/drm_log.c
+> +++ b/drivers/gpu/drm/clients/drm_log.c
+> @@ -302,8 +302,8 @@ static void drm_log_client_unregister(struct drm_client_dev *client)
+>   
+>   	mutex_lock(&dlog->lock);
+>   	drm_log_free_scanout(client);
+> -	drm_client_release(client);
+>   	mutex_unlock(&dlog->lock);
+> +	drm_client_release(client);
+>   	kfree(dlog);
+>   	drm_dbg(dev, "Unregistered with drm log\n");
+>   }
+
