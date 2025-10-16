@@ -1,130 +1,101 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2F21E1C22
-	for <linux-tegra@vger.kernel.org>; Thu, 16 Oct 2025 15:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02E722D4FF;
+	Thu, 16 Oct 2025 18:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627787; cv=none; b=CcSeRLDxCN365h2DKNMCqtGDnL9NwKYxLgdonG6xhzvnwP9Wi/WKopDHN9YWOwcKGpLAL6WRZd8GarFGPTnY35vhILw+TxlwwqVLo/nBM/g51BzZA/zWt3voEYBH7KS3Cb2sASdQm+DTl8jy9qH1479ehWZhbSn/fRSMHCvvfxs=
+	t=1760640844; cv=none; b=DVkDbU8DsWdGFbLq+sAwDEiQ84GFSc28DK7TIZAPK7xy5r9FwXldFx5zXNQYsYKfj49C6r6SKiZGAGx9PZGhjw/G/FEoSm1v072YGxgLig1bbm/fnUgHjkR+/9BK+3jdHQm4qG5+XUs/56OJgCTWnGcYSnS35EkLKO5qq1WNjDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627787; c=relaxed/simple;
-	bh=wcfBHmd6UI5Ee2LDKTIUZ3jBqohaEOc9j2+snQ6rucI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uH88CilxkBgIl2+FRTDuLceJ9YC43ql4BHa6/k8zvHYiIHImQ5kkWjZojQXurSY7qv17RbXngHT27tHmWtQeSFOACEjNbpSbx+ApSu53qzt8wW7tncpqYfR9xOGGydpZGsFdqkcZ6FHSLv3fSc276lfB3m+tkOYR6s3YMtC8ALw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ll4RLxDA; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760640844; c=relaxed/simple;
+	bh=oC4Qmh26pfyqGfqAYEuZFDRhfG9AIhUmSYnLHNqUl2Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CG4qEs0lVZAGABaBC5D4aVUy19vWJcY8/VC8BQc3CmuizFDEiWUFYLpbUuD5/M6mnxYxoY+hEXBgoPA9wW5O82eRWLq5woiqCH+s4gbDlBh2WbU3k/rrmAf9D9llUAAj/xbrNFaHg739SzQboa7CpX/UNxCUWloOrTCHEURU/XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nGQVX2Qk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfN0Q0lm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ll4RLxDA"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso1578886a12.0
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Oct 2025 08:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760627784; x=1761232584; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+GMHzyWxIQdB2FcnGDsVo98f9mvKfQ0tZi6sM1VRpVw=;
-        b=ll4RLxDAj0FVXCLpmb0Hy92wpkTF+tM1aJ4Hph33IeRmerp1ZGixggCCVv1QYgMbmi
-         M/O4cBLWnNfZ91OhZzTHwaBP25UPrLsewfV6wE5Qc/OsRf6sKs7BqxNu1JYpSFrF4FMP
-         mdGbLp02Q1svctTmrUsS5qyfrRPVmfNf4bgjlm8yH3EWWILdj6LqCkzMfxUtwcuYGycA
-         fDSB7rSPCWvlxb7Q0ClsbBuK5AAAJtz9fDUKQ8tfkcjLOK94xQI916au5lMGWiFbJzuK
-         zFFny+iT9Eb4UI6VBbJ/pBCt+S450nk9b0/PbTPmDSDpxb9Dcclq0Hfy+Jqje0cL7ZSO
-         KlBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760627784; x=1761232584;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+GMHzyWxIQdB2FcnGDsVo98f9mvKfQ0tZi6sM1VRpVw=;
-        b=mfY2VqHJABw0OiARGXSheBR7C5SHDfOgJbUsOA6BNmgmi3qnfGVC8vairh1slMHha7
-         u70jqA7Heju/228LocdmWV5WSkcQbSk7sFcpzj0aZYWiM5FFVmmn9f62Wiq3DbdRk57y
-         wZ44uO9clZUtVkvkIHMqrv1dKQ/MRHzMltvZY5U9v3e5ka3LuVoiAaL4flngp2+Uok6V
-         g9IdugCAE1yBLMH73k7sIFdGlBzME26I9YrR7IqfEHm37yeO/b1/2EULkRjRZh/aHSma
-         jQZrzsbCp8d7daf1NHVYi9peNoTxe4YoZwU0MVg1pD6/YZhmsyusqk9a3kWXW5OuzSd+
-         UsXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUafoO3PsbawDddRoGzBzSQxOllzS2n3R3KRmpGP9OcQa4+r4ENaqXluosqTBIWIFezPCQlEa7v6Nl11A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoWSPShfWksJMNCBupurK5PFZJMZuO1LfGFnbEZOtzOPSMGeKU
-	l2ehN2+Ov5DrrQ7rJGFD0T8FtQBEAbtewJY+o+wahJqmLcUT2LaPnPWR
-X-Gm-Gg: ASbGncsUfC86RTFcTR/YGMzoB1V1ocVvX2TDaecEGrcBFiUf3mZYtcnhc94EwFo73Ra
-	rAuy/94Y+f2I2v5O072U7PFx0iFnw30nsNopziLPzqXP8bafgwqOoNCnxrQW2UWW7InL0jrnRjq
-	5tdwoSEcw5h7G7QOEZ/UgE20uppts08apb7W0u2Piwjgf5pijeH1+s+59GG641uCEkBAmTsXJMh
-	2PQNJXdmNsUn4SjGn4keN6ALaHjOSZgaSnker7xvaHMtgV9JotuYIaj+NmI0SExMzxjJlkFo1tP
-	42ghDbYSKpOfK8EQa79DXwrfTMeypqP1RiIGhcWNp3RLkzn/bREwIBf8YoVFibjPoS9v/ucqlkF
-	lxEKZC365qW2dJ2W1Tkg19MBavHkFt9uEL1txjDtBNH2S2OhObX5gX2CE6SpcL0XyW4FumGGmDH
-	qLGATXUoE3WSki8j5YUXkkJOj7ZAdoJfXhc43x7QEJy7Y68HsFCKXX8TWu24kijB059I+6zRatu
-	w==
-X-Google-Smtp-Source: AGHT+IEUnMRpJptAyqDQKCXnI29t4Gj4evz9uABzOpOdIG6VCD9oWY5iTASgKePBY093qoWb66U4sQ==
-X-Received: by 2002:a17:907:2d06:b0:b40:cfe9:ed2c with SMTP id a640c23a62f3a-b64769cd245mr26276666b.64.1760627784283;
-        Thu, 16 Oct 2025 08:16:24 -0700 (PDT)
-Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccb51fesm532883366b.44.2025.10.16.08.16.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 08:16:23 -0700 (PDT)
-Date: Thu, 16 Oct 2025 17:16:21 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: webgeek1234@gmail.com
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] arm64: tegra: Add Tegra186 pin controllers
-Message-ID: <qkyzlnni5nqykck4org4vgxzju6v6iha6fulgguutxuhf7zozc@awyches7ozox>
-References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
- <20250812-tegra186-pinctrl-v3-3-115714eeecb1@gmail.com>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nGQVX2Qk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfN0Q0lm"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760640841;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cw3pW5LiVDOcN8pDOG3T4cobF3AN3EhzWUWIZj4Jfn0=;
+	b=nGQVX2QkQPTCRrQ3BVNkCItQ8edVCSCv+T5F2Qf/zP2coTUp9sAt8aAxm4Ht2INwayVIV8
+	RADP6UycoswqT4A6oeZQpAB+bsa27Eg5IvIjszqJB89aSsB19pXQxg+Kz9kH0dm/ueVy+G
+	6tdpH8WNg9IsLC7dnL0CMx03hTmlc/pPtdR18iD0yytSPE8627j4MyWKJQEGXrCYpVMhfq
+	Jr4KM++28o5bwAeNoKWu6cFIMb3JnAd+gZUE/opBDKWnkoMlAeuK8Bub6mRnWh3JMr92Ra
+	GUUxWv69KXu+PQq1M6Bg72OhVgc9LbkOXS3SE7b1mzWVs/txkfKRe2k2eWtFVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760640841;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cw3pW5LiVDOcN8pDOG3T4cobF3AN3EhzWUWIZj4Jfn0=;
+	b=VfN0Q0lmGJs/KvetSfYA7RgYqToXfCulGzUCe3r/4KAEMiWwRd1TmbHapQ9XlNL4Jtbzfr
+	Fe/1qgwaEUvjpyAQ==
+To: Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+In-Reply-To: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+Date: Thu, 16 Oct 2025 20:53:59 +0200
+Message-ID: <87cy6m1xvc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xpwhjuenbephr6ly"
-Content-Disposition: inline
-In-Reply-To: <20250812-tegra186-pinctrl-v3-3-115714eeecb1@gmail.com>
+Content-Type: text/plain
 
+On Thu, Oct 09 2025 at 13:38, Thierry Reding wrote:
+> We've been running into an issue on some systems (NVIDIA Grace chips)
+> where either during boot or at runtime, CPU 0 can be under very high
+> load and cause some IRQ thread functions to be delayed to a point where
+> we encounter the timeout in the work submission parts of the driver.
+>
+> Specifically this happens for the Tegra QSPI controller driver found
+> in drivers/spi/spi-tegra210-quad.c. This driver uses an IRQ thread to
+> wait for and process "transfer ready" interrupts (which need to run
+> DMA transfers or copy from the hardware FIFOs using PIO to get the
+> SPI transfer data). Under heavy load, we've seen the IRQ thread run
+> with up to multiple seconds of delay.
 
---xpwhjuenbephr6ly
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 3/3] arm64: tegra: Add Tegra186 pin controllers
-MIME-Version: 1.0
+If the interrupt thread which runs with SCHED_FIFO is delayed for
+multiple seconds, then there is something seriously wrong to begin with.
 
-On Tue, Aug 12, 2025 at 04:24:42PM -0500, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
->=20
-> Add the device tree nodes for the MAIN and AON pin controllers found on
-> the Tegra186 family of SoCs.
->=20
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi |  12 ++
->  drivers/pinctrl/tegra/pinctrl-tegra186.c | 207 +++++++++++++++++++++++++=
-+++++-
->  2 files changed, 213 insertions(+), 6 deletions(-)
+You fail to explain how that happens in the first place. Heavy load is
+not really a good explanation for that.
 
-Applied, thanks.
+> Alternatively, would it be possible (and make sense) to make the IRQ
+> core code schedule threads across more CPUs? Is there a particular
+> reason that the IRQ thread runs on the same CPU that services the IRQ?
 
-Thierry
+Locality. Also remote wakeups are way more expensive than local wakeups.
 
---xpwhjuenbephr6ly
-Content-Type: application/pgp-signature; name="signature.asc"
+Though there is no actual hard requirement to force it onto the same
+CPU. What could be done is to have a flag which binds the thread to the
+real affinity mask instead of the effective affinity mask so it can be
+scheduled freely. Needs some thoughts, but should work.
 
------BEGIN PGP SIGNATURE-----
+> Maybe another way would be to "reserve" CPU 0 for the type of core OS
+> driver like QSPI (the TPM is connected to this controller) and make sure
+> all CPU intensive tasks do not run on that CPU?
+>
+> I know that things like irqbalance and taskset exist to solve some of
+> these problems, but they do not work when we hit these cases at boot
+> time.
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjxDEUACgkQ3SOs138+
-s6E1FQ/9Emy2fSHqfWOx1mLl7fFhFiPgIbO/7b6K4ogiYAUJPPgObu9dQKwRZYcT
-y3WxvaYz9orL2R8f9wssQTfeCjiNcxs/9KX63v4K0A8UTAZ6IFU+jwzcuswQ0ZHX
-CLEl1zQnPnzbderf2Ay7rTbxUaOt+D9yDXjmpgm5zGOdGEPCibFaPC8RTbx+5Wy2
-rqztgmgQ4lHhBuVKGfjrfaVttYLrwfv2cV4pvZiyD+o5ekRgQqUqn6vrKbv81edG
-/RYqWHc1p/ylM/ff5oJKbSVEOIVHkdfFB6vREUZHcb5j8CFhXKojdp46dWRNzyKu
-ZobImewQyLDYmny2ci3uCZRZHuohBOHofyND1oPBuzA7seFGAmH41hNWzQD6mbuK
-8FU07VkQyz/S2vEOGb2yyeEnnzNLLSPmiJRXCO7Ld/voGIwAr5UpGdZKhcTn0MHG
-Djt+P8cRy0x5FppjlIT/YqPlhWFKiovlRJ9SSlMtnVyPMz8P+c4wC77uMtQoGodW
-3QkeqNwPVxDsN0pnUFb24DepLbCoOdRAknomjXbbTiRyzwyhCBoJ1y+C8fBNXzjM
-Ndo0FiyUNf712YVBRTtj/Kd44VxC6z0G7kChlUxo1ja4WTI5IZQYxDxoZttn0Nss
-07AJ9/Yu4hGCO60Ut6sY34UshXe//dGNnuaxvrMEbG3DwjD8uEo=
-=+p2n
------END PGP SIGNATURE-----
+I'm still completely failing to see how you end up with multiple seconds
+delay of that thread especially during boot. What exactly keeps it from
+getting scheduled?
 
---xpwhjuenbephr6ly--
+Thanks,
+
+        tglx
+ 
