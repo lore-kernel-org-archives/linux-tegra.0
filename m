@@ -1,76 +1,76 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2C73A8F7
-	for <linux-tegra@vger.kernel.org>; Thu, 16 Oct 2025 15:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2F21E1C22
+	for <linux-tegra@vger.kernel.org>; Thu, 16 Oct 2025 15:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627687; cv=none; b=qAvZlS+BRQyGHFFPJ9TJpjycydxkeban+Uedm9FXlHivZnhXJFFtbY33/NJjeGzDMb4/sIW2c/9QaMJ7n77cjXgaTJc50jYuVjeeK/C0oVLR/BBn7l3Yy7Vi6E40VxorZRsM1Gl8pB+S09qLOAtpkpvO9ZAQOTgrB0F7ok0b2m4=
+	t=1760627787; cv=none; b=CcSeRLDxCN365h2DKNMCqtGDnL9NwKYxLgdonG6xhzvnwP9Wi/WKopDHN9YWOwcKGpLAL6WRZd8GarFGPTnY35vhILw+TxlwwqVLo/nBM/g51BzZA/zWt3voEYBH7KS3Cb2sASdQm+DTl8jy9qH1479ehWZhbSn/fRSMHCvvfxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627687; c=relaxed/simple;
-	bh=hGWSYNWPlK0emE98FnXV2CDEvbnl8xx7bhE7l1Ib1L4=;
+	s=arc-20240116; t=1760627787; c=relaxed/simple;
+	bh=wcfBHmd6UI5Ee2LDKTIUZ3jBqohaEOc9j2+snQ6rucI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XHBGGZLOicnEQSuIjTdJJw/D5NYOrAi9pB+a+uufgY9IgVZgvqrxg6DRIzvyPzLoNLmr/g5YZ8pdJwNh5jZ0iau+EEv0GscHYltd6A7fJ6TuahaABNkjsjmMEdMYRWf3YyTiqHxGkOnIOc/PWzqnLDTeJI+5OHX+8Iw/xVRakVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+e+UmHO; arc=none smtp.client-ip=209.85.128.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=uH88CilxkBgIl2+FRTDuLceJ9YC43ql4BHa6/k8zvHYiIHImQ5kkWjZojQXurSY7qv17RbXngHT27tHmWtQeSFOACEjNbpSbx+ApSu53qzt8wW7tncpqYfR9xOGGydpZGsFdqkcZ6FHSLv3fSc276lfB3m+tkOYR6s3YMtC8ALw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ll4RLxDA; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+e+UmHO"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so4584465e9.0
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Oct 2025 08:14:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ll4RLxDA"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso1578886a12.0
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Oct 2025 08:16:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760627684; x=1761232484; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760627784; x=1761232584; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EoOHIdsdrpxMX0n43mbcTrRfSQGGMlYUvz0zw3AbSco=;
-        b=Q+e+UmHOo15Da84maIiJ/kfAs3ExMXeI1WJ8cZ4I/1W2LzBBiA7ZV204g9OwjyTP7d
-         uIgeS3bNDtSe0blmXEzpHNFB1D+O19V1avn2lCvn1EYI7TPYYVeWLN24wPP2ldYAzzNW
-         eo1UCtP7igLuoOR6jr4IUOyoq1s7Qp3HnfuKr3NCrdaXHFgUkLEse9Bn8dlUUhcYdCKD
-         DuFyAZTl0eUjkDR2U1ioYhENCfNKlaDG4XSJ3jamMtnaAu14ODLwgnOegTJWW9pfmezL
-         f0thkbHF+cO9AmEMu44+fRSnl8KVmllq0YMlcN6YGaZDmT7xNgCgClka57Vgdd0Xgd3b
-         retw==
+        bh=+GMHzyWxIQdB2FcnGDsVo98f9mvKfQ0tZi6sM1VRpVw=;
+        b=ll4RLxDAj0FVXCLpmb0Hy92wpkTF+tM1aJ4Hph33IeRmerp1ZGixggCCVv1QYgMbmi
+         M/O4cBLWnNfZ91OhZzTHwaBP25UPrLsewfV6wE5Qc/OsRf6sKs7BqxNu1JYpSFrF4FMP
+         mdGbLp02Q1svctTmrUsS5qyfrRPVmfNf4bgjlm8yH3EWWILdj6LqCkzMfxUtwcuYGycA
+         fDSB7rSPCWvlxb7Q0ClsbBuK5AAAJtz9fDUKQ8tfkcjLOK94xQI916au5lMGWiFbJzuK
+         zFFny+iT9Eb4UI6VBbJ/pBCt+S450nk9b0/PbTPmDSDpxb9Dcclq0Hfy+Jqje0cL7ZSO
+         KlBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760627684; x=1761232484;
+        d=1e100.net; s=20230601; t=1760627784; x=1761232584;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EoOHIdsdrpxMX0n43mbcTrRfSQGGMlYUvz0zw3AbSco=;
-        b=oZrrnpl2zEG9pFClQGwSa4VKFnp0jEo64oTGyvsPrBbryoeWW1/C7ZxyR9cKvhBOVv
-         Df84Pbrrau3Ss1bHGOCLdZ/Yynwpwveasj7vKP44GA3Nwn83NgCgkrHTkw07U5IuHruz
-         QahZbjW73W0vLWGo98FDpgH32ovJgCb0Lq7OY4pXcXLZT1a5Y74Mcga/r05F4VfQBN1R
-         3+QvVrvqQKEITrnI3P2oQt4IKP81PyFwghzIwTBPoWF3ne05JHPzDWQOi7qsckk1KfEt
-         zlbdL6u0rzsWV9ebk4KynxM+OtFk/NdAFjt/ue3VOj1BdEXa4cU3+FcWzx7Vfd8YNB4/
-         lZow==
-X-Forwarded-Encrypted: i=1; AJvYcCVL8nNU1FpStsY12AZvizXggGW3GPdJjAK+n1X4beCFT6Nv1UU0wNzYHZWeZUOmszqKtaKh5FpaMZ6f4Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyYDbiSJqpKrRrR2Q73VbfytqMksuj8E5SEi+s2iWlBpaeMAIL
-	IXlyUzjlMuG8+TRDJxZi4KDOv7WP1G4Wc8WYx2VRg065YsGrTXwXbqHf
-X-Gm-Gg: ASbGncsKkioPZHhwrL7L/Bdm2Sujvi++Xnz7HCyjMA/EhdVqpsjZeI5PjnVqpWmZ6DZ
-	h483gHUuIRlGvZZvw1wtzqHypTspVvHnvfRSRL7RKRjr68XnyWFcu2y72Y+LbmUZBq0cn4ymLYy
-	+JS2VLAd8xk9FLsnUImN2ndHm5G/kwXzIlmlPbkYOy2n8ttPgZjlUitDzEkFIyIPW/7rwZoln+x
-	K5TzdrhDkZsPwf14pjHhmvZqPGEoxjWjoUmjtkVQO07j3IZuoQ5R94FY7mesv3QC/ZFPuwmcaY1
-	FRviz83imJqPu1bClDKMBoEIN0OZN5dA4x7dsahplCIguxZOb82ISdRxf+WGg3Ik9Y0q37IAEv7
-	c3MW0IheWVY6q1QGPu63kEpUtLqxaCW31xy+VRaHiDhyGRyuIzZZPUE8gQXYJAoD/4gxq/artnq
-	MbYJD3r2gKbxzqAl+tWrV/F3/nd5PAvje0Y+cqlmpGWGY0X1VxtvlJnCFgYdbqaYBzREIbPtxWK
-	Q==
-X-Google-Smtp-Source: AGHT+IF3n3VtNdhsWvLalKoTzz4VLTyBDlsARgNwi1Y2P6nJNR3uu6ecU3ZEzG9VFbpUOYGZEkzvoA==
-X-Received: by 2002:a05:600c:444d:b0:46e:1f86:aeba with SMTP id 5b1f17b1804b1-471178ad982mr2701175e9.17.1760627683366;
-        Thu, 16 Oct 2025 08:14:43 -0700 (PDT)
+        bh=+GMHzyWxIQdB2FcnGDsVo98f9mvKfQ0tZi6sM1VRpVw=;
+        b=mfY2VqHJABw0OiARGXSheBR7C5SHDfOgJbUsOA6BNmgmi3qnfGVC8vairh1slMHha7
+         u70jqA7Heju/228LocdmWV5WSkcQbSk7sFcpzj0aZYWiM5FFVmmn9f62Wiq3DbdRk57y
+         wZ44uO9clZUtVkvkIHMqrv1dKQ/MRHzMltvZY5U9v3e5ka3LuVoiAaL4flngp2+Uok6V
+         g9IdugCAE1yBLMH73k7sIFdGlBzME26I9YrR7IqfEHm37yeO/b1/2EULkRjRZh/aHSma
+         jQZrzsbCp8d7daf1NHVYi9peNoTxe4YoZwU0MVg1pD6/YZhmsyusqk9a3kWXW5OuzSd+
+         UsXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUafoO3PsbawDddRoGzBzSQxOllzS2n3R3KRmpGP9OcQa4+r4ENaqXluosqTBIWIFezPCQlEa7v6Nl11A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoWSPShfWksJMNCBupurK5PFZJMZuO1LfGFnbEZOtzOPSMGeKU
+	l2ehN2+Ov5DrrQ7rJGFD0T8FtQBEAbtewJY+o+wahJqmLcUT2LaPnPWR
+X-Gm-Gg: ASbGncsUfC86RTFcTR/YGMzoB1V1ocVvX2TDaecEGrcBFiUf3mZYtcnhc94EwFo73Ra
+	rAuy/94Y+f2I2v5O072U7PFx0iFnw30nsNopziLPzqXP8bafgwqOoNCnxrQW2UWW7InL0jrnRjq
+	5tdwoSEcw5h7G7QOEZ/UgE20uppts08apb7W0u2Piwjgf5pijeH1+s+59GG641uCEkBAmTsXJMh
+	2PQNJXdmNsUn4SjGn4keN6ALaHjOSZgaSnker7xvaHMtgV9JotuYIaj+NmI0SExMzxjJlkFo1tP
+	42ghDbYSKpOfK8EQa79DXwrfTMeypqP1RiIGhcWNp3RLkzn/bREwIBf8YoVFibjPoS9v/ucqlkF
+	lxEKZC365qW2dJ2W1Tkg19MBavHkFt9uEL1txjDtBNH2S2OhObX5gX2CE6SpcL0XyW4FumGGmDH
+	qLGATXUoE3WSki8j5YUXkkJOj7ZAdoJfXhc43x7QEJy7Y68HsFCKXX8TWu24kijB059I+6zRatu
+	w==
+X-Google-Smtp-Source: AGHT+IEUnMRpJptAyqDQKCXnI29t4Gj4evz9uABzOpOdIG6VCD9oWY5iTASgKePBY093qoWb66U4sQ==
+X-Received: by 2002:a17:907:2d06:b0:b40:cfe9:ed2c with SMTP id a640c23a62f3a-b64769cd245mr26276666b.64.1760627784283;
+        Thu, 16 Oct 2025 08:16:24 -0700 (PDT)
 Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711443e7a1sm33668125e9.9.2025.10.16.08.14.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccb51fesm532883366b.44.2025.10.16.08.16.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 08:14:42 -0700 (PDT)
-Date: Thu, 16 Oct 2025 17:14:40 +0200
+        Thu, 16 Oct 2025 08:16:23 -0700 (PDT)
+Date: Thu, 16 Oct 2025 17:16:21 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, kyarlagadda@nvidia.com, 
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 1/2] spi: tegra210-quad: Fix timeout handling
-Message-ID: <mqyiss7smpwlsfblxgrfkvsg55n7uctujtkmdtdejo7fg3hatj@22cyzfpuk23i>
-References: <20251016132923.3577429-1-va@nvidia.com>
- <20251016132923.3577429-2-va@nvidia.com>
+To: webgeek1234@gmail.com
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: tegra: Add Tegra186 pin controllers
+Message-ID: <qkyzlnni5nqykck4org4vgxzju6v6iha6fulgguutxuhf7zozc@awyches7ozox>
+References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
+ <20250812-tegra186-pinctrl-v3-3-115714eeecb1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,266 +78,53 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rhvddrsybgdqrlkm"
+	protocol="application/pgp-signature"; boundary="xpwhjuenbephr6ly"
 Content-Disposition: inline
-In-Reply-To: <20251016132923.3577429-2-va@nvidia.com>
+In-Reply-To: <20250812-tegra186-pinctrl-v3-3-115714eeecb1@gmail.com>
 
 
---rhvddrsybgdqrlkm
-Content-Type: multipart/mixed; protected-headers=v1;
-	boundary="zoxvwpn4fv5owykj"
-Content-Disposition: inline
-Subject: Re: [PATCH v2 1/2] spi: tegra210-quad: Fix timeout handling
-MIME-Version: 1.0
-
-
---zoxvwpn4fv5owykj
-Content-Type: text/plain; charset=us-ascii
+--xpwhjuenbephr6ly
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 3/3] arm64: tegra: Add Tegra186 pin controllers
+MIME-Version: 1.0
 
-On Thu, Oct 16, 2025 at 01:29:22PM +0000, Vishwaroop A wrote:
-> When the CPU that the QSPI interrupt handler runs on (typically CPU 0)
-> is excessively busy, it can lead to rare cases of the IRQ thread not
-> running before the transfer timeout is reached.
+On Tue, Aug 12, 2025 at 04:24:42PM -0500, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 >=20
-> While handling the timeouts, any pending transfers are cleaned up and
-> the message that they correspond to is marked as failed, which leaves
-> the curr_xfer field pointing at stale memory.
+> Add the device tree nodes for the MAIN and AON pin controllers found on
+> the Tegra186 family of SoCs.
 >=20
-> To avoid this, clear curr_xfer to NULL upon timeout and check for this
-> condition when the IRQ thread is finally run.
->=20
-> While at it, also make sure to clear interrupts on failure so that new
-> interrupts can be run.
->=20
-> A better, more involved, fix would move the interrupt clearing into a
-> hard IRQ handler. Ideally we would also want to signal that the IRQ
-> thread no longer needs to be run after the timeout is hit to avoid the
-> extra check for a valid transfer.
->=20
-> Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI c=
-ontroller")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  drivers/spi/spi-tegra210-quad.c | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-q=
-uad.c
-> index 3be7499db21e..10e56d8ef678 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -1024,8 +1024,10 @@ static void tegra_qspi_handle_error(struct tegra_q=
-spi *tqspi)
->  	dev_err(tqspi->dev, "error in transfer, fifo status 0x%08x\n", tqspi->s=
-tatus_reg);
->  	tegra_qspi_dump_regs(tqspi);
->  	tegra_qspi_flush_fifos(tqspi, true);
-> -	if (device_reset(tqspi->dev) < 0)
-> +	if (device_reset(tqspi->dev) < 0) {
->  		dev_warn_once(tqspi->dev, "device reset failed\n");
-> +		tegra_qspi_mask_clear_irq(tqspi);
-> +	}
->  }
-> =20
->  static void tegra_qspi_transfer_end(struct spi_device *spi)
-> @@ -1173,12 +1175,14 @@ static int tegra_qspi_combined_seq_xfer(struct te=
-gra_qspi *tqspi,
->  					dma_ctl &=3D ~QSPI_DMA_EN;
->  					tegra_qspi_writel(tqspi, dma_ctl,
->  							  QSPI_DMA_CTL);
-> -				}
-> +			}
-> =20
->  				/* Reset controller if timeout happens */
-> -				if (device_reset(tqspi->dev) < 0)
-> +				if (device_reset(tqspi->dev) < 0) {
->  					dev_warn_once(tqspi->dev,
->  						      "device reset failed\n");
-> +					tegra_qspi_mask_clear_irq(tqspi);
-> +				}
->  				ret =3D -EIO;
->  				goto exit;
->  			}
-> @@ -1196,6 +1200,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegr=
-a_qspi *tqspi,
->  			goto exit;
->  		}
->  		msg->actual_length +=3D xfer->len;
-> +		tqspi->curr_xfer =3D NULL;
->  		if (!xfer->cs_change && transfer_phase =3D=3D DATA_TRANSFER) {
->  			tegra_qspi_transfer_end(spi);
->  			spi_transfer_delay_exec(xfer);
-> @@ -1205,6 +1210,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegr=
-a_qspi *tqspi,
->  	ret =3D 0;
-> =20
->  exit:
-> +	tqspi->curr_xfer =3D NULL;
->  	msg->status =3D ret;
-> =20
->  	return ret;
-> @@ -1290,6 +1296,8 @@ static int tegra_qspi_non_combined_seq_xfer(struct =
-tegra_qspi *tqspi,
->  		msg->actual_length +=3D xfer->len + dummy_bytes;
-> =20
->  complete_xfer:
-> +		tqspi->curr_xfer =3D NULL;
-> +
->  		if (ret < 0) {
->  			tegra_qspi_transfer_end(spi);
->  			spi_transfer_delay_exec(xfer);
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi |  12 ++
+>  drivers/pinctrl/tegra/pinctrl-tegra186.c | 207 +++++++++++++++++++++++++=
++++++-
+>  2 files changed, 213 insertions(+), 6 deletions(-)
 
-The original patch has another tqspi->curr_xfer =3D NULL in
-handle_cpu_based_xfer() that doesn't seem to be in this patch. I'm
-attaching it here again for reference.
+Applied, thanks.
 
 Thierry
 
---zoxvwpn4fv5owykj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-=46rom 6c35ff11a4ef6e917aa1891df5cbd6bfd5902067 Mon Sep 17 00:00:00 2001
-=46rom: Thierry Reding <treding@nvidia.com>
-Date: Tue, 7 Oct 2025 13:40:26 +0000
-Subject: [PATCH] spi: tegra210-quad: Fix timeout handling
-
-When the CPU that the QSPI interrupt handler runs on (typically CPU 0)
-is excessively busy, it can lead to rare cases of the IRQ thread not
-running before the transfer timeout is reached.
-
-While handling the timeouts, any pending transfers are cleaned up and
-the message that they correspond to is marked as failed, which leaves
-the curr_xfer field pointing at stale memory.
-
-To avoid this, clear curr_xfer to NULL upon timeout and check for this
-condition when the IRQ thread is finally run.
-
-While at it, also make sure to clear interrupts on failure so that new
-interrupts can be run.
-
-A better, more involved, fix would move the interrupt clearing into a
-hard IRQ handler. Ideally we would also want to signal that the IRQ
-thread no longer needs to be run after the timeout is hit to avoid the
-extra check for a valid transfer.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-qua=
-d.c
-index 3be7499db21e..a103265e7eab 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1024,8 +1024,10 @@ static void tegra_qspi_handle_error(struct tegra_qsp=
-i *tqspi)
- 	dev_err(tqspi->dev, "error in transfer, fifo status 0x%08x\n", tqspi->sta=
-tus_reg);
- 	tegra_qspi_dump_regs(tqspi);
- 	tegra_qspi_flush_fifos(tqspi, true);
--	if (device_reset(tqspi->dev) < 0)
-+	if (device_reset(tqspi->dev) < 0) {
- 		dev_warn_once(tqspi->dev, "device reset failed\n");
-+		tegra_qspi_mask_clear_irq(tqspi);
-+	}
- }
-=20
- static void tegra_qspi_transfer_end(struct spi_device *spi)
-@@ -1176,9 +1178,11 @@ static int tegra_qspi_combined_seq_xfer(struct tegra=
-_qspi *tqspi,
- 				}
-=20
- 				/* Reset controller if timeout happens */
--				if (device_reset(tqspi->dev) < 0)
-+				if (device_reset(tqspi->dev) < 0) {
- 					dev_warn_once(tqspi->dev,
- 						      "device reset failed\n");
-+					tegra_qspi_mask_clear_irq(tqspi);
-+				}
- 				ret =3D -EIO;
- 				goto exit;
- 			}
-@@ -1200,11 +1204,13 @@ static int tegra_qspi_combined_seq_xfer(struct tegr=
-a_qspi *tqspi,
- 			tegra_qspi_transfer_end(spi);
- 			spi_transfer_delay_exec(xfer);
- 		}
-+		tqspi->curr_xfer =3D NULL;
- 		transfer_phase++;
- 	}
- 	ret =3D 0;
-=20
- exit:
-+	tqspi->curr_xfer =3D NULL;
- 	msg->status =3D ret;
-=20
- 	return ret;
-@@ -1290,6 +1296,8 @@ static int tegra_qspi_non_combined_seq_xfer(struct te=
-gra_qspi *tqspi,
- 		msg->actual_length +=3D xfer->len + dummy_bytes;
-=20
- complete_xfer:
-+		tqspi->curr_xfer =3D NULL;
-+
- 		if (ret < 0) {
- 			tegra_qspi_transfer_end(spi);
- 			spi_transfer_delay_exec(xfer);
-@@ -1395,6 +1403,7 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra=
-_qspi *tqspi)
- 	tegra_qspi_calculate_curr_xfer_param(tqspi, t);
- 	tegra_qspi_start_cpu_based_transfer(tqspi, t);
- exit:
-+	tqspi->curr_xfer =3D NULL;
- 	spin_unlock_irqrestore(&tqspi->lock, flags);
- 	return IRQ_HANDLED;
- }
-@@ -1480,6 +1489,15 @@ static irqreturn_t tegra_qspi_isr_thread(int irq, vo=
-id *context_data)
- {
- 	struct tegra_qspi *tqspi =3D context_data;
-=20
-+	/*
-+	 * Occasionally the IRQ thread takes a long time to wake up (usually
-+	 * when the CPU that it's running on is excessively busy) and we have
-+	 * already reached the timeout before and cleaned up the timed out
-+	 * transfer. Avoid any processing in that case and bail out early.
-+	 */
-+	if (tqspi->curr_xfer =3D=3D NULL)
-+		return IRQ_NONE;
-+
- 	tqspi->status_reg =3D tegra_qspi_readl(tqspi, QSPI_FIFO_STATUS);
-=20
- 	if (tqspi->cur_direction & DATA_DIR_TX)
---=20
-2.51.0
-
-
---zoxvwpn4fv5owykj--
-
---rhvddrsybgdqrlkm
+--xpwhjuenbephr6ly
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjxC+AACgkQ3SOs138+
-s6Fa3Q//evLYuwnbYxOKDhFrZmDwXFibzeB4ybyDIvEok2dR4lrF1//hBeMx2LDD
-tc/SoS6z9z1uz6i3aBwigUWeZFnEis+NIegialJY/SUozlkdRc6EjjsvptPQJR06
-+wssprXAhdlB/JBSaWSvbSC4gl/HTNDIYgzjQdoNHEo5px0snsN3kUN8YlZ0iTOi
-OYE2/cWeAWKwT9I2JFw8JX+0Wgke7HXlYJAGU9Ax3FiJN5jsnL37zLkhXqclu7RS
-gKBPqQtYQTgITsU566pyTBkiFHeNGgugZWe6Eyf8XGealloY51cC1/885ewCzDWc
-wHltjXQViL4/skq67v1LsqHmEpCMSRQlRVK+KShI0OvXJasbpUlarhZj0Bsn4ETx
-16OmKXTo5VcIO5ufXRgFT0MCOKB8ZcGsCMOwjQqNS//t7/JHemF8Nwq3hohzyoRd
-BdMGxt+1vQPEYnF4PKTWkG+OChbFJ/3Q0rueGNvL7R6YI8rH/tH455yAWG1VPpSp
-9upVhtQNo0wJzeMSyUMXNtza8zjZKu2eD5O+BDAg0bFKEwhFx+Ba5YqO0CgOMo+n
-gKH15jeUAGnUDUvcNRq113FN+gpLTw4avCbUXhWbpnvwsy+f7MumfWYAMzf7F26m
-waK4woXg8XoJuxESyI/1+Eq0U1PrlmKYCEOAUo1q/YpcH2zjk+o=
-=Npcl
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjxDEUACgkQ3SOs138+
+s6E1FQ/9Emy2fSHqfWOx1mLl7fFhFiPgIbO/7b6K4ogiYAUJPPgObu9dQKwRZYcT
+y3WxvaYz9orL2R8f9wssQTfeCjiNcxs/9KX63v4K0A8UTAZ6IFU+jwzcuswQ0ZHX
+CLEl1zQnPnzbderf2Ay7rTbxUaOt+D9yDXjmpgm5zGOdGEPCibFaPC8RTbx+5Wy2
+rqztgmgQ4lHhBuVKGfjrfaVttYLrwfv2cV4pvZiyD+o5ekRgQqUqn6vrKbv81edG
+/RYqWHc1p/ylM/ff5oJKbSVEOIVHkdfFB6vREUZHcb5j8CFhXKojdp46dWRNzyKu
+ZobImewQyLDYmny2ci3uCZRZHuohBOHofyND1oPBuzA7seFGAmH41hNWzQD6mbuK
+8FU07VkQyz/S2vEOGb2yyeEnnzNLLSPmiJRXCO7Ld/voGIwAr5UpGdZKhcTn0MHG
+Djt+P8cRy0x5FppjlIT/YqPlhWFKiovlRJ9SSlMtnVyPMz8P+c4wC77uMtQoGodW
+3QkeqNwPVxDsN0pnUFb24DepLbCoOdRAknomjXbbTiRyzwyhCBoJ1y+C8fBNXzjM
+Ndo0FiyUNf712YVBRTtj/Kd44VxC6z0G7kChlUxo1ja4WTI5IZQYxDxoZttn0Nss
+07AJ9/Yu4hGCO60Ut6sY34UshXe//dGNnuaxvrMEbG3DwjD8uEo=
+=+p2n
 -----END PGP SIGNATURE-----
 
---rhvddrsybgdqrlkm--
+--xpwhjuenbephr6ly--
