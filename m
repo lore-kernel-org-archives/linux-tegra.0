@@ -1,124 +1,98 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A512D4B4B
-	for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 18:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29DB2D1901
+	for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 19:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760986430; cv=none; b=RZfqRvmftVwZQVx10C9QyHUr6NUBMO3yppbn2DFgAiUB3G3/CmppQSzFVfxZ/JC7CocC0KU6rY0RBbaW4dCkda9xgl7XJ+7rPTl32gnMUfgTMWyLnAeEVXUKQU37mx/895f/vZZfjWiTDZAq2DoKw/Zdw5tyy9yTJeNzlBS8l2c=
+	t=1760987967; cv=none; b=PJKinP9BZ8vPG/sXkAZhtuhYBapD+gbRyXLySPySGef+DNd9wMAPWEEHPsSctj5lFIMwm8GLe8yuAOgNQlO1kLfV0RHMOAYkeV0AXrQf8Bp86RHP4XkuW7faH8J1jLuR2cehaw7B6aRcurLx4RGLgC8BOd3IwIPN/x36odsMEVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760986430; c=relaxed/simple;
-	bh=ep9oGRp0oF+oCFDHArxdHwQE5BacfqsLXNq7hLcEyno=;
+	s=arc-20240116; t=1760987967; c=relaxed/simple;
+	bh=YXpkBBmrwSLjuLYxkx+3i4ZtUHvDplauNtUTFwWBGco=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YB0z/rk4u/KaXe94ASvwPZvYbiWgGhcHFFFf+zYKoss+Ru/XpXutWJR32RU57uCfSBxvXPESLl6lt6JaW8lSlos+fXBjHe+j1dKHqCP51T4f+Jat2OD1Wt0gw2cG/1smFe+PpoYDrLIPO1Kfv131fmhXjebK74WXmZYjFV28T3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIzWjg9g; arc=none smtp.client-ip=209.85.167.54
+	 To:Cc:Content-Type; b=Q1/j3vREqvNfHBc4DTeMiSzYZyGISzzZxY6+LXD4b8gbq4JD0iU9oBWjrCAb3UWNQTIbhZ7yFFPivJd/9raYig2gsJ19MCbouI2+vpvtB45kj62u5D8H8DVBwzJ5wxLB32H1FgOUitxt5C3PEZY8vGAQnstYR1YSWIC4/G7ykos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kdd3YdFc; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIzWjg9g"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57a59124323so4846489e87.2
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 11:53:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kdd3YdFc"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso5408603e87.0
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 12:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760986427; x=1761591227; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760987964; x=1761592764; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qvkRm+XTrLJJZVcVghGvmjpr/0j+IP7YtKfaztr+Qdc=;
-        b=DIzWjg9gnQnUG9TcemQgQYlJC55i8rgv3s+7i2MxRtYySa9ILCW7fpRp9+J2yWIUEl
-         viFqIMc25uHKqE43zhQ2Qr2hAW7gVMoVl98xyP7YerEPBKHs4claLxW18eJl+NreoJej
-         WffmX3v9GA7My0V+8IfhPBc8dGhJ7ua17YO5gpnpjBL3NuSe8BOAKoHqVqdfywjpmbaF
-         V+NwuuKz4KqToNNYnna2QJtySN0ULEyzfCdRYcwssMitclS8mmxPy5YJdXCiYEFsOeib
-         BiQIBJ1dDXo4RWYkETf2/Dv5QVUmC5rJp9xAu+ogGX4V0Yzng765/M9+UZU0QAu8v9hI
-         88vw==
+        bh=YXpkBBmrwSLjuLYxkx+3i4ZtUHvDplauNtUTFwWBGco=;
+        b=Kdd3YdFcMyrvPRoxy4FtZJGCj9hQyARmmshnlMe3lA41voG47/kTWHTosvtnin9DBr
+         GNrJwwhgFAR8swu8NsZO20DcnHn4uQ3PjqjFfRpQ0Lyi1e09IANp1xbX6Wb0O/a7MSII
+         +/0uqxHMKFZeidtvasWZMjCyujXJNhpGS+uAYDRQdbDThvUCvXoLUe5Vy9bM9O2RIqhW
+         szrXgSd8z33mdRgKgr893RnZvk3XbeoeYhDsE0fdtIcCwQETZX2utHC95pycz0p4whPZ
+         +5ZRj6GSltJ71vBN3jfU0ktsX6mAxtEC51vnC1U6qXj/mJb5W7JKwl/qF115jdggm0+1
+         D2wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760986427; x=1761591227;
+        d=1e100.net; s=20230601; t=1760987964; x=1761592764;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qvkRm+XTrLJJZVcVghGvmjpr/0j+IP7YtKfaztr+Qdc=;
-        b=qElo50780v54SYSypcESgIQiI/rDGOh0EBSKcQeLiOIjVkyHLcpJ2JBKLunhX6owbr
-         mrOvyga1usv3UM0XuiHtCHzAGo1zd5KbT9T9CXtwm3l1ZPiWoAhC8TkOeSxsTlBBLeNZ
-         geFzoxFOJq55FJvicigyn0cgpsR6UOGYBGq/txFQ+rv7tCc6QpvZo0T3Oc+b4MLYYtI1
-         yki8WnzQldu/IylPErenJPY784SRmByjV1eCu8caEEG2Ob3D8MGfftGN4nivDiS5QcZz
-         NbKZpZn9RMRVts69bFeJDemtkmcaXh7ji/w0pXuJjPTo65pEF//yD9QiqSpK+QOY3WXw
-         qQVA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0G/fJEkhtQDP9lpqlj7vKLLa/AD/ULDThVRKBLwp0bDBXQgcBYl5/Uaue9OdGl2j8JsVd5N0jgpFXnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFlrbnAhQhFmDqLYOJY4OxMZ2p3g0VwDBLuV16N4KPA/sYh3Vf
-	W9JZCILel8M3kkOXrIcd/Ok6KE2+2I1/hBo7WFgdLGQXSkj7CwwEKdxHK7vK2kMyvjwCjhc/+XV
-	xgndjF3tVebpMHwJJZ8Jb5U+j4hvTs2g=
-X-Gm-Gg: ASbGncsIwVPqzz1qa3K9l+nTkyscvt8Zr3ZtGsCZek1No0++8e/YAxY/OYH3HMfy2E7
-	BdQcY3rmWRnQcFHddFuSF3pU9cHwUXUqTVbX8B/PUpPQhw70hpquGf2Ywy+a31QtAKdkpPSbqmD
-	hnuePFmmNotbHCFO8qEBX7/1MbWbVOWHKfqgzfHzcksX6zzXpseSZVv1uIi6XhfG/dkEbQ1B0dS
-	5u8qxOmwV7SpFvPuXcjmjT6YBYBlLGhN1sCusdcIGbf2y+L6/HuNvsbe9u8
-X-Google-Smtp-Source: AGHT+IGriJ7UXZ9nd8XnOsNbi6d9VsXWG8HB0uHqueF027XCSb3Vwq82mSdbbfih1n1Eq8I/zX/Vvg6RGc3tBqBeAaA=
-X-Received: by 2002:a05:6512:308d:b0:577:318a:a1c6 with SMTP id
- 2adb3069b0e04-591d84f7185mr4042715e87.23.1760986426759; Mon, 20 Oct 2025
- 11:53:46 -0700 (PDT)
+        bh=YXpkBBmrwSLjuLYxkx+3i4ZtUHvDplauNtUTFwWBGco=;
+        b=eCzBHx1jCCPeepXnINRxLGR8yTjYl7BRyP+SOrCWnUoyqW8Z21rgL6x4842ulB2xRQ
+         YbB/rHLSOSlww/cnNwem41q6YjKhM9zdw22jhaRqdCLZNTf7Fd8eeMwgRsOu7gWWl1ie
+         If5sK4zj23pgKeRTHB6S8v/IApZvqKHHzjFyT6oGUnbqnmGl+CqbLfV5DHvVEUpo9BUC
+         vOz0WM/Scax3PKiFgKfyH3e9o25dgwjMNqAL8x+SxtPyJ58Xrrdh1WWl9OPSzugn/Cde
+         5rPJRCa0Q4GmwTFZGw/4MR6nmKfzkcP/V4cKKRNio+U0pVr1+qNb16Pm5VRSZHQgWmDR
+         Mu0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU7w8/esDju/z1yswIeCb/cV5HNRuTY+AtXCjc4DPUgwKt5/4PHXm8hJIbovzHqDs2Xcute2Ix8LvZZdQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHCGvcLuAd89IcxaDciRNHBrQy0GhxCHwRCZ7YMBcywmk9FCCr
+	qij5wh5FJH2jC4GYy8ko4qbtBnVh88DhWSNidp4hbgIZXFhex/gaWUT5w1PviR6BvvmeCiyUjh9
+	P5jgYXMAVc22kcawQCty8h86p6PZ2eoI=
+X-Gm-Gg: ASbGncs1VKjYPfVn4OlOMf9rr8eLmyG4Wy/ssfM06X3HrzTanRAlUv2MwaYHvSvPYTQ
+	bEBmptTCzu6MVi8zTMfqn1FbLfNd8bRiTyRjBYpzfYgyKR01V61eNte0nDa9tLAeq9rdmlwgzzN
+	7OXdob42Sb2x+34WkOsFh5EkxkhZN72QulsANA8q+o0mW+GOLKncV9ucsGuAgebe1QaT6FxTpDG
+	/wQqh7SY9Ap/+d+7YIT4sQwIEPP7T9GKySOvuUolsbL6sNxpCkXclDiP39M8iMKpvtY+HI4QohT
+	Mtb/aZczQAxZ2qBRjJy7ub2rfRTh
+X-Google-Smtp-Source: AGHT+IEvSQqoPC0w5PqHnyoNSr3taVqbpjv29jeiklwEL1fN7434TEmXmWt3EGss8QKd/DksBI8+cWWNCno4+2/Z7ZY=
+X-Received: by 2002:a05:6512:1545:10b0:591:eb00:9795 with SMTP id
+ 2adb3069b0e04-591eb00988amr18089e87.13.1760987963720; Mon, 20 Oct 2025
+ 12:19:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731-pci-tegra-module-v7-2-cad4b088b8fb@gmail.com> <20250926212519.GA2268653@bhelgaas>
-In-Reply-To: <20250926212519.GA2268653@bhelgaas>
+References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com> <a3833c6b-5574-4aaf-86cc-66c10801ff3a@nvidia.com>
+In-Reply-To: <a3833c6b-5574-4aaf-86cc-66c10801ff3a@nvidia.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 20 Oct 2025 13:53:35 -0500
-X-Gm-Features: AS18NWCmMUTtQXUaLifQrSGp8qDRYM75-V9Y9cQ9D8p5t478TikwLfPuNlOWrnU
-Message-ID: <CALHNRZ-1sLDz7rSO97tWFeRzgP4rGo=winc7ZsANtAtQkU+pFw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Date: Mon, 20 Oct 2025 14:19:12 -0500
+X-Gm-Features: AS18NWDPp-wH8uYhmDLfsUgIzuO_wAf4YraXF5LgQ1r-UO3sGLpOYdxnVLvjeiQ
+Message-ID: <CALHNRZ-wcEf-3ekk0wGxdGw0O5HiTnFUwFRxyKAikQkkWDjteA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 4:25=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
+On Wed, Sep 17, 2025 at 8:36=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
 >
-> [cc->to: Rafael, Daniel, any feedback or ack?  Would like to resolve
-> this (part of Aaron's series at
-> https://lore.kernel.org/r/20250731-pci-tegra-module-v7-0-cad4b088b8fb@gma=
-il.com)]
 >
-> On Thu, Jul 31, 2025 at 04:59:25PM -0500, Aaron Kling via B4 Relay wrote:
+>
+> On 13/05/2025 22:10, Aaron Kling via B4 Relay wrote:
 > > From: Aaron Kling <webgeek1234@gmail.com>
 > >
-> > Add export for tegra_cpuidle_pcie_irqs_in_use() so that drivers like
-> > pci-tegra can be loaded as a module.
+> > The p3509 carrier board does not connect the id gpio. Prior to this, th=
+e
+> > gpio role switch driver could not detect the mode of the otg port.
 > >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  drivers/cpuidle/cpuidle-tegra.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-=
-tegra.c
-> > index b203a93deac5f378572be90e22c73e7417adb99e..aca907a62bb5de4ee4c71c1=
-900eacedd4b90bc0a 100644
-> > --- a/drivers/cpuidle/cpuidle-tegra.c
-> > +++ b/drivers/cpuidle/cpuidle-tegra.c
-> > @@ -336,6 +336,7 @@ void tegra_cpuidle_pcie_irqs_in_use(void)
-> >       pr_info("disabling CC6 state, since PCIe IRQs are in use\n");
-> >       tegra_cpuidle_disable_state(TEGRA_CC6);
-> >  }
-> > +EXPORT_SYMBOL_GPL(tegra_cpuidle_pcie_irqs_in_use);
 >
-> tegra_cpuidle_pcie_irqs_in_use() looks like a workaround for a Tegra20
-> hardware defect, and having no knowledge of typical Tegra20 systems,
-> my questions would be "Why do we even bother with this?  Should
-> cpuidle-tegra.c just disable CC6 always, unconditionally?  The whole
-> thing, and all of include/soc/tegra/cpuidle.h, looks like it might be
-> more trouble than it's worth."
+> We should add a fixes tag here.
 
-It's been almost a month again with no responses. Does this have any
-path forward that doesn't include signoff from the cpuidle
-maintainers? It's been over four months since they were first asked to
-look at this, so I presume there will never be any response.
+ Do I need to send another revision for this, or should it be added
+when picked up? If the latter, this is another reminder about picking
+this up.
 
 Aaron
