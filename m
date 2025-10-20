@@ -1,108 +1,136 @@
 Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B592C0268
-	for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 19:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EA02DAFBA
+	for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 19:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988519; cv=none; b=YfaFyYHc2unTUe/E/9atpD9pv2dYzzxdD+h546quJbsfBVz/927/yODbEHaWyz90d+u1TH96TY+OSl8OSsgOdkg2SiiY6SUvJHblyFPVtUK9rk5OuhxYWZFg/4ZH1H5utZS/JoKvkdOPd1D9TjipHqqnA5VI4CnudtXF8IYhXeg=
+	t=1760988610; cv=none; b=V+MV3jmST+06CYxqUcS4Bshm+d9UVLvGz9a3oMvCLYuqApMfZiA992WIWfT+SH1x+9HneS+BSXJX2C4KJRma9pmotePZUyQk/XlLA9PnCuQxYPqRryEeQ0SUlKW36yxRI5JPFwyzyFFVrrJskiPV/eDnHZwF928YCCwz0/QR0ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988519; c=relaxed/simple;
-	bh=p7xYeF0WlMh71JeISQYSQHf2LpPiKT+ylBcdVGC2AqU=;
+	s=arc-20240116; t=1760988610; c=relaxed/simple;
+	bh=9GdDL7+3mULH8MsHFnHWRsu7pRMHDK4Pcihd8YMTY1I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AGSSU4l0Sgm5ag/Si8hADQbgwwlI+MLdkqZPOOfYuJRUmCgiJqeoffn5QhiEOZ1ru6IxzgyA6cftI3la7c7zJXJDMpz0tp6kYUmaSzMORUJgB+WPkrOxeBfCRuqhtNFWE4SNw9CfEKM0T2fokaYK2Rm6pZVfskyG1uHTTHD1z5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJGO/Lg/; arc=none smtp.client-ip=209.85.167.53
+	 To:Cc:Content-Type; b=KQ3aE4b6EkrOj1eJyP4rFI+Eowd31ALNWHzEBBR+RsMRqzWMbuvNc+VcnFDo03Gvbhl3QAkjOiPPJseyoEVGDcZLgAK9hV+2Pk9S0Zgp9kWd3tVraIhyRYhS6az+fEFFsV2InZ/5kaYn32poZkttiZDi7zPU4jpsCNo+5CrwDww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VblrGhtG; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJGO/Lg/"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-579363a4602so4757825e87.0
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 12:28:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VblrGhtG"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57f0aa38aadso6211543e87.2
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Oct 2025 12:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760988515; x=1761593315; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760988606; x=1761593406; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mMg83nd2YrTgwcvW3RZ6bW/OIA8b6kbsYQV4BXY32dU=;
-        b=TJGO/Lg/3ZI93Doa2cyBSYdG6jGqWq5DvF/eqVzDpPPyMRBa6AD0YhzNX6Jd4wcAfA
-         vsCuM3uiNUVCwqVJDiG8onEnDMq3gnhXC3i7sJuGv/JQ61TVrUcnRPyBvEy2hAmJyRwV
-         ygZD2Ep/HAgDkZWgN8pIeclFa8whL6MXt9cCH9gAmXxoOOzETXTG2dfr3NkQfN17hrA8
-         P2oIWCCVoPU4Fgq06zo5DNzQhUcg5Zyl7DzUMNqyzsaCSLXmjcE2kxIkczEjobnlHxaW
-         WPImJXTGIUmsPXISTMrgoO7xZKATCaEDgVSn/GrsQWhBBoDaeB0PhYtbwynLVgt4nGvJ
-         V39A==
+        bh=NFZNqT2D+DsLVgY6VgSkl2denBx7SAaoL+y9bEiDZII=;
+        b=VblrGhtGbfm69ssIpjv2TWOn+ijpOO53JaiJUpKmahR5auwsbMn/07Zs4gIfq9cE9n
+         3Gorffv94xvKmBvC0pcwPN26rJJHDZ+VHC33+NVztcH558wuPA+xFXC5HNO+QZy7b6Op
+         g4clcf0spNrzrHe4tZLhJaoelyUCL/sHOkOAvts1chcLZAiKLBynq87IzBNxP3Y7N9xl
+         jts4h6IXuLKZiqJGj/939urWXzsXhgMYL8ON90xZRfquCDd7TddzOAWe0tcHTPjqM0S/
+         4+yRLRxmGFvN5uM8fKz12BzhNTVjK24ksa5zvazSrMaeNfCYZIq82C9Hx5McaBHXrMLO
+         wjTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760988515; x=1761593315;
+        d=1e100.net; s=20230601; t=1760988606; x=1761593406;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mMg83nd2YrTgwcvW3RZ6bW/OIA8b6kbsYQV4BXY32dU=;
-        b=EfutnVvek3+naQGR5wZX9RuPg0lyip5HO1WWMYuOHtF9qM8GyinomMkUFypYCoLVhv
-         d863QmYW5PSsK/hFfXX7IugzJXbeo+2jy87hhb6u/+msBDaUcEDtV4u0VHtQ9IpwQY1P
-         b0smCW6J/nwCZpoB5VLNORpDhhI7IR+9vip6aIMAnnLPQ4HckgjjN3h3jjK/Xbs3Ebcy
-         Fsu9nyfmT7/X1SwKYY1bwICGl64puepdQE4+Sj31M+5zStVBjbtq6zCfQ72cYNomiQsU
-         T7MeJl2prM+IWAf+AYju5ibKBMKuZlPHrhH9MWQqcdRsekG9oLvq9kWFut5uBxq7cgUn
-         2BVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgJem4wVpLzU81ECts3NlMBwu6Adb5wjTTEYgqXWjR1nck3thQ8zEfNapCvVsM24Cv++mTX8P1CnlOXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqQsA77BTDhekA6aqXPbVZSXaaPB02Ln+731r53yYFqKcFGgl5
-	RSq7OvFGCJ/spUjvp4U8a9OO8ojwZ5iDulmhMBPUVqpLlLAI6w/EKm5KIEKaAitJ/j1gX7t1S4H
-	bzzZLHSfZ0V+aijBEIegiC53afqAoFsI=
-X-Gm-Gg: ASbGncsj4sV0qesiIL77/kXNNxPdAbCmx4ys2kCojEi0NouuEgKqVgxc27Y8AQJbIaS
-	n4TX671iN0QdWYUhmiqQUAGfSgA1saHiAbY/PpbC4dy8oJ3/QCgvceuByO3SsZJVp49JpYPnvUX
-	fqjxFzSABILm84/HFz8cMmXM+x4Zu2hqwpB97d3goKutv5Vj6KspaYyAw9EwmnqevcC9YOivO0t
-	jyjNQdRmouOm9iNTQCJPW9OPrT2clhhwwYyS7WRBCouIhApHlRdALH50BnEh8OHHNV6T9OnKntO
-	tVyOLkEvgQYyEDPjAw==
-X-Google-Smtp-Source: AGHT+IGBoVkVev7OLhVh5KiRwW/MZskLumEnnwL6WLxBkk2eAfCxIeEvBR17BmPX3b8GgUCopYGwgBk2P/JNXv/x5+E=
-X-Received: by 2002:a05:6512:1307:b0:57e:b9a:9c82 with SMTP id
- 2adb3069b0e04-591d85836e7mr4364166e87.39.1760988515325; Mon, 20 Oct 2025
- 12:28:35 -0700 (PDT)
+        bh=NFZNqT2D+DsLVgY6VgSkl2denBx7SAaoL+y9bEiDZII=;
+        b=ttFIDGQUuvmk/FJDuZx/p9jGPHxVc1EAq5Ut95OQOIjWj1slq53ZXQMRxtLglPSkhV
+         XAbXTa7dHFBIViHVhp0eRYP2uy9u3lIyEvnigGtY6z6xa/UvBZ2FYve2xEXQPDz8C0oN
+         CKKcgO6TA5HmhRBViX3lUWtzQIUGn+2DEpXTdFEVZK3c6cdQFdATgy6i/HfBZ5yjQ5u5
+         Y5qQXeVKXGkZac72B1wALmJzHcBeS+BgjlO8BTBehaMDzD5enzX7lPa7fzH+rd4GR5ye
+         cVdzpdge0CmRrm0utKQVsmgEezBZI2AV0wXi8Xn+x5/k4gnp+52aAVhiNnSYc5N0PhpQ
+         Yltw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiYUmJ9hAzuEDQ14yhGjaWBtD8W8f2GdsD6F6TW1bWvXnmlTqCnCOoAWO78PS5qesnkxdeA5h6tNvfAQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB4It9KVe0U154Vg6wsk4DOcP9TKD6xf1uWlOS5r3n9cJIZWAk
+	5qATHodyWZk9p2q/BZi+2/ENxIav6CHZLD9MK3A9oDjLcmLs2H2ErpkcjFNM2ISiHs6VUh7GOWw
+	TNMYgOmoSAK81HJwOB4yoKdECQmewAI0=
+X-Gm-Gg: ASbGnctyUfc2yZNJ0qHsRTXOMd5m603ZUY57Aw3dbc4J4pUHuRkLvCWNAmySaCqVJ88
+	Cv4BSbLUuU4/eh55M+25dtiiuhyOvPpThO2O1Aa6jkqaL4w3uepRro8iLn3g74ef4JbzQsBNMWH
+	hCB+mmXZsKXmOnxCFD1tU58uFJ+OoUzyAXnhxeHv3EJR5tU7yJA0LW20o2Vuyh9sP2TEOqGZJ8k
+	u2eRLwwA/H0rBhihKqP4k83tesKNulwbc7a53xNEsiyRWbFTuiwJZ7rJIoZUDJi6kFdz/X/x6bJ
+	AHR/MinPOmh4oTPLeA==
+X-Google-Smtp-Source: AGHT+IH8pJ/l725F7jpzit86CNm+iBx7HYI5g7kErnw7UkpgGPy+kn1LJM6uau/6mX+yCgesQsO7k/FLWd0sn0ytGhY=
+X-Received: by 2002:a05:6512:682:b0:583:ac7e:4e1a with SMTP id
+ 2adb3069b0e04-591d8502b29mr4582945e87.23.1760988606107; Mon, 20 Oct 2025
+ 12:30:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
-In-Reply-To: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
+References: <20250526-p3450-otg-v1-1-acb80ca2dc63@gmail.com>
+ <CALHNRZ-pE4EA=x-7LuJev60=aOwGt2eDf9mGVHWJ8SPGisBchg@mail.gmail.com>
+ <CALHNRZ_W6gQknMr=eKEcB6-k5HBBkE6JfJ9LFntX9L+NTo5hUQ@mail.gmail.com> <iiooyryqjbfutvyycrk4wxgkhow42bnks7ndkkqy2zujv47bly@2f3sgagl6yte>
+In-Reply-To: <iiooyryqjbfutvyycrk4wxgkhow42bnks7ndkkqy2zujv47bly@2f3sgagl6yte>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 20 Oct 2025 14:28:22 -0500
-X-Gm-Features: AS18NWBlNKt3MmTfiejt6ZGCRffbefMOPo_ko_DLqTSSs5UW2n7AtLASjfzoSFc
-Message-ID: <CALHNRZ8ycMNA-OLx=hWNmetqxioDSbt2mRH=_NXr2zLu_pbJoA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] arm64: tegra: Add reserved-memory node to L4T
- Tegra210 devices
-To: webgeek1234@gmail.com
+Date: Mon, 20 Oct 2025 14:29:53 -0500
+X-Gm-Features: AS18NWBRKorxOsoZ_E9SDZMzdQeGC1t6Wb2mP6Y3s6-jRK4cbkxihFxXMR8bUok
+Message-ID: <CALHNRZ9OTfYqKzP4Dk80q8bFY8ZWF1=bTCBPRuVNJKGNe-L=hQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Set usb micro-b port to otg mode on P3450
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 3, 2025 at 10:14=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
+On Fri, Aug 1, 2025 at 4:41=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
 >
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
-> Changes in v2:
-> - Add patch for P2180
-> - Link to v1: https://lore.kernel.org/r/20250526-p3450-mts-bug-v1-1-78500=
-613f02c@gmail.com
+> On Thu, Jul 31, 2025 at 04:40:05PM -0500, Aaron Kling wrote:
+> > On Mon, Jun 30, 2025 at 2:35=E2=80=AFPM Aaron Kling <webgeek1234@gmail.=
+com> wrote:
+> > >
+> > > On Mon, May 26, 2025 at 8:22=E2=80=AFPM Aaron Kling via B4 Relay
+> > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > >
+> > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > >
+> > > > The usb micro-b port on p3450 is capable of otg and doesn't need
+> > > > hardcoded to peripheral. No other supported tegra device is set up =
+like
+> > > > this, so align for consistency.
+> > > >
+> > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/a=
+rch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > > > index 0ecdd7243b2eb1abba9adbe9a404b226c29b85ef..019484a271c396edc30=
+200e8592c713455a8e1a4 100644
+> > > > --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > > > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > > > @@ -514,7 +514,7 @@ pcie-6 {
+> > > >                 ports {
+> > > >                         usb2-0 {
+> > > >                                 status =3D "okay";
+> > > > -                               mode =3D "peripheral";
+> > > > +                               mode =3D "otg";
+> > > >                                 usb-role-switch;
+> > > >
+> > > >                                 vbus-supply =3D <&vdd_5v0_usb>;
+> > > >
+> > > > ---
+> > > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
+> > > > change-id: 20250513-p3450-otg-b947f31843d8
+> > > >
+> > > > Best regards,
+> > > > --
+> > > > Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > > Friendly reminder about this patch.
+> >
+> > Re-reminder about this patch.
 >
-> ---
-> Aaron Kling (2):
->       arm64: tegra: Add reserved-memory node for P3450
->       arm64: tegra: Add reserved-memory node for P2180
->
->  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 6 ++++++
->  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 6 ++++++
->  2 files changed, 12 insertions(+)
-> ---
-> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-> change-id: 20250526-p3450-mts-bug-02394af31f0a
->
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
+> Sorry for missing this earlier. We're in the middle of the merge window
+> now, so I can't apply this to a tree that feeds into linux-next, but I
+> will pick it up once the merge window closes.
 
-Reminder to review or pick up this series.
+Reminder to pick up this patch.
 
 Aaron
