@@ -1,245 +1,878 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012062.outbound.protection.outlook.com [40.93.195.62])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5E71A3029;
-	Tue, 21 Oct 2025 06:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761028632; cv=fail; b=XTBEzkbLIlOChHWvV94QPiiGe167V9MF/eqebHxX1AYAQGtNuz7joAvjqpl1mUei9wNRF9+dgwwTayER7GLQT5HUKUBYtjFN8j/llDEdvOut9TxFLv3MnVbEJX1BGYy2H9DDBjB/Auswnd1k+PAUfN4LfOUKwQTK5CRSJzj9Yp0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761028632; c=relaxed/simple;
-	bh=fRGTq7MWxV9piCTykghwtrUjUMfenR/dUNRdUC4R4VY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aH5AH6kdG60NorNIoc9P+ULE2JBiHEhkUL8r4rPsB4ON3thaBT6P0w3baBszyKFBp+FdJK0fS+TbqM1//hFEDX3XS3aEPwWrSw85YFZbYaYI23n7XmOhb+Gz48jx0rebG1JVYAssIt5/hMgg6moxkIALls72ZeazOJmww46nBBY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IWtWKxce; arc=fail smtp.client-ip=40.93.195.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC02324678F;
+	Tue, 21 Oct 2025 07:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761031636; cv=none; b=DmRiQCr3xwpOAy9h/Whd+CqK9Khif/MErkBHtfeBFlM5NNYVoD4Ov8u2dD4p9Z4cVjtQ/vjws0RB7B9hc5yW97DwOSl5VAKlmbNREYUeT1qrgBAB9hnm6YcAMY5DYulJnGQXpuYgjSELXz9FMAPYpTVRi1sTVdnzTRb2C+WeHUk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761031636; c=relaxed/simple;
+	bh=EA4Q4ncq5AHQhXTYNEQxzvm2O7KUIh5Dc0IXnPAsSpc=;
+	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
+	 Message-Id:Date; b=lCaBB/iBlmi1A7H5j07V/NZ85IYJU1xnF5rEWiHW7I/PIIQU7BBvEeVZktZn1xY7xuC1IjZ0CDdWzV54EFy7yUPz4oXzNAGFd4yrS70rhkJcK/0j9Q9+I1iF70pEyOSBqkCtx9hFqG9cYPEZ1g5CXopSnBQwdUqvsQWmRiz6vzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XldoPiGA; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IWtWKxce"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ujhal8lOuaEOYjqc9jJgFDYyKQgFCyAG50qCl44BPL34qC9OfMsWhOlxfh4LNHLkbDHpkb4MrNVrBCwa+D/jpBhpE0voKZ4XiiA82wxsajwmPiJFGlxI6LBGfK6YOCdxUhSeRXTbE7pIWoNH2mr1Ho9HXDaCSTcHsi/nJhbI38J/5OO/HWx50cs1Ytxqn6kjWN5NhaWWuP3J4hhbGY2x7pr+nFSbPAot9/0+MflldSbuLRpbD60uI0vdHweNoy8O68vx6ZZA722tWlUcOWLttsepygafGihIrWSTmBqumWrrA6tBenNd6GUR0NwDTk4yM8CIe0RHsDIhW0oYLOMv/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EnXsqvRR3A04r0mj7NLYpGfRiqATw2B8aMjqs2jklKU=;
- b=DoDY5bnmV5m2D0tmhPNnLXMhh9EsgI/f4PHto0EM5lPeFq1EcmcTzIINl1T2nmnZCxP5QKJIUu+Bi8IrUR9RlD+FirhDJFNGm5sTQn7BEEFm858/ABrQ7Pcgr2bnwspxQ+dhQhd2mnxgB8muVN7A+HZ5jcngaKvf9UJV4mKv3y7kjZ2kJVU1TnHJrSNp6xGu6lmux5+/Slonx684RFR52V7oU3xZ6UgBld0w7p8jVZi4K6R3J9n6Fc3j7WDEOBDKR5phl6pzQT8RXSYyny7At+uT1uxcF/5l8V/Y8/ol8amEfeprslg0lSmTySFiF6d3ta20fZZf5lQSbUb9UuqZJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EnXsqvRR3A04r0mj7NLYpGfRiqATw2B8aMjqs2jklKU=;
- b=IWtWKxceMlgc4HFluKvHDNEA5+m3lW8CrwrzoBUbuTrZR+umSsB+qTX1b05NKGG9rIdsp4Q5UMoeq16ggyFl7J2Lq9uAtrFDbdRHR2Dl4vhIzK/YP7itzYJVScrf1tBx7RjNoReG5hXKDLtbRFYTdZX31AkKM4eNQW61SKeFegQsk17TmGT3FP0QCxHz4mizRXN6U2RxXqXQLQlPV0wT87phb9EXOgi0jZyP7PsOGb52IyNmNH6V1Lxc4BciIMtsh5K4mqph9N3IppbzJOxFiqU0a7vPdX+HML9fBf9aFhjqCdlyxHFS68lm5cdBU6ztIFpmlyei3B4UiZ12O40LuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
- by PH8PR12MB7328.namprd12.prod.outlook.com (2603:10b6:510:214::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Tue, 21 Oct
- 2025 06:37:06 +0000
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861]) by MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861%3]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 06:37:06 +0000
-Message-ID: <e03ab196-c204-4e2f-b69e-400b464e3d21@nvidia.com>
-Date: Tue, 21 Oct 2025 12:06:56 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtc: tegra: Add ACPI support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: alexandre.belloni@bootlin.com, thierry.reding@gmail.com,
- jonathanh@nvidia.com, linux-rtc@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250919111232.605405-1-kkartik@nvidia.com>
- <aO9Vmfm6jPplEQca@smile.fi.intel.com>
-Content-Language: en-US
-From: Kartik Rajput <kkartik@nvidia.com>
-In-Reply-To: <aO9Vmfm6jPplEQca@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5PR01CA0200.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1b2::15) To MN0PR12MB5716.namprd12.prod.outlook.com
- (2603:10b6:208:373::14)
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XldoPiGA"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
+	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1qiH3bchi9gQNmURIsDuSOTNav9BZeMc7YwkWybXM1k=; b=XldoPiGATMwuuvl5i5Y6b9JiWg
+	olXFfbrnt1IOFrUclGoJx2Eu2TJUpDItxi83TAvgMJgULPWOUPMpDzA3R6K9iL6doPiY91NF4S0Fy
+	JU0Qmnyzeqgt3E5jmnsxWqtQ25MRfSKgT/NeG1tpZq6xji0XDVHhLbXeLWR1LrDRNEwChrwHAWoEq
+	uDQF9DgMWVWYufV5vESxk9aOVTHKWAlXJZIHiAs6caGOzejCqPv9VvHre+P+eg56BJ7JUmOEBCDbc
+	iYr+Q6RvFgt0GKdkNTbvTawyMEOZvDkPCcjUGJvCSN0YGGb0NIMbftc+C8wszz18+lgRHnd+/fbDG
+	Ijw5YIDw==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:54232 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1vB6le-000000003Mb-1g6L;
+	Tue, 21 Oct 2025 08:26:50 +0100
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1vB6ld-0000000BIPy-2Qi4;
+	Tue, 21 Oct 2025 08:26:49 +0100
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jan Petrous <jan.petrous@oss.nxp.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	s32@nxp.com,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH net-next v2] net: stmmac: replace has_xxxx with core_type
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|PH8PR12MB7328:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1ed2cd0-32d3-441b-fbe2-08de106c4098
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RWY1ZG84NUEzbnY0RUZYWW1NZVlibzhBL2RoVXB6OHMyQVpRQlF1YUplRkQy?=
- =?utf-8?B?ZytydzdtNTlQTVVqcEY3cDFNOWZuMHFwMnFNNTQ2VUZ1d1B4RGpBaHRVNWIv?=
- =?utf-8?B?SXhEdFkrSVhvcm9HNkdzTWFsTVNncUFWaGZaSTFabnI5dGJlNFd2ckd5Ym9P?=
- =?utf-8?B?TlF0Um5uWkdsUkhhcVFvUTAwcERKaitUdnJBU0NSVzJ1SnZHeHpUc3V4R1Vv?=
- =?utf-8?B?Qmc4T3RvU0N6YnhwUzdoN3JGU0ZhdEtIVkNoZHVyMHl1OUFBVU5JalpPZ3Fh?=
- =?utf-8?B?VXRkMkc3dFhMNEpRZEFDVFpsMVRjdmkyK3d0TWFweWdRZ3VCNjdtMmgrQ2RZ?=
- =?utf-8?B?VTF5ZHNTTTdjbUZQUVVQa0NnSGtsR2gvUXlFWjJsT29iMTdoTTVReU50RWEv?=
- =?utf-8?B?SXorbjJIZXNZM2ExdU0zT3VZVGwrYlJ6R2FjNUZ5aThPRXZDV0htSzdDQnZT?=
- =?utf-8?B?OEU4MzRYTHJEdzZZNzJudzZXM1plcW8wV0NKTmx3WXFzSW9KN1c1RC9vUCtE?=
- =?utf-8?B?SWh4S0xyeWV0VytqVlhtQlBiKzBYbWxVL3c0QW1qaXVNTDlNMUMzY0FBWnVq?=
- =?utf-8?B?Q1B5eWF1V1lrQ04rWUQySDNrZGN5ZWhCOGhKVVZ3dVlLOW1SNmhMZHFsTFFo?=
- =?utf-8?B?SWtLa1BxcUVrYWMrTmpkbTdFeW1vSWtOcWFJNHNZWDRXMVFTbVRvR0kxLzg3?=
- =?utf-8?B?ejA4KzI4VlFyT1VrMEdCQm1Ebys0NG4zZzRPYWJHRnZ3UldTbEdtWUN3b3VG?=
- =?utf-8?B?Zngxd1prQlpYbXFHZGhrdWtIUldiWUlNZFlmc1c3OXZXR2o3TlZqYzFRNFZj?=
- =?utf-8?B?T2xIR0RSM3NiSHFCckROSjdrOUxTaU9aN095UzU1NWM3SlVHR1ZqZ3lJWktU?=
- =?utf-8?B?ZlpoSURTUS9WdW52dEgwbDBWSndMaUhnMjFFRjVLczBYUWlwTnREWGNuNVVJ?=
- =?utf-8?B?YWNFZmViRENvOVFQT0JjaTdta0JwUlVWbVIyVG1GT3RsdTZlZVhwQmVRcjZZ?=
- =?utf-8?B?KzlYYXE1dit2VkF2L2RGZU5ZRGZ2eWlXUWxCOUh4U0w2Nk5FUlEvTHpSOVhR?=
- =?utf-8?B?YzA1QVlCVHBBZERYdUVwbXJtakFaZFRJK2Nuc1dLU1FpVHNTNnR5aGxCOXZ6?=
- =?utf-8?B?Z29ockdPYnFqbElRZ1kvZVZnVHFoc0hNbEJlTTFXVXEyZU10S0MvZXo0amVJ?=
- =?utf-8?B?U0liWThFWVd1R1QzL09sRUxzVS9FVHhNUFZvT1pqMENhaCtUK0ZiUjI5S0Jv?=
- =?utf-8?B?L09FMzBmMzdaQzBWMXJ1d0VEUWd5bXc4K2VqVGNCeXRUelJ6NGlJQ3dkOHdy?=
- =?utf-8?B?NXNsMHI4V3l2RnlzVHE5Ty9MTmU1UlhkSmRpWUk5Q3lTcENTVjkyZ2lGa1RZ?=
- =?utf-8?B?M3VqbnNpbVZOOEw5MHhESzVqdkxuU0wyckZwTldYVkczdTArZWgxU0EvN1U4?=
- =?utf-8?B?Q0ZBd1dFU3lpMzlQRm96d2toSWtXeXZRa1h0Vzd5NFh5WVdpMXNRZ0JERlF2?=
- =?utf-8?B?QzFNczFZblZTVWthd216aVdIK2V5emFuSFVSNEdYS1lzMlpUN2EwSDRLQkFh?=
- =?utf-8?B?TlQ5T2xqU2RRWVkrYm1hZDR6ZHd6NXJSQ1Iyd3hHbGYzUHVOZS9XTkRPbzZs?=
- =?utf-8?B?NWhwRXhuWXVzTy9ZMkM1R1ExdHBhWm5lcDEvSUNZZjNMQ0RXRnNIVmZLZFgy?=
- =?utf-8?B?ZFJPNDgxQWUzUFZCWVQwclBlOFlYR1ZzV2Yzby9rVzFoMkJOU2tkMlp4WUZk?=
- =?utf-8?B?aGlUKzl1bE9tazFSUEQzYUdsTFMwNlJmUFZDUTJpYnk4eFhLbXpkbWJyS3Nu?=
- =?utf-8?B?U0hZRlV6T0pXRjk4RlVNYUw5bEdEWFhGd3J3NnFaODhlNEJWY1BVb3hjTFBT?=
- =?utf-8?B?U0EyT3I2TDF3SzNJQ1VVN0V6QlE0dWo3a1FwNWNwbmEyZFZKWHFxc1pxY1R0?=
- =?utf-8?Q?3wlNHcCo6epvBeRGPhzSGcPKLqPi3s+k?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGRHL3F1TmhHYXFwS2Nlc1VUakNOREtHZnVtQXd3R3ByMktmUUdEdU8zUkgw?=
- =?utf-8?B?Y090YXZXZUdpSkVQa1NiQWlmaEdKakNiWnpGVkN6OFBhNmpkb3lrMW9DdUJ6?=
- =?utf-8?B?MExOcFJmZVBzY2FNWUdCa2FNU25NSzRhQ1NoVWFMWUxKYlRSZElEOXFzYnd4?=
- =?utf-8?B?dEV4YURCYTFFL1ZWYjdwN1lNakFoMnZxWlBBaDFIWnN0Q0lVeEtoTHBNTFhr?=
- =?utf-8?B?V0liNVV4Yk1zTnN5Z0tZdTRnSE1YS3BjVUhjWUNRU0RabGZGRFc4cG9YNUtm?=
- =?utf-8?B?Ukk3cG52RVpQdVFKZXRGcmRKTVNvdXZ0elpoMUdHcmUwcGVrQWJtaEJwS1pJ?=
- =?utf-8?B?bVl4akxUY29Pby8vVFFaT1JFdCtOOXdyODR4Q2hubFhudys1YmlBVVNmTmc4?=
- =?utf-8?B?ekY1UlFBcUZ2NmNqQ2d3RjBkS1RnN0FYYWFITDBWYXBiWEFOQm1uQTU2M2FM?=
- =?utf-8?B?b1VqVEFZaHhYN0s0YlRWL2RSYWJEVlRhYTVEUHE2TVdlZnR5dU5xNFE4VzBr?=
- =?utf-8?B?YmdVQWk5SmM1TytXNjNwRUxtVzdVRkphS3NvcE5wN09GdXhCV2ViL3RYa3lL?=
- =?utf-8?B?dDEvZ1RVeC9hSWV6clkyeDlZWFJ4VVBtZk9raWtZQ3Blckk3bklHNWxadmdW?=
- =?utf-8?B?aEFReDQ4TDY1U0k4NkY4Q1pJcDk4d1NjUEhLdStpZFU0UzVUZGtaNjNQclZW?=
- =?utf-8?B?UDJwbGFadFRQUkVMa1p5bmtkSkQ2ZHFHUk5Ja1JnR0hkcGtjbjQ5RG9Qci9p?=
- =?utf-8?B?cm5WWHZEZXQvblZVTjFnL3JBVTVEVXJtUFBjdWxoTlRpbDcvUEZGSE5pdGtK?=
- =?utf-8?B?d3NHWGVpNmJ0cFV0ckZiTGZMVmdJK0k2dnlrbWJsWmZHWUVoZ3dyT2FFaFYv?=
- =?utf-8?B?eG5sYm9Xazlpb3FqV295aERhd29ZL0dpM0VmWGVlUm9xTnozbG9xbS9CNHFC?=
- =?utf-8?B?WHlxRzdUV2g2aU9RcG1POElzN3FrUCs5c3VvKzl2a01yZEZpaTNCNWJMdDU5?=
- =?utf-8?B?K1VZWDdrSHNBbjBXcmljZE9OT25WclQ0MW1aVVBza3UrVkpmMEMvT3FUeStC?=
- =?utf-8?B?S1dHWWlidU5uZlFka2t4dFhucDI2bjFKWktEZ2p4UmdSYWxKOUZnVEM4S1k4?=
- =?utf-8?B?VTd6YXR4MzhLRlF1YWMrNUJGMGx1YTRnSEY0bFRQVGZQMVhBRWVXK0xSUDE0?=
- =?utf-8?B?bVdzRFBIS3VxM2tabVp3aFhWMWliTWcyMnJsZ09nTlphRmVkTGJucGIxalhM?=
- =?utf-8?B?RVZNZmpTN1VpdCtkN0lBalpWTVl4TlJyM1IyajNjMmZRUENCd1ZZZW9hOVFP?=
- =?utf-8?B?MDhlMXZZS2plalZxck82MEg1NHJPMXRPWHl1T1JhV2FOTWZRSmJieU9UV3pz?=
- =?utf-8?B?dkZQYXE2NXNwWEJ1QWIyOEZlcmh2YkdvNStxOFpLWU0xeHo0RnFrNG1pQ2NW?=
- =?utf-8?B?RVc0SjhXK1lqWnZURFR5ZWNuNmUvTXNMUnhhdytXRGJVeUYxNjF2NCtSMkdv?=
- =?utf-8?B?akhMbDBjblJWT1VTUUUza0JITkVsQUNLVVBqZEdvUVdtZWJtZG4wZGVBeGpQ?=
- =?utf-8?B?bWtNOXBNeUNhMUhWZWJWb2FHZlZDeUFucS9oR1JBQ3NoVjRaWnA5WnFJd1Iw?=
- =?utf-8?B?UW4zK2J0RjVEWDFMZ1pjQWJiK2Q0Vm1Nd1gzTWNjTVNMUVI1MnRSL2lZTnVm?=
- =?utf-8?B?OVp6V3V0TEU4Rmw0bVJaZFU2UDIwRnBTUVI2R1cyVm5ReFpUb1JZMHphamFs?=
- =?utf-8?B?TDFYTThFeXFZZlVBMi8xUjBSWFZFZnArdkd4UEo5OUZIT3hLZWdBcEg1RUNm?=
- =?utf-8?B?TzhCTDlxQjNTMmtiOFMvUmJrQUdvcEowdU56TUQvWHVZQVpwblNwbldJS2JR?=
- =?utf-8?B?emM1VXh4S3JHaWZCUGNCSlhDblRVVUwxOEZhcHd5REZybHhIWVBINDZ5Uldj?=
- =?utf-8?B?UWwyOTZnUjlpNTJtV0xIK2hnY3piVEYwMGhJbDgwd2Z4cjlISTQ3NmVNU0di?=
- =?utf-8?B?N2NHbjY3N1JPYXhpcERGTXQrNmRXeUVlTVVibmVyenBhWjlEM1RrT1g3QWU3?=
- =?utf-8?B?VHNVU0oyNXVPampuMjBjbDRWUTN4aTVmeG1PVTg5SWlFZ1JCc1hSbUxTYWQw?=
- =?utf-8?Q?4uQkqjEpWBbqgy10411mkpHlq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1ed2cd0-32d3-441b-fbe2-08de106c4098
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5716.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 06:37:06.4301
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CpnfbsKqZqlFJkKNuksMiX19XQ36ImpLFAz1IVvzbVacEi7AmW0MuSLIsj6HJxogNfOxE17dT0+fLiohiS8qBQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7328
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1vB6ld-0000000BIPy-2Qi4@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Tue, 21 Oct 2025 08:26:49 +0100
 
-Hi Andy,
+Replace the has_gmac, has_gmac4 and has_xgmac ints, of which only one
+can be set when matching a core to its driver backend, with an
+enumerated type carrying the DWMAC core type.
 
-Thanks for reviewing the patch!
+Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+v2:
+- fix conflict with removal with STMMAC_FLAG_HAS_INTEGRATED_PCS removal
+- wrap 88 char line in stmmac_xmit()
+- add Maxime's tested-by
 
-On 15/10/25 13:34, Andy Shevchenko wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Fri, Sep 19, 2025 at 04:42:32PM +0530, Kartik Rajput wrote:
->> Add ACPI support for Tegra RTC, which is available on Tegra241 and
->> Tegra410. Both Tegra241 and Tegra410 use the same ACPI ID 'NVDA0280'.
->> The RTC clock is configured by UEFI before the kernel boots.
-> 
-> ...
-> 
->> +#include <linux/acpi.h>
-> 
-> No use.
-> 
+I haven't added Maxime's r-b because the patch has changed subtly, but
+not in a way that invalidates testing. Given the minor changes and it's
+possibilities for further conflicts, can we get this in sooner please?
+Thanks.
 
-Ack.
+ drivers/net/ethernet/stmicro/stmmac/common.h  |  5 ++
+ .../stmicro/stmmac/dwmac-dwc-qos-eth.c        |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c |  5 +-
+ .../ethernet/stmicro/stmmac/dwmac-ipq806x.c   |  2 +-
+ .../ethernet/stmicro/stmmac/dwmac-loongson.c  |  2 +-
+ .../ethernet/stmicro/stmmac/dwmac-lpc18xx.c   |  2 +-
+ .../stmicro/stmmac/dwmac-qcom-ethqos.c        |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    |  4 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-s32.c   |  2 +-
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-sunxi.c |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-tegra.c |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    | 73 +++++++------------
+ .../net/ethernet/stmicro/stmmac/stmmac_est.c  |  4 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 13 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 34 +++++----
+ .../net/ethernet/stmicro/stmmac/stmmac_mdio.c | 14 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_pci.c  |  4 +-
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |  9 +--
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |  4 +-
+ include/linux/stmmac.h                        | 11 ++-
+ 21 files changed, 94 insertions(+), 104 deletions(-)
 
-> ...
-> 
->> +static const struct acpi_device_id tegra_rtc_acpi_match[] = {
->> +     { "NVDA0280", 0 },
-> 
-> Drop redundant ', 0' part.
-> 
-
-Ack.
-
->> +     { }
->> +};
-> 
-> ...
-> 
->> +     if (is_of_node(dev_fwnode(&pdev->dev))) {
-> 
-> Simple dev_of_node() will work here
-> 
-
-Ack.
-
->> +             info->clk = devm_clk_get(&pdev->dev, NULL);
->> +             if (IS_ERR(info->clk))
->> +                     return PTR_ERR(info->clk);
->>
->> +             ret = clk_prepare_enable(info->clk);
->> +             if (ret < 0)
->> +                     return ret;
->> +     }
-> 
-> ...
-> 
->>   disable_clk:
->> -     clk_disable_unprepare(info->clk);
->> +     if (is_of_node(dev_fwnode(&pdev->dev)))
->> +             clk_disable_unprepare(info->clk);
-> 
-> Redundant change. CLK APIs are NULL aware.
-> 
-
-Ack. I will drop this check.
-
-> ...
-> 
->> -     clk_disable_unprepare(info->clk);
->> +     if (is_of_node(dev_fwnode(&pdev->dev)))
->> +             clk_disable_unprepare(info->clk);
-> 
-> Ditto.
-> 
-
-Ack.
-
-> --
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
-
-Thanks,
-Kartik
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index fee7021246b1..31254ba525d5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -43,6 +43,11 @@
+ #define DWXGMAC_ID		0x76
+ #define DWXLGMAC_ID		0x27
+ 
++static inline bool dwmac_is_xmac(enum dwmac_core_type core_type)
++{
++	return core_type == DWMAC_CORE_GMAC4 || core_type == DWMAC_CORE_XGMAC;
++}
++
+ #define STMMAC_CHAN0	0	/* Always supported and default for all chips */
+ 
+ /* TX and RX Descriptor Length, these need to be power of two.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+index f1c2e35badf7..c7cd6497d42d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+@@ -109,7 +109,7 @@ static int dwc_eth_dwmac_config_dt(struct platform_device *pdev,
+ 	}
+ 
+ 	/* dwc-qos needs GMAC4, AAL, TSO and PMT */
+-	plat_dat->has_gmac4 = 1;
++	plat_dat->core_type = DWMAC_CORE_GMAC4;
+ 	plat_dat->dma_cfg->aal = 1;
+ 	plat_dat->flags |= STMMAC_FLAG_TSO_EN;
+ 	plat_dat->pmt = 1;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+index e74d00984b88..b2194e414ec1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+@@ -565,7 +565,7 @@ static void common_default_data(struct plat_stmmacenet_data *plat)
+ {
+ 	/* clk_csr_i = 20-35MHz & MDC = clk_csr_i/16 */
+ 	plat->clk_csr = STMMAC_CSR_20_35M;
+-	plat->has_gmac = 1;
++	plat->core_type = DWMAC_CORE_GMAC;
+ 	plat->force_sf_dma_mode = 1;
+ 
+ 	plat->mdio_bus_data->needs_reset = true;
+@@ -612,8 +612,7 @@ static int intel_mgbe_common_data(struct pci_dev *pdev,
+ 	plat->pdev = pdev;
+ 	plat->phy_addr = -1;
+ 	plat->clk_csr = STMMAC_CSR_250_300M;
+-	plat->has_gmac = 0;
+-	plat->has_gmac4 = 1;
++	plat->core_type = DWMAC_CORE_GMAC4;
+ 	plat->force_sf_dma_mode = 0;
+ 	plat->flags |= (STMMAC_FLAG_TSO_EN | STMMAC_FLAG_SPH_DISABLE);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+index ca4035cbb55b..c05f85534f0c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+@@ -473,7 +473,7 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
+ 			return err;
+ 	}
+ 
+-	plat_dat->has_gmac = true;
++	plat_dat->core_type = DWMAC_CORE_GMAC;
+ 	plat_dat->bsp_priv = gmac;
+ 	plat_dat->set_clk_tx_rate = ipq806x_gmac_set_clk_tx_rate;
+ 	plat_dat->multicast_filter_bins = 0;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+index 592aa9d636e5..2a3ac0136cdb 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+@@ -92,7 +92,7 @@ static void loongson_default_data(struct pci_dev *pdev,
+ 
+ 	/* clk_csr_i = 20-35MHz & MDC = clk_csr_i/16 */
+ 	plat->clk_csr = STMMAC_CSR_20_35M;
+-	plat->has_gmac = 1;
++	plat->core_type = DWMAC_CORE_GMAC;
+ 	plat->force_sf_dma_mode = 1;
+ 
+ 	/* Set default value for multicast hash bins */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
+index 2562a6d036a2..6fffc9dfbae5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
+@@ -41,7 +41,7 @@ static int lpc18xx_dwmac_probe(struct platform_device *pdev)
+ 	if (IS_ERR(plat_dat))
+ 		return PTR_ERR(plat_dat);
+ 
+-	plat_dat->has_gmac = true;
++	plat_dat->core_type = DWMAC_CORE_GMAC;
+ 
+ 	reg = syscon_regmap_lookup_by_compatible("nxp,lpc1850-creg");
+ 	if (IS_ERR(reg)) {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 32244217d952..d1e48b524d7a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -846,7 +846,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+ 	plat_dat->fix_mac_speed = ethqos_fix_mac_speed;
+ 	plat_dat->dump_debug_regs = rgmii_dump;
+ 	plat_dat->ptp_clk_freq_config = ethqos_ptp_clk_freq_config;
+-	plat_dat->has_gmac4 = 1;
++	plat_dat->core_type = DWMAC_CORE_GMAC4;
+ 	if (ethqos->has_emac_ge_3)
+ 		plat_dat->dwmac4_addrs = &data->dwmac4_addrs;
+ 	plat_dat->pmt = 1;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 51ea0caf16c1..9b92f4d335cc 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1750,8 +1750,8 @@ static int rk_gmac_probe(struct platform_device *pdev)
+ 	/* If the stmmac is not already selected as gmac4,
+ 	 * then make sure we fallback to gmac.
+ 	 */
+-	if (!plat_dat->has_gmac4) {
+-		plat_dat->has_gmac = true;
++	if (plat_dat->core_type != DWMAC_CORE_GMAC4) {
++		plat_dat->core_type = DWMAC_CORE_GMAC;
+ 		plat_dat->rx_fifo_size = 4096;
+ 		plat_dat->tx_fifo_size = 2048;
+ 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+index 221539d760bc..ee095ac13203 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+@@ -146,7 +146,7 @@ static int s32_dwmac_probe(struct platform_device *pdev)
+ 	gmac->ioaddr = res.addr;
+ 
+ 	/* S32CC core feature set */
+-	plat->has_gmac4 = true;
++	plat->core_type = DWMAC_CORE_GMAC4;
+ 	plat->pmt = 1;
+ 	plat->flags |= STMMAC_FLAG_SPH_DISABLE;
+ 	plat->rx_fifo_size = 20480;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+index 354f01184e6c..2ff5db6d41ca 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+@@ -497,7 +497,7 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
+ 	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
+ 	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
+ 	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
+-	plat_dat->has_gmac = true;
++	plat_dat->core_type = DWMAC_CORE_GMAC;
+ 
+ 	plat_dat->riwt_off = 1;
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
+index 1eadcf5d1ad6..7f560d78209d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
+@@ -136,7 +136,7 @@ static int sun7i_gmac_probe(struct platform_device *pdev)
+ 	/* platform data specifying hardware features and callbacks.
+ 	 * hardware features were copied from Allwinner drivers. */
+ 	plat_dat->tx_coe = 1;
+-	plat_dat->has_gmac = true;
++	plat_dat->core_type = DWMAC_CORE_GMAC;
+ 	plat_dat->bsp_priv = gmac;
+ 	plat_dat->init = sun7i_gmac_init;
+ 	plat_dat->exit = sun7i_gmac_exit;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+index dc903b846b1b..d765acbe3754 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+@@ -308,7 +308,7 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
+ 		goto disable_clks;
+ 	}
+ 
+-	plat->has_xgmac = 1;
++	plat->core_type = DWMAC_CORE_XGMAC;
+ 	plat->flags |= STMMAC_FLAG_TSO_EN;
+ 	plat->pmt = 1;
+ 	plat->bsp_priv = mgbe;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+index 3f7c765dcb79..00083ce52549 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
++++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+@@ -106,9 +106,7 @@ int stmmac_reset(struct stmmac_priv *priv, void __iomem *ioaddr)
+ }
+ 
+ static const struct stmmac_hwif_entry {
+-	bool gmac;
+-	bool gmac4;
+-	bool xgmac;
++	enum dwmac_core_type core_type;
+ 	u32 min_id;
+ 	u32 dev_id;
+ 	const struct stmmac_regs_off regs;
+@@ -127,9 +125,7 @@ static const struct stmmac_hwif_entry {
+ } stmmac_hw[] = {
+ 	/* NOTE: New HW versions shall go to the end of this table */
+ 	{
+-		.gmac = false,
+-		.gmac4 = false,
+-		.xgmac = false,
++		.core_type = DWMAC_CORE_MAC100,
+ 		.min_id = 0,
+ 		.regs = {
+ 			.ptp_off = PTP_GMAC3_X_OFFSET,
+@@ -146,9 +142,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwmac100_setup,
+ 		.quirks = stmmac_dwmac1_quirks,
+ 	}, {
+-		.gmac = true,
+-		.gmac4 = false,
+-		.xgmac = false,
++		.core_type = DWMAC_CORE_GMAC,
+ 		.min_id = 0,
+ 		.regs = {
+ 			.ptp_off = PTP_GMAC3_X_OFFSET,
+@@ -165,9 +159,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwmac1000_setup,
+ 		.quirks = stmmac_dwmac1_quirks,
+ 	}, {
+-		.gmac = false,
+-		.gmac4 = true,
+-		.xgmac = false,
++		.core_type = DWMAC_CORE_GMAC4,
+ 		.min_id = 0,
+ 		.regs = {
+ 			.ptp_off = PTP_GMAC4_OFFSET,
+@@ -187,9 +179,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwmac4_setup,
+ 		.quirks = stmmac_dwmac4_quirks,
+ 	}, {
+-		.gmac = false,
+-		.gmac4 = true,
+-		.xgmac = false,
++		.core_type = DWMAC_CORE_GMAC4,
+ 		.min_id = DWMAC_CORE_4_00,
+ 		.regs = {
+ 			.ptp_off = PTP_GMAC4_OFFSET,
+@@ -210,9 +200,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwmac4_setup,
+ 		.quirks = NULL,
+ 	}, {
+-		.gmac = false,
+-		.gmac4 = true,
+-		.xgmac = false,
++		.core_type = DWMAC_CORE_GMAC4,
+ 		.min_id = DWMAC_CORE_4_10,
+ 		.regs = {
+ 			.ptp_off = PTP_GMAC4_OFFSET,
+@@ -233,9 +221,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwmac4_setup,
+ 		.quirks = NULL,
+ 	}, {
+-		.gmac = false,
+-		.gmac4 = true,
+-		.xgmac = false,
++		.core_type = DWMAC_CORE_GMAC4,
+ 		.min_id = DWMAC_CORE_5_10,
+ 		.regs = {
+ 			.ptp_off = PTP_GMAC4_OFFSET,
+@@ -256,9 +242,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwmac4_setup,
+ 		.quirks = NULL,
+ 	}, {
+-		.gmac = false,
+-		.gmac4 = false,
+-		.xgmac = true,
++		.core_type = DWMAC_CORE_XGMAC,
+ 		.min_id = DWXGMAC_CORE_2_10,
+ 		.dev_id = DWXGMAC_ID,
+ 		.regs = {
+@@ -280,9 +264,7 @@ static const struct stmmac_hwif_entry {
+ 		.setup = dwxgmac2_setup,
+ 		.quirks = NULL,
+ 	}, {
+-		.gmac = false,
+-		.gmac4 = false,
+-		.xgmac = true,
++		.core_type = DWMAC_CORE_XGMAC,
+ 		.min_id = DWXLGMAC_CORE_2_00,
+ 		.dev_id = DWXLGMAC_ID,
+ 		.regs = {
+@@ -308,20 +290,18 @@ static const struct stmmac_hwif_entry {
+ 
+ int stmmac_hwif_init(struct stmmac_priv *priv)
+ {
+-	bool needs_xgmac = priv->plat->has_xgmac;
+-	bool needs_gmac4 = priv->plat->has_gmac4;
+-	bool needs_gmac = priv->plat->has_gmac;
++	enum dwmac_core_type core_type = priv->plat->core_type;
+ 	const struct stmmac_hwif_entry *entry;
+ 	struct mac_device_info *mac;
+ 	bool needs_setup = true;
+ 	u32 id, dev_id = 0;
+ 	int i, ret;
+ 
+-	if (needs_gmac) {
++	if (core_type == DWMAC_CORE_GMAC) {
+ 		id = stmmac_get_id(priv, GMAC_VERSION);
+-	} else if (needs_gmac4 || needs_xgmac) {
++	} else if (dwmac_is_xmac(core_type)) {
+ 		id = stmmac_get_id(priv, GMAC4_VERSION);
+-		if (needs_xgmac)
++		if (core_type == DWMAC_CORE_XGMAC)
+ 			dev_id = stmmac_get_dev_id(priv, GMAC4_VERSION);
+ 	} else {
+ 		id = 0;
+@@ -331,14 +311,16 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+ 	priv->synopsys_id = id;
+ 
+ 	/* Lets assume some safe values first */
+-	priv->ptpaddr = priv->ioaddr +
+-		(needs_gmac4 ? PTP_GMAC4_OFFSET : PTP_GMAC3_X_OFFSET);
+-	priv->mmcaddr = priv->ioaddr +
+-		(needs_gmac4 ? MMC_GMAC4_OFFSET : MMC_GMAC3_X_OFFSET);
+-	if (needs_gmac4)
++	if (core_type == DWMAC_CORE_GMAC4) {
++		priv->ptpaddr = priv->ioaddr + PTP_GMAC4_OFFSET;
++		priv->mmcaddr = priv->ioaddr + MMC_GMAC4_OFFSET;
+ 		priv->estaddr = priv->ioaddr + EST_GMAC4_OFFSET;
+-	else if (needs_xgmac)
+-		priv->estaddr = priv->ioaddr + EST_XGMAC_OFFSET;
++	} else {
++		priv->ptpaddr = priv->ioaddr + PTP_GMAC3_X_OFFSET;
++		priv->mmcaddr = priv->ioaddr + MMC_GMAC3_X_OFFSET;
++		if (core_type == DWMAC_CORE_XGMAC)
++			priv->estaddr = priv->ioaddr + EST_XGMAC_OFFSET;
++	}
+ 
+ 	/* Check for HW specific setup first */
+ 	if (priv->plat->setup) {
+@@ -355,16 +337,12 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+ 	for (i = ARRAY_SIZE(stmmac_hw) - 1; i >= 0; i--) {
+ 		entry = &stmmac_hw[i];
+ 
+-		if (needs_gmac ^ entry->gmac)
+-			continue;
+-		if (needs_gmac4 ^ entry->gmac4)
+-			continue;
+-		if (needs_xgmac ^ entry->xgmac)
++		if (core_type != entry->core_type)
+ 			continue;
+ 		/* Use synopsys_id var because some setups can override this */
+ 		if (priv->synopsys_id < entry->min_id)
+ 			continue;
+-		if (needs_xgmac && (dev_id ^ entry->dev_id))
++		if (core_type == DWMAC_CORE_XGMAC && (dev_id ^ entry->dev_id))
+ 			continue;
+ 
+ 		/* Only use generic HW helpers if needed */
+@@ -400,6 +378,7 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+ 	}
+ 
+ 	dev_err(priv->device, "Failed to find HW IF (id=0x%x, gmac=%d/%d)\n",
+-			id, needs_gmac, needs_gmac4);
++		id, core_type == DWMAC_CORE_GMAC,
++		core_type == DWMAC_CORE_GMAC4);
+ 	return -EINVAL;
+ }
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
+index 4b513d27a988..afc516059b89 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
+@@ -53,7 +53,7 @@ static int est_configure(struct stmmac_priv *priv, struct stmmac_est *cfg,
+ 	}
+ 
+ 	ctrl = readl(est_addr + EST_CONTROL);
+-	if (priv->plat->has_xgmac) {
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC) {
+ 		ctrl &= ~EST_XGMAC_PTOV;
+ 		ctrl |= ((NSEC_PER_SEC / ptp_rate) * EST_XGMAC_PTOV_MUL) <<
+ 			 EST_XGMAC_PTOV_SHIFT;
+@@ -148,7 +148,7 @@ static void est_irq_status(struct stmmac_priv *priv, struct net_device *dev,
+ 	}
+ 
+ 	if (status & EST_BTRE) {
+-		if (priv->plat->has_xgmac) {
++		if (priv->plat->core_type == DWMAC_CORE_XGMAC) {
+ 			btrl = FIELD_GET(EST_XGMAC_BTRL, status);
+ 			btrl_max = FIELD_MAX(EST_XGMAC_BTRL);
+ 		} else {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+index c60cd948311e..df016c4eb710 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+@@ -303,9 +303,10 @@ static void stmmac_ethtool_getdrvinfo(struct net_device *dev,
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+ 
+-	if (priv->plat->has_gmac || priv->plat->has_gmac4)
++	if (priv->plat->core_type == DWMAC_CORE_GMAC ||
++	    priv->plat->core_type == DWMAC_CORE_GMAC4)
+ 		strscpy(info->driver, GMAC_ETHTOOL_NAME, sizeof(info->driver));
+-	else if (priv->plat->has_xgmac)
++	else if (priv->plat->core_type == DWMAC_CORE_XGMAC)
+ 		strscpy(info->driver, XGMAC_ETHTOOL_NAME, sizeof(info->driver));
+ 	else
+ 		strscpy(info->driver, MAC100_ETHTOOL_NAME,
+@@ -351,9 +352,9 @@ static int stmmac_ethtool_get_regs_len(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+ 
+-	if (priv->plat->has_xgmac)
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC)
+ 		return XGMAC_REGSIZE * 4;
+-	else if (priv->plat->has_gmac4)
++	else if (priv->plat->core_type == DWMAC_CORE_GMAC4)
+ 		return GMAC4_REG_SPACE_SIZE;
+ 	return REG_SPACE_SIZE;
+ }
+@@ -368,12 +369,12 @@ static void stmmac_ethtool_gregs(struct net_device *dev,
+ 	stmmac_dump_dma_regs(priv, priv->ioaddr, reg_space);
+ 
+ 	/* Copy DMA registers to where ethtool expects them */
+-	if (priv->plat->has_gmac4) {
++	if (priv->plat->core_type == DWMAC_CORE_GMAC4) {
+ 		/* GMAC4 dumps its DMA registers at its DMA_CHAN_BASE_ADDR */
+ 		memcpy(&reg_space[ETHTOOL_DMA_OFFSET],
+ 		       &reg_space[GMAC4_DMA_CHAN_BASE_ADDR / 4],
+ 		       NUM_DWMAC4_DMA_REGS * 4);
+-	} else if (!priv->plat->has_xgmac) {
++	} else if (priv->plat->core_type != DWMAC_CORE_XGMAC) {
+ 		memcpy(&reg_space[ETHTOOL_DMA_OFFSET],
+ 		       &reg_space[DMA_BUS_MODE / 4],
+ 		       NUM_DWMAC1000_DMA_REGS * 4);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 5e6aaead5894..9fa3c221a0c3 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -446,7 +446,7 @@ static void stmmac_get_rx_hwtstamp(struct stmmac_priv *priv, struct dma_desc *p,
+ 	if (!priv->hwts_rx_en)
+ 		return;
+ 	/* For GMAC4, the valid timestamp is from CTX next desc. */
+-	if (priv->plat->has_gmac4 || priv->plat->has_xgmac)
++	if (dwmac_is_xmac(priv->plat->core_type))
+ 		desc = np;
+ 
+ 	/* Check if timestamp is available */
+@@ -697,7 +697,7 @@ static int stmmac_hwtstamp_get(struct net_device *dev,
+ static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,
+ 				      u32 systime_flags)
+ {
+-	bool xmac = priv->plat->has_gmac4 || priv->plat->has_xgmac;
++	bool xmac = dwmac_is_xmac(priv->plat->core_type);
+ 	struct timespec64 now;
+ 	u32 sec_inc = 0;
+ 	u64 temp = 0;
+@@ -746,7 +746,7 @@ static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,
+  */
+ static int stmmac_init_timestamping(struct stmmac_priv *priv)
+ {
+-	bool xmac = priv->plat->has_gmac4 || priv->plat->has_xgmac;
++	bool xmac = dwmac_is_xmac(priv->plat->core_type);
+ 	int ret;
+ 
+ 	if (priv->plat->ptp_clk_freq_config)
+@@ -2413,7 +2413,7 @@ static void stmmac_dma_operation_mode(struct stmmac_priv *priv)
+ 		txfifosz = priv->dma_cap.tx_fifo_size;
+ 
+ 	/* Split up the shared Tx/Rx FIFO memory on DW QoS Eth and DW XGMAC */
+-	if (priv->plat->has_gmac4 || priv->plat->has_xgmac) {
++	if (dwmac_is_xmac(priv->plat->core_type)) {
+ 		rxfifosz /= rx_channels_count;
+ 		txfifosz /= tx_channels_count;
+ 	}
+@@ -4520,7 +4520,8 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	if (skb_is_gso(skb) && priv->tso) {
+ 		if (gso & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6))
+ 			return stmmac_tso_xmit(skb, dev);
+-		if (priv->plat->has_gmac4 && (gso & SKB_GSO_UDP_L4))
++		if (priv->plat->core_type == DWMAC_CORE_GMAC4 &&
++		    (gso & SKB_GSO_UDP_L4))
+ 			return stmmac_tso_xmit(skb, dev);
+ 	}
+ 
+@@ -5973,7 +5974,7 @@ static void stmmac_common_interrupt(struct stmmac_priv *priv)
+ 	u32 queue;
+ 	bool xmac;
+ 
+-	xmac = priv->plat->has_gmac4 || priv->plat->has_xgmac;
++	xmac = dwmac_is_xmac(priv->plat->core_type);
+ 	queues_count = (rx_cnt > tx_cnt) ? rx_cnt : tx_cnt;
+ 
+ 	if (priv->irq_wake)
+@@ -5987,7 +5988,7 @@ static void stmmac_common_interrupt(struct stmmac_priv *priv)
+ 		stmmac_fpe_irq_status(priv);
+ 
+ 	/* To handle GMAC own interrupts */
+-	if ((priv->plat->has_gmac) || xmac) {
++	if (priv->plat->core_type == DWMAC_CORE_GMAC || xmac) {
+ 		int status = stmmac_host_irq_status(priv, priv->hw, &priv->xstats);
+ 
+ 		if (unlikely(status)) {
+@@ -6348,7 +6349,7 @@ static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
+ 		   (priv->dma_cap.mbps_1000) ? "Y" : "N");
+ 	seq_printf(seq, "\tHalf duplex: %s\n",
+ 		   (priv->dma_cap.half_duplex) ? "Y" : "N");
+-	if (priv->plat->has_xgmac) {
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC) {
+ 		seq_printf(seq,
+ 			   "\tNumber of Additional MAC address registers: %d\n",
+ 			   priv->dma_cap.multi_addr);
+@@ -6372,7 +6373,7 @@ static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
+ 		   (priv->dma_cap.time_stamp) ? "Y" : "N");
+ 	seq_printf(seq, "\tIEEE 1588-2008 Advanced Time Stamp: %s\n",
+ 		   (priv->dma_cap.atime_stamp) ? "Y" : "N");
+-	if (priv->plat->has_xgmac)
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC)
+ 		seq_printf(seq, "\tTimestamp System Time Source: %s\n",
+ 			   dwxgmac_timestamp_source[priv->dma_cap.tssrc]);
+ 	seq_printf(seq, "\t802.3az - Energy-Efficient Ethernet (EEE): %s\n",
+@@ -6381,7 +6382,7 @@ static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
+ 	seq_printf(seq, "\tChecksum Offload in TX: %s\n",
+ 		   (priv->dma_cap.tx_coe) ? "Y" : "N");
+ 	if (priv->synopsys_id >= DWMAC_CORE_4_00 ||
+-	    priv->plat->has_xgmac) {
++	    priv->plat->core_type == DWMAC_CORE_XGMAC) {
+ 		seq_printf(seq, "\tIP Checksum Offload in RX: %s\n",
+ 			   (priv->dma_cap.rx_coe) ? "Y" : "N");
+ 	} else {
+@@ -7233,8 +7234,9 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
+ 	 * has to be disable and this can be done by passing the
+ 	 * riwt_off field from the platform.
+ 	 */
+-	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
+-	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
++	if ((priv->synopsys_id >= DWMAC_CORE_3_50 ||
++	     priv->plat->core_type == DWMAC_CORE_XGMAC) &&
++	    !priv->plat->riwt_off) {
+ 		priv->use_riwt = 1;
+ 		dev_info(priv->device,
+ 			 "Enable RX Mitigation via HW Watchdog Timer\n");
+@@ -7355,7 +7357,7 @@ static int stmmac_xdp_rx_timestamp(const struct xdp_md *_ctx, u64 *timestamp)
+ 		return -ENODATA;
+ 
+ 	/* For GMAC4, the valid timestamp is from CTX next desc. */
+-	if (priv->plat->has_gmac4 || priv->plat->has_xgmac)
++	if (dwmac_is_xmac(priv->plat->core_type))
+ 		desc_contains_ts = ndesc;
+ 
+ 	/* Check if timestamp is available */
+@@ -7511,7 +7513,7 @@ int stmmac_dvr_probe(struct device *device,
+ 
+ 	if ((priv->plat->flags & STMMAC_FLAG_TSO_EN) && (priv->dma_cap.tsoen)) {
+ 		ndev->hw_features |= NETIF_F_TSO | NETIF_F_TSO6;
+-		if (priv->plat->has_gmac4)
++		if (priv->plat->core_type == DWMAC_CORE_GMAC4)
+ 			ndev->hw_features |= NETIF_F_GSO_UDP_L4;
+ 		priv->tso = true;
+ 		dev_info(priv->device, "TSO feature enabled\n");
+@@ -7564,7 +7566,7 @@ int stmmac_dvr_probe(struct device *device,
+ #ifdef STMMAC_VLAN_TAG_USED
+ 	/* Both mac100 and gmac support receive VLAN tag detection */
+ 	ndev->features |= NETIF_F_HW_VLAN_CTAG_RX | NETIF_F_HW_VLAN_STAG_RX;
+-	if (priv->plat->has_gmac4 || priv->plat->has_xgmac) {
++	if (dwmac_is_xmac(priv->plat->core_type)) {
+ 		ndev->hw_features |= NETIF_F_HW_VLAN_CTAG_RX;
+ 		priv->hw->hw_vlan_en = true;
+ 	}
+@@ -7595,7 +7597,7 @@ int stmmac_dvr_probe(struct device *device,
+ 
+ 	/* MTU range: 46 - hw-specific max */
+ 	ndev->min_mtu = ETH_ZLEN - ETH_HLEN;
+-	if (priv->plat->has_xgmac)
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC)
+ 		ndev->max_mtu = XGMAC_JUMBO_LEN;
+ 	else if ((priv->plat->enh_desc) || (priv->synopsys_id >= DWMAC_CORE_4_00))
+ 		ndev->max_mtu = JUMBO_LEN;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+index d62b2870899d..6b03ea98dced 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -301,7 +301,7 @@ static int stmmac_mdio_read_c22(struct mii_bus *bus, int phyaddr, int phyreg)
+ 	struct stmmac_priv *priv = netdev_priv(bus->priv);
+ 	u32 cmd;
+ 
+-	if (priv->plat->has_gmac4)
++	if (priv->plat->core_type == DWMAC_CORE_GMAC4)
+ 		cmd = MII_GMAC4_READ;
+ 	else
+ 		cmd = 0;
+@@ -344,7 +344,7 @@ static int stmmac_mdio_write_c22(struct mii_bus *bus, int phyaddr, int phyreg,
+ 	struct stmmac_priv *priv = netdev_priv(bus->priv);
+ 	u32 cmd;
+ 
+-	if (priv->plat->has_gmac4)
++	if (priv->plat->core_type == DWMAC_CORE_GMAC4)
+ 		cmd = MII_GMAC4_WRITE;
+ 	else
+ 		cmd = MII_ADDR_GWRITE;
+@@ -417,7 +417,7 @@ int stmmac_mdio_reset(struct mii_bus *bus)
+ 	 * on MDC, so perform a dummy mdio read. To be updated for GMAC4
+ 	 * if needed.
+ 	 */
+-	if (!priv->plat->has_gmac4)
++	if (priv->plat->core_type != DWMAC_CORE_GMAC4)
+ 		writel(0, priv->ioaddr + mii_address);
+ #endif
+ 	return 0;
+@@ -528,7 +528,7 @@ static u32 stmmac_clk_csr_set(struct stmmac_priv *priv)
+ 			value = 0;
+ 	}
+ 
+-	if (priv->plat->has_xgmac) {
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC) {
+ 		if (clk_rate > 400000000)
+ 			value = 0x5;
+ 		else if (clk_rate > 350000000)
+@@ -600,7 +600,7 @@ int stmmac_mdio_register(struct net_device *ndev)
+ 
+ 	new_bus->name = "stmmac";
+ 
+-	if (priv->plat->has_xgmac) {
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC) {
+ 		new_bus->read = &stmmac_xgmac2_mdio_read_c22;
+ 		new_bus->write = &stmmac_xgmac2_mdio_write_c22;
+ 		new_bus->read_c45 = &stmmac_xgmac2_mdio_read_c45;
+@@ -621,7 +621,7 @@ int stmmac_mdio_register(struct net_device *ndev)
+ 	} else {
+ 		new_bus->read = &stmmac_mdio_read_c22;
+ 		new_bus->write = &stmmac_mdio_write_c22;
+-		if (priv->plat->has_gmac4) {
++		if (priv->plat->core_type == DWMAC_CORE_GMAC4) {
+ 			new_bus->read_c45 = &stmmac_mdio_read_c45;
+ 			new_bus->write_c45 = &stmmac_mdio_write_c45;
+ 		}
+@@ -649,7 +649,7 @@ int stmmac_mdio_register(struct net_device *ndev)
+ 	}
+ 
+ 	/* Looks like we need a dummy read for XGMAC only and C45 PHYs */
+-	if (priv->plat->has_xgmac)
++	if (priv->plat->core_type == DWMAC_CORE_XGMAC)
+ 		stmmac_xgmac2_mdio_read_c45(new_bus, 0, 0, 0);
+ 
+ 	/* If fixed-link is set, skip PHY scanning */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+index 4e3aa611fda8..94b3a3b27270 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+@@ -23,7 +23,7 @@ static void common_default_data(struct plat_stmmacenet_data *plat)
+ {
+ 	/* clk_csr_i = 20-35MHz & MDC = clk_csr_i/16 */
+ 	plat->clk_csr = STMMAC_CSR_20_35M;
+-	plat->has_gmac = 1;
++	plat->core_type = DWMAC_CORE_GMAC;
+ 	plat->force_sf_dma_mode = 1;
+ 
+ 	plat->mdio_bus_data->needs_reset = true;
+@@ -76,7 +76,7 @@ static int snps_gmac5_default_data(struct pci_dev *pdev,
+ 	int i;
+ 
+ 	plat->clk_csr = STMMAC_CSR_250_300M;
+-	plat->has_gmac4 = 1;
++	plat->core_type = DWMAC_CORE_GMAC4;
+ 	plat->force_sf_dma_mode = 1;
+ 	plat->flags |= STMMAC_FLAG_TSO_EN;
+ 	plat->pmt = 1;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 27bcaae07a7f..fbb92cc6ab59 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -552,12 +552,12 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 				&pdev->dev, plat->unicast_filter_entries);
+ 		plat->multicast_filter_bins = dwmac1000_validate_mcast_bins(
+ 				&pdev->dev, plat->multicast_filter_bins);
+-		plat->has_gmac = 1;
++		plat->core_type = DWMAC_CORE_GMAC;
+ 		plat->pmt = 1;
+ 	}
+ 
+ 	if (of_device_is_compatible(np, "snps,dwmac-3.40a")) {
+-		plat->has_gmac = 1;
++		plat->core_type = DWMAC_CORE_GMAC;
+ 		plat->enh_desc = 1;
+ 		plat->tx_coe = 1;
+ 		plat->bugged_jumbo = 1;
+@@ -565,8 +565,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 	}
+ 
+ 	if (of_device_compatible_match(np, stmmac_gmac4_compats)) {
+-		plat->has_gmac4 = 1;
+-		plat->has_gmac = 0;
++		plat->core_type = DWMAC_CORE_GMAC4;
+ 		plat->pmt = 1;
+ 		if (of_property_read_bool(np, "snps,tso"))
+ 			plat->flags |= STMMAC_FLAG_TSO_EN;
+@@ -580,7 +579,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 	}
+ 
+ 	if (of_device_is_compatible(np, "snps,dwxgmac")) {
+-		plat->has_xgmac = 1;
++		plat->core_type = DWMAC_CORE_XGMAC;
+ 		plat->pmt = 1;
+ 		if (of_property_read_bool(np, "snps,tso"))
+ 			plat->flags |= STMMAC_FLAG_TSO_EN;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+index 993ff4e87e55..3e30172fa129 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+@@ -57,7 +57,7 @@ static int stmmac_adjust_time(struct ptp_clock_info *ptp, s64 delta)
+ 	bool xmac, est_rst = false;
+ 	int ret;
+ 
+-	xmac = priv->plat->has_gmac4 || priv->plat->has_xgmac;
++	xmac = dwmac_is_xmac(priv->plat->core_type);
+ 
+ 	if (delta < 0) {
+ 		neg_adj = 1;
+@@ -344,7 +344,7 @@ void stmmac_ptp_register(struct stmmac_priv *priv)
+ 
+ 	/* Calculate the clock domain crossing (CDC) error if necessary */
+ 	priv->plat->cdc_error_adj = 0;
+-	if (priv->plat->has_gmac4)
++	if (priv->plat->core_type == DWMAC_CORE_GMAC4)
+ 		priv->plat->cdc_error_adj = (2 * NSEC_PER_SEC) / priv->plat->clk_ptp_rate;
+ 
+ 	/* Update the ptp clock parameters based on feature discovery, when
+diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+index 99022620457a..151c81c560c8 100644
+--- a/include/linux/stmmac.h
++++ b/include/linux/stmmac.h
+@@ -171,6 +171,13 @@ struct dwmac4_addrs {
+ 	u32 mtl_low_cred_offset;
+ };
+ 
++enum dwmac_core_type {
++	DWMAC_CORE_MAC100,
++	DWMAC_CORE_GMAC,
++	DWMAC_CORE_GMAC4,
++	DWMAC_CORE_XGMAC,
++};
++
+ #define STMMAC_FLAG_SPH_DISABLE			BIT(1)
+ #define STMMAC_FLAG_USE_PHY_WOL			BIT(2)
+ #define STMMAC_FLAG_HAS_SUN8I			BIT(3)
+@@ -186,6 +193,7 @@ struct dwmac4_addrs {
+ #define STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY	BIT(13)
+ 
+ struct plat_stmmacenet_data {
++	enum dwmac_core_type core_type;
+ 	int bus_id;
+ 	int phy_addr;
+ 	/* MAC ----- optional PCS ----- SerDes ----- optional PHY ----- Media
+@@ -219,7 +227,6 @@ struct plat_stmmacenet_data {
+ 	struct stmmac_dma_cfg *dma_cfg;
+ 	struct stmmac_safety_feature_cfg *safety_feat_cfg;
+ 	int clk_csr;
+-	int has_gmac;
+ 	int enh_desc;
+ 	int tx_coe;
+ 	int rx_coe;
+@@ -282,10 +289,8 @@ struct plat_stmmacenet_data {
+ 	struct reset_control *stmmac_rst;
+ 	struct reset_control *stmmac_ahb_rst;
+ 	struct stmmac_axi *axi;
+-	int has_gmac4;
+ 	int rss_en;
+ 	int mac_port_sel_speed;
+-	int has_xgmac;
+ 	u8 vlan_fail_q;
+ 	struct pci_dev *pdev;
+ 	int int_snapshot_num;
+-- 
+2.47.3
 
