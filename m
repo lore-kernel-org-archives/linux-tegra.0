@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E6F351FC4;
-	Tue, 21 Oct 2025 18:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7268634D904;
+	Tue, 21 Oct 2025 18:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761071389; cv=none; b=J/xiWB4gURjWtQ+Nzz6GtI3dgtaTU+dglPRWL8ZC81367/HuIbA7bBmbmiI9D0Kn6EKOPs7f26WBgB7NBB77RZzNTWN/JvsZxmTXj1N0lanecJx9DxbJgOqzxrbc5RYzt/2UUauRSWXJx2HskH1O4LLqZsLVi2fNRb76llOsG2c=
+	t=1761071493; cv=none; b=FQG8USy+5D6EzgJB1SgjFuBsHGKqsmDVoXBzBCZjqamgz/BJFE2lygKv4Y1Cpte0Oe202HehVLo8PWtF6I1AuvvFYamtpnuTry6nEzv8AZ1GR46j2rvLQ5tGIlsqVi0C9DdiD6kDqhboqAdhmfrAx6rw0dZvRpt4g1BEddL2cxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761071389; c=relaxed/simple;
-	bh=g2mmajcxbCrl4r+56yYrwyyJINURxPSPFab71xwisCM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cClpYmG6mn/p2OgH+yKkz/ojEHSf4WUTqRET2g5UEFkMOAdEbYn5pVOQWGVSZ4n2rEL2RcrYvIuXT8r19uup3yVyUPXzBXBGNsaOtAsihcESE8+eNbVrYKKIVLQUDK+tyDGocSVqcwC0+0UXsebdYjJO/dgDkaqgI855TTLbcEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fG+Qcl89; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761071493; c=relaxed/simple;
+	bh=foOzd1ErH9G7EZaY83TpuvCawP/IuYOE5JCvotPcJ6c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GoxlQZPrRQWiKpRkN7jKaK0B/J+DXrTO+bqPYADejhta/2LNhXJjx63kSyZRqiDyKaXRk58aVbvDsUGCf4D86HhymimJ5rGvp3xV9qBOgSnn0ArQHpbjEFwPrbUNvdyLj4PexHeJlqWDTibLr28rGhKASGshcxVELHl7dPUIesU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2w6avEZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fG+Qcl89"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DD0B3C19422;
-	Tue, 21 Oct 2025 18:29:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2w6avEZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F92BC4CEF1;
+	Tue, 21 Oct 2025 18:31:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761071387;
-	bh=g2mmajcxbCrl4r+56yYrwyyJINURxPSPFab71xwisCM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fG+Qcl896GZdAUVbnSnm6mUwZl1tEwPaqx922x1OSNRBIaqYzLPrStSxJ2C1KEMSU
-	 tAQt+DBSMyomWeQYLqScE2YhrGCAE2RZFXYqTKMyahYV7+hVEbTYkqKzCdoCvJAuAG
-	 /SzuF22a/E4oj0Xzj+uNb5o+0mrhukn980HPUbzWegT3kHwCz9HZlomlp2EwIN+Wh7
-	 Afe45agO/2dCESM+NsM0I3XMJPkms89pvP3tk0cnh6/JvI3sNtmpL1PdCwuQlYlu5q
-	 p6B6JSYggR0isyM7UceysGxVh8hPLyD3KPlUDX/u0BJE4iVVJfNb6kUGhfxv265YTw
-	 PWBS92et4gGjA==
+	s=k20201202; t=1761071493;
+	bh=foOzd1ErH9G7EZaY83TpuvCawP/IuYOE5JCvotPcJ6c=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=h2w6avEZVMQPgMJWfGohu8I5XNtSFDyw4Nke5xc1evZ17YeqrIIX/vSgwLV27XTJy
+	 kWks35WWRL3XkG03hgO2tgAtvCA43tbpibyIGgC/LmV+6ZPXDQOglqO+zs7tiXFBOT
+	 9JG4G3SpDINx9X5B3jUz7+xbNnf0JzthDC4k4oE6jmDFOTSBAar5VMBk4ytkpd1TUa
+	 Rx7mLV+0LU+52nKITfserOl61UJh9a8CmEyQ56smYZrI8/ke2U/xbdflJPiV8FPqKv
+	 3CruB97jVlGOLkKAZ5XHzkACzqtsFPQo9ZQGY+yzVNnxOSUR4qk0EZV8ltR3pFDXib
+	 8QR0VCLLwktrw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35A6CCD1BB;
-	Tue, 21 Oct 2025 18:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1DECCD1B9;
+	Tue, 21 Oct 2025 18:31:33 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 21 Oct 2025 13:29:43 -0500
-Subject: [PATCH 4/5] memory: tegra186: Support icc scaling
+Subject: [PATCH 0/2] arm64: tegra: Add CPU OPP tables for Tegra186/Tegra194
+Date: Tue, 21 Oct 2025 13:31:26 -0500
+Message-Id: <20251021-tegra186-icc-p3-v1-0-0c313968b77b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,21 +40,23 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-tegra186-icc-p2-v1-4-39d53bdc9aab@gmail.com>
-References: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>
-In-Reply-To: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAH7R92gC/3WOSwoCMRAFrzJkbSDd6Q5xriIuYrqjWfjLjCKId
+ zeooBuX9aCKdzeTtqqTGYe7aXqtUz0eOsBiMHmXDlu1VTobdMjgEOys25YgBltztidvfQnEJIk
+ 1k+nWqWmpt1dxtX5z0/Olh+f3+O2Ow58q2EjMGkCIvYxXML93/mpoY6AiMSCH5fKjbdKkNh/3+
+ zp3EUBE1EX0BYhQKYljTFi8K44dEOecJJn14/EEEpeithsBAAA=
+X-Change-ID: 20251021-tegra186-icc-p3-3f6454da5ec4
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Thierry Reding <thierry.reding@gmail.com>, 
  Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761071387; l=2383;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761071492; l=1249;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=a/aaiaGuHyMc5nlB9Xe5+rxhKDOKwn8mtxYy/DM7ELQ=;
- b=MlFoJ3of+99Qz3Zcxb6hoB4n+vU9Dzs7v/abYNrVrsiCBYziO1VHSmqBr962JMTKXDxo/yOAa
- U0rbVjz7z6JDNoguiurW+TkzAV7Aorh1SMfLiTyS0obpVV/iehr0Ht0
+ bh=foOzd1ErH9G7EZaY83TpuvCawP/IuYOE5JCvotPcJ6c=;
+ b=1ljVV/hSyLq08Gx+hrZftn5e9mALHnzMcU+smzxpkS1aUmXYJhCRO+M2svqmkZhEqdRwnuT93
+ EqoEWGq36ppDk2uwvtM3CFyx+U20sjkBdVsrbQhIlVtbIrR/qgaGNdx
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -62,88 +64,34 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-From: Aaron Kling <webgeek1234@gmail.com>
-
-Add Interconnect framework support to dynamically set the DRAM
-bandwidth from different clients. The MC driver is added as an ICC
-provider and the EMC driver is already a provider.
+This was original part of a larger series [0], but it was requested to
+be split into smaller series.
+    
+[0] https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@gmail.com
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/memory/tegra/tegra186.c | 48 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Aaron Kling (2):
+      arm64: tegra: Add CPU OPP tables for Tegra186
+      arm64: tegra: Add CPU OPP tables for Tegra194
 
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index aee11457bf8e032637d1772affb87da0cac68494..1384164f624af5d4aaccedc84443d203ba3db2c6 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -899,9 +899,56 @@ static const struct tegra_mc_client tegra186_mc_clients[] = {
- 				.security = 0x51c,
- 			},
- 		},
-+	}, {
-+		.id = TEGRA_ICC_MC_CPU_CLUSTER0,
-+		.name = "sw_cluster0",
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA_ICC_MC_CPU_CLUSTER1,
-+		.name = "sw_cluster1",
-+		.type = TEGRA_ICC_NISO,
- 	},
- };
- 
-+static int tegra186_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	/* TODO: program PTSA */
-+	return 0;
-+}
-+
-+static int tegra186_mc_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				     u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	struct icc_provider *p = node->provider;
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(p);
-+
-+	if (node->id == TEGRA_ICC_MC_CPU_CLUSTER0 ||
-+	    node->id == TEGRA_ICC_MC_CPU_CLUSTER1) {
-+		if (mc)
-+			peak_bw = peak_bw * mc->num_channels;
-+	}
-+
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static int tegra186_mc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
-+{
-+	*avg = 0;
-+	*peak = 0;
-+
-+	return 0;
-+}
-+
-+static const struct tegra_mc_icc_ops tegra186_mc_icc_ops = {
-+	.xlate = tegra_mc_icc_xlate,
-+	.aggregate = tegra186_mc_icc_aggregate,
-+	.get_bw = tegra186_mc_icc_get_init_bw,
-+	.set = tegra186_mc_icc_set,
-+};
-+
- const struct tegra_mc_soc tegra186_mc_soc = {
- 	.num_clients = ARRAY_SIZE(tegra186_mc_clients),
- 	.clients = tegra186_mc_clients,
-@@ -912,6 +959,7 @@ const struct tegra_mc_soc tegra186_mc_soc = {
- 		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
- 		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- 	.ops = &tegra186_mc_ops,
-+	.icc_ops = &tegra186_mc_icc_ops,
- 	.ch_intmask = 0x0000000f,
- 	.global_intstatus_channel_shift = 0,
- };
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++++++++++
+ 2 files changed, 953 insertions(+)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-tegra186-icc-p3-3f6454da5ec4
+prerequisite-change-id: 20251021-tegra186-icc-p1-8455e61d453d:v1
+prerequisite-patch-id: 79b5490cea531a49046c96e8b5240dbbe490e16a
+prerequisite-change-id: 20251021-tegra186-icc-p2-864fd8625699:v1
+prerequisite-patch-id: 470c94ee34569e507d14e65dd989e708955f1512
+prerequisite-patch-id: 64f466efb923428edb27b4360ac41bda5c990311
+prerequisite-patch-id: 6a99ee6dbcae73fcbfab52009fd600b2618f3d5a
+prerequisite-patch-id: e05146355f318629f1511fa972c1b1f92ee98064
+prerequisite-patch-id: 5754b9afa57bdf187d8779a3354fdbc36e539af9
 
+Best regards,
 -- 
-2.51.0
+Aaron Kling <webgeek1234@gmail.com>
 
 
