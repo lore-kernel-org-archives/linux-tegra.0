@@ -1,118 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B034D925;
-	Tue, 21 Oct 2025 19:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F9134C140
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Oct 2025 19:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761073869; cv=none; b=TRV04ukA2hOQ3KI1PPcV0yfCCM5wwsNEHQbTNWB1FpCymirhuwqI4zznRAzjA1aJLnvRoNCgxu4oJC3Xhi2JejVHMcSCOI2wSQvQ1J2hTYVXToqAXyyPmf3A6OXgNtvteNFM0eRs7xJrhFDIq3XuAeUoLtce83C1tsHMoqlj33E=
+	t=1761074405; cv=none; b=a+Ojl28j6V43MP9K7nnIWTLD7RCSulPcJrBmWuwlRa6rUuPEzpEIKmXZextt/9Ix//4L8KvbJn8dKxuT3vEvpentSjYBvo526LpjHOe0GC59wWCjg40ytjXOKrOcIIXNSb/bf0J7Z4ywpvZTSD9/2VTXaV+lSNanK8SbrTVWOzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761073869; c=relaxed/simple;
-	bh=6B/f/zDHX9K//eScsZbpkFfCKiThC8QvFqMo8KT6eSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LeSXGVtAebv/uOuWEXCYWy91wi+w+/OumvOAfhwyckFgukOKb7Od34bxqqGP6YH5asFjkL991hbfPTemR/C0tSoy8Ut9PmvL+lh/cz7w5QRMZaV7cPuM8yImEKQ+i1Q4NCPtrO8l5ejfDTQO7dg+vwnu9J1umNJ26vKHu/IT950=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCI4xnKd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761074405; c=relaxed/simple;
+	bh=XF8lCN147t5Xy+RNN4uA2G5rBZdwuSV7eZQQMLT017w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tXysBh0kOrI3H8cvgtUJ6zuE6i+tkueFBamy9b4MmWF4aETmlJXiQ2yhIcz2sA/wVRJo36QprHWIxP3PF964ELgam44I1z3xX8y96mvS2GIFUhZRszO+sRSSgWJ4fxpbdCL7FZ5/ip6/oH9yjYqszgtEY0+4+holdHEPQedcF9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJzp5mEe; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCI4xnKd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4B8C4CEF1;
-	Tue, 21 Oct 2025 19:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761073867;
-	bh=6B/f/zDHX9K//eScsZbpkFfCKiThC8QvFqMo8KT6eSM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NCI4xnKdWDRnFqbrOoM9dO62c+C8Nq8q0Da3+TvouJ2BHUzYUYncC9DJbAbTNyUrT
-	 oGp1k+jk8xWOVyIQ8YIdsUjR9cjg/CpJMabDW/rCz2rkaSmwMuVbAGkF/Pcmjjc9fR
-	 13J2pJ3ijat0D9CmPo80fILTLuDagutkwtXOWWMdOJproGj7QTUBKPOCEKM8Dzs1Nq
-	 RmVefA7DszfJf6e7GPDUs0rao1SmruZ8MnNlnw/X8HvoAeh9HDM8mx/OGymB3kXtKF
-	 ysyowYkalIkkbsHvwtaIPYIgqkHRP49GClddz/+xD63LFbCntKMeDfFgtanbcggdj/
-	 Z6w3Q4RT49mig==
-Message-ID: <ee6b80a7-4505-466e-a433-5f186d747945@kernel.org>
-Date: Tue, 21 Oct 2025 21:11:03 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJzp5mEe"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59093864727so7120614e87.3
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Oct 2025 12:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761074402; x=1761679202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XF8lCN147t5Xy+RNN4uA2G5rBZdwuSV7eZQQMLT017w=;
+        b=KJzp5mEeYdJzzxlbjsQEUTFlebHJG8X9iqasxhpDiJjOyHQVv8yr6M5jC19Ug90/jF
+         8QVJxqseckDiji0y3dB9+X7jsZTWWWCgSW+ZicH+YxC97GT6Aw+CJ4KY9IH2v2RtsznM
+         HlQD5njAaUEaRmRk/e99i/t5Qi6Ghu9YlQ07AvI34/W7gy4uTsa17BItBcOUvcU7j5wp
+         dh90R6vrw+OHPNcXGEk358SGpOsV0+usztbhfaR7UJWVEL1ieaNlHc6YrAxWc18ia3L1
+         erQMtyHcq9805U0nCintbV5EiXyVKfP9OeUccXUUWTsTp/4t5RfpjWIZ9chAKE0JTyng
+         BIUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761074402; x=1761679202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XF8lCN147t5Xy+RNN4uA2G5rBZdwuSV7eZQQMLT017w=;
+        b=YmWaqwPKIPzGvtp+LNSLPNe/LvpIn6ALwSa4QRr6iEQfdKHM0iVoWPPk5LUV+cBQFr
+         NmqfmfxDfVfeQZSTDbTYNz21Hd45XjPZI6K/45Ig9PZhaBQRgOmC3ES1+sXmWDuXuyWS
+         vI6ihE2mOyLEcHNQngkg1/2t7i1XluAoJK8TrF3p12WIrBAPvjaSW2JQ697u4Q4YZ3ye
+         O4bXNvhkQOPBqDW7dC2lZkZrTxnsrOYjJHs+fq7eZGbgjnAEomTFVt2nNgZzosd3iXbB
+         rvOBkX0WdUETjSv/s9omJhs3Vt538Eg/xi7lo/dwafcmL4rFcovPREvDeZSwVqXHa/th
+         ZMDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULTp0WXUUEcx8OyVlPJq8BhVDYn/SnSqc0OArgOvd0KGn1e0etuosLzwSPLJm3k8au2ZgaQu7MQSSHTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxob6k9ZKP+yuRUFYhyeRz96Yud/um+EHuip67Fkx+2Fi1lW6P0
+	HqMSlPgry+pqX4CVXfOpt+4twSA4I+SmAnkran2Vy2Tru7JLYbx+dyrPkZJIli8rgxJvwjdM9wI
+	aclU/SZgrjzeT98ueVqIATav3OEAdZQQ=
+X-Gm-Gg: ASbGncsKqkdF2i57ed4s6bitCD/eyYLMFVmW/WuiyfExbu6hRq75iqq51nZDXKNMLMJ
+	xlAOLf+keA0amTXLq4NPIMu7PIWTco0+IAXFpbpJX3K9zL3VSP5sWJeOWWvzZ8+wBUfxSs16Jos
+	g6WTKFWJ5VCQRtUd3owNCQI3UBsu5Pce77HjyDJsHbW75eRM1HVogDx9tqWEchWdk8DidrouGEE
+	W1m83S4xAaRRKKPWswBOJjjG72g2ErGDQA/ehOnvsLHBR4nN5G2+MdlClcv
+X-Google-Smtp-Source: AGHT+IHwT8B0R5exz7jadTBxGXmtid9llIfQluzOLS1CeZTO457I56feeO6M9WQOY+sC87UPLBULcwRCSiIfs5oVYqw=
+X-Received: by 2002:a05:6512:ac9:b0:57e:6aef:3ffc with SMTP id
+ 2adb3069b0e04-591d84e3c8emr6604351e87.4.1761074401398; Tue, 21 Oct 2025
+ 12:20:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com> <ee6b80a7-4505-466e-a433-5f186d747945@kernel.org>
+In-Reply-To: <ee6b80a7-4505-466e-a433-5f186d747945@kernel.org>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 21 Oct 2025 14:19:49 -0500
+X-Gm-Features: AS18NWBtcweEvCq46SenFYFanpeRQLBTS4t1fv5OY1UgDaihsUSCmyvFCcSEBGM
+Message-ID: <CALHNRZ9nXYRgjmpbR5KiQpsSf4hu4=qcgoh8F9_5b9yXF_5Btw@mail.gmail.com>
 Subject: Re: [PATCH 0/5] memory: tegra: Support EMC dfs on Tegra186/Tegra194
-To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/10/2025 20:29, Aaron Kling via B4 Relay wrote:
-> This series borrows the concept used on Tegra234 to scale EMC based on
-> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
-> bpmp on those archs does not support bandwidth manager, so the scaling
-> iteself is handled similar to how Tegra124 currently works.
-> 
-> This was originally part of a larger series [0], but it was requested to
-> be split into smaller series.
-> 
-> [0] https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@gmail.com
+On Tue, Oct 21, 2025 at 2:11=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 21/10/2025 20:29, Aaron Kling via B4 Relay wrote:
+> > This series borrows the concept used on Tegra234 to scale EMC based on
+> > CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+> > bpmp on those archs does not support bandwidth manager, so the scaling
+> > iteself is handled similar to how Tegra124 currently works.
+> >
+> > This was originally part of a larger series [0], but it was requested t=
+o
+> > be split into smaller series.
+> >
+> > [0] https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@g=
+mail.com
+>
+> Please keep correct versioning and changelog in the future. Try yourself:
+>
+> b4 diff '<20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>'
+> Grabbing thread from
+> lore.kernel.org/all/20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com/=
+t.mbox.gz
+> ---
+> Analyzing 6 messages in the thread
+> Could not find lower series to compare against.
+>
+> I think I emphasized last time how important is to make it readable and
+> easy for maintainers.
 
-Please keep correct versioning and changelog in the future. Try yourself:
+You said to split it, which I don't see how that means anything other
+than 'make new series'. How am I supposed to keep versioning when I
+had to make three entirely new series?
 
-b4 diff '<20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com>'
-Grabbing thread from
-lore.kernel.org/all/20251021-tegra186-icc-p2-v1-0-39d53bdc9aab@gmail.com/t.mbox.gz
----
-Analyzing 6 messages in the thread
-Could not find lower series to compare against.
-
-I think I emphasized last time how important is to make it readable and
-easy for maintainers.
-
-Best regards,
-Krzysztof
+Aaron
