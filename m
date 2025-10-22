@@ -1,88 +1,127 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4AE28507E;
-	Wed, 22 Oct 2025 11:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846A230506E;
+	Wed, 22 Oct 2025 12:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761133663; cv=none; b=kT/Qwc949YktX7eLWv5NmC+iHnESyShlR1yBVOANMCeXg89y2MyAoS2WyEPXtM/G7mwBFrqyuqDLXZ74E1yi6rXyMGt7Prt3bUwHLDb/QXWhWYAoF2Ikkcm6sCmhu4r9zrueDlUQhaKhD6ygueWVc4uvV9CFeS7F4bNBCvTJdMA=
+	t=1761134537; cv=none; b=YntNtc7K5flpI/MYrTBRKuPRZkkqOJl817RVTJxnJKZ/G61OXh1e7TSxjZKPQEgxaQ9wOr68Aq1D/zDt6RQvuLv+/QPyiA8vyf3TSANywoGdVOXY31U/DAte0o819+4V0lG1YM1RM4GUB1Aq4G8eAMQHHTRpWWwbUoZt3vw6vzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761133663; c=relaxed/simple;
-	bh=zSpjC6m3pglcmLbIGjS2FcUdLFf8FTEZflp0fi6fCj0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=pniMGorTT0AmK2H3AEcDBpGvN6DFdF7xhFLSm+Nh1G1bckWXGT6uBh1nqHs4Hq70F/mGoc8jcs3n5yp0/YZ3r3Yb7i/+QiSgy8vH1x1vEG4WT+QmmtuR/FrsDXmtx293RheQjp8n5XGGCutdSgM1Hmidm+y32DjxfnsYos1IHWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowAAHYKJJxPhosYX2Ew--.12754S2;
-	Wed, 22 Oct 2025 19:47:30 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] drm/tegra: dc: fix reference leak in tegra_dc_couple()
-Date: Wed, 22 Oct 2025 19:47:20 +0800
-Message-Id: <20251022114720.24937-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowAAHYKJJxPhosYX2Ew--.12754S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw15uFW5Zr1rAFy5KFW3Jrb_yoWfuFg_GF
-	yUZryxW3yaqFsY9FnFvr13Zry2yFyq9FW0gr42k393Gry3XFyqg34jgFZ09ryUWa1UWFn8
-	AayrXr40vF12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbD8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwV
-	W8KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU6GQhUUUUU
-	=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1761134537; c=relaxed/simple;
+	bh=IsuZfxhGKpHeb5TgVu9VxMiAddZ0SUSvHT55nq8MAaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sd9qeJ/pSf5+rNSWxkzxGC9yQ0M1LxnUujX70vu7nIBMqOjO0q86ul/npeQ3FNXDuyANFaRjjPT1a7UerjGOfxwy5LT9HQiEzzfjz3WdupYjU5sLTUj5akKiQBiq9QcXlU6CGu60ZmcFKpxFgBE3PG/8mxXOQBt/sqEcEDZDh70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B54CB1063;
+	Wed, 22 Oct 2025 05:02:05 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FE633F63F;
+	Wed, 22 Oct 2025 05:02:13 -0700 (PDT)
+Date: Wed, 22 Oct 2025 13:02:11 +0100
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
+	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
+	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
+	gautham.shenoy@amd.com, mario.limonciello@amd.com,
+	perry.yuan@amd.com, linux-pm@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
+	sanjayc@nvidia.com, bbasu@nvidia.com
+Subject: Re: [PATCH v3 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
+ perf_limited
+Message-ID: <aPjHw5Sr4IYw+Dum@arm.com>
+References: <20251001150104.1275188-1-sumitg@nvidia.com>
+ <20251001150104.1275188-7-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001150104.1275188-7-sumitg@nvidia.com>
 
-driver_find_device() calls get_device() to increment the reference
-count once a matching device is found, but there is no put_device() to
-balance the reference count. To avoid reference count leakage, add
-put_device() to decrease the reference count.
+Hi,
 
-Found by code review.
+On Wednesday 01 Oct 2025 at 20:31:02 (+0530), Sumit Gupta wrote:
+> Add sysfs interfaces for Minimum Performance, Maximum Performance
+> and Performance Limited Register in the cppc_cpufreq driver.
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  .../ABI/testing/sysfs-devices-system-cpu      | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> index ab8cd337f43a..82141b45d58c 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> @@ -327,6 +327,49 @@ Description:	Energy performance preference
+>  
+>  		This file is only present if the cppc-cpufreq driver is in use.
+>  
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file
+> +		conveys the minimum performance level at which the platform
+> +		may run. Minimum performance may be set to any performance
+> +		value in the range [Lowest Performance, Highest Performance],
+> +		inclusive but must be set to a value that is less than or
+> +		equal to that specified by the Maximum Performance Register.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection
+> +		is enabled.
 
-Cc: stable@vger.kernel.org
-Fixes: a31500fe7055 ("drm/tegra: dc: Restore coupling of display controllers")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/tegra/dc.c | 1 +
- 1 file changed, 1 insertion(+)
+In the ACPI specification I don't see a clear dependency between the
+minimum and maximum performance registers and autonomous selection.
+There's nothing to say that min and max do not have meaning with
+autonomous selection is disabled.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 59d5c1ba145a..6c84bd69b11f 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -3148,6 +3148,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
- 		dc->client.parent = &parent->client;
- 
- 		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
-+		put_device(companion);
- 	}
- 
- 	return 0;
--- 
-2.17.1
+Thanks,
+Ionela.
 
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file conveys
+> +		the maximum performance level at which the platform may run.
+> +		Maximum performance may be set to any performance value in the
+> +		range [Lowest Performance, Highest Performance], inclusive.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection is
+> +		enabled.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file indicates
+> +		to OSPM that an unpredictable event has limited processor
+> +		performance, and the delivered performance may be less than
+> +		desired/minimum performance.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+>  
+>  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
+>  Date:		August 2008
+> -- 
+> 2.34.1
+> 
+> 
