@@ -1,127 +1,99 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846A230506E;
-	Wed, 22 Oct 2025 12:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798D2340A6F
+	for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 12:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134537; cv=none; b=YntNtc7K5flpI/MYrTBRKuPRZkkqOJl817RVTJxnJKZ/G61OXh1e7TSxjZKPQEgxaQ9wOr68Aq1D/zDt6RQvuLv+/QPyiA8vyf3TSANywoGdVOXY31U/DAte0o819+4V0lG1YM1RM4GUB1Aq4G8eAMQHHTRpWWwbUoZt3vw6vzU=
+	t=1761135747; cv=none; b=I0d4Im0k3VbKb+HdnGY14itvivhD/V8HZfUvHxG5beX5/BpmrjGCwXIcozS/57yfWif1GY4P4blliaV27rqbFroUpWZ/xVO0eQHsdBxt7GDBI+zV8Oxok3xx5obAzPwLBZfQfv4kIoxSiUfjoS57TCLIVIqyWgkgJmECeUkt0JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134537; c=relaxed/simple;
-	bh=IsuZfxhGKpHeb5TgVu9VxMiAddZ0SUSvHT55nq8MAaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sd9qeJ/pSf5+rNSWxkzxGC9yQ0M1LxnUujX70vu7nIBMqOjO0q86ul/npeQ3FNXDuyANFaRjjPT1a7UerjGOfxwy5LT9HQiEzzfjz3WdupYjU5sLTUj5akKiQBiq9QcXlU6CGu60ZmcFKpxFgBE3PG/8mxXOQBt/sqEcEDZDh70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B54CB1063;
-	Wed, 22 Oct 2025 05:02:05 -0700 (PDT)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FE633F63F;
-	Wed, 22 Oct 2025 05:02:13 -0700 (PDT)
-Date: Wed, 22 Oct 2025 13:02:11 +0100
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
-	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, linux-pm@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, treding@nvidia.com,
-	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
-	sanjayc@nvidia.com, bbasu@nvidia.com
-Subject: Re: [PATCH v3 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
- perf_limited
-Message-ID: <aPjHw5Sr4IYw+Dum@arm.com>
-References: <20251001150104.1275188-1-sumitg@nvidia.com>
- <20251001150104.1275188-7-sumitg@nvidia.com>
+	s=arc-20240116; t=1761135747; c=relaxed/simple;
+	bh=BElxTAqqQJrOvJZFCpntAANa1E1RXpxMqA95MHL9q3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qOe1HNDJSUctCVfeMn3Tl2e89CPJLGAclhA5IT1fG//aC/8Csxd9Z2Tz71W0YPbP4hh8sqV2p2OmPpuOjB+SKVAhAcn8hYTwavKKo4QG62Eo/Va973hgiHEXGQG31ZRs2Av727qsfr53LCVC3DPC3iqE4EtzYzYDNveLvxI6bBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tkC6Iyek; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tkC6Iyek"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-58affa66f2bso8036298e87.1
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 05:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761135744; x=1761740544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BElxTAqqQJrOvJZFCpntAANa1E1RXpxMqA95MHL9q3U=;
+        b=tkC6IyekXWvqNvAZqlRKLLBx1zlHKlMKy9AHypgVQKvlOe56k3XChntNbSdlHkAUy+
+         Xf/FvunI1z2cdFIdBOKkTcdoEjf+imBkwT1skSBCHgIQj6Mm14EWAQMyGLsA3nkq2qsr
+         zJssNoPnhy1Ei58rouZfoV3dX9TFV/gVxxM5hxTHWNyg7FOgEohqCG/HB58DMHNPirVk
+         KNnXFthviULPqHjQ9r4aUafqb62fQgITQF6eZhsO1fq7cczxiE5SDcM8y6rawXMCTv5N
+         /MVS/hEpyTOIsN7+iW/xsXGq7RdSZtfXF4nw+pU7ZB5UPs/4R29eqU1SlWLyS2TWLyUV
+         Vsew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761135744; x=1761740544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BElxTAqqQJrOvJZFCpntAANa1E1RXpxMqA95MHL9q3U=;
+        b=d1+MukA3nk0FYNU3qgB8P9QPgtS9xV3wfXTg5uumojtb7xZCYGfQKGHttzDgnSlMHQ
+         EwELNq6enkPQG4rgn0yBNkf9YklFDCs/I5lWjsPahoRsOAXKZiplNAJ7yCw3Zm37odQi
+         JhbvSdFFt0sfRYjup7VWQ6J0K/FKHry8Py92wNWiymAiBfwaNycs92PSttbfHTQVFuY2
+         MSuPG7Sy2odKf1hlh8QPd2irUAZtKT4cRMhBG3L8hIIfNTGdVZbJ0snXolkoUTZ9lcEU
+         Ej/zBZ3DLGGF1QYb+fc8o4QhIewTBPu4S+ELvIDYw50xsJT6hm5uQkPjLSJfK8xkMXL3
+         WqPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFrF1o93KQOKxODBYPp5Vie/H9xTjVkAFPt4Fqj9BK7p3xSMp1LLSVfKfxBEQRyvMN4eZpjNwQG2ij7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcLtRDVz7Fo1oAuCi9iHRZGg6Qu1z/JuWgYe2X2f5Bzh+bM+0t
+	9zQiFukmyPMjJGqucVdl3vWXUk+w0EyIxCpOf2EpJD4gOqhKYZq6QNcO25iMe8/UJHghysUc6GD
+	k987ZaQlHGrSlEaNj6e7aiA9wodhKcx+14MtUmGzYFw==
+X-Gm-Gg: ASbGncstZlPrQLki/r6tND2zur0sSbLPZqoruhVDiXepnAShDUTtvUumsjymG9nQlHV
+	gNWkFppZE5cNrWA5VfB95/or3OMlEiih9/sNbXZ5sufX5s6nW1sUeop/EeeB2HG7Ua0b0CWhWgI
+	IhI3WK0fgjRVfKchkft+hbnWIMShVydExLzA0LhaellZ+PagAlpi7AuoMrMnc1ykoeDBvgQlY0V
+	s2l4/RD7ytfrXKit9Pt1X/qSz7314RLDjgfGFMggRmRTvgDoTQXLayMVRT2k9sgOqFjfa0DC3kr
+	lWY+UhGKJ02bkVhW
+X-Google-Smtp-Source: AGHT+IHopjIXv8jRnOM7SdbKGejL8HmLCEbi6BqZ/fl5zn8nC+umc/NX29TWVW5P2ry8JnLwjKerkQkMpRF8tHTR1Sg=
+X-Received: by 2002:a05:6512:6c6:b0:591:c473:5bc7 with SMTP id
+ 2adb3069b0e04-591d858f85emr7186831e87.50.1761135743550; Wed, 22 Oct 2025
+ 05:22:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001150104.1275188-7-sumitg@nvidia.com>
+References: <E1vB6ld-0000000BIPy-2Qi4@rmk-PC.armlinux.org.uk>
+In-Reply-To: <E1vB6ld-0000000BIPy-2Qi4@rmk-PC.armlinux.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 22 Oct 2025 14:22:12 +0200
+X-Gm-Features: AS18NWDxwRikRa37d3sfSPIurHFNsUg5soxDVQrWVC_wnbUDqwvc55kIMFCSQNk
+Message-ID: <CAMRc=MdWFL_+RJXPUNLd0BTyxbt9x8jztf5SDViPQCkxSqoHdg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: stmmac: replace has_xxxx with core_type
+To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Chen-Yu Tsai <wens@csie.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Petrous <jan.petrous@oss.nxp.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
+	Richard Cochran <richardcochran@gmail.com>, s32@nxp.com, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Vinod Koul <vkoul@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Wednesday 01 Oct 2025 at 20:31:02 (+0530), Sumit Gupta wrote:
-> Add sysfs interfaces for Minimum Performance, Maximum Performance
-> and Performance Limited Register in the cppc_cpufreq driver.
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+On Tue, Oct 21, 2025 at 9:27=E2=80=AFAM Russell King (Oracle)
+<rmk+kernel@armlinux.org.uk> wrote:
+>
+> Replace the has_gmac, has_gmac4 and has_xgmac ints, of which only one
+> can be set when matching a core to its driver backend, with an
+> enumerated type carrying the DWMAC core type.
+>
+> Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 > ---
->  .../ABI/testing/sysfs-devices-system-cpu      | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> index ab8cd337f43a..82141b45d58c 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> @@ -327,6 +327,49 @@ Description:	Energy performance preference
->  
->  		This file is only present if the cppc-cpufreq driver is in use.
->  
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
-> +Date:		September 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance
-> +
-> +		Read/write a 32 bits value from/to this file. This file
-> +		conveys the minimum performance level at which the platform
-> +		may run. Minimum performance may be set to any performance
-> +		value in the range [Lowest Performance, Highest Performance],
-> +		inclusive but must be set to a value that is less than or
-> +		equal to that specified by the Maximum Performance Register.
-> +
-> +		Writing to this file only has meaning when Autonomous Selection
-> +		is enabled.
 
-In the ACPI specification I don't see a clear dependency between the
-minimum and maximum performance registers and autonomous selection.
-There's nothing to say that min and max do not have meaning with
-autonomous selection is disabled.
-
-Thanks,
-Ionela.
-
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
-> +Date:		September 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance
-> +
-> +		Read/write a 32 bits value from/to this file. This file conveys
-> +		the maximum performance level at which the platform may run.
-> +		Maximum performance may be set to any performance value in the
-> +		range [Lowest Performance, Highest Performance], inclusive.
-> +
-> +		Writing to this file only has meaning when Autonomous Selection is
-> +		enabled.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
-> +Date:		September 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance
-> +
-> +		Read/write a 32 bits value from/to this file. This file indicates
-> +		to OSPM that an unpredictable event has limited processor
-> +		performance, and the delivered performance may be less than
-> +		desired/minimum performance.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
->  
->  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
->  Date:		August 2008
-> -- 
-> 2.34.1
-> 
-> 
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
