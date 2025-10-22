@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8331DF979;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132931E5B95;
 	Wed, 22 Oct 2025 01:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761095626; cv=none; b=YOY3QH9bnfOXiG4IS4ss6Yfl8iRUONuBzhwB1ACbayPDjKFCAUtokq68JXuTjVOLLrXr1YW0MWz8kyLo5ncf6uFa9EP5pPRHOHwoWgywV+Qh9N0JnyBVf2bHlrpr4Ab8r0e8Uc3tl8zjLGqbpzHf1ePN/7ZJ5CQ/JuQvq9lje7U=
+	t=1761095626; cv=none; b=Nktk674ChTymqs+HzefQzZoxP9puB12radY4AEfKu8y560Aynl7JhzSGN8Hy0HrSWgcwI4s8f4zOZkR7ABfWPEagoLJEZGnRv98ZhX+Vmw3AP0CydNwro4QU6GMQ5WFsZK5zZlHyWZsZCz+Axvh2j0Sh8YazxMafkEoa/rFqYp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761095626; c=relaxed/simple;
-	bh=xTp2XiVoB2icnqFo5j90y9E3RVOKSjRVf6kH69cV1Eg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NP3ADskb95cBWkK+IxZi9JwhAOFT05MAi01yYum5ge3h9Q7LyXm+0rUVf0Q0o3+Po0HmaisAyxfa+x9jQGA5XWAmfGFu+Trx37j1Ogk5tC2ffDsL0YPYLhTTFSJuZCxm/T82r8panxLrYsGIAMZQqqSppZeVc63DqjvBgkrFFsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEK/uBQo; arc=none smtp.client-ip=10.30.226.201
+	bh=8iY7QoUBS9qHAKKfcMb8SKuucgQX30enphMOTq2KRCU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nYGRrXq476k/TPdvLSCB8gFQ5BPNZ0vCrAkolkrmpS0FaadAn3cN1Cr52GBbXGQQgVbM7jO88Hf7dC2LzxYAOM88SNG4a/uYZDAGtnKC+JKMB1omYAkU521s8wFgYt2+J/5isxRja4Il3IgGjV9gbmDPzYeTUv02RDUv7n1/pt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naBWHVho; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEK/uBQo"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8D89AC4CEF1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naBWHVho"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 82709C4CEFD;
 	Wed, 22 Oct 2025 01:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761095625;
-	bh=xTp2XiVoB2icnqFo5j90y9E3RVOKSjRVf6kH69cV1Eg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=iEK/uBQoS3UYG0qZJWHbuZqCGlqYbEyGSRmdKmmdIxt5sf6NfMKkteNV/lia9C0BL
-	 qXziJPomCBXNmPraiLOZ3WuUjfxzbPpUO0THpRdv0C11zAKxwq2RKNZMqhU5bqKK6I
-	 QsRtqGGOv37n5VMy6dC09Qz8X+wDlfLxVTicn342BZh5hNAs5aLf3xwYRyLWo+toab
-	 mY3oq3BNRXskkM9hZK8CBi0XkDVq3VvVzzDdAjcxjqPemMbgMK+ZeeuP90Cc2kBQzo
-	 NVXTCFnz77a5H/Wh5jKiOB+JKSPJM+gs1f5PQLBlTw6dOeurRj2XFg84B2Z+RKV+Q8
-	 PBj/p/IA2oUfw==
+	bh=8iY7QoUBS9qHAKKfcMb8SKuucgQX30enphMOTq2KRCU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=naBWHVhoxJaiOw3zO3R6h6j16wa3T1K851t6DUEqWB9pd3nNmQ9qEpp6gSiQzaIbG
+	 1/j3hy2psAlIFxkxGAdPjxctkzVHXBeA90b5x24IlL+6u3i0czsVSL4Piv31Bb6F/+
+	 QwVqAz1ggfRZ60pK9rKNtL7wlSV24WX6dnhrlQQ+mSJ8I/yMnL0Ce9vesesoBGgWSv
+	 A9Fa40lFUjf5Z3cSf/fkWUl0lyViLqvGWQdkoMohyzTRc45KXzMq16/u7AW3+e/+NV
+	 rPhp4q2ZGQ4xrQSL+PrOhQ5xLtLYvKkdkIFGEs1odGY8VKXbG7tjX6dr9EFm2eHcCd
+	 bEmO006fs0JrA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D634CCD1A5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE72CCD1AB;
 	Wed, 22 Oct 2025 01:13:45 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 21 Oct 2025 20:13:41 -0500
-Subject: [PATCH v3 1/2] arm64: tegra: Add CPU OPP tables for Tegra186
+Subject: [PATCH v3 0/2] arm64: tegra: Add CPU OPP tables for
+ Tegra186/Tegra194
+Date: Tue, 21 Oct 2025 20:13:40 -0500
+Message-Id: <20251021-tegra186-icc-p3-v3-0-68184ee8a89c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,9 +41,11 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-tegra186-icc-p3-v3-1-68184ee8a89c@gmail.com>
-References: <20251021-tegra186-icc-p3-v3-0-68184ee8a89c@gmail.com>
-In-Reply-To: <20251021-tegra186-icc-p3-v3-0-68184ee8a89c@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAMQv+GgC/3WNyw6CMBBFf4XM2jEt5aUr/8OwKGWASeRhi42G9
+ N+tuHDl8pzknruBI8vk4JxsYMmz43mKoA4JmEFPPSG3kSEVaS5FKnGl3mpZFcjG4KJQdUWWZ63
+ OyWQQV4uljp978Vp/2dL9EcPrTw7s1tm+9lcvP/b/gZcoUBgl1amomrJsLv2o+XY08wh1COENE
+ 8N3oMMAAAA=
+X-Change-ID: 20251021-tegra186-icc-p3-3f6454da5ec4
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Thierry Reding <thierry.reding@gmail.com>, 
@@ -50,11 +53,11 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761095624; l=9142;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761095624; l=1210;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=mcK/FZjZ052XZB0ksgNLfD5UB57g4gnCCq2e0lR26io=;
- b=dIB3Y08l67xR2ifVdPcrvUMP4gSyj7FWylp1xpY0rrrmgBD9QC/T0S31+qOa4VEVnoyA26bVD
- S96Ej9GYG1/AOz50VX+Vihuqwgpub0SBwEjwiOc4t8aMFzkX/8woEcH
+ bh=8iY7QoUBS9qHAKKfcMb8SKuucgQX30enphMOTq2KRCU=;
+ b=zngQlbTPr7Su0Nwf9Imc8H+YBaO/p5OJ/TlvMqvNunoNrJinC7veEAYlCUcjoagLIDPEPXA7A
+ 95mvtZ052mUB1bbFP+UWRp+WtRtlcdD+JmjMEIIo2p1jGRQ35uFcmAS
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -62,389 +65,41 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Bindings Dependencies:
+- https://lore.kernel.org/r/20251021-tegra186-icc-p2-v3-0-1a50b526dd40@gmail.com
 
-Add OPP table and interconnects property to scale DDR frequency with
-CPU frequency for better performance. Each operating point entry of
-the OPP table has CPU freq to per MC channel bandwidth mapping. One
-table is added for each cluster because the different cpu types have
-different scaling curves.
+Logical Dependencies:
+- https://lore.kernel.org/r/20251021-tegra186-icc-p1-v3-1-7e6db3b070c4@gmail.com
+
+Merge Strategy:
+- Merge all patches only after all dependencies are picked up
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++++++++++++++++++
- 1 file changed, 317 insertions(+)
+Changes in v3:
+- Split series
+- Link to v2: https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-09413724e781@gmail.com
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 5778c93af3e6e72f5f14a9fcee1e7abf80d2d2c5..d3f6a938a9b019a043ce2de7ec17bd00155b3eb2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1943,6 +1943,8 @@ cpus {
- 		denver_0: cpu@0 {
- 			compatible = "nvidia,tegra186-denver";
- 			device_type = "cpu";
-+			operating-points-v2 = <&dnv_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER0 &emc>;
- 			i-cache-size = <0x20000>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <512>;
-@@ -1956,6 +1958,8 @@ denver_0: cpu@0 {
- 		denver_1: cpu@1 {
- 			compatible = "nvidia,tegra186-denver";
- 			device_type = "cpu";
-+			operating-points-v2 = <&dnv_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER0 &emc>;
- 			i-cache-size = <0x20000>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <512>;
-@@ -1969,6 +1973,8 @@ denver_1: cpu@1 {
- 		ca57_0: cpu@2 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			operating-points-v2 = <&a57_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
- 			i-cache-size = <0xC000>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -1982,6 +1988,8 @@ ca57_0: cpu@2 {
- 		ca57_1: cpu@3 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			operating-points-v2 = <&a57_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
- 			i-cache-size = <0xC000>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -1995,6 +2003,8 @@ ca57_1: cpu@3 {
- 		ca57_2: cpu@4 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			operating-points-v2 = <&a57_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
- 			i-cache-size = <0xC000>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -2008,6 +2018,8 @@ ca57_2: cpu@4 {
- 		ca57_3: cpu@5 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			operating-points-v2 = <&a57_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
- 			i-cache-size = <0xC000>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -2182,4 +2194,309 @@ timer {
- 		interrupt-parent = <&gic>;
- 		always-on;
- 	};
-+
-+	dnv_opp_tbl: opp-table-cluster0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-998400000 {
-+			  opp-hz = /bits/ 64 <998400000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-1036800000 {
-+			  opp-hz = /bits/ 64 <1036800000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-1075200000 {
-+			  opp-hz = /bits/ 64 <1075200000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-1113600000 {
-+			  opp-hz = /bits/ 64 <1113600000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1152000000 {
-+			  opp-hz = /bits/ 64 <1152000000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1190400000 {
-+			  opp-hz = /bits/ 64 <1190400000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1228800000 {
-+			  opp-hz = /bits/ 64 <1228800000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1267200000 {
-+			  opp-hz = /bits/ 64 <1267200000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1305600000 {
-+			  opp-hz = /bits/ 64 <1305600000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1344000000 {
-+			  opp-hz = /bits/ 64 <1344000000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1382400000 {
-+			  opp-hz = /bits/ 64 <1382400000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1420800000 {
-+			  opp-hz = /bits/ 64 <1420800000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1459200000 {
-+			  opp-hz = /bits/ 64 <1459200000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1497600000 {
-+			  opp-hz = /bits/ 64 <1497600000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1536000000 {
-+			  opp-hz = /bits/ 64 <1536000000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1574400000 {
-+			  opp-hz = /bits/ 64 <1574400000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1612800000 {
-+			  opp-hz = /bits/ 64 <1612800000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1651200000 {
-+			  opp-hz = /bits/ 64 <1651200000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1689600000 {
-+			  opp-hz = /bits/ 64 <1689600000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1728000000 {
-+			  opp-hz = /bits/ 64 <1728000000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1766400000 {
-+			  opp-hz = /bits/ 64 <1766400000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1804800000 {
-+			  opp-hz = /bits/ 64 <1804800000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1843200000 {
-+			  opp-hz = /bits/ 64 <1843200000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1881600000 {
-+			  opp-hz = /bits/ 64 <1881600000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1920000000 {
-+			  opp-hz = /bits/ 64 <1920000000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1958400000 {
-+			  opp-hz = /bits/ 64 <1958400000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1996800000 {
-+			  opp-hz = /bits/ 64 <1996800000>;
-+			  opp-peak-kBps = <3732000>;
-+		};
-+
-+		opp-2035200000 {
-+			  opp-hz = /bits/ 64 <2035200000>;
-+			  opp-peak-kBps = <3732000>;
-+		};
-+	};
-+
-+	a57_opp_tbl: opp-table-cluster1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-883200000 {
-+			  opp-hz = /bits/ 64 <883200000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-921600000 {
-+			  opp-hz = /bits/ 64 <921600000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-960000000 {
-+			  opp-hz = /bits/ 64 <960000000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-998400000 {
-+			  opp-hz = /bits/ 64 <998400000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-1036800000 {
-+			  opp-hz = /bits/ 64 <1036800000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-1075200000 {
-+			  opp-hz = /bits/ 64 <1075200000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		opp-1113600000 {
-+			  opp-hz = /bits/ 64 <1113600000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1152000000 {
-+			  opp-hz = /bits/ 64 <1152000000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1190400000 {
-+			  opp-hz = /bits/ 64 <1190400000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1228800000 {
-+			  opp-hz = /bits/ 64 <1228800000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1267200000 {
-+			  opp-hz = /bits/ 64 <1267200000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1305600000 {
-+			  opp-hz = /bits/ 64 <1305600000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1344000000 {
-+			  opp-hz = /bits/ 64 <1344000000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1382400000 {
-+			  opp-hz = /bits/ 64 <1382400000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1420800000 {
-+			  opp-hz = /bits/ 64 <1420800000>;
-+			  opp-peak-kBps = <1600000>;
-+		};
-+
-+		opp-1459200000 {
-+			  opp-hz = /bits/ 64 <1459200000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1497600000 {
-+			  opp-hz = /bits/ 64 <1497600000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1536000000 {
-+			  opp-hz = /bits/ 64 <1536000000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1574400000 {
-+			  opp-hz = /bits/ 64 <1574400000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1612800000 {
-+			  opp-hz = /bits/ 64 <1612800000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1651200000 {
-+			  opp-hz = /bits/ 64 <1651200000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1689600000 {
-+			  opp-hz = /bits/ 64 <1689600000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1728000000 {
-+			  opp-hz = /bits/ 64 <1728000000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1766400000 {
-+			  opp-hz = /bits/ 64 <1766400000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1804800000 {
-+			  opp-hz = /bits/ 64 <1804800000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1843200000 {
-+			  opp-hz = /bits/ 64 <1843200000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1881600000 {
-+			  opp-hz = /bits/ 64 <1881600000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1920000000 {
-+			  opp-hz = /bits/ 64 <1920000000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1958400000 {
-+			  opp-hz = /bits/ 64 <1958400000>;
-+			  opp-peak-kBps = <3200000>;
-+		};
-+
-+		opp-1996800000 {
-+			  opp-hz = /bits/ 64 <1996800000>;
-+			  opp-peak-kBps = <3732000>;
-+		};
-+
-+		opp-2035200000 {
-+			  opp-hz = /bits/ 64 <2035200000>;
-+			  opp-peak-kBps = <3732000>;
-+		};
-+	};
- };
+Changes in v2:
+- Use opp scoped free in patch 3
+- Cleanup as requested in patch 3
+- Move patch 3 to the start of the series to keep subsystems grouped
+- Link to v1: https://lore.kernel.org/r/20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com
 
+---
+Aaron Kling (2):
+      arm64: tegra: Add CPU OPP tables for Tegra186
+      arm64: tegra: Add CPU OPP tables for Tegra194
+
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++++++++++
+ 2 files changed, 953 insertions(+)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-tegra186-icc-p3-3f6454da5ec4
+
+Best regards,
 -- 
-2.51.0
+Aaron Kling <webgeek1234@gmail.com>
 
 
