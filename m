@@ -1,64 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF3E34C833
-	for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 14:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C4F346794
+	for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 14:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142896; cv=none; b=sGnV8p8fhRSIJjwAcv89h2bQLiRw5hEzJtAaSPDlADeajD8qT/QMdOKYTuFV44ImlUrm/G1i5Jfst9CqhE7V1CIGHZAs9fhUO9Tvx+fYr23QYoONAVgJkDlJ7CFatJ8raZTSE8Q0H45Q2Dq4r7Hv3gycZXcRlIwQtsYv3jjtv1k=
+	t=1761142898; cv=none; b=m7Gu6NtUjUUrUsmQSTp3glK6X+Or7K4/7UKy1DogQMtrcL2ZD8+vwHHnKCsPs1f6Ci4CZH3IdWe5kKM7uGlCc9w6kDOu2sga9IifjSH5nqqOJrxde6CM2QT/bkjmLD/lv6c0epZZ6ZPhdSZZNzt/jyPziWYpFqr9SDBEJlUpArg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142896; c=relaxed/simple;
-	bh=a/48XUdptj6+42+EZNzEr2TY6pY90ELY94jo1ZmZXkk=;
+	s=arc-20240116; t=1761142898; c=relaxed/simple;
+	bh=sgN5V56YM4qhVdHy0m6Dz/yGVt5884z/MxNndOF+8Hg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nAqqj919nVqONQdoOEj1xEWGhyZ4eOJuUShZBl5llEdx485PPlNxB8dZGnJjSC9hgrRzsphgJIdmuq86HAi6wW9LGWlE/nFHLDCCpFH6Z4ZU2istOWYAJWcLP67K12Y4uDvvxjlNo/vEBKt0ku4w/Q1Hn61bqupd9WfsUytPGFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9Rfg1z3; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=WPY1ObMluS8VB8u1au4W00BkEsq1/iNHG9gvb6DEndaxEX20irK48ecapSNXkv7sZwJVi1k+Fs7P8x+rCC5+286HfBKj+VqOXnid/+lXIkPjbmLeWzRcJKc/BgVdgCEnuk5W9q1QILji60xW0P3kE8jlC5Fkkl0OCXUQINGX+gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lXzHC2ux; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9Rfg1z3"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so65858635e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 07:21:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXzHC2ux"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-421851bca51so5745429f8f.1
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 07:21:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761142890; x=1761747690; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761142892; x=1761747692; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=enLEHKOtNTzkrWiTnMIts9Lyjvegz+xp8xyikQdOjDk=;
-        b=L9Rfg1z3roHTXQIeRfpqzNjizW8I2jNJUkZ8O2E2/ErB5LKiaGbn1lgE8KYfKaZj+t
-         rBUlHpu6cWuHqixnlWUmXqUEVNgZX8U5RhlYQwBHFRBG9Quu0gwQh8yfLj9YdZ62RVmo
-         6q2Du0YHLztR9zN9Ne/HCLMlyFJhN3sfYKprnmXlr40jlEIh1j4PDAAggD+V6OaoLUaA
-         Dpm91pbsb2RysUdk8qEl2RtDFY4AwR7MIbLeiIwZ5QSUvX1y7QpQ+OwWMd22w0DnzGcX
-         I4JSKWgPV9sHmdReCcDRjEXmWtKXAMy53oLSfYCRBhNkH7hhsZYekmQHD2pdiRzwqjdW
-         blJQ==
+        bh=LDpFX1J+/TUvWrJNHxxt+1RfUZNV6gVxsd2JBSzQm/w=;
+        b=lXzHC2ux0x6XqqtwU8OExOQbNe87Z254m3f5SjJy87QMVkbeSDUsdKqLDYH765pi57
+         QjajF2sEFc0JiMamnRsr97QNmVmuDpojiDN92b6z5Eb7KAYRo3dLS47wIJfvnZV4ISAV
+         drnzU3S289Yp+vHs43d4DXMeV7fAhHqIUU8Lb5vACnrVGbfl2q/mTd2GLy5D23IMkRf1
+         ziI0GlMUpcsrq2bOAOqu6gkmTjSEDSeF79mDG2u0WJYTXnZaEWS3dY0hrm8tm758/qHA
+         vAtM0FGm6g2iadidAW0AAwlu9hnqDnYqDgd9bEpFKH+QPTDLQntUkJ8ORNXVr/urvyI+
+         5FfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142890; x=1761747690;
+        d=1e100.net; s=20230601; t=1761142892; x=1761747692;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=enLEHKOtNTzkrWiTnMIts9Lyjvegz+xp8xyikQdOjDk=;
-        b=t67Nhanyt/nwTyoMXashZQZqUbICMFCZ4KNoLGOtBuVzPuCKIiDTiTtlMFsFLgpBiw
-         xZrhBo9jJ30DoJ+Hpkyp+ubsa2n5LKAO1tkAoWVxMFunP3VgRojyPkYSIR/Tysc15F7n
-         nboPok5KZEnX/EaqppH+6ocKga+89xb4888KNE/pvWSW6VwXzekwf1Y1ns/tBbAqtBLh
-         BzMkmajtKwD5Hm+M2eXYqddruHCIVqvTPQZDbVOyP+AIfGn68wMUROVDvl7VGLz9U+QY
-         ybI1Cztson2R15wvwvLYka3bOXxpzuG78GlTB/AGbQfsG+Pb5k55aUgnDZWdnaI7rvZb
-         ilNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTG7s/8cXSp3BSkwLxYd3RwD2L+TeERgA4cW60XRfo0p9KHm03soTt7ngNxy5PX+1br7dhZYFSXZQa4g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEsUbeMoZEyzeo743xPrrdpdzShBjJB6RimS8k/5QgGsqsP1fb
-	fSAlpjHwSgFBfoyq5v09+outn463dixJ2CHZTw4/+thDfDuMeJcFnN3Q
-X-Gm-Gg: ASbGnctAzc2Trzh+MAkgYeNStzinrAc0QgHLs32e8nRG3xAf2q+WeFePbq74k/VV1PX
-	5G+FWY4kRQ7L9ebv1NvhvArPoN0np+iwrh41O+oMMwj91MmiCdjiElRfSgKfEo79/yqX+Z2GYA4
-	NGfVPk9ipeFdSxpMyJmdR5bGtvA0BOEzM8zRfXPC5IqL0sdPdeIAsSFOB92mEruHdKugQpqAbXL
-	wcautaAVsDKqQzKWxe8qe8JJeLFhN9OX+Y1RDfaaGy/x4VGBgajpPyoUtHARvBknFuB86153TDW
-	SKNQAIiiNdwFWGJ5R5v+j1FmFdUnio8XiGsCTth9V5kAMnHddmJ4JkhhJwyYLll2AZFkDQG9iQo
-	Ygp+wu9pXbP4iuA5AGqs/hSXmla5ru+GRJspBl62SoocOKfD6Gkzrzu85GNMEAd1yCjPQ7AnF0j
-	OoCg==
-X-Google-Smtp-Source: AGHT+IEfaZa8UfXSJQcTxYFG1UWlPPha1az3qIIfBFq7rCGZuYKGo9sPXz1gfue5h4gMcahe1PnCTQ==
-X-Received: by 2002:a05:6000:2911:b0:425:8bc2:9c43 with SMTP id ffacd0b85a97d-42704d7e987mr13185292f8f.1.1761142889835;
-        Wed, 22 Oct 2025 07:21:29 -0700 (PDT)
+        bh=LDpFX1J+/TUvWrJNHxxt+1RfUZNV6gVxsd2JBSzQm/w=;
+        b=PYoPO/3bIcwRc8+JblXjTJ9XnFnlX9xuaBbIctMTV41zz+x9IfeaIkgL8msJ9FxE0C
+         O7FwCb9gG0KfVKUq721f+9pVhuRCsJbqRpVqnbHeS5IdepPeeaIhtq0/89f16KTwc+4I
+         TwTor+ezD83mnv5V1a+NoZFIQMcJBof/bs5OqPN56KyizsyO/UFh/Fv3gJP8ysQYVkow
+         67GhpzqWxug19reWPd4DhUm3l09eVYncjA/HdKITR6jKC4tzah/KD6R7TolYSkdLdpZL
+         PCOuCktvYKX7oddYkg4BjImOuahQFva72iNm0aJATppPVtLOVXGXL0HLFBDFGJeg8m88
+         iK4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWec3NeeKahtDLprZy23nGgqQC4UH0IX2xlfPtAW1cK8OGh6kVvJ/KwPdi6xDn4x5SFSkhBD5UcWDKg8Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2TYNRVknBop6dr1V5KtWbsLo7FVWXJHYm9ruefS6B/B04GUj0
+	wNZqx3NdhRdELLYPrREQUZi24OYwFhSOIJcCIBniMFEH2Ur/Iix3WPIz
+X-Gm-Gg: ASbGncs2VmYLgQ7yan/pViKXmuNqp1P3kTg24s2pUHpooZEEC4RfVGQBeo4SUvRQL4W
+	uR8f7ZkcA1gX6vcuAyW9WyhMyge8mLX0GUARN5xo0n2Odee97x8CHP7VD+AqnhfUB6Key8RncLN
+	jPlfJcLk1Tk3gDKGHJ+mkuGWRKyvzZNX8djfvKWWbxK6GEH8lS0OgyE75aXZd9zy3zvcZf6rHAD
+	QzqXA0bIVUNho+rGh7yVAC/MSxLE5RtsEBypOwgr5H54/BemPg3bun4v8YYa4mHq6/l2VYilPeZ
+	TO9rz8QR5kiQp0KG2APzodwuzHII0kKUp/oqDklo5Zp8i2Sx7pEJ4cfr2IHIyHqJHwsXesZ3tMH
+	GqhfdRj3kPGSMGdUG6yohSyJZBRM3oSPIoosfcnTxTedksS+Q4TXfTnkHdhJlL6G4Gc0+73FaoL
+	92Y6t8PWCgiQ+H
+X-Google-Smtp-Source: AGHT+IF+82cvX09pMZxWI3kQBEfe70yoMhjWZgKxMgHRV992x45EZGsBOAfdIq28w0jPz4jSk+0d/g==
+X-Received: by 2002:a05:6000:22c6:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-42704dc9395mr15346109f8f.45.1761142891534;
+        Wed, 22 Oct 2025 07:21:31 -0700 (PDT)
 Received: from xeon.. ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.28
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 07:21:29 -0700 (PDT)
+        Wed, 22 Oct 2025 07:21:31 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -92,9 +92,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-media@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v5 04/23] dt-bindings: display: tegra: document Tegra30 VI and VIP
-Date: Wed, 22 Oct 2025 17:20:32 +0300
-Message-ID: <20251022142051.70400-5-clamor95@gmail.com>
+Subject: [PATCH v5 05/23] staging: media: tegra-video: expand VI and VIP support to Tegra30
+Date: Wed, 22 Oct 2025 17:20:33 +0300
+Message-ID: <20251022142051.70400-6-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
 References: <20251022142051.70400-1-clamor95@gmail.com>
@@ -106,73 +106,89 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Existing Parallel VI interface schema for Tegra20 is fully compatible with
-Tegra30; hence, lets reuse it by setting fallback for Tegra30.
-
-Adjust existing VI schema to reflect that Tegra20 VI is compatible with
-Tegra30 by setting a fallback for Tegra30. Additionally, switch to using
-an enum instead of list of const.
+Existing VI and VIP implementation for Tegra20 is fully compatible with
+Tegra30.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # Tegra20 VIP
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- .../display/tegra/nvidia,tegra20-vi.yaml      | 19 ++++++++++++-------
- .../display/tegra/nvidia,tegra20-vip.yaml     |  9 +++++++--
- 2 files changed, 19 insertions(+), 9 deletions(-)
+ drivers/staging/media/tegra-video/Makefile | 1 +
+ drivers/staging/media/tegra-video/vi.c     | 2 +-
+ drivers/staging/media/tegra-video/vi.h     | 2 +-
+ drivers/staging/media/tegra-video/video.c  | 2 +-
+ drivers/staging/media/tegra-video/vip.c    | 4 ++--
+ 5 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
-index 2181855a0920..dd67d4162884 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
-@@ -16,16 +16,21 @@ properties:
+diff --git a/drivers/staging/media/tegra-video/Makefile b/drivers/staging/media/tegra-video/Makefile
+index 6c7552e05109..96380b5dbd8b 100644
+--- a/drivers/staging/media/tegra-video/Makefile
++++ b/drivers/staging/media/tegra-video/Makefile
+@@ -6,5 +6,6 @@ tegra-video-objs := \
+ 		csi.o
  
-   compatible:
-     oneOf:
--      - const: nvidia,tegra20-vi
--      - const: nvidia,tegra30-vi
--      - const: nvidia,tegra114-vi
--      - const: nvidia,tegra124-vi
-+      - enum:
-+          - nvidia,tegra20-vi
-+          - nvidia,tegra114-vi
-+          - nvidia,tegra124-vi
-+          - nvidia,tegra210-vi
-+          - nvidia,tegra186-vi
-+          - nvidia,tegra194-vi
-+
-+      - items:
-+          - const: nvidia,tegra30-vi
-+          - const: nvidia,tegra20-vi
-+
-       - items:
-           - const: nvidia,tegra132-vi
-           - const: nvidia,tegra124-vi
--      - const: nvidia,tegra210-vi
--      - const: nvidia,tegra186-vi
--      - const: nvidia,tegra194-vi
+ tegra-video-$(CONFIG_ARCH_TEGRA_2x_SOC)  += tegra20.o
++tegra-video-$(CONFIG_ARCH_TEGRA_3x_SOC)  += tegra20.o
+ tegra-video-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
+ obj-$(CONFIG_VIDEO_TEGRA) += tegra-video.o
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index c9276ff76157..7c44a3448588 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1956,7 +1956,7 @@ static void tegra_vi_remove(struct platform_device *pdev)
+ }
  
-   reg:
-     maxItems: 1
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-index 14294edb8d8c..9104a36e16d9 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-@@ -11,8 +11,13 @@ maintainers:
+ static const struct of_device_id tegra_vi_of_id_table[] = {
+-#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
++#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_SOC)
+ 	{ .compatible = "nvidia,tegra20-vi",  .data = &tegra20_vi_soc },
+ #endif
+ #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
+index 1e6a5caa7082..cac0c0d0e225 100644
+--- a/drivers/staging/media/tegra-video/vi.h
++++ b/drivers/staging/media/tegra-video/vi.h
+@@ -296,7 +296,7 @@ struct tegra_video_format {
+ 	u32 fourcc;
+ };
  
- properties:
-   compatible:
--    enum:
--      - nvidia,tegra20-vip
-+    oneOf:
-+      - enum:
-+          - nvidia,tegra20-vip
-+
-+      - items:
-+          - const: nvidia,tegra30-vip
-+          - const: nvidia,tegra20-vip
+-#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
++#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_SOC)
+ extern const struct tegra_vi_soc tegra20_vi_soc;
+ #endif
+ #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
+index 074ad0dc56ca..6fe8d5301b9c 100644
+--- a/drivers/staging/media/tegra-video/video.c
++++ b/drivers/staging/media/tegra-video/video.c
+@@ -123,7 +123,7 @@ static int host1x_video_remove(struct host1x_device *dev)
+ }
  
-   ports:
-     $ref: /schemas/graph.yaml#/properties/ports
+ static const struct of_device_id host1x_video_subdevs[] = {
+-#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
++#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_SOC)
+ 	{ .compatible = "nvidia,tegra20-vip", },
+ 	{ .compatible = "nvidia,tegra20-vi", },
+ #endif
+diff --git a/drivers/staging/media/tegra-video/vip.c b/drivers/staging/media/tegra-video/vip.c
+index 5ec717f3afd5..34397b73bb61 100644
+--- a/drivers/staging/media/tegra-video/vip.c
++++ b/drivers/staging/media/tegra-video/vip.c
+@@ -263,12 +263,12 @@ static void tegra_vip_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ }
+ 
+-#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
++#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_SOC)
+ extern const struct tegra_vip_soc tegra20_vip_soc;
+ #endif
+ 
+ static const struct of_device_id tegra_vip_of_id_table[] = {
+-#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
++#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_SOC)
+ 	{ .compatible = "nvidia,tegra20-vip", .data = &tegra20_vip_soc },
+ #endif
+ 	{ }
 -- 
 2.48.1
 
