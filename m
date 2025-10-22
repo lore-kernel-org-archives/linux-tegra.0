@@ -1,59 +1,118 @@
-Received: from mail.taskera.pl (mail.taskera.pl [51.75.73.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C202B2F363B
-	for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 08:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.75.73.133
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B33623ABA1;
+	Wed, 22 Oct 2025 09:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120408; cv=none; b=HTXhnAtU/uDMhibKmFRCyuveecfr3a5MomO35Y/HdZIvJ6fsS87xzUx0zKdpLtgycFi7S/1Kv30/olmL2G+nsJILM10tSDT3VbycPn7hfZoVSQ3VpWQbaYLTa4s5vP96YPrRRPizqStUrWzY5WO2qII5QFUq6O3ADBvolZlSX10=
+	t=1761124381; cv=none; b=mSDZmartfIQV3uXmnrTu/wvHk5sg1u24xPK5eGLRrC5ZC0Ua5DPdpD6O2Bu76ChQrkpetDZJ8bR9Ogel3bAjoZ8BOvbDzdXcXTh0ku8k2Ry3IqOCMt26wLW+TfeIrf2OqBboU4kMDiVT+uVKNQ33LG7YxFoUUV/CpwB55CeTgvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120408; c=relaxed/simple;
-	bh=LHmroAf0IX0JOjVUiIwqM4s8ghVxxktECxT6AQD+q2c=;
-	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=QjFvoM7kqU63ixiwbEq1YATebRTrGV3NYbZDcEJh4Dn07C0eCTo2sTGzi5X//tvwpX2cAYM+dhGP8Ez4xAh1TndL3ozlCpoHZujCg4PiZRqZPJbU/KnvINtIdo3HR3oBY2L9bnf44oixC0AUyEyKW1/+ezCQCTU65wDAZNGnbAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=taskera.pl; spf=pass smtp.mailfrom=taskera.pl; dkim=pass (2048-bit key) header.d=taskera.pl header.i=@taskera.pl header.b=aqYNQ+1e; arc=none smtp.client-ip=51.75.73.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=taskera.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=taskera.pl
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=taskera.pl header.i=@taskera.pl header.b="aqYNQ+1e"
-Received: by mail.taskera.pl (Postfix, from userid 1002)
-	id 3E5F425A90; Wed, 22 Oct 2025 10:06:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=taskera.pl; s=mail;
-	t=1761120405; bh=LHmroAf0IX0JOjVUiIwqM4s8ghVxxktECxT6AQD+q2c=;
-	h=Date:From:To:Subject:From;
-	b=aqYNQ+1ebzXZqvwNtj5069ohoD+IXjUQOej8+rc+3aSwySblLyhA9bqNL9u0rOeUn
-	 IJi7QMfGxKFGd0A2QpvwKnH/P7IXzm0JRfP0X4klsJEG8iRxbGidUolvzeWo54N/Wr
-	 27wS1RiydCJOxd/7S+OA3YTQveUH/ALw0Kx+SUIzNsB3bkyy26M5+K9hNnWjB0mUiM
-	 0tK/NkVUq/vkVQ+Oan5QlWfTIIHWapBetKNdk6XhXj2G6KRpexvBtl+CwwC81nBLQ/
-	 ewilzxQ8tXzZ5jhAc1/HhU+N+TjkO5X3YiVFG8obUeU6OqRtEosirk/FYwy/MyJpLa
-	 VN0eVNE1VDMFQ==
-Received: by mail.taskera.pl for <linux-tegra@vger.kernel.org>; Wed, 22 Oct 2025 08:05:57 GMT
-Message-ID: <20251022084500-0.1.e0.vuvt.0.3qhwi6oeqr@taskera.pl>
-Date: Wed, 22 Oct 2025 08:05:57 GMT
-From: "Eryk Wawrzyn" <eryk.wawrzyn@taskera.pl>
-To: <linux-tegra@vger.kernel.org>
-Subject: Zwrot
-X-Mailer: mail.taskera.pl
+	s=arc-20240116; t=1761124381; c=relaxed/simple;
+	bh=pznKN8dUbII3GpPjqx5PyM5eD2eG/eKsDEZkzbIX6y8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJOgJ8Pc7QPPxfeAxAT4Tsv1unH8TpCCuIBU65w1BU6juophDqogSrwxG8Lv8vJGuvFBeIo4t+kN8xvZYX45o3j7bGzQTWJBaL2u4MTutgXEEyAmTwHSS5/GMc8i4OX0RQfXftE+byW+dh2GH78QKb7EpvLS2dxOTKDmHNOVYjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EA3A1063;
+	Wed, 22 Oct 2025 02:12:49 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9CB93F59E;
+	Wed, 22 Oct 2025 02:12:56 -0700 (PDT)
+Date: Wed, 22 Oct 2025 10:12:55 +0100
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
+	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
+	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
+	gautham.shenoy@amd.com, mario.limonciello@amd.com,
+	perry.yuan@amd.com, linux-pm@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
+	sanjayc@nvidia.com, bbasu@nvidia.com
+Subject: Re: [PATCH v3 3/8] ACPI: CPPC: extend APIs to support auto_sel and
+ epp
+Message-ID: <aPigDd0QTiRjey7K@arm.com>
+References: <20251001150104.1275188-1-sumitg@nvidia.com>
+ <20251001150104.1275188-4-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001150104.1275188-4-sumitg@nvidia.com>
 
-Dzie=C5=84 dobry,
+Hi Sumit,
 
-kontaktuj=C4=99 si=C4=99 w imieniu kancelarii specjalizuj=C4=85cej si=C4=99=
- w zarz=C4=85dzaniu wierzytelno=C5=9Bciami.
+On Wednesday 01 Oct 2025 at 20:30:59 (+0530), Sumit Gupta wrote:
+> - Add auto_sel read support in cppc_get_perf_caps().
+> - Add write of both auto_sel and energy_perf in cppc_set_epp_perf().
+> - Remove redundant energy_perf field from 'struct cppc_perf_caps' as
+>   the same is available in 'struct cppc_perf_ctrls' which is used.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+[..]
+> @@ -1555,6 +1559,8 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>  	struct cpc_register_resource *auto_sel_reg;
+>  	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
+>  	struct cppc_pcc_data *pcc_ss_data = NULL;
+> +	bool autosel_support_in_ffh_or_sysmem;
+> +	bool epp_support_in_ffh_or_sysmem;
+>  	int ret;
+>  
+>  	if (!cpc_desc) {
+> @@ -1565,6 +1571,11 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>  	auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
+>  	epp_set_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
+>  
+> +	epp_support_in_ffh_or_sysmem = CPC_SUPPORTED(epp_set_reg) &&
+> +				(CPC_IN_FFH(epp_set_reg) || CPC_IN_SYSTEM_MEMORY(epp_set_reg));
+> +	autosel_support_in_ffh_or_sysmem = CPC_SUPPORTED(auto_sel_reg) &&
+> +				(CPC_IN_FFH(auto_sel_reg) || CPC_IN_SYSTEM_MEMORY(auto_sel_reg));
+> +
+>  	if (CPC_IN_PCC(epp_set_reg) || CPC_IN_PCC(auto_sel_reg)) {
+>  		if (pcc_ss_id < 0) {
+>  			pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
+> @@ -1590,8 +1601,19 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>  		ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
+>  		up_write(&pcc_ss_data->pcc_lock);
+>  	} else if (osc_cpc_flexible_adr_space_confirmed &&
+> -		   CPC_SUPPORTED(epp_set_reg) && CPC_IN_FFH(epp_set_reg)) {
+> +		   epp_support_in_ffh_or_sysmem && autosel_support_in_ffh_or_sysmem) {
 
-Od lat wspieramy firmy w odzyskiwaniu nale=C5=BCno=C5=9Bci. Prowadzimy ko=
-mpleksow=C4=85 obs=C5=82ug=C4=99 na etapach: przeds=C4=85dowym, s=C4=85do=
-wym i egzekucyjnym, dostosowuj=C4=85c dzia=C5=82ania do bran=C5=BCy Klien=
-ta.
+Isn't this problematic for when auto-select is an integer set to 1 or it's
+not present at all? In those cases the EPP register won't be written and
+-ENOTSUPP will be returned.
 
-Kiedy mo=C5=BCemy porozmawia=C4=87?
+I suppose for the case when auto-select is not present at all in _CPC
+(it's an optional attribute) it's not very clear what one should do
+regarding writing the EPP register. The specification mentions that
+"Writes to this register only have meaning when Autonomous Selection
+is enabled.". From my perspective the OS should not block writes to the
+EPP register for this case, as autonomous selection might still be
+enabled but not exposed to the OS. 
 
+Thanks,
+Ionela.
 
-Pozdrawiam
-Eryk Wawrzyn
+> +		ret = cpc_write(cpu, auto_sel_reg, enable);
+> +		if (ret) {
+> +			pr_debug("Failed to write auto_sel=%d for CPU:%d\n", enable, cpu);
+> +			return ret;
+> +		}
+> +
+>  		ret = cpc_write(cpu, epp_set_reg, perf_ctrls->energy_perf);
+> +		if (ret) {
+> +			pr_debug("Failed to write energy_perf=%u for CPU:%d\n",
+> +				 perf_ctrls->energy_perf, cpu);
+> +			return ret;
+> +		}
+>  	} else {
+>  		ret = -ENOTSUPP;
+>  		pr_debug("_CPC in PCC and _CPC in FFH are not supported\n");
+[..]
