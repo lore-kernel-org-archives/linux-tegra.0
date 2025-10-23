@@ -1,214 +1,423 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012011.outbound.protection.outlook.com [52.101.43.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043E78F54;
-	Thu, 23 Oct 2025 09:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761211957; cv=fail; b=HbaCz+ugH0P+D4fc9tVVhEczEBh4v1P/dyjSE0c3Je9cJvlRjPzZlteQI0frsmb40QiLWsAwVlWdS53zbkVHrCK7rhljBG55RL5E3FY7iXbV8Nu4mQEMAeHrAIPyUuroJ2p332e7C0nN1P+BBLHOrMnGWwNfhJDMtsVnyZXmIIU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761211957; c=relaxed/simple;
-	bh=6vxnEWD4j7sfPq98dBG/sGFRQy1b4V4NMT8ujXXAhng=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nrqlWSKJMBLCHgXlHcjsnMoon7XNuojNmqQc3tf4kID7Suu9qmNIfswlIIeNM/fBq/28GjrxIs+dUxMkdxFb4mWtFMn2cNEy+2dioYgqJ4JL0LIljo6ttXTIFuH237oSIOo5BcAcFcyAku0D5VsYiSptRxu1Detrp8WWSj9YzbA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I1YUFUcp; arc=fail smtp.client-ip=52.101.43.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6456314B6C
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Oct 2025 13:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761225206; cv=none; b=lv97faoQMe+D20HCfZNIiOtbkW8BU5B/r5I375egtIS9xMcsvDUUROfueO/e/fztwhnv3NsKm2p8Y35fjY5INZFiPMjx6WWGHoBaNno/camlBbDr6zJssnohxxE8QUtYZmbbY+BoCeByKWLTx4d8zf6hDyTcJ1SBytPEbnVetD0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761225206; c=relaxed/simple;
+	bh=hkOdKKZGwCaTQVl3c7LZT8SkskIUuJY/xTZqH7NHvPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tbcZw3LdrExkxNvWfkCGWZCCn8NTixkx4lErHTR+edFZsPgl8mxNpfDw33ACu9tOAqY7/VKfNJF4LZM4f37CO67dhE1m/3VGIL2RaCqKU36+O0U1ukOUzo+Q6o0KtjWuki2g3qIoNs0l4HN71Fvh3aH5QvOz8cA0Fd1XOftWd4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h3/2VkoI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ME/7p8ou; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K/X2RGOT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IqmoN06N; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I1YUFUcp"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eUDb5Pw48JnMwo/EwAR3C8UUMvjBhl9CToKfuj0mUjwYqwmCwAPyfFNl0AK1Ix+2jQtaVLZMAKCWqVNo+RfCobGgCOzUlsCXTApLUGXdH69t5HYD/dJb9UPAkYZ+VEKnnZAc9OWsvsqqs0O2NDn0w0+f619N+QpL7chy+3d3tTxsQrJOJnJ2LhArgXA/8UNi7t2tX33ee+x2Ztqyfe++C9p6B4bFd72+si657EsUKHabjHIxat8PKGmnyqj23r66y6ExWArTvOGdl4MlrG6PNSe95udHx9zxv/J/X0z90C2zS6nBVLFq8BUBH1rHTzJCZ7WU3EKoJiaZRfQ55sZPMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a0rJTHwpsvBGW03FY9jPcgIdC5WeuhcH/ckgutMhLus=;
- b=eaEdCTjwb2t0/tVyYWWnNj4TUUcuIPTDiQA9322AAqLCt97v23I6nKXLGr8HEUAF7HR2VX+HoBpcnCCkXEvWrl1mzhwW6NZNS9f0/s/jsm6PPcO3s67A0jwoe3CwEe6tPW034gpQq3a1xrP5bpWVBD3GxsLNFGqfVvhwJTajybOSrT+9O1ALUW1+gympLMODdNhV86qqvc93OOzofXGoD1o+Q1N3g0pstAepSwtyZtHkGcwvs3o03YNoT+rV6Vet52yLpumEwBVhYsLE/sCDrrOlNFncPkLqmAsKUoMfn9avWbsq62Z7uW7CGY/7fpTTYB4Optly1L9Lidollbi2tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a0rJTHwpsvBGW03FY9jPcgIdC5WeuhcH/ckgutMhLus=;
- b=I1YUFUcpNT15vvbntoy5D4Mh0ImBpq6tIMOKkhbqAB5EoxZkz5GJVoOabFfUOkiRYkLWSOK3l8xAN6NmTrEuocRRHm/n/GECGQ2byCW/Tg6xpVtvD0FCPmnNHOpQgmBsl2vJUs31s/7369W58B0OcdFAEmczsWjjNaIygZWJ4E6gQ1jxW8qk9fRzM0+g7+U99/eKbXnQmMuZJ4mU8ox2qko8lY0AuNo252es/bfWGAUKNFTCSPySc+c30m/EdcDPHaRnLIYyNE+3AWaDEVnSv2G2Csh6GS59CnzF+5Q17S8wHl/JozSfys4m5qSNTdhspNzpbGJeeheTbGqIIFFclg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
- by IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 09:32:31 +0000
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861]) by MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861%3]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 09:32:30 +0000
-Message-ID: <cdbc7ecc-6676-4702-bbe3-6d275d561185@nvidia.com>
-Date: Thu, 23 Oct 2025 15:02:12 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] rtc: tegra: Add ACPI support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: alexandre.belloni@bootlin.com, thierry.reding@gmail.com,
- jonathanh@nvidia.com, linux-rtc@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251022063645.765599-1-kkartik@nvidia.com>
- <aPkPkHr0Hp_MabPx@smile.fi.intel.com>
- <f4defdc9-2cc0-45a0-a391-cb8678eb1b23@nvidia.com>
- <aPna3Q9L4Rc9Ufxt@smile.fi.intel.com>
-Content-Language: en-US
-From: Kartik Rajput <kkartik@nvidia.com>
-In-Reply-To: <aPna3Q9L4Rc9Ufxt@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0040.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:81::9) To MN0PR12MB5716.namprd12.prod.outlook.com
- (2603:10b6:208:373::14)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h3/2VkoI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ME/7p8ou";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K/X2RGOT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IqmoN06N"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8327D21196;
+	Thu, 23 Oct 2025 13:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761225198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VjyzPpbvI5fhxQYesxK6omzD3LUeRTF6x2me5bgnC6s=;
+	b=h3/2VkoIvy4pRQU2gTt3fNBwV0Bpbbc6fEDrsTopCy+Oc9ygrJlyzxkj+XUv+evYCkFIsX
+	XycuwAXQ7Qr3XRqgrQIrq/nrl/HVtboKu1jsbnqODHI+radDjly+yvVE9QAVk+sXSp6sdL
+	AfNrxoqCJZN6Ab3GnOJxOg46wyWHjHc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761225198;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VjyzPpbvI5fhxQYesxK6omzD3LUeRTF6x2me5bgnC6s=;
+	b=ME/7p8ouKJM9GLK5zhVbPES1FQGzbPB+WtDCNwBbPItYzwxarZUw8UUgzdVjgfMPfWzy1b
+	Yu7qcwHlW+gndTCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761225194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VjyzPpbvI5fhxQYesxK6omzD3LUeRTF6x2me5bgnC6s=;
+	b=K/X2RGOTD97ojVmDnp2/TWG7VX3nK6sy3QfPe0O8Mf5iX9n6Nk297EBdyPdTc/AapSJ6o8
+	Bl2axhNH1SuvJBA+cfo1A0JnrYpCZ0bUumGG8QeuE9uOq7XJiI3rrpcKofro9GX3cTLgq9
+	2YxSqVAJLHedFD4negyZJ4pi5s8BNjs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761225194;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VjyzPpbvI5fhxQYesxK6omzD3LUeRTF6x2me5bgnC6s=;
+	b=IqmoN06Nrak9Ra4aXuBALYij0axCl7XBGCZZGAeI9W8NWeYnuuI1W93KWKfSM4xXHTrj9x
+	vlmNPTouyAONGzAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B38713285;
+	Thu, 23 Oct 2025 13:13:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id e0oYCeop+mjlGwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 23 Oct 2025 13:13:14 +0000
+Message-ID: <b984815e-b115-49a2-951c-e4ab8049cecc@suse.de>
+Date: Thu, 23 Oct 2025 15:13:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|IA1PR12MB9031:EE_
-X-MS-Office365-Filtering-Correlation-Id: eeb5d76b-7b9b-4dee-ff92-08de12171661
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cCtNRzNVOVpCQ0xuVWs0Ly9iaExFL29EWjR5cUhSVFNvNFZLSnYvVm10M3Vh?=
- =?utf-8?B?aW9hWmV4R2tvMSsyUlRtZnZhZlRVbjMxcDZTS0FDUVBTdTFseHUrWU1BOEhv?=
- =?utf-8?B?VVhjelFvSytLc0VlUDh6cEk3YVVIMWF0eitGK3FuRHZVY0dhRi9oQnhCdENB?=
- =?utf-8?B?dUQ2N2Y4am5PUi8yYzhEYk5lYzZSUEptamVVYUNTaWRqTFJNbU1GWFc4RUNi?=
- =?utf-8?B?U2t3aHNNcjVaTkpUaDlYaXhuTlZ5dlRvb3c4S0p1RDY1a0IvQlordjVhUENv?=
- =?utf-8?B?aTRxUXFVRm5rWFRZM3dMU0wyRUVMUWROaTB1OTdoVmF6NUZrUlBCRU10Y2cr?=
- =?utf-8?B?SGNKUzNSNEEzV2l1WEZYTGdWZmg0Nk02Nkk1dlJDMEtZT2Uzdk9BUC9xU3I2?=
- =?utf-8?B?OVJ3dXVkcjBISHRRTjRyenpZZHlCNTdsTVVENEhWK0YyUzQ1NzdSMkNiTVV1?=
- =?utf-8?B?eC9BenJpMnZHK2c4Wm1Ic29XNDU5dkhVc1RVZkNMV2Q5bGVBdFVQcHhMc1JK?=
- =?utf-8?B?WEtTQXJ2Qjk2N1hnUE9JZzdFU1pScSsxUzJhNWU1MkI3VXNtNGJzckJxaTRN?=
- =?utf-8?B?Y05zR29XbTRhTS9jNERLVnhkZmVoOEJob2ZEWFVsdnpEVFBTZitDR0VwNVdQ?=
- =?utf-8?B?Rlo0K2NkaUFjVktUUDFEUjlEOW5WSDduU0hpUUhpQUxmZzB2OFVlTHlJM1Ry?=
- =?utf-8?B?QVRHK3I4VjlpNHJCeHh3ZU9ObVRZb0h4MnNkVy8vMG9CMlRKczRlVUN3R3NK?=
- =?utf-8?B?UmJSN2gxK2l4aFYxbWJqT3dDNHFQWkZtSHlSaUpEem12N21JU1JWYjZvOHdQ?=
- =?utf-8?B?ck9uNFVTS043ME4xUzh4VVg3Ymw0cmlPUXVHU2ZMZm55Q2cxS0xIcEt3WTNY?=
- =?utf-8?B?MEtlNmhpQ1R1RHA2YjF2b0lubURzS0sxZHRKYVlxUHVvejM1Sk0xQ2V1LzVP?=
- =?utf-8?B?N0FURUN4NFpmd0FCbmhVNzVxb2xWWi9ERHl2alExRHpiVlRtQnNDTWRRVC9Y?=
- =?utf-8?B?SU1jNld0MmxEdHQxQ2JJS2hOb2NjR2MxaDM4alAvTFRKcTJGUEtHdk80U2xX?=
- =?utf-8?B?OVhTN0l3TzY2cWhsbzhTbHFyTXlRTFVxdlp1MFdBWWp6Z0JCZ25FT1FBOCt2?=
- =?utf-8?B?SjdSNkV3QXJVNzFrTGFsbjZrV0d1VnErcjkvTHlZTG91VWIvMHF2NHhxa1lz?=
- =?utf-8?B?bmgwb29ZcDNTaWFPeGc1dUExbU03YTQ3czRmZVBZbDZnN0ZWN3NMczJrdDRP?=
- =?utf-8?B?blNUVmNMUnloSmlId2ZVakFHaVR5VFhTRVR0ZTdJdmZONXdTOHBwTEp6di9L?=
- =?utf-8?B?UlJUS0pZWllQYXlpTzNRSUU5Z2Fib2h1bElxKzNQR0lRVHp2UEUvNkZKbTF6?=
- =?utf-8?B?MFZwU3FNMGNvbGE0eitoMTB4WXM0dlpYdVJvYW5YQWM4K1BON0dHRWFDTVdl?=
- =?utf-8?B?bTc2d1BnTnl0Q1RWNWt5T2pVa0pJOVZtcEkwOWgrMzBaSTdPYVJWMDk4bHND?=
- =?utf-8?B?em5oejJBdDluM3UxbkZYL0hlS0pHWXg3OTFjdmtIUlhrd2FnNWlEalRFbEVR?=
- =?utf-8?B?bTFFVFRSbjg5dGVjdmUvYVRGMXhSRTdJb21QQ0hEaXp6RFpGcHR4WGtsYzZV?=
- =?utf-8?B?ZWs2eTFBWnlDcllkQU1SK1hRczZBWDFOVmoza3JvMGk4NVowMEZUS0FBMXM5?=
- =?utf-8?B?c1dwYzNaMmNHTjJZYm8wZERBQlJoTy9Jb3pKeUNUOHVoajFPZ1hrMUovdDFu?=
- =?utf-8?B?TVpZYks1cWJDc0NVRlFpTmlWcmM3a3hIV2ZiSHJMZjlEc3RCOGNGVVJZc0NV?=
- =?utf-8?B?cGp4dUE2azlYT1ZTa3B5c0hNUk8vSzJBU3VqTUM1K1JzL3E5OVk0dURFM0pB?=
- =?utf-8?B?YzJsR1VEemk1OEpBdXJMeWpMRTlQK1ZvT3duMVJpV0FOaDZRWkkvTk1EM2ZX?=
- =?utf-8?B?M3VPUW5yeE5Kc1RxY3ZPT3U2NTdpTlZ5dDVkMFRiTHJLZUdoSVB0L3Y3ZGxH?=
- =?utf-8?B?emlVdkUzaXRBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WStOUTVzdThtSDhOTjZqT29qUnp6S3lhK21pMlFIYndDeGpsdG44R2ZRbnhl?=
- =?utf-8?B?MzdyMElPVEJZa2trdkNKU0xzVEg2WEtIVW0yaER6dWJLbm9HcmJnVzNKdk9J?=
- =?utf-8?B?bldHZzR3SXdPclU4VmJ5UVlUQXpPUC8rSlNieXpOanI2SU5BU1BGc1JyV2Fa?=
- =?utf-8?B?TzFTaGRmQ3BPT1FtN2JyU1Mrc21BdjJQMzJQRGIvM2VQS2xoODlxTDNsVWNY?=
- =?utf-8?B?SXFrczlxSnRwaUVOa0tQOWZkUG9VbmszN3BFSGUySmFEakV3M1BKaXFENmlN?=
- =?utf-8?B?Ymk5U0VQV2hrVWJTQm50S3gvcEptUHdveExnZnlzV3ZRMkVQSE51cHZrRHVU?=
- =?utf-8?B?YUNRNnVIWVNPM2ZVZ2k0QW9CS2ZraWQ4dnROOXdkSFNiUFQwUCswSTA1b0E4?=
- =?utf-8?B?RVIwa0t5WGxJMjFrSVM4VkdYNTk2bkh0NHdaNnNLRkhJWE1KeG1Jd3Y4bFZP?=
- =?utf-8?B?ZzNXWEZ5cW1PZW4rUXhlRCt2L2FhUkVVN1cyL0VGYzk5ZEpwOXJKdUlWUXRZ?=
- =?utf-8?B?SmNPbXRyOEZvMkRhOWFRMi91SGVzMXcxL3lzL0tXcWVoUVdRV1BlRVJRdktU?=
- =?utf-8?B?OFpwa3ROWkVOQXlESE5kdmJrT2g3d3ZnTVJXMUJrOW9tZnplVm9lNTM5OTVT?=
- =?utf-8?B?dDFGdWx5ZUxxL1phNy84Yi9UMzRtYzh0ZWxjQW9CMXB6bWd6ZThDWHlDdVJn?=
- =?utf-8?B?M1B2NHl3dWpTbkswNWlTeEdBanBEbnFtUlEzRDZuMUU2UWx6OXFRZTFudm5q?=
- =?utf-8?B?R2wzMlNTQy80M2ZyM0tkQzM1OWNTd2NtWjVnL0k5aGYvR1hVTndSSldQOGZ2?=
- =?utf-8?B?VTJkaDlYd09xY0JwcHNlTTdvRTVwOXNZNzBGR0pmSDNFNFpzdm9XMmp6ZnZp?=
- =?utf-8?B?SkV0UzV2ZWllKzRGREkyc1BXNlUrMjRiRXYxT2s5RTJ4LzhYTUZsb2pHNTI4?=
- =?utf-8?B?dHk2NjEvaDFNdktUdGQ3TUZOTldKNWd3Z3lNRGFLMzM1Umhsc1B2TmdxdENr?=
- =?utf-8?B?ZjcwR1JmcjIvbytXcUlJZTBRMmRTR09KaEFQUk4zNnhnMDR5TEtRY1pRTVQ5?=
- =?utf-8?B?eFBqNGhJTTJDd3Rhc3JXcnA5TmszSnhRS0hja3hKYkNMNlRMWnlyS2gzblls?=
- =?utf-8?B?NndYVE44YlFnTVNoNE94WU15VW1lYW42TU81dHJJQUFZbUh3NUowZjRzWkE4?=
- =?utf-8?B?TWFDNEJ2QTFrV0xqQUEreUp6Tlo0eldYWjBIYzFwUTU0ZmVTb0dEb0ZqWHhL?=
- =?utf-8?B?NE1GVThJMW9RVDRJbkFSR3FSQW4rcmRxcmxIbXdjOUpkWFBDejFVM0t2T0c3?=
- =?utf-8?B?OHVqT2RsKzVhaWpzWmZtc29veUw4TkZKRTNKNGExY3NWamlDV1QwYTNBR3R0?=
- =?utf-8?B?Vyt1TkhWbkxML2ZicjBrQUtyeFp6NlB5N0o4TlRUUWRuNGNpU2pYK2NFdmxV?=
- =?utf-8?B?THc4T1ZLWWdSdnNQKzhTbWdTak4xdGF0dHpndCt6QTFrSEhCaWJxcnVuK2Zs?=
- =?utf-8?B?UkRTK2hsQ0ZsM0FhbU4zV04yUm8xdHN6UXhiVjBhazBqUWh2cHUyaFB5b0JF?=
- =?utf-8?B?ZVdENG5VL1F5ck10cG1jempMa1pHUlZBallLd3JUWlNySWdLVkZKZDZRdklh?=
- =?utf-8?B?UUZxMmdPcnlrQXJvNVZVU3dEbFVOdjNOT0JyZE9hUHB4cE05ZGJGTTlMSmV3?=
- =?utf-8?B?RHNsQmVyQksrK0lIaXJQaWFDQXlDYmhCYkNpaFhJeHdIb3BJNGdHTVRQMWs5?=
- =?utf-8?B?cElJYUZFWWNGZHBqNDBlSWhzbkhNS21vMVdDandGVkR5ZTdsVzJzNWdSdjBQ?=
- =?utf-8?B?eVQ4YVBZSEJXekxoUDQ4ZGo2MTZUN09NZDF2cnFMYjdSeWlJLzVSTEdtd2JC?=
- =?utf-8?B?a2VCNXpQcWZaN3NXekxWNktEbW1xWXRhSnA2ampZSzNTd1B6NzFEd01wNml3?=
- =?utf-8?B?S3RTcGI2TWIwdXc4SHlGRnhxcTV3WnZWb2FOQ3U3cVpvaDhrNW1FM0Q0VitM?=
- =?utf-8?B?UEZPbTNPWmE4a0ZGU1ZWc2tocWd2REFCOUJKZGF3dTM5YVVyL1FvVVE4Y1pN?=
- =?utf-8?B?aUNNYms5ZnJabU5UZXVHcXNVQ0NTRm9sckRybmJUY0lTRTNTN0FYMnZrM0FO?=
- =?utf-8?Q?tycIaDElTDw4tFQvPMHR+JjSh?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eeb5d76b-7b9b-4dee-ff92-08de12171661
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5716.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 09:32:30.5979
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5oo3NIUdJK46T7vdEq8iPu9gUmq5IuKUyq+slyPpktpYw3YnF4la1U6M1snYgD+f9CLdvYCrphHsJ7k2lOgvFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9031
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] drm/client: Add client free callback to unprepare
+ fb_helper
+To: jfalempe@redhat.com, javierm@redhat.com, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org
+References: <20251009132006.45834-1-tzimmermann@suse.de>
+ <20251009132006.45834-2-tzimmermann@suse.de>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251009132006.45834-2-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On 23/10/25 13:05, Andy Shevchenko wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Thu, Oct 23, 2025 at 12:14:13PM +0530, Kartik Rajput wrote:
->> On 22/10/25 22:38, Andy Shevchenko wrote:
->>> On Wed, Oct 22, 2025 at 12:06:45PM +0530, Kartik Rajput wrote:
-> 
-> ...
-> 
->>>> -     info->clk = devm_clk_get(&pdev->dev, NULL);
->>>> -     if (IS_ERR(info->clk))
->>>> -             return PTR_ERR(info->clk);
->>>> +     if (dev_of_node(&pdev->dev)) {
->>>> +             info->clk = devm_clk_get(&pdev->dev, NULL);
->>>> +             if (IS_ERR(info->clk))
->>>> +                     return PTR_ERR(info->clk);
->>>> +     }
->>>>
->>>>         ret = clk_prepare_enable(info->clk);
->>>
->>> Since we still call CLK APIs unconditionally here, shouldn't be the whole
->>> approach just to move to _optional() CLK API?
->>>
->>>           info->clk = devm_clk_get_optional(&pdev->dev, NULL);
->>>
->>> I haven't checked the code below, but maybe even one can incorporate _enabled
->>> to this as well (in a separate change as it's not related to this patch
->>> directly).
->>
->> The reason I did not use the _optional API is because the clocks are required
->> for the device-tree. Therefore, it must fail if clocks are not provided on
->> device-tree boot.
-> 
-> I see, please mention this in the commit message. And perhaps add a patch to
-> convert to devm_clk_get_enabled().
-> 
-> On top of that you also can convert driver to use pm_sleep_ptr() and drop ugly
-> ifdeffery. But this is really out of scope, and up to you to decide.
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Acked by Jani via irc to go through  drm-misc
 
-Thanks for the suggestions, Andy! I have posted v3 with all these changes here:
-https://lore.kernel.org/linux-tegra/20251023093042.770798-1-kkartik@nvidia.com/T/#t
+Am 09.10.25 um 15:16 schrieb Thomas Zimmermann:
+> Add free callback to struct drm_client_funcs. Invoke function to
+> free the client memory as part of the release process. Implement
+> free for fbdev emulation.
+>
+> Fbdev emulation allocates and prepares client memory in
+> drm_fbdev_client_setup(). The release happens in fb_destroy from
+> struct fb_ops. Multiple implementations of this callback exist in
+> the various drivers that provide fbdev implementation. Each of them
+> needs to follow the implementation details of the fbdev setup code.
+>
+> Adding a free callback for the client puts the unprepare and release
+> of the fbdev client in a single place.
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>   drivers/gpu/drm/armada/armada_fbdev.c      |  2 --
+>   drivers/gpu/drm/clients/drm_fbdev_client.c | 17 +++++++++++++++--
+>   drivers/gpu/drm/drm_client.c               |  4 ++++
+>   drivers/gpu/drm/drm_fbdev_dma.c            |  4 ----
+>   drivers/gpu/drm/drm_fbdev_shmem.c          |  2 --
+>   drivers/gpu/drm/drm_fbdev_ttm.c            |  2 --
+>   drivers/gpu/drm/exynos/exynos_drm_fbdev.c  |  2 --
+>   drivers/gpu/drm/gma500/fbdev.c             |  3 ---
+>   drivers/gpu/drm/i915/display/intel_fbdev.c |  2 --
+>   drivers/gpu/drm/msm/msm_fbdev.c            |  2 --
+>   drivers/gpu/drm/omapdrm/omap_fbdev.c       |  2 --
+>   drivers/gpu/drm/radeon/radeon_fbdev.c      |  2 --
+>   drivers/gpu/drm/tegra/fbdev.c              |  2 --
+>   include/drm/drm_client.h                   | 10 ++++++++++
+>   14 files changed, 29 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
+> index cb53cc91bafb..22e2081bfa04 100644
+> --- a/drivers/gpu/drm/armada/armada_fbdev.c
+> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
+> @@ -28,8 +28,6 @@ static void armada_fbdev_fb_destroy(struct fb_info *info)
+>   	fbh->fb->funcs->destroy(fbh->fb);
+>   
+>   	drm_client_release(&fbh->client);
+> -	drm_fb_helper_unprepare(fbh);
+> -	kfree(fbh);
+>   }
+>   
+>   static const struct fb_ops armada_fb_ops = {
+> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
+> index f894ba52bdb5..5336accab1b6 100644
+> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
+> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
+> @@ -13,16 +13,28 @@
+>    * struct drm_client_funcs
+>    */
+>   
+> +static void drm_fbdev_client_free(struct drm_client_dev *client)
+> +{
+> +	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
+> +
+> +	drm_fb_helper_unprepare(fb_helper);
+> +	kfree(fb_helper);
+> +}
+> +
+>   static void drm_fbdev_client_unregister(struct drm_client_dev *client)
+>   {
+>   	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
+>   
+>   	if (fb_helper->info) {
+> +		/*
+> +		 * Fully probed framebuffer device
+> +		 */
+>   		drm_fb_helper_unregister_info(fb_helper);
+>   	} else {
+> +		/*
+> +		 * Partially initialized client, no framebuffer device yet
+> +		 */
+>   		drm_client_release(&fb_helper->client);
+> -		drm_fb_helper_unprepare(fb_helper);
+> -		kfree(fb_helper);
+>   	}
+>   }
+>   
+> @@ -88,6 +100,7 @@ static int drm_fbdev_client_resume(struct drm_client_dev *client, bool holds_con
+>   
+>   static const struct drm_client_funcs drm_fbdev_client_funcs = {
+>   	.owner		= THIS_MODULE,
+> +	.free		= drm_fbdev_client_free,
+>   	.unregister	= drm_fbdev_client_unregister,
+>   	.restore	= drm_fbdev_client_restore,
+>   	.hotplug	= drm_fbdev_client_hotplug,
+> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+> index 3fa38d4ac70b..fe9c6d7083ea 100644
+> --- a/drivers/gpu/drm/drm_client.c
+> +++ b/drivers/gpu/drm/drm_client.c
+> @@ -168,6 +168,10 @@ void drm_client_release(struct drm_client_dev *client)
+>   
+>   	drm_client_modeset_free(client);
+>   	drm_client_close(client);
+> +
+> +	if (client->funcs && client->funcs->free)
+> +		client->funcs->free(client);
+> +
+>   	drm_dev_put(dev);
+>   }
+>   EXPORT_SYMBOL(drm_client_release);
+> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
+> index 8bd626ef16c7..c6196293e424 100644
+> --- a/drivers/gpu/drm/drm_fbdev_dma.c
+> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
+> @@ -57,8 +57,6 @@ static void drm_fbdev_dma_fb_destroy(struct fb_info *info)
+>   	drm_client_buffer_vunmap(fb_helper->buffer);
+>   	drm_client_framebuffer_delete(fb_helper->buffer);
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops drm_fbdev_dma_fb_ops = {
+> @@ -92,8 +90,6 @@ static void drm_fbdev_dma_shadowed_fb_destroy(struct fb_info *info)
+>   	drm_client_buffer_vunmap(fb_helper->buffer);
+>   	drm_client_framebuffer_delete(fb_helper->buffer);
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops drm_fbdev_dma_shadowed_fb_ops = {
+> diff --git a/drivers/gpu/drm/drm_fbdev_shmem.c b/drivers/gpu/drm/drm_fbdev_shmem.c
+> index 1e827bf8b815..51573058df6f 100644
+> --- a/drivers/gpu/drm/drm_fbdev_shmem.c
+> +++ b/drivers/gpu/drm/drm_fbdev_shmem.c
+> @@ -65,8 +65,6 @@ static void drm_fbdev_shmem_fb_destroy(struct fb_info *info)
+>   	drm_client_buffer_vunmap(fb_helper->buffer);
+>   	drm_client_framebuffer_delete(fb_helper->buffer);
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops drm_fbdev_shmem_fb_ops = {
+> diff --git a/drivers/gpu/drm/drm_fbdev_ttm.c b/drivers/gpu/drm/drm_fbdev_ttm.c
+> index 85feb55bba11..ccf460fbc1f0 100644
+> --- a/drivers/gpu/drm/drm_fbdev_ttm.c
+> +++ b/drivers/gpu/drm/drm_fbdev_ttm.c
+> @@ -53,8 +53,6 @@ static void drm_fbdev_ttm_fb_destroy(struct fb_info *info)
+>   	drm_client_framebuffer_delete(fb_helper->buffer);
+>   
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops drm_fbdev_ttm_fb_ops = {
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 93de25b77e68..a3bd21a827ad 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -42,8 +42,6 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
+>   	drm_framebuffer_remove(fb);
+>   
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops exynos_drm_fb_ops = {
+> diff --git a/drivers/gpu/drm/gma500/fbdev.c b/drivers/gpu/drm/gma500/fbdev.c
+> index a6af21514cff..bc92fa24a1e2 100644
+> --- a/drivers/gpu/drm/gma500/fbdev.c
+> +++ b/drivers/gpu/drm/gma500/fbdev.c
+> @@ -84,9 +84,6 @@ static void psb_fbdev_fb_destroy(struct fb_info *info)
+>   	drm_gem_object_put(obj);
+>   
+>   	drm_client_release(&fb_helper->client);
+> -
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops psb_fbdev_fb_ops = {
+> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
+> index 3fbdf75415cc..d5f26c8bb102 100644
+> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
+> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
+> @@ -146,8 +146,6 @@ static void intel_fbdev_fb_destroy(struct fb_info *info)
+>   	drm_framebuffer_remove(fb_helper->fb);
+>   
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   __diag_push();
+> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+> index b5969374d53f..aad6fb77f0de 100644
+> --- a/drivers/gpu/drm/msm/msm_fbdev.c
+> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
+> @@ -52,8 +52,6 @@ static void msm_fbdev_fb_destroy(struct fb_info *info)
+>   	drm_framebuffer_remove(fb);
+>   
+>   	drm_client_release(&helper->client);
+> -	drm_fb_helper_unprepare(helper);
+> -	kfree(helper);
+>   }
+>   
+>   static const struct fb_ops msm_fb_ops = {
+> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> index 948af7ec1130..b5df2923d2a6 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> @@ -103,8 +103,6 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
+>   	drm_framebuffer_remove(fb);
+>   
+>   	drm_client_release(&helper->client);
+> -	drm_fb_helper_unprepare(helper);
+> -	kfree(helper);
+>   }
+>   
+>   /*
+> diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/radeon/radeon_fbdev.c
+> index dc81b0c2dbff..4df6c9167bf0 100644
+> --- a/drivers/gpu/drm/radeon/radeon_fbdev.c
+> +++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
+> @@ -184,8 +184,6 @@ static void radeon_fbdev_fb_destroy(struct fb_info *info)
+>   	radeon_fbdev_destroy_pinned_object(gobj);
+>   
+>   	drm_client_release(&fb_helper->client);
+> -	drm_fb_helper_unprepare(fb_helper);
+> -	kfree(fb_helper);
+>   }
+>   
+>   static const struct fb_ops radeon_fbdev_fb_ops = {
+> diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
+> index 1b70f5e164af..91aece6f34e0 100644
+> --- a/drivers/gpu/drm/tegra/fbdev.c
+> +++ b/drivers/gpu/drm/tegra/fbdev.c
+> @@ -53,8 +53,6 @@ static void tegra_fbdev_fb_destroy(struct fb_info *info)
+>   	drm_framebuffer_remove(fb);
+>   
+>   	drm_client_release(&helper->client);
+> -	drm_fb_helper_unprepare(helper);
+> -	kfree(helper);
+>   }
+>   
+>   static const struct fb_ops tegra_fb_ops = {
+> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
+> index bdd845e383ef..eecb8d6e15c7 100644
+> --- a/include/drm/drm_client.h
+> +++ b/include/drm/drm_client.h
+> @@ -28,6 +28,16 @@ struct drm_client_funcs {
+>   	 */
+>   	struct module *owner;
+>   
+> +	/**
+> +	 * @free:
+> +	 *
+> +	 * Called when the client gets unregistered. Implementations should
+> +	 * release all client-specific data and free the memory.
+> +	 *
+> +	 * This callback is optional.
+> +	 */
+> +	void (*free)(struct drm_client_dev *client);
+> +
+>   	/**
+>   	 * @unregister:
+>   	 *
 
-Regards,
-Kartik
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
