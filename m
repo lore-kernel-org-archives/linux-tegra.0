@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96191235063;
-	Thu, 23 Oct 2025 04:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEE317D2;
+	Thu, 23 Oct 2025 05:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761195257; cv=none; b=cKCwGgbmrBfvMDoWqHo9u31Z7IhQ7QJTN3SzgyrdBSk0J9R9iMCmRnV+x/M5tsA7rOJJUe+PC0bjfzVD8XQrUn1rV6WXyLKInQqpFhXPKBLpMsKwFZ1I79suvA99OVjTmUj4jO2s+UjksBDrWWjXWJU7g7TWe5QCBEOe61J/8l4=
+	t=1761195744; cv=none; b=T8BXO5/+VGtpL3q0QRN0psPPXNzMztwTpBn4az4jkZSIwNHQZk3XIh1FjksBox+jRzbOvNJm3z7UGt4GvB22ZAxs8jtq/wTsiSPocscNAMNKG9xlMHt5WFNJdm9rqccKZ+oDx8Slh4YT7DW2PdcH733TmJApvrd9yu4AoHX16+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761195257; c=relaxed/simple;
-	bh=o/X8ig17zbEWg83ccAFqusXE4QA15fbF7lAl6rfU1tQ=;
+	s=arc-20240116; t=1761195744; c=relaxed/simple;
+	bh=xnBFwakM2k1JPYwO3/Qy+Tx8eLKNZ7gwkUwwpTfHUOQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bN5rycMMryd7OlYWuYuntftxxo1TQ1/SJy525sTz+TQ21IrPvSRlsHog96BkjysRF63FUHdDMzZf8Z97+4tDIBJmFX2STRjJoE/G2aI0dm+Cyybz7kJ1q0OdSyHBUw4jmcVVGOTqPaxwX9sM1fALD6A3jyBCvMHxaprmKZ30VMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbYYuDXA; arc=none smtp.client-ip=198.175.65.16
+	 In-Reply-To:Content-Type; b=q7mzHyb1qK5lp6NHKT4CESwZVmIJZjV5ov9vw+mmfBMhSzuVJpf4b/975GTEoX9cGsumeUBCuJolVGmEfaLTfPs9ZWv0tWk2OiBlZopv7A7v1kx6TcSfoF0FyMTkw7kgfJJtddTCzVHRMu9JTaR7vUIkf/hXDflOiqDvGs+Logo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WIxWK84X; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbYYuDXA"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WIxWK84X"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761195256; x=1792731256;
+  t=1761195742; x=1792731742;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=o/X8ig17zbEWg83ccAFqusXE4QA15fbF7lAl6rfU1tQ=;
-  b=FbYYuDXAp/LXLr+T3JMvJyAe8UJgcWn1t5Y2vDTt3UTKFIKOOH4JxxCy
-   llEi+DpMBv7kXbjdFxyRkDDP7IYV5+GC92iilLgSAS6cReFNy2Ab2/fyo
-   H6wZaXgFFvzSpeRUN502qtCDUhW/YEDidgH3nl/OZs7UcXuwYcwYI2Xrg
-   Nl9DXGN6mYLXXYlVAdJ4AgM3UNjmRyxJufX6tvXL5lLMaD+wvK9or9VDl
-   gi+YC+1DTOqOeRcsh8fGuM/UjA7WAge31AQJtdauc6ClH1LRYcgLkBpz0
-   PrZM6oyi5BNoDofZKdSZxMVlEvJkoobW4I4gOryrs2Ew8Fo/tHrwk/ls4
-   w==;
-X-CSE-ConnectionGUID: u3l4LyIOQRe4s2S0B0Dq+w==
-X-CSE-MsgGUID: qHoVY+sKRiq++ux8oK7eYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63502010"
+  bh=xnBFwakM2k1JPYwO3/Qy+Tx8eLKNZ7gwkUwwpTfHUOQ=;
+  b=WIxWK84XMJJx8AcVC72JPDNPt7vkb3i8YAGfP0PIDaanLn3mF5TIrTeM
+   V367lSNM5aQhpmCTy82ZVP3RHZ0/jN4T97F8Sz9CJnhuC258PDh1mysIS
+   CD0Wc3XV/VjL/nyoGcv5OzCiISGm2eGBfrSesGBVEVQyu9cUMz4FHcUZd
+   tFhGD5wNmluz9SpHLqeIF1r/Z6aQCbmB1KbI2F0CyIx44SnJ+7ClGz2YS
+   PP3m5aNg3FAQUbNtSJYFT+WBENxJ/cGbEkY2NPWWmMqwevfYHD+zMZp/q
+   A7eS2rpTTcTVyeOzWIKZWdhTcSfabPmZmfkIE8nepzgIATBPecW3D0ccA
+   Q==;
+X-CSE-ConnectionGUID: 8o2ArTLJSCGhO23WYBSuww==
+X-CSE-MsgGUID: bJSgA2j+TtCjY9REVtLA+g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="50933427"
 X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="63502010"
+   d="scan'208";a="50933427"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:54:15 -0700
-X-CSE-ConnectionGUID: HMCARIInQHW636C3OauOVA==
-X-CSE-MsgGUID: LmNg6KDHRqKFY/2EChkiAw==
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 22:02:20 -0700
+X-CSE-ConnectionGUID: kWA0S5r3S1ua2kzqQUzTDA==
+X-CSE-MsgGUID: MuIS53hmREe4ygA3mF8heg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="214985320"
+   d="scan'208";a="214986870"
 Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:54:06 -0700
-Message-ID: <47b5dfbe-dda7-419d-9032-d61bda44eb9f@linux.intel.com>
-Date: Thu, 23 Oct 2025 12:50:13 +0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 22:02:11 -0700
+Message-ID: <3a9698ac-ac50-499f-871c-ee44d7371815@linux.intel.com>
+Date: Thu, 23 Oct 2025 12:58:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] iommu: Do not revert set_domain for the last gdev
+Subject: Re: [PATCH v2 6/6] iommu: Pass in old domain to attach_dev callback
+ functions
 To: Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org, jgg@nvidia.com,
  kevin.tian@intel.com
 Cc: suravee.suthikulpanit@amd.com, will@kernel.org, robin.murphy@arm.com,
@@ -73,30 +74,60 @@ Cc: suravee.suthikulpanit@amd.com, will@kernel.org, robin.murphy@arm.com,
  linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
  patches@lists.linux.dev
 References: <cover.1761017765.git.nicolinc@nvidia.com>
- <276875013de662fe50f3fdd9e9a5bfbc0f12602e.1761017765.git.nicolinc@nvidia.com>
+ <7f760e795097e3052da82abf410c6ee963e4c62b.1761017765.git.nicolinc@nvidia.com>
 Content-Language: en-US
 From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <276875013de662fe50f3fdd9e9a5bfbc0f12602e.1761017765.git.nicolinc@nvidia.com>
+In-Reply-To: <7f760e795097e3052da82abf410c6ee963e4c62b.1761017765.git.nicolinc@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 10/23/25 10:21, Nicolin Chen wrote:
-> The last gdev is the device that failed the __iommu_device_set_domain().
-> So, it doesn't need to be reverted, given it's attached to group->domain
-> already.
+> The IOMMU core attaches each device to a default domain on probe(). Then,
+> every new "attach" operation has a fundamental meaning of two-fold:
+>   - detach from its currently attached (old) domain
+>   - attach to a given new domain
 > 
-> This is not a problem currently, since it's a simply re-attach. However,
-> the core will need to pass in the old domain to __iommu_device_set_domain
-> so the old domain pointers would be inconsistent between a failed device
-> and all its prior succeeded devices, as all the prior devices need to be
-> reverted.
+> Modern IOMMU drivers following this pattern usually want to clean up the
+> things related to the old domain, so they call iommu_get_domain_for_dev()
+> to fetch the old domain.
 > 
-> Avoid the re-attach for the last gdev, by breaking before the revert.
+> Pass in the old domain pointer from the core to drivers, aligning with the
+> set_dev_pasid op that does so already.
 > 
+> Ensure all low-level attach fcuntions in the core can forward the correct
+> old domain pointer. Thus, rework those functions as well.
+> 
+> Suggested-by: Jason Gunthorpe<jgg@nvidia.com>
+> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
 > Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
 > Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
 > ---
->   drivers/iommu/iommu.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+>   include/linux/iommu.h                         |  3 ++-
+>   arch/powerpc/kernel/iommu.c                   |  5 ++--
+>   drivers/iommu/amd/iommu.c                     | 11 ++++----
+>   drivers/iommu/apple-dart.c                    |  9 ++++---
+>   .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     |  5 ++--
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 24 +++++++++++-------
+>   drivers/iommu/arm/arm-smmu/arm-smmu.c         |  9 ++++---
+>   drivers/iommu/arm/arm-smmu/qcom_iommu.c       | 11 ++++----
+>   drivers/iommu/exynos-iommu.c                  |  8 +++---
+>   drivers/iommu/fsl_pamu_domain.c               | 12 ++++-----
+>   drivers/iommu/intel/iommu.c                   | 10 +++++---
+>   drivers/iommu/intel/nested.c                  |  2 +-
+>   drivers/iommu/iommu.c                         | 25 +++++++++++--------
+>   drivers/iommu/iommufd/selftest.c              |  2 +-
+>   drivers/iommu/ipmmu-vmsa.c                    | 10 ++++----
+>   drivers/iommu/msm_iommu.c                     | 11 ++++----
+>   drivers/iommu/mtk_iommu.c                     |  8 +++---
+>   drivers/iommu/mtk_iommu_v1.c                  |  7 ++++--
+>   drivers/iommu/omap-iommu.c                    | 12 ++++-----
+>   drivers/iommu/riscv/iommu.c                   |  9 ++++---
+>   drivers/iommu/rockchip-iommu.c                | 20 +++++++++++----
+>   drivers/iommu/s390-iommu.c                    | 13 ++++++----
+>   drivers/iommu/sprd-iommu.c                    |  3 ++-
+>   drivers/iommu/sun50i-iommu.c                  |  8 +++---
+>   drivers/iommu/tegra-smmu.c                    | 10 ++++----
+>   drivers/iommu/virtio-iommu.c                  |  6 +++--
+>   26 files changed, 153 insertions(+), 100 deletions(-)
 
 Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
