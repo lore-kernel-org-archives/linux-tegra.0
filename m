@@ -1,430 +1,126 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E5D302747
-	for <linux-tegra@vger.kernel.org>; Thu, 23 Oct 2025 15:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC62622422A
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Oct 2025 16:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761233991; cv=none; b=kgHizSeLrtgfT5PHZJ2m7Rqj/QagDXk2PzEUGfmK/Tm/oUAQWk11oMJ/YU15d0mbiCtMaN8ElJf/6yy7jeBI62/F3ETHoSLp1uTzpbxI0V4mmmC3gXAuIRUq1dlI6ZiFsW7ZCT6pjr+Xggn8+Jfm4yKGAxtvCr90vK2XF0maw7U=
+	t=1761236180; cv=none; b=UGOwg5ioIPDuuEl7bSbI90ICrumLXkia6SAmukU4PJqZ9tfH8MkHN8ddsCNUeRSya+K8pcc2DLIsi7ziHAL6fa0eVGxITciRHfqf7DIfFOOTSEPvOc2iloLPLJkD0J3qExVPEicBlmz+lC5enryeJonYwbHXWXQV2X9QrO3c2R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761233991; c=relaxed/simple;
-	bh=k7Tch+RywkBmHtHYtls1zPCKqLMIlrcnbvkjFLq+MMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6p4DAybvETa6Rnt2UZTYeenjmCs60mtSL1gHAkxtr8hOaVAVIz+ZSVX0OvDQPxmaq5O1TPS9CZ3WTRX833MfUjc+pbnciEN1vFPi8YbVHiP5Lne1uyZlrJP1KwmRijZlyn3hoUqT9sM/KOfzfe3Y4Oq0eQlJ0IFisLvhrt047A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rOOk+1L8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mYDNeC29; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DAlA3sZc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ySnrNCRC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1761236180; c=relaxed/simple;
+	bh=JeoLoOFDkGLH3tpNOyGwr72Phjp8ZAJBLXaKUeI5Gy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jezxgtTDeUvTDxchWSXIELfuNeZ3e99CEyENlSq9ZlVaBBOz7sS7sQTrnvnZtYciNbW1H4P+hlpBLTD25uQA6hdtf4h4/yzKYqkCRYnNcPeZn3SjlR1YJADnESRVj0zHVnwYK2Zwp6hMthzvVkO2SQL4mJspKQHVzlJA8BO30Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gEcvOoHI; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rOOk+1L8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mYDNeC29";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DAlA3sZc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ySnrNCRC"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38AC321187;
-	Thu, 23 Oct 2025 15:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761233983; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=rOOk+1L8Um5iOXXt85CJNrMgUxmzOVrAYvM+tfLETiCGLl2aiJttREq8V3mSKUpcxTqqdj
-	l7TViKhxC0xQVhT6iShwws/h5oGPMkztPOi078I6xr6Uteps0EYGkai+oRAVFx5nyFv6Vn
-	1O8pNJi3YSFsfXJDrweOYfqpid31cf4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761233983;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=mYDNeC298lzqFC8qoZuZk5pNwTUK0YntJyAJtllNJNwZ/toC8a4IZDW8Z6SgJA7xxU8H5k
-	fok4BvyFKK5MrzDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761233979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=DAlA3sZcZeuOjOFICW30MLLWNxNhjXDLqzmJqQrGX9qWDKTIWBN2A2EoFjI0emJdLEFFTa
-	Xy490TDIoI4lzA1jHkx2uCbfi4FN/0kAZSaNlYyg3DiH9kDtT987gwlO79m3H4UB4N/2Lj
-	XwXnnNWvs4GANBXdlNDc7KKSXmZGqLs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761233979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oyYHstVcDj/SkrQCRCxmIIkIeLsDuJ8po4N2nL2Frfc=;
-	b=ySnrNCRC698xP5gkeFXzPyzRo9yOOVBWHgBM3q98Rk7ngacFmPwelNmhM99uFpvyvUArD1
-	eKLz4ieDlW08yWBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8204A136CF;
-	Thu, 23 Oct 2025 15:39:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z1hfHTpM+mihKQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 23 Oct 2025 15:39:38 +0000
-Message-ID: <38e59db5-eae2-4b6e-bdec-8205f1303d9b@suse.de>
-Date: Thu, 23 Oct 2025 17:39:37 +0200
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gEcvOoHI"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so6241865e9.0
+        for <linux-tegra@vger.kernel.org>; Thu, 23 Oct 2025 09:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761236176; x=1761840976; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EKZS4xgdPYgUIvIsxbmjQo0qs6j5eqmB9Z+WVlamt2o=;
+        b=gEcvOoHI8/Y4wwWpqSIfq/xpFmoQBJ8nWkNDs023LDlwS5hrAXm/pyLxYX7aAgvHaJ
+         7l4MDAPHU1kKaD/kaC2OO1hmx+waguBgCrTL4YLf7ON/NJpXtm+xp6cDNJ2+f6KLexYe
+         USvHZsq7dpMiim9vyR0Xr/5Sfo24JYGJ+4HBXC1Zf1HagWYoyEXKO5ADKUNnnqD2vhWP
+         TqjY3gXsgzSR4ucxLk93Qw4SYjWDjt6AWchxiTiITbYssaOdd67gDfqSD1JFymA141bU
+         ZbffolLcvxg1thiN7Jujm01KhCPmG3yi7/h7FqAGskH//+w91maIypSS9W4eakH0HP+t
+         lL9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761236176; x=1761840976;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EKZS4xgdPYgUIvIsxbmjQo0qs6j5eqmB9Z+WVlamt2o=;
+        b=LE117BbYLzGSyzhMK3TkC+Dzrkp8WEzXx4utatzxgGRtQuXbxAo3TEHAdTv785kmSK
+         WQYk9Ajh9ic63LNPFlu3iTAkllFLcp4kTZS+4LgFH5+9zz3scz7ACHDOs8hznY+fQOGe
+         K0xnqHVbR3BYNj5WLrPLITZyEX/pUgiOp9u0snv4M7wpElQzkc3ADE3AOwZq1TrlmAti
+         v/YJYqECoy+YC4MMnNZJMXEVnM7gfW4QZkaAG8qiU5L8dv7GKA+H2WQMKLJHqmHTon1w
+         kJ4Tykvjh8+KUNhbfdbe3T6Rsu/cUe/fIDYKhxKU0/UwqXyM7CjeNKTTPVBaHHANLp5R
+         T8UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXji5es/ByolMgooOV4MO1di6HyzE/Mpq0H3mBzQcxe4TrW7QDycq25s9BBAtrEHmWkGTnzdfxryVSgPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5hwnYKQKQNNrOuJi5GF+cWdi+O7vf3H4uUF7+3LrfU9gleHlI
+	ok9odK9oX5MggZe6dBXxPxMAME0HH1XMMUumqdj1pAg6Y3t1vFiv1RbhEfy1dwzcaOo=
+X-Gm-Gg: ASbGncu1VOc//W/AaTUM+ZEJDVyLjB/R3DHW42u+xlNS32f9MEAOUTA9vj8DG6+k/g1
+	9HXgcE6Gwp+pKKygRvGSOe8Oay0bEQ30pvbUmKaXsvVUD6qkkR38DIjdz4hA0iFCfXsxb8yhBU/
+	83eegfrE9LvHxF/RLjFnu51Ph0adNIhfVvlmJMy00bZlORAzFtCOm8dztQBIVCD6gY2Ny6LdDku
+	qw3d1pB1RSjjFokIgQPS5bLvbPSZl79LMZ+gczNb1jWdnvMOuQ+gGZ5QMHwyJCvRxkDAJZr4Xlm
+	D2DxmmQf87fME80n8HlQ5e0jbmWnjKp5r2xeBI/RVC6NKijw9vw7Zf8vIPJNLGpqeH+rlW8fDIr
+	pG1orgIWusK82UkWr5lgz1shb5yKuJ3RVI7dnlIA0ksu8XPIDUd+aQWRJxX1Jzwr4MzhFATl7OQ
+	AqM+iHSWuY0trBvSYXcsJbTPvFfciUOhUnun7OM2CI4cRRq5bLBg4sBwUpft0iLg==
+X-Google-Smtp-Source: AGHT+IE5Qe9IouXF3wd/woap6FmjLQyoL/fvr9fm0s/tYwr/PqlztetZvIkUyLfVIXDyEdY4GBMr0w==
+X-Received: by 2002:a05:600c:8b35:b0:471:1b25:f9ff with SMTP id 5b1f17b1804b1-475cb065415mr23655755e9.39.1761236176026;
+        Thu, 23 Oct 2025 09:16:16 -0700 (PDT)
+Received: from localhost (p200300f65f06ab04686163f49efc790a.dip0.t-ipconnect.de. [2003:f6:5f06:ab04:6861:63f4:9efc:790a])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475caf2eb9csm44694105e9.14.2025.10.23.09.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 09:16:14 -0700 (PDT)
+Date: Thu, 23 Oct 2025 18:16:14 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Bruno Sobreira =?utf-8?Q?Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Gabriel Somlo <gsomlo@gmail.com>, 
+	Herve Codina <herve.codina@bootlin.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] soc/tegra: Resolve a spelling error in the
+ tegra194-cbb.c
+Message-ID: <4cm74dubx7lzn44szaw4f73n7icd7zsszucz3kqg5imzgkev5k@yso34szyrvn6>
+References: <20251022174531.1751-1-brunofrancadevsec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] drm/client: Add client free callback to unprepare
- fb_helper
-To: jfalempe@redhat.com, javierm@redhat.com, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-tegra@vger.kernel.org
-References: <20251009132006.45834-1-tzimmermann@suse.de>
- <20251009132006.45834-2-tzimmermann@suse.de>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251009132006.45834-2-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ant7aysj5kaa6okg"
+Content-Disposition: inline
+In-Reply-To: <20251022174531.1751-1-brunofrancadevsec@gmail.com>
 
 
+--ant7aysj5kaa6okg
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] soc/tegra: Resolve a spelling error in the
+ tegra194-cbb.c
+MIME-Version: 1.0
 
-Am 09.10.25 um 15:16 schrieb Thomas Zimmermann:
-> Add free callback to struct drm_client_funcs. Invoke function to
-> free the client memory as part of the release process. Implement
-> free for fbdev emulation.
->
-> Fbdev emulation allocates and prepares client memory in
-> drm_fbdev_client_setup(). The release happens in fb_destroy from
-> struct fb_ops. Multiple implementations of this callback exist in
-> the various drivers that provide fbdev implementation. Each of them
-> needs to follow the implementation details of the fbdev setup code.
->
-> Adding a free callback for the client puts the unprepare and release
-> of the fbdev client in a single place.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Hello Bruno,
 
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
+On Wed, Oct 22, 2025 at 05:45:24PM +0000, Bruno Sobreira Fran=E7a wrote:
+> Hi, this commit resolves a spelling error in the tegra194-cbb.c.
 
-via irc
+Unusual commit log, I would expect something like:
 
-https://people.freedesktop.org/~cbrill/dri-log/?channel=radeon&highlight_names=&date=2025-10-23&show_html=true
+	Fix a typo found by CSpell.
 
-> ---
->   drivers/gpu/drm/armada/armada_fbdev.c      |  2 --
->   drivers/gpu/drm/clients/drm_fbdev_client.c | 17 +++++++++++++++--
->   drivers/gpu/drm/drm_client.c               |  4 ++++
->   drivers/gpu/drm/drm_fbdev_dma.c            |  4 ----
->   drivers/gpu/drm/drm_fbdev_shmem.c          |  2 --
->   drivers/gpu/drm/drm_fbdev_ttm.c            |  2 --
->   drivers/gpu/drm/exynos/exynos_drm_fbdev.c  |  2 --
->   drivers/gpu/drm/gma500/fbdev.c             |  3 ---
->   drivers/gpu/drm/i915/display/intel_fbdev.c |  2 --
->   drivers/gpu/drm/msm/msm_fbdev.c            |  2 --
->   drivers/gpu/drm/omapdrm/omap_fbdev.c       |  2 --
->   drivers/gpu/drm/radeon/radeon_fbdev.c      |  2 --
->   drivers/gpu/drm/tegra/fbdev.c              |  2 --
->   include/drm/drm_client.h                   | 10 ++++++++++
->   14 files changed, 29 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-> index cb53cc91bafb..22e2081bfa04 100644
-> --- a/drivers/gpu/drm/armada/armada_fbdev.c
-> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
-> @@ -28,8 +28,6 @@ static void armada_fbdev_fb_destroy(struct fb_info *info)
->   	fbh->fb->funcs->destroy(fbh->fb);
->   
->   	drm_client_release(&fbh->client);
-> -	drm_fb_helper_unprepare(fbh);
-> -	kfree(fbh);
->   }
->   
->   static const struct fb_ops armada_fb_ops = {
-> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> index f894ba52bdb5..5336accab1b6 100644
-> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> @@ -13,16 +13,28 @@
->    * struct drm_client_funcs
->    */
->   
-> +static void drm_fbdev_client_free(struct drm_client_dev *client)
-> +{
-> +	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
-> +
-> +	drm_fb_helper_unprepare(fb_helper);
-> +	kfree(fb_helper);
-> +}
-> +
->   static void drm_fbdev_client_unregister(struct drm_client_dev *client)
->   {
->   	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
->   
->   	if (fb_helper->info) {
-> +		/*
-> +		 * Fully probed framebuffer device
-> +		 */
->   		drm_fb_helper_unregister_info(fb_helper);
->   	} else {
-> +		/*
-> +		 * Partially initialized client, no framebuffer device yet
-> +		 */
->   		drm_client_release(&fb_helper->client);
-> -		drm_fb_helper_unprepare(fb_helper);
-> -		kfree(fb_helper);
->   	}
->   }
->   
-> @@ -88,6 +100,7 @@ static int drm_fbdev_client_resume(struct drm_client_dev *client, bool holds_con
->   
->   static const struct drm_client_funcs drm_fbdev_client_funcs = {
->   	.owner		= THIS_MODULE,
-> +	.free		= drm_fbdev_client_free,
->   	.unregister	= drm_fbdev_client_unregister,
->   	.restore	= drm_fbdev_client_restore,
->   	.hotplug	= drm_fbdev_client_hotplug,
-> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-> index 3fa38d4ac70b..fe9c6d7083ea 100644
-> --- a/drivers/gpu/drm/drm_client.c
-> +++ b/drivers/gpu/drm/drm_client.c
-> @@ -168,6 +168,10 @@ void drm_client_release(struct drm_client_dev *client)
->   
->   	drm_client_modeset_free(client);
->   	drm_client_close(client);
-> +
-> +	if (client->funcs && client->funcs->free)
-> +		client->funcs->free(client);
-> +
->   	drm_dev_put(dev);
->   }
->   EXPORT_SYMBOL(drm_client_release);
-> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-> index 8bd626ef16c7..c6196293e424 100644
-> --- a/drivers/gpu/drm/drm_fbdev_dma.c
-> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
-> @@ -57,8 +57,6 @@ static void drm_fbdev_dma_fb_destroy(struct fb_info *info)
->   	drm_client_buffer_vunmap(fb_helper->buffer);
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_dma_fb_ops = {
-> @@ -92,8 +90,6 @@ static void drm_fbdev_dma_shadowed_fb_destroy(struct fb_info *info)
->   	drm_client_buffer_vunmap(fb_helper->buffer);
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_dma_shadowed_fb_ops = {
-> diff --git a/drivers/gpu/drm/drm_fbdev_shmem.c b/drivers/gpu/drm/drm_fbdev_shmem.c
-> index 1e827bf8b815..51573058df6f 100644
-> --- a/drivers/gpu/drm/drm_fbdev_shmem.c
-> +++ b/drivers/gpu/drm/drm_fbdev_shmem.c
-> @@ -65,8 +65,6 @@ static void drm_fbdev_shmem_fb_destroy(struct fb_info *info)
->   	drm_client_buffer_vunmap(fb_helper->buffer);
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_shmem_fb_ops = {
-> diff --git a/drivers/gpu/drm/drm_fbdev_ttm.c b/drivers/gpu/drm/drm_fbdev_ttm.c
-> index 85feb55bba11..ccf460fbc1f0 100644
-> --- a/drivers/gpu/drm/drm_fbdev_ttm.c
-> +++ b/drivers/gpu/drm/drm_fbdev_ttm.c
-> @@ -53,8 +53,6 @@ static void drm_fbdev_ttm_fb_destroy(struct fb_info *info)
->   	drm_client_framebuffer_delete(fb_helper->buffer);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops drm_fbdev_ttm_fb_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 93de25b77e68..a3bd21a827ad 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -42,8 +42,6 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops exynos_drm_fb_ops = {
-> diff --git a/drivers/gpu/drm/gma500/fbdev.c b/drivers/gpu/drm/gma500/fbdev.c
-> index a6af21514cff..bc92fa24a1e2 100644
-> --- a/drivers/gpu/drm/gma500/fbdev.c
-> +++ b/drivers/gpu/drm/gma500/fbdev.c
-> @@ -84,9 +84,6 @@ static void psb_fbdev_fb_destroy(struct fb_info *info)
->   	drm_gem_object_put(obj);
->   
->   	drm_client_release(&fb_helper->client);
-> -
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops psb_fbdev_fb_ops = {
-> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> index 3fbdf75415cc..d5f26c8bb102 100644
-> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> @@ -146,8 +146,6 @@ static void intel_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb_helper->fb);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   __diag_push();
-> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-> index b5969374d53f..aad6fb77f0de 100644
-> --- a/drivers/gpu/drm/msm/msm_fbdev.c
-> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
-> @@ -52,8 +52,6 @@ static void msm_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&helper->client);
-> -	drm_fb_helper_unprepare(helper);
-> -	kfree(helper);
->   }
->   
->   static const struct fb_ops msm_fb_ops = {
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index 948af7ec1130..b5df2923d2a6 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -103,8 +103,6 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&helper->client);
-> -	drm_fb_helper_unprepare(helper);
-> -	kfree(helper);
->   }
->   
->   /*
-> diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/radeon/radeon_fbdev.c
-> index dc81b0c2dbff..4df6c9167bf0 100644
-> --- a/drivers/gpu/drm/radeon/radeon_fbdev.c
-> +++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
-> @@ -184,8 +184,6 @@ static void radeon_fbdev_fb_destroy(struct fb_info *info)
->   	radeon_fbdev_destroy_pinned_object(gobj);
->   
->   	drm_client_release(&fb_helper->client);
-> -	drm_fb_helper_unprepare(fb_helper);
-> -	kfree(fb_helper);
->   }
->   
->   static const struct fb_ops radeon_fbdev_fb_ops = {
-> diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
-> index 1b70f5e164af..91aece6f34e0 100644
-> --- a/drivers/gpu/drm/tegra/fbdev.c
-> +++ b/drivers/gpu/drm/tegra/fbdev.c
-> @@ -53,8 +53,6 @@ static void tegra_fbdev_fb_destroy(struct fb_info *info)
->   	drm_framebuffer_remove(fb);
->   
->   	drm_client_release(&helper->client);
-> -	drm_fb_helper_unprepare(helper);
-> -	kfree(helper);
->   }
->   
->   static const struct fb_ops tegra_fb_ops = {
-> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-> index bdd845e383ef..eecb8d6e15c7 100644
-> --- a/include/drm/drm_client.h
-> +++ b/include/drm/drm_client.h
-> @@ -28,6 +28,16 @@ struct drm_client_funcs {
->   	 */
->   	struct module *owner;
->   
-> +	/**
-> +	 * @free:
-> +	 *
-> +	 * Called when the client gets unregistered. Implementations should
-> +	 * release all client-specific data and free the memory.
-> +	 *
-> +	 * This callback is optional.
-> +	 */
-> +	void (*free)(struct drm_client_dev *client);
-> +
->   	/**
->   	 * @unregister:
->   	 *
+here. (Obviously replace CSpell by the tool you actually used, or use
+something like:
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+	Fix a typo spotted during code reading.
 
+if there was no tool involved.
 
+Best regards
+Uwe
+
+--ant7aysj5kaa6okg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj6VMsACgkQj4D7WH0S
+/k4giQf9HWEtod0hY+J4Y6GOFR7jqnQDvMN6LvbA/s0chjeOlInayQidq9D4rDWM
+cv4WXXSmtIfmf41IlwadSo+MGmhWnV9C2T67SwKQkQoF5oGLmUmaqNRATI2/s3G3
+JxcNrCLKQuk78JGPMEfuDpXG+NXIWWIRdYqgaMhDv8trpZzbaONgtjYd+AKVUg73
+KX/iN4hTN/R04yQioq62AfOm6IlB0xVXnKfnNVlUGXU6sn+rJXM3yB2QGTR8A0iJ
+PeGcKfC3Ow0gBlxdXeSTZ5lvCuqr8wu6lTA+56jR46vJCx7Qiv9wVrdipvrHTLkr
+Tdma2wRxQW3Y5wH4fF9R05VQQFnJYQ==
+=cwm4
+-----END PGP SIGNATURE-----
+
+--ant7aysj5kaa6okg--
