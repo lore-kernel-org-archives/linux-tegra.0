@@ -1,185 +1,156 @@
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011052.outbound.protection.outlook.com [52.101.62.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F713238C03;
-	Fri, 24 Oct 2025 06:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761288622; cv=fail; b=pfi13AL4PhxKDguJkzpZ5X1k+a45PU0sahW2li8PkDv88hMbgUstDIC28B1sYZhgqJ1YrpV8Mwk8tSFuqvOUt7IX/kwQS3Sijoj1t2SDC44/43EcfD4W1Wy/g4WNulN1P/ei4kibbHSqDculCefC/c6QjzP4cqUqvzVVh5X3FjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761288622; c=relaxed/simple;
-	bh=bP5bzMeZmPr77PBwi6FwaKl5iaGs6wkAXb+9bu+lHcw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TDiNkHrrtQyiBIh3kwFgGw573nFycb2nhUdQuxI24Ub/ogo7DVgFB+dTpcmzW4b5nWOXwy7flf6M1YJc58haOQSFwY+9B58CthE+CDG50IVQ6q9Aw4NKOKHbNQwJ6/VlBsxIuU4XWGibzze80LIM01/Jp4Q3808hTuEqcuoMSxc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QMEo89L2; arc=fail smtp.client-ip=52.101.62.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9CB2F99A5
+	for <linux-tegra@vger.kernel.org>; Fri, 24 Oct 2025 08:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761292863; cv=none; b=FZo6vFym122atfhT6L4IhdrsMa1loqCI5D9Qqe6gEanlErnB4Mng+9ki04u0TCjXqrRQ2bB+Og2SsaFgq2sNgJgLkM7pysNt5bE4Ijo+tpHbPzh46Ii11jZsFmOg7VPqWBkCBG2FEdd4pdEpjPC8bIFaJDqb71vmKoeyNn9Lkdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761292863; c=relaxed/simple;
+	bh=cVdGk421Yf5RFe9fH7sOkQsULYde7RppGYKbXWzQHtw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nWrNfMpUsbw7SDE8piKW7p/zA3KBhgrqEA92X0BjE/t1UYZQaJ/+mcKOM0QEGpE54/4Y2X+Zi0i+KBjv2HIcYnveL0j2E6Im6FdWA0CL2HpuTOAs/ZXQj8nhpRjo3tzOZfI+Xx/VFYrN/DwliefR2ny4gsmYaC3JMSGXO5Ite2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k23FOasF; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QMEo89L2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lxo3eX+svEO5hLfSPeKLJWoV067/l+ZPlTB0SM3O1yOesfBh60I97d3hP/QrswazF7zuxDA2QsyKzc8KllsRP+LwgoEcGOUJNV2+pJYWIG/AlcnvfWMt/cbEneIv/SAtcXNXVjxKXi8Y01qZGcL+uF7dOSRWQQ02DIhkBn1fC2K4cAIWsPufakLfz0V4ZSPd58r5mNmvjwx7YDnfAg5kIHmf9oFzIqUxbN/uX/bvDc0Y/mlLDQOB6Gf2e1gBNPSgSYrPkd9rCgocLp6DlYBlVfi1d+rZyhKpRlfOBnzf0buB1fAUGlyydAh1Q3XLj/4EhnYc3LYGQe5PdSwBIRuOpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0CvRxLI2G1Mhc9TmXhpgFtFA1HS58gZ9DdhEtVy/LRk=;
- b=xTSyHO8Z7kByGRjswfAb4GJTC/tXGy7huG/L5pmExyrlk6bOjJk7x/KK6GPqIcpbI2Shyj4p5tEOcfqKPO3qTNmsyHjEnv7+E4QCA4vLNtw4uzYI/RHmxUlxTjjJ+mYHmK5lUrIcBRePeor2QYxVz1YzBOjtx5HxKR68E+cso8HKgnN9PUacCfKsJtBqLvG1jkgFQ+Vp3hPPOjLpZucuEUQr5NJVHAOoZBi7hbaIVV0jC4BA5kB2mR3hBh9hqIUx/3XzJakeXC/zFvOuoQwT6jLN9Q6VmjYxegyr1/YVAVi3FsGzTbZ0ez3j5kptelhB7nS90ufvtUq+lq/AEfiQZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0CvRxLI2G1Mhc9TmXhpgFtFA1HS58gZ9DdhEtVy/LRk=;
- b=QMEo89L2aS6SEjZbw1KS08m0WB7gRGpYZ/oeAbtLl0UoYm75pbz0ZQ0dT+LtBSlPoOz5g8FaFkmqNTTq1qSYg1+SkY4labf6zGEdDLUnZDY5F8T+XBAeEve6gqpvU6nMqQByjvDWGjZeninsj6ltlWjApNrHBwgYhMlrfm8iZeXoEF4J9emcYI594/izWJKlopyTvYZf0Ja18MokzDnPRHjENRMBMp+Ck/di/DUXBqMxlCyR4nZH5vh3IkLk26shjVcgPGAZyhjwdtTvs8smljHOMX2LvIJOAJRCZH3pDnuDKXyF0NbIZ3s2plskzvWnokqqR089bdoq4CVbDkL0Tg==
-Received: from BN9PR03CA0794.namprd03.prod.outlook.com (2603:10b6:408:13f::19)
- by PH7PR12MB8780.namprd12.prod.outlook.com (2603:10b6:510:26b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 06:50:16 +0000
-Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
- (2603:10b6:408:13f:cafe::d5) by BN9PR03CA0794.outlook.office365.com
- (2603:10b6:408:13f::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Fri,
- 24 Oct 2025 06:50:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.0 via Frontend Transport; Fri, 24 Oct 2025 06:50:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Thu, 23 Oct
- 2025 23:50:04 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 23 Oct
- 2025 23:50:03 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 23 Oct 2025 23:50:01 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <alexandre.belloni@bootlin.com>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <andriy.shevchenko@linux.intel.com>,
-	<linux-rtc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Kartik Rajput <kkartik@nvidia.com>
-Subject: [PATCH v4 3/3] rtc: tegra: Replace deprecated SIMPLE_DEV_PM_OPS
-Date: Fri, 24 Oct 2025 12:19:52 +0530
-Message-ID: <20251024064952.775883-3-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251024064952.775883-1-kkartik@nvidia.com>
-References: <20251024064952.775883-1-kkartik@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k23FOasF"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-592ee9a16adso2877534e87.0
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Oct 2025 01:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761292859; x=1761897659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SN0QFqF27xT4ns3n2W4FJ/2iJtx5o8GT+ucPbu577ZQ=;
+        b=k23FOasF3T0ymdd7CHk04VQOlBv8a/JSCsbDuyoOJLlcrW6yyqLwrR2xebn4Ofm2gX
+         SASqLVeowL02/0fn5CI87DQBhSpVMD0cfHgLQj69uFg5yIO6t2GgZ9XMIvfqZnxj6Vld
+         CcvJJMDMhIUW+GUdOASzCfx+mXuiASdLBnAsrg070yy2ADRgFLI8XGKFzxc/1asYfdkM
+         gCTrbN+ohQ5m1BfKkuoGo5tkc4enVmkbExqimkvyQONziOEodadOG3w0gQmkdRbql7nq
+         HklLz5+QCRzxNpnblfK9kGzGTPs2Sus73A3UII7PrgOtLfggGC4JcZ5TQ1Lxw7rkwVb1
+         r73A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761292859; x=1761897659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SN0QFqF27xT4ns3n2W4FJ/2iJtx5o8GT+ucPbu577ZQ=;
+        b=NMjVAQvLNUFloJ6zXZCEiDvodBkoe0ACsb+YfF0sf5PLyjAIJuQSO+owadb/jGhcVK
+         xy9WRnvpewF4MDopfSi2vhLZR3yEtZfE4ge1LaesM/pknN87PT4vw0p/zlY8a6Wl5odV
+         b3eJBXUX6Nj+yKqfYAvn4qgFsL9e59g9BZ318JqLd4tdigaC0/wgOFv+MznYY6BwrsvP
+         OC/99/dGPxEytXyb64ism6bxQWQOi6ZwFsT5/MgZIV/RWv7lbJ3bejHL1CSj7+C4CV13
+         WTtCFtTSEqeoTyaTmDgFuEVHAfJ64HlcCoA1DWYOgzRjGV1tJsYXSPtje6JNC7dO4Vei
+         P6RA==
+X-Gm-Message-State: AOJu0YxL8PmpTNNmoLsoUX1F1Rz2Q5CSOsDuDL6uTu5DO+usZwOEL8Gt
+	W3Mwl5xQsRy96D89MEuCgMX70gr1l3g5vO71YbE+YKqk92qRvIG7i6/43biRDszD5Wtn7D3uMPe
+	/XgwvvlvYv+YQqz/ozNyY7xWbRQRSCCBhSdCu
+X-Gm-Gg: ASbGnctJZhAG2Slmey8euK+uBjPP71Rm33jPC4icYSnYpUNDpypkcByOUBQ0HePy2rX
+	7UWExk8+Zs1tE0VPAjTZLM9ZDpdb0fdxzFfGVwlNAN20ho6vqKZj9rFqBCNZ27/7wgrG4+30dAN
+	ak1YKEyFVFll3maeMck+zWbEt/5SrMkVVZabey+X6VscIm+Vd4z7Rmt6ShgibkfnITh5Qhwlcuz
+	w/PKMTvsXWJ5W2WZ6yR6C1iGEHiwavglQb4B8hF9GES11iXv++ALgcrj4JjHV+sAfORmYmTXLgt
+	DOuZZA==
+X-Google-Smtp-Source: AGHT+IFv3XIE5kQ+U86k41c0Hf5X3MvCrw3N0d3t/eVbiTwziWROCiPAn7mobz+4slBfolO2oPv9Y+rdAsxhkNUttx4=
+X-Received: by 2002:a05:6512:10d4:b0:592:f73f:1226 with SMTP id
+ 2adb3069b0e04-592f73f141dmr1453914e87.22.1761292858330; Fri, 24 Oct 2025
+ 01:00:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|PH7PR12MB8780:EE_
-X-MS-Office365-Filtering-Correlation-Id: db50a758-68e2-4a84-1d42-08de12c99685
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TXRNdKoQWu9eN7zdT9bClfQ8RyDYN/i3P7bAC3BzykpEZYfz7homP7SESIxF?=
- =?us-ascii?Q?AY+JKiuZ14cFGoaZfqa4UeRW1cVDLjA1XP7lSjK1Zn/KONnGB+8RqKz3G+rh?=
- =?us-ascii?Q?vI3+364DQzk4srjgrMNbdLuim2KnrVlGMkY7o1aTFAYCxpVNcQmMhvhT/OrP?=
- =?us-ascii?Q?UbcwCFRTilipBSKXZUPtKt5HkWmwFpyLsSCSlcZPKkn7zsGmLJcCNPNWeDeT?=
- =?us-ascii?Q?Em6ttXNhDcgvFJL8FE8ePMvmG1/TiTim7X2JZphpl6dLQ+X5zVj1OwQ2KUpt?=
- =?us-ascii?Q?kVIRYFe7r/owhNMlmwYF4OWsO1zBKl7m4vA6lqhauxDNjgk4UK2nE/DmaHCT?=
- =?us-ascii?Q?AMrHzdELFg/HVcaMREOicwbu5US/dvr6jvPzmLrQ4wuxIkIY92Y/tPRGo2ra?=
- =?us-ascii?Q?zCUR5CPXgGN6cGRwwoFc7gCN9xaS6x4nOstQBkG2G+3tGiR0Fcp0f6hoZ8PN?=
- =?us-ascii?Q?NTmpDTYqHT88AdL/HhLFtR5v0IB5KkwwwgNdTbDBeiBeS6RFiHfDIhxICNBi?=
- =?us-ascii?Q?dqNUiZS79bSUndZE2DzCxCTKQ4E5VGrRCKSxh2jmh46BxpDIjhhVC8EHbkao?=
- =?us-ascii?Q?oVBGx/V76xTQkpSn4L1RtfAt3UVrpUr0UBiBzPnY8xZ+nKok0Qwl7tR1JhIE?=
- =?us-ascii?Q?T5v6ub0sTUNWpJc6jWgT4xDucFaMDbk5zYnwHxEqH00Y9w2fG6CM7lNakgjQ?=
- =?us-ascii?Q?21YoN7MaQt0AlWD0RQxz+7f8VedkK6ZrPR7gbJdjeHX10FoMAlgjUmYKXU/G?=
- =?us-ascii?Q?hH19eC0uoGDneTVH6Jcr0drBcgApqZLkjgg0dZEnm7ldycd0Hj55ARqRhqD3?=
- =?us-ascii?Q?T1OzgRcWYWMPhxy7vyYT6qN8cGUZyoALlxGFzzW30Wh+RTdgl3atUspKXwMi?=
- =?us-ascii?Q?PXkA8RB0wM7PMseStNe3Sx6cq07TX/PzGaA9JXeZGFAFDOt0WifFK1YtPiAM?=
- =?us-ascii?Q?mOQQ5Ud1PadWIg0Hz86BeTppUz7oYXMuJgoQF5XzOefMQ85NR03xDcRf0pv1?=
- =?us-ascii?Q?X0tVV5nKjaTiRNz0G+YF5Dtt9sziJ2HTE/W1HZX+eQAkMZRFtBtWOgG2sWlT?=
- =?us-ascii?Q?WhWYiIf+5e8aGfH8Mi3jATzKg4WkFC9a1yCJL/ApOkZRZu4cmVr5dtEba6mA?=
- =?us-ascii?Q?ZfHIcaxvjOKUAycDzQrMeBjJJTxN/0jZFpQRQZQ4ryntUwJXei1wW+KA323E?=
- =?us-ascii?Q?x2mpFPoHL51YWahRuXDWAwakzIcctP2uVn7CBvl+MZWK/xriIOvbIEdLuzU5?=
- =?us-ascii?Q?0WmQtRQayNDBuvv1dbt86XGNGPQ7WNlx7tq1lemwJcHiP5MgUQ0AL9ExWl/9?=
- =?us-ascii?Q?DY+7aeBd1cT0chC+sQEkwd8PkqCNLzjp31ZfzexsGHA6lq3BiDJoALBYi+o3?=
- =?us-ascii?Q?nfSFnoL+1OkvXODyMPbrfFAQXt3F/8tqx1QZp1zs+1ihX6JqA1gAl1xClAT6?=
- =?us-ascii?Q?Y4KQiZ6ZGWUhrQFYfckljeoBgthONCzgRnNFWbRdVu5CPxqXQJvULmzZ+CiN?=
- =?us-ascii?Q?epy1v9r94pbqznptBaec2ZGfV4jDztIwkrtMakfUKJ90oFGLJCn6LOdjQ8IC?=
- =?us-ascii?Q?aMRwPGj3VY3HhuPMY6w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 06:50:15.4367
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: db50a758-68e2-4a84-1d42-08de12c99685
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06B.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8780
+References: <aPsafpMKVTxj20zL@stanley.mountain>
+In-Reply-To: <aPsafpMKVTxj20zL@stanley.mountain>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Fri, 24 Oct 2025 03:00:47 -0500
+X-Gm-Features: AS18NWCNvUwIJVrfyBfRxafGN95_hWE24yypXZMww66whdSRdfjiOlhJhaMQs2o
+Message-ID: <CALHNRZ8XnH64GCSFk21D7HPnbJ0Avr0Ds1SAPTPksohqd4dhjA@mail.gmail.com>
+Subject: Re: [bug report] cpufreq: tegra186: add OPP support and set bandwidth
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace deprecated SIMPLE_DEV_PM_OPS with DEFINE_SIMPLE_DEV_PM_OPS macro
-and use pm_sleep_ptr() to initialize pm_ops. This also allows us to drop
-the checks for CONFIG_PM_SLEEP.
+On Fri, Oct 24, 2025 at 1:19=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Hello Aaron Kling,
+>
+> Commit 71c46a6457e0 ("cpufreq: tegra186: add OPP support and set
+> bandwidth") from Oct 21, 2025 (linux-next), leads to the following
+> Smatch static checker warning:
+>
+>         drivers/cpufreq/tegra186-cpufreq.c:197 tegra186_cpufreq_init()
+>         error: uninitialized symbol 'freq_table'.
+>
+> drivers/cpufreq/tegra186-cpufreq.c
+>     174 static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+>     175 {
+>     176         struct tegra186_cpufreq_data *data =3D cpufreq_get_driver=
+_data();
+>     177         unsigned int cluster =3D data->cpus[policy->cpu].bpmp_clu=
+ster_id;
+>     178         struct cpufreq_frequency_table *freq_table;
+>     179         struct cpufreq_frequency_table *bpmp_lut;
+>     180         u32 cpu;
+>     181         int ret;
+>     182
+>     183         policy->cpuinfo.transition_latency =3D 300 * 1000;
+>     184         policy->driver_data =3D NULL;
+>     185
+>     186         /* set same policy for all cpus in a cluster */
+>     187         for (cpu =3D 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
+>     188                 if (data->cpus[cpu].bpmp_cluster_id =3D=3D cluste=
+r)
+>     189                         cpumask_set_cpu(cpu, policy->cpus);
+>     190         }
+>     191
+>     192         bpmp_lut =3D data->clusters[cluster].bpmp_lut;
+>     193
+>     194         if (data->icc_dram_bw_scaling) {
+>     195                 ret =3D tegra_cpufreq_init_cpufreq_table(policy, =
+bpmp_lut, &freq_table);
+>     196                 if (!ret) {
+> --> 197                         policy->freq_table =3D freq_table;
+>
+> tegra_cpufreq_init_cpufreq_table() will return zero if there are no
+> available opps.  The freq_table will be uninitialized in that case.
+> It's this path:
+>
+>           122          max_opps =3D dev_pm_opp_get_opp_count(cpu_dev);
+>           123          if (max_opps <=3D 0) {
+>           124                  dev_err(cpu_dev, "Failed to add OPPs\n");
+>           125                  return max_opps;
+>           126          }
+>
+>     198                         return 0;
+>     199                 }
+>     200         }
+>     201
+>     202         data->icc_dram_bw_scaling =3D false;
+>     203         policy->freq_table =3D bpmp_lut;
+>     204         pr_info("OPP tables missing from DT, EMC frequency scalin=
+g disabled\n");
+>     205
+>     206         return 0;
+>     207 }
+>
+> regards,
+> dan carpenter
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-Changes in v4:
-	* Updated commit subject.
----
- drivers/rtc/rtc-tegra.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+I'm looking at dev_pm_opp_of_add_table_indexed which gets called
+before dev_pm_opp_get_opp_count inside
+tegra_cpufreq_init_cpufreq_table(). It states that it will return
+-ENODATA if the opp table is empty, which would then return a negative
+value from tegra_cpufreq_init_cpufreq_table(), which gets handled as
+expected. Is there a way for opp count to be zero that would get past
+this? The code could be better, but I'm not sure there's an operable
+fail case here.
 
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index 9e4e9c88178f..528e32b7d101 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -340,7 +340,6 @@ static int tegra_rtc_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static int tegra_rtc_suspend(struct device *dev)
- {
- 	struct tegra_rtc_info *info = dev_get_drvdata(dev);
-@@ -378,9 +377,8 @@ static int tegra_rtc_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
--static SIMPLE_DEV_PM_OPS(tegra_rtc_pm_ops, tegra_rtc_suspend, tegra_rtc_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tegra_rtc_pm_ops, tegra_rtc_suspend, tegra_rtc_resume);
- 
- static void tegra_rtc_shutdown(struct platform_device *pdev)
- {
-@@ -395,7 +393,7 @@ static struct platform_driver tegra_rtc_driver = {
- 		.name = "tegra_rtc",
- 		.of_match_table = tegra_rtc_dt_match,
- 		.acpi_match_table = tegra_rtc_acpi_match,
--		.pm = &tegra_rtc_pm_ops,
-+		.pm = pm_sleep_ptr(&tegra_rtc_pm_ops),
- 	},
- };
- module_platform_driver(tegra_rtc_driver);
--- 
-2.43.0
+Also of note, the same effective flow exists in the tegra194 cpufreq
+driver, so if something does need to be fixed here, it should probably
+be applied there at the same time.
 
+Sincerely,
+Aaron
