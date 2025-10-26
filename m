@@ -1,133 +1,190 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9F91E491B
-	for <linux-tegra@vger.kernel.org>; Fri, 24 Oct 2025 17:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BFA21255B;
+	Sun, 26 Oct 2025 14:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761328011; cv=none; b=jCOESbwj1N+FcYr+BbWJq2wYHmxETEFDijP7jzTs5H4CQxp52YSxaMaNxBf1sWgjnNqNz2cFoPuCkz6BgFyjq/DrcTzSoUDBRnEi5iVi9YQtOx8nSqsCpDNmjxEKIgVkMdfbLP/cqjlwbjqbogObkAyO3l2gz5U+sqb0qw3MH9E=
+	t=1761490290; cv=none; b=Hd2lVBOJjqnI3w5bueF7hD2EIb+ZRmANr0wwlPSJVKnbXWTZobPj8+HcX3ocyEaleDfDLsDrrFvx0tae5eGFzSuyWX3rsXCkzFgRMMkXWyK8d7ldTbXHGKUJ4igwbTfFtBMcFjbzyZ/49i1EK4vWxOxcyJXuRQQrDtFeWRXbXZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761328011; c=relaxed/simple;
-	bh=K6zD0dyxA5X3dz6tOjR3SyTpnMhYisRl3NWIn5tca+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n9YHdy/iL+rXhUxMG2SBhbuAQyw+/9s4DzmU7UumFblmIMooGSgnVGH/7Kt31+Qgt9omBMh1ZsGenY63/CNwNoTiyWHtkuZX6uDKPWNXYXJpNzOBduCHjQ5jLkpfyuB+5faWuoDR41NcdYsd3iO0Kb7lX3N47qGljyQfvhpE/m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2PSQDOp; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761490290; c=relaxed/simple;
+	bh=4vTT0FyKPNjsqEerarHmYTUfCGgYxM2Ua+H89VPNHns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gpuG/Oy7sJ5Cg4oW6iHtu49h0VyloNtQSL8etdz1cgZz4V2n8yholrnTgn+tETvf4cM6lKI0iceIZGh6f938eu1DV5Uu8sAcsCghmKJblho9fKT6mAkbxvYsHG6fkvyYXIrLPOT+cEk+EK/IXTTdKv/vtblGVxGK6CnmJZU89ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdfKS5E9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2PSQDOp"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-592fd97c03eso1040206e87.1
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Oct 2025 10:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761328007; x=1761932807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K6zD0dyxA5X3dz6tOjR3SyTpnMhYisRl3NWIn5tca+s=;
-        b=A2PSQDOpNJJx+gPryK0V8miuxc1723Fpmx3o+U/zSdlIcTwWUtXDwgH7ZWmhmUq5I+
-         DlpVST5ir0ElBFlCd67Uuw1KeeHSQqDO7wtG2cHY/tonBJXAERUmUrGmgIxzuyrX6mFI
-         2xGgLdDsez5UBtAA6Vvpha2JLhHbZXfiSA+hRpVs5na1g5pJg5R9T1T/omVF3IIsb1A4
-         oCfHVqFwS/pDDC4QNEbV73yBSwBkD9ctbTSsgGMZtyl/BBe/mB5KTR2irML1atFuvFcs
-         ilaWNzm+StFZ7b+BevAqZcIV3pebu5SCenPbQ2wtE7tn4D9wtMkRV+zVDFQ8FkEo61Wf
-         4bUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761328007; x=1761932807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K6zD0dyxA5X3dz6tOjR3SyTpnMhYisRl3NWIn5tca+s=;
-        b=VRzUsazR44TYe1nzbaOHUYBFyHgVbUA4EWqvCBw3LwsYCHeZVUXnLAGtQIG/0jFy3a
-         OMKcz/n1OgoDJ6FWMYPEVFgCS8Uh+R55WhFp2TEjWARbQ4n8CO2kJMdjJlJScraUu7Nj
-         PuGu6yakvVumUxrb7H5+Ey2sv/Sz3Lu42EtUrdcx+YO24nspQ6zpKz+Yt9rUSYYhEbrW
-         WFlkQbblcqmJlFsoHI1mifsIuSm2wIttVlBbPprVn2cZUE2L3rjpFe/Mw9HNJdeHtj6f
-         ru2CDKs3mlSAK8BIcGsA+RLFuXwl1X1YTzy13JPSvsYBI6hRzFsQrS3uQisOh8D1FrQZ
-         yDvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlgi+ZqIxf79SiEMhKG0VAC1vPGG3MKSc6mUvzB22Fu7zZKgz0DFLc8PK3ZK4RyqDOFj1ZO4Viw6fWFw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+mflHGs9GeXHl4Aq6kinq033PTgM1ancqbyOJDtSe3zcWbrnS
-	OPMz8yO9woIjWE5cEydEOe9tWfFKYwIV/wH45o+4uDEUCBWYxNnh+f1WPIIkOUrj7oKO1923c52
-	i0rJy6lxyugKo8AWfbsDEvMQAWhC5BY4=
-X-Gm-Gg: ASbGnctKz0s0X/swpslnqK9Bb3Cgcij1IdGflov33k3sqtzZnZkzhLYw1pHLJU0uilL
-	xQWKtSbZCquUVomfQKf4QQC4CclQe3sHq+7wFau/ejGrhnH5h45ZO0+Qqp74WUyJbm36p5Nub1z
-	VMnBYwhmscr8YR68x92kV+LxMISP4+3E7H3gu2SyEGg0tzhXS2DUxde9RKJWdNJdjNWvhZSyzYJ
-	6pMQ5YnLjdcEtZ1xN9r9iQTMYoQvI51l9t+YrRVmp/jDJS/95aPU6+OTXVb
-X-Google-Smtp-Source: AGHT+IEKMTxbFcAqJJs3pqOOQTiDsnpDKsflXjiTlx5yaR9ZYhjteOY9GsHf3z7fyVR7qJSJg+QljfP1XDamHWUqjvs=
-X-Received: by 2002:a05:6512:b84:b0:592:f9e6:a617 with SMTP id
- 2adb3069b0e04-592f9e6a809mr1988690e87.31.1761328006209; Fri, 24 Oct 2025
- 10:46:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdfKS5E9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD95C116B1;
+	Sun, 26 Oct 2025 14:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761490290;
+	bh=4vTT0FyKPNjsqEerarHmYTUfCGgYxM2Ua+H89VPNHns=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KdfKS5E9PXjN6nnjBxfmHtAy/tzt60/Ds1aiwHVyI6Zgofqy/iRpFzycEshW3DEDM
+	 jA5YUwo9IpOeX/JfnP/EOploPLAA7f1nOP51Feshiqq1HH/odTqbNKAIxdrJajljXK
+	 M9H+nJshBrrJfffCjuUUSphJobBEYbvudre4du63NDPOlSN8XRCTLtdJA1ZPwL2z3P
+	 YhcSzFNXnSx7p34EvHCT0fnAPfJsOKmm472p6rw8hKT1hZyJT4FvBCPiarATLCn2gx
+	 BehaOw8JqbbGMHycaMaYeDzp1Lz4GvbvuR0WbQPntD4Zc/Lhzunr9NnJkbyVAArMYl
+	 3Q+nT0PvI6zzw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Aaron Kling <webgeek1234@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	rafael@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-5.15] cpufreq: tegra186: Initialize all cores to max frequencies
+Date: Sun, 26 Oct 2025 10:49:20 -0400
+Message-ID: <20251026144958.26750-42-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251026144958.26750-1-sashal@kernel.org>
+References: <20251026144958.26750-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
- <20250803-p3450-mts-bug-v2-1-6307125408c3@gmail.com> <8ed69b4c-f656-47fa-a247-1c8d94dcc35d@nvidia.com>
-In-Reply-To: <8ed69b4c-f656-47fa-a247-1c8d94dcc35d@nvidia.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Fri, 24 Oct 2025 12:46:33 -0500
-X-Gm-Features: AS18NWB0X2kanA5C8YSvXzeNGUy0EwS1NgCtJrnfR3pQ1y9nZ6F33BdAn_oIim8
-Message-ID: <CALHNRZ86NjcNJhRJd+jtD_7fRTFJ2szPFAAN3HSad_xwnVrHWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] arm64: tegra: Add reserved-memory node for P3450
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025 at 11:16=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> =
-wrote:
->
->
-> On 04/08/2025 04:14, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > The Tegra210 L4T bootloader ram training will corrupt the in-ram kernel
-> > dt if no reserved-memory node exists. This prevents said bootloader fro=
-m
-> > being able to boot a kernel without this node, unless a chainloaded
-> > bootloader loads the dt. Add the node to eliminate the requirement for
-> > extra boot stages.
->
-> I test this platform and don't see any problems. I assume that this
-> would prevent the board from booting.
->
-> What bootloader are you using? Is this from a particular L4T release?
+[ Upstream commit ba6018929165fc914c665f071f8e8cdbac844a49 ]
 
-Please see the longer description of my setup on the revision v1 patch
-here [0]. I am specifically using the cboot prebuilt from L4T r32.6.1
-as it is the last version to support usb input in the fastboot menu
-[1]. The rest of the boot stack is from L4T r32.7.6. The partition
-layout xml is here [2], which requires setting odmdata bit 11 to allow
-reading bootloader partitions off the sdcard. There is no u-boot
-involved, only cboot.
+During initialization, the EDVD_COREx_VOLT_FREQ registers for some cores
+are still at reset values and not reflecting the actual frequency. This
+causes get calls to fail. Set all cores to their respective max
+frequency during probe to initialize the registers to working values.
 
-I've had another report of the same issue, on a pure L4T r32.7.6 boot
-stack as well. The Nvidia downstream u-boot won't copy
-external-memory-controller nodes, namely the memory-region ones, from
-the cboot dtb to the kernel dtb unless the phandles match. Nv-tegra
-gitles isn't working right now, so I can't link directly, but on
-branch l4t/l4t-r32.7.6-v2020.04, file arch/arm/mach-tegra/dt-edit.c,
-see line 31. Which means that such only works if u-boot destination
-FDT is the downstream dtb. Using a mainline dtb causes the
-memory-region dt tables to not be available, thus the emc kernel
-driver fails to probe and emc clock stays stuck at 204MHz on
-p3450/p3541. Hence the user from the report trying to cut u-boot out
-of the mix in order to get emc scaling. And then hit this issue.
+Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-You were able to boot with a mainline dtb on the DTB partition and a
-kernel on LNX, without u-boot and without this change? I have not been
-able to do this. The boot flow will get past nvtboot_cpu, but falls
-apart inside cboot due to the corrupted in-ram dtb, never getting to
-kernel logs.
+LLM Generated explanations, may be completely bogus:
 
-Aaron
+YES
+- `tegra186_cpufreq_get()` reads the EDVD register for a policy’s lead
+  CPU and returns 0 when the register is still at its reset value
+  (`drivers/cpufreq/tegra186-cpufreq.c:120-126`); the cpufreq core
+  treats a zero return as fatal and tears down the policy
+  (`drivers/cpufreq/cpufreq.c:1486-1492`), so the driver currently fails
+  to probe on systems where some cores never had their EDVD register
+  programmed by firmware.
+- The patch teaches `init_vhint_table()` to hand the caller the number
+  of valid operating points and asserts that at least one exists
+  (`drivers/cpufreq/tegra186-cpufreq.c:178-193` together with the new
+  check at `259-266`), so we know which table entry corresponds to the
+  highest valid frequency.
+- During probe the driver now programs every CPU in each cluster with
+  the highest frequency/voltage tuple from the freshly built table
+  (`drivers/cpufreq/tegra186-cpufreq.c:268-273`). This guarantees those
+  EDVD registers hold a non-zero, valid state before cpufreq asks for
+  the current rate, unblocking registration while staying in-spec
+  because the value comes directly from the board’s own V/F table.
+- The change is tightly scoped to the Tegra186 cpufreq driver, relies
+  only on data already returned by BPMP, and doesn’t alter core
+  interfaces; once cpufreq is up, the existing `set_target` path
+  continues to broadcast every new selection to all CPUs in the policy
+  (`drivers/cpufreq/tegra186-cpufreq.c:100-103`), so there’s no new
+  long-term behaviour difference beyond the one-time initialization
+  write.
+- Risk is low: the only observable effect is a brief switch to a table-
+  defined maximum frequency during probe, which is within the validated
+  OPP set and quickly superseded by the governor, whereas the unfixed
+  bug leaves the entire cpufreq subsystem unusable on affected Tegra186
+  systems.
 
-[0] https://lore.kernel.org/all/CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8=
-Jg_3itwQ@mail.gmail.com/
-[1] https://forums.developer.nvidia.com/t/cboot-xusb-support-broken-since-r=
-32-7-1/243534
-[2] https://github.com/LineageOS/android_device_nvidia_porg/blob/f52038d326=
-ef67002185dbe04e9ff1070db2be4c/flash_package/flash_android_t210_max-spi_sd_=
-p3448.xml
+ drivers/cpufreq/tegra186-cpufreq.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index 6c394b429b618..bd94beebc4cc2 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -138,13 +138,14 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
+ 
+ static struct cpufreq_frequency_table *init_vhint_table(
+ 	struct platform_device *pdev, struct tegra_bpmp *bpmp,
+-	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id)
++	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
++	int *num_rates)
+ {
+ 	struct cpufreq_frequency_table *table;
+ 	struct mrq_cpu_vhint_request req;
+ 	struct tegra_bpmp_message msg;
+ 	struct cpu_vhint_data *data;
+-	int err, i, j, num_rates = 0;
++	int err, i, j;
+ 	dma_addr_t phys;
+ 	void *virt;
+ 
+@@ -174,6 +175,7 @@ static struct cpufreq_frequency_table *init_vhint_table(
+ 		goto free;
+ 	}
+ 
++	*num_rates = 0;
+ 	for (i = data->vfloor; i <= data->vceil; i++) {
+ 		u16 ndiv = data->ndiv[i];
+ 
+@@ -184,10 +186,10 @@ static struct cpufreq_frequency_table *init_vhint_table(
+ 		if (i > 0 && ndiv == data->ndiv[i - 1])
+ 			continue;
+ 
+-		num_rates++;
++		(*num_rates)++;
+ 	}
+ 
+-	table = devm_kcalloc(&pdev->dev, num_rates + 1, sizeof(*table),
++	table = devm_kcalloc(&pdev->dev, *num_rates + 1, sizeof(*table),
+ 			     GFP_KERNEL);
+ 	if (!table) {
+ 		table = ERR_PTR(-ENOMEM);
+@@ -229,7 +231,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	struct tegra186_cpufreq_data *data;
+ 	struct tegra_bpmp *bpmp;
+-	unsigned int i = 0, err;
++	unsigned int i = 0, err, edvd_offset;
++	int num_rates = 0;
++	u32 edvd_val, cpu;
+ 
+ 	data = devm_kzalloc(&pdev->dev,
+ 			    struct_size(data, clusters, TEGRA186_NUM_CLUSTERS),
+@@ -252,10 +256,21 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+ 	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
+ 		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
+ 
+-		cluster->table = init_vhint_table(pdev, bpmp, cluster, i);
++		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &num_rates);
+ 		if (IS_ERR(cluster->table)) {
+ 			err = PTR_ERR(cluster->table);
+ 			goto put_bpmp;
++		} else if (!num_rates) {
++			err = -EINVAL;
++			goto put_bpmp;
++		}
++
++		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
++			if (data->cpus[cpu].bpmp_cluster_id == i) {
++				edvd_val = cluster->table[num_rates - 1].driver_data;
++				edvd_offset = data->cpus[cpu].edvd_offset;
++				writel(edvd_val, data->regs + edvd_offset);
++			}
+ 		}
+ 	}
+ 
+-- 
+2.51.0
+
