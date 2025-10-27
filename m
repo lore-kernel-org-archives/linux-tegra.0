@@ -1,112 +1,112 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D7D315D24
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 08:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC9C2E8884;
+	Mon, 27 Oct 2025 10:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554737; cv=none; b=Es7/Xg3KJFts/d3A3njllEHrkI5oTT1M20flOi7ENgKmApmKHIOANU+ZXjsCyQ3dU4r2XxUB2X2Kgp723av0/+bLiyBPx+sIQZINAsdR8+MvIzWpBrFecD0Ry6wJcOoiy52zkotzuw5uptsFxBA9yGusgju4bcrvKq/cT9SlUCY=
+	t=1761562174; cv=none; b=F5oX4i6bEbV12c/6Hv1b8SG4IiZUb75SMKPLpDYA9FQKjx//bFMutWfJ+UyZjvQBMiJhdwJGmZ1mx5doJB6ZUycZYk8jZ7nByttojLIwn1Uj8jYTP/6vJr2mBO8+EmpkIsagHmbYxrQh8r/MUg/mPNy6OET38ssGZw9BXN94tdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554737; c=relaxed/simple;
-	bh=ly8Hr2ywwPol+OOs8cEqDSSykysMh6TpsVP/PGQVACo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SjDUc5sVT8WXlsUHSR3wxa6tkfuH1ZyJiEHoWL7gocWJCmgrEb5EjUB7wy4U8klBP7THvAqkxbVor6eHkLNZhvD44GqOXHN/ikIZNn2QUUhxEntKGygBD46noA8ET00VkSDho5+gEMnWjZOMJzLQh+6j9zKhZvX1vqjGij/Cb5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrWhnroA; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761562174; c=relaxed/simple;
+	bh=ds3tFzdpNFJIENeA4KW9YUiHVknWTfQMfzSY73Vo7nI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PuFGkYb8pSV7sVU5YaAY/Ig14OzpLcFgJuKIj440iXvhsqIrWISqbWABogzQIGSioN10pjjz83TDTJ9jbJMnsxqsZy2jdpAVaAWe+pMY7UvS/bSvGIQDeh7Kwi55UxrPjY+2rf7H1bWnsgQ7H3HC42Ai1ztMjS5HT94M1uDh3qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxG0oVi0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrWhnroA"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a28c7e3577so1939667b3a.1
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 01:45:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761554735; x=1762159535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DU0KscrGihyZoXJMago0IWkiGUoidqfLwL76Wss1j/4=;
-        b=QrWhnroAXJlnaAQd1X6cggmCZDoDH7RHA8A2ZmAoKtPCphlb9vz9UPcqaf1dHcGEo1
-         fjEyZOPDELWIcVFSluUH8SiqDgmyUUGyZohlD/cb+VfG718TavzbW+UiBx0piw7LqOpm
-         lEKAnlDOtCGB3M+Ul6GjA31wW+TjZZPJCtFo0ilYBo0gbb7aeClVajhz0vFXGbqNYyKU
-         x0wiWwVS4NxmguXDKcv5ZegdZLHLriCfcMNEuyI9+qVaPzeURGMs80Kc50w+B3j+BoCF
-         WVooy1brKc0tyMO0GO/hXmO/ZW+NiNp4p1sG4OlcM/VT83r37bLNxrp5CqnzXkc5OIKG
-         VcMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761554735; x=1762159535;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DU0KscrGihyZoXJMago0IWkiGUoidqfLwL76Wss1j/4=;
-        b=YL8QkBNNc+qabCYu7JApTziFP1NPH7pd5j4WkxKgSF1pORyIo157tILqKNUYM9hbvy
-         b2L4Ag2vNny5Ja4VixWP8Ucn5FnfHyHibyMcRnyxvYGC2ZATojtvjFfFb5i31cNb4Vx1
-         ezKZ3dvznXbxPTTHfzo6eSkYqS9pYZrW7bmQUh7S5pVDYTjYJk+CWysZuRkewRZdxWcM
-         moOVuEaoQkZRQFPzI0zcPgsP1LGLOpXAQYzYuzFo2ywtL9ccH1wvlNsO809pzBhXmYbj
-         0b426rIeSWUlxkUmUjzWOHl7cHZ609CcWR0HY0hzBKzsMpA/pY4IPvyXTXiGEl/I4ID0
-         l8Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoZUgSS01XS0BE+qxcm5Iv4IKc4fp5vyWMJU9UbdqvMFSHZ85C+Dv/znf9qH7uk5l+VEmhWgFDiTcZGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCh0+MRGtpe0usvv72gIDPDJ8PJmHLq2b6D87mFfIkAZ/r1RkR
-	CEzi9CZxHUs1dsxuh42ec4EXjyVp0Rf6glvmK8g2lGVUdVXArCJyM2un
-X-Gm-Gg: ASbGncsZdgI3NbuDu/jaMQIkqvxvhlSsLFiOhJf237RrrPx9nSPxYShQpOuZKlr7mnP
-	aH1MIiqnqbh3IfVZe5773s8I53i+XUocBGhDsBJOWp61iRNQJfsxDNDNUXB9z3/tezSxqOYpJUc
-	OZ29iNukrCJzOpN1BE6hnXSlmYTKDBGFK7TN1WzJspo0Mro3n67i64GDbkEYppH3b0z9JPvM/Of
-	NynZY5pgx4rJ5Nxj/FGOhE0oS1bHRjTx1Ywm6Mo7XbKBS807pLCUX8PtuWpyR1GVsPuuYlpDFGb
-	3YHOQyNboMe5w6JIc/pEcviV3BYbnWOfsCOTWEfXvvnOprXIruA/Cw1h8XdsEW1UAZq4dgQLFth
-	hoFTU2vRRjYqojFIzkLznwUeOvccavM2yfq0nFNCND4ZW4iRS1w2wL3bPx6nb4jy9dMhPETccW+
-	v/mrPtPbLs0mWB22BdNoZzV57CHSWQzPlS
-X-Google-Smtp-Source: AGHT+IFlSNyx/m40xKYC6OWXlqmRmI+SM7/L6vothAHVO/hXw1MzPva0O5TbGE0SIfNFUBdqckDGkQ==
-X-Received: by 2002:a05:6a00:2d1d:b0:7a2:73a9:96c with SMTP id d2e1a72fcca58-7a273a90b4cmr13811317b3a.3.1761554735303;
-        Mon, 27 Oct 2025 01:45:35 -0700 (PDT)
-Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41404dddcsm7300209b3a.38.2025.10.27.01.45.31
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 27 Oct 2025 01:45:34 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/tegra: Fix reference count leak in tegra_dc_couple
-Date: Mon, 27 Oct 2025 16:45:18 +0800
-Message-Id: <20251027084519.80009-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxG0oVi0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66829C4CEF1;
+	Mon, 27 Oct 2025 10:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761562173;
+	bh=ds3tFzdpNFJIENeA4KW9YUiHVknWTfQMfzSY73Vo7nI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SxG0oVi0B8DRNG1Kv3B1k/dfw5r7y9PcS+qmKfijxTONDsvD96ZmF/PciaXkYMQTo
+	 p4k6iIghcmXdnya7/Q5wR/DZvHvr7O6Vy4sz+18LWTUjiPjz1WYghPgvbrQHtxYnq5
+	 19RX19sLvQisT3xecezT1xa43rnmDErfE8w2mUVlFOd23Dh+vMra7L+gGYuWO05Nv2
+	 +QDD1nAQhtLE6Fg2Cp0w7R5W6KFTRI0RoYCb1g/WAVIphVUa2RW7aataWyve8YPkQA
+	 rf98jYXb7pY2/J00m2THr8KXUo27pa42LzKFxEMI/ZEBd2P7wEzPQXj9GGPj+hSZa2
+	 bT33QFrgMPu6A==
+Message-ID: <c6eb8ad7-acb4-4218-9293-7ee532be56e9@kernel.org>
+Date: Mon, 27 Oct 2025 11:49:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] memory: tegra: Support EMC dfs on
+ Tegra186/Tegra194
+To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20251021-tegra186-icc-p2-v3-0-1a50b526dd40@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251021-tegra186-icc-p2-v3-0-1a50b526dd40@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The driver_find_device() function returns a device with its reference
-count incremented. The caller is responsible for calling put_device()
-to release this reference when done. Fix this leak by adding the missing
-put_device() call.
+On 22/10/2025 03:09, Aaron Kling via B4 Relay wrote:
+> This series borrows the concept used on Tegra234 to scale EMC based on
+> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+> bpmp on those archs does not support bandwidth manager, so the scaling
+> iteself is handled similar to how Tegra124 currently works.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 
-Found via static analysis.
 
-Fixes: f68ba6912bd2 ("drm/tegra: dc: Link DC1 to DC0 on Tegra20")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/gpu/drm/tegra/dc.c | 1 +
- 1 file changed, 1 insertion(+)
+Does not apply, please check, rebase and resend.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 59d5c1ba145a..6c84bd69b11f 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -3148,6 +3148,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
- 		dc->client.parent = &parent->client;
- 
- 		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
-+		put_device(companion);
- 	}
- 
- 	return 0;
--- 
-2.39.5 (Apple Git-154)
+Patch failed at 0003 memory: tegra186-emc: Support non-bpmp icc scaling
+error: patch failed: drivers/memory/tegra/tegra186-emc.c:217
+error: drivers/memory/tegra/tegra186-emc.c: patch does not apply
 
+
+Best regards,
+Krzysztof
