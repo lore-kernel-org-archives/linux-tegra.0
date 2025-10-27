@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC9C2E8884;
-	Mon, 27 Oct 2025 10:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE85366;
+	Mon, 27 Oct 2025 10:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761562174; cv=none; b=F5oX4i6bEbV12c/6Hv1b8SG4IiZUb75SMKPLpDYA9FQKjx//bFMutWfJ+UyZjvQBMiJhdwJGmZ1mx5doJB6ZUycZYk8jZ7nByttojLIwn1Uj8jYTP/6vJr2mBO8+EmpkIsagHmbYxrQh8r/MUg/mPNy6OET38ssGZw9BXN94tdI=
+	t=1761562333; cv=none; b=tSaB1C/cmOV8EaSDUbyzfwCwldl+9gMJBNJQing0baXNgQt7K6v8asrAdbrldb6UxvH+uvH9FHcgZp5qbfEeNTio+FQM/jWVXAKPRoQBZaf1SvB8Vg/RnNLzMvuPnPKcgUw0or3t2mDoYDQHjUl0w2gDIJrftnFB7DyM5VuSRfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761562174; c=relaxed/simple;
-	bh=ds3tFzdpNFJIENeA4KW9YUiHVknWTfQMfzSY73Vo7nI=;
+	s=arc-20240116; t=1761562333; c=relaxed/simple;
+	bh=HIjSTyXt12acBQwYX0ZEz6fYiPHKI2kjDtgMfgJme6k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PuFGkYb8pSV7sVU5YaAY/Ig14OzpLcFgJuKIj440iXvhsqIrWISqbWABogzQIGSioN10pjjz83TDTJ9jbJMnsxqsZy2jdpAVaAWe+pMY7UvS/bSvGIQDeh7Kwi55UxrPjY+2rf7H1bWnsgQ7H3HC42Ai1ztMjS5HT94M1uDh3qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxG0oVi0; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EkTbeFtOp5odwkxJYl+gBHeWL92L68h9fl86V2K3O4njVuj3AtJTVXg9khduxflxPH4LnFJH2CfUXfKKDCpwDCB51csC3itUNXD1iQOk6Nr71mohoQvPnSD2Jybe+4UQ+SboDz6Qh8goi8x0wQ9AePnZ1XzCwv6RFw9zqoejHUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G842NkKW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxG0oVi0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66829C4CEF1;
-	Mon, 27 Oct 2025 10:49:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G842NkKW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 649EDC4CEF1;
+	Mon, 27 Oct 2025 10:52:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761562173;
-	bh=ds3tFzdpNFJIENeA4KW9YUiHVknWTfQMfzSY73Vo7nI=;
+	s=k20201202; t=1761562332;
+	bh=HIjSTyXt12acBQwYX0ZEz6fYiPHKI2kjDtgMfgJme6k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SxG0oVi0B8DRNG1Kv3B1k/dfw5r7y9PcS+qmKfijxTONDsvD96ZmF/PciaXkYMQTo
-	 p4k6iIghcmXdnya7/Q5wR/DZvHvr7O6Vy4sz+18LWTUjiPjz1WYghPgvbrQHtxYnq5
-	 19RX19sLvQisT3xecezT1xa43rnmDErfE8w2mUVlFOd23Dh+vMra7L+gGYuWO05Nv2
-	 +QDD1nAQhtLE6Fg2Cp0w7R5W6KFTRI0RoYCb1g/WAVIphVUa2RW7aataWyve8YPkQA
-	 rf98jYXb7pY2/J00m2THr8KXUo27pa42LzKFxEMI/ZEBd2P7wEzPQXj9GGPj+hSZa2
-	 bT33QFrgMPu6A==
-Message-ID: <c6eb8ad7-acb4-4218-9293-7ee532be56e9@kernel.org>
-Date: Mon, 27 Oct 2025 11:49:29 +0100
+	b=G842NkKWggV8UfO2KU+qcnibQ8PrdyA4MmBOo2QaUQAQ66z/Kr5FE7VTG3knnNSyS
+	 Mt7b7aXdZUCjQ+Pt3vQ3ZjtmR8Pv9VywYO7aXfH1d0Hx6dysBEAmnVeqSWOtx3e1kE
+	 hm3MFLxwEpm7khiLrfBhHZpcUDx+bYlQQVLQvoGTrMwhY3k1qu2TOL9XzSglFzkgMR
+	 z6q5A170JqllXnlA1AAdyxWFSr2E/C8n/8NczFanmI20ygotnN6Yl1kNt4ssy7TNlv
+	 hZzpbJNzj0N6Bm4Te5AUi/eYi/ZUb3SnWYWCw7Es4DEQXKqtP2c/SOzte1oV+4IkiI
+	 BoF+ivQWt0a6w==
+Message-ID: <0c86e790-84cc-4d4a-b12d-3876f2846073@kernel.org>
+Date: Mon, 27 Oct 2025 11:52:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,14 +35,11 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] memory: tegra: Support EMC dfs on
- Tegra186/Tegra194
-To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20251021-tegra186-icc-p2-v3-0-1a50b526dd40@gmail.com>
+Subject: Re: [PATCH v5] memory: tegra210: Support interconnect framework
+To: webgeek1234@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20251021-t210-actmon-p2-v5-1-a07dc70e948d@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,24 +85,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251021-tegra186-icc-p2-v3-0-1a50b526dd40@gmail.com>
+In-Reply-To: <20251021-t210-actmon-p2-v5-1-a07dc70e948d@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/10/2025 03:09, Aaron Kling via B4 Relay wrote:
-> This series borrows the concept used on Tegra234 to scale EMC based on
-> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
-> bpmp on those archs does not support bandwidth manager, so the scaling
-> iteself is handled similar to how Tegra124 currently works.
+On 22/10/2025 05:10, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> This makes mc and emc interconnect providers and allows for dynamic
+> memory clock scaling.
 > 
 > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v5:
+> - Split series
+> - Link to v4: https://lore.kernel.org/r/20250923-t210-actmon-v4-0-442d1eb6377c@gmail.com
+> 
 
 
-Does not apply, please check, rebase and resend.
+Tried to apply... and see you did not run checkpatch.
 
-Patch failed at 0003 memory: tegra186-emc: Support non-bpmp icc scaling
-error: patch failed: drivers/memory/tegra/tegra186-emc.c:217
-error: drivers/memory/tegra/tegra186-emc.c: patch does not apply
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
 
 Best regards,
