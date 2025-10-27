@@ -1,73 +1,74 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A573F313554
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 16:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B363831355C
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 16:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582747; cv=none; b=tLUaKfhKL7+IbIb+mN3IIP3PS76zPvTugwUS5dFevkOFPygSDA5GEu9tMtp7APbTdP6DiHxWwyu/LtwdCicEV6LgT4liY+MV5224N1gwhpMWHcm7JSSbsDlXAJ4CRh7Aii5SHOY80YJmt6xdPFMxZGYfkN9vR4pR2hONcZvapWI=
+	t=1761583812; cv=none; b=cEmsfgHDYr6JubfPCqyjYXo/rS84GFDj5wOlSgWKuNFOgV0OduW/2H7w8csY0Ik4TM0zXQOuiYvpR55x/3WgG+J7bFCP1NMlAQPkOrgprgiF9IJ+dRPvrgSSV5PWnp8Wtm3MoaI1s/UAwvp3KGOt60l5PjhRFPE4hJZKZKr6wsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582747; c=relaxed/simple;
-	bh=YHmmpySQqjP83Ou3NaqWaXxraBHJUZ+AF544Z54Pr3g=;
+	s=arc-20240116; t=1761583812; c=relaxed/simple;
+	bh=f9gyr+50VXCzFRqzh5h2Eocs+kwwPbsfidV5wgRt5Ys=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BOCh2jlFHSh9ZJn0/oZ2Uo4ItpYYVd3H+FxP374/z/xpm/omqBDIlQ1O0rDc6UoyUNcvFq9BnFjFLCM3dxwNQrA11dfiModePIWDLfKZL5A75g6XrExlrv0ylEdD6BcD3nQNjJxTUN56YqxNDQ8Ll6qYx5+75Tupc6Sxuz6fSXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PbvFkYaG; arc=none smtp.client-ip=209.85.221.53
+	 To:Cc:Content-Type; b=thOVdm6Dyjtfs2QrdmSim3E8lEzN5Za2o0UTD55ZOjckO8+FKrFGip40ROevgYwN4QOWb7TzqjxFjaAipeo+fW6G8kHl5nOlsOj+dS3muJU2V9ekdp8hL9u3+nAQKK5C51cLDcEvr9dkZspdKGTermCgVBal8jcrmQHjqFzg3gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ff/jTan1; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbvFkYaG"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-421851bcb25so3017461f8f.2
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 09:32:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ff/jTan1"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4270491e9easo4045170f8f.2
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 09:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761582743; x=1762187543; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761583809; x=1762188609; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PF5KpKL469fVTXgAkVCiESe8ar89l86aILwHhnCjqVw=;
-        b=PbvFkYaGA7Z6Wb9/LpXRUApUO5DIjC5IBTppAVFG6iAnyVfya9NXblRa9jIj3TLmp+
-         I3Dq+zawvX8EjPDxb7YoDpgwZzm7Fgg7b5rQ0ftCxXAziFH7DcHaF5cVRY4tbBccnkft
-         Fo1nYCZCRRe9M0ujzLkf6lFO6R0qd7hlMQvHCBkr8oSFhHnKznoe5sghdBS1zRb+H+k+
-         C3cBPPKZZ881+up0ZHxHzbViU11EP4izv+0TrqNkLJ5rahbiCCWvzywzL7ntdPVxjHwo
-         QzbVNxytBPw6OOaXmDEF1yr47aBD4MM0xgzoV1uUwjr1UOJ2IevpSbTH77LJe7ZY/LNW
-         Wnfg==
+        bh=llXiWHJLf2syx3blZo0CXJGIyiry1LJYTByzcLi8/h0=;
+        b=ff/jTan1lkgWUNpwMGoLzGON5a2N4mfXOajPZajkFvH4cHFDFH+FASZNEuimReQO6t
+         h0XaH+V4MjEnkv28OfQ38Tvg38vlkJkkq4RD92MGqt/zQzWhEXU9Bnvg1i80vEXdEdfA
+         cPku+D2MAL+xeB9+xGkOr3NIEkdA9WjcUHW/zNNC01W5n8bMhqxRohJO2bTq8sDwdKg/
+         TP51AnWBRMZtN4dZo+3KFvGCIG8D3ae6YO8rH91kqj9XOGkFJFFhWjSakU6jYCOY5FpC
+         zC7XbRmD/bv7A9azMVoI1YHeqMiVCcNUVfG5RDf6ZRtAqWq+FH1HTRInCvxfxnB2DpZy
+         38FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761582743; x=1762187543;
+        d=1e100.net; s=20230601; t=1761583809; x=1762188609;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PF5KpKL469fVTXgAkVCiESe8ar89l86aILwHhnCjqVw=;
-        b=TNn2zxZS4EKyF7uD6vQokKduRP0zDJE3DnR1hFqg0l3vsya5UUvIBH2pSzmzBqJEg4
-         DQg6ybQfQ1NjDxg9mLwgeEqe/b4l26hUYv/2POqLqI0gZiPVSlkq8CQUH8QrQkWlGaO1
-         CJ4YpxFqTZ1s8b/lahYrAD2vK9qHJCVPTF+dhSxYriQJJTUPxhaoI64wv16WZQ5uHMbU
-         107ODiTyp4MO5KUd4qXoxsbjDJohtEku9zzEf4wtDXykzYpFWfojmfm9+XbbDPAA6yjQ
-         C8taOw6el7WBgKsx+J2SZpAexLMs7oMmoXiBRQ3K3kKUlsjVvRAXrLbrBxELuxIPK0yT
-         e0oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgmzs20jG5IEuDT8jFbmBnRHFJWHyF+YgXzl4wYQLwkFXVpndJcMCJE9tpymq7kQC6An3SaWwnn+ZUJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzgxsZSeiJtKohTaSaBp8rLSZ0W0Vb8innUVaU5bEb3BlpdEzt
-	5S9eqHQx0SKPcslN2F7XaNnsC9Ek8vrJYKKATOKTpJvUfOjZ1qQLawtqRFldwaKxjiuwx72GYRW
-	cRk5VrdZqrej4cBktbqpSsX3agyqr0CI=
-X-Gm-Gg: ASbGncvJYwBXHfnLvq9B3OzVoZ+FG4oqn9uhwGyVjBscFCG8vSSCbiCHdI2SSwUIVfZ
-	SERox4NRrjpDTgVtxeYRhs+xTH/1MwyVAQK2svILC34XTwz1+6LXjjeECK00lB9zctQiwNFVcPC
-	fmKJaN8Tv62ocwx5XKiah8y8eNNb6YznlCZdnqHV+JipBchVU3vbXerc+3lcwsHvyfxJGjrbeNe
-	BFDiGK6BEufItyk6/WZT+Ps/tt9ZEbXzcB6f0KBkw75U5bqkwbb+924nhnDQskkTm1o6v/d
-X-Google-Smtp-Source: AGHT+IGnQKSD8LLMcix6lZzwNF5GRcP/d5ntwfmO8bYJcqFggKCrAfVq/BMs9d8iTrMYt/ReQHX0zgxmRp5XUkKSJ3s=
-X-Received: by 2002:a5d:5f82:0:b0:426:d5de:e454 with SMTP id
- ffacd0b85a97d-429a7e84487mr290406f8f.31.1761582742690; Mon, 27 Oct 2025
- 09:32:22 -0700 (PDT)
+        bh=llXiWHJLf2syx3blZo0CXJGIyiry1LJYTByzcLi8/h0=;
+        b=ZXGz18h4iJhrZvheVHR27CZT/27b5MF7esj9A2BWoGXLgdFz7z3XAqaU7jYIudNgAR
+         aTBRObfUwvlxOyZbYGYMVUTwLQmw7LvzRWOV+b1FSe0khJ9U2qOqRC1rhQxN8GwV5yoI
+         dD4/CeYR5SqoZyV7AWiBDhbQF6BzL2HWi5C5APpu+t1kfURIFgRSqHoQTKi8IxsxiIr/
+         NNla2fu9f/G1y0GSM6+XDU6GrQEAP2UilV2SfKGBWtdy23BOQgZ3pdbrG9/jsJPl2OPJ
+         kExcUjFfXBCvRTTNnFZLAT0gagiXD6WQ8+jwcGeipI6qZC6K+RTORfaiLG9KJJPtrGQP
+         UQlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgx8vtla/AlaaBkHPJEtT/bB/xCkBCxlnOEyFqG26yEIPFEQNBdrnlrO5/XLp0+aSv9Kz4dQRRGAn0Zg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTUgDf8I2l2twOwEz4CvPUc+AfP7jhCbc97aItF2BSpLqBPwPg
+	hI3SNAJ6bGKHhkYz6bhtsoqFnSFbaro1TG6m8Divln16fadE7wP8fATlG2XmeUBoIT3VzjMilu8
+	xDl3LpES9DqUQXUPIeUgZbjMcpG3FTww=
+X-Gm-Gg: ASbGncucmCTgPpt7cXPpg1GYfkUlyoE5JF5QCO5PCvkFbplOufLx6cf5RCtAFp+Kr1l
+	us4t0HSly9VlhG0uiQ2CTEv/twR7vmOocenxASKh8C6/6gbaTl58lsnWxEMxzsTTLi4NI2HxdRx
+	LsfObnUsxLMxbLf8Kt092gI9dHuo1KpeZPl4lpYTMcZp2zhPt++35wgPAu8nuYZVm5cDBU+8fmO
+	mglMVLvfxNq6fkZ8520LKwETA9jQ8lYyoKy69HJr8krC0QWJobOkk6vW1ZVUA==
+X-Google-Smtp-Source: AGHT+IH4XlaBzxcnNj5YFZ0kloDrzQaT1eJpLjTjeIpDU2XpK4VeABDkTozkzcR3WZnwD6TgVQ+f15BePNjDYvfetA4=
+X-Received: by 2002:a05:6000:186e:b0:428:476e:e0ab with SMTP id
+ ffacd0b85a97d-429a7e97661mr333005f8f.60.1761583808872; Mon, 27 Oct 2025
+ 09:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022142051.70400-1-clamor95@gmail.com> <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
- <CAPVz0n1aj8A5L50WcO-W4jSH2t6kfi6qXN-2FkmZxiAYJUN3vg@mail.gmail.com> <f1ac1e4a-09cf-4cbc-8555-87111ef5810a@kernel.org>
-In-Reply-To: <f1ac1e4a-09cf-4cbc-8555-87111ef5810a@kernel.org>
+References: <20251022142051.70400-1-clamor95@gmail.com> <20251022142051.70400-7-clamor95@gmail.com>
+ <bd6262c6-a31c-43a6-8ec5-2735fb2fe0d2@kernel.org>
+In-Reply-To: <bd6262c6-a31c-43a6-8ec5-2735fb2fe0d2@kernel.org>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 27 Oct 2025 18:32:10 +0200
-X-Gm-Features: AWmQ_blYaK_-CilYY_DzPCPq1WabsGLOdAlNNG0enxXFT4qytUlg4j6qbAg5jHY
-Message-ID: <CAPVz0n1nZqhnDQfSHOK3uixJd_t1b04CrWzoTa3smXXD8g0mCg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Mon, 27 Oct 2025 18:49:57 +0200
+X-Gm-Features: AWmQ_blgGtMyE7YToN26_Q2JZoB8VDufuUc2Jv2Dui7Z-P7sPMVoiu7__HneWyw
+Message-ID: <CAPVz0n277DZ8S5wX5n0gCaOpng64uEfx3VVue4Zp0n5bsDevqQ@mail.gmail.com>
+Subject: Re: [PATCH v5 06/23] staging: media: tegra-video: vi: adjust
+ get_selection op check
 To: Hans Verkuil <hverkuil+cisco@kernel.org>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -87,207 +88,79 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripar
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 18:3=
-0 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+=D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 17:4=
+4 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On 27/10/2025 17:26, Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE =
-18:08 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >> Hi Svyatoslav,
-> >>
-> >> On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
-> >>> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC alon=
-g
-> >>> with a set of changes required for that.
-> >>
-> >> Other than patch 06/23 that looked iffy (although the original code wa=
-s iffy as
-> >> already), for which I posted a review, this series looks almost ready.
-> >
-> > 06/23 addresses issue I have encountered while testing with mt9m114 I
-> > will add detailed explanation later in the 06/23 commit discussion.
-> >
-> >>
-> >> Should the clk patches be merged together with the media patches? Or c=
-an those
-> >> go in via the clk subsystem? If it is the latter, then I'll need an Ac=
-ked-by from the
-> >> clk subsystem maintainer.
-> >>
-> >
-> > I suppose this should be discussed between staging and clk subsystem
-> > maintainers I am fine with any conclusion.
-> >
-> >> Regarding the bindings: all except 21/23 are Acked.
-> >
-> > Maybe you did not notice, but 21/23 has reviewed-by from Rob Herring.
+> Hi Svyatoslav,
 >
-> Ah yes, Rob replied. Good.
+> On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
+> > Get_selection operation may be implemented only for sink pad and may
+> > return error code. Set try_crop to 0 instead of returning error.
+>
+> Can you mention why try_crop is set to 0 instead of returning an error?
+>
+> That would be good to have in the commit log. And in fact, it's not
+> clear to me either why you want this.
 >
 > >
-> >>
-> >> I have one question regarding testing: in the past I tested this drive=
-r with a
-> >> Jetson TX1 devkit and a camera sensor. One of the main reasons this dr=
-iver is still
-> >> in staging is that I never got that to work reliably: after 10-30 minu=
-tes it would
-> >> lose sync and streaming would stop.
-> >>
-> >> Unfortunately I never had the time to dig deeper into that.
-> >>
-> >> So have you tested this with a camera sensor? And if so, does it strea=
-m reliably?
-> >> I.e. just let it stream for 24 hours and see if that works.
-> >>
-> >> If it is reliable for you, then I think this driver should be moved to=
- drivers/media.
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/staging/media/tegra-video/vi.c | 8 ++------
+> >  1 file changed, 2 insertions(+), 6 deletions(-)
 > >
-> > Streaming works but I did not tested for such prolonged periods of
-> > time. Scope of this patchset is bringing CSI support for
-> > Tegra20/Tegra30, extended testing and move to media can be done in
-> > followup.
+> > diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/m=
+edia/tegra-video/vi.c
+> > index 7c44a3448588..856b7c18b551 100644
+> > --- a/drivers/staging/media/tegra-video/vi.c
+> > +++ b/drivers/staging/media/tegra-video/vi.c
+> > @@ -476,15 +476,11 @@ static int __tegra_channel_try_format(struct tegr=
+a_vi_channel *chan,
+> >       fse.code =3D fmtinfo->code;
+> >       ret =3D v4l2_subdev_call(subdev, pad, enum_frame_size, sd_state, =
+&fse);
+> >       if (ret) {
+> > -             if (!v4l2_subdev_has_op(subdev, pad, get_selection)) {
+> > +             if (!v4l2_subdev_has_op(subdev, pad, get_selection) ||
+> > +                 v4l2_subdev_call(subdev, pad, get_selection, NULL, &s=
+dsel)) {
+> >                       try_crop->width =3D 0;
+> >                       try_crop->height =3D 0;
 >
-> I'd really appreciate it if you can do a duration test. Perhaps start str=
-eaming on
-> Friday and let it run for the weekend?
+> This looks all a bit magical. Which subdev is queried here? I.e. what is =
+the corresponding
+> subdev driver that implements get_selection?
+>
 
-With all do respect this will not happen any time soon.
+Camera sensor subdev, Tegra VI driver directly interacts with camera sensor=
+.
+
+> >               } else {
+> > -                     ret =3D v4l2_subdev_call(subdev, pad, get_selecti=
+on,
+> > -                                            NULL, &sdsel);
+> > -                     if (ret)
+> > -                             return -EINVAL;
+> > -
+> >                       try_crop->width =3D sdsel.r.width;
+> >                       try_crop->height =3D sdsel.r.height;
+> >               }
+>
+> It looks odd (esp. setting try_crop to 0), and I wonder if this code path=
+ has been tested.
+>
+
+Yes it was tested.
+
+Original code checked if the camera sensor has get_selection
+implemented and if such operation is supported then it applies width
+and height from get_selection, else zeroes. This works just fine with
+most cameras and v4l2 compliance tests pass fine, with most but not
+with mt9m114 which implements get_selection only for its ifp source
+pad while sink pad always returns -EINVAL, hence VI driver fails with
+-EINVAL too. To address drivers like mt9m114 instead of just fail with
+-EINVAL if get_selection returns error try_crop width and height will
+be set the same as get_selection is not implemented.
 
 > Regards,
 >
 >         Hans
->
-> >
-> >>
-> >> Regards,
-> >>
-> >>         Hans
-> >>
-> >>>
-> >>> ---
-> >>> Changes in v2:
-> >>> - vi_sensor gated through csus
-> >>> - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
-> >>> - adjusted commit titles and messages
-> >>> - clk_register_clkdev dropped from pad clock registration
-> >>> - removed tegra30-vi/vip and used tegra20 fallback
-> >>> - added separate csi schema for tegra20-csi and tegra30-csi
-> >>> - fixet number of VI channels
-> >>> - adjusted tegra_vi_out naming
-> >>> - fixed yuv_input_format to main_input_format
-> >>> - MIPI calibration refsctored for Tegra114+ and added support for
-> >>>   pre-Tegra114 to use CSI as a MIPI calibration device
-> >>> - switched ENOMEM to EBUSY
-> >>> - added check into tegra_channel_get_remote_csi_subdev
-> >>> - moved avdd-dsi-csi-supply into CSI
-> >>> - next_fs_sp_idx > next_fs_sp_value
-> >>> - removed host1x_syncpt_incr from framecounted syncpoint
-> >>> - csi subdev request moved before frame cycle
-> >>>
-> >>> Changes in v3:
-> >>> - tegra20 and tegra30 csi schema merged
-> >>> - removed unneeded properties and requirements from schema
-> >>> - improved vendor specific properties description
-> >>> - added tegra20 csus parent mux
-> >>> - improved commit descriptions
-> >>> - redesigned MIPI-calibration to expose less SoC related data into he=
-ader
-> >>> - commit "staging: media: tegra-video: csi: add support for SoCs with=
- integrated
-> >>>   MIPI calibration" dropped as unneeded
-> >>> - improved tegra_channel_get_remote_device_subdev logic
-> >>> - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
-> >>> - software syncpoint counters switched to direct reading
-> >>> - adjusted planar formats offset calculation
-> >>>
-> >>> Changes in v4:
-> >>> - removed ifdefs from tegra_mipi_driver
-> >>> - document Tegra132 MIPI calibration device
-> >>> - switched to use BIT macro in tegra114-mipi
-> >>> - pinctrl changes moved to a separate patch
-> >>> - ERESTARTSYS workaround preserved for now
-> >>> - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
-> >>> - reworked bytesperline and sizeimage calculaion
-> >>>
-> >>> Changes in v5:
-> >>> - dropped patch 1/24 of v4 since it was picked to pinctrl tree
-> >>> - added reasoning for tegra132 comaptible into commit desctiption
-> >>> - moved clocks into common section in tegra20-csi schema
-> >>> - added note regarding ERESTARTSYS
-> >>> ---
-> >>>
-> >>> Svyatoslav Ryhel (23):
-> >>>   clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
-> >>>     Tegra114
-> >>>   dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
-> >>>   clk: tegra30: add CSI pad clock gates
-> >>>   dt-bindings: display: tegra: document Tegra30 VI and VIP
-> >>>   staging: media: tegra-video: expand VI and VIP support to Tegra30
-> >>>   staging: media: tegra-video: vi: adjust get_selection op check
-> >>>   staging: media: tegra-video: vi: add flip controls only if no sourc=
-e
-> >>>     controls are provided
-> >>>   staging: media: tegra-video: csi: move CSI helpers to header
-> >>>   gpu: host1x: convert MIPI to use operation function pointers
-> >>>   dt-bindings: display: tegra: document Tegra132 MIPI calibration dev=
-ice
-> >>>   staging: media: tegra-video: vi: improve logic of source requesting
-> >>>   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI =
-to
-> >>>     CSI
-> >>>   arm64: tegra: move avdd-dsi-csi-supply into CSI node
-> >>>   staging: media: tegra-video: tegra20: set correct maximum width and
-> >>>     height
-> >>>   staging: media: tegra-video: tegra20: add support for second output=
- of
-> >>>     VI
-> >>>   staging: media: tegra-video: tegra20: adjust format align calculati=
-ons
-> >>>   staging: media: tegra-video: tegra20: set VI HW revision
-> >>>   staging: media: tegra-video: tegra20: increase maximum VI clock
-> >>>     frequency
-> >>>   staging: media: tegra-video: tegra20: expand format support with
-> >>>     RAW8/10 and YUV422/YUV420p 1X16
-> >>>   staging: media: tegra-video: tegra20: adjust luma buffer stride
-> >>>   dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
-> >>>   ARM: tegra: add CSI nodes for Tegra20 and Tegra30
-> >>>   staging: media: tegra-video: add CSI support for Tegra20 and Tegra3=
-0
-> >>>
-> >>>  .../display/tegra/nvidia,tegra114-mipi.yaml   |   1 +
-> >>>  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 +++
-> >>>  .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
-> >>>  .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
-> >>>  arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
-> >>>  arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
-> >>>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
-> >>>  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
-> >>>  drivers/clk/tegra/clk-tegra114.c              |   7 +-
-> >>>  drivers/clk/tegra/clk-tegra20.c               |  20 +-
-> >>>  drivers/clk/tegra/clk-tegra30.c               |  21 +-
-> >>>  drivers/gpu/drm/tegra/dsi.c                   |   1 +
-> >>>  drivers/gpu/host1x/Makefile                   |   1 +
-> >>>  drivers/gpu/host1x/mipi.c                     | 525 ++---------
-> >>>  drivers/gpu/host1x/tegra114-mipi.c            | 483 +++++++++++
-> >>>  drivers/staging/media/tegra-video/Makefile    |   1 +
-> >>>  drivers/staging/media/tegra-video/csi.c       |  70 +-
-> >>>  drivers/staging/media/tegra-video/csi.h       |  16 +
-> >>>  drivers/staging/media/tegra-video/tegra20.c   | 820 +++++++++++++++-=
---
-> >>>  drivers/staging/media/tegra-video/vi.c        |  56 +-
-> >>>  drivers/staging/media/tegra-video/vi.h        |   6 +-
-> >>>  drivers/staging/media/tegra-video/video.c     |   8 +-
-> >>>  drivers/staging/media/tegra-video/vip.c       |   4 +-
-> >>>  include/dt-bindings/clock/tegra30-car.h       |   3 +-
-> >>>  include/linux/host1x.h                        |  10 -
-> >>>  include/linux/tegra-mipi-cal.h                |  57 ++
-> >>>  26 files changed, 1657 insertions(+), 670 deletions(-)
-> >>>  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
-vidia,tegra20-csi.yaml
-> >>>  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
-> >>>  create mode 100644 include/linux/tegra-mipi-cal.h
-> >>>
-> >>
->
