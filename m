@@ -1,102 +1,113 @@
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0484F24169D;
-	Mon, 27 Oct 2025 12:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569759; cv=none; b=isT81xFxsGKsHMiUdQmGhicigFp4PhSC8JOZiFcsHVrthgzlr/X8gPmy63Xj/RFF1nerD1+R187PcLAuzTbRvpwfEFz9zvijO54gHbsz94BnJCvv8GXI4/Xmp6Q7EeRsAuFv7OXgQ/phCUKFCsw6se0lxc8i8m04mRX02SjC7J0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569759; c=relaxed/simple;
-	bh=wdPrvvPNgCJ92pfYnd82XapNMb2/K9Lk7SnMdXsPwYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcxjKKuroC0M+JM/6H3PTXelv5YUJUaRVBaBlump9zUQEFADlhhcYntmpeub5vf3hjGcblHLCpBw9dccC5iPf1B+yXbbwXj4vbf0GKyH+bhl3QV31b90Tf1EuP7MOHgTSfjncgROJu/kG0BgyCmumZifBhOlpdDp5F/lWEw2ej8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=HA4IsI57; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="HA4IsI57"
-Received: from 8bytes.org (p549214ac.dip0.t-ipconnect.de [84.146.20.172])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 574F959993;
-	Mon, 27 Oct 2025 13:55:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1761569756;
-	bh=wdPrvvPNgCJ92pfYnd82XapNMb2/K9Lk7SnMdXsPwYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HA4IsI57/crRJKm5huZnz2yM9cueuQ83JrqqF31F0g7mwiTfeSnd43x0jF6LZthZc
-	 xInJr7Dl8APiu4Qf/1dKwgAOW7EJNTBxKaqeF3SCeMWstoORITwx7nsvUeINWh5k+9
-	 Ny8WfW/m0sLSzi4YzjffMfU5XZZBpghT634JsVKbHjtinJ84F0IqokpBXMlZ9vPJO6
-	 HareDmhYXldiDUpmdDec87KCRVmJXWOlsHVldVZQAV6o+WAdhsPOkS6ZLKvwvFxjCx
-	 iZSNYPT42T4jbU1r7D4nVssf6XfXSjG7/V3tsl+vP1evUijU+Z9RswofRmqxeAExhN
-	 NJmXcf6NEl0nQ==
-Date: Mon, 27 Oct 2025 13:55:55 +0100
-From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, suravee.suthikulpanit@amd.com, 
-	will@kernel.org, robin.murphy@arm.com, sven@kernel.org, j@jannau.net, 
-	robin.clark@oss.qualcomm.com, m.szyprowski@samsung.com, krzk@kernel.org, dwmw2@infradead.org, 
-	baolu.lu@linux.intel.com, yong.wu@mediatek.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, tjeznach@rivosinc.com, pjw@kernel.org, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, heiko@sntech.de, schnelle@linux.ibm.com, mjrosato@linux.ibm.com, 
-	orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, wens@csie.org, 
-	jernej.skrabec@gmail.com, samuel@sholland.org, thierry.reding@gmail.com, 
-	jonathanh@nvidia.com, jean-philippe@linaro.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, patches@lists.linux.dev
-Subject: Re: [PATCH v2 0/6] iommu: Pass in old_domain pointer to attach_dev
-Message-ID: <xlu227m6u3wubnexhxh2cpx7nwudhvbmgqcqoas57a6sqgvege@p4s5i5p77v7a>
-References: <cover.1761017765.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF902C032E
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 15:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761579215; cv=none; b=MPLwhL4/H0q1Am3Q/6gBPAd4VyYyc0XyL40mOgpR8SB/1OmSwygabg9764Zy7JBMW5kfqw5obYrf8CfJ7pVDg/XFBFkPU+1uEfYfsvuHc2XjJjX9ou5I3dk0Am2xr1eAXnsPeZllCwuEKO6COk/PlAI19bBahYyv+yAYfjhF5x0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761579215; c=relaxed/simple;
+	bh=WdBEdLpSforioHhbukeXfUmMVDWPeJnblF0f8wKYRHA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=revxQk518I8UreCAbt3zK95rKOpjnAHUD2mGaPE9RvU48PcIozrNfDcS0bsF6sCLMfPlDsFtWwK0xq5ubGAr2hTamUZD9i35e4Ct8BmOV8JQL5ZjDYgj7nZssFurqCGtv/kdOosMo4CBr3gohhlc/Qi2floNHeLrc8ScpxYwgQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiIdaDij; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiIdaDij"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso3268552a12.3
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 08:33:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761579213; x=1762184013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gyCJFEF05gZrJ9JMkK8QYJcfOxWfVMGePa9EE1L1ZCg=;
+        b=NiIdaDij8RPnXWj5KP9bBwW3FrHfB1ghyPDE6n0usJ9YA8UycbUr3YgbZG6mQqrl0C
+         72emAI2qz26zXXMge2PohWi7BIchYLVh3yTPyDC5rUQd5g41O1yX49NxVx2kbMO0/uqk
+         k1AKn+GP7QwYp1gAZYlSrhv0NMentposByT5A7ucW9TSaG9sE8v2r2OxDeH03xzWAGll
+         RPjOEYjuxxRQoCXOp/wYVDcREfLlsRpGehLV86qjGeQRDL5nfjrPGbsVFCFIuM7Aj8aG
+         72lg8xsHUz6MWUB5o7oTcIcIpXM8E6XcZwO7aE2VL9x5uaP1wknA2GwB/nTnOANX97pZ
+         VkrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761579213; x=1762184013;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gyCJFEF05gZrJ9JMkK8QYJcfOxWfVMGePa9EE1L1ZCg=;
+        b=Dt3AO7Ps057uXWfveUY50FFXaEV9h0a+8+3204AR59XaLkMZ6p26CdLKXMh98gcsuM
+         tXwWw/GUshJQb/9UdKYBB66fuxYwcM8fO3c7FTJWYyKtHaAcrWiLPZTuiiE4mtmB3eKy
+         LjXo80DGQ/hPn2HSh2zlGguzfqHYwgIEy9+AuT6pqa/py+Vf8rlKz91VYv0txYqQ6dyj
+         J3zIVQiRGI5F3c4G9unxZppGwHIrPmPItc1xMf/ihLK/033YDlb0tA5aqq3SY1VRBR9Y
+         SSjmD2xAV4OK1kkm6UE8zVXMhSg9baH4/KSzI+6zdFKMRNwiMSS44QcmAbc7Q3XTO49P
+         b8Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlKoUh3FFv7496E2ZUdqQti1rmQy1lkyNwg3TYTDsVYS4UKcFLMFuujsCdgvQmjlSXt5x/uDYxhTTN2Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr4bU/vZS9uYjb+8AXAXWiTCoqip7HITN9DLleWUqaNp1Rnvtp
+	Bz8DNKAf9FT/JALOaFM/3bhHaLyM17Pzi+XauccejYyBPhMQe2muLGRn
+X-Gm-Gg: ASbGncu9Ne7rCLiol7l4bVigbeuVPukMIOx/y5pizbBXXNaDxwbt3H4PJlYOx8Rg0Wt
+	PpShhVgwEo813nJ5ZdnF3HzV63prFZ1ZV7wj95rSLYGHnPRDU1ImDFrDpwBpafVitXXyGw7XPD5
+	YErgZwQmy6kCcNfpHn2JaOMRF9sPyRz/Nwk+d9oz8oqfSpXfze9wFEWnaBmz9OHMBnmWyEuVmcY
+	pVWM2oBK79n7b/wIocLUd3jQDsy3e+JZ9Q99uLWn02DEqMRwIvgZ7H6mJrMLGxyBdvsyGuzBQFG
+	uwI+u/OIB4yactmidnVy7JIgvjxwgg0PS7xFdwxAc4r795K2SXezQMu7vxvN8jeTzf9wv1pOuWE
+	DUr50jjE6qtcLGbXgl7UDx6mzLNd4DV29pQaAIkUywoYl9Qa8+s8XJnuwA7JpsPiYaQ2PCZZEM9
+	dxFg770QRZcmWr1AU81Ho/4KUk82Wr8YMm
+X-Google-Smtp-Source: AGHT+IEshwgNJwDO9dUyM9pXppLasDaedDty5cozPvWHVpiDiRN+D5hXAsbWqdxeVF4eaG1w7MO3rw==
+X-Received: by 2002:a17:903:124e:b0:24b:270e:56cb with SMTP id d9443c01a7336-294cb3e5310mr4051855ad.27.1761579213005;
+        Mon, 27 Oct 2025 08:33:33 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498cf4a40sm87272165ad.0.2025.10.27.08.33.29
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 08:33:32 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Stephen Warren <swarren@nvidia.com>,
+	Hiroshi DOYU <hdoyu@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] amba: tegra-ahb: fix reference count leak in tegra_ahb_enable_smmu
+Date: Mon, 27 Oct 2025 23:33:15 +0800
+Message-Id: <20251027153317.66454-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1761017765.git.nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 07:21:03PM -0700, Nicolin Chen wrote:
-> Jason Gunthorpe (1):
->   iommu: Generic support for RMRs during device release
-> 
-> Nicolin Chen (5):
->   iommu/arm-smmu-v3: Set release_domain to arm_smmu_blocked_domain
->   iommu/exynos-iommu: Set release_domain to exynos_identity_domain
->   iommu/amd: Set release_domain to blocked_domain
->   iommu: Do not revert set_domain for the last gdev
->   iommu: Pass in old domain to attach_dev callback functions
-> 
->  include/linux/iommu.h                         |  3 +-
->  arch/powerpc/kernel/iommu.c                   |  5 ++-
->  drivers/iommu/amd/iommu.c                     | 21 +++------
->  drivers/iommu/apple-dart.c                    |  9 ++--
->  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     |  5 ++-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 31 ++++++-------
->  drivers/iommu/arm/arm-smmu/arm-smmu.c         |  9 ++--
->  drivers/iommu/arm/arm-smmu/qcom_iommu.c       | 11 ++---
->  drivers/iommu/exynos-iommu.c                  | 11 ++---
->  drivers/iommu/fsl_pamu_domain.c               | 12 ++---
->  drivers/iommu/intel/iommu.c                   | 10 +++--
->  drivers/iommu/intel/nested.c                  |  2 +-
->  drivers/iommu/iommu.c                         | 44 +++++++++++++------
->  drivers/iommu/iommufd/selftest.c              |  2 +-
->  drivers/iommu/ipmmu-vmsa.c                    | 10 ++---
->  drivers/iommu/msm_iommu.c                     | 11 ++---
->  drivers/iommu/mtk_iommu.c                     |  8 ++--
->  drivers/iommu/mtk_iommu_v1.c                  |  7 ++-
->  drivers/iommu/omap-iommu.c                    | 12 ++---
->  drivers/iommu/riscv/iommu.c                   |  9 ++--
->  drivers/iommu/rockchip-iommu.c                | 20 ++++++---
->  drivers/iommu/s390-iommu.c                    | 13 +++---
->  drivers/iommu/sprd-iommu.c                    |  3 +-
->  drivers/iommu/sun50i-iommu.c                  |  8 ++--
->  drivers/iommu/tegra-smmu.c                    | 10 ++---
->  drivers/iommu/virtio-iommu.c                  |  6 ++-
->  26 files changed, 172 insertions(+), 120 deletions(-)
+The driver_find_device_by_of_node() function returns a device with its
+reference count incremented. driver_find_device_by_of_node() is an inline
+wrapper that calls driver_find_device(), which calls get_device(dev) and
+returns the found device with an incremented reference count.
 
-Applied, thanks.
+Fix this by adding the missing put_device() call after the device
+operations are completed.
+
+Found via static analysis.
+
+Fixes: 89c788bab1f0 ("ARM: tegra: Add SMMU enabler in AHB")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/amba/tegra-ahb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index c0e8b765522d..6c306d017b67 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -147,6 +147,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
+ 	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
+ 	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
+ 	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
++	put_device(dev);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+-- 
+2.39.5 (Apple Git-154)
+
