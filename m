@@ -1,154 +1,112 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9F030DEB7
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 08:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D7D315D24
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 08:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554665; cv=none; b=ppZdcLNwT1QK5MxbA36fGAmKHblhNwOBaDhQaabwl/jGCX56qx9xfly021vCOykinLmm5WpsQrkUR7rvaDYTbmPF1IFoy3P8Bu0cfN+tE8u8qIDzePAIXfXF1DlQnpoWpzzmopQntPR59EVKovS0fo9QpcWyifYp6IYIyFtWefw=
+	t=1761554737; cv=none; b=Es7/Xg3KJFts/d3A3njllEHrkI5oTT1M20flOi7ENgKmApmKHIOANU+ZXjsCyQ3dU4r2XxUB2X2Kgp723av0/+bLiyBPx+sIQZINAsdR8+MvIzWpBrFecD0Ry6wJcOoiy52zkotzuw5uptsFxBA9yGusgju4bcrvKq/cT9SlUCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554665; c=relaxed/simple;
-	bh=auEwf2icKJ5N8eXV469NRfMO69M4TDa+I0O0A8KWhJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sAk0pUkQTmloXALxqGBI6hO91QKKJVuUY5SJ3mZ05f265aG8TVoWneW5zc/f1cm3bihFa0S7lSa0cG/xl8xhGuWYVLoE9cH3oDc7fDxWzsH36UGiK9tcYwpdiCetBvazbsMciy7fCYQfZJgkhVRfPd21gzbYraFXs+uUQHdFvkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YpwEmYKs; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761554737; c=relaxed/simple;
+	bh=ly8Hr2ywwPol+OOs8cEqDSSykysMh6TpsVP/PGQVACo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SjDUc5sVT8WXlsUHSR3wxa6tkfuH1ZyJiEHoWL7gocWJCmgrEb5EjUB7wy4U8klBP7THvAqkxbVor6eHkLNZhvD44GqOXHN/ikIZNn2QUUhxEntKGygBD46noA8ET00VkSDho5+gEMnWjZOMJzLQh+6j9zKhZvX1vqjGij/Cb5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrWhnroA; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YpwEmYKs"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-475dbc3c9efso13012915e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 01:44:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrWhnroA"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a28c7e3577so1939667b3a.1
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Oct 2025 01:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761554662; x=1762159462; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mQ6fDJu4nOBCsqG9UMmERnNrEe5KW+9L11ecqG30wk0=;
-        b=YpwEmYKsEQP/VcC9F8zEtSFTVg1MBwDQPfjO+WU0SxOFM7qCZGTJ/AtaFt2GkZ5yeE
-         6ZufKTLtrpYiGfq43hkWwkk11JCJFCAcaWt22FvtpvKsVfLGR5UCehzSSRWN7S9vRqPX
-         TzJRJJT8vROgQ6nrfG63xNGJo37+8bZ8RWsxRuRZXej9yZE2kLMytoyeZNBdkEiYdOPO
-         ayCznUb8Y74l86uHe/dJQ9oqM1v4g34kO9xSLv2EIO59T18kbPiNmZfTDKeO5YCbpiEz
-         R+gLdTPfdIhuZjeCWpSGN7aSwt3l6OgneAZGwQRnZXo+YNcEakKJ/Dzb4yRRyrLptzjW
-         TROA==
+        d=gmail.com; s=20230601; t=1761554735; x=1762159535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DU0KscrGihyZoXJMago0IWkiGUoidqfLwL76Wss1j/4=;
+        b=QrWhnroAXJlnaAQd1X6cggmCZDoDH7RHA8A2ZmAoKtPCphlb9vz9UPcqaf1dHcGEo1
+         fjEyZOPDELWIcVFSluUH8SiqDgmyUUGyZohlD/cb+VfG718TavzbW+UiBx0piw7LqOpm
+         lEKAnlDOtCGB3M+Ul6GjA31wW+TjZZPJCtFo0ilYBo0gbb7aeClVajhz0vFXGbqNYyKU
+         x0wiWwVS4NxmguXDKcv5ZegdZLHLriCfcMNEuyI9+qVaPzeURGMs80Kc50w+B3j+BoCF
+         WVooy1brKc0tyMO0GO/hXmO/ZW+NiNp4p1sG4OlcM/VT83r37bLNxrp5CqnzXkc5OIKG
+         VcMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761554662; x=1762159462;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mQ6fDJu4nOBCsqG9UMmERnNrEe5KW+9L11ecqG30wk0=;
-        b=aukI7PRx0IRaziQ2mJi97DO46AfEaYoHLd3Oq7PhvGV//QeygEO5EWRayBkOYJDLjL
-         8nX90ooKWz9elT5tCJMROD4JBxDHI5rQnJA7492QRk7XiKoiqRygTCAFZSSP2G5MfhVa
-         7Ni9P094e9S+YmUdFA+vgUp9jY/o/H5jlnPJSqtlRtLVVO7NYVremKH/QdkfG5GbCzvy
-         KUjssL5RUVJiN0FP/F0Q+kAfdgYSA7mB1UFIWY128sNghAfj5zeYqrWEaRg8lg/pVfw1
-         Od74KAFRTyv/fWzyeokHJ8Sg54C6lU7RJWPcpbYGnLbtONTmR1elwvCMa/fVGtYZDTSU
-         uPbA==
-X-Gm-Message-State: AOJu0Yzt8mAfvwvvqjJlJCTRD6jDUrq+lITwvLb7xDQMREC66uQ7qJUG
-	FGt4fRfEBclng57AtM3YBvPdj6KNL7oUOu5BDO/a/bg8ygfe9J4B5r3b8frLdpBzQts=
-X-Gm-Gg: ASbGnctKEFXQWj6M68xUBCIgTlZAQ/xvi2r62PpSQ1pHnVr3I72hMFnAe3FNMeF5wwa
-	wLVfkSQkFPZl6qMI+fqdrOokwRz+t6uk0q1ZRlE8OUDw1y6YzGq0952rEUOjNTDPVEVngobq4wY
-	/a0eKsLBJL6U8DxdrYmjHSzRt7bWfAqJyL+YvQfxhjZzgxZXYi/L03LC73v1CPjgPziEc0F/KIo
-	+T9twXI8X4pjL+iVIkO7GBL50mURWap0aFiRO/ee1nXzg1pzNxqvP65ipzH/ef7xfCBSkpSFOtX
-	No6NSmwAyeJp92XOx7bthirqW6niVcrqM38IjF3VpKN7Eec27R5B49hvyQjmixuNEzk8ghdYCZf
-	mxqF6kvN6aAvkcTIvg617qVX4bxweGN2Yk46lXnQovcLzfhbzWdQn2RRPM3hG+Z3jOwChI6xx9l
-	3669VJXg==
-X-Google-Smtp-Source: AGHT+IERzrA7mdClLFVb6VKW6TMob3v002tE2P2HM0SVO/imnI3/IgdnfKpVH8riDNMG409Svv0HNw==
-X-Received: by 2002:a05:600c:450a:b0:46e:442c:f5e1 with SMTP id 5b1f17b1804b1-4711791cb1fmr278033545e9.35.1761554661546;
-        Mon, 27 Oct 2025 01:44:21 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952b7b22sm12803875f8f.9.2025.10.27.01.44.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 01:44:21 -0700 (PDT)
-Date: Mon, 27 Oct 2025 11:44:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: [bug report] cpufreq: tegra186: add OPP support and set bandwidth
-Message-ID: <aP8w3_okN_KUCSyJ@stanley.mountain>
-References: <aPsafpMKVTxj20zL@stanley.mountain>
- <CALHNRZ8XnH64GCSFk21D7HPnbJ0Avr0Ds1SAPTPksohqd4dhjA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1761554735; x=1762159535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DU0KscrGihyZoXJMago0IWkiGUoidqfLwL76Wss1j/4=;
+        b=YL8QkBNNc+qabCYu7JApTziFP1NPH7pd5j4WkxKgSF1pORyIo157tILqKNUYM9hbvy
+         b2L4Ag2vNny5Ja4VixWP8Ucn5FnfHyHibyMcRnyxvYGC2ZATojtvjFfFb5i31cNb4Vx1
+         ezKZ3dvznXbxPTTHfzo6eSkYqS9pYZrW7bmQUh7S5pVDYTjYJk+CWysZuRkewRZdxWcM
+         moOVuEaoQkZRQFPzI0zcPgsP1LGLOpXAQYzYuzFo2ywtL9ccH1wvlNsO809pzBhXmYbj
+         0b426rIeSWUlxkUmUjzWOHl7cHZ609CcWR0HY0hzBKzsMpA/pY4IPvyXTXiGEl/I4ID0
+         l8Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoZUgSS01XS0BE+qxcm5Iv4IKc4fp5vyWMJU9UbdqvMFSHZ85C+Dv/znf9qH7uk5l+VEmhWgFDiTcZGA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCh0+MRGtpe0usvv72gIDPDJ8PJmHLq2b6D87mFfIkAZ/r1RkR
+	CEzi9CZxHUs1dsxuh42ec4EXjyVp0Rf6glvmK8g2lGVUdVXArCJyM2un
+X-Gm-Gg: ASbGncsZdgI3NbuDu/jaMQIkqvxvhlSsLFiOhJf237RrrPx9nSPxYShQpOuZKlr7mnP
+	aH1MIiqnqbh3IfVZe5773s8I53i+XUocBGhDsBJOWp61iRNQJfsxDNDNUXB9z3/tezSxqOYpJUc
+	OZ29iNukrCJzOpN1BE6hnXSlmYTKDBGFK7TN1WzJspo0Mro3n67i64GDbkEYppH3b0z9JPvM/Of
+	NynZY5pgx4rJ5Nxj/FGOhE0oS1bHRjTx1Ywm6Mo7XbKBS807pLCUX8PtuWpyR1GVsPuuYlpDFGb
+	3YHOQyNboMe5w6JIc/pEcviV3BYbnWOfsCOTWEfXvvnOprXIruA/Cw1h8XdsEW1UAZq4dgQLFth
+	hoFTU2vRRjYqojFIzkLznwUeOvccavM2yfq0nFNCND4ZW4iRS1w2wL3bPx6nb4jy9dMhPETccW+
+	v/mrPtPbLs0mWB22BdNoZzV57CHSWQzPlS
+X-Google-Smtp-Source: AGHT+IFlSNyx/m40xKYC6OWXlqmRmI+SM7/L6vothAHVO/hXw1MzPva0O5TbGE0SIfNFUBdqckDGkQ==
+X-Received: by 2002:a05:6a00:2d1d:b0:7a2:73a9:96c with SMTP id d2e1a72fcca58-7a273a90b4cmr13811317b3a.3.1761554735303;
+        Mon, 27 Oct 2025 01:45:35 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41404dddcsm7300209b3a.38.2025.10.27.01.45.31
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 01:45:34 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/tegra: Fix reference count leak in tegra_dc_couple
+Date: Mon, 27 Oct 2025 16:45:18 +0800
+Message-Id: <20251027084519.80009-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALHNRZ8XnH64GCSFk21D7HPnbJ0Avr0Ds1SAPTPksohqd4dhjA@mail.gmail.com>
 
-On Fri, Oct 24, 2025 at 03:00:47AM -0500, Aaron Kling wrote:
-> On Fri, Oct 24, 2025 at 1:19 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > Hello Aaron Kling,
-> >
-> > Commit 71c46a6457e0 ("cpufreq: tegra186: add OPP support and set
-> > bandwidth") from Oct 21, 2025 (linux-next), leads to the following
-> > Smatch static checker warning:
-> >
-> >         drivers/cpufreq/tegra186-cpufreq.c:197 tegra186_cpufreq_init()
-> >         error: uninitialized symbol 'freq_table'.
-> >
-> > drivers/cpufreq/tegra186-cpufreq.c
-> >     174 static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
-> >     175 {
-> >     176         struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-> >     177         unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-> >     178         struct cpufreq_frequency_table *freq_table;
-> >     179         struct cpufreq_frequency_table *bpmp_lut;
-> >     180         u32 cpu;
-> >     181         int ret;
-> >     182
-> >     183         policy->cpuinfo.transition_latency = 300 * 1000;
-> >     184         policy->driver_data = NULL;
-> >     185
-> >     186         /* set same policy for all cpus in a cluster */
-> >     187         for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-> >     188                 if (data->cpus[cpu].bpmp_cluster_id == cluster)
-> >     189                         cpumask_set_cpu(cpu, policy->cpus);
-> >     190         }
-> >     191
-> >     192         bpmp_lut = data->clusters[cluster].bpmp_lut;
-> >     193
-> >     194         if (data->icc_dram_bw_scaling) {
-> >     195                 ret = tegra_cpufreq_init_cpufreq_table(policy, bpmp_lut, &freq_table);
-> >     196                 if (!ret) {
-> > --> 197                         policy->freq_table = freq_table;
-> >
-> > tegra_cpufreq_init_cpufreq_table() will return zero if there are no
-> > available opps.  The freq_table will be uninitialized in that case.
-> > It's this path:
-> >
-> >           122          max_opps = dev_pm_opp_get_opp_count(cpu_dev);
-> >           123          if (max_opps <= 0) {
-> >           124                  dev_err(cpu_dev, "Failed to add OPPs\n");
-> >           125                  return max_opps;
-> >           126          }
-> >
-> >     198                         return 0;
-> >     199                 }
-> >     200         }
-> >     201
-> >     202         data->icc_dram_bw_scaling = false;
-> >     203         policy->freq_table = bpmp_lut;
-> >     204         pr_info("OPP tables missing from DT, EMC frequency scaling disabled\n");
-> >     205
-> >     206         return 0;
-> >     207 }
-> >
-> > regards,
-> > dan carpenter
-> 
-> I'm looking at dev_pm_opp_of_add_table_indexed which gets called
-> before dev_pm_opp_get_opp_count inside
-> tegra_cpufreq_init_cpufreq_table(). It states that it will return
-> -ENODATA if the opp table is empty,
+The driver_find_device() function returns a device with its reference
+count incremented. The caller is responsible for calling put_device()
+to release this reference when done. Fix this leak by adding the missing
+put_device() call.
 
-I don't see the comment you're referring to but the call to
-dev_pm_opp_get_opp_count() which comes next would prevent an
-empty table.  So it's fine.  We can leave this as-is.  Thanks for
-reviewing it.
+Found via static analysis.
 
-regards,
-dan carpenter
+Fixes: f68ba6912bd2 ("drm/tegra: dc: Link DC1 to DC0 on Tegra20")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 59d5c1ba145a..6c84bd69b11f 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -3148,6 +3148,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+ 		dc->client.parent = &parent->client;
+ 
+ 		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
++		put_device(companion);
+ 	}
+ 
+ 	return 0;
+-- 
+2.39.5 (Apple Git-154)
 
