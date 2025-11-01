@@ -1,131 +1,361 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCB01F09A3
-	for <linux-tegra@vger.kernel.org>; Sat,  1 Nov 2025 23:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749A4A23;
+	Sat,  1 Nov 2025 23:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762038823; cv=none; b=Fl0LjqJUXkUbFq6404hEGuy1YbR4fFVNZKzWeqpPOwto0Z2EzRSZ3Wpgn9OXpwM/ZcdS8rp2VccOMB3R+QWm8HNJLuAVdLp94fgoqZULS3RWYdDB1nXbVaaChPYBlGzqaJOqwGzfidq71pHtcfkQUrwMWQ4llXS6M/68og2POOQ=
+	t=1762038925; cv=none; b=FpSGszMA+Rb2I9LghOFBHOltW/HwVnaQQ+uHiyXqlXUivj+fGUB5JZr3GDLASZWNMgR7TgeQJqbJV6grXy0PtxqMrspMwIPTUSya3Ic0Y9pytYeluA+EV3RuOf5PjKY0oOjWzo9jFn73g9DIuyTBjTTdYcrKwXn4OPVTEH8iHU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762038823; c=relaxed/simple;
-	bh=SrBDDWvLXhp6U/q9qNGjROiU4g3/enClGtkXirRh038=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T7EFZiSdZzpSKnPowbMwJbKy52voV869lvW/j6bYuwlKzjg8rVe5J3P7ImdP0oxTB1Xu4dN4mlMsOZDP3v9bXtgsmYR2O0Wg2/6q1ojcLyFgnBO7WlEmToq/OzAbDI0aa6u+6HbuF8lYASSqfxQcwH2MRgUtvDH99RF6TExXPCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vuiro7t1; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762038925; c=relaxed/simple;
+	bh=3ATetknafvrP9pOikLwADe6yvZtqFQ5/YGTDV81yXCs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kOyiSDzBmJn0GKu1C/OmRxBVbs4DrQ4JN+BasJMEnMPJ5Lc5ekqdnQDT+9CyCi1rVDgqVKLrvq558SoC3O9UTNEGT7hjtFREutCUFJb0Hbs0SsrIPgy+tTgWoTJfwkOhaRe7mnH3UG9SEnvYaXwmpfT3ETNMjMAe+1qpngAy8XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mss74zre; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vuiro7t1"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-36295d53a10so28964771fa.0
-        for <linux-tegra@vger.kernel.org>; Sat, 01 Nov 2025 16:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762038819; x=1762643619; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AYzGZVeDG/F2ZwAs7gohbCGEqRaB9fTMjsTsiPiSNv4=;
-        b=Vuiro7t1K/kjRdRhbHqfsvvpkFJeiuHIV9wV1rz9YcYxGQ3VFVY4+EjongG7M8+D52
-         MXI8BqAFzxxhXgcOlKS2dID5H9PbdeOsRKezDik4zFKdKylM5W4btKxiiJ6LJFrEw1Pj
-         2WuWQwls5grEA11cyQPWF0cdwfckDAFS5J6lRCc+khG8Vz2i895dN1NRhh5aukdbpSXs
-         jxjYuwlfYIb20XLTnO5R/lvfoq2T1/JcJ3IvZNNNbTLYQ1U91bQxGJ95xbzOISnlGp9t
-         ykPRQIiRCMiD7rNPy7PBJidrSc/a8OKmpnneK76cVU6RnituckberWNjbzmrNMrhTPDG
-         wgRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762038819; x=1762643619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AYzGZVeDG/F2ZwAs7gohbCGEqRaB9fTMjsTsiPiSNv4=;
-        b=a/J3AG2H6DU6VZQ+0FrPYklptgkMYWwTQDHCmjbg44kgQfsPNhIinoHVjP3DuXsRg6
-         MNQAbyYyFJtwQVKRMp+5EPXskDzIevmatSD4DqzZuEvAq6e5qR0rpZxwlzkhA4lIuIbT
-         mmJT6N4KEqO012JRLIUMIYsvhd9kw/6RHm1pdHoh5TEz9XeRbH2rwBUoOpOJAgwKgwUS
-         cUKE2pTEngd+vjTn+P48naKbkCqMSeCoLrGo7sSyUX9StF6hgXFAntzA9zNgHdydomMi
-         IkNWsUgMxzOyx5LSMa0IwM61TtRZQpKr/QbvfiViciJJbNJIr4BWZ/RtO+buMv3IP65c
-         G2OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWW3GFLx2CtA16jGY0pCxeW+0SsqAXd3TPGtRkTMn8ijCFYWhvQEpftPqiQMBwRmhUMyNOEuCfGmU3Atg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu9Ehq8mBMN4V55cKItjBdpNxrSVEYl00REyAoJIwT7COBIkGS
-	u95NkaBIb3I8Je+A+zG+IocXrn2a9TEaTaadgMMVciL2mvGUlIlt2+/qZ+s+6b5e6SIXzJNGPEu
-	t82XPuB5I/mgkz4vTWDTigArpS9hMWoA=
-X-Gm-Gg: ASbGnctEcwwNRiAYAaDlhTGZbEicn4MqwDREJkWBNuMJJHsj9/DbMJklU1yrltn16Au
-	YdH0jBzh38B5goughOb+QQtvZg1TAyFV/54arGENsQ9+tsuhtKdVdzEz7gsS1ee+N/+Yz6casvc
-	+8OmpdXTqjsb7X85kT7Cs0wMqH5Nxn4/AsUJe/8oKd884Ut1ybamqguLrtIF6Q0DGFr+xIBVzRy
-	t2glaM7jPUkDXMTfR6y1SFrPJekkwEncQQlniLYBfSIKQxFx0h2W6xk6Sou2oiKnuDjDwk=
-X-Google-Smtp-Source: AGHT+IE8XHymc5LMX6z1ku44swz3jJJw2qy7TpmnFfZvFQicmRNID6fCODQ/EG2fDStIeCQx9l6QeL3n1Ukp8sZtLxA=
-X-Received: by 2002:a05:651c:19a6:b0:378:e673:cff0 with SMTP id
- 38308e7fff4ca-37a18da4d4fmr27578951fa.5.1762038818390; Sat, 01 Nov 2025
- 16:13:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mss74zre"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 61CE9C4CEF1;
+	Sat,  1 Nov 2025 23:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762038925;
+	bh=3ATetknafvrP9pOikLwADe6yvZtqFQ5/YGTDV81yXCs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=mss74zrei7NzfpOhaJjwe4X3RIYUTs7HyEaBkQ03e73+YxP/f1OlWeBnSasnMHt3/
+	 v3XwmCH24lRsMDlHPePy4X515RfHvjP0i35LfcVtlBzPoaLuFTZYJ4zhGcM8MwxLBf
+	 Nc8LD9jVE3czq43rKgUxCUfCRGn42MddbHBPM6KA0r+7bvJhP0/Mwbykj3ZeWkE858
+	 uuNsZDQWXUJ4JkniV/fZPQai0GV8/pI/bp5DRqQ4mnj4WGpdrU+0Sia+8XrVNIlbf8
+	 dGFudP4R6yzCIc5+LYPhqgBNUTts81YnvJrkK+OIgUazA/HL+VorNO4rmTpcW3IGtd
+	 Fjlfwo3AHKSZQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C40ECCFA02;
+	Sat,  1 Nov 2025 23:15:25 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sat, 01 Nov 2025 18:15:17 -0500
+Subject: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com> <20251101-tegra194-dc-mmu-v1-1-8401c45d8f13@gmail.com>
-In-Reply-To: <20251101-tegra194-dc-mmu-v1-1-8401c45d8f13@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAISUBmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA2ND3ZLU9KJE3ZSiXN3k3FJdM0vzVItUA2MDS3MLJaCegqLUtMwKsHn
+ RsbW1AMhK3QpfAAAA
+X-Change-ID: 20251031-tegra-drm-cmu-697e8e030978
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762038924; l=13192;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=NSrrID1EFfOslnWnlsXzn3Vc1iMWToevJVp1+XOkCIY=;
+ b=F34uGpLkd0+hQcaVdC61A8NbbbExx1BZ+BnDUHouEmf5qe2Uzh4rIaQj+FHbnGZEo7UppWTmp
+ L1e8wwcJQJwCDx2juzP37rw8SpV6MaNsgAW7JqgumgMr+WTK9bgKNzo
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sat, 1 Nov 2025 18:13:26 -0500
-X-Gm-Features: AWmQ_bmW3soIlYVprrFQERj13nFXgvHtfazndXt9w2FXnFW8w2VSQcJDNe151xY
-Message-ID: <CALHNRZ_QrQHCmF7f1z29tAmuNR-=rG1SgYJ1sssK3VXiQqURYg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 1, 2025 at 6:01=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> This reverts commit ebea268ea583ba4970df425dfef8c8e21d0a4e12.
->
-> Mmu is now being enabled for the display controllers.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra194.dtsi
-> index 1399342f23e1c4f73b278adc66dfb948fc30d326..854ed6d46aa1d8eedcdfbae1f=
-dde1374adf40337 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -1807,7 +1807,7 @@ iommu@10000000 {
->                         #iommu-cells =3D <1>;
->
->                         nvidia,memory-controller =3D <&mc>;
-> -                       status =3D "disabled";
-> +                       status =3D "okay";
->                 };
->
->                 smmu: iommu@12000000 {
->
-> --
-> 2.51.0
->
->
+Without the cmu, nvdisplay will display colors that are notably darker
+than intended. The vendor bootloader and the downstream display driver
+enable the cmu and sets a sRGB table. Loading that table here results in
+the intended colors.
 
-Question for Jon as the author of the commit being reverted. The
-commit message states "we do not have a way to pass frame-buffer
-memory from the bootloader to the kernel". If I understand this
-correctly, this is talking about seamless handoff. What does this have
-to do with enabling mmu on the display controllers? Seamless does not
-work on any tegra arch as far as I'm aware, but Tegra194 is the only
-one that doesn't have mmu enabled for the dc's. But enabling mmu
-allows for better and faster memory allocation. My initial attempts to
-enable this didn't work because I tried to attach them to the main mmu
-unit, see the related freedesktop issue [0]. After noticing in the
-downstream dt that the dc's are on a separate unit, I made it work.
-And so far, it seems to work just as well as Tegra186. Then when I was
-packaging up the change to submit, I found that this had been
-explicitly disabled. But I'm not seeing why. Am I missing some
-additional factors?
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.h  |  13 +++
+ drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 219 insertions(+)
 
-Aaron
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index 0559fa6b1bf70416e51d5067cc04a6ae6572de23..286eddd89a28f7ea9e64c00f03af76f6c68ae9d8 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -447,11 +447,24 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define BASE_COLOR_SIZE_888    (  8 << 0)
+ #define BASE_COLOR_SIZE_101010 ( 10 << 0)
+ #define BASE_COLOR_SIZE_121212 ( 12 << 0)
++#define CMU_ENABLE_MASK        (1 << 20)
++#define CMU_ENABLE_DISABLE     (0 << 20)
++#define CMU_ENABLE_ENABLE      (1 << 20)
+ 
+ #define DC_DISP_SHIFT_CLOCK_OPTIONS		0x431
+ #define  SC1_H_QUALIFIER_NONE	(1 << 16)
+ #define  SC0_H_QUALIFIER_NONE	(1 <<  0)
+ 
++/* Nvdisplay */
++#define DC_DISP_CORE_HEAD_SET_CONTROL_OUTPUT_LUT	0x431
++#define  OUTPUT_LUT_MODE_MASK        (3 << 5)
++#define  OUTPUT_LUT_MODE_INTERPOLATE (1 << 5)
++#define  OUTPUT_LUT_SIZE_MASK        (3 << 1)
++#define  OUTPUT_LUT_SIZE_SIZE_1025   (2 << 1)
++
++#define DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE	0x432
++#define DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_HI	0x433
++
+ #define DC_DISP_DATA_ENABLE_OPTIONS		0x432
+ #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
+ #define DE_SELECT_ACTIVE        (1 << 0)
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 21f3dfdcc5c9576580b9aa9990dd1bedcdeb4482..a381cb35113c0f3191d7204302f4024f33141622 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -443,6 +443,9 @@ struct tegra_sor {
+ 	bool scdc_enabled;
+ 
+ 	struct tegra_hda_format format;
++
++	u64 *cmu_output_lut;
++	dma_addr_t cmu_output_phys;
+ };
+ 
+ struct tegra_sor_state {
+@@ -483,6 +486,180 @@ static inline struct tegra_sor *to_sor(struct tegra_output *output)
+ 	return container_of(output, struct tegra_sor, output);
+ }
+ 
++static u16 default_srgb_lut[] = {
++		0x6000, 0x60CE, 0x619D, 0x626C, 0x632D, 0x63D4,
++		0x6469, 0x64F0, 0x656B, 0x65DF, 0x664A, 0x66B0,
++		0x6711, 0x676D, 0x67C4, 0x6819, 0x686A, 0x68B8,
++		0x6904, 0x694D, 0x6994, 0x69D8, 0x6A1B, 0x6A5D,
++		0x6A9C, 0x6ADA, 0x6B17, 0x6B52, 0x6B8C, 0x6BC5,
++		0x6BFD, 0x6C33, 0x6C69, 0x6C9E, 0x6CD1, 0x6D04,
++		0x6D36, 0x6D67, 0x6D98, 0x6DC7, 0x6DF6, 0x6E25,
++		0x6E52, 0x6E7F, 0x6EAC, 0x6ED7, 0x6F03, 0x6F2D,
++		0x6F58, 0x6F81, 0x6FAA, 0x6FD3, 0x6FFB, 0x7023,
++		0x704B, 0x7071, 0x7098, 0x70BE, 0x70E4, 0x7109,
++		0x712E, 0x7153, 0x7177, 0x719B, 0x71BF, 0x71E2,
++		0x7205, 0x7227, 0x724A, 0x726C, 0x728E, 0x72AF,
++		0x72D0, 0x72F1, 0x7312, 0x7333, 0x7353, 0x7373,
++		0x7392, 0x73B2, 0x73D1, 0x73F0, 0x740F, 0x742D,
++		0x744C, 0x746A, 0x7488, 0x74A6, 0x74C3, 0x74E0,
++		0x74FE, 0x751B, 0x7537, 0x7554, 0x7570, 0x758D,
++		0x75A9, 0x75C4, 0x75E0, 0x75FC, 0x7617, 0x7632,
++		0x764D, 0x7668, 0x7683, 0x769E, 0x76B8, 0x76D3,
++		0x76ED, 0x7707, 0x7721, 0x773B, 0x7754, 0x776E,
++		0x7787, 0x77A0, 0x77B9, 0x77D2, 0x77EB, 0x7804,
++		0x781D, 0x7835, 0x784E, 0x7866, 0x787E, 0x7896,
++		0x78AE, 0x78C6, 0x78DD, 0x78F5, 0x790D, 0x7924,
++		0x793B, 0x7952, 0x796A, 0x7981, 0x7997, 0x79AE,
++		0x79C5, 0x79DB, 0x79F2, 0x7A08, 0x7A1F, 0x7A35,
++		0x7A4B, 0x7A61, 0x7A77, 0x7A8D, 0x7AA3, 0x7AB8,
++		0x7ACE, 0x7AE3, 0x7AF9, 0x7B0E, 0x7B24, 0x7B39,
++		0x7B4E, 0x7B63, 0x7B78, 0x7B8D, 0x7BA2, 0x7BB6,
++		0x7BCB, 0x7BE0, 0x7BF4, 0x7C08, 0x7C1D, 0x7C31,
++		0x7C45, 0x7C59, 0x7C6E, 0x7C82, 0x7C96, 0x7CA9,
++		0x7CBD, 0x7CD1, 0x7CE5, 0x7CF8, 0x7D0C, 0x7D1F,
++		0x7D33, 0x7D46, 0x7D59, 0x7D6D, 0x7D80, 0x7D93,
++		0x7DA6, 0x7DB9, 0x7DCC, 0x7DDF, 0x7DF2, 0x7E04,
++		0x7E17, 0x7E2A, 0x7E3C, 0x7E4F, 0x7E61, 0x7E74,
++		0x7E86, 0x7E98, 0x7EAB, 0x7EBD, 0x7ECF, 0x7EE1,
++		0x7EF3, 0x7F05, 0x7F17, 0x7F29, 0x7F3B, 0x7F4D,
++		0x7F5E, 0x7F70, 0x7F82, 0x7F93, 0x7FA5, 0x7FB6,
++		0x7FC8, 0x7FD9, 0x7FEB, 0x7FFC, 0x800D, 0x801E,
++		0x8030, 0x8041, 0x8052, 0x8063, 0x8074, 0x8085,
++		0x8096, 0x80A7, 0x80B7, 0x80C8, 0x80D9, 0x80EA,
++		0x80FA, 0x810B, 0x811C, 0x812C, 0x813D, 0x814D,
++		0x815D, 0x816E, 0x817E, 0x818E, 0x819F, 0x81AF,
++		0x81BF, 0x81CF, 0x81DF, 0x81EF, 0x81FF, 0x820F,
++		0x821F, 0x822F, 0x823F, 0x824F, 0x825F, 0x826F,
++		0x827E, 0x828E, 0x829E, 0x82AD, 0x82BD, 0x82CC,
++		0x82DC, 0x82EB, 0x82FB, 0x830A, 0x831A, 0x8329,
++		0x8338, 0x8348, 0x8357, 0x8366, 0x8375, 0x8385,
++		0x8394, 0x83A3, 0x83B2, 0x83C1, 0x83D0, 0x83DF,
++		0x83EE, 0x83FD, 0x840C, 0x841A, 0x8429, 0x8438,
++		0x8447, 0x8455, 0x8464, 0x8473, 0x8481, 0x8490,
++		0x849F, 0x84AD, 0x84BC, 0x84CA, 0x84D9, 0x84E7,
++		0x84F5, 0x8504, 0x8512, 0x8521, 0x852F, 0x853D,
++		0x854B, 0x855A, 0x8568, 0x8576, 0x8584, 0x8592,
++		0x85A0, 0x85AE, 0x85BC, 0x85CA, 0x85D8, 0x85E6,
++		0x85F4, 0x8602, 0x8610, 0x861E, 0x862C, 0x8639,
++		0x8647, 0x8655, 0x8663, 0x8670, 0x867E, 0x868C,
++		0x8699, 0x86A7, 0x86B5, 0x86C2, 0x86D0, 0x86DD,
++		0x86EB, 0x86F8, 0x8705, 0x8713, 0x8720, 0x872E,
++		0x873B, 0x8748, 0x8756, 0x8763, 0x8770, 0x877D,
++		0x878B, 0x8798, 0x87A5, 0x87B2, 0x87BF, 0x87CC,
++		0x87D9, 0x87E6, 0x87F3, 0x8801, 0x880E, 0x881A,
++		0x8827, 0x8834, 0x8841, 0x884E, 0x885B, 0x8868,
++		0x8875, 0x8882, 0x888E, 0x889B, 0x88A8, 0x88B5,
++		0x88C1, 0x88CE, 0x88DB, 0x88E7, 0x88F4, 0x8900,
++		0x890D, 0x891A, 0x8926, 0x8933, 0x893F, 0x894C,
++		0x8958, 0x8965, 0x8971, 0x897D, 0x898A, 0x8996,
++		0x89A3, 0x89AF, 0x89BB, 0x89C8, 0x89D4, 0x89E0,
++		0x89EC, 0x89F9, 0x8A05, 0x8A11, 0x8A1D, 0x8A29,
++		0x8A36, 0x8A42, 0x8A4E, 0x8A5A, 0x8A66, 0x8A72,
++		0x8A7E, 0x8A8A, 0x8A96, 0x8AA2, 0x8AAE, 0x8ABA,
++		0x8AC6, 0x8AD2, 0x8ADE, 0x8AEA, 0x8AF5, 0x8B01,
++		0x8B0D, 0x8B19, 0x8B25, 0x8B31, 0x8B3C, 0x8B48,
++		0x8B54, 0x8B60, 0x8B6B, 0x8B77, 0x8B83, 0x8B8E,
++		0x8B9A, 0x8BA6, 0x8BB1, 0x8BBD, 0x8BC8, 0x8BD4,
++		0x8BDF, 0x8BEB, 0x8BF6, 0x8C02, 0x8C0D, 0x8C19,
++		0x8C24, 0x8C30, 0x8C3B, 0x8C47, 0x8C52, 0x8C5D,
++		0x8C69, 0x8C74, 0x8C80, 0x8C8B, 0x8C96, 0x8CA1,
++		0x8CAD, 0x8CB8, 0x8CC3, 0x8CCF, 0x8CDA, 0x8CE5,
++		0x8CF0, 0x8CFB, 0x8D06, 0x8D12, 0x8D1D, 0x8D28,
++		0x8D33, 0x8D3E, 0x8D49, 0x8D54, 0x8D5F, 0x8D6A,
++		0x8D75, 0x8D80, 0x8D8B, 0x8D96, 0x8DA1, 0x8DAC,
++		0x8DB7, 0x8DC2, 0x8DCD, 0x8DD8, 0x8DE3, 0x8DEE,
++		0x8DF9, 0x8E04, 0x8E0E, 0x8E19, 0x8E24, 0x8E2F,
++		0x8E3A, 0x8E44, 0x8E4F, 0x8E5A, 0x8E65, 0x8E6F,
++		0x8E7A, 0x8E85, 0x8E90, 0x8E9A, 0x8EA5, 0x8EB0,
++		0x8EBA, 0x8EC5, 0x8ECF, 0x8EDA, 0x8EE5, 0x8EEF,
++		0x8EFA, 0x8F04, 0x8F0F, 0x8F19, 0x8F24, 0x8F2E,
++		0x8F39, 0x8F43, 0x8F4E, 0x8F58, 0x8F63, 0x8F6D,
++		0x8F78, 0x8F82, 0x8F8C, 0x8F97, 0x8FA1, 0x8FAC,
++		0x8FB6, 0x8FC0, 0x8FCB, 0x8FD5, 0x8FDF, 0x8FEA,
++		0x8FF4, 0x8FFE, 0x9008, 0x9013, 0x901D, 0x9027,
++		0x9031, 0x903C, 0x9046, 0x9050, 0x905A, 0x9064,
++		0x906E, 0x9079, 0x9083, 0x908D, 0x9097, 0x90A1,
++		0x90AB, 0x90B5, 0x90BF, 0x90C9, 0x90D3, 0x90DD,
++		0x90E7, 0x90F1, 0x90FB, 0x9105, 0x910F, 0x9119,
++		0x9123, 0x912D, 0x9137, 0x9141, 0x914B, 0x9155,
++		0x915F, 0x9169, 0x9173, 0x917D, 0x9186, 0x9190,
++		0x919A, 0x91A4, 0x91AE, 0x91B8, 0x91C1, 0x91CB,
++		0x91D5, 0x91DF, 0x91E9, 0x91F2, 0x91FC, 0x9206,
++		0x9210, 0x9219, 0x9223, 0x922D, 0x9236, 0x9240,
++		0x924A, 0x9253, 0x925D, 0x9267, 0x9270, 0x927A,
++		0x9283, 0x928D, 0x9297, 0x92A0, 0x92AA, 0x92B3,
++		0x92BD, 0x92C6, 0x92D0, 0x92DA, 0x92E3, 0x92ED,
++		0x92F6, 0x9300, 0x9309, 0x9313, 0x931C, 0x9325,
++		0x932F, 0x9338, 0x9342, 0x934B, 0x9355, 0x935E,
++		0x9367, 0x9371, 0x937A, 0x9384, 0x938D, 0x9396,
++		0x93A0, 0x93A9, 0x93B2, 0x93BC, 0x93C5, 0x93CE,
++		0x93D7, 0x93E1, 0x93EA, 0x93F3, 0x93FC, 0x9406,
++		0x940F, 0x9418, 0x9421, 0x942B, 0x9434, 0x943D,
++		0x9446, 0x944F, 0x9459, 0x9462, 0x946B, 0x9474,
++		0x947D, 0x9486, 0x948F, 0x9499, 0x94A2, 0x94AB,
++		0x94B4, 0x94BD, 0x94C6, 0x94CF, 0x94D8, 0x94E1,
++		0x94EA, 0x94F3, 0x94FC, 0x9505, 0x950E, 0x9517,
++		0x9520, 0x9529, 0x9532, 0x953B, 0x9544, 0x954D,
++		0x9556, 0x955F, 0x9568, 0x9571, 0x957A, 0x9583,
++		0x958C, 0x9595, 0x959D, 0x95A6, 0x95AF, 0x95B8,
++		0x95C1, 0x95CA, 0x95D3, 0x95DB, 0x95E4, 0x95ED,
++		0x95F6, 0x95FF, 0x9608, 0x9610, 0x9619, 0x9622,
++		0x962B, 0x9633, 0x963C, 0x9645, 0x964E, 0x9656,
++		0x965F, 0x9668, 0x9671, 0x9679, 0x9682, 0x968B,
++		0x9693, 0x969C, 0x96A5, 0x96AD, 0x96B6, 0x96BF,
++		0x96C7, 0x96D0, 0x96D9, 0x96E1, 0x96EA, 0x96F2,
++		0x96FB, 0x9704, 0x970C, 0x9715, 0x971D, 0x9726,
++		0x972E, 0x9737, 0x9740, 0x9748, 0x9751, 0x9759,
++		0x9762, 0x976A, 0x9773, 0x977B, 0x9784, 0x978C,
++		0x9795, 0x979D, 0x97A6, 0x97AE, 0x97B6, 0x97BF,
++		0x97C7, 0x97D0, 0x97D8, 0x97E1, 0x97E9, 0x97F1,
++		0x97FA, 0x9802, 0x980B, 0x9813, 0x981B, 0x9824,
++		0x982C, 0x9834, 0x983D, 0x9845, 0x984D, 0x9856,
++		0x985E, 0x9866, 0x986F, 0x9877, 0x987F, 0x9888,
++		0x9890, 0x9898, 0x98A0, 0x98A9, 0x98B1, 0x98B9,
++		0x98C1, 0x98CA, 0x98D2, 0x98DA, 0x98E2, 0x98EB,
++		0x98F3, 0x98FB, 0x9903, 0x990B, 0x9914, 0x991C,
++		0x9924, 0x992C, 0x9934, 0x993C, 0x9945, 0x994D,
++		0x9955, 0x995D, 0x9965, 0x996D, 0x9975, 0x997D,
++		0x9986, 0x998E, 0x9996, 0x999E, 0x99A6, 0x99AE,
++		0x99B6, 0x99BE, 0x99C6, 0x99CE, 0x99D6, 0x99DE,
++		0x99E6, 0x99EE, 0x99F6, 0x99FE, 0x9A06, 0x9A0E,
++		0x9A16, 0x9A1E, 0x9A26, 0x9A2E, 0x9A36, 0x9A3E,
++		0x9A46, 0x9A4E, 0x9A56, 0x9A5E, 0x9A66, 0x9A6E,
++		0x9A76, 0x9A7E, 0x9A86, 0x9A8E, 0x9A96, 0x9A9D,
++		0x9AA5, 0x9AAD, 0x9AB5, 0x9ABD, 0x9AC5, 0x9ACD,
++		0x9AD5, 0x9ADC, 0x9AE4, 0x9AEC, 0x9AF4, 0x9AFC,
++		0x9B04, 0x9B0C, 0x9B13, 0x9B1B, 0x9B23, 0x9B2B,
++		0x9B33, 0x9B3A, 0x9B42, 0x9B4A, 0x9B52, 0x9B59,
++		0x9B61, 0x9B69, 0x9B71, 0x9B79, 0x9B80, 0x9B88,
++		0x9B90, 0x9B97, 0x9B9F, 0x9BA7, 0x9BAF, 0x9BB6,
++		0x9BBE, 0x9BC6, 0x9BCD, 0x9BD5, 0x9BDD, 0x9BE5,
++		0x9BEC, 0x9BF4, 0x9BFC, 0x9C03, 0x9C0B, 0x9C12,
++		0x9C1A, 0x9C22, 0x9C29, 0x9C31, 0x9C39, 0x9C40,
++		0x9C48, 0x9C50, 0x9C57, 0x9C5F, 0x9C66, 0x9C6E,
++		0x9C75, 0x9C7D, 0x9C85, 0x9C8C, 0x9C94, 0x9C9B,
++		0x9CA3, 0x9CAA, 0x9CB2, 0x9CBA, 0x9CC1, 0x9CC9,
++		0x9CD0, 0x9CD8, 0x9CDF, 0x9CE7, 0x9CEE, 0x9CF6,
++		0x9CFD, 0x9D05, 0x9D0C, 0x9D14, 0x9D1B, 0x9D23,
++		0x9D2A, 0x9D32, 0x9D39, 0x9D40, 0x9D48, 0x9D4F,
++		0x9D57, 0x9D5E, 0x9D66, 0x9D6D, 0x9D75, 0x9D7C,
++		0x9D83, 0x9D8B, 0x9D92, 0x9D9A, 0x9DA1, 0x9DA8,
++		0x9DB0, 0x9DB7, 0x9DBE, 0x9DC6, 0x9DCD, 0x9DD5,
++		0x9DDC, 0x9DE3, 0x9DEB, 0x9DF2, 0x9DF9, 0x9E01,
++		0x9E08, 0x9E0F, 0x9E17, 0x9E1E, 0x9E25, 0x9E2D,
++		0x9E34, 0x9E3B, 0x9E43, 0x9E4A, 0x9E51, 0x9E58,
++		0x9E60, 0x9E67, 0x9E6E, 0x9E75, 0x9E7D, 0x9E84,
++		0x9E8B, 0x9E92, 0x9E9A, 0x9EA1, 0x9EA8, 0x9EAF,
++		0x9EB7, 0x9EBE, 0x9EC5, 0x9ECC, 0x9ED4, 0x9EDB,
++		0x9EE2, 0x9EE9, 0x9EF0, 0x9EF7, 0x9EFF, 0x9F06,
++		0x9F0D, 0x9F14, 0x9F1B, 0x9F23, 0x9F2A, 0x9F31,
++		0x9F38, 0x9F3F, 0x9F46, 0x9F4D, 0x9F55, 0x9F5C,
++		0x9F63, 0x9F6A, 0x9F71, 0x9F78, 0x9F7F, 0x9F86,
++		0x9F8D, 0x9F95, 0x9F9C, 0x9FA3, 0x9FAA, 0x9FB1,
++		0x9FB8, 0x9FBF, 0x9FC6, 0x9FCD, 0x9FD4, 0x9FDB,
++		0x9FE2, 0x9FE9, 0x9FF0, 0x9FF7, 0x9FFF,
++};
++
+ static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned int offset)
+ {
+ 	u32 value = readl(sor->regs + (offset << 2));
+@@ -2241,6 +2418,13 @@ static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
+ 		dev_err(sor->dev, "failed to power off I/O pad: %d\n", err);
+ 
+ 	host1x_client_suspend(&sor->client);
++
++	if (sor->soc->has_nvdisplay) {
++		dma_free_coherent(dc->dev, ARRAY_SIZE(default_srgb_lut) * sizeof(u64),
++				  sor->cmu_output_lut, sor->cmu_output_phys);
++		sor->cmu_output_lut = NULL;
++		sor->cmu_output_phys = 0;
++	}
+ }
+ 
+ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+@@ -2255,6 +2439,7 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 	unsigned long rate, pclk;
+ 	unsigned int div, i;
+ 	u32 value;
++	u64 r;
+ 	int err;
+ 
+ 	state = to_sor_state(output->connector.state);
+@@ -2557,6 +2742,27 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 	value &= ~DITHER_CONTROL_MASK;
+ 	value &= ~BASE_COLOR_SIZE_MASK;
+ 
++	if (dc->soc->has_nvdisplay) {
++		sor->cmu_output_lut =
++			dma_alloc_coherent(dc->dev, ARRAY_SIZE(default_srgb_lut) * sizeof(u64),
++					   &sor->cmu_output_phys, GFP_KERNEL);
++
++		for (i = 0; i < ARRAY_SIZE(default_srgb_lut); i++) {
++			r = default_srgb_lut[i];
++			sor->cmu_output_lut[i] = (r << 32) | (r << 16) | r;
++		}
++
++		tegra_dc_writel(dc, (u32)(sor->cmu_output_phys & 0xffffffff),
++				DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE);
++		tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
++				DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_HI);
++
++		tegra_dc_writel(dc, OUTPUT_LUT_MODE_INTERPOLATE | OUTPUT_LUT_SIZE_SIZE_1025,
++				DC_DISP_CORE_HEAD_SET_CONTROL_OUTPUT_LUT);
++
++		value |= CMU_ENABLE_ENABLE;
++	}
++
+ 	switch (state->bpc) {
+ 	case 6:
+ 		value |= BASE_COLOR_SIZE_666;
 
-[0] https://gitlab.freedesktop.org/drm/tegra/-/issues/5
+---
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+change-id: 20251031-tegra-drm-cmu-697e8e030978
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
