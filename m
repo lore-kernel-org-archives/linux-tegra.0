@@ -1,64 +1,62 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6BC1F4169;
-	Sun,  2 Nov 2025 17:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E8B2DCC06;
+	Sun,  2 Nov 2025 17:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762103122; cv=none; b=FQivOvQiAcadRZN8gHxcR3alC7ESvRxSR/R1Iyw0TBZadmKzhrLMzQJNeDIuGDzrlxg1ts/CC02cBo/MfLmhmtr6ENRsUUn7g6iqfKTlzyUfHHjjczCohvAK3X7jeIA+LOwbZDc2RTD1i9LL6m3UXSmzcReEf/t9f9gVfT4oQ80=
+	t=1762105471; cv=none; b=DmCa2AtlyXgTr/b/Bzx+TdUCZ8euNb224TQufGLv3kly2NPtA4zkF9CllqDuRFLGjmveW34fNKkLl875vg8hCJjGeLWc8uhKzDR3kT9Gl8yyf77ZcpAN8H4Y9F7GM02PMRmvFOfDA9z7sRHVmJumjmVwSmOKXttEttOl3iodCaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762103122; c=relaxed/simple;
-	bh=QNBa3Nxs4amYOkNF63vxcYItGKzAfFD2qH5ijbBlKxg=;
+	s=arc-20240116; t=1762105471; c=relaxed/simple;
+	bh=ekob6ZS3c0e8P7kQ1YGKc4ijXiV83ifEYMvyqKxpj+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6GtHoZRKezfEn75re/oemmLP9nei06SR94IM46Vv6hTL0ZHE6tICEzhCW/7bRs8wTW8ybA1Ya6QoT734ef28TaD+fvg7zxuBQ1wx9ElJwmTMCdMdKIKy/y+WEZ9EYnL7e3/dC/yXZLlhKo/VwYAQidJI7EDtUYg9Sc4g3l+U0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGu/5isI; arc=none smtp.client-ip=192.198.163.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjQEPU2LqM93zSjIiIjpTRSbLQ/annbXMYCvq5BNYNdluR4BXJD1YyoNTXlwWwgwimTbeVSpvSxQTxEofihh5A82LD7i71mTC6S1+mXWr5tYtYh2vehx8GOGWUpFPuRxJoEIo1r2TlZ3TkjFNAPRjk31cz8iTY4ZlpHO/20XIwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VHrs120P; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGu/5isI"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VHrs120P"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762103120; x=1793639120;
+  t=1762105470; x=1793641470;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=QNBa3Nxs4amYOkNF63vxcYItGKzAfFD2qH5ijbBlKxg=;
-  b=eGu/5isIX+rs3cGSJV72Wo9rsdhDl2OW1iNwcslnx8xkVCZVfQLolg6x
-   S8vaNeFeRZY6edGZ6u2JuK8hi8CFo66hSA3F/uAPoa2TTWGIImFUCiYPv
-   fvpv1blJ7PYUNYF5DicwS+3ZjBJD8eJxKGhhwf/8eafPJLbuHGAsNsVt4
-   p96mhDTke96xTlHh/MQloQ20l9ou2NYnvSH5QYiXzeo1HP/RghPfqYJ+o
-   Y2OZBR8i2craGoNVGXjVieaDuoE4dxdy3A7WHPX0RUiJG14RnzfvpbsJc
-   LKfShDGMuYMfoL8u9oRb+h4fnIsS4PSA6iULbQJzprGb5q2Wjf+fLWFys
-   Q==;
-X-CSE-ConnectionGUID: j74HTt6rSdGE5FIKYNxxZg==
-X-CSE-MsgGUID: elvPVWhoQFehne7i068sCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="66807190"
+  bh=ekob6ZS3c0e8P7kQ1YGKc4ijXiV83ifEYMvyqKxpj+o=;
+  b=VHrs120P63hhSPfYysnHMpMBEsXW5AVLNNGvRF7zMORYtMhcFVWEelWw
+   1FmIJhE95fmhvv90b04hE8eMDCZJtYehio46Xp8qABxa2MjuYBksvVVUV
+   eR+Dx84hkoVgE/R8kvNWGmiBpc7BcQq7RLTi824F2mttJDHmnobEPycDa
+   94ti37NYUBaHvEwOcwetLCGZR+s4rCdv30wPL9IR6Rjrtx8Sa5BHBdgc0
+   veyldlU1K+Ins7zadF2P3Ti7GbRqlOojoatl4pv/r8KyubP/VN/E3ubqa
+   H/DcSbJUk2CNS13SY8m63Bamjtr/3L/6b4CcoWn0qogmbaRxvjrY9P39K
+   g==;
+X-CSE-ConnectionGUID: Zj+aQIOeRlGLMigxltWe/Q==
+X-CSE-MsgGUID: OqqL8hipT0mFjITutX+/iQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75306616"
 X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="66807190"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 09:05:20 -0800
-X-CSE-ConnectionGUID: wvh7ORnySqujkXE1EoAYqg==
-X-CSE-MsgGUID: 0IrIttudS9+ELI6ZydVArQ==
+   d="scan'208";a="75306616"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 09:44:29 -0800
+X-CSE-ConnectionGUID: /BtsB9YDTt+7xQWCkAho/g==
+X-CSE-MsgGUID: FxqV+4HOT/ChUNNigG8zzA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="186826615"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 02 Nov 2025 09:05:17 -0800
+  by fmviesa003.fm.intel.com with ESMTP; 02 Nov 2025 09:44:26 -0800
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vFbUq-000PRM-0f;
-	Sun, 02 Nov 2025 17:04:24 +0000
-Date: Mon, 3 Nov 2025 01:03:08 +0800
+	id 1vFc7s-000PTQ-04;
+	Sun, 02 Nov 2025 17:44:24 +0000
+Date: Mon, 3 Nov 2025 01:44:16 +0800
 From: kernel test robot <lkp@intel.com>
 To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Mikko Perttunen <mperttunen@nvidia.com>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Aaron Kling <webgeek1234@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-Message-ID: <202511030007.5ksWfboC-lkp@intel.com>
+Message-ID: <202511030131.AADiEKfQ-lkp@intel.com>
 References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -80,21 +78,21 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Kling-via-B4-Relay/
 base:   dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
 patch link:    https://lore.kernel.org/r/20251101-tegra-drm-cmu-v1-1-211799755ab8%40gmail.com
 patch subject: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-config: arm-randconfig-002-20251102 (https://download.01.org/0day-ci/archive/20251103/202511030007.5ksWfboC-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030007.5ksWfboC-lkp@intel.com/reproduce)
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20251103/202511030131.AADiEKfQ-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d2625a438020ad35330cda29c3def102c1687b1b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030131.AADiEKfQ-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511030007.5ksWfboC-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511030131.AADiEKfQ-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_hdmi_enable':
->> drivers/gpu/drm/tegra/sor.c:2757:50: warning: right shift count >= width of type [-Wshift-count-overflow]
-    2757 |   tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
-         |                                                  ^~
+>> drivers/gpu/drm/tegra/sor.c:2757:50: warning: shift count >= width of type [-Wshift-count-overflow]
+    2757 |                 tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
+         |                                                                ^  ~~
+   1 warning generated.
 
 
 vim +2757 drivers/gpu/drm/tegra/sor.c
