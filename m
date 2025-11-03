@@ -1,312 +1,193 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012047.outbound.protection.outlook.com [52.101.53.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C371C84D7
-	for <linux-tegra@vger.kernel.org>; Mon,  3 Nov 2025 18:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762195214; cv=none; b=mPPcwQGLRX0V9SZ0lCUcL/XBoN1m2hV4dsPUTraCE6ikBIUYDjhZ2wzq5cmQiR76KGQMfYccIjchBsJpmFcyre7XUm+MSixJJjSdAXNBR6yf4tZ/8IFSPWjHhCIxVI7xBAA/yti6+M/8sO643qZt+8EewXNz7VuNe/c74uASzLU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762195214; c=relaxed/simple;
-	bh=e9mHAwxMs2+tM0PKaRjItovNxkGXbAcTSL/R5300xjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXAXW6ChIzp/jzblpOo5s4h22x7FYldFBko26sEDzlUwlpjoDvBgcwOyRDrA6Oe89LFozLKpqkiU4hhuykh4fIL2nsw4YTu1XYE2K7SCMDycaCThMEFta4EaTI0El1u4xlyvdFtiBew38rk6YZetgw7aXG/eX2wMqYx9OOLZRsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMXieAiy; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE7A285C98;
+	Mon,  3 Nov 2025 18:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762196051; cv=fail; b=fq2KeGYk2ltF7qQpz56BROMwXIQiI48p01tKjkcwVX7Qj3NE4Ij4KalAe4M36Xhz5DywicxlobsbIYQNUgsJRFdOTty/EFzZpFeh5c0zHIDhNgWvYitjmZFQM+Qa+cNUdvpffLWJ2Rsz+oWijdmnJ+csSYxRvvDgemLrOTnFLtM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762196051; c=relaxed/simple;
+	bh=4TwGVRSH17lBxZqjEouXKQxQB1mqAYuVsVCHbjlJVr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OTTy4sm95OFPBTT8ddA8FGV5JxKZA9lYsLH7dmKm83DZKDJpxMPtOyRID+rmAoxODGsl0VZZCZz8V3TF4gj4x0/hZ4EK/NAVnIgCQkAw8JM/3wrJawzoNk0rcHQKzxxGkMhLJAC3c/0KKGZxqH1oaH+lcCYqFielq4A4Jori0sc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mf+znmq9; arc=fail smtp.client-ip=52.101.53.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMXieAiy"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-591c9934e0cso7724952e87.0
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Nov 2025 10:40:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762195210; x=1762800010; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yjg0NORPD0YzwL4UUD+8RwP+2UOFcZACYrXvQ2r4HyE=;
-        b=AMXieAiyrKVLfcKDOVYw5ygteqyc3y5u1ri+u7tsJCzuZZg6jQc48Y/GY8TSFwhn4d
-         QbpmpufkpucXSF85wdhSgNbwB3tyAyvwlu/OsRaQ370Jtgm2UAHkS37bhDDm5Rx2pSli
-         /Zin6pAmurhIPnICZowTCA3CGFpcK/lz47cCZ6hpn9wIW1ifpJzQsM0zLQ4v5PtX67uh
-         iPt7lGh99Gtwgqz+X3FF+hLQY4jrX4QoxJGKuAlDTKMtSe79kj+2362mHG1iLsk8Mx41
-         GyJ6ZWDvbnOsb8aWzjUJeMW9O0VxeACwO4s/yptzqNQG1NWqIcOyzQNI6AEcfYWT5+iO
-         JU+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762195210; x=1762800010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yjg0NORPD0YzwL4UUD+8RwP+2UOFcZACYrXvQ2r4HyE=;
-        b=UdMmxEzjJe/8ObWAOZgJthIiTVWR00TBsBQ5inNfE4tmUCvamQp0LjpDvMBmvyjJSN
-         LtsFPghD0bvMFma+ugucC05lBgJB9f+Haz3xXnRxUSFxZbazE0ChbIIL//qrvt8d5S0S
-         aQkStQIpD8lvzKT4ypGb8MZ9o4ayHtE1rDQR0UArRKM3KNlSlbXuGrQh5pTQw/3Kyy9M
-         yzyhQ/fdG/SCBNIayZscf8RcS59ur3jcTIfKcKaSHvYSl+zwT0OqLVeFTRJd5pZ5VLEG
-         Xl3KefHSuRGlBSRoon5660NdL3KTzFvy+L0BWgdk67nujPnMuCnralYDtWLOKp8IhfmR
-         FAnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeb4Mk1WqM4YCNgDJL0Rysd9ZmhlGEL7f57QBkSGfYvoehoKH5gF4eyjGBCTmAvT2lARZrId89Nik63A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxELZj5Ks7YyuO6AarCxK6smK7TS7I6XvHjYC5wvZOLYSr1fO4X
-	auuMXYWBhIIo4CES5JtwrcGmoq5f6mKBe5xSCAcXdx9toGJizDTQW8cCumQrydbhYfZuP84F+4F
-	ri+LV/Nc7H2BR92ub9hHFbtY9e9l0Uh51pwY+Hmc=
-X-Gm-Gg: ASbGncsNs7ZzfT7B6Y+yLoBAvw/qP/cyFoiGqnVXT9GQU4iOV+FIcLpwBBWVWlLaHZR
-	nApDrYZPBu8FVURe3HQO0CH2K3ExFy+IyAJzZV+nstVHKIxbC9LnOlxpi1uctp7kJmidw2r/Nds
-	mT3m7LK6BjvFJemQTemwIvSU1fvzeaRTSi6YSz5WIbypfxnsF948WtmXKo8sd0tN5ZvSyYtGA3i
-	U8Q01b6DkZofqQ7oQ87sLq1OiP2WXyM7OcWEx/N3gZ9jUhjkTV6e8VJ0Bru
-X-Google-Smtp-Source: AGHT+IHrf8InG0YVbUPJlQOpnMRHCWVus3nqEpRvI8vqF+TG6Uh4sODD1cviMuv9p58GAy7Gm7Gozb3SPZgLNqd21ko=
-X-Received: by 2002:a05:6512:3047:b0:594:2d64:bd0f with SMTP id
- 2adb3069b0e04-5942d64c00fmr1202652e87.16.1762195209578; Mon, 03 Nov 2025
- 10:40:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mf+znmq9"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j+pH0y2IONrgVd0+aFugk4tG3iIPaPkd2MKtDKcmGsbH1NMcWTuNRrddwoBmcfxStyDLe1t5LRFP6JHegZ2QJUppf1N6awN2AP/91BpBlUhauryOSg8eVhaUHnH1+HNXRRsqzgyOChOk+uhrZpvZckOzpa39Buk3RHeeiMFo7Fc3eJyqzYUDHL29vg5zpFZ0r8BAtjJ6wzReHxE0gl+ejlSv/3U6lzv4RxhfngZGoDN0d9j3bESbdTZcWZgNa6oRDCFv+DS/X7Ra9GK+y76cS1QfD/5FAvowMhhV8GoGncm4rV+Y3qpjk9Nf4Wm7w5cndJIZ9luJbg+mJ1ioFBQnhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yj3fUhDhfhfxVJyqMlNMmluhM8PA25nyJNIOaAuLGDw=;
+ b=TR7ah27wgWnL9PbLrA5OmJXS8DCn/fEbhum65XtvKesH7xo7arWPmzavBW/UfmvSnqjSDpK0PlDHSCsUhxgCY/A3MRGWWdGnu0lDG2dDklRQOLmzdn2QiKaMocg7DIacAv6+ozsuEkBAxFqR/9ecWdurTVuTjcH5bWDK6fyP+dTu8uL1CrfH1cafNcNIs8AI2FMUtnbQHDZmwAuAl7hOT2XesqGZu3TkkpTo7XggLDVhqo26NRDVz+eiH8OdB9r5COAul2gOT5j9CMyc73dLx3dOFA6LiqTMAkiDyK1lO2xmjUW5TEpd1azFS8/khRf39CCwwWQmGi4dQU7x4ThmIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yj3fUhDhfhfxVJyqMlNMmluhM8PA25nyJNIOaAuLGDw=;
+ b=mf+znmq9wJatmKJh0YFCJXSEcu7eOiBlvg4zitbxhyZe2HhrcxD7Am8Ssa7x887UJ1PeVa7wgyXpP23MadJdZi+AQ5OlYgZ8dPBQNBghDq6nv7yFX9X+qyj+7kTE+PT0vTysh2+j1OhgZIstNIjThFW0crQA+A6GqYK5zh3I8DKli0X6QIRtq4Mabq5A8jhO3uZRkaP0lkz6XuS4/W+NXQfYomG/e/b1h8oyaTBpe8/tdQL0XIXNEPZFll8F8hZ/f2JbpMJDGqGl6XB5Pm1DtMJkR1wWxlN29l4S+BxE8MtaWjlYaxv0k8+A7waXN6hWF0Bt9dNIpzCuSxhLABScRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by CY5PR12MB6431.namprd12.prod.outlook.com (2603:10b6:930:39::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 18:54:01 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 18:54:01 +0000
+Date: Mon, 3 Nov 2025 14:54:00 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"sven@kernel.org" <sven@kernel.org>, "j@jannau.net" <j@jannau.net>,
+	"jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+	"robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
+	"dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"yong.wu@mediatek.com" <yong.wu@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
+	"tjeznach@rivosinc.com" <tjeznach@rivosinc.com>,
+	"pjw@kernel.org" <pjw@kernel.org>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"heiko@sntech.de" <heiko@sntech.de>,
+	"schnelle@linux.ibm.com" <schnelle@linux.ibm.com>,
+	"mjrosato@linux.ibm.com" <mjrosato@linux.ibm.com>,
+	"wens@csie.org" <wens@csie.org>,
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+	"samuel@sholland.org" <samuel@sholland.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	"linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v1 02/20] iommu: Introduce a test_dev domain op and an
+ internal helper
+Message-ID: <20251103185400.GA1537560@nvidia.com>
+References: <cover.1760312725.git.nicolinc@nvidia.com>
+ <32ce256a2ece5d63e99d5858f953586859818ffc.1760312725.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276D10BD480FE66881870B08CFBA@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <aQO//+6/B/WbdK2h@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQO//+6/B/WbdK2h@Asurada-Nvidia>
+X-ClientProxiedBy: BL1PR13CA0265.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::30) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com> <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
-In-Reply-To: <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 3 Nov 2025 12:39:57 -0600
-X-Gm-Features: AWmQ_bkmrKbleFAu7ESCM5Htipr7i0Mg_ld8nr47Ao7g3e6yS9xY-p2wo60fwAI
-Message-ID: <CALHNRZ9-XrMUkQE0cwjq-HUYsy5uerhOQ9sNpirp23kKoaPuYw@mail.gmail.com>
-Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|CY5PR12MB6431:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59ee45de-9ea3-4d4a-8db1-08de1b0a5a52
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9ERHwDpYtDfspgdJzH4vMwcZmXWsdSipnlFgTFQyNc4GxvYjQRc/1ZuyaLP4?=
+ =?us-ascii?Q?DxjythutWStwJaahcW4d1M3Ga2p7t2R7DVeN47VLE4KLhwrHLvhppJm7muyP?=
+ =?us-ascii?Q?P/fnPsWGYCNESteAsj+J/Qft65WqoLR23uUB6yfbFS7JihDU3ZL7UStvARZ9?=
+ =?us-ascii?Q?7KzN8dG60Y5d5rEjxq4wTdwZ7NAdKqWNwazYNy0c8iJsZbEjCbS1OhCDQiyD?=
+ =?us-ascii?Q?RTFUvhrjbIA2w3eF1KAeqdHGPpY7rBOz95TDoAhkeRYP6uBGZZa+ILRDoyVs?=
+ =?us-ascii?Q?/y6bAA7AvXUtBEmxqvwNVlJbYn4cG4GCa/A4X801MM7Bo3ydXC/7+rGZfdyT?=
+ =?us-ascii?Q?TjVer46QT57t9FFSNgrpJPV5H60T2pr9T8q/2okIaOZFpxcf7BxlgWzFd7R9?=
+ =?us-ascii?Q?nAXwS7Xkb59Ls2tu3l04ni2uiFeHZhLTwboidNfMWRs8vj+yRnMDJhcj+eXy?=
+ =?us-ascii?Q?N4Abs+1JkVEktZzcrRJHNf3vsSVBrecFqxAmxL2jQhDkdednkcPUo3xLQBM/?=
+ =?us-ascii?Q?WYKjs/kvmOaep6wWU31+DDhUOek6PhG8xQs4rsH+9QGN4+Pz5zEjr2QKX4+g?=
+ =?us-ascii?Q?qIeJ+tbLPWOPM0PbchbAHlTCqJvDgcVQjEQgsFXL8WiPIEjw3+qpGf+Vc4PZ?=
+ =?us-ascii?Q?HblQFUw0FQFO6uVm59FiJBLNO77rlfU3snT8Im1d8y6+a6GWg/lsR2USv5Mj?=
+ =?us-ascii?Q?ouWFk5pmN8DcQkAIXRoFFgEoZMBiQBOpI4SpQZgKF5IR0zNRPB6UGMTvJWhU?=
+ =?us-ascii?Q?V/2aLxpzPQ8k6tNPfF0hEMMWUjYlVkzdnOnRYBIJubPbiUkN1kbfQBzKw+QY?=
+ =?us-ascii?Q?hSD960bVoSFeMBlmHlYcFSbvqIQjbX27DUaujKnBN2lMi8BCfQALlylxXwx9?=
+ =?us-ascii?Q?G+fhqgaolowjQHN9mJADXcNCW6oLof55DXsvrtntVNa5LyGzW6Mr8EJtJPdq?=
+ =?us-ascii?Q?EO7iWxRZKenft3R7azDxTbZLTFfieMSJtHskrySv71vwFZgK3QPGpNYYxvgp?=
+ =?us-ascii?Q?ImLNrFOHFy72VWT+UWwbAjc5rGcNUxEv3rQ5vy//xEgtc+D7I5OSeTwjSvzD?=
+ =?us-ascii?Q?Cw7AW1WS5pg9ApqUj7BVPD3sjmy4pxl8f/Zo0D8l4M2xk2JXA7xqo0qHLFPK?=
+ =?us-ascii?Q?XyGLG4VWWxGIMWTKMmLzX2EKtlNLlekwr8qaNl80x40AxsR0VrMU1LULVgjW?=
+ =?us-ascii?Q?RDrzLlJbdjfyEoCamcJ1es/yClk5sMFPKsoic8H7GWsmO0D7ijFGIwqTbC8f?=
+ =?us-ascii?Q?Xlx474HBsGpu6v5MPaLrq7WWedBaOZrE/zbeZNVnUyhsJYW9S0kpaoxB2FTN?=
+ =?us-ascii?Q?ZzgqnpKt/jQsoNu8s4VnN85dqQOrXfdX1bTjZapDe9jImCalAzJaASzi/KWJ?=
+ =?us-ascii?Q?kN2n/3AoxQY0tFMIjya6IV7WcrNHTcg+lhqO8jzE3OxO2uUABitJw/Mm5Xfr?=
+ =?us-ascii?Q?vXzOGqE8epHkrHOAEMQnYQjMh3YMKGsg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OGt9KK0BZ9r2ndE8cd6PaC3l8X3t8TxblUwAqIhPQVViwSFCdWicPi19O3d0?=
+ =?us-ascii?Q?mhiWtJA3x1S5Q8jGeQEqEj1QGsSefzefmumZKqSbUCdclhE6xpe8YrT5OTou?=
+ =?us-ascii?Q?1w0D4Hu156h3Zlc5bAL11imWASOkJsQpCYtJIUPvhFePeswkTFmLK71+pICD?=
+ =?us-ascii?Q?7KM65h4DlT/sVIGQD1v7ERHtIgx35EZVNaVIlh7wGXZKJUxPsT9HeMOOZEG9?=
+ =?us-ascii?Q?cuyq081aqow/olhhvFZ0K0j/PpZpIumoEscc988/yxVwXPcQFJNKxT8w85kg?=
+ =?us-ascii?Q?NM+gV+UpopDuXk92MUcDzAXQrlL87VQ0YzlVt6HtX7rm/Nl4FI78o3AjVlOT?=
+ =?us-ascii?Q?PLStUtz2FQSxv5GOMuC5+Gl/oOMDX44ktbB8NwT2WvUezW4q6Y0MK91bnnWl?=
+ =?us-ascii?Q?a+r6CJEOLED1R28hs0x3SCNp10NMPOVUYpPYAWXYdDluxqUjCpXrbSaSkEQ6?=
+ =?us-ascii?Q?tdbqn1HQaDrt82pnqwZuJ4rNFGhYkEFnXyTYCqT7XvbtIIrm5jP3RRWrQSqD?=
+ =?us-ascii?Q?pbTdslBayQD56WMs14bRgY8e4mRQv5FZ2J1mEGdYrkLCHhZMOE/tpyf2lgV3?=
+ =?us-ascii?Q?aFXHwF/gKQty0gMOZDV21Ge4rFsVkAj0+OsPZbdwXwRoudiYkKYG5quprnkg?=
+ =?us-ascii?Q?55A2lR7Qjc2Wvx3Ze3/vUJcJ+//mk5AWywYRcop+N6gCiZ0KjAF7HXOq8T6M?=
+ =?us-ascii?Q?gd/hhoDWbzdKvmpr5CP1XPhBxvwJy6J01dVt9I+EOjXmVILrGdb9TWvZ19bv?=
+ =?us-ascii?Q?R//aeg89XrX5RMM2MPp7LWLCxDZX2J6Cq72MUlhVW3Lqvg8oHQr+rL4qE8bt?=
+ =?us-ascii?Q?RFxJMqTXiTr2fAcdoCoyvyCh/L+TDZIgQFQnlfCUY0kacNiZApT8ByowL7dt?=
+ =?us-ascii?Q?7bfGt9Po3iIwCqeIs79DvEJ3csIyD+muH1oiQ0z0rK88e52ab0F5lQW0TXNX?=
+ =?us-ascii?Q?3tkYZtW9km9sZyW6hZ7IAJeDB2B60W0YGW36Ms+g1Zxu2+qUPATnGJo9NWSm?=
+ =?us-ascii?Q?45ETOeieZh0u9bJoQ9yhPhvqRnt0fGJZ97GLXEAtVScfc1eKJ2YTFJK5Ke/1?=
+ =?us-ascii?Q?XIeeO8TyO4gOyOnzxAgt7nKuHQPuA93Kvtq/Lz3cKu7xzw92V5c0p0jA+4IQ?=
+ =?us-ascii?Q?EaxISnTA10C3KujHymKXiK4MiZW33IcaGaX9q7K20p1pB7mau0MXI9sR1g0P?=
+ =?us-ascii?Q?eartFnbO7QE4rXTx2GRA+CLY7Tjnl/5wW5cxMwCbrntYkRfEMMGf2VbecpqF?=
+ =?us-ascii?Q?5okFTUN9jIjthLBXVLV4xoH4muuCeHp8ChHAw218t4om6Zw+Es4+1h+2bTl/?=
+ =?us-ascii?Q?PtGzAcbzwEgztZJcSB93AfXaNelOoQtaWl05W7FXFy7czf9eMOmCCh0GtBNC?=
+ =?us-ascii?Q?8u7nnhtavfELmzjp6yrEoB6oWrF64XCAO9mPNH7vnuFXg/U1IvpKm5PgH8uC?=
+ =?us-ascii?Q?Rg82loKyymA/nmI+xRJAygDp4amQSM6dzkX5OOeI2X+j7egV5nuPKNbzYB13?=
+ =?us-ascii?Q?pZD5P6uRZh2ZBbBDIX4ut0kwaxulFmGfc9KarXmBsz9ffRa17dfry+OE8IaU?=
+ =?us-ascii?Q?pVvQSj0MyVj/zciNyaI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59ee45de-9ea3-4d4a-8db1-08de1b0a5a52
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 18:54:01.3813
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GBFFQPVVX6WJAcuBxzILU3DDIplJh+q6ILmgLpN5n59SOQ3VaaYHRADviDm+1mHF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6431
 
-On Mon, Nov 3, 2025 at 5:54=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > Without the cmu, nvdisplay will display colors that are notably darker
-> > than intended. The vendor bootloader and the downstream display driver
-> > enable the cmu and sets a sRGB table. Loading that table here results i=
-n
-> > the intended colors.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  drivers/gpu/drm/tegra/dc.h  |  13 +++
-> >  drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 219 insertions(+)
->
-> What does "darker than intended" mean? Who defines the intention? How do
-> we know what the intention is? What this patch ultimately seems to be
-> doing is define sRGB to be the default colorspace. Is that always the
-> right default choice? What if people want to specify a different
-> colorspace?
+On Thu, Oct 30, 2025 at 12:43:59PM -0700, Nicolin Chen wrote:
 
-I reported this issue almost a month ago. See kernel lore [0] and
-freedesktop issue [1]. The pictures in the latter show what nvdisplay
-looks like right now. It's nigh unusably dark. When booted into
-Android with a tv launcher that has a black background, as is default
-for LineageOS, it is really hard to read anything. Is it correct as a
-default? Well, cboot hardcodes this, so... presumably? It would be
-more ideal to expose this and csc to userspace, but I'm not sure if
-drm has a standardized interface for that or if tegra would have to
-make something vendor specific. I think that would be a separate
-change concept compared to setting this default, though.
+> FWIW, I am thinking of another design based on Jason's remarks:
+> https://lore.kernel.org/linux-iommu/aQBopHFub8wyQh5C@Asurada-Nvidia/
+> 
+> So, instead of core initiating the round trip between the blocking
+> domain and group->domain, it forwards dev_reset_prepare/done to the
+> driver where it does a low-level attachment that wouldn't fail:
+>   For SMMUv3, it's an STE update.
+>   For intel_iommu, it seems to be the context table update?
 
-> Looking at the enum dp_colorimetry it seems like sRGB is the default for
-> DP at least. But then it says the default is sRGB or ITU-R BT.601, but
-> if I compare that to the Wikipedia article for sRGB that says sRGB is
-> closer to ITU-R BT.709 than BT.601. Can we narrow in what exactly the
-> LUT in this patch corresponds to?
+Kevin, how bad do you think the UAPI issue is if we ignore it?
 
-I really don't know. While trying to fix the broken colors, I came
-across the same table in cboot [2] and the downstream tegradc driver.
-Cboot was released as a tarball with no commit history. And the
-tegradc commit history did not have any further clarification beyond
-'sRGB'.
-
-> > diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-> > index 0559fa6b1bf70416e51d5067cc04a6ae6572de23..286eddd89a28f7ea9e64c00=
-f03af76f6c68ae9d8 100644
-> > --- a/drivers/gpu/drm/tegra/dc.h
-> > +++ b/drivers/gpu/drm/tegra/dc.h
-> > @@ -447,11 +447,24 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
-> >  #define BASE_COLOR_SIZE_888    (  8 << 0)
-> >  #define BASE_COLOR_SIZE_101010 ( 10 << 0)
-> >  #define BASE_COLOR_SIZE_121212 ( 12 << 0)
-> > +#define CMU_ENABLE_MASK        (1 << 20)
-> > +#define CMU_ENABLE_DISABLE     (0 << 20)
-> > +#define CMU_ENABLE_ENABLE      (1 << 20)
->
-> _MASK and _DISABLE are unused (and also quite useless in this case).
-
-Fair. I was trying to match the style of the rest of the header, but I
-can drop the unused defines.
-
->
-> >
-> >  #define DC_DISP_SHIFT_CLOCK_OPTIONS          0x431
-> >  #define  SC1_H_QUALIFIER_NONE        (1 << 16)
-> >  #define  SC0_H_QUALIFIER_NONE        (1 <<  0)
-> >
-> > +/* Nvdisplay */
-> > +#define DC_DISP_CORE_HEAD_SET_CONTROL_OUTPUT_LUT     0x431
-> > +#define  OUTPUT_LUT_MODE_MASK        (3 << 5)
-> > +#define  OUTPUT_LUT_MODE_INTERPOLATE (1 << 5)
-> > +#define  OUTPUT_LUT_SIZE_MASK        (3 << 1)
-> > +#define  OUTPUT_LUT_SIZE_SIZE_1025   (2 << 1)
-> > +
-> > +#define DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE     0x432
-> > +#define DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_HI  0x433
-> > +
->
-> There's a section in this header titled "Tegra186 and later", where
-> these new definitions should go. Anything in this section is part of the
-> old registers (or the emulated ones for backwards compatibility).
-
-I figured there had to be a section for that somewhere, but my
-searches failed me. I see it now and will move.
-
-> >  #define DC_DISP_DATA_ENABLE_OPTIONS          0x432
-> >  #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
-> >  #define DE_SELECT_ACTIVE        (1 << 0)
-> > diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-> > index 21f3dfdcc5c9576580b9aa9990dd1bedcdeb4482..a381cb35113c0f3191d7204=
-302f4024f33141622 100644
-> > --- a/drivers/gpu/drm/tegra/sor.c
-> > +++ b/drivers/gpu/drm/tegra/sor.c
-> > @@ -443,6 +443,9 @@ struct tegra_sor {
-> >       bool scdc_enabled;
-> >
-> >       struct tegra_hda_format format;
-> > +
-> > +     u64 *cmu_output_lut;
-> > +     dma_addr_t cmu_output_phys;
-> >  };
-> >
-> >  struct tegra_sor_state {
-> > @@ -483,6 +486,180 @@ static inline struct tegra_sor *to_sor(struct teg=
-ra_output *output)
-> >       return container_of(output, struct tegra_sor, output);
-> >  }
-> >
-> > +static u16 default_srgb_lut[] =3D {
-> > +             0x6000, 0x60CE, 0x619D, 0x626C, 0x632D, 0x63D4,
-> [...]
-> > +             0x9FE2, 0x9FE9, 0x9FF0, 0x9FF7, 0x9FFF,
-> > +};
->
-> I don't take it there's a way to generate this table? And these are not
-> standard values that could be shared among different drivers?
-
-I don't know of a way to generate it. As mentioned above, this was
-copied from downstream.
-
-As for sharing, I don't know. If I read the tx2 trm correctly, the
-display pipeline goes through a input LUT, which is not currently
-enabled by tegra-drm, then into csc, which expects some 'linear
-colorspace'. Then that outputs into the output LUT, which is labelled
-as the cmu, which is expected to translate from that linear colorspace
-into the colorspace expected by the display. Given that this LUT
-generates expected colors on my displays, I assume that the pixels in
-the pipeline are in that 'linear colorspace'. I'm not sure if that's a
-standardized thing or something nvdisplay specific. If it is the
-latter, then the table wouldn't be useful anywhere else.
-
-> You could probably make this a bit more compact by indenting the data
-> with a single tab and squeeze in 2 or 3 more values per line.
-
- Ack.
-
-> >  static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned int =
-offset)
-> >  {
-> >       u32 value =3D readl(sor->regs + (offset << 2));
-> > @@ -2241,6 +2418,13 @@ static void tegra_sor_hdmi_disable(struct drm_en=
-coder *encoder)
-> >               dev_err(sor->dev, "failed to power off I/O pad: %d\n", er=
-r);
-> >
-> >       host1x_client_suspend(&sor->client);
-> > +
-> > +     if (sor->soc->has_nvdisplay) {
-> > +             dma_free_coherent(dc->dev, ARRAY_SIZE(default_srgb_lut) *=
- sizeof(u64),
-> > +                               sor->cmu_output_lut, sor->cmu_output_ph=
-ys);
-> > +             sor->cmu_output_lut =3D NULL;
-> > +             sor->cmu_output_phys =3D 0;
-> > +     }
-> >  }
-> >
-> >  static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
-> > @@ -2255,6 +2439,7 @@ static void tegra_sor_hdmi_enable(struct drm_enco=
-der *encoder)
-> >       unsigned long rate, pclk;
-> >       unsigned int div, i;
-> >       u32 value;
-> > +     u64 r;
->
-> This can be moved into the branch to narrow the scope.
-
-Ack.
-
->
-> >       int err;
-> >
-> >       state =3D to_sor_state(output->connector.state);
-> > @@ -2557,6 +2742,27 @@ static void tegra_sor_hdmi_enable(struct drm_enc=
-oder *encoder)
-> >       value &=3D ~DITHER_CONTROL_MASK;
-> >       value &=3D ~BASE_COLOR_SIZE_MASK;
-> >
-> > +     if (dc->soc->has_nvdisplay) {
-> > +             sor->cmu_output_lut =3D
-> > +                     dma_alloc_coherent(dc->dev, ARRAY_SIZE(default_sr=
-gb_lut) * sizeof(u64),
-> > +                                        &sor->cmu_output_phys, GFP_KER=
-NEL);
->
-> You need to check for failure, otherwise you might NULL dereference the
-> pointer below. But then it's probably even better to allocate this at
-> probe time so that we can guarantee that the LUT can always be set.
-
-Moving alloc to probe and free to remove makes sense. Less thrashing
-that way too. Will do.
-
-> > +
-> > +             for (i =3D 0; i < ARRAY_SIZE(default_srgb_lut); i++) {
-> > +                     r =3D default_srgb_lut[i];
-> > +                     sor->cmu_output_lut[i] =3D (r << 32) | (r << 16) =
-| r;
-> > +             }
->
-> Given that this was taken from the downstream driver, this is probably
-> correct, but I'm not sure I understand why the same value is written to
-> the LUT thrice. Do you happen to know?
-
-I do not, no. I wondered at that too.
-
->
-> > +             tegra_dc_writel(dc, (u32)(sor->cmu_output_phys & 0xffffff=
-ff),
-> > +                             DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE)=
-;
-> > +             tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
-> > +                             DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_=
-HI);
->
-> You'll want to use the lower_32_bits() and upper_32_bits() functions
-> like we do for other address values (see hub.c, for example).
-
-Ack.
-
-I will stage the code review changes, but will hold off on sending a
-new revision. Pending any additional changes coming from the
-discussion of the concept in general.
-
-Aaron
-
-[0] https://lore.kernel.org/all/CALHNRZ_vMy1CTosZ=3DymOhAyMNRh+oBOU9NJ8Gvr8=
-EkqQ5XjFDw@mail.gmail.com/
-[1] https://gitlab.freedesktop.org/drm/tegra/-/issues/8
-[2] https://github.com/LineageOS/android_bootable_cboot_common/blob/034b04d=
-3ac7f2f80d72e3b894d97da4f6e2cd591/drivers/display/nvdisp/tegrabl_nvdisp_cmu=
-.c#L24
+Jason
