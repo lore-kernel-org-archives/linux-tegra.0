@@ -1,163 +1,312 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6029723F294
-	for <linux-tegra@vger.kernel.org>; Mon,  3 Nov 2025 18:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C371C84D7
+	for <linux-tegra@vger.kernel.org>; Mon,  3 Nov 2025 18:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193141; cv=none; b=TjD6PhVnxwHSRptvST0XJ8ci22jbXya6W8k30fDasCFK41klZpys/ui7od9FqypKNpJrDx1/6fuwHwUJ1AWUoUDr7WQdac3zPQJvQK675Kgm8whDwmMcgYQDenNpfIJ20MtkBpYkwmeznbyvN4XvBl7MEvyGO2Ex2j9tx+v3HRA=
+	t=1762195214; cv=none; b=mPPcwQGLRX0V9SZ0lCUcL/XBoN1m2hV4dsPUTraCE6ikBIUYDjhZ2wzq5cmQiR76KGQMfYccIjchBsJpmFcyre7XUm+MSixJJjSdAXNBR6yf4tZ/8IFSPWjHhCIxVI7xBAA/yti6+M/8sO643qZt+8EewXNz7VuNe/c74uASzLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193141; c=relaxed/simple;
-	bh=PISYnyVrW+zygEMF1f2YOQFTzGbLCiScr72QBhAs73I=;
+	s=arc-20240116; t=1762195214; c=relaxed/simple;
+	bh=e9mHAwxMs2+tM0PKaRjItovNxkGXbAcTSL/R5300xjE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pEj1/1z1ru0+tai+WquM1CJLngRcb1aU24KAL2u2SymhLeeL4CH3/pPHTjzn9Zpy0+jKMERRrVysZzdvddAaMc7mCzwHPDfcR+dIMgKNC8HRA8A0UEpIPZ8daV5MZ8N/Y/QPDrF6H5Ni1BGSMNvAZiwcQfW6RvwYt6TOljbx98M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9wNou3K; arc=none smtp.client-ip=209.85.208.172
+	 To:Cc:Content-Type; b=lXAXW6ChIzp/jzblpOo5s4h22x7FYldFBko26sEDzlUwlpjoDvBgcwOyRDrA6Oe89LFozLKpqkiU4hhuykh4fIL2nsw4YTu1XYE2K7SCMDycaCThMEFta4EaTI0El1u4xlyvdFtiBew38rk6YZetgw7aXG/eX2wMqYx9OOLZRsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMXieAiy; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9wNou3K"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3717780ea70so51810851fa.1
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Nov 2025 10:05:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMXieAiy"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-591c9934e0cso7724952e87.0
+        for <linux-tegra@vger.kernel.org>; Mon, 03 Nov 2025 10:40:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762193136; x=1762797936; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762195210; x=1762800010; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R8aecrmpQ3K9U7oiJGcYa/Rpdn9pxiAVmo61NrsXbt8=;
-        b=J9wNou3KNVNCwbK34zdV0koeNZPam9yEEEyJgENpNXhTaTjtqB2YZlP8QT/TLbMypD
-         M9kMiXsec/O+gCm0vyRuYZOA3zLrKmEQ8TPTiwxMFVgbgeMqHzS0Wd4Y/2V9w5O2th9a
-         +IgdkDIRS+RnBCtPACsmad/jjNo5T4qqM20LKaTOQc6Df3iZ7waOfv4Mk45a/47isCn8
-         jCPuvXTEvVqJpxlPvwRXkcyu0a7ivfPLZtwxTXqEUYarS3mMjeI+Q+Qx29ALf+43rzKu
-         QS3fL+fJNVEs/Cv59Z2cAmY9HAILXeXIKfDFUk1RdWaTS1jQZhF9GvqhPZiiSHClJQ6z
-         Q1Aw==
+        bh=yjg0NORPD0YzwL4UUD+8RwP+2UOFcZACYrXvQ2r4HyE=;
+        b=AMXieAiyrKVLfcKDOVYw5ygteqyc3y5u1ri+u7tsJCzuZZg6jQc48Y/GY8TSFwhn4d
+         QbpmpufkpucXSF85wdhSgNbwB3tyAyvwlu/OsRaQ370Jtgm2UAHkS37bhDDm5Rx2pSli
+         /Zin6pAmurhIPnICZowTCA3CGFpcK/lz47cCZ6hpn9wIW1ifpJzQsM0zLQ4v5PtX67uh
+         iPt7lGh99Gtwgqz+X3FF+hLQY4jrX4QoxJGKuAlDTKMtSe79kj+2362mHG1iLsk8Mx41
+         GyJ6ZWDvbnOsb8aWzjUJeMW9O0VxeACwO4s/yptzqNQG1NWqIcOyzQNI6AEcfYWT5+iO
+         JU+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762193136; x=1762797936;
+        d=1e100.net; s=20230601; t=1762195210; x=1762800010;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R8aecrmpQ3K9U7oiJGcYa/Rpdn9pxiAVmo61NrsXbt8=;
-        b=cKJIOWZLYR8+Ensvd1wmpJ0UzoRSvbJA2sNKhSfWcjKRsRZVgC50ezvfJm3tNMXesA
-         FM/V1bcA55BB1PLlQGL9Js186vghXxmr4EXsukuXdMphKvQRJrKZsbvfoq+UemQ/iaFs
-         AYW0ZG7jMi5oNmSoCzHUL48qn3mpe67Q5Lvy8qhOOqYPIs6ZJDgA5FKXmChWztdY358i
-         /+mlpV2FBAAA44LxZjhkeGgXKc+nB5/NqF3oyZcmrSZo8ItOolwQPtc/G3buOynGGcd4
-         4NF7dWmduFc7CkcOjIrFCNDvYn+CRHlvtizT7RxzomXB5LTtXRbEHHjkcvMPK1pFLbiw
-         jvEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlWCk+UFsA4wPzUkPGzFLmsdadwtV/85BiZYpycVGeXVFdd2OsM0vaJw664b8xETmTAHuegDnHUMG72w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxKOKMcBrmL7zIEqworWwG5/XBj42d3Jtg4fxBa0zLxjavdLy4
-	i9RGSIEaU/dxPxVdlDI3t8xaNStiTg8bwiZB3ylyrHF8Nai2wjdwqH3PXgj2vBrziMSZo2QQgDV
-	xpfZYGbk/bh7iW7+ACnlDJHhh8v5xF0o=
-X-Gm-Gg: ASbGnct5IPBbdzbyr9TOjThNOiSaI0ICeC1V8U2CmfxhFZtQ9qAuagqmnry8A1by1AS
-	t9UjzErBifb/X0xjUvMse6eYmmRhPxzMddm/lAAjdEJW+lp9ulcxyoZax1gqG1l4BKZ2Ca4CQY/
-	i1eY9wq4dlMCqFlMcG6Yb1h/6c8Gmtpt4c4HqZiS+GvF4iV4JaN494Qp2CpQpUUslyL88iiYOym
-	VdiB2s8rxBG0b8sdkaHKn2ReB0aiuKmXYl4K63kjfj62kWMO/B+CaPlCP5BYT3UtyF4vJE=
-X-Google-Smtp-Source: AGHT+IGC7/OpISkWQbMMipKycZQIYQDKL8rXabUx2InfXFTpSjCKCJJBdIGKPmclJe97UZMkkDuX8GDTzhUEQwFUA10=
-X-Received: by 2002:a2e:bc21:0:b0:378:e8d1:117 with SMTP id
- 38308e7fff4ca-37a2626ec92mr31718591fa.11.1762193136204; Mon, 03 Nov 2025
- 10:05:36 -0800 (PST)
+        bh=yjg0NORPD0YzwL4UUD+8RwP+2UOFcZACYrXvQ2r4HyE=;
+        b=UdMmxEzjJe/8ObWAOZgJthIiTVWR00TBsBQ5inNfE4tmUCvamQp0LjpDvMBmvyjJSN
+         LtsFPghD0bvMFma+ugucC05lBgJB9f+Haz3xXnRxUSFxZbazE0ChbIIL//qrvt8d5S0S
+         aQkStQIpD8lvzKT4ypGb8MZ9o4ayHtE1rDQR0UArRKM3KNlSlbXuGrQh5pTQw/3Kyy9M
+         yzyhQ/fdG/SCBNIayZscf8RcS59ur3jcTIfKcKaSHvYSl+zwT0OqLVeFTRJd5pZ5VLEG
+         Xl3KefHSuRGlBSRoon5660NdL3KTzFvy+L0BWgdk67nujPnMuCnralYDtWLOKp8IhfmR
+         FAnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeb4Mk1WqM4YCNgDJL0Rysd9ZmhlGEL7f57QBkSGfYvoehoKH5gF4eyjGBCTmAvT2lARZrId89Nik63A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxELZj5Ks7YyuO6AarCxK6smK7TS7I6XvHjYC5wvZOLYSr1fO4X
+	auuMXYWBhIIo4CES5JtwrcGmoq5f6mKBe5xSCAcXdx9toGJizDTQW8cCumQrydbhYfZuP84F+4F
+	ri+LV/Nc7H2BR92ub9hHFbtY9e9l0Uh51pwY+Hmc=
+X-Gm-Gg: ASbGncsNs7ZzfT7B6Y+yLoBAvw/qP/cyFoiGqnVXT9GQU4iOV+FIcLpwBBWVWlLaHZR
+	nApDrYZPBu8FVURe3HQO0CH2K3ExFy+IyAJzZV+nstVHKIxbC9LnOlxpi1uctp7kJmidw2r/Nds
+	mT3m7LK6BjvFJemQTemwIvSU1fvzeaRTSi6YSz5WIbypfxnsF948WtmXKo8sd0tN5ZvSyYtGA3i
+	U8Q01b6DkZofqQ7oQ87sLq1OiP2WXyM7OcWEx/N3gZ9jUhjkTV6e8VJ0Bru
+X-Google-Smtp-Source: AGHT+IHrf8InG0YVbUPJlQOpnMRHCWVus3nqEpRvI8vqF+TG6Uh4sODD1cviMuv9p58GAy7Gm7Gozb3SPZgLNqd21ko=
+X-Received: by 2002:a05:6512:3047:b0:594:2d64:bd0f with SMTP id
+ 2adb3069b0e04-5942d64c00fmr1202652e87.16.1762195209578; Mon, 03 Nov 2025
+ 10:40:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com>
- <20251101-tegra194-dc-mmu-v1-1-8401c45d8f13@gmail.com> <CALHNRZ_QrQHCmF7f1z29tAmuNR-=rG1SgYJ1sssK3VXiQqURYg@mail.gmail.com>
- <ehkwvvmvk4mddxtcmne5jrex2rfq4phqsa5zifxdslrpvdl2ir@3zlwejmx5f5f>
-In-Reply-To: <ehkwvvmvk4mddxtcmne5jrex2rfq4phqsa5zifxdslrpvdl2ir@3zlwejmx5f5f>
+References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com> <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
+In-Reply-To: <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 3 Nov 2025 12:05:25 -0600
-X-Gm-Features: AWmQ_bn8e3wfcvjuhO6Vmi4IjMPB_dfMYgSSGbJtskmsQArECnzIC31_RuG-ptw
-Message-ID: <CALHNRZ-rArVkbEaiEVwMevfbu0dgX5P-ooVYTd-3RHvrhOJ5vQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
+Date: Mon, 3 Nov 2025 12:39:57 -0600
+X-Gm-Features: AWmQ_bkmrKbleFAu7ESCM5Htipr7i0Mg_ld8nr47Ao7g3e6yS9xY-p2wo60fwAI
+Message-ID: <CALHNRZ9-XrMUkQE0cwjq-HUYsy5uerhOQ9sNpirp23kKoaPuYw@mail.gmail.com>
+Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 3, 2025 at 5:07=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+On Mon, Nov 3, 2025 at 5:54=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
 .com> wrote:
 >
-> On Sat, Nov 01, 2025 at 06:13:26PM -0500, Aaron Kling wrote:
-> > On Sat, Nov 1, 2025 at 6:01=E2=80=AFPM Aaron Kling via B4 Relay
-> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > >
-> > > From: Aaron Kling <webgeek1234@gmail.com>
-> > >
-> > > This reverts commit ebea268ea583ba4970df425dfef8c8e21d0a4e12.
-> > >
-> > > Mmu is now being enabled for the display controllers.
-> > >
-> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > ---
-> > >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/bo=
-ot/dts/nvidia/tegra194.dtsi
-> > > index 1399342f23e1c4f73b278adc66dfb948fc30d326..854ed6d46aa1d8eedcdfb=
-ae1fdde1374adf40337 100644
-> > > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > @@ -1807,7 +1807,7 @@ iommu@10000000 {
-> > >                         #iommu-cells =3D <1>;
-> > >
-> > >                         nvidia,memory-controller =3D <&mc>;
-> > > -                       status =3D "disabled";
-> > > +                       status =3D "okay";
-> > >                 };
-> > >
-> > >                 smmu: iommu@12000000 {
-> > >
-> > > --
-> > > 2.51.0
-> > >
-> > >
+> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 Relay wrote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
 > >
-> > Question for Jon as the author of the commit being reverted. The
-> > commit message states "we do not have a way to pass frame-buffer
-> > memory from the bootloader to the kernel". If I understand this
-> > correctly, this is talking about seamless handoff. What does this have
-> > to do with enabling mmu on the display controllers? Seamless does not
-> > work on any tegra arch as far as I'm aware, but Tegra194 is the only
-> > one that doesn't have mmu enabled for the dc's. But enabling mmu
-> > allows for better and faster memory allocation. My initial attempts to
-> > enable this didn't work because I tried to attach them to the main mmu
-> > unit, see the related freedesktop issue [0]. After noticing in the
-> > downstream dt that the dc's are on a separate unit, I made it work.
-> > And so far, it seems to work just as well as Tegra186. Then when I was
-> > packaging up the change to submit, I found that this had been
-> > explicitly disabled. But I'm not seeing why. Am I missing some
-> > additional factors?
+> > Without the cmu, nvdisplay will display colors that are notably darker
+> > than intended. The vendor bootloader and the downstream display driver
+> > enable the cmu and sets a sRGB table. Loading that table here results i=
+n
+> > the intended colors.
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  drivers/gpu/drm/tegra/dc.h  |  13 +++
+> >  drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  2 files changed, 219 insertions(+)
 >
-> This isn't seamless handoff to the Tegra DRM driver for display, but
-> rather to simple-framebuffer. While this does technically work, it also
-> causes a spew of SMMU faults during early boot because the firmware does
-> not properly pass the SMMU mapping information to the kernel.
->
-> In a nutshell what happens is that the firmware sets up the display
-> controller to scan out from a reserved memory region, but it does so
-> without involving the SMMU, so it uses physical addresses directly. When
-> the kernel boots and the SMMU is enabled the continued accesses from
-> display hardware cause SMMU faults (because there is no mapping for the
-> framebuffer addresses).
->
-> That said, we did solve these issues and this may not be happening
-> anymore with the most recent L4T releases, so it may be okay to revert
-> this now. We should find out exactly which release includes all the
-> needed changes so that it can be referenced in the commit message. I
-> want to avoid people running new kernels with an old L4T release and
-> then seeing these errors without any reference as to why that might
-> suddenly happen.
+> What does "darker than intended" mean? Who defines the intention? How do
+> we know what the intention is? What this patch ultimately seems to be
+> doing is define sRGB to be the default colorspace. Is that always the
+> right default choice? What if people want to specify a different
+> colorspace?
 
-For reference, I have rolled back my Android usecase to use the L4T
-r32.7.6 bootloaders on T194 for a variety of reasons. So I am using
-cboot as the final bootloader and not edk2 as in L4T r34/r35. I have a
-pending cboot patch to support simple-framebuffer handoff, but haven't
-fully verified it as tegra-drm is currently unable to takeover from
-simplefb like openrm does for t234. But all that to say that since I
-no longer use r35 for t194 I don't have the setup to easily verify
-which point release works here and what doesn't.
+I reported this issue almost a month ago. See kernel lore [0] and
+freedesktop issue [1]. The pictures in the latter show what nvdisplay
+looks like right now. It's nigh unusably dark. When booted into
+Android with a tv launcher that has a black background, as is default
+for LineageOS, it is really hard to read anything. Is it correct as a
+default? Well, cboot hardcodes this, so... presumably? It would be
+more ideal to expose this and csc to userspace, but I'm not sure if
+drm has a standardized interface for that or if tegra would have to
+make something vendor specific. I think that would be a separate
+change concept compared to setting this default, though.
+
+> Looking at the enum dp_colorimetry it seems like sRGB is the default for
+> DP at least. But then it says the default is sRGB or ITU-R BT.601, but
+> if I compare that to the Wikipedia article for sRGB that says sRGB is
+> closer to ITU-R BT.709 than BT.601. Can we narrow in what exactly the
+> LUT in this patch corresponds to?
+
+I really don't know. While trying to fix the broken colors, I came
+across the same table in cboot [2] and the downstream tegradc driver.
+Cboot was released as a tarball with no commit history. And the
+tegradc commit history did not have any further clarification beyond
+'sRGB'.
+
+> > diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> > index 0559fa6b1bf70416e51d5067cc04a6ae6572de23..286eddd89a28f7ea9e64c00=
+f03af76f6c68ae9d8 100644
+> > --- a/drivers/gpu/drm/tegra/dc.h
+> > +++ b/drivers/gpu/drm/tegra/dc.h
+> > @@ -447,11 +447,24 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+> >  #define BASE_COLOR_SIZE_888    (  8 << 0)
+> >  #define BASE_COLOR_SIZE_101010 ( 10 << 0)
+> >  #define BASE_COLOR_SIZE_121212 ( 12 << 0)
+> > +#define CMU_ENABLE_MASK        (1 << 20)
+> > +#define CMU_ENABLE_DISABLE     (0 << 20)
+> > +#define CMU_ENABLE_ENABLE      (1 << 20)
+>
+> _MASK and _DISABLE are unused (and also quite useless in this case).
+
+Fair. I was trying to match the style of the rest of the header, but I
+can drop the unused defines.
+
+>
+> >
+> >  #define DC_DISP_SHIFT_CLOCK_OPTIONS          0x431
+> >  #define  SC1_H_QUALIFIER_NONE        (1 << 16)
+> >  #define  SC0_H_QUALIFIER_NONE        (1 <<  0)
+> >
+> > +/* Nvdisplay */
+> > +#define DC_DISP_CORE_HEAD_SET_CONTROL_OUTPUT_LUT     0x431
+> > +#define  OUTPUT_LUT_MODE_MASK        (3 << 5)
+> > +#define  OUTPUT_LUT_MODE_INTERPOLATE (1 << 5)
+> > +#define  OUTPUT_LUT_SIZE_MASK        (3 << 1)
+> > +#define  OUTPUT_LUT_SIZE_SIZE_1025   (2 << 1)
+> > +
+> > +#define DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE     0x432
+> > +#define DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_HI  0x433
+> > +
+>
+> There's a section in this header titled "Tegra186 and later", where
+> these new definitions should go. Anything in this section is part of the
+> old registers (or the emulated ones for backwards compatibility).
+
+I figured there had to be a section for that somewhere, but my
+searches failed me. I see it now and will move.
+
+> >  #define DC_DISP_DATA_ENABLE_OPTIONS          0x432
+> >  #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
+> >  #define DE_SELECT_ACTIVE        (1 << 0)
+> > diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> > index 21f3dfdcc5c9576580b9aa9990dd1bedcdeb4482..a381cb35113c0f3191d7204=
+302f4024f33141622 100644
+> > --- a/drivers/gpu/drm/tegra/sor.c
+> > +++ b/drivers/gpu/drm/tegra/sor.c
+> > @@ -443,6 +443,9 @@ struct tegra_sor {
+> >       bool scdc_enabled;
+> >
+> >       struct tegra_hda_format format;
+> > +
+> > +     u64 *cmu_output_lut;
+> > +     dma_addr_t cmu_output_phys;
+> >  };
+> >
+> >  struct tegra_sor_state {
+> > @@ -483,6 +486,180 @@ static inline struct tegra_sor *to_sor(struct teg=
+ra_output *output)
+> >       return container_of(output, struct tegra_sor, output);
+> >  }
+> >
+> > +static u16 default_srgb_lut[] =3D {
+> > +             0x6000, 0x60CE, 0x619D, 0x626C, 0x632D, 0x63D4,
+> [...]
+> > +             0x9FE2, 0x9FE9, 0x9FF0, 0x9FF7, 0x9FFF,
+> > +};
+>
+> I don't take it there's a way to generate this table? And these are not
+> standard values that could be shared among different drivers?
+
+I don't know of a way to generate it. As mentioned above, this was
+copied from downstream.
+
+As for sharing, I don't know. If I read the tx2 trm correctly, the
+display pipeline goes through a input LUT, which is not currently
+enabled by tegra-drm, then into csc, which expects some 'linear
+colorspace'. Then that outputs into the output LUT, which is labelled
+as the cmu, which is expected to translate from that linear colorspace
+into the colorspace expected by the display. Given that this LUT
+generates expected colors on my displays, I assume that the pixels in
+the pipeline are in that 'linear colorspace'. I'm not sure if that's a
+standardized thing or something nvdisplay specific. If it is the
+latter, then the table wouldn't be useful anywhere else.
+
+> You could probably make this a bit more compact by indenting the data
+> with a single tab and squeeze in 2 or 3 more values per line.
+
+ Ack.
+
+> >  static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned int =
+offset)
+> >  {
+> >       u32 value =3D readl(sor->regs + (offset << 2));
+> > @@ -2241,6 +2418,13 @@ static void tegra_sor_hdmi_disable(struct drm_en=
+coder *encoder)
+> >               dev_err(sor->dev, "failed to power off I/O pad: %d\n", er=
+r);
+> >
+> >       host1x_client_suspend(&sor->client);
+> > +
+> > +     if (sor->soc->has_nvdisplay) {
+> > +             dma_free_coherent(dc->dev, ARRAY_SIZE(default_srgb_lut) *=
+ sizeof(u64),
+> > +                               sor->cmu_output_lut, sor->cmu_output_ph=
+ys);
+> > +             sor->cmu_output_lut =3D NULL;
+> > +             sor->cmu_output_phys =3D 0;
+> > +     }
+> >  }
+> >
+> >  static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+> > @@ -2255,6 +2439,7 @@ static void tegra_sor_hdmi_enable(struct drm_enco=
+der *encoder)
+> >       unsigned long rate, pclk;
+> >       unsigned int div, i;
+> >       u32 value;
+> > +     u64 r;
+>
+> This can be moved into the branch to narrow the scope.
+
+Ack.
+
+>
+> >       int err;
+> >
+> >       state =3D to_sor_state(output->connector.state);
+> > @@ -2557,6 +2742,27 @@ static void tegra_sor_hdmi_enable(struct drm_enc=
+oder *encoder)
+> >       value &=3D ~DITHER_CONTROL_MASK;
+> >       value &=3D ~BASE_COLOR_SIZE_MASK;
+> >
+> > +     if (dc->soc->has_nvdisplay) {
+> > +             sor->cmu_output_lut =3D
+> > +                     dma_alloc_coherent(dc->dev, ARRAY_SIZE(default_sr=
+gb_lut) * sizeof(u64),
+> > +                                        &sor->cmu_output_phys, GFP_KER=
+NEL);
+>
+> You need to check for failure, otherwise you might NULL dereference the
+> pointer below. But then it's probably even better to allocate this at
+> probe time so that we can guarantee that the LUT can always be set.
+
+Moving alloc to probe and free to remove makes sense. Less thrashing
+that way too. Will do.
+
+> > +
+> > +             for (i =3D 0; i < ARRAY_SIZE(default_srgb_lut); i++) {
+> > +                     r =3D default_srgb_lut[i];
+> > +                     sor->cmu_output_lut[i] =3D (r << 32) | (r << 16) =
+| r;
+> > +             }
+>
+> Given that this was taken from the downstream driver, this is probably
+> correct, but I'm not sure I understand why the same value is written to
+> the LUT thrice. Do you happen to know?
+
+I do not, no. I wondered at that too.
+
+>
+> > +             tegra_dc_writel(dc, (u32)(sor->cmu_output_phys & 0xffffff=
+ff),
+> > +                             DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE)=
+;
+> > +             tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
+> > +                             DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_=
+HI);
+>
+> You'll want to use the lower_32_bits() and upper_32_bits() functions
+> like we do for other address values (see hub.c, for example).
+
+Ack.
+
+I will stage the code review changes, but will hold off on sending a
+new revision. Pending any additional changes coming from the
+discussion of the concept in general.
 
 Aaron
+
+[0] https://lore.kernel.org/all/CALHNRZ_vMy1CTosZ=3DymOhAyMNRh+oBOU9NJ8Gvr8=
+EkqQ5XjFDw@mail.gmail.com/
+[1] https://gitlab.freedesktop.org/drm/tegra/-/issues/8
+[2] https://github.com/LineageOS/android_bootable_cboot_common/blob/034b04d=
+3ac7f2f80d72e3b894d97da4f6e2cd591/drivers/display/nvdisp/tegrabl_nvdisp_cmu=
+.c#L24
