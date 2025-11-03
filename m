@@ -1,134 +1,95 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A957227B4F7
-	for <linux-tegra@vger.kernel.org>; Mon,  3 Nov 2025 14:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E69732A3C5;
+	Mon,  3 Nov 2025 14:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179413; cv=none; b=FtwVcd3xkPm7hJ5iifOM2hFijOFzEvhA8rS3ZNVnxNGw2Cn4oexRcEftQQNreKrZubD3rw9MHCZyHi1uARo34oeyZXPiYFQKjtvZ8qw2z4ZUhlnPHa1BRAKR79QgzWTy+2y0H/AVRPRwGWgLO5BWdbaxNPD7ONzv9BHkoR4XyvY=
+	t=1762181879; cv=none; b=jgn0Wed4KUD3P/2gbWA+9FGnZ9S4vfadbxFsJVA8N9/ynCc4QncKzTZ1ITdrdUyWz+fxcla0toOKnLGiRgaHB3WcySGjb65G8VEArRjR/R6OCQk+5b5XElwrOLwYGIb8khxaJgPFHDsQ0vrNRkpOZk536ccciBYyiFKe7aXJw6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179413; c=relaxed/simple;
-	bh=wZ6rUp95l1VI3OxxaYss9GPCFbABLcXZVNiUabj2IeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btQ82A8mgnmjj5HV+WOwIrdC4zI/dtVJVWV9Y1Jh1w1VlQ5mWXzmgE588aCEC81MYGlhzoJX9lPTLQ/56EanaVtHiiAG6lA0EilHsXAGwAEXYJEUbByF1fjply7lPJLLoklgw1lCCeNOTqzRF9+2FBnMy5UYlmaCzXGX4/rcVlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lTdhDetG; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762181879; c=relaxed/simple;
+	bh=AbV0ABvCZd1kvghexyj1yJEoaSmQNI8stxZWlAytKKQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fCr1hgz8jsSpe85+/OZWNWK7KSZqB81zulsfwj9+2dHrCY3oXJty7a/4U0+5md0ril7b3jBzPEa6NWivsTFRzKEWFxY7mb4IqRNQgbkl/whFO9u+DMHgeJjEwXyS4bDDK0LnK8jC2I9RWnvt75coGzcFZ3IDMQ7k1fX8CT+SKcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdjF7tLZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTdhDetG"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-429c2f6a580so2472945f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Nov 2025 06:16:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762179410; x=1762784210; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AK6B3GPgKTLS+sYJ2QFwdaDDOy+dXg0ukpEcj9To1Xk=;
-        b=lTdhDetGKWmH4U2jeiuvPUG2Bb62TTFHQaa6mHXbJsAdJpUdJIcvg2N6uczqNnWKhn
-         lrTMYHNng+EdajPYwRvm6UVc7VemjefXLslrz5y9Cn6erziUy8isQmeXSSltyhBzxBP1
-         lbh1CKY4IraYfppGPIDerS4IVurGqu9hHt1cHmimKIffdkF6kp2J4No1JOT+9sx+FKJN
-         Ii3m1n6YWeFJxsw7JMHe1+Yoc/Bfo1YFoHGVfXurap/O2In1VHi6IOuajUUgJaG1I/Dl
-         6T4dWnGAn0+lqQ3AV8pv7tC+WS5ZWK1DIkRD3vtZv5kTQhJ5KGkEszPiljHRX7lgm7TU
-         qXSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762179410; x=1762784210;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AK6B3GPgKTLS+sYJ2QFwdaDDOy+dXg0ukpEcj9To1Xk=;
-        b=l6uu6SHcGNsF6jLGJOAf3SxQTauwInAW54tv+Q6Vs14xJ0R1hppTsXG/uUJeLoRSLw
-         jGnGB/2qW6VOapStPqqMXlGAR3WJ8hcxbTMbXluWCpSFJTkxkzqDrpSuQ/Qn3ajcvdj4
-         EiHO8R57T691yKdDPh9BwWs3/tNHnKGNly1rz56SV0bpOoT2Y/PzmSM7uOAqVnK/L7W1
-         H7M5+xx3ZYqOqE1z65Fwn0/iqpLxrSelDdrPiGwkUegaBARumbvzmbmIV8GtvU+j5VTw
-         bdZ13S4o2cN6D3Z1/96pome+XF5PvVaTyvGHf2/kV8esC1yvp/v0+BL3TesSCzZvRDtt
-         bzdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB3LCq9604BWJfhuS/YF1DeLQLRYytxksamDB4W09u7ZezpF0E6IgdftPB7lSHqc3SJlHACe2VSOU+hA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqCeK0mwz/7SWzAcbYlcCuLTHMif6Rcf1yVmCBiAfXl8a3uhAa
-	I4xCoZOtHFJVQuOaXVI19XaO6BUWmwRdlxPqgNsT3bXby6bKoqmUYdk9
-X-Gm-Gg: ASbGncssKCpb/Fu4ck2nyU/Ieol7IBRwfmk7HqJFcP+vDUV2arlFlyNIdrNvL7Knpuo
-	AYyXFeLyBTiR3VcVl84G5AD8Fu+bolsA7piROODCNzpNlA2kKnNNqdHcktavhNZsOpwhi1KGQ1r
-	Z5w8eQE6aLPf8Q1FjENltD+hiHSn5TLWQc94wS7o8peQl5d9eoDrBkEwGHnnACTjtw9nSdjepIk
-	akaXapDXXSMsA0W2n6XJgVJFnD/VkPGAqL+rBY8nLSQPrPlC2apv9nOnvWmyOT7PbN36XYBKFji
-	7PbtoveciyV3o+RzO9K+2rPW3FuS6e2XbpCAKoVXbtVtGd5wMUJdt2JRH4sLtZ8hbxWO4dF1j50
-	PSESMCkb5lgVBuKHaRHePSMeOfl4YQRoiTWytNeAixZPKefRrdsZr4POdRUA9aMckkW7bEV5vgQ
-	UVZ98fNz/va0YwQwl0NyUeDbe/vQN3h2mOMf3bLCzDK9oRpNi4+FO4YH5x4ILQTiKHRFrARfCZe
-	qolOVzaPd23
-X-Google-Smtp-Source: AGHT+IFLLHTGHcAuIPyGKMZXwN/E6JsPzYuvadEdbaB5JanFKglVSWXPVxk4ppTMgy82SxhKIiaxmw==
-X-Received: by 2002:a05:6000:268a:b0:429:d426:fb9 with SMTP id ffacd0b85a97d-429d4261238mr2280493f8f.34.1762179409528;
-        Mon, 03 Nov 2025 06:16:49 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429cdf42104sm10403042f8f.3.2025.11.03.06.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:16:48 -0800 (PST)
-Date: Mon, 3 Nov 2025 15:16:46 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, kyarlagadda@nvidia.com, 
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] spi: tegra210-quad: Check hardware status on
- timeout
-Message-ID: <wo3oezxxxqbld326h7736lzyspgk7odvvvcamgp5wemtxsnzee@ybl3kg54arvy>
-References: <20251028155703.4151791-1-va@nvidia.com>
- <20251028155703.4151791-4-va@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdjF7tLZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E2FC19421;
+	Mon,  3 Nov 2025 14:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762181879;
+	bh=AbV0ABvCZd1kvghexyj1yJEoaSmQNI8stxZWlAytKKQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qdjF7tLZpSe+2/T4d1NisM5e2ZE1KdSWDaXa9YA3UpeH8OxQkQzgAR2RBaenDcAEu
+	 Z4zl2kTgbi/a6jXjsb6+JEs89mVupNXbE5nqPPoHbDooMlHnAejkD7+MhgbitbRS0i
+	 0r7ZoIrDgMV4vCnssq8b0VuhsHlsJZT7yS6y/RDn7KU8KzFngWu98hdaVB6VV7zA0p
+	 zna0bygb9nDkibXNYN21mJV4IGHiIUNEkNp+2Q0NTrXecFRv4KJYtc7h1HT6/pmCQ8
+	 iEQupk+t2Uw1zZY1gAZnvPlTXnsi3ZZXvoHlZW/2P0aOipfo2QI+gHGoP2L+ra1Vd5
+	 PaB2R5YUigbsw==
+From: Will Deacon <will@kernel.org>
+To: suzuki.poulose@arm.com,
+	robin.murphy@arm.com,
+	ilkka@os.amperecomputing.com,
+	Besar Wicaksono <bwicaksono@nvidia.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	mark.rutland@arm.com,
+	treding@nvidia.com,
+	jonathanh@nvidia.com,
+	vsethi@nvidia.com,
+	rwiley@nvidia.com,
+	sdonthineni@nvidia.com
+Subject: Re: [PATCH v3 0/5] perf/arm_cspmu: Preparatory patches for NVIDIA T410 PMU
+Date: Mon,  3 Nov 2025 14:57:46 +0000
+Message-Id: <176217690916.2889046.15109510463947392648.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250930002604.346306-1-bwicaksono@nvidia.com>
+References: <20250930002604.346306-1-bwicaksono@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gzoofza66yihpibs"
-Content-Disposition: inline
-In-Reply-To: <20251028155703.4151791-4-va@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Tue, 30 Sep 2025 00:25:59 +0000, Besar Wicaksono wrote:
+> This series contains initial patches before adding support for upcoming
+> NVIDIA T410 PMUs.
+> 
+> Thanks,
+> Besar
+> 
+> Changes from v2:
+>  * Add Reviewed-by from Ilkka for patch #2, and #5
+>  * Add Reviewed-by from Suzuki for patch #2
+>  * Add stubbed implementation for arm_cspmu_acpi_dev_get
+>    for !CONFIG_ACPI case
+> Thanks to Ilkka, Suzuki, and Robin for the review comments.
+> v2: https://lore.kernel.org/all/20250923001840.1586078-1-bwicaksono@nvidia.com/T/#t
+> 
+> [...]
 
---gzoofza66yihpibs
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 3/3] spi: tegra210-quad: Check hardware status on
- timeout
-MIME-Version: 1.0
+Applied patches 2-5 to will (for-next/perf), thanks!
 
-On Tue, Oct 28, 2025 at 03:57:03PM +0000, Vishwaroop A wrote:
-> Under high system load, QSPI interrupts can be delayed or blocked on the
-> target CPU, causing wait_for_completion_timeout() to report failure even
-> though the hardware successfully completed the transfer.
->=20
-> When a timeout occurs, check the QSPI_RDY bit in QSPI_TRANS_STATUS to
-> determine if the hardware actually completed the transfer. If so, manually
-> invoke the completion handler to process the transfer successfully instead
-> of failing it.
->=20
-> This distinguishes lost/delayed interrupts from real hardware timeouts,
-> preventing unnecessary failures of transfers that completed successfully.
->=20
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
-> ---
->  drivers/spi/spi-tegra210-quad.c | 100 +++++++++++++++++++++++++-------
->  1 file changed, 80 insertions(+), 20 deletions(-)
+[2/5] perf/arm_cspmu: Add callback to reset filter config
+      https://git.kernel.org/will/c/a2573bc7908d
+[3/5] perf/arm_cspmu: Add pmpidr support
+      https://git.kernel.org/will/c/04330be8dc7f
+[4/5] perf/arm_cspmu: nvidia: Add revision id matching
+      https://git.kernel.org/will/c/82dfd72bfb03
+[5/5] perf/arm_cspmu: nvidia: Add pmevfiltr2 support
+      https://git.kernel.org/will/c/decc3684c241
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Cheers,
+-- 
+Will
 
---gzoofza66yihpibs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkIuU4ACgkQ3SOs138+
-s6FGmA//foQG6+9yuS/wubcK2SRlH+jBiF4e521dUqV22u1TxiW6hnbBogOH3lW7
-Bejz5Qa05wuRQfz1V0yIlZuc137y/LhqjwN5rnkktOd1eVIsIy2gQdan28iMzlAq
-5949P75ohtNWxwRNwero9W6W8cyV7ZZymdW4w8yxdSBlhhIy8UOQZEi4xecsxoOV
-qhmUAenz74bkcJWwtJ+3noqxouJwi8+EwBe4m7vPwHCaVj4F8n87JrYjUQr0Yn9W
-s/iobChVpC2fEFWKScg3iwACpn1IefAVGgNmH0kI5koYSxIbUdZvmNcrKj3sXvC6
-FPrdv/sd4EeVbRgzy5ipWh8JcsgQnbhBbO7cawogGu/cry8JMHVN7CgJ0wDZ03W9
-OptTKOgr9/7KBsMdZwqeEsVkzRDnhksSSh8IUT3RaMMEQBEENf+cYNRslDjEY0Zz
-VEwRuUdpdi6ciNpm8p9Z1z2GDF/r1syb++z63AVLefUCxtApwI505ljqf42uNppU
-3XZ8VkjK8ToRBLDRxfas/0RvFjrUVTku/Gh2sOWPP0h5Pn5jyBKgKVUYgJQhLbiT
-JWBYo/c/1jqRYwc4o8Fk/M8wxpoTjq9a9MRYbt9+hEpTTB8nIceKhRwPtwi/BOUR
-DkovGIAcINw/zIY4frjEjiHia1lKqlWLYpRjy3uuXws9wQgProA=
-=UHnL
------END PGP SIGNATURE-----
-
---gzoofza66yihpibs--
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
