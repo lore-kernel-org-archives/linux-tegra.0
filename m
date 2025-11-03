@@ -1,286 +1,131 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010042.outbound.protection.outlook.com [52.101.61.42])
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEF41B85F8;
-	Mon,  3 Nov 2025 13:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762178099; cv=fail; b=FSvWV26P87Bhg5Ya1FsIy7uXKqGzL9QKWHqXWUzEdqvGDUAVHcEHfKYlhXdzw7hpT7DNu2qJqs8zkDQZSLOKF9at+XVSJe7rKNFCp0WTLZhqysZrCd78nYLjRQZSh4zwg85fLJI6YhL7BbAU7xYKu6Ub/2D5kRKQR5bSweCrkRU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762178099; c=relaxed/simple;
-	bh=Fdz5YVMUaYqg5JpUXxdOI/ASQb+nWVNspj6lOYJOdyk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BfQYLRt/1zQzgsugTSc8vdsVci0s4+G7VqELEhSXXEk5v7VOq1B0hYW9RCGSasfcLdyyaCXO6lXKNj2YXUHhwigfoY8qFbwJrp2vSpvTp0bITattlvMo8aWew0Tvz3m1/SOjvFMK9D+sHIFrOUGJdOE7sJklz9yWiDSESGRV5Wc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=umaG/ijk; arc=fail smtp.client-ip=52.101.61.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BAF19F127;
+	Mon,  3 Nov 2025 14:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762179282; cv=none; b=Cn/3sN1u/0oHaxvR4Sy4iC8UcHswNg9GimN1jBYbU6bN6gramanRzYJGeaGld75S5FXA+8EZsQHzItVln1tShCzFooZ/uvKpaZ1xC0+MuwdT16N9QgG7hQtMcdxjJ/qCfec28B5ftFvDSKKkaTUbTVzhE42k/7tAHJ7BJIDW/kg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762179282; c=relaxed/simple;
+	bh=0UtHJ93CApdPj4/jZyrUpu+KC3Q7dMZ8xBWk98XEaZs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QaC3SoF6/+qES/5n0dqbZioAo1CCeMe4IC5Buf0XOxL0XrLLkqPKWiXXzLVLZnYkvgf/oxBnejKehliw0S4b034jMectpa5RMJMD8ITtMWRCsIaQao/MogIIyQJosUfQPdeHuUfUlPsoT/6bkM0tkQCgMy+N5wec28/edwrfyEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=Z2OnA3/C; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="umaG/ijk"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uG68z03ESvt5kCnSDF3E1ngxeUuhEDSsSMujt4Ku9OL/6DgIaVgPr4J6yvie8znYO/dl4WKSNdVI6F6RGdvP1TsSyVDUL/1tmRhAeUu5jfd3zbmff0N2DOk/aMHGAxIMpILda6xiPwBSM/55v179w1lpUF5KnUEKe/LNit7Jtek/N62nQJCoRvipLLo5GS1tyFPJOwPzg7o/vOEvEgodwZrUHP6+uwFP16EuUs9V7CMlBCoViyYFh5vWUCtxWUPEdaBlkrEaDNf7QX/WwtahYKbDi/ZT1gzdiKYwG6Tjz3vJ6Kon7BAK+p4g6SJPQ+FPcfZb/rHjDE08teI9G9LjoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jodrgEZhuHyvNhEGhxEAIn6daZ/jl0wOadBxgR2upsQ=;
- b=W0msSAutVqzF+WVsphcwuNyH05kfTcbYK+6xIAwFVRbdNiHzdVfLT9fH1HXHYfAUdHXzLuaTpqtvHGa0M57pqwT8vrYCfnO/DV/CfZeQm9OX1uQsLbRrKjhkcO2QMf5koZ41BBanMHL2cWEMgRQFdI7mv8golc5uuTorGBycu+bgJbN/RprjZTKD8jrHolW8lf21E1CP5RQThw4Z2JzSV/XYv12dIDLJ1sZr9tdkcDazulRrNo1ubjx9CqKqiTy9m7yi7Yfw8EFyd+D4yAOAH9DN2/c6e1ybftsARVhf33/t9I6R3ikTVjw8mBgSgTmiBer1uyJw7q5WyYmQZY+3zQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jodrgEZhuHyvNhEGhxEAIn6daZ/jl0wOadBxgR2upsQ=;
- b=umaG/ijk4uIyxDspzm8OUOE36U2umonCFNjpIh5DwhGb4ulr8qUJII439vGzcwdrY/Bp144yWcArhC6zjyy7HXSlBL1jACnCXjpElKWF5bt8s9BBTJAHlGt2VCmRHP4/i56vGyw+Y86dSxxpYRJcTsHJI5I5Z1rGKldYTg8YSMGz8ySrkHf9BxYuMmpo3cmpVSoPO2s5jfmghOv7uuyxAaLDue77zqMYKBtl9TFsw19e6uctett4kvMbBYDz1PLJnJ/fWAMyrDd3Zx+ANyHcBFa3k8j7v/UCRbeuHYDdbEi9WE+0ONJDM7h1IATmoViXnRUNbiBPE5edWIgw0onfDw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB9056.namprd12.prod.outlook.com (2603:10b6:930:34::5)
- by MN2PR12MB4224.namprd12.prod.outlook.com (2603:10b6:208:1dd::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 13:54:54 +0000
-Received: from CY5PR12MB9056.namprd12.prod.outlook.com
- ([fe80::9a15:4da5:cfae:f5c6]) by CY5PR12MB9056.namprd12.prod.outlook.com
- ([fe80::9a15:4da5:cfae:f5c6%4]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 13:54:54 +0000
-Message-ID: <4f6496de-d3c8-4701-a9b4-6f695018eb5e@nvidia.com>
-Date: Mon, 3 Nov 2025 19:24:45 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, jgg@ziepe.ca, nicolinc@nvidia.com,
- linux-tegra@nvidia.com, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20251031062959.1521704-1-amhetre@nvidia.com>
- <20251031062959.1521704-3-amhetre@nvidia.com>
- <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
-Content-Language: en-US
-From: Ashish Mhetre <amhetre@nvidia.com>
-In-Reply-To: <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5PR01CA0177.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1a9::15) To CY5PR12MB9056.namprd12.prod.outlook.com
- (2603:10b6:930:34::5)
+	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="Z2OnA3/C"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 2111D60022F4;
+	Mon,  3 Nov 2025 14:14:31 +0000 (WET)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id T9LFM5EGhtVI; Mon,  3 Nov 2025 14:14:28 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 866BF60020FD;
+	Mon,  3 Nov 2025 14:14:28 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail2; t=1762179268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HpWfodvFZQWizAOLu01/8g3LpgwphXqOOP+S+mC1n0c=;
+	b=Z2OnA3/C3BrZ19sW30AE/Hnp5yLP4aNBmtHqEbpMO36mxMcw1ZQE4GwZ8VKhFDiCuGq4Jr
+	rWpt4knwf4pNSiVNrEvSyezTwAwtZ8oXnXf3s8mJ3Nl1HSe2ybd2byJqpy5KlEIQ535AJf
+	2gEquadJ1CI0+lFLjTPeTvgoGVGXq3HAb70FFtNyxsT+kNzxCXF0qqZ+BeBgZ2fUoW8BLk
+	ZIios0Tll0wdEhP9vRD7K5hBXOWT/w3vnGkzaPWCRHGo6zW+QqtRzCU7JK2hpMIqAxhqLn
+	uyAsFNTjPmI7fdJMKIQlqGJxd3iaspyTjRUvnl2Qp3HTSzcXvao3O8rvPpgmYg==
+Received: from [192.168.1.72] (unknown [IPv6:2001:8a0:fbec:a900:2c09:2fb0:9be7:36e0])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id EBAA93600BA;
+	Mon,  3 Nov 2025 14:14:27 +0000 (WET)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Date: Mon, 03 Nov 2025 14:14:15 +0000
+Subject: [PATCH] Revert "drm/tegra: dsi: Clear enable register if powered
+ by bootloader"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB9056:EE_|MN2PR12MB4224:EE_
-X-MS-Office365-Filtering-Correlation-Id: b417b4fd-bb31-4808-0d74-08de1ae0910a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L2UxeDFaUmEvT1dmV2xFV25NOVJnSHo3eUNlQTFna3JLOXhiNWdHSzY0U0xo?=
- =?utf-8?B?TXYwTzgxWHNzRWhVUTVQYjRuUjZiVEQxaTE3dUlsOFpFVGlDaks3RndhS2tw?=
- =?utf-8?B?b0pLNGZOVkxqU0c3clV4OGRhdkJscXdjemVmTzZHQURHL1J5WEc2bGVhMmNW?=
- =?utf-8?B?NXJhbjYzSk5aeVNtSDdLNnFBY21jWEd6MUFPNjJWUkJvSzErNE01UDZCUlpW?=
- =?utf-8?B?cXBBSFpvRWdudHFnd1lVN3RlbUVvcXk3ZUZERHIwTUplUlNKVSt4QmlQa3dj?=
- =?utf-8?B?QkU4dHR1NkJyMVZMWm14aUpCUy9GSzZ2ZWY3YzMxZXAwWUo2SWorU1YxYzls?=
- =?utf-8?B?YnUwMzBmL1RwK3UyajRKbklFbEhKNHFQMW52ZVl2M2xZRUU3VGdNS1krM0tJ?=
- =?utf-8?B?dEJaUEtyeGJOd214OFJyUjBoTWFHY3lDYzBYa28yYTlrNnI2cXRmQnFCTjN2?=
- =?utf-8?B?MjdhdzhqZTI0QzVsR2hUMGlzTytnZVkzV3VORWRUUDRpT0hJZEd3cDVpZDdx?=
- =?utf-8?B?b3hjTXpDVUg2UklpVTFMTTNYcndhMmlRcFhNd2ZGbmc3d1RKM0V5OE5iUEdr?=
- =?utf-8?B?S1h6bTY2R1BrSUQ5YS8rZytRQ2ttMzNiYWJIYk85TkNpaG5TemUxTVI0OFV2?=
- =?utf-8?B?c2drSlNxeUZ0WjhKeVZHd1FoM3NmbllhUUdnTGl3Nkp4c1kvVENYb2g2VHFv?=
- =?utf-8?B?SFlrT1dMcTlXT01jSC80UDdLWTcyZXJIOHVaNk5XSWV0Tk1iZk1UL2NINTQx?=
- =?utf-8?B?Z1Y2em5DM0JYZGNUdWNKV2luRUZZRGR0TDJMUkpsakJKTy9MOC9BcmI0SkM1?=
- =?utf-8?B?bFpmVmFGN1NPTEpwN2lOTXlFbkpWdGRqcGRlYkpISmlGVXRWR0FGckxjci9z?=
- =?utf-8?B?c3J2aGpSTm5MWjlKaytxQkJRY0VkZkkvdzM3OHlCMm94NWFUaG5uekxlalpE?=
- =?utf-8?B?aEZKSEdtOU5QTkxhVkVjaVgxbFQyQlRySGxDRDlMNmkvdmpnYVJGYTAza20x?=
- =?utf-8?B?RE5UbmxOV0lyT1RMUzJ1VGw0RGY0Q3E5bkNIQ2VFZGZ2a1FsWmt6S3VUMmNx?=
- =?utf-8?B?ckw1SGtsOENWTm5sUkExLy9XLzlsZkNCVXRPSTFCeHhWVzVldWkzNkZva1Iy?=
- =?utf-8?B?RE1sVHpNazMwT2J6SXNPaHkyek9QcG4zWldja3NKak1PK0lEaEp5eDRWc2JP?=
- =?utf-8?B?c2ZRaEFhL0N6NGprNGw5SHZqT3lUZUdsdU04a21TeUNlNm13UkxBV1krWE1m?=
- =?utf-8?B?QllxcWY4bVppS3Ywa3hqR05ZM3crcGNvUzVWLytvdVNjQXlDSVVWMnlkOG9H?=
- =?utf-8?B?bzNidjJMb203YmJUbGpXVG03bmxDczNySzRSbjNVQTBOWmFkTVVoWjVBY25F?=
- =?utf-8?B?VVRydzBJakdxMUdUUmZyeHB6MWVwN3NxZGMyUXBhekVHOEwwKzNXTkdnMmkx?=
- =?utf-8?B?RURtbFRVY2VkZmJ0UCt6MmlwUFNLeFJXQmxLYUZ4dEp5WlptZVlJQWNZcHBs?=
- =?utf-8?B?NXRHTXBKdXRRQUJyMm53WWpkTmNaa1lKcVUwOGVkTTZ4SStXZU9VQktuc0pR?=
- =?utf-8?B?YmM0TDF1SXoyek1naXVIZUtHTmpmRXJHNThwcnJKMjdMUG5vS3RqV1Y3bkRH?=
- =?utf-8?B?K3g0VEZqc1grdzNSa0RPcUpWcEhHaDA1TVlGb0p2WnBHRythRHVHZk1mMjFR?=
- =?utf-8?B?Wk5nbWYrYzUxVll3U21zWWlHbkNQeGY4WW85dWJHbThNOU1kZ2NSQkdqQ0VO?=
- =?utf-8?B?Q0NzZmE3VC8wM3l6cHAwRkczeE4vczBGWXg0bEloTFp1UXNiVWxLU1I4SUF3?=
- =?utf-8?B?aVFGUlN0R2l1QURtTEZMTGdkaVZsU09TKzJSTE9pMi8rbitVNmFlMFJjVFRH?=
- =?utf-8?B?QmtRNTM0ejRBNVFNNE9qb0NwNGpickdQZ08xMEY4Z2MzeDMvcjg2SW93eWoz?=
- =?utf-8?Q?WZsB4oufIzCgRdDH+eoAFZOhC1pQBORi?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB9056.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Zk9NZzIrcGFkR3JxNm1oc2FrTmxKam82RWMvTXZKMzhUZ0RWZjZJYWY2WGlB?=
- =?utf-8?B?NlFHL25RK1lVdUhpWTVBNVJmLzdqeDAyLytKazBTNFc0eWR0Z1FFRmI2Yy9a?=
- =?utf-8?B?MlB5eUV5LzJnK3pCYTdGcjNRRzI2OFloUzl4N2oyTDNEU1B1YmxYSkpycGQz?=
- =?utf-8?B?bWR6TG9acEtpWHlOcUNkcm5iS3pubUFEUzB0c3d3TEZsVUM2YWZTOHkzQ3Av?=
- =?utf-8?B?a3R6ZmhZWXZ3SlFUS05oUE5wQlYyZTBXQm03WVJ5SlNZK0ZIR3c3TmtzbHll?=
- =?utf-8?B?OUFFbGpwWjVhK0NMNFl5WXJWTllKS2Q0azBieEpqOE11cjBJRUNJcTFKT2RX?=
- =?utf-8?B?SjIwQ1R0ODc2WHp1OFdrSUVOWDhVWXJYRHd2akROeGJLa2huS3Y3Q1BDbjZV?=
- =?utf-8?B?RVJoR3ZacnpkYVBvOHNlaDVmbCtCSjdjZkYzTUdtclRpcmpQOVVLeSt3V2sv?=
- =?utf-8?B?QVJhV1FxOXlBMlk5bEtpUUFucGtmU2ozSWZHQ1JBLytPQzMxR1kxTWNYd2Fi?=
- =?utf-8?B?MjRMNzl6bGU0SEUvRkV6d3pYUkZROTZVMW9raElickE1U2taZGRmL1VjcVBV?=
- =?utf-8?B?bGFjSDBxc2NRU3BVZlNVZGNibzFqZDAzSlRsSUZTNjlpa3FLVHJWZENaeWt1?=
- =?utf-8?B?NlNRS3FqNzlWM1NqMXJVdk92WWRUUXRuNkdsczRVOE1MTVRBbWR5ZDhlemo1?=
- =?utf-8?B?amcvU0RtTWlZS2NyMEhDaUtwYjFSbkZSbk04K2l1YUtocG1JOUdaNDBQaldJ?=
- =?utf-8?B?cVZrc20yNThhUTNEekdReTErL3dNYU1mVnY0VHdiT0d1a2NFU1Q5SVNaMzRM?=
- =?utf-8?B?TlhZOXpRdm1CMTEwczhvejBQcTNXOEVEYVF6UzFQWGpsZ2N2L1hxNWtHelFQ?=
- =?utf-8?B?MXIwdFkzYWVRcUNGdWZaRE9CRTVSZzlpZ0xObXZNSUNVRzllaGhZUm1HOG1i?=
- =?utf-8?B?WVZqVTBwdzJhajNnQ2psbURpam9ZMnVSRURTMkZNWWdvUmVheWY0Q3B2QjNB?=
- =?utf-8?B?c1V1WDNEaURFUmErRWJGODRacFd3SW9IT0hGQ1FPRWk3dTRBZFFRTkFhUlkr?=
- =?utf-8?B?ejlNejM1cncycHJVSWFPWGFZMWdJNkZNY3lSUEswM3hpVytVNmhaMHZKZDQz?=
- =?utf-8?B?emhhdkxTUmZXZEU2cTQ1RXZHckhzQkVYVkx3RmJsTUEwNVdOTERNMTd0N2Z6?=
- =?utf-8?B?UlozOHR4SVM0OTVlZ2pjbm1GMit6cGJvMWJQMVh1V0FvamZGeFVXUkliUzlr?=
- =?utf-8?B?NmVZckVrVWRaMkRYSFVIRGFlZmxEK0lWeURxbHU5Ri9ZdXVidXk4RUNhempq?=
- =?utf-8?B?OUwzQ0hWVVhsVjBUMVVscFVGZTRPSXg0TEtBZ2VKVXhPalp6SUFEQjVKWCtz?=
- =?utf-8?B?blRRbEFBdnI5VG5FakFwQzFFbnpIN3IrcVptM2pJZDQrSGxSMzhkbWxxeTA3?=
- =?utf-8?B?UnhKZXJZUThhQXpONVZISDhoN1ZFbUx2VzJYbVc4VGpEb203V2MwZy9UWmtW?=
- =?utf-8?B?SGpFS25WeVpTZGNpS1k0MTBCOE9ZZ0g1b2E4QlM4b25tTnViUWFWdU5ITnEv?=
- =?utf-8?B?WmlQRmFLeWxCMVJUNjBGcHJ0dmJSMk9pSWEyTGRkRm5XWXpSVFEwMjA2MlNu?=
- =?utf-8?B?TGhZQWJZU1VvaEIxTEZpUWc3NXY5T3NOVi9KaEdBS0hpZmFqekdpdmozMzNM?=
- =?utf-8?B?RGxaMmRkN2NRa013Lzdld0JraUVEdmZpbnJCa2hFblFyWGJnWEhHZ1JhRDMr?=
- =?utf-8?B?Q05ucVAwZzhKQmFIRjRKaWpjeUVFN3R5a2NaNmZRbUFyQ2R3b2w2d0c5b3Bq?=
- =?utf-8?B?cXRydW44dlBVT2s0eXkwaThxaHVSYlkwaVhVb3gzMHZ2d0VnVXh0UjJEalRP?=
- =?utf-8?B?U2pKeFJIUmdLcGtnTFgxN29QNCs3KzF3eHpRR2tLcUJ0aVZWZ1IxSzZXTGVS?=
- =?utf-8?B?THZTcVBLQndwYjdDK29nMXdHQ2xJZFJMSjBnbWNZV2ptY0lkQkFqeTNyOWNV?=
- =?utf-8?B?TlVrOWhtYmQ2K2VpN05aOU16VDFJRUlUMEd4cnNjS1UrT2Jrb1VwZGU2UlZW?=
- =?utf-8?B?WVhoSVVVVXhZb0QzKzdXRWlKVXNPbmZCM1FYNnFVUjlyTEpST1pzU25aY3dt?=
- =?utf-8?Q?ETLmMig/Gw7VNLpxr53OupAT2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b417b4fd-bb31-4808-0d74-08de1ae0910a
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB9056.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 13:54:54.5802
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YjzhV7o07m2OvWbIdY0I7nArHPML1qs3TsdsNVKZSA84hmO/tFas2xQRSc41YUN4muEBTB1VYe3B3FuUJAsrcw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4224
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251103-diogo-smaug_ec_typec-v1-1-be656ccda391@tecnico.ulisboa.pt>
+X-B4-Tracking: v=1; b=H4sIALa4CGkC/x3MQQ5AMBBA0avIrDUxLYKriEjVqFlQaREi7q6xf
+ Iv/HwjkmQI0yQOeTg7s1ghMEzCzXi0JHqNBZrJAzJQY2VknwqIP25Pp93sjI+qhrFSJUtc5Qkw
+ 3TxNf/7bt3vcDaD6mLGYAAAA=
+X-Change-ID: 20251103-diogo-smaug_ec_typec-9b683612a941
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762179267; l=2211;
+ i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
+ bh=0UtHJ93CApdPj4/jZyrUpu+KC3Q7dMZ8xBWk98XEaZs=;
+ b=TWbqZCaqz4UEzGh4OnzeR9/4/HeOBL5Y16MX7PhCB07v2Ag8xF226bE+5WZgAoZOumgKEoAWm
+ 35d6fXUKtEgAhjPMBh3NHTLye/3Thg6DvrvVbUOui0Spqc5fqe+8Yep
+X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
+This reverts commit b22fd0b9639ed61e379b3b9bba00629ebf8e6946.
 
-On 10/31/2025 1:44 PM, Krzysztof Kozlowski wrote:
-> External email: Use caution opening links or attachments
->
->
-> On Fri, Oct 31, 2025 at 06:29:58AM +0000, Ashish Mhetre wrote:
->> The Command Queue Virtualization (CMDQV) hardware is part of the
->> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
->> virtualizing the command queue for the SMMU.
-> If this is specific to Nvidia, then I think you need specific front
-> compatible and disallow it for other vendors.
+Commit b6bcbce3359619d ("soc/tegra: pmc: Ensure power-domains are in a
+known state") was introduced so that all power domains get initialized
+to a known working state when booting and it does this by shutting them
+down (including asserting resets and disabling clocks) before registering
+each power domain with the genpd framework, leaving it to each driver to
+later on power its needed domains.
 
-Yes, CMDQV is specific to Nvidia. There isn't currently a vendor-specific
-compatible for Nvidia's arm,smmu-v3 implementation. Would it be acceptable
-to document this as Nvidia-specific in the description? Or can we add a
-new Nvidia-specific compatible string like "nvidia,smmu-v3" if that's
-preferred and use conditional schema to restrict the property?
->> Add a new device tree binding document for nvidia,tegra264-cmdqv.
->>
->> Also update the arm,smmu-v3 binding to include an optional nvidia,cmdqv
->> property. This property is a phandle to the CMDQV device node, allowing
->> the SMMU driver to associate with its corresponding CMDQV instance.
->>
->> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
->> ---
->>   .../bindings/iommu/arm,smmu-v3.yaml           | 10 ++++
->>   .../bindings/iommu/nvidia,tegra264-cmdqv.yaml | 46 +++++++++++++++++++
->>   2 files changed, 56 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
->> index 75fcf4cb52d9..edc0c20a0c80 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
->> @@ -58,6 +58,15 @@ properties:
->>
->>     msi-parent: true
->>
->> +  nvidia,cmdqv:
->> +    description: |
->> +      A phandle to its pairing CMDQV extension for an implementation on NVIDIA
->> +      Tegra SoC.
->> +
->> +      If this property is absent, CMDQ-Virtualization won't be used and SMMU
->> +      will only use its own CMDQ.
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +
->>     hisilicon,broken-prefetch-cmd:
->>       type: boolean
->>       description: Avoid sending CMD_PREFETCH_* commands to the SMMU.
->> @@ -92,4 +101,5 @@ examples:
->>               dma-coherent;
->>               #iommu-cells = <1>;
->>               msi-parent = <&its 0xff0000>;
->> +            nvidia,cmdqv = <&cmdqv>;
->>       };
->> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
->> new file mode 100644
->> index 000000000000..f22c370278a3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
->> @@ -0,0 +1,46 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: NVIDIA Tegra264 CMDQV
-> Missing blank line
+This caused the Google Pixel C to hang when booting due to a workaround
+in the DSI driver introduced in commit b22fd0b9639ed61 ("drm/tegra: dsi:
+Clear enable register if powered by bootloader") meant to handle the case
+where the bootloader enabled the DSI hardware module. The workaround relies
+on reading a hardware register to determine the current status and after
+b6bcbce3359619d that now happens in a powered down state thus leading to
+the boot hang.
 
-Ack, I will correct this in V2.
->> +description: |
-> Do not need '|' unless you need to preserve formatting.
+Fix this by reverting b22fd0b9639ed61 since currently we are guaranteed
+that the hardware will be fully reset by the time we start enabling the DSI
+module.
 
-Okay, I'll remove this in next version.
->> +  The CMDQ-Virtualization hardware block is part of the SMMUv3 implementation
->> +  on Tegra264 SoCs. It assists in virtualizing the command queue for the SMMU.
->> +
->> +maintainers:
->> +  - NVIDIA Corporation <linux-tegra@nvidia.com>
-> No. It should be a person. If entire Nvidia cannot find a person, I
-> don't think we are interested in having this in the kernel.
+Fixes: b6bcbce3359619d ("soc/tegra: pmc: Ensure power-domains are in a known state")
+Cc: stable@vger.kernel.org
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+---
+ drivers/gpu/drm/tegra/dsi.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-Okay, I'll add Nicolin as maintainer.
->> +
->> +properties:
->> +  compatible:
->> +    const: nvidia,tegra264-cmdqv
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: cmdqv
-> Drop interript names, obvious.
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index b5089b772267..ddfb2858acbf 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -913,15 +913,6 @@ static void tegra_dsi_encoder_enable(struct drm_encoder *encoder)
+ 	u32 value;
+ 	int err;
+ 
+-	/* If the bootloader enabled DSI it needs to be disabled
+-	 * in order for the panel initialization commands to be
+-	 * properly sent.
+-	 */
+-	value = tegra_dsi_readl(dsi, DSI_POWER_CONTROL);
+-
+-	if (value & DSI_POWER_CONTROL_ENABLE)
+-		tegra_dsi_disable(dsi);
+-
+ 	err = tegra_dsi_prepare(dsi);
+ 	if (err < 0) {
+ 		dev_err(dsi->dev, "failed to prepare: %d\n", err);
 
-Sure, I will update in V2.
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-names
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +
->> +    cmdqv: cmdqv@8105200000 {
-> Drop unused label
+---
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+change-id: 20251103-diogo-smaug_ec_typec-9b683612a941
 
-Okay, I will remove the label.
-> Best regards,
-> Krzysztof
->
+Best regards,
+-- 
+Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+
