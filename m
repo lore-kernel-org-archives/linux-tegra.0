@@ -1,119 +1,109 @@
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A1B2116E9;
-	Tue,  4 Nov 2025 01:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062FD2D4811;
+	Tue,  4 Nov 2025 07:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762219724; cv=none; b=LZZ3cr++qokGMsew/QOwKPfKHbRMWO6ORQaZz5yVuP+iD9D+2ie25YkDQUNFPWDNteOZE56PBJGfF21M3C8yTbjSiMt7yQMEEu2X4tuA7zoxHY37mYLdo27jATPl5Q+s/QQX75yC/SWSPhomuDqpPrUJu++keMgtgcXkIEhtLug=
+	t=1762242170; cv=none; b=KUQhoWzQ5J0U2WfqpZvIda+BpSCUtdF1TcHzLBajBPTZyVz6Uv9qIqlaYs71jrrRM2LbcYWtn70KlCOysA7YzkAPmFbLz4rw8Dmjcp2s7j1/fcaO2RZLAj6/xEWwHp4tTN0m6xR1zEREw3x44ypTXEiTIaVOcwx2XA+kCXgQSRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762219724; c=relaxed/simple;
-	bh=LjWFY4X32w67+vbJAy41/v3Tho6UvznnXjKxWFz1Yec=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=fjvsUbeW6YBURABkwgj+aYJ58MkR74Y40kbErpx6HP0gTwG+KI9O+MuvTENyY7Xyxo90+F1iTiIvS6NX2mq4kK+CKpGNq2x2mhgvIbgP/1zXe33PXWHMvR+/LJJBPyc702O/oqGL+IYeBhrPFMBL54nH/Lu0olZlAbD1kypwLFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+	s=arc-20240116; t=1762242170; c=relaxed/simple;
+	bh=Q7jngGv1NawQYZtSpvS73CXJteQqxzmFEIciwhtX3dg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ICWP2o4TgVLHu13w/qsRagUoS3wpdCRgei/3JOa6eS7/rxN8ASYV4m2jklgonTaz2hRhQonMj3/yFhsSBvIgKlXFMQZeL9VJg4d5LZ6lye2lW2m9BkslVrS2QUWGsr5fI6P7PQGW7fMcPs/fJ/VQ/G73TLTFrtpkE2YssSh9dpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowADXgO+1VglpSv1aAQ--.30914S2;
-	Tue, 04 Nov 2025 09:28:32 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jckuo@nvidia.com,
-	vkoul@kernel.org,
-	kishon@kernel.org,
+Received: from dfae2b116770.home.arpa (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADHMWxprglpK3RaAQ--.1025S2;
+	Tue, 04 Nov 2025 15:42:33 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
 	thierry.reding@gmail.com,
 	jonathanh@nvidia.com
-Cc: linux-phy@lists.infradead.org,
+Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
+	Wentao Liang <vulab@iscas.ac.cn>,
 	stable@vger.kernel.org
-Subject: [PATCH v2] phy: Fix error handling in tegra_xusb_pad_init
-Date: Tue,  4 Nov 2025 09:28:20 +0800
-Message-Id: <20251104012820.35336-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowADXgO+1VglpSv1aAQ--.30914S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DKFWkAF15tFW3Aw4fKrg_yoW8ZryUp3
-	WUGas0gr9Ygrs5KF1YvF1IvFyUGa12k34Fvr1rA34akrs3Z34Fqas8trWxAa4UArZ2yF4U
-	JrZxJ34kJFyUC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
-	4UJVW0owAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4
-	vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUWa0PU
-	UUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Subject: [PATCH] clk: tegra: tegra124-emc: Fix memory leak in load_timings_from_dt() on krealloc() failure
+Date: Tue,  4 Nov 2025 07:42:29 +0000
+Message-Id: <20251104074229.543546-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADHMWxprglpK3RaAQ--.1025S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7urW7uF18CF4fCFWxAFy7KFg_yoW8Cr48pF
+	48G34qyry0vrWUJFnrJrnruFyYga43trWUKw1FyayFvrs8JFy0yryxArWF9a17Ar9avF4U
+	JrWUWa1jqa1jvFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOku4UUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYQA2kJiUkkJwABs7
 
-If device_add() fails, do not use device_unregister() for error
-handling. device_unregister() consists two functions: device_del() and
-put_device(). device_unregister() should only be called after
-device_add() succeeded because device_del() undoes what device_add()
-does if successful.
+The function load_timings_from_dt() directly assigns the result of
+krealloc() to tegra->timings, which causes a memory leak when
+krealloc() fails. When krealloc() returns NULL, the original pointer
+is lost, making it impossible to free the previously allocated memory.
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+This fix uses a temporary variable to store the krealloc() result and
+only updates tegra->timings after successful allocation, preserving
+the original pointer in case of failure.
 
-In tegra_xusb_pad_init(), both dev_set_name() and device_add() may
-fail. In either case, we should only use put_device(). After
-device_initialize(), the device has a reference count of 1. If
-dev_set_name() fails, device_add() has not been called. If
-device_add() fails, it has already cleaned up after itself.
-device_unregister() would incorrectly call device_del() when
-device_add() was never successful. Therefore, change both error paths
-to use put_device() instead of device_unregister().
-
-Found by code review.
-
+Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
 Cc: stable@vger.kernel.org
-Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
-Changes in v2:
-- modified the Fixes tag;
-- modified the patch description.
----
- drivers/phy/tegra/xusb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra124-emc.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index c89df95aa6ca..d89493d68699 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -171,16 +171,16 @@ int tegra_xusb_pad_init(struct tegra_xusb_pad *pad,
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 2a6db0434281..ed4972fa6dab 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -444,6 +444,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 				u32 ram_code)
+ {
+ 	struct emc_timing *timings_ptr;
++	struct emc_timing *new_timings;
+ 	struct device_node *child;
+ 	int child_count = of_get_child_count(node);
+ 	int i = 0, err;
+@@ -451,10 +452,15 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
  
- 	err = dev_set_name(&pad->dev, "%s", pad->soc->name);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
+ 	size = (tegra->num_timings + child_count) * sizeof(struct emc_timing);
  
- 	err = device_add(&pad->dev);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
+-	tegra->timings = krealloc(tegra->timings, size, GFP_KERNEL);
+-	if (!tegra->timings)
++	new_timings  = krealloc(tegra->timings, size, GFP_KERNEL);
++	if (!new_timings) {
++		kfree(tegra->timings);
++		tegra->timings = NULL;
++		tegra->num_timings = 0;
+ 		return -ENOMEM;
++	}
  
- 	return 0;
- 
--unregister:
--	device_unregister(&pad->dev);
-+put_device:
-+	put_device(&pad->dev);
- 	return err;
- }
++	tegra->timings = new_timings;
+ 	timings_ptr = tegra->timings + tegra->num_timings;
+ 	tegra->num_timings += child_count;
  
 -- 
-2.17.1
+2.34.1
 
