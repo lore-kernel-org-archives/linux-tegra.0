@@ -1,63 +1,64 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755FF334C21
-	for <linux-tegra@vger.kernel.org>; Wed,  5 Nov 2025 16:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48DF334C21
+	for <linux-tegra@vger.kernel.org>; Wed,  5 Nov 2025 16:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358723; cv=none; b=qAi+Fxo97hGV2KwvQQeNPz7/qKJqPpo2YJVZg2L3qhEwT1lG3vgxTPHePsoPAjQ97PBOuHb8VnQelBsTqlsfv//n0XLemNZgFFUxWE1gr1ns52Am/5uITZ09g3Z9YtwLnGJZ/iKzMnC0lutSa4YrDMMe21KRCOLsLPBX3O7RBsE=
+	t=1762358725; cv=none; b=XpWBMr2dHSOiga3XgaL8kvkab1unSqvYQeExQPmxFrmxb9U1T20Oqm0GvSVXsBNzfRwMECcgI+YIj5DJnRAgIBZkh6ebvfYTp2YfAKhjdV/vr+nAWuxMrm2BfN9MpxfIa+GX3k8AOU1pvt5WxH4s3iVZPfG1hdFIGeIYy23uF58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358723; c=relaxed/simple;
-	bh=EwG+dbhxi8tKQPwOTOX4S9P5M6dlpqzhm+2MgD2X0Qg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ag9sMCbjOca+gP6O4RGTM9vGWFXOk7JfSxsqVhk+dYrdHzZAob7BTPQtunKU9WuJo76ILa8yuFryaAyRR0QoFQ2x3zTYOLY7CTZvKCphQ32KmMvrYMexGDX5UeSLXnnv6+r/cmZt8kc5I9O1Hk//n7Nb5RtQmahneaNr41dYiGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K++iMOE3; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1762358725; c=relaxed/simple;
+	bh=YtqP+iwcKtMakzXgLk3UQKPhw4kYFhpKvW8eLwW3czU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fhOZ5wlSCbMOY8pczANXSEqWSkXCZVJT0mji/8EvszBIOu0hi15eEeu0REFYZeTfiDAmMgZv8gFhd3t3izuE7P2FfBTk51XCTcQhb+BbcJ45nbOgu+7nfdE8R34MuQxur69OUYScX8EfW3rVPRJNx5Rr6saC4M5sH56yWW++xhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFAWsg/V; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K++iMOE3"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477605dc769so3929695e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Nov 2025 08:05:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFAWsg/V"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477442b1de0so27021395e9.1
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Nov 2025 08:05:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762358720; x=1762963520; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0gPRO8ltjGC//EqHEd+0CranNOCKlhYc2rOlxmM4oY=;
-        b=K++iMOE3hfIlKdnEHZuB2lklM/MxA8ECQJbG4TG86UEuLjJEwf6nacCCdDjWucI5eP
-         BhD3YRdgwBi6NU4z1RWLu829NFdGh1v6unXo+vwjy/627iO4jGKc8XGDBg22HD1W1ObT
-         FcBe5dXrEpTBw+DK34zWkpKR10oNintnh+NaUitsAvq7NKqAoFc75C3NHF48vAJROnHu
-         i3PC2A38747CKz5zsUyDYzzvSxB89s7CTCDRYLllZXMFe9ZaD4CgDj2zhk+V8QvNT97b
-         y0BthVgiH/757c5qW4541TMhwr7eixTElIrqbWBOMgh7RAbJEQHpQEA13wWYLj+/DWYk
-         9exA==
+        d=gmail.com; s=20230601; t=1762358722; x=1762963522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gi36H1hNTl6bMN6Cd06JLPD8tUQzuyL6UKpqqUX8AXU=;
+        b=TFAWsg/VlGcwdgZk9J3z6itMaDzN7cG4Oq0Yh2d03K85t8XD04mkyaB73VCju148Re
+         ZHmSoC2k7AxSaaa2wMoB1LEEdiCRUbKJAVJq2PAXjptso5ixrpInPIEgHzWja3GcjEyc
+         lytuCs3A7fDbb2qNGkvESQlFpqwnrFGEwY39Pg4Z2o0KLmSfV+bR4T3mjy1JR40uiJmL
+         n+mrCo0yWJf8faK411ZcGuk8ytByaGNAb234bFvaTRIq0MGgR4d7oxC5rEB08St/um/N
+         mWZUscj1QpY7nYMJtjT32tvENaUgMP2AWMqz2GO/8daqQHAdhXu+6qwoTGmZ5YCwHKRn
+         r6fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358720; x=1762963520;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y0gPRO8ltjGC//EqHEd+0CranNOCKlhYc2rOlxmM4oY=;
-        b=JCOMGMMZfsIMt5SI4tdzThyijN8PuUM9yhzMjDD6i3L47wWBb8uZmpHioifv+fa76V
-         YVoXEGQK88SIHonV8eqcw3ELlrvUq/QxzqStllNT3RhvW+pp2hBDJhvbjNe5T6a0NE1Q
-         UL8naYhDfapPsJEtod2MAIykJ8lVXtpKsBaBJe2k/EYBU7rjlOd7tNPOnHhmNh7TMUVo
-         Pgn4cmc4EmGJlvRZLUWKaoa0XhkE0KRpj9c/2ELS3bQBnbs2mlqSGEaNPPV3BdD1mm3T
-         vSBYJ3QBprBYwxXYDZNUG+fUWX0/jpZ3aU787/vox4KxpEfqGRVGU2ZqorL+WxtimP0S
-         OkYg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5FOFdZbXqmEwSI8DnYIvQLBGrDLnuKnsPlCN73GjnTeaZe+fH4laFLDnZ/YUrejHtuMng2AGDBRm/8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyTrrzgzcQ2vq0sY1RONg1QhuPLBzrMw1Mp3n/livYd9KiClYc
-	5eHHD/CFuZzZzSUoCP6d6RThvi/n2BxpaL95iwLME1CgtepuNdld4cyvWlwbpA==
-X-Gm-Gg: ASbGncs7Uysv7KWMh9s5D3OdHU1698VGL5+3ffJfBBGrn2/ftf+ZdDkyMLXYb3zSqDZ
-	5z2ROtwrKZT+5uW/sd4qXIoOe3T5+Wn9FnCxEpDj/dJsqx5ZGR7biGdWR32BcGeQ4+66Y0QOwJd
-	pUXogJjosWXhsIRMLev96H4O8w+/LZwHbf+LDoClFLOxbQeNLDetJO2yOBYxsaRpR1SAy+Dy73t
-	p7rvLaknB2Q+XmNcwKToDpmywwrYBn06l8mABPHIaBkUg8HfDiOwujntfo8agLJZ2hLjbcKFauW
-	wGbrKuYQPEZCxXSLgF1eWfC6pTLJt+IipGPSrcpfgLDXaz/i7XE/JYQQoNclmbRTQ4b0X/vJxUl
-	jYEHvVuUOdD1YLnBroqXvesMGjEe50CK8HEWDJCrkhagzLkWViVWQSGnVsNNu2TeMcMBl70eMqo
-	eRyMTizaPgckyEuD4uB6gxavFHImuHYx2bD94t5zl3cVpb2vT6L22CwJ4wVOSf3E5uTiXZ2qrDA
-	JXSWtQ=
-X-Google-Smtp-Source: AGHT+IFmyNYl5xXskz/5ll5ztpvyfmC6oBvsYVoGB2HdYWWuVi8c9xmV9W/09ZNuLsTpWfK2LkUrSA==
-X-Received: by 2002:a05:600c:5291:b0:477:c71:1fc1 with SMTP id 5b1f17b1804b1-4775cdf76d3mr37635975e9.19.1762358719486;
-        Wed, 05 Nov 2025 08:05:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762358722; x=1762963522;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gi36H1hNTl6bMN6Cd06JLPD8tUQzuyL6UKpqqUX8AXU=;
+        b=Sh59A9OQXTeoDqNMYSKOW/KAQqOl6a/poB6PQ/Gm5VfdEG+H9gVxZ59jjMNgp6e7jB
+         cWRUPt2qCcX7mPI8rFwQXLxwnMGKUjDGSn2JYMtZ1a7WAVBZeU4SnmIkX0ZpvGLmS030
+         Kyem8SNholIFW3HPajwTex75TTZsh05/ah0JbmE31dbCPTqzG+UpbGrrpGhSMdDxI0Xf
+         27M/rxpNBk6FB6428FSp2iwDcOPWWRki/QuM+m7QXnmWyefSHFdsBnjCnVOlStECxPMM
+         DWa8GcWYeb2RmiSx4WyqeIPEP60rPaMhw1bsvBBMqzZVEhHM6+TbD9CiwehSo2mkHCMZ
+         SPnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbA0Ee+H2UHiEBxKBk+Xh0rt7j5jHHE7+iR8QCuaWPk8XNckflrcEOmD5pqxsBh2Oi6zQGzb0VBVLVDA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP65Ujn3opEoPal9tQwUAtnn+1gAF9PZwRmJ+4kzghkxVlOI/k
+	DOlF5BOlqByIx3T/BmAZA9JbkUy69WS0YlcGzfixmYkoUKrbkAgcGgYr
+X-Gm-Gg: ASbGncsD4CDIGQ8MnL+jkO/dX4XAS9f+pPSUlWmN/G8KD4aqMGeIjE96gJ84Vs1Wa7u
+	pRm3IqOCpiFgxZLr5Zvkkm5Lw0sRNejG0e24gtUUGoFpCa20HxWO9/3hm0gCEjDV4G8awg1JKQC
+	ijhRlKoW2GLj390lR5lD4974lrzUmXrs3Yu/imCMGbtkn5AGjbAZfqHQeUdAphBWcdqsgvylCtk
+	F0ntcEOZftM2REp6J7IjAFkufGyEIg/Nllft8P6/0gLLJ9oRvnkCdapaX/6CAeoxZKjB77PCuxc
+	hfQ/oX6/3G5CP+PzLXRvgH5YEnxaoyn5rX0OfSbu19fNpVNOkKw3SLqawIZ6aSvHJnR1cc4qTiM
+	pEC4TbgSFcxUHxOwCYIBzHJez5sy/yS6QB5GsAaTbwDEAeIKRbacX6mosGNrLQGCTxvdSWXdRKF
+	L1LmjvNk2l5HZ/eqGhcfYQnVREzTMUO4c3wUEbFKkPadLGSGig9B2IyuHjGYqayTTmKRo0
+X-Google-Smtp-Source: AGHT+IFIw63y8/HMqfwqpMpvegHOj8/fyBrBB9+zxkNIj4mos1HOvCMf9iyNT5somnO7vFbCIP2bew==
+X-Received: by 2002:a05:600c:a00c:b0:471:115e:87bd with SMTP id 5b1f17b1804b1-4775ce14b0bmr27807925e9.26.1762358721509;
+        Wed, 05 Nov 2025 08:05:21 -0800 (PST)
 Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdee765sm68471675e9.15.2025.11.05.08.05.18
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc96edsm55240185e9.6.2025.11.05.08.05.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:05:18 -0800 (PST)
+        Wed, 05 Nov 2025 08:05:20 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>
@@ -66,10 +67,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 0/3] arm64: tegra: Add DBB clock to EMC on Tegra264
-Date: Wed,  5 Nov 2025 17:05:10 +0100
-Message-ID: <20251105160513.2638408-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/3] dt-bindings: memory: tegra: Document DBB clock for Tegra264
+Date: Wed,  5 Nov 2025 17:05:11 +0100
+Message-ID: <20251105160513.2638408-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251105160513.2638408-1-thierry.reding@gmail.com>
+References: <20251105160513.2638408-1-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,26 +83,66 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+Accesses to external memory are routed through the data backbone (DBB)
+on Tegra264. A separate clock feeds this path and needs to be enabled
+whenever an IP block makes an access to external memory. The external
+memory controller driver is the best place to control this clock since
+it knows how many devices are actively accessing memory.
 
-Tegra264 requires the DBB clock to be enabled anytime an IP block needs
-to access external memory. The external memory controller is the right
-place to put this logic. This short series of patches adds the DBB clock
-to the bindings, adds code to the driver to use that clock and finally
-passes the clock into the EMC so that it can be used.
+Document the presence of this clock on Tegra264 only.
 
-Thierry
-
-Thierry Reding (3):
-  dt-bindings: memory: tegra: Document DBB clock for Tegra264
-  memory: tegra: Add support for DBB clock on Tegra264
-  arm64: tegra: Add DBB clock to EMC on Tegra264
-
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
  .../memory-controllers/nvidia,tegra186-mc.yaml        | 11 +++++++++++
- arch/arm64/boot/dts/nvidia/tegra264.dtsi              |  5 +++--
- drivers/memory/tegra/tegra186-emc.c                   |  8 ++++++++
- 3 files changed, 22 insertions(+), 2 deletions(-)
+ 1 file changed, 11 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+index b901f1b3e0fc..f0448d9ea1ba 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+@@ -92,10 +92,12 @@ patternProperties:
+       clocks:
+         items:
+           - description: external memory clock
++          - description: data backbone clock
+ 
+       clock-names:
+         items:
+           - const: emc
++          - const: dbb
+ 
+       "#interconnect-cells":
+         const: 0
+@@ -115,6 +117,9 @@ patternProperties:
+             reg:
+               maxItems: 1
+ 
++            clocks:
++              maxItems: 1
++
+       - if:
+           properties:
+             compatible:
+@@ -124,6 +129,9 @@ patternProperties:
+             reg:
+               minItems: 2
+ 
++            clocks:
++              maxItems: 1
++
+       - if:
+           properties:
+             compatible:
+@@ -133,6 +141,9 @@ patternProperties:
+             reg:
+               minItems: 2
+ 
++            clocks:
++              maxItems: 1
++
+       - if:
+           properties:
+             compatible:
 -- 
 2.51.2
 
