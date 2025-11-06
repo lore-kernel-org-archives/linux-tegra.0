@@ -1,173 +1,185 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013066.outbound.protection.outlook.com [40.93.201.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE392DCBE6
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Nov 2025 19:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762455975; cv=fail; b=PaJkUBoQfC9Nuaw51hQKhLQidsnqjlS7C9enGjk8kkfL1nOc8fbeZRGwm9lt/L+QsNZgZx3Nxb3T1hyE6ymn1XWo4bRmUMv3bQyieihelz6d8uOE/QGfY7IqORdBm5YzpdR/Wyf9h89154C8F86VzhAKnPR+mg/hSjcsCbJo4ds=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762455975; c=relaxed/simple;
-	bh=fsff7LaURPPQ1Tlwz3j2xYHSUSszgIY6qucrX3TcTRo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r02pwUY4Ahvr26hSwnRDgbGrZVPc7KDqnrxGoyN1b7zsQzeNGYslrTBbckRSuusfXDr0XWhlXItWuf+AJJQnlbdeuSpe/xMBgib6Bbs20TbfIK5rXzth2pPWyXWtH6qUfMXnLQyLKnd34lDkRx7OE0/N9mw84csIx0fntDx2BnE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jBUeWdZz; arc=fail smtp.client-ip=40.93.201.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A2534DB7C
+	for <linux-tegra@vger.kernel.org>; Thu,  6 Nov 2025 19:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762456092; cv=none; b=jDOI2bPqwI6izqoc2rPBUQ25UDc65rd9/tTZGS1dG016uTI7U13kTmNv6ponLvY8Oh0Ah0P37OlPVC79iIFgRp9MICM3KzN3yxp0zydm721Zl1ZhHPOh7kEv1yAeEJyl3EMkZipFjg5i1Lmy1TKC4v3DKmB+3V4asQzp3actVBg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762456092; c=relaxed/simple;
+	bh=0/jEOxtSFPK0PmIemOfKHGwBErRDUi05GZgJASgkD0U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FpjTRiLeglM4919Zp/O25QJ+Oh0Wu6J2meCFveVrwa8sjVAgjrPsV8zfxbL48Vq0Zuee4IR7gdru5t8qKML/NbV/lQ2gt9d9IolrrnhV0WQXamoU3a6l7i4B3IiFCZGPnyH6UPVxxZxyJBNIZck/w1S/nfDLyFTts+yB3lzDj5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=endXWJF9; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jBUeWdZz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JhmzuPlZhlRYKrc4RC4LeSMq2c+wEFE4DoxdaLfVL9LfW15mvIsR7PNH6Xmc//xFQx/CXKeY+ydnLdkVGcwVuxoRFoT1LRsqIqqY3aA6hnSwJt1HorPXogzj71KBSZ7PdPsU+aegx9pFDFsMKqpZofUyC/vpYivmeNugi86u96A5Kf37YMuWU7RnTXaPqouA8020Hsy1iXk9GRjfsp7lZS4vTa3XwffsSgjHbPmrZkw0qcSWpO7fQIyfqD7w79UtdxxMpH7j0ebm6vSiWAhU08S3nTBYgal43sCHxEQ42Zeml1SXTqPmZB9eaewMH28K1/r9Z0BHjM2XrTDudCHg7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r14IgAfY9l/sWUXZq0O+KHKYiIq8itg8k7AtotiGTVg=;
- b=Dj6a8P1XU5YUv4nQXpNubiafrDgnSOBsq4GxBEy+y8z8M3SyM2xCPYx3bj0um0jH89m8qguf6hwAN8kDaLHEa8ZWNm8Bb+mLD5mBnyWUUQG/g/axzYdvOwHI3mGJ2tjs94HdhWLR8i2tk1T4O+t75jK0j9uLYMsrG6fPTwdNBwYkVRa1BNXtCwKAALEhAea1WzPvorS+5lujgfQeEfQlmwvDAY/Xy6Sb45n+voCtJv/0rbhOuR1cUTTCCEZvj9jDxb8dhhZOmXAxKCV0eJo8K345payvjAAbvdJv6tV07hIwA+1DjdkMhHh/PTsBUYwK8/8Rn6JyJ0SI9mpJd+C4JA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r14IgAfY9l/sWUXZq0O+KHKYiIq8itg8k7AtotiGTVg=;
- b=jBUeWdZzn0BIZhmulithZK1efRRDXG1ch+C9Z0ATrSKyT3kLOlc+owEfUwYUG2nM18lVt3+yZs/Kf9yRFb3rh7O9URJYinEYcSv6Agju37OLhNCUP5YFZNaWAa3PZiNdHYis2tYLuutNogfBs20A2sOoAdfCt7HHGduYbU5QIlh3qgfne398eiXuIQ0kfsR6+rkEhncTKyhA64V+KH1VQ9ehvtnjt5uV7EMPsR38bR/DJIijmFY/WWyOalnrsHk0Qds4jFXwYYs+t01kRK4JdfXjibhqjLVxznoR0kryofTO3X/M8c/4awwoKQtt4PJQphG1ssV2MtixoWTd/8bDEg==
-Received: from BY3PR05CA0043.namprd05.prod.outlook.com (2603:10b6:a03:39b::18)
- by PH0PR12MB5646.namprd12.prod.outlook.com (2603:10b6:510:143::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
- 2025 19:06:06 +0000
-Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
- (2603:10b6:a03:39b:cafe::1b) by BY3PR05CA0043.outlook.office365.com
- (2603:10b6:a03:39b::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.8 via Frontend Transport; Thu, 6
- Nov 2025 19:06:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 19:06:06 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 11:05:54 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 6 Nov 2025 11:05:53 -0800
-Received: from moonraker.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 6 Nov 2025 11:05:52 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3] memory: tegra186-emc: Fix missing put_bpmp
-Date: Thu, 6 Nov 2025 19:05:50 +0000
-Message-ID: <20251106190550.1776974-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="endXWJF9"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b729660f8c1so16273066b.2
+        for <linux-tegra@vger.kernel.org>; Thu, 06 Nov 2025 11:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762456088; x=1763060888; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOmMRtW5FXW0MAi6xEIHqEbujsChcuuW9+3rNb6Efhc=;
+        b=endXWJF9xcQC0qfiou69PkWTY5x/2hS9s+O8kGB9yyZM1joqCEym2VuuBtyKZqVd/R
+         OcgjZ5LvV4mRGsdCN6hH3Rg1IhcYkkKYAxEKwGe5y1e08bDlbQPPuyEZ6s3IOH+bjDg5
+         7zG22JJVIZwDcBrHbWVsZmLgTAT1MjkhiRReAn01JsrEOKPFKLzol5pbaaTWaWkBZwLU
+         0AI9Lkd6GVjq90NCTejZ2zq6xM0RXRRZ7VDWpnG9hDXUbqwLypBG+YzHmwEN5o9m6ElY
+         ow2PPt66IzX+Xu/Weqvx0/UTGPm9hvUx2QzoQQcq8xxzbRAdlhGzt+fHv2c3Zy+Cjho9
+         TmvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762456088; x=1763060888;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TOmMRtW5FXW0MAi6xEIHqEbujsChcuuW9+3rNb6Efhc=;
+        b=nGuLzfV1bnkcY9LSX6AW87ZGosKgYhY2zEYFffd285n2ZplqrkwMLDw1Z3u8clpl3H
+         sZh0H3+iGbRaRxxjWp+qV+oayCzKYihEBnfU3iV8gp6FmTCaJ/EftHvQyqQ3JY3Ei+hw
+         pO37xP3ZjQgvOEdboWJdkTipHUgJZzSc2yob0Yf3xuI58PgiJ7QrQgWTI0WEtc8/1OQG
+         7K7Ky9ULBEWiGYSCr0j5j+QUg5kxDRJiCqDVDHuXhWNVwx+8tiwbc8Jqbl3EIp2JciVK
+         QnTs1GDUeiphugQ6ZeR4HEkAzxbPK1i5gJErYA/nRqw3tAZ/q3sognp9AADB+KEOyyhR
+         xkXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8CLoAWARcbfl6OcddpRjwBDgjkfqi755Ciao6bQ0IwhRHtDw3dXEPZReL09Y+X6rBnwateh/QhNVpKw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxvfjEy9FTTbLu5lhQibUqFdoyu8CAsu66/zVmpkExex3IxcJx
+	rPwhdQ/jZDRmAoMmQe8aHla1TjRWZPJMwwhg9QJ9oZAZ9YocvJTvw6JX5KXhLXZaTs0=
+X-Gm-Gg: ASbGncu1iVydXudSo6c/7JICeossTHHNdXkaOpYRofXVqlro0Y42PB3KAKLXJaphB/q
+	tV4uP0m+GeBLDiH3wIQ0TOTtOZZN6zm1d2udEfk/T4kGNmurD2JNfZynOEosk6sMsh7MK0d8PyV
+	Brh2SDvUrloPaMmCiOhQ9Q0UycXEWfAbmdWJfyzRSUtk2+iRzK3AKKu6CceGvTGi6SluT290xQD
+	rxWDcpiql3rnKRMQxamLjrcy83Ys0ZJsQxe38eVDbhwZK1lo4935Nj6ij34s8FmXNlywakQW70S
+	4Lue8oaszN8rzTe5VD7y6cqarObs4vKOUkKPbn4/aXXzYjQ3TFUm09ykho5sCVcfXto+KTgORMb
+	wXP0ZR7CwivQPkC3oeaQ2TWUNxbCkXM58TiHgZy3uczlORKZiQ7FrbfYFDJmFYSrQFezRnNZY1w
+	VG5N8290pkfIKrp27A2Na0TBJAAbU=
+X-Google-Smtp-Source: AGHT+IFGWzZTlk6Pep5z9JJh/2iQFwbYfqTOhkd0VSyzz3YH59510NL660TZKF8rj5tPeiZrlMyDNQ==
+X-Received: by 2002:a17:907:3f24:b0:b65:c8b8:144f with SMTP id a640c23a62f3a-b72c0996c95mr16124866b.6.1762456087865;
+        Thu, 06 Nov 2025 11:08:07 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa2510esm26739566b.72.2025.11.06.11.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 11:08:07 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/13] of: Add wrappers to match root node with OF device
+ ID tables
+Date: Thu, 06 Nov 2025 20:07:07 +0100
+Message-Id: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|PH0PR12MB5646:EE_
-X-MS-Office365-Filtering-Correlation-Id: e795b62a-e11c-4ff1-19a8-08de1d678998
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xZFZWeIUQL6C59MEhkRw1CmUyUEXbDfJbvNjgJ0BcD1SUTpgCWtwsSBX7PBO?=
- =?us-ascii?Q?70qVqZoBCClCX5fWDk7jiuHp14MLB91QsgtMawKpWNblmJ11aQXCyXSvF8Qr?=
- =?us-ascii?Q?yLi3uE194NIyovKc9vo865r2gdpe9v6X6KQlreZ2mYCiBOu0MtvZApXZ2SAt?=
- =?us-ascii?Q?i0e0mm1UW1k+5rxUNwE38RnTKNDjPU1w3bz+cRosbCxjvEMPgMh3kJxVXl8f?=
- =?us-ascii?Q?u/eBNlvzCBslSFTh95F37x7YV8nZmxjrGKoTQP7x5ZU1AHUW2aUo/PPK67i8?=
- =?us-ascii?Q?yB1iq6YRhK7MTuDk5YvpR+rI1o40U3xqjBvSmm78Xbfil21kMNd0+PESELMN?=
- =?us-ascii?Q?oz/SVKMZIpLAHzAN3ij3Tcp3C6qTIV9PV9jPDIs3I0xMW1fIi4GUjt/JIYp/?=
- =?us-ascii?Q?nxwayrLDRdbqlynP1TQ7uyXkyclJ9wpwK8aVvFwGskB0UDmOLHCwjBzWUJw2?=
- =?us-ascii?Q?nNDyGeiWyyGBz+1pUydRxyb/HxSZHli0HooOchrOQXY4OZVI/NHF4MYsa00V?=
- =?us-ascii?Q?mPd40ab9Jao3PpFJRjT80entvWRKE4o1vNf3qak7RJVzIpkq+aKwutiI28so?=
- =?us-ascii?Q?734p69ms+QtEL3QX1edfs3s3wbigIfz7Wz8uTaq6hwwrCuwHF09PeZL4xVrF?=
- =?us-ascii?Q?srXN8yAACPlLeKdkAOWxi4so8JogJpIExCNhPtKJevBD4msTVF0S2QA84aVC?=
- =?us-ascii?Q?cc0b/qDHzCkzM7+t8RK5C3z5rt5dhL6BQdHkq/bQ4nBQoL/Pnsqi8Vz04yvV?=
- =?us-ascii?Q?l7Z6psl2qD1cjGbAryIVOIGlj6XxVFay4mP+srEZ96wbthRR63mhSBCa6vab?=
- =?us-ascii?Q?rrR/dGUSv4tePIbc1GRmh2xXWmXzxRpo5C8kNDlyfGm76wq2Q5XtlophwJYn?=
- =?us-ascii?Q?jbwmLnIz9RDv2siTbsKiCrzqSxJEhZdEtPUZB3vBq+fxLz+JOENHCjbf464B?=
- =?us-ascii?Q?K6FXNt1q7hKRBqjMVRWWRZDKUBZIPeUrBvdF7uq8YJU6m+lInCkiaDCggOVS?=
- =?us-ascii?Q?hGlAY+amfcu7V7jqEZjHqV8dZRvJmDbO9MAv8lDX7Kr4RE0+NoiC302cvCN0?=
- =?us-ascii?Q?6KE+E9720ijH9K4J8U1ewQEIxfc3+w8Oq7u4jT7Bny4o/VW/Ep0wGIBhMSuP?=
- =?us-ascii?Q?82bFAmEZOws2IzXTG2jrz/or8nkZd/MOezXGtoLs7kabY8BvmuVgwaGGDWGI?=
- =?us-ascii?Q?wan3kLoUA/IB0cz1MuEIbERnpzatOeauJeaDPkPOnymQkbfbZGyPVSunyBz3?=
- =?us-ascii?Q?dv7CxEXEVjE/paMyH+k1qgzGsIp6zNYIM2RnBn1UJmO9Ompe1JKHLT6NtUVD?=
- =?us-ascii?Q?940qHr7MgqWIgWRz+8Nu0NmMrfyB0OK+IJvEhXVMrvG+wVvG6cLRg45XEYSF?=
- =?us-ascii?Q?RUtl8F8FHLpFAIse6gt3JcyJ7QFApTILCyxjCdmV+9WaTFw+OQt7sQTIPBfv?=
- =?us-ascii?Q?uBZb31wCNIaq8/bBShjVcRjJZ0E3zkW5Lbfx7FB+pwQ+wgycELcMCjEsLA1a?=
- =?us-ascii?Q?LV/QtnOczTElDTar62mE2SpVeDhKJTse6s8Y2K/VgXTjSP/XFWb0FkvNkkop?=
- =?us-ascii?Q?w4lMJ17HSmyNUAKucVo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 19:06:06.0215
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e795b62a-e11c-4ff1-19a8-08de1d678998
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002314.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5646
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANzxDGkC/yWMMQqAMAwAvyKZDbQSi/gVcYiaagartCKC+HeLL
+ gc33N2QJKokaIsbopyadAtZbFnAuHCYBXXKDpWpamuNw4Fw87jyMS4/NQhOfDASOxq8IddYgtz
+ vUbxe37vrn+cFIRAvI2sAAAA=
+X-Change-ID: 20251106-b4-of-match-matchine-data-4a64bf046814
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2925;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=0/jEOxtSFPK0PmIemOfKHGwBErRDUi05GZgJASgkD0U=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpDPIG5LkF6rev9ukV/+9Qtp68gNcluS7tTEY5b
+ xPa3VIbKtCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQzyBgAKCRDBN2bmhouD
+ 12G3D/9mfBQ7HGLDU/SZRXrLmtiPXCTDREluXdWUYAg8kpONNNEE75+x3up7wKYhs7S49bz7J27
+ LN8BPJka1h7vYjEBYECOIAX9bwtTdR1QgpU+tJJRaN37ZNfdhdTG0SRuIbUpU5ONVnCTVbD+yzf
+ 7zBhrdKxAlht4mclM1I6Gnv97bmFqpGq/Pp5p4YJBGUrlBvuzoL8u9W9CA+xxXjW93uVjGixBu8
+ omyiKyhRMdLgPamka6AttrpGLvvpFJVQChi30yQdAEQVdbp+zHnz4jkteGLGPjH6jy4+PLURMgC
+ 9FJfaviKGJDnBQYR1Vd/kpu9tnP/tW69frilBMHYt5kyIHvL5H31PJaQ+iBNmpavlBaLTjuylT+
+ 5sTnNNeO2R2ewpIY2kWOYuIrjiGSYc+zeHjf8l/zFKVa3zpvFMpjcomXpu0vHESDLc9qBRt8EG5
+ oRhuhAqACjuTy33Nt3xExzTEAmOENK7qDzWl2xWbiFO1sLRbMA2auneH6jgY+Vb9yIqwNUv2zJA
+ /jZShiOwmSnJMha7tiydbA6xvwNQhNMBW1Rs5WJzcEmzRwCWNGTqmhZHOSAQsES3xDV/pFdvbJY
+ 81lzvN3L/XYxoZ0HV75pW19zvzOuwUG+sbhLwIDHO5mlCNQ4qN/lssv+82nTDl+i971szhjo8Kd
+ Jzhgda147d1CC0A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Commit a52ddb98a674 ("memory: tegra186-emc: Simplify and handle deferred
-probe with dev_err_probe()") accidently dropped a call to 'put_bpmp' to
-release a handle to the BPMP when getting the EMC clock fails. Fix this
-by restoring the 'goto put_bpmp' if devm_clk_get() fails.
+Dependency/merging
+==================
+All patches depend on the first patch, thus everything could go via
+Rob's tree with people's acks.
 
-Fixes: a52ddb98a674 ("memory: tegra186-emc: Simplify and handle deferred probe with dev_err_probe()")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Description
+===========
+Several drivers duplicate same code for getting reference to the root
+node, matching it against 'struct of_device_id' table and getting out
+the match data from the table entry.
+
+There is a of_machine_compatible_match() wrapper but it takes array of
+strings, which is not suitable for many drivers since they want the
+driver data associated with each compatible.
+
+Add two wrappers, similar to existing of_device_get_match_data():
+1. of_machine_device_match() doing only matching against 'struct
+   of_device_id' and returning bool.
+2. of_machine_get_match_data() doing the matching and returning
+   associated driver data for found compatible.
+
+Best regards,
+Krzysztof
+
 ---
-Changes since V2:
-- Eliminated extra line for initialising 'err' variable.
-Changes since V1:
-- Fixed dev_err_probe message format
+Krzysztof Kozlowski (13):
+      of: Add wrappers to match root node with OF device ID tables
+      cpufreq: dt-platdev: Simplify with of_machine_get_match_data()
+      cpufreq: mediatek: Simplify with of_machine_get_match_data()
+      cpufreq: sun50i: Simplify with of_machine_device_match()
+      cpufreq: ti: Simplify with of_machine_device_match()
+      cpuidle: big_little: Simplify with of_machine_device_match()
+      firmware: qcom: scm: Simplify with of_machine_device_match()
+      irqchip/atmel-aic: Simplify with of_machine_get_match_data()
+      platform: surface: Simplify with of_machine_get_match_data()
+      powercap: dtpm: Simplify with of_machine_get_match_data()
+      soc: qcom: Simplify with of_machine_get_match_data()
+      soc: qcom: ubwc: Simplify with of_machine_get_match_data()
+      soc: tegra: Simplify with of_machine_device_match()
 
-Please note that the commit hash reference is based upon the hash in
-the -next tree.
+ drivers/cpufreq/cpufreq-dt-platdev.c               | 15 ++-----
+ drivers/cpufreq/mediatek-cpufreq.c                 | 12 +-----
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c             | 11 +----
+ drivers/cpufreq/ti-cpufreq.c                       | 13 +-----
+ drivers/cpuidle/cpuidle-big_little.c               | 11 +----
+ drivers/firmware/qcom/qcom_scm.c                   | 17 +-------
+ drivers/irqchip/irq-atmel-aic-common.c             | 15 ++-----
+ drivers/of/base.c                                  | 47 ++++++++++++++++++++++
+ .../platform/surface/surface_aggregator_registry.c | 13 +-----
+ drivers/powercap/dtpm.c                            | 16 +-------
+ drivers/soc/qcom/qcom_pd_mapper.c                  | 17 +-------
+ drivers/soc/qcom/ubwc_config.c                     | 14 ++-----
+ drivers/soc/tegra/common.c                         | 12 +-----
+ include/linux/of.h                                 | 13 ++++++
+ 14 files changed, 82 insertions(+), 144 deletions(-)
+---
+base-commit: e5efebeef746a24f45b98dbdfcf334285848b32a
+change-id: 20251106-b4-of-match-matchine-data-4a64bf046814
 
- drivers/memory/tegra/tegra186-emc.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index 74be09968baa..b73daf5326cc 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -448,9 +448,11 @@ static int tegra186_emc_probe(struct platform_device *pdev)
- 				     "failed to get BPMP\n");
- 
- 	emc->clk = devm_clk_get(&pdev->dev, "emc");
--	if (IS_ERR(emc->clk))
--		return dev_err_probe(&pdev->dev, PTR_ERR(emc->clk),
--				     "failed to get EMC clock\n");
-+	if (IS_ERR(emc->clk)) {
-+		err = dev_err_probe(&pdev->dev, PTR_ERR(emc->clk),
-+				    "failed to get EMC clock\n");
-+		goto put_bpmp;
-+	}
- 
- 	platform_set_drvdata(pdev, emc);
- 	emc->dev = &pdev->dev;
+Best regards,
 -- 
-2.43.0
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
