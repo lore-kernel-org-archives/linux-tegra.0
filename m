@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1709822A7E4;
-	Fri,  7 Nov 2025 14:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DDA221299;
+	Fri,  7 Nov 2025 15:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527516; cv=none; b=i231/NfHcxCKvqs5yqRoVACcYkM/bKVFnAx89E8z/5RxDPyPX5tOqU5xyiw3vb8+6XIEsXXNo+bP8kC8Ww7ZvxKp2IBBDSzzhwS+/RF3R9nCxCESqkHcVjfIVJbMuLs+ksGOqb0gvYqYbj6lIM/GagQI/svKPYWaiSfFpyXNMOw=
+	t=1762529191; cv=none; b=ewNsSojXtptUts8y0ecWQZSbDqFtMVbUbHm99yiUwnwWq8ipJI21u7V2q8IuLGMcb2ZUVtTc4grJ0ZjnEdYlMByXVwmmnxdwLmfLcsfShwTwsrz5fCtxnp0nzjNUO6p9L0oFjxmt36DkVj9AwXtrxMciwheDf6KGp5wv5nm1pD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762527516; c=relaxed/simple;
-	bh=ojy+Bzf0MwguMVZJCP7SuBfIwC0XckMoTrLg/SyENk0=;
+	s=arc-20240116; t=1762529191; c=relaxed/simple;
+	bh=baOzrg6WLDWZp9M79PyYQfB79ylAdrJWG+GiTqVGNNM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=og+Gjb3u0onZDg3yIpKHu9/OQo7AHvxWJtEUNNTqdrFuPydu89nuF8Uibo/cKvnPz7pBF3ZHePKYvC5jpGdoRl6CzP6aTa4pgnWze6uyXbzIn9sNtyKIeRT4ljvrIOBLMgEgqYgGj0MGl1MdAntLSZuZ92633WYjDzolonc5U5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2pu3Dah; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=YxGmvNMrtSnV463bDwRfnXbMGZUPEL1ruAptyW/QRI7C1RZRJPnFgiSdoJBRBpw77th/+ONY/kBuz4AoCqzg4BSTVDVu/N5wMT9+dONJidVWXCo0U6K5fxDPiDgSvGd2II+8e2/75Tk/s+M+FrzXUluclNmFhUMCpJ1/VxdNs4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9BfHPkM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2pu3Dah"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE63C4CEF5;
-	Fri,  7 Nov 2025 14:58:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9BfHPkM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822E9C16AAE;
+	Fri,  7 Nov 2025 15:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762527515;
-	bh=ojy+Bzf0MwguMVZJCP7SuBfIwC0XckMoTrLg/SyENk0=;
+	s=k20201202; t=1762529191;
+	bh=baOzrg6WLDWZp9M79PyYQfB79ylAdrJWG+GiTqVGNNM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H2pu3DahfPoaTBqNYUbZkowHaXOT1UGdeMguVIfpXuqbNnZghxPeqe5/gUO2Nz8Ff
-	 6VZyRa6s7TnCLlVHZyLmxrr15XAvPLzcCuj0bh4pOb7HPh2DT3Ne3OTEpRlDRP9jEC
-	 ey3BEtQRgFBakA2RQ6311ZV0OuIG05biIXW9Q92fZM2qv7B69HNyD9pf1l9RbPUYLZ
-	 ZSCfSMTaqdw4O83BUPFBhhlEQjOh4VxiVnYRI6EGpuybsU5p/ouhXX/RiDUlAXo8y/
-	 XoUe0PBUtvVE8GyCrb0XizS3HYPZ9ji79VgjEgtOhV4eWMiXLLk4sqZdx0kD3DaBAs
-	 OEnmCk8gAoiwg==
-Message-ID: <8fc8c945-ae67-4c58-837d-40bdf4d60035@kernel.org>
-Date: Fri, 7 Nov 2025 15:58:26 +0100
+	b=H9BfHPkMGdkEVn7Fp0J80Q+ABNz3swYxQUBPh3MIn4chNs+BiWUWENZbm0u076gh2
+	 GBDVIzm9hR4LhZ9CEww5s05K24kgFcH5Plpc87Q9HoGBJHhvo7183tpDbE9XhKZjQq
+	 3ZCEafO5smA0iCyAM+iuH1SoaRYjyLnFQEH5JKYSqszQJfbq2wNKEmzb/N5s95S9kj
+	 h7Facz9Jkzsxy4Zwj8GlnA2zA6j8plOxiHDwMH8ydo2TkGeSsKkXTGnLvCArSNHZNy
+	 EReNlB293NjzrIkkmUH1XQpupPu4QTRzy0GAbM77M/bj9MH0L4CxDly1WXmMk9OP2M
+	 4/+nmW4f0EXIw==
+Message-ID: <da878742-aefc-4cf2-be13-41b6e5f12eba@kernel.org>
+Date: Fri, 7 Nov 2025 16:26:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,40 +35,14 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/13] soc: qcom: Simplify with
- of_machine_get_match_data()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
- <20251106-b4-of-match-matchine-data-v1-11-d780ea1780c2@linaro.org>
- <odmsib3dsxzzggq4gcx7gmh6vq3crlv25fz4z2l2ntezvx6gbi@uelqojwjjait>
- <a8952b46-94b6-4fe5-a5be-d69aa41d44cd@kernel.org>
- <a06ed143-c497-4141-8b4d-98fcb322e130@linaro.org>
- <rxhmiudlnrn2pexqtwuuv2jrenrl2ezepknvrc3o34gaap247u@2tsfw6g33rmr>
+Subject: Re: [PATCH v2 2/3] memory: tegra: Add support for DBB clock on
+ Tegra264
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20251105195342.2705855-1-thierry.reding@gmail.com>
+ <20251105195342.2705855-3-thierry.reding@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,87 +88,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <rxhmiudlnrn2pexqtwuuv2jrenrl2ezepknvrc3o34gaap247u@2tsfw6g33rmr>
+In-Reply-To: <20251105195342.2705855-3-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2025 15:23, Dmitry Baryshkov wrote:
-> On Fri, Nov 07, 2025 at 08:08:28AM +0100, Krzysztof Kozlowski wrote:
->> On 07/11/2025 08:02, Krzysztof Kozlowski wrote:
->>> On 07/11/2025 04:19, Dmitry Baryshkov wrote:
->>>> On Thu, Nov 06, 2025 at 08:07:18PM +0100, Krzysztof Kozlowski wrote:
->>>>> Replace open-coded getting root OF node, matching against it and getting
->>>>> the match data with new of_machine_get_match_data() helper.
->>>>>
->>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>
->>>>> ---
->>>>>
->>>>> Depends on the first OF patch.
->>>>> ---
->>>>>  drivers/soc/qcom/qcom_pd_mapper.c | 17 ++---------------
->>>>>  1 file changed, 2 insertions(+), 15 deletions(-)
->>>>>
->>>>> diff --git a/drivers/soc/qcom/qcom_pd_mapper.c b/drivers/soc/qcom/qcom_pd_mapper.c
->>>>> index 1bcbe69688d2..07198d44b559 100644
->>>>> --- a/drivers/soc/qcom/qcom_pd_mapper.c
->>>>> +++ b/drivers/soc/qcom/qcom_pd_mapper.c
->>>>> @@ -613,25 +613,12 @@ static void qcom_pdm_stop(struct qcom_pdm_data *data)
->>>>>  static struct qcom_pdm_data *qcom_pdm_start(void)
->>>>>  {
->>>>>  	const struct qcom_pdm_domain_data * const *domains;
->>>>> -	const struct of_device_id *match;
->>>>>  	struct qcom_pdm_data *data;
->>>>> -	struct device_node *root;
->>>>>  	int ret, i;
->>>>>  
->>>>> -	root = of_find_node_by_path("/");
->>>>> -	if (!root)
->>>>> -		return ERR_PTR(-ENODEV);
->>>>> -
->>>>> -	match = of_match_node(qcom_pdm_domains, root);
->>>>> -	of_node_put(root);
->>>>> -	if (!match) {
->>>>> -		pr_notice("PDM: no support for the platform, userspace daemon might be required.\n");
->>>>> -		return ERR_PTR(-ENODEV);
->>>>> -	}
->>>>> -
->>>>> -	domains = match->data;
->>>>> +	domains = of_machine_get_match_data(qcom_pdm_domains);
->>>>>  	if (!domains) {
->>>>> -		pr_debug("PDM: no domains\n");
->>>>> +		pr_notice("PDM: no support for the platform or no domains, userspace daemon might be required.\n");
->>>>>  		return ERR_PTR(-ENODEV);
->>>>>  	}
->>>>
->>>> Here you are mixing two cases:
->>>> - There is not match in the table (in which case the driver should print
->>>>   a notice)
->>>>
->>>> - There is a match in the table, but the data is NULL (the platform
->>>>   doesn't have PDM domains). In this case there should be no notice.
->>>
->>>
->>> Why? Existing code printed notice in both cases. Why refactoring which
->>> tries to keep code functionally equivalent should change it?
->>
->> Ah, you mean there was a debug before. Well, then I am a bit confused
->> because table has entries without data (so expected condition) but old
->> code returned ERRNO in such case - so unexpected condition.
->>
->> Wail failing the probe on expected condition?
->>
->> Unless it is not really expected and notice in second case is valid as well.
+On 05/11/2025 20:53, Thierry Reding wrote:
+
 > 
-> If we know that there are no domains on the platform, then the notice
-> definitely doesn't apply. Failing the probe is a separate topic. The
-> rest of the code expects that _qcom_pdm_data is not NULL.
+> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+> index 74be09968baa..7a26d8830172 100644
+> --- a/drivers/memory/tegra/tegra186-emc.c
+> +++ b/drivers/memory/tegra/tegra186-emc.c
+> @@ -33,6 +33,7 @@ struct tegra186_emc {
+>  	struct tegra_bpmp *bpmp;
+>  	struct device *dev;
+>  	struct clk *clk;
+> +	struct clk *clk_dbb;
+>  
+>  	struct tegra186_emc_dvfs *dvfs;
+>  	unsigned int num_dvfs;
+> @@ -452,6 +453,13 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(emc->clk),
+>  				     "failed to get EMC clock\n");
+>  
+> +	emc->clk_dbb = devm_clk_get_optional_enabled(&pdev->dev, "dbb");
+> +	if (IS_ERR(emc->clk_dbb)) {
+> +		err = PTR_ERR(emc->clk_dbb);
+> +		dev_err(&pdev->dev, "failed to get DBB clock: %d\n", err);
+
+Entire code was converted to dev_err_probe, see other clk_get() and
+similar in the driver. Please switch to that syntax, so dropping earlier
+line with assignment and printing 'err' in printk.
 
 
-I hoped that separate topic would be the reason, after commit msg
-adjustments, to keep this change, but if you insist that this must stay
-debug, then this patch should be just dropped because it is impossible
-to achieve with current helpers.
 
 Best regards,
 Krzysztof
