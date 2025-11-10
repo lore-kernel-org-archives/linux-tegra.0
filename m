@@ -1,63 +1,63 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A5B2FF172
-	for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 09:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5195A2FF65B
+	for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 09:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766130; cv=none; b=VX9oK5E0sjgawZ9ddzSEas2/TsMdJu9Gtb6sAaUcZ0TXTnZ8LxrIoMPznbHe9RsvN8LN4sMPCrqyDTRpdi54H8cMQmfipS92Js0j71NraZmOywoBP5j0LZYnhgIqQUccM1Kp4zEMqfPNB0UXf8lT797ufCo+BTLKzr31NUkW1Ms=
+	t=1762766131; cv=none; b=nR1U2C45sawwUlPFuKMa8thpqEbXcOlRt81v/zvz7bzVrKAXUQX2wV+lpa5FT+4jiF435Tw3JRhe5zn7lBSFibaUtOe6cruBQS056hHtJv68c0VTacXYswHnzOcRnHCnjzbFq5dDyVpgCskmMatQ3KuZNSikFNch9XwTwAXOC1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766130; c=relaxed/simple;
-	bh=/CXzj5jTIsG6xjXWB8a3Ddy3m9DDciOJ66r1kBk8d4s=;
+	s=arc-20240116; t=1762766131; c=relaxed/simple;
+	bh=o0ADLZP20Gf+RaCUCo73PsEebUZu5lyI6twUNiTxrps=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zwo1l931IS2SBOwTKplWV+/OcopBlHsBF4k8J325NeDn36sbLZLKfxdo+kPoLKBAYQCBW1vFq8F0eHaYiZofGxz4KhsUQpbzFO28nrKSEslOWOqfNGoRXkRV4kwJPPd7iEXtPjuToEMRIixBuKTm4PL59K48h79yIrs1HszHdWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlACDDgO; arc=none smtp.client-ip=209.85.208.170
+	 MIME-Version; b=Zo8dXta9exOfZdZmEYdB4vwYeKAVfAZsD1nRvO2bnYgmf6OqYHMGqH0Zsm3kwa3OY5Z9yre0M+NhGswAl/sW1pIYF8QLDiGeB8E09Oa23gw0fnQWl8FHBWzyce8SE1gSzGvQNwmFcg/vR0fQE9IyLrj78JX+MupLzXg7MnWb2Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jxKDIytR; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlACDDgO"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-378ccb8f84aso26184951fa.3
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 01:15:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jxKDIytR"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-592f7e50da2so3348351e87.0
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 01:15:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762766126; x=1763370926; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762766127; x=1763370927; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=veHv/uRfxtfoSVQhbpvYC1/mXF+mOr0qW/T/KMequQ0=;
-        b=jlACDDgO/Jko1OYxe3joBkbnlS8cjWjuLBITuikjzfm+6EEJyj3CB/oJPU/dXF6rF/
-         yUEJ6j+PTOF02j9lwCDf7ZUJu6tWh9mS25j7roA2CziVPbGKeM9xZQSL+mevMaLG1myG
-         cS+5DwR+Sw+JRGiT22DJvtanXLwRbBbAiXF70k8nkjIA5tM0puWc+yZMbyCzCLxVH69j
-         TM7/MzqtqMgMTJPrDrzq01vyrlngabruhCLT8739DajvSsvpqQ0bZ/njUQDE1vdjTn1n
-         xYkAq4NRBi06kY1cCPqUYnctzjYHHSRQZadFrKKyBdQA3F+AOoLUTaSeeUjZjHjyKqSN
-         /umQ==
+        bh=CS1qvZ66jY4Y+/VjejeV3GAhiKWhtdvuL8aLYEGuxs0=;
+        b=jxKDIytRPDugAQZqX2/1YEkQKz5ndm64a9UOrKEytDeoZ0cO58XY92GMvropUaVmJk
+         hGcTavO0IY/glgNYnryp4PhF/70sch3zZqSdcgvfJUHHyFwuLWuxYCWsypQxeXCxhaB7
+         kn85IfIjScyI7g8ftSjh8pf0PMKuSFF2P4SpUxNniKickmhn7VXbI2G7aTC0bbywb6W7
+         /UAzcIr3Ai2WMMn2sCXHvilRHGKGj+vmsR4KZL8CWNTh/WwV+x4DjXtMqQC2nZSTv2HP
+         al5qifP3PjUQUS6/I9zApAQqbnlmvFtxj+FoP84Y3s4wc83s86U31626s6/sHY2P9BJM
+         A3rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762766126; x=1763370926;
+        d=1e100.net; s=20230601; t=1762766127; x=1763370927;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=veHv/uRfxtfoSVQhbpvYC1/mXF+mOr0qW/T/KMequQ0=;
-        b=aJAftVrr0t6TxgkwFChkUYLZb74Af57e6iabjNJUsijK9eGcewgdHKJW2kUzr2XlFx
-         z6QdH3NS/otOuPgCzCWO2kGROloVEBW2jMXWxqQsnr+SDdBDeYMxuWOsibXohqoYAyvA
-         2I5Ug2pSIQ5yKyWD9ANypyVsw9nQi8tq314nG78F3lrRkzD8kD7ylp9/cXhl5U6TuAly
-         BeC7kkotLP/z7pxHx6LmuiNDcHJfCq/c1yTz/j0ucd/ChjkV3JfaSg1xbgpFCmpfFkDM
-         7BieJoiZ/Rz4SEQS2wJ8sjDdwEx5ptEWlK7FnHdgUn1emLRziJKwK+VkT/9BCm4bSzbE
-         Dc5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXc4+hJQn+XbNZZZXNzo9RlL6/Psq3bQ8stVgnXWd5YtdY0G1smLSmjAq7kbhj5w/wia3zIea54L4igYQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmHCe9k+juZQsxJCiGkIFX9ipOGGDMIj1uWkL6pN5bTPxmdc7w
-	9dDEDE0le4qlaQSzI91aMU/j1REom1xbHwsHDjKHdPL4cUoaEqboHjp0
-X-Gm-Gg: ASbGncsUP0UMXdFGktRHHDXbFbKiI+It+b31/x9Epl0ZJUAbO8uHJIIDfE6boFGNgCT
-	82zanQxGbsjgcsWnn4KQtmTiENrHWnPfpo3FS/S8jKxNXlFFPnhgnyGKs2W8KZyNCOZbjxcAqXI
-	g7fSdh2atD9pTy+HNY/FzDw3ST108XvFxfzTLHMqLYIWFkTsbnVtLTOXWu67tOncqz9F+7e8DQu
-	T2fNsueDXdb3upL0AynH7z8EQLJheHVhR4zKwmp70xiBwg1G3cTGvIENM7tabMuEpf5VgoRSq8p
-	Kx+9wrEDVDSZTt4+LHAQxtz3H9Y3L6LZxpCz1RXZyU5AA5KkTuJ5WjjzCgj37dzvLMzm7jzw5NG
-	5efVau9DukDG50YjtZYtA+KgMbHrWJKftU/7ZSZsjUxs8nHjSgRuZc8eZXB++4rZA
-X-Google-Smtp-Source: AGHT+IEYKC+UVtlSAdBpY8qGaxywx7G3p1nhsry/fr15fjGb+9mY1iP3g5oIkKF/qfU4YqicbtZh9Q==
-X-Received: by 2002:a05:6512:a96:b0:592:f44e:a28b with SMTP id 2adb3069b0e04-5945f1dfb7bmr2195041e87.57.1762766125833;
-        Mon, 10 Nov 2025 01:15:25 -0800 (PST)
+        bh=CS1qvZ66jY4Y+/VjejeV3GAhiKWhtdvuL8aLYEGuxs0=;
+        b=IzXW7e4MgIdF5os+mBaj1z63aB9Gmz9b8N72VxLbVVHbOLNeTxZfjZfwDCa6tbRkdh
+         aZMsPzaBOmkmMwJhxBfN3uh7wbKEOqJAnbywS9Xr4CKuXxoFB69tH7gD7/JavhAQsjEQ
+         dQbWEi2r2vMk+JFArzO54kYyPnfCZPW8ygPTHhNcXqtBt+hzxOviLwzkIXF613R0O0q0
+         G9YwvozuC61sk19gewprylk2YgLLKVTfi/MNoFsfdfc3UcFhYQWSG1F0msSTTbc5aplW
+         XrGJUGN5i9lSJnFEWR5AUaGZBrv8qThWwx2MIV/TLDhNu0qLP+5awHRLCmbelifljG3c
+         K7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/DnO9OZCGAs5YF+QsZeYioVRfOPA993O9tE1X1f5OiWk1TqaYan8Rd/Q8Zp4MJpKNlT8scw1lRNG12w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoRzu/qTSuzQVKuDLGzvafRTCKTtTUV0GpPHb5fvvKvPWE4FaD
+	XOezgvcyCmBoxNzaepXhy87WoTc4lNkgKpQVFiaFX6rjkrmFEJMsIVRo
+X-Gm-Gg: ASbGncuOH+EUSsMvCwkwb4UVD4PONYWZFkuzA2cxqSagB+4KSe4C6O1O1Euu8Rroy0o
+	2Ft5vmZ2ut3C+fqgK0V0BYjJe2cCylkGuMUZj74oviSLAl6q2IGFhkQiiJvFrFTRxQQZNLMGrxD
+	qs9DYBG5s/e8I79XH/IoPCKcQG7UNYLUVZr1BghvrP95nwdTv3wVgafAWfLTAcdS8FIsmbOPeVu
+	Tl7QKDsSr7n3Clc6X8dywlPfTEchH1R/djyGkSvTZ6HcjNWQ3zlIJr/1UtUBlylTavRAWwr3TAZ
+	pjaY0SWscQOveuccKGS41zj3PoNQRxMWNke7QQPm0VeyS2EDUrmlKlCmfjIsKzc3BkQGzNRVYKD
+	Pb+u4v8AaxSdVC0g4oX0NNuxzg/xU1ijAutTW4jWxBvZ7jnYYfyH/ZRFTxJosKVRD
+X-Google-Smtp-Source: AGHT+IGg01NCiIGQo9N2wxV8aW1VWsEBMMCQPFsF2STXbWMO8Vd4nbT/5Lwb6SNxAC57s9F/DHJ/cQ==
+X-Received: by 2002:a05:6512:224d:b0:594:511f:f1f1 with SMTP id 2adb3069b0e04-594599999d3mr3496080e87.11.1762766127093;
+        Mon, 10 Nov 2025 01:15:27 -0800 (PST)
 Received: from xeon ([188.163.112.74])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0b76f4sm3852006e87.73.2025.11.10.01.15.24
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0b76f4sm3852006e87.73.2025.11.10.01.15.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:15:25 -0800 (PST)
+        Mon, 10 Nov 2025 01:15:26 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -77,9 +77,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 2/7 RESEND] gpu/drm: panel: add support for LG LD070WX3-SL01 MIPI DSI panel
-Date: Mon, 10 Nov 2025 11:14:32 +0200
-Message-ID: <20251110091440.5251-3-clamor95@gmail.com>
+Subject: [PATCH v3 3/7 RESEND] ARM: tn7: adjust panel node
+Date: Mon, 10 Nov 2025 11:14:33 +0200
+Message-ID: <20251110091440.5251-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251110091440.5251-1-clamor95@gmail.com>
 References: <20251110091440.5251-1-clamor95@gmail.com>
@@ -91,302 +91,52 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The LD070WX3 is a Color Active Matrix Liquid Crystal Display with an
-integral Light Emitting Diode (LED) backlight system. The matrix employs
-a-Si Thin Film Transistor as the active element. It is a transmissive type
-display operating in the normally Black mode. This TFT-LCD has 7.0 inches
-diagonally measured active display area with WXGA resolution (800 by 1280
-pixel array).
-
-LG LD070WX3-SL01 MIPI DSI panel was treated as simple DSI panel when it is
-actually not and requires proper setup for correct work. Simple panel work
-relied on preliminary configuration done by bootloader.
+Adjust panel node in Tegra Note 7 according to the updated schema.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
- drivers/gpu/drm/panel/Kconfig             |  13 ++
- drivers/gpu/drm/panel/Makefile            |   1 +
- drivers/gpu/drm/panel/panel-lg-ld070wx3.c | 184 ++++++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c      |  31 ----
- 4 files changed, 198 insertions(+), 31 deletions(-)
- create mode 100644 drivers/gpu/drm/panel/panel-lg-ld070wx3.c
+ arch/arm/boot/dts/nvidia/tegra114-tn7.dts | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 045ffb2ccd0f..1f660ba065a1 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -408,6 +408,19 @@ config DRM_PANEL_LG_LB035Q02
- 	  (found on the Gumstix Overo Palo35 board). To compile this driver as
- 	  a module, choose M here.
+diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
+index bfbdb345575a..75fbafb4a872 100644
+--- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
+@@ -43,7 +43,9 @@ panel@0 {
+ 				compatible = "lg,ld070wx3-sl01";
+ 				reg = <0>;
  
-+config DRM_PANEL_LG_LD070WX3
-+	tristate "LG LD070WX3 MIPI DSI panel"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	select VIDEOMODE_HELPERS
-+	help
-+	  Say Y here if you want to enable support for the LD070WX3 MIPI DSI
-+	  panel found in the NVIDIA Tegra Note 7 tablet.
+-				power-supply = <&vdd_lcd>;
++				vdd-supply = <&avdd_lcd>;
++				vcc-supply = <&dvdd_lcd>;
 +
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called panel-lg-ld070wx3.
-+
- config DRM_PANEL_LG_LG4573
- 	tristate "LG4573 RGB/SPI panel"
- 	depends on OF && SPI
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 0356775a443a..9281221183ac 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -41,6 +41,7 @@ obj-$(CONFIG_DRM_PANEL_LEADTEK_LTK050H3146W) += panel-leadtek-ltk050h3146w.o
- obj-$(CONFIG_DRM_PANEL_LEADTEK_LTK500HD1829) += panel-leadtek-ltk500hd1829.o
- obj-$(CONFIG_DRM_PANEL_LINCOLNTECH_LCD197) += panel-lincolntech-lcd197.o
- obj-$(CONFIG_DRM_PANEL_LG_LB035Q02) += panel-lg-lb035q02.o
-+obj-$(CONFIG_DRM_PANEL_LG_LD070WX3) += panel-lg-ld070wx3.o
- obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
- obj-$(CONFIG_DRM_PANEL_LG_SW43408) += panel-lg-sw43408.o
- obj-$(CONFIG_DRM_PANEL_MAGNACHIP_D53E6EA8966) += panel-magnachip-d53e6ea8966.o
-diff --git a/drivers/gpu/drm/panel/panel-lg-ld070wx3.c b/drivers/gpu/drm/panel/panel-lg-ld070wx3.c
-new file mode 100644
-index 000000000000..00cbfc5518a5
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-lg-ld070wx3.c
-@@ -0,0 +1,184 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/array_size.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/property.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <video/mipi_display.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_probe_helper.h>
-+
-+static const struct regulator_bulk_data lg_ld070wx3_supplies[] = {
-+	{ .supply = "vdd" }, { .supply = "vcc" },
-+};
-+
-+struct lg_ld070wx3 {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi;
-+
-+	struct regulator_bulk_data *supplies;
-+};
-+
-+static inline struct lg_ld070wx3 *to_lg_ld070wx3(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct lg_ld070wx3, panel);
-+}
-+
-+static int lg_ld070wx3_prepare(struct drm_panel *panel)
-+{
-+	struct lg_ld070wx3 *priv = to_lg_ld070wx3(panel);
-+	struct mipi_dsi_multi_context ctx = { .dsi = priv->dsi };
-+	struct device *dev = panel->dev;
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(lg_ld070wx3_supplies), priv->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable power supplies: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * According to spec delay between enabling supply is 0,
-+	 * for regulators to reach required voltage ~5ms needed.
-+	 * MIPI interface signal for setup requires additional
-+	 * 110ms which in total results in 115ms.
-+	 */
-+	mdelay(115);
-+
-+	mipi_dsi_dcs_soft_reset_multi(&ctx);
-+	mipi_dsi_msleep(&ctx, 20);
-+
-+	/* Differential input impedance selection */
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xae, 0x0b);
-+
-+	/* Enter test mode 1 and 2*/
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xee, 0xea);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xef, 0x5f);
-+
-+	/* Increased MIPI CLK driving ability */
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xf2, 0x68);
-+
-+	/* Exit test mode 1 and 2 */
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xee, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xef, 0x00);
-+
-+	return ctx.accum_err;
-+}
-+
-+static int lg_ld070wx3_unprepare(struct drm_panel *panel)
-+{
-+	struct lg_ld070wx3 *priv = to_lg_ld070wx3(panel);
-+	struct mipi_dsi_multi_context ctx = { .dsi = priv->dsi };
-+
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&ctx);
-+
-+	msleep(50);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(lg_ld070wx3_supplies), priv->supplies);
-+
-+	/* power supply must be off for at least 1s after panel disable */
-+	msleep(1000);
-+
-+	return 0;
-+}
-+
-+static const struct drm_display_mode lg_ld070wx3_mode = {
-+	.clock = (800 + 32 + 48 + 8) * (1280 + 5 + 3 + 1) * 60 / 1000,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 32,
-+	.hsync_end = 800 + 32 + 48,
-+	.htotal = 800 + 32 + 48 + 8,
-+	.vdisplay = 1280,
-+	.vsync_start = 1280 + 5,
-+	.vsync_end = 1280 + 5 + 3,
-+	.vtotal = 1280 + 5 + 3 + 1,
-+	.width_mm = 94,
-+	.height_mm = 151,
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
-+
-+static int lg_ld070wx3_get_modes(struct drm_panel *panel,
-+				 struct drm_connector *connector)
-+{
-+	return drm_connector_helper_get_modes_fixed(connector, &lg_ld070wx3_mode);
-+}
-+
-+static const struct drm_panel_funcs lg_ld070wx3_panel_funcs = {
-+	.prepare = lg_ld070wx3_prepare,
-+	.unprepare = lg_ld070wx3_unprepare,
-+	.get_modes = lg_ld070wx3_get_modes,
-+};
-+
-+static int lg_ld070wx3_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct lg_ld070wx3 *priv;
-+	int ret;
-+
-+	priv = devm_drm_panel_alloc(dev, struct lg_ld070wx3, panel,
-+				    &lg_ld070wx3_panel_funcs,
-+				    DRM_MODE_CONNECTOR_DSI);
-+	if (IS_ERR(priv))
-+		return PTR_ERR(priv);
-+
-+	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(lg_ld070wx3_supplies),
-+					    lg_ld070wx3_supplies, &priv->supplies);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get supplies\n");
-+
-+	priv->dsi = dsi;
-+	mipi_dsi_set_drvdata(dsi, priv);
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_LPM;
-+
-+	ret = drm_panel_of_backlight(&priv->panel);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get backlight\n");
-+
-+	drm_panel_add(&priv->panel);
-+
-+	ret = devm_mipi_dsi_attach(dev, dsi);
-+	if (ret < 0) {
-+		drm_panel_remove(&priv->panel);
-+		return dev_err_probe(dev, ret, "failed to attach to DSI host\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void lg_ld070wx3_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct lg_ld070wx3 *priv = mipi_dsi_get_drvdata(dsi);
-+
-+	drm_panel_remove(&priv->panel);
-+}
-+
-+static const struct of_device_id lg_ld070wx3_of_match[] = {
-+	{ .compatible = "lg,ld070wx3-sl01" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, lg_ld070wx3_of_match);
-+
-+static struct mipi_dsi_driver lg_ld070wx3_driver = {
-+	.driver = {
-+		.name = "panel-lg-ld070wx3",
-+		.of_match_table = lg_ld070wx3_of_match,
-+	},
-+	.probe = lg_ld070wx3_probe,
-+	.remove = lg_ld070wx3_remove,
-+};
-+module_mipi_dsi_driver(lg_ld070wx3_driver);
-+
-+MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
-+MODULE_DESCRIPTION("LG LD070WX3-SL01 DSI panel driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index da6b71b70a46..6369e5828189 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -5600,34 +5600,6 @@ static const struct panel_desc_dsi boe_tv080wum_nl0 = {
- 	.lanes = 4,
- };
+ 				backlight = <&backlight>;
+ 			};
+ 		};
+@@ -101,11 +103,10 @@ smps45 {
+ 						regulator-boot-on;
+ 					};
  
--static const struct drm_display_mode lg_ld070wx3_sl01_mode = {
--	.clock = 71000,
--	.hdisplay = 800,
--	.hsync_start = 800 + 32,
--	.hsync_end = 800 + 32 + 1,
--	.htotal = 800 + 32 + 1 + 57,
--	.vdisplay = 1280,
--	.vsync_start = 1280 + 28,
--	.vsync_end = 1280 + 28 + 1,
--	.vtotal = 1280 + 28 + 1 + 14,
--};
--
--static const struct panel_desc_dsi lg_ld070wx3_sl01 = {
--	.desc = {
--		.modes = &lg_ld070wx3_sl01_mode,
--		.num_modes = 1,
--		.bpc = 8,
--		.size = {
--			.width = 94,
--			.height = 151,
--		},
--		.connector_type = DRM_MODE_CONNECTOR_DSI,
--	},
--	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_CLOCK_NON_CONTINUOUS,
--	.format = MIPI_DSI_FMT_RGB888,
--	.lanes = 4,
--};
--
- static const struct drm_display_mode lg_lh500wx1_sd03_mode = {
- 	.clock = 67000,
- 	.hdisplay = 720,
-@@ -5751,9 +5723,6 @@ static const struct of_device_id dsi_of_match[] = {
- 	}, {
- 		.compatible = "boe,tv080wum-nl0",
- 		.data = &boe_tv080wum_nl0
--	}, {
--		.compatible = "lg,ld070wx3-sl01",
--		.data = &lg_ld070wx3_sl01
- 	}, {
- 		.compatible = "lg,lh500wx1-sd03",
- 		.data = &lg_lh500wx1_sd03
+-					smps6 {
++					avdd_lcd: smps6 {
+ 						regulator-name = "va-lcd-hv";
+-						regulator-min-microvolt = <3000000>;
+-						regulator-max-microvolt = <3000000>;
+-						regulator-always-on;
++						regulator-min-microvolt = <3160000>;
++						regulator-max-microvolt = <3160000>;
+ 						regulator-boot-on;
+ 					};
+ 
+@@ -325,7 +326,7 @@ lcd_bl_en: regulator-lcden {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_lcd: regulator-lcd {
++	dvdd_lcd: regulator-lcd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VD_LCD_1V8";
+ 		regulator-min-microvolt = <1800000>;
 -- 
 2.48.1
 
