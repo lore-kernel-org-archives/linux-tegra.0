@@ -1,233 +1,376 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012058.outbound.protection.outlook.com [52.101.48.58])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011037.outbound.protection.outlook.com [52.101.62.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FB830100C;
-	Mon, 10 Nov 2025 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70DA1FF61E;
+	Mon, 10 Nov 2025 21:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.37
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784729; cv=fail; b=cp9sKnDz9c9OrF7mHzBhDnNocLKuiwDzKjLx4kExhpksf8FJwmbKJ6YYPnsRiNgqA0TRj2zCxAW+v274UU47ZCxjm3IhxKLCw35C78qqdTvz8X2OuVHHV3Zcrhnm691GH+8QKM9sYdxm+5T93CcaFGGy8pqt4s0kGE0CPodXino=
+	t=1762809923; cv=fail; b=sB/m77IGf8HmjFfaZzZb+3zTmV0QW9L2YayflgXm4Dw9KxELQ8j90EADfvS2k/LFCFyzAhwT+Gq4qMowgYWLe3dh3utNsBk4lp/O3IUAfvdtQ1ABRmfwPyLpgvv/BnRJbn8oGk9oyHKe9JcFvAdFnRFd9e0VI7Zs54jkHFK7guE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784729; c=relaxed/simple;
-	bh=4YoqL7zQW3SvNiik575ZMfdvSat6/cTASyilpKzTqLw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mxpMuuI/FldgAfEV1TFcwPbdtEz0+P1D+w7VkN7bj3qh29gxKI7BtIjeYveM8GSYI444yZIiHuR/Epf9G/+7M5ubWpAdwzeTO02iENffR0YcJCgWVhP/T/CLZRBzSodNLBEwvk8r2g3xPyR+k1QqZBE+BRlnQY97wu4C0a6jZ2U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ur5CKoVd; arc=fail smtp.client-ip=52.101.48.58
+	s=arc-20240116; t=1762809923; c=relaxed/simple;
+	bh=E0L+eLa07i6HpRxGWbXYE9SthVPZlrPIZkKRc44H4yE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=S45joqqqP41pmyNtBCYjfLUZkYZaMbBHtRMul8ayyq8QsxsxCpUgvNxtOtCfGlMOQFz1ewbOR/NvZeO1PHEmpxU6+jEfqoKAVgvsvD2/w1oKniwJ2FsWLlXvOlxOwYCzLiwjJgdp4wivm+DGUfXPncuGAVxftSHh49KkJ/WwpJw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WuYUcCgS; arc=fail smtp.client-ip=52.101.62.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ur5CKoVd"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WuYUcCgS"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eLFge3FSYXKb1KPhCJVRCA5nykxvNQUPL4o56RWPG5l1YJHK2jFAXt24dv84wacbxcfN/OsJ08z1qVtbOQoYaGQYO8xdWQGIsdG3v6Moaj7iaQI6HWbI6U7sm1OpWBfZqYt8aH4yUoiYEcaLdRR2wI+pLud29oEtDYEmQS2rpDhIw+1l1jwbRuRC32P/sU3FmVuZ8D/DpDZDvVETtgd42/VY93Jm/zHm6KHyoH/VTukMIUbraJvlUD+EPvymjSjJ975qbWUWLtuYZ4qS+qwuArNDgVsoPXK2M59dg7+YZZBfKveNMMAQlHkQQ9AQXUtiBnF246DGyqJ6KXFcGq8rcA==
+ b=Oa6h796+V6ZKY4tO+ZFXRK3Uz5E3Vip/Rvr7Iu3vVoRcDYwSBIF9mYlHrgH+v281zaOv2M2h/jWJMzszBe17E3thYTqxeoj8AxXqZrt2oWYvhulqndHY0fDkyRnU+h3YQZ+f8IHwAd4WMurMDWPMaSbzITZWTw6Itb1IK8PM3gaMzksljY7FpLhcAUURafJxidTC+AoezAAXZwPcIkrgyYzK57IO+5J26uOFbPW7cqHkrMIch0TDWMdk80Qg+rOhDYRZq/r5S1T+RJj2krCSGL9SzC25uue3/NpiHkkaCYjxSYZkGLQkAsbAUi0Peu4SEfetiemjhR/Yy5FsgkCBCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BC7qoZQO6MxqqBSz84y0beFBKn9pV9Oh7XBWVB82NUY=;
- b=DqcHIWABCvm8F9PHjeS/8/zpHM4fkrIdRP60OlpEMaadhY5TifkkDFuPiybVuKRGFop80nj8LkJHQ2XPCxOvVerTyXvhylkxm4nEMkHEyg63vQEWEHEF8+RLqECBTA5j/IPjDyki1hy/nGeknzHQbq+AZ0wyLZKOZXiljDlaNTxMyMyjT9pKjkzEP9h5GJyFYalRTYN5TlhVxPTPRkBvfgx975qhkrKUAM/pMbgcfA9pMtMQClfGrqZ4h8hps6aEoAtAzySspahSt7WB9z9axd1oqisF+Q6N5zJWxFpAW5dUfU1pETL0KptjFG2XxmpZDSk1TG/AJLynXKTySuxm+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=awTg2qF9FkJR85l5vpJHdl/HwRbflk7wamYLXngGd2A=;
+ b=zN1MyBkYUSom1X4tdMUMyvvAw69gfuzz6yW9AuqT7DFI/+5bmez5y++qKnaXjp59ESKmLRSYhldXghImUX/3Az7LayiUTh+1821SF6YrLX+pB0CU/aW2fEa71+sERtQREWkmgdkWZO0Vz7i4X/kBrWiGBaQfZoPzECFaLDLidTp1ls8eiXS+UDvjgsr2yXHkMpLrRAbyGf04JarXluNvGEEfg8UGBwDoTS1zlyWxZxKPMUFLlC2u/GrOiYbfdqjfj4hgZip5sDOWdRTKtU0EQDwTiw1p0ipL6wGRYr/E3l+2y05riJHUC63bH820uGLQUb8fdXqtI9x4fK6WCsLAIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BC7qoZQO6MxqqBSz84y0beFBKn9pV9Oh7XBWVB82NUY=;
- b=ur5CKoVdJ844JW70g77hMt7gd/FWUW2Ho2MMBytR+2ePQBF1eY4AU7+Kgqgdbe98TfYwMiV3+4zfmhLIGP53RCo6ZDxSLYM5ObOynqtIMxUDnqfV11zuvBHgGG3LXn2DhWbt+DzIGyr5fP3QBulsg8xKda/zNd3ZFB3KFAxmvOrRtb3EUmBWgXe6PzJLyRrjmdHDQeA1OPkZ9epKArwyv9dFAHNyHTL5TTmm3wIVItaEVBTXHJwmGgF7/cWB/Qd/illgVldxPRPe0kLHqw1O2QE5NhNQZSd41QYMkM46A5wtREJNlKKQ3tg8YesmONJAnjlKvtkW5mXCVIdsjWnf8w==
-Received: from BY5PR13CA0020.namprd13.prod.outlook.com (2603:10b6:a03:180::33)
- by CH1PPF7A6EE32B1.namprd12.prod.outlook.com (2603:10b6:61f:fc00::616) with
+ bh=awTg2qF9FkJR85l5vpJHdl/HwRbflk7wamYLXngGd2A=;
+ b=WuYUcCgS69rvEY5ECRth56UdSvQJCC87KkFM0v0t3SPsuhAEa+F3qTOJktvJG/VUMhlrgfgd1pQJ1TKfCBBaUTWSiS0iPqoy2/Ha9oj1UP1qDERiA5V+8boYjr+J/vitEkC3Xcztk1Y4YiLu7BkJhfIhcf+tnCOHxNkGgkAdvONDz40zf2hjbeHV4N/bhWPqM8n4CqWkxY65ldxlP66wUo2MCH7Jf3zNIxP8xUx+qRTiscIf414K8Vv5M3I5h9br2j8J7lLo3rR0JOVac2J0iWHxZmtbYPkzMtmdE52CWhihfVzm1GSAuAMvn3DnLSj7iUWhGl31wj35mU7EpE03SQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SN7PR12MB6862.namprd12.prod.outlook.com (2603:10b6:806:265::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 14:25:21 +0000
-Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
- (2603:10b6:a03:180:cafe::2c) by BY5PR13CA0020.outlook.office365.com
- (2603:10b6:a03:180::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.14 via Frontend Transport; Mon,
- 10 Nov 2025 14:25:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 14:25:20 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
- 2025 06:25:11 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 10 Nov 2025 06:25:10 -0800
-Received: from sheetal.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Mon, 10 Nov 2025 06:25:08 -0800
-From: "Sheetal ." <sheetal@nvidia.com>
-To: <vkoul@kernel.org>
-CC: <ldewangan@nvidia.com>, <jonathanh@nvidia.com>,
-	<thierry.reding@gmail.com>, <dmaengine@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sheetal
-	<sheetal@nvidia.com>
-Subject: [PATCH] dmaengine: tegra-adma: Fix use-after-free
-Date: Mon, 10 Nov 2025 19:54:45 +0530
-Message-ID: <20251110142445.3842036-1-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+ 2025 21:25:17 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 21:25:17 +0000
+Message-ID: <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
+Date: Mon, 10 Nov 2025 21:25:12 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
+To: webgeek1234@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
+ <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0260.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:194::13) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|CH1PPF7A6EE32B1:EE_
-X-MS-Office365-Filtering-Correlation-Id: f40f7c75-aca3-4161-920d-08de2064fac7
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SN7PR12MB6862:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59b556f2-df38-46f5-29df-08de209fa4cf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+	BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZT2sjpgg9bTmOjnPJeIW8G3/KPgN8ROvZS+v8PJxhxe7uVBPGwzL9Ydy3pyQ?=
- =?us-ascii?Q?qQZ3idNKd/jJS984BRK5cFJu8JwZXYxldYl75aHRGw8J6vEJqLKBozbmzW73?=
- =?us-ascii?Q?g5Oisn+lBQ2weM2Xgvx7WPl0XG+S8antKmRHBJtCtYePM71hTXbQpdn7640p?=
- =?us-ascii?Q?je3yJoFpk8QX6si5G0MKXf6W4D776PgXLW/CLqJug+y/f/d8kmFrvPJovcGZ?=
- =?us-ascii?Q?lBxlOkB9YhtIY32knpuROr8b9HoP0pR0iR+CGSISVvuEUtrKck2VxuIQQAwp?=
- =?us-ascii?Q?zKswyThCIs71HKBpXqekjKyxbN7ruwL6WBDBV4cCcakCiq9ysxQ1jBsuFhW8?=
- =?us-ascii?Q?2SDQrJXiCu6WtkcwKtfmVYrchebbKJyepSwfOzsm4+P9+JQcv5hzryMF+IEX?=
- =?us-ascii?Q?Ng3MisQOT08uYuSumytO7XKB1geKk7RlkU4oxQ7DkwxKgwvFUwY20rrotF2M?=
- =?us-ascii?Q?3AsxaPKU/uypvQv4BgHW9xYT+YNe4j+jmppKKCGF7j1fwELfrGfx6v/jSJT6?=
- =?us-ascii?Q?twEE2/L5vqtsO+lJ3yc/cqAFFvqyxsMzzFEYlgZtPS2OfpwYP0lDGJCJsMjX?=
- =?us-ascii?Q?RzztxKOPckTYERXJHrOkbfpikCO18Uqp1usQvlfSg0KAc0BRcJe8bLhLM7fJ?=
- =?us-ascii?Q?GWJKXZteXX9aPasnMyEFFzZ2Ckelxm1XU1MWi90wt853u5NmZyo7W5On3oGY?=
- =?us-ascii?Q?dGPFAJ7CHoYYQBzMOi2yo+XgtqKDkwnTqH+vxQikSu/Xlb6+0L0gifBirHCP?=
- =?us-ascii?Q?IYFMYiGa05CSsCo67RAktzdwEfOG34/Hy9kKPUnaXVG1wNGalw4iZvuqQRS6?=
- =?us-ascii?Q?gdPg0kx6XS9Dl518UwLyawWQSTuaMIKKMxODlqVnIgwKJlgIGgmiQpDLSJ7I?=
- =?us-ascii?Q?ARn+onG+KR8+xSwii/8sZbJd/F6Y0UJTOp+ZV7FkggYkw3kVNpwqscEX9kfw?=
- =?us-ascii?Q?8cXA+iWPBYqQmAQEd8JMIEKJ3YCMRk6OjvUBz2kmTjVuma3TOwFmQ2rSezFS?=
- =?us-ascii?Q?OTRn7deEeiOyBz4xxABXoy3sEXQ2vHbH85/D+hdjgQ5clka4mLiGPCHGMejV?=
- =?us-ascii?Q?A2DrEiIdardurniAWXOspFya8Jf2FVMx2hQpx1D83dcno0/aI7YRPydlRv5U?=
- =?us-ascii?Q?1aiBXOuziMqtvtOljccymuXBD7NYrkC6pVK244oewTFd75oXFN++LpHyzj6y?=
- =?us-ascii?Q?nlyGoqHdnKrpWON703NFMXVEqpbcJipgqQEYDcQ16afjxl4gjcdRPaIuqQfZ?=
- =?us-ascii?Q?/LF/2XDP1F2ryRJ8u7E23jnO3JThg54GRP2iWKd4NYVrh0EiyiSZdxgx1vDz?=
- =?us-ascii?Q?Zf50TjjaQv1wng9/lo6ctAsEqdWM8MASyBIAlGZlr5FrMtRQ60V4s0QRW18/?=
- =?us-ascii?Q?bU0ewiN/sXptEhW7BFZcFvTtyWA5Tsqm+aT7caFg1Wb+tomm5Fq6kz8iit0W?=
- =?us-ascii?Q?iqdAgF/J2Yie4IZNBnDU8KunajmJnsMVbwLVuGrKtP8ywRfLDe1nd8ZdlqZg?=
- =?us-ascii?Q?HYMDLfknk2zflVB14UT7H3xkCy38uQGOVTcgufDQIPqkdPHn7chpsPDyALM6?=
- =?us-ascii?Q?9uLtIEi+uAvLatAU4TI=3D?=
+	=?utf-8?B?SnBTWHlFK3dmd0xxMjlpK2RtcWh2eXlSaVN1bVJqa0cxN2Y1Y3QrNmZpN0E2?=
+ =?utf-8?B?QkFNMm8xWmtqQTkrbWl3Nzlmdko3MEVDZDVkSmRER0RUUkdzWmZ3cTREbm9X?=
+ =?utf-8?B?MmJodWRwRlRBMGMxQ3MrcW1jakF1dWVoZ2JTOGRlTUZwZWx0dnFqVDN6MUpu?=
+ =?utf-8?B?dWo5RzFvWlY3UHZjRkhkclhMV0RSU1JNRjdGdVcwUUIyN0x3QWFWdWVTZXF0?=
+ =?utf-8?B?QWRtUkJEWFFweTVOekR4NVhsa1NjS2oxN1FGMFBMcVZtKzZLaDBKNEpRNVEy?=
+ =?utf-8?B?OTN4WjJlOVpPMExGS3pYSHlKdXR1VmZNcmFxOW5LTS9sekJFV3dJVzJMUlo0?=
+ =?utf-8?B?ZWhMWmIrY2dLRGw3NFpyRGczaWlGdFhUekxBVnlPbnJjVTY1NUdGRkNtMmJk?=
+ =?utf-8?B?cVFxaFRqREtaWng3SE5tUFpMV0l6QWZ6TlpxQS9tVmlmZSswbWJCeG1qdzU2?=
+ =?utf-8?B?YVc1QnduV25IdCtZcXR3Wm1Tbm9DbU5uYnhSSmpRUkZkdjVNMlZGcWtxQUVo?=
+ =?utf-8?B?MDZUQ1dPUVpYdUhtQkZyaWhSb3VqYUN1aE4rU05WMVJJSDVESGUzM2R3bnkw?=
+ =?utf-8?B?dXpOSjdSZzI3V1NRMjJXT2FHdHlRNWU0blhlUHRXSUdLUWZkSnlaYzV2WG0x?=
+ =?utf-8?B?ZmJ2WGs0T09IRTRsY0wraTFzNWV4Yzg4N1duUnk4a2srNDU1TUV1bFo0dndm?=
+ =?utf-8?B?aVRFT0xWeUh2VUllNTdoeVE3RWlMM2RubW5rVzhpWVg1VUUzM3VaV1hDUkJr?=
+ =?utf-8?B?bUxSejBubnIyaWRQR2dUdytteUl1a3N2OW92cTcxWmRzb3pKSDlFMFJCdzBh?=
+ =?utf-8?B?WlMvUGRPZUlpNmlNYmhHZnBzeU05c1lmTHNiclFabHhQMjgxL2NIcDZmRUNO?=
+ =?utf-8?B?U2g3Q3lOajdHVHVYUGFyaVoyWGNSTVE1SHJYVEZmSDQ2alRpbXAvM3NUb21V?=
+ =?utf-8?B?WTAra2pwaTN2QkUxY1crYkcwVHlJZVo3Zm0wanM0eGZYdnNnZzlNVlVrVzFO?=
+ =?utf-8?B?QTlISktqNVFMK3YvQ1E0djM5S29pVmd3a3IxTzFBQVJXZ29mYk5aOEhqS21O?=
+ =?utf-8?B?cjlQb01TU3VEaFBETkV4V2lUWWQyeXMrTmpaYnhHYmRYOEpWd2FmbXRWaXg0?=
+ =?utf-8?B?aVl3OVZva3dQSk81YlMrN2M1U3UxYm1jRnNHcGViTm5mYy95eGZQNThIM3ZB?=
+ =?utf-8?B?anVSdm5GcGlUeHQ0VlFOMTlHZ1NrRGtWNE1XSDEvVEIwOWtDTEp5VnV0Rk5n?=
+ =?utf-8?B?T0RxcDlUSVBzTzdGZkRDZjhhTDdsS0M1NmxzbGdrdmFucTlIR0FWWU9oRitl?=
+ =?utf-8?B?RkVjSGhUSkdYTFZ2dFhjNnA3VTBXQ0g0enJxcVMySHpvTGVTemI3eUQ3NWNj?=
+ =?utf-8?B?TitIcHJwSTQ5WFZUU0lEUVNZeHFySXdSc2liaEdGNFZHNjNHa2phU2NCSkpT?=
+ =?utf-8?B?NGFST3hZUGhkVDVPa0NuVlA5bnI4dzg4a0ZmbjNKdGZuVXZvZGdjS0xrSjRj?=
+ =?utf-8?B?TTNhNEd1Yi9ETlRlSnRzUlpsS3RSMG8xTG5ZYjZEYlhkRUtMK3lQRUNNbUkx?=
+ =?utf-8?B?elM1eE9mbGxpWVFmaVN4akRPcGJ3MlNqVGJINGRydkFWa2ZGWnd4Zkw4bENk?=
+ =?utf-8?B?YVN3UjlXN0lSTUU0bzYyNklhQnRkUm9TTDh0WUgyNGQ0MUF1akF6Rnk2NVIr?=
+ =?utf-8?B?MkNlMjExTVlKanVtc254MWo5ZWdhTFpuVVd5TjNUVkszMXJqN21CQlZPdjdt?=
+ =?utf-8?B?M3JlTlZoaUtDWDVZVEtjUDRabWEyTGdBWmdYWXdMRCtqZmdLWGN0UnFodXBn?=
+ =?utf-8?B?VDNkSHVhV1pFMWpCU2FOQzkyN3hJRTRyUmZPbGdFTHZUREVUM3crZEZIWFlN?=
+ =?utf-8?B?OGorYXdHWHlQRmprZEtEcC9EMnZTREJEay9lTEEyelN3ODlQZ0N2RjJBM05U?=
+ =?utf-8?Q?IsugMEPSmVUpz7dQQcHTMAEtFssx8bwZ?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K2JmYktQek1hSHVZSUFwVVdGcWtsYVAyV0k3SDN6NGNlejAvSUpPZVN3UEVu?=
+ =?utf-8?B?bEZwS2hUeXlqVjdqQVYxZG1TUS9LWE0zMUJ6SnhBU1djQW8yRVNTaTJuNUNk?=
+ =?utf-8?B?eXNqZ3JTTk9xNWVRcDUxbG52NVdNNTJLTVZ2SE9kS1I5Wi8rMkZUcURWOUpm?=
+ =?utf-8?B?ZDJzM1pwdVo2Y1c0MXl4SmE5UTdxWXZ0OGIweGhuejlreEVFK0Zld29USURJ?=
+ =?utf-8?B?RjZLenhHdFNzeVR0VE5zQnBlTkk2czRjYTZISEJzV0ExMTNCMi9zRkJ4eXBw?=
+ =?utf-8?B?U2FXeFpFUHZLYm9Rc3ovejNieEZWRzNIa2Npbi9tL1Z4SUVrNG1WanhMSGpK?=
+ =?utf-8?B?RHVSOFBIWk9mSGtDbUNqcDhmWnNnSHRpVGRCTHhVT3FtS2NDd2I2MXYzUWdP?=
+ =?utf-8?B?VjB1Uk4zNUNUNHBpcVhTem82Z1BlUDh2QStrVjh6N3BZT3VhbkxlVDV4UkV4?=
+ =?utf-8?B?ZUp5NGIxU0szQkRXM0dzUEVCUDQ2MVZPWFp6aWoxei9mTXRSQk5EUHhhY1Nk?=
+ =?utf-8?B?TnFKNXUxenUvTlFoRGdSK3lDZy9rWG5oS0xUQ1JyN1Z3Y0R4aGNsdklRalJ4?=
+ =?utf-8?B?Mzh4SEU2Y1o3RXFkU2FxY2FuaUFBd0diNHBUd0tEOUhWbGZVRDIvamY0Q3cx?=
+ =?utf-8?B?QW9TRENFcVpwU2dEQzl4NWpOWWdIVnVIQ1BXUDFPM1lEakJmVCtoVUVWU1lS?=
+ =?utf-8?B?RmYxVm81NG9qeUJTK1RRREF5ME9hVldBVW96VjJUTUU3QW1OblRROHBzeCtU?=
+ =?utf-8?B?NjA5alJHR3Q5ci96NXFxQ2dnQjhybnRRUHpiRDdub1ErcUhlVi9GZERidno4?=
+ =?utf-8?B?Q3VuVmVnMlRDeHVXbDVadSt3WEw2QzYvUWo4K3VaMmFCS1ZYazNCQXRMU0c2?=
+ =?utf-8?B?T09rZm1tdU9ET29MUzhhZGdhbHZ6YXB1bTNSYWZ3cG40MVdVOU5yWG92Njlj?=
+ =?utf-8?B?L29rbngyN09XVVRvRzZpNVFQclFDNldFTFMzaWFUbFRhYzQrSjNpWUxVY1Bs?=
+ =?utf-8?B?WmRBQ0QvVEQrUjJ0Z1g3MFVqUy9nMFk1MWtXdFp3RjJnQWtuUVFFdVk3cnJ6?=
+ =?utf-8?B?U2w5NW9PcU9QaUVRMytwbFlVRzcxS1Y4S2tTS2pSNm52b3JpQWRCRGVpbll0?=
+ =?utf-8?B?NWFZdkVmWHBJdHJjOGdlMDZLZjNOYWJpZkVuam8zMU9QelNXQWoxWDJQd215?=
+ =?utf-8?B?YXI1UzBTYjAraWNQRmNQdWRKZUJscjNaRlRiY1I1cC93bGRuZzdzUUdVejl5?=
+ =?utf-8?B?dEhkVEZRR1Y1YW1naERxK0Z1Z2gzSXZPVXg4cjNSSmxJMDVEaUtkS0sraHQr?=
+ =?utf-8?B?ZXBJN3U3NkNiNDY1cFJFRTBoNmdCeXRmTjhEaFR0a1pEa2U5WHVsR2xTcHA4?=
+ =?utf-8?B?YnR1MG55Mm9rWXcvaEx2WjVBZUlOVWZ4b1IyRElLbGE3ajdNZnFFMUVRUjRm?=
+ =?utf-8?B?YmpBWnFJQ2NHc0dvMDJ4ZVZ2NEk5QlNkRytFVmk5eGhPUlpnbGxLYTRsb2dj?=
+ =?utf-8?B?V2M4LzBWNkRqVmJURWVrT1ZBbDUyRDJiTFdiZWxFSGFlM2pkNUVsOXNHbW1M?=
+ =?utf-8?B?Y0tlOFFrcW0zWm5uSFlRQkpvek82U0xLaFVEK2lhK0hwSDBPd1VwMUtvUGl5?=
+ =?utf-8?B?QTUvMEdPNDNYQVNHNHQwSm1jaWVoU3lKcVE4SnFvVnRBN1Zna3I2VHhBNHFi?=
+ =?utf-8?B?WHVKdml0ZTZvNTZMd081NC9NM2MzNUxDNCtncGd1Q2dZSEtkREhnaHhkR3cw?=
+ =?utf-8?B?YlJkb0dEMEFJNEVtdVFQTTBsYm14VGNKWTU2R0Nlb2tPMEtOdlJpQXlqUjlj?=
+ =?utf-8?B?ekJVRXZuWmdkNFR4VCtuQ2d2OHdXY0J5UU8wd2xIaWJqbkVZU1B5RTdFMGIw?=
+ =?utf-8?B?b0ZkYmczbXppZmVpYmJmMWw5ZGM3eU8vT3NHWGJNOHFnb0NaaTB6Q0lQbEFt?=
+ =?utf-8?B?REwrT1VqbWRmcGNJMXBHMFRUbU5TS1RQOXZuUEg0cEVwcFVlR1lkenFwVFVl?=
+ =?utf-8?B?Mm5aNXZIazdEaEVpUHR5YVhyME5WWndZdkI4YW1XZ0ZiVHVMZE5wUFFMWVlq?=
+ =?utf-8?B?bUNlR2ZTTklrRTJBbFZ3MzlYRVliSTdlNWc5WGRTNHZCc1IraEMxQnZENkRm?=
+ =?utf-8?B?aXgzZzhpaFNaWC9ueFd5KzBHYU42SnNxaTZwL000SUFPMGRDVVd4WDZzUHRp?=
+ =?utf-8?B?UERHMDExMEZBWWF1VlB1Ykt5V3lVRHRrSEtEdVVoOGhIaElCZ0JIWTI4blE0?=
+ =?utf-8?B?TThwZTMxYnAwNmE2bVpHWTRQNVV3PT0=?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 14:25:20.9124
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59b556f2-df38-46f5-29df-08de209fa4cf
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 21:25:17.2495
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f40f7c75-aca3-4161-920d-08de2064fac7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF7A6EE32B1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RYO0z6zA1dDCHZPyqyOCq5msTCLe3ecR7q+w/KMamQrjrlBK9x4077pw/tHgKMrXrvkzz4A+d9dq6V1OtkQy2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6862
 
-From: Sheetal <sheetal@nvidia.com>
 
-A use-after-free bug exists in the Tegra ADMA driver when audio streams
-are terminated, particularly during XRUN conditions. The issue occurs
-when the DMA buffer is freed by tegra_adma_terminate_all() before the
-vchan completion tasklet finishes accessing it.
+On 27/10/2025 18:55, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> This adds support for dynamic frequency scaling of external memory on
+> devices with bpmp firmware that does not support bwmgr.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>   drivers/memory/tegra/tegra186-emc.c | 132 +++++++++++++++++++++++++++++++++++-
+>   1 file changed, 130 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+> index 9959ad5804b444b269456d1fbae87b4bc111661b..74be09968baa7a0fbdce4359f470ce56b18acb10 100644
+> --- a/drivers/memory/tegra/tegra186-emc.c
+> +++ b/drivers/memory/tegra/tegra186-emc.c
+> @@ -18,6 +18,17 @@ struct tegra186_emc_dvfs {
+>   	unsigned long rate;
+>   };
+>   
+> +enum emc_rate_request_type {
+> +	EMC_RATE_DEBUG,
+> +	EMC_RATE_ICC,
+> +	EMC_RATE_TYPE_MAX,
+> +};
+> +
+> +struct emc_rate_request {
+> +	unsigned long min_rate;
+> +	unsigned long max_rate;
+> +};
+> +
+>   struct tegra186_emc {
+>   	struct tegra_bpmp *bpmp;
+>   	struct device *dev;
+> @@ -33,8 +44,90 @@ struct tegra186_emc {
+>   	} debugfs;
+>   
+>   	struct icc_provider provider;
+> +
+> +	/*
+> +	 * There are multiple sources in the EMC driver which could request
+> +	 * a min/max clock rate, these rates are contained in this array.
+> +	 */
+> +	struct emc_rate_request requested_rate[EMC_RATE_TYPE_MAX];
+> +
+> +	/* protect shared rate-change code path */
+> +	struct mutex rate_lock;
+>   };
+>   
+> +static void tegra186_emc_rate_requests_init(struct tegra186_emc *emc)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < EMC_RATE_TYPE_MAX; i++) {
+> +		emc->requested_rate[i].min_rate = 0;
+> +		emc->requested_rate[i].max_rate = ULONG_MAX;
+> +	}
+> +}
+> +
+> +static int emc_request_rate(struct tegra186_emc *emc,
+> +			    unsigned long new_min_rate,
+> +			    unsigned long new_max_rate,
+> +			    enum emc_rate_request_type type)
+> +{
+> +	struct emc_rate_request *req = emc->requested_rate;
+> +	unsigned long min_rate = 0, max_rate = ULONG_MAX;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	/* select minimum and maximum rates among the requested rates */
+> +	for (i = 0; i < EMC_RATE_TYPE_MAX; i++, req++) {
+> +		if (i == type) {
+> +			min_rate = max(new_min_rate, min_rate);
+> +			max_rate = min(new_max_rate, max_rate);
+> +		} else {
+> +			min_rate = max(req->min_rate, min_rate);
+> +			max_rate = min(req->max_rate, max_rate);
+> +		}
+> +	}
+> +
+> +	if (min_rate > max_rate) {
+> +		dev_err_ratelimited(emc->dev, "%s: type %u: out of range: %lu %lu\n",
+> +				    __func__, type, min_rate, max_rate);
+> +		return -ERANGE;
+> +	}
+> +
+> +	err = clk_set_rate(emc->clk, min_rate);
+> +	if (err)
+> +		return err;
+> +
+> +	emc->requested_rate[type].min_rate = new_min_rate;
+> +	emc->requested_rate[type].max_rate = new_max_rate;
+> +
+> +	return 0;
+> +}
+> +
+> +static int emc_set_min_rate(struct tegra186_emc *emc, unsigned long rate,
+> +			    enum emc_rate_request_type type)
+> +{
+> +	struct emc_rate_request *req = &emc->requested_rate[type];
+> +	int ret;
+> +
+> +	mutex_lock(&emc->rate_lock);
+> +	ret = emc_request_rate(emc, rate, req->max_rate, type);
+> +	mutex_unlock(&emc->rate_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int emc_set_max_rate(struct tegra186_emc *emc, unsigned long rate,
+> +			    enum emc_rate_request_type type)
+> +{
+> +	struct emc_rate_request *req = &emc->requested_rate[type];
+> +	int ret;
+> +
+> +	mutex_lock(&emc->rate_lock);
+> +	ret = emc_request_rate(emc, req->min_rate, rate, type);
+> +	mutex_unlock(&emc->rate_lock);
+> +
+> +	return ret;
+> +}
+> +
+>   /*
+>    * debugfs interface
+>    *
+> @@ -107,7 +200,7 @@ static int tegra186_emc_debug_min_rate_set(void *data, u64 rate)
+>   	if (!tegra186_emc_validate_rate(emc, rate))
+>   		return -EINVAL;
+>   
+> -	err = clk_set_min_rate(emc->clk, rate);
+> +	err = emc_set_min_rate(emc, rate, EMC_RATE_DEBUG);
+>   	if (err < 0)
+>   		return err;
+>   
+> @@ -137,7 +230,7 @@ static int tegra186_emc_debug_max_rate_set(void *data, u64 rate)
+>   	if (!tegra186_emc_validate_rate(emc, rate))
+>   		return -EINVAL;
+>   
+> -	err = clk_set_max_rate(emc->clk, rate);
+> +	err = emc_set_max_rate(emc, rate, EMC_RATE_DEBUG);
+>   	if (err < 0)
+>   		return err;
+>   
+> @@ -217,6 +310,12 @@ static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
+>   	return 0;
+>   }
+>   
+> +static inline struct tegra186_emc *
+> +to_tegra186_emc_provider(struct icc_provider *provider)
+> +{
+> +	return container_of(provider, struct tegra186_emc, provider);
+> +}
+> +
+>   /*
+>    * tegra186_emc_icc_set_bw() - Set BW api for EMC provider
+>    * @src: ICC node for External Memory Controller (EMC)
+> @@ -227,6 +326,33 @@ static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
+>    */
+>   static int tegra186_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
+>   {
+> +	struct tegra186_emc *emc = to_tegra186_emc_provider(dst->provider);
+> +	struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
+> +	unsigned long long peak_bw = icc_units_to_bps(dst->peak_bw);
+> +	unsigned long long avg_bw = icc_units_to_bps(dst->avg_bw);
+> +	unsigned long long rate = max(avg_bw, peak_bw);
+> +	const unsigned int ddr = 2;
+> +	int err;
+> +
+> +	/*
+> +	 * Do nothing here if bwmgr is supported in BPMP-FW. BPMP-FW sets the final
+> +	 * Freq based on the passed values.
+> +	 */
+> +	if (mc->bwmgr_mrq_supported)
+> +		return 0;
+> +
+> +	/*
+> +	 * Tegra186 EMC runs on a clock rate of SDRAM bus. This means that
+> +	 * EMC clock rate is twice smaller than the peak data rate because
+> +	 * data is sampled on both EMC clock edges.
+> +	 */
+> +	do_div(rate, ddr);
+> +	rate = min_t(u64, rate, U32_MAX);
+> +
+> +	err = emc_set_min_rate(emc, rate, EMC_RATE_ICC);
+> +	if (err)
+> +		return err;
+> +
+>   	return 0;
+>   }
+>   
+> @@ -329,6 +455,8 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+>   	platform_set_drvdata(pdev, emc);
+>   	emc->dev = &pdev->dev;
+>   
+> +	tegra186_emc_rate_requests_init(emc);
+> +
+>   	if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_EMC_DVFS_LATENCY)) {
+>   		err = tegra186_emc_get_emc_dvfs_latency(emc);
+>   		if (err)
+> 
 
-The race condition follows this sequence:
 
-  1. DMA transfer completes, triggering an interrupt that schedules the
-     completion tasklet (tasklet has not executed yet)
-  2. Audio playback stops, calling tegra_adma_terminate_all() which
-     frees the DMA buffer memory via kfree()
-  3. The scheduled tasklet finally executes, calling vchan_complete()
-     which attempts to access the already-freed memory
+FYI, this patch is causing a boot regression on Tegra194 devices. I 
+noticed that tegra194-p2972-0000 and tegra194-p3509-0000+p3668-0000 are 
+no longer booting and bisect is pointing to this. I will have a closer 
+look and try to see why this is.
 
-Since tasklets can execute at any time after being scheduled, there is
-no guarantee that the buffer will remain valid when vchan_complete()
-runs.
+Jon
 
-Fix this by properly synchronizing the virtual channel completion:
- - Calling vchan_terminate_vdesc() in tegra_adma_stop() to mark the
-   descriptors as terminated instead of freeing the descriptor.
- - Add the callback tegra_adma_synchronize() that calls
-   vchan_synchronize() which kills any pending tasklets and frees any
-   terminated descriptors.
-
-Crash logs:
-[  337.427523] BUG: KASAN: use-after-free in vchan_complete+0x124/0x3b0
-[  337.427544] Read of size 8 at addr ffff000132055428 by task swapper/0/0
-
-[  337.427562] Call trace:
-[  337.427564]  dump_backtrace+0x0/0x320
-[  337.427571]  show_stack+0x20/0x30
-[  337.427575]  dump_stack_lvl+0x68/0x84
-[  337.427584]  print_address_description.constprop.0+0x74/0x2b8
-[  337.427590]  kasan_report+0x1f4/0x210
-[  337.427598]  __asan_load8+0xa0/0xd0
-[  337.427603]  vchan_complete+0x124/0x3b0
-[  337.427609]  tasklet_action_common.constprop.0+0x190/0x1d0
-[  337.427617]  tasklet_action+0x30/0x40
-[  337.427623]  __do_softirq+0x1a0/0x5c4
-[  337.427628]  irq_exit+0x110/0x140
-[  337.427633]  handle_domain_irq+0xa4/0xe0
-[  337.427640]  gic_handle_irq+0x64/0x160
-[  337.427644]  call_on_irq_stack+0x20/0x4c
-[  337.427649]  do_interrupt_handler+0x7c/0x90
-[  337.427654]  el1_interrupt+0x30/0x80
-[  337.427659]  el1h_64_irq_handler+0x18/0x30
-[  337.427663]  el1h_64_irq+0x7c/0x80
-[  337.427667]  cpuidle_enter_state+0xe4/0x540
-[  337.427674]  cpuidle_enter+0x54/0x80
-[  337.427679]  do_idle+0x2e0/0x380
-[  337.427685]  cpu_startup_entry+0x2c/0x70
-[  337.427690]  rest_init+0x114/0x130
-[  337.427695]  arch_call_rest_init+0x18/0x24
-[  337.427702]  start_kernel+0x380/0x3b4
-[  337.427706]  __primary_switched+0xc0/0xc8
-
-Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
-
-Signed-off-by: Sheetal <sheetal@nvidia.com>
----
- drivers/dma/tegra210-adma.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index fad896ff29a2..812f64569e6d 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -429,10 +429,17 @@ static void tegra_adma_stop(struct tegra_adma_chan *tdc)
- 		return;
- 	}
- 
--	kfree(tdc->desc);
-+	vchan_terminate_vdesc(&tdc->desc->vd);
- 	tdc->desc = NULL;
- }
- 
-+static void tegra_adma_synchronize(struct dma_chan *dc)
-+{
-+	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-+
-+	vchan_synchronize(&tdc->vc);
-+}
-+
- static void tegra_adma_start(struct tegra_adma_chan *tdc)
- {
- 	struct virt_dma_desc *vd = vchan_next_desc(&tdc->vc);
-@@ -1155,6 +1162,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	tdma->dma_dev.device_config = tegra_adma_slave_config;
- 	tdma->dma_dev.device_tx_status = tegra_adma_tx_status;
- 	tdma->dma_dev.device_terminate_all = tegra_adma_terminate_all;
-+	tdma->dma_dev.device_synchronize = tegra_adma_synchronize;
- 	tdma->dma_dev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	tdma->dma_dev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
 -- 
-2.34.1
+nvpublic
 
