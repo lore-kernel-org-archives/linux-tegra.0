@@ -1,118 +1,127 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5E22FF658
-	for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 09:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6053288C22
+	for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 10:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766136; cv=none; b=LOM9ILXyp4eQUYzv2XjQuTM5HOX/POXWeykFv3mpThtuXpwfSxeyFwXDwBit4ZIN1kppb9IzBcpxJy4QgleQn//aaP2jCrqTWVQkUpr2Af+o0otObzI50OzGIgZ8V7nuUNHok/jjk9+YC+3EFOufhYE9vVxQ0xyb0x3DBb6o7U8=
+	t=1762771797; cv=none; b=pc2XWyS4ekxwTrKuU0pfwc0g6zlPt/NF8ptTHygV/KpVyfXZzRGmJuF0zLYEnGJa8Sce519F3C1hXBmd6MoNNlyIIhMzGIMsFDhKo6IHyWOM5cg8Ey/sOxaYdohOz9ONI5ExMqnIO39KxZXbfd9Usi8d/U4hRTMdp6ySdPegCks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766136; c=relaxed/simple;
-	bh=459dlBPh3LInR8NOH/R4UDIusnkt1kveYPqleYn7ivo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dHFBoTT3+KNMTTnb4+1VNMldG1waumXLX123LEv3MQMm0/OA3tlnkmXN6wD3SEg54mxs60Z+Yqh2sLnnyKEfx2Wtry/56GEGjX/3LIEoL0jnDFTQmIN+9/heFIAB+w8zk2WWYg90rvkoLQiwZKUYvVBydAs22RDYxjlnWqrwQcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9PhwnKG; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762771797; c=relaxed/simple;
+	bh=xU8sY/U+Epx6hzvm3hj005tB6987LtJ6SFDdcl10XMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SARUXD7cnx83k6ByY7WVdGccEjq8AIHT2QRijnuYV9WOoXp/6Wc2Xo78Y+PvybwZ3XWrQEscXEa8s0wv3ShyMDrcLlgDZusCZjeu0w05BLr5awxXyxU4hhvaUItIi5zaNJZVjYQBy+6l0cOGnFMiyeCK5J/j30xteHzEyzfITbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ah5RHcia; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9PhwnKG"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59428d2d975so2830337e87.3
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 01:15:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ah5RHcia"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-298039e00c2so13197705ad.3
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Nov 2025 02:49:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762766131; x=1763370931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+a5/f/Fx6IMBMc0auLZUB4h0ES81R10KOuZfrxfUU8=;
-        b=h9PhwnKGqK8eooZcjVt/bP7w6Cn6tMOMKltrRTOCBsqSMihDpCO7i+p5CmMJEKwIEo
-         GMRuBjNes1OTTMqzCKHrTzvpPGMQV6pM7iqHSz+OFVGM69ofKmN8X3en7h3yylfP8aZA
-         q+xSihJy2i6+3o8Ka9Um1HYQc34ZG5a74HAnRccoZjrzyBH/M19GuSTzvrkbAQCdJMPP
-         diZ04qk4v67Rrumj5qLL4tgyGaSy8WnHHVJji7pVkM0oRwCYvchPYya0UaejVuXznWmY
-         8SLKML3xlQdqqq35f2RtrUx81qmSnd4bd5+aMWrqVR8MGOPWSzwayDfsXep3YUokYGfx
-         Fm1g==
+        d=linaro.org; s=google; t=1762771795; x=1763376595; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lDeRZdyYag4vENzRo1TPNmjEaRs7VZvYUM0bgVV1nn0=;
+        b=ah5RHciatagk9ieZy3rDKP94q0y6TzWYXWC6Qm9tT7OCveuxMncgPdsZ+1bg6/HHCi
+         nIlOdvLn+4E7daZXIL+lR8Op7fKvtr/ibeBana9wzrcKSHfcpenc8yIW8TapuD3Mvrxb
+         RA9qiPJ0mbut1d9pzMCKeOQ9gMC+1bDNocd/LSlPR2E3k3eYqEiBF2x9XvYw0tJ8St3S
+         6Jf/qJnJycO0FUJxiKhMiRzS7omXZ8/2GXuEADppV/ai9Tti1H/GMX9zvXG1Cn/OrgXP
+         XNWge2oFgIB0uAMOlfDcPh/4tY3ayZNUQG9KbMSQvLH6g4jZb5C7PqtRYcNOEAO5NS8o
+         NRxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762766131; x=1763370931;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0+a5/f/Fx6IMBMc0auLZUB4h0ES81R10KOuZfrxfUU8=;
-        b=HUAuSegTEhQ452qoh6xyoufJTSgfqo88pAa0iBYXqiRJSrfayep1JFpJM+H19sJHCs
-         +XH29NhzRzk8C8fpG0JYNsi21LzH6xxdaVNvYA3VSuUrd1xWZkTnCuXsa78D6BcLTKVn
-         tYJTqe8nxwMimyRbU3d5cF6nfKUgo1L/45zYf1bw50wGFZ/fEoUpKTkm9JQHIAEW6Ym0
-         yJtiVUwMzJ+d4RfxXQxUcTQkXbBawYqdQdXYTnjYx7SUzGDRcOTbcw04Oo61Aeeb8jkB
-         nxmk86+qP5250mmbpRM/elyBGJiw6kWreOy0h3LGxbXz7Q9LlSmJ8GVPkceVT9idd5i9
-         4yQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWssGlI51kp8v82uKpsKex5HPExeN2Fo8HcH1Ih+pvR/myXIzK57KeaE/6MiG1Q5Ymy2U+Y4w2sRemspw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Off4FBEHEW8L+dIplEeE8An2Y4CciNP/DzUsP+p6Koz7a8Ce
-	k1JBTzMOVxFM6/mwslic2BeSYbVjJCkQRHtSkREwT2Hvfk5rfABtfw2y
-X-Gm-Gg: ASbGncvFKdusiiHn5odqtlM4RbZEgbmmkXdzGmUdd9KGoPS7leW5XRURYxW1eLNv7Eg
-	0TEtuUo/FzHLL0zizDPUjQCoUkWQW7uDDbeG7VDyzmFr1c2LZ6F/c6FcC/YYQE7gCO593jgf9XE
-	bdKi3M89zer6wd5662UWoF1xsRVILJIFcBpJEx+Xp2+CTXHJbYO8kLKgQiUWgyibcXv221i06SJ
-	+kuAiql5xTiymrUcZ+n9AoThfmnZA/A5GRNynZYBN4ZqEbRlagZpdGymcwXbEzDHBrSgArz72Ld
-	enUdfpgvbzI0SK1Bg3pwEh09862URCZNvxnrbDZTtSj0h57GiyJyqGe9PMAw8bhINfZNJBlRPSU
-	RRZo+xuZ6COwNtyAgUdaYySfMgth/JpBMK45AxQArDsE5ETktR0/3wTYHQjrVuxD5
-X-Google-Smtp-Source: AGHT+IGz/i0ncWwddIJ+2HVNMQhgm/XQg8Srr9UXcEYDpRdQ63zZfLAICmPWS4NS9Y2VhpYWQE8GAw==
-X-Received: by 2002:a05:6512:158c:b0:594:341a:ab1e with SMTP id 2adb3069b0e04-5945f1b74afmr2232518e87.31.1762766130847;
-        Mon, 10 Nov 2025 01:15:30 -0800 (PST)
-Received: from xeon ([188.163.112.74])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0b76f4sm3852006e87.73.2025.11.10.01.15.29
+        d=1e100.net; s=20230601; t=1762771795; x=1763376595;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDeRZdyYag4vENzRo1TPNmjEaRs7VZvYUM0bgVV1nn0=;
+        b=vQ2oX2ve/SJYyBUqCnjIBeC9TgmSouDIfZX6nhukJMppPlBB7nn/yXvgchSryRkrQC
+         92QwkMlP7bqp4oRWCpI0mLcBVtmTE64WFuV8RYBe+PI05Rb5EVG1UyxbXBP236F8kSBM
+         RxxREsh/I30+rcISQ2JDZ35XMskHpVggDQVFuH84cEv2e+W5rkc8AyyYc/bzSW+rTkm4
+         xw6eYlY+ilaLsm9IvCh9+C3pHDlwL6USVkObZ80mLVF2NXdCh5g+7YvuyPinemurSrvr
+         fDRH0KrXJwVpvzPGMIZ2of5M9kHBrwYqriAM6C9EwTgM6bj41dsVi+/7g+ljIaOkAQnZ
+         e5LA==
+X-Forwarded-Encrypted: i=1; AJvYcCXu/8qGJco3uSl9nfdhSqMluUcJRzxpvIE4Eps1Ftwf4Y1gQ52vj/B9OZEw2W8gL8da3kRGTWrDtd73VQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDrv2InDTcNnQ8fxc/DpXdSHm8DdKGhHjVtu9RxM2YRVm8A0bE
+	J7YUOEeopWIZMzJS1vx5++UHIG5tEKNs83pRWxGUYSIua7t0x8Qqzv76DX7XpbadEP4=
+X-Gm-Gg: ASbGncu7i+v5HeebZKqlCmpRBOgNovbJQ+bNf/RfDutz2ZGK8U7rySeHUI0ae++SqkZ
+	t2l4ijLAg3YwFPMeLLvwVeRL/UMaKzZYPAZpvKAJeMJBKOneEgqZv4u9qa4giLe06SNNzTd8BBK
+	nfhvnBw+ofYgqFob8X2adv1Lfv3aOJfn1bk3kk12SkYdSLKvCUDjbc0qB3IxkV+JIoCsZFDltfS
+	zSLluqojnvXM8Unlld32JB02JFNZz/nqJDwz8uPdCiDjfsW6QlelT3QilpNBzduVNpMWQJ/7msJ
+	f2s8HTpwDB5ZRWHYAIOgnBTgn3zBqqkHaxLyDFd91nYgDf2tLv9RRm+WViL1w4bCkxLRQkgcpOe
+	onWSZCy+CPgFxj5mwTE7o8gZ3CET98enlq43XOgOaP5QVrKU7iRt1oWu98xMJg3SI9vMQRz7PG/
+	Kh
+X-Google-Smtp-Source: AGHT+IEdNDr6Otbb2RROj5/vAfBaFYdws8NbdFblgDxxPFWLMhWpkRHK+/9t+JYyBm57B3EBrBmAnA==
+X-Received: by 2002:a17:903:38cd:b0:297:dad8:f265 with SMTP id d9443c01a7336-297e53e7df9mr96877135ad.3.1762771794882;
+        Mon, 10 Nov 2025 02:49:54 -0800 (PST)
+Received: from localhost ([122.172.86.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650968298sm144484165ad.6.2025.11.10.02.49.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:15:30 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 6/7 RESEND] dt-bindings: display: panel: document Samsung LTL106HL02 MIPI DSI panel
-Date: Mon, 10 Nov 2025 11:14:36 +0200
-Message-ID: <20251110091440.5251-7-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251110091440.5251-1-clamor95@gmail.com>
-References: <20251110091440.5251-1-clamor95@gmail.com>
+        Mon, 10 Nov 2025 02:49:54 -0800 (PST)
+Date: Mon, 10 Nov 2025 16:19:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] cpufreq: add WQ_PERCPU to alloc_workqueue users
+Message-ID: <atnzuecdwp77svypw76e5z5occyh4tkswfc7rg4yqh4joeh7fn@ayygwyjdpe7x>
+References: <20251106163341.336989-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251106163341.336989-1-marco.crivellari@suse.com>
 
-Samsung LTL106HL02 is a simple DSI which requires only a power supply and
-an optional reset gpio.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 ++
- 1 file changed, 2 insertions(+)
+On 06-11-25, 17:33, Marco Crivellari wrote:
+> Currently if a user enqueues a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> This lack of consistency cannot be addressed without refactoring the API.
+> 
+> alloc_workqueue() treats all queues as per-CPU by default, while unbound
+> workqueues must opt-in via WQ_UNBOUND.
+> 
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they’re needed and
+> reducing noise when CPUs are isolated.
+> 
+> This continues the effort to refactor workqueue APIs, which began with
+> the introduction of new workqueues and a new alloc_workqueue flag in:
+> 
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+> 
+> This change adds a new WQ_PERCPU flag to explicitly request
+> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+> 
+> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+> must now use WQ_PERCPU.
+> 
+> Once migration is complete, WQ_UNBOUND can be removed and unbound will
+> become the implicit default.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-index f9f1e76a810c..01ac0af0e299 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-@@ -52,6 +52,8 @@ properties:
-       - panasonic,vvx10f004b00
-         # Panasonic 10" WUXGA TFT LCD panel
-       - panasonic,vvx10f034n00
-+        # Samsung ltl106hl02 10.6" Full HD TFT LCD panel
-+      - samsung,ltl106hl02-001
-         # Samsung s6e3fa7 1080x2220 based AMS559NK06 AMOLED panel
-       - samsung,s6e3fa7-ams559nk06
-         # Samsung s6e3fc2x01 1080x2340 AMOLED panel
+Updated subject to:
+
+    cpufreq: tegra194: add WQ_PERCPU to alloc_workqueue users
+
+Applied. Thanks.
+
 -- 
-2.48.1
-
+viresh
