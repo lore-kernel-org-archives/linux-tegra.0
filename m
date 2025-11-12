@@ -1,62 +1,42 @@
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C63341ADF
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 14:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD47F33F8C5;
+	Wed, 12 Nov 2025 15:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958353; cv=none; b=kqUmkQ5pCF0KiDCD2yPnxHvL7aN91TuJA+06UyWntwJ04L0awZzyHFIVnJfrUsvvL/L9VYMDw5QiHufNEvptgnerf3jdcfs85bYt+jmFZS5s8k2jU91qZSUiG3EQs7XzFhKkqDGaxSLGfWLLJIguO+b6z436QBsAjABLJS5+7ZA=
+	t=1762959737; cv=none; b=fKQIJA/NlFanNF5M9cNmcGEt+gpp7NTTYycHEjqkn+v72JC1Am6R7XCv+Tq05rgNOPPx29bQXYE7hbZI1pIZDPijMEfN88q3BYDpRAqLifjZ7ko0QkqRnw1v4UcJO+t51dcHTPMdgLuzXaQQA0RVz5N5X89ax3UHzgHl0UCeT1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958353; c=relaxed/simple;
-	bh=YLBWd43A4qz68JA3SZqwZJrrUnRu+5NA9D8YMiytfJY=;
+	s=arc-20240116; t=1762959737; c=relaxed/simple;
+	bh=i2E+NvWCFKrgbyZBUGpLcyxl/p485cSfs6HDgAEg+iU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYmFEYftlkZcOIEd8AroP7N3Rj7ToC82tUwBx+k6MTHizgO4W4+ncfMAS/SO2l6y0rVKo9HpY8eCZA+1mY9FDVX0K+CiMW9AYn9piXQ2eQ7rCJktjRqpxWVEqK4V4jGG2fh9uG/3SFEIfGq/MrpIIyfRkT9Srqp21I6btYFw/ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3e3dac349easo618631fac.2
-        for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 06:39:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762958350; x=1763563150;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jduwwJc36NsKSwajdjfjQL6Giew4Hq4QvEpO2y2wUgU=;
-        b=YuOrKq9lWoX8cDZTorodsZwr/HOnWGErSf7nxAzbKBKtbw+WHdJHSuWpcH6pdTW+wc
-         PsuVGY+WbMsIegqx+GiGLh4cqmn/I/PtqAM16U09EhkBBKDCGBgQQ3DT5OPczI7G39BE
-         qslTCEtFiOU2dqLfRJ/JfjUdWGF8+DkXD/bJxcl3m1Ia9XJhGCGkajEVeo9hQDXTzH8l
-         mGnpQI6daRW7rrv5UXnxIpZTEsfDnXMwRFYsVNa+ZqRx3oP5GRsDnoxy4JE+5MOLUaKh
-         lZm0lotS1NObbWdOzLdTPLotp4een/n86S/7NDNZLbl0ejbJVW1c1qxdmZFSM5wrEWeb
-         NEXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeSs3pSvVWoH2fMOOcKdMAm9BPBN8YQpB3Jnjr0xmR8GwVDPyQQ/5H3Y7cXJkFBcxvvkMAY9mezqKaKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLuW+zhsP36MN+FZBGI1SYU741rcTOQ6y0rhUKBIIlo+6xMjpe
-	RDtNKYWoWpPVr54/qsuwDKpPl5Z43bDJmhjmnEQqASqYpuK3eaAeXODx
-X-Gm-Gg: ASbGncsslP5sKEdpTYXiGqftF0HVMmRaJNKa5tEcFw+bL8Qn1NJoyMx5oN5MG9uKbTI
-	MZJl4OfPCQZkiCW5FmybxjYcSCW73hRlj9kDfwg225M1N4Q0Et4xaULgDaOE2+NFGb8D3F1TOFU
-	2qAzYau28NE8LvtZMK3FxjTmvPNEG5yErO1W4okDkF8fVyTGvYiYlQFFCYBdmZ79ERKwF5nfJrP
-	xBzD/CXMRQzM5BFFu/YfQcIDtShUBr5fDxrR4W5WL8bOMXokB5n3v+PMKCm96BlnLOPqtuRAuHo
-	H5DlXGXuLOkZQfn+ltESAuL1RPGFWnH1psRq+0fB8rPKOn3JH4LxL733mogTmtK511L3dvthFYt
-	maJxSolwvkAUHbE39rgGig2c7p/P9NUrcGMpqJ0GK3jhFYY12FAkQXaAB1/U6r6m14EDCH8xjTL
-	Pd/1c=
-X-Google-Smtp-Source: AGHT+IGOaUiBUnjCORPb2sikNr2bFgJVOUtqqbSVaoY7pBHbrk9Eo9bCP5k5x9A+nXecxYbNPaOn+A==
-X-Received: by 2002:a05:6870:ebcb:b0:3e8:3382:aaed with SMTP id 586e51a60fabf-3e834080c5amr1365633fac.12.1762958350559;
-        Wed, 12 Nov 2025 06:39:10 -0800 (PST)
-Received: from gmail.com ([2a03:2880:10ff:52::])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c6f116ddcbsm8564167a34.33.2025.11.12.06.39.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 06:39:10 -0800 (PST)
-Date: Wed, 12 Nov 2025 06:39:08 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, 
-	kyarlagadda@nvidia.com, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v5 1/3] spi: tegra210-quad: Fix timeout handling
-Message-ID: <jzmbuiqm5usjfklqs2cmxz72j5qjvttcib6grn5visgqe37qtx@cowi4mtcvwfh>
-References: <20251028155703.4151791-1-va@nvidia.com>
- <20251028155703.4151791-2-va@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMgrXr+sCRa6k1zZq2ep7UMYCBj1PTshwIG37oKASHesGnOWYZ/xaPIMDXXhwNQEOlEVXO0NU7mIe2LQDRqqdvqHqLsKg9E32Lyo1XORqABUdCmdBwwKp5llpuj/fldU7CI4qO0xcv+p2whH/mzgEV7O8Yp/HRT0Fu1t7wgmFJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8ED001515;
+	Wed, 12 Nov 2025 07:02:07 -0800 (PST)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCAAE3F66E;
+	Wed, 12 Nov 2025 07:02:14 -0800 (PST)
+Date: Wed, 12 Nov 2025 15:02:13 +0000
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
+	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
+	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
+	gautham.shenoy@amd.com, mario.limonciello@amd.com,
+	perry.yuan@amd.com, zhanjie9@hisilicon.com,
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
+	bbasu@nvidia.com
+Subject: Re: [PATCH v4 3/8] ACPI: CPPC: extend APIs to support auto_sel and
+ epp
+Message-ID: <aRShdY+QNQZdRewN@arm.com>
+References: <20251105113844.4086250-1-sumitg@nvidia.com>
+ <20251105113844.4086250-4-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -65,123 +45,143 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028155703.4151791-2-va@nvidia.com>
+In-Reply-To: <20251105113844.4086250-4-sumitg@nvidia.com>
 
-On Tue, Oct 28, 2025 at 03:57:01PM +0000, Vishwaroop A wrote:
-> When the CPU that the QSPI interrupt handler runs on (typically CPU 0)
-> is excessively busy, it can lead to rare cases of the IRQ thread not
-> running before the transfer timeout is reached.
+Hi,
+
+A small nit that applies to multiple places: let's keep the line length
+under 80 characters - the lines seem easy to split.
+
+On Wednesday 05 Nov 2025 at 17:08:39 (+0530), Sumit Gupta wrote:
+> - Add auto_sel read support in cppc_get_perf_caps().
+> - Add write of both auto_sel and energy_perf in cppc_set_epp_perf().
+> - Remove redundant energy_perf field from 'struct cppc_perf_caps' as
+>   the same is available in 'struct cppc_perf_ctrls' which is used.
 > 
-> While handling the timeouts, any pending transfers are cleaned up and
-> the message that they correspond to is marked as failed, which leaves
-> the curr_xfer field pointing at stale memory.
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/acpi/cppc_acpi.c | 42 ++++++++++++++++++++++++++++++++--------
+>  include/acpi/cppc_acpi.h |  1 -
+>  2 files changed, 34 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 05672c30187c..757e8ce87e9b 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -1344,8 +1344,8 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+>  	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+>  	struct cpc_register_resource *highest_reg, *lowest_reg,
+>  		*lowest_non_linear_reg, *nominal_reg, *guaranteed_reg,
+> -		*low_freq_reg = NULL, *nom_freq_reg = NULL;
+> -	u64 high, low, guaranteed, nom, min_nonlinear, low_f = 0, nom_f = 0;
+> +		*low_freq_reg = NULL, *nom_freq_reg = NULL, *auto_sel_reg = NULL;
+> +	u64 high, low, guaranteed, nom, min_nonlinear, low_f = 0, nom_f = 0, auto_sel = 0;
+>  	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
+>  	struct cppc_pcc_data *pcc_ss_data = NULL;
+>  	int ret = 0, regs_in_pcc = 0;
+> @@ -1362,11 +1362,12 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+>  	low_freq_reg = &cpc_desc->cpc_regs[LOWEST_FREQ];
+>  	nom_freq_reg = &cpc_desc->cpc_regs[NOMINAL_FREQ];
+>  	guaranteed_reg = &cpc_desc->cpc_regs[GUARANTEED_PERF];
+> +	auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
+>  
+>  	/* Are any of the regs PCC ?*/
+>  	if (CPC_IN_PCC(highest_reg) || CPC_IN_PCC(lowest_reg) ||
+>  		CPC_IN_PCC(lowest_non_linear_reg) || CPC_IN_PCC(nominal_reg) ||
+> -		CPC_IN_PCC(low_freq_reg) || CPC_IN_PCC(nom_freq_reg)) {
+> +		CPC_IN_PCC(low_freq_reg) || CPC_IN_PCC(nom_freq_reg) || CPC_IN_PCC(auto_sel_reg)) {
+>  		if (pcc_ss_id < 0) {
+>  			pr_debug("Invalid pcc_ss_id\n");
+>  			return -ENODEV;
+> @@ -1414,6 +1415,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+>  	perf_caps->lowest_freq = low_f;
+>  	perf_caps->nominal_freq = nom_f;
+>  
+> +	if (CPC_SUPPORTED(auto_sel_reg))
+> +		cpc_read(cpunum, auto_sel_reg, &auto_sel);
+> +	perf_caps->auto_sel = (bool)auto_sel;
+>  
+>  out_err:
+>  	if (regs_in_pcc)
+> @@ -1555,6 +1559,8 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>  	struct cpc_register_resource *auto_sel_reg;
+>  	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
+>  	struct cppc_pcc_data *pcc_ss_data = NULL;
+> +	bool autosel_support_in_ffh_or_sysmem;
+> +	bool epp_support_in_ffh_or_sysmem;
+>  	int ret;
+>  
+>  	if (!cpc_desc) {
+> @@ -1565,6 +1571,11 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>  	auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
+>  	epp_set_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
+>  
+> +	epp_support_in_ffh_or_sysmem = CPC_SUPPORTED(epp_set_reg) &&
+> +				(CPC_IN_FFH(epp_set_reg) || CPC_IN_SYSTEM_MEMORY(epp_set_reg));
+> +	autosel_support_in_ffh_or_sysmem = CPC_SUPPORTED(auto_sel_reg) &&
+> +				(CPC_IN_FFH(auto_sel_reg) || CPC_IN_SYSTEM_MEMORY(auto_sel_reg));
+> +
+>  	if (CPC_IN_PCC(epp_set_reg) || CPC_IN_PCC(auto_sel_reg)) {
+>  		if (pcc_ss_id < 0) {
+>  			pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
+> @@ -1589,14 +1600,29 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>  		/* after writing CPC, transfer the ownership of PCC to platform */
+>  		ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
+>  		up_write(&pcc_ss_data->pcc_lock);
+> -	} else if (osc_cpc_flexible_adr_space_confirmed &&
+> -		   CPC_SUPPORTED(epp_set_reg) && CPC_IN_FFH(epp_set_reg)) {
+> -		ret = cpc_write(cpu, epp_set_reg, perf_ctrls->energy_perf);
+> +	} else if (osc_cpc_flexible_adr_space_confirmed) {
+> +		if (!epp_support_in_ffh_or_sysmem && !autosel_support_in_ffh_or_sysmem) {
+> +			ret = -EOPNOTSUPP;
+> +		} else {
+> +			if (autosel_support_in_ffh_or_sysmem) {
+> +				ret = cpc_write(cpu, auto_sel_reg, enable);
+> +				if (ret)
+> +					return ret;
+> +			}
+> +
+> +			if (epp_support_in_ffh_or_sysmem) {
+> +				ret = cpc_write(cpu, epp_set_reg, perf_ctrls->energy_perf);
+> +				if (ret)
+> +					return ret;
+> +			}
 
-I saw something similar on one of my hosts, and I debugged it, and it
-seemed similar to what you are fixing in here.
+Wouldn't it be more clear to have separate functions for setting auto-sel
+and EPP? I think this is functionally correct, but somewhat unclear, given
+the signature of the function. But I do acknowledge that the function was
+like this to begin with.
 
-Just sharing what I got while debugging this, in case this is useful:
+> +		}
+>  	} else {
+> -		ret = -ENOTSUPP;
+> -		pr_debug("_CPC in PCC and _CPC in FFH are not supported\n");
+> +		ret = -EOPNOTSUPP;
+>  	}
+>  
+> +	if (ret == -EOPNOTSUPP)
+> +		pr_debug("_CPC in PCC and _CPC in FFH are not supported\n");
 
-	UBSAN: shift-out-of-bounds in drivers/spi/spi-tegra210-quad.c:385:25
-	shift exponent 198 is too large for 32-bit type 'u32' (aka 'unsigned int')
-	CPU: 0 UID: 0 PID: 883 Comm: irq/43-NVDA1513 Tainted: G        W   E    N  6.16.1 #1 PREEMPT(none)
-	Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
-	Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A14 09/02/2025
-	Call trace:
-	show_stack+0x1c/0x30 (C)
-	dump_stack_lvl+0x38/0xb0
-	dump_stack+0x14/0x1c
-	__ubsan_handle_shift_out_of_bounds+0x24c/0x2c0
-	tegra_qspi_isr_thread+0x1cc8/0x1e60 [spi_tegra210_quad]
-	irq_thread_fn+0x80/0x108
-	irq_thread+0x158/0x258
-	kthread+0x3fc/0x530
-	ret_from_fork+0x10/0x20
-	---[ end trace ]---
+This message needs updating.
 
-	------------[ cut here ]------------
-	UBSAN: shift-out-of-bounds in drivers/spi/spi-tegra210-quad.c:397:20
-	shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
-	CPU: 0 UID: 0 PID: 883 Comm: irq/43-NVDA1513 Tainted: G        W   E    N  6.16.1 #1 PREEMPT(none)
-	Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
-	Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A14 09/02/2025
-	Call trace:
-	show_stack+0x1c/0x30 (C)
-	dump_stack_lvl+0x38/0xb0
-	dump_stack+0x14/0x1c
-	__ubsan_handle_shift_out_of_bounds+0x24c/0x2c0
-	tegra_qspi_isr_thread+0xc90/0x1e60 [spi_tegra210_quad]
-	irq_thread_fn+0x80/0x108
-	irq_thread+0x158/0x258
-	kthread+0x3fc/0x530
-	ret_from_fork+0x10/0x20
-
-	---[ end trace ]---
-
-and then KASAN and a kernel crash.
-
-	BUG: KASAN: vmalloc-out-of-bounds in tegra_qspi_isr_thread+0xce8/0x1e60 [spi_tegra210_quad]
-	Write of size 1 at addr ffff8000db950000 by task irq/43-NVDA1513/883
-
-	CPU: 0 UID: 0 PID: 883 Comm: irq/43-NVDA1513 Tainted: G        W   E    N  6.16.1-0_fbk0_debug_rc20_0_g977c20cb5846 #1 PREEMPT(none)
-	Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
-	Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A14 09/02/2025
-	Call trace:
-	show_stack+0x1c/0x30 (C)
-	dump_stack_lvl+0x38/0xb0
-	print_report+0x164/0x6d8
-	kasan_report+0xcc/0x128
-	__asan_report_store1_noabort+0x1c/0x28
-	tegra_qspi_isr_thread+0xce8/0x1e60 [spi_tegra210_quad]
-	irq_thread_fn+0x80/0x108
-	irq_thread+0x158/0x258
-	kthread+0x3fc/0x530
-	ret_from_fork+0x10/0x20
-
-	The buggy address belongs to a 1-page vmalloc region starting at 0xffff8000db940000 allocated at copy_process+0x258/0x28d8
-	Memory state around the buggy address:
-	ffff8000db94ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	ffff8000db94ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	>ffff8000db950000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-			^
-	ffff8000db950080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-	ffff8000db950100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-	==================================================================
-	Unable to handle kernel paging request at virtual address ffff8000db950000
-	KASAN: probably user-memory-access in range [0x00000006dca80000-0x00000006dca80007]
-	Mem abort info:
-	ESR = 0x0000000096000047
-	EC = 0x25: DABT (current EL), IL = 32 bits
-	SET = 0, FnV = 0
-	EA = 0, S1PTW = 0
-	FSC = 0x07: level 3 translation fault
-	Data abort info:
-	ISV = 0, ISS = 0x00000047, ISS2 = 0x00000000
-	CM = 0, WnR = 1, TnD = 0, TagAccess = 0
-	GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-
-
-	 pstate: 234010c9 (nzCv daIF +PAN -UAO +TCO +DIT +SSBS BTYPE=--)
-	 pc : tegra_qspi_isr_thread+0xcc0/0x1e60 [spi_tegra210_quad]
-	 lr : tegra_qspi_isr_thread+0xce8/0x1e60 [spi_tegra210_quad]
-	 x26: 0000000000000001 x25: 0000000000000028 x24: ffff8000db94ffff
-	 x23: ffff0000d16b0918 x22: 0000000000000040 x21: 000000000000003a
-	 x20: ffff8000db94ffff x19: ffff0000d16b08c0 x18: 0000000000000001
-	 x17: 3d3d3d3d3d3b2d2c x16: 3d3d3d3d3d3b2d2c x15: 0000000000000001
-	 x14: 1ffff00010bfce80 x13: 0000000000000000 x12: 0000000000000000
-	 x11: ffff700010bfce81 x10: 0000000000000019 x9 : 0000000000000000
-	 x8 : 0000000000000000 x7 : 0000000000000001 x6 : 0000000000000001
-	 x5 : ffff8000b49cf8e0 x4 : ffff800084e7b140 x3 : ffff8000801bbd8c
-	 x2 : 0000000000000001 x1 : 0000000000000008 x0 : 0000000000000001
-	 Call trace:
-	  tegra_qspi_isr_thread+0xcc0/0x1e60 [spi_tegra210_quad] (P)
-	  irq_thread_fn+0x80/0x108
-	  irq_thread+0x158/0x258
-	  kthread+0x3fc/0x530
-	  ret_from_fork+0x10/0x20
-	 Code: 540001aa 1ad92768 f85f83aa 6b1a039f (383a6b08)
-	 ---[ end trace 0000000000000000 ]---
-	 Kernel panic - not syncing: Oops: Fatal exception
-	 SMP: stopping secondary CPUs
-	 Kernel Offset: disabled
-	 CPU features: 0x2000,000003c0,62534ca1,5467fea7
-	 Memory Limit: none
+Thank you,
+Ionela.
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(cppc_set_epp_perf);
+> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+> index 7190afeead8b..42e37a84cac9 100644
+> --- a/include/acpi/cppc_acpi.h
+> +++ b/include/acpi/cppc_acpi.h
+> @@ -119,7 +119,6 @@ struct cppc_perf_caps {
+>  	u32 lowest_nonlinear_perf;
+>  	u32 lowest_freq;
+>  	u32 nominal_freq;
+> -	u32 energy_perf;
+>  	bool auto_sel;
+>  };
+>  
+> -- 
+> 2.34.1
+> 
