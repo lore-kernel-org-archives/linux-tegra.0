@@ -1,92 +1,117 @@
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A805343D79
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 17:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCE5272813;
+	Wed, 12 Nov 2025 17:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968103; cv=none; b=pqn4NDfh8LETBrjEOl9RpjEH03xxeBWQz3Ikb/fr5xRm2boKCgS1PC7ixiZIG3YUfU08org0PlrI+CINKXiCUUk3uKG5C2qFIp8qpOt7uKvfQ0HV7pfAldwq0/cWw1nV1shqYjGBrDJoh++DZO2UmSYhZ3fgjTtxLMQOLGST8U8=
+	t=1762969893; cv=none; b=q2Ij10fwx59Fh9cb8WmMdOGVpPtCajhGwPaJURTO/u2IjQS3BLAJPYuDnloBTWkJ8k8FD5EfdUYpYASjSXjvsQS1SsQqz5VVl7+94WTVTf0Zf9akAYx0u/33AzUn5S7LFEg5TNazAaEfRKfUWUrOZQpL1YldNVYStokIaDACl78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968103; c=relaxed/simple;
-	bh=N5adIYAtdFqjBajODZDFHwOrJ7rnYtok6HIzFkiZyo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OGZwuADhGMiFs1bBrpNIxP1YClh+rlN68ejDL/JgaOltG0nfAHOc73MSRARPxoidoB6WM7WOOXeoaryS3pkB0rIoTa7ivdE5fXwcvSsCIIDYDCrNqzQVAP7Y7VeYTtQbs30gqMwgMzH+FTjEds7UryFHPeUNvJoHnD2ReyySM+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UBRFJnus; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1762969893; c=relaxed/simple;
+	bh=T7knzhZ/hAoWyK2lUxIZdB+Ka4TMwRh1ujkOMO4Lf04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VsO2ogcwJdF2yGTKLlMdP9LyD8g+lRFZPBDTFvOhnH92dgAIc9/UejhCIkZZVkozmX3qX67R0GahrNvABcUNHSEouaet/PGgoUGGA8t3vI9d0LhZlPNaYvB4iRDzoWC2fo3tbcx19yt3cJk3YcI6RZUjI7ZeatbBnrB2YxN6jPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rO6Mud0E; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UBRFJnus"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762968099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jGs7Hv9KNWjSfl9ACuS3BD9nItk1f1HqEtWBU6SNvgo=;
-	b=UBRFJnusMotR6GK+7LDYXvFe2NVdRm1AtZotjH2GkbguPKudCQW7xTV8MCmt5CCnYw/flw
-	1/HzqeBJyMByGy0LTToYCim0PfnWjfXQGQ4x9fuwgCQ/T+G2+xVUAi4cSZs2Trijh0A6e4
-	GxpLD8HxReL25xprxm6GzOAafIcFSTQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Dmitry Osipenko <digetx@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] PM / devfreq: tegra30: use min to simplify actmon_cpu_to_emc_rate
-Date: Wed, 12 Nov 2025 18:21:21 +0100
-Message-ID: <20251112172121.3741-2-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rO6Mud0E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D3DC4CEF8;
+	Wed, 12 Nov 2025 17:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762969893;
+	bh=T7knzhZ/hAoWyK2lUxIZdB+Ka4TMwRh1ujkOMO4Lf04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rO6Mud0EMKXzwiNc2bQlzO+QiF4pc3XFFext9cJ/t5Wa69rSTMlzvwp4mvrpz5ern
+	 1/w711HXbiu7bl1ydAB5DUdFcwgQ1lJWeN5IpVji2dEdgRtnIF2lrTd0he6MlSGbV+
+	 Zu6LUatZFmxfv4DqArs0FAoWQnazXwpImSlLMqQBPAtLcvSFfO6Qh9Ae3bcMYyPItL
+	 aHx51+xOY/Tg8XTyidCaat1h3AuReI9ji7hHyBaIaStsRhn2b+K5jgPh7En09xzheM
+	 0NaPZ/ftBPYlEZu+UPAyMN6G+DftPSkldBOvdcp8DKUWQSRJl+tUyr3vPq+x1twkib
+	 lhmGS0PYRvO5Q==
+Date: Wed, 12 Nov 2025 23:21:07 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Kever Yang <kever.yang@rock-chips.com>, Simon Xue <xxm@rock-chips.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Dragan Simic <dsimic@manjaro.org>, 
+	FUKAUMI Naoki <naoki@radxa.com>, Diederik de Haas <diederik@cknow-tech.com>, 
+	Richard Zhu <hongxing.zhu@nxp.com>, Frank Li <Frank.li@nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Hans Zhang <hans.zhang@cixtech.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, kernel@pengutronix.de, 
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/4] PCI: dwc: Advertise L1 PM Substates only if driver
+ requests it
+Message-ID: <22srj63j7fzmsebwxwjnnxnpmdn2iwxo36gkrl36gdm7ge2xif@dmrdbfgu3hn3>
+References: <20251111221621.2208606-1-helgaas@kernel.org>
+ <20251111221621.2208606-2-helgaas@kernel.org>
+ <aRRDzKFVTFTIuvvh@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aRRDzKFVTFTIuvvh@ryzen>
 
-Use min() to improve the readability of actmon_cpu_to_emc_rate() and
-remove any unnecessary curly braces.
+On Wed, Nov 12, 2025 at 09:22:36AM +0100, Niklas Cassel wrote:
+> On Tue, Nov 11, 2025 at 04:16:08PM -0600, Bjorn Helgaas wrote:
+> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > @@ -1060,6 +1060,8 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+> >  		PCI_COMMAND_MASTER | PCI_COMMAND_SERR;
+> >  	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
+> >  
+> > +	dw_pcie_config_l1ss(pci);
+> 
+> The name dw_pcie_config_l1ss() sounds like we are enabling l1ss.
+> 
+> I know naming is hard.
+> 
+> Perhaps dw_pcie_disable_unsupported_l1ss() ?
+> 
+> Or something similar.
+> 
+> 
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -1067,6 +1067,8 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+> >  	val &= ~REQ_NOT_ENTR_L1;
+> >  	writel(val, pcie->parf + PARF_PM_CTRL);
+> >  
+> > +	pci->l1ss_support = true;
+> > +
+> >  	val = readl(pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT_V2);
+> >  	val |= EN;
+> >  	writel(val, pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT_V2);
+> 
+> While it seems like ops_2_7_0 is the only type that explicitly does a
+> register write to enable L1ss, other versions might have the register
+> as enabled by default, so it would be nice if Mani could confirm exactly
+> which versions that should set l1ss_support = true.
+> 
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/devfreq/tegra30-devfreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Yes, on the rest of the platforms, this bit is supposed to be enabled by
+default. AFAIK, all Qcom platforms should support L1SS, atleast the
+non-IPQ/APQ ones.
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 4a4f0106ab9d..2c9813bd697e 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -326,14 +327,9 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
- 	unsigned int i;
- 	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
- 
--	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
--		if (cpu_freq >= ratio->cpu_freq) {
--			if (ratio->emc_freq >= tegra->max_freq)
--				return tegra->max_freq;
--			else
--				return ratio->emc_freq;
--		}
--	}
-+	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++)
-+		if (cpu_freq >= ratio->cpu_freq)
-+			return min(ratio->emc_freq, tegra->max_freq);
- 
- 	return 0;
- }
+We should set it for below cfgs:
+
+cfg_fw_managed
+cfg_sc8280xp
+cfg_1_34_0
+cfg_1_9_0
+cfg_2_7_0
+
+I excluded msm8996 due to one recent bug report.
+
+- Mani
+
 -- 
-2.51.1
-
+மணிவண்ணன் சதாசிவம்
