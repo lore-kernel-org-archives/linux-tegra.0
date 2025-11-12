@@ -1,265 +1,207 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022111.outbound.protection.outlook.com [40.107.75.111])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010019.outbound.protection.outlook.com [40.93.198.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B6822370D;
-	Wed, 12 Nov 2025 02:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5874A35;
+	Wed, 12 Nov 2025 06:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762915799; cv=fail; b=P8CcCDvqm9FkujDVANMlXxEXUszEaNAWrQMHO5qi9kMfcdy0Kre+497hokYXZgdopJlF87ubXKNthxM3dLxkQOmfO9EFjT4vJQlNqZiH7Li/Fp2vOtZlkuSkmbYnORQXP+uvMIMBVtKBbbE/Gtk0XipFmFqL4iptJ5t/bIfnx54=
+	t=1762928301; cv=fail; b=TA//76rzOwanTNQk+74PYW9r19De7K5yAduR0lSH82jpbVewDz5ZYwQn6oJgU78af/MNKShZdjKVtGftsfI32r074OS/FAmHyFHR492QNmEY7glSyciS29DMXDDQ+DI0xb3J8v3mrBYDn0D6hTQJkyD+E7jIL4XTnVMR4MMsIdc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762915799; c=relaxed/simple;
-	bh=aAaK+fOiXBOm0RkUfxjWXFCAYAkD8GLQGttzI0yvlFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mTioI4BYZHTVKef+gSiOWLaV77v8Tl+n6B/9JTQecZR4bsxn/1uBYnW89yARt5ppH28veheeNNHN90cSnkd5Nz0x0NJAGXBmwlsCXHHmyWn5USMDYOYR0JYBfLaVG7CY8FI6UUUJNKJc3F0YAHxajp4bbBeAuS06zbb/UhoVbdU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+	s=arc-20240116; t=1762928301; c=relaxed/simple;
+	bh=vogN1Ku59iqvVA9rQcUJWPfAd8JQ4Xo1gJu5IS0EzAk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Lj4+r0eofZ166FWqqojB+9QerfoNm92xPWXVy7YPIs3StmFonhcfVDn8cF98JPv4ivhhZQp2R+wShy6OmcOKQizdr9X4yk8bqeQd8aXtzF5zkGiSOMzPHrokSP82MbNX/VHsqy4cDNcFQSqR+RNEw0piLxLp/HkECp6A58iLCq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oa9dFKKc; arc=fail smtp.client-ip=40.93.198.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oa9dFKKc"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cyq2AkxHrmiDmv91djjP00tLCGrUR1VscSvSARaG7ts+WbvLnCE1Nx2XyhPZWuUf+2CRxxE87QN6JH30NiVjvEMj1jxlGzh6vU3Z39WqU9foVJMSl/H32r6cIJLNburPvux8PqpEybDLmAbAPEq5yJrr5HZvnI/KLQRoRnnaeVTaPdqLl1xIgbfk+L/YVZzZFlArBlk8j0V2bUh+7PnLp3Z4QXBIqhedUDahkOXZ2vOanun2Oi8xJUsFE0+BLOpDju+CoPfqIE2nLz5aCrFwTwP6/50yJgMESOp2Z6f1umuifPCaRMl2/hZCywBOy2bD0kaXRx1xGtzR3rRmxNto+g==
+ b=AmVkq0gSWZHRTtK/Wega5rsZftNtns6D7ElQ9hLpTTAidUHX/YZokMtL6YNWlpaQUzn27ETAOW83vjNitiGvxWC8zfuSnpFPj10OhxGi6ffeJOpfbkLc12WLmBm/oul7Y2pltqtYWt/Ph1O9VLZ6eRLDU5WikPG8sM2vmpC/G18s2Qd48cHYAoaKdpkkowAGZqPWcGwAGsJJ3az/Kb39hFKWqyd+Ms8KtHiWiG/g7KUVeavflevZMH/OfMw9618c1qwsVyYwG/ezTcTjZRAVoORXwOOjZB4FrD+0GkPkiCYQ8XDna5SnsXDT7Q8cdyMJE5l2oZBY+BK9Rjd4kaKsPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zhJ1h/19pA1rVIw2NzIOWDwzP/r8gLb7prN4Oc3+rqY=;
- b=tXRq7MS0iCK/mHHRCdsVLiN4XV1LmFGykcK7RdYwuTIo4P5PEm+Bpv63yRqFQMrE/KMvYwd+WJpPVzoCnKWTLAMJ4R73CjcdITfWOc0VHURjp9f6QKj9K+dFNqjL6Mz2aiX/5Ce+gsx7dWjfrNPjfT0TmhC20VAD6CeLPgvBGFfIcq60ZQPRcB4dqBgYST25mOREwvQiV90qel+xmu9YOKgMM1/shAMMO7zkVRCLx5zNgfXXsSqFZMHzihzWf4zu7HjtfB4JUz0dWV9eKKCC1h4ZtaFGSe8T0ZznW+34ayl0jHlsz/zbon9+Ecnto5CywlfDB9vNIYpMwTyzxZ02uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cknow-tech.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SI2PR06CA0016.apcprd06.prod.outlook.com (2603:1096:4:186::22)
- by TYPPR06MB8208.apcprd06.prod.outlook.com (2603:1096:405:383::13) with
+ bh=LMft4+ZfJOT2Fe0/4nxXT8eqgc58tARbw8gYkH2ePeg=;
+ b=H4341AXyqu43x9H24z6zJ+ht3MhDXYbQ3NGTfzlKhKuux2pa+gyWVfIM3WZDjObPypYsD0ndzBT2DVj1Jyo75h1t4PvMYEj+ePmnXBXvK1edATEQayzgKT8gyrVshzXrQvOCVEAyuHlUGR8fNkYwRmxdivX6mJVyWUkaUdCylo9J2P72IpS6i1Pd8Rml1omkyif7G97dHD+T5XC/uKIJEubQSkEmVOInk+WkyrK8idvDv/thmhZEbiS4z8tvH2o9ds9dzIkcGnfheONrgtOayU7olLnxQEfh9zjPxMxj//1YdmlOCAcwk+TRAspbKrEumOzLzY1Rr3a18PjeoagLUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LMft4+ZfJOT2Fe0/4nxXT8eqgc58tARbw8gYkH2ePeg=;
+ b=oa9dFKKcMY/CNcsTKtHapaC4fcejfblkoGtVJdXGqA7vv3sr2Jyw3nj7UnHtOsJ7JgPx40HeDbFO2bc+oXaNTDDMMpC1ijy2IK06+V3Qj6rosWnpg86seJ35Td23A26gf4wGOepT3NyShfffU7mn15+FR1wbuFf23dKmLVq2Mk/Bd/Z/mD148HNa/M8MwBvEe0pCgTabzE6ya85geMi3QSLlSf/MW1A/dvAHO/2U37OiP+Ypoj9c5lSopKQMjRtGB8zXYx96EWsJMo5KYx6pOI9l1SwcRWTcpBYaSuhMqZe4VAKY4o9yI8H6sy8mYNEVg6etrXWUQQxk7STUzDBljA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by MN2PR12MB4144.namprd12.prod.outlook.com (2603:10b6:208:15f::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Wed, 12 Nov
- 2025 02:49:51 +0000
-Received: from SG1PEPF000082E1.apcprd02.prod.outlook.com
- (2603:1096:4:186:cafe::b) by SI2PR06CA0016.outlook.office365.com
- (2603:1096:4:186::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Wed,
- 12 Nov 2025 02:49:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E1.mail.protection.outlook.com (10.167.240.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 02:49:49 +0000
-Received: from [172.16.96.116] (unknown [172.16.96.116])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 4AEBA41C0141;
-	Wed, 12 Nov 2025 10:49:48 +0800 (CST)
-Message-ID: <e8ef529b-b2e9-4c39-8137-60795fda7773@cixtech.com>
-Date: Wed, 12 Nov 2025 10:49:47 +0800
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 06:18:15 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 06:18:15 +0000
+Message-ID: <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com>
+Date: Wed, 12 Nov 2025 06:18:08 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
+ <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com>
+ <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
+ <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
+ <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
+ <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com>
+ <99ca4992-5736-417d-854e-379542549bee@kernel.org>
+ <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com>
+ <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
+ <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
+ <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
+ <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0284.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::9) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] PCI: dw-rockchip: Configure L1sub support
-To: Bjorn Helgaas <helgaas@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>, Simon Xue <xxm@rock-chips.com>,
- Damien Le Moal <dlemoal@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
- FUKAUMI Naoki <naoki@radxa.com>, Diederik de Haas <diederik@cknow-tech.com>,
- Richard Zhu <hongxing.zhu@nxp.com>, Frank Li <Frank.li@nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@pengutronix.de,
- Bjorn Helgaas <bhelgaas@google.com>
-References: <20251111221621.2208606-1-helgaas@kernel.org>
- <20251111221621.2208606-4-helgaas@kernel.org>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <20251111221621.2208606-4-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E1:EE_|TYPPR06MB8208:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a4b5c70-cfa5-4e0e-6de1-08de219625a8
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MN2PR12MB4144:EE_
+X-MS-Office365-Filtering-Correlation-Id: b146d06c-dbc9-4273-37f6-08de21b343d0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|10070799003|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N1Y5WG1acmE5TFBITlpjS0djdWxpdXY3a0dzSnl0Q1JWV0xlYjFYSmdsZVQ5?=
- =?utf-8?B?NXQ3dG96dWFWdTF6UktQZFlMMENkUUlhU2Jyc2szT3U5cDB2emc3OFBLdnB4?=
- =?utf-8?B?VUlxNEtrcXgwZUJrY2Q4UVVtMjF2RXZwVDJFYVp1ZVE0ck9BVnFaQS9HTU8w?=
- =?utf-8?B?OXpJeGZoRkJNVUNBUjE0S0VJTEd1T0l3M1BSMGxFTG15RG0vdWYvKzZZTmZS?=
- =?utf-8?B?d0tkbWJTbkVHcUFKRXpyV21pQ25vUjlVZk9uZmpaNStDd0tRVEFuZm9tZXlz?=
- =?utf-8?B?L1dhTTA1bmtaazRXemU0TDkyQm1JZy9VRHpKeENMQVhzWTkxR2hRUEhNS2hl?=
- =?utf-8?B?cUs4c2pteERFZHNHcHl6Nm9NMHptcG84UVY3ME85Tys2aHRrN2ZBRUFVbjNM?=
- =?utf-8?B?M0h3bXZERU81c3VLakd2Z1Bvd0QyMHFWUnQ2YS9YNHdUMEJ1QUtFazNsUS9t?=
- =?utf-8?B?cFJ1TzU5eUhDZG82NlY4ZDVDOFBVZEtZK2VvcytZWFd4RGUxQkNBSWFRMklQ?=
- =?utf-8?B?N2NwNTRDSDVoaFlEckc4aEpRbEZYd01FSis2aGxNaWRxV0JQZmJsUmZucjRu?=
- =?utf-8?B?ZlFJTFMzbW1WWU03MnhZSzlsekx3MWVxd2lLRDdRYlB3ekROZjZmVDJlWTUv?=
- =?utf-8?B?cHdDcDZZR2RwbTNHdVV5YUVxNDUweEhHOGZ4dElVUHltdkVra0dhancrSzFv?=
- =?utf-8?B?UkZ1MWQzMmw2NkFWcmxOR3dXQWNSV05DcWRXQnJPK1VPOTYwZFBGVnFUSWRh?=
- =?utf-8?B?bkFySUY1S0RBRWgvSGdJSjBGcGNKVzB4KzQ1U2lnRmI2Nk5QN0hGeGtobS9J?=
- =?utf-8?B?QUJoRDk5eWUxekZqWldNSFFicCtSL1RZa1JNV3RXd2k0b0lpZDJWcWdoSWlN?=
- =?utf-8?B?NUdZWTJQYm1EY0RMV3RKcDdsNnhJVWtzc1g5TTR1Y0xqNzMvRTNjVHhRQ05r?=
- =?utf-8?B?bWdTaUpKcEJVbVFaNDZ6OFZBUzlIWVZ1dkxMdU9vQS82ZFJ5SlplVWVhZUNQ?=
- =?utf-8?B?YTlISWNvcmFGYVlxTUZ1bzdHbEs2TmNGczlsdWpTa1hNRTlwS2RWcWhnbGtt?=
- =?utf-8?B?YTVnS041dGZvczNxbTByOFBlczd6bVU5RXh1dVVqYlRLaTllNlg4U2FwWU41?=
- =?utf-8?B?ZlZDQUh3Z2JhS0p1ekpBRUE5ZU5tWGtDTDBYbnFTa2F3VWVtK2MxMmxHTHVz?=
- =?utf-8?B?YXlYdjBKSmlBK2E0L09QK1BxemtWcXk0UjM0Smt2S3F3K2hORmhyTXdSR3FM?=
- =?utf-8?B?WVJxSndkcXluLzZ2VTJlOGxUZE8xaEYzNFpEamF6dXlYQzNYbEZnR01WUHEw?=
- =?utf-8?B?dWlFd2kxQnNHc3V6bXBKd2lyQXZWdHdVQ1RwbWZ3R0JHY21ZZlBxN3ZnS3pH?=
- =?utf-8?B?NjkvMTM2NklrbnFIemcwZ2tFb3VWMFhzZHptbzc5SzREQ1VsOVFXRTdkTnBI?=
- =?utf-8?B?RjliUlZja2hYVVVzWXlRU01NSklCYzF3TDZhVktQOTM1N1RDejhmZVE5RnI1?=
- =?utf-8?B?NTNud1h0eGVaR0lhREpJM3FnTEtYaHZPNVBERlFJVUJEZnhrVmFVK1hlNzEw?=
- =?utf-8?B?RGdFYUdIaUVydjZvSHIrVk81S2FNZWs2a0lKN3RETFJzNmJWZTc5MzB3Zkwy?=
- =?utf-8?B?VzV5TzZITGxjanlaNzB5V3JreUZLMHZ6dFE0TDhPSGQzeWFEcis1aVpRWUpn?=
- =?utf-8?B?allMcEUyQTc0bkttZWtvcFlkcUNSa1Q2aVhxZHFENktXbkM4bmZWTVpGSGVx?=
- =?utf-8?B?YXFCZi8yRFcxVlBUNThRYUpzSldxVngyc1EzTzAvaFBWUWhrSW1kQjZCZ2lv?=
- =?utf-8?B?bVN3aVlHbUsvZFVDSFFpT2gyVUtQdWs3NlFmSVZ4bTFtdVR2YkpZS0JDc0VN?=
- =?utf-8?B?S0pRWkJQcWRSVElyM1NaNjhxVHppZXdYcHVpRUtFaDJnSThIbXo1S21NMVRo?=
- =?utf-8?B?OUdsOGZpc2Urenk4UmhoY0NuUi82aXZGUjZQTzM1cG9ESGNLYW4wdkJuOTBq?=
- =?utf-8?B?UEdTcnlYYUliVnJHSTgzdktxT3VTNEcwR29yTC9vK1lUanFac3Juckl1S09G?=
- =?utf-8?Q?qRWVoK?=
+	=?utf-8?B?cytja3JuckI4Wmp2YmZKbGlwNXNxeHFkRUtoUlJSTm14cnl3UWYyaDFxSFNN?=
+ =?utf-8?B?NEY5a1FkSUs5enpKSWFaZVYvOU9hUkU4Vkh0YU8xbitpQm8zQUs0QkhsTzJG?=
+ =?utf-8?B?VUx3ZHBENnMvVlRMaXViRks3cklzaENJK0o0dmM5T3V5dVJCTkZ1T1ZvZ0Yy?=
+ =?utf-8?B?R1JFTnNyV0ZDbm9RN2hZeVFJTEVYazF1cVdnUStKSUpYanhhQ2xJMFdDUnFi?=
+ =?utf-8?B?c3dRdXo0UjdLbFM3YUVFbE5LTnJUT1VZVlRCMzljc09qZXkwV1hMTCtEWEo5?=
+ =?utf-8?B?T3I1VVp3d3RXY1MvNEI0Zk5nTGlydFozRHRtWlhTeXEzckttR2RzV0ZIOWZr?=
+ =?utf-8?B?NzN0NGswTzU3cEM2dmVEZWRUL1gwRlVwRDhMVVhEeVArRWNWeUkxbCtEcFhU?=
+ =?utf-8?B?TlEwbnVzYlFqb2lMbURYYVRwdmVWS0hUenNtU3NDNUgwSFlHWFI3aElKNy9r?=
+ =?utf-8?B?bVlWZVQ1N1BMamxPZ2FxTEo5ZVVtMElkaHBPU0xYZGk3SzNrTHJhNG1qVmNO?=
+ =?utf-8?B?enVBRzVacGR0OW9ZRzFWZ1h6WHUrSE14MUxobjN6VitYc0lqYmg0aVdNaFdn?=
+ =?utf-8?B?WHlOQjZmM0pablNYSFRVSFdNb0ttVWJOdHpLdXprcnh3eU9rYTZGdGxiUTJV?=
+ =?utf-8?B?NHRrc2ZRdVRXNVE0NXh2aG1od2dkclF5bm00cW1vQStaNEI1c1N2eFBLRzVy?=
+ =?utf-8?B?K0UxL0trTnlXRWgwWVBPS2tkUm91UTFJeG11bWhFUHV5Q0p6NHl0Y1M3ek0y?=
+ =?utf-8?B?TVpsNnlVZzNuZmJFdlRrd0dUV3RDOXF6N1FJdC9FYmNUcFJtbXlwdWpydmth?=
+ =?utf-8?B?UXlXc3JtUjNNK0hRUjlJTWM1cmNhQWdCOGRPMnlaYzhXa0d6RFNiVGZvN1dv?=
+ =?utf-8?B?YXpHdWZEdE5ZKzlEeExPQlNha1lKM3V3UmNzcXY0ZUYvdloyR2taK0VBcG1Q?=
+ =?utf-8?B?ZzZscTR2VDdSSUhhenJranFSNmVha1ZTczFhWUtJODM0Q01TVXZENlczUktC?=
+ =?utf-8?B?TXFXQzN4a0cxanRVTHhUYWxMVU4xRFloekd0bTFRVzdoSytTRkVtaXdibmtX?=
+ =?utf-8?B?UzNYaC9BT09qWmNNdG9WWXczTVd0emxSeHljV2VGSnJWM1dRdjdFUGFDV1Ry?=
+ =?utf-8?B?bFlHRWg0b0ZrdmlWdXZsUTRURjQvaU80SGFVbFg3UnBZZ2J6dVlKNTl6MDEz?=
+ =?utf-8?B?UEVsQkwwTFpzcCtzTHdSZkN2THROTlhqcGFLcUFRSFd6Y0hDSlhmQ09jdFI4?=
+ =?utf-8?B?R1k3dlc4QTVad0hBd1J0a2JhNDJyazhMUTJFeElIVURJTjNSNE02U091cW1q?=
+ =?utf-8?B?V0R1ZzZ4SDJ1QVQvLzhvejlyRTNjT2VWVHJqdk9pTmdtOWlDODUvdHZnMWcy?=
+ =?utf-8?B?aG9SZURFZ25ScVJUbVY0WTZYQWZ2UU9KSTZJbEhXLzJCN0RpcW50QkxaSmtl?=
+ =?utf-8?B?WEZyZk9sSmhUYnptQ2JrUHN4a21YMStwZmY5Wkt1eGVmMDVjV0tqVDFRWklF?=
+ =?utf-8?B?NUZ4S2xJMVRmcTlpYTg0VVg3NFNWekZVYk1iZE4vREY4MjBmWUZ1K1kwMDRq?=
+ =?utf-8?B?dEM2M0NZWlFFYkVJaFRGL0Qrb2RBNmh4N241YVF2aUQ4ZHQ3R0VoazJ4SkEx?=
+ =?utf-8?B?bkNhMSszNmU1UVVPQ1VOOVhxTGhYMHdoVy8rdmt6Q1pBOWp4RjBjUEJBOE9l?=
+ =?utf-8?B?dnJzQ0s4Sy93cWNHVUIyRm1yOFVhWlMrRVpkbkVPVHJJeWUwNUxGeHZmWDNP?=
+ =?utf-8?B?TjJ5ekFWcUZ0MnprSzJNbG1wTDk4b0VpTUE3U2ttdVhtdnRJSVc1NWwyZG5w?=
+ =?utf-8?B?YlEraTRlZzZWMysxYUpCd0p0bkxUaEFEalVmdmlBL0hieGVFbUc0VmYydmZS?=
+ =?utf-8?B?eTNrRnFEWXBKdStLcFBJYnB2UmNWaEZFZHhGcnZvK1RZZ3pRcVJjWmpSNVFo?=
+ =?utf-8?Q?L+PTTus85FCK0t7PvR5MmquY6+mhXePq?=
 X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 02:49:49.2380
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXJORW00eUhYb1FwbTVWcU5xUE5UR0RhZks5bUNrYkdQd1IydHJtMkJHWmNW?=
+ =?utf-8?B?Skc4cHJLc2UyVExUY29zS1hCZExNZ2tXREUyRklmSVdzSGlwSUhmQ28wUEZ2?=
+ =?utf-8?B?K0pJT1NZcHRmMmhtNm9lZjVQajNBZHFYZ3M2c2pnZ0FDRVR4OEpTUG14QTdu?=
+ =?utf-8?B?ZlZMenNDQzZvSlcyRE5Ua0wyYTNSSHo2WmNQN1p2N2IwOS9pQXc0Yzh1NHdD?=
+ =?utf-8?B?dW0zRXJpTkdGYW9QZEUrbTduVks0WW8wa1RVd1dQdkVQNWFwSWhrRnplRWZR?=
+ =?utf-8?B?UU1qU25maml5V1ZvdFNabWRvMDFHZE5QbkVYV2VVWHBINGtRdGMyYXdMYU9j?=
+ =?utf-8?B?TFp4V3hhc2pFWFh5NUFZbDkvS0diYjljaFI5TnRVNzhkZm1SUWVWdmpEa2VV?=
+ =?utf-8?B?cVpqeEhTRERJZWRCQ2x0Qm0xem1GaFc5ZDJBZmdtVGNWcG1pVnpLMDNJRlRI?=
+ =?utf-8?B?U3FsVGdqUmVrNDVDM2Q2UWZtY1ZoRjBDaC9vNTRGNjB4akQxbkhjNkp2WUpQ?=
+ =?utf-8?B?YTlGOWhyaGtNaEo3Y1ZtZGdxMlVDQTlvczRrUUIxMzFGREF3SFNodVBEMEc2?=
+ =?utf-8?B?YW1jVXFMM0pUbXg3WHNnUVVtSWUrbVNyNHVBUENPYXh5cVd5dHc1bHVkbjNT?=
+ =?utf-8?B?RUVkeFAvU003K0NmV09UYTFMbE9ENGlBOGFGQTU5TVhtVDB3WWwrWlA0RUor?=
+ =?utf-8?B?azhFZHVBanp6WG1NaFlhSXFVOU1lWVovb1NVWk9jTkdWOVlERHl4ZHZjcWFF?=
+ =?utf-8?B?Wk9Mb2JtMjFTSmhuWGMvcm9JZnlmUkhzemgxcVoyVkUwekZWY1BOTSs2OVpl?=
+ =?utf-8?B?dk51dUEraVo0bkVacDdoU3V4aHlwQzhPa2lscmM3TXJrVkwyQjF4SHZyV3Vp?=
+ =?utf-8?B?YkhaMWk2K1o5RVRCRzZ6OGlFS0FERWVTVFBVZzJGdHl6WmdtektGMEpjOS93?=
+ =?utf-8?B?SnNBNkt2eHg0U3AyZEVpM29LOGV4NzhjTXdHSVVzSlFhWE90ZmowQjVMMGRO?=
+ =?utf-8?B?bGdKdHZFak9jbkhVQU5XcjBhWkFHQkZYWXB3MGdYSkYwSDVLRFhnTHJOcFJP?=
+ =?utf-8?B?d0I5dmlhK3lBQkVlSXBVNFg1TEZUdVBZUVVIQy9pVkljdkpMRU10RDYxYU5W?=
+ =?utf-8?B?Q0oxdDhySEliRCtOc3dROXRBVUROaVpvNFo5U2p3MDROU0NJN2F5T1FlU3hR?=
+ =?utf-8?B?aWk3bFNWaGpLc1l4WTA5RHlLYW9ZWjlxdWFNYjR2bjh5aWhxSHdxTGFYbzd6?=
+ =?utf-8?B?dktwcGtwaElmdy9wV2R4UzNKS0dKaE9iNG9Ja0RoUGNCVTNSV2d3ODdGOHhK?=
+ =?utf-8?B?Yjh5dnBVNEJMYlM4d1NiOTBGSUdNZU1HR09yNTF4TFlUQXVRcER0YW9FVmR5?=
+ =?utf-8?B?S2U4UGgySjJUbytBRnZaOFpUMWJUbDdCTnRIRzBDSktaK0huSDFVOEd2Uldz?=
+ =?utf-8?B?TDJHMmhlZm9YTXZ5RTZqQzQ4REJNSUp2V1NjK09HY1BvRjU2MmM1WkxyWE9r?=
+ =?utf-8?B?WTkrRTJST21hZUpvZ2JwaExDMG9mbjZSaVg3QmdUWjUzVEpuZ1JuaDhFUEZC?=
+ =?utf-8?B?TGtTblFLRWd1VDBOVkpVdmNWU1V4eWZvT3VjSGFtQmlTaHoyeGRnTDZXam1q?=
+ =?utf-8?B?TUJUUlJEdTVDS0kvNHBrWVFMdnRsLzI4a045b2xQZXdJOTZOOTlXb3JzekZG?=
+ =?utf-8?B?NHZhQWQwQTZzczNoelpYYk1PWXlQNmNBektaOEpyVklMdk5VSi9BMWhtSzZZ?=
+ =?utf-8?B?SlJSRWJ0bHFHak54emNZQ1YwekxveGN0UU9MTkwvdWg3RTVrdVovQlhkcjA5?=
+ =?utf-8?B?dTRsdXI5NHZyaTM1c3NkUGRnRitxMkNyci93MHFUUWMzK0YvQzJmL3ZldHBj?=
+ =?utf-8?B?ZnhtNmhZK0J6RVkrWXRyZi9vNGRQV1RYQzVLcXkrNTRGSW1GQnNtUzRXNTVw?=
+ =?utf-8?B?Q0djT0FPbm43R0NCUGMwQXIvc3V3WHFuaHBiV3FTeHhBS2xycEdvdmVVZGdZ?=
+ =?utf-8?B?WEttQnBEbE5WMUpNUmdtNHFSdjE5SVkxUmVRWC9PbHVNNzdJeXNZcGxHZ1JK?=
+ =?utf-8?B?S09vYmNodnRRREJZYWNRK3Q3ZUllTnFhQnF1YnZiVDlLQ2c4V2lLd1QxbFZX?=
+ =?utf-8?B?ZlNpOVhybkYweHd2SWl2WWhOdEFrM003ZjQ5eXZGRXhKbDY4NXF6eERSSHJK?=
+ =?utf-8?Q?9xsDHm1x8li+hCKptv2g9YibkNCAN73GBxDX3ewACkfH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b146d06c-dbc9-4273-37f6-08de21b343d0
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:18:15.6406
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a4b5c70-cfa5-4e0e-6de1-08de219625a8
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E1.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYPPR06MB8208
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fz/tGHlauKzjnB3aTCY2QiRb0975/8WjLgtsUutBV1qevmfDtdDJ0IN3K0V0c0+iaRDWM8KYQ0KeEwoMrisP0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4144
 
 
+On 11/11/2025 23:17, Aaron Kling wrote:
 
-On 11/12/2025 6:16 AM, Bjorn Helgaas wrote:
-> EXTERNAL EMAIL
-> 
-> From: Shawn Lin <shawn.lin@rock-chips.com>
-> 
-> L1 PM Substates for RC mode require support in the dw-rockchip driver
-> including proper handling of the CLKREQ# sideband signal. It is mostly
-> handled by hardware, but software still needs to set the clkreq fields
-> in the PCIE_CLIENT_POWER_CON register to match the hardware implementation.
-> 
-> For more details, see section '18.6.6.4 L1 Substate' in the RK3658 TRM 1.1
-> Part 2, or section '11.6.6.4 L1 Substate' in the RK3588 TRM 1.0 Part2.
-> 
-> Meanwhile, for the EP mode, we haven't prepared enough to actually support
-> L1 PM Substates yet. So disable it now until proper support is added later.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> [bhelgaas: set pci->l1ss_support so DWC core preserves L1SS Capability bits;
-> drop corresponding code here]
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Link: https://patch.msgid.link/1761187883-150120-1-git-send-email-shawn.lin@rock-chips.com
+...
 
+> Alright, I think I've got the picture of what's going on now. The
+> standard arm64 defconfig enables the t194 pcie driver as a module. And
+> my simple busybox ramdisk that I use for mainline regression testing
+> isn't loading any modules. If I set the pcie driver to built-in, I
+> replicate the issue. And I don't see the issue on my normal use case,
+> because I have the dt changes as well.
+> 
+> So it appears that the pcie driver submits icc bandwidth. And without
+> cpufreq submitting bandwidth as well, the emc driver gets a very low
+> number and thus sets a very low emc freq. The question becomes... what
+> to do about it? If the related dt changes were submitted to
+> linux-next, everything should fall into place. And I'm not sure where
+> this falls on the severity scale since it doesn't full out break boot
+> or prevent operation.
 
-Reviewed-by: Hans Zhang <hans.zhang@cixtech.com>
+Where are the related DT changes? If we can get these into -next and 
+lined up to be merged for v6.19, then that is fine. However, we should 
+not merge this for v6.19 without the DT changes.
 
-Best regards,
-Hans
+I will also talk with Thierry to see if he has any concerns about users 
+seeing slow performance if they don't have an up-to-date DTB.
 
-> ---
->   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 38 +++++++++++++++++++
->   1 file changed, 38 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index 3e2752c7dd09..62a095752833 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -62,6 +62,12 @@
->   /* Interrupt Mask Register Related to Miscellaneous Operation */
->   #define PCIE_CLIENT_INTR_MASK_MISC     0x24
-> 
-> +/* Power Management Control Register */
-> +#define PCIE_CLIENT_POWER_CON          0x2c
-> +#define  PCIE_CLKREQ_READY             FIELD_PREP_WM16(BIT(0), 1)
-> +#define  PCIE_CLKREQ_NOT_READY         FIELD_PREP_WM16(BIT(0), 0)
-> +#define  PCIE_CLKREQ_PULL_DOWN         FIELD_PREP_WM16(GENMASK(13, 12), 1)
-> +
->   /* Hot Reset Control Register */
->   #define PCIE_CLIENT_HOT_RESET_CTRL     0x180
->   #define  PCIE_LTSSM_APP_DLY2_EN                BIT(1)
-> @@ -85,6 +91,7 @@ struct rockchip_pcie {
->          struct regulator *vpcie3v3;
->          struct irq_domain *irq_domain;
->          const struct rockchip_pcie_of_data *data;
-> +       bool supports_clkreq;
->   };
-> 
->   struct rockchip_pcie_of_data {
-> @@ -200,6 +207,32 @@ static bool rockchip_pcie_link_up(struct dw_pcie *pci)
->          return FIELD_GET(PCIE_LINKUP_MASK, val) == PCIE_LINKUP;
->   }
-> 
-> +/*
-> + * See e.g. section '11.6.6.4 L1 Substate' in the RK3588 TRM V1.0 for the steps
-> + * needed to support L1 substates. Currently, just enable L1 substates for RC
-> + * mode if CLKREQ# is properly connected and supports-clkreq is present in DT.
-> + * For EP mode, there are more things should be done to actually save power in
-> + * L1 substates, so disable L1 substates until there is proper support.
-> + */
-> +static void rockchip_pcie_configure_l1sub(struct dw_pcie *pci)
-> +{
-> +       struct rockchip_pcie *rockchip = to_rockchip_pcie(pci);
-> +
-> +       /* Enable L1 substates if CLKREQ# is properly connected */
-> +       if (rockchip->supports_clkreq &&
-> +           rockchip->data->mode == DW_PCIE_RC_TYPE ) {
-> +               rockchip_pcie_writel_apb(rockchip, PCIE_CLKREQ_READY,
-> +                                        PCIE_CLIENT_POWER_CON);
-> +               pci->l1ss_support = true;
-> +               return;
-> +       }
-> +
-> +       /* Otherwise, pull down CLKREQ# */
-> +       rockchip_pcie_writel_apb(rockchip,
-> +                                PCIE_CLKREQ_PULL_DOWN | PCIE_CLKREQ_NOT_READY,
-> +                                PCIE_CLIENT_POWER_CON);
-> +}
-> +
->   static void rockchip_pcie_enable_l0s(struct dw_pcie *pci)
->   {
->          u32 cap, lnkcap;
-> @@ -264,6 +297,7 @@ static int rockchip_pcie_host_init(struct dw_pcie_rp *pp)
->          irq_set_chained_handler_and_data(irq, rockchip_pcie_intx_handler,
->                                           rockchip);
-> 
-> +       rockchip_pcie_configure_l1sub(pci);
->          rockchip_pcie_enable_l0s(pci);
-> 
->          return 0;
-> @@ -301,6 +335,7 @@ static void rockchip_pcie_ep_init(struct dw_pcie_ep *ep)
->          struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->          enum pci_barno bar;
-> 
-> +       rockchip_pcie_configure_l1sub(pci);
->          rockchip_pcie_enable_l0s(pci);
->          rockchip_pcie_ep_hide_broken_ats_cap_rk3588(ep);
-> 
-> @@ -412,6 +447,9 @@ static int rockchip_pcie_resource_get(struct platform_device *pdev,
->                  return dev_err_probe(&pdev->dev, PTR_ERR(rockchip->rst),
->                                       "failed to get reset lines\n");
-> 
-> +       rockchip->supports_clkreq = of_property_read_bool(pdev->dev.of_node,
-> +                                                         "supports-clkreq");
-> +
->          return 0;
->   }
-> 
-> --
-> 2.43.0
-> 
+Is there any easy way to detect if the DTB has he necessary properties 
+to enable ICC scaling?
+
+Jon
+
+-- 
+nvpublic
 
