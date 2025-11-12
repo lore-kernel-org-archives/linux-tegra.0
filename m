@@ -1,171 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC6C26E717;
-	Wed, 12 Nov 2025 07:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4CD2D6E42;
+	Wed, 12 Nov 2025 08:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932676; cv=none; b=YjZtgEmRmSfTpZrrk1GNkCo1J41az26J6futZTtrTwKDNPoC/Vj//eLhAOnGXWqy13UT+2wpsrnP1FGWkP046HcRjIgE99UFy1Qt3EFW3VKMu7zXEcxMGFMxzrRBrsovAWxTyBSw/A410ZSZkCZT96WpbYbJj1+lCUp386aNuPE=
+	t=1762935766; cv=none; b=dHGUgKpTP/nBv6FI0FuBY9zI1pTJKWSIz5f5bh86u+/w/89juLaQW7sgpRuzAO1IgMxZClqrfIGSoXQA9SdtMkXwNyCJK5Cy6Pw6pU39ifKbHG5hlWK7ENSoCFLc8MIVBH6q2+PsKt7+699Q1p3KYoqMUOieoZDtQa+PtAQYkC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932676; c=relaxed/simple;
-	bh=wRZh9AiMdIHJ/hnaT1J6UAl9Amp76jd8s8ixT0Dm+Gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xw4TmDVV7tZmAnM+OKqKVn5EhIkHERUrpmjEMaU1svYRBjB1FDh6qf8Vnn5p0rkVF5v7qPQO6xtu2xKsakWidG27oVacRJlKNvoy3OhY0z/J0crvBQ/KX11Xdl3d2LhvGPiThYI3vuvn+af9kfLOsBiUHOb7xN7IFiuSYjb0+ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzDdJCtp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762935766; c=relaxed/simple;
+	bh=WHWCVmYt6UtQ3D5Ri8XoM/WvWGHNmlnb2EcUM8qufBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L88nZgCR1r6uLXS3Ib42dSQmhzKJGpUgQdvop5ZD41WKuSZVtAAAqlEQwyG9SH/4Oahh8bD4wYWmWv0XO1jJsbLmcOCc6MMZ1wVHrPrAMJU38b4sK+OuKfk1dyEy7gLVHjMEf2HfewVyom9nOB5WriVnYy6lwSSwkPl2z/PlEEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kttxp00X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzDdJCtp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B119EC19425;
-	Wed, 12 Nov 2025 07:31:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kttxp00X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A174BC4CEF8;
+	Wed, 12 Nov 2025 08:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762932675;
-	bh=wRZh9AiMdIHJ/hnaT1J6UAl9Amp76jd8s8ixT0Dm+Gs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RzDdJCtpDxn/y09+VtD/SqEZV2HiG6FkIIKexmUm6QR9QsHpzUyt3Sk+zIZi07Wg1
-	 K3y3sF0Nu5HzbPC0p4I2eKHBG9pOP4CxpCDB/ukHgd13rrHOrJfeJGWTgI6ou58E63
-	 5vP6gYZdazte/TQapthw6pvGoch6/rP4fC3ot9yEcmWrKXND+e7FJcRV3m/6SEtSI0
-	 eD8HKiywaTrksHCFjloHjN5y73oAlplFoeUEm5rN706DrtMvR+t3L0HN62dhJBVIIq
-	 Mm+vzoVJBRTb84VhsQXCAsFR/Y9n4XLj5kYigFYTIfTj+vuwRyNlr/ZA40A3Nnbxo0
-	 CvbRyLAdr+YfA==
-Message-ID: <95b61d3f-f6e8-4746-9195-cc38d8815d66@kernel.org>
-Date: Wed, 12 Nov 2025 08:31:11 +0100
+	s=k20201202; t=1762935765;
+	bh=WHWCVmYt6UtQ3D5Ri8XoM/WvWGHNmlnb2EcUM8qufBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kttxp00Xc7Q2NVR9zWtAQOW32+K5IUJtvvbjIacWFrREkJHKtXZvOqAE9Gua6PoGC
+	 Z0PWHqSpMfxReJv7iL5UYQPsbL046fDjJOWbbV4bdQ4pdjMz2nIzAIHZhMw7bzayUP
+	 y2Bv+7T/1TtBofUmqHq5O+CejsEDVgK3i6OQG2/ijVcXuHJBdoNk3MTvk2hn7OOdM5
+	 4L32vutb2OpX5twJ0FaMH2B6Hocia+8TeMb5mZAZkTeNOGVOALNy25ugZsQxFkScZ+
+	 F5ZGrNhFI8NY7qx2IFdGhctYLQpV0z7JBTaVUMm/cMNC1+rmxzdT6Bx+4s4v6urya+
+	 S/b1vretnjh2g==
+Date: Wed, 12 Nov 2025 09:22:36 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Simon Xue <xxm@rock-chips.com>, Damien Le Moal <dlemoal@kernel.org>,
+	Dragan Simic <dsimic@manjaro.org>, FUKAUMI Naoki <naoki@radxa.com>,
+	Diederik de Haas <diederik@cknow-tech.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>, Frank Li <Frank.li@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Conor Dooley <conor@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Hans Zhang <hans.zhang@cixtech.com>, linux-tegra@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@pengutronix.de,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/4] PCI: dwc: Advertise L1 PM Substates only if driver
+ requests it
+Message-ID: <aRRDzKFVTFTIuvvh@ryzen>
+References: <20251111221621.2208606-1-helgaas@kernel.org>
+ <20251111221621.2208606-2-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Aaron Kling <webgeek1234@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com>
- <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
- <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
- <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
- <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com>
- <99ca4992-5736-417d-854e-379542549bee@kernel.org>
- <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com>
- <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
- <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
- <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
- <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
- <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com>
- <CALHNRZ83Q2Ha8VYoWAnqoCZQ=Fd9rtVRVLwRFxAY68ePQ29GHw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALHNRZ83Q2Ha8VYoWAnqoCZQ=Fd9rtVRVLwRFxAY68ePQ29GHw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111221621.2208606-2-helgaas@kernel.org>
 
-On 12/11/2025 08:21, Aaron Kling wrote:
-> On Wed, Nov 12, 2025 at 12:18 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->>
->> On 11/11/2025 23:17, Aaron Kling wrote:
->>
->> ...
->>
->>> Alright, I think I've got the picture of what's going on now. The
->>> standard arm64 defconfig enables the t194 pcie driver as a module. And
->>> my simple busybox ramdisk that I use for mainline regression testing
->>> isn't loading any modules. If I set the pcie driver to built-in, I
->>> replicate the issue. And I don't see the issue on my normal use case,
->>> because I have the dt changes as well.
->>>
->>> So it appears that the pcie driver submits icc bandwidth. And without
->>> cpufreq submitting bandwidth as well, the emc driver gets a very low
->>> number and thus sets a very low emc freq. The question becomes... what
->>> to do about it? If the related dt changes were submitted to
->>> linux-next, everything should fall into place. And I'm not sure where
->>> this falls on the severity scale since it doesn't full out break boot
->>> or prevent operation.
->>
->> Where are the related DT changes? If we can get these into -next and
->> lined up to be merged for v6.19, then that is fine. However, we should
->> not merge this for v6.19 without the DT changes.
-> 
-> The dt changes are here [0].
-> 
-> This was all part of the same series, keeping everything logically
-> related together. But on v2, Krzysztof said that none of this should
+On Tue, Nov 11, 2025 at 04:16:08PM -0600, Bjorn Helgaas wrote:
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -1060,6 +1060,8 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+>  		PCI_COMMAND_MASTER | PCI_COMMAND_SERR;
+>  	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
+>  
+> +	dw_pcie_config_l1ss(pci);
 
-I asked you about dependencies between the patches and you said there
-are none, so collecting different subsystems into one is wrong. That's
-nothing new, standard Linux kernel process.
+The name dw_pcie_config_l1ss() sounds like we are enabling l1ss.
 
-What is non-standard here is keeping secret that there is impact on users.
+I know naming is hard.
 
-> have ever been together and that each subsystem should get a separate
-> series, even if the changes are related. Which I did, and now this is
-> split across three series. The actmon series for tegra210 is in a
-> similar state. Split across four series and only one has been pulled
-> to linux-next.
-> 
->> I will also talk with Thierry to see if he has any concerns about users
->> seeing slow performance if they don't have an up-to-date DTB.
->>
->> Is there any easy way to detect if the DTB has he necessary properties
->> to enable ICC scaling?
-> 
-> I'm not sure there is any simple way, given how I set up tegra186 and
-> tegra194. The new dt properties are on the cpu nodes, there's nothing
-> new for the emc node. So the emc driver just unconditionally declares
-> itself to icc. It was doing this before too, but wouldn't do anything
-> on tegra186 or tegra194 because the set_bw function was just a stub
-> and the real logic happened in the bpmp bw mgr, which only exists on
-> tegra234+. Now the set_bw function will directly calculate and set the
-> emc clock as long as the bpmp bw mgr is not supported. Offhand, I
-> can't think of anything existing to check to skip this, because
-> nothing new in the dt has been added in the scope of emc.
-If your ICC triggers without users, I think it is usual case - you
-should not enable the sync_state but instead keep it disabled till you
-have all the consumers in place.
+Perhaps dw_pcie_disable_unsupported_l1ss() ?
 
-Best regards,
-Krzysztof
+Or something similar.
+
+
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1067,6 +1067,8 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>  	val &= ~REQ_NOT_ENTR_L1;
+>  	writel(val, pcie->parf + PARF_PM_CTRL);
+>  
+> +	pci->l1ss_support = true;
+> +
+>  	val = readl(pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT_V2);
+>  	val |= EN;
+>  	writel(val, pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT_V2);
+
+While it seems like ops_2_7_0 is the only type that explicitly does a
+register write to enable L1ss, other versions might have the register
+as enabled by default, so it would be nice if Mani could confirm exactly
+which versions that should set l1ss_support = true.
+
+
+Kind regards,
+Niklas
