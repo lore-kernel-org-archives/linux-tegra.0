@@ -1,67 +1,67 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC3130E0D5
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 10:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB4530F7EA
+	for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 10:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943365; cv=none; b=Wxsl/ThRk8L26OugzGWGXFTaMG27QlVh82bynf0HHKT14YlNBQ5IiiAVSH0W2vo2IsnEUwJpJtI8BSGK39tUWaxsVZlijiCbs1IidoqhQUUO2EUUh3c6/G4C7+CBWYBvVBecBK+KeBaffbW7eaaYLQug7WDeI+LQX+sG6Ehr7co=
+	t=1762943367; cv=none; b=LyxV7OVgkSFy3p4oLXWDzpWNTWNBzJtj5vCm5TtIZ800lDyNwwP0apMpHwOpkZ2D2IwhaMa6MVVDCXRTC/UVHf4JxVxAZPvwDCpzi3ePU8M6oPgaRIL0hzw/fs8DpZXVr+GuwUu1adieX1kHrQ8XiJtuuAwPkY60gxLnQ5zNhEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943365; c=relaxed/simple;
-	bh=nbwVZd1B/0VhFu7wCpDEX+Xq7qXUW4QXmwaphM2p2IQ=;
+	s=arc-20240116; t=1762943367; c=relaxed/simple;
+	bh=HOTpv8E7M3Z9++7bQRRNeja2y7FI7o/hDZwnKU6ywmQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dq8e5gzeMRxEaizbTc9YKbiWTplklwCk/IY0Ux8E+tO9cbehI63Os2IKGFPQpk8JMjIDtepDENXBjJXMM640x8ktj/PKB5UC+Bx8Da8mL0//FDp8/I9eAsNwgji6imztfSevaKyKa3oLvoZDHelC7wI6iRWH27ZLV9aQPX4Lzxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XXNJleC5; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=RYsHVskPv3QhvbDPRg2mW5Do4u5KgjY1VYF420PaeS1ILbvAR3G0R9OUujCd9RcCG9Ap0D7l5KuAsnIE9FowZ7h4TUWDSwlLnKG9eqZqFXbPuN62a+8VOSXFfMn3pWWw51uQ88XN6xmiXIU3NT35rVJO7sm3KtB2v/xQ0xbUod0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zu4CF3Nz; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XXNJleC5"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47714bb5c49so148725e9.2
-        for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 02:29:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zu4CF3Nz"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-429ebf2eb83so83168f8f.1
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 02:29:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762943361; x=1763548161; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762943363; x=1763548163; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CsvFfAvlWLWUNByqNFGDgf521DahJAyf+bE64GmioBo=;
-        b=XXNJleC5qKSNtvmIEAkGOLxGDmq3jFud4he9epG4tSDPUS/BaAsJZfI0ShwvsWT3mD
-         e1oLw8ucPt7CnuwflacurAAAeUKuN42fY3PxyWX99NlwcIymhFDb1Ax99lmFTRO4U7NX
-         HpRarxQaBWFbjmPe9nh1W8CQSFgxzZZzMTmVgt1+moogPtFsdG8OCz/LdzFKxNL+tFwp
-         CBMvk5q0qTb+NqhtPf7I2XKuGxoXVruE0FGfnbGd+7ewGokwoZs8RiG7xpPx4oo+EThX
-         K1U7EK6DxF+n0n9UwupPTaV4BD6bjnObrm62Zb4c+Dvelfu6XyESHbuvV6zcnKi5g+Gt
-         M30w==
+        bh=nB+3RSbUxVhm7JIM+0TQGTITyXpP2tjxIcWVIQgzWAo=;
+        b=zu4CF3NzZ5kD1ZXQwcddAdAKqtb5LzqQ5w648XyMbnHUs7vAxZSEboCPBpZHvvuUar
+         nveZh0Q9HVmHQBCXmnOpiyYaHZvR6983l8QlG6uLC9Gpq1fbR+K8Zhn2wxvY2YMgqEsl
+         1T7U0lD6TewkLcmfNPOM/4eL+zJ9ouKmdCeLU11/GMEgzJh7Mb8eliuKQpaQZZ7oS3Z1
+         4soZ6E8nrx6qIB+X802mQW/UfcMH1Z3CLjtAFL4lt8exvxfah8Pr41XvxFOo2DU9o1G6
+         q+8NDK13nWGJMTsip+qcjbjaHg3gSKFP3uWGXGSK3IEumW9yU5bCBPs5FSYxLn7s81BL
+         Tu/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762943361; x=1763548161;
+        d=1e100.net; s=20230601; t=1762943363; x=1763548163;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=CsvFfAvlWLWUNByqNFGDgf521DahJAyf+bE64GmioBo=;
-        b=h7HG5CcWMs5MbRKLOegv5izo3ELxIggNYYw08sXorqgLF0W7sa54m8HvOuQJ8htC6d
-         bKlOpGc6geIYoCU/NqAUz8pTAlFsQvBeb5s0uq4RPpwa6AtozoqCkVqoJxq1l965gVBK
-         ynH0zkG2vwLSlIIb/73TYWfCJhATav8QrKziw67cm3uk1dFonZvvOnTVIiMLnh7DybGX
-         4WBFFd4MEsJHH4Y5kPIWczdo4A0XK9lpcaGpY03lB3zRu4kd61kGnKoOuJFgdqfw7sP4
-         5gdOiKJKCXD4dEBx0MdPuxWARElxPdO0AgrC6Ub5zr/vbbhM2WF0OHL/w/85bCPvg+o2
-         khSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRRC1excDE8Z6bCcKvXIahZyLyqTHztIAdYUwVMJuYOB/iNpacBdq+4GzKN1xIrJ+cK1oujyc+NRJHJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIwkaqjEolxibaQv4ukMLGGQrK6obYGb/xNS6aGAQG73I7jDqr
-	v9DNz/7PWqtdNiIYLXeYpeTerqpNEkfaLx0Zni0+t748WCQg1TvsQ12WXf4NaWn0KZk=
-X-Gm-Gg: ASbGnctrPYPvSAWs3ByxQUPbxdLQf/G8ntiIgtCa+60VOqHyAWBwTCE/ioFnKI5ikCR
-	Kzgws2NS2JSx1ixTQxIDqilBxLOdqPvn1UM1ojtpuUy6C93FcNZCtoHcgZti+RKe2b8AYmD4aMU
-	ix8dA+II9+hU0WH013rRFJHbufL6S0507JnKs5BTfAwYRMo+CKbM8hbx+6XOFprTEqemg3PW3uy
-	fxZRjTYP86tJFwzMON7Jqw1qoio7D2PW31Ob4qDi0XKNS+GvEqonMybLy7RTmdOzimgW0HzguAy
-	vpOW9KkS3dSlcz1VfDhoB3nhcuAPmWIYXd73t8YQVB0lw2s1iHBe4AguEsCVIvP1gXDCIyTuokz
-	A7JGZ32XLHOwh/qrvJX3aVVLbYsPI/flQIwwZMcy27OhYbQFby4xYxjBGEO7eocT/p45Rfs99Jq
-	RErMw6ivQkX7X8EHUbsSGvuWuC5rA=
-X-Google-Smtp-Source: AGHT+IHAInGs1fY6MhYk+BOaIQN6jWgnuAcNUMCj8asWuYpXZLP7gT6bSs36V8+DqD/oHKzLuMjE9A==
-X-Received: by 2002:a05:600c:458d:b0:468:7a5a:14cc with SMTP id 5b1f17b1804b1-477870a634fmr13473095e9.3.1762943360967;
-        Wed, 12 Nov 2025 02:29:20 -0800 (PST)
+        bh=nB+3RSbUxVhm7JIM+0TQGTITyXpP2tjxIcWVIQgzWAo=;
+        b=naZ/YMA6SbyzY8bSORRRs7nEnmDZinBVnV7kIzNFuKj7EpMpOM7SAtBuvRRnYiMgqP
+         TKT2dUO9izKOM2pNsbeL2SuGnP4PLIqAT/kmcX6R6JZOBRwFxhvbQa/sNpmW5CMZ5LUT
+         +iOx4hCx65UwlNdtm3iO6+T1S0g/vtJ4dyv1I9ccDRtIxGTikm7UHOsDVjE/pTORCdQX
+         lL3+oBnbsaFmFVt8RJnaaIfFA0A9c+48G75jj32bS8hTrftlD8H37urQ2IotkLQYkz1k
+         0XLLTGMwXpA02gEsXwEh3nz/kWXKMYz6SiOgMBr5NJGHXwlQvGFv91iuMKfr0MuBFpVs
+         Gm1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnRVfUT/rEUG/c880b5IIuZVkJT4xlcVMG7LztOl55iqnC51RrEIyObGB9+sPMSHt7vfhd0N0lum5NPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLtQav9G0s3GP5CVURDFEdGJL8YdFYADFLG4ryr8XJYwPaKgpD
+	AysXWu/8doJ5D3pdjVDubGrUpen44colHZzy+9s+DHW0LuphoEDPEJF5q/2VJZf8j9Y=
+X-Gm-Gg: ASbGncve7mxQ1D9QV611ie9FdKzgbh4VigGkt4yftFaYIJguxErXwGnWgMXbyEVliCX
+	8zwc6+Hd3N1y4Y+0SpxIpW5y9Qz8/xTJ4y75EfZzLpHHo9kh+VAFHLdC1iZOIDlnyPEph/ekYBg
+	8mjhGts6LAQPK+B0YhF+EAnn6QioMVmlINTGZVs7Y6xxpB8BrJM4bVeYpz75GpJmCMVwBFTTZBl
+	GgP9OxkRJcdP3Wo+8lMzOnDYMbt2Mtc+i9v1mjwyJUC1Tfb2x/JUweTKY3PYITKZsFgXQaVGjxz
+	cXqUhLxIhLqbAn89M6Ym0VA9w0H5EVvVEPj8lZVdL4kTNlMsB+WE111YH5XOtZutx0JICTZRpKU
+	fxVOyIkRgPVJ8J6hZSWP0cnefpiQD3LiKlQ0oaw3i8fLCxouZywdrBdnY/TgA9ZwcHZ5JUTEycN
+	fGsRjPBLc8tZK9hpAOJvL1jtXlQB4=
+X-Google-Smtp-Source: AGHT+IG4PYkMnNw0ODvtXOUL94VjBv1SVm7gv9pdwxJVf+TJ17wVy2egXepWnzI6OYpTuU2LqPLsAQ==
+X-Received: by 2002:a05:600c:3b99:b0:46f:ab96:58e9 with SMTP id 5b1f17b1804b1-47786ffa240mr13184865e9.0.1762943362906;
+        Wed, 12 Nov 2025 02:29:22 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b32ecf522sm22020001f8f.45.2025.11.12.02.29.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b32ecf522sm22020001f8f.45.2025.11.12.02.29.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 02:29:20 -0800 (PST)
+        Wed, 12 Nov 2025 02:29:22 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 12 Nov 2025 11:28:53 +0100
-Subject: [PATCH v2 08/11] platform: surface: Simplify with
+Date: Wed, 12 Nov 2025 11:28:54 +0100
+Subject: [PATCH v2 09/11] powercap: dtpm: Simplify with
  of_machine_get_match_data()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -70,8 +70,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251112-b4-of-match-matchine-data-v2-8-d46b72003fd6@linaro.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251112-b4-of-match-matchine-data-v2-9-d46b72003fd6@linaro.org>
 References: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
 In-Reply-To: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
 To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
@@ -102,66 +102,71 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-tegra@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1620;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1300;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=nbwVZd1B/0VhFu7wCpDEX+Xq7qXUW4QXmwaphM2p2IQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpFGFqdZoAVmnIlbNdcg1Y+7nkfxGC6i0n15Upq
- K4jKAztwCqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRRhagAKCRDBN2bmhouD
- 16TrD/9AMI5SrOqJWRLQ7jKUbUsOysXBLyuiMqQn38xIXkce16vSkar8aQIikXJi255w8BCbJN5
- XpoXeQslytCRS2CvSCYzSnwLKm2jyAZ/UJ1eYLlbnFgA+bS/tLQ+ZxexHjt9zLRFy5y/asoQ9P5
- T9ql1bh7o1gtWYg/4FFEWUimNr9blWrvDirnEFXFokhYDjS3gC7o+PuR2zOwO1cDK1KeZJJNkxN
- 4siZTPlGWjvimJMhb9MFFIaD1FGMjk8Oo9RuC38wtEQu+3Qnfv/pidmsMkt9EOEP0qyuk39qX97
- K0bF8PhZ0HlmSGHSqBDDnZ7h6TT47NdxsBFm6VztA4UBwafUt0laGgFVTbdjsPh9eLldIzc6gX4
- qd98n+HB0L0CRvu5lEA4fuApN250SBVNphKHTRCHH4rvm+c92d9Rviz27WVVP6aXK0lXrLRvuSQ
- a/h5NgHZvUsRgGR6F+KsWkKyMqs82BCAQMm3hAXYKGAHaMWvvL+CBlqoakEF16kOlukPZ2PeyBx
- +LBG4qy8sQRRamg1wPYLUZkGifRetG7z45hjdPYQwpEltgLy0irZZM9ct+2IGITcZjmMnULegw4
- nTMQ+fbC0RPtlIJPjVmVA3X+PhxBpo1um9dL60Lwd6bft0tS+sEppobeeBlN0d0Kr9qBJ5OTrXg
- yG81W0MnFMi2LXg==
+ bh=HOTpv8E7M3Z9++7bQRRNeja2y7FI7o/hDZwnKU6ywmQ=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpFGFr1tYOKM8LvWVApmUF795FPE3v7DdzNxeRs
+ sD8X/1CFaWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRRhawAKCRDBN2bmhouD
+ 17C6D/9Gk7S57LO4NXNBYYNtibDL8ljONOe8Ig0TRx0qtjvLyrRWtyTVEodm+FhIyH5crFSibku
+ khWIr85eaZnyI7DZmi9EEFVE4TwF2EuzXUHW8BfsvL7GRGYpX14S1sHSR8EleDgvDqMR9NTL6V0
+ jNIwfovhLn7VP+62qwBkcAlM/2T+zgdVrn1DzN5L7mfWJoxKIEyDNH6m/+NJZXFUpV8HAOSggLF
+ aFaSy/KjIdyDDmdGdCwFyzya7/r4WobRUj2kgaeARLZL89D8+WH9h28f/7hCc/hAfW4Ii4hbv91
+ ImiE/Pyo//QGhxgZOOxCC7SdAgA3h0gKzFE0Mgg0fENxJH3ErQLNax2+sn8jNbPg4xi/IW20mCb
+ 2t3DHlPLJLbhonIQc/3zosje4H2HU5cCZ8aqRjTNCRsbwSOVm0Szz99U91i8FgFfFR/laV42FcG
+ Nei3Qs4ZfN50R0C9Dh4TaDOeeBx8nKNoE3EzI2l5AY7zjvVe8CkMAl7LjCpfWFxFj9v9bhYmsoV
+ L/k42dG7HJvL4TkMRdbp6cOYV+0MPV7QY9nt7Fb1vu14PeCkZlFCr9Px35eZypnM018TUFkKaCU
+ 8PQcNvW9cis67Ie9IKba4R0f1wkpZVuHgWxJeR4dLwWs8Upggvlxq5bhVrL2wWCvymS1SWwmlnp
+ ZVHhvRQqrTykRYA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
 Replace open-coded getting root OF node, matching against it and getting
 the match data with new of_machine_get_match_data() helper.
 
-Acked-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 ---
 
 Depends on the first OF patch.
 ---
- drivers/platform/surface/surface_aggregator_registry.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/powercap/dtpm.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/drivers/platform/surface/surface_aggregator_registry.c
-index a594d5fcfcfd..78ac3a8fbb73 100644
---- a/drivers/platform/surface/surface_aggregator_registry.c
-+++ b/drivers/platform/surface/surface_aggregator_registry.c
-@@ -491,24 +491,13 @@ static const struct of_device_id ssam_platform_hub_of_match[] __maybe_unused = {
- static int ssam_platform_hub_probe(struct platform_device *pdev)
+diff --git a/drivers/powercap/dtpm.c b/drivers/powercap/dtpm.c
+index f390665743c4..129d55bc705c 100644
+--- a/drivers/powercap/dtpm.c
++++ b/drivers/powercap/dtpm.c
+@@ -548,9 +548,7 @@ static int dtpm_for_each_child(const struct dtpm_node *hierarchy,
+  */
+ int dtpm_create_hierarchy(struct of_device_id *dtpm_match_table)
  {
- 	const struct software_node **nodes;
 -	const struct of_device_id *match;
--	struct device_node *fdt_root;
- 	struct ssam_controller *ctrl;
- 	struct fwnode_handle *root;
- 	int status;
+ 	const struct dtpm_node *hierarchy;
+-	struct device_node *np;
+ 	int i, ret;
  
- 	nodes = (const struct software_node **)acpi_device_get_match_data(&pdev->dev);
- 	if (!nodes) {
--		fdt_root = of_find_node_by_path("/");
--		if (!fdt_root)
--			return -ENODEV;
--
--		match = of_match_node(ssam_platform_hub_of_match, fdt_root);
--		of_node_put(fdt_root);
--		if (!match)
--			return -ENODEV;
--
--		nodes = (const struct software_node **)match->data;
-+		nodes = (const struct software_node **)of_machine_get_match_data(ssam_platform_hub_of_match);
- 		if (!nodes)
- 			return -ENODEV;
+ 	mutex_lock(&dtpm_lock);
+@@ -567,19 +565,7 @@ int dtpm_create_hierarchy(struct of_device_id *dtpm_match_table)
+ 		goto out_pct;
  	}
+ 
+-	ret = -ENODEV;
+-	np = of_find_node_by_path("/");
+-	if (!np)
+-		goto out_err;
+-
+-	match = of_match_node(dtpm_match_table, np);
+-
+-	of_node_put(np);
+-
+-	if (!match)
+-		goto out_err;
+-
+-	hierarchy = match->data;
++	hierarchy = of_machine_get_match_data(dtpm_match_table);
+ 	if (!hierarchy) {
+ 		ret = -EFAULT;
+ 		goto out_err;
 
 -- 
 2.48.1
