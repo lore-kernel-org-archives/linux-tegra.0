@@ -1,165 +1,219 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m1973173.qiye.163.com (mail-m1973173.qiye.163.com [220.197.31.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E74C22257E
-	for <linux-tegra@vger.kernel.org>; Tue, 11 Nov 2025 23:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCD3A944;
+	Wed, 12 Nov 2025 02:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762903075; cv=none; b=Zx57cz7Ym3Erfn3G0QVnKjRgDPwPLoFXyc3eI4XdJtgb+03A/g/H7ItZ8qFjkFQJJoKlvx8hByS0oEau+cq2gv1xmzkwt4FJZE2av7g7Oz2YjLX9hrBXaQ+wJiY5Cvbi6Je8M3XklKkAOYwfDl2M7226fxNKCii+oRiXJx/2dyw=
+	t=1762913969; cv=none; b=TnLk++38gxOS/Lzj0eKi94DMGcd7HgDJwAA+Pv/fqenPAeahznte+ePmcEsKH+7g2/e/jBHnSAH19TWV77g6lORuuEAKSxkJwegKqkh2+ELWAH8N4cN7UB1d/odxfPCjFtY67PLXTpakU88KqNyNBk2bHb9qJbrBBJ34BcLS/Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762903075; c=relaxed/simple;
-	bh=piyjk0UICuFLylh+Sm1fnefVrHatXFXMF4SInyqrXeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hdc14RBKMQv77m7YcFIp0x+whd8lHq8X8vGzKjmdcun4hq1jIlxmgdLkrQS7Ed3RK6Z22DVtFzW3+twJCEVXawORvJcGKh7fHUSsYQcqIFPs2SnypluKhjoolx0q+cZoDB0rATgM9WysdJDlBcVDRwcOgX4i8SpPnsXYhjkpBXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHAtLRy2; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762913969; c=relaxed/simple;
+	bh=zrv4BQuAkbeUDpzcVRThVXvibXJv+pWYHlspRCkMfOk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OVbvxen98DtEU8iJlEeckFE7oTKS7FoHlthO/mQKn8HaZz6AdWtmVVnePD+JReMrDWBMVUo3dm9fdMJPkvzh/ViJqDiN3T5zWpenV1LxSrqmxLVzHrf98vNZWHkg++MaoQIwBU6hfz78E0eFq+Y9RJMc6y8LSl+o1EQ0Nf+MPPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=DNa5Gs7k; arc=none smtp.client-ip=220.197.31.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHAtLRy2"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59428d2d975so213440e87.3
-        for <linux-tegra@vger.kernel.org>; Tue, 11 Nov 2025 15:17:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762903072; x=1763507872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XxXzAibViSwAAylldqlTc3TG7DUM2kT/SoBJQ9gVkp8=;
-        b=DHAtLRy2efxfkL5EDn8JoBILhV9Z3d5BY+fyahqwi24rTOLBwyoECxfpsNvUXMhcXa
-         0EEyWwdMD4jCsWttrb2Mz/DgA3MmH6jDPkDSLUNtTGoFg/ThllpkQGepG6qWkB8M/7kQ
-         QBDq8tKCxNoYuVh9PY3aRfeIEOFXB7PlB23VdgDd3PlwDRpZiogvmNJHbBGRF1eW9Of4
-         4ZJ2afMZ2EnySSW2ZBbivIieZs9jyhhHkpMCiDWVRiYmhkWvZq+uBzV2l9PTgr/ajgZW
-         p8OovpE7dg0u9v/et/aOcv/c5p8Bz8wY7qNBkRozXn/aeAtynbLXp/pTy8kYz39yFnhQ
-         U9Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762903072; x=1763507872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XxXzAibViSwAAylldqlTc3TG7DUM2kT/SoBJQ9gVkp8=;
-        b=uNir9G0emkQdKSvKj5FE+tj4i6/xoVfSHLzq16Mifhz4ddMNPgKkcivioJ1jkX1eoI
-         ioe09b3nvi7Mn7gn7uaP4JsWlRUber9kyb4y7IOlmribPLn0gqu9oW4ASRVy9rRr+Bta
-         taJYSkulVKnXcxxi7nkM5cOzHUQ/pkOCucVoiGZ4oo4ySx9ocgRInCwwPV7iqQLa6DN8
-         1f4rqUiScNXrEQz72RxaPmrTeeTFTAoZeXECAfKkF1ARJFn1b27DwhM0o6WMAccSKoJP
-         sj8HEPI/XknHu6w0LV2C9zPjY1dy29ktSoOP3nQS97UJCkd0EMACbFjNa+R+kCiCCx14
-         24IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvUSm9zgZYALymG12vcUBiRPcnpEg55/S9X6c95unK5ZKaZqVtLHOHrLIK9t/WXx2GMebuG9RExvw2bg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfuj5bSA0Gu0W2YolMKV6eIkxp4FuLaTX4xt+zA3KdHMdHkCe7
-	IPIPohkdEpWOZ24cIc6Qa4bxjIueVogrXgg1Lso/dMmd4qZ5afURedaxQ4EN9aI+5tmr46jMHG4
-	MdH37bbe++okpEyV6ON3lRaOZX96/K/Q=
-X-Gm-Gg: ASbGnctx1ewWdwP6vzsVgxdeB5qxY0LdgSvA3HBqS2ln4IGfWUfTD5eWH1gQ4vvYCtl
-	VfJZrR1cpoQ0og6tyH8hTK5Bb/1Iwc4XWR7tqx977Ue+RqN3N7h/+R1yYTco73YrzRzM9pbTyc1
-	dM0b3+XkLYifcrw9JRj9+oSkHAvadMLCIaF9AttL2ywDfJScF6oiD4o9wx3o4fcwBjaXo6Gyyjd
-	w48V9ZCdLEKxd+MrYjmLq/af9vTpEz+O69tg6EM7sNK6wBHXPfUsou9GZdUL44nRUXxYeY=
-X-Google-Smtp-Source: AGHT+IECOFMI8OdowjaSX2iDsqoM90iLrXne/fWxcejwflrbsKpPRHv9RqN3KIY7SrMPz9KQt1HDoSYoHFJRU6eT+YM=
-X-Received: by 2002:a05:6512:39cb:b0:594:49ed:3ced with SMTP id
- 2adb3069b0e04-59576e40572mr245993e87.54.1762903071425; Tue, 11 Nov 2025
- 15:17:51 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="DNa5Gs7k"
+Received: from [192.168.61.151] (unknown [110.83.51.2])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 293fd660a;
+	Wed, 12 Nov 2025 09:03:42 +0800 (GMT+08:00)
+Message-ID: <79a8c3cc-2b60-4bce-b1ba-7ab5f033f924@rock-chips.com>
+Date: Wed, 12 Nov 2025 09:03:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
- <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
- <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
- <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com> <99ca4992-5736-417d-854e-379542549bee@kernel.org>
- <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
- <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com> <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
-In-Reply-To: <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 11 Nov 2025 17:17:40 -0600
-X-Gm-Features: AWmQ_bkYm4fjvjDrlS3yKb85hc0z8ySFttCNXBmRTjm0WjIIiGVUIlHpFMqe8b0
-Message-ID: <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Manivannan Sadhasivam <mani@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>, Simon Xue <xxm@rock-chips.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
+ FUKAUMI Naoki <naoki@radxa.com>, Diederik de Haas <diederik@cknow-tech.com>,
+ Richard Zhu <hongxing.zhu@nxp.com>, Frank Li <Frank.li@nxp.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Hans Zhang <hans.zhang@cixtech.com>,
+ linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@pengutronix.de, Bjorn Helgaas <bhelgaas@google.com>,
+ Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH 1/4] PCI: dwc: Advertise L1 PM Substates only if driver
+ requests it
+To: Bjorn Helgaas <helgaas@kernel.org>
+References: <20251111221621.2208606-1-helgaas@kernel.org>
+ <20251111221621.2208606-2-helgaas@kernel.org>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20251111221621.2208606-2-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a759702a009cckunm68f60faf90264
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTUNNVkxJSRoZGR5KTRoaHlYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSktVQ0hVTkpVSVlXWRYaDxIVHRRZQVlPS0hVSktISkpCTVVKS0tVSk
+	JZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=DNa5Gs7krwEhPUprrj/3XgxdSRjNLBnw+qN8B4C1vhJlTX/vfffYkqXOnhtb/6isIcgYPxadD7Z2X5DoSALMwp3BimgGwfur5wMUdCPUpgAhoDNn1bx0HLtK5uyLXSstW6gi7Ky7ThJ0IqZ6g1wO8KJqM501+F+nkx1fxrx3axo=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=X0Bnr2iJChPdZ80UCVLiI+51ilZQPsF7USzqD4IyGeA=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Nov 11, 2025 at 3:29=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 11/11/2025 17:04, Aaron Kling wrote:
->
-> ...
->
-> > My setup uses the boot stack from L4T r32.7.6, though cboot is source
-> > built and has had changes over time to support newer Android versions.
-> > There shouldn't be anything there that would affect emc clock, though.
-> >
-> > I'm seeing the emc clock stay at the boot value, namely 1600MHz. Per
-> > both debugfs clk/emc/clk_rate and bpmp/debug/clk/emc/rate. I don't
-> > even see 250MHz as an option. Debugfs emc/available_rates lists 204MHz
-> > as the closest entry.
-> >
-> > I'm trying to think what could cause a drop in the selected clock
-> > rate. This patch should only dynamically change the rate if the opp
-> > tables exist, enabling the cpufreq based scaling via icc. But those
-> > tables don't exist on linux-next right now. My test ramdisk does
-> > nothing except set up sysfs/procfs/etc just enough to run a busybox
-> > shell for debugging. Do the Nvidia regression testing boot scripts do
-> > anything to sysfs or debugfs that would affect emc?
->
-> So this is definitely coming from ICC. On boot I see a request for
-> 250MHz coming from the PCIe driver ...
->
-> [   13.861227] tegra186_emc_icc_set_bw-356: rate 250000000
-> [   13.861350] CPU: 1 UID: 0 PID: 68 Comm: kworker/u32:1 Not tainted 6.18=
-.0-rc4-next-20251110-00001-gfc12493c80fb-dirty #9 PREEMPT
-> [   13.861362] Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
-> [   13.861370] Workqueue: events_unbound deferred_probe_work_func
-> [   13.861388] Call trace:
-> [   13.861393]  show_stack+0x18/0x24 (C)
-> [   13.861407]  dump_stack_lvl+0x74/0x8c
-> [   13.861419]  dump_stack+0x18/0x24
-> [   13.861426]  tegra186_emc_icc_set_bw+0xc8/0x14c
-> [   13.861438]  apply_constraints+0x70/0xb0
-> [   13.861451]  icc_set_bw+0x88/0x128
-> [   13.861461]  tegra_pcie_icc_set+0x7c/0x10c [pcie_tegra194]
-> [   13.861499]  tegra_pcie_dw_start_link+0x178/0x2b0 [pcie_tegra194]
-> [   13.861510]  dw_pcie_host_init+0x664/0x6e0
-> [   13.861523]  tegra_pcie_dw_probe+0x6d4/0xbfc [pcie_tegra194]
-> [   13.861534]  platform_probe+0x5c/0x98
-> [   13.861547]  really_probe+0xbc/0x2a8
-> [   13.861555]  __driver_probe_device+0x78/0x12c
-> [   13.861563]  driver_probe_device+0x3c/0x15c
-> [   13.861572]  __device_attach_driver+0xb8/0x134
-> [   13.861580]  bus_for_each_drv+0x84/0xe0
-> [   13.861588]  __device_attach+0x9c/0x188
-> [   13.861596]  device_initial_probe+0x14/0x20
-> [   13.861610]  bus_probe_device+0xac/0xb0
-> [   13.861619]  deferred_probe_work_func+0x88/0xc0
-> [   13.861627]  process_one_work+0x148/0x28c
-> [   13.861640]  worker_thread+0x2d0/0x3d8
-> [   13.861648]  kthread+0x128/0x200
-> [   13.861659]  ret_from_fork+0x10/0x20
->
-> The actual rate that is set is 408MHz if I read the rate after
-> it is set ...
->
-> [   13.912099] tegra186_emc_icc_set_bw-362: rate 408000000
->
-> This is a simple boot test and so nothing we are doing via
-> debugfs/sysfs to influence this.
+在 2025/11/12 星期三 6:16, Bjorn Helgaas 写道:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> L1 PM Substates require the CLKREF# signal and may also require
+> device-specific support.  If CLKREF# is not supported or driver support is
+> lacking, enabling L1.1 or L1.2 may cause errors when accessing devices,
+> e.g.,
+> 
+>    nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
+> 
+> If the kernel is built with CONFIG_PCIEASPM_POWER_SUPERSAVE=y or users
+> enable L1.x via sysfs, users may trip over these errors even if L1
+> Substates haven't been enabled by firmware or the driver.
+> 
+> To prevent such errors, disable advertising the L1 PM Substates unless the
+> driver sets "dw_pcie.l1ss_support" to indicate that it knows CLKREF# is
+> present and any device-specific configuration has been done.
+> 
+> Set "dw_pcie.l1ss_support" in tegra194 (if DT includes the
+> "supports-clkreq' property) and qcom (for 2.7.0 controllers) so they can
+> continue to use L1 Substates.
+> 
+> Based on Niklas's patch:
+> https://patch.msgid.link/20251017163252.598812-2-cassel@kernel.org
 
-Alright, I think I've got the picture of what's going on now. The
-standard arm64 defconfig enables the t194 pcie driver as a module. And
-my simple busybox ramdisk that I use for mainline regression testing
-isn't loading any modules. If I set the pcie driver to built-in, I
-replicate the issue. And I don't see the issue on my normal use case,
-because I have the dt changes as well.
 
-So it appears that the pcie driver submits icc bandwidth. And without
-cpufreq submitting bandwidth as well, the emc driver gets a very low
-number and thus sets a very low emc freq. The question becomes... what
-to do about it? If the related dt changes were submitted to
-linux-next, everything should fall into place. And I'm not sure where
-this falls on the severity scale since it doesn't full out break boot
-or prevent operation.
+Except the issue Fank pointed out, the commit msg says CLKREF# 3 times
+which seems not a term from spec. Should it be CLKREQ# ?
 
-Aaron
+Otherwise,
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>   .../pci/controller/dwc/pcie-designware-ep.c   |  2 ++
+>   .../pci/controller/dwc/pcie-designware-host.c |  2 ++
+>   drivers/pci/controller/dwc/pcie-designware.c  | 24 +++++++++++++++++++
+>   drivers/pci/controller/dwc/pcie-designware.h  |  2 ++
+>   drivers/pci/controller/dwc/pcie-qcom.c        |  2 ++
+>   drivers/pci/controller/dwc/pcie-tegra194.c    |  3 +++
+>   6 files changed, 35 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 7f2112c2fb21..c94cff6eeb01 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -966,6 +966,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+>   	if (ep->ops->init)
+>   		ep->ops->init(ep);
+>   
+> +	dw_pcie_config_l1ss(pci);
+> +
+>   	ptm_cap_base = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_PTM);
+>   
+>   	/*
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 20c9333bcb1c..f1d5b45a3214 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -1060,6 +1060,8 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+>   		PCI_COMMAND_MASTER | PCI_COMMAND_SERR;
+>   	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
+>   
+> +	dw_pcie_config_l1ss(pci);
+> +
+>   	dw_pcie_config_presets(pp);
+>   	/*
+>   	 * If the platform provides its own child bus config accesses, it means
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index c644216995f6..ede686623fad 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -1081,6 +1081,30 @@ void dw_pcie_edma_remove(struct dw_pcie *pci)
+>   	dw_edma_remove(&pci->edma);
+>   }
+>   
+> +void dw_pcie_config_l1ss(struct dw_pcie *pci)
+> +{
+> +	u16 l1ss;
+> +	u32 l1ss_cap;
+> +
+> +	if (!pci->l1ss_support)
+> +		return;
+> +
+> +	l1ss = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_L1SS);
+> +	if (!l1ss)
+> +		return;
+> +
+> +	/*
+> +	 * Unless the driver claims "l1ss_support", don't advertise L1 PM
+> +	 * Substates because they require CLKREF# and possibly other
+> +	 * device-specific configuration.
+> +	 */
+> +	l1ss_cap = dw_pcie_readl_dbi(pci, l1ss + PCI_L1SS_CAP);
+> +	l1ss_cap &= ~(PCI_L1SS_CAP_PCIPM_L1_1 | PCI_L1SS_CAP_ASPM_L1_1 |
+> +		      PCI_L1SS_CAP_PCIPM_L1_2 | PCI_L1SS_CAP_ASPM_L1_2 |
+> +		      PCI_L1SS_CAP_L1_PM_SS);
+> +	dw_pcie_writel_dbi(pci, l1ss + PCI_L1SS_CAP, l1ss_cap);
+> +}
+> +
+>   void dw_pcie_setup(struct dw_pcie *pci)
+>   {
+>   	u32 val;
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index e995f692a1ec..8d14b1fe2280 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -516,6 +516,7 @@ struct dw_pcie {
+>   	int			max_link_speed;
+>   	u8			n_fts[2];
+>   	struct dw_edma_chip	edma;
+> +	bool			l1ss_support;	/* L1 PM Substates support */
+>   	struct clk_bulk_data	app_clks[DW_PCIE_NUM_APP_CLKS];
+>   	struct clk_bulk_data	core_clks[DW_PCIE_NUM_CORE_CLKS];
+>   	struct reset_control_bulk_data	app_rsts[DW_PCIE_NUM_APP_RSTS];
+> @@ -573,6 +574,7 @@ int dw_pcie_prog_ep_inbound_atu(struct dw_pcie *pci, u8 func_no, int index,
+>   				int type, u64 parent_bus_addr,
+>   				u8 bar, size_t size);
+>   void dw_pcie_disable_atu(struct dw_pcie *pci, u32 dir, int index);
+> +void dw_pcie_config_l1ss(struct dw_pcie *pci);
+>   void dw_pcie_setup(struct dw_pcie *pci);
+>   void dw_pcie_iatu_detect(struct dw_pcie *pci);
+>   int dw_pcie_edma_detect(struct dw_pcie *pci);
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 805edbbfe7eb..61c2f4e2f74d 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1067,6 +1067,8 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>   	val &= ~REQ_NOT_ENTR_L1;
+>   	writel(val, pcie->parf + PARF_PM_CTRL);
+>   
+> +	pci->l1ss_support = true;
+> +
+>   	val = readl(pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT_V2);
+>   	val |= EN;
+>   	writel(val, pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT_V2);
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 10e74458e667..3934757baa30 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -703,6 +703,9 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
+>   	val |= (pcie->aspm_pwr_on_t << 19);
+>   	dw_pcie_writel_dbi(pci, pcie->cfg_link_cap_l1sub, val);
+>   
+> +	if (pcie->supports_clkreq)
+> +		pci->l1ss_support = true;
+> +
+>   	/* Program L0s and L1 entrance latencies */
+>   	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+>   	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
+
