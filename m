@@ -1,285 +1,187 @@
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31CD27A103
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 14:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C63341ADF
+	for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 14:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762956498; cv=none; b=dmP4dJTBnvNTFjjo/QZoIGrretrg5hkqL7Ar7en913sfWlH3iJWRvtp/k1r8aCfZX3PFB5rFDWaSV3PMieLe8+GoTnHAdNS2Eqgzm1m+gMGPrDzj8eDXCpGIUd8U9MUu4zOEb7qp6DqyxghsaI1nh5goaiavGdHK/n245j4kahE=
+	t=1762958353; cv=none; b=kqUmkQ5pCF0KiDCD2yPnxHvL7aN91TuJA+06UyWntwJ04L0awZzyHFIVnJfrUsvvL/L9VYMDw5QiHufNEvptgnerf3jdcfs85bYt+jmFZS5s8k2jU91qZSUiG3EQs7XzFhKkqDGaxSLGfWLLJIguO+b6z436QBsAjABLJS5+7ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762956498; c=relaxed/simple;
-	bh=g2YlzHJGj084sc9sXlIRUmNldHbk06Gc/gLx23ejMkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sKxhcU9sjD9TWPJ3nEmIi3QVn0J0Qnc6GKWPOW3YwlwO5XGXV083RLANjvXEgxnzLl31xPTa8rIMQqPNDN7VPVhRCCLv/+/rMB2Z3oGnCgoo7oygsNv3wLJUkE675yw4GFndS7bJbjt4O12RVCDPED5KLxhPTuST8QSMOy/pRx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cNreza0x; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cNreza0x"
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ed86157911so9242441cf.3
-        for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 06:08:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762956496; x=1763561296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jG5kkoChahqCjDZgn1sh/A2ZgGCb1MRj2TG2c+j1Y2k=;
-        b=cNreza0xF5xMbi2vomgbWFr9NaKvbiLK9N11vFQfko4OxLx1WT4M2jRVn8wMEQtsjI
-         bvWcwfhx7elx7Ad0AkOqxGq6Qu78E1mwHh6CpoXIHV/IfCgXmysGA6d1Js5mJ7LDTUy5
-         LYoca/ZgLipXNWUAkdy1HLjLcGN5wa6fHBtNp3Rt0CChhPFtKENJkc/wtr2nNi1GFb1+
-         LVITjUYasJYh+J726Sz6syaswBlfdrMki3fIDpRmQzCOQfXlbURlE/HFgsfWQnkrT403
-         LzDglHqS2gGDzPk99gXl6qTwoaaonccbyfol+tUNMgK/7iX9gLhi8iXhyyAMXWIGiU1a
-         r2AQ==
+	s=arc-20240116; t=1762958353; c=relaxed/simple;
+	bh=YLBWd43A4qz68JA3SZqwZJrrUnRu+5NA9D8YMiytfJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYmFEYftlkZcOIEd8AroP7N3Rj7ToC82tUwBx+k6MTHizgO4W4+ncfMAS/SO2l6y0rVKo9HpY8eCZA+1mY9FDVX0K+CiMW9AYn9piXQ2eQ7rCJktjRqpxWVEqK4V4jGG2fh9uG/3SFEIfGq/MrpIIyfRkT9Srqp21I6btYFw/ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3e3dac349easo618631fac.2
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Nov 2025 06:39:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762956496; x=1763561296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jG5kkoChahqCjDZgn1sh/A2ZgGCb1MRj2TG2c+j1Y2k=;
-        b=bqFDn6ZjeIOqUHPz1UeT73oBNeVpxmrKsCVfCHvZBCAL9ZS6iN4qnbIJg3XuVM7xyt
-         L542B3biYK44rd1WhIDgw6ZRt2SbIqQNmKQtThnaiASFTB4x7bztwwA62tEDOznomtwC
-         tOCTeUwrhIS5QdtmCp3brNu98qS7uhoBY4Vr11RkbiH3eBlHmVJ1QhG8WvVwNfB/edPI
-         fLivZi22XZGvWaqI2N5/OodAU9/nsE6lHTybAbUyEoGIFetl+ggk2wRwJJP++G1A5vZp
-         oD+zsjJmF6b9vRIC2z4ul5mz+PzRRZz7NwAvwqXu91T9qKqnfsxqyHPwKbMvNldK7RMe
-         retw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPB6UvoWXB1veLHdJp6LUtifHk084LX91hJuwRcK37Iz06ZAKLyhkkbNA5+7EGQYyUc1DeGzh7lJqXgw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTRlpFXfD099S6cSlGy8kv6xXEuNnRIwyO6KTcs6ZKJeoS7xEF
-	I1QIxgg2RbI//QjY+g+lDhYurrojtZCUFTnukcEFqDM994RQGAM0+ui3PWm7/Jxztboi6ybDZF5
-	qfqBySF0PFc63Luswva/2pOmjsG/U1TVisp3Q7tpS
-X-Gm-Gg: ASbGncuf2Tys/eoMJKSlJ8Syq1tz2v7TYO9bWYOxIjKeB2UlEs8ZHBrNId5sKZsR3ce
-	Ikb1ioN5ukIl5XCNHg9PahiIBd2jIPLxS8E/VA7k35WbGilzuRDBWiXQCsTnl8/82i+2CFgDllV
-	dQritCXfpi/FzrOYA2M1hxP+0OY3bR77cMD2h6XAKi3POnVDtA3OHBspfw938SnNgB2dOAdSOa+
-	J322OXnIgNcvx+cpv3N76BTmC1IqQjdbP7kMOEc/vMyA3Yau6PaZP141Zw8B4i6CJRhs8dY
-X-Google-Smtp-Source: AGHT+IEKOKt0dsSPLoRm4ZjfhAuRZMnh5XHA0GLYp72UxSrSPRL5X/a3564LDoqStTbKgvYQTDufMyx7TMvK3KAKq/Y=
-X-Received: by 2002:ac8:5e50:0:b0:4ed:b03c:7701 with SMTP id
- d75a77b69052e-4eddbdc3572mr37291131cf.69.1762956495146; Wed, 12 Nov 2025
- 06:08:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762958350; x=1763563150;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jduwwJc36NsKSwajdjfjQL6Giew4Hq4QvEpO2y2wUgU=;
+        b=YuOrKq9lWoX8cDZTorodsZwr/HOnWGErSf7nxAzbKBKtbw+WHdJHSuWpcH6pdTW+wc
+         PsuVGY+WbMsIegqx+GiGLh4cqmn/I/PtqAM16U09EhkBBKDCGBgQQ3DT5OPczI7G39BE
+         qslTCEtFiOU2dqLfRJ/JfjUdWGF8+DkXD/bJxcl3m1Ia9XJhGCGkajEVeo9hQDXTzH8l
+         mGnpQI6daRW7rrv5UXnxIpZTEsfDnXMwRFYsVNa+ZqRx3oP5GRsDnoxy4JE+5MOLUaKh
+         lZm0lotS1NObbWdOzLdTPLotp4een/n86S/7NDNZLbl0ejbJVW1c1qxdmZFSM5wrEWeb
+         NEXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeSs3pSvVWoH2fMOOcKdMAm9BPBN8YQpB3Jnjr0xmR8GwVDPyQQ/5H3Y7cXJkFBcxvvkMAY9mezqKaKw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLuW+zhsP36MN+FZBGI1SYU741rcTOQ6y0rhUKBIIlo+6xMjpe
+	RDtNKYWoWpPVr54/qsuwDKpPl5Z43bDJmhjmnEQqASqYpuK3eaAeXODx
+X-Gm-Gg: ASbGncsslP5sKEdpTYXiGqftF0HVMmRaJNKa5tEcFw+bL8Qn1NJoyMx5oN5MG9uKbTI
+	MZJl4OfPCQZkiCW5FmybxjYcSCW73hRlj9kDfwg225M1N4Q0Et4xaULgDaOE2+NFGb8D3F1TOFU
+	2qAzYau28NE8LvtZMK3FxjTmvPNEG5yErO1W4okDkF8fVyTGvYiYlQFFCYBdmZ79ERKwF5nfJrP
+	xBzD/CXMRQzM5BFFu/YfQcIDtShUBr5fDxrR4W5WL8bOMXokB5n3v+PMKCm96BlnLOPqtuRAuHo
+	H5DlXGXuLOkZQfn+ltESAuL1RPGFWnH1psRq+0fB8rPKOn3JH4LxL733mogTmtK511L3dvthFYt
+	maJxSolwvkAUHbE39rgGig2c7p/P9NUrcGMpqJ0GK3jhFYY12FAkQXaAB1/U6r6m14EDCH8xjTL
+	Pd/1c=
+X-Google-Smtp-Source: AGHT+IGOaUiBUnjCORPb2sikNr2bFgJVOUtqqbSVaoY7pBHbrk9Eo9bCP5k5x9A+nXecxYbNPaOn+A==
+X-Received: by 2002:a05:6870:ebcb:b0:3e8:3382:aaed with SMTP id 586e51a60fabf-3e834080c5amr1365633fac.12.1762958350559;
+        Wed, 12 Nov 2025 06:39:10 -0800 (PST)
+Received: from gmail.com ([2a03:2880:10ff:52::])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c6f116ddcbsm8564167a34.33.2025.11.12.06.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 06:39:10 -0800 (PST)
+Date: Wed, 12 Nov 2025 06:39:08 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Vishwaroop A <va@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, 
+	kyarlagadda@nvidia.com, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v5 1/3] spi: tegra210-quad: Fix timeout handling
+Message-ID: <jzmbuiqm5usjfklqs2cmxz72j5qjvttcib6grn5visgqe37qtx@cowi4mtcvwfh>
+References: <20251028155703.4151791-1-va@nvidia.com>
+ <20251028155703.4151791-2-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106202935.1776179-1-edumazet@google.com> <20251106202935.1776179-3-edumazet@google.com>
- <7460a188-3a74-4336-ae03-c88e21ffc1ca@nvidia.com>
-In-Reply-To: <7460a188-3a74-4336-ae03-c88e21ffc1ca@nvidia.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 12 Nov 2025 06:08:04 -0800
-X-Gm-Features: AWmQ_bnvazaykNvLNvtfSDFMux064qsf8aAFWNqISxTc25hPeCf2GdV9rip_Tqw
-Message-ID: <CANn89iJBgaoVuQL7jgKwRJd8drpXYTLdGrJUpP9KVrzsPGK_Zw@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/3] net: fix napi_consume_skb() with alien skbs
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org, 
-	eric.dumazet@gmail.com, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028155703.4151791-2-va@nvidia.com>
 
-On Wed, Nov 12, 2025 at 6:03=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
-> Hi Eric,
->
-> On 06/11/2025 20:29, Eric Dumazet wrote:
-> > There is a lack of NUMA awareness and more generally lack
-> > of slab caches affinity on TX completion path.
-> >
-> > Modern drivers are using napi_consume_skb(), hoping to cache sk_buff
-> > in per-cpu caches so that they can be recycled in RX path.
-> >
-> > Only use this if the skb was allocated on the same cpu,
-> > otherwise use skb_attempt_defer_free() so that the skb
-> > is freed on the original cpu.
-> >
-> > This removes contention on SLUB spinlocks and data structures.
-> >
-> > After this patch, I get ~50% improvement for an UDP tx workload
-> > on an AMD EPYC 9B45 (IDPF 200Gbit NIC with 32 TX queues).
-> >
-> > 80 Mpps -> 120 Mpps.
-> >
-> > Profiling one of the 32 cpus servicing NIC interrupts :
-> >
-> > Before:
-> >
-> > mpstat -P 511 1 1
-> >
-> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %stea=
-l  %guest  %gnice   %idle
-> > Average:     511    0.00    0.00    0.00    0.00    0.00   98.00    0.0=
-0    0.00    0.00    2.00
-> >
-> >      31.01%  ksoftirqd/511    [kernel.kallsyms]  [k] queued_spin_lock_s=
-lowpath
-> >      12.45%  swapper          [kernel.kallsyms]  [k] queued_spin_lock_s=
-lowpath
-> >       5.60%  ksoftirqd/511    [kernel.kallsyms]  [k] __slab_free
-> >       3.31%  ksoftirqd/511    [kernel.kallsyms]  [k] idpf_tx_clean_buf_=
-ring
-> >       3.27%  ksoftirqd/511    [kernel.kallsyms]  [k] idpf_tx_splitq_cle=
-an_all
-> >       2.95%  ksoftirqd/511    [kernel.kallsyms]  [k] idpf_tx_splitq_sta=
-rt
-> >       2.52%  ksoftirqd/511    [kernel.kallsyms]  [k] fq_dequeue
-> >       2.32%  ksoftirqd/511    [kernel.kallsyms]  [k] read_tsc
-> >       2.25%  ksoftirqd/511    [kernel.kallsyms]  [k] build_detached_fre=
-elist
-> >       2.15%  ksoftirqd/511    [kernel.kallsyms]  [k] kmem_cache_free
-> >       2.11%  swapper          [kernel.kallsyms]  [k] __slab_free
-> >       2.06%  ksoftirqd/511    [kernel.kallsyms]  [k] idpf_features_chec=
-k
-> >       2.01%  ksoftirqd/511    [kernel.kallsyms]  [k] idpf_tx_splitq_cle=
-an_hdr
-> >       1.97%  ksoftirqd/511    [kernel.kallsyms]  [k] skb_release_data
-> >       1.52%  ksoftirqd/511    [kernel.kallsyms]  [k] sock_wfree
-> >       1.34%  swapper          [kernel.kallsyms]  [k] idpf_tx_clean_buf_=
-ring
-> >       1.23%  swapper          [kernel.kallsyms]  [k] idpf_tx_splitq_cle=
-an_all
-> >       1.15%  ksoftirqd/511    [kernel.kallsyms]  [k] dma_unmap_page_att=
-rs
-> >       1.11%  swapper          [kernel.kallsyms]  [k] idpf_tx_splitq_sta=
-rt
-> >       1.03%  swapper          [kernel.kallsyms]  [k] fq_dequeue
-> >       0.94%  swapper          [kernel.kallsyms]  [k] kmem_cache_free
-> >       0.93%  swapper          [kernel.kallsyms]  [k] read_tsc
-> >       0.81%  ksoftirqd/511    [kernel.kallsyms]  [k] napi_consume_skb
-> >       0.79%  swapper          [kernel.kallsyms]  [k] idpf_tx_splitq_cle=
-an_hdr
-> >       0.77%  ksoftirqd/511    [kernel.kallsyms]  [k] skb_free_head
-> >       0.76%  swapper          [kernel.kallsyms]  [k] idpf_features_chec=
-k
-> >       0.72%  swapper          [kernel.kallsyms]  [k] skb_release_data
-> >       0.69%  swapper          [kernel.kallsyms]  [k] build_detached_fre=
-elist
-> >       0.58%  ksoftirqd/511    [kernel.kallsyms]  [k] skb_release_head_s=
-tate
-> >       0.56%  ksoftirqd/511    [kernel.kallsyms]  [k] __put_partials
-> >       0.55%  ksoftirqd/511    [kernel.kallsyms]  [k] kmem_cache_free_bu=
-lk
-> >       0.48%  swapper          [kernel.kallsyms]  [k] sock_wfree
-> >
-> > After:
-> >
-> > mpstat -P 511 1 1
-> >
-> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %stea=
-l  %guest  %gnice   %idle
-> > Average:     511    0.00    0.00    0.00    0.00    0.00   51.49    0.0=
-0    0.00    0.00   48.51
-> >
-> >      19.10%  swapper          [kernel.kallsyms]  [k] idpf_tx_splitq_cle=
-an_hdr
-> >      13.86%  swapper          [kernel.kallsyms]  [k] idpf_tx_clean_buf_=
-ring
-> >      10.80%  swapper          [kernel.kallsyms]  [k] skb_attempt_defer_=
-free
-> >      10.57%  swapper          [kernel.kallsyms]  [k] idpf_tx_splitq_cle=
-an_all
-> >       7.18%  swapper          [kernel.kallsyms]  [k] queued_spin_lock_s=
-lowpath
-> >       6.69%  swapper          [kernel.kallsyms]  [k] sock_wfree
-> >       5.55%  swapper          [kernel.kallsyms]  [k] dma_unmap_page_att=
-rs
-> >       3.10%  swapper          [kernel.kallsyms]  [k] fq_dequeue
-> >       3.00%  swapper          [kernel.kallsyms]  [k] skb_release_head_s=
-tate
-> >       2.73%  swapper          [kernel.kallsyms]  [k] read_tsc
-> >       2.48%  swapper          [kernel.kallsyms]  [k] idpf_tx_splitq_sta=
-rt
-> >       1.20%  swapper          [kernel.kallsyms]  [k] idpf_features_chec=
-k
-> >       1.13%  swapper          [kernel.kallsyms]  [k] napi_consume_skb
-> >       0.93%  swapper          [kernel.kallsyms]  [k] idpf_vport_splitq_=
-napi_poll
-> >       0.64%  swapper          [kernel.kallsyms]  [k] native_send_call_f=
-unc_single_ipi
-> >       0.60%  swapper          [kernel.kallsyms]  [k] acpi_processor_ffh=
-_cstate_enter
-> >       0.53%  swapper          [kernel.kallsyms]  [k] io_idle
-> >       0.43%  swapper          [kernel.kallsyms]  [k] netif_skb_features
-> >       0.41%  swapper          [kernel.kallsyms]  [k] __direct_call_cpui=
-dle_state_enter2
-> >       0.40%  swapper          [kernel.kallsyms]  [k] native_irq_return_=
-iret
-> >       0.40%  swapper          [kernel.kallsyms]  [k] idpf_tx_buf_hw_upd=
-ate
-> >       0.36%  swapper          [kernel.kallsyms]  [k] sched_clock_noinst=
-r
-> >       0.34%  swapper          [kernel.kallsyms]  [k] handle_softirqs
-> >       0.32%  swapper          [kernel.kallsyms]  [k] net_rx_action
-> >       0.32%  swapper          [kernel.kallsyms]  [k] dql_completed
-> >       0.32%  swapper          [kernel.kallsyms]  [k] validate_xmit_skb
-> >       0.31%  swapper          [kernel.kallsyms]  [k] skb_network_protoc=
-ol
-> >       0.29%  swapper          [kernel.kallsyms]  [k] skb_csum_hwoffload=
-_help
-> >       0.29%  swapper          [kernel.kallsyms]  [k] x2apic_send_IPI
-> >       0.28%  swapper          [kernel.kallsyms]  [k] ktime_get
-> >       0.24%  swapper          [kernel.kallsyms]  [k] __qdisc_run
-> >
-> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > ---
-> >   net/core/skbuff.c | 5 +++++
-> >   1 file changed, 5 insertions(+)
-> >
-> > diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> > index eeddb9e737ff28e47c77739db7b25ea68e5aa735..7ac5f8aa1235a55db02b40b=
-5a0f51bb3fa53fa03 100644
-> > --- a/net/core/skbuff.c
-> > +++ b/net/core/skbuff.c
-> > @@ -1476,6 +1476,11 @@ void napi_consume_skb(struct sk_buff *skb, int b=
-udget)
-> >
-> >       DEBUG_NET_WARN_ON_ONCE(!in_softirq());
-> >
-> > +     if (skb->alloc_cpu !=3D smp_processor_id() && !skb_shared(skb)) {
-> > +             skb_release_head_state(skb);
-> > +             return skb_attempt_defer_free(skb);
-> > +     }
-> > +
-> >       if (!skb_unref(skb))
-> >               return;
-> >
->
-> I have noticed a suspend regression on one of our Tegra boards. Bisect
-> is pointing to this commit and reverting this on top of -next fixes the
-> issue.
->
-> Out of all the Tegra boards we test only one is failing and that is the
-> tegra124-jetson-tk1. This board uses the realtek r8169 driver ...
->
->   r8169 0000:01:00.0: enabling device (0140 -> 0143)
->   r8169 0000:01:00.0 eth0: RTL8168g/8111g, 00:04:4b:25:b2:0e, XID 4c0, IR=
-Q 132
->   r8169 0000:01:00.0 eth0: jumbo features [frames: 9194 bytes, tx checksu=
-mming: ko]
->
-> I don't see any particular crash or error, and even after resuming from
-> suspend the link does come up ...
->
->   r8169 0000:01:00.0 enp1s0: Link is Down
->   tegra-xusb 70090000.usb: Firmware timestamp: 2014-09-16 02:10:07 UTC
->   OOM killer enabled.
->   Restarting tasks: Starting
->   Restarting tasks: Done
->   random: crng reseeded on system resumption
->   PM: suspend exit
->   ata1: SATA link down (SStatus 0 SControl 300)
->   r8169 0000:01:00.0 enp1s0: Link is Up - 1Gbps/Full - flow control rx/tx
->
-> However, the board does not seem to resume fully. One thing I should
-> point out is that for testing we always use an NFS rootfs. So this
-> would indicate that the link comes up but networking is still having
-> issues.
->
-> Any thoughts?
->
-> Jon
+On Tue, Oct 28, 2025 at 03:57:01PM +0000, Vishwaroop A wrote:
+> When the CPU that the QSPI interrupt handler runs on (typically CPU 0)
+> is excessively busy, it can lead to rare cases of the IRQ thread not
+> running before the transfer timeout is reached.
+> 
+> While handling the timeouts, any pending transfers are cleaned up and
+> the message that they correspond to is marked as failed, which leaves
+> the curr_xfer field pointing at stale memory.
 
-Perhaps try : https://patchwork.kernel.org/project/netdevbpf/patch/20251111=
-151235.1903659-1-edumazet@google.com/
+I saw something similar on one of my hosts, and I debugged it, and it
+seemed similar to what you are fixing in here.
 
-Thanks !
+Just sharing what I got while debugging this, in case this is useful:
+
+	UBSAN: shift-out-of-bounds in drivers/spi/spi-tegra210-quad.c:385:25
+	shift exponent 198 is too large for 32-bit type 'u32' (aka 'unsigned int')
+	CPU: 0 UID: 0 PID: 883 Comm: irq/43-NVDA1513 Tainted: G        W   E    N  6.16.1 #1 PREEMPT(none)
+	Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
+	Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A14 09/02/2025
+	Call trace:
+	show_stack+0x1c/0x30 (C)
+	dump_stack_lvl+0x38/0xb0
+	dump_stack+0x14/0x1c
+	__ubsan_handle_shift_out_of_bounds+0x24c/0x2c0
+	tegra_qspi_isr_thread+0x1cc8/0x1e60 [spi_tegra210_quad]
+	irq_thread_fn+0x80/0x108
+	irq_thread+0x158/0x258
+	kthread+0x3fc/0x530
+	ret_from_fork+0x10/0x20
+	---[ end trace ]---
+
+	------------[ cut here ]------------
+	UBSAN: shift-out-of-bounds in drivers/spi/spi-tegra210-quad.c:397:20
+	shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
+	CPU: 0 UID: 0 PID: 883 Comm: irq/43-NVDA1513 Tainted: G        W   E    N  6.16.1 #1 PREEMPT(none)
+	Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
+	Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A14 09/02/2025
+	Call trace:
+	show_stack+0x1c/0x30 (C)
+	dump_stack_lvl+0x38/0xb0
+	dump_stack+0x14/0x1c
+	__ubsan_handle_shift_out_of_bounds+0x24c/0x2c0
+	tegra_qspi_isr_thread+0xc90/0x1e60 [spi_tegra210_quad]
+	irq_thread_fn+0x80/0x108
+	irq_thread+0x158/0x258
+	kthread+0x3fc/0x530
+	ret_from_fork+0x10/0x20
+
+	---[ end trace ]---
+
+and then KASAN and a kernel crash.
+
+	BUG: KASAN: vmalloc-out-of-bounds in tegra_qspi_isr_thread+0xce8/0x1e60 [spi_tegra210_quad]
+	Write of size 1 at addr ffff8000db950000 by task irq/43-NVDA1513/883
+
+	CPU: 0 UID: 0 PID: 883 Comm: irq/43-NVDA1513 Tainted: G        W   E    N  6.16.1-0_fbk0_debug_rc20_0_g977c20cb5846 #1 PREEMPT(none)
+	Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
+	Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A14 09/02/2025
+	Call trace:
+	show_stack+0x1c/0x30 (C)
+	dump_stack_lvl+0x38/0xb0
+	print_report+0x164/0x6d8
+	kasan_report+0xcc/0x128
+	__asan_report_store1_noabort+0x1c/0x28
+	tegra_qspi_isr_thread+0xce8/0x1e60 [spi_tegra210_quad]
+	irq_thread_fn+0x80/0x108
+	irq_thread+0x158/0x258
+	kthread+0x3fc/0x530
+	ret_from_fork+0x10/0x20
+
+	The buggy address belongs to a 1-page vmalloc region starting at 0xffff8000db940000 allocated at copy_process+0x258/0x28d8
+	Memory state around the buggy address:
+	ffff8000db94ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	ffff8000db94ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>ffff8000db950000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+			^
+	ffff8000db950080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+	ffff8000db950100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+	==================================================================
+	Unable to handle kernel paging request at virtual address ffff8000db950000
+	KASAN: probably user-memory-access in range [0x00000006dca80000-0x00000006dca80007]
+	Mem abort info:
+	ESR = 0x0000000096000047
+	EC = 0x25: DABT (current EL), IL = 32 bits
+	SET = 0, FnV = 0
+	EA = 0, S1PTW = 0
+	FSC = 0x07: level 3 translation fault
+	Data abort info:
+	ISV = 0, ISS = 0x00000047, ISS2 = 0x00000000
+	CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+	GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+
+
+	 pstate: 234010c9 (nzCv daIF +PAN -UAO +TCO +DIT +SSBS BTYPE=--)
+	 pc : tegra_qspi_isr_thread+0xcc0/0x1e60 [spi_tegra210_quad]
+	 lr : tegra_qspi_isr_thread+0xce8/0x1e60 [spi_tegra210_quad]
+	 x26: 0000000000000001 x25: 0000000000000028 x24: ffff8000db94ffff
+	 x23: ffff0000d16b0918 x22: 0000000000000040 x21: 000000000000003a
+	 x20: ffff8000db94ffff x19: ffff0000d16b08c0 x18: 0000000000000001
+	 x17: 3d3d3d3d3d3b2d2c x16: 3d3d3d3d3d3b2d2c x15: 0000000000000001
+	 x14: 1ffff00010bfce80 x13: 0000000000000000 x12: 0000000000000000
+	 x11: ffff700010bfce81 x10: 0000000000000019 x9 : 0000000000000000
+	 x8 : 0000000000000000 x7 : 0000000000000001 x6 : 0000000000000001
+	 x5 : ffff8000b49cf8e0 x4 : ffff800084e7b140 x3 : ffff8000801bbd8c
+	 x2 : 0000000000000001 x1 : 0000000000000008 x0 : 0000000000000001
+	 Call trace:
+	  tegra_qspi_isr_thread+0xcc0/0x1e60 [spi_tegra210_quad] (P)
+	  irq_thread_fn+0x80/0x108
+	  irq_thread+0x158/0x258
+	  kthread+0x3fc/0x530
+	  ret_from_fork+0x10/0x20
+	 Code: 540001aa 1ad92768 f85f83aa 6b1a039f (383a6b08)
+	 ---[ end trace 0000000000000000 ]---
+	 Kernel panic - not syncing: Oops: Fatal exception
+	 SMP: stopping secondary CPUs
+	 Kernel Offset: disabled
+	 CPU features: 0x2000,000003c0,62534ca1,5467fea7
+	 Memory Limit: none
