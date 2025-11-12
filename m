@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303B128B7DB;
-	Wed, 12 Nov 2025 07:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3A0277C9E;
+	Wed, 12 Nov 2025 07:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932369; cv=none; b=CxV6G8twU/RRtOrlOrKFJMw9QMChzgQEyniqCSuf4PEQtpR2ezjtgiXwe/mi/bZiLbntk0EfdXukn5GoLNqz+B9tkbz37KddzDACwHDyTghg+4M+cBlpsJLcHvrb6dlF5Er40IhjrGHTb/r/wyFK2eHpwQTd5hUoS2FvTazb85k=
+	t=1762932397; cv=none; b=JjaGnXh4ivQ6OleH4hb1NUuuJRMOnUByd1k+WkEEKJW8WlIEltiNEsW1zwFe+jqmmRBbhgkUxhqqt+kLFHBk0TfwhvC2W5ykisXR4yc+8WxX7jH6cIbT0jE4rPsAjRL+bp8oXmEDzZXfnB75zaqWpw1U5dE6HhYUSHz4/2BCNz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932369; c=relaxed/simple;
-	bh=MpC7Q8sfu2Zx/rwI4rNxHM4rwj5juiLT2PNkIDphY5A=;
+	s=arc-20240116; t=1762932397; c=relaxed/simple;
+	bh=2irZCMgg4/pD/7WqnevHbUFAeu3+60HKXvJ0LDpO2U0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SesQk6zSUWHqTb4fGanSYjlRWugCb/HOUFtYT4lDovgZkS6ey2W4KQDe1P6ee2DVJoKt5USw2yppv/pJguKEjhGRoA0V/Qd9FasFIIrUTUyA4/k/WoGPpWb65UPxoVAxhVesdi3UEmwbQ+NSrMmZLCFf43z63Up04quNjDLkYf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItQrnS80; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Vk59BkY/2gKMYbWfBLmzVRy3FFIW4stp7Jez+NTY069vzeaUNlV2AyzUEuEXdLZIhioHcUxmUxp3ZFBpsCpdyBhQ+R+WpN1u07nROceXtZ5qN6AFuC0Tqc4fyfPB1EAYqc8g5OdN0IE0MWPR2OotUWqANwTUWib2Zl5/HxNCHk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uo0z/N4e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItQrnS80"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AA6C4CEF7;
-	Wed, 12 Nov 2025 07:26:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uo0z/N4e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7280C4CEF8;
+	Wed, 12 Nov 2025 07:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762932368;
-	bh=MpC7Q8sfu2Zx/rwI4rNxHM4rwj5juiLT2PNkIDphY5A=;
+	s=k20201202; t=1762932396;
+	bh=2irZCMgg4/pD/7WqnevHbUFAeu3+60HKXvJ0LDpO2U0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ItQrnS80UYRJ2NCOkmi+R+sKn6m7TYVXX/1irdajGbjSZsPxUUYpoF1sAWT/k1xDu
-	 ZaR0XSKH0WiYX6ABxNn2J/KYcplHi4R6LDbzUtb5yWisoI5hqWHggbijuWgSXaG3tm
-	 s0UJXWWOj3gpNraQKeLeAFYokSSs9Hld6wonU2VvMH3nUWjPu3ANoJyLH41J1UKeQF
-	 SBcVl6I+rRzT5DIJdi3KLv7AiRagy47z0sT6Q1DbKBJQPV0DbzgNfYocQk8nL85k9r
-	 GGf61MavAGqQ82XjUcvQ4WV3ZD37JPBwQJwHKHYRBd7HsD5B7x9ZtwQKeOfHlmOsLL
-	 qSNsUj2HyNSrw==
-Message-ID: <aff97e62-03c8-416a-842c-bf8ebd8cb578@kernel.org>
-Date: Wed, 12 Nov 2025 08:26:04 +0100
+	b=uo0z/N4eheFkT7lKzplT9g5xR5nvFdn0YPAHrZJY7ad/U1Gr1esI4k1ZmDlRM2pVD
+	 aJfYHHeF2XqrFqACNwjTzMoFyvKEfcUgNbGlmvRNH6M6L9+oEqdlNVhDL8f2vK6JgM
+	 cP2mcM5iKQX2nLLYfvFSIX2RZSaPCILVJkt+fs2jhUPt9po2LNiRQhYTcjo3D9CIZo
+	 6/MsDFbDsnCWD0ccBTXnbt+W1MMOT8MIFGvDiKzK9vAPZb6F7PYSWoUoNCdwzxHP4m
+	 THyVtXDGeUI5UcYx4AX1iYKTJ235p3bx3zXPyT1eJ2Rasr6NJ8/z9QzvOoR1ae6mc4
+	 U7znvV5eRY8Ng==
+Message-ID: <6904a858-d7a3-457b-8141-692238d01582@kernel.org>
+Date: Wed, 12 Nov 2025 08:26:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -36,7 +36,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Aaron Kling <webgeek1234@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -52,6 +52,7 @@ References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
  <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
  <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
  <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+ <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,40 +98,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+In-Reply-To: <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/11/2025 00:17, Aaron Kling wrote:
->>
->> The actual rate that is set is 408MHz if I read the rate after
->> it is set ...
->>
->> [   13.912099] tegra186_emc_icc_set_bw-362: rate 408000000
->>
->> This is a simple boot test and so nothing we are doing via
->> debugfs/sysfs to influence this.
+On 12/11/2025 07:18, Jon Hunter wrote:
 > 
-> Alright, I think I've got the picture of what's going on now. The
-> standard arm64 defconfig enables the t194 pcie driver as a module. And
-> my simple busybox ramdisk that I use for mainline regression testing
-> isn't loading any modules. If I set the pcie driver to built-in, I
-> replicate the issue. And I don't see the issue on my normal use case,
-> because I have the dt changes as well.
+> On 11/11/2025 23:17, Aaron Kling wrote:
 > 
-> So it appears that the pcie driver submits icc bandwidth. And without
-> cpufreq submitting bandwidth as well, the emc driver gets a very low
-> number and thus sets a very low emc freq. The question becomes... what
+> ...
+> 
+>> Alright, I think I've got the picture of what's going on now. The
+>> standard arm64 defconfig enables the t194 pcie driver as a module. And
+>> my simple busybox ramdisk that I use for mainline regression testing
+>> isn't loading any modules. If I set the pcie driver to built-in, I
+>> replicate the issue. And I don't see the issue on my normal use case,
+>> because I have the dt changes as well.
+>>
+>> So it appears that the pcie driver submits icc bandwidth. And without
+>> cpufreq submitting bandwidth as well, the emc driver gets a very low
+>> number and thus sets a very low emc freq. The question becomes... what
+>> to do about it? If the related dt changes were submitted to
+>> linux-next, everything should fall into place. And I'm not sure where
+>> this falls on the severity scale since it doesn't full out break boot
+>> or prevent operation.
+> 
+> Where are the related DT changes? If we can get these into -next and 
+> lined up to be merged for v6.19, then that is fine. However, we should 
 
-If this depends on DT changes then it is obvious ABI break. Nothing in
-commit msgs explained ABI impact.
+It's still breaking all the users then.
 
-> to do about it? If the related dt changes were submitted to
-> linux-next, everything should fall into place. And I'm not sure where
-> this falls on the severity scale since it doesn't full out break boot
-> or prevent operation.
+> not merge this for v6.19 without the DT changes.
 > 
-> Aaron
+> I will also talk with Thierry to see if he has any concerns about users 
+> seeing slow performance if they don't have an up-to-date DTB.
+> 
+> Is there any easy way to detect if the DTB has he necessary properties 
+> to enable ICC scaling?
+> 
+> Jon
+> 
 
 
 Best regards,
