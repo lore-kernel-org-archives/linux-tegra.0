@@ -1,137 +1,127 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3838E34DCFE;
-	Thu, 13 Nov 2025 12:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BDE283FF9
+	for <linux-tegra@vger.kernel.org>; Thu, 13 Nov 2025 14:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037687; cv=none; b=p4hqVoprkvjeQZgtLqMXdAEzaXDCiapcTNSb1M7DBlwbjkKVb5WZ+R+4QgXDcZBzTidmgBFgYlSnoNtZmOJZ7V1JhW0ATFsnZyFT9yp3Xze0RuaBsB/xZQKIJYd2HRAP+Bb6PE00I/vVcjnSArRZI9mX87fL1229oxROnG6oJis=
+	t=1763043699; cv=none; b=oKCGoCfHHy40vVO+PzPmW6v1Ftqi7QS8T8MgCf4szTyKlePNWaJtkCbWtSpw+RabLoOtyD/Ad4ZLfpGDUjmzTJnxws5BokVSJk4mpgZtJCRaTvN4Ef17cl9b4C7CcC2XWUjHuvpac8/JSETWhyp0S8Le1mBsiYUo0T9fbQvoyC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037687; c=relaxed/simple;
-	bh=XaTNNB/CqGz+V+OMzj/mIjV+mLYVDACn92ZqVORRSbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGQtwWGpvSRE3rZqCBr6YsDBZ3xf5YJjR/31CnDfvrFvoKlulf3pdhMFqyaf9pndTijPryqI1+Sl8BNoznQ79X6gyczOnvN/SLxfGwvlpxMcM11y5AGpJAYr+JPoV+i0nTzbgeRd4q47eDfelLUNoyB4upBvvsRJxB+jHgOuBv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C26B012FC;
-	Thu, 13 Nov 2025 04:41:16 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 026C73F5A1;
-	Thu, 13 Nov 2025 04:41:24 -0800 (PST)
-Date: Thu, 13 Nov 2025 12:41:19 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
-	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, zhanjie9@hisilicon.com,
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
-	bbasu@nvidia.com
-Subject: Re: [PATCH v4 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
- perf_limited
-Message-ID: <aRXR7yKyG6l1Agfq@arm.com>
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-7-sumitg@nvidia.com>
+	s=arc-20240116; t=1763043699; c=relaxed/simple;
+	bh=Xe7Ea1AD5sUFo6oXsT+qD/kgt+3KXcnBspVGZoedp+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GnJYXbwLqmqTtr0VEafdwz4jlBJnUAOYIUKkkwiAuFHL09w0c43N7u/73vT58Wct7Qo6JcEY4S9L/+QqQkivyWw+qzv5YLCbW6HoKAo9myIdstdFCym01KcPiY/IIbl/AthzHcqUiMpkUhfJGpxqNZGQueuZ0qFmF53iFXKr6ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haoMfR6B; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haoMfR6B"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b387483bbso729409f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 13 Nov 2025 06:21:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763043696; x=1763648496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PVTH3OodIWn9qSwlGdTpQLDwP01tYh5/+5JVhlUv+nY=;
+        b=haoMfR6BOBTWSk33QievBrW0k/VGkRlaKureVuWz+EWYvTVVkZkFCMS6eUUnmQYSAw
+         vR00hPMIblDxs46XHig8ocQyFTYfG0mPmuOK11AFrGYZs57O3apL4OpumSJgqFigVh36
+         lyVMQdtFw3YH4m+hcIbCk3o2FezKLi4XqOV58JZ2kJkkNQ1WX0Sif7s9Hx0Tt3siIYBg
+         jDvH4kP6ALOvxN8Y29K9hs/n8oC+sunAquEbV+d1ez384R0covO6b3Kc2mg9vhSHDpWe
+         AgdmA1cioKdK4YcHP25oSF/2Y4YsemfW6erNdywEyN0rKnW0Bm31/95VA0jms1JTGL7A
+         45Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763043696; x=1763648496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PVTH3OodIWn9qSwlGdTpQLDwP01tYh5/+5JVhlUv+nY=;
+        b=Ft4JxbYGk3SoTYd9Q90uOVH7jQRafdbYGXR7/ZvDsS6UElMm14UTLuhRB3KWNKwdXo
+         NLe0HtMnbCkw6j0Ce8tRDHI376ioFW6gSRBRmOJ0Ki9YHXbetSYq4kG3L/X/cGzwOCQj
+         4uD+xcd/84CBSMtuLZ+3YLHp2otHM8oAjbmeSZ4D4mWd4qM/Qzqlf9GKC0dOBiYJ5M21
+         +RgkMFGb1YDypwMyMBegQKzW0DYeT7SIEaPgoIUl9SiwtzyqUXTUp1hxODhiF/+kfecq
+         Aq/kT61QDQeJLYBtyHwP//BwzOO3h4HYI1KTtR1CzJRhtK2M1OcKid7Obs8zvRPbhZkM
+         iSrw==
+X-Forwarded-Encrypted: i=1; AJvYcCU05I/za568YdwYJpENqW7zxqaIYy8nuIHM/83ont4POvnV/GZfswqBxjLsaz5ITQgB692T8J+4dC/aiw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YymBmkQSmjJLMyZq+eJKhGDzbq5n9Kd93JBjRyUf21eIayKgj+/
+	pFGTfjbI2Y7PIttShcZ5bhAaasQLXEJZGoDUG+0fa5q9JnoYEEUyAsi9M2FRRnS6QmaLTbJn87i
+	Nt3MH4na6wLtM0XOK1WmdhbtknfnJ+38=
+X-Gm-Gg: ASbGncs+vLI11+njmWMa4WmbP01Xz5I7oxQGp7x40ufzQIa9FMrjK2HdNAT5I5T6zeV
+	odTTRlyr87XnNRsteNKKb/pxu3abPP+Leq1eAMz6z/o/AWY5Ld6YjgLsoiyaav/s2rVAYBwCTzq
+	Tk6+vx3nU3icYJsvoMJWsoWiRyKtdYMPQDR/xDQCYKEkaGqr8oYwhzTIzRJ6wQYppievjXt98Cs
+	qpVnKUZURmycNV0XWH9JmDw1dT9ou3nK8ZLXbrZ5wGhJP65enepD4MpIuy8NbgYl4Gza3W9
+X-Google-Smtp-Source: AGHT+IHpKdVN83TCm20YE3t1L1lDlWwYUNuksMEsa3ToWtEDthhiiFsiCO+R+2diKHhI8EC3wUv5l0WKP1xsWN52j2s=
+X-Received: by 2002:a05:6000:4210:b0:42b:3ed2:c079 with SMTP id
+ ffacd0b85a97d-42b4bdb3157mr6520095f8f.48.1763043695648; Thu, 13 Nov 2025
+ 06:21:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105113844.4086250-7-sumitg@nvidia.com>
+References: <20250915080157.28195-1-clamor95@gmail.com> <20250915080157.28195-7-clamor95@gmail.com>
+ <175847725338.4354.4145979844570539358@lazor>
+In-Reply-To: <175847725338.4354.4145979844570539358@lazor>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 13 Nov 2025 16:21:24 +0200
+X-Gm-Features: AWmQ_blflchRXgqVJi0za8JR5StKpVBhyxQTDb1Y4F00r9nuMPcYEvgT9Q0wdNU
+Message-ID: <CAPVz0n2gUT5aOT3S05Up+vAiMBf5jmthRV_7z_fpj9RsPWEg_w@mail.gmail.com>
+Subject: Re: [PATCH v3 06/11] clk: tegra: remove EMC to MC clock mux in Tegra114
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+=D0=BD=D0=B4, 21 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 20:54 Step=
+hen Boyd <sboyd@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Quoting Svyatoslav Ryhel (2025-09-15 01:01:52)
+> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
+egra114.c
+> > index 8bde72aa5e68..6b3a140772c2 100644
+> > --- a/drivers/clk/tegra/clk-tegra114.c
+> > +++ b/drivers/clk/tegra/clk-tegra114.c
+> > @@ -1321,6 +1309,28 @@ static int tegra114_reset_deassert(unsigned long=
+ id)
+> >         return 0;
+> >  }
+> >
+> > +#ifdef CONFIG_TEGRA124_CLK_EMC
+> > +static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args=
+ *clkspec,
+> > +                                               void *data)
+> > +{
+> > +       struct clk_hw *hw;
+> > +       struct clk *clk;
+> > +
+> > +       clk =3D of_clk_src_onecell_get(clkspec, data);
+> > +       if (IS_ERR(clk))
+> > +               return clk;
+> > +
+> > +       hw =3D __clk_get_hw(clk);
+>
+> Can you just use of_clk_hw_onecell_get() instead? Then we don't need to
+> use __clk_get_hw(). Or is this whole function used to return a clk
+> pointer to something that isn't the clk framework?
+>
 
-On Wednesday 05 Nov 2025 at 17:08:42 (+0530), Sumit Gupta wrote:
-> Add sysfs interfaces for Minimum Performance, Maximum Performance
-> and Performance Limited Register in the cppc_cpufreq driver.
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../ABI/testing/sysfs-devices-system-cpu      | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> index 8aed6d94c4cd..6f1f70696000 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> @@ -327,6 +327,52 @@ Description:	Energy performance preference
->  
->  		This file is only present if the cppc-cpufreq driver is in use.
->  
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
-> +Date:		December 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance Frequency
-> +
-> +		Read/write a frequency value in kHz from/to this file. This
-> +		file conveys the minimum performance level (as frequency) at
-> +		which the platform may run. The frequency value is internally
-> +		converted to a performance value and must correspond to a
-> +		performance level in the range [Lowest Performance, Highest
-> +		Performance], inclusive. The minimum must be less than or equal
-> +		to the maximum performance. The performance range can be checked
-> +		from nodes:
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/highest_perf
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/lowest_perf
+This logic was adopted from Tegra124 driver, but of_clk_hw_onecell_get
+might be applicable. I will adjust to use it and if all works as
+expected, I will apply it in v4. Thank you.
 
-I think information on highest/lowest performance is irrelevant here. If
-the user is expected to provide a frequency value, it should only care
-about it being in the range [cpuinfo_min_freq, cpuinfo_max_freq].
-
-I think ideally all of these controls (auto-select, EPP, min, max, etc.)
-would have been better placed under
-/sys/devices/system/cpu/cpuX/acpi_cppc, but I suppose the intention
-was/is to have all performance related controls under cpufreq. But that
-means that the user should not be concerned about the underlying CPPC
-scale and only use /sys/devices/system/cpu/cpuX/acpi_cppc for
-information purposes.
-
-Thanks,
-Ionela.
-
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
-> +Date:		December 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Maximum Performance Frequency
-> +
-> +		Read/write a frequency value in kHz from/to this file. This
-> +		file conveys the maximum performance level (as frequency) at
-> +		which the platform may run. The frequency value is internally
-> +		converted to a performance value and must correspond to a
-> +		performance level in the range [Lowest Performance, Highest
-> +		Performance], inclusive. The performance range can be checked
-> +		from nodes:
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/highest_perf
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/lowest_perf
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
-> +Date:		December 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Performance Limited
-> +
-> +		Read/write a 32 bits value from/to this file. This file indicates
-> +		to OSPM that an unpredictable event has limited processor
-> +		performance, and the delivered performance may be less than
-> +		desired/minimum performance.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
->  
->  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
->  Date:		August 2008
-> -- 
-> 2.34.1
-> 
+> > +
+> > +       if (clkspec->args[0] =3D=3D TEGRA114_CLK_EMC) {
+> > +               if (!tegra124_clk_emc_driver_available(hw))
+> > +                       return ERR_PTR(-EPROBE_DEFER);
+> > +       }
+> > +
+> > +       return clk;
