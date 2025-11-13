@@ -1,435 +1,204 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A44529D26E;
-	Thu, 13 Nov 2025 15:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763046955; cv=none; b=e7dhhF2bZY5myA10jpPpX9/da3x2ADwXP4nF12Hdu8g5yLnK/QRxYO2hDnc9YIDp+o/J1wmIKPRZnXmUVjHw3TgObN3ZlFfNHE/aLMh5nT6bNaXwjI0Evh/TeBb2gKaTnO9Gu+0WstFO7wwT4/qr99bSkTcKhv9ojc4T72AizZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763046955; c=relaxed/simple;
-	bh=b2qgVXhlTqI+ms4L6K/w37wAIrhIfLu5uz7+Fp58pio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqTUWlK1izF2yjzwf7MVhl2JTHIpr9LqIVwlHkWOEvfcrcQqTqxVwZo0V+sF/5tGmalXNoVSoRCMJe8jlJHWz9+ahzqC9WpHW96r8iT+1bYebKQyBCYYAowaWtFYq+ea0n27aYbrirl8thnQhUlAfisyX3hF4TDpjmSQKzHIsVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FE6A12FC;
-	Thu, 13 Nov 2025 07:15:45 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 983693F66E;
-	Thu, 13 Nov 2025 07:15:52 -0800 (PST)
-Date: Thu, 13 Nov 2025 15:15:47 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
-	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, zhanjie9@hisilicon.com,
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
-	bbasu@nvidia.com
-Subject: Re: [PATCH v4 8/8] cpufreq: CPPC: add autonomous mode boot parameter
- support
-Message-ID: <aRX2Iz9+3oMZpX2K@arm.com>
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-9-sumitg@nvidia.com>
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010017.outbound.protection.outlook.com [52.101.61.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555AA357A55;
+	Thu, 13 Nov 2025 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763051508; cv=fail; b=CPZugGJV6z7bxJFGSeW0iFH9185e/tcuQ/NMAkNACoubkGqHSQajRoND8n3hxAf+IG3fn8PN0jx8ZTZUY4OJWuU7iySwc0/L6brX6kD5ff/0QQxHikcr7HpOZ74roegxYl4QtzFAx/uCFbWyB69v7Mt7ow4thVZiwVe/NyB8eug=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763051508; c=relaxed/simple;
+	bh=VLwrEk9sTry7zO426W5BMd/MAFppZePgk92WFQFS4Zo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s8Pctbj8igU9NHes98RzGxW1fk3XQaF42C61Zi18Nr5hrff7Y5+flL3WGDH9P9p2ryN0SCf71QN/RmcJkiRkegI3T24XEjtdLpdpLRwVkcYdEASrL1isluylaEjseoYSAzfXKOYHRxKF7mX5DXNMvNbDiOMeKxI+Eq6AdhjWf5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cPNdSBhC; arc=fail smtp.client-ip=52.101.61.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cPNdSBhC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r8i4vO0SIqbEb/BR4S57SORh+nVa3SNtAiszl6sl35F1aFLNhCRu0Tgjmxc0UoRs1V0Q29HBRSHynwLdq3YqSQcmV47WzTpcXwkbBk1eaC5GtIzy3hBlIjnKQtDy4nDVBh3m6TjsibJXmi0NV7+VH6j059WpE48PP3fwAWudSwhWeTE5xaOKtIc95kzuu28J/jWSAKTzL0fuh9ipFKPeHvGni8ZtdYlQ7rBYs1DXAvtw5lBKT1/s5h+0x7QOVKxSh9kXWSENfnz5WLFYrrT+OQJrUmLUVlQPtz8ie43gJ2I3iHhG2hsa2Yu5WwOv78FXcAwDSRHWwmNyc3yjyza6ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+93hdRL7Bch1JUkvRRNBiK22lgvEd1EaOIyiMFE1he8=;
+ b=wvCmKXZiYofkXne3NNQQYEl2ZuHvWBKFQDnBxDB8rZD4BOd9am4V+4C6Ck4+Ci4BDwVa+g5ItHSnrverl1NSfKziWFEAqF/4URjz6tnfnfd6nFB8UXZxn85I2XuF/QCCWNNVol1ft6ujUT7wyJsXy+QisUhUmCfGDEC0oga7shljRkDRt2KlMtPDDcTFDZiKNbrwerm4IL+NI8cHW+EhnTkkv5HQDbFCmSRq1mNCIFMe2m4tGStaS5D7+SOmfnAZb/mNM9GLKn+Qat+jpksCQQ29qs61QDCDu91SJBUuNGgyJslR40WB0ugwY3lgeUCc9hSg6armMyk+uraOWrexXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+93hdRL7Bch1JUkvRRNBiK22lgvEd1EaOIyiMFE1he8=;
+ b=cPNdSBhCyTcoo0fxAggYu7tYwZZrNp87qCtEMlsqJRFfTLDdhzksaaCmZiN+H+gJNXNLnOm4TYXXSIS05X1LjiUvrGutSq5w69MOv0D1HuoaFDz5K5FCueshJ26h2uf3zvpbRzd5ISYuRyal4shqyAlsccsRU7ikUuS24C+PEJ/ymDcXmAikLnu+2OGQE9KTRGh3BE85RjXl4uRQ+r6NKzvtrWjaIrKvlyoY8RUCE05dCYbUzCDQroduDvY+pU1iQchw/hb11HDLLMfuQSyywjQrT05AKiil92SjkJUg4k7XxGBXCaxnunH5Yd+IN2tuaaXO1mh/zR+t7h2aNO6abg==
+Received: from SJ0PR03CA0131.namprd03.prod.outlook.com (2603:10b6:a03:33c::16)
+ by SA3PR12MB7879.namprd12.prod.outlook.com (2603:10b6:806:306::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 16:31:40 +0000
+Received: from SJ1PEPF00002319.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c:cafe::f) by SJ0PR03CA0131.outlook.office365.com
+ (2603:10b6:a03:33c::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Thu,
+ 13 Nov 2025 16:31:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002319.mail.protection.outlook.com (10.167.242.229) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 16:31:40 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 08:31:17 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 08:31:17 -0800
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Thu, 13 Nov 2025 08:31:14 -0800
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <pshete@nvidia.com>, <nhartman@nvidia.com>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <kkartik@nvidia.com>
+Subject: [PATCH] gpio: tegra186: Fix GPIO name collisions for Tegra410
+Date: Thu, 13 Nov 2025 22:01:12 +0530
+Message-ID: <20251113163112.885900-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105113844.4086250-9-sumitg@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002319:EE_|SA3PR12MB7879:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e926c76-e074-4462-c395-08de22d21fba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?I4IP63rUkjd7cduICucilmeBFSa1F63prPfM3pGfyh84MwVfb2zHVS9WyJQ0?=
+ =?us-ascii?Q?z05G3AGQIpOhppuhr83gxKcgZV8akwUMXKo+uob6G250o3TtQXlbiysUzXnJ?=
+ =?us-ascii?Q?OtdCcqZIbXn5M7BfgGm4DDeFWO4oqHgQvJQrq2peBNiZypMkPz9l8gc6mNeg?=
+ =?us-ascii?Q?XEzUfVQqh3BcopzpRNmDwxkXT5jzXaAftrteaIWY8e2RpH4M1LB4AsduWXag?=
+ =?us-ascii?Q?GrqXffAfJnC4dq4RhuLj61ut+8r94SgiesJycsj7sy/n26j+hJNtI+XEI4rE?=
+ =?us-ascii?Q?NPjPK5sPC4VuJPIAvKXWfUu2Iq0s5NeeFfpGNt5noRgcK04PY5uO5iQNhsS9?=
+ =?us-ascii?Q?bGn1Tqr0WoodNyDY+PE0EgBrEuWOufhMSSlLiOl0nnAH4cELsYbpaqdEZ+N8?=
+ =?us-ascii?Q?nPTi83yEXoRERjzDzlhiUIBEE7E3dUPQV7BCRL7okxIBttf2T6yAZVG/x6ib?=
+ =?us-ascii?Q?PcUo6q5UEplnMecHpQmujvn9KW/vbmyKuV6tRftSfTMOZ6dAO4tqdCMljJ2/?=
+ =?us-ascii?Q?4WYEaVVgLiSqkqC/52ws/Wx7T7aUyV3kcQKcAfi8lhsXgx6lTjsdV+1ZuJ2L?=
+ =?us-ascii?Q?7DtCEb8pQSsSGUOreNk9yuZc7gYjMZTb0EPi1uPqbXJFWTXQy4g1fCcU7TnZ?=
+ =?us-ascii?Q?/QDwebA9Aoohb6Zn70LlPBqQznppJuhxZWG01MnNoJ5+yRxnFvc5Z0jL8E2B?=
+ =?us-ascii?Q?Wh6g7zaLuNmNcm0h1LkigM2bNz/vzDoAXL7voopPqk7Al+VlBys1t3LDXOUx?=
+ =?us-ascii?Q?arffNvCGq3NoaFs+Zh5PB5ZR0gEEm/k1upqj2KQFf2spXrmUvFukgYRBAfUg?=
+ =?us-ascii?Q?/dCM0/xJo/s0C+L60CxEz3MdDVAHt2reQZJPWCHpRK4vOIFxLyf2RnGhWxNv?=
+ =?us-ascii?Q?eA5EcxZzGTPswJUkN4/ouLr/iEBCgjCR0ZSb4xIPqNXGHwGng9KpMA2IGkAf?=
+ =?us-ascii?Q?voHW6zelxKXb+Bt8/iGBDJMMCYOLdomP1KgX8GCJ8uddlj0Km++MzfY911nt?=
+ =?us-ascii?Q?Xmsg+mBmqCio+5lY3Ft6WPYjt52zroRWeFLFKf6yDTWUA7q+1MNgvSxrBLGg?=
+ =?us-ascii?Q?lznorczklwq/VUWf89Qv7y8svaxXUHK2GdkxSK2rwPlVnSYb9ANBXbPGvZjO?=
+ =?us-ascii?Q?lbwGDIfoDntZwjexaXDx436IsPpW6+y3IUM9icGaww7ecg6fZPuC8Zmx03ty?=
+ =?us-ascii?Q?euxP4rl7WrqXBhP3NF3neXvlku+6EEXe+K0Ccr7xep3cMhMT3GguugkVFT3G?=
+ =?us-ascii?Q?d3qnUl16YeSKw6zbTNhepARWLPYzQepvtIof6eBwuMVerGqx+icLAXr92ymy?=
+ =?us-ascii?Q?KoMq5ll0wE4CLjwOHWs8CuKS8M/OmNxiJgtaI/dSF7cwcsdtdD/8n2x30FUH?=
+ =?us-ascii?Q?Bu5f+VWJ7J9NLpOeDA22bmSqlIcOBO7dUke5LMBMpSwtm/sfCF05aGUBUWAW?=
+ =?us-ascii?Q?+hVsbBh/bwL6SSiCm5kNFE/z8SsHHodwwQDyx6xG5tIsvO6N/9xoiFxyM8CQ?=
+ =?us-ascii?Q?DV96CBkgeGTpvFQ52ZsBw3JA4n+AmAXgozqPfgNcprNj6xvDaSz/mEOPBHRM?=
+ =?us-ascii?Q?4WkX5dAsssyFEEQqNiA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:31:40.2623
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e926c76-e074-4462-c395-08de22d21fba
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002319.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7879
 
-Hi,
+On Tegra410, Compute and System GPIOs have same port names. This
+results in the same GPIO names for both Compute and System GPIOs
+during initialization in `tegra186_gpio_probe()`, which results in
+following warnings:
 
-As an overall comment, there are now various functions that modify the
-autonomous selection configuration in various degrees:
-cppc_cpufreq_update_autosel_config, cppc_cpufreq_update_auto_select,
-cppc_cpufreq_set_epp_autosel_allcpus.
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.00'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.01'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.02'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.00'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.01'
+  ...
 
-Are these all really necessary? Some seem single use functions that
-make the intention very confusing through the use of several bool
-parameters. I think a lot of this complexity can be avoided, so
-I'd recommend to re-think the software design a bit.
+Add GPIO name prefix in the SoC data and use it to initialize the GPIO
+name.
 
-I've added more details below (and I've skipped review of the previous
-patch).
+Port names remain unchanged for previous SoCs. On Tegra410, Compute
+GPIOs are named COMPUTE-P<PORT>.GPIO, and System GPIOs are named
+SYSTEM-P<PORT>.GPIO.
 
-On Wednesday 05 Nov 2025 at 17:08:44 (+0530), Sumit Gupta wrote:
-> Add kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable CPPC
-> autonomous performance selection at system startup. When autonomous mode
-> is enabled, the hardware automatically adjusts CPU performance based on
-> workload demands using Energy Performance Preference (EPP) hints.
-> 
-> This parameter allows to configure the autonomous mode on all CPUs
-> without requiring runtime sysfs manipulation if the 'auto_sel' register
-> is present.
-> 
-> When auto_sel_mode=1:
-> - All CPUs are configured for autonomous operation during module init
-> - EPP is set to performance preference (0x0) by default
-> - Min/max performance bounds use defaults
-> - CPU frequency scaling is handled by hardware instead of OS governor
-> 
-> For Documentation/:
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  12 ++
->  drivers/cpufreq/cppc_cpufreq.c                | 197 +++++++++++++++---
->  2 files changed, 182 insertions(+), 27 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index b8f8f5d74093..048f84008a7e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -929,6 +929,18 @@
->  			Format:
->  			<first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
->  
-> +	cppc_cpufreq.auto_sel_mode=
-> +			[CPU_FREQ] Enable ACPI CPPC autonomous performance selection.
-> +			When enabled, hardware automatically adjusts CPU frequency
-> +			on all CPUs based on workload demands. In Autonomous mode,
-> +			Energy Performance Preference(EPP) hints guide hardware
-> +			toward performance(0x0) or energy efficiency (0xff).
-> +			Requires ACPI CPPC autonomous selection register support.
-> +			Format: <bool>
-> +			Default: 0 (disabled)
-> +			0: use cpufreq governors
-> +			1: enable if supoorted by hardware
-> +
->  	cpuidle.off=1	[CPU_IDLE]
->  			disable the cpuidle sub-system
->  
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index d1b44beaddda..0a55ab011317 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -28,8 +28,12 @@
->  #include <acpi/cppc_acpi.h>
->  
->  static struct cpufreq_driver cppc_cpufreq_driver;
-> +
->  static DEFINE_MUTEX(cppc_cpufreq_update_autosel_config_lock);
->  
-> +/* Autonomous Selection */
-> +static bool auto_sel_mode;
-> +
->  #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
->  static enum {
->  	FIE_UNSET = -1,
-> @@ -272,8 +276,13 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
->  	freqs.old = policy->cur;
->  	freqs.new = target_freq;
->  
-> +	/*
-> +	 * In autonomous selection mode, hardware handles frequency scaling directly
-> +	 * based on workload and EPP hints. So, skip the OS frequency set requests.
-> +	 */
->  	cpufreq_freq_transition_begin(policy, &freqs);
-> -	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> +	if (!cpu_data->perf_caps.auto_sel)
-> +		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+Fixes: 9631a10083d8 ("gpio: tegra186: Add support for Tegra410")
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+---
+ drivers/gpio/gpio-tegra186.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-"When Autonomous Selection is enabled, it is not necessary for OSPM to assess
-processor workload performance demand and convey a corresponding performance
-delivery request to the platform via the Desired Register. If the Desired
-Performance Register exists, OSPM may provide an explicit performance
-requirement hint to the platform by writing a non-zero value."
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 83ecdc876985..b1498b59a921 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -109,6 +109,7 @@ struct tegra_gpio_soc {
+ 	const struct tegra_gpio_port *ports;
+ 	unsigned int num_ports;
+ 	const char *name;
++	const char *prefix;
+ 	unsigned int instance;
+ 
+ 	unsigned int num_irqs_per_bank;
+@@ -940,8 +941,12 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 		char *name;
+ 
+ 		for (j = 0; j < port->pins; j++) {
+-			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
+-					      "P%s.%02x", port->name, j);
++			if (gpio->soc->prefix)
++				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
++						      gpio->soc->prefix, port->name, j);
++			else
++				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
++						      port->name, j);
+ 			if (!name)
+ 				return -ENOMEM;
+ 
+@@ -1306,6 +1311,7 @@ static const struct tegra_gpio_soc tegra410_compute_soc = {
+ 	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
+ 	.ports = tegra410_compute_ports,
+ 	.name = "tegra410-gpio-compute",
++	.prefix = "COMPUTE",
+ 	.num_irqs_per_bank = 8,
+ 	.instance = 0,
+ };
+@@ -1335,6 +1341,7 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
+ 	.num_ports = ARRAY_SIZE(tegra410_system_ports),
+ 	.ports = tegra410_system_ports,
+ 	.name = "tegra410-gpio-system",
++	.prefix = "SYSTEM",
+ 	.num_irqs_per_bank = 8,
+ 	.instance = 0,
+ };
+-- 
+2.43.0
 
-Therefore I believe it's up to the platform to decide if it wants to use
-the software hint.
-
->  	cpufreq_freq_transition_end(policy, &freqs, ret != 0);
->  
->  	if (ret)
-> @@ -565,6 +574,12 @@ static struct cppc_cpudata *cppc_cpufreq_get_cpu_data(unsigned int cpu)
->  		goto free_mask;
->  	}
->  
-> +	ret = cppc_get_perf(cpu, &cpu_data->perf_ctrls);
-> +	if (ret) {
-> +		pr_debug("Err reading CPU%d perf ctrls: ret:%d\n", cpu, ret);
-> +		goto free_mask;
-> +	}
-> +
-
-This belongs to patch 2/8.
-
->  	return cpu_data;
->  
->  free_mask:
-> @@ -666,11 +681,81 @@ static int cppc_cpufreq_update_autosel_val(struct cpufreq_policy *policy, bool a
->  	return 0;
->  }
->  
-> +static int cppc_cpufreq_update_epp_val(struct cpufreq_policy *policy, u32 epp)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	unsigned int cpu = policy->cpu;
-> +	int ret;
-> +
-> +	pr_debug("cpu%d, epp curr:%u, new:%u\n", cpu, cpu_data->perf_ctrls.energy_perf, epp);
-> +
-> +	guard(mutex)(&cppc_cpufreq_update_autosel_config_lock);
-> +
-> +	ret = cppc_set_epp(cpu, epp);
-> +	if (ret) {
-> +		pr_warn("failed to set energy_perf for cpu:%d (%d)\n", cpu, ret);
-> +		return ret;
-> +	}
-> +	cpu_data->perf_ctrls.energy_perf = epp;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * cppc_cpufreq_update_autosel_config - Update Autonomous selection configuration
-> + * @policy: cpufreq policy for the CPU
-> + * @min_perf: minimum performance value to set
-> + * @max_perf: maximum performance value to set
-> + * @auto_sel: autonomous selection mode enable/disable (also controls min/max perf reg updates)
-> + * @epp_val: energy performance preference value
-> + * @update_epp: whether to update EPP register
-> + * @update_policy: whether to update policy constraints
-> + *
-> + * Return: 0 on success, negative error code on failure
-> + */
-> +static int cppc_cpufreq_update_autosel_config(struct cpufreq_policy *policy,
-> +					      u64 min_perf, u64 max_perf, bool auto_sel,
-> +					      u32 epp_val, bool update_epp, bool update_policy)
-> +{
-> +	const unsigned int cpu = policy->cpu;
-> +	int ret;
-> +
-> +	/*
-> +	 * Set min/max performance registers and update policy constraints.
-> +	 *   When enabling: update both registers and policy.
-> +	 *   When disabling: update policy only.
-> +	 * Continue even if min/max are not supported, as EPP and autosel
-> +	 * might still be supported.
-> +	 */
-> +	ret = cppc_cpufreq_set_min_perf(policy, min_perf, auto_sel, update_policy);
-> +	if (ret && ret != -EOPNOTSUPP)
-> +		return ret;
-> +
-> +	ret = cppc_cpufreq_set_max_perf(policy, max_perf, auto_sel, update_policy);
-> +	if (ret && ret != -EOPNOTSUPP)
-> +		return ret;
-> +
-> +	if (update_epp) {
-> +		ret = cppc_cpufreq_update_epp_val(policy, epp_val);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = cppc_cpufreq_update_autosel_val(policy, auto_sel);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pr_debug("Updated autonomous config [%llu-%llu] for CPU%d\n", min_perf, max_perf, cpu);
-> +
-> +	return 0;
-> +}
-
-I think cppc_cpufreq_update_auto_select() can be removed and
-cppc_cpufreq_update_autosel_config() used in its place. 
-
-cppc_cpufreq_update_autosel_config() would not even need min/max as
-arguments as they can be obtained from perf_caps (low/nominal range)
-or perf_ctrls (current min/max). This would also simplify
-cppc_cpufreq_cpu_init().
-
-> +
->  static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  {
->  	unsigned int cpu = policy->cpu;
->  	struct cppc_cpudata *cpu_data;
->  	struct cppc_perf_caps *caps;
-> +	u64 min_perf, max_perf;
->  	int ret;
->  
->  	cpu_data = cppc_cpufreq_get_cpu_data(cpu);
-> @@ -734,11 +819,31 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
->  	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
->  
-> -	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> -	if (ret) {
-> -		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-> -			 caps->highest_perf, cpu, ret);
-> -		goto out;
-> +	if (cpu_data->perf_caps.auto_sel) {
-> +		ret = cppc_set_enable(cpu, true);
-
-Isn't auto-sel enabled at this point? Also, if the auto-sel is
-ACPI_TYPE_INTEGER, cppc_set_enable() will return an error,
-isn't it?
-
-> +		if (ret) {
-> +			pr_err("Failed to enable CPPC on cpu%d (%d)\n", cpu, ret);
-> +			goto out;
-
-Do you really want to bail out of the rest of the cpufreq CPU
-initialisation, if only auto-select configuration fails?
-
-> +		}
-> +
-> +		min_perf = cpu_data->perf_ctrls.min_perf ?
-> +			   cpu_data->perf_ctrls.min_perf : caps->lowest_nonlinear_perf;
-> +		max_perf = cpu_data->perf_ctrls.max_perf ?
-> +			   cpu_data->perf_ctrls.max_perf : caps->nominal_perf;
-> +
-> +		ret = cppc_cpufreq_update_autosel_config(policy, min_perf, max_perf, true,
-> +							 CPPC_EPP_PERFORMANCE_PREF, true, false);
-> +		if (ret) {
-> +			cppc_set_enable(cpu, false);
-> +			goto out;
-> +		}
-> +	} else {
-> +		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> +		if (ret) {
-> +			pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-> +				 caps->highest_perf, cpu, ret);
-> +			goto out;
-> +		}
->  	}
->  
->  	cppc_cpufreq_cpu_fie_init(policy);
-> @@ -910,7 +1015,6 @@ static int cppc_cpufreq_update_auto_select(struct cpufreq_policy *policy, bool e
->  	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
->  	u64 min_perf = caps->lowest_nonlinear_perf;
->  	u64 max_perf = caps->nominal_perf;
-> -	int ret;
->  
->  	if (enable) {
->  		if (cpu_data->perf_ctrls.min_perf)
-> @@ -919,26 +1023,8 @@ static int cppc_cpufreq_update_auto_select(struct cpufreq_policy *policy, bool e
->  			max_perf = cpu_data->perf_ctrls.max_perf;
->  	}
->  
-> -	/*
-> -	 * Set min/max performance registers and update policy constraints.
-> -	 *   When enabling: update both registers and policy.
-> -	 *   When disabling: update policy only.
-> -	 * Continue even if min/max are not supported, as EPP and autosel
-> -	 * might still be supported.
-> -	 */
-> -	ret = cppc_cpufreq_set_min_perf(policy, min_perf, enable, true);
-> -	if (ret && ret != -EOPNOTSUPP)
-> -		return ret;
-> -
-> -	ret = cppc_cpufreq_set_max_perf(policy, max_perf, enable, true);
-> -	if (ret && ret != -EOPNOTSUPP)
-> -		return ret;
-> -
-> -	ret = cppc_cpufreq_update_autosel_val(policy, enable);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return 0;
-> +	return cppc_cpufreq_update_autosel_config(policy, min_perf, max_perf, enable,
-> +						  0, false, true);
->  }
->  
->  static ssize_t store_auto_select(struct cpufreq_policy *policy, const char *buf, size_t count)
-> @@ -1146,13 +1232,61 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
->  	.name = "cppc_cpufreq",
->  };
->  
-> +static int cppc_cpufreq_set_epp_autosel_allcpus(bool auto_sel, u64 epp)
-> +{
-> +	int cpu, ret;
-> +
-> +	for_each_present_cpu(cpu) {
-> +		ret = cppc_set_epp(cpu, epp);
-> +		if (ret) {
-> +			pr_warn("Failed to set EPP on CPU%d (%d)\n", cpu, ret);
-> +			goto disable_all;
-> +		}
-> +
-> +		ret = cppc_set_auto_sel(cpu, auto_sel);
-> +		if (ret) {
-> +			pr_warn("Failed to set auto_sel on CPU%d (%d)\n", cpu, ret);
-> +			goto disable_all;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_all:
-> +	pr_warn("Disabling auto_sel for all CPUs\n");
-> +	for_each_present_cpu(cpu)
-> +		cppc_set_auto_sel(cpu, false);
-> +
-> +	return -EIO;
-> +}
-> +
->  static int __init cppc_cpufreq_init(void)
->  {
-> +	bool auto_sel;
->  	int ret;
->  
->  	if (!acpi_cpc_valid())
->  		return -ENODEV;
->  
-> +	if (auto_sel_mode) {
-> +		/*
-> +		 * Check if autonomous selection is supported by testing CPU 0.
-> +		 * If supported, enable autonomous mode on all CPUs.
-> +		 */
-> +		ret = cppc_get_auto_sel(0, &auto_sel);
-> +		if (!ret) {
-> +			pr_info("Enabling auto_sel_mode (autonomous selection mode)\n");
-> +			ret = cppc_cpufreq_set_epp_autosel_allcpus(true, CPPC_EPP_PERFORMANCE_PREF);
-> +			if (ret) {
-> +				pr_warn("Disabling auto_sel_mode, fallback to standard\n");
-> +				auto_sel_mode = false;
-> +			}
-> +		} else {
-> +			pr_warn("Disabling auto_sel_mode as not supported by hardware\n");
-> +			auto_sel_mode = false;
-> +		}
-> +	}
-> +
-
-Why not check at cppc_cpufreq_cpu_init? In the unlikely case that one
-CPU does not support it, I would recommend to issue a warning, rather
-than disable auto-sel on all the other CPUs. It is possible that some
-CPUs support auto-sel and they have it enabled by default without
-exposing that control to the OS. 
-
->  	cppc_freq_invariance_init();
->  	populate_efficiency_class();
->  
-> @@ -1165,10 +1299,19 @@ static int __init cppc_cpufreq_init(void)
->  
->  static void __exit cppc_cpufreq_exit(void)
->  {
-> +	int cpu;
-> +
-> +	for_each_present_cpu(cpu)
-> +		cppc_set_auto_sel(cpu, false);
-> +	auto_sel_mode = false;
-> +
->  	cpufreq_unregister_driver(&cppc_cpufreq_driver);
->  	cppc_freq_invariance_exit();
->  }
->  
-> +module_param(auto_sel_mode, bool, 0000);
-> +MODULE_PARM_DESC(auto_sel_mode, "Enable Autonomous Performance Level Selection");
-> +
->  module_exit(cppc_cpufreq_exit);
->  MODULE_AUTHOR("Ashwin Chaugule");
->  MODULE_DESCRIPTION("CPUFreq driver based on the ACPI CPPC v5.0+ spec");
-> -- 
-> 2.34.1
-> 
