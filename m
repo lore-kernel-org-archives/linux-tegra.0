@@ -1,86 +1,71 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DA8331239
-	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F37326D5E
+	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 15:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763132281; cv=none; b=uW6orIR+1o21k0s+6ZIUHVTkLe3EPNyCdTyUS+dZzgdyGlF6EorAmkIso7EXwxKFBbnbEW4AZZLLMp++gmQcKl8Xq47dNuqnOAw3xfTI4qGJ5rfdljuCnD/XAeSoGr4Wf6tw0+3bYXKML7KygUhfFYkKAO+jkB22VahJc1WXies=
+	t=1763133128; cv=none; b=W5TCygYld3olEs4tWuiCbG/cDGPOdtImS4UvSB+umqPdjz2MLpyFgzll6HfGkhtwTRljkSCqv/Oe9x1loFXRff4DSKRLnDQC9yeKIoIzReI4ECgaLTHKE1bNuH9ZKcdPhaCXqpKNMeOfdPHwTkknPh+H0m2UK/u8O7R8DRshI7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763132281; c=relaxed/simple;
-	bh=F1ZCzX89awJADOgTe+k1vSNI5Zu2MhOm6VSE4oz9v3Y=;
+	s=arc-20240116; t=1763133128; c=relaxed/simple;
+	bh=voAb5/VWXrSfyBk2pDRuVMB2qmR4O+wj6U1yYvtSv08=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FvKKyadHC8vRwI6nt3PZzLf5wlr9mHQSzhx0Qaz50dy7FA3pYktFZsynK6znR+Us4VudCrdqOVbQ07cqu+mvFpu3qdosiON3BUpaBbzsavWfEEOEC6KO0mUMjZTthnaOcD/FGnWFk9r7XJLG30etAbZOgIUCHa1IGGRWDudsi00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6sYjKLk; arc=none smtp.client-ip=209.85.221.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2c4sLCEzixQGnI3cdRLbME5OH9TCxDBw4BTk4DbSSQxSR8VJlDpHMCT3DdYEw+KHoLik0PrbaVPC6B1iSIq7+fiMX4lp9Nm/x/ljrkiwsveXG24zphwZyyaGjWmH9ZwPfHHR0wseAiN03C3OkfXgZSMzPIssAhxtDIPeK7eEwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0hmEfvF; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6sYjKLk"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-429c4c65485so1748095f8f.0
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 06:57:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0hmEfvF"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477563e28a3so14427085e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 07:12:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763132278; x=1763737078; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763133125; x=1763737925; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JGnRuedlsHd0fcZwXKJjRRdg6CbePYJalR5bL55auvo=;
-        b=P6sYjKLk8/0kTE8lO+CzOp9BGFg8Q8tPJr+bCGTdHDZKE+MuFpap3hCh9kxjhmRm8c
-         DuBjPD5NZJlrBauJgvudHJfDhTFYnUEwPUFkerun/pu41rb3ivvBU6YwcVtkOWPGw0hO
-         QOwsRsQz4UBTPeSKOpwFHcvd62DjRCcOMx8lQdKVdZI0x6Hq8tpyYerCRNhjXj90/aci
-         LYyfxvfggc2KATudGot4O98WBjZoeOFX0LZpu5SiV6WRECYdE/ihuKSdP18u3Tj6YpMU
-         82Z7BDy2Am7a0XuJHskjQoaq/Yphc/+B8ZYI0KcVAxVqUYevx5hGx334o+U7PvVrYoy8
-         9xUg==
+        bh=8r5/EliQfOua7xX65iMj9ifBX816MRf+D+dek3dRiuw=;
+        b=m0hmEfvFZuEOLuMKtdSUXPHAX67QYXl3plv8CznL289WbP8YkEFjNL/5x73cTTbUrf
+         XqbvaK62C1C1pmKhW6Hp0ypWdjBUuRiEWeZ9FS9fbm++xS4hHt2NdgDT+KCJPvoJfvlT
+         mc7klBN/rbDxmL8K3yWIWkUpgSW+ZavQgU/88Bc9h8RYLtGI8jMvma8+eKQ0qbLTZJPR
+         STW9qDR0+9R4tVCpihR69RfcED4OkqR3p16SC40nF2yzsHreJ8Z170T2Sey6DSUh4PBT
+         vniAaV5VZX99oMOxyMbzXEW9RD7HnYwtDffmUvspgv0R6Z5LBZbl0OnFOGIXrF6RD3I8
+         gijg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763132278; x=1763737078;
+        d=1e100.net; s=20230601; t=1763133125; x=1763737925;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JGnRuedlsHd0fcZwXKJjRRdg6CbePYJalR5bL55auvo=;
-        b=fH2ne4ucwuZiBAZZ3Sxvn6B8igRGizIwYAcAyR1I92NezeMJob1b4+SSbaQNUSCIPs
-         S2ST5u1/+fIP4C1GLpuFguR1pKgeixREkdpIzd85EuG6ZzwPxeJrexoIuO6G4EW/mlLj
-         qNE9sATQtdjGMhs0kaKS2DXk1iewWpgvzcBkmzce1ntB/VeMaKp0P5rfxOlVPwgp5iUV
-         sYJHmFKJrkgvVQwW/TjNDsUJFJOg879kdi5r9IMCmow0QK6zst4Mis2a/k63lFC+nFOD
-         ScH4tlloCYAhuZv5PIax5kQxnKHLYg5Ey8IDNs5f79PUT+MVkf3gNNlbV395F7Ox5Tuu
-         tX+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9YowTyRyCndOZalcQzV6jm/+s2nPmktcwLSUGS3CVvesy+l6lCvXzPZCLZv48k+kkwfRJ6wfBUWsv8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YydQXnhJ/7rrdKeRC1OJvp0HB3ncFMj/TY5jXykcNbV7mSlbnGm
-	QGH+rnAhXFrMN0/zfkC+u5ODkiFq0lFfYnUzlu4+ksHHbmp7nYF5EZ8s
-X-Gm-Gg: ASbGncvgDPsTPhCJubTHs4WU7mSkBLGHrgEoqkE0N9CJfRiyB0rdEbMkdFkqVgkfa4P
-	v9VYL74EJC6QYU1sFyP+T+lM9IK6k+Vq/8e+Hzcs/nLXbmn0jfpJcIfQSXVKrIcd8UOWn7dYE51
-	XbXaDtNT0zvnxSVvOk/Ypq7qBG9vY4N6MXt4QXAMzwa/n+k2S7A6nSCG+VXzqb1F8H0UHhJfD5r
-	hyA5as5k4qm+KZKnLXZx0rpOgOaoPl5WQdYd00tiXS9N5HdCAe23h5atqrUq3ZfeA0Hfk+8c+AY
-	zUOm1HAtTzgFWPHUBDImNXWW182NB9duwZEyOjE2hgzE+Va4KvWG20ClcNcqX9F85mEL3ZVvZcF
-	VgAUVUEz1NOhJl+Exc8xaMm/BPKVURJg2SFOzSwwMT/qU9bCowAYNu1AjD6x3lcmJzNlQp3v/iV
-	35Q5h8HDb7vDg1UrCnWJuK8JzRHzPduFNSsvdQS7iua3yU3fJPcMMuA574Orgio89I337as1oDu
-	w==
-X-Google-Smtp-Source: AGHT+IGR+CaGRepCgY9abJOUDZMtJSLpLAxIBXYfl3hSOsk7LXj9GzOPlhHY0Won/RR6QmkpGOV9IA==
-X-Received: by 2002:a05:6000:615:b0:42b:41a6:a670 with SMTP id ffacd0b85a97d-42b59394029mr3665245f8f.54.1763132277621;
-        Fri, 14 Nov 2025 06:57:57 -0800 (PST)
+        bh=8r5/EliQfOua7xX65iMj9ifBX816MRf+D+dek3dRiuw=;
+        b=CheLQK1uxw7bIGtgIHO+VAUSr+rBCPNM/Z5h/HEoYH/vDc38kaycN3QrmKMpxAsN3S
+         zdel1+ZJhjPAUH2C6PNmDib3ueBLXATLUBGrNLEDc7JpkHkvgFQdVWpPWCmDEUjTFuwh
+         nhm1JoRnDEQGkGOYy+E2UIPcLZyH3o2Aqi9XYLNe/qPhyS/sw8UMePlrwM0VBWUcT0Ia
+         8HLq9B8B7Ns7VILrwq09vlPTbelcRtNAhtlSaJ9iCMsbGQDAhyuG/nVkNkUaorN9igDw
+         univDFtKbhCoQ8x9dzWGpIl61HUxPzZvGpGuqxMatZqFfHGGHdAO8fFW+o5u0ey0cYY1
+         pIYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKIOE16LAIsisSat4gOBt65/Wu7alIcfYya/4NutxsYoaCB02+hhLjWk5i+GpU7O8YyLUofCVSJuXzcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRQblQulEJQof01luPtmlOa8b7NMkJ6nt2ufFZSZCM4H9RY2IC
+	sIj6z0NJG0pWbm/pPAyJ/t8q01HCo4RK4MrTScZly6UjMCN5Y1sgP+Lu
+X-Gm-Gg: ASbGncvR2Z03RQag+B1A76lyEQxE0B1wdiY15qeQTWaj+W/uOt7uJ2RnPVBA9HTWRAC
+	1F3cnut0dtuEUQmcINOnM78m3ybJwST4bdtyJdryM/dEWgbH8QdmTDTs77lb6JZHgN09CF69SJj
+	CLJPmgxtZztkT+CJBpxjB8QOkkW+aE+oIKOhxQLi8gxI/QSJa+Vf+TikdfIIohcs1SDHkfVt1qn
+	HPjbgwd8BWwEbOoys/ysMPBdoTwbw16pd/p3w/RqX3G+v0nOxn3pSuqXM+3kApCmgyT13JGW+qF
+	gz82g/VqrojqJPqteTZ1469H2iq1DgYz4Qxu9/Eh3iXFPTGc8MjphTCryR1G85OtZHUp4X8zeyu
+	uX62eZJr4hCD6LtmmM2DIt7yuqyjlEvbB0wHli7c9+WGiCpaKCCsz5a8eTWVC1C8H1ZG937p6HO
+	hcqIvTlfiBRKwpe7DlfFdjTV3SUS45k58KMls2JH8IZJ742QaUJelu3JmDB36AYsM=
+X-Google-Smtp-Source: AGHT+IHlbOOTvrmcjU3ZGEriGOa14ojvkFk4Zj94HNl1yT+L3RpIuFB0z5aqf2JpxrCIuwwdjhRyAg==
+X-Received: by 2002:a05:600c:1c23:b0:477:8b2e:aa7f with SMTP id 5b1f17b1804b1-4778fd874acmr46993815e9.5.1763133124615;
+        Fri, 14 Nov 2025 07:12:04 -0800 (PST)
 Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f174afsm10192785f8f.33.2025.11.14.06.57.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e43c2fsm146920545e9.6.2025.11.14.07.12.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 06:57:56 -0800 (PST)
-Date: Fri, 14 Nov 2025 15:57:54 +0100
+        Fri, 14 Nov 2025 07:12:03 -0800 (PST)
+Date: Fri, 14 Nov 2025 16:12:01 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonas =?utf-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5 22/23] ARM: tegra: add CSI nodes for Tegra20 and
- Tegra30
-Message-ID: <6ec4sw2c5rs2s4akd55vacveloiyc7ehbhouz2mqs2gy2w7v5d@rqxzhxcgm2ns>
-References: <20251022144930.73272-1-clamor95@gmail.com>
- <20251022144930.73272-2-clamor95@gmail.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: jonathanh@nvidia.com, sdonthineni@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: fuse: Do not register SoC device on ACPI boot
+Message-ID: <i3kz66ndhxptxz2vvgdnfqqxjop3ivaj6brdnvbihwby6sfmab@bneli45jube3>
+References: <20251008111618.703516-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -88,51 +73,57 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xekcx7ux3cabz2pl"
+	protocol="application/pgp-signature"; boundary="ysn2tryu6hxuc6n6"
 Content-Disposition: inline
-In-Reply-To: <20251022144930.73272-2-clamor95@gmail.com>
+In-Reply-To: <20251008111618.703516-1-kkartik@nvidia.com>
 
 
---xekcx7ux3cabz2pl
+--ysn2tryu6hxuc6n6
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 22/23] ARM: tegra: add CSI nodes for Tegra20 and
- Tegra30
+Subject: Re: [PATCH] soc/tegra: fuse: Do not register SoC device on ACPI boot
 MIME-Version: 1.0
 
-On Wed, Oct 22, 2025 at 05:49:29PM +0300, Svyatoslav Ryhel wrote:
-> Add CSI node to Tegra20 and Tegra30 device trees.
+On Wed, Oct 08, 2025 at 04:46:18PM +0530, Kartik Rajput wrote:
+> On Tegra platforms using ACPI, the SMCCC driver already registers the
+> SoC device. This makes the registration performed by the Tegra fuse
+> driver redundant.
 >=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+> When booted via ACPI, skip registering the SoC device and suppress
+> printing SKU information from the Tegra fuse driver, as this information
+> is already provided by the SMCCC driver.
+>=20
+> Fixes: 972167c69080 ("soc/tegra: fuse: Add ACPI support for Tegra194 and =
+Tegra234")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 > ---
->  arch/arm/boot/dts/nvidia/tegra20.dtsi | 19 ++++++++++++++++++-
->  arch/arm/boot/dts/nvidia/tegra30.dtsi | 24 ++++++++++++++++++++++--
->  2 files changed, 40 insertions(+), 3 deletions(-)
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 2 --
+>  1 file changed, 2 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---xekcx7ux3cabz2pl
+--ysn2tryu6hxuc6n6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXQ3EACgkQ3SOs138+
-s6H5FQ/7BNrS2X7EchthFaqJs0Itrm1KN9MujAl7hYVvTbvyozWCOEjKbFN4QX/R
-1+8mcxFJxc5TtgvW16xQ+mePTyN2N7jxL1TxRT7XCZL5Tp14zhdK9zDoQK/1408r
-0dw0xy7PAzn9uj8EYX/dfrKT9rsGy0Nc97UyGoBE0/oTU/XHYAoPev2JyFSCqaHn
-sD4JvD6tliCPcRZkdum6WkajMFarxmgx72sJ5jLhOzzsT7/vcJyb12gVN94OtK6b
-6kASWMvl+1YQPbxWk/iSSBYUwlvoG794KpTPyhEzezvigRJkLO3jSSCzCplJ+K9i
-IVfmJlnaaOONvQZVULWL4Bn4OplAnDBaqi8AUwGa5QjlgEEc81FczmuU4KAj+5Zx
-mIhy2Bd5hMjqvSyKFXiDd+4QlRzNHsC3dacBktMu4EH+KC3DVKMTQ3/+7yyXqcc3
-ne4wp7IJVQ9oEsPxr1e0GKPkDEd4iz10UaDCHZKFvDzEwrOkkN7vzUF4tndq1/Av
-+fz4pjf3DCJ7NMc1fs/kBabrbTmHbTqAkIot26EKaLfrogrGlGm/smu32t7CrzWq
-dY17/9eNoHdrPC7o/kncXM3oxYGrh2Bw1OFtF9RL5mLCxSTLOKAkqZZv5zHTLEAg
-MYnh3JVBfN/JUn8Y5x9LTYlIvap2zYy3Rss6uFmNUcMWhjBqhsw=
-=/CC6
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXRsEACgkQ3SOs138+
+s6EmIg/9EKMefuMWc6CjJS4aAAyAzAicRRkohm78OqPgrMKIy8VX+gdiKMxOoP30
+uBM9/Q9QB4N5cOCneHwhRqJDokJFqy9jwxVmD7s8yzI1C395cB0oxRlEhnk3um19
++J2j1CusFgC9x29xlc4IJHNFye/UOlbcNY/pRCGr0eCW/HTU1cygfWXRyY2qWSDQ
+z6Dnz2ZhUpGZf0HlwU0BfiYXp0JmVaJi5Y0Q2lH1h8eiW/axJd1JCD+TrvD/tMuI
+KlTmvmtkDboMzjvzHJ7iFkvW5yOnIuTEyU7+nRI9FoMsSbPIihKSeW9Z+tZWfJOM
+4dJseXOEbDOgCsY8m9ueE5bdDAja7SBgWHafZKX7UDHRs3srVsVzl4sT7un7NU8V
+UOYbNqikghvH5AzH2O3RBYsUVAuMrId4RPalnwR3zPyjifa7dMy2Xc7jqPaRe3c5
+dl2nz3kbwwhdNk4YwQPqyORgWOXNQLrnbREFszFWczANlLwKXqewsgU2PxbcTkGR
+3oCP9K3047febHqNPTkEk2ukHLqtcHnbn0TPswH4TtDDW/FcCRHvSkjl/UZeROv4
+D/sviOCvplsuArAZ8mrl29bolOqWPjVCxuopIXsW8ydFvExdobwvPG5ga8jcdPNr
+16e5d9yUvE46G5smdHVJuf7+5pC9gsBPu4PNTQ780/u6jDOLXio=
+=dH9v
 -----END PGP SIGNATURE-----
 
---xekcx7ux3cabz2pl--
+--ysn2tryu6hxuc6n6--
