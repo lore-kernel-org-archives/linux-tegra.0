@@ -1,131 +1,245 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012001.outbound.protection.outlook.com [40.107.209.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38832E746
-	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 15:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763133476; cv=none; b=f5hes0ScGWNSTY2akUc5UTE7H/4n2TfcnaqRLZ3SDw4y373sQlk0FWjHoOIvuartwNQF5vfDLizgFzO6PmxbQXeHn4pFZuIW14OVw7SfemX471N1YkIJRVK6kGrGSRE3m+WG60+O7mPHMaQoM7+0B5eePXHuyBFjaBdFE3yxeMM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763133476; c=relaxed/simple;
-	bh=lNd3w5V7l0mgcXPo2+rUiLSDJLwRACc4LFeAoLe4Skc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GIxy4pY/IVE/kz+TWpRb5xo+i2y5BLq1PuAfNbEseH0V5nOToY4zvq7BOEPGYCqFy7Ttao1KLtHSWwKdJMrATnIXtLlJDmKqguPJ1kbXpjZ7wn5PggPm+KiD90gV8ybdoCR7HieOGD7DluE/syVORquvtW8f4pUhC6hLfn9UtJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRvOfRju; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F95126E173;
+	Fri, 14 Nov 2025 16:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763137081; cv=fail; b=rpz1tfFdsdEuG8a5Ow4BYaT+LpGt28lUJmmEJtEGRTGRauDfpSrzIZPWt4zk35N8rs2VaXE80/Arsjq6pOEnZlJJpblGdyw5sqNOoKfFRBW0fsnsJ8MvlXbIfFcQNpASkC9PTZv9yEyUCj1BzLmdzau75MTAkZtZUNyw5sDXN7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763137081; c=relaxed/simple;
+	bh=3T9eWNyDa6xec6cJ98SOKwxoe8pZjaOwX8yZnQ4QRpo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qkd0CqlNe3fd5c3iaEV6Y0MxpRfkt2Wizjr51N4sYcWEyifprAOlUVIIp4MzKhg0PBljU0NPXCMELpjKAGDQPg2U8DtCjcOYAvtE9y+LzAu/katvk7OzM776BM27QCKY5sKvwkvHLxy8EnMlxHr7mtxBToSgqtsnn5qXnpqBrRI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eGLEZPnT; arc=fail smtp.client-ip=40.107.209.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRvOfRju"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47777000dadso15925005e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 07:17:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763133473; x=1763738273; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejOkNEGXJncUQ8v1bhY9HLPgQaUXqAC2+8Kmi0a8hUM=;
-        b=cRvOfRjuuy7Ybfyp8dPjbJxnrvV2xHf41cKK6kqN8KMCHWPnzjd18338fdCTJAqBnw
-         5cz8eGfL5BdOMDeIpIWTlZYhM3ygMCWsfEZ+wBzU+kgQdTGUkLq8rZO0/P2qd78fV1wc
-         l/igvbhVUR2y4VEfggdzAncxplg0wd9j4WpPsBABRAbzNzPFftQFPqP4lTiyZNX/bF76
-         NPrdxnk4Tvn3gpJqgYWPyMiY6bmkv4AaBvRd1Lg+Eax55YhUC9acM3Lnxu9Lgc9O9BiF
-         RPBB/CfgV3A3v7ThKWVnXFFf+Qnb22H20SpSiUlstsRbt4JRY1Mr49f99Oun7P2UlPVY
-         3w/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763133473; x=1763738273;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ejOkNEGXJncUQ8v1bhY9HLPgQaUXqAC2+8Kmi0a8hUM=;
-        b=eA+BKeryIkSK1fisJV9kJCDHUHCd1dGcVAnt/tTP3ew77BWEOyFeeuspxLK+K+JcSI
-         ov0Z5y0cwJ8ElZyaPcQFVt15oUCeeB4GUos9oTQLXXNYGfvkGCF1lbxp5BRsBit9EVo+
-         zp+PnSyGm7Uy48/dqq6Z3MIC8rEo7iVZWlBoGzhEYvPt9sCln7ltwarDlNXCa1V48vRs
-         2A+33GvbAR6wuNr6JMdeyu/VqCyA9xuG6fX21dClrv1F7xOxK4glAUOWgyU3Rtd4T4sP
-         hywj9SBCBbYe0OEoPp4AMGGJy8zZr7mZQsZOmYwL3l5AA7+gZx3WiaPRcGEdmv55K/1y
-         b3xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUif3GszsqZKYOoA73HiwmLHgxO6rFoIJVRkwlwCSUTYRolbvzcjhwwhSfwZnYWDqqHM5MuI7iS4JZA5w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuC8e+ACQMaIKIzUZIdUJ4bTDMU0qFByE3l+vVvgXqZClz1f81
-	PJJcRDmZVMLCC52w/LidlPL0vWBrrv8EdzhSc9fd+6YBsuYnVnFpC3A7
-X-Gm-Gg: ASbGncv/kkBE9JtLlQoMH35yfwnwSkkwc1Q3i96xUvy88PksOb33oHuhA0ug1H+JeCX
-	5wEffWDpYiAB2hCWI4mva2QwuuxQ3SSwq8UpnfJ0QSuHLhkleuv/xO9etuNA+goZGgmlQ8xBpvh
-	Rrf8TDwg+U//z9VLa73YfFVjFkXzZdj3Dx1HRcBN/aZs+l9/zJY34H09b+mX5+/BnKiikH7/0+I
-	Qv4xyiN+95RGVTx3G52NZ8toyDT0cuHiLjj2yXE/aiHAzjeiLnvcVJyZy0WJ87reiXb5QWDvuDR
-	WkkLRv1CTat1logBDjyOfc1SazcQQlpazMO26aRhS03K5JGazXUtLP+/UDY6BFfUtfxqQdnkHjf
-	gOcBfyL3TvqgQ2pd/TAhAUzNBBVqc3OAVux3ZLqSc79NIomXXQ2af4gv7B0FnjD8z8z8UWAR3od
-	w6Qy8ei2x8gvtbJLzbCCCsOUuQjV4/RHihgPGxsAITXol4fHPv2vL/j13sbzIUn5Q=
-X-Google-Smtp-Source: AGHT+IGoVvbJ4stZweWJvOdjzDSzxYzeqNZe3z43JnONFHTe/bO1KsXn/qtJ80ZaU0iWMJpeN/i1vA==
-X-Received: by 2002:a05:600c:3587:b0:477:79f8:daa8 with SMTP id 5b1f17b1804b1-4778fe7e760mr31161445e9.17.1763133473056;
-        Fri, 14 Nov 2025 07:17:53 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e91f2dsm10874989f8f.19.2025.11.14.07.17.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 07:17:51 -0800 (PST)
-Date: Fri, 14 Nov 2025 16:17:50 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Bruno Sobreira =?utf-8?Q?Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Gabriel Somlo <gsomlo@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] soc/tegra: Resolve a spelling error in the
- tegra194-cbb.c
-Message-ID: <eavi37q66snsbctp2slb4yz5venkwyfol6kqrsilvm3rmgtylp@lvhwcc76d6fv>
-References: <20251024013528.1542-1-brunofrancadevsec@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eGLEZPnT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PoNIsuGN3HJbGpS965dCWaibkQJePk4aHd4gH3iG4vo51sHfzqReGr/Fx0p6KCl3DYRqyq57hpneIo5UKsdvoe77/+sHGl53wp+WJwNVERFP82ATxC2KAwBiRd4vLUq1K+73Hwm3YtBG8gOvLW8pPtQT0bJyeSJCovWg6m6Rckp1y9PXhdqyMQRoDS9k4Q+rb8dyoXZauRbzJdatTs8ckHMi7htYKx6XUOZzV1PIgdiiLv5DgWjcjvr3176oPcXlFjkKQbGosXwYZhXY2xdUFeUkKg5LeZGUpuADQJPovEZVgDOlCThn+GfwznLIFCenIBf/vXOz2driNIriHIcKXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZG7EuS6JWZaTtH05aNgt3cZOnOpVM06pfK+PqXqW0+k=;
+ b=TLofX3u1wuxpmgSUgW8S9jw2XAZtbhzMmGheeuOj/U5PCzeWR9n+5jEq5VOt4Z2cNWAaNdrY8MDt04+pzaovj4sv+r2kCEX7/+vPhi9kKO1/tEXKWJRvezPeHyyjOCAE2ptlj8AizmDKJKtet9MMAZUsnn8NRBmr/tWIqI9c1aS1jmjJH0TCQTSRp7np8u+tWmY38NyzTZ49UTVOXqufe+yv1M9qtzZz2jTCQySBa6Adr+oIVIvp38gE0AKQtU5DIDCr4VortOXn6wTJ4xVzxeN4uEnvTJRZoaeoAivYcks8OZMbV/T5vWLUTj6AwcXWh4M8YwsnkyyQHezdopLFkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZG7EuS6JWZaTtH05aNgt3cZOnOpVM06pfK+PqXqW0+k=;
+ b=eGLEZPnTwA6slMeKYvjAZdyCJV3AFvoNQm6hJdMOwFLF5Oq153XT4zu7oODLy9kDFigGTAAMS3O+GS8P/4YpJxVTweB9m52YtjtyJCSjO/21aH8FoNr+qjlk+a0rLvqXI7XbLekIan/SY9nvWllrU0OE5cQjGyPaAFMuoxxU6JfOC5PGFLoICMlhk5MxDqwwF6fYgeKzW5YD4YqodLKtfFF4OppFW4jKssO2LTbsatkVR3+gha0XfCPgn0SZBecvDtUs2ZGs24xiT14PccVu01VpAlK6Oao8aQbiGunIbr6f+4cVZNKl1DUUogOPM0DSJ326BXWn0MuQ3atYPLhjGA==
+Received: from BN9PR03CA0701.namprd03.prod.outlook.com (2603:10b6:408:ef::16)
+ by IA0PR12MB7628.namprd12.prod.outlook.com (2603:10b6:208:436::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.18; Fri, 14 Nov
+ 2025 16:17:55 +0000
+Received: from BL02EPF0001A0FD.namprd03.prod.outlook.com
+ (2603:10b6:408:ef:cafe::b8) by BN9PR03CA0701.outlook.office365.com
+ (2603:10b6:408:ef::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.18 via Frontend Transport; Fri,
+ 14 Nov 2025 16:17:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL02EPF0001A0FD.mail.protection.outlook.com (10.167.242.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Fri, 14 Nov 2025 16:17:54 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 14 Nov
+ 2025 08:17:28 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 14 Nov
+ 2025 08:17:27 -0800
+Received: from moonraker.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Fri, 14 Nov 2025 08:17:25 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Jon Hunter
+	<jonathanh@nvidia.com>, Prathamesh Shete <pshete@nvidia.com>
+Subject: [PATCH 1/2] dt-bindings: tegra: pmc: Update aotag as an optional aperture
+Date: Fri, 14 Nov 2025 16:17:10 +0000
+Message-ID: <20251114161711.2655355-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tdu4wmcdfhx5hqxh"
-Content-Disposition: inline
-In-Reply-To: <20251024013528.1542-1-brunofrancadevsec@gmail.com>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FD:EE_|IA0PR12MB7628:EE_
+X-MS-Office365-Filtering-Correlation-Id: 136b5ae2-9843-447d-9d2b-08de23995dc9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oiiO5SKOxy1KHaBA11e/3PNu5koi1SPxp4s0TWYdt86hXGmNOxfcSUfQxR7T?=
+ =?us-ascii?Q?sC57NwKXUeLDuzhwk9qRM934kJ+mUX+YeeQGUn6y+AWEBHQNJUWhSvx669qL?=
+ =?us-ascii?Q?2mPaFdMD/Vlvhfrha2Z3a91PyeWkM6EO+mFJo7E5nvkBhNV3WzLYbFPXtsmS?=
+ =?us-ascii?Q?wkb4Enpqs17JeupPsJ+hqvNhKovXDLZGPW9PR8IGnHnWablIrrWki4nQDr86?=
+ =?us-ascii?Q?aIT3llcm4CULovHo5BEqQm3zraA2rMz0Zzsp4IqmTdYZ9ssaV+VDsz5cxGQj?=
+ =?us-ascii?Q?QDFtJASJ9cKP73XBzDkPzuXLgwZSQozuydwqwDJAgA3bgdENwnj8qtYOaxkE?=
+ =?us-ascii?Q?pUAPooUsRJ+6JqJfRAybda6XZBgaTJ9bWotdl3mwk2OOYpSc8jBMDX3yEEHP?=
+ =?us-ascii?Q?BLbcGXo6kT5rqZjzx3HEUncrdHqeHYVroL8Yf8XLVDJFGAjJg/ZohOF9KDfp?=
+ =?us-ascii?Q?1M3i+IeNwPzg2eRKCvdESEG7h/VvUNQ1Ko2Vn9JMoQ2/EWMmwM4lQDiD+lo6?=
+ =?us-ascii?Q?+KgnnxYXB1GnvalkbgI8u2VwHJfzJ9tQEgoORSqs1tNiZu5ZoHkvTciBr9+d?=
+ =?us-ascii?Q?EHhCcSW4eawg3gpdVHssfw+os8YOkhKtYp5VqXSHQWCc3/bkOF1UVJqZTE8S?=
+ =?us-ascii?Q?GBvL7ehgFHggtRGp1Hyqpp2DELY9tni0heMMCdnrLFbFQEQRCDBzZWH4F4Og?=
+ =?us-ascii?Q?HIZLfe1eSeAkNbp0xG5XehsCWeqKwMx71OXzB6j4YndCFk9LhP417GWd+3XU?=
+ =?us-ascii?Q?GRWJkhf/yKGx42kTJ154UJMX/in+A03R3yQCD7ROcg/uoNnqT28rlrtm7Pvt?=
+ =?us-ascii?Q?nkw2EtVoMSiM6PoEJZEQeIxddrdjqa3d1mvWqgF3ntWU8AKmQ4a5c7m9ZKit?=
+ =?us-ascii?Q?QJmpUdTonuvaR6sOIIKclQ2i8QS0/f3FjWpyQVZl8AdGlduG83CtVZP4qLRT?=
+ =?us-ascii?Q?k7ykgwwYhtuChquWAWLvlHMAR/KC+IngDmX7PdKr6g/f56JxLyCAF/i0HrQZ?=
+ =?us-ascii?Q?wvXqQV1zDRibumvYTzxka5zNHdAkVUe3NNCmu9BZuoB2139R1UDwmQWxEh7N?=
+ =?us-ascii?Q?r+yplKB8qYFZEYXdo/fjoZExskP0iLAIh2GkEL/1ekUQjy7MzE4Wt5hywY5K?=
+ =?us-ascii?Q?6Vm78cQmsG9V//FdtxlZmfFhrJ8TG6LestrU3VwhUypVPZY08hfsHC0k5I00?=
+ =?us-ascii?Q?JMDDNgimDXyYhWFwlux0FrfJlU3KfjUbD30TmMYZVf6nQ2TtnnBLadcWokK/?=
+ =?us-ascii?Q?EjikN55g3VQNkMrCRal+C8kvM2/ym34diI239JEvop8HMwKyJjga7CUmI6rS?=
+ =?us-ascii?Q?Us4CCIo5HhYCyRTg/yi8TzDrW1Y7OwmtGtBxb/4xMtNhh2km2nP8Jh4uL+UI?=
+ =?us-ascii?Q?c2u/J5ARSW8Tv1B02Y300ZxIAYJrD0Inf1NGI2TsuEfH7eduoVcZrYkMT4Ke?=
+ =?us-ascii?Q?B9TT1WUUaL5X+NCtJI5C5MsByZlLcH3SQa4LDt7nKvYmTSVbbBrW2TL3XKrY?=
+ =?us-ascii?Q?Rr1nJtOmrvKnlKJ4AGyWyZ878D/EkvCt//AuJYaPpv/+cVtWpa5Iy9gwjPdR?=
+ =?us-ascii?Q?DDD9vRbKLbK8pmNzSv4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2025 16:17:54.1095
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 136b5ae2-9843-447d-9d2b-08de23995dc9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FD.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7628
 
+Not all Tegra SoCs or all versions of a particular Tegra SoC may include
+the AOTAG aperture. This change makes "aotag" as an optional aperture for
+Tegra234 and Tegra264.
 
---tdu4wmcdfhx5hqxh
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] soc/tegra: Resolve a spelling error in the
- tegra194-cbb.c
-MIME-Version: 1.0
+Co-developed-by: Prathamesh Shete <pshete@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+Admittedly I don't know if there is a better way to handle this,
+but if there is please let me know!
 
-On Fri, Oct 24, 2025 at 01:35:14AM +0000, Bruno Sobreira Fran=C3=A7a wrote:
-> Fix a typo spotted during code reading.
->=20
-> Signed-off-by: Bruno Sobreira Fran=C3=A7a <brunofrancadevsec@gmail.com>
-> ---
-> Changes in v3:
->   - Improve commit message
-> Changes in v2:
->   - Really fix the spelling error
-> ---
->  drivers/soc/tegra/cbb/tegra194-cbb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+ .../arm/tegra/nvidia,tegra186-pmc.yaml        | 57 ++++++++++++-------
+ 1 file changed, 38 insertions(+), 19 deletions(-)
 
-It looks like this was based on an old version and didn't apply cleanly.
-It was easy enough to apply manually, though, so that's what I did.
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+index be70819020c5..defd9000eed2 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+@@ -19,17 +19,12 @@ properties:
+       - nvidia,tegra264-pmc
+ 
+   reg:
+-    minItems: 4
++    minItems: 3
+     maxItems: 5
+ 
+   reg-names:
+-    minItems: 4
+-    items:
+-      - const: pmc
+-      - const: wake
+-      - const: aotag
+-      - enum: [ scratch, misc ]
+-      - const: misc
++    minItems: 3
++    maxItems: 5
+ 
+   interrupt-controller: true
+ 
+@@ -50,12 +45,12 @@ allOf:
+             const: nvidia,tegra186-pmc
+     then:
+       properties:
+-        reg:
+-          maxItems: 4
+         reg-names:
+-          maxItems: 4
+-          contains:
+-            const: scratch
++          items:
++            - const: pmc
++            - const: wake
++            - const: aotag
++            - const: scratch
+ 
+   - if:
+       properties:
+@@ -64,21 +59,45 @@ allOf:
+             const: nvidia,tegra194-pmc
+     then:
+       properties:
+-        reg:
+-          minItems: 5
+         reg-names:
+-          minItems: 5
++          items:
++            - const: pmc
++            - const: wake
++            - const: aotag
++            - const: scratch
++            - const: misc
+ 
+   - if:
+       properties:
+         compatible:
+           contains:
+-            const: nvidia,tegra234-pmc
++            enum:
++              - nvidia,tegra234-pmc
++              - nvidia,tegra264-pmc
+     then:
+       properties:
+         reg-names:
+-          contains:
+-            const: misc
++          oneOf:
++            - items:
++                - const: pmc
++                - const: wake
++                - const: aotag
++                - const: scratch
++                - const: misc
++            - items:
++                - const: pmc
++                - const: wake
++                - const: aotag
++                - const: misc
++            - items:
++                - const: pmc
++                - const: wake
++                - const: scratch
++                - const: misc
++            - items:
++                - const: pmc
++                - const: wake
++                - const: misc
+ 
+ patternProperties:
+   "^[a-z0-9]+-[a-z0-9]+$":
+-- 
+2.43.0
 
-Thanks,
-Thierry
-
---tdu4wmcdfhx5hqxh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXSB4ACgkQ3SOs138+
-s6HajRAAu7P8sVlVzULh3zd75CbQQ9pZ8SprDRNbGGTmHVpec8XDGBaETj9mSJ2f
-kuIf72KlOjL9pdyEG1pzZ0oqM0tMvmhU4gQLxjXsPHau0oXSGu3Y7YHEgpAHudgg
-j+YUrizOZyFiYBhV7kyit5y9Gn4NZNzr8130ieQbRtU79SqT3Dpo/NlmxxaEp/uR
-N65ygSX2MhXzcl7FqXGArLZ7X0felD4mKUD6d+1XzqqdHbDqxfYvchIqLXWXItW7
-5NOQSiok+ytl5X0O3r9Us44eM3lxryNy2JK6McGOAmtT6JsWBCeSnU7EcRsMAc9m
-yT4loEa66sgvZ7BoexMLDrI/lAbZrgkJA4CqO33lte3SXG6u+IbBXRfwSZHqXOEp
-1GIiLmWhbpz+YkYliGHdRUmm6Jf432OhfGC/5q8szt6dRWzYYEWp0/L7Pl5ktd/K
-uBQ66qBl2hudh1aDcfxQbPteLEJO7IsKV2AQM5d/YKP0UWflF+jkRpUei+HeGIXu
-9+12A4PYxIOaogIgfHqIJu+Wu22e1YEKT3tnIrQc6Q5uKGh98iqsNy7hphcsw7an
-tenAohm/uOPh49TFuOMK0uwxeORhzkkhpi4foa/RTcerBaqzWk1EDBDzwMh6N2JX
-ixjaUVH8xmjCD7Pr777+ud416ZQ6pluefl13dyDe5UkIlB/Ck9Q=
-=/vrJ
------END PGP SIGNATURE-----
-
---tdu4wmcdfhx5hqxh--
