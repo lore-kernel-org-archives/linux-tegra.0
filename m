@@ -1,88 +1,74 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6B11F75A6
-	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 13:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F73F3195E8
+	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 13:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763126688; cv=none; b=SifP53eTZwsjTgMwi0DRH9hIuZR9kOlMdxIWNZG3pYI7N9G10eav6uuQ4QRfQghJrDc7/lSe0PLc75zmrnzuU+90PHp7uF4s1n8jG91Mux3RVqVUg7NEb0tbGoTsGO2JWbQwBcVzvR4eS/B4VEHCqTEaDX5a1Mzurc/aWU121vk=
+	t=1763127038; cv=none; b=N4Vow2l83p99TCXr4W7EjLu9ze2tqmLaHUdFqTdIulo1M35baKchA1I6nmCzql4KbD6ZebBgZsD0wRo1gLojRCsXJ7FL/OVvZl6RBt/sYku1/sWYRFimR5OsHCil0aWU6TnzW3fVZEYNhA1f2Ib1iFafrlJoAOHgRdNwAFi0mDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763126688; c=relaxed/simple;
-	bh=/MfNmCaMbBpwAOzkjJvB9GOQKWmOcsbFnthRP3WrP4c=;
+	s=arc-20240116; t=1763127038; c=relaxed/simple;
+	bh=XGyDo4LqxtpBLuczg+0iuG4Awh+JhQ1Wi8g5gNLY170=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SEfN12U8S85jkacYrDwaCDhfTfIYZJasGqURSkvjCeIZTluaIiOnM+nAPJgFJiDj3vMUUibWLhAQV/CzXbbBhMOxWsSAfcDkYYS44PT4OFkwCEgCv3JJF3KiQJAoyB1z9x6OrVPN/NNfTTfR7TTlOAXAbOOLJmFTFBVYMeJtVfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=An0Ki4z5; arc=none smtp.client-ip=209.85.128.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4nvqIyzhE2FtQj+Xni5W54vMPdc5F7yKhz10UrijTWFAItT49J+TuKnT6aE/LAquJwKl2GvPJlCkle45DiG1AeyvRKyozfq9WVrURHvaJwVyCCs+m+qq30WBp7mY0XXFpKEp3dTFqJzjtnwPtPtXFaUYwVPxXMAqvG34J4uJAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzfInjbx; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="An0Ki4z5"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47754e9cc7fso12271325e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 05:24:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzfInjbx"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b3c965df5so1339311f8f.1
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 05:30:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763126685; x=1763731485; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763127035; x=1763731835; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tFYx+r0LtpX/2l5hmodetJ2Wuc+Oih4VLt/Zf0jWOY=;
-        b=An0Ki4z5M41xmXqsKse7t1kP32LyH7afmW0YlcG9Klz4WF2Qx46YDfpOj9RcO8CIW9
-         f8efAj6aNHro8mPQWwq81DAj64i0kZRyu87XRwFl0qsvaDUW0vE7DzGLHl7CTqkpF8cB
-         RBuTx/0HmQ+ZYpJotrbnDXqLaCZFTiycAX58s0n649VTxK2Lw1+OmXloblDS4EynSQeh
-         zYKoVclD7t4CU9KkLLfS4mJ4oK49bGhGV6eIqqTlPrKW/uKBy3IvcxdrDTU1Mc6NblsK
-         ByrgavWKyOE8tH68P8SfojNr4pMgMWJrBUDZjexZwzoxjXBw2o2kLowBzdJ/f4HwwtK3
-         SFBg==
+        bh=RLiSyBxzCacFpRrMJeXNpJbRRbCeUrtYn7SsWh9poBw=;
+        b=KzfInjbxs7BWFbu/Qg8qboDzrsT1aovbqn7ICUX5cEDSJwT+Jg9KLCy4SZE1KOHzQX
+         yF+UvwoRKbJBAE9I/XheZLecx7iR0EL0iIswA92F3qLG9/447/laJb3gGvBP2UrUhRf7
+         mLWGoUsJI+D8y6SYClMRlfuT+SgugxGBdDAnzOcNUYX3fF+QRvQPbcKmcK+kAjB1D0y9
+         yZEUj9Fl53xs49zVEIB76yCWQej1b8QUXh9n1JMmjawMQRW2rVeSwYwryfab1jtIdDTW
+         cZTB5YdeSBcSqLSKSy2+ZTsY4AQ+2QLZpOb7EXmHBxchcNso1PgveQSq+uAwnF/X+4vc
+         2XbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763126685; x=1763731485;
+        d=1e100.net; s=20230601; t=1763127035; x=1763731835;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9tFYx+r0LtpX/2l5hmodetJ2Wuc+Oih4VLt/Zf0jWOY=;
-        b=LJ842+YYQhWnj5KiNz9C+FuHlojVQ6Em5hopyuT4Kd8/ar9/xiknEblwWzc/jJFdqX
-         AUiZkJlAuFWihw0NGWW0Hk8kZoDMkBHPxACR2rBMPPK5J7FVomEl+BO21HxJWdeYMZ3A
-         U7wX9sDfF765HU29hN24n7CCxnnnvamIbvRD+1h3wGtQp5oPCDqy0oP9GsftZbQaJgQn
-         l4dRais4X2QYixs4Vc5ohQdeMuAUR8TWmlBhKJ+VuOSFv3gs4NYrwV7FezOFgt9J/ZNc
-         S1M3hbKyWzuPBqSa5UoelWBwwYuwkn3OqFcSJi5zV8A+AvYTaz41/KzpVtn51x6NULUA
-         AO/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUGgTfESfRf0g8idQXOhcOnlwm/J3t/vbEQVRRU2f5E9sfgkAJ+DvE3l5Yc3veglIMYCfSfpBlZXkbZ5w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwedGoiq5ZHK7UvjIkqIVHfLYp/EMwBpO9B8FhjOzhuvTMPD4Dp
-	zJ89JfO9R/aG+HVyz3O3T70ODiSi1fDxNN881gSVUQ0LZeu8kfIwiSus
-X-Gm-Gg: ASbGncu2uUJNQixSw+VTS69DlLwBj6NluLHU0WC4XqcqCpqB82h48RFvAosHVYOj6tA
-	WQZ/dw6jIi64Eu0/nsP/CwAvA8gK6/hjwnGzCzSo6yI6VtDp3YuewTZRgZPX4sCGH7CepmeinxS
-	eIu9hEG8c/vvV1lEoHzTx9U8uzgnXB3GX8j5Hnotx0nUXsQ4XmiQY95HsfSdBZAD75qgpx5Oc47
-	Y6/JImLURlTzisMx2nDtkUQazArMs1tTMRxgLrwdRqTV4C3XSvGfx4d+sIr0s/OjT1a6i9G8NvK
-	3elDYGwW4JsVeqNgCKxd6XfLjmoYFGKhgvJioNrVsNeX/iir3+anegHmQKBPlMdQSCnbV6leYxZ
-	RAY12quM/6mt7rSmK2qTW9hy/3MgbtTt4KkTP3mlDniQemYfh46k5K6i6SrlNsBAzelIvjwkgtc
-	Ssy/0cYllhmhDz1+sE2xhPnzx2Wri4vtv8uLECVco0dypakAQxJ+BgfmHXU11eexPO+yYLJKb9j
-	Q==
-X-Google-Smtp-Source: AGHT+IGGro6Ab6Q6hQTIcaBq7Nzqv7eihH1X2JDeRvd7W4sKRsUWsSzI35q89svHlSq6wH7pBHiBUw==
-X-Received: by 2002:a05:600c:1c20:b0:477:5b0a:e616 with SMTP id 5b1f17b1804b1-4778fe4f635mr29777265e9.5.1763126684877;
-        Fri, 14 Nov 2025 05:24:44 -0800 (PST)
+        bh=RLiSyBxzCacFpRrMJeXNpJbRRbCeUrtYn7SsWh9poBw=;
+        b=H5r707C8B0pn4KzEhZIIXrh0Hv79fdEkBvA2qOkj5lY81tkVoxPZcWIjsUw/CbcsVi
+         v+tb92Au48uQ/p9wj2FVKUoj2zSCdgJClfyFcOefrP9P/Uf5xIo8GALeApgLrYiHMHWk
+         UJhojkBdPA3Z461Ni8ea0JwmZo0djCpUQpohGPyG562wPkfy+sPxhtLRqogmLmRdoU04
+         hVPjjgthbAqhpk/fTR4Oqh6tOn7DCCBRcpqk/q58N4ZSnbxo/RwIxlZIEJsv9rzIQ7eo
+         sGmmghJKo1h3eVE9LTz1AhmYRm4Dk0wd+2uAXEJTxqv87j52+L7JSaFMzKroQbC7CxGZ
+         4h8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUzFNLWCOcygGfbQm8YrnzxOJwPQ7aO1hEX+BiCxwbUmoDUFi8NDQVXYcHS2qNol6qhypE05Flqw7Zayg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7JCNe0HNuYAB7YAaJjdmORkKRaKhJsyoZMHPY+uZm+7HoeJ2u
+	U2WLgtwb4m/MthzJH8HSf30mwmRVlhYq6ANaTy5hh2MN5+MH3iYel1QS
+X-Gm-Gg: ASbGncvfXsPM9BNz3p6mx/Apf/k6rfbAVWIYLQp+awvTA9Ia2v5U8Z/n3HKuZMf7nq6
+	GaHwFZP8VvVpjZE/kn371VCZEdgj32Hh8MiS8B3WyuyupI43nwhGjBE7sxxQuYmxMVC0/OYS4pe
+	9kceROfCMKSZl8LisJO3HyvRWU83t54tBzErxepqxwzjpxokYzlBmi1cY8HZ5KEVUkazAPRMfSY
+	QtGLycHtB/dltGrjkyyr2EQGximUTraGCUsmInW09qPjoLOlf9Re68YuifTJWK9QKmNoZEzWbQ/
+	QIBTAyaJbVzHLqpMrmSrgBJp3m3iCH0SXz0jENIATuCpxZsTYtqmd4IgXJ/IpUdlHZtCSAsUFtj
+	at+EbARgRbk5BV/egmGBrbtudXVdWWdSnovdffwCW+ZCqK2FRO5KLfV0Y1G9HQy5Mv1ft5xREaT
+	jrQpWCb7TYSajAX3h/K1Syj+4k/lBQmvLm6gEg7hkTDnujlqwt/7Yr2ekWmDfIu/Xnir7GSBzWg
+	w==
+X-Google-Smtp-Source: AGHT+IGtw9+vFMKGdBkzC2iMdhNezX/RVOgAmM2RA0unvN+nz4Kf7Kpd8QEDSTj9Nw8LMYTpqShWMA==
+X-Received: by 2002:a05:6000:2203:b0:429:bb21:94dd with SMTP id ffacd0b85a97d-42b59398e4cmr3336317f8f.46.1763127034720;
+        Fri, 14 Nov 2025 05:30:34 -0800 (PST)
 Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778bb454a6sm46271815e9.2.2025.11.14.05.24.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f206aasm10033057f8f.40.2025.11.14.05.30.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 05:24:43 -0800 (PST)
-Date: Fri, 14 Nov 2025 14:24:41 +0100
+        Fri, 14 Nov 2025 05:30:33 -0800 (PST)
+Date: Fri, 14 Nov 2025 14:30:31 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Maximilian Luz <luzmaximilian@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 00/11] of: Add wrappers to match root node with OF
- device ID tables
-Message-ID: <kqtjfqkzz3lfnpg7lo5m4dctowsxqxtlcdtktoatpze3hr3tue@ku6p25skb666>
-References: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
- <f949c2a6-df24-41bb-aac7-f5567d03c5f5@collabora.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, jonathanh@nvidia.com, linux-clk@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix memory leak in
+ load_timings_from_dt() on krealloc() failure
+Message-ID: <3wvnt4gywyffvqnxagp6c6h6oxxusboc5bascgng34mjshdamj@a75sqvemckg5>
+References: <20251104074229.543546-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -90,57 +76,90 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ntn2juw5rgeaer4c"
+	protocol="application/pgp-signature"; boundary="7yp2qls5f36b7k7w"
 Content-Disposition: inline
-In-Reply-To: <f949c2a6-df24-41bb-aac7-f5567d03c5f5@collabora.com>
+In-Reply-To: <20251104074229.543546-1-vulab@iscas.ac.cn>
 
 
---ntn2juw5rgeaer4c
+--7yp2qls5f36b7k7w
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 00/11] of: Add wrappers to match root node with OF
- device ID tables
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix memory leak in
+ load_timings_from_dt() on krealloc() failure
 MIME-Version: 1.0
 
-On Wed, Nov 12, 2025 at 12:52:48PM +0100, AngeloGioacchino Del Regno wrote:
-> Il 12/11/25 11:28, Krzysztof Kozlowski ha scritto:
-> > Changes in v2:
+On Tue, Nov 04, 2025 at 07:42:29AM +0000, Wentao Liang wrote:
+> The function load_timings_from_dt() directly assigns the result of
+> krealloc() to tegra->timings, which causes a memory leak when
+> krealloc() fails. When krealloc() returns NULL, the original pointer
+> is lost, making it impossible to free the previously allocated memory.
 >=20
-> Note:
+> This fix uses a temporary variable to store the krealloc() result and
+> only updates tegra->timings after successful allocation, preserving
+> the original pointer in case of failure.
 >=20
-> Looks ok based on code and based on testing on the following platforms:
->  - tegra: Jetson Xavier NX Development Kit
+> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/clk/tegra/clk-tegra124-emc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk=
+-tegra124-emc.c
+> index 2a6db0434281..ed4972fa6dab 100644
+> --- a/drivers/clk/tegra/clk-tegra124-emc.c
+> +++ b/drivers/clk/tegra/clk-tegra124-emc.c
+> @@ -444,6 +444,7 @@ static int load_timings_from_dt(struct tegra_clk_emc =
+*tegra,
+>  				u32 ram_code)
+>  {
+>  	struct emc_timing *timings_ptr;
+> +	struct emc_timing *new_timings;
 
-Thanks for testing, but Xavier NX doesn't run any of the code changed by
-this patch. soc_is_tegra() is a legacy function that we need for DT
-backwards-compatibility and should only run on 32-bit ARM devices.
+Can we not reuse timings_ptr to avoid this extra variable?
 
-Technically there's one case in drivers/soc/tegra/flowctrl.c that runs
-this on Tegra210, but it should probably undergo the same treatment as
-the PMC and FUSE drivers. The code that needs this is only used for CPU
-power management on 32-bit ARM devices.
+>  	struct device_node *child;
+>  	int child_count =3D of_get_child_count(node);
+>  	int i =3D 0, err;
+> @@ -451,10 +452,15 @@ static int load_timings_from_dt(struct tegra_clk_em=
+c *tegra,
+> =20
+>  	size =3D (tegra->num_timings + child_count) * sizeof(struct emc_timing);
+> =20
+> -	tegra->timings =3D krealloc(tegra->timings, size, GFP_KERNEL);
+> -	if (!tegra->timings)
+> +	new_timings  =3D krealloc(tegra->timings, size, GFP_KERNEL);
+> +	if (!new_timings) {
+> +		kfree(tegra->timings);
+> +		tegra->timings =3D NULL;
+> +		tegra->num_timings =3D 0;
+
+These two lines are somewhat pointless. The memory that tegra points to
+will be kfree()'ed after we return below and the function will fail, so
+nothing will ever access the memory anyway.
 
 Thierry
 
---ntn2juw5rgeaer4c
+--7yp2qls5f36b7k7w
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXLZkACgkQ3SOs138+
-s6G/cA/+IgP1K3OXIF03hJ/xSNn2a6/dnr1TTFLAUI6Ge13aBNVPxKCDqoxLZCAt
-pN2vtjYNWX0Z80+tnCpGdf961hS6OY28OJmABKNotQvlrnzBSn8ggsZ64UlAka80
-SRr74Do7F4bWqWrBHEDD4FRjlYR0OVy2/s0i5Zcavhixa1bqN/F9gTWT+kKItZOE
-TcV+O8gQF/op9NSShu+oXIZFRcPKdugCNN8w77cE/9B/0o1iII9DzX5uzFYK0Au4
-M7rAxBiHHh71czN3ts79Mcyinj9kcC3zGq9wtusv3N18sDRqwZCp+mPP3Y8Up0t4
-OotwMzxf59FsoSpNDUh/FgkCNoDoDXbajVzHTig9OQspb/nNis+P5Pbw7FIZb8Q2
-3jq8uRvMP3p8gc2pB7nnyQoC6ToofIcHlnhbW0oi1Fi0HovauoN7Vb8/gsJDWY6c
-hBe4ABpghzhh0VXFf8CM0vK2MonZYPO0BTyDguUr4nx6QGrrLnBG7S/B2wvaIzgs
-UeyUPjbgEhQVdyWALBKf6aK9IXi/Wp+s9w0XJ7qG14q665MqwxIXXIo0ZOIiIe28
-e+Ajuapyv0juG6x+mVb44mHgWqZ6bquDTegdCr9PakfF4rDYnDKAcdzOM7/y8/UX
-FXAgwJiScvxp/LO7D70bNXMPtYPQ3TVxDJu2I5128N5iNtuaxgE=
-=vxrn
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXLvcACgkQ3SOs138+
+s6EHZg//ag3Ij35qO8R24R08YICA5PNy8S/hsOQPADvu2swgenuPr6Sc06YrYkBK
+0Lxa6ge3dY28BlwkUL3G0OrYZp2ny+342ImoWlJooNSQfqmVZuXKPoUzwhrcotuU
+42id12ubgDi1gd81F2ch0zK8ELMMeSKUtLHCsAj67f3fxouJ5Zit9CeVEMlETSz8
+DV0DRURkT3p1jDv5jWWg/FYJ64EUAomlIhQDA8O6MizmIa9TkinFelAOdR+mTOZS
+FFHRE4rZDnUabnGa/QUEqigtaKxAUBrb6uo97gYjBEYGtcLZBLJFr0Byip3a9ADT
+g7X9lCl/hVABgndi1WvK0zC1RW0FDOKa+VHxyLnW48S7xoQydUTMAOp/qoTYrDvD
+MFB+hH/9+OZsI77f4hnSlOu9MBPw2ljVOiUavNNrVnsCbvzWDrNcswiYfp4o+Rf/
+LruqBJ3rYzprXJTlRl7zc1x6BtaFSGydirm630PlY9SeymEdhST3l5gEoSV9kG9v
+wJ0e1xGywskfttyoLEgd6r2LOAmSpxQ88hgvrK/wr9Mw5LxQuHs11Hzij2/0rNRc
+nf54Z9yxGpVQHeZxbNM8TRf6QGYP3FENPqT+tedfQaGjQPA6F87TmejvVMxC3+A1
+wmLNfQcvUt2VkmaHfLsdTWBY62kRBKdCnCNvnf9veqGsmezeuyU=
+=JsgF
 -----END PGP SIGNATURE-----
 
---ntn2juw5rgeaer4c--
+--7yp2qls5f36b7k7w--
