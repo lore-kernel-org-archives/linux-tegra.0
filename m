@@ -1,71 +1,74 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F37326D5E
-	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 15:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38832E746
+	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 15:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763133128; cv=none; b=W5TCygYld3olEs4tWuiCbG/cDGPOdtImS4UvSB+umqPdjz2MLpyFgzll6HfGkhtwTRljkSCqv/Oe9x1loFXRff4DSKRLnDQC9yeKIoIzReI4ECgaLTHKE1bNuH9ZKcdPhaCXqpKNMeOfdPHwTkknPh+H0m2UK/u8O7R8DRshI7k=
+	t=1763133476; cv=none; b=f5hes0ScGWNSTY2akUc5UTE7H/4n2TfcnaqRLZ3SDw4y373sQlk0FWjHoOIvuartwNQF5vfDLizgFzO6PmxbQXeHn4pFZuIW14OVw7SfemX471N1YkIJRVK6kGrGSRE3m+WG60+O7mPHMaQoM7+0B5eePXHuyBFjaBdFE3yxeMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763133128; c=relaxed/simple;
-	bh=voAb5/VWXrSfyBk2pDRuVMB2qmR4O+wj6U1yYvtSv08=;
+	s=arc-20240116; t=1763133476; c=relaxed/simple;
+	bh=lNd3w5V7l0mgcXPo2+rUiLSDJLwRACc4LFeAoLe4Skc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2c4sLCEzixQGnI3cdRLbME5OH9TCxDBw4BTk4DbSSQxSR8VJlDpHMCT3DdYEw+KHoLik0PrbaVPC6B1iSIq7+fiMX4lp9Nm/x/ljrkiwsveXG24zphwZyyaGjWmH9ZwPfHHR0wseAiN03C3OkfXgZSMzPIssAhxtDIPeK7eEwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0hmEfvF; arc=none smtp.client-ip=209.85.128.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIxy4pY/IVE/kz+TWpRb5xo+i2y5BLq1PuAfNbEseH0V5nOToY4zvq7BOEPGYCqFy7Ttao1KLtHSWwKdJMrATnIXtLlJDmKqguPJ1kbXpjZ7wn5PggPm+KiD90gV8ybdoCR7HieOGD7DluE/syVORquvtW8f4pUhC6hLfn9UtJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRvOfRju; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0hmEfvF"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477563e28a3so14427085e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 07:12:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRvOfRju"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47777000dadso15925005e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 07:17:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763133125; x=1763737925; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763133473; x=1763738273; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8r5/EliQfOua7xX65iMj9ifBX816MRf+D+dek3dRiuw=;
-        b=m0hmEfvFZuEOLuMKtdSUXPHAX67QYXl3plv8CznL289WbP8YkEFjNL/5x73cTTbUrf
-         XqbvaK62C1C1pmKhW6Hp0ypWdjBUuRiEWeZ9FS9fbm++xS4hHt2NdgDT+KCJPvoJfvlT
-         mc7klBN/rbDxmL8K3yWIWkUpgSW+ZavQgU/88Bc9h8RYLtGI8jMvma8+eKQ0qbLTZJPR
-         STW9qDR0+9R4tVCpihR69RfcED4OkqR3p16SC40nF2yzsHreJ8Z170T2Sey6DSUh4PBT
-         vniAaV5VZX99oMOxyMbzXEW9RD7HnYwtDffmUvspgv0R6Z5LBZbl0OnFOGIXrF6RD3I8
-         gijg==
+        bh=ejOkNEGXJncUQ8v1bhY9HLPgQaUXqAC2+8Kmi0a8hUM=;
+        b=cRvOfRjuuy7Ybfyp8dPjbJxnrvV2xHf41cKK6kqN8KMCHWPnzjd18338fdCTJAqBnw
+         5cz8eGfL5BdOMDeIpIWTlZYhM3ygMCWsfEZ+wBzU+kgQdTGUkLq8rZO0/P2qd78fV1wc
+         l/igvbhVUR2y4VEfggdzAncxplg0wd9j4WpPsBABRAbzNzPFftQFPqP4lTiyZNX/bF76
+         NPrdxnk4Tvn3gpJqgYWPyMiY6bmkv4AaBvRd1Lg+Eax55YhUC9acM3Lnxu9Lgc9O9BiF
+         RPBB/CfgV3A3v7ThKWVnXFFf+Qnb22H20SpSiUlstsRbt4JRY1Mr49f99Oun7P2UlPVY
+         3w/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763133125; x=1763737925;
+        d=1e100.net; s=20230601; t=1763133473; x=1763738273;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8r5/EliQfOua7xX65iMj9ifBX816MRf+D+dek3dRiuw=;
-        b=CheLQK1uxw7bIGtgIHO+VAUSr+rBCPNM/Z5h/HEoYH/vDc38kaycN3QrmKMpxAsN3S
-         zdel1+ZJhjPAUH2C6PNmDib3ueBLXATLUBGrNLEDc7JpkHkvgFQdVWpPWCmDEUjTFuwh
-         nhm1JoRnDEQGkGOYy+E2UIPcLZyH3o2Aqi9XYLNe/qPhyS/sw8UMePlrwM0VBWUcT0Ia
-         8HLq9B8B7Ns7VILrwq09vlPTbelcRtNAhtlSaJ9iCMsbGQDAhyuG/nVkNkUaorN9igDw
-         univDFtKbhCoQ8x9dzWGpIl61HUxPzZvGpGuqxMatZqFfHGGHdAO8fFW+o5u0ey0cYY1
-         pIYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKIOE16LAIsisSat4gOBt65/Wu7alIcfYya/4NutxsYoaCB02+hhLjWk5i+GpU7O8YyLUofCVSJuXzcg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRQblQulEJQof01luPtmlOa8b7NMkJ6nt2ufFZSZCM4H9RY2IC
-	sIj6z0NJG0pWbm/pPAyJ/t8q01HCo4RK4MrTScZly6UjMCN5Y1sgP+Lu
-X-Gm-Gg: ASbGncvR2Z03RQag+B1A76lyEQxE0B1wdiY15qeQTWaj+W/uOt7uJ2RnPVBA9HTWRAC
-	1F3cnut0dtuEUQmcINOnM78m3ybJwST4bdtyJdryM/dEWgbH8QdmTDTs77lb6JZHgN09CF69SJj
-	CLJPmgxtZztkT+CJBpxjB8QOkkW+aE+oIKOhxQLi8gxI/QSJa+Vf+TikdfIIohcs1SDHkfVt1qn
-	HPjbgwd8BWwEbOoys/ysMPBdoTwbw16pd/p3w/RqX3G+v0nOxn3pSuqXM+3kApCmgyT13JGW+qF
-	gz82g/VqrojqJPqteTZ1469H2iq1DgYz4Qxu9/Eh3iXFPTGc8MjphTCryR1G85OtZHUp4X8zeyu
-	uX62eZJr4hCD6LtmmM2DIt7yuqyjlEvbB0wHli7c9+WGiCpaKCCsz5a8eTWVC1C8H1ZG937p6HO
-	hcqIvTlfiBRKwpe7DlfFdjTV3SUS45k58KMls2JH8IZJ742QaUJelu3JmDB36AYsM=
-X-Google-Smtp-Source: AGHT+IHlbOOTvrmcjU3ZGEriGOa14ojvkFk4Zj94HNl1yT+L3RpIuFB0z5aqf2JpxrCIuwwdjhRyAg==
-X-Received: by 2002:a05:600c:1c23:b0:477:8b2e:aa7f with SMTP id 5b1f17b1804b1-4778fd874acmr46993815e9.5.1763133124615;
-        Fri, 14 Nov 2025 07:12:04 -0800 (PST)
+        bh=ejOkNEGXJncUQ8v1bhY9HLPgQaUXqAC2+8Kmi0a8hUM=;
+        b=eA+BKeryIkSK1fisJV9kJCDHUHCd1dGcVAnt/tTP3ew77BWEOyFeeuspxLK+K+JcSI
+         ov0Z5y0cwJ8ElZyaPcQFVt15oUCeeB4GUos9oTQLXXNYGfvkGCF1lbxp5BRsBit9EVo+
+         zp+PnSyGm7Uy48/dqq6Z3MIC8rEo7iVZWlBoGzhEYvPt9sCln7ltwarDlNXCa1V48vRs
+         2A+33GvbAR6wuNr6JMdeyu/VqCyA9xuG6fX21dClrv1F7xOxK4glAUOWgyU3Rtd4T4sP
+         hywj9SBCBbYe0OEoPp4AMGGJy8zZr7mZQsZOmYwL3l5AA7+gZx3WiaPRcGEdmv55K/1y
+         b3xA==
+X-Forwarded-Encrypted: i=1; AJvYcCUif3GszsqZKYOoA73HiwmLHgxO6rFoIJVRkwlwCSUTYRolbvzcjhwwhSfwZnYWDqqHM5MuI7iS4JZA5w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuC8e+ACQMaIKIzUZIdUJ4bTDMU0qFByE3l+vVvgXqZClz1f81
+	PJJcRDmZVMLCC52w/LidlPL0vWBrrv8EdzhSc9fd+6YBsuYnVnFpC3A7
+X-Gm-Gg: ASbGncv/kkBE9JtLlQoMH35yfwnwSkkwc1Q3i96xUvy88PksOb33oHuhA0ug1H+JeCX
+	5wEffWDpYiAB2hCWI4mva2QwuuxQ3SSwq8UpnfJ0QSuHLhkleuv/xO9etuNA+goZGgmlQ8xBpvh
+	Rrf8TDwg+U//z9VLa73YfFVjFkXzZdj3Dx1HRcBN/aZs+l9/zJY34H09b+mX5+/BnKiikH7/0+I
+	Qv4xyiN+95RGVTx3G52NZ8toyDT0cuHiLjj2yXE/aiHAzjeiLnvcVJyZy0WJ87reiXb5QWDvuDR
+	WkkLRv1CTat1logBDjyOfc1SazcQQlpazMO26aRhS03K5JGazXUtLP+/UDY6BFfUtfxqQdnkHjf
+	gOcBfyL3TvqgQ2pd/TAhAUzNBBVqc3OAVux3ZLqSc79NIomXXQ2af4gv7B0FnjD8z8z8UWAR3od
+	w6Qy8ei2x8gvtbJLzbCCCsOUuQjV4/RHihgPGxsAITXol4fHPv2vL/j13sbzIUn5Q=
+X-Google-Smtp-Source: AGHT+IGoVvbJ4stZweWJvOdjzDSzxYzeqNZe3z43JnONFHTe/bO1KsXn/qtJ80ZaU0iWMJpeN/i1vA==
+X-Received: by 2002:a05:600c:3587:b0:477:79f8:daa8 with SMTP id 5b1f17b1804b1-4778fe7e760mr31161445e9.17.1763133473056;
+        Fri, 14 Nov 2025 07:17:53 -0800 (PST)
 Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e43c2fsm146920545e9.6.2025.11.14.07.12.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e91f2dsm10874989f8f.19.2025.11.14.07.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 07:12:03 -0800 (PST)
-Date: Fri, 14 Nov 2025 16:12:01 +0100
+        Fri, 14 Nov 2025 07:17:51 -0800 (PST)
+Date: Fri, 14 Nov 2025 16:17:50 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: jonathanh@nvidia.com, sdonthineni@nvidia.com, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: fuse: Do not register SoC device on ACPI boot
-Message-ID: <i3kz66ndhxptxz2vvgdnfqqxjop3ivaj6brdnvbihwby6sfmab@bneli45jube3>
-References: <20251008111618.703516-1-kkartik@nvidia.com>
+To: Bruno Sobreira =?utf-8?Q?Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Gabriel Somlo <gsomlo@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] soc/tegra: Resolve a spelling error in the
+ tegra194-cbb.c
+Message-ID: <eavi37q66snsbctp2slb4yz5venkwyfol6kqrsilvm3rmgtylp@lvhwcc76d6fv>
+References: <20251024013528.1542-1-brunofrancadevsec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -73,57 +76,56 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ysn2tryu6hxuc6n6"
+	protocol="application/pgp-signature"; boundary="tdu4wmcdfhx5hqxh"
 Content-Disposition: inline
-In-Reply-To: <20251008111618.703516-1-kkartik@nvidia.com>
+In-Reply-To: <20251024013528.1542-1-brunofrancadevsec@gmail.com>
 
 
---ysn2tryu6hxuc6n6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--tdu4wmcdfhx5hqxh
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] soc/tegra: fuse: Do not register SoC device on ACPI boot
+Subject: Re: [PATCH v3] soc/tegra: Resolve a spelling error in the
+ tegra194-cbb.c
 MIME-Version: 1.0
 
-On Wed, Oct 08, 2025 at 04:46:18PM +0530, Kartik Rajput wrote:
-> On Tegra platforms using ACPI, the SMCCC driver already registers the
-> SoC device. This makes the registration performed by the Tegra fuse
-> driver redundant.
+On Fri, Oct 24, 2025 at 01:35:14AM +0000, Bruno Sobreira Fran=C3=A7a wrote:
+> Fix a typo spotted during code reading.
 >=20
-> When booted via ACPI, skip registering the SoC device and suppress
-> printing SKU information from the Tegra fuse driver, as this information
-> is already provided by the SMCCC driver.
->=20
-> Fixes: 972167c69080 ("soc/tegra: fuse: Add ACPI support for Tegra194 and =
-Tegra234")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> Signed-off-by: Bruno Sobreira Fran=C3=A7a <brunofrancadevsec@gmail.com>
 > ---
->  drivers/soc/tegra/fuse/fuse-tegra.c | 2 --
->  1 file changed, 2 deletions(-)
+> Changes in v3:
+>   - Improve commit message
+> Changes in v2:
+>   - Really fix the spelling error
+> ---
+>  drivers/soc/tegra/cbb/tegra194-cbb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+It looks like this was based on an old version and didn't apply cleanly.
+It was easy enough to apply manually, though, so that's what I did.
 
+Thanks,
 Thierry
 
---ysn2tryu6hxuc6n6
+--tdu4wmcdfhx5hqxh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXRsEACgkQ3SOs138+
-s6EmIg/9EKMefuMWc6CjJS4aAAyAzAicRRkohm78OqPgrMKIy8VX+gdiKMxOoP30
-uBM9/Q9QB4N5cOCneHwhRqJDokJFqy9jwxVmD7s8yzI1C395cB0oxRlEhnk3um19
-+J2j1CusFgC9x29xlc4IJHNFye/UOlbcNY/pRCGr0eCW/HTU1cygfWXRyY2qWSDQ
-z6Dnz2ZhUpGZf0HlwU0BfiYXp0JmVaJi5Y0Q2lH1h8eiW/axJd1JCD+TrvD/tMuI
-KlTmvmtkDboMzjvzHJ7iFkvW5yOnIuTEyU7+nRI9FoMsSbPIihKSeW9Z+tZWfJOM
-4dJseXOEbDOgCsY8m9ueE5bdDAja7SBgWHafZKX7UDHRs3srVsVzl4sT7un7NU8V
-UOYbNqikghvH5AzH2O3RBYsUVAuMrId4RPalnwR3zPyjifa7dMy2Xc7jqPaRe3c5
-dl2nz3kbwwhdNk4YwQPqyORgWOXNQLrnbREFszFWczANlLwKXqewsgU2PxbcTkGR
-3oCP9K3047febHqNPTkEk2ukHLqtcHnbn0TPswH4TtDDW/FcCRHvSkjl/UZeROv4
-D/sviOCvplsuArAZ8mrl29bolOqWPjVCxuopIXsW8ydFvExdobwvPG5ga8jcdPNr
-16e5d9yUvE46G5smdHVJuf7+5pC9gsBPu4PNTQ780/u6jDOLXio=
-=dH9v
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXSB4ACgkQ3SOs138+
+s6HajRAAu7P8sVlVzULh3zd75CbQQ9pZ8SprDRNbGGTmHVpec8XDGBaETj9mSJ2f
+kuIf72KlOjL9pdyEG1pzZ0oqM0tMvmhU4gQLxjXsPHau0oXSGu3Y7YHEgpAHudgg
+j+YUrizOZyFiYBhV7kyit5y9Gn4NZNzr8130ieQbRtU79SqT3Dpo/NlmxxaEp/uR
+N65ygSX2MhXzcl7FqXGArLZ7X0felD4mKUD6d+1XzqqdHbDqxfYvchIqLXWXItW7
+5NOQSiok+ytl5X0O3r9Us44eM3lxryNy2JK6McGOAmtT6JsWBCeSnU7EcRsMAc9m
+yT4loEa66sgvZ7BoexMLDrI/lAbZrgkJA4CqO33lte3SXG6u+IbBXRfwSZHqXOEp
+1GIiLmWhbpz+YkYliGHdRUmm6Jf432OhfGC/5q8szt6dRWzYYEWp0/L7Pl5ktd/K
+uBQ66qBl2hudh1aDcfxQbPteLEJO7IsKV2AQM5d/YKP0UWflF+jkRpUei+HeGIXu
+9+12A4PYxIOaogIgfHqIJu+Wu22e1YEKT3tnIrQc6Q5uKGh98iqsNy7hphcsw7an
+tenAohm/uOPh49TFuOMK0uwxeORhzkkhpi4foa/RTcerBaqzWk1EDBDzwMh6N2JX
+ixjaUVH8xmjCD7Pr777+ud416ZQ6pluefl13dyDe5UkIlB/Ck9Q=
+=/vrJ
 -----END PGP SIGNATURE-----
 
---ysn2tryu6hxuc6n6--
+--tdu4wmcdfhx5hqxh--
