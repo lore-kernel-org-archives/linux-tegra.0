@@ -1,62 +1,65 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177AF1B7F4
-	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 09:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C35F221543
+	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 09:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763197253; cv=none; b=MPdgsLKfa2oZ78uI1WmdNa4P/C/eTq/yWhHzl2pu8t6u1AxIl90eBk7oZ5U0ssldKB8rMfhomyktlin4LxTkEsD3cTQo5UQm8JB0LniiMdt30DNEQMYdugM2fpCDLQA2K7/W709usu9HErqttXrsa0EYNX9VqjxQel8TiONd6js=
+	t=1763197255; cv=none; b=q+UQjdbSLIUcCXF66v9QtQAW02FhlRm0SuyCwnmLoXqd2UCtd6pKm4FQmt8hpSyBdLtrDO4PM/VgHGWuFMTAxvUliqpXH3hhImgkBrHrYuMctEte2A4EthHNMLKCRo1mPbNraKAR38gKAC5cAXX6tbbV2UKJDYz15HBaZYJTDL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763197253; c=relaxed/simple;
-	bh=llOeIgKu70lBMfgvDNAGcgciZ6ZowV9Pd+ydOcXSkmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GXIWUelTmkkgwr0labO9+blfgzWA8YBVvMx2BIL7udBw0IacZfNXNRVQh79bzaRmZ1iOvtOXJ84NvqqlRybPm+N/QGKST/ILfyeYC4UcVDFiBH2kpDTqbVYxlXJClYe992moXzUE/nRgdHNS32f6m3Hdgkz/cZnKbuuMo7d4+LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKxRqBLb; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1763197255; c=relaxed/simple;
+	bh=Z1mPo+ebBiIP0/K905Xag3aOH9G6gGBxOg0SUmGsa8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cy3Tsez9gknQkRP/PS7LtkNVvyUxVi1M+Pv9Oddl/bNUc7k/NPtgE1uFOHHJSfuNU5UTp/SAeqbtX9lWsxVWNWZ2Zl+6x4660lFaRGyCdkRdR860qs8MqTqj6NZQeDvH7TAY3fvW7k/w/8Go2OTqbD9Z4PUT5Zzi0pznyK5NQa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=extFH/QJ; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKxRqBLb"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so1484445e9.2
-        for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 01:00:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="extFH/QJ"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b38de7940so1622215f8f.3
+        for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 01:00:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763197250; x=1763802050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f/FG4Wv2yzpc6XTk4ytRAyYbGsSHLi20bNidAtF6BPo=;
-        b=PKxRqBLbfIo3amNm20kohAKyg9XmNVB1Pg6N1CQtVUACfxmkVfNcgpbZclgLizAjeL
-         q3vnr89bl/CGAnsZIqvzzHzcGGx7pUhwq07s5hXFiL+13iIsNVCKo9VMUZpOPdJX5cUm
-         gw5TqceBsOkR2DxoCYOxb54DT37gSgyfUF4QUDSgfY+gP7DL+1Zii0grWamGPy7qqAfb
-         mdpU/mQsknM11VSUt13Qd31LLl1GKRaMnSGqsS/DVFf9rtocmdslnY2O9IHAWtvUd/h8
-         LNaUkce3fz/r1p5U3EZK3EyayN2nmcLBEaOEatqoSo5dP2PMNA53OcXWNj0OYQpJwd3w
-         n+uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763197250; x=1763802050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1763197252; x=1763802052; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f/FG4Wv2yzpc6XTk4ytRAyYbGsSHLi20bNidAtF6BPo=;
-        b=sykvzoHvR/ueuvKH8Mq25rFCrYEbivuHBLp8BuIC+Tlymc6D42YaUZXcliY/hyuFMD
-         Xz5iLayKPCHR1G602IphIv9v/I1+TNOwmfFsiDROBF+PWhDan2Utd5kd4vU64wEPatG6
-         /h8rvGRwLo+PvomhhL56krvfmuVM67uOdcC8s44PNbs2b5TswGcDstIcacyfSxDKKpQ1
-         c6zUYZdT8Ufr6Zy1pRo6RyVCV6JbQUPkp1hK3xrayQG369a3TijqOUyt0WjQ4mPTsTt6
-         YiME2kUCFNJ8DU6XrOn7MVHas54yCAyifFrGoiyLc/+X2XtgDsbeR8Pe1Z8tXFfuheQz
-         DtFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqIfVeybH3ujpCyhD+uHEng6eI+SSs7Sk5Urght31oxzRlzmEQ+quGzZGhIqVgz7DjcnH7o09IaQgn6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9svXgU8naTlK2nvLvUnDIY/l1m3Pe1FPvYiBw6bCM31vLu6Sz
-	CG7ZS1ttnZVyR2OK+f/IoOgtrl0dxU2ncjhq4udiZwWIrvB/087zBxs9
-X-Gm-Gg: ASbGncs5vyokI1iUvpc9Nq1qLpUww/xRd/Lx0ao/rY5U8H2CEx6SEyiIjFU25IQ42vN
-	A/LqrKQvguel2I/rTeRqHJ/LBlhhWt55a1N7PHCL/6v0eLKdbO+4HOONtGZzwkUxJ0VFKas9sfm
-	6Z3OPtbx/DzHwoo9h3owMgXTgk3TiH9bIaC89Z4atHULg4zIjWH9LwTVyjvAr1pUkiwG9bZQZs0
-	VkE0Z5LMZo4JeNusbRTDxfhzVxX+XUTD1H6lpDSzcNnPoz1KnUEoR8fZwyJHluIEfUa98qUK2th
-	teHsMCTdHStB6cqWmOlkFQG6RrBHF0f9rjYHA6StF19o65FR5qGmai4O++/yhmvIA8waL2AhzR+
-	Xgl6zo5QntHxyp2/jsGazMczgdKxUOKkAWXb3VyIKTlPOvRKKAFbWMd7NtxtyCbzSo0AUyVGxk2
-	1JkI/TUuax0th7tOWeppGSVT2cQhEhcVoIDey/NV74Yt2nD9gD0TsNDbqFuv5AIlh6x0OM
-X-Google-Smtp-Source: AGHT+IHKzYERexCacs/Q5yKJvm0zjIs4CrHo/8nTkrtDYu+DEwl/oT7LDhhSdgl1W/LCLyMV8AfECw==
-X-Received: by 2002:a05:600c:c4aa:b0:477:79f8:da9d with SMTP id 5b1f17b1804b1-4778fea8cbemr51354805e9.24.1763197249912;
-        Sat, 15 Nov 2025 01:00:49 -0800 (PST)
+        bh=WYu6Ww6258/C+IrhaH6QoljlvoHD6unsroBSoJrAUys=;
+        b=extFH/QJza6G9Axp5FOjHZhY2nlcZjDYOT3sA2WzboiY3Ts4/o0rKFZCApLwjrLpzp
+         spaMLklWiAGH3CHpVx8eCBAlx2uscU4mLrmNMlAxw1q8uMF/5e/hU/O9eQC/vKd/cMZP
+         cpRl9vzz8ZjGRd0+5EBB7HP3BkhXSE64zehUM9xAIqve1gFvVQbm2pwfmP26CEhV/kIv
+         ZZNFJaldJk6uRvTA8O9t2N72wsxlMJkuGn+8/2jBhs89s4tFCUEy2vtsDxsCjLwWWurY
+         qAwrJJcm3ZXpp6HvJ+asnEw92XGD5j5Y/HjUZ8ruilKBsBI1MIyOV4ZOirTLkRWD6930
+         AvOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763197252; x=1763802052;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WYu6Ww6258/C+IrhaH6QoljlvoHD6unsroBSoJrAUys=;
+        b=UWBO+XCgkRkk3m7uZVSJulran6gSU5zAfsQaV0rKyewgzfc4+RswipisCU8ktttEjy
+         oRsnxF7N8m0V5vjog9GVlWpkR+bMZBqhLfCWRjwP6TUw6o1+NxKGQs7ha1EqMq8cgLo4
+         9cjSflIT8l7dsnEdRQIW3mep31O/OVd5jsFzSoO0Nnox/p4uRlKUoi15XTNp1EhegYp9
+         59jBdWfSC5iq2R3KWWueV5YlPVCYse5LyDo1Gtn9l6hZn923TnQ0cmWO3Iks8zQljCOf
+         t3HpKOk6mgxpZVTW0RbYivkrX/d5GTdByju+gyLqtYs1SbFe2tAL0Krs8QGWtS70QojA
+         J2Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWuf7g0Xpq6BtEcSFRX6XL0RUfHJz7Y6r4l9BWxdfNu7HqtPNjHQEi6NLyKJvgjVXaSeaIa8ROEsJ53Ww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYzHH8j+0PpDwQjKhYjVnbemS6/4+yjfahSu5Ue6185pSrPZtu
+	dQVSiWsQwPs0C3PyfU9g131BUg22m2GkC+WGuxQyTSi0S9B+VsU5uN9h1IY68w==
+X-Gm-Gg: ASbGncvP8HDY77MBdcCvsFiNP0DL7cfzy0w9RMQS67eEddokYY8wu8cbX1xECLSObD4
+	sok0bFD3Rb4J0bYkykfQLx+ELC3ooaJgRwNfQxjC5Sa+lTkxRYD6wmspVcwu29nKyDlu2hQuMNm
+	q5MI3orVsxXDPcjrSt97I0d+Gw75Sjy+1qLRQYQ/Xb4deKxpLAgnxdKlbkwYEDaxUE1DgQvKyz1
+	yIeKdVv6wlLDyQOk8Bf1SRMpbquhcEt14hFxhZRyifKzeM2ttqz1vykUtnfpoiaJo3waJGBEIjr
+	WbqN5SCtZN3Y+q6p18AMuByFWGjP5nx0bQQ9fYebyx1zdkrjpZC3zJpRc6NcgtHPhhsQf2RIpBE
+	jzPKtyAR/L+AE0Mulci3bceSGsQbSF6z5FQ5HloBPq2vI5DEgi0TYUZGQXdY3AGf9nF3Pj3pPha
+	qLd25Mry1xvr5jM6KpnVSWYUDixIFrGtW8KD6931naHxdoWmPuppa5oiOrXQ+mHnEvhvkOGp4gW
+	5Bi07w=
+X-Google-Smtp-Source: AGHT+IFdVfK+Shdttqb57lRCPUmJfMS313dD54S7D51C4gzOhgy2szla9wVkVMN99ItzkzULbuEs8Q==
+X-Received: by 2002:a05:6000:430e:b0:42b:39d0:6386 with SMTP id ffacd0b85a97d-42b5936796fmr4919296f8f.31.1763197252125;
+        Sat, 15 Nov 2025 01:00:52 -0800 (PST)
 Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e8e6acsm200541545e9.9.2025.11.15.01.00.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b617sm14666449f8f.31.2025.11.15.01.00.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Nov 2025 01:00:48 -0800 (PST)
+        Sat, 15 Nov 2025 01:00:51 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -64,10 +67,12 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/8] syscore: Changes for v6.19-rc1
-Date: Sat, 15 Nov 2025 10:00:36 +0100
-Message-ID: <20251115090044.3140331-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/8] dt-bindings: Changes for v6.19-rc1
+Date: Sat, 15 Nov 2025 10:00:37 +0100
+Message-ID: <20251115090044.3140331-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251115090044.3140331-1-thierry.reding@gmail.com>
+References: <20251115090044.3140331-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -85,145 +90,47 @@ The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.19-syscore
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.19-dt-bindings
 
-for you to fetch changes up to a97fbc3ee3e2a536fafaff04f21f45472db71769:
+for you to fetch changes up to 905f0dcc38f8078f0641c5cf855f420d78f10ea7:
 
-  syscore: Pass context data to callbacks (2025-11-14 10:01:52 +0100)
-
-This is a cross-arch/subsystem patch that is a prerequisite for several
-subsequent changes that I plan on getting in after v6.19-rc1. This is
-purely an API change, so no functional changes are intended.
-
-I've done extensive build testing to make sure all files are covered,
-but a last-minute build problem was reported two days ago. This was due
-to a #ifdef block for a configuration symbol that wasn't covered. That's
-now fixed, but it might be a good idea to give this an extra few days in
-next before merging it, just in case there's something else I missed.
+  dt-bindings: usb: Add wake-up support for Tegra234 XUSB host controller (2025-11-14 19:31:10 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-syscore: Changes for v6.19-rc1
+dt-bindings: Changes for v6.19-rc1
 
-Add a parameter to syscore operations to allow passing contextual data,
-which in turn enables refactoring of drivers to make them independent of
-global data. This initially only contains the API changes along with the
-updates for existing drivers. Subsequent work will make use of this to
-improve drivers.
+Document various new IPs on older chips, as well as some existing
+developer kits that were missing compatible strings. Add power domain
+IDs on Tegra264 and wake-up support for the XUSB controller on Tegra234.
 
 ----------------------------------------------------------------
-Thierry Reding (1):
-      syscore: Pass context data to callbacks
+Aaron Kling (2):
+      dt-bindings: arm: tegra: Document Jetson Nano Devkits
+      dt-bindings: devfreq: tegra30-actmon: Add Tegra124 fallback for Tegra210
 
- arch/arm/mach-exynos/mcpm-exynos.c        | 12 +++--
- arch/arm/mach-exynos/suspend.c            | 48 +++++++++++-------
- arch/arm/mach-pxa/generic.h               |  6 +--
- arch/arm/mach-pxa/irq.c                   | 10 ++--
- arch/arm/mach-pxa/mfp-pxa2xx.c            | 10 ++--
- arch/arm/mach-pxa/mfp-pxa3xx.c            | 10 ++--
- arch/arm/mach-pxa/pxa25x.c                |  4 +-
- arch/arm/mach-pxa/pxa27x.c                |  4 +-
- arch/arm/mach-pxa/pxa3xx.c                |  4 +-
- arch/arm/mach-pxa/smemc.c                 | 12 +++--
- arch/arm/mach-s3c/irq-pm-s3c64xx.c        | 12 +++--
- arch/arm/mach-s5pv210/pm.c                | 10 ++--
- arch/arm/mach-versatile/integrator_ap.c   | 12 +++--
- arch/arm/mm/cache-b15-rac.c               | 12 +++--
- arch/loongarch/kernel/smp.c               | 12 +++--
- arch/mips/alchemy/common/dbdma.c          | 12 +++--
- arch/mips/alchemy/common/irq.c            | 24 ++++++---
- arch/mips/alchemy/common/usb.c            | 12 +++--
- arch/mips/pci/pci-alchemy.c               | 16 +++---
- arch/powerpc/platforms/cell/spu_base.c    | 10 ++--
- arch/powerpc/platforms/powermac/pic.c     | 12 +++--
- arch/powerpc/sysdev/fsl_lbc.c             | 12 +++--
- arch/powerpc/sysdev/fsl_pci.c             | 12 +++--
- arch/powerpc/sysdev/ipic.c                | 12 +++--
- arch/powerpc/sysdev/mpic.c                | 14 ++++--
- arch/powerpc/sysdev/mpic_timer.c          | 10 ++--
- arch/sh/mm/pmb.c                          | 10 ++--
- arch/x86/events/amd/ibs.c                 | 12 +++--
- arch/x86/hyperv/hv_init.c                 | 12 +++--
- arch/x86/kernel/amd_gart_64.c             | 10 ++--
- arch/x86/kernel/apic/apic.c               | 12 +++--
- arch/x86/kernel/apic/io_apic.c            | 17 +++++--
- arch/x86/kernel/cpu/aperfmperf.c          | 20 +++++---
- arch/x86/kernel/cpu/intel_epb.c           | 16 +++---
- arch/x86/kernel/cpu/mce/core.c            | 14 ++++--
- arch/x86/kernel/cpu/microcode/core.c      | 15 ++++--
- arch/x86/kernel/cpu/mtrr/legacy.c         | 12 +++--
- arch/x86/kernel/cpu/umwait.c              | 10 ++--
- arch/x86/kernel/i8237.c                   | 10 ++--
- arch/x86/kernel/i8259.c                   | 14 ++++--
- arch/x86/kernel/kvm.c                     | 12 +++--
- drivers/acpi/pci_link.c                   | 10 ++--
- drivers/acpi/sleep.c                      | 12 +++--
- drivers/base/firmware_loader/main.c       | 12 +++--
- drivers/base/syscore.c                    | 82 ++++++++++++++++---------------
- drivers/bus/mvebu-mbus.c                  | 16 +++---
- drivers/clk/at91/pmc.c                    | 12 +++--
- drivers/clk/imx/clk-vf610.c               | 12 +++--
- drivers/clk/ingenic/jz4725b-cgu.c         |  2 +-
- drivers/clk/ingenic/jz4740-cgu.c          |  2 +-
- drivers/clk/ingenic/jz4755-cgu.c          |  2 +-
- drivers/clk/ingenic/jz4760-cgu.c          |  2 +-
- drivers/clk/ingenic/jz4770-cgu.c          |  2 +-
- drivers/clk/ingenic/jz4780-cgu.c          |  2 +-
- drivers/clk/ingenic/pm.c                  | 14 ++++--
- drivers/clk/ingenic/pm.h                  |  2 +-
- drivers/clk/ingenic/tcu.c                 | 12 +++--
- drivers/clk/ingenic/x1000-cgu.c           |  2 +-
- drivers/clk/ingenic/x1830-cgu.c           |  2 +-
- drivers/clk/mvebu/common.c                | 12 +++--
- drivers/clk/rockchip/clk-rk3288.c         | 12 +++--
- drivers/clk/samsung/clk-s5pv210-audss.c   | 12 +++--
- drivers/clk/samsung/clk.c                 | 12 +++--
- drivers/clk/tegra/clk-tegra210.c          | 12 +++--
- drivers/clocksource/timer-armada-370-xp.c | 12 +++--
- drivers/cpuidle/cpuidle-psci.c            | 12 +++--
- drivers/gpio/gpio-mxc.c                   | 12 +++--
- drivers/gpio/gpio-pxa.c                   | 12 +++--
- drivers/gpio/gpio-sa1100.c                | 12 +++--
- drivers/hv/vmbus_drv.c                    | 14 ++++--
- drivers/iommu/amd/init.c                  | 16 +++---
- drivers/iommu/intel/iommu.c               | 12 +++--
- drivers/irqchip/exynos-combiner.c         | 14 ++++--
- drivers/irqchip/irq-armada-370-xp.c       | 12 +++--
- drivers/irqchip/irq-bcm7038-l1.c          | 12 +++--
- drivers/irqchip/irq-gic-v3-its.c          | 12 +++--
- drivers/irqchip/irq-i8259.c               | 12 +++--
- drivers/irqchip/irq-imx-gpcv2.c           | 16 +++---
- drivers/irqchip/irq-loongson-eiointc.c    | 12 +++--
- drivers/irqchip/irq-loongson-htpic.c      | 10 ++--
- drivers/irqchip/irq-loongson-htvec.c      | 12 +++--
- drivers/irqchip/irq-loongson-pch-lpc.c    | 12 +++--
- drivers/irqchip/irq-loongson-pch-pic.c    | 12 +++--
- drivers/irqchip/irq-mchp-eic.c            | 12 +++--
- drivers/irqchip/irq-mst-intc.c            | 12 +++--
- drivers/irqchip/irq-mtk-cirq.c            | 12 +++--
- drivers/irqchip/irq-renesas-rzg2l.c       | 12 +++--
- drivers/irqchip/irq-sa11x0.c              | 12 +++--
- drivers/irqchip/irq-sifive-plic.c         | 12 +++--
- drivers/irqchip/irq-sun6i-r.c             | 18 ++++---
- drivers/irqchip/irq-tegra.c               | 12 +++--
- drivers/irqchip/irq-vic.c                 | 12 +++--
- drivers/leds/trigger/ledtrig-cpu.c        | 14 ++++--
- drivers/macintosh/via-pmu.c               | 12 +++--
- drivers/power/reset/sc27xx-poweroff.c     | 10 ++--
- drivers/sh/clk/core.c                     | 10 ++--
- drivers/sh/intc/core.c                    | 12 +++--
- drivers/soc/bcm/brcmstb/biuctrl.c         | 12 +++--
- drivers/soc/tegra/pmc.c                   | 17 ++++---
- drivers/thermal/intel/intel_hfi.c         | 12 +++--
- drivers/xen/xen-acpi-processor.c          | 12 +++--
- include/linux/syscore_ops.h               | 15 ++++--
- kernel/cpu_pm.c                           | 12 +++--
- kernel/irq/generic-chip.c                 | 14 ++++--
- kernel/irq/pm.c                           | 11 +++--
- kernel/printk/printk.c                    | 11 +++--
- kernel/time/sched_clock.c                 | 22 +++++++--
- kernel/time/timekeeping.c                 | 22 +++++++--
- virt/kvm/kvm_main.c                       | 18 ++++---
- 109 files changed, 898 insertions(+), 470 deletions(-)
+Haotien Hsu (1):
+      dt-bindings: usb: Add wake-up support for Tegra234 XUSB host controller
+
+Svyatoslav Ryhel (2):
+      dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for Tegra114+
+      dt-bindings: display: tegra: Document Tegra20 and Tegra30 CSI
+
+Thierry Reding (1):
+      dt-bindings: power: Add power domain IDs for Tegra264
+
+ Documentation/devicetree/bindings/arm/tegra.yaml   |   5 +
+ .../bindings/devfreq/nvidia,tegra30-actmon.yaml    |  13 +-
+ .../display/tegra/nvidia,tegra114-tsec.yaml        |  68 ++++++++++
+ .../bindings/display/tegra/nvidia,tegra20-csi.yaml | 138 +++++++++++++++++++++
+ .../bindings/display/tegra/nvidia,tegra20-epp.yaml |  14 ++-
+ .../bindings/display/tegra/nvidia,tegra20-isp.yaml |  15 ++-
+ .../bindings/display/tegra/nvidia,tegra20-mpe.yaml |  18 ++-
+ .../bindings/usb/nvidia,tegra234-xusb.yaml         |  31 ++++-
+ include/dt-bindings/power/nvidia,tegra264-bpmp.h   |  24 ++++
+ 9 files changed, 306 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+ create mode 100644 include/dt-bindings/power/nvidia,tegra264-bpmp.h
