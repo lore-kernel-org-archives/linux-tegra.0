@@ -1,205 +1,229 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012058.outbound.protection.outlook.com [52.101.48.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967EF23A98E;
-	Sat, 15 Nov 2025 04:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763180913; cv=fail; b=NTozCKrEw8o91ljxTudNo8v/fb2ZSXwGKyyhFlB/VEJ5OD/DV2Fdvy0H9eh4VVz3jBQTCklA2s+HZ6rNfw6pgjJl6w0l+cFaUvsqAv1qbtRA6NFUhr167fE1wGTvXktsRH7PyFlsRte45My335qbZtLe/8+rs7fcI9iN24oH/NA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763180913; c=relaxed/simple;
-	bh=Anll+CYZ8TGjfsbx2sA6foUSS4paNtjxD7A3TPmwiDk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VcOMmnFWwlxKTjoGVSsEcG9T7cyygYJATVP8LKwsrVA73Vwv79x4dk+a4MppV6pWPUEWP2v/cinuYy/xfk5s0eF9egyTobjP9MKdTy9RfnqANrlFQA1kSHyB2LasLzZREO3sCrHkhi5uqR470cXb8FD/s2qnQlAHyeAuvYagQIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iiDwdlWv; arc=fail smtp.client-ip=52.101.48.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177AF1B7F4
+	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 09:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763197253; cv=none; b=MPdgsLKfa2oZ78uI1WmdNa4P/C/eTq/yWhHzl2pu8t6u1AxIl90eBk7oZ5U0ssldKB8rMfhomyktlin4LxTkEsD3cTQo5UQm8JB0LniiMdt30DNEQMYdugM2fpCDLQA2K7/W709usu9HErqttXrsa0EYNX9VqjxQel8TiONd6js=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763197253; c=relaxed/simple;
+	bh=llOeIgKu70lBMfgvDNAGcgciZ6ZowV9Pd+ydOcXSkmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GXIWUelTmkkgwr0labO9+blfgzWA8YBVvMx2BIL7udBw0IacZfNXNRVQh79bzaRmZ1iOvtOXJ84NvqqlRybPm+N/QGKST/ILfyeYC4UcVDFiBH2kpDTqbVYxlXJClYe992moXzUE/nRgdHNS32f6m3Hdgkz/cZnKbuuMo7d4+LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKxRqBLb; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iiDwdlWv"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sQLATJPLoZ22RZNu6P/6nOy8IdLnw6UGVz7ZDCRZG0rH/cnnNV6yqPGZBgmz++xTfz66FknPbMRtS51DUbjm6RnteapvA9fIJNKbBV0ERk6TtqEG0VgeEllgXGJ2b5vIH5Q5mr3FjLW2sPhVfNdHm7ipB8d7Nk+GH6cPPTSXnlx+uwlSOSmRW2OeueKkRsr4LaeObLNez2MlIMOwnBy5Z7Mi+C/D/WQDugS+qGufxltnbZQezgt9hRstOYum9u4KumZFnlbMPhiNtLoURRF0zLBw1ZmETx+71qTRyqD0qCp7yNlNB6WFma5r/Vh6LnDWemhyyVlPyPD8dBu3wkAK0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U3AkBPST61VFT49wvCzn25XCKGncFuVQFdmO7p6ELHA=;
- b=LzeuZyHGOMqkolObi/nKtUzfDzqlhNQD/uQKDv+VWg8VU+ab72bqrM9FXXuDkCT6CDhebtEU96TOpNd+SP+07m7sZ7gpSB1CLHu97gvWOobHc3Levjj9RSSPV+01jagZm63rxXkPnFRIguvO+D9ZDm+MXKlUcjhHkb0q01L5sPtukqfNMnwd0L/0R1bo203tOwPlIxpLDCWMgBowNoQUgH3479zTVBb0pzfCIHfSoI3oSFDNNDV7vvL1SizyxhCYcHAWmgiF8HOS2PNmnkiAYnxbeu5RIrJnZzh2ZFrjjsjwlF0Z9rm2pK6VLwAsYgQRuwWzR2b27ABSI7c01E8kfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U3AkBPST61VFT49wvCzn25XCKGncFuVQFdmO7p6ELHA=;
- b=iiDwdlWvvIsQXb6GRGdea1nFFvMxisVWJPCNcl2VtIikvkLRXf4YEKE1QJ54hezteKPPI7DquXJAaa8UgZ7ApiND8kiBuElP6CcvxW6qcsPkG9rHDtb+L9atOYepLJ18czMFpHacJKrDqpjOhO1xKkddZ4kNNMRWvAmd2TmF9zd8fbgkoEZ047InP8gyJAHOFPSB4nGLxN1hAzTQ8twpmHfRCLyHEWxYKzP+dwzSxIQCo/jEi+iQLtA1Vfh61b0Nyd31Q4ylt9v/HhCQpqhmiv9d6AWkAlXDsBL119+h7NFBUuw9LIpODBB21sUBnzRCdPvtaH1NbWLMDRy34d1i0g==
-Received: from PH7P220CA0013.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::30)
- by CY8PR12MB8196.namprd12.prod.outlook.com (2603:10b6:930:78::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Sat, 15 Nov
- 2025 04:28:25 +0000
-Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
- (2603:10b6:510:326:cafe::d4) by PH7P220CA0013.outlook.office365.com
- (2603:10b6:510:326::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.18 via Frontend Transport; Sat,
- 15 Nov 2025 04:28:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Sat, 15 Nov 2025 04:28:22 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 14 Nov
- 2025 20:28:15 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 14 Nov
- 2025 20:28:15 -0800
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Fri, 14 Nov 2025 20:28:11 -0800
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <andi.shyti@kernel.org>, <digetx@gmail.com>, <jonathanh@nvidia.com>,
-	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>,
-	<wsa+renesas@sang-engineering.com>, <wsa@kernel.org>
-CC: <kkartik@nvidia.com>, <akhilrajeev@nvidia.com>, <ldewangan@nvidia.com>,
-	<smangipudi@nvidia.com>
-Subject: [PATCH v12 6/6] i2c: tegra: Add Tegra264 support
-Date: Sat, 15 Nov 2025 09:56:32 +0530
-Message-ID: <20251115042632.69708-7-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251115042632.69708-1-akhilrajeev@nvidia.com>
-References: <20251115042632.69708-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKxRqBLb"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so1484445e9.2
+        for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 01:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763197250; x=1763802050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/FG4Wv2yzpc6XTk4ytRAyYbGsSHLi20bNidAtF6BPo=;
+        b=PKxRqBLbfIo3amNm20kohAKyg9XmNVB1Pg6N1CQtVUACfxmkVfNcgpbZclgLizAjeL
+         q3vnr89bl/CGAnsZIqvzzHzcGGx7pUhwq07s5hXFiL+13iIsNVCKo9VMUZpOPdJX5cUm
+         gw5TqceBsOkR2DxoCYOxb54DT37gSgyfUF4QUDSgfY+gP7DL+1Zii0grWamGPy7qqAfb
+         mdpU/mQsknM11VSUt13Qd31LLl1GKRaMnSGqsS/DVFf9rtocmdslnY2O9IHAWtvUd/h8
+         LNaUkce3fz/r1p5U3EZK3EyayN2nmcLBEaOEatqoSo5dP2PMNA53OcXWNj0OYQpJwd3w
+         n+uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763197250; x=1763802050;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f/FG4Wv2yzpc6XTk4ytRAyYbGsSHLi20bNidAtF6BPo=;
+        b=sykvzoHvR/ueuvKH8Mq25rFCrYEbivuHBLp8BuIC+Tlymc6D42YaUZXcliY/hyuFMD
+         Xz5iLayKPCHR1G602IphIv9v/I1+TNOwmfFsiDROBF+PWhDan2Utd5kd4vU64wEPatG6
+         /h8rvGRwLo+PvomhhL56krvfmuVM67uOdcC8s44PNbs2b5TswGcDstIcacyfSxDKKpQ1
+         c6zUYZdT8Ufr6Zy1pRo6RyVCV6JbQUPkp1hK3xrayQG369a3TijqOUyt0WjQ4mPTsTt6
+         YiME2kUCFNJ8DU6XrOn7MVHas54yCAyifFrGoiyLc/+X2XtgDsbeR8Pe1Z8tXFfuheQz
+         DtFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqIfVeybH3ujpCyhD+uHEng6eI+SSs7Sk5Urght31oxzRlzmEQ+quGzZGhIqVgz7DjcnH7o09IaQgn6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9svXgU8naTlK2nvLvUnDIY/l1m3Pe1FPvYiBw6bCM31vLu6Sz
+	CG7ZS1ttnZVyR2OK+f/IoOgtrl0dxU2ncjhq4udiZwWIrvB/087zBxs9
+X-Gm-Gg: ASbGncs5vyokI1iUvpc9Nq1qLpUww/xRd/Lx0ao/rY5U8H2CEx6SEyiIjFU25IQ42vN
+	A/LqrKQvguel2I/rTeRqHJ/LBlhhWt55a1N7PHCL/6v0eLKdbO+4HOONtGZzwkUxJ0VFKas9sfm
+	6Z3OPtbx/DzHwoo9h3owMgXTgk3TiH9bIaC89Z4atHULg4zIjWH9LwTVyjvAr1pUkiwG9bZQZs0
+	VkE0Z5LMZo4JeNusbRTDxfhzVxX+XUTD1H6lpDSzcNnPoz1KnUEoR8fZwyJHluIEfUa98qUK2th
+	teHsMCTdHStB6cqWmOlkFQG6RrBHF0f9rjYHA6StF19o65FR5qGmai4O++/yhmvIA8waL2AhzR+
+	Xgl6zo5QntHxyp2/jsGazMczgdKxUOKkAWXb3VyIKTlPOvRKKAFbWMd7NtxtyCbzSo0AUyVGxk2
+	1JkI/TUuax0th7tOWeppGSVT2cQhEhcVoIDey/NV74Yt2nD9gD0TsNDbqFuv5AIlh6x0OM
+X-Google-Smtp-Source: AGHT+IHKzYERexCacs/Q5yKJvm0zjIs4CrHo/8nTkrtDYu+DEwl/oT7LDhhSdgl1W/LCLyMV8AfECw==
+X-Received: by 2002:a05:600c:c4aa:b0:477:79f8:da9d with SMTP id 5b1f17b1804b1-4778fea8cbemr51354805e9.24.1763197249912;
+        Sat, 15 Nov 2025 01:00:49 -0800 (PST)
+Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e8e6acsm200541545e9.9.2025.11.15.01.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Nov 2025 01:00:48 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/8] syscore: Changes for v6.19-rc1
+Date: Sat, 15 Nov 2025 10:00:36 +0100
+Message-ID: <20251115090044.3140331-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.51.2
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|CY8PR12MB8196:EE_
-X-MS-Office365-Filtering-Correlation-Id: 722c0354-c346-4e74-7c97-08de23ff69b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mkXCnlZ4Y49hgU72RbbrmYueMR+w72jCJ1NFjSycg9bAn3qjq7Qxip3DHr3H?=
- =?us-ascii?Q?AktPumATLHdPExRZUxF/dK0piX8xNqqlMSNbOotgR/Wfku4ZBMHpla2+qXl9?=
- =?us-ascii?Q?tz26rVIfP3g9NPBs3im0fMt/9gdeMrf+0DIcW3iKV+xRvidLK/hNqeXvaQEv?=
- =?us-ascii?Q?sh0VIeysR07WY2dus/Hf+51zthqr0miWpaWXE56FPi7heJdMUV3CSOWa+jXy?=
- =?us-ascii?Q?Ab3Z5IA6/MSxDo/noho7jCpL0Dk5xHeQp5e5izNxyNmGmFMqw9jt1liRfXo0?=
- =?us-ascii?Q?FCDCk3sJz6il4paG4f76VwFddBFuN2XaUSnvEK6H9khCex9cmsJlyNdw9V3y?=
- =?us-ascii?Q?TVRNzy2+lQLCWdSqjKNXIKFKecUIGw6xWV8cANLUED8vJjt5q3Wy7D96Cp06?=
- =?us-ascii?Q?Ua4mE4VRFluzmayKO3RYNITJj59nj+wHvYFzynJbMqxAo7hI/5mCCXh1iL5Z?=
- =?us-ascii?Q?Wj8QdsgxAJ5UvHr8nNusom6jA4g9sgGHUfenejxj4OyvZQvs0CNZHzwC+MS5?=
- =?us-ascii?Q?5LXVtyO/Wjpy36uprn/FGHd7/02ISpcn3PSLiP4JvQ64mclkd7ca9LLSQH8v?=
- =?us-ascii?Q?w/Xb4/GVjd37eAKuS44mP2kBxumi7fQLQxNezPQuxfonJ/aFoegCvUZZOem3?=
- =?us-ascii?Q?KPbJaT3VmkHPWNVTYuUR/HWTnDj6nzP/MD/BfOGW60MwyWs6AiR6EcVoBvgu?=
- =?us-ascii?Q?OSsXZIjKccAN7oBJFbdWTL/HnZZT5cAu8EzjLsScdMvCHY35iioOwrj4m1/X?=
- =?us-ascii?Q?k3INP/Pf1pgVHEZ5rgcgzdR4/mAgfMsO7QPONvTz5kQDBCACfouIa0/Iw6Y+?=
- =?us-ascii?Q?Tj+prKKACTV/IOwcSzrVGyuDJ1IGxjHxdLZlDUYWURCpF19ewI2kmv4NgH4s?=
- =?us-ascii?Q?LrIbMuLObAqGZez69g4fRgqJL9llEWogU6GDk+RkUGIgmcyfSyP6Zf8l8N+K?=
- =?us-ascii?Q?91ul+K3RZprBSeOKZPo3Qt1JVECR2EwLL5DrMGkW3ry5RfMcclhM/Q/BgIOX?=
- =?us-ascii?Q?QZ3SjJeiqeZwZn1ZXXUVhZQKTMS05/58Gl08Ik/Ii34bnwaDDHX6IOZBFZfj?=
- =?us-ascii?Q?znvmpRjjZP+C0cH0K4vwxkez1aTfSQppsEy4shbLra3xjfnwpqdCIgpoyJT6?=
- =?us-ascii?Q?w39QEHkCBY8yumA92+OPuAiKg4NzEmd6si8fs/ie3KF4RBwGHA2Fi8It99XG?=
- =?us-ascii?Q?NvhDl4GffuXMW3bCY8V5fMYudJ5jUzJ0w8Fg5E2I2jKALOu6mOWO9SXrVQW/?=
- =?us-ascii?Q?ePnq5+JRlRVWnQAy9SlMsXjcDGnCeECCijx1N+KRpbqwGdMeDWkWzIV1szXN?=
- =?us-ascii?Q?wdz4x+eC+Et3QB05nbCeTjLX+bynbI0kVRaEHkVp9AVK03bYj/iBip/QZrfr?=
- =?us-ascii?Q?TAVotIMq6RUz7EYjUZVg/X0sQw8yM3lzO7KP89zXG7e76lfjSqwhP9krgjzu?=
- =?us-ascii?Q?nyjtlA5RuJzvDPbJJvthmfMylTYIGBgi5nEr9E6bjl5liae2BxsPswr57NO/?=
- =?us-ascii?Q?ZJstYQlqLVkegzXFIAbUBwH36CKnmQPlrAaE45ZbbwOr52KFxFyNXbWhGxVt?=
- =?us-ascii?Q?+BcmzA7ycJYTSaRS+xw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2025 04:28:22.8027
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 722c0354-c346-4e74-7c97-08de23ff69b0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8196
 
-Add support for Tegra264 SoC which supports 17 generic I2C controllers,
-two of which are in the AON (always-on) partition of the SoC. In
-addition to the features supported by Tegra194 it also supports a
-SW mutex register to allow sharing the same I2C instance across
-multiple firmware.
+Hi ARM SoC maintainers,
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
-v4 -> v10:
-	* Set has_mst_reset = true for Tegra264.
-v1 -> v4:
-        * Update commit message to mention the SW mutex feature
-          available on Tegra264.
----
- drivers/i2c/busses/i2c-tegra.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 135883388c1e..919ef408f3c1 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1852,7 +1852,40 @@ static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
- 	.has_mutex = true,
- };
- 
-+static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_std_mode = 0x1d,
-+	.clk_divisor_fast_mode = 0x15,
-+	.clk_divisor_fast_plus_mode = 0x8,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
-+	.has_mst_reset = true,
-+	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_mode = 0x2,
-+	.thigh_fast_mode = 0x2,
-+	.tlow_fastplus_mode = 0x2,
-+	.thigh_fastplus_mode = 0x2,
-+	.tlow_hs_mode = 0x4,
-+	.thigh_hs_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_mode = 0x02020202,
-+	.setup_hold_time_fastplus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
-+	.has_interface_timing_reg = true,
-+	.has_hs_mode_support = true,
-+	.has_mutex = true,
-+};
-+
- static const struct of_device_id tegra_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra264-i2c", .data = &tegra264_i2c_hw, },
- 	{ .compatible = "nvidia,tegra256-i2c", .data = &tegra256_i2c_hw, },
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
- 	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
--- 
-2.50.1
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.19-syscore
+
+for you to fetch changes up to a97fbc3ee3e2a536fafaff04f21f45472db71769:
+
+  syscore: Pass context data to callbacks (2025-11-14 10:01:52 +0100)
+
+This is a cross-arch/subsystem patch that is a prerequisite for several
+subsequent changes that I plan on getting in after v6.19-rc1. This is
+purely an API change, so no functional changes are intended.
+
+I've done extensive build testing to make sure all files are covered,
+but a last-minute build problem was reported two days ago. This was due
+to a #ifdef block for a configuration symbol that wasn't covered. That's
+now fixed, but it might be a good idea to give this an extra few days in
+next before merging it, just in case there's something else I missed.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+syscore: Changes for v6.19-rc1
+
+Add a parameter to syscore operations to allow passing contextual data,
+which in turn enables refactoring of drivers to make them independent of
+global data. This initially only contains the API changes along with the
+updates for existing drivers. Subsequent work will make use of this to
+improve drivers.
+
+----------------------------------------------------------------
+Thierry Reding (1):
+      syscore: Pass context data to callbacks
+
+ arch/arm/mach-exynos/mcpm-exynos.c        | 12 +++--
+ arch/arm/mach-exynos/suspend.c            | 48 +++++++++++-------
+ arch/arm/mach-pxa/generic.h               |  6 +--
+ arch/arm/mach-pxa/irq.c                   | 10 ++--
+ arch/arm/mach-pxa/mfp-pxa2xx.c            | 10 ++--
+ arch/arm/mach-pxa/mfp-pxa3xx.c            | 10 ++--
+ arch/arm/mach-pxa/pxa25x.c                |  4 +-
+ arch/arm/mach-pxa/pxa27x.c                |  4 +-
+ arch/arm/mach-pxa/pxa3xx.c                |  4 +-
+ arch/arm/mach-pxa/smemc.c                 | 12 +++--
+ arch/arm/mach-s3c/irq-pm-s3c64xx.c        | 12 +++--
+ arch/arm/mach-s5pv210/pm.c                | 10 ++--
+ arch/arm/mach-versatile/integrator_ap.c   | 12 +++--
+ arch/arm/mm/cache-b15-rac.c               | 12 +++--
+ arch/loongarch/kernel/smp.c               | 12 +++--
+ arch/mips/alchemy/common/dbdma.c          | 12 +++--
+ arch/mips/alchemy/common/irq.c            | 24 ++++++---
+ arch/mips/alchemy/common/usb.c            | 12 +++--
+ arch/mips/pci/pci-alchemy.c               | 16 +++---
+ arch/powerpc/platforms/cell/spu_base.c    | 10 ++--
+ arch/powerpc/platforms/powermac/pic.c     | 12 +++--
+ arch/powerpc/sysdev/fsl_lbc.c             | 12 +++--
+ arch/powerpc/sysdev/fsl_pci.c             | 12 +++--
+ arch/powerpc/sysdev/ipic.c                | 12 +++--
+ arch/powerpc/sysdev/mpic.c                | 14 ++++--
+ arch/powerpc/sysdev/mpic_timer.c          | 10 ++--
+ arch/sh/mm/pmb.c                          | 10 ++--
+ arch/x86/events/amd/ibs.c                 | 12 +++--
+ arch/x86/hyperv/hv_init.c                 | 12 +++--
+ arch/x86/kernel/amd_gart_64.c             | 10 ++--
+ arch/x86/kernel/apic/apic.c               | 12 +++--
+ arch/x86/kernel/apic/io_apic.c            | 17 +++++--
+ arch/x86/kernel/cpu/aperfmperf.c          | 20 +++++---
+ arch/x86/kernel/cpu/intel_epb.c           | 16 +++---
+ arch/x86/kernel/cpu/mce/core.c            | 14 ++++--
+ arch/x86/kernel/cpu/microcode/core.c      | 15 ++++--
+ arch/x86/kernel/cpu/mtrr/legacy.c         | 12 +++--
+ arch/x86/kernel/cpu/umwait.c              | 10 ++--
+ arch/x86/kernel/i8237.c                   | 10 ++--
+ arch/x86/kernel/i8259.c                   | 14 ++++--
+ arch/x86/kernel/kvm.c                     | 12 +++--
+ drivers/acpi/pci_link.c                   | 10 ++--
+ drivers/acpi/sleep.c                      | 12 +++--
+ drivers/base/firmware_loader/main.c       | 12 +++--
+ drivers/base/syscore.c                    | 82 ++++++++++++++++---------------
+ drivers/bus/mvebu-mbus.c                  | 16 +++---
+ drivers/clk/at91/pmc.c                    | 12 +++--
+ drivers/clk/imx/clk-vf610.c               | 12 +++--
+ drivers/clk/ingenic/jz4725b-cgu.c         |  2 +-
+ drivers/clk/ingenic/jz4740-cgu.c          |  2 +-
+ drivers/clk/ingenic/jz4755-cgu.c          |  2 +-
+ drivers/clk/ingenic/jz4760-cgu.c          |  2 +-
+ drivers/clk/ingenic/jz4770-cgu.c          |  2 +-
+ drivers/clk/ingenic/jz4780-cgu.c          |  2 +-
+ drivers/clk/ingenic/pm.c                  | 14 ++++--
+ drivers/clk/ingenic/pm.h                  |  2 +-
+ drivers/clk/ingenic/tcu.c                 | 12 +++--
+ drivers/clk/ingenic/x1000-cgu.c           |  2 +-
+ drivers/clk/ingenic/x1830-cgu.c           |  2 +-
+ drivers/clk/mvebu/common.c                | 12 +++--
+ drivers/clk/rockchip/clk-rk3288.c         | 12 +++--
+ drivers/clk/samsung/clk-s5pv210-audss.c   | 12 +++--
+ drivers/clk/samsung/clk.c                 | 12 +++--
+ drivers/clk/tegra/clk-tegra210.c          | 12 +++--
+ drivers/clocksource/timer-armada-370-xp.c | 12 +++--
+ drivers/cpuidle/cpuidle-psci.c            | 12 +++--
+ drivers/gpio/gpio-mxc.c                   | 12 +++--
+ drivers/gpio/gpio-pxa.c                   | 12 +++--
+ drivers/gpio/gpio-sa1100.c                | 12 +++--
+ drivers/hv/vmbus_drv.c                    | 14 ++++--
+ drivers/iommu/amd/init.c                  | 16 +++---
+ drivers/iommu/intel/iommu.c               | 12 +++--
+ drivers/irqchip/exynos-combiner.c         | 14 ++++--
+ drivers/irqchip/irq-armada-370-xp.c       | 12 +++--
+ drivers/irqchip/irq-bcm7038-l1.c          | 12 +++--
+ drivers/irqchip/irq-gic-v3-its.c          | 12 +++--
+ drivers/irqchip/irq-i8259.c               | 12 +++--
+ drivers/irqchip/irq-imx-gpcv2.c           | 16 +++---
+ drivers/irqchip/irq-loongson-eiointc.c    | 12 +++--
+ drivers/irqchip/irq-loongson-htpic.c      | 10 ++--
+ drivers/irqchip/irq-loongson-htvec.c      | 12 +++--
+ drivers/irqchip/irq-loongson-pch-lpc.c    | 12 +++--
+ drivers/irqchip/irq-loongson-pch-pic.c    | 12 +++--
+ drivers/irqchip/irq-mchp-eic.c            | 12 +++--
+ drivers/irqchip/irq-mst-intc.c            | 12 +++--
+ drivers/irqchip/irq-mtk-cirq.c            | 12 +++--
+ drivers/irqchip/irq-renesas-rzg2l.c       | 12 +++--
+ drivers/irqchip/irq-sa11x0.c              | 12 +++--
+ drivers/irqchip/irq-sifive-plic.c         | 12 +++--
+ drivers/irqchip/irq-sun6i-r.c             | 18 ++++---
+ drivers/irqchip/irq-tegra.c               | 12 +++--
+ drivers/irqchip/irq-vic.c                 | 12 +++--
+ drivers/leds/trigger/ledtrig-cpu.c        | 14 ++++--
+ drivers/macintosh/via-pmu.c               | 12 +++--
+ drivers/power/reset/sc27xx-poweroff.c     | 10 ++--
+ drivers/sh/clk/core.c                     | 10 ++--
+ drivers/sh/intc/core.c                    | 12 +++--
+ drivers/soc/bcm/brcmstb/biuctrl.c         | 12 +++--
+ drivers/soc/tegra/pmc.c                   | 17 ++++---
+ drivers/thermal/intel/intel_hfi.c         | 12 +++--
+ drivers/xen/xen-acpi-processor.c          | 12 +++--
+ include/linux/syscore_ops.h               | 15 ++++--
+ kernel/cpu_pm.c                           | 12 +++--
+ kernel/irq/generic-chip.c                 | 14 ++++--
+ kernel/irq/pm.c                           | 11 +++--
+ kernel/printk/printk.c                    | 11 +++--
+ kernel/time/sched_clock.c                 | 22 +++++++--
+ kernel/time/timekeeping.c                 | 22 +++++++--
+ virt/kvm/kvm_main.c                       | 18 ++++---
+ 109 files changed, 898 insertions(+), 470 deletions(-)
