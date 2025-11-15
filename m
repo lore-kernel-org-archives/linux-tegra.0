@@ -1,64 +1,64 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80537221543
-	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 09:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C091FC0E2
+	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 09:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763197262; cv=none; b=AvN7wY+ITUzgz77id1Ojf0hbjzq3Xqo1pLPmyRV1iWrvo48L6MDA6XtZCnCsY8NlVWIZ/O8tHJ2qfR82Z5HjaJLe7SX9qfl/Uh+3F5UPXO2BAJBJjURRSpn31AM9zmQrNG0Wy1pwQxjP65I2ii+1HlGktNJaimshBpfoQ6W6NVs=
+	t=1763197264; cv=none; b=pngBFHPbgid2D+rzaoL+C9kkOyDonXtRR2+h73dbkVFVEKdpEz/2MpYH1+PesQpTzAvXRuhkhdNVF29npqK0H14W84lcZtQMYadQD+DEJu85Fue8xbAU2if5SNFBqAOWgZjotaHwfNfaZQY297Xz+EerLPCndfu3/PasUFTf0Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763197262; c=relaxed/simple;
-	bh=yrGG+hMwf6QlqsGnobYEtBrE77rQUzzH4+zd0SjNkcY=;
+	s=arc-20240116; t=1763197264; c=relaxed/simple;
+	bh=lNTm5B7eG5zTTcCigkqPBKpQFdVecZr6eqltPBKgCno=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BOYmVUNRgaqrvNx47XBLlHkORVvBbLsid1nd6mVnUdCBj1mzhHfIEjgH5qvlxLIsPzm9DQCSYHFTwJQCdKasnYS4BenM1ybwyG2chGvJOJHd6G0pC4QzYuMPW53yZ/B+J4vSWfP/kVNsWBSIawm+V0+B71kOgT5YhYguk+zYpc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5EfknQK; arc=none smtp.client-ip=209.85.221.52
+	 Content-Type:MIME-Version; b=AGFhj38mzKLcYYeaXaEpu2KsG0Q99XkcshswHTLZMFkEiIdjA2/901Gsbe6dON08ruFagK41DTG/dHsTkhtCxJ7hZOQnPAow0G6TfUMUnmgj0AjBrbHqZSnxBoP4RzBA0WRon9JYo6ns2iJfXhP6knd8Ma0iBeAge/Xki5oJZMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zs3gwyRQ; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5EfknQK"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b2a0c18caso1484498f8f.1
-        for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 01:01:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zs3gwyRQ"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47755a7652eso19115905e9.0
+        for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 01:01:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763197259; x=1763802059; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763197261; x=1763802061; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hOVY22gCITksV2gxcyAqD2EMrioeVssa5L5prhcUC28=;
-        b=Y5EfknQKc5Zk0mpy1qYPZlm7dZueqrrfOiNeGlNdiSJxm+jL4WAY+w2vF4zKLut66e
-         gm8YjeXc9jQ57MKq+NRFUkUHTDcj0VZVEX8hOhHB1VJcoVQAiCJ/DcMZKarlzpYx9/Uu
-         xvZwcEe7XgTSdad0ZrsKnsCDNF2h3OrmPWQsJ06HYzIENevVU0Up/LfCshhgyib5NqB1
-         kekG0Hk9xuM/4YnRRr+x+dIFymfkhTBm9TT/kiTHUU/3CJFtSbs3C5m3gY8OpV0Mm5Oe
-         QqEWLTGRad4Agd2ChZMaTnsz6Omy+wWhln4RLx/sUscq2dhvbO04XIoiAFhGptfHRktL
-         x6BA==
+        bh=otQqz4O6TNg9CZvBwxUyiMUDuV9EeqUVPJurKYQsz4A=;
+        b=Zs3gwyRQQIdVU8fQRrgQlxr5m2X89weAU8EWF0QJcB+JY0FxlSjFmiyf5QolDGWhwY
+         BSmPrdwvMObDqCsTj2YlqCREtUtGQwqb8+ex0rkARl+PxBsGUDO1OXnKcd+jtw/xnSTw
+         7Wr7AZa+/nIYA+cl+9lMrapM+isC3WMvo3crH1i9UXnDProjeqqGZ1GxYtO5UT1r4e7q
+         G+Wc0XOS//bT1uue8b4c0Hf/QTfzbXZOkVdxALLjE23Py9Oxpefr+rJVYbSOTS/N2TpE
+         boNK1EHCajkn/bPtJiGjhzO6a5ZejwfGahi54NSuSHKtUcNvHyH9ftI182ZejTPacAuj
+         Z7kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763197259; x=1763802059;
+        d=1e100.net; s=20230601; t=1763197261; x=1763802061;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hOVY22gCITksV2gxcyAqD2EMrioeVssa5L5prhcUC28=;
-        b=HypKzo6XLdI6rbenUlSuF9xRhNd9OfX8cQ3d3Dxc9jRn2da5BKPKZwb9QSQ9H4vPJe
-         iU+XJNSrSlXv4MD4hc8g544vQ97gRjqUoPrK0ge3IbCerqZ0Qf57+6uh2PhmuQz9iZpK
-         0y7iBaahoGo4rDEVTgDiXbeQCAexxRek3Rmw4EhlH3yCJWGCbZ1Zbf5U+PJCfnffR+QQ
-         GY4DKKCoeGZgZ3cgQJECOpHm5k4i4tkU0O1pO4f9lsHYOhDPWFf9FXtOOwVNUmo07GOb
-         O+F0p1rcCcO96k4q88bla/aXPXWeC5WuhYdHiwOxRx+doH3cd4n+pRUtcwnkyPUdnDot
-         j5sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFk9s9D5rsHwBPUF9xy77+FQygB0V+DNIz7xz0UiGMLAnlkto4dBVrCbIkX9nxYCMtpIbHODFC1axiPg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1CzkM9lJDgw6M/FEg07PosaNOWPePLaBUJOxE+eKu+pyu82C6
-	jrO5RP52ywjIAFPGHwYSGNr0a4vSkDQ47bnC6Ke6KQM960mdBx5QZU0o
-X-Gm-Gg: ASbGnctvmlNCzLY3spXuaHPU3jpbdhIxby7i9ep+uQIBVanUUlQkKL1nNJDQeWoo4AB
-	qTuJ63uf0emS6KNt4H3uBQMDHmLCBD/Ny1v7TgW/mgxSZB/3vNeMOYFhqrg+cWCodta+eQImr3o
-	2PoONR+3fRxh7k+Ae5KIK6dukWGtKCSe7MWXlB8l8zz0KtTg7FWV1ujrjX6iGU2V9jTuaZ8Eo7d
-	5+e016a84sJkg9LZS8fC46FAbXY+0wBPYtzgOKbgQa7xbiNpzYuQyuQVMwmsw2REpw/pFFtW8aT
-	b8Frr+ilf4DoEBy0ctToDYKGQjOiML12fkhxhnKG0HWKqsnaPnCkNH+wuCclYSvkjseMqgtjij0
-	wuL16MKAPjuYeZjEa6TtaraS5McJRtvwqV3xayVBItviVlNC1cagQA72t7h/metsqt/j1RQub45
-	XIMmniJA7nDRwqXJMc3H10RfViN+uGeBy7Bk3Rw1oObMpvb34s1HxvlhgYifFMKmSdKgQH
-X-Google-Smtp-Source: AGHT+IFoaK3lhY6hP5vpOdFQPuE5XMwCFmwtA4zhKi+e0WF3vPhR/3CXQ4PwTkjEDkzYzg1tAlyYAQ==
-X-Received: by 2002:a05:6000:288a:b0:42b:3cd2:e9ba with SMTP id ffacd0b85a97d-42b595a48b6mr5302713f8f.33.1763197258729;
-        Sat, 15 Nov 2025 01:00:58 -0800 (PST)
+        bh=otQqz4O6TNg9CZvBwxUyiMUDuV9EeqUVPJurKYQsz4A=;
+        b=m13rgNwWVNRMa5vNc4QRrAa4/miPN+Lk4geAMvY+bydV4GF493g3ud0p+pOKUplnQ5
+         dMmgxT1L8wBdSyWkGKdcuSvGLJ6zTl3ZoVXWx+zGlwPt2MjkpmQhuyFBchGEWIc8JPAo
+         Jgnlota1rchpESduTi6iR4Fi/RMGftGlynvzKb8m9943mgUAPq7m3+thvEDLVmKp1YRL
+         Y48roCRFgfxl4w4QhGPJpG++z/1WyvoOY0pbj0zddde322lkAh/fgK+tae56SbP/A4zM
+         0oMOUO6OG6IBkDKC/aku3+cX7ZyRppbmH0MFn7i+RdGs2JM5KPgTurRoz9r6JIPagk+G
+         PTXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSUvuU3/LscPwdOgQo2hRDeWdR5kYP1Fg04fD+TuG7Uq0Rc2llWmnaY8mHwKX6vCjFdbrxxq3Lq5U2ow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXmLPcTHrZGl1h1PfUooUWCXaQRqvtLaL5273iLhiUOfXxRFFx
+	+WZt7UBSTZ4D1nM5W5MPzgnx3hrOyO4vYU6YvfOjC/HvZvBqpvHYH+4Z
+X-Gm-Gg: ASbGncuVWD9bRJtXZnYMih7fizETXHEdjg+ZcjI30PAoXULY3pw49eJ/WpxfdHNlaa3
+	hkRfzgUT7zkHbkLyNRItYuB/mIsM796dQOn9Rn2GK3P6y52wKKwYzNCHoxsEAUzh90LVBL2wAc2
+	M7oVWhpKqIuNbXwGVkwaGaB9qOGnLYLSy1rkwF+98pgvcMbspKEMJZUb1iSV/l87SbJ0+Qc59Cz
+	IHrTDPwZFPyXcMJ+taXpVWfeQWHcCF9j7HLw5kihItXUfa3z2xMEjUDlk6FT1IXxXQljETBQ7/S
+	mwrS4tDujiw/JVJ6ZUtmfWgd7Rj7Z6AxQ0CAjGooXRy+t1VeRtdybxmjMLlHH74VRm7w9k4V34g
+	3YHX7EmOlW8JbHIpj70arYA9cFY2VwdT0YimawREYWg3qE2xxlmEV6W7IJyDnKD2Lg6J6Z5nvgV
+	cgFba9CzC8jqJJ+uKZiyAbo6E3hJ/2u9zBWbWPSR9Vp45LxfS9tQvBhIYQ6cpeui6lJzC/
+X-Google-Smtp-Source: AGHT+IH1PM8xyj5yEL7gAjaZXMZK2RgMF06dvQKC4vQfddhPGZGy34EPxlJte1WyAuPL9BFCTP4JhQ==
+X-Received: by 2002:a05:600c:4fd2:b0:477:76c2:49c9 with SMTP id 5b1f17b1804b1-4778fe4fa18mr57188215e9.2.1763197260712;
+        Sat, 15 Nov 2025 01:01:00 -0800 (PST)
 Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f17291sm14874843f8f.32.2025.11.15.01.00.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477975022ecsm32259215e9.4.2025.11.15.01.00.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Nov 2025 01:00:57 -0800 (PST)
+        Sat, 15 Nov 2025 01:00:59 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -66,9 +66,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/8] ARM: tegra: Device tree changes for v6.19-rc1
-Date: Sat, 15 Nov 2025 10:00:40 +0100
-Message-ID: <20251115090044.3140331-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 6/8] ARM: tegra: Default configuration changes for v6.19-rc1
+Date: Sat, 15 Nov 2025 10:00:41 +0100
+Message-ID: <20251115090044.3140331-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251115090044.3140331-1-thierry.reding@gmail.com>
 References: <20251115090044.3140331-1-thierry.reding@gmail.com>
@@ -89,33 +89,23 @@ The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.19-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.19-arm-defconfig
 
-for you to fetch changes up to f224e936dad0933a1baa3b7152f48918cdd98498:
+for you to fetch changes up to 23a29a81b44e3a7a139fee4d3eada5f299d8985e:
 
-  ARM: tegra: Add device-tree for Xiaomi Mi Pad (A0101) (2025-11-14 17:43:09 +0100)
+  ARM: tegra: Enable EXT4 for Tegra (2025-11-14 18:05:14 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v6.19-rc1
+ARM: tegra: Default configuration changes for v6.19-rc1
 
-Add more host1x devices on Tegra114 and Tegra124, as well as CSI for
-Tegra20 and Tegra30. Support for the Xiaomi Mi Pad is also added.
+Enable ext4 by default on Tegra to restore systems booting from MMC.
 
 ----------------------------------------------------------------
-Svyatoslav Ryhel (4):
-      ARM: tegra: Add missing HOST1X device nodes on Tegra114
-      ARM: tegra: Add missing HOST1X device nodes on Tegra124
-      ARM: tegra: add CSI nodes for Tegra20 and Tegra30
-      ARM: tegra: Add device-tree for Xiaomi Mi Pad (A0101)
+Jon Hunter (1):
+      ARM: tegra: Enable EXT4 for Tegra
 
- arch/arm/boot/dts/nvidia/Makefile                  |    3 +-
- arch/arm/boot/dts/nvidia/tegra114.dtsi             |   64 +
- arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts | 2790 ++++++++++++++++++++
- arch/arm/boot/dts/nvidia/tegra124.dtsi             |   64 +
- arch/arm/boot/dts/nvidia/tegra20.dtsi              |   19 +-
- arch/arm/boot/dts/nvidia/tegra30.dtsi              |   24 +-
- 6 files changed, 2960 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
+ arch/arm/configs/tegra_defconfig | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
