@@ -1,111 +1,160 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52591FC0E2
-	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 09:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A285212564;
+	Sat, 15 Nov 2025 12:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763197268; cv=none; b=aZOMs/jA1i/k54G7BCJwr4rMencLL3e3lFmyDBYCPtW0bHR9cdEin9VIEXHA3CFuIQue3P0NMy5PZwAJX7h2zR3BPDH6TD8UzHERhukzEe2+Qj2slqgNziaip72oI0ZUmZumFCcc8t5oRBkwLDYYPK48DUPtYgQ3kKyuFM7OXJs=
+	t=1763209523; cv=none; b=bnfVw97jknH39r4PX2LlkJEbzoE0y5eGaQ8Ad6pxbqQK9AcP9Gi6FUOO8nlv889MxEHiI5P1HbRT57X25B8kAzYBkZupoaQXe19+RpDBBODO6ADk+MSPHCpTXFKXyN2MHh/MtGZl9jQt6ktluRId/kB2FNNnTGNwsg3uKJ1SZNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763197268; c=relaxed/simple;
-	bh=zv+maFz1rZ05C01gYlLfTBLLNcYvksJP/DD9r2XuRq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dUQCcgzMjdABtgzN0sjZTlmjx/MToYHXT4eISyvhxcWVl9U0mdFw3I0LHNZEiiYg4qGo+DQMvS3Pq1nwam1hDYw6fGolQLEQ+4UHkZOLkqc3z0eHSmA6Sc/24WX9gf4jf/Z6HBz9a73qOMG25QqOFj0/iAibdPoXDhxBmSAO1cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqAL5vjW; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763209523; c=relaxed/simple;
+	bh=E/0rM1P8xYLG3SX2bhJwIytZleNGPmMhckH8W/ngHZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=utA1wZnwmSusTejlimWmBwQsTfnx8DmXo7NcWZvnX8F3MzyjK5c6hwulhyleUxiXLLrfFfadJylbBRdUf9CAaIWHggPZfhq+dX84GlJ9siq5D65/qKZ6iojUBlDma3BHWVVV8X2j6JSNTwDtiNHMLF7EqMwa5/fA8O7fxA2CBMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u50Ki7O3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqAL5vjW"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4779cc419b2so797135e9.3
-        for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 01:01:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763197265; x=1763802065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q0ZwHP0w/ZzXX9CPFHfzkBVRDrGDiIy2mewdqadHPqo=;
-        b=QqAL5vjW9LRqryHQ7AIrUDmh0aZ05qMFIAnNngJrUYnHP4V0VlFLR7HwSmNhASmDQP
-         Ua6Yc+evOgkKMXY/vYZiAEvGIz+jchwRmbtp7FEzpMO3aWmTCBdF04U2kPW92gBySU/R
-         b149xF9NgWz6MlehCqpdK+zmLEUxtil3/Gw1/0nHFDB8n5egUPF5S6YyVyuqJ7cMyLac
-         0Mq0w/miqBbfkfrj7C+MwFRhXCcUFRTHl4z7suVBXcOlhDmk4iWXSs+EDK+pR+H8WCSz
-         V61WQoYxAAVEKZfTOD3On/qU83pkKmThSEXBCSBaO3E1bkGOmuBP6ljRJ1dCjOvOBme3
-         WcWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763197265; x=1763802065;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Q0ZwHP0w/ZzXX9CPFHfzkBVRDrGDiIy2mewdqadHPqo=;
-        b=scLtgf0nK8C7//+yN0UippH1nNAipCnDGRfMhDKpPvxqTtixdQU4Q8w695ccSz0DZi
-         j49gTMFS+5mMFvreEJdg7tz3oeEhomhYonAc7TNZnK9MUJZK0remjtxeNzSryzabHTtL
-         wDopKsYl3bha+iwz68lEi6r1gF53hqfbbYfoJFF+e77iFe4/IpR0U2BItyxsVJ34485A
-         o1A/0ku4sFSv0xNw4q0m1ik4I2KzPL5jJxqOVP2dYgqmVYFvhq77w7ClDwGrgFO0T5TP
-         e6ikpjI/gVR2lA+9YFzZKd/dyBxM5kaITsGIRirN2MxiqEtcbSbbRa9zxJ3tgCEZ+Nze
-         Jn0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUGYYPXEYcNaN3j4GwpUhd0geKXAVUdWlimZtnQ8+jR81B27X3/mbIlReHevJZ343HguNEsPNdHiN336Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP/UEhbaaCwHp3jzGm7PxCdiVETTz60/jnkfl7a5BPdRhYzkaY
-	DfY19nXk1nBApailjRDKMY7FdAQ95JaNHv2rJl5zuzg6S/URcrRv9amF
-X-Gm-Gg: ASbGncvFWpXlkBqBdkRU0/nN4U2Ybunx9Rjd8do3yva+IzpXnfJWEtaUGlAqHEUR8Mr
-	w3wh69q/3zq2gcEbPBdJfbD6nhIOuPvo6gN3yb+6gCjDJITIBErL6dnJ199JmCY524aroUhZ7uX
-	9fieEQyB37SqnHTtf0uNKlbpwcP/GuzMFgtfuzuhgKVXbkbeaNSJyuEMuKqbBSB0HS6kRViRIK4
-	yGPbd2NUrrgB6eXM/Lkr9G9towvBrBUOdduqi8tuuYpapv23cMWD0kFfg9eNyC/te9gHAg4wPpI
-	j1PnA7g/1/0YcNL+GghQcAT++rmupx7JKbEbrCA5YdlLzsLVUSd4pko87Xry6/ZE7vOPNCZNyag
-	axhU9yM1mxUif+NeC7PyTA3HYsr2PsY71mneR9a+vfMe3M0ldXUGZ7pG8UkK1ubaQVBx1t5la1N
-	EE8sOz0ep0GgS6JH2xbo8wiq4+GloUM/n5lKLKL3tCEhLO3Phd5f/+buYV7xkyvJAYBqVt
-X-Google-Smtp-Source: AGHT+IHaz8rnAcDH+Ih4GXwMyi1IntfGLPFhdJ3V0CaIhnOCXB9/ZniCGlMvXD6/h8Eah1krdyuflQ==
-X-Received: by 2002:a05:6000:310b:b0:3eb:9447:b97a with SMTP id ffacd0b85a97d-42b595b8004mr5910070f8f.54.1763197264994;
-        Sat, 15 Nov 2025 01:01:04 -0800 (PST)
-Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7b12asm15080566f8f.10.2025.11.15.01.01.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Nov 2025 01:01:03 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: arm@kernel.org,
-	soc@kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 8/8] arm64: tegra: Default configuration changes for v6.19-rc1
-Date: Sat, 15 Nov 2025 10:00:43 +0100
-Message-ID: <20251115090044.3140331-8-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251115090044.3140331-1-thierry.reding@gmail.com>
-References: <20251115090044.3140331-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u50Ki7O3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A865C113D0;
+	Sat, 15 Nov 2025 12:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763209522;
+	bh=E/0rM1P8xYLG3SX2bhJwIytZleNGPmMhckH8W/ngHZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u50Ki7O3vjoSQ1OZgz2qK8KXt94XUzeHUZooh7H6CXn7v+f9eo7vAdO5Rx7IkPfYN
+	 xA9BLN0pnjB7+N5PhNM5T1JjWd03nycbHkROuI5i9+R/HxuiKR4h0f1ur4mOWr7P77
+	 XNOmBbbyJD1IUsHIGOfUxAnbq2bjkDbk0EKArlOPWexId4yfsH8At88y1KyUeybOCw
+	 qCcQfSEynb5IOdVgUvJcF15mizaFCSk9QN0qBCOHaf6bRrtbZuFRIdoYCZX6/Wrjel
+	 LBmkZbN+EAWotCuZyWADGVmV28Iyvmhz5r2Q+E7MV3K9h3J3hJ0+haRzp/Q4PJcJ3f
+	 3DwUXMjRWqf+g==
+Date: Sat, 15 Nov 2025 13:25:19 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Prathamesh Shete <pshete@nvidia.com>
+Subject: Re: [PATCH 1/2] dt-bindings: tegra: pmc: Update aotag as an optional
+ aperture
+Message-ID: <20251115-accurate-fair-salmon-64eca9@kuoka>
+References: <20251114161711.2655355-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251114161711.2655355-1-jonathanh@nvidia.com>
 
-Hi ARM SoC maintainers,
+On Fri, Nov 14, 2025 at 04:17:10PM +0000, Jon Hunter wrote:
+> Not all Tegra SoCs or all versions of a particular Tegra SoC may include
+> the AOTAG aperture. This change makes "aotag" as an optional aperture for
+> Tegra234 and Tegra264.
+> 
+> Co-developed-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> Admittedly I don't know if there is a better way to handle this,
+> but if there is please let me know!
+> 
+>  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 57 ++++++++++++-------
+>  1 file changed, 38 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> index be70819020c5..defd9000eed2 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> @@ -19,17 +19,12 @@ properties:
+>        - nvidia,tegra264-pmc
+>  
+>    reg:
+> -    minItems: 4
+> +    minItems: 3
+>      maxItems: 5
+>  
+>    reg-names:
+> -    minItems: 4
+> -    items:
+> -      - const: pmc
+> -      - const: wake
+> -      - const: aotag
+> -      - enum: [ scratch, misc ]
+> -      - const: misc
+> +    minItems: 3
+> +    maxItems: 5
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+  minItems: 3
+  items:
+    - const: pmc
+    - const: wake
+    - enum: [ aotag, cratch, misc ]
+    - enum: [ scratch, misc ]
+    - const: misc
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+Should work, no?
 
-are available in the Git repository at:
+>    interrupt-controller: true
+>  
+> @@ -50,12 +45,12 @@ allOf:
+>              const: nvidia,tegra186-pmc
+>      then:
+>        properties:
+> -        reg:
+> -          maxItems: 4
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.19-arm64-defconfig
+You need to keep reg here. Each variant needs matching constraints
+between xxx and xxx-names.
 
-for you to fetch changes up to 145cde94a5435920cb9f78aacfe91bea6795efaf:
 
-  arm64: defconfig: Enable NVIDIA VRS PSEQ RTC (2025-11-14 16:29:44 +0100)
+>          reg-names:
+> -          maxItems: 4
+> -          contains:
+> -            const: scratch
+> +          items:
+> +            - const: pmc
+> +            - const: wake
+> +            - const: aotag
+> +            - const: scratch
+>  
+>    - if:
+>        properties:
+> @@ -64,21 +59,45 @@ allOf:
+>              const: nvidia,tegra194-pmc
+>      then:
+>        properties:
+> -        reg:
+> -          minItems: 5
 
-Thanks,
-Thierry
+Same here
 
-----------------------------------------------------------------
-arm64: tegra: Default configuration changes for v6.19-rc1
+>          reg-names:
+> -          minItems: 5
+> +          items:
+> +            - const: pmc
+> +            - const: wake
+> +            - const: aotag
+> +            - const: scratch
+> +            - const: misc
+>  
+>    - if:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: nvidia,tegra234-pmc
+> +            enum:
+> +              - nvidia,tegra234-pmc
+> +              - nvidia,tegra264-pmc
+>      then:
+>        properties:
 
-Enable the new driver for the VRS PSEQ RTC found on Tegra234 and later.
+This is fine.
 
-----------------------------------------------------------------
-Shubhi Garg (1):
-      arm64: defconfig: Enable NVIDIA VRS PSEQ RTC
+>          reg-names:
+> -          contains:
+> -            const: misc
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Best regards,
+Krzysztof
+
