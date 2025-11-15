@@ -1,168 +1,117 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2582FB085
-	for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 21:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3440A1F4613
+	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 03:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763157518; cv=none; b=qV4IGjgEto8BWHlGktEwyLifVj/SVLs8BvBwEowsCvoHApTlz2IJ+HniW0IGkGChrusN06Ct6sNa9O8fBxZm/5RKVaVLzrCkdpFHcFcF7kgmNi/7dK41wPf71h2PhEgXWWgfHzaqQN70d7puYb77GllPeux37fdUGCOnRBfd4nQ=
+	t=1763178374; cv=none; b=noqUXulTxFXyJ110/sAJFn8jLHAMxHHtLOyauVAmKc/DzMip4eLjXa3CC+dibwmRQ4aUm77nd7lxDLAfu4C1LlcGqOX23WOTnAyICUl+DsecE9I7SeqiLtFWdu9H8OYf8kElDjBV0kMuGxxUW02nEmgSN2snN63VKlje342QIck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763157518; c=relaxed/simple;
-	bh=Syi8OifrcIa4Q2Oytg9/IzoAJQpo1OhcVXIfS5ioZy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAAvL/Irrl3iIe2Rem/kErZ1H/FUkGss+RWqu1g4HdNM9845hojQ5mWRhbC9SJUkVdHHKlq7l7RIC6nyB1zWLxwWgucoya4KSKx+H6vUyQ281ap9oQ68yqXH+DakrIoijbzHS+6fjEuUXR99VH93BBcFul0DvU46/HjHAr/ay6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLUMwhEM; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763178374; c=relaxed/simple;
+	bh=+j5wbe7YjB1a0hotxpowwguyvU6nExjp2FExXGquiXk=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=IAQ2sHY8BmqIq59kXU7L6jslxlMvS8ztmx9JHVGEg6yaCrQknQ0YPp4Ko5x7w5Mg2Qzqc5+MGvOOhEIg294r8TSUEX5RVMHQDLdWh5g4z5SnzfHBW0EO95spBHhm00RtjbVUTJqGWsJKrrEYo4JMAEn3nb63+I0zOPYliqV1R0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fYqCKu7+; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLUMwhEM"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47721743fd0so14196345e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Nov 2025 13:58:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763157515; x=1763762315; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+u4sesX2F1ivMYBBZ+/x9GtDzSOlzU+Zz0YkP86DrA=;
-        b=mLUMwhEMjUr1lAXhKfSsEGByPg546cOf3Hs032b+vcdJkqHvUXdVWWBXIQyVg9mem5
-         OL9TwWpcxnP94htoQwQiAhhBJCp2bGjSiEZDMY76SBvs8iA4R8qbfejVK+yLJk7PUhbx
-         OFMdz4PjAAKkuA3GFXcOftwNdQiuMsi0zybHwTnboyPpROzPxiw8ZvfPzSOz2+AvX+ow
-         JNzVRBSr7ILmkpQZPUZ8TkvMdTAgdBlf+jv940K1uKKDb4q8yfhWJliZ3B75FXafVQyK
-         D259kW62AWagtpGplCFk3olLvGu28nvNgF7Wa6uAX9JAJyoK2Ul07fjtFm45R0RwQ8Wp
-         69mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763157515; x=1763762315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+u4sesX2F1ivMYBBZ+/x9GtDzSOlzU+Zz0YkP86DrA=;
-        b=gQlJo4Clg5iRhsYAwwqYyuEBp229FtGUJYCR0eHt9WTTcmrp/Tx3/C8AieNI0aS/7Q
-         m7r0TNeXz4cWmbxhmsd4EZ82EKB7vdMEcsLSzlKEEYnFr62hEX/MzIMX2lPZLA/VZ9LA
-         LWx8WmTVR8uOyvQ2YjQbjbGG4fATu7yShsM9mGnVkg3h6vWUWCpwlukG7v6QYSdGUv1m
-         67f0e0ZSe++UNyVhonp1AX6d2EmCZ+bWHBWmG9uxZiVpHOTUgZDQAMCmcK1z+EK7GPBx
-         4yB+jCiPnqqYaFHKXNvbU4D8f5cYE6/Vc+uSaSHeCRczzEYNI3b7eT3oxxZjx2NiM6De
-         /lTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQKDXr2qr7YQJZrcM/dxTn3xlaDIDV3k5PzdMOKWWr/+trK/DT1IHPGp2ZDV0SKPVJZrrMuQtm//RUQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya9uVv3gKBBbfV6a5rCM/Nl9ofa6ShMjgjQm+YUQf7mJBmpsbS
-	d9KcZIOfZSKIkjSvLT3sHehTBsFqQpTN+kE7Fuj06WwA6utmG6kBru/7
-X-Gm-Gg: ASbGncv5CMdIoUKRA01HLBQhai3NMxugBl0XLmlTCzGu09OPQEudlk5tTpkEn2T5hV+
-	LkzThdgY3k/Wu2hL4s+42nVAzTmX/LlfBb+cbpWgQcG8L7J5uF8HzVj4HE5RGg5UedSm4D9QUBT
-	WESa+kslk1/FiJZWzQjHpKO2coRcyNaYNbNh1uPAVUOaXBzBY1dHimKwUcHClXXXtfbAH0T9O3f
-	2f4sXCQmOGpIdqiVqI6ODBomVNJH5h9ajDFP/fNZQ7rpz0EbNMgGXwrKDTtjLxaYVoDQnyNcKY4
-	foV+Ov6Zd/p3AyToSWt3iMEVV+kgSnS+iTMDef3Ny5hgth5i6Jr48E1a7z8LsL57tPcN1t/2zf/
-	QbA3w85bncnAGRG4U2Eeqf1B/Hn5m5qMVz/jam9nGoQKAISYSJq3yscf4UwVLL2fySDjy85uvzR
-	eAjmJdI22fs4buiLDJmMPP2KC8u9geKBr2XkzpHnJOaz8Kq8ho0lZSP7nbSgtg0E4=
-X-Google-Smtp-Source: AGHT+IFiaMZ58B55vi9u64uCvnsSPqkvnvQqbvHQS4sxytgcEOqkF2Eov/l731LFekJ8vKo2nNneiw==
-X-Received: by 2002:a05:600c:8b42:b0:477:942:7521 with SMTP id 5b1f17b1804b1-4778fe683e1mr37311375e9.14.1763157514789;
-        Fri, 14 Nov 2025 13:58:34 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778bd11165sm54720335e9.6.2025.11.14.13.58.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 13:58:33 -0800 (PST)
-Date: Fri, 14 Nov 2025 22:58:31 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] arm64: tegra: Add CPU OPP tables for
- Tegra186/Tegra194
-Message-ID: <z76e63y4ixlsqelhjzwldyjbne55big5zxkflrdjrmilnewuni@ouuf77xakco4>
-References: <20251021-tegra186-icc-p3-v3-0-68184ee8a89c@gmail.com>
- <CALHNRZ-uFJhMjyyV1vUS6ye3q-nNVPT7Ab4vuO41ziHqg8MOvA@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fYqCKu7+"
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251115034608epoutp047af95eecaffc883c5e3d89b802721340~4EWJZJbQl2068320683epoutp04O
+	for <linux-tegra@vger.kernel.org>; Sat, 15 Nov 2025 03:46:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251115034608epoutp047af95eecaffc883c5e3d89b802721340~4EWJZJbQl2068320683epoutp04O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763178368;
+	bh=iezP+plYmMt5jcJgmzrY9aAxgyLRNZkWdBeBYsojFg8=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=fYqCKu7+cdH4XbYqUOP6kUsrEHgyY3SbCc6MmgPl67uLD7ff1SqeS7Tce5eJbPQH9
+	 41xnhza+C0uRL5npDT55v1QvIG7hFkYJNL8ZiJOT4UcfS/h+C6pJSdxgQVqdaPY3B/
+	 Fj+cjv+evKV2xl/aSDUVjsGDwrr/bX7dXRQgNt6M=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
+	20251115034607epcas1p34f9f9576203c8a0e3dda95c01d1505af~4EWIqO2IQ2030020300epcas1p3R;
+	Sat, 15 Nov 2025 03:46:07 +0000 (GMT)
+Received: from epcas1p1.samsung.com (unknown [182.195.38.109]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4d7g0G5tG3z3hhT7; Sat, 15 Nov
+	2025 03:46:06 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z24zjinrywe7h3jf"
-Content-Disposition: inline
-In-Reply-To: <CALHNRZ-uFJhMjyyV1vUS6ye3q-nNVPT7Ab4vuO41ziHqg8MOvA@mail.gmail.com>
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH RESEND v2] devfreq: move governor.h to a public
+ header location
+Reply-To: myungjoo.ham@samsung.com
+Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Robie Basak
+	<robibasa@qti.qualcomm.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <cdzlgnun7kpn24hziut23njsnlnzl465hdquq4zfmur7ylt5id@ioaqt5ilixwt>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20251115034606epcms1p8e17db2609c72815e30df17ab4c895afb@epcms1p8>
+Date: Sat, 15 Nov 2025 12:46:06 +0900
+X-CMS-MailID: 20251115034606epcms1p8e17db2609c72815e30df17ab4c895afb
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-361,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251030182636epcas1p2b332b417c1c42fb559a6f34e9e9f408c
+References: <cdzlgnun7kpn24hziut23njsnlnzl465hdquq4zfmur7ylt5id@ioaqt5ilixwt>
+	<20251030-governor-public-v2-1-432a11a9975a@oss.qualcomm.com>
+	<20251107005809epcms1p5f33e9560755367f0ba4b7df82c87fc85@epcms1p5>
+	<CGME20251030182636epcas1p2b332b417c1c42fb559a6f34e9e9f408c@epcms1p8>
 
+>On Fri, Nov 07, 2025 at 09:58:09AM +0900, MyungJoo Ham wrote:
+>> >Sender: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 
+>> >Date: 2025-10-31 03:26 (GMT+9)
+>> >Title: [PATCH RESEND v2] devfreq: move governor.h to a public header location
+>> >
+>> >Some device drivers (and out-of-tree modules) might want to define
+>> >device-specific device governors. Rather than restricting all of them to
+>> >be a part of drivers/devfreq/ (which is not possible for out-of-tree
+>> >drivers anyway) move governor.h to include/linux/devfreq-governor.h and
+>> >update all drivers to use it.
+>> >
+>> >The devfreq_cpu_data is only used internally, by the passive governor,
+>> >so it is moved to the driver source rather than being a part of the
+>> >public interface.
+>> 
+>> Hi!
+>> 
+>> Could you please direct me to the governors or drivers needing this?
+>> (Qualcomm drivers?)
+>
+>This has been prompted by the Qualcomm KGSL driver:
+>
+>- https://protect2.fireeye.com/v1/url?k=f6bd3b8e-a92112a4-f6bcb0c1-000babe598f7-61920f21ff9de708&q=1&e=8591e0e4-db8b-428a-84a2-250662bb2f1b&u=https%3A%2F%2Fgithub.com%2Fqualcomm-linux%2Fkgsl
+>- https://protect2.fireeye.com/v1/url?k=47a092b9-183cbb93-47a119f6-000babe598f7-7e1401a14df18a21&q=1&e=8591e0e4-db8b-428a-84a2-250662bb2f1b&u=https%3A%2F%2Fgithub.com%2Fqualcomm-linux%2Fkgsl%2Fissues%2F11
+>
+>But I think this issue is not limited to the KGSL driver. Other
+>out-of-tree modules might also implement device-specific governors.
 
---z24zjinrywe7h3jf
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/2] arm64: tegra: Add CPU OPP tables for
- Tegra186/Tegra194
-MIME-Version: 1.0
+Ok, I see.
+It look good to move to the common include directory.
 
-On Sat, Nov 01, 2025 at 06:21:40PM -0500, Aaron Kling wrote:
-> On Tue, Oct 21, 2025 at 8:13=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >
-> > Bindings Dependencies:
-> > - https://lore.kernel.org/r/20251021-tegra186-icc-p2-v3-0-1a50b526dd40@=
-gmail.com
-> >
-> > Logical Dependencies:
-> > - https://lore.kernel.org/r/20251021-tegra186-icc-p1-v3-1-7e6db3b070c4@=
-gmail.com
-> >
-> > Merge Strategy:
-> > - Merge all patches only after all dependencies are picked up
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> > Changes in v3:
-> > - Split series
-> > - Link to v2: https://lore.kernel.org/r/20250909-tegra186-icc-v2-0-0941=
-3724e781@gmail.com
-> >
-> > Changes in v2:
-> > - Use opp scoped free in patch 3
-> > - Cleanup as requested in patch 3
-> > - Move patch 3 to the start of the series to keep subsystems grouped
-> > - Link to v1: https://lore.kernel.org/r/20250831-tegra186-icc-v1-0-607d=
-dc53b507@gmail.com
-> >
-> > ---
-> > Aaron Kling (2):
-> >       arm64: tegra: Add CPU OPP tables for Tegra186
-> >       arm64: tegra: Add CPU OPP tables for Tegra194
-> >
-> >  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
-> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 953 insertions(+)
-> > ---
-> > base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-> > change-id: 20251021-tegra186-icc-p3-3f6454da5ec4
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
-> >
-> >
-> All dependencies have been picked up, unblocking this.
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-Unfortunately the headers are only in linux-next, so I can't pick these
-up into the Tegra tree yet. Will need to wait for v6.19-rc1 so the
-dependencies are all available.
+Cheers,
+MyungJoo
 
-Thierry
-
---z24zjinrywe7h3jf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXpgMACgkQ3SOs138+
-s6Fo9Q/9H5rEpI64Ske74TuL5FhSOmri9aytKKyGeCojYE0IPIc+Sc6IZNqZtaVF
-9a7pcUSFD83X0EYruiXVNZnaJzkvzXFmrvc68q4yq2O2redaFFPEV+BwOc2FzQ4N
-lv/Z+SOM5E+1OIOqbEN5hSCmxGQGQDerCgqU3/jm7ep8CgsdHLx6Osw2HOJ3Bdz/
-OIVdVEaEIGn2Te4csBy9zUt4WQRMo3fS1uAg9K5p2PWoad4bWclS6FRimbPpReZZ
-Gf5906MeRaGruSd6lLQrmFoPNf05Lg7y0BDP778ZDxnFToO0xw8uxju3q+MvcJsm
-zbJsdtWp25JO9m46tY15dgztgwPKvsVCmZlvZxDBTPwHPp9bZ82qqbgDX6xQXznh
-WOk8ruBF2iniva86OhpP74mz/CQrHkhn4mfpET+tFcfxNWRIPhfvIrPxTgvmZlum
-ma7KhnU2Sao09A+JFpWulGZYzH6E6xETJM3ieUPOdw4f71fZUvCburAgyRtjZ5io
-C7tUt/gP4RB2gL4egOZAc/nszFOKzyTT6Cn7i+inES9tT0X4mG/i9IvaDikScu6Y
-RBWIskimVqOhM898Rlh8Xzel90KPDTkFtKE+r5zbewbkW8SsDHX1FbrE7R/FGhdU
-MfsfV0IfmmwTho0se+f38smJGiI3dYdfEzPGotuIXjvSHkSvmck=
-=bN5S
------END PGP SIGNATURE-----
-
---z24zjinrywe7h3jf--
+>
+>-- 
+>With best wishes
+>Dmitry
