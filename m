@@ -1,225 +1,114 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010027.outbound.protection.outlook.com [52.101.46.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC026462E;
-	Mon, 17 Nov 2025 09:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763373164; cv=fail; b=VRTeDMd+2dV5Hs/baW9QwJnqswt+6kPdl9Km6wEcfIu/hcViMUXwHcd/Oq1hEcyXHSB0vDHR/hdcGf5/zx2St36QuSTVxO33apt3JF6l9a2kuZ9CCsc+FFm9vMYgBFH6QRLat8y97lS1R+FfFE9mN2oXEpofz9QffZv+Me46IUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763373164; c=relaxed/simple;
-	bh=G0V1QKLx0kUhiYffcK00sY/x0zXIDnwfvertkdXOPbQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cEW8UVMJbxIq0gt01BPVlIgM8uyN/TYc25iWwjb349B3U1ywxqtofWBL2DU2A3Gmh7uRlYmTMVu17J+EBmgZGh894/nR33uOcVGQCzoBzlqKmPDnEmklytyDNQItdC1sOXnOKxUO4KE8hvqk69vJ5kHsM8j0BmJiHuTO+cmImt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g2L0ZN4V; arc=fail smtp.client-ip=52.101.46.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15CC2D0637
+	for <linux-tegra@vger.kernel.org>; Mon, 17 Nov 2025 10:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763373886; cv=none; b=A+rvG088HOOpj5UH2qJlKMQdZr6dy1IJf8ITPQSFVMEIYGvceZNo2+KRQbSp15qskOxpY+Ge8TD8xteZWur55Jc8AfketZIWbHU80dJbazJCWS2QAzvYqIwhhRiFLWgANLie1OLSxp2yct8i2UpnltmsC460zkBZu3NwuOMvr+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763373886; c=relaxed/simple;
+	bh=sUxmmzik30RUcJHcl9Mo4hULyONy8x0tMDjjLb2v6C8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L0Yh5ItvBtUWFUWxUKp+Wy2zpslVpeFOixjN5gtEFgz0W+SJkKKmrrlOalWy3VrGWd1oizo2QbHZ8STeuK5V4GrPkXnEGh2ULdZFjpsb9KZBQxo87CpI4ZJI5MGzUKRqbxCCCIl7qwb/BwhJFE98MX72RQ29tAABWCD1xcmw3nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TONqugph; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g2L0ZN4V"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SEBFCfvO3Ve95Ayq6GXEJq4cwcckjUYlbL9gk74kW8o7MMXjuOgvsRNpI/zP23xq2RsI2Rb/6O6hxparq/CZysf3PTBPvfo+gB78fY/8Tlj7rQj0RbRzw+Cqb9Z0U9nURHEojKDgRGZGCDVSzoghTrSPefvc1NSsC8dQDiv5f/Ere3GvkhMfHC4GcHXCvVHcdhGDKQCwNn11sv6buyxWvendSvuIHaPgxQ5wz7c7+i8b+iUpm50csiklYO0Rmbgbh/ZBjqng1hSl/FbuHIiS0l/s0auTE2QMaa4dLM4+6REho4SupWXWVa3Y3ePBKMdw9H27s+WrEssGW33U8/ihow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OO/eRYbYMcvOfLXjC2sYo/OetS/mg/kdrGR7Iym9aaw=;
- b=exgceRc9pMYXNNL+W3JI5G/+OROu5s9KqZ15RnohmafU5AUURrR6sd9p4M9PvhkNffnbSO0KV9CscA9IY6hIA2gu2pB1cgIuP39HPq0Hw6oZJ37L+/XQx9EzLjp9yR/8MDzEEOiJPzytxzdNmv9SIrh3jQgeT6/e+bp61ZL42KrOECaR++wlhDEIDVfeGqqijYhPU1pWZ5iXMeupP3ZvZUukC2m0c+GYS86CccTgrO5hq3v0+/kW+GziZwm6aMgUp5OV2RCt06lv2ig+ddJ7oxRwLUlyT1HaV9Q3lJ9lNcsznIeyTr6oLA5lXsrkXKG174ZNoEmEGFo5axwx8GSa4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OO/eRYbYMcvOfLXjC2sYo/OetS/mg/kdrGR7Iym9aaw=;
- b=g2L0ZN4V4sr02n/zINxQK65zPGDb7TIpC8lyTQS2Xr/gIDyhOqst+IN3LOV8PewhS6NG1FdoRBYAODjzrRsyORwifbTS/9tVZD6ecHGFtETXrf9rhJnyc964eezzA0RvRLnGHXT4neItdbgwKeg4RkOQsw5y0QjDNrl5M6WHhKLVgGCRCWJhM13nA67G464UTlixj2LzjN8L9n9v6vyWvyMZstBG19Jm58kagm2S2PAGz+Mu4w8q4sj5zHrul7lfo1Y4xc5ZfX/PZK3q5yu7hBrtYNHReS67dZ161lmXdAwowrMsAUtQeWZcW8h0sAYfPoz4iJRH5tTC98xSO/lt4w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH3PR12MB8546.namprd12.prod.outlook.com (2603:10b6:610:15f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Mon, 17 Nov
- 2025 09:52:40 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9320.021; Mon, 17 Nov 2025
- 09:52:40 +0000
-Message-ID: <811e364d-319a-4527-a4a7-627f3c926490@nvidia.com>
-Date: Mon, 17 Nov 2025 09:52:34 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/6] i2c: tegra: Update Tegra256 timing parameters
-To: Akhil R <akhilrajeev@nvidia.com>, andi.shyti@kernel.org,
- digetx@gmail.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
- wsa+renesas@sang-engineering.com, wsa@kernel.org
-Cc: kkartik@nvidia.com, ldewangan@nvidia.com, smangipudi@nvidia.com
-References: <20251115042632.69708-1-akhilrajeev@nvidia.com>
- <20251115042632.69708-4-akhilrajeev@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251115042632.69708-4-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0186.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a::30) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TONqugph"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477632d45c9so29791315e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Nov 2025 02:04:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763373883; x=1763978683; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KxG2t0oNB06OR4tbCXZ9UBNqKtz6tpbcQaLbdfquq/0=;
+        b=TONqugph1RKNL3Ve/p+ZFUpSu/9q8XpeFsSlezj7UU0C1/6yD9cMGOTp33zv1RChHJ
+         6atXoaJKOtZlhbnz5B/BH7bsVag3BnBxb/Dq49kdWyA2YOwUg7uqhKDUrOhbw7yCI9/8
+         GxLCzHlKjNRnq5RfnqAbX6hIR4IEDTHsYOS+55rzfthVY+HaHYUIyo0YFmgobISZ4QOb
+         a4NleMMPjeDVDGF8xyq143dwsDUg71jw0xM1dPG8Crvg/n4CiZkNTmsYw+tw8j8VnC0+
+         soT4NGApBEkXuerxS+Sjdu5hNvw3zJh5afmydLctuQae4vHonO2dSIehiCkDnnNmICO1
+         PXLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763373883; x=1763978683;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KxG2t0oNB06OR4tbCXZ9UBNqKtz6tpbcQaLbdfquq/0=;
+        b=ZyF8iIe0uMick8EpQuY+x08DOQDnZdy1CWQ+UC3zGicP84QwdHU59uOgLYyqw2EI37
+         qH3qNCn5T54jjVPwl0GFwyQ3pmO008mzViCwJtxfIZD+7RVBt5oXqO64H4PwgBIPIyMa
+         Gt0NmpaLVnF60Cn4i5SfQ1fWiM7H/KTAycnFUUAcwM+JHDjvC91u4gm3w13lL2zLaPeU
+         dOuLft5DJipeOQYU1qcY2cmVeQ0FXngzwTsuFV0qDCikzxI+p2stFYxHOhIMxXF74ai5
+         o9KXl70YHfOpiGpGbZdNz62ToN5SHbM8AJNOU4+zAlfCkAP/mFPY+mis0M6h9WXc1PuG
+         Mwmw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1zf6xOLUXj/MT7Y2+GKPRUL5S40Sx6kKS4ITyD8BMBb1XFwsb0FYCKEbpbNfx4HkLlIJAviPXPU6cZw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzffbUtRdcEHJXQOIw4xhtJfBdBvuFqUjCTTz5dtWLj5yZY95xQ
+	edU+TfsyIigVjK5M1MePN/wFSctuGlZ42J+ko2AWCyeZEbTv/3mLQsqdUS8IBykMIOg=
+X-Gm-Gg: ASbGncthHfM7/RSUmPeV0OvK+6ydIS5a0W1s4qLCsz8H1q63vRmgmSohXTnSvfpBLkd
+	9PXo5fx6ZJct5t5wpRSM3YAruQ8C41FT/a7YBCQ8zAfuny0H/lunQbiM9551Gong8pc4S8cLbQo
+	AufHR2bf7qXUMMMPI0LrlnBB5r1IWBuQDJ0jXD9oJpHko9YrTWb/4ki9pEQwFldgZCdfR8BGEDD
+	CHTp7IzZpSoTwPo60dP2NTc3IutQh61m1xG7u27EsqM/iwgysqjB2Aj+Dx7aD0QEYVCMWV1KGqc
+	Nij58wwPpC/u+irJhh2vq/g+khl05whYcoKIKZEiiru/BZ1mjRWK+1zQ3a0RGWSZtMczQlw7Ry9
+	sugBAosYJpn5q01O6DLIx8Rra1VY+lPxmhCVsuWbss1D+vjPZonRTjVlel0iqIQXcrT3KIJOmuS
+	+pwS4jXQ==
+X-Google-Smtp-Source: AGHT+IH/GibFf1d+NbVobGQY65ToMbd2bGVauIWkeIisTvOKj7Ak9NWrwOzW1UWBaZyb/D/8GOyk6Q==
+X-Received: by 2002:a05:600c:4707:b0:477:9eb8:97d2 with SMTP id 5b1f17b1804b1-4779eb89abfmr45551905e9.8.1763373882926;
+        Mon, 17 Nov 2025 02:04:42 -0800 (PST)
+Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:36dc:12ef:ca32:1a1c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e953e3sm294011395e9.14.2025.11.17.02.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Nov 2025 02:04:42 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	pshete@nvidia.com,
+	nhartman@nvidia.com,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kartik Rajput <kkartik@nvidia.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpio: tegra186: Fix GPIO name collisions for Tegra410
+Date: Mon, 17 Nov 2025 11:04:41 +0100
+Message-ID: <176337387783.48125.16535438263488945711.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251113163112.885900-1-kkartik@nvidia.com>
+References: <20251113163112.885900-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB8546:EE_
-X-MS-Office365-Filtering-Correlation-Id: 620d0fcb-2b5f-4d9c-3f73-08de25bf0baf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|10070799003|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QzBxZE9nRFBRWSs1V2dvcFA1ZjlKTEdWQ0RvVXpYMXJuZU9IRENSVjl6VHg3?=
- =?utf-8?B?bnUyc2RsTDBOVkovdkVYdVRLNk85QTBUMmJwOVF2UVptcWRtdTFweDVRTVly?=
- =?utf-8?B?enVSSlp4S2NuNU9Oc1JobUszME9hT0todEwzYTkvRVBId0s3TVM3bnExLzVG?=
- =?utf-8?B?cFBaa2hVZjhkb2tYQ0JIOE9kZ1JxY2MvL3RxVUNqalRPblA2eElUVVRpN1NW?=
- =?utf-8?B?a2hSb3Q5Ym12U2JlQVdNaHBEZVNCZmRFSlB0bmc4eUcybDYwVVZad3BEUnJu?=
- =?utf-8?B?Zm15djl4SlQwWEppWWpJWW5TMUc1WWsvUS8yOEF2cmVHbUdORCtxUy83Q3B4?=
- =?utf-8?B?STNSeGFRSUd4dlpJR1RONXdUazRtMU9yUjBkTnJpYzM2dnZNdVo5djROSUxW?=
- =?utf-8?B?MnhEUzRkYkxtQmxNR3A2RmF2bzNJUXEweWFRaG1tUTc2QjZUK3dQVnJybUsz?=
- =?utf-8?B?dkF5cXAvVkphVlZaYnNtN0RmMHc1VWhwZXNhUWx1ZEJZeERJc2J5enhEWGdL?=
- =?utf-8?B?dWljYXhnWGFuYXVLWW5KTmhPVTE5TkZqL1k0QXRieVJFajRPdE5lMUM1eDlx?=
- =?utf-8?B?cUtSbGg0eGZobkZtL0htWlBlRGEyd3JMd3BNa0xzTXJHUklxTG1VNTM5bFk4?=
- =?utf-8?B?eG51SGRWUjhHcWdaKzZMaGh5VW9ZcCtja2xKRHJoMUhKODNIQUVMV0szQmxR?=
- =?utf-8?B?bkhubFE1NmplMUR2akdPN3RmOGkzVWt3ZjNWQzZ2Y29uL1Nlemc2SE83VmFX?=
- =?utf-8?B?OUZsQ0s1c0k5aFNCbU14cGI3NTUvRWtNRGswV1BVczhYUjJFR291Y005bzVC?=
- =?utf-8?B?TzdaaVgrQ2JvYjFKS1pQMzB4cEwyeUdwN29WWkVuSUN0dHFqOEQvWW52SHJF?=
- =?utf-8?B?SDdSOUxseGNiSC91KzAwWHZQV0dnN3lZc0hHSnJFSm5yR0E4S1F6U0duS0VT?=
- =?utf-8?B?TmlpV3VtcDlXM083cWtxUXZzK0VVdDhSakF3aEVTU3VSbVUrbzdDbVlMT3ZM?=
- =?utf-8?B?dHd5SVJ3UXgvd3lackMvaml3Y1l3amRtakpxS0RaVDdZV2Uzd25XYk95WjRQ?=
- =?utf-8?B?b2RGVldnUUpoVXQ4UzQ3aHBlbWlnQ0Q5Qng4K25zQkI5a2taMGRQUDlYb3ZK?=
- =?utf-8?B?ckg4bEJOSnVUT0czN2pxSi9Xamd5enNXclBZTHZORVdmbGVkWXNwVnlIcG9E?=
- =?utf-8?B?VGVZRU9oZUFubHNYRUJCWHpURHZWS2UvSHQyZHZjR3k2K0tScHZwN0lhYU9t?=
- =?utf-8?B?NmxHTVkxM1pRWlRTZldyRkVJMy9TQlh4bGZFSEN3RDRSV1lYVXVBdFJoMUFU?=
- =?utf-8?B?VlZYRzluUkVGd3hJWEp6Sy8xOS9wb0lFMW9IeFRKM05CNk1qTWlIQ2tLQlF2?=
- =?utf-8?B?eVl1bVRseHdEQWNMTk9md1dPMWQ1RjJMcjBqYWh3eXJEc0l1T21lc2h2Unlw?=
- =?utf-8?B?clRWRzhFejVvQ1RpczRkOXZMb2VybjRXUUM3Z3g5MVdUc2ZxRWhwT0lxb3pP?=
- =?utf-8?B?d2IzRUtVeXRSQ09TM2tBTTlIQzBTNDh0UXpSUE5zRTFEa04vMElJc3NIOUpF?=
- =?utf-8?B?MDEwOUJiSk0xOW85cDR2ZFlTV0VxK3lCU1FuLzg4Z0JoNWhtZ1U3aDdjYk9Y?=
- =?utf-8?B?aW1WZkZFVkF2emRnQ2NyQjZmbm9tYmlEa3UyNnVuaTRlVzJZY0l6Y0tRYlZ1?=
- =?utf-8?B?ZUtPdmV3LzJZQ1RhQW1mNTFnWmlVTTNWdVo3eis0cC82bVNDRTdEZVN2b1dW?=
- =?utf-8?B?MWxnd2lMQlBnODBDQ3JvUDhSYUZ0d0JPRnVPeWh3RVJRa0hlY1ZudFcrUjNk?=
- =?utf-8?B?QVFwZ2x6WU1hUmRCTWxmR2FTbFc0MGdQU0tlcUFjTzlxSWdpeE0zZ1VKVzI2?=
- =?utf-8?B?RDZRVis1RVcvaTlKVG9aNktMa20ya0lSV1NFV2E4UEpKZnZVdWc5MFdPdGQz?=
- =?utf-8?Q?TNY3DCu0/oPdq6RoQnV7+AJwk3dBr8cy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OTF5aGx0UFZZOEcxQ25xYmJCMG5hK0M3eWVhU1RNZWZOUUtWaVNYeDdQYTdO?=
- =?utf-8?B?SlR6bldzUWFWazdXU3h6NW5IOTBNN1RpdzVIdlZNRld5MURwRWhpSEJ5SnlJ?=
- =?utf-8?B?YTBFQStiSEpXQ21pVkR3M2lXQkNZZng1RWF5Z0tpcGR2NVFKRzFvd3JpTG5m?=
- =?utf-8?B?M3ZORzBJV1B5bDBGemU1Z0JaMEdILzd4MDJzUi8vTHFRMlNleWNFRXRFWEVq?=
- =?utf-8?B?d1hTT3RyQTJLN0xsMFNYUU5iVGdTd0xZNlJYdmJDN3NqZjQxa2pKU0ZLOGJN?=
- =?utf-8?B?cklydW1KRzhINnUxeXZlV01FOFJZUExyeGVYTVdyNjhySGRTM2EydU1QK0lp?=
- =?utf-8?B?VGE2emk0TXhGVVhuTVJ4clpiVHVmNmxDYm1ZODF3SlIwU05jTk9IKzdaTUx5?=
- =?utf-8?B?SXlzelBOM1RzTllyR0hJODJjWmNlVzltVkpDSmN1dUhZUEM4ZDdXL212dnc5?=
- =?utf-8?B?emYwY1JXSEJlM2dQbzEyRXBnWTV4dllNWjNjOE8zQkpUNW5pUDFVcHRSUnB0?=
- =?utf-8?B?bFA4Q0FwQnJxRmR0UllLZFNUVmVDK1RpeUExbysrZzN3c2NSRmtTbURSeVBS?=
- =?utf-8?B?RXNYS1pYUEpPaThDazJGQjZOMHpxSk0zdThqbHJNZ3Qvc0FKcGNWdjN6Q3RO?=
- =?utf-8?B?NjBBd1NDeExHVU5DMExRMFFjWnJyYnZuVDRYdWZhb3BHendHTWRQWmVwemRE?=
- =?utf-8?B?NWhPNEFHVUVsejRQS1pEL1RkZUY0L0JWWmVWcWRTUkx1UnRsZ1BQaDFkTklZ?=
- =?utf-8?B?c1NwMU5PSldzNTVpR0hVY3hDNDlZdmZaQ0t3RXJnYjNCY2hlUDlmZjhLYTR4?=
- =?utf-8?B?bzEzN1E3L0M4RFB4ZTQrVWUvOGdqTUpBQm8xU0pnQlBycFo2MmxmNWpVaGdW?=
- =?utf-8?B?dFlZRkxraEtLUHFTTEgza05OVlhGNzhTcFgrU1d3N0svVnRINHR1T1RVSjdz?=
- =?utf-8?B?ZjRjM201VGVUUjhWaXlOM3RLbFhoU014eFlwOXFMZlBxdWVseUUyRjI5Qi8w?=
- =?utf-8?B?Tlc1ZmVzSm4zU2Z2ZWNkYzhUQ3Iybi9JcmdPdHAzV3VLYTFyOGxBVkdlTm5x?=
- =?utf-8?B?a0pOTFo1R1MxWUNxenN2WUs0UUdUbXo4czhGSU1QelBWc1dYT0xKK1ducXkr?=
- =?utf-8?B?R3drRXF6eGtzWGkyZXN4blhaN1FRMC9sVEwxZnBwa1F4Ky90Q1A4UlRvUWdH?=
- =?utf-8?B?dVlwWE0xZE9iMTI4ZUYxMHlNbm01aHlpUEpaNUIxOURSdTAyQXIrQ3JtQkR3?=
- =?utf-8?B?eHBmSmVwck5seml3WlFUbmF0MFhRTVpsenZyNUpuYzZDNUdhRzZieEUzampM?=
- =?utf-8?B?Yk1oT0gwanlLdmhyeXBUSDd5RVRqUENkK0ZmWXQ5K28reVFFVkZ6NFNTZUpU?=
- =?utf-8?B?aEJTbTRkanZUYkZRMHpJaE8rdHY5UXlmQWl2RUJ1RGtXT09hVDhvUGlsZkly?=
- =?utf-8?B?NzgwOEtwK3FZWEJQSjdWZkxUZXVwZFp1RzZOaUVPcEdPbXVzZFF6WTdOdEo5?=
- =?utf-8?B?LzFuMy9KMUkyQzZNKzFVbEQ4ZG5jcEd4WGFQUnpyZjI5NXVnMkpBUTNPRTAw?=
- =?utf-8?B?OFJCZnhzNms5MEVEZTJPRWF1K3dxeWpETktzUXZsZUxSYU1IMm9IMERiczFE?=
- =?utf-8?B?cTZiV1hMQ3loWlNRQldWN0pscTZkQU5BYVNzZFdVUEUycmpkemRDazJQY1Nl?=
- =?utf-8?B?L1dTbDhLaVZEU2dXa2NVcnhrUWFJOVFJQzRFS28rSjE5dXZMaGYyb0Vrb1dE?=
- =?utf-8?B?Y0JnUkd2RGkvdnZyd0VKUTZKSkgrUnBuL0tHdkRuQmpSMGQ1MGxBYnlSV3Iv?=
- =?utf-8?B?UWx4cVBrSitnZDFpR2dFeksvZTRPczY0aDRydWwrd0Jwd3ZmMWNLdWVGWlkv?=
- =?utf-8?B?NWZVWGxXeXB1VElobURTNW42b2c1b2VaRmdDNmJWYktSd1YvZjh6UVNDVzg2?=
- =?utf-8?B?VXUwNUFwQjhGS0k4VzZWZGZBQ3AyU3lCRUtxaHc0R1dkRHhJejNZQ25sekxP?=
- =?utf-8?B?OE41T2NscloxNlJPVm44MmxXOHRxaWhPaGVFZEVPQmg0QXZZNGFVL2NuRVZJ?=
- =?utf-8?B?TmwrZFpFQVU2dnpVazBLaE9rYXk0OFg4aHMrUTFTamdMSWYwcWxKTTlBek1C?=
- =?utf-8?B?ekFMK1J2WjlmQ01EU09xekRSeCs1aHAzbzJMejJoSVVxaFhMNnNxcWRHNDRP?=
- =?utf-8?B?aWhPN21SeEpTRTNrZkxFMWlXZVZQNWRHYVk0dVpkRDYvRzZDU3NuU28wMEJ0?=
- =?utf-8?B?ZlFnZFdMbE5nK2xMQUk2UWdQT2VnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 620d0fcb-2b5f-4d9c-3f73-08de25bf0baf
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 09:52:39.9356
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uhXn4cMC6mdZ1kmyfh0+c3bpdd2yzUNNQzMfGiIJZvsLRUY7NKRkjzfvFm9Qt0HV42zZPDN5cm85JtGoLLs3xQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8546
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-
-On 15/11/2025 04:26, Akhil R wrote:
-> Update the timing parameters of Tegra256 so that the signals are complaint
-> with the I2C specification for SCL low time.
+On Thu, 13 Nov 2025 22:01:12 +0530, Kartik Rajput wrote:
+> On Tegra410, Compute and System GPIOs have same port names. This
+> results in the same GPIO names for both Compute and System GPIOs
+> during initialization in `tegra186_gpio_probe()`, which results in
+> following warnings:
 > 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 16 +++++++---------
->   1 file changed, 7 insertions(+), 9 deletions(-)
+>   kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.00'
+>   kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.01'
+>   kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.02'
+>   kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.00'
+>   kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.01'
+>   ...
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index c0382c9a0430..8a696c88882e 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1677,14 +1677,13 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
->   	.setup_hold_time_hs_mode = 0x090909,
->   	.has_interface_timing_reg = true,
->   };
-> -
+> [...]
 
-Please don't remove this new line. Otherwise ...
+Applied, thanks!
 
->   static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
->   	.has_continue_xfer_support = true,
->   	.has_per_pkt_xfer_complete_irq = true,
->   	.clk_divisor_hs_mode = 7,
->   	.clk_divisor_std_mode = 0x7a,
->   	.clk_divisor_fast_mode = 0x40,
-> -	.clk_divisor_fast_plus_mode = 0x19,
-> +	.clk_divisor_fast_plus_mode = 0x14,
->   	.has_config_load_reg = true,
->   	.has_multi_master_mode = true,
->   	.has_slcg_override_reg = true,
-> @@ -1695,14 +1694,13 @@ static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
->   	.has_apb_dma = false,
->   	.tlow_std_mode = 0x8,
->   	.thigh_std_mode = 0x7,
-> -	.tlow_fast_mode = 0x3,
-> -	.thigh_fast_mode = 0x3,
-> -	.tlow_fastplus_mode = 0x3,
-> -	.thigh_fastplus_mode = 0x3,
-> +	.tlow_fast_mode = 0x4,
-> +	.thigh_fast_mode = 0x2,
-> +	.tlow_fastplus_mode = 0x4,
-> +	.thigh_fastplus_mode = 0x4,
->   	.setup_hold_time_std_mode = 0x08080808,
-> -	.setup_hold_time_fast_mode = 0x02020202,
-> -	.setup_hold_time_fastplus_mode = 0x02020202,
-> -	.setup_hold_time_hs_mode = 0x090909,
-> +	.setup_hold_time_fast_mode = 0x04010101,
-> +	.setup_hold_time_fastplus_mode = 0x04020202,
->   	.has_interface_timing_reg = true,
->   };
->   
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+[1/1] gpio: tegra186: Fix GPIO name collisions for Tegra410
+      https://git.kernel.org/brgl/linux/c/67f9b828d4e5e47caf3472a399c25c3c0ddc824a
 
-Jon
-
+Best regards,
 -- 
-nvpublic
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
