@@ -1,109 +1,134 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283D8346E4A;
-	Wed, 19 Nov 2025 10:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B770634F473;
+	Wed, 19 Nov 2025 11:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763546695; cv=none; b=lB16I8Cf0KRfOy9n5vr2LE1+/hvnQcvCVmEzfBrvm80FaCE0Ob5Q4NEkTfvjGtKP0QvDrhfngVUiaqILtNoCokOMbaQfiVJyaDRVE6SoCBgkglHXTWpNH763rJF1Is+3iKHBkJELj3wIRsmiFpgKS6fTA5A9lOeNm7UHXmLs/QY=
+	t=1763550533; cv=none; b=XHwMbva5SX693dvO+0EgevxzMzB5IQfBSjTsSJMOJFHRxaYCJ11Nt+izdddee3/t+jK/DgJ4ULcvWTuz52nkDyJRwrUoCv8PH6idAsc0fTZ8Nu60id0XZ3mdGhxfxmz3dnfl9/kwzWBTdKPGnC4YwmfKVdeLp9Y551I42TEAiQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763546695; c=relaxed/simple;
-	bh=Px4ThBY42WScHWeBHUPZdN73sHFvnDPeY/oVLJK/kLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=izd7tKXAtJw5xVKQELwvN314ES1noI/m046ZTm35pD/9nUpkVW59k/Ej5PQNSFwED6gMpFsLpuEbVQCLQUsgfsfw8qZMk87nM78oKiXYkiN14BnD2bK63fikbjWXlqshJMmyh4esAxpxyxWO2ZSXB/m5IL9/KwGhrOJqelayFHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kft1sFC0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763550533; c=relaxed/simple;
+	bh=i9B40rXvO4To44vDLCPvVcioheN0Q6vh2sMRTqdfAAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tClt16QEbomgSwCIySxK/aSYGIy81lVJddMqDjwdA+RJtwuzcaMzCwxc4i9iCv9jVp6HjpaW0uC5MhkVKn+y8hXASD6okv5cDwpnYazpBCq5bKuK/m2qDVRWv4TGkjBALK++ZYLFOjwR9srVFeBPw0ERRlHjyxUHb4ET6zYvK/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFbkS3It; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kft1sFC0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEBEC2BC9E;
-	Wed, 19 Nov 2025 10:04:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFbkS3It"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5474FC19421;
+	Wed, 19 Nov 2025 11:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763546694;
-	bh=Px4ThBY42WScHWeBHUPZdN73sHFvnDPeY/oVLJK/kLY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kft1sFC0tcnBOxDHDVyXmw5vytt/XNaONsTGesnt5QQAAoliTwoWdp5fNkRa68jT3
-	 CsN12vMqRCmUKrji2LydWOpFJbU2rv9tU6h18xgdvOlOelTgdHy5S1hRquQMsmFtyL
-	 vnWoyVe3r07XFGwmInTn/plhGl48jl0gUriFrbPHOFHn2PsiQOMNM9axtwgB113Tfq
-	 kF9dwET+HJfCj0jluOK50/7jLT+SBCZc9bFMLFkQzMqe6/exIf/8Fuq4PSslOCqzzU
-	 3RupCdw9iweiqgU9uDQRk0916rlrw8uO0pHSaDawAoRvMS9Il8uWdCl0SE9Rp01Xnm
-	 tETfSQtYzqGTQ==
-Message-ID: <f9d71290-46dd-4625-b5c0-7d84ef9a6c6f@kernel.org>
-Date: Wed, 19 Nov 2025 11:04:49 +0100
+	s=k20201202; t=1763550533;
+	bh=i9B40rXvO4To44vDLCPvVcioheN0Q6vh2sMRTqdfAAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gFbkS3ItMYkCvXQBowRYIX3QCL4BzIbk1Z/T4w+vthqVM7dO2duydfViADLoc+28z
+	 jAVLswki+uqnYk3baXc1/xCPjJfR5AAVkweeYyd74OzQFAuRatReJpfNOMwr6OrSsn
+	 t/ukjM48syDrh5wEAKKvmTrwPM3rKHGZu1DKQYu8DoEMLmPge4Ramv+COrtVKAQOnQ
+	 60K0dMSN27vkVmSXH4FkMkxJrjSJtmT8xMAoBi8xerAfNemTyR9dy2nc17hKwr6vOF
+	 p+m7U5E5v86hrPOipyimgLTfy261+7s1J3d77Xp1583aHJiGVx6/zZ2JYwCMv2/V0O
+	 wf1kQrOefETjg==
+Date: Wed, 19 Nov 2025 12:08:41 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Simon Xue <xxm@rock-chips.com>, Damien Le Moal <dlemoal@kernel.org>,
+	Dragan Simic <dsimic@manjaro.org>, FUKAUMI Naoki <naoki@radxa.com>,
+	Diederik de Haas <diederik@cknow-tech.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Conor Dooley <conor@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Hans Zhang <hans.zhang@cixtech.com>, linux-tegra@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@pengutronix.de,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v2 1/4] PCI: dwc: Advertise L1 PM Substates only if
+ driver requests it
+Message-ID: <aR2lOZDBEdGVd9On@ryzen>
+References: <20251118214312.2598220-1-helgaas@kernel.org>
+ <20251118214312.2598220-2-helgaas@kernel.org>
+ <aRz0ak6onKzZs2lY@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] dt-bindings: tegra: pmc: Update aotag as an
- optional aperture
-To: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- Prathamesh Shete <pshete@nvidia.com>
-References: <20251119093729.441654-1-jonathanh@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251119093729.441654-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRz0ak6onKzZs2lY@lizhi-Precision-Tower-5810>
 
-On 19/11/2025 10:37, Jon Hunter wrote:
-> Not all Tegra SoCs or all versions of a particular Tegra SoC may include
-> the AOTAG aperture. This change makes "aotag" as an optional aperture for
-> Tegra234 and Tegra264.
+On Tue, Nov 18, 2025 at 05:34:18PM -0500, Frank Li wrote:
+> On Tue, Nov 18, 2025 at 03:42:15PM -0600, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> >
+> > L1 PM Substates require the CLKREQ# signal and may also require
+> > device-specific support.  If CLKREQ# is not supported or driver support is
+> > lacking, enabling L1.1 or L1.2 may cause errors when accessing devices,
+> > e.g.,
+> >
+> >   nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
+> >
+> > If the kernel is built with CONFIG_PCIEASPM_POWER_SUPERSAVE=y or users
+> > enable L1.x via sysfs, users may trip over these errors even if L1
+> > Substates haven't been enabled by firmware or the driver.
+> >
+> > To prevent such errors, disable advertising the L1 PM Substates unless the
+> > driver sets "dw_pcie.l1ss_support" to indicate that it knows CLKREQ# is
+> > present and any device-specific configuration has been done.
+> >
+> > Set "dw_pcie.l1ss_support" in tegra194 (if DT includes the
+> > "supports-clkreq' property) and qcom (for cfg_2_7_0, cfg_1_9_0, cfg_1_34_0,
+> > and cfg_sc8280xp controllers) so they can continue to use L1 Substates.
+> >
+> > Based on Niklas's patch:
+> > https://patch.msgid.link/20251017163252.598812-2-cassel@kernel.org
+> >
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >  .../pci/controller/dwc/pcie-designware-ep.c   |  2 ++
+> >  .../pci/controller/dwc/pcie-designware-host.c |  2 ++
+> >  drivers/pci/controller/dwc/pcie-designware.c  | 24 +++++++++++++++++++
+> >  drivers/pci/controller/dwc/pcie-designware.h  |  2 ++
+> >  drivers/pci/controller/dwc/pcie-qcom.c        |  2 ++
+> >  drivers/pci/controller/dwc/pcie-tegra194.c    |  3 +++
+> >  6 files changed, 35 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > index 7f2112c2fb21..ad6c0fd67a65 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > @@ -966,6 +966,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+> >  	if (ep->ops->init)
+> >  		ep->ops->init(ep);
+> >
+> > +	dw_pcie_hide_unsupported_l1ss(pci);
+> > +
 > 
-> Co-developed-by: Prathamesh Shete <pshete@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+> And, I don't think EP need clean L1SS CAP flags. If EP don't support L1SS,
+> it should be force pull down #clkreq.
+
+I think the problem is that we cannot force pull down CLKREQ# in a generic
+DWC function. That would have to be done in glue driver specific callbacks.
+
+Bjorn, perhaps we should simply drop the dw_pcie_hide_unsupported_l1ss()
+call from dw_pcie_ep_init_registers(), and consider hiding L1ss for EPs to
+be out of scope for this series.
+
+That way, we could still queue this series up for 6.19.
+
+Thoughts from everyone?
 
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards,
-Krzysztof
+Kind regards,
+Niklas
