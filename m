@@ -1,136 +1,236 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010002.outbound.protection.outlook.com [52.101.193.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFDA27B349;
-	Thu, 20 Nov 2025 07:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763625167; cv=none; b=dMqykpk7HiJZ6oU1rcNlZXDna3+tlb9iBxTyuR4lpZtNQIcYMjYzKPh7e6pGBK6r3q2BC8zsVvPxLyAGubji1VQh0bzkF2LP3IO0aoNfQydAZZ8Ho/k4sMXTDZYsgryqHQgElQEVMgjKzThUMNgYdJZSp8rkd20oZ/o+6S9PrQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763625167; c=relaxed/simple;
-	bh=PCcS8iU+MQD7IjGPMGhvdSTgD9hnRAL2owebjIiNWS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5750zsotrb3RO4cFxgL4LwW5ySZFA5IHYp/GWIyeTaqd42+uGPAQAi1mXk5AE7+4du2vFt0IStn8gV/5EB2g6A8sdttVIrtLllNMAr8cpEtBKfdUvfOn6YNGqwbG+7tB0BnZX+GPMbRAHy3ZW1mzOUwjcPpp52KGrw0c8IrpZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICads1Dq; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EDA23D28C;
+	Thu, 20 Nov 2025 10:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763633490; cv=fail; b=qJl7EJv7OBcIlPDUotjmY8aU30123XEs/AgesLfctUKv10TcZKsWhmBiCuRnWYSGHMp9y2JaF4Q9T1tf0Xnrc4ZFaKCyyPsjnlXAXatTOGUkcmV53ypFumZAPrIBfiftYEbU+ceGLRyaUJPThprji2B3IljDiBgSZYQcJraFzEI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763633490; c=relaxed/simple;
+	bh=kq9KDBw5JjgiSbsz+Am3+rddfOJkCsHWWWtNDV1yyW0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jncXbCFNkiDZvcHTsDS01q9dpfYjFqrYX/mwMro/HDkylcBOX3HA5VQzG/4g5s9VvceBcimsk3GSsY7DQMRv8IdRalpE+LnEYZmY7nm7BVEi9o+66QMvTmmKxknPjKCKxMq4iTkGkcZSKi6nCBKUBilLfCPiNS7mXEHEVY4Owgg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SjA2fq1Y; arc=fail smtp.client-ip=52.101.193.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICads1Dq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43EE6C4CEF1;
-	Thu, 20 Nov 2025 07:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763625167;
-	bh=PCcS8iU+MQD7IjGPMGhvdSTgD9hnRAL2owebjIiNWS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICads1DqUmvuOZnOFex1dZonyIVaAiCKcFopkE5vgQTgNsmqyF9C4hlxGvSPvVhMJ
-	 /ZWMz8QmJxGa5zbVBxEy//i/s6NCd+43+QiDg/7m4fAjeoI8Wct6hyvws2ZIXNrSpW
-	 gxhwsUgO5UHfIEgAp7t/iCYAllfLLDgPkJE//v4IyTL5k2kXBdxrjvHqacy5bxDxGb
-	 4TRb795eNwFrkgvLGAbAz/hthBW49c9W8ZjRgMGYpN+JNd+5bMr2zmdsgCWfYGhx4I
-	 VZFH4I2GtjoQZf6EKCHf8FcyMoB8o/WrEnXoYL/5OpRjDHw7gIrDHnLcGzK+iGTQxl
-	 psiNMSKa5dOEA==
-Date: Thu, 20 Nov 2025 13:22:19 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Kever Yang <kever.yang@rock-chips.com>, Simon Xue <xxm@rock-chips.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Dragan Simic <dsimic@manjaro.org>, 
-	FUKAUMI Naoki <naoki@radxa.com>, Diederik de Haas <diederik@cknow-tech.com>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Conor Dooley <conor@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hans Zhang <hans.zhang@cixtech.com>, linux-tegra@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, kernel@pengutronix.de, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 1/4] PCI: dwc: Advertise L1 PM Substates only if
- driver requests it
-Message-ID: <lhunx3lpx3fgzyszf3librekhlrqtewcu664i7anj2s54j7kcr@52tt66auzpnr>
-References: <20251118214312.2598220-1-helgaas@kernel.org>
- <20251118214312.2598220-2-helgaas@kernel.org>
- <aRz0ak6onKzZs2lY@lizhi-Precision-Tower-5810>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SjA2fq1Y"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kamJOPO6DIHyMkgHbv0ZMMTTNKPGP8uEG9ni5lf4jHcieM7KM0APRsJv1XCc7mbasilCsxTblPSeLUzDxa6q8oRXOF/QlsbRcm6UguIM563Z37Tuhyux1Gb77MXphpavyl0EjasOME4sUNcoYz3133aBTcKtvJXpzySTq8uM1kgbx3kg5eYGj8ptAeN+EEZe+xjS4ppEtQQJIy4UVpPq/LZolBafxdEb/7HUWXZcMtUpZoANrzQCEM+gSM8cvwUnER6k1dmwQHP6pRosBDIeFP9Z1elcXGcswlPBf9g2w8uvbaftMoHfALLhDjHalqoM7gtLDzV/2WGoaRBolw2eLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tv/MYpcXsRCbzeZnHtP8wkAi2D+TOWhWnKG3bgbS6LA=;
+ b=b6lciz1+vakY/TLaIm90yY254wQIB1jYq1NkhTgSbA+qfWqk0Aw/2VeUFgi9u5cxDHWlU2x5l9tHu9VHxHgtql8S8xPrJPuTP+R1awFv4D+0n87ESBd99E9opCzCKWVAa3fMgzcw8X9lnP2Q7iBjtQhyhbQIuaAt4N4T2XyD8A1cH13WMBvSAGLAGzhe2dmx9w7WwtH19U/bmV6UbMfGmIdQKrBs6PZEe4n5UGs4+09aV79VHdZ6kFyIR8MwIkNC5pBK85YD+hrK9rg2f6aAdUexy+hO6V3afd7UzRjpm7x5Ae5fdI2PsOw5pfx4z0k5wxEWjT0/WrJOJlt/HvEVTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tv/MYpcXsRCbzeZnHtP8wkAi2D+TOWhWnKG3bgbS6LA=;
+ b=SjA2fq1YZMtSRWjKI56W3bBIV6fIDidZ+3iyafESVice5Rpu2HrIOJJTxoWY8QmviUcmlRI5wOdiuLrAOTf+F2xdRhEuaXUrPHDsQgsdIQlf/3sgVR3Chb6DaLLRDmkVNnMvAixVnFWX6Lt3fCYOq5fmM7dEWRMoGDuyxqcVreM35zyQejHr1MnO6e9hAvzKnVelc9+UV0zmOAWEdr7gxVYiTrp1Oi/17FfCKygARNhT5G5BYuM6/lJB6tKV4l47m/Wy8jW8e95WYzJWQ/fTaNnEIRBfgE+FMpeDQR5Sa6CJaQhx3sX/ahB3nE/FzldM+irLjmAo9k7ged6pJBziIQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by MN2PR12MB4405.namprd12.prod.outlook.com (2603:10b6:208:26d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.11; Thu, 20 Nov
+ 2025 10:11:26 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9343.009; Thu, 20 Nov 2025
+ 10:11:25 +0000
+Message-ID: <566061bf-7645-48ca-b7f5-086eab81d8eb@nvidia.com>
+Date: Thu, 20 Nov 2025 10:11:14 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] of/irq: Ignore interrupt parent for nodes without
+ interrupts
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel@sholland.org>,
+ Marc Zyngier <maz@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <fbe6fc3657070fe2df7f0529043542b52b827449.1763116833.git.geert+renesas@glider.be>
+ <b037f67a-b241-4689-9914-57ff578c1454@sirena.org.uk>
+ <1a4d2276-75e1-4aa0-8ff2-c932ce5d6edc@kernel.org>
+ <CAMuHMdXgq=Zv3GQes_d_eyCcB7m--PaEGSQJtUWiRjj-7gBVkw@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdXgq=Zv3GQes_d_eyCcB7m--PaEGSQJtUWiRjj-7gBVkw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P123CA0009.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:ba::14) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRz0ak6onKzZs2lY@lizhi-Precision-Tower-5810>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MN2PR12MB4405:EE_
+X-MS-Office365-Filtering-Correlation-Id: 745af8d2-f06c-498b-bf5f-08de281d29dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MnRmb2hwazdlSXExV1RnUUdkZDJjOEdEQU5TbjV1T1l2b0ZKQ0RmeHhKWUxt?=
+ =?utf-8?B?OW5PeGFmYkpMaXRrWmN5eTRhTVBXQ0tQSUc1ZU5XWjlxNjJRcThySkhpcXNX?=
+ =?utf-8?B?ZVJnc3ZSaTlFcEY0VjJhdks1dEdZRzJyeE1wYXlYZCt5VlhrYWR4U0pRbmd2?=
+ =?utf-8?B?b3dMa3RrNjFoU1R1VTNzcWVMUUNPUU9tM0p2ODNRTGZiZDEvZ0o3bEhMNWd1?=
+ =?utf-8?B?TEo0V1J4VFFiRDBGUnkveXlBYXUwaklkRDdheStuU1Ntckk1YkNXUm5HS1RM?=
+ =?utf-8?B?NG5lamhVbzEzODZNU1VjeVVnREpUYk1nUTVGVkRrZllWQ2k0am5sZ1dIVHJB?=
+ =?utf-8?B?MjMxMjdYWi91NXoveEpMZkwyVFJUZmFOWC91cmhUNE02TERqNDdFWXNDbWhG?=
+ =?utf-8?B?S3Qyb1JlTE14UHRUb0lOU2kxNUR3cnBHMFZERmJRMmMrU1h6ZXQ4N1hEd3do?=
+ =?utf-8?B?WWllZjhjVUcvazNrMXZiK3BvSnUvOWw5b2ZGaE5MMHlnSmZ6cHVyZ2hPbnVG?=
+ =?utf-8?B?OW9VTDIrWFYrdktYT2VUUnAzK1dRaTVld2ZRdWx1dm1JUWdQRkJhZFNjRDBr?=
+ =?utf-8?B?TkJUVEk4cUJHZ0tIc3RJZmhrOFFvekEySlVoQXBVUEhibXdQOE1yMXA4TlB2?=
+ =?utf-8?B?b3huc1NoRnFzUEZCL0FkaWVqaiswYzQ3ZVROV2ZXbCtERDlxYys5Z0g0MFla?=
+ =?utf-8?B?OXRtM1p2UDAwTUVZVllrTjdXeHlUT3M5SWcycFF6NFY0Wklkc0xSM2pTVTUz?=
+ =?utf-8?B?OXVlZjJaU3NGS1Nmc0ZPUzNIQlRGSDhaS09HaDBjTHZYVXVkV1E0WXEycnJk?=
+ =?utf-8?B?d0ExelAyMFY1SDVVb2tuRTI5bVl1bGRQR21URnRxMlhYYnk4cHZ1UVJDWXdH?=
+ =?utf-8?B?N3BXT0VNQmkveEtlVklRZyt1NUxxei95cHlxbjUvZ0U5SlRxRHI3UGJMcTZN?=
+ =?utf-8?B?MzB3SjlXWUttUjlLQUR3S0UwZkdpcUF2bG5xTFMvVEpMWGtYZVdnc2Zib3Bx?=
+ =?utf-8?B?QWJtV2JXL3RQemVYUTNudlU3cUhqem1BNjNmd1VaeXFwa2tNSEZJMHA5M2Vv?=
+ =?utf-8?B?OFBNakV0WGpKaEp1MkdpclM3TEdxVTFJamREZ3ZKZ3BhN25WR0U1V3JMMklj?=
+ =?utf-8?B?SjR1ZFgza1dyT2R0dklaNXhPUVhTSzc2dFE0cGFwTFVqaDhHNWlSYVk2ak9P?=
+ =?utf-8?B?TzV0eHhUbjBERlh6NVNnRHlvS1BGeVRXZzdqUll0WkF1SjFaTnNRU3ZRT21y?=
+ =?utf-8?B?bmJGWnkrNkNHY1Q3ekRjclJ5NFd2ZmNYRmRFMWhpNTlPZTFsSWFlWE5tUGho?=
+ =?utf-8?B?eVBrODJIQWRTL3pzUlcwSlZIWmtVSStYRVo3QnlTbHdFVkd6TU1mblhvQm85?=
+ =?utf-8?B?aVBJYW5yVGdZZm1jcWRzOEErV2dTK3grczhpbWg5Zk8vZktxdzBhVkNGL1Ji?=
+ =?utf-8?B?MXU4dGR1WXE2Yk1HeFFzbVp6UFpacHl4UVZmeDR2bloxLzhzRVVRTTF0ZHEv?=
+ =?utf-8?B?WWI3anZEN1dPSXVoMkZYSXFBS0oxUy8zN0VnVis5KzVPNUdmTTlFa0NBMlMy?=
+ =?utf-8?B?TjNhRVRuaXNNcmJXSTVteXhkYmkxaEZQT29iMUlPc1ZWZjNjYmNqanBJNVVV?=
+ =?utf-8?B?REFyWmtwSzh6M2pkU3lMRDgyQUdDbE5rZGxnQlI5MjUxTThTQmhmclVMYVdD?=
+ =?utf-8?B?bTBrblM2NVNlUytVTWN6M3UwSkZTNUFJUDFvNzJWd1R0MGw3WnRSSWVRVEkw?=
+ =?utf-8?B?Z0wwWXJleEVyeHhMbHpGL08zOG9oTHU4T3UvRlJaTjNjRWJIZXU0QmRTNURB?=
+ =?utf-8?B?SnRBRTJPcWx1NWNsc1lwcVd0Tmw3bWs3K0dXUEEzQUVLM29oQmVpZXFJaU5Z?=
+ =?utf-8?B?REJSaC90MktJYkZOSXpEYXQzWnhvY3B2eHV0UFBTeFpIVVNwMkQ1QklFZFoy?=
+ =?utf-8?B?QlZlS09pZjh6Tzh3SGYwRnJJT0ZqSWlJOGtDaHc1S0lxdyt6dVVBRFNwdVpJ?=
+ =?utf-8?B?clo3ZS9Rd3JnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SW9TZW9lSHYxejMvM251RWRHOGZpaVJPRlp5RmtadmRpdGFkSTd5cjdETXBa?=
+ =?utf-8?B?MHovTlhkcVVsZmlKYmRPSjlHcjd3Y3QwRmw3NjBwbnBBWkozTDlNeGJpVG03?=
+ =?utf-8?B?OFNUVDZyYThmTGpwRUU4ZTd0d3llLzh5Yi9ZZ1FrNmRCUTdQNzBUME5qUU5n?=
+ =?utf-8?B?a3VaVlJabmdvcEl1QVNYMkpTbk5HZVl1V08wWFRSNFpCR1BKTm12ZDAxYnV3?=
+ =?utf-8?B?SnJFOVNtdmd6RWxWUDJHRHh1OFhDY3dLYmt5NkIyUmt0Y0NMNkZMa0svOG50?=
+ =?utf-8?B?WGwveTBPZ0hGY2ZDaU42NWk5VUR4Z0hzVmpPTHBKNEp2UCs1S25zeC9vbzdT?=
+ =?utf-8?B?SUFETzJQcHlQYmtuQ2NLa0IzclZKWlJSaG0zd2N4YXhaL01DQlFJTC81UGV1?=
+ =?utf-8?B?SlZaY05OYVFXNDh3amFDOVBGcHlQRG9hekZQZUxab2dDQktjWFNJVk5wMjJZ?=
+ =?utf-8?B?RHU1Q0hRb2VwbmZEWVNxTFZna2VJVHlnNUk5NjNGOWJqOXNTc01SZ2ltSnVV?=
+ =?utf-8?B?L05JeXY1T2FjaUtzQUF4OFF5a215TFJmUWRLNm5OZm5Za3EyTXEzUEtrcFd1?=
+ =?utf-8?B?Z0phTGZQUG4vbEcvbnAyVENwQjFBTmZKcE55UmRVUXNER0kzZ3VnL2dVUWgy?=
+ =?utf-8?B?OXYrM2tkbzFlbEtrVkY0bDNaUjVkVGMySVRWVFBNeTJCamZmMnlwbWU5Y1o5?=
+ =?utf-8?B?WFNVSzhJUHhuTDVYZjBJcTYweW5USnk5cG0yQ1JtUVlFOHR3MU5YMG9jUzA2?=
+ =?utf-8?B?NWJGNUFmME5FVFYyV1FuK0tlYUdHUFlUemdkRnJjMG1NdDhMc0trdDJJL2U4?=
+ =?utf-8?B?TGVzQ1psbEdRTkdFbUxDOTlORko4bzlER3dpdHpiSU01ZXJYVlplWE1PRHpK?=
+ =?utf-8?B?a3YwdlZUMHRHc1kzUURNQnkrV3ltRDhFWm1RNDNLSW5NRjlCd1FIWi9ubVFk?=
+ =?utf-8?B?TXhWc3VsbEU4OVVHd09uQjlnK3VTOEF2SkxZNXhvdGMva2VzWHk1dzhkL2NS?=
+ =?utf-8?B?STF1a015cUxBaTNmNlFCdVJHek9oYXV4dlRQZXgwblV5eHVJREZNKzBNcnJj?=
+ =?utf-8?B?L0R1UUx1K2ZQUGdSUkxMY0UxeWJuTm15d2IyVGsrejNUU1ZoK1d4VzRFOGYx?=
+ =?utf-8?B?d0xpaGwraVFUTitnL1U2NFFEaUZ4a09NeU5RSXg1bGtteHNPdDN3RzBQUEdE?=
+ =?utf-8?B?L3pzWHJLRWs0SFY2WFZlSG83S0YyRDF1U0p0L1dyMjNjdGVDOEw3YW5sTVRX?=
+ =?utf-8?B?WC9xVFVVMW52RHEwbFZaKzR1WHY5aGorNWdnb0loeUpxNjBIcGFTUlBzai9x?=
+ =?utf-8?B?d25ERnFxb0taaHhVZnRxMWthWEF1R1cxandyUFd6UjJmMkVRNE9YM1N2QVVL?=
+ =?utf-8?B?ZWpjdzNPQUlKdEhiSFhlZmo3SzlmSUY5TVZCTzZwd051akllQjNPVlhQTlFS?=
+ =?utf-8?B?Nk1XRExOa0ZsRlprQSszM280TzlCaVVWUm9UVFdST1hNc1Y4Q3lCeUVGWEFu?=
+ =?utf-8?B?a1RIVyszUVA1TlpDU2xoc2wrVllQUlkyaUQvcHFZdXFtNG9mWU5NQ3l4eWNI?=
+ =?utf-8?B?d0plcTZKbkNEZU45TGJ1dks0Zjk0cnNmRmxSR0kvMFRkenNjd2pZdURTVGNu?=
+ =?utf-8?B?Njkxd3poWWtlTTYwWUUxQlEwK3Z1cC9PaFM1UmJqT2ZYOXhoVm1hU1Y4SEdw?=
+ =?utf-8?B?YjNGS2pNVHRuRG1jSjV6VCtxa050Z1Erd1FuL0I4eFNCTnd3cXc4YWxtUDhx?=
+ =?utf-8?B?SGcxOFFUWVlNL0dYUzFKeGp1V2Q4bDUwem9SdzdrWkVRTGJOa0h0aWtMc2Rk?=
+ =?utf-8?B?TGJBR0c2MGRURDZ2OW1HS2lEZlNWL0pJZlgwYkUvWnpEakdDRlRSQmNzRUEx?=
+ =?utf-8?B?NjhkcGRBbHlVMk8zS25Qd3I5TjZCSWozMFVMS3FZcjhPV2d4UGNCOFoyaDRZ?=
+ =?utf-8?B?OUo1TjVQRDRsWDE1QUIyd1k2Y1p0KysxZjlmR2s2SnJ5bDNBSmFxcDVoVVoy?=
+ =?utf-8?B?amQ3cXQ2SWtKZEVvMHh1Sno1UTNRWHpaLzNhcnZSWkxtT0JTWGloWFVzNlVw?=
+ =?utf-8?B?VEZlakk0djF6ZjF4S3RObFAxWDRDL201dlUyWVk4QWYrUXhBVFNoSktrNHBn?=
+ =?utf-8?Q?VhldXKAiYUfnYT+u45d9XVudd?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 745af8d2-f06c-498b-bf5f-08de281d29dd
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 10:11:25.8868
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VOnIPwFetuwkbIGz9yHHOybSjyxylcaqWWN/g8RS3fsjGhgkfAkbCWiNrF5EnugihtCfYtT2byN2eKpZkAZPKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4405
 
-On Tue, Nov 18, 2025 at 05:34:18PM -0500, Frank Li wrote:
-> On Tue, Nov 18, 2025 at 03:42:15PM -0600, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> >
-> > L1 PM Substates require the CLKREQ# signal and may also require
-> > device-specific support.  If CLKREQ# is not supported or driver support is
-> > lacking, enabling L1.1 or L1.2 may cause errors when accessing devices,
-> > e.g.,
-> >
-> >   nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
-> >
-> > If the kernel is built with CONFIG_PCIEASPM_POWER_SUPERSAVE=y or users
-> > enable L1.x via sysfs, users may trip over these errors even if L1
-> > Substates haven't been enabled by firmware or the driver.
-> >
-> > To prevent such errors, disable advertising the L1 PM Substates unless the
-> > driver sets "dw_pcie.l1ss_support" to indicate that it knows CLKREQ# is
-> > present and any device-specific configuration has been done.
-> >
-> > Set "dw_pcie.l1ss_support" in tegra194 (if DT includes the
-> > "supports-clkreq' property) and qcom (for cfg_2_7_0, cfg_1_9_0, cfg_1_34_0,
-> > and cfg_sc8280xp controllers) so they can continue to use L1 Substates.
-> >
-> > Based on Niklas's patch:
-> > https://patch.msgid.link/20251017163252.598812-2-cassel@kernel.org
-> >
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >  .../pci/controller/dwc/pcie-designware-ep.c   |  2 ++
-> >  .../pci/controller/dwc/pcie-designware-host.c |  2 ++
-> >  drivers/pci/controller/dwc/pcie-designware.c  | 24 +++++++++++++++++++
-> >  drivers/pci/controller/dwc/pcie-designware.h  |  2 ++
-> >  drivers/pci/controller/dwc/pcie-qcom.c        |  2 ++
-> >  drivers/pci/controller/dwc/pcie-tegra194.c    |  3 +++
-> >  6 files changed, 35 insertions(+)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> > index 7f2112c2fb21..ad6c0fd67a65 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> > @@ -966,6 +966,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
-> >  	if (ep->ops->init)
-> >  		ep->ops->init(ep);
-> >
-> > +	dw_pcie_hide_unsupported_l1ss(pci);
-> > +
+
+On 19/11/2025 08:53, Geert Uytterhoeven wrote:
+> On Tue, 18 Nov 2025 at 20:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 18/11/2025 20:34, Mark Brown wrote:
+>>> On Fri, Nov 14, 2025 at 11:47:54AM +0100, Geert Uytterhoeven wrote:
+>>>> The Devicetree Specification states:
+>>>>
+>>>>      The root of the interrupt tree is determined when traversal of the
+>>>>      interrupt tree reaches an interrupt controller node without an
+>>>>      interrupts property and thus no explicit interrupt parent.
+>>>>
+>>>> However, of_irq_init() gratuitously assumes that a node without
+>>>> interrupts has an actual interrupt parent if it finds an
+>>>> interrupt-parent property higher up in the device tree.  Hence when such
+>>>> a property is present (e.g. in the root node), the root interrupt
+>>>> controller may not be detected as such, causing a panic:
+>>>
+>>> I'm seeing a boot regression on the TI x15 platform in -next which
+>>> bisects to this patch in -next, unfortunately even with earlycon (though
+>>> just earlycon, I don't know the platform specific runes) the board just
+>>> dies with no output:
+>>>
+>>>    https://validation.linaro.org/scheduler/job/4252918#L409
+>>>
+>>> It does seem like a plausible patch for this sort of issue though, and
+>>> the bisect converges smoothly:
+>>
+>> All Samsung platforms fail as well. I was waiting with bisection but
+>> Marek was as usually very fast:
+>>
+>> https://lore.kernel.org/all/20251118115037.1866871-1-m.szyprowski@samsung.com/
 > 
-> And, I don't think EP need clean L1SS CAP flags. If EP don't support L1SS,
-> it should be force pull down #clkreq.
+> Yeah, the various ti,omap[45]-wugen-mpu nodes have interrupt-parent
+> properties, but no interrupts{-extended} properties.
 > 
-> EP don't know if #clkreq connected in host boards, assume EP with same
-> software, which can run at two difference host system, one host system
-> connect #clkreq, the other system have not connect #clkreq.
+> Does the following (whitespace-damaged) patch, to restore finding an
+> explicit interrupt-parent, fix the issue?
 > 
-> otherwords, support-clkreq property should be only for RC side. not EP
-> side. EP side l1ss support should depend on specific epf function and
-> controller's capablity.
-> 
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -685,6 +685,8 @@ void __init of_irq_init(const struct of_device_id *matches)
+>                  desc->interrupt_parent = of_parse_phandle(np,
+> "interrupts-extended", 0);
+>                  if (!desc->interrupt_parent && of_property_present(np,
+> "interrupts"))
+>                          desc->interrupt_parent = of_irq_find_parent(np);
+> +               if (!desc->interrupt_parent)
+> +                       desc->interrupt_parent = of_parse_phandle(np,
+> "interrupt-parent", 0);
+>                  if (desc->interrupt_parent == np) {
+>                          of_node_put(desc->interrupt_parent);
+>                          desc->interrupt_parent = NULL;
 
-'support-clkreq' DT property is only applicable to the RC as per dtschema. So
-using it in the EP driver is wrong in the first place. We could add it to the EP
-schema, but that should be done first before relying on it in the driver.
 
-Also, I do think that the device capability should accurately reflect whether
-L1ss is supported or not and not assume that the EP will pull the CLKREQ# low
-when it is not supported. If the L1ss CAP is available on both RC and EP, host
-software may enable L1ss and expect it to work.
+This patch also breaks various Tegra boards but the above does fix it.
 
-But enabling/disabling the CAP for EP should be done later based on either the
-DT property or controller specific flag.
-
-- Mani
+Jon	
 
 -- 
-மணிவண்ணன் சதாசிவம்
+nvpublic
+
