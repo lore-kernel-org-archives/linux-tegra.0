@@ -1,149 +1,195 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013054.outbound.protection.outlook.com [40.93.201.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5E332D0DE
-	for <linux-tegra@vger.kernel.org>; Thu, 20 Nov 2025 10:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763634752; cv=none; b=pbKyb3Brg++9p/u38m+HJOJHJtDGul/XRmUUBYaICtQr1wYpib2PHTyA/cRsI3cu0+3y353pVTqdvgCHYFc1PhG+9kG936AivhBZ4CVuFtSD5q+hUpBoMj+QMph2sJqGr2yXFx8bP0peLeAdKAgvWegCNDEogv52evxI5W+6cuA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763634752; c=relaxed/simple;
-	bh=tNSg8aCD6nZhbYliPcq+yjGCd2mcFdjJC8MiT7RY128=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJxniQZnjSdCHToGEAeDjNofTFuaffY4DH+VXRK3dIP15M12nQcOiuadvXT++yF/qOVWyP3etoYB3XXPbCG8cWcF1KIhkoqvkYKf/8BK2DIlLlpc5lXx8Zy4i+MWlRzDKwdT5HFQ81SXyosrx/pw7rZfrOPsv/DGRUB2R74vNYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fI0flkrf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=08bR0/lq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fI0flkrf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=08bR0/lq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD86732C33A;
+	Thu, 20 Nov 2025 11:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763639802; cv=fail; b=ABwZawSglT+W4KtMbkgNeq1iEEFe0eHsFf/U15NSAprU2TEtolSqVAREMWwSfdFfJUW9t4EbQ6wiAy6e5XkEnoOs03is5hLeW6h0kcaIOouCb1Eh4ubLdmcGsmzuHWjLuFHqXz2B4tCnBsMo7k6RkqlWiKrASSd/P8q1cFATR4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763639802; c=relaxed/simple;
+	bh=Y5vSMfQW6EyTTffISTNf2zoKDA9RYhEXxdfiaPdPpjI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b8wKZuCe74RGPu4hldVw7aH0MOHo9I6q+NooZySBkzonwTyincAm+G9MC4cVyzRp8obAHZTEHPO1icJFUmu2SsoJI16pzFOrtkAvo5mwP3sTnEtHiVErcrC0z26MjllfzUE+aYcTeMupCAq/DB4w/aKPRBMk2VlXJ1cFy7R69QA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JeO4f16U; arc=fail smtp.client-ip=40.93.201.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fI0flkrf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="08bR0/lq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fI0flkrf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="08bR0/lq"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0E911209BA;
-	Thu, 20 Nov 2025 10:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763634749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
-	b=fI0flkrfILFoGqGCmrL+hhByQs1EnB/Af6T0/+jwe6UrU53WAZoUDbUrKeqtM7HNb8dyFL
-	c/pmh6jEcQZqud2F/yL1KRugfwV/rkccc8AxhBZFaY2jBM6cUWF5oVVKShXpikgcIRdwSJ
-	/8D5A9BqpkeuF3wzi5TyQ9VTYx0ZceY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763634749;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
-	b=08bR0/lqWXzp5rHNgUoNiighTAupKsbWenty5Rm91/5HO5X2iuQXaMN11DZb4dqRYnwOwE
-	4u9pA5EfTVkACeDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763634749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
-	b=fI0flkrfILFoGqGCmrL+hhByQs1EnB/Af6T0/+jwe6UrU53WAZoUDbUrKeqtM7HNb8dyFL
-	c/pmh6jEcQZqud2F/yL1KRugfwV/rkccc8AxhBZFaY2jBM6cUWF5oVVKShXpikgcIRdwSJ
-	/8D5A9BqpkeuF3wzi5TyQ9VTYx0ZceY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763634749;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
-	b=08bR0/lqWXzp5rHNgUoNiighTAupKsbWenty5Rm91/5HO5X2iuQXaMN11DZb4dqRYnwOwE
-	4u9pA5EfTVkACeDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 351413EA61;
-	Thu, 20 Nov 2025 10:32:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y1vJAzzuHmmHXwAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 20 Nov 2025 10:32:28 +0000
-Message-ID: <ee9809e3-58e5-4a40-8c77-a8115f11c1d1@suse.de>
-Date: Thu, 20 Nov 2025 12:32:23 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JeO4f16U"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oMUrfPFzrQ1ah92Q1hJguBTLTClok51A+FZK6SS1JKgQIpcm8ZnXR0sYcTaQWAkBXrgelx44EUG9WH80shxy0DkbYs0Qqf3K8tnKNUJNm31/mC34cTHbE6MeU295WBpkssks7ZSPg5WSKlYm2091Ix1hOLY3KelhBRUv0Uw0NxUgKkGEnUxcZypbLzqxkT/te3P5EzXIABmaW077O08WZ2Z66UJUM+9yYPn87Jq7fq3rN4atp3kCns+25C3UgjWuDpEpxV7pse6nf5F76mmNVQiVDI0jW+5uAumiZE3JNGUBVCXXqhuQ+rrLoRp3PEzmHI8+HIRR38vYv8ndbzYbfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=707eWki5ER6h9gT6OiMnTlc9OwtlkXWq8ptDdr6/dGU=;
+ b=p/cOCE/1ZATD3c5yE6bJzlS+MDtp1nUjSk1oivQCDLkSwFVRPu1khIw5qozbjrrwF4Jsl+mZUYLADxbu7So7TzvPAmD533drZVg33L7FQcq6l1kbu1vvd8vHqBsa3bUJzxb9WvPfz/lMXxq4ONugnPcEKZBUzTnD7682i80u9P59rl8FIRFk+uRZ0kzbMtUjnV6kVePRtbBjoBuz9owCvqgX0B+z+yLNCP9iSjEYKGiKSKh437HiiBBDZ048SjG1apkJjvDjwFJYKgbc9vfulu8GvYmDvhKdl5PH4Ny4uUK9F3knxMkRaYhcP8DHwsHCb7p8gLYcDR+Wx995fkSB/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=707eWki5ER6h9gT6OiMnTlc9OwtlkXWq8ptDdr6/dGU=;
+ b=JeO4f16U0xjc4NjfKcP/d9csQfT8MKXKWsYviJH+BqEtHULbY5rnFScMQMeTqTZ+IJtO7lU2DIWo4mEb1dSRupXe1FvoD7GTlyoBXigKqI3BfBAvKT3xcC5av8CIMowpckFG+uHx5zBqbSQV6MidM0CS5yVkOtWluM78OzjKEI1xeUuIA3bV2ZvvVUcwXuXB2kQH2nwSqA0pbyKIJf+86MuWiyf8hqjFn+ufbuSSRXnkl7oJrfoLCnL2VOCdhRCVqfE5PVBcMG+nOe1fS84x+AZDj455WKTCh16gp/PNX9iFkLjgCiVruyp2ie2Z6ZD3kD9UBkB8OYw2m56MGwqHOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA3PR12MB8761.namprd12.prod.outlook.com (2603:10b6:806:312::15)
+ by DS5PPF4A654669B.namprd12.prod.outlook.com (2603:10b6:f:fc00::64b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.11; Thu, 20 Nov
+ 2025 11:56:37 +0000
+Received: from SA3PR12MB8761.namprd12.prod.outlook.com
+ ([fe80::4d63:f057:7c2f:c157]) by SA3PR12MB8761.namprd12.prod.outlook.com
+ ([fe80::4d63:f057:7c2f:c157%5]) with mapi id 15.20.9343.009; Thu, 20 Nov 2025
+ 11:56:36 +0000
+Message-ID: <ae3b3171-5f16-4a8d-85d4-f29133015445@nvidia.com>
+Date: Thu, 20 Nov 2025 11:56:26 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 9/9] dmaengine: tegra210-adma: drop unused module alias
+To: Johan Hovold <johan@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Viresh Kumar <vireshk@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Frank Li <Frank.Li@nxp.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20251120114524.8431-1-johan@kernel.org>
+ <20251120114524.8431-10-johan@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251120114524.8431-10-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LNXP123CA0014.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:d2::26) To SA3PR12MB8761.namprd12.prod.outlook.com
+ (2603:10b6:806:312::15)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] soc/tegra: pmc: don't fail if "aotag" is not
- present
-To: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- Prathamesh Shete <pshete@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>
-References: <20251119093729.441654-1-jonathanh@nvidia.com>
- <20251119093729.441654-2-jonathanh@nvidia.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20251119093729.441654-2-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.994];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[dt];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[nvidia.com,kernel.org,gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,nvidia.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR12MB8761:EE_|DS5PPF4A654669B:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9c640d4-0690-4031-ec61-08de282bdb27
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SVo4K1l4OWpnZnlabzk1UHFLaWluWGdCVGhOYXlSL25BeHp1S3EwMzRjZGRv?=
+ =?utf-8?B?anlMWmxZYXRWR244SDRXb0N6Yk5zcE03UlFZQnI4OGQydXhVRFo3cDV5LzRY?=
+ =?utf-8?B?b24yVmZwV3doSXpaQUc0M1BLR0R2UjVmT0pXOTFVOXNtZFNHditYM3R3anNx?=
+ =?utf-8?B?WjFUL3MyUnFHT2szc1ZZRTd4aHV0UVJZb0l2WUowKzAwZklsMjJlWUJ1eTNC?=
+ =?utf-8?B?M2Q2NXE5bHNrNElwZVhSTTJMSnprQ0RCQXVRWWpHUTZ1NFN3c0p5TXFTbHRH?=
+ =?utf-8?B?VEk3ejkzWUFJQ2VIZFdCekoxT2JxWVBuS21TYkNPZFlZSEpyUEhyeiswdVpO?=
+ =?utf-8?B?c2c5YW9RbFFoZ1VONjlyR2NzWnJiRDB6dTFEZWhodCsrMGJRL2oycE11UFJZ?=
+ =?utf-8?B?N1h1WktFNGZNb3E5TEdqZlo3cHVHWHFzL2J1NEVuY1p4eGdrUmN4NVBEcnhr?=
+ =?utf-8?B?U3c2NXIrVlFJNVBxdXdZQlVUbFIzMElPWXpJN1lUSmtIL1dMQUk3YkRLRk14?=
+ =?utf-8?B?UzRONU5JdFZNT3JnSFFLNFN2RWNFNkxJd2xNVTJLakJsTWxhUjczM05HaGlK?=
+ =?utf-8?B?VFgxWGpTUjN0WEJhTENDSXRkUHgrb3A4QU42SW8xZFZTc3E3NG1pZTVadHY4?=
+ =?utf-8?B?UjNQL1pKRVE0bktwaGpTbFlnWHdpNHlHM3dBWjVsQlEvZG9VWGhnOEFHV3cz?=
+ =?utf-8?B?QnUxMDcxKy9ZbWh2bitWc3EvMVJtL1ljQ2VoQ1ZGQWd5b3ZneDdoM0NwVXlx?=
+ =?utf-8?B?SUw1RG1DVUgvRXFtQndDMXdJUmpEQW1MSzd0VmtGSmZjSmthbmNtUXFMNG9x?=
+ =?utf-8?B?UjdwTVVvblpsaXZWVEREUUFicVM5YmRyNWVPaGFGVDNlcWw0QVJmQlY1dFBE?=
+ =?utf-8?B?Z1VzUE5DQXNkMm04bUg3VU9IOFhDUzVUMDdqdmVzRVQwazArSFg4RkxUdXgx?=
+ =?utf-8?B?ZXdKOEI5aWMycmtKUDNKYVd4YTFBdytreWJOUjNDTmJLejYwM3VhNlkwNDBk?=
+ =?utf-8?B?emIwaVY1ZWl3TktQa3Y3ZmJUMkN3TGY2UkdHYzlVSEJoOTF3bE5mTHpnT3Rh?=
+ =?utf-8?B?aW8ydVBoTHJJWlZndkY5ZWdnYkwyTDJiRENjblpocVE2MnVBSDIyUVdJeWpm?=
+ =?utf-8?B?Mk9zMTRsZ1BLL1NYZDdnT3I5SHEraU5UMzNiaVJMdTZvUm9DdHJTRGkvM08w?=
+ =?utf-8?B?Z2RmMjY1R1dnOUhXZmpkUFVGVTlWNWFReW1pcHBHMm9YMi9hYzl6cXRvT2tM?=
+ =?utf-8?B?dkFubWRuVnVGWlhDRGNFUmhkWGdqcXVmZXhWZjgzejlTTTBEQVdWL1Y2MXhz?=
+ =?utf-8?B?VXVoakVCWll2cjZsNThJUXc4L1JWMzBBYkUvSVNiL04yeDJtQW5LNHBsZlVU?=
+ =?utf-8?B?cmRjbkwxL1ZXUUZCMjRTQnRGRlZwSEF5UnpTa3ZnSUN3ZW00OVZRUHFhZTBF?=
+ =?utf-8?B?KzdsTWFnc2dEeUdTaVJHNnhsanZOTCtkN1l4b0l0cU81RGJJL0hNNWpza29j?=
+ =?utf-8?B?TEhPOFl2VVQ1dFZMRDNSKzlGRGZCZ3Y4ZDZ2bDFVRTRQV203N2Z2eEZ2MU9D?=
+ =?utf-8?B?dzNJNlZGVXJnUEVlN3FxU1NGd3BBaDBuMXJYNHJGejFWUDlQRGR6bExKcHRx?=
+ =?utf-8?B?L2YvaWx2S0hscXRxeWlHVWNuN2hPWGRnbGNoMFpnL1oyRXNFTVlKVnF1VHVt?=
+ =?utf-8?B?ZkVadmlVNHplTUUyOHVpWDhPRU1zTDdKS3h4bktWL001QVZETVRUa3RHU2tX?=
+ =?utf-8?B?RnMrZU1zclFQWFJIMm9HeGkyWm15STZrcENhdXRYemR3SG94SG4wckJLbFVu?=
+ =?utf-8?B?KzdwWUhDYVZMVVFYeEtVUlpTaDVVbllrc0lVZHY2QmZIaXBJeEQ4TzlGUHBu?=
+ =?utf-8?B?Lzk3RjU3MStlOW9qNndRTmt6WVBWNCsyU2QvQm5lWi84T2hvblRoSmd1MFBQ?=
+ =?utf-8?Q?Rd1OGooThqCfOJqfOVeHgO2JI1KAZauw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB8761.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?clVoRXlyeHVrditycmFXUXhZQ2FRbkppeUNlU1B0Z0RnNHVHS1p0WWtxem45?=
+ =?utf-8?B?cjZwZm1GTWtJdk9mendlRVo5dVkxekRxc2VGbE5DbzQvaktEUHBYT0MrcTRn?=
+ =?utf-8?B?Qkgwc20ycHUzZE5BMCtaNFFjSURoUG1uakpYOExzL05IMUNGZk9rZkF0Y2FQ?=
+ =?utf-8?B?QkRXekY4V0wzTjJWNzdad1duWFFQQzBVTzMxbko0YkhRNmdIcEljdisrZ2Vl?=
+ =?utf-8?B?WVRyWlZjeUlsc3M2UWZyYlgzcjdkeVNhUjJtU3c4azNKRXdnZlhxek40c2Nh?=
+ =?utf-8?B?VWdubzNjbFV1c3ZFSGhkREZ3QkN3TG9OOWR0U0psNGpEQ2hiK3lRSU45d3dX?=
+ =?utf-8?B?d0lOSmhiOVQxMGdnbHlOWkI1eWIwVnVrTHNGRHE4b3RNUXl0eEZrQmlwTHh2?=
+ =?utf-8?B?RGRuV2ZkYThtWFhWQ045N3hhS1ZJdG5EVmNLc1diT2JDN3RBbUd3LzFHZHc2?=
+ =?utf-8?B?NnJnaS8wbWtyRU1GeDhobjkrdG11OTJ4UVYvVXB1cTdXTmprMElTYUFvWHlF?=
+ =?utf-8?B?cVJjWWdhbllFU1BmRFVTMXJac1hBMFU4alZycXRuQWVYVkdFZUZVWG1jT2hm?=
+ =?utf-8?B?SUptT1RLamZpQ2xqVkp2WnQyNUQ4dXFwZGNNVzl4RWYzWjUvQjJTM3hBR3Mv?=
+ =?utf-8?B?dzgwR29peVlOZHVkbEJ4cUZZMVFaNUhtRkYyRFFRSk4vTUhPSmpCc0hNWE9m?=
+ =?utf-8?B?MGZjN2ZyanRzLzd1bDRjYm9acnh6SzllK1NjclM2M2RDL1FvdDRVdTh5RHdh?=
+ =?utf-8?B?YXhZdEFNMml1aXZ0RTl3U3dmVmRyQWdFN2IzNy9aek4vMG5PVnRwSndVaXZn?=
+ =?utf-8?B?dHNMMUFQUHJSMk45bWJRNmZrL0liSVlrZkw1R3VCL0hkTFJaNktUa0ZrVnpw?=
+ =?utf-8?B?eDM4MmY3d3B0YURCdjZXNmZqNXU5UXcxUFEzYVVNYmw5dHRLR0FlRXFDWWR1?=
+ =?utf-8?B?d1Y1TGh3U2Zqd2lSZ1NBZHR5NnlwWndMYXRidFRQWTFxVzZhOUtFdm5Qb3kz?=
+ =?utf-8?B?ZW5NTzRoV1grOG5kMlZwRm9RWE50bjlQRi84aWE5dGVwRXArZWlEVHFEQTVz?=
+ =?utf-8?B?bnUvaHhGUXNQUUhPTVRvSy92K2pvK0VzcTV2M2JvTDR0SkFoNjFhaE96QmUx?=
+ =?utf-8?B?bmtWdWI4T1VHUEs2QzU5QkNEdVZEK0VnTmp0c1BuKy85Q0RraHRBRlBHMDZZ?=
+ =?utf-8?B?cEp5QlZvWWFsOTNzSlJtemNNc0JZTkF5a0t2aFMyMW5lT2ZTdXFDZnNLTHdr?=
+ =?utf-8?B?alhrYldmbFpnMDBRM3dsY2RXWGhDUE81Y3krbTRpLy9YZy8waTBzQktEL3Z3?=
+ =?utf-8?B?QmJaQkI0S0VhRE1qaU9nMWVhSG1wMG1MN2NBcDc1Z3VzLzRrQllIdzdHOW5W?=
+ =?utf-8?B?Smh2elJ4UHRwcWE0Vlh3Ylh3d1dlTDZrb2h1ZHlJbzdwZElsVGdyaE1QRTFm?=
+ =?utf-8?B?bkJQbnhHZENTd1lGYmNLajExTlQ3czcxUjJNODlSUmZ0a29leVd4bFE2Tk1y?=
+ =?utf-8?B?V0haT2tJSFl0V1RkUXFhbi9pNUgwK3c3cE5heDdPekpZN0s4L3BTc3l2Q2xF?=
+ =?utf-8?B?Q0hVZlo5bFRZaWh1eXBpbENweFMvVVFtMFd1YU1pYzVnYjJDSVFNUXF0VHd4?=
+ =?utf-8?B?WW50TnNUTHlURFpiblZRNGFIeU96WEVJT24xZkFEaDUyTVNvSzYrSzZNc3NK?=
+ =?utf-8?B?dlNqTFcxK2NrMG5naDZKUitoVTd1SlZyVFFqa2hMZWxhZ1pyQU4ycWg4bW9H?=
+ =?utf-8?B?di96aGc0TW9OcHA4MUtPTFVvRzJtVUlhdnNwTkpEQnovTk5RODRsUjM3L3Rk?=
+ =?utf-8?B?anpqNU5VQzAyVDY1SnVFT1pINjVSWE5BRndHamdtYU1NeFUvbDRDT1RCbEVz?=
+ =?utf-8?B?ZmNtMXJmQXZQUzhleEQwQ0lEQUtmTElJcjhUMlZhN09TWmVqRTN1NDJnaU1Z?=
+ =?utf-8?B?Sm51YjRMTllnbWJPb0lhUFlJLzJoUmpKcVNEeHdQWFIyNFVocnZFNDJFbzk4?=
+ =?utf-8?B?aVJybWpPOEtncVRJa0NJVHhJYWZPeEVQUGdTeUZVYzQ0c1FZWlBaais3WHl3?=
+ =?utf-8?B?aGxTVDlYVlFJd21CNVd4dy93dXhPQ1YyWnhrU2doMUs2bmt1bURXaXJEeC9M?=
+ =?utf-8?Q?eIloG4tJb/Z4rrxjHR/xGIYoy?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9c640d4-0690-4031-ec61-08de282bdb27
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB8761.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 11:56:36.1722
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 87jin7rAb6MpHk2QOg7qni7KsDmpiSlngyAHTJXrMBNDNFsx917nB2/JtHs460xioR+ifGEbKcf8iv9HozDq+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF4A654669B
 
-Hi Jon,
 
-On 11/19/25 11:37 AM, Jon Hunter wrote:
-> From: Prathamesh Shete <pshete@nvidia.com>
+On 20/11/2025 11:45, Johan Hovold wrote:
+> The driver has never supported anything but OF probe so drop the unused
+> platform module alias.
 > 
-> The "aotog" is an optional aperture, so if that aperture is not defined
-> for a given device, then initialise the 'aotag' pointer to NULL instead
-> of returning an error. Note that the PMC driver will not use 'aotag'
-> pointer if initialised to NULL.
-> 
-> Co-developed-by: Shardar Mohammed <smohammed@nvidia.com>
-> Signed-off-by: Shardar Mohammed <smohammed@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 > ---
-> Changes since V2:
-> - None
+>   drivers/dma/tegra210-adma.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
->  drivers/soc/tegra/pmc.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index fad896ff29a2..d0e8bb27a03b 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -1230,7 +1230,6 @@ static struct platform_driver tegra_admac_driver = {
+>   
+>   module_platform_driver(tegra_admac_driver);
+>   
+> -MODULE_ALIAS("platform:tegra210-adma");
+>   MODULE_DESCRIPTION("NVIDIA Tegra ADMA driver");
+>   MODULE_AUTHOR("Dara Ramesh <dramesh@nvidia.com>");
+>   MODULE_AUTHOR("Jon Hunter <jonathanh@nvidia.com>");
 
-Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-Tested-by: Stanimir Varbanov <svarbanov@suse.de>
 
-~Stan
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
+
+-- 
+nvpublic
+
