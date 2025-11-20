@@ -1,25 +1,80 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B833277B4;
-	Thu, 20 Nov 2025 10:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5E332D0DE
+	for <linux-tegra@vger.kernel.org>; Thu, 20 Nov 2025 10:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763634228; cv=none; b=e+aJS5KIhvaJqR7zAD0qqVn4g7k+1SmURz3BWIbnW76Sh4C3CrjEqw9adeTKsmALdGKJyqeB9SzqjwRMob0fE2hFuXd9BxcCHq/GAD2sNaVzUcDOV+iDEKR3GKPJIiLL3RDihNHsxGVEP2YgeEBs+Pwza4XB6bgHKaO8X+Mr2bk=
+	t=1763634752; cv=none; b=pbKyb3Brg++9p/u38m+HJOJHJtDGul/XRmUUBYaICtQr1wYpib2PHTyA/cRsI3cu0+3y353pVTqdvgCHYFc1PhG+9kG936AivhBZ4CVuFtSD5q+hUpBoMj+QMph2sJqGr2yXFx8bP0peLeAdKAgvWegCNDEogv52evxI5W+6cuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763634228; c=relaxed/simple;
-	bh=KjvXAbH7/GZFMTiVaSj8oMiOI6hItZY5jHsJJofH2pM=;
+	s=arc-20240116; t=1763634752; c=relaxed/simple;
+	bh=tNSg8aCD6nZhbYliPcq+yjGCd2mcFdjJC8MiT7RY128=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oh5VxZhKabvLvXOULxf4yyUiQdMcE5w/ELmuKdiYaIXYkhKND7fqS8WWISBi+WTyx9F7BDgOCsT4gZSqCfrV72a0MfMH5PzATBhyZyyG75HecvpOWSMFvduYfXPz+5hyi3C9w4CdBW7n6dBMtCXZ+q5npiPd/DghlAyJQ0faTN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 930E9339;
-	Thu, 20 Nov 2025 02:23:34 -0800 (PST)
-Received: from [10.57.87.140] (unknown [10.57.87.140])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51E7B3F740;
-	Thu, 20 Nov 2025 02:23:39 -0800 (PST)
-Message-ID: <c23f72a6-24a4-41c4-b5f5-70a8589f1199@arm.com>
-Date: Thu, 20 Nov 2025 10:23:36 +0000
+	 In-Reply-To:Content-Type; b=aJxniQZnjSdCHToGEAeDjNofTFuaffY4DH+VXRK3dIP15M12nQcOiuadvXT++yF/qOVWyP3etoYB3XXPbCG8cWcF1KIhkoqvkYKf/8BK2DIlLlpc5lXx8Zy4i+MWlRzDKwdT5HFQ81SXyosrx/pw7rZfrOPsv/DGRUB2R74vNYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fI0flkrf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=08bR0/lq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fI0flkrf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=08bR0/lq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fI0flkrf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="08bR0/lq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fI0flkrf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="08bR0/lq"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0E911209BA;
+	Thu, 20 Nov 2025 10:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763634749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
+	b=fI0flkrfILFoGqGCmrL+hhByQs1EnB/Af6T0/+jwe6UrU53WAZoUDbUrKeqtM7HNb8dyFL
+	c/pmh6jEcQZqud2F/yL1KRugfwV/rkccc8AxhBZFaY2jBM6cUWF5oVVKShXpikgcIRdwSJ
+	/8D5A9BqpkeuF3wzi5TyQ9VTYx0ZceY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763634749;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
+	b=08bR0/lqWXzp5rHNgUoNiighTAupKsbWenty5Rm91/5HO5X2iuQXaMN11DZb4dqRYnwOwE
+	4u9pA5EfTVkACeDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763634749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
+	b=fI0flkrfILFoGqGCmrL+hhByQs1EnB/Af6T0/+jwe6UrU53WAZoUDbUrKeqtM7HNb8dyFL
+	c/pmh6jEcQZqud2F/yL1KRugfwV/rkccc8AxhBZFaY2jBM6cUWF5oVVKShXpikgcIRdwSJ
+	/8D5A9BqpkeuF3wzi5TyQ9VTYx0ZceY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763634749;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k8eHdVDqFsUecB9quEOdMDvlgDb++nIgrYxStlYj8a4=;
+	b=08bR0/lqWXzp5rHNgUoNiighTAupKsbWenty5Rm91/5HO5X2iuQXaMN11DZb4dqRYnwOwE
+	4u9pA5EfTVkACeDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 351413EA61;
+	Thu, 20 Nov 2025 10:32:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y1vJAzzuHmmHXwAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 20 Nov 2025 10:32:28 +0000
+Message-ID: <ee9809e3-58e5-4a40-8c77-a8115f11c1d1@suse.de>
+Date: Thu, 20 Nov 2025 12:32:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -27,184 +82,68 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
-To: Ashish Mhetre <amhetre@nvidia.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, will@kernel.org
-Cc: joro@8bytes.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
- jgg@ziepe.ca, nicolinc@nvidia.com, linux-tegra@nvidia.com,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20251031062959.1521704-1-amhetre@nvidia.com>
- <20251031062959.1521704-3-amhetre@nvidia.com>
- <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
- <4f6496de-d3c8-4701-a9b4-6f695018eb5e@nvidia.com>
- <ef5bcd93-c88b-4242-be31-a3a4765fe5d8@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ef5bcd93-c88b-4242-be31-a3a4765fe5d8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V2 2/2] soc/tegra: pmc: don't fail if "aotag" is not
+ present
+To: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Prathamesh Shete <pshete@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>
+References: <20251119093729.441654-1-jonathanh@nvidia.com>
+ <20251119093729.441654-2-jonathanh@nvidia.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20251119093729.441654-2-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dt];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[nvidia.com,kernel.org,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,nvidia.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On 2025-11-20 6:07 am, Ashish Mhetre wrote:
+Hi Jon,
+
+On 11/19/25 11:37 AM, Jon Hunter wrote:
+> From: Prathamesh Shete <pshete@nvidia.com>
 > 
-> On 11/3/2025 7:24 PM, Ashish Mhetre wrote:
->>
->> On 10/31/2025 1:44 PM, Krzysztof Kozlowski wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> On Fri, Oct 31, 2025 at 06:29:58AM +0000, Ashish Mhetre wrote:
->>>> The Command Queue Virtualization (CMDQV) hardware is part of the
->>>> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
->>>> virtualizing the command queue for the SMMU.
->>> If this is specific to Nvidia, then I think you need specific front
->>> compatible and disallow it for other vendors.
->>
->> Yes, CMDQV is specific to Nvidia. There isn't currently a vendor-specific
->> compatible for Nvidia's arm,smmu-v3 implementation. Would it be 
->> acceptable
->> to document this as Nvidia-specific in the description? Or can we add a
->> new Nvidia-specific compatible string like "nvidia,smmu-v3" if that's
->> preferred and use conditional schema to restrict the property?
+> The "aotog" is an optional aperture, so if that aperture is not defined
+> for a given device, then initialise the 'aotag' pointer to NULL instead
+> of returning an error. Note that the PMC driver will not use 'aotag'
+> pointer if initialised to NULL.
 > 
-> Hi Will, Robin,
+> Co-developed-by: Shardar Mohammed <smohammed@nvidia.com>
+> Signed-off-by: Shardar Mohammed <smohammed@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> Changes since V2:
+> - None
 > 
-> Do you have any suggestions on this? I have followed existing ACPI approach
-> for implementing DT support.
+>  drivers/soc/tegra/pmc.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 
-No, the way the ACPI binding is implemented has the lookup going *from* 
-the CMDQV node back to the SMMU instance (via the matching identifier) - 
-this is entirely the opposite. The literal DT equivalent would be to use 
-for_each_matching_node/for_each_compatible_node to scan the CMDQV nodes 
-for a property indicating the relevant SMMU.
+Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+Tested-by: Stanimir Varbanov <svarbanov@suse.de>
 
-I'm not hugely fussed either way though - since the fact is the Tegra234 
-SMMU does have this custom modification, a specific 
-"nvidia,tegra234-smmu", "arm,smmu-v3" compatible isn't inappropriate, 
-even if it really doesn't make any difference to architectural SMMU 
-operation without awareness of the other CMDQV nodes.
-
-Thanks,
-Robin.
-
-> Will it be fine to add separate compatible 
-> string
-> for Nvidia Tegra264 SMMU to restrict the usage of CMDQV?
-> 
->>>> Add a new device tree binding document for nvidia,tegra264-cmdqv.
->>>>
->>>> Also update the arm,smmu-v3 binding to include an optional nvidia,cmdqv
->>>> property. This property is a phandle to the CMDQV device node, allowing
->>>> the SMMU driver to associate with its corresponding CMDQV instance.
->>>>
->>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
->>>> ---
->>>>   .../bindings/iommu/arm,smmu-v3.yaml           | 10 ++++
->>>>   .../bindings/iommu/nvidia,tegra264-cmdqv.yaml | 46 +++++++++++++++ 
->>>> ++++
->>>>   2 files changed, 56 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/iommu/ 
->>>> nvidia,tegra264-cmdqv.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu- 
->>>> v3.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
->>>> index 75fcf4cb52d9..edc0c20a0c80 100644
->>>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
->>>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
->>>> @@ -58,6 +58,15 @@ properties:
->>>>
->>>>     msi-parent: true
->>>>
->>>> +  nvidia,cmdqv:
->>>> +    description: |
->>>> +      A phandle to its pairing CMDQV extension for an 
->>>> implementation on NVIDIA
->>>> +      Tegra SoC.
->>>> +
->>>> +      If this property is absent, CMDQ-Virtualization won't be used 
->>>> and SMMU
->>>> +      will only use its own CMDQ.
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>> +
->>>>     hisilicon,broken-prefetch-cmd:
->>>>       type: boolean
->>>>       description: Avoid sending CMD_PREFETCH_* commands to the SMMU.
->>>> @@ -92,4 +101,5 @@ examples:
->>>>               dma-coherent;
->>>>               #iommu-cells = <1>;
->>>>               msi-parent = <&its 0xff0000>;
->>>> +            nvidia,cmdqv = <&cmdqv>;
->>>>       };
->>>> diff --git a/Documentation/devicetree/bindings/iommu/ 
->>>> nvidia,tegra264-cmdqv.yaml b/Documentation/devicetree/bindings/ 
->>>> iommu/nvidia,tegra264-cmdqv.yaml
->>>> new file mode 100644
->>>> index 000000000000..f22c370278a3
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra264- 
->>>> cmdqv.yaml
->>>> @@ -0,0 +1,46 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: NVIDIA Tegra264 CMDQV
->>> Missing blank line
->>
->> Ack, I will correct this in V2.
->>>> +description: |
->>> Do not need '|' unless you need to preserve formatting.
->>
->> Okay, I'll remove this in next version.
->>>> +  The CMDQ-Virtualization hardware block is part of the SMMUv3 
->>>> implementation
->>>> +  on Tegra264 SoCs. It assists in virtualizing the command queue 
->>>> for the SMMU.
->>>> +
->>>> +maintainers:
->>>> +  - NVIDIA Corporation <linux-tegra@nvidia.com>
->>> No. It should be a person. If entire Nvidia cannot find a person, I
->>> don't think we are interested in having this in the kernel.
->>
->> Okay, I'll add Nicolin as maintainer.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: nvidia,tegra264-cmdqv
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  interrupts:
->>>> +    maxItems: 1
->>>> +
->>>> +  interrupt-names:
->>>> +    items:
->>>> +      - const: cmdqv
->>> Drop interript names, obvious.
->>
->> Sure, I will update in V2.
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - reg
->>>> +  - interrupts
->>>> +  - interrupt-names
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>>> +
->>>> +    cmdqv: cmdqv@8105200000 {
->>> Drop unused label
->>
->> Okay, I will remove the label.
->>> Best regards,
->>> Krzysztof
->>>
+~Stan
