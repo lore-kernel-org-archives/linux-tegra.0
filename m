@@ -1,194 +1,156 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B702DD5E2
-	for <linux-tegra@vger.kernel.org>; Fri, 21 Nov 2025 19:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0453B263C9F
+	for <linux-tegra@vger.kernel.org>; Fri, 21 Nov 2025 20:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763753537; cv=none; b=MVJWH8QRi/hkPXZ1EpSUA2qpZwDkrzpwsd+sEv+eSMJRkzmZdQ7e45wnQCGT399HEgKnCLlZuQUqhmDQV4cRY3ozVDUoidUdGAJYUc1kbJ/pe4xM5HYyLEu41TG6GG+zuCibxmEZfK9YUCSG233nbRVloYD4bJlxM5Wm8O7dzUM=
+	t=1763757359; cv=none; b=AysqEhgiyoITOsXGs416Jajx2PPzaJSOEBpOJDW0fM1V2efgq6NTp8zbFZshEilZ8rWTsoP9sjGeaI+H8Vjphp8zBuaqjj0u7wFndYDneRLFMs/K3P61vTb57f8zvjcHH4kFzSrtdsYnNh3uyRvtZjFmqtQBQx9bfEsUEX0wCUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763753537; c=relaxed/simple;
-	bh=TyJZhZkzFkz4ji/Ckoc811B9aWkl0eSzR8xvVKTd01M=;
+	s=arc-20240116; t=1763757359; c=relaxed/simple;
+	bh=meSktXQNs/zDvTr1rLs7LeQfxQysPHSbGkzQDId9XMY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=up2mDBbIyynxIQLujZNVeN4m+hEy09KSPg+4Ztqy3P/KFOzQXmfp79SvCo+gh/VrDrcrkJyG9BLAHM74EC77OZax1cOtFG/iyY5tui7sa3f8g3ZyAm2XGzyO/R8JDWpS3g6RYG2i3ztr+mB1pglNfAOYiYJQgwEuX2FkxMKCCHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jo2UGlXs; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=FhUzeFsRFQ5SjwbXfC/is2fZLS/N8aJaURXI5/Ppjs7lSDZRsrNSbNtZoRsNuy8yiFFZSPSxySDVGTB6389Wo++UoNc5Wr1b3CMftoNI5qvG2QUIqRMJgijsyWDAQ/WFCwYt1DmeOCFJolx2MbdjOTCyPiIeHvxcGmfuioGJlyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+zvWL/N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jo2UGlXs"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-596a055b1b8so1901400e87.0
-        for <linux-tegra@vger.kernel.org>; Fri, 21 Nov 2025 11:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763753534; x=1764358334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aQQkgZdyyxCS6gJ5PW70XCzN6wIijcc0Oben6ZHbGUY=;
-        b=jo2UGlXsvjrf9n+5EgWx1qgC4Q+nqdAvfGcmbwOlGnLCQXf5wnCGAK1IDGzMNtD23u
-         NbfCplyuxYLD7ZEZu8Mik1wnPwX73zGHeAN7AvhkR+3O7N8vF0sSQkJ36tHUWQj1+INC
-         UGEVZEQXWpONQ1du0LY63+VUo2Sv5uPKuVAcHuW16hHvyPHksMYOFb9apTt2pVbzL76L
-         Ia8Erh1ymUKNLakoNo4rTuzYP83I260rvAklgrIRWDxA1WlVtnVn4/b8LJZTo6gn65lv
-         paCxhm4I/0qGyE6jxoyhilWw9KqWhWnONR8ugxlXs1+m8d4OwZeS3Be++Zcj1lJivZdm
-         8P/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763753534; x=1764358334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aQQkgZdyyxCS6gJ5PW70XCzN6wIijcc0Oben6ZHbGUY=;
-        b=bEey+aboxPy5F4pjjaiUKhe79huSsr/a2ccVm5VVhHS/C2z4kUPioDgStzwRt+xLaZ
-         EiF6fSqnOJlsybxWPYH5ULwEQKm6aySEsSsISSfRkrD0f8Tl2TKUjUydeXH7ugkK3xTQ
-         JFZ76opSBlSWhpRIyhbzi9jSQIF5kQSSizv9m1IzK0y7zR0zIjO7fHFDkSp4BjFm94vS
-         0JUoqLEJZVvavO9T+TqgXDDvCCFD6i3NKim3oDlDTl5QEGYuHGn9BP+nJ1f2bXOHeO9F
-         VmPKT2FwlruxkALjBPpHoo6CMqIjV4LgtI/C2jp9I0hUhxnK0ctrcqHk3fOfDSS4WdqM
-         qHWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWeBPXY86xSFBHQ8jRY+k3GUl+iMeDGeShH2orCPiIKQWcDP5AImKZnGc5MXDACMMahIg0Cu1wZBmzGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzejyrythQUzmTMVZm7qyD/rte8DVHzOy830E2nWTAnvNRHER7B
-	ROwgSKeETtOTHECFhyUrAs3sA0l3UYGsG9YP0lQZEsLYAk7fHiAaQ6aPTLpuuuFhwsdONJO0nKN
-	vRtdI2ZY46kIRdFQV6zYjIRjcAMtYLpk=
-X-Gm-Gg: ASbGncvRUZYFmJFaAQenkMKS2hO1U2pjw3SNiuk97nxll5zTTd+U1aNyOq5PepCLkht
-	vc9/QOJxBQQwLQghiWpz3TUz49gu6bTJXbe3SbajKSVaGRav/CAKAZvPLeMQRJtiPYSLjuyKbgA
-	JrtFTK6nLXRFH7c0lmhMooVjWCKaMehPi5xkPeZaPC7VgNvPgGw41nWpCgnE8hPIzgvKyXOmW8t
-	uLvvkvoOskB0rVN6jeg8wsX/ZvcPJxH6l8GyLqeRnjozJNQv16Pi8NF+XdlmML/RMnGoy0=
-X-Google-Smtp-Source: AGHT+IHzMeMRLx+qNbKNP4tO+td0fjgmUeolZXMPswV6zfAtRsDlZcOqTWPYIFhq6t3VYkJwJzmnVFwBb0BgIBovNlQ=
-X-Received: by 2002:a05:6512:3f1d:b0:594:3004:ce37 with SMTP id
- 2adb3069b0e04-596a3ef00bbmr1211551e87.44.1763753533445; Fri, 21 Nov 2025
- 11:32:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+zvWL/N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C111C113D0
+	for <linux-tegra@vger.kernel.org>; Fri, 21 Nov 2025 20:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763757358;
+	bh=meSktXQNs/zDvTr1rLs7LeQfxQysPHSbGkzQDId9XMY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=L+zvWL/Nh94FkM1rZrXcBtTOzgK+mkJwTDosBcBijCdV34X53/cdtFJtiuZ0Md/WM
+	 GcqhqeRjUC0vm45dWjFBz6XmwGZdDlx/1YsRu2QyrzPY+3hCmTjo6+j5LM3zBib4I4
+	 J6tKQx3AUF2IB07P8TFo+IWDzck0Yp3oj5x5qK+1dMshchSxQDW1aIOTW5EmLdVjPD
+	 3zqNL5lRPlgjWSvClhgdnUG+fb4P2UmRkId3/JrLTerz93MIgGIWp8gL3/SUNNbMpt
+	 Z0A6qD2K62qoXRs1K/9ABvtlMFte9d0O1sWFPTl8RY6sAvXTCprA/RgDr/i7m3fD6z
+	 YI+JdDMM/fmQg==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-657523b5db0so471348eaf.2
+        for <linux-tegra@vger.kernel.org>; Fri, 21 Nov 2025 12:35:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX20QVM8o7HwLQOe/JAPgxPOb/nBjxXhNQ3owL7FiOVdfx48hmoZlSfAQayFZupUjr56VkPvXQm7wERpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycqPvNnsAbO7r35NwCr+d8pMbDBStyMCZA4kn4OQE6Wr949ljR
+	K/c/8gbCtJBfWfIBSLDJLNMc2dR1iH41+L92WH+KoOa5AyMKTDncmjmrbnlkzv4e98Bk4BU4vXH
+	SqHYvDLMndISCM3kYslBMvRTeUQGvjBQ=
+X-Google-Smtp-Source: AGHT+IEGV1wW0AyQ4uV5rOeWs+mu0pohToH8QfmqGgzcM1nDvWFgodvXp8dfzsS7PUq8QlplylLWmLPmTb2ii+XtGZ8=
+X-Received: by 2002:a05:6820:4d57:10b0:657:7289:b1dc with SMTP id
+ 006d021491bc7-65792596028mr1028369eaf.6.1763757357967; Fri, 21 Nov 2025
+ 12:35:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
- <20251021-t210-actmon-p4-v5-2-4a4dbc49fbc8@gmail.com> <56aed0ec-b104-4612-8901-3f6f95e0afab@nvidia.com>
-In-Reply-To: <56aed0ec-b104-4612-8901-3f6f95e0afab@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Fri, 21 Nov 2025 13:32:02 -0600
-X-Gm-Features: AWmQ_bk5MRf-_DTPSdXZzW6hKcukUSEpofw-tme48-1wKUDFb-YLYStIglwKPTA
-Message-ID: <CALHNRZ8Hc+kqWVCjTZvtJ+hBrsgpjO9EySOQFfLaLHvt9P_reg@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] arm64: tegra: Add interconnect properties to
- Tegra210 device-tree
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251120-thermal-device-v1-0-bbdad594d57a@gmx.de>
+In-Reply-To: <20251120-thermal-device-v1-0-bbdad594d57a@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 21 Nov 2025 21:35:47 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jOPrBcozzJMsB1eE12MuZRWDAV-+=jfrhJbi=S0p5J9Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bmY4Rgl1Z4nj5ks6gNTVnBjHocEaNjk9D0MQSLHqvtZo8fqobTCygtTNLc
+Message-ID: <CAJZ5v0jOPrBcozzJMsB1eE12MuZRWDAV-+=jfrhJbi=S0p5J9Q@mail.gmail.com>
+Subject: Re: [PATCH RFC RESEND 0/8] thermal: core: Allow setting the parent
+ device of thermal zone/cooling devices
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Len Brown <lenb@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	ath11k@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
+	linux-pci@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 21, 2025 at 5:24=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
+On Thu, Nov 20, 2025 at 4:41=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wrote:
 >
->
-> On 22/10/2025 04:13, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > Add interconnect properties to the Memory Controller, External Memory
-> > Controller and the Display Controller nodes in order to describe hardwa=
-re
-> > interconnection.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 +++++++++++++++++++++++=
-+
-> >   1 file changed, 24 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra210.dtsi
-> > index 6da10db893add44a98fde1666c382511212fd43c..2fcc7a28690f7100d49e8b9=
-3c4fb77de7947b002 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > @@ -202,6 +202,19 @@ dc@54200000 {
-> >
-> >                       nvidia,outputs =3D <&dsia &dsib &sor0 &sor1>;
-> >                       nvidia,head =3D <0>;
-> > +
-> > +                     interconnects =3D <&mc TEGRA210_MC_DISPLAY0A &emc=
->,
-> > +                                     <&mc TEGRA210_MC_DISPLAY0B &emc>,
-> > +                                     <&mc TEGRA210_MC_DISPLAY0C &emc>,
-> > +                                     <&mc TEGRA210_MC_DISPLAYHC &emc>,
-> > +                                     <&mc TEGRA210_MC_DISPLAYD &emc>,
-> > +                                     <&mc TEGRA210_MC_DISPLAYT &emc>;
-> > +                     interconnect-names =3D "wina",
-> > +                                          "winb",
-> > +                                          "winc",
-> > +                                          "cursor",
-> > +                                          "wind",
-> > +                                          "wint";
-> >               };
-> >
-> >               dc@54240000 {
-> > @@ -217,6 +230,15 @@ dc@54240000 {
-> >
-> >                       nvidia,outputs =3D <&dsia &dsib &sor0 &sor1>;
-> >                       nvidia,head =3D <1>;
-> > +
-> > +                     interconnects =3D <&mc TEGRA210_MC_DISPLAY0AB &em=
-c>,
-> > +                                     <&mc TEGRA210_MC_DISPLAY0BB &emc>=
-,
-> > +                                     <&mc TEGRA210_MC_DISPLAY0CB &emc>=
-,
-> > +                                     <&mc TEGRA210_MC_DISPLAYHCB &emc>=
-;
-> > +                     interconnect-names =3D "wina",
-> > +                                          "winb",
-> > +                                          "winc",
-> > +                                          "cursor";
-> >               };
-> >
-> >               dsia: dsi@54300000 {
-> > @@ -990,6 +1012,7 @@ mc: memory-controller@70019000 {
-> >
-> >               #iommu-cells =3D <1>;
-> >               #reset-cells =3D <1>;
-> > +             #interconnect-cells =3D <1>;
-> >       };
-> >
-> >       emc: external-memory-controller@7001b000 {
-> > @@ -1001,6 +1024,7 @@ emc: external-memory-controller@7001b000 {
-> >               clock-names =3D "emc";
-> >               interrupts =3D <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-> >               nvidia,memory-controller =3D <&mc>;
-> > +             #interconnect-cells =3D <0>;
-> >               #cooling-cells =3D <2>;
-> >       };
->
->
-> I am seeing another failure on -next for Tegra210 and bisect is point to
-> this commit ...
->
-> # first bad commit: [3cad4369399a31277e9e20de723c665b30cba574] arm64:
-> tegra: Add interconnect properties for Tegra210
->
-> The tegra-tests [0] devices test is failing and after this commit the
-> DRM device is no longer bound to the driver.
+> Drivers registering thermal zone/cooling devices are currently unable
+> to tell the thermal core what parent device the new thermal zone/
+> cooling device should have, potentially causing issues with suspend
+> ordering
 
-Upon research, this one appears to be a bit more complicated. The dc
-code in tegra-drm sets up an icc connection per plane to emc, I
-presume in order to prevent underruns. If the icc path exists in the
-dt, but the emc driver has not added itself to icc, then dc will
-infinitely defer [0]. And per earlier statements on this list, the
-regression test setup for Tegra210 does not pass emc training data
-from the bootloader to the kernel, meaning the emc driver fails to
-probe.
+This is one potential class of problems that may arise, but I would
+like to see a real example of this.
 
-I am not sure how to handle this. As far as I know, the previous archs
-that the dc icc code was originally written for wouldn't ever have the
-emc driver fail, because the untrained tables are in the kernel dt,
-meaning that the driver could at least load that. On Tegra210 since
-the dt tables were rejected, there's nothing for the driver to fall
-back on, so it is possible to have a hard failure.
+As it stands today, thermal_class has no PM callbacks, so there are no
+callback execution ordering issues with devices in that class and what
+other suspend/resume ordering issues are there?
 
-Does anyone have ideas on how to handle this? To allow dc to report
-icc bw on Tegra210, but not fail probe if the emc is missing? Making
-the icc path lookup non-fatal isn't really an option.
+Also, the suspend and resume of thermal zones is handled via PM
+notifiers.  Is there a problem with this?
 
-Aaron
+> and making it impossible for user space applications to
+> associate a given thermal zone device with its parent device.
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/gpu/drm/tegra/plane.c?h=3Dv6.18-rc6#n778
+Why does user space need to know the parent of a given cooling device
+or thermal zone?
+
+> This patch series aims to fix this issue by extending the functions
+> used to register thermal zone/cooling devices to also accept a parent
+> device pointer. The first six patches convert all functions used for
+> registering cooling devices, while the functions used for registering
+> thermal zone devices are converted by the remaining two patches.
+>
+> I tested this series on various devices containing (among others):
+> - ACPI thermal zones
+> - ACPI processor devices
+> - PCIe cooling devices
+> - Intel Wifi card
+> - Intel powerclamp
+> - Intel TCC cooling
+
+What exactly did you do to test it?
+
+> I also compile-tested the remaining affected drivers, however i would
+> still be happy if the relevant maintainers (especially those of the
+> mellanox ethernet switch driver) could take a quick glance at the
+> code and verify that i am using the correct device as the parent
+> device.
+
+I think that the above paragraph is not relevant any more?
+
+> This work is also necessary for extending the ACPI thermal zone driver
+> to support the _TZD ACPI object in the future.
+
+I'm still unsure why _TZD support requires the ability to set a
+thermal zone parent device.
+
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+> Armin Wolf (8):
+>       thermal: core: Allow setting the parent device of cooling devices
+>       thermal: core: Set parent device in thermal_of_cooling_device_regis=
+ter()
+>       ACPI: processor: Stop creating "device" sysfs link
+
+That link is not to the cooling devices' parent, but to the ACPI
+device object (a struct acpi_device) that corresponds to the parent.
+The parent of the cooling device should be the processor device, not
+its ACPI companion, so I'm not sure why there would be a conflict.
+
+>       ACPI: fan: Stop creating "device" sysfs link
+>       ACPI: video: Stop creating "device" sysfs link
+
+Analogously in the above two cases AFAICS.
+
+The parent of a cooling device should be a "physical" device object,
+like a platform device or a PCI device or similar, not a struct
+acpi_device (which in fact is not a device even).
+
+>       thermal: core: Set parent device in thermal_cooling_device_register=
+()
+>       ACPI: thermal: Stop creating "device" sysfs link
+
+And this link is to the struct acpi_device representing the thermal zone it=
+self.
+
+>       thermal: core: Allow setting the parent device of thermal zone devi=
+ces
+
+I'm not sure if this is a good idea, at least until it is clear what
+the role of a thermal zone parent device should be.
