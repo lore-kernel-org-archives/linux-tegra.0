@@ -1,178 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B13D14A8E;
-	Mon, 24 Nov 2025 06:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E659C2EA;
+	Mon, 24 Nov 2025 07:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763965209; cv=none; b=pMyLgT2A3vEUisqYUqracNuU2KFUZMWgTlb2BB8tnANrjQ0hWO5KyQwL3YeL7CfOuxHMQZ2Iv+PWlRv/3B2iHxSoYhPDUdzDQr4Q+SzwikAotIYHaH2A/KwzA32gEgvYpStQojiAdPpqh3QLFytUqCuq/q7iusKNAeBcgh4O67s=
+	t=1763968176; cv=none; b=TbYsHSRk3BiJnddXfaG8aXMTKyAsRyxSyDRYOeq2qTU4aRRkHcj2jNpvs02obFGtmqkyNZTtJmFTeA8LYRmNtZvNPnpQN9i/HopHmSWv3R/pGIbmmDbiiQE85AbTRrnB8LXUef54j8i2S5yoy+Tvl9TheApo8Gn15JJduRZPYS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763965209; c=relaxed/simple;
-	bh=p+mVid8r0ROMi/cN2VpkF51dxkYFqiGnDz8HjO1KQJw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cNPfU30yUQ/3mjYpJTH1btdgh3g02j5rk7xA91O71HzHVJqA8LyB1lpEP2KCR6okYpK4Lf2SKjKt7RgbWRfklFwkl7cn3XCvtBc6WjGq7Q73rv7UP0VAa+SlpMpLIqDmxYxDqd7+VeQcsy4uQRk0sqqNGPKaVjON7m4ova//9aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0QLtdQK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763968176; c=relaxed/simple;
+	bh=Cro5wyAECih8Mx/GGmMTq6xoZmHWU6tAS1C9mQ4CmUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I53blxMNnFsfi+gX2F/3FGxZOjwRMaQBG/HVlL8+TPq3qTbm1hHoW1pK6BRiRKNpSEklLbR838nIRBG4SFi+dq5QDzu3lwvN2mviscALaIfYTj8SJe0zHpeNjvMfNanGxWmcdJQH6hHyso1aVVHbmLUEfuzLEoHuWiQUx9WxysE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtQwLO3P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0QLtdQK"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F1C63C4CEF1;
-	Mon, 24 Nov 2025 06:20:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtQwLO3P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67153C4CEF1;
+	Mon, 24 Nov 2025 07:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763965206;
-	bh=p+mVid8r0ROMi/cN2VpkF51dxkYFqiGnDz8HjO1KQJw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=h0QLtdQK56lROn1F69nHBA2ld4U3a4DB80FC38qrDSnIq1cX5IK8Nbxg1WKkvVYyj
-	 waLUHYEf2d7LELVociIZhN+DqZ734eGQR7n11ALjJWtIEhDz63YTfd8g3GklXkzn26
-	 RxtvoaEO/H2RWrZlp66/0lyKv2KYi5qfC1IRqUyHGyZ286Rf+C6aF7qfrndT2GyMAe
-	 LMY7pjttdE4fVetpWqsUXlnECE17s+gQsfoGxlRlMqUp5RLDVt79DCqVoN9iMKNCdf
-	 cL3T71DVaXKJPh6v5EdJsTffnZlkSfgNESUjEEhNy49WPxMYKbVvhZJugVVkrs3YcW
-	 E6LrebZuayJFQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04B1CFD31C;
-	Mon, 24 Nov 2025 06:20:05 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 24 Nov 2025 00:19:53 -0600
-Subject: [PATCH] memory: tegra210: Fix opp table cleanup
+	s=k20201202; t=1763968176;
+	bh=Cro5wyAECih8Mx/GGmMTq6xoZmHWU6tAS1C9mQ4CmUg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FtQwLO3PrTROcvyec2nDz1L/MHpBihbkQPZFReLO437tTQDGPoe3Yv3gapO/MnYae
+	 LxpLC3Ly56iNgVbn8+GnFrPh5NxmTAl+P4XHwCAdAbqS2SIQVib7BkDBOEoyTO6cKW
+	 E1P7msO1QNyS5N4BKr8VMDMj1zD+PIuDki40yI0sz0tsm9FUQfYAifVf48kiwrBmho
+	 WLrR1rvvleuT7PwXrjOpzPdhDUjfcyA4erEVs+M7hxTwU4HPyHO/tdM1x04Qm7CdAk
+	 8yBiTY1BkdcARunMverDvvbysguZpmVKPo0UyhfQrfPo2gNv0xceAaETJd/YSanERd
+	 Y9emwqiuuF7Pw==
+Message-ID: <3bd46325-149c-4ca4-899f-3bd52e6a86d6@kernel.org>
+Date: Mon, 24 Nov 2025 08:09:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251124-tegra210-actmon-fix-v1-1-3c4e2aa98e5f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAj5I2kC/x2MywqAIBAAfyX23ILaA+tXooPUantIQyMC8d+Tj
- jMwkyFRZEowNxkiPZw4+AqybWA7jHeEvFcGJdQgperwJheNkgLNdp/Bo+UXJ6vJ9KMWu+ihlle
- kqv/rspbyAQNSYzZlAAAA
-X-Change-ID: 20251123-tegra210-actmon-fix-9f8ea4680d04
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: tegra210: Fix opp table cleanup
+To: webgeek1234@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
  Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763965205; l=3756;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=aVqO6+a1rJ5KerMJYPS3eL1JGgvR/IUQqyrj0a4Y5Oo=;
- b=xNaJIoIR8XO7UUQnzvAenXAN+WuOtmlEF0szkKf/waMdR00xcssqwghS81Wn0p82osVAqu0as
- S2UNzDiG/j2B/k31/HNhdzPKpFwU0074HsU0AtPNUHLhDWdySCO7rR7
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20251124-tegra210-actmon-fix-v1-1-3c4e2aa98e5f@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251124-tegra210-actmon-fix-v1-1-3c4e2aa98e5f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On 24/11/2025 07:19, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> The original change did not clean up the opp table or hardware table on
+> probe error or on remove.
+> 
+> Fixes: b33c93babead ("memory: tegra210: Support interconnect framework")
 
-The original change did not clean up the opp table or hardware table on
-probe error or on remove.
+There is no such commit anymore. Like I said in the other thread (and I
+Cc-ed you on pull request) I dropped all ICC patches.
 
-Fixes: b33c93babead ("memory: tegra210: Support interconnect framework")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-tegra/aSAxxzcRZduavJQT@stanley.mountain/
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
-Change-Id: Ie40abdc1f2b1a66ef60cabf00d64cc5ff069ea91
----
- drivers/memory/tegra/tegra210-emc-core.c | 23 ++++++++++++++++++-----
- drivers/memory/tegra/tegra210-emc.h      |  1 +
- 2 files changed, 19 insertions(+), 5 deletions(-)
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-tegra/aSAxxzcRZduavJQT@stanley.mountain/
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Change-Id: Ie40abdc1f2b1a66ef60cabf00d64cc5ff069ea91
 
-diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-index 397448cb472d5a31565bf201df06e027248f4d5c..7be810eac79faf8ce2d1b90f7931e41e32c4dddd 100644
---- a/drivers/memory/tegra/tegra210-emc-core.c
-+++ b/drivers/memory/tegra/tegra210-emc-core.c
-@@ -1960,13 +1960,13 @@ static int tegra210_emc_opp_table_init(struct tegra210_emc *emc)
- 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
- 	struct dev_pm_opp *opp;
- 	unsigned long rate;
--	int opp_token, err, max_opps, i;
-+	int err, max_opps, i;
- 
- 	err = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
- 	if (err < 0)
- 		return dev_err_probe(emc->dev, err, "failed to set OPP supported HW\n");
- 
--	opp_token = err;
-+	emc->hw_opp_token = err;
- 
- 	err = dev_pm_opp_of_add_table(emc->dev);
- 	if (err) {
-@@ -2009,11 +2009,21 @@ static int tegra210_emc_opp_table_init(struct tegra210_emc *emc)
- remove_table:
- 	dev_pm_opp_of_remove_table(emc->dev);
- put_hw_table:
--	dev_pm_opp_put_supported_hw(opp_token);
-+	dev_pm_opp_put_supported_hw(emc->hw_opp_token);
-+	emc->hw_opp_token = 0;
- 
- 	return err;
- }
- 
-+static void tegra210_emc_opp_table_cleanup(struct tegra210_emc *emc)
-+{
-+	if (emc->hw_opp_token) {
-+		dev_pm_opp_of_remove_table(emc->dev);
-+		dev_pm_opp_put_supported_hw(emc->hw_opp_token);
-+		emc->hw_opp_token = 0;
-+	}
-+}
-+
- static void tegra210_emc_detect(struct tegra210_emc *emc)
- {
- 	u32 value;
-@@ -2227,7 +2237,7 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 		tegra210_emc_rate_requests_init(emc);
- 		tegra210_emc_interconnect_init(emc);
- 	} else if (err != -ENODEV) {
--		return err;
-+		goto detach;
- 	}
- 
- 	cd = devm_thermal_of_cooling_device_register(emc->dev, np, "emc", emc,
-@@ -2236,11 +2246,13 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 		err = PTR_ERR(cd);
- 		dev_err(emc->dev, "failed to register cooling device: %d\n",
- 			err);
--		goto detach;
-+		goto cleanup_table;
- 	}
- 
- 	return 0;
- 
-+cleanup_table:
-+	tegra210_emc_opp_table_cleanup(emc);
- detach:
- 	debugfs_remove_recursive(emc->debugfs.root);
- 	tegra210_clk_emc_detach(emc->clk);
-@@ -2254,6 +2266,7 @@ static void tegra210_emc_remove(struct platform_device *pdev)
- {
- 	struct tegra210_emc *emc = platform_get_drvdata(pdev);
- 
-+	tegra210_emc_opp_table_cleanup(emc);
- 	debugfs_remove_recursive(emc->debugfs.root);
- 	tegra210_clk_emc_detach(emc->clk);
- 	of_reserved_mem_device_release(emc->dev);
-diff --git a/drivers/memory/tegra/tegra210-emc.h b/drivers/memory/tegra/tegra210-emc.h
-index 3c9142bfd5ae5c57bbc139e69e62c893b50ce40c..e6f267823f9f0ee18cd60778116dc5ca2730a5d4 100644
---- a/drivers/memory/tegra/tegra210-emc.h
-+++ b/drivers/memory/tegra/tegra210-emc.h
-@@ -946,6 +946,7 @@ struct tegra210_emc {
- 	struct tegra210_clk_emc_provider provider;
- 
- 	struct icc_provider icc_provider;
-+	int hw_opp_token;
- 
- 	/*
- 	 * There are multiple sources in the EMC driver which could request
-
----
-base-commit: d724c6f85e80a23ed46b7ebc6e38b527c09d64f5
-change-id: 20251123-tegra210-actmon-fix-9f8ea4680d04
+Please do not use Gerrit stuff here.
 
 Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
-
-
+Krzysztof
