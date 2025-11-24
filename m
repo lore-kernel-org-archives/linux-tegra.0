@@ -1,36 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C602F6921;
-	Mon, 24 Nov 2025 21:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CAC23D7E3;
+	Mon, 24 Nov 2025 22:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764019349; cv=none; b=DtWSVJ5K64vt6IYVefo54qG3y8mlb+iVu0xVjtZmxp8NcZuOe/maQFxzIPLu7CWW8r7SvRKHUYDkrVdrXwSy9+cY0x6Embdrit0b8VGduXoXS7hQUFYhFy18u2/1sPf1z7NH4FjFXIboBKseSsajstxKf3RQVV84j7Uv1ZNQJyo=
+	t=1764024633; cv=none; b=Pxfor9azvakbYtvu0OTk+f6jqd7crQ2p2MPuuSF+ojIuGypEVbuGcj/EgGTLhZH9MulljN3+HhCL7u8Yj9yQ2nUVsmeAep+trFtZ8IW2aUKR+HuioXMT1DbIup9eVc7BO9gw+az3DEfFxg/z0RyC5sUrzOKdcWlV9ZgUxLWANk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764019349; c=relaxed/simple;
-	bh=RgrwDiinUzSpRqOGQiyfN+hRdSZO/OtpULDIPl/RaxE=;
+	s=arc-20240116; t=1764024633; c=relaxed/simple;
+	bh=L9vxregCDQ2mkA1oTO/p4wTdwRK2bHafb670knLdCeI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JOFdNyWP09mbytPfYqG4Dl0acnH/pDkfUJ5FwDExswgzLk4rCWbvwNKIxZjggN251Au7YhlAK/A9iPI+ye4yuorvwtT+IHNm1Y9D2Y5uyWotWFjGPm8P8qUvnqXW/5pGtS8dx3KnMSyaQ3HtfYZ4gp8m9RAvi0HMvui9HHNq2gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUnwH3pW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition:In-Reply-To; b=Smol3pxyKzRBJfmAAyQBZOoxhaLSjbq0CirAyroNszy6STdi+3wgs/Q/LoPv+ZmYLd22UDPmQyTRObnFDlUH3fmgk5anGOR1KIlT6rgznqi7xIY4292sGuE/r/m6QUpb4+LFQ65oDQ/Zzs8EddgPurF+iLRanyrMh+EWz+ih32I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4X4KN3E; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUnwH3pW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB27C4CEFB;
-	Mon, 24 Nov 2025 21:22:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4X4KN3E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DCFC4CEF1;
+	Mon, 24 Nov 2025 22:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764019349;
-	bh=RgrwDiinUzSpRqOGQiyfN+hRdSZO/OtpULDIPl/RaxE=;
+	s=k20201202; t=1764024632;
+	bh=L9vxregCDQ2mkA1oTO/p4wTdwRK2bHafb670knLdCeI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qUnwH3pWJBpE5n0hprzgUyQmQnyYDnqdsNL/7ivetkau8W72rzPw6TL6kyAZV06Cx
-	 EESXAQ4m3JglpM69+IQcbANa/HFyP8qH9IXLwafZrKq+OV8OsiNXw7UDN2s3xWfS86
-	 iq3U1hEgP0NdFE3xGqp8dkXzBpw21zocJN6AvpzNM2DQC4J5F8Y0wv+ajYA8mS1YIM
-	 NSphcDi7VxA//qJ0GbJa8B2of/bu+R600bs7kWLaj+FzTWGKztJcxFQqO5ST1vsMHv
-	 IH56mX+FT9s3Pcesq9w7rJJUrVxwhFgELcKZui4Ji52NlX0oO74l74Nq+azyLy8Ntb
-	 49DxDSoqMqi4A==
-Date: Mon, 24 Nov 2025 15:22:27 -0600
+	b=c4X4KN3EdiwLBbtGn7PgXZnYSgyoNSzgxcz5NevhwkczGejGdZ0AFxz2+e9CVKVY/
+	 xZ8nrqYXcK29Er0/xWvywyxNy1FktZ33X1PITEPOA0SDI8EDfwTveqPWkS3CUh4tBU
+	 IuNU3Em4z6ZCaPeaaKU5ZLFVvG/S3rYij2zGTmiwxurIObDVX+2I73Zif5gakUuzdq
+	 wCjDZ15m/X9SZYDeLfys5ZdcB0OwmRgxjICh1zIuEExKgCyP68Jnb1EX/O+zRj8CVE
+	 UciEjUzm+bOsIxB/zSggy0Js1Opcw9zhZLYKQUv7zpq3EO2o21Z0ys+LSDv6xDMvyi
+	 2O5HZfBiEnyYA==
+Date: Mon, 24 Nov 2025 16:50:30 -0600
 From: Bjorn Helgaas <helgaas@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
+To: Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
 	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
@@ -38,7 +37,7 @@ Cc: Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
 	Simon Xue <xxm@rock-chips.com>, Damien Le Moal <dlemoal@kernel.org>,
 	Dragan Simic <dsimic@manjaro.org>, FUKAUMI Naoki <naoki@radxa.com>,
 	Diederik de Haas <diederik@cknow-tech.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>, Frank Li <Frank.li@nxp.com>,
 	Lucas Stach <l.stach@pengutronix.de>,
 	Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
@@ -50,9 +49,9 @@ Cc: Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
 	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org, kernel@pengutronix.de,
 	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 1/4] PCI: dwc: Advertise L1 PM Substates only if
+Subject: Re: [PATCH v2 0/4] PCI: dwc: Advertise L1 PM Substates only if
  driver requests it
-Message-ID: <20251124212227.GA2713330@bhelgaas>
+Message-ID: <20251124225030.GA2721839@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -61,70 +60,60 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aR2lOZDBEdGVd9On@ryzen>
+In-Reply-To: <20251118214312.2598220-1-helgaas@kernel.org>
 
-On Wed, Nov 19, 2025 at 12:08:41PM +0100, Niklas Cassel wrote:
-> On Tue, Nov 18, 2025 at 05:34:18PM -0500, Frank Li wrote:
-> > On Tue, Nov 18, 2025 at 03:42:15PM -0600, Bjorn Helgaas wrote:
-> > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > >
-> > > L1 PM Substates require the CLKREQ# signal and may also require
-> > > device-specific support.  If CLKREQ# is not supported or driver support is
-> > > lacking, enabling L1.1 or L1.2 may cause errors when accessing devices,
-> > > e.g.,
-> > >
-> > >   nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
-> > >
-> > > If the kernel is built with CONFIG_PCIEASPM_POWER_SUPERSAVE=y or users
-> > > enable L1.x via sysfs, users may trip over these errors even if L1
-> > > Substates haven't been enabled by firmware or the driver.
-> > >
-> > > To prevent such errors, disable advertising the L1 PM Substates unless the
-> > > driver sets "dw_pcie.l1ss_support" to indicate that it knows CLKREQ# is
-> > > present and any device-specific configuration has been done.
-> > >
-> > > Set "dw_pcie.l1ss_support" in tegra194 (if DT includes the
-> > > "supports-clkreq' property) and qcom (for cfg_2_7_0, cfg_1_9_0, cfg_1_34_0,
-> > > and cfg_sc8280xp controllers) so they can continue to use L1 Substates.
-> > >
-> > > Based on Niklas's patch:
-> > > https://patch.msgid.link/20251017163252.598812-2-cassel@kernel.org
-> > >
-> > > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > > ---
-> > >  .../pci/controller/dwc/pcie-designware-ep.c   |  2 ++
-> > >  .../pci/controller/dwc/pcie-designware-host.c |  2 ++
-> > >  drivers/pci/controller/dwc/pcie-designware.c  | 24 +++++++++++++++++++
-> > >  drivers/pci/controller/dwc/pcie-designware.h  |  2 ++
-> > >  drivers/pci/controller/dwc/pcie-qcom.c        |  2 ++
-> > >  drivers/pci/controller/dwc/pcie-tegra194.c    |  3 +++
-> > >  6 files changed, 35 insertions(+)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> > > index 7f2112c2fb21..ad6c0fd67a65 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> > > @@ -966,6 +966,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
-> > >  	if (ep->ops->init)
-> > >  		ep->ops->init(ep);
-> > >
-> > > +	dw_pcie_hide_unsupported_l1ss(pci);
-> > > +
-> > 
-> > And, I don't think EP need clean L1SS CAP flags. If EP don't support L1SS,
-> > it should be force pull down #clkreq.
+On Tue, Nov 18, 2025 at 03:42:14PM -0600, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> I think the problem is that we cannot force pull down CLKREQ# in a generic
-> DWC function. That would have to be done in glue driver specific callbacks.
+> This is a follow-up to Niklas's patch at
+> https://lore.kernel.org/r/20251017163252.598812-2-cassel@kernel.org.  That
+> patch clears the L1 PM Substate Supported bits for the dw-rockchip driver,
+> which doesn't yet do the device configuration to support the L1 Substates.
 > 
-> Bjorn, perhaps we should simply drop the dw_pcie_hide_unsupported_l1ss()
-> call from dw_pcie_ep_init_registers(), and consider hiding L1ss for EPs to
-> be out of scope for this series.
+> This series does the same thing, but in the DWC core so it applies to all
+> DWC-based drivers.  Drivers that do support L1 Substates (currently
+> tegra194 and qcom) indicate that by setting "dw_pcie.l1ss_support", and the
+> DWC core will leave the L1 PM Substate Supported bits alone.
 > 
-> That way, we could still queue this series up for 6.19.
+> This also includes Shawn's patches to add the dw-rockchip support for L1
+> Substates.
 > 
-> Thoughts from everyone?
+> The problem this fixes is that users are currently able to enable L1
+> Substates, e.g., by
+> 
+>   - building with with CONFIG_PCIEASPM_POWER_SUPERSAVE=y
+>   - booting with "pcie_aspm.policy=powersupersave"
+>   - echo powersupersave > /sys/module/pcie_aspm/parameters/policy
+>   - echo 1 > /sys/bus/pci/devices/.../link/l1_1_aspm
+> 
+> but this breaks devices if the platform doesn't support CLKREQ# or lacks
+> Root Port configuration.  This series avoids that problem by preventing the
+> kernel from enabling L1.x in the first place.
+> 
+> 
+> Bjorn Helgaas (2):
+>   PCI: dwc: Advertise L1 PM Substates only if driver requests it
+>   PCI: tegra194: Remove unnecessary L1SS disable code
+> 
+> Shawn Lin (2):
+>   PCI: dw-rockchip: Configure L1SS support
+>   arm64: dts: rockchip: Add PCIe clkreq stuff for RK3588 EVB1
 
-Good idea, done locally, thanks!
+I applied these (except for the arm64: dts: patch) to
+pci/controller/dwc, planned for v6.19.  Same as posted here except I
+dropped dw_pcie_hide_unsupported_l1ss() from
+dw_pcie_ep_init_registers().
 
-Bjorn
+>  .../boot/dts/rockchip/rk3588-evb1-v10.dts     |  7 ++-
+>  .../pci/controller/dwc/pcie-designware-ep.c   |  2 +
+>  .../pci/controller/dwc/pcie-designware-host.c |  2 +
+>  drivers/pci/controller/dwc/pcie-designware.c  | 24 ++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h  |  2 +
+>  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 40 ++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  2 +
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 48 ++++---------------
+>  8 files changed, 85 insertions(+), 42 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
