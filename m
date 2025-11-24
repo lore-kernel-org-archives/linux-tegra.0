@@ -1,83 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A8B2459EA;
-	Mon, 24 Nov 2025 10:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514801F1932
+	for <linux-tegra@vger.kernel.org>; Mon, 24 Nov 2025 10:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763978613; cv=none; b=g/v8nmVLx4xb2/ouau8gIPELqEWerF9py7lePi5WzFfdkonENhohzlt/VuCwNR5gERZBRO+Kx92HodOfrQtLE7f/OakmBwJMG8yfsaLH9HP4O9mwoEhMnL1qHqu7W7DOURHROSGjLqHdU9FmI7wukPt23WiiWqKV5YjMqSE/S+o=
+	t=1763979398; cv=none; b=Vqon908jdVS2fZ2Cb2iCqEcapWweiF7ORYTfVHjm3D1gJ52/yeqcvGCfAsqHpvdBZFUE18ESUy8HIJLmZA07fsWwsusL4CZszye+SjOoA/bVVXg48b5q/cCVK/MxAETlCOX3lljwqm0K5K3OdgtfUci43V9FsAk+MXGRjlvFs2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763978613; c=relaxed/simple;
-	bh=3OFtNIJlB5pb83NXaUCm1QhQaxVx50ZAfl+2hNDkg0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RcrW4CvyXpl5QjjGu0l4B/bL3ec6SK+iC4OhhA1nDP1g4WBSX7GMpilMslZRxvTgEkoFqqCj6VQUEXRNLDTTTHZRhnPBMx7mxdRGccecKp3oakpYFlPtmO/WxiULcvXFM4pALbT5YDABVt4I3mcEefhAxUfxOf9eDyGNJCO0tNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bi2RSZIh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763979398; c=relaxed/simple;
+	bh=p3+Wkeoi+awOerBEqliUtsZVxYdk/VvMuODr+mw3q18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BYtnDLt6oosdJycXn3vIEwMPwrUUIQT42JxNA+Q7aJ9wcGlVqaL0qPM/vm041dIkxKXpDWWnWPch+Kh+rUpNUI36NNdFJin8l+eiwHBzQrDeZ0qzqPqATMw+WjZcC03X1Cp4T30qEEP6VtWa93bDJqvM3lGKoIQ/tcu4QGDEE2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yN/MTMQm; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bi2RSZIh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51AD2C116D0;
-	Mon, 24 Nov 2025 10:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763978613;
-	bh=3OFtNIJlB5pb83NXaUCm1QhQaxVx50ZAfl+2hNDkg0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bi2RSZIhIrMeP9lQ7E6Lmm9GslpS3QdXywuDs9Fna/5l1DPEkZkA/RedhcXdqoZdD
-	 1utTkzWvZrIn1dFLitOdHpNORhel1fHvMHmVBd3JgQ6icLqYTo5m6nS9ZD+IGQQl4t
-	 BNa6eSjaJj0x0RjIUtxTPQ6isX7nQxOGoUvsqaz54aLB8So6aXI4d6dcRfzw9Sv+gk
-	 BsE5tMwq60c9kDu6ArZZUCjQ0uCNx8Zv6XJOW+rFhrSsfcgYjwBg+tbby5yE7hafcM
-	 Lus0cO5JsPfxtypi0XoMIp9JD9CYTEqK6+1Xrucbf1V7kFnUOU6puou0/bJOzXQaj2
-	 CMaT59c1woIqQ==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vNTPw-0000000025T-2FTh;
-	Mon, 24 Nov 2025 11:03:32 +0100
-Date: Mon, 24 Nov 2025 11:03:32 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] drm/tegra: fix device leak on probe()
-Message-ID: <aSQtdG3MiSq9YJAP@hovoldconsulting.com>
-References: <20251121112432.32456-1-johan@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yN/MTMQm"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7881b67da53so39647317b3.1
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Nov 2025 02:16:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763979395; x=1764584195; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MUJocug23WNDU1Y6GfZPFr7BhDF2XBVjY51YTnPiJ9I=;
+        b=yN/MTMQmuUbOKW/1haG1umPRA2w46BoaJ5y/QEiLCOrx0qQ4APqE0XiAY9E4VGvf8l
+         Q9y5szUzSQqE8sRtO2FTnuUpUFPhAXHBpTwOBcAlcRa28L4nhckyVzFv5Y0GwBSHEzeu
+         VCZSx/eUK1tyd9jqmbEHCIcFWs1NM7rFF9PGKbx/kqlwJxCHbvsd8sCgPtJYo/RNiL2d
+         cfm4+1dvS7xy7Kpjb1wNbv/R+l1KJ+vKs3o+vxj2tkxJpcbKp7XQiS9FpGjdfAQT6ZeS
+         sQ6Qd5i2rKGFMO56L5PV2HNeerPU3Z5Qfz8OCH7u8DF2v7W0eI2Zh8v9V23jUmBpq+PM
+         CUhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763979395; x=1764584195;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MUJocug23WNDU1Y6GfZPFr7BhDF2XBVjY51YTnPiJ9I=;
+        b=VQkPTky7nm3s77DIvT/pjvGSQ25mmx75u2x1TArliK8aD4lGAVrf7ZuMcSoSRI/DWc
+         mOReQpB6xkabG8NirD9dOON3Xm8N1GT9MnV1S/DRsi/a0m+UDReyUIl0Y6Zh7p/hbDcg
+         1y0E8VhHmBlIcsreKTlp8RRGOlWafmWs4qMvkmftCVpfmVfaYb3+vXqSK1YBiDP7CQmg
+         LExreKRlIuvc1CGYGDHcPH5n6c6WDE/hbOJ45GeyWuQkWbiSXKoHfVYZDF6Tiu/5EzSC
+         NhW6E3pWVMerQApiFko25gIKwPnfgGp+iOv+K67oSCbkzluU4rOtONXVAY1/qhX6mUEP
+         80LA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ek+RBMMDSLRU5XwZuqh1ha8jDUOWtvcOuvP6sX5Y0rDlK3UZ8VWHtxGYJ60xOzrZhAlXYHF6kfZeGg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOZlSHJeWiUCrOH1cnWtf4FOoF09kboVouD2qXdDhOnhy1QtjM
+	vqBx//u4YFjwZn4JoTB3KfTOC2p9nDLGX/TB4vQ7BLd5cFeM9whkegcGOGhOabLt8V963bZ3bcr
+	0EGnrfRbG733VWZckdpnBer363Rv5uHFJLrzucq8ckg==
+X-Gm-Gg: ASbGncuqmRIxkWwahc0ZegxF//TslPbMVfZdYjDCWRaRBGMhssRnddWPI4C3Jv/rjTX
+	wlnyu7mFK6548Q9S0FE7/Jo7OTpQjbGBgCMa5yr7xlMVPZynRJwr1a74LdLB3DSHxE7A3WasOvH
+	5EF6RgPumB0jiwwk2jlKDxbUGg3/L3m4soF/a8dEJVKAsYx0fss7JbArZQToqMZUGTEwEFntJ0G
+	yATNxeAh1X1k8lrEoJrMLcM0VKvuQ/qoa8mwBPeZACVQrYPLznjYLIKCshKBz1YQJcgn1zS
+X-Google-Smtp-Source: AGHT+IFk5xPuC9WllFeYsMt+cAg6kWbQNM3KukyATnXbYdApjEIkRdeGdUKoq+5c0uXHzxg9wlZtxBQZ72ka+tuwxxk=
+X-Received: by 2002:a05:690e:10cf:b0:63f:bab4:fde6 with SMTP id
+ 956f58d0204a3-64302a31c05mr5812050d50.13.1763979395064; Mon, 24 Nov 2025
+ 02:16:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121112432.32456-1-johan@kernel.org>
+References: <20251121141003.1808684-1-jonathanh@nvidia.com>
+In-Reply-To: <20251121141003.1808684-1-jonathanh@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 24 Nov 2025 11:15:58 +0100
+X-Gm-Features: AWmQ_bk3EBTHXt5C05GTGKRYiwOCqayqrpMK8udBn5ehvC6IZljccTyU6QUcoeI
+Message-ID: <CAPDyKFrsXydSXEZYxtuqQRwydbuq+VawJ+J_8EvaeYUkMSizag@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: tegra: Add GENPD_FLAG_NO_STAY_ON flag
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 21, 2025 at 12:24:32PM +0100, Johan Hovold wrote:
-> Make sure to drop the reference taken when looking up the companion
-> device during probe().
-> 
-> Note that holding a reference to a device does not prevent its driver
-> data from going away so there is no point in keeping the reference.
-> 
-> Fixes: f68ba6912bd2 ("drm/tegra: dc: Link DC1 to DC0 on Tegra20")
-> Cc: stable@vger.kernel.org	# 4.16
-> Cc: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+On Fri, 21 Nov 2025 at 15:10, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> Commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until
+> late_initcall_sync") kept power-domains on longer during boot which is
+> causing some GPU related tests to fail on Tegra234. While this is being
+> investigated, add the flag GENPD_FLAG_NO_STAY_ON for Tegra devices to
+> restore the previous behaviour to fix this.
+>
+> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+
+Applied for fixes and by adding a stable tag, thanks!
+
+Kind regards
+Uffe
+
 > ---
->  drivers/gpu/drm/tegra/dc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index 59d5c1ba145a..7a6b30df6a89 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -3148,6 +3148,8 @@ static int tegra_dc_couple(struct tegra_dc *dc)
->  		dc->client.parent = &parent->client;
->  
->  		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
-> +
-> +		put_device(companion);
-
-I noticed that this has been fixed in rc7 when rebasing so please
-disregard this one.
-
-Johan
+>  drivers/pmdomain/tegra/powergate-bpmp.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/pmdomain/tegra/powergate-bpmp.c b/drivers/pmdomain/tegra/powergate-bpmp.c
+> index b0138ca9f851..9f4366250bfd 100644
+> --- a/drivers/pmdomain/tegra/powergate-bpmp.c
+> +++ b/drivers/pmdomain/tegra/powergate-bpmp.c
+> @@ -184,6 +184,7 @@ tegra_powergate_add(struct tegra_bpmp *bpmp,
+>         powergate->genpd.name = kstrdup(info->name, GFP_KERNEL);
+>         powergate->genpd.power_on = tegra_powergate_power_on;
+>         powergate->genpd.power_off = tegra_powergate_power_off;
+> +       powergate->genpd.flags = GENPD_FLAG_NO_STAY_ON;
+>
+>         err = pm_genpd_init(&powergate->genpd, NULL, off);
+>         if (err < 0) {
+> --
+> 2.43.0
+>
