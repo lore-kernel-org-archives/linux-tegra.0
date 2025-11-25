@@ -1,64 +1,64 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DED731AF3F
-	for <linux-tegra@vger.kernel.org>; Tue, 25 Nov 2025 12:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4248631ED81
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Nov 2025 12:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764072389; cv=none; b=YDYl9OVPiqQ3UulHd28Qj68Vb6whJGIf9OlPlCPt9dZGxnNwFSxig3wBY2S9inotP4xWYbussTgHWbfBldcVL1HVNTlz5FzJ0mx81cGGnZo8XvPEiJ1uSRDFb8Dv4ulorcKAk0OvADjWyWtkq+esFlWnco0vBeE7Qwq9oj1law0=
+	t=1764072390; cv=none; b=Bs/y7mklkz41VBJ9CRIXVinq4/mhuzFwO80BLShDimOQGGd4zflkcoBV8DbaYaYebi0NRU25A8hAtyp36bZjwlwwDIOWG9iOLetzmCHLhMkYr24zUSUGU/DP02eriAuWLOAkkhjdiygDBqruDLto+/c2igxLQBwFRoy5+qOJ4qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764072389; c=relaxed/simple;
-	bh=EpZL32Jyo1zVK7iE7f/cCfj6bklP2cCKT0AbKLrFi34=;
+	s=arc-20240116; t=1764072390; c=relaxed/simple;
+	bh=xUFvUb8oKPEbKpAh29NhrNZ2bfXoPM/j19JqA5bbRxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=erpbIN3YpEfgOorWIEakUsTG93TUCHDAu1r+2+VY/c2N5vv+cQuPIyhcTUShOe2IdzJ776UaJNHP/3G4jM6ZsKWiPtXdt4y5JrBFqsnVG/2dktSaafteEW6nYGxUHbHrmzsg9ZdpOiPGizcI/qxsK0QtnqIJqnaamxxfGJSpD/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Go3cfmqc; arc=none smtp.client-ip=209.85.167.54
+	 MIME-Version; b=pFKdxeyiDy8fVmja/PaqxYKnnXhBGTZ2PrX46PuedrA5F9KgYjMGVUi2MAAscr+2wB7eKNUq3LwRfwlFCcmAMBmjDGBUptWtcojpIjlmBPbiTjI9nSlsAfkm/dmV313vHEZK+PyYwXNX5x/Vbt8wiamWewm/EWCaow1YhPC/r0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmGoHuOW; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Go3cfmqc"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-596a055b1b8so5145585e87.0
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Nov 2025 04:06:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmGoHuOW"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59584301f0cso5911238e87.0
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Nov 2025 04:06:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764072384; x=1764677184; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764072386; x=1764677186; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vVffN9Slo7nSA6jMy+HnfjnzdqrKlZ/cdmvcQBPmzT0=;
-        b=Go3cfmqcfpuW9RUC6Mk7WE7nzPEWU+fH0RWjBM59qKzSgrSJ+wjwWKL7ltJFgjcDfy
-         MhU8s8NO9mSXC3LyT7VByI5xz2w2fIDJ5RJlXU2HI0mBiq7YYpce2h6pq4HOH893JCT/
-         PRFbog3fYgrEmLxaVL5ux7UQmmzzm9Hk0kLP0nVOipE98uyZGKGoJSgv3dv8xKQx7qI+
-         UV7pr9nogDskDXyHyuB81rRqwiqmEHk6Kio8azYRm6kioUSI0BujgbWKes/5fJibIXkG
-         N1LPEHcLB34lowIVIKVb+wbl9NTb++9WEJBz/G2Eb/xDGsV6xsuEJC71nUfqwLnIeB5z
-         s2/A==
+        bh=uN+F0Xnd3WljGjWpLVxmMpsaxzHe/mQ0Vkjj3hwJW+M=;
+        b=GmGoHuOWaR995Lcc79GWMbCFK4Oss6BPSvGUKGkjTD/fy0s4ot8bE+Nlm7J/Yr5LF7
+         8F39Gcu6sECcvo64cJ8eaI5q06VXZ12D8uk6kRyRggF69MOM/jUQIVFAUffcE79K7h3j
+         YJDbVtvlQ1JyXmfO3S0OxA3BvoOTKl0ZkCMOJ7c1KYOVB5iW42ckgzIUyVe5vJtVuOa9
+         Iu+TEwCepv3v5v8syqVEtfyNimIy6XEbFDV/e6aVKLCmHuCqyQ2j26951K4O6m7tho08
+         lL1Dwhgs1g0zA93IXwtba0Mrfc2iMxu1YrxeOfxiXNRbcyZjSKVLSi35jdPidD+IXl6i
+         SVLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764072384; x=1764677184;
+        d=1e100.net; s=20230601; t=1764072386; x=1764677186;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=vVffN9Slo7nSA6jMy+HnfjnzdqrKlZ/cdmvcQBPmzT0=;
-        b=uQfPhRELJy2swO7U2lzkK4uh6mh9N17aqW0zKOBWrFWjuoVkC226I++v8+yfsOtZts
-         T3faazvXUpfHRl+g3zKKPNuYsZwIo9A8ZF3ZvW6M6QWyge7YWY9MMP0Z7MjEx14F/Idu
-         QPMZFdbAyyUNTqiMG1BS6SHtsZ+mWLCYwvFncbWAOn7dh3GOb1MxmflLkHQU0L3HVLvM
-         yt1sVltfSY74Ue+07Fbj7VAI2jNbMNbUUdFknJ1PQVOMLpx2rWuNffSBKVGJ27L/NSAT
-         Fp9dPjMr1Wu7w+Hfb+0qwTX0TNPcTdHiv2oHpGlnpHI5EW4+oRWr+rvAhYjUt5cgDY+e
-         tT9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWCEH0u04jUV9m+nmjR9uatUeU73L13Gp4sxonmKxtK+71e/Tegk3EGH1Apj4D68taKfTMrqjUgELyTVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9nogpIM3tYYXKI6Y9PGQqrVKh3fJNUdymFSd5v/i5M9uibFUW
-	gJfgc0ngNvIP+l9oGJtom/qrPXnvg9WNFdMlfwafy35KZu81TbW/HV9Q
-X-Gm-Gg: ASbGncuYzXsUI080M3/MjEd/uyJtsqir3j1yO27hffK/kgMBd+cblyjDfGtm8uTUk8b
-	6uyglax7RMCchDwH0ejmGCfi/z9d7N+tlJygRB+BBaeKdpvw/jJizff4y6sYlogj/dVBEVA/Q8X
-	lPY1D669p5c8YLVKa8vAJznbFpzSSe3FVXNtqSVoJ96BaEf8kj/qMBl76hw/wFpPAiM3G62ghc+
-	aw/T7l7y8365O0+qkScpaMjL56lm8zSKUnmL2+X9IX5cGu/WpIsBj18AK7/Pkv/yfrnl5heCwZx
-	LolponcFDo65c5nPT31vLdDmk7WD+lV/dVY4gLZyiDMeqxVUeCwu4bjSWytIPSysnSUh17DlU9N
-	e0iQ5f9OGeNip5EGWdozJXakLtY18UIfszg1+BCYpqKufSfu/I5LzLpNwCLBEl1RTb2pZba16tf
-	I=
-X-Google-Smtp-Source: AGHT+IGOhBY4VdvmRQpYmf7pO7i0NLn6lazxvfZmPrqmAfJipbxasneXvNQ86FlomE8gw6o627DZdA==
-X-Received: by 2002:a05:6512:104e:b0:595:9152:b93b with SMTP id 2adb3069b0e04-596a3e63731mr5440707e87.0.1764072384245;
-        Tue, 25 Nov 2025 04:06:24 -0800 (PST)
+        bh=uN+F0Xnd3WljGjWpLVxmMpsaxzHe/mQ0Vkjj3hwJW+M=;
+        b=eUUqmbZmo0io8Bj9aYpeHPVOVMgciLyFyQbisK+QOkRor9OXsXzPp199cEzmnAlzhm
+         HO5UZv4rqd9mr1yDJ8wWm5DBfswVPUsca5NDLG5pxEgKc/l/v9Ro0CZE7jRvStVKSYro
+         u54o1olHK7cBzwjmzQiWXKpMb1TPnt5fyFRF1ZqXIJz54RjC5Fw5cgBKribscTzCLLQy
+         gjOsDVcjTOK0OCXaWqasbr8jxY9fJ0fj2SAuGnd0++iYIpP1v+p5gZv07wPTe4JbVW7a
+         0Syliro3TyjvMoIaA86x0GfVZJYfQfYfKuOyY5lS11ODed7Byx0XLx1j++KPpFcaTn7i
+         PEMA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0184/etJhDwtDZo+aEccyyqy8T+8eWh1q5jINgMDw1oq1RoRn6+610DWzMU/Aggr1FPIO1ZTcAScKRQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7kcdq/CDwkGGV9J5uTZVrop5kCi4e7QVLfu1o5VvNdSvAGdA5
+	f5Zb8XXhBLhhb7ALUfYZadWvy3jJW4vDHrwZWbOk+TKkgugPkl00gvN3
+X-Gm-Gg: ASbGncuBdgkWDe6ttZ7ai3bFbfB+ojrOly62DB6gXYNPW23NZEYreuS9KK8WPxSh9Be
+	VGkcHfcx/t+ggO8KHruvDniLOqw922MVviK0GIGxBIzzt/C5y838fOwcz28Y5h2svNnd5w/gjqa
+	Lxqf7vEN76a9wPEdbubrSFGiN3JhED6UYm9Ym727/03fM1VY2orf5Cs0I1HAlrqsvPnVMTeBDfH
+	5NuyAkFdGKIpjhz0+QzlbRMuP+4RHy515LyMpovu13bBMEllUeO4g9SFWy411kfnuLBEtOQ8k87
+	18W24Cu+wT/RQWwe3aXKDkdAynMjKbvNbSmeO9TvEdirzrrR3jOGlZeBGr8p3epjRq3CdCsh/Ad
+	ZqOy4FL7w02onD9e6UTbfzHWluoR7hQIewu/xYQqBE+3f+qC4m5PxnzsliQBN3+PSlB3kpv9OvI
+	E=
+X-Google-Smtp-Source: AGHT+IGkQddv0h4W/kIYw24XVr8lRF2/F0YngAnHGV9hmScDktzlX2Yt8Q6XtITCokbogoFFbpJn9Q==
+X-Received: by 2002:a05:6512:159c:b0:595:9152:b932 with SMTP id 2adb3069b0e04-596b526c87bmr786045e87.47.1764072385864;
+        Tue, 25 Nov 2025 04:06:25 -0800 (PST)
 Received: from xeon ([188.163.112.74])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5969dbbecb9sm5150993e87.58.2025.11.25.04.06.23
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5969dbbecb9sm5150993e87.58.2025.11.25.04.06.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 04:06:23 -0800 (PST)
+        Tue, 25 Nov 2025 04:06:25 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -80,9 +80,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH v4 05/12] dt-bindings: memory: Add Tegra114 memory client IDs
-Date: Tue, 25 Nov 2025 14:05:52 +0200
-Message-ID: <20251125120559.158860-6-clamor95@gmail.com>
+Subject: [PATCH v4 06/12] clk: tegra: set up proper EMC clock implementation for Tegra114
+Date: Tue, 25 Nov 2025 14:05:53 +0200
+Message-ID: <20251125120559.158860-7-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251125120559.158860-1-clamor95@gmail.com>
 References: <20251125120559.158860-1-clamor95@gmail.com>
@@ -94,91 +94,92 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Each memory client has unique hardware ID, add these IDs.
+Remove current emc and emc_mux clocks and replace them with the proper EMC
+clock implementation for correct EMC driver support.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- include/dt-bindings/memory/tegra114-mc.h | 67 ++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ drivers/clk/tegra/clk-tegra114.c | 39 ++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
-diff --git a/include/dt-bindings/memory/tegra114-mc.h b/include/dt-bindings/memory/tegra114-mc.h
-index dfe99c8a5ba5..5e0d6a1b91f2 100644
---- a/include/dt-bindings/memory/tegra114-mc.h
-+++ b/include/dt-bindings/memory/tegra114-mc.h
-@@ -40,4 +40,71 @@
- #define TEGRA114_MC_RESET_VDE		14
- #define TEGRA114_MC_RESET_VI		15
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 8bde72aa5e68..853ef707654a 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -622,10 +622,6 @@ static const char *mux_plld_out0_plld2_out0[] = {
+ };
+ #define mux_plld_out0_plld2_out0_idx NULL
  
-+#define TEGRA114_MC_PTCR		0
-+#define TEGRA114_MC_DISPLAY0A		1
-+#define TEGRA114_MC_DISPLAY0AB		2
-+#define TEGRA114_MC_DISPLAY0B		3
-+#define TEGRA114_MC_DISPLAY0BB		4
-+#define TEGRA114_MC_DISPLAY0C		5
-+#define TEGRA114_MC_DISPLAY0CB		6
-+#define TEGRA114_MC_DISPLAY1B		7
-+#define TEGRA114_MC_DISPLAY1BB		8
-+#define TEGRA114_MC_EPPUP		9
-+#define TEGRA114_MC_G2PR		10
-+#define TEGRA114_MC_G2SR		11
-+#define TEGRA114_MC_MPEUNIFBR		12
-+#define TEGRA114_MC_VIRUV		13
-+#define TEGRA114_MC_AFIR		14
-+#define TEGRA114_MC_AVPCARM7R		15
-+#define TEGRA114_MC_DISPLAYHC		16
-+#define TEGRA114_MC_DISPLAYHCB		17
-+#define TEGRA114_MC_FDCDRD		18
-+#define TEGRA114_MC_FDCDRD2		19
-+#define TEGRA114_MC_G2DR		20
-+#define TEGRA114_MC_HDAR		21
-+#define TEGRA114_MC_HOST1XDMAR		22
-+#define TEGRA114_MC_HOST1XR		23
-+#define TEGRA114_MC_IDXSRD		24
-+#define TEGRA114_MC_IDXSRD2		25
-+#define TEGRA114_MC_MPE_IPRED		26
-+#define TEGRA114_MC_MPEAMEMRD		27
-+#define TEGRA114_MC_MPECSRD		28
-+#define TEGRA114_MC_PPCSAHBDMAR		29
-+#define TEGRA114_MC_PPCSAHBSLVR		30
-+#define TEGRA114_MC_SATAR		31
-+#define TEGRA114_MC_TEXSRD		32
-+#define TEGRA114_MC_TEXSRD2		33
-+#define TEGRA114_MC_VDEBSEVR		34
-+#define TEGRA114_MC_VDEMBER		35
-+#define TEGRA114_MC_VDEMCER		36
-+#define TEGRA114_MC_VDETPER		37
-+#define TEGRA114_MC_MPCORELPR		38
-+#define TEGRA114_MC_MPCORER		39
-+#define TEGRA114_MC_EPPU		40
-+#define TEGRA114_MC_EPPV		41
-+#define TEGRA114_MC_EPPY		42
-+#define TEGRA114_MC_MPEUNIFBW		43
-+#define TEGRA114_MC_VIWSB		44
-+#define TEGRA114_MC_VIWU		45
-+#define TEGRA114_MC_VIWV		46
-+#define TEGRA114_MC_VIWY		47
-+#define TEGRA114_MC_G2DW		48
-+#define TEGRA114_MC_AFIW		49
-+#define TEGRA114_MC_AVPCARM7W		50
-+#define TEGRA114_MC_FDCDWR		51
-+#define TEGRA114_MC_FDCDWR2		52
-+#define TEGRA114_MC_HDAW		53
-+#define TEGRA114_MC_HOST1XW		54
-+#define TEGRA114_MC_ISPW		55
-+#define TEGRA114_MC_MPCORELPW		56
-+#define TEGRA114_MC_MPCOREW		57
-+#define TEGRA114_MC_MPECSWR		58
-+#define TEGRA114_MC_PPCSAHBDMAW		59
-+#define TEGRA114_MC_PPCSAHBSLVW		60
-+#define TEGRA114_MC_SATAW		61
-+#define TEGRA114_MC_VDEBSEVW		62
-+#define TEGRA114_MC_VDEDBGW		63
-+#define TEGRA114_MC_VDEMBEW		64
-+#define TEGRA114_MC_VDETPMW		65
+-static const char *mux_pllmcp_clkm[] = {
+-	"pll_m_out0", "pll_c_out0", "pll_p_out0", "clk_m", "pll_m_ud",
+-};
+-
+ static const struct clk_div_table pll_re_div_table[] = {
+ 	{ .val = 0, .div = 1 },
+ 	{ .val = 1, .div = 2 },
+@@ -672,7 +668,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_csi] = { .dt_id = TEGRA114_CLK_CSI, .present = true },
+ 	[tegra_clk_i2c2] = { .dt_id = TEGRA114_CLK_I2C2, .present = true },
+ 	[tegra_clk_uartc] = { .dt_id = TEGRA114_CLK_UARTC, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA114_CLK_EMC, .present = true },
+ 	[tegra_clk_usb2] = { .dt_id = TEGRA114_CLK_USB2, .present = true },
+ 	[tegra_clk_usb3] = { .dt_id = TEGRA114_CLK_USB3, .present = true },
+ 	[tegra_clk_vde_8] = { .dt_id = TEGRA114_CLK_VDE, .present = true },
+@@ -1048,14 +1043,7 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+ 					     0, 82, periph_clk_enb_refcnt);
+ 	clks[TEGRA114_CLK_DSIB] = clk;
+ 
+-	/* emc mux */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       29, 3, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
+ 				    &emc_lock);
+ 	clks[TEGRA114_CLK_MC] = clk;
+ 
+@@ -1321,6 +1309,26 @@ static int tegra114_reset_deassert(unsigned long id)
+ 	return 0;
+ }
+ 
++static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args *clkspec,
++						void *data)
++{
++	struct clk_hw *hw;
++	struct clk *clk;
 +
- #endif
++	clk = of_clk_src_onecell_get(clkspec, data);
++	if (IS_ERR(clk))
++		return clk;
++
++	hw = __clk_get_hw(clk);
++
++	if (clkspec->args[0] == TEGRA114_CLK_EMC) {
++		if (!tegra124_clk_emc_driver_available(hw))
++			return ERR_PTR(-EPROBE_DEFER);
++	}
++
++	return clk;
++}
++
+ static void __init tegra114_clock_init(struct device_node *np)
+ {
+ 	struct device_node *node;
+@@ -1368,7 +1376,10 @@ static void __init tegra114_clock_init(struct device_node *np)
+ 	tegra_init_special_resets(1, tegra114_reset_assert,
+ 				  tegra114_reset_deassert);
+ 
+-	tegra_add_of_provider(np, of_clk_src_onecell_get);
++	tegra_add_of_provider(np, tegra114_clk_src_onecell_get);
++	clks[TEGRA114_CLK_EMC] = tegra124_clk_register_emc(clk_base, np,
++							   &emc_lock);
++
+ 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+ 
+ 	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
 -- 
 2.51.0
 
