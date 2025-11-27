@@ -1,357 +1,297 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012054.outbound.protection.outlook.com [52.101.66.54])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE9A334C0A;
-	Thu, 27 Nov 2025 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.54
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764255296; cv=fail; b=ILLed6ymdk4GmDKzKmQGvs+oT4ZJpZDMQLVvA0bfnimWJ/dPfyiTj9djLHRorrM0pjQN5lOig/PG2kMslbajsWe6QXYQO3oFRfFBbBJ8OxGQfaOQKu2mrgmi0DF3IR1c6GjgZV2vxUo/++vxSSawIknycxb37frvrqjeI4JtN7A=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764255296; c=relaxed/simple;
-	bh=NSo4XRehT3h6B5nSiMWtJcxAsmhlrGgv8Yw4M/TnrzM=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LKBTW9lJLidYMvzzLeNuIhpZ5kakSknUL13NjiMLWdrquCQ3imoGwwDsoaFxsJMbGlWOFX3v5asXgfjv0H8ypBQty8XfhpLSuQUI9E+zsnDU2p598Hpg7y+1E1ffDhU7RPMD/xi42mcv1y2KPbl3469qCPbYoGtpz55a/ztnQQs=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=KYU033Za; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=KYU033Za; arc=fail smtp.client-ip=52.101.66.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B9A2ECD0F
+	for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 17:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764265283; cv=none; b=Pq0+25ot7aRF1ByhHreZS8urv5GlQhbcbja4//QkCMjnNO5jc8kW4vhUDNXxokqrqIP9BHFR0HVwxc3+HSaZKaOAmyH0ez6cG9Zw0u93s7Ypm6flM3/0R3XMsu7K3SIiU1SymOgPh/ZkvvdYww7GVg9bk+FjEFn0EIz3DexF8pU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764265283; c=relaxed/simple;
+	bh=YRwpnmivmIGfSil+ZD1aGlxCYo+UU/QzrOBg9t1fcoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d+jRwnCnVVvQlhZe1OoaVm4Zj7A6H7ZP/xH3BlaFGG+WH4u331wlyZF5HL4FIGlB12XxV9xZMoyBHpuKDxxCERZYlDj2ybrdl6MbE4ExySFHIVNtCVbuGlg15fnen6yO4Dp9oIFUFp5mcY5OzCsAdfaOK39F1HEIP2dXrx3cHuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQo4zWhW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="KYU033Za";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="KYU033Za"
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=Ca7OCriyvTpslAz4/YW333npjSR+NS7gItm8nns1NsrwqUdqYqKJuYwlTypcvJ5kFwFo4d/Qgryi5m0lUo6m94YgALypURPQQacyeXIrcE+GBtfRnGvjqIWRjZrNhVH02WWrfBbx6trowKdtTpzNnOyLzu+VnR1pNvhBZ9fyKSwDjpDr/OOA02jMClN1+S1nLrnlU3nfUV1ffe5arXvkpfs6Gbp6cMNwaIfFjt9a/ULUkNdDiWBNjU9f73Y9KmlO0QeeuwSxF/HFTCc42Mtv5u7xDhwWFHImWbI9zZ12cg/RVS3282n03Nz0UaRNxzWQel1T0uMZ93G7VVti+fMdbA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OFhpovNIW4zoU6IpWBva3F+yRZ5QcDQYLcPce/PdK/g=;
- b=wRuQgSQtdfIO3YZQ5mcCHicOuRHz9AeaA+taG0AicocU4W436Eo/M9h/7pC9IaJnvA/UYegVD4WbRqufcDb3dB5aQVd3jlyNgnuhnNpBysbZ/XBPpJTBa0rqECOpk1CUOyt1TgRXpDEL+ifNKVCaODjkbqA+P84O0h/D+jTMxUsJG/6ozdSVKMiPTLnJstYH2/pruDv6yPnp9xMUahruZ9eyXoOvFE96Jsd3yPOJpy2Dj0VOmajaMHQDZXFJ9AND2BpDn4KIVeLtBBmS38llU7Jweojjgfu2uYfoLOQhu3hKBZWdtNQV76Tb8yaa5cpwZDwlY1bfBWBZNQA9D5S7bQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=nvidia.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OFhpovNIW4zoU6IpWBva3F+yRZ5QcDQYLcPce/PdK/g=;
- b=KYU033ZaQLw4yRhR33flC/6b5jWzJ4AO7sQVo1xAhH7OhrNuU4wncj7Jw+QONCBGx9ijKL7Z+h9ibztvuAHKjPQvb9xBvQI9YMAmgootDgfJHwQ4U+vsIBL9TBC4ctbslyCmYKpLbcbjhL4jOo+yza0wbF5IGdOVme5ZmJf4AI4=
-Received: from AS4PR09CA0012.eurprd09.prod.outlook.com (2603:10a6:20b:5e0::15)
- by PAWPR08MB10258.eurprd08.prod.outlook.com (2603:10a6:102:358::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.12; Thu, 27 Nov
- 2025 14:54:50 +0000
-Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
- (2603:10a6:20b:5e0:cafe::9) by AS4PR09CA0012.outlook.office365.com
- (2603:10a6:20b:5e0::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9366.14 via Frontend Transport; Thu,
- 27 Nov 2025 14:54:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9366.7
- via Frontend Transport; Thu, 27 Nov 2025 14:54:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rgv7jYny2dFUlwd1AICf0nA5OTyHUfaM95K3QYV13fshaspYnWNT2OMFHNJj+07PJrAHlb3k1Yy/7wW6JxXQiEkegf+XaCUUX6s65S173idaxqHg55qRj9I5cl8I8VAlj0RsjSaL4jG5uCWCNm/z7UFxamUHB29kdKkbQGz14NdWIFg4+vYeRtgVnuWgYqQsvSwmi+uSyGUhcvvoJB/y2Z+aRjuxmoiHV1c2baW6QmeBhVIogowon8lK+e9x4/3rGGYrwAPdBM8BecFdsqs3ukLvaFPvxBaqCN5TIIHac/JK4HiRZ8LONjHK6DjzIJGvj59JxcUVPdZ6SwLOCs2JTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OFhpovNIW4zoU6IpWBva3F+yRZ5QcDQYLcPce/PdK/g=;
- b=IJBgwMrPKCrMltZOxKGqhd1BfdT5ftuhT8A/AdvIRgOFAq53/zvSf+0o2HJx6+xhqUmzGKY1nUlsa8Jd/wRmNtiMZMA1yXXtPZY5CxW8vXuCHw+ZKuTCa3G/UqiBT0OEBQAOaAcWxof5BAp2LSDt7aZk71OVPAW9rMyP1RRsVpTDI7/6eAnaiqAe1d3RgG5ujVUg3kXZhMxkV5CP/zXbrmYvCaK2KkINHKB8eX7KMCSdLR2QJQ1IVHddq6aCzobX16fGMYGDokgHUqtC6yo19ML0NXcG9C6VSbbLy1Qxo8EmPmQFXG0kwIXNq37GjuYeC4xFhy9XU+UQRfUSuptRbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OFhpovNIW4zoU6IpWBva3F+yRZ5QcDQYLcPce/PdK/g=;
- b=KYU033ZaQLw4yRhR33flC/6b5jWzJ4AO7sQVo1xAhH7OhrNuU4wncj7Jw+QONCBGx9ijKL7Z+h9ibztvuAHKjPQvb9xBvQI9YMAmgootDgfJHwQ4U+vsIBL9TBC4ctbslyCmYKpLbcbjhL4jOo+yza0wbF5IGdOVme5ZmJf4AI4=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GVXPR08MB10408.eurprd08.prod.outlook.com
- (2603:10a6:150:149::17) by DB9PR08MB7891.eurprd08.prod.outlook.com
- (2603:10a6:10:39e::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.14; Thu, 27 Nov
- 2025 14:54:18 +0000
-Received: from GVXPR08MB10408.eurprd08.prod.outlook.com
- ([fe80::7727:253f:2e85:efb8]) by GVXPR08MB10408.eurprd08.prod.outlook.com
- ([fe80::7727:253f:2e85:efb8%5]) with mapi id 15.20.9366.009; Thu, 27 Nov 2025
- 14:54:18 +0000
-Message-ID: <1decddd7-54d7-4e7e-922d-b68b901bf9aa@arm.com>
-Date: Thu, 27 Nov 2025 15:54:12 +0100
-User-Agent: Mozilla Thunderbird
-From: Pierre Gondois <pierre.gondois@arm.com>
-Subject: Re: [PATCH v4 5/8] ACPI: CPPC: add APIs and sysfs interface for
- perf_limited register
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- acpica-devel@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
- zhanjie9@hisilicon.com, ionela.voinescu@arm.com, perry.yuan@amd.com,
- mario.limonciello@amd.com, gautham.shenoy@amd.com, ray.huang@amd.com,
- rdunlap@infradead.org, zhenglifeng1@huawei.com, corbet@lwn.net,
- robert.moore@intel.com, lenb@kernel.org, viresh.kumar@linaro.org,
- rafael@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- nhartman@nvidia.com, bbasu@nvidia.com
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-6-sumitg@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251105113844.4086250-6-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0124.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c6::14) To GVXPR08MB10408.eurprd08.prod.outlook.com
- (2603:10a6:150:149::17)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQo4zWhW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97F1C2BCB2
+	for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 17:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764265282;
+	bh=YRwpnmivmIGfSil+ZD1aGlxCYo+UU/QzrOBg9t1fcoE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GQo4zWhWFwuM7yaQm/G6MoYrO1sGCe63LiivwvpbJXTuD4bpwtx7vVrjJq/jO3yNT
+	 /glPNOmTyEyuQgFnjW09IwIDuzYIhIp82Bq5tDcMxZ2FYvQimg6WzJuHjpMmBtLdRC
+	 7UHkgkhDXiAZGbYaljkVGuyQaHao2d5pJkHVYaTTRtcd/n5x9+u6+lZm+cbLEo/yUI
+	 r91c8vZQfOXME3t0aQ3s8j0vLUmV7g0L5ZqU6BMJPCG7P1VcW7pspVtnA3oNfQZt9a
+	 wFzr4/a6G8flzMAgfLEhY9Cq1WfAqIZxQ26MOBUnGa6tT8wSG9PPUc+wOdGDq10Lp1
+	 5jvmWmWflox3A==
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-450b3f60c31so345489b6e.3
+        for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 09:41:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXPA8G5b3uJuVypPJDjZ5T9QS8NWAkpQ6Sqo0PkIOL/n/O1xb2i49wUHNI5Av5kD1kj/3ocoVG59u0Y1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjLGEvrXOZErdEyWcnxsgobXfclGXiBpqPtRCyPfSXp4137Yt3
+	GnPPHpVWIuBhgnzrfhmANO7gB8oBiJTjqJZdmb4u8D2FyStTSolt6wfzMpNtjMX3bkz8220wJ9K
+	JRKJIinMZYJujRpVMXMWC98hNf794nnE=
+X-Google-Smtp-Source: AGHT+IHbfQ5CxJ+BeKUIRbyKYrpAVhmzQHngDVOs0E2Nv7PPmdkB/EPrjv3dEJtB2ATSYwuHhVrLlp/6B/DbEuYhyUY=
+X-Received: by 2002:a05:6808:14d3:b0:450:d7fb:85c2 with SMTP id
+ 5614622812f47-4514e6e1593mr4705868b6e.19.1764265281611; Thu, 27 Nov 2025
+ 09:41:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GVXPR08MB10408:EE_|DB9PR08MB7891:EE_|AM3PEPF00009B9C:EE_|PAWPR08MB10258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75b7b59d-3b59-4433-4f7f-08de2dc4eac7
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?MzJWeU1odHprZkovVmt2MWtUOURaMmJWMHV3czJmWHF1c3FzWjd1RmFyRWJz?=
- =?utf-8?B?UHpyczdKYVlZdm8ycVBXZmx3UkdIaUYvdzdQb0hncXRJM3cveGpobmxEaklQ?=
- =?utf-8?B?ckZQOUVWbjY3bDRvNWpUc0tiUDNFVmtNbGYwYmdCbXVsK0RDQWQvNlpuQit1?=
- =?utf-8?B?aVZpQmVOclJMTVg1L0NXYk5WSVM3S09FZENqNlBQL1RUcHA4Zm9UZ3dBQ2Zw?=
- =?utf-8?B?WnRNMUdGTU9mai9VaFhqTHRxQUppdmVPMlRpbzZwdjZGUWN5Snd1NkQ5ZCtn?=
- =?utf-8?B?OHdqb3Z2OENNT2tCMlFyYjdub0pJWEZnWVRrNG9LYU9ieitCdm1pVTRDbVor?=
- =?utf-8?B?ditrSys1RXpkbmtJZTZYZnJNa2YyL0VMakUwcER4ZFZuZmlnd3lmcmU1WEtK?=
- =?utf-8?B?VkRtRjl3MDlUeXZveFVDb2d4MlRkUlZPVlJQaUtDV1l0UEEvRWVrMmd1Vy8w?=
- =?utf-8?B?S1BHYjJvTTJRSEV1dnZqUkFzeFRzRzkrS0FjMWNuSHQ4SXJyMjI2YTZaNjJi?=
- =?utf-8?B?QlhYWDA4S0dxd0loSDlmY2s5ZkdnQ1VaeEpMdHBXNHhsdjJQVEJ5MFhGUXRY?=
- =?utf-8?B?dmJEWjMvVWZDeFQ4SnFPUlVqU3RKaHZlc3g5cDY4bVpNVmFHaGhQTXIvSG1z?=
- =?utf-8?B?NGtrSnVMOUZ6aFNMZ0d2NWpIQ05SOG94M0dLTVU5dnJkOUsvY3VkRi84RmhS?=
- =?utf-8?B?OFduWlJUQko5ZVlQRXN6MmJ3RUM3NW1MdnlkYnNnOHpwN1pXNFlOeXFVOFNx?=
- =?utf-8?B?VUlHNG9SS0IzRG9lcnI4OUlDWjJrVGtOdndGdE9CODhuYlVrMDBlTGhjMUsr?=
- =?utf-8?B?N3RmeFpPbjJQNmtIZ2lCQ3VSNU9vbU1XVzk4RGFjYXpCZWxZeXgxL1lxdjM0?=
- =?utf-8?B?WXJNUGZZb3FvWVdxN3l0dVJvT2g5cWVMNFk0Um82eEdhZExLZXpaUFUxTkFy?=
- =?utf-8?B?LzY0dkVmWWxBTmVBTGlkRDJRYVRvMHBUT3YrNjN2V3Y0WURka251WEFOTGhI?=
- =?utf-8?B?eUYvSUNqa2tNaGwvbk4rTmtROExoVllyN2pPVTdZYWt2R29nN3RoZFlvWEZ1?=
- =?utf-8?B?VE5oUS9lbzlReWxBckNOZi9MTlQ4dkJUWm5mdURza1J0N01YaDl5dkNNRzVz?=
- =?utf-8?B?Uk0zSklOK2U2RVlBcjBIS0dHWDRSUVhuZGI3MXhTVExSa0NsUEdkZStVQnlz?=
- =?utf-8?B?bkNaWnlmdXdra3FURXNpQ2hYWThQUDZFWVpQZFBnNkpxZzREekd5VkFlVTR5?=
- =?utf-8?B?aWRWN21henZwMU8rdlR1anVGMTVhOC9pN2dzQTZaMWxGWk5sR3FNalVtK05T?=
- =?utf-8?B?UFV6WGxvNFRKVGYzMHNiK1RaZUUvL1dzK0FONU1CQi90QXBsbnp6ckxNUzRS?=
- =?utf-8?B?dkczclFvMElJTzhocmdwNVY0WlZ6Y0czQ2dvM1hYWkxaSlB5eGVhdlZKQ2Fz?=
- =?utf-8?B?U2J0bktqTGhJWC95b0lZdkp0QnU2MU85YS8zQnFndDZSYlM1Nmd0M092dmhs?=
- =?utf-8?B?RDJEQkg1alJUUEFvcGdOLzdxSGRxVjVlazJiRG4wTXE2MFNwb0NUSU92V2th?=
- =?utf-8?B?TVpkWGE3MmxoZTlzWTd6SkRNU2liTktDVGZJRGxRakNueWVSNUxPYWl3eXdw?=
- =?utf-8?B?ZlFyenVDMWZSb2lNL001cEFTQ2FEMlYzUUpqNGM3ZzdSVGtRMFlVbkYzL1pD?=
- =?utf-8?B?QTd6ekFCbW9yUGpBT1F5RUxNY1dJYnJQdTBzeGFQRGdrTzBBN1BKZjRad2hS?=
- =?utf-8?B?ODI3Mmt0aVJIUC9LUzM0eERXTDgzM0tjUUlTQWNPU3JoVmwvb0FhZVVGZDYw?=
- =?utf-8?B?OGJhVmtwSjlzOWdqRjZYbllib1RNVlFjNXFSSGZ4dXFWL0pVdTJEaEkydmtj?=
- =?utf-8?B?bDdLNzlTdWpqUzRWQWpzek1yTTVQNFJCZFp4ZnZEZGoxcW9wLzA1NFJGRHBW?=
- =?utf-8?Q?45rVI/GV+nA9+uZV8luWpJZUVuiN6/YM?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR08MB10408.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7891
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF00009B9C.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	a6616863-12a5-452d-167e-08de2dc4d70c
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|35042699022|82310400026|14060799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OU1PQ3o5TFZMZ2dYRWpSdTJXMGQzbndOcHp0eHBOeUw5WXF5RFRST3hNTUQ1?=
- =?utf-8?B?NTcxbGtLNG5xZ1FnaVgxdExaa0xwbVFWMlREeGNoemtYQ1lVNkJ5d3dobldD?=
- =?utf-8?B?RXVjOUQvaU1oaGdlYjFKMCs0T3dZT2JLRGtJMnVoWU9IaXlUV2RoSzVhZ1Fr?=
- =?utf-8?B?WVUxcG92OUlRd3hqQ0NKN0FCck5KTTZSMUJvVFQ3MjZYWjEwU0U5a0YwTXZF?=
- =?utf-8?B?Z0orajZnRDBIYk9ReER1UVhuV1A2ci8xdnFEWGFtODNIeG4ySnpFOTJYaGkr?=
- =?utf-8?B?NjBlWjh3dW5BZmFXSTBnU3FsT1E1YXg1N0hyNWYvMFl0TG5neDR6amxpZDlH?=
- =?utf-8?B?dUV4YW05UldoZEFucW9ZQnlZL3ovc21RdXRMbTRBR2VmcVdxRndXSDhHRkNq?=
- =?utf-8?B?R081VHg2ZUpZbmNIU2hJR3V5SU5sbnpSTFpGTEJjcHNCanRoMTlYRC9OUHpv?=
- =?utf-8?B?UjFEZS9HYWhtQ3hhaitDZDQwcmx1eG5CeU9vam0vemN6WWlOb21SdTlaekJs?=
- =?utf-8?B?RHRqRUNTZW92ZlU4UDM3NE5yNldPTTkvYlozNWtmSW9YOVFjYkJuZ0lDZkhN?=
- =?utf-8?B?WUJhclUwdlhMa3JpR0NvbUhQWVBjSlZiNWxWV0tNVThJeFRNTjkrVE1HSE5o?=
- =?utf-8?B?N0JCMVFETEhsbVlvd0ZQWFo4bGlhU0dEbGl4UjRUTVBkcFRHQndpbDJVTjVm?=
- =?utf-8?B?aUZ5bmVIVllzSGh1Y25YOVlTQTN0Q0lyMU4xWVROemdPNncvS1lCRVgxQ2pH?=
- =?utf-8?B?RHFXaDdldjR5d3FDTlJ0dkhKV0JZYm52RC92LzZuK21YVkFCOENhY2ovZURT?=
- =?utf-8?B?dEkyVXhkTjdhMlkzeDFrQjlobkhVcWxUcloxdnRqQTNjMDc3YTBzZ3dzVFFT?=
- =?utf-8?B?MHFHZkZjekhHR05uQVdlbG5vRXFqbU55emp2UXZnYy8wTUVMMG5pMEIrNUZr?=
- =?utf-8?B?NHZSTDRFMlFCem02c0RkWDZ5YkU4bXBpc1g5ekVWVzMrUFBYNXJ2akx1L2V6?=
- =?utf-8?B?V2JsRk40VEpRT3NZcWt2eHp4S21qbmxxNHN2eGlGanhuM0ZrV3dXeHpZZkU3?=
- =?utf-8?B?aC9zYktlMHVlQW1ON3hkNXgzSXd5N3NwU05HYUhzUGZKQWJuNnlDWVdaTFRu?=
- =?utf-8?B?Z2FaeENleFBDTnpPMy9NQnN5d2ViYW5PY2RWTUhoelBiaGxZNUNGekxUT3Vr?=
- =?utf-8?B?ZjlaWmJVWkVwbS9HN2tROTZ4S2FFU1Rad0dNb1BqUEphMm92ellWQUZlT0tZ?=
- =?utf-8?B?UEVlbWlLWGZCb1VKWGd0ZHFURXRyT21ZWDA4UWpUdWZvM3RETkE4TVVXSlla?=
- =?utf-8?B?dmZ3TThOMmpzVFdrZWhYcnlsck40eWZBZTF3TytXZ0xMNC9vQ1dSSVdzZlF0?=
- =?utf-8?B?bWY0MVE5WWxXLzdWdTY2ZlZqUWUzTi80UXhDTllQZ3NmVitIcFdQUU5WK2xo?=
- =?utf-8?B?WEZBbkxOQjhKUEtNdHI5MmFBbDVtT2Ryc3NKeWZzdXNoNE54YmI4TWNrcXFN?=
- =?utf-8?B?bHpBYkgxT25zNXJmR0V4ejdMREpuMFpWMFQ4aVl6c2pUN2xTbndiNWlxMHZ0?=
- =?utf-8?B?bXVISXhrc0FpNGhnUVJ2VC9oYWFQdVhrOHVadWxjaytjNVlsNFRmMVNnd2JU?=
- =?utf-8?B?VU9VWVBmZS9XVERXbHFFd2F6V3dwM2FDNDl2MXBrUDlNTXRFMGpqSGFwSWZG?=
- =?utf-8?B?RGIvMlhad252eHZ0TEt6MjRjKzhQSEZPZjBXOG5xNFNnNi9oVXB6U3U2bUhu?=
- =?utf-8?B?OElBY0ZVdG5zZFZndjNic0lTSHVpQjh5YnFqRGk0dDQwOVJsS2FsbjJOSVdj?=
- =?utf-8?B?UXovYWxWY3dQWFdrOHNMOXgxeU5oTDhja1RGa0ZaUnpSMzN5dis1d2JsZG8y?=
- =?utf-8?B?bDlpS0ZjaVJxMGVWVlg5eEV0RzQ2aWtYYlBaYzRMbTdQc0J3QjJCM0xJYkEx?=
- =?utf-8?B?Rll4S2FzcXFrUHhOaWcvZENYMVEyQ1B0Z1EvK1NBM2dia01STkV6RVQ5b2dl?=
- =?utf-8?B?aW42eHRTVk02aU4rV1VSaVljRFh6NkVyb1VtdmM0TlRBVnlSUWNIMENJRWdC?=
- =?utf-8?B?b0JZejN0L202bkYwNVk0V0d6eEZkM3pNeVY2TXlLa2RYYWFsa21weXlkcTh1?=
- =?utf-8?Q?Q1sM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(35042699022)(82310400026)(14060799003)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2025 14:54:50.8001
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75b7b59d-3b59-4433-4f7f-08de2dc4eac7
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF00009B9C.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB10258
+References: <20251120-thermal-device-v1-0-bbdad594d57a@gmx.de>
+ <CAJZ5v0jOPrBcozzJMsB1eE12MuZRWDAV-+=jfrhJbi=S0p5J9Q@mail.gmail.com> <5f3ef610-4024-4ca0-a934-2649f5d25f40@gmx.de>
+In-Reply-To: <5f3ef610-4024-4ca0-a934-2649f5d25f40@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 27 Nov 2025 18:41:10 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iJVV=kf-aJBx8F8dtGfaZpGVyhfi6DBWEg4j3c_nH8_A@mail.gmail.com>
+X-Gm-Features: AWmQ_bnNFzjNLr4ZD-k1rd8sHstOmmRzRHvS_v-U6yiSpHx7MBaeEIqIodGMGBQ
+Message-ID: <CAJZ5v0iJVV=kf-aJBx8F8dtGfaZpGVyhfi6DBWEg4j3c_nH8_A@mail.gmail.com>
+Subject: Re: [PATCH RFC RESEND 0/8] thermal: core: Allow setting the parent
+ device of thermal zone/cooling devices
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Len Brown <lenb@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	ath11k@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
+	linux-pci@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 11/5/25 12:38, Sumit Gupta wrote:
-> Add sysfs interface to read/write the Performance Limited register.
+On Sat, Nov 22, 2025 at 3:18=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
 >
-> The Performance Limited register indicates to the OS that an
-> unpredictable event (like thermal throttling) has limited processor
-> performance. This register is sticky and remains set until reset or
-> OS clears it by writing 0.
+> Am 21.11.25 um 21:35 schrieb Rafael J. Wysocki:
 >
-> The interface is exposed as:
->   /sys/devices/system/cpu/cpuX/cpufreq/perf_limited
+> > On Thu, Nov 20, 2025 at 4:41=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wro=
+te:
+> >> Drivers registering thermal zone/cooling devices are currently unable
+> >> to tell the thermal core what parent device the new thermal zone/
+> >> cooling device should have, potentially causing issues with suspend
+> >> ordering
+> > This is one potential class of problems that may arise, but I would
+> > like to see a real example of this.
+> >
+> > As it stands today, thermal_class has no PM callbacks, so there are no
+> > callback execution ordering issues with devices in that class and what
+> > other suspend/resume ordering issues are there?
 >
-> Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
-> ---
->   drivers/acpi/cppc_acpi.c       | 26 ++++++++++++++++++++++++++
->   drivers/cpufreq/cppc_cpufreq.c | 12 ++++++++++++
->   include/acpi/cppc_acpi.h       | 10 ++++++++++
->   3 files changed, 48 insertions(+)
+> Correct, that is why i said "potentially".
 >
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index ef53eb8a1feb..9b8da3ef06db 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1810,6 +1810,32 @@ int cppc_set_max_perf(int cpu, u64 max_perf)
->   }
->   EXPORT_SYMBOL_GPL(cppc_set_max_perf);
->   
-> +/**
-> + * cppc_get_perf_limited - Get the Performance Limited register value.
-> + * @cpu: CPU from which to get Performance Limited register.
-> + * @perf_limited: Pointer to store the Performance Limited value.
-> + *
-> + * Return: 0 for success, -EIO on register access failure, -EOPNOTSUPP if not supported.
-> + */
-> +int cppc_get_perf_limited(int cpu, u64 *perf_limited)
-> +{
-> +	return cppc_get_reg_val(cpu, PERF_LIMITED, perf_limited);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_perf_limited);
-> +
-> +/**
-> + * cppc_set_perf_limited() - Write the Performance Limited register.
-> + * @cpu: CPU on which to write register.
-> + * @perf_limited: Value to write to the perf_limited register.
-> + *
-> + * Return: 0 for success, -EIO on register access failure, -EOPNOTSUPP if not supported.
-> + */
-> +int cppc_set_perf_limited(int cpu, u64 perf_limited)
-> +{
-> +	return cppc_set_reg_val(cpu, PERF_LIMITED, perf_limited);
-> +}
+> >
+> > Also, the suspend and resume of thermal zones is handled via PM
+> > notifiers.  Is there a problem with this?
+>
+> The problem with PM notifiers is that thermal zones stop working even bef=
+ore
+> user space is frozen. Freezing user space might take a lot of time, so ha=
+ving
+> no thermal management during this period is less than ideal.
 
-There are currently only 2 bits used:
-- 0 Desired_Excursion
-- 1 Minimum_Excursion
-It might be worth defining these bits and mask the values when trying to 
-set the register.
+This can be addressed by doing thermal zone suspend after freezing
+tasks and before starting to suspend devices.  Accordingly, thermal
+zones could be resumed after resuming devices and before thawing
+tasks.  That should not be an overly complex change to make.
 
-------
+> This problem would not occur when using dev_pm_ops, as thermal zones woul=
+d be
+> suspended after user space has been frozen successfully. Additionally, wh=
+en using
+> dev_pm_ops we can get rid of thermal_pm_suspended, as the device core alr=
+eady mandates
+> that no new devices (including thermal zones and cooling devices) be regi=
+stered during
+> a suspend/resume cycle.
+>
+> Replacing the PM notifiers with dev_pm_ops would of course be a optimizat=
+ion with
+> its own patch series.
 
-Also NIT:
+Honestly, I don't see much benefit from using dev_pm_ops for thermal
+zone devices and cooling devices.  Moreover, I actually think that
+they could be "no PM" devices that are not even put on the
+suspend-resume device list.  Technically, they are just interfaces on
+top of some other devices allowing the user space to interact with the
+latter and combining different pieces described by the platform
+firmware.  They by themselves have no PM capabilities.
 
-The spec. says:
-" All accesses to the Performance Limited Register must be made using 
-interlocked operations, by both accessing entities."
+> >> and making it impossible for user space applications to
+> >> associate a given thermal zone device with its parent device.
+> > Why does user space need to know the parent of a given cooling device
+> > or thermal zone?
+>
+> Lets say that we have two thermal zones registered by two instances of th=
+e
+> Intel Wifi driver. User space is currently unable to find out which therm=
+al zone
+> belongs to which Wifi adapter, as both thermal zones have the (nearly) sa=
+me type string ("iwlwifi[0-X]").
 
-I am not sure I understand which synchronization issues are faced.
-It's just to report the comment from the spec.
+But the "belong" part is not quite well defined here.  I think that
+what user space needs to know is what devices are located in a given
+thermal zone, isn't it?  Knowing the parent doesn't necessarily
+address this.
 
+> This problem would be solved once we populate the parent device pointer i=
+nside the thermal zone
+> device, as user space can simply look at the "device" symlink to determin=
+e the parent device behind
+> a given thermal zone device.
 
-> +EXPORT_SYMBOL_GPL(cppc_set_perf_limited);
-> +
->   /**
->    * cppc_get_perf - Get a CPU's performance controls.
->    * @cpu: CPU for which to get performance controls.
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index cde6202e9c51..a425ad575aa6 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -1043,12 +1043,23 @@ static ssize_t store_max_perf(struct cpufreq_policy *policy, const char *buf, si
->   	return count;
->   }
->   
-> +static ssize_t show_perf_limited(struct cpufreq_policy *policy, char *buf)
-> +{
-> +	return cppc_cpufreq_sysfs_show_u64(policy->cpu, cppc_get_perf_limited, buf);
-> +}
-> +
-> +static ssize_t store_perf_limited(struct cpufreq_policy *policy, const char *buf, size_t count)
-> +{
-> +	return cppc_cpufreq_sysfs_store_u64(policy->cpu, cppc_set_perf_limited, buf, count);
-> +}
-> +
->   cpufreq_freq_attr_ro(freqdomain_cpus);
->   cpufreq_freq_attr_rw(auto_select);
->   cpufreq_freq_attr_rw(auto_act_window);
->   cpufreq_freq_attr_rw(energy_performance_preference_val);
->   cpufreq_freq_attr_rw(min_perf);
->   cpufreq_freq_attr_rw(max_perf);
-> +cpufreq_freq_attr_rw(perf_limited);
->   
->   static struct freq_attr *cppc_cpufreq_attr[] = {
->   	&freqdomain_cpus,
-> @@ -1057,6 +1068,7 @@ static struct freq_attr *cppc_cpufreq_attr[] = {
->   	&energy_performance_preference_val,
->   	&min_perf,
->   	&max_perf,
-> +	&perf_limited,
->   	NULL,
->   };
->   
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index be7de1222eee..8baff46f2ac7 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -177,6 +177,8 @@ extern int cppc_get_min_perf(int cpu, u64 *min_perf);
->   extern int cppc_set_min_perf(int cpu, u64 min_perf);
->   extern int cppc_get_max_perf(int cpu, u64 *max_perf);
->   extern int cppc_set_max_perf(int cpu, u64 max_perf);
-> +extern int cppc_get_perf_limited(int cpu, u64 *perf_limited);
-> +extern int cppc_set_perf_limited(int cpu, u64 perf_limited);
->   extern int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf);
->   extern int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator);
->   extern int amd_detect_prefcore(bool *detected);
-> @@ -285,6 +287,14 @@ static inline int cppc_set_max_perf(int cpu, u64 max_perf)
->   {
->   	return -EOPNOTSUPP;
->   }
-> +static inline int cppc_get_perf_limited(int cpu, u64 *perf_limited)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_set_perf_limited(int cpu, u64 perf_limited)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->   static inline int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf)
->   {
->   	return -ENODEV;
+I'm not convinced about this.
+
+> Additionally, being able to access the acpi_handle of the parent device w=
+ill be necessary for the
+> ACPI thermal zone driver to support cooling devices other than ACPI fans =
+and ACPI processors.
+
+I guess by the "parent" you mean the device represented in the ACPI
+namespace by a ThermalZone object, right?  But this is not the same as
+the "parent" in the Wifi driver context, is it?
+
+> >> This patch series aims to fix this issue by extending the functions
+> >> used to register thermal zone/cooling devices to also accept a parent
+> >> device pointer. The first six patches convert all functions used for
+> >> registering cooling devices, while the functions used for registering
+> >> thermal zone devices are converted by the remaining two patches.
+> >>
+> >> I tested this series on various devices containing (among others):
+> >> - ACPI thermal zones
+> >> - ACPI processor devices
+> >> - PCIe cooling devices
+> >> - Intel Wifi card
+> >> - Intel powerclamp
+> >> - Intel TCC cooling
+> > What exactly did you do to test it?
+>
+> I tested:
+> - the thermal zone temperature readout
+> - correctness of the new sysfs links
+> - suspend/resume
+>
+> I also verified that ACPI thermal zones still bind with the ACPI fans.
+
+I see, thanks.
+
+> >> I also compile-tested the remaining affected drivers, however i would
+> >> still be happy if the relevant maintainers (especially those of the
+> >> mellanox ethernet switch driver) could take a quick glance at the
+> >> code and verify that i am using the correct device as the parent
+> >> device.
+> > I think that the above paragraph is not relevant any more?
+>
+> You are right, however i originally meant to CC the mellanox maintainers =
+as
+> i was a bit unsure about the changes i made to their driver. I will rewor=
+k
+> this section in the next revision and CC the mellanox maintainers.
+>
+> >
+> >> This work is also necessary for extending the ACPI thermal zone driver
+> >> to support the _TZD ACPI object in the future.
+> > I'm still unsure why _TZD support requires the ability to set a
+> > thermal zone parent device.
+>
+> _TZD allows the ACPI thermal zone to bind to cooling devices other than A=
+CPI fans
+> and ACPI processors, like ACPI batteries.
+
+No, it is not for cooling devices if my reading of the specification
+is correct.  It says:
+
+"_TZD (Thermal Zone Devices)
+
+This optional object evaluates to a package of device names. Each name
+corresponds to a device in the ACPI namespace that is associated with
+the thermal zone. The temperature reported by the thermal zone is
+roughly correspondent to that of each of the devices."
+
+And then
+
+"The list of devices returned by the control method need not be a
+complete and absolute list of devices affected by the thermal zone.
+However, the package should at least contain the devices that would
+uniquely identify where this thermal zone is located in the machine.
+For example, a thermal zone in a docking station should include a
+device in the docking station, a thermal zone for the CD-ROM bay,
+should include the CD-ROM."
+
+So IIUC this is a list of devices allowing the location of the thermal
+zone to be figured out.  There's nothing about cooling in this
+definition.
+
+> This however will currently not work as
+> the ACPI thermal zone driver uses the private drvdata of the cooling devi=
+ce to
+> determine if said cooling device should bind. This only works for ACPI fa=
+ns and
+> processors due to the fact that those drivers store a ACPI device pointer=
+ inside
+> drvdata, something the ACPI thermal zone expects.
+
+I'm not sure I understand the above.
+
+There is a list of ACPI device handles per trip point, as returned by
+either _PSL or _ALx.  Devices whose handles are in that list will be
+bound to the thermal zone, so long as there are struct acpi_device
+objects representing them which is verified with the help of the
+devdata field in struct thermal_cooling_device.
+
+IOW, cooling device drivers that create struct thermal_cooling_device
+objects representing them are expected to set devdata in those objects
+to point to struct acpi_device objects corresponding to their ACPI
+handles, but in principle acpi_thermal_should_bind_cdev() might as
+well just use the handles themselves.  It just needs to know that
+there is a cooling driver on the other side of the ACPI handle.
+
+The point is that a cooling device to be bound to an ACPI thermal zone
+needs an ACPI handle in the first place to be listed in _PSL or _ALx.
+
+> As we cannot require all cooling devices to store an ACPI device pointer =
+inside
+> their drvdata field in order to support ACPI,
+
+Cooling devices don't store ACPI device pointers in struct
+thermal_cooling_device objects, ACPI cooling drivers do, and there are
+two reasons to do that: (1) to associate a given struct
+thermal_cooling_device with an ACPI handle and (2) to let
+acpi_thermal_should_bind_cdev() know that the cooling device is
+present and functional.
+
+This can be changed to store an ACPI handle in struct
+thermal_cooling_device and acpi_thermal_should_bind_cdev() may just
+verify that the device is there by itself.
+
+> we must use a more generic approach.
+
+I'm not sure what use case you are talking about.
+
+Surely, devices with no representation in the ACPI namespace cannot be
+bound to ACPI thermal zones.  For devices that have a representation
+in the ACPI namespace, storing an ACPI handle in devdata should not be
+a problem.
+
+> I was thinking about using the acpi_handle of the parent device instead o=
+f messing
+> with the drvdata field, but this only works if the parent device pointer =
+of the
+> cooling device is populated.
+>
+> (Cooling devices without a parent device would then be ignored by the ACP=
+I thermal
+> zone driver, as such cooling devices cannot be linked to ACPI).
+
+It can be arranged this way, but what's the practical difference?
+Anyone who creates a struct thermal_cooling_device and can set its
+parent pointer to a device with an ACPI companion, may as well set its
+devdata to point to that companion directly - or to its ACPI handle if
+that's preferred.
