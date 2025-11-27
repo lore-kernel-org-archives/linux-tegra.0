@@ -1,75 +1,75 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE6C329383
-	for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 09:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C012BDC3F
+	for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 09:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764236188; cv=none; b=emgvJfSPMSVocl3Ew9KKtCQe67Q/9zIWJwPx7RDYxl905MibqWQIRkPsCjwu0eE3E/XvPSNcfj8AlsaSZ4pNq7qqjLB2m1koUpQNXKQB1257IqdXYbHCpN4JPGimWUARJYDVZhKVdnZ6D8VyIzbGMBMdYxsz6tYNKClJ8u4gaJ8=
+	t=1764236218; cv=none; b=sQY2d67hBwoFiZSk0+un5qSaYPRJl5kK0xR4YlSgUmwmgu2sAxSTGOc9+kdJzzMLmIizOU6AtMA/vrg3slOFTxYG4kyJ2bjTsp/jzU7UBaPo90iz6BVEooIf0VOnYdEUcTwD4RgJ5f5BZOExzTaJvbs8NqoLj5nQYr54a1nDwgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764236188; c=relaxed/simple;
-	bh=hKkpWP88n3b16vdMv8tX64ZdadOglejX0a2Pmdyz3SY=;
+	s=arc-20240116; t=1764236218; c=relaxed/simple;
+	bh=pY3yIpCqHy9NnfvKjK/24G32/d4GhZhQNfpvnRNw04k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVuu2x+MkG1K1uXJamucODes0nu7cv3jDNUE59gnGS7A7zERWhFWYd+pN/CakFprFcI7sScvkI9HrSvLPxNp3Fyxh0NuX0WX7OzSUkwT0i3XK3dTO8VOgnWOKi78UNyHx6Ks7x0x4LfNBP2qG/G9NQCbNxIS6KvRjyKhsWeP+gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IT17L6aI; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=lMpU9Kix3c35pn6mrcfEmbeceUPwvlm2k8zdOqClxk+p2SAP2hzw8KBh5cBLxEaFwcXOHTilrzDwQgAF+hPv6mAUww+TQFduG04NtuPjbxC6SxQmNnfcI1Dny8caAymcLAfLxdlXJklJCfKuztmXSGPW+dN6iEePGnMipCfIrcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7McMcWV; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IT17L6aI"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47774d3536dso5122915e9.0
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 01:36:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7McMcWV"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so1307135a12.1
+        for <linux-tegra@vger.kernel.org>; Thu, 27 Nov 2025 01:36:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764236185; x=1764840985; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764236215; x=1764841015; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xkjuVlxnDtBeDJu7McmyWbBWdTlwQeavPDxOKxcMxnM=;
-        b=IT17L6aI07JT42l9qAgyLU6S8SvoCmxn8osga7j5/rvsJIBOmgzQf+Cl8cA237DR2n
-         w5GL6ns8NeHwi9LzFSn9uyXS0NyvcK1o8PkvqdI3Z8usK+sN/QGOfolN9N4l346pnsix
-         07rl2kXh5rc+UAH/qHyG6Rpfo3Hr6h4BKyDxD8iU8KeS0/kZDkvPgtbb6GI64dz7wL2Q
-         8Y1lvr9vBN4vc2CFMed+YHW6P/cZomZF7CVSXHZPTCWmRDvCxTMa+X0XVgray4uQL6yP
-         uXnLvjwq/xJihzueNPRMZf9Hot2kTjKOGOr35ghTXJtFedpZMU68WlTlzeCH3Jq8l57V
-         kRnA==
+        bh=gu5JNlymI+xjkbE7SXCQkiY8aeTYQf5loqFwPHd5EQA=;
+        b=V7McMcWV0LTvwaZz9adtMAXTmTg6dWvGW5iQ6rJ362bkMv0qnK3buREbZKPTlfOFj8
+         0uQRVIDELnTb6Yu67wwRkGGlxN0220Fh3cHrEMsSx6m9z8Hq5nV9lW8wxHGjo+FYBwlz
+         ee5Ssxml9pIldtjuUqLjfc+lW3jzuyjifEK4gkRITx4lq4uqGh6QVtEFC4+T01JI8Snx
+         tTnpnz4rNBg/dBb6u7N7JZbzJj/t0c7jhAUvwBFy1gPO7K8R1ABGQSvnuzC0q7vn3b58
+         k7IN8b2xH4HdwDC8h0t3/ko3YnmQwEK5w73UcqrbvNiECbSeb13Ms5WISU4vkX9Oa/yG
+         4XkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764236185; x=1764840985;
+        d=1e100.net; s=20230601; t=1764236215; x=1764841015;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xkjuVlxnDtBeDJu7McmyWbBWdTlwQeavPDxOKxcMxnM=;
-        b=CRyY5MhN2RDj2PA2EsH+ewmVDaqvYlbVqspIrqdiPnlifl9zWQlwF+OTaaYOYKiwtR
-         Xyk01/lUwuaJm2OzgAYbKHDgpbvIdLFVApE9OU1oIIdLbKVCCbAjTnPJoDhHY9oXJFjh
-         y0dOOvCvbmGPbbxhyOT0Vsakv1yRnBuWmJQjtGeX9G/RdhTlzt2Rqd8LddBSll8ClcgL
-         xzB2kaEq7wJCShRs+on6f94otnfWFPlpHiSGlKWlCDinH08ZVXUjIy3jADoxdBb/MmX6
-         M3MFRbOhyxW3yD+tezjmfP+SPmcfLO0UKIjHrx7xXsZ6Xpo43LL30Q9q62R6li5Kjcqp
-         YtgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+6zIdq7HScsvW4WSjoJoXUFtvIejpvjaYJfTF1Bf3Kad8WWbLX7WIjkBb6pRMr8hfC0Imr/lsPIOapQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqWVTsCNV3WcRn3PFqq9yBk+gjrIn+dHccdA6UPEYzG4m9+lPS
-	8WGUh0njhC2z4w1JZ1dq1JqVGfqD1/lwGE65wo+riPoBbZm1xkrAXatR
-X-Gm-Gg: ASbGncv/CgHe301zWgDhrCl5G8hgti5U1zX14AfnvOwiNR0q2gyxX2uIi4e2BCT2YAV
-	R7VxeLJ73WgMsDuerUivAXg2l72cn7p08j7rbo6zaSYYyND36b5KGt6szDXcNXMJMundLcXVZzB
-	pKwHDYpn/xnPuEFKc1nLnNd+44MjuNrsGp3tcgSJMex1EDGfZVJYeJ9NGr/yLl9aXlKcQRQElCH
-	gY8+7JDF2to/Q5qcwZr+Ql6xjzYGKi8KFV9q447xDBj333YwC+CN3prQvi+uRuxgvlvhM8DXs89
-	Z/tCWxgN9SkMEY6CMlBOW1kChdpv0BEldCVKwRncOCGA9OD2DMnWg7l2iZiJBSalr4HgfV/THsO
-	l6JXQ1H+uDwnlKo3BUQMuCruTPzS+4onCIDzpH780nkL+3cBmXsLbL8ag8Yn+25TQ0eckd5Amn1
-	kl/QZlmBxfCqyK3UoVhcrwbF5LG/ew22cFCSs0GcaKBY3BNwRrAZpaDFCh95pPdnJjHck7K51hc
-	lz8aF/aKoWck6co
-X-Google-Smtp-Source: AGHT+IGAcprSuWBr39Jovk2yl3BMGbF7g9hjZCIhouUVNA6iYXFsz94DrWJq53phmHh9EgoFB+jpNQ==
-X-Received: by 2002:a05:600c:3b01:b0:475:d9de:952e with SMTP id 5b1f17b1804b1-477c04c357dmr199942065e9.1.1764236184810;
-        Thu, 27 Nov 2025 01:36:24 -0800 (PST)
+        bh=gu5JNlymI+xjkbE7SXCQkiY8aeTYQf5loqFwPHd5EQA=;
+        b=ItvAxhLQWgheoFy42qt+xwohwkgQt2V17zXcWiE5lx9gn3kOUsPgsq/fyy1SBFctfO
+         YlSKebAVYp2i5T/gZ9YJKODcBRJcTRop/jH/8NR7bEUw/C6R5C5ZFBnJmeabN6SMRnh/
+         KfYhUf9dMrDod2YRj//GS3VZ7tj8SLZgrtx5VbOr5lWcVSlZ9x6jKWeWEzmj/3Y/ckx3
+         FPzAhPJ2Afa3qYmUgI1bWDqgu/dhn/rdXaVaNa+6nsM3OE+JxRyX4h5cTW+5q0/VYA4M
+         flF9abJnlnQrR2Jz9g0966cxR37FDzV2rSDyobwtJtHYOLoiw2w8KvvpMCRCVKRZGnKX
+         4ogA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS+fXb2uoqiMMCXk9uMTrHNTdG9Ud9minglHIn/xu0JAieR2fHUBL18+6VTs//0rz0QX4idYK3HSjh7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBRyanHDl3UqcM5A4i0reLW0PesoWX4M5Iq6rrTmocpid5GzPu
+	BYz1KK7lZpZje52GTNjPIZuoLVgJZg8plQBk04LWYngBoCPrJO0Bl3Er
+X-Gm-Gg: ASbGncvy9BOq4ZPndQSo/t7fydzl4CCLq9Tvtwtv0ppRc7QVP62hyX5sUFS7fC0yywQ
+	kY747/EfoGDbwZSdmcI/SBevGc2WvcnMHei2xFBqV/Zfl+plm6gvv5F7vu7PkIL0Zg+pzcWV4TQ
+	fwpPHTwktWY7shg+FEBdA1CIVqMItN3m9DorEEI2aTdliGT/Avy3lgyB2lAE2Du+rBjUxaU8u5K
+	ma3LpUCanyWum7izNk8lx+bbYuCqiJQIln8dl9kPpGZGE3AcXuEVsghYU3uR2fO9uq2n5iyq5rE
+	THw9DkdKxd8OsKLpgfsHlHmiFhAijHUGZAGwQP+etEE3Go08J3Lw1hxekphLw4/9ICzXGSM6bcm
+	snzsyayZ7Tyu2Ll5tiRvdRH9qjyY/l+XYJqFgVnw67uJQCZIeampVYhYTT9YQbMtXZN4zn+qqT/
+	l9eIc6/XpVcSq1s4rStW4TkrSPSQWwlXV2KTE6z1r3ahYbgLS8mGAFcgLI0svy6+/+ppdXvu8y9
+	M/Pww==
+X-Google-Smtp-Source: AGHT+IGQ4H+rtLVq+LXq012Qv9pYnjuQXeNvOCcH+r5EbiQnQb/cgntH1MokjpKmaFRo2H6P138cbw==
+X-Received: by 2002:a17:907:6e9e:b0:b73:6d56:7459 with SMTP id a640c23a62f3a-b7671705640mr2690672166b.38.1764236215082;
+        Thu, 27 Nov 2025 01:36:55 -0800 (PST)
 Received: from orome (p200300e41f1abc00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1a:bc00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-479111561c2sm26293565e9.4.2025.11.27.01.36.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5199852sm121459866b.15.2025.11.27.01.36.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Nov 2025 01:36:23 -0800 (PST)
-Date: Thu, 27 Nov 2025 10:36:21 +0100
+        Thu, 27 Nov 2025 01:36:53 -0800 (PST)
+Date: Thu, 27 Nov 2025 10:36:52 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Akhil R <akhilrajeev@nvidia.com>
 Cc: andi.shyti@kernel.org, digetx@gmail.com, jonathanh@nvidia.com, 
 	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	wsa+renesas@sang-engineering.com, wsa@kernel.org, kkartik@nvidia.com, ldewangan@nvidia.com, 
 	smangipudi@nvidia.com
-Subject: Re: [PATCH v13 5/6] i2c: tegra: Add support for SW mutex register
-Message-ID: <tqkqtn7nwbc2pmveymrea5fdzrkl6q3wuehy7kdkgb6kcze4wf@r6a7sug7wnfv>
+Subject: Re: [PATCH v13 6/6] i2c: tegra: Add Tegra264 support
+Message-ID: <f5xz4k4udmisatxu4oeymngoy3uyxpoihxlaxd7ymenrvbocmh@cvkgtls3eiej>
 References: <20251118140620.549-1-akhilrajeev@nvidia.com>
- <20251118140620.549-6-akhilrajeev@nvidia.com>
+ <20251118140620.549-7-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -77,107 +77,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fwu2w7fh5xwdofqc"
+	protocol="application/pgp-signature"; boundary="beon2rnby32vl4ue"
 Content-Disposition: inline
-In-Reply-To: <20251118140620.549-6-akhilrajeev@nvidia.com>
+In-Reply-To: <20251118140620.549-7-akhilrajeev@nvidia.com>
 
 
---fwu2w7fh5xwdofqc
+--beon2rnby32vl4ue
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v13 5/6] i2c: tegra: Add support for SW mutex register
+Subject: Re: [PATCH v13 6/6] i2c: tegra: Add Tegra264 support
 MIME-Version: 1.0
 
-On Tue, Nov 18, 2025 at 07:36:19PM +0530, Akhil R wrote:
-> From: Kartik Rajput <kkartik@nvidia.com>
+On Tue, Nov 18, 2025 at 07:36:20PM +0530, Akhil R wrote:
+> Add support for Tegra264 SoC which supports 17 generic I2C controllers,
+> two of which are in the AON (always-on) partition of the SoC. In
+> addition to the features supported by Tegra194 it also supports a
+> SW mutex register to allow sharing the same I2C instance across
+> multiple firmware.
 >=20
-> Add support for SW mutex register introduced in Tegra264 to provide
-> an option to share the interface between multiple firmwares and/or
-> VMs. This involves following steps:
->=20
->  - A firmware/OS writes its unique ID to the mutex REQUEST field.
->  - Ownership is established when reading the GRANT field returns the
->    same ID.
->  - If GRANT shows a different non-zero ID, the firmware/OS retries
->    until timeout.
->  - After completing access, it releases the mutex by writing 0.
->=20
-> However, the hardware does not ensure any protection based on the
-> values. The driver/firmware should honor the peer who already holds
-> the mutex.
->=20
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
-> v7 -> v8:
->         * Use `bool` instead of `int` for `locked` variable in
->           tegra_i2c_mutex_lock() function.
-> v6 -> v7:
->         * Return bool from tegra_i2c_mutex_acquired() and
->           tegra_i2c_mutex_trylock() functions.
->         * Move `has_mutex` check inside tegra_i2c_mutex_lock/unlock
->           functions.
->         * Remove redundant empty line added in tegra_i2c_xfer() in v6.
->         * Fix pm_runtime_put() not getting called if mutex unlock fails.
->         * In tegra_i2c_mutex_lock() simplify the logic to check if the
->           mutex is acquired or not by checking the value of `ret`
->           variable.
->         * Update commit message to describe the functioning of SW mutex
->           feature.
-> v4 -> v6:
->         * Guard tegra_i2c_mutex_lock() and tegra_i2c_mutex_unlock() to
->           ensure that they are called on platforms which support SW
->           mutex.
-> v3 -> v4:
->         * Update timeout logic of tegra_i2c_mutex_lock() to use
->           read_poll_timeout APIs for improving timeout logic.
->         * Add tegra_i2c_mutex_acquired() to check if mutex is acquired
->           or not.
->         * Rename I2C_SW_MUTEX_ID as I2C_SW_MUTEX_ID_CCPLEX.
->         * Function tegra_i2c_poll_register() was moved unnecessarily, it
->           has now been moved to its original location.
->         * Use tegra_i2c_mutex_lock/unlock APIs in the tegra_i2c_xfer()
->           function. This ensures proper propagation of error in case
->           mutex lock fails.
->           Please note that as the function tegra_i2c_xfer() is
->           already guarded by the bus lock operation there is no need of
->           additional lock for the tegra_i2c_mutex_lock/unlock APIs.
-> v2 -> v3:
->         * Update tegra_i2c_mutex_trylock and tegra_i2c_mutex_unlock to
->           use readl and writel APIs instead of i2c_readl and i2c_writel
->           which use relaxed APIs.
->         * Use dev_warn instead of WARN_ON if mutex lock/unlock fails.
-> v1 -> v2:
->         * Fixed typos.
->         * Fix tegra_i2c_mutex_lock() logic.
->         * Add a timeout in tegra_i2c_mutex_lock() instead of polling for
->           mutex indefinitely.
+> v4 -> v10:
+>         * Set has_mst_reset =3D true for Tegra264.
+> v1 -> v4:
+>         * Update commit message to mention the SW mutex feature
+>           available on Tegra264.
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 93 ++++++++++++++++++++++++++++++++++
->  1 file changed, 93 insertions(+)
+>  drivers/i2c/busses/i2c-tegra.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---fwu2w7fh5xwdofqc
+--beon2rnby32vl4ue
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkoG5UACgkQ3SOs138+
-s6F34Q/+JBtEghV1MsKa8M+vUbgyuElSEhb47Skk7oht/cGWwnx//PorQsaoJF+g
-EduxucNIAncT6gjVUtpVMYpRSVUOq6ooWwTCzH1XZpeBtLbRhEg+Ov9+0FAd4zmI
-pEichML+kFtl5Ng2KZmetij6g4rHYtpvMM/FSIlDm8LCcQrHJzW6x33MGe9oAf8s
-MAf7V5Y6ZY1Db1FHWEEe5S2Z3q/qRu4hSU56o2eCi4keUpQ7Tpo9HBvS7+W9Lxc6
-334/FyQAWSZPhksfzagAyOIiFYBPP4D2eDnMOFwGrckDhg6IPNrPlhV42ZnDTZrM
-IJMgAw/c8iWAx8Xm43geScgCHo9SRZeTDx64dy2olZW7iYaMd8gL4i/m6MwJiycq
-qENRnQ497/EiYkhjTyrqynfRF5wMEMMMRLH6yHFgJIMzaeMB5vFr5ZCqPGzboFxr
-QBL0V9v1nry9JnXeLNOH5z/WDooOqJR5lXsp/Ef6llxRSPlnfNNqQp3Ux9ix7IhN
-vYOF8dt/O2GheCMn7QkS+Hwqk0nVnvQXUNwBWN6L+kIYwmE91X29NkjpdVchkhtR
-GqflqEUupm7Wis7ekVUPLInw9JXGQBfI2odjq/5TJ9bCxjbCjPAnTrwLhgie9YO0
-zKtCcBa5CrntRYGEv6eu3XYBlZi06A2bLCF2TXLhy/KbJYFZ5rY=
-=0R1b
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkoG7QACgkQ3SOs138+
+s6Gm6w/6AgXf5tCWx6wKOvXGVYML8fA6p8cgTTKbMVCL0a9Cb30b6mlITGAwIcWQ
+i0AuIno0SiR5dSNi9L4IzIOUqFlF/SY1sOeGgl+YbGlV8UWkLIsN8Y7t0UVh++RN
+MNVgYxUKhvzJa+ECfM/vnqyITnKPwH9CK3HcaqmwHR1mwO8hEjampx/j1p525Z7l
+r9xkWLbjLHok5+W3H9JE+AMo2/lx/7ZtHFV2HB4Ogl01knKoK2K23NEqilnsF7D3
+PCR21yqRUwCjLS/Id093QOVYTiRhhTpc84srM3cFh5SmrRk4zgLtsKHnu4rnjqum
+5xhsJlEdl5YZgmX3LCs++SCOlybQL+YRTR8zqyDhC71CwMD/vqZNWtlQSuklwr8J
+R/YtjG7gTv5OxUnBsv5Wvr+tTO+ZeWs6qSVcwen+X6+/HdQI773/axFYi4prxA3F
+K7qMg4x7aWwoH6f5pACNFLiyVE1ObOgcgpixCvr0e+s60ZZoUp+IusQ8ilcbS0UE
+OnckUTZfCfn97SS+W3S1fZFxFOA9pzH5AxFs073zILDZU+Sa0EOh7Aa2/YVH/TkC
+5qtrz01pPWymeHvwbP+V+UiIZgN2xNiRm/xFWA4fFfkTV+CUtCjaiPsdZIeC3GO6
+0ISgFBLX8DY0PymnALm8DDZB6a7ncVOaIjlG1TYM7ttN/rRgeHY=
+=xJ5v
 -----END PGP SIGNATURE-----
 
---fwu2w7fh5xwdofqc--
+--beon2rnby32vl4ue--
