@@ -1,69 +1,76 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012052.outbound.protection.outlook.com [52.101.48.52])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010057.outbound.protection.outlook.com [52.101.61.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAFA2BE655;
-	Mon,  1 Dec 2025 09:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9713E30FC1F;
+	Mon,  1 Dec 2025 14:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764581834; cv=fail; b=O+ybR1hkNFATvOirEGoiUrWU5lVnpCOsLvqFra2L1SgjRt1jlclRYax6JT4s3LRV/jQJ3Zu/lTdXer+xd4+3Ovr0iMWK5LS2kbW2vCpElBezDi8IQfsR4R8uQne4sLhJPRQfk6V9GJEvqqP4bkuau9fu9lqt9ngZP63t/jtcZk8=
+	t=1764598205; cv=fail; b=bs8XgJbUfb/rFerhjALU8/Vkarr4SXc/o3jvhtyR7ZjA1UiQRX/1T6ruyKC+wIds8HBpsXjgNjd9hvLCOtIW3TLgUD3KYKXYPr3tTGF2gE+n1SqetC2obpD8tBy/rcu0PXQDlYfbfbC0JZHSjaUO9wgojhQ9a1g8qFMRZYOpJAw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764581834; c=relaxed/simple;
-	bh=fJCcVwPkjfz5jykXrhQzumBBdMoMZQ9WYRfzKgsI8H8=;
+	s=arc-20240116; t=1764598205; c=relaxed/simple;
+	bh=2HZd8Zwq51TmKc1o+5RSkpDDrYy2b02F3GIeA7055dw=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hOz1sn14PIeCVrIm6dtrNS2Q1VLI9Cji7eHbkG5oCbFiVzXVaIJVPz50L7J3nltPPIk5XfrVrTMY22dg/0vjKXZ5mZoReZdAHsP9h9NZCMi+zeHD9JneCIlvs4A6sM2zE8K0X4k5mClw6yhuUwNlmUyq1GJ/W/WxlzDrhp9muFY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XZCFpwiJ; arc=fail smtp.client-ip=52.101.48.52
+	 Content-Type:MIME-Version; b=hvSkaNrHCgiaMBSt+baTTLgCxcHQgZqV2mZAKjCSwk8R2s8ywoad6647lVTI8QUR1gYtv2w1AIINDEq6WENfButTauHe1NVkaH/1e+Gf/UBYfB65j0xtYxAXp0lmE32Owck0ghcsDm3Ljo3lg6hhQKBdGEjzbCVsWuSeDRM3tqY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=O+nIbrH1; arc=fail smtp.client-ip=52.101.61.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XZCFpwiJ"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="O+nIbrH1"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pT5EghURZi+dhD2Skm3PeyrrOL7rZ9mFyw1RfhRJeF4d9dcaXZM99/0k5UcC+wzyAvX741CzhVIbXPglIM8YdF4OBrHaNA4vlYZopKTjA1bMyV8IdcbEOxB4aHWZzdxmwwS1O77J4NQYFvRz5H8GUNig6+SFd4Rb0whj64xbboh2QUDx4Q1G0/KBWVOyA/xdjuw2cLU03jsjbRykahyEnwLofc4JbtB96mP/5EWdotmkMWBWQFO98Hb1Drs9xmaxghwzDqSaCiifqNhvPAHVfjWfN3ZlvzCUhQ5gR3jjNLCYujJ47qXA1fC273lydvOTY59OGRz8OxvIYatU9qDMCQ==
+ b=Zx2bNeDXteJ3K0IhKMd9/t2iEOTBFuwApTVWIY+95Ys/DAvsiBkr8sTInUHgAr01kZ/xbAfrBWVAY3qpFhJlkTi9soxFfqXlBtbKDfKvaxvCu70zNDTTUSBg3/EFyi+4uXC4af5lFk0kNuCM1Dq/VtwFO+d8ZSeCWNcdHr/U3EzxMfj5tYJIVC4iKZRePkET9tgDF9QG6wWJKshL7CQsL18pZTj5h4nvowl0o3Q/m1SKnrpg1lnH7kOQFdU50FCyXDiS8JHJot2+vBlX9LyveD3Mi4SbxgCB7ut1I9mCfRAh1iaCgdO2G09wAyZJ4eoZaKXbbi1jpHV3P3f3iuXqRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v1sEUgHz9J6RQ1A6qmSpZIVDTNaEpZCjBuwAR9o3u9g=;
- b=iXWnOg5YCRBVcI8YpwTpkXJQvlS5k7lS/oMrTOlOHNbEkboagUVx1AIO7c0j5o7lLtCM6iwsdpRd4nSXSpQCoHmnFKgHTsO5IV/y2tgEF5zNcVS2+ifQox7zFl1v73HG/Rjj+vArj0G7nOk6iiqGdFHGMfCsx59R2VXrVv7+UXPnEiDbGvhhT3ND7ZLzFaqrps9LpE//L35Twbdst7NIDzGK3Hpnqwotv5LgE0sf4nIIE2WF+PWNBjdWvcUUhY0AM3QxMtY2roIH/oTZnD80qUNMtJ3xCtCjGieliWfhhZtqTWMP6UnFxCcEKrA3/XMrEV9VJ3/uiIZefkqCi/mB9A==
+ bh=3KIcwS1jNFbcY5/NWx5xNQK9PHBUTF1QWoD5Gs3/pxU=;
+ b=dOO6AAJep80Z65F61lQUUpDX0X0OKdCf59ADOSwZ2tTTutwnTErs2vhEQAGU743yIL4UJ4CLf48b0kLEXoetS2vhULbYSAUAi/CwTAK/6whFUipdCss7HtreiGvqH54uuPic9FyPlvXEjjfAkraB0RF6Dv+HZRK1LB4Z1g0G39nD1LcdPloUuUWIT3UfdqzU5m9VLsRWbNV0VQmSkOuTKr07t7sKAT4v2TQmyEEZa5XtYraEc1WcNMjrcwhWEm9bmSX5N/yN8MOM+JJdd5ut3ryvhnB2yIZAd3IRP2i8gi1zeKtQ2YOuwPwojKJy0TJjVAe7wy7DIy9aK7CClJDaRg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v1sEUgHz9J6RQ1A6qmSpZIVDTNaEpZCjBuwAR9o3u9g=;
- b=XZCFpwiJQlY9suEB6XbfR8F6opzAy43qx9qstypqEfQZZfKDxbuzvxDsHy0QnZCKbXnDKtSRV0yFI6JQ/BpjxHQQoU+8OzkC5dWI1CPyHNU2Pia7qJDXATOu/dfOVAON9SoiHgsq3zIqtHgny1O07LJN0VyMKJRI/yMkGPjQFQ6J1vJJ9rU8kv86hefevRvV7sDtt+HcFXTb+PNclHDo0g6UzvoNLEzgPeGP3bgcMfjzg3r3eXsQX90wKzlsgwEEAUHFx2Xh7hpwn5gAEw5x8rFEhmA20w2Qy4undAafemtkx3MzX52ZU/mogRpC7qkUHmZhPepPBbG0O0w6/Ci1pw==
+ bh=3KIcwS1jNFbcY5/NWx5xNQK9PHBUTF1QWoD5Gs3/pxU=;
+ b=O+nIbrH1Rlx+9qzVZQAGovKA6kbaiVjr91Rb9EFrjA0hfSD39HzlxY94WDlU6mOXBb/elKOkLUf63RXeU+GRZJCE4GR6STNj9TCZm7j9niyHPLURnN7P3xQIWaBBGjbKKOBH/oaPpdihtxqYOEEQNljT2ELZS6FYWoDAcqwlwriEYpitYuvbses3LU+oYyFcN3Y8ASc5cOWoeR4askpgLGzZrQKcWCtbxJofXDaLT9qTGLQOIwZyXBmR1WvgmNMtZebWwX5hL185jSjDQ8wr6Yb0D7U1NyXuFFbJOUR08zfGurTXkfN78/BFJ8ssrf4Fr5IHRFh0kovI5OJZ1CAhjQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN5PR12MB9511.namprd12.prod.outlook.com (2603:10b6:408:2a9::14)
- by BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13) with
+Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
+ by CH3PR12MB9344.namprd12.prod.outlook.com (2603:10b6:610:1c8::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Mon, 1 Dec
- 2025 09:37:09 +0000
-Received: from BN5PR12MB9511.namprd12.prod.outlook.com
- ([fe80::4d8d:5f91:6c3c:dc8c]) by BN5PR12MB9511.namprd12.prod.outlook.com
- ([fe80::4d8d:5f91:6c3c:dc8c%4]) with mapi id 15.20.9366.012; Mon, 1 Dec 2025
- 09:37:09 +0000
-Message-ID: <acae92d8-3394-436c-be8e-8bed7a923e85@nvidia.com>
-Date: Mon, 1 Dec 2025 15:06:55 +0530
+ 2025 14:09:57 +0000
+Received: from BN9PR12MB5179.namprd12.prod.outlook.com
+ ([fe80::44e5:415d:e1a8:6e42]) by BN9PR12MB5179.namprd12.prod.outlook.com
+ ([fe80::44e5:415d:e1a8:6e42%7]) with mapi id 15.20.9366.012; Mon, 1 Dec 2025
+ 14:09:57 +0000
+Message-ID: <cba8314f-7e01-464b-9ba2-e337395a453b@nvidia.com>
+Date: Mon, 1 Dec 2025 19:39:45 +0530
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 3/3] arm64: dts: nvidia: Add nodes for CMDQV
-To: Jon Hunter <jonathanh@nvidia.com>, will@kernel.org, robin.murphy@arm.com,
- joro@8bytes.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nicolinc@nvidia.com
-Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, jgg@ziepe.ca,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20251125071659.3048659-1-amhetre@nvidia.com>
- <20251125071659.3048659-4-amhetre@nvidia.com>
- <dff3a962-82dd-4aac-ae11-69f0e95ba04d@nvidia.com>
+Subject: Re: [PATCH v4 8/8] cpufreq: CPPC: add autonomous mode boot parameter
+ support
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: linux-kernel@vger.kernel.org, corbet@lwn.net,
+ acpica-devel@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+ zhanjie9@hisilicon.com, ionela.voinescu@arm.com, perry.yuan@amd.com,
+ mario.limonciello@amd.com, ray.huang@amd.com, rdunlap@infradead.org,
+ zhenglifeng1@huawei.com, robert.moore@intel.com, lenb@kernel.org,
+ viresh.kumar@linaro.org, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
+ sanjayc@nvidia.com, nhartman@nvidia.com, bbasu@nvidia.com,
+ rafael@kernel.org, gautham.shenoy@amd.com, sumitg@nvidia.com
+References: <20251105113844.4086250-1-sumitg@nvidia.com>
+ <20251105113844.4086250-9-sumitg@nvidia.com>
+ <08c65096-dc70-42dd-a085-900605c3fe4b@arm.com>
+ <0e24a618-4a42-4fa8-b9ed-6d7db9b1a8fc@nvidia.com>
+ <22a86779-102e-48ce-a79e-4a324c554984@arm.com>
 Content-Language: en-US
-From: Ashish Mhetre <amhetre@nvidia.com>
-In-Reply-To: <dff3a962-82dd-4aac-ae11-69f0e95ba04d@nvidia.com>
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <22a86779-102e-48ce-a79e-4a324c554984@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN4P287CA0121.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:2b2::8) To BN5PR12MB9511.namprd12.prod.outlook.com
- (2603:10b6:408:2a9::14)
+X-ClientProxiedBy: MA5P287CA0280.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1f2::18) To BN9PR12MB5179.namprd12.prod.outlook.com
+ (2603:10b6:408:11c::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -71,261 +78,463 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN5PR12MB9511:EE_|BY5PR12MB4116:EE_
-X-MS-Office365-Filtering-Correlation-Id: 169d8576-5b23-493a-5cc4-08de30bd329c
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|CH3PR12MB9344:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71ebe27d-9be9-44fb-e29d-08de30e34eb3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SmVEUktLNlEvY3doMUF6Z3U0TVB2UEVmdXc2UFd3bjNNY3VDVXVES2ViQ2Ez?=
- =?utf-8?B?a0RGV1lXMWlQbVhwdnBKUDJjR012UURVL3IvZUxrbjh2bnVZNkgyZWgxRStK?=
- =?utf-8?B?SU44dWljMHljQ2RPbU1pdk80NTgzOXBLcmN1dmlMaHRyaWhKYzc3b2QzTHNN?=
- =?utf-8?B?aStEbE5mYWFsRjR3OXRsWXZLM2tlOTk2WFU0cjA5K29TTS9Wd29mamdwWlBH?=
- =?utf-8?B?SEtvRGcrVUM1QzRQQjZZRmtqUjc0dEd3S1VjdTV2TndCZXRqaU95N21WZVNa?=
- =?utf-8?B?cEJSTGRDVzRGK2V4TkdUbUUxenpNd3J3Tjl0Sk9GaStOYzhNNUpMWEZ6NzNr?=
- =?utf-8?B?N2p2aEV5OE9rZVM4RHNqQWU2VmVKbzV4Z1QzYW9ISFpxRENaamNZR0VSa01s?=
- =?utf-8?B?SWVFNkhJakZBK3lhcDkzaG5JMXVINytCSVFoS01jdTJ1S1dlajNSWDlCUTJ4?=
- =?utf-8?B?QkJteFVBaTZLMGJhcmZhRnB4ZVBIUVorakdBbGl0d2Z0OEcreDdaUjJsSFA4?=
- =?utf-8?B?VVcvdEM1c05iZUJVTXhBSHdtVnFtWHpBdmVtZ1ExZ2xTOC9iaDR0cFg0QWZo?=
- =?utf-8?B?WVBtYjV4L3hab2RMbjdGSWhYS25EMFlsRmR1eE4rcU5aanNtRGtpK0RyNVdD?=
- =?utf-8?B?MTZlS2xDcldSN2g2NWZNa0VOYStJUGozUFZJRlRReUNUV1Zzc1FzRlFXWHk5?=
- =?utf-8?B?Yy9CNUdRaWk1c2Q2aDQ2S0djSUZNYXRsRk50dkhjTjZyWVlYWlhXTjRtaEY5?=
- =?utf-8?B?N2dWZ3FxMXRDSGFGbUxZUjRiY0ZDM1VxOWw5SFpZeUpiWUgxWUtjM0JtU2Va?=
- =?utf-8?B?ODdwYzhvaXJId0QrL2NRSCtGbEtJNmxiMHpnSncxM0VBaHppZTAwWlREV0E5?=
- =?utf-8?B?Qlp3bEdXa09MaGo4VWpDeEgvSVJ5NDJMU1Jzd1NVdkR5MUl2M2tES2xXdjMx?=
- =?utf-8?B?OXJ6eXV2U2tYTVYzQXZXQ2tzcTJBd3I2dVBjQS9iVFdwVzRBOVZOTnMwbm5v?=
- =?utf-8?B?Tk90VTdyMzFpaHBFY01rVmlzOHJDYXFkRG9ObXRMR01aM2xteE4wZWNHUDZk?=
- =?utf-8?B?MW9zVlFpeGh3OENiRFEyTmM5dnVBWVZkeUJmM0NUT1o2dkNxRCthNjByYVA0?=
- =?utf-8?B?N0d4a29QVFFwK1pMTUgrSW51LzgyMFVWdUF6OTV0Q1ZKd3JZTE5CcmZ4TGxl?=
- =?utf-8?B?eDQ4SUN3M1dEc3hMcVJINFppb2pMMW81WHZIWFlYTERGcHRyVUlkQm5HQUkz?=
- =?utf-8?B?MTFJak1zcWlmOFFWQzltdi9Mc0lZZDN4K3drdGZmTEFyNFhZRjRkcUkrOVVu?=
- =?utf-8?B?emJJM3BZSURpTk5GN1IrY3JIbHIvY2JSRHBkMjMwWlptNVRCSE0vWHYvTG1D?=
- =?utf-8?B?UUEyNzFBWDhvU2MzSjRldElNZy9Pb3ZHMGgvazVWRG5mdHNEZzJLR2dPQ0dG?=
- =?utf-8?B?S0dzNHA4b1o2OFltUGoxVW04RkFIR2xYWk5NcHVBV25wRFlsVzdMQzRlUXI0?=
- =?utf-8?B?NjBnb3hRdTRCNzJ0UmtDWnpyTnY3aUJ5ajNKTHZsSmoyNkZEUEszaGtIRXVZ?=
- =?utf-8?B?azdWbUljZFBmQlJRMEdUZ2xZcjRHRUt1WWtQeVpzcFhnYktROTJHWVJxWFVo?=
- =?utf-8?B?bzJHTmhaV1F1UmI2dmcvYjNQN3BaRks3bktaL0cxSkZ3TzBDYkVTVk9idHF4?=
- =?utf-8?B?UVJWWEd4ejB3ZWNRVEpHWGs3S1d5RXpyWFA2bStkNE1IdkJhclJLOFIvZ0VQ?=
- =?utf-8?B?UEx2WXkraHIwSjRjN05lVmNQR1JXdnJNUS9sWW1Bb0FpbjdVSy9IaHRnTDJ5?=
- =?utf-8?B?Qnoxc1A5TWw4VEpTeUtBY2k3ZFAyb1NWZzRPY0RCWVVJbHZTSlNpM0lVNzgw?=
- =?utf-8?B?MlhuT3ZpUnlDU1U0eklWa25vb3RxcWRUZlVWYktOOHhpODBKUjZvTk81SWo5?=
- =?utf-8?Q?/1wbTbUAiBe7VgkmY6FRc0u6dvg5U/Xb?=
+	=?utf-8?B?TEpBZnpNTGd5Z2ZUQlRVeWU3OG5VdEVKeFBoMXdEKyt2RGxoazFSY0g5V1Bj?=
+ =?utf-8?B?R0NDTkxWL25BZUdnQ00yN2ZjMzNuUWFVRjFnaWhRSTU2VExlc1F6V0l2SGhO?=
+ =?utf-8?B?eDFVRitib0JyTWJieUsyRnJWVGx5QmlVUzBrdjcyTUFRMkR2VUhGcHMxTC9I?=
+ =?utf-8?B?Mzl6SjI3TGh4OU5kenBna1RPZFJXTGpFYldQaEpLOTNMM2E5ZmNSTVphT21D?=
+ =?utf-8?B?alFvdXp2VVNNR2ZCZFhBMEZSRjg3QkU1Ny9hQVBZeUpmcS9sSmdFbUhYd0tx?=
+ =?utf-8?B?T1VhUGhZNDNiZWV5QWVTWWpKazNxM2ttOHBmQWRiakZ2WklSMDZEQUkzWjNw?=
+ =?utf-8?B?VGZJMU5ob0FJRnBqTzFBb2JLcU1nY3J5dHJld1FxSlhnRjFpQUUwRytqblF1?=
+ =?utf-8?B?V3N3S1ROajFKUmNlWWFSanVoSCtBREE0UjdoeXpleTFTeXUvdGJLK2hKckZI?=
+ =?utf-8?B?UElwRXpUSk0wdkxmd1M0KzJmQUtTZ0pTcEk2dVRiZnkyR252ZUN6bldMSUpX?=
+ =?utf-8?B?RUNrVENHVjVLNWwydUlSSzQxRmxjY2VBNEJQRDlocjFlYjBvWW9GenJiQ21m?=
+ =?utf-8?B?NGdqaUswbllWOTNlMkZKR1NEZG54Qi9WMWdOeEF0ZnpTNDU5dGprK2lpREZj?=
+ =?utf-8?B?c04ybGFaN3djKzdZbEp6Q25QNUpmUDRaWEhNV2VERXZOZWswSGJ5NWNHZHdJ?=
+ =?utf-8?B?MTRza1hNRlozaUY2MnI5OHlQZy9GN3Ryd21KVXpvUEJVcDdEbmczQUxLajVH?=
+ =?utf-8?B?QSsvZXZTclc1TmdMK2V4dHZEd0R3dDgvK1J0YTdyTW5DdkJyaVdIQ3ZSWnlY?=
+ =?utf-8?B?WFFkOFphdThWM1p0ZjdaR0cwdVkrSUl4K0JqdmJqWEJRV25obEhudHVLYjlj?=
+ =?utf-8?B?ai90Nkw0TEdsa3J3NExUN3p3UFRBaEJxeGNrQ2wrSjBFVGwyMHRnb0c2MmJr?=
+ =?utf-8?B?V2kxNzRBYmNnMHRDbnA2SW9mSSttdHJNR3N2Q2N3dFZhM3ZpVkZzaWtqK2Qx?=
+ =?utf-8?B?YkZROGZGb1JPMld0c29PQ2ZiVENiZWtSRzFCVndlaTFFMEZGQXR6QzNNMmZT?=
+ =?utf-8?B?MWgwUXozMjRzdFZleWR4LzlTUDBVbWtMVlo5R1B4dm5mTTl6R0VMYVl0cUtI?=
+ =?utf-8?B?eitXQWZvaXZwSXo3WHR5Rmd0RXZPZlhVNHgrZ1lxVlo3Z1ZML0JMZzJYdUpQ?=
+ =?utf-8?B?R2tEbi81aGtFcGRKM1BLSWpSTWlmZUY1bUtqU0FjQTVRcHRoVG1vL3l2NXFI?=
+ =?utf-8?B?KzArM3pLNWRYQ3hzeDBpaEtyQjhYdCs3RVc0R3VELy9JbFRDaTZ3VHlGY3JS?=
+ =?utf-8?B?Tmc0MjVOYTJSTVpaOUJjOUx3YUdNUXNkSEZGdXhIaURzMXZRWGErRDN0d1ZH?=
+ =?utf-8?B?TGdqZEZPdlIzb1UrckFObGMvNE5kbkVlangyNVlJNU9HVEN3YWFXMEY0Vzc4?=
+ =?utf-8?B?bXkyTSthMXgvb08xVEJBcGlnaVJoblFjNUxPT3VZcU03NHB5UU8xZU5sMmR6?=
+ =?utf-8?B?Q0EzV29MSDVVSk51eCtjOUtXTFlnVUJXMGFSV2ZYSXlraHNaOWN6SlVycEZq?=
+ =?utf-8?B?NkllMUtlK2tabnNUaU90WkdpeXNIU3h4aVZFMndKM2NJeUJKd21yVXBMQk40?=
+ =?utf-8?B?S1MwRE1IblBucmQ5eVBScGs5Tjc4L0VaRFdjSkdPb3Rmdk9CQUZDMndjQ3FK?=
+ =?utf-8?B?bW1MWjFQSFNBRkxDODdjcnY5S3krVnpPZ1ZuRFdXcE1NakFCcnArTkNTNzlC?=
+ =?utf-8?B?aUZlZDlUT3IvS0E1aWhvL2ozRzI4VjF5dVFJVmNROCsxMG03cFRTOFR5VmYw?=
+ =?utf-8?B?dTR6a29TNFFNeTYva1EwbCtKVFIwcHBMdlBMRlR0ajk3cGV0VHRiNU84MW1r?=
+ =?utf-8?B?SlVHcW9qS09EYjM2OHpSY1RTcTg5VVg4RnlBb214NWoxcHlyOXRoR25JTFpD?=
+ =?utf-8?Q?nAV3TR8WdzU1RExY33UoOqkp97kQ3GyM?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN5PR12MB9511.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bE1WRFQwNVVmajg3SWhFQ283RjRCRVVXd1JmaitHeHRtNHVQSkhUdDVkZXZC?=
- =?utf-8?B?S3hwRk5nRkZoS2FYYTRDRzU3UGFONDNZdkY5d1NPQzY2UkhtSXRWTFNCamtv?=
- =?utf-8?B?b1hUZXE0T3RNTjJ3WHV1b3p1c1lSK3dFTDdKUXlDa3B4MkROeEtKVlQvR1k0?=
- =?utf-8?B?akwwYzdlS2RuT1RJbGFXUEszQi96NHRKb3BUVU0wT1pqYkhKK1hDWVdKQTRo?=
- =?utf-8?B?dlZzV1RIOE9QVno3VjB2c1ZCVmo2Z05wMW93RlBPK0ljMjRWcDZSdDhSNFFk?=
- =?utf-8?B?UkdRVkN3N3Bpa3VUbmt0SUdIR25aUXh5NE5YazdiMXViWVo0NjlXSUlrZXFT?=
- =?utf-8?B?RUJhQnhzUTJsbGN5Ui9DSkFQNUhhN0VSY3lHOUJwQUVKMGpvMFFXbldBWXdp?=
- =?utf-8?B?N2VhS2tvNXhyVGxxTmRNbWEzcmJTWXlBb01CWWl6QTZQWk1lVkJleFJvcmdo?=
- =?utf-8?B?Q3p0K2hOT1lBcDVjZ21jY0J0eTZ2amRCQVFIbEhOTTNjQWQ1ZVlURHc3Rk9Y?=
- =?utf-8?B?aUNkTTZlMnRNOGlrQXNRU1QwVE9HSUlzQWxxUjdBWEc2Ky9wOWdodFhYeUha?=
- =?utf-8?B?cXBFeEFTUjUzS0lXYlJTcWE4WnB1MlVXb00wcXVmMkxNRTR2dHdsU0hoeXNH?=
- =?utf-8?B?eTNmbWZ4c284Y3ZlbmZEZlFBSkRQcDNiZThVTGRJYlJuUlIrY3lrbnQrUnh5?=
- =?utf-8?B?dy8zd1RWQndPd0JNbWVoWkx5bTV0di9PMS9pNnpiaU9qQ3FYelc5TEplTkNH?=
- =?utf-8?B?TXVuOFpNTUorZjhZSkdkTjlOWDR5ekhHczVDYnBuT09lcGlrR3dnZ1NYZmdZ?=
- =?utf-8?B?NzNRcXhnMitGWFVScWN4aFJvcWFhNzB4d2ZmWmF5bDBSQ0xWdnRZRkhYVWlS?=
- =?utf-8?B?R3IyQ3U4NWE2Y09rVzZQL0E3U1NLck92bS9RY1NTMk9UWFhNKy9ySHBWRTNj?=
- =?utf-8?B?TUlMc1dLdmgyNmdHN1piVlhvek95K29UTFUrUG1ST2J4RjRaMm91LzNweWI5?=
- =?utf-8?B?RWFGd0RMN29EREZlYWxnYThIRTZSTUx4Qk5nY3hQL3J4a3FydDJ3S2k1NFEy?=
- =?utf-8?B?VWhiRW9VYk9KTzl6SnVKRG9UZ2J2ZGZzUkY2NXVtNm1xNzA5NlZxMjE3UXlH?=
- =?utf-8?B?TzF6eFh1TWtQUm54Mlh0ZFVtdHBZRUk3b2JvQ2hlVTBOVDRXNXBHODVialRr?=
- =?utf-8?B?NjNJb3RwYkgwaWdFcU1tVHJkWXluZ3N3ZzIzbFAwQ2p1UDVUTm1heHNWR3hp?=
- =?utf-8?B?c2tVZXI5QmhQZ25nY2hQZVlyc2hZeXBhVkRqZklpMEVyNG9zdTJLZW9HbDdX?=
- =?utf-8?B?bWNuUkVNL0F5cnY4SjFycEJDQURlQ1QvdXRPMVlvUXVZSTlRd3NKb0ZTZXlz?=
- =?utf-8?B?eTI2ZGFFMWN3ckV4M1hucEcxQUJtZVNqdzFDVXhDa2I2QkN5TjhTTzZoRHBt?=
- =?utf-8?B?UkpQYVdaOWhCSGRFUFlTdTFudWgrMUc2anFmeGlmNUFEQVV3QU96NjdOaHlJ?=
- =?utf-8?B?M3hCYUdFalB6c0VtRnpXeUN6ZllzK250bGdramIyNCt3K0Z4Uy9QTTg1Nk9Z?=
- =?utf-8?B?MDRFQUtNaGlxYkUyQktqVnJIWGdRV0dMa1pDL3ZudXB5V2VEOE1IRVBUWm5I?=
- =?utf-8?B?WmpIUXpMOXBMaUVDYWtPRUZnSXhoaUVncGpIditJNmNwOHk3aGdnL28rK1Yy?=
- =?utf-8?B?QnA4L04vZjBUeXFwZGtnSzBuT0U5ZGNGZ0VOaHZmZmlyNXJRc1pMeVVsYXFx?=
- =?utf-8?B?M0JTZjJjbjdDK1liNnhnZklYYnJwVWs5dGFoS1hlUENQaytTVzNNeSthendN?=
- =?utf-8?B?RlRhdTYybDgxd3Q5ZTdMaFRHUm9uWFp1dG5ybEVkNXBqbk5tOCt3VWhwVEo0?=
- =?utf-8?B?azMzWUhhUCt6WFlNZUM3V2JCUlk3eTN4OW5hbXlZK0VTWHk5WFRQQ0ZTU0xU?=
- =?utf-8?B?WHpSYlB4NUY4bDNiclNUMFJwMmI5MVkrODc0MWwxYWt6Q05TT2s0czR6cm5t?=
- =?utf-8?B?bzA5bFhyMjh3ekFXUHBiQVFIUGZIdDZ3TUJhcWRrM3RVcHQzM2JQY3JpL3pi?=
- =?utf-8?B?MTJmTVFOS0pXUXJUNkE0Yk4yVmplTWdwa1dFMWVWWFJaZEFvMTBBWmRtS05J?=
- =?utf-8?Q?14o9L2cNoS6J0hN9uv1r7Ntjq?=
+	=?utf-8?B?UE9hSkMyUk1zTWdWMGdwQXpNaXVGUW5aRDZTd3g0ZnFvL3RwODZuVEZrZ0hw?=
+ =?utf-8?B?blAwKzBrVjVIdUkzTGRsVEw2WEpCYkpVVk1mM3d6ZjN0WlRNZTg3Y21FcWdq?=
+ =?utf-8?B?YVVocVowb25EZWNlSCs5TWQzRGdPcjhoNUwzVHl2RFZnVnlFK0JWRTVKM3Ux?=
+ =?utf-8?B?SWZJUHNrQllMUWNIaGMrNkZGdUR3MThQdEFDUUZTa1JXeEtPMFRoaEErZGMr?=
+ =?utf-8?B?bnFPay9NOFh6d1VmeTdVVWRIRUJMTHRyL0VTQThBQ0dUZVhJZ0czaEZpaEFT?=
+ =?utf-8?B?TVc5emhDYXd4S20xekpnZXF4Yis1N29tTEZzdjlHRWJOUGYrbjRVNE1DYkFu?=
+ =?utf-8?B?clhnQ1d4Z2NCb1BvSTR1OTljUW8xWkpKTGVRNUNSK3lMVFFLZHovMjVhM09m?=
+ =?utf-8?B?Si9iTGFqT1FIYkVaeGk4ZkZ6cXFlOU1wSTlRWWNGa1Iyb0J1dDZwUmc4V0t0?=
+ =?utf-8?B?aWhtNmJKSTVUdDRjcld4WmtmeFcxdlFRMTdWallqcjUzZkpGdXhPSDBNNWFE?=
+ =?utf-8?B?TEFpS0hVZ0RlT1laTWhjRUxMZGo3MmxSUWpCUndxdFZnUTV0YVNvczdMdzhG?=
+ =?utf-8?B?cTZjbDZvSkhpTm1DNVlKdGRPejZzZnhUUXFZNWF1bXJ3bHpISGJURSt3TVBw?=
+ =?utf-8?B?aENIbGRXSThwY1VZSkJMY2NIVWNvUWJoZVE1WVNFWE0zTFFPU3BjRUVpSWJl?=
+ =?utf-8?B?Vi9ZTW52ZnBmSEtEcmxOS1pTQ1NSamJTSUdTRXc0dFpOY0JtM2hFYml2Z0Ri?=
+ =?utf-8?B?cE0vNXBEKzAvZmtycUgvdktETzVQNEIzb1RlUDhNQzRmNWRMNlduVGN3aklt?=
+ =?utf-8?B?b1VOUTBZbzJDMVBONlg4eGM1SzdKTGo0V2FVMW41Sm02MWhOb21FY0JUWURB?=
+ =?utf-8?B?c2luendNbkY1TzJTaDMyQXU3U3FONHhxcW5oLytLaE1obWhwcWJnakRDMVFH?=
+ =?utf-8?B?bWJOSVFNVjZLQnpOSVVvcFpNWjY0N3hWQ1Rnc21lVlBoUzN0eExJNmRyNXFv?=
+ =?utf-8?B?OFFtd211UHhURDFLTnBpZmtnWk9TbVVmWi9yc21iclc3YklaU0lLa1c1QStx?=
+ =?utf-8?B?Y0RpcENpaEFmTkRzVlhzQ2VRY0pSd0d6dndJQysrd09uNFViZGRtNUZNV04x?=
+ =?utf-8?B?dkdhSTNaQ0N2SkNzak1ySS92Yi9mUmNJdzZLL0l3T05VQStINnlXSjVEeU9M?=
+ =?utf-8?B?SkR3bGgrTHY1YVRaaUlEK3pCQnQyNmJNVXFUSmdzbWNmRVJnRHZTUHJiN2Mv?=
+ =?utf-8?B?RzQxRmpqMkJ4UEp3SzBZKzdtV3p6MjhBTXc5MTRLSDdROTRLRS9ZTVhDWURM?=
+ =?utf-8?B?V1hVcUJ0anhYajIrSU9SaHlWMERpbUdEQllyVE9JVkozTTg4MlVDTXZGcFdF?=
+ =?utf-8?B?dE8xa3ljZkhrSDJZSWF3V0hyS1BNVWhxMm1SZEVSOVZCOUpWa1l6aTRJNEJp?=
+ =?utf-8?B?VEp6L2pqVE1XQTd4WFBYYnZjb1JZWkNUbUVBdjNrMVhoTzhYSkJOMnJoZDhW?=
+ =?utf-8?B?b0VrbFNqZkdmak9YZzlEQ3pVOVhQVWZCYldvd2hPdXZ2UHo1YXpsTml6VUFK?=
+ =?utf-8?B?VGkxekNXeVkwMTZmU3c2NEs5bnl0c0UyYVhHTWl3YXA0c2RuOVk4ekU1MjNH?=
+ =?utf-8?B?b2M3cURIMzNRa2hFdEc4K2JocStpeGNUWjQzOElqUFlSUmtOV2tLSkNEKzln?=
+ =?utf-8?B?MEdwQ0x1aFlZOVU1MDluYnhTUE1OWVJTUlRsd2o5VDk0bVZiU0k1SG92ZWkz?=
+ =?utf-8?B?M2FELzNUZnhZTzEvOFlFNmNpSjhVZm5HWXgwMEowSlVRSnF2K0thck0wSnpG?=
+ =?utf-8?B?TEtpa085U2dSWHdSMlhCTjdBeEQ0R2NmSmMvZkM3bHhleStZWDA3ck9Ia1JG?=
+ =?utf-8?B?TTh0MXJyN2drdXdoeWptNWx4aVl6RmFnMk4wTFpGU2ZiWm1wSjN1VmNHRkpD?=
+ =?utf-8?B?SklnaUlVU1NXM3FkWnAySnBiSlNjWjBuRExFcGg1VHBoUVJCY0JEMk8xWGJK?=
+ =?utf-8?B?VFhXTFZzWHpsRjVWVVRSUVIwSllXbU5XS25GTERjNXljMnNCUFlSYnh1MzJI?=
+ =?utf-8?B?MDJWUkZnODI4TFVrTDhPN0V6QlR0Y1lMcm5uUlAxalYwVEJ5S3NWM24xTUww?=
+ =?utf-8?Q?uFHmuAU+zoBnu0oEPrNBgjrpn?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 169d8576-5b23-493a-5cc4-08de30bd329c
-X-MS-Exchange-CrossTenant-AuthSource: BN5PR12MB9511.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71ebe27d-9be9-44fb-e29d-08de30e34eb3
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2025 09:37:09.2132
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2025 14:09:57.2563
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zMJS8RzPz/n34Yvf2ORSPNccGhwwjenujY2mT0vOOBAenLfV3wEPTn0263BWBfjVWVNTcTIY9JHGiSAy5UcDoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4116
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bn5a+NCrJhTszn1TWQmTsqW3yRcJ4y8yX7UXaByQRR/SsaWw3RMAXOjlkssPYUIz9XdCYzRNhHb/8HwFd1CVuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9344
 
 
-On 11/25/2025 3:52 PM, Jon Hunter wrote:
->
->
-> On 25/11/2025 07:16, Ashish Mhetre wrote:
->> The Command Queue Virtualization (CMDQV) hardware is part of the
->> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
->> virtualizing the command queue for the SMMU.
+>>>
+>>>
+>>> On 11/5/25 12:38, Sumit Gupta wrote:
+>>>> Add kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable CPPC
+>>>> autonomous performance selection at system startup. When autonomous
+>>>> mode
+>>>> is enabled, the hardware automatically adjusts CPU performance 
+>>>> based on
+>>>> workload demands using Energy Performance Preference (EPP) hints.
+>>>>
+>>>> This parameter allows to configure the autonomous mode on all CPUs
+>>>> without requiring runtime sysfs manipulation if the 'auto_sel' 
+>>>> register
+>>>> is present.
+>>>>
+>>>> When auto_sel_mode=1:
+>>>> - All CPUs are configured for autonomous operation during module init
+>>>> - EPP is set to performance preference (0x0) by default
+>>>> - Min/max performance bounds use defaults
+>>>> - CPU frequency scaling is handled by hardware instead of OS governor
+>>>>
+>>>> For Documentation/:
+>>>> Reviewed-by: Randy Dunlap<rdunlap@infradead.org>
+>>>> Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
+>>>> ---
+>>>>   .../admin-guide/kernel-parameters.txt         |  12 ++
+>>>>   drivers/cpufreq/cppc_cpufreq.c                | 197
+>>>> +++++++++++++++---
+>>>>   2 files changed, 182 insertions(+), 27 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+>>>> b/Documentation/admin-guide/kernel-parameters.txt
+>>>> index b8f8f5d74093..048f84008a7e 100644
+>>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>>> @@ -929,6 +929,18 @@
+>>>>                       Format:
+>>>> <first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
+>>>>
+>>>> +     cppc_cpufreq.auto_sel_mode=
+>>>> +                     [CPU_FREQ] Enable ACPI CPPC autonomous
+>>>> performance selection.
+>>>> +                     When enabled, hardware automatically adjusts
+>>>> CPU frequency
+>>>> +                     on all CPUs based on workload demands. In
+>>>> Autonomous mode,
+>>>> +                     Energy Performance Preference(EPP) hints guide
+>>>> hardware
+>>>> +                     toward performance(0x0) or energy efficiency
+>>>> (0xff).
+>>>> +                     Requires ACPI CPPC autonomous selection
+>>>> register support.
+>>>> +                     Format: <bool>
+>>>> +                     Default: 0 (disabled)
+>>>> +                     0: use cpufreq governors
+>>>> +                     1: enable if supoorted by hardware
+>>>> +
+>>>>       cpuidle.off=1   [CPU_IDLE]
+>>>>                       disable the cpuidle sub-system
+>>>>
+>>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c
+>>>> b/drivers/cpufreq/cppc_cpufreq.c
+>>>> index d1b44beaddda..0a55ab011317 100644
+>>>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>>>> @@ -28,8 +28,12 @@
+>>>>   #include <acpi/cppc_acpi.h>
+>>>>
+>>>>   static struct cpufreq_driver cppc_cpufreq_driver;
+>>>> +
+>>>>   static DEFINE_MUTEX(cppc_cpufreq_update_autosel_config_lock);
+>>>>
+>>>> +/* Autonomous Selection */
+>>>> +static bool auto_sel_mode;
+>>>> +
+>>>>   #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
+>>>>   static enum {
+>>>>       FIE_UNSET = -1,
+>>>> @@ -272,8 +276,13 @@ static int cppc_cpufreq_set_target(struct
+>>>> cpufreq_policy *policy,
+>>>>       freqs.old = policy->cur;
+>>>>       freqs.new = target_freq;
+>>>>
+>>>> +     /*
+>>>> +      * In autonomous selection mode, hardware handles frequency
+>>>> scaling directly
+>>>> +      * based on workload and EPP hints. So, skip the OS frequency
+>>>> set requests.
+>>>> +      */
+>>>>       cpufreq_freq_transition_begin(policy, &freqs);
+>>>> -     ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+>>>> +     if (!cpu_data->perf_caps.auto_sel)
+>>>> +             ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+>>>>       cpufreq_freq_transition_end(policy, &freqs, ret != 0);
+>>>>
+>>>>       if (ret)
+>>>> @@ -565,6 +574,12 @@ static struct cppc_cpudata
+>>>> *cppc_cpufreq_get_cpu_data(unsigned int cpu)
+>>>>               goto free_mask;
+>>>>       }
+>>>>
+>>>> +     ret = cppc_get_perf(cpu, &cpu_data->perf_ctrls);
+>>>> +     if (ret) {
+>>>> +             pr_debug("Err reading CPU%d perf ctrls:ret:%d\n", cpu,
+>>>> ret);
+>>>> +             goto free_mask;
+>>>> +     }
+>>>> +
+>>>>       return cpu_data;
+>>>>
+>>>>   free_mask:
+>>>> @@ -666,11 +681,81 @@ static int
+>>>> cppc_cpufreq_update_autosel_val(struct cpufreq_policy *policy, bool a
+>>>>       return 0;
+>>>>   }
+>>>>
+>>>> +static int cppc_cpufreq_update_epp_val(struct cpufreq_policy
+>>>> *policy, u32 epp)
+>>>> +{
+>>>> +     struct cppc_cpudata *cpu_data = policy->driver_data;
+>>>> +     unsigned int cpu = policy->cpu;
+>>>> +     int ret;
+>>>> +
+>>>> +     pr_debug("cpu%d, eppcurr:%u,new:%u\n", cpu,
+>>>> cpu_data->perf_ctrls.energy_perf, epp);
+>>>> +
+>>>> + guard(mutex)(&cppc_cpufreq_update_autosel_config_lock);
+>>> Do we need to take the mutex ? Or is it reserved to auto_sel ?
 >>
->> Update SMMU compatible strings to use nvidia,tegra264-smmu to enable
->> CMDQV support. Add device tree nodes for the CMDQV hardware and enable
->> them on the tegra264-p3834 platform where SMMUs are enabled. Each SMMU
->> instance is paired with its corresponding CMDQV instance via the
->> nvidia,cmdqv property.
+>> Will move this to parent function.
+>> Explained more in reply of the previous patch '7/8'.
 >>
->> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
->> ---
->>   .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |  8 +++
->>   arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 55 +++++++++++++++++--
->>   2 files changed, 58 insertions(+), 5 deletions(-)
+>>>> +
+>>>> +     ret = cppc_set_epp(cpu, epp);
+>>>> +     if (ret) {
+>>>> +             pr_warn("failed to set energy_perf forcpu:%d (%d)\n",
+>>>> cpu, ret);
+>>>> +             return ret;
+>>>> +     }
+>>>> +     cpu_data->perf_ctrls.energy_perf = epp;
+>>>> +
+>>>> +     return 0;
+>>>> +}
+>>>> +
+>>>> +/**
+>>>> + * cppc_cpufreq_update_autosel_config - Update Autonomous selection
+>>>> configuration
+>>>> + * @policy: cpufreq policy for the CPU
+>>>> + * @min_perf: minimum performance value to set
+>>>> + * @max_perf: maximum performance value to set
+>>>> + * @auto_sel: autonomous selection mode enable/disable (also
+>>>> controls min/max perf reg updates)
+>>>> + * @epp_val: energy performance preference value
+>>>> + * @update_epp: whether to update EPP register
+>>>> + * @update_policy: whether to update policy constraints
+>>>> + *
+>>>> + * Return: 0 on success, negative error code on failure
+>>>> + */
+>>>> +static int cppc_cpufreq_update_autosel_config(struct cpufreq_policy
+>>>> *policy,
+>>>> +                                           u64 min_perf, u64
+>>>> max_perf, bool auto_sel,
+>>>> +                                           u32 epp_val, bool
+>>>> update_epp, bool update_policy)
+>>>> +{
+>>>> +     const unsigned int cpu = policy->cpu;
+>>>> +     int ret;
+>>>> +
+>>>> +     /*
+>>>> +      * Set min/max performance registers and update policy
+>>>> constraints.
+>>>> +      *   When enabling: update both registers and policy.
+>>>> +      *   When disabling: update policy only.
+>>>> +      * Continue even if min/max are not supported, as EPP and 
+>>>> autosel
+>>>> +      * might still be supported.
+>>>> +      */
+>>>> +     ret = cppc_cpufreq_set_min_perf(policy, min_perf, auto_sel,
+>>>> update_policy);
+>>>> +     if (ret && ret != -EOPNOTSUPP)
+>>>> +             return ret;
+>>>> +
+>>>> +     ret = cppc_cpufreq_set_max_perf(policy, max_perf, auto_sel,
+>>>> update_policy);
+>>>> +     if (ret && ret != -EOPNOTSUPP)
+>>>> +             return ret;
+>>>> +
+>>>> +     if (update_epp) {
+>>>> +             ret = cppc_cpufreq_update_epp_val(policy, epp_val);
+>>>> +             if (ret)
+>>>> +                     return ret;
+>>>> +     }
+>>>> +
+>>>> +     ret = cppc_cpufreq_update_autosel_val(policy, auto_sel);
+>>>> +     if (ret)
+>>>> +             return ret;
+>>>> +
+>>>> +     pr_debug("Updated autonomous config [%llu-%llu] for CPU%d\n",
+>>>> min_perf, max_perf, cpu);
+>>>> +
+>>>> +     return 0;
+>>>> +}
+>>>> +
+>>>>   static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>>>>   {
+>>>>       unsigned int cpu = policy->cpu;
+>>>>       struct cppc_cpudata *cpu_data;
+>>>>       struct cppc_perf_caps *caps;
+>>>> +     u64 min_perf, max_perf;
+>>>>       int ret;
+>>>>
+>>>>       cpu_data = cppc_cpufreq_get_cpu_data(cpu);
+>>>> @@ -734,11 +819,31 @@ static int cppc_cpufreq_cpu_init(struct
+>>>> cpufreq_policy *policy)
+>>>>       policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
+>>>>       cpu_data->perf_ctrls.desired_perf = caps->highest_perf;
+>>>>
+>>>> -     ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+>>>> -     if (ret) {
+>>>> -             pr_debug("Err setting perf value:%d on CPU:%d. 
+>>>> ret:%d\n",
+>>>> -                      caps->highest_perf, cpu, ret);
+>>>> -             goto out;
+>>>> +     if (cpu_data->perf_caps.auto_sel) {
+>>>> +             ret = cppc_set_enable(cpu, true);
+>>> The CPPC enable register is optional.
+>>> However this doesn't mean CPPC is not working.
 >>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi 
->> b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
->> index 06795c82427a..375d122b92fa 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
->> @@ -26,5 +26,13 @@ iommu@5000000 {
->>           iommu@6000000 {
->>               status = "okay";
->>           };
->> +
->> +        cmdqv@5200000 {
->> +            status = "okay";
->> +        };
+>> Ya, changed this in v5.
+>>
+>>>> +             if (ret) {
+>>>> +                     pr_err("Failed to enable CPPC on cpu%d
+>>>> (%d)\n", cpu, ret);
+>>>> +                     goto out;
+>>>> +             }
+>>>> +
+>>>> +             min_perf = cpu_data->perf_ctrls.min_perf ?
+>>>> +                        cpu_data->perf_ctrls.min_perf :
+>>>> caps->lowest_nonlinear_perf;
+>>>> +             max_perf = cpu_data->perf_ctrls.max_perf ?
+>>>> +                        cpu_data->perf_ctrls.max_perf :
+>>>> caps->nominal_perf;
+>>>> +
+>>>> +             ret = cppc_cpufreq_update_autosel_config(policy,
+>>>> min_perf, max_perf, true,
+>>>> + CPPC_EPP_PERFORMANCE_PREF, true, false);
+>>>> +             if (ret) {
+>>>> +                     cppc_set_enable(cpu, false);
+>>>> +                     goto out;
+>>>> +             }
+>>>> +     } else {
+>>>> +             ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+>>>> +             if (ret) {
+>>>> +                     pr_debug("Err setting perf value:%d on CPU:%d.
+>>>> ret:%d\n",
+>>>> +                              caps->highest_perf, cpu, ret);
+>>>> +                     goto out;
+>>>> +             }
+>>>>       }
+>>>>
+>>>>       cppc_cpufreq_cpu_fie_init(policy);
+>>>> @@ -910,7 +1015,6 @@ static int
+>>>> cppc_cpufreq_update_auto_select(struct cpufreq_policy *policy, bool e
+>>>>       struct cppc_perf_caps *caps = &cpu_data->perf_caps;
+>>>>       u64 min_perf = caps->lowest_nonlinear_perf;
+>>>>       u64 max_perf = caps->nominal_perf;
+>>>> -     int ret;
+>>>>
+>>>>       if (enable) {
+>>>>               if (cpu_data->perf_ctrls.min_perf)
+>>>> @@ -919,26 +1023,8 @@ static int
+>>>> cppc_cpufreq_update_auto_select(struct cpufreq_policy *policy, bool e
+>>>>                       max_perf = cpu_data->perf_ctrls.max_perf;
+>>>>       }
+>>>>
+>>>> -     /*
+>>>> -      * Set min/max performance registers and update policy
+>>>> constraints.
+>>>> -      *   When enabling: update both registers and policy.
+>>>> -      *   When disabling: update policy only.
+>>>> -      * Continue even if min/max are not supported, as EPP and 
+>>>> autosel
+>>>> -      * might still be supported.
+>>>> -      */
+>>>> -     ret = cppc_cpufreq_set_min_perf(policy, min_perf, enable, true);
+>>>> -     if (ret && ret != -EOPNOTSUPP)
+>>>> -             return ret;
+>>>> -
+>>>> -     ret = cppc_cpufreq_set_max_perf(policy, max_perf, enable, true);
+>>>> -     if (ret && ret != -EOPNOTSUPP)
+>>>> -             return ret;
+>>>> -
+>>>> -     ret = cppc_cpufreq_update_autosel_val(policy, enable);
+>>>> -     if (ret)
+>>>> -             return ret;
+>>>> -
+>>>> -     return 0;
+>>>> +     return cppc_cpufreq_update_autosel_config(policy, min_perf,
+>>>> max_perf, enable,
+>>>> +                                               0, false, true);
+>>>>   }
+>>>>
+>>>>   static ssize_t store_auto_select(struct cpufreq_policy *policy,
+>>>> const char *buf, size_t count)
+>>>> @@ -1146,13 +1232,61 @@ static struct cpufreq_driver
+>>>> cppc_cpufreq_driver = {
+>>>>       .name = "cppc_cpufreq",
+>>>>   };
+>>>>
+>>>> +static int cppc_cpufreq_set_epp_autosel_allcpus(bool auto_sel, u64
+>>>> epp)
+>>>> +{
+>>>> +     int cpu, ret;
+>>>> +
+>>>> +     for_each_present_cpu(cpu) {
+>>>> +             ret = cppc_set_epp(cpu, epp);
+>>> Isn't the EPP optional ?
+>>
+>> Moving this to cppc_cpufreq_cpu_init in v5. Will add handling for
+>> EOPNOTSUPP.
+>>
+>>
+>>> If autonomous selection is available but not EPP, we will bail out.
+>>
+>> I couldn't find in spec that EPP is mandatory when auto_select is
+>> enabled.
 >
-> This needs to be ordered in the file according to its address.
+> I was thinking about the case where the platform:
+> - supports auto_sel
+> - doesn't support EPP
+> Then won't this function return an error code and not set auto_sel even
+> though
+> we could have enabled it (without setting the EPP value) ?
+>
 
-Hi Jon, Thanks for the review.
-cmdqv nodes follow same ordering as its corresponding iommu nodes.
-I have added them immediately after corresponding iommu nodes.
-Can you please check and see if it's fine? Same applies to your
-similar comments below as well.
+Ya, right. For that will handle EOPNOTSUPP after reading EPP.
+
+Thank you,
+Sumit Gupta
+
 
 >
->> +
->> +        cmdqv@6200000 {
->> +            status = "okay";
->> +        };
->>       };
->>   };
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi 
->> b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
->> index f137565da804..d8287b95221e 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
->> @@ -3361,7 +3361,7 @@ bus@8100000000 {
->>                <0x02 0x00000000 0xd0 0x00000000 0x08 0x80000000>; /* 
->> ECAM, prefetchable memory, I/O */
->>             smmu1: iommu@5000000 {
->> -            compatible = "arm,smmu-v3";
->> +            compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
->>               reg = <0x00 0x5000000 0x0 0x200000>;
->>               interrupts = <GIC_SPI 12 IRQ_TYPE_EDGE_RISING>,
->>                        <GIC_SPI 13 IRQ_TYPE_EDGE_RISING>;
->> @@ -3370,10 +3370,11 @@ smmu1: iommu@5000000 {
->>                 #iommu-cells = <1>;
->>               dma-coherent;
->> +            nvidia,cmdqv = <&cmdqv1>;
->>           };
->>             smmu2: iommu@6000000 {
->> -            compatible = "arm,smmu-v3";
->> +            compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
->>               reg = <0x00 0x6000000 0x0 0x200000>;
->>               interrupts = <GIC_SPI 1 IRQ_TYPE_EDGE_RISING>,
->>                        <GIC_SPI 2 IRQ_TYPE_EDGE_RISING>;
->> @@ -3382,6 +3383,23 @@ smmu2: iommu@6000000 {
->>                 #iommu-cells = <1>;
->>               dma-coherent;
->> +            nvidia,cmdqv = <&cmdqv2>;
->> +        };
->> +
->> +        cmdqv1: cmdqv@5200000 {
->
-> Same here. Please order according to the address.
->
->> +            compatible = "nvidia,tegra264-cmdqv";
->> +            status = "disabled";
->> +
->> +            reg = <0x00 0x5200000 0x0 0x830000>;
->> +            interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
->> +        };
->> +
->> +        cmdqv2: cmdqv@6200000 {
->> +            compatible = "nvidia,tegra264-cmdqv";
->> +            status = "disabled";
->> +
->> +            reg = <0x00 0x6200000 0x0 0x830000>;
->> +            interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
->>           };
->>             mc: memory-controller@8020000 {
->> @@ -3437,7 +3455,7 @@ emc: external-memory-controller@8800000 {
->>           };
->>             smmu0: iommu@a000000 {
->> -            compatible = "arm,smmu-v3";
->> +            compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
->>               reg = <0x00 0xa000000 0x0 0x200000>;
->>               interrupts = <GIC_SPI 21 IRQ_TYPE_EDGE_RISING>,
->>                        <GIC_SPI 22 IRQ_TYPE_EDGE_RISING>;
->> @@ -3446,10 +3464,11 @@ smmu0: iommu@a000000 {
->>                 #iommu-cells = <1>;
->>               dma-coherent;
->> +            nvidia,cmdqv = <&cmdqv0>;
->>           };
->>             smmu4: iommu@b000000 {
->> -            compatible = "arm,smmu-v3";
->> +            compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
->>               reg = <0x00 0xb000000 0x0 0x200000>;
->>               interrupts = <GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
->>                        <GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
->> @@ -3458,6 +3477,23 @@ smmu4: iommu@b000000 {
->>                 #iommu-cells = <1>;
->>               dma-coherent;
->> +            nvidia,cmdqv = <&cmdqv4>;
->> +        };
->> +
->> +        cmdqv0: cmdqv@a200000 {
->
-> And here.
->
->> +            compatible = "nvidia,tegra264-cmdqv";
->> +            status = "disabled";
->> +
->> +            reg = <0x00 0xa200000 0x0 0x830000>;
->> +            interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
->> +        };
->> +
->> +        cmdqv4: cmdqv@b200000 {
->> +            compatible = "nvidia,tegra264-cmdqv";
->> +            status = "disabled";
->> +
->> +            reg = <0x00 0xb200000 0x0 0x830000>;
->> +            interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
->>           };
->>             i2c14: i2c@c410000 {
->> @@ -3690,7 +3726,7 @@ bus@8800000000 {
->>           ranges = <0x00 0x00000000 0x88 0x00000000 0x01 0x00000000>;
->>             smmu3: iommu@6000000 {
->> -            compatible = "arm,smmu-v3";
->> +            compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
->>               reg = <0x00 0x6000000 0x0 0x200000>;
->>               interrupts = <GIC_SPI 225 IRQ_TYPE_EDGE_RISING>,
->>                        <GIC_SPI 226 IRQ_TYPE_EDGE_RISING>;
->> @@ -3699,6 +3735,15 @@ smmu3: iommu@6000000 {
->>                 #iommu-cells = <1>;
->>               dma-coherent;
->> +            nvidia,cmdqv = <&cmdqv3>;
->> +        };
->> +
->> +        cmdqv3: cmdqv@6200000 {
->> +            compatible = "nvidia,tegra264-cmdqv";
->> +            status = "disabled";
->> +
->> +            reg = <0x00 0x6200000 0x0 0x830000>;
->> +            interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
->>           };
->>             hda@90b0000 {
->
+>>
+>>
+>>>> +             if (ret) {
+>>>> +                     pr_warn("Failed to set EPP on CPU%d (%d)\n",
+>>>> cpu, ret);
+>>>> +                     goto disable_all;
+>>>> +             }
+>>>> +
+>>>> +             ret = cppc_set_auto_sel(cpu, auto_sel);
+>>>
+>>> Also, it is possible that a platform only supports autonomous 
+>>> selection.
+>>> In this case, writing to auto_sel will fail, but auto_sel is still
+>>> relevant.
+>>
+>> I am not sure if we will have such platform which only supports
+>> Autonomous
+>> mode and has auto_sel as read only. Will add handling for EOPNOTSUPP
+>> if we
+>> have such cases as the cppc_get_reg_val() will returns this error.
+>>
+>> Thank you,
+>> Sumit Gupta
+>>
+>> ....
+>>
