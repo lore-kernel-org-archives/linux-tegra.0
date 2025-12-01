@@ -1,109 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC11E51EB
-	for <linux-tegra@vger.kernel.org>; Sun, 30 Nov 2025 12:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0A7231832
+	for <linux-tegra@vger.kernel.org>; Mon,  1 Dec 2025 06:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764507340; cv=none; b=ihb+KgPWDqlJdQXGiheuWrT82H5SzgjNe/MWhdqfMaoOkqkxKbjsWnwmVqRka3bKklVuyzcTah5dzd+4hmnGS5O51lbU9SgSCWwcWhtFTvuTK3jbbUUTw2Vgk5vMvzh2qo5jdTro3mvP2T2C51djP9xWSUEtClXxWax/kcpCjpA=
+	t=1764569573; cv=none; b=I1ITjLe8Zlyt/IoxopeUaNmYDXhwavN/SnNsRgQFKcSpMG9DiSvhc9wCkaYfKbXAGPodBULICAUeWYHLSVSVLNi+RMY8AOf8yZ/vfCMhxo830fqDVdTZTJTOhhGyG9aeohZDiIWM/hpSAqrfEewx8wxbBtmsZFnVDTzQaDlnTzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764507340; c=relaxed/simple;
-	bh=+CUU91VE9U+UPRFztWIsw6a0HFlxr+X7N2lteq6FDVE=;
+	s=arc-20240116; t=1764569573; c=relaxed/simple;
+	bh=0gqWOlt6q0VnzXoDw9gLNI555RhmJF/DyPsr1omshpk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cM6PXtcmvrV7imIicuRUJNSoOngTWeGvIyF8FtsgcILFsgiCmgwIgFBzxGs7iGVQpJideUWMMFVvuMFJF22GOfU9DkyaJOTSXKWvGwSM5CclaGgN+g00EyNBTpW/3ub+fd8vSJAwbQov96OEo5IJj4CLyUz0uXZaJfpioZeUyYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSJ9/A2F; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=Ib957cPH7VomHVoCpxiHVYE1ZcbxtnXhrJ5Pnzbehw8X3sVTgfa7XkRBRDnvy8Vk1ksosVOvyY5Za2oII2TefogL9JuVjPHZZTo2J8DWu3nLp0+tq6S1T8mROkLCn+T6bsaxQB4zZ4ietIGzk3LMaCfmZl/xJwA6VTo4eHBFxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cxc7gSbl; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSJ9/A2F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00246C2BCB9
-	for <linux-tegra@vger.kernel.org>; Sun, 30 Nov 2025 12:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764507340;
-	bh=+CUU91VE9U+UPRFztWIsw6a0HFlxr+X7N2lteq6FDVE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dSJ9/A2FC4seo224bKPDMEgeoBbyhAX1SNWQp0ET7Y8oWpl24VoMzYc+2+Gb8RKT0
-	 X2/Yulx4fnueTCvv6EJWEeLhm1V5AHLVrz9q3yqMGDCYwvJs4PIfuMQz1Tlm4IaH3h
-	 MNilQfELSEpLA03dnMAZU4Do9ECv1liVZz0UGk2V50fdNYbLham8ROrNM+w+AwNKbZ
-	 b0yEA6SvZgSigfctxx5ch96LVibMmBqkauPpGtbEmEamVwVgcYlv82racFqCCbu+kD
-	 rH/evDI66wb5VBlcLc/loYPIBnUmnbVxb9SaZMXSFeSYyW3sRgoUipMa1R2uEjlQuV
-	 9P+MFCzW4yYlw==
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7c76f65feb5so2452555a34.0
-        for <linux-tegra@vger.kernel.org>; Sun, 30 Nov 2025 04:55:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJ/QW7dgu8fP5XeTxDh2qHu6VXXIJG5fi9D65UGa7uJpmzbhTvT0/CkxFwA0oxH6Dtxq5qXjIcpxmnWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzhONaxoU27MaSABG1Vx17XE1GVquq6ugRvtaeHb0JRq90n5aj
-	BCu7ofG9pqDRJmoavMR1/6NZEJfI96PynuZiw+1HHbzwYXNoCuDTQiVZCZc5NWG9AitWfForQ0n
-	r+syNsp5x5VcpQKF9PLPaf2dmcnpFwz4=
-X-Google-Smtp-Source: AGHT+IGgWthYmyiiRHTuIz/8bWmUoFRUwbcURTcZh3qG98AznU0lJvk231Fz5Su9DD5JkuIHGit6aHtLEtrfKZseF8E=
-X-Received: by 2002:a05:6830:924:b0:7c7:dff:2ac1 with SMTP id
- 46e09a7af769-7c798b8a7dbmr18909653a34.3.1764507338846; Sun, 30 Nov 2025
- 04:55:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cxc7gSbl"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4779cc419b2so37042315e9.3
+        for <linux-tegra@vger.kernel.org>; Sun, 30 Nov 2025 22:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764569570; x=1765174370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0gqWOlt6q0VnzXoDw9gLNI555RhmJF/DyPsr1omshpk=;
+        b=Cxc7gSblD1kga+ixxfkqqpPpnCHI0Jz0AG+H+hgkm9NfsyZMfQ5xqTge0YWVxuZAFJ
+         axrtJVbwUJyDcqjZ8j6Y1xeiPfWnBdKDMwlWMHn7aKeTh8SHWHt8Z0KuzYyH7Tk7rQcG
+         cTQugrgVVnbkKcrPUqw2Tq3vb6uzPYSToLQFdA44DzNFFmuCVXZazqWnLmEfMeg7tbKD
+         /Juc+JgL5qVhgPmwB5qbPxAR6nFFVNmdWQcjl8KWz5Si8y+BYfOqX7h9h5xuwCPq3yyQ
+         aKpR+VlNt688rjvG7vqfKAmqnW41/gGJONRM3RppPA/3jU1zAsCxB2e/lYwdWhWnCvfr
+         2RvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764569570; x=1765174370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0gqWOlt6q0VnzXoDw9gLNI555RhmJF/DyPsr1omshpk=;
+        b=FXcUwQWeVEjJnQO+eKKI4cQwIDro0xlGxq9vUVP8eUkgaFJiIg9tyOrB7mpUEi0yiV
+         Ckgbb6IJhczzmVdONpH61sU/BPEfgPTm6xtuTpokIlp1IbXaXUUQoFP0GGs0wNvWoMmQ
+         OAhpTuJe3kXG/h0dGQBXvfNYOlO7UsL2xPm6R1BkzE/zCJKQzwkd3A/hCz4eaPgrk/LL
+         b0T8tO1jSeuWQyPBMs1fQewaidABupWffyoo4zFw1ibpGdIvd+LA9u1cgsfLyWr9balr
+         vcesuyKrQ585QcuBzrjWHxDRekzTdugJJpJ7ewhND7wz+pqh7AyFcveE2GFpk9t5R3U7
+         eeTw==
+X-Forwarded-Encrypted: i=1; AJvYcCViTwjilEvnu5TSwBSRXoOMTXIah18MbmQWZ31nrW/N3f8Yq2RPWa21wse3aHZLak9VyTOZ1jk/fHXTbQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg1V/Sh5tUep46oAgFAfOuyCrcWulwlg4uDZPS6mgI78wYChhd
+	464M0IB0nYAf931ZswIrxxQfmNle+1uSHOBRJEZTM6ItJZ/d7D8J3Ciyw7z631kzFKZ+Dlb3Bwe
+	yo+PwanYHpw1cb1XGRcIAUfmRAj+KJH4=
+X-Gm-Gg: ASbGnctNh1T2yNoX78MfDVsIyuTNlKVZko8Fu5XkkCDTJGsQ7GY3VYau92ToRrFDxQj
+	527bpC0gFbNBHlBL7yBUt9SSkeCf8CcD54pcEXDwGmEeLK5lcTFufehbECMKXO/4nwVwCN/grGa
+	KHzvn/Gbx3iL/fA7/MAjNlLFzjWeTiS3DAlLF04Sa3B0QqftIyQLJJ1JPau6xTV3EZ8fcNyHXkg
+	vrL5PuWLqsQ4PM81vnikVibOZJKTv3viIFdVWr84DpVa3d8bjZ8Fn2i9qGxzjBMw+XDxr8J
+X-Google-Smtp-Source: AGHT+IG3M3ax/JFTY6r/6kCAKUsAn9FNfG4fATSRqdxto/IaG1LWGYFhzL7upnvl0p2HSyGlz3IJEPgGEFfXgAl5Wik=
+X-Received: by 2002:a05:600c:a01:b0:477:55ce:f3c2 with SMTP id
+ 5b1f17b1804b1-477c111d3camr385466695e9.14.1764569570297; Sun, 30 Nov 2025
+ 22:12:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251120-thermal-device-v1-0-bbdad594d57a@gmx.de>
- <CAJZ5v0jOPrBcozzJMsB1eE12MuZRWDAV-+=jfrhJbi=S0p5J9Q@mail.gmail.com>
- <5f3ef610-4024-4ca0-a934-2649f5d25f40@gmx.de> <CAJZ5v0iJVV=kf-aJBx8F8dtGfaZpGVyhfi6DBWEg4j3c_nH8_A@mail.gmail.com>
- <e360b9b3-ada4-4cd1-8971-097484cf3f5f@gmx.de> <CAJZ5v0ij_Frdrya3=FaekbU2DFHUyBJnBq-oe9jRsB9eqXDisA@mail.gmail.com>
- <ed619280-6f25-4df6-98ca-890bdc343435@gmx.de> <CAJZ5v0hMPCRU_p_krX3nKzB=5TX7hGU38iyNmhSJSHO2j7K3eA@mail.gmail.com>
- <de14f2c4-e7b3-43a1-a9ee-9caba196b0f5@gmx.de>
-In-Reply-To: <de14f2c4-e7b3-43a1-a9ee-9caba196b0f5@gmx.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 30 Nov 2025 13:55:24 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0h3=9V8FFehyaPiG2SreRgeyvKK+oAkR_gzKQQNDBmczQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bm74BLkYigBlEZwhgK9orhm-MSGQUfAzuwxqXDI_Qt7_9TxZm-rm-hXNS4
-Message-ID: <CAJZ5v0h3=9V8FFehyaPiG2SreRgeyvKK+oAkR_gzKQQNDBmczQ@mail.gmail.com>
-Subject: Re: [PATCH RFC RESEND 0/8] thermal: core: Allow setting the parent
- device of thermal zone/cooling devices
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Len Brown <lenb@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
-	ath11k@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
-	linux-pci@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org
+References: <20251125120559.158860-1-clamor95@gmail.com> <fb3a497a-1e48-444d-ae98-f764d9b5ebf4@kernel.org>
+In-Reply-To: <fb3a497a-1e48-444d-ae98-f764d9b5ebf4@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 1 Dec 2025 08:12:39 +0200
+X-Gm-Features: AWmQ_blKNbLhm1nZrpgeDj-g7J0p0JVXe7hTB25EN5hsiX2ADUE2rw8DoOGBpiY
+Message-ID: <CAPVz0n1nk30=UwR5344c+rk=n6LCn-nnzLCf=CRfWOUPDw-rqA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/12] Tegra114: implement EMC support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 29, 2025 at 12:36=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+=D1=81=D1=80, 26 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:4=
+7 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Am 28.11.25 um 12:40 schrieb Rafael J. Wysocki:
+> On 25/11/2025 13:05, Svyatoslav Ryhel wrote:
+> > Add support for External Memory Controller found in Tegra 4 SoC along
+> > with adjustments required for it to work properly.
+> >
+> > Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine=
+.
 >
-> > On Fri, Nov 28, 2025 at 12:50=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wr=
-ote:
-> >> Am 27.11.25 um 22:46 schrieb Rafael J. Wysocki:
+> You mixed here FOUR independent subsystems and without any explanation
+> of the dependencies it means things are just harder for us to handle for
+> no reason.
+>
+> Please split independent subsystems or clearly document the merging
+> issues/dependencies.
+>
 
-[cut]
+All commits are independent and subsystem maintainers can pick commits
+which are relevant for their domain. No regressions at the build time
+nor on the device itself were detected with individual commits picked.
+Only device tree changes are preferred to be picked last.
 
-> >> What do you think?
-> > One advantage of using parents is that it will help user space to
-> > figure out connections between the abstract cooling devices and the
-> > associated hardware or firmware entities.  I think that this is an
-> > important one.
-> >
-> > It also doesn't prevent fwnode_handle from being used because the
-> > fwnode_handle may just be stored in the parent.  I like this more than
-> > associating fwnode_handles directly with abstract cooling devices.
-> >
-> > If the cooling device parent (that is, the provider of the cooling
-> > mechanism used by it) does not have an fwnode_handle, then either it
-> > needs to be driven directly from user space, or the driver creating a
-> > thermal zone device needs to provide a specific .should_bind()
-> > callback that will know what to look for.
-> >
-> OK. When sending the next revision of this patch series, should i also ke=
-ep
-> the patches for the thermal zone device or should i only keep the patches
-> concerning the cooling devices?
+Patchset is made this way to show logic of implementation of EMC
+support for Tegra114 since a list of links between fragmented
+patchsets will not bring clarity nor it will improve merging
+experience.
 
-The cooling device changes are kind of unrelated to the thermal zone
-device changes, so it would be better to send them as separate series,
-but you may as well send those series at the same time as far as I'm
-concerned.
+> Best regards,
+> Krzysztof
