@@ -1,258 +1,215 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010027.outbound.protection.outlook.com [52.101.85.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BC1290DBB
-	for <linux-tegra@vger.kernel.org>; Mon,  1 Dec 2025 14:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764598736; cv=none; b=eLr/dta5zhy6ymtGH2ii2udGp69UieV9SXA42+UPLomulgWvERfvsdGe1CRTe8vAaozxb1OvhTAS6ceWSH+nstjXRL3tIK0YrqrdURdpddWUtxW2iS+uJhORYzUp62EKfAUuMIwTuGAdbWVtiVZRpgfR0VIEsabnHbpU+9qgyhU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764598736; c=relaxed/simple;
-	bh=53LkXaYFrn3GVJ1cIaB3BFaBBqn6BqjYqqHvmEyC6b0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpiJeKSMgW8gAaTCquaKxqp7UJth5qGfImO7Ndby1UDJ1TjR1p7SFnEYXUT1T+9IHKhGwNzbd9cAiH5oQXEL5cVU6qc4BVAPO93ttViK/bYGPEkVdD2lGgcr0Dt0XSLgJOQPnG2ZN5jWY/pXZDXWjjiIkdrootoU/q6Ij4qTYt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lfhlw4OD; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFC52DAFC1;
+	Mon,  1 Dec 2025 15:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764604463; cv=fail; b=DWiF1v+RBqFk5xqREenFYZc+Kf3zpOm7pHH9k0viLmaCZBElAou1Dopynq3cSrAY7AaD8cVDkBF59FFSzmB7Z08yc5aTII1fk3LP7+A0LJZk7ANMdF0iYAclg3GCLK/iTxkogZq5qEXAy/WN2ucPv8U5L6uIhZ3+N6oSsvgqxQg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764604463; c=relaxed/simple;
+	bh=zJI7FreqnlTIoHsvnNnpOlMnuppPXYHvFRB8vsRMhMw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e5IyQ4nuUDtDeGPqPJ3x8ZCogHliIQg+idBecupzAmvcgXSnqBaKH66cCOPMt/H6vITxBw2++yQ+Vrd4nZoziyg+XKwYo8tWGjDnuGYyZle4Inn0z+Aiq1A0l50GTJb453EXW5CiMedhWbRCnUrRErT2n1V8LTYTHDb8S24Itv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mQh7FVmY; arc=fail smtp.client-ip=52.101.85.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lfhlw4OD"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477a219dbcaso38065355e9.3
-        for <linux-tegra@vger.kernel.org>; Mon, 01 Dec 2025 06:18:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764598732; x=1765203532; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zrU/m1NsQKsXrrOPLuPzfw00NgfNm1183Aja3qoirBc=;
-        b=Lfhlw4ODPByC4VhVMdASHQgH5s6JHY0SqbFAues7tvOzCm/T2iq8JVOeiHUbrgtA1D
-         flVHHpZ8ENDR1gxKYRXdSh/rUpgEfbsC1rRtegOy+6amgR9WhMojA/uKMb/r7Lpun1RD
-         rJL1ZfGxGcnDCPdqVNc4kTxjcagVnPGWfTbRQOVwnwUaCQKLaZ2jlvxxNpTJfhndxx89
-         UU1dQefxusE/lo1KCFheOT8b9ElBJCV7hUCMlGJNQ7jySA7bUYB4+gX6HS+0audNe8/f
-         lHvrL8gpbOK3piY4EWsVmga/RoSS3CrrEvQZLmxC06B5hFrOALvT9T4FSvItWbBE3D1h
-         9gdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764598732; x=1765203532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zrU/m1NsQKsXrrOPLuPzfw00NgfNm1183Aja3qoirBc=;
-        b=G3yE3JEcn10B4om95mjZecMy/Ep74Qt2Z8ihuFE3CgNPv6p5Vk4DgEKWrrM4Jm/bPV
-         H/ohJnljiZNO1bCPxbEsljXLBOxICvTBOY/FXMDLQUtQE4VtqME0s9vBkJeAQAb3Kw2i
-         g32NNX8YIiUiJVKeIgYszUwmi5OYGKTg5JeuMOQTK31q6sqAsHIQYAbdAcbv3Zj66wBb
-         xXarhDkG4Utqpo84Vd1skpeEeZ/MET98E9gJvx2ft3QOz5nm5ji893RV2KWTOsCE68G6
-         9m9Cu3K4Rn2C+cGc12+tRIV2YjH8VjiNcTatFQQJm6FjYsiaUwvslrkZL7mFkwg2G499
-         xEjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoDtI4DluZj7RxJj2syqM1l4XzmoXnGnGMEiqdygAaxd+KUsH4ZBPztNRmuH4b4lwYqy63SqQ42FfH3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ0d5c1ovftRres6GZ1vcEQApJmkQq8c2MoTxlr+IdA5JSt85w
-	ceMLqrHVGZNFPWovnnOr8oKI1yK7IvcZJ5kafL7op/MwFfTaQWgoukGb
-X-Gm-Gg: ASbGnct7T0ODEqjQChcpoDmwlKwIqSejMU1c4jhSfSizgN/Sfv/7yzuXa49Hw5CllIa
-	CD48+S1QxGLV8HJ9+zr2J4Q3xhxrpLcxZcV9L83Qg/9FuiYh74tlhMFBf67uR5VB+CtjAFAnPru
-	UTpY7WVIqRfVX6sLrhSqgV0rI744i9EhuqKhT+khJ1uHi7FUJrygZ44eKclMjT0FpVFaWmaf6b4
-	i4jRHZ2lEniHeNSWa9/8vGyFc8YWTasu8fwx5D2mhMtlXxhBuNNl1D08iP1nKjg924h7SbqUhUo
-	OnGPmehJZJFnthtOu6rPIXjhLtTTa5a9+dqT5+SuvELYBUnD8h8Mw25HkKeyND786CH9H0mnw7Z
-	Z6yo8dYY7qmhc1/5nCWAlpx/OuvbDD772Tju9gDj2hgiGZyFkKZzwV0Drf/YkpfXDhDHsop4F6Q
-	uCtuunBKUqej9V0SzLIm4JNtcHI7HpV7F/sQugb6v6j18wkahs+6SY9ltGoQ9D76PsblBgc7zT3
-	A==
-X-Google-Smtp-Source: AGHT+IEWJAy9TFAQ+VOIZ162KEF2lzriCvlTOGHOqCcNNfqx4TM96iV2z0z1mnsWDrSD2qljqTJPoQ==
-X-Received: by 2002:a05:600c:46c3:b0:477:6d96:b3ca with SMTP id 5b1f17b1804b1-477c01743e2mr375540815e9.5.1764598732075;
-        Mon, 01 Dec 2025 06:18:52 -0800 (PST)
-Received: from orome (p200300e41f07e000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f07:e000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4790ade13ddsm303266005e9.8.2025.12.01.06.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 06:18:50 -0800 (PST)
-Date: Mon, 1 Dec 2025 15:18:48 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
- Controller
-Message-ID: <v6adntm5a3wxxxsmufd54t6pgmoj4njp63q362orkbeew6t3ef@7pfiz6ou7w77>
-References: <20250915080157.28195-1-clamor95@gmail.com>
- <20250915080157.28195-4-clamor95@gmail.com>
- <20250922160040.GA92842-robh@kernel.org>
- <CAPVz0n3cmFC1PdFnLJ0Vf60i3c6pDO9Lvi8dmAHzBgwgsrPXnA@mail.gmail.com>
- <20250924152430.GA1735105-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mQh7FVmY"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SLDdrC+t4/GQRzOnYnOPV+xs3N9EjN2o0bYsgaXIfHNBj8bO5DMUUCHY/16RfCkxN3Aqp4QFou2qsIK8Z7JAr6xojVx7IysRJXegQGArY9nkpnLpdyLgDpwgpZgjwZk7KV7xF0egniu4YecMy6G2BKKotkxfHzPgj7vlTDlDrq2YfiaRWt1cnbqYP4MYTbtfm28KplOlwcMrmZmTUM87B2S5D04wnXIxR71wwPdy59m8qFz6owhSD9v/RF2NqD3IUJUQx94X1qLifdoj2vMvRk3lpbDx7+K8VrsZhwHl7fp3C4WFxR+LV7J28ZvmQRj/P7P45nPXfJVHo1SlMJfHAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2QXzObpXTJdSCFODEzgPh1Yq4Hs2svxFg+WtMONlat4=;
+ b=AtZNdMd7YpGujmZqy3SJHHSHGyhyMXn4oQRfkd3WMfjKJLjj/oiw3J1dA9coimh9uc2Yn3omrzqtWJ1rFpEktnddq/dgkIYHPlJBoLVnox9lHBk/A0QMj0BfDQM3l0CbvnQVM8k/KKRFnHLMH/b9bdHlCbgeYTAdisokVESXtnaP4rdonHVt5HIcdrufHwULfUuMD/opqgnF5ooKdqFiK49WmFsrWUNoj1/y5n3mRJYjBbrE1bC+eluop/NIOfmZvmyCDothQnthfUNEyzxfL8/38s1e+xpQyTUOAnR7fwJ7hesQTAAPx4w9zoKhbq4OMbfPL+B5GGkl2yNmfyCVQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2QXzObpXTJdSCFODEzgPh1Yq4Hs2svxFg+WtMONlat4=;
+ b=mQh7FVmYi0XJNcBq+QJE3DiGC6WDkjKUSf9gz+hLbd2e3YsbatyXZ8wc1jZKl24I7WGQ2V62vwc4LhySdGQFROGQELC/PUEJsOz+NfpRwj54tUrmzJx/+CrTh4isLW8zHTTmZ6IQ7MInPw1YtTd3WB2sKNr5RHUI9j6C1IoBi01CA+/zoimr3bU81rxe6hg4CwoJoZDQcClei6uasdqJN/tiss7qffTqBJnSs+i3ZTh9v/+JdaWkOJPsd9h8djpDBbY46gVkeSB5wXmzZV/BWefI+IJz2hpvKaVxGHznBGx2QuIQ+8yA83AAvEli1rm6XscO0gQdaJbkdpvYWRKGBQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com (2603:10b6:408:2a9::14)
+ by CH8PR12MB9766.namprd12.prod.outlook.com (2603:10b6:610:2b6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Mon, 1 Dec
+ 2025 15:54:18 +0000
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c]) by BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c%4]) with mapi id 15.20.9366.012; Mon, 1 Dec 2025
+ 15:54:18 +0000
+Message-ID: <cfc91cbd-e5bf-4e1c-aeb9-795e5b621910@nvidia.com>
+Date: Mon, 1 Dec 2025 21:24:07 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/3] arm64: dts: nvidia: Add nodes for CMDQV
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, will@kernel.org, robin.murphy@arm.com,
+ joro@8bytes.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nicolinc@nvidia.com, vdumpa@nvidia.com, jgg@ziepe.ca,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20251125071659.3048659-1-amhetre@nvidia.com>
+ <20251125071659.3048659-4-amhetre@nvidia.com>
+ <dff3a962-82dd-4aac-ae11-69f0e95ba04d@nvidia.com>
+ <acae92d8-3394-436c-be8e-8bed7a923e85@nvidia.com>
+ <r2mkiktazyn3nvhirbs2ac7n5ymdw62ueutpxt55cnivdi7pdn@6i4hjtvxp2ph>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <r2mkiktazyn3nvhirbs2ac7n5ymdw62ueutpxt55cnivdi7pdn@6i4hjtvxp2ph>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA5PR01CA0091.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1a8::9) To BN5PR12MB9511.namprd12.prod.outlook.com
+ (2603:10b6:408:2a9::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cmjgfgew7ig24nkq"
-Content-Disposition: inline
-In-Reply-To: <20250924152430.GA1735105-robh@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN5PR12MB9511:EE_|CH8PR12MB9766:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ea0cf4b-acf6-49e8-c833-08de30f1e24d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q1UzWkNrc0NFVnIvdThXejQvcEo3Y3FQMEZ4R2U3ZktabHA3S3NsM3JEMHNr?=
+ =?utf-8?B?c1VROXRJRExmVktoU0JabWdTRWF3bXlhL1NXZVNWMHQxTHNoRUlXRTllN0ta?=
+ =?utf-8?B?SDZYSVpEdUxhVWdacU9UNWtKTURHOEY3SWdDUFZOejVlUmhpWHBVT0ExL0Rk?=
+ =?utf-8?B?eGVXck5oZ2plMlZlNkpyMkRVSFhSSHd5UU1hUGtLdWduMEtIbWQzVTQ4ZTNY?=
+ =?utf-8?B?cmJkMVpQSmZ2NzZlR2h1WWJRNnFJSWhUNTRWZENKU1QyVWE0bWpUN1FnNHNw?=
+ =?utf-8?B?cDVLdzgzWG4wdmltcW9NNlR3eFZOcUlmYmdUMHJNZE1vdFdyN2Vmc3ZOUmRK?=
+ =?utf-8?B?bDA4aThQNWZYVlhQWmNOWk15N0x1WEpLZytIL25yUUd0eHFETWtjN0JWUi9V?=
+ =?utf-8?B?RkU2QXRQNEFEelJJSnRTNFlGRkdrcUQycjh6c040ZGt1QTRlb3l3UFU1U0h4?=
+ =?utf-8?B?UkpHci81ZnN0ZjNROFVlTkNrOEZleFJnUEh6azVqekIvdnI0R1VLbjkrNHBz?=
+ =?utf-8?B?ZG9ZL1JIb0RQcHRmanZUek1jSmRydnB2TTJybzBJM0lmTjVJYUxheXFkU0Ns?=
+ =?utf-8?B?empYL3NpUFV6SEJRRlpla2EyNkdlSGdpenVHWjM3TEhCR0FtcUY1eHBlcFV5?=
+ =?utf-8?B?azd3ZlJkSFpIMnNQQ0x0b21MUkx1b3dxVWxyYUcyVzFEdVJRUTN6T0RSWHpr?=
+ =?utf-8?B?TFNuUEZvcXNaQm1qYURzOVVuUGtpanBiSzdCaGlFN3NCbmVXS3NKZVp0eXk2?=
+ =?utf-8?B?THdFMmcwRGJpWlBjejM2WVVSQUpIZ0orREk4ZXNFN09RekwvUDVBS3VWMUpq?=
+ =?utf-8?B?Sk8wSWxLaUcvVHdqSEdVZDRoTG1ueVFtM2tKMldjazRMVzA3NHllcXUrSlZ6?=
+ =?utf-8?B?dTJCY2ZJbzk1cFhZRXN1dUhxQWpMZEgyL2EzSm52YUNjRFJQdys3d2taK2Rh?=
+ =?utf-8?B?RHJGSzROdG5MM2pvVENXdWpXalBkZ3YzTVpCWFBRRTQ5cGplaUtPS25ZN0xl?=
+ =?utf-8?B?eXA2NGRBQ240Y2pqdU5EM2VSUytOeTFuUHNxcTdxbjF1Q1VaektDWDU3a0JZ?=
+ =?utf-8?B?eU9yc1NEZEpWOUpJU3B3cXVSN2ZrWGVDUVRqcXd4Vmp0VVFpaTA4eHc4MHhH?=
+ =?utf-8?B?akMxaER4K3NMUUtsTVZOWGdlcUh2UlUrakhmMW5kWFQ2ODV5THJGcmlXWlhM?=
+ =?utf-8?B?RDJCR0xrdGFmUDlGTWFSYzUwUFN6VFFTMnZ1aVpJeWhHU1FKR1VMY0Jjd2N0?=
+ =?utf-8?B?aWJIQ0NBUDNndDZRbExLYTFIakdkaDd1ejZJTGRtTVpkZSt6YXBCc0EyMzhs?=
+ =?utf-8?B?RjJLK3pqSjZWdmJCd2pUMmVXRVNHWWViU0cveHpYUjE0MGNqSWRlaVNXRWRK?=
+ =?utf-8?B?Z2FmS1FBM05qVmduTmNhbm1JZjA1T0VQNGcwUnZPSi8zS2NXT3FvTTcvd3dV?=
+ =?utf-8?B?WUE3SkpjalFTYk5mYy9ZRCtSS3NiMlFQT0NmS0JHbFVwM2Rrc1V5OUNVbzcy?=
+ =?utf-8?B?eXhMS0tyVlVyYlhBYlRydFRtTjUzN0haZEVmUGF4OU45a1BWWEl2aWppK1Jl?=
+ =?utf-8?B?WG5MbzNuSC8vdU1TNFl6TUxSZmFQVWNCTzJ6ZWdZbS9meGhMZEsxbC9FMUU3?=
+ =?utf-8?B?andMbUMrazNIM3B4NzhPV1pVSFduOE1UUUo4UTN5VStxVGkvM294emRxUmZm?=
+ =?utf-8?B?aTlCRGFjTFZrRWFGTytVTHpHWnMrRjc0T083NjVSQlBKMWFCeFljOHIrVi8v?=
+ =?utf-8?B?ckp1cXRsTG0zOEJ1WWk2V0g2MWdjalpXYVQrVXpyMTFMaUpjMnQ3SHloOExp?=
+ =?utf-8?B?ZmcvSGZXRE1mdGs1OUFEOS90eHM2bzZhZCtFMmxLU0NBSnkwbzdhSFdGVWc2?=
+ =?utf-8?B?WE93QXVGaWxDbHV3bC9wRGN2RE91Ri9YZkdjK2swYU9GSmEwVHRhSlkvK3U2?=
+ =?utf-8?Q?w9GRfS3uesKNP10fm4fUgfT6NuYC88ol?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN5PR12MB9511.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Nit3RlVGb1ZKR3ZvQkJXZUd5aml4ZWh2NzBuK1FQelI3eW9aQ1hDRXY1Zito?=
+ =?utf-8?B?VlEvbnBaVUs0ZkFKandMSFVZc2d1OHdmYXdYUDZ4WThSbUwxRG4rd0FlZ3U4?=
+ =?utf-8?B?a0ZVZVNqNm5ESnc1ZjhCY3I5Ni9LKzkwbFVTSkM0YTh5OXNlTjFpaVpwbUJv?=
+ =?utf-8?B?M2k0VlNmVFhzR1NEeHN6b2NlMzMyUm1LK1p5MmJlekVtZEpkMkUwcWxJNkx6?=
+ =?utf-8?B?cXA5Qm5ma1d6RW5VT3VNblcrRjBNWFhFZnhkRWJMU3hxbmIreldzbTNBcXB6?=
+ =?utf-8?B?UW0wRGJHQ3JESUpqS2NTWHhicXJVVmVoWSsxVEZjZkxrdFErQlJUSU5YNkg2?=
+ =?utf-8?B?Z2NOWGVuVjBvdHY1T2U5NnF3bU1TQXBRK3ZKMzNoMlU4WlE1Wmh4MzNpWHJV?=
+ =?utf-8?B?ME85dDhETXhoV3llQnh1WnB5eE9FTVl5QTFMQ2FTdlpQUDU5ZjlSQlE5RkJs?=
+ =?utf-8?B?Y0JUWnhyd3paK2pJM1FWNmk4ZzFiSm1Ca1NVd0k5WXhFYzNYWTI1RHErS3Zr?=
+ =?utf-8?B?ZWErM1diTjd2QzhGK3hTZ3hJTEpxSjhWcjN0YW1LZmw1cnRiWWVMazhsRFh2?=
+ =?utf-8?B?cmdNUW5rRnMwSkFsVTFjSmNRQlliV2FnQ0xKaUNmSTN6Y2tXZjdoeE5GbEVr?=
+ =?utf-8?B?K1VBTUgwQVhkTDZJWEZ5T2lNRkwwZS92cUE3VFhQejJWU0w1Nk10SkJoYmov?=
+ =?utf-8?B?QWhoMk9BbzBvd25TSVhNbmJvdHY3eHlubUFrZDlIUlJobTg3NjM2Z3hyZHRE?=
+ =?utf-8?B?SVQvTTFqZU9BQzl3QTZhdE5HN0t5TGpyN1oyRU84cURlQ3pGKzBUdU9hYTdk?=
+ =?utf-8?B?dUxjSHh3dE91Yk5mMDQ5RGU1ZlllNi9aOStJdWxtVDFiYmpqVWZ2TVVaVmMx?=
+ =?utf-8?B?TlFaWklPOVgrL2x3Rjc1d0EwamtvTWE5ZHlMeEtoeGRLTVVjYkI4Y1Y0Z2lr?=
+ =?utf-8?B?UU5SSUNIZmNoNTVWUnZwUmNQSlZtRU5jaE1WYVZsNnRMdnBvd3R3NGFSYzhD?=
+ =?utf-8?B?bXdiVmZNNTVHckE4bmQ1bjQrQzVMbFVNcTRKMTNSUldVNWR1NTdxdDdkL2Ir?=
+ =?utf-8?B?SGZQbWlIN05XWEZ4VTZHQ2p6TnYyQlFTcFNjSnBZeFZuanpCaVhuZUtGdGwz?=
+ =?utf-8?B?U2Y5dWt1MDhsVnBXekY5d3pjdjlCK3B1NTVtcHUzZ0xLUURjMENSYVNUUXZZ?=
+ =?utf-8?B?Y0grTWxZbFZMRUVFTHhtZHZOTXg5bjVTZFc3V0o0MW0rTmlpaXN0T3V4a3JN?=
+ =?utf-8?B?QVNiYW9VMU5ZZEJCYVVzeVhTQkpEYWtiZVZiOFZYZG5vaVBlMjk4SmRZellN?=
+ =?utf-8?B?ZjNxcDlhRjFwejhXUCtoY3lBUFZLUktqejlUT3dEVUhoZW95eDJvL2N3ZE5I?=
+ =?utf-8?B?eDFOR0wrSUkzaTJidk5xYXg5NkhvMHAxckhGNVExaFRQcmEvcmVsWnZnRk9i?=
+ =?utf-8?B?R0c2d1VzNzFMVjN0WDBWYXVpa2M2YjF2Wnd6YU5PeXBSLys2cnB0U3VIVk1Q?=
+ =?utf-8?B?Z0daa2JUWmEvbE5YZnF0NGNDNVgyWllubTdrRUlVOUJ4WU5kWTdjVGNBTDRV?=
+ =?utf-8?B?YStrOEViMjVZVkFjK2lScFpYQWNVSnBpblFVK1JZSVF6a3hBVDdyRHBsQ20z?=
+ =?utf-8?B?dFIzNTVZVHRPd0hpbXF5Ujl4TkxLVnpwOUczdXV4WTM3clZoRGRWQ0ZZSGJm?=
+ =?utf-8?B?blpEdzJKMnEwcTB5VWdMR3V3YXRPdk9Wcm92Vld2MGllRnJTQ2tyMUVpWUor?=
+ =?utf-8?B?SmxyMzVnUlAwYVYybEUzaWlPUENlQmF2WHBwcmRYWFgxYmhuNmpVWlJsMEkr?=
+ =?utf-8?B?SHJZR0dPczUxd2dhLy84VjB0eUhoQnRxZDRnQVZvdnpOVXJDQmhDVmVJK0Jp?=
+ =?utf-8?B?Y2tyZzJtUXNLRS91SHhtM0pwbXlRNWh3dE1iYkptUm5LL00xblU4RFJWdDQ3?=
+ =?utf-8?B?VWx5M1F6Q1VtTmcyZGJWR2VBNjNoejRENlBzK0dncmN3V0RQbjV4azE3aHpn?=
+ =?utf-8?B?WWR5ZjM3VGt0YVBOS2g0bnkvdkh0SHFYNXpzaDg1Ryt5S2Q2L29iMlJseC9P?=
+ =?utf-8?B?c21xc1Zmcm9iZUUrU05OaDZoRVE2UjBEUzlhaDRTRkpNZ3M0QjhHb01TMzMr?=
+ =?utf-8?Q?jVOeuGaZjoEbfk8FKvKR6Opvb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ea0cf4b-acf6-49e8-c833-08de30f1e24d
+X-MS-Exchange-CrossTenant-AuthSource: BN5PR12MB9511.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2025 15:54:17.8252
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fmA9b1A3+3a0lA8wa9C0cfpDAEkoFjVHTyy4RggKhRuYyqJn6F2gF3TdPmpHBcZGg6/39UMyrTSsk6eBdoYrfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9766
 
 
---cmjgfgew7ig24nkq
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
- Controller
-MIME-Version: 1.0
+On 12/1/2025 7:41 PM, Thierry Reding wrote:
+> On Mon, Dec 01, 2025 at 03:06:55PM +0530, Ashish Mhetre wrote:
+>> On 11/25/2025 3:52 PM, Jon Hunter wrote:
+>>>
+>>> On 25/11/2025 07:16, Ashish Mhetre wrote:
+>>>> The Command Queue Virtualization (CMDQV) hardware is part of the
+>>>> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
+>>>> virtualizing the command queue for the SMMU.
+>>>>
+>>>> Update SMMU compatible strings to use nvidia,tegra264-smmu to enable
+>>>> CMDQV support. Add device tree nodes for the CMDQV hardware and enable
+>>>> them on the tegra264-p3834 platform where SMMUs are enabled. Each SMMU
+>>>> instance is paired with its corresponding CMDQV instance via the
+>>>> nvidia,cmdqv property.
+>>>>
+>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>> ---
+>>>>    .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |  8 +++
+>>>>    arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 55 +++++++++++++++++--
+>>>>    2 files changed, 58 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+>>>> b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+>>>> index 06795c82427a..375d122b92fa 100644
+>>>> --- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+>>>> @@ -26,5 +26,13 @@ iommu@5000000 {
+>>>>            iommu@6000000 {
+>>>>                status = "okay";
+>>>>            };
+>>>> +
+>>>> +        cmdqv@5200000 {
+>>>> +            status = "okay";
+>>>> +        };
+>>> This needs to be ordered in the file according to its address.
+>> Hi Jon, Thanks for the review.
+>> cmdqv nodes follow same ordering as its corresponding iommu nodes.
+>> I have added them immediately after corresponding iommu nodes.
+> No, you didn't. It seems like you sorted by type and then address. But
+> we always sort by address first. Type doesn't matter.
+>
+> This node belongs above the iommu@6000000 node and after iommu@5000000.
+> The same ordering should be respected in the DTS include.
+>
+> Thierry
 
-On Wed, Sep 24, 2025 at 10:24:30AM -0500, Rob Herring wrote:
-> On Mon, Sep 22, 2025 at 07:18:00PM +0300, Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:00 =
-Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Mon, Sep 15, 2025 at 11:01:49AM +0300, Svyatoslav Ryhel wrote:
-> > > > Add Tegra114 support into existing Tegra124 MC schema with the most
-> > > > notable difference in the amount of EMEM timings.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  .../nvidia,tegra124-mc.yaml                   | 97 ++++++++++++++-=
-----
-> > > >  1 file changed, 74 insertions(+), 23 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/memory-controllers/n=
-vidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controlle=
-rs/nvidia,tegra124-mc.yaml
-> > > > index 7b18b4d11e0a..9cc9360d3bd0 100644
-> > > > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,t=
-egra124-mc.yaml
-> > > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,t=
-egra124-mc.yaml
-> > > > @@ -19,7 +19,9 @@ description: |
-> > > >
-> > > >  properties:
-> > > >    compatible:
-> > > > -    const: nvidia,tegra124-mc
-> > > > +    enum:
-> > > > +      - nvidia,tegra114-mc
-> > > > +      - nvidia,tegra124-mc
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -64,29 +66,10 @@ patternProperties:
-> > > >
-> > > >            nvidia,emem-configuration:
-> > > >              $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > > -            description: |
-> > > > +            description:
-> > > >                Values to be written to the EMEM register block. See=
- section
-> > > > -              "15.6.1 MC Registers" in the TRM.
-> > > > -            items:
-> > > > -              - description: MC_EMEM_ARB_CFG
-> > > > -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > > > -              - description: MC_EMEM_ARB_TIMING_RCD
-> > > > -              - description: MC_EMEM_ARB_TIMING_RP
-> > > > -              - description: MC_EMEM_ARB_TIMING_RC
-> > > > -              - description: MC_EMEM_ARB_TIMING_RAS
-> > > > -              - description: MC_EMEM_ARB_TIMING_FAW
-> > > > -              - description: MC_EMEM_ARB_TIMING_RRD
-> > > > -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > > > -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > > > -              - description: MC_EMEM_ARB_TIMING_R2R
-> > > > -              - description: MC_EMEM_ARB_TIMING_W2W
-> > > > -              - description: MC_EMEM_ARB_TIMING_R2W
-> > > > -              - description: MC_EMEM_ARB_TIMING_W2R
-> > > > -              - description: MC_EMEM_ARB_DA_TURNS
-> > > > -              - description: MC_EMEM_ARB_DA_COVERS
-> > > > -              - description: MC_EMEM_ARB_MISC0
-> > > > -              - description: MC_EMEM_ARB_MISC1
-> > > > -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> > > > +              "20.11.1 MC Registers" in the Tegea114 TRM or
-> > > > +              "15.6.1 MC Registers" in the Tegra124 TRM.
-> > > >
-> > > >          required:
-> > > >            - clock-frequency
-> > > > @@ -109,6 +92,74 @@ required:
-> > > >    - "#iommu-cells"
-> > > >    - "#interconnect-cells"
-> > > >
-> > > > +allOf:
-> > > > +  - if:
-> > > > +      properties:
-> > > > +        compatible:
-> > > > +          contains:
-> > > > +            enum:
-> > > > +              - nvidia,tegra114-mc
-> > > > +    then:
-> > > > +      patternProperties:
-> > > > +        "^emc-timings-[0-9]+$":
-> > > > +          patternProperties:
-> > > > +            "^timing-[0-9]+$":
-> > > > +              properties:
-> > > > +                nvidia,emem-configuration:
-> > > > +                  items:
-> > > > +                    - description: MC_EMEM_ARB_CFG
-> > > > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > > > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > > > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > > > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > > > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > > > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > > > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > > > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > > > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > > > +                    - description: MC_EMEM_ARB_MISC0
-> > > > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-> > >
-> > > Like I said before, I don't think it is worth enumerating the list of
-> > > registers for every variant. If you want to define the length
-> > > (minItems/maxItems), then that is fine.
-> > >
-> >=20
-> > It worth because position of value matters when reading and list above
-> > provides a reference to the order in which register values should be
-> > grouped.
->=20
-> The schema does nothing to validate that. The only thing that gets=20
-> validated is the length. It is just an opaque blob of data. I'm sure you=
-=20
-> have to define the order in the driver as well. One place is enough.
+Oh, I got it. Thanks for clarification. I'll make these changes in v3.
 
-Hi Rob,
-
-Sorry for being so late on this, but I just noticed that v4 had dropped
-these items descriptions and then saw that you had suggested this. I
-have always found the explicit mention useful because it allows DT
-writers to know what to put into the properties without having to look
-up a specific implementation.
-
-If the DT bindings don't specify the order, then how do we guarantee
-that all implementations agree on the order? While it's true that no
-validation is done via the schema, the schema is the only specification
-that we have for this. Without it there is no reason for an
-implementation to pick one order over another.
-
-Thierry
-
---cmjgfgew7ig24nkq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkto8gACgkQ3SOs138+
-s6HFVA//bOnUI5x0pMH+aZ0FS0k/qH/djSWzAvFTrK5cY0onr6xpH6+WvrUb8B4f
-6uuehVHmVOVcMfPWrhJ24ydQsI3RJouP2ZgfRdW80gN6tRr3Sg7aLaM400HPTfiy
-ueUNUSjMUQqRFKbR7YbuMk/F/t/yvgoNBDebzvHwzJV2mfpTXYWJpyUS4SY0hZOj
-7Hav1nmXGi6hX6mU4OCwf6sChzMgATCGy6W6WQ1ka0R8tjyb6XG7zMkpWKFJxPvK
-xAT+Sdzui7OCknvXtXknsGdhug4lpKN0A5eLqKtnzI5BQG7FFYsAuKubzVMLaprX
-1iu3jNH59ZarofA8Rypgm2sUyFbl/yEJAmQlAt1EkZBXnXba/eV8SdmMZrwy6MzR
-9TkEEmQMrYqZ/SFbR34KYmtQfGjx+POAbRVOzvLZxpNUKG4MTFkPTtoiX59gH4ta
-p69j0xbLjYigBzDy4sJGtHVEjDyeB9x+3iJ0o9HeCwQqJ/BzaVTj/GD8BTsyzenu
-A1d8osMl3Clhqa9MsFHe8nAHycCJDZ5XOvwIixcxkd1/jNOkzl5ZSP7a9rtGQjAg
-0/UzrthuSEdMCWWpJImOw8LBrvBnEz0Fte+Gqz6cSblYEx8INoZlUwVoBPwt8ZWc
-qfloinXffZgtWSXTOkd1OCRTBByFtK0K58IqeI4EI67oJ6BMzDU=
-=0r9F
------END PGP SIGNATURE-----
-
---cmjgfgew7ig24nkq--
