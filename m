@@ -1,189 +1,199 @@
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013056.outbound.protection.outlook.com [40.93.196.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8598013A3F7
-	for <linux-tegra@vger.kernel.org>; Tue,  2 Dec 2025 14:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764684858; cv=none; b=FT1nQoelZjXN7Uf/K1AbZhXVRq+Ex6PWv16b9b4v/xkAXcEmfNtJVf2NbqIxMoxpJJOA/gWxitamRYJre40SXXUyOn5IDN90SQkB8DX+w731RFiGfSRl3iO9bSZHwHxHnTrNdtZu/Kn3cyzpvWbd7I3xv/P0GBWEad996fMg2xI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764684858; c=relaxed/simple;
-	bh=vHUrQ6w324fYnCNxiHl4mdFInNGEkkrZLMojf3dBXGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q7F26g68EU7FmiaAuhHPIwyqCs3XnxatPz66RRZt4Wf9iYPkVZ3Au43YC9RVC8+asraZBf8iwAwNO/TipV18P3ASTaehXdD0/WJ8qKqWjSLSgLAbwX3uY+dJXVrX4Xkg46BL1Qgnq3RifYl0UIFS/XCVRZtzoLM5yPT5ElUXBqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-65745a436f7so2382145eaf.3
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Dec 2025 06:14:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764684855; x=1765289655;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P35uIC8+DPfTCMfHgmdtX7Glr2h/6n9nJWKZMAhyHf0=;
-        b=S8KdEQ76xMRjYe8qZfZTDwftopZwQNisZoO68zobH0nwmNYdxzY1WA/IBMT7Pkj0z7
-         Q/Yo/dK8Kruss67mwTTBPz3V14RqtocTkNwk4BNTpJ3NcM9yYK0bdVi+s5CMbB6YyzmT
-         lpYdr7PPtLO2chQMhApeqZYaqztJv1L0JZrdaOX3PA902B+G9MvBOo7POkexeVKl0DUc
-         pSSYpPiShcr/wEGBmElhFwgn7pbYUWsVKvNh/SbuPizZmggKmJVJM3mb0BX70J7MyJnN
-         seL6/VehqYbmKzXyC4KM0MFjY4jlkSryH7k8+KgUtzbfOFCvS9+YBB+/VaBpVYgEM9Fb
-         Emgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVk9YECZJ3ixo6y6ifI+YjdOg1KBxjW9hawnCKYkPODg5QlU/olJTA/4dCtU27z+8ymnn+ndZHNAcWOw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsXVqMFQYc0HGOITrD13L7ejdtwa9Rdu82IOtWKY80Di2D3iiD
-	bHSEu9g/fR2DbqHHCXK+mM8v1wiQX9Jp6XXVoeluvzA75MB1Xp3PsHspChdEdwEU
-X-Gm-Gg: ASbGnct1IJDYg4kCRFjkKPPQSEL4rQf8yuzG9kIp1SDJOaIvY2rba8ktYZOG2bBiMrS
-	JxHTX/Ot5wwbU8t/ncfqAseqccoyKwq/Y9pe9WsL92K2jUkJyR6HTIhzZDTHcqzk7XdwUv4Yf/m
-	ALZHHKghG9gjTd39XgFpOYMXifn2k/4vZjx3av0wtHuUrcOa+0+s8lu9NeZhX3aD6LgulT73Wwn
-	FaZ8X95VdO0tOUIpo1vhavCfLsZN+SKps20hv83qjTYU+5cr4jrpRPiSqzE0K3uNng9BeNS6zmv
-	SbVlsA3MDZeGJStD/x+amJYRM7oi2jaY3ALNAE1GlxS0Q1LNrBk4Tiyf6VPg2kIEV3BYp9ZkfDA
-	D+dBPZyHH15l3fqvJsXemOORPkeoAX5/ze+iX02xzZO/qJOGTo40NOw9dK92L1a7O+vUSpSDPPE
-	gkol/b+VlHoM8rN9tivlrwdBD+/A9voZ8QVVZIPzpbkmaUmXg3
-X-Google-Smtp-Source: AGHT+IH8VCnc3yCHhzd663qe675Bq6Rv9yxPCgBHeODH+r4KTBanjGXQKpcbMAETWt/Bq16e50JiWg==
-X-Received: by 2002:a05:6820:60b:b0:657:7214:b534 with SMTP id 006d021491bc7-65790b48f43mr19756962eaf.6.1764684855287;
-        Tue, 02 Dec 2025 06:14:15 -0800 (PST)
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com. [209.85.160.54])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-659332cf153sm4097716eaf.1.2025.12.02.06.14.15
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 06:14:15 -0800 (PST)
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-3f0cbfae787so862030fac.3
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Dec 2025 06:14:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX3KBc+yFEYLxUN6bfuYmLXh8LNtBOGLBVOc0yK2bSZlnPwIZ8orbEIs6g3G4Ot3FNsWO4AoQ5jBtSOPA==@vger.kernel.org
-X-Received: by 2002:a53:dd48:0:b0:63e:17d8:d977 with SMTP id
- 956f58d0204a3-64302abbb9cmr22209916d50.41.1764684434875; Tue, 02 Dec 2025
- 06:07:14 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40A6156CA;
+	Tue,  2 Dec 2025 16:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764691321; cv=fail; b=icwjgirbNqM80gpQjEy8eWpKPm4a6YWLmFs7z5rF3rtYhOb49hogZN4SYp/xgYCCyjbwFV5Lqg+aLT6jbnTJMio/VepTE4Wyc0v5fRmIGcyrObMpUY5PtbRgWKtfNBx+4FykpgP7+cERI9pdG0pE5sA77m+CWoyY2Igs1gnmdj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764691321; c=relaxed/simple;
+	bh=EMz1Jpf/H7biQHIVHncCpnxSBNbmXiUK27dXsRIUgTw=;
+	h=Message-ID:Date:Subject:To:References:From:Cc:In-Reply-To:
+	 Content-Type:MIME-Version; b=ky3mt6EcBR4+OZ0H9YK60pY5WI+aYnMfDIR+51jx9bkoBc3S3I/ruLoT9D70nRgwUCnxGEJ2sLur0X/oBlWwEdfPWcMcPuyaHthR1OLlH48DNO7/6RXwfhlX48U4Os46k5HsOcMtfK0cYONTsI5Q4bCejLf0fdWyuanAGnHXwKk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lIJoaadC; arc=fail smtp.client-ip=40.93.196.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lIJoaadC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s1fVZFZkxFiR28ev1EPWfXvm4TnZY+tffW9cpJMwgGt0nPJWCPiveCNSvyOZIKDHqx7Oz83+93eG0tXo4hD6RKbhk4Pkw23l+ICHQWpW3FLeiE24w5H+sTYIWhXuuFYgWqPXs+DAQ2hnbSBxAMTFsuzJt349ObYoHCJFaOezWO8ohhGWyLuI9M22Y3il7vf5o8e90z//VS/HlFCaHOy69+k+OlO82q6nwiylmFW11V1m7CNfIBIA2FWN/HF3Qtp6tmwYizwdjjqFwd1UpDxa6yr1yQb0S9+O/KZyG+OsNfQX94i8WSW02EvkPJc1ZMPIFUJ8Cg6lbVbCDwJ87K7Edg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=90EWTwY3/q29ifVNwlln00MtBxD9JahSSg9BsNqQDiU=;
+ b=QlQ74s/Z/SBWCguUW0NllrNpyyfVj9gDndgouphcyAUqzBol/r39rWyuzMYHz/fq5Ro2812Lwm0bYjz2ihViDDveg8TJWmhpOqJadEldEyClvLW705lUgYJAwtugYxaU786XKtAVwoFBdI7bolOL20WA0IdFxqq09zHn8oqM3pew99QFttXGad8K28Zai5xzGUyg1LIweRhxYDvUuvHdFljQd2nsz+AqXg322jfCH7T7TPVzO3Jtqn2NChSsCLeUzqSCgNgikOqLwzWE2MfBsmzubIukr0zRQM0s6A6lYrGKuPpCGg1mLx5BkpxcSZrXHWc7gWy5BtQbbBKIKvCDdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=90EWTwY3/q29ifVNwlln00MtBxD9JahSSg9BsNqQDiU=;
+ b=lIJoaadCrbcdHrwAILwnnD+MwnB5hGLUB/yxFkWvscFAMfxJv43KndWtpbglD3d69Kg1Vld9kZPZpmuZpcxQAP0/HXQIVAd8Hm/OU3/eOGlBH4YIdKNAQtAiyLzr7P8e8A6csdxrCj188EJRlyQ3gQuaLzqAY/Pf1vAZ/bVIRU7OHDqaKuYC858g0o7F2q0UVUNDRtafSmepyRq1/2tYH+Ng1no1005yXf5AOqxAJY+o57Tp9Mog34bf9iTqSzIkKTTN2/4odxgUxPW9vOaDGsiv032QzZ12gIXc6XeITKmGN95+dOnHZKzSLrORkRAHgpvckLJ72JNNzpwFMbR6NA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SA3PR12MB8812.namprd12.prod.outlook.com (2603:10b6:806:312::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.12; Tue, 2 Dec
+ 2025 16:01:56 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9388.003; Tue, 2 Dec 2025
+ 16:01:56 +0000
+Message-ID: <4f5da6d9-ee72-4045-8fe1-c5eacedb4660@nvidia.com>
+Date: Tue, 2 Dec 2025 16:01:52 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] NFS: Request a directory delegation on ACCESS,
+ CREATE, and UNLINK
+To: Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+ trond.myklebust@hammerspace.com
+References: <20251104150645.719865-1-anna@kernel.org>
+ <20251104150645.719865-3-anna@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+In-Reply-To: <20251104150645.719865-3-anna@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0144.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::17) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org> <20251112-b4-of-match-matchine-data-v2-1-d46b72003fd6@linaro.org>
-In-Reply-To: <20251112-b4-of-match-matchine-data-v2-1-d46b72003fd6@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Dec 2025 15:07:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVAZpp7M+pp27+kHZwoet2Q8Rm-Y4ePu7=W_1oXhebLmQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bnQtK_C28o8ts-DX6QMHSfgR5FWBqGmuyp3cjxdu41cx4XkoPs5W_lQhYE
-Message-ID: <CAMuHMdVAZpp7M+pp27+kHZwoet2Q8Rm-Y4ePu7=W_1oXhebLmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] of: Add wrappers to match root node with OF
- device ID tables
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA3PR12MB8812:EE_
+X-MS-Office365-Filtering-Correlation-Id: 251e4312-ee80-49fd-b784-08de31bc1e15
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QTZ2a3lzRmVXN1VOakRRTXVuUmluKzlYeHVBWVk4Z0dTU2ZIN0ZaOVhaSkk5?=
+ =?utf-8?B?OEZiWFdFcHlKNkNBa2xLalNOTnhzM012eHF1ckhTT3BESmhaaTc4SjhONjdO?=
+ =?utf-8?B?cXFlMXhnK0JveG9Ndk5OWTJrUHlubFh4NlBwa3NpT3lNa0ZYYllCaTMvdGNi?=
+ =?utf-8?B?ZGgydXBuaG0vVTljbThIOXYzeVArWUJvU0JzY04xTGVMK0pHY1JCUVlZVTBL?=
+ =?utf-8?B?dGpwajY4cjVmMkgwcHNpNkVVUHRKVjBpMXJaWHk1T0VDZG1UdVhkOTcwb002?=
+ =?utf-8?B?eVhzQWhzT1dVWHhOczNocHhjTTZ2emVVdGEzMnZqdFdSWjFVMU1nQUdjbVlY?=
+ =?utf-8?B?Q3VrMktHWGdSY1llM2JDWS93VGNFTDhIeGtKR2p6VW0yWmdqakdZYnM4ZENn?=
+ =?utf-8?B?eDNoOFlKTi8ybHpwU1AyUTY5U3RiVmZnNkhIaEpEcG9PdHZJRy9SMElSOTRL?=
+ =?utf-8?B?WG8zZ2R2d0U1ZFlCRERwbkJCN0hTMkdrVFJ3R1FrS0dLa3A0QUxETlpFcjlN?=
+ =?utf-8?B?ZEtFZG9BSDVVcFFyQm0xMEJ3eGhBcm9UT2RrUGhiWnBPcnZDeC9SQjhwOURD?=
+ =?utf-8?B?THB2NHpmOGtqZ3dySXh5ajJpV2l2U05EZVYydTlpSThnMlNrYmFNcG5OMDE1?=
+ =?utf-8?B?WXhnZm1kajRMNWx2Yk53a0NVdTBHZUZ4OWhVM2ZJWUR1T3E0MWRodWNmdEt3?=
+ =?utf-8?B?VHNhbkJlRWNzWUNDYVJ2TEZiclF1NEpQek1uYkdKUWZQai9ybmQxZFZ4ZFB3?=
+ =?utf-8?B?WFFDdHEvNiswMG5CNEF2VUt5TXdKdzF6RldWckQxR0VUemdZSTczUDc2WjJu?=
+ =?utf-8?B?UEZiaVFFNzlzeHovd1hyN2NQdWtmZGR5cis2VXFnVDJVekttVyt4NjFlRXln?=
+ =?utf-8?B?d3VnU09qVTdXQ0tjbE5QclBJTG45MHIvR0tUZ3ZVTFZNUTAxbDBPVzdDb0l2?=
+ =?utf-8?B?Tk0xNUs3cnpiZEdGVG9IZjFnczVwYW5JcmhZRkhHY3RwNUp4YVlzRGc1ekkz?=
+ =?utf-8?B?L01UZWNodm1NL1A1dzhTd1J3QmlEQzc5WGdFdUdhQUsvSVBiU1lTbHd1TTV2?=
+ =?utf-8?B?OFIybHg4VHJKMks3ZXA0ZVdSSTNSMHF5bG8xdWFUenVhRHZsclMyeFJpQmNa?=
+ =?utf-8?B?cVJ3b0JDS1lBVnBDbjlZSml3cVFPRmZhVHRwMUlab3FMYVpRd1BYRDJ1R2pm?=
+ =?utf-8?B?VDFwUmxoMDdqMUN0ZVVTeGFDemZGVUpJZENVTU1NekJaTkwrNm5FbTdvL1JH?=
+ =?utf-8?B?bC9uWk1SZE8rdzNHSFRzT1lrZVFDUVhhcXVGcWFBUTUwZXdxMVRkcjhUOVNw?=
+ =?utf-8?B?dEhnNDY4SWpPc1ViQndZL1o1Nk0zcmZRM0hXa1NqY0tSWDFXNTBPVFVqVG5B?=
+ =?utf-8?B?amt1UGgrVFFEb2haamVtTktvZTdyOWoyT05MdXBtbUFGa3hMaWw0YldFRWth?=
+ =?utf-8?B?cE5GTURSS0tVdG82QjV0aTh4dUNncUVBVmh2M1lYaWUvN3d2YlEzTWtIZFFL?=
+ =?utf-8?B?azdOU2NUNVI4TWJMMnc4ek9tWnRBWTh1VVdaZlpIdThuVC9ZMWJmQkZpVnFG?=
+ =?utf-8?B?RERpYXNaUG1RSk5qR0JOQS8xYjFGQm5YT2hKckh3NXIwRXlhSWwzWGNydmd2?=
+ =?utf-8?B?UVhZaXAxMHBtU0l3eGlqRmZSekZGL3JUQnVFajhWRllqeWJUVWZ0Q29IcUll?=
+ =?utf-8?B?b1pTYXFVOWgveHJUSGczbTVVSHloV3l0MWhBSkd6TThtbWVvTVgvQzVRa09G?=
+ =?utf-8?B?S3Fld0UxWFpUVGNJV1h1NmhlNlNITi9zVlJFaXdxaVpPN2NQUkh0Y1RCQmo3?=
+ =?utf-8?B?V3dVWGVGTFVvSnpsZVVFTm1VWFJqM0RIVWhBVTVFOUhPWHhEMys1emV2SG1y?=
+ =?utf-8?B?RUlxTDZkeTF1YTlvb0Y0WXRVZSttQzlyWWUzYW4yU2RrTWlGNXduWTB2eE5K?=
+ =?utf-8?Q?jZFg5rP6aT5Y9i7ZXbeHaDhtCC7hH+Mi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2RRS1JXYkhLQ1FRbXRnS1ZlVzA5c3ppVEl0OXJJTEsycE93ZS9ZMFFXNnhJ?=
+ =?utf-8?B?Rlh6dGhnOXl6cGhjTHJ2QTMwdHZUQ2QrMjJyWlN0STBtYmN3NnVUTi9oaTlJ?=
+ =?utf-8?B?SC9JSFQ5N3JJUGhzUm1pR0U3cW9vR0RTZlFRUzRMdDIvZ2w3eG82MXV2SE43?=
+ =?utf-8?B?TTFSNzNib0FPcDNVU1pTZ2F6eFhyenBTUUhHRXBjZ3I2UVJPcVhLSEFRZnpH?=
+ =?utf-8?B?Y1J4RWFRNEdQQ215SEF2MUJUbFY3M1BpUUdqNUpVL3kvcnpsQStjQ3BTWE50?=
+ =?utf-8?B?NFVwTkxudENMMFFNd3FVU0d6dFZQbWFsQU4wTFZyUm85ZktHRGNGWkNFWHhk?=
+ =?utf-8?B?UVYrZy9GeTRDOVlnU1ZPWER6V05kK09OTG1pbXp5SXBLZmFmeThtU2xKSFFk?=
+ =?utf-8?B?bTlWaXpDejlGME1ra0ZTYXNwUGcxSlZnYWxVUWtLTWRHd3RUTGVpWndkeWZz?=
+ =?utf-8?B?TGdacnNaU1J3WHYvMTJpeWVRcHMvL1p2TXlMUEVmbTVFQnU2Vjgxc2dYbFBV?=
+ =?utf-8?B?ck90dklnUFc5Z1Y4T29oMHZuZDlkU09TMHJ4T2tmbWE0N2tLT0VBMnF1bGh6?=
+ =?utf-8?B?RmlqTnJTa1ZDRkZLalR5MFZUanV0Sk1EMTdRY3dLMnRJeUxRbHA1RWNaSWFx?=
+ =?utf-8?B?QU9ZN09DcWdneVBIZ1YwMTFOUGNSZnQxMHhDWlQ1SzN6RjVtNFlLbjVJVzUy?=
+ =?utf-8?B?VXRtMThBQXl1V3pqbCs3Wkx1akw5dXNqQjhtWndlVXpIeWxOU2lXeEhzbUZR?=
+ =?utf-8?B?Sk1mdFREMVJwZzNmc3JoTysrc2x2Qis2Tks0U1luLzJ3K1BDOW1xa2xySHlM?=
+ =?utf-8?B?ak9hTURxcDBRL2pBb2EyVjI5RHlsaDVIS3NoSUNTZk9weGFQcmlleEpMd0s2?=
+ =?utf-8?B?SGdxMkxpQzFCbFRnSEtHbnM0L04zTFY3VzBjNUVZeGE0MHg2K09ENDFIL3ht?=
+ =?utf-8?B?MkJiUmZ1TlVnZHM1a0FJcDNOUUFhYmZKd3ZPc2x5ejkxaXB5dmRjQ3J6RUhw?=
+ =?utf-8?B?Slo0Wmg2UTRsTlJYUW4yLzkvS0Ixem9zR3JFbDBnU1Ywa2ZnVWpjWnBNSlpL?=
+ =?utf-8?B?TnFRT202eWkzZDdjSmpSSC9uYmZwcE11RXRXYWRBMmk3WUhka2kwaHpOekZP?=
+ =?utf-8?B?bzRwMFpXeXNqK2d4SEowREtBRGJQdWwzU0YwSWxaaTdsa1padWo2UFEwOWgy?=
+ =?utf-8?B?L3c1emlpOHk4V2pGdWpsUG4rMW9hSkxHQk52dTNaMHpIeldrdGh5VWdHc0VN?=
+ =?utf-8?B?cG5FS2dKUjRXWGtHS1pZTEN0MVZ1UGd0WVpWdXduTlJYZ2cxTUs2cDdSbDZj?=
+ =?utf-8?B?UzFoOXA0MHh3c0JTR25YQm5uSFI3RmZXY3J2RktYVC9ldGdpSEdoTVlWdFlk?=
+ =?utf-8?B?YXBOTjFxZ2Y0QnVucU5LTlZTZWFsUFcySjNJSVN2aFlXWWcyYUtNRjhBdmpU?=
+ =?utf-8?B?RmxKd25UMlJjTzREb05XK1RaWWtINThham5BcCsvWDlkOGpidHowd0dSLzB1?=
+ =?utf-8?B?ZzlJbG40YXdKTGk5THZCQWEwZDdMN1BsdmFuREl2NlpWZGR4VlpxTmptcXc2?=
+ =?utf-8?B?NHd1QmRRem5uM0w1VHI4Z2l1Uks3NExLSERWRmlBL29ka2dlQ0dOQ2ZtR25i?=
+ =?utf-8?B?QVZRSVQ1aFoyRUJiQTNaWTl5NFdOM2d2OVdaU3A3NHhMVUdTejlwSjZ5ZEVC?=
+ =?utf-8?B?MkkrbFBQVkViSHVLeFNkTEdkbEdqWmUxVnlPdmg3bFNka3hJOGgyWjRBb3JG?=
+ =?utf-8?B?R0dnOSthdlI0YkdvWWc3R0FmSVFpZXduOVBlems3QVA4Z3BmZDJyOXZ2blNt?=
+ =?utf-8?B?NFR2c2xDTjFjTnJrVkxNRm85K2pkZVZ5RXNySWNlZ25sUU40QXdtMlFwRCta?=
+ =?utf-8?B?WlpXempIUU5HSzlySGNuZGhWbkdBSGlSWnNXTmNXVzRVYnhSUDVBc2lBWTZm?=
+ =?utf-8?B?VHpUdVF4SEdpV3pvcUpJSFN1K0Q5MGVieElqU1FlU2FEZzZoQXU0eE9kcDlI?=
+ =?utf-8?B?dUtIaXhjZjd0bWRvMTNLd09BWHpYdy9CakEwU2ozMWFvNUI0U3B2V0phdjZD?=
+ =?utf-8?B?SmorYXhVTVpnbFR4R1dSY0pyUzhYUEZXN0pZMURFcGZGTW9OSGFTejJpY25J?=
+ =?utf-8?Q?Z73bm5XvRBYQoJAXFRyHWE/hB?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 251e4312-ee80-49fd-b784-08de31bc1e15
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2025 16:01:56.4312
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IFqzZ2rmXlRug7I5+LG6ykZeG61Dm7N50jcWytp0o4d+lepSUI5ZM6xOK+1S3GYwoDKd4mgRO6dZBkiNxy/rMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8812
 
-Hi Krzysztof,
+Hi Anna,
 
-Thanks for your patch, which is now commit 4a93adcbd201aad5
-("of: Add wrappers to match root node with OF device ID tables")
-in dt-rh/for-next.
+On 04/11/2025 15:06, Anna Schumaker wrote:
+> From: Anna Schumaker <anna.schumaker@oracle.com>
+> 
+> This patch adds a new flag: NFS_INO_REQ_DIR_DELEG to signal that a
+> directory wants to request a directory delegation the next time it does
+> a GETATTR. I have the client request a directory delegation when doing
+> an access, create, or unlink call since these calls indicate that a user
+> is working with a directory.
+> 
+> Signed-off-by: Anna Schumaker <anna.schumaker@oracle.com>
 
-On Wed, 12 Nov 2025 at 11:30, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> Several drivers duplicate same code for getting reference to the root
-> node, matching it against 'struct of_device_id' table and getting out
-> the match data from the table entry.
->
-> There is a of_machine_compatible_match() wrapper but it takes array of
-> strings, which is not suitable for many drivers since they want the
-> driver data associated with each compatible.
->
-> Add two wrappers, similar to existing of_device_get_match_data():
-> 1. of_machine_device_match() doing only matching against 'struct
->    of_device_id' and returning bool.
-> 2. of_machine_get_match_data() doing the matching and returning
->    associated driver data for found compatible.
 
-Shouldn't the first function be called of_match_machine(), and return
-a const struct of_device_id *, cfr. of_match_device()?
+We use NFS for boot testing our boards and once this commit landed in 
+-next a lot of them, but no all, started failing to boot. Bisect is 
+pointing to this change.
 
->
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+We have a custom init script that runs to mount the rootfs and I see 
+that it displays ...
 
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -434,6 +434,53 @@ bool of_machine_compatible_match(const char *const *compats)
->  }
->  EXPORT_SYMBOL(of_machine_compatible_match);
->
-> +/**
-> + * of_machine_device_match - Test root of device tree against a of_device_id array
-> + * @matches:   NULL terminated array of of_device_id match structures to search in
-> + *
-> + * Returns true if the root node has any of the given compatible values in its
-> + * compatible property.
-> + */
-> +bool of_machine_device_match(const struct of_device_id *matches)
-> +{
-> +       struct device_node *root;
-> +       const struct of_device_id *match = NULL;
-> +
-> +       root = of_find_node_by_path("/");
-> +       if (root) {
-> +               match = of_match_node(matches, root);
-> +               of_node_put(root);
-> +       }
-> +
-> +       return match != NULL;
-> +}
-> +EXPORT_SYMBOL(of_machine_device_match);
-> +
-> +/**
-> + * of_machine_get_match_data - Tell if root of device tree has a matching of_match structure
-> + * @matches:   NULL terminated array of of_device_id match structures to search in
-> + *
-> + * Returns data associated with matched entry or NULL
-> + */
-> +const void *of_machine_get_match_data(const struct of_device_id *matches)
-> +{
-> +       const struct of_device_id *match;
-> +       struct device_node *root;
-> +
-> +       root = of_find_node_by_path("/");
-> +       if (!root)
-> +               return NULL;
-> +
-> +       match = of_match_node(matches, root);
-> +       of_node_put(root);
-> +
-> +       if (!match)
-> +               return NULL;
-> +
-> +       return match->data;
-> +}
-> +EXPORT_SYMBOL(of_machine_get_match_data);
+[   10.238091] Run /init as init process
+[   10.266026] ERROR: mounting debugfs fail...
+[   10.286535] Root device found: nfs
+[   10.300342] Ethernet interface: eth0
+[   10.313920] IP Address: 192.168.99.2
+[   10.382738] Rootfs mounted over nfs
+[   10.416010] Switching from initrd to actual rootfs
 
-These two functions are very similar, but look different.  If the
-former would return a pointer instead of a bool, the latter could be
-built on top.
+Its odd it fails to mount the debugfs. There are no particular errors 
+that are shown but it never boots up completely. I am unable to cleanly 
+revert this due to other dependencies, but if you have any suggestions 
+for me to try, please let me know.
 
-Even if you still prefer returning a bool, they could share a common
-private helper returning a pointer.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Jon
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+nvpublic
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
