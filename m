@@ -1,188 +1,217 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010071.outbound.protection.outlook.com [52.101.46.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB569313535;
-	Wed,  3 Dec 2025 16:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764779036; cv=none; b=UgMNyUXDOnjVIJ11oy2jvIpmrDBzPn1tabOJMdnSusO8zNH1+nrqEw6ZM2wXKmaqZYJCOhm8inL3BmPRckfpMYU25J8fiKLacZP3cD21SvYH/iZIY+8sbVHfRjonYVnRP9NRM6tuU8Osjyed98NFE8qchesbQtCFmeReaCs+S2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764779036; c=relaxed/simple;
-	bh=tddEi8aeuTu8My14Vkj5+5KWIdyl31N8SDG9rmhDOHs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kWkiDPBoWSzM7FqmLZHXhQbGUit5NE7UxTRly/eU/80xfjv8VxqEFyyMlmsnrQBBq2oua9vs6d/9+qbWjg/Tt5Rr/01xpRT8OS/EtJrBTA+F+b/OJftrwl0JICdmO5XKi3+LqlC/ZelL5MANyL30mIF3PyFz1vIRQZ4kWESA4Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGCWX8TC; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70F2F49FD;
+	Wed,  3 Dec 2025 19:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764790850; cv=fail; b=aWOA89LaNsuWNsHg5vrbpleMlHMeVXWMtY9BjVLOy+wlkxxxV8mCcWfSHGvzSDeruF1jkMrFGNiyG5eG0havnqfl5UC//eAJTsr+YO/xHFEkEUfwfJycYh2pddH6te+jwshx/gEivZWS1a7hiivtx14zu72vQOuA+NjiHdjb2Nk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764790850; c=relaxed/simple;
+	bh=OvVuwJeNEHGZqFgzZHs6qO9BXCdDKPM30wRDhuOQU8A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ub9T1l6XMXHOu9orCreKBt19iidUHk81NgSGpI8GOSC7UxxWq9YKFRS2MieuBJPXwmwWcQLsN1HR5CloklHFLvKZ7ulk9Xh3fquBIhza6pDTUr8qRkTnqvm2EyanflX91H9a+6D+yRVLqCbLmAcZImLE3/BXUckJzphlgtcwUmQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uF8yo6SI; arc=fail smtp.client-ip=52.101.46.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGCWX8TC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD881C116B1;
-	Wed,  3 Dec 2025 16:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764779036;
-	bh=tddEi8aeuTu8My14Vkj5+5KWIdyl31N8SDG9rmhDOHs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=LGCWX8TCiCoVEdc34Sq0wvjGTe9XFp553fK1wo+VUOfCy3bt7Jg6h2ZT7u4wSQjRA
-	 g8MHyBxSVQf4GsR7oLQbDUtU1brfP+PXSh8mN20jEM6ANvRz/wQxBnPuwxDdJJmy6v
-	 Qic8He5fRSkkQEBaQ6J/AGUIk9my/0dX8yNP5itfKH8YPzSMSsqfBDV0/N9MkVA/ZF
-	 xUb5AN0rd2vxyZMzmv2kZ94S33/2SVhFvkuRkzbQpPs+XAM29pYHZPRDSfUhizSgWk
-	 j3+4tWKoKgZaT+x05zU4Q7IaSMgzU7WDx5/I9CfVIBk5KUR/Aj2Co4GbAwQjy5WFbE
-	 2IAl7L21gTjQw==
-Message-ID: <ba1a5563fd66738156a372eed016986952f11fd5.camel@kernel.org>
-Subject: Re: [PATCH 2/5] NFS: Request a directory delegation on ACCESS,
- CREATE, and UNLINK
-From: Trond Myklebust <trondmy@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Anna Schumaker <anna@kernel.org>, 
-	linux-nfs@vger.kernel.org
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Date: Wed, 03 Dec 2025 11:23:54 -0500
-In-Reply-To: <bfe61da1-3b52-49a4-844d-6f39d7ca4e9d@nvidia.com>
-References: <20251104150645.719865-1-anna@kernel.org>
-	 <20251104150645.719865-3-anna@kernel.org>
-	 <4f5da6d9-ee72-4045-8fe1-c5eacedb4660@nvidia.com>
-	 <bfe61da1-3b52-49a4-844d-6f39d7ca4e9d@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uF8yo6SI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EGiu9Bp04bstVYzhqbcojWUzeocacZbvsGVuk39Orcdmf53qBhpV3AKEI6e+L8SXCOs0RVyiiBkQ6YTdoH6jyQv7gSOayPua56GLO3nesIIGqN1SfeyKbGQUyfraI3CCjQdg4yRb8I62YmpvpYww9aLfmtED+LF4LQnkonPKod3scjMWCLz5t6L4ezw5Y6v6/LLct+7a+KvHDgStjRyp9+rA6+r4+1e6yRy7i7JwsBPRLSRUW54hAJxPaDrNgvyTKep3cqJAsnBT3sSrdKVQHyJdvatHpRbocTFnZImSfp0Rm3w+oXg2LHVi5zmwQzNi9wSmDmCc2PYBbUlXFSwO3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1OnbbPA/iAVkI5+nVr0PeMUxZabAu+lKZm081izKJCY=;
+ b=cwo3L+NdUuFuzUVLJanDIaA28eaZ2Vxa7Wcv/SIXhANcZihfKHcNPn5Owg+z20OWdM2z+iwZBoaFM8hmor5FUoueMzev2F3QSvK4pog1SALs42wxLgvbO9jMn4ntdqUVmKu+WKt6cOpyBmr5eEbzidF1odlf+k6+nFNCml+jBReBjD0Isn7LHr8WJjljJXBPbDHLo1e5N2c5olQe7B9CknZUgSfjMQ9XFwRxCmlmK65bftj9qxKN0JeZA90dTcyprxqCxd56DIc7l4uxjkZ6GD9F4KLasSvan2MwEJJDSveYdTXUu6EGQm+ny15NxzJ9wCWDCcBg2lGlTmrlSBdGsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1OnbbPA/iAVkI5+nVr0PeMUxZabAu+lKZm081izKJCY=;
+ b=uF8yo6SINTmu1/1yT3drT4g/4ursGc5g8s8Q7b/nWUbNPDQazXQGMviwVyLXSgTU/bO2MpBkIP8fKOvJ3UytcRmZjUKuWYfiR9BUgAwIB/a5EVoHOU0FFfDv5KQ6O2uU4/0JSta5criVwRElMTIXbEHA+5gQYkkIYv/XvU9OviZ0RddZ0ms1WNcD1ChsJASdKELdzxX8RitlCKsJHj2Hm5q0ra6mJddJYV9p4iDtufpPThDfoFqNiAQzhNNRaZ7E9xcNJ1ymwCW6R2lnyZhM4YFFmx2D4dRlquQJC8vRYJBXI+uf7Tqvq+GHOm+f6sSW5IJN9LvZr/Cn514H4vH4wA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SN7PR12MB7452.namprd12.prod.outlook.com (2603:10b6:806:299::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.9; Wed, 3 Dec
+ 2025 19:40:42 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9388.003; Wed, 3 Dec 2025
+ 19:40:42 +0000
+Message-ID: <71a92d82-e941-4afe-a712-0a4d4c80ddfd@nvidia.com>
+Date: Wed, 3 Dec 2025 19:40:35 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/392] 5.15.197-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+ sr@sladewatkins.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20251203152414.082328008@linuxfoundation.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251203152414.082328008@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0382.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18f::9) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-Hi Jon,
-
-On Wed, 2025-12-03 at 15:56 +0000, Jon Hunter wrote:
->=20
-> On 02/12/2025 16:01, Jon Hunter wrote:
-> > Hi Anna,
-> >=20
-> > On 04/11/2025 15:06, Anna Schumaker wrote:
-> > > From: Anna Schumaker <anna.schumaker@oracle.com>
-> > >=20
-> > > This patch adds a new flag: NFS_INO_REQ_DIR_DELEG to signal that
-> > > a
-> > > directory wants to request a directory delegation the next time
-> > > it does
-> > > a GETATTR. I have the client request a directory delegation when
-> > > doing
-> > > an access, create, or unlink call since these calls indicate that
-> > > a user
-> > > is working with a directory.
-> > >=20
-> > > Signed-off-by: Anna Schumaker <anna.schumaker@oracle.com>
-> >=20
-> >=20
-> > We use NFS for boot testing our boards and once this commit landed
-> > in -=20
-> > next a lot of them, but no all, started failing to boot. Bisect is=20
-> > pointing to this change.
-> >=20
-> > We have a custom init script that runs to mount the rootfs and I
-> > see=20
-> > that it displays ...
-> >=20
-> > [=C2=A0=C2=A0 10.238091] Run /init as init process
-> > [=C2=A0=C2=A0 10.266026] ERROR: mounting debugfs fail...
-> > [=C2=A0=C2=A0 10.286535] Root device found: nfs
-> > [=C2=A0=C2=A0 10.300342] Ethernet interface: eth0
-> > [=C2=A0=C2=A0 10.313920] IP Address: 192.168.99.2
-> > [=C2=A0=C2=A0 10.382738] Rootfs mounted over nfs
-> > [=C2=A0=C2=A0 10.416010] Switching from initrd to actual rootfs
->=20
-> It appears that there are multiple boot issues on -next at the moment
-> and the above it not the relevant part for this particular issue.
-> Looking further at the logs I am seeing the following errors which
-> are related to this change ...
->=20
-> [=C2=A0=C2=A0 11.100334] systemd[1]: Failed to open directory
-> /etc/systemd/system, ignoring: Unknown error 524
-> [=C2=A0=C2=A0 11.119234] systemd[1]: Failed to open directory
-> /lib/systemd/system, ignoring: Unknown error 524
-> [=C2=A0=C2=A0 11.143487] systemd[1]: Failed to load default target: No su=
-ch
-> file or directory
-> [=C2=A0=C2=A0 11.158620] systemd[1]: Trying to load rescue target...
-> [=C2=A0=C2=A0 11.169388] systemd[1]: Failed to load rescue target: No suc=
-h file
-> or directory
-> [=C2=A0=C2=A0 11.188856] systemd[1]: Freezing execution.
->=20
-> Thanks
-> Jon
-
-Does the following patch fix it for you?
-
-8<---------------------------------------------
-From 849bdbd3a2136a86c809ce6a7fa6ae30e9f0728a Mon Sep 17 00:00:00 2001
-Message-ID: <849bdbd3a2136a86c809ce6a7fa6ae30e9f0728a.1764778907.git.trond.=
-myklebust@hammerspace.com>
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
-Date: Wed, 3 Dec 2025 11:17:25 -0500
-Subject: [PATCH] NFSv4: Handle NFS4ERR_NOTSUPP errors for directory
- delegations
-
-The error NFS4ERR_NOTSUPP will be returned for operations that are
-legal, but not supported by the server.
-
-Fixes: 156b09482933 ("NFS: Request a directory delegation on ACCESS, CREATE=
-, and UNLINK")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
----
- fs/nfs/nfs4proc.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index c53ddb185aa3..ec1ce593dea2 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -4533,12 +4533,17 @@ static int _nfs4_proc_getattr(struct nfs_server *se=
-rver, struct nfs_fh *fhandle,
- 	status =3D nfs4_do_call_sync(server->client, server, &msg,
- 				   &args.seq_args, &res.seq_res, task_flags);
- 	if (args.get_dir_deleg) {
--		if (status =3D=3D -EOPNOTSUPP) {
-+		switch (status) {
-+		case 0:
-+			if (gdd_res.status !=3D GDD4_OK)
-+				break;
-+			status =3D nfs_inode_set_delegation(
-+				inode, current_cred(), FMODE_READ,
-+				&gdd_res.deleg, 0, NFS4_OPEN_DELEGATE_READ);
-+			break;
-+		case -ENOTSUPP:
-+		case -EOPNOTSUPP:
- 			server->caps &=3D ~NFS_CAP_DIR_DELEG;
--		} else if (status =3D=3D 0 && gdd_res.status =3D=3D GDD4_OK) {
--			status =3D nfs_inode_set_delegation(inode, current_cred(),
--							  FMODE_READ, &gdd_res.deleg,
--							  0, NFS4_OPEN_DELEGATE_READ);
- 		}
- 	}
- 	return status;
-@@ -4554,10 +4559,14 @@ int nfs4_proc_getattr(struct nfs_server *server, st=
-ruct nfs_fh *fhandle,
- 	do {
- 		err =3D _nfs4_proc_getattr(server, fhandle, fattr, inode);
- 		trace_nfs4_getattr(server, fhandle, fattr, err);
--		if (err =3D=3D -EOPNOTSUPP)
--			exception.retry =3D true;
--		else
-+		switch (err) {
-+		default:
- 			err =3D nfs4_handle_exception(server, err, &exception);
-+			break;
-+		case -ENOTSUPP:
-+		case -EOPNOTSUPP:
-+			exception.retry =3D true;
-+		}
- 	} while (exception.retry);
- 	return err;
- }
---=20
-2.52.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SN7PR12MB7452:EE_
+X-MS-Office365-Filtering-Correlation-Id: ede90628-d4af-4a69-94c6-08de32a3d840
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T01rYnlqSjJ6a0k3dFpvajd3bk5mdHhENEYyNFNmSUZURGhGMHc5enM2N0hp?=
+ =?utf-8?B?WTUzNDJqRU84a3YxZFJiUjFHcWxoVEhBTUt6eWdvTlpBZUgxUnU0U1NuNGhi?=
+ =?utf-8?B?ZWNteGh2d1JLaFhNbEFsMjVJakxxQ09UUEVPNm5IeVVJWWtaU3dvQ3hIL3M0?=
+ =?utf-8?B?emtySWd4a2hTTXVnR05CQXYyUG5lL21mRjBiTks2NmRmNEh5Z1RWSEZFeDly?=
+ =?utf-8?B?QXovT3NPb0I4VHAvTFRDTnZ3M1NJSHhWTDBYVTF5OTE2UjYvdStoQitXdGVB?=
+ =?utf-8?B?TG91TkZBRCsvQkc4QVJlNzV4NGg5SG9zbDFRUmQycThoZ2pCNlM0NGhscVdO?=
+ =?utf-8?B?ZkQ3VnZacktTMTVVNTBMV0lrSFc0OTB0UGF6eTN6SGtCQmdlandZcHNUMTBj?=
+ =?utf-8?B?dW9KLzErSDVtN1hjTU9WSE9CL1NVL0pNWk92MnVvR2NtSExZTFFmVkJzU1Ex?=
+ =?utf-8?B?Q0taNlpEZS9idGp2Y0F3LzV3cml1bFZZV1dCRFJPQ1FzZ1M0WnhYNkNET29N?=
+ =?utf-8?B?eVdmemhsR3BrNWNjOGIvcm9vcUh2VmlqdVp3UWdYYmVFY3dWSkVDN0pNZDZx?=
+ =?utf-8?B?MExpQ3VSMFZmUUtiOWI5K3dQbjlNN1g3akd0OUxNL3RzYkFPcDU1UUlyaGFh?=
+ =?utf-8?B?cXpwTjlhK2VaY0VXbStpbTMxR205NTdUZmhmWUpsVS9uZW9LcU1kNTlObjda?=
+ =?utf-8?B?TlczL29EM1RMODBLR2NqT0Z5aGIrU1ZaOWlieDl3aDdSZE1OZ1RYNXhKRkNo?=
+ =?utf-8?B?SE5TTHVNemk5OU14SHZZZ2VBc1BSdktWT24yWTY2NUoyTW1SZGZCRWNjTS8z?=
+ =?utf-8?B?T2lCakVxS0ZaRDNWaSt1c1Y5UkZGZ2JLT2hQSi9nd0Y5VGtzTzcrQkxsVkxM?=
+ =?utf-8?B?YmQ1ZytyQllCeUFZWUtpMk9PL2hTUmp0UWMwTGwrSjU0K0I0d0REbDVvT21X?=
+ =?utf-8?B?bHc2d1FvWHNiMkFwWjNpOXNaWDNSQjI4SWVtQWcrM2pjRnJsQVN6YzVBeitI?=
+ =?utf-8?B?M3lWWm5CNFNUQW1BZnFMRnFub056ZUpuRHdVUUt1RXZ4dzltQ1lBeEg2RVMw?=
+ =?utf-8?B?bjR5WU5XZVRwNllYVlRmK2lwT1ZRaEhWOTJBWmNVRVdQU1JKR05teGlaWC9p?=
+ =?utf-8?B?R2ZCc2h3VWdjQ3pYTEZ6TktMU0NnVXVNRFRVY3JOZGc5Rlk2N25sMEl4L0tE?=
+ =?utf-8?B?ZHA4eVM0UlNDTElsTlVGZ3Y1OU5sUGJ6WEdBSEllTlNtemRmc0ZjcFdnbmtE?=
+ =?utf-8?B?bys5S21TakpwZUpwaTg3QmJjaDQ1TFlOUDVXeFU5WFRyaHVYajlMRlQ4dnlF?=
+ =?utf-8?B?a1ovQmF4M09zSnBBbXMxanNJVlJ0cDVJTC9iVmVub1RKMlc3V254N2FWV1lo?=
+ =?utf-8?B?VFNtWGtaVmROcGlBRXJtMWJsOTZZSXBFMHlObGFlSFM5OTAzZkx6dkcxRVhW?=
+ =?utf-8?B?OXZ0M1B2OVFBVElHdGFZcGhJTElhTDE4TlMvcFg0WUhSOWtFdjBxRk5maDV1?=
+ =?utf-8?B?UU51aml1WFdOaDdsbzVETHJZWnJyaXM1TG9UUU56TkEwWEJvNThCUEs3U3F0?=
+ =?utf-8?B?UnI1QVl2Z29hT0J4bUh6ZlEvRkdON3Q2Ym0wUlFJeUNqbWFiZ1hxbVBoZWRl?=
+ =?utf-8?B?QThHbkxoRTBXaHF6V0g0Y3JLTkFqWlQ5ODdpTjZpcW1DamE3QmpnVVVzbkVy?=
+ =?utf-8?B?L2hyREZycnpqZXM5NEhDSk5KZDk0WGlhSHdzQXgraWl2MURUZmhueWkwRXVX?=
+ =?utf-8?B?cnAxZGtNTUdab29yRFBRV1BYMUdmSnZHdHJYRFFVdzY1L1c1aEVJbGE1OG01?=
+ =?utf-8?B?cWVDQm1qTlpxNHJBQlRyc2tUb0tmYXNab01qMmZQVTVvMTlvS2J2U1BNN3dX?=
+ =?utf-8?B?bmNyRGdvVDZkYUtELzkwUzhUSk5RQlhONS9CWDhrd0hFOHZDNlJQNmkrR1pq?=
+ =?utf-8?B?RVlySVNuVlRNNmN6MzZZYnFVWnJwbFg1UnRWUjBmbDlqbkdyeSs5RU5ReVBi?=
+ =?utf-8?B?QW1qSDdpZzNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TkEvajJHMlJwaEdlRFZINnA3R09sNnlvUUNkV1oyVHRrcjJ5VnJIR2tLaS82?=
+ =?utf-8?B?U29rNUl4SS9VTU5RRlBoUnk3WlhpNnJ5dXM1YXhpMTBtSXhtYmt1VWFYSjJS?=
+ =?utf-8?B?UklZOVkwcHkyaEpaV1M5UVVTTDA4ay83T01WS281c3J6UjQ4ZGhSR0grRjdz?=
+ =?utf-8?B?QzJBOHBDaEtISUdjTmM4ay9QNTh4OHR5cHEvZFdBK1UwRTNFM0tlelFsSWFF?=
+ =?utf-8?B?NmY5eEZHcWpaSzVXejhLb2ZwNnV5TEcwTkNrR2RBSnBBRmVJbGtXbHhzNXdE?=
+ =?utf-8?B?MHJJSmhIYWtIR3dPYWk1dnRUVytCTThYNzRYeHZJSWhBVzZrOXoyZ01hSDRm?=
+ =?utf-8?B?Vmw2clJzK2VvMUh5U2JnZ2tLRlhaWE80Zjdha3R1QVNYV1ZSNWNHT2Z6Nzl1?=
+ =?utf-8?B?c20ydmZiSjYybFUza1BCeUlEYW8zbGFkMlJpK3IxME14S0VUQUxrOFQwcnJR?=
+ =?utf-8?B?Ly9Zemd2dWhCYmJzV080MExBejV5Ni9SUzJCQnYxUkVzdjd6RFU5bkYvcHVr?=
+ =?utf-8?B?U2loNGo3VGpQWWhmdzB1dkV6N1kzYjl1UDFOOGFtRXg5YTczaEpSQ0laa1JL?=
+ =?utf-8?B?UkovOTFIbWp1V1crbVlObGxQeHhDc09TSE9YN2lwbVg4SUxhQTZYR2hIcnZD?=
+ =?utf-8?B?K3lRWEh0b3RyYVVYKytPbWtZcCs1eFI2dlpvNGZrU1kwRlJ0Z0hxckJjN2c4?=
+ =?utf-8?B?YUtQMDArUk9vWDlsOFZJeXRyODhlZnBDbGd4ek1idFo4YXdFbEM1bXZqakky?=
+ =?utf-8?B?MU5tdDljdXJoZEZNQ0NIRlZNalBMVUZNa01SN1pWUkV4bFQyWVptUUR5dEdT?=
+ =?utf-8?B?dE4ycE55a2ZYd24wUFF1dkRwY3d1dGNPNlhid3lJbnB2SFF6UUd6N1M2RG1m?=
+ =?utf-8?B?QjNjK2hVTUZxZkptQktHdHpDR3VkYS9nMmxEYmsvMlFSYlZPeXFtT0ZtbnZK?=
+ =?utf-8?B?bHdDZGUxR3JuWXJaUE1uZm91bUlTM3R1UDZMNWtqZ1JhYmJmMEF6VEdIQndF?=
+ =?utf-8?B?SWdnaGZGMTlJN2Nla1RBRWlvempESGVFQWNWbEsxSGlzZEtTaEZxRm43N01t?=
+ =?utf-8?B?RFozV0wxVytJdzhEOXlkN3crbUxEbDdNYkhoT3JUV3VHRVkxRndLMWdXWkFm?=
+ =?utf-8?B?MkMvNHI1a0xKdGs2dU9jOFh6TmlqdGFXem1mS0dQenlSQkNlS1E1YjJpSWRp?=
+ =?utf-8?B?M3QxOFRmZjd6NHk4ZzU0Z296NlZXWG5pYzJMY0JrZVQvbjJQLzMvK0FiUm9R?=
+ =?utf-8?B?K3BhTU8vYzN1NGIrUEhGQ2YvWngvbkhPUnZEYVFFbC9Gdml4Ymp4ZzNiRS82?=
+ =?utf-8?B?ZHNyWWsyM3lkY1V4SEF5VDNyMTJhVXFsWU56MmluU2p1bmpTWFQrRmN4K3JU?=
+ =?utf-8?B?U0VTRGpidTRJVVZxL0EwcjAxc20rK0d1Ryt3WWszbGZBZGNBUXdQNHlxbmh2?=
+ =?utf-8?B?WUdsejJZeHZ3TEE1VnBaaWxTMHltYTZtNHFoaHdDMGhYT1ZnRmRYME9rdTdk?=
+ =?utf-8?B?THJsK3Q5VHVaSmtlUHFSK0NWUU9tMXhaNHRxNFV2enZTdzczWk05eHcvUHhF?=
+ =?utf-8?B?dFZqd3RDMEpDSzdTNlgxY29PQW1qVDFZRm9OZE9sc3ZMb2lJN3Jva1E0bGwr?=
+ =?utf-8?B?NjZsMkJpQTFxRlAzc0tJbHJpS2VKYm5aUjlzeFErQXZJUzRhQW9FTVEzSTlr?=
+ =?utf-8?B?cXNCc28zc0xxdmV5bXVYN1ErUWVMMW9wam9Md2xKUEVjUTFNYkJmeVJBcDlH?=
+ =?utf-8?B?MVExclVkZC8wcGtZY2hZZjZUa0NuV1JJcCtwblNYdUo5YS9LeHE3SGcxUVVF?=
+ =?utf-8?B?dW1FblIxeFhSYUpWdW0vaXk1ckRsNDd6ZHBOU3BzMzRzVEZVR2gxMG9RY2dI?=
+ =?utf-8?B?TG1zNHlZelJDNURYeWUxRTZjZFJFdVRSd2J3R0R1Qk5qdkVZWW41OTVFVTBL?=
+ =?utf-8?B?MGNWZ0Q3ZU52eU9FWEhaZitDNGZNUGNla2RBa2VrTkQ1VVpPYlNSbkYvT2Yx?=
+ =?utf-8?B?QXRabWJKYjZTbGJvbzFmbGpNb0VwQnhzOGxwVWdnVjA2ZU55VElrSVNmTVZI?=
+ =?utf-8?B?Z2ZFUEZFL0VvNDFiNFZzazlDZDZkd1dKQzBNTFpHRGh5MXkrM0pmT1FUQkl2?=
+ =?utf-8?B?U3pyZ2VQVzV1Rkd2VDAvUStMQ2llSWU3U0Z6VmxDeENraTZDTFFLZVBRcWY5?=
+ =?utf-8?Q?y4BvIMdOukJvANf+ehd0Yk7JvZzH288LZSQ03cYWBthG?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ede90628-d4af-4a69-94c6-08de32a3d840
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 19:40:42.5407
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IFVYXsR8S1WKog3bWMUUwrRFpJkTvHNyTL0zMQd0iSe+Dn0VqBcRfSKDtEMdj1Fmck4W7Knl1LBRhSjpUvu6Yg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7452
 
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+On 03/12/2025 15:22, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.197 release.
+> There are 392 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 05 Dec 2025 15:23:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.197-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
+
+...
+
+> 
+> Vlastimil Babka <vbabka@suse.cz>
+>      mm/mempool: fix poisoning order>0 pages with HIGHMEM
+
+
+The above commit is causing the following build error ...
+
+mm/mempool.c: In function ‘check_element’:
+mm/mempool.c:68:17: error: ‘for’ loop initial declarations are only allowed in C99 or C11 mode
+    68 |                 for (int i = 0; i < (1 << order); i++) {
+       |                 ^~~
+mm/mempool.c:68:17: note: use option ‘-std=c99’, ‘-std=gnu99’, ‘-std=c11’ or ‘-std=gnu11’ to compile your code
+mm/mempool.c: In function ‘poison_element’:
+mm/mempool.c:101:17: error: ‘for’ loop initial declarations are only allowed in C99 or C11 mode
+   101 |                 for (int i = 0; i < (1 << order); i++) {
+       |                 ^~~
+make[1]: *** [scripts/Makefile.build:289: mm/mempool.o] Error 1
+
+
+Cheers,
+Jon
+
+-- 
+nvpublic
+
