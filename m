@@ -1,51 +1,51 @@
 Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509852FBDFF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5086429B8E8;
 	Thu,  4 Dec 2025 21:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764884228; cv=none; b=WgcyfSFf+BEiHG7oyps7J4FVYrTO34BYQuQONf3MslN34xksZrwALvsz1D3XdEVYCEWVxB8Ft2Zrv/wFV5mNzVz+pz/K1Wj0SFGFzHtkkibYMaVOlVpjYImARnBwwl18+tFci3RwaWuiu9TAXllSGDvnfzGKuGezHUlhg9aR3eA=
+	t=1764884229; cv=none; b=jl1WkbkhlVQrse89XUJUE+UXnkYMNaZtUBOylZ1pjjhb9TKQs91zBMtisqqiaD8S+aNe5pK/R81Y2RJwUaZ6wHQuVrVqqYzLEd9J+GOv6ns6fdyex1kbdVRS9yMyjpoYjbz9wqgwm0n21CAo5qcXDCDFiBKqZ/QgjhzUUFnayEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764884228; c=relaxed/simple;
-	bh=7Bhceul0Djmy/FTqFXQ8yH/nOs3uT2cr4R1ec8CPF5U=;
+	s=arc-20240116; t=1764884229; c=relaxed/simple;
+	bh=sfqv4Sr+OMnIY9gPi8e20yGHX5crm0dHFpzYIkqQThU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GKmCT1EgHdId6KnCSrsVIVJ1/NMx2wwxwu65j8JXBfEE+UOzzcKCfk/EUS5GiKfHHLjTyCzbgRiL7pE21sEksWoB51SAqb2171DQdxMvhvW63dvSE7cty9G+3vCRx73lJClHHkbeUi44qe6navmEbvw5JSdF9jk6MdIbFTLF5fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=caq+uw9w; arc=none smtp.client-ip=193.136.128.21
+	 In-Reply-To:To:Cc; b=nVYXLK7N2xBRolZrwvyA7s/WY5ZXm9AzxLiVGAg1bNimVBDYNaz/wOwFPpO17XLiQM2JVTjGkl/uz7L098K+SUTJRPg5u+ID/K8znRnFGllU5qpAwv93HS+DYptsC+LIq+U7ZIfWcC4Bg6y4qecs4r/Ckcafi/8tex3hrxK57Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=bjzMUT0d; arc=none smtp.client-ip=193.136.128.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="caq+uw9w"
+	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="bjzMUT0d"
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 636D26007C0E;
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 751846007C07;
 	Thu,  4 Dec 2025 21:27:30 +0000 (WET)
 X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
 Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
  by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id BGUSO3u_jN07; Thu,  4 Dec 2025 21:27:28 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id E1D0D6007C1A;
-	Thu,  4 Dec 2025 21:27:25 +0000 (WET)
+ with LMTP id LtbYQ1UNms0M; Thu,  4 Dec 2025 21:27:28 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 4C6BE6007C2A;
+	Thu,  4 Dec 2025 21:27:26 +0000 (WET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
 	s=mail2; t=1764883646;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=i2xJ/PFmcIyGi2LSxLsJ2Rs5bQ0h4NEOjIa44Tuehhw=;
-	b=caq+uw9wNmaYLrBjvqhTf7/lFDUe9ka5PtWeIlUrVyBZRPzqO1ZGVGONmW90vhOTs05ai9
-	VWJuGEz3e4P9WBw2C/r0pTi4Lo2QwyNWcNdB6qEKzULsY1KkKM4dHNJYOr/pKIfScQHMdc
-	VLV/E1eHRACHg55Nm0phIWWkLVuaImKr+C2VF93JY+zc6CdASHVWBfCuUlxFJ1FdBjaThW
-	tnXujGa92x5Gy5d+OAi7rnjJQ92cqhRqgMcAH0KScW+HVeGWKLzTUb8GBkCLjyFNQq6kCL
-	DRv7Q+r63gQmfa2ONzwhWYOlXRw6h7Xbs60yopU7nHPlUccmR2hL4LrTLSfKuQ==
+	bh=aM83Mw77rc4YXSunFcfwV7YHy4i8gIDVF0RJQ/BhVzk=;
+	b=bjzMUT0dNT9EyFzPJm70pDW9tN/aT9KJ5QlvIf+ZKkIgHyFlLWFUtVf/WvvrQkk1jGJxYi
+	kZJln2MBCPT4EhTipG4fsOCUaQlqmm5R4ofkkxfhTpq0257GJhxhiAXRDDhGn6JCZpA0Mh
+	uzqxeoMSkh6OSkrDpdYbz86SJPBKVOLE2YdG3UHuf4hlewMVWITcFRDo/LC6m5u1a9crh3
+	X5blxrCsLBZXNO45VptaSXF+PaHwe2GgqTwgK1RE+Ng+BEtZf9FT/EY0L9WfRGsftzR2/b
+	WxknAPxD/mwg2LhTPk5MIn2pym/wCxAW05KPbijoIwPPYMj+1YdDWlBAiUstHQ==
 Received: from [192.168.1.151] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
 	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id B968436013A;
-	Thu,  4 Dec 2025 21:27:25 +0000 (WET)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 1DCF336013D;
+	Thu,  4 Dec 2025 21:27:26 +0000 (WET)
 From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Date: Thu, 04 Dec 2025 21:27:17 +0000
-Subject: [PATCH 1/5] usb: host: tegra: Remove redundant
- pm_runtime_mark_last_busy() call
+Date: Thu, 04 Dec 2025 21:27:20 +0000
+Subject: [PATCH 4/5] arm64: tegra: smaug: Complete and enable tegra-udc
+ node
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251204-diogo-tegra_phy-v1-1-51a2016d0be8@tecnico.ulisboa.pt>
+Message-Id: <20251204-diogo-tegra_phy-v1-4-51a2016d0be8@tecnico.ulisboa.pt>
 References: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
 In-Reply-To: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
 To: Mathias Nyman <mathias.nyman@intel.com>, 
@@ -68,35 +68,44 @@ Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1764883644; l=780;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1764883644; l=925;
  i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=7Bhceul0Djmy/FTqFXQ8yH/nOs3uT2cr4R1ec8CPF5U=;
- b=MSFpWziUnBc/OPf/yhVMRKv6Ok/jVF90lG2n6xG4zPodbFDYWpxS6sqYuBVXaUgIVZHBYEOuu
- zcCx9l7YBjkBXgP/LpUKBo3mcNEBo57EXVFGdhxhMwKm+/I/7MbwEx8
+ bh=sfqv4Sr+OMnIY9gPi8e20yGHX5crm0dHFpzYIkqQThU=;
+ b=BnvupjdKsXMIGOQCbH1KdJqWRnJzGtzyBQhBhW5BNYfMdgIF5DCTYTD+y1ag5U/rOm+mlLqyl
+ AJrDL5z+BbNADkNyhq8HkkWwDr5sSqY+TsGyLKDTpY+Ss7c1gvwnNFF
 X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
  pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
-As pm_runtime_put_autosuspend() called at the end of tegra_xhci_id_work()
-already calls pm_runtime_mark_last_busy() remove the prior redundant call.
+Complete the missing properties in the tegra-udc node and enable it for
+Smaug.
 
 Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 ---
- drivers/usb/host/xhci-tegra.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 5255b1002893..9c69fccdc6e8 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1399,8 +1399,6 @@ static void tegra_xhci_id_work(struct work_struct *work)
- 		}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 5aa6afd56cbc..b8d854f90be7 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1843,6 +1843,17 @@ mmc@700b0600 {
+ 		status = "okay";
+ 	};
  
- 		tegra_xhci_set_port_power(tegra, true, true);
--		pm_runtime_mark_last_busy(tegra->dev);
--
- 	} else {
- 		if (tegra->otg_usb3_port >= 0)
- 			tegra_xhci_set_port_power(tegra, false, false);
++	usb@700d0000 {
++		phys = <&{/padctl@7009f000/pads/usb2/lanes/usb2-0}>,
++		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-6}>;
++		phy-names = "usb2-0", "usb3-0";
++
++		avddio-usb-supply = <&avddio_1v05>;
++		hvdd-usb-supply = <&pp3300>;
++
++		status = "okay";
++	};
++
+ 	clock@70110000 {
+ 		status = "okay";
+ 		nvidia,cf = <6>;
 
 -- 
 2.52.0
