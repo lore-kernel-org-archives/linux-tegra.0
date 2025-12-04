@@ -1,91 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F051330B3D;
-	Thu,  4 Dec 2025 12:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF362FC010;
+	Thu,  4 Dec 2025 16:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764851599; cv=none; b=mFZa99w8FDbrI/Ej9I8w9gA2bw85IxZegEPaEgClUVkysGvQW/yLOeLvaCTZjY5gVd+kOBadrOYSvfiUmjv7CF/+Ah+sk7feMFwZDBeeF7IRo21nZ63MbAOSecBBHKEbxWNnbbH5a4HCkLf+xm+XItME/QNrVBJPXpR3TAGqZMk=
+	t=1764866071; cv=none; b=sXCtZLNBGUUURmsbVXp62PL01C6A1/pCpMNV/Dlye911yhaFE2Rvrxics9+fXNtgJy2EVTRBRXYxm4uhZ1VQWC2DxNBxsWqovo/hLko0ND37+ASaFtJJsR0QiAaLKE14I2j0W7oz9geY8FFFO0vB4YTCoDWS2gzhxdInn1Z+PtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764851599; c=relaxed/simple;
-	bh=HMmNty+P3NAdwwW+CTsFuvrWKjzzvhFXf2oLlXgTZdw=;
+	s=arc-20240116; t=1764866071; c=relaxed/simple;
+	bh=38BE4UeZOm8s40CNSyasMUAwHYSUYKpGeUgm9sWx/Fg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gP2uPfCL8hZS8fPwR4cNNuP8LKDJH41xygvdlt9TdrMFWH5qUULRsoUsC+LbA5tYeOUhDOHg5uxjCCyoqTfrkVfvRmjVaUOi2iilg0w+9B0sgaKssIFuc6mQWFaP0+5v/6yJFll/nu14uDMfMa41NFloeZSaV73krd5t905sii8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mhoww7L3; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwX0SC7dPeOiCppxtOhLutQ94cIynheBJ+86/cjuQD/4UGWL87qpvU7Ojhr23swHoj1VS+7vwgbdaRvMEfDQOTXBANuFGgC7q+vKBDMKfw1tU5+8N5IAIMc9Wrcppo/cvGzJJuaFcL7HYXdPF1F9c1b+RFXmyY0aUZeS8/Scvx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NE/dNtps; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mhoww7L3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6C9C4CEFB;
-	Thu,  4 Dec 2025 12:33:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764851598;
-	bh=HMmNty+P3NAdwwW+CTsFuvrWKjzzvhFXf2oLlXgTZdw=;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NE/dNtps"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0C66C4CEFB;
+	Thu,  4 Dec 2025 16:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1764866070;
+	bh=38BE4UeZOm8s40CNSyasMUAwHYSUYKpGeUgm9sWx/Fg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mhoww7L37d2+HcwPhCcqhSAJryHtEPS2AOdqGh0uX7eC/kFvp9GayA+htefzOvat2
-	 wqk9wGjNGmal6eB/DbfxjUPDrKTQAMlwBSGhueHRBR3kHcACBpJ1zwB5yvlyxNepyi
-	 0kE02L3xJGmtjhaF+YGnN9/ppksV743tYZKXU/BtCo12OVmIpDv0q/IPIvRgu75LfO
-	 D2mNM+2Jt3QtbYGzCCorFzRtexXu2gn7eWT0z2J+cP6fk29xq3AFEBAR8hAZ36rbPr
-	 MmJ8lgEn9HbH1i8Ed+LS/npN8mU6oeGyiIghuKbdZzf2lCzcNLB7dNlEeKlh5xTO2g
-	 nfApDh32H3PkQ==
-Date: Thu, 4 Dec 2025 12:33:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Guixin Liu <kanie@linux.alibaba.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: tegra210-quad: downgrade the log when fall back to
- PIO
-Message-ID: <cb9c67fa-c95e-44a3-b906-8f64bc4a9e29@sirena.org.uk>
-References: <20251127130207.43754-1-kanie@linux.alibaba.com>
- <16bc32ff-2c10-448b-ab82-a21eaa91f4ce@linux.alibaba.com>
+	b=NE/dNtpsNGqU7POhVNup6SiLoVDZbyp0CgupmTbNkEuSppaNK2sGfEwvEMI3m1ggD
+	 NgUZiuh8frZ7w4iS6FqU7c6xiMT8tjGtoyEmMQsr+6Zf8VV5Gq2UgFOdQinAdSjkbH
+	 xIfMzAqK0BLaAe332HxMvqj1L/B2ouKPUhj/LJp8=
+Date: Thu, 4 Dec 2025 17:34:27 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, sr@sladewatkins.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 000/392] 5.15.197-rc1 review
+Message-ID: <2025120420-gravy-parsnip-20c9@gregkh>
+References: <20251203152414.082328008@linuxfoundation.org>
+ <71a92d82-e941-4afe-a712-0a4d4c80ddfd@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="U0KhDSkCRerBZi8d"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <16bc32ff-2c10-448b-ab82-a21eaa91f4ce@linux.alibaba.com>
-X-Cookie: volcano, n.:
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <71a92d82-e941-4afe-a712-0a4d4c80ddfd@nvidia.com>
 
+On Wed, Dec 03, 2025 at 07:40:35PM +0000, Jon Hunter wrote:
+> 
+> On 03/12/2025 15:22, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.197 release.
+> > There are 392 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 05 Dec 2025 15:23:16 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.197-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
+> 
+> ...
+> 
+> > 
+> > Vlastimil Babka <vbabka@suse.cz>
+> >      mm/mempool: fix poisoning order>0 pages with HIGHMEM
+> 
+> 
+> The above commit is causing the following build error ...
+> 
+> mm/mempool.c: In function ‘check_element’:
+> mm/mempool.c:68:17: error: ‘for’ loop initial declarations are only allowed in C99 or C11 mode
+>    68 |                 for (int i = 0; i < (1 << order); i++) {
+>       |                 ^~~
+> mm/mempool.c:68:17: note: use option ‘-std=c99’, ‘-std=gnu99’, ‘-std=c11’ or ‘-std=gnu11’ to compile your code
+> mm/mempool.c: In function ‘poison_element’:
+> mm/mempool.c:101:17: error: ‘for’ loop initial declarations are only allowed in C99 or C11 mode
+>   101 |                 for (int i = 0; i < (1 << order); i++) {
+>       |                 ^~~
+> make[1]: *** [scripts/Makefile.build:289: mm/mempool.o] Error 1
 
---U0KhDSkCRerBZi8d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Now dropped, thanks.
 
-On Thu, Dec 04, 2025 at 09:46:26AM +0800, Guixin Liu wrote:
-> Friendly ping...
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
-
---U0KhDSkCRerBZi8d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkxf4kACgkQJNaLcl1U
-h9BsjQf+OYhDV4Z7kPWKI01Q5eLXCDLd8NmrTIbce0ywnQsYHbXT6FP0G6oVZPwk
-UsyTh6tToqKa3qnMKu4Fz0OC/s88WuEJq3kqClZ02eKVVXAUP+9PszTMPGsctpV/
-Rc20S3NvDXMzBqMQK13TUcg44SBwf5eJHICI63r/zRkxY04BBf1EHMU1xCscF3Nr
-LtVONTFiFBmpC/etV7R+qFPjRRrTzy7+XnIl0VbtjWCUdAHvoerCDNgxZ92JOIFn
-yaQKD7IZi4pbwUxT7F5eWPjByMP6lcpU4XWJDwVHy5H+WjVF1Yh09YLwRjdZ7Nqf
-nUSVGo5Ti/6v1B+/szCD4NKdlBSccg==
-=5ORn
------END PGP SIGNATURE-----
-
---U0KhDSkCRerBZi8d--
+greg k-h
