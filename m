@@ -1,66 +1,52 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062712E8DFC;
-	Wed,  3 Dec 2025 23:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DC31FE471;
+	Thu,  4 Dec 2025 01:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764803965; cv=none; b=cuNvqiOdnq8XrrUCIPjXsMtiXKhhxblk1V78cNyO1/+QvZ+i61zUyvPm6PSaW/SGGfbvhagR4QxMneBH14/Mrj5VsvWs16De4wx6B9KZrqU2Ts47AiCXD9CijA6qurMIfvtvaiFdiVhXBfDuDGDP5gu7J1jS16b43YL13Jt0RDw=
+	t=1764812792; cv=none; b=HsfBeHKRNTbpUq74Zmz2xELFLHU/XJxfzvddYqa1KPknJLNxjjGgoVoLUZdttNlnCczte1FoCdu6HbAeTVaPiVPrSYI3/cW42JiNDCNBiDcY1qU19NcQiaNZPxWoVFXywCafkg4gzM6pbVEDTJinOOBT3j7nQddWpVX/sY1bcHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764803965; c=relaxed/simple;
-	bh=9JMe3anAk+JGBqMfs4fJuF5ElnBPpLX0K7LZ0ITkNGc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UqHtAoNeOunypfe1VM0lnWc1vwFoCdm/ZM2Oej4kG87og+wY3ClO9ZGZZLg+9ZP8dPkU3hG7H1KX29eZv9TPl9jrbBre3o0VqZmxoCCgCkhpmJx+bPMRivA/tzlgUT/MgnNIMiJOTyfdyEHNdrMMm5w8/QHIo8brmTdZPTc6Yjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhMNzwKi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764812792; c=relaxed/simple;
+	bh=Me/o6vXITmrakcjffEt+XLSkDwLMgGl2xAHdPx0o8lQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TYYPWjaDBupCojuNA5MnSS6jSuNFOhBaEVtopRxT3hWUNK1+gGWvdcGF8GolmZZoomsLkOlYjQ/g0Umcq3JC2Cd6zaOGMSgZ3HMSlHQ0VETSN+AHOmWmTkVuGXfWPwkeklC63/t3Er9dET8yZ89pm88qfD75pfbpvXuFnUWQBxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tU87TPXG; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhMNzwKi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F05C4CEF5;
-	Wed,  3 Dec 2025 23:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764803964;
-	bh=9JMe3anAk+JGBqMfs4fJuF5ElnBPpLX0K7LZ0ITkNGc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qhMNzwKiw3xmAUH0fADkWv6gS+BzUeq+Fk0ehbDxoo2pieTwVWkOBMHgp9PTTHuBF
-	 wWdJodkePsePyGd6mV2cYlaJa3wdd6cJuKhqhoX9HAMoh3pmlFzO0RP+yg6CA/aW1H
-	 WWIlMqIlDbNF7dj05yOFzbxtLAqzBAcr3AeaVX6QofLZkMwAuEHM834xW1DUU1f45E
-	 EvtPoxWLfcipw7tno3K43qd5Rb8WJEZ50fzrDouBNGgLzEIDU37FBKWGDpF4cjKAPp
-	 6AEBA81uLRdSjHhqeREBDy5bXvxLbSZYzUkBXdFTamMkfJZ24uzF3ut5QErcVZWLlc
-	 LG9GVuG/Zx4Gg==
-Message-ID: <2130c40a31e71d7d602f17d6e564bcf1482d704d.camel@kernel.org>
-Subject: Re: [PATCH 2/5] NFS: Request a directory delegation on ACCESS,
- CREATE, and UNLINK
-From: Trond Myklebust <trondmy@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Anna Schumaker <anna@kernel.org>, 
-	linux-nfs@vger.kernel.org
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Date: Wed, 03 Dec 2025 18:19:22 -0500
-In-Reply-To: <d3da8a0e-4bb3-4a47-9804-2d0f3c452a84@nvidia.com>
-References: <20251104150645.719865-1-anna@kernel.org>
-	 <20251104150645.719865-3-anna@kernel.org>
-	 <4f5da6d9-ee72-4045-8fe1-c5eacedb4660@nvidia.com>
-	 <bfe61da1-3b52-49a4-844d-6f39d7ca4e9d@nvidia.com>
-	 <ba1a5563fd66738156a372eed016986952f11fd5.camel@kernel.org>
-	 <d3da8a0e-4bb3-4a47-9804-2d0f3c452a84@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tU87TPXG"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1764812787; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=Me/o6vXITmrakcjffEt+XLSkDwLMgGl2xAHdPx0o8lQ=;
+	b=tU87TPXG8mTauZsV/ILOso+ygXheV4BzxQaHAwBt0n1qiN7uQ09dlJonCg/LuHH1eYoA1gVgKGJBYgQhf8/ORNsBEg0lxLUSIKVPUDPSTpjhEuiqpmugjlvkaASUaah0GA6HaAP6o6w92Sd2yjl2Ir94hTYZ3VypOY52aWAogmE=
+Received: from 30.178.67.88(mailfrom:kanie@linux.alibaba.com fp:SMTPD_---0Wu2E4N6_1764812786 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 04 Dec 2025 09:46:27 +0800
+Message-ID: <16bc32ff-2c10-448b-ab82-a21eaa91f4ce@linux.alibaba.com>
+Date: Thu, 4 Dec 2025 09:46:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH] spi: tegra210-quad: downgrade the log when fall back to
+ PIO
+From: Guixin Liu <kanie@linux.alibaba.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+References: <20251127130207.43754-1-kanie@linux.alibaba.com>
+In-Reply-To: <20251127130207.43754-1-kanie@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-12-03 at 21:06 +0000, Jon Hunter wrote:
-> Hi Trond,
->=20
-<snip>
->=20
-> Yes that does appear to fix it thanks!
+Friendly ping...
 
-Thanks for testing! I'm pushing that fix out to the linux-next branch.
-
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+Best Regards,
+Guixin Liu
