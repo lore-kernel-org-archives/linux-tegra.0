@@ -1,321 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012005.outbound.protection.outlook.com [40.107.209.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991292FFFAB;
-	Thu,  4 Dec 2025 07:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764833953; cv=none; b=ANEZTFl2fcsLSE8sH8aEQe6iy85gVZnorQsvbb4iAnr+CZ1wulqm7tRTOONwOu0DrPLfV+AmkSdRTNHox5ekwsEGKHR0h4l27mGO4d87Rr151yUYbgzrd7w5ylv8pwekQ9/VTOpG8BAzuh5vYYPbgGHtyptZkAqahYXOkYjg++0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764833953; c=relaxed/simple;
-	bh=Qq0GWTvBPgCqUz9m3+8fVUgJ9uPY8K9dp5GcVDT/CYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=URYYkqvs83gcP86hkm6dd0j6hkXsLDYoowumaSbfkSU8KiWYb3WI2X7UoMJQ4XJwN2/SfHilKJ1fCRlrWoLqKabVZGHEgZbJyQ5did8Pwt7MB3qBNmqh68Re9cjLK3J2Ho9MPydvoiRGFiwD5JcPnuJJqSwBN+YiiPgPwMDe7dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naH7XhYE; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F174117C77;
+	Thu,  4 Dec 2025 10:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764842471; cv=fail; b=PI+NT7fRq8r/JfDlFZQq4muPo08Xw6JeNOnUsrHcsdHuNnwzQs4+EXQIci/nIKUndR9y2UsOlTWp2IKPK+XB+kX9zMbIff9gps6zAxNuv8RWdiNyYP7rPJD/whyFZEHmu+qo9UazY+lcs5+xi82VAg3hz3F6Xf0QCoxbJuJMaW0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764842471; c=relaxed/simple;
+	bh=Ok6bz3x99EAJrsV7XXnUN0wArvYDfS4U5FzMSazC1LY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=HWnkC+JT6ZpmWtfVQunnczePIhJm9HsJqLIqjvFJVCkFjHjpSnxg64bceIkQD3dvrqeGZ08teJ3QAls9iWy4YFysKp8/32aW3+M23+ID3pvwnhFzlpZ+VIV909lfOO2OxDTuvOJJsGeI2kJzUqwDMHQEUUa1ifXR52LkLn8RCAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h62hDACC; arc=fail smtp.client-ip=40.107.209.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naH7XhYE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F690C113D0;
-	Thu,  4 Dec 2025 07:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764833953;
-	bh=Qq0GWTvBPgCqUz9m3+8fVUgJ9uPY8K9dp5GcVDT/CYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=naH7XhYEsEkbtlW6bsr51zK1N3fr04bg7n2X9YlcuhrVgKW+16Y+Zb8p2vXqWEOvm
-	 p9IJks1elvXfDM72avZm44WkyA6S6axvsOO9yKOt107nN/XGV+syj1R0x2FySHa/dS
-	 ZsLnhKU8Vrt4l32kXkLXUT30bZaMTIP+zLvWVRwtijoZXIbe12bkkdIac79lyYcg7w
-	 KpKF8/bwnuwzXk75yU4uqCdpd7Ts3Cbb2sc+bOrThfJ9ZF+OuZIbCZk4chVYq1nAXF
-	 eBYKxcJR0XQctjXiK1mK01OaMZU6amOD6yjnjSy2A5qlDw9gZJxrPmhRDDX2kCtYNA
-	 8L5PdBOJKtD1g==
-Message-ID: <b896d109-d707-4651-8bb0-6cf5071e46bf@kernel.org>
-Date: Thu, 4 Dec 2025 08:39:03 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h62hDACC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pYPMsYT6cOzNJTzlk9Mp4pDXJoJTcx5RinHrD2StU/zgXlyvYetyPCK6VxPqwkcBoJnVd5JnW7nYZU90dwLVgyIwzuuJ8U2A109gHuvWJHIGTrgFDAxe1tvdfc1csKh4evsKyH3q8ytzi/uJVf0PbHfd374nzJTmH6gS1cIvmeOFFGzWetnQMd7v9Rz0xmg4KW8zDSw1fDoINgpR49ssR6MbPM4bgTrY7hfys+HhyxF7heJdaJFthyH/Eqs8izo66GvxVpzEp46avvs2uAuj/mkqoSvYccjB4fhn2e1Z3Fx7Zq/jLBY5q6j/kxjQVm3wMRFRNgEbPX3TTUMTFrUWQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xQ1odrrO7CbpfnHJOsY4emvPDNeuRlVSBqGItlvnBck=;
+ b=brAB68sHmk3ktcswmQKdiFu8h2Id0v47dqTj0a94V/utFO+pHxkSvvQzu7gXtyOzyr/G+DgZPhJSfHY5LrLWB8z92WEOiTnluAQC69IVS1DKrv5WLOtFntHkARe0e/YKfW6KPfWs6mfc17ySYP3kLJr9G60oO65rsuHN5Q/eoxH9lgqqXhqZkXAcDl9b6zrdjmdrnSnBW9pEZrvFjT0ZqeIdcvmWgBU+Qk1RYK2kUnXSZtogpYhDYy+qxWa1Xhj0chUfnrFN0jWVKxlSF4WmEzq8V+fgi86tRkB+z3i/NEfteepnfW0ks45lQAeMv9YrPQvifm3rPogZKDnA/2BzMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xQ1odrrO7CbpfnHJOsY4emvPDNeuRlVSBqGItlvnBck=;
+ b=h62hDACCzd/7s6uMnn5FN3OCjZeETjmqTNKtuJ4Bx/lA2IOLTqTlyYjSGGIsUHsZg07rD1H+/pKJv2RONC8lNEziy7oK0Cu7zSz9uaWvZw6q9HDZxvSmPw9F5qhk68a6h6Wg5BpX7d6G1GYak5qGC+lEvbIBV2ac/reYuPYAk1TL42qMMYgYCwUY6Offt+b/AEBveapuulkHmxq6cgMAokTyMWSa5zICkp1ANwNaKPSdcZjXHQZ8VKyxPq+xlAEDOUN5zwbRNDWMgm2fo9GOgrA5UcTL22UFxaIw1oWH0aYJOc/cuKu1x8sYPtjCjXPOtkcxFPCQ1aWWjGv0RJBFWA==
+Received: from BN9PR03CA0492.namprd03.prod.outlook.com (2603:10b6:408:130::17)
+ by BY5PR12MB4211.namprd12.prod.outlook.com (2603:10b6:a03:20f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Thu, 4 Dec
+ 2025 10:01:06 +0000
+Received: from BN2PEPF000055DD.namprd21.prod.outlook.com
+ (2603:10b6:408:130:cafe::bb) by BN9PR03CA0492.outlook.office365.com
+ (2603:10b6:408:130::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9388.9 via Frontend Transport; Thu, 4
+ Dec 2025 10:01:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN2PEPF000055DD.mail.protection.outlook.com (10.167.245.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9412.0 via Frontend Transport; Thu, 4 Dec 2025 10:01:05 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 4 Dec
+ 2025 02:00:47 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 4 Dec
+ 2025 02:00:47 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 4 Dec 2025 02:00:46 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 00/93] 6.6.119-rc1 review
+In-Reply-To: <20251203152336.494201426@linuxfoundation.org>
+References: <20251203152336.494201426@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: Do not build obsolete API
-To: david@ixit.cz, Russell King <linux@armlinux.org.uk>,
- Vladimir Zapolskiy <vz@mleia.com>,
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Keguang Zhang <keguang.zhang@gmail.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-sh@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20251203-old-alsa-v1-1-ac80704f52c3@ixit.cz>
-Content-Language: fr-FR
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-In-Reply-To: <20251203-old-alsa-v1-1-ac80704f52c3@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <cdd15351-d6f2-40f4-b872-042de88012f3@rnnvmail201.nvidia.com>
+Date: Thu, 4 Dec 2025 02:00:46 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DD:EE_|BY5PR12MB4211:EE_
+X-MS-Office365-Filtering-Correlation-Id: aed8ff5c-36f0-4752-2724-08de331c0a4f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cldyVU9LNWN3T0V0WFJtK0xEQlMzR2lJVGJ1NWRRU2tXdXFWazY3YUJodWJW?=
+ =?utf-8?B?ZXFPUCtWdGtJTThObVpGdVdLZVV3UStsMi9FK290YlBlNm82cERhZVZqT2c5?=
+ =?utf-8?B?Y3dsQ1pCQ2pzZGg0aWNQUUxmN3B5S2lEcGEzY3U3RFVlNkcrSUxFNE1yVGNi?=
+ =?utf-8?B?SFpGSmFPR0Erd21HQUVLbWV4TmJRL09IeUFOaGNaRUhTVHc3bmdQR0JYQ3dN?=
+ =?utf-8?B?aTN4NUhjd2I3ZHRWUTFEUTZGQkpTalFPcnFiNS9IeHNpanRPMWdlVkQvSThl?=
+ =?utf-8?B?bFdvS3NYanlUM0hSZ0hJWm5jRVp5d2QySVRSMXdBYkIycDVJemE5TWRqbHBt?=
+ =?utf-8?B?QS9UbDQxaGpqb3ZwZDNYbGt6SWk2ZG9HSlRTNTFJSDQ3L3RmZmZOV1Z6dzhI?=
+ =?utf-8?B?SHl4MjVhbHVoV25NMVZpVHdNU1RGVkNoQytGdjFQS3VNMFgwNlVUSUtJT0FM?=
+ =?utf-8?B?SHZTNUEyRENrMDFjUjdpWUFraFFxSCs5elgrang3ZGxJUncwbGsrVER4R2NK?=
+ =?utf-8?B?ZnBock9pSlRLQnlIaXY2bjFpN0RIRmJIUmVFWXVQYjlld3NYVTNWaGVNcUZ5?=
+ =?utf-8?B?RDFLUDdHQ1dySVhBZHpMSkJ6ZUsveWJ4STNuT3dERzZOdndiaVJXRkhCN3lJ?=
+ =?utf-8?B?cDJsWnJkOWdXRmFDeTdndzhoeC93VE9JQlZoeXY4Zk91WDhZb0FuTVRCVy9v?=
+ =?utf-8?B?SWtVTzN0ZHNEeTJjeXJWQVBHbytaNXlKbkJ0VzFtU2NpZWhmYjlBamZaSW9K?=
+ =?utf-8?B?SUlaZXAxNU81OHFIWkY0SVgwS09vcytrR0kxSzJqTlM4OElsczRvOGpLVStZ?=
+ =?utf-8?B?bE9pUFdnUnYxWTY5MFd5Z2IwcXJLNk1WRjlKQldxUG5ldGpwSGtGNWsxTXpz?=
+ =?utf-8?B?T09NRTBJZ0Q3dTY1ZHU0b3g5Mm4zZTU0SUdGWkU4dHRlcHd5dDg0WVAyOEhu?=
+ =?utf-8?B?NTEwdldKd2RoaGxWSlRVZEpzMG5JTng1QTFtZ0MxdDloUlFwRVo2aVVGdXh2?=
+ =?utf-8?B?OHppRTBrNWxqZitMUFNYREU3Mk82OW9sdGJIOCtNYVA2QkxSV2tBRlZiYllR?=
+ =?utf-8?B?NTNBQTBQbGFpdWpzZDc1V0tkRFBHblNacldsTmRac0FaanFUdVRmcnlyemVh?=
+ =?utf-8?B?MHIxdGV5K1BkbEh4NkhHQ2lTYVU3bm1CT0tYakcya1Q1aDRNaS9mUGNaZ1hs?=
+ =?utf-8?B?RU9UR0o3Z09HRk5HQ0ZMR0cvVVdBcjA2YkxZN2VOMGkyQTU1RUF6V2kzcjNL?=
+ =?utf-8?B?UmdnQmV1TmY5N25HZDhHd09iQ1lqb2tNbHcvQ2VnZ1VSdWFTVjArNEhiU0tT?=
+ =?utf-8?B?Q2tTNFRHMnQrYTNsUE5pTzVqRUR3SlN5ZEVqT0ZrUDBweFJMTTBMSWhUMEU5?=
+ =?utf-8?B?eWxIWlk3TGhCUGVGV1BJVklDRTVBNXB0UVpEYXpRNFJvMFRJQmgwUnF0MHZs?=
+ =?utf-8?B?cUMyMUZ1WE8wU3ZvazlDU3Z1Tk4rbFViM3hrZVdVb2pBQUlsOWl5N2pwU2lZ?=
+ =?utf-8?B?ZCsrdTlSNlk5aUFWVFV2aHhjakN5NTR6TWlXODVrM1luOVQ2M2xzb2RseXJD?=
+ =?utf-8?B?dld2dHhyajVWSlpCUWh5NU9oTzNabXpVeUIyeHdRYi82MkZTdDk5Wm5FWEhD?=
+ =?utf-8?B?bHRVS3ljRGk4N1lFeFpoUFhOcllON1BReW91MXVoQTc2ZUJOR21nb0FHN09y?=
+ =?utf-8?B?VkhjQ3B6dU5kYThRZXQ3UzMrYTFDNzNIbGYyNTNyN0Q1eEVFRWgwRnNac2ZT?=
+ =?utf-8?B?K2h0MWxwNkpxZy9OcDhCOEpyY2dWK1FzMTBkbmVMODFwM2liSEZyMFd4Y1B4?=
+ =?utf-8?B?MU92aU9BMk9OZUpwbjBrWFZlSE54NzVZSGhIYnZTanZRWlRjMmY0TU9JSkZ1?=
+ =?utf-8?B?QTVsTDY1bGtzTmhYOUN6Q2lVdGtubU5kRnIwcmdmVWZUaFRmWVJJY1hNRVNF?=
+ =?utf-8?B?V2w1c1lPVE5aeGZjM2VpYk9Lcnp4TGpWOTdyWjN2d1FHRk85enZ6c3hQdlJi?=
+ =?utf-8?B?NHkxN0kvSWpSRnpzY3FZYzY2dHVmU0J4aDZqZk54SVJlaTNCSEZQanZZWmhI?=
+ =?utf-8?B?RWFjbElHQXJQUnJ3U1N6RGp4eFgwWlZPT1A2Qjk1RXdZUHhwc3VSME9IZ2Z0?=
+ =?utf-8?Q?wTaU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2025 10:01:05.6270
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aed8ff5c-36f0-4752-2724-08de331c0a4f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DD.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4211
 
+On Wed, 03 Dec 2025 16:28:53 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.119 release.
+> There are 93 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 05 Dec 2025 15:23:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.119-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
+All tests passing for Tegra ...
 
-Le 03/12/2025 à 23:34, David Heidelberg via B4 Relay a écrit :
-> [Vous ne recevez pas souvent de courriers de devnull+david.ixit.cz@kernel.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> From: David Heidelberg <david@ixit.cz>
-> 
-> ALSA 0.9.0-rc3 is from 2002, 23 years old.
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> Maybe I could drop also the code and Kconfig option?
-> 
-> David
-> ---
->   arch/arm/configs/am200epdkit_defconfig    | 1 -
->   arch/arm/configs/lpc32xx_defconfig        | 1 -
->   arch/arm/configs/omap1_defconfig          | 1 -
->   arch/arm/configs/tegra_defconfig          | 1 -
->   arch/mips/configs/gcw0_defconfig          | 1 -
->   arch/mips/configs/loongson1_defconfig     | 1 -
->   arch/mips/configs/qi_lb60_defconfig       | 1 -
->   arch/mips/configs/rbtx49xx_defconfig      | 1 -
->   arch/mips/configs/rs90_defconfig          | 1 -
->   arch/powerpc/configs/85xx-hw.config       | 1 -
->   arch/powerpc/configs/86xx-hw.config       | 1 -
->   arch/powerpc/configs/mpc5200_defconfig    | 1 -
->   arch/powerpc/configs/ppc6xx_defconfig     | 1 -
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    120 tests:	120 pass, 0 fail
 
-For powerpc:
+Linux version:	6.6.119-rc1-gcca93798e4cd
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-Reviewed-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
-Acked-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-
-
->   arch/sh/configs/edosk7760_defconfig       | 1 -
->   arch/sh/configs/se7724_defconfig          | 1 -
->   arch/sh/configs/sh7785lcr_32bit_defconfig | 1 -
->   sound/core/Kconfig                        | 2 +-
->   17 files changed, 1 insertion(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm/configs/am200epdkit_defconfig b/arch/arm/configs/am200epdkit_defconfig
-> index 134a559aba3dd..2367b1685c1cf 100644
-> --- a/arch/arm/configs/am200epdkit_defconfig
-> +++ b/arch/arm/configs/am200epdkit_defconfig
-> @@ -68,7 +68,6 @@ CONFIG_SOUND=m
->   CONFIG_SND=m
->   CONFIG_SND_MIXER_OSS=m
->   CONFIG_SND_PCM_OSS=m
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   CONFIG_SND_PXA2XX_AC97=m
->   CONFIG_USB_GADGET=y
-> diff --git a/arch/arm/configs/lpc32xx_defconfig b/arch/arm/configs/lpc32xx_defconfig
-> index 2bddb0924a8c0..b9e2e603cd95e 100644
-> --- a/arch/arm/configs/lpc32xx_defconfig
-> +++ b/arch/arm/configs/lpc32xx_defconfig
-> @@ -113,7 +113,6 @@ CONFIG_LOGO=y
->   # CONFIG_LOGO_LINUX_VGA16 is not set
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   CONFIG_SND_DEBUG=y
->   CONFIG_SND_DEBUG_VERBOSE=y
-> diff --git a/arch/arm/configs/omap1_defconfig b/arch/arm/configs/omap1_defconfig
-> index dee820474f444..df88763fc7c3d 100644
-> --- a/arch/arm/configs/omap1_defconfig
-> +++ b/arch/arm/configs/omap1_defconfig
-> @@ -148,7 +148,6 @@ CONFIG_SOUND=y
->   CONFIG_SND=y
->   CONFIG_SND_MIXER_OSS=y
->   CONFIG_SND_PCM_OSS=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   CONFIG_SND_DUMMY=y
->   CONFIG_SND_USB_AUDIO=y
-> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-> index ce70ff07c978a..68aedaf92667a 100644
-> --- a/arch/arm/configs/tegra_defconfig
-> +++ b/arch/arm/configs/tegra_defconfig
-> @@ -219,7 +219,6 @@ CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
->   CONFIG_LOGO=y
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_DRIVERS is not set
->   CONFIG_SND_HDA_TEGRA=y
->   CONFIG_SND_HDA_INPUT_BEEP=y
-> diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
-> index fda9971bdd8d9..adb9fd62ddb0d 100644
-> --- a/arch/mips/configs/gcw0_defconfig
-> +++ b/arch/mips/configs/gcw0_defconfig
-> @@ -79,7 +79,6 @@ CONFIG_LOGO=y
->   # CONFIG_LOGO_LINUX_VGA16 is not set
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_PROC_FS is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_SPI is not set
-> diff --git a/arch/mips/configs/loongson1_defconfig b/arch/mips/configs/loongson1_defconfig
-> index 02d29110f7024..1d9781ff96986 100644
-> --- a/arch/mips/configs/loongson1_defconfig
-> +++ b/arch/mips/configs/loongson1_defconfig
-> @@ -119,7 +119,6 @@ CONFIG_WATCHDOG_SYSFS=y
->   CONFIG_LOONGSON1_WDT=y
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_MIPS is not set
->   # CONFIG_SND_USB is not set
-> diff --git a/arch/mips/configs/qi_lb60_defconfig b/arch/mips/configs/qi_lb60_defconfig
-> index 5f5b0254d75e7..a1bb0792f6eb1 100644
-> --- a/arch/mips/configs/qi_lb60_defconfig
-> +++ b/arch/mips/configs/qi_lb60_defconfig
-> @@ -81,7 +81,6 @@ CONFIG_LOGO=y
->   # CONFIG_LOGO_LINUX_CLUT224 is not set
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_SPI is not set
-> diff --git a/arch/mips/configs/rbtx49xx_defconfig b/arch/mips/configs/rbtx49xx_defconfig
-> index 03a7bbe28a532..49c709d663beb 100644
-> --- a/arch/mips/configs/rbtx49xx_defconfig
-> +++ b/arch/mips/configs/rbtx49xx_defconfig
-> @@ -53,7 +53,6 @@ CONFIG_TXX9_WDT=m
->   # CONFIG_VGA_ARB is not set
->   CONFIG_SOUND=m
->   CONFIG_SND=m
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_PCI is not set
-> diff --git a/arch/mips/configs/rs90_defconfig b/arch/mips/configs/rs90_defconfig
-> index a53dd66e9b864..8382d535e6dc1 100644
-> --- a/arch/mips/configs/rs90_defconfig
-> +++ b/arch/mips/configs/rs90_defconfig
-> @@ -105,7 +105,6 @@ CONFIG_LOGO=y
->   CONFIG_SOUND=y
->   CONFIG_SND=y
->   # CONFIG_SND_PCM_TIMER is not set
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_PROC_FS is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_MIPS is not set
-> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
-> index 8aff832173977..2b19c20a9a2c4 100644
-> --- a/arch/powerpc/configs/85xx-hw.config
-> +++ b/arch/powerpc/configs/85xx-hw.config
-> @@ -117,7 +117,6 @@ CONFIG_SND_INTEL8X0=y
->   CONFIG_SND_POWERPC_SOC=y
->   # CONFIG_SND_PPC is not set
->   CONFIG_SND_SOC=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_USB is not set
->   CONFIG_SND=y
->   CONFIG_SOUND=y
-> diff --git a/arch/powerpc/configs/86xx-hw.config b/arch/powerpc/configs/86xx-hw.config
-> index e7bd265fae5a4..07f30ab881e59 100644
-> --- a/arch/powerpc/configs/86xx-hw.config
-> +++ b/arch/powerpc/configs/86xx-hw.config
-> @@ -80,7 +80,6 @@ CONFIG_SERIO_LIBPS2=y
->   CONFIG_SND_INTEL8X0=y
->   CONFIG_SND_MIXER_OSS=y
->   CONFIG_SND_PCM_OSS=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   CONFIG_SND=y
->   CONFIG_SOUND=y
->   CONFIG_ULI526X=y
-> diff --git a/arch/powerpc/configs/mpc5200_defconfig b/arch/powerpc/configs/mpc5200_defconfig
-> index c0fe5e76604a0..617650cea56a9 100644
-> --- a/arch/powerpc/configs/mpc5200_defconfig
-> +++ b/arch/powerpc/configs/mpc5200_defconfig
-> @@ -75,7 +75,6 @@ CONFIG_FB_SM501=m
->   CONFIG_LOGO=y
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_PCI is not set
->   # CONFIG_SND_PPC is not set
-> diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs/ppc6xx_defconfig
-> index b082c1fae13c9..787d707f64a42 100644
-> --- a/arch/powerpc/configs/ppc6xx_defconfig
-> +++ b/arch/powerpc/configs/ppc6xx_defconfig
-> @@ -726,7 +726,6 @@ CONFIG_SND_OSSEMUL=y
->   CONFIG_SND_MIXER_OSS=m
->   CONFIG_SND_PCM_OSS=m
->   CONFIG_SND_DYNAMIC_MINORS=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   CONFIG_SND_VERBOSE_PRINTK=y
->   CONFIG_SND_DEBUG=y
->   CONFIG_SND_DEBUG_VERBOSE=y
-> diff --git a/arch/sh/configs/edosk7760_defconfig b/arch/sh/configs/edosk7760_defconfig
-> index abeae220606a3..905fac1072845 100644
-> --- a/arch/sh/configs/edosk7760_defconfig
-> +++ b/arch/sh/configs/edosk7760_defconfig
-> @@ -79,7 +79,6 @@ CONFIG_FB_TILEBLITTING=y
->   CONFIG_FB_SH_MOBILE_LCDC=m
->   CONFIG_SOUND=y
->   CONFIG_SND=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   CONFIG_SND_VERBOSE_PRINTK=y
->   CONFIG_SND_SOC=y
-> diff --git a/arch/sh/configs/se7724_defconfig b/arch/sh/configs/se7724_defconfig
-> index 9e3a54936f76f..8ca46d704c8ba 100644
-> --- a/arch/sh/configs/se7724_defconfig
-> +++ b/arch/sh/configs/se7724_defconfig
-> @@ -83,7 +83,6 @@ CONFIG_LOGO=y
->   # CONFIG_LOGO_SUPERH_VGA16 is not set
->   CONFIG_SOUND=y
->   CONFIG_SND=m
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_DRIVERS is not set
->   # CONFIG_SND_SPI is not set
->   # CONFIG_SND_SUPERH is not set
-> diff --git a/arch/sh/configs/sh7785lcr_32bit_defconfig b/arch/sh/configs/sh7785lcr_32bit_defconfig
-> index eb63aa61b0465..5468cc53cddb4 100644
-> --- a/arch/sh/configs/sh7785lcr_32bit_defconfig
-> +++ b/arch/sh/configs/sh7785lcr_32bit_defconfig
-> @@ -93,7 +93,6 @@ CONFIG_SND_PCM_OSS=y
->   CONFIG_SND_SEQUENCER_OSS=y
->   CONFIG_SND_HRTIMER=y
->   CONFIG_SND_DYNAMIC_MINORS=y
-> -# CONFIG_SND_SUPPORT_OLD_API is not set
->   # CONFIG_SND_VERBOSE_PROCFS is not set
->   CONFIG_SND_VERBOSE_PRINTK=y
->   CONFIG_SND_DEBUG=y
-> diff --git a/sound/core/Kconfig b/sound/core/Kconfig
-> index 48db44fa56feb..4e7bc370ffd7f 100644
-> --- a/sound/core/Kconfig
-> +++ b/sound/core/Kconfig
-> @@ -155,7 +155,7 @@ config SND_MAX_CARDS
-> 
->   config SND_SUPPORT_OLD_API
->          bool "Support old ALSA API"
-> -       default y
-> +       default n
->          help
->            Say Y here to support the obsolete ALSA PCM API (ver.0.9.0 rc3
->            or older).
-> 
-> ---
-> base-commit: b2c27842ba853508b0da00187a7508eb3a96c8f7
-> change-id: 20251203-old-alsa-fa2c2cb038e1
-> 
-> Best regards,
-> --
-> David Heidelberg <david@ixit.cz>
-> 
-> 
-
+Jon
