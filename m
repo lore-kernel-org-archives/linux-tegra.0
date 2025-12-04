@@ -1,201 +1,321 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011007.outbound.protection.outlook.com [40.93.194.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC7B1DE894;
-	Thu,  4 Dec 2025 07:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764832337; cv=fail; b=aQvOiNWuluaDi/ZOvm2++TMclPZfQBhFn696AOksw3DjPztfSvwkRWFkFFCinbLeaZPX+2JBQzEM1giak0zj1FkljWPN2qC8Qkag6TVlI37d6sOv7WC1z8JgJ3+p27iY7NsvBw/wiALgTiJFWqHbyQWaN2klwz9bq9b3M5srUWU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764832337; c=relaxed/simple;
-	bh=1DP2M8GgMf9A0Xo/p0nkidmJvf6LdGxu/vmva9a0fZw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lYDFUg3GWzf+gfrcSZyiv1S3ibi+jP3/tEmWQ2E3fItZ0nWqjaTN14iPceNJsk7sD4mevW+bLncSz8PnNOUbRNIueVSefunDvfI0q57zwOu5PTcwzAxzTNNhjILKvEqsed2yn5GDvNafAf/l9W4dP0KDwrv1phBHLwRjTtg51pY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WXmTWvgR; arc=fail smtp.client-ip=40.93.194.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991292FFFAB;
+	Thu,  4 Dec 2025 07:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764833953; cv=none; b=ANEZTFl2fcsLSE8sH8aEQe6iy85gVZnorQsvbb4iAnr+CZ1wulqm7tRTOONwOu0DrPLfV+AmkSdRTNHox5ekwsEGKHR0h4l27mGO4d87Rr151yUYbgzrd7w5ylv8pwekQ9/VTOpG8BAzuh5vYYPbgGHtyptZkAqahYXOkYjg++0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764833953; c=relaxed/simple;
+	bh=Qq0GWTvBPgCqUz9m3+8fVUgJ9uPY8K9dp5GcVDT/CYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=URYYkqvs83gcP86hkm6dd0j6hkXsLDYoowumaSbfkSU8KiWYb3WI2X7UoMJQ4XJwN2/SfHilKJ1fCRlrWoLqKabVZGHEgZbJyQ5did8Pwt7MB3qBNmqh68Re9cjLK3J2Ho9MPydvoiRGFiwD5JcPnuJJqSwBN+YiiPgPwMDe7dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naH7XhYE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WXmTWvgR"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FAKhI3Ye5UGp0YGvJSaOex9WKXp+ogY00LH6SytHzcOPsk5KHTELIgA+0Oc/Q23VuV+u9vPs0goximjEw4/cD5q7k35W5O+pCoy/lFf8AgKM2eOhkO8wrkJMCrSVE1z8SYhJ9iBSWk26hFtl6/2zyRbUz8YDmlq3YW5bL0ebIm6Po/1Dv56cFQoJgYtGCSyIYi5DqS2Hf+qNAvLRDE+E9OAYGrbQJHCQDtHbsYtLc3GwjlvJlWDgJ8ONVYvJIne/KZF0wQkkQGFcbJpNB8+HYWIerznRYhUKuQ3O7pyiT6xA9uP2cOlWhvutan1eXfdYRdWxK4TkwtogLOxNzZ8Iyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ClYUetRolTO+uoUjQ125IJA/RZ+oc0eCdehr4KcYIJg=;
- b=wixgiYked88Fj/hYETjrEsiUrolqLO5lizWtopgVb+VFFWp6bArXN6QJXilMIpyQOHKN7bXYWjBgY07dugiyYrZNIqz+O7fey9EqTx5b8UMrciiXgjZhr3g5ik9UvPYf3cClIxFELajjrxs0hHglg5rxdus9hfY9G/MaNMypWfw7PoI3I6BVgkxpCRWkKQUuatLASN0fwXkQ9MZ4sLozrLEw2xe4ONB/DhwFEfwM3Qotv3Xiq2EmNgbc/nSEw66HKBTVjUAWP6B9TIjmUnGzwX1NYfG5o3NGGPmMq91/Blcwfa1D5HTB8Nk0u+HqSrU1/JGZEi+Yw3HUC4GzU56tDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ClYUetRolTO+uoUjQ125IJA/RZ+oc0eCdehr4KcYIJg=;
- b=WXmTWvgRIytZ7AUENjl3TPRmecmTCq/ri6ROg6LrMumw+7Qc2fTNcwC585q1xtai/0LRFJiAs5cvSqZVf/CGB6TwNLDov0kBSInETU3wfi2+u/aEVH22C6PgqSOhNCnx3OdOMRCARVMTMhDo+fsWFbIBow0Smoy6/NMySH7eTUiNQC4I0uvIDEZtCguBa8OqUp2tEpmqWKfJZzbdhQUv4h2/j4dwtuq0Y1PNwmnzx/2K1vVV54dPMmY8wOXG2Gh0Vn/AkwVyjYOxGe/GMAHqWghi+kJrNHxsHJ1ue2H+0cWyfajEecRtd4q+Ya6JtA4hF7oFT7lZ5zozwhJZFc4X0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5195.namprd12.prod.outlook.com (2603:10b6:408:11c::19)
- by SA1PR12MB5660.namprd12.prod.outlook.com (2603:10b6:806:238::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Thu, 4 Dec
- 2025 07:12:13 +0000
-Received: from BN9PR12MB5195.namprd12.prod.outlook.com
- ([fe80::de30:34bc:cb2e:1ec1]) by BN9PR12MB5195.namprd12.prod.outlook.com
- ([fe80::de30:34bc:cb2e:1ec1%3]) with mapi id 15.20.9388.003; Thu, 4 Dec 2025
- 07:12:13 +0000
-Message-ID: <7d3c711a-bc33-4dbb-a8e5-bcb420d5b536@nvidia.com>
-Date: Thu, 4 Dec 2025 15:12:03 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] phy: tegra: xusb: Fix UTMI AO sleepwalk trigger
- programming sequence
-To: Wayne Chang <waynec@nvidia.com>, vkoul@kernel.org, kishon@kernel.org,
- thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: haotienh@nvidia.com, linux-phy@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251203024752.2335916-1-waynec@nvidia.com>
-Content-Language: en-US
-From: JC Kuo <jckuo@nvidia.com>
-Organization: NVIDIA
-In-Reply-To: <20251203024752.2335916-1-waynec@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0147.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::27) To BN9PR12MB5195.namprd12.prod.outlook.com
- (2603:10b6:408:11c::19)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naH7XhYE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F690C113D0;
+	Thu,  4 Dec 2025 07:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764833953;
+	bh=Qq0GWTvBPgCqUz9m3+8fVUgJ9uPY8K9dp5GcVDT/CYE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=naH7XhYEsEkbtlW6bsr51zK1N3fr04bg7n2X9YlcuhrVgKW+16Y+Zb8p2vXqWEOvm
+	 p9IJks1elvXfDM72avZm44WkyA6S6axvsOO9yKOt107nN/XGV+syj1R0x2FySHa/dS
+	 ZsLnhKU8Vrt4l32kXkLXUT30bZaMTIP+zLvWVRwtijoZXIbe12bkkdIac79lyYcg7w
+	 KpKF8/bwnuwzXk75yU4uqCdpd7Ts3Cbb2sc+bOrThfJ9ZF+OuZIbCZk4chVYq1nAXF
+	 eBYKxcJR0XQctjXiK1mK01OaMZU6amOD6yjnjSy2A5qlDw9gZJxrPmhRDDX2kCtYNA
+	 8L5PdBOJKtD1g==
+Message-ID: <b896d109-d707-4651-8bb0-6cf5071e46bf@kernel.org>
+Date: Thu, 4 Dec 2025 08:39:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5195:EE_|SA1PR12MB5660:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c1d935a-d252-43da-de57-08de3304725c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bGN5cjdrME80MzFoeUk0eGtJZDIybkx1bmtmY1U1SDRHa3hERG1jcjRXaEs1?=
- =?utf-8?B?em42c3lQNDVvaHczQjdxQnl6YndLUzBQZUREVE5TYkdVTWZtSm4xMXFHd3Fk?=
- =?utf-8?B?UWFhblA2d2doZjQyUDlZZ1VOTHRydFJUaEJHZUoyb3JZc0tuaHgrTzRYVUgr?=
- =?utf-8?B?S0poV3MvVTFDVkJVWWltc3ZvVmVGa1NPV1FBWHJVWldOem1lTkhZSXpjZTZJ?=
- =?utf-8?B?YWdXY1FpN0dBMGRsdTRRZWl1bDg1bnZtNldiUUM0bDA1QU50M1FjcnpzK3Q1?=
- =?utf-8?B?YTlRZS8zamFhcUFzU1FzR0lkemY4Kzd5NFFod1Yyd2huYmpORytVU2FZcjhK?=
- =?utf-8?B?eDdKSlI1Q3E2cnRwRUwvWG05aGhaM0w3cHl5amlzcjk5QlVhejI2VXpwQWFN?=
- =?utf-8?B?WTFrS1drcFovTjYwbXBiQVpGejh4ZFp2dTFkeldQN09mbk4zeDV6OW0xWDZO?=
- =?utf-8?B?YVU2UzhuZXMrMTk1dW1XSnFEK1c0ckNIcmRCTi9SS3pRcnIzVmdPQzIvVkkw?=
- =?utf-8?B?c0ZkRmdkMmFrOTZHUmxZamNXTVZMdE1SQjdaaXVib0wxSURhRFo4RlVjZWlW?=
- =?utf-8?B?RlBTNTliMHBjNVM0N29aYVVldCsvbDNwVmhUNjc4OXE3eVE1TTlaMXdIU2JL?=
- =?utf-8?B?V2Y5dmFnMUh1a0EvdzF0MXNRNjIxd2cwN3R1OHRJbk1sZ2tOTFlUTGVSci9X?=
- =?utf-8?B?Q08xemxZbDBXV2V0WkhxMHdEdU5OMEdMdE9jbCtqZnA2MTVFeEhVdUdnMStR?=
- =?utf-8?B?OWpxamxERFJkTUJ6ZldqdU9jdk5wZ1dab0pDamZQVTIydWxFUXpmTmI0OW1E?=
- =?utf-8?B?SGVCRGlVYndHTzBlZlFpR0lJT09FNi9ZVjJMVDNSZ3BVOWpvQ09Za0UxMHpJ?=
- =?utf-8?B?QmxLMVIrc3I3OWlSNTk0ZXlueWh4RitjdmMwK1g4RTdKWGtDc0pPUGREU2FF?=
- =?utf-8?B?N3ZxNWQ3eEZJUTl1cDdnRnp6WHJLTFpZNzhTOTUvZk1qRkFXQ3pUdU9kZStq?=
- =?utf-8?B?S0FHQzRCYVlOeTlRdS8zNGJZQVdRVlF6OTJvMnBCcVNEV3dYdnMyM1gvTjUy?=
- =?utf-8?B?VmZKdENtRmFSRG5jOXRsZDFmSDRPM1ZQbTJhZTRacXlRRVUrcUc3OHFDLytr?=
- =?utf-8?B?bDd0WlNlUW5YUmUrUzQ5R29ZNHp1K0VlZUkrSHlEVDViYUtkMmN5b1hYUlpL?=
- =?utf-8?B?NFlTYUZFcUVSQ1pVM1A1YmRCNGp6dWN5eW83WFRxZHlJSWgwdUJKd0tvY0d1?=
- =?utf-8?B?c0l1a09Pd3ZMNGJ0dkcvS0REa2orUGErU3lXeDNUT0MwTGdwZDFJL2tGamRr?=
- =?utf-8?B?NldtRUNWWmpxRmsySEN0WFU4YnVvYWliUk9vbCs5bldrUWlLbmYwVHZLajJW?=
- =?utf-8?B?ZnpVc1JncGhmWTkxTlgwMlEzR25vaUdnYVp0SHg2TjRnUGxBWkZxRXdDR21Q?=
- =?utf-8?B?bXNXM1U2elB6bllnVkxybzR1eEZFZisrSDAxQ0t4MTRzK1BGV1hxcDRMQzBk?=
- =?utf-8?B?YkFROS8wazVCeWNWWmpFNDNlZWxZNndvS2lZcGNmWlI0UkVZbjJodjlLbHkx?=
- =?utf-8?B?OS9OL2lrdVc3cnpxSjNzOG9Ma3dMZGxBZE9yV01ZdWxDUVB0VGxYNmNKblQ0?=
- =?utf-8?B?Z2JDTG8zZllFQ1hqS2pIdTM2NEIrWHJPaERkSzl1blowZFloMHl3NnJpa1Nx?=
- =?utf-8?B?TnllUVAraWpNbkhKUHZQMzZQRi92Mm15MXZYbXdhN3EvSXBINDRDbjFkTW9W?=
- =?utf-8?B?SU0vZHhLVFN6NEt0a2l6UmpOMU1PNERwN3VycFJNWVU4NHZGM1JCbXJsN1dW?=
- =?utf-8?B?eVFnbUppNHVxV2huNzgwb0tCcjNqRTFNMVhYSDdnRmlkM1hpV1E2azM1eWZO?=
- =?utf-8?B?ZDZYYkdHRUYycWVOZ0J0UlFUVVBxcXk2L3Buc1lLZDFmWHZtZjRTVXZJUmoy?=
- =?utf-8?Q?jMGj0BIK53xjE2sGFqGZokNwY3Y750ia?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YWpsTExqRU0vaWl6MEtCM25RbUg4cnF3MjFLL09CWThmOGNmVjRtQlNiK2Va?=
- =?utf-8?B?bUQ5V25VOEdqdTJSRU8zc1FFaVBOdkxId3VyVEh1UmpDWUNVZzRsQW9CamFv?=
- =?utf-8?B?dlZkL1FiS1RXTVBnK1J0ZTZVU1dwY0lZQmR5SHVYVDB3c0hiYzlvbG9Xcnp3?=
- =?utf-8?B?dlFQaURiOEpGallkVmUvWjBGV1htNGVIQUlFMzlZNFlJN2xVdExmRW40ZWxP?=
- =?utf-8?B?K2luanpGM2tXbUJ1R2c0SXdqelQwUFptUmo5L1g4MGtaMTRVaGNMNmw5Q0pR?=
- =?utf-8?B?anBmUzloazkyMzl2dkFLUzhhUzIrS3BhYm1zWi9zRVhwaC9UMmw5WnBzZ2h4?=
- =?utf-8?B?MFk2Q0lxRWx3Y2JGQ1EwRGlmT0cvZEthV2RZTHFoVFNOOHRpQllSREN6dTV1?=
- =?utf-8?B?eHRhN3A4UWFqalJ3M2R1UVlrTnUxTEJoc2ovdlFJZEtPV0NES2dDMVNMUGxY?=
- =?utf-8?B?TzB1eWNiYWMrbnNrMnNVamdySW9jREtuOFREZ3hiY2x5N2N1clhjMGVuNTRt?=
- =?utf-8?B?c2lGVGRoSVBaSVpyaHpteGNpUHNrL0FFb1FMK3hCdVdndHh3NC9UWnBoMmxM?=
- =?utf-8?B?ZlZEbU5WY1hieFVhRGV6QUtXOVNEcHdsNFZQM1hZdm5TalM3RmgyS2FISjBT?=
- =?utf-8?B?dGxpaEhnK1pwZEo0REdHK3BIVHZocmd1RzVNbkppQUl4TVhNVWVVc0NKc3ZN?=
- =?utf-8?B?QktQVHovVmQzQjc0WUVacmlKdnBCTnJsZEN2V25kay9zV2JPTkJTRXd2ZC9B?=
- =?utf-8?B?bjZqWTlNaUN4dUlNWlFFKzlYaWJ4YW1ob284QkpvTm0rQUFjemNaa1M4dnhz?=
- =?utf-8?B?L0dzVG1kRnNLTmMzZzIzbVZmQmZNNzJQYjNmVE50MjFEY2M5cXlENjU0MGU0?=
- =?utf-8?B?L1g2b2J2TmxObXduV1JXeGV2L1B6U3ZwZkl0VFVhci8rbEgyN0RwTzFERmtW?=
- =?utf-8?B?eGQ1TWZHdUdBQ0xCNk5ZcjZCQ3o3NEVMTXhOVXNRTU9RaDNOZUQ0TGVCQjhM?=
- =?utf-8?B?TGR5SnVqQ2QrTnpwUEc1QmljSlRrTktQb2E3Mkd0VWFUZG96QVZ4ZmxUT3kz?=
- =?utf-8?B?ZTZ3b1dhSzZkbjc1VFU5TTJWSElGZEZEVEtkdmI5TlFIa09mVWN0TnZQOHor?=
- =?utf-8?B?Y2M1RXZWOVVJT0FWOWwrR2N2K2ROczU3RFdQQVcyaXVIYkJrbk9EcU9JVXZp?=
- =?utf-8?B?UWU2V0U2WTlzRzVWMzdyOHlYMTRhR2FJVUZmK05NTm9LVmY3dWs2cCsyOUV3?=
- =?utf-8?B?NGtyOXRHVWdxUGtUZzV6ZExBMGNvVXUvYVJBRTBEUkRCeWRoOFNhaDZrd3po?=
- =?utf-8?B?cXRqMXRzVFFjMTdYRnNTTWVQVEd4WitEVkV1RzR5b1NId0lFZU5hRVRzR0xY?=
- =?utf-8?B?dUtRalptTnJsZHpNZ1BnVkFhQ3pHTkNOTm8ya0JZY2NPOGFQRDUxeXFtUUNK?=
- =?utf-8?B?ZXJVa3A0U25hd1QrZGVuclBYcmZlK1FOMURydDNHblV1WnR6TU5GNjZudmRW?=
- =?utf-8?B?RGFnOXBMbWVSdW5YOFdLVTFIMDhXTDA0ckx0ZHlrOUpLYlIvTG1QYlp2aXpI?=
- =?utf-8?B?WXRxQUVqT2hFOUNtNVdlSDZWTEJKWXZZc0xUeGNRd0d2OGxIZ1hRZ3pQUzhs?=
- =?utf-8?B?TmlJSkEwcDNsbGFuQ3RabmRSZDBxMFNGNjJoQmpjOXgyMlVFdzFDU2RUY1k4?=
- =?utf-8?B?Kzh0TFExWkIrdXpoQzNrWUxPSXdmUmtrdDBTSDdPQVBKVGZtVG00SmhQbkFn?=
- =?utf-8?B?WkxwYldWaWFYZHZ2c2ppeVFFaTZLbzVmTjcycXJJdkU1U3pwNnBia3ZIYmVK?=
- =?utf-8?B?UzA2RUs2TmxWcjAzMmRqdXczdlpXYThoOE1VTTh4QUJWT0lBaXBlWjZvL0VN?=
- =?utf-8?B?amRGUTU2bkR5VHBVSEFSc1hIQXZKUnZyaE1rdFRKQXZjbjdTMlVrdFRYYU5Y?=
- =?utf-8?B?emtSU2RNcno3V1hyVnE0TTFLVnJlWksrUG9NUk1GaUNtZlJTdWlwbWxBNWNT?=
- =?utf-8?B?dzVuZmtuSVZUc01OWTJNN3FLdzlkRnU3c1haQzhwdlRQVGUwZlBvcTBCTVpT?=
- =?utf-8?B?NDhrSmlWTHFGalc4RnZVUU54V1JYOHZZMExvTzhKalRJbVR0SW5mOFA1TE1F?=
- =?utf-8?Q?tAnv37GfNbNCziA/zl4yfLF1b?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c1d935a-d252-43da-de57-08de3304725c
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5195.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2025 07:12:12.8476
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OGlUm1jNNrrbzZBqXWPX9Ctptob9MYAM6z1EnHlajf9U//14ESGxTWhkb9+Of6iw4Mg2BtRWZzfOGGY6xorw1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5660
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ALSA: Do not build obsolete API
+To: david@ixit.cz, Russell King <linux@armlinux.org.uk>,
+ Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Keguang Zhang <keguang.zhang@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sh@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20251203-old-alsa-v1-1-ac80704f52c3@ixit.cz>
+Content-Language: fr-FR
+From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+In-Reply-To: <20251203-old-alsa-v1-1-ac80704f52c3@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Wayne
 
-On 12/3/25 10:47, Wayne Chang wrote:
-> From: Haotien Hsu <haotienh@nvidia.com>
+
+Le 03/12/2025 à 23:34, David Heidelberg via B4 Relay a écrit :
+> [Vous ne recevez pas souvent de courriers de devnull+david.ixit.cz@kernel.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> The UTMIP sleepwalk programming sequence requires asserting both
-> LINEVAL_WALK_EN and WAKE_WALK_EN when enabling the sleepwalk logic.
-> However, the current code mistakenly cleared WAKE_WALK_EN, which
-> prevents the sleepwalk trigger from operating correctly.
+> From: David Heidelberg <david@ixit.cz>
 > 
-> Fix this by asserting WAKE_WALK_EN together with LINEVAL_WALK_EN.
+> ALSA 0.9.0-rc3 is from 2002, 23 years old.
 > 
-> Fixes: 1f9cab6cc20c ("phy: tegra: xusb: Add wake/sleepwalk for Tegra186")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
 > ---
->  drivers/phy/tegra/xusb-tegra186.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Maybe I could drop also the code and Kconfig option?
 > 
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-> index e818f6c3980e..b2a76710c0c4 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -401,8 +401,7 @@ static int tegra186_utmi_enable_phy_sleepwalk(struct tegra_xusb_lane *lane,
->  
->  	/* enable the trigger of the sleepwalk logic */
->  	value = ao_readl(priv, XUSB_AO_UTMIP_SLEEPWALK_CFG(index));
-> -	value |= LINEVAL_WALK_EN;
-> -	value &= ~WAKE_WALK_EN;
-> +	value |= LINEVAL_WALK_EN | WAKE_WALK_EN;
->  	ao_writel(priv, value, XUSB_AO_UTMIP_SLEEPWALK_CFG(index));
->  
->  	/* reset the walk pointer and clear the alarm of the sleepwalk logic,
-WAKE_WALK_EN has to be set with '0' according to the ASIC designers. Tegra234
-and Tegra239 TRMs have been updated. We will get Tegra264 document updated as well.
+> David
+> ---
+>   arch/arm/configs/am200epdkit_defconfig    | 1 -
+>   arch/arm/configs/lpc32xx_defconfig        | 1 -
+>   arch/arm/configs/omap1_defconfig          | 1 -
+>   arch/arm/configs/tegra_defconfig          | 1 -
+>   arch/mips/configs/gcw0_defconfig          | 1 -
+>   arch/mips/configs/loongson1_defconfig     | 1 -
+>   arch/mips/configs/qi_lb60_defconfig       | 1 -
+>   arch/mips/configs/rbtx49xx_defconfig      | 1 -
+>   arch/mips/configs/rs90_defconfig          | 1 -
+>   arch/powerpc/configs/85xx-hw.config       | 1 -
+>   arch/powerpc/configs/86xx-hw.config       | 1 -
+>   arch/powerpc/configs/mpc5200_defconfig    | 1 -
+>   arch/powerpc/configs/ppc6xx_defconfig     | 1 -
 
-Thanks,
-JC
+For powerpc:
+
+Reviewed-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+Acked-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+
+
+
+>   arch/sh/configs/edosk7760_defconfig       | 1 -
+>   arch/sh/configs/se7724_defconfig          | 1 -
+>   arch/sh/configs/sh7785lcr_32bit_defconfig | 1 -
+>   sound/core/Kconfig                        | 2 +-
+>   17 files changed, 1 insertion(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm/configs/am200epdkit_defconfig b/arch/arm/configs/am200epdkit_defconfig
+> index 134a559aba3dd..2367b1685c1cf 100644
+> --- a/arch/arm/configs/am200epdkit_defconfig
+> +++ b/arch/arm/configs/am200epdkit_defconfig
+> @@ -68,7 +68,6 @@ CONFIG_SOUND=m
+>   CONFIG_SND=m
+>   CONFIG_SND_MIXER_OSS=m
+>   CONFIG_SND_PCM_OSS=m
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   CONFIG_SND_PXA2XX_AC97=m
+>   CONFIG_USB_GADGET=y
+> diff --git a/arch/arm/configs/lpc32xx_defconfig b/arch/arm/configs/lpc32xx_defconfig
+> index 2bddb0924a8c0..b9e2e603cd95e 100644
+> --- a/arch/arm/configs/lpc32xx_defconfig
+> +++ b/arch/arm/configs/lpc32xx_defconfig
+> @@ -113,7 +113,6 @@ CONFIG_LOGO=y
+>   # CONFIG_LOGO_LINUX_VGA16 is not set
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   CONFIG_SND_DEBUG=y
+>   CONFIG_SND_DEBUG_VERBOSE=y
+> diff --git a/arch/arm/configs/omap1_defconfig b/arch/arm/configs/omap1_defconfig
+> index dee820474f444..df88763fc7c3d 100644
+> --- a/arch/arm/configs/omap1_defconfig
+> +++ b/arch/arm/configs/omap1_defconfig
+> @@ -148,7 +148,6 @@ CONFIG_SOUND=y
+>   CONFIG_SND=y
+>   CONFIG_SND_MIXER_OSS=y
+>   CONFIG_SND_PCM_OSS=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   CONFIG_SND_DUMMY=y
+>   CONFIG_SND_USB_AUDIO=y
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+> index ce70ff07c978a..68aedaf92667a 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -219,7 +219,6 @@ CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+>   CONFIG_LOGO=y
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   CONFIG_SND_HDA_TEGRA=y
+>   CONFIG_SND_HDA_INPUT_BEEP=y
+> diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
+> index fda9971bdd8d9..adb9fd62ddb0d 100644
+> --- a/arch/mips/configs/gcw0_defconfig
+> +++ b/arch/mips/configs/gcw0_defconfig
+> @@ -79,7 +79,6 @@ CONFIG_LOGO=y
+>   # CONFIG_LOGO_LINUX_VGA16 is not set
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_PROC_FS is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_SPI is not set
+> diff --git a/arch/mips/configs/loongson1_defconfig b/arch/mips/configs/loongson1_defconfig
+> index 02d29110f7024..1d9781ff96986 100644
+> --- a/arch/mips/configs/loongson1_defconfig
+> +++ b/arch/mips/configs/loongson1_defconfig
+> @@ -119,7 +119,6 @@ CONFIG_WATCHDOG_SYSFS=y
+>   CONFIG_LOONGSON1_WDT=y
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_MIPS is not set
+>   # CONFIG_SND_USB is not set
+> diff --git a/arch/mips/configs/qi_lb60_defconfig b/arch/mips/configs/qi_lb60_defconfig
+> index 5f5b0254d75e7..a1bb0792f6eb1 100644
+> --- a/arch/mips/configs/qi_lb60_defconfig
+> +++ b/arch/mips/configs/qi_lb60_defconfig
+> @@ -81,7 +81,6 @@ CONFIG_LOGO=y
+>   # CONFIG_LOGO_LINUX_CLUT224 is not set
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_SPI is not set
+> diff --git a/arch/mips/configs/rbtx49xx_defconfig b/arch/mips/configs/rbtx49xx_defconfig
+> index 03a7bbe28a532..49c709d663beb 100644
+> --- a/arch/mips/configs/rbtx49xx_defconfig
+> +++ b/arch/mips/configs/rbtx49xx_defconfig
+> @@ -53,7 +53,6 @@ CONFIG_TXX9_WDT=m
+>   # CONFIG_VGA_ARB is not set
+>   CONFIG_SOUND=m
+>   CONFIG_SND=m
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_PCI is not set
+> diff --git a/arch/mips/configs/rs90_defconfig b/arch/mips/configs/rs90_defconfig
+> index a53dd66e9b864..8382d535e6dc1 100644
+> --- a/arch/mips/configs/rs90_defconfig
+> +++ b/arch/mips/configs/rs90_defconfig
+> @@ -105,7 +105,6 @@ CONFIG_LOGO=y
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+>   # CONFIG_SND_PCM_TIMER is not set
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_PROC_FS is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_MIPS is not set
+> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
+> index 8aff832173977..2b19c20a9a2c4 100644
+> --- a/arch/powerpc/configs/85xx-hw.config
+> +++ b/arch/powerpc/configs/85xx-hw.config
+> @@ -117,7 +117,6 @@ CONFIG_SND_INTEL8X0=y
+>   CONFIG_SND_POWERPC_SOC=y
+>   # CONFIG_SND_PPC is not set
+>   CONFIG_SND_SOC=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_USB is not set
+>   CONFIG_SND=y
+>   CONFIG_SOUND=y
+> diff --git a/arch/powerpc/configs/86xx-hw.config b/arch/powerpc/configs/86xx-hw.config
+> index e7bd265fae5a4..07f30ab881e59 100644
+> --- a/arch/powerpc/configs/86xx-hw.config
+> +++ b/arch/powerpc/configs/86xx-hw.config
+> @@ -80,7 +80,6 @@ CONFIG_SERIO_LIBPS2=y
+>   CONFIG_SND_INTEL8X0=y
+>   CONFIG_SND_MIXER_OSS=y
+>   CONFIG_SND_PCM_OSS=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   CONFIG_SND=y
+>   CONFIG_SOUND=y
+>   CONFIG_ULI526X=y
+> diff --git a/arch/powerpc/configs/mpc5200_defconfig b/arch/powerpc/configs/mpc5200_defconfig
+> index c0fe5e76604a0..617650cea56a9 100644
+> --- a/arch/powerpc/configs/mpc5200_defconfig
+> +++ b/arch/powerpc/configs/mpc5200_defconfig
+> @@ -75,7 +75,6 @@ CONFIG_FB_SM501=m
+>   CONFIG_LOGO=y
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_PCI is not set
+>   # CONFIG_SND_PPC is not set
+> diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs/ppc6xx_defconfig
+> index b082c1fae13c9..787d707f64a42 100644
+> --- a/arch/powerpc/configs/ppc6xx_defconfig
+> +++ b/arch/powerpc/configs/ppc6xx_defconfig
+> @@ -726,7 +726,6 @@ CONFIG_SND_OSSEMUL=y
+>   CONFIG_SND_MIXER_OSS=m
+>   CONFIG_SND_PCM_OSS=m
+>   CONFIG_SND_DYNAMIC_MINORS=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   CONFIG_SND_VERBOSE_PRINTK=y
+>   CONFIG_SND_DEBUG=y
+>   CONFIG_SND_DEBUG_VERBOSE=y
+> diff --git a/arch/sh/configs/edosk7760_defconfig b/arch/sh/configs/edosk7760_defconfig
+> index abeae220606a3..905fac1072845 100644
+> --- a/arch/sh/configs/edosk7760_defconfig
+> +++ b/arch/sh/configs/edosk7760_defconfig
+> @@ -79,7 +79,6 @@ CONFIG_FB_TILEBLITTING=y
+>   CONFIG_FB_SH_MOBILE_LCDC=m
+>   CONFIG_SOUND=y
+>   CONFIG_SND=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   CONFIG_SND_VERBOSE_PRINTK=y
+>   CONFIG_SND_SOC=y
+> diff --git a/arch/sh/configs/se7724_defconfig b/arch/sh/configs/se7724_defconfig
+> index 9e3a54936f76f..8ca46d704c8ba 100644
+> --- a/arch/sh/configs/se7724_defconfig
+> +++ b/arch/sh/configs/se7724_defconfig
+> @@ -83,7 +83,6 @@ CONFIG_LOGO=y
+>   # CONFIG_LOGO_SUPERH_VGA16 is not set
+>   CONFIG_SOUND=y
+>   CONFIG_SND=m
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_DRIVERS is not set
+>   # CONFIG_SND_SPI is not set
+>   # CONFIG_SND_SUPERH is not set
+> diff --git a/arch/sh/configs/sh7785lcr_32bit_defconfig b/arch/sh/configs/sh7785lcr_32bit_defconfig
+> index eb63aa61b0465..5468cc53cddb4 100644
+> --- a/arch/sh/configs/sh7785lcr_32bit_defconfig
+> +++ b/arch/sh/configs/sh7785lcr_32bit_defconfig
+> @@ -93,7 +93,6 @@ CONFIG_SND_PCM_OSS=y
+>   CONFIG_SND_SEQUENCER_OSS=y
+>   CONFIG_SND_HRTIMER=y
+>   CONFIG_SND_DYNAMIC_MINORS=y
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>   # CONFIG_SND_VERBOSE_PROCFS is not set
+>   CONFIG_SND_VERBOSE_PRINTK=y
+>   CONFIG_SND_DEBUG=y
+> diff --git a/sound/core/Kconfig b/sound/core/Kconfig
+> index 48db44fa56feb..4e7bc370ffd7f 100644
+> --- a/sound/core/Kconfig
+> +++ b/sound/core/Kconfig
+> @@ -155,7 +155,7 @@ config SND_MAX_CARDS
+> 
+>   config SND_SUPPORT_OLD_API
+>          bool "Support old ALSA API"
+> -       default y
+> +       default n
+>          help
+>            Say Y here to support the obsolete ALSA PCM API (ver.0.9.0 rc3
+>            or older).
+> 
+> ---
+> base-commit: b2c27842ba853508b0da00187a7508eb3a96c8f7
+> change-id: 20251203-old-alsa-fa2c2cb038e1
+> 
+> Best regards,
+> --
+> David Heidelberg <david@ixit.cz>
+> 
+> 
+
