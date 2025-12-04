@@ -1,52 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE310221F17;
-	Thu,  4 Dec 2025 18:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4CA3093AB;
+	Thu,  4 Dec 2025 21:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764871933; cv=none; b=Ans1F6SNQ2xZqbA9mBBqMTcBr0M1+t0YLzd87AL1FD266ccWoKh7cmg74+eOCQkvMTjRyTGPxlflAu7wDuyqi4OMULXmdjBOgZt2+sQiGvPoYGg5jfjlVIhdCS00MWs3GQWBOSXS1mdXZC5sn87XcjKy7HLoJbiFNw5Lbmop1W0=
+	t=1764883709; cv=none; b=aZo3Y0OaVS8JK77kl/nN/zs9NrQizuhpH98PClkYIakCk11dKbmFcQaDGMd6Sx/FfUD/qJYXnDDE6+F81ZH9/zwYaQvACLLVcawoLbWNrn6J2XcxKR3prjgJBCkuK2WH0zZslCkuUQ++sgvLhvlpUz9cGP0zaP7McZruFb9a32I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764871933; c=relaxed/simple;
-	bh=8PHs28SqzWjfJzL9JIh6ooHYIVc9VF2o6WfZK+qg9+0=;
+	s=arc-20240116; t=1764883709; c=relaxed/simple;
+	bh=X8tPs9E6uh+VtgXU41XCn/OUQj8VPbapViZgvzXZmqg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8iOXLGRrM7pVb2YZJmEn2Q2fgm60dqcwf6tqq44UUHjsfuXjz/ApqtudzQRKBop7ge3l6tA/e2ZBWR25oERu7gkYphz9oy9ZQAGEZWqC88WrDmfR0c00aT0wz/gSrhcxmk7iU6dBUzlfCV1ihOjzkyq8kMtDU7slxo3SACE7IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5ihQe7h; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8UCAToenLVilt3Hs2SUHoMHYCydF4EZlB6VrLE+8DfcCaeEd5rSq5uCHIKIpasqOXw4ODrnCpsJDFKVi6mUpfVw9Do7aC2fPny6Ji5B9s1XPgPL0//wLKlLatqoAct2jqV4mapplduHELxM0puvT3DyJeiEQYbTr3WA9hwXmkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oL8AMU1H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5ihQe7h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3281C116B1;
-	Thu,  4 Dec 2025 18:12:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL8AMU1H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71998C4CEFB;
+	Thu,  4 Dec 2025 21:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764871933;
-	bh=8PHs28SqzWjfJzL9JIh6ooHYIVc9VF2o6WfZK+qg9+0=;
+	s=k20201202; t=1764883708;
+	bh=X8tPs9E6uh+VtgXU41XCn/OUQj8VPbapViZgvzXZmqg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U5ihQe7hpcGsdrB7QLUdYntN1ezpVQF8awkoMGAmHsi8lj789c5/vXZzMMUVQDDnk
-	 iIPQOeodS5lM0Lap2gE9wOSHGlbCsTwCxML4AgnMJMqhU1YOw7CFWrqN+fYXXYvC5V
-	 Kqdm6m+jEj+pJgvJg1D0w8t3GbFr1kd6Bro6Lu1NOWHBdkyp7FiGFzDeoRTZkMHTz7
-	 yEdPnljw6u7TSC5ZKkdhgKPdD3wau3S9oHgZl7OzqtsrisqNglc0zQodgBqbeHm0er
-	 1YhLBqAmPh6F0zg3sHin363hF/1kSFpuGMxuKa58/QNfpEh04S7OqDyDnKDwiT3GOe
-	 3pG0EJZOhAgYg==
-Date: Thu, 4 Dec 2025 12:12:10 -0600
+	b=oL8AMU1H9u/kQnCLhQPiR/4W7X8gevJNJMq9MHRESr5Uh3iMs3dMulOAWxAGbCajN
+	 iUrgGj349WZ+JwTd5AoFpVrv17YrLe3K9ObpzkoULntZCzfHVaKCDUNZGD8pZdXj1P
+	 CP42WR2GRGoCXpOgI5VX6RlzVkO3eAOZGVEnNhwfy/CkQiNhW7rADRoVbg2fQscMQD
+	 JOoF+kqXoHX1Y2jN6+83sUV/tjcJLRpFq/hvgQQRE0jpf0M2x1lbFB8xTdswPc2i3l
+	 1Zd2X9E0L6bckUM9WaNeEdkaa1IHMYYKBXtCzue/OWQPIUXTlBBtLuEu/I5r1WdJGP
+	 BWf0N7K/D+05Q==
+Date: Thu, 4 Dec 2025 15:28:25 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
-	Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v4 07/12] dt-bindings: memory: Document Tegra114 External
- Memory Controller
-Message-ID: <176487193022.1928847.1387771027394340435.robh@kernel.org>
-References: <20251125120559.158860-1-clamor95@gmail.com>
- <20251125120559.158860-8-clamor95@gmail.com>
+To: Ashish Mhetre <amhetre@nvidia.com>
+Cc: nicolinc@nvidia.com, jgg@ziepe.ca, linux-arm-kernel@lists.infradead.org,
+	krzk+dt@kernel.org, devicetree@vger.kernel.org,
+	jonathanh@nvidia.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, will@kernel.org, conor+dt@kernel.org,
+	vdumpa@nvidia.com, joro@8bytes.org, robin.murphy@arm.com,
+	linux-tegra@vger.kernel.org, thierry.reding@gmail.com
+Subject: Re: [PATCH V3 2/3] dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
+Message-ID: <176488370517.2196325.5157844880170253515.robh@kernel.org>
+References: <20251201163219.3237266-1-amhetre@nvidia.com>
+ <20251201163219.3237266-3-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -55,18 +47,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251125120559.158860-8-clamor95@gmail.com>
+In-Reply-To: <20251201163219.3237266-3-amhetre@nvidia.com>
 
 
-On Tue, 25 Nov 2025 14:05:54 +0200, Svyatoslav Ryhel wrote:
-> Include Tegra114 support into existing Tegra124 EMC schema with the most
-> notable difference being the amount of EMC timings and a few SoC unique
-> entries.
+On Mon, 01 Dec 2025 16:32:18 +0000, Ashish Mhetre wrote:
+> The Command Queue Virtualization (CMDQV) hardware is part of the
+> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
+> virtualizing the command queue for the SMMU.
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Add a new device tree binding document for nvidia,tegra264-cmdqv.
+> 
+> Also update the arm,smmu-v3 binding to include an optional nvidia,cmdqv
+> property. This property is a phandle to the CMDQV device node, allowing
+> the SMMU driver to associate with its corresponding CMDQV instance.
+> Restrict this property usage to Nvidia Tegra264 only.
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
 > ---
->  .../nvidia,tegra124-emc.yaml                  | 174 +++---------------
->  1 file changed, 26 insertions(+), 148 deletions(-)
+>  .../bindings/iommu/arm,smmu-v3.yaml           | 30 ++++++++++++-
+>  .../bindings/iommu/nvidia,tegra264-cmdqv.yaml | 42 +++++++++++++++++++
+>  2 files changed, 70 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
