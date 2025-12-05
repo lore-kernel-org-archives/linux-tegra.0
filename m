@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484F42E9EC3;
-	Fri,  5 Dec 2025 22:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFF4283FDF;
+	Fri,  5 Dec 2025 22:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764974206; cv=none; b=aEzKnZ0RRKriYwkXYWkxS2bt4AD6LyuDolj8LtfScIA49PBSQ5s/PzmXwX7bet+2UBIYoTPpoGPqOTgRsE8/5IJFyMvl3/GpOhKTuQGgy6fBKFNrU2VdpQYYtzzq1ef/76vFW5efvIz0+Y7V8SfFnHGeGnn7NnGubc2FPEWjpUo=
+	t=1764974210; cv=none; b=R1l/gQOIYAQwMJ3qRuq5a4BComWlNkatGXv0c9OjUV6K2ZmR99WLGXOFx0SCFTUmObLrHFaL6Tx9ZF+X3YrBQtHCZQ42LWXL/KYedw8RXPSjFA2UGExomqf7rBwgnxw/LPMjjblJHXhrzxai/01br3SaIPeqVO1V8YUFXenspSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764974206; c=relaxed/simple;
-	bh=pRvBU8hdBshi9X9/i75oX46Ef1xJoQXQr1hheMftI0g=;
+	s=arc-20240116; t=1764974210; c=relaxed/simple;
+	bh=fozoT2mIHoqlaC/dIcUWXWiqeKFS54g8S0cfQ4C96mc=;
 	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dXvPHa2n4Ql1HY9AlyspHlOdPwv7AUWXgLpm2IUx5mlmNiC1YBzZn3fnaQTf5wxieqMdm8xg1OcjENWWQsi91ayjpNyEo2+d+n/pZ2U+htFDLQc/Qn73P562siEeWt85BLgTrlqRn5ayGJli2ov3SM5lOX2OB5jPpPx/2/s+uwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYHq/kud; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=nzBnbrgb23T745gOkfgCVcbjh5ltuSKOYUfgHymX/DRveK9JpAP8rsrZSxMN7qBUUkod5sgF+EfHowTmvlkPKSY0iOHJbz7rPG93HB8oWfAqoVbIubqqGF+VocP1/LjM0bF0AZc5Tr2dDtlhEMY6nwe6m+hSi+LlIcTRu18vmR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQ06qna4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYHq/kud"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A9DC4CEF1;
-	Fri,  5 Dec 2025 22:36:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQ06qna4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B729C19422;
+	Fri,  5 Dec 2025 22:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764974205;
-	bh=pRvBU8hdBshi9X9/i75oX46Ef1xJoQXQr1hheMftI0g=;
+	s=k20201202; t=1764974209;
+	bh=fozoT2mIHoqlaC/dIcUWXWiqeKFS54g8S0cfQ4C96mc=;
 	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
-	b=lYHq/kud809TW3bsbzges0zp3fv6LxYXCRbSyi6P/Npp41ojx0a1VDMdwybVETkPo
-	 JubZ5OuNP2RIBzbNrFEe0pX+yKsePiNtGKenx4subPa706SbuOrE666MWF11az5X3m
-	 +2emWkUDuJ4q8mfYXVA4Dgr48KjgzbwYFh0ZH8gsdzFUcJMUKRsBzysMko//EKoo3y
-	 AUdp70h5nYu3PpvT+bO7f5b9xyQRT6apX5ijNNO+fqmnBQzmb1Z/njczlSLyqY7QjN
-	 gJm3wiESPpQahKbFLZJlS3wIzHjpG/sTnzOmcGbfof4nojokKXfvUE81jQFnmesCv6
-	 1lrLDIWlF8ewQ==
+	b=qQ06qna44Yx7eukWkJ5er0z168gA9PNBFZ9s0IewUszxj7u+iap3qm3VxGwydyei6
+	 SDlHlwMeQZguV/AjhbmqOIRiHqHjrhSA5mAI3W2RkUPw+P2CeK9QqkVlZGm2PeQ86T
+	 HStDYp0ioSaWzKHhqrEqU8740sr03W9527l0lVv3NVNBgl13g7/HXlyY//3PqrK/c+
+	 Tdh4arNZt2fBtLtA41+PowHDAt7bziXnsp7OP3+yPH3g0UxGqGAO135jj/Ny+pICaK
+	 G3MuvxnJhYGlbmeykaMDGXQ0ayeYj5hWBIsTnbXarbZBqI8RVFdZrybkHCqNWcrdMo
+	 nVXJfuY7XHr8A==
 From: Rob Herring <robh@kernel.org>
-Date: Fri, 05 Dec 2025 16:36:44 -0600
+Date: Fri, 05 Dec 2025 16:36:47 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,59 +36,77 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Ion Agorria <ion@agorria.com>, 
- linux-tegra@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20251204060856.4994-1-clamor95@gmail.com>
-References: <20251204060856.4994-1-clamor95@gmail.com>
-Message-Id: <176497381556.863476.14617613789034811129.robh@kernel.org>
-Subject: Re: [PATCH v2 0/1 RESEND] ARM: tegra: add support for Xiaomi Mi
- Pad (A0101)
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 
+ JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Mathias Nyman <mathias.nyman@intel.com>, Conor Dooley <conor+dt@kernel.org>, 
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ linux-phy@lists.infradead.org
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
+References: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
+Message-Id: <176497381829.863612.7431013132555369131.robh@kernel.org>
+Subject: Re: [PATCH 0/5] Fixes to Tegra USB role switching and Smaug USB
+ role switching enablement
 
 
-On Thu, 04 Dec 2025 08:08:55 +0200, Svyatoslav Ryhel wrote:
-> The Mi Pad is a tablet computer based on Nvidia Tegra K1 SoC which
-> originally ran the Android operating system. The Mi Pad has a 7.9" IPS
-> display with 1536 x 2048 (324 ppi) resolution. 2 GB of RAM and 16/64 GB of
-> internal memory that can be supplemented with a microSDXC card giving up
-> to 128 GB of additional storage.
+On Thu, 04 Dec 2025 21:27:16 +0000, Diogo Ivo wrote:
+> Hello,
 > 
-> This patchset includes some schema changes not yet applied. They can be
-> found here:
-> - https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250909143432.121323-2-clamor95@gmail.com/
-> - https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912065146.28059-2-clamor95@gmail.com/
-> - https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912064253.26346-2-clamor95@gmail.com/
+> This patch series contains two fixes for USB role switching on the
+> Tegra210 SoC, as well as enabling this feature on the Pixel C.
 > 
-> UPD: patchsets above were accepted
+> The first patch addresses a wrong check on the logic that disables the
+> VBUS regulator.
 > 
+> The second patch guarantees proper ordering of events when switching PHY
+> roles.
+> 
+> The third and fourth patches then add the necessary nodes and properties
+> in the Smaug DT in order for role switching to work. Currently with this
+> patch series this feature can only be controlled from userspace by writing
+> the desired role to sysfs as
+> 
+> echo "role" > /sys/class/usb_role/usb2-0-role-switch/role
+> 
+> with role being one of {device, host, none}.
+> 
+> Further patches will enable automatic role switching via the 'cros_ec_typec'
+> driver which is currently broken on Smaug.
+> 
+> N.B: This series does not add a 'connector' node under the 'usb-role-switch'
+> property added on patch 04/04 because for Smaug the connector should instead
+> be under the node for 'cros_ec_typec' node and as stated above this
+> driver is currently broken for this device. If it is deemed better to
+> describe it but explicitly disable the node let me know and I will send
+> out a v2.
+> 
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 > ---
-> Changes in v2:
-> - added fuel gauge interrupt
-> - added CE gpio for charger
-> - removed always-on for vdd_gpu
-> - improved pinmux configuration
-> - added camera regulators
-> - removed usb@70090000 (already disabled in common tree)
-> - set correct modes for mmc devices
-> - removed thermistor thermal zone (not used by mocha)
-> - fixed pmc interrupt polarity (removed interrupt inverted prop)
-> - configured OTG support
-> - removed bluetooth reset-gpios
+> Diogo Ivo (5):
+>       usb: host: tegra: Remove redundant pm_runtime_mark_last_busy() call
+>       phy: tegra: xusb: Fix USB2 port regulator disable logic
+>       phy: tegra: xusb: Fix ordering issue when switching roles on USB2 ports
+>       arm64: tegra: smaug: Complete and enable tegra-udc node
+>       arm64: tegra: smaug: Add usb-role-switch support
+> 
+>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 13 +++++++++++++
+>  drivers/phy/tegra/xusb-tegra210.c             |  5 +++--
+>  drivers/phy/tegra/xusb.c                      | 23 +++++++++++++++++++++++
+>  drivers/phy/tegra/xusb.h                      |  1 +
+>  drivers/usb/gadget/udc/tegra-xudc.c           |  4 ++++
+>  drivers/usb/host/xhci-tegra.c                 | 17 ++++++++++-------
+>  include/linux/phy/tegra/xusb.h                |  1 +
+>  7 files changed, 55 insertions(+), 9 deletions(-)
 > ---
+> base-commit: a8817ff3b5cd99b0a5af57a92d1a3a7980612550
+> change-id: 20251201-diogo-tegra_phy-86c89cab7377
 > 
-> Svyatoslav Ryhel (1):
->   ARM: tegra: add device-tree for Xiaomi Mi Pad (A0101)
-> 
->  arch/arm/boot/dts/nvidia/Makefile             |    3 +-
->  .../boot/dts/nvidia/tegra124-xiaomi-mocha.dts | 2790 +++++++++++++++++
->  2 files changed, 2792 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
-> 
+> Best regards,
 > --
-> 2.48.1
+> Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 > 
 > 
 > 
@@ -109,38 +127,20 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
+ Base: base-commit a8817ff3b5cd99b0a5af57a92d1a3a7980612550 not known, ignoring
  Base: attempting to guess base-commit...
- Base: tags/v6.18-rc6-2003-gef7de33544a7 (exact match)
- Base: tags/v6.18-rc6-2003-gef7de33544a7 (use --merge-base to override)
+ Base: tags/v6.18-rc7-8-gf402ecd7a8b6 (exact match)
+ Base: tags/v6.18-rc7-8-gf402ecd7a8b6 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20251204060856.4994-1-clamor95@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt:
 
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /pcie@1003000: failed to match any schema with compatible: ['nvidia,tegra124-pcie']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: dsi@54300000 (nvidia,tegra124-dsi): Unevaluated properties are not allowed ('port' was unexpected)
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-dsi.yaml
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: dsi@54400000 (nvidia,tegra124-dsi): Unevaluated properties are not allowed ('port' was unexpected)
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-dsi.yaml
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: dma@60020000 (nvidia,tegra124-apbdma): $nodename:0: 'dma@60020000' does not match '^dma-controller(@.*)?$'
-	from schema $id: http://devicetree.org/schemas/dma/nvidia,tegra20-apbdma.yaml
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58: failed to match any schema with compatible: ['ti,tps65913', 'ti,palmas']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58: failed to match any schema with compatible: ['ti,tps65913', 'ti,palmas']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/extcon: failed to match any schema with compatible: ['ti,palmas-usb-vid']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/palmas-clk32k@0: failed to match any schema with compatible: ['ti,palmas-clk32kg']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/pinmux: failed to match any schema with compatible: ['ti,tps65913-pinctrl']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/pmic: failed to match any schema with compatible: ['ti,tps65913-pmic', 'ti,palmas-pmic']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/pmic: failed to match any schema with compatible: ['ti,tps65913-pmic', 'ti,palmas-pmic']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/rtc: failed to match any schema with compatible: ['ti,palmas-rtc']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra124-dfll']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /ahub@70300000: failed to match any schema with compatible: ['nvidia,tegra124-ahub']
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency', 'vdd-cpu-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml
-arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: led-controller (pwm-leds): 'led-button' does not match any of the regexes: '^led(-[0-9a-f]+)?$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-pwm.yaml
+arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: padctl@7009f000 (nvidia,tegra210-xusb-padctl): ports:usb2-0: 'role-switch-default-mode' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra210-xusb-padctl.yaml
+arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: padctl@7009f000 (nvidia,tegra210-xusb-padctl): ports:usb2-0: 'connector' is a dependency of 'usb-role-switch'
+	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra210-xusb-padctl.yaml
 
 
 
