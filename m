@@ -1,187 +1,148 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012031.outbound.protection.outlook.com [40.107.209.31])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AC53002D4;
-	Fri,  5 Dec 2025 10:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764932341; cv=fail; b=iQvIiQ+mV+YKDGvMpc/d4rZLayYUPy6cZntmFKNKJKQ+snKfG23rm4kfy9IOU8AhZgfbeSy060FXmLi87fwRBTvb8w0L1MFrBBqaeTbYBBi6lUEn8N5IPi7CxNroSaR3pc59LgQcutmPt9miYmwbGZ7K4t7tzw3ump+ClQKxAhc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764932341; c=relaxed/simple;
-	bh=WZPtnpGyEoC2vXqdk5KVXlewZ2We/rdGAwc68Jy49qE=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=hfDJ7NATp1/4WSpefNF4jkN/Zh4S2KfkUL6rV5P688CbXKRvRmA4HFwWCbZNUvx7mlqhx1QqQq2/htLEhOltQ62c3PTQDZ1tF93O/61B1iFwSAj0KGsYwPE3uOnADKqI6cFgUyEQJL5SDsmGglb/WAl5nkqBn56rFdDRfEabqi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XzmrEU+o; arc=fail smtp.client-ip=40.107.209.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484F42E9EC3;
+	Fri,  5 Dec 2025 22:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764974206; cv=none; b=aEzKnZ0RRKriYwkXYWkxS2bt4AD6LyuDolj8LtfScIA49PBSQ5s/PzmXwX7bet+2UBIYoTPpoGPqOTgRsE8/5IJFyMvl3/GpOhKTuQGgy6fBKFNrU2VdpQYYtzzq1ef/76vFW5efvIz0+Y7V8SfFnHGeGnn7NnGubc2FPEWjpUo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764974206; c=relaxed/simple;
+	bh=pRvBU8hdBshi9X9/i75oX46Ef1xJoQXQr1hheMftI0g=;
+	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=dXvPHa2n4Ql1HY9AlyspHlOdPwv7AUWXgLpm2IUx5mlmNiC1YBzZn3fnaQTf5wxieqMdm8xg1OcjENWWQsi91ayjpNyEo2+d+n/pZ2U+htFDLQc/Qn73P562siEeWt85BLgTrlqRn5ayGJli2ov3SM5lOX2OB5jPpPx/2/s+uwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYHq/kud; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XzmrEU+o"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=deLnZM2xXFZD2vH9cckIUQ/PvtaHp4VEI47xPLeFayiMRKhtyM7R1qtybBIPbsA++f9b7Ut1DAP70kpJ3tWPkRLoFHGiapKcZYQDgVQhHXwZskgpJGsnXXdjs8TKoB6vNiltoWOgEsq7ysy45VvBq133adQQwkt2H1SwePvuphDH93TSZOsy9I2EC3QepqUHu8GZoYDsTdkBnkELaU5o8HfYjkWAdZS3nubru4oBJcx29mtPqqrGGyE/xkZoSwMQYnATyPlA7K/mYRuzAuKn6lC1xd6dafrNULPBiaFHRd0wY4amsSmEAXgGxS5psCU6oSR6A3iTHtb2P9l3Li7Ncg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FvsKlr4qJNQ1h3qnSCaESA4sl5Y8i/vY1syLNXMfLoU=;
- b=t8TwyV1h+JA2xyNy/vSFwcDLHk4BjTmqqTxgxHpxWGo5lQqBoFNsPRLlLEokFbIjXCkA13ooEQG4Pr0ZoDkF1dI4/3kGDOmtqcnCocW9Uuh0Uoa1m0BSp1e7DwUiah0S60sUXKButk8CnWGipl5zQ1bZcxMvYpH/wqfETvEAlvEU2hwOCq7vqfrQA9s7pQQEmh5uJb3F2evW1kpaoxq575Vvxqo11vqDfKpwGIiYtDVuWPnxx8u1ceeXg8VyRzG0GO5z4XC3Bjk83X2Ae7p2027W2ZnR4HvgArylEhFJHFvE0Fuk4vIzAHI+nfZAAhD+DjX191T7ovXEDDtvLPclgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FvsKlr4qJNQ1h3qnSCaESA4sl5Y8i/vY1syLNXMfLoU=;
- b=XzmrEU+oa5jGSM0s1Q4bNcPwprYMV3V6WwcU7IjB/MeEMLtVOO8Yb9HfxAj7Qf9NXRgrRTn78t3ref7PCNDByBTA5a8qCTZXcsSSx6blapxFQW1A/5pnzEUJxicpFRu6y2AWUuXBWwHZl3tWQbC0Y4ixzDLb1EwySGnxaaz4TpnvHauCuGC+FaayQI97B5fwPe1zXmI5FvdjZDLlpRCAcnLH7ggh1Uu7REhmb7T5+RwzRsAkEjac5/ejZyA9pw25dtLMu0ygKUrcRtjlhfNRNvxTn6ODgl9YGxnxG0lroKA6dcZusel4VGCqSi2RJwUKv5ePs+yiGi9VT85thP8DHg==
-Received: from SJ0PR13CA0227.namprd13.prod.outlook.com (2603:10b6:a03:2c1::22)
- by DS5PPFDF2DDE6CD.namprd12.prod.outlook.com (2603:10b6:f:fc00::665) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Fri, 5 Dec
- 2025 10:58:51 +0000
-Received: from SJ5PEPF000001D3.namprd05.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::16) by SJ0PR13CA0227.outlook.office365.com
- (2603:10b6:a03:2c1::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9412.0 via Frontend Transport; Fri, 5
- Dec 2025 10:58:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ5PEPF000001D3.mail.protection.outlook.com (10.167.242.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9388.8 via Frontend Transport; Fri, 5 Dec 2025 10:58:51 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 5 Dec
- 2025 02:58:48 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Fri, 5 Dec 2025 02:58:47 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 5 Dec 2025 02:58:47 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
-	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
-	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/567] 6.1.159-rc2 review
-In-Reply-To: <20251204163841.693429967@linuxfoundation.org>
-References: <20251204163841.693429967@linuxfoundation.org>
-X-NVConfidentiality: public
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYHq/kud"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A9DC4CEF1;
+	Fri,  5 Dec 2025 22:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764974205;
+	bh=pRvBU8hdBshi9X9/i75oX46Ef1xJoQXQr1hheMftI0g=;
+	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
+	b=lYHq/kud809TW3bsbzges0zp3fv6LxYXCRbSyi6P/Npp41ojx0a1VDMdwybVETkPo
+	 JubZ5OuNP2RIBzbNrFEe0pX+yKsePiNtGKenx4subPa706SbuOrE666MWF11az5X3m
+	 +2emWkUDuJ4q8mfYXVA4Dgr48KjgzbwYFh0ZH8gsdzFUcJMUKRsBzysMko//EKoo3y
+	 AUdp70h5nYu3PpvT+bO7f5b9xyQRT6apX5ijNNO+fqmnBQzmb1Z/njczlSLyqY7QjN
+	 gJm3wiESPpQahKbFLZJlS3wIzHjpG/sTnzOmcGbfof4nojokKXfvUE81jQFnmesCv6
+	 1lrLDIWlF8ewQ==
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 05 Dec 2025 16:36:44 -0600
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <a02d61e2-d838-453a-baeb-3c7acd18a28e@drhqmail201.nvidia.com>
-Date: Fri, 5 Dec 2025 02:58:47 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D3:EE_|DS5PPFDF2DDE6CD:EE_
-X-MS-Office365-Filtering-Correlation-Id: 236821de-880f-47a8-6ef4-08de33ed4692
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|82310400026|36860700013|1800799024|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?blpkQXBjSHpwS3NmV3ZwcnpwM2VPUStQUWNQbFpvNm95MG1UUDFVamUvVTZn?=
- =?utf-8?B?OFRzVkZpcmxYQ3lqalBlMUU5UHFIWklSWkFwbUpkZFJNWWk3eUl5M2ZhSlNx?=
- =?utf-8?B?TGMvQzhwS3VYT1JJSVBsaTBQclVDaU51enArc1MvN2N4YnZaa0gzSXpwWFI3?=
- =?utf-8?B?REJsRGpFdWp5ejU3Kys2djVLQzcwa0dmbG5mTFhGbjBYSENWREYwYmp0NkFy?=
- =?utf-8?B?ejVXdzd2R1NDTG5wUjZhVkRHSmlKU1Q2Uk82YlQvM0RWanNmSVpobW1uVnRa?=
- =?utf-8?B?NlpTSmdCY2VzOTZXMVYwRFNkVnNDTXJ2OVJLeS9mVEdLaXVEV0pVSzgwdGRr?=
- =?utf-8?B?UCtRN3FxQU9BY3I0RVU4aWNrSnVkTEV5QzFEVDJQank5bWR4QndDazdSOE95?=
- =?utf-8?B?dzhsTWRVNEQ1NFQwWUlvVHVUcHJTT1BTRXpFUi9rSDBkZE4wbk5mQlVmbTRs?=
- =?utf-8?B?a0RqNXVPZk03TFE3U21CbFQxSE1LaFdzeEFvT3hsVXVTa1lvTk0vV044WTha?=
- =?utf-8?B?bU9PVnZtQ09qQWVKUnN3QmVUNGo1Q0tVVG80eUtoUUxNcm5pVVgvby9NZW1H?=
- =?utf-8?B?d1NGYU51TXdYVGRwcWZmU0pGK0NmS0t6VGIrTWJrWWVVMlZzY3hlU21wUUtR?=
- =?utf-8?B?M0FhWitrYm0wK3Z5dzBrOVU4TVNMeHQrajRKajdCcE1QMlQxUFdIdjlvZWtq?=
- =?utf-8?B?TEduK3AydXg4anlVM1YvMnlpU2hwVFpRbVZMK09KbE02UUlhZUZ2dE5iQkJl?=
- =?utf-8?B?OUxPRUx6WUVBS3B6MTFFU3cwM2UzalNEMnJJaXFiTE5vZm0rRFhtQk80Wmdm?=
- =?utf-8?B?RGNyU2R3SVhQbVhUK0RicWltRXlxZEtUTmVXNzRPK2NCS29Nc0tMNTB4MjFY?=
- =?utf-8?B?NzUwOUptUDFzY0pmcU1pSEc4NU5QZ2o1R0o4LzN0UlB4akxnSlRGZEhoK0Jj?=
- =?utf-8?B?eGVHNnc0Sk5rKzBpa2FsN0FsWjlicE5CN0JJNFZVTlRnUGRESHc0RTFNVCs1?=
- =?utf-8?B?WUR5Vzd5TzVKamtyMk1SRWIyTEUzOW9LWjIvbkluU0pWMVp1SmZacVIyNEwv?=
- =?utf-8?B?RFlsRzVCQU10UUttUisrRzNQSGZFRWVvdVROZk9qb3NWSk9FYVI4U1FqNUZl?=
- =?utf-8?B?SWk0eTBTeWV5TkFFczF3SVdCaHJHd0dNLzRRdGtvVFY2TnRpMjUrb0RoYm1r?=
- =?utf-8?B?d2tHeDZIRHIvZURLellOSHd6L2J2UUFRazQ3NG55VlZqd2FIWmdYYkpkV2U0?=
- =?utf-8?B?ekx1RjJVOHBreXQ0TVh6VVVIOHNQS0c5TFM0SGZleElEWlFjcERSK0VJZzha?=
- =?utf-8?B?aVRha0ZHa3R0VEJlVG1hMDRuQ0pzMk1HODg4TGtxOWZGZGlVeHlzWGxaZFVl?=
- =?utf-8?B?QVdka3o5ZCtRb1d6YjJjczBhckZkWGY5bFNLcUtPRFI4RnEyZ0dKOHZwVVM3?=
- =?utf-8?B?U3BQSG0xKzFTdUlUSFpDdk1lNjZab24wWmhld0kyTGtqbVBRYTg1VE1hSnEv?=
- =?utf-8?B?bUQ5RmoyYm9GOHVHYU54dVN5eWd2TDQ0YjY5cHpSR1JhRlQrdWl4djRPRFJC?=
- =?utf-8?B?eUZ4YXZ6WS83N29XWjNuNVRkRnpyRU50dDFIWXk2cURqUjdvcjVIbEwwOEwv?=
- =?utf-8?B?b3MvNGc1dTYwTWZJSHhCWlNyRzVJOUY2QmlDSlpEMThNSGpyY09ydW4yaFhw?=
- =?utf-8?B?cU9XTkQrVW1XejM4UWFCblk0MU9OYjdJaXhKdHA2UnMra1NnUnpUbDM1eG9S?=
- =?utf-8?B?dWpicXdtTzYwTjJkMHhwS3FTMm9tU0F5ZHdtVHl3cStDWDdkTTc4WnpzdkVh?=
- =?utf-8?B?VXpCTjVVdHNLTlZhUEEyclBPclc4OGp3dk9FTEQ2SE1tZ1FFSkJQLzZsdWlK?=
- =?utf-8?B?RVp5Y0o3azRORUUxTkM4aXoxRWRYQ1BhNVh3SDRBY0ZXUFQ3M2h5YmJYSVRn?=
- =?utf-8?B?MzQrSEFvYjg4eW9vKysybmdaQzAxWFJXdWprQXhtb1J4TUdrcUlIeHIyVTlN?=
- =?utf-8?B?bkNIN3ptdDQxbnZ3dS9NMHAyOHdkL0RINWZCd0Q3N1VYZFI4bkZBcXlKN3pu?=
- =?utf-8?B?eGVjaVlBemRLbE1TNDRUc2dSU2NpVmxpRVMwUXRlb0Z2NXZaV0QzNGVJbVFx?=
- =?utf-8?Q?MhsM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(36860700013)(1800799024)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2025 10:58:51.7142
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 236821de-880f-47a8-6ef4-08de33ed4692
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFDF2DDE6CD
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Ion Agorria <ion@agorria.com>, 
+ linux-tegra@vger.kernel.org
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20251204060856.4994-1-clamor95@gmail.com>
+References: <20251204060856.4994-1-clamor95@gmail.com>
+Message-Id: <176497381556.863476.14617613789034811129.robh@kernel.org>
+Subject: Re: [PATCH v2 0/1 RESEND] ARM: tegra: add support for Xiaomi Mi
+ Pad (A0101)
 
-On Thu, 04 Dec 2025 17:44:32 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.159 release.
-> There are 567 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+On Thu, 04 Dec 2025 08:08:55 +0200, Svyatoslav Ryhel wrote:
+> The Mi Pad is a tablet computer based on Nvidia Tegra K1 SoC which
+> originally ran the Android operating system. The Mi Pad has a 7.9" IPS
+> display with 1536 x 2048 (324 ppi) resolution. 2 GB of RAM and 16/64 GB of
+> internal memory that can be supplemented with a microSDXC card giving up
+> to 128 GB of additional storage.
 > 
-> Responses should be made by Sat, 06 Dec 2025 16:37:18 +0000.
-> Anything received after that time might be too late.
+> This patchset includes some schema changes not yet applied. They can be
+> found here:
+> - https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250909143432.121323-2-clamor95@gmail.com/
+> - https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912065146.28059-2-clamor95@gmail.com/
+> - https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912064253.26346-2-clamor95@gmail.com/
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.159-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> UPD: patchsets above were accepted
 > 
-> thanks,
+> ---
+> Changes in v2:
+> - added fuel gauge interrupt
+> - added CE gpio for charger
+> - removed always-on for vdd_gpu
+> - improved pinmux configuration
+> - added camera regulators
+> - removed usb@70090000 (already disabled in common tree)
+> - set correct modes for mmc devices
+> - removed thermistor thermal zone (not used by mocha)
+> - fixed pmc interrupt polarity (removed interrupt inverted prop)
+> - configured OTG support
+> - removed bluetooth reset-gpios
+> ---
 > 
-> greg k-h
+> Svyatoslav Ryhel (1):
+>   ARM: tegra: add device-tree for Xiaomi Mi Pad (A0101)
+> 
+>  arch/arm/boot/dts/nvidia/Makefile             |    3 +-
+>  .../boot/dts/nvidia/tegra124-xiaomi-mocha.dts | 2790 +++++++++++++++++
+>  2 files changed, 2792 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
+> 
+> --
+> 2.48.1
+> 
+> 
+> 
 
-All tests passing for Tegra ...
 
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    119 tests:	119 pass, 0 fail
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Linux version:	6.1.159-rc2-g2ee6aa0943a7
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Jon
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.18-rc6-2003-gef7de33544a7 (exact match)
+ Base: tags/v6.18-rc6-2003-gef7de33544a7 (use --merge-base to override)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20251204060856.4994-1-clamor95@gmail.com:
+
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /pcie@1003000: failed to match any schema with compatible: ['nvidia,tegra124-pcie']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: dsi@54300000 (nvidia,tegra124-dsi): Unevaluated properties are not allowed ('port' was unexpected)
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-dsi.yaml
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: dsi@54400000 (nvidia,tegra124-dsi): Unevaluated properties are not allowed ('port' was unexpected)
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-dsi.yaml
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: dma@60020000 (nvidia,tegra124-apbdma): $nodename:0: 'dma@60020000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/nvidia,tegra20-apbdma.yaml
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58: failed to match any schema with compatible: ['ti,tps65913', 'ti,palmas']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58: failed to match any schema with compatible: ['ti,tps65913', 'ti,palmas']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/extcon: failed to match any schema with compatible: ['ti,palmas-usb-vid']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/palmas-clk32k@0: failed to match any schema with compatible: ['ti,palmas-clk32kg']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/pinmux: failed to match any schema with compatible: ['ti,tps65913-pinctrl']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/pmic: failed to match any schema with compatible: ['ti,tps65913-pmic', 'ti,palmas-pmic']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/pmic: failed to match any schema with compatible: ['ti,tps65913-pmic', 'ti,palmas-pmic']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /i2c@7000d000/pmic@58/rtc: failed to match any schema with compatible: ['ti,palmas-rtc']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra124-dfll']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: /ahub@70300000: failed to match any schema with compatible: ['nvidia,tegra124-ahub']
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency', 'vdd-cpu-supply' were unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml
+arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dtb: led-controller (pwm-leds): 'led-button' does not match any of the regexes: '^led(-[0-9a-f]+)?$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/leds/leds-pwm.yaml
+
+
+
+
+
