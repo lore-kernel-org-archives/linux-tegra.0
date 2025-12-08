@@ -1,190 +1,176 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011053.outbound.protection.outlook.com [40.107.208.53])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C851EE033;
-	Mon,  8 Dec 2025 05:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765171271; cv=fail; b=XJbiC0nQVl8cTBUJYhReYp1TZ9oim8RejR10+RWI53j7YDccDz3vK5tKZTdw/MEfWVfoDyvEfuxjY3woLBWv1Xjca/Sc2weH6AUJNP6KNqkbk6nJYis869i9sUF52wLBjOs1/b1snEWeV4jaZv6Y9/UJP3hzqdW+MUv/t85h28w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765171271; c=relaxed/simple;
-	bh=nFYoOIq0xf4qgUJqTRDBTUzKEEdzPXkP4yXlY1qZVww=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EJAS7LnoHV1lQICodu1MSWJMZegzwUDxBdtxEmoMDEbOvNvQXFBXrkXZ1zKkN96+VZsMcG6Nptmcr5i2AyHukBtEluy2GIf3rlCZrVZYOx9KhVPL96YNLkRYo4dbg1UiWpBshqE+ccDF90KtxvvVhci+pt8mWdvK6by301kQGiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q8qHJIUk; arc=fail smtp.client-ip=40.107.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCD72EA493;
+	Mon,  8 Dec 2025 19:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765223046; cv=none; b=skNWae20A3oy9/PTVBODSoI/daaUJ3NIbrQ2mekwH4ZrPerlrIscjveRxTDKTQ+4JF5xjt45yjw1HMbNS9o+69PJy20puco+4hB+5o/3WKVV2vvGrWPPI+dgm4DLMeoK7KvYl52jLDwnztaiLyhKq/2u7kUnQp9J8RrZ8uDf7I4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765223046; c=relaxed/simple;
+	bh=3ipuuZGft/S8N19xrr05kuT8U40MNWLgd1x0A0Em+OA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgLh3KD6kInV8S2Zl2DmxI5VSiEnH1vEjhjptRSVrYY6WX3C4YwiclEMLOzBFQrRhDMXx1eqtpE5ii8WUgiMQhS1ZIVXH8/4mKkvXZBkd4aeJs0bPZ/w9LK0kirAHnYfGVl4xPRI8Ad1G7rIlHLA6m+QaLKaqbVsulVPOVWVEO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LRJl+H4F; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q8qHJIUk"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vsFavZjN1OaBjqZLO1XX+9Dvn7qMDH2mbyxIsAFfUWSJ536yczas46pIW5GLF62TyZcLcADYv31R4IsQZ/Mxt4us+UgMEK4VO9BChTugpOc6DDwjCMp2r2WSkeCs9UXv053amaErGNZoLyXMS1kh36Dp05H/BMYz/71j0jgYuTmXooLdLnRbti+o2AU0buxb4t7WDKJ7uut1PjfGGb8hUXiduTJ95rpF7vtzfrNA/G/Zcs8QSdKYwkgU9KW8ajriRdWgy8iAvPSTsPUiYysfx7A2IhUw/IeQEuipdTAL/vklvXCSWJiBjlgOR95EBEnzHwsISfCrZdNoKKnwuLIr5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5772/iPChKMRHW/CFXZ5JJyyQ+QAo+JO6hvMHEx/xDY=;
- b=NjcNVrLo0viIG2sW4xm5yTmDJr3WLC+ZNRSpEjfya0bi6TN+4c1TVeaJuK2fZOXtD92bQEsw2sP/XWJ+T39DJ29QUXrJgCbAFCQnCmcDOi8WnxoFYjdwzpfRv8GxQYw1Ih/sTv9c3HLyelmnGojfZNbBGMJ/mCvfWUVf9It4TiTCMtxehGluTvvK5q7oLXDgGk4ONKUYnPf4jgEGQ+HxScV0C2Q0B1jalzXQ5xMYyftCAtoM7NljdY0HamvaoxF4VWEJENGLbscDz64SvYmkgmWf9w+1/jZ1onrinVqQr0ivCFqyZKXyteZs6JjCq6+MoN1F6CVoRoPZhubiTF7jRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5772/iPChKMRHW/CFXZ5JJyyQ+QAo+JO6hvMHEx/xDY=;
- b=q8qHJIUkdPS9w554CDMyzmKf9zHGxWD7mUMnfnQ5rkH1FTnXZcl5QzhcgDrnzMvQoL6kEY/dz90S/vVbXk1+He8XrXsrLIKenHEUFB9AZ3vJeHeJkvwKjl78cyjZnuFmJfxzNDgOWOpjezlziV8sMTaEGFUAHVQkgoZjZa41A8Ton2ygDVTb6RPQMJ3WdJqqxNc8nN7XW9uBEK/YmIiCCdJlrb/LFZ/FJvd8iL6oFO66k/hVSLVUhOxylYsW/pKTa9oBji3QtvwVw5AHzaWX8yOathspTWI3Em0s2MQ8nEVO7N9j7UTo6AQ9I2p3MM2FKfBVz7xhC6gwcd5t74JhNQ==
-Received: from SA9PR11CA0027.namprd11.prod.outlook.com (2603:10b6:806:6e::32)
- by DS7PR12MB9551.namprd12.prod.outlook.com (2603:10b6:8:24f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.14; Mon, 8 Dec
- 2025 05:21:05 +0000
-Received: from SA2PEPF00003F63.namprd04.prod.outlook.com
- (2603:10b6:806:6e:cafe::2c) by SA9PR11CA0027.outlook.office365.com
- (2603:10b6:806:6e::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9388.14 via Frontend Transport; Mon,
- 8 Dec 2025 05:20:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00003F63.mail.protection.outlook.com (10.167.248.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9412.4 via Frontend Transport; Mon, 8 Dec 2025 05:21:05 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 7 Dec
- 2025 21:20:49 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 7 Dec
- 2025 21:20:48 -0800
-Received: from sheetal.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Sun, 7 Dec 2025 21:20:45 -0800
-From: "Sheetal ." <sheetal@nvidia.com>
-To: <linux-sound@vger.kernel.org>, Mark Brown <broonie@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Charles Keepax
-	<ckeepax@opensource.cirrus.com>, Sander Vanheule <sander@svanheule.net>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, sheetal
-	<sheetal@nvidia.com>
-Subject: [PATCH] ASoC: tegra: Fix uninitialized flat cache warning in tegra210_ahub
-Date: Mon, 8 Dec 2025 10:50:40 +0530
-Message-ID: <20251208052040.4025612-1-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LRJl+H4F"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1765223045; x=1796759045;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3ipuuZGft/S8N19xrr05kuT8U40MNWLgd1x0A0Em+OA=;
+  b=LRJl+H4F37v+q66RlJ0PyASxPHS7ml7oq6s+ZfL88A273fihsBpYHJM2
+   Iq4qoIOIOMyeDJ8AHqVFihJCtj3hvtx6TSG+EjgsdlhOzHwFu/FvYxGsh
+   Sy1WS/ObWvSaIg9GgoV0wAq2/NVI1OgBHM9JakmxDVgn/Rao7M4eMv8Ap
+   Bdyz1Zv0QZ1pIjvsdrKeM+QRjqynCx+4h7c9tCtyVtzgc33DJR6MUr3aD
+   kQRYrjSMui3UUKt1uM9CZIGQlvH999r6G6FEe5KqQyqLxFnpDzu5pBU7q
+   x2HyoFZhbw/1/0vmzgOG/fV00wY40DktdfI4twgJewUtrv/Eoeh2jIUM9
+   Q==;
+X-CSE-ConnectionGUID: LH7GQyvBQ7W1f2+4cEJuFw==
+X-CSE-MsgGUID: DPUyR9fpRDeox1T1kNZU2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="54714116"
+X-IronPort-AV: E=Sophos;i="6.20,259,1758610800"; 
+   d="scan'208";a="54714116"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2025 11:44:04 -0800
+X-CSE-ConnectionGUID: n+XSjhiORGCFX38P4L/tgg==
+X-CSE-MsgGUID: NGCiOOtnRBmB7MoDx7MLow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,259,1758610800"; 
+   d="scan'208";a="195921748"
+Received: from lkp-server01.sh.intel.com (HELO d335e3c6db51) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Dec 2025 11:44:01 -0800
+Received: from kbuild by d335e3c6db51 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vSh9K-000000000mj-0dfK;
+	Mon, 08 Dec 2025 19:43:58 +0000
+Date: Tue, 9 Dec 2025 03:43:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, nicolinc@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, vdumpa@nvidia.com, jgg@ziepe.ca,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Ashish Mhetre <amhetre@nvidia.com>
+Subject: Re: [PATCH V4 1/3] iommu/arm-smmu-v3: Add device-tree support for
+ CMDQV driver
+Message-ID: <202512090331.QAFgb6vQ-lkp@intel.com>
+References: <20251205065850.3841834-2-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F63:EE_|DS7PR12MB9551:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad4641db-04c6-4803-9cb4-08de36199644
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s0BGYR9bCH4shErKd1zqlC21ywheVavHIlLK5r75CXY9h69SrWb/Na+FVi/1?=
- =?us-ascii?Q?t67KcFBg2eJlcS8rpvLmLgZpw9LYIjJw2nGq255y+UvWCysouKREelnCBMhJ?=
- =?us-ascii?Q?dBH5TFZ+hAEOrrW6S3PjAcYmpm0hpMJdDsrCfGe52TW4ST1ukaNgMFXqHSTj?=
- =?us-ascii?Q?izZnAJD4mIKZrjQKqpYpo53l34jwHS/00VyptyxXgWJIB9vBbFa/O7hFckuQ?=
- =?us-ascii?Q?is82YZ0FMdk20ZUOCpU7cf6b7sG3xuDIvlCjizx4oPBmi+AcUUGIJprnu+aJ?=
- =?us-ascii?Q?Mkw054PdnADtGvvwjMnFOoMjd8gYmE6M9m8C3vLpFcHjrHdKy1YiBXiKmcIw?=
- =?us-ascii?Q?LCghBGlYrLYuiaZSFbhgaVa9LHnaz6/DL8rDBNkxnT9/HnFu/uamt5SRTFLp?=
- =?us-ascii?Q?M3uRZckCt1kHTFGQsGXc5ZbOlD3JwGyw6xqdmRjggzGYCbTFYnceF/gQyVxR?=
- =?us-ascii?Q?Nb9MD/4Z6tuOr1W9QhEwxQj07oAfKuFVs0giLSTuoiBSTXaE5WrhhH43t/W4?=
- =?us-ascii?Q?IvrxEfvjwx+/8J+8An8rRw9yAxGKM2tOnnh3TA4jnkMVdqWUUiBWblTalmiZ?=
- =?us-ascii?Q?ps6Jgj/Qpn4L8XbAg07VHzBkaHgyZHxcFGYg8usJhzkLR5g9UyMsbhtG5soh?=
- =?us-ascii?Q?Y6ghDKcfaLRex+2Ty2Rxqw/e68kEJ1+gKgQ0XZYHB3EBOY89E9ecByBWBibh?=
- =?us-ascii?Q?rDxONHlkiX4pwWBbEsXfJQuhNyJzaYP61sF+A4W1zEA1Wqk0irqW0hIFam7t?=
- =?us-ascii?Q?jUDyFkcSfRyQqW86PlbxK5n9gWAGyHes8VlIZO93DCK6oy9DEpJWGeDIzKjZ?=
- =?us-ascii?Q?7DwMTIU/z3PQ29rLNaiV16ZlVS5HOOL0JzxjryU0Ow2AkhEjIaz9NQC31E7K?=
- =?us-ascii?Q?ZGHc7YaKZNjOQSCsWPFNwnaQ1JqAfVaDHnPOls6l/qXzwmbRAZCFmRfv2mED?=
- =?us-ascii?Q?VfGp/zAc78d8EZbjYxiT4ghOxAcZ6sg6DRFx7OC94RrebTn3E+95zrEvBxbg?=
- =?us-ascii?Q?x3mQbjuMQ7M62/gn2fbxRe+Xk/HIgCtGAEicL20wP0zPg4LfokvD2Q0Eir/0?=
- =?us-ascii?Q?C94PzPrFrr3KoB4PXZu2rOVn5vz74SUBhv8anhAXEmeZ6JpYKsIfxVgGWeId?=
- =?us-ascii?Q?0cPzzOQSuKr8EOagyyM1Qp03rrHpOQkCXjP/YTo8brS7hHns8sxc8lnvcsBa?=
- =?us-ascii?Q?pzce/MTsrPJ4WClIWF40Cjo+P+8FMUkVwEnn8yVEuXvSB/Zll9o8OiTFNF8L?=
- =?us-ascii?Q?6PQlLQ1CO7VErtLtRW+QaLBynFhpWBF+xJ6m9zNH4JRTD/CBCwrj7XACUSKY?=
- =?us-ascii?Q?IMaNgmeH5A37IircC8ouUbhM1wuIhESNSi1+vdm5RAdAOkua474DIFG2TXeV?=
- =?us-ascii?Q?Ns1dD0aDhcoBRJVuVs+ROw7iKiyODb8dkeFbs9Rpv3HoCnidlRbC6UJxcej2?=
- =?us-ascii?Q?LOHzaxuKn8eWC8rH4V/oMLPyVut3d3p54+Uln50paDTdFkXEyp/r8n8Rquh/?=
- =?us-ascii?Q?DbLyrvOzR734qtDvouObQDy34VWVGsZPNh6FLrxTBkbDh+qHOU4f/FKwBYFV?=
- =?us-ascii?Q?RdiwfhFTdQf1ClVKTgA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2025 05:21:05.5006
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad4641db-04c6-4803-9cb4-08de36199644
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F63.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9551
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251205065850.3841834-2-amhetre@nvidia.com>
 
-From: sheetal <sheetal@nvidia.com>
+Hi Ashish,
 
-The tegra210_ahub driver started triggering a warning after commit
-e062bdfdd6ad ("regmap: warn users about uninitialized flat cache"),
-which flags drivers using REGCACHE_FLAT without register defaults.
-Since the driver omits default definitions because its registers are
-zero initialized, the following warning is shown:
+kernel test robot noticed the following build warnings:
 
-  WARNING KERN tegra210-ahub 2900800.ahub: using zero-initialized flat cache, this may cause unexpected behavior
+[auto build test WARNING on next-20251204]
+[also build test WARNING on v6.18]
+[cannot apply to robh/for-next linus/master v6.18 v6.18-rc7 v6.18-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Switch to REGCACHE_FLAT_S which is the recommended cache type for
-sparse register maps without defaults. This cache type initializes
-entries on-demand from hardware, eliminating the warning while using
-memory efficiently.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ashish-Mhetre/iommu-arm-smmu-v3-Add-device-tree-support-for-CMDQV-driver/20251205-151258
+base:   next-20251204
+patch link:    https://lore.kernel.org/r/20251205065850.3841834-2-amhetre%40nvidia.com
+patch subject: [PATCH V4 1/3] iommu/arm-smmu-v3: Add device-tree support for CMDQV driver
+config: arm64-randconfig-004-20251209 (https://download.01.org/0day-ci/archive/20251209/202512090331.QAFgb6vQ-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251209/202512090331.QAFgb6vQ-lkp@intel.com/reproduce)
 
-Fixes: e062bdfdd6ad ("regmap: warn users about uninitialized flat cache")
-Signed-off-by: sheetal <sheetal@nvidia.com>
----
- sound/soc/tegra/tegra210_ahub.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512090331.QAFgb6vQ-lkp@intel.com/
 
-diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
-index e795907a3963..261d9067d27b 100644
---- a/sound/soc/tegra/tegra210_ahub.c
-+++ b/sound/soc/tegra/tegra210_ahub.c
-@@ -2077,7 +2077,7 @@ static const struct regmap_config tegra210_ahub_regmap_config = {
- 	.val_bits		= 32,
- 	.reg_stride		= 4,
- 	.max_register		= TEGRA210_MAX_REGISTER_ADDR,
--	.cache_type		= REGCACHE_FLAT,
-+	.cache_type		= REGCACHE_FLAT_S,
- };
- 
- static const struct regmap_config tegra186_ahub_regmap_config = {
-@@ -2085,7 +2085,7 @@ static const struct regmap_config tegra186_ahub_regmap_config = {
- 	.val_bits		= 32,
- 	.reg_stride		= 4,
- 	.max_register		= TEGRA186_MAX_REGISTER_ADDR,
--	.cache_type		= REGCACHE_FLAT,
-+	.cache_type		= REGCACHE_FLAT_S,
- };
- 
- static const struct regmap_config tegra264_ahub_regmap_config = {
-@@ -2094,7 +2094,7 @@ static const struct regmap_config tegra264_ahub_regmap_config = {
- 	.reg_stride		= 4,
- 	.writeable_reg		= tegra264_ahub_wr_reg,
- 	.max_register		= TEGRA264_MAX_REGISTER_ADDR,
--	.cache_type		= REGCACHE_FLAT,
-+	.cache_type		= REGCACHE_FLAT_S,
- };
- 
- static const struct tegra_ahub_soc_data soc_data_tegra210 = {
+All warnings (new ones prefixed by >>):
+
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c: In function 'tegra241_cmdqv_acpi_is_memory':
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:863:17: error: implicit declaration of function 'acpi_dev_resource_address_space' [-Werror=implicit-function-declaration]
+     863 |         return !acpi_dev_resource_address_space(res, &win);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c: In function 'tegra241_cmdqv_acpi_get_irqs':
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:871:26: error: implicit declaration of function 'acpi_dev_resource_interrupt' [-Werror=implicit-function-declaration]
+     871 |         if (*irq <= 0 && acpi_dev_resource_interrupt(ares, 0, &r))
+         |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c: In function 'tegra241_cmdqv_find_acpi_resource':
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:879:36: error: implicit declaration of function 'to_acpi_device'; did you mean 'to_acpi_device_node'? [-Werror=implicit-function-declaration]
+     879 |         struct acpi_device *adev = to_acpi_device(dev);
+         |                                    ^~~~~~~~~~~~~~
+         |                                    to_acpi_device_node
+>> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:879:36: warning: initialization of 'struct acpi_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:886:15: error: implicit declaration of function 'acpi_dev_get_resources'; did you mean 'acpi_get_event_resources'? [-Werror=implicit-function-declaration]
+     886 |         ret = acpi_dev_get_resources(adev, &resource_list,
+         |               ^~~~~~~~~~~~~~~~~~~~~~
+         |               acpi_get_event_resources
+   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:907:9: error: implicit declaration of function 'acpi_dev_free_resource_list' [-Werror=implicit-function-declaration]
+     907 |         acpi_dev_free_resource_list(&resource_list);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +879 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+
+918eb5c856f6ce Nate Watterson 2024-08-29  875  
+918eb5c856f6ce Nate Watterson 2024-08-29  876  static struct resource *
+918eb5c856f6ce Nate Watterson 2024-08-29  877  tegra241_cmdqv_find_acpi_resource(struct device *dev, int *irq)
+918eb5c856f6ce Nate Watterson 2024-08-29  878  {
+918eb5c856f6ce Nate Watterson 2024-08-29 @879  	struct acpi_device *adev = to_acpi_device(dev);
+918eb5c856f6ce Nate Watterson 2024-08-29  880  	struct list_head resource_list;
+918eb5c856f6ce Nate Watterson 2024-08-29  881  	struct resource_entry *rentry;
+918eb5c856f6ce Nate Watterson 2024-08-29  882  	struct resource *res = NULL;
+918eb5c856f6ce Nate Watterson 2024-08-29  883  	int ret;
+918eb5c856f6ce Nate Watterson 2024-08-29  884  
+918eb5c856f6ce Nate Watterson 2024-08-29  885  	INIT_LIST_HEAD(&resource_list);
+918eb5c856f6ce Nate Watterson 2024-08-29  886  	ret = acpi_dev_get_resources(adev, &resource_list,
+918eb5c856f6ce Nate Watterson 2024-08-29  887  				     tegra241_cmdqv_acpi_is_memory, NULL);
+918eb5c856f6ce Nate Watterson 2024-08-29  888  	if (ret < 0) {
+918eb5c856f6ce Nate Watterson 2024-08-29  889  		dev_err(dev, "failed to get memory resource: %d\n", ret);
+918eb5c856f6ce Nate Watterson 2024-08-29  890  		return NULL;
+918eb5c856f6ce Nate Watterson 2024-08-29  891  	}
+918eb5c856f6ce Nate Watterson 2024-08-29  892  
+918eb5c856f6ce Nate Watterson 2024-08-29  893  	rentry = list_first_entry_or_null(&resource_list,
+918eb5c856f6ce Nate Watterson 2024-08-29  894  					  struct resource_entry, node);
+918eb5c856f6ce Nate Watterson 2024-08-29  895  	if (!rentry) {
+918eb5c856f6ce Nate Watterson 2024-08-29  896  		dev_err(dev, "failed to get memory resource entry\n");
+918eb5c856f6ce Nate Watterson 2024-08-29  897  		goto free_list;
+918eb5c856f6ce Nate Watterson 2024-08-29  898  	}
+918eb5c856f6ce Nate Watterson 2024-08-29  899  
+918eb5c856f6ce Nate Watterson 2024-08-29  900  	/* Caller must free the res */
+918eb5c856f6ce Nate Watterson 2024-08-29  901  	res = kzalloc(sizeof(*res), GFP_KERNEL);
+918eb5c856f6ce Nate Watterson 2024-08-29  902  	if (!res)
+918eb5c856f6ce Nate Watterson 2024-08-29  903  		goto free_list;
+918eb5c856f6ce Nate Watterson 2024-08-29  904  
+918eb5c856f6ce Nate Watterson 2024-08-29  905  	*res = *rentry->res;
+918eb5c856f6ce Nate Watterson 2024-08-29  906  
+918eb5c856f6ce Nate Watterson 2024-08-29  907  	acpi_dev_free_resource_list(&resource_list);
+918eb5c856f6ce Nate Watterson 2024-08-29  908  
+918eb5c856f6ce Nate Watterson 2024-08-29  909  	INIT_LIST_HEAD(&resource_list);
+918eb5c856f6ce Nate Watterson 2024-08-29  910  
+918eb5c856f6ce Nate Watterson 2024-08-29  911  	if (irq)
+918eb5c856f6ce Nate Watterson 2024-08-29  912  		ret = acpi_dev_get_resources(adev, &resource_list,
+918eb5c856f6ce Nate Watterson 2024-08-29  913  					     tegra241_cmdqv_acpi_get_irqs, irq);
+918eb5c856f6ce Nate Watterson 2024-08-29  914  	if (ret < 0 || !irq || *irq <= 0)
+918eb5c856f6ce Nate Watterson 2024-08-29  915  		dev_warn(dev, "no interrupt. errors will not be reported\n");
+918eb5c856f6ce Nate Watterson 2024-08-29  916  
+918eb5c856f6ce Nate Watterson 2024-08-29  917  free_list:
+918eb5c856f6ce Nate Watterson 2024-08-29  918  	acpi_dev_free_resource_list(&resource_list);
+918eb5c856f6ce Nate Watterson 2024-08-29  919  	return res;
+918eb5c856f6ce Nate Watterson 2024-08-29  920  }
+918eb5c856f6ce Nate Watterson 2024-08-29  921  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
