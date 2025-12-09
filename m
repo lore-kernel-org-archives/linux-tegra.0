@@ -1,137 +1,163 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C734227814C
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Dec 2025 04:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F13F26F296;
+	Tue,  9 Dec 2025 05:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765255122; cv=none; b=qRHF80X11sQzYE5o1hvX8aVU7mbcUCo8SbnxJYmOv64MGOl4l6Nn2F2fg2qNNtfS6U+pLQZqL6QKwKsd2ZEWWfDH1SjjC8WEaq00x9e9ieY5VABHcet+Ha1DwRKkD2Xd19JFigspdC/gRBLq8gptCB+HNzQpXYY9asXbx8MIF9Y=
+	t=1765259629; cv=none; b=sqT2DT4LkoD32FjNS8EBYLDtRWAWjpTQtKADk+ekHUECEvCx3Fms1SHf8/TwR0pb7jBusv9beaAGNan3AUb3K80nh+R6QlF3q3wmFDqRlhxHz1qo8PDiCO1fV079c5XCH5ABd5GnLigUgJzJC5FZLh/UXkoZlZofofh5cZlsoDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765255122; c=relaxed/simple;
-	bh=lCeS2rZs0DOuchGORWhUOHFafJbHcX8mIQByqB5tQ6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTiw1qDrwoOyVoYDghMfCj4Ww3ivO/dWJCr030sczgoLvM0BFtsYtXU2B8xmsxYHz3JhXble8/QszlQVon8shxqsyvxGrPMOkdG7COd8m2gu/6WPqAbn/lsQO47Xu+Wb3gqCVpMhADvIpJ6lYflAMi3Uenf8ogM/D/iwZzVQ4pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKQRLve1; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1765259629; c=relaxed/simple;
+	bh=z+m0utOd2YnpOXXxw6CT1KiBiBPO3m93BrS90rijNgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Onv8LJm5yS+BfHecIJt6zmvWRtlxyugrnwTa5p8bD7BkcFmaOZ5FfX7FTdsvTC5K0w+I/xrdLSgUF64HzxX/MT6mvjMBmqkY+0lisTwPHp8lb0wnjITdv4T+jE6EbwJ21ndLbL8qwdji+UCEsPhw3xul32njQZth14is6uV1rAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDNVubnu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKQRLve1"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5959b2f3fc9so5408132e87.2
-        for <linux-tegra@vger.kernel.org>; Mon, 08 Dec 2025 20:38:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765255119; x=1765859919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SzHsigVrv0A4MNDWjYlB5QyJq7OvnSZmzl7cSMbglZ8=;
-        b=hKQRLve1O5jcfydsLE/2hrtvhQGb9Z3SQTjEGk6zX4puFbnd4XmkKJM2nSWFB0uQ4K
-         2qRxUnxc51jB+NsZVeQZARuGInstpkW8n5Jpc2JAe7CC+vJMG6FrUrjpy2f+ImCU2IsN
-         j0SjMUtWqJzu7q6PyTSyh/E8lWJLTqCcCESIMYAbdYZSD8oa5UabW9GTJkHBv5h6gVgw
-         OvkFhMMa6JT1Ppedq96JtLt17oJIrodIwey8bWyIZ0O+X8JjBV/fCi29a94taTrTkPXp
-         KdgYGY5Z1VnVRhSUiL6IXuS4epnP5GBRniDyAKlAU7o07fj63ZZnv8q2m7Wh4xUSwKLF
-         SGng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765255119; x=1765859919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SzHsigVrv0A4MNDWjYlB5QyJq7OvnSZmzl7cSMbglZ8=;
-        b=Hfgg8oBS6aLibrhYGkm0HXtjChRIiVC8UtYZEgqWJZUzDmRRNSEs9bkP/rQp4Tf4Fu
-         QLiMiZr9pO2cjzcImGhwXCKL1SKDSz1WqC5NU4w6V+JIjDUwsTpcIrtOO82yMVwD3jE4
-         ad+BagTFah4fz0RA+SPfO9VvxVFMw67cjmtsu+v3VPhX5IJQUiDWwBJ99UnnhQOycxnd
-         YIiKPkzT8xTu0nw59YHRFCJoLjM+k86rGrgKnVWtH0mGpQrRdTRJeWTsIkaKvCYHEX7l
-         DpY6b2sL2NmAZMcMR/gEhzXXSL7Npfu9HPM4IIoo8/m8UlXMhiof6scg891FbI0pi+MQ
-         eZ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUb4fKxfRKaPl+1Ui+oxj+FKseBUjwhgNlGh52CRxwCrwy/GQTmP/MdmWplk0DQGsfQqvqmJVl5ocxgsA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmn/RVzbWt8N2z4KyDQ3COmbPU84Xe2F19oUPSkxC6pT2sRxiR
-	mz+1AvfiRZxijk7qiXy0q3J8XJ18ueR7eB1zeZaA6Xclbiv8iE4jPxoHikCqAGkn2Z2iy+ypJhV
-	qoftwquR7X3okp/0iw1oiEMm3O9Kc7nA=
-X-Gm-Gg: ASbGncsAlUjJDsDRTUiTyrYwIPwMaJVp8WHeudklmlC0oT9Z7kTzqOE8/UrBLi4XQZz
-	ILTkyj5A79b+uustgeXOAqC+FK+AHMmvHehRKsgFi4sFVsqwXQIUePB+NfSDQOcX2T0+jZkAOl9
-	YLpWCvTx6ME9TS7rZFoEFTEW7XP62fHok4V88KtfeUoeOslcrK1RTDuL0xCBEHc4qbGuJrZBOBR
-	7pfNNAPrwErM3OG8zFOhlji+J0L0BXSHj+xefnrSLDHVcvlPxGuh1Y5uVY+9lzXvCzORJk=
-X-Google-Smtp-Source: AGHT+IHc8wnLSC3QKPaNCjZkhPEnAZ8Y/+7SK+LNIP9wQWMucLG9PhpZ4JxKAADqY3Ze08e24Vac7MAoxfivyy3iyM4=
-X-Received: by 2002:a05:6512:124b:b0:595:9d86:2cc7 with SMTP id
- 2adb3069b0e04-598853c1be6mr3876881e87.39.1765255118790; Mon, 08 Dec 2025
- 20:38:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDNVubnu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A1AC4CEF5;
+	Tue,  9 Dec 2025 05:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765259628;
+	bh=z+m0utOd2YnpOXXxw6CT1KiBiBPO3m93BrS90rijNgU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DDNVubnujiykhrzYXvr80WmV8f3bm3dgue6tBsXXGSQfXrdJX7pCOlhK75QSBif0G
+	 rgJwKBh+u9UnyxUeCZlbYXwR/InOAT8QqFeMELUPR+B62+vitLTuQKXTJ+NtkxY+Fd
+	 8YYG/A9ThLkdnqkiQGQ5w753H19nljApdosTkEDmJevhspQk1YRw++vBCozlQnv3rW
+	 0y5Xy7kTS9uyG2Yo2QPTDsFR5xmHfzAHyRiNm1W5u95fgguBOqX8SzzVn1im03HZy4
+	 MTj8u/kK1gZUsavbL8qFyN7WpkXrB8+RxVwTbuGxftDueCMY2ZNvGTw9iQbaEZZzT/
+	 u+AyZ2J9g8d8Q==
+Message-ID: <83142b0c-0743-4a23-8846-e9f5e72a7677@kernel.org>
+Date: Tue, 9 Dec 2025 06:53:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731-pci-tegra-module-v7-2-cad4b088b8fb@gmail.com>
- <20250926212519.GA2268653@bhelgaas> <CALHNRZ-1sLDz7rSO97tWFeRzgP4rGo=winc7ZsANtAtQkU+pFw@mail.gmail.com>
-In-Reply-To: <CALHNRZ-1sLDz7rSO97tWFeRzgP4rGo=winc7ZsANtAtQkU+pFw@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 8 Dec 2025 22:38:27 -0600
-X-Gm-Features: AQt7F2pvGcZWndtbfMMeJ1f-6NSlT5r1quLqId4BydBljPNcuT6AVY1N-3SAoqM
-Message-ID: <CALHNRZ8JBMQRBXeO2cx11UJ2Ag6vzkuOj8Dg5BnYke8b41_AeQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
+ <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com>
+ <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
+ <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
+ <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
+ <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com>
+ <99ca4992-5736-417d-854e-379542549bee@kernel.org>
+ <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com>
+ <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
+ <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
+ <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
+ <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+ <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com>
+ <CALHNRZ83Q2Ha8VYoWAnqoCZQ=Fd9rtVRVLwRFxAY68ePQ29GHw@mail.gmail.com>
+ <29cf2c16-3a0e-42c5-a083-16f77ae5d09a@nvidia.com>
+ <63be3373-1ab4-4aa4-aa7a-0175727aa9a3@kernel.org>
+ <CALHNRZ83EcVnyBYADsuXtMu9omBd8WW+7reyb4GX8FfJ4sOcyw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALHNRZ83EcVnyBYADsuXtMu9omBd8WW+7reyb4GX8FfJ4sOcyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 1:53=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
->
-> On Fri, Sep 26, 2025 at 4:25=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org=
-> wrote:
-> >
-> > [cc->to: Rafael, Daniel, any feedback or ack?  Would like to resolve
-> > this (part of Aaron's series at
-> > https://lore.kernel.org/r/20250731-pci-tegra-module-v7-0-cad4b088b8fb@g=
-mail.com)]
-> >
-> > On Thu, Jul 31, 2025 at 04:59:25PM -0500, Aaron Kling via B4 Relay wrot=
-e:
-> > > From: Aaron Kling <webgeek1234@gmail.com>
-> > >
-> > > Add export for tegra_cpuidle_pcie_irqs_in_use() so that drivers like
-> > > pci-tegra can be loaded as a module.
-> > >
-> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > ---
-> > >  drivers/cpuidle/cpuidle-tegra.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidl=
-e-tegra.c
-> > > index b203a93deac5f378572be90e22c73e7417adb99e..aca907a62bb5de4ee4c71=
-c1900eacedd4b90bc0a 100644
-> > > --- a/drivers/cpuidle/cpuidle-tegra.c
-> > > +++ b/drivers/cpuidle/cpuidle-tegra.c
-> > > @@ -336,6 +336,7 @@ void tegra_cpuidle_pcie_irqs_in_use(void)
-> > >       pr_info("disabling CC6 state, since PCIe IRQs are in use\n");
-> > >       tegra_cpuidle_disable_state(TEGRA_CC6);
-> > >  }
-> > > +EXPORT_SYMBOL_GPL(tegra_cpuidle_pcie_irqs_in_use);
-> >
-> > tegra_cpuidle_pcie_irqs_in_use() looks like a workaround for a Tegra20
-> > hardware defect, and having no knowledge of typical Tegra20 systems,
-> > my questions would be "Why do we even bother with this?  Should
-> > cpuidle-tegra.c just disable CC6 always, unconditionally?  The whole
-> > thing, and all of include/soc/tegra/cpuidle.h, looks like it might be
-> > more trouble than it's worth."
->
-> It's been almost a month again with no responses. Does this have any
-> path forward that doesn't include signoff from the cpuidle
-> maintainers? It's been over four months since they were first asked to
-> look at this, so I presume there will never be any response.
+On 09/12/2025 05:26, Aaron Kling wrote:
+> On Sat, Nov 22, 2025 at 6:01 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 21/11/2025 12:21, Jon Hunter wrote:
+>>>
+>>> On 12/11/2025 07:21, Aaron Kling wrote:
+>>>> On Wed, Nov 12, 2025 at 12:18 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>>>
+>>>>>
+>>>>> On 11/11/2025 23:17, Aaron Kling wrote:
+>>>>>
+>>>>> ...
+>>>>>
+>>>>>> Alright, I think I've got the picture of what's going on now. The
+>>>>>> standard arm64 defconfig enables the t194 pcie driver as a module. And
+>>>>>> my simple busybox ramdisk that I use for mainline regression testing
+>>>>>> isn't loading any modules. If I set the pcie driver to built-in, I
+>>>>>> replicate the issue. And I don't see the issue on my normal use case,
+>>>>>> because I have the dt changes as well.
+>>>>>>
+>>>>>> So it appears that the pcie driver submits icc bandwidth. And without
+>>>>>> cpufreq submitting bandwidth as well, the emc driver gets a very low
+>>>>>> number and thus sets a very low emc freq. The question becomes... what
+>>>>>> to do about it? If the related dt changes were submitted to
+>>>>>> linux-next, everything should fall into place. And I'm not sure where
+>>>>>> this falls on the severity scale since it doesn't full out break boot
+>>>>>> or prevent operation.
+>>>>>
+>>>>> Where are the related DT changes? If we can get these into -next and
+>>>>> lined up to be merged for v6.19, then that is fine. However, we should
+>>>>> not merge this for v6.19 without the DT changes.
+>>>>
+>>>> The dt changes are here [0].
+>>>
+>>> To confirm, applying the DT changes do not fix this for me. Thierry is
+>>> having a look at this to see if there is a way to fix this.
+>>>
+>>> BTW, I have also noticed that Thierry's memory frequency test [0] is
+>>> also failing on Tegra186. The test simply tries to set the frequency via
+>>> the sysfs and this is now failing. I am seeing ..
+> 
+> With this patch dropped from -next, what needs to happen to get it
+> requeued? I gave an analysis over two weeks ago and have seen no
+> response since.
 
-It has been another month and a half without any response. Is there
-any kernel policy for handling completely dead subsystems? Can the
-maintainer of -next sign off? Can it be sent directly to Torvalds? I
-have been trying to get this merged for almost 8 months now. And the
-majority of that time has been waiting on one single ack for a trivial
-one line change that wont affect anything outside of this series. This
-is seriously ridiculous.
+Hm, I did not see the root cause identified, so maybe I missed something.
 
-Aaron
+Anyway, I am waiting for the patchset to be retested and resent. And
+testing MUST include kernel development process rules, including how
+patches are taken - see maintainer soc profile. Any dependencies must be
+clearly marked.
+
+Best regards,
+Krzysztof
