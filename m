@@ -1,141 +1,209 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672A12C236B
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Dec 2025 04:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D13B8D63
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Dec 2025 04:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765254390; cv=none; b=qIXfTozikpmwCQs3ZN+U7R50GYTS1F9UCwKFpcSsJDXGlvAw8le5G33tkLpth/Lwh09w9uUli5ukyE+w1fosZhfek6QkLCIVPk3i1RmEj2TzQRsZHzVPKENq4kLWSAVK0GMqmL7B3pNO7dou7H7c07SIDWH/Yqox4Tqgbnry0zY=
+	t=1765254465; cv=none; b=f/cNRYTg8TT/cEHiAfXwFvTgI8sSMziM20k2wFVvUwwh6Q1SycR3qdeDIKVFXIhzA1yIDe5ong7zoj/clNVOd3T9/CbYUt5624Wgh2+2BtHlAjAEtQkwSdjsuf1qKom5Ss2m0nR0Ep+JTBt/UsrU+TeUjHCPoHotUC30k8JbtrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765254390; c=relaxed/simple;
-	bh=4QNfQT+yaSWc9HC3z84t8OAr2py9WRAhBnkZqk0vEH4=;
+	s=arc-20240116; t=1765254465; c=relaxed/simple;
+	bh=Cbqrmcc54drJXoEx9wYOJfemeR+eB7sGSu4BM2rb9Aw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D6Mbg4zJZsajWfQTaY19SHSUbiynVe/MY6/IMdbOf+C9zlJoskJNRm5xViqE/StzjUA9bQJ8IA8ValSjo1bIR1gyf+OcZBbmxXh6Bo2u8SI8DudeXsNHoAk4CPyEm+pRxE9QoBLiu73QN0mFvjpFMDJKFbFFsq8EA8SQqfUXknQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mdKdbvI8; arc=none smtp.client-ip=209.85.167.49
+	 To:Cc:Content-Type; b=XNYrbrTts9tYkN0yRu9w1/O6slZo+KzBELoujDuZDsX69s3TYuPp6AlGLEOR8gR7vsXRhenqOn6RltXbkQAUl4YdGPYT/ZAuIusuC/M3/mLQEE/2qZipJFKm7W6ns8KhQ+VrcK7LTEx9htLcqHJSfEfpvyMw+Z9zgOuJyX7NWu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRkpHss2; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdKdbvI8"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-597d712c0a7so5483286e87.0
-        for <linux-tegra@vger.kernel.org>; Mon, 08 Dec 2025 20:26:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRkpHss2"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-59584301f0cso5631469e87.0
+        for <linux-tegra@vger.kernel.org>; Mon, 08 Dec 2025 20:27:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765254387; x=1765859187; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765254462; x=1765859262; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4QNfQT+yaSWc9HC3z84t8OAr2py9WRAhBnkZqk0vEH4=;
-        b=mdKdbvI8Yk2rfMLD3tPLnJudt6MMA7IBoXOviqbTKJzz4pZl4T5lE0nyvMib8MdjWd
-         jriiucdHCgYb0uZL93ZNsUcJkXQqVEiYx4j6cHEiQR4UkEdtDQtz786W9eQklO+SKvMI
-         bQNdVBSIoQZ0AyFWI6o7KVL3sQi8trEIxpM6ue83AYwFWwm9hgpUXYJncsdK2BJMQeer
-         7mfgWFGQsBsyfXBuXR9oPax4Cg0FX9ixKeiMQp8Fg0z9c23twqcqMsL6bkZZGaBQUPOI
-         Nqenlzxa+f0qI5v+QhY6h0sqHDjzsgMti2gYx4n+FZuRq2cLjwZ/Dsfc8MGva9/w1Ggf
-         +AVg==
+        bh=F4WpmHTbKcifGYAFFryKnbXtddGIYXrVx0U5IkY//qM=;
+        b=BRkpHss2EiFSbMQ6oNoNAqoPK6KEas3tIV1MgM2A0XQ0WQav7ZYZomnnyugad1lex0
+         5vckjsb1sVSVsD8fEv69xMS6OlUs1vPdlnfXI8aDgraUZFZRfyfe2oxKzFKGCmaaCoL4
+         kiI5urbcuUzevFZuPqceWd0Gf0g0cRbgv00gU66ogNbT/HnA8wHDdSkyUcoAFwDowBJQ
+         rupvmY0p7a2Kt5Mn0nDK/k0jeSFW0oub/jYSo9/wyu7dgGeKEKhAhIUbkXcm4dkBvLv8
+         qOWTZXpnFZw2rZ7S/gIbJqdLWioL1iiMW+py/TIvVo2FWpY5+hVjayIGmpHsNMweCd6w
+         nPvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765254387; x=1765859187;
+        d=1e100.net; s=20230601; t=1765254462; x=1765859262;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=4QNfQT+yaSWc9HC3z84t8OAr2py9WRAhBnkZqk0vEH4=;
-        b=B5fyyTq3byO0ogEAxwcuehI204OTYQeItm0hY6vDvgXFeJZdJrlzVULlIVUY5caKC2
-         My+bBd1gF4xHJ8rG3vbSg1hg5XeUiaLr8kExz7iFVhpG6/4jIdd67lQdMRKrj+FreUvD
-         KQL9uZQpGpvZWBny5Eo3pgJLNcG+ic7aJnBxyIBllJ52XDI+cLuzunhIBq1aVcUkAPaZ
-         4mN9iWNMPYc1irmtNeiRX1KSCyv1fN6QQAYXhYg8Wl6O1MlDUSEUD4vks7oNPHHoP8+y
-         t7lmPHmQ1Mvc17vgAg4oK0Uqzui+YxHoAkHRMPLeyB+aAZc0iGmmd1i5woMEI9Vo5BDd
-         iGNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWanrMKKiPV3Q0ljycBauGM8cVAc6W3bF7MSBn5ascYG2R/iQiB8s7HucWpSSNdVqb4srqbkxOHqjX7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywqCm2AEuPWWlvh6bTWQBlVDU/6F16bwIsXQk2kcZehYxbGrYm
-	pYfHmGNtEsYkoOn4bW37NeRcSWHVmKpbaIFTf5ZZlDgEzjmjMRSftKJJF4QBjm+I7xy+Npnmw6T
-	IgPOv+hXMkP7DNCc4JRmDQCOhpXVhI2c=
-X-Gm-Gg: ASbGncvOMpMf9fQCcg+nDHnUzRS9IWmI6eVW7UJd7ab1T++S/KA5h7IswMVnBEhva+s
-	irBkjo0N+45AudmJCib7/7ZT99wd9tqMuE5Hl15aQH4uxd0Ee5sL03sm5weDa5ULMzNjJs6fhRq
-	kLE8t45BbeoqJSshRMskryrwc7Zg426cMiGQyuaa/CX7oKb78qskaGZMbQOD3IpXjnuPy4rOKkD
-	9antVGUkZbzeTdHmOB5nBaemUYArj9AJEL2eYQUJiPr1pAslBSYZ8Zio7tWKKw1J8rz4Yg=
-X-Google-Smtp-Source: AGHT+IFR8801MDmyrZ18WOguOY+Gn0UIvPBqOLGDs22BI9QURUqSD4rNMEHzVCfSwWAzDWvmrLJoAz9Gyfs5PBTeLDo=
-X-Received: by 2002:a05:6512:3d9e:b0:577:318a:a1c6 with SMTP id
- 2adb3069b0e04-5987e8bf1cdmr3462912e87.23.1765254386315; Mon, 08 Dec 2025
- 20:26:26 -0800 (PST)
+        bh=F4WpmHTbKcifGYAFFryKnbXtddGIYXrVx0U5IkY//qM=;
+        b=wSBKKEbUZypQJm2gSvtn4D1HWYNw8zs0X5r5Vxwa9lUA8mN7ZyjJ5PnqWgPJbWf92I
+         w1ykVzOHcYjq8FeEYbb2fk9ud2fHRQE0UETmxIGKQY/5EDAF380TOJ8yx3xgH40GMhxY
+         A0gPrhcLBGPacfqcq/DTq2Nksre5hrk9tesdGdMw3jH/zaNpbK8AIeqGFrlRQOjdoQnX
+         DFXr3Eig2iPRxIadQNU58TO9M8Tth7LC3Xu+coZ0OzeiwDEj+6grak4/wwnsV/oM+pSS
+         5IQXBjbtM9sv0fssaeOVVxMKAMkXavWCnF7/xjj2vLhuC9KUHyBmQVG/NCbM9vE5pqaA
+         diXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWd7HZKK/dD8AWggSCOLQXfwxKA0eINgZiy0MP7+d9KLXi2YX7EoefGCYIxxgWdgOTIU1tHr6P6UMb/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZa7AC/O/96Ld/OdYGOS8CBPV/9hEk4zbSLQLQgRifDu3utceL
+	dsfjPvjsct4zyTv6pI2uHovPU1BTkPYVLRlEdfOj4DBCNIOtkX8ThY9w7eTINTCR5fLnnaigs0t
+	3TclbJB3dDyN0BvLZ5MxV0d0mSeWVJuY=
+X-Gm-Gg: ASbGncvYlG8Od5WohTIltAHRlK82qHwiIsLXNCaktDHZ9k0EvuBWJPOZ5sDSDg2Ehx/
+	tmnOvZM3ZGRHO2TDVY1LaNQVhe1gZyKEXnoMhjQxQIhrlrm9isJs/yuadHaICaxFQ1dyK+O4Nxt
+	VjpbUrLfBqOhxgue7MDaWenNLMLIm9U3TKrsD1J9p936t3NHyY67EwobUrpynaVcnPjjLBPi7D8
+	aYam14AAyQW+iZMpKYuidLLMWjRbjU81Z1hPt1INudtTrJMXbLVULMN1M7em0YYfGyLpGc=
+X-Google-Smtp-Source: AGHT+IGvfbU31rATrFW7yKgrfprgR+nt3X9seL3vdzkCriOND0amwqexHU+zTbNxhLhoihgc9v5Fmj1r9zqeH+vbdrk=
+X-Received: by 2002:a05:6512:3e04:b0:595:7e73:995c with SMTP id
+ 2adb3069b0e04-598853b91f3mr3260088e87.44.1765254461935; Mon, 08 Dec 2025
+ 20:27:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
- <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
- <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
- <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com> <99ca4992-5736-417d-854e-379542549bee@kernel.org>
- <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
- <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
- <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com> <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
- <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com> <CALHNRZ83Q2Ha8VYoWAnqoCZQ=Fd9rtVRVLwRFxAY68ePQ29GHw@mail.gmail.com>
- <29cf2c16-3a0e-42c5-a083-16f77ae5d09a@nvidia.com> <63be3373-1ab4-4aa4-aa7a-0175727aa9a3@kernel.org>
-In-Reply-To: <63be3373-1ab4-4aa4-aa7a-0175727aa9a3@kernel.org>
+References: <20251021-t210-actmon-p4-v5-0-4a4dbc49fbc8@gmail.com>
+ <20251021-t210-actmon-p4-v5-2-4a4dbc49fbc8@gmail.com> <56aed0ec-b104-4612-8901-3f6f95e0afab@nvidia.com>
+ <CALHNRZ8Hc+kqWVCjTZvtJ+hBrsgpjO9EySOQFfLaLHvt9P_reg@mail.gmail.com>
+In-Reply-To: <CALHNRZ8Hc+kqWVCjTZvtJ+hBrsgpjO9EySOQFfLaLHvt9P_reg@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 8 Dec 2025 22:26:15 -0600
-X-Gm-Features: AQt7F2qHv1xU42NvH4dUdczccSFHNDISNqkEzdZv_IWSUPDeDRC4VEc-RTlPQG0
-Message-ID: <CALHNRZ83EcVnyBYADsuXtMu9omBd8WW+7reyb4GX8FfJ4sOcyw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+Date: Mon, 8 Dec 2025 22:27:29 -0600
+X-Gm-Features: AQt7F2oCKVfzdOHI88ZZ-GHLP6TDXGTHzetFCKsT_okj-D0HByOTmpoRN0mC8y4
+Message-ID: <CALHNRZ8qnVGu130Yxsf2e_6GHJj13H+_gA0T_JTNXT0xx7NyjQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] arm64: tegra: Add interconnect properties to
+ Tegra210 device-tree
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 22, 2025 at 6:01=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Fri, Nov 21, 2025 at 1:32=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
 >
-> On 21/11/2025 12:21, Jon Hunter wrote:
+> On Fri, Nov 21, 2025 at 5:24=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com>=
+ wrote:
 > >
-> > On 12/11/2025 07:21, Aaron Kling wrote:
-> >> On Wed, Nov 12, 2025 at 12:18=E2=80=AFAM Jon Hunter <jonathanh@nvidia.=
-com> wrote:
-> >>>
-> >>>
-> >>> On 11/11/2025 23:17, Aaron Kling wrote:
-> >>>
-> >>> ...
-> >>>
-> >>>> Alright, I think I've got the picture of what's going on now. The
-> >>>> standard arm64 defconfig enables the t194 pcie driver as a module. A=
-nd
-> >>>> my simple busybox ramdisk that I use for mainline regression testing
-> >>>> isn't loading any modules. If I set the pcie driver to built-in, I
-> >>>> replicate the issue. And I don't see the issue on my normal use case=
+> >
+> > On 22/10/2025 04:13, Aaron Kling via B4 Relay wrote:
+> > > From: Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > > Add interconnect properties to the Memory Controller, External Memory
+> > > Controller and the Display Controller nodes in order to describe hard=
+ware
+> > > interconnection.
+> > >
+> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > ---
+> > >   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 +++++++++++++++++++++=
++++
+> > >   1 file changed, 24 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/bo=
+ot/dts/nvidia/tegra210.dtsi
+> > > index 6da10db893add44a98fde1666c382511212fd43c..2fcc7a28690f7100d49e8=
+b93c4fb77de7947b002 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > > @@ -202,6 +202,19 @@ dc@54200000 {
+> > >
+> > >                       nvidia,outputs =3D <&dsia &dsib &sor0 &sor1>;
+> > >                       nvidia,head =3D <0>;
+> > > +
+> > > +                     interconnects =3D <&mc TEGRA210_MC_DISPLAY0A &e=
+mc>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAY0B &emc=
+>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAY0C &emc=
+>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAYHC &emc=
+>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAYD &emc>=
 ,
-> >>>> because I have the dt changes as well.
-> >>>>
-> >>>> So it appears that the pcie driver submits icc bandwidth. And withou=
-t
-> >>>> cpufreq submitting bandwidth as well, the emc driver gets a very low
-> >>>> number and thus sets a very low emc freq. The question becomes... wh=
-at
-> >>>> to do about it? If the related dt changes were submitted to
-> >>>> linux-next, everything should fall into place. And I'm not sure wher=
-e
-> >>>> this falls on the severity scale since it doesn't full out break boo=
-t
-> >>>> or prevent operation.
-> >>>
-> >>> Where are the related DT changes? If we can get these into -next and
-> >>> lined up to be merged for v6.19, then that is fine. However, we shoul=
-d
-> >>> not merge this for v6.19 without the DT changes.
-> >>
-> >> The dt changes are here [0].
+> > > +                                     <&mc TEGRA210_MC_DISPLAYT &emc>=
+;
+> > > +                     interconnect-names =3D "wina",
+> > > +                                          "winb",
+> > > +                                          "winc",
+> > > +                                          "cursor",
+> > > +                                          "wind",
+> > > +                                          "wint";
+> > >               };
+> > >
+> > >               dc@54240000 {
+> > > @@ -217,6 +230,15 @@ dc@54240000 {
+> > >
+> > >                       nvidia,outputs =3D <&dsia &dsib &sor0 &sor1>;
+> > >                       nvidia,head =3D <1>;
+> > > +
+> > > +                     interconnects =3D <&mc TEGRA210_MC_DISPLAY0AB &=
+emc>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAY0BB &em=
+c>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAY0CB &em=
+c>,
+> > > +                                     <&mc TEGRA210_MC_DISPLAYHCB &em=
+c>;
+> > > +                     interconnect-names =3D "wina",
+> > > +                                          "winb",
+> > > +                                          "winc",
+> > > +                                          "cursor";
+> > >               };
+> > >
+> > >               dsia: dsi@54300000 {
+> > > @@ -990,6 +1012,7 @@ mc: memory-controller@70019000 {
+> > >
+> > >               #iommu-cells =3D <1>;
+> > >               #reset-cells =3D <1>;
+> > > +             #interconnect-cells =3D <1>;
+> > >       };
+> > >
+> > >       emc: external-memory-controller@7001b000 {
+> > > @@ -1001,6 +1024,7 @@ emc: external-memory-controller@7001b000 {
+> > >               clock-names =3D "emc";
+> > >               interrupts =3D <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+> > >               nvidia,memory-controller =3D <&mc>;
+> > > +             #interconnect-cells =3D <0>;
+> > >               #cooling-cells =3D <2>;
+> > >       };
 > >
-> > To confirm, applying the DT changes do not fix this for me. Thierry is
-> > having a look at this to see if there is a way to fix this.
 > >
-> > BTW, I have also noticed that Thierry's memory frequency test [0] is
-> > also failing on Tegra186. The test simply tries to set the frequency vi=
-a
-> > the sysfs and this is now failing. I am seeing ..
+> > I am seeing another failure on -next for Tegra210 and bisect is point t=
+o
+> > this commit ...
+> >
+> > # first bad commit: [3cad4369399a31277e9e20de723c665b30cba574] arm64:
+> > tegra: Add interconnect properties for Tegra210
+> >
+> > The tegra-tests [0] devices test is failing and after this commit the
+> > DRM device is no longer bound to the driver.
+>
+> Upon research, this one appears to be a bit more complicated. The dc
+> code in tegra-drm sets up an icc connection per plane to emc, I
+> presume in order to prevent underruns. If the icc path exists in the
+> dt, but the emc driver has not added itself to icc, then dc will
+> infinitely defer [0]. And per earlier statements on this list, the
+> regression test setup for Tegra210 does not pass emc training data
+> from the bootloader to the kernel, meaning the emc driver fails to
+> probe.
+>
+> I am not sure how to handle this. As far as I know, the previous archs
+> that the dc icc code was originally written for wouldn't ever have the
+> emc driver fail, because the untrained tables are in the kernel dt,
+> meaning that the driver could at least load that. On Tegra210 since
+> the dt tables were rejected, there's nothing for the driver to fall
+> back on, so it is possible to have a hard failure.
+>
+> Does anyone have ideas on how to handle this? To allow dc to report
+> icc bw on Tegra210, but not fail probe if the emc is missing? Making
+> the icc path lookup non-fatal isn't really an option.
+>
+> Aaron
+>
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/drivers/gpu/drm/tegra/plane.c?h=3Dv6.18-rc6#n778
 
-With this patch dropped from -next, what needs to happen to get it
-requeued? I gave an analysis over two weeks ago and have seen no
-response since.
+Are there any further thoughts on this patch? I would like to get this
+requeued as soon as possible.
 
 Aaron
