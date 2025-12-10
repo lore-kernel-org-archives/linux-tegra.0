@@ -1,213 +1,71 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBB630215F
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 08:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0801322537;
+	Wed, 10 Dec 2025 12:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765355519; cv=none; b=Z2pZwwkBM6/4FmT1T5R6tRewuv1S5c0SG5WvyBU35CMNSc06ge/D/LrdC6qV0wuhL+a8GhPqsDMYRFcKrQg2QhYhdZUWjp8ThIdt786DnHUWnHRolnHbq7BOELPnbGsIZ/czAg++Wb8t70o91ftnXhx2PufrFevfQVICmVn0slI=
+	t=1765370398; cv=none; b=Z4riaZPPc75Imltz8IkLaIUakvxUZLmmxiD5miGP6fcitGcDPaX9Nz2GJi8EeC2cM0rdMWjRYPm/4i2KkIiAO7Eo+SXVX2MNfCVunEsGRD7cnuZVzFjFzubHwvqNUb9TJoG7GLNbvaqlg7kRV3NHj3zVbu4sebLLYFt8wU+nu4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765355519; c=relaxed/simple;
-	bh=FFNspWcgr6JBh3jF6KiuWIJwLT9QVchWO/Z3r4hqr+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h1CiRMRYAYMhObZeKf78uq/5XVSV+egpFC1wUWiscA4u1LEAOWidWzaLZZBlgdrp8XlPQINasRdCKQecsGxvLZPVoOjkroRDFl1cp6LPJJbr1b79y9/InpDXBiW+RhZttJ61NGavmHHYGsPU9fuAJLapcWQDGCp1mOWKHA0BboY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cF0BEjQb; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cF0BEjQb"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b75c7cb722aso1054877166b.1
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 00:31:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765355513; x=1765960313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lSMdgZiYQlpcrCoz/a1I+Tk8d9M7yHxRNKGn/fSx/9c=;
-        b=cF0BEjQb+pTEHhzIg1eJMLMIX8DydObzAgCGq3MbMZONR3gBxvoTVTn18tW/DtS+BF
-         YJ6SQThIszXytIBMVK0xujqHuocRfFhNrvlRDYJ3kC8MGLNiuoJcpdms29NkFgK42wfy
-         EXdBwa8XRxpdmSkzApbEZHa+Dnumu5vnxFDxkCx3P2hxaU1dgtgUOxNuxb14HoP8VizS
-         TyvA6l24P4XBbHeNwdBnYvZjOBGzCb+vD5izgNO8JrFY0Ez7q6YpEcLzHrCKPlMHsWcw
-         z2koF1GtH3nj9p2fxVwViw0C2MmHAC6ZnuB+UOPQDbE89avAbYCLBkKd1sIOqSgFtRYf
-         cVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765355513; x=1765960313;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lSMdgZiYQlpcrCoz/a1I+Tk8d9M7yHxRNKGn/fSx/9c=;
-        b=gRggDne06/YPk9xZmo4J2D2wBT86j9ptEtJUGFqpj7EIgsLmh2Qpolu1x5F8jM2SSO
-         xcVzgiZm8Py1dhizU+UR9qpl0E9eVdmetcU7lNKEdlFkqOZaxkvZ2Xno3EOgqCLOEA9Y
-         XLHN/YPr1pcMMEtW/ECiPebSGBEux0xZdDjuO1ikQACGHOUQXXAImuPHMVS3SIdaPPkd
-         gFOdrTHdy5/BBOFa92BKkMGcxDfNHH8v54S6NP5EV05H88RKj4qCjUZKdiS4Xq2t6uX9
-         k5MJBiI552Dh+YBVUaQ6BpH1Vtaa/+rd6V3TXwRIwPQHx/tqvAZmqao5iY2l2FL27sp+
-         17VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAaTUN/WKhVbzrOQhljKEv02MeVTSKwtjn9rpjKt801UdscT5aHnbdhdXaYBKUBzfU/v7WVsLBnsM4uw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzypcGdyTSEaZwxywcvtKCRTfa114QCilZZZGoLFT1bT9SvHKGp
-	sLzcPv6eJO230wTNwfOsAMj+yHRheyAfMaJFS/5L1fAhlCvZ1sVLiqM7scBUeIMEOhE=
-X-Gm-Gg: AY/fxX4AMFD1wpvUdpxsIv6fSdYmNmjbZ/bD6p+oWVfXpLW94MCRPOSW3j0g9EmH25h
-	95CdtKp/ZQ2B+1wmdkUcLAIQcHdSaUG9CN8Lgy2L+NdFXH4hFw+TA+eEavFvijBc4mFBAiMQZYI
-	lx3dUngZcEP8oteAcOe50pJKlg9pYgtipRRBc7f5UQkVYQMWRNQXY+3hNYXTUgWdj9dmQ0oA1HA
-	0GYcizFxX1K5951Cj5cMeiq0X/VhtAWVrSNybyUoleswTp4m3LrPi+z967BBDeCHAcRAwoozhb1
-	pmcDjl2Nl8EteIYlawRKl9vJWbV/pVpf8oS6Wbck8xWtuW3pe1/qfyVk+aTWfSMHr6gh85a6Mft
-	5OJF8p7FouZbdHJf8lDFu8iDXhofYPsY2SFZuuwjXID1CDBhXm1s+4oXIePLc7UGaWN3jRTLJP8
-	lvVAftQDAIGFcd102Y
-X-Google-Smtp-Source: AGHT+IFYDRtX5PoiZPxafkMiANC8Xf6Bj78BEbFQEysHNafXsqKHXNdBL6htv855tq3hOMwvxyT2DQ==
-X-Received: by 2002:a17:906:dc89:b0:b7a:1b3:5e52 with SMTP id a640c23a62f3a-b7ce8245e92mr181408966b.17.1765355513484;
-        Wed, 10 Dec 2025 00:31:53 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b79f4975c56sm1602897366b.33.2025.12.10.00.31.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Dec 2025 00:31:53 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Akhil R <akhilrajeev@nvidia.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-crypto@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH 2/2] host1x: Convert to bus methods
-Date: Wed, 10 Dec 2025 09:31:38 +0100
-Message-ID:  <dd55d034c68953268ea416aa5c13e41b158fcbb4.1765355236.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1765355236.git.u.kleine-koenig@baylibre.com>
-References: <cover.1765355236.git.u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1765370398; c=relaxed/simple;
+	bh=ltoA8PAYbQchGv4Tq5FjVCH2RTUlYr/gKQZiFv2B4qs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qHkNujKvu8hyLKZtY8YYsbfxy26BZUDP+oo3X7nSIn01U+rsphXDglrqMLYtnV/EfBlqZbgAmu+5kOHUNftDa5QeU80TqIl8l7GApvwA9xU5fCIXheG2kNRVTSzAgb5WqYMsOsn8TTyRTVL05S3KLaULJIHCPQ+omugFFRjlkjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD58C153B;
+	Wed, 10 Dec 2025 04:39:48 -0800 (PST)
+Received: from [10.57.45.247] (unknown [10.57.45.247])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1E4D3F73B;
+	Wed, 10 Dec 2025 04:39:52 -0800 (PST)
+Message-ID: <e7c69e9c-6af4-468a-88ed-fb8829afb92e@arm.com>
+Date: Wed, 10 Dec 2025 12:39:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3411; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=FFNspWcgr6JBh3jF6KiuWIJwLT9QVchWO/Z3r4hqr+s=; b=owGbwMvMwMXY3/A7olbonx/jabUkhkxL/XeniljWpVlqZprUz387O3yFDZsen0Dv82P2G2Sm3 TlnKlbUyWjMwsDIxSArpshi37gm06pKLrJz7b/LMINYmUCmMHBxCsBEVC3Y/zu/fWz+PrXm6LS0 dE5ho5k693/XWU84d3BxsdDGBK8J1dxsNlGXf78pl87kPVPNdPVFGHN/poPqz/XF2R+y4+P+1Pm uF4y9sNcp+StnnJ+woIjkh4kejO9X8ru5rza4Jv51C38E74xrNc+9+s/5tdZ2eKV8MPe/cbB8iu cJA8ud7316C22vnJ8Va705o+iMduCiwGk7jKrzVOL++s14Lv+wt93cRPTHzfK2Ob1enG0Va8y73 AR/zb+W8Z1zSvTLS2YKRjzB/H1W97rMXDljNyk1tquedzktlBzCnO2smc3YUKHdeTDPcUruiQf6 sUVfGVMl1taKv/g0yShu35X6slxd4de/9vOe3K3QXAYA
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/3] iommu/arm-smmu-v3: Add device-tree support for
+ CMDQV driver
+To: Ashish Mhetre <amhetre@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>
+Cc: oe-kbuild-all@lists.linux.dev, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, vdumpa@nvidia.com, jgg@ziepe.ca,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, joro@8bytes.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, kernel test robot <lkp@intel.com>,
+ will@kernel.org
+References: <20251205065850.3841834-2-amhetre@nvidia.com>
+ <202512090331.QAFgb6vQ-lkp@intel.com>
+ <2bf7bb25-9a6b-42d5-b095-978f7bb81f35@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <2bf7bb25-9a6b-42d5-b095-978f7bb81f35@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The callbacks .probe(), .remove() and .shutdown() for device_drivers
-should go away. So migrate to bus methods. There are two differences
-that need addressing:
+On 2025-12-10 5:19 am, Ashish Mhetre wrote:
+[...]
+> Hi Robin, Nic,
+> We removed ACPI dependency in Kconfig but driver still depends
+> on ACPI for these functions. I will be protecting ACPIspecific
+> tegra241-cmdqv code under CONFIG_ACPI similar to what is done
+> in arm-smmu-v3 driver. Is this the correct thing to do or do you
+> have any other suggestions?
 
- - The bus remove callback returns void while the driver remove callback
-   returns int (the actual value is ignored by the core).
- - The bus shutdown callback is also called for unbound devices, so an
-   additional check for dev->driver != NULL is needed.
+Yes, when I commented that "depends on ACPI || OF" was functionally the 
+same as just removing "depends on ACPI", I didn't mean to suggest that 
+wasn't necessarily a genuine dependency still.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/gpu/host1x/bus.c | 67 ++++++++++++++++++++--------------------
- 1 file changed, 33 insertions(+), 34 deletions(-)
+I guess if you can wrap the ACPI-specific functions in a single #ifdef 
+block that's reasonable, however I do now wonder whether things couldn't 
+be factored out a bit more - if it's a standard DSDT/SSDT namespace 
+device, shouldn't there also be a corresponding platform device created 
+for it, which we could look up instead of delving directly into the _CRS 
+of the ACPI node itself? (not sure off-hand if there's a straightforward 
+inverse of ACPI_COMPANION()...)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index fd89512d4488..c0d7a9b5f07a 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -346,6 +346,36 @@ static int host1x_device_uevent(const struct device *dev,
- 	return 0;
- }
- 
-+static int host1x_device_probe(struct device *dev)
-+{
-+	struct host1x_driver *driver = to_host1x_driver(dev->driver);
-+	struct host1x_device *device = to_host1x_device(dev);
-+
-+	if (driver->probe)
-+		return driver->probe(device);
-+
-+	return 0;
-+}
-+
-+static void host1x_device_remove(struct device *dev)
-+{
-+	struct host1x_driver *driver = to_host1x_driver(dev->driver);
-+	struct host1x_device *device = to_host1x_device(dev);
-+
-+	if (driver->remove)
-+		driver->remove(device);
-+}
-+
-+static void host1x_device_shutdown(struct device *dev)
-+{
-+	struct host1x_driver *driver = to_host1x_driver(dev->driver);
-+	struct host1x_device *device = to_host1x_device(dev);
-+
-+	if (dev->driver && driver->shutdown)
-+		driver->shutdown(device);
-+}
-+
-+
- static const struct dev_pm_ops host1x_device_pm_ops = {
- 	.suspend = pm_generic_suspend,
- 	.resume = pm_generic_resume,
-@@ -359,6 +389,9 @@ const struct bus_type host1x_bus_type = {
- 	.name = "host1x",
- 	.match = host1x_device_match,
- 	.uevent = host1x_device_uevent,
-+	.probe = host1x_device_probe,
-+	.remove = host1x_device_remove,
-+	.shutdown = host1x_device_shutdown,
- 	.pm = &host1x_device_pm_ops,
- };
- 
-@@ -611,37 +644,6 @@ int host1x_unregister(struct host1x *host1x)
- 	return 0;
- }
- 
--static int host1x_device_probe(struct device *dev)
--{
--	struct host1x_driver *driver = to_host1x_driver(dev->driver);
--	struct host1x_device *device = to_host1x_device(dev);
--
--	if (driver->probe)
--		return driver->probe(device);
--
--	return 0;
--}
--
--static int host1x_device_remove(struct device *dev)
--{
--	struct host1x_driver *driver = to_host1x_driver(dev->driver);
--	struct host1x_device *device = to_host1x_device(dev);
--
--	if (driver->remove)
--		driver->remove(device);
--
--	return 0;
--}
--
--static void host1x_device_shutdown(struct device *dev)
--{
--	struct host1x_driver *driver = to_host1x_driver(dev->driver);
--	struct host1x_device *device = to_host1x_device(dev);
--
--	if (driver->shutdown)
--		driver->shutdown(device);
--}
--
- /**
-  * host1x_driver_register_full() - register a host1x driver
-  * @driver: host1x driver
-@@ -672,9 +674,6 @@ int host1x_driver_register_full(struct host1x_driver *driver,
- 
- 	driver->driver.bus = &host1x_bus_type;
- 	driver->driver.owner = owner;
--	driver->driver.probe = host1x_device_probe;
--	driver->driver.remove = host1x_device_remove;
--	driver->driver.shutdown = host1x_device_shutdown;
- 
- 	return driver_register(&driver->driver);
- }
--- 
-2.47.3
-
+Thanks,
+Robin.
