@@ -1,198 +1,219 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012054.outbound.protection.outlook.com [40.93.195.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682B117555;
-	Wed, 10 Dec 2025 04:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765340672; cv=fail; b=DyCEKZjJ4etMAF1JWjnLhYlOdlAf10KBUYYRYNDr+mgqMILnmVzF3YAgy4h9qKfFZAWgy8kgXT5raJHudyZfVPXNcfLl4e7X/PzvSNDAnfXCVnlzvfTkYhPZy78LjpFQh24DRJZPnOY8YXptqS/8Tld4EAc8W8b3y3980ZZSsJ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765340672; c=relaxed/simple;
-	bh=fUwP+1MpMwPYjKKzttGW9NUcAusDa3t1FdK0hIWquH4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oVzTMbe+DcQFZoN93877MxCMhB/CaHO6dRL/LRQA28H3NJNk/Ue2a1YXbAgaBMr6el5hB2IXBXgSCtn1Ac1nVuQ+91NaDuUe4YY1movExm8LBIaRw20B7Kse56PRZWS8XAz2g9eqrwRm0XzY44oE0rKPM0S9c7IDQD5YKIBH03U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=i2rNWhd3; arc=fail smtp.client-ip=40.93.195.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D51FBCA7
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 05:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765343211; cv=none; b=Ti8zFflnWUbRhv5h2qiEckEq3JMX2hHVSE1GSliYSCgUN1/fnoz+yR2ecG0jm7wUJ0qDy7peCZeWglzkUDO8EJptkaxcoQ9G7I4HioUK9RvknRSsqWhH1maTamNQnAS/ImfGxHn8h2ITG9qJdam2c0eZHufL+OPbzgwjdIaIAuk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765343211; c=relaxed/simple;
+	bh=J1mCaVxdHq5uB6Eo60OXrHAj6qDbeR6ep4VsMHoBUws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KYALldoC1qgKVMUHjbjIxFeAGTvvWMo+odMfSttR90P/v7chCZX9M4asyHOvBBWMkRAbXH1gj+xbU54zurRK8GVMhtkP6Bc4/gPGRYRkBsc48O16DtmncLrm7PIo1x+Zt4ho2icDkZOao18zS0+phoFAOMxi5i7OKChZMSli+HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFAhVD9r; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="i2rNWhd3"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lCJjexwvXV6pVqZyT/AC6kLQbJr95papvyk6JRrj4FytbS+9i9Tai7sG4fhkiSwj+op19UZtlSHplqnfLkr8kpvt/bP0ILUbRpUXcdbul6phmz2f350JiGQyx4eXK8SYwXAfx7hWHOVcWQEAZy8KGrFhtl+uo24WHTkTjcXMUpGQomU4cSPsETihqe0yeU0+Y5GMkRVaFFw5TDKAqixVchEJIMoOd7x+7eNoUdNBxYi6FJkmDz1fwGFw9rNT4b2gboCo0N8kQF/gZP/eEHIA061XZJe53Lnxacz9hI3ROJcsNqXgsnxXq1vfBRtM7afxgEN0KcMp7juLRnGOAl2Tgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vncjNtJJCAR4/egauwnF3Pozlj4AHgWV8yXtkqLhTDA=;
- b=At91ltLj6DxyRrDga75oT53Hd58u8QnjAdx/quCeXllOJUJ7dP/Me3yRFsfn/Td89b050nZi7TwblUSeVmTUsiS4QfwUdvG7Ek1mUJCDlUVq0dg4M0mcXihPrjSsSdcJqoQRQQUX5Osa1IYUDBELZS8ZHCQ2xpR5lg6AH4lFsym5nE+elHENt7yqNou4ZZ6fimsnynGu1BTl/sffhvBc6xOYP0J1WvSlQ05EZI+RLb9sBYA4d++UG8qN1r/65zli0rMsvqW+jLdaWAtZiclt0kxukFJw5y4e7Ui+jtkOmrzZhfgzDEGgTbsg7KRkZYgNlMcplAnc9MKKXzifQOVB4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vncjNtJJCAR4/egauwnF3Pozlj4AHgWV8yXtkqLhTDA=;
- b=i2rNWhd32xPmMR2HtHk/aPd/ICkHQhsrZWpCyVoRrF5Tf9Lctr7N8ivqVYCcls4Ne5rOh0hqprTuwe0DdutEbAQm74OSFw9HHVGX6q734lzADACmYkfkY3u7Nvf/IbogMhlb307UsU81N+AAVF7S7RG5topllHxzde1yBs0UhtNWkH5mfdnr6Sra1X3G79uTjKG6Si0tm0pcITi/RE+d00++sYPLw85pLKQP4slrgC68YnjOdfbzDwBBbkL/YFNfPFXAPJlhq8faybLCpJtvlae3pY5smaR/S3NgpjeT6SiYVEOGL9wlfDV+t4pK3sR7JKjiNQZtYxEBavX4D287ow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH0PR12MB8532.namprd12.prod.outlook.com (2603:10b6:610:191::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.7; Wed, 10 Dec
- 2025 04:24:27 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9412.005; Wed, 10 Dec 2025
- 04:24:27 +0000
-Message-ID: <e2b2288e-e8fb-484e-9675-39a0d14441fa@nvidia.com>
-Date: Wed, 10 Dec 2025 04:24:19 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: tegra210-quad: downgrade the log when fall back to
- PIO
-To: Guixin Liu <kanie@linux.alibaba.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
-References: <20251127130207.43754-1-kanie@linux.alibaba.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251127130207.43754-1-kanie@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR06CA0251.apcprd06.prod.outlook.com
- (2603:1096:4:ac::35) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFAhVD9r"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-37a2d9cf22aso2774801fa.1
+        for <linux-tegra@vger.kernel.org>; Tue, 09 Dec 2025 21:06:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765343208; x=1765948008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cILwPL07kmVMgs2qEzjNirTOJ78Hi53PQg9DcT1cFUs=;
+        b=SFAhVD9rhmIaazNZkSJe0Z/+wHcTGG5aAB7zdpJ2uDF01JlfqOPPDO//PccSIRiY9j
+         sHUs9qqQJtw1l8HuuKaJnDUgWQRRPf/+9PWlvjKJBAAeyIsPEn+XwCJ9THr+A35Q3yh2
+         lXC6N8r/5cQJ1DS3FB/QvB/5QxFtrkId36JcGCcgf8y0a7vuBCXk2tn0W4L6vAShdC0M
+         +P+XLiQssDMmAfDsGhNlAmSjd4nQdHFN3jOebGCCgSKUmxc/Wy5lApRkNlQN8oUNRilc
+         3tiPek6ro72lrCEgeBWCQ4ndAVuc+pENE0LgV2+o7PFd1akO4yni8O9pkk2z6Yo3pguk
+         p47g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765343208; x=1765948008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cILwPL07kmVMgs2qEzjNirTOJ78Hi53PQg9DcT1cFUs=;
+        b=VAFTkk5pi9TrpVUM/x7Xrhp7NrN0gcmi+mxXGQLbVsvfKSzZv7p7WyjoS5lys3L1rQ
+         2cpZ4NLfd4AIG/p5eSv2V3wuYhgOVwR0civCNLVlKcCEMAnoswbDrQWfkrHsolWxGwDP
+         WDHRV3MlqLgTqACZDMOYTij5zEbAiv93mIT4ojQ0d0rNjD6R5FakG9nhYRXB4s5DMYpV
+         CcCbY9KPmj5akO7rxFrwZKgtkEGxjF0CuKva5sa+8zkjSXKOlO38vei8xfBkoReWr0K7
+         goiWPDbg0YbCao3UD89mWsnOEsFMGfdS3U41XYM1ekFbv7tk31U9iviZBPGwW6MJf4cE
+         cphA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKqf6/9H0OAWYDRSfjDV4h88oqcZkywdz7smfG4W3W1YJpVqO10MVvV2xsU0T0kYzD26jvxisHL5M9bA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjenPWqMXgFkGqykU0BJFYHv5CinqOF/HTKDXhd/gsSvpI9XEV
+	3HnJ2/IsbTbvnj13ge4gh9mTG6C1J9tl2vtT2CUL7/ZDF/gdwRaxve8rS5V3rz8K0FjpAVo5Mjb
+	YFpqOrUbDycPXuqAnsH8MwOB8iNqJZFQ=
+X-Gm-Gg: AY/fxX7E+RYwHnlC4Uyw0AnNTZ1jnAd/RdJ/vF/+dhund/TgQnJfdS3B+WN15QtM2hT
+	vjj2kpOoCyCCPoWFONdNUXRFsm1CHE0sk8VjwKeAqBGguxrFcFap57TT8cbm9KusdoR0o/BH0GW
+	oJTOOumPL6to4LiMdaF6MuL+21JDVLEewD8bDRrRnzTCdOmAySab31yKDojxfqoLRuO9akkQIyN
+	zHt8Y5aZH+JdIkf6dzLkK3nSDLfATB7Hy+e/SvRSR4iMQIyJa3Prc06nkecU/M2INfVYVc=
+X-Google-Smtp-Source: AGHT+IEtD51pVgfyEoZs16zdlkS5zOCHps39l1VDJ6qAeRTKqL8udHWBgVhfQdit4f38nYtvHD+3Y4GH3SE3RhssnNo=
+X-Received: by 2002:a05:651c:1508:b0:37b:98d3:7bc8 with SMTP id
+ 38308e7fff4ca-37faa664722mr12420771fa.20.1765343207258; Tue, 09 Dec 2025
+ 21:06:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH0PR12MB8532:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ed8e6a9-4513-4307-2625-08de37a4014e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dHhHQldpcUhzQXArWDkxRldrUVZ3T0hndG5aR004NDVvL09BOXIreFI4N0tE?=
- =?utf-8?B?cDF6SGVpOHVncGVqTGRBbmFiZVBMUHhMb2xTTWVrcEx6Nis4ZVNYRlpadlJx?=
- =?utf-8?B?VTFyUGVwQ3BwT1RodUFkNWxvNDMrbXhpNXluV0Z2VUg4amY4bmVJSm9vMGJQ?=
- =?utf-8?B?KzR2c3BIclMydHk5OXBmSUFWQzgwREx0Z09ZMkMwRlMwcUVxZUdxeFFmZmpV?=
- =?utf-8?B?NXRsY3ZSbXR0bjRpME1XYXZHeWp4dWZ4UlJoT1NOT1VTbHNGd2FTSytoOEpQ?=
- =?utf-8?B?TUJ3TzFmR3kyM0FzUmlza0Q1d1ZKNjZYbUI4ZWUzY2J4SzJ2b0orb1dWaGtE?=
- =?utf-8?B?SWN3bzc1cEVEeXlVbzRsT1pYV2phU1lmUFFNOThMQ1djQlNmb0g2eUhlT29U?=
- =?utf-8?B?clBnMm1iTkV0ZFV3NHZxWTg2UUdzOTdwa1JRRG53djJ0dVlxTEtMa2Y4cVpu?=
- =?utf-8?B?WkE2Z0ZVUzIzWXZMTHhic1JpUHJBOXZ0aGlhMkVobmRMMklCUkNDajF1VXNH?=
- =?utf-8?B?R29waTZNZ2VKei9GWnZlQUozTVF4R1U2L2JMdDloTlloeFlZYkVqMVczYlBu?=
- =?utf-8?B?dVovVFYrSUhCVnJrSWEvQ2QraE9hUjdNVnRWNmN4QzArZnFxK2x5aUo0b1do?=
- =?utf-8?B?UVdlQ3dKcTVTOFdsbE5uWUszcXphSVIrRHB5SWZla3ZkbTB2dUowU3hRYjUz?=
- =?utf-8?B?QmlzNlRLeE9DUEVWZkVaQWtkR0NFYzY5TnNtSmNkYkZMZ0dZQlhBVFdjLzRI?=
- =?utf-8?B?U1RWNVFSNDVQTVJQNFc5UlRmQjk5WXlWKzYyTzBoNDh6UVlqSTg5MjJ2aDNU?=
- =?utf-8?B?VzJUdm9TbHBvN2Y1QW5mK0hwLzJ6NittL1Qzclp4N2tIM1dISEVYUDJST3g3?=
- =?utf-8?B?YStUQ3k0V0pNNDFNSTlVUG9yWHR2MFNHRDYrYjErOHhvQVJCYkV1M3hnU2tD?=
- =?utf-8?B?NjlESnBwalJCU0RRUVV2VjVNWFo2K05veStVQVVhTTNZbkt4V3BmTlJnaVpL?=
- =?utf-8?B?WnJhUDFGSDJzVndubGtTQzJySEQ1WWJXakRzdFkyS0F3QUtQNTgrdHFlS3N0?=
- =?utf-8?B?Nmx6MTZzeDd3Rk9TVHdxWnFrc2xiazBYQ0k5aFZZaGZ6T25jdnhCRncxR01K?=
- =?utf-8?B?cTQxQ0ovR3JrQ2drcmR3Y1pDNEUvMDd4VldkOTlCQTBWTWZ5UWZHTUc2UlZz?=
- =?utf-8?B?RGZadEx2WkgwV2ZTYkFlVGNabEh1QmxpRG51aU1ad1ZLWFR2T1NnSG5VN1cw?=
- =?utf-8?B?ZE9EZW5DcVRyZnZiOTB2eFkyMHlEd3Y0eFVnQXFXZHR6UEVCRmtvaDF2VDkv?=
- =?utf-8?B?MW55a3VibzVmRnhESFNqUHJCOVgwb1lKWXoxd3JFRDIvVG1JcVRUZWhUZU9G?=
- =?utf-8?B?a1ZvK0xxTW5PZG82ZHVIc2ZIL1kzRDFzYWJqb2cxTnl0SUxIdThtU3o2d0cz?=
- =?utf-8?B?QnpwQjNQU3ZnamNjVngzYVBNbm9pbzFJZk1NMWVHVi9sUkJOS2hsU0FKbE5w?=
- =?utf-8?B?RVFEYnM5ZWxyRU9TdU5PRVV0cEZ3Uk10NDFEV29odWFnRkY2elp4b21TNVpR?=
- =?utf-8?B?L3RkTTNVbWI0U0dPZTFUMjV4ZmM2YjZib21IVU9uWmZDL0pRSE5mTmcwSnov?=
- =?utf-8?B?VFNnQUM4VHNkeUdMUFBjaE9jVTQvekNzSE9oVmhYaDVXbGdscThZaExkaVpu?=
- =?utf-8?B?OUV6Q2VEZnpBY0hla1pCVU5GdHE3b3BoenJ2ODVpczJwLzRHRGJmMHE1eXJm?=
- =?utf-8?B?aVlBYS9xd3BhRmVQSEJFV0hnOVhBWEF0SitqTmJuWU42UXg4TEJROWpyMjd2?=
- =?utf-8?B?VjMxQ09rUFVaYTVjOTEvQXkyV2JMK0hzdjVIUU4zY1kvdXRZVkJ4cmt3bmR3?=
- =?utf-8?B?OUhXb0lYNTl3emRxaE8yOWNPbmZ6K2ZsTElvQmYyTXBIbnNMMzFGNDdrNHRG?=
- =?utf-8?Q?yXNMRKakp+TcE+yg+NOj4cj0smSGHsoF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGpoZWt5MGlMZ1QwMWJEdDZFbVZNdm1mSHErcmhRQ1VTaEE4R0VreGRVNzRo?=
- =?utf-8?B?MjJnTWR6amtmOHZ0M20xY3kwMnp1VzM4UnErMzdBbDlTMXZxTnI3eDZTVHo1?=
- =?utf-8?B?Q1JicVZKVlBiZFpMM3FJaFRTREl0aGlrQWNGR2RsWGQxQXR1NVZXbUpMT0Nw?=
- =?utf-8?B?T0ZWYkFuU0g4dG4zelpOdG5TNHZPWEszeE5wUW9hWUVBK2wyemtFSmV3NXJS?=
- =?utf-8?B?N3ZQNXFxUEdUM2dpUVh4bWtxYlFFQUFwaEMxd0t5TTBJVTVManRLbzJTSlZJ?=
- =?utf-8?B?NnhnR2ZndlBtbU5JWDFqSEZzZjhYU2IrbFd0SzlGWWZRNklwSUV3dEZsS2FW?=
- =?utf-8?B?dW9idnNyWkhJSGRsWUZsQTMxUWQzYmFFVjJCaTBUMjN3NXRKUHQxZ05WR3hl?=
- =?utf-8?B?enhFRUx4MHNVV3lJMExqNTFMZnJxVnBPYlJTbDJDZnRES3ROeDBkMVE3emQ2?=
- =?utf-8?B?R21lUDNoK2dJL2ljZml6OHdnRmtUVlMwa0hlSWVEcEc0WkYrMFl6RnZhNlhn?=
- =?utf-8?B?Nk44WkxYWFRkUmR6U2RyR3hRSnZpOWlNZytHN2dIQVpsdXNTNDlIUE1XU05X?=
- =?utf-8?B?M1liMDI2VFRaODBQV05CQm8xK3JMTXFNMzU2RWNpT2tDdmZ4ME9UbXE0YXdx?=
- =?utf-8?B?aWh6YmoxUXJrZFczU3pPY3lrWktMajhMclZUZjNWaVRVOW1JZEIzM3BEejZn?=
- =?utf-8?B?M3V6WTQ5YXJ6QmM5ZmxPL1AwaXJaeGNJMTY5eGhzUFgybG0wVkt3aU02aHdm?=
- =?utf-8?B?L2pLWUNjci9MVDlWL3FMMmRoYi82ckpHVHplNlJUUmJ5Z3hxd2hXSldCOXl2?=
- =?utf-8?B?dURWN0JzejF6TElBQzd1L1RVR3FXRjdwUiswVk9Td0dXSTEzYi9nZ0lPNjE5?=
- =?utf-8?B?amUyeTY1Q3lmaktNbjFiMkNMZWlxdzJ4N0U0d0tYbngxNXc5czIvWUdSVEZI?=
- =?utf-8?B?UlFUSk03WUFGQXkyREZkZ08yeFRqTUJqbUJIUEY3a2Zua1V3WlFnZDI4eXVL?=
- =?utf-8?B?dGhuUmNqMWdrbEh4cDVBdHFucXFvZHpDb2lrVW9UN1A0M2gvZ0I4S3JJd09v?=
- =?utf-8?B?QlVpSTcyN2lmRnZBM0tVTG42RzQwSXhKZUVZWHdZVlpZdXJ4MWxHeHNYMERt?=
- =?utf-8?B?Nm00QzhsOGw5Szg0M1NsZnpTU1NQVXZUNTN4Rmw4MDQray9pM2dqd01NTXdo?=
- =?utf-8?B?SUU0SWdJTGlYRTFxNklEd29WNnlyN2UzSGxMVnMxWG9TZTNVUzIxS0tvbVAv?=
- =?utf-8?B?L1l2UkFkS0F0UDV1eVNJYTlFaVllcGhPaWk4dEdRTTM5dm03NGZzY3A4ZHRz?=
- =?utf-8?B?OHR2a0EyNmw5T0ZYaHYxMkl5MnZwemhSQU9QNlJUMVcxdDBFWFlUZTZLYktU?=
- =?utf-8?B?eEVCUGxmYmtrWDJnWlFRWVBybUYwTXk0VmF1ZDFQb2tNeUpJSkdDLzd3N3Z2?=
- =?utf-8?B?Sk1mRjVKRWdKM3JWV2pneno0ZGNEM3I5UUJMek51T21lYThnM1h1MkhYK1g4?=
- =?utf-8?B?b2pyYnArT2dpNklNdEZZTnVjNnhHelFQaTR0OFcySkozZ3FxS05vRVVqQ01B?=
- =?utf-8?B?U0VocjBsY2ZoZVp1NWQ1R3lNSUo4RVQzZExJTUJuTUNtSmpwR3RiVWJIclQz?=
- =?utf-8?B?UzBhTmlGRGpMR0pBQ1lkRjI1U1FvSGxKclpNeHU2ZFhBVEZFTnFqQjJNdFh0?=
- =?utf-8?B?Zm1venJhUzBTcVlPWjZjUHRlbi9BRGV1bHhqN3pTR2M5M1NpY09taFdvempV?=
- =?utf-8?B?SHd4QUpkT2xPZWtFaHVCdXRMdmVqaFM0aU9GemdOYVBoSVRmeHRiL213L1Zo?=
- =?utf-8?B?TjREOW5wTHQ0MWdNVkhLREpVWE9meEl6N0ExWks4L2VUaVRHWFVMRWw4NEwr?=
- =?utf-8?B?Z1VUREN1RkZTZjJYZGNiemcrQ3c0RzV1NVlEeGNNTitUSzZRUkVtcXJCYzhN?=
- =?utf-8?B?Z2gxTXl2RUd0eDdpV0p3N2xzeDdZcVpzdGJKcC9oSnVjWXNheWp6dHNDYms5?=
- =?utf-8?B?eXV1RVRoL0VIaXgxSTJ3eHhNQ1IvVUpMQlQ3SWd2NkQ5RUVDaVI1Wis4N3Bh?=
- =?utf-8?B?QkplcndYQ2d1SmNhSlFRU282M3FST1c4dVl2cTU3eFd2NjRnZmdaSE8zYVJY?=
- =?utf-8?Q?4jjRX8lreoEimXJOtZ1Hd7mI0?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ed8e6a9-4513-4307-2625-08de37a4014e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2025 04:24:27.0422
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xfkeRKPBViJaV2fWmtWxTm0nROkBtptAfD9hpY/p57moTBNDrKWgrLsue2K3wg+OJbBLB37ZYvnF4xsSescSAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8532
+References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
+ <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
+ <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
+ <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
+ <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com> <99ca4992-5736-417d-854e-379542549bee@kernel.org>
+ <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
+ <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
+ <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com> <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+ <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com> <CALHNRZ83Q2Ha8VYoWAnqoCZQ=Fd9rtVRVLwRFxAY68ePQ29GHw@mail.gmail.com>
+ <29cf2c16-3a0e-42c5-a083-16f77ae5d09a@nvidia.com> <CALHNRZ9KAv-hL6+6Uiaz2O2odm1rqMnjNxNVPsbCOdqX15KTuw@mail.gmail.com>
+ <856447ae-4338-471d-a71f-a34aed749ac7@nvidia.com>
+In-Reply-To: <856447ae-4338-471d-a71f-a34aed749ac7@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 9 Dec 2025 23:06:35 -0600
+X-Gm-Features: AQt7F2p8HV3-IIxyA2es5G8USNAvQnuSmeVt0nyJ-nZ6wfxM32pOyTDXFbd106o
+Message-ID: <CALHNRZ9y0n6JNfeDUQgZoECkxo+We0_G8TP0H4advcSqrX86kg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Dec 9, 2025 at 10:08=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+>
+>
+> On 21/11/2025 18:17, Aaron Kling wrote:
+> > On Fri, Nov 21, 2025 at 5:21=E2=80=AFAM Jon Hunter <jonathanh@nvidia.co=
+m> wrote:
+> >>
+> >>
+> >> On 12/11/2025 07:21, Aaron Kling wrote:
+> >>> On Wed, Nov 12, 2025 at 12:18=E2=80=AFAM Jon Hunter <jonathanh@nvidia=
+.com> wrote:
+> >>>>
+> >>>>
+> >>>> On 11/11/2025 23:17, Aaron Kling wrote:
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>> Alright, I think I've got the picture of what's going on now. The
+> >>>>> standard arm64 defconfig enables the t194 pcie driver as a module. =
+And
+> >>>>> my simple busybox ramdisk that I use for mainline regression testin=
+g
+> >>>>> isn't loading any modules. If I set the pcie driver to built-in, I
+> >>>>> replicate the issue. And I don't see the issue on my normal use cas=
+e,
+> >>>>> because I have the dt changes as well.
+> >>>>>
+> >>>>> So it appears that the pcie driver submits icc bandwidth. And witho=
+ut
+> >>>>> cpufreq submitting bandwidth as well, the emc driver gets a very lo=
+w
+> >>>>> number and thus sets a very low emc freq. The question becomes... w=
+hat
+> >>>>> to do about it? If the related dt changes were submitted to
+> >>>>> linux-next, everything should fall into place. And I'm not sure whe=
+re
+> >>>>> this falls on the severity scale since it doesn't full out break bo=
+ot
+> >>>>> or prevent operation.
+> >>>>
+> >>>> Where are the related DT changes? If we can get these into -next and
+> >>>> lined up to be merged for v6.19, then that is fine. However, we shou=
+ld
+> >>>> not merge this for v6.19 without the DT changes.
+> >>>
+> >>> The dt changes are here [0].
+> >>
+> >> To confirm, applying the DT changes do not fix this for me. Thierry is
+> >> having a look at this to see if there is a way to fix this.
+> >>
+> >> BTW, I have also noticed that Thierry's memory frequency test [0] is
+> >> also failing on Tegra186. The test simply tries to set the frequency v=
+ia
+> >> the sysfs and this is now failing. I am seeing ...
+> >>
+> >> memory: emc: - available rates: (* =3D current)
+> >> memory: emc:   -   40800000
+> >> memory: emc:   -   68000000
+> >> memory: emc:   -  102000000
+> >> memory: emc:   -  204000000
+> >> memory: emc:   -  408000000
+> >> memory: emc:   -  665600000
+> >> memory: emc:   -  800000000
+> >> memory: emc:   - 1062400000
+> >> memory: emc:   - 1331200000
+> >> memory: emc:   - 1600000000
+> >> memory: emc:   - 1866000000 *
+> >> memory: emc: - testing:
+> >> memory: emc:   -   40800000...OSError: [Errno 34] Numerical result out
+> >> of range
+> >
+> > Question. Does this test run and pass on jetson-tk1? I based the
+> > tegra210 and tegra186 [0] code on tegra124 [1]. And I don't see a
+> > difference in the flow now. What appears to be happening is that icc
+> > is reporting a high bandwidth, setting the emc min_freq to something
+> > like 1600MHz. Then debugfs is having max_freq set to something low
+> > like 40.8MHz. Then the linked code block fails because the higher of
+> > the min_freqs is greater than the lower of the max_freqs. But if this
+> > same test is run on jetson-tk1, I don't see how it passes. Unless
+> > maybe the t124 actmon is consistently setting min freqs during the
+> > tests.
+>
+> So we don't currently run this test on Tegra124. We could certainly try.
+> I don't recall if there was an issue that prevented us from doing so now.
+>
+> > An argument could be made that any attempt to set debugfs should win a
+> > conflict with icc. That could be done. But if that needs done here,
+> > I'd argue that it needs replicated across all other applicable emc
+> > drivers too.
+>
+> The bottom line is that we cannot regress anything that was working befor=
+e.
 
-On 27/11/2025 13:02, Guixin Liu wrote:
-> When the machine boots using ACPI, Tegra cannot use DMA and falls back
-> to PIO. In this case, logging these messages as "Error" may confuse
-> users into thinking it is an actual error; therefore, these two log
-> messages should be downgraded to "Info" level.
+Let me try to iterate the potential issues I've seen stated here. If
+I'm missing anything, please fill in the blanks.
 
-Which Tegra device are you using?
+1) If this change is applied without the related dt change and the
+pcie drvier is loaded, the emc clock can become stuck at the lowest
+rate. This is caused by the pcie driver providing icc data, but
+nothing else is. So the very low requested bandwidth results in the
+emc clock being set very low. I'm not sure there is a 'fix' for this,
+beyond making sure the dt change is merged to ensure that the cpufreq
+driver provides bandwidth info, causing the emc driver to select a
+more reasonable emc clock rate. This is a similar situation to what's
+currently blocking the tegra210 actmon series. I don't think there is
+a way for the drivers to know if icc data is missing/wrong. The
+scaling is doing exactly what it's told based on the icc routing given
+in the dt.
 
-> Signed-off-by: Guixin Liu <kanie@linux.alibaba.com>
-> ---
->   drivers/spi/spi-tegra210-quad.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-> index 3be7499db21e..2189904b931d 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -823,8 +823,8 @@ static int tegra_qspi_init_dma(struct tegra_qspi *tqspi)
->   	tegra_qspi_deinit_dma(tqspi);
->   
->   	if (err != -EPROBE_DEFER) {
-> -		dev_err(tqspi->dev, "cannot use DMA: %d\n", err);
-> -		dev_err(tqspi->dev, "falling back to PIO\n");
-> +		dev_info(tqspi->dev, "cannot use DMA: %d\n", err);
-> +		dev_info(tqspi->dev, "falling back to PIO\n");
->   		return 0;
->   	}
+2) Jon, you report that even with both this change and the related dt
+change, that the issue is still not fixed. But then posted a log
+showing that the emc rate is set to max. If the issue is that emc rate
+is too low, then how can debugfs report that the rate is max? For
+reference, everything scales as expected for me given this change plus
+the dt change on both p2771 and p3636+p3509.
 
-This change would potentially hide an actual case where the DMA 
-initialisation fails when booting with device-tree.
+3) If icc is requesting enough bandwidth to set the emc clock to a
+high value, then a user tries to set debugfs max_freq to a lower
+value, this code will reject the change. I do not believe this is an
+issue unique to this code. tegra20-emc, tegra30-emc, and tegra124-emc
+all have this same flow. And so does my proposed change to
+tegra210-emc-core in the actmon series. This is why I asked if
+tegra124 ran this test, to see if the failure was unique. If this is
+not a unique failure, then I'd argue that all instances need changed,
+not just this one causing diverging results depending on the soc being
+utilized. A lot of the work I'm doing is to try to bring unity and
+feature parity to all the tegra socs I'm working on. I don't want to
+cause even more divergence.
 
-Jon
+What actions need taken for which issue?
 
--- 
-nvpublic
-
+Aaron
