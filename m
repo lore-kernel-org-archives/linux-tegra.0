@@ -1,64 +1,64 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566403019BE
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 08:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBB630215F
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 08:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765355518; cv=none; b=PCej5RqLOAWLqEiLNo0/XzeCeHg4kSkQGTzNgR9Zn55poOQvwoZqCKnXrEPYWna55zQBcBwuneT9NXYrbYO1Ugst7yYPIj0I/k3CiwuMF+dzDxJpGH+DsMvjhp+NwIshDLMEHYqRccIx9uq533gxzCvqS4Ugo8pSr97QsZ2B0+c=
+	t=1765355519; cv=none; b=Z2pZwwkBM6/4FmT1T5R6tRewuv1S5c0SG5WvyBU35CMNSc06ge/D/LrdC6qV0wuhL+a8GhPqsDMYRFcKrQg2QhYhdZUWjp8ThIdt786DnHUWnHRolnHbq7BOELPnbGsIZ/czAg++Wb8t70o91ftnXhx2PufrFevfQVICmVn0slI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765355518; c=relaxed/simple;
-	bh=LrLdovRzSzdNxTBUY5bVyUTgTkSb9V8DwRHPPe0GO8o=;
+	s=arc-20240116; t=1765355519; c=relaxed/simple;
+	bh=FFNspWcgr6JBh3jF6KiuWIJwLT9QVchWO/Z3r4hqr+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GsP2KymmnjpFNOLSFiq67mn18Fx1ffJ7EEunwGOupteDbJEZd9/WaUxDWIpuaX4klPuyIK9H+5IwJvrQn2gU7XLn5WSZ4+KyoCkN67KJFRVF7fi86gIxB7/0OG/kTOaJSOe+3rxy7MkZFYcPOPzZvH/TKgLnvQpgM7yfnOZjiGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=o7dt1r9s; arc=none smtp.client-ip=209.85.208.42
+	 MIME-Version:Content-Type; b=h1CiRMRYAYMhObZeKf78uq/5XVSV+egpFC1wUWiscA4u1LEAOWidWzaLZZBlgdrp8XlPQINasRdCKQecsGxvLZPVoOjkroRDFl1cp6LPJJbr1b79y9/InpDXBiW+RhZttJ61NGavmHHYGsPU9fuAJLapcWQDGCp1mOWKHA0BboY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cF0BEjQb; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="o7dt1r9s"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so11266029a12.0
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 00:31:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cF0BEjQb"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b75c7cb722aso1054877166b.1
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Dec 2025 00:31:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765355511; x=1765960311; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765355513; x=1765960313; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WSlXOGUPyH2wmzlmXTP6V9Rk2E/YQBY/7/JUKnpIt0k=;
-        b=o7dt1r9sZBHpQ7xP2PEScnWRDP/FPWGQ7XIa9QIppo/K7Dkl1fGw7QydGHGsRbCjvx
-         kbRwrdGW2uiAa3SJUrOHFz3y/oGiHcKewabSCW/nmo/RYn+JRaI/D6P5Pt5glowPwr00
-         Su2UVe4Aw5wJYLQZfboi59s1EaVkYZo+SBODgvULY6Jb1epa91W/y9Vwqhx8K5NPHev8
-         bqoX1ViROgSPf/PwOaQ3/+SYjrSi9ef8+PNq8gA3mPJSxpHzsHp0ZaCo+gRQk0NZynD3
-         e7lnMMvqSw3g02Q3GSqsVgMv6IHR0mL5Rk1A0/74xFxoZq8wbNE31pWZKNRh8CFxXcKH
-         9UEA==
+        bh=lSMdgZiYQlpcrCoz/a1I+Tk8d9M7yHxRNKGn/fSx/9c=;
+        b=cF0BEjQb+pTEHhzIg1eJMLMIX8DydObzAgCGq3MbMZONR3gBxvoTVTn18tW/DtS+BF
+         YJ6SQThIszXytIBMVK0xujqHuocRfFhNrvlRDYJ3kC8MGLNiuoJcpdms29NkFgK42wfy
+         EXdBwa8XRxpdmSkzApbEZHa+Dnumu5vnxFDxkCx3P2hxaU1dgtgUOxNuxb14HoP8VizS
+         TyvA6l24P4XBbHeNwdBnYvZjOBGzCb+vD5izgNO8JrFY0Ez7q6YpEcLzHrCKPlMHsWcw
+         z2koF1GtH3nj9p2fxVwViw0C2MmHAC6ZnuB+UOPQDbE89avAbYCLBkKd1sIOqSgFtRYf
+         cVgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765355511; x=1765960311;
+        d=1e100.net; s=20230601; t=1765355513; x=1765960313;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=WSlXOGUPyH2wmzlmXTP6V9Rk2E/YQBY/7/JUKnpIt0k=;
-        b=XcxfkxJFZXNP/if2L8UHxcTNOyLFHziEl/dgNjUp9P6XdT07VL0icWg9AnT6QdVgAa
-         gYxGeWwuX3hb5+mehzgDeQeQWDhmPdh812y+ThfP/5VZSoh+Df4oemUAbc/1g0cBOdrx
-         8tIbOFC2ptmqwtReqtcEVU/bnTALhbNYfl9gHqt1utTILrtSrG7a/vgOxZUSxKDynbrr
-         9a4Bjq62zA3k2GpcYILaM2p3J56HapxWePU1OCXVafTYQMrj8vzsvEMopPMgRo1nC5+j
-         Hyunf5QeVPQFvjDEfvv21yGJYv9QoS926XUIdVWL7nm67LcOzV+ZW645zzQzBgDO4HxS
-         9uxA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0bbt9TeROkSKBoY5jqjSwGNraMV06hORLvUozpLCmX+ufGDYQdV/cFABG9P1+b+JzfoVBK+aSrSBgqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOG5BsMUk92gha9l6Q67hgr9x+Sz8F4TBaxgJam2KsiME+5rnq
-	jhlSJG++NUO5MgX7CPVFkdXKSGkAx5grEcKbNAkh/NGmHktavF+6a/PSMiXb7ha3i70=
-X-Gm-Gg: AY/fxX7wEtBG/HlG3VuKRJ34B6kpArNikz0TsyTy6RRflB0Gc10rZ0FP/tyxX+/aClm
-	1H+IxI4ol9tuK+40yB6g9JqJxBsaM7ZOC6Id+Ejbyu/Tmxq42rDnAsze5y8JI8WjVvHIWXFMCFb
-	pXnyc3xI/jejPHnHSraxGgdFGaFYMd8M+rx0q50UEa+vaq3GL7bS4q6eFvvfdl5xjIcTZ0F4V1c
-	6XIMxaNpIeBNMR/KKhyQFK2yw7MTkgbYMB+hC+ZBCmQG89b+8RDXXYJnLzyIhRzTAImE8uM05Qt
-	m6A6xG01o4qk3D4Db5IwoOcveXi3t9/pSsF36EBT67g43j6yGkVx/kSdNmSPOCkD/X5n5vgxf0F
-	Rh9CiaD4XtTnlQDYjSOcrcF4hmty7fwkLTeR96yotjL/4W5Gt9Jc+6NItuD1svLylsEkV6fJtgY
-	Q/kHLE2qeYHC2xs1VQ
-X-Google-Smtp-Source: AGHT+IFDU3NgK94e2I43lGVaae/zTSx8SJWvAB4zEAII7VlEYPowkYq2MDr2f3QvhM1SFljKSS7JEQ==
-X-Received: by 2002:a17:907:86a6:b0:b7a:21d5:15eb with SMTP id a640c23a62f3a-b7ce844ed2cmr161725666b.52.1765355511508;
-        Wed, 10 Dec 2025 00:31:51 -0800 (PST)
+        bh=lSMdgZiYQlpcrCoz/a1I+Tk8d9M7yHxRNKGn/fSx/9c=;
+        b=gRggDne06/YPk9xZmo4J2D2wBT86j9ptEtJUGFqpj7EIgsLmh2Qpolu1x5F8jM2SSO
+         xcVzgiZm8Py1dhizU+UR9qpl0E9eVdmetcU7lNKEdlFkqOZaxkvZ2Xno3EOgqCLOEA9Y
+         XLHN/YPr1pcMMEtW/ECiPebSGBEux0xZdDjuO1ikQACGHOUQXXAImuPHMVS3SIdaPPkd
+         gFOdrTHdy5/BBOFa92BKkMGcxDfNHH8v54S6NP5EV05H88RKj4qCjUZKdiS4Xq2t6uX9
+         k5MJBiI552Dh+YBVUaQ6BpH1Vtaa/+rd6V3TXwRIwPQHx/tqvAZmqao5iY2l2FL27sp+
+         17VA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAaTUN/WKhVbzrOQhljKEv02MeVTSKwtjn9rpjKt801UdscT5aHnbdhdXaYBKUBzfU/v7WVsLBnsM4uw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzypcGdyTSEaZwxywcvtKCRTfa114QCilZZZGoLFT1bT9SvHKGp
+	sLzcPv6eJO230wTNwfOsAMj+yHRheyAfMaJFS/5L1fAhlCvZ1sVLiqM7scBUeIMEOhE=
+X-Gm-Gg: AY/fxX4AMFD1wpvUdpxsIv6fSdYmNmjbZ/bD6p+oWVfXpLW94MCRPOSW3j0g9EmH25h
+	95CdtKp/ZQ2B+1wmdkUcLAIQcHdSaUG9CN8Lgy2L+NdFXH4hFw+TA+eEavFvijBc4mFBAiMQZYI
+	lx3dUngZcEP8oteAcOe50pJKlg9pYgtipRRBc7f5UQkVYQMWRNQXY+3hNYXTUgWdj9dmQ0oA1HA
+	0GYcizFxX1K5951Cj5cMeiq0X/VhtAWVrSNybyUoleswTp4m3LrPi+z967BBDeCHAcRAwoozhb1
+	pmcDjl2Nl8EteIYlawRKl9vJWbV/pVpf8oS6Wbck8xWtuW3pe1/qfyVk+aTWfSMHr6gh85a6Mft
+	5OJF8p7FouZbdHJf8lDFu8iDXhofYPsY2SFZuuwjXID1CDBhXm1s+4oXIePLc7UGaWN3jRTLJP8
+	lvVAftQDAIGFcd102Y
+X-Google-Smtp-Source: AGHT+IFYDRtX5PoiZPxafkMiANC8Xf6Bj78BEbFQEysHNafXsqKHXNdBL6htv855tq3hOMwvxyT2DQ==
+X-Received: by 2002:a17:906:dc89:b0:b7a:1b3:5e52 with SMTP id a640c23a62f3a-b7ce8245e92mr181408966b.17.1765355513484;
+        Wed, 10 Dec 2025 00:31:53 -0800 (PST)
 Received: from localhost ([2a02:8071:b783:6940:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-647b4121f07sm16450153a12.28.2025.12.10.00.31.50
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b79f4975c56sm1602897366b.33.2025.12.10.00.31.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Dec 2025 00:31:51 -0800 (PST)
+        Wed, 10 Dec 2025 00:31:53 -0800 (PST)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Akhil R <akhilrajeev@nvidia.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
@@ -78,9 +78,9 @@ Cc: linux-crypto@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	linux-media@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH 1/2] host1x: Make remove callback return void
-Date: Wed, 10 Dec 2025 09:31:37 +0100
-Message-ID:  <d364fd4ec043d36ee12e46eaef98c57658884f63.1765355236.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH 2/2] host1x: Convert to bus methods
+Date: Wed, 10 Dec 2025 09:31:38 +0100
+Message-ID:  <dd55d034c68953268ea416aa5c13e41b158fcbb4.1765355236.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1765355236.git.u.kleine-koenig@baylibre.com>
 References: <cover.1765355236.git.u.kleine-koenig@baylibre.com>
@@ -91,113 +91,123 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3660; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=LrLdovRzSzdNxTBUY5bVyUTgTkSb9V8DwRHPPe0GO8o=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBpOS/sRGieJNY6eEBd+rKCwW3UfWy+0G4cTvst6 vX4NaiKjOaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaTkv7AAKCRCPgPtYfRL+ ToEUCACCotR1zED66IhienYTk2oEwO+g1mqbvB0PBHiZ7kpG+Kt+FBF7T1RKGnWK6WehDqyRHzM LmmgMZ0GhkSc/r8NFSihIQ7xR9UHh0VtcZmTCGjd/V+1XQJ//+axPc6/9xNaWlRikHwzmJCpk0s Zn3UGsasK2k7ECE8T6ylyGqtRmxW3d0glZQHu1Nr48U662jtsLpWZTEqu0fSg6jfVexpG95q63a KmF1OmNjtm+iHmWbYbtWuMwvE/va59+K8qESdRpTmtGEhbPfoSDzB9Z5AKF0leNgBVwwbtrYrSm 9Gn4FQA7UH5CuZuJt9nktkL/UscIvvFIeQ5hP0bslc+tW4tc
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3411; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=FFNspWcgr6JBh3jF6KiuWIJwLT9QVchWO/Z3r4hqr+s=; b=owGbwMvMwMXY3/A7olbonx/jabUkhkxL/XeniljWpVlqZprUz387O3yFDZsen0Dv82P2G2Sm3 TlnKlbUyWjMwsDIxSArpshi37gm06pKLrJz7b/LMINYmUCmMHBxCsBEVC3Y/zu/fWz+PrXm6LS0 dE5ho5k693/XWU84d3BxsdDGBK8J1dxsNlGXf78pl87kPVPNdPVFGHN/poPqz/XF2R+y4+P+1Pm uF4y9sNcp+StnnJ+woIjkh4kejO9X8ru5rza4Jv51C38E74xrNc+9+s/5tdZ2eKV8MPe/cbB8iu cJA8ud7316C22vnJ8Va705o+iMduCiwGk7jKrzVOL++s14Lv+wt93cRPTHzfK2Ob1enG0Va8y73 AR/zb+W8Z1zSvTLS2YKRjzB/H1W97rMXDljNyk1tquedzktlBzCnO2smc3YUKHdeTDPcUruiQf6 sUVfGVMl1taKv/g0yShu35X6slxd4de/9vOe3K3QXAYA
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-The return value of struct device_driver::remove is ignored by the core
-(see device_remove() in drivers/base/dd.c). So it doesn't make sense to
-let the host1x remove callback return an int just to ignore it later.
+The callbacks .probe(), .remove() and .shutdown() for device_drivers
+should go away. So migrate to bus methods. There are two differences
+that need addressing:
 
-So make the callback return void. All current implementors return 0, so
-they are easily converted.
+ - The bus remove callback returns void while the driver remove callback
+   returns int (the actual value is ignored by the core).
+ - The bus shutdown callback is also called for unbound devices, so an
+   additional check for dev->driver != NULL is needed.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- drivers/crypto/tegra/tegra-se-main.c      | 4 +---
- drivers/gpu/drm/tegra/drm.c               | 4 +---
- drivers/gpu/host1x/bus.c                  | 2 +-
- drivers/staging/media/tegra-video/video.c | 4 +---
- include/linux/host1x.h                    | 2 +-
- 5 files changed, 5 insertions(+), 11 deletions(-)
+ drivers/gpu/host1x/bus.c | 67 ++++++++++++++++++++--------------------
+ 1 file changed, 33 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/crypto/tegra/tegra-se-main.c b/drivers/crypto/tegra/tegra-se-main.c
-index 7237f14eaf5a..4e7115b247e7 100644
---- a/drivers/crypto/tegra/tegra-se-main.c
-+++ b/drivers/crypto/tegra/tegra-se-main.c
-@@ -401,11 +401,9 @@ static int tegra_se_host1x_probe(struct host1x_device *dev)
- 	return host1x_device_init(dev);
- }
- 
--static int tegra_se_host1x_remove(struct host1x_device *dev)
-+static void tegra_se_host1x_remove(struct host1x_device *dev)
- {
- 	host1x_device_exit(dev);
--
--	return 0;
- }
- 
- static struct host1x_driver tegra_se_host1x_driver = {
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 4596073fe28f..bd0646eae555 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1300,7 +1300,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	return err;
- }
- 
--static int host1x_drm_remove(struct host1x_device *dev)
-+static void host1x_drm_remove(struct host1x_device *dev)
- {
- 	struct drm_device *drm = dev_get_drvdata(&dev->dev);
- 	struct tegra_drm *tegra = drm->dev_private;
-@@ -1329,8 +1329,6 @@ static int host1x_drm_remove(struct host1x_device *dev)
- 
- 	kfree(tegra);
- 	drm_dev_put(drm);
--
--	return 0;
- }
- 
- static void host1x_drm_shutdown(struct host1x_device *dev)
 diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 344cc9e741c1..fd89512d4488 100644
+index fd89512d4488..c0d7a9b5f07a 100644
 --- a/drivers/gpu/host1x/bus.c
 +++ b/drivers/gpu/host1x/bus.c
-@@ -628,7 +628,7 @@ static int host1x_device_remove(struct device *dev)
- 	struct host1x_device *device = to_host1x_device(dev);
- 
- 	if (driver->remove)
--		return driver->remove(device);
-+		driver->remove(device);
- 
+@@ -346,6 +346,36 @@ static int host1x_device_uevent(const struct device *dev,
  	return 0;
  }
-diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
-index 074ad0dc56ca..68783d5ffeb1 100644
---- a/drivers/staging/media/tegra-video/video.c
-+++ b/drivers/staging/media/tegra-video/video.c
-@@ -107,7 +107,7 @@ static int host1x_video_probe(struct host1x_device *dev)
- 	return ret;
- }
  
--static int host1x_video_remove(struct host1x_device *dev)
-+static void host1x_video_remove(struct host1x_device *dev)
- {
- 	struct tegra_video_device *vid = dev_get_drvdata(&dev->dev);
- 
-@@ -118,8 +118,6 @@ static int host1x_video_remove(struct host1x_device *dev)
- 
- 	/* This calls v4l2_dev release callback on last reference */
- 	v4l2_device_put(&vid->v4l2_dev);
--
--	return 0;
- }
- 
- static const struct of_device_id host1x_video_subdevs[] = {
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 9fa9c30a34e6..5e7a63143a4a 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -380,7 +380,7 @@ struct host1x_driver {
- 	struct list_head list;
- 
- 	int (*probe)(struct host1x_device *device);
--	int (*remove)(struct host1x_device *device);
-+	void (*remove)(struct host1x_device *device);
- 	void (*shutdown)(struct host1x_device *device);
++static int host1x_device_probe(struct device *dev)
++{
++	struct host1x_driver *driver = to_host1x_driver(dev->driver);
++	struct host1x_device *device = to_host1x_device(dev);
++
++	if (driver->probe)
++		return driver->probe(device);
++
++	return 0;
++}
++
++static void host1x_device_remove(struct device *dev)
++{
++	struct host1x_driver *driver = to_host1x_driver(dev->driver);
++	struct host1x_device *device = to_host1x_device(dev);
++
++	if (driver->remove)
++		driver->remove(device);
++}
++
++static void host1x_device_shutdown(struct device *dev)
++{
++	struct host1x_driver *driver = to_host1x_driver(dev->driver);
++	struct host1x_device *device = to_host1x_device(dev);
++
++	if (dev->driver && driver->shutdown)
++		driver->shutdown(device);
++}
++
++
+ static const struct dev_pm_ops host1x_device_pm_ops = {
+ 	.suspend = pm_generic_suspend,
+ 	.resume = pm_generic_resume,
+@@ -359,6 +389,9 @@ const struct bus_type host1x_bus_type = {
+ 	.name = "host1x",
+ 	.match = host1x_device_match,
+ 	.uevent = host1x_device_uevent,
++	.probe = host1x_device_probe,
++	.remove = host1x_device_remove,
++	.shutdown = host1x_device_shutdown,
+ 	.pm = &host1x_device_pm_ops,
  };
  
+@@ -611,37 +644,6 @@ int host1x_unregister(struct host1x *host1x)
+ 	return 0;
+ }
+ 
+-static int host1x_device_probe(struct device *dev)
+-{
+-	struct host1x_driver *driver = to_host1x_driver(dev->driver);
+-	struct host1x_device *device = to_host1x_device(dev);
+-
+-	if (driver->probe)
+-		return driver->probe(device);
+-
+-	return 0;
+-}
+-
+-static int host1x_device_remove(struct device *dev)
+-{
+-	struct host1x_driver *driver = to_host1x_driver(dev->driver);
+-	struct host1x_device *device = to_host1x_device(dev);
+-
+-	if (driver->remove)
+-		driver->remove(device);
+-
+-	return 0;
+-}
+-
+-static void host1x_device_shutdown(struct device *dev)
+-{
+-	struct host1x_driver *driver = to_host1x_driver(dev->driver);
+-	struct host1x_device *device = to_host1x_device(dev);
+-
+-	if (driver->shutdown)
+-		driver->shutdown(device);
+-}
+-
+ /**
+  * host1x_driver_register_full() - register a host1x driver
+  * @driver: host1x driver
+@@ -672,9 +674,6 @@ int host1x_driver_register_full(struct host1x_driver *driver,
+ 
+ 	driver->driver.bus = &host1x_bus_type;
+ 	driver->driver.owner = owner;
+-	driver->driver.probe = host1x_device_probe;
+-	driver->driver.remove = host1x_device_remove;
+-	driver->driver.shutdown = host1x_device_shutdown;
+ 
+ 	return driver_register(&driver->driver);
+ }
 -- 
 2.47.3
 
