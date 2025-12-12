@@ -1,246 +1,172 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010052.outbound.protection.outlook.com [52.101.61.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA793305E3E
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Dec 2025 17:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765474809; cv=none; b=H0NmnVWR451yLFFyRq4M7JSclRcnGuftNKubyU0H4xy/qBOWiCh/QAfcYMWmraTpW4xWys+7KCNjUEWGJqbGVSFtwF0hkOlm5IJs7zcaot50w+OJetRqVd6vdqhZn7CZcMR7528S1rVCwUjlgQb+rLQu9qnQxQUvsWUSO2lupKM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765474809; c=relaxed/simple;
-	bh=Lx4HMK9AF8VPbF4QFfWwQYGg2V0b2Hxh3AEWgTw1Of4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Him6SqjnANj+9QaP791ZfkltyhpeQ2aUkYKwAXOmNYOawm7glj7AXAMiFjmz6ZdqUqfe1Z2TSpKrhfVnItPMqulHh/O/0XkRXwKn6qSvtmcnCkYhGaIDGtzKOzMX7JKwMtOMVWsyQm+WiJF+Lau99KmiHwxhksDfVVqMwPGOirQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktfCNE3K; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8C22D193C;
+	Fri, 12 Dec 2025 03:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765509762; cv=fail; b=JrPP5Hltu8Xxe28TR58EKkKo1lyTW67jLL2I5C4ZHOxl3FtnTdPSlEVfaLvZ2cKOfVggHDM5LEj9DoAwmVS62Pp8c4g8zqgH0Gciwt1eHn+K2hgczCySQm2Kt8GWbwP7gvesCQyVQWAWD53h41uFKkNAdC/uR9/XM8wgTmCSl3E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765509762; c=relaxed/simple;
+	bh=2r5jC+UXVuRE1nNI3nQ/YqB694sy67lJqmkfclYNPcs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dp/mgrChrNP6GV0W8X1kc3y5muW4a7ut3YeLM7876eDNRE/5vyLXJHlfCD46/Vd0fi/CP9BZHdZdM7GK79by9kL+q5QRscOmNXws4LGr8q/ellB6uZmnTHG6gqk/ttKY/VyLbx9qDQqKb1arH24RVX6j1MPqvNcn3Xhuh7090z8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lICu5pvv; arc=fail smtp.client-ip=52.101.61.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktfCNE3K"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37b99da107cso3645971fa.1
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Dec 2025 09:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765474805; x=1766079605; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lx4HMK9AF8VPbF4QFfWwQYGg2V0b2Hxh3AEWgTw1Of4=;
-        b=ktfCNE3Kr404aKEtXUXog9HEBgsLWoJ86Gs1ndesWN1GdzmItJTTZKB4tsjcARXIpf
-         kUAsZcxaIctogDvhIZ0kqvCzbOI/IOMc3wmXmxm+bcGevy/AE1RK2T2Jfg2WSrGilh3A
-         DfZjW9P2qCqNiQhnN94LiuT00wqCesawNMWI+rskZ1/RF+99LkLY21HPNx3bAUn7siHA
-         DQFIX+7TwuJmttHBCV/KHWvrHLGufXwSCBZUEdpqN4SCu9jm7h23YYDnz75lIi2mO4vO
-         vqiAl3591RrXNLAFFinjItxwE7wdhN6Befsiex7kWn8yA3S20IatKn8taDoi1LeW07Kx
-         oiCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765474805; x=1766079605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Lx4HMK9AF8VPbF4QFfWwQYGg2V0b2Hxh3AEWgTw1Of4=;
-        b=hFroae8U28RpsBRJYHsZ64bqU4cuVC4FAlqwYXA7FbGzKyeDWD1NKZ4kX9Cgvd057D
-         td8LWJvaHPHSQIC+49sMyVzMEkTN7CjwrpHOiXiSfjWUqhGNObIByyERe1fypwQzAkz4
-         KVtw+p4nF/J7OKnRdjwtoMEkoJrkQTO5TkqjBQ6he4f0l6KjFtTkXNQsUoVrFUnacYH4
-         UiegJ12czD/9oOTkDDnAwk8r85EsXn0AZR7e6IypIlt8zrH4Kf7tdfiwofYwz8VSGdzT
-         6Amo/o/aFl4+3ZcvFMKdHeij7I5elCYgIoDX8vBlVg8cMeI04d5WoQqN7VkyqYlaoPpQ
-         AYwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDwIYS8DDqxVtXQEaoaT901pElYplGshrvjdMMAvzV9IkCI0rm2b5ie0iQtIXdxRwcstaNHPB5eEjr8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMSfJq818tQxVxC01CgX29FNnXT8ssCmYkRKX8QdgOtGW1P5EG
-	/VcDaajacgpBrWaRc9C33CFwYOV38epAA82TtLfSc8ihZd0P9emWCnfwUdu7IUoiv8aUWcyEQMs
-	USl1X9R1CvkMN6+lVCglBsGnAkNX40fw=
-X-Gm-Gg: AY/fxX4motFP/KDflljpbddofmDLg5yReWx7fbC0QCe+Rb7/BMyJVXCi5DjMPgEsRZ4
-	5UvIod7piVlmN50dNzYcvB1Uv0D8ZppUOk3J0hQelKdGZoyb+bCTRMr4E0nZKzm4kdDgELxnkiO
-	JH+AcGfSCA09GIgaxwoMEF9m+S1EZFNN64/OcD34N7qbLHTe4Eo5JWcknxqXVZtFdElOQpPAyFU
-	1JA+s33w8McEnXOA37HyFXdvYewhU7Gp81qn7cci0SugsgRbcckpIQCPs7NChHBSmghv9A=
-X-Google-Smtp-Source: AGHT+IEiUjsh9MdyHGHu5hSYaLiBAwvlbiLAvEBxHUXl2wGdpmF/stwBEhVdYaYYdZBf6h/2veig0J1HC2k6xCqqieM=
-X-Received: by 2002:a2e:a595:0:b0:37e:6a88:99c8 with SMTP id
- 38308e7fff4ca-37fb20c1673mr22861991fa.29.1765474804576; Thu, 11 Dec 2025
- 09:40:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lICu5pvv"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WnWkJpbnVhW757Oa++GzreJ0/EfTBqZrSTzPsBYiJG6khJuJ/rsQZyqtB611vrdzlHA2rykbLMYL7W3kG9QNmqcrIv1brnomO9zA6zb1511j2ASnFenR03qjThHfY2xYcsB3C0kTNZxJZjeGFJE6VMDh6sGUVpaU3Z8YWS25FAXN3yGOC8e5R0RpnpnxPXVzY4rNSrR4NPvWpCMDq+tZfWLfB5BnasjZgiBcBmQFyOfjDQOyEhuuTp6gBwsgmp5GwUSUVUgpGx4henlaUUK4iMWQsotr2JhuJr5eAQX5V1ME2FHEALQaDVGbCBm5HAPdNQamwjV/lMI3J+WCtgEwFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lvqp80v1hZY7JpyDe1N9bPLp2iDFwrD2pzo9jgoCJAI=;
+ b=jOQQgsX6NZm8AuN8L6qyJy+co2eoukH+MdqHfBCpCa1GzxUYdKPpG8P6Q7XfpEo2yAPSBkr0T1W9No89IAYW1ZhEzQQe0vD5i/0iQ9FPJ5uQ1oLJWYFKoESlzy/fZrZtxI1POJlTO0ixYKNQsJRPSvtvLiSrUBV32eSlXfMQ66QYJks7d6j1EVS6OPd7NCT/YEYNCryd8qoz4NpJGjKIm9C0tcVwJ96v1X/WDWAEwfNNMeqpAAMYCvTiVn8QeZvbpI192BAHE7WB846BCunQfLBM+Sw0ahNTzm6KnWsitrbYvNL9sTWpzE/LEd+3RvzFeDzsNtq7zBoeBMtVybaYhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lvqp80v1hZY7JpyDe1N9bPLp2iDFwrD2pzo9jgoCJAI=;
+ b=lICu5pvvuuPj06V/UGBlbpjL3V89qQsDKWyCpnlShBnEgpHdmd9f2Naxm6r4poKVYRe5phb2iHzqBu5i33up1x/ywQeqYaeOT+bTI+xOlp7ii2KLnYtcNraDaxLB2Y2j6a9ObP+uHrRieysWtchxn6vyzh16hUZu1M0cURVM2qpmFxAr885XPDNM4s26K8mMDu7ElzK+uNEYGCxrByIrgDG5z6qHY3mCP0v6k002JEGLv8U3DY8j7WpjB0Zqg+EmCkFA5KDAXUkeZjjGru7O5mKfS+GIMRUgqI0OE4vkFwIe5eRO4vVijRODNixTFhWz3/hclUfHfT30FAtTjPP1uQ==
+Received: from CY5PR22CA0033.namprd22.prod.outlook.com (2603:10b6:930:1d::33)
+ by BL3PR12MB6378.namprd12.prod.outlook.com (2603:10b6:208:3b1::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.7; Fri, 12 Dec
+ 2025 03:21:40 +0000
+Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
+ (2603:10b6:930:1d:cafe::4f) by CY5PR22CA0033.outlook.office365.com
+ (2603:10b6:930:1d::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9412.9 via Frontend Transport; Fri,
+ 12 Dec 2025 03:21:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9388.8 via Frontend Transport; Fri, 12 Dec 2025 03:21:40 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 11 Dec
+ 2025 19:21:21 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 11 Dec
+ 2025 19:21:20 -0800
+Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Thu, 11 Dec 2025 19:21:18 -0800
+From: Wayne Chang <waynec@nvidia.com>
+To: <jckuo@nvidia.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC: <waynec@nvidia.com>, <haotienh@nvidia.com>,
+	<linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH 1/1] phy: tegra: xusb: Explicitly configure HS_DISCON_LEVEL to 0x7
+Date: Fri, 12 Dec 2025 11:21:16 +0800
+Message-ID: <20251212032116.768307-1-waynec@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
- <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
- <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com> <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
- <d16803e5-7b6d-4472-b50c-aa324cf52736@nvidia.com> <CALHNRZ83Q2Ha8VYoWAnqoCZQ=Fd9rtVRVLwRFxAY68ePQ29GHw@mail.gmail.com>
- <29cf2c16-3a0e-42c5-a083-16f77ae5d09a@nvidia.com> <CALHNRZ9KAv-hL6+6Uiaz2O2odm1rqMnjNxNVPsbCOdqX15KTuw@mail.gmail.com>
- <856447ae-4338-471d-a71f-a34aed749ac7@nvidia.com> <CALHNRZ9y0n6JNfeDUQgZoECkxo+We0_G8TP0H4advcSqrX86kg@mail.gmail.com>
- <f906f85f-b110-4328-b177-02fcdf7ffe53@nvidia.com> <CALHNRZ8go4ATHgJ4SE=7pkAMgRP_0tj5z4pDXjxicV9o7F13Ng@mail.gmail.com>
- <1b9f0b14-876c-4c6e-90eb-b04d016f88e8@nvidia.com> <CALHNRZ_GGAg_VP8gSdtw_1CA2A0netrOeA2+guZfxyG7POhHoA@mail.gmail.com>
- <adc7ca5c-69d8-4164-bd89-3381b101576a@nvidia.com>
-In-Reply-To: <adc7ca5c-69d8-4164-bd89-3381b101576a@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 11 Dec 2025 11:39:51 -0600
-X-Gm-Features: AQt7F2rFE8po-cQL3dwn-KBtp-NEsoAGWn4mBuLPGDS3wGH3dLMk5rCp6uQfPEM
-Message-ID: <CALHNRZ-SU_kyak_u6mfUZBHJ9Cph6=-edhL+yhRizu8DDy=Big@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|BL3PR12MB6378:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9407c726-9ca8-4a1d-cd5e-08de392d90f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?75IbJdORmZte31d2zWraZpsAjHpusVw2ebJtLR22PYRsXcSS/8uKh5Uw4ULY?=
+ =?us-ascii?Q?7YunMkwh7R8bgrAVWqS086GQOjsAZR3RT0U9vg6GhDszO2UVQZCmAJ+VX1Gl?=
+ =?us-ascii?Q?qpMDC2lsGkMl39sB5Ze3NS8dBQFIzay/7L+pya64peMaBYP0Tv7mfXRV4JEW?=
+ =?us-ascii?Q?idq4+T9NeLFC/Va2yOkiQbtip1r9TsCI/E1hUdQUAbSz2j1tf+Gcy9FO/6Ns?=
+ =?us-ascii?Q?Xy9ItGwHGOTLrAcsvatwysCS4q9tmyScJ+/haOmpZcAa3yHpqJAUoOgyLSbX?=
+ =?us-ascii?Q?pU9zy9BUwYxswJELeglDP9Z/bk6yH0dEGuM8Oi6un8A0XywtKayCf3/4mPbx?=
+ =?us-ascii?Q?rheFm1JjZIdLEvdkwKrCfBV6nTCluOptRWxmUda3pIG5s3DXkNkYMDUXhZsO?=
+ =?us-ascii?Q?seCUMXhi9Kz2IGz+mYBpG/aBqL3Za2tjAwCeTPRZ6B547izIPGjTNA29O9uE?=
+ =?us-ascii?Q?YEpTZvAA2hG5Am0xrgshwpUj6yRbANrZ4u+REjNobMrPlXQSLI3s5yWSVNaA?=
+ =?us-ascii?Q?1L06Q1rZoeUS0H2vb4K2Q90ujTQNqI48b1RefUOxvAq2IasmtHS61hp6sMDY?=
+ =?us-ascii?Q?05VQyB6psNMk4e+Mg3Dv2GzH2pklknwd3q2WyqY0gq5sATWf2LCmSTWBO4XT?=
+ =?us-ascii?Q?rbKwLOMn2COq3S6+dXpu3gI5EBPMJLaHsvr3nIxhWWE3tUAw/QrteBNav3+p?=
+ =?us-ascii?Q?aGnt+3VYagPMSGtd0xg7ex0aNhvXotSi/oHJ2pONdRj//kJZdkDMFxNQhjAi?=
+ =?us-ascii?Q?x9IltA5/PPe/z5RBc4ks9NZKCAC3RHe3lj3gH2e0zXHHKcTo0tsPx9emDZKV?=
+ =?us-ascii?Q?0vOa1XcOMK49AdKE4iniUMYzVQs8t6+SfH06E26OSGshMN1V5sMZdEPfuL4s?=
+ =?us-ascii?Q?xoogLfh7Z7BvVll2HOks6yy9ZC7Zh/mSBSrskhbBI5+NkYAIDYl2m/VYeiKF?=
+ =?us-ascii?Q?4oZktvpXYqZZZCGfnJTAwyDlV44buSOEEgT2kRPzvhApx8cxOHQOyLOl1yod?=
+ =?us-ascii?Q?5z/jvptDmzyk37MdFXhVQacnSnUNs2sNmy1u430UoyYaOCn8UBL3ry36xfE8?=
+ =?us-ascii?Q?RWDM9RlGNjbNxJYI8YLvEEecmNtHpL+EXrkDH2fJPKlFFUs+oXARhFg0GMHk?=
+ =?us-ascii?Q?5Vy+lTVM0hO6qhnZ9rXCRD4JGQQlnIx4w2kc7tW/UpIJaaYSRY5gzktbnefZ?=
+ =?us-ascii?Q?VQH5cTB/S5bpOE6zYjC0FBiCZsW5UtJFqs3gRxFKIoRObWVvIzv+1FnyuR3m?=
+ =?us-ascii?Q?yR5AUE6MhM/R256h8GPObF1Cy3eFvbTMA00k61WfihqgTTQZRNHXALQHT5x3?=
+ =?us-ascii?Q?oZtUwgA3blSnIEWQSfZOci+fGV1gUwqx1zZVW2L6sSNhWfE7MOw8dvYDFfrF?=
+ =?us-ascii?Q?Lg/QpHGEzWW79VuGyk5qa8Agws6IeDjZ/eq+NogzCjugAmG5D2OIf3wrsfJb?=
+ =?us-ascii?Q?DIDJSdM+usHmiamnMTAPM9IT2S0Omk+ytilDqr6v5XijKgtHGSD3t4pz15rd?=
+ =?us-ascii?Q?dRPYyZu3eEMRhwMwtzS2aw/2kuv+25zDrsPplqdvml9DAFL5g98XHHm6mW0Z?=
+ =?us-ascii?Q?nXTzVAjlnF5CE4AJQhI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2025 03:21:40.0264
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9407c726-9ca8-4a1d-cd5e-08de392d90f3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6378
 
-On Thu, Dec 11, 2025 at 1:47=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 10/12/2025 22:41, Aaron Kling wrote:
-> > On Wed, Dec 10, 2025 at 3:24=E2=80=AFPM Jon Hunter <jonathanh@nvidia.co=
-m> wrote:
-> >>
-> >>
-> >> On 10/12/2025 18:32, Aaron Kling wrote:
-> >>> On Wed, Dec 10, 2025 at 9:04=E2=80=AFAM Jon Hunter <jonathanh@nvidia.=
-com> wrote:
-> >>>>
-> >>>>
-> >>>> On 10/12/2025 05:06, Aaron Kling wrote:
-> >>>>
-> >>>> ...
-> >>>>
-> >>>>> Let me try to iterate the potential issues I've seen stated here. I=
-f
-> >>>>> I'm missing anything, please fill in the blanks.
-> >>>>>
-> >>>>> 1) If this change is applied without the related dt change and the
-> >>>>> pcie drvier is loaded, the emc clock can become stuck at the lowest
-> >>>>> rate. This is caused by the pcie driver providing icc data, but
-> >>>>> nothing else is. So the very low requested bandwidth results in the
-> >>>>> emc clock being set very low. I'm not sure there is a 'fix' for thi=
-s,
-> >>>>> beyond making sure the dt change is merged to ensure that the cpufr=
-eq
-> >>>>> driver provides bandwidth info, causing the emc driver to select a
-> >>>>> more reasonable emc clock rate. This is a similar situation to what=
-'s
-> >>>>> currently blocking the tegra210 actmon series. I don't think there =
-is
-> >>>>> a way for the drivers to know if icc data is missing/wrong. The
-> >>>>> scaling is doing exactly what it's told based on the icc routing gi=
-ven
-> >>>>> in the dt.
-> >>>>
-> >>>> So this is the fundamental issue with this that must be fixed. We ca=
-n't
-> >>>> allow the PCIe driver to slow the system down. I think that Krzyszto=
-f
-> >>>> suggested we need some way to determine if the necessary ICC clients=
- are
-> >>>> present/registered for ICC to work. Admittedly, I have no idea if th=
-ere
-> >>>> is a simple way to do this, but we need something like that.
-> >>>
-> >>> I'm not sure I understand how checking clients would work. Is there a
-> >>> mechanism for the emc driver to know if cpufreq is registered to icc
-> >>> in a way that works with probe deferrals, but also allows for it to b=
-e
-> >>> optional?
-> >>
-> >> I am not sure if such a mechanism exists either, but it seems that we
-> >> need something like this.
-> >>
-> >>> Alternatively if there is not, can we just accept the abi break and
-> >>> have this and the dt change depend on each other? I know it's not
-> >>> desirable or the first choice, but if the other option is to rewrite
-> >>> part of the icc system, then perhaps it should be an option.
-> >>
-> >> I am not sure it is an ABI break, but the default performance might be
-> >> worse. I am not sure if you are proposing a way to enforce the
-> >> dependency or just saying that there is a dependency. We can't do the
-> >> latter, but if there is a way for the kernel to check the dependency a=
-nd
-> >> make the right choice, then that should work.
-> >
-> > So we can't accept that older dt's will run slower on a newer kernel
-> > and say that a newer dt is needed for full performance?
-> >
-> > If that's not an option, then I have no idea how to resolve this. I'm
-> > not greatly knowledgeable about the icc subsystem. I can try to look
-> > into options, but I'm not greatly optimistic about me finding one. If
-> > someone could suggest a concept on how to make it work, I could
-> > implement it. But I'm not even seeing the concept right now.
-> >
-> >>>>> 2) Jon, you report that even with both this change and the related =
-dt
-> >>>>> change, that the issue is still not fixed. But then posted a log
-> >>>>> showing that the emc rate is set to max. If the issue is that emc r=
-ate
-> >>>>> is too low, then how can debugfs report that the rate is max? For
-> >>>>> reference, everything scales as expected for me given this change p=
-lus
-> >>>>> the dt change on both p2771 and p3636+p3509.
-> >>>>
-> >>>> To clarify, this broke the boot test on Tegra194 because the boot wa=
-s
-> >>>> too slow. However, this also broke the EMC test on Tegra186 because
-> >>>> setting the frequency from the debugfs failed. So two different fail=
-ures
-> >>>> on two different devices. I am guessing the EMC test would also fail=
- on
-> >>>> Tegra194, but given that it does not boot, we did not get that far.
-> >>>
-> >>> So you're saying that even with the dt changes, this change on
-> >>> tegra194 still does not boot before the regression test framework
-> >>> times out? If so, I need some more details about this. I have not see=
-n
-> >>> issues on p2972 or p3518. For example, if I boot to android recovery
-> >>> where I set the cpufreq governor to performance, I see emc clock rate
-> >>> set to 2133 MHz and 1600 MHz respectively. And boot time from kernel
-> >>> start to pixels on display is 15 seconds, give or take a couple
-> >>> seconds. This is using the boot stack from l4t r32.7.6.
-> >>
-> >> Yes. The boot failure here is not a hard boot failure, but the device
-> >> takes too long to boot and the boot test times out. And no we will not
-> >> increase the timeout as it is there for a reason. It could well be
-> >> because the default governor is not set to performance. If you boot wi=
-th
-> >> just using the stock 'defconfig' for ARM64 without setting the governo=
-r
-> >> does it take longer?
-> >
-> > So, I checked out next-20251210, then b4 shazam'ed this series and the
-> > matching dt series,
-> > 20251021-tegra186-icc-p3-v3-0-68184ee8a89c@gmail.com. Then built with
-> > LLVM=3D1 ARCH=3Darm64 make defconfig
-> > LLVM=3D1 ARCH=3Darm64 make -j33 Image nvidia/tegra194-p2972-0000.dtb
-> >
-> > I packaged them into an android boot image using a lightly modified
-> > copy of Gnurou's bbinitramfs which just drops to a busybox shell. Note
-> > that this includes no modules, and since the pcie driver is =3Dm in
-> > defconfig, it is not included. Then I flashed that with the l4t
-> > r32.7.6 boot stack to p2972. I got the shell on uart after 4.275
-> > seconds in the kernel. Per sysfs, the cpufreq governor is schedutil
-> > and all policies are idling at min freq, 115200. And per debugfs, the
-> > emc clock is 800000000. All this looks to be as expected.
-> >
-> > I have no idea why the regression test setup is timing out. I have not
-> > seen the issue through any of my testing. On pure mainline as per the
-> > above paragraph, or with the patches on the android common kernel, as
-> > per my target use case. I don't know what to do if I can't replicate
-> > the issue. I don't suppose the flash package for the regression test
-> > setup is something that could be released?
->
-> I thought we already concluded that you did not see this because you did
-> not have the PCIe module present in your testing? From the above its
-> sounds like you still don't have that driver present and so you don't
-> see the issue. I guess I am not surprised by that but I am not sure why
-> you are now saying you have no idea why this is timing out? I thought
-> this was understood.
+The USB2 Bias Pad Control register manages analog parameters for signal
+detection. Previously, the HS_DISCON_LEVEL relied on hardware reset
+values, which may lead to the detection failure.
 
-Oh, come on... The issue is a combination of old dt AND the pcie
-driver. I can reproduce low emc clock with that. But then you said
-t194 on the regression bench was still timing out even with the new
-dt. And that's what I cannot reproduce. And then you asked me to test
-with pure mainline and a stock/unmodified defconfig. So I did, using
--next and the two open series, but clarified what an unmodified
-defconfig meant.
+Explicitly configure HS_DISCON_LEVEL to 0x7. This ensures the disconnect
+threshold is sufficient to guarantee reliable detection.
 
-So, I modified the .config to enable the pcie driver as built-in, then
-reflashed. Otherwise the same as my previous post. I got the shell
-after 11 seconds. And clocks are still as reported before, cpu at min,
-emc at 800000000.
+Fixes: bbf711682cd5 ("phy: tegra: xusb: Add Tegra186 support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+---
+ drivers/phy/tegra/xusb-tegra186.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Aaron
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index e818f6c3980e..bec9616c4a2e 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -84,6 +84,7 @@
+ #define XUSB_PADCTL_USB2_BIAS_PAD_CTL0		0x284
+ #define  BIAS_PAD_PD				BIT(11)
+ #define  HS_SQUELCH_LEVEL(x)			(((x) & 0x7) << 0)
++#define  HS_DISCON_LEVEL(x)			(((x) & 0x7) << 3)
+ 
+ #define XUSB_PADCTL_USB2_BIAS_PAD_CTL1		0x288
+ #define  USB2_TRK_START_TIMER(x)		(((x) & 0x7f) << 12)
+@@ -623,6 +624,8 @@ static void tegra186_utmi_bias_pad_power_on(struct tegra_xusb_padctl *padctl)
+ 	value &= ~BIAS_PAD_PD;
+ 	value &= ~HS_SQUELCH_LEVEL(~0);
+ 	value |= HS_SQUELCH_LEVEL(priv->calib.hs_squelch);
++	value &= ~HS_DISCON_LEVEL(~0);
++	value |= HS_DISCON_LEVEL(0x7);
+ 	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
+ 
+ 	udelay(1);
+-- 
+2.25.1
+
