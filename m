@@ -1,95 +1,91 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440A22D663F;
-	Fri, 12 Dec 2025 20:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76A81DDF3;
+	Sun, 14 Dec 2025 12:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765571798; cv=none; b=Z8EwmChnKoRGnOPvN8yAw9j0HMr85wipUdsMsVxdw/oY8pAd5st/q29qd+/3PNHZS7PaVRHjuET1JZ1OdScwf0NxashzmkfqsL3+TmiIg3zItJ/Junbd9DgMzwXISYPZ5KTVeBWJGuC4pZhkDR34oBFHnUat5OfvnHGEM+ZZ5qI=
+	t=1765716823; cv=none; b=pOlGkmVVTjYLGuVFT/URhY+/IetuD8pmhb+Cz14YAD7qb/oVkKZsdjMtdSDlX00Fhu9h8s82BPDBpQUwWZZIl7SeK7wacynZjdoypN5SotH9FycvAnpT2xKj7YezcE6UXtC8SiyaBaEHbpI9ZaDyV51XE5X9dxwSn38KapOgIe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765571798; c=relaxed/simple;
-	bh=Wr5l93HxK6yATXbDCP7Hf/rUCIiHc/qT9612u4YlCsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bqJenIp3/V7DHAl/cmLEytqvUvkAm2apiblldzumbSuf5+xBzhwO0/O7EW718+VoZbm6EFCsmde9A99d1fPHESxHlkWpX1euXJCT9xVXkuFaGuhdAoHmhzZ0IidXiSQm16yjNoMVRyCy2No/k7aUAZf/yOwOWjYegMRQjFsVYG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3014B1063;
-	Fri, 12 Dec 2025 12:36:27 -0800 (PST)
-Received: from [10.1.196.95] (e121345-lin.cambridge.arm.com [10.1.196.95])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA0FD3F740;
-	Fri, 12 Dec 2025 12:36:31 -0800 (PST)
-Message-ID: <104441bd-1284-4147-873a-f94c91788609@arm.com>
-Date: Fri, 12 Dec 2025 20:36:25 +0000
+	s=arc-20240116; t=1765716823; c=relaxed/simple;
+	bh=a+s01Y8XeApCsCOB/d+kvVefTC7plcn9Xkl6+nDmkRM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=TP54DdNwQeNQzayvR+QBj0BtggP/NuYOOJaj5QRHiPm3crBCCyuUdef6NFf7AS9XId1L9rInwwilyAG8xHL/H2pOqj+VUWhGoboOujs5GcRDBe2E0dZABxjcaSmgmTWnlQ8MNn6Pacjg2okr2Tyig8ptHya6ybwqcYtkahR5ohk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowABnh94_sz5pJOyyAA--.52272S2;
+	Sun, 14 Dec 2025 20:53:28 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: linux@armlinux.org.uk,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	make24@iscas.ac.cn,
+	johan@kernel.org,
+	hdoyu@nvidia.com,
+	swarren@nvidia.com
+Cc: linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] ARM: tegra: fix device leak on tegra ahb lookup
+Date: Sun, 14 Dec 2025 20:53:17 +0800
+Message-Id: <20251214125317.2086-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowABnh94_sz5pJOyyAA--.52272S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZF4fXr4DJw48JFWkZrW3Awb_yoW8JrW8pr
+	48GryrAr98Wa48Kw40vF4UAFy5A3409w1rKr97u3yY9wsxXryFkFyktrnIqa98tr97tF4f
+	KFyxtw18CF48WFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwV
+	W5JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
+	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
+	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
+	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUPfHUUUUUU
+	=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 1/4] iommu/tegra241-cmdqv: Decouple driver from ACPI
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
- jgg@ziepe.ca, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20251212060803.1712637-1-amhetre@nvidia.com>
- <20251212060803.1712637-2-amhetre@nvidia.com>
- <54fce1f8-7675-4351-b292-0009b2e8c599@arm.com> <aTxxBdcY4hODXcdu@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <aTxxBdcY4hODXcdu@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 12/12/2025 7:46 pm, Nicolin Chen wrote:
-> On Fri, Dec 12, 2025 at 12:01:41PM +0000, Robin Murphy wrote:
->>> @@ -4542,7 +4542,7 @@ static void acpi_smmu_dsdt_probe_tegra241_cmdqv(struct acpi_iort_node *node,
->>>    	adev = acpi_dev_get_first_match_dev("NVDA200C", uid, -1);
->>>    	if (adev) {
->>>    		/* Tegra241 CMDQV driver is responsible for put_device() */
->>
->> Don't we need to bring the put_device(adev) out to this level, since
->> impl_dev is now something else that AFAICS we are *not* taking a new
->> reference on (and thus should not be putting either)?
-> 
-> Ah, right! We are using the platform device now.
-> 
->>> -		smmu->impl_dev = &adev->dev;
->>> +		smmu->impl_dev = acpi_get_first_physical_node(adev);
->>>    		smmu->options |= ARM_SMMU_OPT_TEGRA241_CMDQV;
->>>    		dev_info(smmu->dev, "found companion CMDQV device: %s\n",
->>>    			 dev_name(smmu->impl_dev));
-> 
-> I think we should squash this:
+tegra_ahb_enable_smmu() utilizes driver_find_device_by_of_node() which
+internally calls driver_find_device() to locate the matching device.
+driver_find_device() increments the ref count of the found device by
+calling get_device(), but tegra_ahb_enable_smmu() fails to call
+put_device() to decrement the reference count before returning. This
+results in a reference count leak of the device, which may prevent the
+device from being properly released and cause a memory leak.
 
-Ack, it occurred to me shortly after sending that in fact it's good to 
-still hold our own reference on impl_dev itself, as we're not relying on 
-a bound driver to hold one for us.
+Found by code review.
 
-Cheers,
-Robin.
+Cc: stable@vger.kernel.org
+Fixes: 89c788bab1f0 ("ARM: tegra: Add SMMU enabler in AHB")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/amba/tegra-ahb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 0c98be3135c63..88625e3c27a65 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -5280,10 +5280,11 @@ static void acpi_smmu_dsdt_probe_tegra241_cmdqv(struct acpi_iort_node *node,
->   	adev = acpi_dev_get_first_match_dev("NVDA200C", uid, -1);
->   	if (adev) {
->   		/* Tegra241 CMDQV driver is responsible for put_device() */
-> -		smmu->impl_dev = acpi_get_first_physical_node(adev);
-> +		smmu->impl_dev = get_device(acpi_get_first_physical_node(adev));
->   		smmu->options |= ARM_SMMU_OPT_TEGRA241_CMDQV;
->   		dev_info(smmu->dev, "found companion CMDQV device: %s\n",
->   			 dev_name(smmu->impl_dev));
-> +		acpi_dev_put(adev);
->   	}
->   	kfree(uid);
->   }
-> 
-> Thanks
-> Nicolin
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index f23c3ed01810..3ed5cef34806 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -148,6 +148,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
+ 	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
+ 	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
+ 	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
++	put_device(dev);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+-- 
+2.17.1
 
