@@ -1,337 +1,200 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010056.outbound.protection.outlook.com [52.101.193.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD50633C195
-	for <linux-tegra@vger.kernel.org>; Mon, 15 Dec 2025 14:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765808214; cv=none; b=n/gjbAS+kclwShlXA/4767ctWANmJZwFWur0dZ7pVwdJ0kf3nzsoP/oA7PHgYZpwMvm0yfOiHPLN2VBuTVG+ZX4tMvKo0pl13sPYNWQr0Aj8lg2MEeuUYxoNBqaNH3lx7j6txBhiulHqK7kwwl7GyqFON0s0lfO8soPOvUjtJ+A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765808214; c=relaxed/simple;
-	bh=ZR6q3hUlpQa05vbit+PLb45/WQBI03pAz9sOoLchSxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nxl4IlLtQGgvirtXdkY+nLc7yDIRHI3iYeM7BAnR+QG+caUjGAZ3LjD9CRByiDUAFFeZ84ay6ttV5H4AwyGRvMnzGfao2Q6gyoj8WniM7Jy68Sh27MyEXDT35chSxQdTVYHI58ciNH/FUtNIIqZX8skZhn9QA39jcljrMuE/M5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CtVI9Kvq; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29C42BEC41;
+	Mon, 15 Dec 2025 20:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765829001; cv=fail; b=cBHQO9AC8wgLooLKf90nMzdxBeJ3mXLNuMS99H62VI3/mywD4J1mvOKmtiSMlt+W2T0ixoWLpd/x12su/NJoVdqCSQ2QkP5XCllkS8I4hG3zXkjtLbADpe046mfXqnwsACymmg0IcyBCzAHqeBcxKftNv5DhRPKwJg/nWp/8VX0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765829001; c=relaxed/simple;
+	bh=EwZVshl3dRQqxnaQKHrXgGiiMmZHGH7bUivD8FqmnJ4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p6+pwui5DenW1F6lnRHBn0H4fwJ8uc1oXT8W4o0h6dh6zEIvfMlnnMcEH3qjkVcEyTz0Z1xOFaZpGX5D331v4/ibZqzPxZz88PZhQsSLFkkiw6nOJfvKTDN5A7zdBiUZIN8gSY+p2IATyDusTiauHl15IISBGbwwymmNm1/djT8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AzQrGyWA; arc=fail smtp.client-ip=52.101.193.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtVI9Kvq"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7ade456b6abso2627220b3a.3
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Dec 2025 06:16:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765808210; x=1766413010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ryhYtP1wm9rO0sAsCRHCZCcFW4Wvia7RnAGn4TEXwrI=;
-        b=CtVI9KvqDa0A/irjRgzeE2V7rNk6ttmDL8jyNijow8mB5QQWXiYKT1CDc246HUhrMY
-         lkpQjCEuZXBS1uIyvsPkcvggAMsYkI6RUAuXcxyOeOulGBqnO6rlslViHLCT1fN7faCc
-         yQ3gYSeKFsIdxInITkZDk6VRtYy3fEWD1ypRB4gB0eSt3ze/QL0UoZupWBvRi9IJxp9O
-         Pv0VDBu8368EK4yg/EuUyhjlUc5LZf9rYcZ2aS999E0NcqTF7DsvF/FCDsY+dbRYx+YE
-         YE/pxGDzR8b4n4AwcCm6hVPPKf2B/OnbOhR/gOnlrcINCPHZb+uwYywJdgm/2KEsjove
-         PzSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765808210; x=1766413010;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ryhYtP1wm9rO0sAsCRHCZCcFW4Wvia7RnAGn4TEXwrI=;
-        b=pPhMzaKiIIs/KpBZCQAiw6+LYiB6twhGzFksszkH2tUMIUKo//s/YdA7YdEDQaQ2ct
-         8OG0JUYICu+g4fgUTJ/04R7RZ6/0U1EoPSrGJNjo5PxaHGyKuS9x600Rb1nEfsVboQ4Y
-         me2OB+MdaJNIS2w4nHV32+lYManw1b2zU6dJGw4LQ8a1abnwvO6Xo/eAj654HjeFq0NO
-         L6u0nuuuauBbfFh6yP27PJdt1q13NFRYLR8Y3ye6yHJGOwrNKH88Er/498TKV4cuTO93
-         Izx/lyeH1b6EHgwYlyI/c5BGd/SLkD+PLspIbYIel8YYlPG1L2R5z+2eTxY2celfml83
-         BArw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ7biMczYUpL0XfPekU2KvP/00cQpWBNhWKUkXbNzLPWcghS/iYsXYp5R5rZrCQTeRRAa25ha4WqUkxA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxau+JTPSnyQ1ohG25MMkyHyckN+3TWbHdbDVBjByjmDX8smBoQ
-	OF7JarezaxENWkYhLsDlbdSTVxteXY30KImtUST44mrBk3QEe42OS+5k
-X-Gm-Gg: AY/fxX661uiicXrj658JGrT/wmaPy7eNdK4SV7FknWTUHrd4BnSqxlzOANvXJpLQzPo
-	yY2MO+lIDfeq695PNCHgpBsbJepUd0arDr7Hs6foMjBiRAKaVLSzlCN7jq32T+gZgj3iZ+ZeNt1
-	8gLgIUW/eIQ9LJgkpAsqMPkNcL+n0Hw891evaCcwOib98zgRh8NzOiBl1WFZxNt0HtFl2YgjvE/
-	DDhjKvnrQ55Nowf8Nrkpx45HKsG+B9iRVxqvoi1l49SyCOS5gKkW1fhkjFOVJUEUXT0yUuqEA3Z
-	T05F1nd+WOP4NXUiv0jitTy1jxYArYd0NPfYbheuJFFU+6MfiBSgsfSg7G+CksFgMfm1o/A+qSN
-	UXHfLl7nXVmlncARycdX8/CTLISmB4iF91f9IRTwHrN0Sh3vb3fncCvRUSDT6fdvc+I+lFqZ//A
-	Px0KY7ig==
-X-Google-Smtp-Source: AGHT+IEiY7mkfOBoYzxmWFqaVzQf2O3CE0Stan6v9+BXqL38ogVwa5kiO5amtFhh/9Z+KmHhcB5HKA==
-X-Received: by 2002:a05:6a00:bc10:b0:7b9:a27:3516 with SMTP id d2e1a72fcca58-7f667d197a4mr9573135b3a.21.1765808209866;
-        Mon, 15 Dec 2025 06:16:49 -0800 (PST)
-Received: from rockpi-5b ([45.112.0.8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7f4c2772a51sm12938189b3a.17.2025.12.15.06.16.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Dec 2025 06:16:49 -0800 (PST)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 4/4] PCI: tegra: Use BIT() and GENMASK() macros for register definitions
-Date: Mon, 15 Dec 2025 19:45:37 +0530
-Message-ID: <20251215141603.6749-5-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251215141603.6749-1-linux.amoon@gmail.com>
-References: <20251215141603.6749-1-linux.amoon@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AzQrGyWA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ki00t5QePSJ4D9EI7STuaCETcWaVxmB9zTKvc/XqTdZ34KLnBL66emcCQkBT37RmL500vVd3BfjV7d0woh0cDQPLcFjO3yL/BOOAzU9ha1F/nNXN1MRKhXLsapTCGFBG3tcTsTPXr6s04QgFR+YyVKRW2LACzt6nSJNQyr2yiXUGBaYc5hD+GnyVSAWzUAQMTPVyXMUpj7dU5Wd0TY3DAAp95Cdq+Yeab3nKVbsGIS731zbqLgLqr0/FNfrUEgkDWpGm3c8Q784QIgFFE+RLeodC0zMwFhS81oBQtDwkoVNl46iCGvNteh0D8YYJnX2uuCS9O1e3h6YPuDYULAPGtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n7KSEX7U7NnIO2daCi7CaoyWIyRMKHemmUP+Qo9svhA=;
+ b=RWJcPW8HLGLTF7azmj7NYY3hiXO0p3qnZ8wvI33qfUX2j27twypmA8Yd8WWUm2/paL6vuTuB3DeH1J7vxu3ZggpoQjyHkMI4rlQzWH1JdVbVcFHfrJLuWJLBZEvnarlcEXDxpWQSe7ZC3dKY6IopDgLEDF+1qIpQ5R9ehpDb+BJ6nwXEoYdmqQ/vpJ+suLFM/G+41EjA1pZsiYqq86GsqL2cNrmMXAqFQtFva0Dx87aZNh0Gf9fo40RpnXOIGCS0Q5SRFusbRpGszeZn/9TWPZZZ/95LY3c25j/bVVzQqTJXcwV1FMg6SYD/HVwjuWaRYeUJvaBEyVUrrxMKG8pedQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n7KSEX7U7NnIO2daCi7CaoyWIyRMKHemmUP+Qo9svhA=;
+ b=AzQrGyWAr6F+AAhaLm0cmalfqexBfNpAh1uVyWxRMlQrzSG1QH37kS9PZ91nseNoVmZwUSvlSSL1AKVbAroHncl/hmJGWGqYPb2fA7s4RWp0+snhr5ZueiVCjsws1LT/YgB4/VSVhPITHcrQGlBSs+ImGsdPobzgUsmC5VoAPgzsE3+I3uc3dkb7ZcbfnKx95ZNBoIXHoff82OGLsKG8srLy6TTdWLYGHSXtLd06axYNExfk1RJQDIbDxzt3VOfP6FDzcp01taAHKqWsz6Mv/6YV3L/UmPaVBv01gIT6DZP1BjMMN628IXRna1tzFuU40GHhuTlsbkWkCHZisOxsNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by CH3PR12MB7689.namprd12.prod.outlook.com (2603:10b6:610:14d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Mon, 15 Dec
+ 2025 20:03:15 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9412.011; Mon, 15 Dec 2025
+ 20:03:15 +0000
+Message-ID: <64761b5c-1dc4-43da-a348-3db994ca5e87@nvidia.com>
+Date: Mon, 15 Dec 2025 20:03:10 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] ARM: tegra: fix device leak on tegra ahb lookup
+To: Ma Ke <make24@iscas.ac.cn>, linux@armlinux.org.uk,
+ thierry.reding@gmail.com, johan@kernel.org, hdoyu@nvidia.com,
+ swarren@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, stable@vger.kernel.org
+References: <20251214125317.2086-1-make24@iscas.ac.cn>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251214125317.2086-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0194.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:318::9) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB7689:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c225a6e-0255-4cd5-cee4-08de3c14fb7c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|10070799003|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M3ZSQUZvSEhuMlJlb0psK0p2UUdzNzZRVXl0MlpId2RSMThVL1E1dmJadTVl?=
+ =?utf-8?B?amlIUUNUcEFSU3Y2NXZXaDRMeTVUNUJBcjdPQ25tOGpobk1mKytoa3QyeHRL?=
+ =?utf-8?B?d0Vya29aNGxGSnpMb0JLZklRTHlheGxLaytnTGZrUHJzUTRZOWMrc2xtcVBt?=
+ =?utf-8?B?eDcwSjVRTGpVRzBGd0lPTXJaR1djZzA3M3JsV2QrNHh5RDBvblp2eFR3RHV6?=
+ =?utf-8?B?c2hnV0Q3Qks2QWdtaGtSbDdTK2w5UGlUdmpacWRJUFprQktQaTUydjNnTmd2?=
+ =?utf-8?B?amMyay9sTWRWTW5zbXlvNkxYOHZMM1JwalhVeEs3YzV4eVlMS3R3NGVEYXpL?=
+ =?utf-8?B?S2hjQ2hsMHA0ejBKZGduOUp0UEdrR0VqeTFIRmppcHRNTkN6NTJQRjJSdmtq?=
+ =?utf-8?B?UFlFYjl0UGhRTFZNSkZidUdlekZhTWlUSDNzMHBrdXA1OHkvcWc2MXdUSnpM?=
+ =?utf-8?B?d1ZTdmM3MFplMmx3Qzk0Z1JZMjNGYnRMU1Y2am85QXdIQ2tBVVUxS2J0aHdV?=
+ =?utf-8?B?Y0dPditWV3lPbERUQkpnZG9FY3dIZ3BLYytaWmJ5ZTN3bGRtZEE2K0tuZ245?=
+ =?utf-8?B?dlBNc1RDVkptcmlhUk5xaXc4R0k4YUFzc1JsU0JWM0tnUStxUWp4SXIxajNi?=
+ =?utf-8?B?UlExckpTeUR1WlNoSDljd2R3QU1iT3lLUEN6UVk1T3R6d0F6UVdzRkloeTZa?=
+ =?utf-8?B?dWFWM1N3OXhxcjlldmZmV1JEVlk3dllxS1FBS0xzUGJibmMrbU9qR0xCWGFx?=
+ =?utf-8?B?U2dsWFdqWkhSbWQvZHRRSVRSWnovbGd6djRsamhyVlpueWE3UWp6djRCeHg3?=
+ =?utf-8?B?UGpiYXplbUozWnlZcDRxdlVrL1VlZCtPdlQvcm1XV0VNMnFXeS9vektNZ3RL?=
+ =?utf-8?B?MkZFL3RxbldvY0J0N1VBb0F2a0NxV3lNTlp2VFpBVUlmOEY0QkNSaGsvOHdI?=
+ =?utf-8?B?bEUxelVLMzJ3WXp2MjhQaE9CcEczL2JQMkpvWTMvTkIzamdLem00U25aUzdX?=
+ =?utf-8?B?NVNvSndOM3J1TWRNZitqMiswbFlxVUZoZDliUjdWUy9Qa0taNmFOL1l5Q3ds?=
+ =?utf-8?B?aW8vKzZnTHIxWUN3UzlYdlYvRHNGeWZIL1NCa0FXVXlEek02Z2xjbVVadS9D?=
+ =?utf-8?B?K3VibWJLLzA5RzQyL2YyQlR4ZFUyRzB0U2wyNjhyZUsxM1Jsd0pqWFFYN0dt?=
+ =?utf-8?B?bzlqdjJHRzUrUWJWUGUvdzViRG1BVGtxR1gwT2NNSDJFTlRNRktwaXJ6SWJS?=
+ =?utf-8?B?RXAwOUNNTHlya1VKQmRia3NKNTJoOU8remFuQUFvMi9pVk5Iem5EaTl0cmhm?=
+ =?utf-8?B?LzJUOUtJWlZTNUZwZE5YRFVVeGNtNkMySXpZdE5MMVpVNWFWMmdjVkhIM2Jr?=
+ =?utf-8?B?ZWlKOU1pcTUrcG9QVXJycUJKTENPb1YvYmoxbDJwV3lPVW4rbzhJMnJORUUw?=
+ =?utf-8?B?VjBjNUNwUWhmb1pucG5zVC81b0Vsd3VJT1E3TFJuWURiV3ZIWGxiMHhmNmtO?=
+ =?utf-8?B?REdkTkpxaVU5bzZtK2ZOWWw2U1FGV1BBYUZoY0xqaG9zejM3VUdTckZnbmI4?=
+ =?utf-8?B?S3FQRWc0VTd1ZDRLSjVuZit4K05ZbFN3STkycjY2UVM4aUU2UlN5NzBjZ2kx?=
+ =?utf-8?B?ZEJJQ3FzK2NXc3ZEcndYZG9WU2h5QU1Eek1NdkoxR0ZTcmkzM01YVFBzVlRQ?=
+ =?utf-8?B?Ti91OGE4ZS80cFRsMytxSldWRjBaS2RKWExZRkpTc1hxVXpsK1RqYTJpWjFr?=
+ =?utf-8?B?V0ZlWWFnOE5pK3VqOWxzRmVhcExic01YdE41YUJxY0pEdjlxeUdhZ0pFODNV?=
+ =?utf-8?B?OTU0MnNGWkV3VzhFUktVNitiVzdXUmJRRUFnTGV4YjdVTnQ5MkhIeEh3R3lU?=
+ =?utf-8?B?dnVSbFBCbFJ3NnVyS3dWM281VHhMRncrVzJzbGtaeDgzREcwSjJONXp0TGcr?=
+ =?utf-8?Q?aNfJVaOUkvJwNkmH2Cin+UZB9IN11eB/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WDVzenEzUjhhNWdIZHBpck1LSzhacFpNUXFOWkFQTkl3eEtYeStmNytHb1lK?=
+ =?utf-8?B?dTRwS0FUUk1vcmRhK1Jod1YrR3ZyK0VGMUU1UklHY3IzSWdUdlNRWnJKNWp1?=
+ =?utf-8?B?NndOcm9ubUxqVTFZN3hLaS9RY0ZQWmFpcTZXY1ZZSVhFUkhIRzJxRnZienR5?=
+ =?utf-8?B?YlBSczVxZG04MnRTdlBhdUhmZjBwTmRIa2E0cm8wa28vZE1zWWtoNHdFQnlI?=
+ =?utf-8?B?bEZoUlRvQVkranRKNG5LSkl5Wkh0dC92bXg3NWlQcHdONjZSWmZVOFBsRS9B?=
+ =?utf-8?B?YjdOOUZaR21qYjBGN3FZWGc4NXRwNFIyQlkwL0E3YWdESjJtTXdoaC9XTlIr?=
+ =?utf-8?B?b0ZNY0hCOThqb1Uyd2Nqb0lCU1JBdGJQYXh6a0ZrNEJhUXl2aVFoWFNhZ0Rl?=
+ =?utf-8?B?T3l0WjhMWDJKUmdKMk1PTnJvbjZmWVd5VVNFaTJBRXhYUkZ2djBpaTk2aXZV?=
+ =?utf-8?B?WmVEYXhjYkMzVzFrU1M0TDJGUW5YWFd4RHdhbkFMaXZBYkpwM2JoUDN1YzBp?=
+ =?utf-8?B?eUpTZmsyZFR4R0thTVlkVEZneFFBV1RpamdMZURiK1pDYlZTWmdzR3NpcG9r?=
+ =?utf-8?B?SFVZVlFJU2doMW9haGtRd1BRODJldm82QjR6L1NZd0tQb3JJOWp4bHlueEsr?=
+ =?utf-8?B?ZEVhY3lzbkhRN3pMenliSkpKck5UYlZENXIvNDB0UnlrcnRVd2xmR1A2RWtY?=
+ =?utf-8?B?WWhpdzRFU0QvWk1yRmtBODRNMnZncFZXckJiS09lVTNjbkN0RVJ2TEkzMEFp?=
+ =?utf-8?B?K3hrZ3FqZGNMR1RYSGEyOU02NGljd3FsOHFDMllSYWswYjYwWnp2RU5PSXA3?=
+ =?utf-8?B?UlpIS0htVUxJQk4zaUFUYytBbUp0RE9GMmd5dFJ5U3NQYnR0a2Q2VjI3Yk4y?=
+ =?utf-8?B?MWxjU1J1VTlQSGRlQnZJb3RUN3hIOXJ5bVJieEpPQ25kaTk1U3Qyd0xta2o3?=
+ =?utf-8?B?YlVPK3lieUZjU2ZGNE5BdEJCWE1tWllyNmlsZE5Dd1NESVZaeHA1TFFJdFZn?=
+ =?utf-8?B?OWIzbmdDektTT1FzVFZpZnAxZ1BnZ2hzZWZpdHoybUVzQk94NE4rQ3hJazFl?=
+ =?utf-8?B?VFF4VGFDV2loaUE4MFVaUUJEZk9mRUhkN0I0ejZqRmlOVzhtVmFjRGlLeWJL?=
+ =?utf-8?B?UkNzK1FuM2ZscTRGRUNnTmN5dGRoWEE5MG05SldyQWt3ZGNTNVVZb3JUSkhE?=
+ =?utf-8?B?Nkg3K3psbFZ0YnR0K0tYeFdIMXJ2YXQ3OFBHRGlrNGtpN012UTdDdlllVld3?=
+ =?utf-8?B?NS91MXZOY2pNMTh0RzFLQm4vUVVUa291cTU4cy82bkNWdi9HMEg1ZHJnUkt3?=
+ =?utf-8?B?aElsTXlEYXhLNEo3eFhkZ1ZYTGZ2a0FveFRHK2l6RndxOVBtck4rQ0xIS1dt?=
+ =?utf-8?B?VytLdjdHWGRYWXhBTFF5b08zZGVhRUc0eHRpSDBqb1hrZXVLbjhXa1E5OHNG?=
+ =?utf-8?B?SnRsV2wxNnlMODRpT0k1VzVITXE3dlU1OUtYM1pzdVh2S0ZOcEJ5dGUyWTRn?=
+ =?utf-8?B?dnoxUWV4K0ZZWnU2dndSWlRPNFlVTkJWR294YVVWTFJaQm82QjRTVjRMeU5S?=
+ =?utf-8?B?azFkbDJMcXdXdHQ0OHYvSVAybFJLandyQUEwODBTak1UM2g5aFNQN1d6TEZ4?=
+ =?utf-8?B?Ly9lVmVNWENzcWdicG5hZUM4eFBpT1NyZHNtS0JOK2dIdU4zU3owdFUyeGR6?=
+ =?utf-8?B?Y1VjaWxEMmNZQlo2YVg5Rzd5Tnd3QmVFRWw1d0owS0J4aWRwdld5Rnk0OTY4?=
+ =?utf-8?B?ODBFbzY1VG1Xa0plMGRhNjBRem1BTXc1SW5nTkhJSURDWDArU3NFWTU5UFlv?=
+ =?utf-8?B?RzhZTzgwRGNNWE1rUkxRaXM1d3NOWUR1R20xcGZyWDdaOVZFYlNGRGY4WXY2?=
+ =?utf-8?B?dmp6V3I5aUFGeGpPQnJTaDEzNWZ6RGNzVUNVV0ZLZ3E3d2VnNHQwZWZyV091?=
+ =?utf-8?B?SDBBVUVtTkdEWG9iRDcycTVSbTdqYTg1NWtGbW0vM2o4WEh1Mk9HQ0xwRlM4?=
+ =?utf-8?B?bXlDRy9GdlBoM3pqa29acGptalRTNjN6TU9SR1ZHR2ZURlUvMTY0TjNYcEE2?=
+ =?utf-8?B?STh1US9KWElZSXJPa0F2ZnBCdEROZUozN3pxTk9lMnFmSUZIN0Q5dEJOczNT?=
+ =?utf-8?B?T05MZjNZWmJVNEd0ZzlSU0F6MlFCZ2REK2p0czYvMlA1bDVXWGJnZXU4bTZ2?=
+ =?utf-8?Q?7xjqPQ94vtRspECscEi85QOb/IqVvvTMm6DUVDhLpdN1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c225a6e-0255-4cd5-cee4-08de3c14fb7c
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2025 20:03:15.2229
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ux3ebMDxt9QaBUOivG8mMd3huPqa6GujHnHcU+kKZCYYp4lEbuxHtVSUVfEezQgGQVLoSBbtR64Vt/A4uYAsnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7689
 
-Replace manual bit operations with standard BIT() and GENMASK() macros.
-This eliminates magic numbers, enhances readability, improves
-maintainability, and resolves checkpatch.pl warnings.
 
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v2: improve the commit message
-v1: New patch
----
- drivers/pci/controller/pci-tegra.c | 129 +++++++++++++++--------------
- 1 file changed, 65 insertions(+), 64 deletions(-)
+On 14/12/2025 12:53, Ma Ke wrote:
+> tegra_ahb_enable_smmu() utilizes driver_find_device_by_of_node() which
+> internally calls driver_find_device() to locate the matching device.
+> driver_find_device() increments the ref count of the found device by
+> calling get_device(), but tegra_ahb_enable_smmu() fails to call
+> put_device() to decrement the reference count before returning. This
+> results in a reference count leak of the device, which may prevent the
+> device from being properly released and cause a memory leak.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 89c788bab1f0 ("ARM: tegra: Add SMMU enabler in AHB")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>   drivers/amba/tegra-ahb.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+> index f23c3ed01810..3ed5cef34806 100644
+> --- a/drivers/amba/tegra-ahb.c
+> +++ b/drivers/amba/tegra-ahb.c
+> @@ -148,6 +148,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
+>   	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
+>   	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
+>   	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
+> +	put_device(dev);
+>   	return 0;
+>   }
+>   EXPORT_SYMBOL(tegra_ahb_enable_smmu);
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 336d2cf4d828..99f6f93d6d99 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -13,6 +13,7 @@
-  * Author: Thierry Reding <treding@nvidia.com>
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/cleanup.h>
- #include <linux/debugfs.h>
-@@ -85,17 +86,17 @@
- #define AFI_MSI_EN_VEC(x)	(0x8c + ((x) * 4))
- 
- #define AFI_CONFIGURATION		0xac
--#define  AFI_CONFIGURATION_EN_FPCI		(1 << 0)
--#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	(1 << 31)
-+#define  AFI_CONFIGURATION_EN_FPCI		BIT(0)
-+#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	BIT(31)
- 
- #define AFI_FPCI_ERROR_MASKS	0xb0
- 
- #define AFI_INTR_MASK		0xb4
--#define  AFI_INTR_MASK_INT_MASK	(1 << 0)
--#define  AFI_INTR_MASK_MSI_MASK	(1 << 8)
-+#define  AFI_INTR_MASK_INT_MASK	BIT(0)
-+#define  AFI_INTR_MASK_MSI_MASK	BIT(8)
- 
- #define AFI_INTR_CODE			0xb8
--#define  AFI_INTR_CODE_MASK		0xf
-+#define  AFI_INTR_CODE_MASK		GENMASK(3, 0)
- #define  AFI_INTR_INI_SLAVE_ERROR	1
- #define  AFI_INTR_INI_DECODE_ERROR	2
- #define  AFI_INTR_TARGET_ABORT		3
-@@ -114,32 +115,32 @@
- #define AFI_INTR_SIGNATURE	0xbc
- #define AFI_UPPER_FPCI_ADDRESS	0xc0
- #define AFI_SM_INTR_ENABLE	0xc4
--#define  AFI_SM_INTR_INTA_ASSERT	(1 << 0)
--#define  AFI_SM_INTR_INTB_ASSERT	(1 << 1)
--#define  AFI_SM_INTR_INTC_ASSERT	(1 << 2)
--#define  AFI_SM_INTR_INTD_ASSERT	(1 << 3)
--#define  AFI_SM_INTR_INTA_DEASSERT	(1 << 4)
--#define  AFI_SM_INTR_INTB_DEASSERT	(1 << 5)
--#define  AFI_SM_INTR_INTC_DEASSERT	(1 << 6)
--#define  AFI_SM_INTR_INTD_DEASSERT	(1 << 7)
-+#define  AFI_SM_INTR_INTA_ASSERT	BIT(0)
-+#define  AFI_SM_INTR_INTB_ASSERT	BIT(1)
-+#define  AFI_SM_INTR_INTC_ASSERT	BIT(2)
-+#define  AFI_SM_INTR_INTD_ASSERT	BIT(3)
-+#define  AFI_SM_INTR_INTA_DEASSERT	BIT(4)
-+#define  AFI_SM_INTR_INTB_DEASSERT	BIT(5)
-+#define  AFI_SM_INTR_INTC_DEASSERT	BIT(6)
-+#define  AFI_SM_INTR_INTD_DEASSERT	BIT(7)
- 
- #define AFI_AFI_INTR_ENABLE		0xc8
--#define  AFI_INTR_EN_INI_SLVERR		(1 << 0)
--#define  AFI_INTR_EN_INI_DECERR		(1 << 1)
--#define  AFI_INTR_EN_TGT_SLVERR		(1 << 2)
--#define  AFI_INTR_EN_TGT_DECERR		(1 << 3)
--#define  AFI_INTR_EN_TGT_WRERR		(1 << 4)
--#define  AFI_INTR_EN_DFPCI_DECERR	(1 << 5)
--#define  AFI_INTR_EN_AXI_DECERR		(1 << 6)
--#define  AFI_INTR_EN_FPCI_TIMEOUT	(1 << 7)
--#define  AFI_INTR_EN_PRSNT_SENSE	(1 << 8)
-+#define  AFI_INTR_EN_INI_SLVERR		BIT(0)
-+#define  AFI_INTR_EN_INI_DECERR		BIT(1)
-+#define  AFI_INTR_EN_TGT_SLVERR		BIT(2)
-+#define  AFI_INTR_EN_TGT_DECERR		BIT(3)
-+#define  AFI_INTR_EN_TGT_WRERR		BIT(4)
-+#define  AFI_INTR_EN_DFPCI_DECERR	BIT(5)
-+#define  AFI_INTR_EN_AXI_DECERR		BIT(6)
-+#define  AFI_INTR_EN_FPCI_TIMEOUT	BIT(7)
-+#define  AFI_INTR_EN_PRSNT_SENSE	BIT(8)
- 
- #define AFI_PCIE_PME		0xf0
- 
- #define AFI_PCIE_CONFIG					0x0f8
--#define  AFI_PCIE_CONFIG_PCIE_DISABLE(x)		(1 << ((x) + 1))
--#define  AFI_PCIE_CONFIG_PCIE_DISABLE_ALL		0xe
--#define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_MASK	(0xf << 20)
-+#define  AFI_PCIE_CONFIG_PCIE_DISABLE(x)		BIT((x) + 1)
-+#define  AFI_PCIE_CONFIG_PCIE_DISABLE_ALL		GENMASK(3, 1)
-+#define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_MASK	GENMASK(23, 20)
- #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_SINGLE	(0x0 << 20)
- #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_420	(0x0 << 20)
- #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_X2_X1	(0x0 << 20)
-@@ -150,79 +151,79 @@
- #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_211	(0x1 << 20)
- #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_411	(0x2 << 20)
- #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_111	(0x2 << 20)
--#define  AFI_PCIE_CONFIG_PCIE_CLKREQ_GPIO(x)		(1 << ((x) + 29))
--#define  AFI_PCIE_CONFIG_PCIE_CLKREQ_GPIO_ALL		(0x7 << 29)
-+#define  AFI_PCIE_CONFIG_PCIE_CLKREQ_GPIO(x)		BIT((x) + 29)
-+#define  AFI_PCIE_CONFIG_PCIE_CLKREQ_GPIO_ALL		GENMASK(31, 29)
- 
- #define AFI_FUSE			0x104
--#define  AFI_FUSE_PCIE_T0_GEN2_DIS	(1 << 2)
-+#define  AFI_FUSE_PCIE_T0_GEN2_DIS	BIT(2)
- 
- #define AFI_PEX0_CTRL			0x110
- #define AFI_PEX1_CTRL			0x118
--#define  AFI_PEX_CTRL_RST		(1 << 0)
--#define  AFI_PEX_CTRL_CLKREQ_EN		(1 << 1)
--#define  AFI_PEX_CTRL_REFCLK_EN		(1 << 3)
--#define  AFI_PEX_CTRL_OVERRIDE_EN	(1 << 4)
-+#define  AFI_PEX_CTRL_RST		BIT(0)
-+#define  AFI_PEX_CTRL_CLKREQ_EN		BIT(1)
-+#define  AFI_PEX_CTRL_REFCLK_EN		BIT(3)
-+#define  AFI_PEX_CTRL_OVERRIDE_EN	BIT(4)
- 
- #define AFI_PLLE_CONTROL		0x160
--#define  AFI_PLLE_CONTROL_BYPASS_PADS2PLLE_CONTROL (1 << 9)
--#define  AFI_PLLE_CONTROL_PADS2PLLE_CONTROL_EN (1 << 1)
-+#define  AFI_PLLE_CONTROL_BYPASS_PADS2PLLE_CONTROL BIT(9)
-+#define  AFI_PLLE_CONTROL_PADS2PLLE_CONTROL_EN BIT(1)
- 
- #define AFI_PEXBIAS_CTRL_0		0x168
- 
- #define RP_ECTL_2_R1	0x00000e84
--#define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
-+#define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		GENMASK(15, 0)
- 
- #define RP_ECTL_4_R1	0x00000e8c
--#define  RP_ECTL_4_R1_RX_CDR_CTRL_1C_MASK	(0xffff << 16)
-+#define  RP_ECTL_4_R1_RX_CDR_CTRL_1C_MASK	GENMASK(31, 16)
- #define  RP_ECTL_4_R1_RX_CDR_CTRL_1C_SHIFT	16
- 
- #define RP_ECTL_5_R1	0x00000e90
--#define  RP_ECTL_5_R1_RX_EQ_CTRL_L_1C_MASK	0xffffffff
-+#define  RP_ECTL_5_R1_RX_EQ_CTRL_L_1C_MASK	GENMASK(31, 0)
- 
- #define RP_ECTL_6_R1	0x00000e94
--#define  RP_ECTL_6_R1_RX_EQ_CTRL_H_1C_MASK	0xffffffff
-+#define  RP_ECTL_6_R1_RX_EQ_CTRL_H_1C_MASK	GENMASK(31, 0)
- 
- #define RP_ECTL_2_R2	0x00000ea4
- #define  RP_ECTL_2_R2_RX_CTLE_1C_MASK	0xffff
- 
- #define RP_ECTL_4_R2	0x00000eac
--#define  RP_ECTL_4_R2_RX_CDR_CTRL_1C_MASK	(0xffff << 16)
-+#define  RP_ECTL_4_R2_RX_CDR_CTRL_1C_MASK	GENMASK(31, 16)
- #define  RP_ECTL_4_R2_RX_CDR_CTRL_1C_SHIFT	16
- 
- #define RP_ECTL_5_R2	0x00000eb0
--#define  RP_ECTL_5_R2_RX_EQ_CTRL_L_1C_MASK	0xffffffff
-+#define  RP_ECTL_5_R2_RX_EQ_CTRL_L_1C_MASK	GENMASK(31, 0)
- 
- #define RP_ECTL_6_R2	0x00000eb4
--#define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	0xffffffff
-+#define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	GENMASK(31, 0)
- 
- #define RP_VEND_XP	0x00000f00
--#define  RP_VEND_XP_DL_UP			(1 << 30)
--#define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
--#define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
--#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
-+#define  RP_VEND_XP_DL_UP			BIT(30)
-+#define  RP_VEND_XP_OPPORTUNISTIC_ACK		BIT(27)
-+#define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	BIT(28)
-+#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	GENMASK(25, 18)
- 
- #define RP_VEND_CTL0	0x00000f44
--#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-+#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	GENMASK(15, 12)
- #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
- 
- #define RP_VEND_CTL1	0x00000f48
--#define  RP_VEND_CTL1_ERPT	(1 << 13)
-+#define  RP_VEND_CTL1_ERPT	BIT(13)
- 
- #define RP_VEND_XP_BIST	0x00000f4c
--#define  RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
-+#define  RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	BIT(28)
- 
- #define RP_VEND_CTL2 0x00000fa8
--#define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
-+#define  RP_VEND_CTL2_PCA_ENABLE BIT(7)
- 
- #define RP_PRIV_MISC	0x00000fe0
--#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT		(0xe << 0)
--#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT		(0xf << 0)
--#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK	(0x7f << 16)
-+#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT		GENMASK(3, 1)
-+#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT		GENMASK(3, 0)
-+#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK	GENMASK(22, 16)
- #define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD		(0xf << 16)
--#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE		(1 << 23)
--#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK	(0x7f << 24)
-+#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE		BIT(23)
-+#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK	GENMASK(30, 24)
- #define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD		(0xf << 24)
--#define  RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE		(1 << 31)
-+#define  RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE		BIT(31)
- 
- #define RP_LINK_CONTROL_STATUS			0x00000090
- #define  RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE	0x20000000
-@@ -233,22 +234,22 @@
- #define PADS_CTL_SEL		0x0000009c
- 
- #define PADS_CTL		0x000000a0
--#define  PADS_CTL_IDDQ_1L	(1 << 0)
--#define  PADS_CTL_TX_DATA_EN_1L	(1 << 6)
--#define  PADS_CTL_RX_DATA_EN_1L	(1 << 10)
-+#define  PADS_CTL_IDDQ_1L	BIT(0)
-+#define  PADS_CTL_TX_DATA_EN_1L	BIT(6)
-+#define  PADS_CTL_RX_DATA_EN_1L	BIT(10)
- 
- #define PADS_PLL_CTL_TEGRA20			0x000000b8
- #define PADS_PLL_CTL_TEGRA30			0x000000b4
--#define  PADS_PLL_CTL_RST_B4SM			(1 << 1)
--#define  PADS_PLL_CTL_LOCKDET			(1 << 8)
--#define  PADS_PLL_CTL_REFCLK_MASK		(0x3 << 16)
-+#define  PADS_PLL_CTL_RST_B4SM			BIT(1)
-+#define  PADS_PLL_CTL_LOCKDET			BIT(8)
-+#define  PADS_PLL_CTL_REFCLK_MASK		GENMASK(17, 16)
- #define  PADS_PLL_CTL_REFCLK_INTERNAL_CML	(0 << 16)
--#define  PADS_PLL_CTL_REFCLK_INTERNAL_CMOS	(1 << 16)
-+#define  PADS_PLL_CTL_REFCLK_INTERNAL_CMOS	BIT(16)
- #define  PADS_PLL_CTL_REFCLK_EXTERNAL		(2 << 16)
- #define  PADS_PLL_CTL_TXCLKREF_MASK		(0x1 << 20)
- #define  PADS_PLL_CTL_TXCLKREF_DIV10		(0 << 20)
--#define  PADS_PLL_CTL_TXCLKREF_DIV5		(1 << 20)
--#define  PADS_PLL_CTL_TXCLKREF_BUF_EN		(1 << 22)
-+#define  PADS_PLL_CTL_TXCLKREF_DIV5		BIT(20)
-+#define  PADS_PLL_CTL_TXCLKREF_BUF_EN		BIT(22)
- 
- #define PADS_REFCLK_CFG0			0x000000c8
- #define PADS_REFCLK_CFG1			0x000000cc
+
+This has already been fixed and so this change is not needed.
+
 -- 
-2.50.1
+nvpublic
 
