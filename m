@@ -1,61 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ED7335558;
-	Tue, 16 Dec 2025 15:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1AA14B08A;
+	Tue, 16 Dec 2025 16:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765898600; cv=none; b=Tr/CWp3r7GofYKxOSXTOb4XTu14BBeiAVbkeV8KAr6vxvWP1QbYYlZET11H34kXk6NvoOVwZr/uIaeLIW9o8Ma/nFE4iJK308BmLbEGlnZH3m0/zgZ7SuN1pRgDgxKs/diYED8t/NYIgGROguMn4SsqnXZ2vXOTXrEYLQmimwgc=
+	t=1765904186; cv=none; b=tx6W/2JRtBvQLxNXS+kU7xfd+TFCrTXKlxn11o0UuRGD7hX0LpFi6vZ9BWBlOk9+6/xxYG+fXAhgR8eKFrE4zUpb+w7sZVUwGMtSAUZKlY4m3W0+uwtToeUyHvHRnIUJRKoDupqi+EXDFz5aP+D0EMmt2LoquwEIy3PlVL4fxHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765898600; c=relaxed/simple;
-	bh=poxxidryPk6pZK/7R6prbfZDAe3T3Jxk+yRbb7+zbYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUONqRMPw0kkZsyIi5rssn8S2+Q7FYQUrO2Y+dLFuq/HDzgvS8UwHZsrhPpz3OAl41jtVpUUrFYTDvA1CCyC82YY+lb3n+27I+z/6nkgXGKqNIhfxlJr/dhLVYEiXqS6VlFMenMHZXigA3JiFAXE7UAgiAzVpPdkWU8BMdWYdUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2hUAtWG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765904186; c=relaxed/simple;
+	bh=cNKpevnXsX9XUwqoMEgdxh29HOpfZ/BhQ6L8gahlKIU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=B6Ow3zE4SiX+sSQLzSDzGOyi6sTBX/yAxq8qY/+rwp2wC70OJW2zI0873izGeF3gJw8wOmHnr1iMnHWZy5vkzBSCTSHO3suEEh90lqgOzbW0GtUTUWR2MIRDfLBUFi8hD+VREobILs3BowlqUy1f3B/w+VQ4YKBEb2aK10D3QH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7Ky9UFY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2hUAtWG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE07C4CEF1;
-	Tue, 16 Dec 2025 15:23:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7Ky9UFY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05012C19422;
+	Tue, 16 Dec 2025 16:56:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765898600;
-	bh=poxxidryPk6pZK/7R6prbfZDAe3T3Jxk+yRbb7+zbYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m2hUAtWGh/ZhYvhLzQJD5nDGxZcUUlbZb7CmgcDoCvNKUF+IAv+Qnb6lMHqgNxKet
-	 E03W3k5V1kpZbchZhFRNWJzFYq1mtvdOO6DRog67tXia8bhsiG/qaVkIKMY9BND+fP
-	 TFFjS65sk03LYvKFxrkIXB+ApvExEJ36vca0hTK/52FSOYZgvwUCFd+gK1gUpqAchA
-	 RgWEljtp/ORo1DBKe34iZIc6quXgQjesxwjH2CvlqjYAmKrd3dvYB1MS5FWj0gkQXm
-	 yl8S6ZHVrp0wcwV/7snN7HpFTWgGTGZttS4a7CjwXhJL0NpEUZhUgdzroxwu3PTBTQ
-	 DCgNYSLYLpoFw==
-Date: Tue, 16 Dec 2025 20:53:16 +0530
+	s=k20201202; t=1765904185;
+	bh=cNKpevnXsX9XUwqoMEgdxh29HOpfZ/BhQ6L8gahlKIU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=E7Ky9UFYTW+yabm3WfxuMFV/Q6arAWY/+OL+Yluax/1geJILcoXogcw8NspzCyiue
+	 p0QWmyzWMQwPb+QUaTP9OkJ6buwprWsclo96DgEH+/yFdPMdpVnH2gBtw3vGKHADXO
+	 OhWd74qZOdEiII+p4Bf7gFoHXgKiIydfm2fX1lqXVFUIodPHgrSHkFbCJucVvfmrHt
+	 1FHiMNgJu1K5M0srCz7tBjVIfbxPFC+bWLUvqDJfR9GLXPJiwvjQfpovO2G21v6EWe
+	 vyY04O6S9e5fmrOnv8BymVbZpD8jYLZUnG9sEaKSf4Je/KxNeqftpCMICeSVIaGjMZ
+	 2XQja81TLLnJQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Sheetal ." <sheetal@nvidia.com>, ldewangan@nvidia.com,
-	jonathanh@nvidia.com, dmaengine@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: tegra-adma: Fix use-after-free
-Message-ID: <aUF5ZK7nTgPACXdO@vaman>
+To: "Sheetal ." <sheetal@nvidia.com>
+Cc: ldewangan@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
+ dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251110142445.3842036-1-sheetal@nvidia.com>
 References: <20251110142445.3842036-1-sheetal@nvidia.com>
- <ovxny5nhgn2lnfq2bespxwzntkug7l7pwfwhrn47nc42nvtn2h@6fqgpmvbxfla>
+Subject: Re: [PATCH] dmaengine: tegra-adma: Fix use-after-free
+Message-Id: <176590418364.422798.14000642771067955308.b4-ty@kernel.org>
+Date: Tue, 16 Dec 2025 22:26:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ovxny5nhgn2lnfq2bespxwzntkug7l7pwfwhrn47nc42nvtn2h@6fqgpmvbxfla>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 27-11-25, 10:25, Thierry Reding wrote:
-> On Mon, Nov 10, 2025 at 07:54:45PM +0530, Sheetal . wrote:
+
+On Mon, 10 Nov 2025 19:54:45 +0530, Sheetal . wrote:
+> A use-after-free bug exists in the Tegra ADMA driver when audio streams
+> are terminated, particularly during XRUN conditions. The issue occurs
+> when the DMA buffer is freed by tegra_adma_terminate_all() before the
+> vchan completion tasklet finishes accessing it.
 > 
-> Tiny nit-pick: there should be no blank line between the tags above
-> (i.e. between the Fixes: and Signed-off-by: lines).
+> The race condition follows this sequence:
 > 
-> Vinod, is that something you can fix up while applying, or do you want a
-> new patch for that?
+> [...]
 
-Yep, fixed that
+Applied, thanks!
 
+[1/1] dmaengine: tegra-adma: Fix use-after-free
+      commit: 2efd07a7c36949e6fa36a69183df24d368bf9e96
+
+Best regards,
 -- 
 ~Vinod
+
+
