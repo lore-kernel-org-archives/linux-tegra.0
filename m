@@ -1,307 +1,115 @@
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7E830E827
-	for <linux-tegra@vger.kernel.org>; Tue, 16 Dec 2025 08:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5499325736
+	for <linux-tegra@vger.kernel.org>; Tue, 16 Dec 2025 10:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765874637; cv=none; b=aNqqvZQAEiyTYgYs0WPXyWeIHs2Kvtp3kpCTqfgtGy0BWhF/TD48fqZYZOXZTsPFRMvO/MDPNXN0TfssrdIwDy5XY9X9gNMfOEgKBHApTfvLaQh+L/ijJtHcgVyBBiJMtP+Un/i0m6j9ja3mGy2QnS5C00a+PiPN4R2SijNNcP0=
+	t=1765880592; cv=none; b=WvjI4ZeibojAuXq0PKIVVvBvcopEwAdEDyIPdlBF5QvdMZJOcb9tM/PHU1/A4CyNWFPkp48gllTCHZDPdg6iINkyYM6s5f5mfW5b636sN0nhGbihpPczQbcrPlW2LgQz2aRA25uk4sJgIW5WlOpLI9AdrzcGH0/VZxA4+C8ah/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765874637; c=relaxed/simple;
-	bh=sVE2uy1lfgD1T3yf8ycnp+3UiXq4hxYh/F0gCRqGTrA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IVYDZsIG7P7OFUHixNuxgGuenfYDFJPT15uNzchNW07YjWf/Mwh02N8ROWPM4B0jeQgsE4JVcm48Djy+RWkJCJJ+iP+8JcbrL78TbNdiQvy3xLdnSaWl1Gq3zpZw6Bp1wXbxSBqTG+8V8sdGMoyvVkAd5jGRmEDVAGpR3u2w7uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CMQElSWo; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+	s=arc-20240116; t=1765880592; c=relaxed/simple;
+	bh=UT9DY5CCLckA8L/X6WyKzdgV+pJLPEZiuu//aLyXHiw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JmVFSQf/ULlyucRK71iTmlwg4v38GxlgjyDn1QEYxtO+K3jA0Eqp9LsmlKEmAZJAAJvd7Rjcw1hM+RhNhO+ZmUtew3EsPsjSRrcmgrnzIScpBFzMp/12FmzEXklLXwR04kgJ2dDhveOPothbCSHwn4bq2teNcA//2DJKdb9r7Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CJbUKkcN; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CMQElSWo"
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7c240728e2aso8948765b3a.3
-        for <linux-tegra@vger.kernel.org>; Tue, 16 Dec 2025 00:43:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CJbUKkcN"
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-4779a637712so29537905e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 16 Dec 2025 02:23:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765874634; x=1766479434; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3YwVFuyayREOqPduUup4CfMPIb0E9MpA8gNuOyoTCFw=;
-        b=CMQElSWoBC9jqUn5u9uW2K+Ql/symas4KVB50xZj2HQYWlEtPPKQ9eg/FhqebJUbDZ
-         dlydfXbt3YirBFNlTHtpE5p613GSqIJTyVTUIbqaoAwQS8ZC8x2W9qaH9trHW2YocJ5j
-         js1xwZSub60dOY95WOyprjoxKk99UViGLZ6Hkvl0i2/fgPBneq6chtEPvdsBsTVwhif+
-         Vr5i3sbPlTLDCDgqcmxc+kno7mMUiRqUv8aXc/hMY/SLRvoGL69fHuyTTHsM1ntJI9IC
-         TsqgIe22fDKj7cxQ8tF8WNJo5kY26kpDJL6CqmJ2aSMJq3HLkqz6pHPd4yMZ/fHBcnQd
-         r83Q==
+        d=linaro.org; s=google; t=1765880589; x=1766485389; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7WDtCUommDCsmx+U/Szem2TR0e9IxHNpK+A96g18W4A=;
+        b=CJbUKkcNRTeRlqwsQnRtme8/8gEE1C35GonMGxCR1h2pAJUVHbgThQMgMjmwuY/fdE
+         BGnePsvPOQFxfQCPAg7zJdthrCYd3xhLUDD6PWAtGUUx0j1bgP54uCyeYoqeBieUZNIk
+         N+l1yOnQyzOABPmwG/WDOAhCAR3GOGizRVZ356oEBs3kcpwQ3CVCWRPE5/hT2NkCBkcS
+         OZAA6RxwN4MsmIyJoA0dYhE99iReg/vnpHfL13RdWFbAFsmBsQlDoAcCSmNK0mWx5exX
+         OTnMDEGozQB3vtLXJI3ZLnceNM7zYRziZKgpWL0Cy3yjpb7LllxvYOkTm/IztD7f2y9g
+         8o3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765874634; x=1766479434;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3YwVFuyayREOqPduUup4CfMPIb0E9MpA8gNuOyoTCFw=;
-        b=mE9WMREcYhAsqmHMReQv8TjPfMb6z9up5Q0/x41PLQEJMo/TR4w7H9GHaqVeF2uGlv
-         vQRuxIRfirzhi9Je6tvWNCYuYiZz4yiOz45JDGFxzzqcfqshkFJZCceLaqILuU/+Ju0C
-         MkFfriETyxGbBn0AL/W9OioIht+QB63bgpRYsBC16kZQ8sp9Ze1zL6KlLuMfT3kskpZF
-         NnRKVDt289uF3FNODLMxnSAS2e4aCiKLbAv2fOZFXAXBLZ/TiCU5pMQLfQ60ciP45HuR
-         jMkXwZAJUSHoFE3JuSI5+C4ekxUUtZqeBd0P2cZOYBVSx9aiuXbW3+/Se+SEfst6irDR
-         07oA==
-X-Forwarded-Encrypted: i=1; AJvYcCURTqOrKbucijKVEtq75vOyvhvVtuPA3dejnPtvxzkALEvkQoJZ/7oVvtZQ1EbItxNBS3I6UIuM9YX3lA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYwD1Pg+TmjcKNwSmM95TXDLk4rPn9+N8omC1MnHYMA/Xclgya
-	LP/g7j9mhx9unr73usSvIY4rS7Tw20OrBmey2wjI60ViqXiY6TJy4MgeWW8TdzndvH+X1wlSzKO
-	wBxPcW94YtzlwHoDcrHvZYEtxXw==
-X-Google-Smtp-Source: AGHT+IEUK2E5WQWmckQII0liTKhGV27vc1qIeabtLP5TEhd2IumLLhVtg0DI/Adfpvx5Jx75V4rso5xYin8rXonE3Q==
-X-Received: from pfbjc37.prod.google.com ([2002:a05:6a00:6ca5:b0:7dd:8bba:638c])
- (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:4304:b0:7e8:4398:b35f with SMTP id d2e1a72fcca58-7f66969f83dmr12436525b3a.50.1765874634535;
- Tue, 16 Dec 2025 00:43:54 -0800 (PST)
-Date: Tue, 16 Dec 2025 08:43:34 +0000
+        d=1e100.net; s=20230601; t=1765880589; x=1766485389;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7WDtCUommDCsmx+U/Szem2TR0e9IxHNpK+A96g18W4A=;
+        b=Nmh8/ljUZFPoU90yxRIJ97aXuw7JzELD5WhAGuWc8ztg2FCJvDCLY8+z1FUom/C8HI
+         RA6Pgx/qwTvOSGqcXI1WDybxtfeJH21n8zAWS+p/JvPxiWcC0OJN4bkO7oDvPuBoAuK/
+         YuFJo+oWNDcH6bq2LZTxRLaGk0lfETPHeeftvskn2cnn3pnl1TzRcRJJT2GFbV4hLQD0
+         g0z9Bgb5giDm0eQZjHDpSHmzaaEBK4gClKYW5l8UIrxQzjEDM/1q1IP3gQHK6BZl1OQP
+         bZQL02lHS+321hzmCIIz6JUAnksD5bWozVORM9TH5/mkrBzyX00UPimKlw5vTsFqu8K5
+         XwkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkyH6I01+0cyZpZk1dKh+ZxTX0YvhsXt8vi/yfACHSBDaqpvIq/S8V9JJ+T8ezX0hHpfGboerhXKTmPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2ynETNjjgusD9Nx4az7F0MexrsULawTXkp62lRH5dzCYoKUxX
+	EYZgoePtQtI5VgWwiXRuik9DcoCvaMiGoPcdAqGAVvL3ks0lyt8OJ7/m6c3drhPVv5I=
+X-Gm-Gg: AY/fxX5mWeqdZDDhCt+leda4g0oXV0da2jtFDz/QZjlc+5Irn0KzCf2OOcUPTRXYkix
+	GkM2i9cBWQnaMPqYL6PlWfs6DDefOn8wvIDIcwDVQjm4iFcgS/87wsawVfo43yMudZmQ+kSaMp5
+	8RM5hwYPp5Eqmi+VYLVCQfx4EEQQEteTLq37jnVr2E8kTyvODYg2vnEE34hCLZSfW2nqNwWMqG0
+	FW2OHKZZJY3N7X8dl+GJdj1/qYa0DKU8dXFlxizY3Rffw6YFSIYTilQlxSrrxhyf+VGilQNi7f4
+	Jv7pE22JcsLTTkkmlBjL5xt5HasyrmXmT2ZQzTz79DtB5LZKgi1lnrKG3rcqD5o7P8cU1c7G58Z
+	PuxsthU8MXVMWEogOT13KvpsOvLYHuBK2KuILqymR2U0ZYPALGTKiDNT7eQnq5JV6PmJZyF+i0c
+	vYO9IO/ZTc5NNgukUg6KYPOOanUlHw3HY=
+X-Google-Smtp-Source: AGHT+IE5XhIX7FjwoHBOlG97LHD5zlw8YKyqlXpbrt0WFyJR9XjjoioKL0v+cIUn6C9Jtz+qyGN+0Q==
+X-Received: by 2002:a05:6000:178e:b0:430:f449:5f09 with SMTP id ffacd0b85a97d-430f4495fb4mr10395685f8f.20.1765880588937;
+        Tue, 16 Dec 2025 02:23:08 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-430f984a268sm14996292f8f.1.2025.12.16.02.23.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Dec 2025 02:23:08 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Douglas Anderson <dianders@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20251110091440.5251-1-clamor95@gmail.com>
+References: <20251110091440.5251-1-clamor95@gmail.com>
+Subject: Re: (subset) [PATCH v3 0/7 RESEND] Add support for panels found in
+ various Tegra devices
+Message-Id: <176588058797.2230787.9159942064311142294.b4-ty@linaro.org>
+Date: Tue, 16 Dec 2025 11:23:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.52.0.239.gd5f0c6e74e-goog
-Message-ID: <20251216084334.903376-1-joonwonkang@google.com>
-Subject: [PATCH 1/2 RESEND] mailbox: Use per-thread completion to fix wrong
- completion order
-From: Joonwon Kang <joonwonkang@google.com>
-To: jassisinghbrar@gmail.com
-Cc: thierry.reding@gmail.com, alexey.klimov@arm.com, sudeep.holla@arm.com, 
-	jonathanh@nvidia.com, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, Joonwon Kang <joonwonkang@google.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-Previously, a sender thread in mbox_send_message() could be woken up at
-a wrong time in blocking mode. It is because there was only a single
-completion for a channel whereas messages from multiple threads could be
-sent on the same channel in any order; since the shared completion could
-be signalled in any order, it could wake up a wrong sender thread.
+Hi,
 
-This commit resolves the false wake-up issue with the following changes:
-- Completions are created just as many as the number of concurrent sender
-  threads
-- A completion is created on a sender thread's stack
-- Each slot of the message queue, i.e. `msg_data`, contains a pointer to
-  its target completion
-- tx_tick() signals the completion of the currently active slot of the
-  message queue
+On Mon, 10 Nov 2025 11:14:30 +0200, Svyatoslav Ryhel wrote:
+> Add support for panels found in various Tegra30 and Tegra114 devices,
+> including panels in Tegra Note 7, Surface RT, Surface 2 and Ideapad
+> Yoga 11 T30.
+> 
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jaswinder.singh@linaro.org
-Signed-off-by: Joonwon Kang <joonwonkang@google.com>
----
-Link -> v1: The previous solution in the Link tries to have per-message
-  completion: `tx_cmpl[MBOX_TX_QUEUE_LEN]`; each completion belongs to
-  each slot of the message queue: `msg_data[i]`. Those completions take
-  up additional memory even when they are not used. Instead, this patch
-  tries to have per-"thread" completion; each completion belongs to each
-  sender thread and each slot of the message queue has a pointer to that
-  completion; `struct mbox_message` has the "pointer" field
-  `struct completion *tx_complete` which points to the completion which
-  is created on the stack of the sender, instead of owning the completion
-  by `struct completion tx_complete`. This way, we could avoid additional
-  memory use since a completion will be allocated only when necessary.
-  Plus, more importantly, we could avoid the window where the same
-  completion is reused by different sender threads which the previous
-  solution still has.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
- drivers/mailbox/mailbox.c          | 43 +++++++++++++++++++-----------
- drivers/mailbox/tegra-hsp.c        |  2 +-
- include/linux/mailbox_controller.h | 20 +++++++++-----
- 3 files changed, 43 insertions(+), 22 deletions(-)
+[1/7] dt-bindings: display: panel: properly document LG LD070WX3 panel
+      (no commit info)
+[2/7] gpu/drm: panel: add support for LG LD070WX3-SL01 MIPI DSI panel
+      (no commit info)
+[4/7] dt-bindings: display: panel: document Samsung LTL106AL01 simple panel
+      (no commit info)
+[5/7] gpu/drm: panel: simple-panel: add Samsung LTL106AL01 LVDS panel support
+      (no commit info)
+[6/7] dt-bindings: display: panel: document Samsung LTL106HL02 MIPI DSI panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/06fb75e2d12ee2b24129acacace044a0ddd2000d
+[7/7] gpu/drm: panel: add Samsung LTL106HL02 MIPI DSI panel driver
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac488854890165b55a973dab7247aa2deea9cc02
 
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 617ba505691d..0afe3ae3bfdc 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -23,7 +23,7 @@
- static LIST_HEAD(mbox_cons);
- static DEFINE_MUTEX(con_mutex);
- 
--static int add_to_rbuf(struct mbox_chan *chan, void *mssg)
-+static int add_to_rbuf(struct mbox_chan *chan, void *mssg, struct completion *tx_complete)
- {
- 	int idx;
- 
-@@ -34,7 +34,8 @@ static int add_to_rbuf(struct mbox_chan *chan, void *mssg)
- 		return -ENOBUFS;
- 
- 	idx = chan->msg_free;
--	chan->msg_data[idx] = mssg;
-+	chan->msg_data[idx].data = mssg;
-+	chan->msg_data[idx].tx_complete = tx_complete;
- 	chan->msg_count++;
- 
- 	if (idx == MBOX_TX_QUEUE_LEN - 1)
-@@ -52,7 +53,7 @@ static void msg_submit(struct mbox_chan *chan)
- 	int err = -EBUSY;
- 
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
--		if (!chan->msg_count || chan->active_req)
-+		if (!chan->msg_count || chan->active_req >= 0)
- 			break;
- 
- 		count = chan->msg_count;
-@@ -62,14 +63,14 @@ static void msg_submit(struct mbox_chan *chan)
- 		else
- 			idx += MBOX_TX_QUEUE_LEN - count;
- 
--		data = chan->msg_data[idx];
-+		data = chan->msg_data[idx].data;
- 
- 		if (chan->cl->tx_prepare)
- 			chan->cl->tx_prepare(chan->cl, data);
- 		/* Try to submit a message to the MBOX controller */
- 		err = chan->mbox->ops->send_data(chan, data);
- 		if (!err) {
--			chan->active_req = data;
-+			chan->active_req = idx;
- 			chan->msg_count--;
- 		}
- 	}
-@@ -83,11 +84,17 @@ static void msg_submit(struct mbox_chan *chan)
- 
- static void tx_tick(struct mbox_chan *chan, int r)
- {
--	void *mssg;
-+	int idx;
-+	void *mssg = NULL;
-+	struct completion *tx_complete = NULL;
- 
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
--		mssg = chan->active_req;
--		chan->active_req = NULL;
-+		idx = chan->active_req;
-+		if (idx >= 0) {
-+			mssg = chan->msg_data[idx].data;
-+			tx_complete = chan->msg_data[idx].tx_complete;
-+			chan->active_req = -1;
-+		}
- 	}
- 
- 	/* Submit next message */
-@@ -101,7 +108,7 @@ static void tx_tick(struct mbox_chan *chan, int r)
- 		chan->cl->tx_done(chan->cl, mssg, r);
- 
- 	if (r != -ETIME && chan->cl->tx_block)
--		complete(&chan->tx_complete);
-+		complete(tx_complete);
- }
- 
- static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
-@@ -114,7 +121,7 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
- 	for (i = 0; i < mbox->num_chans; i++) {
- 		struct mbox_chan *chan = &mbox->chans[i];
- 
--		if (chan->active_req && chan->cl) {
-+		if (chan->active_req >= 0 && chan->cl) {
- 			txdone = chan->mbox->ops->last_tx_done(chan);
- 			if (txdone)
- 				tx_tick(chan, 0);
-@@ -245,11 +252,18 @@ EXPORT_SYMBOL_GPL(mbox_client_peek_data);
- int mbox_send_message(struct mbox_chan *chan, void *mssg)
- {
- 	int t;
-+	struct completion tx_complete;
- 
- 	if (!chan || !chan->cl)
- 		return -EINVAL;
- 
--	t = add_to_rbuf(chan, mssg);
-+	if (chan->cl->tx_block) {
-+		init_completion(&tx_complete);
-+		t = add_to_rbuf(chan, mssg, &tx_complete);
-+	} else {
-+		t = add_to_rbuf(chan, mssg, NULL);
-+	}
-+
- 	if (t < 0) {
- 		dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
- 		return t;
-@@ -266,7 +280,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
- 		else
- 			wait = msecs_to_jiffies(chan->cl->tx_tout);
- 
--		ret = wait_for_completion_timeout(&chan->tx_complete, wait);
-+		ret = wait_for_completion_timeout(&tx_complete, wait);
- 		if (ret == 0) {
- 			t = -ETIME;
- 			tx_tick(chan, t);
-@@ -319,9 +333,8 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		chan->msg_free = 0;
- 		chan->msg_count = 0;
--		chan->active_req = NULL;
-+		chan->active_req = -1;
- 		chan->cl = cl;
--		init_completion(&chan->tx_complete);
- 
- 		if (chan->txdone_method	== TXDONE_BY_POLL && cl->knows_txdone)
- 			chan->txdone_method = TXDONE_BY_ACK;
-@@ -477,7 +490,7 @@ void mbox_free_channel(struct mbox_chan *chan)
- 	/* The queued TX requests are simply aborted, no callbacks are made */
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		chan->cl = NULL;
--		chan->active_req = NULL;
-+		chan->active_req = -1;
- 		if (chan->txdone_method == TXDONE_BY_ACK)
- 			chan->txdone_method = TXDONE_BY_POLL;
- 	}
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index ed9a0bb2bcd8..de7494ce0a9f 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -497,7 +497,7 @@ static int tegra_hsp_mailbox_flush(struct mbox_chan *chan,
- 			mbox_chan_txdone(chan, 0);
- 
- 			/* Wait until channel is empty */
--			if (chan->active_req != NULL)
-+			if (chan->active_req >= 0)
- 				continue;
- 
- 			return 0;
-diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
-index 80a427c7ca29..67e08a440f5f 100644
---- a/include/linux/mailbox_controller.h
-+++ b/include/linux/mailbox_controller.h
-@@ -105,16 +105,25 @@ struct mbox_controller {
-  */
- #define MBOX_TX_QUEUE_LEN	20
- 
-+/**
-+ * struct mbox_message - Internal representation of a mailbox message
-+ * @data:		Data packet
-+ * @tx_complete:	Pointer to the transmission completion
-+ */
-+struct mbox_message {
-+	void *data;
-+	struct completion *tx_complete;
-+};
-+
- /**
-  * struct mbox_chan - s/w representation of a communication chan
-  * @mbox:		Pointer to the parent/provider of this channel
-  * @txdone_method:	Way to detect TXDone chosen by the API
-  * @cl:			Pointer to the current owner of this channel
-- * @tx_complete:	Transmission completion
-- * @active_req:		Currently active request hook
-+ * @active_req:		Index of the currently active slot in the queue
-  * @msg_count:		No. of mssg currently queued
-  * @msg_free:		Index of next available mssg slot
-- * @msg_data:		Hook for data packet
-+ * @msg_data:		Queue of data packets
-  * @lock:		Serialise access to the channel
-  * @con_priv:		Hook for controller driver to attach private data
-  */
-@@ -122,10 +131,9 @@ struct mbox_chan {
- 	struct mbox_controller *mbox;
- 	unsigned txdone_method;
- 	struct mbox_client *cl;
--	struct completion tx_complete;
--	void *active_req;
-+	int active_req;
- 	unsigned msg_count, msg_free;
--	void *msg_data[MBOX_TX_QUEUE_LEN];
-+	struct mbox_message msg_data[MBOX_TX_QUEUE_LEN];
- 	spinlock_t lock; /* Serialise access to the channel */
- 	void *con_priv;
- };
 -- 
-2.52.0.239.gd5f0c6e74e-goog
+Neil
 
