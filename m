@@ -1,69 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1AA14B08A;
-	Tue, 16 Dec 2025 16:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F1633A9CB;
+	Wed, 17 Dec 2025 08:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765904186; cv=none; b=tx6W/2JRtBvQLxNXS+kU7xfd+TFCrTXKlxn11o0UuRGD7hX0LpFi6vZ9BWBlOk9+6/xxYG+fXAhgR8eKFrE4zUpb+w7sZVUwGMtSAUZKlY4m3W0+uwtToeUyHvHRnIUJRKoDupqi+EXDFz5aP+D0EMmt2LoquwEIy3PlVL4fxHI=
+	t=1765959380; cv=none; b=fiJhcaIXOjvdaPW7oeCEu/3UoDeN75zjnGiXyjqspB8hvQkS7cNmbAjGDaeYaCiEsr/wGNS8CSP3sj4noKraFjjbdmn3sNsaq898X/N0/2u+Ki7GVIlNYdboQ1krUvusEcd7Y5w0x29g09tRiKQ5TRhZKfLJVSekU7f5meOZQk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765904186; c=relaxed/simple;
-	bh=cNKpevnXsX9XUwqoMEgdxh29HOpfZ/BhQ6L8gahlKIU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=B6Ow3zE4SiX+sSQLzSDzGOyi6sTBX/yAxq8qY/+rwp2wC70OJW2zI0873izGeF3gJw8wOmHnr1iMnHWZy5vkzBSCTSHO3suEEh90lqgOzbW0GtUTUWR2MIRDfLBUFi8hD+VREobILs3BowlqUy1f3B/w+VQ4YKBEb2aK10D3QH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7Ky9UFY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765959380; c=relaxed/simple;
+	bh=ndFj2/VBaLvB0PIaxljeZW+fwoxS9OjFWv+5Tz+R8f4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pMjQdiXAUgZsjejN/JNwG6OZaEVWPgSY5iFBnChSRyr18HOJHVKP3aN9Mqqt5OZnZdfNmET9GYK6aqWLD+DBppi0yh8JtvyvQEY9ebZK+0yvQH58eAqDsAEuWpCDoiNLCPAey5T7jj+HIEPmeTA46tyvk4hzlE7YKBqnQWjyEg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Dr0mjOxE; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7Ky9UFY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05012C19422;
-	Tue, 16 Dec 2025 16:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765904185;
-	bh=cNKpevnXsX9XUwqoMEgdxh29HOpfZ/BhQ6L8gahlKIU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=E7Ky9UFYTW+yabm3WfxuMFV/Q6arAWY/+OL+Yluax/1geJILcoXogcw8NspzCyiue
-	 p0QWmyzWMQwPb+QUaTP9OkJ6buwprWsclo96DgEH+/yFdPMdpVnH2gBtw3vGKHADXO
-	 OhWd74qZOdEiII+p4Bf7gFoHXgKiIydfm2fX1lqXVFUIodPHgrSHkFbCJucVvfmrHt
-	 1FHiMNgJu1K5M0srCz7tBjVIfbxPFC+bWLUvqDJfR9GLXPJiwvjQfpovO2G21v6EWe
-	 vyY04O6S9e5fmrOnv8BymVbZpD8jYLZUnG9sEaKSf4Je/KxNeqftpCMICeSVIaGjMZ
-	 2XQja81TLLnJQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: ldewangan@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
- dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251110142445.3842036-1-sheetal@nvidia.com>
-References: <20251110142445.3842036-1-sheetal@nvidia.com>
-Subject: Re: [PATCH] dmaengine: tegra-adma: Fix use-after-free
-Message-Id: <176590418364.422798.14000642771067955308.b4-ty@kernel.org>
-Date: Tue, 16 Dec 2025 22:26:23 +0530
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Dr0mjOxE"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1765959367; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=EnjkgsuHneXoZUzoXJxbQZgrKKLC87jcGoRy+MS+Jaw=;
+	b=Dr0mjOxEnane2onJUZkWFQ20fiF+AXUWXU+4D1i23PTfZIwc7YSLvFXufVz/+3qBk/5+28QCP7BWgEipxz+VMQjGVEValc8q8cfTVZ7BmCUBO2prlLSZUECwSZXDG/DGcZsPcj4nwQ2JXU2n92DH26KE0jamiuAhOhEEKuTodL0=
+Received: from localhost(mailfrom:kanie@linux.alibaba.com fp:SMTPD_---0Wv2kLz9_1765959361 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 17 Dec 2025 16:16:06 +0800
+From: Guixin Liu <kanie@linux.alibaba.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-i2c@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] i2c: tegra: remove unused rst
+Date: Wed, 17 Dec 2025 16:16:01 +0800
+Message-ID: <20251217081601.93856-1-kanie@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
+Since commit 56344e241c54 ("i2c: tegra: Fix reset error handling with
+ACPI") replace reset_control_reset() with device_reset(), the rst
+is no longer used, remove it.
 
-On Mon, 10 Nov 2025 19:54:45 +0530, Sheetal . wrote:
-> A use-after-free bug exists in the Tegra ADMA driver when audio streams
-> are terminated, particularly during XRUN conditions. The issue occurs
-> when the DMA buffer is freed by tegra_adma_terminate_all() before the
-> vchan completion tasklet finishes accessing it.
-> 
-> The race condition follows this sequence:
-> 
-> [...]
+Signed-off-by: Guixin Liu <kanie@linux.alibaba.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied, thanks!
-
-[1/1] dmaengine: tegra-adma: Fix use-after-free
-      commit: 2efd07a7c36949e6fa36a69183df24d368bf9e96
-
-Best regards,
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e533460bccc3..9e39ac7a0a69 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -240,7 +240,6 @@ struct tegra_i2c_hw_feature {
+  * @div_clk: clock reference for div clock of I2C controller
+  * @clocks: array of I2C controller clocks
+  * @nclocks: number of clocks in the array
+- * @rst: reset control for the I2C controller
+  * @base: ioremapped registers cookie
+  * @base_phys: physical base address of the I2C controller
+  * @cont_id: I2C controller ID, used for packet header
+@@ -269,7 +268,6 @@ struct tegra_i2c_dev {
+ 	struct i2c_adapter adapter;
+ 
+ 	const struct tegra_i2c_hw_feature *hw;
+-	struct reset_control *rst;
+ 	unsigned int cont_id;
+ 	unsigned int irq;
+ 
 -- 
-~Vinod
-
+2.43.0
 
