@@ -1,183 +1,336 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012066.outbound.protection.outlook.com [52.101.43.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1627232ED2F
-	for <linux-tegra@vger.kernel.org>; Wed, 17 Dec 2025 23:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766013500; cv=none; b=edQVKDQDO6nXSUCUD3VirNGC3FKgLaSXj0mTe8dzYEZ7U3cvzqEXOA68+fVW/nWjPt1wthyPl97jH1WFnRIKkDYIQPxTyizSpKTQ6SxiTJ03ON/iOL1JMjxQhSkBGIEDZaWdYG4Vd+qrHeioCrLZOPWehcjUGmaVtAqZKyQqOBQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766013500; c=relaxed/simple;
-	bh=4sJrl2AOvvkrDUgLKBqz603NEpV1KdizOUO6eH4qpMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlilvIMkuDCCSBtQYlrt5doaf3uCfS6G1w4ACrCiIz7XUcP+M4MbqRnPuxL13HiD7B1XsxuCTmTdlbgH8946eKVxrDWKpkVDCRsPDzSDAadm+46a5i16cBZiwIbnC9oy42WUcmKKKqchk2E6w+vSlVXVxwwCAb9xFkDclvuNbuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwuFastE; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C3817D2;
+	Thu, 18 Dec 2025 00:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766016593; cv=fail; b=MH/bTJI55CpAGrgJzgOPRH8/yKgPrHN0Kt9zy/6GqxeVgWSAw2HfkadoHLzs0jB8drH6uz1ZngoypFSJmaxhtHxinl1Pc6xJaaB3ynofo2/ODPlSIIFsAb5PtwS0AqSmySEj7gTSvD6Y2vfb2zdGiHyi5itFJeUAaiFLwDb0lD4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766016593; c=relaxed/simple;
+	bh=Kix0Bg5WmrY394LR3toCr3NzIZ7H8gZXbnPWA4UONiM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aiQ2YqZK2Y82/L06yrxxTtoKgYZjr60M4DrqVaXPewj8hv72/+IZbo9EKdJJ6z8h01BwrLHYWOBJwz8B6PkV5f4EHdbf49jZJEscj1gc9k/Vu/EInEZB3xuHUuacAsyWS97aD/SZCTqkrOrE83wkoIIwvucc7jNtGcmyDLIKCUk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uoxeNOGo; arc=fail smtp.client-ip=52.101.43.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwuFastE"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6499159273dso8062780a12.3
-        for <linux-tegra@vger.kernel.org>; Wed, 17 Dec 2025 15:18:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766013497; x=1766618297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UN96YHFRB/4inIMgi3dbMvEusx9VWtrV50KsEfyV8ik=;
-        b=TwuFastEa0H8ik1XWtULzCvqpmhwAIGWObDSeUUZr4GwBDrDV7rwBinLUrGC32d1v8
-         KvPlSzZsKM9i4JjFpVBPlzYzZCn0hTsaf4iPSeezi5Y690pQyC0NGzmSXnxm/qLuBN86
-         nAtudhw4+wvXdr2aMN3XAP5QTcEDx3DahIFuNR3ToPDesGIJWXodEPN0+0Jz+vhvxh8B
-         usrc0Cb2ZSQWaqpSxI0nWIBpTojPyt037Iosm3/AYIfyIuzZnwFAHSiKjlKnHkBsRZOx
-         uIy5iYmoEsZr9FpWiDPyY0H88LBgpQ/n17dLeO9ymvkTXKeJ3OGaYUCn5TA26HJeCNre
-         rqbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766013497; x=1766618297;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UN96YHFRB/4inIMgi3dbMvEusx9VWtrV50KsEfyV8ik=;
-        b=tlaqqhuQ6YQ3QlTe5bRBB1kuCBhuo/I4XoWgCVA8VmuTPbTOgwp254dGJ9EsuZ1uV4
-         9Chc/pacDjYFcWPkP0GXv4h4AX2pf8eQAmx3Dv0G0aOLQS2XFwDglmrRhD4HtYfYwGJu
-         1LyLnWUGxFDZjt0KkZUWVVLpJ7rFFOuGh4gMQ/7qqw/shQCDP5vGEAF+DSeqvT8BCMlT
-         odxVAjkd6V6zE2YFGKfLymZFe/Ki92IQ+xU1BPi4euRUTg2HPYh+TWu9Dvuw2RGENVof
-         iGb6T2sdxWRx1/BQ03Q0D91MiI/5Efrb3bCQ7R0b7iLr6AnxgW+D1YEWXScDTnsgjAGW
-         neBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2s5ReNQoqvoD3te8/I+6Dt2JLWHY+wfpn4Q7vOSaxL/ObpE1qkESDZ+PgUfBAw0hf7tLuh9xYEZMuRg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwx7mjOibz9DaDCpsYmUnKVCzTtECyiTc+CFw1muEk0r+BqpFd
-	I+W2nIdIakvfxKDJNyvJ7hMdegE0b+6cWHEJfHvTuFAft//VD3J3dzK+
-X-Gm-Gg: AY/fxX77X1OZcQyIU7M2nQvMO4OCNNB+ulXM3NAeGvixuJ4ev/mtGACapP+66ThoJET
-	DAp+U84kJ0EF+9KQ0BpWjm27krQXlKSAj3sZX1QlWhmFJKIXm4CdwpLImwPNYo2/o6IOSgZH3BZ
-	zRnybTHmqBK96Uv/J/y668sYiZKJ/lwERHc4Z9Q+1YxIJLpPELAtB9TrsgS58iiVFCqMsQS9Nv0
-	XJ9/vwAyhQWorLJhszcfrx+LkkbmYqxkb6gtdEthTQfy8WRP8VEplrf/hIOknIhE+GVXpR3hC0u
-	tubNJu7VEXY8+zUO2Ui25ZMWw/Yz16M9QJcQqo54lTNfbsB57ej6r+CqIEDhWOqP1zb1hP1znCj
-	0YB5Ovv8ql5W7ifI7OgrqFmVBajdgJEyE1/QLb+aAJMF9xkq1OFg82s4fs+h5q4mMgXFg48UB/9
-	3hP9NPQXXXrTwXaCs8BoSO4DQYzSU3hz+ofYFHV5C6eQuhAMSaL7h+
-X-Google-Smtp-Source: AGHT+IH72LAfNzyy+q1FdHHf4lMhn1wfNHRULTFndvPYWMDbTNlqP41izrh+Mgb7nu96smLmXrV0VQ==
-X-Received: by 2002:a05:6402:2681:b0:63c:4da1:9a10 with SMTP id 4fb4d7f45d1cf-6499b331141mr17431482a12.31.1766013497198;
-        Wed, 17 Dec 2025 15:18:17 -0800 (PST)
-Received: from [192.168.0.130] (84-148-177-143.ftth.glasoperator.nl. [143.177.148.84])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b5886d434sm760731a12.21.2025.12.17.15.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Dec 2025 15:18:16 -0800 (PST)
-Message-ID: <6dc26bf0-6e28-4478-9ec4-20622cc8a19e@gmail.com>
-Date: Thu, 18 Dec 2025 00:18:18 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uoxeNOGo"
+Received: from CH3PR12MB9341.namprd12.prod.outlook.com (2603:10b6:610:1cd::20)
+ by MW4PR12MB7031.namprd12.prod.outlook.com (2603:10b6:303:1ef::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Thu, 18 Dec
+ 2025 00:09:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RNTfDZMJ6FNBUViabMZvgb2Me6vHVc6a12l169pwD31YpMX3vmqUK8O6g/cYFrd3G0uqhnoFCSjM9GkAwB1pgSIB16vXGjP5Ywu4AIH+v+zG5NU24AUpe58hh0vg6XqIBKDOFPNEvj7HbVejCINCzZqn9fiMsdW5DjCziHY3m7E5JLrtCJ2h82rR1KRi0nACBpROmFUo7zwZN9EjEA8210xgyaU81ZGZlOs+V4NE4w03nkpl8M73YWLpBoJHbtdoNaedeTk1OsohDB56X6MP1+0nDLmRaWM1uxPCwP/1B2PIDy6kbYNT33uGldIRspBQZbaKpf33H5GcKrRsYWqBnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9n4jhjFePTS9/IljxavjRwXAbxRiqON1Ih8K7F1PRpw=;
+ b=EKYDTfH23px7qJ5byrBY4Jn5PtW7d7XQiq8i8R+gcEsrIV7BzZ6FAgVtF9Yw9nQmjqyDSAnGNpUDzGXbaLc+d2yiFylwwx6Z+JWZe70lbUcs5rFWaSbyvsS17cA/QcorRQa3Y9qNeB1u2cesB4aDJiXmE69uUrWPwj2BdwB32WGODZ4QEs/SdkBXcjnLZG0YNP1dOBMzSeVARTEZM5ijkmBYy82dsPCotFCfij+eVONsZVmNxhRI9kyqB2aAIKqDPDIAsvZ2rkxRbNhl0vzEAq9rxvX5fEr3M/bq6cHdGBidIauqbItGD8CUH9fZIvB0/UAEo/FDnWn5Cm16ITXbOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9n4jhjFePTS9/IljxavjRwXAbxRiqON1Ih8K7F1PRpw=;
+ b=uoxeNOGoB+35d1fot3NNEzIrEsIpIF8Ysy/qGlalDDst8jH3B1H6NniCs7wtSEnECODBa9AobHIWIZdq5ig9wRr/cFFWAimZ5uZrkSvi6V5b7GgFDoti6LSZ2AH9n8RuJgk/19w9gfY7C+ezYLSM8qPqPUPXdBcNbb9PCEqt1HU8KQeXT4x2yWURyXo/G1JVjFCTK4Bw7m4s4s9J+X2XBUGKo0S7CgaadhpXc2xIhX3woC/nRmBj8VJRYfbX28bjcA+MRL+9IX5HoEm8DAJS04kJ4cjAnfGm2fbJb6aDLf2KP9bVw0g0/j9ZthTuoDy1BX/YYBI65YZ6VuZsURz2mA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by CH3PR12MB9341.namprd12.prod.outlook.com (2603:10b6:610:1cd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Wed, 17 Dec
+ 2025 20:42:37 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9434.001; Wed, 17 Dec 2025
+ 20:42:37 +0000
+Message-ID: <325a9641-a3cb-4137-8cca-99597ca2caa0@nvidia.com>
+Date: Wed, 17 Dec 2025 20:42:31 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 4/4] arm64: dts: nvidia: Add nodes for CMDQV
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org,
+ robin.murphy@arm.com, joro@8bytes.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nicolinc@nvidia.com
+Cc: thierry.reding@gmail.com, vdumpa@nvidia.com, jgg@ziepe.ca,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20251215064819.3345361-1-amhetre@nvidia.com>
+ <20251215064819.3345361-5-amhetre@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251215064819.3345361-5-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0283.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::14) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
- <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
- <CALHNRZ9-XrMUkQE0cwjq-HUYsy5uerhOQ9sNpirp23kKoaPuYw@mail.gmail.com>
- <72llskwvuwyllvz24zoex4ad6v6t5skiehmwylj7exoh7bmzjo@xq3v7vja5w62>
- <CALHNRZ_k6e9ZRmpK6Pzpet=RzUQ0fRYmfnea6U+9E2oZc8=z7w@mail.gmail.com>
- <eac10a43-5164-4ecf-8b56-6099e69001bc@gmail.com>
- <CALHNRZ9b98Su9qAqXRSTCStoUPtC_u3+MG0cr4SQ-g3aVJD7LQ@mail.gmail.com>
-Content-Language: en-US
-From: Jasper Korten <jja2000@gmail.com>
-In-Reply-To: <CALHNRZ9b98Su9qAqXRSTCStoUPtC_u3+MG0cr4SQ-g3aVJD7LQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic:
+	SJ2PR12MB8784:EE_|CH3PR12MB9341:EE_|MW4PR12MB7031:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7ba8578-9ae4-4987-c63d-08de3dacd074
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?ZUIrZ3pBb2NkKzlaaHVqR042SjgwSGxhK1ViNFAra0ltYmlsQWxFZmV1MHFQ?=
+ =?utf-8?B?by9BcnJvYW5MWWhOSlBXYkkvWGlWRGYwVjk2czZ6ZjVBa3l2a2xaMWc2bEVC?=
+ =?utf-8?B?YzA3NWlKeWx1c3ArL3ZQWExTZ0lISVJibFZlcEVRUUFSSUk0WDNLeE1kWHZO?=
+ =?utf-8?B?ZllCS0JwZFoxeXlEZUx3eEpacml4ZC9KUllEWHUyNnIzdmNaTk5KbE5rU2dU?=
+ =?utf-8?B?L1h6d0FMS0gvMGNFcndQUmZmMWNteFc3eElMcDVOZ2F6YmxFNGQ5eHhDSnVD?=
+ =?utf-8?B?OWxpVytlRThma0grQXBqd24xTFEwNHFqa2QyODFHMlVsYktBM0tOQmVMM3JS?=
+ =?utf-8?B?TExCTktkaG5lQldMaXRuQ0ZtVnJUN09NSXRXM0QxdjRiODRGRXZ2T1RJbWxV?=
+ =?utf-8?B?VVJ6YUhTQnVMKzVSTS9NMEw5KzlJVWp2V3lDd25kaG9mZDJGVXltQkF2MnZi?=
+ =?utf-8?B?eWFVckFuNVVidlR3aXFNNUkwcnJuVEN2UTYrK2w3bHpEc0Mrc2wrbStIVzRh?=
+ =?utf-8?B?SlJrZmpSQUtLc3hadFpvVWtxU2JLU2JKeFJUZGppbCtLRlNnRXBQTTQrOHdk?=
+ =?utf-8?B?Uy91M05OazFkaWhQN25jTStQNlFYMFdFVlFNM1ZyczJFV2lnTWNZUmJ3dlhv?=
+ =?utf-8?B?UXFEcU9oZHFNbnNvMzhyOFU1M2NMQmVJaTI3bU5pcjJPcGZxNFp4dkUxMjh3?=
+ =?utf-8?B?TzhVTzBsYXJoemdhWXRSd3N5K2xORmRJUlVQM1Q2QW1zeGszOXJnWUxSNGZG?=
+ =?utf-8?B?NzdBZldldVhSdkdjdDdoc2JhZm9kQXZNYWhmTmY4VmZYZDdONlZXN0FvZHly?=
+ =?utf-8?B?alhNbEcrYk1UWXB0bVRCa3M4M3dsekFBN0VoVkh3dkU2dmwyMWF5RCtwNjVP?=
+ =?utf-8?B?dktJcVdKZU50dmREbTRFZXFlTmVNV1NFMTVLNFU1NENJQ1ZQV01HdW5BRGUx?=
+ =?utf-8?B?U25QbW1KNmsydnlidytWRDYzSVhnY2h1UFBLOGw1QUhQNnAyMTA3WE1lQml3?=
+ =?utf-8?B?YXN4NFhqRUU0RHBxcTBsNWxnWUFnWlZkanY4MjJpaU5WQlNxS1Vaczd6YTFa?=
+ =?utf-8?B?TEVrOVB5SzdGdC9iUlZLNTQ0VmhRR0h0OWRZM3FMbUNSOHdXb04wcmsrNHI0?=
+ =?utf-8?B?TVFxa0JQT1YxdEJnSGVxVElpNStPL0xHbHM2d3VVYlpoOG1BRndxL0sydmU4?=
+ =?utf-8?B?a3c0K0pNdVI4K3Z3R3VYeWJiYkx4S1JuYW9mRTBzTUlUYS9ISDNiSFdEalBi?=
+ =?utf-8?B?bHArVkcrOHE3NUtaYVR1bDNSelNicjJJY0ZmWFRSMWJoalpoMTBHQUV0Nm8v?=
+ =?utf-8?B?TUl3VnBpeDJsNU1PV3Z3U1J5SlZWV3puU3VtNzlNbGVMdStMQ2JSNEdVeHU4?=
+ =?utf-8?B?Y1FFNXRhd1dNRTZzakVDZXZaNHFMMnhzVzlDVzhlSDFlaVdyZlhmaFRrNTBG?=
+ =?utf-8?B?aTVra0dUYXdqVzMrUWRsT0tHeUhGRkZwdlNNRlpIU0E3SVE1dUN4MzNYQXAv?=
+ =?utf-8?B?SDc1dU9XNnM5b0xSbUMzMjVhTTBoVU1ONitCbU90NnhTTDlaWU15SjQ3Zjky?=
+ =?utf-8?B?MGdPd0hlTGJtbzhZczVjRXZQVnlmODNKZ1U5akQyT0RRcU4yQ2E0a3hxOFZp?=
+ =?utf-8?B?T2NLdGlKcG14NWFXeStTRncyd0N2T1IrTTcrY2pHTHZnNGJsMG1IR3QwVitt?=
+ =?utf-8?B?Szl5OTNnZDlta1EvR1JZNytiSVdHaGxLTmpiTThIUEhlL20rcGh0ckFjKzNh?=
+ =?utf-8?B?Njk1QVR2STRJQlpGa2NOZjJjOU5LaU50cFhVZkZxaXBlSDA2NFFZcVVRQmtz?=
+ =?utf-8?B?VEo5elUvMFcvZTQvSWpjelNPeDU3NVVxWElrWTBNeGNKKzBOSzRkZEo3OXRO?=
+ =?utf-8?B?eVlnN3ljQ3hRNFRmckpLYU9PNVA3enhmaHR6Wi9MMjJTR0JxRDRuNkRvb3lq?=
+ =?utf-8?Q?gX2Ft4wsLGh37zqF2mAywGfEH3ysOq+z?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?MFA4ajhFdVZyaUFMN05xZ1U3RnBDN2kwWWZoOHp2aGMvclZwdGl4NElaKzlR?=
+ =?utf-8?B?bEt5Q1FzbXBUa21UWldZeHZZL1I4STVxTThMKzFtRUVEQ3RNcXQzZm80Vnlm?=
+ =?utf-8?B?R29INmx1VmdPVDczc0JZaDZDU25RNFlqL3JVVHlRL3dYQVQ1QkNReU5QV1dN?=
+ =?utf-8?B?WXVvVVNzeVd5YjVWcm9acUI1WXF6VUs4aDFuNm91ZXRZeHVWeCtuMmpnOUVn?=
+ =?utf-8?B?NXA0djJBRG52d2hUT01kYStRSkM4VXJvNjVocUh5UjJ1SzcydlhRNENvOU55?=
+ =?utf-8?B?TGREa3dmeTZMUVh2MEE2OHpRaTVUU2pMTmNZUFNoZW5pREhZd2hNZHRCSmpL?=
+ =?utf-8?B?YjVib2FEOEk4dFcrNXZxUmkzMVdWSnZVZ1l1aEZ0eHZKay9LV3RRdGIxQ1U0?=
+ =?utf-8?B?cUVZcnlvRU8vSjZmYVRWQUJsdDljUFcraUFQcUlTbjQwekNJWTdLUUdCZ0ZI?=
+ =?utf-8?B?dFQrdHRobC9Ka2haSENiUndubXIrRG8rNzUvYUpGYXlpSGlXbjFaRzhGaHoz?=
+ =?utf-8?B?Tmc5RUExTDA3OG44ekNqdFpiSGFWTXgybU1JNEJINVc0VklkMFQ3Yi9TRjNw?=
+ =?utf-8?B?YWV5V0JReUNxRGFkQUk5c2dMcnIvNUxDTks2UVA1UWZvYitBWHZ6UVZTWGN3?=
+ =?utf-8?B?R0NlL1NCcktoc3RXYjJDQnd1NlRGaS9venV1SEdScVhzSlpURDRFM2ZJL1lB?=
+ =?utf-8?B?QTVoSFcwdWNKSlVNWFc5TFM5TTdWOGx5V0Y3S01laVhPZm0vclRDVFQzTzdM?=
+ =?utf-8?B?c09HVFZOWTJDTktPZjZoS2hCK2tmYW1kT01ZU0VmZGpPR1BLQjJxd2FyZEdT?=
+ =?utf-8?B?SCt3dTFoaUNsK0Z4TXZPODk2VzhLaFpPdkhZY1k0aUZ3cE8ySkVqRlNUZVJU?=
+ =?utf-8?B?QnpsVWxTLzNTTjlNOTFMdTZCNVJhMWw2N1Z6K3JWNnZqSEQ0dlgxbyt3K01M?=
+ =?utf-8?B?Z1FIL041QjNQTDNuNm1Ka1pwRkh2d0UxcWJlSC8rOTljQmhJL0M0SHRlaGpO?=
+ =?utf-8?B?eksrQmY0WU02OWZvNGVobEtnbytHd29vVjhUaXR5QW1NdnhVVjFOM3lTNUFa?=
+ =?utf-8?B?VkdnS0htZzdJNU8rSktCVG5DcFdFTm5wcm40V1gzeGRxUi9OdHVZRU5oL1h5?=
+ =?utf-8?B?WmFHWXRHcElFTnBOZXRQVE1iN1Z4L3plOVFnSTk5SmtzQ0taQVBOZXByQ0lH?=
+ =?utf-8?B?cVYzSjZlaDM5VmxsMnZmT3dtdEVaOFpnSHduSjdkRnl4MzVpN20zbWlDL3dV?=
+ =?utf-8?B?TC90anVPa1lBS2tJYkFBM0d2d0hGZTU2TlkzbEMveG1heHUvWmF0NGdoZlBM?=
+ =?utf-8?B?L2d1ODdFNXJYS1UzVGh6ODdpOFBSekFkOC9vay85dWNMTmlNMmZ1dzY2dk1S?=
+ =?utf-8?B?QzBNZ2lhZHZoMGF0UkVMQUF2L3QwbkpKRGVzeE5ZeHVvQlg5NFBaTXRTKy9a?=
+ =?utf-8?B?UFZGQUpDbUdUd0gyclB0N253eUEwUzNMQklRbjBOWnR2ZmIvU2lqYmt4ZHJB?=
+ =?utf-8?B?c1VkVTRTb0JZUzZrN1RZZlZzdEdNQnlsRDAyVWJDeDNGVjZuQ0pNZGtndnNz?=
+ =?utf-8?B?d2gwa3MzU0cyeDhZMEVBajhRa3VEMkRnSUdGQk4zd2x0WGJ0bzdXcmljdWJ3?=
+ =?utf-8?B?YmM2WTl4QXNvSVRCQWhUaTJ2RXVEVDd0M0phNlJQZVloTWVaWE45Y2ZWTWs3?=
+ =?utf-8?B?eTk4SDE0L0Y5MFBLakp6RkFLVlhUZktQVVQyTlhTQjY1cElyb0ZlaHd4QVFm?=
+ =?utf-8?B?OTZWMUx0a0tmQXJmWE1Id2lSZlVGWVJaWjlsM041MUFLdURkVXFQRTdaZ0lR?=
+ =?utf-8?B?SitYTzFOL1ZnaFZxVzE0R1hiUDF3cFl1YUdDRzlzRzZZck9GdUVFZHBDeHpk?=
+ =?utf-8?B?SGNFTHBWRXhTZGxVU3JISms5K3ZSQnJ5SmUySXBkbktzSlpORTdIcHhsTWF1?=
+ =?utf-8?B?QUVPV3hNYnIvK0xZeWR2cXAyOXZaL0tDRzh6ZENXTWZsN1NuSitsZ2xxSThO?=
+ =?utf-8?B?bzZ4d0o2WTc0dGNEZDM0RGtObmowRWFLRVFKL2N3RUtwQkpIbThPUFpud0V5?=
+ =?utf-8?B?QlZJeHViQ1VCSDJhamhnQ1Z0S3k4Q2czdlR6eGJhdmhiWFFYR1UweVBCd0dt?=
+ =?utf-8?B?VUE5N0lvMGJXekx5MW5zUDNYMUVMMUo1dUF6cGtJRWhaOU9NZDIvbVBSdW1o?=
+ =?utf-8?Q?9zQ6/4clkUrw7OFMK4ZFCs+n4a9TzssHGc0Y1OGOAxTK?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7ba8578-9ae4-4987-c63d-08de3dacd074
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2025 20:42:37.6695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XrjPHUWuTlLlDXlnShar+AqL0t8Ru0Y9cK8lEI2SSkFwRFm9qdJk72Qme6KM+1af/NDzM5ecAaaHCgeU2T23zg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9341
+X-OriginatorOrg: Nvidia.com
 
-On 09/12/2025 05:23, Aaron Kling wrote:
 
-> On Wed, Nov 5, 2025 at 3:28 PM Jasper Korten <jja2000@gmail.com> wrote:
->> Hi all,
->>
->> On 11/4/25 19:12, Aaron Kling wrote:
->>> On Tue, Nov 4, 2025 at 3:14 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->>>> On Mon, Nov 03, 2025 at 12:39:57PM -0600, Aaron Kling wrote:
->>>>> On Mon, Nov 3, 2025 at 5:54 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->>>>>> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 Relay wrote:
->>>>>>> From: Aaron Kling <webgeek1234@gmail.com>
->>>>>>>
->>>>>>> Without the cmu, nvdisplay will display colors that are notably darker
->>>>>>> than intended. The vendor bootloader and the downstream display driver
->>>>>>> enable the cmu and sets a sRGB table. Loading that table here results in
->>>>>>> the intended colors.
->>>>>>>
->>>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
->>>>>>> ---
->>>>>>>    drivers/gpu/drm/tegra/dc.h  |  13 +++
->>>>>>>    drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>    2 files changed, 219 insertions(+)
->>>>>> What does "darker than intended" mean? Who defines the intention? How do
->>>>>> we know what the intention is? What this patch ultimately seems to be
->>>>>> doing is define sRGB to be the default colorspace. Is that always the
->>>>>> right default choice? What if people want to specify a different
->>>>>> colorspace?
->>>>> I reported this issue almost a month ago. See kernel lore [0] and
->>>>> freedesktop issue [1]. The pictures in the latter show what nvdisplay
->>>>> looks like right now. It's nigh unusably dark. When booted into
->>>>> Android with a tv launcher that has a black background, as is default
->>>>> for LineageOS, it is really hard to read anything. Is it correct as a
->>>>> default? Well, cboot hardcodes this, so... presumably? It would be
->>>>> more ideal to expose this and csc to userspace, but I'm not sure if
->>>>> drm has a standardized interface for that or if tegra would have to
->>>>> make something vendor specific. I think that would be a separate
->>>>> change concept compared to setting this default, though.
->>>> The reason I'm asking is because I don't recall ever seeing "broken"
->>>> colors like you do. So I suspect that this may also be related to what
->>>> display is connected, or the mode that we're setting.
->> I have tried it on both a MacroSilicon HDMI capture card and an Arzopa
->> Z1FC 1080p portable monitor and run into the same darker colors. Both
->> have in common that they use HDMI which seems to line up with what Aaron
->> is reporting. I do not have an eDP display to test or another carrier
->> board with a different display out to test.
->>>> It could perhaps
->>>> also be related to what infoframes we're sending and how these are
->>>> supported/interpreted by the attached display.
->>>>
->>>> All of that is to say that maybe this looks broken on the particular
->>>> setup that you have but may works fine on other setups. Changing the
->>>> default may fix your setup and break others.
->>> Do you have a device set up so you can check? Or does the regression
->>> test bench have a display that can be forwarded?
->>>
->>> My current setup is a rack of units plugged via hdmi to a kvm which is
->>> then plugged to a pikvm. I also observed this issue before I had this
->>> setup, plugged directly to a 1080p monitor. I have not checked
->>> displayport. I can cycle through a couple other displays without this
->>> patch to see if I get any other result. I am fairly certain I have
->>> consistently seen this issue since I started trying to work with
->>> tegra-drm on kernel 6.1 or maybe even 5.15. I've never seen it work to
->>> allow for a bisect.
->>>
->>> I am in contact with one other person with a tx2 devkit, who
->>> replicated the issue when I asked. Who plans to reply to this thread
->>> with setup info later.
->> For reference, I am said person. I have a Jetson TX2 Devkit that uses
->> the P2771 Device Tree. I'm running a Fedora distrokernel with no
->> additional patches applied by myself. I have personally noticed the
->> issue to at least be present on 6.14.5 and 6.17.4.
->>
->>
->> I'm currently not at home to take screenshots with and without the
->> submitted patch, but will be able to do it tomorrownight or friday.
-> Any further thoughts from the maintainers on this patch? As far as I
-> know, this is an issue for all users, at the very least on hdmi.
->
-> Aaron
+On 15/12/2025 06:48, Ashish Mhetre wrote:
+> The Command Queue Virtualization (CMDQV) hardware is part of the
+> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
+> virtualizing the command queue for the SMMU.
+> 
+> Update SMMU compatible strings to use nvidia,tegra264-smmu to enable
+> CMDQV support. Add device tree nodes for the CMDQV hardware and enable
+> them on the tegra264-p3834 platform where SMMUs are enabled. Each SMMU
+> instance is paired with its corresponding CMDQV instance via the
+> nvidia,cmdqv property.
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>   .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |  8 +++
+>   arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 50 +++++++++++++++++--
+>   2 files changed, 53 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+> index 06795c82427a..7e2c3e66c2ab 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+> @@ -23,8 +23,16 @@ iommu@5000000 {
+>   			status = "okay";
+>   		};
+>   
+> +		cmdqv@5200000 {
+> +			status = "okay";
+> +		};
+> +
+>   		iommu@6000000 {
+>   			status = "okay";
+>   		};
+> +
+> +		cmdqv@6200000 {
+> +			status = "okay";
+> +		};
+>   	};
+>   };
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+> index f137565da804..9eb7058e3149 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+> @@ -3361,7 +3361,7 @@ bus@8100000000 {
+>   			 <0x02 0x00000000 0xd0 0x00000000 0x08 0x80000000>; /* ECAM, prefetchable memory, I/O */
+>   
+>   		smmu1: iommu@5000000 {
+> -			compatible = "arm,smmu-v3";
+> +			compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
+>   			reg = <0x00 0x5000000 0x0 0x200000>;
+>   			interrupts = <GIC_SPI 12 IRQ_TYPE_EDGE_RISING>,
+>   				     <GIC_SPI 13 IRQ_TYPE_EDGE_RISING>;
+> @@ -3370,10 +3370,18 @@ smmu1: iommu@5000000 {
+>   
+>   			#iommu-cells = <1>;
+>   			dma-coherent;
+> +			nvidia,cmdqv = <&cmdqv1>;
+> +		};
+> +
+> +		cmdqv1: cmdqv@5200000 {
+> +			compatible = "nvidia,tegra264-cmdqv";
+> +			reg = <0x00 0x5200000 0x0 0x830000>;
+> +			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+> +			status = "disabled";
+>   		};
+>   
+>   		smmu2: iommu@6000000 {
+> -			compatible = "arm,smmu-v3";
+> +			compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
+>   			reg = <0x00 0x6000000 0x0 0x200000>;
+>   			interrupts = <GIC_SPI 1 IRQ_TYPE_EDGE_RISING>,
+>   				     <GIC_SPI 2 IRQ_TYPE_EDGE_RISING>;
+> @@ -3382,6 +3390,14 @@ smmu2: iommu@6000000 {
+>   
+>   			#iommu-cells = <1>;
+>   			dma-coherent;
+> +			nvidia,cmdqv = <&cmdqv2>;
+> +		};
+> +
+> +		cmdqv2: cmdqv@6200000 {
+> +			compatible = "nvidia,tegra264-cmdqv";
+> +			reg = <0x00 0x6200000 0x0 0x830000>;
+> +			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> +			status = "disabled";
+>   		};
+>   
+>   		mc: memory-controller@8020000 {
+> @@ -3437,7 +3453,7 @@ emc: external-memory-controller@8800000 {
+>   		};
+>   
+>   		smmu0: iommu@a000000 {
+> -			compatible = "arm,smmu-v3";
+> +			compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
+>   			reg = <0x00 0xa000000 0x0 0x200000>;
+>   			interrupts = <GIC_SPI 21 IRQ_TYPE_EDGE_RISING>,
+>   				     <GIC_SPI 22 IRQ_TYPE_EDGE_RISING>;
+> @@ -3446,10 +3462,18 @@ smmu0: iommu@a000000 {
+>   
+>   			#iommu-cells = <1>;
+>   			dma-coherent;
+> +			nvidia,cmdqv = <&cmdqv0>;
+> +		};
+> +
+> +		cmdqv0: cmdqv@a200000 {
+> +			compatible = "nvidia,tegra264-cmdqv";
+> +			reg = <0x00 0xa200000 0x0 0x830000>;
+> +			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+> +			status = "disabled";
+>   		};
+>   
+>   		smmu4: iommu@b000000 {
+> -			compatible = "arm,smmu-v3";
+> +			compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
+>   			reg = <0x00 0xb000000 0x0 0x200000>;
+>   			interrupts = <GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
+>   				     <GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
+> @@ -3458,6 +3482,14 @@ smmu4: iommu@b000000 {
+>   
+>   			#iommu-cells = <1>;
+>   			dma-coherent;
+> +			nvidia,cmdqv = <&cmdqv4>;
+> +		};
+> +
+> +		cmdqv4: cmdqv@b200000 {
+> +			compatible = "nvidia,tegra264-cmdqv";
+> +			reg = <0x00 0xb200000 0x0 0x830000>;
+> +			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+> +			status = "disabled";
+>   		};
+>   
+>   		i2c14: i2c@c410000 {
+> @@ -3690,7 +3722,7 @@ bus@8800000000 {
+>   		ranges = <0x00 0x00000000 0x88 0x00000000 0x01 0x00000000>;
+>   
+>   		smmu3: iommu@6000000 {
+> -			compatible = "arm,smmu-v3";
+> +			compatible = "nvidia,tegra264-smmu", "arm,smmu-v3";
+>   			reg = <0x00 0x6000000 0x0 0x200000>;
+>   			interrupts = <GIC_SPI 225 IRQ_TYPE_EDGE_RISING>,
+>   				     <GIC_SPI 226 IRQ_TYPE_EDGE_RISING>;
+> @@ -3699,6 +3731,14 @@ smmu3: iommu@6000000 {
+>   
+>   			#iommu-cells = <1>;
+>   			dma-coherent;
+> +			nvidia,cmdqv = <&cmdqv3>;
+> +		};
+> +
+> +		cmdqv3: cmdqv@6200000 {
+> +			compatible = "nvidia,tegra264-cmdqv";
+> +			reg = <0x00 0x6200000 0x0 0x830000>;
+> +			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
+> +			status = "disabled";
+>   		};
+>   
+>   		hda@90b0000 {
 
-I've finally captured some footage of the colors of my TX2 within tty.
-I've also added a reference in the form of my X13s doing the same thing.[1]
+Looks good to me.
 
-I will at a later date try the patch and update the MR comment,
-but at least this shows the difference while recording using the same setup.
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-Kindest regards,
+Jon
 
-Jasper
-
-[1]: https://gitlab.freedesktop.org/drm/tegra/-/issues/8#note_3242611
+-- 
+nvpublic
 
