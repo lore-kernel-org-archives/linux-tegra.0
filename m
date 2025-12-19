@@ -1,282 +1,196 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012054.outbound.protection.outlook.com [52.101.53.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9508B2D0636
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Dec 2025 18:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766167444; cv=none; b=OlBkPplGPvQo/0JwTjBBP1fMhatUig4rVQc0RX8eBRXYAc1hzS0HW2FxvssBgVEu5PKVrmkj9qEr7rLpvZ6ZjNBVA1+nxCjxH4R8UJR1IBI4QC0TrQoChYm7wSKqvnMeRKl8XXpVL1YKywbZIxfBgpbOXNQXXjdCtmOgVNdXLhU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766167444; c=relaxed/simple;
-	bh=9mnXsvRAr1aOPh+owI9jNGJldgt66fK/Jo93oaXt28Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jYlU+KgxFGhfxYFDLsZtrGSYNwwSwXZR7ZhcdVRgfXo2HGqb4fEHGGNy4K5LdIkPGXrBh5ArNK3ijxws0t6HLrMQVR8Ls+t/BwWbAemcmWqBKfa0W5LAJFZAfe6D2SN2OggDnvAvSJ/2vX3NuqsUrsBCQlTVYldnh7ISzPzmTdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVxyNpqr; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BC0355808;
+	Fri, 19 Dec 2025 18:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766170226; cv=fail; b=PXHgOM/6i4QZr35ILbBiQzLADjrMUXU3dP0ENGxPyqq3UDB46k6u2AU94LUje4BLHBLR0rvdD1YGpXZo/yiv519qSdgpYd/hKnJwo/dB4u5yHjgFq6dq+BwRlMjNnQGVNgxY0Y/KFcHR2cBuzq3huXJbtyV22WondwD47m5FhZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766170226; c=relaxed/simple;
+	bh=cXO8VTDvTlSyLihzGnYsT/8UukD2AEVWobqpp7mb9uE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpILeWTN6FdpNtrFvDSKxaZ++9cZjIMpebYhUYODwofH3wo6xDbbcjrfBbGt2BxFry867fr8npEDLRLusHVaex3Luw0rf265M/zQBZEiW5nrxKz30oflZgPJGKRMbn1gK+mnRqWiO8nRHELFlzBlqiluvmdgh/LsGJuA5Pd7ptc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ImlWEykj reason="signature verification failed"; arc=fail smtp.client-ip=52.101.53.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVxyNpqr"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-37b96cbd875so16617681fa.3
-        for <linux-tegra@vger.kernel.org>; Fri, 19 Dec 2025 10:04:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766167441; x=1766772241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r/V0GdR/KX4hQyzHp9M/qZtPuhDJKGMuj6R6bdVKIn8=;
-        b=fVxyNpqrBhDjU2VxFoR0qVlnxjkNk89/hB0MZi9CduvDY8/Ff7w+sO61HulwJK+b8f
-         VepfAOJ8g1h3CMgqDzR56dosybJepndbR7PzoyCLLR0g6eR4DemPJZO+fP53NlgJJb1+
-         qdMfW2BTr6tzZnkycpU4BqRpjdrxCt5XV2ZgiQCTuDXC1+7HXt8tvCS+5EaokbnYXEng
-         OF5Wf6TfwS2K7BZHf1X90M52NokKNF/a6dstPYOJgXm0RAqEDlKf5ADABxOHL2wwHGh4
-         8e292KVphrxQgElYbKxf/9po3ihA4hMyRfEMrPWrKHL8UdCvWMG8Dfl8gKZoPrJjkrK9
-         mcGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766167441; x=1766772241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=r/V0GdR/KX4hQyzHp9M/qZtPuhDJKGMuj6R6bdVKIn8=;
-        b=XoqQe132nOVVL14Ochf42qIAREvbwsjamj8pyTQrFUFVTBYI7BJBTrLG7HO9RY1LSR
-         o+3dxc7P7l9dHjjTvEuJzwudnCLxdTKq3UaR+69r6wJnDqNad/8etk+cbC8Kppd+XVKE
-         CGbuWSGOHcZpbKSf2gDzyn1/vVIxL9J2x/ySpDh0mXLFtDyeaS5EO3zdH1cPi43kjd2L
-         lEXfLq61tC6AkoztkZ6YvN4wi1P8v75hZiyJcUXBSwzi1lr40j/9lmSgIQ0PqMrW1P0F
-         7qo52RRCxJQLwll/2EbztKm4xeqFfNYoNUdbQidsDWK9ZqBYBXXX9HB1W6odSUXWFzl4
-         w03Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiN8fxk57TXIWR9LvPQa673qIrQ8/Igipqg1JpEsw3HeZlSiq5UnF6Aitzhp7ASmeUGyFG2chBT5fiWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxseWOPyBQemdlEUfuZYSoypiefcYGi21jnuU8jnBc+w+h6eMi
-	LDd2pSfRUQa3QwLPkUqC5JezS48HR6/sFlirUV65G8RIYs19fhQD0NGz7X+kFsFTeX0dzNbChQU
-	fF5eGo0O2dbkAMnM4Pnovgvq2+24BBBU=
-X-Gm-Gg: AY/fxX4pYEGFO+w/J99y42opVnr/VF/3MHdXfWGftBBpc7uZwtdmk0Eu6AfJO9hhfw/
-	AXpY/sE9ygv5hs0KGK0KQl/Ki7xOSvWBruWRkCa32O7ReqAY5XyRZHoyDSxkkvEW0mQEeyIbKBY
-	LRR9o+ktoGyj3MGUUNgzn7DDmzipesYfI1IUn0wxipCYrmgCgGpZANBYl1hjgxZZSJY83ZVuGAe
-	uJ+sp32t5i/iDpO6OMluP46vQH0aFmmLlShhUesdY742AmSvbibeKsALBSo0eBPENpm6E9380R6
-	UYEFjVpeoqtb5i8CGimuTjEwpVxq+FQujHAfRUDfJliPRXGvjRuc9h8+
-X-Google-Smtp-Source: AGHT+IEbnviA7IBanuP5qxQGYh/Vd05ZwBK5sKHe+n9bqwvH7LzyoOm2YySlVGgFsxHZIPAllbiRd3vbFv23UA3WIjk=
-X-Received: by 2002:a05:651c:549:b0:37f:cac3:c27f with SMTP id
- 38308e7fff4ca-381216552efmr12322531fa.33.1766167440280; Fri, 19 Dec 2025
- 10:04:00 -0800 (PST)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ImlWEykj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=drF1VNSQEsNUktcw7u44hzv7WK0NXQfMiz6p4EAzGMGpwstkgNm8PFllV8PpdUIBjE6BtUkTkD+wGS3jrNCR/NCBs9SzZGPo4TAX3fqNbZtBoKdY6fbr1wXbV4vSQWqJjnLT0yW1TnWZkRuGG+QJN+Ql1Uyin421luNFiM/9CJ8dFv5RilFDVkNH+NrWeYhdhNDpO+Cl0bF/ERBmK9zwvQBYWM7lu3gOv1PBvT2bubToJMYlz1RvQ9tXPvEvGIx6ZrF+TqtwbIcX4GqkuRzUVvOpfTZQyHLAT1BolIIoUn+faoJp6VdudVz5Tzoexfl1F09ojjRkXTbYGQIvTghCRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=91FGNp3BQopsv2twqGGMk8LEy2XRbaF5ubVXbcPtntk=;
+ b=A7d1jy9whdRr69wmF4u53T5vLeEHLFiFP11XC1xX1c3XOOZu7SuNOZTqKbOL3mu+zS59eyyHUXo5UgtDYIsk8cWgLWSLQMkjstVyTaa5Cvrn59XQAQfU4GyROl/tWcZqZZ36bofWa2VNNheQ2Xuk42g7IfFv6s2RSulFzQGUjrfI9y8GNcubOZS/4B3JF5tSv/hWwZB7RMs8pXNE2q1NY3p9IMiAUfx84IxKT/AswSkSHfp9v4o0TAPIabbye3JTZ7cOwZAOP5+xI8znRDXqMtofXgtmHgtLtns8TB1a3c3RE6b16ZlQIpU1/T2IJi3ZZI9l5wMj+mbhZ68X4WEmYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=91FGNp3BQopsv2twqGGMk8LEy2XRbaF5ubVXbcPtntk=;
+ b=ImlWEykjizKghc7mjLzL/63NCw5u2uEQNMlXE9iHgSelpagXMU6VmwP5AXUJVagw+VpGSQOICBiiqvsm7NOpotItUp4usvbZQVm4xrh9DIDbgywB3GwvtU/PDMPb6h9NNpVVO4WnLLCyPPHT32amz9AsUwKq3orHriML5p3AzJLF5SuF5y+nGBpYjRoHvCKMT0I5DOfC8lPNUzSjeFbSNRMHtRSr9CColmtN8b67Q2ZTHWfUOuMTdPue94IB38WMQFgXsDP0wMSSPdu7NGbJcVgmPLTllX0tpYd9wUy62ov4AJzvScI89H8rLeBV1R/+P6jZTxIMGwkJkeANbIC6xg==
+Received: from MW4PR02CA0002.namprd02.prod.outlook.com (2603:10b6:303:16d::10)
+ by DM4PR12MB6421.namprd12.prod.outlook.com (2603:10b6:8:b7::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.9; Fri, 19 Dec
+ 2025 18:50:18 +0000
+Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
+ (2603:10b6:303:16d:cafe::f4) by MW4PR02CA0002.outlook.office365.com
+ (2603:10b6:303:16d::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9434.8 via Frontend Transport; Fri,
+ 19 Dec 2025 18:50:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9434.6 via Frontend Transport; Fri, 19 Dec 2025 18:50:18 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 19 Dec
+ 2025 10:49:56 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 19 Dec 2025 10:49:55 -0800
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 19 Dec 2025 10:49:55 -0800
+Date: Fri, 19 Dec 2025 10:49:53 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Ashish Mhetre <amhetre@nvidia.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
+	<vdumpa@nvidia.com>, <jgg@ziepe.ca>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH V7 2/4] iommu/arm-smmu-v3: Add device-tree support for
+ CMDQV driver
+Message-ID: <aUWeUapsFo3KZP7i@Asurada-Nvidia>
+References: <20251215064819.3345361-1-amhetre@nvidia.com>
+ <20251215064819.3345361-3-amhetre@nvidia.com>
+ <23df682e-6d08-4827-994e-1bbd89e5c903@nvidia.com>
+ <5e9a0ce1-a0ba-4a31-be95-99f349ec6028@nvidia.com>
+ <e7d3e95f-a885-4b13-ab4d-bc82793c5396@nvidia.com>
+ <aUROk0jRQoLmBRo3@Asurada-Nvidia>
+ <b2df8ce6-d336-457a-8169-f2eccec3c12e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251217104744.184153-1-jonathanh@nvidia.com> <CALHNRZ8syS6F9W1ovw2Y-jkspQafCnLy0ynocn0sMLurShHnbA@mail.gmail.com>
- <CALHNRZ_vkw6Ns=PMa+x0SY64+Ov0FeA5tMKJr+-tY9_OasKUog@mail.gmail.com>
- <aUPsDeFmxAJ09Tk7@orome> <CALHNRZ_vjSy+A8ZW7E1A4B5yQJ=GgvbNmafU7gjtGv-xjdfhPg@mail.gmail.com>
- <0ed3d270-b0be-4431-8a46-a7eea29598f4@nvidia.com>
-In-Reply-To: <0ed3d270-b0be-4431-8a46-a7eea29598f4@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Fri, 19 Dec 2025 12:03:48 -0600
-X-Gm-Features: AQt7F2rJS0K8HHzWkRZdrqg6_ZDdphO6J-nuYlVYstXpDV3y3m1Ji8ekIyscID8
-Message-ID: <CALHNRZ9GW-rWh=u6m6v1sp1dLZebWeY66-r+FjMJWt9X9f9C9Q@mail.gmail.com>
-Subject: Re: [PATCH] Revert "arm64: tegra: Add interconnect properties for Tegra210"
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2df8ce6-d336-457a-8169-f2eccec3c12e@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|DM4PR12MB6421:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82aaa629-a950-4931-6e42-08de3f2f7485
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?hBw2HooVbl1lXS1v9WD40EPDANOT6I36SC+fNQtVhcNR/QJ4n4Q7TcLlQO?=
+ =?iso-8859-1?Q?LD+LT58AQMfRvUqwHOaOje4L6gQKNZoa8l6U6/XMrE+z1DQskgkFNlymsj?=
+ =?iso-8859-1?Q?JvFqXeLSUzDAZNfsgT38vwOmGv+4hn0QjZ48gUQUd5JEQBBYC5Y53Ne9LC?=
+ =?iso-8859-1?Q?vFInoJKh47k5lrk79hSn7EQrytWQ8f234xWEp1j+gsMr8FUNgqruwuuQ31?=
+ =?iso-8859-1?Q?mzVb51D47XFVhfT6PLzcAxV/p2HVA+tat5RabsYcXMEqLA1DMEtUWV5dCS?=
+ =?iso-8859-1?Q?cSzvHgstFYUrfakFK4cRVZOISH+3oTWJ1cp1QCp6AonrFHNQQGSQnbG6Qf?=
+ =?iso-8859-1?Q?/1JQ5Zp3MLNUkAVR0w/B19VXndnA1Gex1emMI3HXGL7wZxegVmSLzU+K1E?=
+ =?iso-8859-1?Q?sbgeSvCQl2TrIsuX5GLSrukGr9qn+YrMM+Key/cYYvOSXz6VjpVBZx3NmP?=
+ =?iso-8859-1?Q?HbVotvsj+DlmlEa552Ifr9JIL4QvfulGniwHPQecpqgKQK5OxFy/JvJPP8?=
+ =?iso-8859-1?Q?08qKz8KEjP0ST5zgCBJExIh8ra/74oj6+t3avMwo6+C0ZtoEgGMGea0tAl?=
+ =?iso-8859-1?Q?i5K1mpPGPpBmEvcTSwHp4bBGadzf0palX0R+zLdCq+cI+fSpP/SWxu73HI?=
+ =?iso-8859-1?Q?kPmUwXVgASQY46YF7zKUXI9KVPHAFaOo0Onqh5dHvnvkDAncCYhtGeXg5f?=
+ =?iso-8859-1?Q?V8ZaMGVXc3dtsSYv2BOzv5ioU9QPZuiF87X7yT+5IqkNeOlK8xoa7tshsk?=
+ =?iso-8859-1?Q?tRfXhS5Q+icJZ8XFpzSPx14ZJgHAQA7kb6l1LVZ2YnB3oLz2YimGsSWwfR?=
+ =?iso-8859-1?Q?tdvJnFDx4yXb9j8lVmdaFYHjgREMJxRfvZDpqg7b9Q1qaiX2wnVx98Xgji?=
+ =?iso-8859-1?Q?OP+s1eqjubNBRS8h0M2oD8fu05Ylpc+W+gh3PJKgxWAHntRPK63GQdSQyX?=
+ =?iso-8859-1?Q?6bUHjnVIYETa5YYNaY3+gOdopNMBeUIZJ2R/SyBXKsPLv+vnGWwUjaXNHj?=
+ =?iso-8859-1?Q?VdUkqzqDkJwb+Z65ShhlaPhVrho7qlbLRT6FwOM8ALmWqyVSwHdBTiqmW1?=
+ =?iso-8859-1?Q?b5HMThTLhK3EK5yJPWUY9kLAAXLEnALfO1/1BhUGSolGW7r8tfKwA9hgW4?=
+ =?iso-8859-1?Q?82bIMFlOkoy3UGd3KhhlJHxDeLUHy5GnC+mozb8j2tlmD8Bw6/zhQa/zrT?=
+ =?iso-8859-1?Q?NPK6OHwyVSBQ4AAcJB6l2laS0cgB8cYGJGIG6zYJaRbTbGiBxwTWXjZUJ9?=
+ =?iso-8859-1?Q?eT7QVh/voDZvYWX+fGvMw44xSktSHUlu1ynJBVWIE0HCqB9hp6TuWKFrKo?=
+ =?iso-8859-1?Q?lpk4PUENZlLu6h6Tg+IPy09PPMnhUXEYgJWu3QAKEcEntoIaYt2pVhwaIF?=
+ =?iso-8859-1?Q?oKN0IPaSRfq/5OI/pdvIsOoEKlfnG+hbNgV+jRqGrnEvM+C5CysebLwU0R?=
+ =?iso-8859-1?Q?h+qap97JjT5biHDHkYhM2Hr9yZ8eXX0kFyOCl2RAJqFI7IaQVelL0nS3ZU?=
+ =?iso-8859-1?Q?xSjKuxvxwJATJl26Wa3OyGuV3QP8hw6ZoawWRw+BI/vNpYZjitgzI3ic7P?=
+ =?iso-8859-1?Q?5mk19i1b/VwYGglHOfjPiLTqUoKtP/U8aMo4U8Tp3D7JLiErp51GmpvRbf?=
+ =?iso-8859-1?Q?N3fBg1kL1EVag=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Dec 2025 18:50:18.2046
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82aaa629-a950-4931-6e42-08de3f2f7485
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E5.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6421
 
-On Fri, Dec 19, 2025 at 4:59=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
->
-> On 18/12/2025 19:07, Aaron Kling wrote:
-> > On Thu, Dec 18, 2025 at 6:00=E2=80=AFAM Thierry Reding <thierry.reding@=
-gmail.com> wrote:
-> >>
-> >> On Wed, Dec 17, 2025 at 02:42:58PM -0600, Aaron Kling wrote:
-> >>> On Wed, Dec 17, 2025 at 12:20=E2=80=AFPM Aaron Kling <webgeek1234@gma=
-il.com> wrote:
-> >>>>
-> >>>> On Wed, Dec 17, 2025 at 4:48=E2=80=AFAM Jon Hunter <jonathanh@nvidia=
-.com> wrote:
-> >>>>>
-> >>>>> Commit 59a42707a094 ("arm64: tegra: Add interconnect properties for
-> >>>>> Tegra210") populated interconnect properties for Tegra210 and this =
-is
-> >>>>> preventing the Tegra DRM driver from probing successfully. The foll=
-owing
-> >>>>> error is observed on boot ...
-> >>>>>
-> >>>>>   drm drm: failed to initialize 54240000.dc: -517
-> >>>>>
-> >>>>> For now revert this change, until a fix is available.
-> >>>>>
-> >>>>> Fixes: 59a42707a094 ("arm64: tegra: Add interconnect properties for=
- Tegra210")
-> >>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> >>>>> ---
-> >>>>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 -------------------=
------
-> >>>>>   1 file changed, 24 deletions(-)
-> >>>>>
-> >>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra210.dtsi
-> >>>>> index 709da31d5785..137aa8375257 100644
-> >>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> >>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> >>>>> @@ -202,19 +202,6 @@ dc@54200000 {
-> >>>>>
-> >>>>>                          nvidia,outputs =3D <&dsia &dsib &sor0 &sor=
-1>;
-> >>>>>                          nvidia,head =3D <0>;
-> >>>>> -
-> >>>>> -                       interconnects =3D <&mc TEGRA210_MC_DISPLAY0=
-A &emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAY0B =
-&emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAY0C =
-&emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAYHC =
-&emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAYD &=
-emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAYT &=
-emc>;
-> >>>>> -                       interconnect-names =3D "wina",
-> >>>>> -                                            "winb",
-> >>>>> -                                            "winc",
-> >>>>> -                                            "cursor",
-> >>>>> -                                            "wind",
-> >>>>> -                                            "wint";
-> >>>>>                  };
-> >>>>>
-> >>>>>                  dc@54240000 {
-> >>>>> @@ -230,15 +217,6 @@ dc@54240000 {
-> >>>>>
-> >>>>>                          nvidia,outputs =3D <&dsia &dsib &sor0 &sor=
-1>;
-> >>>>>                          nvidia,head =3D <1>;
-> >>>>> -
-> >>>>> -                       interconnects =3D <&mc TEGRA210_MC_DISPLAY0=
-AB &emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAY0BB=
- &emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAY0CB=
- &emc>,
-> >>>>> -                                       <&mc TEGRA210_MC_DISPLAYHCB=
- &emc>;
-> >>>>> -                       interconnect-names =3D "wina",
-> >>>>> -                                            "winb",
-> >>>>> -                                            "winc",
-> >>>>> -                                            "cursor";
-> >>>>>                  };
-> >>>>>
-> >>>>>                  dsia: dsi@54300000 {
-> >>>>> @@ -1052,7 +1030,6 @@ mc: memory-controller@70019000 {
-> >>>>>
-> >>>>>                  #iommu-cells =3D <1>;
-> >>>>>                  #reset-cells =3D <1>;
-> >>>>> -               #interconnect-cells =3D <1>;
-> >>>>>          };
-> >>>>>
-> >>>>>          emc: external-memory-controller@7001b000 {
-> >>>>> @@ -1066,7 +1043,6 @@ emc: external-memory-controller@7001b000 {
-> >>>>>                  nvidia,memory-controller =3D <&mc>;
-> >>>>>                  operating-points-v2 =3D <&emc_icc_dvfs_opp_table>;
-> >>>>>
-> >>>>> -               #interconnect-cells =3D <0>;
-> >>>>>                  #cooling-cells =3D <2>;
-> >>>>>          };
-> >>>>>
-> >>>>> --
-> >>>>> 2.43.0
-> >>>>>
-> >>>>
-> >>>> A little bit of documentation on this, should someone read the list =
-to
-> >>>> see what happened. The original report of the failure is here [0] an=
-d
-> >>>> only occurred when the tegra210-emc driver fails to probe. After thi=
-s
-> >>>> report, the related code change [1] to tegra210-emc which registers
-> >>>> the driver to icc was silently dropped from -next, but these dt
-> >>>> changes remained. So now these interconnect routes do cause tegra-dr=
-m
-> >>>> to universally fail on tegra210.
-> >>>>
-> >>>> Aaron
-> >>>>
-> >>>> [0] https://lore.kernel.org/all/56aed0ec-b104-4612-8901-3f6f95e0afab=
-@nvidia.com/
-> >>>> [1] https://lore.kernel.org/all/20251027-t210-actmon-p2-v6-1-1c4bd22=
-7d676@gmail.com/
-> >>>
-> >>> There may be another option here. I'm beginning to think there will
-> >>> not be any way to set the icc routes for the dc's while the emc drive=
-r
-> >>> can fail to probe. The next best thing looks to be just dropping the
-> >>> interconnect nodes from the dc nodes and leaving the rest of the
-> >>> original commit in place. Then reland the tegra210-emc driver change.
-> >>> This should put the no-emc case back to where it was, while allowing
-> >>> actmon to do its scaling when emc is available. And I will move to th=
-e
-> >>> dc icc routes to downstream dt's, where I tightly control that emc is
-> >>> available.
-> >>>
-> >>> Does this sound reasonable? If so, I will go stage the changes and
-> >>> verify that it works as intended.
-> >>
-> >> Let's go with the revert for now, since that clearly documents where
-> >> things go wrong and it can be easily reapplied once the root cause has
-> >> been resolved.
-> >>
-> >> It's a bit unfortunate that we don't have a way of making these
-> >> interconnect properties optional. If EMC fails to probe for whatever
-> >> reason, I think the assumption should be that it doesn't do any dynami=
-c
-> >> scaling of the EMC frequency and hence the entire ICC stuff isn't need=
-ed
-> >> and should just be no-ops.
-> >>
-> >> On the other hand, other than the patches getting reverted, there's
-> >> really no good reason for the EMC driver to fail to provide them, henc=
-e
-> >> I think once that's been restored we can apply this again and then tha=
-t
-> >> should be the end of it.
-> >
-> > Except that the tegra210-emc driver fails to probe at all if the
-> > bootloader does not copy reserved-memory table node? Which per Jon,
-> > the Nvidia regression bench does not do. And neither will a normal L4T
-> > install using a mainline kernel and dt via extlinux or u-boot. I have
-> > to put the mainline kernel on DTB and use a kernel in an android boot
-> > image, which causes nvtboot-cpu to set the dt table reserved memory
-> > node directly. Which is perfectly fine for my android use case, but
-> > not so much for anyone just trying to boot a Linux distro.
->
-> I am lost. I was not able to follow the above. Our current testing
-> simply boots the upstream kernel + upstream DTB.
+On Fri, Dec 19, 2025 at 10:48:22AM +0000, Jon Hunter wrote:
+> On 18/12/2025 18:57, Nicolin Chen wrote:
+> > On Thu, Dec 18, 2025 at 08:48:32AM +0000, Jon Hunter wrote:
+> > > On 18/12/2025 06:32, Ashish Mhetre wrote:
+> > > > On 12/18/2025 2:13 AM, Jon Hunter wrote:
+> > > > > > +    smmu->impl_dev = &pdev->dev;
+> > > > > > +    smmu->options |= ARM_SMMU_OPT_TEGRA241_CMDQV;
+> > > > > > +    dev_info(smmu->dev, "found companion CMDQV device: %s\n",
+> > > > > > +         dev_name(smmu->impl_dev));
+> > > > > 
+> > > > > This seems a bit noisy. dev_dbg?
+> > > > > 
+> > > > 
+> > > > This info print is similar to what is there in ACPI path as well.
+> > > > It's only a single print per SMMU at boot time. Should I still change
+> > > > it to dev_dbg?
+> > > 
+> > > Yes, I would.
+> > 
+> > It's really not that bad IMHO, I am not against that though..
+> > 
+> > If we have to change that, we'd need another patch changing the
+> > one in the ACPI path as well to keep things aligned.
+> 
+> Regardless of what is already present, does not mean we need add more prints
+> to just say everything is OK.
 
-Per the conversation on the p3450 mts bug workaround patch [0], the
-conclusion was reached that the regression test setup does not pass
-the emc tables to a mainline kernel. And as I described earlier in
-that thread, neither will a normal L4T install. Which means the
-tegra210-emc driver will always fail to probe unless the device is
-flashed in the way I do for Android. If there's another way to get
-that reserved ram node passed to a mainline kernel, I am unaware of
-it.
+This is how it looks like for each instance probe():
 
-> > I have wondered how the reserved memory dt tables were verified when
-> > that support was initially added. And if the regression bench can be
-> > set up like that. Because right now, emc fails to probe there, meaning
-> > there's no test coverage for the driver.
->
-> We have limited testing, but it is better than nothing. We are always
-> open to more testing. I avoid the downstream device-trees because of
-> compatibility issues. And avoid the bootloader making modifications to
-> the upstream device-tree. I understand that might limit some features,
-> but as you can see those have not been supported upstream yet.
+[    2.709269] arm-smmu-v3 arm-smmu-v3.10.auto: found companion CMDQV device: NVDA200C:00
+[    2.709273] arm-smmu-v3 arm-smmu-v3.10.auto: option mask 0x10
+[    2.709618] arm-smmu-v3 arm-smmu-v3.10.auto: ias 48-bit, oas 48-bit (features 0x001e1fbf)
+[    2.716236] arm-smmu-v3 arm-smmu-v3.10.auto: allocated 524288 entries for cmdq
+[    2.719432] arm-smmu-v3 arm-smmu-v3.10.auto: allocated 524288 entries for evtq
+[    2.725898] arm-smmu-v3 arm-smmu-v3.10.auto: allocated 524288 entries for priq
+[    2.736051] arm-smmu-v3 arm-smmu-v3.10.auto: allocated 524288 entries for vcmdq0
+[    2.742553] arm-smmu-v3 arm-smmu-v3.10.auto: allocated 524288 entries for vcmdq1
+[    2.742586] arm-smmu-v3 arm-smmu-v3.10.auto: msi_domain absent - falling back to wired irqs
+[    2.742759] arm-smmu-v3 arm-smmu-v3.10.auto: no priq irq - PRI will be broken
 
-This isn't about upstream or downstream device trees, it's about what
-the bootloader sets to the in-ram dt during boot, namely for this
-case: the emc tables reserved ram node. Which is currently supported
-by tegra210-emc.
+On a second thought: The CMDQV device has a very unclear naming in
+ACPI path: "NVDA200C:00". So, printing it gives us a hint for any
+later warning/error tagged with "NVDA200C:00".
 
-Aaron
+Now, for DT, it might be okay to not print it. But making the two
+paths asymmetric feels odd. So, is it really worth nitpicking here
+given that each SMMU already prints quite a few lines on probe()?
 
-[0] https://lore.kernel.org/all/00c5e342-50c7-44e6-89d3-3b879742c204@nvidia=
-.com/
+Nicolin
