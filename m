@@ -1,110 +1,145 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D56309EEA
-	for <linux-tegra@vger.kernel.org>; Tue, 23 Dec 2025 20:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B2938DEC;
+	Tue, 23 Dec 2025 23:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766522829; cv=none; b=rrbvK0IcI3F+DeZJodCHZjTm9ZKqvOE2a5r3LR2ONwas5Hqob1L2+Dllsibwjgya9zY1fEzDk/cFu/dRuevMwb5q9s7jRD1H/90tuyK+r8yxp/DkUTNol7yovdvVnlSdjw4sq03RRaXVTHyHMNJ7SlrxL1jvoECaiu1aux2qoCA=
+	t=1766531755; cv=none; b=oWTCLKxa/s5LX58iEwyPYq8EM4uokjv9XOqTouR4kkKRFsd4XTb3R8ApM4doPEQ6tZeS0Dh11AVMz0jJWS4KmVqlpquN2RiuSdq/DO1UUnuiDhuAVrVDa1bEQa/bsvFpFtjgxNNbjQMgnjwp6S3qnzpcDY8U40MKMyWbxEacdbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766522829; c=relaxed/simple;
-	bh=3d4OKNlzKWCjWAaPIKmGWLQfdrv/dO6JCfyye/NB2lk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T0+gxXiox7/9mXNs2O1JGq72O0uzhG3eewIdStHhspOJqvQzZWT4UX6VpVLMpIuW8pE3yYQGjGu1JPpNDxoTx/3/pnv8sOjfdxL2ka66afuWll+mIZjvTlrjJQybGCtU9R3HXgBGAd0AVIRBDnaZmCy5uPjVmnPUNVP/dLFVweQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PR2L41MZ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766531755; c=relaxed/simple;
+	bh=0mSJkPl/ka32Vr2UFQsN9pJHnFvlWfIgKc/b90M8gAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmzFMCO9lMY5NyEqkO/QjYF1HxXjPixUHFg1+D8QmaKAttrvyXyEHQA1v0OvWInRTeKWaPERGireuLAL6xsMzZFm3R7X8F3ZDUBWNMIE5Kw/G3uWn17hCKt0LcC81Nm5WzNnUxGQOXebT18b+4R9cwaESjoeoI/8rvnQ4TiCAMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhhS6ucb; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PR2L41MZ"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2a0d5c365ceso67821425ad.3
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Dec 2025 12:47:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766522825; x=1767127625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iq0j0tbdVnJAA23CTExCnxXrx5D9T13riCwpcS1VEEs=;
-        b=PR2L41MZ6tzUJ//7bhCXTjoApaB3gjsEC0pufy9eyh4yuIU73PbVlRbOdFSK61ne5W
-         Auolgl2Jzq7BXSFzX1HGYA5qRkZbRlAmHL1Cgn3v7z7VVXV5EW3bAKoR6vhFUTtmjhr6
-         O+LDqUfFaCjaugkYr/uRSZekylK6pwowu3AdC6XiQxRxqAhLVIQzGXWphP5+nBhZSSZA
-         hbx+B8mEgTqY9M6++AWAVLa38sm6ClRoCqsQKCQcfXAu786bO+4SWndvTngIceLjXehZ
-         qC1y0Cz19RYSwWxyn/zGaM12EmGN3KO/JWN0YM7ePNiv5m8iBqEBghI3h6M+gNc6U1VO
-         wrSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766522825; x=1767127625;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iq0j0tbdVnJAA23CTExCnxXrx5D9T13riCwpcS1VEEs=;
-        b=kRGJnxD3ADemzMnRU0dwOVjOio3M3AtW9cp9uZ6dDKg8FWHnLalo0BIrjFfHQRC3St
-         f/vn+zq2rpKRoSstWZW1FMFDCZyp3OwQxPMpFnm4biDnmIxiKPgLDDpydT8eDy/qEc/U
-         b9biuGXFkkmvTCahVMF3vabqUDJ8pbrrI4X4PtbjUnZ0hcbo3Ks3qlVvZdQkBJLeke/+
-         eMiyodkpgYcvcy0vs1XFQGRLRfDzurJ/Ppy/JQZpUCbUgQSMDcPJldOocL1+3PHa3Szm
-         9EnZJeBX4gG5h7sOu5kc66gG9w9fc3SR4Pxp9DWC90LypyXXB9QmgIXbb8Lnnq+K8ZgM
-         erNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVauaZ36qCeaIdm9BO4ad0gfTDr3tWVxfRL3cNWp4vRMnTr099r4wl2leuwT4LFaY6BJxzuMD+59EQ1HA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWX2+9zvuyUjkWG9FAxlHadg9Yb1fcaZYY8TeEkYmedIyU/ZeQ
-	Rwhkc+143t1EpUrb7qQKET+FU8HQGd6QCcyC2PHq8GvoHiTHXEkdHOyq
-X-Gm-Gg: AY/fxX7FGFewt7yjn2TkyUxhHcNRceaS2k5zyq42RgZpkrAcwKnYKJ6Qylzw9tNqU9k
-	8sCdfN15qtDA9ah/GV2Z3rTuhHDjk/oZi86sukdpFBRVJqawiJPuBOngeB6CavFKS48zH3K93Ft
-	18ejye2eVxorq3kvf0XbXO13oYjms91WCBjWDDmSA4bO+VK7Gc8YrUCtf7xgUAxxqcsd8panhdR
-	lNqDC5z+Q1MXR7BuWnE5vTPLAVd9/xMFaNnXpuyRj7NA/2Ko1mPMEAu+0VnMt7H52wfIet9aa1P
-	Nf0sRDs4VwqNt2H6I79dF+vdrY/ALDlE0fYagy1oUpLuQ0r76ZQCA3HUyNWrIN5sdpF7YjxsRWT
-	wbn23UqIOcDkm515aJ6FMn+bWUT4Gkg3jWQUyygkuY9CHNd7TP0UP/Jln0jRbzp7l3PwN
-X-Google-Smtp-Source: AGHT+IHS2NtUHegFOEt7CP+ojUG3bqkkAvfhDyQQyX4Z7DAyzki/HKyxB1pTnMTphYfOx3KAPuFJpQ==
-X-Received: by 2002:a17:902:cf0d:b0:29f:b3e5:5186 with SMTP id d9443c01a7336-2a2f293d13bmr151099575ad.56.1766522824768;
-        Tue, 23 Dec 2025 12:47:04 -0800 (PST)
-Received: from ryzen ([2601:644:8000:8e26::ea0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3c87845sm137642545ad.39.2025.12.23.12.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Dec 2025 12:47:04 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Vinod Koul <vkoul@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhhS6ucb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766531754; x=1798067754;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0mSJkPl/ka32Vr2UFQsN9pJHnFvlWfIgKc/b90M8gAY=;
+  b=WhhS6ucbpcN6NMsVCV62Rlvvj480qWTWQlpqS0DGfEd4gHnt9J3z1mvA
+   v4dqP3KYBHeqot2lWZKXg74jDtyqWYBXFNxC2KAwPRJ+c52hduf7pXzI3
+   ace+hQG1ZLwU7GLwDhYuJUzj7EECce++dhx2LgCSjvABqq8ChErRVVPz4
+   dPFj+WSukBy4t3zznhNQsfhx2FbwxjRNo+ceqZW6RMv/Bgp3IDrcXuZL5
+   BWLrTzgi4c85VksEoUD12gPJVOoggOtQP+Vks2Pj88qPG0eQzDb5XV6Lm
+   EFj3z5uIOyPNxxH2ycQoVeqKwqqdZPABw1sjlXQ/x9H5Q8aKR3HD5iDPO
+   w==;
+X-CSE-ConnectionGUID: ITI3oJSvQgCDSet1fed87w==
+X-CSE-MsgGUID: 5vnVg1+cQwSt8EVFdOdKpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11651"; a="55948117"
+X-IronPort-AV: E=Sophos;i="6.21,172,1763452800"; 
+   d="scan'208";a="55948117"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2025 15:15:54 -0800
+X-CSE-ConnectionGUID: qdVn1HOuSVSKhRN4YyqiSw==
+X-CSE-MsgGUID: nG+foIbFQMeiZMynm5QOvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,172,1763452800"; 
+   d="scan'208";a="230923062"
+Received: from lkp-server02.sh.intel.com (HELO dd3453e2b682) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 23 Dec 2025 15:15:51 -0800
+Received: from kbuild by dd3453e2b682 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vYBbZ-000000002TJ-08J0;
+	Tue, 23 Dec 2025 23:15:49 +0000
+Date: Wed, 24 Dec 2025 07:15:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] dmaengine: tegra210-adma: use platform to ioremap
-Date: Tue, 23 Dec 2025 12:46:46 -0800
-Message-ID: <20251223204646.12903-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] usb: phy: tegra: use phy type directly
+Message-ID: <202512240627.LvJwMSta-lkp@intel.com>
+References: <20251223094529.7202-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251223094529.7202-2-clamor95@gmail.com>
 
-Simpler to call the proper function.
+Hi Svyatoslav,
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/dma/tegra210-adma.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 215bfef37ec6..5353fbb3d995 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -1073,14 +1073,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 		}
- 	} else {
- 		/* If no 'page' property found, then reg DT binding would be legacy */
--		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		if (res_base) {
--			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
--			if (IS_ERR(tdma->base_addr))
--				return PTR_ERR(tdma->base_addr);
--		} else {
--			return -ENODEV;
--		}
-+		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(tdma->base_addr))
-+			return PTR_ERR(tdma->base_addr);
- 
- 		tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
- 	}
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on usb/usb-testing usb/usb-next usb/usb-linus staging/staging-testing staging/staging-next staging/staging-linus drm-tegra/drm/tegra/for-next linus/master v6.19-rc2 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/usb-phy-tegra-use-phy-type-directly/20251223-175449
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251223094529.7202-2-clamor95%40gmail.com
+patch subject: [PATCH v2 1/2] usb: phy: tegra: use phy type directly
+config: sparc64-allmodconfig (https://download.01.org/0day-ci/archive/20251224/202512240627.LvJwMSta-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 4ef602d446057dabf5f61fb221669ecbeda49279)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251224/202512240627.LvJwMSta-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512240627.LvJwMSta-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/usb/phy/phy-tegra-usb.c:853:2: warning: variable 'err' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+     853 |         default:
+         |         ^~~~~~~
+   drivers/usb/phy/phy-tegra-usb.c:857:6: note: uninitialized use occurs here
+     857 |         if (err)
+         |             ^~~
+   drivers/usb/phy/phy-tegra-usb.c:839:9: note: initialize the variable 'err' to silence this warning
+     839 |         int err;
+         |                ^
+         |                 = 0
+   1 warning generated.
+
+
+vim +/err +853 drivers/usb/phy/phy-tegra-usb.c
+
+   836	
+   837	static int tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
+   838	{
+   839		int err;
+   840	
+   841		if (!phy->powered_on)
+   842			return 0;
+   843	
+   844		switch (phy->phy_type) {
+   845		case USBPHY_INTERFACE_MODE_UTMI:
+   846			err = utmi_phy_power_off(phy);
+   847			break;
+   848	
+   849		case USBPHY_INTERFACE_MODE_ULPI:
+   850			err = ulpi_phy_power_off(phy);
+   851			break;
+   852	
+ > 853		default:
+   854			break;
+   855		}
+   856	
+   857		if (err)
+   858			return err;
+   859	
+   860		phy->powered_on = false;
+   861	
+   862		return 0;
+   863	}
+   864	
+
 -- 
-2.52.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
