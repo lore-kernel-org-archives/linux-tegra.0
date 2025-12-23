@@ -1,112 +1,123 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC48933065E;
-	Mon, 22 Dec 2025 19:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAB8326D63
+	for <linux-tegra@vger.kernel.org>; Tue, 23 Dec 2025 09:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766432189; cv=none; b=CQf0Hhp0+uId8gjaBn/p9VjNpusJkMNkxmxbTdYeA/kVjB0AI+c6PocI4/VIrsIVQR9mMjpX4mSFWi+bJxSbuHioPTlIJli1l2nJAjUh+YockXnspdIE8LUhHaKwlLcvZhZby68MFMvkUZy0COaG90BgztrrSJUQO6dC7Fj+blg=
+	t=1766482372; cv=none; b=JZc6WdbXcE+Tt2XZFZ8lAf04bTShjbvZOC/la219nZjieML0ECJHswgCd65NKyDtiDFYd7ahMMkrrbUih8zEQQwjZUf/oibstQEXoxdnXuksfK2KscrvyhW5MyxjWF9nvBHPvULmkdSg3Ks8IK5waYJKZwNvFJ2NhTRf7+t2ynk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766432189; c=relaxed/simple;
-	bh=WouLnG/EDgvG12FRfKj7rC3BNHDgqCalZ+ubaC/6qOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWbGFwOLiyjQ8dIYn/rHXBA0KD46s7QrGwOrcHW39LPTmplxcJiVb5FJ6T9EkP23bGS00YE2EgruQ1QTlTe++kTYRx2/f6O2mPyt8ZYAjrmEzpihfiGYD/RTYohLDs6RK7fgTbrPkGtJiD/akuNCdFQn4l4voLAuhlmTZPjFI2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l7GdwVco; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1766482372; c=relaxed/simple;
+	bh=/Iii+N1pB+IX8ozivJEIczKINrVHiSyEufjWtYoS9l0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SKMx5p7sH9WoOVImNTudje21K1NEe58eBfOY4wjRFm0+lQqril8S7zytmhOmC+JZQmeNZmQPBGk4EdLd6Rw8tOYBq18r3JNainmmUARD6YDfUI3wWiDgGMRAHx0nEsEsj/U6D7mqgAM6WTwnnXuIjQdUPC/prBIi810LGeRjvmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EC2ZUeGS; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l7GdwVco"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766432188; x=1797968188;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WouLnG/EDgvG12FRfKj7rC3BNHDgqCalZ+ubaC/6qOI=;
-  b=l7GdwVcopJ2IB8VorkteCWYibY9VA1/cDtsSRfA/0hyKJIo9UzxJ7vd6
-   wZh/uCwZSdhRyeeB6ym0K9DED2OdLU7tH+j/paJk8YFBnnhtfLbZ/DvjE
-   Pa2t63x/klnOUMDUmIXz167VbzxyOO8lzEfi4Fh8V3nRNQ4apybcORf2Y
-   W/6/pq9Ibu6WDCYHi8vJJEZJr8H1ox8XoG7BrKP7cj8ocOaITXhTSFR9V
-   2oTE9FKyyrfGfKZQzAhy4LhezBQv8/0Af2uTMji17xc9EElW+f+0h7FRw
-   rXOHOHQUfL+W8shhpBqT9/fQDmi3ekX1oklcYk4UjjOnV48+sDsaxYx2t
-   Q==;
-X-CSE-ConnectionGUID: FGZKmtjSSu+bi/h1ruiDXg==
-X-CSE-MsgGUID: tZx9WNCiR8K1nfxOC9QqEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11650"; a="90950052"
-X-IronPort-AV: E=Sophos;i="6.21,169,1763452800"; 
-   d="scan'208";a="90950052"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2025 11:36:27 -0800
-X-CSE-ConnectionGUID: HKnqYG8eRmmu3a5YwP8JxA==
-X-CSE-MsgGUID: SQK+jjjFQ8yMZr3kx2WaCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,169,1763452800"; 
-   d="scan'208";a="200091893"
-Received: from igk-lkp-server01.igk.intel.com (HELO 8a0c053bdd2a) ([10.211.93.152])
-  by fmviesa009.fm.intel.com with ESMTP; 22 Dec 2025 11:36:24 -0800
-Received: from kbuild by 8a0c053bdd2a with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vXlhe-000000005bA-0L86;
-	Mon, 22 Dec 2025 19:36:22 +0000
-Date: Mon, 22 Dec 2025 20:35:48 +0100
-From: kernel test robot <lkp@intel.com>
-To: Anand Moon <linux.amoon@gmail.com>, Bjorn Helgaas <helgaas@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EC2ZUeGS"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so31941075e9.2
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Dec 2025 01:32:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766482368; x=1767087168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAEySv2XWlwHuqdOI9fzzrs359mLloz83GdyEXxt2mU=;
+        b=EC2ZUeGSuM8CwnRloLZx2AuqZgK3J0RtcPxKLIaqLsObdSndiYv1HJ0pel7CBW6LoH
+         kt5V18p726ApXWhiiN9Mm6I2NEAd+FcQtkQZXVEaCynvHmngDJrTikF28qZSWo/Pqiub
+         yI6aCXIbbYMh5KHH/EQdKSokRk/ENS0eO4aK7OYO6qwvEKUgBIlaymyYjhLiVpekz5ea
+         3+D31oace2S5F9U5XlfBVh4MnRQ5iHhI64pYRMtR54hS1+582ptSRucetS0UIIcrB9HQ
+         qakT5dfF0gFS7iImfxGHGUwvPNiILPAIYtb+sEqj8UKIDOPLbgUHEUKB6pCecPdnDa42
+         nwaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766482368; x=1767087168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eAEySv2XWlwHuqdOI9fzzrs359mLloz83GdyEXxt2mU=;
+        b=EhRqOUvLNk29XphcarOEEAWSTyRYvtpDl4M8qA52zhOIAO02E/DRDzGuws50vyrsXD
+         o3tHfgX8bLRaXjkpeBhqHPuATmT3LW4VTSyBXYU21xKv0IU9eB2bcBPfVd5hPUiXypP2
+         M+vcSMio0I12SDvI2AzLhGC0qaHn+0AcKjAm6pzgz0JtblcjRgHgOeuKwkzCb54zDq43
+         JoMvvkY5vqArEfD/3LjTD3azs5f6U1n977+0aLu+ZET01p66yVhLWjLDG/ZTit4CxxW6
+         UE9jfhV2GE88hRr/Nc0XBvWUDWuyHUPSoKDNTfgAh3WmmJxLrbvRQ60N/5Xd+JewqOGD
+         CWXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVksTF1fU4byIgJqzOtVEgK8BpdlolEY7vGXiANFrzasrz7ZE7vzhJuvY4R3qmGT4Pdx8XCsT1y9E6yHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwHTrt6o1AGbMMQWFJIiC8DhOdbzDHcO+nifQ+NTl8nIZcGCoh
+	2nztTGD2PtTjaOrkf8A+Z0jAK6KHfmnuno8TjXK7iC9rSQi/bgvV6+XR
+X-Gm-Gg: AY/fxX5UupDT1Dx5FGfFAr83OgKHvdCjLtzokV6MQiaq6xVpiUxDZkjvNXAddGQ98fF
+	9KPCRHDL/uanLSNM34WGLIDz3d/g3L6nJjJSQPNuNsOJmM4s/sG5E4xE3oO/gFBcGFdgmkolVa0
+	2ZVHcS3WIO/eXIoK/IJ25vCp/8+0Tv2mOrGBVk9Lg26LncQbic/d9IfNrFDJJm8WoGI3gfldqFv
+	JT1dgnq4GHKpB+BLBD2H+ztD8iTmtEKeST8W5yFjyq9ZD52s6Hg0xr6ppyyxsR72DCHzl92g4yY
+	1+2Pa7MipLlVIdWAnT+Z/Nk8cKDc3yL5VwpjKQ4zncjePQOWfXWi42a5g1hMAZIY3NvNEo7yDzP
+	sE0mg3JwyZE4vFzyvFaLkfc1Ka93wUP4uRGhYf5/aVkg2t4qEiS/JjeKPUTZVO0ULpU0Ycz3KCR
+	Rs
+X-Google-Smtp-Source: AGHT+IGvi6J82Rgzr2zCOEmBeT5lUa3Wx78GAwGqctUMSFJV6I3evSDSyLrVDEeoqnj/mU6Cj72pdQ==
+X-Received: by 2002:a05:600c:37c6:b0:47a:7fd0:9eea with SMTP id 5b1f17b1804b1-47d1953c178mr142674055e9.3.1766482367600;
+        Tue, 23 Dec 2025 01:32:47 -0800 (PST)
+Received: from xeon ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47be272eaf8sm282891485e9.5.2025.12.23.01.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Dec 2025 01:32:47 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Ion Agorria <ion@agorria.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Anand Moon <linux.amoon@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: PCI: Convert nvidia,tegra-pcie to DT
- schema
-Message-ID: <202512222054.5XFbv0HE-lkp@intel.com>
-References: <20251215141603.6749-2-linux.amoon@gmail.com>
+Subject: [PATCH v2 0/1 RESEND] ARM: tegra: add support for Xiaomi Mi Pad (A0101)
+Date: Tue, 23 Dec 2025 11:32:35 +0200
+Message-ID: <20251223093236.6006-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251215141603.6749-2-linux.amoon@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Anand,
+The Mi Pad is a tablet computer based on Nvidia Tegra K1 SoC which
+originally ran the Android operating system. The Mi Pad has a 7.9" IPS
+display with 1536 x 2048 (324 ppi) resolution. 2 GB of RAM and 16/64 GB of
+internal memory that can be supplemented with a microSDXC card giving up
+to 128 GB of additional storage.
 
-kernel test robot noticed the following build warnings:
+This patchset includes some schema changes not yet applied. They can be
+found here:
+- https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250909143432.121323-2-clamor95@gmail.com/
+- https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912065146.28059-2-clamor95@gmail.com/
+- https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912064253.26346-2-clamor95@gmail.com/
 
-[auto build test WARNING on 8f0b4cce4481fb22653697cced8d0d04027cb1e8]
+UPD: patchsets above were accepted
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/dt-bindings-PCI-Convert-nvidia-tegra-pcie-to-DT-schema/20251215-231359
-base:   8f0b4cce4481fb22653697cced8d0d04027cb1e8
-patch link:    https://lore.kernel.org/r/20251215141603.6749-2-linux.amoon%40gmail.com
-patch subject: [PATCH v2 1/4] dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
-reproduce: (https://download.01.org/0day-ci/archive/20251222/202512222054.5XFbv0HE-lkp@intel.com/reproduce)
+---
+Changes in v2:
+- added fuel gauge interrupt
+- added CE gpio for charger
+- removed always-on for vdd_gpu
+- improved pinmux configuration
+- added camera regulators
+- removed usb@70090000 (already disabled in common tree)
+- set correct modes for mmc devices
+- removed thermistor thermal zone (not used by mocha)
+- fixed pmc interrupt polarity (removed interrupt inverted prop)
+- configured OTG support
+- removed bluetooth reset-gpios
+---
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512222054.5XFbv0HE-lkp@intel.com/
+Svyatoslav Ryhel (1):
+  ARM: tegra: add device-tree for Xiaomi Mi Pad (A0101)
 
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/translations/zh_CN/scsi/scsi_mid_low_api.rst references a file that doesn't exist: Documentation/Configure.help
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/ABI/testing/sysfs-platform-ayaneo
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/input/touchscreen/himax,hx83112b.yaml
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/media/mediatek-mdp.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-   Warning: arch/powerpc/sysdev/mpic.c references a file that doesn't exist: Documentation/devicetree/bindings/powerpc/fsl/mpic.txt
-   Warning: arch/riscv/kernel/kexec_image.c references a file that doesn't exist: Documentation/riscv/boot-image-header.rst
-   Warning: drivers/clocksource/timer-armada-370-xp.c references a file that doesn't exist: Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
-   Warning: include/rv/da_monitor.h references a file that doesn't exist: Documentation/trace/rv/da_monitor_synthesis.rst
-   Warning: rust/kernel/sync/atomic/ordering.rs references a file that doesn't exist: srctree/tools/memory-model/Documentation/explanation.txt
+ arch/arm/boot/dts/nvidia/Makefile             |    3 +-
+ .../boot/dts/nvidia/tegra124-xiaomi-mocha.dts | 2790 +++++++++++++++++
+ 2 files changed, 2792 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
