@@ -1,127 +1,146 @@
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0406D355049
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Dec 2025 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B664B86337;
+	Wed, 24 Dec 2025 18:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766586756; cv=none; b=tnYIheXu+I0r0cSaDdirrqW339Cd7RpJJQ4KoSmNzlqdDZWaWe8/Bl5D7AOIcmQWTL1UKu7cAXVs5JFvFWEgpyGxF0mghtfq8Q8z2BsdonawiJ9MrKl1NluEDUXGPzzO3DPFU30rxHL/15BqDaZBHodCdOaJoDaWTxWAIjxx68A=
+	t=1766601185; cv=none; b=CrnsTiviYqw8zywdeHWe4kY4WTr3RIbe28v61517x1AnD9VmsRe9WB4Pz4kNF8Yg8qFv8rcVUdy2pSPXCvnZFDRwUzgZCIXGVtfWbu9ndLuyDJ5QJM7sZSZ9btg0nL8BLr9oxwDi1FHQd0P8sG26JSIuAUKAF076LnzieISw2qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766586756; c=relaxed/simple;
-	bh=Ep6T2A1IcsHXvBna5nLZzlaT9fz+LpfP5KHb0lK+HHM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=iFVeGsOqKI6PzSDY+y1bX7TzGS97w5W4fu6wFouvAdsn2Ryzn6EuUFOjGMLMmaCplHEcIxxuJkcBe07apWRZZ8Fw/Qw5iMbzvC9DGVrx1N6N9uIkSQ/LTlJ3998UWTnmFVFQ2CMINUbXKMf0pRRUIJStlUyuPfKu8XW6g5/jW0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=lzFTrCu1; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1766601185; c=relaxed/simple;
+	bh=RsG87ueyldnZZZk3PsZzqf+vvdsWkt7pyksxnFNVWBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvzmGRkHbFr3+VrtjwFMK42icV6Y61vm00BLYucURO/DzOGmVhz+SfpnJl7znLi1JxOw3K3JTu9nPLe0rCe9z4xGv2ThTSlkQPsuwQGhGdGrJOpJsxmx4b/CKtQ/tBIgpbVy8ynlWShnzdl48wA+6bU6DmXuUZ4UX0jS0Z4QjQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLhNK3j9; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="lzFTrCu1"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id BFB71240028
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Dec 2025 15:32:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1766586742; bh=02SzH1r7rFbe6gp7uCgKGi3IEEll/QfXuR0nbkBAYaY=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=lzFTrCu1OG7eFk9vJoLRL/RCLOTNUwjjznwuXpP7D1QNvjGVnU0gh4dFcjJwQTipe
-	 krSwlS/K5bBDghdZG8XioLQZSOCYFEmyy8SD/NMqRYUqlTcFuUTbBRZUyZBQmyfcvc
-	 G7nB1DYkuxosYPVJNnz6fxLUI6+Ga43d4mI1cE+mMFIl6/UOm6TbPSFbSsXwrDJaUC
-	 R/8bNzGOy+oXqjjKLt0ybHuMFPLg8aWk4plXsX/SDQi/5Hdr5Tb4utqVTC25EpU20l
-	 IpBvr/CM/10QKdZrr4fveJm/Qk/wH5FcmolOBw32Www6Db3f75M/WEqxePbX29RG3g
-	 s6Dv9UMoPTJkA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4dbvTx6Lcjz9rxL;
-	Wed, 24 Dec 2025 15:32:21 +0100 (CET)
-Date: Wed, 24 Dec 2025 14:32:22 +0000
-From: Marc Dietrich <marvin24@posteo.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: ShadowMonkee <sshadowmonkeyy@gmail.com>, Marc Dietrich <marvin24@gmx.de>, 
-    ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, 
-    linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: replace udelay with usleep_range
-In-Reply-To: <2025122414-sedation-hazard-598b@gregkh>
-Message-ID: <ab692e6f-4b9f-b089-4fa8-c6cb7c460be2@posteo.de>
-References: <20251224111651.217679-1-sshadowmonkeyy@gmail.com> <2025122414-sedation-hazard-598b@gregkh>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLhNK3j9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766601184; x=1798137184;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RsG87ueyldnZZZk3PsZzqf+vvdsWkt7pyksxnFNVWBU=;
+  b=lLhNK3j9PL8oSkCwOP6K6ocZt3F/EHta8480nugK2fduJlcSUX2OrqVx
+   hus4yqmbCQZi5nAcIgnTQQDiTRzGWXNMqbD0wOrLgtgBIPzrai9d3rWuZ
+   bUTepfby9ZjapsZGLPqaZBFLVwcDT60pslyx+aZC7Y2kANxZXXDVnpdHj
+   74SImfAi+fym2xlaiE45F5ISQy32JmzGLgoQqqVbOOBK1ON+/cbqH3qnS
+   nX45ZgTm+2B643amdt/eAmCgbuhl6El9Xb4P9Ipdi/V204N9B5IJNFGLw
+   vw85d+THswzJQZ9vln+/gxD5gR4mFQd78r3aTXMnROnYFNLN410eab5ND
+   g==;
+X-CSE-ConnectionGUID: WwCPfXMxQwS0Q4MXl3/5CA==
+X-CSE-MsgGUID: MiSvo8EXQAe/wGo9KpaBCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11652"; a="72061774"
+X-IronPort-AV: E=Sophos;i="6.21,174,1763452800"; 
+   d="scan'208";a="72061774"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Dec 2025 10:33:03 -0800
+X-CSE-ConnectionGUID: hIIlLaeHRTO+FMsExmvWDw==
+X-CSE-MsgGUID: FV+miLuFT0ee+nKrm1TQZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,174,1763452800"; 
+   d="scan'208";a="231124025"
+Received: from igk-lkp-server01.igk.intel.com (HELO 8a0c053bdd2a) ([10.211.93.152])
+  by fmviesa001.fm.intel.com with ESMTP; 24 Dec 2025 10:32:57 -0800
+Received: from kbuild by 8a0c053bdd2a with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vYTfL-000000006Ia-0DOx;
+	Wed, 24 Dec 2025 18:32:55 +0000
+Date: Wed, 24 Dec 2025 19:32:53 +0100
+From: kernel test robot <lkp@intel.com>
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+	viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
+	corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com,
+	rdunlap@infradead.org, ray.huang@amd.com, gautham.shenoy@amd.com,
+	mario.limonciello@amd.com, perry.yuan@amd.com,
+	ionela.voinescu@arm.com, zhanjie9@hisilicon.com,
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-tegra@vger.kernel.org,
+	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
+	bbasu@nvidia.com, sumitg@nvidia.com
+Subject: Re: [PATCH v5 07/11] cpufreq: CPPC: Add sysfs for min/max_perf and
+ perf_limited
+Message-ID: <202512241930.heuhsbt9-lkp@intel.com>
+References: <20251223121307.711773-8-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251223121307.711773-8-sumitg@nvidia.com>
 
-Hi all,
+Hi Sumit,
 
-I don't remember anymore where this delay came from, but I think we can
-get rid of it alltogether after the fix for i2c writes landed. Somehow I
-had overlooked it at the time.
-I will try without my machine and see if it works (and also send a patch
-afterwards).
+kernel test robot noticed the following build warnings:
 
-Best wishes,
-Marc
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.19-rc2 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Gupta/cpufreq-CPPC-Add-generic-helpers-for-sysfs-show-store/20251224-001833
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20251223121307.711773-8-sumitg%40nvidia.com
+patch subject: [PATCH v5 07/11] cpufreq: CPPC: Add sysfs for min/max_perf and perf_limited
+reproduce: (https://download.01.org/0day-ci/archive/20251224/202512241930.heuhsbt9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512241930.heuhsbt9-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Using alabaster theme
+   ERROR: Cannot find file ./include/linux/pci.h
+   WARNING: No kernel-doc for file ./include/linux/pci.h
+   ERROR: Cannot find file ./include/linux/mod_devicetable.h
+   WARNING: No kernel-doc for file ./include/linux/mod_devicetable.h
+>> Documentation/ABI/testing/sysfs-devices-system-cpu:356: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+   ERROR: Cannot find file ./include/linux/bootconfig.h
+   WARNING: No kernel-doc for file ./include/linux/bootconfig.h
+   ERROR: Cannot find file ./include/linux/pstore_zone.h
+   ERROR: Cannot find file ./include/linux/pstore_zone.h
+   WARNING: No kernel-doc for file ./include/linux/pstore_zone.h
 
 
-On Wed, 24 Dec 2025, Greg Kroah-Hartman wrote:
+vim +356 Documentation/ABI/testing/sysfs-devices-system-cpu
 
-> On Wed, Dec 24, 2025 at 12:16:51PM +0100, ShadowMonkee wrote:
->> udelay() was used for a short delay in the NVEC I2C receive path.
->> Replace it with usleep_range(), which is preferred as it avoids
->> busy-waiting and allows the scheduler to run other tasks.
->>
->> Signed-off-by: ShadowMonkee <sshadowmonkeyy@gmail.com>
->> ---
->>  drivers/staging/nvec/nvec.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
->> index 263774e6a78c..dd92f186e0db 100644
->> --- a/drivers/staging/nvec/nvec.c
->> +++ b/drivers/staging/nvec/nvec.c
->> @@ -648,7 +648,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
->>  		break;
->>  	case 2:		/* first byte after command */
->>  		if (status == (I2C_SL_IRQ | RNW | RCVD)) {
->> -			udelay(33);
->> +			usleep_range(33, 34);
->>  			if (nvec->rx->data[0] != 0x01) {
->>  				dev_err(nvec->dev,
->>  					"Read without prior read command\n");
->> --
->> 2.52.0
->>
->
-> Hi,
->
-> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> a patch that has triggered this response.  He used to manually respond
-> to these common problems, but in order to save his sanity (he kept
-> writing the same thing over and over, yet to different people), I was
-> created.  Hopefully you will not take offence and will fix the problem
-> in your patch and resubmit it so that it can be accepted into the Linux
-> kernel tree.
->
-> You are receiving this message because of the following common error(s)
-> as indicated below:
->
-> - It looks like you did not use your "real" name for the patch on either
->  the Signed-off-by: line, or the From: line (both of which have to
->  match).  Please read the kernel file,
->  Documentation/process/submitting-patches.rst for how to do this
->  correctly.
->
-> - You sent a patch that has been sent multiple times in the past and is
->  identical to ones that has been recently rejected.  Please always look
->  at the mailing list traffic to determine if you are duplicating other
->  people's work.
->
-> If you wish to discuss this problem further, or you have questions about
-> how to resolve this issue, please feel free to respond to this email and
-> Greg will reply once he has dug out from the pending patches received
-> from other developers.
->
-> thanks,
->
-> greg k-h's patch email bot
->
->
+   347	
+   348			Read/write a frequency value in kHz from/to this file. This
+   349			file sets the maximum performance level (as frequency) at
+   350			which the platform may run. The frequency value is internally
+   351			converted to a performance value and must be in the range
+   352			[cpuinfo_min_freq, cpuinfo_max_freq], inclusive.
+   353	
+   354			This file is only present if the cppc-cpufreq driver is in use.
+   355	
+ > 356	What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
+   357	Date:		February 2026
+   358	Contact:	linux-pm@vger.kernel.org
+   359	Description:	Performance Limited
+   360	
+   361			Read to check if platform throttling (thermal/power/current
+   362			limits) caused delivered performance to fall below the
+   363			requested level. A non-zero value indicates throttling occurred.
+   364	
+   365			Write the bitmask of bits to clear:
+   366			  1 = clear bit 0 (desired performance excursion)
+   367			  2 = clear bit 1 (minimum performance excursion)
+   368			  3 = clear both bits
+   369			The platform sets these bits; OSPM can only clear them.
+   370	
+   371			This file is only present if the cppc-cpufreq driver is in use.
+   372	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
