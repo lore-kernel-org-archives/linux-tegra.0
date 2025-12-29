@@ -1,151 +1,137 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB0E3164A8;
-	Mon, 29 Dec 2025 13:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065A922A4EB
+	for <linux-tegra@vger.kernel.org>; Mon, 29 Dec 2025 13:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767014666; cv=none; b=ENUdIu4jieRK7S1LTKIxiIWGSFfe2rsMNDe5kGcaeCj9LbyvN7vckPKPzKrgJffiTwfuYxXUFdxAvfOVdUBHz3/RxNNTcFD07KffHUncRxr2Ij7pPoI4k2w99H12djgg9K+L7hPxW72zFUKJ3vs79GomXmO2gSVJggUKuyEHCRU=
+	t=1767016756; cv=none; b=XPHfwUlBHapBbyu5emr5yl8f+j81OEq8k+d2E4lQhoGPm89ajMwqhHFsO1lxHbYrC/4FfL/jFrx3h2EHET4m17Bc51Tmsox2j48b7Od61es/cugEoMJDkUgolqpiLsnLJCveARVH1k+kmG8NgDZJUcWLcYuaFH7HZr3CIiGbGbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767014666; c=relaxed/simple;
-	bh=1RLLMvwM6Kz/hBPx+VgNo14k3cnzriMn8z5q0fggmu4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NH3FLzxBu/+QL6RBYju8A3NE8wV+SUzglP7fIWCzxJvQCE+smpC6XVYE1QGQMC0ynGLXTMwnFyA1I0LPCG89c78oHSeWcjLkC97S6fyJXHh8ieDb12NztUBD1puekC/B7p0Kx+qF/0KDLyfRG2fkT4Lvs/kH06aSWUZu65SpkgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bx/Ffsri; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1767016756; c=relaxed/simple;
+	bh=k257uZ3HPDKFfAze/hz1Hfmw8/7Hf+9ogZi61Nyan10=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kwE3YMNNH+PLbBL/DJ1mR9aWPuxbLDaHQJ+1rVyyQIW69ZmdcmvGLipyzxLbL4gI5ZC3H1fI1TGWYKzz5471Ye0Y45joj3UBnhtjjg2R4yFjkXxektuj/tN5qX/1tyDP35HVu/ZmTKbLVfGHSYSV8QQ++JM+ClkTPkPWtIqKKpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jb4vi6OU; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bx/Ffsri"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1767014659; x=1767619459; i=markus.elfring@web.de;
-	bh=w8ClR58Cfpycw02klzxwPrta8Q6Ou1mAgEyCsXGyI3M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=bx/Ffsri+d/PfrhjKUzwguR1a6PaWl46lfBRNieVbIatCWSTQURBbz22p0d1abUL
-	 bfZzq5HGvkIuZxYLXtNf3dXZkCiScus8bxu8XNXcBmoQVpgQAOJGRqp+dsttlrDTT
-	 wodoeboTXJfvuVpjdcLBkVq4MYfLNfz3zkozbCCGe63/Sfd5IFD8AULnFeZsu0Njq
-	 ibS4iLXqRedZt1PoZPmbfB/kHMdn+cplClv/3Vq7UQlUWN4jWQPYk5PLGUHt8qlKC
-	 vU0QzQHVkFWRWEMp97Z7/e6YGMX/33XEcnGHqIF6jUm4QILHevMhw3Fv5dxeDRWu5
-	 15qyewtUFeYOsTTsag==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.231]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiuSe-1w5zkd3KYW-00lqYx; Mon, 29
- Dec 2025 14:24:19 +0100
-Message-ID: <c99d37b9-f313-462c-ac8e-7a29637cc101@web.de>
-Date: Mon, 29 Dec 2025 14:23:54 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jb4vi6OU"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477985aea2bso8520715e9.3
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Dec 2025 05:59:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767016752; x=1767621552; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnurlv5ZkeGevc2yEP3yL2OMFl89R04sLNUEhoXlc4A=;
+        b=Jb4vi6OUmolZ4NXViQlAkeq0JttPiAGs85sSgTroLRQN6PTW3eJ0Qx3lk4q4uljvuw
+         hY9QD7hSwXfbp/I/Uuldx6Pou/8Kv8NqMzpG1+EEMTiaOxSHjdDOUPMdooPJvLO3bgrQ
+         fCL2C1VDR+wLBEildF9gD831DPeJGwNsvtKw2eWJOCRVAgEIEVwo1HVLcH+aXZV4KGRO
+         DZX1zoLxHJ7+zgAsrUl5a+N7J5DC9d3PYmD1CsE1BDztKcCSRKebIWEKm//NvNf/38rp
+         ohxAD8pFkM6X7cwgMPp7NlvYiagUcfRxNBB2dPAcNvO1i8nCJWNeGB+GRHYYwDMjZv6u
+         z8bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767016752; x=1767621552;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jnurlv5ZkeGevc2yEP3yL2OMFl89R04sLNUEhoXlc4A=;
+        b=G8hjBI+cOMjGFyn0MDMKRlcsI7fjjltN324t3G05HMBSYGYlnTfn6bhjUDX1NRI+4Z
+         udBvaSBIQmywYVt/5P7RD6SC72BdKC7nJcEgX6ALNrQmHqM/5UJ9w368NJ1hGPQLpV/f
+         aYV4tcdqSbT3nR8K8+Cd25vmwVt89nJfkqcfQcdzq233HUhiSMvV94XxWjkioLyCpoif
+         9141qpG+LHZMtvdUX0IGwlNQwfm72x1d159IECPpA4AYyCpz9a3IwfEZjrbJKaSsVM+0
+         cspC6U77iWLF2Zqv4rqdPsyd2dgqmZtYTpet6u98Wna5utNGj4PXoZMwPIhb0jtXSIOi
+         mQqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZojF79Gm8A/0/rXsChSuf6p8nX80zptO9ooKc5nLCUJhnSM6EPiH6yTG50RSNDwnS/WwP8jjocGir6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ZwghKmvqLdAp4t9mJFJnrcQ/7wPg59+VKQR0ahS3jp0WQYWp
+	IoiksnVdtNTVBpRMNAdQqrPIjWI8Q+RdaOi2+8OO+tfiho+uUhaxc8/K
+X-Gm-Gg: AY/fxX6P5N+QeHe+aoSrYQTHWjwPs1a0uN71U+/bfmOtod/abWLm+MRZPVyxE574ZR/
+	+g1lgn3MaDhA86loO1oJrxYrErsbu50dCHlvCedjNaQK/yFosG/YId6Ybi801HyPLa0i/KinKn0
+	1KSvdsF7jqDrDJV/gEqxLxooM4TVMglGOvcHKKYGQBHl2wQIWFU7dqL9SNm0rmD5XIFtFlNrejA
+	wsGaAifNPjcrTeNrgtAi1KM9ys9a2b4Nh6z2xQYtLD9OHJVAINqYqP9qohmYIqW5oUytfeeUC6k
+	fh7TFm0N/QjTkyNYuFCcOLdgq8yz5pbvJH4jyJVGz6s+iRQgAZLWAr1IjPshugdHb0qUzvqKMEI
+	EAA43KqF4K6hvK9xQbDkYUJ+xzAc1l+Uev34dWoYowlMN3i5d+1DwYsDB/xPYhHq9IHUwLGsTHA
+	LYja/OuLcW1LKc60lbi+yZKX36VdYem0Mo/bQx+zvo466o9fWvb3mhjRCWxKyufUYZcZ2J8Mvkt
+	DUZhAw=
+X-Google-Smtp-Source: AGHT+IG9xRAmZubwF+oTURx72QKNS8IBmfurtixzLyk4corHAwr+82eB/ZvmEfCyKAkZ8m72tcMOWQ==
+X-Received: by 2002:a05:600c:3ba4:b0:468:7a5a:14cc with SMTP id 5b1f17b1804b1-47d1957af0emr232438825e9.3.1767016752121;
+        Mon, 29 Dec 2025 05:59:12 -0800 (PST)
+Received: from thomas-precision3591.paris.inria.fr (wifi-pro-83-215.paris.inria.fr. [128.93.83.215])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4324ea1b1bdsm61881417f8f.8.2025.12.29.05.59.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Dec 2025 05:59:11 -0800 (PST)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Wayne Chang <waynec@nvidia.com>,
+	Haotien Hsu <haotienh@nvidia.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Liao Yuanhong <liaoyuanhong@vivo.com>,
+	Nagarjuna Kristam <nkristam@nvidia.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] usb: gadget: Fix trb_virt_to_phys() error value
+Date: Mon, 29 Dec 2025 14:58:49 +0100
+Message-ID: <20251229135853.33222-1-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-tegra@vger.kernel.org,
- linux-sound@vger.kernel.org, Daniel Dadap <ddadap@nvidia.com>,
- Jaroslav Kysela <perex@perex.cz>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mohan Kumar D <mkumard@nvidia.com>, sheetal@nvidia.com,
- Thierry Reding <thierry.reding@gmail.com>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20251228140530.3739960-1-lihaoxiang@isrc.iscas.ac.cn>
-Subject: Re: [PATCH] ALSA: hda/tegra: fix a memory leak in
- hda_tegra_first_init()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251228140530.3739960-1-lihaoxiang@isrc.iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:l/TGNvAGRjQpNxdll1UwVCHkQj9qNT+j4oMk31vS8dcjTtufeYo
- STknBPTMKpmHSMgTUgtN9yVFFrZsGCIr3BBGjx7t8naD7Jod1dNo4P5yMUq+2KM2pDNqBeH
- GxqZ0OutxzNrH12UWq8orMjSlq+LV2TOphxALdi5U7efNovcRYqmRXhQwem3Q3nDg0yE6m8
- E1K9CyEA/XMbc0xRBA1jg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2lEueDRsEOY=;5pO7os9fJmJ3nDRjd36lh7bhn9O
- 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
- US5eMQutUu6eqEOik=
+Content-Transfer-Encoding: 8bit
 
-> Add azx_free_stream_pages() to release the resources allocated
+0 is a valid DMA address, so returning DMA_MAPPING_ERROR in
+trb_virt_to_phys().  Also, dma_mapping_error() wouldn't
+flag 0 as an error address.
+Checking the return value directly because the dma_addr
+does not come directly from dma_map().
 
-                              call?
+Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+v1->v2:
+  - Add Cc: tag
+ drivers/usb/gadget/udc/tegra-xudc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 9d2007f448c0..63f7eeddb401 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -904,7 +904,7 @@ static dma_addr_t trb_virt_to_phys(struct tegra_xudc_ep *ep,
+ 	index = trb - ep->transfer_ring;
+ 
+ 	if (WARN_ON(index >= XUDC_TRANSFER_RING_SIZE))
+-		return 0;
++		return DMA_MAPPING_ERROR;
+ 
+ 	return (ep->transfer_ring_phys + index * sizeof(*trb));
+ }
+@@ -1484,7 +1484,7 @@ __tegra_xudc_ep_dequeue(struct tegra_xudc_ep *ep,
+ 			deq_ptr = trb_virt_to_phys(ep,
+ 					&ep->transfer_ring[ep->enq_ptr]);
+ 
+-			if (dma_mapping_error(xudc->dev, deq_ptr)) {
++			if (deq_ptr == DMA_MAPPING_ERROR) {
+ 				ret = -EINVAL;
+ 			} else {
+ 				ep_ctx_write_deq_ptr(ep->context, deq_ptr);
+@@ -2834,7 +2834,7 @@ static void tegra_xudc_reset(struct tegra_xudc *xudc)
+ 
+ 	deq_ptr = trb_virt_to_phys(ep0, &ep0->transfer_ring[ep0->deq_ptr]);
+ 
+-	if (!dma_mapping_error(xudc->dev, deq_ptr)) {
++	if (deq_ptr != DMA_MAPPING_ERROR) {
+ 		ep_ctx_write_deq_ptr(ep0->context, deq_ptr);
+ 		ep_ctx_write_dcs(ep0->context, ep0->pcs);
+ 	}
+-- 
+2.43.0
 
-> by azx_alloc_stream_pages().
-
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.19-rc3#n145
-
-Regards,
-Markus
