@@ -1,85 +1,156 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8581528FFF6
-	for <linux-tegra@vger.kernel.org>; Fri,  2 Jan 2026 15:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54493C465;
+	Fri,  2 Jan 2026 15:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767369209; cv=none; b=iO2/cypF65XE6L4NjqDqo75aHf/VzgLvJsRwe0bO1lrxFKOXROZnVXlN6OklP/+kiV716aI4fHG+PIqoKDnXV80pNbZSTYKFv8Dv98V0dYGTEFVK0OZObPDhKb9KhxHlr9LpCzBVIVoUBQtndvghh9R1gdOAW3N8GKHhKLFHYdQ=
+	t=1767369518; cv=none; b=E4Pe2g9RmgqhxLJ9H7VK8AE+OaqwmSCdTLM2tKkEjvds/kcXTKlTlvtyZ8YR0b6TcoKsP7ss0MlwiNt7vXLmp2r5g/cr7/O8+wXYz7WGj/O+RIV/9jtglKD/EV9AmXJqhheE2czK0hScjbadCL/lTf8jBnulVkZSBFgWVzIHp8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767369209; c=relaxed/simple;
-	bh=k+ngzHxkn5MYFYlg0gfMzzkSE4lr7ZWvme1Vz6TFLlo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=RtZSYJRhwFBwf9G7QupK8B3vau+8FYeKiV7qKwQL+GelLG8ETxQWfQ2TbAi8tYHCdjIzzdQhakY5zP5FKpEmEcRvHd2xPzmrEI2CiVF974iFNcGUk/ogrlfmjYwzPt39x4DTu1G1mRsAhejchNiYz2XA+RqTpBKxD5m1kp6uI4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A1u5Ptr+; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1767369518; c=relaxed/simple;
+	bh=PPpDFLKy+MzvxXHjluPSv/KXPSJTNW+J04zNHdxiXE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRxJtk42GI9DF80md+/CSiImgwsD36VWZZNs07fGhQ3XUUmsgb1HulqIAUTRzqfF5w5fkawBRWDaluSjCYXsq8SmZIMZhHuhsux8NocOdu2wXYhj1TmiwXW8IZZ7JYiPqrWBQRCs+bSvTn0cbYvqdzC1ZEeaWsfCI39GxA9If8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lg5xcQkF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A1u5Ptr+"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 82134C1C3B6;
-	Fri,  2 Jan 2026 15:52:59 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 46FF5606C7;
-	Fri,  2 Jan 2026 15:53:25 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D475C113B071B;
-	Fri,  2 Jan 2026 16:53:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1767369204; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=MfEK2g1j0oovEtEL82YFmPrUmFMZvfTNK/qZ4cy7bXQ=;
-	b=A1u5Ptr+EcLCFjE/tGiuLvWPYLT/nq1IeDfopVjxkEtkaQChPU6biz9lFoyI8Q+ZyDv35Q
-	fYG6gSZoTZivYUF28LzehOtM+AqrCkelgvWvKdyTcdO/fnZgoSG/mXCTuoA2ZtV4Fxq2hC
-	a3VwjrAooPL3l+GXNpaG/JyMXV+cCPIao2UbHZju0V1o6zvqLPkBlDHtjougWCBoZE3cRO
-	puKRtf9H98nMa/DKGwuRG6kGN25DJdoNpzTDvL4TfAeVsQwXrTCt5Lyb0PpQZLfW9cKEIK
-	4g2Lfq2ZKWFXdY9deDWGPADLmmyXR6O81uFG4/mqvYvYw7A/oc6FWsLj+tEoVw==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lg5xcQkF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F92C116B1;
+	Fri,  2 Jan 2026 15:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767369518;
+	bh=PPpDFLKy+MzvxXHjluPSv/KXPSJTNW+J04zNHdxiXE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lg5xcQkFX76bBotONUpLGc6Wei1S7UNg/nZ3yvWe/MQ234Q4YalthRijWTFUdP2rH
+	 NJYHaJdgMQdgItxpEqYC6EKNytLGJYMmRJ2M6ncFlAJG5CnXp245f6pGeE+XsfxWqP
+	 70FgYgV2fRp1Wm5Br6JLHcUj5jj9Je0eAVyOR7/d7HS+5iDQMrZkKZSFCIBFFCmeiw
+	 qQIh1R2KqoVZY9l7kM1p4MaGcNLRMRAVgbZgzZ8WmhXD69kIAhKMhoYs05RNdotU2m
+	 cNcGycccxNIUtznysD2a6JAkKZbRm5O3GUxfH76gjSqd3o2bEaN+r4vSzExoxltg1Y
+	 ypsasO1Z0gKNw==
+Date: Fri, 2 Jan 2026 09:58:37 -0600
+From: Rob Herring <robh@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: mtd: nvidia,tegra20-nand: convert to DT
+ schema
+Message-ID: <20260102155837.GA3840725-robh@kernel.org>
+References: <20251231-nvidia-nand-v3-1-2e67664d3674@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 02 Jan 2026 16:53:21 +0100
-Message-Id: <DFE83EE9TFJ8.FZBQIKRUYFS5@bootlin.com>
-Subject: Re: [PATCH v3 0/2] staging: media: tegra-video: move shared SoC
- declarations to headers
-Cc: "Jonathan Hunter" <jonathanh@nvidia.com>, "Sowjanya Komatineni"
- <skomatineni@nvidia.com>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
- <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-To: "Sun Jian" <sun.jian.kdev@gmail.com>, "Thierry Reding"
- <thierry.reding@gmail.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20251229070125.98741-1-sun.jian.kdev@gmail.com>
- <20260102114501.42312-1-sun.jian.kdev@gmail.com>
-In-Reply-To: <20260102114501.42312-1-sun.jian.kdev@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251231-nvidia-nand-v3-1-2e67664d3674@gmail.com>
 
-On Fri Jan 2, 2026 at 12:44 PM CET, Sun Jian wrote:
-> This series cleans up tegra-video SoC data declarations shared across
-> translation units by moving them to the corresponding headers, avoiding
-> local extern declarations in .c files.
->
-> No functional change intended.
->
+On Wed, Dec 31, 2025 at 09:29:32AM +0000, Charan Pedumuru wrote:
+> Convert NVIDIA Tegra NAND Flash Controller binding to YAML format.
+> Changes during Conversion:
+> - Define new properties `power-domains` and `operating-points-v2`
+>   because the existing in tree DTS uses them.
+> 
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
 > ---
 > Changes in v3:
->   - Wrap the SPARSE warning in patch 1 commit message to <=3D 75 columns.
+> - Removed pattern properties for partition.
+> - Used single quotes for nand string in pattern properties.
+> - Modified maxItems value and added minItems to reg property under nand child node.
+> - Link to v2: https://lore.kernel.org/r/20251229-nvidia-nand-v2-1-b697d9724b0b@gmail.com
+> 
+> Changes in v2:
+> - Edited the commit description to match the updated changes.
+> - Modified the description for the YAML.
+> - Removed all the duplicated properties, defined a proper ref for both parent
+>   and child nodes.
+> - Removed unnecessary properties from the required following the old
+>   text binding.
+> - Link to v1: https://lore.kernel.org/r/20251030-nvidia-nand-v1-1-7614e1428292@gmail.com
+> ---
+>  .../bindings/mtd/nvidia,tegra20-nand.yaml          | 103 +++++++++++++++++++++
+>  .../bindings/mtd/nvidia-tegra20-nand.txt           |  64 -------------
+>  2 files changed, 103 insertions(+), 64 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
+> new file mode 100644
+> index 000000000000..632cfd7dc5e2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
+> @@ -0,0 +1,103 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mtd/nvidia,tegra20-nand.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra NAND Flash Controller
+> +
+> +maintainers:
+> +  - Jonathan Hunter <jonathanh@nvidia.com>
+> +
+> +allOf:
+> +  - $ref: nand-controller.yaml
+> +
+> +description:
+> +  The NVIDIA NAND controller provides an interface between NVIDIA SoCs
+> +  and raw NAND flash devices. It supports standard NAND operations,
+> +  hardware-assisted ECC, OOB data access, and DMA transfers, and
+> +  integrates with the Linux MTD NAND subsystem for reliable flash management.
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra20-nand
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: nand
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: nand
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  operating-points-v2:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '^nand@':
+> +    type: object
+> +    description: Individual NAND chip connected to the NAND controller
+> +    $ref: raw-nand-chip.yaml#
+> +
+> +    properties:
+> +      reg:
+> +        minItems: 1
+> +        maxItems: 5
 
-My understanding and my knowledge of the common practice is that you
-shouldn't wrap lines if they are quoting a single path, log message, error
-message and the like.
+Sigh. I gave you the exact schema to use. How is 5 address ENTRIES 
+valid? Again:
 
-So I think v2 should be applied, not v3. But I'll leave the decision to
-maintainers applying the patches.
+reg:
+  maximum: 5
 
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Rob
