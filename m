@@ -1,296 +1,202 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010007.outbound.protection.outlook.com [52.101.46.7])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A53334698;
-	Mon,  5 Jan 2026 12:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767615802; cv=fail; b=upmOdlC7v38EqA6VYfSlJNWar4CdiNBG1OuOH4pU9j0XxXhS9akZqVq+YSm8vhD3DAgbRRXevIfAQDPlRTV/vEVCND5+41PGMgtCmilREPAI1OqurqaOdiGMQMV5MCH6JeXVtZpNLRVoZuZe2eigWQXMSpp2O6jL0v7T1urf1i4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767615802; c=relaxed/simple;
-	bh=sgbXF9qkLpE2x6oiFguGAt6F/02HgLkSFd73aEyJk68=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=N2fnLFXCzk3Ne8jE5wDimScmnKii/2roVi3sEZ9KjvCm4emYItJI9WtmymzO7/y8XTq+bDeF4/11SGWndAe/GrKeS2ikfpWs79ZWJiPA2g83A3IkWWhYPRT1B5l+D/ZHgeuD9p0V+MW5hJjRoiKSKeg4pAPuR3YtTud+haN5Gvs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cVS1JXEq; arc=fail smtp.client-ip=52.101.46.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E665733B947
+	for <linux-tegra@vger.kernel.org>; Mon,  5 Jan 2026 12:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767616093; cv=none; b=N1BjjcTtfXe491kgWpE5aZlGJKmFPxdqd1kA04NBrz0VVrC0KkzNtv7JOtwViNO0NOJCnPyS3Wac1H2LVAFLpAI3cS/WEYVON5wD1CXAao7nEY3Yd1DDCg7RKaLrUg3z5OpQ7Qm3FjzcMhD8FzXnNPcrYmC5TcvRkLtxUZwfwyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767616093; c=relaxed/simple;
+	bh=oOdjw5Byp9hHCPO/ockAN81t86SXy2F/vEnb3wQ8Fiw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Snc81vIA+ddJTyKIAVIor4L8s0Zfh8boum5o0COJnYN3TH7IreMBfmzlxwkxh3HKk7HaMFe1BdJszLOVTevqUIYu64mvSjFlbtAMaXfRS4ox+3UIhrZo9+N/u804gGn0gLeYm+AKpSAhT+jgcFi5LrWwjdLQp9/hYhXdSh9ARb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QPZyalOn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gjBs1pI9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cVS1JXEq"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MYH3n6ulik3AW8IkM7M2I2ArA1rErwuyHOd1b4okEC2iH4nxTTtiYHoXCJuoyFnGo6dbReYNQRJedZuG+e5egF5WVMWJQHjXLMdgcyg9Ly4UJ3WAME3rU4ScJwuNs4SWJQpntBilzwxsEGLYDVY/QJXwMOif33175IMdPJSmL3GxIMsDQ/VJHWSB5WVEF+sSYC+kjb2O6M+XsJZ23nwMSAyQyAtGxS9jvAD7bjLE0xgcIXwp3N9mN+VQXMi9JQ2d97mgUrqTG9+f29GnHZytSjQNfCTlPLCw+aSojYX3IdHKRUxOBFeT4wKhn4azRO0t2aKbmdwGPhJ1rIwh3/3ycA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YUZM6l/IT7CxZUu33yjzHA5mOr/Nq2m5XkYJnCdTFQ4=;
- b=Z1dqPJuRHMPRowjrj2oSfpheOiyqyiRssmENBb6Z06t26XNuzFkLGIosf4Gz9uiHw9RbBFcTCribbMgkDavQTXgeYeCDYSLhjZFREubS5VgRit/XdTD03ifvtuBtCG2G9RkKYvwkahB7YhvH4ujNTEiGo00JRR2sW8q9a8zHuN5BQEOwP8sbt/OkLJsTtSUiKo7+EL9MbL3YjARUfQbsg4uhC27XLlGGt5IriWQdZIgmNAcNlY3iPM2JpjKDgJ4+xdCYZ8GoxXVuQRppgUUcvm8SbpRdKRT7kUNua7kXo3VoVLu/liFkcNHJDvYNV4BmntqXf1Pz0FhYgPytV1IXRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YUZM6l/IT7CxZUu33yjzHA5mOr/Nq2m5XkYJnCdTFQ4=;
- b=cVS1JXEqMZ+h+28PR0Kit0nI+uKGct6RBLMqP60PxAPcH13uBYkvCDqfiv7hweiDIV7WYjtnuMb8Sv1WYhUNxUVuqtWrFaMC85UqTeod5pm6A5mkyNxVNKv6tKajbdbMo7EgaYu2iZ4DwIxnxzil3oClsQqRmjmJ2Cdi0cEJ0ItujYRO9iUUXB+fdeY8/pgpNwhcahEWE0C3ClmoGTYvoorTcU1hNyzLR8rWkyjbCLKfGHiZpAF9lweVdo72RQApKy8i90gC+xo8QFFbKqXxBFZUi9y9ga5GQ+5d8LkyO4cc0I/WFMwTUYfOjaq5wWeC8ujOatg0RUangdH6C52iUQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by MN0PR12MB6003.namprd12.prod.outlook.com (2603:10b6:208:37f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Mon, 5 Jan
- 2026 12:23:17 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9478.004; Mon, 5 Jan 2026
- 12:23:17 +0000
-Message-ID: <9efcc80b-b8b5-4eb3-a5c1-75957ac86066@nvidia.com>
-Date: Mon, 5 Jan 2026 12:23:11 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pci: controller: tegra194: remove dependency on Tegra194
- SoC
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>, Francesco Lavra <flavra@baylibre.com>,
- thierry.reding@gmail.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Mayank Rana <mayank.rana@oss.qualcomm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Shradha Todi <shradha.t@samsung.com>,
- Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
- Inochi Amaoto <inochiama@gmail.com>, Vidya Sagar <vidyas@nvidia.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20251126102530.4110067-1-flavra@baylibre.com>
- <xh2att7wpqowricyifxmoaijbhtrtoht25pomu4voosfctf36e@4p27y7rezz22>
- <e900f082-fb3e-45c6-a94b-935132190249@nvidia.com>
- <5cwg6tg2y2q4mkns5zblenvhhovnz52dp5bo4uyghs4yledh3v@7apj6wwy3kjf>
- <aVt_t3kxtT99wbwi@ryzen> <7bfb3ebc-2e8b-4fcc-8d13-a6f3e0b7141e@nvidia.com>
- <q2iezy4uydlvwgo6m6yv2nlucafyvxgonm2o5q3g32p73vemwb@x33rmfffnwlu>
- <aVurA-MUECufgTw0@ryzen> <8b5dc374-77e0-4957-8ecc-6c646aff36a1@nvidia.com>
- <hbhvydcqr7lcpvijw5vu57biqato2znjf4txshfepc7zszsptk@6ft3jujbyvtd>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <hbhvydcqr7lcpvijw5vu57biqato2znjf4txshfepc7zszsptk@6ft3jujbyvtd>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO3P123CA0001.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::6) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QPZyalOn";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gjBs1pI9"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6058KRo63798532
+	for <linux-tegra@vger.kernel.org>; Mon, 5 Jan 2026 12:28:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=FhnBgqCd894h4xDDyalypD
+	S1B5tbKhHsA76XEw2zZxU=; b=QPZyalOnblB4vaPsgrD/LCt8SvD882UV71zW0z
+	XdlhiHYZwBkV7qbOm/nIGDNyp1udmWPc/kfJhuFovga4cXZILGzTRMCrnd9sGi9G
+	cqpDsVGpjjO6wUbZIegEEwTOGky17bZME8R++zkstSucabaNjDewwvMyAcy5pSbl
+	vP8wXu4nQMBeTHu0GeVH9XN8MO07EqDd4LIN3BbaAnE57IAJE/AtaYt4W8e209IB
+	OI53NTZVNBTkoU8Yh6A/xWlqDS+Uu6GUT0AfohJ3Cnyv6jz/4hwF37US6bUh6l9y
+	qPFVFC2m5lpT/lmtabxI21tm+4/wuCPim44/h0NY6/1++Ifg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bfyx0hx5m-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Mon, 05 Jan 2026 12:28:10 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2a0d058fc56so231937135ad.3
+        for <linux-tegra@vger.kernel.org>; Mon, 05 Jan 2026 04:28:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767616089; x=1768220889; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FhnBgqCd894h4xDDyalypDS1B5tbKhHsA76XEw2zZxU=;
+        b=gjBs1pI9kF3PcucXpNKbejnGRluQ8XbY6TEwzVSzsurWO8I8tRdr2PZVTmIh7u0uVq
+         H/o75MT4CLfmSBQPOWhkHNvnUCQSCfjbHRDC7uab2a4hxuSEY8Vo2nvKd0GKKdVe4mYz
+         uaPyKP2do/hClgLuCIP1NoTPfMcYpO3XtoEczCzOy70veLoatdc6tDr+h11ic+AlC6nY
+         DLOoZTI749msm/BwkshHtomjOD2r4VMDhsbTT3hkbwH5KZVD/aPQGeWvd4lFB7CcC3ww
+         Ga7DFRMLv4/1nSIeIL6ZBaa+YJiJNGyhtFKwwTJZ/HNEO5N5qVXSvzRwzPKTlVopbmTk
+         N0EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767616089; x=1768220889;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FhnBgqCd894h4xDDyalypDS1B5tbKhHsA76XEw2zZxU=;
+        b=NrSc6PF1CapxTZXJM0VDzGFisdjiq4ZiVlGywHLwYJwIuaRUKDKkoQ7ekboyMdsbeE
+         F/uAhuJhpj2drJXYHrCw/Ei5rAapKVUkydEOtdtXhh9Ci4NvoAuXyt2sPseJ30NpvztO
+         tjgvU0jhrdnF34K5bf2i0hKDNO54KGeGALKFV5O1P/Oy/KaLTOywqybmqqf8scaAL06B
+         cYlNogbRYQknkO9t8o7unlWJx2Po4ADf6V4HqIZh/3+zfvQyP0e9hKEoMtcei8H9jqw9
+         VCyxiMtKyJHwH76HVkppMwsJ8AGxy2EP2fc7ftIEO9YNbCArgH2oTZPyVnOVowEPNCcu
+         cVhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYN0eaT+0oPzPQfnGeBNNqH3YScN3nM1Lpp0W2A+ooaCZk1ETgeU4Iil2T3Wya0gzr55oF5OvzyvLS7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLpSrg1SOOZhGc/AXWG/WHTkPhMBkxTHXwzARZl4ytPmNyTlQQ
+	I9NRa76RTDSJQOyLa0mQlVOsZiKM80pdE3lqlfWg0nNyTtLQF2l9Roic+x3eDDjklwxTFWEb1rw
+	tyD5tI+o673xXhq6mbYDnc40EoC3bopAThdS4kjmd5R+t0QO16MJYMdrB3j12zVzw1A==
+X-Gm-Gg: AY/fxX6aRDPW+NEJiiougpUhh753DsDkSW4jZB46uWsgu6HU/zLjNPhn71xM/TSMN8S
+	ufC7In6zgTKdyuq1OwePRcKzAkHVqx7WPjBt3opSYW/Y30VZfL7b+2J5Eff5ZEl4UCPNFwo30+7
+	bTyw27AzkifAKjj9/OVotq9SG4VR2lmEif67MoFxwYzpfp6Isw4ydHmFKAQDkP2UHIADS8HblJB
+	UiZDFZezdaMAkwN4LUf+kJeA71EtSWfTg4aQakaG4TjxDx/MbBLopBDYQOlXlsMZbDNajP5SutI
+	KN2QEe2J1uU0ZVo6HNPc965hJWYvJjmrZi6KMbCGXv7+/LAesI5GrThG1LC2+6hse/r6nLJaWE3
+	mmW6QanKlmX5E8W0kavRAPNIMOESxtRXVScQ=
+X-Received: by 2002:a17:902:e5ca:b0:29e:bf7b:7f36 with SMTP id d9443c01a7336-2a2f2a41a08mr391761225ad.58.1767616089423;
+        Mon, 05 Jan 2026 04:28:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IET+z4gvln2AUwlbFjFw+MzhBkeuBLY3bqxJej2pC+/8tWtSlxole94SJbnplA8xuBW7zdQcg==
+X-Received: by 2002:a17:902:e5ca:b0:29e:bf7b:7f36 with SMTP id d9443c01a7336-2a2f2a41a08mr391760755ad.58.1767616088758;
+        Mon, 05 Jan 2026 04:28:08 -0800 (PST)
+Received: from hu-sumk-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3c82a10sm448109275ad.26.2026.01.05.04.27.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jan 2026 04:28:08 -0800 (PST)
+From: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Subject: [PATCH 0/2] PCI: dwc: Add multi-port controller support
+Date: Mon, 05 Jan 2026 17:57:53 +0530
+Message-Id: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MN0PR12MB6003:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34febfe1-34c0-4192-e89b-08de4c5534d3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L1VWblZmWGtZTVJ3SFh1ZXlONHo3SzZqbVkxQUNwaHNYemVnNHlBWk83L0NH?=
- =?utf-8?B?OTR6emU3UHptdjdvd21Kc3l5VDhOaTYyTzJoQ0pPRmo5OXJmSGJuUlk5WjdS?=
- =?utf-8?B?REE0ZWtJM200QlhmL2ZCNHRDWThXWVViMlZwOG45OXROeDAwWkQvVTByaUhS?=
- =?utf-8?B?WEdNVFRSY25FSzgxcU9wamtuUmo4c0RTdzB5ZEVCaHdSRjNYOG9hS0d0TjBR?=
- =?utf-8?B?ZVRacHBBMEZ2aTdaQ2ZDczRpdlhEVC9VODFFcGFCOHMxK3dJNjQwaWFBeGxQ?=
- =?utf-8?B?bEJHSXVTZ2lZUDFJcDBmSTdROUoxOUlKeFZnU2pWZm51MHV2c0FFMGt4NDBP?=
- =?utf-8?B?QnlKeERQRWNiUjIrZWpPOHh5b2NiNkt5azdGZzFqRlNJWkxZSngyeEtPSlBR?=
- =?utf-8?B?VEdSNjcydFFzMysySzRkOWtEL28rOXFFVVd0NStDaFBobkU1U3I4Y3F6UlNG?=
- =?utf-8?B?VmlLTTNnZm5taUZHdDV1OEFxMFg3MytyS0NkQm8xRDQ0czJyVFBTWExsMjhK?=
- =?utf-8?B?aUt3NEZjaVBhLzYwNWNrbDJLMGNXWHhWaVpkTXh0cm1VNklrZnVjeXpXUGJ2?=
- =?utf-8?B?bFV6S2l2Y0Z4VTRMcTYzRi9SNGtKLzJFVXI0STNWWGNmUUhhREZiVit4SG44?=
- =?utf-8?B?RHVCelRpT25DRlJkVktJMnpLaUJ5OXBRa3JUNy9yaUpXdWREWjlBZitVYXRD?=
- =?utf-8?B?bHhkZm5QL2NpVUFLZTVGS1A2VC8wNnVKUGp2NjU1dkxEUGp6Vno5QlBrSTNV?=
- =?utf-8?B?cjRYOWFFeU8vYzNUN0YydWFRbDRYOXVyN2cxOGpxUUQvTHVmUC92eU5UTnBw?=
- =?utf-8?B?ZjIrVVdjZnJEWloyRG53cnZLd0Z5Q2FkRnZ1My9YWTg2bzdwcWt4YXFwYXJm?=
- =?utf-8?B?RUhXZ0EzckVKWnJnVWJ1Z1dZUGZVSzFUNVVsS1RBOE9sWTV4V3VQK0JTNjJG?=
- =?utf-8?B?c1hGeGxlNHlEWTZSYXo0dXZCTkhyYlBlbUJ1dFRvREJ0RHBZZktaMmZjQkFI?=
- =?utf-8?B?NUJzTWxXZzdsbEppZjY5Q1NMT05KaGhnZWJuR3lXc0dkTDJGRkdDRC9DMnhT?=
- =?utf-8?B?NGE3NDZrUnVEVWZRVk81ZXAxOFc4aG9ocFozT2Vzekx2SHVKMmVaeU5NRVVj?=
- =?utf-8?B?cDlRWnJzTWdrSFhnSFAzcXdPY25kYlJEc2ZGVC9WY0hnNXIzWXBKcVU0dGt5?=
- =?utf-8?B?RG1iUTMvRm53WVlwWVdTNFJsb1dOV1BCM0kzRWdQb085Nm5TRlIxNVM5M055?=
- =?utf-8?B?Q1ppODdHRmY4NmxTSkxXc1JGVitaUW9ISXZJYzZ0UzBjQS8wcnoremJCRnlO?=
- =?utf-8?B?KzVtUnFTLzlBeFlGd3Q2b3pBbktPMzZPN3k0Y1VReERvVFZnWFRJVi9sQkt4?=
- =?utf-8?B?bTBSaEpFTDQ4ZU1FQklscFVSVERGN0VPMTk3OHhleVNBNWs2ZFhaektTcjlv?=
- =?utf-8?B?ZnRyb3BpVSs3YUkrZ29tOFV0SFJGTXhKSEE3RWN6amRjaExwSkZzMHpnM2dN?=
- =?utf-8?B?c1h0SlVZZ1hhSWVHYUErMjdJd29QS1lwWTJnTUFxOXFKQ3IvMFZZTm5mbmQ3?=
- =?utf-8?B?ZUFuY3lXZ0JNeU1uR21ZKzlZZDRmUmxlVmhkcDNNbU9wNitsUGZSOVlIb0VJ?=
- =?utf-8?B?NmdtaTV6TzBPZWRmU1U5UzFiN2JDbFhYWXBZemlWeGtKRU1ORlhtSmkwRlUz?=
- =?utf-8?B?aWZrOTdLWDkyOGVYbFZwaFRldFZGN3lYQkFlSEgwVllYYW5tTi9IekducU1Q?=
- =?utf-8?B?SWt3MDRoeVJqNXo0cDhQODR2T2VzVEQyR2k0VURJcXdoRHBWMjZ4UTNveDZ3?=
- =?utf-8?B?Y20vNVNIT3JrTWt1Vkp5UWpvSDBCOExXa1hxMXdnS3MyVVE3Tk5FUElPNXRL?=
- =?utf-8?B?NGVra0poSURHK2V3eWJQZTZMTjV4TnRzYU94ZCszZ2tsNVBEWWcrU2I3LzBM?=
- =?utf-8?B?RXBwZkVzNGxDNEs0Q1RYTHRWUDRaM1NHcW42NkE2dUN0SlBWMk5JbnRoc2JV?=
- =?utf-8?B?WFBiMXZvTVhRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RW9XWmkwSDlpUDFaclpKWlU0T3Q4ajgrM1lNNXMvYW0vc1RhNzN1YkM1alVR?=
- =?utf-8?B?bWF6RlVkL0ZkNXNRSytvSWllbVg1bW5sSXdlN2lsbTJnbHd2VW02aFU5YXA2?=
- =?utf-8?B?NFhoL3ZkaGJLSVJ2Q0lKNmVkc3RJSG9mUWhkcll5RlhXVXNSZWhsSlIxZk1s?=
- =?utf-8?B?L1NYd29ZMDZnV2M1ZVpsZHl2VmdjazFpNVFDaVlJQVlZb3ZoR1BiYzlOanhh?=
- =?utf-8?B?TUZtZlFtUkpPL2UzbEZZUE1hcE1KU05GN3NEUUx6Zk1tTmNlcGRHZ2tvM0lh?=
- =?utf-8?B?THkzL3QxRmdPaDFsRW9iMW1GMERWTEUxTU1SSmcwbHpBTU9UbEVtcjc0Rjd0?=
- =?utf-8?B?clB1ak53Ujc0aFpMc2lGeEZBcTJib3JGdHhHTnFaOUhsbzJ4dnVZMTM2Z2RO?=
- =?utf-8?B?eFRFa1lDczhrMXYyTm52VjErZWYxVm54NXIvdVhkSUF0emRMemtLd25wWXlx?=
- =?utf-8?B?RjJmVno4a3Z1N3B1NG9GcytzY1Y5YjJhZG1rVjVXVmw0RjJUS2pVb1BSNmI1?=
- =?utf-8?B?T0IyS0s5a3Qya0dldWxMY1c5V2QwZERBS29mdkhhZm1mb29RQit3YTRrZEVw?=
- =?utf-8?B?ejNmMEZUaWdNVTQycC9zMjdENmJRZFlxbVNVOG5zSmVRRkdyVkIvNXJlQnh0?=
- =?utf-8?B?VmlLVlFDdHdXOG5CUFMyRlJRTllpbGNJSi9XWDFMdEFabWNDTlVPdXpRR1Ru?=
- =?utf-8?B?SHJXSzZDd2hUZU11OGRNYTYrckdwME9sWngrSGRjQjhkQ0VPcHN0c2MzTzVM?=
- =?utf-8?B?MTVaZHovN09BZlVnT0NJWURVb1VibVE2cTVJYmJTRlh1dWNRdFBiRUZzTGZN?=
- =?utf-8?B?aTlQdjNweTlBbU96Y1hRYlFyQzZZWjkvblhPdjY1MkFMV2VJYXdSWGtJWHIz?=
- =?utf-8?B?MmNubWdkOWFtNnhMT1ZJL3A0djdlMVo2TCtvU0w0MkVSN2ZyWk9OSDAyYjFE?=
- =?utf-8?B?U2Q5YXlFeCsxQjlIRzFzUktGN2paeHlsVG81TzJoeUU3V2YvS29BaDNEcHBn?=
- =?utf-8?B?d2JHVkVyRUZRTjhVK0Rsd3ErWm54WUZ1K0hNOW5JYTVzNWdqa1lLY2Fhb21E?=
- =?utf-8?B?d0dERnE3RlJpNWhnWWNPay9DVE1zVlU3UlpQbXhaMGRBVmx6MnpuYWNVeTRC?=
- =?utf-8?B?WnN1S0lEK3dlamROQ1I3OURvRnJ5Y1pqZk5COHpaeGdzd0dpbm1oN1ZVTUE5?=
- =?utf-8?B?ZG5uQ1doZFRieHEvVkRiY1BXenl4dXMxVVh3NkhlSDNyTi83UlVnME9rdG5j?=
- =?utf-8?B?N3JvZVdHWkhBV3N5NE1PbXVNa0MrRFk1Y2x0Wm40bGt1OFFNdnVDUXIyTEhY?=
- =?utf-8?B?a2RWMTBlaWpWa1ZySEd2Y0VBb2hjQmpuNWQvODRDeVZaMlEzMXYxWW9WRVdr?=
- =?utf-8?B?dEpwVEFtUWhLWXZEbnFtazlsSEMzVXpZNU5QbUphUlBIenorVURnWllqMG1G?=
- =?utf-8?B?cFkrWW1MUnNMRHloUDQxcnJUQkVvOEpmUFB6a1F4N3YwNXBYbitMYjlyM0lK?=
- =?utf-8?B?Y0pqbi9iYS9OWGp3bnNyS3pMWFdpSklZTm9YMDJGNElNT0FzaHdocTRmMGdi?=
- =?utf-8?B?Nm5kbFJKVUx0enVpUTVhOHN0Tlg2VENwT0ZoV2RzeG5jVDVIRlNQNlRFWEF2?=
- =?utf-8?B?TFJCR1g2UTUyWG84alJRU01QaHp0OFgvTWpRQzZYQnRIVzcvRVVycStHQzBI?=
- =?utf-8?B?RVFPZW1nVW95bFpYNEJraGg4aUwvMTN3UEtZUUVaMm05b2grdUduWUcxbUpS?=
- =?utf-8?B?aUFLVC92K2NXTlNGVnNreFh6N0dCSEkvWVFVa21seEllQXZwdlZJRXhyMlB3?=
- =?utf-8?B?aUdLTjJuWEhFRm5IdVJtUjNMbGp4UmdRQ0Y0WVk1bjFMWmV1VFk1OURNM1FJ?=
- =?utf-8?B?MXZpWUEweVBqMGd1VUprdHdDWTYwWDVQNDJUakhpMmxrcTJhU3lBZExrQ29r?=
- =?utf-8?B?MmU4Q3l1SXRMeEM5QW0yOUE4OWd6RS9lSUJzdlBIT2ZMUklkQ0QwTHQwTWdk?=
- =?utf-8?B?SkhieXNNOFNjK1BsMUp3WGNkRng0SW02a1ZiUTFyc3FyTWd6NUxBdVhwbm8v?=
- =?utf-8?B?VVVhV2RXaUczZ2RublkxWTBSbEJBM0lmOEoxNWVZai92UWJkWnZVd2FRZ2xo?=
- =?utf-8?B?NUxxY0Q5OE81Mml2TEI1YW1xZE1HQnljK2pzbEVERlkxcnRZZXhva28xV1lu?=
- =?utf-8?B?VjZpbFBMN3FHSEkweTR6M1BiN1Jid0Z4QlJVeHUrQnpac0NGcyt2Y2hiL1Jr?=
- =?utf-8?B?MGVNYTkwZjMxa3BxVW45NEdMQUZRb0xQMDYySWVrUWdLWmg2Q0RCbDRYa2JY?=
- =?utf-8?B?WXViVnBFeWN0WGpXZUwvWWpHWUNUTWVFekVDNmd6S05qMy95cm1HTk94WjVH?=
- =?utf-8?Q?MbYWjP/1qURlVK6IySmtWjpN6KLaYAyrl/3xQbvQuI0jp?=
-X-MS-Exchange-AntiSpam-MessageData-1: OF4ADa9ULTXKoA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34febfe1-34c0-4192-e89b-08de4c5534d3
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2026 12:23:17.7568
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aj5FAtAM9o0yslJ1bqWgm7tVl2qy/CamNaLQJXkQxUQdlefArHLWBTZjDL+X3hMai6sdEMdu9kL3fi6/CwscvQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6003
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEmuW2kC/3WOy24DIQxFfyViXSJsMBm66n9UXQDjSZCaTArpq
+ FU0/15IF53msbF0LZ9zfRaFc+IinldnkXlKJY2HGuBpJeLOH7YsU1+zQIUECpTsT/Loc6Wk6wK
+ pyNANEUS9P2Ye0tfF9fpW8y6V05i/L+oJ2vbXAmAWlgmkkp1G6nUcYBP4ZSxl/fHp3+O436/ra
+ O4K2tqO12Ak6513JpAZbsH2xYR/zfhfgE1gbPSBSTOEBwK9FOilQFeB7gk1RUIi++j1Brpr0BA
+ RO2vYdfFO8zzPPxbKniedAQAA
+X-Change-ID: 20251010-dt-parser-98b50ce18fc1
+To: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@Amlogic.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Samuel Holland <samuel.holland@sifive.com>,
+        Chuanhua Lei <lchuanhua@maxlinear.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767616078; l=1933;
+ i=sumit.kumar@oss.qualcomm.com; s=20250409; h=from:subject:message-id;
+ bh=oOdjw5Byp9hHCPO/ockAN81t86SXy2F/vEnb3wQ8Fiw=;
+ b=WU8lb1IRlgnKDoA9DoKTUmSQTgI6f7zeHzmNW0Tkt7aRJYhehUZTwlR+K5OXYgJ0gdfAFYhjX
+ qSneDuM7UF2AaUjsAqusdejjuvDVr2QpTc2oXVQufADAoi3I1PrM2Fo
+X-Developer-Key: i=sumit.kumar@oss.qualcomm.com; a=ed25519;
+ pk=3cys6srXqLACgA68n7n7KjDeM9JiMK1w6VxzMxr0dnM=
+X-Authority-Analysis: v=2.4 cv=CZYFJbrl c=1 sm=1 tr=0 ts=695bae5a cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=k2kXPNx1VYhKFT5-HLMA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA1MDEwOSBTYWx0ZWRfXy53B2tLNhevF
+ wz0WuVvDnbTBEpNRXl+MqS98iYo4EnYrNl7E9bUYDlzR5JVUqXxn7CkFo2A0rBdPdWrgDWeA8xF
+ t00v0lyIQdAK7VJ8VTAYBbUiijFI1rO+yEeiS63kEF1YiQpqH7yCTCUACV/miTZtHBJTCpf+lgb
+ EQtZBj1XD6e7DIjXtKBVUyKhhxedJqawfpq01N34vaKWh2V/XoSevs4pA6YwMsxlNOWTRwMKdgy
+ eL8GWh3M5Jk4qg70ElaQ5iJ6RQRlIu79whY+ANwF8UF5nsZ+O9aZv3QOe9qs8bUuAZYqu5UMINS
+ fqpOvJtfLUsLkdc645cCMl2ssT8CqWXnY72bKOrGkK5duVkNgTPR+2NVeXFcu/B6NJcEGyEikYk
+ Ku70JGAjYIfL9Lx8oL2LMUkOQvfB4V4+QFTUzEoAbA10jRkM0C9r77L6RPysHB+slbFSjPkAouc
+ 1m+3poc7U8JaaU7v42Q==
+X-Proofpoint-GUID: kDBn6b0Z89cA25j16Dkgg-SC70h749Hx
+X-Proofpoint-ORIG-GUID: kDBn6b0Z89cA25j16Dkgg-SC70h749Hx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-05_01,2025-12-31_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 spamscore=0 bulkscore=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601050109
 
+This series adds support for multi-port PCIe controllers in the DesignWare
+driver. Currently, the driver only supports a single Root Port with
+controller-level properties, which doesn't work for multi-port controllers
+where each port may have different configurations.
 
-On 05/01/2026 12:21, Manivannan Sadhasivam wrote:
-> On Mon, Jan 05, 2026 at 12:18:35PM +0000, Jon Hunter wrote:
->>
->> On 05/01/2026 12:13, Niklas Cassel wrote:
->>> On Mon, Jan 05, 2026 at 05:38:34PM +0530, Manivannan Sadhasivam wrote:
->>>> On Mon, Jan 05, 2026 at 11:56:37AM +0000, Jon Hunter wrote:
->>>>>
->>>>>
->>>>> On 05/01/2026 09:09, Niklas Cassel wrote:
->>>>>> On Mon, Jan 05, 2026 at 02:09:34PM +0530, Manivannan Sadhasivam wrote:
->>>>>>> On Fri, Jan 02, 2026 at 10:58:15AM +0000, Jon Hunter wrote:
->>>>>>>>
->>>>>>>> On 23/12/2025 06:45, Manivannan Sadhasivam wrote:
->>>>>>>>> On Wed, Nov 26, 2025 at 11:25:30AM +0100, Francesco Lavra wrote:
->>>>>>>>>
->>>>>>>>> + Tegra maintainers
->>>>>>>>>
->>>>>>>>>> This driver runs (for both host and endpoint operation) also on other Tegra
->>>>>>>>>> SoCs (e.g. Tegra234).
->>>>>>>>>> Replace the Kconfig dependency on ARCH_TEGRA_194_SOC with a more generic
->>>>>>>>>> dependency on ARCH_TEGRA; in addition, amend the Kconfig help text to
->>>>>>>>>> reflect the fact that this driver is no longer exclusive to Tegra194.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> I vaguely remember asking about this a while back during some other patch review
->>>>>>>>> and I don't remember what we concluded.
->>>>>>>>>> Thierry, Jon, thoughts?
->>>>>>>>
->>>>>>>> So ARCH_TEGRA means that this can be enabled for the legacy 32-bit Tegra
->>>>>>>> devices as well as the current 64-bit Tegra devices (such as Tegra194).
->>>>>>>> Given that this driver is only used for Tegra194 and Tegra234, it seems it
->>>>>>>> would be better to only enable this for Tegra194 and Tegra234 instead of any
->>>>>>>> Tegra.
->>>>>>>>
->>>>>>>
->>>>>>> The dependency means, whenever someone tries to enable PCIE_TEGRA194_HOST,
->>>>>>> ARCH_TEGRA should be enabled. So as long as someone not trying to enable
->>>>>>> PCIE_TEGRA194_HOST for 32bit Tegra systems, ARCH_TEGRA should work fine and
->>>>>>> PCIE_TEGRA194_HOST is not selected by arch/arm/configs/tegra_defconfig. So I
->>>>>>> don't see any blocker with this patch. In fact, many other archs do the same.
->>>>>>>
->>>>>>> But I don't like extending the Kconfig with per SoC dependency as it won't
->>>>>>> scale.
->>>>>>
->>>>>> We already have a patch from Vidya:
->>>>>> [PATCH V4] PCI: dwc: tegra194: Broaden architecture dependency
->>>>>> that was sent 2025-05-08
->>>>>>
->>>>>> Back then, the reason why it wasn't merged was because it required a
->>>>>> similar change to the PHY driver to go in first:
->>>>>> https://lore.kernel.org/linux-pci/174722268141.85510.14696275121588719556.b4-ty@kernel.org/
->>>>>>
->>>>>> The PHY driver change was merged in v6.16:
->>>>>> 0c2228731974 ("phy: tegra: p2u: Broaden architecture dependency")
->>>>>>
->>>>>> So, I think we could just merge:
->>>>>> https://lore.kernel.org/linux-pci/20250508051922.4134041-1-vidyas@nvidia.com/
->>>>>>
->>>>>> (Assuming it still applies.)
->>>>>
->>>>> Yes it does and applying Sagar's patch is fine with me. So it you want to
->>>>> apply Sagar's patch please add my ...
->>>>>
->>>>
->>>> Don't we need:
->>>>
->>>> 	depends on (ARCH_TEGRA && ARM64) || COMPILE_TEST
->>>
->>> This is exactly what I originally suggested to Vidya:
->>> https://lore.kernel.org/linux-pci/Z6XjWJd9jm0HHNXW@ryzen/
->>>
->>>
->>>>
->>>> in the above patch?
->>>
->>> The above patch instead has:
->>>
->>> depends on ARCH_TEGRA && (ARM64 || COMPILE_TEST)
->>>
->>> I don't know why Vidya did not use my suggestion exactly, but I guess I
->>> assumed that he had a reason not to use my suggestion exactly.
->>
->> Looking 0c2228731974 ("phy: tegra: p2u: Broaden architecture
->> dependency") we ended up just merging ...
->>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index f30cfb42b210..342fb736da4b 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -13,7 +13,7 @@ config PHY_TEGRA_XUSB
->>   config PHY_TEGRA194_P2U
->>          tristate "NVIDIA Tegra194 PIPE2UPHY PHY driver"
->> -       depends on ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC || COMPILE_TEST
->> +       depends on ARCH_TEGRA || COMPILE_TEST
->>          select GENERIC_PHY
->>          help
->>
->> So I guess we could just merge Francesco's original suggestion for
->> consistency. Otherwise I would be happy with ...
->>
->>   depends on (ARCH_TEGRA && ARM64) || COMPILE_TEST
->>
-> 
-> I made the above change applied Vidya's patch. Thanks Jon and Niklas!
+This series introduces a per-port structure and parsing API that allows 
+each Root Port to be configured independently via pcie@N child nodes in
+device tree, while maintaining backward compatibility with existing 
+single-port bindings.
 
-Thanks! Feel free to add my ...
+Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+---
+Sumit Kumar (2):
+      PCI: API changes for multi-port controller support
+      PCI: dwc: Add multi-port controller support
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+ drivers/pci/controller/dwc/pci-exynos.c           |   4 +-
+ drivers/pci/controller/dwc/pci-imx6.c             |  15 +-
+ drivers/pci/controller/dwc/pci-meson.c            |   1 -
+ drivers/pci/controller/dwc/pcie-designware-host.c | 168 ++++++++++++++++++----
+ drivers/pci/controller/dwc/pcie-designware.c      |  32 ++---
+ drivers/pci/controller/dwc/pcie-designware.h      |  17 ++-
+ drivers/pci/controller/dwc/pcie-fu740.c           |   6 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c        |  13 +-
+ drivers/pci/controller/dwc/pcie-qcom-common.c     |   5 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c         |   4 +-
+ drivers/pci/controller/dwc/pcie-qcom.c            |   4 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  13 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c       |   5 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c        |   4 +-
+ drivers/pci/of.c                                  |   6 +-
+ drivers/pci/pci.h                                 |   2 +
+ 16 files changed, 226 insertions(+), 73 deletions(-)
+---
+base-commit: 097a6c336d0080725c626fda118ecfec448acd0f
+change-id: 20251010-dt-parser-98b50ce18fc1
 
-Jon
-
+Best regards,
 -- 
-nvpublic
+Sumit Kumar <sumit.kumar@oss.qualcomm.com>
 
