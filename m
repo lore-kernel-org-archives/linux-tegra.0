@@ -1,119 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6C433D6E7;
-	Mon,  5 Jan 2026 16:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE95331A67;
+	Mon,  5 Jan 2026 16:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767629990; cv=none; b=Ipv4jDqgwdkDw9hVMj1DHVJupncBnuTMKHViuODOrro7MgvdPFT7fLfH/MNSaX+kXnj+ybAuqcehMgoUWgRws4yUakW4tYkHKWNIBK7vumI3NZoiMpzRJWYthAaZ81EToYbFMnqxM/rC1gM8qZ0TkiTo766XdPZMQVE2aZoOv4k=
+	t=1767631669; cv=none; b=Oapgu+6SbK5RSsrJ1S75u+CQ1OFntaD7DvNMT+FU9Xnl3P4XZEFG3pxVhrO89UTEkqqxOC28EfJaXLt4F3uZgfDvBe/Nc3y/nnJm/hVpzFq+whS90ZUP7GYIY2ikFgqijQIOnddCr1/3pLDG2TFjGGyqZOf90EkfJD9btbpMpjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767629990; c=relaxed/simple;
-	bh=AtN7od0JeLsN9YbMUfbbQk/4L1P9KKm0XcoR8cmj7CA=;
+	s=arc-20240116; t=1767631669; c=relaxed/simple;
+	bh=ZiJrrEY9P9FpfATo28nJ11jflRNk+YNVn+ZFqq9fLjg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKPLrjf/ItY5RMRjrzzH/6sollMb93DI9JiG8kx4fNJYhu8KbHjDe/drx0zYANSddQYo48jV7rSuEXuzJ0nqkBUR66iCWhgCGNje5PcOTEl9dLu9JwsTuYQ5PY5sRlJa9JqYV7Ti4srftLzRPobAbhSg8FZZGRDITk4FjFhenT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhHlARlN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieweug9pX3fz8sGlFj9U+zovdLlHXGMlcOH0QeQJsFKZ/5LxH4piFzGWUw0CN6YC1rRP4nuzLYn8K1+yR2X9sFCHjOOwev7fjC5HgxmTpTzOitzCsuNGSicEikQaA/pTy3INZnE/QD69dzwOVMfRl9J8oGVdr02Op6UMwHQC1cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYDRbEjQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhHlARlN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE25AC116D0;
-	Mon,  5 Jan 2026 16:19:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYDRbEjQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E13CC19425;
+	Mon,  5 Jan 2026 16:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767629990;
-	bh=AtN7od0JeLsN9YbMUfbbQk/4L1P9KKm0XcoR8cmj7CA=;
+	s=k20201202; t=1767631667;
+	bh=ZiJrrEY9P9FpfATo28nJ11jflRNk+YNVn+ZFqq9fLjg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KhHlARlNAGXphZOOMOLPXXdYboH6rQGoEW00D0fi7fuAHJOXGzeRgKYG5X1gpaPFj
-	 uzXh4SM8KE4Na2K2V9fmxDxkWzBKNxqKopKgrNor3jKn7aZ4gRQLdsF3X5+jLkxh4U
-	 0SjmlPwW3RkL7OZV9qDHm54Wi5IR/Al4nYVxEV392JoniVlmeAEahNMfp1JOK7ns/o
-	 liXgqtNjg/fiLGTcysf30O4NzJSIrFMFIdeHpIqm/F1jF8Uc7Kjsgi/Ihe8FPPnrY3
-	 DDJqu93pjX4IWDHcObkDD4CagtAouZaUKOTXJ3tft846K9m7kLSRbZtQZs8CYaPD91
-	 0Xn6ZM8O1egOQ==
-Date: Mon, 5 Jan 2026 17:19:38 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
+	b=LYDRbEjQgP2Asfn/x/gNHx0H/dSoyL9YaCywJKqXf3tajVXwIhW6qQa84DASWdWvc
+	 KlLnBw7ZPkkPspa4P25TZ/tzSM69XhO+JvSJLPO2ASgAI/imFz2e5ze9P28XE0Je7n
+	 VG3NprNzHutKqd8gPrub59ZQm3jAMvs1q9uIFJVdtoKtcUzB1gPqmx7ROcnRIrYy+h
+	 fflBRt+1T3Pe3FKZoqIzsr+IsOa0QgEu7SuJr2YNoviO7yD8SKKKKPFKxQbLDZSSxf
+	 UChBhlsDMEB+yEh8aTbma2m/iUfpvB/Rug/EZpEn8/a78HeQCxtE7rU/fMfOJOA133
+	 wK8RGf0KilPFg==
+Date: Mon, 5 Jan 2026 16:47:42 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Sheetal ." <sheetal@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/2] PCI: dwc: Add multi-port controller support
-Message-ID: <aVvkmkd5mWPmxeiS@ryzen>
-References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
- <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tegra: Revert fix for uninitialized flat cache
+ warning in tegra210_ahub
+Message-ID: <23b9831e-e52e-4959-a9ab-70a234d2f1ab@sirena.org.uk>
+References: <20251217132524.2844499-1-sheetal@nvidia.com>
+ <41cb1bac-5503-4765-b45a-200963448e5a@nvidia.com>
+ <f44287d4-2f76-409d-b537-038896c5bc59@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZE7vn+Pl0qm1pY4z"
+Content-Disposition: inline
+In-Reply-To: <f44287d4-2f76-409d-b537-038896c5bc59@nvidia.com>
+X-Cookie: So many women
+
+
+--ZE7vn+Pl0qm1pY4z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 05, 2026 at 05:57:55PM +0530, Sumit Kumar wrote:
-> The current DesignWare PCIe RC implementation supports only the controller
-> (Host Bridge) node for specifying the Root Port properties in an assumption
-> that the underlying platform only supports a single root Port per
-> controller instance. This limits support for multi-port controllers where
-> different ports may have different lane configurations and speed limits.
-> 
-> Introduce a separate dw_pcie_port structure to enable multi-port support.
-> Each Root Port can have independent lane count, speed limit through pcie@N
-> child nodes in device tree. Add dw_pcie_parse_root_ports()
-> API to parse these child nodes.
-> 
-> Equalization presets and link width detection currently use common DBI
-> space for all the root ports. Per-port DBI space assignment for these
-> features will be added in future.
-> 
-> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+On Mon, Jan 05, 2026 at 04:06:22PM +0000, Jon Hunter wrote:
 
-Hello Sumit,
+> Now we are into the new year, I just wanted to send a reminder for this f=
+ix.
+> We need to get this revert into v6.19.
 
-Is there a reason why you represent this as a list of ports rather than a
-simple array?
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
 
-The number of ports is known by parsing the device tree, so it should be
-static, no?
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
 
-At least to me, this seem similar to e.g. how a gpio_device has multiple
-gpio_descriptors "struct gpio_desc *descs":
-https://github.com/torvalds/linux/blob/master/drivers/gpio/gpiolib.h#L68C1-L68C26
+--ZE7vn+Pl0qm1pY4z
+Content-Type: application/pgp-signature; name="signature.asc"
 
-A list is usually used for something that is dynamic.
-I don't think that the number of ports to a PCIe controller will be dynamic.
+-----BEGIN PGP SIGNATURE-----
 
-I can see that struct qcom_pcie in pcie-qcom.c has struct list_head ports,
-but that does not necessarily mean that we need to have a list of ports in
-pcie-designware-host.c. (pcie-qcom could also be modified to have an array
-of ports if there is a desire for similar design pattern.)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlb6y4ACgkQJNaLcl1U
+h9Aktgf/YskRTy3ysPw73JSAw7OD5tgVrt8/5YkXInt0AIlzMRt+PJit8lDcwK9/
+/oomtffPqj9k/qoQjmNlOEQsWArX0215RBFmuuw55UU5ptqqPH2o3Qie9xB0aILh
+qTdKiCDy18abjkR8cqMHyhPPYkoZc5zHjgHTkovH05tTE3lXEl2Uow98RdP3/wIl
+yGuftO0fw0b9A5Jbtkg0l4XOHeeVPe5lzOUPnjhjZ9H1FmzFzJiHVjiQlHzNGIBK
+Ocv8sM4P3fMJD3eqH0SpU4wo5lMx6TY0F/INsSF8lyYIveYMMMdySiSExMqQ63xl
+jF+MzzKhGjYCnBZWslqincodZc5nlw==
+=xSa6
+-----END PGP SIGNATURE-----
 
-
-Kind regards,
-Niklas
+--ZE7vn+Pl0qm1pY4z--
