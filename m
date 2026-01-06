@@ -1,117 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010020.outbound.protection.outlook.com [52.101.56.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260CF3043BD;
-	Tue,  6 Jan 2026 05:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767676775; cv=none; b=BGgiLgm/xWlwWzhbx0Yz3NkCVP0ZTDjN74iH34FWfcu0Vf32QtChiRTDfCVqYYVayTiQquptF8B6SnyUeIYW4fUm8Qw8BSz0R5ApAiS4AHMyLJ6uhTVQzQfIJ95NtlqsC3TY8CmHrA6ZtnYRe4mKv030PhukxqpnisRIGaekjZw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767676775; c=relaxed/simple;
-	bh=h2nYGKojRr759U41EwbB4BsmLSlNtVAL8aBfQlF4xTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEvab8v0OkivgC5x5s8h9gRIKtgw3phGDP/0vy3NAuETeRcTP/32h8/Jvl2mHi+YtqaQjv+2H3avzBL8p08m0S9wWR5kI+VS3FBKiAlpyT4Q5l5kcOLpMZ4Ft19XW4z+vqkkyf2ylzrUm+2c4lrsjw4Hpcct2f2Zs6b5Jpex6/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fn7eNbq+; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83FB2AD2C;
+	Tue,  6 Jan 2026 06:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767680913; cv=fail; b=NbLQjksvgoyBBzFmda0rkHSpo10BmoYX/qdGB3rgWI5aLH3FMPLTQKimajcEsRhnUECbq+7T2zvlNSXj9spLErfeHddPa+vcbKf81dHz1CwYmc13bNx6HGsb1OqgDjyGpO6Yyxht/IJf4LOXp3U5UCaD4O8sMEGO7+xYxeXiK2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767680913; c=relaxed/simple;
+	bh=a6V14ykcukKTeKqCmafJL19oXxQ2RS9olbkWOW9ikkg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q5s455vZb5HNCxkiH9MAV5fsiLQ4V+vpypd2fTAdf2MkOv2rPKQux481YZ3X0q7gvbgOpQD9P07Pzt0DkYdonNMnNrImjh4jnuJMTwM5S1E8i7+eyairjdIxdNE4ySWVPn6Xk791+Lm0JDKyx3aOQvaX4lMY/Bru57pQ+vOmVck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P0R3PoXx; arc=fail smtp.client-ip=52.101.56.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fn7eNbq+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7117FC116C6;
-	Tue,  6 Jan 2026 05:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767676774;
-	bh=h2nYGKojRr759U41EwbB4BsmLSlNtVAL8aBfQlF4xTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fn7eNbq+r0jsnqP0Mix+RIWDvZUr1tdAgbjsrEGr2Ms9oW27hgMlnJw0ZkpSpIB7H
-	 VFVpNZUQpOrDUTBWHMpyZi9/eKY0Qb+AnhG52J5zL8WWqo88g/p5j0J5Zy85RsIztz
-	 P2mn8L1AGv1qK0pNNdB/HsIJIkBXeXj+VG0BiSfhQJOHcPXQkEZQG6mMUihoezwrSB
-	 w8K6ZeXkX1jI/ZfTN4Zm7awLzTo9nbMlCOwvaMpLHDKzcXwj3pixaITdVMhWoVjGKB
-	 KrSBHZeR6A15yHPveYgjG/D2gFY70Y8Q5JReXwCWQqbWYvWeEnIvCRk91nnGFYGIc8
-	 dYoNqcI1m3mfg==
-Date: Tue, 6 Jan 2026 10:49:19 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Greentime Hu <greentime.hu@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Chuanhua Lei <lchuanhua@maxlinear.com>, 
-	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Pratyush Anand <pratyush.anand@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/2] PCI: dwc: Add multi-port controller support
-Message-ID: <m5ukeugo2lazipljqpubyvm7j3xk2j5o7i2xgdbkkhii57xmyk@lh32qdzjhe4n>
-References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
- <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
- <aVvkmkd5mWPmxeiS@ryzen>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P0R3PoXx"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ljmfxMp1Kuj/HSW46IIob7MWFe86/gZo761IC95p6Qx48GatqUXCoubbB+yVLqT78CHSttq4LYwA5Kx2JNvDkrTQWyPxgQxTUm6UX2z/jIBb3hETTEPj3tt00fdDI6dRjAQmfwRwMwM0ggkqnLgXU6z7WEQIg2DjOVgDF3i5f5Bf7kvonw6o86jSNoZQ3MV28ynGNsdK2yTS0hUbB8ZZMjhyFtjwRE/VIP2G2z5HafCrylxqjUzdPmaymx4QsXQFF1OqSwufpw6v4cYGcTO7HicNhw6BolEUcnSY27I/fU4nTLydaJLCh94M8rJZ2d0NsL3qLV0SpgcaWSO5NqMoBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S5xuXOxVWRtrHTYIB8gg3njYUnzRe5yhKdaxNtRhHMw=;
+ b=Az6ivqsy3aYBxJNZiiaOuPGCZoJKdFzCPTO3g7mwQFPhtLCT70qeJQLsWdA1P6l/zr9s+SLaOccuSnL2DiX1zJiKbnthsvrd57aRYyYbQZy41SfY0KcIZQA8ttfY3Frug5Jcv++RXHnPqD/ccde3OSzfliKNzha+ru/zhDYR1/q7WGlvayrDDT/o+4P5IADyHXajfhUkB12Tg1ywMsHhvhVe+TjK5onjTAa1yz1JBBlKWokwgAse2ZT5S/LxeXEoFAwCJLPkYDAVCTtBVDqgicT0wgle/lqpPl4oU2D4TpiCG2C6flcTIP0zE+6MnSjO6rhXyw1pkdjkqob8a1/9Lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S5xuXOxVWRtrHTYIB8gg3njYUnzRe5yhKdaxNtRhHMw=;
+ b=P0R3PoXxzJ7pV7u8kA06FLKlIA7OMWk9seIY3pELXdhIjP7i4MlSrvKpA3UVQ1GswYdxPhGk/DiRwRsRSfulDDB6UJoWupAEkfj76MbBvbASs1xDogkwzoCJd/RPibOtELVAKIJVp1vJhKt0mog8GQcDh7ghCRArHiBVxvHtVBzHpPnNtg7rm8QVnyRn/+hu3MejfO5Xn5UCHDszD5Navih/CgHWCVi6i47RGHzgMxIJ+tgCZ7ToTEdREWpTQqCWHZ1mOjHm+DdPT+vjOYonx5LU8xvUUlqlyUG3DXf1kLawzwEuGEaMgfrgoNH+R5HozTklk/NCgV8usTyBZX6dzg==
+Received: from MN2PR07CA0007.namprd07.prod.outlook.com (2603:10b6:208:1a0::17)
+ by CYYPR12MB8890.namprd12.prod.outlook.com (2603:10b6:930:c7::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Tue, 6 Jan
+ 2026 06:28:26 +0000
+Received: from BL6PEPF00020E65.namprd04.prod.outlook.com
+ (2603:10b6:208:1a0:cafe::8b) by MN2PR07CA0007.outlook.office365.com
+ (2603:10b6:208:1a0::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9478.4 via Frontend Transport; Tue, 6
+ Jan 2026 06:28:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF00020E65.mail.protection.outlook.com (10.167.249.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9499.1 via Frontend Transport; Tue, 6 Jan 2026 06:28:25 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
+ 2026 22:28:16 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 5 Jan 2026 22:28:15 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Mon, 5 Jan 2026 22:28:12 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <andi.shyti@kernel.org>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<wsa+renesas@sang-engineering.com>, <wsa@kernel.org>
+CC: <akhilrajeev@nvidia.com>, <digetx@gmail.com>, <jonathanh@nvidia.com>,
+	<kkartik@nvidia.com>, <ldewangan@nvidia.com>, <smangipudi@nvidia.com>,
+	<thierry.reding@gmail.com>
+Subject: Re: [PATCH v13 0/6] Updates for Tegra264 and Tegra256
+Date: Tue, 6 Jan 2026 11:58:11 +0530
+Message-ID: <20260106062811.894-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251219090919.14287-1-akhilrajeev@nvidia.com>
+References: <20251219090919.14287-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aVvkmkd5mWPmxeiS@ryzen>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E65:EE_|CYYPR12MB8890:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61ec6cb9-cdac-4f95-4b0d-08de4ceccc78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+Opz9UZVLizinNTeb4mQlaYgAboOfj/pyPQ55F9bobjokwxL8oRmUlDDwJ2J?=
+ =?us-ascii?Q?CDoViSm5OAJfhO7rS/0VWqknTRm0yCzAE90QPi/EpEUO0vOwODwM9NdlqFX1?=
+ =?us-ascii?Q?bVjibrZRrC1mlHsQo7lm73vpIjwrQTllgTLA7hInu/SGVsoE3pT644keBXcJ?=
+ =?us-ascii?Q?DFqsKrroxzmKRpOzsS4VXE8IMSgEYvI5wL6fIwP3cj64sGz6O7RYT5jB+HY3?=
+ =?us-ascii?Q?9u+K68mgludL3TbON1eT3+Bqnjkbv3IGUiBiuhtA21j9AfRkkm2WPSRxsxEF?=
+ =?us-ascii?Q?2oBKPUXT9KuWnZmbNDFjzf3gIr1MYMJy9D0/sMp10EDAqiuXi7xvAG4j24YJ?=
+ =?us-ascii?Q?SVGcBGm6KhMjLyLo+WAACrU7OTkZhDU8wmRI7VhPh5jXjytDgOuoRDzCyFqF?=
+ =?us-ascii?Q?usPz/rLJ6XQuwvndZLl+ArVEbhwHQQ0BxlZr3jV2Hp6jwJ8UqJtwimfZxTSu?=
+ =?us-ascii?Q?AG4lGXVGVAeE6ofUGhNJ/SR2IO6w3fm7t1/OlsBh92uFD/KLvZs67gXVl8qO?=
+ =?us-ascii?Q?i/8gAfSA2aZHXqKvc+ZrmTlxI1P1509u9qWg7MV0nZe9s64SX3rFIBueDvHo?=
+ =?us-ascii?Q?aANp5ARkG7vzqzZXXLHfJfUz+r+iZeJ4nMt7/jeKm3BgRJhGcufWZOHgQ4/i?=
+ =?us-ascii?Q?wyM7FC/a70wt2pbRuu7GIJyxFDLrXm/uaK66dXnfXCrWVkt3bGaAgwUdcFxE?=
+ =?us-ascii?Q?JMjCsVw0JrZ+yKJvjA7ipeqRC84LeB1DWsud/jvqhsNDD8K5XK2zak17MMNs?=
+ =?us-ascii?Q?jemERwp5gG6I5dC/ty9EPA8qfKIYOMYzzdIcJaac7jOhVf/ya3vGjRlVBSdK?=
+ =?us-ascii?Q?JFGLTUcOi2tslv7I49nmsA10E++fFmnUi+uY3H70fObt05ZORtF2RaUABt0K?=
+ =?us-ascii?Q?3hVeF8L6+PXH08l2wWwVu8WnVvOSKzrDc68xE/EGxH/Pcdp5BeX/PwGb+ubV?=
+ =?us-ascii?Q?7zX9Aae2pnjFXwqYhRekwRnMguSx8XUN3ovcsvnTKUVLMwb2YuC+7cgfi7Go?=
+ =?us-ascii?Q?FRP6xG9ABwly7TLlO9RHP8/nmeSxLpOe6j7gKwB++IY6ldrfAbeHNVub/YOq?=
+ =?us-ascii?Q?cRQEzXe2T8tXRWornDHFidxNiQaT2r/1iN61t1b2gq4fdwTSk7nxPUSNHK7C?=
+ =?us-ascii?Q?zmWfYVra+6tIIQfb9nZiw3RRCDDg9jlAd9/aC/0Qj0ROfxbWTwEUK4jFGUU6?=
+ =?us-ascii?Q?aDsVNNz6iYDC5Yt26c0HkWH1nsF00diRoDvurNvJVRhu8OOOlJX4+hZIgB8a?=
+ =?us-ascii?Q?5zDTzd9kFaPqdG4l3zDTB+H5mcX8yBWdnt9djggpRDP59SYjEkAhprt8tp/y?=
+ =?us-ascii?Q?S8WYKPR8+3bR+uDwhiXOmUaVi3rjaILF5344JEfkZjx9tXfBUKC+w88niP9L?=
+ =?us-ascii?Q?r40q/rs2i/mtpbMBukMYuv5+hM9lEIWVYqMsHqKazHkn7CiaC4KuiXYAIISf?=
+ =?us-ascii?Q?tkDqaEKM2CGlgJxhN+1lXEfeZqqZ0725Ph+oiKZDUZFYPmJWsA2eF4SLEvhY?=
+ =?us-ascii?Q?E8iwLxyYLrNjmN7NJCIpKEZzotvPLiiLhMP4WafC9sv7ZDLGXHwtuwoZpmvg?=
+ =?us-ascii?Q?dy9f0DugynBuqYHyvfs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2026 06:28:25.6969
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61ec6cb9-cdac-4f95-4b0d-08de4ceccc78
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E65.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8890
 
-On Mon, Jan 05, 2026 at 05:19:38PM +0100, Niklas Cassel wrote:
-> On Mon, Jan 05, 2026 at 05:57:55PM +0530, Sumit Kumar wrote:
-> > The current DesignWare PCIe RC implementation supports only the controller
-> > (Host Bridge) node for specifying the Root Port properties in an assumption
-> > that the underlying platform only supports a single root Port per
-> > controller instance. This limits support for multi-port controllers where
-> > different ports may have different lane configurations and speed limits.
-> > 
-> > Introduce a separate dw_pcie_port structure to enable multi-port support.
-> > Each Root Port can have independent lane count, speed limit through pcie@N
-> > child nodes in device tree. Add dw_pcie_parse_root_ports()
-> > API to parse these child nodes.
-> > 
-> > Equalization presets and link width detection currently use common DBI
-> > space for all the root ports. Per-port DBI space assignment for these
-> > features will be added in future.
-> > 
-> > Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+On Fri, 19 Dec 2025 14:39:18 +0530, Akhil R wrote:
+> On Thu, 27 Nov 2025 10:37:43 +0100, Thierry Reding wrote:
+>> On Tue, Nov 18, 2025 at 07:36:14PM +0530, Akhil R wrote:
+>>> Following series of patches consist of updates for Tegra264 and Tegra256
+>>> along with adding support for High Speed (HS) Mode in i2c-tegra.c driver.
+>>> 
+>>> v12->v13: Update has_hs_mode_support to enable_hs_mode_support
+>>> v11->v12:
+>>>   * Added two more patches to the series which are needed for Tegra256 and
+>>>     also cleans up the timing settings configuration.
+>>> v1->v11: Changelogs are in respective patches.
+>>> v[11] https://lore.kernel.org/linux-tegra/20251111091627.870613-1-kkartik@nvidia.com/T/#t
+>>> 
+>>> Akhil R (4):
+>>>   i2c: tegra: Use separate variables for fast and fastplus
+>>>   i2c: tegra: Update Tegra256 timing parameters
+>>>   i2c: tegra: Add HS mode support
+>>>   i2c: tegra: Add Tegra264 support
+>>> 
+>>> Kartik Rajput (2):
+>>>   i2c: tegra: Do not configure DMA if not supported
+>>>   i2c: tegra: Add support for SW mutex register
+>>> 
+>>>  drivers/i2c/busses/i2c-tegra.c | 304 ++++++++++++++++++++++++++++-----
+>>>  1 file changed, 258 insertions(+), 46 deletions(-)
+>>
+>> I really like how this looks now. Thanks for seeing this through.
+>
+> Thanks Thierry,
 > 
-> Hello Sumit,
-> 
-> Is there a reason why you represent this as a list of ports rather than a
-> simple array?
-> 
-> The number of ports is known by parsing the device tree, so it should be
-> static, no?
-> 
-> At least to me, this seem similar to e.g. how a gpio_device has multiple
-> gpio_descriptors "struct gpio_desc *descs":
-> https://github.com/torvalds/linux/blob/master/drivers/gpio/gpiolib.h#L68C1-L68C26
-> 
-> A list is usually used for something that is dynamic.
-> I don't think that the number of ports to a PCIe controller will be dynamic.
-> 
-> I can see that struct qcom_pcie in pcie-qcom.c has struct list_head ports,
-> but that does not necessarily mean that we need to have a list of ports in
-> pcie-designware-host.c. (pcie-qcom could also be modified to have an array
-> of ports if there is a desire for similar design pattern.)
-> 
+> Hi Andi and Wolfram,
+> Do you see any concerns with this patchset?
 
-Only reason why I went with lists in pcie-qcom is flexibility. There are useful
-helpers available for traversing the lists and they seem much more elegant to
-use rather than manually traversing the array in C.
+Ping! Please let me know if there are any concerns.
 
-But to be frank, I don't really care which one is used as there is going to be
-only a handful of ports at max anyway and there is not much overhead.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Akhil
