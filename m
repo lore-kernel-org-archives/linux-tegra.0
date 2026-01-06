@@ -1,173 +1,166 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4199A2F1FD7;
-	Tue,  6 Jan 2026 12:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FD830C60D;
+	Tue,  6 Jan 2026 13:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767701994; cv=none; b=N+GMmFWZtbwEe62YT9eBv1YiyrbWwXSX219bP8A4z903R+JaeiDcTRPlla3Hs2D4MxsSPTRsWu14BQq1fhMDDcj6NQ0/17deinW5bgL1LDqBye5aGRMQeZgWlC9pesmN/NUAnuT2KAzvkFvY9MiKqIwTcccPeAE4tMiAjMTq/Vs=
+	t=1767705085; cv=none; b=LubNjq0+T1lWN66DbymIkecvzhvQ6fmyzEZocwQQVZwHh+W5yAtXhmzpsZxyVAFLTE/jORt9+OUeUmJoevTZevi3oyJux/gR2MDEUEBbfQFvA+EnRntnaQgOG/Jtvkcgdg6CtPFT6y/qTOEQf4EKovZJBstcGfY8Hq4rckQ4FTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767701994; c=relaxed/simple;
-	bh=O/dUHVimSNITbK1jFp8OUa64TxXXBUiAJEVnK2fNV/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CNfmAFtJNYhYHLdadq8OVqHxjZmQf8TQQOwBg75ynvRw7sLpFUBnRmxss3IrbSBZUw6Vh/jV/D/3eqkTVbLwECIJLt3e/k5EFd8MR5HmFQPCYguVXSc2mgkOk8dOrIaBveZljdJXiS73BdnLzlVEF0IUZVgxPmGs6UtCpFSk5GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MndQZg5Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767705085; c=relaxed/simple;
+	bh=up2iff1BZxa94kRdGC8JpHKlWbcnvKvXoZYjbXT7JJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqhGKYaUpTxXn5YIZiLPjyQtVH6B3x2js4LXmJv/Qgk588aE2WeTFuiua2gPbMTREjGZAmkgKaZ3o0q9KEj1pBqLCEhYCof9b2m0QCOgzzugnFwOMtkPAsgKXByAetUF6UzwjQQBfvz+dEzsQUgFe3yM7F4TzODxdDWuWrCssb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9VSxyA6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MndQZg5Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B767FC116C6;
-	Tue,  6 Jan 2026 12:19:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9VSxyA6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B83DC116C6;
+	Tue,  6 Jan 2026 13:11:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767701993;
-	bh=O/dUHVimSNITbK1jFp8OUa64TxXXBUiAJEVnK2fNV/g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MndQZg5QHrZwZC1tYQynC9cmXs+i3bh5G0apx7/tSIZthxiU6TtnFHAHMUZahaL8Q
-	 p7i6PasNNZZiT19/veZrVEFTUXP//jULMvD/d9+mNJQhdqsPJxc8al5f7kWt4DacQX
-	 1GL3S1d3AWG+ugm2hGSInej54TguCh/SmJWzI3whN54twSKAjw8m23yqWS/Y/fvqGN
-	 UWY/hpbgbP2BuDdc+VbqOnOSUvz+Ss7e5hcMgN7rc9molpJkDAqmfm11HaqQWd3LCf
-	 yVRVCjqdLB6bqV09T0pDlOdWL+dRVsKBYBrMCXA6kU2SNh52uBodk2eeJx5qwmEzxo
-	 r8BsQZoIAKotw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Linux PM <linux-pm@vger.kernel.org>
-Cc: linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2] clk: tegra: Adjust callbacks in tegra_clock_pm
-Date: Tue, 06 Jan 2026 13:19:47 +0100
-Message-ID: <5956349.DvuYhMxLoT@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To:
- <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com>
-References:
- <5088794.31r3eYUQgx@rafael.j.wysocki>
- <2d55ebec-1e42-4ddb-b0e2-529d3b2d7b85@nvidia.com>
- <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com>
+	s=k20201202; t=1767705084;
+	bh=up2iff1BZxa94kRdGC8JpHKlWbcnvKvXoZYjbXT7JJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9VSxyA6dLZYidFmR3YKrnuiZmFCzcB/BXSKq32qKyENyNq4aYaGeJAl6It6ZWDae
+	 fNHETbHe0yBHeHjen+HujqOr71J0UL8kKlDhPZPwBXLp5KOJzvtamRwgbC1dTWtzoU
+	 dU8zDzs8a3uCTCqPdqAaHawnWUWhg0/LDiK9aM5Vnv5eyd/YlNschdxUR68oCwFSuq
+	 lsb+Yem3dGUbajGYyEcIG1jGg3tb4MFgBauIq1kXi/bjkYNnEjRcZYahTuLaT6sg8S
+	 43n3wc587dSole11rjV87w4Lq2gF90tg+wVYlie+AZg/u/3/SL0a3CFyoH3K0toWyp
+	 KnseknnkVQXOg==
+Date: Tue, 6 Jan 2026 18:41:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Greentime Hu <greentime.hu@sifive.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Chuanhua Lei <lchuanhua@maxlinear.com>, 
+	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Pratyush Anand <pratyush.anand@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/2] PCI: dwc: Add multi-port controller support
+Message-ID: <5gne3bureusi45sy4zqr2zrfvt4ba4uxgnsfdnjeh2eno5zspe@ldvhq2nilsan>
+References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
+ <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
+ <aVvkmkd5mWPmxeiS@ryzen>
+ <m5ukeugo2lazipljqpubyvm7j3xk2j5o7i2xgdbkkhii57xmyk@lh32qdzjhe4n>
+ <aVzqMqTUWIuKhgmC@fedora>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aVzqMqTUWIuKhgmC@fedora>
 
-On Tuesday, January 6, 2026 1:07:15 PM CET Rafael J. Wysocki wrote:
-> Hi Jon,
->=20
-> On Tue, Jan 6, 2026 at 11:36=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com>=
- wrote:
-> >
-> > Hi Rafael,
-> >
-> > On 04/01/2026 11:53, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > System suspend and resume callbacks run after the core has bumped
-> > > up the runtime PM usage counters of all devices, so these callbacks
-> > > need not worry about runtime PM reference counting.
-> > >
-> > > Accordingly, to eliminate useless overhead related to runtime PM
-> > > usage counter manipulation, set the suspend callback pointer in
-> > > tegra_clock_pm to pm_runtime_resume() and do not set the resume
-> > > callback in it at all.
-> > >
-> > > This will also facilitate a planned change of the pm_runtime_put()
-> > > return type to void in the future.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >
-> > > This patch is requisite for converting pm_runtime_put() into a void
-> > > function.
-> > >
-> > > If you decide to pick it up, please let me know.
-> > >
-> > > Otherwise, an ACK or equivalent will be appreciated, but also the lack
-> > > of specific criticism will be eventually regarded as consent.
-> > >
-> > > ---
-> > >   drivers/clk/tegra/clk-device.c |    2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > --- a/drivers/clk/tegra/clk-device.c
-> > > +++ b/drivers/clk/tegra/clk-device.c
-> > > @@ -175,7 +175,7 @@ unreg_clk:
-> > >    * perspective since voltage is kept at a nominal level during susp=
-end anyways.
-> > >    */
-> > >   static const struct dev_pm_ops tegra_clock_pm =3D {
-> > > -     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_p=
-ut)
-> > > +     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
-> > >   };
-> > >
-> > >   static const struct of_device_id tegra_clock_match[] =3D {
-> >
-> >
-> > I gave this a quick test and this is causing a suspend regression on
-> > Tegra20 and Tegra30 that use this driver. Looking at the console log
-> > on Tegra20 I see the following errors ...
-> >
-> >   tegra-clock tegra_clk_sclk: PM: dpm_run_callback(): pm_runtime_resume=
- returns 1
->=20
-> Of course, it needs a wrapper.
+On Tue, Jan 06, 2026 at 11:55:46AM +0100, Niklas Cassel wrote:
+> On Tue, Jan 06, 2026 at 10:49:19AM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Jan 05, 2026 at 05:19:38PM +0100, Niklas Cassel wrote:
+> > > On Mon, Jan 05, 2026 at 05:57:55PM +0530, Sumit Kumar wrote:
+> > > > The current DesignWare PCIe RC implementation supports only the controller
+> > > > (Host Bridge) node for specifying the Root Port properties in an assumption
+> > > > that the underlying platform only supports a single root Port per
+> > > > controller instance. This limits support for multi-port controllers where
+> > > > different ports may have different lane configurations and speed limits.
+> > > > 
+> > > > Introduce a separate dw_pcie_port structure to enable multi-port support.
+> > > > Each Root Port can have independent lane count, speed limit through pcie@N
+> > > > child nodes in device tree. Add dw_pcie_parse_root_ports()
+> > > > API to parse these child nodes.
+> > > > 
+> > > > Equalization presets and link width detection currently use common DBI
+> > > > space for all the root ports. Per-port DBI space assignment for these
+> > > > features will be added in future.
+> > > > 
+> > > > Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+> > > 
+> > > Hello Sumit,
+> > > 
+> > > Is there a reason why you represent this as a list of ports rather than a
+> > > simple array?
+> > > 
+> > > The number of ports is known by parsing the device tree, so it should be
+> > > static, no?
+> > > 
+> > > At least to me, this seem similar to e.g. how a gpio_device has multiple
+> > > gpio_descriptors "struct gpio_desc *descs":
+> > > https://github.com/torvalds/linux/blob/master/drivers/gpio/gpiolib.h#L68C1-L68C26
+> > > 
+> > > A list is usually used for something that is dynamic.
+> > > I don't think that the number of ports to a PCIe controller will be dynamic.
+> > > 
+> > > I can see that struct qcom_pcie in pcie-qcom.c has struct list_head ports,
+> > > but that does not necessarily mean that we need to have a list of ports in
+> > > pcie-designware-host.c. (pcie-qcom could also be modified to have an array
+> > > of ports if there is a desire for similar design pattern.)
+> > > 
+> > 
+> > Only reason why I went with lists in pcie-qcom is flexibility. There are useful
+> > helpers available for traversing the lists and they seem much more elegant to
+> > use rather than manually traversing the array in C.
+> > 
+> > But to be frank, I don't really care which one is used as there is going to be
+> > only a handful of ports at max anyway and there is not much overhead.
+> 
+> Personally, when I see lists, I automatically think of something that is
+> dynamic, so using lists for something static just looks a little bit out of
+> place IMHO.
+> 
+> Technically, the difference is speed. If we want a specific element, we
+> will need to traverse the list. With an array, we can access the element
+> directly. However, looking at the current patch, it seems like it never
+> looks for a specific port, it always does an operation for all ports.
+> So from a speed perspective, it doesn't matter, at least not for now.
+> 
 
-So the patch below should work better.
+Yes. I don't envision the driver doing element based lookup even in the future.
 
-=2D--
-=46rom: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Subject: [PATCH v2] clk: tegra: Adjust callbacks in tegra_clock_pm
+> 
+> One advantage I can see, instead of doing:
+> 
+> +	struct dw_pcie_port *port = list_first_entry(&pci->pp.ports,
+> +						struct dw_pcie_port, list);
+> +	return dw_pcie_wait_for_link(pci, port);
+> 
+> for drivers with only one port (most drivers), we could just instead do:
+> 
+> +	return dw_pcie_wait_for_link(pci, pci->pp.port);
+> 
+> To simply get the first element in the array. No need to sprinkle
+> list_first_entry() everywhere in all the drivers if they just have one port.
+> 
+> 
+> For iterating, to avoid manually traversing the array, we could do like
+> libata and create a simple macro, e.g. ata_qc_for_each():
+> https://github.com/torvalds/linux/blob/v6.19-rc4/drivers/ata/libata-eh.c#L851-L854
+> https://github.com/torvalds/linux/blob/v6.19-rc4/include/linux/libata.h#L1657-L1659
+> 
 
-System suspend and resume callbacks run after the core has bumped
-up the runtime PM usage counters of all devices, so these callbacks
-need not worry about runtime PM reference counting.
+I specifically do not want to introduce custom helpers. That's one of my primary
+motivation for using lists :)
 
-Accordingly, to eliminate useless overhead related to runtime PM
-usage counter manipulation, set the suspend callback pointer in
-tegra_clock_pm to a wrapper around pm_runtime_resume() called
-tegra_clock_suspend() and do not set the resume callback in it at all.
+> And at least personally, I think my brain will parse dw_pcie_port_for_each() { }
+> faster than it parses list_for_each_entry(port, &pcie->ports, list) { },
+> since it is more unique, but perhaps I am the weird one here :)
+> 
 
-This will also facilitate a planned change of the pm_runtime_put()
-return type to void in the future.
+Arrays for sure will allow us to do O(1) lookups, but considering that we will
+only be traversing the ports from the start, I still prefer using lists.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-=2D--
+- Mani
 
-v1 -> v2:
-   * Use a wrapper around pm_runtime_resume() to avoid aborting
-     system suspend when it returns 1 (which is always when the
-     clock is active during system suspend).
-
-=2D--
- drivers/clk/tegra/clk-device.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-=2D-- a/drivers/clk/tegra/clk-device.c
-+++ b/drivers/clk/tegra/clk-device.c
-@@ -174,8 +174,19 @@ unreg_clk:
-  * problem. In practice this makes no difference from a power management
-  * perspective since voltage is kept at a nominal level during suspend any=
-ways.
-  */
-+static inline int tegra_clock_suspend(struct device *dev)
-+{
-+	int ret;
-+
-+	ret =3D pm_runtime_resume(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static const struct dev_pm_ops tegra_clock_pm =3D {
-=2D	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put)
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_clock_suspend, NULL)
- };
-=20
- static const struct of_device_id tegra_clock_match[] =3D {
-
-
-
+-- 
+மணிவண்ணன் சதாசிவம்
