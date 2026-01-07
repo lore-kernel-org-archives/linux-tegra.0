@@ -1,226 +1,225 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011008.outbound.protection.outlook.com [52.101.52.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9F1287253
-	for <linux-tegra@vger.kernel.org>; Wed,  7 Jan 2026 01:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767748422; cv=none; b=YEZ5q/eWvfbS4hGyMEiXbMM5/MDsLeEMUsm+VQ8Q5p5NGgo41tYZKg1clFeozPLUMNGmQwzn04fpTzjiLCtKE+h9vR72l2dcRKhmMhW5q3GGIG5oOEiVmqyjlWDZysec65e/LTrU+cd227mDzonVxcQx4cMnDi8cm1Pio4TieRw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767748422; c=relaxed/simple;
-	bh=Rl+RVB635jDWTyz3WbQdh8xirqGQS1j4dySJG+WcogQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=a0J5CmUmX+4E3gllJolwjZnvqRz1aGKGiEbXmp7K5yWoKolAq8+7sOmGax7ES4+QG8NVw54S+s+V4zaAn5ESlLg5sCo3HSTAriQy5/5VU19/u9uUfu+CTFmxBLu0pI/INwsDEbzh9KxUg82lyeAEzeQ9j1jd7S4GNEpfoecjHAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d3s/PvWn; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PBdvF3+r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0797542A9D;
+	Wed,  7 Jan 2026 04:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767759040; cv=fail; b=Un4ENGxHZ05DziZygzblALrA+yZth83ey6iFfC9HCiWP8Tu7cKPffYOeICFEXRmbn+r2HRgb1p9crXFoNIgOznHSVWw0lJxe9yYsUqYLBZ0GRaK2zFlBzkdxQMOQAxc8xZn8uEFmfO+0R32EoopoEGUkNdWQ2TfB9+vEurUvA44=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767759040; c=relaxed/simple;
+	bh=oLka733ksWygLKMGrf9hlZTaG1w5rw50fmdvc9uyW7g=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WFASbjNPlwznFGXsT/NFV0mqwnKMl9wX5u/uNAa0+OWihogJZP50MH5qcfTJvP3hdXmqHEJW8Z7N+hM86m6hfEzYeBqNawOo3d/J2Fb+YBD/8kc3Ybr5YYyeXCfUuAZW7a7Rvh00MqytAPoHfncSN5rUFZNGklNSlCq4PUhzLtM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sDOFw1zG; arc=fail smtp.client-ip=52.101.52.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3s/PvWn";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PBdvF3+r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1767748419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jGEm6SrfIkQBXCBDJsmfWgmej6ZHwdAiFj4oBQ8yV/4=;
-	b=d3s/PvWnYRUfZqeF8voDnXRR6PVW0jXlh567bj4vlzKPoU9XihP8dNJyiARvJMkAt+yxoq
-	lR/ZkostmfpzbQc4zj3CCgN3T/cYsrBwA6JVOzb7wGz6l2kkrgJhbEUzOWhf1Lh5W0mQLs
-	1JHnBEhZtHVq2fPBd2BY1gsaaOxMET8=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-dQSzNQ6EOxSKytfzXGPNow-1; Tue, 06 Jan 2026 20:13:38 -0500
-X-MC-Unique: dQSzNQ6EOxSKytfzXGPNow-1
-X-Mimecast-MFC-AGG-ID: dQSzNQ6EOxSKytfzXGPNow_1767748418
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ed79dd4a47so34965891cf.3
-        for <linux-tegra@vger.kernel.org>; Tue, 06 Jan 2026 17:13:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1767748418; x=1768353218; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jGEm6SrfIkQBXCBDJsmfWgmej6ZHwdAiFj4oBQ8yV/4=;
-        b=PBdvF3+rC8a6QbF17pOkEP74ZCpb0RqbvqNs6X1+S1ntZyf2QhFb1UHXSef5FNb1M4
-         nUXnJrGWLocTqz5KdkdLo/0TBiwyTTffhI8hcQUGIiF0Nze1y8+jCz0T2hHhAEk6rMR1
-         lCAmA09jJBIP0DZ6Boef1FooNDsmBOpjC7Uz65hoAUs6cnvn/myrw5K5dw1GAsjEjNCf
-         cFR+a7Lrx/NP8PGd8MZJyb2Wi1bGimZ8fOWRK30wzI6LtAz59/AtufBIoU2mzq5f5Rdy
-         UU12GV0IYSIl9QDVa3A6ivli/y+qrH9c/FHnlE7dENu6iDcIBl+G3Ay8McUeMC4W/mYS
-         4Bbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767748418; x=1768353218;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jGEm6SrfIkQBXCBDJsmfWgmej6ZHwdAiFj4oBQ8yV/4=;
-        b=qdYj59B37alBg1q4SG9o11zdsU88yo9UlHnM5zcrMjB02+ty1qzQ1/iRqWOt5e09iL
-         UczUIf3T8ttnLldESD7kl02ivXqAAZZkH2PQj6Z5xMoM2U9i6dHFaRDc695rSzJRhAB5
-         iPp7qKTKVJzOAOIiYDwxJ5DXbwseukobWx6aqWItRjMMQWuVrYPd+wo/78iniHooENWT
-         6IqjiYa3eRnwcajT8Krqj1Nx8vsCF/46EAtI6kaHZki7dQpLJVrZtvqD4LSzgJCOwxYu
-         ecSxBW2fF8omLEM2SbyfW9Yrpoh5NbhpCIigcB0ySmmyN6CrwVFnejO6KTA1QMqo800x
-         sU7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqQDOoQJm+1ccOc7nnib041jU7LxpbgBzxID8IWVsqbtHIn7dO5jjgccDBe4Y8ByiTcKtqCWfEkrBq7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9bjakO6uFrEhctFK203jCf9JwtRMoQwePtP3CVrC4MnnYfoVY
-	kW2dGUn9QlOi2u3zfhev3L9f6F3fv1zCuY8G3HRDNv50GH9dh9Q8D6H1zb4XTTr9pNCTJ9p3ank
-	D9trNcs1g10Q/k4LhJ9RFAMjM36BcN4Gy+XuY5YZMmx/Mh+1T7cvfzeAOnstLP11s
-X-Gm-Gg: AY/fxX46mxhFGcY9HVEUZcY/D+brR3sNtC4B+LHYiF6wsiosgz2/H7xYaoVYT4RPNHc
-	C93UGiplVGd/UU2vBltrg2XPUf6KxT/liCAl37Tsvh5fBTHThrbQGHFkAjWFTsCnmd9ywHsFR5N
-	/jGP9T6OMU1yh3TCEYtLvDjBMt58NvLaNZzirNQlV1zVSZ5uim4DrOB//IZCEQ/Xwj9lWL/xTJ4
-	tXI3BDZ6Rj+leYldzzjMKeeP4XcS9Xnz54/ReoASoFFMVYuffLAiAhBsWtal61x+TvwuY4VRcEG
-	DrkKWbVDgwTCWn6GPCbzfaZ0BJkL4U01256gJCwiehvtWfBQITRHf1GxxOaTZzRvqdCWbV2T8ft
-	v/yjoBUT9ta6eMruFqQ+8fiVuRRZEO8pRlRwL8eYS4Ee2vSWIIqRPO7QPK8OjWUNu90sJ83GoPH
-	VmDg==
-X-Received: by 2002:ac8:5810:0:b0:4eb:a192:de99 with SMTP id d75a77b69052e-4ffb4ab80d3mr11772931cf.76.1767748418072;
-        Tue, 06 Jan 2026 17:13:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHFv+apa0jRruNJjdM2l53yEuFK4YAhqutLPAPVUGPuZp1HG97C4J0qur49aGEfGm4e3uR+Xw==
-X-Received: by 2002:ac8:5810:0:b0:4eb:a192:de99 with SMTP id d75a77b69052e-4ffb4ab80d3mr11772701cf.76.1767748417656;
-        Tue, 06 Jan 2026 17:13:37 -0800 (PST)
-Received: from thinkpad-p1.localdomain (pool-174-112-193-187.cpe.net.cable.rogers.com. [174.112.193.187])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ffb75d7916sm566541cf.7.2026.01.06.17.13.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 17:13:37 -0800 (PST)
-Message-ID: <144a39f2d19af30961498acc11d6b7475166ccf5.camel@redhat.com>
-Subject: Re: [tip: irq/msi] PCI: dwc: Enable MSI affinity support
-From: Radu Rendec <rrendec@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
-	linux-tip-commits@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, 
- "linux-tegra@vger.kernel.org"
-	 <linux-tegra@vger.kernel.org>
-Date: Tue, 06 Jan 2026 20:13:36 -0500
-In-Reply-To: <9ec6928cd4e7a599d4bbb6ac0258da8997518d3a.camel@redhat.com>
-References: <20251128212055.1409093-4-rrendec@redhat.com>
-		 <176583448396.510.10427292538118156779.tip-bot2@tip-bot2>
-		 <44509520-f29b-4b8a-8986-5eae3e022eb7@nvidia.com>
-	 <9ec6928cd4e7a599d4bbb6ac0258da8997518d3a.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sDOFw1zG"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i7RQSZHJzxggXmkS3iUA8ZjbEmkdn3cMePZZ5nvwM0MLL8MpQqcgqVn+Z/quAGJPRMVcWKM1VrTa7m+NfptQ/uQKIGKoM9alt1d6w6RvvuCpjZ256PDjK8geHpBOsYpppalg1T8Gs+mHLrZee3JILe/TduxX2QzmSJ/PvAlqnmBSGNcP1JyyFZ41FYKLwAVUT4lv4hxAidv/IDY4a63RrRLp7SBkNsV377tQogSD/GMbrex+5ycCRYJbrLE2cjWfCMGuh2sd+20cF98L/rPZPojXrWZBPcDx6wcWnxigkWOEp/v7dnwaiQ7WnRMwtAtFRCCbm/mnQF+lk974zFljwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JuklfLNcAZtqVtmatrpx4RiBm4YijVgIobC7WP0YlHM=;
+ b=L79tG9Z12KgHBb+rcYoKI2sKw0Cua5X+qqqoBTtAGZMTi3RpIMbjB77qZxo8D1lwBQR0QFBo0hxwpebg5lN2i2Jqw6do7YWJN3NR4oYo4AsFqIA2MiN5f0ZIciwxXdy9XRHc1YRM/nKmNlff/zPWDeld9xTMApCdGHZIqFYRafITgdGSbrj6EuuOwrCbSOqP92jTRlUiT1bjAqtlJJ4S6lSuYdLjzGDWYARKOjYDuOKkfIWVYaTehSzRoNQXY+BbzeTOx4Pd1eGHkhTlu/ckOIZvx6qbQTam6SS/LpiWW4BYsmnC7klK5P7rCv7FAMgfbADmVucg4tyMfEkjJvBzJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JuklfLNcAZtqVtmatrpx4RiBm4YijVgIobC7WP0YlHM=;
+ b=sDOFw1zGJZnixmXfBIk+Gj8QsoJ/aZBAV29C7mCjVLflR/ib6IO6AFmTj4cte8QXbCIoJR90uFtRB39LmzErQDw1pJ977cqjajWnLWoZtDIPcvMqv5JiS3KRMzXOe+SjyKFZFfW7rN5IJSzA5XFDprh25OdthKsFg3TWAkk1lq3G2M+5UQzlCp8Aw3v2Sbo0MvzVGLBsKOTNS2HsUI0YTTUPtxfXxVrgueu9JxZpusGSH9cRKN4QUDoBkwfcNCbIE2OCZrlp1g49m6B6b46hMM+/FJpmeQuSIN4W0ArBDrEsmqwrDsn9/L+UXvqLOT/ScQqiQ14nDrZsVpwdqdzmaQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
+ by PH7PR12MB8427.namprd12.prod.outlook.com (2603:10b6:510:242::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Wed, 7 Jan
+ 2026 04:10:36 +0000
+Received: from MN0PR12MB5716.namprd12.prod.outlook.com
+ ([fe80::bac8:2b43:2a64:4c76]) by MN0PR12MB5716.namprd12.prod.outlook.com
+ ([fe80::bac8:2b43:2a64:4c76%6]) with mapi id 15.20.9478.004; Wed, 7 Jan 2026
+ 04:10:36 +0000
+Message-ID: <e3a6d4f5-87cc-4d22-bf3a-f1067fe152e9@nvidia.com>
+Date: Wed, 7 Jan 2026 09:40:28 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] i2c: tegra: Move variant to tegra_i2c_hw_feature
+To: Jon Hunter <jonathanh@nvidia.com>, ldewangan@nvidia.com,
+ digetx@gmail.com, andi.shyti@kernel.org, thierry.reding@gmail.com,
+ akhilrajeev@nvidia.com, smangipudi@nvidia.com, linux-i2c@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260106111033.5556-1-kkartik@nvidia.com>
+ <20260106111033.5556-3-kkartik@nvidia.com>
+ <e4be900b-207e-49b1-a7d4-5cf88e0caf2e@nvidia.com>
+Content-Language: en-US
+From: Kartik Rajput <kkartik@nvidia.com>
+In-Reply-To: <e4be900b-207e-49b1-a7d4-5cf88e0caf2e@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN4P287CA0124.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:2b2::10) To MN0PR12MB5716.namprd12.prod.outlook.com
+ (2603:10b6:208:373::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|PH7PR12MB8427:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4dfc1fa5-5ca1-4708-9575-08de4da2b57c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y3VWOVZyUXdLMXB4Q1pJMUFMeHhQcnZ2VlNoWmhNN2YzMFBtRzZJM1kyeEVa?=
+ =?utf-8?B?OXFXR2w5Q1FrTkozWGIzdG1NMDhWWEFwMzZ0TVUvNUo3WE94ZU9OdnFZSWtY?=
+ =?utf-8?B?ZHRkOTRUVG9mV2x0NTFmNXRIOWo2NTdKRlMzRjNjaHRZUVR2L25MVG5BZU9F?=
+ =?utf-8?B?aXZSVG1yeFdIWjV3SGY0UzVVd1l4UnBsTW9LZUVJc0ZZWWZWNzVYK3NHbS9k?=
+ =?utf-8?B?WG50SXBwVHgraXd0OEw4eUtnMENsR3M5OXMyRi9OZ3ArWjJBbUU1SWRrYURV?=
+ =?utf-8?B?WnJoWXgxUlBJZHZiS2RjTUR0QSt0aHI2OEhjQkJzRmZqUmlJTFVWTWVuS2hm?=
+ =?utf-8?B?SmlqWks2ZW1HVHhEVW96aTBLZ0F3UW96eTlVbUpGTGpvbURQNmQ2KytsRzAz?=
+ =?utf-8?B?M0MyTjZrcXJxZ1l3dUlVMHYvVkM3UmFPRGNLaXYwdmhPKytpa05UdmE4RHFy?=
+ =?utf-8?B?RFBJckdoNzdtbVZabHU5emQ5VFA3RXhMcXlMQmQwTVJSemwyQU9LcVVISUhO?=
+ =?utf-8?B?T0JNN3h0RDFZaVB5eWMybklmSEJGUlZwb21iM3hUV05hekNUNjFERHdoR2FE?=
+ =?utf-8?B?SHZyeG5xUm5lVnRIT0JOc25Ka0o3WG00R24xdXk1Z2ZlTERlakdQTkN3NG9Y?=
+ =?utf-8?B?am5tVnV6M3BTdGJ1ZzFRVG5RbWUvOW5MZnhUeGplaWpWSlpkcFArVzdURHF1?=
+ =?utf-8?B?UWJTcjlBNi9QMW5QTnQ3YkdvTUpqbnlRTkpqVjE2R1dyVXdnV05ucDZZN0xJ?=
+ =?utf-8?B?V25PVzNocm1YUUhKRldlcytSL3prSXFBWGk5d0FZOThGRWhLREJ3Ly9neUZT?=
+ =?utf-8?B?akVSZjBDVGJpOG5yN3ZhclNMNHppRUdJNFFnYk1kR2h0bjdFQ2hvc21FMGpy?=
+ =?utf-8?B?VGpJcHdHaGYyQXRnZlczYTFzckQzN3o3WlRIQkFyRlpKZytXbmpvTDlYWEVC?=
+ =?utf-8?B?UGhOMUUvV2Vzd3ozbzZ3cTQ4YytFc0kxRk1SZ2ljNVQybEZvWUg4ZG9mazNm?=
+ =?utf-8?B?bU9ROGV3R1ZuN21ZZVdrKzNqdDlGazBOYytGaW5TWHFoMEhBUEphMFFDaVhK?=
+ =?utf-8?B?UFkxT2FLRFhzU2wwSXJzWTIrcXRmUHdIZlhkcyt5YWVEUWFqUkw0N1N0aXBx?=
+ =?utf-8?B?R3J3UXExazQ2c296R3YzNkRZZ093Q2R5Z3B5clo2L3BYVFZtdjQxK0hVTnN6?=
+ =?utf-8?B?Yjc1RUFITzV4SUpwK3RYL1cwcXlaQ3IxbC8wRVcyOWFINjgrU1FJVExKUm8x?=
+ =?utf-8?B?ejdVYUhhQnorRS9pSUpVLytCTUVCVjZBVTR1RFdKSmNMd2pSU1BDVCtxVlFl?=
+ =?utf-8?B?alZoNy8vR3JyT1FreWFoeC9XZyt1QXBadXJ2Y0Q0cHhVdHlpdUwwK1JsTXl5?=
+ =?utf-8?B?Rjh6OGQwN3pBa0IycVE1dEpGc0xYamFuVEVPUnZxQytUeTdzUEJnSGNydmZI?=
+ =?utf-8?B?Slh6Wk5vQzQ5MENvN0g2dndCUWhKQjl4N2h3VEpYQWU2T1ZSa2hVTWJiVndK?=
+ =?utf-8?B?TFpOTXBLVVVWTitGUTlxUm5tOHNTMW80VmhNbko1em9WNzl1ZVhZYzlRKzc1?=
+ =?utf-8?B?YkdKVkxuVnNVZ3Y2U3l3NXJiS29sZHFkUjJDajNZRi84QnFGNzE5ZUtpdVMx?=
+ =?utf-8?B?Rm9sd1lWLzRmZkRuSERBQWhsRWpWMUtYVDE4Yk5TK0pHNHBDWkd0Tk9HaG13?=
+ =?utf-8?B?NVdzNnltSTl2VEFMQkN3ai9QV0V2VGptaDNFTXMwcTJmOStsV1lKOWEwcGpX?=
+ =?utf-8?B?Ukx2U3NkTnZqT1JEV3BiNXR4VWE1MnV1cEpTSWxMdDZaOUw3ZStPR1NhbUJs?=
+ =?utf-8?B?TGpEOE9kRzFadUZjd0s3b2dJRmVSSjFXb243d0hueS9DRGJ2Y0VRcGVNcThh?=
+ =?utf-8?B?ZjUwWEI5bysvU1E3OGFLM3lQcUlmRmwyMGxDbmZFQlROUXRYRjlCOHVrRjE1?=
+ =?utf-8?B?VEVYY0IxSWpkeEVTU0tjNkJvaDVRd05qZXVsZ0liTTlPNUFDd0YxZXR0TVlR?=
+ =?utf-8?Q?DrA70XgpZF8hKCR0103f5UoFUXwFlI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aWxRYVA2MXFUa05oVUdJSktEclBlZ1lobWUrZEppL0tLTXU4RFJsMGNCelps?=
+ =?utf-8?B?eGJTbEg0c1hMNUtrd2RUNW1vL29WdVRESVo2U1p1ZTdscU03T2p3WWRJS3c2?=
+ =?utf-8?B?N2ovN1FjVWx3RktoUzFGT1JhUWtETE1rWlVIYW5vdDRURlc1NGFvVUxHYWFI?=
+ =?utf-8?B?KzhOdk1tWTVxTytFdUdXSk5aVlNiT2xyN00rS21oUVJxZTVGSm9Ua1ExcHhs?=
+ =?utf-8?B?MFo4aURCeWZYRnRBbUJwWlE0bGlhNWh2UWFTdWtTbCs5YWNCOEplWWU1Rnlk?=
+ =?utf-8?B?K2VydWZCc0QzQ2c1LyttclBNaWJ2eHRDSmRZNURWbmtrRmxBNmxsRVpWQWlY?=
+ =?utf-8?B?WDJ4TFFyeHlSZTVDeUNNc2FLcGJSUTg2bkFqSUJhWkZ2bGxIN0Q3U0VwZmZT?=
+ =?utf-8?B?T3JxZ0V0Q0tKUHRHWUJzQkZjY1UrN01CUXdXbVpyK3BxTGQrTE5vQXBmeDQv?=
+ =?utf-8?B?VENYR0tVajZPcjEyMFBhenF4aFVCcFUySFJUdER5eGpGa0FVaTU5R2xxYk0w?=
+ =?utf-8?B?NzcxdEVHU3lrU2dLRE94Q2tvb1lIUWJYMnVLUmNJWElxT21mZ1FOU3lqR3Y4?=
+ =?utf-8?B?WlBkYzdhUWc0QTcvbjJ6dElPeGVJQUtDdzUrM1o4S0NDeVozV2pPMkFMMmpQ?=
+ =?utf-8?B?eUxBb2Nic0NrZFdUM05OTHZJZVlWV0ttcHk0TFcwNDZWcmNXcTVidkV6QUM2?=
+ =?utf-8?B?WXZBeHpiSlNTUkZpdzZHWlpYNytxaStBZ2FqYko0YkNkeEkyV3JlTjUyNGNW?=
+ =?utf-8?B?SkVUcUszZUIzUlA0SmVGdXJWUDFFU1RSQnVsSU1lSkYvRnVvcEZCaGRyY3NR?=
+ =?utf-8?B?VkZZN21NQ01hVHM1NGxEdUJmMzI4Q0daa01YaFkxU3FRRWt5d2pORXI2YVhl?=
+ =?utf-8?B?a2RYNmFZMWxEcHRYMERJVHVCd3pHakZPek1Ia29BVjVEd05lSm9oRkhZaUV5?=
+ =?utf-8?B?ZUpPODEwdWJ3eG5vYnNZQ2lhYloralhlR3BHMVk3enVHR1oxM2Y5YU8waGRM?=
+ =?utf-8?B?S0UrKzBmenNKbGxsVjhMdGVUYlpwazNvZTNiVjl1ME9Tc2gwTXVUQ0RkNGhI?=
+ =?utf-8?B?YmlpZFgvLzE2VUFZQm1qdDUzQ2FUSnZFTnJkd1NjbWZHcWdsSEd0RXU2V3Zy?=
+ =?utf-8?B?VGhuT09iQzY3K0gzbWdzNit2cmJOT2ViUXFSRFg0YmxEaElrWVNhWkdLcHpo?=
+ =?utf-8?B?eVNnUWRFc0xLWitEaHpKTG1HWDlLZDZBNDVXUEw4UmtURE5BWElNT1hMWTBr?=
+ =?utf-8?B?KzRISzM4cGl6NFRwZHRCVVRVNnVLeERqOURDa09IbDlYR0UxSEFGV00wSitP?=
+ =?utf-8?B?b3JKWkVpUXBGUzRJR2dJY1RKMjl2TUFkWDlhZXc1MEFraUlnUHRzSEdpbHJ1?=
+ =?utf-8?B?c2FTN1pNdE5OZ2NaUG10NGs5THJJVnNtdXY5cjhrMkNDTWFyUTJaYjZ1dEFM?=
+ =?utf-8?B?Z1VMZmYvUlFEMklRdC9RSjZMTXNaVW1nclBsWjBYb255VmJ6YTJmRkFZNFNY?=
+ =?utf-8?B?WmwrVUpCL1RWcFhYdUVlQndYNnZYb0FveWdMMlVMdCtDSGdEMHhLNkx0NXBM?=
+ =?utf-8?B?SXpLckZXaFRjU3VJdjBDU210RXBBSkhnYmdlb2pINzk1VzB1TkZlVHJVbjRr?=
+ =?utf-8?B?VjhIVWdKQVVPQXpOSGQ2UDFkNWVqOU9XMURMSXRSN3VZMWNzd1hFcHJka3p3?=
+ =?utf-8?B?djliWFAzMG8rS1FxUFBGWUU0NWdpeXdYZlRjY1A4cmNPdkRlZkFoMFI1ZEpE?=
+ =?utf-8?B?YkF5VTdrT2s4NlpwUy84aGNtWnBGVU4vQzRpbFR2enloTzMxZDJMeGlaNHA0?=
+ =?utf-8?B?S2F1MjEyOXBuLzBPOXp1VFdra0U2bWF4WFh6cHZiT1d6bUlXb3VKMldBTnFr?=
+ =?utf-8?B?RkR0V2RXcnpEMk1TTW00V0NHb1VWbGtWSzJrWjBlU2JmYm1jZFdLZlZLSXdV?=
+ =?utf-8?B?NWdLTzVTbUNCVVRMQ240WEJ5SnkyVnhZWFZIR0p4ZmZudzRNYlZTUktFd1ZI?=
+ =?utf-8?B?OEUvUmVpRHpONlFmeWIwTVFINitZMEhCWGErR1NVUTVBRGgzNm1kRHdNY2tX?=
+ =?utf-8?B?a2FUYVYySFQwNDhGaUFEOEdobmxDVHdiWEZvakgwT0QvaTl2Zmd5UGFQcEJr?=
+ =?utf-8?B?Zml0N0ZDaHZxRWdmenBVbDdLSkNBTldVMFZJTlU4WUpVZmVvKyt6OERYTGdz?=
+ =?utf-8?B?R0VWVTljT2w5MWZEVFcvcHlnUE8wVFV4TlNBNmdKai9CUVZkcGphcTdDalY4?=
+ =?utf-8?B?aWJHRzl3czI2aGgybHFVblZzNnphZVNLN01nTE9zTjNKalFzV0llN3JSSVZT?=
+ =?utf-8?B?YVlKTEc2a21Kem1UNHh6a0hRMXFLejZqK3B2YzRORitIcTY3WUVJUT09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4dfc1fa5-5ca1-4708-9575-08de4da2b57c
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5716.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2026 04:10:36.2095
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rM/WIw8VIz20H4AjCnDjm1RPiN1y9wT5GwtPUgfA0Vk1BCzzSHr5b5iTqYIAnP6C/9GqiNwLCN2hqYUUzxSx5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8427
 
-Hi Jon,
+On 06/01/26 17:04, Jon Hunter wrote:
+> 
+> On 06/01/2026 11:10, Kartik Rajput wrote:
+>> Move the variant field into tegra_i2c_hw_feature and populate it for all
+>> SoCs. Add dedicated SoC data for "nvidia,tegra20-i2c-dvc" and
+>> "nvidia,tegra210-i2c-vi" compatibles. Drop the compatible-string checks
+>> from tegra_i2c_parse_dt to initialize the Tegra I2C variant. Also remove
+>> the redundant config checks from IS_VI and IS_DVC macros.
+>>
+>> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 100 ++++++++++++++++++++++++++-------
+>>   1 file changed, 81 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index 9a09079dcc9c..4ab991a22350 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -235,6 +235,7 @@ enum tegra_i2c_variant {
+>>    *        timing settings.
+>>    * @enable_hs_mode_support: Enable support for high speed (HS) mode transfers.
+>>    * @has_mutex: Has mutex register for mutual exclusion with other firmwares or VMs.
+>> + * @variant: This represents the I2C controller variant.
+>>    */
+>>   struct tegra_i2c_hw_feature {
+>>       bool has_continue_xfer_support;
+>> @@ -266,6 +267,7 @@ struct tegra_i2c_hw_feature {
+>>       bool has_interface_timing_reg;
+>>       bool enable_hs_mode_support;
+>>       bool has_mutex;
+>> +    enum tegra_i2c_variant variant;
+>>   };
+>>   /**
+>> @@ -281,7 +283,6 @@ struct tegra_i2c_hw_feature {
+>>    * @base_phys: physical base address of the I2C controller
+>>    * @cont_id: I2C controller ID, used for packet header
+>>    * @irq: IRQ number of transfer complete interrupt
+>> - * @variant: This represents the I2C controller variant.
+>>    * @msg_complete: transfer completion notifier
+>>    * @msg_buf_remaining: size of unsent data in the message buffer
+>>    * @msg_len: length of message in current transfer
+>> @@ -334,13 +335,10 @@ struct tegra_i2c_dev {
+>>       bool atomic_mode;
+>>       bool dma_mode;
+>>       bool msg_read;
+>> -    enum tegra_i2c_variant variant;
+>>   };
+>> -#define IS_DVC(dev) (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) && \
+>> -             (dev)->variant == TEGRA_I2C_VARIANT_DVC)
+>> -#define IS_VI(dev)  (IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC) && \
+>> -             (dev)->variant == TEGRA_I2C_VARIANT_VI)
+>> +#define IS_DVC(dev) ((dev)->hw->variant == TEGRA_I2C_VARIANT_DVC)
+>> +#define IS_VI(dev)  ((dev)->hw->variant == TEGRA_I2C_VARIANT_VI)
+> 
+> I was thinking about this and actually, I am wondering if we should leave these checks present because if these are not enabled, then the compiler should be enable to drop all the associated code at compile time. So there could be some value to keeping this as is.
+> 
+> Jon
+> 
 
-On Tue, 2026-01-06 at 10:07 -0500, Radu Rendec wrote:
-> On Tue, 2026-01-06 at 09:53 +0000, Jon Hunter wrote:
-> > On 15/12/2025 21:34, tip-bot2 for Radu Rendec wrote:
-> > > The following commit has been merged into the irq/msi branch of tip:
-> > >=20
-> > > Commit-ID:=C2=A0=C2=A0=C2=A0=C2=A0 eaf290c404f7c39f23292e9ce83b8b5b51=
-ab598a
-> > > Gitweb:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://git.kernel.=
-org/tip/eaf290c404f7c39f23292e9ce83b8b5b51ab598a
-> > > Author:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Radu Rendec <rrende=
-c@redhat.com>
-> > > AuthorDate:=C2=A0=C2=A0=C2=A0 Fri, 28 Nov 2025 16:20:55 -05:00
-> > > Committer:=C2=A0=C2=A0=C2=A0=C2=A0 Thomas Gleixner <tglx@linutronix.d=
-e>
-> > > CommitterDate: Mon, 15 Dec 2025 22:30:48 +01:00
-> > >=20
-> > > PCI: dwc: Enable MSI affinity support
-> > >=20
-> > > Leverage the interrupt redirection infrastructure to enable CPU affin=
-ity
-> > > support for MSI interrupts. Since the parent interrupt affinity canno=
-t
-> > > be changed, affinity control for the child interrupt (MSI) is achieve=
-d
-> > > by redirecting the handler to run in IRQ work context on the target C=
-PU.
-> > >=20
-> > > This patch was originally prepared by Thomas Gleixner (see Link tag b=
-elow)
-> > > in a patch series that was never submitted as is, and only parts of t=
-hat
-> > > series have made it upstream so far.
-> > >=20
-> > > Originally-by: Thomas Gleixner <tglx@linutronix.de>
-> > > Signed-off-by: Radu Rendec <rrendec@redhat.com>
-> > > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > > Link: https://lore.kernel.org/linux-pci/878qpg4o4t.ffs@tglx/
-> > > Link: https://patch.msgid.link/20251128212055.1409093-4-rrendec@redha=
-t.com
-> >=20
-> >=20
-> > With next-20260105 I am observing the following warning on the Tegra194=
-=20
-> > Jetson AGX platform ...
-> >=20
-> > =C2=A0 WARNING KERN genirq: irq_chip DW-PCI-MSI-0001:01:00.0 did not up=
-date
-> > =C2=A0=C2=A0 eff. affinity mask of irq 171
-> >=20
-> > Bisect is point to this commit. This platform is using the driver=20
-> > drivers/pci/controller/dwc/pcie-tegra194.c. Is there some default=20
-> > affinity that we should be setting to avoid this warning?
->=20
-> Before that patch, affinity control wasn't even possible for PCI MSIs
-> exposed by the dw_pci drivers. Without having looked at the code yet,
-> I suspect it's just because now that affinity control is enabled,
-> something tries to use it.
->=20
-> I don't think you should set some default affinity. By default, the PCI
-> MSIs should be affine to all available CPUs, and that warning shouldn't
-> happen in the first place. Let me test on Jetson AGX and see what's
-> going on. I'll update the thread with my findings, hopefully later
-> today.
-
-I looked at the code and tested, and the problem is that the effective
-affinity mask is not updated for interrupt redirection. The bug is not
-in this patch, but the previous one in the series [1], which adds the
-interrupt redirection framework.
-
-The warning is actually triggered when the MSI is set up. This is the
-top part of the relevant stack trace:
-  irq_do_set_affinity+0x28c/0x300 (P)
-  irq_setup_affinity+0x130/0x208
-  irq_startup+0x118/0x170
-  __setup_irq+0x5b0/0x6a0
-  request_threaded_irq+0xb8/0x180
-  devm_request_threaded_irq+0x88/0x150
-  rtw_pci_probe+0x1e8/0x370 [rtw88_pci]
-
-I don't immediately see an easy way to fix it for the generic case
-because the affinity of the=C2=A0demultiplexing IRQ (the "parent" IRQ) can
-change after the affinity of the demultiplexed IRQ (the "child" IRQ)
-has been set up. But since dw_pcie is currently the only user of the
-interrupt redirection infrastructure, and it sets up the demultiplexing
-IRQ as a chained IRQ, there is no way its affinity can change other
-than CPU hot(un)plug. And in this particular case, something as simple
-as will work:
-
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index d5c3f6ee24cc2..036641f9534ae 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1512,8 +1512,11 @@ EXPORT_SYMBOL_GPL(irq_chip_release_resources_parent)=
-;
- int irq_chip_redirect_set_affinity(struct irq_data *data, const struct cpu=
-mask *dest, bool force)
- {
- 	struct irq_redirect *redir =3D &irq_data_to_desc(data)->redirect;
-+	unsigned int target_cpu =3D cpumask_first(dest);
-+
-+	WRITE_ONCE(redir->target_cpu, target_cpu);
-+	irq_data_update_effective_affinity(data, cpumask_of(target_cpu));
-=20
--	WRITE_ONCE(redir->target_cpu, cpumask_first(dest));
- 	return IRQ_SET_MASK_OK;
- }
- EXPORT_SYMBOL_GPL(irq_chip_redirect_set_affinity);
-
-I will send this as a proper patch tomorrow, and it will fix the
-immediate problem and buy some time for a more elaborate fix for the
-generic case. Meanwhile, thanks a lot for finding/reporting this!
-
-[1] https://lore.kernel.org/all/20251128212055.1409093-2-rrendec@redhat.com=
-/
-
---=20
-Best regards,
-Radu
-
+Ack.
