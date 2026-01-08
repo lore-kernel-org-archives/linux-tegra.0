@@ -1,374 +1,328 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012026.outbound.protection.outlook.com [52.101.66.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E8023AB95
-	for <linux-tegra@vger.kernel.org>; Thu,  8 Jan 2026 15:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767887626; cv=none; b=hPLPi0l48ePJXnx9bBztvA4EK8hlJ0w0VefwccOeDjW9/7VQBQGPGPB+D0kY1Jg+u2oLs/6UiviSAbvwqOb2QI/yqGKPe+pu8DF0ZDvWUuAzBSvnmhtCTYxMJSnhsSQte0fKowXa6XFgXow+rCPwVse0k68a+YUkerrTJwDhEzE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767887626; c=relaxed/simple;
-	bh=3ZQ/nKOSWptZxT2hnkOVr8QbwM+Io0AiatFnUs1HhME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F7bUxfTPbZyjVpPqZy+KLYzYZC5dPViQCq07k407jJNmCLaAR8E71huhqoqzY1SvV6nRjNJEyjgtSSZleNQmeLrZTYXym3ChMMK9WB2Tq9VJEyYtuzXb9c1SwL7hgtAFn2YZHoAJJaLkmUlDGKSqHMQQS/cDWnRp4ccW/tzHT/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIWxddv4; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDD2500949;
+	Thu,  8 Jan 2026 16:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.26
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767890950; cv=fail; b=EWxMWPxoB3eN2k3NpVapoc09U6uiK2QDIsbPS0C2oGndazCjvqRxLuFM6l5Pzvt7xHzNqWEo2t6dtFd3+aHBSK8P5rwYJgU8uRlpTvwQ04q0rd5SAgf1BXCOtM/hsZhZ5pAnDrnNI03WgaOp72EkEGrEdtbUe0xTyMK2eq7etmI=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767890950; c=relaxed/simple;
+	bh=G6yhgby2ekXMUp8kRQw61nmRamzgh7u4oDGCYmEgfrs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=r91b9iUxwDTP9DKrPmTBrwmijXOfogp8sK1iOjJtjAxmAp08d+/ERr/E27Yxz0Tw0cXv8VEO9MU06XWParZtWdbep1+8zFJrvy//TCw+CksKPNJe8volHyYFTHWGnSTxvCpeFM6i8Mio+tp4Bf+AK6utlXarErJL99tSyTWOC6s=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=VBMQSrZr; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=VBMQSrZr; arc=fail smtp.client-ip=52.101.66.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIWxddv4"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7c6d13986f8so1676975a34.0
-        for <linux-tegra@vger.kernel.org>; Thu, 08 Jan 2026 07:53:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767887622; x=1768492422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WS4v+L5fbORHSb1TsTci/XfehGA5nJR4kwq94AjXke4=;
-        b=FIWxddv4licvx91HymuPj22Pk2WGH3pPZ5kcM2UQurh27r/ypHFCsRCNM737u2PkNj
-         1BywNFOyLkfTI9lWVmAzQYWyo4GzGyyTf7n5MU412jKqiNkvDYeWTlZkqmHLRtypDTBr
-         bBjDkjm3g4YlUn9jYnkHlsrdlnSAMUT01CHkSz8HfyOzNg+HEFASo7TDR2KbOMu5+9Pd
-         5nCH5cBH7SQpFxOGcl6ze3BJvE0ulAsOHKRcgY5MOxcuj37bTgmSpP1yeZs369ehXOv8
-         2R48zzv1ACYLfXoGCyjG3DL0QJ9gtZrXHsPin1FL2F5/epj6d7z7ufNjjiA0QoGLizat
-         Vntw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767887622; x=1768492422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WS4v+L5fbORHSb1TsTci/XfehGA5nJR4kwq94AjXke4=;
-        b=Dpm7lz1vVJf0N/gC724x9G8LUSKRb9vaqBYJg5o4bg91w/GA02UCzIJ9FI5PERGp75
-         5x1sWIjNQEVcUr+IY+Ua4EMEWa+dR1PnhAYM1vm6FvoB/E1L7SG+kemrE75o5k3hPw2Y
-         BGZgE+zguwpKWtV4DM+JTlJr1RpTtIHjnTYPwB/ebqcD34nfsACBTNm34DIHLhtFMBOs
-         MoU+XmqxZTK5yttzWEVrtdGOpUkm/Hs/T1xSt9UsPrOT6J9aze/iiV3wDhTh7eja3XXv
-         rHLJPlJzWf8SlkUGTQvFxSPxgzF74jjkgZtiSyiQYqiT9RdEFuJwNxWMa5djG16KQtu5
-         UEOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyWvfqnXFPTpSfSOGslV7z0se44PgDga/7XDY12Qv82BBxrLjLbAHcoYS6YUX0fWLmt8E1vCq56/Ya1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8+2j6nZrM4U1gDVVIoJiUPiCH7NmN3xyt0SlB2Xp8Yrv8yJPI
-	aH/fooUS8X1sVbK0pi1dWijCkR5ON4LnCxQ8sEm4+S7vLn4+Bib1DISCCMHL5Lf9oodyUTnRKv1
-	36vwIW9gliJqjIlY4htdaGxnrmZdoC6Q=
-X-Gm-Gg: AY/fxX6CBJOVHca6/U99iA5TUBelqtZgh9IOlKnZRysh438oUj1SGI/Tkm/iNmTrw9m
-	A5JIdb+eBF5kFoRp51kpLd2TjZVHohxmuMWnMSn6aNHYyPZjTnKeCSmHrCkskFlv2zGNObg4r2u
-	xPtmALx7n1lE+7buZC0X2Zp4o2XIBgTXKj6ym4OpU6/EZKNGvYb2Rfz+GQZp0VHnTRS2c8V5T9k
-	7VMMCfoeARiah1NPPej7ngzS1jQAwUQ/BJeZWYTL4fWDkzqq6T70zInJFnfZKJ0CK4y
-X-Google-Smtp-Source: AGHT+IGLMMDCosA8bDOF7Nx/VITlJVXJX+5aiGOxyv4K2+Z0zmu4wqjonFMQjgC8RoRCfLJmIxKD4JitqOjokrT1iWM=
-X-Received: by 2002:a05:6830:65c6:20b0:7c7:5ef4:a52b with SMTP id
- 46e09a7af769-7ce46cc9fbemr3983422a34.9.1767887622159; Thu, 08 Jan 2026
- 07:53:42 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="VBMQSrZr";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="VBMQSrZr"
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=OPVaik9alGB5zcb1r0M0z/fOQbML+udNDl0uroa2c/WBk1mowrHJkrb3sW6H5Is2HP7vlXqPRtnWEfzCIBRmZYm6/Ga+0Ij/Em5+NAq3SZRKWg2APJDX1wW4nOPmSKk8UgT4sDJHSKX3nHmny48A7AR/xRzPN4ooOsZkMOZNR9s7gZatTm9CjVE0n8RnVIUwQ39zu7tEPOkCjdKHSzQUJfKMMOdq6AUmGtP7y+SUwXLD/JCvP4721OcSHph5h1btvUw9izCwpwcBdZxTau7ZuzdrnS1b1qfyGVMDrXP4ePRU+IRtyBUQisE1i9upZYZAu0vM+ga4ukRtpsn+hQM+Og==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D05YHSka1StVM3jnM9rqEBsBB80HKJAyNE6esd7FbDo=;
+ b=mfov6n0/zO/oxTN/oDr4VoGfDGBW0c4/vDBBECSqAGy5S+Wm6RUWKcBY+JANZFUx/hVtehvH8HKDFyK7KvN7WvsTCgn6unSlsJfzWo6QZMs/jN9owvqslM1X5vPJzK6Na6tXDPHQlQfhm5ThAiueTg25WI4IRgn7GX81jx3hNUg5NOo93l3x2KJkdc9jww61iAGdqDEAzp7WNjwLDpuSH0Dfk4LFNwomCCoptnnqn5p5ejk7HdT2/E91KOQvzBfYbSbCRCa82lbLjBXKnrpdxOOdMu+Yjyd3TEjPDTSlvEYxajblz019v87KcfVX5UC4Bnc13DHMt33md21wohyP6A==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=nvidia.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D05YHSka1StVM3jnM9rqEBsBB80HKJAyNE6esd7FbDo=;
+ b=VBMQSrZriRdJTq4m/twhq/AUXw00B85FPLO4r3rmwVWmaJpQnr2mmehBTDMp38GpypIHvLDXmuoIXr0A0gXA4vUhr7RUuIR0I7v7GA1mTX7lDonUAUxOrLO8xWW4V0U8gWZQ+DSu1izzEpNQw9JxQiH+HQEM32ha7TeSrdV7gAk=
+Received: from DU2P251CA0020.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:230::29)
+ by DB9PR08MB6684.eurprd08.prod.outlook.com (2603:10a6:10:26d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Thu, 8 Jan
+ 2026 16:47:49 +0000
+Received: from DB1PEPF00039233.eurprd03.prod.outlook.com
+ (2603:10a6:10:230:cafe::d4) by DU2P251CA0020.outlook.office365.com
+ (2603:10a6:10:230::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.2 via Frontend Transport; Thu, 8
+ Jan 2026 16:47:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF00039233.mail.protection.outlook.com (10.167.8.106) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9520.1
+ via Frontend Transport; Thu, 8 Jan 2026 16:47:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NPck8azfBpwWTtiarV68hVh8RTMbFI/7FLmMZxMilYaQEbIOxWHyvKL+5niUTKsjQKCHn3lhX6u4d4QeZDFQGRpBhRFBdv+ABKuiPYH69JNV10+QeWC9h7H2iecF0SbRdCIId4XtLTAhN5iHivwJ/Erqkls29nDmY75tOITr30RnTRSp2TAc0vPHwKJGlthdYzg02RfSbBYqIQDp9YlYMjZO76Ks14GAhFixp6L02NKAa4bzpMZJ6/v/n9XhfkS0/i90i4ExLu+mF8q37ewxc/ZFv0mgDkDCSsS/T8CrIdrqfx76QGjplAwrUl+Ua4UABWZQXJCoSUmneSntphnL9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D05YHSka1StVM3jnM9rqEBsBB80HKJAyNE6esd7FbDo=;
+ b=CKDjtSPKodtPjpkGG5ZOEru5V9sPogFjxLZh4WgDPUkR4kc3jgd638ALDEPHdDSWQNO764XH9Ql3zyaVtIvqc/ktHvgz1t9Fj/PDGVT1lL2ik/B7J90MzZ42tWjUc2ZPMxq0j8uIY5I/VZoJWTEgpVOSTB+ygqUMgYNLmCxBWwlEQHsmj7g+xnIM4N4SP9cJWgRMyh2zrjtcQx2aRTLNa1qKHvIP8hlFiqxREgcWr4e8noomMp/q4nLydaBnZHKWY8lGSYirSgqXgjcnZIW6jEnqlkXCeM7DYavyG9xPXTsK6gnwvEutejI1psZDQSDd2K9ZdG3rtPLKSfKcCLw0lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D05YHSka1StVM3jnM9rqEBsBB80HKJAyNE6esd7FbDo=;
+ b=VBMQSrZriRdJTq4m/twhq/AUXw00B85FPLO4r3rmwVWmaJpQnr2mmehBTDMp38GpypIHvLDXmuoIXr0A0gXA4vUhr7RUuIR0I7v7GA1mTX7lDonUAUxOrLO8xWW4V0U8gWZQ+DSu1izzEpNQw9JxQiH+HQEM32ha7TeSrdV7gAk=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from VI0PR08MB10391.eurprd08.prod.outlook.com (2603:10a6:800:20c::6)
+ by GV2PR08MB11255.eurprd08.prod.outlook.com (2603:10a6:150:2f7::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Thu, 8 Jan
+ 2026 16:46:43 +0000
+Received: from VI0PR08MB10391.eurprd08.prod.outlook.com
+ ([fe80::fa6b:9ba8:5c2f:ac91]) by VI0PR08MB10391.eurprd08.prod.outlook.com
+ ([fe80::fa6b:9ba8:5c2f:ac91%4]) with mapi id 15.20.9499.002; Thu, 8 Jan 2026
+ 16:46:43 +0000
+Message-ID: <ed9015a3-42b5-4c0e-af6f-2b4d65c34cd5@arm.com>
+Date: Thu, 8 Jan 2026 17:46:40 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/11] cpufreq: CPPC: make scaling_min/max_freq
+ read-only when auto_sel enabled
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, zhenglifeng1@huawei.com
+Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, ray.huang@amd.com,
+ corbet@lwn.net, robert.moore@intel.com, lenb@kernel.org,
+ acpica-devel@lists.linux.dev, mario.limonciello@amd.com,
+ rdunlap@infradead.org, linux-kernel@vger.kernel.org, gautham.shenoy@amd.com,
+ zhanjie9@hisilicon.com, ionela.voinescu@arm.com, perry.yuan@amd.com,
+ linux-doc@vger.kernel.org, linux-acpi@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
+ sanjayc@nvidia.com, nhartman@nvidia.com, bbasu@nvidia.com
+References: <20251223121307.711773-1-sumitg@nvidia.com>
+ <20251223121307.711773-11-sumitg@nvidia.com>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <20251223121307.711773-11-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PR3P189CA0003.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:102:52::8) To VI0PR08MB10391.eurprd08.prod.outlook.com
+ (2603:10a6:800:20c::6)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251217104744.184153-1-jonathanh@nvidia.com> <CALHNRZ8syS6F9W1ovw2Y-jkspQafCnLy0ynocn0sMLurShHnbA@mail.gmail.com>
- <CALHNRZ_vkw6Ns=PMa+x0SY64+Ov0FeA5tMKJr+-tY9_OasKUog@mail.gmail.com>
- <aUPsDeFmxAJ09Tk7@orome> <CALHNRZ_vjSy+A8ZW7E1A4B5yQJ=GgvbNmafU7gjtGv-xjdfhPg@mail.gmail.com>
- <0ed3d270-b0be-4431-8a46-a7eea29598f4@nvidia.com> <CABr+WTnyKz7y-KKv6yQOfPWDf4iB2MarcQPetZ+OT1=3WqdH5A@mail.gmail.com>
- <CALHNRZ9JTMEWy8qgfPiZOPbOC3BdK8UbB01ghG+jC7+DsQS8Xg@mail.gmail.com>
-In-Reply-To: <CALHNRZ9JTMEWy8qgfPiZOPbOC3BdK8UbB01ghG+jC7+DsQS8Xg@mail.gmail.com>
-From: Nicolas Chauvet <kwizart@gmail.com>
-Date: Thu, 8 Jan 2026 16:53:31 +0100
-X-Gm-Features: AZwV_QhI0yrxQbwxrBRHJ_YAR1z1X-9R5ewF7lHxSG4eqy1N-2WYaJz7ZZZvknw
-Message-ID: <CABr+WT=2u0W-gLarOo7nQj5=CURw+7r2rFfiBTJGUOHz51p3+w@mail.gmail.com>
-Subject: Re: [PATCH] Revert "arm64: tegra: Add interconnect properties for Tegra210"
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-TrafficTypeDiagnostic:
+	VI0PR08MB10391:EE_|GV2PR08MB11255:EE_|DB1PEPF00039233:EE_|DB9PR08MB6684:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1bd78bf-5ea9-4f1e-718f-08de4ed5a7c3
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|10070799003|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?NkxxS2ROb1BIbE8yb0I5aloyck5GOFBRZUE4aHJFajlia0szWEo4Zmh5UTV3?=
+ =?utf-8?B?b0tUUURYQks1S0pUUUNPd1lOcHllMHdWM3kzbEhqWVBJSTBzVVY2aEtnY0dU?=
+ =?utf-8?B?WUtzT3RnY2NtK1gvc1preUFjRFpkWlRyUSs4b1gyLzR0SUVGMVhhVVE4ZDhy?=
+ =?utf-8?B?OExMeGEvd3NNTm05Vm1Md3pVY3FqR1ZNSzJzejhsbFBQMUhkY1ducDVKWDhF?=
+ =?utf-8?B?dkZJRVZ5NDRyTUU0aS9DWUxhNy90NVd6WWxpeklCS3M3alZPeTNsL3ZBS243?=
+ =?utf-8?B?bHVYaDU5d0ZpbzliN0VLQVB1dG9BcmlwaVBCMi9iNFpXUUtUZGdSS0NhQVlY?=
+ =?utf-8?B?dmY5UDZGWloyTlBUM1pCVXh4QUhSOVlLSW1wcnIyd09vdDBGSlBoVmtEcGVy?=
+ =?utf-8?B?MFg4U214V2Zoakt3c3o5REZrRDVYQy85eHlKUCtCdi9SeDdCeURCVUEvekZ1?=
+ =?utf-8?B?SmpCMEdOQjBCUGY0VCtHN2tqWTF5eEZPck9BQTVZSnl6N05xamlKdHZBaUtJ?=
+ =?utf-8?B?eHlEU1BDamY0VVJjYk9rMjAzK2xhUUJlRmJOcXNWZy9OUEJuQzJNK0xFajc4?=
+ =?utf-8?B?Z3VmSkVVUVphR2hTSVdqUThMUDQ0YUxJeCs3Z1I0NzE2NUZVZUpqaDQ1VFVY?=
+ =?utf-8?B?eFU5RVArdUFqeS8xQ2FKY2dxYXpuQnRxZ2VVd1o2NkxaUnZUdVgwc0JScGZi?=
+ =?utf-8?B?bzVNazZiODBTYlZYd1d0czVzclg2M3hUN3BxVUR5SnNlaklBY1VNYTMwZmRv?=
+ =?utf-8?B?NDdISG1CVStLc0h6dmx1RUU0N3NVdXZvQlpZelNWelFMVWVSQi8xU0Y1WVMz?=
+ =?utf-8?B?aEhHeTFxR3ZreDlJUTFYUDdnRmRUUXhuYWdvckYxd1NFM1JSY1ErK0pQZmd0?=
+ =?utf-8?B?SVJVY1oybUhwU1czQy9iWWQwdEtTb1BYU1N6K2ZqZXBKRG95L3JFTlRPWE91?=
+ =?utf-8?B?VDFXWU1aMmpCb0lSVVQrZ25yV1JEWVJjcjgvS0VTOHBsQjdLVG9JQXRHTm9j?=
+ =?utf-8?B?bCswRVNNd2R2elBWQjZrbFBZUjVPZVF2SVNsRW9vT1VIcm1uS0w2eDN3V0hU?=
+ =?utf-8?B?RVkyeEkrNHhUSUVSN1I0YUxndDJodVJydXlZSmZNZFEza1pLbHd3RWtHcG04?=
+ =?utf-8?B?UXhPeWZZRkVPc3JGU2ZadnBta1cramREQ1JiWHA4TU4rakdaOTIydVdkWlVs?=
+ =?utf-8?B?YmY5UVA2ZHk4c0Z4ZnZ0R0NZZE1zNzlqdTBsSFNHbC9UK1hGZkNTU0J3QVJ3?=
+ =?utf-8?B?bGRYZVZ6dEtGdjNTT0QrTzlEOSt3Rkh1eWd1MDdpWnZTVGp2R0ZETHhPbVFG?=
+ =?utf-8?B?S1JDdFlobXBKZ21OVXRpVXkyZDJJaDAyQjBqMWIvWi9nSW1ZbjFOaHRnbkQx?=
+ =?utf-8?B?ZnExbUFzaVc5d0p3S2IvSjhqYWpQZStDem4ydWVMTkVNTXZzaFdYS1pkMGJR?=
+ =?utf-8?B?WTZmUUttR3h1WklCWk1tQkI4R1dDM0R4QlpYK0RlYVBmcVdrT242eGx0bStF?=
+ =?utf-8?B?RGNYTFVxa2dWZGM1akVaNzRMODlJQS9tN0lIcENVVWFiekRGWk5wTzIyNXJB?=
+ =?utf-8?B?SVd4K1RINm9BaDBRMCsra1dkTUwvMk9sUUhiM0NyVHY4a0Fqdkgwck9tR21L?=
+ =?utf-8?B?djREYmZJRUxQb1dxa04xQ3l4V0VDTExYUXVNZURDZnZhaUxlUER4bVRRT28w?=
+ =?utf-8?B?OVpkaGlLTEZrSHVOZzZlOHNFUk9hU3FuOFNjVXlwTGVrOGZQSkdJWk1NNWN6?=
+ =?utf-8?B?S0NhZ044TFdudCtEekVPcUwwVVdQTDhMdXVCL1pBbmJXZ0VjQytDMXQrazIv?=
+ =?utf-8?B?NWZKQXBvTjJqa1RjM1FOT1FuaGhSSmR3Rnkwblp1N01qMkpIdFJHODQ5SWd5?=
+ =?utf-8?B?NmNJK2labHNrM0RvRGpxTUg0aWFJTHRGNmlYbGlBSWwxcHRFMkg5MGJBYUdT?=
+ =?utf-8?Q?ogHY2RiAhB6pIDvgrEtJ6cawXagqL/HG?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB10391.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB11255
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF00039233.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	33a4afc7-0654-430d-224e-08de4ed580a8
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|35042699022|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cEl5MWtjMTBCYUJSaWFNSExpb2pEbzc3eGZhM3dBckhNZ0poL2VITXJpQWpP?=
+ =?utf-8?B?MkF0U2JjaTc4U25hdWtiU3c2T2dHT2ZtbDZOcVJzYlE2WUozQXhCR0FNTy9t?=
+ =?utf-8?B?akxFWjBONEk4cU0rVVpJZkZrc0tweWxDWmpBWUlyZjB0dTRPejVIU3RxZ0VI?=
+ =?utf-8?B?ZXp5L3JHbWVubmJWYUdSSU1vbjE1UzRSYzNWRTZUVGlnMXBSUTdzeWw0ZHpt?=
+ =?utf-8?B?blhpcVRHeFlIYVgwR2wzbUVkWnVVZDMwdHl3bWgzeUxDYXlDT2dDcnFoTktr?=
+ =?utf-8?B?NFZ1RjhzOVhZb0krT0N4MU9lUWVrQ2tmRGxXRjQvQW0wY0R0STY4anVaUEE4?=
+ =?utf-8?B?bW5nZUV3MkVYV2RtOGhPQWRtaHF1QmV3akNVQjMvNThwbVg4ZHNwUm04NERS?=
+ =?utf-8?B?UGdWVVRPc2hWejNJeEdlVDF5MGpsbUliTDRrdU0vNE8weUcyb2g4UWFJMThY?=
+ =?utf-8?B?QndhWVpyL1ZtMEZXV1ZROHE0VkZXYWV0ankxTEh5TUtSSVMrOXRvZG5KTkkx?=
+ =?utf-8?B?Sk9xMEc2SW9LeWsxdDhlZU9hdFZKRlFWdzk5WDJvWTNGc0xzNi9kUWJIMlBD?=
+ =?utf-8?B?ZFhtVlQrOUo0djcvMUhBOHJ5K2J2QnNBTUlwdmhhWE1GVGhXQUtsWnBjdDdH?=
+ =?utf-8?B?cHQyY0hSMzZqVUZFRDhFZm9VbkZlaVNvL2JRNlNWN0prSSsxdC8wOHQyL2FF?=
+ =?utf-8?B?VEhFSExZSGVzNHhIOEgzaTJXU2djV0F2MnpqTjY1SmxvQ3FteGZJbmxpVWhr?=
+ =?utf-8?B?SXliaEM0N2ZjT2lpRUdSMjhoeHR1Rmh3OHJzY0NGRUFSWEFYSWpWNHFGZzFL?=
+ =?utf-8?B?eWxlMmtoa0hqSkQwWnliTzAyWG5kWGI2R3lyV0JhTFRpcm5JdGhSOFZaSFp4?=
+ =?utf-8?B?cW5pSnc5OFVPcmFROHU5QjBDMFcvME9aYzZVZjBDc29zc3VXMTZNTlcxWDZz?=
+ =?utf-8?B?eE43Y0NtVThOMzk3UGZtOWZEUnJVNkhkQXliT0ZlcnpGbDdNaGxteGZPMXlI?=
+ =?utf-8?B?aEIrQzJlMHNGQkN1ZFpNVUluVE96ZHhlbEpMT1l6VjFtZVVMN29UVnp2bkJW?=
+ =?utf-8?B?bHBsb0pKTHNET25LazBQaW5PWUxaeG15eWJydWYrM3RBejh0QTYvMGZQYUIz?=
+ =?utf-8?B?ZFI3bVVQcjIyZkY5NW1HWEsyYW9iNUdFdG9GY1pscDBMQm82OEdkcEZPZW9s?=
+ =?utf-8?B?SHEzUTN4YlljeGtsNklHQW9PSVJHcjQraUE4dytQbDF1Q2cyVEY3RFZta01k?=
+ =?utf-8?B?VnFpK0RFd1lxbzlVS3JLVm9lWC9QOTlNeUFEemF0dWU2WVlCQlk0SWdlMTRD?=
+ =?utf-8?B?d3RjeW1LVDR4YlVqZjRlVXpRazYzT0cxYWs5VlpMVHNOTjFlQ0pXU3RCVGZM?=
+ =?utf-8?B?ejRaQmU1OVBxMCt4bXJLbTFjMkVSVGVUaHFuSmlOdzJ0Qk4vZUxXVHNKUm9Y?=
+ =?utf-8?B?d3cxUlhzUkxXMVJFRVFXSmdudDY2N1N3K09NMnR2eWZud2JXc2JiOWh6ZzNC?=
+ =?utf-8?B?b3A0cHlLVXZUQ0FEbUJ0OTdLSStuZDhKUG91dmdqdHBYVy9tZDZmZS83VjhO?=
+ =?utf-8?B?YzNSZUdGK0V5SktqUWlwSE9pUWcvZUhDL1NnRUFkQ2xpT0t1VXhhbHpVVWhh?=
+ =?utf-8?B?d3lCZU05U0VieGxHZGYvUVZJRUZJYnVIUHFCa0w2YzE5TkV1MlBTT1djL1pS?=
+ =?utf-8?B?THNjYTV3NDNNUHR4WUlEOXB1Tm1Wa2NPOVExUTZRUmN0a2xrMndSZDN3cTNM?=
+ =?utf-8?B?ME96TDB4ci95RlZhQkhGOERDWUhCRkpndnd0Y0lpM2VtL21POFNKMk91VnQ1?=
+ =?utf-8?B?T1F0OGorSm9hYlFUVkd4T3pyK2xZYXE4UHFSZk5LTlFsYUZ0eU9Gb21JcW9C?=
+ =?utf-8?B?dXdGWHRVRDloSjdtT3VReG9BeE1Cb1RRTWp5MWJlVG45OS91M1JQVkJEQUFa?=
+ =?utf-8?B?bkJCOTY4R010cThHMTE2UE91RCtSbzVrbnhlSE1tRTlFTmVkSjZDK2NDU0Np?=
+ =?utf-8?B?L2NGWkJwS2YwT2RZRXEwa25SeEFCTThFKys2WHRPdVhYRVVQRnNTUVpnak1o?=
+ =?utf-8?B?RnZEVlJnNVlmWmYzSHBTTG1lelJ2WU1oU0dMdFFadUVheTU4N2xCMkkrS01X?=
+ =?utf-8?Q?+1Ss=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(35042699022)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 16:47:48.1713
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1bd78bf-5ea9-4f1e-718f-08de4ed5a7c3
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF00039233.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6684
 
-Le mer. 7 janv. 2026 =C3=A0 20:50, Aaron Kling <webgeek1234@gmail.com> a =
-=C3=A9crit :
+Hello Sumit, Lifeng,
+
+On 12/23/25 13:13, Sumit Gupta wrote:
+> When autonomous selection (auto_sel) is enabled, the hardware controls
+> performance within min_perf/max_perf register bounds making the
+> scaling_min/max_freq effectively read-only.
+
+If auto_sel is set, the governor associated to the policy will have no 
+actual control.
+
+E.g.:
+If the schedutil governor is used, attempts to set the
+frequency based on CPU utilization will be periodically
+sent, but they will have no effect.
+
+The same thing will happen for the ondemand, performance,
+powersave, userspace, etc. governors. They can only work if
+frequency requests are taken into account.
+
+------------
+
+This looks like the intel_pstate governor handling where it is possible
+not to have .target() or .target_index() callback and the hardware is in
+charge (IIUC).
+For this case, only 2 governor seem available: performance and powersave.
+
+------------
+
+In our case, I think it is desired to unload the scaling governor 
+currently in
+use if auto_sel is selected. Letting the rest of the system think it has 
+control
+over the freq. selection seems incorrect.
+I am not sure what to replace it with:
+-
+There are no specific performance/powersave modes for CPPC.
+There is a range of values between 0-255
+-
+A firmware auto-selection governor could be created just for this case.
+Being able to switch between OS-driven and firmware driven freq. selection
+is not specific to CPPC (for the future).
+However I am not really able to say the implications of doing that.
+
+------------
+
+I think it would be better to split your patchset in 2:
+1. adding APIs for the CPPC spec.
+2. using the APIs, especially for auto_sel
+
+1. is likely to be straightforward as the APIs will still be used
+by the driver at some point.
+2. is likely to bring more discussion.
+
+
+> Enforce this by setting policy limits to min/max_perf bounds in
+> cppc_verify_policy(). Users must use min_perf/max_perf sysfs interfaces
+> to change performance limits in autonomous mode.
 >
-> On Mon, Jan 5, 2026 at 2:27=E2=80=AFPM Nicolas Chauvet <kwizart@gmail.com=
-> wrote:
-> >
-> > Le ven. 19 d=C3=A9c. 2025 =C3=A0 11:59, Jon Hunter <jonathanh@nvidia.co=
-m> a =C3=A9crit :
-> > >
-> > >
-> > >
-> > > On 18/12/2025 19:07, Aaron Kling wrote:
-> > > > On Thu, Dec 18, 2025 at 6:00=E2=80=AFAM Thierry Reding <thierry.red=
-ing@gmail.com> wrote:
-> > > >>
-> > > >> On Wed, Dec 17, 2025 at 02:42:58PM -0600, Aaron Kling wrote:
-> > > >>> On Wed, Dec 17, 2025 at 12:20=E2=80=AFPM Aaron Kling <webgeek1234=
-@gmail.com> wrote:
-> > > >>>>
-> > > >>>> On Wed, Dec 17, 2025 at 4:48=E2=80=AFAM Jon Hunter <jonathanh@nv=
-idia.com> wrote:
-> > > >>>>>
-> > > >>>>> Commit 59a42707a094 ("arm64: tegra: Add interconnect properties=
- for
-> > > >>>>> Tegra210") populated interconnect properties for Tegra210 and t=
-his is
-> > > >>>>> preventing the Tegra DRM driver from probing successfully. The =
-following
-> > > >>>>> error is observed on boot ...
-> > > >>>>>
-> > > >>>>>   drm drm: failed to initialize 54240000.dc: -517
-> > > >>>>>
-> > > >>>>> For now revert this change, until a fix is available.
-> > > >>>>>
-> > > >>>>> Fixes: 59a42707a094 ("arm64: tegra: Add interconnect properties=
- for Tegra210")
-> > > >>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > >>>>> ---
-> > > >>>>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ---------------=
----------
-> > > >>>>>   1 file changed, 24 deletions(-)
-> > > >>>>>
-> > > >>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/ar=
-m64/boot/dts/nvidia/tegra210.dtsi
-> > > >>>>> index 709da31d5785..137aa8375257 100644
-> > > >>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > > >>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > > >>>>> @@ -202,19 +202,6 @@ dc@54200000 {
-> > > >>>>>
-> > > >>>>>                          nvidia,outputs =3D <&dsia &dsib &sor0 =
-&sor1>;
-> > > >>>>>                          nvidia,head =3D <0>;
-> > > >>>>> -
-> > > >>>>> -                       interconnects =3D <&mc TEGRA210_MC_DISP=
-LAY0A &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-Y0B &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-Y0C &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-YHC &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-YD &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-YT &emc>;
-> > > >>>>> -                       interconnect-names =3D "wina",
-> > > >>>>> -                                            "winb",
-> > > >>>>> -                                            "winc",
-> > > >>>>> -                                            "cursor",
-> > > >>>>> -                                            "wind",
-> > > >>>>> -                                            "wint";
-> > > >>>>>                  };
-> > > >>>>>
-> > > >>>>>                  dc@54240000 {
-> > > >>>>> @@ -230,15 +217,6 @@ dc@54240000 {
-> > > >>>>>
-> > > >>>>>                          nvidia,outputs =3D <&dsia &dsib &sor0 =
-&sor1>;
-> > > >>>>>                          nvidia,head =3D <1>;
-> > > >>>>> -
-> > > >>>>> -                       interconnects =3D <&mc TEGRA210_MC_DISP=
-LAY0AB &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-Y0BB &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-Y0CB &emc>,
-> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
-YHCB &emc>;
-> > > >>>>> -                       interconnect-names =3D "wina",
-> > > >>>>> -                                            "winb",
-> > > >>>>> -                                            "winc",
-> > > >>>>> -                                            "cursor";
-> > > >>>>>                  };
-> > > >>>>>
-> > > >>>>>                  dsia: dsi@54300000 {
-> > > >>>>> @@ -1052,7 +1030,6 @@ mc: memory-controller@70019000 {
-> > > >>>>>
-> > > >>>>>                  #iommu-cells =3D <1>;
-> > > >>>>>                  #reset-cells =3D <1>;
-> > > >>>>> -               #interconnect-cells =3D <1>;
-> > > >>>>>          };
-> > > >>>>>
-> > > >>>>>          emc: external-memory-controller@7001b000 {
-> > > >>>>> @@ -1066,7 +1043,6 @@ emc: external-memory-controller@7001b000 =
-{
-> > > >>>>>                  nvidia,memory-controller =3D <&mc>;
-> > > >>>>>                  operating-points-v2 =3D <&emc_icc_dvfs_opp_tab=
-le>;
-> > > >>>>>
-> > > >>>>> -               #interconnect-cells =3D <0>;
-> > > >>>>>                  #cooling-cells =3D <2>;
-> > > >>>>>          };
-> > > >>>>>
-> > > >>>>> --
-> > > >>>>> 2.43.0
-> > > >>>>>
-> > > >>>>
-> > > >>>> A little bit of documentation on this, should someone read the l=
-ist to
-> > > >>>> see what happened. The original report of the failure is here [0=
-] and
-> > > >>>> only occurred when the tegra210-emc driver fails to probe. After=
- this
-> > > >>>> report, the related code change [1] to tegra210-emc which regist=
-ers
-> > > >>>> the driver to icc was silently dropped from -next, but these dt
-> > > >>>> changes remained. So now these interconnect routes do cause tegr=
-a-drm
-> > > >>>> to universally fail on tegra210.
-> > > >>>>
-> > > >>>> Aaron
-> > > >>>>
-> > > >>>> [0] https://lore.kernel.org/all/56aed0ec-b104-4612-8901-3f6f95e0=
-afab@nvidia.com/
-> > > >>>> [1] https://lore.kernel.org/all/20251027-t210-actmon-p2-v6-1-1c4=
-bd227d676@gmail.com/
-> > > >>>
-> > > >>> There may be another option here. I'm beginning to think there wi=
-ll
-> > > >>> not be any way to set the icc routes for the dc's while the emc d=
-river
-> > > >>> can fail to probe. The next best thing looks to be just dropping =
-the
-> > > >>> interconnect nodes from the dc nodes and leaving the rest of the
-> > > >>> original commit in place. Then reland the tegra210-emc driver cha=
-nge.
-> > > >>> This should put the no-emc case back to where it was, while allow=
-ing
-> > > >>> actmon to do its scaling when emc is available. And I will move t=
-o the
-> > > >>> dc icc routes to downstream dt's, where I tightly control that em=
-c is
-> > > >>> available.
-> > > >>>
-> > > >>> Does this sound reasonable? If so, I will go stage the changes an=
-d
-> > > >>> verify that it works as intended.
-> > > >>
-> > > >> Let's go with the revert for now, since that clearly documents whe=
-re
-> > > >> things go wrong and it can be easily reapplied once the root cause=
- has
-> > > >> been resolved.
-> > > >>
-> > > >> It's a bit unfortunate that we don't have a way of making these
-> > > >> interconnect properties optional. If EMC fails to probe for whatev=
-er
-> > > >> reason, I think the assumption should be that it doesn't do any dy=
-namic
-> > > >> scaling of the EMC frequency and hence the entire ICC stuff isn't =
-needed
-> > > >> and should just be no-ops.
-> > > >>
-> > > >> On the other hand, other than the patches getting reverted, there'=
-s
-> > > >> really no good reason for the EMC driver to fail to provide them, =
-hence
-> > > >> I think once that's been restored we can apply this again and then=
- that
-> > > >> should be the end of it.
-> > > >
-> > > > Except that the tegra210-emc driver fails to probe at all if the
-> > > > bootloader does not copy reserved-memory table node? Which per Jon,
-> > > > the Nvidia regression bench does not do. And neither will a normal =
-L4T
-> > > > install using a mainline kernel and dt via extlinux or u-boot. I ha=
-ve
-> > > > to put the mainline kernel on DTB and use a kernel in an android bo=
-ot
-> > > > image, which causes nvtboot-cpu to set the dt table reserved memory
-> > > > node directly. Which is perfectly fine for my android use case, but
-> > > > not so much for anyone just trying to boot a Linux distro.
-> > >
-> > > I am lost. I was not able to follow the above. Our current testing
-> > > simply boots the upstream kernel + upstream DTB.
-> >
-> > With this revert, I have tegra drm back on 6.19-rc4 kernel.
-> >
-> > But I also have this error that did not appear on 6.18:
-> > "tegra210-emc 7001b000.external-memory-controller: failed to get
-> > nominal EMC table: -19"
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>   drivers/cpufreq/cppc_cpufreq.c | 32 +++++++++++++++++++++++++++++++-
+>   1 file changed, 31 insertions(+), 1 deletion(-)
 >
-> I'm not sure what between 6.18 and -next would change this. I would
-> expect your setup to see this on older kernel versions too. Does the
-> emc driver fully probe and does scaling work for you on 6.18?
->
-> > My boot flow is the latest L4T 32.7.6, upstream U-Boot 2025.01 and EFI =
-boot.
-> > U-Boot mentions:
-> > Found DTB: nvidia/tegra210-p2371-2180.dtb
-> > copying carveout for /host1x@50000000/dc@54200000...
-> > copying carveout for /host1x@50000000/dc@54240000...
-> > copying carveout for /external-memory-controller@7001b000..
-> >
-> > That said, comparing in-tree dtb and runtime only shows few diffs.
-> > (are more changes expected ?)
-> >
-> > dtdiff /boot/dtbs/nvidia/tegra210-p2371-2180.dtb /proc/device-tree
-> > --- /dev/fd/63    2026-01-05 21:20:39.956415634 +0100
-> > +++ /dev/fd/62    2026-01-05 21:20:39.956415634 +0100
-> > @@ -2207,6 +2207,12 @@
-> >      };
-> >
-> >      chosen {
-> > +        bootargs =3D "BOOT_IMAGE=3D(hd0,msdos2)/vmlinuz-arm64
-> > root=3DUUID=3D9bdc914f-f5c9-42cb-a4e9-9f3387f8d480 ro
-> > rootflags=3Dsubvol=3Droot console=3DttyS0,115200 selinux=3D0 fbcon=3Dro=
-tate:3";
-> > +        linux,uefi-mmap-desc-size =3D <0x28>;
-> > +        linux,uefi-mmap-desc-ver =3D <0x01>;
-> > +        linux,uefi-mmap-size =3D <0x528>;
-> > +        linux,uefi-mmap-start =3D <0x00 0xfb568068>;
-> > +        linux,uefi-system-table =3D <0x00 0xfed2bf80>;
-> >          stdout-path =3D "serial0:115200n8";
-> >
-> >          framebuffer {
->
-> For emc scaling to work with the current tegra210-emc driver, a
-> memory-region property needs added by the bootloader to
-> external-memory-controller@7001b000, pointing to emc-table regions
-> that it added to the reserved-memory node.
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index b1f570d6de34..b3da263c18b0 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -305,7 +305,37 @@ static unsigned int cppc_cpufreq_fast_switch(struct cpufreq_policy *policy,
+>   
+>   static int cppc_verify_policy(struct cpufreq_policy_data *policy)
+>   {
+> -	cpufreq_verify_within_cpu_limits(policy);
+> +	unsigned int min_freq = policy->cpuinfo.min_freq;
+> +	unsigned int max_freq = policy->cpuinfo.max_freq;
+> +	struct cpufreq_policy *cpu_policy;
+> +	struct cppc_cpudata *cpu_data;
+> +	struct cppc_perf_caps *caps;
+> +
+> +	cpu_policy = cpufreq_cpu_get(policy->cpu);
+> +	if (!cpu_policy)
+> +		return -ENODEV;
+> +
+> +	cpu_data = cpu_policy->driver_data;
+> +	caps = &cpu_data->perf_caps;
+> +
+> +	if (cpu_data->perf_ctrls.auto_sel) {
+> +		u32 min_perf, max_perf;
+> +
+> +		/*
+> +		 * Set policy limits to HW min/max_perf bounds. In autonomous
+> +		 * mode, scaling_min/max_freq is effectively read-only.
+> +		 */
+> +		min_perf = cpu_data->perf_ctrls.min_perf ?:
+> +			   caps->lowest_nonlinear_perf;
+> +		max_perf = cpu_data->perf_ctrls.max_perf ?: caps->nominal_perf;
+> +
+> +		policy->min = cppc_perf_to_khz(caps, min_perf);
+> +		policy->max = cppc_perf_to_khz(caps, max_perf);
 
-Okay, I got what was the issue on my side, my grub loader entry had a
-"devicetree /dtbs/nvidia/tegra210-p2371-2180.dtb" line that prevented
-for my self compiled kernel to have the trained emc-tables and other
-options from bootloader.
+policy->min/max values are overwritten, but the governor which is 
+supposed to use them to select the most fitting frequency will be 
+ignored by the firmware I think.
 
-Also I had to point the /boot/dtb symlink to /boot/dtbs where my
-kernel installed dtbs are located. Now the fedora grub loads the more
-recent dtb everywhere (which is a separate issue).
-
-Now I had the training table rights:
-See also:
-dtdiff /boot/dtbs/nvidia/tegra210-p2371-2180.dtb /proc/device-tree
-....
-@@ -2355,6 +2364,8 @@
-                clocks =3D <0x03 0x39>;
-                compatible =3D "nvidia,tegra210-emc";
-                interrupts =3D <0x00 0x4e 0x04>;
-+               memory-region =3D <0x17b 0x17c>;
-+               memory-region-names =3D "nominal", "derated";
-                nvidia,memory-controller =3D <0x0d>;
-                operating-points-v2 =3D <0x35>;
-                phandle =3D <0x16>;
-@@ -3270,7 +3281,7 @@
-
-        memory@80000000 {
-                device_type =3D "memory";
--               reg =3D <0x00 0x80000000 0x01 0x00>;
-+               reg =3D <0x00 0x80000000 0x00 0x7ee00000 0x01 0x00 0x00
-0x7f200000>;
-        };
-
-        mipi@700e3000 {
-@@ -5664,6 +5675,18 @@
-                #size-cells =3D <0x02>;
-                ranges;
-
-+               emc-table@83400000 {
-+                       compatible =3D "nvidia,tegra210-emc-table";
-+                       phandle =3D <0x17b>;
-+                       reg =3D <0x00 0x83400000 0x00 0x10000>;
-+               };
-+
-+               emc-table@83410000 {
-+                       compatible =3D "nvidia,tegra210-emc-table";
-+                       phandle =3D <0x17c>;
-+                       reg =3D <0x00 0x83410000 0x00 0x10000>;
-+               };
-+
-                framebuffer@92cb5000 {
-                        iommu-addresses =3D <0xec 0x00 0x92cb5000 0x00 0x80=
-0000>;
-                        phandle =3D <0x17>;
+> +	} else {
+> +		cpufreq_verify_within_limits(policy, min_freq, max_freq);
+> +	}
+> +
+> +	cpufreq_cpu_put(cpu_policy);
+>   	return 0;
+>   }
+>   
