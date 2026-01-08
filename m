@@ -1,387 +1,374 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011039.outbound.protection.outlook.com [40.107.208.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A68474BF6;
-	Thu,  8 Jan 2026 14:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767883127; cv=fail; b=Lo60ZktueS2MxETUHoCLc+mvb674HozS3FiiDbQjwz0llGrBFdt6gtsNtoZBD2BJGFUUcMZAKjI4qq3jzFxdCNyNJR31yGOcUuydlFV4rKif25xLI3/zrrkgTewV461Xsv+Dfm01tb6I+J0ynt6I+sEesVpOOEnQKWLbnkOEN4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767883127; c=relaxed/simple;
-	bh=sB382uQFQ4C9iuzerHEQPiIhQh9IyOh9IpX3hVHoxUU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OFXd7Wth55IiGMKsl6HLbEBHlxi8voU7rgJSLZ/SP0iebGJWRouivyzWDOEG6aDoZ6L5e1oFZGzoc9Stqxg7JEgOoXKqc9axGxVX19iadzoVwYNZIgId4MsxwgyQE+N3WWb1d5vyG/zJyXfbn2L2b+4qkBg5Dq/ezPNxCcbOnAY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (0-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mnxbBQ3c reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.208.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E8023AB95
+	for <linux-tegra@vger.kernel.org>; Thu,  8 Jan 2026 15:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767887626; cv=none; b=hPLPi0l48ePJXnx9bBztvA4EK8hlJ0w0VefwccOeDjW9/7VQBQGPGPB+D0kY1Jg+u2oLs/6UiviSAbvwqOb2QI/yqGKPe+pu8DF0ZDvWUuAzBSvnmhtCTYxMJSnhsSQte0fKowXa6XFgXow+rCPwVse0k68a+YUkerrTJwDhEzE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767887626; c=relaxed/simple;
+	bh=3ZQ/nKOSWptZxT2hnkOVr8QbwM+Io0AiatFnUs1HhME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7bUxfTPbZyjVpPqZy+KLYzYZC5dPViQCq07k407jJNmCLaAR8E71huhqoqzY1SvV6nRjNJEyjgtSSZleNQmeLrZTYXym3ChMMK9WB2Tq9VJEyYtuzXb9c1SwL7hgtAFn2YZHoAJJaLkmUlDGKSqHMQQS/cDWnRp4ccW/tzHT/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIWxddv4; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mnxbBQ3c"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RrPY6S6vsHCZtSb5t6xYw0Za2j/IXr/rQPD20SEMFL8ffge4h0wuN5l1qpGL8YMtwz77v5kWnzig1BsmEyI+S9JnBp5QrP7iYxoJIujVaG68KbLekQZk0hI+Um69Z42/bCu+oHA/DlLgQYPJf2VBw342Br/FYYh+3b5iyCkODwMTGfAwxSlagulIuNJmCCP8Z6zB/sXaGfqrVHyFnsjZH1MshKtAkMcDf8EbgtPaj+qQvnr1rJuUANg7P/watm7oZnDpomScvd0R0vEl4v5W1pbUAXMYf2ejsZMfzf/cUttNbtYr8jClBKGnjdCdcLfuWFzmSfJPj0WWYUTJigTdIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0dHZ1WgT4ikYOHFH8NUwRepj+JduOV6sPoRsJpwtR1I=;
- b=lyJpAJcdGEcqGB/3eFTVRvhauFGMGIK0s9oSjMgCtXFcp71z3JJ5zV17fR6/eRsIlOhru+lHcCL8Y0SuRZSgHSflCCYQ4iIYrfhYpTZ6t1qDBEj6hdVYwiIwoJ7eiQ8JNzppK1fBT8B2O9Ui+tBqPymmjrycoktjclUzmeymyJCMsGz8EQ4Qgjj849ExSlu6tG/XtGKg1/WeJ067NEiR0L34mJWLDV1S9DaAexWfIJJxoPtoR+ky9uUpopaWpTqqNjY2ccZ33l40hUIOX1w4oGCwb6DeHDWSyO8SLPDRWM0qevuiM2xJq6mOufXH1usumUFGXTHxKpFuq83t2UQA8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0dHZ1WgT4ikYOHFH8NUwRepj+JduOV6sPoRsJpwtR1I=;
- b=mnxbBQ3cmHd5RyhB/awCW05EajsaJb8qNmsYpYoGjcavdKAPz/eSKqBZ32oEg6KwlXTgDLl1wEZKF89D41aEKuApPV5IJfV6YsR7R5jchON21U5c+M55tBbXB77mENapo03q89B2El3KOYDslclhZzfeJ+2pM/knKPfb0X9EyCYYSpo4U/wx5Q8pQIClnYjVjkmE0t0SEVmSqXZBJ8vE5aBSEuoPsvaSDvk1GfMHUeAhGViXQLLRF7RZoGnYvWO4JGMSJtNj5K8oHseu/1148aTPYbZzIEQ7YkmNQWXXQEx+KOxi7LfrjNL9RYSOecNecAn1Ke6YY09hN+MkF59fyg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by DS0PR12MB7704.namprd12.prod.outlook.com (2603:10b6:8:138::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.3; Thu, 8 Jan
- 2026 14:38:41 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42%7]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
- 14:38:41 +0000
-Message-ID: <0a2b7d49-bd1f-442e-9247-705cd2eb0d1c@nvidia.com>
-Date: Thu, 8 Jan 2026 20:08:30 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/11] ACPI: CPPC: add APIs and sysfs interface for
- perf_limited
-To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
- corbet@lwn.net, pierre.gondois@arm.com, rdunlap@infradead.org,
- ray.huang@amd.com, gautham.shenoy@amd.com, mario.limonciello@amd.com,
- perry.yuan@amd.com, ionela.voinescu@arm.com, zhanjie9@hisilicon.com,
- linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- nhartman@nvidia.com, bbasu@nvidia.com, sumitg@nvidia.com
-References: <20251223121307.711773-1-sumitg@nvidia.com>
- <20251223121307.711773-7-sumitg@nvidia.com>
- <14851f8e-b6ac-42ff-9623-b7ac8d8893e2@huawei.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <14851f8e-b6ac-42ff-9623-b7ac8d8893e2@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0087.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ae::17) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIWxddv4"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7c6d13986f8so1676975a34.0
+        for <linux-tegra@vger.kernel.org>; Thu, 08 Jan 2026 07:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767887622; x=1768492422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WS4v+L5fbORHSb1TsTci/XfehGA5nJR4kwq94AjXke4=;
+        b=FIWxddv4licvx91HymuPj22Pk2WGH3pPZ5kcM2UQurh27r/ypHFCsRCNM737u2PkNj
+         1BywNFOyLkfTI9lWVmAzQYWyo4GzGyyTf7n5MU412jKqiNkvDYeWTlZkqmHLRtypDTBr
+         bBjDkjm3g4YlUn9jYnkHlsrdlnSAMUT01CHkSz8HfyOzNg+HEFASo7TDR2KbOMu5+9Pd
+         5nCH5cBH7SQpFxOGcl6ze3BJvE0ulAsOHKRcgY5MOxcuj37bTgmSpP1yeZs369ehXOv8
+         2R48zzv1ACYLfXoGCyjG3DL0QJ9gtZrXHsPin1FL2F5/epj6d7z7ufNjjiA0QoGLizat
+         Vntw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767887622; x=1768492422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WS4v+L5fbORHSb1TsTci/XfehGA5nJR4kwq94AjXke4=;
+        b=Dpm7lz1vVJf0N/gC724x9G8LUSKRb9vaqBYJg5o4bg91w/GA02UCzIJ9FI5PERGp75
+         5x1sWIjNQEVcUr+IY+Ua4EMEWa+dR1PnhAYM1vm6FvoB/E1L7SG+kemrE75o5k3hPw2Y
+         BGZgE+zguwpKWtV4DM+JTlJr1RpTtIHjnTYPwB/ebqcD34nfsACBTNm34DIHLhtFMBOs
+         MoU+XmqxZTK5yttzWEVrtdGOpUkm/Hs/T1xSt9UsPrOT6J9aze/iiV3wDhTh7eja3XXv
+         rHLJPlJzWf8SlkUGTQvFxSPxgzF74jjkgZtiSyiQYqiT9RdEFuJwNxWMa5djG16KQtu5
+         UEOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyWvfqnXFPTpSfSOGslV7z0se44PgDga/7XDY12Qv82BBxrLjLbAHcoYS6YUX0fWLmt8E1vCq56/Ya1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8+2j6nZrM4U1gDVVIoJiUPiCH7NmN3xyt0SlB2Xp8Yrv8yJPI
+	aH/fooUS8X1sVbK0pi1dWijCkR5ON4LnCxQ8sEm4+S7vLn4+Bib1DISCCMHL5Lf9oodyUTnRKv1
+	36vwIW9gliJqjIlY4htdaGxnrmZdoC6Q=
+X-Gm-Gg: AY/fxX6CBJOVHca6/U99iA5TUBelqtZgh9IOlKnZRysh438oUj1SGI/Tkm/iNmTrw9m
+	A5JIdb+eBF5kFoRp51kpLd2TjZVHohxmuMWnMSn6aNHYyPZjTnKeCSmHrCkskFlv2zGNObg4r2u
+	xPtmALx7n1lE+7buZC0X2Zp4o2XIBgTXKj6ym4OpU6/EZKNGvYb2Rfz+GQZp0VHnTRS2c8V5T9k
+	7VMMCfoeARiah1NPPej7ngzS1jQAwUQ/BJeZWYTL4fWDkzqq6T70zInJFnfZKJ0CK4y
+X-Google-Smtp-Source: AGHT+IGLMMDCosA8bDOF7Nx/VITlJVXJX+5aiGOxyv4K2+Z0zmu4wqjonFMQjgC8RoRCfLJmIxKD4JitqOjokrT1iWM=
+X-Received: by 2002:a05:6830:65c6:20b0:7c7:5ef4:a52b with SMTP id
+ 46e09a7af769-7ce46cc9fbemr3983422a34.9.1767887622159; Thu, 08 Jan 2026
+ 07:53:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|DS0PR12MB7704:EE_
-X-MS-Office365-Filtering-Correlation-Id: 069f0078-3869-43b1-5b78-08de4ec39e2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MjV3VDVRbG5oWUFrMyt1SkJoZnZVMk5qNnl1UWh5ZFRFZHlyQVAvaUdQRWRq?=
- =?utf-8?B?MGQ2QlVWQm9URjBRYmgvNStkcC82d3B3R3lzZG95RWdUSEI1QkYwUDRpZTlF?=
- =?utf-8?B?VU55TEZUSmNkbXpoR0VMdWZjWE9MVWtnWWJEQWI2Qnc2REpPUXJHTGhXYkNk?=
- =?utf-8?B?RXZsZnVnb3E5d2VRTE43UjloaE9CeHl4TGhBNm81UnFPOEhMdTRhckFZeXVZ?=
- =?utf-8?B?RFo1OEw4Z2hzZW5GUlQ0SzkrMm9kNC9WZHAxTC95emRLc0EvTVJEVTlxaUVw?=
- =?utf-8?B?Mlk1RzUrZDlDb1V5cGZnWVBnUnlCZ1Z3RUlyZzRLUnhFRmhSdkw2RjVvWG9u?=
- =?utf-8?B?SXhUUHpFbkcvK1lUUm5aSytKUk5YN1JWRGlsWDB4Y0Q1aXhvRVlZcC9WQmVL?=
- =?utf-8?B?OW4vTStCVkJ5TXlWVXJCZ3JTZ1MrT2UyR2VTMloraEsxMHNzY3Z4dmNjdU1P?=
- =?utf-8?B?MWJEb2UrRWNlNTZLOFRQVDE0RUw1bnQzdVAvM0FMRkZ3dU9tZjBzSjk1K2d5?=
- =?utf-8?B?ZjZCTW9JSjVhQmw0WmxqTTdCVTQ1eTJtL0lOL3M4UXlGTVVtdDlMT0crRlZz?=
- =?utf-8?B?YnMwOWlsaUdyVzVsTWNhMGdiSHJVbW5sT2ltNnNLeTArSk1SdFFXK0k3Y1JY?=
- =?utf-8?B?ZHBqRld0cnJ4eng0M1BmbnRhWkdDRlRBTDdTbzQ1OXZ2M1RDckFFaFdBbnJW?=
- =?utf-8?B?ZGFHVjlpemViQVcvMTlpMU83R1pPamRQNy9mOWxOTlhYK0hxVG9rQkZ4WUky?=
- =?utf-8?B?RTNLQWdVdjdVYmpHR05MY2F6VVEyZ2svVkRKVkh1MEkyMEo4K2dvaWI3Vm4w?=
- =?utf-8?B?RDBzODQ5YlZndjNkWlZIclYxMjNHNVhCM2U0bmQzaTlPV3dFdG84YjhqOHJR?=
- =?utf-8?B?cFViaVJjdVdCeXRnaTVnY29oNXBhb0lJS1NLbkQzRmZ4RGRRMmNvMFMzeVd4?=
- =?utf-8?B?djMwanE3QUNkSU5CUjMwcmtvRXdKOFRLaXZpNGJVeFdXZGtaMGtNa0YxZXgz?=
- =?utf-8?B?RnBGSE1wRTFEUFBMMzM5Yi9oWitSRlQzUXF3VEtSa2RmWlBvTUMrNTZDbWJH?=
- =?utf-8?B?anpqa3RWRUxOdFhucWVKOFdPbEhlNVg5aWNObUJRdHlDSXgzTzBNOXM0UzF2?=
- =?utf-8?B?OVYxYTFXS1B5aExrZ2VtUm1tclQ4VUtPNDNtdXlBMGNNRlY3TnEybUZLYzhP?=
- =?utf-8?B?RGdNcWlsaExYMHZwb2ZCcGE4eXJjOU9pc3ZWY1ljanN1alo5NnNmRGVEZ1J3?=
- =?utf-8?B?QTlFS28xUTZPTlBUQXBOeC9iNmF3Sk56QUx2RWh3RmNoRGs1OGM1TjRGbmxF?=
- =?utf-8?B?MkNPQzVNWVBMdTludWVPWVVPY2Q2a2JFUXVxSzZXWjhiNnpuTHpmYUNWcmg2?=
- =?utf-8?B?WHpTdTk1aE9zTU5Qdm04QzhuQXRnNjVPZE5pdCtySEZTK0pISGlNVzJkSzJz?=
- =?utf-8?B?cXBKenU4Qk9hdnlmamJRMXVuLzJrK3F1eTVvMHZxMkhjU1RHc3ZZdUFzN1Fp?=
- =?utf-8?B?YUFTaDRzcmRNallaTFF0OUdFRDM3Zzl6WVBRR2lnMGNWSHMwOWhCL2diMW9v?=
- =?utf-8?B?NG1VUmJaWEhHUTd2M2dDMklJcTB4cDdvVFZqQldWZ2Yxa2NMcExLek1mVERv?=
- =?utf-8?B?WVd4eTA5Z1JkM2swOUdXejZSdURYY0RBWjNEdVBqRS9RRmN3MGdMUGxEUmZ3?=
- =?utf-8?B?MjlMUWNseTNRTDNkK2I2TUZBS2ovb3pNSkJvWXd6cG9YNWIxL0lFS29IOHBs?=
- =?utf-8?B?ZllPRzM2ekFvUkZyVmg0amJuOVd5akd1Ui9jRkRXOE5hNXFUU2dJR3JHZWRZ?=
- =?utf-8?B?VVFOdTVZZmN1MitvVFNWeVQ1UURrSzc1TVh0YjhHL2h5K3ZrZ0tKSThiYUZX?=
- =?utf-8?B?dTdnSUMrTWRJb1Y1TGFIYnRRWjRFY1RGeWxlZHcxdjd5WENYaUxMQ2lWNWtS?=
- =?utf-8?B?eVM5a3hLSUg5azVCQUs4dSt4aXJmQzkrNzRVTnpYMU1WTzlTWmNmRjBJSUtp?=
- =?utf-8?Q?De4eJW+MXwj+EXPMGQV/MGxRuVEqRA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UWRFTDBIRW9JaHNuL3l1MytJa2xEUysyeUd6NndNb3pqS2ZWUjVJVStwTnpS?=
- =?utf-8?B?RHJ4NW0xMG5DUVBhL1BzNzNuekppREF1Undtekk3R3ZOMkFCUWNVV1NKSzh2?=
- =?utf-8?B?c3pFM2ZWdUZzV3A3RnRSUkhjVm1kN3NaRXMrMmJIemkzRHJ0RWRzdUplMm9J?=
- =?utf-8?B?SndSVGNwU0lQODZUT3ZpajVTMjVJL0Z6NjZlb2RsZDBBV2ZzUzlrbmhhUkxT?=
- =?utf-8?B?eWFZZUVuL1U3UUlvQW5udnE2Q25OQVB1bmtLSlIwUVBYTHdmbW5WVHNWaGk5?=
- =?utf-8?B?UXQ2bVJjZTJIQ2l1Q00xKy9vczVMbWFtaFVsMkVGcDdPdW4wbzVETDBCQTVv?=
- =?utf-8?B?bC9CMG83WHRPSHNJWGVFaE52dEQ3VktFZURRSDIreDFVbU9FdElWYjFMdWlP?=
- =?utf-8?B?TUZBWW9WSFAzUU1OZ3ZaK25yZHdLNDJpWDFjQ2J0L2hmMWhoSmlCY1BLeGdh?=
- =?utf-8?B?dFZYbFhrcFZvc2dBcFYyaklGMmk3SjgxWW5KT3E1WnRjSVhPTFRkTXVVc1NP?=
- =?utf-8?B?RTEwclp2YTN6cVRzZjVGcS84QmF2ckpyM3ErR2ZtUG1KWDlKM2dyUFJXa3d4?=
- =?utf-8?B?N3k0Z3ZTb3cvMzNjZWJhS09KS0lOT3JTVWtIdHhxY3ZQeDJhdjUrbnlGeSts?=
- =?utf-8?B?WUpZS1Q1amlqSXc2T0EwTmpUdFNuUHBKRXBtZFo3WDgyVUxDM1VqMkdnOGgw?=
- =?utf-8?B?ajkrQnFrS0VJbTR1eXgvK2lSYkNBU1dxeng3bmp6Q1F3a00vc1ZROFM4TVVv?=
- =?utf-8?B?WllCRlJVZ2ZTTGQ0eEI4c09nNnEwbkpqWG41Q2tIZHNTSVlnRTF4RHJrZ0VO?=
- =?utf-8?B?NnZRUDdRMko5S0xNcXpSTXlkSTVnOE5CVWUwNEVaZkV1cFRDaUo2NkE4b05n?=
- =?utf-8?B?SUFDSHRTTWE2bjF5c3hyRWV0c1Z4cE80YkNNRWNDZjBkMExBdmxqNVN2L2V5?=
- =?utf-8?B?cnNmNmd3TTFTWnpTK3kwMWFHL2Rla291U3V3TmxLLzFaQ29Qdk9aSHhIYUQx?=
- =?utf-8?B?RkptcEh0NHVSZlgwNzhCK1RNUk9RR3JERkhxNi9ib3h4Ym5MK3RXTDRQMEFB?=
- =?utf-8?B?bGN4dU5XSm8yVU5QMDVvbGxmeVdSZ0poUklNbEYxbTVjdUxhSzFOQ1Ixd2Rs?=
- =?utf-8?B?eEFGRU9oNFhQMU9hdUJjZXJKWitBWDVNN3BIMVdFSzJJeXJVc1N5K1hwRVpP?=
- =?utf-8?B?SldURDZaM2llNXQ5bCtRQ2c1dHNJTXBTcCt6Wk8yN3NsNjNSdHBLUkhNU0dX?=
- =?utf-8?B?VTdRQ1RYSm1hRE1VUExRUGt1TTRqTURWUWhncWxSZk1SSDVxZnB0eW9XeW4r?=
- =?utf-8?B?bVY4Z1dnMkRXRFRtUnZyVXZvdjlDQzY4TUFHZVNSL1ZrczRFK3lSUjdBdThP?=
- =?utf-8?B?Qmp1Kzc0dnJxdGZMSTVnYkdhRkZLN251V2c2Y1ZpZHYxUXlLalBaMHA2eXNt?=
- =?utf-8?B?bFdYVkFlTnlzcVZqcWtxeFFDWkJpOGEzSm5NSEU1N1hPQXBzMklMcGZVWTZH?=
- =?utf-8?B?eDdBYWh2OEpQaksvdEFKTC9sTCtrbTJ3blo4OENmR20zcm56QXJKa1ZBZS81?=
- =?utf-8?B?TGJhSTdkUkxFa2VvVzZRVVpER3ZMdy9leWhhS3RLdEN1dEdxUTFKSzFnald4?=
- =?utf-8?B?OFpBaXFqWEtIUThIN1M3dFZ4cHN1Vm56My85U3cyV2lTMDNKSlk4ZVZzb2x0?=
- =?utf-8?B?OEZJNUpyYnRaSUZqcXh1dFhsQUlFOTlWR1h0MnV0YytmUUdoKzY1NkNtalBi?=
- =?utf-8?B?Z3JxRG9mZVhQVHlJYlA0QnFZd0NpbDU3a3o2aXl0QnErbGJwWVorNkRXM3A3?=
- =?utf-8?B?VGJWMzBSNXp3WGYvalhETnBaVXF0QXkrVkloRjBMamVrYXNnUnZaaGVDVDdL?=
- =?utf-8?B?YjFPTFlvTTg0em9kUXJxYnRZbFJKOFpoNnRqSG1rQ3BDeWlQazZSYSt4bmZX?=
- =?utf-8?B?TWVMNFJ3VDBlcjZqKzhhZndIOWYrQmovY3h5bTU2S1VPbTV1WWIxb3FKT0hS?=
- =?utf-8?B?R1pQSllvMlljek5SMkNXOGlTdmtpU21DK05kMHUwZVBCVG55SFdkZzVsaEdo?=
- =?utf-8?B?dVpIUSt4d21rdEZnV0YvbkptcTJkbDlncDB0UWhCT3c5OW1rWWp1ZjgyUHlE?=
- =?utf-8?B?cUw3V0VheFdXQXZRZkxCcEZSOWZBdXhzQS9ZdXV4Umxadm9Za08rUGJnNTQv?=
- =?utf-8?B?RDM3SWFtNFJHTEFjQUVsTThyTXI4ak1ia2JvL1pvRlgvQlo2cGdtT0JxdmY1?=
- =?utf-8?B?c3pIcmpVL1Jvbk9FU3ZCNVEwQ0JLSkdkbWU0LzdJMVN1QjFyRjZwdlBPVFNK?=
- =?utf-8?B?emZCNy8yNzhGSFY4MlRnSXN1UGF2Y1dWQUpFUWRya25mYkt2VnlRQT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 069f0078-3869-43b1-5b78-08de4ec39e2e
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 14:38:41.5724
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L2g1yfZo9FbEQDQb3WXumMuGFfngKyfQKAXfppn1DkToFzhL+1o5MTzB4qIRVWD21dbKZ8graEg9qscgEoZ1yQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7704
+References: <20251217104744.184153-1-jonathanh@nvidia.com> <CALHNRZ8syS6F9W1ovw2Y-jkspQafCnLy0ynocn0sMLurShHnbA@mail.gmail.com>
+ <CALHNRZ_vkw6Ns=PMa+x0SY64+Ov0FeA5tMKJr+-tY9_OasKUog@mail.gmail.com>
+ <aUPsDeFmxAJ09Tk7@orome> <CALHNRZ_vjSy+A8ZW7E1A4B5yQJ=GgvbNmafU7gjtGv-xjdfhPg@mail.gmail.com>
+ <0ed3d270-b0be-4431-8a46-a7eea29598f4@nvidia.com> <CABr+WTnyKz7y-KKv6yQOfPWDf4iB2MarcQPetZ+OT1=3WqdH5A@mail.gmail.com>
+ <CALHNRZ9JTMEWy8qgfPiZOPbOC3BdK8UbB01ghG+jC7+DsQS8Xg@mail.gmail.com>
+In-Reply-To: <CALHNRZ9JTMEWy8qgfPiZOPbOC3BdK8UbB01ghG+jC7+DsQS8Xg@mail.gmail.com>
+From: Nicolas Chauvet <kwizart@gmail.com>
+Date: Thu, 8 Jan 2026 16:53:31 +0100
+X-Gm-Features: AZwV_QhI0yrxQbwxrBRHJ_YAR1z1X-9R5ewF7lHxSG4eqy1N-2WYaJz7ZZZvknw
+Message-ID: <CABr+WT=2u0W-gLarOo7nQj5=CURw+7r2rFfiBTJGUOHz51p3+w@mail.gmail.com>
+Subject: Re: [PATCH] Revert "arm64: tegra: Add interconnect properties for Tegra210"
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 25/12/25 17:36, zhenglifeng (A) wrote:
-> External email: Use caution opening links or attachments
+Le mer. 7 janv. 2026 =C3=A0 20:50, Aaron Kling <webgeek1234@gmail.com> a =
+=C3=A9crit :
 >
+> On Mon, Jan 5, 2026 at 2:27=E2=80=AFPM Nicolas Chauvet <kwizart@gmail.com=
+> wrote:
+> >
+> > Le ven. 19 d=C3=A9c. 2025 =C3=A0 11:59, Jon Hunter <jonathanh@nvidia.co=
+m> a =C3=A9crit :
+> > >
+> > >
+> > >
+> > > On 18/12/2025 19:07, Aaron Kling wrote:
+> > > > On Thu, Dec 18, 2025 at 6:00=E2=80=AFAM Thierry Reding <thierry.red=
+ing@gmail.com> wrote:
+> > > >>
+> > > >> On Wed, Dec 17, 2025 at 02:42:58PM -0600, Aaron Kling wrote:
+> > > >>> On Wed, Dec 17, 2025 at 12:20=E2=80=AFPM Aaron Kling <webgeek1234=
+@gmail.com> wrote:
+> > > >>>>
+> > > >>>> On Wed, Dec 17, 2025 at 4:48=E2=80=AFAM Jon Hunter <jonathanh@nv=
+idia.com> wrote:
+> > > >>>>>
+> > > >>>>> Commit 59a42707a094 ("arm64: tegra: Add interconnect properties=
+ for
+> > > >>>>> Tegra210") populated interconnect properties for Tegra210 and t=
+his is
+> > > >>>>> preventing the Tegra DRM driver from probing successfully. The =
+following
+> > > >>>>> error is observed on boot ...
+> > > >>>>>
+> > > >>>>>   drm drm: failed to initialize 54240000.dc: -517
+> > > >>>>>
+> > > >>>>> For now revert this change, until a fix is available.
+> > > >>>>>
+> > > >>>>> Fixes: 59a42707a094 ("arm64: tegra: Add interconnect properties=
+ for Tegra210")
+> > > >>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > > >>>>> ---
+> > > >>>>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ---------------=
+---------
+> > > >>>>>   1 file changed, 24 deletions(-)
+> > > >>>>>
+> > > >>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/ar=
+m64/boot/dts/nvidia/tegra210.dtsi
+> > > >>>>> index 709da31d5785..137aa8375257 100644
+> > > >>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > > >>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > > >>>>> @@ -202,19 +202,6 @@ dc@54200000 {
+> > > >>>>>
+> > > >>>>>                          nvidia,outputs =3D <&dsia &dsib &sor0 =
+&sor1>;
+> > > >>>>>                          nvidia,head =3D <0>;
+> > > >>>>> -
+> > > >>>>> -                       interconnects =3D <&mc TEGRA210_MC_DISP=
+LAY0A &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+Y0B &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+Y0C &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+YHC &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+YD &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+YT &emc>;
+> > > >>>>> -                       interconnect-names =3D "wina",
+> > > >>>>> -                                            "winb",
+> > > >>>>> -                                            "winc",
+> > > >>>>> -                                            "cursor",
+> > > >>>>> -                                            "wind",
+> > > >>>>> -                                            "wint";
+> > > >>>>>                  };
+> > > >>>>>
+> > > >>>>>                  dc@54240000 {
+> > > >>>>> @@ -230,15 +217,6 @@ dc@54240000 {
+> > > >>>>>
+> > > >>>>>                          nvidia,outputs =3D <&dsia &dsib &sor0 =
+&sor1>;
+> > > >>>>>                          nvidia,head =3D <1>;
+> > > >>>>> -
+> > > >>>>> -                       interconnects =3D <&mc TEGRA210_MC_DISP=
+LAY0AB &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+Y0BB &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+Y0CB &emc>,
+> > > >>>>> -                                       <&mc TEGRA210_MC_DISPLA=
+YHCB &emc>;
+> > > >>>>> -                       interconnect-names =3D "wina",
+> > > >>>>> -                                            "winb",
+> > > >>>>> -                                            "winc",
+> > > >>>>> -                                            "cursor";
+> > > >>>>>                  };
+> > > >>>>>
+> > > >>>>>                  dsia: dsi@54300000 {
+> > > >>>>> @@ -1052,7 +1030,6 @@ mc: memory-controller@70019000 {
+> > > >>>>>
+> > > >>>>>                  #iommu-cells =3D <1>;
+> > > >>>>>                  #reset-cells =3D <1>;
+> > > >>>>> -               #interconnect-cells =3D <1>;
+> > > >>>>>          };
+> > > >>>>>
+> > > >>>>>          emc: external-memory-controller@7001b000 {
+> > > >>>>> @@ -1066,7 +1043,6 @@ emc: external-memory-controller@7001b000 =
+{
+> > > >>>>>                  nvidia,memory-controller =3D <&mc>;
+> > > >>>>>                  operating-points-v2 =3D <&emc_icc_dvfs_opp_tab=
+le>;
+> > > >>>>>
+> > > >>>>> -               #interconnect-cells =3D <0>;
+> > > >>>>>                  #cooling-cells =3D <2>;
+> > > >>>>>          };
+> > > >>>>>
+> > > >>>>> --
+> > > >>>>> 2.43.0
+> > > >>>>>
+> > > >>>>
+> > > >>>> A little bit of documentation on this, should someone read the l=
+ist to
+> > > >>>> see what happened. The original report of the failure is here [0=
+] and
+> > > >>>> only occurred when the tegra210-emc driver fails to probe. After=
+ this
+> > > >>>> report, the related code change [1] to tegra210-emc which regist=
+ers
+> > > >>>> the driver to icc was silently dropped from -next, but these dt
+> > > >>>> changes remained. So now these interconnect routes do cause tegr=
+a-drm
+> > > >>>> to universally fail on tegra210.
+> > > >>>>
+> > > >>>> Aaron
+> > > >>>>
+> > > >>>> [0] https://lore.kernel.org/all/56aed0ec-b104-4612-8901-3f6f95e0=
+afab@nvidia.com/
+> > > >>>> [1] https://lore.kernel.org/all/20251027-t210-actmon-p2-v6-1-1c4=
+bd227d676@gmail.com/
+> > > >>>
+> > > >>> There may be another option here. I'm beginning to think there wi=
+ll
+> > > >>> not be any way to set the icc routes for the dc's while the emc d=
+river
+> > > >>> can fail to probe. The next best thing looks to be just dropping =
+the
+> > > >>> interconnect nodes from the dc nodes and leaving the rest of the
+> > > >>> original commit in place. Then reland the tegra210-emc driver cha=
+nge.
+> > > >>> This should put the no-emc case back to where it was, while allow=
+ing
+> > > >>> actmon to do its scaling when emc is available. And I will move t=
+o the
+> > > >>> dc icc routes to downstream dt's, where I tightly control that em=
+c is
+> > > >>> available.
+> > > >>>
+> > > >>> Does this sound reasonable? If so, I will go stage the changes an=
+d
+> > > >>> verify that it works as intended.
+> > > >>
+> > > >> Let's go with the revert for now, since that clearly documents whe=
+re
+> > > >> things go wrong and it can be easily reapplied once the root cause=
+ has
+> > > >> been resolved.
+> > > >>
+> > > >> It's a bit unfortunate that we don't have a way of making these
+> > > >> interconnect properties optional. If EMC fails to probe for whatev=
+er
+> > > >> reason, I think the assumption should be that it doesn't do any dy=
+namic
+> > > >> scaling of the EMC frequency and hence the entire ICC stuff isn't =
+needed
+> > > >> and should just be no-ops.
+> > > >>
+> > > >> On the other hand, other than the patches getting reverted, there'=
+s
+> > > >> really no good reason for the EMC driver to fail to provide them, =
+hence
+> > > >> I think once that's been restored we can apply this again and then=
+ that
+> > > >> should be the end of it.
+> > > >
+> > > > Except that the tegra210-emc driver fails to probe at all if the
+> > > > bootloader does not copy reserved-memory table node? Which per Jon,
+> > > > the Nvidia regression bench does not do. And neither will a normal =
+L4T
+> > > > install using a mainline kernel and dt via extlinux or u-boot. I ha=
+ve
+> > > > to put the mainline kernel on DTB and use a kernel in an android bo=
+ot
+> > > > image, which causes nvtboot-cpu to set the dt table reserved memory
+> > > > node directly. Which is perfectly fine for my android use case, but
+> > > > not so much for anyone just trying to boot a Linux distro.
+> > >
+> > > I am lost. I was not able to follow the above. Our current testing
+> > > simply boots the upstream kernel + upstream DTB.
+> >
+> > With this revert, I have tegra drm back on 6.19-rc4 kernel.
+> >
+> > But I also have this error that did not appear on 6.18:
+> > "tegra210-emc 7001b000.external-memory-controller: failed to get
+> > nominal EMC table: -19"
 >
-> On 2025/12/23 20:13, Sumit Gupta wrote:
->> Add sysfs interface to read/write the Performance Limited register.
->>
->> The Performance Limited register indicates to the OS that an
->> unpredictable event (like thermal throttling) has limited processor
->> performance. It contains two sticky bits set by the platform:
->>    - Bit 0 (Desired_Excursion): Set when delivered performance is
->>      constrained below desired performance. Not used when Autonomous
->>      Selection is enabled.
->>    - Bit 1 (Minimum_Excursion): Set when delivered performance is
->>      constrained below minimum performance.
->>
->> These bits remain set until OSPM explicitly clears them. The write
->> operation accepts a bitmask of bits to clear:
->>    - Write 1 to clear bit 0
->>    - Write 2 to clear bit 1
->>    - Write 3 to clear both bits
-> It's a bit odd that users write a 1 to and then read a 0 from the sysfs
-> file. I think it is better to seperate these two bits, as two sysfs files.
-> Then users can write '0' or 'clear' or others into them to clear each bit.
-
-I think its better to keep one sysfs interface per HW register.
-Can change the perf_limited write interface to accept bit index
-instead of bitmask.
-  - Write 0 to clear bit 0 (desired performance excursion)
-  - Write 1 to clear bit 1 (minimum performance excursion)
-
-Thank you,
-Sumit Gupta
-
-
+> I'm not sure what between 6.18 and -next would change this. I would
+> expect your setup to see this on older kernel versions too. Does the
+> emc driver fully probe and does scaling work for you on 6.18?
 >
->> This enables users to detect if platform throttling impacted a workload.
->> Users clear the register before execution, run the workload, then check
->> afterward - if set, hardware throttling occurred during that time window.
->>
->> The interface is exposed as:
->>    /sys/devices/system/cpu/cpuX/cpufreq/perf_limited
->>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>   drivers/acpi/cppc_acpi.c       | 56 ++++++++++++++++++++++++++++++++++
->>   drivers/cpufreq/cppc_cpufreq.c | 31 +++++++++++++++++++
->>   include/acpi/cppc_acpi.h       | 15 +++++++++
->>   3 files changed, 102 insertions(+)
->>
->> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
->> index 9f28c20d902d..ffd866c1c00d 100644
->> --- a/drivers/acpi/cppc_acpi.c
->> +++ b/drivers/acpi/cppc_acpi.c
->> @@ -1786,6 +1786,62 @@ int cppc_set_max_perf(int cpu, u32 max_perf)
->>   }
->>   EXPORT_SYMBOL_GPL(cppc_set_max_perf);
->>
->> +/**
->> + * cppc_get_perf_limited - Get the Performance Limited register value.
->> + * @cpu: CPU from which to get Performance Limited register.
->> + * @perf_limited: Pointer to store the Performance Limited value.
->> + *
->> + * The returned value contains sticky status bits indicating platform-imposed
->> + * performance limitations.
->> + *
->> + * Return: 0 for success, -EIO on failure, -EOPNOTSUPP if not supported.
->> + */
->> +int cppc_get_perf_limited(int cpu, u64 *perf_limited)
->> +{
->> +     return cppc_get_reg_val(cpu, PERF_LIMITED, perf_limited);
->> +}
->> +EXPORT_SYMBOL_GPL(cppc_get_perf_limited);
->> +
->> +/**
->> + * cppc_set_perf_limited() - Clear bits in the Performance Limited register.
->> + * @cpu: CPU on which to write register.
->> + * @bits_to_clear: Bitmask of bits to clear in the perf_limited register.
->> + *
->> + * The Performance Limited register contains two sticky bits set by platform:
->> + *   - Bit 0 (Desired_Excursion): Set when delivered performance is constrained
->> + *     below desired performance. Not used when Autonomous Selection is enabled.
->> + *   - Bit 1 (Minimum_Excursion): Set when delivered performance is constrained
->> + *     below minimum performance.
->> + *
->> + * These bits are sticky and remain set until OSPM explicitly clears them.
->> + * This function only allows clearing bits (the platform sets them).
->> + *
->> + * Return: 0 for success, -EINVAL for invalid bits, -EIO on register
->> + *         access failure, -EOPNOTSUPP if not supported.
->> + */
->> +int cppc_set_perf_limited(int cpu, u64 bits_to_clear)
->> +{
->> +     u64 current_val, new_val;
->> +     int ret;
->> +
->> +     /* Only bits 0 and 1 are valid */
->> +     if (bits_to_clear & ~CPPC_PERF_LIMITED_MASK)
->> +             return -EINVAL;
->> +
->> +     if (!bits_to_clear)
->> +             return 0;
->> +
->> +     ret = cppc_get_perf_limited(cpu, &current_val);
->> +     if (ret)
->> +             return ret;
->> +
->> +     /* Clear the specified bits */
->> +     new_val = current_val & ~bits_to_clear;
->> +
->> +     return cppc_set_reg_val(cpu, PERF_LIMITED, new_val);
->> +}
->> +EXPORT_SYMBOL_GPL(cppc_set_perf_limited);
->> +
->>   /**
->>    * cppc_set_enable - Set to enable CPPC on the processor by writing the
->>    * Continuous Performance Control package EnableRegister field.
->> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->> index 1e282dfabc76..1f8825006940 100644
->> --- a/drivers/cpufreq/cppc_cpufreq.c
->> +++ b/drivers/cpufreq/cppc_cpufreq.c
->> @@ -1052,12 +1052,42 @@ static ssize_t store_max_perf(struct cpufreq_policy *policy, const char *buf,
->>        return count;
->>   }
->>
->> +/**
->> + * show_perf_limited - Show Performance Limited register status
->> + * @policy: cpufreq policy
->> + * @buf: buffer to write the value to
->> + *
->> + * Read the Performance Limited register to check if platform throttling
->> + * (thermal/power/current limits) occurred.
->> + */
->> +static ssize_t show_perf_limited(struct cpufreq_policy *policy, char *buf)
->> +{
->> +     return cppc_cpufreq_sysfs_show_u64(policy->cpu,
->> +                                        cppc_get_perf_limited, buf);
->> +}
->> +
->> +/**
->> + * store_perf_limited - Clear Performance Limited register bits
->> + * @policy: cpufreq policy
->> + * @buf: buffer containing the bitmask of bits to clear
->> + * @count: number of bytes in buf
->> + *
->> + * Write 1 to clear bit 0, 2 to clear bit 1, or 3 to clear both.
->> + */
->> +static ssize_t store_perf_limited(struct cpufreq_policy *policy,
->> +                               const char *buf, size_t count)
->> +{
->> +     return cppc_cpufreq_sysfs_store_u64(policy->cpu,
->> +                                         cppc_set_perf_limited, buf, count);
->> +}
->> +
->>   cpufreq_freq_attr_ro(freqdomain_cpus);
->>   cpufreq_freq_attr_rw(auto_select);
->>   cpufreq_freq_attr_rw(auto_act_window);
->>   cpufreq_freq_attr_rw(energy_performance_preference_val);
->>   cpufreq_freq_attr_rw(min_perf);
->>   cpufreq_freq_attr_rw(max_perf);
->> +cpufreq_freq_attr_rw(perf_limited);
->>
->>   static struct freq_attr *cppc_cpufreq_attr[] = {
->>        &freqdomain_cpus,
->> @@ -1066,6 +1096,7 @@ static struct freq_attr *cppc_cpufreq_attr[] = {
->>        &energy_performance_preference_val,
->>        &min_perf,
->>        &max_perf,
->> +     &perf_limited,
->>        NULL,
->>   };
->>
->> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
->> index a49b50bddaf9..57e04326a4b6 100644
->> --- a/include/acpi/cppc_acpi.h
->> +++ b/include/acpi/cppc_acpi.h
->> @@ -42,6 +42,11 @@
->>   #define CPPC_EPP_PERFORMANCE_PREF            0x00
->>   #define CPPC_EPP_ENERGY_EFFICIENCY_PREF              0xFF
->>
->> +#define CPPC_PERF_LIMITED_DESIRED_EXCURSION  BIT(0)
->> +#define CPPC_PERF_LIMITED_MINIMUM_EXCURSION  BIT(1)
->> +#define CPPC_PERF_LIMITED_MASK               (CPPC_PERF_LIMITED_DESIRED_EXCURSION | \
->> +                                      CPPC_PERF_LIMITED_MINIMUM_EXCURSION)
->> +
->>   /* Each register has the folowing format. */
->>   struct cpc_reg {
->>        u8 descriptor;
->> @@ -177,6 +182,8 @@ extern int cppc_get_min_perf(int cpu, u64 *min_perf);
->>   extern int cppc_set_min_perf(int cpu, u32 min_perf);
->>   extern int cppc_get_max_perf(int cpu, u64 *max_perf);
->>   extern int cppc_set_max_perf(int cpu, u32 max_perf);
->> +extern int cppc_get_perf_limited(int cpu, u64 *perf_limited);
->> +extern int cppc_set_perf_limited(int cpu, u64 perf_limited);
->>   extern int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf);
->>   extern int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator);
->>   extern int amd_detect_prefcore(bool *detected);
->> @@ -285,6 +292,14 @@ static inline int cppc_set_max_perf(int cpu, u32 max_perf)
->>   {
->>        return -EOPNOTSUPP;
->>   }
->> +static inline int cppc_get_perf_limited(int cpu, u64 *perf_limited)
->> +{
->> +     return -EOPNOTSUPP;
->> +}
->> +static inline int cppc_set_perf_limited(int cpu, u64 perf_limited)
->> +{
->> +     return -EOPNOTSUPP;
->> +}
->>   static inline int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf)
->>   {
->>        return -ENODEV;
+> > My boot flow is the latest L4T 32.7.6, upstream U-Boot 2025.01 and EFI =
+boot.
+> > U-Boot mentions:
+> > Found DTB: nvidia/tegra210-p2371-2180.dtb
+> > copying carveout for /host1x@50000000/dc@54200000...
+> > copying carveout for /host1x@50000000/dc@54240000...
+> > copying carveout for /external-memory-controller@7001b000..
+> >
+> > That said, comparing in-tree dtb and runtime only shows few diffs.
+> > (are more changes expected ?)
+> >
+> > dtdiff /boot/dtbs/nvidia/tegra210-p2371-2180.dtb /proc/device-tree
+> > --- /dev/fd/63    2026-01-05 21:20:39.956415634 +0100
+> > +++ /dev/fd/62    2026-01-05 21:20:39.956415634 +0100
+> > @@ -2207,6 +2207,12 @@
+> >      };
+> >
+> >      chosen {
+> > +        bootargs =3D "BOOT_IMAGE=3D(hd0,msdos2)/vmlinuz-arm64
+> > root=3DUUID=3D9bdc914f-f5c9-42cb-a4e9-9f3387f8d480 ro
+> > rootflags=3Dsubvol=3Droot console=3DttyS0,115200 selinux=3D0 fbcon=3Dro=
+tate:3";
+> > +        linux,uefi-mmap-desc-size =3D <0x28>;
+> > +        linux,uefi-mmap-desc-ver =3D <0x01>;
+> > +        linux,uefi-mmap-size =3D <0x528>;
+> > +        linux,uefi-mmap-start =3D <0x00 0xfb568068>;
+> > +        linux,uefi-system-table =3D <0x00 0xfed2bf80>;
+> >          stdout-path =3D "serial0:115200n8";
+> >
+> >          framebuffer {
+>
+> For emc scaling to work with the current tegra210-emc driver, a
+> memory-region property needs added by the bootloader to
+> external-memory-controller@7001b000, pointing to emc-table regions
+> that it added to the reserved-memory node.
+
+Okay, I got what was the issue on my side, my grub loader entry had a
+"devicetree /dtbs/nvidia/tegra210-p2371-2180.dtb" line that prevented
+for my self compiled kernel to have the trained emc-tables and other
+options from bootloader.
+
+Also I had to point the /boot/dtb symlink to /boot/dtbs where my
+kernel installed dtbs are located. Now the fedora grub loads the more
+recent dtb everywhere (which is a separate issue).
+
+Now I had the training table rights:
+See also:
+dtdiff /boot/dtbs/nvidia/tegra210-p2371-2180.dtb /proc/device-tree
+....
+@@ -2355,6 +2364,8 @@
+                clocks =3D <0x03 0x39>;
+                compatible =3D "nvidia,tegra210-emc";
+                interrupts =3D <0x00 0x4e 0x04>;
++               memory-region =3D <0x17b 0x17c>;
++               memory-region-names =3D "nominal", "derated";
+                nvidia,memory-controller =3D <0x0d>;
+                operating-points-v2 =3D <0x35>;
+                phandle =3D <0x16>;
+@@ -3270,7 +3281,7 @@
+
+        memory@80000000 {
+                device_type =3D "memory";
+-               reg =3D <0x00 0x80000000 0x01 0x00>;
++               reg =3D <0x00 0x80000000 0x00 0x7ee00000 0x01 0x00 0x00
+0x7f200000>;
+        };
+
+        mipi@700e3000 {
+@@ -5664,6 +5675,18 @@
+                #size-cells =3D <0x02>;
+                ranges;
+
++               emc-table@83400000 {
++                       compatible =3D "nvidia,tegra210-emc-table";
++                       phandle =3D <0x17b>;
++                       reg =3D <0x00 0x83400000 0x00 0x10000>;
++               };
++
++               emc-table@83410000 {
++                       compatible =3D "nvidia,tegra210-emc-table";
++                       phandle =3D <0x17c>;
++                       reg =3D <0x00 0x83410000 0x00 0x10000>;
++               };
++
+                framebuffer@92cb5000 {
+                        iommu-addresses =3D <0xec 0x00 0x92cb5000 0x00 0x80=
+0000>;
+                        phandle =3D <0x17>;
