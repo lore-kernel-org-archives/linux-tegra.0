@@ -1,66 +1,64 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010003.outbound.protection.outlook.com [40.93.198.3])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012028.outbound.protection.outlook.com [52.101.48.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA401FC0FC;
-	Fri,  9 Jan 2026 18:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2931FC0FC;
+	Fri,  9 Jan 2026 18:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.28
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767983787; cv=fail; b=nyrYsPir3C9cnfMao8U0Mor+QkrC6BwIII8cK1SWstqSs3Ulv+N0DCclyIwTTMThAzJUwme1yz/F9Hh6dDXUKcoi9xjRc9OJ220Xli89guD+mSeNmg8csydB/yBF4qcCb9g2bKf5KPIeKHEcZ4R9gvZzitMt3kRZee32Gy8BBWY=
+	t=1767983809; cv=fail; b=R9MEJ9O5NXlTQ+w4PLNJBjtygIph60nh8W2E6pVFQQzPNoUqDQ8VYAGb5CnMA15X2ycloKTtXrKYZvnp4TULu0l2q5DISqfhdxW08hiTVe+IrxVOFzH82to8U/v93AhNAGO3CWjrt917cFG054D+Irs9Z1hYVNq5qCxLto8yiCo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767983787; c=relaxed/simple;
-	bh=DcwwUv8WfCKq727/jdXDfW2zDSNuMP+pRs62nx7etZ4=;
+	s=arc-20240116; t=1767983809; c=relaxed/simple;
+	bh=KTx4PJfwPVKqkmg+bP3sc+xP9ESAkz3kn6TX2Vlt8tY=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cHcQquHLkSs+cfygdZFP8tqLnYD8AmrUpK2ncT1E+hZ/8U3Vj/gkLRzzuX8ugO2hB3p6TJ+RfEwK2cEeeFutOJIWvckV3WdlkejKsECD6O3ayZAtXPK7L/Zu/3ateeNyZFPZr4YyCL0Ra+d9MId516DCQtUQlE6rz7lbvIal618=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GDw9/2rz; arc=fail smtp.client-ip=40.93.198.3
+	 Content-Type:MIME-Version; b=ARsaEKMHhnz+sjka/lzNUzU867tLBXZl6RTuo59K5ZGMK+eRTJFruG47wvn4iOl8UVDEkO39vGsrLP169DZBqjjA0P2FBvwTCf3ZzEy803XSV+iWnFrlG73wfx2TxAl6CfjZo3HT0wIMO0COy2/sA7eRJ99AskJ1x2oKb7RVg9U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iW1I/gUi; arc=fail smtp.client-ip=52.101.48.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GDw9/2rz"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iW1I/gUi"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oCe8vrVjUZxXmWCKNZHdinF+eOSplHckmgXO4MsfBBeNU5T5ZBoTqJwMamPwBDJSTvq4wh3CdfLRmIM0RMQho/y4pW1DxCkGbBSA0phe0ny0vr0sc3j7TX+C0qm/JMmyXMxzfYmjAYTGbVjoGrR3//i5zDRzSvcGWMX/1P7jP2Cb4X8GdpLXp8q3oK9VLzlma4xIv9we08HWBLARRDIy2R8Jha4dj2hreV0xNmzYvO8m9Y5/sHaxuZYE5UbCduyIbT5jRsuPDCV9jsWpt8E/NvDs0WK8p8VCHwEr5Yx9SWFz37WlxlX1lJ7beQhoODtXRT43FcbwXSdPN2GeXeKyUw==
+ b=Vopw3LS/xcApkhiwDZvZBk5BVzr0IbyhXJx0pTqnlaMoijBfztOjJF5xg1jIM2qVY1pQ882tTnfc3fDZncK4cicgDZJ6hwOnwMuQ8u3EHQa52CPrpvq118/yx/tJLKoJOS+rw3xe2t7jAWTZfliwC3wCgyjcZRcdEWBqzv1CphJGWYHaSrFvebvhGRlOmD2vlCNJPCWtAtnAzddvzWrtM2otsrRfHs0ZpajLh7szaezA4H144pb2/W/Md+LJc+/QgL2WHMGsO3NRaLcSq606mPVa3SbGk8ImGkCeI6bvpdZifdyX4ZbPkwVIsmE2PQ8bUzZFjKgwEJy6remV7Lh/yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7fiSvtSpouC3ZCwTNLgiwoPzHu6e3D9+6lSOxvm+gPU=;
- b=BJIh3koVClOBh5C8ViStsnpUGT28l0+IDhhK/G6aPVEZDCWNP1G3eho7sVIjoX5WPm2XvDFU7dNFauFWI2ecbpKkUjf8VIHjXN6sw4bLlBmDLl8tS6j9eBXH+yl+F3OQANHzgjEScHGGyFtBfnu9U5f7lEzjJq9iMKEwPL9xnzecty2jC4HVDUSPUghCWOz+8Cu3RABwL7FHxAyT8eRaq/i4XPUn6UYEbj/xoYgk55G0aKbvykVx7Dv+U2dQdBVxwFztTzldp+/F+t37v3rEXYAyk0F1UpbJevZY12xbc0L9r+qVED4RUohZCFZlOKPUpJEIrZQrcUHSH95yZPIEhw==
+ bh=N9li82byccfoNIhGzViZ0HHDp8n25bl5NCI88GCr/+I=;
+ b=KDh4D7ox4pWVqNc/M4sFZ76oWtmKJa7hhxUnyVO5ERaH7baKAUIYLQmLqMw7JaKjLJPJTFmMqz6ZBSBo1OzGC501IdjpB8HPOLw/a5GLbF4MajgN4gVVqq5jg4E2OD17oUlVxwOupDdJD4uqcYYJHy8giVYR6dLrZMeilzJ9AYDQgpbfV48c4qjWZBH0WRcOBE7Bmy+h6lnkOG+UZd7zUkZH9UmW0xpHAwoBYjb0WkF1dPp/OVZ66soSl6am3yqXxwUy8x3Gfiv0BUfykYPuzRWaqoK1kLXND0d4YRdLmFpZiAlAl4lzTVeCCFgv8bIfr99oiHYQ8pswaWnMJX4YBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7fiSvtSpouC3ZCwTNLgiwoPzHu6e3D9+6lSOxvm+gPU=;
- b=GDw9/2rzaeDyi7KbzPkVPm4Jtj025ex9MoDTG2u6+bQBj/pznOLQzhwiPXFCpigQqdgWIYecFKKMzGGMEMFGt7wlFqjTpdqwqKbzKQZSyXl7bsDGuZTrQcbaPtlum7RphjCuNQrJKc33edss227rhFv5EHk48OXra8Fm+vOwEtWCNBIw5JOTa478+NSJ2taNLIhwcxtaJqIazIl35dLRUMKHhmC7ytjZCdot5R/FqNfMF/u/dLShfj9fdzPI/0Q8ISp5as+2mLEzayiripbvtNdY7Q1SiNNolWCy7HSnH9gE5Dx9rcxYj5OObwUNUaVb1wXflFG3sTGKXMeRj9HKgg==
+ bh=N9li82byccfoNIhGzViZ0HHDp8n25bl5NCI88GCr/+I=;
+ b=iW1I/gUiEn0u16O94I6o1JRerllb+eVgsRJ/AxQ6d6AOv2IYbh8gYm02ndKxmN9HQdYSwGrlELYr5i3eok5WT5jK23lev6MOnxj5QNTaIoBuf1qTwYWN5kokX91zezJcg+E0cq4o30PFb8Cw3dGv+iyhgsvwMPv58TJJVsv589reHnhadDmiU4uOAK/nCS+taolz+mOrTzlzzP+I3xnrb1sAj5krxhMcrzWAB6cerZRayDeEedZH8F4HyScVbxwz4Bua631Xb44lU/ywj3/Ngo/JJBwhhDDoMKd8yblQ1IBImJuIAWBpSql9YG0Y0FjIhI9b9y8Ab1odM+vapp1ROg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
  by IA0PPF52B16157D.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bce) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Fri, 9 Jan
- 2026 18:36:22 +0000
+ 2026 18:36:43 +0000
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9%7]) with mapi id 15.20.9499.003; Fri, 9 Jan 2026
- 18:36:22 +0000
-Message-ID: <26c69151-6342-4504-933a-802dda910a83@nvidia.com>
-Date: Fri, 9 Jan 2026 18:36:16 +0000
+ 18:36:43 +0000
+Message-ID: <e6e83a4e-5eca-4ddd-b0cb-e78921d1e5a7@nvidia.com>
+Date: Fri, 9 Jan 2026 18:36:37 +0000
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: host: xhci-tegra: Use platform_get_irq_optional()
- for wake IRQs
-To: Wei-Cheng Chen <weichengc@nvidia.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thierry Reding <thierry.reding@gmail.com>, Haotien Hsu <haotienh@nvidia.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20260108102152.241073-1-weichengc@nvidia.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Fix unsafe generic_handle_irq() call
+To: Prathamesh Shete <pshete@nvidia.com>, thierry.reding@gmail.com,
+ ulf.hansson@linaro.org, chleroy@kernel.org, jirislaby@kernel.org,
+ haotienh@nvidia.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: petlozup@nvidia.com
+References: <20260108050103.126008-1-pshete@nvidia.com>
 From: Jon Hunter <jonathanh@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20260108102152.241073-1-weichengc@nvidia.com>
+In-Reply-To: <20260108050103.126008-1-pshete@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0118.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c6::8) To SJ2PR12MB8784.namprd12.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0120.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c6::7) To SJ2PR12MB8784.namprd12.prod.outlook.com
  (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -70,137 +68,314 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|IA0PPF52B16157D:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4be4002-c9fb-40df-e32b-08de4fadfc6e
+X-MS-Office365-Filtering-Correlation-Id: 5925d876-c500-4346-3804-08de4fae0929
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N1dya20rZitSR3B3YVNoZXFZVE5MdU43RFl3dEd3WGRaZUh1bTNxRGdnK0NC?=
- =?utf-8?B?NjZDdlYyVWc0b2tNaTFJekhvMlM3NExrMlJQMHUwRXIvc2g4Y09HdUk3Yk5L?=
- =?utf-8?B?eXFTbGZVeHB1Z3hyRmpXdmxHMm5JYmJ1cjVnTTBQeVpTcHA3RTJPTUZ0WXlq?=
- =?utf-8?B?Yk13YnA5K3NmSmVlV01MdXNxaktBZjROZFp6VWdFNnZVTjJrYk13SHBGSkl2?=
- =?utf-8?B?OG9UakN1WFZmSEtvTXp0M3ZBNnI2aTBnU2VzVmo2UTY0YUdwYzJSV0ZZUExR?=
- =?utf-8?B?S0FKVUNTaU9aWkNHbnVtMXVKU2FFYlpXOG9UMjM3SjN5SC9GVUpQSjJ2bnFB?=
- =?utf-8?B?azlpNmZxSUJxVzAraTZ5M2RDaE9jRmV5cll0cFpsc1NKYlJqbS9Gak1vU0t0?=
- =?utf-8?B?REIwZXdGQjU1V2tIeUxrQ3ZWaHdRWFZVNHZmd3pCNGFVWVFzV1dPTjR5dFBT?=
- =?utf-8?B?WDVRTStSejZ2TDNTZFhkQXlKeG4yRy9RY0lpb1pzV2Fqd3RHaVhLMURDVHJB?=
- =?utf-8?B?VWgxL0EweUZVZUdrTytaa3o1Q0dCQ3pqb05NaUpSQW1jNW1XOVRZUFRUeEdR?=
- =?utf-8?B?d05aY0g4TWZRUWUwWTRFNzR5Y1lEYkN0OHhMcks4NUl0dStLS2xyeDdJOTVD?=
- =?utf-8?B?Ny9HMkhSeEd6d2RHQXhrVUNVYXVvQzVhU2dMSFZRMnJtVlNYeElrT2U5V2VS?=
- =?utf-8?B?UnJYQzJVQmJEYUFMYVNORE1Fc0xMekdkRkdYN21xNUl4c0Z6RmpJRURQUy82?=
- =?utf-8?B?ZG1abmRpUFIzRTBNaVdJbzJnb09EQ0tYckEvOHRYMmZyZWFsS0paaTh0eHFw?=
- =?utf-8?B?NU5WL3IrcHZiRmFKTmdTVmdwN1lFd05EZXUrSTg3OUdXTmlhUEYrUjdCZzU1?=
- =?utf-8?B?UjFWVWNSSURLRnBLZnROZEtVUzFSc1E5QmdkQnJwZlJPR2c0V3N5blIvdnhS?=
- =?utf-8?B?a1pRS3lKKzFyS1VyZFJOeVJ6dXIxeHZuZm5nWGsrYVRaM3VkOURTbnlqYmxi?=
- =?utf-8?B?VVFlK0tIakdFc3NtdVZYaUJUQlc5NmJlbUd5VlgzVktxd0Z4Zms5OUo2M2NV?=
- =?utf-8?B?ZmRLMWRwejRyYzMxbHhWZmFHY0xaaEJrdXN0ekJ6QzBMdmpaUjJLaSthMGRq?=
- =?utf-8?B?NWJUdEVmajVNSi9OZXBMSXdmVWtFYmcvMmhySnZqdVkxenE2MkxNRlludzFJ?=
- =?utf-8?B?K2o1NFdlOXJ1b0RQdEl3azJady92bVFWMCtpRkwraW5YQU9vTWxyVU13L3gy?=
- =?utf-8?B?clAycFRMci9uQ005K2RZbENoaGRXOUorTU1zbE9MZWtRWjVCcEE2RjF6bUlL?=
- =?utf-8?B?bzIzNFB4TkVjOEpFZXdmYjNHOTQyaCs3RUlCWVcrR3FiV2hzU1RROFExZThX?=
- =?utf-8?B?NEt1MmNLemc0b0k4STNzNmViNWVNdUtERmpFWm9lWUFVQTN4Qk1jUzNLS2gv?=
- =?utf-8?B?SzJEcUhGUlNXVFlJNVJjMUt4clZlNnVhNUhMWk1OaFF4alFWOGFpQ2NUbW9o?=
- =?utf-8?B?NEtSdUFGUlRKa3Z2SGRJSENtTWZkWEppTXg4V3Y2NUthcWhDZy9QZS9DdlZS?=
- =?utf-8?B?Z1R3TmtjM3dPSTU1N2hjbU5QRVRKSXdBVWlMbTB4TXcyN3ptOFFyaHVUcVdy?=
- =?utf-8?B?c3k3WFkzZnRENmRSUGVzbjVwQXFvdTVZaHBCQjh6bDRaTEhnMWJyL0hiNnRV?=
- =?utf-8?B?TXhJc0ExT0FwNWpOdmdsY05Nd0p6TSt6RWZyUGZwODh5bENTWURhT3VobENU?=
- =?utf-8?B?c3pQYmJMamhlNFpmbkUwWUtrQnVEa3h2STE4dEdkTW1qZDlIMXhLdHNGdUdt?=
- =?utf-8?B?MUFacVJVNjBJQ1pQdC96TXhjdUJEU3lZbCtyWmQ2YURUZ1Q4UURJQ0RFbGY4?=
- =?utf-8?B?bDdhenNxTUdldUVGL3BiN3o0SThNMmxtVkV5bnN0QTdKajE3YmgvbWhVenN1?=
- =?utf-8?Q?YFVlcEbEwLmGZ9y3I6X93GrBpD272ugc?=
+	=?utf-8?B?UndMWFNCSWQ5Q2w3dStGdUlBeDBuTURUTVkrUHU3SXQvcm1nOHdmbDJ2M2Vt?=
+ =?utf-8?B?NFduMzVaTkZZQXVnZjh1Z0lReW9NTDZLckJvOWZWekxWNDloN2tGQ3pKWjVN?=
+ =?utf-8?B?LzVpeStOSm8vaHQ1K0dQLzh0aW9OeEhNS0JtbHNiWVZySWRZcWxXYjZacmZX?=
+ =?utf-8?B?QU9sNnpRaVpvVng1L2hBbXV6cmlkNXpUazV6cGNOMzl1UlRJa0hUY3VqOVQy?=
+ =?utf-8?B?SEx0SG44MHdaVzlJNGpFZ2RXcHA4eXRlVFc5ckEvemN4T0JuT2l0b09qOGxB?=
+ =?utf-8?B?NGtJTVRqWWpaWlppcTJwYS9YY2R2d1o5MEc5emJDZ1Z3bTNXb2MxRzFGS25Z?=
+ =?utf-8?B?NG9aOGVRT2JTbE1SNEhNR2owL2twTFZGdnhUd0c4V3FTZkxYRGxhUUw4MG81?=
+ =?utf-8?B?YmZRd2FPQ1FjR1hKbWZtMEdLS216Y3FHRkliMlJFRXB6YUFTSWdoQ1Y3cVkr?=
+ =?utf-8?B?aWxxL1duK0V5aTBZWEVjQ3d4U3lEWGN0ZEw3RGxUUUw4QS9CUldrL0ZPeG1k?=
+ =?utf-8?B?ajNKZ2NoeGFtMFBGSmkrS05OTkljOTIvNHgrZHVLZEJ3MDB2QlIrdmg1TmNk?=
+ =?utf-8?B?MUkxbExMeHg4c1RrNUZ4dFpYZXdPOFVCRUxVSUFFRmg3b2x3YzFGa2tPMXhM?=
+ =?utf-8?B?VFRGOEdSZnNrdUptbFhReUU1V1Bnb3J3Ny83TVo3d0V3anovNURBL082aTdt?=
+ =?utf-8?B?T0hPV3IyUEkzVXZTRit0NnZLM3pxMTA0bUFRMUFsem81bDdJSXdSRzZvZUJ6?=
+ =?utf-8?B?ZlcrWEFjbmlCTFJsWjZkMHpZZmVlMmlMZVJBTTRteHJ4eVpvUzNFcWNERXEw?=
+ =?utf-8?B?MlhCNGtLQmZ6VGFwV09vdEZCQkxiU3doMmdsK3M3SDFEWnQ1b1RDemlHTXlQ?=
+ =?utf-8?B?dlRYNVRtcFdVT3AwZ0UyeFNkVVh0VzhhVWw3WGNyT0NOYUZ2OWljeDRJN1Rr?=
+ =?utf-8?B?UnZ1UzMyelFlMWJzTFZLVDBMamxpYUdOSDcxSGMyUGhGdzZvZkJRRDdjMFhy?=
+ =?utf-8?B?VlRBMjRRVTJYWHlnWU05MXg0R1lhWUtjc0ppNCsrRDVaM1FRM2k3REFBbDhJ?=
+ =?utf-8?B?TThMbUZUV0pPZXBla21Ka2RSSHJGV1ZHUzQ5ZGpjZWpLWWV6RklSMXFvNExL?=
+ =?utf-8?B?ZTZ4VStmZ1dYbFRSc2MrbGNHcHlLbU41ZTV0cVorVk9hNjZFelJOYlZPdE1p?=
+ =?utf-8?B?ekcxQnU2aFVzaUtTRnV2STlOeGxwTW96cEM0WmgwYWVZVllaVm00N3l6WWVp?=
+ =?utf-8?B?dkVsK0FXYkFLcFYzZHhwWWYzUWhOUUtKOVBsb1JTdUFjdVFOSC9iQUxDMFMv?=
+ =?utf-8?B?cVBJcXQ4RlVrZHZ5Q2RvZThyZDdqSEdEZWxWemRoQU03czk4bzJwRDFQSSt2?=
+ =?utf-8?B?VHROejc3b0VLY1dqQk1USDFybDdBWm5NWjB4VUFtREFxS0FiRXJYazUwN1Fr?=
+ =?utf-8?B?Y0hLTEw4OGpQYXlyL0F3WDdzOFFpWEN0ZXVvcENtelNnZUhLRDVyeGJhOHlw?=
+ =?utf-8?B?SGhmM0JXbFZnUW9QQnhmQkJKTm9PQWRmRmNnZEF4ZGpQKzBYMCtEN1BoTldh?=
+ =?utf-8?B?c3BqVXZXMytrcHZqUGsvd3B4NU1CMk84Smt2QlA4S2NOSGJpWGtzaDJ4L3g2?=
+ =?utf-8?B?Ung1MU5uc2tEK3llMDdnOWk3T2hwWk9rbWpNWWFzWENNY1ZyZVlGSVU1VDZT?=
+ =?utf-8?B?RzU2MS9HajV3eSsvRjdWSC9sQnl5YU9OTHEwZzhsSFdXM0VVNGs2MXdPazlp?=
+ =?utf-8?B?TkJWVGgvQklLQ2FTd3ZVeGp4bFdyQ29RSjdmN2FhK2dEZkhxMTlUNDNJdzl3?=
+ =?utf-8?B?d1dEYmoxMmZXZE1YWllHS1BvK1dlWlNyVXlJR3NrckdUem5FRHhOUGdRMWtv?=
+ =?utf-8?B?eDVOcURDTEFvZURxUnRwb2pmTlg1cGk4aDkwNVZFTGMzSU1MU1NvU2pBa25E?=
+ =?utf-8?Q?UQJt5hzJlH8ImdU3gsBSsCzRSoMkGkzY?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MG1kWkpERm1BL0pjck9hS3ZKR24xcGlTVzZhTUJJZDNpVmYyWWcvVGc3S1Vi?=
- =?utf-8?B?V29WSHd0bW1WTStjNnNXSTJzcHRiZzYyVDNxRmVyMGtRZkxHSk9jbTF0bjBR?=
- =?utf-8?B?ZDIrNkxEQy9jbVNvU0pBNGJBNFFPRkllajRZYUhGMjNNM0k3N29PWXUzN0pP?=
- =?utf-8?B?eTEyb3NaWlZqd1h0a2l4WUY2VjJ0a0FKc1BuRis4Um9pOE5xUVpNeFZsS0Vw?=
- =?utf-8?B?bGlhVTBXaEFsd2JnNDlaMGZ2S2pzcmVEYnRrNDRwRTl4WGd4amhqRU44Y1ow?=
- =?utf-8?B?WlNWek1TNTJwaFdQbFd1T1NnaEpSY21NOVNMVnJUNnRxNm1IYVBINHkzWGx5?=
- =?utf-8?B?ZVpSZTZJZUVxN1Z4RHJRdWc5NnZVNFM4UXBqNjYzODV6d2pJK3hXODRnMWMr?=
- =?utf-8?B?OUNVZFdpM2ZmV21pMnJrQkJzWDRkeVR1TXQ3NlBxeHN6M3pBR0hVOTI5SXZV?=
- =?utf-8?B?cXBNWVh5U3dMSjdkWXk5ZE94TjZaVG5NUnArNXg0dUkwZzllZms4UlJaemNY?=
- =?utf-8?B?dWc1L216MDZuVnQ1SWhMUVdoUnI4UnJ5TmttSk5XamlnS1BMbE94T25SajRT?=
- =?utf-8?B?VWEySXp1T3dVRExTaEtaSDd6c2syYm4ralI2dmNFMG4rb1ZkMVpPTXNjcGNh?=
- =?utf-8?B?dUI0ejhJNEFjakljZEZxRXNJbHkzdFFLTlgzL1dNamxVRWF6RnFwSlVjR0lw?=
- =?utf-8?B?azhXbWFkKzd5REM5dzVwbFlEdWNWS0E3WlJ1R0NkZzB4aGUvMVpPREUvM2pY?=
- =?utf-8?B?eU9aY3RabnB2V3FJM1M4TG5DSlJqMGpzOXVtRXhZRUZGWnpEUm42THdOMVNq?=
- =?utf-8?B?bXVzeStpYWtZekExaldyd2R6NTdONExPcEZSYlRMdkxCUFdXQ1lqNjdTa0Z5?=
- =?utf-8?B?M2xzdkFlSlBOdjdjd0pzbnJRVENySFJZNTJybnpIeDRLOThuRTVtWEIrUXFm?=
- =?utf-8?B?Z0hXOFlSSUphMlJueTB6NC9pVUxQelIzRDRPVi9jSzl4RFJCMDJQOHFKNVFp?=
- =?utf-8?B?cjB1MEYzblljVUIxTXQ5SFNQT0F6L3pRbTdvZzlsaFNCNDA3emNYaWpzVnpO?=
- =?utf-8?B?R281MDByVFpsMHhrVUZWYjIzUkhIdFpIbGdSQzEreFpkeEtlNVp4RFpLYjBr?=
- =?utf-8?B?bFVvdmZVRGtTUHFkUFVyQWNkUFVLcHBWRDdERjBZWGY4Um53bXpmbkFSOUVG?=
- =?utf-8?B?MHZDY2QyUnQrNDQ3R1BFVmE1N2V5a2JpWGlZY1o4WEJKMEEyUVRpdzJpVFV6?=
- =?utf-8?B?Y1VLVTcrSzhJU2xWM0h6MG5jWml6SGIyOWx4OERvNWVXam9yL3ZxemI3Rkg2?=
- =?utf-8?B?cjhJUFd2NDdCSTgyZi9rcmJjL0szbkUzQ05OZUYyRVM2eWlHWHpZcUJwOUNu?=
- =?utf-8?B?Q2hHV3V0bjlVQVJTTUtOSEk5U1BUQ1hQY2NpL25zSkVodWt3Z1dhcUpZdi8z?=
- =?utf-8?B?eHRHRjMzQlMxYmVpTWtjVklzWlJKTDlBUDBIR2dLbUgrQm9wN3BsUHVtKzc2?=
- =?utf-8?B?NWl5dG9aZm1DbDRCakM5QnRlblZtZTRMLzQwOUl0bml1QTdMUTN3WXZkWURP?=
- =?utf-8?B?TUlpOWIyenNLRkxqMmJRMnQ5VTZKYmoyOVZLenZXZjNSYXZIdmhaN3p1Qi9i?=
- =?utf-8?B?SXVyRENQWm5jYzg1ZTVVdnlIVkROVHBWNnZvVElaWnlOeW85Z1o3a2NBM1Jx?=
- =?utf-8?B?RnV3TjRJU3hZdEZscTVUL00yTmdkcGtEakQ3eGRVdGtVQ1dtOGVCMXNSWGZi?=
- =?utf-8?B?MXhzbXFQblJZTGR2a2NER3pUeXJTSXhqOVJBQ0UyWUlJaUZDczN2bmZDUnMv?=
- =?utf-8?B?eUIzWUpwbGg0VmRKS01PZ0Z3bTdBSkNxZy9lTUYvaDRUR3pUaFNKVXliV2NY?=
- =?utf-8?B?ckxvckJZOUQ3UW5zaFFEWmQvZnc1OTBVQlpVT0V1YVpPazFSa1pQaTZ1cjBo?=
- =?utf-8?B?TldLaU44b3E1TUxRQVJzWFRXVTdsYVBBdEhXZnJNaHBZZG4vdWtKMUN5aFor?=
- =?utf-8?B?MDZ2bGovYUlYcnQ4MXFqZWs1d3h3OXJrTjE0WlBzempZVVM4S2xOa2lkeS9p?=
- =?utf-8?B?S0hTOE1SS005anZUM2l0ODlSZW9rbVpQYmNmM2R0Qi9kUDdsZHJpSXNuSkNG?=
- =?utf-8?B?bG5aN1AvZkpJMW1qRDhrdyt0SEZPUi9jTXJzN3NsUWVSRmd2L3IrZGxlOEpr?=
- =?utf-8?B?S0FOQ1VldlRJR09sUDhoUjJlN3dnSHh3cktUSlM3N0Q1d0M5eGxXb3JNa1kv?=
- =?utf-8?B?RUZXOVdDWlFJalBTWDVQT2hnZXBPUWt6NkVmWStGVG5RTUFpUnB1S25WckIr?=
- =?utf-8?B?dlk5OEJQcHE5TnVCTjJqT3hwOGorT1dnZk9ZZmZkcktRakdrRWJ3cVhGNlZN?=
- =?utf-8?Q?Cq1uImq1zJS2b0ZfErjyUB9GFmkQsEvJfoJ2Z/+yVTLuu?=
-X-MS-Exchange-AntiSpam-MessageData-1: SVK14oFuDWsVDw==
+	=?utf-8?B?RkpNd3FFT1JFOWErU3dMZDRLclZvZXRFMzEyZnR0Y1E0c2dXYlI0Zk5NemNE?=
+ =?utf-8?B?VmpQRVk5R3NOVDJHZm9yakQ1Z0ZCcWNFRzZmdjlQaW5qT3FjcFd6VDczbXRI?=
+ =?utf-8?B?NUF0UzA0bTlHTytKV09oVG1lcWhSYXNWNUNNeVhBanUzUzZ6YmZ2VTVMTnpW?=
+ =?utf-8?B?UGlDeldodnc0WVZaSmR6bUZOZ2xrOHlCSEJ1UGVQSUNKQ1JydlpJcE1BdzhC?=
+ =?utf-8?B?aG04TW9rY2VqcU5UQTVBbldxUzhkaWhXL25OZklreERQYWh6RGdmemxZbkpp?=
+ =?utf-8?B?MEpkV1BoVDJaSjlCK3JtUnhuTTlHbEo3a2gxem9mTW5PVFBsTHRIZS9GTnZF?=
+ =?utf-8?B?MjkyZDJuNWFmK2NKcUpjUnFYQzF1RFd6VXdGR3dNb0dseVFNbUVjVEswZjN1?=
+ =?utf-8?B?dHFGcm8xV2pnT0J4VFZaeHlxSmlVbFJvWnh2a2lDa1VucEFja3dNNFJ1a2Ji?=
+ =?utf-8?B?SXBCejd2SzQyOFBNakEyczBvSWMvV2VVN1VUR1ZOVzVwZ1NyaUpyL0ZuUWpN?=
+ =?utf-8?B?bGpaY0x4Q0ZmT2d5ZE90ZUJhU0F1ZzhWM0hRSE4yMjFlWDFEcjNEbzZlZ2k0?=
+ =?utf-8?B?OTNnazZyVzJhSWlvZTduTTVPWlVNTk85OHF0V1ZCUHNBOGFSTzZTb3o4Q1hY?=
+ =?utf-8?B?aHNTK3NaUEludENmeWhJSHVURFJ6cHZwWlYzUXRSd0dkeklIeE9mYVZTaUxs?=
+ =?utf-8?B?VE1lWERNWExBMUhLVEloaTdwb2R3YlZYcGU1QVlHQnVjVVFScjczN1RiUDBI?=
+ =?utf-8?B?T2djUXdBOVpnZS9aeHYrb3RyMkdlbUg0bEdtZ3k0WXIvQTZYUkNpcGR2TWRz?=
+ =?utf-8?B?ZW9rL0daYmVuc1BiZjkrWVpPZDhHMkxnSlR3UDBOd2RwZklHWkFDYlUvQ2lw?=
+ =?utf-8?B?aFRBdWhUVlp0VGhMV25ickR4WDRWeEhsWEtiNm5BQkF2RDRiSysxOVpJbnBB?=
+ =?utf-8?B?alY0RmRxanA4WFB0RU9CWndEZElqcWs3YW9MWER4c0E4aUJmUXhCVDRzbW9N?=
+ =?utf-8?B?dVVibFBlUjVIaWZXRU4zYy9Eek1jd0lkUUNvdzBMU25zNDFKMG9mckZua0R4?=
+ =?utf-8?B?VDA1N21EVzhHbjB0VkcrL2hIaGdOVC8yRklLMGNkbFdHVS9CM3lBbjkyTlQw?=
+ =?utf-8?B?QXdMR3czVVl0dnZJbGEyS01uZWxFU21kWjZSVG1ORUdxbDBHODNRUWNObTFn?=
+ =?utf-8?B?OEpQU1BET3R5MDNsOUNvQllDZXkyU2FZclZybkt4UXhFN2UyLzZvbEYwTEgz?=
+ =?utf-8?B?OWQrOGc1anIyZGxTcjJRVDdXaDVXVUJnRGJDWkFaYVNUZ3pTTTkzZVpRbFh5?=
+ =?utf-8?B?SG0xS0c2T2tHNWRxdjNjQ3lEUU9rZG1RVE5Qc3BwWmliWGYzbGwrVHE5NDFr?=
+ =?utf-8?B?VlpqR3V6VHowa29ySkhZemZCUDFDUEJkVWJ3N0FGajFlVHpRcmV1RTAvTDFq?=
+ =?utf-8?B?dSt4eGkwWHl4ZWZqNk1wbG9XQm5hRDZvOUlnNkQ5djNId1ZvbFVjRVBlM3Ft?=
+ =?utf-8?B?OUZ3ZVljM3pCVWl3TDRGc1dXUmV5czl0eGpaaTZrbGo3aC9DM1V0YzZYZmlo?=
+ =?utf-8?B?MDlUKzE5b0RXd3R6blZFOFhpbDRKQ2ZscFY2cFBSWW5BakRkbERJTy8xS3RP?=
+ =?utf-8?B?SUVkaEkxNGw4ZEFVdVd4ektxS2hqbTdUc2pIV3hlWkV6cW41cXJRY3RwSXlW?=
+ =?utf-8?B?SkxrcE1ROC9hcDVBNjl6UjJFdGQyVWhsaFYyOVNRdzltd05zdWkzVzN3L3Bs?=
+ =?utf-8?B?YXpTZlRsbHJCMDZpNURRYStWTm5QbVUzWWdCL29vT0NsUWtUU3pYclJlWnJB?=
+ =?utf-8?B?M3dzZXIxNUxURlNpZmloZGU2WmpSSGFRKzhpSzNkSDVROWVEc0c4ME1HQW9G?=
+ =?utf-8?B?ZUpidVl0K0t5S3BYR0lJUHdYaC9GN3QzZVdNNm9NZFJQZSt6dW5FWmJ6dnVr?=
+ =?utf-8?B?MEFrMjZDK1A2K29RNlVVS0s1LzMvVTlkMWhQYWtTVUlhOEx4YmZwU3MwRkRL?=
+ =?utf-8?B?NVI0YW9peFFveExaK0lZZC9MTUVvRmtpSmN1UzcyZEJtWXpuRFd3RnV1c2lW?=
+ =?utf-8?B?OWs3TnZVRUhSRTNzYXRYUzJzbzNFeEpmT1dDV2xta1dqOTdTZkVveXpac1VM?=
+ =?utf-8?B?U3IzZWo4a0srOERyb3ZRTm01OGNxOWlSMElIZUJlbEc0bFFSWVU2Y0hacXFm?=
+ =?utf-8?B?QXl2dml0RjJBZlNtWjIzWmh1ZjhKT2ZwQ2dzVk1yUFRDRURaWmdNci9MUG5o?=
+ =?utf-8?B?RGxyeWV6Ym45akN2NEpUUzNuTlhBeFM3dnduR3NScGpQd2hIN2FPdDc4RkVS?=
+ =?utf-8?B?MGdpMmZXcnZzdzVQN3hXbnpLZ1pSWVFKbXJiSkhpR3hZeG80cVN0TVJtdWNF?=
+ =?utf-8?Q?17La3/eJDLxhe2f9/erUmLHXT5aFKDqXs5D7I2Mhar3dD?=
+X-MS-Exchange-AntiSpam-MessageData-1: 8yER10jThTs0wA==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4be4002-c9fb-40df-e32b-08de4fadfc6e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5925d876-c500-4346-3804-08de4fae0929
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 18:36:21.8919
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 18:36:43.1958
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Lv3jahUzNr4aYTQRoNGWJsWTWmsAB8bDQ/uqcEkZdtT25VnL5xylTtGo9y+ADK8Ilm0lsOHrOATyDZP2nQ7Xfw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: orVjjYwNnyAx1bjdHbqdZX4zDR0UIwIoZR7sSbal6aSVOCPqIXDhnbeXuYSd1LYwzlzIOLYC5K+x6XNlDfiNYA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF52B16157D
 
 
-On 08/01/2026 10:21, Wei-Cheng Chen wrote:
-> From: Wayne Chang <waynec@nvidia.com>
+
+On 08/01/2026 05:01, Prathamesh Shete wrote:
+> Currently, when resuming from system suspend on Tegra platforms,
+> the following warning is observed:
 > 
-> When some wake IRQs are disabled in the device tree, the corresponding
-> interrupt entries are removed from DT. In such cases, the driver
-> currently calls platform_get_irq(), which returns -ENXIO and logs
-> an error like:
+> WARNING: CPU: 0 PID: 14459 at kernel/irq/irqdesc.c:666
+> Call trace:
+>   handle_irq_desc+0x20/0x58 (P)
+>   tegra186_pmc_wake_syscore_resume+0xe4/0x15c
+>   syscore_resume+0x3c/0xb8
+>   suspend_devices_and_enter+0x510/0x540
+>   pm_suspend+0x16c/0x1d8
 > 
->    tegra-xusb 3610000.usb: error -ENXIO: IRQ index 2 not found
+> The warning occurs because generic_handle_irq() is being called from
+> a non-interrupt context which is considered as unsafe.
 > 
-> However, not all wake IRQs are mandatory. The hardware can operate
-> normally even if some wake sources are not defined in DT. To avoid this
-> false alarm and allow missing wake IRQs gracefully, use
-> platform_get_irq_optional() instead of platform_get_irq().
+> Fix this warning by deferring generic_handle_irq() call to an IRQ work
+> which gets executed in hard IRQ context where generic_handle_irq()
+> can be called safely.
 > 
-> Fixes: 5df186e2ef11 ("usb: xhci: tegra: Support USB wakeup function for Tegra234")
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Wei-Cheng Chen <weichengc@nvidia.com>
+> When PREEMPT_RT kernels are used, regular IRQ work (initialized with
+> init_irq_work) is deferred to run in per-CPU kthreads in preemptible
+> context rather than hard IRQ context. Hence, use the IRQ_WORK_INIT_HARD
+> variant so that with PREEMPT_RT kernels, the IRQ work is processed in
+> hardirq context instead of being deferred to a thread which is required
+> for calling generic_handle_irq().
+> 
+> On non-PREEMPT_RT kernels, both init_irq_work() and IRQ_WORK_INIT_HARD()
+> execute in IRQ context, so this change has no functional impact for
+> standard kernel configurations.
+> 
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 > ---
->   drivers/usb/host/xhci-tegra.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/soc/tegra/pmc.c | 106 ++++++++++++++++++++++++++++------------
+>   1 file changed, 76 insertions(+), 30 deletions(-)
 > 
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 31ccced5125..8b492871d21 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -1563,7 +1563,7 @@ static int tegra_xusb_setup_wakeup(struct platform_device *pdev, struct tegra_xu
->   	for (i = 0; i < tegra->soc->max_num_wakes; i++) {
->   		struct irq_data *data;
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index f3760a3b3026..a0cc276e235a 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -28,6 +28,7 @@
+>   #include <linux/iopoll.h>
+>   #include <linux/irqdomain.h>
+>   #include <linux/irq.h>
+> +#include <linux/irq_work.h>
+>   #include <linux/kernel.h>
+>   #include <linux/of_address.h>
+>   #include <linux/of_clk.h>
+> @@ -336,6 +337,8 @@ struct tegra_wake_event {
+>   		},					\
+>   	}
 >   
-> -		tegra->wake_irqs[i] = platform_get_irq(pdev, i + WAKE_IRQ_START_INDEX);
-> +		tegra->wake_irqs[i] = platform_get_irq_optional(pdev, i + WAKE_IRQ_START_INDEX);
->   		if (tegra->wake_irqs[i] < 0)
->   			break;
+> +#define TEGRA_PMC_MAX_WAKE_VECTORS	4
+> +
+>   struct tegra_pmc_soc {
+>   	unsigned int num_powergates;
+>   	const char *const *powergates;
+> @@ -468,6 +471,10 @@ struct tegra_pmc {
+>   	unsigned long *wake_sw_status_map;
+>   	unsigned long *wake_cntrl_level_map;
+>   	struct syscore syscore;
+> +
+> +	/* Pending wake IRQ processing */
+> +	u32 pending_wake_status[TEGRA_PMC_MAX_WAKE_VECTORS];
+> +	struct irq_work pending_wake_irq_work;
+>   };
 >   
+>   static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+> @@ -1905,8 +1912,59 @@ static int tegra_pmc_parse_dt(struct tegra_pmc *pmc, struct device_node *np)
+>   	return 0;
+>   }
+>   
+> +/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
+> +static void tegra186_pmc_wake_irq_work_handler(struct irq_work *work)
+> +{
+> +	struct tegra_pmc *pmc = container_of(work, struct tegra_pmc,
+> +					      pending_wake_irq_work);
+> +	unsigned int i, wake;
+> +	unsigned long pending_wake_status;
+> +
+> +	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
+> +		pending_wake_status = pmc->pending_wake_status[i];
+> +
+> +		for_each_set_bit(wake, &pending_wake_status, 32) {
+> +			irq_hw_number_t hwirq = wake + (i * 32);
+> +			struct irq_desc *desc;
+> +			unsigned int irq;
+> +
+> +			irq = irq_find_mapping(pmc->domain, hwirq);
+> +			if (!irq) {
+> +				dev_warn(pmc->dev, "No IRQ found for WAKE%lu!\n",
+> +					 hwirq);
+> +				continue;
+> +			}
+> +
+> +			dev_dbg(pmc->dev,
+> +				"Resume caused by WAKE%lu mapped to IRQ %d\n",
+> +				hwirq, irq);
+> +
+> +			desc = irq_to_desc(irq);
+> +			if (!desc) {
+> +				dev_warn(pmc->dev,
+> +					 "No descriptor found for IRQ %d\n",
+> +					irq);
+> +				continue;
+> +			}
+> +
+> +			if (!desc->action || !desc->action->name)
+> +				continue;
+> +
+> +			generic_handle_irq(irq);
+> +		}
+> +
+> +		pmc->pending_wake_status[i] = 0;
+> +	}
+> +}
+> +
+>   static int tegra_pmc_init(struct tegra_pmc *pmc)
+>   {
+> +	if (pmc->soc->max_wake_vectors > TEGRA_PMC_MAX_WAKE_VECTORS) {
+> +		dev_err(pmc->dev, "max_wake_vectors (%u) exceeds maximum (%u)\n",
+> +			pmc->soc->max_wake_vectors, TEGRA_PMC_MAX_WAKE_VECTORS);
+> +		return -EINVAL;
+> +	}
+> +
+>   	if (pmc->soc->max_wake_events > 0) {
+>   		pmc->wake_type_level_map = bitmap_zalloc(pmc->soc->max_wake_events, GFP_KERNEL);
+>   		if (!pmc->wake_type_level_map)
+> @@ -1923,6 +1981,12 @@ static int tegra_pmc_init(struct tegra_pmc *pmc)
+>   		pmc->wake_cntrl_level_map = bitmap_zalloc(pmc->soc->max_wake_events, GFP_KERNEL);
+>   		if (!pmc->wake_cntrl_level_map)
+>   			return -ENOMEM;
+> +
+> +		/* Initialize IRQ work for processing wake IRQs
+> +		 * Must use HARD_IRQ variant to run in hard IRQ context on PREEMPT_RT
+> +		 * because we call generic_handle_irq() which requires hard IRQ context.
+> +		 */
+> +		pmc->pending_wake_irq_work = IRQ_WORK_INIT_HARD(tegra186_pmc_wake_irq_work_handler);
+>   	}
+>   
+>   	if (pmc->soc->init)
+> @@ -3129,47 +3193,29 @@ static void wke_clear_wake_status(struct tegra_pmc *pmc)
+>   	}
+>   }
+>   
+> -/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
+> -static void tegra186_pmc_process_wake_events(struct tegra_pmc *pmc, unsigned int index,
+> -					     unsigned long status)
+> -{
+> -	unsigned int wake;
+> -
+> -	dev_dbg(pmc->dev, "Wake[%d:%d]  status=%#lx\n", (index * 32) + 31, index * 32, status);
+> -
+> -	for_each_set_bit(wake, &status, 32) {
+> -		irq_hw_number_t hwirq = wake + 32 * index;
+> -		struct irq_desc *desc;
+> -		unsigned int irq;
+> -
+> -		irq = irq_find_mapping(pmc->domain, hwirq);
+> -
+> -		desc = irq_to_desc(irq);
+> -		if (!desc || !desc->action || !desc->action->name) {
+> -			dev_dbg(pmc->dev, "Resume caused by WAKE%ld, IRQ %d\n", hwirq, irq);
+> -			continue;
+> -		}
+> -
+> -		dev_dbg(pmc->dev, "Resume caused by WAKE%ld, %s\n", hwirq, desc->action->name);
+> -		generic_handle_irq(irq);
+> -	}
+> -}
+> -
+>   static void tegra186_pmc_wake_syscore_resume(void *data)
+>   {
+> -	u32 status, mask;
+> +	u32 mask;
+>   	unsigned int i;
+>   
+>   	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
+>   		mask = readl(pmc->wake + WAKE_AOWAKE_TIER2_ROUTING(i));
+> -		status = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+> -
+> -		tegra186_pmc_process_wake_events(pmc, i, status);
+> +		pmc->pending_wake_status[i] = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+>   	}
+
+Missing a newline here.
+
+> +	/* Schedule IRQ work to process wake IRQs (if any) */
+> +	irq_work_queue(&pmc->pending_wake_irq_work);
+>   }
+>   
+>   static int tegra186_pmc_wake_syscore_suspend(void *data)
+>   {
+> +	unsigned int i;
+> +
+> +	/* Check if there are unhandled wake IRQs */
+> +	for (i = 0; i < pmc->soc->max_wake_vectors; i++)
+> +		if (pmc->pending_wake_status[i])
+> +			dev_warn(pmc->dev,
+> +				 "Unhandled wake IRQs pending vector[%u]: 0x%x\n",
+> +				 i, pmc->pending_wake_status[i]);
+
+Missing a newline here.
+
+>   	wke_read_sw_wake_status(pmc);
+>   
+>   	/* flip the wakeup trigger for dual-edge triggered pads
+
+
+Thierry may be able to fix up the missing newlines when applying. With 
+that ...
 
 Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Tested-by: Jon Hunter <jonathanh@nvidia.com>
