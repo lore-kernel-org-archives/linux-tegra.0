@@ -1,49 +1,49 @@
 Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90CE257827;
-	Mon, 12 Jan 2026 13:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA071E1DF0;
+	Mon, 12 Jan 2026 13:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768225594; cv=none; b=PGVjil8zdNJvA17jhb3zSDdN8dXM14dnp0EtUJXNtJej8s9lNvqk+n+yaEZr1IxxgTz8MHOzzxFwhqYa2U7C8j2YP3++7YePCE5F7a0/XP++76f+aJFi6xOSklGq5X4eMZBra1sRLv9L5XSyichOTxO/NHbiNlRcZjpP6Upmj2M=
+	t=1768225910; cv=none; b=SUmCS71wOiVzsdXocCilA8biOBXFmAH+fZcipvdzL6fQhLc9FnlRvjga5oVFKHZGtle4O0dZ1gOfYAWsuJf+qrO9Oa0qOq6OtyzrEdkBSxnVwOYFueV2Snk/CEuCvTYLf+2rnEeZ2f2mGiDYfZVV8seLeomuOP32yCgIqCXYpy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768225594; c=relaxed/simple;
-	bh=8/aEM+N/WJ88UdtF+leN0xUavaTf+RRw4Q20tjYMDCY=;
+	s=arc-20240116; t=1768225910; c=relaxed/simple;
+	bh=5vRv/pZsfNb7lRuCrIFMf+OcHs4aWH+H1NEGFhzZhtI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WTq5zwt2L8INe07rAY1K8zkZVaSxTlMwd46akzleXFYzK68cS/jYVhbi0Wltwc9VWfcoU/e2cgyVODCc1cDgpkQB9PopmK9MKqmTZiLiP1jvrauiJpGdoB/2vbYGhhtghiNqb+qzHXHaTTdw/DyAotG3jUctIsPSwf5YENoDO6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=ltAZsuR/; arc=none smtp.client-ip=193.136.128.21
+	 In-Reply-To:Content-Type; b=SxmWBPHyMbzUJHxdhdkwBFw2xAIt4X7b9CirTG6zuIiUo+yNY99p0wnDdPrABtguq6jWV9WHzwumln0hdhAlgahdf7DZbsf0CwQ2fIb8mKmXuVQTQigEH53Q4s2s74+uEqhTb7N1X6cJZ8ORB+jrOvHwHn2ZD9AI6xhYQSZQ9rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=bZnFjsaK; arc=none smtp.client-ip=193.136.128.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="ltAZsuR/"
+	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="bZnFjsaK"
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id EFCC96001407;
-	Mon, 12 Jan 2026 13:46:27 +0000 (WET)
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id E262B600025A;
+	Mon, 12 Jan 2026 13:45:40 +0000 (WET)
 X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
 Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
  by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id e0GECEQ2kv4x; Mon, 12 Jan 2026 13:46:25 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 7C38C6000256;
-	Mon, 12 Jan 2026 13:46:24 +0000 (WET)
+ with LMTP id T_Lsx4VB-hy2; Mon, 12 Jan 2026 13:45:38 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 86E536000256;
+	Mon, 12 Jan 2026 13:45:37 +0000 (WET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail2; t=1768225585;
+	s=mail2; t=1768225537;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uFKcXE+OliUSap4yQqLacMApUbum4+mc35fmauINXeI=;
-	b=ltAZsuR/TrWFWKlvz+8DLThz4rMJrAfmVj/dX9eENLDgL2zqZ1i3wTYmXUEuPwlJ101CIT
-	4SOA5cxUI0Mq68zzwlNAgBl/N4+0nJaH64hSh4moFWQ6BFPumHRiDx1RFPk/030m/cCtf3
-	7aC3dkwnY3jGicSzqMX7dqPAssWGZmpVSE2aq/hEQyu9Yway6cXJLMOGIXTGrQ8I/qfTOS
-	nEqT4AmS6llXkoiLPoah59WkiJ7dxZRl8W9lG/5oEMISEyV7JEP6/ri/fM8kh8OXKYZGGa
-	UTzIIHoeBa9JRTukyNdnj0/R2/C5xYPIF5kk6qrK6xYbYYv5GtRCCVgQYdUeVg==
+	bh=i4mQuv4mU/Y/i+cCr+u9L7cjmQiPuxL604c9Tea/Ng4=;
+	b=bZnFjsaKx+kykBB7D5DFKZ6u726gLCXEeqVigQ8sT0jNAEdBAe4bII2FrXxXdxod2SYFsL
+	mw2YEwjBdJyoKl5nQ8QETnjhbiUgZldmjsRoqXfuFtUfMcRTkhb3zcgC1dla4ckKHjJ3wD
+	+2+X91U07EdIlRzKF+wdWGFrOtuzzb0f21rwo1lmah8kyf5nLvWU+SeVPSJpwPdPl6XJnY
+	666UtsxPmgs31pIFOhOVtAUUofQFgViL9RibK0XzEenXFBmTlcWwqrzS46Tu3r0W4sCD8x
+	SK5D03dNCYLcQa/O8bJu+30Qhy9e81XM0sRpKO8JCYuBD1iQzyB1AC2i7LLoXA==
 Received: from [192.168.2.110] (unknown [148.63.39.39])
 	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 08B923600D6;
-	Mon, 12 Jan 2026 13:46:22 +0000 (WET)
-Message-ID: <c21113d5-cd10-409b-a4d6-a6d213bfec2f@tecnico.ulisboa.pt>
-Date: Mon, 12 Jan 2026 13:46:19 +0000
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 2936D36008B;
+	Mon, 12 Jan 2026 13:45:37 +0000 (WET)
+Message-ID: <7a723cf9-700f-460e-a4a9-3d0e1e81ef07@tecnico.ulisboa.pt>
+Date: Mon, 12 Jan 2026 13:45:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -51,80 +51,67 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Fixes to Tegra USB role switching and Smaug USB role
- switching enablement
-To: Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
+Subject: Re: [PATCH] arm64: tegra: smaug: Enable DisplayPort via USB-C port
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
 Content-Language: en-US
 From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
+In-Reply-To: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Hello,
 
-On 12/4/25 21:27, Diogo Ivo wrote:
-> Hello,
-> 
-> This patch series contains two fixes for USB role switching on the
-> Tegra210 SoC, as well as enabling this feature on the Pixel C.
-> 
-> The first patch addresses a wrong check on the logic that disables the
-> VBUS regulator.
-> 
-> The second patch guarantees proper ordering of events when switching PHY
-> roles.
-> 
-> The third and fourth patches then add the necessary nodes and properties
-> in the Smaug DT in order for role switching to work. Currently with this
-> patch series this feature can only be controlled from userspace by writing
-> the desired role to sysfs as
-> 
-> echo "role" > /sys/class/usb_role/usb2-0-role-switch/role
-> 
-> with role being one of {device, host, none}.
-> 
-> Further patches will enable automatic role switching via the 'cros_ec_typec'
-> driver which is currently broken on Smaug.
-> 
-> N.B: This series does not add a 'connector' node under the 'usb-role-switch'
-> property added on patch 04/04 because for Smaug the connector should instead
-> be under the node for 'cros_ec_typec' node and as stated above this
-> driver is currently broken for this device. If it is deemed better to
-> describe it but explicitly disable the node let me know and I will send
-> out a v2.
+On 12/26/25 12:17, Diogo Ivo wrote:
+> Enable both SOR and DPAUX modules allowing the USB-C port to transmit
+> video in DP altmode. Tested on several monitors with USB-C to HDMI
+> adapter.
 > 
 > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 > ---
-> Diogo Ivo (5):
->        usb: host: tegra: Remove redundant pm_runtime_mark_last_busy() call
->        phy: tegra: xusb: Fix USB2 port regulator disable logic
->        phy: tegra: xusb: Fix ordering issue when switching roles on USB2 ports
->        arm64: tegra: smaug: Complete and enable tegra-udc node
->        arm64: tegra: smaug: Add usb-role-switch support
+>   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
 > 
->   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 13 +++++++++++++
->   drivers/phy/tegra/xusb-tegra210.c             |  5 +++--
->   drivers/phy/tegra/xusb.c                      | 23 +++++++++++++++++++++++
->   drivers/phy/tegra/xusb.h                      |  1 +
->   drivers/usb/gadget/udc/tegra-xudc.c           |  4 ++++
->   drivers/usb/host/xhci-tegra.c                 | 17 ++++++++++-------
->   include/linux/phy/tegra/xusb.h                |  1 +
->   7 files changed, 55 insertions(+), 9 deletions(-)
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> index 49bf23d6f593..b88428aa831e 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> @@ -31,6 +31,11 @@ memory@80000000 {
+>   	};
+>   
+>   	host1x@50000000 {
+> +		dpaux1: dpaux@54040000 {
+> +			vdd-supply = <&pp3300>;
+> +			status = "okay";
+> +		};
+> +
+>   		dsia: dsi@54300000 {
+>   			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
+>   			status = "okay";
+> @@ -58,6 +63,13 @@ link1: panel@0 {
+>   			};
+>   		};
+>   
+> +		sor1: sor@54580000 {
+> +			avdd-io-hdmi-dp-supply = <&pp1800>;
+> +			vdd-hdmi-dp-pll-supply = <&avddio_1v05>;
+> +			nvidia,dpaux = <&dpaux1>;
+> +			status = "okay";
+> +		};
+> +
+>   		dpaux: dpaux@545c0000 {
+>   			status = "okay";
+>   		};
+> 
 > ---
-> base-commit: a8817ff3b5cd99b0a5af57a92d1a3a7980612550
-> change-id: 20251201-diogo-tegra_phy-86c89cab7377
+> base-commit: c100317dc8c40c71bfb572353d87ca1735d39fd5
+> change-id: 20251226-smaug-typec_dp-197201aaadae
 
-Gentle ping on this series.
+Gentle ping on this patch.
 
 Thank you,
 Diogo
