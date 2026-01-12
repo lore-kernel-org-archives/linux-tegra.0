@@ -1,117 +1,178 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA071E1DF0;
-	Mon, 12 Jan 2026 13:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F413327E054;
+	Mon, 12 Jan 2026 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768225910; cv=none; b=SUmCS71wOiVzsdXocCilA8biOBXFmAH+fZcipvdzL6fQhLc9FnlRvjga5oVFKHZGtle4O0dZ1gOfYAWsuJf+qrO9Oa0qOq6OtyzrEdkBSxnVwOYFueV2Snk/CEuCvTYLf+2rnEeZ2f2mGiDYfZVV8seLeomuOP32yCgIqCXYpy8=
+	t=1768227101; cv=none; b=MuF0OMYQnTgpXI4mMQezNVvbiNopYL08xpUoiSEZeGRKgBHGOjcG4DCzhwlmf564vVkSgF+uaePZdnHsi2BZRsWM/Oci6JzxtaJx1QNVCqKhRy3rvVelLVRR+p0vI7WBczaSK+JaYB8FpjZZlmxV7CuJuOksKl/ARM78hOJmJfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768225910; c=relaxed/simple;
-	bh=5vRv/pZsfNb7lRuCrIFMf+OcHs4aWH+H1NEGFhzZhtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SxmWBPHyMbzUJHxdhdkwBFw2xAIt4X7b9CirTG6zuIiUo+yNY99p0wnDdPrABtguq6jWV9WHzwumln0hdhAlgahdf7DZbsf0CwQ2fIb8mKmXuVQTQigEH53Q4s2s74+uEqhTb7N1X6cJZ8ORB+jrOvHwHn2ZD9AI6xhYQSZQ9rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=bZnFjsaK; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1768227101; c=relaxed/simple;
+	bh=bgJaNUM5VIgE3jmg2aRlC1+4Tim4pBQlk9u6DJ16NrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lldfFWVv5mMhtqAgDVHr2qJ/OuLOewpFGXDSMWS4qJm3KOsbScMeCQkJsBmkpIm+3hp1STz8Z4lE5LqAhRbpqasI2fxLwxXIyOextQP2QW14kIBAFTw9RCHHahcLr3GeWYM+BJ/RfhAz0Ls/hwe07bluxknEHR3uByZPS+gxuEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CakAumhF; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="bZnFjsaK"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id E262B600025A;
-	Mon, 12 Jan 2026 13:45:40 +0000 (WET)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id T_Lsx4VB-hy2; Mon, 12 Jan 2026 13:45:38 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 86E536000256;
-	Mon, 12 Jan 2026 13:45:37 +0000 (WET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail2; t=1768225537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i4mQuv4mU/Y/i+cCr+u9L7cjmQiPuxL604c9Tea/Ng4=;
-	b=bZnFjsaKx+kykBB7D5DFKZ6u726gLCXEeqVigQ8sT0jNAEdBAe4bII2FrXxXdxod2SYFsL
-	mw2YEwjBdJyoKl5nQ8QETnjhbiUgZldmjsRoqXfuFtUfMcRTkhb3zcgC1dla4ckKHjJ3wD
-	+2+X91U07EdIlRzKF+wdWGFrOtuzzb0f21rwo1lmah8kyf5nLvWU+SeVPSJpwPdPl6XJnY
-	666UtsxPmgs31pIFOhOVtAUUofQFgViL9RibK0XzEenXFBmTlcWwqrzS46Tu3r0W4sCD8x
-	SK5D03dNCYLcQa/O8bJu+30Qhy9e81XM0sRpKO8JCYuBD1iQzyB1AC2i7LLoXA==
-Received: from [192.168.2.110] (unknown [148.63.39.39])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 2936D36008B;
-	Mon, 12 Jan 2026 13:45:37 +0000 (WET)
-Message-ID: <7a723cf9-700f-460e-a4a9-3d0e1e81ef07@tecnico.ulisboa.pt>
-Date: Mon, 12 Jan 2026 13:45:33 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CakAumhF"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 9C2B7C2086A;
+	Mon, 12 Jan 2026 14:11:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0D1FB6074A;
+	Mon, 12 Jan 2026 14:11:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 736BF103C8C61;
+	Mon, 12 Jan 2026 15:10:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1768227090; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=S8c2ARP9HcnV+reUeOF4Vcg2quHBkPmCAqYrhfyr6c0=;
+	b=CakAumhFpasu+3ZI3BaB812kdRiuu+v1Tg/Sp3TTEi8pdVKDZEtVO84AoLEgEc1xrnFluT
+	i+SAwVNTU/VK298rD4GgfOlbL1x1IRBq+LMtmjrslvr8iNw/wqHBq7SowNZ+1bxrqAdaPR
+	ziVMPo032s+fSJqG9mpYJmDIazpKyi53yb/qGj1zj4VwwbAj77lJfzPnCy7GfnRvSCaoiG
+	VLNhV0T9IC//MbbHQG1tnGAF03XNmqvN+K3xG6/Renyw+hJ5Ia+fO3n6d7mTvuZI7e4oUm
+	CIup66ln9btW8iWglHRpKXcMS5I6EydGAat63GN0yLYYuyDF497mBLdXxOQ06g==
+From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
+To: Mark Brown <broonie@kernel.org>,
+ Varshini Rajendran <varshini.rajendran@microchip.com>,
+ Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sunny Luo <sunny.luo@amlogic.com>, Janne Grunau <j@jannau.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, CL Wang <cl634@andestech.com>,
+ Manikandan Muralidharan <manikandan.m@microchip.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>,
+ Jun Guo <jun.guo@cixtech.com>, Philipp Stanner <phasta@kernel.org>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Bartosz Golaszewski <brgl@kernel.org>, Shiji Yang <yangshiji66@outlook.com>,
+ James Clark <james.clark@linaro.org>, Jonathan Marek <jonathan@marek.ca>,
+ Carlos Song <carlos.song@nxp.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Huacai Chen <chenhuacai@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>,
+ Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
+ Sergio Perez Gonzalez <sperezglz@gmail.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Qianfeng Rong <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>,
+ Gabor Juhos <j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>,
+ Rosen Penev <rosenp@gmail.com>, Luis de Arquer <luis.dearquer@inertim.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Longbin Li <looong.bin@gmail.com>,
+ Patrice Chotard <patrice.chotard@foss.st.com>,
+ =?UTF-8?B?Q2zDqW1lbnQ=?= Le Goffic <clement.legoffic@foss.st.com>,
+ Alessandro Grassi <alessandro.grassi@mailbox.org>,
+ Chen-Yu Tsai <wens@kernel.org>, Darshan R <rathod.darshan.0896@gmail.com>,
+ Aaron Kling <webgeek1234@gmail.com>, Vishwaroop A <va@nvidia.com>,
+ Haixu Cui <quic_haixcui@quicinc.com>,
+ Darshan Rathod <darshanrathod475@gmail.com>, linux-spi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, asahi@lists.linux.dev,
+ linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+ linux-rpi-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, imx@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>,
+ Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
+ =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Ryan Wanner <ryan.wanner@microchip.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ William Zhang <william.zhang@broadcom.com>,
+ Kursad Oney <kursad.oney@broadcom.com>, Anand Gore <anand.gore@broadcom.com>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Jean-Marie Verdun <verdun@hpe.com>, Nick Hawkins <nick.hawkins@hpe.com>,
+ Yang Shen <shenyang39@huawei.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>,
+ Yinbo Zhu <zhuyinbo@loongson.cn>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
+ Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>,
+ Linus Walleij <linusw@kernel.org>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>,
+ Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>,
+ Masahisa Kojima <masahisa.kojima@linaro.org>,
+ Jassi Brar <jaswinder.singh@linaro.org>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>,
+ Michal Simek <michal.simek@amd.com>, Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH v1 4/4] spi: Drop duplicate device_set_node() call
+Date: Mon, 12 Jan 2026 15:10:36 +0100
+Message-ID: <2776743.vuYhMxLoTh@benoit.monin>
+In-Reply-To: <20260108203004.3538449-5-andriy.shevchenko@linux.intel.com>
+References:
+ <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com>
+ <20260108203004.3538449-5-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: tegra: smaug: Enable DisplayPort via USB-C port
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+On Thursday, 8 January 2026 at 21:23:41 CET, Andy Shevchenko wrote:
+> The SPI core provides the default fwnode for the controller,
+> assigned by device_set_node(). No need to repeat it in the driver.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 12/26/25 12:17, Diogo Ivo wrote:
-> Enable both SOR and DPAUX modules allowing the USB-C port to transmit
-> video in DP altmode. Tested on several monitors with USB-C to HDMI
-> adapter.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> ---
->   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> index 49bf23d6f593..b88428aa831e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -31,6 +31,11 @@ memory@80000000 {
->   	};
->   
->   	host1x@50000000 {
-> +		dpaux1: dpaux@54040000 {
-> +			vdd-supply = <&pp3300>;
-> +			status = "okay";
-> +		};
-> +
->   		dsia: dsi@54300000 {
->   			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
->   			status = "okay";
-> @@ -58,6 +63,13 @@ link1: panel@0 {
->   			};
->   		};
->   
-> +		sor1: sor@54580000 {
-> +			avdd-io-hdmi-dp-supply = <&pp1800>;
-> +			vdd-hdmi-dp-pll-supply = <&avddio_1v05>;
-> +			nvidia,dpaux = <&dpaux1>;
-> +			status = "okay";
-> +		};
-> +
->   		dpaux: dpaux@545c0000 {
->   			status = "okay";
->   		};
-> 
-> ---
-> base-commit: c100317dc8c40c71bfb572353d87ca1735d39fd5
-> change-id: 20251226-smaug-typec_dp-197201aaadae
+>  drivers/spi/spi-dw-core.c           | 2 --
+>=20
+Works fine on Mobileye EyeQ6Lplus SoC in both host and target mode.
 
-Gentle ping on this patch.
+Tested-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com> # dw mobileye
 
-Thank you,
-Diogo
+Thanks,
+=2D-=20
+Beno=C3=AEt Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+
+
