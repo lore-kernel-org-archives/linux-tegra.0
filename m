@@ -1,801 +1,249 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012068.outbound.protection.outlook.com [52.101.48.68])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011063.outbound.protection.outlook.com [52.101.65.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F1930DEAA;
-	Mon, 12 Jan 2026 04:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DE311C36;
+	Mon, 12 Jan 2026 07:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768192289; cv=fail; b=lbeYoUbKKaiDUjzGWFS13oz9VnRCNf8SbGblZXmMVoCCVLfyW46ZRkKDm/ehBnlpGSa7RWrYXF/fbKPqkcqognbEUPUOrvTbfH6DwYYrymPoSEyBlYoTDkV+aHPz4tWuElMc+7eNJ1ZXfMX0ZuEzK4B82+JLaK3lxd69gOkBsfI=
+	t=1768201934; cv=fail; b=aQXsIadB10mm7szolemdbv4qqqYEriVVSHiUq8n/pNVKh39aBfuVscuqzMQrtIhB80GvHG8Ijsmp2hMuV/8sJLzXP6G7deGLPv5sydgzSUCqgSn6174qYKmxf51XHMnFXrlPLxlOOG3PN0oK/FExl6OHnd9MszDllG9xuL/lg4I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768192289; c=relaxed/simple;
-	bh=OAJqbQH7PJpwdqvIzv4Joc+3LtBXl0enmrsUwqjpTSA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qI+yWEA6EruMW9aL3Tcd4ZWysAGqPjDcByniKiZaaHbNi/afwzabIz5MnQYL/oMfl9xV7kLtF+Q5HSAQN9sqcd0VwOpqimpMWPmBP319sNzjTM4f3UC0h59pj0Lwwb2K7Sx4mu47saCBc/vEkOHHTId6U5rdCp1fQiiMpf8Cj90=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tthUbkOg; arc=fail smtp.client-ip=52.101.48.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1768201934; c=relaxed/simple;
+	bh=NPDl28R1JosLfHoF7Z1pIdOw8Xq7GICB462Ot5vupGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q0ciqJ6R0F3C74g1IhDeUR1rAAhhkWbG4Chi1oelqwhII4mBY3s6TiVgdQjqVn1oWVLvbPNNRCacrdzrb0p50tAYl5QD7i1VGwq/EP3gl9Vf2RqSap2hAJpdem7sY60uXVwjU6BsMrucIfep7DMwxMFf/n/jJ5YyvMckT/xDYy4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=JWMiwXzN; arc=fail smtp.client-ip=52.101.65.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tthUbkOg"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="JWMiwXzN"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oGqKyppYx2X9My3Wk/TlvdojdHhXDNYEz7TQi58POe+daw09soPo4gumT9rbkRbWrsmAYuCOLw0uvzXm0PMsZy6xcZNyZRoNfIyM9fiBzJwdfZE9yLMN2anJp/RviCxaFnCMwuYJTX3myyT0c1iFQMm163psL7RDGFTuOq2NZ8LjuryRan/oTIgtyd6aOU5VzmwTRCbFZ4NN8DqshAvuKRRQDWjM+A7SE1c4NpzTylbKwqpPHyRvSqDqg+AGd9gb/NHafd58RwV/GnRWf/XI2OdGNc8Vn5gd9MxYWPeLE9QSlg3HvOqm+g7hT+U2TqQSGaru8hR1c9YjztgoTw+lXw==
+ b=DiWjBw3NhX4cyS3lnH2JMD74N88jVMZeCHcUNTZ8zdAZq22MkAmlEy+wDn4fUqyzXbF8hhpiARDecpRSi+0gmlPdNLfrVIiAZ/HoP9cwDCD0WKlNz52Giz93YAC8RRZ9O5CgOgehwCvH7QZ1Satd0zchZpRTN2jzQPbm6KJ7wLTfDMwbk3Cr+Zo8hrLEIaKkC49M4gMAovVCSepFEL5dvpE3pkKRekOXmxgSeFORVYXy9BF0kgFJ1UHVl7tnh4b8swEhccsMePQ4n4DRm+E37Q9S8N/Yat8ObtRmqhXmd7QHmDKJk1SCRb5icIOyDKrDe/2XQw1ZKNitgOEwu0vhTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V/JlBOSakJ6lHphY9xavIo62xqbDHbeLC3Oakq7NwW0=;
- b=CMZOLUxu430rqUaLQQIo77qSE5sRKIcYUrWT8oxZFIna8NXHUvBHdIpzuwcpbFm/a892nd0o/JuJkLSxH61vIbxOQzs2NTr9ZoAiUcTomJHvShRZLJ1m5Sa+gukCWT+bhDDi5NsAquQWlHLPtIoRZh4MN0z5iIsUfyYU5OAeeibunUR3htUO+d+21f23lafplFRgm5zqsUJ53EVvBjGwQqc1gzR9wlmitX0Cx9t18vr2f79lo9AwSMd2r6ApANwwMA63/Qsw7nuwTOUqJweJrUiPQOUP8+ppaiPa/JJqhRGQi9PbJnMKo9V2iSA2ItfYXv6TqXvNkNuuzp1Wc0gH0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ bh=5sUtyRzyU2X/5L8qtvUfjHP+2SVXxP81mWDh1Of6sls=;
+ b=bV5+glcNenM4PLDhrF7n5PnEJaopUOIuXyx5YBokvhqC3SNaXqGN4BI7tdgs+RgeNdrKsGKHEywf3ReINzXlWWA2KJ1N2zZ5tUtWgsRZ4sJRw6Z+zHlc+JgfU3tl8KuMS8wxeruIT/RK19BdgTFgrmRUb+NXoK02kzGRuOFOJA2Cd6OHIzFOlB6G/nz/Y0jnDPYMkWyuXjzQDR8mwkhm/WoB0XmC0GsM65T9Q2arK9fFVr5WwgRWOnYrK1HgP8lWH6BFk08FSTWZlM0Nu48Lz2FIKZmE3fnbYEC4yZzsWJCr062agUgskdXTKLZ4qLU27oyg9gC/5BuyTOqIY0ym4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V/JlBOSakJ6lHphY9xavIo62xqbDHbeLC3Oakq7NwW0=;
- b=tthUbkOg68zsiCf+KdgUCLhcue0pM0yWFgs3Hrnu5zyNl/AJlan8yTmsBvNEYQ6vd5IFuJEVMhEGM4g7piOnnXimZtCwIB2LqFkpynNJQ+nnOCOHmA/X2tlobP5DtntNMxZg8YRODoapdVdxlUgtp77pl//jdXFfaJisjNOJh3/1b+Y7ELCcgei8SRQcKiNOLubfivPoTOzNqUvGg1flgWHktrFLti3dWQPzJInmAMJZBATDaKuB3rsXKfOyUd/+YI/e2ktlN5kj8mhYMpNrZSMrfd+lVy6ngrneq9Vk1CuDTPPieVmvjpEit2mNbrN2tO2OSGDOiysDpNthGkhT8w==
-Received: from SA9PR13CA0015.namprd13.prod.outlook.com (2603:10b6:806:21::20)
- by BL3PR12MB6521.namprd12.prod.outlook.com (2603:10b6:208:3bd::16) with
+ bh=5sUtyRzyU2X/5L8qtvUfjHP+2SVXxP81mWDh1Of6sls=;
+ b=JWMiwXzNiqiOjlBD+gmAlAWXLcpT4kC4lRUGBL4iAJAF3opUQxylUVz2aB5dST+coYssMF5Fh6RgICWhlnG+eI9u/GR29pvJIEWZHly6urfoSrIaiMVHn5qkomUIbjGlNigrb4JnG8Dn2pimUVEb51h3qEksdlxylLVWM9uGu3u7ePfoQ1DuDbl/eqM4qd4vSl/37dZgqYgxzeetI+eJ6iUoYdn81VKto5ObDIYHOAJzvXJVtBwqxWzndSq3+kIrQBFLjJuZmtNUZEtkS4x3KqbTkz8TBhiErzrB7G16Ib0Eygv03/ufay4bu+fBX/KkM/FGCjuqSEnRWkNoXybo5A==
+Received: from DU7P250CA0026.EURP250.PROD.OUTLOOK.COM (2603:10a6:10:54f::9) by
+ VI1PR10MB3197.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:13c::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Mon, 12 Jan
- 2026 04:31:02 +0000
-Received: from SA2PEPF00003AE6.namprd02.prod.outlook.com
- (2603:10b6:806:21:cafe::ad) by SA9PR13CA0015.outlook.office365.com
- (2603:10b6:806:21::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9520.4 via Frontend Transport; Mon,
- 12 Jan 2026 04:30:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00003AE6.mail.protection.outlook.com (10.167.248.6) with Microsoft
+ 2026 07:12:04 +0000
+Received: from DU2PEPF00028D03.eurprd03.prod.outlook.com
+ (2603:10a6:10:54f:cafe::f) by DU7P250CA0026.outlook.office365.com
+ (2603:10a6:10:54f::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.7 via Frontend Transport; Mon,
+ 12 Jan 2026 07:12:04 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ DU2PEPF00028D03.mail.protection.outlook.com (10.167.242.187) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9520.1 via Frontend Transport; Mon, 12 Jan 2026 04:31:02 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 11 Jan
- 2026 20:30:45 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 11 Jan
- 2026 20:30:44 -0800
-Received: from sheetal.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Sun, 11 Jan 2026 20:30:40 -0800
-From: "Sheetal ." <sheetal@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-CC: Sander Vanheule <sander@svanheule.net>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Thierry
- Reding" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	Mohan kumar <mkumard@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Sheetal
-	<sheetal@nvidia.com>
-Subject: [RFC PATCH v2 3/3] ASoC: tegra: Enable flat_cache_default_is_zero for audio drivers
-Date: Mon, 12 Jan 2026 09:58:41 +0530
-Message-ID: <20260112042841.51799-4-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260112042841.51799-1-sheetal@nvidia.com>
-References: <20260112042841.51799-1-sheetal@nvidia.com>
+ 15.20.9520.1 via Frontend Transport; Mon, 12 Jan 2026 07:12:02 +0000
+Received: from STKDAG1NODE1.st.com (10.75.128.132) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Mon, 12 Jan
+ 2026 08:13:26 +0100
+Received: from [10.48.86.129] (10.48.86.129) by STKDAG1NODE1.st.com
+ (10.75.128.132) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Mon, 12 Jan
+ 2026 08:11:57 +0100
+Message-ID: <faacf28a-7877-4500-9c2f-f60589462ed5@foss.st.com>
+Date: Mon, 12 Jan 2026 08:11:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] spi: Drop duplicate of_node assignment
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mark Brown
+	<broonie@kernel.org>, Varshini Rajendran <varshini.rajendran@microchip.com>,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, "AngeloGioacchino Del
+ Regno" <angelogioacchino.delregno@collabora.com>, Sunny Luo
+	<sunny.luo@amlogic.com>, Janne Grunau <j@jannau.net>, Chin-Ting Kuo
+	<chin-ting_kuo@aspeedtech.com>, CL Wang <cl634@andestech.com>, "Manikandan
+ Muralidharan" <manikandan.m@microchip.com>, David Lechner
+	<dlechner@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>, Jun Guo
+	<jun.guo@cixtech.com>, Philipp Stanner <phasta@kernel.org>, Charles Keepax
+	<ckeepax@opensource.cirrus.com>, Bartosz Golaszewski <brgl@kernel.org>,
+	=?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, Shiji Yang
+	<yangshiji66@outlook.com>, James Clark <james.clark@linaro.org>, "Jonathan
+ Marek" <jonathan@marek.ca>, Carlos Song <carlos.song@nxp.com>, Sakari Ailus
+	<sakari.ailus@linux.intel.com>, Huacai Chen <chenhuacai@kernel.org>, "Xianwei
+ Zhao" <xianwei.zhao@amlogic.com>, Prajna Rajendra Kumar
+	<prajna.rajendrakumar@microchip.com>, Sergio Perez Gonzalez
+	<sperezglz@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, "Qianfeng
+ Rong" <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>, Gabor Juhos
+	<j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>, Rosen Penev
+	<rosenp@gmail.com>, Luis de Arquer <luis.dearquer@inertim.com>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, Cosmin Tanislav
+	<cosmin-gabriel.tanislav.xa@renesas.com>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Longbin Li
+	<looong.bin@gmail.com>, =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>, Alessandro Grassi
+	<alessandro.grassi@mailbox.org>, Chen-Yu Tsai <wens@kernel.org>, Darshan R
+	<rathod.darshan.0896@gmail.com>, Aaron Kling <webgeek1234@gmail.com>,
+	Vishwaroop A <va@nvidia.com>, Haixu Cui <quic_haixcui@quicinc.com>, "Darshan
+ Rathod" <darshanrathod475@gmail.com>, <linux-spi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <asahi@lists.linux.dev>,
+	<linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+	<linux-rpi-kernel@lists.infradead.org>, <linux-sound@vger.kernel.org>,
+	<patches@opensource.cirrus.com>, <imx@lists.linux.dev>,
+	<linux-arm-msm@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
+	<linux-tegra@vger.kernel.org>, <virtualization@lists.linux.dev>
+CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, "Sven
+ Peter" <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
+	=?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, Joel Stanley
+	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Ryan Wanner
+	<ryan.wanner@microchip.com>, Michael Hennerich
+	<michael.hennerich@analog.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+	<nuno.sa@analog.com>, Kamal Dasu <kamal.dasu@broadcom.com>, "Broadcom
+ internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, William Zhang
+	<william.zhang@broadcom.com>, Kursad Oney <kursad.oney@broadcom.com>, "Anand
+ Gore" <anand.gore@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+	<rafal@milecki.pl>, David Rhodes <david.rhodes@cirrus.com>, "Richard
+ Fitzgerald" <rf@opensource.cirrus.com>, Vladimir Oltean <olteanv@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>, Jean-Marie Verdun <verdun@hpe.com>, Nick Hawkins
+	<nick.hawkins@hpe.com>, Yang Shen <shenyang39@huawei.com>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"Lixu Zhang" <lixu.zhang@intel.com>, Yinbo Zhu <zhuyinbo@loongson.cn>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Conor Dooley
+	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Avi Fishman
+	<avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Tali Perry
+	<tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen
+	<yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, Han Xu
+	<han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, Linus Walleij
+	<linusw@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang
+	<haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, "Chris
+ Packham" <chris.packham@alliedtelesis.co.nz>, Heiko Stuebner
+	<heiko@sntech.de>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, "Andi
+ Shyti" <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, "Paul
+ Walmsley" <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>,
+	"Orson Zhai" <orsonzhai@gmail.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>,
+	Masahisa Kojima <masahisa.kojima@linaro.org>, Jassi Brar
+	<jaswinder.singh@linaro.org>, "Laxman Dewangan" <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu
+	<mhiramat@kernel.org>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?=
+	<j.neuschaefer@gmx.net>, Michal Simek <michal.simek@amd.com>, Max Filippov
+	<jcmvbkbc@gmail.com>
+References: <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com>
+ <20260108203004.3538449-3-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20260108203004.3538449-3-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE1.st.com
+ (10.75.128.132)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE6:EE_|BL3PR12MB6521:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04d9bc07-d1f0-4e56-7fb3-08de51936499
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D03:EE_|VI1PR10MB3197:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d5c2bce-94d6-45d7-965b-08de51a9e2df
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013|13003099007;
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|32650700017|36860700013|7053199007|921020|41080700001;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wgzhptv2MwcH12aZNb2TqDv8E4SvEA5c1E1Ea5bC5XKgc30bwWzZYewgbiLL?=
- =?us-ascii?Q?U80aPE4LWtptgn+oI/+z8ivPwcNmMk2eN6Gwq62W0Muwa0gQvXxaCSsWAnmK?=
- =?us-ascii?Q?xFQ5MRncnzqAzcCnolzLcaMqT3M7TmEmuaJ3ymrfZ3HdICaZKT26oxBgeh2m?=
- =?us-ascii?Q?c2coSKpjr3ZgWRAsW6EdPQ8i7twDmc9YFAc0sd7cp+oTR/ppNcZT5a4gQgQ3?=
- =?us-ascii?Q?Z81VrDWJqRgt5ai0qPgJ2LtbvQA3PsWhENgO4TSmqA10Lf5bBOktMqksJyhK?=
- =?us-ascii?Q?+CeCqL4oklkKV++B+4nr1S9OfIemKetGEOohx2QEyW3IdLaeABCfmDk5/k9M?=
- =?us-ascii?Q?8ci5B0zwflOTKQy6VN6teRPVIjQ/tq5QvOBIcG4FalgjsqhDUDxT81aaQUO9?=
- =?us-ascii?Q?00X5Cb1zTAJwIFyEBO7GZijqEmS6O3W49UGD1N1E0HgZEczflV89sTZLZj/3?=
- =?us-ascii?Q?vETfIkvvm96N+IgV1esnH7Dw+t2Fky8gtLQWjJbNKmm5/ul4SiL1oqHaS+1s?=
- =?us-ascii?Q?dA1TfSGYNwnsZiRxBKPRJuraHrbzoOLO70eBeCi4W1DLYfzYZI101EeuVAHT?=
- =?us-ascii?Q?1ZWbgcKFQFJMA+la4iyunyp/1NotQtiuQoHSPMZip+9PzpAVW5q3x9aOKfE4?=
- =?us-ascii?Q?qPmxRUNKYReuqN2DL5hySe8BzM2O3rgGnGLIk0GwZaAbs6dO9uHy416ha7Z0?=
- =?us-ascii?Q?plzW0MWRRlyxZLALtc8b2g4R5vdiNk8xA/08452MCDYp2C1Ai0+71+6JuNav?=
- =?us-ascii?Q?XiI9mSL9rq+QJjW1zG96Q8AVe8+hO2S8FAeiMOPBFocZAOBIJlHT71NHzBsF?=
- =?us-ascii?Q?p3kRk9vzBxQ1ZpkDWalsRT9NgHSOVJuXu4OAuPCt5aNomb2sVR29NTCD+isy?=
- =?us-ascii?Q?PYGq8bK1CjUwHKNNsUv5KNgg7ohocpdgkfVlwOEg+EBRo2Apv0uDIzM/Wtjy?=
- =?us-ascii?Q?uP6rJQIMTyXCN7M6EExoIqC6exqHB5lZc1QHST80KGFpOqj2ISlJgqbx4KuG?=
- =?us-ascii?Q?eNG+8ydlwJnHHmWOtpGXM8Cae9qB6vyfdAsHZMekyerJnJyUAZodItEUXt+c?=
- =?us-ascii?Q?2iSMVrU+hSHKjl8WoSWN62vqOiqfgJg91FnrF9fqG2lHsbD5PrnEUOy14nhn?=
- =?us-ascii?Q?7GotW2JZDHZwDEpZhGplamh73x8LDthYR7c07sANIyoUgeEkNGAOvxWmoR4r?=
- =?us-ascii?Q?HCwN1/1MCuUyfLZobF1Jw01YpOBgj0vByUHu91dRwX6mkAsY2VhS27OyAHXt?=
- =?us-ascii?Q?nzb1WVn6Q2obS9L5rUg8n+60GM+F/vY/NeRJ2k0Qrab5XkObzRzrSPPGlXkO?=
- =?us-ascii?Q?bP53bCBwE2Mu05kKi+Oeu8DuTaDy0ivdENQdKRpscuMaPQ2VIQ2Vo8lEgeh5?=
- =?us-ascii?Q?/wFkIjwUeenggHzE/QBflPkjkbZx1x8IxWtgx4Jnymh9iJy9IccllC6/NJUr?=
- =?us-ascii?Q?rXrCRiLgPOM/LoySf5k8eyJ7B3IVyo7gjLUy7eBQ0jE0dNgieFYbNb46mmrt?=
- =?us-ascii?Q?oQYfHpmInCu+ACUTeANlvTbDf+S9HQKXAaUdZVBZXa6tpUZHu8NjkX0gxeSo?=
- =?us-ascii?Q?esro8cfZS/uT7C7nQkg=3D?=
+	=?utf-8?B?VnZWRDJoUC8rR0xOTER6aDdYSlN3bWdqOXJnelZzSlVLeXRscDI2ZURBOHBB?=
+ =?utf-8?B?dHg5YWRmZnpFVllnT2pBQjM1Wm52bVI3dUZmSHlibGcwWEQ2K2QxNEZKNFR1?=
+ =?utf-8?B?RmtuOU50Njc2dWhMbE1Ma3M1c2o4VUFreVNuVEQyR3dHTCtiaGM5aWJweUFG?=
+ =?utf-8?B?MUJGeldDYnRSUllrdGVKMUVVYUVCTlh2RVZCWDc0T1VQMWU5RmhKa1ZleUhK?=
+ =?utf-8?B?SkEwL3ZyT0djV3QrNEx6UlpqaTE0K2RJNFlRdERoZkQzQjhQM0hDOUhoUHZl?=
+ =?utf-8?B?Vy9GQys0QXhXbHRiVStlbURnczhLRUowTXl1Tk9XRzU3cjQzL3oxUGR2b1Bt?=
+ =?utf-8?B?WU9CdXVMVFdjenFuMDMxTk9URGRQc2s4RVVycVYwaGxtVlptUDZXcmw0MWhm?=
+ =?utf-8?B?S3VSNU1PUDkvM3dPaDVYNXJTVzE0aHUyY0o4U0FUZkV3Nm1CMDFSSk5HaS9m?=
+ =?utf-8?B?akpObmVSTDRFbXdyM0NPcHFGRVlqZW55ZHdma1dGVmZ6K2hKelU2WlFRazV0?=
+ =?utf-8?B?TWJLQm10dW1uRXVLV1FRU3A3V2pwbHFObTAxRVArcjI5aGZrelVYQW9SY1RR?=
+ =?utf-8?B?R2EzMUtGejdFSmkxdkluUTc1MUxzZzIxZFhvUUlpREMrYnM4TEFndmVadVps?=
+ =?utf-8?B?TnVZMlBtQmtSVmgxbTlzckpmd1c1YmhMWEJUdHpsOEtDM3ZDODh3OXhqNUVK?=
+ =?utf-8?B?MU1lcUFhTEQzTkdVQjBpSmFFSldnc21sTU4wRnQxaWhOaDNqSnZnTkVSZ2pu?=
+ =?utf-8?B?ZCt3TlBkQWZzL3Vtem1ZYzI2a05CcDk4RE12bUdBZUNta084ZnN1WXBUdXkr?=
+ =?utf-8?B?UTl3Q2F2WmdqVEV4dTRtY1ZXQU9HN3BSZitheGZYeDYxQUZLODFZSHNJWHEy?=
+ =?utf-8?B?UHNSY2VsQU4zNksrODd1T1dhYkY0b2dVeVEzTFcxUUlVaERQUlFwQko0L3A4?=
+ =?utf-8?B?SDVGeCt5Vks4RnlGMVZTZ0lsMGZqeGVtQmRoZjB5SWM5YVN1RUp0dWltRTZN?=
+ =?utf-8?B?bG9Dd0NxNVhhVlZQeVE0dGd5cmdibXk5VWVRblNYVE82QlVWaGgyUjNwblhD?=
+ =?utf-8?B?YkNVN082dnJoTzFRLzQ3RTZXdWVlWE9udjNYbUU1OE1IQWhJRzZWMnQwNzI0?=
+ =?utf-8?B?dE9Tc0hSTVNNbTZiem9OUUtqNi85QzhZS2wzUSs0cXBrNTZEaWZCZTl5ck0x?=
+ =?utf-8?B?UmlPK05YSDVKQmR0RzlMeXp5bnZFQlpVc1lwUTV3cWRHM2k4MXk5aWd0NE1P?=
+ =?utf-8?B?UHV4VXRRQ1krZmpZU0xJVVJBOE9lM2FtT2hpZHVXb1YwZFc2bi9rRU9oK2tP?=
+ =?utf-8?B?T0svRmZ3clFsYW9UZnNRY1BFNGJFRjBhalpPb1ZUdnpCOFVQWFpPRmRsd1NQ?=
+ =?utf-8?B?VlM3OEhyWTE4bjJ5UWJKV1p5MHZvYWlNcTFTKzhtU2VIWkJKbzZGcXM0ZjhR?=
+ =?utf-8?B?bXNkQ1hjeThtVzhWQ1ZzZ1prMFNBYmdoYkMrNU9NZ1VJOHVNaHhyMlRaRWhG?=
+ =?utf-8?B?bHRwVjVyc0p5Snl0aE42ZHN0bTIrYnVPVkNGM1lja2o1Q1o5cTJxOXpuZDFj?=
+ =?utf-8?B?NWlpSkliL0NIUG90dTBSSFVFZHgrYXEyVVRYK0JmRllDR1ExazJ2RDgySmk0?=
+ =?utf-8?B?UGNvQWxDdVFscXp3Vm5uUEpESEFjakEzQ2hEWVNjZDI0Qys5MHNmWkdHZWdj?=
+ =?utf-8?B?dUdTaGM2TUttMHorTVlxRW4wL2Y2MStVQUpQWGZEQVpFb0c0ZmVyMythU1dF?=
+ =?utf-8?B?ejlMcGQvZ01NdDRlMjB0QWhqK3lFWFozNTB2aTh3WTFLVCt5akgrMHVnSkht?=
+ =?utf-8?B?bEpWNFkzV1haMUtIRnY5S3lUcGhoQy9MZUFZSnpYcDF2SVM1MExvSllnb2JV?=
+ =?utf-8?B?a3o0WWtiRk50UVJnVFNLOUplcnNucndNb1AxVzBzMExaR0IxdUwyN0REMWtF?=
+ =?utf-8?B?UlVGOXVMSlVJSWt0VFE5WS9oSXpNUklhRHJBU3RtZzhSKzFWZjFkN1NXZzU1?=
+ =?utf-8?B?VGdYYjZJNCtEMUV1WXA2Z29JQlRQVVRzaFQyS2wxQnkrWHVnN0dUSGR4YSt3?=
+ =?utf-8?B?Uk5PNGcrYW94WDk1aXhQK1BydWFFalhoNXl2UUZNTTRmT28vZUZSenltaW5C?=
+ =?utf-8?B?K002UGkyL3BkcEQxa3MzSXdNUkVsZDR4RlAzdTFOakkzNFNMd09rUlowcURr?=
+ =?utf-8?B?QXc9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2026 04:31:02.1636
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(32650700017)(36860700013)(7053199007)(921020)(41080700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	P6BK0ZgB8SUTDfdxaJ8c8uL2dwTw5IEdwkAzylPE9GisUNIQvtA5bN+iI85qmoZR8i60+K5BvP6ArNOViQn0ERimnfKEfjDW+qbxwC5iKX9HkBzfP2v7377aWnloj08itWVqr2QWGH2HO2l601gVnXYqiIk3J43SxEiqnn3aPUgWOvWR3PshG2P+DhiOony75p4grRcx/VJiH15Kpf+oekulACyL/ix2yRIW4Qcfqwmk8U+1U3yZF5kFs9V82SJ2JB9aXDJyxRy7dbiaaIf4DHIum/Mh5OcmsBMb6j0pqyBxRbCsFqrfj8VPj5ZW71yBpCNFxfGyFgprSD624xGOAe3LWUe6M4rXcIg6A4eIBSTkq3z+djWm+KQS94f2BNUYlBv95TTKNP651EKDI86sUgWoig0yBV2TuLLdTyvATXPghfUrXnq87/L9vl+TKbIONKtNb6EVBumKiP2oi9X7tdhuLMjtFuNfK8K33b9p0F60nVvHyaQbH9rl7PQ/eCrCi6P/WzSwWHUk5TgDE7xXdR7/BfUAEfXVvCas//cGrzr6edD8AGoxHAwls8yWjtmbtdvEqWLOoFhtD0k+txJuD0ofeWOyt6LAYwTWmtd96915CwgcqXxaekOrYWjKNn6C4RJJSQHBEXjXfwmajIxQGbgZ3rwY7epTWeybKuFvwrPk06eiGxF2YcrjI+amIA4b
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2026 07:12:02.9802
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04d9bc07-d1f0-4e56-7fb3-08de51936499
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d5c2bce-94d6-45d7-965b-08de51a9e2df
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE6.namprd02.prod.outlook.com
+	DU2PEPF00028D03.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6521
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3197
 
-From: Sheetal <sheetal@nvidia.com>
 
-Set flat_cache_default_is_zero flag in Tegra audio driver regmap
-configurations.
 
-Tegra APE hardware has numerous registers with zero power-on-reset
-values. Use flat_cache_default_is_zero to mark cache entries as valid
-instead of adding all these registers to reg_defaults arrays.
+On 1/8/26 21:23, Andy Shevchenko wrote:
+> The SPI core provides the default of_node for the controller,
+> inherited from the actual (parent) device. No need to repeat it
+> in the driver.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-This patch depends on:
-https://patchwork.ozlabs.org/project/linux-tegra/patch/20251217132524.2844499-1-sheetal@nvidia.com/
+>  drivers/spi/spi-stm32-ospi.c         | 1 -
+>  drivers/spi/spi-stm32-qspi.c         | 1 -
+> 
 
-Signed-off-by: Sheetal <sheetal@nvidia.com>
----
- sound/soc/tegra/tegra186_asrc.c   | 21 ++++++-----
- sound/soc/tegra/tegra186_dspk.c   | 21 ++++++-----
- sound/soc/tegra/tegra210_admaif.c | 63 ++++++++++++++++---------------
- sound/soc/tegra/tegra210_adx.c    | 42 +++++++++++----------
- sound/soc/tegra/tegra210_ahub.c   | 35 +++++++++--------
- sound/soc/tegra/tegra210_amx.c    | 63 ++++++++++++++++---------------
- sound/soc/tegra/tegra210_dmic.c   | 21 ++++++-----
- sound/soc/tegra/tegra210_i2s.c    | 42 +++++++++++----------
- sound/soc/tegra/tegra210_mbdrc.c  | 25 ++++++------
- sound/soc/tegra/tegra210_mixer.c  | 23 +++++------
- sound/soc/tegra/tegra210_mvc.c    | 21 ++++++-----
- sound/soc/tegra/tegra210_ope.c    | 21 ++++++-----
- sound/soc/tegra/tegra210_peq.c    | 25 ++++++------
- sound/soc/tegra/tegra210_sfc.c    | 23 +++++------
- 14 files changed, 234 insertions(+), 212 deletions(-)
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-diff --git a/sound/soc/tegra/tegra186_asrc.c b/sound/soc/tegra/tegra186_asrc.c
-index 2c0220e14a57..5f95b7cb9421 100644
---- a/sound/soc/tegra/tegra186_asrc.c
-+++ b/sound/soc/tegra/tegra186_asrc.c
-@@ -941,16 +941,17 @@ static bool tegra186_asrc_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra186_asrc_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA186_ASRC_CYA,
--	.writeable_reg		= tegra186_asrc_wr_reg,
--	.readable_reg		= tegra186_asrc_rd_reg,
--	.volatile_reg		= tegra186_asrc_volatile_reg,
--	.reg_defaults		= tegra186_asrc_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra186_asrc_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA186_ASRC_CYA,
-+	.writeable_reg			= tegra186_asrc_wr_reg,
-+	.readable_reg			= tegra186_asrc_rd_reg,
-+	.volatile_reg			= tegra186_asrc_volatile_reg,
-+	.reg_defaults			= tegra186_asrc_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra186_asrc_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct tegra_asrc_soc_data soc_data_tegra186 = {
-diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
-index a762150db802..4183c8fc124f 100644
---- a/sound/soc/tegra/tegra186_dspk.c
-+++ b/sound/soc/tegra/tegra186_dspk.c
-@@ -458,16 +458,17 @@ static bool tegra186_dspk_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra186_dspk_regmap = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA186_DSPK_CODEC_CTRL,
--	.writeable_reg		= tegra186_dspk_wr_reg,
--	.readable_reg		= tegra186_dspk_rd_reg,
--	.volatile_reg		= tegra186_dspk_volatile_reg,
--	.reg_defaults		= tegra186_dspk_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra186_dspk_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA186_DSPK_CODEC_CTRL,
-+	.writeable_reg			= tegra186_dspk_wr_reg,
-+	.readable_reg			= tegra186_dspk_rd_reg,
-+	.volatile_reg			= tegra186_dspk_volatile_reg,
-+	.reg_defaults			= tegra186_dspk_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra186_dspk_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct of_device_id tegra186_dspk_of_match[] = {
-diff --git a/sound/soc/tegra/tegra210_admaif.c b/sound/soc/tegra/tegra210_admaif.c
-index f9f6040c4e34..5ecd83517413 100644
---- a/sound/soc/tegra/tegra210_admaif.c
-+++ b/sound/soc/tegra/tegra210_admaif.c
-@@ -232,42 +232,45 @@ static bool tegra_admaif_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_admaif_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_ADMAIF_LAST_REG,
--	.writeable_reg		= tegra_admaif_wr_reg,
--	.readable_reg		= tegra_admaif_rd_reg,
--	.volatile_reg		= tegra_admaif_volatile_reg,
--	.reg_defaults		= tegra210_admaif_reg_defaults,
--	.num_reg_defaults	= TEGRA210_ADMAIF_CHANNEL_COUNT * 6 + 1,
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_ADMAIF_LAST_REG,
-+	.writeable_reg			= tegra_admaif_wr_reg,
-+	.readable_reg			= tegra_admaif_rd_reg,
-+	.volatile_reg			= tegra_admaif_volatile_reg,
-+	.reg_defaults			= tegra210_admaif_reg_defaults,
-+	.num_reg_defaults		= TEGRA210_ADMAIF_CHANNEL_COUNT * 6 + 1,
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra186_admaif_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA186_ADMAIF_LAST_REG,
--	.writeable_reg		= tegra_admaif_wr_reg,
--	.readable_reg		= tegra_admaif_rd_reg,
--	.volatile_reg		= tegra_admaif_volatile_reg,
--	.reg_defaults		= tegra186_admaif_reg_defaults,
--	.num_reg_defaults	= TEGRA186_ADMAIF_CHANNEL_COUNT * 6 + 1,
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA186_ADMAIF_LAST_REG,
-+	.writeable_reg			= tegra_admaif_wr_reg,
-+	.readable_reg			= tegra_admaif_rd_reg,
-+	.volatile_reg			= tegra_admaif_volatile_reg,
-+	.reg_defaults			= tegra186_admaif_reg_defaults,
-+	.num_reg_defaults		= TEGRA186_ADMAIF_CHANNEL_COUNT * 6 + 1,
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra264_admaif_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA264_ADMAIF_LAST_REG,
--	.writeable_reg		= tegra_admaif_wr_reg,
--	.readable_reg		= tegra_admaif_rd_reg,
--	.volatile_reg		= tegra_admaif_volatile_reg,
--	.reg_defaults		= tegra264_admaif_reg_defaults,
--	.num_reg_defaults	= TEGRA264_ADMAIF_CHANNEL_COUNT * 6 + 1,
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA264_ADMAIF_LAST_REG,
-+	.writeable_reg			= tegra_admaif_wr_reg,
-+	.readable_reg			= tegra_admaif_rd_reg,
-+	.volatile_reg			= tegra_admaif_volatile_reg,
-+	.reg_defaults			= tegra264_admaif_reg_defaults,
-+	.num_reg_defaults		= TEGRA264_ADMAIF_CHANNEL_COUNT * 6 + 1,
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static int tegra_admaif_runtime_suspend(struct device *dev)
-diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_adx.c
-index 6c9a410085bc..de7f64bd5d75 100644
---- a/sound/soc/tegra/tegra210_adx.c
-+++ b/sound/soc/tegra/tegra210_adx.c
-@@ -616,29 +616,31 @@ static bool tegra264_adx_volatile_reg(struct device *dev,
- }
- 
- static const struct regmap_config tegra210_adx_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_ADX_CFG_RAM_DATA,
--	.writeable_reg		= tegra210_adx_wr_reg,
--	.readable_reg		= tegra210_adx_rd_reg,
--	.volatile_reg		= tegra210_adx_volatile_reg,
--	.reg_defaults		= tegra210_adx_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_adx_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_ADX_CFG_RAM_DATA,
-+	.writeable_reg			= tegra210_adx_wr_reg,
-+	.readable_reg			= tegra210_adx_rd_reg,
-+	.volatile_reg			= tegra210_adx_volatile_reg,
-+	.reg_defaults			= tegra210_adx_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_adx_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra264_adx_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA264_ADX_CFG_RAM_DATA,
--	.writeable_reg		= tegra264_adx_wr_reg,
--	.readable_reg		= tegra264_adx_rd_reg,
--	.volatile_reg		= tegra264_adx_volatile_reg,
--	.reg_defaults		= tegra264_adx_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra264_adx_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA264_ADX_CFG_RAM_DATA,
-+	.writeable_reg			= tegra264_adx_wr_reg,
-+	.readable_reg			= tegra264_adx_rd_reg,
-+	.volatile_reg			= tegra264_adx_volatile_reg,
-+	.reg_defaults			= tegra264_adx_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra264_adx_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct tegra210_adx_soc_data soc_data_tegra210 = {
-diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
-index e795907a3963..e67850dac18d 100644
---- a/sound/soc/tegra/tegra210_ahub.c
-+++ b/sound/soc/tegra/tegra210_ahub.c
-@@ -2073,28 +2073,31 @@ static bool tegra264_ahub_wr_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_ahub_regmap_config = {
--	.reg_bits		= 32,
--	.val_bits		= 32,
--	.reg_stride		= 4,
--	.max_register		= TEGRA210_MAX_REGISTER_ADDR,
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.val_bits			= 32,
-+	.reg_stride			= 4,
-+	.max_register			= TEGRA210_MAX_REGISTER_ADDR,
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra186_ahub_regmap_config = {
--	.reg_bits		= 32,
--	.val_bits		= 32,
--	.reg_stride		= 4,
--	.max_register		= TEGRA186_MAX_REGISTER_ADDR,
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.val_bits			= 32,
-+	.reg_stride			= 4,
-+	.max_register			= TEGRA186_MAX_REGISTER_ADDR,
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra264_ahub_regmap_config = {
--	.reg_bits		= 32,
--	.val_bits		= 32,
--	.reg_stride		= 4,
--	.writeable_reg		= tegra264_ahub_wr_reg,
--	.max_register		= TEGRA264_MAX_REGISTER_ADDR,
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.val_bits			= 32,
-+	.reg_stride			= 4,
-+	.writeable_reg			= tegra264_ahub_wr_reg,
-+	.max_register			= TEGRA264_MAX_REGISTER_ADDR,
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct tegra_ahub_soc_data soc_data_tegra210 = {
-diff --git a/sound/soc/tegra/tegra210_amx.c b/sound/soc/tegra/tegra210_amx.c
-index c94f8c84e04f..1a7943bb41cc 100644
---- a/sound/soc/tegra/tegra210_amx.c
-+++ b/sound/soc/tegra/tegra210_amx.c
-@@ -645,42 +645,45 @@ static bool tegra264_amx_volatile_reg(struct device *dev,
- }
- 
- static const struct regmap_config tegra210_amx_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_AMX_CFG_RAM_DATA,
--	.writeable_reg		= tegra210_amx_wr_reg,
--	.readable_reg		= tegra210_amx_rd_reg,
--	.volatile_reg		= tegra210_amx_volatile_reg,
--	.reg_defaults		= tegra210_amx_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_amx_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_AMX_CFG_RAM_DATA,
-+	.writeable_reg			= tegra210_amx_wr_reg,
-+	.readable_reg			= tegra210_amx_rd_reg,
-+	.volatile_reg			= tegra210_amx_volatile_reg,
-+	.reg_defaults			= tegra210_amx_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_amx_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra194_amx_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA194_AMX_RX4_LAST_FRAME_PERIOD,
--	.writeable_reg		= tegra194_amx_wr_reg,
--	.readable_reg		= tegra194_amx_rd_reg,
--	.volatile_reg		= tegra210_amx_volatile_reg,
--	.reg_defaults		= tegra210_amx_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_amx_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA194_AMX_RX4_LAST_FRAME_PERIOD,
-+	.writeable_reg			= tegra194_amx_wr_reg,
-+	.readable_reg			= tegra194_amx_rd_reg,
-+	.volatile_reg			= tegra210_amx_volatile_reg,
-+	.reg_defaults			= tegra210_amx_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_amx_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct regmap_config tegra264_amx_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA264_AMX_RX4_LAST_FRAME_PERIOD,
--	.writeable_reg		= tegra264_amx_wr_reg,
--	.readable_reg		= tegra264_amx_rd_reg,
--	.volatile_reg		= tegra264_amx_volatile_reg,
--	.reg_defaults		= tegra264_amx_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra264_amx_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA264_AMX_RX4_LAST_FRAME_PERIOD,
-+	.writeable_reg			= tegra264_amx_wr_reg,
-+	.readable_reg			= tegra264_amx_rd_reg,
-+	.volatile_reg			= tegra264_amx_volatile_reg,
-+	.reg_defaults			= tegra264_amx_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra264_amx_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct tegra210_amx_soc_data soc_data_tegra210 = {
-diff --git a/sound/soc/tegra/tegra210_dmic.c b/sound/soc/tegra/tegra210_dmic.c
-index 66fff53aeaa6..71b46a86443e 100644
---- a/sound/soc/tegra/tegra210_dmic.c
-+++ b/sound/soc/tegra/tegra210_dmic.c
-@@ -474,16 +474,17 @@ static bool tegra210_dmic_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_dmic_regmap_config = {
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.max_register = TEGRA210_DMIC_LP_BIQUAD_1_COEF_4,
--	.writeable_reg = tegra210_dmic_wr_reg,
--	.readable_reg = tegra210_dmic_rd_reg,
--	.volatile_reg = tegra210_dmic_volatile_reg,
--	.reg_defaults = tegra210_dmic_reg_defaults,
--	.num_reg_defaults = ARRAY_SIZE(tegra210_dmic_reg_defaults),
--	.cache_type = REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_DMIC_LP_BIQUAD_1_COEF_4,
-+	.writeable_reg			= tegra210_dmic_wr_reg,
-+	.readable_reg			= tegra210_dmic_rd_reg,
-+	.volatile_reg			= tegra210_dmic_volatile_reg,
-+	.reg_defaults			= tegra210_dmic_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_dmic_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static int tegra210_dmic_probe(struct platform_device *pdev)
-diff --git a/sound/soc/tegra/tegra210_i2s.c b/sound/soc/tegra/tegra210_i2s.c
-index b91e0e6cd7fe..940d9f6bdc3f 100644
---- a/sound/soc/tegra/tegra210_i2s.c
-+++ b/sound/soc/tegra/tegra210_i2s.c
-@@ -988,16 +988,17 @@ static bool tegra264_i2s_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_regmap_conf = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_I2S_CYA,
--	.writeable_reg		= tegra210_i2s_wr_reg,
--	.readable_reg		= tegra210_i2s_rd_reg,
--	.volatile_reg		= tegra210_i2s_volatile_reg,
--	.reg_defaults		= tegra210_i2s_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_i2s_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_I2S_CYA,
-+	.writeable_reg			= tegra210_i2s_wr_reg,
-+	.readable_reg			= tegra210_i2s_rd_reg,
-+	.volatile_reg			= tegra210_i2s_volatile_reg,
-+	.reg_defaults			= tegra210_i2s_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_i2s_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- /*
-@@ -1035,16 +1036,17 @@ static void tegra210_parse_client_convert(struct device *dev)
- }
- 
- static const struct regmap_config tegra264_regmap_conf = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA264_I2S_PAD_MACRO_STATUS,
--	.writeable_reg		= tegra264_i2s_wr_reg,
--	.readable_reg		= tegra264_i2s_rd_reg,
--	.volatile_reg		= tegra264_i2s_volatile_reg,
--	.reg_defaults		= tegra264_i2s_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra264_i2s_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA264_I2S_PAD_MACRO_STATUS,
-+	.writeable_reg			= tegra264_i2s_wr_reg,
-+	.readable_reg			= tegra264_i2s_rd_reg,
-+	.volatile_reg			= tegra264_i2s_volatile_reg,
-+	.reg_defaults			= tegra264_i2s_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra264_i2s_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static int tegra210_i2s_probe(struct platform_device *pdev)
-diff --git a/sound/soc/tegra/tegra210_mbdrc.c b/sound/soc/tegra/tegra210_mbdrc.c
-index 09fe3c5cf540..485fae392741 100644
---- a/sound/soc/tegra/tegra210_mbdrc.c
-+++ b/sound/soc/tegra/tegra210_mbdrc.c
-@@ -752,18 +752,19 @@ static bool tegra210_mbdrc_precious_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_mbdrc_regmap_cfg = {
--	.name			= "mbdrc",
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_MBDRC_MAX_REG,
--	.writeable_reg		= tegra210_mbdrc_wr_reg,
--	.readable_reg		= tegra210_mbdrc_rd_reg,
--	.volatile_reg		= tegra210_mbdrc_volatile_reg,
--	.precious_reg		= tegra210_mbdrc_precious_reg,
--	.reg_defaults		= tegra210_mbdrc_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_mbdrc_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.name				= "mbdrc",
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_MBDRC_MAX_REG,
-+	.writeable_reg			= tegra210_mbdrc_wr_reg,
-+	.readable_reg			= tegra210_mbdrc_rd_reg,
-+	.volatile_reg			= tegra210_mbdrc_volatile_reg,
-+	.precious_reg			= tegra210_mbdrc_precious_reg,
-+	.reg_defaults			= tegra210_mbdrc_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_mbdrc_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- int tegra210_mbdrc_hw_params(struct snd_soc_component *cmpnt)
-diff --git a/sound/soc/tegra/tegra210_mixer.c b/sound/soc/tegra/tegra210_mixer.c
-index ff8e9f2d7abf..b05d1140c689 100644
---- a/sound/soc/tegra/tegra210_mixer.c
-+++ b/sound/soc/tegra/tegra210_mixer.c
-@@ -598,17 +598,18 @@ static bool tegra210_mixer_precious_reg(struct device *dev,
- }
- 
- static const struct regmap_config tegra210_mixer_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_MIXER_CTRL,
--	.writeable_reg		= tegra210_mixer_wr_reg,
--	.readable_reg		= tegra210_mixer_rd_reg,
--	.volatile_reg		= tegra210_mixer_volatile_reg,
--	.precious_reg		= tegra210_mixer_precious_reg,
--	.reg_defaults		= tegra210_mixer_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_mixer_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_MIXER_CTRL,
-+	.writeable_reg			= tegra210_mixer_wr_reg,
-+	.readable_reg			= tegra210_mixer_rd_reg,
-+	.volatile_reg			= tegra210_mixer_volatile_reg,
-+	.precious_reg			= tegra210_mixer_precious_reg,
-+	.reg_defaults			= tegra210_mixer_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_mixer_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct of_device_id tegra210_mixer_of_match[] = {
-diff --git a/sound/soc/tegra/tegra210_mvc.c b/sound/soc/tegra/tegra210_mvc.c
-index 779d4c199da9..a0699563a512 100644
---- a/sound/soc/tegra/tegra210_mvc.c
-+++ b/sound/soc/tegra/tegra210_mvc.c
-@@ -690,16 +690,17 @@ static bool tegra210_mvc_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_mvc_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_MVC_CONFIG_ERR_TYPE,
--	.writeable_reg		= tegra210_mvc_wr_reg,
--	.readable_reg		= tegra210_mvc_rd_reg,
--	.volatile_reg		= tegra210_mvc_volatile_reg,
--	.reg_defaults		= tegra210_mvc_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_mvc_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_MVC_CONFIG_ERR_TYPE,
-+	.writeable_reg			= tegra210_mvc_wr_reg,
-+	.readable_reg			= tegra210_mvc_rd_reg,
-+	.volatile_reg			= tegra210_mvc_volatile_reg,
-+	.reg_defaults			= tegra210_mvc_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_mvc_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct of_device_id tegra210_mvc_of_match[] = {
-diff --git a/sound/soc/tegra/tegra210_ope.c b/sound/soc/tegra/tegra210_ope.c
-index 27db70af2746..6a1c05829b4b 100644
---- a/sound/soc/tegra/tegra210_ope.c
-+++ b/sound/soc/tegra/tegra210_ope.c
-@@ -288,16 +288,17 @@ static bool tegra210_ope_volatile_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_ope_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_OPE_DIR,
--	.writeable_reg		= tegra210_ope_wr_reg,
--	.readable_reg		= tegra210_ope_rd_reg,
--	.volatile_reg		= tegra210_ope_volatile_reg,
--	.reg_defaults		= tegra210_ope_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_ope_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_OPE_DIR,
-+	.writeable_reg			= tegra210_ope_wr_reg,
-+	.readable_reg			= tegra210_ope_rd_reg,
-+	.volatile_reg			= tegra210_ope_volatile_reg,
-+	.reg_defaults			= tegra210_ope_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_ope_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static int tegra210_ope_probe(struct platform_device *pdev)
-diff --git a/sound/soc/tegra/tegra210_peq.c b/sound/soc/tegra/tegra210_peq.c
-index 9a05e6913276..0f90a9d27f2e 100644
---- a/sound/soc/tegra/tegra210_peq.c
-+++ b/sound/soc/tegra/tegra210_peq.c
-@@ -295,18 +295,19 @@ static bool tegra210_peq_precious_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_peq_regmap_config = {
--	.name			= "peq",
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_PEQ_CFG_RAM_SHIFT_DATA,
--	.writeable_reg		= tegra210_peq_wr_reg,
--	.readable_reg		= tegra210_peq_rd_reg,
--	.volatile_reg		= tegra210_peq_volatile_reg,
--	.precious_reg		= tegra210_peq_precious_reg,
--	.reg_defaults		= tegra210_peq_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_peq_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.name				= "peq",
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_PEQ_CFG_RAM_SHIFT_DATA,
-+	.writeable_reg			= tegra210_peq_wr_reg,
-+	.readable_reg			= tegra210_peq_rd_reg,
-+	.volatile_reg			= tegra210_peq_volatile_reg,
-+	.precious_reg			= tegra210_peq_precious_reg,
-+	.reg_defaults			= tegra210_peq_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_peq_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- void tegra210_peq_restore(struct regmap *regmap, u32 *biquad_gains,
-diff --git a/sound/soc/tegra/tegra210_sfc.c b/sound/soc/tegra/tegra210_sfc.c
-index d6341968bebe..4aee0a86c5dc 100644
---- a/sound/soc/tegra/tegra210_sfc.c
-+++ b/sound/soc/tegra/tegra210_sfc.c
-@@ -3559,17 +3559,18 @@ static bool tegra210_sfc_precious_reg(struct device *dev, unsigned int reg)
- }
- 
- static const struct regmap_config tegra210_sfc_regmap_config = {
--	.reg_bits		= 32,
--	.reg_stride		= 4,
--	.val_bits		= 32,
--	.max_register		= TEGRA210_SFC_CFG_RAM_DATA,
--	.writeable_reg		= tegra210_sfc_wr_reg,
--	.readable_reg		= tegra210_sfc_rd_reg,
--	.volatile_reg		= tegra210_sfc_volatile_reg,
--	.precious_reg		= tegra210_sfc_precious_reg,
--	.reg_defaults		= tegra210_sfc_reg_defaults,
--	.num_reg_defaults	= ARRAY_SIZE(tegra210_sfc_reg_defaults),
--	.cache_type		= REGCACHE_FLAT,
-+	.reg_bits			= 32,
-+	.reg_stride			= 4,
-+	.val_bits			= 32,
-+	.max_register			= TEGRA210_SFC_CFG_RAM_DATA,
-+	.writeable_reg			= tegra210_sfc_wr_reg,
-+	.readable_reg			= tegra210_sfc_rd_reg,
-+	.volatile_reg			= tegra210_sfc_volatile_reg,
-+	.precious_reg			= tegra210_sfc_precious_reg,
-+	.reg_defaults			= tegra210_sfc_reg_defaults,
-+	.num_reg_defaults		= ARRAY_SIZE(tegra210_sfc_reg_defaults),
-+	.cache_type			= REGCACHE_FLAT,
-+	.flat_cache_default_is_zero	= true,
- };
- 
- static const struct of_device_id tegra210_sfc_of_match[] = {
--- 
-2.17.1
-
+Thanks
