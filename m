@@ -1,210 +1,187 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012063.outbound.protection.outlook.com [52.101.43.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D7935770A;
-	Mon, 12 Jan 2026 12:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768219471; cv=none; b=OtyawGBfk/6y5GsMarBvC70GGYMgOjgynMf5JfWj1shfCkgFoow7CbRPTqPlwVtpfoOAuNzc3BY6sK9nXINdHyIUUJMKZQvlU/Bv2W9CR5JK+aJ5JSpzrN40U+5tdhPpq51Q4G9TnMCqQ3iK0Qr2PT9gzCCJ+Vx9NKgWyclWwR8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768219471; c=relaxed/simple;
-	bh=5BiEA3YT3OvxJlu4+BexDLoaIF8cPC1fj4FQDGyymNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJ5uEKtUbZgGrw52JQfiwWiI5ZrSU9H7e+2mc66gSerWspd1ZbNmPbJ0u5ORj8tKCrgRCSHLqdLh3EdFplOf4c0tfjgt8e02cN2DO2hdVIrRAkAMg34/PHHktAgLFUK3Lq8pjiZw+RVcQt5SX3M4tR3/ur2YZcgl+Qz1JBNXRHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDjZfSNy; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0386357715;
+	Mon, 12 Jan 2026 12:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768219800; cv=fail; b=l8vlQ5vrxqjPui0YR/K7hTln1LZ2LUfLhkLcpdv5Fp73rUw/NEjPF1QiwIX2Va6ufbfsd/LgMG12OeH7QXzUwNWB+80OO6DHHVDddsAFYzc3hkeZzp0W/Rawpn8l0sUugSvgX57HEc/T/5FGZO6Zq4F+6yHBaPrk75HcUFeS13A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768219800; c=relaxed/simple;
+	bh=mevMBxNU6QbkjajhwX3CC4GD0nRGhiVWtTmMQsjPQAA=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=NlbD9mHqYdk1AGDt956EsPg5Badn3Sfy5/801+vlP+Q2SCwtBTuxnzkWOdtKNC7J0LfJ01ixaBaU2SoPOAsgKC1EOdy5I+WS0Wb+zNkd4o8Oi+m7jXgLu4t9ncBzpCC3O6A8vWrk+zzBKPoZxtP51HpM7S3UNgHT1JwKipNZaTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CeqUXlLm; arc=fail smtp.client-ip=52.101.43.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDjZfSNy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768219467; x=1799755467;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5BiEA3YT3OvxJlu4+BexDLoaIF8cPC1fj4FQDGyymNA=;
-  b=DDjZfSNyxTncEYNcrrpaxY4o5VtVjcXdYOXq/x8lftRhErNZCpQ/Kzft
-   qAQlLZibtjd7ee65KFFe57SPs8Wb1MC+9/h685Fz+G563QhlG075o2ubE
-   Ls+guReaAN78mfXonpc/yp/dwU/T46JOVmA0YQgajSUBML807N63sbm13
-   fh/gDDdBj+osRUna6Zw1b4+hssbUCMLbT/T/ME09AU0pqJDNAU9bzjax1
-   gFgiyNsj69/P50pwKUQrpqADF7AV6qM7YCuLQTbifg4SHX5S5l5Ogl3nt
-   9vrUXgsCTBjLYSRgBp4XoTWzszvj6Q4zwg/1DSlMZxyTvvrxPN+EtHmrA
-   Q==;
-X-CSE-ConnectionGUID: ciGn0PVuQNmJDVqQ6KhXbQ==
-X-CSE-MsgGUID: j7AyeWHIS/iybjCMfnBoJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="80597332"
-X-IronPort-AV: E=Sophos;i="6.21,219,1763452800"; 
-   d="scan'208";a="80597332"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2026 04:04:25 -0800
-X-CSE-ConnectionGUID: XAibRldxTZ6xSE7cKV3erw==
-X-CSE-MsgGUID: kqm52HRnSw29im3jfiPOTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,219,1763452800"; 
-   d="scan'208";a="208554124"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.245.37])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2026 04:03:57 -0800
-Date: Mon, 12 Jan 2026 14:03:54 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Varshini Rajendran <varshini.rajendran@microchip.com>,
-	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sunny Luo <sunny.luo@amlogic.com>, Janne Grunau <j@jannau.net>,
-	Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-	CL Wang <cl634@andestech.com>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>,
-	Jun Guo <jun.guo@cixtech.com>, Philipp Stanner <phasta@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
-	Shiji Yang <yangshiji66@outlook.com>,
-	James Clark <james.clark@linaro.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Carlos Song <carlos.song@nxp.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>,
-	Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
-	Sergio Perez Gonzalez <sperezglz@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	Haibo Chen <haibo.chen@nxp.com>, Gabor Juhos <j4g8y7@gmail.com>,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Luis de Arquer <luis.dearquer@inertim.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-	Alessandro Grassi <alessandro.grassi@mailbox.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Darshan R <rathod.darshan.0896@gmail.com>,
-	Aaron Kling <webgeek1234@gmail.com>, Vishwaroop A <va@nvidia.com>,
-	Haixu Cui <quic_haixcui@quicinc.com>,
-	Darshan Rathod <darshanrathod475@gmail.com>,
-	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	asahi@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
-	openbmc@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>,
-	Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	=?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Ryan Wanner <ryan.wanner@microchip.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	William Zhang <william.zhang@broadcom.com>,
-	Kursad Oney <kursad.oney@broadcom.com>,
-	Anand Gore <anand.gore@broadcom.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Jean-Marie Verdun <verdun@hpe.com>,
-	Nick Hawkins <nick.hawkins@hpe.com>,
-	Yang Shen <shenyang39@huawei.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lixu Zhang <lixu.zhang@intel.com>, Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>, Han Xu <han.xu@nxp.com>,
-	Yogesh Gaur <yogeshgaur.83@gmail.com>,
-	Linus Walleij <linusw@kernel.org>, Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Li-hao Kuo <lhjeff911@gmail.com>,
-	Masahisa Kojima <masahisa.kojima@linaro.org>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Michal Simek <michal.simek@amd.com>,
-	Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH v1 1/4] spi: Propagate default fwnode to the SPI
- controller device
-Message-ID: <aWTjKvbThxx9hSuL@smile.fi.intel.com>
-References: <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com>
- <20260108203004.3538449-2-andriy.shevchenko@linux.intel.com>
- <aWTgzqXrGMcdpFOr@opensource.cirrus.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CeqUXlLm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wvHhIbGAIWiBFKLMbaO+0kGSu+4ffVCW6T38bx7oY06fdfdjAtGJJn581WpMYuUSEB4LOWfqp1s0KHZx6MmkfFQKJdUkht2Tj2S2inl4cYcK6QIwZEDzGW/GKt1XDha+/Ulhk6xuORO9BUOxWdB2MjYUN6grozrwtaknhbdS/+yo3LCglY4LMnitx/twWqaXi6mUOwcnnRYDn7k5NRMX7vbzRX+Ye/Gj/4FiNscz+gG664KwBk3pmrV9Ldn0hTeS8XdKB6ROo/3jy/JOkFXgEQ0wKanDy1tVsKWdgZ3opxJq2JtcLNs4BPxh5wswbFGJgRcKsn5Syx9a1ejRoRmSMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VxQm5OUhCkJXsPTAoENvnEAfocdEMy05CocxVws6YvM=;
+ b=wWlubf1KYhCRPV0HkCYYsoHqCWzw5hPDDXPyK4lPga8EiA4gwpVFbtDqDuXU9tSK1fR+LqpOTqs2pwzie3Rf42ozbMPOW+abyKWQqit67qaHft87sUkkaZog3MhsgPIaDprzNo6lIgSP9vJETZUGUy+6acJ0ltQA/rlFggMl/XcRClQgos/BgAr+AdqfFfu6zkBS6Lzee4oxnfNZn06eq/PqAaC28i6SYRD6hg+1Mq00TNSWlLIKap8dA5R3LZynRYFjijgDdtjbUje/8ZsXn+h98CrV4hpqudEgyS7Hmgsy3nckGEOxE1qeQr4nD/USB4kMGxOCZB01ZAT+DgSV4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VxQm5OUhCkJXsPTAoENvnEAfocdEMy05CocxVws6YvM=;
+ b=CeqUXlLmNgIMRxqKQPaErnZBw9q15uOndwB8+a/SwRLj8+Wr3St59ezb9byeB/zmFLKSDQGCRG3P5N2lYpH1kSZnmm5IloeixlYmXauqbE5Pl2NRI9Zi7fcluQE9c7u05Y3n8aSo0rPPpFcjHsOsSDW6/5wuyKaeVXy+z7+XM580Af1AeHuEdbOm+TB3rfs+V8oNMQYdBBCNjJfgXuS+PHMQaenYmQq4/CrB36gCDABRzp9DdSgNcqGmYwJsH67qF3NCMkUOroxl1n/o9zEMk5hamUc3XwTNT0nXaCFYta6i0m7XjJfK+mtqlENPF0n6yjwydkEHmZg+o0+fgeQCSQ==
+Received: from MW4PR04CA0276.namprd04.prod.outlook.com (2603:10b6:303:89::11)
+ by CYYPR12MB8730.namprd12.prod.outlook.com (2603:10b6:930:c1::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Mon, 12 Jan
+ 2026 12:09:54 +0000
+Received: from MWH0EPF000A672F.namprd04.prod.outlook.com
+ (2603:10b6:303:89:cafe::43) by MW4PR04CA0276.outlook.office365.com
+ (2603:10b6:303:89::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.7 via Frontend Transport; Mon,
+ 12 Jan 2026 12:09:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MWH0EPF000A672F.mail.protection.outlook.com (10.167.249.21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9520.1 via Frontend Transport; Mon, 12 Jan 2026 12:09:53 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 12 Jan
+ 2026 04:09:37 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 12 Jan
+ 2026 04:09:36 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 12 Jan 2026 04:09:35 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/633] 6.1.160-rc2 review
+In-Reply-To: <20260110135319.581406700@linuxfoundation.org>
+References: <20260110135319.581406700@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aWTgzqXrGMcdpFOr@opensource.cirrus.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Message-ID: <f5cf6068-ef2e-4052-8bea-343be248f351@rnnvmail205.nvidia.com>
+Date: Mon, 12 Jan 2026 04:09:35 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A672F:EE_|CYYPR12MB8730:EE_
+X-MS-Office365-Filtering-Correlation-Id: 680eb66d-4fdb-4c80-859c-08de51d37e96
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDNtK2hjbmlQdmkwc0NKQVB2Qkl1MUFPUmI0ZWJPNXh1Y28waUNkeHpTQ25N?=
+ =?utf-8?B?L3JZdXNrRGlpRzJwNUh1aFhjTkh6cXk0ZENTK1pSekU4eWl0NEJYRm5aVUhH?=
+ =?utf-8?B?Tk54a1pKMk5va0huMGJnaFRGdnF6UUIrcWY0bG5Fek5oQ05OemlGdkVqWktW?=
+ =?utf-8?B?NUlOcEFHVWVYSHlxNU83L3hHbHBEVGl3WlFBbThPNW5FUUxRamw4ZUQ1TFBs?=
+ =?utf-8?B?RnJCRTlIc3NUdkZ0aXRNWEp1WGR5SE5maXBTWTFiMml6MWVGb0JrZTBnODY4?=
+ =?utf-8?B?cmU5anRsT1lablFFZ050RGR3Q1R0U2Q5Nkh6NG1Cd2tOenhhUFFMS2lIUGor?=
+ =?utf-8?B?cGpaUy9CTmRncHdiM0lKV2VtWTdKTVFxM2UwSVh2MFpWeDhFRGNZZDFDTDVT?=
+ =?utf-8?B?VGZFYUJwblM3QmV2NStGT3FwTks4Tml3TjN2WDVKaTlmOEgwNlhiaHVGdmhI?=
+ =?utf-8?B?eWdRV0JaR3JKR29XZ2VOUWprRk1UVkxON3ljb296ZElPSU04elZPaHMvZ2gv?=
+ =?utf-8?B?VjFOdHBDWFhFK2lsSDNtdzI4Zk9nazZFRW1mOUdWWGg0TC9HazZ4T2YxK28y?=
+ =?utf-8?B?RExWeUdQUVl3VWl1Q29yYzE3V3JGcG04Ujd4MWpFYzEwY3ZTWWxDMzdxemt6?=
+ =?utf-8?B?Vkk0RTlOb3AxcDJKSUFQQ2hhRTVpRi9iOXR1dFptN0E3Um9pSnJyRGhDVm5L?=
+ =?utf-8?B?eFFuY281TkU5cDZnSUtNM21RS1Y1c3R4RC9FcWZZQUZUVkw1WkdmdmNyT2VW?=
+ =?utf-8?B?bWthT25lTzVPMy9iNEVyYjVOUDhIYldjRjB5TFdRbXF0eTY0d3FHeVRwYVJ3?=
+ =?utf-8?B?TEVjemZKV2RXdDBSb0RxY3NyaHdCSUc5WXZqcG0rTStsbkIwQ1A4dWlvVW5C?=
+ =?utf-8?B?L3Fra1VPMStKYUhoMCtTWGVybE5VcEVDRnFGZFUxNmRONzdFc1k0NVBnbG54?=
+ =?utf-8?B?ci9tRDdHdkxHbEQvS3cvdTlveUw0TnY2RDI0YVhCcmp5WGNieGhEaWFCamFo?=
+ =?utf-8?B?Z2hjdERBUGduNVUzNXFvWkFBcTRwQUlYRUxHRkRyai82a0RIZ0M4RnRMOVJq?=
+ =?utf-8?B?NE4yM3hZdm5UUXo2RGd4RUFEdGt6MFNNYjhzVGQ0WjVkbWh2K1lPR3BQcGtQ?=
+ =?utf-8?B?Y0ZTeDZlanYzZUc0RXFIVTJabE5xVlFScWNXTzE1MVlZWG5jL1RXaEo2Qkdw?=
+ =?utf-8?B?THk4cktsdmJOMWxscnNETXdldGNETGxmUUVKZDd2QTdtNkwrRkxCS0k2Vkw1?=
+ =?utf-8?B?U1c5blR2R0Z0V3ZrSHMvbER2MXNtUTNGaVNXSnZHaW1lL1ExS3pvNXFoQWVt?=
+ =?utf-8?B?UW11bXo0R3NxQjNJVWg3YWJnckY2K2JzVHJOVWd4ZjJLdjZyWldxRk9OV3Ro?=
+ =?utf-8?B?TXdwZjRYOEgvdmlNekovdUZRa0xTbU1ZTVBRVll4VkMxdkVSL2c0NXJTbk45?=
+ =?utf-8?B?OFU3eGRRRzEyYzJhRHdsQkx3K3hzZks0UVppRm1oOUFJNU1oSzlWSVFNejZE?=
+ =?utf-8?B?QWxXODhobWNrb1pvL1NGM2o2cjFkL1hmcmQ3alk2TjRha1hYdSs3b1RKOEUr?=
+ =?utf-8?B?anhoV2xlUmVmWXdjai9ZK2VSUnNuamJ1bXB6T2wvQ1NwMTY1ZnRFc0EyQ2h5?=
+ =?utf-8?B?MVZjSFA4YzcvUytJSjNucnRjTHI2SEsvT0h2TUlsNVkrNFhFRi95ekNGcUR4?=
+ =?utf-8?B?Mkd3R3MrZnVsS25SUi90dGorQko2VzVuVHRIUWdzUGxaSkhkdHkrMWpLS3RP?=
+ =?utf-8?B?b25ZdzFjR29SWEI1eVJoV1ZKd1NSYjRIU1dUQ2JyeWdjNXVBOFNua2I2ZGZG?=
+ =?utf-8?B?VVN0QjJBZzh0S3BOTXRaaWxTQ2ZjWWdYdDBTaFF5U2hNaktkaTFLaXJEbitC?=
+ =?utf-8?B?Y1Z6amUxSkRQNm9VQ0ZtdTBpcnpqN1dKbkFWNWd4M2dxUU9tbmZIdVpscTJG?=
+ =?utf-8?B?TGljM24xMmdCMlRKaDBsTVFLcGc4b0pHS2xZcDhCOXl1d0ZmUGRoR3ltYTRk?=
+ =?utf-8?B?bXc1VUMwb0JJM1J2N2s1Ym9FWFF1YUljN3JNSkxJcG5vZ3EzWW5BaGdYeVRR?=
+ =?utf-8?B?UVhmV1NLcGN0TU8ySHJLKzRyd2VkcmY4U21KbWxEdVlyWHNsdVRsSFYvbnpR?=
+ =?utf-8?Q?oeVQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2026 12:09:53.5462
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 680eb66d-4fdb-4c80-859c-08de51d37e96
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A672F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8730
 
-On Mon, Jan 12, 2026 at 11:53:50AM +0000, Charles Keepax wrote:
-> On Thu, Jan 08, 2026 at 09:23:38PM +0100, Andy Shevchenko wrote:
-> > Most of the SPI controller drivers share the parent's fwnode
-> > by explicit assignment. Propagate the default by SPI core,
-> > so they may drop that in the code. Only corner cases may require
-> > a special treatment and we simply (re)assign the controller's
-> > fwnode explicitly (as it's done right now, no changes required
-> > for that).
+On Sat, 10 Jan 2026 17:27:38 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.160 release.
+> There are 633 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Tested-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Responses should be made by Mon, 12 Jan 2026 13:51:43 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.160-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Thank you very much! I'm now pretty much confident about the change.
+All tests passing for Tegra ...
 
--- 
-With Best Regards,
-Andy Shevchenko
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    119 tests:	119 pass, 0 fail
 
+Linux version:	6.1.160-rc2-g38b254e86276
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
