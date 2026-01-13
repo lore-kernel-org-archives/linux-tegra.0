@@ -1,52 +1,52 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012029.outbound.protection.outlook.com [40.93.195.29])
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013040.outbound.protection.outlook.com [40.107.201.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C90125A2DE;
-	Tue, 13 Jan 2026 14:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A511624C0;
+	Tue, 13 Jan 2026 14:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768315338; cv=fail; b=GUBLudVt4lJCdRgXcV/97usRQ4Ymay8eNwqrWxJdM0NB450/7C7XeBjCW26GjxvvGt+AyvARfOLdHhpLDQymWtmILtS94ytO9ZnIn/kAHujaNGO3EiX1OmTqY9GAidy/Qm4O+myh6NM8rQkI/KStlA27vda6Oa16kD2AmSOfmJI=
+	t=1768315726; cv=fail; b=rjxcjZ1wQjd4XHvAjzhRJ/O4fg9mBVR7Jf6JAiQAjMgGZqWfBKvmcFnMbrufFuh+A6h7I6Fys8+3LuJ/hEhBIG7nMiEd/t3CO/29J7g6e4pEnbWzjyziabt4WnqDtL5h0agNPlNqiNrXz1NCOXMigPTud2kaStkkpFWkJJcKQm4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768315338; c=relaxed/simple;
-	bh=pNdOcF1+qP6U/1bmQegtC/p1E5hA547cVDLFxF/nyN8=;
+	s=arc-20240116; t=1768315726; c=relaxed/simple;
+	bh=19iEUVBm5tfLeA/i13OdBcZErB+91zlTeyJL3GBtSJ4=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BxkO2bLtf+dbQGVvD+6Pv/8Zl3y9ZLXyrmzYLsGCUdoEM+gqYyj6sNXXQ8Hj1mHGFFcJq4oEF7ghJjlvFqizrs2bdmb9yQVNj4SFN3Q0VR1xfltKSagzPnembOYUagp9PVjhiSQ04L214hPoavQtTtxFPt2ZzhOTg7CWj9oUiBc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CAKazBOT; arc=fail smtp.client-ip=40.93.195.29
+	 Content-Type:MIME-Version; b=Q737Itc3Pz+BFeXn+Ay71ZSC0FBrv5HCfS8cNJs/O4FWkAJcmzAa1EeJyZc7leR15+7fDceeoj7hxbQWp1Pte8AGdNWBctzPANPF2ADLr0XQrnnG/B5znLp/k4RcQn5wHKBUWxdFU/GMR6vFGN8yCAEX8YDUjrmTZgQ3VpOdJ84=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N/8fEwCf; arc=fail smtp.client-ip=40.107.201.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CAKazBOT"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N/8fEwCf"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aNr3Qr19QiyQMhPBPp862kJ4t5Kn4YOp8iR1OlzDCbchn9FCIbpXhNzwSwuAxlr/olnzwwaZhWUdHCUUMxBpR7Z1hNnIMJ803IarWGAXt5HEMmoTxBZgmZOWfTzI1iH0TNpxmD5XEsz0j6YYlfLW5v5WGaUu3XDL9C39TwKbp+Ut1vFBDOY2gwy+bqwkyd5NSy3WUMoggdPpE6KRYYP+iJ+igjED17IvCsuJ8smfF1li/fWapLaUgtxHICr/lPAFYIOl9Szae8ihx8Hli630EXAFoYxX/kh8JRHKzrtbnm5YKB9teHYLiS1C9+peh2tnoyJ1R+/lDpklf1xPsUmH3Q==
+ b=Q9IM5L/3kQ+p8dDgz/OqspvAu/y7RGlONMqn9ibY4OQWPtyyBvCTCUIuUC7z2IPEg27HgIzCbEj7piKQiEUGZGqGd9zO28+kaylu2LKHNPCc7vyuY7WOtJQf4N8ljRI4I4K5Yt5AA75+KIchUaWVYBQVkb5jWYymYPyAZIPBJH7RZr1O3uqiTA+DUG0Ms7V1mYRfYHZcwIPWTp6s7YBtZePaWcL5mDNO8OgE88FBOpQjro3IotrnAoFmKRdOR8vA5FftO18wp1Z6LmMulfsaTCq3DiLc0qPuhzdasCUpsqLHyRZFuc/IiHJr5C1tsgrpjXDgNkhejRhQjM6wv3OnpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PQ5Da6zhuTfPmikOfQWtLKHoGPckaVXhvtnn7bhG9W0=;
- b=D34IFZpgS5xH7JgyeIMDwVz9nXLMP3WT8toJD70GDlJ5vnBzKHZgPerER3XrnGS+PXCrwyyRsqtYVbEqIOiZo+vpcOIG69UVMGlE2Ps0/ssPZ0YgAEWIAWwxEV1q49jZrIRTy5UdrlNKm9SL7fvRsiU38am1hJC78Pzmy6CY/9rA7P6bS/iA9BxPERq5JSiMJeaHV44nunbnC8MOJ359cvRlMYhNqtwmpzE0i7y195eYsqJhFaz4QCF6lY+848oU37rWxRdbnc7VhE+XuhO7MMFjsU1tLQoDXVi3guYmMU4q+6xmC9sEnu32Wnr3sQnvjNDV8FMBrJ+ZqbSwy6uEUg==
+ bh=FANrG9/sGCu0jg/MH/U0Bu+9ErjM2YcMoYeRhyKdmig=;
+ b=WHnG3eZePyuVleP3TDpxdMFxw1FW7aQGu+GIKI26kdRWmyne20vbTZGubf1vLdvNLcirUX9+zXHJJQMnqDIjTpT377GwTwvsj7fqqg4Hj++CmIfFiyUCKxa4MII59oRFtXEyDHejziRta8Kqp36OBrf3Ux8o426MhKnh/fBq74x4ykgZVvshIYIQFIL7F/A2BphbXOeUzn3/EESO7QSXiCgn1KfQs+UwlBf+u60o0Gw+wV/ES8k9BitZadVvvxpmtMaljbI3LAlg/d7fpDhIavYZFEkLFk71B67/An83LRmzJ0adDcIWm2dZKDnkm0uHM0JYe+y6nEZk+1I9ivss7A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PQ5Da6zhuTfPmikOfQWtLKHoGPckaVXhvtnn7bhG9W0=;
- b=CAKazBOTQTiU1j4shH7kMTLCNSlGV0zDzEjdG+eZ/sNlgJnvJWtDTPNOTB5BWXSV1Ip9geJYDxN3FZSsbF8zAzWf1bXnOsA+Px9Sy7jJowcWe4LInwaH4mYsF7NYTVtRgtE5bfbCQhvGxyACNWQQah3AuSKJIdgR+sdX1/5aNbw9eZ7CgzmYjGv4ogF6s54IVpqvMUk1agmPgfcsPaJpJOGUJ+x3gCIKiyFBxmW5x2q5QcEC5CU3brCL1l20oPzWVPbyu9bx9OnIgNgH3LH9rYXsELJmWb3ODIgC7Ovkv6l7KDckunLdb/5hmMpPL5ne8Y/rC9lr7LH8+KOc7CosQQ==
+ bh=FANrG9/sGCu0jg/MH/U0Bu+9ErjM2YcMoYeRhyKdmig=;
+ b=N/8fEwCfGKXhYRLRpA6nkRieEWlGn+tfD9U+wWfi6sF7LSTh15BGc/VAEMFntUeAe8QoD/VNjJ+s6B8J9mjXvtBaToQoFxtSdsH+Lmnm2t4q7lzGSyONhU8W/fucU5Td06lVfzr1pGyCtjNTiaz6xrzSQi64ZKBQCT8fRPoK7qV1qcAoi0IPLKdJOWjxvLwVQwtYOW2TsJnHruVA02oGhcaHoR89n/TTOyBoa0vD7gWgQFsgqsi/pS6sl4OWk6tZDi5befhuhZ0zO2uw1Z9eu8lcO0Mpn2Yl8o7yK9q4fvFM4h6DzaPi+HwxnAUiYleHBFBvXF5Yk476pJyI3GOPyA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
  by SJ0PR12MB6943.namprd12.prod.outlook.com (2603:10b6:a03:44b::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Tue, 13 Jan
- 2026 14:42:12 +0000
+ 2026 14:48:40 +0000
 Received: from DS2PR12MB9750.namprd12.prod.outlook.com
  ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
  ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9499.005; Tue, 13 Jan 2026
- 14:42:12 +0000
-Message-ID: <043663d0-d592-432b-8550-10669674d17a@nvidia.com>
-Date: Tue, 13 Jan 2026 14:42:07 +0000
+ 14:48:40 +0000
+Message-ID: <703a470d-87fc-4580-a743-952e422984d4@nvidia.com>
+Date: Tue, 13 Jan 2026 14:48:36 +0000
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] phy: tegra: xusb: Fix USB2 port regulator disable
- logic
+Subject: Re: [PATCH 3/5] phy: tegra: xusb: Fix ordering issue when switching
+ roles on USB2 ports
 To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
  Mathias Nyman <mathias.nyman@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -58,16 +58,16 @@ Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
  devicetree@vger.kernel.org
 References: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
- <20251204-diogo-tegra_phy-v1-2-51a2016d0be8@tecnico.ulisboa.pt>
- <c5450fc7-230e-4435-bd1d-3db4f1f6e736@nvidia.com>
- <54afff11-df9b-4c25-bd1d-8134196ce093@tecnico.ulisboa.pt>
+ <20251204-diogo-tegra_phy-v1-3-51a2016d0be8@tecnico.ulisboa.pt>
+ <86cd3ff0-1609-44cb-911c-f0e97652ca1b@nvidia.com>
+ <ae36f759-e889-4371-8c08-b8ffd1b69250@tecnico.ulisboa.pt>
 From: Jon Hunter <jonathanh@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <54afff11-df9b-4c25-bd1d-8134196ce093@tecnico.ulisboa.pt>
+In-Reply-To: <ae36f759-e889-4371-8c08-b8ffd1b69250@tecnico.ulisboa.pt>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0512.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:272::18) To DS2PR12MB9750.namprd12.prod.outlook.com
+X-ClientProxiedBy: CH0PR13CA0033.namprd13.prod.outlook.com
+ (2603:10b6:610:b2::8) To DS2PR12MB9750.namprd12.prod.outlook.com
  (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -77,182 +77,247 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SJ0PR12MB6943:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b121553-1843-423d-796d-08de52b1f004
+X-MS-Office365-Filtering-Correlation-Id: 89f26695-c5ea-4f3f-b594-08de52b2d77f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K2k2N3E3OE5SUUV4OEFzQnBYZnJFcDB6QUVLZFdyL04xUloxOUJYOTNWa1Zi?=
- =?utf-8?B?TXFFNzM4cWpjbWxCR2YyZG1rYnB0VEhXcnA2UTdMNlNhSCtvdGZpVGpxZ1NF?=
- =?utf-8?B?MWJMWUV1SFVSM3Izd3g2VGwzQ2FtYlNFN3ZZK0lsdWNPUWNGenBVWVJyRWY4?=
- =?utf-8?B?R3k3c3dIR2VvN1VWRXFxMEFIM0VsTThMYmhLZERMeDAwbmVhQU9acmcyWHFs?=
- =?utf-8?B?MnMvQi9WZDVQbkhVL2I5c1lYdnJPSnRPQTh3QmU0eGk4RVVmT2JvZGI4Wm9S?=
- =?utf-8?B?VmFvTk9IdjFNS2tHMGJtVGQxVXdiL1plTnl5bUJ3bkMrZTcrMDhBcU5jcERI?=
- =?utf-8?B?WWtqM1hWdTg0b21IbTUwbUs3UVI5d2xTVFAzUGdULytodE1NSW5rd0VZTWgy?=
- =?utf-8?B?ZTlSbTBmUDU2NEp4TWVLTFBHd0xCS09MQk40RG8zWVAzd3BTV2JYTGpPdEpG?=
- =?utf-8?B?eHo5cXVvQWQxTkFqc3I4NG1hcmN3bUxLOFdpMGYraXlrak1xVzZHZnFGOGxX?=
- =?utf-8?B?WGZRMlhvOUp6WTJXYm5HaHhORmJvN1dnSXJTSnBSTGRFdWRpb3V2a0pkVHhH?=
- =?utf-8?B?UFEzaHQ3NHRHSU9QdG5oTzcycVB3VnBzQ0QyZ2h6cmFBbTE2Y0VKQUtjL1ll?=
- =?utf-8?B?MlA3MEsrRU1KSmxNTWxUYzZ4V05LOVptdjQ1eHhOQllIdlJxRWFuWjQwRWZz?=
- =?utf-8?B?eTkweEVvZDE4eHNiYjhGaE5TamtvcVBDeHREM2hIa1FYYUtzVExHL1ZpNXJl?=
- =?utf-8?B?KzcrM3czYVRTSzJZNVlieG5yYUNtQXhBT0JEdkxrNHRUOXpvWHJtV3ZlVmNQ?=
- =?utf-8?B?ODFCQnR4Sk8xL0pUSjRFSDU2MUFPcURodGZWMEVjd0dxZXF2UEtTWVRHVzF1?=
- =?utf-8?B?SXpqaDJmRXBqcWtvT1kyaUl1a2VuNmhONEdFS1lEZnRNMFZiV2duNjlacGtE?=
- =?utf-8?B?Zm5DckhVb1ZBQllYTkxiZ0lyRzRUV1VVeFRYUkRJajdlRGNRRUZUcGhWcjBm?=
- =?utf-8?B?NWdsNndvMDZBNmRBdE9XaWhxek1Ca0pnb1NzNnFPS0NDTjVwWDc4cGFmeWdV?=
- =?utf-8?B?dldCbUpXdkVVNGY1Q29FMlJva3BkMm9WcXh6OXBGL1h3c09WT3BkeWl6WkJa?=
- =?utf-8?B?T0lIaFU0akJkOEdrSTdtTEZoRmIvck13YTMzR0hvQytJclNaMngwaGE3S2RD?=
- =?utf-8?B?eWpTWllOV1hIZHRkOTh6cVJLUGEwK2RsdHJOVlFzUEpRd0tyem91elJjM05i?=
- =?utf-8?B?Mmo4YlVuZS9jS1FXZXpaVUxhU1pUNEh3RDV4YUpUaW9yc0xIaG83QzJnd3FX?=
- =?utf-8?B?U09TVW16dzl3a0lGRHlZQmJteVdjTTBoZzdLOHZuR0JpVUt0QWJyNjV0SFZ4?=
- =?utf-8?B?Q29zRGMwdkFrc0tibCtTVVQrV2J0VVJMakhRaEM0bUNDeTFvNHB6b3RnWXV6?=
- =?utf-8?B?SUdLSEtYZ3RmRkttYkl1djY1WFNWNEdIK2wveTJUMnF2MlFONlJlM3B2WTJD?=
- =?utf-8?B?S2dZMVFGeTNBOFUzZnBFTFNrTy9GMWhMSnhVN2lmajM3TGc3bXlwU1g2SFMy?=
- =?utf-8?B?Yld1dzVoSDFCM2c0ekFGc3JtanFaZk9pM3F0Z1JUSUFTOXVGT1BERFZpNTJU?=
- =?utf-8?B?T3RFUHBKTEJHR212UldhOTQwZGlETGJ3clN4aEhWQWtKemRvbEUzcHEvU2xs?=
- =?utf-8?B?SjZidXBZK2ZtaVVlOVQvc09sTHMxcWtoZWkwVXpyamtjd0tuWXVHaGZkN2F1?=
- =?utf-8?B?cDA4K1pIZGJNNW5LQ29HZ3pyc2RTYTlHY3k4UFFQME1CMTV2Q3FtTUc1eXgx?=
- =?utf-8?B?SG1lalozWFhGL1prRjJMZzRjTFhUdnhWRmNWT01Bd1lrRU9zN1hkNlNQS3VP?=
- =?utf-8?B?ZmpTYWY5NC9nZ2xZd2o5aFZFV2dBSWJUclhUT3Q1OE5IcVRmdnBvWExiTjR4?=
- =?utf-8?B?dHZFZHhySC9BUWdQVE9WcXludTFoNEZzeWtDU0xCSWQ5VGV5akM3YVFYejlP?=
- =?utf-8?Q?jiWC1lR6CGXN7rXB40HhqmRj0XO9Xs=3D?=
+	=?utf-8?B?NHkraG1zQXl5Q09KMll1OVdPN3FrSXdXSENSbE40K3BmaUpYdzR1UGxKc0cz?=
+ =?utf-8?B?VDdoUlZuUTJNYXdnWFVpcCtEOWtic3NYRDdTUjF6a29kcGlmTFgxYWliTmxu?=
+ =?utf-8?B?dFRacUtXaWRZcTJIV0dmOGJGSEJiVkpZR2RENFpLM1pQUVIxVjJpVFAvak95?=
+ =?utf-8?B?cE1DVW53QXJuUDVobGZBNTNpQnFBdDd0bWdVRGoyME94NzN5ZW1XU3VRQ0lG?=
+ =?utf-8?B?cFR6amRwa3FHOHJtVW52TlNYRVh0OW9TQ0tkV0RuSnErclRuTGcvMFh2cU5K?=
+ =?utf-8?B?R05MMmxQd1FkUStqRzhQMUFBM0lIbjdZNTFha3pwK21pcFZzSE9IQUN0emNq?=
+ =?utf-8?B?N0lVemh3TW56TkhxZm9HbXZEeXJkcE02a2NBU3I0eWh6SkxIeUdRaktQWHVm?=
+ =?utf-8?B?RkFseFlGZUcyaVJ2ZHN5d2dnYWdrS2V5ZjZyS1p0bk1uejBjektzbkhsR1BE?=
+ =?utf-8?B?cmF6bTVxdlMwQlk1Q1dla1FHWUtpRDY0QVhXbXMxaDVMVG96SU1nN1JPclJD?=
+ =?utf-8?B?NTZsOFBmY3NZSXVPMkJaZVo2a09hT2M0ZkN4S2p5ZkFhUU1JRlRuRVhHd2x2?=
+ =?utf-8?B?RTF2dWM3UHN0eEZaSmlVRko2Zm1LakFRYzl5N1JwMEh6M2JuOUQ2UXl4UzVo?=
+ =?utf-8?B?Y3BPdmFsU2x6ZVZJT3VjS3hlT29tOUt5bkZDTmliS3Nrc1VmSHR3L3Vwb0M2?=
+ =?utf-8?B?ayt1SXY5cFYxcHpnUXIxOW1vc0IzTkVnTEpoODBheVZKRTdyODJsR0hiWUtJ?=
+ =?utf-8?B?OURxNXoyZ1JDWG8wRzl1emNEN0J1N2wySjZkbTZ5aUdNTkZkSVo1T0YycTNL?=
+ =?utf-8?B?Q09Zam11dkhnR250U2NzVVNZeWQ1aW1sMnVUMC9HT0ptVTdoVVkzR25BZFl5?=
+ =?utf-8?B?ZWJoY1R5S3NDTXdReFByQld1bVVkU0FMMjNXb25CWjN3YnNDNU82ZHRqbG5E?=
+ =?utf-8?B?WVJ6T0h0Tm5WVkZ6ZmNGMHF6NzBmYzVQVVBNdlJicUQ1VFNRYmJzenB5aGdn?=
+ =?utf-8?B?Y0RWNVFaN1pOQlpwdU0vdE0xbDcwTC9HQVp6SWZSeEhXZTNncnlEckg2MVg4?=
+ =?utf-8?B?OFpoVjdzRmhRSHlrdStBZHdnbytTbm1nTVE4dG1kQkgxbWFDUWhFRnFoeE5D?=
+ =?utf-8?B?ZndNVGZ0WXUzY3o0Q2J2OWpQSlNOY0hJYS85Rk5ETkh0alBsVU5yUUQvU0kw?=
+ =?utf-8?B?VE5tSVI5Rk9RTnVPUnNOeEF1ZXk3RXlxMW9DRURPNWptV2ppejVuVGRDWG1G?=
+ =?utf-8?B?cThVOEllcHNhNUlwZlNXM3dycDFLczV0S05aRTBVT1NMY3g4cjUxemNlWG1C?=
+ =?utf-8?B?OWNWQzYrWmdZNDZuZFdlS2FlOHA2V0Q0N0ZlaEFhUnlGUFZOQUlET0ZkMzg4?=
+ =?utf-8?B?YVUxRjY3c3VJa1dOOFU2VndXNXdMTGppYnY1Vko1eWZjN2liOXVvSGlPUDI1?=
+ =?utf-8?B?MVIvZmdXOUVrL3RMMXZKcGFzelhCVm1pbVQ0L0NsZ04rNjFMUEI4ZXIwbzBk?=
+ =?utf-8?B?SE91cWZBbVVTaHQ2TmFTai84bEZWYktwVmVNQjZmVTNiaU14VU9qdDRuYUxi?=
+ =?utf-8?B?d1U5UExZWkd1SlBuZmpqWG93U2J0NjVhcWpVMlVGaHJlNENOTDFMOGx5NkdB?=
+ =?utf-8?B?Mmp2NlBzZ1Jwc1pFYVVCTEZDd3d5ejI4ZHRxMUZ1eFZHbkROcG1FL0gxcGtp?=
+ =?utf-8?B?K1V2cnBGMjcxZ2RBd1lWK2JjTEVwMWtTQ09ybFhTT0FweVBHRzlyNWwrdlVF?=
+ =?utf-8?B?bVUwb09haVJLOG40UGFuNDdDZEVWNjFkOFZCUk41WFVQNjRlMTJ2TG9HMHpE?=
+ =?utf-8?B?c05UZkg4bzRhUE5MbnYyRlE4UGV1MWQ4aWJ5a3RwdThHSzJOSVV4YktaQzd0?=
+ =?utf-8?B?U1laQ3phaHFYYzBRZDBGSnBCNzA4WU5BQlM0T3pJTGtVR1lORkdJRkNTWmpl?=
+ =?utf-8?B?Ym5LQ2l3K3ZHZFhNZWVCclJUV1NDSWpmNWI3M0FKZnp5OW5RdVNacDgyVUNG?=
+ =?utf-8?Q?94j2jKOeY114nsvVKBpiw/0ltgWUK0=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGVvN281elgxVEtaVWh1b0x6eHZNZ1FSUDAyRWlrSXZPT0h6clVmUitUQ2M4?=
- =?utf-8?B?SEs3bURoYWpCdVBRampDZS9ORXFLVllFakNYRElPS0pMQm55TGRCNWEzc3Zw?=
- =?utf-8?B?NFRqWExlQmFtUE41ZFQrWmxUSlRaSmF1THVxM2FGVVhUTmoyMHM5OFZ6bzMv?=
- =?utf-8?B?cTYyR05kQjNOU1VhU1VNU3VpWTlmRWI4NUk2TitTTm1LWk9EMEYrVm0vR3kz?=
- =?utf-8?B?UW1oQktidG1LUXJtSVpmV2dZWExORU1ob1ZJZldielF3UjUybFo4QmJMZ0pQ?=
- =?utf-8?B?MDZoUVZEYy9RVWExZzBwZXlFdUkxOERwOHM0QlBpR0NHaUZyZldYdVFnMUxB?=
- =?utf-8?B?QnV6SCtxZmVaOHptazF2YmZadmg4ZkYrQjJPcllrMW8yYTd0MVF0R2o3OGJq?=
- =?utf-8?B?SFBMNXdGc25BRGs3WkRnWnlXTGszRWF5U01PTkttRFpUTlpZMUNZTnYrdUV0?=
- =?utf-8?B?V0FhRkNZMjhZVVVySDdPT2lhYUdzcURXMHdHZGpTbnhvRi80SkNXczN0TW9U?=
- =?utf-8?B?bStDTUFxbzNpWm01Vmc3ckRpYkpsOE1mKytkL2YvdzE1K29IN0l0L1dUZ2hH?=
- =?utf-8?B?NHJTemUwdlIzM3lxSGVOR3hrUUVCcWlwdHhGS1J1STlWVDFySkJNNGdtcG5w?=
- =?utf-8?B?UzJmRGlCRGEzUWRCMUJSVmxyV2ZDV0Rmd3BiVU1lNGVVdGc1NlprNUVMT3JJ?=
- =?utf-8?B?enR6Ti9nYkw0dUNxZTd3VWZUQk8wVHVpeFYvdDhhdnZRSWdpZkRpWkNKQ1R3?=
- =?utf-8?B?YkVBTjV3R2p3N0dXSEttQUZGL01HM1pXYUxmZjdUVENmb2NIVU8wUEhRNU50?=
- =?utf-8?B?ZjhLemZPem5PY3dqaFY1MlRvUWhFTjRpK3RXTHorbHNmY29OQ0V0WThQVTZa?=
- =?utf-8?B?RlBhNkdOWFM2UC84T3k1UmNCTXJSN2gvaE52T3JLRForTjhkcTY5WG9XZ1Qw?=
- =?utf-8?B?R2lCajlpTUdpOUtjZExWeXJvZVR6ZTJlN0plTHlXQk1yYzNtTzJQSkM4eERT?=
- =?utf-8?B?TFZncm1DQW0rV2JvUHBpb3dJRlNRYlh6RGk1aTV1MUl3Mk13SXJqaGxaSVUw?=
- =?utf-8?B?V1VuYjI4aXBUVmk5VnRhbjRWQktSRTFzTjg0MDh0ZlF3Nk1RY3FDeWhiR0s3?=
- =?utf-8?B?L0IzVVNRN2ZLcWFXNHNISTcza0x1ZkJtUFNZWlVUdlMrUDF1UStGcDNmSXRa?=
- =?utf-8?B?dzBqWkgvVzZjZ1hJekhLWGpzV25SMHJJWUk0N01SMzJ1ZlNvZDVxb3NRSkRG?=
- =?utf-8?B?dmdEbk5SMEtaaVZjVFhuTktIcEgrYWNwcExUcWJXNzJnbVdaODFTQTl4Z1p0?=
- =?utf-8?B?Nng1ekV6bkdkOEhIWGRMRjhGWGZzWm5yR2w3eC9Qd2Y5ZUthRlduL1gwYUZs?=
- =?utf-8?B?aWJ3WmFmWlJWeStNVG5FSTFscnNNWktRb1VWeTNmY0JvclN5OHJpeUdyejdY?=
- =?utf-8?B?cWNUbVZMQnAwWGx2dit5TWtuaWxHNFVEeVBDUTQ5U2FkempCY0lNMjBqS1Ix?=
- =?utf-8?B?aWhhTVJvUGQvY2xYZThrcFRTSmRsVmdpSFdRMENLeUl3eEV2V3NnUDRvOUYz?=
- =?utf-8?B?V3RSUmpHRDM0bU9qbWFLQk9QNXBLenlwZ3VtMXF3UC91Y2cvcWE5TW5KaExp?=
- =?utf-8?B?N0lhcEFlMFBSVlRoZnRoKzJ6QitiTEhNOTloNHQxemkxdHBqbEdhSXBmaXUx?=
- =?utf-8?B?K2dLSE5nZWxjRURZSlNnQWZlL2ZuMWtIZXhLUCtDOFZKZndWTm02U3dpV0FX?=
- =?utf-8?B?bnRwdWorbmgvVms5cXg2N0hBT1Fnd0NUbGhmeEk5UWk2L0hGSE9zU3h3KzRp?=
- =?utf-8?B?bC9Kd3owQTV6dmlQMmdjR3l4YS9pcThDNUp1d1lrVGd1bXcvbVg4aGRxTjly?=
- =?utf-8?B?NWR3QUFrOGptcjZGT3VGYm1ReXltRlpoRDJ5cmVERXVuU1VQTyttSVZ2Q1ov?=
- =?utf-8?B?ckR2RjZ2dDlMelB3dG11clhPOTNINWNXbzVYd1JIcUZoa3ZRaVIwWnZsUUdK?=
- =?utf-8?B?Tm1vZ0VhRlhyUGVRMFRkZkxCY3k2ZC9PVTN5N1N5ZXlXbFpVZ3RCZGJGT1ky?=
- =?utf-8?B?M3dUZTh1QVdYOVY5UzFtL0M3b1JEaGJLSnZ0U3dtZnpKRWtEaHlZZjZZNzU1?=
- =?utf-8?B?ZWtwOXRxQzBSK3p4Mm1zclpTNFRlaFlCUXpLUFlHc2c1bE1JOHJnK3ZIMVBu?=
- =?utf-8?B?bHVmZ1RnQVY1QzhpUkdhUlJKSVBmZklhVFF1SGFFOXZUZm14Y29wNk0zYVR6?=
- =?utf-8?B?QmFnT1ExTHVZdTJvWEtLV2x0VDdPS2RYd2RSOFM1QVdrcHFRYmgrSFJ4aTAr?=
- =?utf-8?B?d2VkM0tEeGdiMVNCdlNlUjJUcTJGNXBFYTV1R3Rqc0picjZiT1ZqUT09?=
+	=?utf-8?B?S2svQk9VeHV1dWpJYmFBYUxnT2d1cE9zb2MvaUh2ajlTR0lFWkdOZnRTMUJJ?=
+ =?utf-8?B?OEk3MEFqVXB5QU00Rk1FNnhrcjgxenJQSlRnSmJwSU5Fako4b2Q4aHFvaHJj?=
+ =?utf-8?B?MHhLNDNzZHlBMmx2RURUcDJKSWJSRWZmM1BRK1ZaT1hudXp6a1VsdVVUUnJr?=
+ =?utf-8?B?azJxcTlVRmZOOWl1Z2ozM0JudVlrWXFlWWJzSXRFaHNYVUR4UTlpUEZqTzYv?=
+ =?utf-8?B?dlVZRVplZlVWQVNnSHZ2QVFtNDVpaWc0cEcwY0YvbnBmd3kwZ1U5d3hLK0Qy?=
+ =?utf-8?B?emh1WDVPWU5wVGY0emhOUFBUSVJxSmtBSkdxUnUreDBmeW9nbWJRRGlpRnNm?=
+ =?utf-8?B?b0l6OVlXcEErK0kra0JDVVdsM2RSOFl4L0hiZU9BakFNOXdveXE5bEZOeGJU?=
+ =?utf-8?B?c3Zkb2xVZEg5bUg0Nzh2c2lJZzlEbytXcGh2c3k4NUFQVUxWSHkrTzJxOXNl?=
+ =?utf-8?B?eW90TlRybFdjYjdQcTJENGVIVmFNd3pkMVk4RnFvSGtSNlJxcmRJLzJvN01h?=
+ =?utf-8?B?eG9HV2YzSFZMSTZ5YU1OZjRZZExmZFhuNG4rYlZxTlV0MGN6ZUlRNVREb2FC?=
+ =?utf-8?B?ekFnbjRJN3ZqdENjYisxZDA2aXF3Nm5ndUREampVMkp5OEkzTk1rdHhjT1Y3?=
+ =?utf-8?B?RDFZbURFdnZQSms3UW9TNW1yMjNkNkFLeXB3c05UUmd2UGxEZ2lzMGRGdjVV?=
+ =?utf-8?B?T1gxZDQ5Tko5YUNkUTI3SHVCanUrRnROZnYxYWp2SHF4S2kzRGNubmFzUjhO?=
+ =?utf-8?B?cURHUWpCRmxxaXFGRFNUNndMTmlodHA4MEZFUmpxY2FlUU96Y3o0Slg4TDYx?=
+ =?utf-8?B?eW0yR2I0dzYzM3NSR0U5Ry9IVXhoRTBMUm16WkRXeFY4SGoxdWRNTVdWZVVy?=
+ =?utf-8?B?aDkzdW5QNGxyVXVvYlNJejh0L3ZYMUd5UVl3TERLNmRBOHMrUHg3M1FYeW0v?=
+ =?utf-8?B?a283WHYrdVlwc0JNVXJ0TWZlRFNiZTRzZEZ1TlJzeFhPdk9rcTlXemJubWtG?=
+ =?utf-8?B?L3Y3MThvY2VvdDhkdG5ZYy8rMzRtTDhoNDMzcnIzTXlNTm1ZQXdoZzE3MTlH?=
+ =?utf-8?B?ZHZvOWtyc2dYVXpqeWZhTnlhL2NpZ1ZxSjE0YlRTbDFXSE9COXk0K2pyV0U3?=
+ =?utf-8?B?eGllK0s2Yi9saVcxc2Z5ck12eVJ5ZXc3NjI2OWFxOXJjTFpqWk5OUUNwNWkx?=
+ =?utf-8?B?SFVIeFFNellZYlFvRUsxMlVzNTROOHFDNmdaVHdPM3ZwR3JLVXU2aGgzdkIz?=
+ =?utf-8?B?eDBiQnNIR0dLaHdjWGFBaTQzK0NRb3Z2c0luYVU5c2lXcHNrVVRZazBGeDc4?=
+ =?utf-8?B?R2k4RkFrL0lHdUt0bUx4bVZMdlQ3NDJzUHlXMC96RUc4M29Qc0NYTW1BVjQw?=
+ =?utf-8?B?dlBuTlUrVS96c3NibHFDTndORFJqUGhyNlI3UWVUSlkxTXlyb2FDK0VMMVM1?=
+ =?utf-8?B?YTZqRTJabCs0aWxiVnZXZEViVTRjZFgxVUpmMFlUWjFpWnMrZklSVWdZZkhQ?=
+ =?utf-8?B?ZjRmRE0za0toS0pTZzRGWko3ZXhKeWU5cElWVkJxNEhqUGhCblNJd2JYZ2pr?=
+ =?utf-8?B?NmRiZnpPb253QnhWeEhXZWVOM1FNMVdRSGxKRVQxaVdvZ2hjTDFCSDhWNUEv?=
+ =?utf-8?B?REwveUxJQk52L3RhR0NReXJKWUZpT0Fxc0dFS3l6aW5UakFDcGxmcmt3ZHZX?=
+ =?utf-8?B?RXd2eTRUMDJyMEN1THc5UXM2WGtXUVdFNCttd2VuNDBTOFpyMW94RklPVVVN?=
+ =?utf-8?B?WG9vSmpvaW1yeVFmS0JSazE4OHJ0alpNd0o1UFo0WWYyTEI5b0NrZ3pEdVNC?=
+ =?utf-8?B?V3l2UWlmZnZCa0pqakhMQzh6SjBXRFA4blRRMnQyS3JFRFV2clZ0cmJVOXpJ?=
+ =?utf-8?B?eFVFc245OVJRdnV2M2h1QVFkb09VRWJyYk5wV1ZXZS92bTFnb0RhdVNtcjNp?=
+ =?utf-8?B?M0pQTmVwZ0kzR1IwK1hUUUxONTdoMlQ2bXY0ZnVPM3JEQUlGVnIwVlBGeXRX?=
+ =?utf-8?B?TnQ4MFVPSDcyZXJKcWNBeThscEdvOHJVOUJCVUlZdW1EZi9rdFd5VkhzaDdY?=
+ =?utf-8?B?cXZiV0lnSVUrRGVuc3BRbk5ENnlRUXQ3aVF2UXhlZC9qUFdmUTFDNUJ0cVp6?=
+ =?utf-8?B?dVBKbXpicFhFZnhiQUREQVVWbEY2VnpXQXhaa09vZnUvbWVwTkNUdlVNMmJw?=
+ =?utf-8?B?cVRRRHZSR1ZwdHVkTkdhd1JZUS85RW5WcXloN3NjTlpCaXdFWEF1eEdud3pW?=
+ =?utf-8?B?QW5ZeFBGSDgwdU9HTHNKNEkyM2RHckl0S2ZvMTdwbDZkM2V0QTBoRk5UdGZm?=
+ =?utf-8?B?VXBFZzBwc0kwSFQyUFhoeUMxd21BVGxNRENTV1FuVEs4WVpPUlpyZz09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b121553-1843-423d-796d-08de52b1f004
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89f26695-c5ea-4f3f-b594-08de52b2d77f
 X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2026 14:42:12.4850
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2026 14:48:40.7153
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 59waTxhK1CmksUhHN6koZ7wuYE2cd5e5e1aiwKSFi8qjWp7ADeApq2TBnIRzhHdX6lOpCFxqSG1qxCSUdVY+wg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: mtY/EOVxJ/LaGG4Jdj1F4g2TPEA+G3L7xDoR9xIKjiyTfa+Ax2zFTMK9arGE41GZjyOCgVHIDFIb7JnypZJwmQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6943
 
 
-On 13/01/2026 13:59, Diogo Ivo wrote:
+On 13/01/2026 14:05, Diogo Ivo wrote:
 > 
 > 
-> On 1/13/26 12:01, Jon Hunter wrote:
+> On 1/13/26 11:56, Jon Hunter wrote:
 >>
 >> On 04/12/2025 21:27, Diogo Ivo wrote:
->>> The USB2 PHY mode handling on Tegra210 incorrectly relied on
->>> regulator_is_enabled() when determining whether the VBUS supply should
->>> be disabled during role changes. This is because regulator_is_enabled()
->>> reports exactly what is states and not if there is an unbalanced number
->>> of calls between regulator_enable() and regulator_disable(). For
->>> example, regulator_is_enabled() always reports true on a fixed-regulator
->>> with no enable gpio, which is the case on the Pixel C.
+>>> The current implementation of USB2 role switching on Tegra relies on
+>>> whichever the previous USB controller driver was using the PHY to first
+>>> "yield" it back to USB_ROLE_NONE before the next controller configures
+>>> it for the new role. However, no mechanism to guarantee this ordering
+>>> was implemented, and currently, in the general case, the configuration
+>>> functions tegra_xhci_id_work() and tegra_xudc_usb_role_sw_work() end up
+>>> running in the same order regardless of the transition being HOST- 
+>>> >DEVICE
+>>> or DEVICE->HOST, leading to one of these transitions ending up in a
+>>> non-working state due to the new configuration being clobbered by the
+>>> previous controller driver setting USB_ROLE_NONE after the fact.
 >>>
->>> This then leads to the PHY driver wrongfully calling regulator_disable()
->>> when transitioning from USB_ROLE_DEVICE to USB_ROLE_NONE since the 
->>> driver
->>> did not previously call the corresponding regulator_enable().
->>>
->>> Fix this by keeping track of the current role and updating the logic to
->>> disable the regulator only when the previous role was USB_ROLE_HOST.
->>>
->>> While at it fix a small typo in a comment.
+>>> Fix this by introducing a helper that waits for the USB2 port’s current
+>>> role to become USB_ROLE_NONE and add it in the configuration functions
+>>> above before setting the role to either USB_ROLE_HOST or
+>>> USB_ROLE_DEVICE. The specific parameters of the helper function are
+>>> choices that seem reasonable in my testing and have no other basis.
+>>
+>> This is no information here about why 6 * 50/60us is deemed to be 
+>> sufficient? May be it is, but a comment would be nice.
+>>
+>>> This was tested on a Tegra210 platform (Smaug). However, due to the 
+>>> similar
+>>> approach in Tegra186 it is likely that not only this problem exists 
+>>> there
+>>> but that this patch also fixes it.
 >>>
 >>> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 >>> ---
->>>   drivers/phy/tegra/xusb-tegra210.c | 5 +++--
->>>   drivers/phy/tegra/xusb.h          | 1 +
->>>   2 files changed, 4 insertions(+), 2 deletions(-)
+>>>   drivers/phy/tegra/xusb.c            | 23 +++++++++++++++++++++++
+>>>   drivers/usb/gadget/udc/tegra-xudc.c |  4 ++++
+>>>   drivers/usb/host/xhci-tegra.c       | 15 ++++++++++-----
+>>>   include/linux/phy/tegra/xusb.h      |  1 +
+>>>   4 files changed, 38 insertions(+), 5 deletions(-)
 >>>
->>> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/ 
->>> xusb-tegra210.c
->>> index 3409924498e9..63ad57d95514 100644
->>> --- a/drivers/phy/tegra/xusb-tegra210.c
->>> +++ b/drivers/phy/tegra/xusb-tegra210.c
->>> @@ -1934,9 +1934,9 @@ static int tegra210_usb2_phy_set_mode(struct 
->>> phy *phy, enum phy_mode mode,
->>>               /*
->>>                * When port is peripheral only or role transitions to
->>>                * USB_ROLE_NONE from USB_ROLE_DEVICE, regulator is not
->>> -             * be enabled.
->>> +             * enabled.
->>>                */
->>> -            if (regulator_is_enabled(port->supply))
->>> +            if (port->role == USB_ROLE_HOST)
->>>                   regulator_disable(port->supply);
->>>               tegra210_xusb_padctl_id_override(padctl, false);
->>> @@ -1944,6 +1944,7 @@ static int tegra210_usb2_phy_set_mode(struct 
->>> phy *phy, enum phy_mode mode,
->>>           }
+>>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+>>> index c89df95aa6ca..e05c3f2d1421 100644
+>>> --- a/drivers/phy/tegra/xusb.c
+>>> +++ b/drivers/phy/tegra/xusb.c
+>>> @@ -740,6 +740,29 @@ static void 
+>>> tegra_xusb_parse_usb_role_default_mode(struct tegra_xusb_port *port)
 >>>       }
->>> +    port->role = submode;
->>>       mutex_unlock(&padctl->lock);
->>>       return err;
->>> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
->>> index d2b5f9565132..273af147dfd3 100644
->>> --- a/drivers/phy/tegra/xusb.h
->>> +++ b/drivers/phy/tegra/xusb.h
->>> @@ -317,6 +317,7 @@ struct tegra_xusb_usb2_port {
->>>       enum usb_dr_mode mode;
->>>       bool internal;
->>>       int usb3_port_fake;
->>> +    enum usb_role role;
->>>   };
+>>>   }
+>>> +bool tegra_xusb_usb2_port_wait_role_none(struct tegra_xusb_padctl 
+>>> *padctl, int index)
+>>> +{
+>>> +    struct tegra_xusb_usb2_port *usb2 = 
+>>> tegra_xusb_find_usb2_port(padctl,
+>>> +                                      index);
+>>> +    int retries = 5;
+>>> +
+>>> +    if (!usb2) {
+>>> +        dev_err(&usb2->base.dev, "no port found for USB2 lane %u\n", 
+>>> index);
 >>
->>
->> A similar fix was made to the Tegra186 code by commit cefc1caee9dd 
->> ("phy: tegra: xusb: Fix unbalanced regulator disable in UTMI PHY 
->> mode"). Although the above looks simpler, I am wondering if we should 
->> make a similar change to the Tegra210 code so that they both are 
->> implemented in the same way?
+>> This appears to be a bug. If !usb2 then dereference usb2->base anyway.
 > 
-> Looking at cefc1caee9dd my approach leads to less changes but I do agree
-> that standardization benefits us here. However in that case I think we
-> can take it a step further and actually just have a single function
-> tegra_xusb_padctl_id_override() (and likewise for vbus_override() and
-> set_mode()) since they all seem to do the same thing in both platforms.
+> It is a bug, will fix in v2.
+> 
+>>> +        return false;
+>>> +    }
+>>> +
+>>> +    do {
+>>> +        if (usb2->role == USB_ROLE_NONE)
+>>> +            return true;
+>>> +
+>>> +        usleep_range(50, 60);
+>>> +    } while (retries--);
+>>> +
+>>> +    dev_err(&usb2->base.dev, "timed out waiting for USB_ROLE_NONE");
+>>> +
+>>> +    return false;
+>>> +}
+>>> +
+>>>   static int tegra_xusb_usb2_port_parse_dt(struct 
+>>> tegra_xusb_usb2_port *usb2)
+>>>   {
+>>>       struct tegra_xusb_port *port = &usb2->base;
+>>> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/ 
+>>> gadget/ udc/tegra-xudc.c
+>>> index 0c38fc37b6e6..72d725659e5f 100644
+>>> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+>>> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+>>> @@ -698,8 +698,12 @@ static void tegra_xudc_restore_port_speed(struct 
+>>> tegra_xudc *xudc)
+>>>   static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
+>>>   {
+>>> +    int port = tegra_xusb_padctl_get_port_number(xudc->curr_utmi_phy);
+>>>       int err;
+>>> +    if (!tegra_xusb_usb2_port_wait_role_none(xudc->padctl, port))
+>>> +        return;
+>>> +
+>>>       pm_runtime_get_sync(xudc->dev);
+>>>       tegra_phy_xusb_utmi_pad_power_on(xudc->curr_utmi_phy);
+>>> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci- 
+>>> tegra.c
+>>> index 9c69fccdc6e8..9944593166a3 100644
+>>> --- a/drivers/usb/host/xhci-tegra.c
+>>> +++ b/drivers/usb/host/xhci-tegra.c
+>>> @@ -1352,18 +1352,23 @@ static void tegra_xhci_id_work(struct 
+>>> work_struct *work)
+>>>       struct tegra_xusb_mbox_msg msg;
+>>>       struct phy *phy = tegra_xusb_get_phy(tegra, "usb2",
+>>>                               tegra->otg_usb2_port);
+>>> +    enum usb_role role = USB_ROLE_NONE;
+>>>       u32 status;
+>>>       int ret;
+>>>       dev_dbg(tegra->dev, "host mode %s\n", str_on_off(tegra- 
+>>> >host_mode));
+>>> -    mutex_lock(&tegra->lock);
+>>
+>> Extra blank line here.
+> 
+> Will fix in v2.
+> 
+>>> -    if (tegra->host_mode)
+>>> -        phy_set_mode_ext(phy, PHY_MODE_USB_OTG, USB_ROLE_HOST);
+>>> -    else
+>>> -        phy_set_mode_ext(phy, PHY_MODE_USB_OTG, USB_ROLE_NONE);
+>>> +    if (tegra->host_mode) {
+>>> +        if (!tegra_xusb_usb2_port_wait_role_none(tegra->padctl,
+>>> +                             tegra->otg_usb2_port))
+>>> +            return;
+>>> +        role = USB_ROLE_HOST;
+>>> +    }
+>>> +
+>>> +    mutex_lock(&tegra->lock);
+>>> +    phy_set_mode_ext(phy, PHY_MODE_USB_OTG, role);
+>>>       mutex_unlock(&tegra->lock);
+>>
+>> I am trying to understand why you opted to implement it this way 
+>> around and not add the wait loop after setting to the mode to 
+>> USB_ROLE_NONE in the original code all within the context of the mutex?
+> 
+> I did that to minimize the amount of time we wait while holding the
+> mutex, as we can now possibly wait a significant amount of time for the
+> role switch. Is this an unneccessary optimization?
 
-Yes I think that would be fine. I can't say I have looked at that in 
-detail but that would seem like the logical way to go.
+Do you mean it will be longer than a few 100us?
 
 Jon
 
