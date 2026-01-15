@@ -1,144 +1,293 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2EA313547
-	for <linux-tegra@vger.kernel.org>; Thu, 15 Jan 2026 07:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DA92E8B98;
+	Thu, 15 Jan 2026 08:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768463360; cv=none; b=uYGdg7L9OxKxBcOHEOofhaM5z2zM0by7hSrwvJgm20qJWZJlKGMWTCfnX+KF+SIELUv1DEmu/ywHmg0PvFVYkEYWmY0M0yXgXa0wsJ1obvR8lwumYz2yoEhd7OCSvQlj0zTsJ/b7c1ovPfK6HFi7e/UVWz8RXCD/26qJRxk6Uvw=
+	t=1768464071; cv=none; b=K8YlHzihxs9nIL/MhcdcuE8evIMG5R5iKrbJq1Sy2vKRXH8+Z8cGLsAcsuENtaGlkcI5kdfNM03CjCgvl4bzeV5hY8OhBxT4X4eSg2hDv2MM8HFZ/3Q7q9o2hGnQ+lSe5p5eGaXg3Qgrc/Y8mMFCDUFwuSBQREp0OXRyblxUYmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768463360; c=relaxed/simple;
-	bh=hd2VPdvp8ufnz+pdMsSef2AaJOW+FtodIDjMjm5/IIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o94wDbv/HIqCjCn1F9WeR+LdRoCfCQOcnccYYg3qsFqLR/4/lk7q4Z52FaF5TLRmBaoK2/9xkKz6HfSl6XFvVYRrvYgbRl0iGl4r2mmjrajx8Hlh+eTfN4z4nb3DISajgXviDvOkV4DaSur5sLRBNAtnxqptCWa67RIOxai+VUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gl6CBYMT; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1768464071; c=relaxed/simple;
+	bh=il+ur2AmFhBIas4/rfObzdgF/u8NIMfbFkNRWVDGI5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nXn9IpQDK0OxE3m8JhJBmhhHLOrNYfFABrcYSRJV7HpRhmolln5ik063f2jexLIyOI9yCp2/txvq5yPTkDJK5GRUO4NnpjLxdNB0jSIFNaJswdEwDG2wciT7g8yCp+iTtnn4/ukFhmC5s28pDMdvcGQ1u7BwhRa+b9tCt7ELMkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=L2x0TQlK; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gl6CBYMT"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-430f5ecaa08so278404f8f.3
-        for <linux-tegra@vger.kernel.org>; Wed, 14 Jan 2026 23:49:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768463357; x=1769068157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GtxAoaTpJU6r++xlIpmAaAG/bZOXfH9n2gzVC3kL6Pc=;
-        b=gl6CBYMThWlrGXrBHxb6WypqpxguzhCqzgyIzVnlZJgA6szY65qhsBNCDDXxInjbjM
-         VdQaXk297mclLMv4QCGucjiYsxKfT4jx9ivQLEvUcY+UAcgb3NHzVOfj6EBSWOEtQiMA
-         WAzT//jdZ4+fdgpnVSG05P2vEXhZYWTiqtXjxh5NwmlAgBB7/Hbc+ShTsDII5H/0QA1B
-         N7Kwit/JHlMPdpcB2KNLuQusF8mya4mkAMtWcE+P8IHSgKFZC0AbWoameqm2wWXtOOZr
-         ctzBItgDCyRjiaIXFGQxUz6Jbt2c7vnNmoOT8EccvIpAv6yp+iP8RocmAThw+hp98vEC
-         JCEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768463357; x=1769068157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GtxAoaTpJU6r++xlIpmAaAG/bZOXfH9n2gzVC3kL6Pc=;
-        b=Ys+kFAqS5oXxJ51iJwoXkL7Q5R8v/FZDBVfPzxPXmRwW7Noe1GVDB3JJvv2VZQVunB
-         EwmREf8SlXy+nSJx7vYSq/JooLUnV1u26X1AiSx0cuAPc4SKEK7R5Gvc5VxcAfRelSSB
-         i930J879X/meuh+BQ7wOoXWgthzTzIim8+XDeL7cJmvqXWTWFY/2EhDGsIRbzurap/aA
-         CbMgEPCYt6zEIK7zGqF2dIRirdhKE7teZdnIn5s95DzsF2JmYrRbgGMtnTV5h0NVEWVL
-         fp86uovmwnA+2+zletLIKIPmihiW4wl/w3p339iHaeAfqs5D/4rHfXo3PPkTeMFFxhzR
-         onEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/0ISq1NLAfZlS7U+3lXxKkL0D2QADU1Jm4K6pA66gY/Dy7wy7I/H7X/zPNM7gkwAiouZisvSiL+SE3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqkfWi8QSz03kU72XvuoSkgu/D4uHjQYkD2QDAXm5+yVHpHcZu
-	3h6UKDGMmpMrd8jv5YxxHv2n5Dco/SbZ/LylvLDt6tZFrEmuvunmWkiQk/FRMHa/Y2qaIPAuU4o
-	LmjJWIiZTFGwM5TgBMFZldgCsZATowqU=
-X-Gm-Gg: AY/fxX6WMg0PbkVCutknxkxpCQdUUdIGUrQ4keztAVVTzdw+bPYMhrfc8hmmip+ZoCm
-	VpEuMJdOcbS7T0aJqcdkvydscPizmnS55Z+K0+aqsnALuxei1LKd018Bun5CxRe0J0ERzIouV18
-	5NlLNeYRsSnBFJlBe8a79NMnB31H6EvWOQbrpBq00r7hxu35eSXqsMWc8GD0wKBuCOV72hrKz0q
-	k+zsyi5kmQyYsPp8qjHj8VBt/lqauOt+ahwZe61wApciZRcoloWnJhXa5Ktm2qJ8VvSy1If
-X-Received: by 2002:a5d:5d86:0:b0:432:8504:b8a9 with SMTP id
- ffacd0b85a97d-4342c571e43mr6373650f8f.62.1768463356624; Wed, 14 Jan 2026
- 23:49:16 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="L2x0TQlK"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=oip95iPWTAaoPcXICTEjsNFUgVofongS4JHq1pQa6L4=;
+	b=L2x0TQlK4LzJbCmJflrRMkpTVxA6gI83/6eZn6KclUo4gpTexniFkeVPPZiHQhfze0R5d0q50
+	gncTICkF2qU7f+3t0GNZEGQqkpil4lcHYzM7UtXsvmTsF6if4POl3WYfSAfaudDPXpKA3RYcOIN
+	XxciGDdoRqqFJGWA2w9P58E=
+Received: from mail.maildlp.com (unknown [172.19.162.140])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4dsFhs5dPxz12Lc0;
+	Thu, 15 Jan 2026 15:58:05 +0800 (CST)
+Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id 72E6B201E9;
+	Thu, 15 Jan 2026 16:01:05 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemf200001.china.huawei.com
+ (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Jan
+ 2026 16:01:04 +0800
+Message-ID: <abc72d3a-990b-4eaa-9043-185e1d205df5@huawei.com>
+Date: Thu, 15 Jan 2026 16:01:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251204061703.5579-1-clamor95@gmail.com> <20251204061703.5579-3-clamor95@gmail.com>
- <7012249.lOV4Wx5bFT@senjougahara>
-In-Reply-To: <7012249.lOV4Wx5bFT@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 15 Jan 2026 09:49:05 +0200
-X-Gm-Features: AZwV_Qi0zcbXk0tsiK_qJ_9rRb1cx2nEQ98pWwmRVMmkpOG8O8-PqPUPy2GYvG0
-Message-ID: <CAPVz0n3JEHtUOq4qaZbqPu97NXdYxx_=5im4rxoEWi8EbKmKEw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4 RESEND] gpu/drm: tegra: dsi: move prepare function
- to the top of encoder enable
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/11] ACPI: CPPC: add APIs and sysfs interface for
+ perf_limited
+To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
+	<corbet@lwn.net>, <pierre.gondois@arm.com>, <rdunlap@infradead.org>,
+	<ray.huang@amd.com>, <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
+	<perry.yuan@amd.com>, <ionela.voinescu@arm.com>, <zhanjie9@hisilicon.com>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <nhartman@nvidia.com>, <bbasu@nvidia.com>
+References: <20251223121307.711773-1-sumitg@nvidia.com>
+ <20251223121307.711773-7-sumitg@nvidia.com>
+ <14851f8e-b6ac-42ff-9623-b7ac8d8893e2@huawei.com>
+ <0a2b7d49-bd1f-442e-9247-705cd2eb0d1c@nvidia.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <0a2b7d49-bd1f-442e-9247-705cd2eb0d1c@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf200001.china.huawei.com (7.202.181.227)
 
-=D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 07:54 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > The tegra_dsi_prepare function performs hardware setup and should be
-> > called before any register readings or there will be a risk of device
-> > hangup on register access. To avoid this situation, tegra_dsi_prepare m=
-ust
-> > be called at the beginning of tegra_dsi_encoder_enable.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/gpu/drm/tegra/dsi.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> > index 278bf2c85524..8e80c7efe8b4 100644
-> > --- a/drivers/gpu/drm/tegra/dsi.c
-> > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > @@ -914,6 +914,12 @@ static void tegra_dsi_encoder_enable(struct drm_en=
-coder *encoder)
-> >       u32 value;
-> >       int err;
-> >
-> > +     err =3D tegra_dsi_prepare(dsi);
-> > +     if (err < 0) {
-> > +             dev_err(dsi->dev, "failed to prepare: %d\n", err);
-> > +             return;
-> > +     }
-> > +
-> >       /* If the bootloader enabled DSI it needs to be disabled
-> >        * in order for the panel initialization commands to be
-> >        * properly sent.
-> > @@ -923,12 +929,6 @@ static void tegra_dsi_encoder_enable(struct drm_en=
-coder *encoder)
-> >       if (value & DSI_POWER_CONTROL_ENABLE)
-> >               tegra_dsi_disable(dsi);
-> >
-> > -     err =3D tegra_dsi_prepare(dsi);
-> > -     if (err < 0) {
-> > -             dev_err(dsi->dev, "failed to prepare: %d\n", err);
-> > -             return;
-> > -     }
-> > -
-> >       state =3D tegra_dsi_get_state(dsi);
-> >
-> >       tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
-> >
->
-> The section of code before the tegra_dsi_prepare call was removed in 'Rev=
-ert "drm/tegra: dsi: Clear enable register if powered by bootloader"', so t=
-his patch should no longer be necessary.
->
-> Mikko
->
+On 2026/1/8 22:38, Sumit Gupta wrote:
+> 
+> On 25/12/25 17:36, zhenglifeng (A) wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 2025/12/23 20:13, Sumit Gupta wrote:
+>>> Add sysfs interface to read/write the Performance Limited register.
+>>>
+>>> The Performance Limited register indicates to the OS that an
+>>> unpredictable event (like thermal throttling) has limited processor
+>>> performance. It contains two sticky bits set by the platform:
+>>>    - Bit 0 (Desired_Excursion): Set when delivered performance is
+>>>      constrained below desired performance. Not used when Autonomous
+>>>      Selection is enabled.
+>>>    - Bit 1 (Minimum_Excursion): Set when delivered performance is
+>>>      constrained below minimum performance.
+>>>
+>>> These bits remain set until OSPM explicitly clears them. The write
+>>> operation accepts a bitmask of bits to clear:
+>>>    - Write 1 to clear bit 0
+>>>    - Write 2 to clear bit 1
+>>>    - Write 3 to clear both bits
+>> It's a bit odd that users write a 1 to and then read a 0 from the sysfs
+>> file. I think it is better to seperate these two bits, as two sysfs files.
+>> Then users can write '0' or 'clear' or others into them to clear each bit.
+> 
+> I think its better to keep one sysfs interface per HW register.
+> Can change the perf_limited write interface to accept bit index
+> instead of bitmask.
+>  - Write 0 to clear bit 0 (desired performance excursion)
+>  - Write 1 to clear bit 1 (minimum performance excursion)
+> 
+> Thank you,
+> Sumit Gupta
 
-You are correct. I have found this when rebasing onto v6.18 which was
-much later then this series was resent. Obviously, this patch would be
-dropped on the next resend/v3. Sorry for inconvenience.
+I believe that user-facing interfaces should prioritize usability, ideally
+allowing users to guess how to use them simply from the interface name
+without reading any documentation. While this is nearly impossible, user
+interfaces should strive towards this goal, rather than being rigidly bound
+to register implementations.
 
->
->
+Viresh, Rafael, what do you think?
+
+> 
+> 
+>>
+>>> This enables users to detect if platform throttling impacted a workload.
+>>> Users clear the register before execution, run the workload, then check
+>>> afterward - if set, hardware throttling occurred during that time window.
+>>>
+>>> The interface is exposed as:
+>>>    /sys/devices/system/cpu/cpuX/cpufreq/perf_limited
+>>>
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>> ---
+>>>   drivers/acpi/cppc_acpi.c       | 56 ++++++++++++++++++++++++++++++++++
+>>>   drivers/cpufreq/cppc_cpufreq.c | 31 +++++++++++++++++++
+>>>   include/acpi/cppc_acpi.h       | 15 +++++++++
+>>>   3 files changed, 102 insertions(+)
+>>>
+>>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>>> index 9f28c20d902d..ffd866c1c00d 100644
+>>> --- a/drivers/acpi/cppc_acpi.c
+>>> +++ b/drivers/acpi/cppc_acpi.c
+>>> @@ -1786,6 +1786,62 @@ int cppc_set_max_perf(int cpu, u32 max_perf)
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(cppc_set_max_perf);
+>>>
+>>> +/**
+>>> + * cppc_get_perf_limited - Get the Performance Limited register value.
+>>> + * @cpu: CPU from which to get Performance Limited register.
+>>> + * @perf_limited: Pointer to store the Performance Limited value.
+>>> + *
+>>> + * The returned value contains sticky status bits indicating platform-imposed
+>>> + * performance limitations.
+>>> + *
+>>> + * Return: 0 for success, -EIO on failure, -EOPNOTSUPP if not supported.
+>>> + */
+>>> +int cppc_get_perf_limited(int cpu, u64 *perf_limited)
+>>> +{
+>>> +     return cppc_get_reg_val(cpu, PERF_LIMITED, perf_limited);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(cppc_get_perf_limited);
+>>> +
+>>> +/**
+>>> + * cppc_set_perf_limited() - Clear bits in the Performance Limited register.
+>>> + * @cpu: CPU on which to write register.
+>>> + * @bits_to_clear: Bitmask of bits to clear in the perf_limited register.
+>>> + *
+>>> + * The Performance Limited register contains two sticky bits set by platform:
+>>> + *   - Bit 0 (Desired_Excursion): Set when delivered performance is constrained
+>>> + *     below desired performance. Not used when Autonomous Selection is enabled.
+>>> + *   - Bit 1 (Minimum_Excursion): Set when delivered performance is constrained
+>>> + *     below minimum performance.
+>>> + *
+>>> + * These bits are sticky and remain set until OSPM explicitly clears them.
+>>> + * This function only allows clearing bits (the platform sets them).
+>>> + *
+>>> + * Return: 0 for success, -EINVAL for invalid bits, -EIO on register
+>>> + *         access failure, -EOPNOTSUPP if not supported.
+>>> + */
+>>> +int cppc_set_perf_limited(int cpu, u64 bits_to_clear)
+>>> +{
+>>> +     u64 current_val, new_val;
+>>> +     int ret;
+>>> +
+>>> +     /* Only bits 0 and 1 are valid */
+>>> +     if (bits_to_clear & ~CPPC_PERF_LIMITED_MASK)
+>>> +             return -EINVAL;
+>>> +
+>>> +     if (!bits_to_clear)
+>>> +             return 0;
+>>> +
+>>> +     ret = cppc_get_perf_limited(cpu, &current_val);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     /* Clear the specified bits */
+>>> +     new_val = current_val & ~bits_to_clear;
+>>> +
+>>> +     return cppc_set_reg_val(cpu, PERF_LIMITED, new_val);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(cppc_set_perf_limited);
+>>> +
+>>>   /**
+>>>    * cppc_set_enable - Set to enable CPPC on the processor by writing the
+>>>    * Continuous Performance Control package EnableRegister field.
+>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+>>> index 1e282dfabc76..1f8825006940 100644
+>>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>>> @@ -1052,12 +1052,42 @@ static ssize_t store_max_perf(struct cpufreq_policy *policy, const char *buf,
+>>>        return count;
+>>>   }
+>>>
+>>> +/**
+>>> + * show_perf_limited - Show Performance Limited register status
+>>> + * @policy: cpufreq policy
+>>> + * @buf: buffer to write the value to
+>>> + *
+>>> + * Read the Performance Limited register to check if platform throttling
+>>> + * (thermal/power/current limits) occurred.
+>>> + */
+>>> +static ssize_t show_perf_limited(struct cpufreq_policy *policy, char *buf)
+>>> +{
+>>> +     return cppc_cpufreq_sysfs_show_u64(policy->cpu,
+>>> +                                        cppc_get_perf_limited, buf);
+>>> +}
+>>> +
+>>> +/**
+>>> + * store_perf_limited - Clear Performance Limited register bits
+>>> + * @policy: cpufreq policy
+>>> + * @buf: buffer containing the bitmask of bits to clear
+>>> + * @count: number of bytes in buf
+>>> + *
+>>> + * Write 1 to clear bit 0, 2 to clear bit 1, or 3 to clear both.
+>>> + */
+>>> +static ssize_t store_perf_limited(struct cpufreq_policy *policy,
+>>> +                               const char *buf, size_t count)
+>>> +{
+>>> +     return cppc_cpufreq_sysfs_store_u64(policy->cpu,
+>>> +                                         cppc_set_perf_limited, buf, count);
+>>> +}
+>>> +
+>>>   cpufreq_freq_attr_ro(freqdomain_cpus);
+>>>   cpufreq_freq_attr_rw(auto_select);
+>>>   cpufreq_freq_attr_rw(auto_act_window);
+>>>   cpufreq_freq_attr_rw(energy_performance_preference_val);
+>>>   cpufreq_freq_attr_rw(min_perf);
+>>>   cpufreq_freq_attr_rw(max_perf);
+>>> +cpufreq_freq_attr_rw(perf_limited);
+>>>
+>>>   static struct freq_attr *cppc_cpufreq_attr[] = {
+>>>        &freqdomain_cpus,
+>>> @@ -1066,6 +1096,7 @@ static struct freq_attr *cppc_cpufreq_attr[] = {
+>>>        &energy_performance_preference_val,
+>>>        &min_perf,
+>>>        &max_perf,
+>>> +     &perf_limited,
+>>>        NULL,
+>>>   };
+>>>
+>>> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+>>> index a49b50bddaf9..57e04326a4b6 100644
+>>> --- a/include/acpi/cppc_acpi.h
+>>> +++ b/include/acpi/cppc_acpi.h
+>>> @@ -42,6 +42,11 @@
+>>>   #define CPPC_EPP_PERFORMANCE_PREF            0x00
+>>>   #define CPPC_EPP_ENERGY_EFFICIENCY_PREF              0xFF
+>>>
+>>> +#define CPPC_PERF_LIMITED_DESIRED_EXCURSION  BIT(0)
+>>> +#define CPPC_PERF_LIMITED_MINIMUM_EXCURSION  BIT(1)
+>>> +#define CPPC_PERF_LIMITED_MASK               (CPPC_PERF_LIMITED_DESIRED_EXCURSION | \
+>>> +                                      CPPC_PERF_LIMITED_MINIMUM_EXCURSION)
+>>> +
+>>>   /* Each register has the folowing format. */
+>>>   struct cpc_reg {
+>>>        u8 descriptor;
+>>> @@ -177,6 +182,8 @@ extern int cppc_get_min_perf(int cpu, u64 *min_perf);
+>>>   extern int cppc_set_min_perf(int cpu, u32 min_perf);
+>>>   extern int cppc_get_max_perf(int cpu, u64 *max_perf);
+>>>   extern int cppc_set_max_perf(int cpu, u32 max_perf);
+>>> +extern int cppc_get_perf_limited(int cpu, u64 *perf_limited);
+>>> +extern int cppc_set_perf_limited(int cpu, u64 perf_limited);
+>>>   extern int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf);
+>>>   extern int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator);
+>>>   extern int amd_detect_prefcore(bool *detected);
+>>> @@ -285,6 +292,14 @@ static inline int cppc_set_max_perf(int cpu, u32 max_perf)
+>>>   {
+>>>        return -EOPNOTSUPP;
+>>>   }
+>>> +static inline int cppc_get_perf_limited(int cpu, u64 *perf_limited)
+>>> +{
+>>> +     return -EOPNOTSUPP;
+>>> +}
+>>> +static inline int cppc_set_perf_limited(int cpu, u64 perf_limited)
+>>> +{
+>>> +     return -EOPNOTSUPP;
+>>> +}
+>>>   static inline int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf)
+>>>   {
+>>>        return -ENODEV;
+> 
+
