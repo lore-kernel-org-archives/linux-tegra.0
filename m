@@ -1,47 +1,47 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010034.outbound.protection.outlook.com [52.101.46.34])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012039.outbound.protection.outlook.com [40.93.195.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174ED27732;
-	Thu, 15 Jan 2026 05:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A23325705;
+	Thu, 15 Jan 2026 07:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768456491; cv=fail; b=ghb3c0lTM6qgbxOU2ym4dBrNjzxDCs7ALbFXvaOF5UpbMPvM2x4Zc3pi1Iw1y3skJ8UXTQR3/TXFyCJ0c/DnNHK2WDvK8G7GpVs3ec7zGX25z3Z1zntQtxrrJ2q7Vwpj6F0+1aCXMcJE1DyqIrvTi5rV1SQwIUzJ1EQnf232WLc=
+	t=1768460575; cv=fail; b=c0OniV6FyFoZXhkUumLAdzCvOejsMjVuXdS6Wrnlx2JFZjtUhTgZMWsLB5w+qNTUAHEhdVaGFaBZD3K3mV8ZZmp1cnPuzcv8iCbf0TDL044ODetihdNhTUZbSqSS97g/o8EWMQcwMzgRE83GP7poWdb2ehq+8CwjPafSyxY9+iU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768456491; c=relaxed/simple;
-	bh=ojRPwKbYmOBa+ZCVhnR8hN5hK8/nCTPogIeagunXUeI=;
+	s=arc-20240116; t=1768460575; c=relaxed/simple;
+	bh=6wM47BrAdrim8+B4HUy3t388le0oBgXO1cDFtA6K6QQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QEwSlaV4wPHK1hKOe2O2yNdZhW2m9ik+xhFtNxXJ7RfHwgGWdXaL+etxws/9+YSg8upgdgEi9umo5HZy9ShBityZBcqwzwpBo7CIHqqysgUz9up2u4JnqEvaPGQQipL4IBwlSZr1pT5gHqlHbWKw4Bi2QqPmBNrfLwGdjVEjbws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KvEW/f2Q; arc=fail smtp.client-ip=52.101.46.34
+	 Content-Type:MIME-Version; b=R4V2oAljl8w5EmP+ca6iCpn6r+kmqsIwWCsayaJJSkGbbUxnM9ickevcFMtD+ZWlc33FxHDQzmhyJpn7u3HhDd23zYMw249W96OPBzAMQ7eA/hYCzQFTXW1t6iTGlj+N7o9sw1tG+eN5PPw6wUwVe4O324hRJeRa5Ku1Ko059Rc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Nl6UN1zq; arc=fail smtp.client-ip=40.93.195.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KvEW/f2Q"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Nl6UN1zq"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uzbbyl2hyIKZzmVRk9Yal+OJWsSjJ7pmtpivBlSNMGpOqFFmeLlOSCS8aaOxerRre7PLBXoGQtFzQJ/mTXfZ842/2R21+5LmKlz6S9vPQBG8kdtY33d3nq0txw1Tj4TvigVuAKwAfCos+YXqJxgIzIJnqejGOFNBCrFLtCptXtZZxTfzvspigmWC3Ox8Nl+bq+VutIAseGgdoAHuk+7tUFW3Dhs1hJUhPvBe42peNIaJvV5noSKyWGVyBc8UaKVeustTdrinR/WBYQpWtpZWRt/szwGlg92GImsVQCUO3vGXUsbiDgruA1xAKa5sDPOP9YvOXLV5xn16A/ITuFoJ7w==
+ b=vmXSQgelwA4mVEz+NdyyIgcyfdzENaACZEVkDco4ATmwaeFFqXQUHjj1ul6qLFnskVZBbcUfS7OLIEaKEHEktVDLV+Ro+l9X87QJ8/yQUFpcfBye4385GDr+H6jkDIeORkq6ElD47eD8CP8mdrvjN6HtFv8dM6Hx61RL/kYwC60a4mBRrU2HYyjOCguasW+hdA9h6Da6N7pairQh8P/Fra5wpAyZ59eotKE32YemUjAaJZ4sxNrYqBW1cUMDIXnyaN++feDWFYaFwsJNbVRhsaXMoasMETM+IxuzZ80neNWZaVco9yzowwJ0bpsjh9PB7QQhfJOEHp7I6JPak12bzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a/oMb6uc5M6ful+S1fylOD2pLO1Odhz/9xyOG8b/68w=;
- b=BeTt9wguhaBVr6cNEKgDcQl/bUA9tVDxH7NyvCiYxYLpbPRIDnUPVxV77vRKonHWZYexmErO/6HDVDioEx3XmETNTd9Ga12DuVSxfvN7A8iYYyEuooyiR3wf4L2qLL1+Rb4ZuxrXNv6sjEtxrr6MEMdLu9P5zfm50MSYx4S74qxdTfbB2n3Q7VHfr7pEiGNuOfVB3SrK+AHNlY7fn7JNRydVMn9U7LX82fPXwxEnf/uMM52vWrFTMxntWMhhD5Xbepb3t/mlOgJuHUNF6R5FGSqeutD4Yn4nxzmCLrPCkXHEDo79yQJKnXCzcxOhbccDjXvZSEib8zY/KonX9HObkg==
+ bh=renm9du4FSxE6Fz31886PP5edb2pTqDhuw4Z3sEXpus=;
+ b=gxye+/g6Td6Ht/WS/MDix+kzPfpwZi6XeSquu4AN6fJAnCxQG0lyg56jrlPT3hfR0WaNlqL4z74zcF7+K4AchDYdB+a/6lIGMCj+4JK8GhneTpGwLGdzswUgngUpxZZUjDaHFBfkVjmnXCHkvtDWTij3QAUwbPeTXjcyYD73keYvh08zCFN6xsLr0LB6prF3LbdRiVi3pl4HsrGGfE0XLMj00aktAa//CE3ya7joz4eSX5Utg/yp675YR6xCYuefySmq9YEbQVRM/rCgTduF6oRNNabQ3PsDcrLqwysOVQL8wKgmEErF5TkZX4JVUigUWPkAzXhIP/1xffj0GR7k0A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a/oMb6uc5M6ful+S1fylOD2pLO1Odhz/9xyOG8b/68w=;
- b=KvEW/f2QyehJgT+clnF+Kwd+4s/0DdjpEXrPKCJ7wvHTHqCJAFFsnJU9V6QQZ4GqiS/xFdTdynZo2i9Vt+oTqix3SpcDrrNL6uEiQ6uVMXeO0J/9lNHDHiQYKkq675MlZ1QrsZp4zUpWgFBsHyWOrNVR8GI/kZYPUvwZzNgftKjiixfxybakCht0h2A18Cy03i8ei1KS1iYQz2zCTk8VnXJhqPorOOyGvR6qoZ/t57XqGM+M3qrKIm1L9T2+iMnb6TkvRiDzSGAE420gzuEEBe0K8JAizszGUj4Fj7aD0g9wF0xkfl3kdzqmY6WSMdqucYjSY0QFb5XoOZ30S44/cA==
+ bh=renm9du4FSxE6Fz31886PP5edb2pTqDhuw4Z3sEXpus=;
+ b=Nl6UN1zqjNejsnHpc78BO1RwJaZ8/fh0WbuTuL/eWUTpa550Gc5HKU+pd0QeJe4lb4xkJ/rXme9X63eJiVTGvmr2gxMT2QZq/K48PCjdh1csKJhJ7End6OrkrtZNEOYTn8P58jWL6W7LiZhxsGfA+4A896CiHFTgVf0vrXeD3MZSwPMgBWHyf76nlNA0UsN6PuISjXO53rcIGA2K9KeXfPE1f7Rc66Mz1owbsTUQoyDxkX9BOgDkaUcvqAKiKupRvxNvZQ94p4R5g1RvrIlqKbS+3SbQtD2gqoyC6urUmpjgSaBoFqsxbDs6IGRglyEq1n0r5PMubhK2yb0CZDeenQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by CY8PR12MB7562.namprd12.prod.outlook.com (2603:10b6:930:95::16) with
+ by SJ2PR12MB8942.namprd12.prod.outlook.com (2603:10b6:a03:53b::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.6; Thu, 15 Jan
- 2026 05:54:48 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.5; Thu, 15 Jan
+ 2026 07:02:49 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::1f16:244a:2a9d:2c93]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::1f16:244a:2a9d:2c93%3]) with mapi id 15.20.9499.002; Thu, 15 Jan 2026
- 05:54:47 +0000
+ 07:02:49 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>,
@@ -57,18 +57,18 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  dri-devel@lists.freedesktop.org
 Subject:
- Re: [PATCH v2 2/4 RESEND] gpu/drm: tegra: dsi: move prepare function to the
- top of encoder enable
-Date: Thu, 15 Jan 2026 14:47:36 +0900
-Message-ID: <7012249.lOV4Wx5bFT@senjougahara>
-In-Reply-To: <20251204061703.5579-3-clamor95@gmail.com>
+ Re: [PATCH v2 3/4 RESEND] gpu/drm: tegra: dsi: add support for
+ Tegra20/Tegra30
+Date: Thu, 15 Jan 2026 16:02:46 +0900
+Message-ID: <9411928.T7Z3S40VBb@senjougahara>
+In-Reply-To: <20251204061703.5579-4-clamor95@gmail.com>
 References:
  <20251204061703.5579-1-clamor95@gmail.com>
- <20251204061703.5579-3-clamor95@gmail.com>
+ <20251204061703.5579-4-clamor95@gmail.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0364.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:79::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TY4P286CA0059.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:371::6) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -77,156 +77,361 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CY8PR12MB7562:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ec0df3b-ebfd-4bff-9960-08de53fa972d
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SJ2PR12MB8942:EE_
+X-MS-Office365-Filtering-Correlation-Id: c0485e5b-37d9-4ab5-c4fc-08de5404183a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b3pZaHRxZVlHSlFLMlU2UFJaRTRvT3NYaHNoMDNISFFESEQ2eUFacWorSyt6?=
- =?utf-8?B?Z2E1ZTdBTHBCdXF4UUVrcytxb1o1eHdmWEtYS3FkNlNXRmYza2xiUHdUalU3?=
- =?utf-8?B?ZThaUzRjaktEUmtaSHorTDdsdDJoeFhZM0RuUFBKUFBKY0ppSnRDbm1MVUxr?=
- =?utf-8?B?TDFuME95MWJIOVEwS0QzQnpScG44VzIydEEvelRITk5DKzFvdGorNFRqQXgv?=
- =?utf-8?B?UVhEbXdhTCtQN2ZJUHhuMzNmdTJxQ1FaWHA1bE5hNlVKK2pheFBrT05SUmxV?=
- =?utf-8?B?aGZLdVVwTEU0eW5UZXU3b052TVRYRTlTR3lYMjREQ05yemsvNHh1cy9qQ25i?=
- =?utf-8?B?ck5lNllNNldCdlhqMnlXZWJTc0dqaVBRWFloaEd5c0ZJUysxQ3RvRlpHaERZ?=
- =?utf-8?B?eWhuQUlxNmgwVC9TSzBwT0dtSkI2ZzlqWms2ejRBTjFGTTlyY2l6QVFmTHMz?=
- =?utf-8?B?cmJyRWdMQmdVZS9pVk1qM0x1SU1YNWh5ZlE3eGdybTlkQVdha25QR0tqaVBy?=
- =?utf-8?B?a0o2V2p6TXRCdy9aWEdzb1NtQm9KWjNHb3JoSTcwTkpHeklISnIrcWE3dGUw?=
- =?utf-8?B?YUtuOHJyWnNEaFpYd01zRUVqTng4MkJhZjdHTDZ4TDRqcGtHTG1nTXdsQzJU?=
- =?utf-8?B?VUNkZTI3M3N4NFk4UExtMVkrK09RYlBHWDVNMk1KTnlFUTJtWWt1RXJySFNC?=
- =?utf-8?B?blRDUnhpUm9rV0FSWjNrcW1QNEkzVmNIQkRFdVlSTWZnN3dYcGZWNG1PK1Ex?=
- =?utf-8?B?d0RycW5jckRoZ3RDTzFpYjAwYVBGWHNGd2dpVHhYN3dDcEZPMHhXR1BjL3Y5?=
- =?utf-8?B?RDAzaFM1eU1GSWppR2IxZUJoN0pZZ085czl3ZUt5SEpxekdDcTdtdnJoOHpv?=
- =?utf-8?B?TGdYUURHTUUvMHBrKzc3UUFLdStWaHRIYzJpUnY2T01iWWk2MjkwRHowdzB6?=
- =?utf-8?B?MjZaQmxXMkY5OFJITFhKMGExWDhLL0N2RFd6eFNnYWJuRTJtb3dBVEZQVThY?=
- =?utf-8?B?TGFRMWNRZ3pNdFNSYUtKRHZ2Z0dJemJJWEZlQytybXJLdkIvZ1NRUkFLZi9n?=
- =?utf-8?B?bHRMeGllaDRESEc1Zm1KMERjdFJSSWdXblRGY2pSQ0RqOEw5N3dOTHFuZlVO?=
- =?utf-8?B?bCtkeXFuSGJhU3hNSXhWZm1ycUV4MUFPVEY3MHdHTHBDSVB0bGdySGMvcVI3?=
- =?utf-8?B?eWRtU1h1eEV1Zk9wNUxSd1JFb2VNeW1jc3FxcVd5WjJmT3ZtRTE3aWlKVWdw?=
- =?utf-8?B?TGJOK2RPcG1ZMGorNFk3TllmdDRGaUxXM2VDdkVRb2VXUE56YUNsOUxEZVpI?=
- =?utf-8?B?MkVveWV4U0R6Z0RRbi9GK05ueDk5SjlvZDNvUHZYZlBXQTlSWVNkMVdVQnBy?=
- =?utf-8?B?V2lISUZ4bnZRd2p2ZjNnazVhenZuRWNXQkd3emUvS1VrTSt3MkxIeWlXOW5p?=
- =?utf-8?B?c2VaaEI1aGQ1UlEycXJEOG11Y2lIR1JmSnk2OGprdXlCbS9ZYnd6SDd2K0VQ?=
- =?utf-8?B?ZW4xTm50eWlyODFxSGlCblhMaW96VnFDNUJEZ0wyVWY3b3hhcURxaVlPNjZF?=
- =?utf-8?B?S1I1ODA4YmkzQzNrZ0hGeHlsM0p3NDhZNU83aUpGMklQRVkxME9pYUIzMjNj?=
- =?utf-8?B?NFNoNFowcUd6ZjAvZEs2MTdvVmJmUzJrVGptQVdEcUhGQ3VXbHpVVDFmWldq?=
- =?utf-8?B?YTlqT3MrVHQ4M0VkY2xKYTh6ZTlhb2I4YThSUDRpVzhDZE5YRGNvbEV0SmRK?=
- =?utf-8?B?T0hhNkhHbUx5MEJWb3F3SHh2VkQ2UWlpYWF3REVJS09iVlltR2VwMStDL2lK?=
- =?utf-8?B?YjdDWjZ6bXR4cEE2S1pZV0pIaTRKS3lUeUY1QUhER1E3RDRJMkxVVThselV4?=
- =?utf-8?B?MFFhZk5ZVU4zVml0aVZRay9kVFdWQnd1cWdFZGNkYzZleVhtanpwK1hDcTRV?=
- =?utf-8?B?Wm1MRUU1ZUlGRjdEOEtqcGZHeEJNNkVBeUZZdjh3ZjdVQzhjeFhwS25vQ1B4?=
- =?utf-8?B?aFdab1AwQ1ZWNVBMYkFRbmZFUUdxUjJhU3YrN3R2eEdwdFJXY0R1WWRPQ1hF?=
- =?utf-8?B?N1k5d0RlTk15TkJ5Q2ZHN0tnb3VUaWEvWnltdWdjcXJWMDlhenpKamdNUnV4?=
- =?utf-8?B?a3VRTFNxKytSZWNQcTg4bTB5d1lDdHZ2U3ZyK2YvbU1hNmtJaGJlRmhDVGFY?=
- =?utf-8?B?SkE9PQ==?=
+	=?utf-8?B?anRvbGpUcjVlcXEyZVNzc2lXUW52dGNoazZsazJEUlBBVHFxaEF2SkZtc25t?=
+ =?utf-8?B?cEhkYVJmckN4TDM2aisvNDk4Zmk4UWRQcmZLdHVVdjdrSTU2Wlg4bGFNbG9s?=
+ =?utf-8?B?Y2JnU2RNTVZCMWJKdnhybXE4VTdYNndNS1VJTi9UTEZJYlJpTlVoOUk0Qm5t?=
+ =?utf-8?B?Rm14WTNEME9ZZTdpUFgrSE91dXMzVC9HM21CSlJaeklaNHo5eXlJOCtXQ3JJ?=
+ =?utf-8?B?SEszdCs4czA2K0QwVStPS1VIZW9uZUM2eXVROXJvTlpubWQ4cExDYWNTOHor?=
+ =?utf-8?B?US9tMm9XczNMOWdlVk9uKzdkWCs0c09iLytRVU9hQkNTaGx4NVpQUWs5WUZG?=
+ =?utf-8?B?eGxTWDdhcHRROUt4d2ZnQ0FTQ3g4ak5tdXdOYnVrNnZ5WWxMZzFRREQrWTA1?=
+ =?utf-8?B?VndDRS92VDBpeDlmTEFoaXYyTWlPbktkNHlYcTBMRDEyREJpdE4zZjVwSFl5?=
+ =?utf-8?B?TnF2enU2NkhTL01zcjFhaDZPT2Y3WnB0YzNjR01ZU0hKdU1yYndSUXEvN1Nm?=
+ =?utf-8?B?TFhZRGNZVWRFeVdoQWQwQndGeklHVlAxMFQ5OXJkOFh1NmV4YnFMQ1d3eGpv?=
+ =?utf-8?B?NzVkOUl2ZXpwOXhlSXZVM0p2Z2k4ZEZwcmlYZWpPbmdFaS9raCthSGxPYytJ?=
+ =?utf-8?B?bG1TSk94Rnd6WXBUY2tYOUUrS21hbks4VG00bmw3YnUyM2hTQVFtbXp5azdQ?=
+ =?utf-8?B?bDUyYlFXSXZUcnY4VHk5ZjI1cDVia2pSWUZ2SktXWFdYM0d1UWYvVk56Mm1I?=
+ =?utf-8?B?TlhFY2o4WnA4V0N2NWhXQ1UzRzI2UUplQjc1Qk54TDg0TlNWU3g4VUd5V1J1?=
+ =?utf-8?B?b2RuenI2VlZDTXZLd0xObUlpK08ybmxybG9HbnhKZko4SzRQRGVIcjFNUFVq?=
+ =?utf-8?B?NUd1TGh3WFg4dmwwU2lYZW9oZld3dzdUMUN6bTVXTENQRWpOYlhMeUl6WnFG?=
+ =?utf-8?B?RFBLL2E1SEl0NklNYnJLLzlnRjltdUpNbXhhYjlsdDBXVEJwU3lvWlFTRnJO?=
+ =?utf-8?B?L0JtWHFuaW52YTJpR0pUZm9KemIyRE9HZXRUcGpCcEJWLzA4Sm9UYWNVdGZE?=
+ =?utf-8?B?WmcvTmhndUxmUXgwRXowbFdlVk9wa0t5OFUrdHJTaDhybHBrK3RSeDRmY2Ey?=
+ =?utf-8?B?dFRQTHZWTXpteTk0ZkJtV2NxZk5Ha09sTWJaSDNrTThhOHhyeUFkeEtRTkNV?=
+ =?utf-8?B?cURuVWROR2tRZ0ZkcEp2dmF3MWJZbE5HY2ZkVEZQZi9NMmR1SkVaL1lGTG9F?=
+ =?utf-8?B?TEdha1dlVFVxSHFIS2Z0VHdKREQ5aGYwUFY2UmV3Rnc1cDQxWVJJUFFqZlZ4?=
+ =?utf-8?B?aFBhUzVDa2h1ZkRrd0JZSmNkelNoQ2VLZUlXUER6WkFMYlk3WmRjUmIrbkVC?=
+ =?utf-8?B?Mk90cWNNd3hiL3J6c3Jsc2I3RTBzMDgyWmw4WG9KcFFEdzBoSjNHTjZFVXVM?=
+ =?utf-8?B?a1prWEgzeWdHYk85cEUzd2U3YmNOcnR2bDlLSG5OOFZQWTdBVVpkUE1XbjI0?=
+ =?utf-8?B?RC9SZXJEMkl6enoxYm1KTW1YWXd3MndRTTh2emkzVVRPeFVKclI0Z0ZGZjUz?=
+ =?utf-8?B?S1hsZVJDMUNhS01YazYvc1JHcGU4QVBtYk9ER2Fsb25kRjh5dHJkYUFiZ2Rv?=
+ =?utf-8?B?SjFFckp3SXBDUUM1aG0wakJ3TU5tNWw3SXIxaDhmMW9LRmZXQ3ZjQXRVQ2NY?=
+ =?utf-8?B?c054K1BCamQzVnJFVkZNZWtGbGZIcHlUMkZrNnpnWHg2VUw0UHhuR2prMTFT?=
+ =?utf-8?B?SmQ1Wi9IN3JFZkJiemVDN2lsRnJMRjQ1cFBHcE1mMlhtZVVyRVFkb2FXY2dC?=
+ =?utf-8?B?YTdEeDVhRFhxc2FpRzVZU2hoQXI4VWxXQzdiV1E4dE5sR3ZxbFJOdGVmQmtk?=
+ =?utf-8?B?Y25IZUZsa0lzWFVTN1MzN0JBcXFRT2VJbm91UFUzRExrK3NNcmppbzUxRHRU?=
+ =?utf-8?B?b2psYjNBam51RDdIS2xGM1FlcG9FTG9rTWNYUlIvc2RLVnU3TWdReHVEWm9N?=
+ =?utf-8?B?aWFaYlZTTzQ4M0hMWks0M0VnQjU1V1RwYVhpWlgzRmkvT2V2bGVqalhMaVFw?=
+ =?utf-8?B?NTNjeFVuaUlJM2tkNXM3Wm9ORWhZSGxoNFBNWEEzbzRXK1JRUkJURFZ1eFls?=
+ =?utf-8?B?aDBYMHFTbUtRRk1jMGF0aDNKTFlKTXp1dkR3THZXQVhDSHRobHN6QS9TNTZR?=
+ =?utf-8?B?WEE9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q0pOWGRwOVRIMnNsQmhzdHVIUFg1VWE0dTUwS0pZS2ZxUlVDeWFVQmYzMXVa?=
- =?utf-8?B?UzZQb2kwV2FwNVcrMk9GV25iSCtacjRGTDFKYlJ5SFVXN04zYy9HdUphNlRi?=
- =?utf-8?B?Y1JkS3ZTK09Xam9Gc1FnU0dZR3MwaDNhM200dUtMdThTUDZLSHlJQ3pqSUtm?=
- =?utf-8?B?SFNkenBMUkx1TytUTEc1WHg4VFRTVVRBcXNaNDY0SnBrRUlJRWx1RWJCNjlv?=
- =?utf-8?B?cHBLTHdBM1dnTFhlS2dWTjBrNjljdXN6SktvQnVPOHdWMFVYOW9aVE9WUHdK?=
- =?utf-8?B?bGJaWkRKS05MSWZjNVlTWnpQR21BWUUwT2wyYXJqbG1RYVQ5dUZWTER2SE9m?=
- =?utf-8?B?T0hqVnpNUGNZNnUyMDBMRkFsQ0ZNMDlmbVBDWTJDaXo2Yno5Q2V0THpPeGM0?=
- =?utf-8?B?LzZFbmgzaGdKai9FbG5JT1NnREVVVUZ6bkJjVTVNZlV0OGdJNnU3R2RPVTk3?=
- =?utf-8?B?YzBNeGhieCtJVjZ1MUpuWVN5ZDNKSlZmSDFZOEFjQnNPUW8zRGxqU0pldnZi?=
- =?utf-8?B?YlZqSWRJSURHL3hGaXVtaHowcWowRHg2TGwwQkFDVU81MnBiZmprZDZIMEJk?=
- =?utf-8?B?NnFNY0ZLWlRvZFRxUFU3cEJhN1VBSzNLNDZqM29UUGo2alBkM3F3cG0zMkdk?=
- =?utf-8?B?YUl4aEtFSTA4NGN0VlhjU0hETHFGc0pIOVFURUFKem9EZlVIT0o5ZCtOWVdQ?=
- =?utf-8?B?b1NuNWw4UFA1TmJQOXZjTDg2SlNwWnYwdlRwdGZTUndXZVVlbjhoWG5sdmNZ?=
- =?utf-8?B?bTNmYng0UlJKVGNzTHp6VjQzVS9xSlE3YkhwSVNNbW5QRzJWWVEyd1YyR1Jj?=
- =?utf-8?B?UUFXaVZOa3BReEtqZ2dEcmtRL2VMeFltRVdjeXhzblFJNEdTUXQwb25haU9U?=
- =?utf-8?B?UDZaUHlpcW1FUEg3Y2lFMzI4bXpkcmE3MVg0Y09CSXpuSFM1MWxrdE81UUl2?=
- =?utf-8?B?eDRhSkoyd0JVd29YbjV4THFnVklHVERSazVmMXVqdmNEYXlUT2dRNWlWQTll?=
- =?utf-8?B?dkI1UklJelhSWmh0TUZFOE5yZEs1UWs3bVhud0FVTkhqOGJXLzQ4dWVNaGhG?=
- =?utf-8?B?QWZvSzFNNmdHeVZEbmlJWVBCaSs1YXU2K083VS9GdXZxMi9zcHZWSmxiV25Z?=
- =?utf-8?B?RGNNUGxUU01NTWFyRmpxVVk4aTBYQWJHcFQ0MVVkZWZkVWdWU2RhQkQrMW44?=
- =?utf-8?B?U3B0NldWaWZvMU83TDh5NzI1L1dralpvUUppMFpSeGdvWDV3TzZ3M3V4Y2ha?=
- =?utf-8?B?T29BNWRQY0hXVnBRWFgzK0JXY0xpajcwZUZmdUhabGFINThWVzV6aXNIcmtF?=
- =?utf-8?B?T1V4QzQyVlp2ZU12akd5eGgrK2xhY2J3Y0RvZG9STXp0QkdPYTBFTU9kWE9T?=
- =?utf-8?B?SU5GN29vaS9PVURQT3Jvd2hUaG5sd2F0Mi9UK3RROHRxM0hiRTQrZWIyR0JE?=
- =?utf-8?B?R0JEZTlQTU1qVXVpYWEzbFE1YTNHbExhM2E1VU93TlNyb25jR3loTklRazJv?=
- =?utf-8?B?MGFZTGh3WjAvNDdJaHp6VExqR01OUWZlOGhmLzlPVzM5Unh5OEhIcXd2cDhH?=
- =?utf-8?B?SnNicWRkK2tCNWlXeXllV2hKZzBYMjI3RWlxSDY0VDN1QkczZmtTWm51WXpF?=
- =?utf-8?B?OEROY2tFczRkOFlwNnh0ZjFuY0h1ZmRLUzhUKzBubjFYZjVWTTVqcFN3Ym4x?=
- =?utf-8?B?NGtkZ2p0MTJFZVdoTTRLS0s5UkhIbXd0VHd2aGdaYVZKZ0NjYVA0OUZsMlpN?=
- =?utf-8?B?Y28velN4ZUhGRkI3aVlkSkRBZjFWTFlBVDFMVjN0YW14ek9yTzYyelkxb1A3?=
- =?utf-8?B?d2FWNWxHczRRN3VaRUZIakJiQVpwSjRVYU1SaWVtUFI3TEdaR1BJRnlST1hT?=
- =?utf-8?B?R3JNY1ByRFgzd3Y2WEZHSHhOUDg3Y0lMeWtyNkp6RXM1Q2N0VEk3QmhqcVFp?=
- =?utf-8?B?TlpBTUM1MTFIL0xQUkN1SW5SZlR1VlNWaGdxaDhhRHUvZkkzZnV4YnIzd2tD?=
- =?utf-8?B?c2VCY2dERmRNNW05OXBpNk9iajZiQW9vVnIxM25jdmNuaEJvd1VDN0tzcitw?=
- =?utf-8?B?RFJYdXFnT1R6czd4d1Jxc3VIb3VQTWdhNWxQZkc3S3JZSldKTjJsZDVPZWlB?=
- =?utf-8?B?aURpOHNidVkvQVpWbStnZGQvTjJSUWJCZCtHSHJJQkRBNnpPaXN5UHNSdjlB?=
- =?utf-8?B?SVVaenlDQ0lDVVp2UEdHeUhOQ2gvR0swRWx1eGtTVE9FR0ZCVEd2SmhXbjc4?=
- =?utf-8?B?Ui91U1BreXdVOEd2TGdoc2pOZXZRS0kyWGtzRTQ3LzdCYS9GVDBFQUdkMXlj?=
- =?utf-8?B?MzM0bm5ZZGxPQnZmUmFmZ0M5NDM1U0hMM1VqampmbnZ6VnhoM1ZJZz09?=
+	=?utf-8?B?MU1keFMzQ01ZVlcwbXFzUys5UmNMZitkM3VwZHVmWStFZlEyWlYzdlNtMHJr?=
+ =?utf-8?B?c3FGUDRlUXNBZ095TmxHRnlaR2wzUlBtdzJVcFpPUUhvQmh0bzhhZG44RFor?=
+ =?utf-8?B?RTNpK1JBOHJTbldveXlERTYrZDNSZm9BTnhwa2dnVGRJRHRLcGZ5Lzg5R1Y0?=
+ =?utf-8?B?UUMyN0R0Nlk0TkhQNjNSeDBLbjFFUjBxVmMrSU04SXU4MGN5Si9VQmNPb1pC?=
+ =?utf-8?B?SXlDN2RNSHFYb0xQNFZub01pUW1pVFFscHZHdU9EK3I3V21Pc2kxbVc1Ykt0?=
+ =?utf-8?B?a09vNS9PZHdENVdsYkdPVFM0aGg0QURrQnVOaU5iNXBhNEl6L25oQkYxZzhv?=
+ =?utf-8?B?VmZqajJLUThvSmNLRmhibSs5NVdpZWJjVFFSa3BVRUJlQndoZVJKYW9GRjFL?=
+ =?utf-8?B?K1RlUUswUlpxS2FaMFZ0ZUZaVFRkVkRwakpaYjdoemtyZTlhdmlnOU9lOHJr?=
+ =?utf-8?B?SlFzZmlKNEFkeG8zMTNSZWVtNXd5Z1p3UFNlN0pKd0RyNkJmWXJRaTBpdGxF?=
+ =?utf-8?B?RnltV215SFJidk40TmtqMHplZjF1WHZzRHhRSkZ4dzlQdjlPc2poOC94UG5w?=
+ =?utf-8?B?VVlHbjMvaC9YUXFVZDV4UWk1UE9zbEFCVXo4V0xPS0k5Y1V2NlZZUnQzbit6?=
+ =?utf-8?B?K3V5c3VocVpoTUJmY3dNdzk5bVNJd2gyRkNWcWE5bGx4T0pabm5waEF3cTQr?=
+ =?utf-8?B?NCtRWjFvY3lLYTRxV25YckZhMk9oaXlGKzdrQUJCSXhUM25OMHh3cG1hN2ZT?=
+ =?utf-8?B?Y29udmhEVTYxaUZGNU9TRTVhb2MvQmo4Y3JhQTRiMDBrUHgvQm5mZFhnNlc5?=
+ =?utf-8?B?cHdrRnlLeHhQdXNvOEswN29MUnlGOXVKRXY3dEtIU1RrWFFEYnpTeU9VWFlF?=
+ =?utf-8?B?aFllZTdLZmQwNTNsSXZKSXVoamZkbTVOTHNzZmFCdVgxRlFSQklzYW90QXRB?=
+ =?utf-8?B?SWh1VHdiVEZBTUs5ZlNpZVA1TUlPdURpaHBzM3ZVOWtwMUdiUjNMaXdCRE4y?=
+ =?utf-8?B?RWRZTzVadWhObS8zMzY2eDVJUCs4WjNCNDhUS3N6ZnI1ODVUREhTT2E0dWkr?=
+ =?utf-8?B?ZmlDU0VUNmh6N2NPVXp4Rkl4WE5lNnB4NGNuZUcxYldHQWVYOUJnSmhYRUl5?=
+ =?utf-8?B?T0FuSFljdGxwbkhiV1Vta24yMDhkVUUwYkhxQ1AxZUNVOUsxMjFHOG9KOVN1?=
+ =?utf-8?B?ajJiRnhnZlVPRitXNVdMUUJFWHMzYnBieUhnTlBtdHJLTHd5VkNZZm9ZTVJv?=
+ =?utf-8?B?V2F1REpYbmF6Rkk2K3NCRU13RUo3bnUwcTlXam9NR0pTNUVIckk5MTdwTnhh?=
+ =?utf-8?B?VzhGSGVIdmtzaDVNM1FReXdIaG1jdGVSaHBudFIyTDFoai9xWE02aTZDcHNI?=
+ =?utf-8?B?QVJMV3NLZGhpNUR0ZjBQNXRrZy9sRjltL0NDWk5WWHlyemY5SFdXc1NySW1t?=
+ =?utf-8?B?SG9PY1FXUjNkNlV1NnIyM1lwTS93V3FKREZKakhrWDBrWkZOSVFKaVQvVGhi?=
+ =?utf-8?B?alVsejlacEk2bnNmcnk3RkUwalRRVUFqUDV6Q3FxbDAzb0Z5OXpzQVk0ZlJF?=
+ =?utf-8?B?Q1hVL0VJNHVVNlhVRkZEdzd4aEczeERTbHk4clVmbnFKaWhtSVJWTjExem85?=
+ =?utf-8?B?RHRkb0VzYko0RXJwcG8xWDRsNzRQUzd5UTIrU3JwZlZEVXczM1RpMGNOeDdt?=
+ =?utf-8?B?elZQZUxmTTJFbFIrM3N6RndCQWwvak91U1hPWGpuVWhibUVvaDNRb0NMSk9R?=
+ =?utf-8?B?V3JpZE1tTEp6c1htYkJSOWEraXVBUlpweWhPaXJaTkpadkYrc29iT3U4Z2dD?=
+ =?utf-8?B?OE5qQnlHK1ZNMUJvSDlqUExZZnhLWEw0Wm5WelIrQjVjUC94NURCZTkzL1Er?=
+ =?utf-8?B?N1ZJTk8wdzBaeDIrUGJ0WkRNVkI4M0xxQUVCQzVkbkJyS2FlMmt3c0pXS2Nq?=
+ =?utf-8?B?UHRWcGpVN3dTNnJEbnhaSk5lRDdzYlZBellMcENLT0dWVG5LU1ROZ2YwZmpX?=
+ =?utf-8?B?ZW9UU0ZpbnNEWUIwa3kya3YrVDZ5aGpYZ0xYNm5YY3RSZFlWd3BYZXEyNWMx?=
+ =?utf-8?B?NkpWL1dWcU9nVVNVUHpQeEFpcWtscTg2TzJKR3ZOMy8vMmhFTXFwTWF6dE9o?=
+ =?utf-8?B?ZURhamZ3aGJ3RWlXWkNCYVpUZG9Bbjhvcm40aG1uY2pON0xIaFdzdFpaOEg0?=
+ =?utf-8?B?dktLYXo4clZaYkVxd2VNL3hEZ3NNenJFOWFMR094V0JBUnVVajRLM0NFWjVw?=
+ =?utf-8?B?R24vWXFBL0N1SmFwK2Erdlc2bjNnYy9DZXFDbkhOa3ZTYnlFN3ZuQThFY0Ft?=
+ =?utf-8?B?VWwzaHB5TjZpdiswSCtiellqRXltdmsraHl2SWU4RS9yS3VIeTIyUT09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ec0df3b-ebfd-4bff-9960-08de53fa972d
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0485e5b-37d9-4ab5-c4fc-08de5404183a
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2026 05:54:47.8026
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2026 07:02:49.7602
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TN1XbUWi5FCfGee/NnHcLPa5ChB80vjC2Nz+y+Os3XCdfnGTHLzky7T9e6IemoUTHew/E6YN6LgoPyhiD1AEgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7562
+X-MS-Exchange-CrossTenant-UserPrincipalName: ckhtOTLT5Q7PGlV4QOWG+0hq7kmFB2PyuHuBzUl2qgSJD4bOf4iZMGQkWors4yJyoBBhmjkqjrRu65MKcIbndQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8942
 
 On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
-> The tegra_dsi_prepare function performs hardware setup and should be
-> called before any register readings or there will be a risk of device
-> hangup on register access. To avoid this situation, tegra_dsi_prepare mus=
-t
-> be called at the beginning of tegra_dsi_encoder_enable.
+> Tegra20 and Tegra30 are fully compatible with existing tegra DSI driver
+> apart from clock configuration and PAD calibration which are addressed by
+> this patch.
 >=20
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  drivers/gpu/drm/tegra/dsi.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  drivers/gpu/drm/tegra/drm.c |  2 +
+>  drivers/gpu/drm/tegra/dsi.c | 88 ++++++++++++++++++++++++-------------
+>  drivers/gpu/drm/tegra/dsi.h | 15 +++++++
+>  3 files changed, 74 insertions(+), 31 deletions(-)
 >=20
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 4596073fe28f..5d64cd57e764 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -1359,10 +1359,12 @@ static SIMPLE_DEV_PM_OPS(host1x_drm_pm_ops, host1=
+x_drm_suspend,
+> =20
+>  static const struct of_device_id host1x_drm_subdevs[] =3D {
+>  	{ .compatible =3D "nvidia,tegra20-dc", },
+> +	{ .compatible =3D "nvidia,tegra20-dsi", },
+>  	{ .compatible =3D "nvidia,tegra20-hdmi", },
+>  	{ .compatible =3D "nvidia,tegra20-gr2d", },
+>  	{ .compatible =3D "nvidia,tegra20-gr3d", },
+>  	{ .compatible =3D "nvidia,tegra30-dc", },
+> +	{ .compatible =3D "nvidia,tegra30-dsi", },
+>  	{ .compatible =3D "nvidia,tegra30-hdmi", },
+>  	{ .compatible =3D "nvidia,tegra30-gr2d", },
+>  	{ .compatible =3D "nvidia,tegra30-gr3d", },
 > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> index 278bf2c85524..8e80c7efe8b4 100644
+> index 8e80c7efe8b4..d079aa7d2a85 100644
 > --- a/drivers/gpu/drm/tegra/dsi.c
 > +++ b/drivers/gpu/drm/tegra/dsi.c
-> @@ -914,6 +914,12 @@ static void tegra_dsi_encoder_enable(struct drm_enco=
-der *encoder)
+> @@ -53,6 +53,10 @@ to_dsi_state(struct drm_connector_state *state)
+>  	return container_of(state, struct tegra_dsi_state, base);
+>  }
+> =20
+> +struct tegra_dsi_config {
+> +	u32 dsi_version;
+
+Rather than a dsi_version field, we should have something that describes th=
+e difference. e.g. 'bool has_multiple_pad_controls' being true for the "V1"=
+ hardware.
+
+> +};
+> +
+>  struct tegra_dsi {
+>  	struct host1x_client client;
+>  	struct tegra_output output;
+> @@ -82,6 +86,8 @@ struct tegra_dsi {
+>  	/* for ganged-mode support */
+>  	struct tegra_dsi *master;
+>  	struct tegra_dsi *slave;
+> +
+> +	const struct tegra_dsi_config *config;
+>  };
+> =20
+>  static inline struct tegra_dsi *
+> @@ -663,39 +669,46 @@ static int tegra_dsi_pad_enable(struct tegra_dsi *d=
+si)
+>  {
 >  	u32 value;
+> =20
+> -	value =3D DSI_PAD_CONTROL_VS1_PULLDN(0) | DSI_PAD_CONTROL_VS1_PDIO(0);
+> -	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
+> +	if (dsi->config->dsi_version =3D=3D TEGRA_DSI_V1) {
+> +		/*
+> +		 * XXX Is this still needed? The module reset is deasserted right
+> +		 * before this function is called.
+> +		 */
+> +		tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_0);
+> +		tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_1);
+> +		tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_2);
+> +		tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_3);
+> +		tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_4);
+> +
+> +		value =3D DSI_PAD_CONTROL_VS1_PULLDN(0) | DSI_PAD_CONTROL_VS1_PDIO(0);
+> +		tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
+> +
+> +		value =3D DSI_PAD_SLEW_UP(0x7) | DSI_PAD_SLEW_DN(0x7) |
+> +			DSI_PAD_LP_UP(0x1) | DSI_PAD_LP_DN(0x1) |
+> +			DSI_PAD_OUT_CLK(0x0);
+> +		tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_2);
+> +
+> +		value =3D DSI_PAD_PREEMP_PD_CLK(0x3) | DSI_PAD_PREEMP_PU_CLK(0x3) |
+> +			DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+> +		tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
+> +	} else {
+> +		value =3D DSI_PAD_CONTROL_LPUPADJ(0x1) | DSI_PAD_CONTROL_LPDNADJ(0x1) =
+|
+> +			DSI_PAD_CONTROL_PREEMP_EN(0x1) | DSI_PAD_CONTROL_SLEWDNADJ(0x6) |
+> +			DSI_PAD_CONTROL_SLEWUPADJ(0x6) | DSI_PAD_CONTROL_PDIO(0) |
+> +			DSI_PAD_CONTROL_PDIO_CLK(0) | DSI_PAD_CONTROL_PULLDN_ENAB(0);
+> +		tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
+> +	}
+> =20
+>  	return 0;
+>  }
+> =20
+>  static int tegra_dsi_pad_calibrate(struct tegra_dsi *dsi)
+>  {
+> -	u32 value;
 >  	int err;
 > =20
-> +	err =3D tegra_dsi_prepare(dsi);
-> +	if (err < 0) {
-> +		dev_err(dsi->dev, "failed to prepare: %d\n", err);
-> +		return;
-> +	}
-> +
->  	/* If the bootloader enabled DSI it needs to be disabled
->  	 * in order for the panel initialization commands to be
->  	 * properly sent.
-> @@ -923,12 +929,6 @@ static void tegra_dsi_encoder_enable(struct drm_enco=
-der *encoder)
->  	if (value & DSI_POWER_CONTROL_ENABLE)
->  		tegra_dsi_disable(dsi);
-> =20
-> -	err =3D tegra_dsi_prepare(dsi);
-> -	if (err < 0) {
-> -		dev_err(dsi->dev, "failed to prepare: %d\n", err);
-> -		return;
-> -	}
+> -	/*
+> -	 * XXX Is this still needed? The module reset is deasserted right
+> -	 * before this function is called.
+> -	 */
+> -	tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_0);
+> -	tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_1);
+> -	tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_2);
+> -	tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_3);
+> -	tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_4);
 > -
->  	state =3D tegra_dsi_get_state(dsi);
+>  	/* start calibration */
+>  	tegra_dsi_pad_enable(dsi);
 > =20
->  	tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
+> -	value =3D DSI_PAD_SLEW_UP(0x7) | DSI_PAD_SLEW_DN(0x7) |
+> -		DSI_PAD_LP_UP(0x1) | DSI_PAD_LP_DN(0x1) |
+> -		DSI_PAD_OUT_CLK(0x0);
+> -	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_2);
+> -
+> -	value =3D DSI_PAD_PREEMP_PD_CLK(0x3) | DSI_PAD_PREEMP_PU_CLK(0x3) |
+> -		DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+> -	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
+> -
+>  	err =3D tegra_mipi_start_calibration(dsi->mipi);
+>  	if (err < 0)
+>  		return err;
+> @@ -1577,6 +1590,7 @@ static int tegra_dsi_probe(struct platform_device *=
+pdev)
+>  	if (!dsi)
+>  		return -ENOMEM;
+> =20
+> +	dsi->config =3D of_device_get_match_data(&pdev->dev);
+>  	dsi->output.dev =3D dsi->dev =3D &pdev->dev;
+>  	dsi->video_fifo_depth =3D 1920;
+>  	dsi->host_fifo_depth =3D 64;
+> @@ -1615,7 +1629,7 @@ static int tegra_dsi_probe(struct platform_device *=
+pdev)
+>  		goto remove;
+>  	}
+> =20
+> -	dsi->clk_lp =3D devm_clk_get(&pdev->dev, "lp");
+> +	dsi->clk_lp =3D devm_clk_get_optional(&pdev->dev, "lp");
+>  	if (IS_ERR(dsi->clk_lp)) {
+>  		err =3D dev_err_probe(&pdev->dev, PTR_ERR(dsi->clk_lp),
+>  				    "cannot get low-power clock\n");
+> @@ -1636,10 +1650,12 @@ static int tegra_dsi_probe(struct platform_device=
+ *pdev)
+>  		goto remove;
+>  	}
+> =20
+> -	err =3D tegra_dsi_setup_clocks(dsi);
+
+> -	if (err < 0) {
+> -		dev_err(&pdev->dev, "cannot setup clocks\n");
+> -		goto remove;
+> +	if (dsi->config->dsi_version =3D=3D TEGRA_DSI_V1) {
+
+And 'has_mux_parent_clk', perhaps? Not a very good name, if you come up wit=
+h something better feel free to use it.
+
+I checked, and looks like Tegra30 in fact allows DSIA/DSIB to be muxed to e=
+ither PLL_D or PLL_D2, it is just not modelled in the clock driver. The sam=
+e applies to all of Tegra114, 124, and 210, but only Tegra114 has it presen=
+tly modelled as a mux whereas 124 and 210 have a gate. The TRMs for 124 and=
+ 210 specify that only PLL_D can be used in the mux bit documentation so th=
+e bit is probably dysfunctional on those chips.
+
+The correct solution, hence, I think is to have that config field, and it b=
+e false for Tegra20, 124, and 210; and true for Tegra30, and 114. Then impl=
+ement the mux clock in the Tegra30 clock driver.
+
+However, I would settle for setting it to false for both Tegra20 and Tegra3=
+0 and leaving a comment next to the Tegra30 entry describing the situation =
+(the mux clock is not currently modelled).
+
+Cheers,
+Mikko
+
+> +		err =3D tegra_dsi_setup_clocks(dsi);
+> +		if (err < 0) {
+> +			dev_err(&pdev->dev, "cannot setup clocks\n");
+> +			goto remove;
+> +		}
+>  	}
+> =20
+>  	dsi->regs =3D devm_platform_ioremap_resource(pdev, 0);
+> @@ -1703,11 +1719,21 @@ static void tegra_dsi_remove(struct platform_devi=
+ce *pdev)
+>  	tegra_mipi_free(dsi->mipi);
+>  }
+> =20
+> +static const struct tegra_dsi_config tegra20_dsi_config =3D {
+> +	.dsi_version =3D TEGRA_DSI_V0,
+> +};
+> +
+> +static const struct tegra_dsi_config tegra114_dsi_config =3D {
+> +	.dsi_version =3D TEGRA_DSI_V1,
+> +};
+> +
+>  static const struct of_device_id tegra_dsi_of_match[] =3D {
+> -	{ .compatible =3D "nvidia,tegra210-dsi", },
+> -	{ .compatible =3D "nvidia,tegra132-dsi", },
+> -	{ .compatible =3D "nvidia,tegra124-dsi", },
+> -	{ .compatible =3D "nvidia,tegra114-dsi", },
+> +	{ .compatible =3D "nvidia,tegra210-dsi", .data =3D &tegra114_dsi_config=
+ },
+> +	{ .compatible =3D "nvidia,tegra132-dsi", .data =3D &tegra114_dsi_config=
+ },
+> +	{ .compatible =3D "nvidia,tegra124-dsi", .data =3D &tegra114_dsi_config=
+ },
+> +	{ .compatible =3D "nvidia,tegra114-dsi", .data =3D &tegra114_dsi_config=
+ },
+> +	{ .compatible =3D "nvidia,tegra30-dsi", .data =3D &tegra20_dsi_config }=
+,
+> +	{ .compatible =3D "nvidia,tegra20-dsi", .data =3D &tegra20_dsi_config }=
+,
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_dsi_of_match);
+> diff --git a/drivers/gpu/drm/tegra/dsi.h b/drivers/gpu/drm/tegra/dsi.h
+> index f39594e65e97..5049ec7813c7 100644
+> --- a/drivers/gpu/drm/tegra/dsi.h
+> +++ b/drivers/gpu/drm/tegra/dsi.h
+> @@ -95,6 +95,16 @@
+>  #define DSI_TALLY_LRX(x)		(((x) & 0xff) <<  8)
+>  #define DSI_TALLY_HTX(x)		(((x) & 0xff) <<  0)
+>  #define DSI_PAD_CONTROL_0		0x4b
+> +/* DSI V0 */
+> +#define DSI_PAD_CONTROL_PULLDN_ENAB(x)	(((x) & 0x1) << 28)
+> +#define DSI_PAD_CONTROL_SLEWUPADJ(x)	(((x) & 0x7) << 24)
+> +#define DSI_PAD_CONTROL_SLEWDNADJ(x)	(((x) & 0x7) << 20)
+> +#define DSI_PAD_CONTROL_PREEMP_EN(x)	(((x) & 0x1) << 19)
+> +#define DSI_PAD_CONTROL_PDIO_CLK(x)	(((x) & 0x1) << 18)
+> +#define DSI_PAD_CONTROL_PDIO(x)		(((x) & 0x3) << 16)
+> +#define DSI_PAD_CONTROL_LPUPADJ(x)	(((x) & 0x3) << 14)
+> +#define DSI_PAD_CONTROL_LPDNADJ(x)	(((x) & 0x3) << 12)
+> +/* DSI V1 */
+>  #define DSI_PAD_CONTROL_VS1_PDIO(x)	(((x) & 0xf) <<  0)
+>  #define DSI_PAD_CONTROL_VS1_PDIO_CLK	(1 <<  8)
+>  #define DSI_PAD_CONTROL_VS1_PULLDN(x)	(((x) & 0xf) << 16)
+> @@ -140,4 +150,9 @@ enum tegra_dsi_format {
+>  	TEGRA_DSI_FORMAT_24P,
+>  };
+> =20
+> +enum tegra_dsi_version {
+> +	TEGRA_DSI_V0,
+> +	TEGRA_DSI_V1,
+> +};
+> +
+>  #endif
 >=20
 
-The section of code before the tegra_dsi_prepare call was removed in 'Rever=
-t "drm/tegra: dsi: Clear enable register if powered by bootloader"', so thi=
-s patch should no longer be necessary.
-
-Mikko
 
 
 
