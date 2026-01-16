@@ -1,75 +1,83 @@
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76FC2236E0
-	for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 12:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05612116F4
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 12:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768567488; cv=none; b=D5yJs4aaCVx3yeX6dOpdOzJkcEGDuooZkTOoi02zz0YAB1FLifXM2pYqNioykkV4qGcuHbWgDNcCK5aE3scogIFz+C3xUVHXCMJ2tHiHkggymq+2N5fpEl63bB9Y1fRQT/XI0ssmJrxfcBPJcu6eCN2E1Egs2FMUoG3k9dgzkb8=
+	t=1768567865; cv=none; b=QtQPug2tlb61yo2dwmjM8XcNb43tPD00BUmvXFd17wvrjKjvd1LJ/bT5A9BUntjYHnpP0PmxyLEabC2MqmG/pDuy/zt+Zih2qjFmSdB8NuVAZMPhKMGO7CA934V5PG7TpvyFABO1GPuoByErd0jDHMWp6ekDtjepyyVHRGpmQC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768567488; c=relaxed/simple;
-	bh=408DwCq9gASo4Vyk9YR3/taKUiVRWEuSFIGtx754BN8=;
+	s=arc-20240116; t=1768567865; c=relaxed/simple;
+	bh=DSALMvzBwB081u4Jt8c9NpYNawx04HscrqIhArOIoek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEfvkhgQWRmYBd6NBvQCCHcoAoV2Sc+nL+YIrjw/BwD1PsHbQZSL94BbJtu6+FrMT0v9IQNgktRfA8JFO9Q4kIbzd8TgRXnCMWWifWjR4yFLu8pNgVjoC+iXyfCiod0oIz+JcRa9nGzcSm0Kb0twwBRAEV5OJ4ft6n6luDTsQH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQVZ6AOE; arc=none smtp.client-ip=74.125.82.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIUG41DFt2IaM0phNCYvVyGVCU6ofWEA5XEV3wDRrimkLu2KGaB+FWjpqHPTsRUjtlhBaD02aX7EqOBfAQCdCDoFxNRaIcKrI3M7IuIGXYjBtozk4o4h9zQbhk9M17SFXHPaWrFb4caaTT9mOklV/+k7gWHOps349jDJRBxcOHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxBBS7n7; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQVZ6AOE"
-Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-2b4520f6b32so2708808eec.0
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 04:44:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxBBS7n7"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47ee76e8656so23914275e9.0
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 04:51:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768567483; x=1769172283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768567862; x=1769172662; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uz8SRiw4IfjOx53ckfZ2h9xJeTMYhUuFqjQyqdesaBE=;
-        b=OQVZ6AOEN4y5sSFc1vp0tHklN2BL9oP06+v0N8y9Yjlg4+0lsy/0UmJ5VnUUxDA/uy
-         H/+yPQtX1yUvWdGeIzl8arF3F/W87wPxKkUnz0zxbM9qXfybH41qEHUSwTcvoRvCQE8w
-         wgy2PlU9Jqz1ldc1r4L6tk9yWfBnQMMIOSSOsFsqBqBHKZARwdEGzvq2tC+Wu1op613A
-         5UOrA6PCGZNiT5ghNIhL0bId6Dt97yUmQv391XM4ni+ASSNIETa4vDuajxMPN/KIw6iZ
-         I1K1t/gfm3SMD794u72ePMMKG7FtFOCvudjnXFNC6FrDBw1NMJ5xs8nlQhDDkihS+stK
-         QRxA==
+        bh=zTkxHu8mh7w4aqi9Nu456ezpUXh108CX0ltHIeT0yH8=;
+        b=KxBBS7n7iqVxeR9Hb6Vd4u5g7iWEVl9aTG5LuuuEdQfRIN9cFeE3sLlPuipmGoyAJ/
+         p+9L1ziS5tMxV/UDnCnM5ovcVEeLHQwylikPsPUBD5mdM2h1oBbFPLPYGFRsrwRpvWkR
+         stY4zb5N8B0AvtPbUxqnKEpXd45HoOcVo1ibEpbBJhlAaVg98kmR3sdEbsYCVTmio0pv
+         1RfBeDbLZB5ZNgBdmBccVjQbpZLTJIvUjev+8lugg1G+89eS/zG3CBKUrN7/LUgxvL92
+         34OxZpjvJLVy7pum0QZgh42jdYTL5HiPw59n57Pte4dbz8BIY+23WYtrinZTvK4USzfl
+         OWZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768567483; x=1769172283;
+        d=1e100.net; s=20230601; t=1768567862; x=1769172662;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uz8SRiw4IfjOx53ckfZ2h9xJeTMYhUuFqjQyqdesaBE=;
-        b=SgR7loRBd1J4TwmakT6QCwcyedBYjZBRHG2DhJvbodicUxVCvAGGxwty1m0FXjDldO
-         cyr7Wc0prXhxZkxwVa1xNMpYSWOjlaO1U8EjFwHS3k7bIZiYfnCFRz3ZRmMSRuT3BoFP
-         Dm8RSzRbCjqKCHoOc1fYDbdwianhKZ6+ZZuJk0ONtE2tAQ6/155I3aEejvNfExmLSzPT
-         kGtl44ROrpvgXTEKK6o6RfDLI2/tDDH7++9FRM9IAQfJYY/wohEa0ObzHKOC9GkikYrC
-         7+2jI0phKIZl4Q+J72uK0i8rK5CXYIs2Wo3uMGQqjt3OHzha6Fmeutgm0ccUXPoQsTUE
-         YJnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbB8kyHqdaWp63Pmmn3vVayPLEw8xgpFzXuQk+vWG2VC7FEpA4N0+Qg/gPG7XgfcdxlYR3l7yKNTgJ9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3kFn2IDzeuedrDEg0d0lkI1jKRNbHCimfXivbB4WWMglP6m0e
-	nuGQueDfHbIJz0YNj6PCaTrycyB2MATYgNqUdgvhzfMSzqAAuhv62HVc
-X-Gm-Gg: AY/fxX6yjCYBJ7TIx5ozvrK/K6DasJnFugExfYKAzCTeMYZxctKm1ssXmNDw6FvMcLi
-	/xOQCwa1fyz5P3Nz+GIxME0nRYbC/xowGd9NviTQWQcfxuD05uigAvvPEtJEzOme6ou4PvL/ctN
-	/l0QphADbSPfSnuBDaAJWLWqnNhC/RhSCcEY4uPiMmIq8TegT8iXdXxuGMPtjU2N2yPVvR+BuWO
-	RVa34v8BWvs2uA1clfUxZQcpEYFcxNfYc7SmvQ6NgJ7gOsevNXLvbXyG2X0Ziisno7N7jZAerXi
-	6q43ViXfrl+0ITAbDvniTtu9tTJzHXhK37u/Kx19/lSgBlxdeFBsLGs2h5zK9+47Vh6iGqZ/6aA
-	GzswmueSLsz/oNPkI4450QO/NrMsC9kQvqVxNRXrxjAYueDOEdqgd/silAHdoNjK6H6ZF9zhPAg
-	ba2oecWB5dbqAe3yksenp824q48qMc5zwPAc5yGwMqlF2qbxce1cvATp2+xbdMrRTrhqfnzPvvf
+        bh=zTkxHu8mh7w4aqi9Nu456ezpUXh108CX0ltHIeT0yH8=;
+        b=mGfluuhRUjjU4Ce8TSYDDogsKicCiL1EkPbdxB4pkDQGNauzWlCnR5AOEfjlrkC7qP
+         derGVpsEHcykBHPW5bzc0+U9J85+7f4hnnCTfn0ENNFrzbFXDQeTw+ZwyEl92LHsDoWv
+         XK+jcyhzAgFbv2zndmW4pDy7728TmuwakN0woKUOEURfwgAo3uCRU2e9L9exivvw22Am
+         DZkjka8RBHSNdqwNx/Khqd3RuHW8hMyzIQYssyqqt4ZRNLd/KPf2U1Lcp4EUp+v2Dxmy
+         KFluGo2ODQv29jTm7kP1FbtkXszIfq8XrQ3q9qxZ2lMntzEW/qX6OR9R8FLymUPlAj/v
+         C+YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9k1sTM8eiaA6i5lz091i2asMtL/2GKCc2pTzCtp8MalipB6xHBS6tXl2ki8u7ZPSMhdQVAp226DgkEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJp/fFfxBO6encx4R5gWTUnNEI8KucOw/OPtJSMz3MHEvKxXRD
+	5c572zssnsGwlJsWGtv2RzxtlzgR9csT7ShrD2cRxp8k4hId/l4ThDlN
+X-Gm-Gg: AY/fxX6ryUMxaMKPnggC0GUMPj1619TLSLd1eqURY8VV6k7yXNPe7c6VdXeezniKdvz
+	aWVf5WOYJrhb54DtP8PipNen7CrwUBW36wrVTv/toUdnlI/CBwpMuVrQ7R0RWf/wYxZlDYWoBCm
+	zswZo16D/CzJ9prbWEIK3pds1sy+HIFh3r3K0q/rynKwU2U53QUfonxDcHiAvT2PboN9W6A8nCH
+	AbL1oo48uynJqWrhHGCQ+wColrci4BnsmWeAaEYHyOCWEYJZ3fn+E34dPGueg1z3ME9exnVrLJ/
+	8BZn9Y2W4ZyKvIGSAIwSG/N+ubT93vGRdkoRCqRK9Y7bdzixG+msVIBe0mfQDqo4+PiLznp3Pra
+	0cvomu8YjNfkvXP88PKjPTBxfYtxTXGGSBDZ6RABwnp45leHPW8eaTlgwHGgdYS2NQRZ8pS2Vx0
+	XAp+8iKuubX3BQmm1ofJqDXnUl6fKbvqytxw3FVVJAXQGh9eJRhRY8+7gTMW7abhCnimbOlF5qU
 	Q==
-X-Received: by 2002:a05:7301:3f16:b0:2ae:55f2:ad57 with SMTP id 5a478bee46e88-2b6b40f01e5mr2028389eec.29.1768567482726;
-        Fri, 16 Jan 2026 04:44:42 -0800 (PST)
+X-Received: by 2002:a05:6000:2004:b0:433:2f55:7cab with SMTP id ffacd0b85a97d-43569bbafd6mr3570766f8f.37.1768567861918;
+        Fri, 16 Jan 2026 04:51:01 -0800 (PST)
 Received: from orome (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b36564ffsm1810021eec.28.2026.01.16.04.44.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356997eb0bsm5012584f8f.34.2026.01.16.04.50.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 04:44:41 -0800 (PST)
-Date: Fri, 16 Jan 2026 13:44:35 +0100
+        Fri, 16 Jan 2026 04:51:00 -0800 (PST)
+Date: Fri, 16 Jan 2026 13:50:58 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Ashish Mhetre <amhetre@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nicolinc@nvidia.com, 
-	jonathanh@nvidia.com, vdumpa@nvidia.com, jgg@ziepe.ca, 
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V8 4/4] arm64: dts: nvidia: Add nodes for CMDQV
-Message-ID: <aWoymh04hKXsADa-@orome>
-References: <20260113054935.1945785-1-amhetre@nvidia.com>
- <20260113054935.1945785-5-amhetre@nvidia.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Linus Walleij <linusw@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 08/11] pinctrl: tegra-xusb: Return void in padctl
+ enable/disable functions
+Message-ID: <aWo0LESc5bIs1kHi@orome>
+References: <20260114-pinctrl-cleanup-guard-v1-0-a14572685cd3@oss.qualcomm.com>
+ <20260114-pinctrl-cleanup-guard-v1-8-a14572685cd3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -77,60 +85,49 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4oau3igknnhri5c2"
+	protocol="application/pgp-signature"; boundary="bhhiv6s43avuu3l7"
 Content-Disposition: inline
-In-Reply-To: <20260113054935.1945785-5-amhetre@nvidia.com>
+In-Reply-To: <20260114-pinctrl-cleanup-guard-v1-8-a14572685cd3@oss.qualcomm.com>
 
 
---4oau3igknnhri5c2
+--bhhiv6s43avuu3l7
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V8 4/4] arm64: dts: nvidia: Add nodes for CMDQV
+Subject: Re: [PATCH 08/11] pinctrl: tegra-xusb: Return void in padctl
+ enable/disable functions
 MIME-Version: 1.0
 
-On Tue, Jan 13, 2026 at 05:49:35AM +0000, Ashish Mhetre wrote:
-> The Command Queue Virtualization (CMDQV) hardware is part of the
-> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
-> virtualizing the command queue for the SMMU.
+On Wed, Jan 14, 2026 at 04:30:09PM +0100, Krzysztof Kozlowski wrote:
+> Make the padctl functions a bit simpler by returning void instead of
+> always '0'.  The callers - phy init/exit - still need to return 0, but
+> these are smaller function without if/branching.
 >=20
-> Update SMMU compatible strings to use nvidia,tegra264-smmu to enable
-> CMDQV support. Add device tree nodes for the CMDQV hardware and enable
-> them on the tegra264-p3834 platform where SMMUs are enabled. Each SMMU
-> instance is paired with its corresponding CMDQV instance via the
-> nvidia,cmdqv property.
->=20
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Acked-by: Nicolin Chen <nicolinc@nvidia.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > ---
->  .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |  8 +++
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 50 +++++++++++++++++--
->  2 files changed, 53 insertions(+), 5 deletions(-)
+>  drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 
-Applied, with the tags rearranged and the subject prefix fixed.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks,
-Thierry
-
---4oau3igknnhri5c2
+--bhhiv6s43avuu3l7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmlqMrMACgkQ3SOs138+
-s6GZWw/+PsfThyygUX03IXSU8Jsrup/oODhWPhvKjNgijz6nnSVFBhA0BA5ikMoH
-FCIWEVLZKqW3QA6ftDE8V3MnYh+JPY1qW0g55q5jFthi1qtwtbL+WlMvvGPqulGx
-8XYCYkYrtzg/PEx+UJi/0DP0i0BNCCCSSx4fTNDxUqpNdre3oGyD0Ac8eF0xkp90
-JLv76ggCT7UX4MNuXEGGs4ndCBYlcOeO1wDkkDd8ZfkdZU8qAaOnvM4TNRocSZIU
-imgVHUIRNXnaMOB29ykaxvAjah65rbv//4inrVutVTLepKoH/rT/p2ahSUHG3JIZ
-DAssTp4AUCO2Ovc4CGqPBw5ORMs3TdKnKFGqyQN718EnSGmJkzwbWZ0Z1Q+FJrdN
-s2RQXxLdL9ZGcu3tBm3/5j5If5VRvNo5aTc2IDhjeKsrVRPttCw6FBZfbxHcHj0M
-UZls4LAAes/RnZ3XQDrUdf6mIgoOZnx70Dy5BfulONNoVf7SxE3yZGR0h02q9EVp
-kJlCh9VuoS0aza6CpWY8mv6Gam171pC0VJABduWXeCfxKW0uqDIce7EOrppXT1/w
-7XMvcfiSfopGB83vO4ulQ3rTPvot2fbJnm9JHrYPdnYwkDPFRs+zDeDSr3Ub/iZ/
-U5J/FD1YV4AsdQfuwEDWkE8URTqex7eqUWg3i2yKHe2wZBYHb50=
-=R6HJ
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmlqNDIACgkQ3SOs138+
+s6HKVA//WbWB3AVvEbOYpT8fr129RiWvQ5lRtQceA8fb/1Ep4k0qX0M5cVujq72g
+OFie2IcJyCzuci1ZmKEf7fTaR/cjlzExIrXvmox2TLmtKm5kBAFTu2UcHzvAbRcs
+VbasfUeQ/Wi7dlT6+I6JeNLYaXbstuH2RQV3NQ2BC3zPUsJk27p7DARdqBLUSNTJ
+7jX2sBu0xKu5n0hrBhesTMi/zBLMI3pZvqmMlhGzTU01GSlmPz72GMI5J6YmeeF0
+Midhy4ZCbs40l7nJPghjxdtQoKLhUPG6z+NzTyp9Hfelr7q/cYZ1avlAGkJ/39fI
+ugJEOfjl0ed/HMarlvwrRPSTjF6f2BUKH1Ub2xGxErbhGaGvOsKGJizbjsK0CGzl
+jdVsdFUF/wmzPeX27RIel8DxTdTYnhpUyZoylg7l9thjdhYGceKGJHeHb1DaOOZ+
+OhsSUZlejccTbalvk7OeBxtnujGfE56nEXsSByA0C6kaDRxPZmsH9WWtp4mwIzXg
+rvw2hOERLedWoFTjFynl0+3hazgw2hh21iH/uE+uOEiVwHNhPiEXeb+lJMGQbH/9
+Bm2mL/1gvDYA3KxeFZbTTyNwEiGkZyPFLvwZ4hpapk8AvhFdEu/60sMZWsTRlSgx
+H7CJIWp6MSs4e2ErCXbhjjucu3eJo1lFTm/bGVBosixPjjSZ720=
+=VB+5
 -----END PGP SIGNATURE-----
 
---4oau3igknnhri5c2--
+--bhhiv6s43avuu3l7--
