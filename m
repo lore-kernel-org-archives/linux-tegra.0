@@ -1,89 +1,82 @@
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0F3491C8
-	for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 18:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDDA2FC037
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 19:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768589978; cv=none; b=nHAoga2yAAxwcs9D4lk4ndVOSMMipzzRNyi0dWD/GbeSJlyaX7LaofGMeRlC+qAhPGCVcNvN+jH1Y8/vgIylBx8bvSaksIq6VsWkHrPDJm6ekyRG/CNUL+1B5auEFS5YV9llavXMAK/6PfFYyHONPtE5InpwDywWknqUEUJdid0=
+	t=1768590405; cv=none; b=hIB3WYbzA1q+7O5dhMC2lQgZuaoYvKVc3J7DbuaWcVY7SMhEYXeQfoNIHSD+sXXTx56Gg2OrJjerP0KADsh+tiRClbRGAXDK1C+KgySeJAyRSvmhUXdo1AIzaDsa6Tjl2caaXnXkaCwrVWn+A6/YOhbeTUsTEEAejfbgVGI1tew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768589978; c=relaxed/simple;
-	bh=TzSo+tlzxFxHwZ9wkSBmczjkeQhikq+vs+l7Oy23ORw=;
+	s=arc-20240116; t=1768590405; c=relaxed/simple;
+	bh=nnEFCj8D60Q/Pd+jRhT3XAOSYc/qt6y9nDtXhDj9Hoo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aSDTUdc77a27pcO84huJHLC65N1wlSkf7AYm2nud7EIKiIlnQsuPZ+igUp7FZqOW6ACh6V8daxHIGiNg381AHAJ8MNSDBZ94P3QdYWYdgjRu4uCjtw6TYb7vmDLTqD8/4s6BhKVMpqSrI4yS9/VCmWTECVuDs2fsk6XTumlFz/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlUCJCIT; arc=none smtp.client-ip=74.125.82.50
+	 MIME-Version:Content-Type; b=Nmz/jZ2Z+/xT+GToBn52wFAn+0otB/GoBNQO9xDedE80UZt3IE/LZxWlZDI8F6wJ7NEKLenmo64uwDVRKEIF6cqC2ah/vJHC0X+ensjydwHhjkvmAGqnqyOj5sC3xQhiDKcEfF2/vKhvPoFRQlyHGgL9qGA71gVUiFq7WdJzkFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg0uFIyd; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlUCJCIT"
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-12332910300so812771c88.0
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 10:59:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg0uFIyd"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47ee807a4c5so17667615e9.2
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 11:06:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768589976; x=1769194776; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768590401; x=1769195201; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OsdpmGsyOkVZsi/y+GsHdikzRvoYJyk6QlblSikl37w=;
-        b=dlUCJCITWmOW4mqAG7Xbkgj7NRmaG6VLpoK2ZrOwa9PzqpvHtGbpNt5DdfpbMfI6f8
-         MBGic3fBcQxkFvtOjk955jVpueQA5L71DVScE8srthwcmmWi6tvUIoZqdNi2YffNpGmk
-         nqVy3jRkPUWNZnptHQNu2KRgIOL7hsgUSXO1eWclnZgNriW3n4x8V9A0JN1Rz/eg+0fz
-         I5uYs8QjYI8lqZOB6xDQN9pNTWgLwmbwOgRq3tRDln7ik7iB7ngax4onYVoAZIby/bP0
-         gdQh79wASr6VolTux/EhIL5Mm+IT6ZYbr2SZABz4upgyfMN2j/1vF4xkRiVh0oXGcBrP
-         GlHA==
+        bh=LgyQv7aXTbcxBIKDlhEjQlYxX38fSitJW3AjGTyENGM=;
+        b=dg0uFIydHXYC0qIrtQaDLXe6ryJD3R3Ey6h7DwzCq/anPmK7wDHlMPIDsm1lAAWxRg
+         zMErEajrqTu4uFJO+3S1ZKI4O0HqOCC7rlAHudnlKd9lkwiQTPyHp8dFeMwUTDBr2QPI
+         dMUaU73WTfJXRyV74S0m3PNZxQKYgWmTAlwlDWmT7DP1HfB0jmQy6RQX7wRZzfdRDijk
+         ThVTaIgzh8Zv1/jQKUsI8R1Dq9AM30o6i07u9whZimeTsrxqwdwiZvy+dTfZa/pVfpMm
+         wBwiYMobvttPWAd03m8IHPxNKa2CJqXznVYuBXecssam5yMxCsNLti/PL+M8aGVon0kZ
+         g20g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768589976; x=1769194776;
+        d=1e100.net; s=20230601; t=1768590401; x=1769195201;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=OsdpmGsyOkVZsi/y+GsHdikzRvoYJyk6QlblSikl37w=;
-        b=TIYHY4ZKwC3YzggiTqNA/4alx+pbfza0Glwp1eGkkqdJlf+ZsnX6QrJwixEg6zloLW
-         bL7EURQo3h9kBUsvmhlHnz8jo1OWSjqb1Pr0YTsvUvryfw5hTfAM7JdBGdThvfLHh4mr
-         5TeBmr/aRovtArk7NjPTKmpbiN/3sugUJ8ARL/l5V1njOVE3jrEQcoMTIJSKXbCGB0KG
-         e0TzTkKqbGrtNYq5dYMCi+2XAKQJbluDWfzRgwiMNvTXCdHK1VDLZjeguILjo5gMo47v
-         c6Prxcn8gxoYUGSh0Ts0hhMGyt4cwtYw1/UZKJ7uGSguL/MxiIKx6CWV9K3q9eokgeqo
-         ncpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5zEaGaIL2rt8PnsXvQ4GLe6OQ8rVBxCe1ahoMqq5AOIC9hqTniadWOR5YBJfHCrc2JHJXOujmwjIfxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhK6nn7PFzWx00uRoUhUPg3+zZbGtfv7SQn8Vg+ntTqIc72ezX
-	fqOcayFiXLQ6IAXxs/LaHV5w5aAbzSnWZGpMTGoh0yyEW7+jQ8t24gew
-X-Gm-Gg: AY/fxX5Ds19Yz6HvnPNfou/i7nIwkHkylt9JeM5uF5ok+aTeMVhiXXTPl5j0qNw+Re9
-	xByz89iDbRqCfh+W/doNl1CbRBT0MIxM4St+n91jtVh5Epq3aXtQwONOfjUJLQ/3EcseePyWURa
-	yFDHNJKI0BJ8aWe3pKoIY4DkpTJSOt9H/zEO1nuyZHlfQ6vZrNk5NveqotfC/9PruXbXOOe+sel
-	iGeCPRPUDCFP3CM0XePMF4jW7fFCOmyOmIc+9bvCA129WkNzLJvq1mXCAMRWEWXHjC2HLEbv+or
-	ln2n5Yewm5qhOLw9aH8B3vfo3Jt+KlIRXyUyexjkZP7a22OTjQOtU3qwY1NHyDgP/O8dKLXkWE0
-	WzRDpR1AvUPC0wl0p0FURasu5jbNuWT9LOFC9Ss0B+KMf0k0QgEsX2sjC6/QbFu+Kv/h2Bbedvr
-	dkelSR9JV/UV17688QpHX4RVvE9m+bqEVqZy1mVSSlOmOIakQ4m5vCO2CiJc0zxq5yB4pzbYiZS
-	U2zF6E=
-X-Received: by 2002:a05:7022:2397:b0:11b:88a7:e1b0 with SMTP id a92af1059eb24-1244a75f051mr3682555c88.26.1768589976312;
-        Fri, 16 Jan 2026 10:59:36 -0800 (PST)
+        bh=LgyQv7aXTbcxBIKDlhEjQlYxX38fSitJW3AjGTyENGM=;
+        b=NzHQcKd/KTX4JaPimgdy+PUppL93PUDgYRXeZKMAgav1roZHcWje3IX8KZtyZw1G41
+         mjeD/lp1OgmFBEtBVQkiTYjretSBaS+wSCrA6wh5A172NecSpz8M4W9yiSgFcGNOuoLY
+         tx+uZ/F2+TnMbcevqyrCAucyj7gxQwG4SM4oCyXsMUQ6f8xDO0vFITMC6RCzk2+dyAKd
+         7FUV0109+wDu7bqJNGgJ+QK4GePls6o3BHZdFWz6C7JeaoQHOHeP3/xm9DG6zZIBbQ4p
+         Pe5isaXEzIguerzhk4IvcSZCCrSRON5MmBdZkeYoWQ2LBRviZ2SkyMC/tc9K5WPIz+94
+         gfgQ==
+X-Gm-Message-State: AOJu0YwWo/1FZZJtuGIKFxZlFuO8bIJCzjiHsFvKL/+ECiUVQc8STNjz
+	zxWv48yHw6UrOOK46QhPEYUNdBflEQHZZqi29kF7St8xWM66jQitJCVW
+X-Gm-Gg: AY/fxX6k+vbkY8Z13I6KySV4eY6h0pVO9RxCXDA367pCJwiIUEkWRWk+PIsXG+xQ+sm
+	OSQrmC2sPNRCBfy/ZYjeZ2Eb8Bd+AyXs/mBS9DVWDXLvwuDKeIGKNNxAnEC/GKphEevzp1HGZRI
+	Xx/sy+BQKzr+cEmPo6u0UuaxI4/a6T4MIDGBVw7ZIfNXNM5rVZ8mH4jYnF0SLvhoHQn8uTBOAjl
+	eDXvMmOicG8V8GCN4yb551IMCcFvySppfMr8R5G5kHE3X88c0Sx1VwxFv25bJYQsei7gbE+ucmf
+	t9oywD8/rTMOBwPbzvQPln47X3sIfHioy+Zp/PXfTC4/iFKQcVC2sMzXo1k81qlQIFtvvv++HGB
+	uL7ZrF2Wq4ak4RvLtG9vikKn0G97oAyaOorKyY6CxAHkV7L5wfJh/lOBMlKFs4rKLnSNWaKv1NO
+	wRyYPH273keqBZq3XckSjMlaiWO3GOk+iLjKVdFO5FqmgxvbmFRpSlrdk1BjbOEcQvfDddmJnJ7
+	c2M9Rk=
+X-Received: by 2002:a05:6000:26c8:b0:432:86e1:bd38 with SMTP id ffacd0b85a97d-4356a0773a3mr5064731f8f.39.1768590400554;
+        Fri, 16 Jan 2026 11:06:40 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1244ac57fd0sm3522534c88.3.2026.01.16.10.59.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996cefdsm6657811f8f.24.2026.01.16.11.06.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 10:59:35 -0800 (PST)
+        Fri, 16 Jan 2026 11:06:39 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Jon Hunter <jonathanh@nvidia.com>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-tegra@vger.kernel.org,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Sheetal ." <sheetal@nvidia.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org
-Subject: Re: (subset) [PATCH V2 0/4] Add tegra264 audio device tree support
-Date: Fri, 16 Jan 2026 19:59:27 +0100
-Message-ID: <176858995889.167465.8638060731154515673.b4-ty@nvidia.com>
+	linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2] clk: tegra: Adjust callbacks in tegra_clock_pm
+Date: Fri, 16 Jan 2026 20:06:37 +0100
+Message-ID: <176859039010.168755.11485202766941795981.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20250929105930.1767294-1-sheetal@nvidia.com>
-References: <20250929105930.1767294-1-sheetal@nvidia.com>
+In-Reply-To: <5956349.DvuYhMxLoT@rafael.j.wysocki>
+References: <5088794.31r3eYUQgx@rafael.j.wysocki> <2d55ebec-1e42-4ddb-b0e2-529d3b2d7b85@nvidia.com> <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com> <5956349.DvuYhMxLoT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -96,26 +89,71 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
-> From: sheetal <sheetal@nvidia.com>
-> 
-> Add device tree support for tegra264 audio subsystem including:
-> - Binding update for
->   - 64-channel ADMA controller
->   - 32 RX/TX ADMAIF channels
->   - tegra264-agic binding for arm,gic
-> - Add device tree nodes for
->   - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
->     DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
->   - HDA controller
->   - sound
+On Tue, 06 Jan 2026 13:19:47 +0100, Rafael J. Wysocki wrote:
+> On Tuesday, January 6, 2026 1:07:15 PM CET Rafael J. Wysocki wrote:
+> > Hi Jon,
+> >
+> > On Tue, Jan 6, 2026 at 11:36 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > >
+> > > Hi Rafael,
+> > >
+> > > On 04/01/2026 11:53, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > System suspend and resume callbacks run after the core has bumped
+> > > > up the runtime PM usage counters of all devices, so these callbacks
+> > > > need not worry about runtime PM reference counting.
+> > > >
+> > > > Accordingly, to eliminate useless overhead related to runtime PM
+> > > > usage counter manipulation, set the suspend callback pointer in
+> > > > tegra_clock_pm to pm_runtime_resume() and do not set the resume
+> > > > callback in it at all.
+> > > >
+> > > > This will also facilitate a planned change of the pm_runtime_put()
+> > > > return type to void in the future.
+> > > >
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >
+> > > > This patch is requisite for converting pm_runtime_put() into a void
+> > > > function.
+> > > >
+> > > > If you decide to pick it up, please let me know.
+> > > >
+> > > > Otherwise, an ACK or equivalent will be appreciated, but also the lack
+> > > > of specific criticism will be eventually regarded as consent.
+> > > >
+> > > > ---
+> > > >   drivers/clk/tegra/clk-device.c |    2 +-
+> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > --- a/drivers/clk/tegra/clk-device.c
+> > > > +++ b/drivers/clk/tegra/clk-device.c
+> > > > @@ -175,7 +175,7 @@ unreg_clk:
+> > > >    * perspective since voltage is kept at a nominal level during suspend anyways.
+> > > >    */
+> > > >   static const struct dev_pm_ops tegra_clock_pm = {
+> > > > -     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put)
+> > > > +     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
+> > > >   };
+> > > >
+> > > >   static const struct of_device_id tegra_clock_match[] = {
+> > >
+> > >
+> > > I gave this a quick test and this is causing a suspend regression on
+> > > Tegra20 and Tegra30 that use this driver. Looking at the console log
+> > > on Tegra20 I see the following errors ...
+> > >
+> > >   tegra-clock tegra_clk_sclk: PM: dpm_run_callback(): pm_runtime_resume returns 1
+> >
+> > Of course, it needs a wrapper.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: dma: Update ADMA bindings for tegra264
-      commit: 919f6cd469c605f1de2269d46d04ebf80a1af568
+[1/1] clk: tegra: Adjust callbacks in tegra_clock_pm
+      commit: 53bf300fd4a73146882889020504e8e87cc86c7d
 
 Best regards,
 -- 
