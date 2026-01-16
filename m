@@ -1,84 +1,89 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B870534321C
-	for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 18:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0F3491C8
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 18:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768588749; cv=none; b=JMmevI/cvMIkFWgRGPSId//j7JTNKKggzCnOLKpYD+s1vTVSIk9qqmIMpigcENYKFC5sgXTYZjF6ZKzN6MIaG5nocrALfW28L88fs5SNOtTcSUddhRRsP9+f7z1hAxxHG3xa7KbBBVYGfTnMN08Hj7QBDhU3vyr+WihYW2+onFI=
+	t=1768589978; cv=none; b=nHAoga2yAAxwcs9D4lk4ndVOSMMipzzRNyi0dWD/GbeSJlyaX7LaofGMeRlC+qAhPGCVcNvN+jH1Y8/vgIylBx8bvSaksIq6VsWkHrPDJm6ekyRG/CNUL+1B5auEFS5YV9llavXMAK/6PfFYyHONPtE5InpwDywWknqUEUJdid0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768588749; c=relaxed/simple;
-	bh=d41syVwVZdKjv7cxV7/aihYb8fxPi9Y3sb0RmDUSMDI=;
+	s=arc-20240116; t=1768589978; c=relaxed/simple;
+	bh=TzSo+tlzxFxHwZ9wkSBmczjkeQhikq+vs+l7Oy23ORw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iKfcFd2Gxrxq/DE5bK2efKkuf33tv5J5G2RP8l1P0s2Er5rzSiI11bm33RRmT9qBlkih1/MDA5pGMoj5n7r2GQATZ3h4WB/55PWC6+K5QPDiISPQFsUR2IZqj+V8tfh2F/z4JBXT2q1X7chKjwElaCWo26cIkY7SHe3IK27gXuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFUIXkHd; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version:Content-Type; b=aSDTUdc77a27pcO84huJHLC65N1wlSkf7AYm2nud7EIKiIlnQsuPZ+igUp7FZqOW6ACh6V8daxHIGiNg381AHAJ8MNSDBZ94P3QdYWYdgjRu4uCjtw6TYb7vmDLTqD8/4s6BhKVMpqSrI4yS9/VCmWTECVuDs2fsk6XTumlFz/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlUCJCIT; arc=none smtp.client-ip=74.125.82.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFUIXkHd"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42fb2314eb0so1907230f8f.2
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 10:39:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlUCJCIT"
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-12332910300so812771c88.0
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 10:59:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768588746; x=1769193546; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768589976; x=1769194776; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qtATPDsxWorsaJSHrXqsG5j839hXtsmCTkBX1g557KA=;
-        b=iFUIXkHda/MqoaTbXQCrPO43tvTtVMHYPOrm9QU7Q5LrHBNrH7gzLfFTezAiWik7Fj
-         uhqGzfiej1o9M6gsFYrlc32cJo5t+QLm955fDlhCi4ClJg7V43Wnflp3jBDxWggtYuyE
-         6xTF9LS60E5hiXa9532s6atejPcpc0vHP00q+oeaVbMSv2gGMQlIyOJQT4LGw4A/7rk8
-         SfAd0icEf9e39M7EQe6gd+8VNpGFAIWMB+2NcDdqXU0CzyXJ0CKmZwjQRdGQfhMfIt9m
-         osHOV/5ahP4fi7rCcaBmMyrqVZQBVBy7RJr6v9fa2bPoHInfxIKMtxAL/YmjO6L/v32A
-         4ZtQ==
+        bh=OsdpmGsyOkVZsi/y+GsHdikzRvoYJyk6QlblSikl37w=;
+        b=dlUCJCITWmOW4mqAG7Xbkgj7NRmaG6VLpoK2ZrOwa9PzqpvHtGbpNt5DdfpbMfI6f8
+         MBGic3fBcQxkFvtOjk955jVpueQA5L71DVScE8srthwcmmWi6tvUIoZqdNi2YffNpGmk
+         nqVy3jRkPUWNZnptHQNu2KRgIOL7hsgUSXO1eWclnZgNriW3n4x8V9A0JN1Rz/eg+0fz
+         I5uYs8QjYI8lqZOB6xDQN9pNTWgLwmbwOgRq3tRDln7ik7iB7ngax4onYVoAZIby/bP0
+         gdQh79wASr6VolTux/EhIL5Mm+IT6ZYbr2SZABz4upgyfMN2j/1vF4xkRiVh0oXGcBrP
+         GlHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768588746; x=1769193546;
+        d=1e100.net; s=20230601; t=1768589976; x=1769194776;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=qtATPDsxWorsaJSHrXqsG5j839hXtsmCTkBX1g557KA=;
-        b=dC7v0W59nv8ERf869nqdUHMoy6+NpwRQWok5wqkICOPvrcssVlLmx9oJEazNM9xG/4
-         GjZrxbujyFcRQqfDW5N4Z/Cu+mGNmIzm9w/2x5LJNty1bpkXwPrAsF9m/8y8T42fUf8T
-         kfJ7FdqK8mP2L0PgLd7u2tS9w6T2VXbwfET9ef0cLhYK6/uJaqJSqMfeQhl9iIccX6bc
-         h8gSGrRDiai/d4kh9yKy5RpsEm5b1iKSr5vxl2wtDUluJnQBXmsblueT1QRfREN4f8oW
-         ng9PywMyuTCRnjzT3Z2aYpjdv5fmGnvZcEhjQolflRQBeHD2oa0IBrA9sbkHZbhFHRVl
-         WGlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1KikD0uOFtrGX26NX8S4IIIzLmMYRbRRgImfTGtp/MOPRKqiTvrhVtlO3xcYGIFF42O5m91ZA8e0zzg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgv186L0a71MczBjWLfA0K7+nauw7M0Fp5pVKwsMzePS/tznH2
-	gyNLYyhyHO34dB/Gtm73C0ZZ5wJnMlLF+j/ocb2Gi80ifaDHce7YlueX
-X-Gm-Gg: AY/fxX70c1cmhXbm1k2NfTz1/nV5x4ZHx+5Rd1+a9hL0xKSYZlw+7JjOe/Nu8kfnQR5
-	5OItXCPUwnH8vHpv5WECgqaZEkWB0vQNyz48AolrXjIen++mNUt3Qx2O0rLsDf7AKKmTbTWorW8
-	VaFQQBLuAFsWtNVD50x3ue/PPy7PPE+4qC2PijGE+6vmvV07p2tqb6YLbFW00el6XR0w+OM1igE
-	6BzMshaEL6YOUxG+lmV3t6+4AHXkSBt8ZVmXWxFyH9gZepme9l1rXWLQ8PKZCjFJpxx1F8U2Wr8
-	UoGd/Jij/oq5ZZ4KgI2Pq+9k2B/i/2jcpAVDj8CcKdA8rbuo+C01cTQBiS+AJ+NUslV5bjTCwob
-	r/ND8iTWhKtZ4YM5nG8eRqmUK0jJhdyR8qAGUKKuIfvcD4q8ZFi7MK0f2KMJnRLv3/Wytaru7UN
-	Md5H7qTiXs73g8Ypjjyx/s3OYkDU5GabGaEEvTDfog2i8+WexRx5GjN3T9iVvDax7fv7M+4y6G8
-	hy7LE0=
-X-Received: by 2002:a05:6000:26ce:b0:430:f5ab:dc8e with SMTP id ffacd0b85a97d-4356996f129mr5220791f8f.13.1768588746076;
-        Fri, 16 Jan 2026 10:39:06 -0800 (PST)
+        bh=OsdpmGsyOkVZsi/y+GsHdikzRvoYJyk6QlblSikl37w=;
+        b=TIYHY4ZKwC3YzggiTqNA/4alx+pbfza0Glwp1eGkkqdJlf+ZsnX6QrJwixEg6zloLW
+         bL7EURQo3h9kBUsvmhlHnz8jo1OWSjqb1Pr0YTsvUvryfw5hTfAM7JdBGdThvfLHh4mr
+         5TeBmr/aRovtArk7NjPTKmpbiN/3sugUJ8ARL/l5V1njOVE3jrEQcoMTIJSKXbCGB0KG
+         e0TzTkKqbGrtNYq5dYMCi+2XAKQJbluDWfzRgwiMNvTXCdHK1VDLZjeguILjo5gMo47v
+         c6Prxcn8gxoYUGSh0Ts0hhMGyt4cwtYw1/UZKJ7uGSguL/MxiIKx6CWV9K3q9eokgeqo
+         ncpw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5zEaGaIL2rt8PnsXvQ4GLe6OQ8rVBxCe1ahoMqq5AOIC9hqTniadWOR5YBJfHCrc2JHJXOujmwjIfxQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhK6nn7PFzWx00uRoUhUPg3+zZbGtfv7SQn8Vg+ntTqIc72ezX
+	fqOcayFiXLQ6IAXxs/LaHV5w5aAbzSnWZGpMTGoh0yyEW7+jQ8t24gew
+X-Gm-Gg: AY/fxX5Ds19Yz6HvnPNfou/i7nIwkHkylt9JeM5uF5ok+aTeMVhiXXTPl5j0qNw+Re9
+	xByz89iDbRqCfh+W/doNl1CbRBT0MIxM4St+n91jtVh5Epq3aXtQwONOfjUJLQ/3EcseePyWURa
+	yFDHNJKI0BJ8aWe3pKoIY4DkpTJSOt9H/zEO1nuyZHlfQ6vZrNk5NveqotfC/9PruXbXOOe+sel
+	iGeCPRPUDCFP3CM0XePMF4jW7fFCOmyOmIc+9bvCA129WkNzLJvq1mXCAMRWEWXHjC2HLEbv+or
+	ln2n5Yewm5qhOLw9aH8B3vfo3Jt+KlIRXyUyexjkZP7a22OTjQOtU3qwY1NHyDgP/O8dKLXkWE0
+	WzRDpR1AvUPC0wl0p0FURasu5jbNuWT9LOFC9Ss0B+KMf0k0QgEsX2sjC6/QbFu+Kv/h2Bbedvr
+	dkelSR9JV/UV17688QpHX4RVvE9m+bqEVqZy1mVSSlOmOIakQ4m5vCO2CiJc0zxq5yB4pzbYiZS
+	U2zF6E=
+X-Received: by 2002:a05:7022:2397:b0:11b:88a7:e1b0 with SMTP id a92af1059eb24-1244a75f051mr3682555c88.26.1768589976312;
+        Fri, 16 Jan 2026 10:59:36 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356997eb1fsm6846449f8f.35.2026.01.16.10.39.04
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1244ac57fd0sm3522534c88.3.2026.01.16.10.59.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 10:39:05 -0800 (PST)
+        Fri, 16 Jan 2026 10:59:35 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	mperttunen@nvidia.com,
-	tomeu@tomeuvizoso.net,
-	Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
-Cc: linux-clk@vger.kernel.org,
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Sheetal ." <sheetal@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+	Sameer Pujar <spujar@nvidia.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()
-Date: Fri, 16 Jan 2026 19:38:58 +0100
-Message-ID: <176858859966.165514.1542929598310125407.b4-ty@nvidia.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org
+Subject: Re: (subset) [PATCH V2 0/4] Add tegra264 audio device tree support
+Date: Fri, 16 Jan 2026 19:59:27 +0100
+Message-ID: <176858995889.167465.8638060731154515673.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260115050542.647890-1-lihaoxiang@isrc.iscas.ac.cn>
-References: <20260115050542.647890-1-lihaoxiang@isrc.iscas.ac.cn>
+In-Reply-To: <20250929105930.1767294-1-sheetal@nvidia.com>
+References: <20250929105930.1767294-1-sheetal@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -91,15 +96,26 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Thu, 15 Jan 2026 13:05:42 +0800, Haoxiang Li wrote:
-> If clk_register() fails, call kfree to release "tegra".
+On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
+> From: sheetal <sheetal@nvidia.com>
 > 
+> Add device tree support for tegra264 audio subsystem including:
+> - Binding update for
+>   - 64-channel ADMA controller
+>   - 32 RX/TX ADMAIF channels
+>   - tegra264-agic binding for arm,gic
+> - Add device tree nodes for
+>   - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
+>     DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
+>   - HDA controller
+>   - sound
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()
-      commit: fce0d0bd9c20fefd180ea9e8362d619182f97a1d
+[1/4] dt-bindings: dma: Update ADMA bindings for tegra264
+      commit: 919f6cd469c605f1de2269d46d04ebf80a1af568
 
 Best regards,
 -- 
