@@ -1,104 +1,131 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F8A500943
-	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CE8143C61
+	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768608671; cv=none; b=FOCDruimRtEr58GEmkfp6Vi/X+da8am3U16guNGBrkUFfSWJYHryq8Hicw+w3duZ9kHECqCnhcf3GdBWBDtPOVbkjL3i8h62hELDvzowzG7+7EwsukeU4FAM9WK6SNnSANt7yfP/2+jtk/VOOu5z/hCoxnZsUd7Eyl65EFRz33U=
+	t=1768609185; cv=none; b=RcGYjGn5wDOwWI1j1bXq6ue5b1tRRR6BEnQiVivx3TtbllrQTXkth5EodqGYWPiITo9sGuLzfOHtX3hi5y1OQlXgFl9/EZ7zUDQSujRmWeK8lzGyUT8u1f2nS61ktw/5HD6kQFaE8wdWim4o6ibRFRfToFnDYa8TvAiJHG22Vok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768608671; c=relaxed/simple;
-	bh=P/oahKn22V1Q/qKIOgeNOxr9OQ5K7jy4uqISMhIitG8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dxaZy0qclOK2AiJKzqnt4gRBlnawDjLS7lPY/IrfNyJJqRe+sR1lR5k6Cbf+A55nmwGXmTrYIsaJsCOTNWBqPYKPtHQS+vq4Oq/C24897ET63kXM2Ha5Jm+/mfuF+v5ZzTc9OlALLLoyIxGr+E1/MVHOJnA/z7bX9oQ2oY6DU0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIHupAFy; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1768609185; c=relaxed/simple;
+	bh=WddixO14B+NrKX3RH6X9bhZ895fa1HGCFdVzPGvd3eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5GJTTdwff382Ep58VFNpRs1R9BjU90JA/ZZq3sepA/Xsi59s86GxaGooHd+Q745S2Fmf+Sp/qt6C7ttO7rKBKGKVBYVDrMUxAkncma653Q+KW0H5ZjwWaYXz/BY8Wz1TYQn5s9hyhGdcyJQPVy+Y3i4miBjCugh9g9kkVEQ6is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGEUtYeI; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIHupAFy"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47ee9817a35so13840825e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:11:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGEUtYeI"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4801d98cf39so9721275e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:19:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768608668; x=1769213468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f7KP989+MtQ/Vx2GH1+7AMZFtXODIHzXJuAD4CeYR4A=;
-        b=lIHupAFy1lJTOEiumLHcyFNiD+bFp4SOxA+BzH9b16dCc/rI/hoBrUFtd0HFf0sLvz
-         3L+QlLxLTNWePwdTGDDo0qxdK1CNbnaVOdfa6W+x9F01m3gTKsOGhLUG7BTpATh6kM60
-         vqZM9AhiPUzsctYRivq4JMsrbPAlp8f3MNmA6V318HgiijMcO6u0HrRC5YDbr+Ewma9T
-         qxUWkjF3B3ApPFrKkQz6GQXTliAofAVU6EbUA1W+v9CaYtvKyJljZIKxv6/ceVRNwPbt
-         Nw4T0WoZceFFFnlm7U4Gp6WKDmXfNdf0h6T4PRGo4cinYFPPF5a+6jZnuJV22EMu0DxQ
-         lKQQ==
+        d=gmail.com; s=20230601; t=1768609182; x=1769213982; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qr4dd4sRl6alXbR76AfI/u+BBUeNx88I+aVBJKJ/FKc=;
+        b=nGEUtYeIPv8M7G1sWCyWOVHK8AE9lRN2HlWUBQUbeTUFn9OiRwOHtc7EmYoaRiaeot
+         XRj3mat8ttFSrr9KJ8s0PsCz7BcCirNR8E/OU4KCbXpYlr2T64RbsoqTvUkfnBEPO+q7
+         jEj8iaOXZn1r5Ms/sYccEzrA5jVI04r7NRLR7zNnx5lJVUFe2hy33N8UzNHhfs87YGcQ
+         r/ohaf19Gx4zs4uxqlh2WTId1f+bAVUowZCxtqt1wmKtsGskBmvNOfSgs0QG6scHomJJ
+         upgsTU/JE5HW+jUKkIiUZWTxjWVQkPVlXrMEqVrFQgoAokV1On7BB//qnOcyPo0PhSf9
+         17iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768608668; x=1769213468;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f7KP989+MtQ/Vx2GH1+7AMZFtXODIHzXJuAD4CeYR4A=;
-        b=Jj2uXbU43BXqHDPRJ/UL6A2RciNVEsjOstx7s+X/VS7n8CiIgRGzZhIhGkRB+ib4lS
-         Lb6eocyBSurs/3W5+IVxKPZ/QroBQwXufBrGk5FxDtNGZctXVtenF7emT+A5Qh2eNs8B
-         bS+7ImQee6MkLMtv7dg8GRJnKTfxiUihaLnwrncerBwrdvT5A/AJ4AhuL8r4jP2e5fzD
-         eWwvbJ52X3k0FSASp8FJJaoi/hTsw7qt743/kZMmFtXwfrY7nsyGyOEeSuN6rcEEwwy+
-         gTPSBXYxekWgD8Bye0wKRYSt+h/8vIJTvi0hCRYOH4JmnCP7t9aJaq7dhK2e1KfJ7Sbw
-         Vl2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWlDE+zRy/9CjZT/83OkGq8BL11Wa4PSJWCov6oAxw4xix58OO326vjqIIpfyaDRiQeZaCuDpECzzyX4A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3q9uJVmGle71upoYGZMp8A3GpyGH9cKNiH7VT70UNKpJxQLwi
-	xAExkXEaCvilGBaQxQAHqcFlzwPXf11m/FjBSv+60bHObz1slpm+RZfd
-X-Gm-Gg: AY/fxX4LOeVILB23troj8UeMrmcSitIQwRhEPzl1OS5ynPQQDPK3YPf39OtIZWOwfen
-	3VGKzIhvZ1Ua5RtWwQBbVnkkQNuU8zmPFqZljMts91OYFvZF/5Vcm0DmfGH9Wyq1tsxGcURLmnS
-	nSGeTFspy1nmsPGs5a4DNOW1i3D7nbl6Q9sFDhNLI/2mwO7mNQKQ2JEe4u7XCGXbYiCAKv1IWk3
-	+SY4WoXkgupaZRAMlkiHWgIOVuDO8Si2tLLJf+ygzeiPKj4mQHnjf8Pe5au00NqtX9ZN7Q4tC4p
-	TONq0hSoKzRBoX6ETxXZPamuKywoxvHPwS4iXpP4U2D+HoggclrSxOAQSigK7jPqmi3xrPuITeq
-	Dkq2cqMbnu67vBp56pakg3S0UHpvOlz4gzPeaFWV3qt81lXSEppKQUxVNYsPrajA5Ggi4nEF5+X
-	t0btTyy2rpfV8gdGVLMuiu+FdpzM99iw1j6PoL7p9CtKOhAgRHe7QWaV7whD8UpkNWzfQoXd5Gj
-	FJQDSY=
-X-Received: by 2002:a05:600c:1c05:b0:47e:e952:86ca with SMTP id 5b1f17b1804b1-4801e2f28edmr51066635e9.2.1768608667711;
-        Fri, 16 Jan 2026 16:11:07 -0800 (PST)
-Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f429071a2sm120243635e9.11.2026.01.16.16.11.05
+        d=1e100.net; s=20230601; t=1768609182; x=1769213982;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qr4dd4sRl6alXbR76AfI/u+BBUeNx88I+aVBJKJ/FKc=;
+        b=jlAZ9eXl0SeJerTSy5RhT1liwPkg0xFG0PfjSWfQBWbWSXFn/czn5s5l4i9SBvPqL8
+         xNKmkbIfZx4dIPhiY91JV2ORIccsjI6HaROEShOGc47rWPuS3nNZcWJojzVZkqNx3vAo
+         4fPCpsLKoXTVbmoGDhzRHwUe82XedtSgXpDXNYdEDQX7eOscWe1s6mozVGJ2lcWDcrbA
+         TkyKHGXwJZVKj7l6AlgAtx66pqZ/24XQt9DFrOWJ/GMtyK76LyqwhpRC1tu+qnWF6Ozq
+         guE3rDSnXsbWBvxwTcHsytEmbCK+BHFOkS/C4FNLwz0Jtni/F9Ssotk1i5WlEjcTjXHV
+         RKcA==
+X-Forwarded-Encrypted: i=1; AJvYcCURKJjRckL3lLK4X42iAQdp/4NlNCIxWtikP+dQOV4v1uQy+UE4akMyArwgIB10aIWnV4DIbEbP3D9Hlg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2AYoKrEye/rMsZzxZv+8KEf858vbJBy8lT2OiB6sXl4LeHCDA
+	DFmSf77XQcVbP2H7FlbaHLhM544PZmlrbl9X0u4MtlGwd3PUFs1w6z+j
+X-Gm-Gg: AY/fxX7geEa/RTtHSNuxFzxaTaBXZniP1eV0Pz6gS50N2CcgbUirns262XGwSmSpPxE
+	y8yCCkdFswrjSKNF6M++RQNoYTrkfQ7AwVgEBNd5BF5WOrMXuNgbeKefPP2c0WRmbuP3LTYYY+P
+	59Vl2mPMNbwMRZTJxrRG/dtLaYkxnZ+7+0uvnygW3mSaiwtuvzDqy+pEuAZaKl472OLHyZY8sL+
+	a+n25JS6DBrQvTYzzYt0rWMlAn68qKMfEQKCHcqg0ra+fpw6JZ92p/sne+Z84m8mHomZ4jny2KI
+	31oAmiPklnvbSyoITBFlWRC4vDHOBRrIok09hej0qPNDITB19SaDaTqbpJiCSJoz08KBpbgZsus
+	guTZhaL9d2cdfM+pjX6SipswtdyEoXTATC+CWL0dOlhdoLV3YBmx81bNYYuiMvpI+ywK6eOk1C+
+	Q1XVoovAosum36KJ+3BBLoaA1Sas2Z480saAx1rowwubVDWtQ9oGbOgLNsCT23xBJKCIKEN7NOF
+	Q==
+X-Received: by 2002:a05:600c:6091:b0:480:1a9a:e571 with SMTP id 5b1f17b1804b1-4801eb04160mr48471585e9.22.1768609182440;
+        Fri, 16 Jan 2026 16:19:42 -0800 (PST)
+Received: from orome (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f4289b7aasm124804445e9.2.2026.01.16.16.19.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 16:11:06 -0800 (PST)
+        Fri, 16 Jan 2026 16:19:40 -0800 (PST)
+Date: Sat, 17 Jan 2026 01:19:38 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH] clk: tegra: tegra124-emc: Simplify with scoped for each OF child loop
-Date: Sat, 17 Jan 2026 01:11:00 +0100
-Message-ID: <176860865300.1484839.10997280341072285851.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260102125019.65129-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260102125019.65129-2-krzysztof.kozlowski@oss.qualcomm.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 4/4 RESEND] ARM: tegra: adjust DSI nodes for
+ Tegra20/Tegra30
+Message-ID: <aWrVjkNzmowjPr0i@orome>
+References: <20251204061703.5579-1-clamor95@gmail.com>
+ <20251204061703.5579-5-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3ps3p3ummquvspuh"
+Content-Disposition: inline
+In-Reply-To: <20251204061703.5579-5-clamor95@gmail.com>
 
-From: Thierry Reding <treding@nvidia.com>
 
+--3ps3p3ummquvspuh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 4/4 RESEND] ARM: tegra: adjust DSI nodes for
+ Tegra20/Tegra30
+MIME-Version: 1.0
 
-On Fri, 02 Jan 2026 13:50:20 +0100, Krzysztof Kozlowski wrote:
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
-> 
-> 
+On Thu, Dec 04, 2025 at 08:17:03AM +0200, Svyatoslav Ryhel wrote:
+> Add missing nvidia,mipi-calibrate and cells properties to DSI nodes.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  arch/arm/boot/dts/nvidia/tegra20.dtsi | 4 ++++
+>  arch/arm/boot/dts/nvidia/tegra30.dtsi | 8 ++++++++
+>  2 files changed, 12 insertions(+)
 
-Applied, thanks!
+Applied, thanks.
 
-[1/1] clk: tegra: tegra124-emc: Simplify with scoped for each OF child loop
-      commit: 362b0c81b3a5a3d455577866cee6c300784a2ad8
+Thierry
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+--3ps3p3ummquvspuh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmlq1ZoACgkQ3SOs138+
+s6FU/Q/+JnHz4z3iaM5N3GbdNqivjMvosUv7yPpTe+rH1fd0qedCwH/Ozg5mOBAA
+fj89b6CFl8jNcxU26br2W7ePbJCqnz9+SENaMtlKZbUMXOd5rDzcdie2PMSclLxH
+vC2ycq79lAOsKcUWCClkQb5vqR2Dny0w+Ph3Z94DhdxCpW0/NWWswmT8NePMsiNK
+dgFtnWfsbzDYLzuNi6tSfngA4sHR68lmmoywqje+s4L1LEgCjVQlbJLDt7ztniOt
+zp9kkVMbF03fOeyjk0L6iw+0MEHHGpCWWBqg5A0YG54vwot0kkb8E97tdJUBQJ9K
+2vgxQ5hrsAYcJVh0h9SSiAsVXKJq5gu+0grEiFClSZbHMbFb5+J003t8Stk+2CwP
+vKtIurLRZ65Dn3eQt2p7trRJzjfdQcSmATMUeoEqV0ledh40y2b/ACm8OgtE0HTq
+hEJYyaOjbKUHxy5Asmp9Ioe7iDaXlOlK0L2w+ZAP0Hxaaem1Zfr9RRkA1wZIdhsy
+/8ao0kVBfZCC0l8vN8/wEQm+3+P6QS45JpqCe4xj8OgJozy8qZU53UJVr1T9cc+l
+BUuegRtXLa3Lv3vnxfHkQvNJ1CiwyrOEzFwOsoC5fjvToYWY0zQ5WSF/jW6+8yeH
+yjb9+tfoli6Gml1zk63cL3Srqflb5bX2FxXT4dxCAvU3V1ErZtY=
+=KaHS
+-----END PGP SIGNATURE-----
+
+--3ps3p3ummquvspuh--
