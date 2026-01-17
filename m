@@ -1,80 +1,103 @@
-Received: from mail-dl1-f66.google.com (mail-dl1-f66.google.com [74.125.82.66])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629CB1B85F8
-	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E029170810
+	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768609552; cv=none; b=fIChW04qVx3XHyZ5XESwdLFs3MufhmEBcz2Gvx1VuHGCH+2q9ljZx+GgKWvUi+uFYqHiTp19O3E63zDYy0xwMSe7sPCVcIR2yRiVlei6ZDMobl/Q6nNIdGS823cpdtWtQqdU6FMzd8Kf7grraQNWnPiDAxhxNSWy+XNIS11Slc8=
+	t=1768609903; cv=none; b=CBZZ5JBGMVv5+KVNJXbt9vJhjKY6iLh1GxnKmjyfA1QZMdcCSEDdO/TArpS1hxiypYCZjsYwjTqyovLhd1nT0rVuFrGMAPJazDj6HSa5bh2hUEGX5OMbS11dHV1turB9lTsNxERpzYlWUvVipDE0UHMpswVUZJagM9vDN364h6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768609552; c=relaxed/simple;
-	bh=1Pihf5lbWkVay8sxliYYrZJf63s7eUo9QUF0VnXRwZg=;
+	s=arc-20240116; t=1768609903; c=relaxed/simple;
+	bh=oYQI2hBpIRcvGtuZTojZuoMSi1NBy8aQgzTCzObvMzE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iGOBe1N4TzdpmODZ1bR8uRbewsZISJlLiC4kurIW98xnJSnYuWli1TWvDc0ZSZOqI3kyEpA3NBxbKS5p3El7ouTKgfJiIfmVtOG3IdEWjrWHtTv8v5TLj02Qb1PEyHgsuWsNWgpVDnjBZse7wEkVHUOFAQ3osCuaP1XqL0ORTVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/ED+WLy; arc=none smtp.client-ip=74.125.82.66
+	 MIME-Version:Content-Type; b=XEdRmMyiq1pjBxw6qxFEJnkpl6Mnpfj+vP8lA6+UPrj03bJPqqL3Erli14Di82gJB59Lhpo9wjH07ptXT7bLkLT/2akBVPfwCO72QNF2l+FCpyBGlqj5thpYXEk6o257mPOYIQbHXnbVIjKZgwyHB2t+2PxizTCorxaiIeZD/JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3wNVdwy; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/ED+WLy"
-Received: by mail-dl1-f66.google.com with SMTP id a92af1059eb24-121a0bcd376so1789599c88.0
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:25:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3wNVdwy"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4801c314c84so14068375e9.0
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:31:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768609548; x=1769214348; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768609900; x=1769214700; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uWRJQTsxOUHCUsanLD6DVdXRUIeel0Iya9VReAfc2Qw=;
-        b=S/ED+WLyi6Ifea4YMgL6aCaXSr62rPh5qfim40Ish5OTcoOW4qS840IZUQoelgmxP6
-         tVKIcr2fYdR3xuBd7FgHDyFW50FPrD75F9i0mJdsOpHyFDeX/HVgYIZZJmoWzMT8wbrH
-         oT+kRMLe9vyLXxbUO/moHVSyA12HHJRAPH03H16YkrjshWkKoJWJI7riZVOoAfhgDCVU
-         MC5/kmM/xrzbbYorHT9eQP3ARw4/qm1V02T0o0HNBmvpkdAGnIvIJlk+NLZf7DCeDxl2
-         XpIttv+8BEelQDtfi67rdir1A/15itJ1I5LUApgojSLBp4sWaIkDrXYFfbLcTw6f3sPV
-         Kodg==
+        bh=iFv214rAmnxy+ZWfqYzxoI4aXe7hA3FW0xG43u2wRxw=;
+        b=Z3wNVdwyvc69g3580tyf5fWfsc14h+xc/9Vg7PNDraGOG69INSVBA1CzQxPpB4YuJ3
+         PKbJ2HX869tVWnNxczVuxy5XUMmrKH6RCTC74NzjWEyITJ8wsFDhSwVO8qFXS3h0nF9l
+         zLlMXJJKycuP8R6ewUNsbElXbltaxzQP8B/ylWOmQA8B4ETt5tcgPQQS8iPBTAyRGshV
+         y6qj+5YBywUuBf+KdejltrIIANh5VXj9HpnpopRWsjGMjwmUrClqhnzR5GegrUfbYKUf
+         EH5Frf4yO93if/0XcU64VQiyErG2KMsxhElv0qzt8UDUcQ+yUMVwWYeaxNCTnnpLrYHq
+         Z9KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768609549; x=1769214349;
+        d=1e100.net; s=20230601; t=1768609900; x=1769214700;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=uWRJQTsxOUHCUsanLD6DVdXRUIeel0Iya9VReAfc2Qw=;
-        b=xMwvZ0q6RzpLm5miL6SB7andQEVi0JjNj4oMRQqU7limF3sGkgh/Cnd/6c4RfWoK17
-         PCoQKFVmhLYXva+YAQttdStadsMIUKabJtrNtnAX3fAsSqgQcinrANofpQ/VlxEw1kI8
-         jgmG+m1PCN7dyA7Mm8vtlhN6ncSjFhldpx6Jo0tIj5bVqGtmAPRX+wHfFExg98BXg1ny
-         VTcFjbS6uqRCRbq1maIR+H29sWdahanegLGKs0eDoLg2i6ch5dDUCCZ9Yp4Y4+3Y92yc
-         Lg/XCRAwZ+mIL5bQmeba3i7agv26bvuegKcTBUWEybaEYf8DGbk4r9lTdTRDJo5M6Ku+
-         kN6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNNzvImYbPe+8z7ZgZsvIaWBVr0LJRIrT2bnLc3DvajOjFzO8DyPb13HV35uZSZ+bKJcIDRCUJnPiJeA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRq91hoJZzroZNUuLg1xZ5HLZyk9FuZ6gb0olGeyuxyBJgrOG
-	j+fVmfEaaN/p+mMOtw/JHO895jSK3SEy0kZEPjOhUH47XdWPJxhPG93x
-X-Gm-Gg: AY/fxX6lWZcptOrUR/fhhDPjrl13UuowBIy6nracOTpLQvmiuXsV2Dvm6JiKfREv7uu
-	h2i7ssnqfUFPqCMeLTDB1I9otOhxlpRKuZ8jHFY+zgGw61K/bMGTqDd/GdnHtZERfVoacE2vgmf
-	CbWxQpjRNWSAYWr9alW62L9s98Bf554UEeVaDtK8lsaxk1TlidZu4qJiNSRYLinKC8BOp/Rycw8
-	+gQKtUGoi16I+2dm+Ps81MZN7v07zlPDyeVJ70KiAbUxLOLiEX0Kq1DxjIGYOUqStm2C25ia6lp
-	SwRCnN/ys0BescnEQyaIZLPKO9cD6XbWZEXTvY8yzU7FY54crUM7PpkTdbl2+EVsIsbZ1tBZ7fc
-	FCjWfQD8tgKLzEQfMCiTFIh5BeJenCau62nir7NWQznL883iiVViDAvXRU7MoB7XIHiYBCmDUA8
-	i9N4rrHqCi/1VGsZoBVAzXbiNlPUtAMscKOtQrqQ/IVcrtreicI5B3TQ1p/Fr2QCw9iCdIjKx6q
-	E0RsCc=
-X-Received: by 2002:a05:7022:4396:b0:119:e56b:c75c with SMTP id a92af1059eb24-1244a74ca46mr4331442c88.33.1768609548597;
-        Fri, 16 Jan 2026 16:25:48 -0800 (PST)
+        bh=iFv214rAmnxy+ZWfqYzxoI4aXe7hA3FW0xG43u2wRxw=;
+        b=WULKC58nnuZts8FjuDtVNdFrBp2AZA+pfiGtz4r8UEYVyYoK5anOLDLEDh94stc/Nz
+         gvqkeOiXME4JUidYGlYeEEMqc4k/IMK7YWhFVoNxzp8nmvGlXIirM0g0D0e5I/TXkBAg
+         uS+s8Be3iC85nSIkHDS1+9T09VvGwzHMMJz+mMXzr0Ktm0ab/DepZcIwvUCf4qrWHMwX
+         3qHtzpv7QpnywdammoOIKdEvE3SpJGh44EEPmuj4Fhzt9+R84yz2RVUPkRLtCLLd0/yW
+         OQwjryhkXjKB6Hnlv+ivbwT0MvP6zqddJJbnrC+RkzPXUxZUL3HjsSB8RNdcuT6e8tLH
+         MlAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV//emQWuhe1coplClXxKtLYI4Mo12FUJS/EpZZW4VAAPw03Ve3Ipj04JorfiEoj+K6ecXik206Pt+z3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnk9CQeAYmQHdC1uVCoS2r5WTq7pjNuu8/bnLcjWlP9ndghGu5
+	JV3e75vc28hDV/ReeBeNpxwpdVtvd2bim1mytfIcEib+53n8sH3puWpf
+X-Gm-Gg: AY/fxX6tv8aZJN6DNIGy7M7v9wCC1Awsi302420D5S9fKYFsK84ql6R35gzgSDrw6pb
+	Xbo73QsN6qfNXosbSkTXg6lxE3GF2JTNfPXUp6m6OOaW0op1Gra0phCeeudmgdkFN2Fr1l+fgA0
+	odxWvBgWx/pYDyQpYlxFlWTC5QTl2b37xJN0n4pv0uSLxK7ah+tgLRslSPyJuGefREpEjGnUf4G
+	8K4RJLA+qlvZ/+54sfibh8gP87cpE2KXNXWcTwGX8tM66vAO78yxOYzBsqC0i40O3xB5XaLi5QP
+	q2lYhMC2/YrpG6QFRsSBobUvB7KlWt7mJQVx5TtEBWuMmx+3EVC4So4CjMK5XxjTwHBU6T035s5
+	YbMgfa/TqvHOlTMcXuqcdv+7Ov3JkusYClZYjgjJURfVHmwUwa35x/q5A8AofL3UTkCQhnZ/dt7
+	6f/7bjjf3Y7WWuwqVzuwSeFM2eM6q150mkhhwBneFUzTEk9t1VlFhbI8MnJii3ki8ccohNMen3a
+	GJ6zRM=
+X-Received: by 2002:a05:600c:3b9e:b0:477:9a28:b09a with SMTP id 5b1f17b1804b1-4801e2a5861mr63784045e9.0.1768609900200;
+        Fri, 16 Jan 2026 16:31:40 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1244af10c3csm4418791c88.15.2026.01.16.16.25.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4801e9fb193sm27730315e9.6.2026.01.16.16.31.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 16:25:47 -0800 (PST)
+        Fri, 16 Jan 2026 16:31:38 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: devicetree@vger.kernel.org,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Aaron Kling <webgeek1234@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: smaug: Enable DisplayPort via USB-C port
-Date: Sat, 17 Jan 2026 01:25:34 +0100
-Message-ID: <176860947659.1613073.1005694583898145248.b4-ty@nvidia.com>
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: (subset) [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Sat, 17 Jan 2026 01:31:35 +0100
+Message-ID: <176860988748.1688420.11717122647073678.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
-References: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
+In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
+References: <20251022142051.70400-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -87,17 +110,15 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Fri, 26 Dec 2025 12:17:32 +0000, Diogo Ivo wrote:
-> Enable both SOR and DPAUX modules allowing the USB-C port to transmit
-> video in DP altmode. Tested on several monitors with USB-C to HDMI
-> adapter.
-> 
+On Wed, 22 Oct 2025 17:20:28 +0300, Svyatoslav Ryhel wrote:
+> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+> with a set of changes required for that.
 > 
 
 Applied, thanks!
 
-[1/1] arm64: tegra: smaug: Enable DisplayPort via USB-C port
-      (no commit info)
+[04/23] dt-bindings: display: tegra: document Tegra30 VI and VIP
+        commit: d262d030baef287da33344a932639aab5f913c3a
 
 Best regards,
 -- 
