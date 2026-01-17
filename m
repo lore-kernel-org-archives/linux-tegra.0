@@ -1,64 +1,64 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CE8143C61
-	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84990770FE
+	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768609185; cv=none; b=RcGYjGn5wDOwWI1j1bXq6ue5b1tRRR6BEnQiVivx3TtbllrQTXkth5EodqGYWPiITo9sGuLzfOHtX3hi5y1OQlXgFl9/EZ7zUDQSujRmWeK8lzGyUT8u1f2nS61ktw/5HD6kQFaE8wdWim4o6ibRFRfToFnDYa8TvAiJHG22Vok=
+	t=1768609209; cv=none; b=IEevs/aAHwSGjvZryogmbZ61h9kIxo8QIfYdA5iIHRLHLcpdqh0lej9IyLzwNtqWg4R82tLBvBX5y1453oiOGg+b1yAbd8+GCcoX7BsaypT2/YUTGVDjKadj6cNbHf8Ol6HHla7eDgcAcVEvq9ePUkdTBN4HTz0ImxbTT5ruLWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768609185; c=relaxed/simple;
-	bh=WddixO14B+NrKX3RH6X9bhZ895fa1HGCFdVzPGvd3eA=;
+	s=arc-20240116; t=1768609209; c=relaxed/simple;
+	bh=8VsYUdV+ZGtwBbWIdtRn602J4qIYJ25Ps5b08wwWbxY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5GJTTdwff382Ep58VFNpRs1R9BjU90JA/ZZq3sepA/Xsi59s86GxaGooHd+Q745S2Fmf+Sp/qt6C7ttO7rKBKGKVBYVDrMUxAkncma653Q+KW0H5ZjwWaYXz/BY8Wz1TYQn5s9hyhGdcyJQPVy+Y3i4miBjCugh9g9kkVEQ6is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGEUtYeI; arc=none smtp.client-ip=209.85.128.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyQlZQAioTNOcPPX5+1+PN5oADLvsBLggUybiS67eFy1V0o+4pE3hKS4S7CvF7g2DKpGoiBdnhXfzcdAqgfO1FjqcIA7JAlRhckPARWbOREZouHRYSsS4EU51CwVesPicsAx8UOV1BbA4vHh1IsfrS1cK8iodxY8LN8Lqemtnjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTV7uoRk; arc=none smtp.client-ip=74.125.82.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGEUtYeI"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4801d98cf39so9721275e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:19:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTV7uoRk"
+Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-2ae38f81be1so3364958eec.0
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:20:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768609182; x=1769213982; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768609208; x=1769214008; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qr4dd4sRl6alXbR76AfI/u+BBUeNx88I+aVBJKJ/FKc=;
-        b=nGEUtYeIPv8M7G1sWCyWOVHK8AE9lRN2HlWUBQUbeTUFn9OiRwOHtc7EmYoaRiaeot
-         XRj3mat8ttFSrr9KJ8s0PsCz7BcCirNR8E/OU4KCbXpYlr2T64RbsoqTvUkfnBEPO+q7
-         jEj8iaOXZn1r5Ms/sYccEzrA5jVI04r7NRLR7zNnx5lJVUFe2hy33N8UzNHhfs87YGcQ
-         r/ohaf19Gx4zs4uxqlh2WTId1f+bAVUowZCxtqt1wmKtsGskBmvNOfSgs0QG6scHomJJ
-         upgsTU/JE5HW+jUKkIiUZWTxjWVQkPVlXrMEqVrFQgoAokV1On7BB//qnOcyPo0PhSf9
-         17iw==
+        bh=cczEx05352KICGWcEnd+Dlv+PGQV2cIqtx8pi5Cp/Qo=;
+        b=kTV7uoRkUfwbHSU2NeGpYt0A2DjQKyjCQ3XpjeK6jFdONDRZdzMhKMVjK//zUmPX8L
+         AU51m0k3FxyqKhbBs1APeNKMDnznrvId6mQ52FvKSmVyWWZkGm3eORhjTMHAiOdbp3eC
+         Af5wugvuDxomYGT1E4BrM4QnFQrEEwNrztdPo7fXSFUCMDfVwl92BjpM4W8N2mA2/cXh
+         UahDc0VjojNV4c0hgp5h++Emy0cidn6aZCrSNjrxGWkkJTm9o0wCoiIyRD72VDhk9W9U
+         Nt/m8auvr1LO8QE0DOhr1J6rzVtGOcM+uTj+GvIH6O5ZWDGSNRT5Ay8b4dAMJikmIB48
+         m7cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768609182; x=1769213982;
+        d=1e100.net; s=20230601; t=1768609208; x=1769214008;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qr4dd4sRl6alXbR76AfI/u+BBUeNx88I+aVBJKJ/FKc=;
-        b=jlAZ9eXl0SeJerTSy5RhT1liwPkg0xFG0PfjSWfQBWbWSXFn/czn5s5l4i9SBvPqL8
-         xNKmkbIfZx4dIPhiY91JV2ORIccsjI6HaROEShOGc47rWPuS3nNZcWJojzVZkqNx3vAo
-         4fPCpsLKoXTVbmoGDhzRHwUe82XedtSgXpDXNYdEDQX7eOscWe1s6mozVGJ2lcWDcrbA
-         TkyKHGXwJZVKj7l6AlgAtx66pqZ/24XQt9DFrOWJ/GMtyK76LyqwhpRC1tu+qnWF6Ozq
-         guE3rDSnXsbWBvxwTcHsytEmbCK+BHFOkS/C4FNLwz0Jtni/F9Ssotk1i5WlEjcTjXHV
-         RKcA==
-X-Forwarded-Encrypted: i=1; AJvYcCURKJjRckL3lLK4X42iAQdp/4NlNCIxWtikP+dQOV4v1uQy+UE4akMyArwgIB10aIWnV4DIbEbP3D9Hlg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2AYoKrEye/rMsZzxZv+8KEf858vbJBy8lT2OiB6sXl4LeHCDA
-	DFmSf77XQcVbP2H7FlbaHLhM544PZmlrbl9X0u4MtlGwd3PUFs1w6z+j
-X-Gm-Gg: AY/fxX7geEa/RTtHSNuxFzxaTaBXZniP1eV0Pz6gS50N2CcgbUirns262XGwSmSpPxE
-	y8yCCkdFswrjSKNF6M++RQNoYTrkfQ7AwVgEBNd5BF5WOrMXuNgbeKefPP2c0WRmbuP3LTYYY+P
-	59Vl2mPMNbwMRZTJxrRG/dtLaYkxnZ+7+0uvnygW3mSaiwtuvzDqy+pEuAZaKl472OLHyZY8sL+
-	a+n25JS6DBrQvTYzzYt0rWMlAn68qKMfEQKCHcqg0ra+fpw6JZ92p/sne+Z84m8mHomZ4jny2KI
-	31oAmiPklnvbSyoITBFlWRC4vDHOBRrIok09hej0qPNDITB19SaDaTqbpJiCSJoz08KBpbgZsus
-	guTZhaL9d2cdfM+pjX6SipswtdyEoXTATC+CWL0dOlhdoLV3YBmx81bNYYuiMvpI+ywK6eOk1C+
-	Q1XVoovAosum36KJ+3BBLoaA1Sas2Z480saAx1rowwubVDWtQ9oGbOgLNsCT23xBJKCIKEN7NOF
-	Q==
-X-Received: by 2002:a05:600c:6091:b0:480:1a9a:e571 with SMTP id 5b1f17b1804b1-4801eb04160mr48471585e9.22.1768609182440;
-        Fri, 16 Jan 2026 16:19:42 -0800 (PST)
+        bh=cczEx05352KICGWcEnd+Dlv+PGQV2cIqtx8pi5Cp/Qo=;
+        b=VKHJ1bDErbxzFo5H79gAUoUcPQqwO1qq6EHcyrIJ3uJVh0BlBj7xQ30zEw1etXtEpX
+         OXbYDY37SApab2Zfe88r35xMUehjrQWffaI5ZMGarpm8WKRrAuetE4Iz8lWz5IiAS/OW
+         FBFO7bps0eKYY7QonOVw2f9QhZF8lSpeDDqxT+df5kPbo09Z8qQWHnhO1gjuXfW3XCGu
+         ZQxfLnj+eA5hOyq65pE1JXLg7rDMIvUIP05xPvWd1/UoqFnO6Ge5LgbLURI5rA/gZLLT
+         09nsLTtWmH56PfIFIUulooxgqsXEOJbR8ztxmxTRAh9qt2zfUeKbgpNW7NQMozBPs19M
+         fQAw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/XES7uYetV/hzZUb9zmRCpIOI/4tDbYVbZdKKjL7xKUFj0Wec5vOR6NflN55fiTTK9NYfVxIW+fblaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu8ZaHiEDprg+I4v7ePjun8intgteHFsWeqUTpW/n/KJsQAsRr
+	lrl3hLz4vAqtcDx7s7/gwV9l53bxkpe+AP2psgm2mHDdVOn4C+5La1ZQ
+X-Gm-Gg: AY/fxX6lZYhiOT6/82KiloxULrYCH7gkgrBO0Br75eMPI19+o/qEFTFg8J7hkC2oy/u
+	7jZpYN67CRGp7O1AOx8bxedE+/xgvScsolZMsE3SnF4bGoMC3sjSEHRM8G96MKHyeqSLlMDlvME
+	gJbhmADKmjKoH/b0bp7WKcv5dKGZ5tkmfFxyO/AsRI9KugFaGtr7fOerVhnYX4fLMDhnUXwW3Q/
+	sCaP7gu8G8H80JxAvIr7ilZw95r0vwvxWsw9EAWWsOX5v0MgFjby7X4tnmj6RUWN1xo3Q1VbQfl
+	Ba4/cBXiLz8wEyduATa8Wrq+hy0j+SlxAU6rareV+/dmSkXl3mXMAQe5pcaHlEHIjz6b6X0Ns3p
+	LUXD2x2H5S1fbi7ojfeYRtXldam8dcVfoGscovvcKSWzyDdcVKM/S9hL4ZDun2ZonIVxIVaaNnM
+	BEK55t8iMZ9MoJmVke5KDykHS0VFeY26x7IZwvzPMoxCPZbzVEV68RcbQrhzJAWGjOUY0zUBuUr
+	A==
+X-Received: by 2002:a05:7301:1e85:b0:2ae:546a:f2c3 with SMTP id 5a478bee46e88-2b6b46d2dd9mr3435395eec.3.1768609207520;
+        Fri, 16 Jan 2026 16:20:07 -0800 (PST)
 Received: from orome (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f4289b7aasm124804445e9.2.2026.01.16.16.19.40
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b36550dfsm3932999eec.25.2026.01.16.16.20.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 16:19:40 -0800 (PST)
-Date: Sat, 17 Jan 2026 01:19:38 +0100
+        Fri, 16 Jan 2026 16:20:06 -0800 (PST)
+Date: Sat, 17 Jan 2026 01:19:59 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -70,11 +70,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
 	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 4/4 RESEND] ARM: tegra: adjust DSI nodes for
- Tegra20/Tegra30
-Message-ID: <aWrVjkNzmowjPr0i@orome>
+Subject: Re: [PATCH v2 1/4 RESEND] clk: tegra20: reparent dsi clock to
+ pll_d_out0
+Message-ID: <aWrVplD0jfx-JM1v@orome>
 References: <20251204061703.5579-1-clamor95@gmail.com>
- <20251204061703.5579-5-clamor95@gmail.com>
+ <20251204061703.5579-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,50 +82,50 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3ps3p3ummquvspuh"
+	protocol="application/pgp-signature"; boundary="jaydkfl2lwerisz4"
 Content-Disposition: inline
-In-Reply-To: <20251204061703.5579-5-clamor95@gmail.com>
+In-Reply-To: <20251204061703.5579-2-clamor95@gmail.com>
 
 
---3ps3p3ummquvspuh
+--jaydkfl2lwerisz4
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 4/4 RESEND] ARM: tegra: adjust DSI nodes for
- Tegra20/Tegra30
+Subject: Re: [PATCH v2 1/4 RESEND] clk: tegra20: reparent dsi clock to
+ pll_d_out0
 MIME-Version: 1.0
 
-On Thu, Dec 04, 2025 at 08:17:03AM +0200, Svyatoslav Ryhel wrote:
-> Add missing nvidia,mipi-calibrate and cells properties to DSI nodes.
+On Thu, Dec 04, 2025 at 08:17:00AM +0200, Svyatoslav Ryhel wrote:
+> Reparent DSI clock to PLLD_OUT0 instead of directly descend from PLLD.
 >=20
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  arch/arm/boot/dts/nvidia/tegra20.dtsi | 4 ++++
->  arch/arm/boot/dts/nvidia/tegra30.dtsi | 8 ++++++++
->  2 files changed, 12 insertions(+)
+>  drivers/clk/tegra/clk-tegra20.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---3ps3p3ummquvspuh
+--jaydkfl2lwerisz4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmlq1ZoACgkQ3SOs138+
-s6FU/Q/+JnHz4z3iaM5N3GbdNqivjMvosUv7yPpTe+rH1fd0qedCwH/Ozg5mOBAA
-fj89b6CFl8jNcxU26br2W7ePbJCqnz9+SENaMtlKZbUMXOd5rDzcdie2PMSclLxH
-vC2ycq79lAOsKcUWCClkQb5vqR2Dny0w+Ph3Z94DhdxCpW0/NWWswmT8NePMsiNK
-dgFtnWfsbzDYLzuNi6tSfngA4sHR68lmmoywqje+s4L1LEgCjVQlbJLDt7ztniOt
-zp9kkVMbF03fOeyjk0L6iw+0MEHHGpCWWBqg5A0YG54vwot0kkb8E97tdJUBQJ9K
-2vgxQ5hrsAYcJVh0h9SSiAsVXKJq5gu+0grEiFClSZbHMbFb5+J003t8Stk+2CwP
-vKtIurLRZ65Dn3eQt2p7trRJzjfdQcSmATMUeoEqV0ledh40y2b/ACm8OgtE0HTq
-hEJYyaOjbKUHxy5Asmp9Ioe7iDaXlOlK0L2w+ZAP0Hxaaem1Zfr9RRkA1wZIdhsy
-/8ao0kVBfZCC0l8vN8/wEQm+3+P6QS45JpqCe4xj8OgJozy8qZU53UJVr1T9cc+l
-BUuegRtXLa3Lv3vnxfHkQvNJ1CiwyrOEzFwOsoC5fjvToYWY0zQ5WSF/jW6+8yeH
-yjb9+tfoli6Gml1zk63cL3Srqflb5bX2FxXT4dxCAvU3V1ErZtY=
-=KaHS
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmlq1a8ACgkQ3SOs138+
+s6G7cg/+Nqq8drdePQg7ZDPcGam2jT1OJFozjkQqShUwbw65NT30Ld24jWkBEDET
+V66VMxWnuD+FqJUtmYFgBgP+09riMOIn1kjUwq48fs2/gTigorAcdLx60a80NuP3
+uBece6NnnstpG/euRgY5blBwruOhTSyLnu9JPOVnnRSAoRncMndRKLWRykAn201U
+ikxuUD7pdh2KLMbPDdqQaTgE/IyyEqjmtt8N50vHBLOZZAvgxaG7UwQsf5RH/KUh
+GbB1fyfApGFoCvVJJT+Y3RIH1R0UA7Cz2iQ9BpnWq0qKZbRdx2aD3YoEhsAXT+qu
+U/bY+kcvYwshKoxl1KQoM3jkk0k4V7QoN03fnjyR21ZsXjnQzf0RKu/0UzC1BK5y
+vLBkf9olK7gFjgLDjrXEzKQUB3sIY/YGWig21onNSMU69zB+JOB6Y8ClDIOoyyJY
+HtzjYhTgsuwPMi1vocOk2HrDTlWl7KYZOOi2y00YGp8/bOhWoOvP9z7D4AcbR3zW
+kV248pj2Mzd/4/k0H2k69lMZeoBlXZnxAtK07aADqo7eRqYEFUjaESqAPSn7y1OL
+5wSs+0gnrfv7vEAC5r1wJ5e+VEXk20ErPvTfzrbQtmo98iyWuRLvR1e7t5X9vuAj
+BP+2EYu0xjdpPW9R9wuZG04CSNWKx4490GPl+9UTm8BmHsO5kPk=
+=bC1o
 -----END PGP SIGNATURE-----
 
---3ps3p3ummquvspuh--
+--jaydkfl2lwerisz4--
