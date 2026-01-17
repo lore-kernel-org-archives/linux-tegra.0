@@ -1,87 +1,80 @@
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+Received: from mail-dl1-f66.google.com (mail-dl1-f66.google.com [74.125.82.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F5616A956
-	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629CB1B85F8
+	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768609547; cv=none; b=tTTm74wz2jQ8BCCONpFzWVwFaMZnjPOnLjlEY/HwqQ0pv5NrQo+ux7GKjVqAX6BDDtByTDQug9eI4qK16QxiCabHNWrtJ1jweLzU8y49Q7BXnWzLM2IxJyf7Ztrx5cnpR0tRhg8NKlOzjC2K3iQE5joq8SUk7vf9Rztx7tjO1fM=
+	t=1768609552; cv=none; b=fIChW04qVx3XHyZ5XESwdLFs3MufhmEBcz2Gvx1VuHGCH+2q9ljZx+GgKWvUi+uFYqHiTp19O3E63zDYy0xwMSe7sPCVcIR2yRiVlei6ZDMobl/Q6nNIdGS823cpdtWtQqdU6FMzd8Kf7grraQNWnPiDAxhxNSWy+XNIS11Slc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768609547; c=relaxed/simple;
-	bh=Id75euKpfQTJco8yENL5IWArmZd3XiPG2kUkByIZOUk=;
+	s=arc-20240116; t=1768609552; c=relaxed/simple;
+	bh=1Pihf5lbWkVay8sxliYYrZJf63s7eUo9QUF0VnXRwZg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mIk1AEL9aWGI8NGpeZjVHc9NH4CVnJXWYFQf+Sk80cJ7Cnspv9FMr+qP5vMpwSSsAsXUDi+CfYirDKC+NpPxuKUg69KNGVYRq77qNP40FlZmlyuncnyk5DikOsITQIMU5/8umB49UmzXum04oyxaU9JYXXe6/scqMiGS35miZ7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfDR9dh0; arc=none smtp.client-ip=74.125.82.179
+	 MIME-Version:Content-Type; b=iGOBe1N4TzdpmODZ1bR8uRbewsZISJlLiC4kurIW98xnJSnYuWli1TWvDc0ZSZOqI3kyEpA3NBxbKS5p3El7ouTKgfJiIfmVtOG3IdEWjrWHtTv8v5TLj02Qb1PEyHgsuWsNWgpVDnjBZse7wEkVHUOFAQ3osCuaP1XqL0ORTVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/ED+WLy; arc=none smtp.client-ip=74.125.82.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfDR9dh0"
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-2b6a93d15ddso2251904eec.1
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:25:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/ED+WLy"
+Received: by mail-dl1-f66.google.com with SMTP id a92af1059eb24-121a0bcd376so1789599c88.0
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:25:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768609545; x=1769214345; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768609548; x=1769214348; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cs/w5dukbECq6vP+JVY/PT3LY1xl+bSBRNaUMsBTQvY=;
-        b=bfDR9dh07Ax8yCTUpMajEXGrrxJvdyZl6MQIkskM2fNP3et7b2njGJgjGUlc908qbk
-         b9WLI6WMyMA18iOAi+BM5A8abDMKOMGM4j8XJTOu5KvO7YzS4/LkPAWn0eNzqtX6hdVu
-         rZblcccOEJXr6NdVzSc2lpdeTTizyNf9apFtYL5fEwOlRHvZ6fX+k/kqIBK3mKQTk2eD
-         BIjgDXiVes6u27kFXovWrbI6kshYWYc6nDMbq35+X1XNLReJMfE2tmChjqlYeoqxTZWn
-         I6EXGragJ2eGeSmccFmuALCUel7GnL6ZX0Azy4n1G+gWRYTZzYcWuzeYvVmJEgcD7/Re
-         apew==
+        bh=uWRJQTsxOUHCUsanLD6DVdXRUIeel0Iya9VReAfc2Qw=;
+        b=S/ED+WLyi6Ifea4YMgL6aCaXSr62rPh5qfim40Ish5OTcoOW4qS840IZUQoelgmxP6
+         tVKIcr2fYdR3xuBd7FgHDyFW50FPrD75F9i0mJdsOpHyFDeX/HVgYIZZJmoWzMT8wbrH
+         oT+kRMLe9vyLXxbUO/moHVSyA12HHJRAPH03H16YkrjshWkKoJWJI7riZVOoAfhgDCVU
+         MC5/kmM/xrzbbYorHT9eQP3ARw4/qm1V02T0o0HNBmvpkdAGnIvIJlk+NLZf7DCeDxl2
+         XpIttv+8BEelQDtfi67rdir1A/15itJ1I5LUApgojSLBp4sWaIkDrXYFfbLcTw6f3sPV
+         Kodg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768609545; x=1769214345;
+        d=1e100.net; s=20230601; t=1768609549; x=1769214349;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cs/w5dukbECq6vP+JVY/PT3LY1xl+bSBRNaUMsBTQvY=;
-        b=EgzRxQCoT4XsNiz2vUedQgfRntL6WihLiJAFFUEhyuEFOll8JEGEVBJiUM3wBSdsIK
-         tzgSCVfQjZ2IZnwvOPkIaWeHY3IfKz7EFc42ZvC7gpSuDwMCrMCpO93VatZvGfDjrveK
-         8khKGAZIKKpJwJlOR7UYnXCjv+FLmzB6KZUikVuaLU1yXIaXMXfcfZ2BypWtAHfhcNyg
-         n5cAqSiCbwFarIxuQoBlE0pJAEnrnSE9R3d8kW7K6rcO6L6iDvH0DlNOQJ4ksXoQfO6y
-         UlgRN0xdFFXoHrnuzR+wOggLtFbLzXVCQ6S98J37OWP3RMcecWnPf6VCZvm17sufU2gn
-         hL5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUBH5aaclqXd+MIW8VtftJpY9igd8CaKnVBd4mBI5Y6Oo4Xz4WIfO5UlKgs3GtBHfHxL9jsIXBT5dccwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8i4tXDmK0ip4Ey+XXPTB8MsuopDPqoV5G2zRY3n2ovzEB0Z1z
-	vlEunJnCP4+Ma/2NEvIEw4Qf8oIHJfeIusAzSRQBBo5TBVIvaPwmhRXL
-X-Gm-Gg: AY/fxX6gywsq8dSi+/5wTGyVRMWeIM5RxpyATRmizKKhhVBerxd6jKdRqmveYzLIOiX
-	SNjsgqUigvIoPGyG7j4lZbVmqZAUEv6ixIHHI1E6Xs4A8Ji8/dFN6kywwAvSdUiFDqJZt2xx+fj
-	8d1d+dvZ4W0Y4phrjgnLsZZg9tW7gZrZvgpvmiVju1Fysu/ZAk/9qhJigmpx9LSvEz4qXe9sPZ6
-	ley3FQbljQmLVma7BlHSNvWOAMZ9MgejEBfilB3C103zJ5vRjxA1JQGSyCOhYqU4zw8oWKHthAj
-	VrBibdBqk/vXG492M3v8d2fVnSQBiqIFWUUjhQdXXXKr8lFhwT2562s8lac+M8zkYugUQQQAelS
-	KeSVxWDzbcSEx6rMmVtcQi4eSvhSIbCwCpSluKIg3c79FHh3kQ22Clv78VZpa5j7sQft1kXR0f0
-	mHVhKjjiyxOMHiRdoeMcdedtYI+AsumfWhV5rFBRB9aEhdguQwJn/S0ymOVaBB6w42HUQZ0oH7I
-	3GqbtBCe24Pygzudw==
-X-Received: by 2002:a05:7301:2e87:b0:2ab:8ef5:df2 with SMTP id 5a478bee46e88-2b6b40f0c13mr3046636eec.35.1768609544724;
-        Fri, 16 Jan 2026 16:25:44 -0800 (PST)
+        bh=uWRJQTsxOUHCUsanLD6DVdXRUIeel0Iya9VReAfc2Qw=;
+        b=xMwvZ0q6RzpLm5miL6SB7andQEVi0JjNj4oMRQqU7limF3sGkgh/Cnd/6c4RfWoK17
+         PCoQKFVmhLYXva+YAQttdStadsMIUKabJtrNtnAX3fAsSqgQcinrANofpQ/VlxEw1kI8
+         jgmG+m1PCN7dyA7Mm8vtlhN6ncSjFhldpx6Jo0tIj5bVqGtmAPRX+wHfFExg98BXg1ny
+         VTcFjbS6uqRCRbq1maIR+H29sWdahanegLGKs0eDoLg2i6ch5dDUCCZ9Yp4Y4+3Y92yc
+         Lg/XCRAwZ+mIL5bQmeba3i7agv26bvuegKcTBUWEybaEYf8DGbk4r9lTdTRDJo5M6Ku+
+         kN6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXNNzvImYbPe+8z7ZgZsvIaWBVr0LJRIrT2bnLc3DvajOjFzO8DyPb13HV35uZSZ+bKJcIDRCUJnPiJeA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeRq91hoJZzroZNUuLg1xZ5HLZyk9FuZ6gb0olGeyuxyBJgrOG
+	j+fVmfEaaN/p+mMOtw/JHO895jSK3SEy0kZEPjOhUH47XdWPJxhPG93x
+X-Gm-Gg: AY/fxX6lWZcptOrUR/fhhDPjrl13UuowBIy6nracOTpLQvmiuXsV2Dvm6JiKfREv7uu
+	h2i7ssnqfUFPqCMeLTDB1I9otOhxlpRKuZ8jHFY+zgGw61K/bMGTqDd/GdnHtZERfVoacE2vgmf
+	CbWxQpjRNWSAYWr9alW62L9s98Bf554UEeVaDtK8lsaxk1TlidZu4qJiNSRYLinKC8BOp/Rycw8
+	+gQKtUGoi16I+2dm+Ps81MZN7v07zlPDyeVJ70KiAbUxLOLiEX0Kq1DxjIGYOUqStm2C25ia6lp
+	SwRCnN/ys0BescnEQyaIZLPKO9cD6XbWZEXTvY8yzU7FY54crUM7PpkTdbl2+EVsIsbZ1tBZ7fc
+	FCjWfQD8tgKLzEQfMCiTFIh5BeJenCau62nir7NWQznL883iiVViDAvXRU7MoB7XIHiYBCmDUA8
+	i9N4rrHqCi/1VGsZoBVAzXbiNlPUtAMscKOtQrqQ/IVcrtreicI5B3TQ1p/Fr2QCw9iCdIjKx6q
+	E0RsCc=
+X-Received: by 2002:a05:7022:4396:b0:119:e56b:c75c with SMTP id a92af1059eb24-1244a74ca46mr4331442c88.33.1768609548597;
+        Fri, 16 Jan 2026 16:25:48 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b3682540sm3944277eec.34.2026.01.16.16.25.43
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1244af10c3csm4418791c88.15.2026.01.16.16.25.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 16:25:44 -0800 (PST)
+        Fri, 16 Jan 2026 16:25:47 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	JC Kuo <jckuo@nvidia.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
 	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: linux-usb@vger.kernel.org,
+Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/5] Fixes to Tegra USB role switching and Smaug USB role switching enablement
-Date: Sat, 17 Jan 2026 01:25:33 +0100
-Message-ID: <176860947663.1613073.5692699224170959766.b4-ty@nvidia.com>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: smaug: Enable DisplayPort via USB-C port
+Date: Sat, 17 Jan 2026 01:25:34 +0100
+Message-ID: <176860947659.1613073.1005694583898145248.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
-References: <20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt>
+In-Reply-To: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
+References: <20251226-smaug-typec_dp-v1-1-7eabcd59da4c@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -94,23 +87,16 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Thu, 04 Dec 2025 21:27:16 +0000, Diogo Ivo wrote:
-> This patch series contains two fixes for USB role switching on the
-> Tegra210 SoC, as well as enabling this feature on the Pixel C.
+On Fri, 26 Dec 2025 12:17:32 +0000, Diogo Ivo wrote:
+> Enable both SOR and DPAUX modules allowing the USB-C port to transmit
+> video in DP altmode. Tested on several monitors with USB-C to HDMI
+> adapter.
 > 
-> The first patch addresses a wrong check on the logic that disables the
-> VBUS regulator.
 > 
-> The second patch guarantees proper ordering of events when switching PHY
-> roles.
-> 
-> [...]
 
 Applied, thanks!
 
-[4/5] arm64: tegra: smaug: Complete and enable tegra-udc node
-      (no commit info)
-[5/5] arm64: tegra: smaug: Add usb-role-switch support
+[1/1] arm64: tegra: smaug: Enable DisplayPort via USB-C port
       (no commit info)
 
 Best regards,
