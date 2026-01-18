@@ -1,62 +1,64 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E5520C477
-	for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 08:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D142049
+	for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 08:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768723389; cv=none; b=Tg6VFoIOJzWY2i4PqhEv+Va6XSretIbc3PsDFBY0WOApHSB2UrIP8p0tWY5h/lyRJZ0KcKEJ5nl8cK/57w2D3S+1Qs4VQEh9yCWmdSiV9AIF518540WlPav0dUWQEYRvgDHjLWzN9Brsc+7Fr8Svm1gTztE3ez+mVkxrfrq7mas=
+	t=1768723392; cv=none; b=DVVJcOJslGq3NuPyWVyRfQBmGAoo8AMTWX08b9yoA6/Y7lCW+0zuWGkNBYju9wRWCk9liAOiN/xPhfH9NaH2myZXgk3mqE/ita6KgRI/bHwDaLyzAODTpFNFLpq7BjqUvn6uet2uC6FCcvOI071UNnJSGVp0W4QuDvxCCQ4w4zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768723389; c=relaxed/simple;
-	bh=jrTP11soEfORrLVH+xR41AKz6lAjKbEzIalTUkv5/1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=olvCOqtMsBQv480g76p5CnHD+D7Kkr2kn7UlBjIhnX65RycjcoTmxt7D3D+w55nueuF2/rye606/Bh34gc8D8BR6K8KMcBWUldJsncrkj15Hu7IeSSaS2ou7D/o8pk0WSWselBhIBY9pSw+6yKnYElmRU67rRe3vSSbWadv0Q0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJVTbgsI; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1768723392; c=relaxed/simple;
+	bh=abPb8hIaBHO1pitSFBec5OO0Rd8g4FIfut3VTH1oglY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WqOvHhrnzo4kDWCK7pdqEWi6NKK6bFfEMIgIh7d/3J4c/9pOmKLMrdqtiMH6wlzyi+B/O8z0+BTXfUfl3yrnGzrvJBtJZCkEX2chiDI/gWnNH4lKnbrHscWjQpBWOUB404EuYVDxdQ8WibYwfAbBa2mxQmcIN6iNP7MpxmF6xZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSNx5R5k; arc=none smtp.client-ip=74.125.82.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJVTbgsI"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47d1d8a49f5so20043685e9.3
-        for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 00:03:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSNx5R5k"
+Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-2ac3d5ab81bso3600272eec.1
+        for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 00:03:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768723386; x=1769328186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S0d4JaXYJUmXcmKZUFMKusPIGrJ84LJQoTA8blpIJf0=;
-        b=lJVTbgsIf9kMoTS0d6IlfyUlv1XrXd3Ep9V2rQVJ3w9j1RJ61JEcwoZbvGrF/qwYRb
-         5PaWmdwpRyBDXFnp/9JxqTjl33z+U6dXTgs1gwMAGEh69QG7cYY3bGp4wEc6GBp72Oj8
-         nwg0Bfbrfbiy7LvUonDpCWF6/YC8U3VZ4S6MFi8rrPYzPLY4mRn4yMLaEHv7yly6mA/W
-         BbVJz7qdT++2NUBTDGsMxEcS/3++6HVNbS/qIikPkFwvkJjJOyLuM7F4saNkeFKRhRBp
-         adjsBPlR/clgpv+1oHDXeJQR7LlvMS5dyfhb9p7tIrxmCd/1fWVAGLv0EfGG+C5RmX/U
-         KEzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768723386; x=1769328186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1768723390; x=1769328190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S0d4JaXYJUmXcmKZUFMKusPIGrJ84LJQoTA8blpIJf0=;
-        b=DN+w/FDxRuY8n+5xdpSqzjHreMm+LNJMLoZFAKbG6Ry7GryXgaOwphCzMv+gmxa3lF
-         lEiMqastV6le4oyK7b+G/cOdEw8BotrtezWHMEA0/EEb/USUDf1mzAirgHspYgaDA3Xi
-         E5cP9Tl40P0DLWbXecUmaGvYN0TR7DKMvjtU5IWZfFJacU8M95q9DSoYFRwgdG+3vdVQ
-         zDPtXuaOHJVPRKP6jeo2R70uq6nEkT/Mjcrb0Cruk9iGf8LYWQ6BrffBUY6kPa5DPSEo
-         lVoNVFxR/s4QHA44+suDaH/+XXQyRR4x0RvCh4TVaHCfztCpcm7D6j9A0uiEXtAicr2t
-         uKsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOIwiu7WhVlTLU5Sq/opVq6OyKx8FtEnyHSRat3BpM0eg6Cp5XAjHYgYd/b3NhZM6JzOSHG4Ggzadpnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb/8HgpbR/jW8aQ3ZuidggjJJAgJFBcIBDQ8V1nK2sKtA53nHP
-	Rs8kHhppw2q6n8287uKawMHyRWb/dQHmRXjT50p6RNgxs4qzmvUZ4jCM
-X-Gm-Gg: AY/fxX4yr+kSfZ7EgSLRF/f+0vuDx5SkkcHp8j7JvVWAZTGSvdjWqVXzyPi8CEEEtQt
-	OprnNSysGDq6iLLkaN56M2OUzt/fn8x9+cAflSvJ4Ekhxm3KmNVB8atK/s8kImWZgRa7LPO66Mq
-	EATF5vi8+c0xw6uCh8XFLG9RM+gSsE5RIFJgCO3L+DFn07iZ8uj6mIJwIO+DW3z8UPKv+w1mSir
-	7jGEWY8SgVPQYS6WClywhMrVd75DRNSKwTCka3qhHVYJ2OrtR4XNZGJGzrtqsHFnKHf0ynMrJvC
-	bFCejNE8INCfnrOmL9pwsdrXnA5z/rQeln9p/9IkyFTUIznMX0sWsxT36ae1xBfIW1FiWT/p2ht
-	emI4d40F2vWifL3usH3AxnJARnqxFYyc7fmwrnSp6TzPTdm3VfAztQoqNChoyF59glrkXj1p1t1
-	zxY/GwUcTBnApB5IAu6MrAa+FVu/IGutEGjWv7U0H0zThddDwqJsiZwJRivY/dNci8qZQJhGdxc
-	4BbDBs=
-X-Received: by 2002:a05:600c:4e50:b0:47e:e946:3a59 with SMTP id 5b1f17b1804b1-4801e3503fbmr93270645e9.34.1768723386007;
-        Sun, 18 Jan 2026 00:03:06 -0800 (PST)
+        bh=kj8UfNtBvaeaAbcPqe3cu399aKYUpefB3CwEh0ou4Yc=;
+        b=NSNx5R5kmkOVHkla7nHvDnx42qctCyXadiwGvsMUxa101CvrVcaqgFMGxRxiejULq6
+         QWiMBi7qmbpK+9/jDLkhsTg2BoYSHFYoKMVZEV1Rm4E+gaPjpnUVZzmr2siwAyrnYShO
+         BKBylwPAntwMyLtfEt900GrV/iUuH+96PxIEuoI817qpiGCpQl8r/6oUGATWbfMwgSG7
+         WD6R2FROCoEdyFK80x+Ny1CiQ3FDloU2SwXYp7gWBrkz0ahaNTobtdrOzsOApL91aW9E
+         e5aMwoRwVFq63yvbwn0ZOlLEQMcJhC86HSvLxcGjXzjsEwPCDRX7w58cPj/JJEmudXHz
+         aPfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768723390; x=1769328190;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kj8UfNtBvaeaAbcPqe3cu399aKYUpefB3CwEh0ou4Yc=;
+        b=s2d7cELQ8ui6dUqf7fRbTApWymdivzKCdbezGMvBdKoseo4oxfgkBPjZV0AKSdMaHK
+         BddJLUC/pakJmzJR1xEaHDC2R0mRvB/DMvO4wLy4dNjuHbcf/9efpMYiRklTA5OE3NEL
+         t9I8NdUl/8s4YyAgeWN35SjXxTsVgmywdiYX7Tl4HfKnw4YZfBbTwhbHw39c91ZCBC/n
+         Ymmdk+1iNYfSghhT5YH2yfc8ZPHEL+sJLWV0XznCPX2SVhYGBZj83cz2efM6ey+Kswof
+         /VUVakdeE1tU+SQXHZnH3J22bY1yHfxjZ7ii0rTj0K0E3+sstyLTCjH/qLwI4dOfrLep
+         iGvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUy8rFjg3E6ktQby0/Me32s+T21k5U9DZwQ3iL1LT55PGfdCt2Q1By0rZAyJvVa9s0ikFFZ9sJOG2vygg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPkjxV312uODfqekAw3Iq1BwmieBVyzrah3tqh8rQmSaUxeIDv
+	NCzrozl6dFNuZ+kE6zFYUbD0NOgDeRnk/BF4/9Cut4QnKEITnr6YkpGo
+X-Gm-Gg: AY/fxX7nKGpR3sg8h1RUAD8egonv72psoD3kW+L1a9XZxw2Af4YVZNSIWZ2PZow0E6C
+	XIgjkhyAXg4Cv9dFa8AtCUb9/envnHqCe6SNkrtvOJsukAzE/isg0xfVEZ+14B5zbyYUEmqAsnZ
+	tEixHe6B86tlGtC9Tbhfhq2c81gJUdmyCuDeIEZzigIp+f8hXzS2OJj70LyCK4H97hrh0RheaK6
+	p7vsPVuZFep08Pn5KVXjsgu4dq1s2cCpnOfg5UpEQHXk6RI5m17nKiCgj0PhsLrIUw9XNPymNhF
+	IIATFCbtr/GA1h2gYGDNlXNMEFqlfWIx2Zt6Wy6QQSyn9q3tkKot4KhHdpme4c/QQ97ldZe1O8R
+	g96bxsBSTsEOUDeCG5Lz2IFH4qI3rArFGZsR0GniPFDJ8fqAJoL/ZAw/z3OWDHI59/B1h+PlxXh
+	97aIlvJyrHs9xJqR7K5jIVib8q6QzS+bYYss6deNwuWmNdYz27GrpgZsry7hOOvpa6IYNMbpw7s
+	T6LY8E=
+X-Received: by 2002:a05:7301:1687:b0:2a7:83e:7b17 with SMTP id 5a478bee46e88-2b6b46e6ddfmr6064907eec.12.1768723390082;
+        Sun, 18 Jan 2026 00:03:10 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f4b2755absm229099345e9.15.2026.01.18.00.03.04
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b365516asm8498854eec.26.2026.01.18.00.03.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jan 2026 00:03:05 -0800 (PST)
+        Sun, 18 Jan 2026 00:03:09 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -64,10 +66,12 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/4] dt-bindings: Changes for v6.20-rc1
-Date: Sun, 18 Jan 2026 09:03:00 +0100
-Message-ID: <20260118080304.2646387-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/4] soc/tegra: Changes for v6.20-rc1
+Date: Sun, 18 Jan 2026 09:03:01 +0100
+Message-ID: <20260118080304.2646387-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260118080304.2646387-1-thierry.reding@gmail.com>
+References: <20260118080304.2646387-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -85,63 +89,41 @@ The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.20-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.20-soc
 
-for you to fetch changes up to b2788f6320722d6059f849f35a77eb082608c627:
+for you to fetch changes up to 70f752ebb08c85a5ea19471a5aaf26263e53dcb0:
 
-  ASoC: dt-bindings: realtek,rt5640: Document port node (2026-01-17 01:58:18 +0100)
+  soc/tegra: pmc: Add PMC contextual functions (2026-01-18 08:48:30 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v6.20-rc1
+soc/tegra: Changes for v6.20-rc1
 
-This series updates various DT bindings for Tegra architecture,
-primarily focusing on schema validation fixes and new feature
-documentation for Tegra234 and Tegra264 SoCs. Key changes include
-correcting realtek,rt5640 audio codec bindings (adding missing ports,
-clocks, and jack-detect sources), converting Tegra20 NAND bindings to
-YAML, and updating memory, DMA, and IOMMU definitions for Tegra264
-(introducing CMDQV and DBB clock support). Additionally, it resolves
-legacy warnings for Tegra30/132 display and VI interfaces.
+This series primarily refactors the Tegra PMC driver to eliminate
+reliance on a global variable, transitioning to passing the tegra_pmc
+context explicitly across clocks, powergates, sysfs/debugfs interfaces,
+and power management callbacks. Additionally, it resolves a warning
+during system resume by deferring an unsafe generic_handle_irq() call to
+a hard IRQ context using irq_work.
 
 ----------------------------------------------------------------
-Ashish Mhetre (1):
-      dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
+Prathamesh Shete (1):
+      soc/tegra: pmc: Fix unsafe generic_handle_irq() call
 
-Charan Pedumuru (1):
-      dt-bindings: mtd: nvidia,tegra20-nand: convert to DT schema
+Thierry Reding (10):
+      soc/tegra: pmc: Use contextual data instead of global variable
+      soc/tegra: pmc: Pass struct tegra_pmc to tegra_powergate_state()
+      soc/tegra: pmc: Store PMC context in clocks
+      soc/tegra: pmc: Embed reboot notifier in PMC context
+      soc/tegra: pmc: Pass PMC context via sys-off callback data
+      soc/tegra: pmc: Pass PMC context as debugfs data
+      soc/tegra: pmc: Use PMC context embedded in powergates
+      soc/tegra: pmc: Use driver-private data
+      soc/tegra: pmc: Do not rely on global variable
+      soc/tegra: pmc: Add PMC contextual functions
 
-Jon Hunter (4):
-      dt-bindings: tegra: pmc: Update aotag as an optional aperture
-      ASoC: dt-bindings: realtek,rt5640: Document mclk
-      ASoC: dt-bindings: realtek,rt5640: Update jack-detect
-      ASoC: dt-bindings: realtek,rt5640: Document port node
-
-Svyatoslav Ryhel (2):
-      dt-bindings: display: tegra: document Tegra132 MIPI calibration device
-      dt-bindings: display: tegra: document Tegra30 VI and VIP
-
-Thierry Reding (1):
-      dt-bindings: memory: tegra: Document DBB clock for Tegra264
-
-sheetal (1):
-      dt-bindings: dma: Update ADMA bindings for tegra264
-
- .../bindings/arm/tegra/nvidia,tegra186-pmc.yaml    |  11 ++-
- .../display/tegra/nvidia,tegra114-mipi.yaml        |   1 +
- .../bindings/display/tegra/nvidia,tegra20-vi.yaml  |  19 ++--
- .../bindings/display/tegra/nvidia,tegra20-vip.yaml |   9 +-
- .../bindings/dma/nvidia,tegra210-adma.yaml         |  15 ++-
- .../devicetree/bindings/iommu/arm,smmu-v3.yaml     |  27 +++++-
- .../bindings/iommu/nvidia,tegra264-cmdqv.yaml      |  42 +++++++++
- .../memory-controllers/nvidia,tegra186-mc.yaml     |  13 +++
- .../bindings/mtd/nvidia,tegra20-nand.yaml          | 102 +++++++++++++++++++++
- .../bindings/mtd/nvidia-tegra20-nand.txt           |  64 -------------
- .../devicetree/bindings/sound/realtek,rt5640.yaml  |  13 +++
- MAINTAINERS                                        |   2 +-
- 12 files changed, 238 insertions(+), 80 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
- delete mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+ drivers/soc/tegra/pmc.c | 425 ++++++++++++++++++++++++++++++++++++------------
+ include/soc/tegra/pmc.h |  60 ++++++-
+ 2 files changed, 384 insertions(+), 101 deletions(-)
