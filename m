@@ -1,64 +1,64 @@
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D142049
-	for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 08:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BEC238166
+	for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 08:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768723392; cv=none; b=DVVJcOJslGq3NuPyWVyRfQBmGAoo8AMTWX08b9yoA6/Y7lCW+0zuWGkNBYju9wRWCk9liAOiN/xPhfH9NaH2myZXgk3mqE/ita6KgRI/bHwDaLyzAODTpFNFLpq7BjqUvn6uet2uC6FCcvOI071UNnJSGVp0W4QuDvxCCQ4w4zI=
+	t=1768723396; cv=none; b=NYEkaHVnRgDaSpWeoY4xgUI294QxfQGkMreMyONTIJ46WGZVK1WrARl4iwzPWihIivhHUdbEiD4tZ3D/LTB5nDB96OqMNLX2wb2hzET/yRyuXZ/Gu2uZKXZ6jJ0QXmMuvv/6/xaz9iOUOTMAR9hFGjy48wwrRiA0/sLZ2uzuSDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768723392; c=relaxed/simple;
-	bh=abPb8hIaBHO1pitSFBec5OO0Rd8g4FIfut3VTH1oglY=;
+	s=arc-20240116; t=1768723396; c=relaxed/simple;
+	bh=iNlyouCX4ztJ5uR+HLG7R9Ms7Gtp53ClA4DmyyIUaH8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WqOvHhrnzo4kDWCK7pdqEWi6NKK6bFfEMIgIh7d/3J4c/9pOmKLMrdqtiMH6wlzyi+B/O8z0+BTXfUfl3yrnGzrvJBtJZCkEX2chiDI/gWnNH4lKnbrHscWjQpBWOUB404EuYVDxdQ8WibYwfAbBa2mxQmcIN6iNP7MpxmF6xZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSNx5R5k; arc=none smtp.client-ip=74.125.82.174
+	 Content-Type:MIME-Version; b=HGj5s2eMAXRKhGKwZT1WpYiQPGfqbsAQec/jyc6rJopE5YH9Js0XTvQJPkzGHD6ePLxpTxzOxso0X5FyxgNpK3j0WjmIlUlAytrPZWd/W9EISh9U2efvfnvJCM9zGgIALAFNHHZgetf/em2mlC66Pz0Up1nFl97cEbZjRUb5554=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DN71DYZP; arc=none smtp.client-ip=74.125.82.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSNx5R5k"
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-2ac3d5ab81bso3600272eec.1
-        for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 00:03:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DN71DYZP"
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-124566b6693so2120914c88.0
+        for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 00:03:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768723390; x=1769328190; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768723394; x=1769328194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kj8UfNtBvaeaAbcPqe3cu399aKYUpefB3CwEh0ou4Yc=;
-        b=NSNx5R5kmkOVHkla7nHvDnx42qctCyXadiwGvsMUxa101CvrVcaqgFMGxRxiejULq6
-         QWiMBi7qmbpK+9/jDLkhsTg2BoYSHFYoKMVZEV1Rm4E+gaPjpnUVZzmr2siwAyrnYShO
-         BKBylwPAntwMyLtfEt900GrV/iUuH+96PxIEuoI817qpiGCpQl8r/6oUGATWbfMwgSG7
-         WD6R2FROCoEdyFK80x+Ny1CiQ3FDloU2SwXYp7gWBrkz0ahaNTobtdrOzsOApL91aW9E
-         e5aMwoRwVFq63yvbwn0ZOlLEQMcJhC86HSvLxcGjXzjsEwPCDRX7w58cPj/JJEmudXHz
-         aPfQ==
+        bh=5sRCewco8tgHw4XXcafKVb3dqNsijWHex/AmSsnm9Nw=;
+        b=DN71DYZPhOtV44SN7xdmpv2lY1KzkXXKkmC6afs2r/x1gCPFX0oCLjO3axZCEMWTb9
+         zT25Ur5EhUMncS9dOD4Fk7C0xwX2K2juWPBOkic1M6x7/+5Ucqe9XOMW6MmDuWcw1COg
+         Ip+dZ1nH0g1XIYtiVcgKLpDKqpjrrR+Gt2g5OkG2/Rx1N2EZji3kAZ/kLElZPM8yKNmo
+         Y1QCfhdPSOkMc60f76CtJjh7/W+zjYz0UJoQYQuJoLPY7BgDSFU6OKAWNz87GfanrtSH
+         XOG6j7OhYN17j7PJdLKJFpTFHx3UqEkrldbCkh2pDK7zGFkQyeND53VI9AE6I2+BBs/L
+         jIWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768723390; x=1769328190;
+        d=1e100.net; s=20230601; t=1768723394; x=1769328194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kj8UfNtBvaeaAbcPqe3cu399aKYUpefB3CwEh0ou4Yc=;
-        b=s2d7cELQ8ui6dUqf7fRbTApWymdivzKCdbezGMvBdKoseo4oxfgkBPjZV0AKSdMaHK
-         BddJLUC/pakJmzJR1xEaHDC2R0mRvB/DMvO4wLy4dNjuHbcf/9efpMYiRklTA5OE3NEL
-         t9I8NdUl/8s4YyAgeWN35SjXxTsVgmywdiYX7Tl4HfKnw4YZfBbTwhbHw39c91ZCBC/n
-         Ymmdk+1iNYfSghhT5YH2yfc8ZPHEL+sJLWV0XznCPX2SVhYGBZj83cz2efM6ey+Kswof
-         /VUVakdeE1tU+SQXHZnH3J22bY1yHfxjZ7ii0rTj0K0E3+sstyLTCjH/qLwI4dOfrLep
-         iGvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUy8rFjg3E6ktQby0/Me32s+T21k5U9DZwQ3iL1LT55PGfdCt2Q1By0rZAyJvVa9s0ikFFZ9sJOG2vygg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPkjxV312uODfqekAw3Iq1BwmieBVyzrah3tqh8rQmSaUxeIDv
-	NCzrozl6dFNuZ+kE6zFYUbD0NOgDeRnk/BF4/9Cut4QnKEITnr6YkpGo
-X-Gm-Gg: AY/fxX7nKGpR3sg8h1RUAD8egonv72psoD3kW+L1a9XZxw2Af4YVZNSIWZ2PZow0E6C
-	XIgjkhyAXg4Cv9dFa8AtCUb9/envnHqCe6SNkrtvOJsukAzE/isg0xfVEZ+14B5zbyYUEmqAsnZ
-	tEixHe6B86tlGtC9Tbhfhq2c81gJUdmyCuDeIEZzigIp+f8hXzS2OJj70LyCK4H97hrh0RheaK6
-	p7vsPVuZFep08Pn5KVXjsgu4dq1s2cCpnOfg5UpEQHXk6RI5m17nKiCgj0PhsLrIUw9XNPymNhF
-	IIATFCbtr/GA1h2gYGDNlXNMEFqlfWIx2Zt6Wy6QQSyn9q3tkKot4KhHdpme4c/QQ97ldZe1O8R
-	g96bxsBSTsEOUDeCG5Lz2IFH4qI3rArFGZsR0GniPFDJ8fqAJoL/ZAw/z3OWDHI59/B1h+PlxXh
-	97aIlvJyrHs9xJqR7K5jIVib8q6QzS+bYYss6deNwuWmNdYz27GrpgZsry7hOOvpa6IYNMbpw7s
-	T6LY8E=
-X-Received: by 2002:a05:7301:1687:b0:2a7:83e:7b17 with SMTP id 5a478bee46e88-2b6b46e6ddfmr6064907eec.12.1768723390082;
-        Sun, 18 Jan 2026 00:03:10 -0800 (PST)
+        bh=5sRCewco8tgHw4XXcafKVb3dqNsijWHex/AmSsnm9Nw=;
+        b=RIRVdHaDk7SmC33zojbKI+vDAkghCD7ryWPZso8XqnGpP704qrJdy0vo6XFZJdcPZj
+         oLW2dCDWEt+cAUm0AWLUacuqfwCQBT1PicnNalPwyFzwrZUOWtZdZFEoRtQ1zOc1s6Sk
+         ygsb1oXPzBCK588J4TKODlOzMezrUEkv0SqF+G7akCzusTV9WKiXTTL7i5K0S2/rt4sm
+         HBuIXC8kTCpd8CBgda8BEb2V2rWrravFMsLzDCPMjoFGQ1rI33TWcvfdSsdewtu5/9NQ
+         B7c4/93iqyLg8yjEnlBKlXmGU+dBNE7/TsoPZM/UkyBDLHa7QiYotE9LwCGoyU6Gio8U
+         e7Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCW06A/LV5MjFHFNy8f8gyniT3p6E3R9DwTWvWfNsN0HXE9CQCYNs4ogohEmZtABe1gpSv5/JgzjHlCgLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQxExffwRL1GR1i2s8hBfPfyKZJGRgVvWNipytQVBmFcMEMfKK
+	qN53RzJ9z4UVRqzlbC8eFJ52sMF8+cfqDeCvfQQ5fEoYkqTSuehoLdsB
+X-Gm-Gg: AY/fxX7gcKEMD6hhrttY1AD7wyz0wnf4zCcX4T5wFPOvG1jiRevemkbQXN/GKM+KcY2
+	W4uhVHGjoNp1llU6RJNm/LwwwSpqDpqZ/mVVp6gJqlDiEtMA0++4k9/uQMLViwz74tXY+lzX7g+
+	gxnE7sjjBb4uwsRY+ZT0o2qdeG9SbyTVOyRLf7OXXgOltt17zQp1wec67ibleli+eW0tP5IijUS
+	XaEz955ZEjfyOiJZfOCyPCabtOJ7bdbNYxhmuNNC4T9NSk5PG6L1weHXAImJk7XquPnvGmhaSP0
+	7IZ6oXW8JugHlkZcz+uwJT806dI85tSxNZnSwbLJskzZT7oZbb9fkfoypd4sePXyhtdi84ZhNWd
+	YPEexFJMDW97dsVipItpbh55QdOm6AYlodjdYMHQbLgUriE7+NMP0tfWfNh5kBJlrho5IYxbflv
+	dD6vJxTUPH74fG3IwSk4ttZJ2/93e5bqoQGGN0QL7BiWdwqkagvzitZw/67o0DDU/q8YFPZfrQQ
+	DXSgeRHnrtI9Q7G/Q==
+X-Received: by 2002:a05:7300:c86:b0:2ae:5275:6901 with SMTP id 5a478bee46e88-2b6b503d29emr6365433eec.34.1768723393925;
+        Sun, 18 Jan 2026 00:03:13 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b365516asm8498854eec.26.2026.01.18.00.03.08
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b3696f40sm8460212eec.35.2026.01.18.00.03.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jan 2026 00:03:09 -0800 (PST)
+        Sun, 18 Jan 2026 00:03:13 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -66,9 +66,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/4] soc/tegra: Changes for v6.20-rc1
-Date: Sun, 18 Jan 2026 09:03:01 +0100
-Message-ID: <20260118080304.2646387-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/4] ARM: tegra: Device tree changes for v6.20-rc1
+Date: Sun, 18 Jan 2026 09:03:02 +0100
+Message-ID: <20260118080304.2646387-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260118080304.2646387-1-thierry.reding@gmail.com>
 References: <20260118080304.2646387-1-thierry.reding@gmail.com>
@@ -89,41 +89,26 @@ The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.20-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.20-arm-dt
 
-for you to fetch changes up to 70f752ebb08c85a5ea19471a5aaf26263e53dcb0:
+for you to fetch changes up to 4d93678236678c4b6b0076fd11f4611a22b7e70b:
 
-  soc/tegra: pmc: Add PMC contextual functions (2026-01-18 08:48:30 +0100)
+  ARM: tegra: Adjust DSI nodes for Tegra20/Tegra30 (2026-01-17 01:18:38 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v6.20-rc1
+ARM: tegra: Device tree changes for v6.20-rc1
 
-This series primarily refactors the Tegra PMC driver to eliminate
-reliance on a global variable, transitioning to passing the tegra_pmc
-context explicitly across clocks, powergates, sysfs/debugfs interfaces,
-and power management callbacks. Additionally, it resolves a warning
-during system resume by deferring an unsafe generic_handle_irq() call to
-a hard IRQ context using irq_work.
+This update corrects the DSI Device Tree nodes for Tegra20 and Tegra30
+by adding missing properties (nvidia,mipi-calibrate and cell
+definitions) to ensure proper MIPI calibration support.
 
 ----------------------------------------------------------------
-Prathamesh Shete (1):
-      soc/tegra: pmc: Fix unsafe generic_handle_irq() call
+Svyatoslav Ryhel (1):
+      ARM: tegra: Adjust DSI nodes for Tegra20/Tegra30
 
-Thierry Reding (10):
-      soc/tegra: pmc: Use contextual data instead of global variable
-      soc/tegra: pmc: Pass struct tegra_pmc to tegra_powergate_state()
-      soc/tegra: pmc: Store PMC context in clocks
-      soc/tegra: pmc: Embed reboot notifier in PMC context
-      soc/tegra: pmc: Pass PMC context via sys-off callback data
-      soc/tegra: pmc: Pass PMC context as debugfs data
-      soc/tegra: pmc: Use PMC context embedded in powergates
-      soc/tegra: pmc: Use driver-private data
-      soc/tegra: pmc: Do not rely on global variable
-      soc/tegra: pmc: Add PMC contextual functions
-
- drivers/soc/tegra/pmc.c | 425 ++++++++++++++++++++++++++++++++++++------------
- include/soc/tegra/pmc.h |  60 ++++++-
- 2 files changed, 384 insertions(+), 101 deletions(-)
+ arch/arm/boot/dts/nvidia/tegra20.dtsi | 4 ++++
+ arch/arm/boot/dts/nvidia/tegra30.dtsi | 8 ++++++++
+ 2 files changed, 12 insertions(+)
