@@ -1,113 +1,125 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7983449620
-	for <linux-tegra@vger.kernel.org>; Sat, 17 Jan 2026 00:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922D8C8F0
+	for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 08:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768611547; cv=none; b=TBW5peASBNdvzW9UZc2pZyB1IudgP0er536Vt8tU7830f9uGxA8xurRAlsZI85m5qvWyTi5qsSigzHdCqxx56U16QNCkX8xeEEydql0KE7IcEAr8TXXnYCA0x3IcneYrnQyh4iZsc38aIG6W5EiMs22T6q1bQCaWqBe9Uc+EKfY=
+	t=1768723308; cv=none; b=tvft7yKWcYLNdlh+/MfxXsDb7nqjC4GDBBpgrVgvpZLs37EL4Rq6b7lgwFsSGBi9bHdWBKi9JLhL/OjZVYDpVnYzTZ8wkrcZAlkOGENg3Unsf50oEvoP2SHyxrTynKB9KlzttyCT8plFJ/O+jdUXUAyG5vXoG+6o0fQwHU0JwiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768611547; c=relaxed/simple;
-	bh=ZveipeIP7Bmtra4tJV836ZoRkFGm7qdMZOJGSTZHv5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=APLRXs8wY05124UrhjrTqJQQ8V7vIhPPjmH5gpTwelGfFvn0slcj2w6CfOumVmABUrMpPryBUCq76mZy6RICr60Lvg38f18Z3hrDYEpEMIOBnJFZJ6J/MHhA7gN9IbEYnxQa/1olv2RwWbpGiFdJbdOFDKgqCoBWjOqvwEi5uoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhI+LvMa; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1768723308; c=relaxed/simple;
+	bh=i0TnZ1aoXb0Ga8elfzyeLZOHdqQbgEsJIWTTxkAsI4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BOG5maned8RWOCWyzrkAhG3A5F08ZW+LNX8BY13hM/rJYngPsB56yL9njsXpfzyxG9XyEFAbkwzGQyS/Yfa0ruvgnJfN5DcwAC+8Zs9LrOEJBKsmh/REof/2LYk752Jz7qpd5JnC8Inb5+5Q2/K62yTwp3qq2riyKuXMrUurQaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGwSWaI/; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhI+LvMa"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-432d256c2a9so2551458f8f.3
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jan 2026 16:59:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGwSWaI/"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42fb5810d39so2608016f8f.2
+        for <linux-tegra@vger.kernel.org>; Sun, 18 Jan 2026 00:01:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768611545; x=1769216345; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8wzbNnTwPY3sl1kDBYO8pjwy7AQ3U6oZDZIuHTJM1cw=;
-        b=OhI+LvMaHSser8ogUVoWen08Y4NvsMT4duH30zfQaOucwAYuWbKrgK82rtSCfUZJCH
-         atEz1QdpNqqFd+FUzN+IAK+tqA5PES3gUc0sMmuVo2iEc9lX09JPwLNtUZ3mKKS4iTfQ
-         oVccuUVQMubtxoukZroBcWgY8kGMMMQe0qbjO24WTOql99gI/wcq3z5k8CRktpbNGjO6
-         YJ5R5AbWWKFY93FlYYiOQl1a6Sjp1SQp6u57MwSXNQya1nhBvONMnXSl8xyUp8dm6+3L
-         MITX+znpE6JV9HWgcyzS0f8z64h298AL9OAo/bd6j2+97OE+D+IZr5Om6IKBtuuQ18BB
-         J9JA==
+        d=gmail.com; s=20230601; t=1768723305; x=1769328105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/l59X7gw84IvvPUFApyUS2QxbtG2L8cFXaBBO6JtN+4=;
+        b=JGwSWaI/e99QAWwk0a1rp8oJUtJvAjTU/wdBnYdrrxaeLwM3pW8mlOqCK0VpMAELTM
+         Y6tEkdLOh+IdCowY/DF2Ovs6CIby81m2SUeEfhbb30kno4w3IOEEVGN1bLJI51PqXnXS
+         +kZ6/x3LPDIbWEOGlxG+L85ycoYqVD59qBTQLPJqt3hOkWmzi+I/lnOLV0d+bbidULJQ
+         a36QOD90wPvDnnBz8dyrPVNh4qk7K9zcacA1U6XWhQka8cPTyQViW5CTBbWI8A8BKH1A
+         g2bf88B/lP9m5C53dla7Tjdk2dwBGeh2dkkFRAmIKvV0ftLYnFmFeFcH7GqEsTPXAq87
+         euIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768611545; x=1769216345;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8wzbNnTwPY3sl1kDBYO8pjwy7AQ3U6oZDZIuHTJM1cw=;
-        b=l53XiYrYAs5UptQe9XZJ9Jnj7xQZSS3GQhlaE6K35bqP/An2plhvs+mvwyyShWfNuW
-         TQTTMN4+iwl1J0Th6G0Aeq4G6m7Dl58sX2mXpyP5al9dVS2KnnbXRIQKMl1w0QKocgEl
-         47jmk6EseC+TTLRjY+Asaholq8NIiBmolfEU39PL0ZRnPQIwVJxCtB80P8QYoAy4/jSg
-         ZlclyRw1ez/AryXq9u3dVOwnafQRoBHOjTovtySJLStYwBPjt3BoIFnFfe7CuHU+xhwW
-         1cndQusdI7/x12fTR5bdYWBIeBab4h5Ud1EpCv+22QIwnWspVecd+nElBDGmyj73qEgr
-         OysA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2R8Oc7StLSqJklEJKjfUXmfK55QcUJ/CSsvD2MRydVXWG1VH8fcaocEkRCcuJLgXsM3C4UyOBLHQ6XQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1S2My/Ky7F/vm5l8BL41J0ZTTcV4zcwPjUaBzBfyDViuHsdbt
-	Q4NjQ3T9u5vqxxpSujvWwEujDn1Qu0pWDGrG30yo6FZ8qurTHIZXZXl6kV9TZGcE
-X-Gm-Gg: AY/fxX7DZOVjPVmHFQ3RUTVDqbQrkyenBqYhhjgQ5bSBZPJxDocnK4OXSHVDvV0bO8G
-	zvp8/uuC/P9rf9ns1Yq858IaZjviuDRpFvBl/clSy4s9pPWwkTMarWu06cgwpaWOi2KkMUVlQ26
-	JiW6c+V7X/Joldm8lTE/I8fxS+YI3z7+rMxAT1odEnaLy83XGEGNypblyxhLppY1ST2rn+ywxlP
-	3joyw6iA1s0FCbLSEAH7F2LfoO0AnvRgRs3IjhNU625OjzKxA8BVcg7fViVUoTB/j+EwoKja2gn
-	7OgMWNC7g81U1TrDaZymsHFp8KTuTvkBN6QpQckF7jOTzGaM4eYsEZyKwxqqSN44CHmt8ku4a1Q
-	EzDe1DI6B4Hmn3m4BrqzzK+8Jh12fcazCFWu+vLrRrmCp7EmGYSEjN+fFUolL/0JqZruUKZ033X
-	1hIk2w/vy9viQ/3UHz8hy44IBPxHfTIywRqc4caoV2vi5Ov9r0BQRsgJkbfp+Bo/zCzVPJNR9X0
-	hw6taz6hnPe1EuAtQ==
-X-Received: by 2002:a05:6000:288e:b0:430:f622:8cd4 with SMTP id ffacd0b85a97d-4356a082f50mr5383723f8f.49.1768611544731;
-        Fri, 16 Jan 2026 16:59:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768723305; x=1769328105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/l59X7gw84IvvPUFApyUS2QxbtG2L8cFXaBBO6JtN+4=;
+        b=BqwzSu1PuMtPChJSypfCDDoaMxiGdSif8TLwADY9NVD9XEBKYmOWtYQeqNGnVBkOHD
+         n8x2zeL+Ns27uERZCfFjUsqXUJoyv7qh9Nfl8/0AbYp/nVdutMz2PuhIaUpPPcKKJkRN
+         o9wgfSlpTp8udsCSKmooqPrIJhObYRba1NqCD5X7RSvw3Qdz7ISwkqFL+bcNR3jV2RqK
+         2wkGPKGSGsRHvGM1RzmMsfU8v2kJ6iFwaWUEgnisQn8uFWKsEopNdbhvlgwoazrXlY44
+         wokzhmjasXo2YtaF6m/IfkqNYjmjDl2uUf8TDNyMrQb8xNhBGQhNaNVSsOWkraZ80Qoo
+         Cnjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYYqH1QAU3CtDwvKzqSVwlraYSTEaz6HWc9cXAkAZGjMDOrY2QtKtLkj6v9L+SxlbEh6TZH4ru+DhT7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXU4YmVufMYUw7Dl05WBfYau6nipvD1yH5rLaSTXqYCaqsmKCl
+	sTmiEQIowG+8CoUGfwfd5X31WW0NE7DXenBmqikMvMTHDYTTVtR2ZViZ364HaMtjFwY=
+X-Gm-Gg: AY/fxX4SsepEAdgKsikATdpL/cFLuAsRZXQ7dmn754bD2Sf6VVl65CVKiL9qA6EsP5d
+	XSEQihqFjIwGJjNGAJd53JzfJUdkNcDuMNg/c48XU7X2SvJIiJ+gA+3jhHmCbj2UyywumnUzSsT
+	EtKKIMv28tG/OS150Jo0kAT3BDg77CvemIK5QU5favXREAunx87Q0sqF3Qf9Ly4wVG4VY/H20cW
+	i0ARF5014UslQkg1S/0Lb3NwieNjYhptxGlKQeZ4XWaR1ptVa5JOuImq1qPpnl1ZlFmUyquCKWN
+	QzT1BStESVv/SvYudryNnDjXdGTp1pNJ2n0OD8fSoDQMutmVXGhF9W5vLI8gv4H/+BqTkCs5Qsz
+	4IsyREdkp3m0o3Fvi7SUfXSBlXC5B+EvhehfBm2yizA9y8ea4NP+5Ks97ajYD/kvHmMqqq8oItB
+	HVp68GY5DnLZmpYtim99U9KS4VgV2+bPA1Q6r6uJzKSXqywRxJq74dkgZ0cudFxxR/bveVprc1C
+	WeiLQI=
+X-Received: by 2002:a05:6000:25c7:b0:430:fafd:f1d8 with SMTP id ffacd0b85a97d-4356a024c88mr8955054f8f.1.1768723304722;
+        Sun, 18 Jan 2026 00:01:44 -0800 (PST)
 Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569921facsm7885225f8f.5.2026.01.16.16.59.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569926ffcsm15463299f8f.18.2026.01.18.00.01.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 16:59:03 -0800 (PST)
+        Sun, 18 Jan 2026 00:01:43 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 0/3] ASoC: dt-bindings: realtek,rt5640: Various fixes
-Date: Sat, 17 Jan 2026 01:58:55 +0100
-Message-ID: <176861152450.1947082.2637987844354037789.b4-ty@nvidia.com>
+Subject: [GIT PULL] clk: tegra: Changes for v6.20-rc1
+Date: Sun, 18 Jan 2026 09:01:40 +0100
+Message-ID: <20260118080142.2632077-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260108143158.351223-1-jonathanh@nvidia.com>
-References: <20260108143158.351223-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Thierry Reding <treding@nvidia.com>
+Hi Mike, Stephen,
 
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
-On Thu, 08 Jan 2026 14:31:55 +0000, Jon Hunter wrote:
-> This series includes fixes for the realtek,rt5640 dt-binding to address
-> a few warnings that are observed when running the CHECK_DTBS=y for some
-> DTBs that use this codec.
-> 
-> Jon Hunter (3):
->   ASoC: dt-bindings: realtek,rt5640: Document mclk
->   ASoC: dt-bindings: realtek,rt5640: Update jack-detect
->   ASoC: dt-bindings: realtek,rt5640: Document port node
-> 
-> [...]
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 
-Applied, thanks!
+are available in the Git repository at:
 
-[1/3] ASoC: dt-bindings: realtek,rt5640: Document mclk
-      commit: 601a821631c55014b02371740c39748d0af916c1
-[2/3] ASoC: dt-bindings: realtek,rt5640: Update jack-detect
-      commit: 2efe28d11cc19b69b19b9bcdb6f498c1bf842fbc
-[3/3] ASoC: dt-bindings: realtek,rt5640: Document port node
-      commit: b2788f6320722d6059f849f35a77eb082608c627
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-6.20-clk
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+for you to fetch changes up to e897e86711b28f815fbbe542fe87a66b39123d1e:
+
+  clk: tegra30: Add CSI pad clock gates (2026-01-17 01:33:18 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v6.20-rc1
+
+This series updates the Tegra clock driver to improve hardware support
+and code correctness. Key changes include fixing camera and display
+clock hierarchies for Tegra20/30 (adding CSI pad gates, reparenting
+DSI/CSUS), resolving a memory leak in the Tegra124 EMC driver, and
+optimizing system suspend/resume callbacks to remove redundant runtime
+PM overhead.
+
+----------------------------------------------------------------
+Haoxiang Li (1):
+      clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()
+
+Krzysztof Kozlowski (1):
+      clk: tegra: tegra124-emc: Simplify with scoped for each OF child loop
+
+Rafael J. Wysocki (1):
+      clk: tegra: Adjust callbacks in tegra_clock_pm
+
+Svyatoslav Ryhel (3):
+      clk: tegra20: Reparent dsi clock to pll_d_out0
+      clk: tegra: Set CSUS as vi_sensor's gate for Tegra20, Tegra30 and Tegra114
+      clk: tegra30: Add CSI pad clock gates
+
+ drivers/clk/tegra/clk-device.c       | 13 ++++++++++++-
+ drivers/clk/tegra/clk-tegra114.c     |  7 ++++++-
+ drivers/clk/tegra/clk-tegra124-emc.c |  8 ++++----
+ drivers/clk/tegra/clk-tegra20.c      | 26 ++++++++++++++++----------
+ drivers/clk/tegra/clk-tegra30.c      | 20 ++++++++++++++++++--
+ 5 files changed, 56 insertions(+), 18 deletions(-)
