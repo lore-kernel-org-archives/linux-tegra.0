@@ -1,212 +1,393 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013069.outbound.protection.outlook.com [40.107.201.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46F64611FB;
-	Tue, 20 Jan 2026 14:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768921135; cv=fail; b=rXA6c66W3AlOCqft2nKZ0AAsrZQNVSZLhpLR6CdTOLv+XWIg1ZRtGA3Zi1C2TGXsH38cAAu1w11pBAGqRhDA2aJifLlq3waqtNXjUKfLPsPHWI8DI/mxqVJhNCEebwBAtzRN8t4hy0Jf3BB2ZCm4t3Uqlha+abv/4FhdUSvsG8U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768921135; c=relaxed/simple;
-	bh=L3qNnAx0khWE0Luo1h1QezbkUCfzTsHk5iYSJTIEeFo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZtyoGo+CadviFVZM2RaDg/C0BPL9i0Zz4+pPgu0vBlQrU9j5wzVgnQNEHee/+YYmYpemMZvjYhU2LEhW7adbfegSshih8oA4eTPrU4XgiLTUY5N1pO7+vpq15+0vZvWeb15lZOo2Srgm9Yb7sdIiQqLperev2KqJbSmrIW1ldfU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KZX5M2or; arc=fail smtp.client-ip=40.107.201.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KZX5M2or"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WmuFP2608omtBYW2q14AvVrLSt4GFctLQrcqiEYDZ1paGaTZHeCho2YNEnYtsnzXLa/DhIymeo74LE5W45HtqSbvYTVh+HRcmSicnqCSkoMVj7rhab+SC20pH5Zn1je65XSVIMr8AddUcH015pnAp7N615xOy+oAyt8oBYBAR9ytEdEW9uFh8V3cCX5KoULNlVuT1tjRgKLTPs+hb7lYvb0L/pO8QTB2z8D+vtHb8VCxyM8dEe1EngK8fqbiXcUN91FdjldfgdGMKmZ11kt2XYcN8y4QxmYisX0tr4RSX9dMtV4pVkgOOhDvRzsW6/+D7bGb4/hhP1MJ/Hw9IHuQmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qxrUtn2EnaNj7axE4JGgKF1vyBqfKeDIrgnErzXOufQ=;
- b=ME+3dr9NlcPZ3pc03wFy7VPhx47Y5C4mCRkYgjfGl+RQ0HRImfE7kyu1+Q+q7kQ7e0N3d4Z3ReCr3QtTXMLk/103oy0Ut/sXMtbi1xCG5xW8MNB/eCSMq7Ws4z/d9ssrXFTZTvl6JR8tmkf03IIGpeYRUToE20wf62N5QVNlhK5AfK0OwI3QeMOmhJKOw4SQvUSAbDWWD0RFhfq+QGxeOUarXZRVCbp9K0YsJ+vpnxmiAx6lcMgXqN9Lxpi6RNRsC7Cbn9+OUXLWrvortQuY3nJO90CBMVWePXsIEGIKSsKmKW7T7t+lHqA0hC5OTpmQAkob54o0+Gt7y3mNLnaNNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qxrUtn2EnaNj7axE4JGgKF1vyBqfKeDIrgnErzXOufQ=;
- b=KZX5M2orD/R/giPaNIHTRBZJPQhJQUHQfHqlAjPw2Sec1sFkZ/h7BvoqFIuZAWDkCT/rU4EyyRQHEY9wMp99FLvBD2+PJuL5WK4EC0Cu2unxtzlsQNydUu1qMCskK/vqmaoV3OyjISoEiyMxxUBh7KvxhpaNhtA1iJchV4u/DDcH4d6ZqfCFQIug5H1NQV6PljQGxq6xMRou3ELedib9fsA0yDiUfv8aV814GuKjCwX0fOF+Wm1EZkn6ViSY5now1WZ4HAlPMjpAae7p7fKCsOFZxWifxstUDjyg6SXY1XOEHlvM0R0bYSb7kvIFbzMzRrd5O+7StzpK7f9XcZzQYQ==
-Received: from DM6PR01CA0001.prod.exchangelabs.com (2603:10b6:5:296::6) by
- IA1PR12MB8407.namprd12.prod.outlook.com (2603:10b6:208:3d9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.9; Tue, 20 Jan
- 2026 14:58:44 +0000
-Received: from CY4PEPF0000E9D9.namprd05.prod.outlook.com
- (2603:10b6:5:296:cafe::51) by DM6PR01CA0001.outlook.office365.com
- (2603:10b6:5:296::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.9 via Frontend Transport; Tue,
- 20 Jan 2026 14:58:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9D9.mail.protection.outlook.com (10.167.241.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9542.4 via Frontend Transport; Tue, 20 Jan 2026 14:58:40 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 20 Jan
- 2026 06:58:15 -0800
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 20 Jan
- 2026 06:58:14 -0800
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 20 Jan 2026 06:58:07 -0800
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<zhenglifeng1@huawei.com>, <ionela.voinescu@arm.com>, <lenb@kernel.org>,
-	<robert.moore@intel.com>, <corbet@lwn.net>, <rdunlap@infradead.org>,
-	<ray.huang@amd.com>, <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
-	<perry.yuan@amd.com>, <zhanjie9@hisilicon.com>, <linux-pm@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
-	<sanjayc@nvidia.com>, <nhartman@nvidia.com>, <bbasu@nvidia.com>,
-	<sumitg@nvidia.com>
-Subject: [PATCH v6 8/9] cpufreq: CPPC: Add sysfs for min/max_perf and perf_limited
-Date: Tue, 20 Jan 2026 20:26:22 +0530
-Message-ID: <20260120145623.2959636-9-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260120145623.2959636-1-sumitg@nvidia.com>
-References: <20260120145623.2959636-1-sumitg@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFB433C50F
+	for <linux-tegra@vger.kernel.org>; Tue, 20 Jan 2026 16:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768927768; cv=none; b=ok6XlVv+RdiauV7yjtDLNZb+1TMdWSV/wL4c1E0o1NoOuIfaBgkjiTQMsdeAfKQY4/PSDX/4gXPoBY/wPH6nQOpo0NslJx4Q0FunFoviMK63Is7cv0ajXq8S1NY9ZsjOo2EAdLM8TwYx1FHbgZWguempF8oU9vaUhNCs6KpePrU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768927768; c=relaxed/simple;
+	bh=2d/yq3knosW3zJWdHQ0Y2S8XqNnUEApPAlaIucvUJ1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rleAlcBob1HkL4xeHeYI1MsK3i/MHAmJc8VieBpDF10il8JCND/TnEgXBXa41/492joNsynfBDnv7hLj2moBdQOw+vm9DRL/0hA6sRTSCDJLWcJFjQlGudmppSdQqTJH/n3NucZTnckDbT6IHhbVTWCCnHYLz2/Yf2z35yO2qbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-4045e70f36eso2614146fac.1
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Jan 2026 08:49:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768927765; x=1769532565;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dak1Qm1DFpV4V+FwYEI/GqMZJDhTig5zKh8vic31T98=;
+        b=Ir51+F5xeaVtyFLDGj3lqGlih0c+IGVhPuYBS+jjj3rTcFXjv0pIRjzoTpLPmP0lsd
+         GEAVR5gW1DGxVEaa5ZTriJ0zRBqJTskURdoDhiUcfMoOmK0hTlQ3rOtd7OejTtE3Zzyu
+         ewIu41zpTLGadWdLmHdtDftZeZFZxHFi1O1Cd3UpDxS5HzR+87c68qeCCkQXfV9Jyb0B
+         RH0XaIjYD19hRxFTaeksVbIIJmjsys7DGQm5Oo0yKDQWkRenPPszF7AeZMKioqdJOg8B
+         JWtKKpZKHktHTspQ0lo1lB3bulFE4EodeCtGWEJijjv2FY3/uMWwOmmubEsMRxTV9AvT
+         s+YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjJ6tgDcusFKANDbzqLUZAQzsWAVgAIjCMZ4Qvytjty/tcqXpxY28LBPGNqTI+46j/nnePQrUg6d260w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnet3k9AtibOJKchNZoYKCciS7x5sON48HBPESzGEYx2aViUpP
+	IeQ4c65P5JIdXePQUinp8mjjNl5BHJSdQ2dhZdUHffujAfgvfl0+XFnG
+X-Gm-Gg: AZuq6aLS20f1fmp299xIAY1cdjNyBogTMNv7/NN96ydMHVGL4saFei0lMTxH3gg8dX7
+	e/ayYhhIQUE+0+C3uiF8yLdCKZ073JkK7CdVy6LFT544d2tLgCus1WQGdEgr9dgNO0iVm6Y8An+
+	Z/J0m19WVg5XbhdtIP30QZm0AYuWhN4auoDI6C+VVrH2DWO7no+O2geIkC2CdJQ2yBCo4K61zy4
+	mTElO5QBg3lHwABcLKaA80OqHidlxJlgebIRPUy4u5yt3PW602Pdh9sPpTQ5GpyPSZJiFqSa5wj
+	TK43lduNWcPYKlz2GajWCUMudrKG+DeQOVQRC9LzP7bFAn2fE1m24PAhUcCSe01Gk6K8sKy0bXY
+	CsLIlSO6wPQ2DPttgw0TFCabOJNUnN3VRdIJhGtNcWu1GaVDRPrANvz5ttTZmJ+2VJvTT08Uo2G
+	Wkfw==
+X-Received: by 2002:a05:6871:b29:b0:404:436d:66ce with SMTP id 586e51a60fabf-40846cf716bmr1210488fac.23.1768927765181;
+        Tue, 20 Jan 2026 08:49:25 -0800 (PST)
+Received: from gmail.com ([2a03:2880:10ff:4e::])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4044bb528d5sm9336123fac.8.2026.01.20.08.49.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 08:49:24 -0800 (PST)
+Date: Tue, 20 Jan 2026 08:49:23 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Vishwaroop A <va@nvidia.com>
+Cc: thierry.reding@gmail.com, treding@nvidia.com, jonathanh@nvidia.com, 
+	skomatineni@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org, 
+	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, puranjay@kernel.org, usamaarif642@gmail.com
+Subject: Re: [PATCH 0/6] spi: tegra-qspi: Fix race condition causing NULL
+ pointer dereference and spurious IRQ
+Message-ID: <aW-seUXIJv4Lz7bK@gmail.com>
+References: <20260116-tegra_xfer-v1-0-02d96c790619@debian.org>
+ <20260120112242.3766700-1-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D9:EE_|IA1PR12MB8407:EE_
-X-MS-Office365-Filtering-Correlation-Id: fbc32a74-ae09-4741-4d20-08de58346647
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pe02abpUSOj++kgFGmTKnaSWRMp0cTDECJq7jSmxppMa4lZNA64HLbnA6ESG?=
- =?us-ascii?Q?ak+NmMJplJY5N9NR0juVeDqsXQNIkqF5nhUT7HSVr1PhmTsWUIuZXxTahpZa?=
- =?us-ascii?Q?FCYhJJ92CzUXjBOOcWGaJYAK/JgRIw0aC9DEag9lJaBz9DTB2cFj/URvsDol?=
- =?us-ascii?Q?H0v+xUsZAwyPub6dnTPHxuJthoc0oeIvra7oA88df2ry1dGxXRke0sUZj1Cz?=
- =?us-ascii?Q?+NafhdqubyTyYEaltYYI0rtIfr35YShd1SN/0rx/CCnfx5XpPSEEO73wrrCY?=
- =?us-ascii?Q?sUzvrVePuEEB/lwq9vm6g5oZsGjl2TBSSOfO8Gj4AFXCcoNVKbYhNPXAodLh?=
- =?us-ascii?Q?rLXPiDWBOVvu/ErpU4WXQuumiyFJqaAQapRfll4UHvfgUUq0HL//OIHnrP4y?=
- =?us-ascii?Q?Bk0JAyKXRZtbANCreWKSZCBG9xwd7/X0C0E1wmYnvmyb491ZzPipyRko2rr0?=
- =?us-ascii?Q?PxioPdIK804kinGOlNfllzPnrfQS6u2iL/tJxIsjFtOAs98i9gsmbVIGpvDD?=
- =?us-ascii?Q?ROUvR+AlRtsLUU5kyLlDLCWQI0SEiu63NSA+DwJDDY8leTBEouDKGexZLu2K?=
- =?us-ascii?Q?GpW3naAZ98iyxsY3wmfANCl5NR6+1+lrAyvtW89rXo7criNBmSirDwws0PBC?=
- =?us-ascii?Q?h9CVrJmRPHUhQgU5Si0vUe4vZ2rgktiM/Rwbfa8RX2iyBuR2lq/swXWIxZlf?=
- =?us-ascii?Q?3l1aHNxNbqswJqsH01jeBEgqsVlf9xNP/JReMLdeGFcsEqEun03UqftzfG27?=
- =?us-ascii?Q?ZT9ke5pEVpZ4+Lto/aIn04gWJoJqCDghCWO7cTiqucFbQBHtd4eHjVzyTAr/?=
- =?us-ascii?Q?hXT9xL9mfIOq2UfVe1zmuMJ1Npf5SarWKEg+kX0wRUhczGhb6ayMn5dGh9VI?=
- =?us-ascii?Q?RPfXGhjyG3dXshjdCacGTN5zMNquHzdIJNtXenktgu/2xTb6FtFtghOCogpK?=
- =?us-ascii?Q?FNJkpV+j/O+UKjdpXEzAfBSBjvDf6tCYim0NnBzYuo2569EdcvV8zuCPORun?=
- =?us-ascii?Q?F5QtrLhJrzhtpzN30HsJyw26FHm2aWiZFJ15l6hQQ+3hDqnSmVb9g4Z2MWnX?=
- =?us-ascii?Q?/MfuDIvyVdqSKhsEHXfzClbZCM5pAgfi8Gnabc3JLyrRHddzJJbkOVAB5/0O?=
- =?us-ascii?Q?w+J5ckect5wY7nNfx/FzVYuUxoDE8u47xY14lSj/mo+94nQpzWqXDXnPoyce?=
- =?us-ascii?Q?b6qWohV2C7Oew0Iqo1wR5X0PH5xHvRMIg+RcivY/InL53DDO5VrntWmS+N+W?=
- =?us-ascii?Q?jetlN4gFlK0WzHQkc9ftPVTNXrjzGs+pSL/wBpMGjWSn5TWC2C8gT5kD7VwI?=
- =?us-ascii?Q?TzwbYY3S88Ytzo8oqgAYMZcQg19YSOTl1nkX0jtmGCrMU2Ode4Q5md1xqfeM?=
- =?us-ascii?Q?yySGALhZ/W+HEeJnVb7kBuglWOloquapFjzuhldGeT52Ps4POYSU3bsewDAZ?=
- =?us-ascii?Q?/9ZHJfHJDfnKJBqiErqwSzqSWZF3iV7MgiEHjbdhRXUrlmEbJKh9RZCEn50U?=
- =?us-ascii?Q?rhpyrtQwyr1HKaOdUvfhiWfgzQok/x66AgMHrYjGfv6xXRxwxRn+olAqLJ1P?=
- =?us-ascii?Q?VouYdliW9zi7jl56EZ2yVQjK4v9/jDJbSFresx+e5QpQFMIS2jhQgyFwLStx?=
- =?us-ascii?Q?Nq+xzbWUBLlEzZTRhK4V0gIwXCsksFGq1BvAj6z+1SQcezobqKSF6MmeETVv?=
- =?us-ascii?Q?551d2fJIcl2p+3oOgTJIDdxcPSo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 14:58:40.9369
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbc32a74-ae09-4741-4d20-08de58346647
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D9.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8407
+In-Reply-To: <20260120112242.3766700-1-va@nvidia.com>
 
-Add sysfs interfaces for Minimum Performance, Maximum Performance
-and Performance Limited Register in the cppc_cpufreq driver.
+Hello Vishwaroop,
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- .../ABI/testing/sysfs-devices-system-cpu      | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+First of all, thanks for you answer and help,  
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 3a05604c21bf..0b0c07c074bf 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -327,6 +327,50 @@ Description:	Energy performance preference
- 
- 		This file is only present if the cppc-cpufreq driver is in use.
- 
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
-+Date:		February 2026
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Minimum Performance Frequency
-+
-+		Read/write a frequency value in kHz from/to this file. This
-+		file sets the minimum performance level (as frequency) at
-+		which the platform may run. The frequency value is internally
-+		converted to a performance value and must be in the range
-+		[cpuinfo_min_freq, cpuinfo_max_freq], inclusive.
-+
-+		This file is only present if the cppc-cpufreq driver is in use.
-+
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
-+Date:		February 2026
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Maximum Performance Frequency
-+
-+		Read/write a frequency value in kHz from/to this file. This
-+		file sets the maximum performance level (as frequency) at
-+		which the platform may run. The frequency value is internally
-+		converted to a performance value and must be in the range
-+		[cpuinfo_min_freq, cpuinfo_max_freq], inclusive.
-+
-+		This file is only present if the cppc-cpufreq driver is in use.
-+
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
-+Date:		February 2026
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Performance Limited
-+
-+		Read to check if platform throttling (thermal/power/current
-+		limits) caused delivered performance to fall below the
-+		requested level. A non-zero value indicates throttling occurred.
-+
-+		Write the bitmask of bits to clear:
-+
-+		  - 0x1 = clear bit 0 (desired performance excursion)
-+		  - 0x2 = clear bit 1 (minimum performance excursion)
-+		  - 0x3 = clear both bits
-+
-+		The platform sets these bits; OSPM can only clear them.
-+
-+		This file is only present if the cppc-cpufreq driver is in use.
- 
- What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
- Date:		August 2008
--- 
-2.34.1
+On Tue, Jan 20, 2026 at 11:22:42AM +0000, Vishwaroop A wrote:
+> Thanks for posting this series. I've been working closely with our team at 
+> NVIDIA on this exact issue after the reports from Meta's fleet.
+> 
+> Your analysis is correct, I have some technical feedback on the series:
+> 
+> **Patches 1-2 (IRQ_HANDLED + spinlock for curr_xfer):
+> 
+> These directly address the race we identified. The spinlock-protected read of 
+> curr_xfer in Patch 2 mirrors the fix we developed internally and resolves the 
+> TOCTOU race between the timeout handler and the delayed ISR thread.
+> 
+> **Patch 3 (Spinlock in tegra_qspi_setup_transfer_one): Improves formal correctness**
+> 
+> While our original position was that this lock isn't strictly required due to 
+> call ordering (setup completes before HW start, so no IRQ can fire yet), I 
+> agree that explicit locking here improves maintainability. It makes the 
+> synchronization model clearer for future readers and removes any dependency on 
+> implicit ordering guarantees.
+> 
+> **Patch 4 (device_reset_optional):
+> 
+> Your observation about ACPI platforms lacking _RST is accurate. On server 
+> platforms, device_reset() fails and logs unnecessary errors. 
+> device_reset_optional() is the right semantic here. I'd suggest coordinating 
+> with the device core maintainers (Greg KH, Rafael Wysocki) to ensure this API 
+> addition gets proper review—it's useful beyond just QSPI.
 
+We are counting patch numbers differently. Patch 4 in this patchset is called
+"[PATCH 4/6] spi: tegra210-quad: Protect curr_xfer in tegra_qspi_combined_seq_xfer",
+ and basically protect the curr_xfer clearing at the exit path of
+tegra_qspi_combined_seq_xfer() with the spinlock to prevent a race with the
+interrupt handler that reads this field.
+
+https://lore.kernel.org/all/20260116-tegra_xfer-v1-4-02d96c790619@debian.org/
+
+The discussion about device_reset_optional() happened a while ago (March 2025),
+but it never landed. Do you want me to include in this patchset?
+
+Here is the discussion link:
+https://lore.kernel.org/all/20250317-tegra-v1-1-78474efc0386@debian.org/
+
+> **Patch 6 (Timeout error path): Logic issue—needs rework**
+
+I understand you are talking about patch "[PATCH 1/6] spi:
+tegra210-quad: Return IRQ_HANDLED when timeout already processed
+transfer", right?
+
+https://lore.kernel.org/all/20260116-tegra_xfer-v1-1-02d96c790619@debian.org/
+
+> I see a problem here. If QSPI_RDY is not set (hardware actually timed out), 
+> you return success (0) from tegra_qspi_handle_timeout(). This causes 
+> __spi_transfer_message_noqueue() to call spi_finalize_current_message() with 
+> status = 0, signaling success to the client when the transfer actually failed.
+> 
+> The correct behavior should be:
+> - If QSPI_RDY is set: Hardware completed, recover the data, return success (0)
+> - If QSPI_RDY is NOT set: True timeout, reset hardware, return error (-ETIMEDOUT)
+
+Thanks for the heads-up.
+
+> The current logic inverts this. I'd suggest:
+> 
+>   if (fifo_status & QSPI_RDY) {
+>       /* HW completed, recover */
+>       handle_cpu/dma_based_xfer();
+>       return 0;
+>   }
+>   /* True timeout */
+>   dev_err(..., "Transfer timeout");
+>   tegra_qspi_handle_error(tqspi);
+>   return -ETIMEDOUT;
+
+I am not sure we can return -ETIMEDOUT here, given its return function
+is irqreturn, which is:
+
+  /**
+   * enum irqreturn - irqreturn type values
+   * @IRQ_NONE:           interrupt was not from this device or was not handled
+   * @IRQ_HANDLED:        interrupt was handled by this device
+   * @IRQ_WAKE_THREAD:    handler requests to wake the handler thread
+   */
+  enum irqreturn {
+          IRQ_NONE                = (0 << 0),
+          IRQ_HANDLED             = (1 << 0),
+          IRQ_WAKE_THREAD         = (1 << 1),
+  };
+
+
+What about something as:
+
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index cdc3cb7c01f9b..028b0b0cfdb25 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -1552,15 +1552,30 @@ static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi)
+ static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
+ {
+        struct tegra_qspi *tqspi = context_data;
++       u32 status;
++
++       /*
++        * Read transfer status to check if interrupt was triggered by transfer
++        * completion
++        */
++       status = tegra_qspi_readl(tqspi, QSPI_TRANS_STATUS);
+
+        /*
+         * Occasionally the IRQ thread takes a long time to wake up (usually
+         * when the CPU that it's running on is excessively busy) and we have
+         * already reached the timeout before and cleaned up the timed out
+         * transfer. Avoid any processing in that case and bail out early.
++        *
++        * If no transfer is in progress, check if this was a real interrupt
++        * that the timeout handler already processed, or a spurious one.
+         */
+-       if (!tqspi->curr_xfer)
++       if (!tqspi->curr_xfer) {
++               /* Spurious interrupt - transfer not ready */
++               if (!(status & QSPI_RDY))
++                       return IRQ_HANDLED;
++               /* Real interrupt, already handled by timeout path */
+                return IRQ_NONE;
++       }
+
+        tqspi->status_reg = tegra_qspi_readl(tqspi, QSPI_FIFO_STATUS);
+
+
+> I saw your tpm_torture_test.sh in the cover letter. We haven't been able to 
+> reproduce the issue locally yet—it seems to require the specific TPM device 
+> configuration and CPU load patterns present in Meta's fleet. 
+
+You can try to simulate a timeout using something like:
+
+t a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index cdc3cb7c01f9..7116c876c62b 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -159,7 +159,8 @@
+ #define DATA_DIR_TX                            BIT(0)
+ #define DATA_DIR_RX                            BIT(1)
+
+-#define QSPI_DMA_TIMEOUT                       (msecs_to_jiffies(1000))
++/* INSTRUMENTATION: Reduced from 1000ms to 20ms to trigger timeouts */
++#define QSPI_DMA_TIMEOUT                       (msecs_to_jiffies(20))
+ #define DEFAULT_QSPI_DMA_BUF_LEN               SZ_64K
+
+ enum tegra_qspi_transfer_type {
+@@ -1552,6 +1553,10 @@ static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi)
+ static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
+ {
+        struct tegra_qspi *tqspi = context_data;
++       mdelay(10);
+
+        /*
+         * Occasionally the IRQ thread takes a long time to wake up (usually
+
+I've also uploaded another stress test in
+https://github.com/leitao/debug/tree/main/arm/tegra. Those are the  
+stress test I am using to reproduce this issue.
+
+> If you have 
+> additional details on the reproduction environment (TPM vendor/model, specific 
+> workload characteristics, CPU affinity settings), that would help us validate 
+> the fix on our end.
+
+I am not doing anything special, this is a bit more about my host:
+
+  # dmesg | grep tegra
+  [    8.903792] tegra-qspi NVDA1513:00: cannot use DMA: -19
+  [    8.903806] tegra-qspi NVDA1513:00: falling back to PIO
+  [    8.903811] tegra-qspi NVDA1513:00: device reset failed
+
+  # udevadm info -a /dev/tpm0  | cat
+  looking at device '/devices/platform/NVDA1513:00/spi_master/spi0/spi-PRP0001:01/tpm/tpm0':
+    KERNEL=="tpm0"
+    SUBSYSTEM=="tpm"
+    DRIVER==""
+    ATTR{null_name}=="000bb4c148f37daef5c917ebdd9267edad857263b872d9a9cd05f2af96c060212e6f"
+    ATTR{pcr-sha256/0}=="9CC1646906FD362B5F6D182CBADE226057CD32A6F5D6C6197A49AA78B4241929"
+    ATTR{pcr-sha256/1}=="BFB3D60EA045EE30E924F239C812E11D7D02D380D94B1A53CDF8E336F4BD5EFF"
+    ATTR{pcr-sha256/10}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/11}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/12}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/13}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/14}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/15}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/16}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/17}=="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    ATTR{pcr-sha256/18}=="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    ATTR{pcr-sha256/19}=="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    ATTR{pcr-sha256/2}=="ECE24999889A3DBA6BDC392ED64CA0B6A968DFCAF46D8DBDDAD57A7A0423AD2C"
+    ATTR{pcr-sha256/20}=="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    ATTR{pcr-sha256/21}=="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    ATTR{pcr-sha256/22}=="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    ATTR{pcr-sha256/23}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/3}=="3D458CFE55CC03EA1F443F1562BEEC8DF51C75E14A9FCF9A7234A13F198E7969"
+    ATTR{pcr-sha256/4}=="7E7811C1F6A74895706FFFBED8180452AABA032209D708A7B08066B16F38524F"
+    ATTR{pcr-sha256/5}=="D679AB040FA69F51A392DC467BA09AC0A5040FAAD386A9DA99A23C465DB0BCE1"
+    ATTR{pcr-sha256/6}=="3D458CFE55CC03EA1F443F1562BEEC8DF51C75E14A9FCF9A7234A13F198E7969"
+    ATTR{pcr-sha256/7}=="65CAF8DD1E0EA7A6347B635D2B379C93B9A1351EDC2AFC3ECDA700E534EB3068"
+    ATTR{pcr-sha256/8}=="0000000000000000000000000000000000000000000000000000000000000000"
+    ATTR{pcr-sha256/9}=="94BACCCA95B21E689C38511D4FE26D2DCB1E2C20CD5CECC5C4F2FC99C28452BF"
+    ATTR{power/control}=="auto"
+    ATTR{power/runtime_active_time}=="0"
+    ATTR{power/runtime_status}=="unsupported"
+    ATTR{power/runtime_suspended_time}=="0"
+    ATTR{tpm_version_major}=="2"
+
+  looking at parent device '/devices/platform/NVDA1513:00/spi_master/spi0/spi-PRP0001:01':
+    KERNELS=="spi-PRP0001:01"
+    SUBSYSTEMS=="spi"
+    DRIVERS=="tpm_tis_spi"
+    ATTRS{driver_override}==""
+    ATTRS{power/control}=="auto"
+    ATTRS{power/runtime_active_time}=="0"
+    ATTRS{power/runtime_status}=="unsupported"
+    ATTRS{power/runtime_suspended_time}=="0"
+    ATTRS{statistics/bytes}=="0"
+    ATTRS{statistics/bytes_rx}=="0"
+    ATTRS{statistics/bytes_tx}=="0"
+    ATTRS{statistics/errors}=="0"
+    ATTRS{statistics/messages}=="0"
+    ATTRS{statistics/spi_async}=="0"
+    ATTRS{statistics/spi_sync}=="3542838"
+    ATTRS{statistics/spi_sync_immediate}=="3542838"
+    ATTRS{statistics/timedout}=="0"
+    ATTRS{statistics/transfer_bytes_histo_0-1}=="0"
+    ATTRS{statistics/transfer_bytes_histo_1024-2047}=="0"
+    ATTRS{statistics/transfer_bytes_histo_128-255}=="0"
+    ATTRS{statistics/transfer_bytes_histo_16-31}=="0"
+    ATTRS{statistics/transfer_bytes_histo_16384-32767}=="0"
+    ATTRS{statistics/transfer_bytes_histo_2-3}=="0"
+    ATTRS{statistics/transfer_bytes_histo_2048-4095}=="0"
+    ATTRS{statistics/transfer_bytes_histo_256-511}=="0"
+    ATTRS{statistics/transfer_bytes_histo_32-63}=="0"
+    ATTRS{statistics/transfer_bytes_histo_32768-65535}=="0"
+    ATTRS{statistics/transfer_bytes_histo_4-7}=="0"
+    ATTRS{statistics/transfer_bytes_histo_4096-8191}=="0"
+    ATTRS{statistics/transfer_bytes_histo_512-1023}=="0"
+    ATTRS{statistics/transfer_bytes_histo_64-127}=="0"
+    ATTRS{statistics/transfer_bytes_histo_65536+}=="0"
+    ATTRS{statistics/transfer_bytes_histo_8-15}=="0"
+    ATTRS{statistics/transfer_bytes_histo_8192-16383}=="0"
+    ATTRS{statistics/transfers}=="0"
+    ATTRS{statistics/transfers_split_maxsize}=="0"
+
+  looking at parent device '/devices/platform/NVDA1513:00/spi_master/spi0':
+    KERNELS=="spi0"
+    SUBSYSTEMS=="spi_master"
+    DRIVERS==""
+    ATTRS{power/control}=="auto"
+    ATTRS{power/runtime_active_time}=="0"
+    ATTRS{power/runtime_status}=="unsupported"
+    ATTRS{power/runtime_suspended_time}=="0"
+    ATTRS{statistics/bytes}=="0"
+    ATTRS{statistics/bytes_rx}=="0"
+    ATTRS{statistics/bytes_tx}=="0"
+    ATTRS{statistics/errors}=="0"
+    ATTRS{statistics/messages}=="0"
+    ATTRS{statistics/spi_async}=="0"
+    ATTRS{statistics/spi_sync}=="3542838"
+    ATTRS{statistics/spi_sync_immediate}=="3542838"
+    ATTRS{statistics/timedout}=="0"
+    ATTRS{statistics/transfer_bytes_histo_0-1}=="0"
+    ATTRS{statistics/transfer_bytes_histo_1024-2047}=="0"
+    ATTRS{statistics/transfer_bytes_histo_128-255}=="0"
+    ATTRS{statistics/transfer_bytes_histo_16-31}=="0"
+    ATTRS{statistics/transfer_bytes_histo_16384-32767}=="0"
+    ATTRS{statistics/transfer_bytes_histo_2-3}=="0"
+    ATTRS{statistics/transfer_bytes_histo_2048-4095}=="0"
+    ATTRS{statistics/transfer_bytes_histo_256-511}=="0"
+    ATTRS{statistics/transfer_bytes_histo_32-63}=="0"
+    ATTRS{statistics/transfer_bytes_histo_32768-65535}=="0"
+    ATTRS{statistics/transfer_bytes_histo_4-7}=="0"
+    ATTRS{statistics/transfer_bytes_histo_4096-8191}=="0"
+    ATTRS{statistics/transfer_bytes_histo_512-1023}=="0"
+    ATTRS{statistics/transfer_bytes_histo_64-127}=="0"
+    ATTRS{statistics/transfer_bytes_histo_65536+}=="0"
+    ATTRS{statistics/transfer_bytes_histo_8-15}=="0"
+    ATTRS{statistics/transfer_bytes_histo_8192-16383}=="0"
+    ATTRS{statistics/transfers}=="0"
+    ATTRS{statistics/transfers_split_maxsize}=="0"
+
+  looking at parent device '/devices/platform/NVDA1513:00':
+    KERNELS=="NVDA1513:00"
+    SUBSYSTEMS=="platform"
+    DRIVERS=="tegra-qspi"
+    ATTRS{driver_override}=="(null)"
+    ATTRS{power/control}=="auto"
+    ATTRS{power/runtime_active_time}=="86751"
+    ATTRS{power/runtime_status}=="suspended"
+    ATTRS{power/runtime_suspended_time}=="340179486"
+
+  looking at parent device '/devices/platform':
+    KERNELS=="platform"
+    SUBSYSTEMS==""
+    DRIVERS==""
+    ATTRS{power/control}=="auto"
+    ATTRS{power/runtime_active_time}=="0"
+    ATTRS{power/runtime_status}=="unsupported"
+    ATTRS{power/runtime_suspended_time}=="0"
+
+> I'm happy to:
+> - Test this series on our hardware platforms
+
+Please test with the patch above (reduced QSPI_DMA_TIMEOUT and the mdelay). 
+
+> - Collaborate on v2 with the fixes above
+
+Thanks. I understand that the only concern for v1 is that QSPI_RDY if inverted,
+and I can fix it and send a v2. is there anything else you want fixed in v2?
+
+> - I will work on hard IRQ handler follow-up that Thierry suggested for 
+>   long-term robustness
+
+This is awesome, appreciate!
+
+Thanks for you support,
+--breno
