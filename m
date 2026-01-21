@@ -1,342 +1,227 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433A14ADDAB
-	for <linux-tegra@vger.kernel.org>; Wed, 21 Jan 2026 16:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769014666; cv=pass; b=pBdhuSwv3GOcHQwdZfkDvlVSznnwnpc53EkWi0lAPRqQ23SDQfQp6HzKRvXtJpXDJ25KwSBRFPIgzIArBgfoQ8/rE2yJgm+Ze2D5Whd7vBpO4tu/Hm7WqUntGCTc5Ehm1KYaTfbm4LBG6kRERkBCBxtRny5jTtgVN317DcJ03vs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769014666; c=relaxed/simple;
-	bh=n9LGtCCoNWJYT6s8g8s+u64o/APoDWxPMT01RQqJz/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F4qj9Uv32D7K33nMxLQGw6Cp5M+DMoqDJYeaBzE43Wf3dgzXvi9PeNl8mcimGyr1otnI35G/iTBO7Wb+9neLzrUtIFOvv2yicm7ZTEjp8M2urgV45Vg+vzaLIV6SU2Y1pHbcPqMDhH9NgE/YJSTWVrB7VMHC/1lfbWCGmba+JZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKz09Hgl; arc=pass smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3475F31B10F
+	for <linux-tegra@vger.kernel.org>; Wed, 21 Jan 2026 17:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769015315; cv=none; b=Kl6rsbiyPt68JmGZ7EAeTzvQkSQ8RyrjZlcH0rsRi2MAigdwy0ZjnjmkRe1SOelqQP0OtS5+KBMyzgzm9hO88hNgYU/XFJSXP3N9B9jfWc6MjZMaMHDafIzDIjNh0hh1ZL0z4J6fJ7by8puSmd/LulGgA0eJ7bzdzKo1zgI8u2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769015315; c=relaxed/simple;
+	bh=ylt8hCn+PfJWRmyhebzDTVE9RwwtBWImeihh+sFkkuU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Dze8knUk1e1jup6YLUrdMP/Aow5mrqNR6RWm4GHYgSj1sD73fgQo4BdTtZIdkOwr1xUW1DkKE6jNDm+h+cr8NMCWrYSb3G7n0/LKKk9hKX7ZDnexqaqePqx3Liy/hnCBvVtRpb6IMh65LJOW7oUUevXKDHdqbMpdEbtbd1UVSKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+n/GTfV; arc=none smtp.client-ip=209.85.160.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKz09Hgl"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43246af170aso23238f8f.0
-        for <linux-tegra@vger.kernel.org>; Wed, 21 Jan 2026 08:57:42 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769014660; cv=none;
-        d=google.com; s=arc-20240605;
-        b=TXij0xG6/JW6cudM3Nbhi4mfpy+RpjY5qILbiHfIKEpamfMStzJr4nKBVIZsuXu22R
-         7BAd7s+aRIFJmloSsAYcQdKZQGPGEbg5ngxTeoYx8cYpXq9tqH0r8aw4lGiG2kc0RLyc
-         r+X00TZzXoQzlmYsaH84oY81opG8UOcistt2lFTxp7RaprT5M2hO9BpqYwKxoi4p2Nce
-         /aQIE0C7v3UnBTWipVA2yt3hcTKMq2prTehGDcLE7WtK6E2069Wq6xRt096+IUdHyF61
-         HM9XnfqOdohfFAFF04E+Fus2RCq69TvLwzXdQ2F+CyJmAtJkrYxveCeNWHCnPiKkmnRb
-         QGfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bnUdOq88S5jzPpVoyj19K4zXbAbMVOiRE4Y/7ikog0w=;
-        fh=WW9+ThvU/E8rNk4uA9ZAC3wTvdGud+eOc0VRM9Jq4ac=;
-        b=T1l0/ZCasH4+LhGf3si7PB+NaX0P0eju5m5ivF9QAEZE/RWYloNpUsNDLbvsPcbDiz
-         dVDpB0duxjRtaFP8e2/IlmrjHgaJXb+k/v4MEokMWr19AAkHXRrCMMLLmmQm8rwXydE1
-         hf5veFAGcK6j2qJibbrBBkot1iMZ6ulkPImTwSBBh6cxfbbwOXUj8alTgOZ7r4KgYFg9
-         Mgtu3hicyLunvTwiCaqDusV5ZrUv/GhOknlw+crZn2QFrVgvBEGib6szfGhorUbQqh4g
-         cWY3dD3y2tDMc2mio7O6xdv1YH+Y+QB/wTnHVtQ9Ca6IUBkRwDcUiSSs9JFkhZblKTQO
-         68sA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+n/GTfV"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3f9ebb269c3so47802fac.3
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Jan 2026 09:08:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769014660; x=1769619460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1769015312; x=1769620112; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bnUdOq88S5jzPpVoyj19K4zXbAbMVOiRE4Y/7ikog0w=;
-        b=BKz09Hgl3lIelVXmMkIqX51HjoGjTyR2dhIE4AhhoglxZ5zn1Y4dJ2dkNgJw9DHpXc
-         40UJVULiUxwCH5WMZqOlaaTf+OswEQUN7TDnLsay4Aqkcw6CFtLmKix+5lIzoHtk79kv
-         qZggeVrVpC3hWqBlMM5K9hpgyut79Gv0uTDHyvEyh/idpZrBMDRaYsFDxolodney3tKA
-         AzrHabBYwzjNEeEWJcw7KMhybgAx+OvE7ex3wTPfqgHiuBHjtx//INyhBmaTNJOATNr/
-         5PzIGGAio2YjyEaRFSIMoZINuWMERWCxVO6tlMZnScnM0P/DTqhbJN3hWqYk+l/nLjUI
-         BH/Q==
+        bh=af5XQHYCmWbE8OkeX4m6uk9+GAFVqnxcLOlrwMZ+INI=;
+        b=h+n/GTfVDfC0BnQKeAs3UcEYynhRK2NmF92CFepuqe/EW762IF9ihms4X7s4PjWISW
+         tqODo4WmOO5ngorVxINd+p3Ly4lvjBwpOrLVcIx58ywM8sq2vZPx7v3l5pbQTKQF4NgQ
+         E+gBMP4+ZdwEgL+trKcQs2hEZl9Xjo1dQOaycaLMpLOI0wRGpygbIKDrIx8xKvIUYcZW
+         za2g7LwYCRrh5GfpwvK665H41teWxsz5AhTiU5KMSdJ14c9TeRebCbq5DzpVzOXo/qHJ
+         5lK4PGarvyAJx+kHl41PbILCgodlFbicUKTICITOpQHdfqac0dV16JdPgwk8lTxO44KY
+         aNag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769014660; x=1769619460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bnUdOq88S5jzPpVoyj19K4zXbAbMVOiRE4Y/7ikog0w=;
-        b=ReLTEXEb0tPJaGbU4Wmf9IXkCYH5K8fUEhr8/0rBLnI2xsKn8odQAo4AOpYGJVqsKX
-         55ZnoyG/ji/vytq4M92ZX6jjex5b8nv7CsdxHlFo8+l5utIRieAYJ4cNinbzNUhBiqV+
-         +o+buCIv6FHbgn4sAaNiHqoIkNUjERcWLyW89K1UlAf+X+1B5H9KO2abAY6Jad/BZNOw
-         8u0g2RXvw6QNq6QP65zRyFUT5ZuZOw1vYYTtnpC/1Yj5uyj6sjWEj0jIGbsyBMxv0LMQ
-         o9oViYN0HuwwZahl1Kw2KJXOeylTIujdeX/qTEL8xWcznQgQhrMDNk3e6hb3+iZyvnq3
-         5MUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVz4HpoQq/YC0egftFQb5cFcsIwmUbkRV30qbC7g3ChEyLgbK08Li1x3Zu5rB8rUsfTLZlIVVimT3q5eg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg4D9q2Vgrw+X+jY52a1iXIE6Ti/5MPelapUl9D+XWfYaxcmiJ
-	NulvmAq88xxveZtPTM49l+U1602eG5Q5wh1NsVhtgt6KtBFN72bCDsdQHQnKxrukHxRtBaJjjzZ
-	jK86+0h11zL6jfAeyuqtnB7vFfsutSiw=
-X-Gm-Gg: AZuq6aKER8AuNt/jI272gFJ85II0Jbt7d+5ivAasnhXyCgnLXU2CkzK1GH0RZWXrnGK
-	Hc57kue7uqPixrPZyovDOU0e4xlKG0dbBwTQjJEch1Of9U9db86qnjFmeX0LFU/KQVEpHzA+XsK
-	gS2clBaYz68GTREsU/1ccAwqjLVNxQgs2F/gvKni+OnKNpaDAf44lFdFRQLyI3NomadqyXqL5bh
-	PdoaLrIgmsbW8onkVOyeJXyVvt3Y2y6l8K3E5hcNgHsl/LoVNmiEoC6XiumjASmWi2r4Zn1
-X-Received: by 2002:a5d:64c4:0:b0:435:9144:13fe with SMTP id
- ffacd0b85a97d-435a5ff8c0fmr101536f8f.26.1769014660302; Wed, 21 Jan 2026
- 08:57:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769015312; x=1769620112;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=af5XQHYCmWbE8OkeX4m6uk9+GAFVqnxcLOlrwMZ+INI=;
+        b=So3g3NpyLIgR1sO84hJj2U6+UcLmCco5tfsKGqEeSUj6b81j4FPN4AAQFF2LgW98ay
+         YGS6/CY2fotVPjx0IJm9BP+NVowSDU1JrGAilUR+QS+qa/w2zNyIX8AIzbNLD/LrKFPs
+         KFl8emyoJ1vE2C4fZM0lMIwhNDkMGMu/7fo7FN2pORSitOGnHXhrXNfiT9vzptao2TbS
+         6kIvCnFcz6itRQr0dr6MkeP7+xp8i4Tfa04L79fpD005mlvRq4PJD/e38waBWu9xt6EG
+         jacVf4WA3vG4tEUmVKutH00zIey0EJKOdVkXQxGH8AglRihIHhyzFj9AH5StJ10udhLv
+         He6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWF2xzA2pislBHWw0bzQCseg85V0u3T0uTgyHuMmWZpvEHGMDKxxmkM8DfSwG8edBWHTaxt2Dr7rEVK8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgevAjXmheu9lmYE4jaxHgcT+Vg0RuIVnpsfmH5RoQOAw6YJep
+	dYiIrrhPNJ9LNLElMP/lvspfh6G0RKpvHSVS8cw9m+aD9puuymAlU/Wy
+X-Gm-Gg: AZuq6aJF0IWp1Zh58UAFbpxTz7CxkpIWfiz5U+HTBw91EEGgFmpH/e3jE8Zmxf8ofJQ
+	/Oh/6SGYBZpqMe1aGV0QjYdpLajBYUOS0/oGJGSyk3kzz80Tj+xLGm3MfxOJIXVNwzRUKfnS5Bs
+	obGiVksLL3rXmo4LkRkLLCMce04gsELWrj7cFopJafAvZ/ShX6xUeIlryG6pd4Qk0hlcz/nzfdS
+	2K5ENj1WUaewlfPYZLHLN6vmDZFdGeyoE96jkjK7jRVB7x5vIH006JUJN0Jb7xOjtRBiU7e8QWo
+	6Cswj+lFVvDBjePgzjuuXrMxX6B+SsVDPPHQD4z/qJfXaRFWL+Bb8Uw2/1RCs5+G/U/6GTbQNpR
+	IvY9zbm1NRSh2vhbEx0SXgyKSnr3hVBMjiCAb+HHXLJPDZnaAzDxc+rZkQDnmtm0gWKR6xmn+3B
+	9VtvE72XvR/3DzRV5pe1+jBscMRgc0T9Edf21ahJkWSCDtyQsVxfiPm2M=
+X-Received: by 2002:a05:6820:480f:b0:65f:69f7:d0e4 with SMTP id 006d021491bc7-66117a3d381mr6187186eaf.83.1769015311981;
+        Wed, 21 Jan 2026 09:08:31 -0800 (PST)
+Received: from smtpclient.apple ([207.154.79.109])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-661187840d8sm8111739eaf.12.2026.01.21.09.08.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Jan 2026 09:08:31 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251125120559.158860-1-clamor95@gmail.com> <20251125120559.158860-12-clamor95@gmail.com>
- <4370037.mvXUDI8C0e@senjougahara>
-In-Reply-To: <4370037.mvXUDI8C0e@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 21 Jan 2026 18:57:29 +0200
-X-Gm-Features: AZwV_QgURCnhkWoxVxcJP63yhkPm-ScQ-p0XP69L3txSPXMFGvGuHj06hr84FTs
-Message-ID: <CAPVz0n1zqo1TyaV=+fc6YzOKH9TqOBEatruZTAVGg9hFEWmXsQ@mail.gmail.com>
-Subject: Re: [PATCH v4 11/12] ARM: tegra: Add EMC OPP and ICC properties to
- Tegra114 EMC and ACTMON device-tree nodes
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.300.41.1.7\))
+Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
+From: Kurt Kiefer <kekiefer@gmail.com>
+In-Reply-To: <CALHNRZ9b98Su9qAqXRSTCStoUPtC_u3+MG0cr4SQ-g3aVJD7LQ@mail.gmail.com>
+Date: Wed, 21 Jan 2026 09:08:19 -0800
+Cc: Jasper Korten <jja2000@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <8615742F-EE35-4B37-BA0A-D62FFD5424B4@gmail.com>
+References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
+ <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
+ <CALHNRZ9-XrMUkQE0cwjq-HUYsy5uerhOQ9sNpirp23kKoaPuYw@mail.gmail.com>
+ <72llskwvuwyllvz24zoex4ad6v6t5skiehmwylj7exoh7bmzjo@xq3v7vja5w62>
+ <CALHNRZ_k6e9ZRmpK6Pzpet=RzUQ0fRYmfnea6U+9E2oZc8=z7w@mail.gmail.com>
+ <eac10a43-5164-4ecf-8b56-6099e69001bc@gmail.com>
+ <CALHNRZ9b98Su9qAqXRSTCStoUPtC_u3+MG0cr4SQ-g3aVJD7LQ@mail.gmail.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: Apple Mail (2.3864.300.41.1.7)
 
-=D1=81=D1=80, 21 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:56 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Tuesday, November 25, 2025 9:05=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Add EMC OPP tables and interconnect paths that will be used for
-> > dynamic memory bandwidth scaling based on memory utilization statistics=
-.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../dts/nvidia/tegra114-peripherals-opp.dtsi  | 151 ++++++++++++++++++
-> >  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   9 ++
-> >  2 files changed, 160 insertions(+)
-> >  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.d=
-tsi
-> >
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi b/a=
-rch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > new file mode 100644
-> > index 000000000000..1a0e68f22039
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > @@ -0,0 +1,151 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/ {
-> > +     emc_icc_dvfs_opp_table: opp-table-emc {
-> > +             compatible =3D "operating-points-v2";
-> > +
-> > +             opp-12750000-900 {
-> > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <12750000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
->
-> What's the source of the opp data?
->
 
-I have used tf701t (T40X) and tegratab (T40S) kernel sources, to be
-more specific board-*-memory.c files. Timing struct for each clock
-contains min voltage field which was used to compose these opps.
-1390000 is the max core regulator voltage, taken from tegra11_dvfs.c
 
-I have converted an entire core_dvfs_table table from tegra11_dvfs.c
-and I am planning to submit those later on too along with
-powergates/domains configuration for tegra114, but that is for another
-time :)
+> On Dec 8, 2025, at 8:23=E2=80=AFPM, Aaron Kling =
+<webgeek1234@gmail.com> wrote:
+>=20
+> On Wed, Nov 5, 2025 at 3:28=E2=80=AFPM Jasper Korten =
+<jja2000@gmail.com> wrote:
+>>=20
+>> Hi all,
+>>=20
+>> On 11/4/25 19:12, Aaron Kling wrote:
+>>> On Tue, Nov 4, 2025 at 3:14=E2=80=AFAM Thierry Reding =
+<thierry.reding@gmail.com> wrote:
+>>>> On Mon, Nov 03, 2025 at 12:39:57PM -0600, Aaron Kling wrote:
+>>>>> On Mon, Nov 3, 2025 at 5:54=E2=80=AFAM Thierry Reding =
+<thierry.reding@gmail.com> wrote:
+>>>>>> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 =
+Relay wrote:
+>>>>>>> From: Aaron Kling <webgeek1234@gmail.com>
+>>>>>>>=20
+>>>>>>> Without the cmu, nvdisplay will display colors that are notably =
+darker
+>>>>>>> than intended. The vendor bootloader and the downstream display =
+driver
+>>>>>>> enable the cmu and sets a sRGB table. Loading that table here =
+results in
+>>>>>>> the intended colors.
+>>>>>>>=20
+>>>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+>>>>>>> ---
+>>>>>>>  drivers/gpu/drm/tegra/dc.h  |  13 +++
+>>>>>>>  drivers/gpu/drm/tegra/sor.c | 206 =
+++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>  2 files changed, 219 insertions(+)
+>>>>>> What does "darker than intended" mean? Who defines the intention? =
+How do
+>>>>>> we know what the intention is? What this patch ultimately seems =
+to be
+>>>>>> doing is define sRGB to be the default colorspace. Is that always =
+the
+>>>>>> right default choice? What if people want to specify a different
+>>>>>> colorspace?
+>>>>> I reported this issue almost a month ago. See kernel lore [0] and
+>>>>> freedesktop issue [1]. The pictures in the latter show what =
+nvdisplay
+>>>>> looks like right now. It's nigh unusably dark. When booted into
+>>>>> Android with a tv launcher that has a black background, as is =
+default
+>>>>> for LineageOS, it is really hard to read anything. Is it correct =
+as a
+>>>>> default? Well, cboot hardcodes this, so... presumably? It would be
+>>>>> more ideal to expose this and csc to userspace, but I'm not sure =
+if
+>>>>> drm has a standardized interface for that or if tegra would have =
+to
+>>>>> make something vendor specific. I think that would be a separate
+>>>>> change concept compared to setting this default, though.
+>>>> The reason I'm asking is because I don't recall ever seeing =
+"broken"
+>>>> colors like you do. So I suspect that this may also be related to =
+what
+>>>> display is connected, or the mode that we're setting.
+>> I have tried it on both a MacroSilicon HDMI capture card and an =
+Arzopa
+>> Z1FC 1080p portable monitor and run into the same darker colors. Both
+>> have in common that they use HDMI which seems to line up with what =
+Aaron
+>> is reporting. I do not have an eDP display to test or another carrier
+>> board with a different display out to test.
+>>>> It could perhaps
+>>>> also be related to what infoframes we're sending and how these are
+>>>> supported/interpreted by the attached display.
+>>>>=20
+>>>> All of that is to say that maybe this looks broken on the =
+particular
+>>>> setup that you have but may works fine on other setups. Changing =
+the
+>>>> default may fix your setup and break others.
+>>> Do you have a device set up so you can check? Or does the regression
+>>> test bench have a display that can be forwarded?
+>>>=20
+>>> My current setup is a rack of units plugged via hdmi to a kvm which =
+is
+>>> then plugged to a pikvm. I also observed this issue before I had =
+this
+>>> setup, plugged directly to a 1080p monitor. I have not checked
+>>> displayport. I can cycle through a couple other displays without =
+this
+>>> patch to see if I get any other result. I am fairly certain I have
+>>> consistently seen this issue since I started trying to work with
+>>> tegra-drm on kernel 6.1 or maybe even 5.15. I've never seen it work =
+to
+>>> allow for a bisect.
+>>>=20
+>>> I am in contact with one other person with a tx2 devkit, who
+>>> replicated the issue when I asked. Who plans to reply to this thread
+>>> with setup info later.
+>>=20
+>> For reference, I am said person. I have a Jetson TX2 Devkit that uses
+>> the P2771 Device Tree. I'm running a Fedora distrokernel with no
+>> additional patches applied by myself. I have personally noticed the
+>> issue to at least be present on 6.14.5 and 6.17.4.
+>>=20
+>>=20
+>> I'm currently not at home to take screenshots with and without the
+>> submitted patch, but will be able to do it tomorrownight or friday.
+>=20
+> Any further thoughts from the maintainers on this patch? As far as I
+> know, this is an issue for all users, at the very least on hdmi.
+>=20
+> Aaron
+>=20
 
-> Cheers,
-> Mikko
->
-> > +
-> > +             opp-20400000-900 {
-> > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <20400000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-40800000-900 {
-> > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <40800000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-68000000-900 {
-> > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <68000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-102000000-900 {
-> > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <102000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-204000000-900 {
-> > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <204000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-suspend;
-> > +             };
-> > +
-> > +             opp-312000000-1000 {
-> > +                     opp-microvolt =3D <1000000 1000000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <312000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-408000000-1000 {
-> > +                     opp-microvolt =3D <1000000 1000000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <408000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-528000000-1050 {
-> > +                     opp-microvolt =3D <1050000 1050000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <528000000>;
-> > +                     opp-supported-hw =3D <0x000E>;
-> > +             };
-> > +
-> > +             opp-528000000-1100 {
-> > +                     opp-microvolt =3D <1100000 1100000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <528000000>;
-> > +                     opp-supported-hw =3D <0x0001>;
-> > +             };
-> > +
-> > +             opp-624000000-1100 {
-> > +                     opp-microvolt =3D <1100000 1100000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <624000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +
-> > +             opp-792000000-1100 {
-> > +                     opp-microvolt =3D <1100000 1100000 1390000>;
-> > +                     opp-hz =3D /bits/ 64 <792000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +             };
-> > +     };
-> > +
-> > +     emc_bw_dfs_opp_table: opp-table-actmon {
-> > +             compatible =3D "operating-points-v2";
-> > +
-> > +             opp-12750000 {
-> > +                     opp-hz =3D /bits/ 64 <12750000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <204000>;
-> > +             };
-> > +
-> > +             opp-20400000 {
-> > +                     opp-hz =3D /bits/ 64 <20400000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <326400>;
-> > +             };
-> > +
-> > +             opp-40800000 {
-> > +                     opp-hz =3D /bits/ 64 <40800000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <652800>;
-> > +             };
-> > +
-> > +             opp-68000000 {
-> > +                     opp-hz =3D /bits/ 64 <68000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <1088000>;
-> > +             };
-> > +
-> > +             opp-102000000 {
-> > +                     opp-hz =3D /bits/ 64 <102000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <1632000>;
-> > +             };
-> > +
-> > +             opp-204000000 {
-> > +                     opp-hz =3D /bits/ 64 <204000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <3264000>;
-> > +                     opp-suspend;
-> > +             };
-> > +
-> > +             opp-312000000 {
-> > +                     opp-hz =3D /bits/ 64 <312000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <4992000>;
-> > +             };
-> > +
-> > +             opp-408000000 {
-> > +                     opp-hz =3D /bits/ 64 <408000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <6528000>;
-> > +             };
-> > +
-> > +             opp-528000000 {
-> > +                     opp-hz =3D /bits/ 64 <528000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <8448000>;
-> > +             };
-> > +
-> > +             opp-624000000 {
-> > +                     opp-hz =3D /bits/ 64 <624000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <9984000>;
-> > +             };
-> > +
-> > +             opp-792000000 {
-> > +                     opp-hz =3D /bits/ 64 <792000000>;
-> > +                     opp-supported-hw =3D <0x000F>;
-> > +                     opp-peak-kBps =3D <12672000>;
-> > +             };
-> > +     };
-> > +};
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts=
-/nvidia/tegra114.dtsi
-> > index a920ad041c14..6221423b81d1 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> > @@ -8,6 +8,8 @@
-> >  #include <dt-bindings/soc/tegra-pmc.h>
-> >  #include <dt-bindings/thermal/tegra114-soctherm.h>
-> >
-> > +#include "tegra114-peripherals-opp.dtsi"
-> > +
-> >  / {
-> >       compatible =3D "nvidia,tegra114";
-> >       interrupt-parent =3D <&lic>;
-> > @@ -323,6 +325,9 @@ actmon: actmon@6000c800 {
-> >               clock-names =3D "actmon", "emc";
-> >               resets =3D <&tegra_car TEGRA114_CLK_ACTMON>;
-> >               reset-names =3D "actmon";
-> > +             operating-points-v2 =3D <&emc_bw_dfs_opp_table>;
-> > +             interconnects =3D <&mc TEGRA114_MC_MPCORER &emc>;
-> > +             interconnect-names =3D "cpu-read";
-> >               #cooling-cells =3D <2>;
-> >       };
-> >
-> > @@ -655,6 +660,7 @@ mc: memory-controller@70019000 {
-> >
-> >               #reset-cells =3D <1>;
-> >               #iommu-cells =3D <1>;
-> > +             #interconnect-cells =3D <1>;
-> >       };
-> >
-> >       emc: external-memory-controller@7001b000 {
-> > @@ -665,6 +671,9 @@ emc: external-memory-controller@7001b000 {
-> >               clock-names =3D "emc";
-> >
-> >               nvidia,memory-controller =3D <&mc>;
-> > +             operating-points-v2 =3D <&emc_icc_dvfs_opp_table>;
-> > +
-> > +             #interconnect-cells =3D <0>;
-> >       };
-> >
-> >       hda@70030000 {
-> >
->
->
->
->
+I can confirm that I have the same issue on a DisplayPort output of =
+t194.
+IMO, this patch will need to be reworked a bit to enable the CMU for =
+this
+output as well. I hacked this change in for DisplayPort, and then it
+functioned as intended there as well.
+
+I've traced back to the reason this is necessary. The DC hub driver is
+applying an sRGB degamma for every RGB plane (presumably for blending),
+and then nothing reapplies the EOTF later on. Without gamma correction
+in places where it is expected, images are going to look "too dark".
+
+Which does raise the point that there is an alternative implementation
+where we do not degamma RGB planes in the first place. But this may have
+unintended consequences when it comes to composition.
+
+The SOR does not appear to handle YCbCr outputs at this time, so =
+enabling
+the CMU assuming an sRGB EOTF seems like a reasonable path here, to me.
+
+Kurt=
