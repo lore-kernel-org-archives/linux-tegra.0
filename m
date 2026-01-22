@@ -1,225 +1,89 @@
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95CE3A7F49;
-	Thu, 22 Jan 2026 08:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37093491F4;
+	Thu, 22 Jan 2026 09:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769072176; cv=none; b=NVKLExTKLicNBsibkweEJu+VYVqQ+QNXwI0NXx9tBs7kn76KKp626SCn+D5jzurlo/gz+kt1fuiHmCrQ7Zb12I5RicEidGh2adaTF1T9SA1aCpUxFmn/BEaWP7znHgQQrHCiYC7XaHomWaCF3L95vEaE3jbXqpMgdLXHsbbyk0M=
+	t=1769072425; cv=none; b=C7OcrArKBO+aUirE234wUDTAk15hFm7VluxBlITAqUnL9yWsz5qs1Ef85qB5BJcx8U/zlHVrUMlrg3l82wrEFl7Gk1oQKqm3SKaQKL0B6i7D1IsZMUT9O6MC1J6FqRkbxdiG2jCwlViMF5qZMylZVlFxF6uLlrTcUXvjMnYROjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769072176; c=relaxed/simple;
-	bh=zo/k6MNrNvcqETtnkBU7N9py2eZd8C0HTvTrCTYeNRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ia4eqo4lHFKd05/sJgg7ya/lBHGTS1L6HOKRmQEGhQPJzScJDzWvjyXSItKkvxlROltHbx/x87cLSHRuT3PwUC4deAR2CzlS4Pdgre6lqPjnMCX026VmQAohzUIX/8CPjAWP+ke18Gj53m07XxwPRAMTIyWSvoLy6byjw6c5LL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Cs7omK5N; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1769072425; c=relaxed/simple;
+	bh=AZFYl95tZw83k2fEE48wfdvR4CXEcLULoc8pMv1G/Bo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhN+Xs8/wyYMEx3zTpIkRna+RD2rOHOPsa7xv1+t2ThlLu413Bk3ZlYs0UJs1FldKXm4/G9yOgBefMstc8NtjKXxtIIHqdWC/t4dx2NKnTgHpml4ETC3t3LYRFzEAtyph8P9lrqz2GJkUmkPBlor8LnCegMN3mTSjdTrWap5xcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mp8ENmYQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Cs7omK5N"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=egbATltjKtI2lDt3jOk7R1/+E4l/hmITyhwUo2UnyFk=;
-	b=Cs7omK5NyR4uJO7VAmxcu1sE2rcdo73iU+6c/iYg9a+wUflB0gPeW/Rk07TPI5WNIJOSHNSNl
-	Zg8OCiQx3J89s8VGX5GfxfqqiSnikoO+TZaZsSzJKTFMOgzyK5ePYvO5NneAo3/F9Nvw5d3Xi14
-	0hRS58CCvFcNw+Tuq7J/A6g=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4dxZZd0tRlz1cyTK;
-	Thu, 22 Jan 2026 16:52:41 +0800 (CST)
-Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
-	by mail.maildlp.com (Postfix) with ESMTPS id 012E940538;
-	Thu, 22 Jan 2026 16:56:05 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemf200001.china.huawei.com
- (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Jan
- 2026 16:56:03 +0800
-Message-ID: <7f0b280d-9c22-46dc-a924-a85591e1034d@huawei.com>
-Date: Thu, 22 Jan 2026 16:56:03 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mp8ENmYQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C6BC116C6;
+	Thu, 22 Jan 2026 09:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769072425;
+	bh=AZFYl95tZw83k2fEE48wfdvR4CXEcLULoc8pMv1G/Bo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mp8ENmYQVtJ1EMYz0X8bkcVxWU+gCr8Fgt+QaEj8GkJ+34FS+nBT+LQC9OkGsQezu
+	 5MApqwdB08KOLxvl+IburfuHXNQwD8Hy3mGkN83wSQCKFWXy8QOF21LPMxQAnImFrV
+	 SkRbS529Iy5egC5SypGHdJ0kyuctrmmCIyqot1zcplQxuH6Qlu5SFF+stcyxOJXr5c
+	 uzdOee9LlPwxuBMCk/ODtg5TSEF4vV4AqMSBKNX0vNQbRYxGG7YWc/VADSk+i4tTdb
+	 9OPXRV7NVJwsOJhuvpYlIs4O+x+cHQX67sgm2Pis2uH67qGA4dAmdBaLXIBiD1b50T
+	 DVt46F3Vf1GSg==
+Date: Thu, 22 Jan 2026 10:00:11 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Koichiro Den <den@valinux.co.jp>
+Cc: jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	vigneshr@ti.com, s-vadapalli@ti.com, hongxing.zhu@nxp.com,
+	l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, minghuan.Lian@nxp.com,
+	mingkai.hu@nxp.com, roy.zang@nxp.com, jesper.nilsson@axis.com,
+	heiko@sntech.de, srikanth.thokala@intel.com,
+	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	christian.bruel@foss.st.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
+	mhiramat@kernel.org, kishon@kernel.org, jirislaby@kernel.org,
+	rongqianfeng@vivo.com, 18255117159@163.com,
+	shawn.lin@rock-chips.com, nicolas.frattaroli@collabora.com,
+	linux.amoon@gmail.com, vidyas@nvidia.com, Frank.Li@nxp.com,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v9 3/5] PCI: dwc: Advertise dynamic inbound mapping
+ support
+Message-ID: <aXHnFskw9InGNuuR@ryzen>
+References: <20260122084909.2390865-1-den@valinux.co.jp>
+ <20260122084909.2390865-4-den@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/9] ACPI: CPPC: Add cppc_get_perf() API to read
- performance controls
-To: Sumit Gupta <sumitg@nvidia.com>
-CC: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<corbet@lwn.net>, <rdunlap@infradead.org>, <ray.huang@amd.com>,
-	<gautham.shenoy@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<zhanjie9@hisilicon.com>, <linux-pm@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
-	<nhartman@nvidia.com>, <bbasu@nvidia.com>
-References: <20260120145623.2959636-1-sumitg@nvidia.com>
- <20260120145623.2959636-5-sumitg@nvidia.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <20260120145623.2959636-5-sumitg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemf200001.china.huawei.com (7.202.181.227)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260122084909.2390865-4-den@valinux.co.jp>
 
-On 2026/1/20 22:56, Sumit Gupta wrote:
-> Add cppc_get_perf() function to read values of performance control
-> registers including desired_perf, min_perf, max_perf, energy_perf,
-> and auto_sel.
+On Thu, Jan 22, 2026 at 05:49:07PM +0900, Koichiro Den wrote:
+> The DesignWare EP core has supported updating the inbound iATU mapping
+> for an already configured BAR (i.e. allowing pci_epc_set_bar() to be
+> called again without a prior pci_epc_clear_bar()) since commit
+> 4284c88fff0e ("PCI: designware-ep: Allow pci_epc_set_bar() update
+> inbound map address").
 > 
-> This provides a read interface to complement the existing
-> cppc_set_perf() write interface for performance control registers.
+> Now that this capability is exposed via the dynamic_inbound_mapping EPC
+> feature bit, set it for DWC-based EP glue drivers using a common
+> initializer macro to avoid duplicating the same flag in each driver.
 > 
-> Note that auto_sel is read by cppc_get_perf() but not written by
-> cppc_set_perf() to avoid unintended mode changes during performance
-> updates. It can be updated with existing dedicated cppc_set_auto_sel()
-> API.
+> Note that pci-layerscape-ep.c is untouched. It currently constructs the
+> feature struct dynamically in ls_pcie_ep_init(). Once converted to a
+> static feature definition, it will use DWC_EPC_COMMON_FEATURES as well.
 > 
-> Use cppc_get_perf() in cppc_cpufreq_get_cpu_data() to initialize
-> perf_ctrls with current hardware register values during cpufreq
-> policy initialization.
-> 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
 > ---
->  drivers/acpi/cppc_acpi.c       | 80 ++++++++++++++++++++++++++++++++++
->  drivers/cpufreq/cppc_cpufreq.c |  6 +++
->  include/acpi/cppc_acpi.h       |  5 +++
->  3 files changed, 91 insertions(+)
-> 
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index a09bdabaa804..de35aeb07833 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1739,6 +1739,86 @@ int cppc_set_enable(int cpu, bool enable)
->  }
->  EXPORT_SYMBOL_GPL(cppc_set_enable);
->  
-> +/**
-> + * cppc_get_perf - Get a CPU's performance controls.
-> + * @cpu: CPU for which to get performance controls.
-> + * @perf_ctrls: ptr to cppc_perf_ctrls. See cppc_acpi.h
-> + *
-> + * Return: 0 for success with perf_ctrls, -ERRNO otherwise.
-> + */
-> +int cppc_get_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls)
-> +{
-> +	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
-> +	struct cpc_register_resource *desired_perf_reg,
-> +				     *min_perf_reg, *max_perf_reg,
-> +				     *energy_perf_reg, *auto_sel_reg;
-> +	u64 desired_perf = 0, min = 0, max = 0, energy_perf = 0, auto_sel = 0;
-> +	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
-> +	struct cppc_pcc_data *pcc_ss_data = NULL;
-> +	int ret = 0, regs_in_pcc = 0;
-> +
-> +	if (!cpc_desc) {
-> +		pr_debug("No CPC descriptor for CPU:%d\n", cpu);
-> +		return -ENODEV;
-> +	}
-> +
-> +	if (!perf_ctrls) {
-> +		pr_debug("Invalid perf_ctrls pointer\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	desired_perf_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
-> +	min_perf_reg = &cpc_desc->cpc_regs[MIN_PERF];
-> +	max_perf_reg = &cpc_desc->cpc_regs[MAX_PERF];
-> +	energy_perf_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
-> +	auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
-> +
-> +	/* Are any of the regs PCC ?*/
-> +	if (CPC_IN_PCC(desired_perf_reg) || CPC_IN_PCC(min_perf_reg) ||
-> +	    CPC_IN_PCC(max_perf_reg) || CPC_IN_PCC(energy_perf_reg) ||
-> +	    CPC_IN_PCC(auto_sel_reg)) {
-> +		if (pcc_ss_id < 0) {
-> +			pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
-> +			return -ENODEV;
-> +		}
-> +		pcc_ss_data = pcc_data[pcc_ss_id];
-> +		regs_in_pcc = 1;
-> +		down_write(&pcc_ss_data->pcc_lock);
-> +		/* Ring doorbell once to update PCC subspace */
-> +		if (send_pcc_cmd(pcc_ss_id, CMD_READ) < 0) {
-> +			ret = -EIO;
-> +			goto out_err;
-> +		}
-> +	}
-> +
-> +	/* Read optional elements if present */
-> +	if (CPC_SUPPORTED(max_perf_reg))
-> +		cpc_read(cpu, max_perf_reg, &max);
-> +	perf_ctrls->max_perf = max;
-> +
-> +	if (CPC_SUPPORTED(min_perf_reg))
-> +		cpc_read(cpu, min_perf_reg, &min);
-> +	perf_ctrls->min_perf = min;
-> +
-> +	if (CPC_SUPPORTED(desired_perf_reg))
-> +		cpc_read(cpu, desired_perf_reg, &desired_perf);
-> +	perf_ctrls->desired_perf = desired_perf;
 
-desired_perf_reg is not an optional one, so it has to be supported.
-
-> +
-> +	if (CPC_SUPPORTED(energy_perf_reg))
-> +		cpc_read(cpu, energy_perf_reg, &energy_perf);
-> +	perf_ctrls->energy_perf = energy_perf;
-> +
-> +	if (CPC_SUPPORTED(auto_sel_reg))
-> +		cpc_read(cpu, auto_sel_reg, &auto_sel);
-> +	perf_ctrls->auto_sel = (bool)auto_sel;
-> +
-> +out_err:
-> +	if (regs_in_pcc)
-> +		up_write(&pcc_ss_data->pcc_lock);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_perf);
-> +
->  /**
->   * cppc_set_perf - Set a CPU's performance controls.
->   * @cpu: CPU for which to set performance controls.
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index c95dcd7719c3..229880c4eedb 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -594,6 +594,12 @@ static struct cppc_cpudata *cppc_cpufreq_get_cpu_data(unsigned int cpu)
->  		goto free_mask;
->  	}
->  
-> +	ret = cppc_get_perf(cpu, &cpu_data->perf_ctrls);
-> +	if (ret) {
-> +		pr_debug("Err reading CPU%d perf ctrls: ret:%d\n", cpu, ret);
-> +		goto free_mask;
-> +	}
-> +
->  	return cpu_data;
->  
->  free_mask:
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 4d644f03098e..3fc796c0d902 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -151,6 +151,7 @@ extern int cppc_get_desired_perf(int cpunum, u64 *desired_perf);
->  extern int cppc_get_nominal_perf(int cpunum, u64 *nominal_perf);
->  extern int cppc_get_highest_perf(int cpunum, u64 *highest_perf);
->  extern int cppc_get_perf_ctrs(int cpu, struct cppc_perf_fb_ctrs *perf_fb_ctrs);
-> +extern int cppc_get_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls);
->  extern int cppc_set_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls);
->  extern int cppc_set_enable(int cpu, bool enable);
->  extern int cppc_get_perf_caps(int cpu, struct cppc_perf_caps *caps);
-> @@ -193,6 +194,10 @@ static inline int cppc_get_perf_ctrs(int cpu, struct cppc_perf_fb_ctrs *perf_fb_
->  {
->  	return -EOPNOTSUPP;
->  }
-> +static inline int cppc_get_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  static inline int cppc_set_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls)
->  {
->  	return -EOPNOTSUPP;
-
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
