@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABD93A7338;
-	Thu, 22 Jan 2026 16:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A0E3D5F3E;
+	Thu, 22 Jan 2026 16:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769098217; cv=none; b=fRgO/zXdmzTzWEmvsDavE0lsRfqdqcXhtUW1thCZIbZdZP3K5DeNDKL6fc1LemG/Ns+DHyhSZN5mGB9rarz6syHKCvoHWp/nGwSRVvai9CiKCFM/iZorC9U4xWXIKckeL3PNNPXFhR+I+7VzI0lTh9xKnJoQy/Ty97XXVgFH7iU=
+	t=1769098220; cv=none; b=S/wZ7n4d0JBCPt63RAzpNmYFD2HKrHyJMGCLsJN5EiBc5ppT/GCV4Njlf8KLFU+Auqq0XWrh0HV2knkpkhe2gctO2FCnmkvUCwoWSDPgcHMQYNhwDLvJLsVCFZevuhLnroRjJY8zKNO/Jy453NTISLf2KmWaCI8CU7Mncl58Tgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769098217; c=relaxed/simple;
-	bh=ha3JA4N/2sbTZoLLt9Hk+/O5tkj/IAzHDfElKjAoOuU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BSZeZOLnTXvDawUtVj/9KEUm8fIC34sThI+o1N7Faf0+gPH2gYhQOcQIq1W5OZRDMnG9gVQVVzD+yg1qY9a0k8/MMKll4PkZTl2J7x+k8hS4dVwBn9XPqNqm1kpjsm3QkyOD6l3fdpVYAK9J2ZxysTigyPK8/f9qB/I4Rz7w7K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxw0zSYC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769098220; c=relaxed/simple;
+	bh=wprP5qSFccWPgCsBEyBcH1cv+pmmiGrAaswb0KExp1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Mq+ocF/0kgnPUbT5OIXZH8Cd1p0UwwdMievoppkubPoN3pTX0g3Mfk2Zz6zvQfV9NkAb14hMD7UjnfsWL5SiYRiKKMoj+7kOkt6r4gBGy2djkhqk8FnogmsZ7g8/ZpuphQYu4KbuudkeGwOxao1Nn5iY3cFHskYKg/EfMGF+AIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg+sVNEq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxw0zSYC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95341C116C6;
-	Thu, 22 Jan 2026 16:10:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg+sVNEq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B674C116C6;
+	Thu, 22 Jan 2026 16:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769098216;
-	bh=ha3JA4N/2sbTZoLLt9Hk+/O5tkj/IAzHDfElKjAoOuU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gxw0zSYCXNJ4FcqwQQa7I3h3D2XukR/5aI8fAthL9DSmSmnm5KNPPfNGJ1op1BP4Y
-	 MQ8cVwzVPjLYouTp/7uYsWSzL1ur0vhAi8L6FpMUXjN04ub6UPMiSU3ZiH+XtPFwfk
-	 VDdZWO7EoWXGrXVNri26ANlTn29LcOna1OgwmoqrgPHF2Z+DlEJR1wAkHWsZ6kesJv
-	 qbLK+3OIqfHgL9efAc72qE3r7O1STboGXJlBPqou0qcXN6QKZkFhWF6pvcrQDPFrx/
-	 MqiNydzq8TzcExsRUkFNe+MEx6i7Rghos0E8UwfsefR6oollk4PXYz9/GzaS+tOntT
-	 OxAMHTZ4pQ6Hg==
+	s=k20201202; t=1769098219;
+	bh=wprP5qSFccWPgCsBEyBcH1cv+pmmiGrAaswb0KExp1k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Qg+sVNEqkTWkKuBV8wwZkfUMtNnpz21o2pnCIbPK6JFd1GTpwksfgK5rI/SLZW7uu
+	 8q5fKDiVr/3uxG0owtnmWMQGpzenZAz2DKxPSfWSU+8KRA/u40ZlO9UW/A+roJKS/U
+	 ML7S7DE7XmZCQLTiGtartsWl3WrcJpxMnCm856DYR/ojhsaBNkLaoVRQwxKErrhkQd
+	 nyVlO/WcBRdoZkYgQGpMIVtb4pWIcwDCGt5I7CcWth3/y5RSpDLypse6ZvrbY1WcKy
+	 B1Azpbu28TqnrZw2ONDq3mqMk/EPIzQ9pmTYvawFdj0s+GCFjD/vo/MgbG/rju3yaH
+	 knfsE2mphcFFA==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	David Airlie <airlied@gmail.com>,
@@ -46,10 +47,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-tegra@vger.kernel.org,
 	linaro-mm-sig@lists.linaro.org,
 	linux-mm@kvack.org
-Subject: [PATCH v2 00/10] dma-bug: heaps: Add Tegra VPR support
-Date: Thu, 22 Jan 2026 17:09:59 +0100
-Message-ID: <20260122161009.3865888-1-thierry.reding@kernel.org>
+Subject: [PATCH v2 01/10] dt-bindings: reserved-memory: Document Tegra VPR
+Date: Thu, 22 Jan 2026 17:10:00 +0100
+Message-ID: <20260122161009.3865888-2-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260122161009.3865888-1-thierry.reding@kernel.org>
+References: <20260122161009.3865888-1-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,78 +63,84 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+The Video Protection Region (VPR) found on NVIDIA Tegra chips is a
+region of memory that is protected from CPU accesses. It is used to
+decode and play back DRM protected content.
 
-This series adds support for the video protection region (VPR) used on
-Tegra SoC devices. It's a special region of memory that is protected
-from accesses by the CPU and used to store DRM protected content (both
-decrypted stream data as well as decoded video frames).
+It is a standard reserved memory region that can exist in two forms:
+static VPR where the base address and size are fixed (uses the "reg"
+property to describe the memory) and a resizable VPR where only the
+size is known upfront and the OS can allocate it wherever it can be
+accomodated.
 
-Patches 1 and 2 add DT binding documentation for the VPR and add the VPR
-to the list of memory-region items for display and host1x.
-
-Patch 3 adds bitmap_allocate(), which is like bitmap_allocate_region()
-but works on sizes that are not a power of two.
-
-Patch 4 introduces new APIs needed by the Tegra VPR implementation that
-allow CMA areas to be dynamically created at runtime rather than using
-the fixed, system-wide list. This is used in this driver specifically
-because it can use an arbitrary number of these areas (though they are
-currently limited to 4).
-
-Patch 5 adds some infrastructure for DMA heap implementations to provide
-information through debugfs.
-
-The Tegra VPR implementation is added in patch 6. See its commit message
-for more details about the specifics of this implementation.
-
-Finally, patches 7-10 add the VPR placeholder node on Tegra234 and hook
-it up to the host1x and GPU nodes so that they can make use of this
-region.
-
-Changes in v2:
-- Tegra VPR implementation is now more optimized to reduce the number of
-  (very slow) resize operations, and allows cross-chunk allocations
-- dynamic CMA areas are now trackd separately from static ones, but the
-  global number of CMA pages accounts for all areas
-
-Thierry
-
-Thierry Reding (10):
-  dt-bindings: reserved-memory: Document Tegra VPR
-  dt-bindings: display: tegra: Document memory regions
-  bitmap: Add bitmap_allocate() function
-  mm/cma: Allow dynamically creating CMA areas
-  dma-buf: heaps: Add debugfs support
-  dma-buf: heaps: Add support for Tegra VPR
-  arm64: tegra: Add VPR placeholder node on Tegra234
-  arm64: tegra: Add GPU node on Tegra234
-  arm64: tegra: Hook up VPR to host1x
-  arm64: tegra: Hook up VPR to the GPU
-
- .../display/tegra/nvidia,tegra186-dc.yaml     |   10 +
- .../display/tegra/nvidia,tegra20-dc.yaml      |   10 +-
- .../display/tegra/nvidia,tegra20-host1x.yaml  |    7 +
- .../nvidia,tegra-video-protection-region.yaml |   55 +
- arch/arm/mm/dma-mapping.c                     |    2 +-
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      |   60 +
- arch/s390/mm/init.c                           |    2 +-
- drivers/dma-buf/dma-heap.c                    |   56 +
- drivers/dma-buf/heaps/Kconfig                 |    7 +
- drivers/dma-buf/heaps/Makefile                |    1 +
- drivers/dma-buf/heaps/cma_heap.c              |    2 +-
- drivers/dma-buf/heaps/tegra-vpr.c             | 1265 +++++++++++++++++
- include/linux/bitmap.h                        |   25 +-
- include/linux/cma.h                           |    7 +-
- include/linux/dma-heap.h                      |    2 +
- include/trace/events/tegra_vpr.h              |   57 +
- mm/cma.c                                      |  187 ++-
- mm/cma.h                                      |    5 +-
- 18 files changed, 1713 insertions(+), 47 deletions(-)
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../nvidia,tegra-video-protection-region.yaml | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvidia,tegra-video-protection-region.yaml
- create mode 100644 drivers/dma-buf/heaps/tegra-vpr.c
- create mode 100644 include/trace/events/tegra_vpr.h
 
+diff --git a/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra-video-protection-region.yaml b/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra-video-protection-region.yaml
+new file mode 100644
+index 000000000000..c13292a791bb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra-video-protection-region.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reserved-memory/nvidia,tegra-video-protection-region.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra Video Protection Region (VPR)
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++description: |
++  NVIDIA Tegra chips have long supported a mechanism to protect a single,
++  contiguous memory region from non-secure memory accesses. Typically this
++  region is used for decoding and playback of DRM protected content. Various
++  devices, such as the display controller and multimedia engines (video
++  decoder) can access this region in a secure way. Access from the CPU is
++  generally forbidden.
++
++  Two variants exist for VPR: one is fixed in both the base address and size,
++  while the other is resizable. Fixed VPR can be described by just a "reg"
++  property specifying the base address and size, whereas the resizable VPR
++  is defined by a size/alignment pair of properties. For resizable VPR the
++  memory is reusable by the rest of the system when it's unused for VPR and
++  therefore the "reusable" property must be specified along with it. For a
++  fixed VPR, the memory is permanently protected, and therefore it's not
++  reusable and must also be marked as "no-map" to prevent any (including
++  speculative) accesses to it.
++
++allOf:
++  - $ref: reserved-memory.yaml
++
++properties:
++  compatible:
++    const: nvidia,tegra-video-protection-region
++
++dependencies:
++  size: [alignment, reusable]
++  alignment: [size, reusable]
++  reusable: [alignment, size]
++
++  reg: [no-map]
++  no-map: [reg]
++
++unevaluatedProperties: false
++
++oneOf:
++  - required:
++      - compatible
++      - reg
++
++  - required:
++      - compatible
++      - size
 -- 
 2.52.0
 
