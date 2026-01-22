@@ -1,77 +1,79 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011040.outbound.protection.outlook.com [40.93.194.40])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11021075.outbound.protection.outlook.com [52.101.125.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000123164C2;
-	Thu, 22 Jan 2026 13:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C039334C1C;
+	Thu, 22 Jan 2026 14:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769089433; cv=fail; b=g3Od3fHARqoGlVrvdCzyQBdDDkW0eQJqia7yD5hG1iGmqd/SVqCaCMMEfSFaz4spUNXZnqYQ8Dn+qdbuXYQiBRnzCV6g+FGPPEnJaBMaIxqg0A/TgixfUGV7P/KyOXHmLciMy5SrcBiHcv0i1zVxdJPKcQmaFe/0ncqSTcjx5L8=
+	t=1769092149; cv=fail; b=ClnRouXD5ALExJ4bjvptjDSYeWLiB5/5NC499TTMES6bgdGE7VpvDfb+7IWTsYdVMaec2Cwh51Ga/kPSHD0IXWI3Nif+Rm/ZQbxFTHRT+a/LW15Rf6/ASH1UB+eTg7AtfMdPhxl4DwZndzz0uy893o6ZFzISRXodDvOAMWKkbXM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769089433; c=relaxed/simple;
-	bh=EQjn565SYcNyi7Y+2HTZc2A022M3p/zqG+zUEJoVA8I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IfDWcCvLdQrjmCHG29capB4NKdEzn6Jh37vKkoMhl882pU7dshEt7zYmXxRk5q8j3uoSOku+FlyrkPxSPermGyqAgzOlF1EnzgS2WdVT0qrsr8rjXo8e7l0te6YUgzCwVBAmxspjswRFxP1BQOMjdjEIrQVViV5G2XlxodhbcqE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FWlpZz8N; arc=fail smtp.client-ip=40.93.194.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1769092149; c=relaxed/simple;
+	bh=RowIM3b+fHgW1D2FU7k97DsSx0axmKNB/5p4e5ilzas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aUDqCPv1J2+G4TXgq/yXMEUIpQEjX8TpUgEPRKTD5ZQuvVVnw3s7eKYJmF5Op5bWNX7JSqjisC9JeD9hhiyZZNvA5qwzHzMNkoQ9eefyShYhbWZIiQ6slglTsW5EeCJcx0Vb/WaYZNtTmlEVVSm40OqBrmEgllqhFQNZJVe1eJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=alpxUyaM; arc=fail smtp.client-ip=52.101.125.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FWlpZz8N"
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="alpxUyaM"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SF2eoHVrM75RxaaEZvQruHPkacEJSmic1zpsiUqeluBFUd6t+77rSOvG5SVRO/DxOzo4l+n6iRUUhqbFg9dzs/oSnmLlsCdAK/zMtn6r1RjD1ov17ufqx6c5oDO4mG0varf1xpSwc/7HLzSmD1BYN/H1beCI0QAiasWQ4WLZdUBftXkI/oBOrhuff8eMiG9EToUsQ4+bs++hEEDVOu3rYufAHI1iMj+5PKh0BYlucdqD+8a+7y28jZJWj9HkFGRqumpPiuq2SzGE/PNSNc35QaN0NaIPVRkp4F0pVP9ZqTicle42dQgUCiEGvRHD7BGC3bE6ObAn6Qtu1Xpgo24Ohg==
+ b=B6QasVriUnNVW9xxi+wNikCk0iLAqVo4ZBnJKIjKC14MfsCOe1NUu7x/X7pvzysKUP5i2g4ORFdIELGp0612bLF4hq1fMGgEl6M2uVCoKR3HGgwiXStV4Ex9YayCdo798UQrZXnk8FPfZNPzOn3ScXoFODmgRaQFL0VZ+QZRhfH7+5iR02ZJ221sCfgenbA76rqRnnDiEq44+Go5Y8ebzPVoUQFKsTDQBvt+vLaFiqpqCBFUEac/5Nb/B7bNtMxx9WJAWAFAgKCANguFxEg+wOjtb4J5nwJjYyqw1XpN9x0RxVkoRs8oA0UUzKlCnuCJ+TEYrRH4WpRAqXHBenLNOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RpaJMvsmoYWjyuY1dgQw5ZatPhYvSgvPDwRJvgV9xs0=;
- b=Sxqew0Ix747ZD31lTxUiA3YNGGEdiMAy9/wdqXCd0xSgdDjnqoRMh67goexu3zyWiydyfP2Em/NlC7XXQwU95mnP24ZyU/IKKJDW7KYOspvYkyodPgbNY/g82hMrBYrooij+OVzgYQuHjcYhd9J9NjvronGyg+cVKbBoZDzOfN+0zBVqUS9IM9lMRrAbSlHfpp96TIlQVIxHYj8tddXY4njlQkGQh48Zbn5jR4Wb2T+RdwtCpPPjHFKdrO9JM9Os7k0w+PR+qymvsqTprWKEXpu5Tg5Fkt+ohpq8Vz0caPO1Fsw1tQQsjK3xXoTfhHBVAF9oCX9fo01SNF4QRQnkNQ==
+ bh=GcWOTR9grXcO++MlMUTXwjrQaKHmN3B5qcWWN3Nx6IM=;
+ b=kItZxTpJwxFOALPDWYUCJkCFCyZb1LdfcmAKDb85RZnYMEYT86Ux++UKDv3y/BYCOfxiF6slGY5uFt5qriChB1osPkBBV/bJxNis/FKp2m+m7Erim6Ma5154dMzmJHv3PkUSJ8ZRCOQhVw42LUTM5BnfwwvmQxTHJqiDhAOxJaywH3jQ+SVrCG+hHo6DC5VxGqcAJCoVYxYkKST5uoH1V6v7pqnjzItghIG7K1R5K2ReVQ7ZJ0ufjXRo6tiS4veK2y9OqFrDKhSeQflgGiiKasUiJkhYe7rf82PDBobmLUzvlb2FdpTo8QK0hA0Rf3Yk2CnTyfpmpP+eZKd0hISKLg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RpaJMvsmoYWjyuY1dgQw5ZatPhYvSgvPDwRJvgV9xs0=;
- b=FWlpZz8NLhv5iOlwHQ6Och86GMEMlSaz3CMNNNhcZYv4/zAGX1DIallDnK3ZyZroyLdTK4wHiUKqaMWhFLLyUxDEAFXk/h3CcmMeq4LUKUVArYdEEwLBdD+y9iIx5Abzfud56vGM2CXvk5D1v9j/QufTxwL5tDEfndYxgJVnkl2xVKpicRrzHe1H1r9zm73rqhgHVmmRT6SshcG+WZWBgGMnIeRjYenjnBi7O0GWw++2zFHhCPRWfh51jJEt9njZXgs9lCoFUJ5KrC+DxwZS0WFWLnT5IDLlxz+LSCqzdns6d3yiUjyyiQw8LiN2r+5p+/5UT1qaDaqmMHXRjtcePQ==
+ bh=GcWOTR9grXcO++MlMUTXwjrQaKHmN3B5qcWWN3Nx6IM=;
+ b=alpxUyaMB8vG5LDgVP4yHxlK9hABO+djvfJMcoImomv1/d/NcgFH4I6qxHHkhqYhOo8XOJOB6yrm45jwiZgmLkgFfsfaqUUSZOpuEeECbYrinj0Zop7ixgt/uAtdt0x16qcTBYt0gWxx6MM/eqgy7OUQQUK/53EFe4jiXLSC0Jo=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by DM4PR12MB5890.namprd12.prod.outlook.com (2603:10b6:8:66::20) with
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:38f::10)
+ by TYCP286MB3203.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2c1::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.10; Thu, 22 Jan
- 2026 13:43:46 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9542.008; Thu, 22 Jan 2026
- 13:43:46 +0000
-Message-ID: <9a76a4a7-c02c-436a-8f69-57606a6b2bed@nvidia.com>
-Date: Thu, 22 Jan 2026 13:43:41 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- "David E. Box" <david.e.box@linux.intel.com>,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Chia-Lin Kao <acelan.kao@canonical.com>, Bjorn Helgaas <helgaas@kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
- <20250922-pci-dt-aspm-v2-1-2a65cf84e326@oss.qualcomm.com>
- <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
- <76sr3yuwdaon3o3u5dfjycwlxhxcarid5tevgtao6aaapvwbzd@e7bam35dzt3k>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <76sr3yuwdaon3o3u5dfjycwlxhxcarid5tevgtao6aaapvwbzd@e7bam35dzt3k>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0260.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37c::11) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.9; Thu, 22 Jan
+ 2026 14:29:04 +0000
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32]) by TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32%5]) with mapi id 15.20.9542.009; Thu, 22 Jan 2026
+ 14:29:04 +0000
+Date: Thu, 22 Jan 2026 23:29:02 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, vigneshr@ti.com, 
+	s-vadapalli@ti.com, hongxing.zhu@nxp.com, l.stach@pengutronix.de, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com, 
+	jesper.nilsson@axis.com, heiko@sntech.de, srikanth.thokala@intel.com, 
+	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, christian.bruel@foss.st.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, thierry.reding@gmail.com, jonathanh@nvidia.com, 
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org, kishon@kernel.org, jirislaby@kernel.org, 
+	rongqianfeng@vivo.com, 18255117159@163.com, shawn.lin@rock-chips.com, 
+	nicolas.frattaroli@collabora.com, linux.amoon@gmail.com, vidyas@nvidia.com, Frank.Li@nxp.com, 
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v9 4/5] PCI: dwc: ep: Support BAR subrange inbound
+ mapping via Address Match Mode iATU
+Message-ID: <s6bnqkbuugi7oio7ybekdbk3dokpbe2bui2wjltdwajxix2app@wosgmhrfsriv>
+References: <20260122084909.2390865-1-den@valinux.co.jp>
+ <20260122084909.2390865-5-den@valinux.co.jp>
+ <aXHsd7-WWAGyhy_w@ryzen>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aXHsd7-WWAGyhy_w@ryzen>
+X-ClientProxiedBy: TYCPR01CA0077.jpnprd01.prod.outlook.com
+ (2603:1096:405:3::17) To TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:38f::10)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,175 +81,212 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|DM4PR12MB5890:EE_
-X-MS-Office365-Filtering-Correlation-Id: a92cbdc2-538d-4f86-7229-08de59bc43d1
+X-MS-TrafficTypeDiagnostic: TY7P286MB7722:EE_|TYCP286MB3203:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3d2329b-83ce-4137-174e-08de59c29806
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|27256017;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ME5MN21ISnROMkNOK0pna0t6dEJKVHYvZ3pVZ25hSnZZZTBEWUlRbW1tcUN6?=
- =?utf-8?B?RUhocTlIOTZrdzM1VHZydkViZE51dnA1YU8rVHhZYUxoc3g4Mm1SNTdxVnpO?=
- =?utf-8?B?U09POHJYZk5kKy9rWjhvVzVOMEpmdGNrK1FtYmZWNTRTRmNybURDVDcxdGE4?=
- =?utf-8?B?WmZJaFhIL3JsYitsZy80VEp0d2xKZzk5aWJra3FaNjlkNVlXMG1idGQ0ZUV1?=
- =?utf-8?B?NmhKZEd4STZMZ3RqUE9pZk9FbldoYmh2UVRLTWVrQmY1S2NhNTU1R1ZGLzFw?=
- =?utf-8?B?alJrTEx0aVgzeDllYVhoSXUxdDhBa2tFR3hpckVheE5pUTRzcnFDRWhSdkJT?=
- =?utf-8?B?NVgzbkdObXYzWjBXRksvYWxRcUhvZ2YxMDltaEcyQjJVRTBIUmlFNThuVWw4?=
- =?utf-8?B?TEExenlhb0R6ZU0wK2kzdXZaOTcrZTgyazRSdGkwN0NoVTgzOVpocHU1b3Rl?=
- =?utf-8?B?K3BMdlNKcC9ZWndxSW52SzlHOVFyN2JOWVlCcUwxUG9UcVh0MjFlNHB1TFB0?=
- =?utf-8?B?R2czQmJ2eXo5TWlBbkdkaUxvYVo4K05mTzNWNnRIL3Q0M2YwaDdzRXBQdUZ0?=
- =?utf-8?B?SjFITk9MZUxEZGlabmhadHRWVDBDUmx1dUFwRWxHRXg0bnVnU3lkWW9zYUxH?=
- =?utf-8?B?QmhUa3ZYeG5OYTVra0Zpaktza0JOWTF1OTMrVTYrTWdMT2VkVFRsck5nQmFR?=
- =?utf-8?B?LzhBSm5vbDBkZ1lGeXhQZWh1WWFYN1B5TTg5VE9oWHo3TlhUSitYd0lCMkFO?=
- =?utf-8?B?NkxVK0tYMUV5Z0tydlpaVUZ1UlJEejBWWDFWZU5CcmhqZG1kSlZoWnpZWEpO?=
- =?utf-8?B?R2U3YW5JZU0rd284dFY5aXNSSENudDdHWm5uaDhFay95MEd4RFpudXJPbzc0?=
- =?utf-8?B?SjRwS3V4Sk1KWER2bFp6Sk9HWTcrcm9IN0dYcnhzTGVGcnFNb1ZERGtVS0Jv?=
- =?utf-8?B?bU0xY1VSTExTTEZ4OFJzY0NXdC9uNkdYVkl1d1JVWmxNbFFWWXRHQVBaVTFy?=
- =?utf-8?B?QlNNWGJ1Uytya0ZaQlBrcmVvcnRRVWdvT296YzhKY1krNERPbUZWRVBpZnhy?=
- =?utf-8?B?bGxHNGNLbk8yQVZuQVFmemZPKy9sMUlSUnkrcUJBWmZmSC9vNGtyaVJ0ZjA1?=
- =?utf-8?B?NExNV3pmRlAxWGQrenQxZUR6WTRGZWs1ODU5VFgvaFk4TDRyZTlGVEMxVlRi?=
- =?utf-8?B?aXNTbzNmMm5HNTIvZzFGVW9VRUJsRjAxcjdvMVBXRmRtbmF4b1BWUjhZSURr?=
- =?utf-8?B?T200SUhPNVQ4aVQ1UWpYc3M3NE5NMXBsMGVqeUl3c2srTzdxc3ZNVzhaTVRz?=
- =?utf-8?B?K0RiZkhRa1J5SjFpQ1lPZ3lGVmxsU3B3QVJCQjN6dzJkOGIzM0Q1TTZTTlpY?=
- =?utf-8?B?ditlYU0rWTI0OCtkZllYUjBwL2Nra0VKdDA0eUpqbWJ2L1NvVGdqYm5NY0ZL?=
- =?utf-8?B?bkNmVjZYUU1sMFgxMFQ5aUZKM0JiWnZRT3plMXBPOFppcEhiRm54czBWQjVR?=
- =?utf-8?B?TFpYNklHM2E0b0lkcFFMN0dIZmU5TS9FZ3NLZHBlVjZwb3RCS0FXdHNmbFBU?=
- =?utf-8?B?OXZlSHhUbEUxU1dseTVScmtzMTRDcmtoRGYzRWZ0Qy9MUjlNR2REUURaRHpr?=
- =?utf-8?B?WVFIL01KLzBBQkZ2ZmlONlZOeGdNL2k2RFhIU2dlS1BQN0NFRis2dnpUdnZ6?=
- =?utf-8?B?Q0FHanFqeUNEYnkzblZUS1dsL0lUVEh3TGI1ZmkrSzd0UERtU0NGZjNBWFZp?=
- =?utf-8?B?cTZnZGpibEswRDJRRTJsdjJYVG10ZmxCdExNT3lNQklqUkxDNTltTWhBL0gz?=
- =?utf-8?B?a3Rvb1krSjRFd0ZVNTNINWUza2xxODZ2TmRTNHBoWTNycVhNdFg4dXc2Y0Jm?=
- =?utf-8?B?T3JnN2dzZHBrcHo4Rlg3UW4xZ3pjWEdIWk5MU3J0N1g1Ry84QXF4UkVJVC9U?=
- =?utf-8?B?T1ZPYjluQXo1Q0tUY1VzVVR3RnJaYkdXMDNqNEpUaUFDU3lZTm0vSk9BVnBQ?=
- =?utf-8?B?QUw4RHlIc0YrSzV1Ym5GZHhKTUFONERGWWR3QWs2c1BHSk4zS3cwZGo0UWdW?=
- =?utf-8?B?bXFGcmJoMmlEbnZRRTVpeVpwZVY2WmJHS3dLSklNV0d2aVc5YmZSMUgrZm1w?=
- =?utf-8?Q?TMZA=3D?=
+	=?us-ascii?Q?W62h6TVqgGXpoHCcKl7FlrvXA3gJJrbN6QVcg+8n6BsRQlRdOvRZ2VwiefAl?=
+ =?us-ascii?Q?FPvua6Oxqb77JDh8aT4U+EsNxG0SDWMvL0vTlf6QlQEeXaVu98Ow3d6drTHs?=
+ =?us-ascii?Q?YYLoLSnIRzoKVze/pQDZm6NdhszZ8BBO0TPPi6K9lhdW2sRT+wHVmbZvutrE?=
+ =?us-ascii?Q?YnbEwGLBjofuqVSQKvK7rA4iGsaNpMmZOHYDMwduRfX6VPIkYHHU0t/u6oaJ?=
+ =?us-ascii?Q?jE99EiYzLqNm2R4XSTSXZv/iNTBg7Y8dtFBq1Zn7Ckp0gZQOEeIWhzMInuoS?=
+ =?us-ascii?Q?uSqbVPl/CYLg9Qd7wa1UV9D7/Gc0xixVo4cUGEh40TBo+A5ANOrQkpeGVjND?=
+ =?us-ascii?Q?j8MPimMtEpp2eMJBa6KycNDEvCWeIACm78aUlf9XNIc2DWPtHzfAFAAx2gpB?=
+ =?us-ascii?Q?t52hLqd33Ewuq60vxKgmAMIjTF/0E65x/cFfm76zR+tBywkJE2X+pjZayxpA?=
+ =?us-ascii?Q?ZrDByOh71piT9Xn8K8J6+8u6lB1F5dblYr8062qUH2jY9vD8bfTgvBNmMcvc?=
+ =?us-ascii?Q?jTqc4pfq/6yiZNl9hhgEZi5QeinEjtemGd3eGq/7JcNiDPtVKqThE0nWZLou?=
+ =?us-ascii?Q?8wBhi0hrwn5NNXQGxuiec9BFuFW6IEGTTCvN3m7wZpFM5vYwf0lmE+0jvo/8?=
+ =?us-ascii?Q?JVP5dmkCQsbMylCpypDDea1zpnZWJ0McYzWRgGDRHPYVsVASHhYlS0U5nu7C?=
+ =?us-ascii?Q?RxjNDdD5QLqRVfAkTwQ3UoNtEY9l8+A5Golhp11NLZBkZ9GxlkLJGbLyGtHW?=
+ =?us-ascii?Q?gRGpmIrtR3BGs0J3y6Z8ESrTNBOLm+2jWIb9rRI/qqRAp4eJWDf9o3JgFu7U?=
+ =?us-ascii?Q?wRf2GLwW65jbCvfN3IHOnN729YHmY+6ejL5xxiBQIMBJCutGkjUs0HnXZkPa?=
+ =?us-ascii?Q?6ivQfLYB1+cMqdFofjcdKvNtsEJt5OVRqE7mg25tMcIg4V4jq/5rCPDyJEzz?=
+ =?us-ascii?Q?h19EsbNtFA7ed+hADVnNu6LMqAZzxBtM9WoBYTZE+VzcrE1aJ2N3NtuxPdCU?=
+ =?us-ascii?Q?zXiw/Cot6u7rQl2HT7bCLGrbvwiBONjG8Q58FVmS35eraBcS405zXAvq8+vL?=
+ =?us-ascii?Q?24eReI7u2TDwcHgNnbis8y+zTfSbjt1fOYMITep8zv8RLbtqfosKfkaTDMsr?=
+ =?us-ascii?Q?Yji4jiyrJLrA4dfZBOCRItXgr9Lzk0yQiU9C5MvikWFCt3+7TYth2nFgdVpw?=
+ =?us-ascii?Q?7GtzaLr2sG/851FWu8iRC+2VrDW7UBVnk8c2IB6T+/839lHP90bYh8yRL9Uh?=
+ =?us-ascii?Q?tRuUPSOA1WPGerpnc29USQ5DXmxp+cW4d8sBFhGG4t6UTQjnvdkqkAsoHJc7?=
+ =?us-ascii?Q?j6FKA6qBdk82La+tE2uxUj8QbWGlnV0z16P+WFBcVPhmPqMKpJrJ6V/oc+bc?=
+ =?us-ascii?Q?6UXCQyfLrTytyOrmA/3KdHdI5CAH15WOf8n2vz00CY5rLpzf8FaDjCfJFai2?=
+ =?us-ascii?Q?cl3CkcMg1gQZh5kAB6aXAGqZyYVSzxk4gGziiakNKUryIW8qK10L+7ansgrS?=
+ =?us-ascii?Q?SVOB5Iytfvxc80b6BFbWG5urIFJawvP8yxwhfi86seyAnGtnvZjwkwbgyh8o?=
+ =?us-ascii?Q?h628IExQ/gauiTZ/+O7Y3xAzaXO8b8ZE7Ebxphp5hg/iPTBoHV/l/4xWOCKd?=
+ =?us-ascii?Q?dWS2mCFXZjFzu3Q70yUx3iw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(27256017);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SGJVdlhZWnlEalEvSWYzRWZ5cXhOL3lMWmhqUHRJWHczMy9MU0MvbytzSG80?=
- =?utf-8?B?Uk5KS25ZYk1wYmRwbHlkaC9yczZBMkU2WmFEbWd5cTZYN01PQkpqQjgwYXE5?=
- =?utf-8?B?NUJ5Q0praE85djBENE1idWpaREFQb1hOYWtUejM1V0w4OU1Ud2ljRW00NTNm?=
- =?utf-8?B?d0J1c3hLaTdXeWp4Q1MyaEZtY09jV2NOcmRoTU9PUmJGQ1QyMVUwcTh0OEJU?=
- =?utf-8?B?bFY2SktVUlVEQkdlblFTajlLZjV3bkV3K0svVWpRQVdkK3lhQ3lrSmpSSWZ6?=
- =?utf-8?B?SG9VMEErcXBOQ0VZdERrZGZORWRXbm9FV2JNRkhUV2dienUwckdsU2VtMk8w?=
- =?utf-8?B?bWJBY1g0c1d2eVFIOEY5TWE0Q2U0UnpDK2NtSDRSSFVzTzNyUDdWblZjMUQ1?=
- =?utf-8?B?VjBFbFZKZ1E2N0I3dUtkTzBCUDR1N0YrbWRLWDV0M1BaankyL2tWR0EvQWhl?=
- =?utf-8?B?R1JiU0hTemg0Sm51MGVvYnZjMVl1dVRtUTE3enRTeDk0UnFpdCtGYml3RFF1?=
- =?utf-8?B?dkZFSVFFZnNlaXFrM05qS09ZTGFOc2RiR20zYm9QbC9TcWtLUnpCZHBRWTZv?=
- =?utf-8?B?VHhVb0xJZnFMMDRVSXBRc3JFa3JHVWRvdGUwWWk3b3Z1WjN2NTR3M0hZbWNJ?=
- =?utf-8?B?QU0rdUp1cE9FSE5lZTF2bnJKVFI5cjR6NjJsZEZaUkpzMzRDa3dTb0VyeDlW?=
- =?utf-8?B?cHRkRWpnamw1WWNsbzlLU2lMdzVLa25PcktqaVRGd0JJZ3R2Y2x2SEZ2Z0lp?=
- =?utf-8?B?Nnl0cFdTVnZKSW0vVVA0Z3VEZC9oM25GUzhWdDg2b3FvKzlTeUFDZGNDcXZN?=
- =?utf-8?B?V0RoRWtwMW0xQTlaaGlFbEFtcDg0dUJMank5ZnIyNXQwQUVHeEkrRzBjQk40?=
- =?utf-8?B?QnBxNU9kNWEvSzZwZGxZWG9XaUo5M3lxZk5RdmgraEJocjVFbmtBazkzR0Jn?=
- =?utf-8?B?TE91UEFDOVpHcjg2dWNnWXBWRVMzUTdZenpCYitCbkN0aGxicVhUcE5nTFh6?=
- =?utf-8?B?c1VmWlRWeWd1Qk1ydkx1ZmxsRUIxTlU1WnNvK1lDUWRQVnp3bllvTkE0SEsx?=
- =?utf-8?B?dUcvbGJRREpXUGlCS3IwMUVka2R6QzRhZ0dnWCtkTUR4aTdCajl5QzlnSGNm?=
- =?utf-8?B?b21HN2hqT0plRUMzRTNJUXNKemlqMHQvckhwaVFMZVZKbTVxczFhTnFqREF1?=
- =?utf-8?B?OG42QW5XRldGT3hTU1FURFpORWw2VFdGQ0hWZGxYNWxZR0NPMFZiR0hNb1Nt?=
- =?utf-8?B?dHgvckFBWDRsdkVPVlovUjNnOFA5NE1sREZQS205dHJqdzlCK05TamFRd0k5?=
- =?utf-8?B?ZEpKWmlKMWtXaE00NWdISW9WVXQ2eVQvcjB1VXlWUncwaDBJZWxmUFpneWNY?=
- =?utf-8?B?bWlReU9ybi9UY2R3ZkRSSVo4UnF4MXZ4VFNmRkVBMklZUkdobUljT3lrdmJP?=
- =?utf-8?B?ZXZpVFF2czZOZjdFdHF0TU1Bdm45ejdjWTVjL3VDMUpmODRPOHlUK3E0Mmhr?=
- =?utf-8?B?Ykp2dHp1b0JIMU0yZjduOUhsaG8yUDk3bGtCMlJGdHQ0cmh0MFhCRktpU3A5?=
- =?utf-8?B?WWFnb2FRWis3SlR5dythdXlxcWF5RWlCanRGTUFEYVk1N1B0UGdMVU5KNnJT?=
- =?utf-8?B?akM4TnBONVkwUWVTUGNVWkhqY2hacmt0K1hmd3M2WDJMVVYrNW51UzRXeFVB?=
- =?utf-8?B?aGVIcG1aTWU5M1E2NVlVdTJLVnJJUzhOV2s2Wjd1dkprditFSGdZdnUxOEF4?=
- =?utf-8?B?MmIxcTROQlU0eTB2UjFUS1VrZFVkTW8rYTFkdFEzSVIweUNqUFBzVHpTbEF5?=
- =?utf-8?B?VE8vOHNQZHpKbjhzTHJvZGFsbWpTWjRIY3NHbkZFVHFnRWRFS3dndjhrU25W?=
- =?utf-8?B?Szh0Z2l5QWFRK05Sb3FkSStRVDRTWGR3c0krSUtRS3ZkZ0hFa0FFVUZyV3VQ?=
- =?utf-8?B?RWVDT0RqdG5VOENKZUo5TERLeEhscExPN0pUQkdJamorUkJUVU1ER3FHeUdW?=
- =?utf-8?B?Z3pZU2FyRDIwVGFUL0dZdVJ3b2VYU1QrbEJNMGdnYTgzcVdQVktCTWdXYlpZ?=
- =?utf-8?B?OGd6ai9tYkgyZ0tVR1Q0V084cElqSVh2cTNZRW5KYUIxeHlTd2xtaGRMQk5P?=
- =?utf-8?B?b1VybEduRHIzRmk2bTlsaFA5UktibmM4SzBKRDVqc01tSHlqREFYWTBoNzNS?=
- =?utf-8?B?SnhqUTh3bGtmMEVwLzhOaFdFS0R4Wm1qU0tFbVhyQ2o4VkxGUW1naEYybS9i?=
- =?utf-8?B?Y0lBTkNQd255bWphNFgyZ3V3YWtqaEZqRVBKaGRZZ1h0MTExWkErQ1dTZ3VG?=
- =?utf-8?B?TGxqUWJ1NDgxMXNOMG1uelRGZ0t5SWZaZWdEQkpYanpkempkY09vUT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a92cbdc2-538d-4f86-7229-08de59bc43d1
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+	=?us-ascii?Q?FN+kTGVO0fJwFeaGZiKd5L7OQxqbcslOkGIyOpDcrwPWCEhI/oLnUGwoEamf?=
+ =?us-ascii?Q?RmuwXXUkh+i0LvMK1B92mlzpS9c8jFyzUbEub1MhSNW9hn9s4B+AesG84gnE?=
+ =?us-ascii?Q?RqOPJeSj7uf/CzUlN2VEBi6s3+694sSq6+zjuQNj0r5SQ/y8EtfKRWITlJMd?=
+ =?us-ascii?Q?VprrUGZsYrs+LCvIvyx851B49gcj5jGGLRpprdBOtgc6vUE2VNJ7rSRPHZF5?=
+ =?us-ascii?Q?RyILBMSaPeydz/hpJh9//YtW9nTQQE4Sd2PwB6l3v1XNxdIGBoorL6y9lMWG?=
+ =?us-ascii?Q?9MJhFA0+qpvgaLRm2Du+GSszbCAWxTfNuSt6YCLdo+n1FO6PpEtpnTCdtP31?=
+ =?us-ascii?Q?VNPIDRlllIhpYUhdDRcym0b6zScoUIczIX3ift6Mtwu97Min+DL4rnO/1pet?=
+ =?us-ascii?Q?uUYcCAk25aYPjjWGt4nOYMt8UoJ61zvBSj7MZbT2D8O0i5gxgIDuOvlbODVG?=
+ =?us-ascii?Q?M3z/FetA+rOuh10vIIy3Fnnapib//LyqMGRSl0fBqiVdkMRh74GGoKMbdiqp?=
+ =?us-ascii?Q?ijRD2LsWUnpUtDMdRGA+/0MyedLMiTQLmuU9eU02oXYk2FWbwZBF4fW3uzke?=
+ =?us-ascii?Q?D9+aiPOH4jqty5mN4PlfKxAHKnlzULVpVCCEfe6TlvZo8+bzV3OpgWdos/vs?=
+ =?us-ascii?Q?fyoMmf/cd05x5AKaleW36Fs5C72tHTmU5qq1Tf5roHWWdCXNMqPXXJxYMB7Z?=
+ =?us-ascii?Q?6FwvDLW4TZ5hBPWsDNfNPv8uxfrubeUYFESjknCmUNg4TiKjHpycAVx0w3zu?=
+ =?us-ascii?Q?mRMxkvF6zh63KB67G3S/08Rij4BCcNpSy9Ok7HWqjAjMym2eCK8JS+LRicLY?=
+ =?us-ascii?Q?b7W2hmFSnb8YMVETesKBWO2Atjfq/67wuKdrT7pnhV3kFh7VGihsDTQRh9ck?=
+ =?us-ascii?Q?fBOo/W8iVLgr6OE0utrIyheic5gl1IiG2FJLxX7kK7xHC6kuuG8IgUm60pn2?=
+ =?us-ascii?Q?tCEsSSV/XNYBARUNiDGeriNhV2OSvg6tNvIBRYDaFBCvssW4DiXJVZKaKKo3?=
+ =?us-ascii?Q?d/DHfvLgQLcIo0htdTMUUjKEQkNdVwedPwe6NAFbTkuW7UII7u+xcprPSpfZ?=
+ =?us-ascii?Q?jOTE5vu0i2BNpdsxssn5D3qc1JYWd9FK5nEa17XoWqir5eZRg9PR7HpZ0uK1?=
+ =?us-ascii?Q?8WiZHpyn4rhLTa4zVzzhtBb3xUq+/Br+0td10/pj828H2MtNF+trVmP3lghX?=
+ =?us-ascii?Q?2Akf1T2sNyT/fBX82I1Jpb7V7/zYTP7IRLwMZXS6SvwMUCRMhVZQzWZQks7L?=
+ =?us-ascii?Q?SONe7x0JjsXJXylTcVnd7ci5X8R0+w4IKxL2cuIkEQdUE7Dm+G9bFaSYciSX?=
+ =?us-ascii?Q?bV8KlPOCSqcSEiuJnNZ21FNKhogOLDwWTjW6Ql5LbPNmG2KBd/8eeTKYokUK?=
+ =?us-ascii?Q?kV69qejAhwZS6KVpXdfUSeNU6dYZGt7zWN9kHwk5+oFy8erxy93ZaGWWQM+3?=
+ =?us-ascii?Q?fBidFBsBIqUNsZd+bGOKetYw46e4eb3mfUwZzkRGeS+67tcxS4Sc31JATGu2?=
+ =?us-ascii?Q?/vI+E2IKkOPIjQaahgf/fiDgmBHgsb4rtYXEqdBCGHjtP6B8m8q0GFHbhFEM?=
+ =?us-ascii?Q?zv9GwZTYxA9vKFDvDAKHQfTCVgGVVBbqeknwlTOpUuR54+Q4x7xxIZg13ONC?=
+ =?us-ascii?Q?OKdL9zxFW4DZP2ST0ORpjZFaRoAn+Krk0W7grYvd5Yi+C4ThA5GADTAip5fs?=
+ =?us-ascii?Q?5ANq+6M/bYwMWPsXWcOnPRwpBFwwd1DalUcbsJU3CaPsGBLLEPLDZSt15rOu?=
+ =?us-ascii?Q?Gah3pu0tW4i21us+e0EgfKkv3JZDRXLcpezjB5UrUwRLtpzOvpcu?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3d2329b-83ce-4137-174e-08de59c29806
+X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 13:43:46.1538
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 14:29:04.2837
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vu2ceEy/nPF/078nXUJmV7cdkPqRxpAtIjEZ5sA29QI8IhgEZe442Jgb27M1wONZWKq3gnXhF58RZoH8Spr8JQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5890
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q6TiSe/Up9g8J91Wq2g7UF4+gw6IM9klaaGfXXbn0zIy33Alh6LOfQctMgmEsToh3bPjcrz0+N9n+RjdbAlY6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB3203
 
-
-On 22/01/2026 13:17, Manivannan Sadhasivam wrote:
-
-...
-
->> Since this commit was added in Linux v6.18, I have been observing a suspend
->> test failures on some of our boards. The suspend test suspends the devices
->> for 20 secs and before this change the board would resume in about ~27 secs
->> (including the 20 sec sleep). After this change the board would take over 80
->> secs to resume and this triggered a failure.
->>
->> Looking at the logs, I can see it is the NVMe device on the board that is
->> having an issue, and I see the reset failing ...
->>
->>   [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
->>    flow control rx/tx
->>   [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
->>    0 timeout, reset controller
->>   [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
->>   [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
->>   [ 1003.050481] OOM killer enabled.
->>   [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
->>
->>  From the above timestamps the delay is coming from the NVMe. I see this
->> issue on several boards with different NVMe devices and I can workaround
->> this by disabling ASPM L0/L1 for these devices ...
->>
->>   DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
->>   DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
->>   DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
->>   DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
->>
->> I am curious if you have seen any similar issues?
->>
+On Thu, Jan 22, 2026 at 10:23:03AM +0100, Niklas Cassel wrote:
+> On Thu, Jan 22, 2026 at 05:49:08PM +0900, Koichiro Den wrote:
+> > Extend dw_pcie_ep_set_bar() to support inbound mappings for BAR
+> > subranges using Address Match Mode IB iATU when pci_epf_bar.num_submap
+> > is non-zero.
+> > 
+> > Rename the existing BAR-match helper into dw_pcie_ep_ib_atu_bar() and
+> > introduce dw_pcie_ep_ib_atu_addr() for Address Match Mode. When
+> > num_submap is non-zero, read the assigned BAR base address and program
+> > one inbound iATU window per subrange. Validate the submap array before
+> > programming:
+> > - each subrange is aligned to pci->region_align
+> > - subranges cover the whole BAR (no gaps and no overlaps)
+> > - subranges are sorted in ascending order by offset
+> > 
+> > Track Address Match Mode mappings and tear them down on clear_bar() and
+> > on set_bar() error paths to avoid leaving half-programmed state or
+> > untranslated BAR holes.
+> > 
+> > Advertise this capability by extending the common feature bit
+> > initializer macro (DWC_EPC_COMMON_FEATURES).
+> > 
+> > This enables multiple inbound windows within a single BAR, which is
+> > useful on platforms where usable BARs are scarce but EPFs need multiple
+> > inbound regions.
+> > 
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> > ---
 > 
-> Marek reported a similar issue on ARM Juno board [1] on which one of the switch
-> downstream port failed to come up while *entering* system suspend. But I was
-> clueless as to why the device fails to function only while entering system
-> suspend and not during runtime. I suspect something is going wrong in the
-> suspend path.
 > 
-> In your case, looks like the device is failing while resuming from suspend. Did
-> you see any error log during suspend as well?
-
-I don't see any errors on entering suspend, just resuming from suspend. 
-One other thing that I notice, on resuming in a good case I see ...
-
-  tegra194-pcie 141e0000.pcie: Link didn't transition to L2 state
-
-In a bad case I see ...
-
-  tegra194-pcie 141e0000.pcie: Link didn't transition to L2 state
-  tegra194-pcie 14160000.pcie: Link didn't transition to L2 state
-  tegra194-pcie 14160000.pcie: Link didn't go to detect state
-
-It appears that this is related because ...
-
-  tegra194-pcie 14160000.pcie: PCI host bridge to bus 0004:00
-  ...
-  nvme nvme0: pci function 0004:01:00.0
-
->> Other PCIe devices seem to be OK (like the realtek r8169) but just the NVMe
->> is having issues. So I am trying to figure out the best way to resolve this?
->>
+> > @@ -331,6 +503,13 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+> >  		    ep->epf_bar[bar]->flags != flags)
+> >  			return -EINVAL;
+> >  
+> > +		/*
+> > +		 * When dynamically changing a BAR, tear down any existing
+> > +		 * mappings before re-programming.
+> > +		 */
+> > +		if (ep->epf_bar[bar]->num_submap || epf_bar->num_submap)
+> > +			dw_pcie_ep_clear_ib_maps(ep, bar);
+> > +
+> >  		/*
+> >  		 * When dynamically changing a BAR, skip writing the BAR reg, as
+> >  		 * that would clear the BAR's PCI address assigned by the host.
+> > @@ -369,8 +548,12 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+> >  	else
+> >  		type = PCIE_ATU_TYPE_IO;
+> >  
+> > -	ret = dw_pcie_ep_inbound_atu(ep, func_no, type, epf_bar->phys_addr, bar,
+> > -				     size);
+> > +	if (epf_bar->num_submap)
+> > +		ret = dw_pcie_ep_ib_atu_addr(ep, func_no, type, epf_bar);
+> > +	else
+> > +		ret = dw_pcie_ep_ib_atu_bar(ep, func_no, type,
+> > +					    epf_bar->phys_addr, bar, size);
 > 
-> First let's try to isolate the issue to L0s or L1. Can you try disabling L0s
-> first, then L1?
+> If someone calls set_bar() with a submap, without having called set_bar() first
+> without a submap, we will still call dw_pcie_ep_ib_atu_addr() here.
+> 
+> To make sure that dw_pcie_ep_ib_atu_addr() cannot be called without already
+> having a BAR configured, to we perhaps want something like:
 
-Yes I will try this today.
+Thanks for the review.
+Isn't the existing guard in dw_pcie_ep_ib_atu_addr sufficient?
 
-Jon
+        [...]
+        base = dw_pcie_ep_read_bar_assigned(ep, func_no, bar, epf_bar->flags);
+        if (!base) {
+                dev_err(dev,
+                        "BAR%u not assigned, cannot set up sub-range mappings\n",
+                        bar);
+                return -EINVAL;
+        }
 
--- 
-nvpublic
+Koichiro
 
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 0567552b784c..fe26b7f7b212 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -487,6 +487,9 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>         if ((flags & PCI_BASE_ADDRESS_MEM_TYPE_64) && (bar & 1))
+>                 return -EINVAL;
+>  
+> +       if (!ep->epf_bar[bar] && epf_bar->num_submap)
+> +               return -EINVAL;
+> +
+>         /*
+>          * Certain EPF drivers dynamically change the physical address of a BAR
+>          * (i.e. they call set_bar() twice, without ever calling clear_bar(), as
+> 
+> 
+> or
+> 
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 0567552b784c..8aeaa6fe53f9 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -475,6 +475,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>         struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>         struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>         enum pci_barno bar = epf_bar->barno;
+> +       bool use_addr_match_mode = false;
+>         size_t size = epf_bar->size;
+>         enum pci_epc_bar_type bar_type;
+>         int flags = epf_bar->flags;
+> @@ -510,6 +511,9 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>                 if (ep->epf_bar[bar]->num_submap || epf_bar->num_submap)
+>                         dw_pcie_ep_clear_ib_maps(ep, bar);
+>  
+> +               if (epf_bar->num_submap)
+> +                       use_addr_match_mode = true;
+> +
+>                 /*
+>                  * When dynamically changing a BAR, skip writing the BAR reg, as
+>                  * that would clear the BAR's PCI address assigned by the host.
+> @@ -548,7 +552,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>         else
+>                 type = PCIE_ATU_TYPE_IO;
+>  
+> -       if (epf_bar->num_submap)
+> +       if (use_addr_match_mode)
+>                 ret = dw_pcie_ep_ib_atu_addr(ep, func_no, type, epf_bar);
+>         else
+>                 ret = dw_pcie_ep_ib_atu_bar(ep, func_no, type,
