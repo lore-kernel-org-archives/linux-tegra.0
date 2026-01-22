@@ -1,148 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2BE343D7F;
-	Thu, 22 Jan 2026 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D06335E552
+	for <linux-tegra@vger.kernel.org>; Thu, 22 Jan 2026 15:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769092801; cv=none; b=XZvXaV/9W6NXsLfiYmIofdolWZp1VqHWbTFk2riPV7mvDHdn47yOAcOPNGix+ItaLs393M9kz3bK//fvyqaNHsjtb39W0RlaRq8if+znxU1Ejy+cw/M5uM3vj2WD4Zs5FNaQGuAzZPLOzVvuvbUR7363+xw3yRaCuOwoWxL+j4s=
+	t=1769094714; cv=none; b=i5WHWZYaHev0+VMMUuF9ef2Spw6654VBy+n9K2IY48sq0l8g0ThvRCRL0Gl2ketaawmIMQvGAxR5iD4gsyOM4ls9PGI6tL0evsivKgxxQWPKQCFLy2CAODoBjhh6q7tANK1HXX42eunyQEepI2la6/94WbqcxeAxDemUAU5/+A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769092801; c=relaxed/simple;
-	bh=1ieLDIlqa3rrEJoM3l1ytVw+31Xyr7caHGb5FP+IeH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDr7j340aDcIwJNRhcLmeufzLYZpKr/PCUPjnTPaxoeDCyMGhe1vrOwUzcHUjcXi2vT6Pv+ypJqoPR55urFY0aZch++ODQbQyAS//EoVs7iQ2O+aaqv6wU/xvtpQAIByWL5n9ihUEeHTJt0cqPPwkai2Pkzwu4mu34ZGVsgs2Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hN6y9gqA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769094714; c=relaxed/simple;
+	bh=ZDy5yI9QqflnU3k5ABMZs1VkFVXrQ0H8SbViYLRUrYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=un/ox6pZEupOZFo7nANt/9VR5hKg7TvaNNhEUcL5sabjLczhCl/L+NoHJYUrJp+BxkOkfMhAW57K4tnD3Yb5SJn8ZivIKUcZEepcUx4iXZat+A8oAVZQCRlqUj9putQzfZLtqjQqSNR3Z9beN5Btbu0oeScMELLqh0vMA5Ay8BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbOtJ5+D; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hN6y9gqA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC1BC116C6;
-	Thu, 22 Jan 2026 14:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769092801;
-	bh=1ieLDIlqa3rrEJoM3l1ytVw+31Xyr7caHGb5FP+IeH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hN6y9gqAWxAcQsPwSSNk6yDY0nA/2zMjHltdGPEYl32qpcc756s/+sUezdnA5xT2a
-	 g+JcA26d40PYgkM5c65D4eQgm33IOUbjc68X9eSb2HN3Ieb0rFa68JBdTci6t/Fxmr
-	 ahoZp1wZpSoDAPDs7x2VfXnd4kD3oUv+QSfhSn5vCykEyKgWtJQiH9eJymSoXC2SoC
-	 qjkWRHymFFXa9XrCdmAXNvOGRZy3Yo3odm3eqAbR0MAMKDmU2P9Uo9fQmEbJm7NhI1
-	 WSuDgmkzsnr0G1gkovOOBlfhAEi9BA3yooLMxccj/atS+iDSbvD19S6wV8Ah+lTQ5K
-	 CBPac2Zv4CdFQ==
-Date: Thu, 22 Jan 2026 20:09:45 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Chia-Lin Kao <acelan.kao@canonical.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <4ywec7ifq4s2hqd3rg4mxcwkj345vvifpyihsywz3unn77fkdu@74wzarashnul>
-References: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
- <20250922-pci-dt-aspm-v2-1-2a65cf84e326@oss.qualcomm.com>
- <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
- <76sr3yuwdaon3o3u5dfjycwlxhxcarid5tevgtao6aaapvwbzd@e7bam35dzt3k>
- <9a76a4a7-c02c-436a-8f69-57606a6b2bed@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbOtJ5+D"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47ee974e230so10716565e9.2
+        for <linux-tegra@vger.kernel.org>; Thu, 22 Jan 2026 07:11:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769094711; x=1769699511; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g6E8GtY3TTJfMWO98cB1PkgRGKTg/bOaROhT3qeSbC0=;
+        b=ZbOtJ5+DkPcuFaJTGqhHzKVFgX89tDNzqdtGolLyHmtp14BN/4D6SNHNJ+4faJFnSh
+         YY/zU9sx69bOEXixyiXonyNPUKr6UyoADzXOp0W74s4PUNrT5Ketppfgk5IqLZH/TLFW
+         kAbp348jcmx19l16jV7TCAfvSly/ihOILNDxSFONjdW2FQs5kZPBQLL/Tlalw+qadvNU
+         twkEsUQ6RI8aZ9zrJ0TrVTJEthGaXF8YQRfOPGPyFiPUWmM6ayID2hgX+1yeVHjwL3We
+         MQmh6gYJL0b6DXZPpBACsc07oEBK3N9K4gB6YzeN6jPdjrkzaQOmvT4TjQWcQk2HxxMP
+         HGgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769094711; x=1769699511;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g6E8GtY3TTJfMWO98cB1PkgRGKTg/bOaROhT3qeSbC0=;
+        b=i9hTb8kI3mDRGTOSasUx3mI5nOWm9DPwaeUkUJHp1tPM3GERI/tlWDaS/QFua5oypc
+         pz+Dcdl4xaUaKubWEMPIN4m9RD/kPvK+mKARFN9tDXF6lBvJXkuHranTExQEZo0zfOgA
+         +SY80TBHG/HzNeTLpom2Qob48dWtIE4AvpToHWe3hWfIHLr1a8c+bfiqmUHSo5mvtr88
+         4pAO0c3+q+L5L7W2G5FBKHTHa6wD3jhKmc4FRxz2pKZ27QhGAIcCxDFRa6sA1CfcY2MC
+         bLFPTL352qxFcMFrNTGssdtAxpBbdA97/bUk5N9fGU9A2rA9UpAhHiw5m3J7LYRQ8hb5
+         JxRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzTJUq5lyZ7TvIozdw6UsuLNMcz+JRWbsd7iJp8PHx2N+/YQSQ0/OrQtN4uYYy7atC/69O6zw2M09UQQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx01k53dqFYWwoCVR+Q/jjO2P0jsb3f2nCqkXmR9b8F3ePlz52P
+	rp4TPd7UFIprvHKz/3YV92FJEYexHQPwi9R4i6RZcKE71ZqwNFgayAte6lOliA==
+X-Gm-Gg: AZuq6aK+8oe+rSKA3Pwm3Eb9m90/lW3LuvTmnjOZRPI4PzLp/cOGmpjVUee/n7QgNaZ
+	Bqx38hzYTbYtRqBVQhPyVYS3zFmkWXP1uIs08R1EY6VwUsgB64srYrJuHRUtHsSnTENYNKjGHIL
+	v/c9neMPzrN9I0vUDTSbjTh3ZxuLKrUZXeHBeUI+qj8tQYkZLqdV4ELBZ8qR7JdnokJU2Y+6NPn
+	jUjY7HYeaWWE2/DJSlHbRJFjaxI9Q09z5yNEZyz7u4ETKM4iU73EbAxGn3xn8F3hesOZcYmdtE8
+	br/ER3lqsyJhZZn4rZK1YoN3qc4uyVVFea0Eboc627/EwBK7tJyJRXYIDx9lNyYDehec87YAkND
+	e0Nu9UmhHccjhaN7ji3e2dnRjVNIQ5pFRB0LJ5cKHz4YVsbYdA+lW4lACu6eT++Hf2WWGSYW2ie
+	G8
+X-Received: by 2002:a05:600c:868f:b0:480:3ad0:93c0 with SMTP id 5b1f17b1804b1-4803e7e853cmr95861425e9.23.1769094710557;
+        Thu, 22 Jan 2026 07:11:50 -0800 (PST)
+Received: from xeon ([188.163.112.49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804704b4e6sm74861705e9.7.2026.01.22.07.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 07:11:49 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] usb: phy: tegra: add support for HSIC mode
+Date: Thu, 22 Jan 2026 17:11:23 +0200
+Message-ID: <20260122151125.7367-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9a76a4a7-c02c-436a-8f69-57606a6b2bed@nvidia.com>
 
-On Thu, Jan 22, 2026 at 01:43:41PM +0000, Jon Hunter wrote:
-> 
-> On 22/01/2026 13:17, Manivannan Sadhasivam wrote:
-> 
-> ...
-> 
-> > > Since this commit was added in Linux v6.18, I have been observing a suspend
-> > > test failures on some of our boards. The suspend test suspends the devices
-> > > for 20 secs and before this change the board would resume in about ~27 secs
-> > > (including the 20 sec sleep). After this change the board would take over 80
-> > > secs to resume and this triggered a failure.
-> > > 
-> > > Looking at the logs, I can see it is the NVMe device on the board that is
-> > > having an issue, and I see the reset failing ...
-> > > 
-> > >   [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
-> > >    flow control rx/tx
-> > >   [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
-> > >    0 timeout, reset controller
-> > >   [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
-> > >   [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
-> > >   [ 1003.050481] OOM killer enabled.
-> > >   [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
-> > > 
-> > >  From the above timestamps the delay is coming from the NVMe. I see this
-> > > issue on several boards with different NVMe devices and I can workaround
-> > > this by disabling ASPM L0/L1 for these devices ...
-> > > 
-> > >   DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
-> > >   DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
-> > >   DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
-> > >   DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
-> > > 
-> > > I am curious if you have seen any similar issues?
-> > > 
-> > 
-> > Marek reported a similar issue on ARM Juno board [1] on which one of the switch
-> > downstream port failed to come up while *entering* system suspend. But I was
-> > clueless as to why the device fails to function only while entering system
-> > suspend and not during runtime. I suspect something is going wrong in the
-> > suspend path.
-> > 
-> > In your case, looks like the device is failing while resuming from suspend. Did
-> > you see any error log during suspend as well?
-> 
-> I don't see any errors on entering suspend, just resuming from suspend. One
-> other thing that I notice, on resuming in a good case I see ...
-> 
->  tegra194-pcie 141e0000.pcie: Link didn't transition to L2 state
-> 
-> In a bad case I see ...
-> 
->  tegra194-pcie 141e0000.pcie: Link didn't transition to L2 state
->  tegra194-pcie 14160000.pcie: Link didn't transition to L2 state
->  tegra194-pcie 14160000.pcie: Link didn't go to detect state
-> 
+Add support for HSIC mode into phy driver. HSIC mode is supported by
+second USB controller in Tegra SoC and is used for connecting modem.
+Linux kernel has support for HSIC mode in the controller driver itself
+(Chipidea driver) but USB PHY part was missing until now.
 
-But this error print is coming from:
+Tested on LG Optimus Vu smartphone with Infineon/Comneon modem on usb2
+line.
 
-	tegra_pcie_dw_suspend_noirq()
-		\__ tegra_pcie_dw_pme_turnoff()
+---
+Changes in v2:
+- initialized err in tegra_usb_phy_power functions
+- rebased on top of 6.18
 
-This function broadcasts PME_Turn_Off message and expects the PME_TO_Ack
-response from the device. But in both working and non-working cases, response is
-not being received. Then the driver *deasserts* PERST# without asserting it
-before (which is weird) and then restarts LTSSM expecting the LTSSM to be in
-Detect state. And this one is not happening in non-working case. I don't know
-why, maybe the device got crashed?
+Changes in v3:
+- initialized err in tegra_usb_phy_power_off function
+---
 
-Can you also try skipping the suspend/resume handlers to isolate the issue with
-PME_Turn_Off?
+Svyatoslav Ryhel (2):
+  usb: phy: tegra: use phy type directly
+  usb: phy: tegra: add HSIC support
 
-diff --git drivers/pci/controller/dwc/pcie-tegra194.c drivers/pci/controller/dwc/pcie-tegra194.c
-index 0ddeef70726d..a5bb122a9477 100644
---- drivers/pci/controller/dwc/pcie-tegra194.c
-+++ drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -2490,7 +2490,7 @@ static struct platform_driver tegra_pcie_dw_driver = {
-        .shutdown = tegra_pcie_dw_shutdown,
-        .driver = {
-                .name   = "tegra194-pcie",
--               .pm = &tegra_pcie_dw_pm_ops,
-+//             .pm = &tegra_pcie_dw_pm_ops,
-                .of_match_table = tegra_pcie_dw_of_match,
-        },
- };
-
-- Mani
+ drivers/usb/phy/phy-tegra-usb.c   | 300 +++++++++++++++++++++++++++---
+ include/linux/usb/tegra_usb_phy.h |   7 +-
+ 2 files changed, 276 insertions(+), 31 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.51.0
+
