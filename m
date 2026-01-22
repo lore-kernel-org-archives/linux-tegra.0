@@ -1,135 +1,181 @@
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E957132C939;
-	Thu, 22 Jan 2026 09:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5662835F8BD;
+	Thu, 22 Jan 2026 09:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769073535; cv=none; b=mJxdEDf0kgTDso7jCSGAJhFIPlJtFRB7bzbux4rxM3eK5AxPZB3LMUliQUehdr/akcb0G2+K4FHA5Ure7KiYGU4AAb22UH2EmKQAyyPCJ0GKHErQ+VAjwRJRBVXo8gXTSvyfKTgJ20SKDeoDMeNpa7bvAOyJ8QLFI+d01fR6wTs=
+	t=1769073798; cv=none; b=QXYk9FcuXVJp6Nm5NjgfUq1NFFZvPPjBl61HXMBbb3918/z9MO9YnlnBhvYel006qs+/E4HzUGV1K4vMoSYA20hrfZ4Wk+JkLr4xwK97gpa/iNQT7/0ODwxRSzfYRUZw9H53XggJqwDuq96Mw5HSTp/uB75k+QjWJV+ycZXkpzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769073535; c=relaxed/simple;
-	bh=k1vLCZxBh2pEce2WLUIty3WrFFC+IYh3CoHUZFCCAnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Iu28kwRN2ty90IaPyegBUH/dTQ5M1lmQCQgvqjEUHS3C4T3xpgMXCmb3qat3UOwyhgDiyyXEeZuYVkMfkI6rGxKF+hu3vp3sQAnGhiXFLK+VKV37mSU5Y85TOT0cAa2DEuPYblKtrRACp9kv1QJuSM16SgAt+NaPLB4FffGO9yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=pfZWIrRg; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1769073798; c=relaxed/simple;
+	bh=yJdKxIhYOUpUaBpsLGMKL4pD24z5wQ6BB3Ktu++YZqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOu+NIpgDgDa2sAFBOsTTZFgWHBFM/cqxUOIs9HgBgs6wB6Mstik5tzogHMDb93qWtNpFvcOv330BUbyLul6WopWCGGeGSAmR+3gQgFFhNQ6N0xJwm4UK3UO/L6d2SFc62/5I/WNoyDdNZxtEaw9PyoUQ36RVo/Z/dQgoFfKzb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/d07n/X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="pfZWIrRg"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=hj5qo0VXuLVg7QUuygYodXkqi79esrBXG4hcCec4FkM=;
-	b=pfZWIrRgu0AWyxmJKowFYr1F8stIjaWf/j/sNCNQE5rf3Hrg7aEdLiSkGJlcUe9S5fc7gBUHF
-	3riCN1sKX9eUwmfl2raal9FImMtY/1FDR4hzCXzVwCGGG1Aa0qIuISwJYjlvRuMvljB6PpctSzB
-	lPUq7nKUTmLmoFACp3WpsuQ=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4dxb4l1jd5zmV69;
-	Thu, 22 Jan 2026 17:15:19 +0800 (CST)
-Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3D42C40563;
-	Thu, 22 Jan 2026 17:18:44 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemf200001.china.huawei.com
- (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Jan
- 2026 17:18:43 +0800
-Message-ID: <a7a4d351-eed3-4ea6-a84f-e525b7ac13a6@huawei.com>
-Date: Thu, 22 Jan 2026 17:18:42 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/d07n/X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 884DDC19423;
+	Thu, 22 Jan 2026 09:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769073797;
+	bh=yJdKxIhYOUpUaBpsLGMKL4pD24z5wQ6BB3Ktu++YZqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i/d07n/XiyO/GYZA1Yd61IttxQ1mcR7bpCASWYbyei4lGJrH3PzHwefIKkxhhG09v
+	 s9iROZk+AcPE1TdQ6wq2CuzVLOdZLG00uls+kKsGdO7o2a835s1hR7nfr3lHNKxahc
+	 WInb/vUcRfD54E3+d9LLeGUTAFbeRlunWUOAe7Sg475DZoOrmt5E9Y11BEfWsTnxEA
+	 jcCrYjAyE3xNwG+HYbDG5Sk3kA5856FxsG5fQfOuOxTSCbemYdcpjucRZIE2C2vRE4
+	 iENgMKmwOc/YEnCZixdTiAK1LlKU1woO2U5+vPN+6Mvz69683ULDROGOXRqdESB3gr
+	 dFtW0t7lKni2Q==
+Date: Thu, 22 Jan 2026 10:23:03 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Koichiro Den <den@valinux.co.jp>
+Cc: jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	vigneshr@ti.com, s-vadapalli@ti.com, hongxing.zhu@nxp.com,
+	l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, minghuan.Lian@nxp.com,
+	mingkai.hu@nxp.com, roy.zang@nxp.com, jesper.nilsson@axis.com,
+	heiko@sntech.de, srikanth.thokala@intel.com,
+	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	christian.bruel@foss.st.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
+	mhiramat@kernel.org, kishon@kernel.org, jirislaby@kernel.org,
+	rongqianfeng@vivo.com, 18255117159@163.com,
+	shawn.lin@rock-chips.com, nicolas.frattaroli@collabora.com,
+	linux.amoon@gmail.com, vidyas@nvidia.com, Frank.Li@nxp.com,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v9 4/5] PCI: dwc: ep: Support BAR subrange inbound
+ mapping via Address Match Mode iATU
+Message-ID: <aXHsd7-WWAGyhy_w@ryzen>
+References: <20260122084909.2390865-1-den@valinux.co.jp>
+ <20260122084909.2390865-5-den@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/9] ACPI: CPPC: Extend cppc_set_epp_perf() for
- FFH/SystemMemory
-To: Sumit Gupta <sumitg@nvidia.com>
-CC: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<corbet@lwn.net>, <rdunlap@infradead.org>, <ray.huang@amd.com>,
-	<gautham.shenoy@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<zhanjie9@hisilicon.com>, <linux-pm@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
-	<nhartman@nvidia.com>, <bbasu@nvidia.com>
-References: <20260120145623.2959636-1-sumitg@nvidia.com>
- <20260120145623.2959636-6-sumitg@nvidia.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <20260120145623.2959636-6-sumitg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemf200001.china.huawei.com (7.202.181.227)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260122084909.2390865-5-den@valinux.co.jp>
 
-On 2026/1/20 22:56, Sumit Gupta wrote:
-> Extend cppc_set_epp_perf() to write both auto_sel and energy_perf
-> registers when they are in FFH or SystemMemory address space.
+On Thu, Jan 22, 2026 at 05:49:08PM +0900, Koichiro Den wrote:
+> Extend dw_pcie_ep_set_bar() to support inbound mappings for BAR
+> subranges using Address Match Mode IB iATU when pci_epf_bar.num_submap
+> is non-zero.
 > 
-> This keeps the behavior consistent with PCC case where both registers
-> are already updated together, but was missing for FFH/SystemMemory.
+> Rename the existing BAR-match helper into dw_pcie_ep_ib_atu_bar() and
+> introduce dw_pcie_ep_ib_atu_addr() for Address Match Mode. When
+> num_submap is non-zero, read the assigned BAR base address and program
+> one inbound iATU window per subrange. Validate the submap array before
+> programming:
+> - each subrange is aligned to pci->region_align
+> - subranges cover the whole BAR (no gaps and no overlaps)
+> - subranges are sorted in ascending order by offset
 > 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> Track Address Match Mode mappings and tear them down on clear_bar() and
+> on set_bar() error paths to avoid leaving half-programmed state or
+> untranslated BAR holes.
+> 
+> Advertise this capability by extending the common feature bit
+> initializer macro (DWC_EPC_COMMON_FEATURES).
+> 
+> This enables multiple inbound windows within a single BAR, which is
+> useful on platforms where usable BARs are scarce but EPFs need multiple
+> inbound regions.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
 > ---
->  drivers/acpi/cppc_acpi.c | 24 +++++++++++++++++++++---
->  1 file changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index de35aeb07833..45c6bd6ec24b 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1562,6 +1562,8 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
->  	struct cpc_register_resource *auto_sel_reg;
->  	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
->  	struct cppc_pcc_data *pcc_ss_data = NULL;
-> +	bool autosel_ffh_sysmem;
-> +	bool epp_ffh_sysmem;
->  	int ret;
+
+
+> @@ -331,6 +503,13 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>  		    ep->epf_bar[bar]->flags != flags)
+>  			return -EINVAL;
 >  
->  	if (!cpc_desc) {
-> @@ -1572,6 +1574,11 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
->  	auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
->  	epp_set_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
->  
-> +	epp_ffh_sysmem = CPC_SUPPORTED(epp_set_reg) &&
-> +		(CPC_IN_FFH(epp_set_reg) || CPC_IN_SYSTEM_MEMORY(epp_set_reg));
-> +	autosel_ffh_sysmem = CPC_SUPPORTED(auto_sel_reg) &&
-> +		(CPC_IN_FFH(auto_sel_reg) || CPC_IN_SYSTEM_MEMORY(auto_sel_reg));
+> +		/*
+> +		 * When dynamically changing a BAR, tear down any existing
+> +		 * mappings before re-programming.
+> +		 */
+> +		if (ep->epf_bar[bar]->num_submap || epf_bar->num_submap)
+> +			dw_pcie_ep_clear_ib_maps(ep, bar);
 > +
->  	if (CPC_IN_PCC(epp_set_reg) || CPC_IN_PCC(auto_sel_reg)) {
->  		if (pcc_ss_id < 0) {
->  			pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
-> @@ -1597,11 +1604,22 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
->  		ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
->  		up_write(&pcc_ss_data->pcc_lock);
->  	} else if (osc_cpc_flexible_adr_space_confirmed &&
-> -		   CPC_SUPPORTED(epp_set_reg) && CPC_IN_FFH(epp_set_reg)) {
-> -		ret = cpc_write(cpu, epp_set_reg, perf_ctrls->energy_perf);
-> +		   (epp_ffh_sysmem || autosel_ffh_sysmem)) {
-> +		if (autosel_ffh_sysmem) {
-> +			ret = cpc_write(cpu, auto_sel_reg, enable);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		if (epp_ffh_sysmem) {
-> +			ret = cpc_write(cpu, epp_set_reg,
-> +					perf_ctrls->energy_perf);
-> +			if (ret)
-> +				return ret;
-> +		}
-
-Don't know if such a scenario exists, but if one of them is in PCC and the
-other is in FFH or system memory, only the one in PCC will be updated
-based on your modifications.
-
->  	} else {
->  		ret = -ENOTSUPP;
-> -		pr_debug("_CPC in PCC and _CPC in FFH are not supported\n");
-> +		pr_debug("_CPC in PCC/FFH/SystemMemory are not supported\n");
->  	}
+>  		/*
+>  		 * When dynamically changing a BAR, skip writing the BAR reg, as
+>  		 * that would clear the BAR's PCI address assigned by the host.
+> @@ -369,8 +548,12 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>  	else
+>  		type = PCIE_ATU_TYPE_IO;
 >  
->  	return ret;
+> -	ret = dw_pcie_ep_inbound_atu(ep, func_no, type, epf_bar->phys_addr, bar,
+> -				     size);
+> +	if (epf_bar->num_submap)
+> +		ret = dw_pcie_ep_ib_atu_addr(ep, func_no, type, epf_bar);
+> +	else
+> +		ret = dw_pcie_ep_ib_atu_bar(ep, func_no, type,
+> +					    epf_bar->phys_addr, bar, size);
 
+If someone calls set_bar() with a submap, without having called set_bar() first
+without a submap, we will still call dw_pcie_ep_ib_atu_addr() here.
+
+To make sure that dw_pcie_ep_ib_atu_addr() cannot be called without already
+having a BAR configured, to we perhaps want something like:
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 0567552b784c..fe26b7f7b212 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -487,6 +487,9 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+        if ((flags & PCI_BASE_ADDRESS_MEM_TYPE_64) && (bar & 1))
+                return -EINVAL;
+ 
++       if (!ep->epf_bar[bar] && epf_bar->num_submap)
++               return -EINVAL;
++
+        /*
+         * Certain EPF drivers dynamically change the physical address of a BAR
+         * (i.e. they call set_bar() twice, without ever calling clear_bar(), as
+
+
+or
+
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 0567552b784c..8aeaa6fe53f9 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -475,6 +475,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+        struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+        struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+        enum pci_barno bar = epf_bar->barno;
++       bool use_addr_match_mode = false;
+        size_t size = epf_bar->size;
+        enum pci_epc_bar_type bar_type;
+        int flags = epf_bar->flags;
+@@ -510,6 +511,9 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+                if (ep->epf_bar[bar]->num_submap || epf_bar->num_submap)
+                        dw_pcie_ep_clear_ib_maps(ep, bar);
+ 
++               if (epf_bar->num_submap)
++                       use_addr_match_mode = true;
++
+                /*
+                 * When dynamically changing a BAR, skip writing the BAR reg, as
+                 * that would clear the BAR's PCI address assigned by the host.
+@@ -548,7 +552,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+        else
+                type = PCIE_ATU_TYPE_IO;
+ 
+-       if (epf_bar->num_submap)
++       if (use_addr_match_mode)
+                ret = dw_pcie_ep_ib_atu_addr(ep, func_no, type, epf_bar);
+        else
+                ret = dw_pcie_ep_ib_atu_bar(ep, func_no, type,
