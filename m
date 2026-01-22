@@ -1,380 +1,256 @@
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794AC1CAA7D;
-	Thu, 22 Jan 2026 12:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F752DC763;
+	Thu, 22 Jan 2026 13:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769085334; cv=none; b=RLT3RqBnAkCVNeWk0AMej/UXV73089bgehMRUhfCktuWJ09LV8zO3E1noqb59VjdFAGKRO9oj0QSxeTnngPnXuxdA5cPU6A6bXjCzQjJ5xTF+1G8oYzF7pEiUNWQv4I9cmvml5pF0OzdneHq/J2bOEYgnKTuoplZMb3jAufKGJc=
+	t=1769087844; cv=none; b=ondynYT0SVmdcmcj7HUsiePaVvft+/RD96lQGjPYYj5HnvY5xVgLzNVCQjnTDChfQjoV3t/G1GwawDF8IjXbPkIlMfkGKRMq+0BE86yv2pHSG8+w0WbjUo4udoxgvsv6PBHM2yysP8w5/LPbLo7HAqjOKo3qs4OZif6l3oRUs4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769085334; c=relaxed/simple;
-	bh=g44p+Utjr96i7aRFZwxxIDAjb4o9yxAncsQC1czZsZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u7S84vqiDzz2Px3Q/jeCF6mJIX1u2DWN2hbOo54UAieuCdNYx0QMiIFTWRQ9ZDgfjFx14QYQdfulp5h/sTbqn4eOP17X1ESC/4+pRR5EUFjEEjedYcKjrk5wLlFgAC9WSCRSqa+wlPlDFG0zF0nVbehlXIKHrO0q7Zh96/udS+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=NsaOUsNn; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1769087844; c=relaxed/simple;
+	bh=BboKZC7lJjpQsIwQ8SNg8wIaBhGEiugaek244I4OWiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axce/cRFbAbu/f+2xnPyjwcf7JwoReubBmAI4tJHn+le0r6PZfyKRHRL/PoGk9yVggrajf0APSSLJcue9fdLASLt4261laclCS7Xnpybq9kqZuLrcVcWL4mrr/RCZe8UQ5dp0LmTePXurDiC93U+NFcdBqHgrve+6JuE4DFj45I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vu/vaqZq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="NsaOUsNn"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=LILk48d7nhKek/faEudoL9YCrLaV/jEp69B7IF0M/8U=;
-	b=NsaOUsNnNbsXgIjyzBbfxAQZsPZ0OusXo/KjriJJe/4eDEJZ9rtO5kOZmpILB82+RJ9YIkhzM
-	4E0mZqiV0M2nSAkR/GQ09pK7gTdMng+U6pP4HRMpLsOL6/8SU4FlE3mALpiUUO7VPiAt81uB2Us
-	eSWMPuP7mmi5qLGy1Wb0izc=
-Received: from mail.maildlp.com (unknown [172.19.162.223])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4dxgR71FxPz12LDC;
-	Thu, 22 Jan 2026 20:31:31 +0800 (CST)
-Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
-	by mail.maildlp.com (Postfix) with ESMTPS id D6F3E40569;
-	Thu, 22 Jan 2026 20:35:28 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemf200001.china.huawei.com
- (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Jan
- 2026 20:35:27 +0800
-Message-ID: <c4a655ac-8674-45fe-8eb5-a0513d3b9bdd@huawei.com>
-Date: Thu, 22 Jan 2026 20:35:27 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu/vaqZq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8657CC116C6;
+	Thu, 22 Jan 2026 13:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769087844;
+	bh=BboKZC7lJjpQsIwQ8SNg8wIaBhGEiugaek244I4OWiQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vu/vaqZqS7AZZ1hiNQ//DWxncpJcqp2APCwNpEoAS7w06EwvT/CQ5oEesuZqpdj9U
+	 NH/O2YuNqLMSPoovHGJOBeyu+n7T6JAjqs03HQ+hJEoWLkgLYXpACTV9oPqc3duejH
+	 ZTj4T0eiyANOjllj6ZAFaN3kUbn3Y24bDKdXLxBL2xGNhSK8KUDqSa9bMhcrXscx/x
+	 74/Jq52YNXz0zYUu2mqo+LtqF+5bBjdmtbKFodXSQdRBSMpIn8PIS+IaXlEVM5hv0S
+	 W8TiSMPcncJvueHm9C+/KHyRuHiPojkccruUAfO9YeV0kaSK9J3COpudAS+Q9HEL6Y
+	 VtcURRO5cyDbQ==
+Date: Thu, 22 Jan 2026 18:47:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, Bjorn Helgaas <helgaas@kernel.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <76sr3yuwdaon3o3u5dfjycwlxhxcarid5tevgtao6aaapvwbzd@e7bam35dzt3k>
+References: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
+ <20250922-pci-dt-aspm-v2-1-2a65cf84e326@oss.qualcomm.com>
+ <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/9] ACPI: CPPC: add APIs and sysfs interface for
- min/max_perf
-To: Sumit Gupta <sumitg@nvidia.com>
-CC: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<corbet@lwn.net>, <rdunlap@infradead.org>, <ray.huang@amd.com>,
-	<gautham.shenoy@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<zhanjie9@hisilicon.com>, <linux-pm@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
-	<nhartman@nvidia.com>, <bbasu@nvidia.com>
-References: <20260120145623.2959636-1-sumitg@nvidia.com>
- <20260120145623.2959636-7-sumitg@nvidia.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <20260120145623.2959636-7-sumitg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf200001.china.huawei.com (7.202.181.227)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
 
-On 2026/1/20 22:56, Sumit Gupta wrote:
-> Add cppc_get/set_min_perf() and cppc_get/set_max_perf() APIs to read and
-> write the MIN_PERF and MAX_PERF registers.
+On Thu, Jan 22, 2026 at 12:12:42PM +0000, Jon Hunter wrote:
+> Hi Manivannan,
 > 
-> Also add sysfs interfaces (min_perf, max_perf) in cppc_cpufreq driver
-> to expose these controls to userspace. The sysfs values are in frequency
-> (kHz) for consistency with other cpufreq sysfs files.
+> On 22/09/2025 17:16, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > 
+> > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
+> > the BIOS (through LNKCTL) during device initialization, if it relies on the
+> > default state selected using:
+> > 
+> > * Kconfig: CONFIG_PCIEASPM_DEFAULT=y, or
+> > * cmdline: "pcie_aspm=off", or
+> > * FADT: ACPI_FADT_NO_ASPM
+> > 
+> > This was done conservatively to avoid issues with the buggy devices that
+> > advertise ASPM capabilities, but behave erratically if the ASPM states are
+> > enabled. So the PCI subsystem ended up trusting the BIOS to enable only the
+> > ASPM states that were known to work for the devices.
+> > 
+> > But this turned out to be a problem for devicetree platforms, especially
+> > the ARM based devicetree platforms powering Embedded and *some* Compute
+> > devices as they tend to run without any standard BIOS. So the ASPM states
+> > on these platforms were left disabled during boot and the PCI subsystem
+> > never bothered to enable them, unless the user has forcefully enabled the
+> > ASPM states through Kconfig, cmdline, and sysfs or the device drivers
+> > themselves, enabling the ASPM states through pci_enable_link_state() APIs.
+> > 
+> > This caused runtime power issues on those platforms. So a couple of
+> > approaches were tried to mitigate this BIOS dependency without user
+> > intervention by enabling the ASPM states in the PCI controller drivers
+> > after device enumeration, and overriding the ASPM/Clock PM states
+> > by the PCI controller drivers through an API before enumeration.
+> > 
+> > But it has been concluded that none of these mitigations should really be
+> > required and the PCI subsystem should enable the ASPM states advertised by
+> > the devices without relying on BIOS or the PCI controller drivers. If any
+> > device is found to be misbehaving after enabling ASPM states that they
+> > advertised, then those devices should be quirked to disable the problematic
+> > ASPM/Clock PM states.
+> > 
+> > In an effort to do so, start by overriding the ASPM and Clock PM states set
+> > by the BIOS for devicetree platforms first. Separate helper functions are
+> > introduced to override the BIOS set states by enabling all of them if
+> > of_have_populated_dt() returns true. To aid debugging, print the overridden
+> > ASPM and Clock PM states as well.
+> > 
+> > In the future, these helpers could be extended to allow other platforms
+> > like VMD, newer ACPI systems with a cutoff year etc... to follow the path.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
+> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > Link: https://patch.msgid.link/20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com
+> > ---
+> >   drivers/pci/pcie/aspm.c | 42 ++++++++++++++++++++++++++++++++++++++++--
+> >   1 file changed, 40 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index 919a05b9764791c3cc469c9ada62ba5b2c405118..cda31150aec1b67b6a48b60569222ea3d1c3d41f 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -15,6 +15,7 @@
+> >   #include <linux/math.h>
+> >   #include <linux/module.h>
+> >   #include <linux/moduleparam.h>
+> > +#include <linux/of.h>
+> >   #include <linux/pci.h>
+> >   #include <linux/pci_regs.h>
+> >   #include <linux/errno.h>
+> > @@ -235,13 +236,15 @@ struct pcie_link_state {
+> >   	u32 aspm_support:7;		/* Supported ASPM state */
+> >   	u32 aspm_enabled:7;		/* Enabled ASPM state */
+> >   	u32 aspm_capable:7;		/* Capable ASPM state with latency */
+> > -	u32 aspm_default:7;		/* Default ASPM state by BIOS */
+> > +	u32 aspm_default:7;		/* Default ASPM state by BIOS or
+> > +					   override */
+> >   	u32 aspm_disable:7;		/* Disabled ASPM state */
+> >   	/* Clock PM state */
+> >   	u32 clkpm_capable:1;		/* Clock PM capable? */
+> >   	u32 clkpm_enabled:1;		/* Current Clock PM state */
+> > -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+> > +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+> > +					   override */
+> >   	u32 clkpm_disable:1;		/* Clock PM disabled */
+> >   };
+> > @@ -373,6 +376,18 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+> >   	pcie_set_clkpm_nocheck(link, enable);
+> >   }
+> > +static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+> > +						   int enabled)
+> > +{
+> > +	struct pci_dev *pdev = link->downstream;
+> > +
+> > +	/* Override the BIOS disabled Clock PM state for devicetree platforms */
+> > +	if (of_have_populated_dt() && !enabled) {
+> > +		link->clkpm_default = 1;
+> > +		pci_info(pdev, "Clock PM state overridden: ClockPM+\n");
+> > +	}
+> > +}
+> > +
+> >   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+> >   {
+> >   	int capable = 1, enabled = 1;
+> > @@ -395,6 +410,7 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+> >   	}
+> >   	link->clkpm_enabled = enabled;
+> >   	link->clkpm_default = enabled;
+> > +	pcie_clkpm_override_default_link_state(link, enabled);
+> >   	link->clkpm_capable = capable;
+> >   	link->clkpm_disable = blacklist ? 1 : 0;
+> >   }
+> > @@ -788,6 +804,26 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
+> >   		aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
+> >   }
+> > +static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+> > +{
+> > +	struct pci_dev *pdev = link->downstream;
+> > +	u32 override;
+> > +
+> > +	/* Override the BIOS disabled ASPM states for devicetree platforms */
+> > +	if (of_have_populated_dt()) {
+> > +		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> > +		override = link->aspm_default & ~link->aspm_enabled;
+> > +		if (override)
+> > +			pci_info(pdev, "ASPM states overridden: %s%s%s%s%s%s\n",
+> > +				 (override & PCIE_LINK_STATE_L0S) ? "L0s+, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1) ? "L1+, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_1) ? "L1.1+, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_2) ? "L1.2+, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_1_PCIPM) ? "L1.1 PCI-PM+, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_2_PCIPM) ? "L1.2 PCI-PM+" : "");
+> > +	}
+> > +}
+> > +
+> >   static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+> >   {
+> >   	struct pci_dev *child = link->downstream, *parent = link->pdev;
+> > @@ -868,6 +904,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+> >   	/* Save default state */
+> >   	link->aspm_default = link->aspm_enabled;
+> > +	pcie_aspm_override_default_link_state(link);
+> > +
+> >   	/* Setup initial capable state. Will be updated later */
+> >   	link->aspm_capable = link->aspm_support;
 > 
-> A mutex is used to serialize sysfs store operations to ensure hardware
-> register writes and perf_ctrls updates are atomic.
 > 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  drivers/acpi/cppc_acpi.c       |  44 +++++++++
->  drivers/cpufreq/cppc_cpufreq.c | 157 +++++++++++++++++++++++++++++++++
->  include/acpi/cppc_acpi.h       |  20 +++++
->  3 files changed, 221 insertions(+)
+> Since this commit was added in Linux v6.18, I have been observing a suspend
+> test failures on some of our boards. The suspend test suspends the devices
+> for 20 secs and before this change the board would resume in about ~27 secs
+> (including the 20 sec sleep). After this change the board would take over 80
+> secs to resume and this triggered a failure.
 > 
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 45c6bd6ec24b..46bf45f8b0f3 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1743,6 +1743,50 @@ int cppc_set_auto_sel(int cpu, bool enable)
->  }
->  EXPORT_SYMBOL_GPL(cppc_set_auto_sel);
->  
-> +/**
-> + * cppc_get_min_perf - Read minimum performance register.
-> + * @cpu: CPU from which to read register.
-> + * @min_perf: Return address.
-> + */
-> +int cppc_get_min_perf(int cpu, u64 *min_perf)
-> +{
-> +	return cppc_get_reg_val(cpu, MIN_PERF, min_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_min_perf);
-> +
-> +/**
-> + * cppc_set_min_perf - Write minimum performance register.
-> + * @cpu: CPU to which to write register.
-> + * @min_perf: the desired minimum performance value to be updated.
-> + */
-> +int cppc_set_min_perf(int cpu, u32 min_perf)
-> +{
-> +	return cppc_set_reg_val(cpu, MIN_PERF, min_perf);
+> Looking at the logs, I can see it is the NVMe device on the board that is
+> having an issue, and I see the reset failing ...
+> 
+>  [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
+>   flow control rx/tx
+>  [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
+>   0 timeout, reset controller
+>  [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
+>  [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
+>  [ 1003.050481] OOM killer enabled.
+>  [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
+> 
+> From the above timestamps the delay is coming from the NVMe. I see this
+> issue on several boards with different NVMe devices and I can workaround
+> this by disabling ASPM L0/L1 for these devices ...
+> 
+>  DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
+>  DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
+>  DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
+>  DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
+> 
+> I am curious if you have seen any similar issues?
+> 
 
-ACPI spec says it 'must be set to a value that is less than or equal to
-that specified by the Maximum Performance Register'. So it may be better
-to check it before setting value.
+Marek reported a similar issue on ARM Juno board [1] on which one of the switch
+downstream port failed to come up while *entering* system suspend. But I was
+clueless as to why the device fails to function only while entering system
+suspend and not during runtime. I suspect something is going wrong in the
+suspend path.
 
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_set_min_perf);
-> +
-> +/**
-> + * cppc_get_max_perf - Read maximum performance register.
-> + * @cpu: CPU from which to read register.
-> + * @max_perf: Return address.
-> + */
-> +int cppc_get_max_perf(int cpu, u64 *max_perf)
-> +{
-> +	return cppc_get_reg_val(cpu, MAX_PERF, max_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_max_perf);
-> +
-> +/**
-> + * cppc_set_max_perf - Write maximum performance register.
-> + * @cpu: CPU to which to write register.
-> + * @max_perf: the desired maximum performance value to be updated.
-> + */
-> +int cppc_set_max_perf(int cpu, u32 max_perf)
-> +{
-> +	return cppc_set_reg_val(cpu, MAX_PERF, max_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_set_max_perf);
-> +
->  /**
->   * cppc_set_enable - Set to enable CPPC on the processor by writing the
->   * Continuous Performance Control package EnableRegister field.
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 229880c4eedb..66e183b45fb0 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -28,6 +28,8 @@
->  
->  static struct cpufreq_driver cppc_cpufreq_driver;
->  
-> +static DEFINE_MUTEX(cppc_cpufreq_autonomous_lock);
-> +
->  #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
->  static enum {
->  	FIE_UNSET = -1,
-> @@ -570,6 +572,35 @@ static void populate_efficiency_class(void)
->  }
->  #endif
->  
-> +/* Set min/max performance HW register and cache the value */
-> +static int cppc_cpufreq_set_mperf_reg(struct cpufreq_policy *policy,
-> +				      u64 val, bool is_min)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
-> +	unsigned int cpu = policy->cpu;
-> +	u32 perf;
-> +	int ret;
-> +
-> +	perf = clamp(val, caps->lowest_perf, caps->highest_perf);
-> +
-> +	ret = is_min ? cppc_set_min_perf(cpu, perf) :
-> +		       cppc_set_max_perf(cpu, perf);
-> +	if (ret) {
-> +		if (ret != -EOPNOTSUPP)
-> +			pr_warn("CPU%d: set %s_perf=%u failed (%d)\n",
-> +				cpu, is_min ? "min" : "max", perf, ret);
-> +		return ret;
-> +	}
-> +
-> +	if (is_min)
-> +		cpu_data->perf_ctrls.min_perf = perf;
-> +	else
-> +		cpu_data->perf_ctrls.max_perf = perf;
-> +
-> +	return 0;
+In your case, looks like the device is failing while resuming from suspend. Did
+you see any error log during suspend as well?
 
-I think cppc_set_XXX and updating cpudata->perf_ctrls.XXX can be extract
-out for not only min_perf and max_perf but also auto_sel and energy_perf
-and anything else in perf_ctrls.
+> Other PCIe devices seem to be OK (like the realtek r8169) but just the NVMe
+> is having issues. So I am trying to figure out the best way to resolve this?
+> 
 
-> +}
-> +
->  static struct cppc_cpudata *cppc_cpufreq_get_cpu_data(unsigned int cpu)
->  {
->  	struct cppc_cpudata *cpu_data;
-> @@ -918,16 +949,142 @@ CPPC_CPUFREQ_ATTR_RW_U64(auto_act_window, cppc_get_auto_act_window,
->  CPPC_CPUFREQ_ATTR_RW_U64(energy_performance_preference_val,
->  			 cppc_get_epp_perf, cppc_set_epp)
->  
-> +/**
-> + * show_min_perf - Show minimum performance as frequency (kHz)
-> + * @policy: cpufreq policy
-> + * @buf: buffer to write the frequency value to
-> + *
-> + * Reads the MIN_PERF register and converts the performance value to
-> + * frequency (kHz).
-> + */
-> +static ssize_t show_min_perf(struct cpufreq_policy *policy, char *buf)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = cppc_get_min_perf(policy->cpu, &perf);
-> +	if (ret == -EOPNOTSUPP)
-> +		return sysfs_emit(buf, "<unsupported>\n");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Use lowest_perf if register is uninitialized (0) */
-> +	if (perf == 0)
-> +		perf = caps->lowest_perf;
-> +
-> +	/* Convert performance to frequency (kHz) for user */
-> +	return sysfs_emit(buf, "%u\n", cppc_perf_to_khz(caps, perf));
-> +}
-> +
-> +/**
-> + * store_min_perf - Set minimum performance from frequency (kHz)
-> + * @policy: cpufreq policy
-> + * @buf: buffer containing the frequency value
-> + * @count: size of @buf
-> + *
-> + * Converts the user-provided frequency (kHz) to a performance value
-> + * and writes it to the MIN_PERF register.
-> + */
-> +static ssize_t store_min_perf(struct cpufreq_policy *policy, const char *buf,
-> +			      size_t count)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	unsigned int freq_khz;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = kstrtouint(buf, 0, &freq_khz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Convert frequency (kHz) to performance value */
-> +	perf = cppc_khz_to_perf(&cpu_data->perf_caps, freq_khz);
-> +
-> +	guard(mutex)(&cppc_cpufreq_autonomous_lock);
-> +	ret = cppc_cpufreq_set_mperf_reg(policy, perf, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +/**
-> + * show_max_perf - Show maximum performance as frequency (kHz)
-> + * @policy: cpufreq policy
-> + * @buf: buffer to write the frequency value to
-> + *
-> + * Reads the MAX_PERF register and converts the performance value to
-> + * frequency (kHz).
-> + */
-> +static ssize_t show_max_perf(struct cpufreq_policy *policy, char *buf)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = cppc_get_max_perf(policy->cpu, &perf);
-> +	if (ret == -EOPNOTSUPP)
-> +		return sysfs_emit(buf, "<unsupported>\n");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Use highest_perf if register is uninitialized or out of range */
-> +	if (perf == 0 || perf > caps->highest_perf)
-> +		perf = caps->highest_perf;
-> +
-> +	/* Convert performance to frequency (kHz) for user */
-> +	return sysfs_emit(buf, "%u\n", cppc_perf_to_khz(caps, perf));
-> +}
-> +
-> +/**
-> + * store_max_perf - Set maximum performance from frequency (kHz)
-> + * @policy: cpufreq policy
-> + * @buf: buffer containing the frequency value
-> + * @count: size of @buf
-> + *
-> + * Converts the user-provided frequency (kHz) to a performance value
-> + * and writes it to the MAX_PERF register.
-> + */
-> +static ssize_t store_max_perf(struct cpufreq_policy *policy, const char *buf,
-> +			      size_t count)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	unsigned int freq_khz;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = kstrtouint(buf, 0, &freq_khz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Convert frequency (kHz) to performance value */
-> +	perf = cppc_khz_to_perf(&cpu_data->perf_caps, freq_khz);
-> +
-> +	guard(mutex)(&cppc_cpufreq_autonomous_lock);
-> +	ret = cppc_cpufreq_set_mperf_reg(policy, perf, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
->  cpufreq_freq_attr_ro(freqdomain_cpus);
->  cpufreq_freq_attr_rw(auto_select);
->  cpufreq_freq_attr_rw(auto_act_window);
->  cpufreq_freq_attr_rw(energy_performance_preference_val);
-> +cpufreq_freq_attr_rw(min_perf);
-> +cpufreq_freq_attr_rw(max_perf);
->  
->  static struct freq_attr *cppc_cpufreq_attr[] = {
->  	&freqdomain_cpus,
->  	&auto_select,
->  	&auto_act_window,
->  	&energy_performance_preference_val,
-> +	&min_perf,
-> +	&max_perf,
->  	NULL,
->  };
->  
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 3fc796c0d902..b358440cd0e2 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -174,6 +174,10 @@ extern int cppc_get_auto_act_window(int cpu, u64 *auto_act_window);
->  extern int cppc_set_auto_act_window(int cpu, u64 auto_act_window);
->  extern int cppc_get_auto_sel(int cpu, bool *enable);
->  extern int cppc_set_auto_sel(int cpu, bool enable);
-> +extern int cppc_get_min_perf(int cpu, u64 *min_perf);
-> +extern int cppc_set_min_perf(int cpu, u32 min_perf);
-> +extern int cppc_get_max_perf(int cpu, u64 *max_perf);
-> +extern int cppc_set_max_perf(int cpu, u32 max_perf);
->  extern int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf);
->  extern int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator);
->  extern int amd_detect_prefcore(bool *detected);
-> @@ -270,6 +274,22 @@ static inline int cppc_set_auto_sel(int cpu, bool enable)
->  {
->  	return -EOPNOTSUPP;
->  }
-> +static inline int cppc_get_min_perf(int cpu, u64 *min_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_set_min_perf(int cpu, u32 min_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_get_max_perf(int cpu, u64 *max_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_set_max_perf(int cpu, u32 max_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  static inline int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf)
->  {
->  	return -ENODEV;
+First let's try to isolate the issue to L0s or L1. Can you try disabling L0s
+first, then L1?
 
+I will also inspect the suspend/resume path in the meantime.
+
+- Mani
+
+[1] https://lore.kernel.org/linux-pci/cae5cb24-a8b0-4088-bacd-14368f32bdc5@samsung.com/
+
+-- 
+மணிவண்ணன் சதாசிவம்
