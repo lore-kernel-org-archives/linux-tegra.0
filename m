@@ -1,48 +1,50 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CB038F950;
-	Thu, 22 Jan 2026 17:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0162A36EAA1;
+	Thu, 22 Jan 2026 17:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769101322; cv=none; b=M+SA/jr08Q6w7NclDXVmv3LzXiLpo4+yDnlVUL6AzLodSgRX/uNKrDvUbD0zD8DwmftKP3sz9LnKXAJfHaFdQiQmSrvIqsudpa8cXvM7hH3QPcaIjUFbU0XVBir8GFBTDMgHsSZiI1gy8/ogEnB5HnlsPtObiT1MAy+s8sh40Lg=
+	t=1769101481; cv=none; b=EowGujyfH88juOvDnfs9lSYz5b/2JdCGow/jxwB5B3mcw/nBm9vGieOSppUZ9/ZBTum0lytlptyg2UDEmvx9Qd1FU4mF0bQFOAuRpE0mwdPaqAab71S7CGUom4BsJG3h0k8HIEzUvrypH7kTWq3d5a/zNd0virEzCxCSzlAejsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769101322; c=relaxed/simple;
-	bh=TPAxVo8Je7LBB6w1OgAl2SBsCio85y7ZhAg7mwaob/k=;
+	s=arc-20240116; t=1769101481; c=relaxed/simple;
+	bh=EJUiyx0fiNzV6nZRPuLTpeqOgZYbF7x2TL30h+puJtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVE/IRXuhP+ceLrzCe6GNv+Mr7zgx4y5AiRqovlsNfNT4ilANCijOUoXhRGlaysG03+wtOkRjW82HTneroheI8a/DDaBBKY/BHtr1lGYu1maCLChslsKeP2KpTBkORMZoWZ1lCHDdAiBua+lbvsea5f26pX0x5k+XVjhuyOVLcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldyC/2RN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7DI3Zbc+aHG3nyn1KYPcF4onXNw5MizGY1dTGHKD5ym+IN3z+BaeJZJiBBdjEqzYnnFSsOk7RVNMFnmHWck3TxsM0suSnqFXfUSv/ROB7nj2X8+ea43GntLn7fg5jHgYsOP0c1gGbE+IyMQN3bMjKLxCNXhsNd4rVC5B/+c0Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=puPwBOs2; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldyC/2RN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04DF7C116C6;
-	Thu, 22 Jan 2026 17:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769101321;
-	bh=TPAxVo8Je7LBB6w1OgAl2SBsCio85y7ZhAg7mwaob/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ldyC/2RNsLzuo+dmdhcSQl2Lsm+MaFjhwWiz5vU/CE4I0SNwJMniv9WdvqPIzub/8
-	 WSTzATYjUAS6k5btQyOu2yTVqC/4902f+3Xcw75W9mDW/fxsVB7YzCXK4i8gCtWPs+
-	 4RA/xoorE+BmqGY6suSZi0NSUZ48nW/FfqRjkPpgYdRCa8qxF7oX7WO6MXXhvqLSyy
-	 Wrwlth1qliNglURiJ/PbS/dWl6+xeNZygwO6N7oHIEjr/79TJKSOddy0fmWex3tkB9
-	 0us42nFupsxpVha6bt5xAEeZh27srjXhoo3NHYw8VrH4ZMUOE5ewERi648ucFoD5YY
-	 JcHAhXSpb4xIw==
-Date: Thu, 22 Jan 2026 22:31:50 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Chia-Lin Kao <acelan.kao@canonical.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <5z7c25nkb35prvax6vq6ud7eaeuhzsswbf7fqvmlgys3xftgwb@odocboejrdrv>
-References: <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
- <20260122152903.GA1247682@bhelgaas>
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="puPwBOs2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-ID:Content-Description;
+	bh=2qmG/ca9Nm5l33OpftaEiVZnmoIEA5h4CJ2pJZwge0Y=; b=puPwBOs2Izh45sTZRkemxSV+GD
+	bncJOMdT4E6IATNWnAodlOcVHAoGZc4ZcmySNQZtfdFKouEZs+Geauljr6mg++38wPAUlq2kPbX/I
+	oMfLFSQMzt9Ba4cdzxT1xMJFd3IdG2JNjG1iS6rvGhh5YCIZXQy2s9nYaIUTBgK7eFTw4mCNepkTs
+	K/ZspNOrd/SSOebkxWXiim/MH9aK56ESheea+Ngf2oNI/VCyIs2ek/VhX6FzAaC3KWQzH2uCz6XtW
+	9X7Pff2y/1MZdBvia4skPvR38+Zd0516/kL98ydvWXvrvZo5+cEnkgn8jFpJNHnj7Fw1p1DWFmBnh
+	xb4OeVJw==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <leitao@debian.org>)
+	id 1viy6Z-00DAkU-Cb; Thu, 22 Jan 2026 17:04:23 +0000
+Date: Thu, 22 Jan 2026 09:04:17 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Vishwaroop A <va@nvidia.com>
+Cc: thierry.reding@gmail.com, treding@nvidia.com, jonathanh@nvidia.com, 
+	skomatineni@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org, 
+	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, puranjay@kernel.org, usamaarif642@gmail.com
+Subject: Re: [PATCH 0/6] spi: tegra-qspi: Fix race condition causing NULL
+ pointer dereference and spurious IRQ
+Message-ID: <aXJWRUhAe8F67-zG@gmail.com>
+References: <20260116-tegra_xfer-v1-0-02d96c790619@debian.org>
+ <20260120112242.3766700-1-va@nvidia.com>
+ <aW-seUXIJv4Lz7bK@gmail.com>
+ <20260121000000.0000000-1-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,112 +54,79 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260122152903.GA1247682@bhelgaas>
+In-Reply-To: <20260121000000.0000000-1-va@nvidia.com>
+X-Debian-User: leitao
 
-On Thu, Jan 22, 2026 at 09:29:03AM -0600, Bjorn Helgaas wrote:
-> [+cc NVMe folks]
+Hello Vishwaroop,
+
+On Wed, Jan 21, 2026 at 05:56:17PM +0000, Vishwaroop A wrote:
+> Hi Breno,
 > 
-> On Thu, Jan 22, 2026 at 12:12:42PM +0000, Jon Hunter wrote:
-> > ...
+> After reviewing Mark Brown's feedback and the code carefully, let me clarify the 
+> correct logic. This is important to get right.
 > 
-> > Since this commit was added in Linux v6.18, I have been observing a suspend
-> > test failures on some of our boards. The suspend test suspends the devices
-> > for 20 secs and before this change the board would resume in about ~27 secs
-> > (including the 20 sec sleep). After this change the board would take over 80
-> > secs to resume and this triggered a failure.
-> > 
-> > Looking at the logs, I can see it is the NVMe device on the board that is
-> > having an issue, and I see the reset failing ...
-> > 
-> >  [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
-> >   flow control rx/tx
-> >  [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
-> >   0 timeout, reset controller
-> >  [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
-> >  [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
-> >  [ 1003.050481] OOM killer enabled.
-> >  [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
-> > 
-> > From the above timestamps the delay is coming from the NVMe. I see this
-> > issue on several boards with different NVMe devices and I can workaround
-> > this by disabling ASPM L0/L1 for these devices ...
-> > 
-> >  DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
-> >  DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
-> >  DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
-> >  DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
-> > 
-> > I am curious if you have seen any similar issues?
-> > 
-> > Other PCIe devices seem to be OK (like the realtek r8169) but just
-> > the NVMe is having issues. So I am trying to figure out the best way
-> > to resolve this?
+> **IRQ Handler Semantics (per Mark Brown):**
+> - IRQ_NONE = interrupt was NOT from this device
+> - IRQ_HANDLED = interrupt WAS from this device (regardless of whether we fully processed it)
 > 
-> For context, "this commit" refers to f3ac2ff14834, modified by
-> df5192d9bb0e:
+> **The QSPI_RDY Bit:**
+> This bit in QSPI_TRANS_STATUS is set by hardware when a transfer completes and triggers 
+> the interrupt. Software clears it by writing 1.
 > 
->   f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
->   df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> **Why Your Original v1 Logic is Correct:**
 > 
-> The fact that this suspend issue only affects NVMe reminds me of the
-> code in dw_pcie_suspend_noirq() [1] that bails out early if L1 is
-> enabled because of some NVMe expectation:
+> Your "[PATCH 1/6] spi: tegra210-quad: Return IRQ_HANDLED when timeout already processed 
+> transfer" reads QSPI_TRANS_STATUS at the start of tegra_qspi_isr_thread():
 > 
->   dw_pcie_suspend_noirq()
->   {
->     ...
+>     if (!tqspi->curr_xfer) {
+>         if (!(status & QSPI_RDY))
+>             return IRQ_NONE;        // HW never set RDY → spurious interrupt
+>         return IRQ_HANDLED;         // HW did set RDY → real interrupt, timeout processed it
+>     }
+> 
+> **Scenario 1 - Delayed ISR (the race you're fixing):**
+> 1. HW completes transfer, sets QSPI_RDY, interrupt fires
+> 2. ISR thread delayed (CPU busy)
+> 3. Timeout handler runs, processes transfer, clears curr_xfer
+> 4. Delayed ISR finally wakes up
+> 5. Reads QSPI_RDY (may still be set)
+> 6. curr_xfer is NULL
+> 7. Return IRQ_HANDLED → this WAS our interrupt, just processed by timeout
+> 
+> **Scenario 2 - Truly Spurious:**
+> 1. Spurious interrupt fires
+> 2. QSPI_RDY = 0 (no transfer completed)
+> 3. curr_xfer is NULL
+> 4. Return IRQ_NONE → not our interrupt
+> 
+> **Your Latest Proposal Has It Backwards:**
+> 
+> The version in your last email returns IRQ_HANDLED when QSPI_RDY is NOT set, which is 
+> incorrect per Mark's feedback.
+> 
+> **For v2:**
+> 
+> Patches 1-5: Keep as-is from v1 (all correct)
+> 
+> Patch 6 ("[PATCH 6/6] spi: tegra210-quad: Protect curr_xfer check in IRQ handler"): 
+> The TODO comment you added asks about keeping the lock held across the handler call. I'd 
+> suggest removing the TODO and replacing it with a comment explaining why the current 
+> approach is safe:
+> 
+>     spin_unlock_irqrestore(&tqspi->lock, flags);
+> 
 >     /*
->      * If L1SS is supported, then do not put the link into L2 as some
->      * devices such as NVMe expect low resume latency.
+>      * Lock is released here but handlers safely re-check curr_xfer under lock
+>      * before dereferencing. DMA handler also needs to sleep in 
+>      * wait_for_completion_*(), which cannot be done while holding spinlock.
 >      */
->     if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
->       return 0;
->     ...
+>     if (!tqspi->is_curr_dma_xfer)
+>         return handle_cpu_based_xfer(tqspi);
 > 
-> That suggests there's some NVMe/ASPM interaction that the PCI core
-> doesn't understand yet.
-> 
+> This documents the design decision and closes the TODO.
 
-We have this check in place since NVMe driver keeps the device in D0 and expects
-the link to be in L1ss on platforms not passing below checks:
+Thanks. I will send a v2 with patches 1 - 5 untoouched, and patch
+6 updated with this document.
 
-        if (pm_suspend_via_firmware() || !ctrl->npss ||
-            !pcie_aspm_enabled(pdev) ||
-            (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND))
-
-Since the majority of the DWC platforms do not pass the above checks, we don't
-transition the device to D3Cold or link to L2/L3 in dw_pcie_suspend_noirq() if
-the link is in L1ss. Though I think we should be checking for D0 state instead
-of L1ss here.
-
-I think what is going on here is that since before commits f3ac2ff14834 and
-df5192d9bb0e, !pcie_aspm_enabled() check was passing as ASPM was not enabled for
-the device (and upstream port) and after those commits, this check is not
-passing and the NVMe driver is not shutting down the controller and expects the
-link to be in L0/L1ss. But the Tegra controller driver initiates L2/L3
-transition, and also turns off the device. So all the NVMe context is lost
-during suspend and while resuming, the NVMe driver got confused due to lost
-context.
-
-Jon, could you please try the below hack and see if it fixes the issue?
-
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 0e4caeab739c..4b8d261117f5 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -3723,7 +3723,7 @@ static int nvme_suspend(struct device *dev)
-         * state (which may not be possible if the link is up).
-         */
-        if (pm_suspend_via_firmware() || !ctrl->npss ||
--           !pcie_aspm_enabled(pdev) ||
-+           pcie_aspm_enabled(pdev) ||
-            (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND))
-                return nvme_disable_prepare_reset(ndev, true);
- 
-This will confirm whether the issue is due to Tegra controller driver breaking
-the NVMe driver assumption or not.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks for the review,
+--breno
