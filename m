@@ -1,115 +1,123 @@
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDA22D839E
-	for <linux-tegra@vger.kernel.org>; Thu, 22 Jan 2026 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E8138E109;
+	Thu, 22 Jan 2026 15:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769095652; cv=none; b=khK6eGkX9UGo4k/LPLu2F/sA2gyCN7A/TUIBV9OcOc1a35sxy2AyJtmoLlxQbOPcGHS4RqtDV4t6Qlnkrvx5Qb7asSeAGN7rtVbZT7ZsrL1I9fzUFBKQ4W0N6463yWIZvrrPQqKPFO78Q/O+88fOYP+kzn7elDME76XQ84X9Aww=
+	t=1769095745; cv=none; b=IrSUZ7EsyysfKnFDRthtaxypW0Ra+j63xkXixoZGIegzBrKYia1kkGqwmfXIar3Al+xwGHlenBezurcCAaCbu2ephpJaG7BAcZ+rENPWWpQ3DpWFhh0VSCrPesolXUjsTX02NfSMv4JTRwPZ/L3UmUxqnPwQJJtHthpQh2pGTNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769095652; c=relaxed/simple;
-	bh=JqgbQNrqQ6UKCxgFx0b++79yzf+5y6xvkz8O9SHBNWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uneOeG71gXbYSUunKzRz/heo4nrd6PEjOnGswsazMH1xpCW5a8quCzGj/p83+Oc7kDgkrISubMcBZgrnFbBl2uKJUXTwwxvYLyeFOizw2lk2YA2Bqq2NbNXTPFEgveXsTxRRa2hibsL0Y7l71BhJryvXhYXN93cFkP0TlMhDP3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fh5zBYzE; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1769095745; c=relaxed/simple;
+	bh=vYjhezx8RBYrZaQh5Oid2wtb4ZoiGXx6HNPQ9eDro9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rOhh+gBXS6HsT607tm+FzHnk5Tv9f9qk5WFlpoeC2vGARyCC1dIaYWt0FiS8rj9HoD4fKm8cGtgSWA1/kBCEBH/Y9IeD52FvyKot3Pn9FUlZNXqmnynOo+di9XJQkkS45+FWgWtVeHojp6nOOE8Kb4lQuv5P/wTSffdBOIcXVCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9RIThb7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fh5zBYzE"
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-435a517be33so741091f8f.0
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Jan 2026 07:27:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769095647; x=1769700447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qx2wv6S0iIG4uGf8KctiDi1tHOu4cYrHv9uyasSr0z0=;
-        b=Fh5zBYzEYPuX4wSaw1qkir0fiNmRP8gx9qu+/HwsZxE2dqY/chCBS5gpF4A5plQQ/2
-         XnMjZZ+5XvgnWqjcQl8DtCIxxpvGusD0Tnj8EgN6IqvlSxHNzV6SR2JPvJeYlebWizwp
-         hvc4LwFZAzK+MNrWScdiyC3Av+ylCQTE4Me5q0XKplWXTdatepCidjVEQB/qX0qbd3KI
-         4QgCzLKl5JQUIzym9jFpzhCbabj24Td0Ha20LNnYNPVBQqznqIR8fcCFoJpHSR0TeIxK
-         +RJMZ0/+b4jaVbpucVgfIk+bZesx+yNXhuxiHBz272j8FQde//Vd0XiiDYEIOnKcmYoY
-         KLxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769095647; x=1769700447;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Qx2wv6S0iIG4uGf8KctiDi1tHOu4cYrHv9uyasSr0z0=;
-        b=wikCxu6qw0tnnRWxezDVSB5i+12Bqib/ZlLugvOeaHiGgGeFKDpGG6zK1Lv09epsvL
-         A75GCcPsJNbIQ4G4Ntrgl0hCIGawgiIsX2/ck0vG3J85TrbygFCjxJslq62TtwVWjeyq
-         eocujXYbsrJgITN45iqKr8YXg7L9rHZ5ksE4g89rt/xMiBZs6tTTc5v43OnnGJE8xW5G
-         GO7lTEhyzn22X9/2saLnNzCRk+Zgf2Kmv/pZawuhfu7+a6Y2qHcsKbmuLY40A6vmNMvM
-         OHBCEh7KfcnxGOsMzqASfeeK3uZ0Ks1fMaUxv56uV1FOLGxDGZ1AnceHup4ivQ32cCUB
-         Ly0A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0hgglWuU4AN3yOUQGDRSGgTZiExJ2yV/ZsnSDiK8aQ8yhnYrGbyq1HmEZzbWQ7N4FueoYauxopXuElw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcItyx/f6yVU0rxaRT8Hvz+bqf/goV8B2DRDHpyzfcSh3ugIJF
-	2tXwSCe1TO5xxPYmsxVE1X3ceU/n7X9JNgk/t59HyFDNesGSkOqaP6P+
-X-Gm-Gg: AZuq6aI6O7MSohqXjTjqMmt3lw1/wn4wif376yFsO7AzVSDzDtpJ2N/0fLiBNHsowyD
-	0QM+svSRFAIqqllVyjWL3cM8gUvjToJjgTkGnL2m3yjAQSAUwElHNa7reCY7YEuJynZFzhJ0D11
-	UmQov3QxaGrrBJGrO9fYWLW7N57ULn85Bc3CYV28AM9+AU3ILmiIO1ZnEOcUIpwM/Pi1MsRWRtM
-	FpIXSO2uOM26rmUVJ5/R2vDo+p0guUxSRd4lht4yxWnHQqC9Enr1wSJOTrb4SoPkfLUH3xeewm2
-	IKzYiVrVi+4o0RrEsYhgXSnfWfLAOjdIEX78Irf0G2JpB7lTD0ic8Z7DBIPrWAJVBK/ZrvFB/Qf
-	93Jjj2a1Xra0CRw/23WNK1Ij5kR3pDFOI6B6EqaZvkCSPnHY1rGO3lalQ33SVGN4aajWY98dFOg
-	SxnYFhg1SGBDY=
-X-Received: by 2002:a05:6000:2c07:b0:435:a258:772 with SMTP id ffacd0b85a97d-435a25808dfmr9706611f8f.57.1769095647132;
-        Thu, 22 Jan 2026 07:27:27 -0800 (PST)
-Received: from xeon ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4358f138e26sm20762642f8f.17.2026.01.22.07.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jan 2026 07:27:26 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] ARM: tegra: lg-x3: add node for capacitive buttons
-Date: Thu, 22 Jan 2026 17:27:13 +0200
-Message-ID: <20260122152713.8311-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260122152713.8311-1-clamor95@gmail.com>
-References: <20260122152713.8311-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9RIThb7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE824C116C6;
+	Thu, 22 Jan 2026 15:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769095745;
+	bh=vYjhezx8RBYrZaQh5Oid2wtb4ZoiGXx6HNPQ9eDro9w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=r9RIThb7pS8xgBhPwF6j7rujxOlpGK87EDpxtnKQWiX/kMFD7/1HzsMUNgEf8eVpS
+	 Z97YIo9I3WxQWVAAi+Ntp2bI5zcFcogD46jybFOBK2thytrqmLuoJHF0at0Lpkktvd
+	 C50JSZHao1pYE8mN7r725zBWUSidfJXAWE8qHrl3+WMLIf52IQHjz/Q5IPn0UTr2uk
+	 m5AEBZbfcfeMVkjyZ72imyixCHrppf8FWodV1EZ5pWGvNeGt/9u1DmXpvk8tbf8T0y
+	 e3rtCDPK//aK9ftaHcGYC6h9++sOAmDxrAWTiTJz7+jxx95PZPT2xgUkst+wL9+Kv8
+	 MI+3qjq6ef4Nw==
+Date: Thu, 22 Jan 2026 09:29:03 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: manivannan.sadhasivam@oss.qualcomm.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <20260122152903.GA1247682@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
 
-Both smartphones have capacitive buttons but only P895 supports RMI4
-function 1A (0D touch), while P880 exposes buttons area as a region of the
-touchscreen.
+[+cc NVMe folks]
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Thu, Jan 22, 2026 at 12:12:42PM +0000, Jon Hunter wrote:
+> ...
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-index e300a2c49edf..db4b16a21e86 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-@@ -109,6 +109,12 @@ rmi4-f11@11 {
- 				syna,clip-x-high = <1535>;
- 				syna,clip-y-high = <2047>;
- 			};
-+
-+			rmi4-f1a@1a {
-+				reg = <0x1a>;
-+
-+				linux,keycodes = <KEY_BACK KEY_HOME KEY_MENU KEY_SEARCH>;
-+			};
- 		};
- 	};
- 
--- 
-2.51.0
+> Since this commit was added in Linux v6.18, I have been observing a suspend
+> test failures on some of our boards. The suspend test suspends the devices
+> for 20 secs and before this change the board would resume in about ~27 secs
+> (including the 20 sec sleep). After this change the board would take over 80
+> secs to resume and this triggered a failure.
+> 
+> Looking at the logs, I can see it is the NVMe device on the board that is
+> having an issue, and I see the reset failing ...
+> 
+>  [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
+>   flow control rx/tx
+>  [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
+>   0 timeout, reset controller
+>  [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
+>  [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
+>  [ 1003.050481] OOM killer enabled.
+>  [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
+> 
+> From the above timestamps the delay is coming from the NVMe. I see this
+> issue on several boards with different NVMe devices and I can workaround
+> this by disabling ASPM L0/L1 for these devices ...
+> 
+>  DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
+>  DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
+>  DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
+>  DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
+> 
+> I am curious if you have seen any similar issues?
+> 
+> Other PCIe devices seem to be OK (like the realtek r8169) but just
+> the NVMe is having issues. So I am trying to figure out the best way
+> to resolve this?
 
+For context, "this commit" refers to f3ac2ff14834, modified by
+df5192d9bb0e:
+
+  f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+  df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+
+The fact that this suspend issue only affects NVMe reminds me of the
+code in dw_pcie_suspend_noirq() [1] that bails out early if L1 is
+enabled because of some NVMe expectation:
+
+  dw_pcie_suspend_noirq()
+  {
+    ...
+    /*
+     * If L1SS is supported, then do not put the link into L2 as some
+     * devices such as NVMe expect low resume latency.
+     */
+    if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
+      return 0;
+    ...
+
+That suggests there's some NVMe/ASPM interaction that the PCI core
+doesn't understand yet.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-designware-host.c?id=v6.18#n1146
