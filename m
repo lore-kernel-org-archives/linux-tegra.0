@@ -1,310 +1,303 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012027.outbound.protection.outlook.com [40.107.209.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B69938553D;
-	Fri, 23 Jan 2026 03:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769138815; cv=none; b=Pgv58CfmjB7AUXBPx8XNmeOKL57jvq+liISvAtz+eQN7dh3h5b8/zCia7rKBZYIthYhsFTyfWD0Ne97ssQOod6zwtzgORUWoLcag3MuR+yKs9WjYmkuZROkUFVsMEZaHCiQyQxV76JgQIKHhQ1n28UFxr4sMBG6vwIkVKUyYkGM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769138815; c=relaxed/simple;
-	bh=NOXL9m6fEubgub/xwM+k4V/yV9xMOb+Sk90Wkl4s490=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwZiSKnJH4eQ0tjCHMDkrH0BIiDp1zqkmQ9K1Ow3DdWdI0V7JYG8pzrzeTBV8aVTNGEa9S4b8qeiWDvcF6WoPeI9GBm3Bq93/0K+3WhAkn4Ui5eEZBMhj621W+JI6W451WV4AENDmmVUZWnkv3vxWtAey0FBSfvAOM248BQSKs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIH+9N8e; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB3F2D6E61;
+	Fri, 23 Jan 2026 06:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769150531; cv=fail; b=lMXnJisThZXIxicXIsZRdtEHw3mOm9FGETR6giczflVzrt1jZfOOjEDeHXCeJiMKUj2FRt5tzFJj7UroduHxFcz6wNHhukqw/DU2HTAhcKNAJQwq5KbndOiWCrTkvArVqVKyP6RTyxaNnBH1Bjyt2J9JVyp49eXbu4HSC1+oBk8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769150531; c=relaxed/simple;
+	bh=EWXH6lhsYmM5OQ6pKNgPpkFmjN9yvA4UhiRsEF1PdYc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i25IuyUJsr0W14AQ1qrMcSi0yXZlCAkQg1EEXTZmWxVKOvVtbhrZHT47oRTLZtTuV2vpJ1Ala9NUfFkrACsUl0C223VchY5vKjolkgn3aO0WOaMTnc61Ju7rT1bItwQZU36aDENG0F8bllTDvJj96MM5Z2iimEH8xOm/bwPCmp8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c3hHGhsu; arc=fail smtp.client-ip=40.107.209.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIH+9N8e"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769138802; x=1800674802;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NOXL9m6fEubgub/xwM+k4V/yV9xMOb+Sk90Wkl4s490=;
-  b=iIH+9N8ejOKrMEvqKEKZL/0KgZmWE8VgGrCvlUildyBr1OnWe6VBwGQL
-   iRh8YyO0MWKtHy4WzVMQGai7l5SpPgecvnlM+lJ5kSEcr49VNBlW0o2g8
-   0nvzJu4x++MjsofySo+I9v59LVP8bMgVbfK73qv5B6uJpoIw8WZ9j/X0X
-   B/x69/oIlE3RUfI3guaAj88nwfD507Ks3QnlMRe8P7y9dwL5ZI1Gsnw9i
-   zx7qoQBsUdv46Wm3WfqcUi7x3qxnAPda/1YW0jMzmF7c002tn8aFpFIDi
-   9i25xDq5tuprgW3cDIN9xpQ69oA66SR36+IfTxoUrkrX9AAl5LFMoZXHt
-   A==;
-X-CSE-ConnectionGUID: 2IiTU9rRT46qXxocm7gjIA==
-X-CSE-MsgGUID: 8XjuIQjFQ+2tT5cdP9WNNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11679"; a="81760966"
-X-IronPort-AV: E=Sophos;i="6.21,247,1763452800"; 
-   d="scan'208";a="81760966"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2026 19:26:36 -0800
-X-CSE-ConnectionGUID: 1UJUUNxqTBO2GGoOwSkStg==
-X-CSE-MsgGUID: ri+diFlRRQivG4+m0yc/SQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,247,1763452800"; 
-   d="scan'208";a="206960705"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 22 Jan 2026 19:26:31 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vj7oa-00000000TT8-3E5h;
-	Fri, 23 Jan 2026 03:26:28 +0000
-Date: Fri, 23 Jan 2026 11:25:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
-Message-ID: <202601231123.4V5wVUur-lkp@intel.com>
-References: <20260122161009.3865888-7-thierry.reding@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c3hHGhsu"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L7PEVRCfMrKmKQxsUckZV/7gvUwxGIZVPb5ewIGg86MbaBLifgiQ5Sn2c4E8ZA4RjUoEb2YLwfee36DrZlDLDuW3YhpBR8z1TSYBNCkh7EdxODSdBkWulbeOLoJqE8Df7kzOcu/UwbnWC5h8pw9oMUHtVv+UzfIV0mc0JuHPgiw8WR1vIDaNEEdko+p3Ao0fqfWS1Qm43UAKNFU80uhdPgikxjC1L8Jkhh8OjkzQTGU5HE2WgT3yQ7RfLEGWx3OC0nbRVNgGCRJ2px5dpySrmFlZLsy9W+HIxR33Dc1cui3+cjJkTCIj2cCHy9uyPF3yGxuNjQKufNCpEmzCnxMsTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hGTDCoNaHgOdbALek1LUUBkrqbpWC+OUyPmvM5GeUJE=;
+ b=rIYp1UIFLfed/cwivM9UfG1hKVVlSaYyxAJBh9nMKdRANZD6mI1jxFSYPMShP77Cm+Cea5lVwtzh4B3jpYmlWaejpXoDdZuhC/eBgGeqZMFoq83f009PxJtFgVsZuFoHcHRzWxVgNAnELkuU2KMjq1jHS0rozbkR9tIHZ6YEuFXKl6z37GbsUjEA/IXWhyoeR+PPVI//PzpHXegKz7Z+684tYTZfp8F8mj0HrF/NbtDSV7U5SBRIVD2bZvbGxZ8wPY46voVMjGADfgXoPo0YmOxITm3ux9MvJo+snTX0gMfeQsip3zo2j4CID9JC9w9CSENG+fd0DOxleyd3Ue6rFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hGTDCoNaHgOdbALek1LUUBkrqbpWC+OUyPmvM5GeUJE=;
+ b=c3hHGhsuX6DY9f6R2pdeEZ9g2o/frhtHsMZqe0LTSDtOB8bzfJQazXwjGtf9JVg9i9YFfb2bTHXmk6hCsOOBYj0jndybItx0UvMwFFt9zBawEgvoo3wEQ7Zh7ntPl3qN++At6x+ZI2XRXVjsKbyBkZXbq6KPAmCFquwwgjp/5sK9li+ds0DPqnk0ud1gMW4V/9ysHa69qHiXcVcTZtL6U+nccOP5MsRIJ9lRHVlsjfh+aTdyIDQ2dDzwibUGTcorf8elyxFQJESya1xPCc2yjE6KtUhI7Qq913i9FqToTc0P39FziJFgw9qdig4gdpALSrxaSkFfK+T4B7x4fM/ocg==
+Received: from BYAPR05CA0091.namprd05.prod.outlook.com (2603:10b6:a03:e0::32)
+ by DM4PR12MB7549.namprd12.prod.outlook.com (2603:10b6:8:10f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.11; Fri, 23 Jan
+ 2026 06:42:03 +0000
+Received: from SJ1PEPF00001CE4.namprd03.prod.outlook.com
+ (2603:10b6:a03:e0:cafe::ab) by BYAPR05CA0091.outlook.office365.com
+ (2603:10b6:a03:e0::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.3 via Frontend Transport; Fri,
+ 23 Jan 2026 06:42:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00001CE4.mail.protection.outlook.com (10.167.242.20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9564.3 via Frontend Transport; Fri, 23 Jan 2026 06:42:02 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 22 Jan
+ 2026 22:41:46 -0800
+Received: from localhost (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 22 Jan
+ 2026 22:41:45 -0800
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<robh@kernel.org>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <pshete@nvidia.com>
+Subject: [PATCH v2 1/3] dt-bindings: gpio: Add Tegra264 support
+Date: Fri, 23 Jan 2026 06:41:38 +0000
+Message-ID: <20260123064140.1095946-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260122161009.3865888-7-thierry.reding@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE4:EE_|DM4PR12MB7549:EE_
+X-MS-Office365-Filtering-Correlation-Id: c90e9dd0-66cf-4f68-3c76-08de5a4a844e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q1ZyYUc0SEE0V21PbDZIejhQaWpEdkhIQkNvUXRyb1hUSEc2eE9jWDJVblp5?=
+ =?utf-8?B?dmJFYzZtWlgwN1YyeWpJTXhoU2Q3Rmd5ejE4b0JmRHFobWRCbjkwMVY0Qi95?=
+ =?utf-8?B?Q2s4NzhoK1NGVytBSDBlbTNoOWlWOTQ3RlR3VFpFVERiZjBTekx4eEtpREI0?=
+ =?utf-8?B?eGc0TklpNUlBMzA1RWtSaElJV1UrVjl6SjNYckNwS1FoQU5VelJONng5T05E?=
+ =?utf-8?B?amh3Mk1SR1VySVU3VXJ3QVdPRGNuUzJYbmRHSm9DVDVodXVacURqVkJiQXNl?=
+ =?utf-8?B?YmtFOXlFNU1xVU5ZSVRFYUpqeHExa3YwQlNhL0NoSms0bFBiMkJSSHh6VFBx?=
+ =?utf-8?B?bzJUaFBGWlY1WUNtY05oS2labmxSTFFpMlF4alFnMllXYk9FK2ovVTFEN0J0?=
+ =?utf-8?B?aFJCV3hUaHNnYnd2VVp5ZGJvUjRXK2dqWVJUQ2d5SldzcExFTEhNVmRBbC83?=
+ =?utf-8?B?bURqTG1xQXExYlJIcUkzNFJGUnAwenN1Y3k5eWNIUjhzb2lnOHlIbHYyZ2V5?=
+ =?utf-8?B?bCtLaEtzdWd0NFhYeGp3STdSa05YL3hnRG5qMlV1VjVVcjlBQlFDcUorVnFT?=
+ =?utf-8?B?SjhDR3VmTjNaQzFhOFBqSFRCWXRSWGJIU24vOW5ZL0tXREFZNWlucURvb2VU?=
+ =?utf-8?B?ckdSK2FLdlloMTVGelBLNXZWKy9CN0FZeGFkTEpISkVCTGtZQk1GbUNUNW1y?=
+ =?utf-8?B?c2IxZS8raWxmQ2s5RnZnZldGN3MxUXp6YWNEWFNZSGxvMnNXRzJsNTVkbGdl?=
+ =?utf-8?B?cDk2S3VDU2VUZjVRVlc4RUs4Vlc1azlMZGN0UWRGbE1EcVVrTnZyc2pNLzFL?=
+ =?utf-8?B?Z29SZ0tFQTBvVUdxQUxuR2poL0tURWZ4alZYVXN0UTVJSE9WeStIZU9KMXlx?=
+ =?utf-8?B?SVRhaXI4NmR2aDh2QnZjQzMzcDVSUVhGLyt2M1VudElDeTI1aGliYlR6bDVx?=
+ =?utf-8?B?WHVqdHZ4N0VZbVYyUGNGdklIeGptLzRxUEQwdFFYSDdJQ1hhM1RhVTJERTBL?=
+ =?utf-8?B?WTVuaXNoL1NVazBaVnVNR09kVWIrUTFlRmwzbWI2RzlUL3BtVFZWUDhjemIv?=
+ =?utf-8?B?a0p2V012ZXBKNTZrQmVCeUFwcnFuWHdDaWdHUm5IaEx2NXFCZU11bm9ET2c1?=
+ =?utf-8?B?MldTRW1vMXhUbGIrRXVOQ0Jva1VpRnhlSFNTMS9waGQwNFFwU3NjNFYwRGsw?=
+ =?utf-8?B?Ti90eDdRUWF4REZNSW80TjVvK1ZRNWVEL28yZUVOSHBFeWIwemZmK0owTisr?=
+ =?utf-8?B?Y1liSU1XaG5wVW9WMzRDK2RRTmdKWTNSamZtb2hTVlE5YXAzY3lvZ1FjNzBa?=
+ =?utf-8?B?aGt0S0hSUDJTaXRINUNnd0thRmpEdUY5WEorMUxXM2Y4ZlA2dFBDS0lKbDFC?=
+ =?utf-8?B?NkZwdFVJQU50TDhzL21XUmpNNWFXQUdUdlhGOGdqSHNjaFA2bU56NTRYUVVI?=
+ =?utf-8?B?UUF0T21sSkdKVVVxWkdYNk5sM0VaUGRLdTk2a0VTUUFvcXh1NnJ0bFptQmV4?=
+ =?utf-8?B?QWk5VDN5bVh6SE1xWDJmSU1lak15dHF0R3FyZ1oxVHNJMlovbkY2UjBtazNx?=
+ =?utf-8?B?MEdwRzNneGZJVEcyeWp6NlA1UWhIWUZTakJTbTlnNXFicjU1bG5lVXRVOVEy?=
+ =?utf-8?B?cWNaenpXdDRzaU8zaG5aWVJZVmdTS2JFNk0zTFNYWGpSRDJoT0hOdG82UmNQ?=
+ =?utf-8?B?cjBRakI3VU9WL0daYnM2MXNMSnRnL1NnOUk5eENkbDRVYkorRWR3RHZ3MmYr?=
+ =?utf-8?B?NzBGMlVSd1VPQzNpU01Cekljdk9rTHNNVXBZL1Z0dWhyVjZKK0dkSzV0ejRz?=
+ =?utf-8?B?OXFud2hlbVB1Q1ZXcTF3THJQcVNscm1qSjNlemdId0FZUmR3cUcwdkpueEpG?=
+ =?utf-8?B?S2NSenFseXM2VUYveHd6WG5DeG5RWGVyRjVJckdKbEJBTzNtRkQ5SkdRZEg0?=
+ =?utf-8?B?blV2N0FnVnFjbWk3MHZRYVB6Zi9JeGF2RUlHOFBicGg2WjBuMk13ejc2VUx5?=
+ =?utf-8?B?U3RSNFJvN0p6b3hmN1lkU2h6T24rMWJVT1p1bXRTMG9xTTlyd1lNbDZlRk5E?=
+ =?utf-8?B?cUNVNjNmTlptRHlmVnhtVVdyU0hiaXZyU2lsY3hSQWdVUFMrZ1FHb3ZaQWNh?=
+ =?utf-8?B?bitOdlRoUFU1R2pHQ29qVCtSME01NktYNktFdTBRNm5qN1UyMFhsUTBvaW5D?=
+ =?utf-8?B?Qk5NQlhFNFpRUmJXVFkram9tN043NS9lanBqK2NrV2x0TVJ0USsrYmhxT0tt?=
+ =?utf-8?Q?7mNu6Y5fqSY24+sS/8foxkbHUSLMZUCirTKQvUwSo4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2026 06:42:02.5730
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c90e9dd0-66cf-4f68-3c76-08de5a4a844e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7549
 
-Hi Thierry,
+Extend the existing Tegra186 GPIO controller device tree bindings with
+support for the GPIO controller found on Tegra264. The number of pins
+is slightly different, but the programming model remains the same.
 
-kernel test robot noticed the following build warnings:
+Add a new header, include/dt-bindings/gpio/tegra264-gpio.h,
+that defines port IDs as well as the TEGRA264_MAIN_GPIO() helper,
+both of which are used in conjunction to create a unique specifier
+for each pin.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on next-20260122]
-[cannot apply to drm-misc/drm-misc-next robh/for-next linus/master v6.19-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Tegra, GPIO wake events are latched and routed via the PMC.
+Document the standard DT property, wakeup-parent, which is a phandle to
+the PMC interrupt controller that provides the parent wake interrupt
+domain for the GPIO controller. If the property is absent the driver
+falls back to a compatible-based lookup.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Reding/dt-bindings-reserved-memory-Document-Tegra-VPR/20260123-001244
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20260122161009.3865888-7-thierry.reding%40kernel.org
-patch subject: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20260123/202601231123.4V5wVUur-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260123/202601231123.4V5wVUur-lkp@intel.com/reproduce)
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+Changes in v2:
+  * Update DT binding to use “wakeup-parent” (drop custom nvidia,pmc).
+  * Require “wakeup-parent” for Tegra264 compatibles in the binding.
+  * Rename header file to "nvidia,tegra264-gpio.h".
+---
+ .../bindings/gpio/nvidia,tegra186-gpio.yaml   | 24 +++++++
+ .../dt-bindings/gpio/nvidia,tegra264-gpio.h   | 62 +++++++++++++++++++
+ 2 files changed, 86 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/nvidia,tegra264-gpio.h
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601231123.4V5wVUur-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/dma-buf/heaps/tegra-vpr.c: In function 'tegra_vpr_protect_pages':
-   drivers/dma-buf/heaps/tegra-vpr.c:205:21: error: implicit declaration of function '__ptep_get'; did you mean 'ptep_get'? [-Wimplicit-function-declaration]
-     205 |         pte_t pte = __ptep_get(ptep);
-         |                     ^~~~~~~~~~
-         |                     ptep_get
-   drivers/dma-buf/heaps/tegra-vpr.c:205:21: error: invalid initializer
-   drivers/dma-buf/heaps/tegra-vpr.c:207:15: error: implicit declaration of function 'clear_pte_bit'; did you mean 'clear_ptes'? [-Wimplicit-function-declaration]
-     207 |         pte = clear_pte_bit(pte, __pgprot(PROT_NORMAL));
-         |               ^~~~~~~~~~~~~
-         |               clear_ptes
-   In file included from arch/x86/include/asm/paravirt_types.h:11,
-                    from arch/x86/include/asm/ptrace.h:175,
-                    from arch/x86/include/asm/math_emu.h:5,
-                    from arch/x86/include/asm/processor.h:13,
-                    from arch/x86/include/asm/timex.h:5,
-                    from include/linux/timex.h:67,
-                    from include/linux/time32.h:13,
-                    from include/linux/time.h:60,
-                    from include/linux/stat.h:19,
-                    from include/linux/fs_dirent.h:5,
-                    from include/linux/fs/super_types.h:5,
-                    from include/linux/fs/super.h:5,
-                    from include/linux/fs.h:5,
-                    from include/linux/debugfs.h:15,
-                    from drivers/dma-buf/heaps/tegra-vpr.c:12:
-   drivers/dma-buf/heaps/tegra-vpr.c:207:43: error: 'PROT_NORMAL' undeclared (first use in this function)
-     207 |         pte = clear_pte_bit(pte, __pgprot(PROT_NORMAL));
-         |                                           ^~~~~~~~~~~
-   arch/x86/include/asm/pgtable_types.h:202:48: note: in definition of macro '__pgprot'
-     202 | #define __pgprot(x)             ((pgprot_t) { (x) } )
-         |                                                ^
-   drivers/dma-buf/heaps/tegra-vpr.c:207:43: note: each undeclared identifier is reported only once for each function it appears in
-     207 |         pte = clear_pte_bit(pte, __pgprot(PROT_NORMAL));
-         |                                           ^~~~~~~~~~~
-   arch/x86/include/asm/pgtable_types.h:202:48: note: in definition of macro '__pgprot'
-     202 | #define __pgprot(x)             ((pgprot_t) { (x) } )
-         |                                                ^
-   drivers/dma-buf/heaps/tegra-vpr.c:208:15: error: implicit declaration of function 'set_pte_bit'; did you mean 'set_pte_at'? [-Wimplicit-function-declaration]
-     208 |         pte = set_pte_bit(pte, __pgprot(PROT_DEVICE_nGnRnE));
-         |               ^~~~~~~~~~~
-         |               set_pte_at
-   drivers/dma-buf/heaps/tegra-vpr.c:208:41: error: 'PROT_DEVICE_nGnRnE' undeclared (first use in this function)
-     208 |         pte = set_pte_bit(pte, __pgprot(PROT_DEVICE_nGnRnE));
-         |                                         ^~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/pgtable_types.h:202:48: note: in definition of macro '__pgprot'
-     202 | #define __pgprot(x)             ((pgprot_t) { (x) } )
-         |                                                ^
-   drivers/dma-buf/heaps/tegra-vpr.c:210:9: error: implicit declaration of function '__set_pte'; did you mean 'set_pte'? [-Wimplicit-function-declaration]
-     210 |         __set_pte(ptep, pte);
-         |         ^~~~~~~~~
-         |         set_pte
-   drivers/dma-buf/heaps/tegra-vpr.c: In function 'tegra_vpr_unprotect_pages':
-   drivers/dma-buf/heaps/tegra-vpr.c:218:21: error: invalid initializer
-     218 |         pte_t pte = __ptep_get(ptep);
-         |                     ^~~~~~~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c:220:43: error: 'PROT_DEVICE_nGnRnE' undeclared (first use in this function)
-     220 |         pte = clear_pte_bit(pte, __pgprot(PROT_DEVICE_nGnRnE));
-         |                                           ^~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/pgtable_types.h:202:48: note: in definition of macro '__pgprot'
-     202 | #define __pgprot(x)             ((pgprot_t) { (x) } )
-         |                                                ^
-   drivers/dma-buf/heaps/tegra-vpr.c:221:41: error: 'PROT_NORMAL' undeclared (first use in this function)
-     221 |         pte = set_pte_bit(pte, __pgprot(PROT_NORMAL));
-         |                                         ^~~~~~~~~~~
-   arch/x86/include/asm/pgtable_types.h:202:48: note: in definition of macro '__pgprot'
-     202 | #define __pgprot(x)             ((pgprot_t) { (x) } )
-         |                                                ^
-   drivers/dma-buf/heaps/tegra-vpr.c: In function 'tegra_vpr_buffer_allocate':
->> drivers/dma-buf/heaps/tegra-vpr.c:612:30: warning: variable 'last' set but not used [-Wunused-but-set-variable]
-     612 |         unsigned long first, last;
-         |                              ^~~~
->> drivers/dma-buf/heaps/tegra-vpr.c:612:23: warning: variable 'first' set but not used [-Wunused-but-set-variable]
-     612 |         unsigned long first, last;
-         |                       ^~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c: In function 'tegra_vpr_buffer_release':
-   drivers/dma-buf/heaps/tegra-vpr.c:695:30: warning: variable 'last' set but not used [-Wunused-but-set-variable]
-     695 |         unsigned long first, last;
-         |                              ^~~~
-   drivers/dma-buf/heaps/tegra-vpr.c:695:23: warning: variable 'first' set but not used [-Wunused-but-set-variable]
-     695 |         unsigned long first, last;
-         |                       ^~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c: In function 'tegra_vpr_setup_chunks':
->> drivers/dma-buf/heaps/tegra-vpr.c:8:21: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-       8 | #define pr_fmt(fmt) "tegra-vpr: " fmt
-         |                     ^~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:231:29: note: in expansion of macro 'pr_fmt'
-     231 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:259:9: note: in expansion of macro '__dynamic_func_call_cls'
-     259 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:261:9: note: in expansion of macro '_dynamic_func_call_cls'
-     261 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:280:9: note: in expansion of macro '_dynamic_func_call'
-     280 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:636:9: note: in expansion of macro 'dynamic_pr_debug'
-     636 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c:1075:17: note: in expansion of macro 'pr_debug'
-    1075 |                 pr_debug("  %2u: %pap-%pap (%lu MiB)\n", i, &start, &end,
-         |                 ^~~~~~~~
-   drivers/dma-buf/heaps/tegra-vpr.c: In function 'tegra_vpr_add_heap':
-   drivers/dma-buf/heaps/tegra-vpr.c:1120:30: warning: variable 'last' set but not used [-Wunused-but-set-variable]
-    1120 |         unsigned long first, last;
-         |                              ^~~~
-   drivers/dma-buf/heaps/tegra-vpr.c:1120:23: warning: variable 'first' set but not used [-Wunused-but-set-variable]
-    1120 |         unsigned long first, last;
-         |                       ^~~~~
-
-
-vim +/last +612 drivers/dma-buf/heaps/tegra-vpr.c
-
-   605	
-   606	static struct tegra_vpr_buffer *
-   607	tegra_vpr_buffer_allocate(struct tegra_vpr *vpr, size_t size)
-   608	{
-   609		unsigned int num_pages = size >> PAGE_SHIFT;
-   610		unsigned int order = get_order(size);
-   611		struct tegra_vpr_buffer *buffer;
- > 612		unsigned long first, last;
-   613		int pageno, err;
-   614		pgoff_t i;
-   615	
-   616		/*
-   617		 * "order" defines the alignment and size, so this may result in
-   618		 * fragmented memory depending on the allocation patterns. However,
-   619		 * since this is used primarily for video frames, it is expected that
-   620		 * a number of buffers of the same size will be allocated, so
-   621		 * fragmentation should be negligible.
-   622		 */
-   623		pageno = tegra_vpr_allocate_region(vpr, num_pages, 1);
-   624		if (pageno < 0)
-   625			return ERR_PTR(pageno);
-   626	
-   627		first = find_first_bit(vpr->bitmap, vpr->num_pages);
-   628		last = find_last_bit(vpr->bitmap, vpr->num_pages);
-   629	
-   630		buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
-   631		if (!buffer) {
-   632			err = -ENOMEM;
-   633			goto release;
-   634		}
-   635	
-   636		INIT_LIST_HEAD(&buffer->attachments);
-   637		INIT_LIST_HEAD(&buffer->list);
-   638		mutex_init(&buffer->lock);
-   639		buffer->start = vpr->base + (pageno << PAGE_SHIFT);
-   640		buffer->limit = buffer->start + size;
-   641		buffer->size = size;
-   642		buffer->num_pages = num_pages;
-   643		buffer->pageno = pageno;
-   644		buffer->order = order;
-   645	
-   646		buffer->pages = kmalloc_array(buffer->num_pages,
-   647					      sizeof(*buffer->pages),
-   648					      GFP_KERNEL);
-   649		if (!buffer->pages) {
-   650			err = -ENOMEM;
-   651			goto free;
-   652		}
-   653	
-   654		/* track which chunks this buffer overlaps */
-   655		if (vpr->num_chunks > 0) {
-   656			unsigned int limit = buffer->pageno + buffer->num_pages, i;
-   657	
-   658			for (i = 0; i < vpr->num_chunks; i++) {
-   659				struct tegra_vpr_chunk *chunk = &vpr->chunks[i];
-   660	
-   661				if (tegra_vpr_chunk_overlaps(chunk, pageno, limit))
-   662					set_bit(i, buffer->chunks);
-   663			}
-   664	
-   665			/* activate chunks if necessary */
-   666			err = tegra_vpr_activate_chunks(vpr, buffer);
-   667			if (err < 0)
-   668				goto free;
-   669	
-   670			/* track first and last allocated pages */
-   671			if (buffer->pageno < vpr->first)
-   672				vpr->first = buffer->pageno;
-   673	
-   674			if (limit - 1 > vpr->last)
-   675				vpr->last = limit - 1;
-   676		}
-   677	
-   678		for (i = 0; i < buffer->num_pages; i++)
-   679			buffer->pages[i] = &vpr->start_page[pageno + i];
-   680	
-   681		return buffer;
-   682	
-   683	free:
-   684		kfree(buffer->pages);
-   685		kfree(buffer);
-   686	release:
-   687		bitmap_release_region(vpr->bitmap, pageno, order);
-   688		return ERR_PTR(err);
-   689	}
-   690	
-
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+index 2bd620a1099b..b74fc3a8d80d 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -86,6 +86,9 @@ properties:
+       - nvidia,tegra234-gpio
+       - nvidia,tegra234-gpio-aon
+       - nvidia,tegra256-gpio
++      - nvidia,tegra264-gpio
++      - nvidia,tegra264-gpio-uphy
++      - nvidia,tegra264-gpio-aon
+ 
+   reg-names:
+     items:
+@@ -110,6 +113,12 @@ properties:
+       ports, in the order the HW manual describes them. The number of entries
+       required varies depending on compatible value.
+ 
++  wakeup-parent:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      Phandle to the parent interrupt controller used for wake-up.
++      On Tegra, this typically references the PMC interrupt controller.
++
+   gpio-controller: true
+ 
+   gpio-ranges:
+@@ -157,6 +166,8 @@ allOf:
+               - nvidia,tegra194-gpio
+               - nvidia,tegra234-gpio
+               - nvidia,tegra256-gpio
++              - nvidia,tegra264-gpio
++              - nvidia,tegra264-gpio-uphy
+     then:
+       properties:
+         interrupts:
+@@ -171,12 +182,25 @@ allOf:
+               - nvidia,tegra186-gpio-aon
+               - nvidia,tegra194-gpio-aon
+               - nvidia,tegra234-gpio-aon
++              - nvidia,tegra264-gpio-aon
+     then:
+       properties:
+         interrupts:
+           minItems: 1
+           maxItems: 4
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra264-gpio
++              - nvidia,tegra264-gpio-uphy
++              - nvidia,tegra264-gpio-aon
++    then:
++      required:
++        - wakeup-parent
++
+ required:
+   - compatible
+   - reg
+diff --git a/include/dt-bindings/gpio/nvidia,tegra264-gpio.h b/include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+new file mode 100644
+index 000000000000..689cf5c67c0c
+--- /dev/null
++++ b/include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/* Copyright (c) 2026, NVIDIA CORPORATION. All rights reserved. */
++
++/*
++ * This header provides constants for binding nvidia,tegra264-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA264_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA264_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA264_MAIN_GPIO_PORT_T  0
++#define TEGRA264_MAIN_GPIO_PORT_U  1
++#define TEGRA264_MAIN_GPIO_PORT_V  2
++#define TEGRA264_MAIN_GPIO_PORT_W  3
++#define TEGRA264_MAIN_GPIO_PORT_AL 4
++#define TEGRA264_MAIN_GPIO_PORT_Y  5
++#define TEGRA264_MAIN_GPIO_PORT_Z  6
++#define TEGRA264_MAIN_GPIO_PORT_X  7
++#define TEGRA264_MAIN_GPIO_PORT_H  8
++#define TEGRA264_MAIN_GPIO_PORT_J  9
++#define TEGRA264_MAIN_GPIO_PORT_K  10
++#define TEGRA264_MAIN_GPIO_PORT_L  11
++#define TEGRA264_MAIN_GPIO_PORT_M  12
++#define TEGRA264_MAIN_GPIO_PORT_P  13
++#define TEGRA264_MAIN_GPIO_PORT_Q  14
++#define TEGRA264_MAIN_GPIO_PORT_R  15
++#define TEGRA264_MAIN_GPIO_PORT_S  16
++#define TEGRA264_MAIN_GPIO_PORT_F  17
++#define TEGRA264_MAIN_GPIO_PORT_G  18
++
++#define TEGRA264_MAIN_GPIO(port, offset) \
++	((TEGRA264_MAIN_GPIO_PORT_##port * 8) + (offset))
++
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA264_AON_GPIO_PORT_AA  0
++#define TEGRA264_AON_GPIO_PORT_BB  1
++#define TEGRA264_AON_GPIO_PORT_CC  2
++#define TEGRA264_AON_GPIO_PORT_DD  3
++#define TEGRA264_AON_GPIO_PORT_EE  4
++
++#define TEGRA264_AON_GPIO(port, offset) \
++	((TEGRA264_AON_GPIO_PORT_##port * 8) + (offset))
++
++#define TEGRA264_UPHY_GPIO_PORT_A  0
++#define TEGRA264_UPHY_GPIO_PORT_B  1
++#define TEGRA264_UPHY_GPIO_PORT_C  2
++#define TEGRA264_UPHY_GPIO_PORT_D  3
++#define TEGRA264_UPHY_GPIO_PORT_E  4
++
++#define TEGRA264_UPHY_GPIO(port, offset) \
++	((TEGRA264_UPHY_GPIO_PORT_##port * 8) + (offset))
++
++#endif
++
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
