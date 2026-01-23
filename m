@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C30334373
-	for <linux-tegra@vger.kernel.org>; Fri, 23 Jan 2026 07:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7416296BAF
+	for <linux-tegra@vger.kernel.org>; Fri, 23 Jan 2026 07:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769154228; cv=none; b=GPvawYwt/AC5i7k5bSwsuXKnWUCyzr9dp4djInQnB51WpEL3xixmTnSLiGBRQYeGaKVaxpqpDRTSe4kJ985hKE38Z7uV675SET4qtE5Au7iquhfx5zUNNQv/QVHmKOSD5fRNySoXtJAKMk4Kjg4G9J4NKIYaMfsKJWRSq5Qshhw=
+	t=1769154447; cv=none; b=BRoJP0Xp7Fz0pDPGhsP/40FWxQ/+eTsbFNOWeUnZZs8Z4bBnwUVNdAwNh/HEyOsOpebuWA7XzcyNobWeLCDQy066wlNmAy9C+s1U/BFE6ZUaGdvVscvLIeakm1BzlGh5ZG9bf2Tb+Z35kGbzwyMXw6+S0NSDyBOhSw85wpv52SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769154228; c=relaxed/simple;
-	bh=hNJqMGM1DGrrZMHfT+TOWmjcktsysNTRhH0t2zsZwh8=;
+	s=arc-20240116; t=1769154447; c=relaxed/simple;
+	bh=dOll45aJteWe/IdVv749+twRkEY8CjTGFq0bhB2NtGs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YrdwDEBQlLNS01mjRJmWhIzZ6r9xCVDW0vtqIeejIttuC/PvldyQy5OND7IF0uYLvDMOwFDAlQt6f1aNlBvfkfAi12fIJMfP0tUP7+hwE7/kzMDgttRaqzTrONbD6Jd3Q9vwCvm2ZfPyV5JmU3HmWuXFFQ8KtvIEcJwVj4lTn50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKvTDXH4; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hXuF50SmFCVpFMnnpIBIx1oF8xlcgXCRrMVMHM5bHz88R+cVfVIIO1InS64OyFyfPwcg1H++aeTioNbf1PEI32DpY6O9XXDl5XX0EohVlTYO7CR0G/oBVOX2WhoKL64xeHAS5/TrK7qBjxcphoaV0A80QrTpC4FuWDtNneu8JWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbYgL7Ke; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKvTDXH4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 759B0C19422;
-	Fri, 23 Jan 2026 07:43:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbYgL7Ke"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F08A8C4CEF1;
+	Fri, 23 Jan 2026 07:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769154228;
-	bh=hNJqMGM1DGrrZMHfT+TOWmjcktsysNTRhH0t2zsZwh8=;
+	s=k20201202; t=1769154447;
+	bh=dOll45aJteWe/IdVv749+twRkEY8CjTGFq0bhB2NtGs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TKvTDXH4yniIjS5R/1KBh2KeniWAQxfMVz0eMyGploKWx6CpIQ0CqJDezf/md0DRx
-	 q4EyisajkmDpFeCVX8KcTMXHMrwtwUI/HJg21w0CAha7cLQaG2d9yGsGZCkPfYDdBi
-	 8fQnr9vYA48tSoL3yDO4uCysLDG3EqSNZ/Im62iIz39fMASmzdl0WUlkXTszdm/zwT
-	 vSIY8wYQy8qcoF+ktKkMdsbgIEM7yXKm6+ZI6RSH7OdztUQ8DNth0lVm9izBBDiOHe
-	 YzRG93qVaQLPVa3h1aDIfM7uG5tRvJ7DnsuGOZEmEyC6Aig4wYph0SZGtDLi15FrH4
-	 EXICVgOjgeUYA==
-Message-ID: <684526d5-f1ac-46d5-b147-1fb906ba2248@kernel.org>
-Date: Fri, 23 Jan 2026 08:43:44 +0100
+	b=fbYgL7Kelmvg0PKpKns0GUwSXw+tu1FNKrGVh/a0hMA/06TjoN1BrgTfAon9el6kg
+	 ZzhuNlUKPE9xgFOgs3AEqoRGtow9Q4eg8oe2kXs0jVodl3vXUGaVEpvh+mELyhLylg
+	 pDpTmGL4JXU09G094RhJsq3oOHCZSY95cdJSzSYTaMUxFdA0EIjZ6+jE2Zzsx0odnI
+	 CE4rNTgHJwWdFhfsW4n22bol68M6JBM003248Sb+L+PB38qUT/adHBOIMpTqMk/5Re
+	 pT+MrKNZa7Br+V2TM3yb/uQRaIsIx75NzwPWASImZOKna7tdk43HyeOay25n6ZeJoo
+	 3yQLOLDyVrYjg==
+Message-ID: <53d3a98f-3ad8-43c0-9094-39f229a5b698@kernel.org>
+Date: Fri, 23 Jan 2026 08:47:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -36,15 +36,10 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [GIT PULL 1/4] dt-bindings: Changes for v6.20-rc1
-To: Thierry Reding <thierry.reding@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: arm@kernel.org, soc@kernel.org, Jon Hunter <jonathanh@nvidia.com>,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
+To: Thierry Reding <thierry.reding@gmail.com>, arm@kernel.org, soc@kernel.org
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 References: <20260118080304.2646387-1-thierry.reding@gmail.com>
- <20260122-hidden-goat-of-excellence-a43b9f@quoll>
- <CAMuHMdUZqJa3KEWZReA734=ZV98JTD=HPztkszEe6ARFWiuhww@mail.gmail.com>
- <aXIVmW_mjb0AdDwe@orome>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,70 +85,91 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aXIVmW_mjb0AdDwe@orome>
+In-Reply-To: <20260118080304.2646387-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/01/2026 13:20, Thierry Reding wrote:
-> On Thu, Jan 22, 2026 at 12:02:04PM +0100, Geert Uytterhoeven wrote:
->> Hi Krzysztof,
->>
->> On Thu, 22 Jan 2026 at 11:08, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> On Sun, Jan 18, 2026 at 09:03:00AM +0100, Thierry Reding wrote:
->>>> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
->>>>
->>>>   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
->>>>
->>>> are available in the Git repository at:
->>>>
->>>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.20-dt-bindings
->>>>
->>>> for you to fetch changes up to b2788f6320722d6059f849f35a77eb082608c627:
->>>>
->>>>   ASoC: dt-bindings: realtek,rt5640: Document port node (2026-01-17 01:58:18 +0100)
->>>>
->>>> Thanks,
->>>> Thierry
->>>>
->>>> ----------------------------------------------------------------
->>>> dt-bindings: Changes for v6.20-rc1
->>>>
->>>> This series updates various DT bindings for Tegra architecture,
->>>> primarily focusing on schema validation fixes and new feature
->>>> documentation for Tegra234 and Tegra264 SoCs. Key changes include
->>>> correcting realtek,rt5640 audio codec bindings (adding missing ports,
->>>> clocks, and jack-detect sources), converting Tegra20 NAND bindings to
->>>> YAML, and updating memory, DMA, and IOMMU definitions for Tegra264
->>>> (introducing CMDQV and DBB clock support). Additionally, it resolves
->>>> legacy warnings for Tegra30/132 display and VI interfaces.
->>>
->>> Same comment as was for Geert, I am surprised to see DT bindings as
->>> separate pull and I see drivers were alerady merged, so I will defer
->>> entire Tegra pull to Arnd.
->>
->> The soc tree used to have a separate branch for dt-bindings.
->> Hence several soc submaintainers still use that split for their PRs.
+On 18/01/2026 09:03, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 > 
-> Yeah. I usually also only put things in the PR for ARM SoC that have no
-> related driver changes (fixups, conversions, ...) and therefore nobody
-> else feels responsible for picking up.
+> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
+> 
+>   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.20-dt-bindings
+> 
+> for you to fetch changes up to b2788f6320722d6059f849f35a77eb082608c627:
+> 
+>   ASoC: dt-bindings: realtek,rt5640: Document port node (2026-01-17 01:58:18 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> dt-bindings: Changes for v6.20-rc1
+> 
+> This series updates various DT bindings for Tegra architecture,
+> primarily focusing on schema validation fixes and new feature
+> documentation for Tegra234 and Tegra264 SoCs. Key changes include
+> correcting realtek,rt5640 audio codec bindings (adding missing ports,
+> clocks, and jack-detect sources), converting Tegra20 NAND bindings to
+> YAML, and updating memory, DMA, and IOMMU definitions for Tegra264
+> (introducing CMDQV and DBB clock support). Additionally, it resolves
+> legacy warnings for Tegra30/132 display and VI interfaces.
+> 
+> ----------------------------------------------------------------
+> Ashish Mhetre (1):
+>       dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
+> 
+> Charan Pedumuru (1):
+>       dt-bindings: mtd: nvidia,tegra20-nand: convert to DT schema
 
-Why these are still separate? There are few options here:
-1. These were needed by the drivers you sent in pull: should be in that
-driver pull. It seems Geert confirmed this was the case with Renesas.
-BTW, checkpatch asks for that somewhat - you will have checkpatch
-warning of undocumented compatibles and you are not suppose to have such
-warnings.
+This should go via MTD. I think Miquel is not ignoring bindings.
 
-2. These were needed by the new DTS you sent in pull: should be in that
-DTS pull.
+> 
+> Jon Hunter (4):
+>       dt-bindings: tegra: pmc: Update aotag as an optional aperture
 
-3. These were not needed by anything yet or they document compatibles
-already in the tree: that's the only case I imagine having them on
-separate branch. You can take such bindings when subsystem maintainers
-do not - they ignore them. 90% of bindings in this pull are not like that!
+...
 
-I will respond to that as well in separate email.
+>       ASoC: dt-bindings: realtek,rt5640: Document mclk
+>       ASoC: dt-bindings: realtek,rt5640: Update jack-detect
+>       ASoC: dt-bindings: realtek,rt5640: Document port node
+
+No, Mark always promptly picks up bindings patches, so I do not
+understand why these are here. These should go via subsystem maintainer.
+> 
+> Svyatoslav Ryhel (2):
+>       dt-bindings: display: tegra: document Tegra132 MIPI calibration device
+>       dt-bindings: display: tegra: document Tegra30 VI and VIP
+> 
+> Thierry Reding (1):
+>       dt-bindings: memory: tegra: Document DBB clock for Tegra264
+
+And this one was never publicly acknowledged that you applied it and
+lead to ACTUAL warning/review comment from my side postponing your other
+patch.
+
+If you took this patch for DTS, then it must be on the DTS branch BEFORE
+the DTS uses it. There is explicit rule about this in writing bindings.
+You even sent it like that, look:
+https://lore.kernel.org/all/176856655186.139432.6919318227218814446.b4-ty@nvidia.com/
+1/3: DT binding
+2/3: driver
+3/3: DTS
+
+so why a correct posting you would disorganize and break the
+bisectability rule by applying binding separate?
+
+> 
+> sheetal (1):
+>       dt-bindings: dma: Update ADMA bindings for tegra264
+
+Vinod also picks up such bindings. If this is for DTS then should be in
+DTS branch.
 
 Best regards,
 Krzysztof
+
