@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D08318B8F;
-	Fri, 23 Jan 2026 01:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AA72E8897;
+	Fri, 23 Jan 2026 01:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769132000; cv=none; b=szYdPighVrvD3BUFKMQdbkpgYpHh4kPGWb8U3+cDftXPlQPey/BIkH7EnhJaup9cp6bqBTymfOfdn/3qbFwCA6m7ZbbHxAU+0f6ewcNl/yGZAtl0ojjED0wiPkpOIcFqRe9UUGy6LwDrklBGp4LnK8Nh5meulMkzS3xvzxgxZvc=
+	t=1769132510; cv=none; b=P3aI6wkcbPInz9dfi1ZtCcegUHr1Qtnr76yOI349tu3MedpTqU+DzDDZDk7sJ4fOZM2UAH0STIAW3DAWc2za7RoIr/x9kGg85zsOvj+FxFfvhULYXG1y/Y0S9S/Sm2cn20FBcCdSfsJO61tIWMhx7NkKsb1yQek/Nx4n2yLB+yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769132000; c=relaxed/simple;
-	bh=ZjA0MF6AbgPN2AWjXjk+9YXMDSWyj/5/jG9CHgJr2vw=;
+	s=arc-20240116; t=1769132510; c=relaxed/simple;
+	bh=oNjilOE/dRq5dq0Dva4SX0YHGlllIlzGlLtyxlIdKCM=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=hBu0JR88oGFbIxpAGk0k5MkA2WP6xRrRUgytnze+p82l7gXAFRH9Chf6s66Wm1oW2qjLXi0sKKvdWja6MjBOh6rMZJXhrwKIyP40YpaauqbSs2YJX27ODdRM9OX0hYGpJZcPkC3RxoO6Iw4JPIzt7D+25dxTXIWSdtTRhdV9LP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/24BiO0; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=Yz5Jtd6UPKw+Y4LQyVoZvvxXgkmjetkz6+bwD3Gltsm8QI98NgAFjxXasTZwPQURsI8Uzl3wXeRjQ3RXCCNyawH9ImfiesFw+sKIFNL3yJ97m82pwXoHyY9MqEKyovM/S+92iebtchphI7hR9PzSCPmEAdTcHz5kLObIn18VXp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lv8co33U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/24BiO0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 085E5C116C6;
-	Fri, 23 Jan 2026 01:33:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lv8co33U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF42C116C6;
+	Fri, 23 Jan 2026 01:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769131999;
-	bh=ZjA0MF6AbgPN2AWjXjk+9YXMDSWyj/5/jG9CHgJr2vw=;
+	s=k20201202; t=1769132508;
+	bh=oNjilOE/dRq5dq0Dva4SX0YHGlllIlzGlLtyxlIdKCM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=m/24BiO03F3mSYBVckdNr77X7tCKrf/MnXUS2//Yr3ZNoTHywoe6YHfKttNJ386BN
-	 ef2ZO1ULprp26gj5g3AFWvLcBvNd+oEFO+kD8FlKwVFwJ/PswnhVWBLeRg5aobpMhf
-	 NunjTvw8aQkTuRE22zR9lhVncI7L4+NzV9eip5dA9NfCpcYeKdQtziungmvIyqJi3z
-	 K7Ht8VVOHh3PovSqYXCG947ECGLoYUcabN5Ek3DOqqTpo6kbdhKmvO1KYinWbrbxDz
-	 +p1hWEEc6JZVTE783B8zzk+epH6XdJCvT+CJiAMCT0LejBopkdrR63hX+YX//ou3nV
-	 BpaFCAXGFnjZw==
+	b=Lv8co33Usw8jQjJhAI69jkEwgk1TXkprRyXGxi6IsQzVsOJM/UkQBEre44uCo+Q1L
+	 S8/FAlHEtGwFFrocDD+T29+FJMlalvJwqWE+7vFSYOV/bFHp4t/jG3bZINgUpZ849u
+	 OEjNiIi5QhC/X4WGUgkGjHtMRPeURjwQJIpm9RN2pDBkCMeXMvLiBXaPxbCT8EZzVG
+	 ClABQnMnQT5kH4YKo50jcEYUg50g8DdyaREgllg2pAXszUN3M0OO38ql7EJGLJr8Gx
+	 kkp+MRy3IEP2boeXt6O8lUv+J/VzMqZk3xuJq8EYDkKjzDKEgLFUsAgjrwnEfmLCLX
+	 ZMgxc2RsOS8Ug==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -34,36 +34,30 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260118080142.2632077-1-thierry.reding@gmail.com>
-References: <20260118080142.2632077-1-thierry.reding@gmail.com>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v6.20-rc1
+In-Reply-To: <20251121164003.13047-1-johan@kernel.org>
+References: <20251121164003.13047-1-johan@kernel.org>
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>
-Date: Wed, 21 Jan 2026 12:17:43 -0700
-Message-ID: <176902306391.4027.13378027345427671781@localhost.localdomain>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Miaoqian Lin <linmq006@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Date: Thu, 22 Jan 2026 18:41:46 -0700
+Message-ID: <176913250651.4027.13580353440284678626@lazor>
 User-Agent: alot/0.11
 
-Quoting Thierry Reding (2026-01-18 01:01:40)
-> Hi Mike, Stephen,
+Quoting Johan Hovold (2025-11-21 09:40:03)
+> Make sure to drop the reference taken when looking up the EMC device and
+> its driver data on first set_rate().
 >=20
-> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1=
-e8:
+> Note that holding a reference to a device does not prevent its driver
+> data from going away so there is no point in keeping the reference.
 >=20
->   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
-6.20-clk
->=20
-> for you to fetch changes up to e897e86711b28f815fbbe542fe87a66b39123d1e:
->=20
->   clk: tegra30: Add CSI pad clock gates (2026-01-17 01:33:18 +0100)
->=20
-> Thanks,
-> Thierry
->=20
-> ----------------------------------------------------------------
+> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+> Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() =
+call in emc_ensure_emc_driver")
+> Cc: stable@vger.kernel.org      # 4.2: 6d6ef58c2470
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: Miaoqian Lin <linmq006@gmail.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
