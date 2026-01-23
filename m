@@ -1,141 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971132E54DE;
-	Fri, 23 Jan 2026 08:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA362E401;
+	Fri, 23 Jan 2026 09:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769158292; cv=none; b=cyoMO9zVzQSXkybhoabL5k3HM20uldq1YKqaf82claNMR4t6L5ALNfE7BBLUWQE+yUPICK5w53S6Q8fzMto5P6UQZJ+hxuMu3J2ASp2HkSS3b/mSH80KS3xNdQRl4oqd4Ug+goUZhcGo1oinVkfKdm7tB7XydlFly4VNxiDARl4=
+	t=1769159066; cv=none; b=YrT3ardde/e18OLkoXw+azQ0Z5rVYAqy3mpIYBAJ0rYXcInVikM3NSzN/aDhVUIbIFTmwGyvK3VbRzxE8i5sHGJxUg7CR6b7oHHMLo/p03HnOxtZnbL57yJpnYAcUaYOqxtMi5suyLE8+HB8LsAQb7wfNF1rp9PCxqEHMNoJat0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769158292; c=relaxed/simple;
-	bh=uHLu75YU3d5LFuDqYhNdrTluLj4QmEkgMjijx82wFVo=;
+	s=arc-20240116; t=1769159066; c=relaxed/simple;
+	bh=XCFl2REXVO6EuffUy52nWk8JGTDRVPijstsX6bLq2i0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cAIToSmVChxu6b6IOpDtjudx+XvTjpG+LQ04rj/lCRmdiH+wzal94Lodzx9kvf+y5HgyF30wD/VnqXCNw0lYAxsw/JMMylEbY5VhovvZwmTFH1WGx6QzD1k/tn4F1J55WtfDAThQEb21RuARgqq0/YKmga7DWzoTM9oKeTdU/5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2x/rDF+; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+9CpWjVpLjRrOrdn++/eEeL73bOX5cNTRmeGetJY+I3BrFdsq0Q370g1hrBzuEc2JJXtaFNU6ecFu4z93NooN6sl1xLpyXikDU0u+mVTnMvJZI6SI6xbn2l9aHGANUY9Danud30baSWtiU75s8aRBXg0Lj/SMOc9m+vpHICqOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlKO0GuA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2x/rDF+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F06FC4CEF1;
-	Fri, 23 Jan 2026 08:51:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlKO0GuA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9029C4CEF1;
+	Fri, 23 Jan 2026 09:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769158292;
-	bh=uHLu75YU3d5LFuDqYhNdrTluLj4QmEkgMjijx82wFVo=;
+	s=k20201202; t=1769159066;
+	bh=XCFl2REXVO6EuffUy52nWk8JGTDRVPijstsX6bLq2i0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P2x/rDF+V1S8nsKTuKOnD9QTwc41mF+XW6CEW4Lczf+0Sd6Nq5HQYPZljIkT06Qsr
-	 wIpsWwJl7SNWJGjLv6Eul2oOhcXM+uSeslFw7p/fqlD351FGaNP7tTEeORpdakVZ2x
-	 TqvkKLgYvEcqDaF0pIhEqdOwsfBiNwfz73XPMMzNpH57FqZjOmS6Ef5yIk1U5pEv3/
-	 sDhbSopJR642hfZEnALQcni3Jw5qQtapD3e7lk65oHsqDb0Bur+Ix0+UDcHnBGwPU1
-	 //bi+O56i4qSkHisywxprWy1WySWG064VdIew5tpiaTSmeiHZoS4N3KNcwNWuzGqID
-	 JclBA/sfEIjRQ==
-Date: Fri, 23 Jan 2026 09:51:19 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	vigneshr@ti.com, s-vadapalli@ti.com, hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, minghuan.Lian@nxp.com,
-	mingkai.hu@nxp.com, roy.zang@nxp.com, jesper.nilsson@axis.com,
-	heiko@sntech.de, srikanth.thokala@intel.com,
-	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	christian.bruel@foss.st.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
-	mhiramat@kernel.org, kishon@kernel.org, jirislaby@kernel.org,
-	rongqianfeng@vivo.com, 18255117159@163.com,
-	shawn.lin@rock-chips.com, nicolas.frattaroli@collabora.com,
-	linux.amoon@gmail.com, vidyas@nvidia.com, Frank.Li@nxp.com,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v9 4/5] PCI: dwc: ep: Support BAR subrange inbound
- mapping via Address Match Mode iATU
-Message-ID: <aXM2hwCrziK2I8OL@ryzen>
-References: <20260122084909.2390865-1-den@valinux.co.jp>
- <20260122084909.2390865-5-den@valinux.co.jp>
- <aXHsd7-WWAGyhy_w@ryzen>
- <s6bnqkbuugi7oio7ybekdbk3dokpbe2bui2wjltdwajxix2app@wosgmhrfsriv>
- <19D609EC-F850-4B43-A83C-0B8C70E641B5@kernel.org>
- <l7wknbayighcczjkqfwhbaqrepjtbgxxstgkntoqvnrs7dnm6g@wvmy67ky37pv>
+	b=WlKO0GuAhbcAOFDeuH+OguoUC5C87tY/AcYuWt2ZGfHsZCCyoiS9J08eAvthk7zGS
+	 nvQ/OAJl3rwR0oSSq01lVqGJE5Mg0qW+XRwSucsFb7xuwgXRzuhDxTxqvtMFRKlaQ7
+	 gUuFgAqUJGEWd1vDupBFmiOXVllTIYsGv3YQSIcygkffgPve3BvEPHjgkE4plLjdAR
+	 iARhkqTPKhVdNYWW/V6h+X+hPWT41JgZfkecIinUxCMhJn+MTQYjhXc8G9SPygo3KB
+	 5evH+Lu1dMKNQhl6aphQRQEZnHM5MO/P1tHgwr8OLX4hsiKi60my0vmQ/Kj7+hbdIg
+	 hCn3xyO5zStLg==
+Date: Fri, 23 Jan 2026 10:04:23 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: linusw@kernel.org, brgl@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: Add Tegra264 support
+Message-ID: <20260123-bizarre-impartial-mamba-f36ac4@quoll>
+References: <20260123064140.1095946-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <l7wknbayighcczjkqfwhbaqrepjtbgxxstgkntoqvnrs7dnm6g@wvmy67ky37pv>
+In-Reply-To: <20260123064140.1095946-1-pshete@nvidia.com>
 
-On Fri, Jan 23, 2026 at 10:16:21AM +0900, Koichiro Den wrote:
-> >
-> > There might be other EPC drivers that don't disable all BARs in their .init(), so I would say that simply checking if the BAR has an address is not sufficient to guarantee that an EPF driver has called set_bar().
-> >
->
-> Even if an EPC driver does not reset the BAR in their .init() and some
-> default translation is left exposed, wouldn't it be safe as long as
-> dw_pcie_ep_ib_atu_addr() succeeds in programming inbound mappings for the
-> entire BAR?
+On Fri, Jan 23, 2026 at 06:41:38AM +0000, Prathamesh Shete wrote:
+>  required:
+>    - compatible
+>    - reg
+> diff --git a/include/dt-bindings/gpio/nvidia,tegra264-gpio.h b/include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+> new file mode 100644
+> index 000000000000..689cf5c67c0c
+> --- /dev/null
+> +++ b/include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+> @@ -0,0 +1,62 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
 
-For e.g. on RK3588, the default HW configuration of the DWC controller has
-all 5 BARs as enabled, with a size of 1 GB.
+Wrong license. Checkpatch tells you this. I did not run checkpatch that
+time, but run it now... but anyway, it is your task to run checkpatch,
+not mine.
 
-There is no inbound address translation for these BARs by default.
+Best regards,
+Krzysztof
 
-So for it to be safe, the size of the set_bar() call would have to
-match the current size of the BAR, but how should the EPF driver know
-that when it has not called set_bar() yet?
-
-dw_pcie_ep_read_bar_assigned() does not return the current size of the
-BAR. So you can't verify that the set_bar() call has the same size as
-the BARs "default size".
-
-
->
-> That said, such usage apparently contradicts the documented usage (1st
-> set_bar with no submap, then with submap) described in the docs and commit
-> messages in this series, and allowing it would make things unnecessarily
-> complicated. So I agree that adding such a safeguard is the right approach.
->
-> >
-> > I think the safest option is my second suggestion because then we know that we will only call
-> > dw_pcie_ep_ib_atu_addr()
-> >
-> > When:
-> >
-> > 1) If ep->epf_bar[bar] is set:
-> > https://github.com/torvalds/linux/blob/v6.19-rc6/drivers/pci/controller/dwc/pcie-designware-ep.c#L363
-> >
-> >
-> > 2) All the other requirements to dynamically update a BAR is also met:
-> >
-> > https://github.com/torvalds/linux/blob/v6.19-rc6/drivers/pci/controller/dwc/pcie-designware-ep.c#L368-L370
-> >
->
-> That makes sense, and it ensures that the behavior always accords with the
-> docs and commit messages in this series.
-
-I think it makes most sense to put the "use_addr_translation = true"
-
-after the check:
-
-		/*
-		 * We can only dynamically change a BAR if the new BAR size and
-		 * BAR flags do not differ from the existing configuration.
-		 */
-		if (ep->epf_bar[bar]->barno != bar ||
-		    ep->epf_bar[bar]->size != size ||
-		    ep->epf_bar[bar]->flags != flags)
-			return -EINVAL;
-
-
-So we know that dw_pcie_ep_ib_atu_addr() is only called when the size is the
-same.
-
-
-Kind regards,
-Niklas
