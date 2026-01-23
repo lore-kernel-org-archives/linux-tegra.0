@@ -1,172 +1,148 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB42459C5
-	for <linux-tegra@vger.kernel.org>; Fri, 23 Jan 2026 13:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B95266565;
+	Fri, 23 Jan 2026 13:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769175021; cv=none; b=X5uICPKXEaA9z7/kku20jZ8MqgqSE6/9Gqd2iAOXWqeA97mFU/70D9lpgHVU57gvjuhzdMSfionad71rHOUsYPqXXuAhuPPDOeGco9yTNDOd797inUpmkVXpbpYMQhR0BT21pfniGaSIoYH5VdBGSphCPzGizKqSAe2zg/Vr4XA=
+	t=1769176591; cv=none; b=lZmJ9dbLQVTlHlRSrdDdzaTZbgJWUgDrRMHfWh+7fPeSg8vkoxvbkPlf7c9pg7fSNoOzXL03Bq3TlGcgOq6VdJ4fXTMcVF5nQ2oyqXcFgg2jgscomw0VG2an64VhbHoLL12OAfN7URG36QrKpm/xpdW9z29MFw89RuRAGXyKvEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769175021; c=relaxed/simple;
-	bh=q7Dwu+CNXtg5bTxCbEyb6A4+Vw/Acc988cNs3Meb1J8=;
+	s=arc-20240116; t=1769176591; c=relaxed/simple;
+	bh=GrLa4Ipr5uuNIx8FLflnc5DZHfapIQatDZ883pAbvVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLPs2PBRHm26fKB4aj5uyqb8fL3FwF1bXDkyxGSw+dympsy+2NTbl2YV1evTDkDyP0RaLCFldHd37EY+br8RCz+GkGwaEHpVhbESNCE/94Wqvk5EMik0ggZKmme8DlyQmYXSo/cXL00Qc7IlImYrU7jIwMOQI2UGcNUJvmP6uqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CYZlga9M; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xc4UvFvn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=rP/68Amsp/97ebVi9A5Z3y+IpLFDFftgze/STeaZ9l9GYV+edxVwOzLwGeO1+Licawn5LsCx/UxXCbQiILCo0O+4UoLXyj8kDadoI3M2U/7+TJIHKZ+BeBSmimS/wouMFdR1mN5qcxil9ZLkXl5JB3MqjyLzGNLV8MC169CAcd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVj/Og6D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CYZlga9M";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xc4UvFvn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769175019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q7Dwu+CNXtg5bTxCbEyb6A4+Vw/Acc988cNs3Meb1J8=;
-	b=CYZlga9Mf0vKluuPkLAOTVDehTLUOTQMqqztMPLb9XEtfIaRlV24a64MpWuoTqxwDj5f6e
-	2hQji93YyQzbI3YUR2BbmuoKdPYKfAJhFNREtOIWfTE849y3u5ToXQRA163nJuiUI8D87I
-	ylnXU1o/MXu0cGmVWp9Gn3Midd8Bq3s=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-H2sIFQK1NRaBsoWVfqd7VQ-1; Fri, 23 Jan 2026 08:30:17 -0500
-X-MC-Unique: H2sIFQK1NRaBsoWVfqd7VQ-1
-X-Mimecast-MFC-AGG-ID: H2sIFQK1NRaBsoWVfqd7VQ_1769175017
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-477cf25ceccso21791915e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 23 Jan 2026 05:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1769175016; x=1769779816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7Dwu+CNXtg5bTxCbEyb6A4+Vw/Acc988cNs3Meb1J8=;
-        b=Xc4UvFvnVu9INXyCEvv+keBPFSSaDKE+7js9Gqy43m2xOUyy9TfAb3kKBep6M/AEMj
-         AfUtO6snIjdPpWUZ5uPQ64c0zTC//vRs8T1Dg6PEIcUPtdvEYnTJx+bFKNRi+N9uVd/1
-         ydpCPj2krpzNgTCk/G/NqHnCrASzGtFXLEFI5cSQK1rj05Zt+sQ9hhsyiyTFxGZdctTC
-         8A3oCl84CJSWsfm/BHfEzaLU28amMhDoX3S9lIy2GUJtK1gjqfMvKRaJWsjg0LsHLvsV
-         dHbRmx+y58qkp1HyNAPCxMasT7iaVTA0O6hsLcVY8S8I9SU9AphtJky4/1G6t/4DSY81
-         TjFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769175016; x=1769779816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q7Dwu+CNXtg5bTxCbEyb6A4+Vw/Acc988cNs3Meb1J8=;
-        b=f8JWnMZFgk/lsMb2rSczJx4tFLT9tD86P4cN4owYPc+7jc+GFKWrPJWsqTVe0b24sk
-         +XJKW1pgHB6XWyJC7OUwcFZGwqgfF1ve5JG1DGnu+jzjAIa4ir0dTpKDK2IBxEzyAQqi
-         2UY7l9Z5lpMFgCO9VSqG09sX7AWznsdFbR6jP3hm+KfRumK6o5rfH7fdM68icK2g8AuE
-         cwB2cZjUeW1UQNrhIxqN5DRVR2gx+ehl+ePJZEQzmlJ27mUt0Hc83+Hee4nhV/e6zsq9
-         w9iHO6OKDVvVhBbfou4YVnq0R35BE543woKQahmviYRKmpcTy7eAPPfbvU4cl9Z7xn7f
-         u2nA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAVTEjKFs6BgeYOSZ/LnrgwbBX+0/0GuzyXsqJckrBlJ1WPtgtzeaU2/HOOVVFUkbQYyY5YuuAyISfIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAtRsGFdT3puFiO5zLU/6jXyMFicpEHclNvCqpjuzfEYFRUvOy
-	FCFtwIOQh9/kF5gTL76AjuzPb9EtkRjqNOi2G6rwnmf1L6eFOckv7e2nM3UU0S/+kcANCv5MmdP
-	ipqvHTfis6vRhPHS1Pz5Nf/fNs9XCPkSONz8V63PA+uHjhr/W6IQvhYDuFvr3Pj35
-X-Gm-Gg: AZuq6aKOXvUrYNwAfxpzgduh3XJmWDdF3r6lmWOBBGe9km6wJZmxdYfsDAsBoxmbN3C
-	VkkqM9gQRa/rY4/mLRInSsRv5L7a8+xCFzNCp+ULel5vmfngo1nfo2AjxiQ7iSvBR8kF7huE7xl
-	HsWR53FqbfKmneftELw2sZzVHuJqAVlj2Z+3OwFqLDPeOGo6X19erRVTG+jDLocJTSox+WnBBZW
-	OQuYhnUrigQsePinI0GJd7omRHmlzxkdiGV3+v7HF09a//JOOTVSCbsTfbyLoQ5LK8bnJ/QIJIt
-	4/rtBKQWq25jfNBTvayTdCrjzw9R6y/Iema6Iu9abllsAhcPn0v3jLRdsVgfbw==
-X-Received: by 2002:a05:600c:310b:b0:47d:73a4:45a7 with SMTP id 5b1f17b1804b1-4804c9b4d0dmr52292885e9.24.1769175016398;
-        Fri, 23 Jan 2026 05:30:16 -0800 (PST)
-X-Received: by 2002:a05:600c:310b:b0:47d:73a4:45a7 with SMTP id 5b1f17b1804b1-4804c9b4d0dmr52291525e9.24.1769175015283;
-        Fri, 23 Jan 2026 05:30:15 -0800 (PST)
-Received: from localhost ([2a01:e0a:b25:f902::ff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804db63817sm22696555e9.3.2026.01.23.05.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jan 2026 05:30:14 -0800 (PST)
-Date: Fri, 23 Jan 2026 14:30:14 +0100
-From: Maxime Ripard <mripard@redhat.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
-Message-ID: <20260123-meteoric-butterfly-of-imagination-fd691f@houat>
-References: <20260122161009.3865888-1-thierry.reding@kernel.org>
- <20260122161009.3865888-7-thierry.reding@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVj/Og6D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6DEC19424;
+	Fri, 23 Jan 2026 13:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769176591;
+	bh=GrLa4Ipr5uuNIx8FLflnc5DZHfapIQatDZ883pAbvVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fVj/Og6Dsam87eSwc/fSklA6b6iRd/S5y9Cq/EqOYRct5TAlVy2wrfRwMPHan/EOO
+	 xrBs8TR9glOT/Z0+/NpougmXdcqF/xEN4KJddW1acGRb1KMFKiTEu/zyCUCRFbg2HY
+	 uWpFZjJfr4pETvIsuLWZb+1iiSzW/kTaxRLha/lsEODM5VZNlQAjbEjaGfONVlPpca
+	 Bf59ufWV4Tbf7u5x8DXIDER1vjZPpsQ5BgHe4qO8HdlGuYymvZ9UFA5+NDAjF9QUs5
+	 PWwLeDEGX5BDoDZNOEPfHzAu8A2uM2yNMdt4UCT3luCzpqa3AbBB4tK2vU0Jy+6WVp
+	 K7TUPuejLZtwg==
+Date: Fri, 23 Jan 2026 19:26:14 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	manivannan.sadhasivam@oss.qualcomm.com, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, 
+	Kai-Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Chia-Lin Kao <acelan.kao@canonical.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org, 
+	krishna.chundru@oss.qualcomm.com
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <unc5zefwndgcv7wufaezz3gkg3qtaymkjlmymhyqdqwzn3wybl@ow2rhbyt772h>
+References: <7306256a-b380-489b-8248-b774e6d3d80e@nvidia.com>
+ <20260122152903.GA1247682@bhelgaas>
+ <5z7c25nkb35prvax6vq6ud7eaeuhzsswbf7fqvmlgys3xftgwb@odocboejrdrv>
+ <e44c330b-778b-4fa1-b678-fa909cc05b03@nvidia.com>
+ <bf37b6a5-268d-4c07-a536-a826b3d5953b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xayh7cobbiwzraak"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260122161009.3865888-7-thierry.reding@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bf37b6a5-268d-4c07-a536-a826b3d5953b@nvidia.com>
 
++ Krishna
 
---xayh7cobbiwzraak
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
-MIME-Version: 1.0
+On Fri, Jan 23, 2026 at 10:55:28AM +0000, Jon Hunter wrote:
+> 
+> On 22/01/2026 19:14, Jon Hunter wrote:
+> 
+> ...
+> 
+> > > I think what is going on here is that since before commits
+> > > f3ac2ff14834 and
+> > > df5192d9bb0e, !pcie_aspm_enabled() check was passing as ASPM was not
+> > > enabled for
+> > > the device (and upstream port) and after those commits, this check is not
+> > > passing and the NVMe driver is not shutting down the controller and
+> > > expects the
+> > > link to be in L0/L1ss. But the Tegra controller driver initiates L2/L3
+> > > transition, and also turns off the device. So all the NVMe context
+> > > is lost
+> > > during suspend and while resuming, the NVMe driver got confused due
+> > > to lost
+> > > context.
+> > > 
+> > > Jon, could you please try the below hack and see if it fixes the issue?
+> > > 
+> > > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> > > index 0e4caeab739c..4b8d261117f5 100644
+> > > --- a/drivers/nvme/host/pci.c
+> > > +++ b/drivers/nvme/host/pci.c
+> > > @@ -3723,7 +3723,7 @@ static int nvme_suspend(struct device *dev)
+> > >           * state (which may not be possible if the link is up).
+> > >           */
+> > >          if (pm_suspend_via_firmware() || !ctrl->npss ||
+> > > -           !pcie_aspm_enabled(pdev) ||
+> > > +           pcie_aspm_enabled(pdev) ||
+> > >              (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND))
+> > >                  return nvme_disable_prepare_reset(ndev, true);
+> > > This will confirm whether the issue is due to Tegra controller
+> > > driver breaking
+> > > the NVMe driver assumption or not.
+> > 
+> > Yes that appears to be working! I will test some more boards to confirm.
+> 
+> So yes with the above all boards appear to be working fine.
+> 
+> How is this usually coordinated between the NVMe driver and Host controller
+> driver? It is not clear to me exactly where the problem is and if the NVMe
+> is not shutting down, then what should be preventing the Host controller
+> from shutting down.
+> 
 
-Hi,
+Well if the NVMe driver is not shutting down the device, then it expects the
+device to be in APST (NVMe low power state if supported) state and retain all
+the context across the suspend/resume cycle.
 
-On Thu, Jan 22, 2026 at 05:10:05PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> NVIDIA Tegra SoCs commonly define a Video-Protection-Region, which is a
-> region of memory dedicated to content-protected video decode and
-> playback. This memory cannot be accessed by the CPU and only certain
-> hardware devices have access to it.
->=20
-> Expose the VPR as a DMA heap so that applications and drivers can
-> allocate buffers from this region for use-cases that require this kind
-> of protected memory.
->=20
-> VPR has a few very critical peculiarities. First, it must be a single
-> contiguous region of memory (there is a single pair of registers that
-> set the base address and size of the region), which is configured by
-> calling back into the secure monitor. The memory region also needs to
-> quite large for some use-cases because it needs to fit multiple video
-> frames (8K video should be supported), so VPR sizes of ~2 GiB are
-> expected. However, some devices cannot afford to reserve this amount
-> of memory for a particular use-case, and therefore the VPR must be
-> resizable.
->=20
-> Unfortunately, resizing the VPR is slightly tricky because the GPU found
-> on Tegra SoCs must be in reset during the VPR resize operation. This is
-> currently implemented by freezing all userspace processes and calling
-> invoking the GPU's freeze() implementation, resizing and the thawing the
-> GPU and userspace processes. This is quite heavy-handed, so eventually
-> it might be better to implement thawing/freezing in the GPU driver in
-> such a way that they block accesses to the GPU so that the VPR resize
-> operation can happen without suspending all userspace.
->=20
-> In order to balance the memory usage versus the amount of resizing that
-> needs to happen, the VPR is divided into multiple chunks. Each chunk is
-> implemented as a CMA area that is completely allocated on first use to
-> guarantee the contiguity of the VPR. Once all buffers from a chunk have
-> been freed, the CMA area is deallocated and the memory returned to the
-> system.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+But if the host controller powers down the device, then during resume, the
+device will start afresh and would've lost all the context (like queue info
+etc..). So when the NVMe driver resumes, it would expect the device to retain
+the context and try to use the device as such. But it won't work as the device
+will be in an unconfigured state and you'll see failures as you reported.
 
-Aside from the discussion on CMA, it doesn't look like the heap defines
-anywhere the attributes of the allocated buffers this heap provides.
+Apparently, most host controller drivers never cared about it because either
+they were not tested with NVMe or they haven't enabled ASPM before. So the NVMe
+driver ended up shutting down the controller during suspend. But since we
+started enabling ASPM by default since 6.18, this issue is being uncovered.
 
-Maxime
+So to properly fix it, we need the controller drivers to perform below checks
+for all devices under the Root bus(ses) before initiating D3Cold:
 
---xayh7cobbiwzraak
-Content-Type: application/pgp-signature; name="signature.asc"
+1. Check if the device state is D3Hot. If it is not D3Hot, then the device is
+expected to stay in the current D-state by the client driver, so D3Cold should
+not be initiated.
 
------BEGIN PGP SIGNATURE-----
+2. Check if the device is wakeup capable. If it is, then check if it can support
+wakeup from D3Cold (with WAKE#).
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaXN35QAKCRAnX84Zoj2+
-di8FAYCOkztgtjE43ySzEaa0yAsqQduekc23hd1d+jt1Rs7EtiAvzP+ciybiSQwk
-DUzYoicBgP4Oh3gf3t211CT8YUccPrYQrrNg2xkUvpgMi28C/P9/n1V75W2MOChK
-DyngiCfqgA==
-=4Im3
------END PGP SIGNATURE-----
+Only if both conditions are satisfied for all the devices under the Root busses,
+then the host controller driver should initiate D3Cold sequence.
 
---xayh7cobbiwzraak--
+Krishna is going to post a patch that performs the above checks for
+pcie-designware-host driver. But since the above checks are platform agnostic,
+we should introduce a helper and resuse it across other controllers as well.
 
+Hope this clarifies.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
