@@ -1,136 +1,140 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AA730E0F9;
-	Fri, 23 Jan 2026 16:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0481A9F90;
+	Fri, 23 Jan 2026 17:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769187269; cv=none; b=ID7oM3kM+XQxfOi11ReFofgfgFd7TlAKcsa86JjJptZwNdCX1fmZItPWA+SPDwZahDnoSr5K1kW0d0V43NKicAV6zoPicqsliaXI/fP3hejQLCdZxUgosQyAK4GLhh0XNxahOSbjagMQVfqFH7ozuvG9FQ5e5gl7NZz38fvfQHo=
+	t=1769188564; cv=none; b=IufJUTcoFswodciCYB1B1TEoqEmlEWk49ZnyYTBihnnCWjQhNFDbel0JVul/UEPk6uEFc5TXlGCTf4SAqnsqlVoPv3ITSzlYKm+S8Cfb8E2BeSpAF6LGbW5TQGmDRhuwMkbk7dW8faKELLs64+ewI5lOLmF9EDBbJhq4+QoUPAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769187269; c=relaxed/simple;
-	bh=HxovxSgeXj5Hx118Th/7eXKqpT/c0hw9aE78CY7gbaw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=NYptvf2Jg1Sc11zprmoz3fKJK9l+3zEp6ztUYnJRVHCycigRBc3CR2plNkldomqgILhB5d9enZOWv621rkeKgMrofBrS57LXY4Lhyzz1+6KTPph0eqeE70yFwyRZJrKsl2rTRDnfens0UCURVX9W0CKC7GCS+3G4IQoQpESXKPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1JebDhl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769188564; c=relaxed/simple;
+	bh=UJeaACACnw2W6qBc+2rEWefBPoPPj8lzmmpmPgBVuiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UgP42EpkRE0YQLFFyMZYF1NImpNBCFa7gRFQ+grdVJHp1gpvvlIoDrPCjJgAVtZXGsPXY3SyKWy6/nCi6V73POeY6YS8HDaikLDX/KhN3yhAawJ9/Aq+v8TzOX3VWVzzVi6e6jr0lY1OyyMhAFRMSf0SwRPoSSJ9fsok+YPAKDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLJ7RYJb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1JebDhl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B2BC19421;
-	Fri, 23 Jan 2026 16:54:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLJ7RYJb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658B8C4CEF1;
+	Fri, 23 Jan 2026 17:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769187266;
-	bh=HxovxSgeXj5Hx118Th/7eXKqpT/c0hw9aE78CY7gbaw=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=X1JebDhlvyGSI+55UHnAM2hcBkOpuaWXAlz9NjyTfMsG/R0EjUa7V8VwQSvJzrzm0
-	 LUJEd8k2BeC44WHU8A0GaVO3H5KB/44CYTWD6MNaVsX0R8dWpb6X2OVD8oMVgUzTm+
-	 mBfLSKVKPOGWERIWaZytlHtOIJvy4AKiuCSCtN/U+om5oUX/TIl++CUdRqYi0ylG92
-	 w3ErhvfJo9M7ge6/pkWJVCm4yiphLXgjqrT7h4toM0CDWoaUqJq7Fm3ICOeEmzSnmN
-	 SYVtju2ADdGU8JzN+B8zJ75+1VjCF71mmP03ciTuVbqaoG+Jfk8OSDRg9BKpv8kO2c
-	 qsHDiVvgcx5Xw==
+	s=k20201202; t=1769188563;
+	bh=UJeaACACnw2W6qBc+2rEWefBPoPPj8lzmmpmPgBVuiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CLJ7RYJbF0HIqIRKIqQNli+hcZlGT2+po8P0nLyFpg/n55pSPniusAh6nSfrEEcKF
+	 pRXnv6YzHAy9IBwhnUXE9aosDscIrdos4vrPAF6EQ3BLN7B5gyKc9QOb1oad1AhMel
+	 i6O5rBGNRRXgTTwyVUrpp+eivcWJygBSFIkJUtFauJQmIrTEoysAVuuwq4DbjwY2us
+	 JtPlqy0BdOwLI5agax0dXyeF2czDEO2os2Qx1mii6KJqJjIhbk87j81ZFHaCaqgvd4
+	 jg5WX9eh9Uj9EBRnyhQKWsm3QruGJ6elx2PSknnNkA0XBWP7XjqlJlgXbFSDpLYbym
+	 KOeDA4IjVhQnw==
+Date: Fri, 23 Jan 2026 17:15:59 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: linusw@kernel.org, brgl@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	robh@kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: gpio: Add Tegra264 support
+Message-ID: <20260123-value-marsupial-98e2322db2f6@spud>
+References: <20260123100824.1109150-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JoixOS6VL0SqOcW8"
+Content-Disposition: inline
+In-Reply-To: <20260123100824.1109150-1-pshete@nvidia.com>
+
+
+--JoixOS6VL0SqOcW8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 23 Jan 2026 17:54:21 +0100
-Message-Id: <DFW4JJYIDC2O.3L1XXBT5MY9SI@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v5] driver core: enforce device_lock for
- driver_match_device()
-Cc: "Gui-Dong Han" <hanguidong02@gmail.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Mark Brown" <broonie@kernel.org>,
- <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <linux-kernel@vger.kernel.org>, <baijiaju1990@gmail.com>, "Qiu-ji Chen"
- <chenqiuji666@gmail.com>, <Aishwarya.TCV@arm.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-To: "Jon Hunter" <jonathanh@nvidia.com>
-References: <20260113162843.12712-1-hanguidong02@gmail.com>
- <7ae38e31-ef31-43ad-9106-7c76ea0e8596@sirena.org.uk>
- <CGME20260120152328eucas1p1024a7488ae10b8b7f2fcb74baee24c75@eucas1p1.samsung.com> <ef37ed64-24ad-4b82-bc6c-d3bc72aaf232@samsung.com> <e32b0819-2c29-4c83-83d5-e28dc4b2b01f@nvidia.com> <DFULF717AOGG.GY8B9ET26KND@kernel.org> <f10007af-3629-4769-b89c-bbf4aa013bf3@nvidia.com> <CALbr=LaE=nS30uMmm_spywEHPYgC_w9qb9L1wFvwBe=PDae1Mw@mail.gmail.com> <DFVBKRQ35CC0.95P329BK5KZA@kernel.org> <956d5d23-6a62-4dba-9c98-83457526f9b6@nvidia.com> <DFVDC5NWTOT4.NA2H05V84CWD@kernel.org> <2b7109c2-2275-4a38-a52f-f4f901a6d182@nvidia.com> <DFW11G0SNME0.3G28YPXH64DOT@kernel.org> <b3b0635c-657f-4869-bc88-06de9287a464@nvidia.com>
-In-Reply-To: <b3b0635c-657f-4869-bc88-06de9287a464@nvidia.com>
 
-On Fri Jan 23, 2026 at 3:29 PM CET, Jon Hunter wrote:
-> I can fix this by either:
->
-> 1. Reverting this patch.
-> 2. Disabling the QSPI driver.
->
-> Now the QSPI driver has issues which need to be fixed which I am=20
-> wondering once fix will avoid this problem.
->
-> However, I guess regardless of the QSPI issue, should this patch be=20
-> having such an impact?
+On Fri, Jan 23, 2026 at 10:08:22AM +0000, Prathamesh Shete wrote:
+> Extend the existing Tegra186 GPIO controller device tree bindings with
+> support for the GPIO controller found on Tegra264. The number of pins
+> is slightly different, but the programming model remains the same.
+>=20
+> Add a new header, include/dt-bindings/gpio/tegra264-gpio.h,
+> that defines port IDs as well as the TEGRA264_MAIN_GPIO() helper,
+> both of which are used in conjunction to create a unique specifier
+> for each pin.
+>=20
+> On Tegra, GPIO wake events are latched and routed via the PMC.
+> Document the standard DT property, wakeup-parent, which is a phandle to
+> the PMC interrupt controller that provides the parent wake interrupt
+> domain for the GPIO controller. If the property is absent the driver
+> falls back to a compatible-based lookup.
+>=20
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+> Changes in v3:
+>   * Fix DT binding SPDX license to GPL-2.0-only OR BSD-2-Clause
+>=20
+> Changes in v2:
+>   * Update DT binding to use =E2=80=9Cwakeup-parent=E2=80=9D (drop custom=
+ nvidia,pmc).
+>   * Require =E2=80=9Cwakeup-parent=E2=80=9D for Tegra264 compatibles in t=
+he binding.
+>   * Rename header file to "nvidia,tegra264-gpio.h".
+> ---
+>  .../bindings/gpio/nvidia,tegra186-gpio.yaml   | 24 +++++++
+>  .../dt-bindings/gpio/nvidia,tegra264-gpio.h   | 62 +++++++++++++++++++
+>  2 files changed, 86 insertions(+)
+>  create mode 100644 include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.=
+yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+> index 2bd620a1099b..b74fc3a8d80d 100644
+> --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+> @@ -86,6 +86,9 @@ properties:
+>        - nvidia,tegra234-gpio
+>        - nvidia,tegra234-gpio-aon
+>        - nvidia,tegra256-gpio
+> +      - nvidia,tegra264-gpio
+> +      - nvidia,tegra264-gpio-uphy
+> +      - nvidia,tegra264-gpio-aon
+> =20
+>    reg-names:
+>      items:
+> @@ -110,6 +113,12 @@ properties:
+>        ports, in the order the HW manual describes them. The number of en=
+tries
+>        required varies depending on compatible value.
+> =20
+> +  wakeup-parent:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-So, this patch by itself is correct, but it reveals when drivers do the wro=
-ng
-thing, that is register drivers from contexts where it neither makes sense =
-nor
-it is supported by the driver core.
+This type should not be needed, wakeup-parent is defined in dt-shema for
+interrupt-controllers.
 
-The deadlock happens when a driver (A) registers another driver (B) from a
-context where the device lock of the device bound to (A) is held, e.g. from=
- bus
-callbacks, such as probe(). See also [1].
+> +    description: |
 
-While never valid, the deadlock does only occur when (A) and (B) are on the=
- same
-bus, e.g. when a platform driver registers another platform driver in its
-probe() callback.
+Drop the | from here, there's no formatting to preserve.
 
-However, it is a bit more tricky than that: Let's say a platform driver
-registers an SPI controller, then spi_register_controller() might scan the =
-SPI
-bus and register SPI devices (not drivers), which are then probed as well. =
-So
-far this is all fine, but if now in one of the SPI drivers probe() callback=
-s a
-platform driver is registered, you have a deadlock condition as well.
 
-So it seems that something of this kind is going on with
-drivers/spi/spi-tegra210-quad.c.
+pw-bot: changes-requested
 
-I did already run quite thorough analysis throughout the whole kernel tree =
-with
-various static analyzers and also played around with LLMs for finding this
-pattern.
+Cheers,
+Conor.
 
-The tools gave me two results:
+> +      Phandle to the parent interrupt controller used for wake-up.
+> +      On Tegra, this typically references the PMC interrupt controller.
 
-  (1) The IOMMU one I already fixed [2].
-  (2) The GPIO driver I posted a patch for in [3].
+--JoixOS6VL0SqOcW8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I specifically also looked for all drivers that are required to run all the
-peripherals in the tegra194-p3509-0000+p3668-0000.dts hierarchy, but couldn=
-'t
-catch anything.
+-----BEGIN PGP SIGNATURE-----
 
-(This is also why I asked about OOT, because there are quite some compatibl=
-e
-strings that are not supported by any upstream driver.)
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaXOszwAKCRB4tDGHoIJi
+0uOWAP4yGS/Su0lTcne4L4Xg/k4Tm7jN1/de6QgIHbCwDI7bSQEAmm2q+v9V1hWF
++3p2JvXh9ghzXgR2QqbTUWSe1uITbwk=
+=2Kxr
+-----END PGP SIGNATURE-----
 
-I think to really see what's going in with spi-tegra210-quad.c, we need the
-dumps of the sysrq-triggers I provided in a previous mail.
-
-I'd also recommend to pick a stable state of the spi-tegra210-quad.c driver=
- and
-apply this patch on top (or just apply the spi-tegra210-quad.c fixes as wel=
-l).
-
-Subsequently, we could try and retest with the diff I provided and the
-corresponding lockdep options enabled and with the sysrq-triggers (without =
-the
-diff).
-
-[1] https://lore.kernel.org/lkml/DFU7CEPUSG9A.1KKGVW4HIPMSH@kernel.org/
-[2] https://lore.kernel.org/all/20260121141215.29658-1-dakr@kernel.org/
-[3] https://lore.kernel.org/all/20260123133614.72586-1-dakr@kernel.org/
-
-> Please note that a lot of the boards I test are in a farm and I don't=20
-> have direct access. So although I can see the test harness SSH'ing into=
-=20
-> the board, I am not accessing directly. However, we can run whatever=20
-> tests we want.
-
-Maybe you can trigger the sysrq-trigger from a custom test?
+--JoixOS6VL0SqOcW8--
