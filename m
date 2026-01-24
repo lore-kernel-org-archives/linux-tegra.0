@@ -1,105 +1,240 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011062.outbound.protection.outlook.com [40.107.208.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F093F27F18B;
-	Fri, 23 Jan 2026 19:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769195269; cv=none; b=I3Ip5dhE3+z1lJPPT95vvnQJMq5ythTpY9AS5ntCRYX+feksfuej2LEQgkLJUkHxxH3w8E9C/tMqFr2Fau8kXdHYPzaQTtwI95fF+w6Tr9jR4gysnfsbusYst3MQv3qfAe7nY9ukz5aT21syewD0e/17fezzerMXj3tBnRAIKwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769195269; c=relaxed/simple;
-	bh=6cQEuAT5QYGrVN1KkWNZ7IO9TPkmg08lBpk2DkS8ekc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=iXPzHsKcbrAadIiEiiNT0RIUZPewQdISBJO8kIZyIADsFzKocnma6NMOMFueH+bIt+SkAauU85OkMDTvZ4Crs5WAvWnUYcg/QDkMpDOPaI9O5ifDtJzP7T1OzDTpleZ4bgOdHYlmdEMTU7xJp7T4oOVk7S34mzs1/3rKDP+QERs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEFwFVtd; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765CC27732;
+	Sat, 24 Jan 2026 01:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769217670; cv=fail; b=HDeSIR4fZsNPf7q+S12i1oAhHu+yCAodcvaWHYx67+5CjneR5dp9+j+oupUrDy04isBmdaaMhwBXQBAyAiKV9GRFm2sgPPAVQ6ZomgruuaGdjw+joDijrymh9divOhvPRXE1guKnhpYGTe/0oUC/3Nxfz7tVazJV4QF8mBngf6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769217670; c=relaxed/simple;
+	bh=EyVlm2NWqWaienKhBY6wscMu35dZVZ+SSjgeyWIfLsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UkCK1FoFfD7YHkA8CUPactAZgww6zPxDMv9qgyUxY0nyMUrNhvq0Oy6+J3A+nkBVD0FZzEiGDyijhp/G6ypHqOwLetLXpJvBUDA972SlbyyUMdBcqbTpGWS5YaqQyrqn26xpmZjSLf8FjVifpkTDXlYnNgUCKvTFVCJT1V1ugyE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Cg/NIXzi; arc=fail smtp.client-ip=40.107.208.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEFwFVtd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85004C2BC87;
-	Fri, 23 Jan 2026 19:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769195268;
-	bh=6cQEuAT5QYGrVN1KkWNZ7IO9TPkmg08lBpk2DkS8ekc=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=vEFwFVtdcuw82OTu93HV1Xihpq3odkia6MgGvdrXZQ6ghfJYCE8SrBxcRF4QQtE69
-	 n2XZdTNOwk3gLXGBRXkOsj1VNbFlNscKZEEqAoKxkC5DLHE8LhKJkdRhk5m9W4xF1u
-	 827BCDqg6yMgkv/DNpKgP5zDPiiCyrMZz3waGvgBWC2eeuWoYKLAwp9D0bTLCu0+eR
-	 nsVwqDzU9vkhfB7P98jJdzAWu4rcEiRvDOOZqaoZzSpKEaKwLxgbGWmST6oMX/iN+X
-	 0hfmw2bfEdqbdEMOn7dIOP8kse8Uh0LyFOIlzOu2/lKXEtzx8tOEATYs5Lg4AJChO3
-	 Q+0hB9qC+8/cA==
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cg/NIXzi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TuWgFd8X2qp5+DFYpPYObPr570FE653Fca3B4xOZye4top7akxNcIPzwvXdsY2v7mYwC0LxWRe0MHypX6ucT+mr1zQX6aK3K9JeGq3D74hg6YdHJgalxH3c766eQget7AJD9GvHfX/bZbJBg3PbILp+zs87WaCJpcM+zp/uzq/sUWf1hmfLvOuWog+oFNtRcyb6KVWLGwRft91iT5+nHTpjuHbGMbZcXasOiOdYpE5PEWFoi7CWhw/6P6w5hJ7tPJPf+E+O8cp9+kGpDNKZjCIEI4oZOUrKmlM8mmwfD/rCkZOekblawsHyvNj+Ma+mRRzgqVJrqU7Ba9YZRsnCPbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tbEroxk3TESTQ19B/RMXcQ/Apk9mA/Dk2NEkzutTw9o=;
+ b=imP4pSYDrNOJNfbmtYWevdurRd36d18J6VtkX4q95UgPSQaN+b0u89TptltrCfQzjLqPGnHZ1rxp/+JE5HlXRmTVFeovZ88tV3Oa2tsLGTEAHBRTZ9C639QO3+NcaFNOulRYIu5Ku/3tTJzBE5CfqoBUxjnSYxqg2Hpy5hPAMxhDbv3sVp5EB04sNVCq9di4e7qbU3gJZJcK1UpHIEZkJR0qKTww+UwNW+Q76+Ov/zw02SXmKeOD9lp4hJ15auK79ddD5Cf5YrBl3VLmSSBGOu9Wf3+MVaX7g34mkMqDUWHFemwosID4RuhZg3rswRzrWI9DRjhqmykuUqdfACjC6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tbEroxk3TESTQ19B/RMXcQ/Apk9mA/Dk2NEkzutTw9o=;
+ b=Cg/NIXziYg45pm4jAs+kYfIYZ/+s0KvXYDM8yHwvESS9JfEk/8peQajOiq0/9A5X6MYW6BE3IG4/uUBmdQ456nwNkrMnu4KEIkE9j+Lj0Q7t0/1OArUuwpJDm8z95MaNGyWsBaJnIG1XbOMEZZ//yi83gJEJJjevBbnIizviEKqCOPbmujY3lSw913UlR7tYjlyTWawTyZvUHD9SheMnOcikD3q0IDdvGxNNCZt3h4dwgi/VnZVKAsrucNDXlarAEliCtnHcq54PdXJADZ4sVfcTQp7J30SJ17V00GJwX69hxQGjvdYKWklya9gzQHpXec3Nb2TLKMOycYVrRprqNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by CH3PR12MB7617.namprd12.prod.outlook.com (2603:10b6:610:140::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.11; Sat, 24 Jan
+ 2026 01:21:06 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::1f16:244a:2a9d:2c93]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::1f16:244a:2a9d:2c93%3]) with mapi id 15.20.9499.002; Sat, 24 Jan 2026
+ 01:21:06 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ simona@ffwll.ch, airlied@gmail.com, thierry.reding@gmail.com,
+ Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
+Subject:
+ Re: [PATCH v2] gpu: host1x: fix missing 'host1x_context_device_bus_type'
+Date: Sat, 24 Jan 2026 10:20:55 +0900
+Message-ID: <49374358.fMDQidcC6G@senjougahara>
+In-Reply-To: <20260123140512.609167-1-ben.dooks@codethink.co.uk>
+References: <20260123140512.609167-1-ben.dooks@codethink.co.uk>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0097.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b4::11) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 23 Jan 2026 20:07:44 +0100
-Message-Id: <DFW7DOC56CUG.3PV4UGDTMUYE1@kernel.org>
-Subject: Re: [PATCH v5] driver core: enforce device_lock for
- driver_match_device()
-Cc: "Jon Hunter" <jonathanh@nvidia.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Mark Brown" <broonie@kernel.org>,
- <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <linux-kernel@vger.kernel.org>, <baijiaju1990@gmail.com>, "Qiu-ji Chen"
- <chenqiuji666@gmail.com>, <Aishwarya.TCV@arm.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-To: "Gui-Dong Han" <hanguidong02@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20260113162843.12712-1-hanguidong02@gmail.com>
- <7ae38e31-ef31-43ad-9106-7c76ea0e8596@sirena.org.uk>
- <CGME20260120152328eucas1p1024a7488ae10b8b7f2fcb74baee24c75@eucas1p1.samsung.com> <ef37ed64-24ad-4b82-bc6c-d3bc72aaf232@samsung.com> <e32b0819-2c29-4c83-83d5-e28dc4b2b01f@nvidia.com> <DFULF717AOGG.GY8B9ET26KND@kernel.org> <f10007af-3629-4769-b89c-bbf4aa013bf3@nvidia.com> <CALbr=LaE=nS30uMmm_spywEHPYgC_w9qb9L1wFvwBe=PDae1Mw@mail.gmail.com> <DFVBKRQ35CC0.95P329BK5KZA@kernel.org> <956d5d23-6a62-4dba-9c98-83457526f9b6@nvidia.com> <DFVDC5NWTOT4.NA2H05V84CWD@kernel.org> <2b7109c2-2275-4a38-a52f-f4f901a6d182@nvidia.com> <DFW11G0SNME0.3G28YPXH64DOT@kernel.org> <b3b0635c-657f-4869-bc88-06de9287a464@nvidia.com> <DFW4JJYIDC2O.3L1XXBT5MY9SI@kernel.org> <CALbr=LZ4v7N=tO1vgOsyj9AS+XuNbn6kG-QcF+PacdMjSo0iyw@mail.gmail.com>
-In-Reply-To: <CALbr=LZ4v7N=tO1vgOsyj9AS+XuNbn6kG-QcF+PacdMjSo0iyw@mail.gmail.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CH3PR12MB7617:EE_
+X-MS-Office365-Filtering-Correlation-Id: e95373f3-f37d-4646-ea30-08de5ae6d8b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N1hSNkR5THRIYUNhb21TSmJCN05lWEp5ZEtRdlNNT2JIcER3Wi9xQU1xNnF2?=
+ =?utf-8?B?eFhIaC9PZWRIYVRkek5xbEVpZnFqbUxXdDFqdlBIa2xoSDM3azVSMnZzeGUy?=
+ =?utf-8?B?bC9uV3hDa3hyZ1AzaW1nV0JhckllcFBOeTMwWHNVL3E0RGh1cG44MXZUSEVo?=
+ =?utf-8?B?NjdoYVc3dm1PN2FKVnp2QmI1b1gwVytUeHRpVEF5SkdUMm05ZlpRTmhMQWpx?=
+ =?utf-8?B?dzNTbUN1UTNuMjdCSWVWQStKaEoweHRYT3FCNFBqdFFEbmVoNU9LQjRhWnBE?=
+ =?utf-8?B?S0U5WVc5U0lmZnJMdXBOakptZTFTU0pHT1ZaZHRJN1Z2L3Z4OC8yazUrU0xT?=
+ =?utf-8?B?NVpWWUlvR29ONlFiaTQrcFdhb0JDbDF3UHJ6N1crSTJOaE9yc1BlZlNpZlBU?=
+ =?utf-8?B?OHM4aFdJRllSeWNRajhrL2JnMmV1V0U5eVVHRFRMSG9oMTcwSnpKMlpQM1ox?=
+ =?utf-8?B?TTFLS2ZBYTUxUjRtM0Z4ZnFGMkVRaXNLVm44V2NsQlYyajc3Z2ZwckpzK3F6?=
+ =?utf-8?B?akJaL0d4aWgyRDlRMjBqRWMyT1Y5MFprOGg1ZW1oNmk2VzAvQ3RCeHJ1VW4v?=
+ =?utf-8?B?T2Z3a3grNTVtd2pyc3JHd05ENDJjTWZkbXhaYWJMZWd1VTZtck0xUlczeE5o?=
+ =?utf-8?B?dmlxTjhvZXJ6Z04wNWo0QS93WkpzaG4rL0hmOW5LTCtnUDhnZlhqOGhZQUV1?=
+ =?utf-8?B?azg1VW42RjJxR21SWlRpdWhZeEl6RHNiaEYrYVNQOW5oWXU4MmhSQmprNm5T?=
+ =?utf-8?B?MVcrZExtQTBOYmlUeTREZUtEQ3VQdHQrVm1LZmFmeElaOGJQd0FJYlBVWjly?=
+ =?utf-8?B?emxzMDd3U2dkQzcvWFV5TE9NRVp1WjNtei92Z0s2S0RXWWM3L0xuNkVpcUdm?=
+ =?utf-8?B?QTZBWXptS2xEc3lqM3FXSFFKdDJlVFBSSUY1Mk1BT29KSUp4blZ3Qk5EQjBl?=
+ =?utf-8?B?NUUrSXJ3MXMweFI4eEk5TEsrUFBlaG5sZHVZOS9WeitlenMrMGxQUDZuaVZx?=
+ =?utf-8?B?ZW41Z1FPRjF2L0p2WDI2Tml3emdGWUtkcTVsTURJQWVvWnE3TVJLUlJhcHdP?=
+ =?utf-8?B?NzlWNUJlTTh1MHNWcmxka0xLNDFOZThuYnBNL1pHaDA2alVqVVE2Y1AvdDJX?=
+ =?utf-8?B?YVRpTkRBNUpiRXF6Yi9paUdiSHBGR2MxditCMThmTStMMGxKb0Irc3BQQkQ5?=
+ =?utf-8?B?RUkvMFJVbnZzNVZrR0FqY3NtK28vSXhjdDkrT3FzZDM4Nlp2ZDdpQ2JyUGl4?=
+ =?utf-8?B?MDVzY0JnR28vU2ovNGtoREpIUWw2c085SHk1K3ZhN3RaTWhmTkNCaHZpYlNt?=
+ =?utf-8?B?YUJUVldGNWZkYzh3NVhIQTRyK2VhbDZudkRSYTRLUHRmM1BVeUJldUhNRDR0?=
+ =?utf-8?B?clRBMFpBb0xlS09CTC9IYnZKYkhNcWJaU05IQzhYcUM3VzF1b3UyVTRncC8r?=
+ =?utf-8?B?aFRObjgwaUlIMlhIVFNtdWVHQVRzWS8vMlFsRFAwNEx3K0JjZDkwc0ZsaGZF?=
+ =?utf-8?B?eGJTN0UreTRBMGxwUlhLUkd2blUwT3NNRGpHVnpFaDUwRXlFNER4Y0NzTFdH?=
+ =?utf-8?B?eGVxY2VUZ3k4N2tQU2JYRmRXdXQvam5MUHJnbndWU3hHYU9tM2liNzB1TEZD?=
+ =?utf-8?B?MC9nUGs1MnVmaUFUVVBqY29qTHpxTUpUbWxSdHJlWVRUZ25MNFFjaVg1dVBI?=
+ =?utf-8?B?dW1XcWNqbUpVUEdSZTUveWJwQU52RzhSRENBMjVhbzJXYWtVOHFGVGptV0Na?=
+ =?utf-8?B?THlxek9jSml6b0N3SndGcENJVTA1MGRlS2ZuWlkvTHZYNjRPNnRmMHdmZFlP?=
+ =?utf-8?B?Q3Fqb1dXbFo0N0Z5eTVJM3FleE9IRVN0dGpGb0lDeThwNE9pSEJncUJNTXhh?=
+ =?utf-8?B?TDZWSC9RTm5mSUNKRUNyaFpSSWNNWXlOUkdYbko5N2NVWmhWcHRNdGVqWXlY?=
+ =?utf-8?B?YmJBaXE0b0VsZTZOL1lpM1hKczNxWWJXUHkrQ2IxUENwWnNOU0hOTVdpQm9Q?=
+ =?utf-8?B?azIzNnMrVWNVQ1lkUTRYNWV3b08yRzB5MitpT0JMMHQwOFpmQXk3SVgwRlh1?=
+ =?utf-8?B?QVZBcDNDbEpBNEIwczN0K0krZWgxeTk2VWUybDV6R3dNMnhEVlNhQmVINTNT?=
+ =?utf-8?Q?0w1s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R2VYUldFTGM3ME9sWjZhTUkyY1JuZ04wR1BYUUQ3dEQyY2YxbE02K1hoNXJQ?=
+ =?utf-8?B?dDVrSHlzenp1SUxOd2hYV0hPWXFYWnFJQkJWOHY5MHF6Ly9BejhyWWFqQTBY?=
+ =?utf-8?B?dTQvNUtpL3NOWG1COXJnRFFSbXd0bTU1Z3d2MlowdnkxUU43QysyVXVDK2U0?=
+ =?utf-8?B?NTVBcEwzWEY2UVJKQWYreE1YUXQyOUtuYWZScHF6R1NjZ3UvU1dEbGZCMzhF?=
+ =?utf-8?B?ZWNHK1pWYU9RaDRXcHoyUG0rd29IU01jaW9WVXVmUDY0V3RqVitrbHV1alZH?=
+ =?utf-8?B?dk9yK3FITjk4WEFldTlQYnA5eFg3MlN2RHJYOGc2bHc3OXZzQzB6UTRsd3I5?=
+ =?utf-8?B?Y0RMcERjUVNWclE4Z3dESEpob1habGpFL0YrMlpUMVdoTU1iQ3FIQTNTd243?=
+ =?utf-8?B?c0F2Rlc5WWQvdjhYOHFPMFJBanRNU29KSTNjMmh2MkVwa2hDOEd0b1NUNE9W?=
+ =?utf-8?B?VncyQnI5N3hodUR6a1IvbHBYVG92SHhPMDVad3g3UFpaSW9NbWtqNGhjV1N1?=
+ =?utf-8?B?NnlUVXJnVGV2Wm83Y0w4TDRvdzEwSWpoVElLSnRxMStyanRtT2N2WXcwaWtB?=
+ =?utf-8?B?WFI4OEJnVUJWUmlCMlRsdVFVWXpma3h4MHMvVUU5cGQzM3o1TGxqR0lHci9C?=
+ =?utf-8?B?WEIvMkFmT1VoK1RTdFo3WXZMb2UzRys0OER5enlZL0dyZEJNaEM1VkVubWR6?=
+ =?utf-8?B?dWRvNk5ScERyUlVQSU0yRzdOb3pPWGJaMGFGclFVRG5VQ0h1b0JLWGl2VlIy?=
+ =?utf-8?B?T2dHeTY3ZHR0L2tjb0Y2QmduRnk3bzdKSGpoemt1SjVDdkdMNFRtSXBMQ2pn?=
+ =?utf-8?B?S1R6Y0NsZXZXSVlmRVFHd2h2L2V2ZVQ1cFkvc1BXVHBZclBBR05wK201eDVr?=
+ =?utf-8?B?bW55bisvbWtOSDk2cUY3WXVsU3dPbFhnYmZaaTcxSHhMUkY5UWF0T0FPQm5h?=
+ =?utf-8?B?Qk5VMlNxNENha2JwMUVVVlppOWpnZUZxNXI2V0kxTXdCb2xmeXViSDZKWXE4?=
+ =?utf-8?B?Y3psWkFGcU1xWkh6c1RlcU5KcUVTMjB4bnFtVGZWZEtZakpuanhISVRNNHA0?=
+ =?utf-8?B?cGhuUUdqQUNxV1FMY1doN3A4SkcyK0ZDcEZQNlhNZlQyZ0k0TXhIUHdueGpB?=
+ =?utf-8?B?Y09nbFlUUk5yUWo4Qlh2NEl1RVZya3V6eXlQM092R3pWaGhwT2E1bWZ2aWpC?=
+ =?utf-8?B?N3o1WWZjZWxRMnlmNUl1KzEvTzE0dngrWFVmWmZENE80bXJNOTJ1RUtLRi9m?=
+ =?utf-8?B?eFVtdC8yZHF1b1RtdHRVUXhpUXdHTm4zdzl6SFpqNGFjL0V2Y0dqTjFJR0RW?=
+ =?utf-8?B?ZkxJejFYc0NMN2p5RjRZdVp6TWNpZk5tWnlrMHFFd2hoRkdJNnlVVlI3bXI1?=
+ =?utf-8?B?NFJPMHRNNEUyN0hscjdwZkpWdVpabUVzWTljQmk4czA4cW03cnZLQmtyS0I2?=
+ =?utf-8?B?MFNXQ1RzV3NyckZNMitKTHViQU9VYWpuZHFDQzFlTjl6Nlg5SjBsZFJtTTJp?=
+ =?utf-8?B?Tk0rbit2U08ybE9kTUQzS1FabEtxbzVCVWFUT2o3TEptZ3ZuQnJNcEhHMVZG?=
+ =?utf-8?B?U1FjUFFrUWRLeURTNVlhMkRCQnc4ZUhGY0gxUjZhOW9qQkNIUmZWY2NCb05q?=
+ =?utf-8?B?VVB2NmdTdFMzNW9vR2xpL3NqSVppRHdXcFdHZ2k5Z2xITGJlVzNkaUhUUk5E?=
+ =?utf-8?B?bk9GTmNFcExtaVcyWk1qSytyRlAwT05yRDdFTVdMZEw1ZWFqRjh2V1VHUXdx?=
+ =?utf-8?B?elpKL0c0ZUV6bFFTcmdvWEFHcHpTa3M1V0x0OWx1NXFjWHhOWFFCTEwzVFM5?=
+ =?utf-8?B?Vi9GUzRpWXo2eXk2elcxQ0VTbWVZQ3o0YnBtSWcxRWJEdjFzUldsYXFkVEZO?=
+ =?utf-8?B?MU9KM0R3dVlSc3oxK2xOYUtBN2FVay9TaWw4RzNURjFjNmpvemczT3FsUU9j?=
+ =?utf-8?B?NmpmMVZnblc3Q1piYTFDTDNETVVPR0FrODhMOFRQbysxcEEyVC9URkwrUGkv?=
+ =?utf-8?B?dXQ2a2J4bDFQTm51UTFVU1g2bi9Od2FkOHNiNXNVSTBERVp4Nkd5UnArbXZt?=
+ =?utf-8?B?MHhCQUdlWno5eFYyZGxBK3pRQWVnTFZ1NFRpajV5SVpCa2NDcWpDd1lqTjBP?=
+ =?utf-8?B?T1J2eEZtMk1ncmh3NXNsRmpTa1RjY2QzajdEMm9LMytSUjNmMHVtMVB0d3dP?=
+ =?utf-8?B?Rldwc0w4bHIxQjhpc3A2ZkZTOTQrT2tJdlNZMnB4amsyYXpZZ3dlNUJBdmRy?=
+ =?utf-8?B?czhOZGVYTXRLQVJkWVRrY2ZSR09RMHFNTk1wNE9CYmUzNi9yR2J5N0c0M2lG?=
+ =?utf-8?B?b1hzaFdqaXN4MXNRbDVyeHlIcUo0M0VtQ1hHMXFwUVBlRTlPZzByZWlsSmpl?=
+ =?utf-8?Q?otuGNpcfkTrf+DIa6r4JNfbt7fbPGyS2tDkTJpTrkmxyj?=
+X-MS-Exchange-AntiSpam-MessageData-1: tQh319tF04jlyA==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e95373f3-f37d-4646-ea30-08de5ae6d8b7
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2026 01:21:05.9494
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PiO2Su1oQ/Pi22MVZCSG4sOzya8ccgts4fbDIcJ/cQB3hm1etTMGXtreDdJGtd1NEfC9qsfSs6rti/5jBg9jig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7617
 
-On Fri Jan 23, 2026 at 7:53 PM CET, Gui-Dong Han wrote:
-> It seems the issue is simpler than a recursive registration deadlock.
-> Looking at the logs, tegra_qspi_probe triggers a NULL pointer
-> dereference (Oops) while holding the device_lock. The mutex likely
-> remains marked as held/orphaned, blocking subsequent driver bindings
-> on the same bus.
->
-> This likely explains why lockdep was silent. Since this is not a lock
-> dependency cycle or a recursive locking violation, but rather a lock
-> remaining held by a terminated task, lockdep would not flag it as a
-> deadlock pattern.
->
-> This is indeed a side effect of enforcing the lock here=E2=80=94it amplif=
-ies
-> the impact of a crash. However, an Oops while holding the device_lock
-> is generally catastrophic regardless.
+On Friday, January 23, 2026 11:05=E2=80=AFPM Ben Dooks wrote:
+> The drivers/gpu/host1x/context_bus.c does not include
+> any declaration of host1x_context_device_bus_type, and
+> after including "context.h" it also showed that there
+> are two definitons in the kernel, so fix those two
+>=20
+> Fix by removing the definition in context.h and include
+> <linux/host1x_context_bus.h> in context_bus.c
+>=20
+> Fixes the following sparse warning:
+> drivers/gpu/host1x/context_bus.c:9:23: warning: symbol 'host1x_context_de=
+vice_bus_type' was not declared. Should it be static?
+>=20
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> --
+> v2:
+>   - removed fixes line
+>   - changed to include into the c files directly
+> ---
+>  drivers/gpu/host1x/context.c     | 1 +
+>  drivers/gpu/host1x/context.h     | 2 --
+>  drivers/gpu/host1x/context_bus.c | 1 +
+>  3 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
+> index a6f6779662a3..476e8c5e1297 100644
+> --- a/drivers/gpu/host1x/context.c
+> +++ b/drivers/gpu/host1x/context.c
+> @@ -12,6 +12,7 @@
+> =20
+>  #include "context.h"
+>  #include "dev.h"
+> +#include <linux/host1x_context_bus.h>
 
-This makes sense to me; it might indeed be as simple as that.
+Both this and the #include below are sorted incorrectly (should be within t=
+he linux/ block of includes and alphabetically sorted). Otherwise looks goo=
+d.
 
-> Following up on our previous discussion [1], refactoring
-> driver_override would resolve this. We could move driver_override to
-> struct device and protect it with a dedicated lock (e.g.,
-> driver_override_lock). We would then replace driver_set_override with
-> dev_set_driver_override and add dev_access_driver_override with
-> internal lock assertions. This allows us to remove device_lock from
-> the 2 match paths, reducing contention and preventing a single crash
-> from stalling the whole bus.
->
-> However, this deviates from the current paradigm where device_lock
-> protects sysfs attributes (like waiting_for_supplier and
-> power/control). If other sysfs attributes are found to share similar
-> constraints or would benefit from finer-grained locking (which
-> requires further investigation), we might have a stronger argument for
-> introducing a more generic sysfs_lock to handle this class of
-> attributes. We would also need to carefully verify safety during
-> device removal.
->
-> Danilo, what are your thoughts on this refactoring plan? I am willing
-> to attempt it, but since it touches the driver core, documentation,
-> and 10+ bus drivers, and I haven't submitted such a large series
-> before, it may take me a few weeks to get an initial version out, and
-> additional time to iterate based on review feedback until it is ready
-> for merging. If you prefer to handle it yourself to expedite things,
-> please let me know so we don't duplicate efforts.
+Mikko
 
-I think moving driver_override to struct device and providing accessors wit=
-h
-proper lockdep assertions is the correct thing to do. With that, I do not t=
-hink
-a separate lock is necessary.
+> =20
+>  static void host1x_memory_context_release(struct device *dev)
+>  {
+> diff --git a/drivers/gpu/host1x/context.h b/drivers/gpu/host1x/context.h
+> index 3e03bc1d3bac..78bcf08cc90a 100644
+> --- a/drivers/gpu/host1x/context.h
+> +++ b/drivers/gpu/host1x/context.h
+> @@ -13,8 +13,6 @@
+> =20
+>  struct host1x;
+> =20
+> -extern struct bus_type host1x_context_device_bus_type;
+> -
+>  struct host1x_memory_context_list {
+>  	struct mutex lock;
+>  	struct host1x_memory_context *devs;
+> diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/contex=
+t_bus.c
+> index 7cd0e1a5edd1..c0ba0433c686 100644
+> --- a/drivers/gpu/host1x/context_bus.c
+> +++ b/drivers/gpu/host1x/context_bus.c
+> @@ -5,6 +5,7 @@
+> =20
+>  #include <linux/device.h>
+>  #include <linux/of.h>
+> +#include <linux/host1x_context_bus.h>
+> =20
+>  const struct bus_type host1x_context_device_bus_type =3D {
+>  	.name =3D "host1x-context",
+>=20
 
-Please feel free to follow up on this.
+
+
+
