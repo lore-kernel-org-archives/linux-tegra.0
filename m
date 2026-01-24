@@ -1,296 +1,179 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013063.outbound.protection.outlook.com [40.93.201.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D823135972;
-	Sat, 24 Jan 2026 20:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D1B237A4F
+	for <linux-tegra@vger.kernel.org>; Sat, 24 Jan 2026 20:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769285981; cv=fail; b=Hx/Z6SrgfQXNULN94aVEo6JofXkOZqOE3FVrNGt4WYJbknWiPJhVq0nZmtTHCdPMKYUBfylgq+hlTvgxeEvZJEMDmnVQbCc+kVCxKlGLCkO/bJrkysRH01vwfHQRKUsufhMDFLMqB3+DgGRNb3zbL5XCv44RIAw4Z1MIBg2vNEU=
+	t=1769286005; cv=pass; b=F25p3OoJfrTN8OlxdeNvQhk+knfWyZFKwT0u8E6J1ngiZmRTiUTkEwp08BilbGtf5uN6P0CUuWnMPIsDaaBCBqtCxCXELCAhqf4dA3azBlSojLj1hWt32xvr+EcMGAmgzhX2eSwazUbrFZQEm15vfdzOAtcLqszIEFRe8weTmb0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769285981; c=relaxed/simple;
-	bh=V3Ft7zBvORrPm6E2rJ2Tfp9+XhDBpPicOJLMcA31ty8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XfHJ0CYKrRYFMgiZzNGHy6RDHWBC0MW0WiHTpfim1UAft2AsisMgMY5WyZ8zucVp8BrUxCiHeXzPo/qVZntke2iyP7sxmL0ss/UIpprMEd0sa5aMS0HexFn7ZMcDgTM0VRsmnw8tKC9l4M54RL+iVO9/f00TzyD7Z8baVIBx5ek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AaUI8yz8; arc=fail smtp.client-ip=40.93.201.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1769286005; c=relaxed/simple;
+	bh=zbChyElac1UwgTP0SJZj1q6AbqL+QWSoCe8JC/abZcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TRJ6amtYexhuKp3NAnJCJS7RJ0suX61fXyGU/PRHgV+7zp+l5rPpcB6h55h2e+QL5LAaQqvdzc3GKEcMWr8VnA3PFAmuVN/1EAGXWbW8d0fX/PysPashFgHinVFK3lEvKtR2tBDNYa4p/MqGBtd/HHiGyiDB4/bs6XTgMQJEphQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4Q94oLU; arc=pass smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AaUI8yz8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yV+bKY6kYOM974r34UgD0IUr/vYMBwowL8btweBh1p7ENpcbWMTIwPUHVOINPDpMQQxEPpMYCb8UCy4AlgGMft+cEA3ivUml+oRiRffZecbx3V2I9Pr+0Iblc2r1Ho790Qav5nRSPv9cee9z3QmlW10vEz0GEeooI7seYkhWy/s6pChID1HvchtSGqDUsmOzz7IwzPbWvqOMXOWIJ8W2RtzHW8nfy3XNr3sXEe0mVt8PKz/8LrTH5mK0FykYcQZ+lCvC+apXPM9331G8ljERY5jpv+7A0LqHbppMhtHYuRGX7s+oPJn6vJNSKV9uaA0GXAd7Sv+SwRgBoRefZywA9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w1ofkzNCXGAuVo108NNuylgdh8/PswXDnUI4MhJpiN0=;
- b=B4XZuTVNJMkJynzm3GWj8pc1uRTXNTwoU/K6FdR8D/NGwn5kNrfJoEmQEGxOzakPnnzeVYvV2GQ4jqjtl+wJ/Z3GF0b9IbRKS58WrujXlljeTjPlCPd/JfcZeJ94HhWYAdeyVDa7Ae9mXyk3XwNfsPJ4Ppy/okF8mQNo6U6e2WUvqJZiasyw8hnA9abRl/N28IfWWe6mb5GmGiS13szIKKXWUKqaD6LBLfbU+qHvLM2Y++mf8h7ijDG/oXohbBk/nZLJPti/e9hus1le4pYOdbWZFZgeAmt6aEhGWu2sTU90MQElwuNpeYPVGp/1qmfOXg/6aONxjgisgxxnceG5vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w1ofkzNCXGAuVo108NNuylgdh8/PswXDnUI4MhJpiN0=;
- b=AaUI8yz8/9/FQTio0JWApCW3ArJX6IpI1picFqEHrWRRTgx3f8WaNyy3OBOSG8jUIgaP3I4DsgfLgOWZe+GOPib/VjDInWpx5vNcaV+vvnpuXrbuqLEY+ok6m9akSni0RxNpNc8dtgcyXLjIPv7mR2PiM3djvU21Y92CAC26MDZ4Lb1pPjqZdmmSKMPpghrCQ8F+MuZ5xOoB5C4PsVyxkczodkwGs87Ksfa9SJ4RzeJPhTXgcmH8HmGggLpnAmchval1zqcnPN4piS/yidkDx0oKkbvCDO99P5FeqNJLVhoKdKI35ibi8DSRQklQb67EWxUawwUgHYs5ajtbjOukCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by LV8PR12MB9617.namprd12.prod.outlook.com (2603:10b6:408:2a0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.14; Sat, 24 Jan
- 2026 20:19:36 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::cf08:f59b:d016:c95f]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::cf08:f59b:d016:c95f%5]) with mapi id 15.20.9542.010; Sat, 24 Jan 2026
- 20:19:36 +0000
-Message-ID: <53827af7-f3b6-4e1c-8c8d-2f57ef5be97e@nvidia.com>
-Date: Sun, 25 Jan 2026 01:49:24 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/9] ACPI: CPPC: Add cppc_get_perf() API to read
- performance controls
-To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com,
- ionela.voinescu@arm.com, lenb@kernel.org, robert.moore@intel.com,
- corbet@lwn.net, rdunlap@infradead.org, ray.huang@amd.com,
- gautham.shenoy@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com,
- zhanjie9@hisilicon.com, linux-pm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
- acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- nhartman@nvidia.com, bbasu@nvidia.com, sumitg@nvidia.com
-References: <20260120145623.2959636-1-sumitg@nvidia.com>
- <20260120145623.2959636-5-sumitg@nvidia.com>
- <7f0b280d-9c22-46dc-a924-a85591e1034d@huawei.com>
- <fb4b68f7-ec64-4660-99a3-d288bc20ffac@nvidia.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <fb4b68f7-ec64-4660-99a3-d288bc20ffac@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA5PR01CA0215.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1f3::19) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4Q94oLU"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42fbc305882so1968116f8f.0
+        for <linux-tegra@vger.kernel.org>; Sat, 24 Jan 2026 12:20:04 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769286003; cv=none;
+        d=google.com; s=arc-20240605;
+        b=A/bjZqpoUzsqLNbULwLn/FOzAnsih1XOhF1wDbCQCLMH21pDpPizI6TrW5B278ObHL
+         3nu+Juy50DWlKOyLgpvg6mr8Fv4V2P205XoXKnGfMmzqQKylhcJrtTEceFXRu9SBsiLx
+         u31aZ4RCyju6d8kAXZGZR9aGpcEEI/ossWArB2nVgBBn5vkQEIRS6iWT2bOtSkMX/mwJ
+         fkDm8WMZlVjZomFxI/JoccI3rZZbqaWmpCJH/zgsIiV1MEXuSlaqzNQsVR/moCasSByj
+         JYLHa5EgKeQ7Rm/c4eqSjfyEB+sQiCI86OE4qePxG4d+upTDyf/1swfI43OggEO9izX9
+         VHwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5IvQvVO47AehbyLG9Cg7wRdRPasY+7er+DvV1ut13R4=;
+        fh=O+NqqHKOKQvYmCa/OD3Am0N2K+aVHucCdqPvyYvftq4=;
+        b=TI/k134OH6ZJ5HeTpVbOsLujxtoQogOUpKAs10cjerPn7PT4nEUXzNKhMLsppFujEu
+         nOQhUzGRn9svQVxknao5kSmgcn8BJKAKAgQSySFZ1yna8GJ2LCfJp+WfSIk87Esa1p29
+         Y9cNxzAqic5SvFmUcDHrBsQY9IkBos6raqg3ab45+MVlHQypx1EnGrrTy3AaG0DMUtFN
+         JLoeDxKqa/vKPWnHjozb3x6zwxJa+lpykJszkIm5xs7uiJl4YnJMwN78MyKQB2FGN1gk
+         HKheR3L5J2V4QNtHVkhSRvwsMTN47H2I7lRAJgcjjgCqEnGW0PouHSCGOvsFTwpldb+2
+         oeiw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769286003; x=1769890803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5IvQvVO47AehbyLG9Cg7wRdRPasY+7er+DvV1ut13R4=;
+        b=Y4Q94oLUupXmlLchLUI7rcyaX/eHch73XeNMif5OHqYgMjCyzUzQ4zwvoRRdsEKHkc
+         I17sFJgX3F9urlyFfXZfA7DcHGT5TEiu4zyIJDmqWrnOawbv9/HIvy0OWjeROFD7BH7h
+         Y0MpPSqP3HNkYPP5vc1eeljfq6bgJNOy9W3OpkwLTibM/H10BFpK34uOZ5z25X0Nye1Q
+         vuny9yj2AH3KGteVRbIY5iyLedvFODpw4pMshIjUyzKULqJOeYfsIIf24ygZ5NkBnToo
+         uKe7Ib3J9HUNhRBKRJx4GdnAbgFK2rcLLTLM/3Kj1v7FUKpLnzHRXrfl+klA/3z6Q+7E
+         5+Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769286003; x=1769890803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5IvQvVO47AehbyLG9Cg7wRdRPasY+7er+DvV1ut13R4=;
+        b=jyTk5xNWWeaG6itShs6g7llDyqJk2nKve3vtZHfJv0W2uGlyHju3UY/NN65O3B3MxV
+         /lkUtzhCj/ZANR6co5Ad6Yhvwlow0YyKMdIW67f4dnLfBk/AbPeJqAdYyybbHwXiqyMi
+         tnEyvjvVGBq3XO6AOjHjNaag12H/1ZNaH8n2r417D1RUr1QyLedyfg4vYXK4rE82ZcCl
+         y5tASbrgK/5jh2erBM34BEL1rJwMzQtPs3YHMHntaPCgYPzVGN3sHiMQICI+YwoMostc
+         E0q20PXzAeIW6Zca7jz3URhIKM3v7ldaqz0p54izmB0YURAqQyZas3vKROMXRX1WUXLA
+         QPvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUefpgXIoCdLGJosDcpKGLXU1u0gwSzeOxpMxRf5mJDZWN2fAW8f2Ri/PMAeznorO/agzpLh8yvQDlJcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnvNSsZW07poK039fyIAU9MFKJ/YCTnzJ/CYD5JA6EWUcbgQfc
+	aXxWq7t8FnFEoR91qXrcbUeOlI7E/6JK8XGabfOz5MKjjZDRzrRQqgQXaoUrExgiI+UTX5rzPZK
+	dCNGZ0/wpOlS+C5gagrErNkzZaMTSmb8=
+X-Gm-Gg: AZuq6aIStseRA8UoAGYETa8mzye9Onkq053VsKqwDgw3GBQkS2nLKyMvUyTJ6yUMIjb
+	wmzuLslSBD5uDnZLIBHPqPx02aZyUBW+wsNbngRqugoppG+iubJoSkru+mQYMZT4kxga3HrnyyW
+	o+mIUhbl9QM58D7mFCTOmvTDh5tmcbFsN8Kz/iwEtyDYLhIN0mO7/orrtFnOVM5IvvUqv1I082W
+	N4Jnc/Av/5at8zjAzCEt3Zbp66aN09IbWd732iG6iqlkBPMFkO3rSCnW99CuYQ+kyr9KyuZ
+X-Received: by 2002:a05:6000:288e:b0:431:752:672b with SMTP id
+ ffacd0b85a97d-435b159556dmr11734663f8f.14.1769286002389; Sat, 24 Jan 2026
+ 12:20:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|LV8PR12MB9617:EE_
-X-MS-Office365-Filtering-Correlation-Id: 593305e3-7737-40cb-10d3-08de5b85e499
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NWUvdmQ2cmdDZnpiTzBidG9iOUFiY2treHN6MDFjeXlQbmV1c1cyVlJFZjNX?=
- =?utf-8?B?KytpWUVoYWRCS3c4UExObzBMRXhMVzdTOHY4OUdmeUZ5bGpHWkE0anlqK2Ji?=
- =?utf-8?B?OG8yVWN5eitXbmRVOTF5SGJ2SE9qazgram9RSklkeUdYVW5ScHNRdmh2WWU5?=
- =?utf-8?B?RlN5Q0tDWHAxT3cwUWI2dDA2VW9FWENYQXQvS1NVODZCU3RFSDIrdk1aZ3NY?=
- =?utf-8?B?bFIzQmg2b3NLZWRJeFViVHhOaUcyV1pmVENXMlQvUjM2aHBvZGpiRHI0WGh2?=
- =?utf-8?B?MGVaM0R5ekh2V0FFa3BEVHVDdHJJdVRvZjlkcEMxMzFWZExBYTJ0alVuVXlL?=
- =?utf-8?B?ak1sVlNoejlHQmlFSU9ieVYvVVdOQkIyeThFMW4zdjlGbGVWZ013U3R5YmlS?=
- =?utf-8?B?d1RoR0V0S1JNWDk0ejNhbVErc3ZGcmpTdTI3aUdxNTAydFlsdXVlL0xCVFI2?=
- =?utf-8?B?dFVObkdmOHVrYlBNaGRwc3VhNld0QlNLQ2NhakFkemZ0Q3QzdlE1MXNKWDlY?=
- =?utf-8?B?bEh3amFETzIzemozY0VpcEdaTGZVL2FBd3d0NXpRNC8wSTNkS1dBaUhXR3Ri?=
- =?utf-8?B?a2p1OVJuRFFzMGgzcTJ4cm53ZHZRN3hLZkVNenNJQWNRdFAxWi93RjRiNlBI?=
- =?utf-8?B?b1hMcGNMSTBvSlJFTG9wTDczU1p2dGx3cE9Wc0NWaS9LcVpRSisyNkQ2cDFU?=
- =?utf-8?B?NzA3aWlETUVUUUJsWlEvL3dOV1gwWTNkenVzdEc4Yy9jY0xMemRYTjJ3OG9y?=
- =?utf-8?B?cU9TVXIwWHdGS1pZY1FzWjhmUGMxazVDaXpBY3pnQ1JoRnpiV3Rhbitrd2V6?=
- =?utf-8?B?a0ZLWUF3RWRTQ2ltZmFJV1hOVUpLeUxwSlBGSFhON0FRTGtsNFhoM2VFTkhT?=
- =?utf-8?B?S1M0NFJLQUtBWmtRTlFBYUI1UEgvdTdkQmhSV3UzellERHZaNTB0d3RkTnRr?=
- =?utf-8?B?dVlTR1NSNDZwODRRbXplanBEQ2lBU1ZjSENQOVRSck8zMDBWV0U3Nml2Nkhh?=
- =?utf-8?B?d3piNytpcTlZd216emtoQ2xqb1U2UWhvS2ZvZi9UbnIyVDFFdEh6Mi9BUXZ4?=
- =?utf-8?B?bTBab0pkNFBnZTZMQW96V1pCVXk1S003c1BSa3ZqWDhyV1FPQTVsVlBBeGRj?=
- =?utf-8?B?YVU0NWZHUGFPamdUbGNoTjVaMWcrQ2xCQlNwOVFFRmdEak9CdzRPcDN3MVBl?=
- =?utf-8?B?dENVbHpVM2dxbDBvRmNhZ2NtUEwwUVcrN2ZLRndTa0JDTyttTmQ0Tkk3L2dv?=
- =?utf-8?B?RmFZcHpmTUQ5WDJzZDRYd29OVUhTdmtpc0V1RTNIMGh5L0RSUS9RQmd4WGU3?=
- =?utf-8?B?Ry9kdXdUUTY3WjRTVVVHTStZa2pROFBOR24rdURYd3VYUWdjTVY2ZEU4ME9J?=
- =?utf-8?B?NWVJT2FiQWVQVmN0WjdpSXBRQ0Njc013R04zWlVZTU9YalIrNjRvVldxYVNu?=
- =?utf-8?B?aXdTSWM1cVo1MS95M2tMRUljcUlNNjV5UzNUWXZDUUo2QU0rdkxmWlFBWDdo?=
- =?utf-8?B?a3NLczJZeE5WcmxCTitLTzFQR1d3NDY4MVlsNldiNnF5WExsVEw5NkUxQkpF?=
- =?utf-8?B?Wmh4V3JBRWxCNmM4MnRtNXdmZm45Tkk2RzF2akVRdUg4OENoMlB1VUFlZlJ5?=
- =?utf-8?B?TFlubmd5RkhDUzFwMEsxMlc5OTNhYWpnUnMrd1ZaNWsxdmZ4WkpOa1U4WDdN?=
- =?utf-8?B?clc2N2lPZVNxSmZscHF4V0Z1L3FTK2gzaHplL1AyamlJYTZtTFN0Z0YvZGwr?=
- =?utf-8?B?NmVISzFzczZkakcrOXVBRWxxRjNLclY5eWl2MEFuWDB4elRDYWVBYWpPMXVk?=
- =?utf-8?B?dFl3SUdiTi9wNmMrUm1wT2prVU8vNnNTdUFQbnhFOVpnV3FGRHoxOWVEQ2U5?=
- =?utf-8?B?eGRUdEdYbndNMDdGa3BRRGpmZk9paFFCZURZUmFEd3oyTGRrY2llODZCakFm?=
- =?utf-8?B?WlYrSDhxRWVxa1ZkY3ZyVmZkWUJXMVJidUgrRGgyVlErdVJsNnNrcGJPeVF2?=
- =?utf-8?B?UXcxdXZpTEZSemJjc001NzJDMUhWTXNUUDNubCtGeGt2WmJ6ellOb2ZEVUhQ?=
- =?utf-8?B?SVRJN2I3bndzNXR3THVhdnUyd09oWE5KVk5lQzNMZzc1bUxjQm1vcTluTU8v?=
- =?utf-8?Q?Ql+sDvDBN7/deAyiQctCnf5po?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?em5SYlVHZDdjSnNwa2JFK3RkeVc5Rm5PUDFTMkpMYmNVMGh1UEEyd0xwRHVI?=
- =?utf-8?B?bU5OdXJXR3BESm5uai8rdHNFWnR6OFZ0ZGlkbDRkUDVGYjRhZ1UyL3VBWGtH?=
- =?utf-8?B?Nm9Gak5BdlVCaFByaUZLTTNLS0ZGNXJpb1lTWEhkTHBiWTQwcERQcmUxQ2dh?=
- =?utf-8?B?TkpjQ2g5Q0VsUTVGTnZkT0ppMXNicmhJcWxlY0RqbndJVUl3YkdIZDNRMm1y?=
- =?utf-8?B?cjF5cFI3L0ZqUysyWWxua09ZeE52NmtLV01FT05MaExUK2E0TjhnR2xrR0p2?=
- =?utf-8?B?aUpKb0oxNDMrdDAyMnhvV2h3dmc0WEFZTzQvQ0Zhc29QSjBkeGVwMWZZWHJi?=
- =?utf-8?B?UmxLdjd5STF6UGRnNmFmdWszeFg3ZEtmSXdkVUFJRXhGeGFlUkVSSS93cG5B?=
- =?utf-8?B?NGpPZDFQMi9UNHp4UlhlWXNSYmhvNTJlQTZiZXR1RzI2VzdEVDBWN2JZMFNa?=
- =?utf-8?B?a2hDSjZGbDV3ZDRwZnBhZVNRSk0vaEE0Z0JoL0JyZ2VUMmxrejVualFNV09I?=
- =?utf-8?B?dU9OMkw3b0wrcWhUNVNoUVJQeUtDaTYxMmxjczhLVlljOWFWeEpoaGtUeDl1?=
- =?utf-8?B?WndObHdzZWEvTW1ESGR5MWpkRmd3bVp0WktPa2xuak80aSt4Ti9XeVN6Zjdr?=
- =?utf-8?B?WThSVWI3V2JNYXVBWEwxNjFOaHF1MVdENEJwSCtXeXZoUFcxaXlHQ0pNOFAz?=
- =?utf-8?B?aDJITStMcy9Ua2NjaFhLR0pMRmJTQ1BrdFk5QjZNRHhLMVgvaExoNDArNnVY?=
- =?utf-8?B?ZDZVOTdRNG1oVTVjMUVoTU53UVRhT2VpZ0Z6K3F5UVMyeGVwMjJEckpQMlVD?=
- =?utf-8?B?M29xRjJTWXJtaGd3dVBua1JtZHF4NjE5Q0JWRm5LNmdYZXBoZjBWa2xWZmFU?=
- =?utf-8?B?RUN4WUNOZldOcS95cnlXQnJhMHBaQjd5aURKUFg4dFUyNHNxTUNiU2VvbWxp?=
- =?utf-8?B?Zk4xaXpIYVlvaWdoK1MyWDV4Y1Jxa2F6bXJOeEU0d3RmUjczZFpGR3E3WDNC?=
- =?utf-8?B?eTNzU3lhall5TXZWWGIyWnJqV0VkbkJET0dlQ21HZnQyUnJpajZuUDJSTjB4?=
- =?utf-8?B?QjV6YXFja0w3QkNDZzlGN2ZkVVF0SFR0TU9YTkhELzZwZlZRYUZjQnNyS0lj?=
- =?utf-8?B?N1pmbTcxbkxFN0F5L1QycFVscHA0c2JSTEFrcE44dHpqdDlCUGhDRHcvRE1B?=
- =?utf-8?B?WTNjcEpBTk5YTGF5MUQxdytXb0svK3dtT0pSNmxRbElIeVE4UG0rSFJRZ2RQ?=
- =?utf-8?B?NHlRdXBkYjl5aUcvREk5cEViSmhRTjdnOGQwdFUvSU9ReDQ0YmM1UUhKYjN6?=
- =?utf-8?B?NzJ2azA5aVJXYVpROFhmTUFJdWFHMkFEa0VZYWVVMDhQTmpsV1V4L3l4b0xL?=
- =?utf-8?B?T0VaSlJ0cG9oLzZrM0JIZnBPRmJGOTZ5RHhwbFM5Z3BCL1RtOUFMbUduWkRk?=
- =?utf-8?B?L3g3bllGWWFDZ2orRUJnbHFuanBOOXZucHlXRUJPNnMrV1d0S0JGMTBFNE9m?=
- =?utf-8?B?SVdRVnF4a00wMEhyV2t6OEg5bk1NSXA2enh0dCtNRGZUK2Q2THdOM3BJcEM4?=
- =?utf-8?B?ZFlTb0pqOHRqN2hiZ1pnZ3JlQXVrcHpiSXRyNExQaVptTmQ1MFFqUkJlbG5C?=
- =?utf-8?B?TUFweVUzbEdzYzZ3RE1xUkY1K0JZWUJMTlFDSW1uL0NBMlp3L0F0TGVjdGg0?=
- =?utf-8?B?U2tuWHhSV0pVbnlqNHFva25pZDU1QVBIeE15ZGpqTWZ6TnhHL2dTOFB6ZUhn?=
- =?utf-8?B?NjdXci9QS2Y1cDY2WHQzR0FNM1M4QTdYMzh5dTI0NkJkb1hRakgrQVp5cXVo?=
- =?utf-8?B?Ky9lR2ppckw2WEJXclRjK3JSUkpWeEpQbmZxVjFBdHNaTGk3M0FYRzdqQ1g4?=
- =?utf-8?B?WDFVMFphKyt6QVlDV1hHeGdSdDRHWk5Bb1p1bEhWWFBRdWNzdnlpQ3VYcDF6?=
- =?utf-8?B?LzdhYVBOeENRWC9JemZwK1NabmFDZXcyRnZmVjNYdjVCdUVleGczNVVNc3RK?=
- =?utf-8?B?cXFRMnBneHdBb0VzVndVRzRMcVljd1hnWGpDRVMvYTZnWXhMeStDWTJzYkNM?=
- =?utf-8?B?SXRjbjdjMit2S3RVR2ZSZnVMZkZZbEdWM0poNmpVbG9WT2FQeWtEd2ZubndE?=
- =?utf-8?B?eGlYbllSWjdCSGxrL3BxQVl2MWZpOW1aL1YwaWJ0YW5MSTV5akxCMU9lWThM?=
- =?utf-8?B?T281dmZOWG5nSWJxTkJpZ2ZOdDcyNUx6RHRJZEM1WmpVdStraDlBZWgxMWU2?=
- =?utf-8?B?SVJCUENTQU9yZW9KSnhCWVhWb0NGUE5XeHFQMW9xU3pUbEhIR2g2WVRhUG0w?=
- =?utf-8?B?R1IxSWNsL0ExeVNXVkcvVWxMMzF4dXg3a002bG5hUmVqdUQxcE1hdz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 593305e3-7737-40cb-10d3-08de5b85e499
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2026 20:19:36.3331
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MebDGbP7601im+NWwb3KvqfICwIHwnEQlJQ3V6aeFrbaPjMiUOCBjjaGtPlo/xl68jYauGv4t9jb09Lket/mAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9617
+References: <20251204061703.5579-1-clamor95@gmail.com> <20251204061703.5579-3-clamor95@gmail.com>
+ <7012249.lOV4Wx5bFT@senjougahara> <CAPVz0n3JEHtUOq4qaZbqPu97NXdYxx_=5im4rxoEWi8EbKmKEw@mail.gmail.com>
+In-Reply-To: <CAPVz0n3JEHtUOq4qaZbqPu97NXdYxx_=5im4rxoEWi8EbKmKEw@mail.gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sat, 24 Jan 2026 22:19:51 +0200
+X-Gm-Features: AZwV_QiGF7B_Re4bWRTdgXNS-XzkdDJdBkm2AnW07YovL950WfU-W10tVO3KO9M
+Message-ID: <CAPVz0n2PZRSLyKNBAA+nfH66ujbvmQVQbG=6Ai_5sBe3U_dyPg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4 RESEND] gpu/drm: tegra: dsi: move prepare function
+ to the top of encoder enable
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 25/01/26 01:35, Sumit Gupta wrote:
+=D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:49 Svya=
+toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On 22/01/26 14:26, zhenglifeng (A) wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 2026/1/20 22:56, Sumit Gupta wrote:
->>> Add cppc_get_perf() function to read values of performance control
->>> registers including desired_perf, min_perf, max_perf, energy_perf,
->>> and auto_sel.
->>>
->>> This provides a read interface to complement the existing
->>> cppc_set_perf() write interface for performance control registers.
->>>
->>> Note that auto_sel is read by cppc_get_perf() but not written by
->>> cppc_set_perf() to avoid unintended mode changes during performance
->>> updates. It can be updated with existing dedicated cppc_set_auto_sel()
->>> API.
->>>
->>> Use cppc_get_perf() in cppc_cpufreq_get_cpu_data() to initialize
->>> perf_ctrls with current hardware register values during cpufreq
->>> policy initialization.
->>>
->>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>> ---
->>>   drivers/acpi/cppc_acpi.c       | 80 
->>> ++++++++++++++++++++++++++++++++++
->>>   drivers/cpufreq/cppc_cpufreq.c |  6 +++
->>>   include/acpi/cppc_acpi.h       |  5 +++
->>>   3 files changed, 91 insertions(+)
->>>
->>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
->>> index a09bdabaa804..de35aeb07833 100644
->>> --- a/drivers/acpi/cppc_acpi.c
->>> +++ b/drivers/acpi/cppc_acpi.c
->>> @@ -1739,6 +1739,86 @@ int cppc_set_enable(int cpu, bool enable)
->>>   }
->>>   EXPORT_SYMBOL_GPL(cppc_set_enable);
->>>
->>> +/**
->>> + * cppc_get_perf - Get a CPU's performance controls.
->>> + * @cpu: CPU for which to get performance controls.
->>> + * @perf_ctrls: ptr to cppc_perf_ctrls. See cppc_acpi.h
->>> + *
->>> + * Return: 0 for success with perf_ctrls, -ERRNO otherwise.
->>> + */
->>> +int cppc_get_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls)
->>> +{
->>> +     struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
->>> +     struct cpc_register_resource *desired_perf_reg,
->>> +                                  *min_perf_reg, *max_perf_reg,
->>> +                                  *energy_perf_reg, *auto_sel_reg;
->>> +     u64 desired_perf = 0, min = 0, max = 0, energy_perf = 0, 
->>> auto_sel = 0;
->>> +     int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
->>> +     struct cppc_pcc_data *pcc_ss_data = NULL;
->>> +     int ret = 0, regs_in_pcc = 0;
->>> +
->>> +     if (!cpc_desc) {
->>> +             pr_debug("No CPC descriptor for CPU:%d\n", cpu);
->>> +             return -ENODEV;
->>> +     }
->>> +
->>> +     if (!perf_ctrls) {
->>> +             pr_debug("Invalid perf_ctrls pointer\n");
->>> +             return -EINVAL;
->>> +     }
->>> +
->>> +     desired_perf_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
->>> +     min_perf_reg = &cpc_desc->cpc_regs[MIN_PERF];
->>> +     max_perf_reg = &cpc_desc->cpc_regs[MAX_PERF];
->>> +     energy_perf_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
->>> +     auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
->>> +
->>> +     /* Are any of the regs PCC ?*/
->>> +     if (CPC_IN_PCC(desired_perf_reg) || CPC_IN_PCC(min_perf_reg) ||
->>> +         CPC_IN_PCC(max_perf_reg) || CPC_IN_PCC(energy_perf_reg) ||
->>> +         CPC_IN_PCC(auto_sel_reg)) {
->>> +             if (pcc_ss_id < 0) {
->>> +                     pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
->>> +                     return -ENODEV;
->>> +             }
->>> +             pcc_ss_data = pcc_data[pcc_ss_id];
->>> +             regs_in_pcc = 1;
->>> +             down_write(&pcc_ss_data->pcc_lock);
->>> +             /* Ring doorbell once to update PCC subspace */
->>> +             if (send_pcc_cmd(pcc_ss_id, CMD_READ) < 0) {
->>> +                     ret = -EIO;
->>> +                     goto out_err;
->>> +             }
->>> +     }
->>> +
->>> +     /* Read optional elements if present */
->>> +     if (CPC_SUPPORTED(max_perf_reg))
->>> +             cpc_read(cpu, max_perf_reg, &max);
->>> +     perf_ctrls->max_perf = max;
->>> +
->>> +     if (CPC_SUPPORTED(min_perf_reg))
->>> +             cpc_read(cpu, min_perf_reg, &min);
->>> +     perf_ctrls->min_perf = min;
->>> +
->>> +     if (CPC_SUPPORTED(desired_perf_reg))
->>> +             cpc_read(cpu, desired_perf_reg, &desired_perf);
->>> +     perf_ctrls->desired_perf = desired_perf;
->> desired_perf_reg is not an optional one, so it has to be supported.
+> =D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 07:54 Mi=
+kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > The tegra_dsi_prepare function performs hardware setup and should be
+> > > called before any register readings or there will be a risk of device
+> > > hangup on register access. To avoid this situation, tegra_dsi_prepare=
+ must
+> > > be called at the beginning of tegra_dsi_encoder_enable.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/tegra/dsi.c | 12 ++++++------
+> > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.=
+c
+> > > index 278bf2c85524..8e80c7efe8b4 100644
+> > > --- a/drivers/gpu/drm/tegra/dsi.c
+> > > +++ b/drivers/gpu/drm/tegra/dsi.c
+> > > @@ -914,6 +914,12 @@ static void tegra_dsi_encoder_enable(struct drm_=
+encoder *encoder)
+> > >       u32 value;
+> > >       int err;
+> > >
+> > > +     err =3D tegra_dsi_prepare(dsi);
+> > > +     if (err < 0) {
+> > > +             dev_err(dsi->dev, "failed to prepare: %d\n", err);
+> > > +             return;
+> > > +     }
+> > > +
+> > >       /* If the bootloader enabled DSI it needs to be disabled
+> > >        * in order for the panel initialization commands to be
+> > >        * properly sent.
+> > > @@ -923,12 +929,6 @@ static void tegra_dsi_encoder_enable(struct drm_=
+encoder *encoder)
+> > >       if (value & DSI_POWER_CONTROL_ENABLE)
+> > >               tegra_dsi_disable(dsi);
+> > >
+> > > -     err =3D tegra_dsi_prepare(dsi);
+> > > -     if (err < 0) {
+> > > -             dev_err(dsi->dev, "failed to prepare: %d\n", err);
+> > > -             return;
+> > > -     }
+> > > -
+> > >       state =3D tegra_dsi_get_state(dsi);
+> > >
+> > >       tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
+> > >
+> >
+> > The section of code before the tegra_dsi_prepare call was removed in 'R=
+evert "drm/tegra: dsi: Clear enable register if powered by bootloader"', so=
+ this patch should no longer be necessary.
+> >
+> > Mikko
+> >
+>
+> You are correct. I have found this when rebasing onto v6.18 which was
+> much later then this series was resent. Obviously, this patch would be
+> dropped on the next resend/v3. Sorry for inconvenience.
+>
 
-Please ignore my previous reply on this. Had some problem with my email
-client and both mails got mixed.
+Actually, "Revert "drm/tegra: dsi: Clear enable register if powered by
+bootloader"" causes a  regression for me (DSI on Tegra20 device,
+Motorola Atrix 4G). DSI initiated by bootloader will be stuck if not
+disabled pre reconfiguration, Dmitry was right by bringing that
+change, but he did not take into account that if DSI is accessed from
+cold state (not configured by bootloader), device will hang. This
+patch addresses this behavior of Dmitry's patch and prevents
+regression introduced by reverting it.
 
-The register is optional when Autonomous mode is enabled.
-Seems the comment here is already resolved with Pierre's reply.
-We discussed this during v4 [1] also.
-[1] 
-https://lore.kernel.org/lkml/ccd45c1b-2f69-4725-918f-18063f00a864@nvidia.com/
-
-Thank you,
-Sumit Gupta
-
-
+> >
+> >
