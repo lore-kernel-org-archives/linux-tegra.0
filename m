@@ -1,63 +1,63 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47D930DECC
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 10:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7636733031B
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 10:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769422513; cv=none; b=tGQKi0Yel1xSjfJ0DO2pCWtYcaYRr7TelcmfWJ9X9IQPc76KRgjrxYk3TtBIpkd+QnZAtBYBx85PGoBmp3SxOekUbWYDXgUucEB4+B1BM+yzstaezhRLSPYtb3rRT1aU6Hugn81zkLul54eokpCampQB14JLMYuG/Rcu31AL4U0=
+	t=1769422515; cv=none; b=dS+uPIxksGGEHH7/JLHo652Li7mxRM4Ezm3m0hP5U4oqAuYxdRyA8C6RZjBHwXt5RkTIoiCcTWf9U69fBQUtbtfsq678USg6ZXE5eHFs3frEGzXejakONhOSnds7XQHwgiHIyuYGduRfrIgXAjrxaSIVfafPXwgjhohN2qVIysU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769422513; c=relaxed/simple;
-	bh=C7FSXnhNCzHXLjCA2xi/1xbacAe+dijTj6X7KneFqic=;
+	s=arc-20240116; t=1769422515; c=relaxed/simple;
+	bh=VAcTrN4SEtCtkSuzww4o6pK0mdDw8d4krQPbqlihmNA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qSXiMYhmJGs9JHgiIMFjBQn54wRPhJ4abHMzKJ9HUIkD+yYSyEFJVzN/qqf/ZCEiyq1Sc8zPafccZwpQy4Q4d6B5OxbeMqunSxkkLBbuTFkN52do8adpmgetcU5xWM7sDTLYIgBD4gLyiqnZ/yQ7QpnzNuQnyIqwdGAgCm7SA2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANEPVMOx; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=TULmlW1tJGHSs3XwAsUKEuZVQhCdO8KOUNYhDXZzfGKycSFYnNcV1sBrBBPSiOn11/l6LPtuFQpJEuKUqqs0m6vFo5manXABe4UQlb5vBrjVXPNTLPMcfvEedQ3uKN41BjkW8nA7sh0REBvA9OvO8yzk0Fv7T3VsMD7j5lVjM08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuzNbhIS; arc=none smtp.client-ip=209.85.128.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANEPVMOx"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47ee9817a35so32576085e9.1
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 02:15:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuzNbhIS"
+Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-47ee974e230so39123045e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 02:15:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769422510; x=1770027310; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769422512; x=1770027312; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KXSsUeEe6Ho3pzDTRZABOlvJdmrHwM6q/RZLBXXZ1I4=;
-        b=ANEPVMOxI7Q7jzMGBLfHNWJ1BbywrfBF2C6HalfwE0/CRlPf383rpCvLlIYilbzMIP
-         ivNpmYv1J07pDH+6QLR0LnKJ8C/jq/WnkKYz8H6P86bBYvlvr7E50OmAxBK1ep8JtUaH
-         YhxDcmAduM7OaODY7AMHIxkv192yaI8LtFhKMbBzOVHsIt8MPi5ALzhURv6okWkj/2vp
-         UqgnzoWz+lAPOZWRy1HdU3uwzOfO11zo+0SIde+q615G1d+NXMU3MSJ6TIwbMoUvDdXc
-         ChET+IJnI2sxjcvHASj1oYAFtYVB5BgJroF+J4iirLVvdGVZvR3FIyJehzr/EwHFDBIk
-         PiSA==
+        bh=60kkHg9EpcHMwtWKY6bs7zqhBr9lwoD5Ih0JKegSxHA=;
+        b=OuzNbhIStQnMFOQeqYqCOwS0jxXjQYkGHZuh4nVKHCmrVOGxB86KHRmjw/u/JI2cAC
+         pjNnmRdMLLvleIwGdc6s2wvjpHsGVPm4n9yWr0dmjIhag3p+W8Ly+nVj7kOyOSY9O13t
+         /Ib6QcLTZIrDEKbahoraiqThAFTy1eogzhvxAyfUQ6NASgsA1D8Kutg8GuRBGndSXci2
+         eBNaAV3i3NbefE0SgWR6pU4ckvuMUdkLQz1urW3x+06L4X8qgB6tfus/1eVdGSQ3hO43
+         El8h4si/ywojQVDgwfLNEwb7UDOBkYgngiuc4fKKR1JYjnkZqqAAmOaLGftzGYIEZFDM
+         cHZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769422510; x=1770027310;
+        d=1e100.net; s=20230601; t=1769422512; x=1770027312;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=KXSsUeEe6Ho3pzDTRZABOlvJdmrHwM6q/RZLBXXZ1I4=;
-        b=Symep4ij4DJmbH6mGc0F6nQQc6hpoZCnAOVzR+bebNIkayO15lxjn+RKGOrktdSm2J
-         jxAKyrijy6gz/RGbjL14XDrugwIi8hV2/7fQSfC0zSbsJYGkLm/UeyH0hATfKO6HXaOe
-         zR0O2J5fwfVs9AvE2Jd/V/gUOSu/7IXV8rIRQomipuoLKCib9upUcMWLtBxpgafWAxeh
-         fPcznhxChDROhTECbKTyJBNk50o8YC51Oio07DhWL793LxM5Q6xDYTKMCGwNASf00bS5
-         jv3cDYiewawCADBdsud8ctMPyL5BQ3/PKnYbBrHC/7niVd5NCq+ETAItjl2hMJjjP4ah
-         3Bxw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/gn1NfTY3Ji25aI+TTCmxNOhE7Cuyb2mzpGwhDozFNaIjvWlOsNESwxmioKuVrIecLIyIQiTZ/E9MCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6oUl3ChwPBhpUEZhCT0JfPIbln3nWEv5oh51DMGbmjR5d70WD
-	VYkkc53WPzgkaZ5lB+zEpapfNaANJehdpfB9wiAHbIvc5oJwYNNYAOwl
-X-Gm-Gg: AZuq6aKKuGfXMC7U1IgupCtEn8CZUR7a35J/JyJOLOkZ3YOWxRTZTxp0enBS+Z5yMRM
-	7opPiiRs3v070vX9M+TfHtiDE7U3Z/eoPsxx8dzIM5yCr+V44rRz+5wU3qib8z10AmzcrbFJWD6
-	aDkGNDxzVN0lCcz10K+diNFmTMAFvo2FGrhxKztajCjE9zJxXC9kIpT4WA6ZEhWuLka9yklhUYu
-	zJU0MH990XZH1/WnN3op0Dc5rV2sFjkf7/fG82AiH78HCIe+fJCum/yxaN7EWN5Qp3mizqTfV9a
-	g+r0VN3A5b1UqJgmCmnmE90h3ljzAQscMXnk09EPvbjVxPvkwrwlHMwvKkM0tFcbwRBeWCt4AvS
-	uaE72DoRnAHr+n3mDgTVkmURMG4xT1FkDSNeSHyL/F6P/HXCWmuhNHorv/h3ZhLwjN7OxN9RM59
-	GA
-X-Received: by 2002:a05:600c:1993:b0:47e:e20e:bbbf with SMTP id 5b1f17b1804b1-4805cf6690cmr67919285e9.24.1769422509856;
-        Mon, 26 Jan 2026 02:15:09 -0800 (PST)
+        bh=60kkHg9EpcHMwtWKY6bs7zqhBr9lwoD5Ih0JKegSxHA=;
+        b=S1YwTWwy5JDEcDRFsgcHuZ6Pq4cb2S73lc/EdCc46PTxSThAxZqTWw/JbGlwL9r00S
+         r3XIsZfQ1T1g8thaVCmwYC2jcPEhD+KT5JLdJQDekpXfPVIccCQXBrPBsm3sEoVNMR/8
+         86kT0eoSbLZ1M2rnRBd2CLkNzbAM0nSF22bHL1LeOm7xZNYHCS+OSRyq0lq/OrojTzFx
+         T/ZdauLsR0strYh/WgClqKhJLGZKO6zRYfDIYI7R9RwB6O9nVBAIyduzXZZ6BPCIecfJ
+         g7z2z++y0bMArLmM1rwKk/gMTGMSTog8Cajd3hO3BUuFzLR9EvDsIRI6KsoeNbL+amHj
+         LgHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUB6tIl/uqJQIic56H/K8qKLTFwyDe0USdDAHuJ25sxQCsoHtrcheQoDxDE6CIA4fuPYPvIMcaMPx0BhA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgUglOKHX/1VseWbNzrJhxauGrsVDjX0mGSyPq7qwZn6asYBQy
+	iAXrvSxL0JUvLj5C53DqKMh5NA8nXBg46gA+acMr4YKNNY+lXmE7Mdiu
+X-Gm-Gg: AZuq6aJ+UfWHytTMADX+mJ7oM212W/199PMYXdcOfoL7qGEBMQ5i5acgAVQGZJuEoy+
+	VG6n2LeZjaZMw/eCf4ady6t9SsonfTqGJWcdsFz6aW3kNH0aQvLJxbGuhRK4QYCjmYXbsCLl2i+
+	RE0+A2Q3Nk/4ViWa7E1f5h06AG9Hw+iLZu1HbD3fg9zzn7TyDvZ2QhCVqXB74pkKz1WNkcB8BJX
+	EpOlEoF6SbZV/kXci19KfPYdHIRmmTO1pTFTJS6rcCswEWNYXFlWAgFxwQwvc4VvD/Ts26GhEaq
+	AwSr/eoVt1/4FQBwbhJe/UDdKVQWJYCvLsTzmMuZkWdlgkEGP7YFXmUuMWVO63nD3Sv+h5jyF5e
+	5yVMAoB51IJOUTwivxw2BF56dyC9P5sbx553weMgZXgcj+5fddfUPRTjbUt463OIA24GBiYyx2i
+	oF
+X-Received: by 2002:a05:600c:468a:b0:47e:e946:3a59 with SMTP id 5b1f17b1804b1-4805d06c77amr59044075e9.34.1769422511702;
+        Mon, 26 Jan 2026 02:15:11 -0800 (PST)
 Received: from xeon ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d8a5c32sm319771795e9.11.2026.01.26.02.15.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d8a5c32sm319771795e9.11.2026.01.26.02.15.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 02:15:09 -0800 (PST)
+        Mon, 26 Jan 2026 02:15:11 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] ARM: tegra: lg-x3: add panel and bridge nodes
-Date: Mon, 26 Jan 2026 12:10:15 +0200
-Message-ID: <20260126101018.24450-2-clamor95@gmail.com>
+Subject: [PATCH v2 3/4] ARM: tegra: lg-x3: add node for capacitive buttons
+Date: Mon, 26 Jan 2026 12:10:17 +0200
+Message-ID: <20260126101018.24450-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260126101018.24450-1-clamor95@gmail.com>
 References: <20260126101018.24450-1-clamor95@gmail.com>
@@ -84,200 +84,32 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add RGB-DSI bridge and panel nodes to LG Optimus 4X and Vu device trees.
+Both smartphones have capacitive buttons but only P895 supports RMI4
+function 1A (0D touch), while P880 exposes buttons area as a region of the
+touchscreen.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts | 23 ++++++
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts | 27 +++++++
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi  | 81 +++++++++++++++++++-
- 3 files changed, 130 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
-index c6ef0a20c19f..cc14e6dca770 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
-@@ -116,6 +116,29 @@ rmi4-f11@11 {
- 		};
- 	};
- 
-+	spi@7000dc00 {
-+		dsi@2 {
-+			/*
-+			 * JDI 4.57" 720x1280 DX12D100VM0EAA MIPI DSI panel
-+			 */
-+			panel@1 {
-+				compatible = "jdi,dx12d100vm0eaa", "renesas,r69328";
-+				reg = <1>;
-+
-+				reset-gpios = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_LOW>;
-+
-+				vdd-supply = <&vcc_3v0_lcd>;
-+				vddio-supply = <&iovcc_1v8_lcd>;
-+
-+				port {
-+					panel_input: endpoint {
-+						remote-endpoint = <&bridge_output>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	memory-controller@7000f000 {
- 		emc-timings-0 {
- 			/* SAMSUNG 1GB K4P8G304EB FGC1 533MHz */
 diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-index e32fafc7f5e0..ab8f5cf317bf 100644
+index ab8f5cf317bf..414117fd4382 100644
 --- a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-@@ -112,6 +112,33 @@ rmi4-f11@11 {
+@@ -109,6 +109,12 @@ rmi4-f11@11 {
+ 				syna,clip-x-high = <1535>;
+ 				syna,clip-y-high = <2047>;
+ 			};
++
++			rmi4-f1a@1a {
++				reg = <0x1a>;
++
++				linux,keycodes = <KEY_BACK KEY_HOME KEY_MENU KEY_SEARCH>;
++			};
  		};
  	};
  
-+	spi@7000dc00 {
-+		dsi@2 {
-+			/*
-+			 * HITACHI/KOE 5" 768x1024 TX13D100VM0EAA MIPI DSI panel
-+			 */
-+			panel@1 {
-+				compatible = "koe,tx13d100vm0eaa", "renesas,r61307";
-+				reg = <1>;
-+
-+				reset-gpios = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_LOW>;
-+
-+				renesas,gamma = <3>;
-+				renesas,column-inversion;
-+				renesas,contrast;
-+
-+				vcc-supply = <&vcc_3v0_lcd>;
-+				iovcc-supply = <&iovcc_1v8_lcd>;
-+
-+				port {
-+					panel_input: endpoint {
-+						remote-endpoint = <&bridge_output>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	memory-controller@7000f000 {
- 		emc-timings-2 {
- 			/* Hynix 1GB H9TCNNN8JDMMPR LPDDR2 533MHz */
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index 909260a5d0fb..6eea8eacd7d5 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -20,6 +20,8 @@ aliases {
- 		rtc0 = &pmic;
- 		rtc1 = "/rtc@7000e000";
- 
-+		display0 = &lcd;
-+
- 		serial0 = &uartd; /* Console */
- 		serial1 = &uartc; /* Bluetooth */
- 		serial2 = &uartb; /* GPS */
-@@ -71,6 +73,21 @@ trustzone@bfe00000 {
- 		};
- 	};
- 
-+	host1x@50000000 {
-+		lcd: dc@54200000 {
-+			rgb {
-+				status = "okay";
-+
-+				port {
-+					dpi_output: endpoint {
-+						remote-endpoint = <&bridge_input>;
-+						bus-width = <24>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	vde@6001a000 {
- 		assigned-clocks = <&tegra_car TEGRA30_CLK_VDE>;
- 		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>;
-@@ -1357,7 +1374,58 @@ spi@7000dc00 {
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
- 
--		/* DSI bridge */
-+		dsi@2 {
-+			compatible = "solomon,ssd2825";
-+			reg = <2>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			spi-max-frequency = <1000000>;
-+
-+			spi-cpha;
-+			spi-cpol;
-+
-+			reset-gpios = <&gpio TEGRA_GPIO(O, 2) GPIO_ACTIVE_LOW>;
-+
-+			dvdd-supply = <&vdd_1v2_rgb>;
-+			avdd-supply = <&vdd_1v2_rgb>;
-+			vddio-supply = <&vdd_1v8_vio>;
-+
-+			solomon,hs-zero-delay-ns = <300>;
-+			solomon,hs-prep-delay-ns = <65>;
-+
-+			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_3>;
-+
-+			assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN3>,
-+					  <&tegra_pmc TEGRA_PMC_CLK_OUT_3>;
-+			assigned-clock-rates = <24000000>;
-+
-+			assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>,
-+						 <&tegra_car TEGRA30_CLK_EXTERN3>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					bridge_input: endpoint {
-+						remote-endpoint = <&dpi_output>;
-+						bus-width = <24>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					bridge_output: endpoint {
-+						remote-endpoint = <&panel_input>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	pmc@7000e400 {
-@@ -1617,6 +1685,17 @@ vdd_1v8_sen: regulator-sen1v8 {
- 		vin-supply = <&vdd_3v3_vbat>;
- 	};
- 
-+	vdd_1v2_rgb: regulator-rgb1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_1v2_rgb";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(B, 1) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
- 	vcc_3v0_lcd: regulator-lcd3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc_3v0_lcd";
 -- 
 2.51.0
 
