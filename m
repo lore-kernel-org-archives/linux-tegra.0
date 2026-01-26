@@ -1,97 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92413112A1;
-	Mon, 26 Jan 2026 07:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B7A27A47F;
+	Mon, 26 Jan 2026 08:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769414369; cv=none; b=JXum4GACqaWmjufXlRJqk9dhMsqYM0SjOS2cREAm+Acq5Q2rSMXlAbjJXMXPkt1F5HapcL0pLTC5AUYsuZIAC5LZ1avSvz3cfRmeosKHFvB8rEAJYihigPcGitNOxG9VPZJ0y51T4eASbFdh1gCo8v6cwUbkkEyKkNNrd3shUOs=
+	t=1769415061; cv=none; b=goBPBYRCXwZhtpUrMX+38B7IWdGAGJiF32vR5toAqWt7DfapGNN/nMp7SeIBTE0O/4ql+yuxZU9g7Vvgb67EoFUQxjQn0CGKajjSIdFKGO1/TTcp1XFRzrOYqsRmxF545X750xN/CuGUICFHj35esC16eYYbF7iGF36Bm4cw4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769414369; c=relaxed/simple;
-	bh=J50tdSk8sDMdjw4n+Da8atfv3eIp+GRNj2176vLLWCM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fbuqhjkJyqRZASSy+A5eTBbZJcvwyB+jC9nWYrPixUW5SjYSiO4/EPBxkxBen1L/kMcrI0ubCd7zQbbweFmAkGkhte+6ubACIf0fGY/Q3CCn6RIhduDwt8BVzZsIb5KhTnn+HQZSY5RAkFt3rGKqeDnyq4Pd1MBjQdVy8+3MFR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGcUjlqe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769415061; c=relaxed/simple;
+	bh=GR3zckIVpt6LCL6jaARW/kyCfDLSF1sXbOxzIXTnr6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kh9yCQxDGCchzxWtwl9tgmGpqCib/nH7n1artrh1m2wjLFrzGOdUP6kHA5qLRz458wVmUgA+hJ5efiVxuBYfSi6+u5GARecFURqu5OJfDrkr83KAdB6jGI4BPYx0Q9Wzpsu60luFqrBH7yLumI6c3ov/i2eifVIxynDIrixtA3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=LKNeZMbq; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGcUjlqe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0DBC116C6;
-	Mon, 26 Jan 2026 07:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769414369;
-	bh=J50tdSk8sDMdjw4n+Da8atfv3eIp+GRNj2176vLLWCM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=IGcUjlqeD/uHIpcJBQqTX4/l3rJ/PjKgJ9PQCAvbyq1M7GiZJfmlQ1uZKVW8tefw0
-	 O5AHUG80x8L/1Ra2LMSzvil5LZKpalBgolJsTYZ3Yk30/KCwPs57eIlhGIviOJ0cbd
-	 /qUXVuXH6vGSXAyoxS+1AJCBolWQsaM04J0ci1VJKSuon3jQcaPTeNpB2qlGpH2uS7
-	 l75SPdn9kVNljbev0O3fMHqEq1UW1GzKd9viTd8uWqd1DRJ2q1hGGhRchdNcuzVTAo
-	 ox6DMgFXxsOvcO8XCT8OWDd3H12v9CD3ibdJu3hqBvQROfT5rQy0+hda9CZejv1Jv5
-	 g2mnY164ejYcg==
-From: Thomas Gleixner <tglx@kernel.org>
-To: Radu Rendec <rrendec@redhat.com>, Jon Hunter <jonathanh@nvidia.com>,
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: Daniel Tsai <danielsftsai@google.com>, Marek =?utf-8?Q?Beh=C3=BAn?=
- <kabel@kernel.org>,
- Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Brian
- Masney <bmasney@redhat.com>, Eric Chanudet <echanude@redhat.com>,
- Alessandro Carminati <acarmina@redhat.com>, Jared Kangas
- <jkangas@redhat.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] PCI: dwc: Enable MSI affinity support
-In-Reply-To: <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
-References: <20251128212055.1409093-1-rrendec@redhat.com>
- <20251128212055.1409093-4-rrendec@redhat.com>
- <4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com>
- <a8d841e870d6dbbabef7eadb774f2a58a96c57c7.camel@redhat.com>
- <cfe44924-3419-4f31-8ab3-87b769d21a5b@nvidia.com>
- <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
-Date: Mon, 26 Jan 2026 08:59:25 +0100
-Message-ID: <87sebsdcte.ffs@tglx>
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="LKNeZMbq"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=YyYWratAnhyYvIsPU6aAB6x0/xonNgcbkzbNqPshYGQ=;
+	b=LKNeZMbqFLdvYz2YeBy0aAN1E+7l3nKA5q817rd/b/G3STx/GRuBXiAD5c861+osb+hPe8NUC
+	pvDYwKR//CrXuJwdmkMyKZGn2JYr8OLoJ3RAXiHnM6epBPN8ctp87YALoaZ/2SLjIRhOY7Er/YS
+	BmQvUpYiD+1CrPP+7DxOHXg=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4f01Mz3VmGznTVZ;
+	Mon, 26 Jan 2026 16:06:55 +0800 (CST)
+Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8F6D740363;
+	Mon, 26 Jan 2026 16:10:50 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemf200001.china.huawei.com
+ (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Jan
+ 2026 16:10:49 +0800
+Message-ID: <7e86cdbe-f16c-4fe8-92c5-e6fb89f49811@huawei.com>
+Date: Mon, 26 Jan 2026 16:10:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/9] ACPI: CPPC: Extend cppc_set_epp_perf() for
+ FFH/SystemMemory
+To: Sumit Gupta <sumitg@nvidia.com>
+CC: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<ionela.voinescu@arm.com>, <lenb@kernel.org>, <robert.moore@intel.com>,
+	<corbet@lwn.net>, <rdunlap@infradead.org>, <ray.huang@amd.com>,
+	<gautham.shenoy@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
+	<zhanjie9@hisilicon.com>, <linux-pm@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
+	<nhartman@nvidia.com>, <bbasu@nvidia.com>
+References: <20260120145623.2959636-1-sumitg@nvidia.com>
+ <20260120145623.2959636-6-sumitg@nvidia.com>
+ <a7a4d351-eed3-4ea6-a84f-e525b7ac13a6@huawei.com>
+ <86303677-6124-424f-999d-c420eac0cceb@nvidia.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <86303677-6124-424f-999d-c420eac0cceb@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf200001.china.huawei.com (7.202.181.227)
 
-On Thu, Jan 22 2026 at 18:31, Radu Rendec wrote:
-> The CPUs are taken offline one by one, starting with CPU 7. The code in
-> question runs on the dying CPU, and with hardware interrupts disabled
-> on all CPUs. The (simplified) call stack looks like this:
->
-> irq_migrate_all_off_this_cpu
->   for_each_active_irq
->     migrate_one_irq
->       irq_do_set_affinity
->         irq_chip_redirect_set_affinity (via chip->irq_set_affinity)
->
-> The debug patch I gave you adds:
->  * a printk to irq_chip_redirect_set_affinity (which is very small)
->  * a printk at the beginning of migrate_one_irq
->
-> Also, the call to irq_do_set_affinity is almost the last thing that
-> happens in migrate_one_irq, and that for_each_active_irq loop is quite
-> small too. So, there isn't much happening between the printk in
-> irq_chip_redirect_set_affinity for the msi irq (which we do see in the
-> log) and the printk in migrate_one_irq for the next irq (which we don't
-> see).
+On 2026/1/25 4:08, Sumit Gupta wrote:
+> 
+> On 22/01/26 14:48, zhenglifeng (A) wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 2026/1/20 22:56, Sumit Gupta wrote:
+>>> Extend cppc_set_epp_perf() to write both auto_sel and energy_perf
+>>> registers when they are in FFH or SystemMemory address space.
+>>>
+>>> This keeps the behavior consistent with PCC case where both registers
+>>> are already updated together, but was missing for FFH/SystemMemory.
+>>>
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>> ---
+>>>   drivers/acpi/cppc_acpi.c | 24 +++++++++++++++++++++---
+>>>   1 file changed, 21 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>>> index de35aeb07833..45c6bd6ec24b 100644
+>>> --- a/drivers/acpi/cppc_acpi.c
+>>> +++ b/drivers/acpi/cppc_acpi.c
+>>> @@ -1562,6 +1562,8 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>>>        struct cpc_register_resource *auto_sel_reg;
+>>>        struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
+>>>        struct cppc_pcc_data *pcc_ss_data = NULL;
+>>> +     bool autosel_ffh_sysmem;
+>>> +     bool epp_ffh_sysmem;
+>>>        int ret;
+>>>
+>>>        if (!cpc_desc) {
+>>> @@ -1572,6 +1574,11 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>>>        auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
+>>>        epp_set_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
+>>>
+>>> +     epp_ffh_sysmem = CPC_SUPPORTED(epp_set_reg) &&
+>>> +             (CPC_IN_FFH(epp_set_reg) || CPC_IN_SYSTEM_MEMORY(epp_set_reg));
+>>> +     autosel_ffh_sysmem = CPC_SUPPORTED(auto_sel_reg) &&
+>>> +             (CPC_IN_FFH(auto_sel_reg) || CPC_IN_SYSTEM_MEMORY(auto_sel_reg));
+>>> +
+>>>        if (CPC_IN_PCC(epp_set_reg) || CPC_IN_PCC(auto_sel_reg)) {
+>>>                if (pcc_ss_id < 0) {
+>>>                        pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
+>>> @@ -1597,11 +1604,22 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
+>>>                ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
+>>>                up_write(&pcc_ss_data->pcc_lock);
+>>>        } else if (osc_cpc_flexible_adr_space_confirmed &&
+>>> -                CPC_SUPPORTED(epp_set_reg) && CPC_IN_FFH(epp_set_reg)) {
+>>> -             ret = cpc_write(cpu, epp_set_reg, perf_ctrls->energy_perf);
+>>> +                (epp_ffh_sysmem || autosel_ffh_sysmem)) {
+>>> +             if (autosel_ffh_sysmem) {
+>>> +                     ret = cpc_write(cpu, auto_sel_reg, enable);
+>>> +                     if (ret)
+>>> +                             return ret;
+>>> +             }
+>>> +
+>>> +             if (epp_ffh_sysmem) {
+>>> +                     ret = cpc_write(cpu, epp_set_reg,
+>>> +                                     perf_ctrls->energy_perf);
+>>> +                     if (ret)
+>>> +                             return ret;
+>>> +             }
+>> Don't know if such a scenario exists, but if one of them is in PCC and the
+>> other is in FFH or system memory, only the one in PCC will be updated
+>> based on your modifications.
+> The current code handles mixed cases correctly.
+> When either register is in PCC, the first if block executes and calls
+> cpc_write() for both registers. The cpc_write() internally handles
+> each register's type (PCC, FFH, or SystemMemory)
 
-This doesn't make any sense at all. irq_chip_redirect_set_affinity() is
-only accessing interrupt descriptor associated memory and the new
-redirection CPU is the same as the previous one as the mask changes from
-0xff to 0x7f and therefore cpumask_first() yields 0 in both cases.
+Yes, I was wrong.
 
-According to the provided dmesg, this happens on linux-next.
+According to the first if block, cpc_wite() is OK to be called for a
+register not in PCC. So it looks like this 'else if' is unnecessary. Only
+CPC_SUPPORTED is needed to be checked before calling cpc_write(), isn't it?
 
-Jon, can you please validate that this happens as well on
+> 
+> 
+> Thank you,
+> Sumit Gupta
+> 
+> 
+> 
+>>>        } else {
+>>>                ret = -ENOTSUPP;
+>>> -             pr_debug("_CPC in PCC and _CPC in FFH are not supported\n");
+>>> +             pr_debug("_CPC in PCC/FFH/SystemMemory are not supported\n");
+>>>        }
+>>>
+>>>        return ret;
 
-     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
-
-Thanks
-
-        tglx
