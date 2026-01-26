@@ -1,159 +1,283 @@
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B7A27A47F;
-	Mon, 26 Jan 2026 08:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47D930DECC
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 10:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769415061; cv=none; b=goBPBYRCXwZhtpUrMX+38B7IWdGAGJiF32vR5toAqWt7DfapGNN/nMp7SeIBTE0O/4ql+yuxZU9g7Vvgb67EoFUQxjQn0CGKajjSIdFKGO1/TTcp1XFRzrOYqsRmxF545X750xN/CuGUICFHj35esC16eYYbF7iGF36Bm4cw4Jk=
+	t=1769422513; cv=none; b=tGQKi0Yel1xSjfJ0DO2pCWtYcaYRr7TelcmfWJ9X9IQPc76KRgjrxYk3TtBIpkd+QnZAtBYBx85PGoBmp3SxOekUbWYDXgUucEB4+B1BM+yzstaezhRLSPYtb3rRT1aU6Hugn81zkLul54eokpCampQB14JLMYuG/Rcu31AL4U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769415061; c=relaxed/simple;
-	bh=GR3zckIVpt6LCL6jaARW/kyCfDLSF1sXbOxzIXTnr6Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kh9yCQxDGCchzxWtwl9tgmGpqCib/nH7n1artrh1m2wjLFrzGOdUP6kHA5qLRz458wVmUgA+hJ5efiVxuBYfSi6+u5GARecFURqu5OJfDrkr83KAdB6jGI4BPYx0Q9Wzpsu60luFqrBH7yLumI6c3ov/i2eifVIxynDIrixtA3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=LKNeZMbq; arc=none smtp.client-ip=113.46.200.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1769422513; c=relaxed/simple;
+	bh=C7FSXnhNCzHXLjCA2xi/1xbacAe+dijTj6X7KneFqic=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qSXiMYhmJGs9JHgiIMFjBQn54wRPhJ4abHMzKJ9HUIkD+yYSyEFJVzN/qqf/ZCEiyq1Sc8zPafccZwpQy4Q4d6B5OxbeMqunSxkkLBbuTFkN52do8adpmgetcU5xWM7sDTLYIgBD4gLyiqnZ/yQ7QpnzNuQnyIqwdGAgCm7SA2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANEPVMOx; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="LKNeZMbq"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=YyYWratAnhyYvIsPU6aAB6x0/xonNgcbkzbNqPshYGQ=;
-	b=LKNeZMbqFLdvYz2YeBy0aAN1E+7l3nKA5q817rd/b/G3STx/GRuBXiAD5c861+osb+hPe8NUC
-	pvDYwKR//CrXuJwdmkMyKZGn2JYr8OLoJ3RAXiHnM6epBPN8ctp87YALoaZ/2SLjIRhOY7Er/YS
-	BmQvUpYiD+1CrPP+7DxOHXg=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
-	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4f01Mz3VmGznTVZ;
-	Mon, 26 Jan 2026 16:06:55 +0800 (CST)
-Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8F6D740363;
-	Mon, 26 Jan 2026 16:10:50 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemf200001.china.huawei.com
- (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Jan
- 2026 16:10:49 +0800
-Message-ID: <7e86cdbe-f16c-4fe8-92c5-e6fb89f49811@huawei.com>
-Date: Mon, 26 Jan 2026 16:10:49 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANEPVMOx"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47ee9817a35so32576085e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 02:15:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769422510; x=1770027310; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KXSsUeEe6Ho3pzDTRZABOlvJdmrHwM6q/RZLBXXZ1I4=;
+        b=ANEPVMOxI7Q7jzMGBLfHNWJ1BbywrfBF2C6HalfwE0/CRlPf383rpCvLlIYilbzMIP
+         ivNpmYv1J07pDH+6QLR0LnKJ8C/jq/WnkKYz8H6P86bBYvlvr7E50OmAxBK1ep8JtUaH
+         YhxDcmAduM7OaODY7AMHIxkv192yaI8LtFhKMbBzOVHsIt8MPi5ALzhURv6okWkj/2vp
+         UqgnzoWz+lAPOZWRy1HdU3uwzOfO11zo+0SIde+q615G1d+NXMU3MSJ6TIwbMoUvDdXc
+         ChET+IJnI2sxjcvHASj1oYAFtYVB5BgJroF+J4iirLVvdGVZvR3FIyJehzr/EwHFDBIk
+         PiSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769422510; x=1770027310;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KXSsUeEe6Ho3pzDTRZABOlvJdmrHwM6q/RZLBXXZ1I4=;
+        b=Symep4ij4DJmbH6mGc0F6nQQc6hpoZCnAOVzR+bebNIkayO15lxjn+RKGOrktdSm2J
+         jxAKyrijy6gz/RGbjL14XDrugwIi8hV2/7fQSfC0zSbsJYGkLm/UeyH0hATfKO6HXaOe
+         zR0O2J5fwfVs9AvE2Jd/V/gUOSu/7IXV8rIRQomipuoLKCib9upUcMWLtBxpgafWAxeh
+         fPcznhxChDROhTECbKTyJBNk50o8YC51Oio07DhWL793LxM5Q6xDYTKMCGwNASf00bS5
+         jv3cDYiewawCADBdsud8ctMPyL5BQ3/PKnYbBrHC/7niVd5NCq+ETAItjl2hMJjjP4ah
+         3Bxw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/gn1NfTY3Ji25aI+TTCmxNOhE7Cuyb2mzpGwhDozFNaIjvWlOsNESwxmioKuVrIecLIyIQiTZ/E9MCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6oUl3ChwPBhpUEZhCT0JfPIbln3nWEv5oh51DMGbmjR5d70WD
+	VYkkc53WPzgkaZ5lB+zEpapfNaANJehdpfB9wiAHbIvc5oJwYNNYAOwl
+X-Gm-Gg: AZuq6aKKuGfXMC7U1IgupCtEn8CZUR7a35J/JyJOLOkZ3YOWxRTZTxp0enBS+Z5yMRM
+	7opPiiRs3v070vX9M+TfHtiDE7U3Z/eoPsxx8dzIM5yCr+V44rRz+5wU3qib8z10AmzcrbFJWD6
+	aDkGNDxzVN0lCcz10K+diNFmTMAFvo2FGrhxKztajCjE9zJxXC9kIpT4WA6ZEhWuLka9yklhUYu
+	zJU0MH990XZH1/WnN3op0Dc5rV2sFjkf7/fG82AiH78HCIe+fJCum/yxaN7EWN5Qp3mizqTfV9a
+	g+r0VN3A5b1UqJgmCmnmE90h3ljzAQscMXnk09EPvbjVxPvkwrwlHMwvKkM0tFcbwRBeWCt4AvS
+	uaE72DoRnAHr+n3mDgTVkmURMG4xT1FkDSNeSHyL/F6P/HXCWmuhNHorv/h3ZhLwjN7OxN9RM59
+	GA
+X-Received: by 2002:a05:600c:1993:b0:47e:e20e:bbbf with SMTP id 5b1f17b1804b1-4805cf6690cmr67919285e9.24.1769422509856;
+        Mon, 26 Jan 2026 02:15:09 -0800 (PST)
+Received: from xeon ([188.163.112.49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d8a5c32sm319771795e9.11.2026.01.26.02.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jan 2026 02:15:09 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] ARM: tegra: lg-x3: add panel and bridge nodes
+Date: Mon, 26 Jan 2026 12:10:15 +0200
+Message-ID: <20260126101018.24450-2-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260126101018.24450-1-clamor95@gmail.com>
+References: <20260126101018.24450-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/9] ACPI: CPPC: Extend cppc_set_epp_perf() for
- FFH/SystemMemory
-To: Sumit Gupta <sumitg@nvidia.com>
-CC: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<corbet@lwn.net>, <rdunlap@infradead.org>, <ray.huang@amd.com>,
-	<gautham.shenoy@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<zhanjie9@hisilicon.com>, <linux-pm@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
-	<nhartman@nvidia.com>, <bbasu@nvidia.com>
-References: <20260120145623.2959636-1-sumitg@nvidia.com>
- <20260120145623.2959636-6-sumitg@nvidia.com>
- <a7a4d351-eed3-4ea6-a84f-e525b7ac13a6@huawei.com>
- <86303677-6124-424f-999d-c420eac0cceb@nvidia.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <86303677-6124-424f-999d-c420eac0cceb@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemf200001.china.huawei.com (7.202.181.227)
 
-On 2026/1/25 4:08, Sumit Gupta wrote:
-> 
-> On 22/01/26 14:48, zhenglifeng (A) wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 2026/1/20 22:56, Sumit Gupta wrote:
->>> Extend cppc_set_epp_perf() to write both auto_sel and energy_perf
->>> registers when they are in FFH or SystemMemory address space.
->>>
->>> This keeps the behavior consistent with PCC case where both registers
->>> are already updated together, but was missing for FFH/SystemMemory.
->>>
->>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>> ---
->>>   drivers/acpi/cppc_acpi.c | 24 +++++++++++++++++++++---
->>>   1 file changed, 21 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
->>> index de35aeb07833..45c6bd6ec24b 100644
->>> --- a/drivers/acpi/cppc_acpi.c
->>> +++ b/drivers/acpi/cppc_acpi.c
->>> @@ -1562,6 +1562,8 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
->>>        struct cpc_register_resource *auto_sel_reg;
->>>        struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
->>>        struct cppc_pcc_data *pcc_ss_data = NULL;
->>> +     bool autosel_ffh_sysmem;
->>> +     bool epp_ffh_sysmem;
->>>        int ret;
->>>
->>>        if (!cpc_desc) {
->>> @@ -1572,6 +1574,11 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
->>>        auto_sel_reg = &cpc_desc->cpc_regs[AUTO_SEL_ENABLE];
->>>        epp_set_reg = &cpc_desc->cpc_regs[ENERGY_PERF];
->>>
->>> +     epp_ffh_sysmem = CPC_SUPPORTED(epp_set_reg) &&
->>> +             (CPC_IN_FFH(epp_set_reg) || CPC_IN_SYSTEM_MEMORY(epp_set_reg));
->>> +     autosel_ffh_sysmem = CPC_SUPPORTED(auto_sel_reg) &&
->>> +             (CPC_IN_FFH(auto_sel_reg) || CPC_IN_SYSTEM_MEMORY(auto_sel_reg));
->>> +
->>>        if (CPC_IN_PCC(epp_set_reg) || CPC_IN_PCC(auto_sel_reg)) {
->>>                if (pcc_ss_id < 0) {
->>>                        pr_debug("Invalid pcc_ss_id for CPU:%d\n", cpu);
->>> @@ -1597,11 +1604,22 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
->>>                ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
->>>                up_write(&pcc_ss_data->pcc_lock);
->>>        } else if (osc_cpc_flexible_adr_space_confirmed &&
->>> -                CPC_SUPPORTED(epp_set_reg) && CPC_IN_FFH(epp_set_reg)) {
->>> -             ret = cpc_write(cpu, epp_set_reg, perf_ctrls->energy_perf);
->>> +                (epp_ffh_sysmem || autosel_ffh_sysmem)) {
->>> +             if (autosel_ffh_sysmem) {
->>> +                     ret = cpc_write(cpu, auto_sel_reg, enable);
->>> +                     if (ret)
->>> +                             return ret;
->>> +             }
->>> +
->>> +             if (epp_ffh_sysmem) {
->>> +                     ret = cpc_write(cpu, epp_set_reg,
->>> +                                     perf_ctrls->energy_perf);
->>> +                     if (ret)
->>> +                             return ret;
->>> +             }
->> Don't know if such a scenario exists, but if one of them is in PCC and the
->> other is in FFH or system memory, only the one in PCC will be updated
->> based on your modifications.
-> The current code handles mixed cases correctly.
-> When either register is in PCC, the first if block executes and calls
-> cpc_write() for both registers. The cpc_write() internally handles
-> each register's type (PCC, FFH, or SystemMemory)
+Add RGB-DSI bridge and panel nodes to LG Optimus 4X and Vu device trees.
 
-Yes, I was wrong.
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+---
+ arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts | 23 ++++++
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts | 27 +++++++
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi  | 81 +++++++++++++++++++-
+ 3 files changed, 130 insertions(+), 1 deletion(-)
 
-According to the first if block, cpc_wite() is OK to be called for a
-register not in PCC. So it looks like this 'else if' is unnecessary. Only
-CPC_SUPPORTED is needed to be checked before calling cpc_write(), isn't it?
-
-> 
-> 
-> Thank you,
-> Sumit Gupta
-> 
-> 
-> 
->>>        } else {
->>>                ret = -ENOTSUPP;
->>> -             pr_debug("_CPC in PCC and _CPC in FFH are not supported\n");
->>> +             pr_debug("_CPC in PCC/FFH/SystemMemory are not supported\n");
->>>        }
->>>
->>>        return ret;
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
+index c6ef0a20c19f..cc14e6dca770 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
++++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
+@@ -116,6 +116,29 @@ rmi4-f11@11 {
+ 		};
+ 	};
+ 
++	spi@7000dc00 {
++		dsi@2 {
++			/*
++			 * JDI 4.57" 720x1280 DX12D100VM0EAA MIPI DSI panel
++			 */
++			panel@1 {
++				compatible = "jdi,dx12d100vm0eaa", "renesas,r69328";
++				reg = <1>;
++
++				reset-gpios = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_LOW>;
++
++				vdd-supply = <&vcc_3v0_lcd>;
++				vddio-supply = <&iovcc_1v8_lcd>;
++
++				port {
++					panel_input: endpoint {
++						remote-endpoint = <&bridge_output>;
++					};
++				};
++			};
++		};
++	};
++
+ 	memory-controller@7000f000 {
+ 		emc-timings-0 {
+ 			/* SAMSUNG 1GB K4P8G304EB FGC1 533MHz */
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
+index e32fafc7f5e0..ab8f5cf317bf 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
++++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
+@@ -112,6 +112,33 @@ rmi4-f11@11 {
+ 		};
+ 	};
+ 
++	spi@7000dc00 {
++		dsi@2 {
++			/*
++			 * HITACHI/KOE 5" 768x1024 TX13D100VM0EAA MIPI DSI panel
++			 */
++			panel@1 {
++				compatible = "koe,tx13d100vm0eaa", "renesas,r61307";
++				reg = <1>;
++
++				reset-gpios = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_LOW>;
++
++				renesas,gamma = <3>;
++				renesas,column-inversion;
++				renesas,contrast;
++
++				vcc-supply = <&vcc_3v0_lcd>;
++				iovcc-supply = <&iovcc_1v8_lcd>;
++
++				port {
++					panel_input: endpoint {
++						remote-endpoint = <&bridge_output>;
++					};
++				};
++			};
++		};
++	};
++
+ 	memory-controller@7000f000 {
+ 		emc-timings-2 {
+ 			/* Hynix 1GB H9TCNNN8JDMMPR LPDDR2 533MHz */
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+index 909260a5d0fb..6eea8eacd7d5 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
++++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+@@ -20,6 +20,8 @@ aliases {
+ 		rtc0 = &pmic;
+ 		rtc1 = "/rtc@7000e000";
+ 
++		display0 = &lcd;
++
+ 		serial0 = &uartd; /* Console */
+ 		serial1 = &uartc; /* Bluetooth */
+ 		serial2 = &uartb; /* GPS */
+@@ -71,6 +73,21 @@ trustzone@bfe00000 {
+ 		};
+ 	};
+ 
++	host1x@50000000 {
++		lcd: dc@54200000 {
++			rgb {
++				status = "okay";
++
++				port {
++					dpi_output: endpoint {
++						remote-endpoint = <&bridge_input>;
++						bus-width = <24>;
++					};
++				};
++			};
++		};
++	};
++
+ 	vde@6001a000 {
+ 		assigned-clocks = <&tegra_car TEGRA30_CLK_VDE>;
+ 		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>;
+@@ -1357,7 +1374,58 @@ spi@7000dc00 {
+ 		status = "okay";
+ 		spi-max-frequency = <25000000>;
+ 
+-		/* DSI bridge */
++		dsi@2 {
++			compatible = "solomon,ssd2825";
++			reg = <2>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			spi-max-frequency = <1000000>;
++
++			spi-cpha;
++			spi-cpol;
++
++			reset-gpios = <&gpio TEGRA_GPIO(O, 2) GPIO_ACTIVE_LOW>;
++
++			dvdd-supply = <&vdd_1v2_rgb>;
++			avdd-supply = <&vdd_1v2_rgb>;
++			vddio-supply = <&vdd_1v8_vio>;
++
++			solomon,hs-zero-delay-ns = <300>;
++			solomon,hs-prep-delay-ns = <65>;
++
++			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_3>;
++
++			assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN3>,
++					  <&tegra_pmc TEGRA_PMC_CLK_OUT_3>;
++			assigned-clock-rates = <24000000>;
++
++			assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>,
++						 <&tegra_car TEGRA30_CLK_EXTERN3>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++
++					bridge_input: endpoint {
++						remote-endpoint = <&dpi_output>;
++						bus-width = <24>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++
++					bridge_output: endpoint {
++						remote-endpoint = <&panel_input>;
++					};
++				};
++			};
++		};
+ 	};
+ 
+ 	pmc@7000e400 {
+@@ -1617,6 +1685,17 @@ vdd_1v8_sen: regulator-sen1v8 {
+ 		vin-supply = <&vdd_3v3_vbat>;
+ 	};
+ 
++	vdd_1v2_rgb: regulator-rgb1v2 {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_1v2_rgb";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-boot-on;
++		gpio = <&gpio TEGRA_GPIO(B, 1) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		vin-supply = <&vdd_3v3_vbat>;
++	};
++
+ 	vcc_3v0_lcd: regulator-lcd3v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_3v0_lcd";
+-- 
+2.51.0
 
