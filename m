@@ -1,63 +1,63 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8036D1A7
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 19:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D972550A4
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 19:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769454951; cv=none; b=spZgRwdjVtg/hI89ntUfu1s3a4LplKGZ4w82asSgGVW3qsuChvZKy62rl0UlJ0/RdFLimjobgN5XjdGmp5BiQcUW+GokDdg5lrZvDnE363Cp36vCyXje16tBQsoqyA0eAx1ODCMFa8Q/LeezUKYl09FZz+szoLVnC+sjbKDQps8=
+	t=1769454952; cv=none; b=mEITn8PBkZqgqSDmw/jS0pVSrQqqJES94jHW+STsowoSnOqvhGF5z9PevjCcXenuRzR/+gsdTiJR6Q6xmv8d0UP0vnWoBwyefOGWBxgno1/KGxMrfLzB5bKIcTrodHziaWMDxhNw4ZXpgSd0Cpc9HOsCHkh/INACZ2ygLO7EHKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769454951; c=relaxed/simple;
-	bh=VJS7tKi4W2dCRDnFqQGBe73LZKmaMcajj+4bVj7gZPI=;
+	s=arc-20240116; t=1769454952; c=relaxed/simple;
+	bh=raBx+Qdai5ZkiQYhuTqQNlBy1l8tIYeinzCV8VWO67E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t+GjRTh/GYeFa5dv5XpmzLtx302IbBn2B8zSovmeHmaWlmbXHYsVnX3J9yJPRQe55wAbxX7M75Dtods5WouflCYYbNJOaEq2SPg+hgB3OCivicsEcV4cQEftHR1M9JIbiEgW7iZ48ayvz+z1Z4VCj+xMGqMDHZGY3KFyZfTxJXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTmoyt0m; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=KK9192mwDSY1tIC67xyO/LuH2KCRYjbxnvb9iENsfOOtBYV65vG/B8ZnMfY5aNB/icRsScwpba3MomBZq+rO4A3CRDnylAfKrWR1OGn+ubo/R39qMMcPRrCDnCEhaFHLO4Mvr2qUbi9/JH0awxU81LzD9xzGXSbqR6lVpH2nJr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcV78d1B; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTmoyt0m"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4801d7c72a5so37457585e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 11:15:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcV78d1B"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43590777e22so2949312f8f.3
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Jan 2026 11:15:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769454948; x=1770059748; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769454949; x=1770059749; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hW/vKp7i5enJJG2aIk5G1BDDlAi5srul9SKR0E7oEGI=;
-        b=VTmoyt0mNgEov0A1vaMX308R5EG2nre+aWXU/ojE3I33Uf9LCYnh8xv+wSP4ZyNDSM
-         QSlpnPjS3seu4k23k1bx27yJWuFfhid4mi5W1AkHtc7FDRzA6LL525Fdm4xCzjITUj1S
-         y3BfhmOvPfGM7GFTVoX4hnVfcIqTVR/HzuHPchPmkRtj5gx1N+hBbza8diwCWg7i+Ld3
-         y/YirVOtXr/lL/HoATzjCXayFdygmZK3e1BntM58TwIAM0QBOyHRVJAkv/MI9178S9tP
-         6RPE9RGJO4s6UHDYPFZNxi4xKX53O8qcLtA5hDkdKm/YeMdvbemoz02MUwAilSeadSno
-         E4Sg==
+        bh=TbHz9AHsTxZBxTlKqWlpfBap6OFPOQasclNmZKuJ2mQ=;
+        b=fcV78d1BJitlkNK+21CGtBcGE6WdY2GGXJRkt+HNIlJUYUQ3W6JoW5bPX+zuv5KYZf
+         u4nY8IySStMa2Jw/OVNjy0L8eHyyt3TOM9n1Ud3zEummZDwOH+3lFbjvcPq7cOm4UwpQ
+         z6WgQ2AolOk7rMuctsn3ACifh37uDyX/tmWbsgSGISyjsr92A7TKujwSMmAimoWqPmk8
+         y2GnCqrKpQQQA7HQpv0XQhS6nmy93y/bP2ccrdqGcdWu7LuxaYktK1Tip4pNvcVn966P
+         ejTeeRq6tXIl6ckON+wfPXKl3uFkvc1ujfTEQ/TRGWT8epSJTatvSu7yEjRZf07VV5rr
+         zQXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769454948; x=1770059748;
+        d=1e100.net; s=20230601; t=1769454949; x=1770059749;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hW/vKp7i5enJJG2aIk5G1BDDlAi5srul9SKR0E7oEGI=;
-        b=BjRSMSFpOpcA267TIw8julnG3AYroNTub4W52hrt8OlsG+bGMXzjp+7DoHlGQnEnFx
-         9SgJ1ANZ66etJ46yc/p9khp8SA/afu4GjP7QMrYIVylAU1CCYbMnLZdVIYOwZ6FGeF6v
-         74pMRiZ51otGzBUuE+Ft2VVnykop0qI/SP+jHN1s0A3HORRHEXUsi4zSFhg9Fw6QpooY
-         10fjxGrr3fz8PHZ1PloV/0ZMMBp7cWl6pSAohnegJe0EkW1KDfxBh+Uz0QnjNybJ3a9W
-         dscfN0D3fHy70EXbvsS07vpmiPOya7utGn+IKDCvShUZcQd1sQpsSOpikYPaI0YzGff7
-         M5HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnIlkRxwx1Sdh7Lz10IIU+d2xFIy7CKe2TQCxtEMEEFNSf/ufd8NYqehgtvf0RUIWGWgxuD230khaW7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZo+SDQVqi+z9pCk5pfqurfWHR2CRA0Pn6m1RiPp7g13KoVDYw
-	qBFwjWLQ/EpVNGJXf0PN/Vlsh+1sTps5U+gd3hf+hc+tOuXSm1EBcIrR
-X-Gm-Gg: AZuq6aIYJ654ZR8vPsaSp7qGeR96kYC038o6a2kk7Jdz6Ncu4J6jPegQP2iWhPzGBZK
-	RD8hewesGgbAaAvOG3r+M5nGDpWlX2XPUAkc7keRWpImd5uejk40mW+eH0lrBWP75c9JOATBb1x
-	Izh1ugzTR4uqHoLW/Ulj0Ufx0+nBCDTjWqhQP9AscXIvNF6CNlwcn4XSFSy96MWya8nQPuIdEjK
-	G+K3QuRNDIkEfFIuWScS2DupKUiVABXPcoCCNiwk9VN6K2C0GpSJ0hODC2axYyfilZ0hhhMwQkW
-	ZivFNnavqZKgTmH+HcNaUzEWHGHosdLqFTBSUsOEoKhIehoIvm/Q6QnSMvJwDdmISxtnTyK6mkU
-	W5MeiywIikvcmFRyP6S87s/cc5lLaZu1nBd24srNGNPYy5DmMmcoQLgDchge1C9uSFBAIxvR6le
-	PL
-X-Received: by 2002:a05:600c:19d2:b0:480:1a9a:e571 with SMTP id 5b1f17b1804b1-4805cf5f67emr80180905e9.22.1769454948026;
-        Mon, 26 Jan 2026 11:15:48 -0800 (PST)
+        bh=TbHz9AHsTxZBxTlKqWlpfBap6OFPOQasclNmZKuJ2mQ=;
+        b=m1i6eBjCwuL+W1SZ17ILTmxVulbuNVrI4vT9CYTYNTyVNE8CdBOoJg1QVEC+HiaPCt
+         l7MlUXwpE6jshPAbYGJ7UZxujTKw+OVenRVdnO7rO0itWssknd4I1gwqmjG2wcD5AGui
+         4/yD/GePA6/NysyN157IvFDXjB03EBBubIEDAVtMzj4vCpEKnK4DlvQkHrPY5NS7zZQu
+         j9yma+MP1lDfR1ccNyBiERrMTAtOiSaiM0KI4ZOk42dpWAOMAXKfKqY/RqTm5X0coLXi
+         +2asiyM9wrX1pfPeiNzRlV97LH4YoN+tW+/Kba3Hd/fgtTqnTRPvYjk06ac0XSi0f6e1
+         oHFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWM/E4kPovbTRCwinSjlAu9rWWR79gGxD5R8v9evLgSLuHptKCcPt8qmAER+5tf+ExvpbP2cFsbFYZQ2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0/PrSetToF1snsxqLsW7TJdFx+dEwhH70Bda5ZKMCGUwkQ3mL
+	j+53tS2MykOqECROpo9WyA5qxP0JxFU7Hd2W/8EUdhuczN1YM7gepkz0
+X-Gm-Gg: AZuq6aKKYZvUSWWqqro4Px3XDR1sPPnHv1f0fiUtmUH0pom5ZNyBsMdGNRg65I5k9x5
+	vkulZd6YcR0+zOQ+5S5gIjs4i1F5gFPpcnT+iJqgmSEa2Suj8NNJPo68cH0m+PgoxwiAn6XLqF6
+	OPumqpnwRlftFiH/AqHtm3LNGDEEkkGzUVOxSlc+m9vyR371Gc/+Y4IbUaGoFZ6R7a3W9yw5eQJ
+	W+sj8fQsUnqTuuvxn8csDgFbjV7FyWT9RJXvQvcE58uod7LiHqmCWtydKuS/ht+gklBVvUzrV7x
+	Q31TTCnEeBlN9I9Xj0clCIysIqbJPaSNXxgHwA709VA6X7P7jOvXPpRiL+S7ow9m8lwX1VWvwMM
+	kgromjQmwuZ0zL5scOCU0bwqFuVxDLIUUQbH0terKCBycQFo3ztXgAxsPyiRFn1pHV7ULlH/eYW
+	P+
+X-Received: by 2002:a05:6000:4203:b0:435:a647:a3b8 with SMTP id ffacd0b85a97d-435ca1872famr9039595f8f.36.1769454949020;
+        Mon, 26 Jan 2026 11:15:49 -0800 (PST)
 Received: from xeon ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c02d0dsm30958219f8f.4.2026.01.26.11.15.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c02d0dsm30958219f8f.4.2026.01.26.11.15.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 11:15:47 -0800 (PST)
+        Mon, 26 Jan 2026 11:15:48 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -69,9 +69,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/5] ARM: tegra: Add ACTMON node to Tegra114 device tree
-Date: Mon, 26 Jan 2026 21:15:32 +0200
-Message-ID: <20260126191536.78829-2-clamor95@gmail.com>
+Subject: [PATCH v1 2/5] ARM: tegra: Add External Memory Controller node on Tegra114
+Date: Mon, 26 Jan 2026 21:15:33 +0200
+Message-ID: <20260126191536.78829-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260126191536.78829-1-clamor95@gmail.com>
 References: <20260126191536.78829-1-clamor95@gmail.com>
@@ -83,9 +83,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for ACTMON on Tegra114. This is used to monitor activity from
-different components. Based on the collected statistics, the rate at which
-the external memory needs to be clocked can be derived.
+Add External Memory Controller node to the device-tree.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
@@ -94,28 +92,35 @@ Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 02d2c40dd79a..ef0618e9eec1 100644
+index ef0618e9eec1..77ab17f397f6 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -312,6 +312,18 @@ ahb: ahb@6000c000 {
- 		reg = <0x6000c000 0x150>;
+@@ -259,6 +259,8 @@ tegra_car: clock@60006000 {
+ 		reg = <0x60006000 0x1000>;
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
++
++		nvidia,external-memory-controller = <&emc>;
  	};
  
-+	actmon: actmon@6000c800 {
-+		compatible = "nvidia,tegra114-actmon";
-+		reg = <0x6000c800 0x400>;
-+		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA114_CLK_ACTMON>,
-+			 <&tegra_car TEGRA114_CLK_EMC>;
-+		clock-names = "actmon", "emc";
-+		resets = <&tegra_car TEGRA114_CLK_ACTMON>;
-+		reset-names = "actmon";
-+		#cooling-cells = <2>;
+ 	flow-controller@60007000 {
+@@ -655,6 +657,16 @@ mc: memory-controller@70019000 {
+ 		#iommu-cells = <1>;
+ 	};
+ 
++	emc: external-memory-controller@7001b000 {
++		compatible = "nvidia,tegra114-emc";
++		reg = <0x7001b000 0x800>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA114_CLK_EMC>;
++		clock-names = "emc";
++
++		nvidia,memory-controller = <&mc>;
 +	};
 +
- 	gpio: gpio@6000d000 {
- 		compatible = "nvidia,tegra114-gpio", "nvidia,tegra30-gpio";
- 		reg = <0x6000d000 0x1000>;
+ 	hda@70030000 {
+ 		compatible = "nvidia,tegra114-hda", "nvidia,tegra30-hda";
+ 		reg = <0x70030000 0x10000>;
 -- 
 2.51.0
 
