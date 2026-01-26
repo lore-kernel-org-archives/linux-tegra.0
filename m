@@ -1,28 +1,28 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010028.outbound.protection.outlook.com [52.101.46.28])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011004.outbound.protection.outlook.com [40.107.208.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC2034D932;
-	Mon, 26 Jan 2026 18:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F83634DB6D;
+	Mon, 26 Jan 2026 18:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.4
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769451200; cv=fail; b=u5jTYwVaTwuKrVylenNxkZ8jA4i6RrohptVLkaFdkc3NTWyGiVE6DT7cP6JN0iRvbOelCIo3TLqIfrzKCw7ghOa8d6HXxMJId/SJTdxce/c8fbDfYqEwp/g9dgy9Pzr/0QVOIt92/jal1dwx90/FnC9PzP3xx8RSyt1frb60zI4=
+	t=1769451206; cv=fail; b=QQJciabNN/Yn3MoJQvMdcvjaIT72X1wXE61MhwtPtOQfSEqBM0Kf6M5iK+sCQ0/0y9esrH/slUvF7FNaWjGKdDSmVhpgkvaxupE1nVu8I+8KSfpngvMsKLLonQ9xmPiVxFqFvoyqiMeFzOQREMWrfrQpicjyavIXo68gURFPG5M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769451200; c=relaxed/simple;
-	bh=a0KJJu2FOafD5BAMVclpDoU3oFxaRVlDEPs6OU3Dxmw=;
+	s=arc-20240116; t=1769451206; c=relaxed/simple;
+	bh=yl6zxSw91Yx8qkR2e+gTGSliiz6E7PM+dWAYI8rmG0M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DXpVFhGuYqe2U+5eNlFZk5jHVRYld1495mefnKMxDks0k/8HtQt+xCQf54eCW0eT1RDX5qKRCXTr9PrhWH737IDUUU1NKY3VY8MRkRawli1VD5dwOnQFvTPi2WHJB+07d4mZY7mFL4SD+8d0VqWmWh3gB4Z6XV76Z5g/O1KkOiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oIRmPS7L; arc=fail smtp.client-ip=52.101.46.28
+	 MIME-Version:Content-Type; b=aDzK1RdOHJtw+KgE1rQdcMU2yFEuw9/mC7yF6UXmCbDM7lTN9GGpdQwEzCjbblhqC/fJUaMWEINQ6Cgt5UEQMG5N83uyeGPjDyXvoZBWc+qiiOFJMD0+pk4OKtP0kXAh0ZPYtj8Nxlo6uIh/vC9lqGGjGs9U946Z5S7CKGcOxuQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=H3TYYh5b; arc=fail smtp.client-ip=40.107.208.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oIRmPS7L"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="H3TYYh5b"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bJkWZHbPtPNWIutish54Q3h2KX4GD2m1O6THlYUs+AFKzy9epQQxc0olJD2pW8mIYomZrxGc9hsAJZNWYhZjehEuV8eOsUd/60Jvbce8zmzc7ObcZ8cTGsV4/jclPyAaAyXjoCNqmtd2fhP1NPMzz59QslTur6EIezt7+/1BGJ/+1Ra8igtisGm4JtQl6WDnvx4QekeY/iMRWcdAZl2tIQRb7Qm3QH/wsuZqEQ8L+mozctlRo9l/ORmCdJjk9ap4EXe+Ait8lycWACBp/g7BLr/79QXtdgZmSaPmX2dXYgklRDhtkcIEkR+VqshppZEdnbp9ZvdFqMP3CZ04Nex2lA==
+ b=nB7wT8Hk48aF58sQo9mgeFg6tgs6bchx94aa7fPKvV8yDCQXXZwbSSY7nk3bSE9sj3uHgeBIjlydDDeiZYHHu2OnmaamqZbV7OfgaYWjkKZGjVSdicpGYtQuJPsqH1kOQcj2afN3ugFuS1NSHMhAbFLv/lRhjckkQh6gShxTQ5yTKc25wn4TO0cKMrg4DgvTw/D9vR2Vg2H/eGpb2tC1+RWwAancedSG1zsh678fQFqHyvjkWMMMOeNJi3qUOKrPTRZb/L9U+f4sVyHxtNuIOxIUusbGI8ofl9RMWihNxf5sYV9EnMO6y2YNz3Fn3WsAArBMI/gKTv+DhPCQWgHRUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wGU28m02fh2GLpogu/Ho6mdEWfmVROUdh4qaI76JK/E=;
- b=KCf1wkiURaTIo4vIZJE8+XoH1kgwaMFBSjolMz+oFgXLpDjw8RmplHCJ8IwgoYUXI/P0YKWL2sxymnUlAvPVREEJlV6jsnUwtPLRDQ7AhiIgPff99HpNKX8/2PdU4x15rfTmHvYMJa6/lJzy/b0RZTc1MC0j3wzgN3N6175rj7+PaDMymCnNFh5WM21RJwnWU+VcMK7UMcNbRLM0QWWhWF/oku6Xvz0mD5VtFkwDgx2pxlhg59uSXW3Y+NZ/96hXjMFQ41cByknsKpiVX5BIXs1iCS0oL+NgDB04Zop88fHW9x6RoS5EqdKOzYJMiCYTeYxUjamwlJDZaeE2Do/ghA==
+ bh=nJDSG7d5kYxZnIsI0GgZZi/fMZvdLqZQqBdxLxX0BQM=;
+ b=GDnOJoMNpxctpVey95nIhTCwLSw1lnZnqXq9+lycCFca1sdNchySX4FlVa6AAdDDlTrL8ZDFPYGkIk81B7Y4u65XYLbhdu8Nv1PuSlKd9Erm5abyjo9rJ04RuWdFUEPH4GaHO5JBQqQyseQYz+mKIavjSv4LlO0QgK0hy6rNlBFutjL070C42pGB7HSXc/QEu6iZLFjgWu7mUFd/th8sWlPg1BhOaCdTfbsyIMr/RilddIwc0/UhSwuuGgtFC6HRcWc78ZE9rw4a6xjRVmOKMbb1rl28vqfgUpWgmzlJzqLcgWbc/uudKdek6Pw0jxHt1MBTCza6RsQXS9bc78Lt3g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wGU28m02fh2GLpogu/Ho6mdEWfmVROUdh4qaI76JK/E=;
- b=oIRmPS7LSroKdDnTCuv6asOsY9gAM9HTBc8Wwin6gaFofij9479wzkCmx5Y54gQBd1cETdCup0wjjxR9cIBUsY1e8diD3nStTGNW38Hpgk2+gVrJhBYpKuErcSaz5KpbM8w1gX0eT81xEVrGsQSBBfk0zfjr50k3bcNXXC6uYRrY4EyYHciJscNxYlf3u443RajcwQdtzRosZQSFVPWGKmPUkuofenBvQx1mAFS3Eo73Nv4AX9gFkvZ3mWSJvS8EObr4VahrxYAYnUcWdzDGxbtdt8aNcm2O7SAVKmvrKNtYAowjLVbjWgDFMXyNDEGFTJgJjLVH3pEnM+i5oFnKag==
-Received: from SJ0PR05CA0080.namprd05.prod.outlook.com (2603:10b6:a03:332::25)
- by MN2PR12MB4270.namprd12.prod.outlook.com (2603:10b6:208:1d9::21) with
+ bh=nJDSG7d5kYxZnIsI0GgZZi/fMZvdLqZQqBdxLxX0BQM=;
+ b=H3TYYh5bOidQHOW5plXj7oZBYwXxX2guAxAO/O138xSf5Uc5GHW5CmJ6lNxqwAufKgHwOD2fBuyDKRoIhmpQ3GfXuPq86RgJLA7zpRVBlOk9QytgBUlqo4HA34oZWdTHGxAbuW7hRhNu/m2bGZ1s8HrVxeyQILorfmgogv+TDvhwYMfIlyDaYUwdKTwt4qhkr9LDBuhqizkln1dzjPNZkFLCOqs9sXKAZ0APnWKF4SCFDlWG3A01Ery2HD6pfxLC9k4o+2ERwj+qHdiH5wNH97teZBb1gIVviYbNAaSoBh9mytTzf1iZuqkRFVJPyIgEVo3zUM47CVPM+b1aO5c0lw==
+Received: from SJ0PR05CA0206.namprd05.prod.outlook.com (2603:10b6:a03:330::31)
+ by LV8PR12MB9714.namprd12.prod.outlook.com (2603:10b6:408:2a0::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.14; Mon, 26 Jan
- 2026 18:13:05 +0000
-Received: from SJ5PEPF000001F4.namprd05.prod.outlook.com
- (2603:10b6:a03:332:cafe::17) by SJ0PR05CA0080.outlook.office365.com
- (2603:10b6:a03:332::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.16; Mon, 26 Jan
+ 2026 18:13:11 +0000
+Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
+ (2603:10b6:a03:330:cafe::aa) by SJ0PR05CA0206.outlook.office365.com
+ (2603:10b6:a03:330::31) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.7 via Frontend Transport; Mon,
- 26 Jan 2026 18:13:00 +0000
+ 26 Jan 2026 18:13:02 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -49,20 +49,20 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.118.233 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.118.233) by
- SJ5PEPF000001F4.mail.protection.outlook.com (10.167.242.72) with Microsoft
+ SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9564.3 via Frontend Transport; Mon, 26 Jan 2026 18:13:04 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ 15.20.9564.3 via Frontend Transport; Mon, 26 Jan 2026 18:13:11 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
  (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 26 Jan
- 2026 10:12:53 -0800
+ 2026 10:13:00 -0800
 Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 26 Jan 2026 10:12:53 -0800
+ 15.2.2562.20; Mon, 26 Jan 2026 10:12:59 -0800
 Received: from build-bwicaksono-noble-20251018.internal (10.127.8.11) by
  mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20
- via Frontend Transport; Mon, 26 Jan 2026 10:12:52 -0800
+ via Frontend Transport; Mon, 26 Jan 2026 10:12:59 -0800
 From: Besar Wicaksono <bwicaksono@nvidia.com>
 To: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
 	<ilkka@os.amperecomputing.com>
@@ -72,9 +72,9 @@ CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<sdonthineni@nvidia.com>, <skelley@nvidia.com>, <ywan@nvidia.com>,
 	<mochs@nvidia.com>, <nirmoyd@nvidia.com>, Besar Wicaksono
 	<bwicaksono@nvidia.com>
-Subject: [PATCH 4/8] perf/arm_cspmu: nvidia: Add Tegra410 PCIE PMU
-Date: Mon, 26 Jan 2026 18:11:51 +0000
-Message-ID: <20260126181155.2776097-5-bwicaksono@nvidia.com>
+Subject: [PATCH 7/8] perf: add NVIDIA Tegra410 C2C PMU
+Date: Mon, 26 Jan 2026 18:11:54 +0000
+Message-ID: <20260126181155.2776097-8-bwicaksono@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260126181155.2776097-1-bwicaksono@nvidia.com>
 References: <20260126181155.2776097-1-bwicaksono@nvidia.com>
@@ -89,534 +89,1325 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F4:EE_|MN2PR12MB4270:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd233f17-af10-46a3-f55c-08de5d068cdf
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|LV8PR12MB9714:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7dca0bf2-8639-464b-d275-08de5d0690b1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uJeqUVkR0fRcX1AjvLUfnr4KZSVAnKJe/rTxEklvIVSlaTVpHmjC5J8UROBU?=
- =?us-ascii?Q?YMxpkH8Wk1IVv04f9ecFLxB782R9J5nDQ5OAn3xpOFGIFje2DY+b2EewCRRK?=
- =?us-ascii?Q?/f/JgOWbqSA6XSeg6AnzaX56po2tB0eXO9fE91mW+Te8bYkcCVjKqAh0QfyI?=
- =?us-ascii?Q?7hwKEXsjK1AEhxAyyaOPplVl23XSlELhtJ8PJzqhTdUhl4r3IKPNvt2f46Tc?=
- =?us-ascii?Q?SO6+U5PY0Mi+wcZPwJfGEH1nKT3PKtx5FfMfk2/cImp/xBEjUaT2RnR1m64R?=
- =?us-ascii?Q?l7bF0Fd3dhfO5CCjHJN2EsNaXaQR680Om17ZQpIo01N95MfVfau7DKnCyZpY?=
- =?us-ascii?Q?vosjCeQOzT8UiCvAH+8sqXxLm3crXKV4+WD54iVyZSIOaOb+whJzlkfIiwzf?=
- =?us-ascii?Q?c0nz4a3IrRSSPgwyzd/3LmrNmeN65VHvL0ySPdFmzRatqPwrulPphZxMsEsd?=
- =?us-ascii?Q?Md/Q5c6VHbbI6TnXogMUq4pnOv6l48TsIPK0wixt6oo1vjvmdUQnB6RdY3Ly?=
- =?us-ascii?Q?BCCGYUrEw/E559GUHZJ3EfXafkKIjwmTM+++2QkAtGwXB/NHAgExQEdPt6z5?=
- =?us-ascii?Q?zBOZSppIY7dn9GEReHXDZHsNgoFz3K0PNGQSYLzXDcXKnUR5nYpqF/8O5D86?=
- =?us-ascii?Q?WTvwhnlwsY3kO0jsYA1o7vcDW+2qN/KEhJfdZLYVxD48xfxm4/ffSL2sM8vL?=
- =?us-ascii?Q?qKz6QxDOWA//HhatntTuIVg2M/zQmR2gWzy6xtv5b7nbIkjtwvFUNpJ/RpqS?=
- =?us-ascii?Q?sTmkRZBpOwDQlN4mU2StBusL9mx2At9OnpwUc2cd795sBVUOpjzDC9uPdkY0?=
- =?us-ascii?Q?UsNtUjSuHUfwQX8XrYzcxVChAa4LBhhlSe0qIwopS+MmecLAa0FqQNltfqvm?=
- =?us-ascii?Q?yc7+4qq2nxHmEdfadJwrU7fqVwrCxfGjnV4+QHgHAIozXysqSOUPjcps6qR+?=
- =?us-ascii?Q?TqYVnVL6mgg3izhnV6/+cqz6ZexaG+mbRR+VbSczUxbOc/FhT/E8y1YXJ96L?=
- =?us-ascii?Q?36D5Ne8bfZ7oREQzWU+Wmua05Th1O6u3oi/U5+SMEEsiNGjKMvRu3nA+dg2W?=
- =?us-ascii?Q?okEvus6Uv2wEg6BsnOkVYGGnCRkR0SSNWv6WY+rjxTCfH+Z5MFe8D8uzFUk/?=
- =?us-ascii?Q?GmmKDvKaoVZeCCg7RglhxXM1iJ25Dj68FUPZOfFYdMkMHvEJxdljE4YRxwgv?=
- =?us-ascii?Q?nLNjk2swpFQDmJ7toJrZBLcGSfz+WQ6Ba1G/f+Dwo3713gTmfrT+28B17Eu/?=
- =?us-ascii?Q?nfHT/PbOKnSDhyX5RP6gl2WHercOQKHDwypGYeS0bPUdb6e2TCDd9O4NTxF5?=
- =?us-ascii?Q?Mwobk6I9mw9UUcPZ0aWsNCjjVgmRS3MJd08nMOK85DwlYagWW8h13bRKDoC7?=
- =?us-ascii?Q?rGDuAdyu05ekg6tMQf7jO+kWe7IFbK4MYifLMucCydEtryZZujKHha5kEjyk?=
- =?us-ascii?Q?libHXle3nbwgHJxxm/b2x1JvlZ3wxWa8R8SvpnYzRvn7gn8FJC0K0lFuAksy?=
- =?us-ascii?Q?6b99yAVwEU1lvkmDFfMcj+1LZB04ygEBsSUSVyyxK97A75E8E217xIZ3hDfb?=
- =?us-ascii?Q?nreiE4/eeaF91+z56ZMyoTbq0AjT6MzRxs0bzzbd8SCNINxDc0ntL93KNORi?=
- =?us-ascii?Q?fUAliCh0haMHXjaRsB/63zNQGiRuDIcVIvGFJDaB0g16DUxtJMwk/Cs62W/L?=
- =?us-ascii?Q?qa0QFg=3D=3D?=
+	=?us-ascii?Q?OSM/+Y82C7Nzw4irKb1L6Jj1Ed0iBW/+kZeWxPd9Lohp54i5o3FZwoVuk6af?=
+ =?us-ascii?Q?GBLThktB+MgOZRSY4FCFXxTOhO8yZhEu3A0AwmDFIjE9dnEt173T5fYnxwUh?=
+ =?us-ascii?Q?B9z9eaj7eBmpS+BfhyHmIu1U0atev6cBspOwcytGWHG5SND3ySN9GkUYW56e?=
+ =?us-ascii?Q?qnPBLxvJ3RfItU+wIIMYeAiCLiG7CD62NptdvnNUzAAyi2YaumOeVOfFDJxo?=
+ =?us-ascii?Q?wdejA1mxCcFo6MeLA/LWY5V3sG4Svr/PUzZkhlmwiWHk9HtUwBrUZrrOfVFo?=
+ =?us-ascii?Q?6dG2BGSIW5hocwbkkJ4Wt3BDkiEsRvBmiEYmpyEZHHYfrwcfiaP/LFjfteTm?=
+ =?us-ascii?Q?fKMWuvjanMIT3sQXR8yCmvOILszmwdqTsgD3sU+ZK40LDFDx/olei11J1dmB?=
+ =?us-ascii?Q?2cD78K/1D0SveEsaPXlq4mUjlHpAnOE2rP0NmU3yb3KN/Q3GxdAJyCi3UjtM?=
+ =?us-ascii?Q?6t2tE3OZfB8SjQQX/kpWDUwtkFs9uDtNSrlQVY0m/JaXojKf+X5nDl4Doqei?=
+ =?us-ascii?Q?wjbdVEtY06WOl2ALNpMVqd0CQVfogDiQnkkwEVJGZmqNHfSgc81Dab1FifoC?=
+ =?us-ascii?Q?KE5e8Q0dYADgBT7kRASpfgs3U+1VJpzp8p969dJgL6CACytGGavT8NLxhsqS?=
+ =?us-ascii?Q?HTjlCDCk2GgpV96TxevaskV/OHaSH6HF9AZFfGTpuEyFmyqE4rmsx5sAfNuu?=
+ =?us-ascii?Q?Us3g6XxhklT/I43hcudtemO8W1LocS2PF6YgYIb5lTFuFshgMlobCLpXHD0f?=
+ =?us-ascii?Q?tytX9JRwsQ7tj2yZOJVhboxEq568SRaxWO+pjD75Gufw4Ekbqk9R3Vo+uZ//?=
+ =?us-ascii?Q?gXYewchMk3ZZHg9lejeZGfh894vEJjncDkX+KmWpQqsnbLI3qFy6i3wFvFB7?=
+ =?us-ascii?Q?78zbWmL9++Ku2kozlLDLrezptwhRogylrC4EvMxVrGwAys7SUxyAbc6w/9D9?=
+ =?us-ascii?Q?84988+18zJktS3kqHPGZCeNngWCHR3z+s2/8jQ/Cw4wRPKGQ7J0K0bzzw06p?=
+ =?us-ascii?Q?94/b4THUpJep7IwUkI8wxbxpEuc/0C1RTy/VnYYm5dLuir5IRDCPR1ac3wRq?=
+ =?us-ascii?Q?0nxDNbqWdCNFRNQf4NqLsyh1dsOoWjROi79bAF0UaeLIF1eEcamr9aL0R4ns?=
+ =?us-ascii?Q?p/+QreL8tniNBLytQ0ysH3y0QmzfJaQVJjra3bODorVVaFtNduNFY4poHd3W?=
+ =?us-ascii?Q?1qqrHOa56hAg7UJXsTglkx/ts0kO8RyXCJFsDIepV5HuMlR4fjIHCkC63oY2?=
+ =?us-ascii?Q?+YEDM64eULTggF222SeVaE6oOGoL3LpY3EyxyD74HkhTxqhWogXEM6pfeGLO?=
+ =?us-ascii?Q?8Jq7s4Amk8e3BRHmBCb2xc89uKoxYNh0dHobx/SbfmthQSYyZe7ciOZL/aSW?=
+ =?us-ascii?Q?GM7s0zu0SDtSxCxaZuOD25KVvIN+cJPypbHUXvx1fS3Mf19D9Elg01zt4dMI?=
+ =?us-ascii?Q?rbVwHP+YDFnM5QGPZLdQmRk09as9yJhUn+hbO5Vk14jFhIGDzACkTQHMxNQV?=
+ =?us-ascii?Q?mE/13K3XyWraYKouCEDJDCsET0SmxXuORWWlCJzO+KGaUjjUigZGuVwlvld1?=
+ =?us-ascii?Q?TFguVTWY60qhv9NfCnHyLWMiQ+2Kmr/x7VKv6gILDzRqzlBQYC1SeSe+y3U7?=
+ =?us-ascii?Q?39yqbqxQE292SnL+FbLfAdcwl55oxNO3EXFt6P1qgZ8UQ0eXNT+NvSoWKRPf?=
+ =?us-ascii?Q?ACPGoQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2026 18:13:04.7526
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2026 18:13:11.1611
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd233f17-af10-46a3-f55c-08de5d068cdf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7dca0bf2-8639-464b-d275-08de5d0690b1
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F4.namprd05.prod.outlook.com
+	SJ5PEPF000001F1.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4270
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9714
 
-Adds PCIE PMU support in Tegra410 SOC.
+Adds NVIDIA C2C PMU support in Tegra410 SOC.
 
 Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 ---
- .../admin-guide/perf/nvidia-tegra410-pmu.rst  | 162 ++++++++++++++
- drivers/perf/arm_cspmu/nvidia_cspmu.c         | 208 +++++++++++++++++-
- 2 files changed, 368 insertions(+), 2 deletions(-)
+ .../admin-guide/perf/nvidia-tegra410-pmu.rst  |  151 +++
+ drivers/perf/Kconfig                          |    7 +
+ drivers/perf/Makefile                         |    1 +
+ drivers/perf/nvidia_t410_c2c_pmu.c            | 1061 +++++++++++++++++
+ 4 files changed, 1220 insertions(+)
+ create mode 100644 drivers/perf/nvidia_t410_c2c_pmu.c
 
 diff --git a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-index 7b7ba5700ca1..8528685ddb61 100644
+index 11fc1c88346a..f81f356debe1 100644
 --- a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
 +++ b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-@@ -6,6 +6,7 @@ The NVIDIA Tegra410 SoC includes various system PMUs to measure key performance
- metrics like memory bandwidth, latency, and utilization:
- 
- * Unified Coherence Fabric (UCF)
-+* PCIE
+@@ -9,6 +9,9 @@ metrics like memory bandwidth, latency, and utilization:
+ * PCIE
+ * PCIE-TGT
+ * CPU Memory (CMEM) Latency
++* NVLink-C2C
++* NV-CLink
++* NV-DLink
  
  PMU Driver
  ----------
-@@ -104,3 +105,164 @@ Example usage:
-   destination filter = remote memory::
+@@ -367,3 +370,151 @@ see /sys/bus/event_source/devices/nvidia_cmem_latency_pmu_<socket-id>.
+ Example usage::
  
-     perf stat -a -e nvidia_ucf_pmu_1/event=0x0,src_loc_noncpu=0x1,dst_rem=0x1/
+   perf stat -a -e '{nvidia_cmem_latency_pmu_0/rd_req/,nvidia_cmem_latency_pmu_0/rd_cum_outs/,nvidia_cmem_latency_pmu_0/cycles/}'
 +
-+PCIE PMU
-+--------
++NVLink-C2C PMU
++--------------
 +
-+This PMU monitors all read/write traffic from the root port(s) or a particular
-+BDF in a PCIE root complex (RC) to local or remote memory. There is one PMU per
-+PCIE RC in the SoC. Each RC can have up to 16 lanes that can be bifurcated into
-+up to 8 root ports. The traffic from each root port can be filtered using RP or
-+BDF filter. For example, specifying "src_rp_mask=0xFF" means the PMU counter will
-+capture traffic from all RPs. Please see below for more details.
++This PMU monitors latency events of memory read/write requests that pass through
++the NVIDIA Chip-to-Chip (C2C) interface. Bandwidth events are not available
++in this PMU, unlike the C2C PMU in Grace (Tegra241 SoC).
 +
-+The events and configuration options of this PMU device are described in sysfs,
-+see /sys/bus/event_source/devices/nvidia_pcie_pmu_<socket-id>_rc_<pcie-rc-id>.
++The events and configuration options of this PMU device are available in sysfs,
++see /sys/bus/event_source/devices/nvidia_nvlink_c2c_pmu_<socket-id>.
 +
-+The events in this PMU can be used to measure bandwidth, utilization, and
-+latency:
++The list of events:
 +
-+  * rd_req: count the number of read requests by PCIE device.
-+  * wr_req: count the number of write requests by PCIE device.
-+  * rd_bytes: count the number of bytes transferred by rd_req.
-+  * wr_bytes: count the number of bytes transferred by wr_req.
-+  * rd_cum_outs: count outstanding rd_req each cycle.
-+  * cycles: counts the PCIE cycles.
++  * IN_RD_CUM_OUTS: accumulated outstanding request (in cycles) of incoming read requests.
++  * IN_RD_REQ: the number of incoming read requests.
++  * IN_WR_CUM_OUTS: accumulated outstanding request (in cycles) of incoming write requests.
++  * IN_WR_REQ: the number of incoming write requests.
++  * OUT_RD_CUM_OUTS: accumulated outstanding request (in cycles) of outgoing read requests.
++  * OUT_RD_REQ: the number of outgoing read requests.
++  * OUT_WR_CUM_OUTS: accumulated outstanding request (in cycles) of outgoing write requests.
++  * OUT_WR_REQ: the number of outgoing write requests.
++  * CYCLES: NVLink-C2C interface cycle counts.
 +
-+The average bandwidth is calculated as::
++The incoming events count the reads/writes from remote device to the SoC.
++The outgoing events count the reads/writes from the SoC to remote device.
 +
-+   AVG_RD_BANDWIDTH_IN_GBPS = RD_BYTES / ELAPSED_TIME_IN_NS
-+   AVG_WR_BANDWIDTH_IN_GBPS = WR_BYTES / ELAPSED_TIME_IN_NS
++The sysfs /sys/bus/event_source/devices/nvidia_nvlink_c2c_pmu_<socket-id>/peer
++contains the information about the connected device.
 +
-+The average request rate is calculated as::
++When the C2C interface is connected to GPU(s), the user can use the
++"gpu_mask" parameter to filter traffic to/from specific GPU(s). Each bit represents the GPU
++index, e.g. "gpu_mask=0x1" corresponds to GPU 0 and "gpu_mask=0x3" is for GPU 0 and 1.
++The PMU will monitor all GPUs by default if not specified.
 +
-+   AVG_RD_REQUEST_RATE = RD_REQ / CYCLES
-+   AVG_WR_REQUEST_RATE = WR_REQ / CYCLES
++When connected to another SoC, only the read events are available.
 +
++The events can be used to calculate the average latency of the read/write requests::
 +
-+The average latency is calculated as::
++   C2C_FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
 +
-+   FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
-+   AVG_LATENCY_IN_CYCLES = RD_CUM_OUTS / RD_REQ
-+   AVERAGE_LATENCY_IN_NS = AVG_LATENCY_IN_CYCLES / FREQ_IN_GHZ
++   IN_RD_AVG_LATENCY_IN_CYCLES = IN_RD_CUM_OUTS / IN_RD_REQ
++   IN_RD_AVG_LATENCY_IN_NS = IN_RD_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
 +
-+The PMU events can be filtered based on the traffic source and destination.
-+The source filter indicates the PCIE devices that will be monitored. The
-+destination filter specifies the destination memory type, e.g. local system
-+memory (CMEM), local GPU memory (GMEM), or remote memory. The local/remote
-+classification of the destination filter is based on the home socket of the
-+address, not where the data actually resides. These filters can be found in
-+/sys/bus/event_source/devices/nvidia_pcie_pmu_<socket-id>_rc_<pcie-rc-id>/format/.
++   IN_WR_AVG_LATENCY_IN_CYCLES = IN_WR_CUM_OUTS / IN_WR_REQ
++   IN_WR_AVG_LATENCY_IN_NS = IN_WR_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
 +
-+The list of event filters:
++   OUT_RD_AVG_LATENCY_IN_CYCLES = OUT_RD_CUM_OUTS / OUT_RD_REQ
++   OUT_RD_AVG_LATENCY_IN_NS = OUT_RD_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
 +
-+* Source filter:
-+
-+  * src_rp_mask: bitmask of root ports that will be monitored. Each bit in this
-+    bitmask represents the RP index in the RC. If the bit is set, all devices under
-+    the associated RP will be monitored. E.g "src_rp_mask=0xF" will monitor
-+    devices in root port 0 to 3.
-+  * src_bdf: the BDF that will be monitored. This is a 16-bit value that
-+    follows formula: (bus << 8) + (device << 3) + (function). For example, the
-+    value of BDF 27:01.1 is 0x2781.
-+  * src_bdf_en: enable the BDF filter. If this is set, the BDF filter value in
-+    "src_bdf" is used to filter the traffic.
-+
-+  Note that Root-Port and BDF filters are mutually exclusive and the PMU in
-+  each RC can only have one BDF filter for the whole counters. If BDF filter
-+  is enabled, the BDF filter value will be applied to all events.
-+
-+* Destination filter:
-+
-+  * dst_loc_cmem: if set, count events to local system memory (CMEM) address
-+  * dst_loc_gmem: if set, count events to local GPU memory (GMEM) address
-+  * dst_loc_pcie_p2p: if set, count events to local PCIE peer address
-+  * dst_loc_pcie_cxl: if set, count events to local CXL memory address
-+  * dst_rem: if set, count events to remote memory address
-+
-+If the source filter is not specified, the PMU will count events from all root
-+ports. If the destination filter is not specified, the PMU will count events
-+to all destinations.
++   OUT_WR_AVG_LATENCY_IN_CYCLES = OUT_WR_CUM_OUTS / OUT_WR_REQ
++   OUT_WR_AVG_LATENCY_IN_NS = OUT_WR_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
 +
 +Example usage:
 +
-+* Count event id 0x0 from root port 0 of PCIE RC-0 on socket 0 targeting all
-+  destinations::
++  * Count incoming traffic from all GPUs connected via NVLink-C2C::
 +
-+    perf stat -a -e nvidia_pcie_pmu_0_rc_0/event=0x0,src_rp_mask=0x1/
++      perf stat -a -e nvidia_nvlink_c2c_pmu_0/in_rd_req/
 +
-+* Count event id 0x1 from root port 0 and 1 of PCIE RC-1 on socket 0 and
-+  targeting just local CMEM of socket 0::
++  * Count incoming traffic from GPU 0 connected via NVLink-C2C::
 +
-+    perf stat -a -e nvidia_pcie_pmu_0_rc_1/event=0x1,src_rp_mask=0x3,dst_loc_cmem=0x1/
++      perf stat -a -e nvidia_nvlink_c2c_pmu_0/in_rd_cum_outs,gpu_mask=0x1/
 +
-+* Count event id 0x2 from root port 0 of PCIE RC-2 on socket 1 targeting all
-+  destinations::
++  * Count incoming traffic from GPU 1 connected via NVLink-C2C::
 +
-+    perf stat -a -e nvidia_pcie_pmu_1_rc_2/event=0x2,src_rp_mask=0x1/
++      perf stat -a -e nvidia_nvlink_c2c_pmu_0/in_rd_cum_outs,gpu_mask=0x2/
 +
-+* Count event id 0x3 from root port 0 and 1 of PCIE RC-3 on socket 1 and
-+  targeting just local CMEM of socket 1::
++  * Count outgoing traffic to all GPUs connected via NVLink-C2C::
 +
-+    perf stat -a -e nvidia_pcie_pmu_1_rc_3/event=0x3,src_rp_mask=0x3,dst_loc_cmem=0x1/
++      perf stat -a -e nvidia_nvlink_c2c_pmu_0/out_rd_req/
 +
-+* Count event id 0x4 from BDF 01:01.0 of PCIE RC-4 on socket 0 targeting all
-+  destinations::
++  * Count outgoing traffic to GPU 0 connected via NVLink-C2C::
 +
-+    perf stat -a -e nvidia_pcie_pmu_0_rc_4/event=0x4,src_bdf=0x0180,src_bdf_en=0x1/
++      perf stat -a -e nvidia_nvlink_c2c_pmu_0/out_rd_cum_outs,gpu_mask=0x1/
 +
-+Mapping the RC# to lspci segment number can be non-trivial; hence a new NVIDIA
-+Designated Vendor Specific Capability (DVSEC) register is added into the PCIE config space
-+for each RP. This DVSEC has vendor id "10de" and DVSEC id of "0x4". The DVSEC register
-+contains the following information to map PCIE devices under the RP back to its RC# :
++  * Count outgoing traffic to GPU 1 connected via NVLink-C2C::
 +
-+  - Bus# (byte 0xc) : bus number as reported by the lspci output
-+  - Segment# (byte 0xd) : segment number as reported by the lspci output
-+  - RP# (byte 0xe) : port number as reported by LnkCap attribute from lspci for a device with Root Port capability
-+  - RC# (byte 0xf): root complex number associated with the RP
-+  - Socket# (byte 0x10): socket number associated with the RP
++      perf stat -a -e nvidia_nvlink_c2c_pmu_0/out_rd_cum_outs,gpu_mask=0x2/
 +
-+Example script for mapping lspci BDF to RC# and socket#::
++NV-CLink PMU
++------------
 +
-+  #!/bin/bash
-+  while read bdf rest; do
-+    dvsec4_reg=$(lspci -vv -s $bdf | awk '
-+      /Designated Vendor-Specific: Vendor=10de ID=0004/ {
-+        match($0, /\[([0-9a-fA-F]+)/, arr);
-+        print "0x" arr[1];
-+        exit
-+      }
-+    ')
-+    if [ -n "$dvsec4_reg" ]; then
-+      bus=$(setpci -s $bdf $(printf '0x%x' $((${dvsec4_reg} + 0xc))).b)
-+      segment=$(setpci -s $bdf $(printf '0x%x' $((${dvsec4_reg} + 0xd))).b)
-+      rp=$(setpci -s $bdf $(printf '0x%x' $((${dvsec4_reg} + 0xe))).b)
-+      rc=$(setpci -s $bdf $(printf '0x%x' $((${dvsec4_reg} + 0xf))).b)
-+      socket=$(setpci -s $bdf $(printf '0x%x' $((${dvsec4_reg} + 0x10))).b)
-+      echo "$bdf: Bus=$bus, Segment=$segment, RP=$rp, RC=$rc, Socket=$socket"
-+    fi
-+  done < <(lspci -d 10de:)
++This PMU monitors latency events of memory read requests that pass through
++the NV-CLINK interface. Bandwidth events are not available in this PMU.
++In Tegra410 SoC, the NV-CLink interface is used to connect to another Tegra410
++SoC and this PMU only counts read traffic.
 +
-+Example output::
++The events and configuration options of this PMU device are available in sysfs,
++see /sys/bus/event_source/devices/nvidia_nvclink_pmu_<socket-id>.
 +
-+  0001:00:00.0: Bus=00, Segment=01, RP=00, RC=00, Socket=00
-+  0002:80:00.0: Bus=80, Segment=02, RP=01, RC=01, Socket=00
-+  0002:a0:00.0: Bus=a0, Segment=02, RP=02, RC=01, Socket=00
-+  0002:c0:00.0: Bus=c0, Segment=02, RP=03, RC=01, Socket=00
-+  0002:e0:00.0: Bus=e0, Segment=02, RP=04, RC=01, Socket=00
-+  0003:00:00.0: Bus=00, Segment=03, RP=00, RC=02, Socket=00
-+  0004:00:00.0: Bus=00, Segment=04, RP=00, RC=03, Socket=00
-+  0005:00:00.0: Bus=00, Segment=05, RP=00, RC=04, Socket=00
-+  0005:40:00.0: Bus=40, Segment=05, RP=01, RC=04, Socket=00
-+  0005:c0:00.0: Bus=c0, Segment=05, RP=02, RC=04, Socket=00
-+  0006:00:00.0: Bus=00, Segment=06, RP=00, RC=05, Socket=00
-+  0009:00:00.0: Bus=00, Segment=09, RP=00, RC=00, Socket=01
-+  000a:80:00.0: Bus=80, Segment=0a, RP=01, RC=01, Socket=01
-+  000a:a0:00.0: Bus=a0, Segment=0a, RP=02, RC=01, Socket=01
-+  000a:e0:00.0: Bus=e0, Segment=0a, RP=03, RC=01, Socket=01
-+  000b:00:00.0: Bus=00, Segment=0b, RP=00, RC=02, Socket=01
-+  000c:00:00.0: Bus=00, Segment=0c, RP=00, RC=03, Socket=01
-+  000d:00:00.0: Bus=00, Segment=0d, RP=00, RC=04, Socket=01
-+  000d:40:00.0: Bus=40, Segment=0d, RP=01, RC=04, Socket=01
-+  000d:c0:00.0: Bus=c0, Segment=0d, RP=02, RC=04, Socket=01
-+  000e:00:00.0: Bus=00, Segment=0e, RP=00, RC=05, Socket=01
-diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-index c67667097a3c..3a5531d1f94c 100644
---- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-+++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-@@ -8,6 +8,7 @@
++The list of events:
++
++  * IN_RD_CUM_OUTS: accumulated outstanding request (in cycles) of incoming read requests.
++  * IN_RD_REQ: the number of incoming read requests.
++  * OUT_RD_CUM_OUTS: accumulated outstanding request (in cycles) of outgoing read requests.
++  * OUT_RD_REQ: the number of outgoing read requests.
++  * CYCLES: NV-CLINK interface cycle counts.
++
++The incoming events count the reads from remote device to the SoC.
++The outgoing events count the reads from the SoC to remote device.
++
++The events can be used to calculate the average latency of the read requests::
++
++   CLINK_FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
++
++   IN_RD_AVG_LATENCY_IN_CYCLES = IN_RD_CUM_OUTS / IN_RD_REQ
++   IN_RD_AVG_LATENCY_IN_NS = IN_RD_AVG_LATENCY_IN_CYCLES / CLINK_FREQ_IN_GHZ
++
++   OUT_RD_AVG_LATENCY_IN_CYCLES = OUT_RD_CUM_OUTS / OUT_RD_REQ
++   OUT_RD_AVG_LATENCY_IN_NS = OUT_RD_AVG_LATENCY_IN_CYCLES / CLINK_FREQ_IN_GHZ
++
++Example usage:
++
++  * Count incoming read traffic from remote SoC connected via NV-CLINK::
++
++      perf stat -a -e nvidia_nvclink_pmu_0/in_rd_req/
++
++  * Count outgoing read traffic to remote SoC connected via NV-CLINK::
++
++      perf stat -a -e nvidia_nvclink_pmu_0/out_rd_req/
++
++NV-DLink PMU
++------------
++
++This PMU monitors latency events of memory read requests that pass through
++the NV-DLINK interface.  Bandwidth events are not available in this PMU.
++In Tegra410 SoC, this PMU only counts CXL memory read traffic.
++
++The events and configuration options of this PMU device are available in sysfs,
++see /sys/bus/event_source/devices/nvidia_nvdlink_pmu_<socket-id>.
++
++The list of events:
++
++  * IN_RD_CUM_OUTS: accumulated outstanding read requests (in cycles) to CXL memory.
++  * IN_RD_REQ: the number of read requests to CXL memory.
++  * CYCLES: NV-DLINK interface cycle counts.
++
++The events can be used to calculate the average latency of the read requests::
++
++   DLINK_FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
++
++   IN_RD_AVG_LATENCY_IN_CYCLES = IN_RD_CUM_OUTS / IN_RD_REQ
++   IN_RD_AVG_LATENCY_IN_NS = IN_RD_AVG_LATENCY_IN_CYCLES / DLINK_FREQ_IN_GHZ
++
++Example usage:
++
++  * Count read events to CXL memory::
++
++      perf stat -a -e '{nvidia_nvdlink_pmu_0/in_rd_req/,nvidia_nvdlink_pmu_0/in_rd_cum_outs/}'
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index 9fed3c41d5ea..7ee36efe6bc0 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -318,4 +318,11 @@ config NVIDIA_TEGRA410_CMEM_LATENCY_PMU
+ 	  Enable perf support for CPU memory latency counters monitoring on
+ 	  NVIDIA Tegra410 SoC.
  
- #include <linux/io.h>
- #include <linux/module.h>
++config NVIDIA_TEGRA410_C2C_PMU
++	tristate "NVIDIA Tegra410 C2C PMU"
++	depends on ARM64 && ACPI
++	help
++	  Enable perf support for counters in NVIDIA C2C interface of NVIDIA
++	  Tegra410 SoC.
++
+ endmenu
+diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
+index 4aa6aad393c2..eb8a022dad9a 100644
+--- a/drivers/perf/Makefile
++++ b/drivers/perf/Makefile
+@@ -36,3 +36,4 @@ obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu/
+ obj-$(CONFIG_MESON_DDR_PMU) += amlogic/
+ obj-$(CONFIG_CXL_PMU) += cxl_pmu.o
+ obj-$(CONFIG_NVIDIA_TEGRA410_CMEM_LATENCY_PMU) += nvidia_t410_cmem_latency_pmu.o
++obj-$(CONFIG_NVIDIA_TEGRA410_C2C_PMU) += nvidia_t410_c2c_pmu.o
+diff --git a/drivers/perf/nvidia_t410_c2c_pmu.c b/drivers/perf/nvidia_t410_c2c_pmu.c
+new file mode 100644
+index 000000000000..362e0e5f8b24
+--- /dev/null
++++ b/drivers/perf/nvidia_t410_c2c_pmu.c
+@@ -0,0 +1,1061 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * NVIDIA Tegra410 C2C PMU driver.
++ *
++ * Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++#include <linux/acpi.h>
++#include <linux/bitops.h>
++#include <linux/cpumask.h>
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/perf_event.h>
++#include <linux/platform_device.h>
 +#include <linux/property.h>
- #include <linux/topology.h>
- 
- #include "arm_cspmu.h"
-@@ -28,6 +29,19 @@
- #define NV_UCF_FILTER_DST            GENMASK_ULL(11, 8)
- #define NV_UCF_FILTER_DEFAULT        (NV_UCF_FILTER_SRC | NV_UCF_FILTER_DST)
- 
-+#define NV_PCIE_V2_PORT_COUNT        8ULL
-+#define NV_PCIE_V2_FILTER_ID_MASK    GENMASK_ULL(24, 0)
-+#define NV_PCIE_V2_FILTER_PORT       GENMASK_ULL(NV_PCIE_V2_PORT_COUNT - 1, 0)
-+#define NV_PCIE_V2_FILTER_BDF_VAL    GENMASK_ULL(23, NV_PCIE_V2_PORT_COUNT)
-+#define NV_PCIE_V2_FILTER_BDF_EN     BIT(24)
-+#define NV_PCIE_V2_FILTER_BDF_VAL_EN GENMASK_ULL(24, NV_PCIE_V2_PORT_COUNT)
-+#define NV_PCIE_V2_FILTER_DEFAULT    NV_PCIE_V2_FILTER_PORT
 +
-+#define NV_PCIE_V2_DST_COUNT         5ULL
-+#define NV_PCIE_V2_FILTER2_ID_MASK   GENMASK_ULL(4, 0)
-+#define NV_PCIE_V2_FILTER2_DST       GENMASK_ULL(NV_PCIE_V2_DST_COUNT - 1, 0)
-+#define NV_PCIE_V2_FILTER2_DEFAULT   NV_PCIE_V2_FILTER2_DST
++/* The C2C interface types in Tegra410. */
++#define C2C_TYPE_NVLINK          0x0
++#define C2C_TYPE_NVCLINK         0x1
++#define C2C_TYPE_NVDLINK         0x2
++#define C2C_TYPE_COUNT           0x3
 +
- #define NV_GENERIC_FILTER_ID_MASK    GENMASK_ULL(31, 0)
- 
- #define NV_PRODID_MASK	(PMIIDR_PRODUCTID | PMIIDR_VARIANT | PMIIDR_REVISION)
-@@ -162,6 +176,16 @@ static struct attribute *ucf_pmu_event_attrs[] = {
- 	NULL,
- };
- 
-+static struct attribute *pcie_v2_pmu_event_attrs[] = {
-+	ARM_CSPMU_EVENT_ATTR(rd_bytes,		0x0),
-+	ARM_CSPMU_EVENT_ATTR(wr_bytes,		0x1),
-+	ARM_CSPMU_EVENT_ATTR(rd_req,		0x2),
-+	ARM_CSPMU_EVENT_ATTR(wr_req,		0x3),
-+	ARM_CSPMU_EVENT_ATTR(rd_cum_outs,	0x4),
-+	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-+	NULL,
++/* The type of the peer device connected to the C2C interface. */
++#define C2C_PEER_TYPE_CPU        0x0
++#define C2C_PEER_TYPE_GPU        0x1
++#define C2C_PEER_TYPE_CXLMEM     0x2
++#define C2C_PEER_TYPE_COUNT      0x3
++
++/* The number of peer devices can be connected to the C2C interface. */
++#define C2C_NR_PEER_CPU          0x1
++#define C2C_NR_PEER_GPU          0x2
++#define C2C_NR_PEER_CXLMEM       0x1
++#define C2C_NR_PEER_MAX          0x2
++
++/* Number of instances on each interface. */
++#define C2C_NR_INST_NVLINK       14
++#define C2C_NR_INST_NVCLINK      12
++#define C2C_NR_INST_NVDLINK      16
++#define C2C_NR_INST_MAX          16
++
++/* Register offsets. */
++#define C2C_CTRL                    0x864
++#define C2C_IN_STATUS               0x868
++#define C2C_CYCLE_CNTR              0x86c
++#define C2C_IN_RD_CUM_OUTS_CNTR     0x874
++#define C2C_IN_RD_REQ_CNTR          0x87c
++#define C2C_IN_WR_CUM_OUTS_CNTR     0x884
++#define C2C_IN_WR_REQ_CNTR          0x88c
++#define C2C_OUT_STATUS              0x890
++#define C2C_OUT_RD_CUM_OUTS_CNTR    0x898
++#define C2C_OUT_RD_REQ_CNTR         0x8a0
++#define C2C_OUT_WR_CUM_OUTS_CNTR    0x8a8
++#define C2C_OUT_WR_REQ_CNTR         0x8b0
++
++/* C2C_IN_STATUS register field. */
++#define C2C_IN_STATUS_CYCLE_OVF             BIT(0)
++#define C2C_IN_STATUS_IN_RD_CUM_OUTS_OVF    BIT(1)
++#define C2C_IN_STATUS_IN_RD_REQ_OVF         BIT(2)
++#define C2C_IN_STATUS_IN_WR_CUM_OUTS_OVF    BIT(3)
++#define C2C_IN_STATUS_IN_WR_REQ_OVF         BIT(4)
++
++/* C2C_OUT_STATUS register field. */
++#define C2C_OUT_STATUS_OUT_RD_CUM_OUTS_OVF    BIT(0)
++#define C2C_OUT_STATUS_OUT_RD_REQ_OVF         BIT(1)
++#define C2C_OUT_STATUS_OUT_WR_CUM_OUTS_OVF    BIT(2)
++#define C2C_OUT_STATUS_OUT_WR_REQ_OVF         BIT(3)
++
++/* Events. */
++#define C2C_EVENT_CYCLES                0x0
++#define C2C_EVENT_IN_RD_CUM_OUTS        0x1
++#define C2C_EVENT_IN_RD_REQ             0x2
++#define C2C_EVENT_IN_WR_CUM_OUTS        0x3
++#define C2C_EVENT_IN_WR_REQ             0x4
++#define C2C_EVENT_OUT_RD_CUM_OUTS       0x5
++#define C2C_EVENT_OUT_RD_REQ            0x6
++#define C2C_EVENT_OUT_WR_CUM_OUTS       0x7
++#define C2C_EVENT_OUT_WR_REQ            0x8
++
++#define C2C_NUM_EVENTS           0x9
++#define C2C_MASK_EVENT           0xFF
++#define C2C_MAX_ACTIVE_EVENTS    32
++
++#define C2C_ACTIVE_CPU_MASK        0x0
++#define C2C_ASSOCIATED_CPU_MASK    0x1
++
++/*
++ * Maximum poll count for reading counter value using high-low-high sequence.
++ */
++#define HILOHI_MAX_POLL    1000
++
++static unsigned long nv_c2c_pmu_cpuhp_state;
++
++/* PMU descriptor. */
++
++/* Tracks the events assigned to the PMU for a given logical index. */
++struct nv_c2c_pmu_hw_events {
++	/* The events that are active. */
++	struct perf_event *events[C2C_MAX_ACTIVE_EVENTS];
++
++	/*
++	 * Each bit indicates a logical counter is being used (or not) for an
++	 * event.
++	 */
++	DECLARE_BITMAP(used_ctrs, C2C_MAX_ACTIVE_EVENTS);
 +};
 +
- static struct attribute *generic_pmu_event_attrs[] = {
- 	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
- 	NULL,
-@@ -202,6 +226,19 @@ static struct attribute *ucf_pmu_format_attrs[] = {
- 	NULL,
- };
- 
-+static struct attribute *pcie_v2_pmu_format_attrs[] = {
-+	ARM_CSPMU_FORMAT_EVENT_ATTR,
-+	ARM_CSPMU_FORMAT_ATTR(src_rp_mask, "config1:0-7"),
-+	ARM_CSPMU_FORMAT_ATTR(src_bdf, "config1:8-23"),
-+	ARM_CSPMU_FORMAT_ATTR(src_bdf_en, "config1:24"),
-+	ARM_CSPMU_FORMAT_ATTR(dst_loc_cmem, "config2:0"),
-+	ARM_CSPMU_FORMAT_ATTR(dst_loc_gmem, "config2:1"),
-+	ARM_CSPMU_FORMAT_ATTR(dst_loc_pcie_p2p, "config2:2"),
-+	ARM_CSPMU_FORMAT_ATTR(dst_loc_pcie_cxl, "config2:3"),
-+	ARM_CSPMU_FORMAT_ATTR(dst_rem, "config2:4"),
-+	NULL,
++struct nv_c2c_pmu {
++	struct pmu pmu;
++	struct device *dev;
++	struct acpi_device *acpi_dev;
++
++	const char *name;
++	const char *identifier;
++
++	unsigned int c2c_type;
++	unsigned int peer_type;
++	unsigned int socket;
++	unsigned int nr_inst;
++	unsigned int nr_peer;
++	unsigned long peer_insts[C2C_NR_PEER_MAX][BITS_TO_LONGS(C2C_NR_INST_MAX)];
++	u32 filter_default;
++
++	struct nv_c2c_pmu_hw_events hw_events;
++
++	cpumask_t associated_cpus;
++	cpumask_t active_cpu;
++
++	struct hlist_node cpuhp_node;
++
++	struct attribute **formats;
++	const struct attribute_group *attr_groups[6];
++
++	void __iomem *base_broadcast;
++	void __iomem *base[C2C_NR_INST_MAX];
 +};
 +
- static struct attribute *generic_pmu_format_attrs[] = {
- 	ARM_CSPMU_FORMAT_EVENT_ATTR,
- 	ARM_CSPMU_FORMAT_FILTER_ATTR,
-@@ -233,6 +270,32 @@ nv_cspmu_get_name(const struct arm_cspmu *cspmu)
- 	return ctx->name;
- }
- 
-+#if defined(CONFIG_ACPI)
-+static int nv_cspmu_get_inst_id(const struct arm_cspmu *cspmu, u32 *id)
++#define to_c2c_pmu(p) (container_of(p, struct nv_c2c_pmu, pmu))
++
++/* Get event type from perf_event. */
++static inline u32 get_event_type(struct perf_event *event)
 +{
-+	struct fwnode_handle *fwnode;
-+	struct acpi_device *adev;
-+	int ret;
-+
-+	adev = arm_cspmu_acpi_dev_get(cspmu);
-+	if (!adev)
-+		return -ENODEV;
-+
-+	fwnode = acpi_fwnode_handle(adev);
-+	ret = fwnode_property_read_u32(fwnode, "instance_id", id);
-+	if (ret)
-+		dev_err(cspmu->dev, "Failed to get instance ID\n");
-+
-+	acpi_dev_put(adev);
-+	return ret;
-+}
-+#else
-+static int nv_cspmu_get_inst_id(const struct arm_cspmu *cspmu, u32 *id)
-+{
-+	return -EINVAL;
-+}
-+#endif
-+
- static u32 nv_cspmu_event_filter(const struct perf_event *event)
- {
- 	const struct nv_cspmu_ctx *ctx =
-@@ -278,6 +341,20 @@ static void nv_cspmu_set_ev_filter(struct arm_cspmu *cspmu,
- 	}
- }
- 
-+static void nv_cspmu_reset_ev_filter(struct arm_cspmu *cspmu,
-+				     const struct perf_event *event)
-+{
-+	const struct nv_cspmu_ctx *ctx =
-+		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
-+	const u32 offset = 4 * event->hw.idx;
-+
-+	if (ctx->get_filter)
-+		writel(0, cspmu->base0 + PMEVFILTR + offset);
-+
-+	if (ctx->get_filter2)
-+		writel(0, cspmu->base0 + PMEVFILT2R + offset);
++	return (event->attr.config) & C2C_MASK_EVENT;
 +}
 +
- static void nv_cspmu_set_cc_filter(struct arm_cspmu *cspmu,
- 				   const struct perf_event *event)
- {
-@@ -308,9 +385,103 @@ static u32 ucf_pmu_event_filter(const struct perf_event *event)
- 	return ret;
- }
- 
-+static u32 pcie_v2_pmu_bdf_val_en(u32 filter)
++static inline u32 get_filter_mask(struct perf_event *event)
 +{
-+	const u32 bdf_en = FIELD_GET(NV_PCIE_V2_FILTER_BDF_EN, filter);
++	u32 filter;
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
 +
-+	/* Returns both BDF value and enable bit if BDF filtering is enabled. */
-+	if (bdf_en)
-+		return FIELD_GET(NV_PCIE_V2_FILTER_BDF_VAL_EN, filter);
++	filter = ((u32)event->attr.config1) & c2c_pmu->filter_default;
++	if (filter == 0)
++		filter = c2c_pmu->filter_default;
 +
-+	/* Ignore the BDF value if BDF filter is not enabled. */
++	return filter;
++}
++
++/* PMU operations. */
++
++static int nv_c2c_pmu_get_event_idx(struct nv_c2c_pmu_hw_events *hw_events,
++				    struct perf_event *event)
++{
++	u32 idx;
++
++	idx = find_first_zero_bit(hw_events->used_ctrs, C2C_MAX_ACTIVE_EVENTS);
++	if (idx >= C2C_MAX_ACTIVE_EVENTS)
++		return -EAGAIN;
++
++	set_bit(idx, hw_events->used_ctrs);
++
++	return idx;
++}
++
++static bool
++nv_c2c_pmu_validate_event(struct pmu *pmu,
++			  struct nv_c2c_pmu_hw_events *hw_events,
++			  struct perf_event *event)
++{
++	if (is_software_event(event))
++		return true;
++
++	/* Reject groups spanning multiple HW PMUs. */
++	if (event->pmu != pmu)
++		return false;
++
++	return nv_c2c_pmu_get_event_idx(hw_events, event) >= 0;
++}
++
++/*
++ * Make sure the group of events can be scheduled at once
++ * on the PMU.
++ */
++static bool nv_c2c_pmu_validate_group(struct perf_event *event)
++{
++	struct perf_event *sibling, *leader = event->group_leader;
++	struct nv_c2c_pmu_hw_events fake_hw_events;
++
++	if (event->group_leader == event)
++		return true;
++
++	memset(&fake_hw_events, 0, sizeof(fake_hw_events));
++
++	if (!nv_c2c_pmu_validate_event(event->pmu, &fake_hw_events, leader))
++		return false;
++
++	for_each_sibling_event(sibling, leader) {
++		if (!nv_c2c_pmu_validate_event(event->pmu, &fake_hw_events,
++					       sibling))
++			return false;
++	}
++
++	return nv_c2c_pmu_validate_event(event->pmu, &fake_hw_events, event);
++}
++
++static int nv_c2c_pmu_event_init(struct perf_event *event)
++{
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
++	struct hw_perf_event *hwc = &event->hw;
++	u32 event_type = get_event_type(event);
++
++	if (event->attr.type != event->pmu->type ||
++	    event_type >= C2C_NUM_EVENTS)
++		return -ENOENT;
++
++	/*
++	 * Following other "uncore" PMUs, we do not support sampling mode or
++	 * attach to a task (per-process mode).
++	 */
++	if (is_sampling_event(event)) {
++		dev_dbg(c2c_pmu->pmu.dev, "Can't support sampling events\n");
++		return -EOPNOTSUPP;
++	}
++
++	if (event->cpu < 0 || event->attach_state & PERF_ATTACH_TASK) {
++		dev_dbg(c2c_pmu->pmu.dev, "Can't support per-task counters\n");
++		return -EINVAL;
++	}
++
++	/*
++	 * Make sure the CPU assignment is on one of the CPUs associated with
++	 * this PMU.
++	 */
++	if (!cpumask_test_cpu(event->cpu, &c2c_pmu->associated_cpus)) {
++		dev_dbg(c2c_pmu->pmu.dev,
++			"Requested cpu is not associated with the PMU\n");
++		return -EINVAL;
++	}
++
++	/* Enforce the current active CPU to handle the events in this PMU. */
++	event->cpu = cpumask_first(&c2c_pmu->active_cpu);
++	if (event->cpu >= nr_cpu_ids)
++		return -EINVAL;
++
++	if (!nv_c2c_pmu_validate_group(event))
++		return -EINVAL;
++
++	hwc->idx = -1;
++	hwc->config = event_type;
++
 +	return 0;
 +}
 +
-+static u32 pcie_v2_pmu_event_filter(const struct perf_event *event)
++/*
++ * Read 64-bit register as a pair of 32-bit registers using hi-lo-hi sequence.
++ */
++static u64 read_reg64_hilohi(const void __iomem *addr, u32 max_poll_count)
 +{
-+	u32 filter, lead_filter, lead_bdf;
-+	struct perf_event *leader;
-+	const struct nv_cspmu_ctx *ctx =
-+		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
++	u32 val_lo, val_hi;
++	u64 val;
 +
-+	filter = event->attr.config1 & ctx->filter_mask;
-+	if (filter != 0)
-+		return filter;
++	/* Use high-low-high sequence to avoid tearing */
++	do {
++		if (max_poll_count-- == 0) {
++			pr_err("NV C2C PMU: timeout hi-low-high sequence\n");
++			return 0;
++		}
 +
-+	leader = event->group_leader;
++		val_hi = readl(addr + 4);
++		val_lo = readl(addr);
++	} while (val_hi != readl(addr + 4));
 +
-+	/* Use leader's filter value if its BDF filtering is enabled. */
-+	if (event != leader) {
-+		lead_filter = pcie_v2_pmu_event_filter(leader);
-+		lead_bdf = pcie_v2_pmu_bdf_val_en(lead_filter);
-+		if (lead_bdf != 0)
-+			return lead_filter;
-+	}
++	val = (((u64)val_hi << 32) | val_lo);
 +
-+	/* Otherwise, return default filter value. */
-+	return ctx->filter_default_val;
++	return val;
 +}
 +
-+static int pcie_v2_pmu_validate_event(struct arm_cspmu *cspmu,
-+				   struct perf_event *new_ev)
++static void nv_c2c_pmu_check_status(struct nv_c2c_pmu *c2c_pmu, u32 instance)
 +{
-+	/*
-+	 * Make sure the events are using same BDF filter since the PCIE-SRC PMU
-+	 * only supports one common BDF filter setting for all of the counters.
-+	 */
++	u32 in_status, out_status;
 +
-+	int idx;
-+	u32 new_filter, new_rp, new_bdf, new_lead_filter, new_lead_bdf;
-+	struct perf_event *leader, *new_leader;
++	in_status = readl(c2c_pmu->base[instance] + C2C_IN_STATUS);
++	out_status = readl(c2c_pmu->base[instance] + C2C_OUT_STATUS);
 +
-+	if (cspmu->impl.ops.is_cycle_counter_event(new_ev))
-+		return 0;
++	if (in_status || out_status)
++		dev_warn(c2c_pmu->dev,
++			"C2C PMU overflow in: 0x%x, out: 0x%x\n",
++			in_status, out_status);
++}
 +
-+	new_leader = new_ev->group_leader;
++static u32 nv_c2c_ctr_offset[C2C_NUM_EVENTS] = {
++	[C2C_EVENT_CYCLES] = C2C_CYCLE_CNTR,
++	[C2C_EVENT_IN_RD_CUM_OUTS] = C2C_IN_RD_CUM_OUTS_CNTR,
++	[C2C_EVENT_IN_RD_REQ] = C2C_IN_RD_REQ_CNTR,
++	[C2C_EVENT_IN_WR_CUM_OUTS] = C2C_IN_WR_CUM_OUTS_CNTR,
++	[C2C_EVENT_IN_WR_REQ] = C2C_IN_WR_REQ_CNTR,
++	[C2C_EVENT_OUT_RD_CUM_OUTS] = C2C_OUT_RD_CUM_OUTS_CNTR,
++	[C2C_EVENT_OUT_RD_REQ] = C2C_OUT_RD_REQ_CNTR,
++	[C2C_EVENT_OUT_WR_CUM_OUTS] = C2C_OUT_WR_CUM_OUTS_CNTR,
++	[C2C_EVENT_OUT_WR_REQ] = C2C_OUT_WR_REQ_CNTR,
++};
 +
-+	new_filter = pcie_v2_pmu_event_filter(new_ev);
-+	new_lead_filter = pcie_v2_pmu_event_filter(new_leader);
++static u64 nv_c2c_pmu_read_counter(struct perf_event *event)
++{
++	u32 ctr_id, ctr_offset, filter_mask, filter_idx, inst_idx;
++	unsigned long *inst_mask;
++	DECLARE_BITMAP(filter_bitmap, C2C_NR_PEER_MAX);
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
++	u64 val = 0;
 +
-+	new_bdf = pcie_v2_pmu_bdf_val_en(new_filter);
-+	new_lead_bdf = pcie_v2_pmu_bdf_val_en(new_lead_filter);
++	filter_mask = get_filter_mask(event);
++	bitmap_from_arr32(filter_bitmap, &filter_mask, c2c_pmu->nr_peer);
 +
-+	new_rp = FIELD_GET(NV_PCIE_V2_FILTER_PORT, new_filter);
++	ctr_id = event->hw.config;
++	ctr_offset = nv_c2c_ctr_offset[ctr_id];
 +
-+	if (new_rp != 0 && new_bdf != 0) {
-+		dev_err(cspmu->dev,
-+			"RP and BDF filtering are mutually exclusive\n");
-+		return -EINVAL;
-+	}
++	for_each_set_bit(filter_idx, filter_bitmap, c2c_pmu->nr_peer) {
++		inst_mask = c2c_pmu->peer_insts[filter_idx];
++		for_each_set_bit(inst_idx, inst_mask, c2c_pmu->nr_inst) {
++			nv_c2c_pmu_check_status(c2c_pmu, inst_idx);
 +
-+	if (new_bdf != new_lead_bdf) {
-+		dev_err(cspmu->dev,
-+			"sibling and leader BDF value should be equal\n");
-+		return -EINVAL;
-+	}
++			/*
++			 * Each instance share same clock and the driver always
++			 * enables all instances. So we can use the counts from
++			 * one instance for cycle counter.
++			 */
++			if (ctr_id == C2C_EVENT_CYCLES)
++				return read_reg64_hilohi(
++					c2c_pmu->base[inst_idx] + ctr_offset,
++					HILOHI_MAX_POLL);
 +
-+	/* Compare BDF filter on existing events. */
-+	idx = find_first_bit(cspmu->hw_events.used_ctrs,
-+			     cspmu->cycle_counter_logical_idx);
-+
-+	if (idx != cspmu->cycle_counter_logical_idx) {
-+		leader = cspmu->hw_events.events[idx]->group_leader;
-+
-+		const u32 lead_filter = pcie_v2_pmu_event_filter(leader);
-+		const u32 lead_bdf = pcie_v2_pmu_bdf_val_en(lead_filter);
-+
-+		if (new_lead_bdf != lead_bdf) {
-+			dev_err(cspmu->dev, "only one BDF value is supported\n");
-+			return -EINVAL;
++			/*
++			 * For other events, sum up the counts from all instances.
++			 */
++			val += read_reg64_hilohi(
++				c2c_pmu->base[inst_idx] + ctr_offset,
++				HILOHI_MAX_POLL);
 +		}
 +	}
 +
++	return val;
++}
++
++static void nv_c2c_pmu_event_update(struct perf_event *event)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	u64 prev, now;
++
++	do {
++		prev = local64_read(&hwc->prev_count);
++		now = nv_c2c_pmu_read_counter(event);
++	} while (local64_cmpxchg(&hwc->prev_count, prev, now) != prev);
++
++	local64_add(now - prev, &event->count);
++}
++
++static void nv_c2c_pmu_start(struct perf_event *event, int pmu_flags)
++{
++	event->hw.state = 0;
++}
++
++static void nv_c2c_pmu_stop(struct perf_event *event, int pmu_flags)
++{
++	event->hw.state |= PERF_HES_STOPPED;
++}
++
++static int nv_c2c_pmu_add(struct perf_event *event, int flags)
++{
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
++	struct nv_c2c_pmu_hw_events *hw_events = &c2c_pmu->hw_events;
++	struct hw_perf_event *hwc = &event->hw;
++	int idx;
++
++	if (WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
++					   &c2c_pmu->associated_cpus)))
++		return -ENOENT;
++
++	idx = nv_c2c_pmu_get_event_idx(hw_events, event);
++	if (idx < 0)
++		return idx;
++
++	hw_events->events[idx] = event;
++	hwc->idx = idx;
++	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
++
++	if (flags & PERF_EF_START)
++		nv_c2c_pmu_start(event, PERF_EF_RELOAD);
++
++	/* Propagate changes to the userspace mapping. */
++	perf_event_update_userpage(event);
++
 +	return 0;
 +}
 +
- enum nv_cspmu_name_fmt {
- 	NAME_FMT_GENERIC,
--	NAME_FMT_SOCKET
-+	NAME_FMT_SOCKET,
-+	NAME_FMT_SOCKET_INST
- };
- 
- struct nv_cspmu_match {
-@@ -430,6 +601,27 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
- 		.init_data = NULL
- 	  },
- 	},
-+	{
-+	  .prodid = 0x10301000,
-+	  .prodid_mask = NV_PRODID_MASK,
-+	  .name_pattern = "nvidia_pcie_pmu_%u_rc_%u",
-+	  .name_fmt = NAME_FMT_SOCKET_INST,
-+	  .template_ctx = {
-+		.event_attr = pcie_v2_pmu_event_attrs,
-+		.format_attr = pcie_v2_pmu_format_attrs,
-+		.filter_mask = NV_PCIE_V2_FILTER_ID_MASK,
-+		.filter_default_val = NV_PCIE_V2_FILTER_DEFAULT,
-+		.filter2_mask = NV_PCIE_V2_FILTER2_ID_MASK,
-+		.filter2_default_val = NV_PCIE_V2_FILTER2_DEFAULT,
-+		.get_filter = pcie_v2_pmu_event_filter,
-+		.get_filter2 = nv_cspmu_event_filter2,
-+		.init_data = NULL
-+	  },
-+	  .ops = {
-+		.validate_event = pcie_v2_pmu_validate_event,
-+		.reset_ev_filter = nv_cspmu_reset_ev_filter,
-+	  }
-+	},
- 	{
- 	  .prodid = 0,
- 	  .prodid_mask = 0,
-@@ -453,7 +645,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
- static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
- 				  const struct nv_cspmu_match *match)
- {
--	char *name;
-+	char *name = NULL;
- 	struct device *dev = cspmu->dev;
- 
- 	static atomic_t pmu_generic_idx = {0};
-@@ -467,6 +659,16 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
- 				       socket);
- 		break;
- 	}
-+	case NAME_FMT_SOCKET_INST: {
-+		const int cpu = cpumask_first(&cspmu->associated_cpus);
-+		const int socket = cpu_to_node(cpu);
-+		u32 inst_id;
++static void nv_c2c_pmu_del(struct perf_event *event, int flags)
++{
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
++	struct nv_c2c_pmu_hw_events *hw_events = &c2c_pmu->hw_events;
++	struct hw_perf_event *hwc = &event->hw;
++	int idx = hwc->idx;
 +
-+		if (!nv_cspmu_get_inst_id(cspmu, &inst_id))
-+			name = devm_kasprintf(dev, GFP_KERNEL,
-+					match->name_pattern, socket, inst_id);
-+		break;
++	nv_c2c_pmu_stop(event, PERF_EF_UPDATE);
++
++	hw_events->events[idx] = NULL;
++
++	clear_bit(idx, hw_events->used_ctrs);
++
++	perf_event_update_userpage(event);
++}
++
++static void nv_c2c_pmu_read(struct perf_event *event)
++{
++	nv_c2c_pmu_event_update(event);
++}
++
++static void nv_c2c_pmu_enable(struct pmu *pmu)
++{
++	void __iomem *bcast;
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(pmu);
++
++	/* Check if any filter is enabled. */
++	if (bitmap_empty(c2c_pmu->hw_events.used_ctrs, C2C_MAX_ACTIVE_EVENTS))
++		return;
++
++	/* Enable all the counters. */
++	bcast = c2c_pmu->base_broadcast;
++	writel(0x1UL, bcast + C2C_CTRL);
++}
++
++static void nv_c2c_pmu_disable(struct pmu *pmu)
++{
++	unsigned int idx;
++	void __iomem *bcast;
++	struct perf_event *event;
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(pmu);
++
++	/* Disable all the counters. */
++	bcast = c2c_pmu->base_broadcast;
++	writel(0x0UL, bcast + C2C_CTRL);
++
++	/*
++	 * The counters will start from 0 again on restart.
++	 * Update the events immediately to avoid losing the counts.
++	 */
++	for_each_set_bit(idx, c2c_pmu->hw_events.used_ctrs,
++			 C2C_MAX_ACTIVE_EVENTS) {
++		event = c2c_pmu->hw_events.events[idx];
++
++		if (!event)
++			continue;
++
++		nv_c2c_pmu_event_update(event);
++
++		local64_set(&event->hw.prev_count, 0ULL);
 +	}
- 	case NAME_FMT_GENERIC:
- 		name = devm_kasprintf(dev, GFP_KERNEL, match->name_pattern,
- 				       atomic_fetch_inc(&pmu_generic_idx));
-@@ -514,8 +716,10 @@ static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
- 	cspmu->impl.ctx = ctx;
- 
- 	/* NVIDIA specific callbacks. */
-+	SET_OP(validate_event, impl_ops, match, NULL);
- 	SET_OP(set_cc_filter, impl_ops, match, nv_cspmu_set_cc_filter);
- 	SET_OP(set_ev_filter, impl_ops, match, nv_cspmu_set_ev_filter);
-+	SET_OP(reset_ev_filter, impl_ops, match, NULL);
- 	SET_OP(get_event_attrs, impl_ops, match, nv_cspmu_get_event_attrs);
- 	SET_OP(get_format_attrs, impl_ops, match, nv_cspmu_get_format_attrs);
- 	SET_OP(get_name, impl_ops, match, nv_cspmu_get_name);
++}
++
++/* PMU identifier attribute. */
++
++static ssize_t nv_c2c_pmu_identifier_show(struct device *dev,
++					  struct device_attribute *attr,
++					  char *page)
++{
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
++
++	return sysfs_emit(page, "%s\n", c2c_pmu->identifier);
++}
++
++static struct device_attribute nv_c2c_pmu_identifier_attr =
++	__ATTR(identifier, 0444, nv_c2c_pmu_identifier_show, NULL);
++
++static struct attribute *nv_c2c_pmu_identifier_attrs[] = {
++	&nv_c2c_pmu_identifier_attr.attr,
++	NULL,
++};
++
++static struct attribute_group nv_c2c_pmu_identifier_attr_group = {
++	.attrs = nv_c2c_pmu_identifier_attrs,
++};
++
++/* Peer attribute. */
++
++static ssize_t nv_c2c_pmu_peer_show(struct device *dev,
++	struct device_attribute *attr,
++	char *page)
++{
++	const char *peer_type[C2C_PEER_TYPE_COUNT] = {
++		[C2C_PEER_TYPE_CPU] = "cpu",
++		[C2C_PEER_TYPE_GPU] = "gpu",
++		[C2C_PEER_TYPE_CXLMEM] = "cxlmem",
++	};
++
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
++	return sysfs_emit(page, "nr_%s=%u\n", peer_type[c2c_pmu->peer_type],
++		c2c_pmu->nr_peer);
++}
++
++static struct device_attribute nv_c2c_pmu_peer_attr =
++	__ATTR(peer, 0444, nv_c2c_pmu_peer_show, NULL);
++
++static struct attribute *nv_c2c_pmu_peer_attrs[] = {
++	&nv_c2c_pmu_peer_attr.attr,
++	NULL,
++};
++
++static struct attribute_group nv_c2c_pmu_peer_attr_group = {
++	.attrs = nv_c2c_pmu_peer_attrs,
++};
++
++/* Format attributes. */
++
++#define NV_C2C_PMU_EXT_ATTR(_name, _func, _config)			\
++	(&((struct dev_ext_attribute[]){				\
++		{							\
++			.attr = __ATTR(_name, 0444, _func, NULL),	\
++			.var = (void *)_config				\
++		}							\
++	})[0].attr.attr)
++
++#define NV_C2C_PMU_FORMAT_ATTR(_name, _config) \
++	NV_C2C_PMU_EXT_ATTR(_name, device_show_string, _config)
++
++#define NV_C2C_PMU_FORMAT_EVENT_ATTR \
++	NV_C2C_PMU_FORMAT_ATTR(event, "config:0-3")
++
++static struct attribute *nv_c2c_nvlink_pmu_formats[] = {
++	NV_C2C_PMU_FORMAT_EVENT_ATTR,
++	NV_C2C_PMU_FORMAT_ATTR(gpu_mask, "config1:0-1"),
++	NULL,
++};
++
++static struct attribute *nv_c2c_pmu_formats[] = {
++	NV_C2C_PMU_FORMAT_EVENT_ATTR,
++	NULL,
++};
++
++static struct attribute_group *
++nv_c2c_pmu_alloc_format_attr_group(struct nv_c2c_pmu *c2c_pmu)
++{
++	struct attribute_group *format_group;
++	struct device *dev = c2c_pmu->dev;
++
++	format_group =
++		devm_kzalloc(dev, sizeof(struct attribute_group), GFP_KERNEL);
++	if (!format_group)
++		return NULL;
++
++	format_group->name = "format";
++	format_group->attrs = c2c_pmu->formats;
++
++	return format_group;
++}
++
++/* Event attributes. */
++
++static ssize_t nv_c2c_pmu_sysfs_event_show(struct device *dev,
++					   struct device_attribute *attr,
++					   char *buf)
++{
++	struct perf_pmu_events_attr *pmu_attr;
++
++	pmu_attr = container_of(attr, typeof(*pmu_attr), attr);
++	return sysfs_emit(buf, "event=0x%llx\n", pmu_attr->id);
++}
++
++#define NV_C2C_PMU_EVENT_ATTR(_name, _config)	\
++	PMU_EVENT_ATTR_ID(_name, nv_c2c_pmu_sysfs_event_show, _config)
++
++static struct attribute *nv_c2c_pmu_events[] = {
++	NV_C2C_PMU_EVENT_ATTR(cycles, C2C_EVENT_CYCLES),
++	NV_C2C_PMU_EVENT_ATTR(in_rd_cum_outs, C2C_EVENT_IN_RD_CUM_OUTS),
++	NV_C2C_PMU_EVENT_ATTR(in_rd_req, C2C_EVENT_IN_RD_REQ),
++	NV_C2C_PMU_EVENT_ATTR(in_wr_cum_outs, C2C_EVENT_IN_WR_CUM_OUTS),
++	NV_C2C_PMU_EVENT_ATTR(in_wr_req, C2C_EVENT_IN_WR_REQ),
++	NV_C2C_PMU_EVENT_ATTR(out_rd_cum_outs, C2C_EVENT_OUT_RD_CUM_OUTS),
++	NV_C2C_PMU_EVENT_ATTR(out_rd_req, C2C_EVENT_OUT_RD_REQ),
++	NV_C2C_PMU_EVENT_ATTR(out_wr_cum_outs, C2C_EVENT_OUT_WR_CUM_OUTS),
++	NV_C2C_PMU_EVENT_ATTR(out_wr_req, C2C_EVENT_OUT_WR_REQ),
++	NULL
++};
++
++static umode_t
++nv_c2c_pmu_event_attr_is_visible(struct kobject *kobj, struct attribute *attr,
++				 int unused)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
++	struct perf_pmu_events_attr *eattr;
++
++	eattr = container_of(attr, typeof(*eattr), attr.attr);
++
++	if (c2c_pmu->c2c_type == C2C_TYPE_NVDLINK) {
++		/* Only incoming reads are available. */
++		switch (eattr->id) {
++		case C2C_EVENT_IN_WR_CUM_OUTS:
++		case C2C_EVENT_IN_WR_REQ:
++		case C2C_EVENT_OUT_RD_CUM_OUTS:
++		case C2C_EVENT_OUT_RD_REQ:
++		case C2C_EVENT_OUT_WR_CUM_OUTS:
++		case C2C_EVENT_OUT_WR_REQ:
++			return 0;
++		default:
++			return attr->mode;
++		}
++	} else {
++		/* Hide the write events if C2C connected to another SoC. */
++		if (c2c_pmu->peer_type == C2C_PEER_TYPE_CPU) {
++			switch (eattr->id) {
++			case C2C_EVENT_IN_WR_CUM_OUTS:
++			case C2C_EVENT_IN_WR_REQ:
++			case C2C_EVENT_OUT_WR_CUM_OUTS:
++			case C2C_EVENT_OUT_WR_REQ:
++				return 0;
++			default:
++				return attr->mode;
++			}
++		}
++	}
++
++	return attr->mode;
++}
++
++static const struct attribute_group nv_c2c_pmu_events_group = {
++	.name = "events",
++	.attrs = nv_c2c_pmu_events,
++	.is_visible = nv_c2c_pmu_event_attr_is_visible,
++};
++
++/* Cpumask attributes. */
++
++static ssize_t nv_c2c_pmu_cpumask_show(struct device *dev,
++				       struct device_attribute *attr, char *buf)
++{
++	struct pmu *pmu = dev_get_drvdata(dev);
++	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(pmu);
++	struct dev_ext_attribute *eattr =
++		container_of(attr, struct dev_ext_attribute, attr);
++	unsigned long mask_id = (unsigned long)eattr->var;
++	const cpumask_t *cpumask;
++
++	switch (mask_id) {
++	case C2C_ACTIVE_CPU_MASK:
++		cpumask = &c2c_pmu->active_cpu;
++		break;
++	case C2C_ASSOCIATED_CPU_MASK:
++		cpumask = &c2c_pmu->associated_cpus;
++		break;
++	default:
++		return 0;
++	}
++	return cpumap_print_to_pagebuf(true, buf, cpumask);
++}
++
++#define NV_C2C_PMU_CPUMASK_ATTR(_name, _config)			\
++	NV_C2C_PMU_EXT_ATTR(_name, nv_c2c_pmu_cpumask_show,	\
++				(unsigned long)_config)
++
++static struct attribute *nv_c2c_pmu_cpumask_attrs[] = {
++	NV_C2C_PMU_CPUMASK_ATTR(cpumask, C2C_ACTIVE_CPU_MASK),
++	NV_C2C_PMU_CPUMASK_ATTR(associated_cpus, C2C_ASSOCIATED_CPU_MASK),
++	NULL,
++};
++
++static const struct attribute_group nv_c2c_pmu_cpumask_attr_group = {
++	.attrs = nv_c2c_pmu_cpumask_attrs,
++};
++
++/* Per PMU device attribute groups. */
++
++static int nv_c2c_pmu_alloc_attr_groups(struct nv_c2c_pmu *c2c_pmu)
++{
++	const struct attribute_group **attr_groups = c2c_pmu->attr_groups;
++
++	attr_groups[0] = nv_c2c_pmu_alloc_format_attr_group(c2c_pmu);
++	attr_groups[1] = &nv_c2c_pmu_events_group;
++	attr_groups[2] = &nv_c2c_pmu_cpumask_attr_group;
++	attr_groups[3] = &nv_c2c_pmu_identifier_attr_group;
++	attr_groups[4] = &nv_c2c_pmu_peer_attr_group;
++
++	if (!attr_groups[0])
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int nv_c2c_pmu_online_cpu(unsigned int cpu, struct hlist_node *node)
++{
++	struct nv_c2c_pmu *c2c_pmu =
++		hlist_entry_safe(node, struct nv_c2c_pmu, cpuhp_node);
++
++	if (!cpumask_test_cpu(cpu, &c2c_pmu->associated_cpus))
++		return 0;
++
++	/* If the PMU is already managed, there is nothing to do */
++	if (!cpumask_empty(&c2c_pmu->active_cpu))
++		return 0;
++
++	/* Use this CPU for event counting */
++	cpumask_set_cpu(cpu, &c2c_pmu->active_cpu);
++
++	return 0;
++}
++
++static int nv_c2c_pmu_cpu_teardown(unsigned int cpu, struct hlist_node *node)
++{
++	unsigned int dst;
++
++	struct nv_c2c_pmu *c2c_pmu =
++		hlist_entry_safe(node, struct nv_c2c_pmu, cpuhp_node);
++
++	/* Nothing to do if this CPU doesn't own the PMU */
++	if (!cpumask_test_and_clear_cpu(cpu, &c2c_pmu->active_cpu))
++		return 0;
++
++	/* Choose a new CPU to migrate ownership of the PMU to */
++	dst = cpumask_any_and_but(&c2c_pmu->associated_cpus,
++				  cpu_online_mask, cpu);
++	if (dst >= nr_cpu_ids)
++		return 0;
++
++	/* Use this CPU for event counting */
++	perf_pmu_migrate_context(&c2c_pmu->pmu, cpu, dst);
++	cpumask_set_cpu(dst, &c2c_pmu->active_cpu);
++
++	return 0;
++}
++
++static int nv_c2c_pmu_get_cpus(struct nv_c2c_pmu *c2c_pmu)
++{
++	int ret = 0, socket = c2c_pmu->socket, cpu;
++
++	for_each_possible_cpu(cpu) {
++		if (cpu_to_node(cpu) == socket)
++			cpumask_set_cpu(cpu, &c2c_pmu->associated_cpus);
++	}
++
++	if (cpumask_empty(&c2c_pmu->associated_cpus)) {
++		dev_dbg(c2c_pmu->dev,
++			"No cpu associated with C2C PMU socket-%u\n", socket);
++		ret = -ENODEV;
++	}
++
++	return ret;
++}
++
++static int nv_c2c_pmu_init_socket(struct nv_c2c_pmu *c2c_pmu)
++{
++	const char *uid_str;
++	int ret, socket;
++
++	uid_str = acpi_device_uid(c2c_pmu->acpi_dev);
++	if (!uid_str) {
++		ret = -ENODEV;
++		goto fail;
++	}
++
++	ret = kstrtou32(uid_str, 0, &socket);
++	if (ret)
++		goto fail;
++
++	c2c_pmu->socket = socket;
++	return 0;
++
++fail:
++	dev_err(c2c_pmu->dev, "Failed to initialize socket\n");
++	return ret;
++}
++
++static int nv_c2c_pmu_init_id(struct nv_c2c_pmu *c2c_pmu)
++{
++	const char *name_fmt[C2C_TYPE_COUNT] = {
++		[C2C_TYPE_NVLINK] = "nvidia_nvlink_c2c_pmu_%u",
++		[C2C_TYPE_NVCLINK] = "nvidia_nvclink_pmu_%u",
++		[C2C_TYPE_NVDLINK] = "nvidia_nvdlink_pmu_%u",
++	};
++
++	char *name;
++	int ret;
++
++	name = devm_kasprintf(c2c_pmu->dev, GFP_KERNEL,
++		name_fmt[c2c_pmu->c2c_type], c2c_pmu->socket);
++	if (!name) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	c2c_pmu->name = name;
++
++	c2c_pmu->identifier = acpi_device_hid(c2c_pmu->acpi_dev);
++
++	return 0;
++
++fail:
++	dev_err(c2c_pmu->dev, "Failed to initialize name\n");
++	return ret;
++}
++
++static int nv_c2c_pmu_init_filter(struct nv_c2c_pmu *c2c_pmu)
++{
++	u32 cpu_en = 0;
++	struct device *dev = c2c_pmu->dev;
++
++	if (c2c_pmu->c2c_type == C2C_TYPE_NVDLINK) {
++		c2c_pmu->peer_type = C2C_PEER_TYPE_CXLMEM;
++
++		c2c_pmu->nr_inst = C2C_NR_INST_NVDLINK;
++		c2c_pmu->peer_insts[0][0] = (1UL << c2c_pmu->nr_inst) - 1;
++
++		c2c_pmu->nr_peer = C2C_NR_PEER_CXLMEM;
++		c2c_pmu->filter_default = (1 << c2c_pmu->nr_peer) - 1;
++
++		c2c_pmu->formats = nv_c2c_pmu_formats;
++
++		return 0;
++	}
++
++	c2c_pmu->nr_inst = (c2c_pmu->c2c_type == C2C_TYPE_NVLINK) ?
++		C2C_NR_INST_NVLINK : C2C_NR_INST_NVCLINK;
++
++	if (device_property_read_u32(dev, "cpu_en_mask", &cpu_en))
++		dev_dbg(dev, "no cpu_en_mask property\n");
++
++	if (cpu_en) {
++		c2c_pmu->peer_type = C2C_PEER_TYPE_CPU;
++
++		/* Fill peer_insts bitmap with instances connected to peer CPU. */
++		bitmap_from_arr32(c2c_pmu->peer_insts[0], &cpu_en,
++				c2c_pmu->nr_inst);
++
++		c2c_pmu->nr_peer = 1;
++		c2c_pmu->formats = nv_c2c_pmu_formats;
++	} else {
++		u32 i;
++		u32 gpu_en = 0;
++		const char *props[C2C_NR_PEER_MAX] = {
++			"gpu0_en_mask", "gpu1_en_mask"
++		};
++
++		for (i = 0; i < C2C_NR_PEER_MAX; i++) {
++			if (device_property_read_u32(dev, props[i], &gpu_en))
++				dev_dbg(dev, "no %s property\n", props[i]);
++
++			if (gpu_en) {
++				/* Fill peer_insts bitmap with instances connected to peer GPU. */
++				bitmap_from_arr32(c2c_pmu->peer_insts[i], &gpu_en,
++						c2c_pmu->nr_inst);
++
++				c2c_pmu->nr_peer++;
++			}
++		}
++
++		if (c2c_pmu->nr_peer == 0) {
++			dev_err(dev, "No GPU is enabled\n");
++			return -EINVAL;
++		}
++
++		c2c_pmu->peer_type = C2C_PEER_TYPE_GPU;
++		c2c_pmu->formats = nv_c2c_nvlink_pmu_formats;
++	}
++
++	c2c_pmu->filter_default = (1 << c2c_pmu->nr_peer) - 1;
++
++	return 0;
++}
++
++static void *nv_c2c_pmu_init_pmu(struct platform_device *pdev)
++{
++	int ret;
++	struct nv_c2c_pmu *c2c_pmu;
++	struct acpi_device *acpi_dev;
++	struct device *dev = &pdev->dev;
++
++	acpi_dev = ACPI_COMPANION(dev);
++	if (!acpi_dev)
++		return ERR_PTR(-ENODEV);
++
++	c2c_pmu = devm_kzalloc(dev, sizeof(*c2c_pmu), GFP_KERNEL);
++	if (!c2c_pmu)
++		return ERR_PTR(-ENOMEM);
++
++	c2c_pmu->dev = dev;
++	c2c_pmu->acpi_dev = acpi_dev;
++	c2c_pmu->c2c_type = (unsigned int)(unsigned long)device_get_match_data(dev);
++	platform_set_drvdata(pdev, c2c_pmu);
++
++	ret = nv_c2c_pmu_init_socket(c2c_pmu);
++	if (ret)
++		goto done;
++
++	ret = nv_c2c_pmu_init_id(c2c_pmu);
++	if (ret)
++		goto done;
++
++	ret = nv_c2c_pmu_init_filter(c2c_pmu);
++	if (ret)
++		goto done;
++
++done:
++	if (ret)
++		return ERR_PTR(ret);
++
++	return c2c_pmu;
++}
++
++static int nv_c2c_pmu_init_mmio(struct nv_c2c_pmu *c2c_pmu)
++{
++	int i;
++	struct device *dev = c2c_pmu->dev;
++	struct platform_device *pdev = to_platform_device(dev);
++
++	/* Map the address of all the instances. */
++	for (i = 0; i < c2c_pmu->nr_inst; i++) {
++		c2c_pmu->base[i] = devm_platform_ioremap_resource(pdev, i);
++		if (IS_ERR(c2c_pmu->base[i])) {
++			dev_err(dev, "Failed map address for instance %d\n", i);
++			return PTR_ERR(c2c_pmu->base[i]);
++		}
++	}
++
++	/* Map broadcast address. */
++	c2c_pmu->base_broadcast = devm_platform_ioremap_resource(pdev,
++								 c2c_pmu->nr_inst);
++	if (IS_ERR(c2c_pmu->base_broadcast)) {
++		dev_err(dev, "Failed map broadcast address\n");
++		return PTR_ERR(c2c_pmu->base_broadcast);
++	}
++
++	return 0;
++}
++
++static int nv_c2c_pmu_register_pmu(struct nv_c2c_pmu *c2c_pmu)
++{
++	int ret;
++
++	ret = cpuhp_state_add_instance(nv_c2c_pmu_cpuhp_state,
++				       &c2c_pmu->cpuhp_node);
++	if (ret) {
++		dev_err(c2c_pmu->dev, "Error %d registering hotplug\n", ret);
++		return ret;
++	}
++
++	c2c_pmu->pmu = (struct pmu) {
++		.parent		= c2c_pmu->dev,
++		.task_ctx_nr	= perf_invalid_context,
++		.pmu_enable	= nv_c2c_pmu_enable,
++		.pmu_disable	= nv_c2c_pmu_disable,
++		.event_init	= nv_c2c_pmu_event_init,
++		.add		= nv_c2c_pmu_add,
++		.del		= nv_c2c_pmu_del,
++		.start		= nv_c2c_pmu_start,
++		.stop		= nv_c2c_pmu_stop,
++		.read		= nv_c2c_pmu_read,
++		.attr_groups	= c2c_pmu->attr_groups,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE |
++					PERF_PMU_CAP_NO_INTERRUPT,
++	};
++
++	ret = perf_pmu_register(&c2c_pmu->pmu, c2c_pmu->name, -1);
++	if (ret) {
++		dev_err(c2c_pmu->dev, "Failed to register C2C PMU: %d\n", ret);
++		cpuhp_state_remove_instance(nv_c2c_pmu_cpuhp_state,
++					  &c2c_pmu->cpuhp_node);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int nv_c2c_pmu_probe(struct platform_device *pdev)
++{
++	int ret;
++	struct nv_c2c_pmu *c2c_pmu;
++
++	c2c_pmu = nv_c2c_pmu_init_pmu(pdev);
++	if (IS_ERR(c2c_pmu))
++		return PTR_ERR(c2c_pmu);
++
++	ret = nv_c2c_pmu_init_mmio(c2c_pmu);
++	if (ret)
++		return ret;
++
++	ret = nv_c2c_pmu_get_cpus(c2c_pmu);
++	if (ret)
++		return ret;
++
++	ret = nv_c2c_pmu_alloc_attr_groups(c2c_pmu);
++	if (ret)
++		return ret;
++
++	ret = nv_c2c_pmu_register_pmu(c2c_pmu);
++	if (ret)
++		return ret;
++
++	dev_dbg(c2c_pmu->dev, "Registered %s PMU\n", c2c_pmu->name);
++
++	return 0;
++}
++
++static void nv_c2c_pmu_device_remove(struct platform_device *pdev)
++{
++	struct nv_c2c_pmu *c2c_pmu = platform_get_drvdata(pdev);
++
++	perf_pmu_unregister(&c2c_pmu->pmu);
++	cpuhp_state_remove_instance(nv_c2c_pmu_cpuhp_state, &c2c_pmu->cpuhp_node);
++}
++
++static const struct acpi_device_id nv_c2c_pmu_acpi_match[] = {
++	{ "NVDA2023", (kernel_ulong_t)C2C_TYPE_NVLINK },
++	{ "NVDA2022", (kernel_ulong_t)C2C_TYPE_NVCLINK },
++	{ "NVDA2020", (kernel_ulong_t)C2C_TYPE_NVDLINK },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, nv_c2c_pmu_acpi_match);
++
++static struct platform_driver nv_c2c_pmu_driver = {
++	.driver = {
++		.name = "nvidia-t410-c2c-pmu",
++		.acpi_match_table = ACPI_PTR(nv_c2c_pmu_acpi_match),
++		.suppress_bind_attrs = true,
++	},
++	.probe = nv_c2c_pmu_probe,
++	.remove = nv_c2c_pmu_device_remove,
++};
++
++static int __init nv_c2c_pmu_init(void)
++{
++	int ret;
++
++	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
++				      "perf/nvidia/c2c:online",
++				      nv_c2c_pmu_online_cpu,
++				      nv_c2c_pmu_cpu_teardown);
++	if (ret < 0)
++		return ret;
++
++	nv_c2c_pmu_cpuhp_state = ret;
++	return platform_driver_register(&nv_c2c_pmu_driver);
++}
++
++static void __exit nv_c2c_pmu_exit(void)
++{
++	platform_driver_unregister(&nv_c2c_pmu_driver);
++	cpuhp_remove_multi_state(nv_c2c_pmu_cpuhp_state);
++}
++
++module_init(nv_c2c_pmu_init);
++module_exit(nv_c2c_pmu_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("NVIDIA Tegra410 C2C PMU driver");
++MODULE_AUTHOR("Besar Wicaksono <bwicaksono@nvidia.com>");
 -- 
 2.43.0
 
