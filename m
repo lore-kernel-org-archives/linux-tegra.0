@@ -1,175 +1,181 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010016.outbound.protection.outlook.com [52.101.201.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FD534D390;
-	Mon, 26 Jan 2026 17:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769449878; cv=none; b=NqtQJ0vmW5YLwMJ49eh8YJgdeWjgVn+FfnRjZ6nmBdhbCFJRzE1FBb1Jp8cdpHQNGvoW1xryqJTj202N/Vw16INvsfJeqk44HQ1FR1dWePaAHfDwSEsUjRBtTMqEXU0Fy7he563gNtfjI24FocsvT6KXQSIJzYef3tqFX+lkP9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769449878; c=relaxed/simple;
-	bh=Q81YilWbPLWtEp7yxcbHsFIR2jpqUv0EOpT10c6Xuvw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fkw4IYpI3DjuUECv+9Fvkj45nRtL7Qq9UYe6k8O1xeOvg4z2wt3R5iH4DSi2jyMT5cNNBbZDgOwG4L1NNYzNZOzHnHW0ENDTSrRk3S3rNjJuv6rsssZO93e/3sDaNDrG4zs7efWskR3uPxi3wnHvKV0C75l7xHUDXqRX3EKyD+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=bTTjio5d; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D3934D901;
+	Mon, 26 Jan 2026 18:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769451162; cv=fail; b=e9f/0Ju3mcBJM2jCLmNnu3flTaSThlECBf5BMqLBZacYN6vFdjWfT5jjqflreukhAh9NAJNgw4qJJq0YxaC8DVTYrcKHPyIutczMjXwMc8n+GQ8uGTjQikZLLaxrIS06DEEK5/mLVKF8oHtmymDfBtGLXbHGIs5DczCeOZ3rLE0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769451162; c=relaxed/simple;
+	bh=UXwU4I8BwVLGzKQFj8FXLfqaphtR7jI3z1WC2JR4BJw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZKMbPPgqQWAV7SqJ/dT3nI0/WPZWXfxiUvQ8UlyZVOJbVJO/CMC0+Xir9Sbdly+coXLmO3BcQ2wz3rsFXJn1FFiHspmGLchvymrw6RShLGM7p0Ym3uWQue9JJxKm2KWSZQ94XAPNM3cssB4DYqUf9jJXQxYdLkQlu+bvn5PUd8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GkJ9hzcO; arc=fail smtp.client-ip=52.101.201.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="bTTjio5d"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:In-Reply-To:References:
-	Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:
-	From:Reply-To:Content-ID:Content-Description;
-	bh=enYJz9EqJNqwh5dKgF2h4XKb81SowoT5sujLs8RC+V0=; b=bTTjio5dME77OWNFHg6USruoPl
-	JnexsRaW7BLdz3E78aYqKUgimrPvCMthau2UD406vU6FUV7H0EGLTemLBkNU+eyaoO9xforK/x5Y3
-	d5MYy5+gWoonb7EsMlJxUZ+ZB2hT66eeGEbZNvFjhMfhJJvGMpp2VINlGNo2VZIWI38PlsX1CAvVX
-	ejkk1JgY7I+XjxNl5OZ79TQ5Hj0z76CIkhGdS/11LQs54X741tNCV7McKHY9qUZf9NVdGHsI51+5b
-	8rPJUtq5ZTu31HlF0En3vLcIbdT6Bz8sIcy+Xp9un7GIGcUdKTd3K/OOABwA0TI8VGwU+xQcRSBJJ
-	GUpkgWXw==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <leitao@debian.org>)
-	id 1vkQk3-00GLaL-35; Mon, 26 Jan 2026 17:51:11 +0000
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 26 Jan 2026 09:50:31 -0800
-Subject: [PATCH v2 6/6] spi: tegra210-quad: Protect curr_xfer check in IRQ
- handler
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GkJ9hzcO"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pdCCMHmsibfdPE3lUgrHzQEODAkW95gHqAxVBWXkJDhnC6X/rbmlG8tBVxp5gFCylQ8POlPZPfeMRh3kWTO1/Tzc62VqGaF0zfHr7HteMruKZXUpIUPWcW0Ok3YYjfWE5nqk0XrcJJtryDNlyW7YRX1ofKOEgty529dTCqmjCBq/bL9z5UUl7ysPAZ0lX6ONWDPP8VCCX3xHF1LZpzy4RW9OnX1qFqro1BOQdP1EOx8Zf5SXAoFJM7T4/BbZcFuNMcqezZYo+9ZQP1BNrfjP//HfFoW/LetFjTwXNl4VjbmyLH/JAf8igbAz8ycEi6bvoiAr4T//5GeriiSsLs+ugg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HhEuAZMR5UDGow0z2dsH6PsRMXDGpCka9sRzAIIM/FQ=;
+ b=e2AQ7gpQ1PPKxvH7aCxIWvSeNqaPAoO3Kg3JnAHJGjkmqdDcUugOXEqGy9fPuzp/QOGD/KDxfBqAlHTAXuMaWyohCYU+DhtpZLR4/QE99FPPgudmzzdpE5QyRmhN4S7qWcC+tteZgxvR+L7w0YwtlmNWED1x8mYcJv2TNihpwLuAdXzO3HofhDlf3tMV3JTTe4Sv2hzyZ3FxsVr0Tbp4/eo4LhbHREz7MaEE/08tKvyYg0ckx9QpJ7Ff3qwLwshL8SnjjeaIXhD4zjdulwdYzjT+Z5ZLZV4PphP25GKK0eMzhpOwDcD+psy3aZTUYWHtV/cv4PHZAwcEN8rwccye+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HhEuAZMR5UDGow0z2dsH6PsRMXDGpCka9sRzAIIM/FQ=;
+ b=GkJ9hzcOyLeE05aHXXctYgVXep/OYb8704LOpZdKsSSlRBTmNwziLf7KLbjo75IVBkCI5mt1Wpw3WxCU4SMkLtN29qILC98ohFiq59RLfVzzY/qWfmEqrYWH8UeOKuMXXtXfCx5QwORstuxE8f29ZDGGnM0lpJuOy5sgZH1vo9aFT67HiKv0X0ln0fy8PsJKQBUmwsUynv25qtoUsfGSCyiV/CYJE2/RxnxeLT9lwUMdiUMFZ953GBGdJ7cDkh4LK08+nXIOAyjCL5ey756+WKI0t+6kBztYNvGPbITF/7wZB6ilBeaIp3YrOg6gLEPNgIH1dgqqi9heDz+G2zk9kg==
+Received: from BN9PR03CA0595.namprd03.prod.outlook.com (2603:10b6:408:10d::30)
+ by CH1PR12MB9621.namprd12.prod.outlook.com (2603:10b6:610:2b2::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.16; Mon, 26 Jan
+ 2026 18:12:35 +0000
+Received: from BN2PEPF000044A4.namprd02.prod.outlook.com
+ (2603:10b6:408:10d:cafe::59) by BN9PR03CA0595.outlook.office365.com
+ (2603:10b6:408:10d::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.16 via Frontend Transport; Mon,
+ 26 Jan 2026 18:12:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN2PEPF000044A4.mail.protection.outlook.com (10.167.243.155) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9564.3 via Frontend Transport; Mon, 26 Jan 2026 18:12:33 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 26 Jan
+ 2026 10:12:21 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 26 Jan 2026 10:12:21 -0800
+Received: from build-bwicaksono-noble-20251018.internal (10.127.8.11) by
+ mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20
+ via Frontend Transport; Mon, 26 Jan 2026 10:12:20 -0800
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+To: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
+	<ilkka@os.amperecomputing.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <mark.rutland@arm.com>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <rwiley@nvidia.com>,
+	<sdonthineni@nvidia.com>, <skelley@nvidia.com>, <ywan@nvidia.com>,
+	<mochs@nvidia.com>, <nirmoyd@nvidia.com>, Besar Wicaksono
+	<bwicaksono@nvidia.com>
+Subject: [PATCH 0/8] perf: add NVIDIA Tegra410 Uncore PMU support
+Date: Mon, 26 Jan 2026 18:11:47 +0000
+Message-ID: <20260126181155.2776097-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260126-tegra_xfer-v2-6-6d2115e4f387@debian.org>
-References: <20260126-tegra_xfer-v2-0-6d2115e4f387@debian.org>
-In-Reply-To: <20260126-tegra_xfer-v2-0-6d2115e4f387@debian.org>
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, 
- Vishwaroop A <va@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>, kernel-team@meta.com, soto@nvidia.com
-X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3702; i=leitao@debian.org;
- h=from:subject:message-id; bh=Q81YilWbPLWtEp7yxcbHsFIR2jpqUv0EOpT10c6Xuvw=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpd6lwjTHBL+FKmdyD8HH3w4do+kkthCCuRqavw
- s31q5DOPu2JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaXepcAAKCRA1o5Of/Hh3
- bfhmD/9R5eTrEns8UylPi6v7RQAw26T2O58zpqjdgmQoLpXC0IZlJAqfRMDVUdWkQGmkWD/mLv9
- he2Mj2QpIiF7UAK2j5oYfEUFKvF/Iu4fxIo5gIP0ht0RoVWF40Dkg68YiOncy15BG0kVECuQQCo
- x/9TYuV9qx3NVaKRBRHKZiAamx49HxmTQnNtBBtVZ3fg6Jjw6g1oDFC36T/FVlmkXm1YTlTrpA8
- qFp3mxO6Kg8zp1o6dS0h8+a4zSPUxZqnutwzL1shGtOA4nOhRuBIFygW3Ta+ktJLX7uvZUHKtrc
- Ugxng45urOJoMg4ewHVDjcNAoi5EQ051+u0utqESzTv9Tl2zzQLsVabExEeBGVT5KYrOji/74ah
- /uL0IxWhZCjW0oVtDSlRa1kMmY8eRVlMB11JCA/U1mBZEiozXvK+sg9r3GDzOHi9MybZdonQ8cc
- pym2tFHq25TDPpf1XXqPmbdQccxmsO6pi4lFmfMNIRtIh0pf6ngdTZd0t3rJro366CFK5ZZimC+
- PCev7pzjnnS6b80tqer2f+OkNxiRhJLoSPGtqhrJ/yi8bbtMLuYytmgZJmVWdYgy0/jvSpGvmki
- N9PUYIYn1SxVK9z5tLu6gEqvcJnoBdbeojlCPbgPRKfcuLb4U+9S0S6DwqWHw2OuLZ8rxxrTiaZ
- 0GkDpwwrrlSguvQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
-X-Debian-User: leitao
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A4:EE_|CH1PR12MB9621:EE_
+X-MS-Office365-Filtering-Correlation-Id: 73c6a6d1-ff54-4c1a-8285-08de5d067a57
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?abvHa7OCNhPpF2CctZcpgkyKcDOWucXcDhOwHx7qDdDpCi8hkkuKvukm8/zT?=
+ =?us-ascii?Q?amokCRkySM2rf0LYUIbuz1JJz0hfOa+olhyVyiRRFmK4XbrdubpXbv8Es0ps?=
+ =?us-ascii?Q?5HQUmFO2WFI0thk7DrqhRxvNsRxfd+7mJMIX8dxbR0mIW6IJqr9NjLJM4Zzl?=
+ =?us-ascii?Q?QMMlBFzcG8vOmynzC9EaUwiafXEq+wbjasf/xaK2q357bSdTv/aiIRdAtvwd?=
+ =?us-ascii?Q?5atfGKfUCT3puMf8AoXipMeHIzNQXVsmtuP25uCsgLQWYU8q5saFf6Mw0iVQ?=
+ =?us-ascii?Q?SVlQ/NBcVkPkfKQzVF/55LWtN+C8jqwlBwkDtsuNfeoYrVUpkKcDkPP7Miih?=
+ =?us-ascii?Q?7EqWRl72QAnSaZ6P+V38RBign++AtX5lMkWHV9GKKe93exE+imkLtvFztCnZ?=
+ =?us-ascii?Q?I9zVu7neT4r0Aw1ouyQka82e48QpnzTT5OBwYfoTV9dp/8Yd6dbF7gThSW88?=
+ =?us-ascii?Q?A9q4c8TgWH0TvoEMs6fcDeaGq+TomYDmcF2iXSGdmjM72v2Ikw4+daoJAKlH?=
+ =?us-ascii?Q?+KLgpZYsVuGypufz+rPwYRR/5Ntl08l+szpMgCFOBiAMDD3dgTkpSm1Ti8lQ?=
+ =?us-ascii?Q?mjgE6OBs9zzjIVFWwpFCt4Uk52SA/p6owCi46Ds2lp2W1MPZEFuGoNd1VbZJ?=
+ =?us-ascii?Q?n5Q6+eTO3bRHWoMxPAx7gqoQuiRIJC5zx1dtY1bqu7EHJ/ZhDlI6mSiQd52R?=
+ =?us-ascii?Q?eGuzsYSRz4DVqTbl1akQ23z3Qkj8nV+LuNhnY7VUXAQ8cNJgSj+RCKpG1YHZ?=
+ =?us-ascii?Q?DN4KiiR3H05R6IFllib18cMGS0nY3qAwpjfDf3mi+9cdEMSnHqI1nLgGrIzQ?=
+ =?us-ascii?Q?9s6WuVb8381WTA174wUTZVHaUTG7PIv5Qd+bkZxuD4X0uoHjCJSgebiapcUu?=
+ =?us-ascii?Q?IWhgQnsS50jZjkzqA6H0FA/Nr4U9n+hAAZ8oS5yEF7e5RexJcUY5IvnHLJju?=
+ =?us-ascii?Q?mXc+jN8C3OG21WIAdQNrIqUv25JFYyHn6uhHnjLuF1DvcxQi7max2FTILp/A?=
+ =?us-ascii?Q?e15AUzSg2sdUsGhyXF2j6/e1pVHrf8QocHI7kIKNU82SWv8Cy6rZiJzxEzAP?=
+ =?us-ascii?Q?AC7lQp1nPdDPKO4DyqwIAucRszexvtjVmQrJ+95ayCfAPhKfGU3KtfMaVucO?=
+ =?us-ascii?Q?KIdBeRJo4wXPO1k6RSNHkbUYq1Rr+eqUVdFs4hlWftUSL7z1ZxvQZVyWryGu?=
+ =?us-ascii?Q?ofqyIasJ3z6WvN/fM8EnCKV2wfKtl4mbjT0VPE0eV9nSPD1c5JMLLsCjOoHj?=
+ =?us-ascii?Q?B1E0NpR7cY8hh+gG+X+Pnknhu+FuiXNcNKuJnqHgXpTf14g92N7odnrpyeod?=
+ =?us-ascii?Q?lGkZw3vTJbYvyfedDK8qv5LjatrGnKKI/ffyPAaLJAMSsCF50LrUB7CU1QmI?=
+ =?us-ascii?Q?xbr6ZesbOi8evwm0rWGek05mQwBjx8n5XfCP3WVgSoJHY1dmJtIih2frGNng?=
+ =?us-ascii?Q?JnmqftGaCfFybsLqFhrMMj27Wpwianh4G2kPwDbqXGF8vrIBvTKyA2O/5TQV?=
+ =?us-ascii?Q?RSaFuYQiHP9T8h3COFJYB9GYxEa/CdU2V45DwGDDCHsOuN/ICC/7nCcHWBGA?=
+ =?us-ascii?Q?Ku5VFE9GzcjipsAWTM0uB4pEj7j7tMlajLZLM8jkch7HPwZ+F2mXJAFQnFQq?=
+ =?us-ascii?Q?jttNGqLhETda6q0OkIjQWkMujpHkaKqfeEjfbwWuVWE24wOrrc4CdtnsYyxd?=
+ =?us-ascii?Q?G9Q3Qw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2026 18:12:33.5233
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73c6a6d1-ff54-4c1a-8285-08de5d067a57
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9621
 
-Now that all other accesses to curr_xfer are done under the lock,
-protect the curr_xfer NULL check in tegra_qspi_isr_thread() with the
-spinlock. Without this protection, the following race can occur:
+This series adds driver support for the following Uncore PMUs in
+NVIDIA Tegra410 SoC:
+  - Unified Coherence Fabric (UCF)
+  - PCIE
+  - PCIE-TGT
+  - CPU Memory (CMEM) Latency
+  - NVLink-C2C
+  - NV-CLink
+  - NV-DLink
 
-  CPU0 (ISR thread)              CPU1 (timeout path)
-  ----------------               -------------------
-  if (!tqspi->curr_xfer)
-    // sees non-NULL
-                                 spin_lock()
-                                 tqspi->curr_xfer = NULL
-                                 spin_unlock()
-  handle_*_xfer()
-    spin_lock()
-    t = tqspi->curr_xfer  // NULL!
-    ... t->len ...        // NULL dereference!
+Thanks,
+Besar
 
-With this patch, all curr_xfer accesses are now properly synchronized.
+Besar Wicaksono (8):
+  perf/arm_cspmu: nvidia: Rename doc to Tegra241
+  perf/arm_cspmu: nvidia: Add Tegra410 UCF PMU
+  perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
+  perf/arm_cspmu: nvidia: Add Tegra410 PCIE PMU
+  perf/arm_cspmu: nvidia: Add Tegra410 PCIE-TGT PMU
+  perf: add NVIDIA Tegra410 CPU Memory Latency PMU
+  perf: add NVIDIA Tegra410 C2C PMU
+  arm64: defconfig: Enable NVIDIA TEGRA410 PMU
 
-Although all accesses to curr_xfer are done under the lock, in
-tegra_qspi_isr_thread() it checks for NULL, releases the lock and
-reacquires it later in handle_cpu_based_xfer()/handle_dma_based_xfer().
-There is a potential for an update in between, which could cause a NULL
-pointer dereference.
-
-To handle this, add a NULL check inside the handlers after acquiring
-the lock. This ensures that if the timeout path has already cleared
-curr_xfer, the handler will safely return without dereferencing the
-NULL pointer.
-
-Fixes: b4e002d8a7ce ("spi: tegra210-quad: Fix timeout handling")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/spi/spi-tegra210-quad.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index 79aeb80aa4a70..f425d62e0c276 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1457,6 +1457,11 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_qspi *tqspi)
- 	spin_lock_irqsave(&tqspi->lock, flags);
- 	t = tqspi->curr_xfer;
- 
-+	if (!t) {
-+		spin_unlock_irqrestore(&tqspi->lock, flags);
-+		return IRQ_HANDLED;
-+	}
-+
- 	if (tqspi->tx_status ||  tqspi->rx_status) {
- 		tegra_qspi_handle_error(tqspi);
- 		complete(&tqspi->xfer_completion);
-@@ -1527,6 +1532,11 @@ static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi)
- 	spin_lock_irqsave(&tqspi->lock, flags);
- 	t = tqspi->curr_xfer;
- 
-+	if (!t) {
-+		spin_unlock_irqrestore(&tqspi->lock, flags);
-+		return IRQ_HANDLED;
-+	}
-+
- 	if (num_errors) {
- 		tegra_qspi_dma_unmap_xfer(tqspi, t);
- 		tegra_qspi_handle_error(tqspi);
-@@ -1565,6 +1575,7 @@ static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi)
- static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
- {
- 	struct tegra_qspi *tqspi = context_data;
-+	unsigned long flags;
- 	u32 status;
- 
- 	/*
-@@ -1582,7 +1593,9 @@ static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
- 	 * If no transfer is in progress, check if this was a real interrupt
- 	 * that the timeout handler already processed, or a spurious one.
- 	 */
-+	spin_lock_irqsave(&tqspi->lock, flags);
- 	if (!tqspi->curr_xfer) {
-+		spin_unlock_irqrestore(&tqspi->lock, flags);
- 		/* Spurious interrupt - transfer not ready */
- 		if (!(status & QSPI_RDY))
- 			return IRQ_NONE;
-@@ -1599,7 +1612,14 @@ static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
- 		tqspi->rx_status = tqspi->status_reg & (QSPI_RX_FIFO_OVF | QSPI_RX_FIFO_UNF);
- 
- 	tegra_qspi_mask_clear_irq(tqspi);
-+	spin_unlock_irqrestore(&tqspi->lock, flags);
- 
-+	/*
-+	 * Lock is released here but handlers safely re-check curr_xfer under
-+	 * lock before dereferencing.
-+	 * DMA handler also needs to sleep in wait_for_completion_*(), which
-+	 * cannot be done while holding spinlock.
-+	 */
- 	if (!tqspi->is_curr_dma_xfer)
- 		return handle_cpu_based_xfer(tqspi);
- 
+ Documentation/admin-guide/perf/index.rst      |    3 +-
+ ...nvidia-pmu.rst => nvidia-tegra241-pmu.rst} |    8 +-
+ .../admin-guide/perf/nvidia-tegra410-pmu.rst  |  520 ++++++++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/perf/Kconfig                          |   14 +
+ drivers/perf/Makefile                         |    2 +
+ drivers/perf/arm_cspmu/arm_cspmu.c            |   24 +-
+ drivers/perf/arm_cspmu/arm_cspmu.h            |   17 +-
+ drivers/perf/arm_cspmu/nvidia_cspmu.c         |  622 +++++++++-
+ drivers/perf/nvidia_t410_c2c_pmu.c            | 1061 +++++++++++++++++
+ drivers/perf/nvidia_t410_cmem_latency_pmu.c   |  727 +++++++++++
+ 11 files changed, 2990 insertions(+), 10 deletions(-)
+ rename Documentation/admin-guide/perf/{nvidia-pmu.rst => nvidia-tegra241-pmu.rst} (98%)
+ create mode 100644 Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
+ create mode 100644 drivers/perf/nvidia_t410_c2c_pmu.c
+ create mode 100644 drivers/perf/nvidia_t410_cmem_latency_pmu.c
 
 -- 
-2.47.3
+2.43.0
 
