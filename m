@@ -1,148 +1,253 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9312733F8C5;
-	Tue, 27 Jan 2026 10:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFA130649C;
+	Tue, 27 Jan 2026 10:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769509828; cv=none; b=Ab64rZqdGHL9nT0s6LuXQFzAY6eNHqbC7VprumDjE2rcFZavY4hciH7qu0V7zXtc05gccDerdX8oCePVrypP0Dx1VasXNXZ05AkFmOwxU1QyOmRyIRVHEk0npIZpBNDZynD0IqXB2ScX8RuAIVXpcU35QHHNB/EuCPlROuoPkXg=
+	t=1769509979; cv=none; b=GcaYD6r7awSaRg917lqHgXt8dO6tdgnBlve2e/3DPM/rZDpDwHOs6bcnp8DCKKoC6z8wVUeap5RwdpF3mlA2UTDKsFU86015oWvIooUGOOmbKWu/lGuCNGpsnDnCYJKoRWT9p3BchbKzZVZCXRVRFP3p6KQQdWZ57t5+gMa9Hz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769509828; c=relaxed/simple;
-	bh=pe4cHHVWeu3WRBqDfGNX5Ssdo8XICk4NB162PNWOgaY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=P9YsgYbih1l+YyJiT5vDyxKkFG+gW5/EBPBxbLiwP+O4C5niJYrmtaHvRcpIiOpYNE6APE6YVzou6EeCHha4r8tiIQiNgxyfF9BbfLKjXbUMRlj5Fg4lruIN1iLchhjn/ZOBBowMIlvLdbqLXRJUTZakMDHXe2UKegZnM5a6sew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biZJ+QPB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769509979; c=relaxed/simple;
+	bh=upyzIdX6sc+F9yKHqn/z6MJzFeFxUfq9aLCsXCMxv4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlYuhCwQCwh9CwGk0ND2ix4A93Cxdedtuto68Ug9tw3BWszawuLHQ1F6F8PbN9LLW24imyAuoL5aloJKd5awUKhhakfK0gRK5AN86lznOWVcDoyq4uLcDZrrq1KWhikPd9/6l595+okCNN2BA/zkeqTwogCQwIjinnfP/X7LiBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaCVGb1w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biZJ+QPB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B02D7C116C6;
-	Tue, 27 Jan 2026 10:30:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaCVGb1w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA170C116C6;
+	Tue, 27 Jan 2026 10:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769509827;
-	bh=pe4cHHVWeu3WRBqDfGNX5Ssdo8XICk4NB162PNWOgaY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=biZJ+QPBygYJ1fo1uyD8cuVYpXMogC1D2Ld/ZFMGGb1Ij78MqASLs6tLcNCzKLOI3
-	 qQcKQYPQd75Px4JEPnzq3NQNR3yYKXGxG9XQ8o85dJbVo7LLbSBdK/Ivc8vo5fpEkZ
-	 C1u39rrfFCl+qQhg06Ow+jSoLySFJCaKV9mmfAc23LGeKjDwCbiJtWsTkgb6Tyadnx
-	 jPslLseiUk2sjQajv1exwhWNIMm//8zx+7FJSNf9RMviGPYSnItCrAKsjsryppgcuM
-	 6qb9o5GIJSsZqdYCz9jeVrJy8zXzH8IrwUatE3GJ7BryRMrnPWEFyt36yRiwOTuMe1
-	 t4eRVGNoj4I+w==
-From: Thomas Gleixner <tglx@kernel.org>
-To: Radu Rendec <rrendec@redhat.com>, Jon Hunter <jonathanh@nvidia.com>,
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: Daniel Tsai <danielsftsai@google.com>, Marek =?utf-8?Q?Beh=C3=BAn?=
- <kabel@kernel.org>,
- Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Brian
- Masney <bmasney@redhat.com>, Eric Chanudet <echanude@redhat.com>,
- Alessandro Carminati <acarmina@redhat.com>, Jared Kangas
- <jkangas@redhat.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] PCI: dwc: Enable MSI affinity support
-In-Reply-To: <221f6dadb6d8ce06f30a24baaa2777e90d75b130.camel@redhat.com>
-References: <20251128212055.1409093-1-rrendec@redhat.com>
- <20251128212055.1409093-4-rrendec@redhat.com>
- <4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com>
- <a8d841e870d6dbbabef7eadb774f2a58a96c57c7.camel@redhat.com>
- <cfe44924-3419-4f31-8ab3-87b769d21a5b@nvidia.com>
- <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
- <87sebsdcte.ffs@tglx> <255713ca-bf91-4f7e-8df2-33b7b614a1bb@nvidia.com>
- <221f6dadb6d8ce06f30a24baaa2777e90d75b130.camel@redhat.com>
-Date: Tue, 27 Jan 2026 11:30:23 +0100
-Message-ID: <87h5s7bb5s.ffs@tglx>
+	s=k20201202; t=1769509979;
+	bh=upyzIdX6sc+F9yKHqn/z6MJzFeFxUfq9aLCsXCMxv4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RaCVGb1wMOEGpU58u34kxHjibgOqFQeYFGZ1kRvowtT37vPWybnwGOBd+CuNUbUAV
+	 DhMnTMS66u/V7/1MBu1xh0VkBEOYYbR2QADskSJy7/iweNyPzsQmV2JHf2/tVEdq/f
+	 6uFRWkpNVa5DKPzIjGlqNf/ZgOcvNXLERc+fcdYuQNUjxAJPyjxi63BbtNHuVlrZBx
+	 M3q2S4iNbdXVsZgFjux+wRpftz8A1fK5Vg2l2T63jnnyaiw3/zGMPQ4GcIkshAIbLa
+	 IvsogM3geHENQH8l35EP72wIIgnB/XF/8DWAOu1WfhCMPbnqF7IIT0qU0BADTUp70C
+	 PPAC/Ip/rppFA==
+Date: Tue, 27 Jan 2026 11:32:56 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, Kurt Kiefer <kekiefer@gmail.com>, 
+	Jasper Korten <jja2000@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
+Message-ID: <aXiSMlP-UKmrFKL7@orome>
+References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
+ <CALHNRZ9b98Su9qAqXRSTCStoUPtC_u3+MG0cr4SQ-g3aVJD7LQ@mail.gmail.com>
+ <8615742F-EE35-4B37-BA0A-D62FFD5424B4@gmail.com>
+ <4318175.BddDVKsqQX@senjougahara>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fue3hpucru44eqpn"
+Content-Disposition: inline
+In-Reply-To: <4318175.BddDVKsqQX@senjougahara>
+
+
+--fue3hpucru44eqpn
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
+MIME-Version: 1.0
 
-On Mon, Jan 26 2026 at 17:26, Radu Rendec wrote:
-> On Mon, 2026-01-26 at 22:07 +0000, Jon Hunter wrote:
->> > Jon, can you please validate that this happens as well on
->> >=20
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 git://git.kernel.org/pub/scm/linux/kern=
-el/git/tip/tip.git irq/msi
->>=20
->>=20
->> I tried this branch and I see suspend failing with that branch too. If I=
-=20
->> revert this change on top of your branch or -next, I don't see any=20
->> problems.
->
-> The closest hardware I have access to is Jetson Xavier NX, and you
-> already mentioned you couldn't reproduce the issue there (and it looks
-> like I can't even get a hold of that board anyway). So I'm going to ask
-> you to test a few more things for me.
->
-> Can you please apply the patch below on top of the previous one I sent?
-> The suspect is the spinlock lock in irq_migrate_all_off_this_cpu(),
-> although I can't think of any reason why it shouldn't be free. But I
-> don't have any better idea, and I would like to narrow down the spot
-> where hotplug gets stuck.
+On Tue, Jan 27, 2026 at 01:12:54PM +0900, Mikko Perttunen wrote:
+> On Thursday, January 22, 2026 2:08=E2=80=AFAM Kurt Kiefer wrote:
+> >=20
+> > > On Dec 8, 2025, at 8:23=E2=80=AFPM, Aaron Kling <webgeek1234@gmail.co=
+m> wrote:
+> > >=20
+> > > On Wed, Nov 5, 2025 at 3:28=E2=80=AFPM Jasper Korten <jja2000@gmail.c=
+om> wrote:
+> > >>=20
+> > >> Hi all,
+> > >>=20
+> > >> On 11/4/25 19:12, Aaron Kling wrote:
+> > >>> On Tue, Nov 4, 2025 at 3:14=E2=80=AFAM Thierry Reding <thierry.redi=
+ng@gmail.com> wrote:
+> > >>>> On Mon, Nov 03, 2025 at 12:39:57PM -0600, Aaron Kling wrote:
+> > >>>>> On Mon, Nov 3, 2025 at 5:54=E2=80=AFAM Thierry Reding <thierry.re=
+ding@gmail.com> wrote:
+> > >>>>>> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 Rel=
+ay wrote:
+> > >>>>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> > >>>>>>>=20
+> > >>>>>>> Without the cmu, nvdisplay will display colors that are notably=
+ darker
+> > >>>>>>> than intended. The vendor bootloader and the downstream display=
+ driver
+> > >>>>>>> enable the cmu and sets a sRGB table. Loading that table here r=
+esults in
+> > >>>>>>> the intended colors.
+> > >>>>>>>=20
+> > >>>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > >>>>>>> ---
+> > >>>>>>>  drivers/gpu/drm/tegra/dc.h  |  13 +++
+> > >>>>>>>  drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++=
+++++++++++++++++
+> > >>>>>>>  2 files changed, 219 insertions(+)
+> > >>>>>> What does "darker than intended" mean? Who defines the intention=
+? How do
+> > >>>>>> we know what the intention is? What this patch ultimately seems =
+to be
+> > >>>>>> doing is define sRGB to be the default colorspace. Is that alway=
+s the
+> > >>>>>> right default choice? What if people want to specify a different
+> > >>>>>> colorspace?
+> > >>>>> I reported this issue almost a month ago. See kernel lore [0] and
+> > >>>>> freedesktop issue [1]. The pictures in the latter show what nvdis=
+play
+> > >>>>> looks like right now. It's nigh unusably dark. When booted into
+> > >>>>> Android with a tv launcher that has a black background, as is def=
+ault
+> > >>>>> for LineageOS, it is really hard to read anything. Is it correct =
+as a
+> > >>>>> default? Well, cboot hardcodes this, so... presumably? It would be
+> > >>>>> more ideal to expose this and csc to userspace, but I'm not sure =
+if
+> > >>>>> drm has a standardized interface for that or if tegra would have =
+to
+> > >>>>> make something vendor specific. I think that would be a separate
+> > >>>>> change concept compared to setting this default, though.
+> > >>>> The reason I'm asking is because I don't recall ever seeing "broke=
+n"
+> > >>>> colors like you do. So I suspect that this may also be related to =
+what
+> > >>>> display is connected, or the mode that we're setting.
+> > >> I have tried it on both a MacroSilicon HDMI capture card and an Arzo=
+pa
+> > >> Z1FC 1080p portable monitor and run into the same darker colors. Both
+> > >> have in common that they use HDMI which seems to line up with what A=
+aron
+> > >> is reporting. I do not have an eDP display to test or another carrier
+> > >> board with a different display out to test.
+> > >>>> It could perhaps
+> > >>>> also be related to what infoframes we're sending and how these are
+> > >>>> supported/interpreted by the attached display.
+> > >>>>=20
+> > >>>> All of that is to say that maybe this looks broken on the particul=
+ar
+> > >>>> setup that you have but may works fine on other setups. Changing t=
+he
+> > >>>> default may fix your setup and break others.
+> > >>> Do you have a device set up so you can check? Or does the regression
+> > >>> test bench have a display that can be forwarded?
+> > >>>=20
+> > >>> My current setup is a rack of units plugged via hdmi to a kvm which=
+ is
+> > >>> then plugged to a pikvm. I also observed this issue before I had th=
+is
+> > >>> setup, plugged directly to a 1080p monitor. I have not checked
+> > >>> displayport. I can cycle through a couple other displays without th=
+is
+> > >>> patch to see if I get any other result. I am fairly certain I have
+> > >>> consistently seen this issue since I started trying to work with
+> > >>> tegra-drm on kernel 6.1 or maybe even 5.15. I've never seen it work=
+ to
+> > >>> allow for a bisect.
+> > >>>=20
+> > >>> I am in contact with one other person with a tx2 devkit, who
+> > >>> replicated the issue when I asked. Who plans to reply to this thread
+> > >>> with setup info later.
+> > >>=20
+> > >> For reference, I am said person. I have a Jetson TX2 Devkit that uses
+> > >> the P2771 Device Tree. I'm running a Fedora distrokernel with no
+> > >> additional patches applied by myself. I have personally noticed the
+> > >> issue to at least be present on 6.14.5 and 6.17.4.
+> > >>=20
+> > >>=20
+> > >> I'm currently not at home to take screenshots with and without the
+> > >> submitted patch, but will be able to do it tomorrownight or friday.
+> > >=20
+> > > Any further thoughts from the maintainers on this patch? As far as I
+> > > know, this is an issue for all users, at the very least on hdmi.
+> > >=20
+> > > Aaron
+> > >=20
+> >=20
+> > I can confirm that I have the same issue on a DisplayPort output of t19=
+4.
+> > IMO, this patch will need to be reworked a bit to enable the CMU for th=
+is
+> > output as well. I hacked this change in for DisplayPort, and then it
+> > functioned as intended there as well.
+> >=20
+> > I've traced back to the reason this is necessary. The DC hub driver is
+> > applying an sRGB degamma for every RGB plane (presumably for blending),
+> > and then nothing reapplies the EOTF later on. Without gamma correction
+> > in places where it is expected, images are going to look "too dark".
+> >=20
+> > Which does raise the point that there is an alternative implementation
+> > where we do not degamma RGB planes in the first place. But this may have
+> > unintended consequences when it comes to composition.
+> >=20
+> > The SOR does not appear to handle YCbCr outputs at this time, so enabli=
+ng
+> > the CMU assuming an sRGB EOTF seems like a reasonable path here, to me.
+> >=20
+> > Kurt
+>=20
+> I tested this patch locally and did some investigation. Can confirm
+> that on my Jetson AGX Xavier, this patch (or disabling degamma) fixes
+> the color output.
+>=20
+> The colorspace the display expects from the incoming data is specified
+> in the AVI infoframe. This is generated in
+> tegra_sor_hdmi_setup_avi_infoframe, which calls into
+> drm_hdmi_avi_infoframe_from_display_mode, which leaves a lot of fields
+> set at the default.
+>=20
+> Currently we're advertising:
+> * colorimetry =3D no data -> for HD resolutions, use Rec. 709 primaries.
+> These are the same as sRGB.
+> * itc =3D false -> NOT IT content.
+>=20
+> My understanding (based on some LLM research and otherwise) is that
+> this is likely to result in the display expecting Rec. 709 colors with
+> Rec. 709 gamma. sRGB gamma is slightly different, and setting itc =3D
+> true would hint the display towards using sRGB gamma.
+>=20
+> However, what seems clear to me is that the display would be expecting
+> nonlinear data, so enabling gamma conversion at the output LUT seems
+> correct to me. So this patch would be a clear improvement (with the
+> fixes already discussed).
 
-Can we please take a step back and think about what is actually
-different when this change is in effect instead of halluzinating about
-completely unrelated spinlocks?
+I think ideally we want to hook this up to the DRM color management
+facilities, so that it can both be properly reported and configured
+at runtime.
 
-Without this change the interrupt is ignored in the hotplug migration
-because it has MSI_FLAG_NO_AFFINITY set.
+Obviously we also want to make sure that the output pixels match what
+is advertised via the AVI infoframe. Looks like there's concensus that
+enabling the output LUT is the correct way to do that.
 
-Now with this new magic in place the following happens:
+Thierry
 
-migrate_one_irq()
-   ...
-   irq_do_set_affinity()
-      chip->irq_set_affinity()                // --> msi_domain_set_affinit=
-y()
-         parent->chip->irq_set_affinity()     // --> irq_chip_redirect_set_=
-affinity()
-            update target_cpu/effective mask; // Benign
-         ...
-         irq_chip_write_msi_msg()             // --> pci_msi_domain_write_m=
-sg()
-=20=20
-I'm pretty sure that this write screws things up because the
-devices/busses are already frozen. It simply hangs there.
+--fue3hpucru44eqpn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Usually this is prevented by this check in pci_msi_domain_write_msg():
+-----BEGIN PGP SIGNATURE-----
 
-        if (dev->current_state !=3D PCI_D0 || pci_dev_is_disconnected(dev))
-        	do_nothing();
-        else ...
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAml4lFUACgkQ3SOs138+
+s6GqRQ/9Gty05JE6EKz66N98sGLJL+SU2hd4EiSyJ69JkUn682UhsMBkZj4GnaRj
+FrxDBDnjjjDhdzinX5I/7Z/dEYeH2f+j8d7lT/oUhO/7YUpXylLoWByLBmIb52yp
+/YaeipNrSfXRdN81+d8lw7Un1OST8N+vVq4WmZUWj5kI5TvzfmRcT8m6JmNpv58b
+cOFZMuplp0V7UUs+2UzCKW9B5QskhkQCVd2X5Itut87DaNOkIkTwhYR6Y4oYnL1o
+e+CyE0i7FxsdZ1pACzW3yWIOl4Ym+kJ9o9Lm0GsPcWboZv2N6qWI35DbQQNe6FUO
+8CHQGuFYqmJxTiiXls6vCM8wxNocNcf0fpd78eNdSgTdjy1cis9P4z+aSI0C0K/q
+sdxsIZv4azcfztg+AhZyZGpHdSaZ4YbHcH8Bez9tr50ar/FP0/XJap35csiLYjfZ
+rg9OQS+BVOxxeXAyq6SOjnNqZz4Cr6eIQtYSjDVh479I9VuEl5lMplgxyBThwdQu
+JJvPkbxzX4NdVFNPIm/N4YewIyDxt3lIOIfYmpFbYrZap8SechQ6iK30pzhizDcp
+nGhY8fWz7y8khwOLldOzpHOtlpB0i5pvDGQhYiAEIEw9qpYdPkzGON3PIrvgKUNv
+hH3/+A2/mJe9Kv/TmIvCzYDGInP3jyCWCYseVKCprHz1agpQjus=
+=o1Nu
+-----END PGP SIGNATURE-----
 
-As the boot log contains this:
-
-[   44.101151] tegra194-pcie 14100000.pcie: Link didn't transition to L2 st=
-ate
-[   44.110764] Disabling non-boot CPUs ...
-
-... I suspect that there is some weirdness going on with this PCIe
-controller which subsequently screws up the check.
-
-The below untested hack should confirm that theory.
-
-Thanks,
-
-        tglx
----
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -672,7 +672,11 @@ int msi_domain_set_affinity(struct irq_d
- 	if (ret >=3D 0 && ret !=3D IRQ_SET_MASK_OK_DONE) {
- 		BUG_ON(irq_chip_compose_msi_msg(irq_data, msg));
- 		msi_check_level(irq_data->domain, msg);
--		irq_chip_write_msi_msg(irq_data, msg);
-+		// Hack alert
-+		struct irq_desc *desc =3D irq_data_to_desc(irq_data);
-+
-+		if (!(desc->istate & IRQS_SUSPENDED))
-+			irq_chip_write_msi_msg(irq_data, msg);
- 	}
-=20
- 	return ret;
+--fue3hpucru44eqpn--
