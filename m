@@ -1,107 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494A8361652
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 16:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCAC283FE3
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 16:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769531239; cv=none; b=Ks78Si18pvBI973C5SbphqRczS3ZM0DwoDsJ3Mx/beEfUM9iqJLmLWpY4y0JFKJesRliEKH2A69Ec9X/JAPI32G9csj8qLGxwNfOWEBuUIuv9oIfNbM3gL0AIjCZZK641dBaPmjkzacV6tepFVjRASSbNKwfoOmlOjhluyhW4Y4=
+	t=1769532197; cv=none; b=nsJZyAaDn4Li9sSoZo1ZaieWw7vBhAeKS8QgUhQGW5xJNkqZy6h6bX0BZK8+Xce0xRUmaVSK9wo9cW3Xw6beY5k+0E3HF6rax/GgVOgb8eh8uexbU4Z2+lJe3btp3FyOrUMRcbq00MIkzZuIZgL5j34eFrgsjfoeNe6Su5L4DUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769531239; c=relaxed/simple;
-	bh=BWXp9go9XfwSeW0YCc/iImV8Xt/lH6uEAIKNCqQ8bHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LagQtgjwImPZCo/mlDeIP+ODB3/Y6Nl9jvAKPCXUZ6sFgd358E+MmwEHhlunfgymxKisra5YP4KSp/Xi17FrZwOZsU58MI2OomQDextbqc0CaXlGdD0cCiC0bKgMtUzJ/3PpXbV9G1vlosDZT/sjnt/HXVvWHlbVzr40cjGwjhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbPfsQ0j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769532197; c=relaxed/simple;
+	bh=jvSrjyI0rNYJ8C8R56pXxeLDoon1cGjhsNLYQXraWfE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jorhsJB9rlx+nf2A6R55In61wc+yL9DcFcEWYOizPsElfykzDNYQAetDMgfM6otiBg26Sp+aO2WggtAYD9O/5zr3k9Srf6x9dsLMBNFsJydvHR7a0oJitxqBSn4viCHYdRWvRz+FhhHE2XVYxkWkI09ZmFcyu59rXQnVH+itrN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RznIej3N; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbPfsQ0j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1426DC2BCC4
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 16:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769531239;
-	bh=BWXp9go9XfwSeW0YCc/iImV8Xt/lH6uEAIKNCqQ8bHk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tbPfsQ0jvKjqDadmAxnw4cxgLq2iOgtsopUYjRsZYeDlmgS0HemYTrxL4xcrC6hzP
-	 5aqJ4bB+ivCwlfZuEtb81LDNxCaKctH+A6DFxVczaUWDMJruOCASRthGTQh+XuUI6e
-	 eGg+3Bhm+ktRpQ3lm/49C6P5lbHHc5RMnwP6UKQU7crHz53hdL41VfO9Hz+TSJ7bBs
-	 cj6yEkM4H5hoJhVGUVaddK1243RiErhqPRkhNXY0Rwlf+LWVRabEjVzoyLYD7keyVR
-	 DvXgrx+BSUSPUV4v/OWBwL2GrzqjwoHbYrBr56s0uaCAj1Vg1OhBFzqQQLwmmePAHF
-	 mAnux6qepiv0Q==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-662f30d3f1fso271540eaf.1
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 08:27:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJwwJVuSnDcj7Mdzu+0hcoVMsn5It4VQfoOj903Cc1qxIwt/pAZvyhWZhQeRdAniquvMBHgkd7iYoQDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzubjkD+OWPNtKoE5p0drjthlSlblxb58xr72wgr6Um8Awp7gDD
-	4N2VTIW9WTAXpLbnYt79/TYSl5FdhYctQYJ1WqCZzaSzSRx/5/cFO1BDmCn8f4pDCrKvedgkT5q
-	cbx6kRX8S1m5wLPPjnXBqbJ+AuZHsBJE=
-X-Received: by 2002:a05:6820:440f:b0:659:9a49:8edc with SMTP id
- 006d021491bc7-662f205e135mr934882eaf.16.1769531238024; Tue, 27 Jan 2026
- 08:27:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RznIej3N"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-81f4f4d4822so2984031b3a.3
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 08:43:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769532196; x=1770136996; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbJqSdTvAPwaCOQOYdwmWizDI5ckJvr5N6HEdUxLGI0=;
+        b=RznIej3NRfWf9KLz5nDkX+LCRIBu+8M4dPvRJEKgk1yTH+ZAeWaCRxSq/+AHgpNZ5E
+         R+GrhEO62F8UIMmPR3vK7AVRxnosLEmC3Bg21YOtl1QJLWkhH6mBYY0uEYrJq9XC/M2L
+         3tg2U0wn99vNLQDQNM0JYMUCR5WMU8L4oNGVw0agrLuwXXqOvJJOLVvIue7fKm3wzxMe
+         24p8pVH2Zxqssi/K52a/xSATjnuILLX+A9vCuSvYmh6Ls0cdsK//j+BI6y1p6YhqGyq3
+         1Se1YAE0vZ/cM5jHbJDJf5AYJPNEL78M8iBZTLPUSOEPm/DLn5F5rT5qFRH1xqqgnLyz
+         UplA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769532196; x=1770136996;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rbJqSdTvAPwaCOQOYdwmWizDI5ckJvr5N6HEdUxLGI0=;
+        b=dOB9+eL2dfa+hqT3+PD3BY7bTgST7WZD+v8fvLbweebEEPDER+68Qr5dVKjtEd2L8O
+         Q5FTMvHnolKw7lumoxY0QPfDqv58Ri+NL2vE/sxs9F9/FsoeD9Ht4eGgNVQwmqJHCPpi
+         +D002ugN3mxzdDr+4EK5m0Gin0gA90PW5Wb2qAG1Zmp5l/18sUwNcPJBtwNMkEjJdZJD
+         B3VpRuVM9M4eW2qvs/HESR2zgpZW5wIQ4vjnvYcgZs+DX9Fd8icUDiQAFf6i1Zvm/AUi
+         U2YOLNGiZgsEshAZo/tXkm7tzOx3msKcsnP1wWYiAvKv4v1iIGsQ9znJ4xfa15qmFH/9
+         eA6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUyA7HfhCA62ur/yOnuUHx1or9r+nJ3oQj4Rpzy7Zc630Gp/j7I6D4ixoo3N0wsc+MIN56EBSII1PjuFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfmHZKndMpbpzAW2luxu4/2if4+5FMPumFNiLUjloVZM1IFD6m
+	ZcSXgphmUWrYQJULFJhbmQQkpdSIuPHLRLQh1VKI3w7Jcwc8RY6G564F
+X-Gm-Gg: AZuq6aJOKEceKtnCXmjs3ORxTOvek8+xnX6Owz5JlfoNUjhfx0KIuIEJlwiDCMLceDn
+	jU8udbGgueW9milBRu8qkfo8bG7pfU+vixMLkQLyB3fyhwYhLijJf6Tpze2D9i0JM5n51euKGGT
+	6MjRvYNFGK0p97XCHNQQP8BYTQMniGtvjIyh0YDXWrPlk7ZSeVJWDDbrNQZ09u1mPX4hMN1vIjn
+	bgU3XvGOjU9i/hJQ80EjCdrbId4Lj+ZwPRgYWK7GR7Kks2t4iu0SrLiJ+kSlKMYThGhLGxVSbYZ
+	HqkesgMhi5DeU2OiKzr9r+rQFClrBbGAb1ZaJl8nexinMg+TxXmQ4Efo0d7ONLVcQGs8HiDFFdZ
+	//71b0L0ckgDBPCFTrDho1olxH5HQmWiLi6mRjdjCltw5LXToWUFdZkiQdeSs6+DA6m6P+LjJ8d
+	vpSiT3YsL5z2OXxjie+6S3ajA=
+X-Received: by 2002:a05:6a21:6813:b0:38d:e87c:48c8 with SMTP id adf61e73a8af0-38ec6546d38mr2069349637.60.1769532195656;
+        Tue, 27 Jan 2026 08:43:15 -0800 (PST)
+Received: from junjungu-PC.localdomain ([223.166.246.160])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c635a1307a1sm11187307a12.5.2026.01.27.08.43.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jan 2026 08:43:15 -0800 (PST)
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Wed, 28 Jan 2026 00:43:10 +0800
+Subject: [PATCH] drm/tegra: dc: Fix device node reference leak in
+ tegra_dc_has_output()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120145623.2959636-1-sumitg@nvidia.com> <20260120145623.2959636-3-sumitg@nvidia.com>
-In-Reply-To: <20260120145623.2959636-3-sumitg@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Jan 2026 17:27:07 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i-fgbpfd-iHcNNtnFU79Whs+Maknx3ou4oNOADzAZmxg@mail.gmail.com>
-X-Gm-Features: AZwV_QjSIa14EzdtQMBjWmzIWxgVIX9AlsvjWJH35lHYiUt_r6wvkA4ONqxelYY
-Message-ID: <CAJZ5v0i-fgbpfd-iHcNNtnFU79Whs+Maknx3ou4oNOADzAZmxg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/9] ACPI: CPPC: Clean up cppc_perf_caps and
- cppc_perf_ctrls structs
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com, 
-	zhenglifeng1@huawei.com, ionela.voinescu@arm.com, lenb@kernel.org, 
-	robert.moore@intel.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ray.huang@amd.com, gautham.shenoy@amd.com, mario.limonciello@amd.com, 
-	perry.yuan@amd.com, zhanjie9@hisilicon.com, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	nhartman@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260128-dc-v1-1-a88205826301@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAB3reGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDQyNz3ZRk3VRjS7PEJFNjC5OURCWgwoKi1LTMCrAh0bG1tQD4XkIUVAA
+ AAA==
+X-Change-ID: 20260127-dc-e396ab5384da
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769532192; l=1230;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=jvSrjyI0rNYJ8C8R56pXxeLDoon1cGjhsNLYQXraWfE=;
+ b=zAg99uNto1mob2shUsiEV5w4TAfuo/rwrqM+hVIS9lQ63dW5WkF0SDAfWkvE+yX7MT5qx765p
+ W/5FyvToi+QCrFPSeh2AtelSmLjoTdDxfD3R9Qr8tLWnFjjJVJfMcVN
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-On Tue, Jan 20, 2026 at 3:57=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
-te:
->
-> - Remove redundant energy_perf field from 'struct cppc_perf_caps' as
->   the same is available in 'struct cppc_perf_ctrls' which is used.
-> - Move the 'auto_sel' field from 'struct cppc_perf_caps' to
->   'struct cppc_perf_ctrls' as it represents a control register.
->
-> Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  include/acpi/cppc_acpi.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 4bcdcaf8bf2c..6573a759eb8d 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -119,8 +119,6 @@ struct cppc_perf_caps {
->         u32 lowest_nonlinear_perf;
->         u32 lowest_freq;
->         u32 nominal_freq;
-> -       u32 energy_perf;
-> -       bool auto_sel;
->  };
->
->  struct cppc_perf_ctrls {
-> @@ -128,6 +126,7 @@ struct cppc_perf_ctrls {
->         u32 min_perf;
->         u32 desired_perf;
->         u32 energy_perf;
-> +       bool auto_sel;
->  };
->
->  struct cppc_perf_fb_ctrs {
-> --
+The of_for_each_phandle() macro increments the reference count of the
+device node it iterates over. If the loop exits early, the reference must
+be released manually.
 
-It looks like this patch and the next one can be applied independently
-of the other patches in the series.
+In tegra_dc_has_output(), the function returns true immediately when a
+match is found, failing to release the current node's reference.
 
-Do you want me to do that?
+Fix this by adding a call to of_node_put() before returning from the loop.
+
+Fixes: c57997bce423 ("drm/tegra: sor: Add Tegra186 support")
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 01e9d5011dd8..9bf6c008a5ea 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -101,8 +101,10 @@ bool tegra_dc_has_output(struct tegra_dc *dc, struct device *dev)
+ 	int err;
+ 
+ 	of_for_each_phandle(&it, err, np, "nvidia,outputs", NULL, 0)
+-		if (it.node == dev->of_node)
++		if (it.node == dev->of_node) {
++			of_node_put(it.node);
+ 			return true;
++		}
+ 
+ 	return false;
+ }
+
+---
+base-commit: 615aad0f61e0c7a898184a394dc895c610100d4f
+change-id: 20260127-dc-e396ab5384da
+
+Best regards,
+-- 
+Felix Gu <ustc.gu@gmail.com>
+
