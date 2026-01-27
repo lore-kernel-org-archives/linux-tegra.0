@@ -1,102 +1,204 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555DF1A23A6;
-	Tue, 27 Jan 2026 16:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5629F35FF52
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 16:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769530600; cv=none; b=pz7NitpHeDkULHKGK2CV6Rpt4q8JLV5xBhnAH7krWPJ7Q7p8LqPWlGedkJZBGLvE09CqkCHrclF7gonE3TS/YiByi4W7IiK8y3HKkzNlzMdJWryBjeAht5utcsKNUBZt4Q/yFOObZuKnTj5v6Yc7wcDSYRoRepYQZWJbfY9wQzs=
+	t=1769531089; cv=none; b=B82QrvNLZmmCV6knINd6W7cbjWaY3374Nq/NsQIwzx7mLybOCzyt1RU/6x8NqBJjenPkFVVTlJ0ozRV0N7ibHTv0JlPTX+dZkSRikIOJaEniMmTGCWpoIgLi+qZu5IJgszKv0D5B1Nz1ft3hwe7GzYl26uHqTv2bjmO2uf1mcug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769530600; c=relaxed/simple;
-	bh=NqFehIo+wBHMLRHMznX73JFaSdHutIeKjEWsJZ2JeHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecjE/FGPeOJTEKQp7O3Xr5+hvFLW6nti1yjKQHFUjlKTSKywSrlWTlRusJYeq6KHlHhFggzDVTclioTe12YEKlj8qhAMKSHwKolW96u9p4IVW+2SbHCfT/o4FJkh4uwLdQ4NwAvME9CNYjwN3NIZM9zd8tRIqqcFcz5OvK58bP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPrHnJoE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769531089; c=relaxed/simple;
+	bh=Mm7PNHjxKBBGvZCLiHpXhTyu74qmhr7ObXdQIYvFD28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cMXCOW15qPdlfjJZxPf6ABwGnawgmXhnK/BghQyypndO1NcoZ31v1V/xDNeOcPVfIiZeRqBjZjS7AtTeZcS5cackGrmUgMJeWFgAQsFx4LD19wFJHmROBNhCBAqHnI+a9i2w+bAf9+V/hNpWHB2+p61xAXKhgfLb0fu96qPHZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDHoZ7wz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPrHnJoE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6514BC116D0;
-	Tue, 27 Jan 2026 16:16:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDHoZ7wz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393D8C2BCB4
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 16:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769530599;
-	bh=NqFehIo+wBHMLRHMznX73JFaSdHutIeKjEWsJZ2JeHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WPrHnJoES5+B4SO5Id+A461DHDKLrk6+GM3/Uf/n8N3inB4rEP/d1K4dzz/YC+DAU
-	 gqzA6l1uA7yXlKKaaJ4i/gXpvdC9kZs7+FyjWImn2IfU7ezTuwwZVHaQSkZjpHDpM8
-	 Frtgge+tLCAY/+ZCHfomsBumZyzizDrEAeA1vQ3P3yp1m6fKd6J22pPnZl4VkbP6TU
-	 s3gRXa6uJNtG5H1692o+64MhnO8LLgllYtki1lrUH+qMJqBPQYHdEXO8wrO4arMQei
-	 /bKZlodd4pbQW9+JdAtcLQaOSbTri5MQxvtIrQEki7eJI7uhbpNvvh1IXv14/zmNd4
-	 y1nszUxOjxPNg==
-Date: Tue, 27 Jan 2026 17:16:37 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: linusw@kernel.org, brgl@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] gpio: tegra186: Add support for Tegra264
-Message-ID: <aXjk3VEb7f2tDGrW@orome>
-X-NVConfidentiality: public
-References: <20260127050358.1136279-1-pshete@nvidia.com>
- <20260127050358.1136279-2-pshete@nvidia.com>
+	s=k20201202; t=1769531089;
+	bh=Mm7PNHjxKBBGvZCLiHpXhTyu74qmhr7ObXdQIYvFD28=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eDHoZ7wzov52VSRHiF8O0B+f4RfcehlRQcp9dNXea78RFjUTpz7fFO/LcDiBTKY+2
+	 YfLeL1ggHEYl+VgCSw8hwbpIDQ7m6vNgzXTPDw3hYHBVE95xBC4pZxLpeA+Sqni9XW
+	 r2iNwPsVohBqTnU9wNPLdX3TvVZixG2jJHDFSO9ZkcqEcFeEh/21J6Z6fRzlkHCbDQ
+	 W1IZStBzWGLECfsnXQ0IXHvDHajllPv43WklQ3HT9zWaWDs8gly/6SUcxNW3MQVUJ+
+	 78VyG6Vlbtk4kYTNswBjQVbhpDfM3fDFhCh77DKNF0IG0OYmq4nS1eosWIUFv1bcmI
+	 4B6bnjUQia6iA==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-45effa36208so184414b6e.1
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 08:24:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXxv5dG190cvngP9trv6kdBxgdgtT927oHriZmy7X9f2z3f0v/+/mMXAcKpeUbuCA/o0Jri1S3Cvz/DfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxomm3Mt+IuvploaMqG4fqm5fIbN4h8tyMrbnHEjOs6BhtBcXpK
+	SOT6IHVQ6Zj342e2bk1rHrE6/p9aRfjsCwsWGrhPoTbVW0E/Fy19nPt/RPDfqfinlnaE8srFm4D
+	7f7sowlKleqqsFx6stDZj24NKL13jWG8=
+X-Received: by 2002:a05:6808:1904:b0:450:ccef:c01f with SMTP id
+ 5614622812f47-45efc65eef8mr1065605b6e.34.1769531087995; Tue, 27 Jan 2026
+ 08:24:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jmu6es2dltbgztd2"
-Content-Disposition: inline
-In-Reply-To: <20260127050358.1136279-2-pshete@nvidia.com>
-
-
---jmu6es2dltbgztd2
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20260120145623.2959636-1-sumitg@nvidia.com> <20260120145623.2959636-2-sumitg@nvidia.com>
+In-Reply-To: <20260120145623.2959636-2-sumitg@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 Jan 2026 17:24:36 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ipgGt7tetY6p0CW0jyOh9TVeWxgXpFzveTa2CaGB8ZpA@mail.gmail.com>
+X-Gm-Features: AZwV_Qg_oEiNndB5ZDCW_5HqO2fNprSPJkksUv7HA7IrMkSsJk1zm9cMtY4Gyck
+Message-ID: <CAJZ5v0ipgGt7tetY6p0CW0jyOh9TVeWxgXpFzveTa2CaGB8ZpA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/9] cpufreq: CPPC: Add generic helpers for sysfs show/store
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com, 
+	zhenglifeng1@huawei.com, ionela.voinescu@arm.com, lenb@kernel.org, 
+	robert.moore@intel.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ray.huang@amd.com, gautham.shenoy@amd.com, mario.limonciello@amd.com, 
+	perry.yuan@amd.com, zhanjie9@hisilicon.com, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	nhartman@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/3] gpio: tegra186: Add support for Tegra264
-MIME-Version: 1.0
 
-On Tue, Jan 27, 2026 at 05:03:57AM +0000, Prathamesh Shete wrote:
-> Extend the existing Tegra186 GPIO controller driver with support for the
-> GPIO controller found on Tegra264.
->=20
-> Use the "wakeup-parent" phandle from the GPIO device tree node to
-> ensure the GPIO driver associates with the intended PMC device.
-> Relying only on compatible-based lookup can select an unexpected
-> PMC node, so fall back to compatible-based lookup when the phandle
-> is not present.
->=20
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+On Tue, Jan 20, 2026 at 3:57=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
+te:
+>
+> Add generic helper functions for u64 sysfs attributes that follow the
+> common pattern of calling CPPC get/set APIs:
+> - cppc_cpufreq_sysfs_show_u64(): reads value and handles -EOPNOTSUPP
+> - cppc_cpufreq_sysfs_store_u64(): parses input and calls set function
+>
+> Add CPPC_CPUFREQ_ATTR_RW_U64() macro to generate show/store functions
+> using these helpers, reducing boilerplate for simple attributes.
+>
+> Convert auto_act_window and energy_performance_preference_val to use
+> the new macro.
+>
+> No functional changes.
+>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
-> Changes in v2:
->   * Use =E2=80=9Cwakeup-parent=E2=80=9D instead of "nvidia,pmc" and inclu=
-de the renamed header.
-> ---
->  drivers/gpio/gpio-tegra186.c | 90 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 88 insertions(+), 2 deletions(-)
+>  drivers/cpufreq/cppc_cpufreq.c | 69 ++++++++++++----------------------
+>  1 file changed, 25 insertions(+), 44 deletions(-)
+>
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufre=
+q.c
+> index 36e8a75a37f1..c95dcd7719c3 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -863,73 +863,54 @@ static ssize_t store_auto_select(struct cpufreq_pol=
+icy *policy,
+>         return count;
+>  }
+>
+> -static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char =
+*buf)
+> +static ssize_t cppc_cpufreq_sysfs_show_u64(unsigned int cpu,
+> +                                          int (*get_func)(int, u64 *),
+> +                                          char *buf)
+>  {
+>         u64 val;
+> -       int ret;
+> -
+> -       ret =3D cppc_get_auto_act_window(policy->cpu, &val);
+> +       int ret =3D get_func((int)cpu, &val);
+>
+> -       /* show "<unsupported>" when this register is not supported by cp=
+c */
+>         if (ret =3D=3D -EOPNOTSUPP)
+>                 return sysfs_emit(buf, "<unsupported>\n");
+> -
+>         if (ret)
+>                 return ret;
+>
+>         return sysfs_emit(buf, "%llu\n", val);
+>  }
+>
+> -static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
+> -                                    const char *buf, size_t count)
+> +static ssize_t cppc_cpufreq_sysfs_store_u64(unsigned int cpu,
+> +                                           int (*set_func)(int, u64),
+> +                                           const char *buf, size_t count=
+)
+>  {
+> -       u64 usec;
+> +       u64 val;
+>         int ret;
+>
+> -       ret =3D kstrtou64(buf, 0, &usec);
+> +       ret =3D kstrtou64(buf, 0, &val);
+>         if (ret)
+>                 return ret;
+>
+> -       ret =3D cppc_set_auto_act_window(policy->cpu, usec);
+> -       if (ret)
+> -               return ret;
+> +       ret =3D set_func((int)cpu, val);
+>
+> -       return count;
+> +       return ret ? ret : count;
+>  }
+>
+> -static ssize_t show_energy_performance_preference_val(struct cpufreq_pol=
+icy *policy, char *buf)
+> -{
+> -       u64 val;
+> -       int ret;
+> -
+> -       ret =3D cppc_get_epp_perf(policy->cpu, &val);
+> -
+> -       /* show "<unsupported>" when this register is not supported by cp=
+c */
+> -       if (ret =3D=3D -EOPNOTSUPP)
+> -               return sysfs_emit(buf, "<unsupported>\n");
+> -
+> -       if (ret)
+> -               return ret;
+> -
+> -       return sysfs_emit(buf, "%llu\n", val);
+> +#define CPPC_CPUFREQ_ATTR_RW_U64(_name, _get_func, _set_func)          \
+> +static ssize_t show_##_name(struct cpufreq_policy *policy, char *buf)  \
+> +{                                                                      \
+> +       return cppc_cpufreq_sysfs_show_u64(policy->cpu, _get_func, buf);\
+> +}                                                                      \
+> +static ssize_t store_##_name(struct cpufreq_policy *policy,            \
+> +                            const char *buf, size_t count)             \
+> +{                                                                      \
+> +       return cppc_cpufreq_sysfs_store_u64(policy->cpu, _set_func,     \
+> +                                           buf, count);                \
+>  }
+>
+> -static ssize_t store_energy_performance_preference_val(struct cpufreq_po=
+licy *policy,
+> -                                                      const char *buf, s=
+ize_t count)
+> -{
+> -       u64 val;
+> -       int ret;
+> +CPPC_CPUFREQ_ATTR_RW_U64(auto_act_window, cppc_get_auto_act_window,
+> +                        cppc_set_auto_act_window)
+>
+> -       ret =3D kstrtou64(buf, 0, &val);
+> -       if (ret)
+> -               return ret;
+> -
+> -       ret =3D cppc_set_epp(policy->cpu, val);
+> -       if (ret)
+> -               return ret;
+> -
+> -       return count;
+> -}
+> +CPPC_CPUFREQ_ATTR_RW_U64(energy_performance_preference_val,
+> +                        cppc_get_epp_perf, cppc_set_epp)
+>
+>  cpufreq_freq_attr_ro(freqdomain_cpus);
+>  cpufreq_freq_attr_rw(auto_select);
+> --
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+It looks like this patch could be applied independently of the other
+patches in the series.
 
---jmu6es2dltbgztd2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAml45OUACgkQ3SOs138+
-s6Ge5xAAsNBPs+CZNlpmu3Xy/pYpzEzOCb+fYyZrPLrZ4G+YqBWaMYdJ+p0qlQEz
-EpeCYYYG+0LhZ1RLV1oFcJck9VFGAkpi1AniCFM6F9lpk8KhaPh1D7+4i+MYG57L
-G0Q0tW2ujibz0basbooe6Pmaa91pVi4XHpxYJdATxOFCeIHgln2I7dfT9zDGpSYP
-TskNEGgywdbQG0SucKnUlgIikIr0gIugL7f+G14Gy2qXXhBBsDmiG9cPZNGA9KEO
-n0NoBPvoptOJsfxsZcv7moBb3Hh8pqv8wHVgMwsE4VPsuEpBF4121gGnMiYN2zMj
-czv+E3o95PKJ5bXt3TNE/VrAZoqTQJYQYfY6KgJKykJLhaSVpaGjudijSmQ6re7Q
-q3KTpY3Ryvn0G77fP2M0u1Sib+V1VK/+E0WSz6Kcay82PpsD8RKQ9GXFpfBlzrlO
-KFpRXZen+a8inwNnzlb8vqKX1NkKQMbvRF3M9a2LonNDh4HITYlpCCB65OppbtnD
-sge7a/Gm3l5aWAhrzoaZVrD1JNUenf8a8m+fpOIGYBQh40sxcmCblCfQQb1uiNPr
-z49qc57cM83jrcsPTsiljMh/oyiFw3a3al7E3ZWlKcNZwJz4fZCLLV+jDt2/i8xs
-ZpOmMi7CNSemcmsu7w6rHDXLdEfsfAjCPHxzHg8sIXq8ulxhQpE=
-=lDo0
------END PGP SIGNATURE-----
-
---jmu6es2dltbgztd2--
+Do you want me to do so?
