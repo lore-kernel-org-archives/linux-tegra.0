@@ -1,221 +1,169 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013028.outbound.protection.outlook.com [40.107.201.28])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C18A225775;
-	Tue, 27 Jan 2026 08:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769501253; cv=fail; b=CoLsoWaI6AgzS80x0y4Z4yR6k9qmHLXuqzL6YaiTjKlcrfls+2XZosNZUCLf2Vs3eH7qSHAt0dkw1FnphMrLYIACI0qBFwqFgNcQOgzlHSSWKynAyTJZhI27jCpDLtqKVmGt/YKZYleLdUNhyVbpYNZVQhq/Xih0hp/lxSB5hcw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769501253; c=relaxed/simple;
-	bh=qgeyC7g3n0Blh4eYXkoay3vJNz60xO0BOxFuZsZUceI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NCn6fETQukGAt9gwLI/tLme5MWNgsCGCFmzadfEeeePlHIxznQZewt57AxFgOLo74PBby/MYkAq3fKatG9Z9JLD9iyfdK3qXGjF+GxbitK1RhopimHvREP5X43ugaQuzrfWcN8Yq7Utd1ZR0X+q7hHNFaiDNpDEEMiFy7JMCPpE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DGsfWoft; arc=fail smtp.client-ip=40.107.201.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA88E284898
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 09:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769507500; cv=none; b=LEqoS8mvqNogE1t2aJSwBUnjTvAnFr8LzIo7EJDNLHepdEkWIqsokv0Cxas5tAPdtLcy/YsY/9PvI/YJvJl37BD3qdlSbx3GwM+T+TwDLOec5fX/f9T6QA0aCrQdTlxveCXemTokC3m0JEWP7KgMlNq7SgmcV9J4eEpTlmYyFjw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769507500; c=relaxed/simple;
+	bh=fHNDf98UfSxZP/5620ThKlWUIXX7A+obJ7tl3F71J2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=INOpQCnq8W4RZwiEWxqF1shYA+s9gbUoMG6cWfYOicZvP2iF5E3t8npzQ3P5rj4rcEzhS2Rx/Dj0nWYIsAZDZsYW6E/Fvx8J5wHW00TzZhglmuISXvTL59Z8VQ4e8azOI8Rtrj/2vATKmE/4RKAn0GfUEMOsqoQTeqL4ztRB42w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aa/8qJY0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DGsfWoft"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lSnAZN6Iau8+Kp6uAUlmubmH9klxrZAYDpOOBHgAOx4VvWLvnsZJ4vRVZfbqQJWUmBWffFm9pah2hEKT/cuwrNLAmZBFyzCHVgOvdTcVjp/OFb0stnbXK1SRfOazwchzTuDgpUTCRjtkI36GdXCP52gIjnbpxakmLuCr+vhyQJjPjJIVgNONuyqAD99AwHHLScKc6ClqslfuGppHxrXKqk4a4WtdKOiPifXsEQ98jy4S36WzRsMeyq0y5wNtasdwXpOODyleXfmEFoz5KUB40C664oI0os6gY9NStgrEROF0OIJvnA3hIYhhiMf8XSxJYsNDX7+DhjeYZJQbBebyYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dBd9iAsdM0uDnGnSqriuSE9SRmgRVRur+Y8Lpy/FyVo=;
- b=Q96q6hMRHPadSupg3ezTxPHhwjPkB4ezWNsoeqzIDOHSpSev3qBa5EoEo8APQ2CSWviJwezS1qzopzIdtMNNxJ+nwzL/KjYMXwJQiP/g5+oIr6tUSJhj5hWAAdxVKZvqPNz1snql/JyemRY/GN11r/TTb9ByPaKxUlJvi0uu8nkzPHF49DywyGF0js+iLe1LLus7W8BfsWWD6LokOp5KJDoCMwNeNaVbt/ILzjZhhisdNMU2Y0OHuR7pVXBdbagxF8sX6/R/7E8hgAyp7S5ojyYj752KKrlMUXvXSfXeQYqLGdCxGLoZmHhmnRsjbgGXzF3HdzC4EgaTtXj9EAD7QA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dBd9iAsdM0uDnGnSqriuSE9SRmgRVRur+Y8Lpy/FyVo=;
- b=DGsfWoftAog9bJq3oYUfDT4/6UQ3iwlU6NSRj+h5uaHvlrpPRebWV+MAUPypJ/j9j1yEZMt1dGYYbRxWVpNcdGOP+5zJkDp1gVbkUbG6gVJ5YQUP96FnMW7H/rl/zJP2rJe8nJzCRYzn2miKJ7n54dGcYS3+831EG+THiQo3vINahXV2bZtqnI2O2FIa0ghIhYSyvwNiw2tUUkihpOwgW+Oe1vNRJkDpDP0SKIByqNBHI0esbctm8iTxL+RG9FY1SZpdySsFDNNDjUWbQj5UkviiXVTmWH/1Odmb+HEm+hjw5oO6qHM09mHflgHhs3lW3IZy2uQKgtHJDNICCX7YTg==
-Received: from BN9PR03CA0634.namprd03.prod.outlook.com (2603:10b6:408:13b::9)
- by DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.15; Tue, 27 Jan
- 2026 08:07:25 +0000
-Received: from BN3PEPF0000B06E.namprd21.prod.outlook.com
- (2603:10b6:408:13b:cafe::1d) by BN9PR03CA0634.outlook.office365.com
- (2603:10b6:408:13b::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.16 via Frontend Transport; Tue,
- 27 Jan 2026 08:07:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN3PEPF0000B06E.mail.protection.outlook.com (10.167.243.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9587.0 via Frontend Transport; Tue, 27 Jan 2026 08:07:24 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 27 Jan
- 2026 00:07:10 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 27 Jan
- 2026 00:07:07 -0800
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 27 Jan 2026 00:07:03 -0800
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <viresh.kumar@linaro.org>, <rafael@kernel.org>,
-	<beata.michalska@arm.com>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
-	<sumitg@nvidia.com>
-Subject: [PATCH] arm64: topology: Fix false warning in counters_read_on_cpu() for same-CPU reads
-Date: Tue, 27 Jan 2026 13:37:00 +0530
-Message-ID: <20260127080700.3565546-1-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aa/8qJY0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CFD9C116C6;
+	Tue, 27 Jan 2026 09:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769507500;
+	bh=fHNDf98UfSxZP/5620ThKlWUIXX7A+obJ7tl3F71J2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Aa/8qJY0e6xOLcJGlkXtsRB5yaIEhLxJRgDjRIt77AeIOoU+yBZvFSDMePfS4/uIQ
+	 Q7n4zXIUfPoGXGk8df0O9mZjh+Bw2QapijH5i4+yCJ2PwRl/LRVu94XfTia5ttLAa0
+	 APU/YyYxVQCi8MT3MK2oJfj0YHvTUClco4CwSXGUDp1lbqLE6oENK7ODxshuua+YSd
+	 mY758ebI6rofXlCT4W4YqjG2NzdZ2+57k2qlWxuMVbt9Jw/ueHp3XgnGacusaxp/2v
+	 m129Og3jFuXkv7Kv6NW/ALo3/YsM8GXD1t5zFVCjmXwL1iC1B8XgUej5cZBKQ19/CS
+	 g5BhrKLr3KVaA==
+Date: Tue, 27 Jan 2026 10:51:38 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, arm@kernel.org, soc@kernel.org, 
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [GIT PULL 1/4] dt-bindings: Changes for v6.20-rc1
+Message-ID: <aXiJGxVnYxRuHIMv@orome>
+References: <20260118080304.2646387-1-thierry.reding@gmail.com>
+ <20260122-hidden-goat-of-excellence-a43b9f@quoll>
+ <CAMuHMdUZqJa3KEWZReA734=ZV98JTD=HPztkszEe6ARFWiuhww@mail.gmail.com>
+ <aXIVmW_mjb0AdDwe@orome>
+ <684526d5-f1ac-46d5-b147-1fb906ba2248@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06E:EE_|DS7PR12MB6309:EE_
-X-MS-Office365-Filtering-Correlation-Id: 427c725f-c8d6-4d1a-bbb8-08de5d7b1b2f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?f096rxUs+XVtb9etbe9dtpB6dUteQ949mbRFTpaOZKSf+8FENQ5F9NW9K6GJ?=
- =?us-ascii?Q?LCnGxSSwZlG4ldfck6urm6947oAzeGwB+49qTLpSk+C7HqPURMpJOzFpFp8h?=
- =?us-ascii?Q?3PYeiq4f1fuFT6bTIzmgNHr/ZCQB0Jm210xOW4RMxs+cNHViRMdbhxd9dlPk?=
- =?us-ascii?Q?9yWOKB2RacsSWfecNsya/0IBM+wtIqDLMVIsbc+UvtL0R0U/jy3c1VSG/em/?=
- =?us-ascii?Q?Zx/ZUaKfY9RI1HiCBNFaEI9Eq7YCjMm//+0knDpq8JmeQEKJguaEYiC/TEIp?=
- =?us-ascii?Q?TC9I7ZTHNarLLC+gn9lAKoLX20xYPP1ZVh/7COupt+XElROqvzZQKWe5mkG1?=
- =?us-ascii?Q?17/JoFn4KGNVYQtEux8fAkrRbL5yd2ZG+7J8MR+zS/wLHEkxbiMhMNKtV6eX?=
- =?us-ascii?Q?N93Q5EVU8MhysyW1fF/V73+n9jbK+Ice/p4qIVoEwnZtb+VZXoGtHi8ItzFB?=
- =?us-ascii?Q?lCjAaXbf7qqpxoUZl3IXgP9lUs8svO9VuP4IO6LmhdylECS0Awri9VSOO8Zj?=
- =?us-ascii?Q?o5lTRJTG3cKQRL7TRz9f2wifs04i6t2wfM5beOmmX3pKsAJKh6Cwm8au1Tuv?=
- =?us-ascii?Q?xRyHpyInsG2Y/CPgPFn+2CeF1VIMP+Yq7rWhskWhKJ2Rn1/HieVIwBilOnQ2?=
- =?us-ascii?Q?Sm/SWKfYEVHQL2lqlOzMMueGwPglgxWgy9o/ao/m2SYXQMOFJISp/cV9h9Hb?=
- =?us-ascii?Q?TF0+QDvhL1k/j7QmoorLoSfehe8eg1pFl22ce/IxebI6tfckd/jnR10mT+m7?=
- =?us-ascii?Q?4IgQH+pMFTMUo7lHnmqtgwKKGBq3UG67eCs3uvh4B0bwLcnALi3WBTr55DZx?=
- =?us-ascii?Q?Yl5bBkTOuLfcaslghPAyj46OHuu49XdvzI9X+TIfy4qzIhd8gtTMxKepgd6C?=
- =?us-ascii?Q?bYUernUQ+zEio2860zIHoNFN8/fNkcstBsXqFgfLaJFf5AWrhQlg/QOBmqoK?=
- =?us-ascii?Q?TEhrKZlp4nJnizovhHcw2dXwCf1Us8/jJz2XvMkGjD0lhfMob3L6nwgvypqw?=
- =?us-ascii?Q?FUvsYOHlcBEjpg3OlhUQlbhGFm8yWb+oQPfb6PKde6ckAESal0hoRk6rgc1o?=
- =?us-ascii?Q?rKBDWlr1E5zVtUGEXNwJz9dqXVAK6nzCE058SISCvQRvVxX7ADGI7T8LbC2W?=
- =?us-ascii?Q?Kg5YsADq77KJGr+B+1JjhclHq8J4f5+Gz3+OoSAJfsE0xd5KvWmTP9y4RDCm?=
- =?us-ascii?Q?QyFVDo84MJ3f7e63oNd06Gwwp8srY/p7PShY7VY2m02obO+hWxbGSFmHgDIq?=
- =?us-ascii?Q?Q5Oq3JqhlsANNbfRlZIteAdUdSDosLD+6Kt8moa4V+Lwc55gvUlXfvO1EnWv?=
- =?us-ascii?Q?tS0pnSbxeKRiwimNRZ42sOvpDtqwAM8qGI1FLXzPE8uq9RbWnjUYSb3gVzin?=
- =?us-ascii?Q?fqfmctqeKLNEMcDtvbqZwrHUX2lbb/P4+gKNyPHBz9pvxnFnZXQo19Di700z?=
- =?us-ascii?Q?mBRMsmmmklVb8HQ/ucOoq/AqSn+2Z1aJyI52taynRmJ4taKvP39iw6UixIBf?=
- =?us-ascii?Q?811ZK0zlKex23POYYESnsbcSg9DSLy4d74l5GlrlGUOoeJ8CXebMR4FJ4pe7?=
- =?us-ascii?Q?sodNDp6r+yzmV4SWYu8wdM3CmB7wZp7U/EqzzJ5H8T2wfsB3ViwM2ii5fa+D?=
- =?us-ascii?Q?/FGWk9Ja/Pk5RDnga4l59EIJE/LRB8m2t5qFhH6Zuea7N4PxvKyAIxv2Sbxx?=
- =?us-ascii?Q?AbvSWiVDKIiBI074SdbuDYv5Dv4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2026 08:07:24.9772
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 427c725f-c8d6-4d1a-bbb8-08de5d7b1b2f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06E.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6309
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4zipssenwoagfsy7"
+Content-Disposition: inline
+In-Reply-To: <684526d5-f1ac-46d5-b147-1fb906ba2248@kernel.org>
 
-The counters_read_on_cpu() function warns when called with IRQs disabled
-to prevent deadlock in smp_call_function_single(). However, this warning
-is spurious when reading counters on the current CPU since no IPI is
-needed for same-CPU reads.
 
-Commit 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks
-for non-PCC regs") changed the CPPC Frequency Invariance Engine to read
-AMU counters directly from the scheduler tick for non-PCC register
-spaces (like FFH), instead of deferring to a kthread. This means
-counters_read_on_cpu() is now called with IRQs disabled from the tick
-handler, triggering the warning:
+--4zipssenwoagfsy7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [GIT PULL 1/4] dt-bindings: Changes for v6.20-rc1
+MIME-Version: 1.0
 
-| WARNING: arch/arm64/kernel/topology.c:410 at counters_read_on_cpu
-| ...
-| Call trace:
-|  counters_read_on_cpu+0x88/0xa8 (P)
-|  cpc_read_ffh+0xdc/0x148
-|  cpc_read+0x260/0x518
-|  cppc_get_perf_ctrs+0xf0/0x398
-|  __cppc_scale_freq_tick+0x4c/0x148 [cppc_cpufreq]
-|  cppc_scale_freq_tick+0x44/0x88 [cppc_cpufreq]
-|  topology_scale_freq_tick+0x34/0x58
-|  sched_tick+0x58/0x300
-|  update_process_times+0xcc/0x120
-|  tick_nohz_handler+0xa8/0x260
-|  __hrtimer_run_queues+0x154/0x360
-|  hrtimer_interrupt+0xf4/0x2b0
-|  arch_timer_handler_phys+0x4c/0x78
-|  ....
-|  CPPC Cpufreq:__cppc_scale_freq_tick: failed to read perf counters
-|  ....
+On Fri, Jan 23, 2026 at 08:43:44AM +0100, Krzysztof Kozlowski wrote:
+> On 22/01/2026 13:20, Thierry Reding wrote:
+> > On Thu, Jan 22, 2026 at 12:02:04PM +0100, Geert Uytterhoeven wrote:
+> >> Hi Krzysztof,
+> >>
+> >> On Thu, 22 Jan 2026 at 11:08, Krzysztof Kozlowski <krzk@kernel.org> wr=
+ote:
+> >>> On Sun, Jan 18, 2026 at 09:03:00AM +0100, Thierry Reding wrote:
+> >>>> The following changes since commit 8f0b4cce4481fb22653697cced8d0d040=
+27cb1e8:
+> >>>>
+> >>>>   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
+> >>>>
+> >>>> are available in the Git repository at:
+> >>>>
+> >>>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags=
+/tegra-for-6.20-dt-bindings
+> >>>>
+> >>>> for you to fetch changes up to b2788f6320722d6059f849f35a77eb082608c=
+627:
+> >>>>
+> >>>>   ASoC: dt-bindings: realtek,rt5640: Document port node (2026-01-17 =
+01:58:18 +0100)
+> >>>>
+> >>>> Thanks,
+> >>>> Thierry
+> >>>>
+> >>>> ----------------------------------------------------------------
+> >>>> dt-bindings: Changes for v6.20-rc1
+> >>>>
+> >>>> This series updates various DT bindings for Tegra architecture,
+> >>>> primarily focusing on schema validation fixes and new feature
+> >>>> documentation for Tegra234 and Tegra264 SoCs. Key changes include
+> >>>> correcting realtek,rt5640 audio codec bindings (adding missing ports,
+> >>>> clocks, and jack-detect sources), converting Tegra20 NAND bindings to
+> >>>> YAML, and updating memory, DMA, and IOMMU definitions for Tegra264
+> >>>> (introducing CMDQV and DBB clock support). Additionally, it resolves
+> >>>> legacy warnings for Tegra30/132 display and VI interfaces.
+> >>>
+> >>> Same comment as was for Geert, I am surprised to see DT bindings as
+> >>> separate pull and I see drivers were alerady merged, so I will defer
+> >>> entire Tegra pull to Arnd.
+> >>
+> >> The soc tree used to have a separate branch for dt-bindings.
+> >> Hence several soc submaintainers still use that split for their PRs.
+> >=20
+> > Yeah. I usually also only put things in the PR for ARM SoC that have no
+> > related driver changes (fixups, conversions, ...) and therefore nobody
+> > else feels responsible for picking up.
+>=20
+> Why these are still separate? There are few options here:
+> 1. These were needed by the drivers you sent in pull: should be in that
+> driver pull. It seems Geert confirmed this was the case with Renesas.
+> BTW, checkpatch asks for that somewhat - you will have checkpatch
+> warning of undocumented compatibles and you are not suppose to have such
+> warnings.
 
-Fix this by calling the counter read function directly for same-CPU
-case, bypassing smp_call_function_single() entirely. Use get_cpu() to
-disable preemption as the counter read functions call this_cpu_has_cap()
-which requires a non-preemptible context.
+Yes, most of the time they'll be in this type of pull request and I
+don't usually apply them when they are in this category.
 
-Fixes: 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks for non-PCC regs")
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- arch/arm64/kernel/topology.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+> 2. These were needed by the new DTS you sent in pull: should be in that
+> DTS pull.
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 539b38935182..57b71f403007 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -401,12 +401,29 @@ static inline
- int counters_read_on_cpu(int cpu, smp_call_func_t func, u64 *val)
- {
- 	/*
--	 * Abort call on counterless CPU or when interrupts are
--	 * disabled - can lead to deadlock in smp sync call.
-+	 * Abort call on counterless CPU.
- 	 */
- 	if (!cpu_has_amu_feat(cpu))
- 		return -EOPNOTSUPP;
- 
-+	/*
-+	 * For same-CPU reads, call the function directly since no IPI
-+	 * is needed and this is safe even with IRQs disabled.
-+	 * Use get_cpu() to disable preemption as the counter read
-+	 * functions call this_cpu_has_cap() which requires a
-+	 * non-preemptible context.
-+	 */
-+	if (cpu == get_cpu()) {
-+		func(val);
-+		put_cpu();
-+		return 0;
-+	}
-+	put_cpu();
-+
-+	/*
-+	 * Reading from a remote CPU requires IRQs enabled to avoid
-+	 * deadlock in smp_call_function_single().
-+	 */
- 	if (WARN_ON_ONCE(irqs_disabled()))
- 		return -EPERM;
- 
--- 
-2.34.1
+This happens sometimes. In that case what I will usually do is have them
+on a separate branch that is merged into the branch with the DTS changes
+so that they are separate but the dependency is explicit.
 
+> 3. These were not needed by anything yet or they document compatibles
+> already in the tree: that's the only case I imagine having them on
+> separate branch. You can take such bindings when subsystem maintainers
+> do not - they ignore them. 90% of bindings in this pull are not like that!
+
+This is typically the majority of patches that end up in the Tegra
+dt-bindings branch. It's random assortments of things that nobody seems
+to feel responsible for and they concern primarily Tegra, so I consider
+the Tegra tree to be the fallback and will vacuum these up.
+
+In this particular case I was heavily relying on Patchwork and missed
+that Mark had already applied them. Jon pointed it out to me, and so did
+Rob, so I removed them. Unfortunately, I didn't send out an updated PR
+in time, so Arnd ended up pulling this into ARM SoC.
+
+Let me check in with Arnd to see if that one PR can be backed out, so we
+can iron this out.
+
+Thierry
+
+--4zipssenwoagfsy7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAml4iqkACgkQ3SOs138+
+s6H//A//Sgq9M8Nb3DnMTwj6xOLWTSrty3XpzgLqTud6s2j5MLPaQGnmUf+FWZYI
++Tj+YToZBG2Lt5pF3kbmWjAedbfqEQX27f4XlJFuazxdQXOjjx4EjDUdhKVvJaA3
+bH0JhOLOq225sLB1SqSDNewDJDxTXkc4FTrL/cevxR7hlC6tWTLtLoauQa18AYKG
+wSz1nCseXHsXKWWWlFAnio6oPvIg4lN0h2AbcO6TwFUl4lWC4AID0cK3WScvmwos
+j3Rj8aziEV8sFBfAHEu1pJ0ZuOlYnLg4FC/vMyhpm17zYfkk9BxO9xfguZ0i6BPI
+iXlvadk93zSDqTrgJHcoHE9A0EvxSEWL40Qgoph4dPxPhZ7mZRYHBKcqT2uR0Y+h
+rBx/ZXKre6zyP4uQhKpWAImFQ3Qxwkk1lrRzAT/whK0EYXpzhtUH8IMyZLFCRSBd
+IEUZOHKXGM0df6JdRWuOllAyYCTIDDjMKVvZdn0uFlzRTnK7a5O/JOVbyvbpFqbx
+vTyPSmIe7dl7PtE6y+lmWlia+NaGKpg2IE7lOzwV147A3X1i2wM/pVSderi5Woyj
+4zXcNXZRNHty3iPtpqhVpdwkq/Zwz7nTDvcPA4PbeQchek+FOJIeIuaVphS+A4/f
+zIPtw+JH92AcZIO2lZJp5ERxGb56Xf1/qUSLyZxRl0OF+ECkbms=
+=QO4O
+-----END PGP SIGNATURE-----
+
+--4zipssenwoagfsy7--
