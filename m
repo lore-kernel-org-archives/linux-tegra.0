@@ -1,227 +1,124 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E7D36EA9A
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 20:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375FE22129B;
+	Tue, 27 Jan 2026 21:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769545063; cv=none; b=uJo39JtPqovGLCTQdUDhftCUaU9NNg+3ZXJ2AhDlaa4xptqeqgf1dj2iWb9oj4QJk5CmJFdyaFs8siMIkeF4GYmrSv2MaF7qIYPXMCiGZIg9TtrMLeRfzBRXl55DX8Z4fixsnuqRzVvPMe9P25zvgd1XeBsuefC7EHQreP8FIIw=
+	t=1769549420; cv=none; b=BdBfkeBK4veDbdJghOIoC2kP3gOyuWzFsI70m9ocHeyiQn23gsxwqXA11B9ydpeXgEFmZcEZUDZIpHUXxLACXIv1jd6ntm2zKVpBYaumEBRnp1J6vgrkIWd2pC+Su05L7S1kZa/OXzi5h/wcd/XheNWarRNW6ypjmeVkJUF9jp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769545063; c=relaxed/simple;
-	bh=a33Hqp1gxCbHs3ozHKcUQHsfvseir6CgyC/3r5RJM6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JbVRhnEH/0DeniMAxp7iGa2ZJbfwbP+uXtsne/G8LcpsDDhKPol+Q0DtiQlRtRlFa8/DysSBGbl3FrzH2qqE1uY2IlpjnbtwYna5HakXf2fTckJk4Gyn9LkJaVnhhOvedXlbOUjz2wemAD/Lr2H0xrIWY02aEXRYLXjvuu1P3K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW70FeFZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769549420; c=relaxed/simple;
+	bh=X/DyL3htn4ICmaXSKDEv8M3FS9tX32N0mfBoLLW/kkM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RM5G0AukL1IXF7vxwPVgFPTSVP9d6Q1D0yDO2lNybDQfx51MMAwvSrRPlJ9jPa/ieRI3hvw0Ola4wVQMH+l9rOfDCRoYuETyaXKj+OUsGgDsQdM89I7+Z2ZNXg3ijLKYIUujutX5KmwPvJnre9sCCkB9E709vXexW+J9HbAQqUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WijDDMwr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW70FeFZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27BFDC2BCB4
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 20:17:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WijDDMwr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C832C116C6;
+	Tue, 27 Jan 2026 21:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769545063;
-	bh=a33Hqp1gxCbHs3ozHKcUQHsfvseir6CgyC/3r5RJM6I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HW70FeFZrSJ5tBsfLLlIAQhEzhETh6tGJ8tsLmA0yCoS3laS0upD795WkBN21W5zq
-	 B8ciEbjNYs6hbdNNW+kVuQ5z5T3eDTRzjv7tC8n/3yakZRq6PJpEGuuQ4XZnWsBw0T
-	 wAWDeOfbJz8Re4DdBwfr7/KuHsJ/IfMgGS2JWa+lCgBEGGWu3M6s5a90nnzE/aqx52
-	 3XussOr8obvtKWz4Ei2gYzEA4AloJKZNuC+UC8qLC0xdwkigb0x+Y3K38uttqKiwhL
-	 72aArRFqF+7eQd8x+V9XAiuTuAeJEbRYqpKmrbXk5EKag7XV0oWkPchUkwUUpCsSF7
-	 /bPfKndaxVoJQ==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-40427db1300so3756640fac.0
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Jan 2026 12:17:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXIxJtqU/n7glR1pEwul9XDyMS3tlgecNjBzVZ6rlNpH4BfU/SgygcBQt4lJOjyyJG3T43nK1bmgg803Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ5KBiKfUpB7QAmdshvIfgqS3DyrHIwavmJQA6Kt81cPR/IXZr
-	hsyaq1wCe6zN2igjwvf5q9+GJZ2xW6AhQfSBgxXQ6IibNHkvIyQ8O0qHJ1DpB8V10EqfaF9rhyl
-	7+pWHbc/m33yms0uNGmH/+SoxHuyLUa0=
-X-Received: by 2002:a4a:cf16:0:b0:662:f6b4:8c4e with SMTP id
- 006d021491bc7-662f6b48e48mr773192eaf.80.1769545062036; Tue, 27 Jan 2026
- 12:17:42 -0800 (PST)
+	s=k20201202; t=1769549419;
+	bh=X/DyL3htn4ICmaXSKDEv8M3FS9tX32N0mfBoLLW/kkM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WijDDMwrDlC0yAJeSE7e/a7UUpJVMqW00N65/Izb6qD72C7Bn8jKEz78nFOhZvU+g
+	 QUYm88brO3yU+ppBtnO1DSIgXD0W2eLdtLMtlPQV3nz27CL2AWsG+1M+hAeGEaxliS
+	 2fYs8HXjPVThkYlmFrc3l6A9U4up+iQHxlHcmd4wcu2A6yTo4ZO3rXaabQdhJBJsUo
+	 kiTUmKAhMoCNgo8zCSKM/gVvWrXD2PP+f7kggd7I/I6mscaN3B8LqrfFps2YWYwjwo
+	 UBU0AEm5KpUOWcbTbzWXAc8whnj9A4ihpuGoPGS7nTMOdLiMXhSBRr8DCjOLve2Ae0
+	 iEXLI51H5bQgQ==
+From: Thomas Gleixner <tglx@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>, Radu Rendec <rrendec@redhat.com>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: Daniel Tsai <danielsftsai@google.com>, Marek =?utf-8?Q?Beh=C3=BAn?=
+ <kabel@kernel.org>,
+ Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Brian Masney <bmasney@redhat.com>, Eric
+ Chanudet <echanude@redhat.com>, Alessandro Carminati
+ <acarmina@redhat.com>, Jared Kangas <jkangas@redhat.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: [PATCH] genirq/redirect: Prevent writing MSI message on affinity
+ change
+In-Reply-To: <b5e33957-1b8d-436b-888e-2b6f13d30782@nvidia.com>
+References: <20251128212055.1409093-1-rrendec@redhat.com>
+ <20251128212055.1409093-4-rrendec@redhat.com>
+ <4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com>
+ <a8d841e870d6dbbabef7eadb774f2a58a96c57c7.camel@redhat.com>
+ <cfe44924-3419-4f31-8ab3-87b769d21a5b@nvidia.com>
+ <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
+ <87sebsdcte.ffs@tglx> <255713ca-bf91-4f7e-8df2-33b7b614a1bb@nvidia.com>
+ <221f6dadb6d8ce06f30a24baaa2777e90d75b130.camel@redhat.com>
+ <87h5s7bb5s.ffs@tglx> <87ecnbb2mn.ffs@tglx>
+ <b5e33957-1b8d-436b-888e-2b6f13d30782@nvidia.com>
+Date: Tue, 27 Jan 2026 22:30:16 +0100
+Message-ID: <87tsw6aglz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120145623.2959636-1-sumitg@nvidia.com> <20260120145623.2959636-2-sumitg@nvidia.com>
- <CAJZ5v0ipgGt7tetY6p0CW0jyOh9TVeWxgXpFzveTa2CaGB8ZpA@mail.gmail.com> <6be02e54-dd4a-4d8f-b2ee-291da63b0bf2@nvidia.com>
-In-Reply-To: <6be02e54-dd4a-4d8f-b2ee-291da63b0bf2@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Jan 2026 21:17:31 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0j8Z3dUZUuUUZPiGthN7yg03yDpWARGJLE8U2fCeUK8Qw@mail.gmail.com>
-X-Gm-Features: AZwV_QhFFimFgohPagii-2LtTrRkBzebBcIWZn4w-qFlB50tTtELmDGXQrkWWSI
-Message-ID: <CAJZ5v0j8Z3dUZUuUUZPiGthN7yg03yDpWARGJLE8U2fCeUK8Qw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/9] cpufreq: CPPC: Add generic helpers for sysfs show/store
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, pierre.gondois@arm.com, 
-	zhenglifeng1@huawei.com, ionela.voinescu@arm.com, lenb@kernel.org, 
-	robert.moore@intel.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ray.huang@amd.com, gautham.shenoy@amd.com, mario.limonciello@amd.com, 
-	perry.yuan@amd.com, zhanjie9@hisilicon.com, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	nhartman@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jan 27, 2026 at 8:01=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
-te:
->
->
-> On 27/01/26 21:54, Rafael J. Wysocki wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Tue, Jan 20, 2026 at 3:57=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com>=
- wrote:
-> >> Add generic helper functions for u64 sysfs attributes that follow the
-> >> common pattern of calling CPPC get/set APIs:
-> >> - cppc_cpufreq_sysfs_show_u64(): reads value and handles -EOPNOTSUPP
-> >> - cppc_cpufreq_sysfs_store_u64(): parses input and calls set function
-> >>
-> >> Add CPPC_CPUFREQ_ATTR_RW_U64() macro to generate show/store functions
-> >> using these helpers, reducing boilerplate for simple attributes.
-> >>
-> >> Convert auto_act_window and energy_performance_preference_val to use
-> >> the new macro.
-> >>
-> >> No functional changes.
-> >>
-> >> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> >> ---
-> >>   drivers/cpufreq/cppc_cpufreq.c | 69 ++++++++++++--------------------=
---
-> >>   1 file changed, 25 insertions(+), 44 deletions(-)
-> >>
-> >> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpu=
-freq.c
-> >> index 36e8a75a37f1..c95dcd7719c3 100644
-> >> --- a/drivers/cpufreq/cppc_cpufreq.c
-> >> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> >> @@ -863,73 +863,54 @@ static ssize_t store_auto_select(struct cpufreq_=
-policy *policy,
-> >>          return count;
-> >>   }
-> >>
-> >> -static ssize_t show_auto_act_window(struct cpufreq_policy *policy, ch=
-ar *buf)
-> >> +static ssize_t cppc_cpufreq_sysfs_show_u64(unsigned int cpu,
-> >> +                                          int (*get_func)(int, u64 *)=
-,
-> >> +                                          char *buf)
-> >>   {
-> >>          u64 val;
-> >> -       int ret;
-> >> -
-> >> -       ret =3D cppc_get_auto_act_window(policy->cpu, &val);
-> >> +       int ret =3D get_func((int)cpu, &val);
-> >>
-> >> -       /* show "<unsupported>" when this register is not supported by=
- cpc */
-> >>          if (ret =3D=3D -EOPNOTSUPP)
-> >>                  return sysfs_emit(buf, "<unsupported>\n");
-> >> -
-> >>          if (ret)
-> >>                  return ret;
-> >>
-> >>          return sysfs_emit(buf, "%llu\n", val);
-> >>   }
-> >>
-> >> -static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
-> >> -                                    const char *buf, size_t count)
-> >> +static ssize_t cppc_cpufreq_sysfs_store_u64(unsigned int cpu,
-> >> +                                           int (*set_func)(int, u64),
-> >> +                                           const char *buf, size_t co=
-unt)
-> >>   {
-> >> -       u64 usec;
-> >> +       u64 val;
-> >>          int ret;
-> >>
-> >> -       ret =3D kstrtou64(buf, 0, &usec);
-> >> +       ret =3D kstrtou64(buf, 0, &val);
-> >>          if (ret)
-> >>                  return ret;
-> >>
-> >> -       ret =3D cppc_set_auto_act_window(policy->cpu, usec);
-> >> -       if (ret)
-> >> -               return ret;
-> >> +       ret =3D set_func((int)cpu, val);
-> >>
-> >> -       return count;
-> >> +       return ret ? ret : count;
-> >>   }
-> >>
-> >> -static ssize_t show_energy_performance_preference_val(struct cpufreq_=
-policy *policy, char *buf)
-> >> -{
-> >> -       u64 val;
-> >> -       int ret;
-> >> -
-> >> -       ret =3D cppc_get_epp_perf(policy->cpu, &val);
-> >> -
-> >> -       /* show "<unsupported>" when this register is not supported by=
- cpc */
-> >> -       if (ret =3D=3D -EOPNOTSUPP)
-> >> -               return sysfs_emit(buf, "<unsupported>\n");
-> >> -
-> >> -       if (ret)
-> >> -               return ret;
-> >> -
-> >> -       return sysfs_emit(buf, "%llu\n", val);
-> >> +#define CPPC_CPUFREQ_ATTR_RW_U64(_name, _get_func, _set_func)        =
-  \
-> >> +static ssize_t show_##_name(struct cpufreq_policy *policy, char *buf)=
-  \
-> >> +{                                                                    =
-  \
-> >> +       return cppc_cpufreq_sysfs_show_u64(policy->cpu, _get_func, buf=
-);\
-> >> +}                                                                    =
-  \
-> >> +static ssize_t store_##_name(struct cpufreq_policy *policy,          =
-  \
-> >> +                            const char *buf, size_t count)           =
-  \
-> >> +{                                                                    =
-  \
-> >> +       return cppc_cpufreq_sysfs_store_u64(policy->cpu, _set_func,   =
-  \
-> >> +                                           buf, count);              =
-  \
-> >>   }
-> >>
-> >> -static ssize_t store_energy_performance_preference_val(struct cpufreq=
-_policy *policy,
-> >> -                                                      const char *buf=
-, size_t count)
-> >> -{
-> >> -       u64 val;
-> >> -       int ret;
-> >> +CPPC_CPUFREQ_ATTR_RW_U64(auto_act_window, cppc_get_auto_act_window,
-> >> +                        cppc_set_auto_act_window)
-> >>
-> >> -       ret =3D kstrtou64(buf, 0, &val);
-> >> -       if (ret)
-> >> -               return ret;
-> >> -
-> >> -       ret =3D cppc_set_epp(policy->cpu, val);
-> >> -       if (ret)
-> >> -               return ret;
-> >> -
-> >> -       return count;
-> >> -}
-> >> +CPPC_CPUFREQ_ATTR_RW_U64(energy_performance_preference_val,
-> >> +                        cppc_get_epp_perf, cppc_set_epp)
-> >>
-> >>   cpufreq_freq_attr_ro(freqdomain_cpus);
-> >>   cpufreq_freq_attr_rw(auto_select);
-> >> --
-> > It looks like this patch could be applied independently of the other
-> > patches in the series.
-> >
-> > Do you want me to do so?
->
-> Yes, this patch is independent and can be applied.
+The interrupts which are handled by the redirection infrastructure provide
+a irq_set_affinity() callback, which solely determines the target CPU for
+redirection via irq_work and und updates the effective affinity mask.
 
-Applied as 6.20 material, thanks!
+Contrary to regular MSI interrupts this affinity setting does not change
+the underlying interrupt message as the message is only created at setup
+time to deliver to the demultiplexing interrupt.
+
+Therefore the message write in msi_domain_set_affinity() is a pointless
+exercise. In principle the write is harmless, but a Tegra system exposes a
+full system hang during suspend due to that write.
+
+It's unclear why the check for the PCI device state PCI_D0 in
+pci_msi_domain_write_msg(), which prevents the actual hardware access if
+a device is powered down state, fails on this particular system, but
+that's a different problem which needs to be investigated by the Tegra
+experts.
+
+The irq_set_affinity() callback can advise msi_domain_set_affinity() not to
+write the MSI message by returning IRQ_SET_MASK_OK_DONE instead of
+IRQ_SET_MASK_OK. Do exactly that.
+
+Just to make it clear again:
+
+This is not a correctness issue of the redirection code as returning
+IRQ_SET_MASK_OK in that context is completely correct. From the core
+code point of view this is solely a optimization to avoid an redundant
+hardware write.
+
+As a byproduct it papers over the underlying problem on the Tegra platform,
+which fails to put the PCIe device[s] out of PCI_D0 despite the fact that
+the devices and busses have been shut down. The redirect infrastructure
+just unearthed the underlying issue, which is prone to happen in quite some
+other code paths which use the PCI_D0 check to prevent hardware access to
+powered down devices.
+
+This therefore has neither a 'Fixes:' nor a 'Closes:' tag associated as the
+underlying problem, which is outside the scope of the interrupt code, is
+still unresolved.
+
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thomas Gleixner <tglx@kernel.org>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Link: https://lore.kernel.org/all/4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com
+---
+ kernel/irq/chip.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1495,7 +1495,7 @@ int irq_chip_redirect_set_affinity(struc
+ 	WRITE_ONCE(redir->target_cpu, cpumask_first(dest));
+ 	irq_data_update_effective_affinity(data, dest);
+ 
+-	return IRQ_SET_MASK_OK;
++	return IRQ_SET_MASK_OK_DONE;
+ }
+ EXPORT_SYMBOL_GPL(irq_chip_redirect_set_affinity);
+ #endif
