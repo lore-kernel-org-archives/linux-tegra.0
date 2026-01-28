@@ -1,239 +1,311 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010062.outbound.protection.outlook.com [52.101.46.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4E5337BB1
-	for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 08:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED4733A70A;
+	Wed, 28 Jan 2026 08:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769587434; cv=pass; b=A3RhYABQQw8LbvYhMQimDMPvGtZD+OplfqwBA4WbfJO77m+2x2ftCvIEgc9aoAxKZo4p4dPAOUrscakJ939UvD0m9u+nf4AFfBV12IcU0C8mRIZc8mXxBL26etGR+9SuqNd5vuCm3iz0dL36Qj8IyBTBaJQBr43tG6UY0LAq5Bs=
+	t=1769590309; cv=fail; b=UFC1mdBGAzQmQzT46IuUS1/htpT/o5QwqF36iYPw5HFmvJAKwKfswUTWpipd8p68Od20c/W6ZEw5oNt6z0ST6qza6wg4uKrbgDFPtI31+XuY2BrW9+Bro1rdESjgGITc4vnOC2pqNxoh4esIEHOA6MfyBsBBDisE11043acSziU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769587434; c=relaxed/simple;
-	bh=aqn+gN2OxI69735lSHDX86lDwmZbS9vqddn2YqjxpN8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M8YrnhTiV12KMMIzlsqR0ZCNBKn+A8bpX6np/ZukITUALMBUUe11CxwWaU7mAtBDheIAAxKMoeC4S1o9RWyNOoJNtECFNacFEpWPjPvTJTv2je5ZK7BJ9g5ZZp6xj/NfQyMT8unIVw6h8WsHFl1F8S0fMvXu1jTyDpIbR6Pli1A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FtyZqgom; arc=pass smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1769590309; c=relaxed/simple;
+	bh=LaUPdwZu2toxeLjah6J5meVqDo5uTfr0rtLW2J9UV90=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q7rj2f1n1eUAdmkywOOCu5R/JhCnzXbb/kbWEtijzBXiUcLnN4QaFq4jhFkvgZ+I6upLJPUhyyT4Jvy6EVREmxUsliGQOm2AczaaIlLvRHq3q4XlzQdcsesWnl53g5FFHtW3jLxT0cB8SStVJ5GBLQyvKjNFv5nblkUYUaY8jxM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XcT0De8w; arc=fail smtp.client-ip=52.101.46.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FtyZqgom"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2a0d06cfa93so47125ad.1
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 00:03:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769587432; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZsNBnwzBk/gTRXoh+UvpLGh4JdXeEA2xVdmkAq4f3QA++hoxDCapghG3XxmKdDwFfF
-         VTI9oSeeYCBzft4uL8Xkq0111BsPCx1MGBsmo3Op58doC6mgoaSM43NqNSjtTVU8vntH
-         R7j6FyTpTHtGYTZQQwccZO8lVnoWJuJpzwUYZojKYXr8Cbf/+/Q9Pj+hoiNDiURc9dZd
-         1ae8FpEDLJBUPuJHGRNVBTAI4OZ6NJ9A41c3Ylj9WZS9BLPlDQ7qob9Uj2vjddhcUh+J
-         yfIrlw1y1Wvv1oh4+sEyj4qA7Mk4dMGWwp08tDAdbAPPc6FqNrhbtZXwrBlKHCjhkz6M
-         NI8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=kwxqyPY7kwvh1qYq0RNe4lMNJMkXau1MJhNry6YmLss=;
-        fh=qSwhCqHBnjJbwS6NKakiXxaE0H5ezss6Z5jb92RCS7s=;
-        b=SFRYt7i0jGWNe5Qy4kfVXYGCywoGbqR21cMikWP0NMhzjgkJg8yZm9bW9x8GfgBAws
-         NXSLDIphoE/AAU+L2av5J5lal67/FvQwvtLTObzPhKcQxS6dkaUqLGxgCP5WYNxvnQ2P
-         QDN7gAAthsrixmhCzZTurehSpQYslAAyj/PYpO+muA3X2CAUKYP/zzV1LouxloZajpmE
-         NgQAUmWLprZ1mGUIVgpvujCmkFZ6ZL+1L6N5b19fMjXCCkfC7x122GcIjRGOfTpBh06Y
-         Yv62riBWB0D0mSuSuli8YE9gkg+5T8VWN1c6R9ZM+rMp20iq5J6+CfeDIa6sJpiA/wlG
-         2/Og==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769587432; x=1770192232; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kwxqyPY7kwvh1qYq0RNe4lMNJMkXau1MJhNry6YmLss=;
-        b=FtyZqgomLOQzIcb530lwU0srOzkzzwPj8YVFumXkpsz4njhIpgUKE5+iU8QFkxvRVw
-         NkvChfDP3jNBvViTnBKQWeVUy6tJLjKeYNLcwW4TiyxloUNc2hDjiufymK3/e3xQXDeI
-         NfY+xUR5LwyrRvkSp5tQhD8OzuJow+lmILEvawhFOK3FleILFv/exV7lxNRCGAFoT/uy
-         3Fbskhwr9wZ2S4kD9BX/Z5jKwMZ4mLxfykn+JFfi+1SsorFi9VEUZATXMeTDYpshwtgK
-         B5eiGbeYXAQgvvKMpJHGv5TaEqvDzjhlhnp5FdnU+ujvUDwsTr+w9IF6TSSnQCvZsEpP
-         CWNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769587432; x=1770192232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kwxqyPY7kwvh1qYq0RNe4lMNJMkXau1MJhNry6YmLss=;
-        b=AxdYFzOzzwp6kmFAkQjuRmvnKywbHgmZRFwTb/r5wGus3CFXNVLcFpy7M28WrB51uP
-         wtWOStTXnqhhouD1yNuXRIQp92GLH6vvPr6F1tjK9P9hcrCqZZUE9MJUhMVRaqxotFzy
-         j8T4Vyr/+mbljn4spFDqX+TNPB7Z0Mgs6V6mPYz47uhFczWu/Mu75/xjkm4PqlUpk+fz
-         7NxjS/YfsNCdFPsB7t3N3khZxorB+6UzFQVEDgVnLcQ9BgJxw1MEWOKkXOZfZAUyp0PZ
-         FkgJerrmcKpH4ZYM/5OCmOOiaiDjMTSuo6Ib+29+W/3lBuwDtzttMFRtLXcPAFXB/pg9
-         svbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXV0BlNIrpD3yuEdi9aeDczGHbKar2ppbYmxWSBrec91lmdiG71RLDoNnNPbWZwWyA+c1a2htHekKG76w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkVHwWoxvP6mb4AKpA/ZZw9BplDEh6iSAjoDlMkO260BwwKsgY
-	C28292v/08P0AizjqiKYE2x9uTznAnvdxjX+7qN3whXKcC3Q8vLHM9dnjKZ2ezEaZSNYao+y9Qe
-	g4LAjtBHA6G9Hi2z+FuvPtK4c7OfOKsj6tOlk9PXr
-X-Gm-Gg: AZuq6aJqU2QITGbwbKfRiDluzZ4a99//JTTcaXsLGKaY7lLYglMdjmheivc1nbRkJ/z
-	EjJeWVRdtwTr88itVKRD78XmldgFZXTUZly0iHQJ1N8nSgSFz4oGCtqSNMsJp5t7pwHCFL+kT6d
-	Omr9w9Voblq8TwL55Ejv+NHUwpEnxm/aCloPDzJPfrpZ9BWOdf3lulSunmT5UXd/wcKk8W5cPWm
-	BHkVaviIkZTJooNm20sNMejihLWhhbU8xJHjU2aJiJRVNOjFJer+VYGb/tZ058TyAAPoQK+
-X-Received: by 2002:a17:903:3c2d:b0:26d:72f8:8cfa with SMTP id
- d9443c01a7336-2a870b49cd1mr4464695ad.13.1769587431647; Wed, 28 Jan 2026
- 00:03:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XcT0De8w"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QLzcnHd24zsSqtApfkxwXeYUUOTFlxqSQrnvA11tjjM6dQKINs735XpK4k2dGcUELnC4LrDxO3zcVHtuNSdoQJ9hLAKAq69ao2WUMGFEgfGxyHj8DW7Fu86LYZFr0o47ZWoUW1XIKo95MOQx21q9yGpewA9zjQpb643X8jMdVPYuRkbQoueNnPmvzpPxQpi3s/6nKOmMj1/dkExfXPOOCkZoX/5fq4zt7jc0f2GhdmDYltZCXNH3UndwwfIDJ8QbO4kXGSRPOnfAvYk7Gl6fkUiRahDhhlBDwC0GVljkkKrH4c8VCVbt2767k9jrO7Vjz04li6jhEkqpj0EO76AYsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=csf1cJNQ7vqBjg0ez48uHATBXIQMHxCeqL8htsnYOVU=;
+ b=SmA7B5loZ5IptSsnMpALY+1nEHBa4L/ORORFtkAFsjprG4yV121OwiYWnl4weGtcx3g/Nowyi7qQxq9rDDZAapSNQpVQW9TOtmiL3UZZK9CIkuwbZBPWvIs0Qn54jSWeqI79q7uhV5HFsIKHolhpQ2puWJhLn5UI8KA7djPlyPQn0byZ95WltGJLX/yfOrrXVpPDl3+76tVv4TgTq0B1hnZ74u4WKn9WZXBl5vcLs5aGs02NXxaoz0h9WYvRC3H4BpjPgAJDWjCm/XbxqvhAFqV8/OWEZauL0OgabSFct2fS5MWEL0K/+nT2KsE35uJyLjj1Mm7lyoD1xCAeAD4dmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=csf1cJNQ7vqBjg0ez48uHATBXIQMHxCeqL8htsnYOVU=;
+ b=XcT0De8wbRpcQgdvTDKSKvx0zT8A9b87IdJ0mHH0elTWRjpNTXgqvIntbIkpt8kg+TxzQOz+8j5BC79xKy2tMJrDaVbBuKIEnkglQ4HTKd0uhf9rZKnzOXlgVf9YC76+5lYobEGgT/PqLqHhYoodfUzTNdjlXmpPxfQ6dIqOVS9lKD21Zqf7E682YVUc1vpAvBfrfmB2oHeWx67iA05SIxe9VRPRyGyFt3ZZBGse8MnIxKb1FkHLnbEdxQJKX2Xs4diBEiDoe/iEMNkF76O6rjnSnTH+Hp757m/jXV8GpndLVxIy1e3qpeEaIIRGFzuKH5Ky6oRI0Jg4U155Mg/leg==
+Received: from MW4PR03CA0121.namprd03.prod.outlook.com (2603:10b6:303:8c::6)
+ by BY5PR12MB4146.namprd12.prod.outlook.com (2603:10b6:a03:20d::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.16; Wed, 28 Jan
+ 2026 08:51:41 +0000
+Received: from MWH0EPF000A672F.namprd04.prod.outlook.com
+ (2603:10b6:303:8c:cafe::57) by MW4PR03CA0121.outlook.office365.com
+ (2603:10b6:303:8c::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.7 via Frontend Transport; Wed,
+ 28 Jan 2026 08:51:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MWH0EPF000A672F.mail.protection.outlook.com (10.167.249.21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9564.3 via Frontend Transport; Wed, 28 Jan 2026 08:51:40 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 28 Jan
+ 2026 00:51:19 -0800
+Received: from localhost (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 28 Jan
+ 2026 00:51:19 -0800
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<robh@kernel.org>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <pshete@nvidia.com>, Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v5 1/3] dt-bindings: gpio: Add Tegra264 support
+Date: Wed, 28 Jan 2026 08:51:12 +0000
+Message-ID: <20260128085114.1137725-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260127225909.3296202-1-bwicaksono@nvidia.com>
-In-Reply-To: <20260127225909.3296202-1-bwicaksono@nvidia.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 28 Jan 2026 00:03:40 -0800
-X-Gm-Features: AZwV_Qh52YOdWkzhjqwDKEE_iLJJ8-fVjQ4au_Elxnl29BT84Z16fQ67obstxk8
-Message-ID: <CAP-5=fUxhbR1xs1f9mrkcUXZZNLrVqDG0ebhwW--WtgVRnNxNw@mail.gmail.com>
-Subject: Re: [PATCH] perf vendor events arm64: Add Tegra410 Olympus PMU events
-To: Besar Wicaksono <bwicaksono@nvidia.com>
-Cc: john.g.garry@oracle.com, will@kernel.org, james.clark@linaro.org, 
-	mike.leach@linaro.org, leo.yan@linux.dev, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tmakin@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com, skelley@nvidia.com, 
-	ywan@nvidia.com, treding@nvidia.com, jonathanh@nvidia.com, mochs@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A672F:EE_|BY5PR12MB4146:EE_
+X-MS-Office365-Filtering-Correlation-Id: da07f2b9-1f32-43e2-81c5-08de5e4a74a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QkJubUp4Z3U3WEh2WVJNNC90ejd0MXk0QUFJWWl6ZHFVM1l1dC94NmgycEpm?=
+ =?utf-8?B?MXJwWVRhYzRaVnFIY0JKSE1NdWNubGVpdThscGRUVithMGZDOUhlVTVCOUJz?=
+ =?utf-8?B?QzlxWFNDNGluczZIZUFxMWR5VmFjUmNPWFRQcTZJcUxuRE94cWk3NmFDaXhS?=
+ =?utf-8?B?Y2JiblBjdjduS1NaQnhLQlNtQ1ZPWDkwOTNQdUNIQ2tRRlZ1TFVVUy83elFT?=
+ =?utf-8?B?NGphR2tKNkMxTlptMEE5NUpTeWxvQ2tNR080R1VpcnM3RTFCbU42RGFtblJL?=
+ =?utf-8?B?a2ZEY1ZKM3YxWnNmSUFXU0pKWndLWTh4MVhjN2dNNTFuVWJ1M2dpV1k5TTli?=
+ =?utf-8?B?NmNuaXVYRnROWmJvYjAxdEU5OXdvVXBNbExCUW1VN1c0UlIvRTZ3QUNBNVkr?=
+ =?utf-8?B?b1dCOUFuaEVhK2JFSlR2WlMxUkNiMUJLZkJnL2s0VjdwQU8yaCsvZXJiblhF?=
+ =?utf-8?B?dU9kUnBzcTBpclUzZXlqUzNCVDQyejVlQnhzU2F5ZDBDNURmaDFLVUdZSWJw?=
+ =?utf-8?B?VVgxRnhrY2U2b2lYK1BQQ05TU3FmbDhuckJNZGdZdG5Kci84aEhjbHlCQjlo?=
+ =?utf-8?B?cHRHNVhxTE5HOVVxdDRaY2lKNnBqU2o4dnZ4Q3B3bWdMOHloVVZoUXMwRU12?=
+ =?utf-8?B?WEx6RmVYR2JjUzNNWkJDOGFndVpseUJMNktTZ2llZlBCVmV5UDVlY0Z0MmpJ?=
+ =?utf-8?B?eXdHb0xWWGhwVTFDRjEyRFFrR3hVWkxtS0cyTUlXWlVUa2ttdWRaSVdNOXFt?=
+ =?utf-8?B?bVg2NzQvT2NMM0QwMFRJaHFBbi9KTkgrSjhIWE1FZUQxZ0JzWXVXcVRXSXNX?=
+ =?utf-8?B?aHlLUCtvdVB5dVJxTVFwclgwVCtUMW1UV1pYVlpqRVNXNzFMU1NOaWI2TGxq?=
+ =?utf-8?B?TzJvSUNGV1RScnkrOXV1TnFMU1pYcFdRRlBkTjJENG1LaktOaHpzSHRublh5?=
+ =?utf-8?B?TFBLSGVQTDV3L21tWnQwZHJzN01nbWdaQ3ZOM1ZYUU5IOWw0VDRkUkYvcEZY?=
+ =?utf-8?B?OGd4MzVUWm5lMUsrd1ZaUHk4M2VCY01hZkhWSXQvWmV1Y0MwNk16Z1hNR29X?=
+ =?utf-8?B?UzhEejBlbVEwbmNSbDlLQy9UbFI5cmNoMGFMaXVNSXZlODhVRnhsOGlYUUkx?=
+ =?utf-8?B?ekJ6dnREM1lYZmFqdnRTakd0SGFmYXJieTdsTWRiTFlJOGRNek9Za25qS3Jo?=
+ =?utf-8?B?aU5GamhNYWpTbVZPK0thMG9VeEhUQ0l6aWRveERrN05VSWJEZmFtbnB6Wmg4?=
+ =?utf-8?B?QUlEblJVNUZlb3VSN2tWb2s4bHM5dkFDcWx5Z21xYU96ZWh4V2ZNUDlBa2tS?=
+ =?utf-8?B?MGFBQytJSGJBTDVpSkxxUzVvazNGdXg5eWg1M1RnQ2NGUTkvS0NYbGtiZTR0?=
+ =?utf-8?B?cEsyL0k1UlZTL2sxOGhCbjJVOHdVb1QxQ0x6SG5zVXAwUW1QM3VVaWxtQUZ0?=
+ =?utf-8?B?WTlzTWNuaTlnbVZHN0JtL3hRVUR1T3UwZ0h0R2lXaVAveDVCSjAwb1czRnRr?=
+ =?utf-8?B?NlA0MlRRVXBXYTJYM09nN0R6Zy9lMkVjdnZkZmNEVjFpZnNPVVhzbm5PUFA1?=
+ =?utf-8?B?ZHYySzZBMHByLzExdWR0TDN1aEd1YWZEV1pYY01YM1JLcVROZ0RSV01sd05z?=
+ =?utf-8?B?Tk9XY0Y1eTZhRDlFSm9wWFpJVEZ4bWRnYTQ0N2pjdGM1OVNkS0RjbW9ENGZi?=
+ =?utf-8?B?OGJ6cG82Vk1SakxmRXBQSUFleG85Qm5WMGpoWm5tejF0UXByVzUzZFFuS0Fp?=
+ =?utf-8?B?Q3dhMUxNcWE5akRNZHlaREFmOEE1SUNjeG1ab3Q3UC9UeGw2bmV5Zm1lS25H?=
+ =?utf-8?B?dFRwNytVL05jKy93dDZHTGxXMU16N0RrVnVvTWxFUmZaWGlVRjVsaEpOUi9o?=
+ =?utf-8?B?SXdCVittUGJoa3NabktpTHVoZTFIOW0vZ25TVUZadDdpeW5jYjU1elVMUmRl?=
+ =?utf-8?B?NENIMDRxQ2V1ejFRVHE5NFEvKzNmZkZKZXZqQU9NR1Y5WEVIZjZUZ3B3cTdy?=
+ =?utf-8?B?OUhZZllEMTNWZ1FUdi95VnpXWlM5bktjMU5MMFo3bGM4M0F2eWlSQmljc2Y0?=
+ =?utf-8?B?bkRmM1NyRHlFY2QzN1BuaHBGODZTbUpyUnZDeDc5UUZjZG53VzFTaUMxUjVO?=
+ =?utf-8?B?MytCbzlKbTR1Q0tGMGlxNVc3ckJXc0t4Y0tRV3BCT2NBdXlyMGdtQ1lzMmhu?=
+ =?utf-8?B?K2VlQzN1WFArSGUyZzRBays3OVR1VlVaNE5ud05vbk1jSlpEVGdpM3Z6YkUw?=
+ =?utf-8?Q?Sa6P0JUTgAvIZfyZqF+09Oxs3OOggDN9CeddR8QHZs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 08:51:40.9220
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: da07f2b9-1f32-43e2-81c5-08de5e4a74a5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A672F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4146
 
-On Tue, Jan 27, 2026 at 3:00=E2=80=AFPM Besar Wicaksono <bwicaksono@nvidia.=
-com> wrote:
->
-> Add JSON files for NVIDIA Tegra410 Olympus core PMU events.
-> Also updated the common-and-microarch.json.
->
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> ---
->  .../arch/arm64/common-and-microarch.json      |  90 +++
->  tools/perf/pmu-events/arch/arm64/mapfile.csv  |   1 +
->  .../arch/arm64/nvidia/t410/branch.json        |  45 ++
->  .../arch/arm64/nvidia/t410/brbe.json          |   6 +
->  .../arch/arm64/nvidia/t410/bus.json           |  48 ++
->  .../arch/arm64/nvidia/t410/exception.json     |  62 ++
->  .../arch/arm64/nvidia/t410/fp_operation.json  |  78 ++
->  .../arch/arm64/nvidia/t410/general.json       |  15 +
->  .../arch/arm64/nvidia/t410/l1d_cache.json     | 122 +++
->  .../arch/arm64/nvidia/t410/l1i_cache.json     | 114 +++
->  .../arch/arm64/nvidia/t410/l2d_cache.json     | 134 ++++
->  .../arch/arm64/nvidia/t410/ll_cache.json      | 107 +++
->  .../arch/arm64/nvidia/t410/memory.json        |  46 ++
->  .../arch/arm64/nvidia/t410/metrics.json       | 722 ++++++++++++++++++
->  .../arch/arm64/nvidia/t410/misc.json          | 646 ++++++++++++++++
->  .../arch/arm64/nvidia/t410/retired.json       |  94 +++
->  .../arch/arm64/nvidia/t410/spe.json           |  42 +
->  .../arm64/nvidia/t410/spec_operation.json     | 230 ++++++
->  .../arch/arm64/nvidia/t410/stall.json         | 145 ++++
->  .../arch/arm64/nvidia/t410/tlb.json           | 158 ++++
->  20 files changed, 2905 insertions(+)
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/branch.j=
-son
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/brbe.jso=
-n
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/bus.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/exceptio=
-n.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/fp_opera=
-tion.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/general.=
-json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/l1d_cach=
-e.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/l1i_cach=
-e.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/l2d_cach=
-e.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/ll_cache=
-.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/memory.j=
-son
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/metrics.=
-json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/misc.jso=
-n
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/retired.=
-json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/spe.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/spec_ope=
-ration.json
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/stall.js=
-on
->  create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/tlb.json
->
-> diff --git a/tools/perf/pmu-events/arch/arm64/common-and-microarch.json b=
-/tools/perf/pmu-events/arch/arm64/common-and-microarch.json
-> index 468cb085d879..6af15776ff17 100644
-> --- a/tools/perf/pmu-events/arch/arm64/common-and-microarch.json
-> +++ b/tools/perf/pmu-events/arch/arm64/common-and-microarch.json
-> @@ -179,6 +179,11 @@
->          "EventName": "BUS_CYCLES",
->          "BriefDescription": "Bus cycle"
->      },
-> +    {
-> +        "EventCode": "0x001E",
-> +        "EventName": "CHAIN",
-> +        "BriefDescription": "Chain a pair of event counters."
-> +    },
+Extend the existing Tegra186 GPIO controller device tree bindings with
+support for the GPIO controller found on Tegra264. The number of pins
+is slightly different, but the programming model remains the same.
 
-Cool stuff :-)
+Add a new header, include/dt-bindings/gpio/nvidia,tegra264-gpio.h,
+that defines port IDs as well as the TEGRA264_MAIN_GPIO() helper,
+both of which are used in conjunction to create a unique specifier
+for each pin.
 
-For wider counters AMD does something similar, but should this be an
-implementation detail rather than an exposed event? How does it
-operate as an event?
+On Tegra, GPIO wake events are latched and routed via the PMC.
+Document the standard DT property, wakeup-parent, which is a phandle to
+the PMC interrupt controller that provides the parent wake interrupt
+domain for the GPIO controller. If the property is absent the driver
+falls back to a compatible-based lookup.
 
-[snip]
-> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pm=
-u-events/arch/arm64/mapfile.csv
-> index bb3fa8a33496..7f0eaa702048 100644
-> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-> @@ -46,3 +46,4 @@
->  0x00000000500f0000,v1,ampere/emag,core
->  0x00000000c00fac30,v1,ampere/ampereone,core
->  0x00000000c00fac40,v1,ampere/ampereonex,core
-> +0x000000004e0f0100,v1,nvidia/t410,core
-> diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/branch.json b/t=
-ools/perf/pmu-events/arch/arm64/nvidia/t410/branch.json
-> new file mode 100644
-> index 000000000000..532bc59dc573
-> --- /dev/null
-> +++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/branch.json
-> @@ -0,0 +1,45 @@
-> +[
-> +    {
-> +        "ArchStdEvent": "BR_MIS_PRED",
-> +        "PublicDescription": "The Event counts Branches which are specul=
-atively executed and mis-predicted."
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v5:
+  * Update commit subject with changed header file name
 
-nit: The capitalization on Event and Branches, as well as other words,
-is a little unusual.
+Changes in v4:
+  * Drop local $ref for wakeup-parent (use dt-schema default) and inline its description.
 
-[snip]
-> diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/metrics.json b/=
-tools/perf/pmu-events/arch/arm64/nvidia/t410/metrics.json
-> new file mode 100644
-> index 000000000000..18c2fd58ee9e
-> --- /dev/null
-> +++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/metrics.json
-> @@ -0,0 +1,722 @@
-> +[
-> +    {
-> +        "MetricName": "backend_bound",
-> +        "MetricExpr": "100 * (STALL_SLOT_BACKEND / CPU_SLOT)",
-> +        "BriefDescription": "This metric is the percentage of total slot=
-s that were stalled due to resource constraints in the backend of the proce=
-ssor.",
-> +        "ScaleUnit": "1percent of slots",
-> +        "MetricGroup": "TopdownL1"
+Changes in v3:
+  * Fix DT binding SPDX license to GPL-2.0-only OR BSD-2-Clause
 
-Note, on x86 we place TopdownL1 in the Default metric group so it is
-shown by `perf stat` when it isn't given events or metrics to compute.
-Perhaps you want to do something similar?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/pmu-events/arch/x86/icelake/icl-metrics.json?h=3Dtmp.perf=
--tools-next#n116
+Changes in v2:
+  * Update DT binding to use “wakeup-parent” (drop custom nvidia,pmc).
+  * Require “wakeup-parent” for Tegra264 compatibles in the binding.
+  * Rename header file to "nvidia,tegra264-gpio.h".
+---
+ .../bindings/gpio/nvidia,tegra186-gpio.yaml   | 22 +++++++
+ .../dt-bindings/gpio/nvidia,tegra264-gpio.h   | 62 +++++++++++++++++++
+ 2 files changed, 84 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/nvidia,tegra264-gpio.h
 
-Thanks,
-Ian
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+index 2bd620a1099b..17748dd1015d 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -86,6 +86,9 @@ properties:
+       - nvidia,tegra234-gpio
+       - nvidia,tegra234-gpio-aon
+       - nvidia,tegra256-gpio
++      - nvidia,tegra264-gpio
++      - nvidia,tegra264-gpio-uphy
++      - nvidia,tegra264-gpio-aon
+ 
+   reg-names:
+     items:
+@@ -110,6 +113,10 @@ properties:
+       ports, in the order the HW manual describes them. The number of entries
+       required varies depending on compatible value.
+ 
++  wakeup-parent:
++    description: Phandle to the parent interrupt controller used for wake-up. On
++      Tegra, this typically references the PMC interrupt controller.
++
+   gpio-controller: true
+ 
+   gpio-ranges:
+@@ -157,6 +164,8 @@ allOf:
+               - nvidia,tegra194-gpio
+               - nvidia,tegra234-gpio
+               - nvidia,tegra256-gpio
++              - nvidia,tegra264-gpio
++              - nvidia,tegra264-gpio-uphy
+     then:
+       properties:
+         interrupts:
+@@ -171,12 +180,25 @@ allOf:
+               - nvidia,tegra186-gpio-aon
+               - nvidia,tegra194-gpio-aon
+               - nvidia,tegra234-gpio-aon
++              - nvidia,tegra264-gpio-aon
+     then:
+       properties:
+         interrupts:
+           minItems: 1
+           maxItems: 4
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra264-gpio
++              - nvidia,tegra264-gpio-uphy
++              - nvidia,tegra264-gpio-aon
++    then:
++      required:
++        - wakeup-parent
++
+ required:
+   - compatible
+   - reg
+diff --git a/include/dt-bindings/gpio/nvidia,tegra264-gpio.h b/include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+new file mode 100644
+index 000000000000..63a3541c2fb0
+--- /dev/null
++++ b/include/dt-bindings/gpio/nvidia,tegra264-gpio.h
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/* Copyright (c) 2026, NVIDIA CORPORATION. All rights reserved. */
++
++/*
++ * This header provides constants for binding nvidia,tegra264-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA264_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA264_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA264_MAIN_GPIO_PORT_T  0
++#define TEGRA264_MAIN_GPIO_PORT_U  1
++#define TEGRA264_MAIN_GPIO_PORT_V  2
++#define TEGRA264_MAIN_GPIO_PORT_W  3
++#define TEGRA264_MAIN_GPIO_PORT_AL 4
++#define TEGRA264_MAIN_GPIO_PORT_Y  5
++#define TEGRA264_MAIN_GPIO_PORT_Z  6
++#define TEGRA264_MAIN_GPIO_PORT_X  7
++#define TEGRA264_MAIN_GPIO_PORT_H  8
++#define TEGRA264_MAIN_GPIO_PORT_J  9
++#define TEGRA264_MAIN_GPIO_PORT_K  10
++#define TEGRA264_MAIN_GPIO_PORT_L  11
++#define TEGRA264_MAIN_GPIO_PORT_M  12
++#define TEGRA264_MAIN_GPIO_PORT_P  13
++#define TEGRA264_MAIN_GPIO_PORT_Q  14
++#define TEGRA264_MAIN_GPIO_PORT_R  15
++#define TEGRA264_MAIN_GPIO_PORT_S  16
++#define TEGRA264_MAIN_GPIO_PORT_F  17
++#define TEGRA264_MAIN_GPIO_PORT_G  18
++
++#define TEGRA264_MAIN_GPIO(port, offset) \
++	((TEGRA264_MAIN_GPIO_PORT_##port * 8) + (offset))
++
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA264_AON_GPIO_PORT_AA  0
++#define TEGRA264_AON_GPIO_PORT_BB  1
++#define TEGRA264_AON_GPIO_PORT_CC  2
++#define TEGRA264_AON_GPIO_PORT_DD  3
++#define TEGRA264_AON_GPIO_PORT_EE  4
++
++#define TEGRA264_AON_GPIO(port, offset) \
++	((TEGRA264_AON_GPIO_PORT_##port * 8) + (offset))
++
++#define TEGRA264_UPHY_GPIO_PORT_A  0
++#define TEGRA264_UPHY_GPIO_PORT_B  1
++#define TEGRA264_UPHY_GPIO_PORT_C  2
++#define TEGRA264_UPHY_GPIO_PORT_D  3
++#define TEGRA264_UPHY_GPIO_PORT_E  4
++
++#define TEGRA264_UPHY_GPIO(port, offset) \
++	((TEGRA264_UPHY_GPIO_PORT_##port * 8) + (offset))
++
++#endif
++
+-- 
+2.17.1
+
