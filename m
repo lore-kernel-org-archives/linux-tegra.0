@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7206B34FF70;
-	Wed, 28 Jan 2026 12:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED2932BF43
+	for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 12:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769604239; cv=none; b=hreaDKshBGhSW6Havk6EQb8tzj0v0T1A7eXBYFvqgz9ed1nbHn9ZLz05vGu46BYDrYc48xjcv+bV57xBDwaMhShTq0Xm/Eyrd7EyXDF1wHue4a+OiN+GAmYjlC82C+xO5aazv41f4pex9LgCHbYAEsdmxjHC/WiA23Dct76CM0c=
+	t=1769604276; cv=none; b=MmxNuez3+vVkbRiPo1oVIo7WRpyZPeaHLuA20EqTNNmEpH6hsJXAieHG7Q4vUuIfpxa8liuraACn0f7/b/7EgGVPpSv2FlfigvD1LkNgEJwPWlqRfwiOU0TF2HwvaLLh5ohZ+K52uxjvev1dnwCWIz6Miq/rvz6rvqM/Ewp/kA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769604239; c=relaxed/simple;
-	bh=21o7Sk1LvcwFGTtlndbPMNt9Skdhx9N7m/IPcsY4r4I=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dwo5Uhuv7S5NEVJBanJ9vGXx2YNKwd//r3f2ODYgZqaQdYgz6E11mB2OvBqrquULiC8kS8dmm5ZWQx3s7Va+JYHTe6aMj6/UXKDqft0G7jGTh7LQyccVsW/X04gs/GrWAhK5uHopj3PCn0ChKo3Z0u0YHj2TU6/lghBAZS9QBy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6iijq1U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769604276; c=relaxed/simple;
+	bh=mFDSWjULiqNb4gYo6mmddAEfUmh3dS6FOXzRW85kLjw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TufnckUPulTuWcOoofTOtKobduGviFL36rbuxD+5xnA4D2MBgMJXdgHWTSi4toqkj9C7STtpX3ZJ9Mx9NIoLJgUvxHcO2kZm+9h3k+owoqp6ZsAHeCczBD8nO2HprldCh++zeZK4raAazUIINKaHwi+dqNNjh5ZdMbinUfw4+uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTAvHsdz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6iijq1U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B149C4CEF1;
-	Wed, 28 Jan 2026 12:43:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTAvHsdz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD197C16AAE;
+	Wed, 28 Jan 2026 12:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769604239;
-	bh=21o7Sk1LvcwFGTtlndbPMNt9Skdhx9N7m/IPcsY4r4I=;
-	h=From:Subject:Date:To:Cc:From;
-	b=O6iijq1UXavDudl1Ma5LeKPtHarFTnU/sK32yJaRS7mIMrId2lF0cw1JHdrnfQHkj
-	 MRkIe6i4+u1fUkn1jg6nemXkpkFlAoV0/+vGwjf8AMLCYGU+3VVHL71uZmok3f9J6B
-	 czeoykWTutBy2D+kCQ2xJtF3B518S7HZaFgZCkLK3GGgCv5KFdcXSuf8UCqU3OSDdi
-	 SfRO79j+EYDNT48nW4wYBwRvxVT1631IxTFcShVnBAdSaL70QbLmIt5cLFWKYlRNNh
-	 G4pDbEuS9P+6gOxEBp2mJhQh7U6X7L0sZF4qTecGT+MiUNUJNQ/tIEC0Pouyt1OJKP
-	 6v7l7JqjMEZRg==
+	s=k20201202; t=1769604276;
+	bh=mFDSWjULiqNb4gYo6mmddAEfUmh3dS6FOXzRW85kLjw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nTAvHsdzbx9rYNtENmAzzur6nYgJoVdHWB+3RK0TEaEADXfMgpnHgp9S5b8Qr6HjR
+	 dTZuk6BRiaag3G/flqjrJvkJVKW/dZCxwA6QAijrR1mSU2k3Sre52irmxH4h6UX74B
+	 J9BWLys/hb9eEAe7mWJy08s/5hMLonYZFjx2YMqvtq+MXTZPxI2CYmSDOJyf3o9wgM
+	 THE/tkcGJaIWntZiD61c2wpwkDYSPLDLdrZe5tiS5v4rdzJjL/uJwRjyzQVB/6x9Fy
+	 ybnJMBZVDO9ze/rEiyQT2ObF/6zHh0cnDR+nJg53bJhIbabFq1htn2v8EcpVua2stT
+	 1iMG21+fizOIw==
 From: Maxime Ripard <mripard@kernel.org>
-Subject: [PATCH v4 00/15] drm/atomic: Allocate drm_private_state through a
- callback
-Date: Wed, 28 Jan 2026 13:43:44 +0100
-Message-Id: <20260128-drm-private-obj-reset-v4-0-90891fa3d3b0@redhat.com>
+Date: Wed, 28 Jan 2026 13:43:57 +0100
+Subject: [PATCH v4 13/15] drm/tegra: Switch private_obj initialization to
+ atomic_create_state
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -38,129 +38,97 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XN0WoCMRCF4VeRXDeSSTbrbq98j+LFrDm60bqRy
- RJaZN+9USgUinj5H5hvbipDIrJ6X92UoMQc01SjeVup/cjTETqG2soa68mYTge56KvEwjN0Gk5
- akDFrBsFuGjJ2w6reXgWH+PVwP3a1x5jnJN+PN4Xu6yuxkDa6M56HxjFaz9szZMLnOslR3cli/
- zDUPGNsZdoQWoO+8+jDP8b9Mq0h6p8xrjJD74gHOPZwW0EYeV7v00XtlmX5AZ8rZlVJAQAA
-X-Change-ID: 20251008-drm-private-obj-reset-ae1e2741027a
+Message-Id: <20260128-drm-private-obj-reset-v4-13-90891fa3d3b0@redhat.com>
+References: <20260128-drm-private-obj-reset-v4-0-90891fa3d3b0@redhat.com>
+In-Reply-To: <20260128-drm-private-obj-reset-v4-0-90891fa3d3b0@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
  Simona Vetter <simona@ffwll.ch>
 Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <siqueira@igalia.com>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- amd-gfx@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>, 
- Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
  Thierry Reding <thierry.reding@gmail.com>, 
  Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- kernel-list@raspberrypi.com, Jessica Zhang <jesszhan0024@gmail.com>
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4027; i=mripard@redhat.com;
- h=from:subject:message-id; bh=21o7Sk1LvcwFGTtlndbPMNt9Skdhx9N7m/IPcsY4r4I=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDJlVLK32mTpTgmL9V12Jc+9d9CrJKaYuRyXpl7e10lSJE
- i/hnzs6prIwCHMyyIopsjyRCTu9vH1xlYP9yh8wc1iZQIYwcHEKwES+RDI2rDN7Ucwd3Tf/fPAM
- zh2dbQa+2ts3sD70ZWUI+8kUcjZAqfP71hsTuQ9k9i6JL3fbGD6bseGH6oeZExYrTXgkLn7rg/G
- Sv/a8xl9r/yuxMzFxX/f/sKLswid+111tjU1N/zflPfnPtxIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2438; i=mripard@redhat.com;
+ h=from:subject:message-id; bh=mFDSWjULiqNb4gYo6mmddAEfUmh3dS6FOXzRW85kLjw=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDJlVLF3uhy6w6nJF+esGGB1doyt76JnTxjj5Z78+/FtyW
+ qDViO9Rx1QWBmFOBlkxRZYnMmGnl7cvrnKwX/kDZg4rE8gQBi5OAZjIonbGWgHf2RIGpUG9tfkb
+ b7ron1f1MLwlODs8x9z9/hvX+kvhRhy7vz9J3eZ0t05nphPD8sJCxobnU/ze5F3fusLgxr6DT34
+ +kbzyzjToRMwkcTkHF8nuxUUL9Z+rOMnbxlR2pi42ZJ3iKAEA
 X-Developer-Key: i=mripard@redhat.com; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-Hi,
+The tegra driver relies on a drm_private_obj, that is initialized by
+allocating and initializing a state, and then passing it to
+drm_private_obj_init.
 
-This series started from my work on the hardware state readout[1], and
-was suggested by Dmitry[2].
-
-This series deal with the fact that drm_private_obj (and thus bridges)
-are not initialized using the same pattern than any other object. This
-series solves that inconsistency by aligning it to what we're doing for
-all the other objects.
-
-This was tested on a TI SK-AM62, with three bridges.
-
-Let me know what you think,
-Maxime
-
-1: https://lore.kernel.org/dri-devel/20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org/
-2: https://lore.kernel.org/dri-devel/zvqtehg66dbrrdmik6ylo2kdk74umfzo5hbfkizwsb352nlyqv@jgouvmbfwa4x/
+Since we're gradually moving away from that pattern to the more
+established one relying on a atomic_create_state implementation, let's
+migrate this instance to the new pattern.
 
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Changes in v4:
-- Fix a circular dependencies between modules by calling
-  __drm_atomic_helper_private_obj_create_state from
-  __drm_atomic_helper_bridge_reset instead of
-  drm_bridge_atomic_create_priv_state()
-- Link to v3: https://lore.kernel.org/r/20260119-drm-private-obj-reset-v3-0-b931abe3a5e3@redhat.com
-
-Changes in v3:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v2: https://lore.kernel.org/r/20251014-drm-private-obj-reset-v2-0-6dd60e985e9d@kernel.org
-
-Changes in v2:
-- Switch to a new hook instead of reset since some drm_private_objs want
-  to persist across suspends
-- Drop the call to drm_private_obj_funcs.reset in
-  drm_mode_config_reset()
-- Link to v1: https://lore.kernel.org/r/20251008-drm-private-obj-reset-v1-0-805ab43ae65a@kernel.org
 
 ---
-Maxime Ripard (15):
-      drm/atomic: Make drm_atomic_private_obj_init fallible
-      drm/atomic: Add new atomic_create_state callback to drm_private_obj
-      drm/atomic-helper: Add private_obj atomic_create_state helper
-      drm/bridge: Switch private_obj initialization to atomic_create_state
-      drm/dp_mst: Switch private_obj initialization to atomic_create_state
-      drm/dp_tunnel: Switch private_obj initialization to atomic_create_state
-      drm/amdgpu: Switch private_obj initialization to atomic_create_state
-      drm/arm: komeda: Switch private_obj initialization to atomic_create_state
-      drm/ingenic: Switch private_obj initialization to atomic_create_state
-      drm/msm: mdp5: Switch private_obj initialization to atomic_create_state
-      drm/msm: dpu1: Switch private_obj initialization to atomic_create_state
-      drm/omapdrm: Switch private_obj initialization to atomic_create_state
-      drm/tegra: Switch private_obj initialization to atomic_create_state
-      drm/vc4: Switch private_obj initialization to atomic_create_state
-      drm/atomic: Remove state argument to drm_atomic_private_obj_init
 
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  51 ++---
- .../gpu/drm/arm/display/komeda/komeda_pipeline.h   |   2 +
- .../drm/arm/display/komeda/komeda_private_obj.c    | 208 ++++++++++++++-------
- drivers/gpu/drm/display/drm_dp_mst_topology.c      |  36 ++--
- drivers/gpu/drm/display/drm_dp_tunnel.c            |  25 ++-
- drivers/gpu/drm/drm_atomic.c                       |  22 ++-
- drivers/gpu/drm/drm_atomic_state_helper.c          |  23 +++
- drivers/gpu/drm/drm_bridge.c                       |  30 +--
- drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  28 +--
- drivers/gpu/drm/ingenic/ingenic-ipu.c              |  28 +--
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  41 ++--
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  40 ++--
- drivers/gpu/drm/omapdrm/omap_drv.c                 |  22 ++-
- drivers/gpu/drm/tegra/hub.c                        |  22 ++-
- drivers/gpu/drm/vc4/vc4_kms.c                      |  67 ++++---
- include/drm/drm_atomic.h                           |  20 +-
- include/drm/drm_atomic_state_helper.h              |   3 +
- 17 files changed, 436 insertions(+), 232 deletions(-)
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
 ---
-base-commit: 68b271a3a94cfd6c7695a96b6398b52feb89e2c2
-change-id: 20251008-drm-private-obj-reset-ae1e2741027a
+ drivers/gpu/drm/tegra/hub.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-Best regards,
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index c924ffba409426cdc8719b208c74908d0e9fc544..e8cc4382532fffaea99020755ad78d3252613c26 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -823,11 +823,26 @@ static void tegra_display_hub_destroy_state(struct drm_private_obj *obj,
+ 		to_tegra_display_hub_state(state);
+ 
+ 	kfree(hub_state);
+ }
+ 
++static struct drm_private_state *
++tegra_display_hub_create_state(struct drm_private_obj *obj)
++{
++	struct tegra_display_hub_state *hub_state;
++
++	hub_state = kzalloc(sizeof(*hub_state), GFP_KERNEL);
++	if (!hub_state)
++		return ERR_PTR(-ENOMEM);
++
++	__drm_atomic_helper_private_obj_create_state(obj, &hub_state->base);
++
++	return &hub_state->base;
++}
++
+ static const struct drm_private_state_funcs tegra_display_hub_state_funcs = {
++	.atomic_create_state = tegra_display_hub_create_state,
+ 	.atomic_duplicate_state = tegra_display_hub_duplicate_state,
+ 	.atomic_destroy_state = tegra_display_hub_destroy_state,
+ };
+ 
+ static struct tegra_display_hub_state *
+@@ -939,17 +954,12 @@ void tegra_display_hub_atomic_commit(struct drm_device *drm,
+ static int tegra_display_hub_init(struct host1x_client *client)
+ {
+ 	struct tegra_display_hub *hub = to_tegra_display_hub(client);
+ 	struct drm_device *drm = dev_get_drvdata(client->host);
+ 	struct tegra_drm *tegra = drm->dev_private;
+-	struct tegra_display_hub_state *state;
+ 
+-	state = kzalloc(sizeof(*state), GFP_KERNEL);
+-	if (!state)
+-		return -ENOMEM;
+-
+-	drm_atomic_private_obj_init(drm, &hub->base, &state->base,
++	drm_atomic_private_obj_init(drm, &hub->base, NULL,
+ 				    &tegra_display_hub_state_funcs);
+ 
+ 	tegra->hub = hub;
+ 
+ 	return 0;
+
 -- 
-Maxime Ripard <mripard@redhat.com>
+2.52.0
 
