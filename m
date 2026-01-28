@@ -1,155 +1,166 @@
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD66F28CF6F;
-	Wed, 28 Jan 2026 10:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7206B34FF70;
+	Wed, 28 Jan 2026 12:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769597450; cv=none; b=L3hDUL7ChUvWC7D2bpenOuUD9VuBw1/rd+k7yMcFKP1i/TcRklSQP/0TfLSdLQ6Xh496DKIr6l/jT1yC1IPuLVjPFW9u/0YTOhSKpgvSfhtKmLEnJw5HTms1DlA6L/F3m9RPxvxvP8Fz+nXm+qPfq/l6w5s1o1kPvzHqA0yk1Qs=
+	t=1769604239; cv=none; b=hreaDKshBGhSW6Havk6EQb8tzj0v0T1A7eXBYFvqgz9ed1nbHn9ZLz05vGu46BYDrYc48xjcv+bV57xBDwaMhShTq0Xm/Eyrd7EyXDF1wHue4a+OiN+GAmYjlC82C+xO5aazv41f4pex9LgCHbYAEsdmxjHC/WiA23Dct76CM0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769597450; c=relaxed/simple;
-	bh=BV0gNi+tc0yyHVuAWTUC07E1tMEAHg+We+j6aGJMvHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=r/C5M68R8ppQM4S1cSK/P8b5jveXW2DiApKwPg7jGKuP5msZ5KMTKExjHj8LbmBS2iHrOZOFuMf2810VdCvpZxw4BYdPhwmPYs0Iec8ZP5pyWFBczSQIm6N5yq1mlLbWbHIOuATnJc7TFI4E1roJWAFcHur65xDsd9hZIZlGQ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.144])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4f1JqY2ps8z12LDY;
-	Wed, 28 Jan 2026 18:46:49 +0800 (CST)
-Received: from kwepemf200017.china.huawei.com (unknown [7.202.181.10])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9731240538;
-	Wed, 28 Jan 2026 18:50:43 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemf200017.china.huawei.com
- (7.202.181.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Jan
- 2026 18:50:42 +0800
-Message-ID: <3c6d58b2-b4c9-4dc7-a705-b7626e127f33@hisilicon.com>
-Date: Wed, 28 Jan 2026 18:50:42 +0800
+	s=arc-20240116; t=1769604239; c=relaxed/simple;
+	bh=21o7Sk1LvcwFGTtlndbPMNt9Skdhx9N7m/IPcsY4r4I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dwo5Uhuv7S5NEVJBanJ9vGXx2YNKwd//r3f2ODYgZqaQdYgz6E11mB2OvBqrquULiC8kS8dmm5ZWQx3s7Va+JYHTe6aMj6/UXKDqft0G7jGTh7LQyccVsW/X04gs/GrWAhK5uHopj3PCn0ChKo3Z0u0YHj2TU6/lghBAZS9QBy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6iijq1U; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6iijq1U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B149C4CEF1;
+	Wed, 28 Jan 2026 12:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769604239;
+	bh=21o7Sk1LvcwFGTtlndbPMNt9Skdhx9N7m/IPcsY4r4I=;
+	h=From:Subject:Date:To:Cc:From;
+	b=O6iijq1UXavDudl1Ma5LeKPtHarFTnU/sK32yJaRS7mIMrId2lF0cw1JHdrnfQHkj
+	 MRkIe6i4+u1fUkn1jg6nemXkpkFlAoV0/+vGwjf8AMLCYGU+3VVHL71uZmok3f9J6B
+	 czeoykWTutBy2D+kCQ2xJtF3B518S7HZaFgZCkLK3GGgCv5KFdcXSuf8UCqU3OSDdi
+	 SfRO79j+EYDNT48nW4wYBwRvxVT1631IxTFcShVnBAdSaL70QbLmIt5cLFWKYlRNNh
+	 G4pDbEuS9P+6gOxEBp2mJhQh7U6X7L0sZF4qTecGT+MiUNUJNQ/tIEC0Pouyt1OJKP
+	 6v7l7JqjMEZRg==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v4 00/15] drm/atomic: Allocate drm_private_state through a
+ callback
+Date: Wed, 28 Jan 2026 13:43:44 +0100
+Message-Id: <20260128-drm-private-obj-reset-v4-0-90891fa3d3b0@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: topology: Fix false warning in
- counters_read_on_cpu() for same-CPU reads
-To: Sumit Gupta <sumitg@nvidia.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <zhenglifeng1@huawei.com>, <viresh.kumar@linaro.org>,
-	<rafael@kernel.org>, <beata.michalska@arm.com>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>
-References: <20260127080700.3565546-1-sumitg@nvidia.com>
-Content-Language: en-US
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <20260127080700.3565546-1-sumitg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemf200017.china.huawei.com (7.202.181.10)
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XN0WoCMRCF4VeRXDeSSTbrbq98j+LFrDm60bqRy
+ RJaZN+9USgUinj5H5hvbipDIrJ6X92UoMQc01SjeVup/cjTETqG2soa68mYTge56KvEwjN0Gk5
+ akDFrBsFuGjJ2w6reXgWH+PVwP3a1x5jnJN+PN4Xu6yuxkDa6M56HxjFaz9szZMLnOslR3cli/
+ zDUPGNsZdoQWoO+8+jDP8b9Mq0h6p8xrjJD74gHOPZwW0EYeV7v00XtlmX5AZ8rZlVJAQAA
+X-Change-ID: 20251008-drm-private-obj-reset-ae1e2741027a
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ amd-gfx@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ kernel-list@raspberrypi.com, Jessica Zhang <jesszhan0024@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4027; i=mripard@redhat.com;
+ h=from:subject:message-id; bh=21o7Sk1LvcwFGTtlndbPMNt9Skdhx9N7m/IPcsY4r4I=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDJlVLK32mTpTgmL9V12Jc+9d9CrJKaYuRyXpl7e10lSJE
+ i/hnzs6prIwCHMyyIopsjyRCTu9vH1xlYP9yh8wc1iZQIYwcHEKwES+RDI2rDN7Ucwd3Tf/fPAM
+ zh2dbQa+2ts3sD70ZWUI+8kUcjZAqfP71hsTuQ9k9i6JL3fbGD6bseGH6oeZExYrTXgkLn7rg/G
+ Sv/a8xl9r/yuxMzFxX/f/sKLswid+111tjU1N/zflPfnPtxIA
+X-Developer-Key: i=mripard@redhat.com; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
+Hi,
 
-Hi Sumit,
+This series started from my work on the hardware state readout[1], and
+was suggested by Dmitry[2].
 
-On 1/27/2026 4:07 PM, Sumit Gupta wrote:
-> The counters_read_on_cpu() function warns when called with IRQs disabled
-> to prevent deadlock in smp_call_function_single(). However, this warning
-> is spurious when reading counters on the current CPU since no IPI is
-> needed for same-CPU reads.
-> 
-> Commit 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks
-> for non-PCC regs") changed the CPPC Frequency Invariance Engine to read
-> AMU counters directly from the scheduler tick for non-PCC register
-> spaces (like FFH), instead of deferring to a kthread. This means
-> counters_read_on_cpu() is now called with IRQs disabled from the tick
-> handler, triggering the warning:
-> 
-> | WARNING: arch/arm64/kernel/topology.c:410 at counters_read_on_cpu
-> | ...
-> | Call trace:
-> |  counters_read_on_cpu+0x88/0xa8 (P)
-> |  cpc_read_ffh+0xdc/0x148
-> |  cpc_read+0x260/0x518
-> |  cppc_get_perf_ctrs+0xf0/0x398
-> |  __cppc_scale_freq_tick+0x4c/0x148 [cppc_cpufreq]
-> |  cppc_scale_freq_tick+0x44/0x88 [cppc_cpufreq]
-> |  topology_scale_freq_tick+0x34/0x58
-> |  sched_tick+0x58/0x300
-> |  update_process_times+0xcc/0x120
-> |  tick_nohz_handler+0xa8/0x260
-> |  __hrtimer_run_queues+0x154/0x360
-> |  hrtimer_interrupt+0xf4/0x2b0
-> |  arch_timer_handler_phys+0x4c/0x78
-> |  ....
-> |  CPPC Cpufreq:__cppc_scale_freq_tick: failed to read perf counters
-> |  ....
-> 
-> Fix this by calling the counter read function directly for same-CPU
-> case, bypassing smp_call_function_single() entirely. Use get_cpu() to
-> disable preemption as the counter read functions call this_cpu_has_cap()
-> which requires a non-preemptible context.
-> 
-> Fixes: 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks for non-PCC regs")
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+This series deal with the fact that drm_private_obj (and thus bridges)
+are not initialized using the same pattern than any other object. This
+series solves that inconsistency by aligning it to what we're doing for
+all the other objects.
 
-Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+This was tested on a TI SK-AM62, with three bridges.
 
-Looks fine for me except for the minor comment wrapping.
+Let me know what you think,
+Maxime
 
-Thanks for spotting this.
-I may have missed the warning log in the FFH test.
+1: https://lore.kernel.org/dri-devel/20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org/
+2: https://lore.kernel.org/dri-devel/zvqtehg66dbrrdmik6ylo2kdk74umfzo5hbfkizwsb352nlyqv@jgouvmbfwa4x/
 
-This happens during the short window in cpufreq_policy_online() between
-driver->init() and the CREATE_POLICY notifier that gets AMU FIE ready.
-After that, CPPC FIE will be stopped.
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v4:
+- Fix a circular dependencies between modules by calling
+  __drm_atomic_helper_private_obj_create_state from
+  __drm_atomic_helper_bridge_reset instead of
+  drm_bridge_atomic_create_priv_state()
+- Link to v3: https://lore.kernel.org/r/20260119-drm-private-obj-reset-v3-0-b931abe3a5e3@redhat.com
 
-Ideally this can be merged together with Viresh's PR since the CPPC FIE
-changes are there.
-https://lore.kernel.org/all/j4qdid7iqmng4gzb5ozefemjkep3wx2b5z2yki5tnqc3vzvzf4@kvrnarvdod5p/
+Changes in v3:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v2: https://lore.kernel.org/r/20251014-drm-private-obj-reset-v2-0-6dd60e985e9d@kernel.org
 
-Jie
+Changes in v2:
+- Switch to a new hook instead of reset since some drm_private_objs want
+  to persist across suspends
+- Drop the call to drm_private_obj_funcs.reset in
+  drm_mode_config_reset()
+- Link to v1: https://lore.kernel.org/r/20251008-drm-private-obj-reset-v1-0-805ab43ae65a@kernel.org
 
-> ---
->  arch/arm64/kernel/topology.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 539b38935182..57b71f403007 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -401,12 +401,29 @@ static inline
->  int counters_read_on_cpu(int cpu, smp_call_func_t func, u64 *val)
->  {
->  	/*
-> -	 * Abort call on counterless CPU or when interrupts are
-> -	 * disabled - can lead to deadlock in smp sync call.
-> +	 * Abort call on counterless CPU.
->  	 */
->  	if (!cpu_has_amu_feat(cpu))
->  		return -EOPNOTSUPP;
->  
-> +	/*
-> +	 * For same-CPU reads, call the function directly since no IPI
-> +	 * is needed and this is safe even with IRQs disabled.
-> +	 * Use get_cpu() to disable preemption as the counter read
-> +	 * functions call this_cpu_has_cap() which requires a
-> +	 * non-preemptible context.
-> +	 */
-Wrap at 80 chars?
-> +	if (cpu == get_cpu()) {
-> +		func(val);
-> +		put_cpu();
-> +		return 0;
-> +	}
-> +	put_cpu();
-> +
-> +	/*
-> +	 * Reading from a remote CPU requires IRQs enabled to avoid
-> +	 * deadlock in smp_call_function_single().
-> +	 */
->  	if (WARN_ON_ONCE(irqs_disabled()))
->  		return -EPERM;
->  
+---
+Maxime Ripard (15):
+      drm/atomic: Make drm_atomic_private_obj_init fallible
+      drm/atomic: Add new atomic_create_state callback to drm_private_obj
+      drm/atomic-helper: Add private_obj atomic_create_state helper
+      drm/bridge: Switch private_obj initialization to atomic_create_state
+      drm/dp_mst: Switch private_obj initialization to atomic_create_state
+      drm/dp_tunnel: Switch private_obj initialization to atomic_create_state
+      drm/amdgpu: Switch private_obj initialization to atomic_create_state
+      drm/arm: komeda: Switch private_obj initialization to atomic_create_state
+      drm/ingenic: Switch private_obj initialization to atomic_create_state
+      drm/msm: mdp5: Switch private_obj initialization to atomic_create_state
+      drm/msm: dpu1: Switch private_obj initialization to atomic_create_state
+      drm/omapdrm: Switch private_obj initialization to atomic_create_state
+      drm/tegra: Switch private_obj initialization to atomic_create_state
+      drm/vc4: Switch private_obj initialization to atomic_create_state
+      drm/atomic: Remove state argument to drm_atomic_private_obj_init
+
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  51 ++---
+ .../gpu/drm/arm/display/komeda/komeda_pipeline.h   |   2 +
+ .../drm/arm/display/komeda/komeda_private_obj.c    | 208 ++++++++++++++-------
+ drivers/gpu/drm/display/drm_dp_mst_topology.c      |  36 ++--
+ drivers/gpu/drm/display/drm_dp_tunnel.c            |  25 ++-
+ drivers/gpu/drm/drm_atomic.c                       |  22 ++-
+ drivers/gpu/drm/drm_atomic_state_helper.c          |  23 +++
+ drivers/gpu/drm/drm_bridge.c                       |  30 +--
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  28 +--
+ drivers/gpu/drm/ingenic/ingenic-ipu.c              |  28 +--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  41 ++--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  40 ++--
+ drivers/gpu/drm/omapdrm/omap_drv.c                 |  22 ++-
+ drivers/gpu/drm/tegra/hub.c                        |  22 ++-
+ drivers/gpu/drm/vc4/vc4_kms.c                      |  67 ++++---
+ include/drm/drm_atomic.h                           |  20 +-
+ include/drm/drm_atomic_state_helper.h              |   3 +
+ 17 files changed, 436 insertions(+), 232 deletions(-)
+---
+base-commit: 68b271a3a94cfd6c7695a96b6398b52feb89e2c2
+change-id: 20251008-drm-private-obj-reset-ae1e2741027a
+
+Best regards,
+-- 
+Maxime Ripard <mripard@redhat.com>
+
