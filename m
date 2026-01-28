@@ -1,182 +1,103 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED81235EDA3
-	for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 13:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9612874FE;
+	Wed, 28 Jan 2026 15:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769608080; cv=none; b=rYRsOR4zlN94+ANgDRVOGpC0Y6RLC0j/InvXWCdpJ5vq5+TtXxlot3WQpuYnC4dxNo8gs4V29bh12iSjp5zIzfZNTwOPeipcay/ASpQUG81+7+/N7cYW+sTRFv5u0GcRMb1hd4iegctRwS/eS8HS/SwatJHxiyDV4oC3Ef2F2us=
+	t=1769615858; cv=none; b=AycuLSTglpoqAopQXl2rgamqRZE37uctDmazwKfeG5L1dVSTcWxtoKy8gDLkuuNlMe/tlIgh+f5f4TqDzx9rT8FEpKVJXp8ONFDzxt6ptb3aingqP7lfRiYjJC7LlCbdzYS5Gl4FGFGVSpjQy1LVy+MasA4u+y9CTrYhmpBox34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769608080; c=relaxed/simple;
-	bh=/xpe0WZiMxl/GqX7qwhgJXFWRG2PG+0p92lLjw6JC0w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=M/dpOqaGhJNaVrAVkigwoXiWJHr6NBm/zE834RUND9CCrI80Rik+/bDwXdeNNY2SIIa5dM1ksvlshjEbbas7W7m5Y+wIfPv9mu/xz1kSXWLc51XSzF/YcJiZqTzm5oKdyHdZJQ3S3jBQbj4ETS1NZcP5HIZl8eC65DZjbkXtAwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q8YXT+Qe; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ISFSMnCi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1769615858; c=relaxed/simple;
+	bh=I9Di7H3MuUn01E+66sdDwN0NLusiqDryL3CP5MafZfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAUFDDhJ5/GI6RsO6nwa/QoAmTfkL9cQTuFQj60y2Q6vGcQ/RPhcZfNke8mHDAu9KWBkFFEY37mUgrVGHeh1KBtsPIacMILsv5n5IA+oU8PaCRrTvSu9eI62GNY+o03lresm+vcWEeR9AALHYj6MtOq+HnuEy+VAVUGJTDm62hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fC6pU8ZR; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q8YXT+Qe";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ISFSMnCi"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60S92TcN3907690
-	for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 13:47:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wGMo0m1R2L9wwbTRPxCXUEgVOcQ6/Yw3wU/Y91P03Q8=; b=Q8YXT+QeY4P06cQc
-	N/4uFGZiGouljnPWHr1Fr80N2Kqf0k01NRQuAeasyWrFpvFyzmVTsMc4hfLHsGjS
-	kfY8MdWdpwixcVYhsvoE6Ep5Af5lLrcA1cGYd+LMnvOVUQGEk/czRmf2Q/B0FwRH
-	2/daLG1us83CzfFERdEu+40Ibnf2W50lVoPtqVArBInciktD25oQBR3L95U8pGqm
-	D67ea37JPV3Cmzggkv0n3HQhYkjW+M29AnE5rPZchNY5DUoeHoCdBv8kAO0MZ4CG
-	7mWpd7mI830gRfF4o1taUUhf6H2YBqL4txuVAJKrcCrGFRP5M23b3CiY+Yi08O1e
-	oZCHGA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4by0g0c1cc-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 13:47:57 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2a0a8c465c1so6277125ad.1
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Jan 2026 05:47:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1769608077; x=1770212877; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wGMo0m1R2L9wwbTRPxCXUEgVOcQ6/Yw3wU/Y91P03Q8=;
-        b=ISFSMnCin7fEsT555OMX+fEgRru+rUNLwkUS6MiqxhBtaLjSbY0bkICQHx8fA7m3Yj
-         FpbAeeWKrjen6P35KWgOEyAdgXLD9TRfr3lhSjXdycUffdjOYImQBYf+KQYEVV+cImJ+
-         xNyXmG0HZlR/sOaVzYanTcDaeF85kX2KVBTpzjERuKE2XM9ryeDZCkaUWUa0D1gkqPRv
-         SxiUBAYFgz8+GbIGx19hQO9hWn8VHmvYvPe9FTw/j7MDZ46qdHvQfN95eiTeJJwXYVvo
-         ePas4skvF+w1B2iJzr9s76/2/XHsFTnthr02DyLethWKIUfBuLZTh1SfMeIEmqF8ai6r
-         MNQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769608077; x=1770212877;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wGMo0m1R2L9wwbTRPxCXUEgVOcQ6/Yw3wU/Y91P03Q8=;
-        b=FWAzwDMs+9SloRJnfBUQtDEZzMleLaSjC2ZzEeD6RIgcb5OY37WQ9pqD5IZI8inJ8/
-         4YTGr5NKCeiyJaUpxMYJ09VxZ4GOTewm6+kEH0M4Z9yEuTgcRFM34hHOqIPH8FdXbq5l
-         O9NCqHPnrLs7urdvvo4LiiHrrYaqmmiWRTnaxTXbgRkEk9F6LThIWbd3YBC8CdklRNw0
-         EFG5QbpwNUzW3quulavOccN8hrn/TnqOMFnYg0e6B6tL8GpETMYI88QiSkNMuYes+ifO
-         XHix3nP64gKCtRUexUIuXwPraxIlq2QOt+OZfh017S2+dbWUJMO/1BBjO4Nt4o7cv3uo
-         2mSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9n7qDdfldKAvSFsaC5J3SMVygpzaEDkHnCaktenYwRSt2R9wzLZRx21zwmsn41ywONACB3eCiuQvG1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+v0IH3JRErgTgpDhrtbjihbWBEyx+7c30atjHY9OysCJPZJ96
-	MzZmz8CVBWNGnOEI5j9kwxEavPPydkzZ4g01hkbmKjrHtLz66MXQ+oy9o+VJ4EVpiabnt5vLVlD
-	zZDjvckkrO+Q2XZnSbN7Zu5E4haUwwVGw3zCXppfJyeHWktwoVmUhvTah8hGNKXkmAA==
-X-Gm-Gg: AZuq6aJQruc9r/laAZeHZrKwD+PuVh0lLDy1Jxr9m6svJRO1xNp1fEvEvShgvudCpz0
-	GMyqt4X0caIKXltXp+Ml6TyJ1pkIN1Ygx7znTuAMTSZOHGXeap9oyqn/+Gtg29Z1LgVMF3d3pmD
-	7TY+llC8aSjSie6S/1i6+kRgNJI+TVxZ+9Gqn/XhNuxQUnbmzU4aHlpi1bBjlx1lEcW7HfTgU4r
-	YXc7eqF7rsktKW+jAVPjR/Q13GqpO9OkbPgz5N9oPvBtx6rgO7mmO82NNJxMU8J44l+QGfbkTYD
-	1KKZsSmlSyTrmgOYv8pHkiHkIvoUboiuYj+GTXYge86ZBDwIGDJfC9sRN/GDOyIJIpbXmaYzGq1
-	Cy2EOo2E=
-X-Received: by 2002:a17:902:f60b:b0:298:45e5:54a4 with SMTP id d9443c01a7336-2a87120f746mr50143765ad.1.1769608076691;
-        Wed, 28 Jan 2026 05:47:56 -0800 (PST)
-X-Received: by 2002:a17:902:f60b:b0:298:45e5:54a4 with SMTP id d9443c01a7336-2a87120f746mr50143365ad.1.1769608076044;
-        Wed, 28 Jan 2026 05:47:56 -0800 (PST)
-Received: from [192.168.1.102] ([120.60.55.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b4c45c4sm23790595ad.62.2026.01.28.05.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 05:47:55 -0800 (PST)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-X-Google-Original-From: Manivannan Sadhasivam <mani@kernel.org>
-To: jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        robh@kernel.org, bhelgaas@google.com, cassel@kernel.org,
-        Frank.Li@nxp.com, Koichiro Den <den@valinux.co.jp>
-Cc: vigneshr@ti.com, s-vadapalli@ti.com, hongxing.zhu@nxp.com,
-        l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, jesper.nilsson@axis.com,
-        heiko@sntech.de, srikanth.thokala@intel.com,
-        marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com,
-        christian.bruel@foss.st.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
-        mhiramat@kernel.org, kishon@kernel.org, jirislaby@kernel.org,
-        rongqianfeng@vivo.com, 18255117159@163.com, shawn.lin@rock-chips.com,
-        nicolas.frattaroli@collabora.com, linux.amoon@gmail.com,
-        vidyas@nvidia.com, shuah@kernel.org, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com,
-        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-In-Reply-To: <20260124145012.2794108-1-den@valinux.co.jp>
-References: <20260124145012.2794108-1-den@valinux.co.jp>
-Subject: Re: [PATCH v10 0/8] PCI: endpoint: BAR subrange mapping support
-Message-Id: <176960806032.58847.15614322725355216575.b4-ty@kernel.org>
-Date: Wed, 28 Jan 2026 19:17:40 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fC6pU8ZR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769615857; x=1801151857;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I9Di7H3MuUn01E+66sdDwN0NLusiqDryL3CP5MafZfw=;
+  b=fC6pU8ZRtS/OpHuiO0h/8tONFyXtu72/STXs99BE1jRc0FeHQxloxqG5
+   nDwNGARZB8kPru4L1vrccR47WyTgERLy3wysCraXKQT/LO7rUexYkS0yG
+   haw3Vugsi+s7THKmvAuCLMk6X4O76rPPgVC2KWYcNNcrx1gLkJlUqj/p9
+   zGgLiyJQS6xf5zLlx9Q/0N9rMx5JSr3uIdByWY6SpZl9wFejdFWMetCXB
+   lvS6I1VIW2EHCcesf+7XcbLNMX507G8zx52gC6I/7j4K4XHav8eVp0ydK
+   99O1P/2hPIch4ip/JB++aym+G34rrqPdA1I4XPu5yLcrnO+8DTf+7CRI7
+   g==;
+X-CSE-ConnectionGUID: /LwMFwrLSmeAlpscaiyB1A==
+X-CSE-MsgGUID: I8Ow/aE/RRi46lVMeqtNDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11685"; a="81464555"
+X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
+   d="scan'208";a="81464555"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2026 07:57:37 -0800
+X-CSE-ConnectionGUID: mmONyVQtSiqMDeVB079yPw==
+X-CSE-MsgGUID: DO7rhtghTFOyjp+X1uisYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
+   d="scan'208";a="207913499"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 28 Jan 2026 07:57:33 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vl7v8-00000000a9I-2oGg;
+	Wed, 28 Jan 2026 15:57:30 +0000
+Date: Wed, 28 Jan 2026 23:56:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
+	suzuki.poulose@arm.com, robin.murphy@arm.com,
+	ilkka@os.amperecomputing.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
+	vsethi@nvidia.com, rwiley@nvidia.com, sdonthineni@nvidia.com,
+	skelley@nvidia.com, ywan@nvidia.com, mochs@nvidia.com,
+	nirmoyd@nvidia.com, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: Re: [PATCH 4/8] perf/arm_cspmu: nvidia: Add Tegra410 PCIE PMU
+Message-ID: <202601282328.gksG6ks9-lkp@intel.com>
+References: <20260126181155.2776097-5-bwicaksono@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Proofpoint-ORIG-GUID: jLcH7PArWcUBadswQl0iYXuPWqiJ-nx0
-X-Proofpoint-GUID: jLcH7PArWcUBadswQl0iYXuPWqiJ-nx0
-X-Authority-Analysis: v=2.4 cv=UPXQ3Sfy c=1 sm=1 tr=0 ts=697a138e cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=F3mjE3T3/ow0zpRzCzjSvA==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=Ux4BfgyPd-WidXiTcjQA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDExMyBTYWx0ZWRfX3N0CVmtqWW7W
- wpSoEgjmnBaw3MQjKZO7r0s16ui6JLNwykKXJEb6UNUeZCItVLHlqGm712hKZiGXejFiBLp4vMZ
- lyaetG/4gC7jNwYkaiIEN2USMQRTHYthdEshSHadMuX6BsuE2nZennZpYhE8Tm/4JI1kgwwxfYo
- plJBvZOT2oT7RvxE6RVXhy0asa9ymVnIhIk+m7sZXljJXnUoWAOqytFM7gxF0yTM9XFHvzkG4g9
- L9wJKFbvFXRtxnnOwkf5IVbftFefkkdvPMEa+q8n9dNEkO3PaTG+pFXIhSqV6zkITbvhuWFuHYp
- jHAMIgZqgjKsOFSAKRDsMSQQiM2VMwqgh/yUuk+NegJ0aq60yWLBm+hUxsIZnH3Q8t/J8KUcLo8
- 4l0nBcHfTaFTDYPHz7ssxjGyRpT3Od/b5vcN9VadjMiqwGPXnEE7ivAVu+9IQWXkq6AIPrgp5yM
- r6RRvHKfEH90HYeRvkw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-28_02,2026-01-28_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1011 priorityscore=1501
- suspectscore=0 spamscore=0 adultscore=0 impostorscore=0 bulkscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
- definitions=main-2601280113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260126181155.2776097-5-bwicaksono@nvidia.com>
 
+Hi Besar,
 
-On Sat, 24 Jan 2026 23:50:04 +0900, Koichiro Den wrote:
-> This series proposes support for mapping subranges within a PCIe endpoint
-> BAR and enables controllers to program inbound address translation for
-> those subranges.
-> 
-> Note: This series is a spin-off from a larger RFC series:
->       https://lore.kernel.org/all/20260118135440.1958279-1-den@valinux.co.jp/
->       The first user is the pci-endpoint-test, and the real user will
->       likely be epf-vntb for Remote eDMA-backed NTB transport, demonstrated
->       in that RFC series.
-> 
-> [...]
+kernel test robot noticed the following build errors:
 
-Applied, thanks!
+[auto build test ERROR on arm64/for-next/core]
+[also build test ERROR on linus/master v6.19-rc7 next-20260127]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1/8] PCI: endpoint: Add dynamic_inbound_mapping EPC feature
-      commit: 06a81c5940e46cc7bddee28f16bdd29a12a76344
-[2/8] PCI: endpoint: Add BAR subrange mapping support
-      commit: 31fb95400451040050361e22ff480476964280f0
-[3/8] PCI: dwc: Advertise dynamic inbound mapping support
-      commit: c0f1506f63546308e894469ceb0f1fadbdf9d2f9
-[4/8] PCI: dwc: ep: Support BAR subrange inbound mapping via Address Match Mode iATU
-      commit: cfbc98dbf44d52738976f592f30c2ca6bb282939
-[5/8] Documentation: PCI: endpoint: Clarify pci_epc_set_bar() usage
-      commit: 7d857a3f517df4591d4c85832c4ce5aeb0ddc038
-[6/8] PCI: endpoint: pci-epf-test: Add BAR subrange mapping test support
-      commit: 530e3701a81b228c369261798ce1b7f63f5d6c08
-[7/8] misc: pci_endpoint_test: Add BAR subrange mapping test case
-      commit: 622e1ad5e49c6949dd8c97d71f609bd17cfb8813
-[8/8] selftests: pci_endpoint: Add BAR subrange mapping test case
-      commit: 0ebf8e7943e01b2c38c199228f51adbb89c02425
+url:    https://github.com/intel-lab-lkp/linux/commits/Besar-Wicaksono/perf-arm_cspmu-nvidia-Rename-doc-to-Tegra241/20260127-021604
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20260126181155.2776097-5-bwicaksono%40nvidia.com
+patch subject: [PATCH 4/8] perf/arm_cspmu: nvidia: Add Tegra410 PCIE PMU
+config: loongarch-randconfig-r051-20260127 (https://download.01.org/0day-ci/archive/20260128/202601282328.gksG6ks9-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260128/202601282328.gksG6ks9-lkp@intel.com/reproduce)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202601282328.gksG6ks9-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "arm_cspmu_acpi_dev_get" [drivers/perf/arm_cspmu/nvidia_cspmu.ko] undefined!
+
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
