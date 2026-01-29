@@ -1,28 +1,28 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11022128.outbound.protection.outlook.com [40.107.209.128])
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020090.outbound.protection.outlook.com [52.101.85.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122AA337B81;
-	Thu, 29 Jan 2026 22:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E9A30AACA;
+	Thu, 29 Jan 2026 22:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.90
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769725286; cv=fail; b=NIIVXodrGP2Sg994T08FL13vJUU9yq4koDkjf/DV+/L8QcGUXus88LppLqCc5Kux9UZeH6XcqL/FlCol8EJxjDkJegv5jecHnRGY0p+agbNyr6lrGflXAn1Ct4SjgJ6mmEqo900iehk7BpC9g3WbZW34dwuKZYZVYdl58QAoy1Y=
+	t=1769725401; cv=fail; b=dIswF2Trb/YNMv0C6I1LvFD2PQ167Ag3bZjDRGTUz1AQmASeBdfbOpzoS6WUaJ43WKAjCqUlj3qPSLl8pxSjGcmQjqxC8bpnSot7RLELufEm/ERuE9fP1QpzqFjUB/D6PydNm8sIB0ww28TNBnX6b3iM+5ThNctpt7rlwMA3vyA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769725286; c=relaxed/simple;
-	bh=NLQG6DM8l6eCVn+/WhrYpnGW8AfZKBZFSKSkzMx+U/A=;
+	s=arc-20240116; t=1769725401; c=relaxed/simple;
+	bh=HGIL9W6WL3tWPb0qizrH4Za985KwTQQZ2Fh2CH4Z6xg=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 Content-Type:MIME-Version; b=tXMbZuwmMyaYfHYPMQtIzk5u/03pI/wKkBUreNZUpWe9YxSxbc4a/m8WbclBbUGkVIhYlbhLQoazXvAohhPOj1tPUHvWSKQd6k8eHkxntDvfV7CNQcqI0v2tphfvBnTOoGngEDsDlZBcS+7kcztx6T2yacTln4y6v7FuTWHTOGs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=vnc6f6Jd; arc=fail smtp.client-ip=40.107.209.128
+	 Content-Type:MIME-Version; b=f2YgJywDaPHB3J4hcZT3rXUhn7krSH9uOf2798SfmDBXXaTRlvDLJ7sV7uzxF8EHiZPTsQCt2dwFbucnISGD4kRVNfmBkEaop//rRYVjfLHa/NhdxIpgpCF/pbCCqO9uY0CmlPcERrJ20dJ4odyHGqI37tbOR62tuGSDLQQFuEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=WQ6iZiYc; arc=fail smtp.client-ip=52.101.85.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="vnc6f6Jd"
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="WQ6iZiYc"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yOEjtT5Vcwy9szFwS9X0O+iQn4HFWFUursNCVVYghbVFYTz4WQ0lUTehBxTqauqmvOs4O2I7Ol3QxyOn/AU4dC7zUAr4NfMzQo6bXGtRufpJTUTMF9rUVYULye7Fn6FaCY57m3qBPhFFYVRKAJ6ULa1fGwGjnrkalinVC+inishu4H9+4dtYBv1L7E43QIa1RFSpeGyuXf2cynNQfqjuEWgUaQbR1JUbPr3vZ+e6w5eOmFi+/0OzphIFInMm53sCgcLp/Qrm+5MrS2KcYYWDUvD8DIQTMebKSSToO9bt3GD9/DCzpR5o0fIRrjYT447+4V1dFDEdLRzMgeyIt8Dokw==
+ b=QpnL0Xz+iwVhW+6WkVG8p4S+rhsNsf8KRLyPKEjgNP8DOxF9ibl2LHe/BIWT0Rz9OUP/u9Q49UzTN+g7wJbdWJ5f/WH/lJzrBW0IcHLfkWR16IsS/8CkyQS3/vP5vKYCDLsrEfd7N+i4gFYmzCbUmdVCb0oE8MqBlQUCvVYGOExE9cKhx5+fTuviOuG9h7JmAmk2vcjPjMCD2GYbokgw7fY6SUK1xIl73Hc28tk9P+xwW3N4JeuocPvqHk4UP8nux897tJdK2rEtPzzHt5LH8rPaeTHNng7MgN2UN4jRmr5fzueFqTR3YRAlX2NNMcfV6xZaQlpty67UKt7kVs0oKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dQqTBoEOuk1Rrqapo8uRzUTnT2O7+yhSfpIMkr9o7Xw=;
- b=i/XZMfX8D5hGTMR9ogzq9owCuykSD2hSCwKgYL+pp/BLx3VJ9HJoSqY2HgTw4UvNYV+4GtzecEt9bfaSfrVPVkRzuSovlfzfBidjH3R/kQQDGPRjWLao2ZugwPGGuETXaX1VE+IFhkn9lZpCpddfFATX9t1Fi2gZvv4L5mTzw9KAt/Q6mPuwIyKa4RsvtLtCifakjXrwaZZbEvs8K46Z7QPKR27aGz3IT7pNtep0ibbFWfV8CMvCBFUVCvlP04Uj1t6uM2ekiOCFEC/ZdKMf0VCNe6YyA5gKyYT0QaKgubERScfNe7/BD/UVlfn4kLPEGgV/6h0o5KQ2nagw+M89rw==
+ bh=Q9KrnX7WxYTbSsJ5iXPyNvX4RP9/BOtOB8dIkyiVKZw=;
+ b=jfH9hHjbAxWRSs/0fZLEZlCFgyPIIBuA52DF7W8PB7eCGj0PuYHW7cr6LMH4e1yhPWz5eT/o6bkX1bONMB9xLHpFUGY0n+rR7Zv3Hiz8zmLGXGFQs4UgrssKDnmmYkbD5twKDgMNo72lZA5rSogV6TFncTDRzgFUdHFp3DoxU1Bw93E8R2xHf1Fl+58TbStb88VIo20s88rpwiJa85jCuogL4rhWmNg0SISVCXGpM7jKFrJMfKycNUe0A5vFtIQnD5LlJEzj6g09P4P8czetbfDaLNJ1BJQId+rcEkYIL+03PeQOXK3KoqcGiJBDNjXJS0qQrAj7nD2eP3991EKYqg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
  header.from=os.amperecomputing.com; dkim=pass
@@ -30,19 +30,19 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dQqTBoEOuk1Rrqapo8uRzUTnT2O7+yhSfpIMkr9o7Xw=;
- b=vnc6f6JdqAl0To63HHihm/rmUmazXGb6W82JNVwt//2SReSYPiOSofq1UVHVTZ3KhxHXndqq/yXgEoaikxUYs1PC+YUNqVANvhGLSBlRJ1tRBMgl+F80MF/jSqvoyQ017Y6T9qjim8D6NMgGJ7DFhBb2A/zKLp/42UzTX3gh4Rs=
+ bh=Q9KrnX7WxYTbSsJ5iXPyNvX4RP9/BOtOB8dIkyiVKZw=;
+ b=WQ6iZiYcPlyS7l3/qdYC+w/GNN24n0fQAfp8kyXaTNlQzFaB68/OpW+KO1xeW5U0hPS9QV9ywVHeLAHsG95bDBlCP2vSFrNm+6elXOe4cj1p8Eux4xLc2R5kXKETy1FzhGsom6cy6CS9rjZuJ4kUh7ABrdDuT/X+izhBlALretU=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
 Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
  DM4PR01MB7809.prod.exchangelabs.com (2603:10b6:8:68::20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9564.10; Thu, 29 Jan 2026 22:20:08 +0000
+ 15.20.9564.10; Thu, 29 Jan 2026 22:23:16 +0000
 Received: from MW4PR01MB6228.prod.exchangelabs.com
  ([fe80::86f5:4db2:7ad5:7fc4]) by MW4PR01MB6228.prod.exchangelabs.com
  ([fe80::86f5:4db2:7ad5:7fc4%6]) with mapi id 15.20.9542.010; Thu, 29 Jan 2026
- 22:20:08 +0000
-Date: Thu, 29 Jan 2026 14:20:03 -0800 (PST)
+ 22:23:16 +0000
+Date: Thu, 29 Jan 2026 14:23:14 -0800 (PST)
 From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
 To: Besar Wicaksono <bwicaksono@nvidia.com>
 cc: will@kernel.org, suzuki.poulose@arm.com, robin.murphy@arm.com, 
@@ -51,13 +51,13 @@ cc: will@kernel.org, suzuki.poulose@arm.com, robin.murphy@arm.com,
     mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com, 
     vsethi@nvidia.com, rwiley@nvidia.com, sdonthineni@nvidia.com, 
     skelley@nvidia.com, ywan@nvidia.com, mochs@nvidia.com, nirmoyd@nvidia.com
-Subject: Re: [PATCH 2/8] perf/arm_cspmu: nvidia: Add Tegra410 UCF PMU
-In-Reply-To: <20260126181155.2776097-3-bwicaksono@nvidia.com>
-Message-ID: <d72fc2bd-6200-1ee6-31d3-d81d7b669453@os.amperecomputing.com>
-References: <20260126181155.2776097-1-bwicaksono@nvidia.com> <20260126181155.2776097-3-bwicaksono@nvidia.com>
+Subject: Re: [PATCH 3/8] perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
+In-Reply-To: <20260126181155.2776097-4-bwicaksono@nvidia.com>
+Message-ID: <3e96b16f-a53f-438b-fcd9-2e1b6fef2136@os.amperecomputing.com>
+References: <20260126181155.2776097-1-bwicaksono@nvidia.com> <20260126181155.2776097-4-bwicaksono@nvidia.com>
 Content-Type: text/plain; format=flowed; charset=US-ASCII
-X-ClientProxiedBy: MW4PR03CA0104.namprd03.prod.outlook.com
- (2603:10b6:303:b7::19) To MW4PR01MB6228.prod.exchangelabs.com
+X-ClientProxiedBy: MW4PR04CA0206.namprd04.prod.outlook.com
+ (2603:10b6:303:86::31) To MW4PR01MB6228.prod.exchangelabs.com
  (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|DM4PR01MB7809:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e4f6d2e-f635-4b4b-52c5-08de5f848f62
+X-MS-Office365-Filtering-Correlation-Id: 7e7cf362-cef9-447d-cc52-08de5f84ffc9
 X-LD-Processed: 3bc2b170-fd94-476d-b0ce-4229bdc904a7,ExtAddr
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
@@ -75,361 +75,137 @@ X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
  BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?YOu3ykwaLLoIg7QlRU3yH23xvs+GgTd3ABIJSiExx/kxHXuNOqrZZIyE9Om6?=
- =?us-ascii?Q?OV9LpcSRFvd8scqlK2yYetx6SWYrwn4BsCb6yy7aRdeVxjjmsfePMLYJ/dca?=
- =?us-ascii?Q?xe1lhYLGENdVJ/I8xgkEYfUhVQhgbpBgwNJJDsyodqzS8vcNBMRnSeoin8Me?=
- =?us-ascii?Q?zqrCG6jD3bnXKMvJp38FgQ3ib8IQthKy8fLoz9h08oOpiUujXnpCCs5tN4of?=
- =?us-ascii?Q?AkvZYlWr8gxm4Xtj9BixD5T6Cu7zIyfmmxJ+Z4fJD5olS4SMPqH92xuvSzUt?=
- =?us-ascii?Q?PZ8dV0kUAzZ0al86NAbXB5XB/q0DTrC7BYXDkjbS/fZJCA/MR+9TARR3RBD0?=
- =?us-ascii?Q?53s0SfTNkINafQ++5I+fQW/KBFaVsOl5Yt2PxW4tMaKoisUVDEtmMk8Jhx2a?=
- =?us-ascii?Q?Ue5T2aPS9R6LK7r5AvNQDGOv4TwvFMcwD9tunIkVHPC9u1H4UHXKwcbreHNw?=
- =?us-ascii?Q?jy6JZs7dB/etEBGw8QMF3kvoiIH4O23CimsFDgHloRf440uKNcWx0e3Pfj1W?=
- =?us-ascii?Q?0TqQI20B8N1w/9jptJ8vV6lfO5MldesLdbLQJmg7AUEQg60dk1bU9MT0uQYY?=
- =?us-ascii?Q?TYCuUZPZXqq9t3wlO3YrkB1mgwaB9Qz8oQeCkkhUE+50nvXHDrrEKMoufY6G?=
- =?us-ascii?Q?nz4ArmAC0tNlu6vhECsJXzngUwyTH6MXF4PasZXOVAVXQJAcCAYhFAydSG6o?=
- =?us-ascii?Q?VU79FJ6sk1o9o+vCJaon26oQz6EHZ0bXLICpK5nKUeTYpRW9yZtOVHYGRX2V?=
- =?us-ascii?Q?pjG0yXqxgk601GnktVgKmlvEWATufuVbu66B4z5NZ/rEaPZadsXnDo35NUTh?=
- =?us-ascii?Q?6iVeF72zwQ4UkqVlrbK83+KOC8VBAjh6EzRb+e4bo24T8VgfVEh69IothDmo?=
- =?us-ascii?Q?tKv+53f/fckW1/b7hcwsayNvT3RPanc81QDGD2PedaGt91fqk21K9fGGeHyw?=
- =?us-ascii?Q?PRnzJwIEd0wJrzplGIyjfQzyGk0Q4mYsGyJwBC5qZzK+xadnpP5R1A0C2dLb?=
- =?us-ascii?Q?qJCYVNrPT54fn+71S2Zl+Oqi0M6EpXMH7vnNX7/2QhawCkz7hhUWHMrJDX+E?=
- =?us-ascii?Q?L4pIX6mzO9P6t5JlLAr5+KAMhMrdiLKsTBQvr+tO5Gw86RGZpwJYr1p6KbnG?=
- =?us-ascii?Q?kcwKdDk52Uon2oiYGcb2HlmZNjWEvra82XZfplOZ4G2mYJf5DFdavTVtzJWo?=
- =?us-ascii?Q?A+tw+jmQ0afD/5HF3bvY+tb9zFu1dgQoColtQNuDmbilcHGY3Rda+kzrSqaX?=
- =?us-ascii?Q?b4Yjpcsx/n7hn4UOnhze/anMLheme8wDmh4R8WoywIHbJVf5qzqpeIKmdx/h?=
- =?us-ascii?Q?q18SCEpcKr6jG9tCXdLEd8sY7Y/9zFtTdCACLjVuQLpNYBAmAnDrpfxT2Vfl?=
- =?us-ascii?Q?0HzxrrE8f+KI3te9Bj21g/8/zn43oydVwXgc+L37DkijphB9gf5eQc1EMzHM?=
- =?us-ascii?Q?0ou4DCeOZf+pKuUVmeab+VsCwgkLkmMSeU00g67oB112BjIzxRoyInP88Gzn?=
- =?us-ascii?Q?XF2Ywj7Ft7L93DZNDX5CU+TRUQYtD1fENvcftrVfdUjbSa+XP0QTnArxtLzz?=
- =?us-ascii?Q?ff1z8RqJA/9VHyw46Nw=3D?=
+ =?us-ascii?Q?G5RNh8wAtkl3T5C3ZSvwOwdGs4ncUoeGUMo4MXOjPVPpd3eMJRYFHaG7yydw?=
+ =?us-ascii?Q?f/HprxNVho7BGkzGcp30qLxxnGDd9kxIjZUeUwtTuMO4Ut/n3cLSYOTPyk04?=
+ =?us-ascii?Q?/WVAolV7e67dGHz4mrFc0XqwOKy0nHabOPkpz8S95Pf9FuYrzZk6SPPAopsJ?=
+ =?us-ascii?Q?Bs4WMwVdDXjVqvr4oXmtDnL5tf/4W+XKnTAm+iQMi6CgUgADTkLg4JO92pVi?=
+ =?us-ascii?Q?ZH9qO3/5OYJAXlArQ3k2rvmXrFcL+/6JCqE8wjwZDtMfg/2F7OOJmypHpN8J?=
+ =?us-ascii?Q?qT2QvxCzUWbB7wjMDil9PU0Rmh2QiGh6HYy6pEWG+zxJpIuP8m/X2vgYeEH1?=
+ =?us-ascii?Q?bVEZ+Nyb+CqoBbEhbYkhjx8EifrDWdXO3RPgy9ma4cUTepvH6RI+EylJZcIR?=
+ =?us-ascii?Q?dQ2qSlug2Jxasl8epfLq0HGpcaLovGFl8P7X1Ih42a1NyCV0PO9PFAnO2G2j?=
+ =?us-ascii?Q?7QA85h1U7MPrYFHr9lhwDNKnpWhu0nPmalNIS0vDT6sDBrEMtKOmnAxWJFCe?=
+ =?us-ascii?Q?Vw2uuxOgbj5JtrDIhySWQ3mhW1eZJctO8pfKo3Z6V97h05cT9gYqP3qasZ+B?=
+ =?us-ascii?Q?5FipqGQ6nyf9Mwhcs1yGvsMQlrV1lXdf/7ggJmIc/XyxKhOgNowa93eZsIvI?=
+ =?us-ascii?Q?z0vr6kORT2qc34VzdkcC+MMSa2VAEVRFtujKh+ugu9/SryLQGrySdwTCdc+s?=
+ =?us-ascii?Q?KXg4brk6Rcaso+nv25kkI1ZTtoJ5UaT6oy01+siTt3+ROV7ByJ1QoXbP/Gbc?=
+ =?us-ascii?Q?LnY4OspQH+6ofcY87dSzWQff/ZLRapRH5lp2exT8XGdeBOMd7zwlmdGNbPJ+?=
+ =?us-ascii?Q?AvltGNbRDBWAahcT36ZypZ8r5NVoJUqOZ9EJ292LqDDYoEwxTJ6qWcOlZo5r?=
+ =?us-ascii?Q?+FGzvBB9pgYXXqPTzuZupZ38I4FUDwNqlamAGCvM7xQOIyOkYVceezgs5vxm?=
+ =?us-ascii?Q?YXq5u1tGlPJ6sk02ToW9y80rCrvAI9pnlMS51mn1tmBHyzvSmIJnn+AN8L6o?=
+ =?us-ascii?Q?jnAi/HiA7ptFagw5UXPL0ISzulqVrDYcCna4G06n6quvKO7zruVy3VgAjqRd?=
+ =?us-ascii?Q?V78wvEt1T65dS9+U0Pf6ufi3jObM+u17xnZvuI0DndEw8udm53sUv1qxazau?=
+ =?us-ascii?Q?lLtTYbohdw5vOOzw9j7Ttm9N88mPUvc7JAIsPrg5SarGT57Ho8WntDgFKNUS?=
+ =?us-ascii?Q?mt5ht+0EEJYGBOduYrBIej7T21kHrvervy1KmIGdWB33pR14HESAQtZGBufg?=
+ =?us-ascii?Q?1iCwGSBemex/qYjO+lw038bxQdWijFdxJsqPA0WyedNThcKxAzGZaF4pH1MO?=
+ =?us-ascii?Q?c6XtlIDsUHPM1d/u2Nc6nFH4zNvapNsfAGC+GOIMjLEiy1oEPee4l4V4+D73?=
+ =?us-ascii?Q?ANxifSJNkvhEm4OTh4G+5OSjawFpCukLN1osulxZGnEq3Ym+oM09uQ2IUuzM?=
+ =?us-ascii?Q?YrzstDE30wNSb00ySXSKDMWndgsLSqOXcES12PzCWBf655EDHpQvb0sODKVZ?=
+ =?us-ascii?Q?ikvujKA2QtXWuwb6YDHs8esxI1nU6xN6LX7bu7vP+DOhSNARKRlPcI0eYnSg?=
+ =?us-ascii?Q?STM2bL4Hj5PonKodjqw=3D?=
 X-Forefront-Antispam-Report:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?fgGFybnCqoZxu4yNYvi+BFIoGTz8IL82yqWA1lCEak3GoNbMVGcu9LGNHUGs?=
- =?us-ascii?Q?ryKFhPW5MhjxaPES+zsAmINgwu1vt1eIw3yuxNZyNJhBEFrYvWmb9dVoYnrF?=
- =?us-ascii?Q?SPtC2iKIx/HD2aSMgsi7k6hLFw33Ewny2C+s8NvoD5AhEV6Z7sUxf6A+KCw2?=
- =?us-ascii?Q?P/XQ9r2YaqwFFGiw7sufwjJuFwU4HkEirhZplTYV9ZlhPbPbCT1ufhNTAT/1?=
- =?us-ascii?Q?FXuWDDJU7ixOWggvfZ5v5HXvKhKTkl4Ar6eUvdkfxK5eIw2YEcUKVresnYf/?=
- =?us-ascii?Q?9wptDER3+wsFf3Bym9+5YUc/+Gt7tE/tpKLW7jI5JHzaP895Nbn2RW+OFEQp?=
- =?us-ascii?Q?6dwf5MqD3gngkwnOSpIVZgyVcfupIRvIfekxZKvrFbB3Di/t7JHV1OA02dxx?=
- =?us-ascii?Q?zIJEzdKKeS0kJUbp6jLH0nMOsTxuT0IadFmzwKu2YM13j/q3ls8m38HzFZ0r?=
- =?us-ascii?Q?sTW2MmYdNIfu2qz65Ff4H6oR0iBXrukVXap3w5+WMo604Bdh80OReYEhVd+n?=
- =?us-ascii?Q?JrlqWHCyL5lArdjozVZ6vCnOs7sZsoFzbysCkW8aEVo7HoAFhW9wdVIeRF9+?=
- =?us-ascii?Q?w52BTN0rihhIJ+9ciEy41Gy3fpNrGZ+bil1rAvV+Oyecm8NvZl2r7/Q89N1K?=
- =?us-ascii?Q?S7gZed+O0tFY8xI5p6Tzn88SOAZeBoVfrXjW+sVlPaqVb8ilBk6FBNjEJIDz?=
- =?us-ascii?Q?DV94kSKwgrH7UtEuTskdGI7nrQg8hk1iR1e6U+UAmzyk9gN4AhbxRNJlSPbp?=
- =?us-ascii?Q?7AfQ49TuNlvDf4Ux4pXF+Bsp4O/Rg/KRwZrs6bf3AucEaxm+EmiHn6Pjsvs+?=
- =?us-ascii?Q?lzngTkDWVI1w/8oqBRs9UerZ8M1S49gRYcFfO5KiTOW60wIKbK9kq+MCGWjQ?=
- =?us-ascii?Q?BfqUg4RZ4h2HQcRy/l0pFKxASs8voa5TA0jI91aDp/1iJGnOsfyYJS3G6sVF?=
- =?us-ascii?Q?V/VTflD/3l4Nk7seSNMtrV49fVg/kMn0SDKpd3w2G+E8FsiAZfX7hN777tKn?=
- =?us-ascii?Q?+Qzp0NDlw3jjW6OamLIU2UAgWHgGGBpGZVOFpUed6ioJ5QSSPEwJZqHO3kGM?=
- =?us-ascii?Q?tdLcSl1/Y3N4r53AaQEdureDXIDaKJc23TI3NoJK488hcXTS7HlMyJHAWCVJ?=
- =?us-ascii?Q?kzmDwrksMXrwdp00dd8Me6XfUAP4iy1/rv8PyITK94T9nCqheUPitNlKuVoT?=
- =?us-ascii?Q?SvekBVZuCFaJuKXF7G5lMhKeEp5s4DBH9cruVKGTdAt+fjVVU4ZIHi2zzqwu?=
- =?us-ascii?Q?yPKVLzRHMXkkZeL59zKOzaPg78mPkz11C9fp57tYSgnBRM3x3XgmJSWgyz4/?=
- =?us-ascii?Q?iUJEy8BVZ3kPuIOksGzbR0tao1x+IpyxgtkeJhiQHOOJlUaaSfsWTbgn4XEG?=
- =?us-ascii?Q?VuAJWxWDjWVRhV6TO+JCtSuMW2CkXpz+D1X28QLVyOt5BgdDsfXtt4TgPENJ?=
- =?us-ascii?Q?02piDn/ef6ZR/YcvCvmT3SAPHml/uKVEUhtHh93c+Fp6JGMaH2b7BuCjIxiW?=
- =?us-ascii?Q?l7Ng9WAUuiGXp9B77D4QsevVe2RNRk9kyMct8AFZOBUSJZ/0DPbl1JI/M1vo?=
- =?us-ascii?Q?BjoXSXYLGgE5IKcFIi98SdFjWQz4k4gMPzrXUAvYTk0q5ZuHrZViCgPutEUU?=
- =?us-ascii?Q?yV80QHv6cLtEojHTTcqMid2rsxyRjcTqQsKLO+Umh2iR7TziwNedk+N0mClB?=
- =?us-ascii?Q?MPcuzSB+114W3TR7izn97k8GpTPYGLPuNNMxeI0PsLVI1WDK6ulAeIAepV8W?=
- =?us-ascii?Q?ktorSFdmnHp4UucZFMoQk/evzxxnRvukuMQis63QPoBGBlqNQ9/D?=
+ =?us-ascii?Q?6AYSaYNvJ3HE5rdNbqfEN3Gc8hacYsrq9JYi6L7Cbbw0xrTLHKtx3vZrv8u4?=
+ =?us-ascii?Q?vf7qLyikPOr9uERB9xse3UEZq9fTMk8gzIjyMUtzatREEqqUo/UY9pCdeiu4?=
+ =?us-ascii?Q?dzsmq4VTLWTLEBOEj8vjb9KLiYPydRttSyHRzJJrSm/tciSWcCLwjJO9XVTS?=
+ =?us-ascii?Q?V1TB2N3NEAXjkAv0/9wFdtau78lRgtq3JGqSCDTIgRFpooQ6CivwT7QRpM1b?=
+ =?us-ascii?Q?YAsCkKlbbL377wjZyTlz/Q5tQsmBVHnHdFw1+QPH2ugt6PHUMZgdYL73gRWd?=
+ =?us-ascii?Q?BR5RUwoRxVET3jkD6ySx3UPGzANsj4+8pWjSbl1R8U9GXSylmogrihzszprW?=
+ =?us-ascii?Q?wqZA8hIdvWga2WNKZ3dDxUeunt0lTijGIHBNspmxls9IY5xaxU8ZggD7zSkQ?=
+ =?us-ascii?Q?ZWhgeBJAWKpLbSOszst2eiVdbXdDYRGKh4cCAw30mC/mp5odI/sdJUYXZcAo?=
+ =?us-ascii?Q?ISYZEeBNXOK3z5XKwJZRmAmlEWcCQK1rztrJTnsDpAVR3UndmBTXnYDxVfwW?=
+ =?us-ascii?Q?/6hhbJZzWiyDDzL+cUIW16rwW5hoAiHLbqhcHh+bsj/aRPgi4D8vruSMJz8V?=
+ =?us-ascii?Q?7jgs10zAcrYc706pkfwtn4k2RK+Iwc59iOUGn+lJhcyhFYZLCc7JxASzidXI?=
+ =?us-ascii?Q?BskurZfaiX5r5bqEBOv9e/aDQhGINBxTF718qtH5WKe0DhJ37lG5qhKl3D1X?=
+ =?us-ascii?Q?xAJU98aoc8rrsUxgv4RfOfKqqj78Wbobd92nYaAzH0o3vES9hS3Ed0QinFEV?=
+ =?us-ascii?Q?zchHHpR6mzLn7y4XCLXVHiN4LjIU5qk0LsWajEfGgi19tIQzU3uadsQBcxiR?=
+ =?us-ascii?Q?aXFC62RJ8mL8N68ruVTX1nV16u7UPzgrMOLGVImvOs80k/WW9bm9jM6//MGp?=
+ =?us-ascii?Q?xYDqGoDrLOdxa2DU5bHy+Uyh8BzhK5WybY0pNGnP/qnsMWfNVB2TxboTRrXn?=
+ =?us-ascii?Q?BfwM85NfchAscfxa23TiWtohLOw2ngQ0f/eq+F9FmqzTrPMCDO8+jRsEjyed?=
+ =?us-ascii?Q?NtWRPg+WrjI4MX0MU+P8971WoEMA+SNhnuGTslCluLUnUFfdzAPPWx+X4mEo?=
+ =?us-ascii?Q?ivpSm+awOF5sNw+PatlOvvGlgyUesRNTjpScoEXn2FALFV+RHqBYvG4v5HTK?=
+ =?us-ascii?Q?mHTO4aKxXVm0kKYouSdwE5n1LLcoU3lmL/YTVgy7zodcBz0eqYI/zPWOhCrj?=
+ =?us-ascii?Q?AVYuOceoyWPIC+BMOp1eyfmrjVtQqXWBhhwju9OntyfKYIEYg8paXyMfrOOb?=
+ =?us-ascii?Q?4KxmoTR47E7Jxl47dQxyxFQqfqgmvmeyMSL6s8Ohc7ln/virGO5cFFgRj/mx?=
+ =?us-ascii?Q?1SiUSO6dZXU3dp8PSy+EWGhBHhQEZ0FE9+o7RLjk8Uq2/oiAS0svK3CkHnGK?=
+ =?us-ascii?Q?X1jjNyttZpkDgMrMNP/1uhnX76Pwnux6syt28XVx1aElzaEfW73EkwpvHyB+?=
+ =?us-ascii?Q?h04sXow4ogSqLUc68aCp2TeeZ3VziwWum2Xa+AZfJ2gU25wmPwgFm11hcQx9?=
+ =?us-ascii?Q?w9csRxK1LZ6rJlMV5e72KlGi+cjc55Xczcj9uVxOOk++CtHUfPS7Z8pGKba1?=
+ =?us-ascii?Q?1cFSgVapY2g8W3WDox4Ah1zfvcojXG+SYklr0UdBNl9Fdpc3GGKI4fXJ+N0P?=
+ =?us-ascii?Q?n9rAhimZqadx0bDm2p/pbp2y7Klb1AheiGnLohcsMDKN6GNUwumRXGxngqjk?=
+ =?us-ascii?Q?8HsXWIKBydgf/29JF95s91NfF4z8cCtZOWkjxzO+ufss6j1/bCkGxfgmSpWS?=
+ =?us-ascii?Q?f+g7qLJw1AGIPth2Gjv9UqMnpX3wDQs=3D?=
 X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e4f6d2e-f635-4b4b-52c5-08de5f848f62
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e7cf362-cef9-447d-cc52-08de5f84ffc9
 X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2026 22:20:08.1612
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2026 22:23:16.5780
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VWUfkw5Nxfxndk4vXvkRGxD0vO4OflBpj8kURVK3LdmcmwsWqoonHkOowgz9plLaA6H2BikiMQcbPHMnctlPj49nYwrUmiCsmHijlBWHCmV3hiyreQQzDk1QjNFuTIgO
+X-MS-Exchange-CrossTenant-UserPrincipalName: cMeESBhPCAAkUjXLv0/rMQHZ2LwhZU1Is8rSrgpg7Lwhrs25cUpVnO3lMOAbJ4SWsqzdavZQtbU0Dr9QcGs8mNZkr6hydVgcFIG2mRxRuki4RQaw/Dssz0qvEhLFqkex
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR01MB7809
 
 
 Hi Besar,
 
 On Mon, 26 Jan 2026, Besar Wicaksono wrote:
-> Adds Unified Coherent Fabric PMU support in Tegra410 SOC.
+> Add interface to get ACPI device associated with the
+> PMU. This ACPI device may contain additional properties
+> not covered by the standard properties.
 >
 > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-
-Looks good to me
-
-Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-
---Ilkka
-
-
 > ---
-> Documentation/admin-guide/perf/index.rst      |   1 +
-> .../admin-guide/perf/nvidia-tegra410-pmu.rst  | 106 ++++++++++++++++++
-> drivers/perf/arm_cspmu/nvidia_cspmu.c         |  90 ++++++++++++++-
-> 3 files changed, 196 insertions(+), 1 deletion(-)
-> create mode 100644 Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
+> drivers/perf/arm_cspmu/arm_cspmu.c | 24 +++++++++++++++++++++++-
+> drivers/perf/arm_cspmu/arm_cspmu.h | 17 ++++++++++++++++-
+> 2 files changed, 39 insertions(+), 2 deletions(-)
 >
-> diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-> index c407bb44b08e..aa12708ddb96 100644
-> --- a/Documentation/admin-guide/perf/index.rst
-> +++ b/Documentation/admin-guide/perf/index.rst
-> @@ -25,6 +25,7 @@ Performance monitor support
->    alibaba_pmu
->    dwc_pcie_pmu
->    nvidia-tegra241-pmu
-> +   nvidia-tegra410-pmu
->    meson-ddr-pmu
->    cxl
->    ampere_cspmu
-> diff --git a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> new file mode 100644
-> index 000000000000..7b7ba5700ca1
-> --- /dev/null
-> +++ b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> @@ -0,0 +1,106 @@
-> +=====================================================================
-> +NVIDIA Tegra410 SoC Uncore Performance Monitoring Unit (PMU)
-> +=====================================================================
-> +
-> +The NVIDIA Tegra410 SoC includes various system PMUs to measure key performance
-> +metrics like memory bandwidth, latency, and utilization:
-> +
-> +* Unified Coherence Fabric (UCF)
-> +
-> +PMU Driver
-> +----------
-> +
-> +The PMU driver describes the available events and configuration of each PMU in
-> +sysfs. Please see the sections below to get the sysfs path of each PMU. Like
-> +other uncore PMU drivers, the driver provides "cpumask" sysfs attribute to show
-> +the CPU id used to handle the PMU event. There is also "associated_cpus"
-> +sysfs attribute, which contains a list of CPUs associated with the PMU instance.
-> +
-> +UCF PMU
-> +-------
-> +
-> +The Unified Coherence Fabric (UCF) in the NVIDIA Tegra410 SoC serves as a
-> +distributed cache, last level for CPU Memory and CXL Memory, and cache coherent
-> +interconnect that supports hardware coherence across multiple coherently caching
-> +agents, including:
-> +
-> +  * CPU clusters
-> +  * GPU
-> +  * PCIe Ordering Controller Unit (OCU)
-> +  * Other IO-coherent requesters
-> +
-> +The events and configuration options of this PMU device are described in sysfs,
-> +see /sys/bus/event_source/devices/nvidia_ucf_pmu_<socket-id>.
-> +
-> +Some of the events available in this PMU can be used to measure bandwidth and
-> +utilization:
-> +
-> +  * slc_access_rd: count the number of read requests to SLC.
-> +  * slc_access_wr: count the number of write requests to SLC.
-> +  * slc_bytes_rd: count the number of bytes transferred by slc_access_rd.
-> +  * slc_bytes_wr: count the number of bytes transferred by slc_access_wr.
-> +  * mem_access_rd: count the number of read requests to local or remote memory.
-> +  * mem_access_wr: count the number of write requests to local or remote memory.
-> +  * mem_bytes_rd: count the number of bytes transferred by mem_access_rd.
-> +  * mem_bytes_wr: count the number of bytes transferred by mem_access_wr.
-> +  * cycles: counts the UCF cycles.
-> +
-> +The average bandwidth is calculated as::
-> +
-> +   AVG_SLC_READ_BANDWIDTH_IN_GBPS = SLC_BYTES_RD / ELAPSED_TIME_IN_NS
-> +   AVG_SLC_WRITE_BANDWIDTH_IN_GBPS = SLC_BYTES_WR / ELAPSED_TIME_IN_NS
-> +   AVG_MEM_READ_BANDWIDTH_IN_GBPS = MEM_BYTES_RD / ELAPSED_TIME_IN_NS
-> +   AVG_MEM_WRITE_BANDWIDTH_IN_GBPS = MEM_BYTES_WR / ELAPSED_TIME_IN_NS
-> +
-> +The average request rate is calculated as::
-> +
-> +   AVG_SLC_READ_REQUEST_RATE = SLC_ACCESS_RD / CYCLES
-> +   AVG_SLC_WRITE_REQUEST_RATE = SLC_ACCESS_WR / CYCLES
-> +   AVG_MEM_READ_REQUEST_RATE = MEM_ACCESS_RD / CYCLES
-> +   AVG_MEM_WRITE_REQUEST_RATE = MEM_ACCESS_WR / CYCLES
-> +
-> +More details about what other events are available can be found in Tegra410 SoC
-> +technical reference manual.
-> +
-> +The events can be filtered based on source or destination. The source filter
-> +indicates the traffic initiator to the SLC, e.g local CPU, non-CPU device, or
-> +remote socket. The destination filter specifies the destination memory type,
-> +e.g. local system memory (CMEM), local GPU memory (GMEM), or remote memory. The
-> +local/remote classification of the destination filter is based on the home
-> +socket of the address, not where the data actually resides. The available
-> +filters are described in
-> +/sys/bus/event_source/devices/nvidia_ucf_pmu_<socket-id>/format/.
-> +
-> +The list of UCF PMU event filters:
-> +
-> +* Source filter:
-> +
-> +  * src_loc_cpu: if set, count events from local CPU
-> +  * src_loc_noncpu: if set, count events from local non-CPU device
-> +  * src_rem: if set, count events from CPU, GPU, PCIE devices of remote socket
-> +
-> +* Destination filter:
-> +
-> +  * dst_loc_cmem: if set, count events to local system memory (CMEM) address
-> +  * dst_loc_gmem: if set, count events to local GPU memory (GMEM) address
-> +  * dst_loc_other: if set, count events to local CXL memory address
-> +  * dst_rem: if set, count events to CPU, GPU, and CXL memory address of remote socket
-> +
-> +If the source is not specified, the PMU will count events from all sources. If
-> +the destination is not specified, the PMU will count events to all destinations.
-> +
-> +Example usage:
-> +
-> +* Count event id 0x0 in socket 0 from all sources and to all destinations::
-> +
-> +    perf stat -a -e nvidia_ucf_pmu_0/event=0x0/
-> +
-> +* Count event id 0x0 in socket 0 with source filter = local CPU and destination
-> +  filter = local system memory (CMEM)::
-> +
-> +    perf stat -a -e nvidia_ucf_pmu_0/event=0x0,src_loc_cpu=0x1,dst_loc_cmem=0x1/
-> +
-> +* Count event id 0x0 in socket 1 with source filter = local non-CPU device and
-> +  destination filter = remote memory::
-> +
-> +    perf stat -a -e nvidia_ucf_pmu_1/event=0x0,src_loc_noncpu=0x1,dst_rem=0x1/
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index e06a06d3407b..c67667097a3c 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -1,6 +1,6 @@
-> // SPDX-License-Identifier: GPL-2.0
-> /*
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index 34430b68f602..dadc9b765d80 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -16,7 +16,7 @@
+>  * The user should refer to the vendor technical documentation to get details
+>  * about the supported events.
+>  *
 > - * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 > + * Copyright (c) 2022-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 >  *
 >  */
 >
-> @@ -21,6 +21,13 @@
-> #define NV_CNVL_PORT_COUNT           4ULL
-> #define NV_CNVL_FILTER_ID_MASK       GENMASK_ULL(NV_CNVL_PORT_COUNT - 1, 0)
+> @@ -1132,6 +1132,28 @@ static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
 >
-> +#define NV_UCF_SRC_COUNT             3ULL
-> +#define NV_UCF_DST_COUNT             4ULL
-> +#define NV_UCF_FILTER_ID_MASK        GENMASK_ULL(11, 0)
-> +#define NV_UCF_FILTER_SRC            GENMASK_ULL(2, 0)
-> +#define NV_UCF_FILTER_DST            GENMASK_ULL(11, 8)
-> +#define NV_UCF_FILTER_DEFAULT        (NV_UCF_FILTER_SRC | NV_UCF_FILTER_DST)
-> +
-> #define NV_GENERIC_FILTER_ID_MASK    GENMASK_ULL(31, 0)
->
-> #define NV_PRODID_MASK	(PMIIDR_PRODUCTID | PMIIDR_VARIANT | PMIIDR_REVISION)
-> @@ -124,6 +131,37 @@ static struct attribute *mcf_pmu_event_attrs[] = {
-> 	NULL,
-> };
->
-> +static struct attribute *ucf_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(bus_cycles,            0x1D),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(slc_allocate,          0xF0),
-> +	ARM_CSPMU_EVENT_ATTR(slc_wb,                0xF3),
-> +	ARM_CSPMU_EVENT_ATTR(slc_refill_rd,         0x109),
-> +	ARM_CSPMU_EVENT_ATTR(slc_refill_wr,         0x10A),
-> +	ARM_CSPMU_EVENT_ATTR(slc_hit_rd,            0x119),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(slc_access_dataless,   0x183),
-> +	ARM_CSPMU_EVENT_ATTR(slc_access_atomic,     0x184),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(slc_access,            0xF2),
-> +	ARM_CSPMU_EVENT_ATTR(slc_access_rd,         0x111),
-> +	ARM_CSPMU_EVENT_ATTR(slc_access_wr,         0x112),
-> +	ARM_CSPMU_EVENT_ATTR(slc_bytes_rd,          0x113),
-> +	ARM_CSPMU_EVENT_ATTR(slc_bytes_wr,          0x114),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(mem_access_rd,         0x121),
-> +	ARM_CSPMU_EVENT_ATTR(mem_access_wr,         0x122),
-> +	ARM_CSPMU_EVENT_ATTR(mem_bytes_rd,          0x123),
-> +	ARM_CSPMU_EVENT_ATTR(mem_bytes_wr,          0x124),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(local_snoop,           0x180),
-> +	ARM_CSPMU_EVENT_ATTR(ext_snp_access,        0x181),
-> +	ARM_CSPMU_EVENT_ATTR(ext_snp_evict,         0x182),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> static struct attribute *generic_pmu_event_attrs[] = {
-> 	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> 	NULL,
-> @@ -152,6 +190,18 @@ static struct attribute *cnvlink_pmu_format_attrs[] = {
-> 	NULL,
-> };
->
-> +static struct attribute *ucf_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> +	ARM_CSPMU_FORMAT_ATTR(src_loc_noncpu, "config1:0"),
-> +	ARM_CSPMU_FORMAT_ATTR(src_loc_cpu, "config1:1"),
-> +	ARM_CSPMU_FORMAT_ATTR(src_rem, "config1:2"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_loc_cmem, "config1:8"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_loc_gmem, "config1:9"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_loc_other, "config1:10"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_rem, "config1:11"),
-> +	NULL,
-> +};
-> +
-> static struct attribute *generic_pmu_format_attrs[] = {
-> 	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> 	ARM_CSPMU_FORMAT_FILTER_ATTR,
-> @@ -236,6 +286,27 @@ static void nv_cspmu_set_cc_filter(struct arm_cspmu *cspmu,
-> 	writel(filter, cspmu->base0 + PMCCFILTR);
+> 	return 0;
 > }
->
-> +static u32 ucf_pmu_event_filter(const struct perf_event *event)
+> +
+> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu)
 > +{
-> +	u32 ret, filter, src, dst;
+> +	char hid[16];
+> +	char uid[16];
+> +	struct acpi_device *adev;
+> +	const struct acpi_apmt_node *apmt_node;
 > +
-> +	filter = nv_cspmu_event_filter(event);
+> +	apmt_node = arm_cspmu_apmt_node(cspmu->dev);
+> +	if (!apmt_node || apmt_node->type != ACPI_APMT_NODE_TYPE_ACPI)
+> +		return NULL;
 > +
-> +	/* Monitor all sources if none is selected. */
-> +	src = FIELD_GET(NV_UCF_FILTER_SRC, filter);
-> +	if (src == 0)
-> +		src = GENMASK_ULL(NV_UCF_SRC_COUNT - 1, 0);
+> +	memset(hid, 0, sizeof(hid));
+> +	memset(uid, 0, sizeof(uid));
 > +
-> +	/* Monitor all destinations if none is selected. */
-> +	dst = FIELD_GET(NV_UCF_FILTER_DST, filter);
-> +	if (dst == 0)
-> +		dst = GENMASK_ULL(NV_UCF_DST_COUNT - 1, 0);
+> +	memcpy(hid, &apmt_node->inst_primary, sizeof(apmt_node->inst_primary));
+> +	snprintf(uid, sizeof(uid), "%u", apmt_node->inst_secondary);
 > +
-> +	ret = FIELD_PREP(NV_UCF_FILTER_SRC, src);
-> +	ret |= FIELD_PREP(NV_UCF_FILTER_DST, dst);
-> +
-> +	return ret;
-> +}
->
-> enum nv_cspmu_name_fmt {
-> 	NAME_FMT_GENERIC,
-> @@ -342,6 +413,23 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
-> 		.init_data = NULL
-> 	  },
-> 	},
-> +	{
-> +	  .prodid = 0x2CF20000,
-> +	  .prodid_mask = NV_PRODID_MASK,
-> +	  .name_pattern = "nvidia_ucf_pmu_%u",
-> +	  .name_fmt = NAME_FMT_SOCKET,
-> +	  .template_ctx = {
-> +		.event_attr = ucf_pmu_event_attrs,
-> +		.format_attr = ucf_pmu_format_attrs,
-> +		.filter_mask = NV_UCF_FILTER_ID_MASK,
-> +		.filter_default_val = NV_UCF_FILTER_DEFAULT,
-> +		.filter2_mask = 0x0,
-> +		.filter2_default_val = 0x0,
-> +		.get_filter = ucf_pmu_event_filter,
-> +		.get_filter2 = NULL,
-> +		.init_data = NULL
-> +	  },
-> +	},
-> 	{
-> 	  .prodid = 0,
-> 	  .prodid_mask = 0,
-> -- 
-> 2.43.0
->
->
+> +	adev = acpi_dev_get_first_match_dev(hid, uid, -1);
+> +	return adev;
+
+I'd probably just do
+
+ 	return acpi_dev_get_first_match_dev(hid, uid, -1);
+
+but it doesn't really matter. Regardless,
+
+ 	Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+
+Cheers, Ilkka
