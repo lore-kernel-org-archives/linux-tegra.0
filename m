@@ -1,63 +1,63 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F22376BF8
-	for <linux-tegra@vger.kernel.org>; Fri, 30 Jan 2026 12:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2FB37F0F5
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Jan 2026 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769777402; cv=none; b=r1y7XIcpY6Rt3qwdjvVHrJF+aeiQIdj+4zyCYvUaMQjEDWF8lb1orxCWm8v2CxaByEWFraUi1GtGVClkT9nSE3zwmE4XepsL4mVm2TphXo62YjLTGJqZLZ1dj+LsrSnyB87XT+i6PsgGbeeVD6lhaIj0xHhXTTrkqnpw/DBvAUo=
+	t=1769777403; cv=none; b=q7X+ZxjHqK38QW2u5lWbpV8O6wG6ZJdEFIVS5SMYO/3/ir+a/hiak9qyIB706jattSq8oSYVooifRKZYFqrd5xHutE3fQfCXYWNGp+WT/yim4lHBP/mMH7VvoSbg6xtDkmwASVhr7UEpZgDNn90UXow5Gzas2JATRBzaFtrVTJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769777402; c=relaxed/simple;
-	bh=W/c+p5OzSzMCPsuxSreuM0YQnwu6gX3JEtOSgZZKgMM=;
+	s=arc-20240116; t=1769777403; c=relaxed/simple;
+	bh=4Y6GlT1FtG8VTSEqElibSSfmV/oqQEBBF3NI80Dhu3w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EXpBFsUmVqdvPpwOFUzl9knsT6TOIk0QpGM9oDO5JSVii15L8bMU1K+cQA9PC4WRLW3jEFNqb60+z3MPAGFibv5gLLnt1G3RDC/QcpnwygTRfhdB33pOQD3zw+7ydHe6WhjKMTSXr9lrqiSd7FwKQ3Kk2FtSudXhv1ZLIYXlY6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+ELSBeD; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=s49782BFdZGSVLJbCIoVnotKqKX6RxzAz9j0MCeMCb2jp/KuKXrQQtf+DolUd8xVpTBHrfv3FIAKODEeOXhK+TEuPO8IoaGzWRAXhYldC+bwMVK90xRrb7JAZZ4TwdVjyVNwBc9J1tKkyNvFhFeBFJLocu4/5TSmmTWC/Pj2/uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LyJ/9VxK; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+ELSBeD"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47edffe5540so25752365e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 30 Jan 2026 04:49:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LyJ/9VxK"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47ee76e8656so27479515e9.0
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Jan 2026 04:50:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769777398; x=1770382198; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769777399; x=1770382199; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vuLhv0mNsbTmk14Cy+1I+agalhgb8cQohYYZvZhzur0=;
-        b=f+ELSBeDc4COMI7t9a5iP6snIRDOyJWzJB/Lo6Rcnq1TyPpQfURO1wd2w+/30qhEt/
-         Vd4gk98DH+f+bo16GH45cbKD09hhjGUgeyLxoEEmHpUCSgRlB9FV76/TdPkGFeI0SjL9
-         LHbt9sJE5au/UbFjm0db5kbMzgDw3UmDIfm4NZq4SfBr1E9ggBReJoK907gE83BZbl6E
-         QxUsdoLtMj53/m1qYqgiM/1ixS+PZBy4z47qN8lShDwFEeTEKRPjR76ydp3DZgHxzbCc
-         YJqE6wShwcfmDa4eJaoYncgJczoG6HEd0XVdnLKdf7gBrgJICmVXYhCs10Ur6GlgTl++
-         /59g==
+        bh=5ZTvAgzsdLyPVb7r9icvoh5jhK/kCdwgL9RfYNjUTH0=;
+        b=LyJ/9VxKH8qG4HIkajVqD+yx8jJ34L/TPUKCDM5oTP8QdBExhQ2HFUfNkzvM/ynTLQ
+         Nc/GG1r0L8w5mOwzDzCMSa05SI87FacWcIdEi51vGRQGTopwyrUb6DsXZMEVso4ge6l0
+         pDB0vz6r6GAY8L2RE70H7a2OcoBnv4rKz5ewy3eUq8fck92eF9sKoaq9lrocFk3NzdkZ
+         95FdMhhVi0Fg+glk3Ac7uldmaAnNFwv3GnxhkZjP2iYrEyG7PWS9rl0zcB8LA1VlR1iR
+         gov8P3jrWxWNX5mV9Gl0LatjHECTNa6R2cMwZX1ZIKGxx/2dPyRWQGQaszTDRX1slLw3
+         OinQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769777398; x=1770382198;
+        d=1e100.net; s=20230601; t=1769777399; x=1770382199;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=vuLhv0mNsbTmk14Cy+1I+agalhgb8cQohYYZvZhzur0=;
-        b=MJ0H/Mxn5AFy8BPRqdWhwDStL8+0gSG7NPRkb7jlpgjKiV9nLghUnf3RqcoxcaeTcI
-         iRTXHZzCiA46RZ5hn/JuFPtSN+fYmBOLTDQUhilVPxxp+o3BIHFRJeiAso0QnezIqHhJ
-         3O4XMkuF4KfVgaxcBp0tTxosxDkRLdXOc6QZSAFawajMMAmu5wbjrKRiOqvD6rEV8529
-         0LHX9lZ3scq3uBRK4pFkbTFYowYO1KA5IDZtk/z+mgLSNQnarYKCX6JvgE4W7xMABc/u
-         64qxzIR/aFiYirkkotxtgyF1ISlzbg5k1J7W10RuF9bDxTgcxZpfSb0MSz/RCipE3aHU
-         MZaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUN7Nha9wxvTP5/6ljYR6R5As9XKPBwdgByDu/0/LWBecYUN0qWnPAIJofbi8rr8XpI35MCG6oMPPiTQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHAzcrDBn7i97lVwlbNf2HhJlBZ/XO7gH9EzqHwulD7O1oHYmL
-	bTBm+pBp22wcrhjuaiTDdytsXWwjWsA010BRtV16qtgyL73y5xXEDhAz
-X-Gm-Gg: AZuq6aI4MLkXYhUVJgXxn5bJoZfuHP67+8KEKYK8w3dlykdizuVD1YnB5eDJgSD9WDc
-	xWhVujY0z4vIxSqlYAel4f4eoJm1BYJy5augi68HvFpmw9qFheIt3No57tFpaiuEX7GxfbjCSII
-	4RoHopHY/xzXf8CJU5AjpfRkwYPU98PPJnY9exTcN99UZqjdYYlCw4x63sNLxGwOv99t54boAW4
-	2i9dUolhVkS1ISzEgSj8x0LAbvb0D154JR9tV7H49cHuKJPklqWhXIq1fGEWGEDXXwoHFMEHisl
-	OWWhcXVGRmOzDt5v+en0zgtzqiSh76Z3KTIVcVegDL/XsRFZCxqyF45GMpfVTcssCOZYG3IixXe
-	y/Y7vXRD96CnchubIgx8BfA5GrytKhzYH9ODM+7Nrh8MvcgN2oQK5FlXSJyLPBFqgv2kTd98nrb
-	9z
-X-Received: by 2002:a05:600c:4f48:b0:47a:935f:61a0 with SMTP id 5b1f17b1804b1-482db013b90mr42921685e9.0.1769777397748;
-        Fri, 30 Jan 2026 04:49:57 -0800 (PST)
+        bh=5ZTvAgzsdLyPVb7r9icvoh5jhK/kCdwgL9RfYNjUTH0=;
+        b=R8cnQb4+vyCxCZDQ3KmG3NmKpuhGIYkRMNnpLXKqhOqN5Feb0oAcBDnaLCgTDPf4fW
+         onsLEXAv5oiqbobm194Ew/ay/o2FZT75+g4WiE9j485N7DPmr9ujnvrDzpCkE91jgJl3
+         DFSWRbKAS+W7xHuBZ5pbWIHCOPB35eMSDrxEUcrVTtdK0s92SVhnWMT9woeIU8s1sRwH
+         luh1MSPYGEpO2ZCC5jFNqeEko2LzVSRmwr2vE/dLfbUtpoOSHYELpeiT/U0qtUtyj3oc
+         9kYRmXnjorTp0q8nBopi7WyOn5r85nUfQrl9QD7qoVI6l5LL111mvsMRVB74juzHhByb
+         HL2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXcULs3D5k9+mfoBRNGaOSJ3PJ9f9c7HP4xHHHWbkrng7kEZUhww3nbko3NUFAP+23175RkMEO8mQC0kA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXGl27LetZD68ITy1W6bOHmQUkjSNdN+HBSt0VTrN5x0XG01TO
+	/F5Lg5Tew+9SyEenQsB0srYw8jCSASinlgI1qQ1KlGHh4xECKO/1iAMD
+X-Gm-Gg: AZuq6aJXpRV7oi9EH6A3EswzBGJ782aqNcFXyZTqOzt5nwlOtKsjbY84sfPEahr/jzh
+	PSy7CjPK66ydXbCwrfRa1y/WrrbIH5in+eBHFUFq4+8gSnYydLbmMLbX0WU+7BpCzMBPhLPP4ON
+	BkyfhUyQSEpKsZRUu/dV8uRV8+agf3uANjOBtJIjcYmxHKtyUCXtJGf8LyyqPXS/Tk7jdOIsjT8
+	OpPeeGE7jUt8jeRb61ZPTE+eE1O/VHGYKeD8UjnaOsjzVGL2XnyupbzFVtfjNtLFBHZWVeYJPXf
+	KnNnOZouprXkYBj+lPbkbq6T6ufdCjvEfrbg4LePv98OK9QHCJaCa5lG28fTVlwnW7ww3XfRzml
+	Xal0cWAYFnPKOKbQ01Z7e6kI+PY0iYwyt1YDEl2U/I0uuOHNlTy66m2facWDiCjgh6sC6wCvHhq
+	ZJ
+X-Received: by 2002:a05:600c:a08c:b0:477:6374:6347 with SMTP id 5b1f17b1804b1-482db491ef7mr36328755e9.22.1769777398808;
+        Fri, 30 Jan 2026 04:49:58 -0800 (PST)
 Received: from xeon ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e10e4757sm22738783f8f.5.2026.01.30.04.49.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e10e4757sm22738783f8f.5.2026.01.30.04.49.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jan 2026 04:49:57 -0800 (PST)
+        Fri, 30 Jan 2026 04:49:58 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Mikko Perttunen <mperttunen@nvidia.com>,
@@ -75,9 +75,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-media@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v6 03/15] staging: media: tegra-video: vi: add flip controls only if no source controls are provided
-Date: Fri, 30 Jan 2026 14:49:20 +0200
-Message-ID: <20260130124932.351328-4-clamor95@gmail.com>
+Subject: [PATCH v6 04/15] staging: media: tegra-video: csi: move CSI helpers to header
+Date: Fri, 30 Jan 2026 14:49:21 +0200
+Message-ID: <20260130124932.351328-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130124932.351328-1-clamor95@gmail.com>
 References: <20260130124932.351328-1-clamor95@gmail.com>
@@ -89,47 +89,59 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Because the current Tegra video driver is video-centric, it exposes all
-controls via /dev/video. If both the camera sensor and the VI provide
-hflip and vflip, the driver will fail because only one control is allowed.
-To address this, hflip and vflip should be added from the SoC only if the
-camera sensor doesn't provide those controls.
+Move CSI helpers into the header for easier access from SoC-specific video
+driver parts.
 
 Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # tegra20, parallel camera
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/staging/media/tegra-video/csi.c | 11 -----------
+ drivers/staging/media/tegra-video/csi.h | 10 ++++++++++
+ 2 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 70a84158b589..0f98157a7e91 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -962,6 +962,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
- 	}
- #else
- 	struct v4l2_subdev *subdev;
-+	struct v4l2_ctrl *hflip, *vflip;
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index 3c3f6e3fd1ec..894583d48b35 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -20,17 +20,6 @@
  
- 	/* custom control */
- 	v4l2_ctrl_new_custom(&chan->ctrl_handler, &syncpt_timeout_ctrl, NULL);
-@@ -987,11 +988,13 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
- 		return ret;
- 	}
+ #define MHZ			1000000
  
--	if (chan->vi->soc->has_h_v_flip) {
-+	hflip = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_HFLIP);
-+	if (chan->vi->soc->has_h_v_flip && !hflip)
- 		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
--		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
--	}
+-static inline struct tegra_csi *
+-host1x_client_to_csi(struct host1x_client *client)
+-{
+-	return container_of(client, struct tegra_csi, client);
+-}
+-
+-static inline struct tegra_csi_channel *to_csi_chan(struct v4l2_subdev *subdev)
+-{
+-	return container_of(subdev, struct tegra_csi_channel, subdev);
+-}
+-
+ /*
+  * CSI is a separate subdevice which has 6 source pads to generate
+  * test pattern. CSI subdevice pad ops are used only for TPG and
+diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
+index 609c5952e050..2b4d586d3845 100644
+--- a/drivers/staging/media/tegra-video/csi.h
++++ b/drivers/staging/media/tegra-video/csi.h
+@@ -155,6 +155,16 @@ struct tegra_csi {
+ 	struct list_head csi_chans;
+ };
  
-+	vflip = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_VFLIP);
-+	if (chan->vi->soc->has_h_v_flip && !vflip)
-+		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
- #endif
- 
- 	/* setup the controls */
++static inline struct tegra_csi *host1x_client_to_csi(struct host1x_client *client)
++{
++	return container_of(client, struct tegra_csi, client);
++}
++
++static inline struct tegra_csi_channel *to_csi_chan(struct v4l2_subdev *subdev)
++{
++	return container_of(subdev, struct tegra_csi_channel, subdev);
++}
++
+ void tegra_csi_error_recover(struct v4l2_subdev *subdev);
+ void tegra_csi_calc_settle_time(struct tegra_csi_channel *csi_chan,
+ 				u8 csi_port_num,
 -- 
 2.51.0
 
