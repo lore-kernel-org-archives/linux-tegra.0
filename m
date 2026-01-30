@@ -1,219 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008692D0601;
-	Fri, 30 Jan 2026 10:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB3937E302
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Jan 2026 12:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769768176; cv=none; b=bqdXwQkiNzg67vRgH8BbFzC8XX5mEoMAMkjx269cn7Y6LwCqMjFoKzVlwRGOr6sfgWfsa0i9gvvtuWwH1ZVkI8ANS2+dSwrrsMsivglInDwi7LmrfWFcaNAjcfR31ugMBRnSamnv9c6eCDf7EWhf8QMc7pBqNUgeDLUILNqsoBo=
+	t=1769777398; cv=none; b=mAM5touom8hHXybQ0PILH1XhKkyEh4XtLlb67bUdOLGHwwQ1LsmLy1Me5DpOHRsuKmxnSskOJ4rUw7CK73LlOSJVFtJx+fWhW4wSlsdFnLQBy+nfFCijpQxQDN9zBcNakYOeJ2hBqw5lHQ3l06MSd3VItzlEvWYZ3eH4hpbpTQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769768176; c=relaxed/simple;
-	bh=9f6YWadehBkDdkf5Omkg7B6Z03n6pAURFqAXfV0ZPZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFVVD1fOuaok9X7ZAUmXAZxory8KSH/2tVIxsINuqjzNMujsj1iEvGQPcQ63N+LGgxJH/fgNK4LSKUQl6D8JoDa7n8fIbTFBOIxaJQGVCkbuByGmgTPaI9eSA4AMi1F1Y52zB0lLlC4QwNrDALlSvPsguRWfiVRfcxJfWU9hkA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDMOaKI8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769777398; c=relaxed/simple;
+	bh=HoHrBtYNXY/SaE9OzlXfq5/j1Mx321YZxOI1YdRsAkA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RXCj1ouRq3YJ6k4KDBGU+MEgJ6WlNEWAQ32yxRfasC96dWke/tHpce3+czrqXsysyX7RsDHljhXr9/Ci9T2dTqYBmgJs/gnCPKH8rCUFGFhP4lIYb2U7b1v3B9xhWqFQBkHJ7bQ0NXYX95ceRHJmLpUs7JfV283E2P14Ji0Q6YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHEGwcVk; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDMOaKI8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F685C19421;
-	Fri, 30 Jan 2026 10:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769768175;
-	bh=9f6YWadehBkDdkf5Omkg7B6Z03n6pAURFqAXfV0ZPZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eDMOaKI8SP9IULFlykjcKVJqqArq2TPmNeW5zShWNCQIsKdqZuKvNRZCZvKESniAS
-	 ADdhrQvyJCD1OFrxE07nBoxdoA26+2eq6YGbp2y21Y2J6M3nhL97SjPwRbbtu1rwBe
-	 waJuiJeF18lF43imxRk56/i0GYWEmmiodQTiWYVpHsuyiAzbNXg29uR5Q/bdFVD4Gv
-	 4U6thvqkCp1UrRAWX8Ysl+6/s1j1neovVCF/u7h6h7B66AK/NwtuQUpyG0Ytai5JVk
-	 qOq4zynuwDDIlDKSbCv5TuRJPaAPfFWDCpUhieI3VFBlOMwT1NCJriT0bY/8UkLgnW
-	 KSF6hRiBiiFLQ==
-Date: Fri, 30 Jan 2026 11:16:12 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Vishwaroop A <va@nvidia.com>, 
-	Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, soto@nvidia.com
-Subject: Re: [PATCH v2 0/6] spi: tegra-qspi: Fix race condition causing NULL
- pointer dereference and spurious IRQ
-Message-ID: <aXyE1kfP4GeOdYs5@orome>
-References: <20260126-tegra_xfer-v2-0-6d2115e4f387@debian.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHEGwcVk"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42fb5810d39so1524331f8f.2
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Jan 2026 04:49:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769777395; x=1770382195; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5acCy6OTSjM6pJSucEyPYN85YsF77rdFjU9Wvmbua0=;
+        b=RHEGwcVkxtDpG6TYt6FoPFUjzn28eJE8NYOtHvo2cResc+ujOxXeloni3SGqcd+W6F
+         MEn3jrDFGxDtluO1XaUGnpq8QZoXYH7QXQlSh61QJSVsiy7rLT3PvdaZ0okLLB7lmpxt
+         dEM90+LehMWguZJP5+FVaQhbZF43J0jpzNEg0WUnd5u41Ebja1SxcapGHdJFOBDLgC5Z
+         VuYoDIlvicfkeRuVj95Zikj5kE47Pzhc+xIKHE7a/SgbOSplCu7VegAMr0nrC7pSknl/
+         vf11QhClv1TfRxWtgEmZnSXli42cViUR+ORL5zqvM+Bur6752uppQkdnPQWfz86Z28zj
+         x0ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769777395; x=1770382195;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j5acCy6OTSjM6pJSucEyPYN85YsF77rdFjU9Wvmbua0=;
+        b=N2lHM7m6/IEoe9hJW/MhFz5NfajdHDuPftxSE44x0Y81ysgNwxFUapWwsylxrJ7QYk
+         5NaRP9M6KG9rrYKYBBxTdtYpnze2kxDcinWKph6zbDhj0oXVepGEmxE374C4c+fKQjb9
+         u3ShcLEXXdfJJ6mku5o/Xx/CRsVNnYtsApWA6vcWIB370x+0MZYtQ0FxVwrfQsfngMxX
+         VKFOsA6s+4xnfgCUXucgfOFEkWarGIT7F0fkrlEdNd63EX1PupqvwIrCcorgV8S72hGf
+         oJZ2A0rRf7w0Is91+1J5BRkzTgamswRiX/WbCWngiFq9YBYy6O02ydMLhAGaolD3deZY
+         IoQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfXYDAjSaGjRXvpxWVYbk7QKQs7etEez3v/hto4D9X5dZA2WuFYwqakRhlm6hiZD5/rPO1i9v9NGPPCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAHo9Brezt5EpRQOq+4B6lLJD9CCaardxmQKO84FFV3US8m2T5
+	CvacnsN73pUC10XPChGkSQvLOojvE22OHtLljziZkwDemFqSdKhId8YQ
+X-Gm-Gg: AZuq6aKZqhlTyQMPR9TZb+BSAymKz03wOhM661i1Grh0m45HVseszcFH28xIO+6xtfM
+	WyCM5LiKFByhYWyiUmAdBBtBXv3u1VgpMNFH8bWIpZohQoYZfw/yJPFF/nxiLJhi/N0h3aiBJrO
+	Xy/2Vk3FTmfY7WhR77YF1RszvZrG6QhmnYcx+pQton0weQgQa971k0UevLJ39GtbUdDQ14tZhQl
+	yEqEclJ7IwRS2rYGVS7WhRlYeoCN5nHRiM8RCVDijOolbeNuU4CKYXwDEOQvMrO8ZK33ZmMd181
+	aKtoXXu1MHg9/YFNnEbzi0MaPgC5o8if7edrGH94rrZE8hBr2Jn5OjewIjHoz7CLhzZADgyrgqF
+	AyFJNjYr3DIjDshXOjUHVBf5z7zrVWqxS612zkADJqCqpmez5rhfwoRMJ/rB3hODBd9FUOSLMhh
+	4Y
+X-Received: by 2002:a05:6000:2404:b0:430:8583:d189 with SMTP id ffacd0b85a97d-435f3aa928amr4307852f8f.39.1769777394637;
+        Fri, 30 Jan 2026 04:49:54 -0800 (PST)
+Received: from xeon ([188.163.112.49])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e10e4757sm22738783f8f.5.2026.01.30.04.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jan 2026 04:49:54 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v6 00/15] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Fri, 30 Jan 2026 14:49:17 +0200
+Message-ID: <20260130124932.351328-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="efufeesp4va7bbg5"
-Content-Disposition: inline
-In-Reply-To: <20260126-tegra_xfer-v2-0-6d2115e4f387@debian.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+with a set of changes required for that.
 
---efufeesp4va7bbg5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/6] spi: tegra-qspi: Fix race condition causing NULL
- pointer dereference and spurious IRQ
-MIME-Version: 1.0
+---
+Changes in v2:
+- vi_sensor gated through csus
+- TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+- adjusted commit titles and messages
+- clk_register_clkdev dropped from pad clock registration
+- removed tegra30-vi/vip and used tegra20 fallback
+- added separate csi schema for tegra20-csi and tegra30-csi
+- fixet number of VI channels
+- adjusted tegra_vi_out naming
+- fixed yuv_input_format to main_input_format
+- MIPI calibration refsctored for Tegra114+ and added support for
+  pre-Tegra114 to use CSI as a MIPI calibration device
+- switched ENOMEM to EBUSY
+- added check into tegra_channel_get_remote_csi_subdev
+- moved avdd-dsi-csi-supply into CSI
+- next_fs_sp_idx > next_fs_sp_value
+- removed host1x_syncpt_incr from framecounted syncpoint
+- csi subdev request moved before frame cycle
 
-On Mon, Jan 26, 2026 at 09:50:25AM -0800, Breno Leitao wrote:
-> The tegra-quad-spi driver is crashing on some hosts. Analysis revealed
-> the following failure sequence:
->=20
-> 1) After running for a while, the interrupt gets marked as spurious:
->=20
->     irq 63: nobody cared (try booting with the "irqpoll" option)
->     Disabling IRQ #63
->=20
-> 2) The IRQ handler (tegra_qspi_isr_thread->handle_cpu_based_xfer) is
->    responsible for signaling xfer_completion.
->    Once the interrupt is disabled, xfer_completion is never completed, ca=
-using
->    transfers to hit the timeout:
->=20
->     WARNING: CPU: 64 PID: 844224 at drivers/spi/spi-tegra210-quad.c:1222 =
-tegra_qspi_transfer_one_message+0x7a0/0x9b0
->=20
-> 3) The timeout handler completes the transfer:
->=20
->     tegra-qspi NVDA1513:00: QSPI interrupt timeout, but transfer complete
->=20
-> 4) Later, the ISR thread finally runs and crashes trying to dereference
->    curr_xfer which the timeout handler already set to NULL:
->=20
->     Unable to handle kernel NULL pointer dereference at virtual address 0=
-000000000000008
->     pc : handle_cpu_based_xfer+0x90/0x388 [spi_tegra210_quad]
->     lr : tegra_qspi_handle_timeout+0xb4/0xf0 [spi_tegra210_quad]
->     Call trace:
->       handle_cpu_based_xfer+0x90/0x388 [spi_tegra210_quad] (P)
->=20
-> Root cause analysis identified three issues:
->=20
-> 1) Race condition on tqspi->curr_xfer
->=20
->    The curr_xfer pointer can change during ISR execution without proper
->    synchronization. The timeout path clears curr_xfer while the ISR
->    thread may still be accessing it.
->=20
->    This is trivially reproducible by decreasing QSPI_DMA_TIMEOUT and
->    adding instrumentation to tegra_qspi_isr_thread() to check curr_xfer
->    at entry and exit - the value changes mid-execution. I've used the
->    following test to reproduce this issue:
->=20
->    https://github.com/leitao/debug/blob/main/arm/tegra/tpm_torture_test.sh
->=20
->    The existing comment in the ISR acknowledges this race but the
->    protection is insufficient:
->=20
->        /*
->         * Occasionally the IRQ thread takes a long time to wake up (usual=
-ly
->         * when the CPU that it's running on is excessively busy) and we h=
-ave
->         * already reached the timeout before and cleaned up the timed out
->         * transfer. Avoid any processing in that case and bail out early.
->         */
->=20
->    This is bad because tqspi->curr_xfer can just get NULLed
->=20
-> 2) Incorrect IRQ_NONE return causing spurious IRQ detection
->=20
->    When the timeout handler processes a transfer before the ISR thread
->    runs, tegra_qspi_isr_thread() returns IRQ_NONE.
->=20
->    After enough IRQ_NONE returns, the kernel marks the interrupt as spuri=
-ous
->    and disables it - but these were legitimate interrupts that happened t=
-o be
->    processed by the timeout path first.
->=20
->    Interrupt handlers shouldn't return IRQ_NONE, if the driver somehow ha=
-ndled
->    the interrupt (!?)
->=20
-> 3) Complex locking makes full protection difficult
->=20
->    Ideally the entire tqspi structure would be protected by tqspi->lock,
->    but handle_dma_based_xfer() calls wait_for_completion_interruptible_ti=
-meout()
->    which can sleep, preventing the lock from being held across the entire
->    ISR execution.
->=20
->    Usama Arif has some ideas here, and he can share more.
->=20
-> This patchset addresses these issues:
->=20
-> Return IRQ_HANDLED instead of IRQ_NONE when the timeout path has
-> already processed the transfer. Use the QSPI_RDY bit in
-> QSPI_TRANS_STATUS (same approach as tegra_qspi_handle_timeout()) to
-> distinguish real interrupts from truly spurious ones.
->=20
-> Protect curr_xfer access with spinlock everywhere in the code, given
-> Interrupt handling can run in parallel with timeout and transfer.
-> This prevents the NULL pointer dereference by ensuring curr_xfer cannot
-> be cleared while being checked.
->=20
-> While this may not provide complete protection for all tqspi fields
-> (which might be necessary?!), it fixes the observed crashes and prevents
-> the spurious IRQ detection that was disabling the interrupt entirely.
->=20
-> This was tested with a simple TPM application, where the TPM lives
-> behind the tegra qspi driver:
->=20
-> https://github.com/leitao/debug/blob/main/arm/tegra/tpm_torture_test.sh
->=20
-> A special thanks for Usama Arif for his help investigating the problem
-> and helping with the fixes.
->=20
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Changes in v2:
-> - Replaced the TODO comment to clarify why the lock is being released.
-> - Link to v1: https://patch.msgid.link/20260116-tegra_xfer-v1-0-02d96c790=
-619@debian.org
->=20
-> ---
-> Breno Leitao (6):
->       spi: tegra210-quad: Return IRQ_HANDLED when timeout already process=
-ed transfer
->       spi: tegra210-quad: Move curr_xfer read inside spinlock
->       spi: tegra210-quad: Protect curr_xfer assignment in tegra_qspi_setu=
-p_transfer_one
->       spi: tegra210-quad: Protect curr_xfer in tegra_qspi_combined_seq_xf=
-er
->       spi: tegra210-quad: Protect curr_xfer clearing in tegra_qspi_non_co=
-mbined_seq_xfer
->       spi: tegra210-quad: Protect curr_xfer check in IRQ handler
->=20
->  drivers/spi/spi-tegra210-quad.c | 56 +++++++++++++++++++++++++++++++++++=
-+++---
->  1 file changed, 52 insertions(+), 4 deletions(-)
+Changes in v3:
+- tegra20 and tegra30 csi schema merged
+- removed unneeded properties and requirements from schema
+- improved vendor specific properties description
+- added tegra20 csus parent mux
+- improved commit descriptions
+- redesigned MIPI-calibration to expose less SoC related data into header
+- commit "staging: media: tegra-video: csi: add support for SoCs with integrated
+  MIPI calibration" dropped as unneeded
+- improved tegra_channel_get_remote_device_subdev logic
+- avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+- software syncpoint counters switched to direct reading
+- adjusted planar formats offset calculation
 
-For the series:
+Changes in v4:
+- removed ifdefs from tegra_mipi_driver
+- document Tegra132 MIPI calibration device
+- switched to use BIT macro in tegra114-mipi
+- pinctrl changes moved to a separate patch
+- ERESTARTSYS workaround preserved for now
+- tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
+- reworked bytesperline and sizeimage calculaion
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Changes in v5:
+- dropped patch 1/24 of v4 since it was picked to pinctrl tree
+- added reasoning for tegra132 comaptible into commit desctiption
+- moved clocks into common section in tegra20-csi schema
+- added note regarding ERESTARTSYS
 
---efufeesp4va7bbg5
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v6:
+- dropped patches 1, 2, 3, 4, 10, 13, 21, 22 of v5 since they were picked
+- rebased on top of linux next/master
+- improved description of commit
+  "staging: media: tegra-video: vi: adjust get_selection operation check"
+---
 
------BEGIN PGP SIGNATURE-----
+Svyatoslav Ryhel (15):
+  staging: media: tegra-video: expand VI and VIP support to Tegra30
+  staging: media: tegra-video: vi: adjust get_selection operation check
+  staging: media: tegra-video: vi: add flip controls only if no source
+    controls are provided
+  staging: media: tegra-video: csi: move CSI helpers to header
+  gpu: host1x: convert MIPI to use operation function pointers
+  staging: media: tegra-video: vi: improve logic of source requesting
+  staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+    CSI
+  staging: media: tegra-video: tegra20: set correct maximum width and
+    height
+  staging: media: tegra-video: tegra20: add support for second output of
+    VI
+  staging: media: tegra-video: tegra20: adjust format align calculations
+  staging: media: tegra-video: tegra20: set VI HW revision
+  staging: media: tegra-video: tegra20: increase maximum VI clock
+    frequency
+  staging: media: tegra-video: tegra20: expand format support with
+    RAW8/10 and YUV422/YUV420p 1X16
+  staging: media: tegra-video: tegra20: adjust luma buffer stride
+  staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAml8hOwACgkQ3SOs138+
-s6G/zg//RLyg+fKkVXQTedNVk7kJBZ4TJinjd7gjvxTVFnl2WIJQhf9/pJPcCqtw
-6MzgVCt8zK3yvdQjGW/pyenZg/zBIDaBTWkoX7peZwzDN8Vin26kOUfwF5kohbVZ
-qixe6a4/VrUaPHzv4EipM/25XuUdVeLxMc4VWwo/qwc7RmZBOPtdCygFuL90eSWp
-XwmjGQ6odJsYBCew0EROZrTagKowuXynON/PQ8NU+naEjaM6fzcoF2VKel5tbOfw
-C9sPHG7xEE84QDM0QyXy6PLmLd+aeJQ+wN/sHwBjj4E3gFTJ3o3xfqY7MsLtm2Xw
-pYj/tm/fQna0WmYE5C4cLgLevlq3QyxozhTSu6X8dpNTZPPBnaa0y5zVp6PU2hiH
-JRQlaP4DJ28EXiajPkzTi/TAD8FddMYVpe0h4LkkYV+J2SU6F7jaSENykR8r5QwM
-p18L4X3N/jOXI9ssA3tuIG3ZjPkCNHMSJTa32kMnRNnTdldsez4B+dIr9wk2V1X/
-HRKv1esAlA+OvQvudEfg0DPOjTlCIbUHn4+/q3X4Ociy2X4U69FJWBz6HLtiJper
-y8MovoM5E+iERQY71Cz5kC/iIARUh4elT/4SE2sfij0XhS1cYO4ruTSRiW3c04B8
-iJUQ01XoVPzPwI3/q7HOhip/1+r98nJXouBAXRYGrO1MotH9fds=
-=pTtT
------END PGP SIGNATURE-----
+ drivers/gpu/drm/tegra/dsi.c                 |   1 +
+ drivers/gpu/host1x/Makefile                 |   1 +
+ drivers/gpu/host1x/mipi.c                   | 525 ++-----------
+ drivers/gpu/host1x/tegra114-mipi.c          | 483 ++++++++++++
+ drivers/staging/media/tegra-video/Makefile  |   1 +
+ drivers/staging/media/tegra-video/csi.c     |  64 +-
+ drivers/staging/media/tegra-video/csi.h     |  22 +
+ drivers/staging/media/tegra-video/tegra20.c | 820 +++++++++++++++++---
+ drivers/staging/media/tegra-video/vi.c      |  58 +-
+ drivers/staging/media/tegra-video/vi.h      |   6 +-
+ drivers/staging/media/tegra-video/video.c   |   8 +-
+ drivers/staging/media/tegra-video/vip.c     |   2 +-
+ drivers/staging/media/tegra-video/vip.h     |   2 +-
+ include/linux/host1x.h                      |  10 -
+ include/linux/tegra-mipi-cal.h              |  57 ++
+ 15 files changed, 1415 insertions(+), 645 deletions(-)
+ create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+ create mode 100644 include/linux/tegra-mipi-cal.h
 
---efufeesp4va7bbg5--
+-- 
+2.51.0
+
