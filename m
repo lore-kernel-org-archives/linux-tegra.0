@@ -1,28 +1,28 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011060.outbound.protection.outlook.com [40.93.194.60])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010018.outbound.protection.outlook.com [52.101.193.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19D4364040;
-	Fri, 30 Jan 2026 17:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72BB3644D1;
+	Fri, 30 Jan 2026 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769794301; cv=fail; b=qmzButK1TvAKRaH5HB3BFpiWxjM0KMu534KIfzp3SXTjFYUHoMoEk2h8b0yM3tB8hyoL6cIrfpZ94MHwyrTpKX0rqZvXgxW6YOGnQ+beqCfHqJMc452vBKiJNcdonZ+h3C6eEEVdbt7B/vFxlkQG2wrGS/Q617pXmTneCnexsk4=
+	t=1769794303; cv=fail; b=rLGd+Tb3eMoPYjdh2o7sOVNRgHYEKIymAg8JkQpWUHCMfS2FJwGVoXsmAxu5gFGGblQEn7hbOJEX+Dr5ODlhAV8j84f1NXuQJwgKIlAO/nKcDCpS+rs5c9oXWFvPt1UZyU5ht2P8hAJQlJqVXLpNZM51CbYDxD+KGJ2WtQEeAb4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769794301; c=relaxed/simple;
-	bh=JBHft8+p8NIU0Wy8BZccOino7AAx3XQ8uXpnWACqypA=;
+	s=arc-20240116; t=1769794303; c=relaxed/simple;
+	bh=tOQiR992wMNl8OOu5U6Q/Q0VWeYktcEV8ahANf02u/k=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rav1oInLMFiOHMbXrMEg3fd/TFAJDgsm0S0Fr6rVPdhWh9gjEGpPdo1IueaOWuaxuA8fMcthXDh9aFZ7D2eotiqa+er3PEHKoIyge5GABppsZGCeMZRBjMvhLDxAEiyoRI3BTim/vtpsYjFDZG3KeVTdVKNxnSDZmetCzh1E7ss=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=acOpvVUo; arc=fail smtp.client-ip=40.93.194.60
+	 MIME-Version:Content-Type; b=kKy926ydn8/N/98mWUI249XFYIkIutmBDHGkXIh6R+EL7+qB4M0171GLRkcRDJDSkNvn4lh2jDxpa8YAZGL6zOXYepngNJpbC7DWft4nKxgpXcthr8q+2MBPaDro3yt6qc7h1qRaYEMKeVBsiUR4h3s3W7oJ72Z6Zn1zI37E+kc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QYwpk+fS; arc=fail smtp.client-ip=52.101.193.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="acOpvVUo"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QYwpk+fS"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Csq4aRzQeEpwzYBxHqTU4juh9gJrILIwwD/4ld5EX4O57VG4ANmNMzdWelYbv8KHpuFRyn7uYgN9PS6cnb523zbveAgVHvDiAq0vT8hdFxj5Q+ykpSloH+NHyoNI2JG6iSZpj4mPJau0mv+h0JvZKhGvzZGrSbIqkXWOGhXI6Mf8yOjhvmbPWiyG+mb+khuvDelSSccBdcJdVsIrZSiC6yA0G5zifhcHc+MX8Y0KSCT76gOZ+Pkk/2Ua4KNxSBujWvUKa4FwCr6ikno00WgZBLbEuz3Es1ho0UwgufUCUs71VODlRcvM8k3Oixk/oykvK5loB3TCGhrRh98j3GUehw==
+ b=QL/HY/k1wKkUL6n/r3jiwBiFFEIHUHroYblnFm5ZHjeQ/keSFBKUZUX6Jn7JnzUueXc+94iNKzOkSaFAdhI7307r42rMDJXhfx+3XX2sjvtZ3JYp2iXmzhJ6fd3OA+FQMy5qow0fsL47uOIvoPwsPuuW3c+FW4Eur1gWycbEE0ilyl0XDLDp9BoWkJsTUB6gKeh02OFFjUqpuE43eabLhzZ18T3ho4yCAeQZYotdlnRMhtyXn2PDa7yqi2/ktme2XM3TABj/CHF5c7p8KITQTJ0SN/cAiJV9QSxUtLAs4VAcqsaKbCt33HwNICl5sV/TNjfmWgNeXv/28CkagV+9Xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qThP87H3FJ7t4Bm1czLg0Vbh//Zr+WTwyGBBuQmTeDs=;
- b=VX7AYqOg7EtmU8llcbQobFeh8dm/di/101aFmDr6xWsvCgVqSqRxRBVWD2LH2WmCaHh/l5Acy9fbOR0UMECa5uZGD1/H/b0EMAuB2YOdGwbayaftTnCQK8OkS1+NdmnZZXV8j8GwhWIJoyYPjiBTRS5a85ZVT46KYRoEmNlhFnoFnIICiyf0I6Cbl8NE2xaO0KVi3TShcikoMxwuo1QczdzwI+PC7LLBSvQu4zA6K/21IhlNG+cKjHl7Paiuo5Qvuzw/Ea4nogC+o53EKMvSAW08BYd+SLYhYeHoE6IqO6g1ZAKV1fav+z+WYltqOt2eW3G0RpVdhkUl5sfR4JXD0g==
+ bh=BeY5L0XjHXFxwDiI3iQhXBBwvU3JRt2MedP5gikfN7Q=;
+ b=l9h2NoVm55rA2VKzipWI3aJGOymp+UW+mqZK8/5cz1EZCIGLgxCMg8Vb8z8EDH1K/3XH5RVvBQJfz9NOxQ/mydN00mKMxEhBaQL1d1pvw+7BPmfvf+MKxyxlsvLyP/OP0eptVgu1zH0xw+59PEP6AcZ5WOXTq+id7NAqsf09zBNs6jIZocW4TeZNGmpk1+g6mnKn9Roie5koskhbNWz46waTfxJhoJKRYszdYOb9jursMMuWxbye0pVt1Mfknhwd8d1q4+sxJVPQGehRjboqr7TWalGqpxIxsGGQLXm+X482dFicydzeShAGQTGtozgo4r8mKMGob5pgSG9m85tC+A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,17 +30,17 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qThP87H3FJ7t4Bm1czLg0Vbh//Zr+WTwyGBBuQmTeDs=;
- b=acOpvVUou/FAH3PqySH+JmN0i+jJsOhFgszpuCxvBBPDAR7IKTPjc2cSqRcczQXKfo/HHNlKYo/dvpAp/rBUysfGwaPj+sp4TMyhr75SGO8Tv4fDQsBcsbcWq+S81/HVkzO6b7G3sxgvtmyu7j7lbf27UlW4VZaLoisY4/98XXeYh4iLkiVMEAzUwOtYGbdx+Aoun/nVmAttdW09Vr+v0d3wpBIIJqGjWPLhbSFKszwha3U8PQUAQv+a5KIIZAgITpIQzhQLh9hZDnA2GTb7p4HpEsYi+sxWfytTc+M1wEKaW5EzMYl6b+OAphTis8CQkCsi98zF22BdfW1yh9jkLQ==
-Received: from SA1P222CA0196.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c4::23)
- by SA1PR12MB6751.namprd12.prod.outlook.com (2603:10b6:806:258::6) with
+ bh=BeY5L0XjHXFxwDiI3iQhXBBwvU3JRt2MedP5gikfN7Q=;
+ b=QYwpk+fS1JLZ3zqLeoENsXfr2gq5NhBog6xNXekVMMn4Octx0J0/RAi09VVcIlvTHgV9wpg2EScbx542kd7YUSjXWq7vaHHitCc5IUmiH7gdo0F+ZdFNBCNYT3cZbdOVu+lA6i1ga69EgS3fD7X1F3+GhsdpWC+Q7nxzUokdVzEPc+w+3qkdmYR/wY4uSXUPg1wERZ8a9hYDxQ0U2IRZca2kEumjRS/HZyQQTXHeOY7jZiCwbtB10org8DwvztF20cM6vRti/7Q1wBlyXbJXRgDoJEPYYtr1AYo5nZ6xNCA8inAp9AF1cjA2O1nmpz5dUuhHGmmlaxWyqqIAXpsqvw==
+Received: from SA0PR12CA0023.namprd12.prod.outlook.com (2603:10b6:806:6f::28)
+ by DS2PR12MB9614.namprd12.prod.outlook.com (2603:10b6:8:276::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.8; Fri, 30 Jan
- 2026 17:31:33 +0000
-Received: from SA2PEPF00001508.namprd04.prod.outlook.com
- (2603:10b6:806:3c4:cafe::15) by SA1P222CA0196.outlook.office365.com
- (2603:10b6:806:3c4::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.13 via Frontend Transport; Fri,
+ 2026 17:31:35 +0000
+Received: from SA2PEPF0000150A.namprd04.prod.outlook.com
+ (2603:10b6:806:6f:cafe::a3) by SA0PR12CA0023.outlook.office365.com
+ (2603:10b6:806:6f::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.11 via Frontend Transport; Fri,
  30 Jan 2026 17:31:30 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
@@ -49,27 +49,27 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.118.233 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.118.233) by
- SA2PEPF00001508.mail.protection.outlook.com (10.167.242.40) with Microsoft
+ SA2PEPF0000150A.mail.protection.outlook.com (10.167.242.42) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9564.3 via Frontend Transport; Fri, 30 Jan 2026 17:31:33 +0000
+ 15.20.9564.3 via Frontend Transport; Fri, 30 Jan 2026 17:31:35 +0000
 Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
  (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 30 Jan
- 2026 09:31:16 -0800
+ 2026 09:31:19 -0800
 Received: from drhqmail203.nvidia.com (10.126.190.182) by
  drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Fri, 30 Jan 2026 09:31:16 -0800
+ 15.2.2562.20; Fri, 30 Jan 2026 09:31:18 -0800
 Received: from build-ketanp-bionic-20250813.nvidia.com (10.127.8.10) by
  mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20
- via Frontend Transport; Fri, 30 Jan 2026 09:31:16 -0800
+ via Frontend Transport; Fri, 30 Jan 2026 09:31:18 -0800
 From: Ketan Patil <ketanp@nvidia.com>
 To: <krzk@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
 CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ketan Patil
 	<ketanp@nvidia.com>
-Subject: [PATCH v6 2/4] memory: tegra: Group register and fields
-Date: Fri, 30 Jan 2026 17:30:53 +0000
-Message-ID: <20260130173055.151255-3-ketanp@nvidia.com>
+Subject: [PATCH v6 3/4] memory: tegra: Add support for multiple IRQs
+Date: Fri, 30 Jan 2026 17:30:54 +0000
+Message-ID: <20260130173055.151255-4-ketanp@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20260130173055.151255-1-ketanp@nvidia.com>
 References: <20260130173055.151255-1-ketanp@nvidia.com>
@@ -84,166 +84,213 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001508:EE_|SA1PR12MB6751:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00d1aed6-1e65-49ce-bb42-08de602569c3
+X-MS-TrafficTypeDiagnostic: SA2PEPF0000150A:EE_|DS2PR12MB9614:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5fe19993-3e9d-4e0c-3c82-08de60256afa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xboJXkhibHSZVqRcO4C+4zRmOzutnh6YwWMSEqL49G6m0GZNzn28GbGQWhsj?=
- =?us-ascii?Q?jXyjbCudm+h0rkf4ovyuWEjPsKmjjku9B3mQJWkzZ9sIHW9API0sx7fUpfip?=
- =?us-ascii?Q?EA4ym+2QR7uqsXViLppJJ1lv0BjUCj9TN8WWhpX6AFW1ImXKgFU0K98EKI7y?=
- =?us-ascii?Q?uzWlACXQgVww7Txvy15e7Ec147iL3v2DL9i0oSE1Rcg670SGuALyY52Bqrxh?=
- =?us-ascii?Q?RYfOC8n5slRLyJoMUL9xxuy1ICcmPWBgCACXQmwmBqDcZ1+GKhLTI1Ry4HAy?=
- =?us-ascii?Q?tvttM9AgQceHAFzouN30xhgm4GKOjDAveNI0izmeCBT/lJBNZdvuUOljolmf?=
- =?us-ascii?Q?o7J37TSj0sMTm/YCdtyQr+nIiH0ZmHPJFvBsmOeJYGQyDsgfnZxDDuK0dTvp?=
- =?us-ascii?Q?z2KLNqXD3smJoH2nJdnco7+tG/RAp9OYOQgImacZlaK1GoloVefk1o/acqOG?=
- =?us-ascii?Q?Fq4eoWzoGO1j34mUasTRI4kVFQZw0nkC2zcPZtnZYOBP6GKiREI8ETguMU9l?=
- =?us-ascii?Q?yK977OFtSH0t3NDsFHMZ/FqSKUGr9z8Vh/WJM/uP4AKXtL3F2t+SiQBoCalt?=
- =?us-ascii?Q?80+kkph7nMQrTCj3h/aJVfn4+N2J7gnpuCbKkT5d7dAUuLh4fueTVSje6tJc?=
- =?us-ascii?Q?YtHbGWbrLFKJA9pEKQdAdl8rOliOGuxTWdEeU4ZuXUjUyeblW0a3LTO5srHA?=
- =?us-ascii?Q?9bjoX977lxjQnFMg0ui4H/C8bDgdljYRLvmUsYe8k+WWZBhZ7Lmn6wJy2DYF?=
- =?us-ascii?Q?ZeeXU0Wncf8hd5go/9hDjUpSxebvKd/I2rgqhYZ2GOciy/b+L3PSp126Fo7f?=
- =?us-ascii?Q?ZucsA/2w97IQXFdOv/s+q79K3Q5nvGVZz9Lz8m760e6BCFYBkcz+9VYJ3g3b?=
- =?us-ascii?Q?p/MzKXKo9xlaQcERmB9Fx3QzCjVaCUFjeoVY7x+PfmUp4kFfJ2CAjST+osSE?=
- =?us-ascii?Q?WB3iiGST7SNfjHSqb0T9qap93Bc8YH+CPm08CTbyt7q27p+qIYSj/RBO9qth?=
- =?us-ascii?Q?3pioh9Vvbj4ZiSk+W5rTXgq20TEc2fnXee9zXLafn4leM8PoMeqI9JK4sHWx?=
- =?us-ascii?Q?7xyxseKnuB2bIjD1AtGPxpdCaCadggs6tM+Dcqb6P95rqU/f0nkHo1BPTpqd?=
- =?us-ascii?Q?M6BKYnhbIO9kHH3DJW3nOkAk4tGl4IZpWJvlh9rrzsyI5ILwGNCDDxOAzrWK?=
- =?us-ascii?Q?BH73Vrsdt7gJ7KsAkQrhID8BG2Ykjb7l40rYG/y0fT0SS9syHvyejNZFl2Go?=
- =?us-ascii?Q?ZFG+qp7cy3JnzfBfOBx+jS/VCNZ8qgoAv6gBlUB4sWKAuoC7ABgzhxtt4RfD?=
- =?us-ascii?Q?Pb0k2dT0IY93H3T43vkY0aLMMbGOdxbkwrBNANdSUExDOEG2E1hzv7VH64rO?=
- =?us-ascii?Q?i341oOEHfJu+OoNRd0zGnS3GY20NoVEJqFfFV8TjIeGftW5LJcUz5fV2xjn3?=
- =?us-ascii?Q?SS8TONtV4AzRDICbU6L+UvU30gMguVuKO1KiCZBobKGXXdxz6jSIXiEnj0bd?=
- =?us-ascii?Q?wX2cnHDOZbhaI4hxHqNNHYg2oOJ7062AcA2ymvvhtdRJbfWpTDyhdlXFzxg+?=
- =?us-ascii?Q?s3eJspfSJ+DY6qvTSb2F6IAeGzsd8dfMSfX1MDwvx4dtlAyN6XRd5U8MUIgd?=
- =?us-ascii?Q?TVl9HCbVicWAAl5VohA0/2fKkFm3Rvd/zyIDYMNKZuoKEcoIz6e5H++Bw43E?=
- =?us-ascii?Q?uFJocA=3D=3D?=
+	=?us-ascii?Q?oalGcfzPKYtn2H3VgoRT1w8pSReJIXYhTucvnt7o6/0LLOKKYEA5+26wvPTJ?=
+ =?us-ascii?Q?BylrkeXmph8ET9NRfUJ/oGfJYU+HzvCs5+AK2BJmtB8ZcS6LPVoGrLa2zuP6?=
+ =?us-ascii?Q?7xWwxpbkEQxiq8UBfG4HiuyVf8jn8j5Jg8xCXvm0eUFtjiBeRAYuuAN0ftPh?=
+ =?us-ascii?Q?+GguSxPHZBMziL5rkwSF57z/s7KmEcuyfDudjXOJR7mFnXOLrIAXkr1OSU0A?=
+ =?us-ascii?Q?214Wbp5cFu/mYb2KEC4Z3AUO0tJxr1TgbJU3FWrjsFuOb0TBGsO8B7mXG4lO?=
+ =?us-ascii?Q?ZBDaspWQP41DyZfqujP+82jqIKtU+1F6yOGHpJ81efuUVQjCdemK9LAzID3t?=
+ =?us-ascii?Q?dLAl2afuGSv6o+OdpBl9EewvKK2eBhNDhu9loFDfOqGzIs3dgQRE8SKva8p2?=
+ =?us-ascii?Q?B21yG6VOoMVESrSTgUMd2HvTDdqcqEPbJgkyHJ+xYwpVaJAOa5Ccjvad5c3x?=
+ =?us-ascii?Q?MBrfOyNBhcw8MeCPeQmMPLV5wR9zPbexgB8UP3hqRlNcDXBccYLxGXuNQ71t?=
+ =?us-ascii?Q?Hf1vuo4GFHcf9TaKWkbRkm7yKALKtW8CxFM4A2T9uq91ocbADaOxuDIzegLU?=
+ =?us-ascii?Q?TinCPE6T/Adup38TYa3SmbsGiXqNjkhzL6INw0n7k5J9jPuEU2KqeoME5OR8?=
+ =?us-ascii?Q?6lEvNdW1/k20LM3XmhxYkaGeocjlP8+7HvmZdHBh7SY89o1lvUSPBOuajULx?=
+ =?us-ascii?Q?bOSoWiP/Tw3uG9kiYu40Vjipha5VZFk7Ul4d0fj5siMtdvUuKfXvyCzMpA4K?=
+ =?us-ascii?Q?gW4bvaeFxHbG0Cc3SxV28/tf0z7h1UysC0ULR8uPreBm6UHSh22UKVmI1+Hv?=
+ =?us-ascii?Q?/96wbO/kieJpb1Va6wO+HOcWrQa3nM0DzIqEAI5YXziMWlJHj4dGcXC8bhH1?=
+ =?us-ascii?Q?hTgxw8FQAFX5AEwgJ9vM0YS8XJq8h9Zt3wUth2rtls8qCk5dfZcd6z9/H5OR?=
+ =?us-ascii?Q?bSXBXTM8QvXIItGtkZLcADql6rPiclZ+C7qxbRk0md4KQ2iNBYFYJKLJSeCU?=
+ =?us-ascii?Q?7Zu4xd6cjWc7TPcTxzbnp7LQfWTbcQk93fm/HMpCyyjGkBcsshPn3wIGc+KQ?=
+ =?us-ascii?Q?zTHQ7NQJaKGFNYxWs8wLG0bWUBfDjRZlk/1f+dDsvyM+50Cal9MF0mNnzXRF?=
+ =?us-ascii?Q?Dfl70bKKm/yJ65qqtv7OKx0s/JM2WQIyCtShYDYrfeegJAYjNMSD8Q8VzXRH?=
+ =?us-ascii?Q?jGSYjKpqqeldn+xiU0yxGTBBhok9NLXK35SiiV+tfqxZwI35m4As6DEysaMH?=
+ =?us-ascii?Q?U9Ou7QRZ6Jlw4sCBMQQ1JxBbev1F0aoZQHtmsi4frTT4+NwscGpoiF2Y/UFj?=
+ =?us-ascii?Q?CLHcnkk4a8wAl0ihP5yQXjJukyddmiNOBIxwhE/dwAeV0N2EeBmNjbjpBetr?=
+ =?us-ascii?Q?lks8D7wiS9q9cgv6k3qD/rOhyhRXKWIF5B13MLJ4PuPjJgpvWd8J+oWHE1IS?=
+ =?us-ascii?Q?lrsQIrZbd9IcQc7MNco+b6Y1NNk+AnTJK0h0m6AcuMoYywF5ywf+eIu2wiK9?=
+ =?us-ascii?Q?05INylsiDrOdps7DKh4lry/0IBHmacja+TLcrlsPjaoVn6sFxnrjSXxF8FWM?=
+ =?us-ascii?Q?xKHW8LfqQ+zvF9M0cRacfI34oGqulfKZy3vqG8Re84y0o824BsklM6r2UsvF?=
+ =?us-ascii?Q?Bln6WZsGRqJ1Pxr5UfZwspQK396Z786nlHc2J5f5GDiu7epD0p3mbm6KlRFp?=
+ =?us-ascii?Q?Sd5qyg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	95TXtFR+OSNdQpHJVHIhM8gUYtuGqwfBHHKe12WScAx2QKZF0t51M7DFAtzfPaS4sZHBQoKagPegtMs4ArpNuUDDlfhHeB4vILQEwtkDJd/HfQmA61oG56StNR2pT49pWgq1QjoP2vvFt9n4uEf/+OPXABDe+Eqjaw4nOdaaQa6sbR5WDmKoSZP1fNB4j/OAaXRrqhgZAQALUD6sKEq2Egb4I2RW1MouGiOFdPiW5nU6cHXDNRrt/NedA6ut9Ioj45IE+aD8lXNo0ctrOvR7FYAorfKCaRQ2ifzW5hLw7WpP0klgwzAwCIuscKr23wCiSM51ZYkH6Kr9SBTQMdxqmAqDDGIZquZe7XB9sMlrH6+Rzo3BPHiOM9Lz50sAdwVJiFVmKoB534SDLfX2wrJ8LtjmqFTBBMmMhaEhMgM8cHsj+f54npkly6W7UM3j6mIt
+	2uyPfsKvPszGSK+qAkr70naoahpEDExRhoV4/URwPlbaa/GyyQ71TWFi/mTwOtEYSWI5/MIKsHrPfDvC5fREhGoxZEYPYK5y2zCg5LgJS2494fGK2+1EYcDpQKMa7oeua8zhDu0EQ0/3m9dipw/gui6CP8bcDfAnWdlwmegMMZLgCug89CjQAq4vnUP1HbsNUWyXQnEu8XlMYVUlDcfFHDR0sMEAW0yV7fATC35hzw3REDZDa/Wkq7HV55ML8w6W5gKr6RjkcIKiDQQV8nuIumynkSj5PPUdqMzeow5neg0i4LPn+hFa99owJSZCtbJnS1XqLuqS9UYS2SJIr6+P+mtR/KQwEj5e2WNyNIoyysspzW/ZyCZXjTItEvDyIK4ahB5UKYuz3MlyK2DIHntlW3pXtO0utDMtqIPHHEAIqGocBuGYzJ7Yxx7imvWKJBUz
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 17:31:33.6384
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 17:31:35.6867
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00d1aed6-1e65-49ce-bb42-08de602569c3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fe19993-3e9d-4e0c-3c82-08de60256afa
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001508.namprd04.prod.outlook.com
+	SA2PEPF0000150A.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6751
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9614
 
-The current register definitions are not in sorted order. Sort these
-registers according to their address. Put bit fields and masks of the
-corresponding registers below the register definitions to clearly
-identify which fields belongs to which registers.
+Add support to handle multiple MC interrupts lines, as supported by
+Tegra264. Turn the single IRQ handler callback into a counted array to
+allow specifying a separate handler for each interrupt.
 
 Signed-off-by: Ketan Patil <ketanp@nvidia.com>
 ---
- drivers/memory/tegra/mc.h | 62 +++++++++++++++++++++------------------
- 1 file changed, 33 insertions(+), 29 deletions(-)
+ drivers/memory/tegra/mc.c       | 34 +++++++++++++++++++++------------
+ drivers/memory/tegra/mc.h       |  1 +
+ drivers/memory/tegra/tegra186.c |  3 ++-
+ drivers/memory/tegra/tegra20.c  |  7 ++++++-
+ include/soc/tegra/mc.h          |  6 ++++--
+ 5 files changed, 35 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index 1dacbe2aba4e..49c470f7b1f7 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -398,6 +398,10 @@ unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc)
+ }
+ EXPORT_SYMBOL_GPL(tegra_mc_get_emem_device_count);
+ 
++const irq_handler_t tegra30_mc_irq_handlers[] = {
++	tegra30_mc_handle_irq
++};
++
+ #if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_114_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+@@ -551,7 +555,8 @@ int tegra30_mc_probe(struct tegra_mc *mc)
+ 
+ const struct tegra_mc_ops tegra30_mc_ops = {
+ 	.probe = tegra30_mc_probe,
+-	.handle_irq = tegra30_mc_handle_irq,
++	.handle_irq = tegra30_mc_irq_handlers,
++	.num_interrupts = ARRAY_SIZE(tegra30_mc_irq_handlers),
+ };
+ #endif
+ 
+@@ -953,25 +958,30 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 	tegra_mc_num_channel_enabled(mc);
+ 
+ 	if (mc->soc->ops && mc->soc->ops->handle_irq) {
+-		mc->irq = platform_get_irq(pdev, 0);
+-		if (mc->irq < 0)
+-			return mc->irq;
++		unsigned int i;
+ 
+ 		WARN(!mc->soc->client_id_mask, "missing client ID mask for this SoC\n");
+ 
++		for (i = 0; i < mc->soc->ops->num_interrupts; i++) {
++			int irq;
++
++			irq = platform_get_irq(pdev, i);
++			if (irq < 0)
++				return irq;
++
++			err = devm_request_irq(&pdev->dev, irq, mc->soc->ops->handle_irq[i], 0,
++					       dev_name(&pdev->dev), mc);
++			if (err < 0) {
++				dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", irq, err);
++				return err;
++			}
++		}
++
+ 		if (mc->soc->num_channels)
+ 			mc_ch_writel(mc, MC_BROADCAST_CHANNEL, mc->soc->intmask,
+ 				     MC_INTMASK);
+ 		else
+ 			mc_writel(mc, mc->soc->intmask, MC_INTMASK);
+-
+-		err = devm_request_irq(&pdev->dev, mc->irq, mc->soc->ops->handle_irq, 0,
+-				       dev_name(&pdev->dev), mc);
+-		if (err < 0) {
+-			dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", mc->irq,
+-				err);
+-			return err;
+-		}
+ 	}
+ 
+ 	if (mc->soc->reset_ops) {
 diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index bbe3e2690c64..5f816d703d81 100644
+index 5f816d703d81..464cf75ccadc 100644
 --- a/drivers/memory/tegra/mc.h
 +++ b/drivers/memory/tegra/mc.h
-@@ -13,13 +13,35 @@
- #include <soc/tegra/mc.h>
+@@ -193,6 +193,7 @@ extern const struct tegra_mc_ops tegra186_mc_ops;
+ #endif
  
- #define MC_INTSTATUS					0x00
-+/* Bit field of MC_INTSTATUS register */
-+#define MC_INT_DECERR_EMEM				BIT(6)
-+#define MC_INT_INVALID_GART_PAGE			BIT(7)
-+#define MC_INT_SECURITY_VIOLATION			BIT(8)
-+#define MC_INT_ARBITRATION_EMEM				BIT(9)
-+#define MC_INT_INVALID_SMMU_PAGE			BIT(10)
-+#define MC_INT_INVALID_APB_ASID_UPDATE			BIT(11)
-+#define MC_INT_DECERR_VPR				BIT(12)
-+#define MC_INT_SECERR_SEC				BIT(13)
-+#define MC_INT_DECERR_MTS				BIT(16)
-+#define MC_INT_DECERR_GENERALIZED_CARVEOUT		BIT(17)
-+#define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
-+
- #define MC_INTMASK					0x04
- #define MC_GART_ERROR_REQ				0x30
- #define MC_EMEM_ADR_CFG					0x54
-+#define MC_EMEM_ADR_CFG_EMEM_NUMDEV			BIT(0)
-+
- #define MC_DECERR_EMEM_OTHERS_STATUS			0x58
- #define MC_SECURITY_VIOLATION_STATUS			0x74
- #define MC_EMEM_ARB_CFG					0x90
-+#define MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(x)		((x) & 0x1ff)
-+#define MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK		0x1ff
-+
- #define MC_EMEM_ARB_OUTSTANDING_REQ			0x94
-+#define MC_EMEM_ARB_OUTSTANDING_REQ_HOLDOFF_OVERRIDE	BIT(30)
-+#define MC_EMEM_ARB_OUTSTANDING_REQ_LIMIT_ENABLE	BIT(31)
-+#define MC_EMEM_ARB_OUTSTANDING_REQ_MAX_MASK		0x1ff
-+
- #define MC_EMEM_ARB_TIMING_RCD				0x98
- #define MC_EMEM_ARB_TIMING_RP				0x9c
- #define MC_EMEM_ARB_TIMING_RC				0xa0
-@@ -39,45 +61,27 @@
- #define MC_EMEM_ARB_MISC1				0xdc
- #define MC_EMEM_ARB_RING1_THROTTLE			0xe0
- #define MC_EMEM_ARB_OVERRIDE				0xe8
-+#define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
-+
- #define MC_TIMING_CONTROL_DBG				0xf8
- #define MC_TIMING_CONTROL				0xfc
-+#define MC_TIMING_UPDATE				BIT(0)
-+
- #define MC_GLOBAL_INTSTATUS				0xf24
+ irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
++extern const irq_handler_t tegra30_mc_irq_handlers[];
+ extern const char * const tegra_mc_status_names[32];
+ extern const char * const tegra_mc_error_names[8];
  
--#define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
--#define MC_INT_DECERR_GENERALIZED_CARVEOUT		BIT(17)
--#define MC_INT_DECERR_MTS				BIT(16)
--#define MC_INT_SECERR_SEC				BIT(13)
--#define MC_INT_DECERR_VPR				BIT(12)
--#define MC_INT_INVALID_APB_ASID_UPDATE			BIT(11)
--#define MC_INT_INVALID_SMMU_PAGE			BIT(10)
--#define MC_INT_ARBITRATION_EMEM				BIT(9)
--#define MC_INT_SECURITY_VIOLATION			BIT(8)
--#define MC_INT_INVALID_GART_PAGE			BIT(7)
--#define MC_INT_DECERR_EMEM				BIT(6)
-+/* Bit field of MC_ERR_STATUS_0 register */
-+#define MC_ERR_STATUS_RW				BIT(16)
-+#define MC_ERR_STATUS_SECURITY				BIT(17)
-+#define MC_ERR_STATUS_NONSECURE				BIT(25)
-+#define MC_ERR_STATUS_WRITABLE				BIT(26)
-+#define MC_ERR_STATUS_READABLE				BIT(27)
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index 51e2dd628fb4..23ec433f0f92 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -174,7 +174,8 @@ const struct tegra_mc_ops tegra186_mc_ops = {
+ 	.remove = tegra186_mc_remove,
+ 	.resume = tegra186_mc_resume,
+ 	.probe_device = tegra186_mc_probe_device,
+-	.handle_irq = tegra30_mc_handle_irq,
++	.handle_irq = tegra30_mc_irq_handlers,
++	.num_interrupts = 1,
+ };
  
- #define MC_ERR_STATUS_TYPE_SHIFT			28
- #define MC_ERR_STATUS_TYPE_INVALID_SMMU_PAGE		(0x6 << 28)
- #define MC_ERR_STATUS_TYPE_MASK				(0x7 << 28)
--#define MC_ERR_STATUS_READABLE				BIT(27)
--#define MC_ERR_STATUS_WRITABLE				BIT(26)
--#define MC_ERR_STATUS_NONSECURE				BIT(25)
+ #if defined(CONFIG_ARCH_TEGRA_186_SOC)
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+index 227c3336974d..794255914f2e 100644
+--- a/drivers/memory/tegra/tegra20.c
++++ b/drivers/memory/tegra/tegra20.c
+@@ -761,9 +761,14 @@ static irqreturn_t tegra20_mc_handle_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static const irq_handler_t tegra20_mc_irq_handlers[] = {
++	tegra20_mc_handle_irq
++};
 +
- #define MC_ERR_STATUS_ADR_HI_SHIFT			20
- #define MC_ERR_STATUS_ADR_HI_MASK			0x3
--#define MC_ERR_STATUS_SECURITY				BIT(17)
--#define MC_ERR_STATUS_RW				BIT(16)
--
--#define MC_EMEM_ADR_CFG_EMEM_NUMDEV			BIT(0)
--
--#define MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(x)		((x) & 0x1ff)
--#define MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK		0x1ff
--
--#define MC_EMEM_ARB_OUTSTANDING_REQ_MAX_MASK		0x1ff
--#define MC_EMEM_ARB_OUTSTANDING_REQ_HOLDOFF_OVERRIDE	BIT(30)
--#define MC_EMEM_ARB_OUTSTANDING_REQ_LIMIT_ENABLE	BIT(31)
--
--#define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
--
--#define MC_TIMING_UPDATE				BIT(0)
+ static const struct tegra_mc_ops tegra20_mc_ops = {
+ 	.probe = tegra20_mc_probe,
+-	.handle_irq = tegra20_mc_handle_irq,
++	.handle_irq = tegra20_mc_irq_handlers,
++	.num_interrupts = ARRAY_SIZE(tegra20_mc_irq_handlers),
+ };
  
- #define MC_BROADCAST_CHANNEL				~0
+ const struct tegra_mc_soc tegra20_mc_soc = {
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 372f47e824d5..89f94abfaada 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -10,10 +10,11 @@
+ #include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/interconnect-provider.h>
++#include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/reset-controller.h>
+-#include <linux/types.h>
+ #include <linux/tegra-icc.h>
++#include <linux/types.h>
  
+ struct clk;
+ struct device;
+@@ -164,8 +165,9 @@ struct tegra_mc_ops {
+ 	int (*probe)(struct tegra_mc *mc);
+ 	void (*remove)(struct tegra_mc *mc);
+ 	int (*resume)(struct tegra_mc *mc);
+-	irqreturn_t (*handle_irq)(int irq, void *data);
+ 	int (*probe_device)(struct tegra_mc *mc, struct device *dev);
++	const irq_handler_t *handle_irq;
++	unsigned int num_interrupts;
+ };
+ 
+ struct tegra_mc_regs {
 -- 
 2.17.1
 
