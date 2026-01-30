@@ -1,1435 +1,297 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11022143.outbound.protection.outlook.com [52.101.53.143])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011028.outbound.protection.outlook.com [52.101.70.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC5932FA20;
-	Fri, 30 Jan 2026 02:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.143
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769741668; cv=fail; b=r2ODzyAc+kPRW9YhUg+QgZrzzi4xu2gdy7x/5jafbnwvaBiPOeLiG9mSd6QU1K2cXkKdwunXJEqNt6n8J+AHmgpbX3JRpOq6qOJUbDDyXxPxlHpNjjoRoh9E7DgXcQWcCyJAC2HCt/So/AnPuza/5idPcrEMGjWKqV4aeW8jTLs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769741668; c=relaxed/simple;
-	bh=cv+/vNo3EOSTh7UQpsdQ5TsXj8AMBaRyfeKTaqF2e+U=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 Content-Type:MIME-Version; b=itOiFGe5120jnuubU6Q8xS5jRY+pwFADn6vTAXPdp60qPUUFZPQSmwkXKYCMBWshXbiEHCUiO3vtnsgyUc1myQmNK72f9BHAi7/L8eVR9R7/A2P39FEHq8GoyH0YnagVufYJnM6jewENnOE9NyDt/TFrjn+jPwERdIbd33g4ZNU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=GA6xvnEy; arc=fail smtp.client-ip=52.101.53.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2AE2FD7B1;
+	Fri, 30 Jan 2026 08:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.28
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769761508; cv=fail; b=siPGM1LgY9r4N76jRdcu2Vf15f1HhTYgakER24YC56TNwpQpcLpkbHOwsIE1vJWASfuEmWXkwcJG4SXyWoUiCinisXPkVzJEAFE2FJ0tGLzFD2+/Iikzzkr/qIBt74vsaxgicvCTpT6Y9s0BLPaPqNZJ3xVmNNYc3ncfgvKpQcc=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769761508; c=relaxed/simple;
+	bh=uL68O9Mk+AYMyqaOXe9BHjoHhJOiaI9qS75EOcj1K9c=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MUd0VuQM+QXYJ5xR2PqWay2KO/eo+J2iijV41IlOetDW0vA6HlsSUxrR7ITMIGrZehdBzGNMk21+9lLppPyOYAjRbrU1nkCIeqw2rJYQofab7jwCSuwz1LLwf9Vtp6qxn2PsBzKR7Y2+jrRlW2N0da21iRn41k7RxSgCiIXMlc8=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lLu/gWtu; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lLu/gWtu; arc=fail smtp.client-ip=52.101.70.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="GA6xvnEy"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lLu/gWtu";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lLu/gWtu"
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=xQPSu89Vzz/rgu/CyF2svF7UCi/6/SiUNJ6x4rmrmG6cGdgJGeX3//B8J1eftDfc5fCyqIbnxjCylueuyki50vMByC/tXMtCRjT8PqW/zs4SuWJ7WPeto+LmzGrVl0FiHemA3x3lDGkxf9z05j9W+CYbRzPbyluNqCd7x5vPk41DDspNJS24j+CXOo47JJikvfqlE/EwEF86gXta7A7jav5YERxbTTQ8FiY5S/Qgut49XiMLiYIbC6gmYbKL4JNmkcJ9qVZ1jDMrH7mdP/sxEI4r2fvw4k0rWGcZ/9aX6TGVWhTxXR2qCQjxZgKAWxVkmRKzqO2pMg+gY4Ysh8QUyQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gXVBz0DGpyhavVFC9bBHLvU2XJa7apBKt8QUeEcVP78=;
+ b=UW/Jgki7nqGgd9sZcPiKMYGVLHpRmBv7H7oGn1xcWRmpd+sEp4plCsMP/PG7fg7VflM9Z268l/WGq5C45Ncmc60xkHr1t6pB8Dmgyr2vnT470xbylYU/mvR4dUWxnhyV4Gc7x3kDR0bA74tu5KAWpJ3Iw4iJVT9AsH6TC/dYEmPzmjl1YPF3ZmptiO/AQi6F4+Q6/4Ay6Z5ILXIOYK0iF+oIxwmc/eic1iJwxXigo9LHYX+hjnGWjqAiC/dET9ayyKXPefFh03m/28hDdLKmidhdlxlveGaUWWlpU0ZJz2btrQzvDOaPPJydb5ayhcsPq9Qd5GCvbAGHjbG46AX5Ew==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=nvidia.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gXVBz0DGpyhavVFC9bBHLvU2XJa7apBKt8QUeEcVP78=;
+ b=lLu/gWtugE1Sr54SJaZjBoUBTZ9dfmOwo84+VZ3W/ZZU8KcBXOFufkcaBsljffe/cSKNm9t5bxkOLp4QqDxR3tQKatDTYDqzKLvKXQF0u/CumVCOO8YFkxm1qcQ7EGM/rKeW8bigCpFcGciDhSpJZXzZBs4K1QjSsrwuwP6RZWI=
+Received: from DU7PR01CA0038.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50e::20) by AS8PR08MB8635.eurprd08.prod.outlook.com
+ (2603:10a6:20b:563::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.7; Fri, 30 Jan
+ 2026 08:24:55 +0000
+Received: from DU6PEPF0000B61D.eurprd02.prod.outlook.com
+ (2603:10a6:10:50e:cafe::6c) by DU7PR01CA0038.outlook.office365.com
+ (2603:10a6:10:50e::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.11 via Frontend Transport; Fri,
+ 30 Jan 2026 08:24:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DU6PEPF0000B61D.mail.protection.outlook.com (10.167.8.137) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.3
+ via Frontend Transport; Fri, 30 Jan 2026 08:24:55 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dX4c8VWwx49P1pba4ilBS5a6pJ1cepfAyoa91YCDrUUftop10+tj0AInbUTYirhZBuPE/ESgAhX55dRQ1K4BkDHSxSMwyIZxYNdy9GjSUGAtnT9gm6TuPSPCdcmlktT2iEwQpCJLMH2IDdVvIccKUkYN73f5J+1xzOa7oSKjW8u41egfp7bmlEb2nY/l4K9jtHyLkKUQ1E7Jck4H7SOJpnR2kmd68c1WdhseP/amct2riVIHHlpMLk9I22anEQajCjc9Qdemz8p/a8gi39sXZ4zXoYkGkecFepEImRmzHdj3QQzZuuZ2Y+pbn/BoU21Eh6f/GEWY2uQxBWp3sX88vw==
+ b=HucStdDuBe9o0YOj1jHYkexS8fYAv4y6AB5ODC8pNx7LyUcamLMBcnoUeoSs0RL3V+YSObCzWuGqUg338H0C8AXeNlLk/7y7GJMeF4qF7rOZEIJlu5A+coSvcBm7lC7VjJFBuTL4Tfv+n2iHdShoz8e7c0n80oQC7k24b05xurZPHRXir5nyRrTMbhR3H4ga9tTSe+vgcmzA2bMFjwrtOBomzqCfk/+mBZ5R8ZmirY8kCKualI4QZRaitmqyF22I5FKWjrXCASKoPj67W42Nem1x+vaUWFGNF11Z4m1LXWwgcWdCQa1WCTmJYbkJ+OKMhizMFbObKgcHcYqntB+V3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+rINmALzxAK74hTH4nCleXDA2lu8HJbjNCG1NfzFJ+Q=;
- b=nrhSYI4JXAsNP0iN02cMJbFq9p/ZOjjC2HCdHCbpFvSv9rh+9Dc3gpSh1IHtr4XNXGM0BrBqaFSJTj1xRt/Pg5dLwcre+1woxaX2dCckHHWVRtOKn101TjXbhlgDNGFt4dCXZQMIxD9/zqynhdxDC1ZAKP2MO6MO6urQPxIoJx9McTPug5XyiHW8XEqpTNgkUFjdD9D3C8NdqmwuGUOywOm0HNKZ4R0/1C72AU4UIRW/Rh2kqPUDRJZ7AZnu/oWTKmKIIjVvIMY+WIJQfMNn0KatyBbRKIGmWJ+LNzA7WiLeNh0dZN68qU8kHTXInyb6MQXgPry7tRQ+zU6YmO8fvg==
+ bh=gXVBz0DGpyhavVFC9bBHLvU2XJa7apBKt8QUeEcVP78=;
+ b=y8KW1BV6pbusDqMwk/BWFfnjDW+NSwOGaAvNEYVQtvYdPZoXzDg0eG8xVL8VzI6F8HeGjgBcdGjnk+ahkMR3OglulE267gC8CPxNvEgLHBNyyFN4HBu0EltJ+Qpip1csbpMB3OgPor/0Cw4zSmEl5TeYan63aRDHe0D5lqg5jEdSES9qBKGcONzxorWEqlyCgzgcXScsOIzJePkiB8ECA+8O7hJj37CshtXs5TtPva2dGUeoz99Rj7eXmR6sFvswQMjtfFsZ5kaRtR4u913sXqSlxq4atyAl50jRMi3gcAkVgK/zeiWc7iNeCiBMl7MI8fBRjZxt7+5xLw4XL50pvg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+rINmALzxAK74hTH4nCleXDA2lu8HJbjNCG1NfzFJ+Q=;
- b=GA6xvnEyuRSPXe5h/sLrPq/sYBWTokfLCre34nREUNJTMIhajvilmxVPKRidYkwTBoCgfmWaVwXKpFaE7Fa3KVAu/20FdSMISNDsrnlqWJ5Myx3HbHElTEK6+xQz9nE4eByBhg8IVyZaaGgIHjKL5dicuzLk++z2HnJGGB6gM2o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- CH0PR01MB7052.prod.exchangelabs.com (2603:10b6:610:10d::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9542.10; Fri, 30 Jan 2026 02:54:17 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::86f5:4db2:7ad5:7fc4]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::86f5:4db2:7ad5:7fc4%6]) with mapi id 15.20.9542.010; Fri, 30 Jan 2026
- 02:54:17 +0000
-Date: Thu, 29 Jan 2026 18:54:15 -0800 (PST)
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: Besar Wicaksono <bwicaksono@nvidia.com>
-cc: will@kernel.org, suzuki.poulose@arm.com, robin.murphy@arm.com, 
-    ilkka@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-    mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com, 
-    vsethi@nvidia.com, rwiley@nvidia.com, sdonthineni@nvidia.com, 
-    skelley@nvidia.com, ywan@nvidia.com, mochs@nvidia.com, nirmoyd@nvidia.com
-Subject: Re: [PATCH 7/8] perf: add NVIDIA Tegra410 C2C PMU
-In-Reply-To: <20260126181155.2776097-8-bwicaksono@nvidia.com>
-Message-ID: <9451191c-affb-b802-712f-968ae895770c@os.amperecomputing.com>
-References: <20260126181155.2776097-1-bwicaksono@nvidia.com> <20260126181155.2776097-8-bwicaksono@nvidia.com>
-Content-Type: text/plain; format=flowed; charset=US-ASCII
-X-ClientProxiedBy: MW4PR03CA0304.namprd03.prod.outlook.com
- (2603:10b6:303:dd::9) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+ bh=gXVBz0DGpyhavVFC9bBHLvU2XJa7apBKt8QUeEcVP78=;
+ b=lLu/gWtugE1Sr54SJaZjBoUBTZ9dfmOwo84+VZ3W/ZZU8KcBXOFufkcaBsljffe/cSKNm9t5bxkOLp4QqDxR3tQKatDTYDqzKLvKXQF0u/CumVCOO8YFkxm1qcQ7EGM/rKeW8bigCpFcGciDhSpJZXzZBs4K1QjSsrwuwP6RZWI=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from VI0PR08MB10391.eurprd08.prod.outlook.com (2603:10a6:800:20c::6)
+ by PAXPR08MB7333.eurprd08.prod.outlook.com (2603:10a6:102:230::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.11; Fri, 30 Jan
+ 2026 08:23:51 +0000
+Received: from VI0PR08MB10391.eurprd08.prod.outlook.com
+ ([fe80::fa6b:9ba8:5c2f:ac91]) by VI0PR08MB10391.eurprd08.prod.outlook.com
+ ([fe80::fa6b:9ba8:5c2f:ac91%4]) with mapi id 15.20.9564.006; Fri, 30 Jan 2026
+ 08:23:50 +0000
+Message-ID: <6652394f-7a44-44e9-8220-4dd45624729c@arm.com>
+Date: Fri, 30 Jan 2026 09:23:46 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/7] Enhanced autonomous selection and improvements
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, zhenglifeng1@huawei.com, ionela.voinescu@arm.com,
+ lenb@kernel.org, robert.moore@intel.com, corbet@lwn.net,
+ rdunlap@infradead.org, ray.huang@amd.com, gautham.shenoy@amd.com,
+ mario.limonciello@amd.com, perry.yuan@amd.com, zhanjie9@hisilicon.com,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ nhartman@nvidia.com, bbasu@nvidia.com
+References: <20260129104817.3752340-1-sumitg@nvidia.com>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <20260129104817.3752340-1-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR3P193CA0055.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:102:51::30) To VI0PR08MB10391.eurprd08.prod.outlook.com
+ (2603:10a6:800:20c::6)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CH0PR01MB7052:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a1926aa-034e-42ea-4629-08de5faadbdc
-X-LD-Processed: 3bc2b170-fd94-476d-b0ce-4229bdc904a7,ExtAddr
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic:
+	VI0PR08MB10391:EE_|PAXPR08MB7333:EE_|DU6PEPF0000B61D:EE_|AS8PR08MB8635:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8079bfb-6ec3-40ad-2561-08de5fd90c76
+x-checkrecipientrouted: true
+NoDisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|10070799003|366016|921020;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?SEdTbk1tVUgzVXZFakc4Y1drZVZtT3VnMGo1R3R4S0NuWFdKRmd6aGNRNTM5?=
+ =?utf-8?B?SWowL3JHZVFoMUhVQW5qT1VGMEpVUGM2NE1pbGZGN01kOHh3TWlPSGs4R2pL?=
+ =?utf-8?B?WXRySzNRVTByQ0dWclgzT250WGY0cXZ3SVJuSHU1SFhleC9xZjlJaUdNTkdH?=
+ =?utf-8?B?ZTVzV1pOVzQyNUlJL05RQVBjSVMraE9UR1FsRXlSUHBrbDIxYmxab3NoK3hx?=
+ =?utf-8?B?NWYwci83cU4yTlZuVk0xRTVrdzdRQmE2K2w4U01aL01mcUkxVFZwaTJPZGw4?=
+ =?utf-8?B?UTBZQ0U1RjVOb0FPQmE0ZXR1TU9tQXF6cHUrdzluVTdIKytsRjI5cVJvTjZV?=
+ =?utf-8?B?OHlzTUZiMXFLRlRZeWNjZ0pMRGEzM3E4YWl1bDFWT2tBL2xHWXNOc2NXbGE3?=
+ =?utf-8?B?eEdqb0x0NDd2U29YdjdmMDI4aWdZRzZKcml0QTVITmdaeDJjVjljR2ZqNUxj?=
+ =?utf-8?B?bmtiZkp4TmlsWDhYaWVtN1A2aEY0UVQvMEJkcE9WaCtGVHNxd0FZcmFFdUhW?=
+ =?utf-8?B?eHk3c3ZmY3FjeUpHODlHb2NCdDF0ZzZQUExnMFdmQjVPejFXTEgvc1pxU0NO?=
+ =?utf-8?B?dk13VkNoa0RnUzVzbXRLK1JWOUFLUWtzN2xMeityUGROcHRLSFhZcVY3eVN5?=
+ =?utf-8?B?KzlZb1NQR1RUZlg2RTRGUSsra0VEZ3RIYWFXRmxSbnQxaWdYMHdlbXl3UUc5?=
+ =?utf-8?B?T3RCRDhuc0Y3ZEJja3d0UXBua0ZhZnRIdmlaVFllbzd2Mk03ekRhd2xpeVRS?=
+ =?utf-8?B?dGtvd0J0R3p5dktpZG1MRDh5NFY2VU5IQVVVYUVaUS9lU2VpOVR0TlQ2em1M?=
+ =?utf-8?B?V3NKaHNyb2hWN2JmYnhpTXBsQmRLNFZaSUhpajZyWU5ENCtTTVp5OEN0MnZR?=
+ =?utf-8?B?UW5hd09JSC9PLzBKQnpsNUJ5WlJyeXRvUlpld3pSbkJyMmRsZUg2L2hiZ3hE?=
+ =?utf-8?B?TFpIS1poYUJEN2ZaY1hWbXZPb2kyK2NNODM5UjJHUkw0dE56U2pGZFZWVkJJ?=
+ =?utf-8?B?UWF1bVF3UnlHOThFbFgxbWtTa2VpZUZxRk1PK25tNW5YcnhURlRwVk16OUU3?=
+ =?utf-8?B?YmhObUduSHU0UUp2RWdhWFdjMXBFMy9zZVlzWk9qRCtaS0YyQThSZlErT1FK?=
+ =?utf-8?B?LzBwYU55TUQranJHME03NWpqcEswRmM1dUVZdEdJZ0FmNGtBMWVDLzIzam9l?=
+ =?utf-8?B?djVrZ2xxVzNaL3M1U2JTeTlPTXAvWGczTWkwc3VFUXlIU055bFJXYjdmamRo?=
+ =?utf-8?B?Vkwzd2tIbGNJRHlUd3dPZzZIYmRpM1A4V3l3ZmNvd2prSVQ1czhXVlQydk02?=
+ =?utf-8?B?ZGhJYWUrL3JCbWEvV0hzd0ZEcWw4QlptOVVtcklYRGdTb1hWSVErQ0hEYnFa?=
+ =?utf-8?B?Q2h3SGVSUG9salorRDVGNFBkeVdxMlplME5zMjVCUWFneHlua01rdzRxZVlV?=
+ =?utf-8?B?U0tGRU5GanpGWGsrLzlmWUpGVWY1TnFyQ2RaWWRFcmdZU20rdDl4OHVHSWww?=
+ =?utf-8?B?T1NnVVlXbXl6RlRVMmdZaERPK012eEpCTWNjRzcrR1N2bGVGbEIxS3Y0dHI4?=
+ =?utf-8?B?VmpXZzhJNUJhY1NhWC9CWUxJaHg2dlJoU2JLaitqWitiMVlUTWJjRmhTTEZO?=
+ =?utf-8?B?UGRZdlhPRFRLbUFJbGVrWWFxeDExSk5tbEhDdXcvUEZ4d254RVZYNVNkWWs3?=
+ =?utf-8?B?NnFoRkpyT1B6NnpPa1JHT01tNG1VTXZyc05tYnByeFp2Sjk1UWpzenFCQlRI?=
+ =?utf-8?B?RU5xMmJSdGkzS0tJeEFuTmVkdm1xSjhseVNrNlN0YUJFa09ZRUZXb3JNWTBu?=
+ =?utf-8?B?SjNiN0tmNkM4Q05rT2xrd0ZCdlg3VjBTVjA1UUp0MGpQZDhOZnVNbFZHS2hn?=
+ =?utf-8?B?dUlCckNzZE5PVVFVY2tVNm1lOGxLa2pjamNMS3dlVHprcFhpRXR5VTNMNSsr?=
+ =?utf-8?B?TkpIZExrTFdmMkM5RldGbzNOWkw0NzFRR3F6RG5hN0JUd3U1ZTh6ZSswOGxL?=
+ =?utf-8?B?ZHg1a1dKOHFXRHIycFBnc3FtaDF4ckY2RTRxV1p6bVRvbVRMdGdJdHNjYllP?=
+ =?utf-8?B?NFllSjI5K0QvREo3QzdMVVdkM0RjUjlyMTkxekRGT3pGdEJHNXJ5L3BHV1k5?=
+ =?utf-8?B?Q2VvMVIwY3lJbnV1YWhBc1NKUnU3Y1NmaFJkV3JWZXN4RnZwV2dRd3diMnhN?=
+ =?utf-8?Q?IlAliI1YSmv6inziH0uQBbg=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB10391.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(10070799003)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB7333
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DU6PEPF0000B61D.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	ce14a773-3491-4480-4928-08de5fd8e546
 X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+	BCL:0;ARA:13230040|1800799024|35042699022|82310400026|36860700013|14060799003|7416014|376014|13003099007|921020;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?piHM0OvZfd/nNmg01pXORgPL0STNy+WXs07BRyMl0/uW0zqmf5N5CQw229+E?=
- =?us-ascii?Q?SIQc3NLMZ6FrgmtV1xbuRoS0qpF0VOkjMcEpqXQYjvtAF14Bh1Dw7G5R5SYr?=
- =?us-ascii?Q?xRN2gltuD6lWaV3IeN6cN/uFgvgh3R5pUkL2W7+u+PXZdjwiLP4GDUEhIja/?=
- =?us-ascii?Q?qY4l/YVka6kTjJpjHATDlMtOUfzer9l/N08JoaZ3ZWoRIhxmkhJ9RmFDEH9R?=
- =?us-ascii?Q?ZTwBfaNZseVT8KoIBgA0SBLiInNHUj2ziREeVMeN9rY4GAujCDHnWKSDuPgc?=
- =?us-ascii?Q?5NfKAHQAxDWv8Hg1j1k19Ka5PM+qe4IlHXHzwHbDe6vqWzYtqj6MM6O0ZLa+?=
- =?us-ascii?Q?wUhoe3+uRFAXb4WUVugP+tbhkVHWukuvObIjp/RiPi3jvUQvaYOvuRGF72fR?=
- =?us-ascii?Q?q0QThl/jNeow+d8nWEQ9PWyDABs3+HTNqSU/vznq/QrbDxwz+MV1DuIDaLHs?=
- =?us-ascii?Q?wk0GchUyokI/uH02w3Pwgz8Hu3XyBk035WPQ1Y4Ujvwkpd1Uv0fIp79NHlJx?=
- =?us-ascii?Q?/qrXlrvEe73Tm8vXfcfCIlVtLowHJa+h833+q5eKDUjTfOPVcmQMn6Vo1AnV?=
- =?us-ascii?Q?Ew7ZjoY+2amNLODdXwMVs7unOJKLLIr0WRNkTptZNi459WND+3gOy5XxOlMx?=
- =?us-ascii?Q?adOAnwKSp+pDrz6jY2JOiKBN51SY0eKLEy4zvVEyPJuMmn+KdbJVKNsPD7S8?=
- =?us-ascii?Q?2GIy9WoQ+YHfi1XXJgATiAfSEUaeMY3Ztn/DmZ6nDSKZTv+aoCBhS9KfFvqC?=
- =?us-ascii?Q?tfMYjKc3NzFRqXA9mYg+RUDOaltgtwVDrJtoKVTdCKLNx3xN10kOHBzo92yW?=
- =?us-ascii?Q?ySUjvvWEspPOrV8WqVu6XWmJf9UQWeWOHPZytVNCTFdlNL9b36HEcZVIrZ6z?=
- =?us-ascii?Q?CVYdLw2g4DHe/oZc2VeRIe3FE8refelxfjx3CcH0mYQrrdyeFPe9Nvg9PdxO?=
- =?us-ascii?Q?aI+SCrFHUwmWVtykFhsBptgBvEhhMTKKO7DR6hXWMPNjk+Vy47y0Qdt1Dsr7?=
- =?us-ascii?Q?dIQTetE9+JylmJmmOStpqLNDJa4keLMUufm3tCE0R0pzyHXJDHmvAYVvwkzL?=
- =?us-ascii?Q?Wpw8scVH2mchqKA7/jvKBxIowt+TrqLN6SoW7ZEn4ecknac+zN2pe5CFLJ71?=
- =?us-ascii?Q?2/3S1pWnrVemgpGF5BNZjDqIZaZ5XLbeG8yW4C/66lr3r63ZviWZOqAfzJ78?=
- =?us-ascii?Q?rCsIOnny7rDZNXYZbmDMBrDOQj6CocZCHIiMgIuzfKpP2uCI7NWWEIJD6EzO?=
- =?us-ascii?Q?PKd9S2jyYvcUwxHodoFj/GtN4lHBy6uK+aaJQrJHiYF16TIpYDkwl1mUitC6?=
- =?us-ascii?Q?L/3GYCccr7KUEotMaM4hRqsO1Cd+Ni6jonQaxjECvJvjv6Dm5kI3Bcsr04bm?=
- =?us-ascii?Q?lHbAodfHV1vD/PrXiGGxK6ysR6dwA3z8ToubMmWGBMSGtCb/Fh0c6TROpxva?=
- =?us-ascii?Q?my9I+vn5kyJQHIpUoMvvHN0b5rsXjctCLYyWvU4+aXp8zFCxtkbPWLxjlE7v?=
- =?us-ascii?Q?uB41a7E5Im9x9t/pRJWRAkwWltPBemb5yEjsswDD4ofV+jgtoVQGdBB+KyHo?=
- =?us-ascii?Q?DQIhtsGJdLyFxsimj5Y=3D?=
+	=?utf-8?B?YXRYaWZCUzFDdWcyaGxpY25UcUZCUE1QOENHODJPOGNjd3ZMYzdjanMwSDJ1?=
+ =?utf-8?B?SDFBaFV2MzVuMjV3TzBSTUlpL2ZYK3pXVHRxKzc5dkVuVGtPeGRPOE5tMW9B?=
+ =?utf-8?B?Sjc3MEVzYkJHQjNrV0RxZmxTbStDMHJkaTM0ZVdsK1BUWTZ4SzdNM1dLdzkz?=
+ =?utf-8?B?bFJtdEQ1dkF1bWZUeEhuNkx3QWhXSTcwRDBZVTVNWGhsaXR1OUFvdTlLaUNR?=
+ =?utf-8?B?VnJ1M01wUlh1V2xJd1JDOFF2aktZb01kR0ZaNmZXb2JsbU9CVTdYcUxzSFpi?=
+ =?utf-8?B?QkRrb09iWUFPZHZMTnFjVHJvRFFOaU5CTTBaNXNHNklQKzBhRHU5RkJnc3Vy?=
+ =?utf-8?B?NExTcnBUTXVjWVJPUSsxZGtmakN3TEVES2x5U0tIeFYxSHBXdENvLy90eHAw?=
+ =?utf-8?B?cXN4WmpZa25qVlpiTGpXd09OVnVEcFZWUnZGeFJENFpOOU1heHZUejkvRXUw?=
+ =?utf-8?B?U2s0SEx3ZWg0UkhMTUJocHZRU1ZQc05yS0lpc3hYVHlaOHhCTC80bTRSRXc0?=
+ =?utf-8?B?ZU5uUXNsczhVekdxOEduQ1F0aC9VSmZvd0hUWHQ3WUxHYUxlWkF4cFRCdjZp?=
+ =?utf-8?B?bnBsbGdWOUt1dWZGeDgyOXExak4rSWtFVzl3QkhCZEV5QllqQ2NJTDhwZEYr?=
+ =?utf-8?B?d3NDTUp2K2lPRXlLaWJueXphNDdOTlpGUzdKZFN4MjFqUGxlVDBUak5vam5M?=
+ =?utf-8?B?YUpGOHVNWDhMNzQ4NGw4bjBhTlJqWFFFMWdXRW9iMGs4d2MxcTB2SHR2VGRl?=
+ =?utf-8?B?bkZ4N0FOY0xqdzlpaW5xazFrR294WDVwVjNhVEI1MGlQbGh0TkRRYUNCT0VL?=
+ =?utf-8?B?ZlVCNWJaejA0Wm5idll3VzBTcUJaQlA1UXBza3RLTTNSRmh3N2hlbmhlaGtY?=
+ =?utf-8?B?bFh6K0Vxa3Q2MHVMQWc2d0s2NUtXUmxOcnZIVkFTZWp4MlpjYWZTKzBLdkVi?=
+ =?utf-8?B?cGF4ZVNnWGhvQ3RUTUtxWEtZODlqbTJsaHAyZlBYVFBDRDNDK1VwM1p0c25K?=
+ =?utf-8?B?L3dUWGN3d1NRM1d2bWY2TlJ1dGJzcEgrS3dyZ3FCWVZaYUhEY0t3N2s5c2Y1?=
+ =?utf-8?B?Q21VY090SHdvYzlCOWc2eXlyZVdkdE9zZEYzdG1HT3JlQlF6V3U4M3ZIbTVN?=
+ =?utf-8?B?MjdENEJVSjN0OVdOS3Blb0VUU3pTWFVyVDJjRHJTZDlHS2dCelYvMnlCd2ZH?=
+ =?utf-8?B?RlF4eUVqZUxOYkVRZXlEQW51Ujg2L0FFMWRESXVnaG5id0p5aHZ4Y0ZaenhR?=
+ =?utf-8?B?U21Ic3VxYmZ2eE4rdndPSmlrcFNIaWpXT0k4WEFMc2EyaXc5SFE4aU9mWTZG?=
+ =?utf-8?B?aEVaS21xa1VkN2JaOTNzajRLcmk5VnM1aE9NSk9IalRxRVFCSUsvNmIyQkZM?=
+ =?utf-8?B?Q3lQdDgxMnRYM1NYN1FVWStOTGpCcE0rL3JTUEw5ekRTYktmb2loNlFGeEJF?=
+ =?utf-8?B?MG1XY2xReGh0UEN6d2x5NWc1VTBBZlRHMWNJNkIrNU03RHg2b0QrRjNSblYx?=
+ =?utf-8?B?UEhPNGgwWEgxYXF0dWZqSVdZbWo3ajU1Ymduc2NvOXZYemlmc0NzRmczK3ow?=
+ =?utf-8?B?UmNac2I5TnpEYU52VWdKY0ZIK2pRSVBmRGxhbFdoTThGd2FjVExYVUF0U3F5?=
+ =?utf-8?B?MGpOZlNzTlE5L09SeUhyYVlVR0FXUzlyUEdHaUltVWhUeFBxQXlSY2JIazBP?=
+ =?utf-8?B?OVhMakhqSERlQ25YZ3RjdXdyT1pjK3JwKzlNdkVRZFJnRHBoakgyMXBpbjgv?=
+ =?utf-8?B?V3lJQlJQZ0FMR09ZWW9MUVdLM1pWOGRqU09qNE9SUGpMVFNkSytDMXZkY3hq?=
+ =?utf-8?B?VWN1UzkralZiUlBZRVZqYWRZRnlTeGhhK2pIaGE3aFNDTjdYVTk3ZFVBaFhs?=
+ =?utf-8?B?S1E3VlUrMnlocDhMd3llUjlhV2tCRnJVNXFJdEZ1djZIbStwbU1sWndxS2Ni?=
+ =?utf-8?B?dkRBWlFTaU9oVXluTGt3a3YrQkJUa2hVZk1IVFd1YUZPT3Y1L2VUd2tyZjVY?=
+ =?utf-8?B?YjJISDJUd3lsemxaZ25EUisvUWIvejUwNHIyUXg1Mk5VYUh5STEzZ0ZlMEVM?=
+ =?utf-8?B?dUpBM2JuckJVYVh5Tm1MbEFTcG91OW1DUEdGTVRPYzdSWFhVczFZWEhCdWFU?=
+ =?utf-8?B?UHdERFMvSHd4M0sweDc4VmpoTzFOeXZKTXhpN3NTM2FJUEhHVVB3eHdHWHlu?=
+ =?utf-8?B?eFVoOW5WS1lCSTNQOUE1em05YkY0UUVUSllMS2VUNDdiMjZZemV2SnBtSHhx?=
+ =?utf-8?Q?qZP2t9ARNN2YmoTfRwRsRSrRz3rHxDXirJ4lUVzLuY=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1102;
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(82310400026)(36860700013)(14060799003)(7416014)(376014)(13003099007)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?e45m62/Ew9xDJvv2M9dAhV8gnqpoH51/QJLeOa9dcexL7zU/oXw7q1vDOdAy?=
- =?us-ascii?Q?5xZxjp+fq+D1P3N/Qz4N68cPG8BuDRXhBeIjvu+9+kEwVNTyGrOrUho6KC/8?=
- =?us-ascii?Q?BqdqKPkAa2HqMLOyyRT6zCXDOkLJDTcyaGrrv5hElB0WWH/bDkCgv6L1Bwu4?=
- =?us-ascii?Q?IAICFnKyTbYIpt6jbcAC3oQPRpMBGaLjo2bVHxOtS2XIWePW5P+ybuiVmuYb?=
- =?us-ascii?Q?8g092+Eh17aLm6EomxgvjuFM5EiaM7IKCe4+aNoyEOKq7X9fSCcrksbsPQmB?=
- =?us-ascii?Q?DUN914Z+3Q9YDfCtpgH2LTsnBp/JZokT18B39VG1ufBHsGRwpwpKCn1zG17a?=
- =?us-ascii?Q?h7u+776Bqhg1aPNt6E5HE17illV6Q3CMUuSDJkbmr3qgQ4mdJHoOgnxCB35S?=
- =?us-ascii?Q?QJr76pHzjAvbhYbD+ZHhHR6sCYb6v5wa+PlMKBesTBYx6jFNmk4zRIPEEv+s?=
- =?us-ascii?Q?7wMBpXf7VPpC90OxNC0hj/LZAZ6z853QnrWcWVXqJcrnO5gvXWH0przEzcJ2?=
- =?us-ascii?Q?Zno9nmq9Um9OMWbKyuIXpxwC0ixXx6VguxZKl1PKa+XSewyL1daazglRzKm9?=
- =?us-ascii?Q?oT06Q3apq935UuonyqJt4PCZmiHiuy5jHpT+qY38XK+4XhjqyuZbbnZmQGWp?=
- =?us-ascii?Q?2uAF4YEElgHup6EH/snvr8MZrHqD6VbF+7Ox7IlX6kFExV6KOCTb47w2b5Vk?=
- =?us-ascii?Q?qSGVZLfaI4/DNVYaDJxaGxpGFlNoQIwwRCiV/kb4Ia65lvVXiOuaozhbS7Lr?=
- =?us-ascii?Q?WzcCHohNFGopgUMLkuXln5/DO2QN7Pvgs4kyzFCD64eLSULAmG80CL4nqP4Q?=
- =?us-ascii?Q?1eMEpVhSuhQdGywOHHHpRgHF7LKhM62WdVGESAlryCXfIH5H7F5145q+BOiD?=
- =?us-ascii?Q?b3zQEP4Bzg1/6RXLlOgEaSe6nom+IwouSX6ahBylYJ9PoaJkcb1DOVMbm2ah?=
- =?us-ascii?Q?407xDZhsqyAuyDnGrBfWpKgGHIQIOrXZ5KfJ7Fl5DFzZyDUyPOVXyVKh1wAX?=
- =?us-ascii?Q?Up0MzbUGLwRYzStGOZmT9yV3hKIblLGrpxVlqx/v3CUrKLs5Gu/zxDh/zzoV?=
- =?us-ascii?Q?Utuqqn2UZz/e/dRbyC0gNAxxh/g6hggL6UOBkt9ihASjIIY29XljnMci8ex9?=
- =?us-ascii?Q?P6eHaLQloJfGAGLPhuWzpm3PFjFbdIPe2LxGjTIXuBZgKm46PaopJzRueNSr?=
- =?us-ascii?Q?YxqS/1VsDCdGnnJRSnCC8qmLnXNXZN1qXHzfIuxZRCPhsC+vDn0QeAcZDWl3?=
- =?us-ascii?Q?VI0poZgNcu7eBKZ19zJc08JsU30+F4UzXfYalC2EGfRsziMpkX5UPAGQ29Mu?=
- =?us-ascii?Q?mc5DhMvrem+oK32RaY411/Eclf8XwZdNboZMzVE0QnKqKTUn1ptIlSMAllGh?=
- =?us-ascii?Q?7rhanUlykfDpeDGb7S5SKWfpLB9a7bgONGaB1mS3CmFM59NO1VjQaMv1q7Ft?=
- =?us-ascii?Q?EJWAhx5PXDtyziBhbsLH3uT/6aPWhEulhuhmlUVfR36lKl4mQ2NgaSSmWRwH?=
- =?us-ascii?Q?BpfwddL1SiUOUoqE3sG3A6wpfnaUjR53SURmQEO/xqNdXfqLaC0RV2pnNEfd?=
- =?us-ascii?Q?m3qdmfLwUbTlfnbOnqfXitPTFsgFAbG+JsjmFVJtl+/LsZclzD5yYCnt9iyV?=
- =?us-ascii?Q?l+hqx5x8CHO1apaVY3RIwReLbKcM8qQOY9mza1zdvIYeZEqP/k42LlCJIW4O?=
- =?us-ascii?Q?fAJvp+75p9sP28xO4McOWE+5DMv6b2jEc/MHH/YsBPQpyYYCWEsvPiuNyM6A?=
- =?us-ascii?Q?1cw4Dsy2519c1GSOO0TBpaSRNUtBkj0=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a1926aa-034e-42ea-4629-08de5faadbdc
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 02:54:17.5372
+	DAmJh0l/dqcLmc/HGj5Auej35kC5JFoGFU+RPun+ZZoEN5zpt/eBecEFhwhCNgFpBaAy6AMVFG/f7c8iwL20ixuJ/thNOePPT7xfOY2ZycwDPq8NuagWwJnHilrpCgvO3pa/ln5HM1+vdUXnhx1Ng9tXDodIzdj4OyXRyKysKE7hpKoAuHi0D8h68c0jNV3hdgWBer02Hv2YLI0xQ3p7TqcVWuz31gkYxkcfg2koeUJkJtUqYTK66RBNsgNLj7Wt/BRo09j00E20/fch9X7Nhd2uqNk14Bm3Uth2zRj9xLHMt584TQ9Qm0K/l943YLrAx/OvnxF+FGrAKwR0xB8uI7TGEH7Z89kW4JKid3L6baCfLH1xbx8eiufvriM8oBN6qzUZ4+RazpNKk0Ks0eRmmhM9F/aAEDD6jyEvVOrwmUh06dFMwhSduHVeH1r9RpOI
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 08:24:55.3302
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T0GwH5rJV3S5dwsj5H2Ek1/jgwWBNWKIsO/DrVtImirmdEQnRittZm4opgv8AZJ/W0GiMoa0Esc8hb5dowRwbJbTLNdrghtHBCAKleZ2YvzADJXA5XS7wyOkjhKhbwGa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB7052
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8079bfb-6ec3-40ad-2561-08de5fd90c76
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000B61D.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8635
 
+Hi Sumit,
 
-Hi Besar,
+For the whole patch-set:
 
-On Mon, 26 Jan 2026, Besar Wicaksono wrote:
-> Adds NVIDIA C2C PMU support in Tegra410 SOC.
+Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
+
+Thanks
+
+On 1/29/26 11:48, Sumit Gupta wrote:
+> As discussed in [7], v5 was split into two parts. This is part 1.
+> - Patch 1-3 from v6: Applied by Rafael for 6.20.
+> - Remaining patches: Included in this v7 with review comments addressed.
+> Part 2 (v5 patches 8-11) will follow separately.
 >
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-
-Looks good to me
-
- 	Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-
-Cheers, Ilkka
-
-
+> This patch series adds sysfs interfaces for CPPC min_perf, max_perf,
+> and perf_limited registers, along with supporting ACPI APIs and
+> improvements for the cppc_cpufreq driver.
+>
+> CPPC autonomous mode (auto_sel) enables hardware-driven CPU performance
+> scaling using Energy Performance Preference (EPP) hints. Currently,
+> there's limited runtime control and visibility into CPPC performance
+> registers.
+>
+> This series addresses these gaps by:
+> 1. Exposing min_perf/max_perf registers via sysfs (as frequency in kHz)
+>     to allow fine-grained performance bounds control in autonomous mode.
+> 2. Exposing perf_limited register to detect and clear throttling events.
+>
+> It also includes code improvements: new APIs for reading performance
+> controls, a warning for missing mandatory DESIRED_PERF register, and
+> extended epp_perf support.
+>
+> The patches are grouped as below:
+> - Patch 1: Add cppc_get_perf() API (independent).
+> - Patch 2: Warn on missing mandatory DESIRED_PERF (independent).
+> - Patch 3: Extend cppc_set_epp_perf for FFH/SystemMemory (independent)
+> - Patch 4-5: APIs, sysfs for min/max_perf, perf_limited (independent)
+> - Patch 6: Doc for min/max_perf and perf_limited (depends on 4-5)
+> - Patch 7: Update cached perf_ctrls on sysfs write (independent).
+>
 > ---
-> .../admin-guide/perf/nvidia-tegra410-pmu.rst  |  151 +++
-> drivers/perf/Kconfig                          |    7 +
-> drivers/perf/Makefile                         |    1 +
-> drivers/perf/nvidia_t410_c2c_pmu.c            | 1061 +++++++++++++++++
-> 4 files changed, 1220 insertions(+)
-> create mode 100644 drivers/perf/nvidia_t410_c2c_pmu.c
+> v6[7] -> v7:
+> - patch 1-3 (v6): Dropped as they were applied by Rafael for 6.20.
+> - patch 2 (v7): Added new patch to warn on missing DESIRED_PERF as
+>    suggested by Pierre.
+> - patch 4, 7 (v7): Removed mutex from sysfs store functions as
+>    policy->rwsem already provides synchronization.
+> - patch 4 (v7): Added validation checks in store_min/max_perf.
 >
-> diff --git a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> index 11fc1c88346a..f81f356debe1 100644
-> --- a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> +++ b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> @@ -9,6 +9,9 @@ metrics like memory bandwidth, latency, and utilization:
-> * PCIE
-> * PCIE-TGT
-> * CPU Memory (CMEM) Latency
-> +* NVLink-C2C
-> +* NV-CLink
-> +* NV-DLink
+> Sumit Gupta (7):
+>    ACPI: CPPC: Add cppc_get_perf() API to read performance controls
+>    ACPI: CPPC: Warn on missing mandatory DESIRED_PERF register
+>    ACPI: CPPC: Extend cppc_set_epp_perf() for FFH/SystemMemory
+>    ACPI: CPPC: add APIs and sysfs interface for min/max_perf
+>    ACPI: CPPC: add APIs and sysfs interface for perf_limited
+>    cpufreq: CPPC: Add sysfs for min/max_perf and perf_limited
+>    cpufreq: CPPC: Update cached perf_ctrls on sysfs write
 >
-> PMU Driver
-> ----------
-> @@ -367,3 +370,151 @@ see /sys/bus/event_source/devices/nvidia_cmem_latency_pmu_<socket-id>.
-> Example usage::
+>   .../ABI/testing/sysfs-devices-system-cpu      |  44 ++++
+>   drivers/acpi/cppc_acpi.c                      | 214 +++++++++++++++++-
+>   drivers/cpufreq/cppc_cpufreq.c                | 207 ++++++++++++++++-
+>   include/acpi/cppc_acpi.h                      |  40 ++++
+>   4 files changed, 500 insertions(+), 5 deletions(-)
 >
->   perf stat -a -e '{nvidia_cmem_latency_pmu_0/rd_req/,nvidia_cmem_latency_pmu_0/rd_cum_outs/,nvidia_cmem_latency_pmu_0/cycles/}'
-> +
-> +NVLink-C2C PMU
-> +--------------
-> +
-> +This PMU monitors latency events of memory read/write requests that pass through
-> +the NVIDIA Chip-to-Chip (C2C) interface. Bandwidth events are not available
-> +in this PMU, unlike the C2C PMU in Grace (Tegra241 SoC).
-> +
-> +The events and configuration options of this PMU device are available in sysfs,
-> +see /sys/bus/event_source/devices/nvidia_nvlink_c2c_pmu_<socket-id>.
-> +
-> +The list of events:
-> +
-> +  * IN_RD_CUM_OUTS: accumulated outstanding request (in cycles) of incoming read requests.
-> +  * IN_RD_REQ: the number of incoming read requests.
-> +  * IN_WR_CUM_OUTS: accumulated outstanding request (in cycles) of incoming write requests.
-> +  * IN_WR_REQ: the number of incoming write requests.
-> +  * OUT_RD_CUM_OUTS: accumulated outstanding request (in cycles) of outgoing read requests.
-> +  * OUT_RD_REQ: the number of outgoing read requests.
-> +  * OUT_WR_CUM_OUTS: accumulated outstanding request (in cycles) of outgoing write requests.
-> +  * OUT_WR_REQ: the number of outgoing write requests.
-> +  * CYCLES: NVLink-C2C interface cycle counts.
-> +
-> +The incoming events count the reads/writes from remote device to the SoC.
-> +The outgoing events count the reads/writes from the SoC to remote device.
-> +
-> +The sysfs /sys/bus/event_source/devices/nvidia_nvlink_c2c_pmu_<socket-id>/peer
-> +contains the information about the connected device.
-> +
-> +When the C2C interface is connected to GPU(s), the user can use the
-> +"gpu_mask" parameter to filter traffic to/from specific GPU(s). Each bit represents the GPU
-> +index, e.g. "gpu_mask=0x1" corresponds to GPU 0 and "gpu_mask=0x3" is for GPU 0 and 1.
-> +The PMU will monitor all GPUs by default if not specified.
-> +
-> +When connected to another SoC, only the read events are available.
-> +
-> +The events can be used to calculate the average latency of the read/write requests::
-> +
-> +   C2C_FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
-> +
-> +   IN_RD_AVG_LATENCY_IN_CYCLES = IN_RD_CUM_OUTS / IN_RD_REQ
-> +   IN_RD_AVG_LATENCY_IN_NS = IN_RD_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
-> +
-> +   IN_WR_AVG_LATENCY_IN_CYCLES = IN_WR_CUM_OUTS / IN_WR_REQ
-> +   IN_WR_AVG_LATENCY_IN_NS = IN_WR_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
-> +
-> +   OUT_RD_AVG_LATENCY_IN_CYCLES = OUT_RD_CUM_OUTS / OUT_RD_REQ
-> +   OUT_RD_AVG_LATENCY_IN_NS = OUT_RD_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
-> +
-> +   OUT_WR_AVG_LATENCY_IN_CYCLES = OUT_WR_CUM_OUTS / OUT_WR_REQ
-> +   OUT_WR_AVG_LATENCY_IN_NS = OUT_WR_AVG_LATENCY_IN_CYCLES / C2C_FREQ_IN_GHZ
-> +
-> +Example usage:
-> +
-> +  * Count incoming traffic from all GPUs connected via NVLink-C2C::
-> +
-> +      perf stat -a -e nvidia_nvlink_c2c_pmu_0/in_rd_req/
-> +
-> +  * Count incoming traffic from GPU 0 connected via NVLink-C2C::
-> +
-> +      perf stat -a -e nvidia_nvlink_c2c_pmu_0/in_rd_cum_outs,gpu_mask=0x1/
-> +
-> +  * Count incoming traffic from GPU 1 connected via NVLink-C2C::
-> +
-> +      perf stat -a -e nvidia_nvlink_c2c_pmu_0/in_rd_cum_outs,gpu_mask=0x2/
-> +
-> +  * Count outgoing traffic to all GPUs connected via NVLink-C2C::
-> +
-> +      perf stat -a -e nvidia_nvlink_c2c_pmu_0/out_rd_req/
-> +
-> +  * Count outgoing traffic to GPU 0 connected via NVLink-C2C::
-> +
-> +      perf stat -a -e nvidia_nvlink_c2c_pmu_0/out_rd_cum_outs,gpu_mask=0x1/
-> +
-> +  * Count outgoing traffic to GPU 1 connected via NVLink-C2C::
-> +
-> +      perf stat -a -e nvidia_nvlink_c2c_pmu_0/out_rd_cum_outs,gpu_mask=0x2/
-> +
-> +NV-CLink PMU
-> +------------
-> +
-> +This PMU monitors latency events of memory read requests that pass through
-> +the NV-CLINK interface. Bandwidth events are not available in this PMU.
-> +In Tegra410 SoC, the NV-CLink interface is used to connect to another Tegra410
-> +SoC and this PMU only counts read traffic.
-> +
-> +The events and configuration options of this PMU device are available in sysfs,
-> +see /sys/bus/event_source/devices/nvidia_nvclink_pmu_<socket-id>.
-> +
-> +The list of events:
-> +
-> +  * IN_RD_CUM_OUTS: accumulated outstanding request (in cycles) of incoming read requests.
-> +  * IN_RD_REQ: the number of incoming read requests.
-> +  * OUT_RD_CUM_OUTS: accumulated outstanding request (in cycles) of outgoing read requests.
-> +  * OUT_RD_REQ: the number of outgoing read requests.
-> +  * CYCLES: NV-CLINK interface cycle counts.
-> +
-> +The incoming events count the reads from remote device to the SoC.
-> +The outgoing events count the reads from the SoC to remote device.
-> +
-> +The events can be used to calculate the average latency of the read requests::
-> +
-> +   CLINK_FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
-> +
-> +   IN_RD_AVG_LATENCY_IN_CYCLES = IN_RD_CUM_OUTS / IN_RD_REQ
-> +   IN_RD_AVG_LATENCY_IN_NS = IN_RD_AVG_LATENCY_IN_CYCLES / CLINK_FREQ_IN_GHZ
-> +
-> +   OUT_RD_AVG_LATENCY_IN_CYCLES = OUT_RD_CUM_OUTS / OUT_RD_REQ
-> +   OUT_RD_AVG_LATENCY_IN_NS = OUT_RD_AVG_LATENCY_IN_CYCLES / CLINK_FREQ_IN_GHZ
-> +
-> +Example usage:
-> +
-> +  * Count incoming read traffic from remote SoC connected via NV-CLINK::
-> +
-> +      perf stat -a -e nvidia_nvclink_pmu_0/in_rd_req/
-> +
-> +  * Count outgoing read traffic to remote SoC connected via NV-CLINK::
-> +
-> +      perf stat -a -e nvidia_nvclink_pmu_0/out_rd_req/
-> +
-> +NV-DLink PMU
-> +------------
-> +
-> +This PMU monitors latency events of memory read requests that pass through
-> +the NV-DLINK interface.  Bandwidth events are not available in this PMU.
-> +In Tegra410 SoC, this PMU only counts CXL memory read traffic.
-> +
-> +The events and configuration options of this PMU device are available in sysfs,
-> +see /sys/bus/event_source/devices/nvidia_nvdlink_pmu_<socket-id>.
-> +
-> +The list of events:
-> +
-> +  * IN_RD_CUM_OUTS: accumulated outstanding read requests (in cycles) to CXL memory.
-> +  * IN_RD_REQ: the number of read requests to CXL memory.
-> +  * CYCLES: NV-DLINK interface cycle counts.
-> +
-> +The events can be used to calculate the average latency of the read requests::
-> +
-> +   DLINK_FREQ_IN_GHZ = CYCLES / ELAPSED_TIME_IN_NS
-> +
-> +   IN_RD_AVG_LATENCY_IN_CYCLES = IN_RD_CUM_OUTS / IN_RD_REQ
-> +   IN_RD_AVG_LATENCY_IN_NS = IN_RD_AVG_LATENCY_IN_CYCLES / DLINK_FREQ_IN_GHZ
-> +
-> +Example usage:
-> +
-> +  * Count read events to CXL memory::
-> +
-> +      perf stat -a -e '{nvidia_nvdlink_pmu_0/in_rd_req/,nvidia_nvdlink_pmu_0/in_rd_cum_outs/}'
-> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> index 9fed3c41d5ea..7ee36efe6bc0 100644
-> --- a/drivers/perf/Kconfig
-> +++ b/drivers/perf/Kconfig
-> @@ -318,4 +318,11 @@ config NVIDIA_TEGRA410_CMEM_LATENCY_PMU
-> 	  Enable perf support for CPU memory latency counters monitoring on
-> 	  NVIDIA Tegra410 SoC.
->
-> +config NVIDIA_TEGRA410_C2C_PMU
-> +	tristate "NVIDIA Tegra410 C2C PMU"
-> +	depends on ARM64 && ACPI
-> +	help
-> +	  Enable perf support for counters in NVIDIA C2C interface of NVIDIA
-> +	  Tegra410 SoC.
-> +
-> endmenu
-> diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-> index 4aa6aad393c2..eb8a022dad9a 100644
-> --- a/drivers/perf/Makefile
-> +++ b/drivers/perf/Makefile
-> @@ -36,3 +36,4 @@ obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu/
-> obj-$(CONFIG_MESON_DDR_PMU) += amlogic/
-> obj-$(CONFIG_CXL_PMU) += cxl_pmu.o
-> obj-$(CONFIG_NVIDIA_TEGRA410_CMEM_LATENCY_PMU) += nvidia_t410_cmem_latency_pmu.o
-> +obj-$(CONFIG_NVIDIA_TEGRA410_C2C_PMU) += nvidia_t410_c2c_pmu.o
-> diff --git a/drivers/perf/nvidia_t410_c2c_pmu.c b/drivers/perf/nvidia_t410_c2c_pmu.c
-> new file mode 100644
-> index 000000000000..362e0e5f8b24
-> --- /dev/null
-> +++ b/drivers/perf/nvidia_t410_c2c_pmu.c
-> @@ -0,0 +1,1061 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * NVIDIA Tegra410 C2C PMU driver.
-> + *
-> + * Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/bitops.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/perf_event.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +
-> +/* The C2C interface types in Tegra410. */
-> +#define C2C_TYPE_NVLINK          0x0
-> +#define C2C_TYPE_NVCLINK         0x1
-> +#define C2C_TYPE_NVDLINK         0x2
-> +#define C2C_TYPE_COUNT           0x3
-> +
-> +/* The type of the peer device connected to the C2C interface. */
-> +#define C2C_PEER_TYPE_CPU        0x0
-> +#define C2C_PEER_TYPE_GPU        0x1
-> +#define C2C_PEER_TYPE_CXLMEM     0x2
-> +#define C2C_PEER_TYPE_COUNT      0x3
-> +
-> +/* The number of peer devices can be connected to the C2C interface. */
-> +#define C2C_NR_PEER_CPU          0x1
-> +#define C2C_NR_PEER_GPU          0x2
-> +#define C2C_NR_PEER_CXLMEM       0x1
-> +#define C2C_NR_PEER_MAX          0x2
-> +
-> +/* Number of instances on each interface. */
-> +#define C2C_NR_INST_NVLINK       14
-> +#define C2C_NR_INST_NVCLINK      12
-> +#define C2C_NR_INST_NVDLINK      16
-> +#define C2C_NR_INST_MAX          16
-> +
-> +/* Register offsets. */
-> +#define C2C_CTRL                    0x864
-> +#define C2C_IN_STATUS               0x868
-> +#define C2C_CYCLE_CNTR              0x86c
-> +#define C2C_IN_RD_CUM_OUTS_CNTR     0x874
-> +#define C2C_IN_RD_REQ_CNTR          0x87c
-> +#define C2C_IN_WR_CUM_OUTS_CNTR     0x884
-> +#define C2C_IN_WR_REQ_CNTR          0x88c
-> +#define C2C_OUT_STATUS              0x890
-> +#define C2C_OUT_RD_CUM_OUTS_CNTR    0x898
-> +#define C2C_OUT_RD_REQ_CNTR         0x8a0
-> +#define C2C_OUT_WR_CUM_OUTS_CNTR    0x8a8
-> +#define C2C_OUT_WR_REQ_CNTR         0x8b0
-> +
-> +/* C2C_IN_STATUS register field. */
-> +#define C2C_IN_STATUS_CYCLE_OVF             BIT(0)
-> +#define C2C_IN_STATUS_IN_RD_CUM_OUTS_OVF    BIT(1)
-> +#define C2C_IN_STATUS_IN_RD_REQ_OVF         BIT(2)
-> +#define C2C_IN_STATUS_IN_WR_CUM_OUTS_OVF    BIT(3)
-> +#define C2C_IN_STATUS_IN_WR_REQ_OVF         BIT(4)
-> +
-> +/* C2C_OUT_STATUS register field. */
-> +#define C2C_OUT_STATUS_OUT_RD_CUM_OUTS_OVF    BIT(0)
-> +#define C2C_OUT_STATUS_OUT_RD_REQ_OVF         BIT(1)
-> +#define C2C_OUT_STATUS_OUT_WR_CUM_OUTS_OVF    BIT(2)
-> +#define C2C_OUT_STATUS_OUT_WR_REQ_OVF         BIT(3)
-> +
-> +/* Events. */
-> +#define C2C_EVENT_CYCLES                0x0
-> +#define C2C_EVENT_IN_RD_CUM_OUTS        0x1
-> +#define C2C_EVENT_IN_RD_REQ             0x2
-> +#define C2C_EVENT_IN_WR_CUM_OUTS        0x3
-> +#define C2C_EVENT_IN_WR_REQ             0x4
-> +#define C2C_EVENT_OUT_RD_CUM_OUTS       0x5
-> +#define C2C_EVENT_OUT_RD_REQ            0x6
-> +#define C2C_EVENT_OUT_WR_CUM_OUTS       0x7
-> +#define C2C_EVENT_OUT_WR_REQ            0x8
-> +
-> +#define C2C_NUM_EVENTS           0x9
-> +#define C2C_MASK_EVENT           0xFF
-> +#define C2C_MAX_ACTIVE_EVENTS    32
-> +
-> +#define C2C_ACTIVE_CPU_MASK        0x0
-> +#define C2C_ASSOCIATED_CPU_MASK    0x1
-> +
-> +/*
-> + * Maximum poll count for reading counter value using high-low-high sequence.
-> + */
-> +#define HILOHI_MAX_POLL    1000
-> +
-> +static unsigned long nv_c2c_pmu_cpuhp_state;
-> +
-> +/* PMU descriptor. */
-> +
-> +/* Tracks the events assigned to the PMU for a given logical index. */
-> +struct nv_c2c_pmu_hw_events {
-> +	/* The events that are active. */
-> +	struct perf_event *events[C2C_MAX_ACTIVE_EVENTS];
-> +
-> +	/*
-> +	 * Each bit indicates a logical counter is being used (or not) for an
-> +	 * event.
-> +	 */
-> +	DECLARE_BITMAP(used_ctrs, C2C_MAX_ACTIVE_EVENTS);
-> +};
-> +
-> +struct nv_c2c_pmu {
-> +	struct pmu pmu;
-> +	struct device *dev;
-> +	struct acpi_device *acpi_dev;
-> +
-> +	const char *name;
-> +	const char *identifier;
-> +
-> +	unsigned int c2c_type;
-> +	unsigned int peer_type;
-> +	unsigned int socket;
-> +	unsigned int nr_inst;
-> +	unsigned int nr_peer;
-> +	unsigned long peer_insts[C2C_NR_PEER_MAX][BITS_TO_LONGS(C2C_NR_INST_MAX)];
-> +	u32 filter_default;
-> +
-> +	struct nv_c2c_pmu_hw_events hw_events;
-> +
-> +	cpumask_t associated_cpus;
-> +	cpumask_t active_cpu;
-> +
-> +	struct hlist_node cpuhp_node;
-> +
-> +	struct attribute **formats;
-> +	const struct attribute_group *attr_groups[6];
-> +
-> +	void __iomem *base_broadcast;
-> +	void __iomem *base[C2C_NR_INST_MAX];
-> +};
-> +
-> +#define to_c2c_pmu(p) (container_of(p, struct nv_c2c_pmu, pmu))
-> +
-> +/* Get event type from perf_event. */
-> +static inline u32 get_event_type(struct perf_event *event)
-> +{
-> +	return (event->attr.config) & C2C_MASK_EVENT;
-> +}
-> +
-> +static inline u32 get_filter_mask(struct perf_event *event)
-> +{
-> +	u32 filter;
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
-> +
-> +	filter = ((u32)event->attr.config1) & c2c_pmu->filter_default;
-> +	if (filter == 0)
-> +		filter = c2c_pmu->filter_default;
-> +
-> +	return filter;
-> +}
-> +
-> +/* PMU operations. */
-> +
-> +static int nv_c2c_pmu_get_event_idx(struct nv_c2c_pmu_hw_events *hw_events,
-> +				    struct perf_event *event)
-> +{
-> +	u32 idx;
-> +
-> +	idx = find_first_zero_bit(hw_events->used_ctrs, C2C_MAX_ACTIVE_EVENTS);
-> +	if (idx >= C2C_MAX_ACTIVE_EVENTS)
-> +		return -EAGAIN;
-> +
-> +	set_bit(idx, hw_events->used_ctrs);
-> +
-> +	return idx;
-> +}
-> +
-> +static bool
-> +nv_c2c_pmu_validate_event(struct pmu *pmu,
-> +			  struct nv_c2c_pmu_hw_events *hw_events,
-> +			  struct perf_event *event)
-> +{
-> +	if (is_software_event(event))
-> +		return true;
-> +
-> +	/* Reject groups spanning multiple HW PMUs. */
-> +	if (event->pmu != pmu)
-> +		return false;
-> +
-> +	return nv_c2c_pmu_get_event_idx(hw_events, event) >= 0;
-> +}
-> +
-> +/*
-> + * Make sure the group of events can be scheduled at once
-> + * on the PMU.
-> + */
-> +static bool nv_c2c_pmu_validate_group(struct perf_event *event)
-> +{
-> +	struct perf_event *sibling, *leader = event->group_leader;
-> +	struct nv_c2c_pmu_hw_events fake_hw_events;
-> +
-> +	if (event->group_leader == event)
-> +		return true;
-> +
-> +	memset(&fake_hw_events, 0, sizeof(fake_hw_events));
-> +
-> +	if (!nv_c2c_pmu_validate_event(event->pmu, &fake_hw_events, leader))
-> +		return false;
-> +
-> +	for_each_sibling_event(sibling, leader) {
-> +		if (!nv_c2c_pmu_validate_event(event->pmu, &fake_hw_events,
-> +					       sibling))
-> +			return false;
-> +	}
-> +
-> +	return nv_c2c_pmu_validate_event(event->pmu, &fake_hw_events, event);
-> +}
-> +
-> +static int nv_c2c_pmu_event_init(struct perf_event *event)
-> +{
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	u32 event_type = get_event_type(event);
-> +
-> +	if (event->attr.type != event->pmu->type ||
-> +	    event_type >= C2C_NUM_EVENTS)
-> +		return -ENOENT;
-> +
-> +	/*
-> +	 * Following other "uncore" PMUs, we do not support sampling mode or
-> +	 * attach to a task (per-process mode).
-> +	 */
-> +	if (is_sampling_event(event)) {
-> +		dev_dbg(c2c_pmu->pmu.dev, "Can't support sampling events\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	if (event->cpu < 0 || event->attach_state & PERF_ATTACH_TASK) {
-> +		dev_dbg(c2c_pmu->pmu.dev, "Can't support per-task counters\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * Make sure the CPU assignment is on one of the CPUs associated with
-> +	 * this PMU.
-> +	 */
-> +	if (!cpumask_test_cpu(event->cpu, &c2c_pmu->associated_cpus)) {
-> +		dev_dbg(c2c_pmu->pmu.dev,
-> +			"Requested cpu is not associated with the PMU\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Enforce the current active CPU to handle the events in this PMU. */
-> +	event->cpu = cpumask_first(&c2c_pmu->active_cpu);
-> +	if (event->cpu >= nr_cpu_ids)
-> +		return -EINVAL;
-> +
-> +	if (!nv_c2c_pmu_validate_group(event))
-> +		return -EINVAL;
-> +
-> +	hwc->idx = -1;
-> +	hwc->config = event_type;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Read 64-bit register as a pair of 32-bit registers using hi-lo-hi sequence.
-> + */
-> +static u64 read_reg64_hilohi(const void __iomem *addr, u32 max_poll_count)
-> +{
-> +	u32 val_lo, val_hi;
-> +	u64 val;
-> +
-> +	/* Use high-low-high sequence to avoid tearing */
-> +	do {
-> +		if (max_poll_count-- == 0) {
-> +			pr_err("NV C2C PMU: timeout hi-low-high sequence\n");
-> +			return 0;
-> +		}
-> +
-> +		val_hi = readl(addr + 4);
-> +		val_lo = readl(addr);
-> +	} while (val_hi != readl(addr + 4));
-> +
-> +	val = (((u64)val_hi << 32) | val_lo);
-> +
-> +	return val;
-> +}
-> +
-> +static void nv_c2c_pmu_check_status(struct nv_c2c_pmu *c2c_pmu, u32 instance)
-> +{
-> +	u32 in_status, out_status;
-> +
-> +	in_status = readl(c2c_pmu->base[instance] + C2C_IN_STATUS);
-> +	out_status = readl(c2c_pmu->base[instance] + C2C_OUT_STATUS);
-> +
-> +	if (in_status || out_status)
-> +		dev_warn(c2c_pmu->dev,
-> +			"C2C PMU overflow in: 0x%x, out: 0x%x\n",
-> +			in_status, out_status);
-> +}
-> +
-> +static u32 nv_c2c_ctr_offset[C2C_NUM_EVENTS] = {
-> +	[C2C_EVENT_CYCLES] = C2C_CYCLE_CNTR,
-> +	[C2C_EVENT_IN_RD_CUM_OUTS] = C2C_IN_RD_CUM_OUTS_CNTR,
-> +	[C2C_EVENT_IN_RD_REQ] = C2C_IN_RD_REQ_CNTR,
-> +	[C2C_EVENT_IN_WR_CUM_OUTS] = C2C_IN_WR_CUM_OUTS_CNTR,
-> +	[C2C_EVENT_IN_WR_REQ] = C2C_IN_WR_REQ_CNTR,
-> +	[C2C_EVENT_OUT_RD_CUM_OUTS] = C2C_OUT_RD_CUM_OUTS_CNTR,
-> +	[C2C_EVENT_OUT_RD_REQ] = C2C_OUT_RD_REQ_CNTR,
-> +	[C2C_EVENT_OUT_WR_CUM_OUTS] = C2C_OUT_WR_CUM_OUTS_CNTR,
-> +	[C2C_EVENT_OUT_WR_REQ] = C2C_OUT_WR_REQ_CNTR,
-> +};
-> +
-> +static u64 nv_c2c_pmu_read_counter(struct perf_event *event)
-> +{
-> +	u32 ctr_id, ctr_offset, filter_mask, filter_idx, inst_idx;
-> +	unsigned long *inst_mask;
-> +	DECLARE_BITMAP(filter_bitmap, C2C_NR_PEER_MAX);
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
-> +	u64 val = 0;
-> +
-> +	filter_mask = get_filter_mask(event);
-> +	bitmap_from_arr32(filter_bitmap, &filter_mask, c2c_pmu->nr_peer);
-> +
-> +	ctr_id = event->hw.config;
-> +	ctr_offset = nv_c2c_ctr_offset[ctr_id];
-> +
-> +	for_each_set_bit(filter_idx, filter_bitmap, c2c_pmu->nr_peer) {
-> +		inst_mask = c2c_pmu->peer_insts[filter_idx];
-> +		for_each_set_bit(inst_idx, inst_mask, c2c_pmu->nr_inst) {
-> +			nv_c2c_pmu_check_status(c2c_pmu, inst_idx);
-> +
-> +			/*
-> +			 * Each instance share same clock and the driver always
-> +			 * enables all instances. So we can use the counts from
-> +			 * one instance for cycle counter.
-> +			 */
-> +			if (ctr_id == C2C_EVENT_CYCLES)
-> +				return read_reg64_hilohi(
-> +					c2c_pmu->base[inst_idx] + ctr_offset,
-> +					HILOHI_MAX_POLL);
-> +
-> +			/*
-> +			 * For other events, sum up the counts from all instances.
-> +			 */
-> +			val += read_reg64_hilohi(
-> +				c2c_pmu->base[inst_idx] + ctr_offset,
-> +				HILOHI_MAX_POLL);
-> +		}
-> +	}
-> +
-> +	return val;
-> +}
-> +
-> +static void nv_c2c_pmu_event_update(struct perf_event *event)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	u64 prev, now;
-> +
-> +	do {
-> +		prev = local64_read(&hwc->prev_count);
-> +		now = nv_c2c_pmu_read_counter(event);
-> +	} while (local64_cmpxchg(&hwc->prev_count, prev, now) != prev);
-> +
-> +	local64_add(now - prev, &event->count);
-> +}
-> +
-> +static void nv_c2c_pmu_start(struct perf_event *event, int pmu_flags)
-> +{
-> +	event->hw.state = 0;
-> +}
-> +
-> +static void nv_c2c_pmu_stop(struct perf_event *event, int pmu_flags)
-> +{
-> +	event->hw.state |= PERF_HES_STOPPED;
-> +}
-> +
-> +static int nv_c2c_pmu_add(struct perf_event *event, int flags)
-> +{
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
-> +	struct nv_c2c_pmu_hw_events *hw_events = &c2c_pmu->hw_events;
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	int idx;
-> +
-> +	if (WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
-> +					   &c2c_pmu->associated_cpus)))
-> +		return -ENOENT;
-> +
-> +	idx = nv_c2c_pmu_get_event_idx(hw_events, event);
-> +	if (idx < 0)
-> +		return idx;
-> +
-> +	hw_events->events[idx] = event;
-> +	hwc->idx = idx;
-> +	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
-> +
-> +	if (flags & PERF_EF_START)
-> +		nv_c2c_pmu_start(event, PERF_EF_RELOAD);
-> +
-> +	/* Propagate changes to the userspace mapping. */
-> +	perf_event_update_userpage(event);
-> +
-> +	return 0;
-> +}
-> +
-> +static void nv_c2c_pmu_del(struct perf_event *event, int flags)
-> +{
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(event->pmu);
-> +	struct nv_c2c_pmu_hw_events *hw_events = &c2c_pmu->hw_events;
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	int idx = hwc->idx;
-> +
-> +	nv_c2c_pmu_stop(event, PERF_EF_UPDATE);
-> +
-> +	hw_events->events[idx] = NULL;
-> +
-> +	clear_bit(idx, hw_events->used_ctrs);
-> +
-> +	perf_event_update_userpage(event);
-> +}
-> +
-> +static void nv_c2c_pmu_read(struct perf_event *event)
-> +{
-> +	nv_c2c_pmu_event_update(event);
-> +}
-> +
-> +static void nv_c2c_pmu_enable(struct pmu *pmu)
-> +{
-> +	void __iomem *bcast;
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(pmu);
-> +
-> +	/* Check if any filter is enabled. */
-> +	if (bitmap_empty(c2c_pmu->hw_events.used_ctrs, C2C_MAX_ACTIVE_EVENTS))
-> +		return;
-> +
-> +	/* Enable all the counters. */
-> +	bcast = c2c_pmu->base_broadcast;
-> +	writel(0x1UL, bcast + C2C_CTRL);
-> +}
-> +
-> +static void nv_c2c_pmu_disable(struct pmu *pmu)
-> +{
-> +	unsigned int idx;
-> +	void __iomem *bcast;
-> +	struct perf_event *event;
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(pmu);
-> +
-> +	/* Disable all the counters. */
-> +	bcast = c2c_pmu->base_broadcast;
-> +	writel(0x0UL, bcast + C2C_CTRL);
-> +
-> +	/*
-> +	 * The counters will start from 0 again on restart.
-> +	 * Update the events immediately to avoid losing the counts.
-> +	 */
-> +	for_each_set_bit(idx, c2c_pmu->hw_events.used_ctrs,
-> +			 C2C_MAX_ACTIVE_EVENTS) {
-> +		event = c2c_pmu->hw_events.events[idx];
-> +
-> +		if (!event)
-> +			continue;
-> +
-> +		nv_c2c_pmu_event_update(event);
-> +
-> +		local64_set(&event->hw.prev_count, 0ULL);
-> +	}
-> +}
-> +
-> +/* PMU identifier attribute. */
-> +
-> +static ssize_t nv_c2c_pmu_identifier_show(struct device *dev,
-> +					  struct device_attribute *attr,
-> +					  char *page)
-> +{
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
-> +
-> +	return sysfs_emit(page, "%s\n", c2c_pmu->identifier);
-> +}
-> +
-> +static struct device_attribute nv_c2c_pmu_identifier_attr =
-> +	__ATTR(identifier, 0444, nv_c2c_pmu_identifier_show, NULL);
-> +
-> +static struct attribute *nv_c2c_pmu_identifier_attrs[] = {
-> +	&nv_c2c_pmu_identifier_attr.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group nv_c2c_pmu_identifier_attr_group = {
-> +	.attrs = nv_c2c_pmu_identifier_attrs,
-> +};
-> +
-> +/* Peer attribute. */
-> +
-> +static ssize_t nv_c2c_pmu_peer_show(struct device *dev,
-> +	struct device_attribute *attr,
-> +	char *page)
-> +{
-> +	const char *peer_type[C2C_PEER_TYPE_COUNT] = {
-> +		[C2C_PEER_TYPE_CPU] = "cpu",
-> +		[C2C_PEER_TYPE_GPU] = "gpu",
-> +		[C2C_PEER_TYPE_CXLMEM] = "cxlmem",
-> +	};
-> +
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
-> +	return sysfs_emit(page, "nr_%s=%u\n", peer_type[c2c_pmu->peer_type],
-> +		c2c_pmu->nr_peer);
-> +}
-> +
-> +static struct device_attribute nv_c2c_pmu_peer_attr =
-> +	__ATTR(peer, 0444, nv_c2c_pmu_peer_show, NULL);
-> +
-> +static struct attribute *nv_c2c_pmu_peer_attrs[] = {
-> +	&nv_c2c_pmu_peer_attr.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group nv_c2c_pmu_peer_attr_group = {
-> +	.attrs = nv_c2c_pmu_peer_attrs,
-> +};
-> +
-> +/* Format attributes. */
-> +
-> +#define NV_C2C_PMU_EXT_ATTR(_name, _func, _config)			\
-> +	(&((struct dev_ext_attribute[]){				\
-> +		{							\
-> +			.attr = __ATTR(_name, 0444, _func, NULL),	\
-> +			.var = (void *)_config				\
-> +		}							\
-> +	})[0].attr.attr)
-> +
-> +#define NV_C2C_PMU_FORMAT_ATTR(_name, _config) \
-> +	NV_C2C_PMU_EXT_ATTR(_name, device_show_string, _config)
-> +
-> +#define NV_C2C_PMU_FORMAT_EVENT_ATTR \
-> +	NV_C2C_PMU_FORMAT_ATTR(event, "config:0-3")
-> +
-> +static struct attribute *nv_c2c_nvlink_pmu_formats[] = {
-> +	NV_C2C_PMU_FORMAT_EVENT_ATTR,
-> +	NV_C2C_PMU_FORMAT_ATTR(gpu_mask, "config1:0-1"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *nv_c2c_pmu_formats[] = {
-> +	NV_C2C_PMU_FORMAT_EVENT_ATTR,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group *
-> +nv_c2c_pmu_alloc_format_attr_group(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	struct attribute_group *format_group;
-> +	struct device *dev = c2c_pmu->dev;
-> +
-> +	format_group =
-> +		devm_kzalloc(dev, sizeof(struct attribute_group), GFP_KERNEL);
-> +	if (!format_group)
-> +		return NULL;
-> +
-> +	format_group->name = "format";
-> +	format_group->attrs = c2c_pmu->formats;
-> +
-> +	return format_group;
-> +}
-> +
-> +/* Event attributes. */
-> +
-> +static ssize_t nv_c2c_pmu_sysfs_event_show(struct device *dev,
-> +					   struct device_attribute *attr,
-> +					   char *buf)
-> +{
-> +	struct perf_pmu_events_attr *pmu_attr;
-> +
-> +	pmu_attr = container_of(attr, typeof(*pmu_attr), attr);
-> +	return sysfs_emit(buf, "event=0x%llx\n", pmu_attr->id);
-> +}
-> +
-> +#define NV_C2C_PMU_EVENT_ATTR(_name, _config)	\
-> +	PMU_EVENT_ATTR_ID(_name, nv_c2c_pmu_sysfs_event_show, _config)
-> +
-> +static struct attribute *nv_c2c_pmu_events[] = {
-> +	NV_C2C_PMU_EVENT_ATTR(cycles, C2C_EVENT_CYCLES),
-> +	NV_C2C_PMU_EVENT_ATTR(in_rd_cum_outs, C2C_EVENT_IN_RD_CUM_OUTS),
-> +	NV_C2C_PMU_EVENT_ATTR(in_rd_req, C2C_EVENT_IN_RD_REQ),
-> +	NV_C2C_PMU_EVENT_ATTR(in_wr_cum_outs, C2C_EVENT_IN_WR_CUM_OUTS),
-> +	NV_C2C_PMU_EVENT_ATTR(in_wr_req, C2C_EVENT_IN_WR_REQ),
-> +	NV_C2C_PMU_EVENT_ATTR(out_rd_cum_outs, C2C_EVENT_OUT_RD_CUM_OUTS),
-> +	NV_C2C_PMU_EVENT_ATTR(out_rd_req, C2C_EVENT_OUT_RD_REQ),
-> +	NV_C2C_PMU_EVENT_ATTR(out_wr_cum_outs, C2C_EVENT_OUT_WR_CUM_OUTS),
-> +	NV_C2C_PMU_EVENT_ATTR(out_wr_req, C2C_EVENT_OUT_WR_REQ),
-> +	NULL
-> +};
-> +
-> +static umode_t
-> +nv_c2c_pmu_event_attr_is_visible(struct kobject *kobj, struct attribute *attr,
-> +				 int unused)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
-> +	struct perf_pmu_events_attr *eattr;
-> +
-> +	eattr = container_of(attr, typeof(*eattr), attr.attr);
-> +
-> +	if (c2c_pmu->c2c_type == C2C_TYPE_NVDLINK) {
-> +		/* Only incoming reads are available. */
-> +		switch (eattr->id) {
-> +		case C2C_EVENT_IN_WR_CUM_OUTS:
-> +		case C2C_EVENT_IN_WR_REQ:
-> +		case C2C_EVENT_OUT_RD_CUM_OUTS:
-> +		case C2C_EVENT_OUT_RD_REQ:
-> +		case C2C_EVENT_OUT_WR_CUM_OUTS:
-> +		case C2C_EVENT_OUT_WR_REQ:
-> +			return 0;
-> +		default:
-> +			return attr->mode;
-> +		}
-> +	} else {
-> +		/* Hide the write events if C2C connected to another SoC. */
-> +		if (c2c_pmu->peer_type == C2C_PEER_TYPE_CPU) {
-> +			switch (eattr->id) {
-> +			case C2C_EVENT_IN_WR_CUM_OUTS:
-> +			case C2C_EVENT_IN_WR_REQ:
-> +			case C2C_EVENT_OUT_WR_CUM_OUTS:
-> +			case C2C_EVENT_OUT_WR_REQ:
-> +				return 0;
-> +			default:
-> +				return attr->mode;
-> +			}
-> +		}
-> +	}
-> +
-> +	return attr->mode;
-> +}
-> +
-> +static const struct attribute_group nv_c2c_pmu_events_group = {
-> +	.name = "events",
-> +	.attrs = nv_c2c_pmu_events,
-> +	.is_visible = nv_c2c_pmu_event_attr_is_visible,
-> +};
-> +
-> +/* Cpumask attributes. */
-> +
-> +static ssize_t nv_c2c_pmu_cpumask_show(struct device *dev,
-> +				       struct device_attribute *attr, char *buf)
-> +{
-> +	struct pmu *pmu = dev_get_drvdata(dev);
-> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(pmu);
-> +	struct dev_ext_attribute *eattr =
-> +		container_of(attr, struct dev_ext_attribute, attr);
-> +	unsigned long mask_id = (unsigned long)eattr->var;
-> +	const cpumask_t *cpumask;
-> +
-> +	switch (mask_id) {
-> +	case C2C_ACTIVE_CPU_MASK:
-> +		cpumask = &c2c_pmu->active_cpu;
-> +		break;
-> +	case C2C_ASSOCIATED_CPU_MASK:
-> +		cpumask = &c2c_pmu->associated_cpus;
-> +		break;
-> +	default:
-> +		return 0;
-> +	}
-> +	return cpumap_print_to_pagebuf(true, buf, cpumask);
-> +}
-> +
-> +#define NV_C2C_PMU_CPUMASK_ATTR(_name, _config)			\
-> +	NV_C2C_PMU_EXT_ATTR(_name, nv_c2c_pmu_cpumask_show,	\
-> +				(unsigned long)_config)
-> +
-> +static struct attribute *nv_c2c_pmu_cpumask_attrs[] = {
-> +	NV_C2C_PMU_CPUMASK_ATTR(cpumask, C2C_ACTIVE_CPU_MASK),
-> +	NV_C2C_PMU_CPUMASK_ATTR(associated_cpus, C2C_ASSOCIATED_CPU_MASK),
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group nv_c2c_pmu_cpumask_attr_group = {
-> +	.attrs = nv_c2c_pmu_cpumask_attrs,
-> +};
-> +
-> +/* Per PMU device attribute groups. */
-> +
-> +static int nv_c2c_pmu_alloc_attr_groups(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	const struct attribute_group **attr_groups = c2c_pmu->attr_groups;
-> +
-> +	attr_groups[0] = nv_c2c_pmu_alloc_format_attr_group(c2c_pmu);
-> +	attr_groups[1] = &nv_c2c_pmu_events_group;
-> +	attr_groups[2] = &nv_c2c_pmu_cpumask_attr_group;
-> +	attr_groups[3] = &nv_c2c_pmu_identifier_attr_group;
-> +	attr_groups[4] = &nv_c2c_pmu_peer_attr_group;
-> +
-> +	if (!attr_groups[0])
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static int nv_c2c_pmu_online_cpu(unsigned int cpu, struct hlist_node *node)
-> +{
-> +	struct nv_c2c_pmu *c2c_pmu =
-> +		hlist_entry_safe(node, struct nv_c2c_pmu, cpuhp_node);
-> +
-> +	if (!cpumask_test_cpu(cpu, &c2c_pmu->associated_cpus))
-> +		return 0;
-> +
-> +	/* If the PMU is already managed, there is nothing to do */
-> +	if (!cpumask_empty(&c2c_pmu->active_cpu))
-> +		return 0;
-> +
-> +	/* Use this CPU for event counting */
-> +	cpumask_set_cpu(cpu, &c2c_pmu->active_cpu);
-> +
-> +	return 0;
-> +}
-> +
-> +static int nv_c2c_pmu_cpu_teardown(unsigned int cpu, struct hlist_node *node)
-> +{
-> +	unsigned int dst;
-> +
-> +	struct nv_c2c_pmu *c2c_pmu =
-> +		hlist_entry_safe(node, struct nv_c2c_pmu, cpuhp_node);
-> +
-> +	/* Nothing to do if this CPU doesn't own the PMU */
-> +	if (!cpumask_test_and_clear_cpu(cpu, &c2c_pmu->active_cpu))
-> +		return 0;
-> +
-> +	/* Choose a new CPU to migrate ownership of the PMU to */
-> +	dst = cpumask_any_and_but(&c2c_pmu->associated_cpus,
-> +				  cpu_online_mask, cpu);
-> +	if (dst >= nr_cpu_ids)
-> +		return 0;
-> +
-> +	/* Use this CPU for event counting */
-> +	perf_pmu_migrate_context(&c2c_pmu->pmu, cpu, dst);
-> +	cpumask_set_cpu(dst, &c2c_pmu->active_cpu);
-> +
-> +	return 0;
-> +}
-> +
-> +static int nv_c2c_pmu_get_cpus(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	int ret = 0, socket = c2c_pmu->socket, cpu;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		if (cpu_to_node(cpu) == socket)
-> +			cpumask_set_cpu(cpu, &c2c_pmu->associated_cpus);
-> +	}
-> +
-> +	if (cpumask_empty(&c2c_pmu->associated_cpus)) {
-> +		dev_dbg(c2c_pmu->dev,
-> +			"No cpu associated with C2C PMU socket-%u\n", socket);
-> +		ret = -ENODEV;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int nv_c2c_pmu_init_socket(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	const char *uid_str;
-> +	int ret, socket;
-> +
-> +	uid_str = acpi_device_uid(c2c_pmu->acpi_dev);
-> +	if (!uid_str) {
-> +		ret = -ENODEV;
-> +		goto fail;
-> +	}
-> +
-> +	ret = kstrtou32(uid_str, 0, &socket);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	c2c_pmu->socket = socket;
-> +	return 0;
-> +
-> +fail:
-> +	dev_err(c2c_pmu->dev, "Failed to initialize socket\n");
-> +	return ret;
-> +}
-> +
-> +static int nv_c2c_pmu_init_id(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	const char *name_fmt[C2C_TYPE_COUNT] = {
-> +		[C2C_TYPE_NVLINK] = "nvidia_nvlink_c2c_pmu_%u",
-> +		[C2C_TYPE_NVCLINK] = "nvidia_nvclink_pmu_%u",
-> +		[C2C_TYPE_NVDLINK] = "nvidia_nvdlink_pmu_%u",
-> +	};
-> +
-> +	char *name;
-> +	int ret;
-> +
-> +	name = devm_kasprintf(c2c_pmu->dev, GFP_KERNEL,
-> +		name_fmt[c2c_pmu->c2c_type], c2c_pmu->socket);
-> +	if (!name) {
-> +		ret = -ENOMEM;
-> +		goto fail;
-> +	}
-> +
-> +	c2c_pmu->name = name;
-> +
-> +	c2c_pmu->identifier = acpi_device_hid(c2c_pmu->acpi_dev);
-> +
-> +	return 0;
-> +
-> +fail:
-> +	dev_err(c2c_pmu->dev, "Failed to initialize name\n");
-> +	return ret;
-> +}
-> +
-> +static int nv_c2c_pmu_init_filter(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	u32 cpu_en = 0;
-> +	struct device *dev = c2c_pmu->dev;
-> +
-> +	if (c2c_pmu->c2c_type == C2C_TYPE_NVDLINK) {
-> +		c2c_pmu->peer_type = C2C_PEER_TYPE_CXLMEM;
-> +
-> +		c2c_pmu->nr_inst = C2C_NR_INST_NVDLINK;
-> +		c2c_pmu->peer_insts[0][0] = (1UL << c2c_pmu->nr_inst) - 1;
-> +
-> +		c2c_pmu->nr_peer = C2C_NR_PEER_CXLMEM;
-> +		c2c_pmu->filter_default = (1 << c2c_pmu->nr_peer) - 1;
-> +
-> +		c2c_pmu->formats = nv_c2c_pmu_formats;
-> +
-> +		return 0;
-> +	}
-> +
-> +	c2c_pmu->nr_inst = (c2c_pmu->c2c_type == C2C_TYPE_NVLINK) ?
-> +		C2C_NR_INST_NVLINK : C2C_NR_INST_NVCLINK;
-> +
-> +	if (device_property_read_u32(dev, "cpu_en_mask", &cpu_en))
-> +		dev_dbg(dev, "no cpu_en_mask property\n");
-> +
-> +	if (cpu_en) {
-> +		c2c_pmu->peer_type = C2C_PEER_TYPE_CPU;
-> +
-> +		/* Fill peer_insts bitmap with instances connected to peer CPU. */
-> +		bitmap_from_arr32(c2c_pmu->peer_insts[0], &cpu_en,
-> +				c2c_pmu->nr_inst);
-> +
-> +		c2c_pmu->nr_peer = 1;
-> +		c2c_pmu->formats = nv_c2c_pmu_formats;
-> +	} else {
-> +		u32 i;
-> +		u32 gpu_en = 0;
-> +		const char *props[C2C_NR_PEER_MAX] = {
-> +			"gpu0_en_mask", "gpu1_en_mask"
-> +		};
-> +
-> +		for (i = 0; i < C2C_NR_PEER_MAX; i++) {
-> +			if (device_property_read_u32(dev, props[i], &gpu_en))
-> +				dev_dbg(dev, "no %s property\n", props[i]);
-> +
-> +			if (gpu_en) {
-> +				/* Fill peer_insts bitmap with instances connected to peer GPU. */
-> +				bitmap_from_arr32(c2c_pmu->peer_insts[i], &gpu_en,
-> +						c2c_pmu->nr_inst);
-> +
-> +				c2c_pmu->nr_peer++;
-> +			}
-> +		}
-> +
-> +		if (c2c_pmu->nr_peer == 0) {
-> +			dev_err(dev, "No GPU is enabled\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		c2c_pmu->peer_type = C2C_PEER_TYPE_GPU;
-> +		c2c_pmu->formats = nv_c2c_nvlink_pmu_formats;
-> +	}
-> +
-> +	c2c_pmu->filter_default = (1 << c2c_pmu->nr_peer) - 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static void *nv_c2c_pmu_init_pmu(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +	struct nv_c2c_pmu *c2c_pmu;
-> +	struct acpi_device *acpi_dev;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	acpi_dev = ACPI_COMPANION(dev);
-> +	if (!acpi_dev)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	c2c_pmu = devm_kzalloc(dev, sizeof(*c2c_pmu), GFP_KERNEL);
-> +	if (!c2c_pmu)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	c2c_pmu->dev = dev;
-> +	c2c_pmu->acpi_dev = acpi_dev;
-> +	c2c_pmu->c2c_type = (unsigned int)(unsigned long)device_get_match_data(dev);
-> +	platform_set_drvdata(pdev, c2c_pmu);
-> +
-> +	ret = nv_c2c_pmu_init_socket(c2c_pmu);
-> +	if (ret)
-> +		goto done;
-> +
-> +	ret = nv_c2c_pmu_init_id(c2c_pmu);
-> +	if (ret)
-> +		goto done;
-> +
-> +	ret = nv_c2c_pmu_init_filter(c2c_pmu);
-> +	if (ret)
-> +		goto done;
-> +
-> +done:
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return c2c_pmu;
-> +}
-> +
-> +static int nv_c2c_pmu_init_mmio(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	int i;
-> +	struct device *dev = c2c_pmu->dev;
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +
-> +	/* Map the address of all the instances. */
-> +	for (i = 0; i < c2c_pmu->nr_inst; i++) {
-> +		c2c_pmu->base[i] = devm_platform_ioremap_resource(pdev, i);
-> +		if (IS_ERR(c2c_pmu->base[i])) {
-> +			dev_err(dev, "Failed map address for instance %d\n", i);
-> +			return PTR_ERR(c2c_pmu->base[i]);
-> +		}
-> +	}
-> +
-> +	/* Map broadcast address. */
-> +	c2c_pmu->base_broadcast = devm_platform_ioremap_resource(pdev,
-> +								 c2c_pmu->nr_inst);
-> +	if (IS_ERR(c2c_pmu->base_broadcast)) {
-> +		dev_err(dev, "Failed map broadcast address\n");
-> +		return PTR_ERR(c2c_pmu->base_broadcast);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int nv_c2c_pmu_register_pmu(struct nv_c2c_pmu *c2c_pmu)
-> +{
-> +	int ret;
-> +
-> +	ret = cpuhp_state_add_instance(nv_c2c_pmu_cpuhp_state,
-> +				       &c2c_pmu->cpuhp_node);
-> +	if (ret) {
-> +		dev_err(c2c_pmu->dev, "Error %d registering hotplug\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	c2c_pmu->pmu = (struct pmu) {
-> +		.parent		= c2c_pmu->dev,
-> +		.task_ctx_nr	= perf_invalid_context,
-> +		.pmu_enable	= nv_c2c_pmu_enable,
-> +		.pmu_disable	= nv_c2c_pmu_disable,
-> +		.event_init	= nv_c2c_pmu_event_init,
-> +		.add		= nv_c2c_pmu_add,
-> +		.del		= nv_c2c_pmu_del,
-> +		.start		= nv_c2c_pmu_start,
-> +		.stop		= nv_c2c_pmu_stop,
-> +		.read		= nv_c2c_pmu_read,
-> +		.attr_groups	= c2c_pmu->attr_groups,
-> +		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE |
-> +					PERF_PMU_CAP_NO_INTERRUPT,
-> +	};
-> +
-> +	ret = perf_pmu_register(&c2c_pmu->pmu, c2c_pmu->name, -1);
-> +	if (ret) {
-> +		dev_err(c2c_pmu->dev, "Failed to register C2C PMU: %d\n", ret);
-> +		cpuhp_state_remove_instance(nv_c2c_pmu_cpuhp_state,
-> +					  &c2c_pmu->cpuhp_node);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int nv_c2c_pmu_probe(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +	struct nv_c2c_pmu *c2c_pmu;
-> +
-> +	c2c_pmu = nv_c2c_pmu_init_pmu(pdev);
-> +	if (IS_ERR(c2c_pmu))
-> +		return PTR_ERR(c2c_pmu);
-> +
-> +	ret = nv_c2c_pmu_init_mmio(c2c_pmu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = nv_c2c_pmu_get_cpus(c2c_pmu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = nv_c2c_pmu_alloc_attr_groups(c2c_pmu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = nv_c2c_pmu_register_pmu(c2c_pmu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_dbg(c2c_pmu->dev, "Registered %s PMU\n", c2c_pmu->name);
-> +
-> +	return 0;
-> +}
-> +
-> +static void nv_c2c_pmu_device_remove(struct platform_device *pdev)
-> +{
-> +	struct nv_c2c_pmu *c2c_pmu = platform_get_drvdata(pdev);
-> +
-> +	perf_pmu_unregister(&c2c_pmu->pmu);
-> +	cpuhp_state_remove_instance(nv_c2c_pmu_cpuhp_state, &c2c_pmu->cpuhp_node);
-> +}
-> +
-> +static const struct acpi_device_id nv_c2c_pmu_acpi_match[] = {
-> +	{ "NVDA2023", (kernel_ulong_t)C2C_TYPE_NVLINK },
-> +	{ "NVDA2022", (kernel_ulong_t)C2C_TYPE_NVCLINK },
-> +	{ "NVDA2020", (kernel_ulong_t)C2C_TYPE_NVDLINK },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(acpi, nv_c2c_pmu_acpi_match);
-> +
-> +static struct platform_driver nv_c2c_pmu_driver = {
-> +	.driver = {
-> +		.name = "nvidia-t410-c2c-pmu",
-> +		.acpi_match_table = ACPI_PTR(nv_c2c_pmu_acpi_match),
-> +		.suppress_bind_attrs = true,
-> +	},
-> +	.probe = nv_c2c_pmu_probe,
-> +	.remove = nv_c2c_pmu_device_remove,
-> +};
-> +
-> +static int __init nv_c2c_pmu_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
-> +				      "perf/nvidia/c2c:online",
-> +				      nv_c2c_pmu_online_cpu,
-> +				      nv_c2c_pmu_cpu_teardown);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	nv_c2c_pmu_cpuhp_state = ret;
-> +	return platform_driver_register(&nv_c2c_pmu_driver);
-> +}
-> +
-> +static void __exit nv_c2c_pmu_exit(void)
-> +{
-> +	platform_driver_unregister(&nv_c2c_pmu_driver);
-> +	cpuhp_remove_multi_state(nv_c2c_pmu_cpuhp_state);
-> +}
-> +
-> +module_init(nv_c2c_pmu_init);
-> +module_exit(nv_c2c_pmu_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("NVIDIA Tegra410 C2C PMU driver");
-> +MODULE_AUTHOR("Besar Wicaksono <bwicaksono@nvidia.com>");
-> -- 
-> 2.43.0
->
+> [1] https://lore.kernel.org/lkml/20250211103737.447704-1-sumitg@nvidia.com/
+> [2] https://lore.kernel.org/lkml/20250823200121.1320197-1-sumitg@nvidia.com/
+> [3] https://lore.kernel.org/lkml/20251001150104.1275188-1-sumitg@nvidia.com/
+> [4] https://lore.kernel.org/lkml/20251105113844.4086250-1-sumitg@nvidia.com/
+> [5] https://lore.kernel.org/lkml/20251223121307.711773-1-sumitg@nvidia.com/
+> [6] https://lore.kernel.org/lkml/20260120145623.2959636-1-sumitg@nvidia.com/
+> [7] https://lore.kernel.org/lkml/66f58f43-631b-40a0-8d42-4e90cd24b757@arm.com/
 >
