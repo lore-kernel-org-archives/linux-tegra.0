@@ -1,188 +1,653 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013028.outbound.protection.outlook.com [40.93.196.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B3B27B347;
-	Mon,  2 Feb 2026 08:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4758F353EE1
+	for <linux-tegra@vger.kernel.org>; Mon,  2 Feb 2026 08:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770019845; cv=fail; b=YYxmA8gPCfwHw9Jt7cbK5DC2js2NMXMoudC2f6sgoFF4t7otfd6zsrfJZvWxkuUCsmwHhAuFw9rOrBratIStenhQsNt0Q8tUl5dkw7ZrcgTTrvOP8xSZIyDCfJ3UbInxsBm6rKhzD0ELqEKtkTdLY1lHgcSfelQidVbzEAge26M=
+	t=1770020663; cv=pass; b=D7AqNAdwWgMQKxRtSoAqFJYCjjHQxQHT4lnPljLzq8lFu9FY0twztp9rUonUrLM78tlrmXEhQnmQtt0Q3d4bS4TvXC6Ea9/iCIgDEs/WwLPySpYQCrbLCAWTdjdxLWJr48tKKk4TqwrL8nMKxmcxRozyoNDf/cqkquI13Hg1zQU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770019845; c=relaxed/simple;
-	bh=0QceBAIq9QpOeJPhRzQMYPqL86mFwPrGs3zOk/e9R4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mhzmJFCyOfVMNQ3pHKLWziTurThrMDfVg08kr7CKLcf0RcvQeyO0AvMl1zbKk5Jm2QHyrxvSJtHaNMD3c4jsufJhLFFV1+yoEObkNKYx+p8lDywsDHJiXQhSl7j5e6+iYmbEY+zb2RM5uXQxW71/3QBtkfcw69uZ0bKlZY3VQlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DNCcpfyu; arc=fail smtp.client-ip=40.93.196.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1770020663; c=relaxed/simple;
+	bh=nCJwHZwYsH/XXrMX2LVTrLBUrBij6ZKO67jRl7VsH2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X4/RENP06a1MRkKeCZ99gOJd2sWZmOcDaMiXumFJ1JXBiBXyytztgCQwRjBi4BfGrsdIImk2pxMhHH93jHg+929SYYIkWXASU0cKiyJJXvBBRcYqizd8B1D/+MSNcrcHHMWs/7t1ha/zjmJMAg1yC4QCT7+r/GaOSHZBRgIL/po=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYYUv821; arc=pass smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DNCcpfyu"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C6Xf5xUOGi6YBde54o8BgKsPx+CyWfBpDcEETwrYXQ0tQbR9SGNAOPxpWV9d6D98+d1mXJmsKqlX96i3WB03tGeoHS9UbV7m2nfvmCIA1SnKmLkQ4p3fH2BQsXjSKrJuBVskx+iS3yYHket23xLn0JYahzUanF1J1Z4gy1yXPIgg720c2W56gBdQKXPun4xxX6QIEEMAEJ/UnKm06o8bijxra6/Y3SlZgKk9a/HOlHnqz2w6pdAhOzFiahpgAIxudnRj86UK3ZiTiGfDdzMX9leUKy2SgGvMGqEgV32kh3r1zaYHsZu6yP+trB22hwZPNEpZOVpDXdiK3BQArOc0/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JxgLYIH9MupBXDj22MHRB4osb6TuvZwPRGeAcGoCEJs=;
- b=CMzr/fq9GE9aaBAwbVVR0MGeZmHp9/uxu0Zo0yzjjsLHfw0tyh6iSWwLPauitr8o2bIddYpjJnIXUXb0vo2FAEoZ2eligBao4v93OpwD4OTJ+dvsfIvy34b1sjXDS8VQzzQ7ICLgZ0r6pe33eEHP8RFB/YsAQJFG5FZmskMD9AUgCXtLh+jAoH2iy7I8xUFNer+rtQmjEbApIr3anbzFrhBeJUOaaP532SqX+Yyy9vHowy3iO9CcHzCYi+hoNNlnAJoKg6e6siMnuDGwsBKTayRJRYzbqewamSdhsw47xkPNeeiNCcHXp7p4uAKQfBnnK+r0NUZW0n4o6/4tqnLxLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JxgLYIH9MupBXDj22MHRB4osb6TuvZwPRGeAcGoCEJs=;
- b=DNCcpfyufeLL9d+/Xlh8nCfjrT5VSCNYlPy6rvOkh8sAOdbfxfjizUj/OJrS+g25PhZFw0FavOVhyJtWwgRmxNs/f5jj3g5vaUljazpKc4Z3RGT0iVkYueJupZiN2WPqIVh9hvTGdChS0RpVQCo4GDEADufv3upBbz9MrEoXDFgmu4mYrXx3kkz8kGyf8KLRpSklUA2SmWSjxFZcdiecGeX6BArtCoA0+96jja69DmV43pQ180eWgB/k4VzHCIQNeky5F2wTzKS0FgpOxUdjxkBH+YfYlBGMWmiqPjYnD3i6Tas4IKtdVruSknvlJeq5GwmCJ9wOR807lJcIg1RuPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by IA1PR12MB6649.namprd12.prod.outlook.com (2603:10b6:208:3a2::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
- 2026 08:10:41 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9564.007; Mon, 2 Feb 2026
- 08:10:40 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/4] usb: phy: tegra: HSIC adjustments
-Date: Mon, 02 Feb 2026 17:10:37 +0900
-Message-ID: <1952298.CQOukoFCf9@senjougahara>
-In-Reply-To: <20260202080526.23487-1-clamor95@gmail.com>
-References: <20260202080526.23487-1-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0013.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:26c::20) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYYUv821"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42fbc305882so2557148f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Feb 2026 00:24:17 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770020655; cv=none;
+        d=google.com; s=arc-20240605;
+        b=WdxJPFHvTiZU2Nkug6ktX9xoeTs8+i7RBQpnh0Jd9hIPc0j+XxzTTUjMU+jZ2NhC4n
+         wQH352T9uflDU/NTtKHC9NNtLxJi2VpcNzOGWou1ODacS/uP2w25dvom4woneiQcJ6Iz
+         JdNer0REd9J6+34zqiqJn4XjvhK9Ew9dR89megOHpa4wuZacaCD9yFVal77nfcWrcIdi
+         oqmTdeOAsRCKeNNTGprQ7DM4iBRHPcazc/OVRu1UoX7mRlKWkjaQSyTzwC9tK1bzDLOE
+         PMf/MUdAsHOyQ4Qbzz7zlJqfdVLCjEcfAe7Q0OVKavn/vY4+K/Qnd8i8TbcqqNQdGfyp
+         vUbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=P1RyF9+sNePlBjrihwCTgTMvXw1Ck7aGk6ank57Xtvs=;
+        fh=H6erFguEDZCinVKua+A80dO2bHqdFsIvUr4GdRQPfwM=;
+        b=P99MA1frynL8DUC3wLi+nR7PdI85i4iH/p3JjyrzbuzmV5CE2yuaxUB25RmW98xwKp
+         4kd22f0H2xViYWYoA9GAjJPWQzb3e4k2P1aAs27PXH/YFO1YmZN84ZZpDnRMYQs33fFx
+         wMFCpTwFOtVCuiM+1JA0aAj1HBB5JJWtg6WBvMRTSICH4FqpJtiagJ0XmxYSpoY3wBno
+         NeHYQWtur0DxISRHAykg3rE6xS/3f4It6nfyirgNXpqd9sXXNeh0BeDujbiBqcpZWSKb
+         2dzTiXNhQG6UEMyXSSCPrGRoaDRiSjuJBryWamFjPU+kuJiApWdrM11fGSy2R80fbdqW
+         25sQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770020655; x=1770625455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P1RyF9+sNePlBjrihwCTgTMvXw1Ck7aGk6ank57Xtvs=;
+        b=RYYUv821n6+bDWkf+tFYLcg4JuUzbtYuY6I3027F7JsQCiQh45ma7+amPyEXnovmhn
+         cr4lwkkpi6WwvwKcxbAbEpNBqNomIhYTSPJwPBE4n9bZOQXzlmo1hPjn9DvESeXKclZ/
+         wiNJTlsF6FP+qjGcyRzgRD0E/CebdLpC1PAluYv1zwfgH5/rQmaVtFZdFhotWYFXlvNC
+         LUTJoREUOGk6dYhf3yqDnwgVHi71iBaMH6X0RpUS6g0+NReX2yj83CwqriMSW5COZC5a
+         JeZsOeF0iEeKEWq+eUBWeWFZIj+QW5ApTSTKWAIG/5COEQLhqUkEOzs6H/119ONZJ+xZ
+         B7og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770020655; x=1770625455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=P1RyF9+sNePlBjrihwCTgTMvXw1Ck7aGk6ank57Xtvs=;
+        b=ZbxL1wYnOZZqzj2WLfrJfdlK+Zh2tybFAYhUPxEM0u9T0U8lCDnAZT83efc1v8DvJZ
+         8HhsstviY6egv2JkFvTsIeaDRRk8e0efhJc4Xaei2ynbjCyJ7GZj7y6huBSA3eNboJWR
+         CqRxu51qJ4GZq/MiGyuTq/1eHCmoJyV0GGA3KzW1CW2RqGFvaGslV/9DWcNnutUzx8pI
+         WnqMOSJ3Toh435jUUTtjm5+zFImo8aSzaYke29cDRRXdo1IEAZeazgzUsSHJfBQC9jv4
+         8c4Z3eXd+dcy7j6hjfYBlGdTUM4wr+NuMSq2tlMay/aYhocZxSPN2dj7QEM4Hytw0QxH
+         DkYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWass48mFtZRHu4oaSocbKUAoKiNPJrF5QsWbXUSUalZ/272wAp3hk2Nxk4xOTVI/dlDKifgO1ZlWNkcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSK1HQgbfLxd6QFi1AnBvwBfSM7llZyFnd3Jki6hPqvG1QZjRO
+	1BbaUUICjtynlkd2T190dpZJGdxc3RQamls5euPmR4+tI3i9OjJzlO9WOIJejoGyFOnTm8AqW/R
+	FlHF7UiZT/m6vnOZqI+3r95JyMkKYSNM=
+X-Gm-Gg: AZuq6aJfKByB/dAZmYVtA+vKPDLEa2CoD7rSnjnfT+90shejTdNrgcIJsx0NSJS1mwU
+	Qb4SM0FtWVlu28fdOaki/Hya0b25blo7q0F4g/qBAl+YCVKYBzbOL24obMVO762uCJAspbr8E96
+	QVtsZdMoXLikFPa5NiDd7plmx4Yfv294HEFvk6pDJLirMT5nwWAFbcVKviBjQ4QwvVHZmDH1dhS
+	wPEeDkh6cZu1yblP5Qz/n2hOgkFlDNQaeysyy18pPvJX9ObIkI8EQaBzV5SNhIE4YanKqBZzolb
+	E22a0Lg=
+X-Received: by 2002:a5d:64c7:0:b0:435:b728:c979 with SMTP id
+ ffacd0b85a97d-435f3a6f814mr13098748f8f.8.1770020654964; Mon, 02 Feb 2026
+ 00:24:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|IA1PR12MB6649:EE_
-X-MS-Office365-Filtering-Correlation-Id: 166686c8-fa01-46a6-4859-08de62328e11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|10070799003|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YzA4akR1Zk5iKytPUFE3UWZqL2diU2FwU29Bdm5lRVJsVWRxbWJtdTFnWnk3?=
- =?utf-8?B?dDNrbWwwejVWaVY3RXNpMG4xVkRNZlBSMUFNbXFPVWV3SUZnY251SzNBRCtS?=
- =?utf-8?B?clJVVjhkaUppNklKVlV1K0ZxWTJjbWdvMEtpNFhZMFdSVTZkT2tjTDZaOENK?=
- =?utf-8?B?S3FpN0VlcDkrdC9ZeTAyZEhjRDZyalFEeTNFcCtGRVUrd0Jpd3YyQm4ybUhY?=
- =?utf-8?B?WE5HK2dxN1Q2cWx0dTFWQnU4MUhSUWI0QmRTa3o1TnRTMzRTL3M5NWpOM012?=
- =?utf-8?B?MU1rRkZNNm4xWU1kNFFWOVh4V2hQL2tPYVZwVUlxd1d0cVFENEJyRE8wSWVh?=
- =?utf-8?B?TzRIWDlGaW4wRitzcXBHc3ZiYUlpbytnbzBqQVFvaEN5V1lvc2dIWjc4VHVx?=
- =?utf-8?B?M1BVZFJNNHBvUTRvZzFEZmFiTWxjL09zMjMwYklTTTZVRzlrbk1uY2xRYzg0?=
- =?utf-8?B?bzJoaFZweUZJdnRRcTNQcFAvcEx5bnBYampmcVNoamhZWnZFdGlUWmlJUWRW?=
- =?utf-8?B?RGtTYkczcHpEVFNCeEp4bGpJSDh6K3Z3RWNZNGhsYjJRZDltV3BCaVhmc3FU?=
- =?utf-8?B?MFVITGYwdUFRZTN4TTRJOVIzMTBVWmN4dnZaeDFSbGxCQ3dkSDJCMGhXUTRz?=
- =?utf-8?B?L1dFTXFibG02cDk3eEV0OGdaWVZMK2V4d0lRTzI2TlF1dTlPMU90dXBmRVVS?=
- =?utf-8?B?WEZBVDN3Sm1UQ29wekhEbVJZeFBLM3hEWjRNYmJTeThEcEJhdm1lQWxsS1Jv?=
- =?utf-8?B?bnYvVVVGbUlLMkk3MVg1NzR2bmhXVEpwS1hLRjFMSGVBV215NVZlYVVHQVV0?=
- =?utf-8?B?TXVIcURnQzg0MTNrZGp3UzgweVQ2bkZiSkFSem1nRzkwN0N5VVVZN0w0ZGJZ?=
- =?utf-8?B?WklaRkE0bTM0NEp0aDFLbUllRG9IaWxqQTE5ZWlodUlJMnNSMU0rcklUOUhi?=
- =?utf-8?B?TGtGMDdYbmQ2YVlEM3hyNDc3RktLZmtCdnlNZ1hLZTJDRWlubmxwVzQvQlBw?=
- =?utf-8?B?T2JvZXFnZzdPS2ZxVllpWkswU0R5SXVEMkdpdHVNMytoYmVMUnd5ZitZTUZm?=
- =?utf-8?B?ZkZ3MURaM1htTC90cVdlNnZUNmpnTzhQWm5xQkZ6R2U2RXVTaTZFZkxjeWxi?=
- =?utf-8?B?T0JIN2Izd2xoYnlPOGlYL2F4eGxBeXh5eE9mN2xCQjR3UE9kTkxOdW1HVHIy?=
- =?utf-8?B?dHpuUlozQTlwVG5UaXROa25mYXdTdlNpNEVBWmVaTlh4T3B0UDFuMmY2bkdD?=
- =?utf-8?B?REhDd0J4dkhnMXJPNjk2Wm83MFhuS1lYMVo1eTlSd2dKblkySnYwWkx1MUxL?=
- =?utf-8?B?UXZhNEE3Ri9rclp5b0tqNVpDNTJXQXZKcUtDdkF4endpSms3MFhPQ0tXb3Rm?=
- =?utf-8?B?S2JSbURjZExmVjV4QXhDekJxUHZBVGljVjJOTnJqT2c3MXVUdTg1MEZkQ0dw?=
- =?utf-8?B?c0VQcXU2TGNUL3BuSmJvbHA4UzUxN2J6RzZvVFF6MW9LWCtUbThCMHlmdjRt?=
- =?utf-8?B?WHBIb2JMK2xma0U1MTBacDJYVStyZ2JUVnI5OEF2OEZSeEdac3NPaFYwYnB5?=
- =?utf-8?B?VEFRNXp6YS9DQzEvYmdBMmg0K3pENEhrdlRDUVM5ODBuVFlDQXlCdnV2NWtL?=
- =?utf-8?B?NWpVSUFuT2RXMjQ2MkRkY3QwazdGRWg2c1RXWGYrakhucENGL0tjTEpyTzBL?=
- =?utf-8?B?bWhKN25DeWJtdStjeG5Xc0xqOWxlZ2tCM2ZCR0RLaTdZcHRZUHBEaC9CbzFu?=
- =?utf-8?B?bjllWkxFSkpucFpvYWcxQ2xubzhsWXhFU2NJY3M1eU41QVZjUlB0alozdDdh?=
- =?utf-8?B?QzJ1KzVkOWJEajE2V0Vpa3k5S1k0ZGhEVy9Gc2UxcUpKSkRZdVNMd212V1Vq?=
- =?utf-8?B?SGdxQXZncVl2ZnMwUnJuS3h3U3VaeXZpbzkrUVVvVXY0MkNSTVJIakl4TVVI?=
- =?utf-8?B?SDFUclQ2Z3dSYlRtMDVib044am1hcHpHUUxjQ0xScEs2M2I4TVB6M1BYRUxr?=
- =?utf-8?B?dFBoQkdVSDlPcmI1OXoyQmFZUGJDMzdSSWp2WWZrS1lpM0phVkYvRzR1UmtH?=
- =?utf-8?B?aGJWbmRFQWVtWlVrZVRUNEROSWxLMkVSQWdCeFZWanB6d2ZtVHFxYkFQSUta?=
- =?utf-8?Q?qiwQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V3orMXhsU0pmVkNFVDd4NHkwcU8zY2ZMMzU5a0U2TFRiS3ArWjgyUTJOeW4v?=
- =?utf-8?B?bE1hZWxHVUp1ZjROT3pmKytodGZ4WWE4ZXBJZHpKMmYyQVhhSUwxbGh1dlZZ?=
- =?utf-8?B?R3R2YjcrV0lWaVhSUE0yVC9HNHoreklYN0d0YTBMc0taRmQrdjRDY05Pak8w?=
- =?utf-8?B?M0JSaXg3RHZ2eWlUeFVPUEc0OTlaQ015V1NMUXNtcFg3UzJ0MzA0aUV0SE52?=
- =?utf-8?B?SVlmVVhNNEM0UjN1NHZDUEhvak1wUW5DU1NVckRuNVlmczdUNG5pZ0h0K1pN?=
- =?utf-8?B?MHJZVU5VSnp3Y2FScGlIU1pKVExiaG9nN2ZNdVJVTTlJY2xnYWV1c2J2dEFE?=
- =?utf-8?B?TjZES2xKTjVWekQxdisxOVVhcEx6eHB0S2xiZWdab0FGZS9CbGFuZ2FRSzhN?=
- =?utf-8?B?RGd5S2h0b0ZQYmJLZDJLMjdOZlRMUGd2OFBoc2drcndsN0pTL3JSQ0tRVGp4?=
- =?utf-8?B?MksrN1pwanNoSW1TVndycmZSZmY5Y3ltWkh3QW1yOWVzZTR0MU4xQzVpOWd4?=
- =?utf-8?B?NnJ4THJmRHBwcmh4aWJCbVBKQVF4cS9oY3pYWXZyUWJwOGQrQW02N0g2UnFs?=
- =?utf-8?B?L1E2akpoSUFtQ2lGc05KekFLbCs1VmU1V1ZiZUhjVXp5cUtEbFN4WTYyQ1pZ?=
- =?utf-8?B?VUlXWHRDYVdMcmVuVzQwMGhlcU5obzF4WHdPbmxoeVJiMmlBNHNrU2F5RU9Y?=
- =?utf-8?B?aE84bWpMdDZZN1FhbzRDcWxYTzQ2RWpCV0JrTmcvQ1lzZmpUM3JnMnFVSDVL?=
- =?utf-8?B?Z043N211dmZ2Y3RMc1cyU3VOL0dSeFU3TVFVMTRCaVBNWGI1cTNHY2NtQSsx?=
- =?utf-8?B?SFl4eEJERnVmbHhDdWJTakJUM2p1VHZNVmFNWUJlWlJDRGhJdmJwbnc3MkVH?=
- =?utf-8?B?Z0NtbmtZLzR6Y1hHWWIxQ3hvRE81TldSdFc0eS9veEV1bzlydHBibUd5VERI?=
- =?utf-8?B?dDkzWVNwWGw5RTE1dEFLN2hEd1A0Q2Q2ald0MVRQbnR2c0RsbGN2UGJlMVUw?=
- =?utf-8?B?WGxBVG9FUklaa3hwR0p6eUFUL3B3R1o4RnIwYllhZmY4U284c01jb0IxeVo0?=
- =?utf-8?B?TlZBR2NiMDFUT0k5cFBsZVZlSHNNdzZFWW4vWjRFRmkxZjgySzAzUEY5aTQv?=
- =?utf-8?B?VzRDZHFDc2ZaS3kxKys1NXEvdFd4UkE5UlVISXhrVkZFSnI0SDdFT1FoVkNU?=
- =?utf-8?B?akorREV0RzFDN1lvenhIZEM2UHVBWmxHZC9Gd2l3eEUvcUwxR2dDbUdraWxR?=
- =?utf-8?B?dWJGMWEyNmNPY2d6Y1d0VWNEUERoZGRKZ1NlTHlLSW1nczZ3RDdrQm9LNTNm?=
- =?utf-8?B?bVM0RnFZTWpqVnQ4bE1JN0twNDBqRm42dnhvNzRLc09yZWZxakhDaGpDS0ds?=
- =?utf-8?B?VUphYWNKVGJwSVdnSGtFUGo1em8reXVRMFcvanc0cWhWNm1OQ1JHd28xeHNL?=
- =?utf-8?B?NzFtMzU1aW1NU05lbk5FZUo4UEx1Uk5tcWducnNVSFE3N1hTTHYrUTNSZDB5?=
- =?utf-8?B?U0F4SmEwYzVtdWgzM2ZKSXlqQmc0WEFURG12dFJoUmhicDlRTkFDTGozM2x2?=
- =?utf-8?B?bWs5S21lZHZJK1pWcWlVeENwNjdhaWRuSUJpV3lNVzhuQVo4bnNhaWlnUXIz?=
- =?utf-8?B?b21PeC94QkpGSER1ajhFaHF4NExYaEkxZTVHZFFwN3Y4ajhlZDZudXI1V0k4?=
- =?utf-8?B?YVRheXNnb2pYRVVyUjlRTUFUdzl1OEVIOGNnWUwxdWFZK0w5TEhsMDl5NjU1?=
- =?utf-8?B?N3hCSkhmT2YrMGR4TzVjQWdtUWZFS1M5K1FQeGZxeCtWK3VhTUVmTHNGY2hX?=
- =?utf-8?B?cDk0T1QxRTU2eXlDNmxwNm4zQUpCMFBZbTdndElvT2x1WWpNVXVlS2RVbmlP?=
- =?utf-8?B?ZkxSWHk1alh1eUFhT0o5bHdRNzZPdkVwYXJjNkhzWlVSeHlpY0RwdDRSM1Iw?=
- =?utf-8?B?Z3R2clNJQVFyUU4vNE05RmZ5Wkw5OHR1LytQYnNUdVB0QTRVZ01zTVZsNUww?=
- =?utf-8?B?a1VLZlJ6QXRVOFN0UDQzUmJxWTlXTzZyS2NCWER4eGx3blRiVnhRMUluSWFN?=
- =?utf-8?B?a0F6cFBOOEdoQTA3OWdYK0FOb2lUMVkyME5RMWZibHhZQlk4eG9sYjk4dXR1?=
- =?utf-8?B?aDNCRlZxaHJVTU90NjZCa0JCZkx2dnhTM2dENDdVWWduYTlDdDlCazJiTTlC?=
- =?utf-8?B?VkVPUGFLL09taHVXanNPTUh1MnJ2MUdPamRSdGNya0QxZzFjbnVmL3RCQ1h6?=
- =?utf-8?B?Y3NYWnY2RFAzaU9sZGNmVXk2OWJPdjdselE3NHpxNlVxcFdWbnVSSjZGTzBE?=
- =?utf-8?B?a05tUWxEQTRHWXZxcHdMMi9HMjlpdlk5ejlzSmVma2oxeVFacUhZSVZ6VHRD?=
- =?utf-8?Q?RMxqczs8jrz8Nm4rj8lwLz7WHgUKMI2ueD7rlX250fkGX?=
-X-MS-Exchange-AntiSpam-MessageData-1: 3js8CFohZ0IGYUzW0wWwNGQiKSJMX9UhLQk=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 166686c8-fa01-46a6-4859-08de62328e11
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 08:10:40.6246
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: moqOBLWH4JnDZ3bhkBIf88Rm+gnvSi02cEKcbvpnlum+rOI7IuFXElwS56zu9Uu8rSAHmDwozXvmyN+fv0CcUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6649
+References: <20260122151125.7367-1-clamor95@gmail.com> <3677292.iIbC2pHGDl@senjougahara>
+ <CAPVz0n0Enr0SNoVXjPyROhj6s412OEczQp+bgY9TGiEekpjW7A@mail.gmail.com> <2051347.usQuhbGJ8B@senjougahara>
+In-Reply-To: <2051347.usQuhbGJ8B@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 2 Feb 2026 10:24:03 +0200
+X-Gm-Features: AZwV_QisbXJcU6EWAostZp_Hl3RGj2PJJtIR2_JRg09Mv-dLMCQcjMg91fofi-E
+Message-ID: <CAPVz0n3PncS5vcK5TDW950c6Z=sf6vTFPOP1B81+2UWvHEa1Xg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] usb: phy: tegra: add HSIC support
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, February 2, 2026 5:05=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Followup to a recent HSIC bringup with a few small improvements.
->=20
-> Svyatoslav Ryhel (4):
->   usb: phy: tegra: cosmetic fixes
->   usb: phy: tegra: return error value from utmi_wait_register
->   usb: phy: tegra: parametrize HSIC PTS value
->   usb: phy: tegra: parametrize PORTSC1 register offset
->=20
->  drivers/usb/phy/phy-tegra-usb.c   | 45 +++++++++++++++----------------
->  include/linux/usb/tegra_usb_phy.h |  8 ++++--
->  2 files changed, 27 insertions(+), 26 deletions(-)
->=20
->=20
+=D0=BF=D0=BD, 2 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 10:06 Mikko=
+ Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Monday, February 2, 2026 3:37=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > =D0=BF=D0=BD, 2 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 06:07 M=
+ikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Friday, January 23, 2026 12:11=E2=80=AFAM Svyatoslav Ryhel wrote:
+> > > > Add support for HSIC USB mode, which can be set for second USB cont=
+roller
+> > > > and PHY on Tegra SoC along with already supported UTMI or ULPI.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  drivers/usb/phy/phy-tegra-usb.c   | 249 ++++++++++++++++++++++++++=
+++--
+> > > >  include/linux/usb/tegra_usb_phy.h |   5 +
+> > > >  2 files changed, 243 insertions(+), 11 deletions(-)
+> > > >
+> > > > diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-=
+tegra-usb.c
+> > > > index afa5b5535f92..4f0fde33647e 100644
+> > > > --- a/drivers/usb/phy/phy-tegra-usb.c
+> > > > +++ b/drivers/usb/phy/phy-tegra-usb.c
+> > > > @@ -29,17 +29,26 @@
+> > > >  #include <linux/usb/tegra_usb_phy.h>
+> > > >  #include <linux/usb/ulpi.h>
+> > > >
+> > > > +#define USB_TXFILLTUNING                     0x154
+> > > > +#define USB_FIFO_TXFILL_THRES(x)             (((x) & 0x1f) << 16)
+> > > > +#define USB_FIFO_TXFILL_MASK                 0x1f0000
+> > > > +
+> > > >  #define ULPI_VIEWPORT                                0x170
+> > > >
+> > > >  /* PORTSC PTS/PHCD bits, Tegra20 only */
+> > > >  #define TEGRA_USB_PORTSC1                    0x184
+> > > > -#define TEGRA_USB_PORTSC1_PTS(x)             (((x) & 0x3) << 30)
+> > > > -#define TEGRA_USB_PORTSC1_PHCD                       BIT(23)
+> > > > +#define   TEGRA_USB_PORTSC1_PTS(x)           (((x) & 0x3) << 30)
+> > > > +#define   TEGRA_USB_PORTSC1_PHCD             BIT(23)
+> > > > +#define   TEGRA_USB_PORTSC1_WKOC             BIT(22)
+> > > > +#define   TEGRA_USB_PORTSC1_WKDS             BIT(21)
+> > > > +#define   TEGRA_USB_PORTSC1_WKCN             BIT(20)
+> > > >
+> > > >  /* HOSTPC1 PTS/PHCD bits, Tegra30 and above */
+> > > > +#define TEGRA30_USB_PORTSC1                  0x174
+> > > >  #define TEGRA_USB_HOSTPC1_DEVLC                      0x1b4
+> > > > -#define TEGRA_USB_HOSTPC1_DEVLC_PTS(x)               (((x) & 0x7) =
+<< 29)
+> > > > -#define TEGRA_USB_HOSTPC1_DEVLC_PHCD         BIT(22)
+> > > > +#define   TEGRA_USB_HOSTPC1_DEVLC_PTS(x)     (((x) & 0x7) << 29)
+> > > > +#define   TEGRA_USB_HOSTPC1_DEVLC_PHCD               BIT(22)
+> > > > +#define   TEGRA_USB_HOSTPC1_DEVLC_PTS_HSIC   BIT(2)
+> > >
+> > > PTS is an enumeration, not a bitfield, so I would say '4' instead of =
+'BIT(2)'
+> > >
+> >
+> > Noted
+> >
+> > > >
+> > > >  /* Bits of PORTSC1, which will get cleared by writing 1 into them =
+*/
+> > > >  #define TEGRA_PORTSC1_RWC_BITS       (PORT_CSC | PORT_PEC | PORT_O=
+CC)
+> > > > @@ -51,11 +60,12 @@
+> > > >  #define   USB_SUSP_CLR                               BIT(5)
+> > > >  #define   USB_PHY_CLK_VALID                  BIT(7)
+> > > >  #define   UTMIP_RESET                                BIT(11)
+> > > > -#define   UHSIC_RESET                                BIT(11)
+> > > >  #define   UTMIP_PHY_ENABLE                   BIT(12)
+> > > >  #define   ULPI_PHY_ENABLE                    BIT(13)
+> > > >  #define   USB_SUSP_SET                               BIT(14)
+> > > > +#define   UHSIC_RESET                                BIT(14)
+> > > >  #define   USB_WAKEUP_DEBOUNCE_COUNT(x)               (((x) & 0x7) =
+<< 16)
+> > > > +#define   UHSIC_PHY_ENABLE                   BIT(19)
+> > > >
+> > > >  #define USB_PHY_VBUS_SENSORS                 0x404
+> > > >  #define   B_SESS_VLD_WAKEUP_EN                       BIT(14)
+> > > > @@ -156,6 +166,58 @@
+> > > >  #define UTMIP_BIAS_CFG1                              0x83c
+> > > >  #define   UTMIP_BIAS_PDTRK_COUNT(x)          (((x) & 0x1f) << 3)
+> > > >
+> > > > +/*
+> > > > + * Tegra20 has no UTMIP registers on PHY2 and UHSIC registers star=
+t from 0x800
+> > > > + * just where UTMIP registers should have been. This is the case o=
+nly with Tegra20
+> > > > + * Tegra30+ have UTMIP registers at 0x800 and UHSIC registers shif=
+ter by 0x400
+> > >
+> > > 'shift', or 'are shifted'
+> > >
+> >
+> > Noted
+> >
+> > > > + * to 0xc00, but register layout is preserved.
+> > > > + */
+> > > > +#define UHSIC_PLL_CFG1                               0x804
+> > > > +#define   UHSIC_XTAL_FREQ_COUNT(x)           (((x) & 0xfff) << 0)
+> > > > +#define   UHSIC_PLLU_ENABLE_DLY_COUNT(x)     (((x) & 0x1f) << 14)
+> > > > +
+> > > > +#define UHSIC_HSRX_CFG0                              0x808
+> > > > +#define   UHSIC_ELASTIC_UNDERRUN_LIMIT(x)    (((x) & 0x1f) << 2)
+> > > > +#define   UHSIC_ELASTIC_OVERRUN_LIMIT(x)     (((x) & 0x1f) << 8)
+> > > > +#define   UHSIC_IDLE_WAIT(x)                 (((x) & 0x1f) << 13)
+> > > > +
+> > > > +#define UHSIC_HSRX_CFG1                              0x80c
+> > > > +#define   UHSIC_HS_SYNC_START_DLY(x)         (((x) & 0x1f) << 1)
+> > > > +
+> > > > +#define UHSIC_TX_CFG0                                0x810
+> > > > +#define   UHSIC_HS_READY_WAIT_FOR_VALID              BIT(9)
+> > > > +
+> > > > +#define UHSIC_MISC_CFG0                              0x814
+> > > > +#define   UHSIC_SUSPEND_EXIT_ON_EDGE         BIT(7)
+> > > > +#define   UHSIC_DETECT_SHORT_CONNECT         BIT(8)
+> > > > +#define   UHSIC_FORCE_XCVR_MODE                      BIT(15)
+> > > > +#define   UHSIC_DISABLE_BUSRESET             BIT(20)
+> > > > +
+> > > > +#define UHSIC_MISC_CFG1                              0x818
+> > > > +#define   UHSIC_PLLU_STABLE_COUNT(x)         (((x) & 0xfff) << 2)
+> > > > +
+> > > > +#define UHSIC_PADS_CFG0                              0x81c
+> > > > +#define   UHSIC_TX_RTUNEN                    0xf000
+> > > > +#define   UHSIC_TX_RTUNE(x)                  (((x) & 0xf) << 12)
+> > > > +
+> > > > +#define UHSIC_PADS_CFG1                              0x820
+> > > > +#define   UHSIC_PD_BG                                BIT(2)
+> > > > +#define   UHSIC_PD_TX                                BIT(3)
+> > > > +#define   UHSIC_PD_TRK                               BIT(4)
+> > > > +#define   UHSIC_PD_RX                                BIT(5)
+> > > > +#define   UHSIC_PD_ZI                                BIT(6)
+> > > > +#define   UHSIC_RX_SEL                               BIT(7)
+> > > > +#define   UHSIC_RPD_DATA                     BIT(9)
+> > > > +#define   UHSIC_RPD_STROBE                   BIT(10)
+> > > > +#define   UHSIC_RPU_DATA                     BIT(11)
+> > > > +#define   UHSIC_RPU_STROBE                   BIT(12)
+> > > > +
+> > > > +#define UHSIC_CMD_CFG0                               0x824
+> > > > +#define   UHSIC_PRETEND_CONNECT_DETECT               BIT(5)
+> > > > +
+> > > > +#define UHSIC_STAT_CFG0                              0x828
+> > > > +#define   UHSIC_CONNECT_DETECT                       BIT(0)
+> > > > +
+> > > >  /* For Tegra30 and above only, the address is different in Tegra20=
+ */
+> > > >  #define USB_USBMODE                          0x1f8
+> > > >  #define   USB_USBMODE_MASK                   (3 << 0)
+> > > > @@ -174,7 +236,8 @@ struct tegra_xtal_freq {
+> > > >       u8 enable_delay;
+> > > >       u8 stable_count;
+> > > >       u8 active_delay;
+> > > > -     u8 xtal_freq_count;
+> > > > +     u8 utmi_xtal_freq_count;
+> > > > +     u16 hsic_xtal_freq_count;
+> > > >       u16 debounce;
+> > > >  };
+> > > >
+> > > > @@ -184,7 +247,8 @@ static const struct tegra_xtal_freq tegra_freq_=
+table[] =3D {
+> > > >               .enable_delay =3D 0x02,
+> > > >               .stable_count =3D 0x2F,
+> > > >               .active_delay =3D 0x04,
+> > > > -             .xtal_freq_count =3D 0x76,
+> > > > +             .utmi_xtal_freq_count =3D 0x76,
+> > > > +             .hsic_xtal_freq_count =3D 0x1CA,
+> > > >               .debounce =3D 0x7530,
+> > > >       },
+> > > >       {
+> > > > @@ -192,7 +256,8 @@ static const struct tegra_xtal_freq tegra_freq_=
+table[] =3D {
+> > > >               .enable_delay =3D 0x02,
+> > > >               .stable_count =3D 0x33,
+> > > >               .active_delay =3D 0x05,
+> > > > -             .xtal_freq_count =3D 0x7F,
+> > > > +             .utmi_xtal_freq_count =3D 0x7F,
+> > > > +             .hsic_xtal_freq_count =3D 0x1F0,
+> > > >               .debounce =3D 0x7EF4,
+> > > >       },
+> > > >       {
+> > > > @@ -200,7 +265,8 @@ static const struct tegra_xtal_freq tegra_freq_=
+table[] =3D {
+> > > >               .enable_delay =3D 0x03,
+> > > >               .stable_count =3D 0x4B,
+> > > >               .active_delay =3D 0x06,
+> > > > -             .xtal_freq_count =3D 0xBB,
+> > > > +             .utmi_xtal_freq_count =3D 0xBB,
+> > > > +             .hsic_xtal_freq_count =3D 0x2DD,
+> > > >               .debounce =3D 0xBB80,
+> > > >       },
+> > > >       {
+> > > > @@ -208,7 +274,8 @@ static const struct tegra_xtal_freq tegra_freq_=
+table[] =3D {
+> > > >               .enable_delay =3D 0x04,
+> > > >               .stable_count =3D 0x66,
+> > > >               .active_delay =3D 0x09,
+> > > > -             .xtal_freq_count =3D 0xFE,
+> > > > +             .utmi_xtal_freq_count =3D 0xFE,
+> > > > +             .hsic_xtal_freq_count =3D 0x3E0,
+> > > >               .debounce =3D 0xFDE8,
+> > > >       },
+> > > >  };
+> > > > @@ -541,7 +608,7 @@ static int utmi_phy_power_on(struct tegra_usb_p=
+hy *phy)
+> > > >               val =3D readl_relaxed(base + UTMIP_PLL_CFG1);
+> > > >               val &=3D ~(UTMIP_XTAL_FREQ_COUNT(~0) |
+> > > >                       UTMIP_PLLU_ENABLE_DLY_COUNT(~0));
+> > > > -             val |=3D UTMIP_XTAL_FREQ_COUNT(phy->freq->xtal_freq_c=
+ount) |
+> > > > +             val |=3D UTMIP_XTAL_FREQ_COUNT(phy->freq->utmi_xtal_f=
+req_count) |
+> > > >                       UTMIP_PLLU_ENABLE_DLY_COUNT(phy->freq->enable=
+_delay);
+> > > >               writel_relaxed(val, base + UTMIP_PLL_CFG1);
+> > > >       }
+> > > > @@ -812,6 +879,153 @@ static int ulpi_phy_power_off(struct tegra_us=
+b_phy *phy)
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > +static u32 tegra_hsic_readl(struct tegra_usb_phy *phy, u32 reg)
+> > > > +{
+> > > > +     void __iomem *base =3D phy->regs;
+> > > > +     u32 shift =3D phy->soc_config->uhsic_registers_shift;
+> > > > +
+> > > > +     return readl_relaxed(base + shift + reg);
+> > > > +}
+> > > > +
+> > > > +static void tegra_hsic_writel(struct tegra_usb_phy *phy, u32 reg, =
+u32 value)
+> > > > +{
+> > > > +     void __iomem *base =3D phy->regs;
+> > > > +     u32 shift =3D phy->soc_config->uhsic_registers_shift;
+> > > > +
+> > > > +     writel_relaxed(value, base + shift + reg);
+> > > > +}
+> > > > +
+> > > > +static int uhsic_phy_power_on(struct tegra_usb_phy *phy)
+> > > > +{
+> > > > +     struct tegra_utmip_config *config =3D phy->config;
+> > > > +     void __iomem *base =3D phy->regs;
+> > > > +     u32 val;
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_PADS_CFG1);
+> > > > +     val &=3D ~(UHSIC_PD_BG | UHSIC_PD_TX | UHSIC_PD_TRK | UHSIC_P=
+D_RX |
+> > > > +              UHSIC_PD_ZI | UHSIC_RPD_DATA | UHSIC_RPD_STROBE);
+> > > > +     val |=3D UHSIC_RX_SEL;
+> > >
+> > > L4T r16 (Tegra30) keeps UHSIC_PD_TX set until after UHSIC_RESET has b=
+een cleared. Commit message says this avoids a signal glitch.
+> > >
+> >
+> > I did not notice any difference with this change and without. Since it
+> > does not affect detection of modem by my device I can apply it (is it
+> > worth applying at all?). Should it be applied globally or for Tegra30+
+> > only?
+>
+> Downstream only has it for Tegra30, but that's probably just because it w=
+as tested in the Tegra30 timeframe. If it's not causing any issue on Tegra2=
+0 I would apply it globally. Considering it's a signal glitch it might only=
+ have an effect in marginal signal situations.
+>
+> >
+> > > > +     tegra_hsic_writel(phy, UHSIC_PADS_CFG1, val);
+> > > > +
+> > > > +     udelay(2);
+> > > > +
+> > > > +     val =3D readl_relaxed(base + USB_SUSP_CTRL);
+> > > > +     val |=3D UHSIC_RESET;
+> > > > +     writel_relaxed(val, base + USB_SUSP_CTRL);
+> > > > +
+> > > > +     udelay(30);
+> > > > +
+> > > > +     val =3D readl_relaxed(base + USB_SUSP_CTRL);
+> > > > +     val |=3D UHSIC_PHY_ENABLE;
+> > > > +     writel_relaxed(val, base + USB_SUSP_CTRL);
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_HSRX_CFG0);
+> > > > +     val &=3D ~(UHSIC_IDLE_WAIT(~0) |
+> > > > +              UHSIC_ELASTIC_UNDERRUN_LIMIT(~0) |
+> > > > +              UHSIC_ELASTIC_OVERRUN_LIMIT(~0));
+> > > > +     val |=3D UHSIC_IDLE_WAIT(config->idle_wait_delay) |
+> > > > +             UHSIC_ELASTIC_UNDERRUN_LIMIT(config->elastic_limit) |
+> > > > +             UHSIC_ELASTIC_OVERRUN_LIMIT(config->elastic_limit);
+> > > > +     tegra_hsic_writel(phy, UHSIC_HSRX_CFG0, val);
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_HSRX_CFG1);
+> > > > +     val &=3D ~UHSIC_HS_SYNC_START_DLY(~0);
+> > > > +     val |=3D UHSIC_HS_SYNC_START_DLY(config->hssync_start_delay);
+> > > > +     tegra_hsic_writel(phy, UHSIC_HSRX_CFG1, val);
+> > > > +
+> > >
+> > > L4T r16 (Tegra30) clears UHSIC_TX_CFG0.UHSIC_HS_READY_WAIT_FOR_VALID =
+here. According to commit message this fixes an intermittent failure to con=
+nect to HSIC modem. It also sets UHSIC_MISC_CFG0.UHSIC_DISABLE_BUSRESET  be=
+low due to same issue.
+> > >
+> >
+> > And this change causes my modem to fail entirely.
+> >
+> > [   10.145976] usb 1-1: new high-speed USB device number 2 using ci_hdr=
+c
+> > [   10.295970] usb 1-1: device descriptor read/64, error -71
+> > [   10.545975] usb 1-1: device descriptor read/64, error -71
+> > [   10.795990] usb 1-1: new high-speed USB device number 3 using ci_hdr=
+c
+> > [   10.935970] usb 1-1: device descriptor read/64, error -71
+> > [   11.185977] usb 1-1: device descriptor read/64, error -71
+> >
+> > I assume UHSIC_DISABLE_BUSRESET, UHSIC_HS_READY_WAIT_FOR_VALID and
+> > UHSIC_PD_TX workarounds are all consequences of how modem in
+> > downstream kernel is called. Instead of relaying on modem to lead the
+> > controller probe, downstream just brutally removes and reinits
+> > controller until modem probes. I have never observed modem not
+> > appearing without any of discussed patches.
+>
+> The downstream commit says that without this workaround, the modem would =
+sometimes not come up in stress tests. So I think it's possible there is st=
+ill a rare hardware bug that this is working around, but perhaps we're miss=
+ing some other part and that's why it's not working. I think it's fine to d=
+rop these changes.
+>
 
-Series
+I propose not adding any of the three workarounds for now. I don't
+have a Tegra20 with an HSIC modem, as it seems that most Tegra20
+devices use ULPI mode. Among my personal devices, only the LG Optimus
+Vu (P895) is a GSM device with an XMM HSIC modem, and it fails if I
+add UHSIC_DISABLE_BUSRESET and UHSIC_HS_READY_WAIT_FOR_VALID. Since I
+may be the only one at the moment actively working in this area of
+legacy Tegra SoCs =E2=80=94 and this discussion is public =E2=80=94 anyone =
+who has
+issues can contact me to resolve them. Additionally, I will keep in
+mind that there may be a need for these workarounds; if I find any
+need for them during modem bring-ups in the legacy Tegra community, I
+will submit dedicated patches with explanations.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-
-
-
+> >
+> >
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_MISC_CFG0);
+> > > > +     val |=3D UHSIC_SUSPEND_EXIT_ON_EDGE;
+> > > > +     tegra_hsic_writel(phy, UHSIC_MISC_CFG0, val);
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_MISC_CFG1);
+> > > > +     val &=3D ~UHSIC_PLLU_STABLE_COUNT(~0);
+> > > > +     val |=3D UHSIC_PLLU_STABLE_COUNT(phy->freq->stable_count);
+> > > > +     tegra_hsic_writel(phy, UHSIC_MISC_CFG1, val);
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_PLL_CFG1);
+> > > > +     val &=3D ~(UHSIC_XTAL_FREQ_COUNT(~0) |
+> > > > +             UHSIC_PLLU_ENABLE_DLY_COUNT(~0));
+> > > > +     val |=3D UHSIC_XTAL_FREQ_COUNT(phy->freq->hsic_xtal_freq_coun=
+t) |
+> > > > +             UHSIC_PLLU_ENABLE_DLY_COUNT(phy->freq->enable_delay);
+> > > > +     tegra_hsic_writel(phy, UHSIC_PLL_CFG1, val);
+> > > > +
+> > > > +     val =3D readl_relaxed(base + USB_SUSP_CTRL);
+> > > > +     val &=3D ~UHSIC_RESET;
+> > > > +     writel_relaxed(val, base + USB_SUSP_CTRL);
+> > > > +
+> > > > +     udelay(2);
+> > > > +
+> > > > +     if (phy->soc_config->requires_usbmode_setup) {
+> > > > +             val =3D readl_relaxed(base + USB_USBMODE);
+> > > > +             val &=3D ~USB_USBMODE_MASK;
+> > > > +             if (phy->mode =3D=3D USB_DR_MODE_HOST)
+> > > > +                     val |=3D USB_USBMODE_HOST;
+> > > > +             else
+> > > > +                     val |=3D USB_USBMODE_DEVICE;
+> > > > +             writel_relaxed(val, base + USB_USBMODE);
+> > > > +     }
+> > > > +
+> > > > +     if (phy->soc_config->has_hostpc)
+> > > > +             set_pts(phy, TEGRA_USB_HOSTPC1_DEVLC_PTS_HSIC);
+> > > > +     else
+> > > > +             set_pts(phy, 0);
+> > >
+> > > This (and below) are abusing has_hostpc to detect Tegra30 vs Tegra20.=
+ We should instead add soc_config fields hsic_pts_value and portsc1_offset.
+> > >
+> > > > +
+> > > > +     val =3D readl_relaxed(base + USB_TXFILLTUNING);
+> > > > +     if ((val & USB_FIFO_TXFILL_MASK) !=3D USB_FIFO_TXFILL_THRES(0=
+x10)) {
+> > > > +             val =3D USB_FIFO_TXFILL_THRES(0x10);
+> > > > +             writel_relaxed(val, base + USB_TXFILLTUNING);
+> > > > +     }
+> > > > +
+> > > > +     if (phy->soc_config->has_hostpc) {
+> > > > +             val =3D readl_relaxed(base + TEGRA30_USB_PORTSC1);
+> > > > +             val &=3D ~(TEGRA_USB_PORTSC1_WKOC | TEGRA_USB_PORTSC1=
+_WKDS |
+> > > > +                      TEGRA_USB_PORTSC1_WKCN);
+> > > > +             writel_relaxed(val, base + TEGRA30_USB_PORTSC1);
+> > > > +     } else {
+> > > > +             val =3D readl_relaxed(base + TEGRA_USB_PORTSC1);
+> > > > +             val &=3D ~(TEGRA_USB_PORTSC1_WKOC | TEGRA_USB_PORTSC1=
+_WKDS |
+> > > > +                      TEGRA_USB_PORTSC1_WKCN);
+> > > > +             writel_relaxed(val, base + TEGRA_USB_PORTSC1);
+> > > > +     }
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_PADS_CFG0);
+> > > > +     val &=3D ~UHSIC_TX_RTUNEN;
+> > > > +     val |=3D UHSIC_TX_RTUNE(phy->soc_config->uhsic_tx_rtune);
+> > > > +     tegra_hsic_writel(phy, UHSIC_PADS_CFG0, val);
+> > > > +
+> > > > +     if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALI=
+D,
+> > > > +                            USB_PHY_CLK_VALID))
+> > > > +             dev_err(phy->u_phy.dev,
+> > > > +                     "Timeout waiting for PHY to stabilize on enab=
+le (HSIC)\n");
+> > >
+> > > Should return error (return value of utmi_wait_register) here?
+> > >
+> >
+> > Noted.
+> >
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int uhsic_phy_power_off(struct tegra_usb_phy *phy)
+> > > > +{
+> > > > +     void __iomem *base =3D phy->regs;
+> > > > +     u32 val;
+> > > > +
+> > > > +     set_phcd(phy, true);
+> > > > +
+> > > > +     val =3D tegra_hsic_readl(phy, UHSIC_PADS_CFG1);
+> > > > +     val |=3D (UHSIC_PD_BG | UHSIC_PD_TX | UHSIC_PD_TRK | UHSIC_PD=
+_RX |
+> > > > +             UHSIC_PD_ZI | UHSIC_RPD_DATA | UHSIC_RPD_STROBE);
+> > > > +     tegra_hsic_writel(phy, UHSIC_PADS_CFG1, val);
+> > > > +
+> > > > +     val =3D readl_relaxed(base + USB_SUSP_CTRL);
+> > > > +     val |=3D UHSIC_RESET;
+> > > > +     writel_relaxed(val, base + USB_SUSP_CTRL);
+> > > > +
+> > > > +     udelay(30);
+> > > > +
+> > > > +     val =3D readl_relaxed(base + USB_SUSP_CTRL);
+> > > > +     val &=3D ~UHSIC_PHY_ENABLE;
+> > > > +     writel_relaxed(val, base + USB_SUSP_CTRL);
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > >  static int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
+> > > >  {
+> > > >       int err =3D 0;
+> > > > @@ -828,6 +1042,10 @@ static int tegra_usb_phy_power_on(struct tegr=
+a_usb_phy *phy)
+> > > >               err =3D ulpi_phy_power_on(phy);
+> > > >               break;
+> > > >
+> > > > +     case USBPHY_INTERFACE_MODE_HSIC:
+> > > > +             err =3D uhsic_phy_power_on(phy);
+> > > > +             break;
+> > > > +
+> > > >       default:
+> > > >               break;
+> > > >       }
+> > > > @@ -859,6 +1077,10 @@ static int tegra_usb_phy_power_off(struct teg=
+ra_usb_phy *phy)
+> > > >               err =3D ulpi_phy_power_off(phy);
+> > > >               break;
+> > > >
+> > > > +     case USBPHY_INTERFACE_MODE_HSIC:
+> > > > +             err =3D uhsic_phy_power_off(phy);
+> > > > +             break;
+> > > > +
+> > > >       default:
+> > > >               break;
+> > > >       }
+> > > > @@ -1256,6 +1478,8 @@ static const struct tegra_phy_soc_config tegr=
+a20_soc_config =3D {
+> > > >       .requires_usbmode_setup =3D false,
+> > > >       .requires_extra_tuning_parameters =3D false,
+> > > >       .requires_pmc_ao_power_up =3D false,
+> > > > +     .uhsic_registers_shift =3D 0,
+> > > > +     .uhsic_tx_rtune =3D 0, /* 40 ohm */
+> > > >  };
+> > > >
+> > > >  static const struct tegra_phy_soc_config tegra30_soc_config =3D {
+> > > > @@ -1264,6 +1488,8 @@ static const struct tegra_phy_soc_config tegr=
+a30_soc_config =3D {
+> > > >       .requires_usbmode_setup =3D true,
+> > > >       .requires_extra_tuning_parameters =3D true,
+> > > >       .requires_pmc_ao_power_up =3D true,
+> > > > +     .uhsic_registers_shift =3D 0x400,
+> > > > +     .uhsic_tx_rtune =3D 8,  /* 50 ohm */
+> > > >  };
+> > > >
+> > > >  static const struct of_device_id tegra_usb_phy_id_table[] =3D {
+> > > > @@ -1360,6 +1586,7 @@ static int tegra_usb_phy_probe(struct platfor=
+m_device *pdev)
+> > > >       tegra_phy->phy_type =3D of_usb_get_phy_mode(np);
+> > > >       switch (tegra_phy->phy_type) {
+> > > >       case USBPHY_INTERFACE_MODE_UTMI:
+> > > > +     case USBPHY_INTERFACE_MODE_HSIC:
+> > > >               err =3D utmi_phy_probe(tegra_phy, pdev);
+> > > >               if (err)
+> > > >                       return err;
+> > > > diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/=
+tegra_usb_phy.h
+> > > > index e394f4880b7e..4e79f1c2173a 100644
+> > > > --- a/include/linux/usb/tegra_usb_phy.h
+> > > > +++ b/include/linux/usb/tegra_usb_phy.h
+> > > > @@ -24,6 +24,9 @@ struct gpio_desc;
+> > > >   * requires_extra_tuning_parameters: true if xcvr_hsslew, hssquelc=
+h_level
+> > > >   *      and hsdiscon_level should be set for adequate signal quali=
+ty
+> > > >   * requires_pmc_ao_power_up: true if USB AO is powered down by def=
+ault
+> > > > + * uhsic_registers_shift: for Tegra30+ where HSIC registers were s=
+hifted
+> > > > + *      comparing to Tegra20 by 0x400, since Tegra20 has no UTMIP =
+on PHY2
+> > > > + * uhsic_tx_rtune: fine tuned 50 Ohm termination resistor for NMOS=
+/PMOS driver
+> > > >   */
+> > > >
+> > > >  struct tegra_phy_soc_config {
+> > > > @@ -32,6 +35,8 @@ struct tegra_phy_soc_config {
+> > > >       bool requires_usbmode_setup;
+> > > >       bool requires_extra_tuning_parameters;
+> > > >       bool requires_pmc_ao_power_up;
+> > > > +     u32 uhsic_registers_shift;
+> > >
+> > > I would rather call this 'uhsic_registers_offset'. Shift first brings=
+ to mind bitshifts, and we often have fields in these config structs for bi=
+t shifts called '*_shift'.
+> > >
+> >
+> > Yes, offset seems more appropriate.
+> >
+> > > > +     u32 uhsic_tx_rtune;
+> > > >  };
+> > > >
+> > > >  struct tegra_utmip_config {
+> > > >
+> >
+> > Mikko, thank you for your review, since HSIC patches already were
+> > picked into linux/next I will prepare a few followup patches to
+> > address some of uncertainties.
+>
+> Thank you!
+>
+>
+>
