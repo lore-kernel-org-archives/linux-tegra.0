@@ -1,194 +1,127 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011063.outbound.protection.outlook.com [52.101.65.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D5A2472AA;
-	Mon,  2 Feb 2026 16:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770050804; cv=fail; b=lFR/jRDW3OR45pbH4jrtGoLquba5eTYC4y7Bk8TXlsKMu0TwbHaEhgI4AAgbJkGdHTNQqVRQ1PPj7WrNZz9sdiYwzeRbZ3n9FtdVxaP6i18alAozAFBGYdFfm525G6ad6UrQOTtjU3mQwKvay1YxH4JkzKzeErXM5CPZk2w5ibQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770050804; c=relaxed/simple;
-	bh=VFkB4mzrqs2yHWos4TLev85EVfYewjBfTIkd1EH1dbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pjx/UhL/Hrk5bDbnk0aIOwo6Tquqct0k17jNHxESkNFd8WAPBHDU91dX9Yft7Y8ZoCPzGFoOWYl8VqnCwouHIjlA1BJyCL9zQjwmXoEfqVlPeWqe+Gxpbhl3rBNHg0zHfmmEvlo0xZIvVQzIDF+xrFVV6o7oZxVoBvARqseV6pI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PoG4Cxdk; arc=fail smtp.client-ip=52.101.65.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFBB38B9BF
+	for <linux-tegra@vger.kernel.org>; Mon,  2 Feb 2026 18:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770055313; cv=none; b=YULTKgw89msnD1rXNE43Raqwcs+ZhPbX/Je9MQhivncyAPFpG6i6eNnPU0kq1+OSrf5hsDU0U0Npy9/uIoMFh4vdi4Js3Wl3Gkil1nSkdoKBVgGETnqC+KDhB7lxY5huwOhjUt1JpcVsd5vmD4kulcp81/jZRuoetRUzPuNHAWU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770055313; c=relaxed/simple;
+	bh=hTtgkhOWMpNlBXr1nPDMrRziEVVQp/MwMYD4QueQQpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N4Vd3NGPAhxxrWlVDcmOXEk29V0JDFu7yrSP8eY5Yo1F8YJxxvJXKElQnM+Rzm6og51rWF7H7BveJn75mYjhOUOwIgQ8tNDz88s1do/b3OXDesaCRB8Stp6rYOqFvNKaR/L2Ir7SWWsb5+QsnypJ3N69nHNrw4TeWr6nbJ6+MZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMPagI2B; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PoG4Cxdk"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LXcyNtPZU4dwgcuA7ZSDjEhYkoxX/kRwJ3j84J7xOI6LJ2Y4zNl3eLOzIlYM0Dw9qf0+76CQOCTN7N0M2ACwAN+LGJ1i/o4lm8nV2UL3vLrG26y9Eivx63H+pvVnznzgCJOLt34exKZHZAAWwDs4NMATxRyit5N9ZS297/WuzCcBuXfalzwxe2kiRGiGzp6Z0j/GvU4oz2aDdG3zo76QpFfCXxwVawvQMYI1VVaR4rYfP052SnpziELFOqollWMzxRnnjWIbKmADSrkluATRTh6RyI7P9Q7lCNqDNLPdnpHadtQdhV6HPRtoESLz1NhE2PHIwjJu1/nsq2QTU0P8Bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2l0YbfnVNxNZ9phrg0R0idUuFC1+2HmC8V0Jqbl/AWs=;
- b=YvAeJj41sbPXcZfPf5h0a49des6cERQHUPdPOCAvXVe9wGFkFnEcOhEthBCr48qrjpYVEWGXKdWvTJgT8YJDxmP7i8k1rrkR/0OeByscJdfMd1tY0AQ698hMgeWkEKd+uSZznqPNj9YQ/fzqU6ZUz2e9z8Kdd9UCeZhDb/bl03W4J5sCmkRpHCz8DeDkvaIVmijv98ZO4m0sgdGYYw1xjiZ3WsW31GvD0XnRRIVJb4wJBdD8No9M3Tt98VKj3Ysq04xNRhx0OeRcrcwoTxUU9lbeneJnxMk9uY1u7q3o6rb+vU4u5MNSRM+rJoYStXFzNh1/ZEO8tWJOszVGHrd98w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2l0YbfnVNxNZ9phrg0R0idUuFC1+2HmC8V0Jqbl/AWs=;
- b=PoG4CxdkcojSLo7N0QEh3+Bb9My7JgixMYHRY3W34wQrQnaxi+4FclAWwZ8RowsHDrQHVRq5BUUoDn58B0p9ShXoK/LtKYZ7S3rFR/CyWz06EEFJ+GfB07DyuKO6dZkdcqN9xbaP4elIO/pN5ysiwR8+gXIughUW5gO0oon3HVsGKXIKAYr3kk7ojpwNEZB1PAMDtnadYpJB2XeFu7KtXw6+Vmauk+9TErFC+F51Wc4jbs1J6guR7iLcHkWrYx+Jb4jWAXBbJpdcPl1a6YY0Xc54pduyLXCYktBeF/+e/79Rsmh6CVpu0ZZAnDCvjpxZB4ycWM4Tdw0l/ODTwwt8/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by VI0PR04MB10464.eurprd04.prod.outlook.com (2603:10a6:800:218::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
- 2026 16:46:37 +0000
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9564.016; Mon, 2 Feb 2026
- 16:46:37 +0000
-Date: Mon, 2 Feb 2026 11:46:30 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: dmaengine@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3] dmaengine: tegra210-adma: use
- devm_platform_ioremap_resource
-Message-ID: <aYDU5na1HxkPRvwR@lizhi-Precision-Tower-5810>
-References: <20260202034419.3958-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260202034419.3958-1-rosenp@gmail.com>
-X-ClientProxiedBy: SJ0PR13CA0100.namprd13.prod.outlook.com
- (2603:10b6:a03:2c5::15) To PA4PR04MB9366.eurprd04.prod.outlook.com
- (2603:10a6:102:2a9::8)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMPagI2B"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59b7c2614f7so4385242e87.3
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Feb 2026 10:01:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770055309; x=1770660109; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sFABA++ZvkbyuC08URcMyM+fmFe85L0vnPidtUOeUZA=;
+        b=jMPagI2BaSTgwApEPadMupRuXGmZULICw2dkfzBIlw/3Y62rJKorbZZdFdP8vQLPpT
+         QJ79Q4qLJkKZ6rxEbQAp5yJTJdgGR3sv8hSnIWK2Z/tfor2To5n4bgxEU7v5SuqF0POf
+         24J1wQluxfgfE0JT2AV7wZFdwtGyiJ25BuG3CLXth/sauSqYzMmic2EgrlKjSwErQK0P
+         aygK5F8dzS06vHtfWn6JmAL43U0nc83sn49e+Lg7RUr3sJ3naSSTF7qA2qdNwP9xib0c
+         qSJA1tacedVLWbXYwDwMjbUQOKh1G/pEYLTFNwKUFn+FYjDK+92EFlrSR4Jj1FC9G8as
+         +1cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770055309; x=1770660109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sFABA++ZvkbyuC08URcMyM+fmFe85L0vnPidtUOeUZA=;
+        b=HGs1l/isvFVbO0OycKR6bEK3WhQ0oU+EQv8uI86vId6InVWJmffvPVIVRWV0k4ZBbq
+         rUCZAoD22seBf1dMWRGUGEOgexHmmDmpm0+aBdxkkLhKF2+uICSUWQOa5bFfwl8iBbXw
+         //oXsP4lbOD9HzrPFl9nOB4zZvnnV7WiRTmMDidozVjZaLQauo9wGNaecu9cgkDB7noc
+         usHDekVax/DRD3zARBDnhPwtMYtD9qmy9l824+usQ8BydKAAvYeh8N2SenK3svTnXuwd
+         m2yEYku0Yrb7HxPxec9JRc3RwdcWQiAUaKpeiwu4zX5ykFJKpv7n3zvGiGRUxrnf3u6O
+         skKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSvq82RZsd+XgIq8yYQXZiBxisgcSXW/v1I6O+oaFDrEZWho4DLK/luEI+aVWhZGB5CcvwkihP+GoM6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwViJc/ZVZE4GDs/0pC9ngcRuRb2EBsoF9Nt1LvOt4B5UMqRF8c
+	jUfJsFcFqb0or7KMaA9UL3w6LMyZfGxopmgehWsCKm1m6nv0XpojNO3C
+X-Gm-Gg: AZuq6aL47VYPaTAAmeKMT/h7K1wmtf65id1FJZ+F2mZWmcTQie/EY/2McVich8Lrmxi
+	OwWNpNMGzt7znbPXZaqTzh1OBoKDmQeGvPlGktUdTAEGyelaiGICYw/miRxZLKTyWM9iIahv9B7
+	BFCDmHIeabRxpwHYvxaogxot1SRENI0dfx2PdIdGnWXYfQKSphd5oROCqREthSo05z909q236h8
+	dS9pHFv6jdSR/O0ZFMYhMCI28qtLhAGzFjYxGVSM4suz0LbLwFg5gktYlyDgM8W/7hufXIKhdJt
+	YDJ63zsgCgmq+4A346+ANyY1xm/jdJXwOVqAowXeVujx3HciL1uRN1prBEdTbkYHy2YjaSUvMrT
+	v1zw3icfh4GfZztwrusv2hEAuUQ1Y6I/06kYZkM0ds/fo07vIc9NRQeo4dcgfmPA9Fbvj1C69a0
+	BQZDCdH+utN2WgTjfr+5Y5BvBE9bGXgInK9GhVzDssrXAoUezL/xkbcmtb1cMskhRRVMR8Zg==
+X-Received: by 2002:a05:6512:4023:b0:59d:fd1d:ddff with SMTP id 2adb3069b0e04-59e164304e0mr6191268e87.45.1770055308708;
+        Mon, 02 Feb 2026 10:01:48 -0800 (PST)
+Received: from ?IPV6:2a00:1fa0:4246:14fa:feaa:638c:335c:bdbe? ([2a00:1fa0:4246:14fa:feaa:638c:335c:bdbe])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e074bdabesm3761777e87.93.2026.02.02.10.01.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Feb 2026 10:01:47 -0800 (PST)
+Message-ID: <aabfe8bb-cd04-43f4-b0e5-07aca86c3ae0@gmail.com>
+Date: Mon, 2 Feb 2026 21:01:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|VI0PR04MB10464:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4f3e5d2-f481-456a-4aa0-08de627aa1c6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|19092799006|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hXWBrkAj8XI6a8WhRHTLB8vnyJkAHTc23NDFT+ARSKpkrqORG7uD0pQVKy5u?=
- =?us-ascii?Q?dk2vrwnlD3CfRZr1MGGxdCgJK0sND7XAdjunUZiQSufBcrT2KOvX9ZNf/80g?=
- =?us-ascii?Q?G9BFE8Wz3wW9+qoR5FS1MkbcwDYsP69cxuXch+KKmtws9dK/7QWEKOsNUBI1?=
- =?us-ascii?Q?cDAHqluuB0xeDJsNI4oRcbOFmM1vAp0adlc7va3yAZ7EkB0rmke+msXGN2KP?=
- =?us-ascii?Q?M5nN979gFzhhWOKa3HxMcMWAKANnVecQ902VjJCvPi4TEEZpolqu4Yh72e5V?=
- =?us-ascii?Q?K+6h5/yn67CRt3z8i2eG5YajlqjRR0IM0IcVdzNuj8yjgLG5mvtjLf4KL726?=
- =?us-ascii?Q?nireptpky4qlztPlW/OPEkU9+DWl7zos6LM5ClwHsNgnWjP3ldfFE/0nGkeJ?=
- =?us-ascii?Q?8uJSsAaLwZG/SHeej+nm9Kn6PjzGimALLnGr5qlp0SNnEWPXFrvhLGhCYENZ?=
- =?us-ascii?Q?fGy6S0zNrK9iPH5XlhLd9KFC+XN2XMPNhptjZaef/RZ/RlIXi0gFwLYvqBPj?=
- =?us-ascii?Q?DQor4Dvqifl3hIeh6cQ65rxSrMM43H6tu4fCIHsS6UzjSwviVF+ZE+BP73NA?=
- =?us-ascii?Q?z/hgC2LUNMjt8b7e2IIT440uQPnlrO6Iixa3dG63StfAGfvmIB4KQ+u9T7xn?=
- =?us-ascii?Q?sUDlGVUS0KV1CIMv7EYqr9KSHcQNxlh6Y9fcNb/v5m0s9QRvR9LwY3yNgMmv?=
- =?us-ascii?Q?r02il0YgtijpK5KB+EFMZw1delqD8aTuXAqYVsdXF3rxncL53oLuL1xUyOij?=
- =?us-ascii?Q?JfwoK1AAhlK7mOFIhwtEd7IEQSfZK9a7Jt/aa/XnhOghaoGSc8jy/xVg2oOL?=
- =?us-ascii?Q?qSfhgKEzB47rYso2sT0KebF2V2pyYTYVW7opqO50Y5sApcN5uIHqgWGGrELh?=
- =?us-ascii?Q?1GN+eOep2024QMSOhssrWKjJNVpk4F7DsVnLqe7LYy9rDEq4B5Crbgb/VpQz?=
- =?us-ascii?Q?9SI9kYhQUQ0YeD4G1x+h7b04xdSZRn2//pqkP3HXnEWHmPUlqFdKc10Gb+0a?=
- =?us-ascii?Q?K5GQwhHS3HJDK23yGFelKobPJDYafaiq9DPQp1L1KRz9WqRKhma/WjJBUr8H?=
- =?us-ascii?Q?B7gC3hLA3yKgT+UNNPARWZpj+IDhS/TDNy3LY7sJesWGz3EBYtV76j6htNGA?=
- =?us-ascii?Q?jkPM17i7+HkYs63HXHVy53F+vUj543P+PW6dxXEAu8O0jrI9AmZF1FFdgmOs?=
- =?us-ascii?Q?/qVNviFcEnmDb6dhOHDqwj3sTCmTvMiuYnZYqzILNUBXrXtwb0Sa3K9jcFcZ?=
- =?us-ascii?Q?8D0Yo+kQVxmK8TadSi8hI+XSHSA5jLmb9DQi1qBMCqbhE7LUIwTJ6qEHf/7R?=
- =?us-ascii?Q?ZcRK/DmuNFINdcCpI9WxomN5KCGGabE8HzqUt+qjlrR2G4fE0l/UAve5DTEn?=
- =?us-ascii?Q?fwuGC1HrVTm4axQx5GE3ApqMDEOtvu5yr1tkg0vX071saqnWmXCP1TCU6Et6?=
- =?us-ascii?Q?LiQzs7Ail1Jpeh197kcGv9dL1ehFNo7+Mo8jRelMBf6rgpP78Sj260/FHjOD?=
- =?us-ascii?Q?KaLUjbogpzsNGvjRDyxgnyf9wMZ+GCV+UL1CVwR9YFnG3IAh/+mNwZHTaFJ9?=
- =?us-ascii?Q?Zw5PAEoL0b0eYLBu2awyQxFxw05FKvaypenibBSnkwe+XEyohuPrxBg1BArP?=
- =?us-ascii?Q?nuxL/I6M+hhcDqTyP9wDXbg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(19092799006)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hmb98+d7tl7UXzeHG11LaErRui+JRPQHTSKAd6yaT7uMWqhMAxYJSi6Yl7lu?=
- =?us-ascii?Q?1SGFtdwg6/BMBSeSVQ7D9HYIR07ZZLuEo+nMPiFRVX/0MQlca/7FI+GrnR67?=
- =?us-ascii?Q?fHHFSe4zOkNiEnXWs/BY33uMH6qKnZmPzCD8agT3OQ3WoTQCu/sNxzOJBBNH?=
- =?us-ascii?Q?k2sGcQ842ReqnQQ17zBVc5jvL75YBktiEsq9UWDt3oYoY+EQvbazID9/qpkZ?=
- =?us-ascii?Q?+YCDsmoqqs1OB1OeUWqoAey/dI8WAAvUSg1ZPcV4+RVx40LVOd/x59GfX3h2?=
- =?us-ascii?Q?oHeEdF9olwYQFkfBtpTpdDs+mYYvdGzgdRgQdbWxVXksQcUbEKTaT/7QfmtV?=
- =?us-ascii?Q?DEApi82FtLIbJL8q1XEeUQR19OWE+kOoFjGuYYZTLH2jHR0P5aGJ9ibh+74e?=
- =?us-ascii?Q?7XEkq5OnuiG/UjHI8Xxsl/SeHh3/SYyrfJPTpBcr+8aTGL3PYrTDkEYREuCQ?=
- =?us-ascii?Q?F5GXHZt/FcDaT1hRGLtOzyZlIffoBapVfdqvBqdmdGbgulQ9YlOFp6d3dMWN?=
- =?us-ascii?Q?vOg++PysHr0WJv+iNzWePMbtx1IbfDI3ThdUq3k/M1e8+zDnXBxGI1gBx+s4?=
- =?us-ascii?Q?HAQSyojT6LbuutUCaaEQNt41AGafXWqsqovXl3IInW/Rb6l2BXq17P+1iiuQ?=
- =?us-ascii?Q?BQA21ABI6PZ8xu88V0sF/Elr8ZCU/O+PF1jisAtt5+cXe9h6tMNHXF0/mJ+q?=
- =?us-ascii?Q?NXp397+ktp0zmBHWlSQDpGyjh/i9JRe45vh8BoIXM96jzz/tz5kWtr8p/FgY?=
- =?us-ascii?Q?khdOtn8C5tB1w9MszKZ0+d63WFTb+sI0CXBrNbxIgIY/X1QLzsA1bdFbcdLG?=
- =?us-ascii?Q?o+3obiHSBi18Uj4vm2vpjKGxheB/S/fUooqC805XUzAQQirPHzA39U+ml3eZ?=
- =?us-ascii?Q?sokqprRQH9j6WrxtWZtzYSFaOqm5x2Fo5wi+8/XoQWObxzqPuW/sBb6azYPo?=
- =?us-ascii?Q?+shcwz0+d5RIPj8ssrbZl/ihCV+2R4/6VsO8v6usOhQd45BSQ/VoP3o5r6gg?=
- =?us-ascii?Q?8ktME93FmHJesFoBMKVmupDGF41v8ExpQgzbEpK/yjNETAoZkmpbyL3X+e++?=
- =?us-ascii?Q?G2C7bajDTKUpGY724UV+SZZzLBz9zpJFE8hCQ06rePfM2pr2Cad0YcipjROk?=
- =?us-ascii?Q?mct7syv/nyJar9wt9zPHSdOGZFYAxNU2AGLL6KUGQPwyiZn4sB3Ev6CN1SA4?=
- =?us-ascii?Q?XbOrs639WUGXCH3xAlIHexK/S2QOTy12LFcxI46wqoaJJEL2mS3TNY9gZdlo?=
- =?us-ascii?Q?uQYUNwX1c9epJsIpwXoeyxdwelLOL+bRnbctaSeqeopmIoPgl7YJp4Za77Jo?=
- =?us-ascii?Q?Tzn8SsPVgxAFKne6ijNH/UUVhVXbbzQ2c1f7Nf6sf0dc3QvHxwFjdVMP9vyX?=
- =?us-ascii?Q?g9JYUdf7o7gF+SW5W2NeZ1BZE7JGrVx1F/TWwv0SafDydQApbWqgAHxMwhlk?=
- =?us-ascii?Q?0apYL0x8PY0xwcvtTekUfhnn1iVjZbU/KA9lnV8WRJzTN+cwMH6otIwhJyGK?=
- =?us-ascii?Q?S9jDnLkBrmI9y6dlFsFzu7PY2V/zgHuqh23p3VN/VjCM9MKAhSPSziX0jq2B?=
- =?us-ascii?Q?4/v26G7z6mQ3a7XPJObI6v4eqdc37S3OPI1cUdePMaM/aFoP/lqoTVGvEBgq?=
- =?us-ascii?Q?RB9CzF5hxs+t7Dds8s4iHQHXsWawpUoxKeqVW69IM9MKxA40SHNNDIjM5Byg?=
- =?us-ascii?Q?LkQ33ZKsFNSdwSarFp3aiW4lewL0TlJkgINkxupaAxvxRsiQ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4f3e5d2-f481-456a-4aa0-08de627aa1c6
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 16:46:37.4128
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lzLuFc1WX3BhXvUWJrqJX7TFvrRX920l9SpQ0PxIHr1KubUg1p2o87WQqcSKZRjSn3OCJYBrIZckQYn+mPQAHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10464
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] usb: phy: tegra: return error value from
+ utmi_wait_register
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260202080526.23487-1-clamor95@gmail.com>
+ <20260202080526.23487-3-clamor95@gmail.com>
+ <74268def-31fd-4015-8be6-faebd6676667@gmail.com>
+ <CAPVz0n0giLnk6caoZFHZS52XCfA_CN1BqKjSQQGnbHBdHGikiw@mail.gmail.com>
+Content-Language: en-US
+From: Sergey Shtylyov <sergei.shtylyov@gmail.com>
+In-Reply-To: <CAPVz0n0giLnk6caoZFHZS52XCfA_CN1BqKjSQQGnbHBdHGikiw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 01, 2026 at 07:44:19PM -0800, Rosen Penev wrote:
-> Simpler to call the proper function.
+On 2/2/26 3:14 PM, Svyatoslav Ryhel wrote:
+> пн, 2 лют. 2026 р. о 14:05 Sergey Shtylyov <sergei.shtylyov@gmail.com> пише:
+>>
+>> On 2/2/26 11:05 AM, Svyatoslav Ryhel wrote:
+>>
+>>> Return exact error value from utmi_wait_register during HSIC power on.
+>>>
+>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>> ---
+>>>  drivers/usb/phy/phy-tegra-usb.c | 9 ++++++---
+>>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+>>> index 3a7a74f01d1c..6173b240c3ea 100644
+>>> --- a/drivers/usb/phy/phy-tegra-usb.c
+>>> +++ b/drivers/usb/phy/phy-tegra-usb.c
+>>> @@ -891,6 +891,7 @@ static int uhsic_phy_power_on(struct tegra_usb_phy *phy)
+>>>       struct tegra_utmip_config *config = phy->config;
+>>>       void __iomem *base = phy->regs;
+>>>       u32 val;
+>>> +     int err = 0;
+>>
+>>    This initialization seems pointless -- the newly added variable gets overwritten
+>> by you later...
+>>
+> 
+> So? let it better be initialized and rewritten then later on catch errors.
 
-subject: function name need ()
+   I'm not sure what errors you mean here. To me, it (contrariwise) seems to
+mask the possible errors when you forget to set err to e.g. -ENOMEM before
+returning (when adding a call to kmalloc() or any other function that doesn't
+return an error code itself)...
+   I'm pretty sure gcc will drop this initialization when generating the object
+code and (what's worse) the static analyzers will trip on this code telling you
+that the value 0 is unused...
 
-dmaengine: tegra210-adma: use devm_platform_ioremap_resource() to simplify code
+[...]
 
-Use devm_platform_ioremap_resource() to simplify code.
-
-No funcational change.
-
-Frank
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  v3: reword title
->  v2: reword commit message
->  drivers/dma/tegra210-adma.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index 215bfef37ec6..5353fbb3d995 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -1073,14 +1073,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
->  		}
->  	} else {
->  		/* If no 'page' property found, then reg DT binding would be legacy */
-> -		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -		if (res_base) {
-> -			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
-> -			if (IS_ERR(tdma->base_addr))
-> -				return PTR_ERR(tdma->base_addr);
-> -		} else {
-> -			return -ENODEV;
-> -		}
-> +		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
-> +		if (IS_ERR(tdma->base_addr))
-> +			return PTR_ERR(tdma->base_addr);
->
->  		tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
->  	}
-> --
-> 2.52.0
->
+MBR, Sergey
