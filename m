@@ -1,87 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D47B287276;
-	Mon,  2 Feb 2026 23:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FDC6FC5
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Feb 2026 00:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770075215; cv=none; b=Yqj9EoWSOaKTloYu9SNAGdQ5AQgWa1hHA6UmUruRaEi8kfbayVAuFbrB7jLtse0zFD2vp1Dt3EE7mBB8UpIIG6IjV3U4beDp5OPfJBchpq5UFIxjqDb+hS0sWZvQtaw/lhImzN99ETd7IDq5ktiqxdEzi7X/HWUbhlZVqwreyOw=
+	t=1770077199; cv=none; b=ddSYGDiHu+0Iin82yi+LlPc81/Yi4hepqiZ9t6KTfczSZLa7KPwDunrtV+sLCim5TnPwonrtQEsO2GEUZ3p2ub2u/sDXblbNWU0b9btkNkxqyOmRQPtfL6H0Ri+scaC6UkW5GlM6dktR1srLk5UcuoTCtrd3A9jW+Ro/bvud4D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770075215; c=relaxed/simple;
-	bh=uTcauUUxDk1QARIIvO0Qay0BsuBOJtklwhWuhR3nLeQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=j1Yo+ObyuEoIQSe8XYREqkOOytu8YAA44RqY0bMD0xvZGc6jk7B/pgGZXG3q5vfssQZogC0QM67lYf9EZuao3Oorl9Yf68LKxjmt1QVoiQDCKAj3lET/y0uBdBvUUY2W/QZjpHK2sjzXzd3eIsfsskelBDUQAOUQcNjMC/Dahjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oua6foBw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770077199; c=relaxed/simple;
+	bh=SYeGoreiX8dI0LCiK/jiS7IA90ZFkVbLZTsO3MdCF1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rjuHrc4sWCfWG2PnGOO6586OZDDAMq4n9KuiQ/b+pnEmO8IKPQEDG9tdbWnjWG9L4zt7J/WKgPplPJFdPGPT5HIkeIu2JPISrNd/MggxZP+o/USY6I7MeF3KOcZ0IETc1lhO1Cw+Ol+TGvi4ph+Lk6R8bKTJqVXylmj57CwIAOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ey0QQoH6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oua6foBw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F77CC116C6;
-	Mon,  2 Feb 2026 23:33:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ey0QQoH6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69192C19421
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Feb 2026 00:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770075214;
-	bh=uTcauUUxDk1QARIIvO0Qay0BsuBOJtklwhWuhR3nLeQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Oua6foBw/m3uiwlJSorc5z9Y5AdmMFtpWfazjLam89utlAtWk1wmEN4ScLjtq3R2D
-	 i5aShUL8WrntIQK7deCwDMY8DZxNORyRdUAEcu4YNSyd73tG/T1Ul86oA+Fh3nhQva
-	 drqSqR3lIJMEdx4AxvGo7cbZE20N7R8cr0i4SdO4Zq6XLTUGy2UnTPkGYee8viwruA
-	 Jxnm/A/MNWLuxZmlB+UZjrwQiT7/wGvTgIs5lTqdBNoEwlMGSN+T0lXmLn2xXNqTop
-	 8xP4rqoligv2GtN8LLZ0sfZk0Kv+LzKDi8dQx4NWWAWXx8ncQ2CRoEQkfaKBtD+ahU
-	 MCzHKa+Y4fujA==
-From: Mark Brown <broonie@kernel.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Zhang Shurong <zhang_shurong@foxmail.com>, 
- Helen Koike <helen.koike@collabora.com>, Felix Gu <ustc.gu@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260202-slink-v1-1-eac50433a6f9@gmail.com>
-References: <20260202-slink-v1-1-eac50433a6f9@gmail.com>
-Subject: Re: [PATCH] spi: tegra: Fix a memory leak in tegra_slink_probe()
-Message-Id: <177007521299.976788.8413773321991263199.b4-ty@kernel.org>
-Date: Mon, 02 Feb 2026 23:33:32 +0000
+	s=k20201202; t=1770077199;
+	bh=SYeGoreiX8dI0LCiK/jiS7IA90ZFkVbLZTsO3MdCF1k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ey0QQoH6BwuTR8fff+OqmjThDYe7eCajwESX4d2drLFd3bL1lc0hNeSV4U52uY3WP
+	 QcUpsSxajR/4h0BPohLq74kEN7nf37cBqFJWcGkGyIozqCNdodAdU+s64a70q5ZP/D
+	 2yXwXiH17dKeXfl/TyWRqjoxWYySycZmYLVjBP7tIzkVjUhSTdZ1tbohUOFJrELwUl
+	 SojBUyG2lQp7gqXyncwS4gon4SEEwFi+jCgRhKr5iELp9S0ji5LdDwX7EgunBvpAaK
+	 uM/3qojAupFuEw6KItnYABCiXYRxurRftIAWX6qbTN1haoU4FNOSOsG2gT3r/hYbou
+	 OCo4b+pYqLUWQ==
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7945838691aso4228577b3.0
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Feb 2026 16:06:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVjIf9aNDsxnILmYAQqamRgnUz50MfTJw31XMWupZMPQB8pZ4xCOLXeaKLBj9VeZKh8tn2hMmEULBBPzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaEtaNUJ8O616WGR2IcP2s7RvZmnw3VMorJ4WJDF6G8+gk5Dnp
+	orLlqIGSwIXi2a/TiAspe1vhOohPdo8WAGe59iE+TpEdzpzpu/dG8CAR+xauW0vlTbh/HfUivM7
+	lTXP2KEhBjvpEat53bduPX495s+4b/PM=
+X-Received: by 2002:a53:c78b:0:b0:644:60d9:751f with SMTP id
+ 956f58d0204a3-649d2f80c52mr930885d50.44.1770077198799; Mon, 02 Feb 2026
+ 16:06:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-47773
+References: <20260128085114.1137725-1-pshete@nvidia.com> <20260128085114.1137725-2-pshete@nvidia.com>
+In-Reply-To: <20260128085114.1137725-2-pshete@nvidia.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 3 Feb 2026 01:06:28 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=DOjp-k1XM6kULURQF5winWWqBm-S3JYFEVsZ8FpsY8Q@mail.gmail.com>
+X-Gm-Features: AZwV_Qhka7MsaZkB33uaVL0wGJTuPnFbgweVPaF4CVuqk1UUYD-WghDyZ7pRfdo
+Message-ID: <CAD++jL=DOjp-k1XM6kULURQF5winWWqBm-S3JYFEVsZ8FpsY8Q@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] gpio: tegra186: Add support for Tegra264
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: brgl@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 02 Feb 2026 23:15:09 +0800, Felix Gu wrote:
-> In tegra_slink_probe(), when platform_get_irq() fails, it directly
-> returns from the function with an error code, which causes a memory leak.
-> 
-> Replace it with a goto label to ensure proper cleanup.
-> 
-> 
+On Wed, Jan 28, 2026 at 9:51=E2=80=AFAM Prathamesh Shete <pshete@nvidia.com=
+> wrote:
 
-Applied to
+> Extend the existing Tegra186 GPIO controller driver with support for the
+> GPIO controller found on Tegra264.
+>
+> Use the "wakeup-parent" phandle from the GPIO device tree node to
+> ensure the GPIO driver associates with the intended PMC device.
+> Relying only on compatible-based lookup can select an unexpected
+> PMC node, so fall back to compatible-based lookup when the phandle
+> is not present.
+>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Thanks!
-
-[1/1] spi: tegra: Fix a memory leak in tegra_slink_probe()
-      commit: 41d9a6795b95d6ea28439ac1e9ce8c95bbca20fc
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Yours,
+Linus Walleij
