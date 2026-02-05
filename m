@@ -1,226 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3507326D4B
-	for <linux-tegra@vger.kernel.org>; Thu,  5 Feb 2026 19:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439F22C3255
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Feb 2026 23:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770319661; cv=none; b=g5DblXo19i0Vtx0ks+hLPRP68tyN5y9Dct+pxVrkIvYedT9ZHEj+5DaCIW7TAapgmiuOl6hoaFb7YN0N7EBCDuLnT68YHOIIJtPzbg2utXiTXcKjb/v1yclryVr1cEpddpKvcrnCtqIysux9byqxTcMoiLjJThOgPzirmf2GRwc=
+	t=1770335195; cv=none; b=lnqMMlu7Q2qCh1j2ueYokcSoq0SlaF68cTkGlxpBb4q6S3etXsrLPyPIHa5/5N92ss7Xa2wd35obTeWO8gtoZ0lpbt+XVxUw43CUqSHwvCqxnDqKogj1e9iAL1QfQKyA2IcSZ6Ttq0wooaVlxj1UVqmswX8oRQ7hnT3+Jr4YR44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770319661; c=relaxed/simple;
-	bh=lVqH9YXUENR1THUynMSza+9sAUW6necQO2XQfXpawAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BwxJ7LopTXcMXefydxBirWoIz9p60YwAfmu8VM2NGti+dj3p75SOWWwxn9jOAN7InUC0hy8PGO8CdgzdtmGFpFsqMzZqkJo8SxrWdNecwW20+k+/vGcWCsM4yixKaQcj/rdLSU6lKNGz6HJc9sbZYPY3YZ8zdcMvBnIbal9DeXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Swl6Bhwm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770335195; c=relaxed/simple;
+	bh=W/y78jy7X4nuj5V5IpcGtOqeSqAcFoKR80crW8YdxtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k7S4y+YEKe8M3CsgUXPzHMt7J1POUnnNuWs2vO24Imn+srtx0e1ZzqxwTP8kLannDFjVMgpU8+ptXILkSEVHCkGmzDX7Q+SzlUm+PilqLxK8vI3TtYtzcNgt2Xjpr1EjMs5wrSUV+F/7FPak7h0RFGGg4m3YnXTVrmYM3cBHilk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4aWbS2u; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Swl6Bhwm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82222C4CEF7
-	for <linux-tegra@vger.kernel.org>; Thu,  5 Feb 2026 19:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770319661;
-	bh=lVqH9YXUENR1THUynMSza+9sAUW6necQO2XQfXpawAg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Swl6Bhwm61In1+nItp1x7MaE5aIHKD1M0B8TgOGljboJRPxhQaKAnL6ptkSQ8GimH
-	 2eYkMNQobZ8NhGphqW8y/QLZBx1zJnEnnQocdmRBzbl5fmCihrm1Txusbgz7OYleWK
-	 5AiHzQQqOREwWy3PSqJQGA16W2LPoHaGEpCa9KdrBdYAil8LPwzIQZzBgXLBK+cAbp
-	 0KQQ54mc1ef/JWMTkkMoTXz7M0cnoCkSl86oSjf0P2h3SRz/DO/feMDG9wmFHgWMVt
-	 RgmtVo1qjE+8qpWKqG72RUX7Slj8xQ+ADOHRl/DyOOLHHyOvoTyHG4Vdn9oFmKEgMz
-	 oMF9sVU/GdEAw==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7d148dd3421so515486a34.0
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Feb 2026 11:27:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVxxKGxkNOU1YUPz0Je93qsed4khOWhtT4oA53XwWJlpFkNQ8tsJE7PSWrUHozHZnM1R4VMI74AzYdYiQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9VzyagfGdr3D62dMtcqIxGsg96UFdqGys2b+HNWY6+bj43Wm3
-	T7i7U6Tmlm4mIG0ZLtTSGpOYpGEpItjVhqsE8e1hNtVFo7ei4uMlAwwUZSH4XsAyeZXFim6S0A2
-	cGz6JrgWX+lFmJqc3nNq6x9uLVaxH1kU=
-X-Received: by 2002:a05:6830:828e:b0:7c5:3c7d:7e65 with SMTP id
- 46e09a7af769-7d4644296ebmr58017a34.16.1770319660609; Thu, 05 Feb 2026
- 11:27:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4aWbS2u"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6581327d6baso2546118a12.3
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Feb 2026 15:46:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770335193; x=1770939993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9fEt2B8uF3Xgw1RKagrHwaEXS6gyn2vlWTudLc2umps=;
+        b=l4aWbS2ufvqa4SSYfu6si8Ch3+IFzB2c9buAY3w0GkkGkbuThFOYDv79m7V88Z/QKz
+         monwgkT43Bxb7dQUOn8MCt7nJqi0tsRolvhut+4Jkl7YVQwNXmlfFrgBtW9FsMLPtxGt
+         KG/aHFjQDBqERRX5PBQ12gNjnhm4ZgYg+J8hl5kxfZYwO8oO6NwgW6CutVF3zEngXwFM
+         1J43t7KZqnuQ1THeCRO387VbuTNo6t13xlf/bctw7fgG5DF7gbmNFoh1+SLX/E32qlyq
+         Uwbv5EHClwLBgqfSCesBwr2/wxXjlKmp8m//AVUdsS4ZVNlyogFsxl+SCs+tTUG7pEX2
+         X5DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770335193; x=1770939993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fEt2B8uF3Xgw1RKagrHwaEXS6gyn2vlWTudLc2umps=;
+        b=showbNlVWxDuyGmbUPM5VJiKoouq800HWVx3U6W630uFn6wTnonht0L1z2HG0bnSB3
+         KRpeyd43p6rXXETiEf4E70h1UIDey6AapTwHv34u8Ip9XAbYfnq0uoAvSsYIJmVm9G+s
+         DZHOMzb1WzaXvCL4FZNDk9PC1SMJWCyRDgAU2aBC2B4Re1/fX1YXV/SOR4gEQRzKU8yS
+         AQsApdTh6bYnK+g9pNT3jFKfQExaSfsKBQJLbo7G+2K50IngApqukMMQSdAyjp+7F/WP
+         AE9uJOx+e+k3YUKcL4nMB5/AKdQWsRCeb4m5xfCGoegF6xsqyUKFBf7qIKpHko8M0Wp4
+         uphA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ6QgwT/p4jCX1yQSW+Z8gCa4mQTYd23DT6D398toJbJAl6+x/8m7ondquH2bZnnHi3V9yTnwQ/ui6TQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTXqlWc6Jpb/mHU5wc/jMAJeMCiRe5XmETu3Pxen0AJLq3y/lL
+	3qeaQ5pqwWUbi8tPpJUbpwezhLc+KpurFMffiFQ1E+nmkuviNLWg+WbIHeNb110jjj9DvT5p
+X-Gm-Gg: AZuq6aIpms8QAFkBD8UyDoR19gWHWG+rEbOGW1I9YO8SOt50AOC35YBJdUYWHLTk6Tm
+	lRvDW0Dv6YdeFjEDGec/FHSYf/BhSI6d69TBiRToA6YpbsBqzVDUVtCStEWDdTtdQHPUc9OSN9l
+	M04EI9jHENxwNQqzQ8RSLcInhaTsAzzj4pA9lLyzZg/MLOe1YJ0AEVv6NWrboyY15DazuKrjIGA
+	bIPSAkaTCKOZz0wpzMBYqBVn0h9DXjBuPFf7k1ARRnvpaLxTSwLlgq3WmFUdLs5V3O/Obtfuky1
+	xtJ26LmntqYYOvk7GpmCzrfLDaTNmhh1Y0/CS1bX4N5mwPck4NtJmC3pu2xaNbyE9Spo/cHSNqp
+	b8PBFEoTNoBtVPnYch1xmb/F0l4nkd8mWeH2HGshiAUykEmRnXI3pzO8qY/8Yuv2jUAZdMXEOiF
+	ImdR8CVYq6cfqlt0TaVfRh4HW0HKFb9hM39i1Tgpyg4tIt+FEKBnlaj69uODd7WHcFiUha5SKeM
+	RsJC06XeGahBhjsZHBeYymgayHcz0hZ8Pvrw66hCQpVP5PJ+Ejs4DZvSlEpVA==
+X-Received: by 2002:a17:907:d8d:b0:b8a:8537:e399 with SMTP id a640c23a62f3a-b8edf3c0f26mr44373766b.48.1770335193396;
+        Thu, 05 Feb 2026 15:46:33 -0800 (PST)
+Received: from cs-874966990260-default.europe-west4-a.c.od237066db22328bb-tp.internal (212.28.147.34.bc.googleusercontent.com. [34.147.28.212])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8eda7a3004sm29501766b.15.2026.02.05.15.46.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Feb 2026 15:46:32 -0800 (PST)
+From: Artem Lytkin <iprintercanon@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Artem Lytkin <iprintercanon@gmail.com>
+Subject: [PATCH] staging: nvec: use strcmp() instead of strncmp() with magic length
+Date: Thu,  5 Feb 2026 23:46:32 +0000
+Message-ID: <20260205234632.1964-1-iprintercanon@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260129104817.3752340-1-sumitg@nvidia.com> <20260129104817.3752340-5-sumitg@nvidia.com>
- <4432fa04-e67c-422a-aae4-2938be431985@huawei.com> <c96312c7-b13f-4f5c-9512-cc0382c1c77b@nvidia.com>
- <74f3e6cf-7c13-43e6-a8f6-2b46184b8ad6@gmail.com> <944fc140-e5c5-425f-a6ad-883e87eed8a3@nvidia.com>
- <CAJZ5v0hUdLsh8UK5G6rHHD49RQGYLAiU1J-11DK-fLTKnuqhUQ@mail.gmail.com>
- <CAJZ5v0ggzD0PEti-r20Sm-8n0gPigPh=NgE2Oa=UKzMmwB0jpw@mail.gmail.com>
- <211d9dfa-26e6-4fc3-b70b-f5fbca49e5fd@nvidia.com> <CAJZ5v0if=tMiyLB-efkzB67SniJS-2pCVv1-eN+vzZxqrdAM8Q@mail.gmail.com>
- <e7570bc3-5420-4743-8a75-8602559ca235@amd.com> <b8603fcb-b0ab-47da-ae90-e82f7b9bcd67@nvidia.com>
- <CAJZ5v0h4yOAW5y-B76EooeBLdMBmmL1hRf3PZ0udA+FYR4EPKQ@mail.gmail.com> <a1cdc4ee-1aaa-4685-b1a9-a6961a486cd8@nvidia.com>
-In-Reply-To: <a1cdc4ee-1aaa-4685-b1a9-a6961a486cd8@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 5 Feb 2026 20:27:29 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jCT5exCOz1gmHN+gXaamn-W0Yg0g8KN77vB5tUmsGFOw@mail.gmail.com>
-X-Gm-Features: AZwV_QjYbWmk9CpFs4_fQbMfpghyGM5juCTPanm_jBC_7JecsACmsCoO-gdsJcQ
-Message-ID: <CAJZ5v0jCT5exCOz1gmHN+gXaamn-W0Yg0g8KN77vB5tUmsGFOw@mail.gmail.com>
-Subject: Re: [PATCH v7 4/7] ACPI: CPPC: add APIs and sysfs interface for min/max_perf
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Russell Haley <yumpusamongus@gmail.com>, "zhenglifeng (A)" <zhenglifeng1@huawei.com>, 
-	pierre.gondois@arm.com, viresh.kumar@linaro.org, ionela.voinescu@arm.com, 
-	corbet@lwn.net, rdunlap@infradead.org, ray.huang@amd.com, 
-	gautham.shenoy@amd.com, perry.yuan@amd.com, zhanjie9@hisilicon.com, 
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, 
-	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
-	sanjayc@nvidia.com, nhartman@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 5, 2026 at 8:21=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wrot=
-e:
->
-> >>>>>>>>>>> Hi Sumit,
-> >>>>>>>>>>>
-> >>>>>>>>>>> I am thinking that maybe it is better to call these two sysfs
-> >>>>>>>>>>> interface
-> >>>>>>>>>>> 'min_freq' and 'max_freq' as users read and write khz instead
-> >>>>>>>>>>> of raw
-> >>>>>>>>>>> value.
-> >>>>>>>>>> Thanks for the suggestion.
-> >>>>>>>>>> Kept min_perf/max_perf to match the CPPC register names
-> >>>>>>>>>> (MIN_PERF/MAX_PERF), making it clear to users familiar with
-> >>>>>>>>>> CPPC what's being controlled.
-> >>>>>>>>>> The kHz unit is documented in the ABI.
-> >>>>>>>>>>
-> >>>>>>>>>> Thank you,
-> >>>>>>>>>> Sumit Gupta
-> >>>>>>>>> On my x86 machine with kernel 6.18.5, the kernel is exposing ra=
-w
-> >>>>>>>>> values:
-> >>>>>>>>>
-> >>>>>>>>>> grep . /sys/devices/system/cpu/cpu0/acpi_cppc/*
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/feedback_ctrs:ref:342904=
-018856568
-> >>>>>>>>>
-> >>>>>>>>> del:437439724183386
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/guaranteed_perf:63
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/highest_perf:88
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/lowest_freq:0
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/lowest_nonlinear_perf:36
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/lowest_perf:1
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/nominal_freq:3900
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/nominal_perf:62
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/reference_perf:62
-> >>>>>>>>> /sys/devices/system/cpu/cpu0/acpi_cppc/wraparound_time:18446744=
-073709551615
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> It would be surprising for a nearby sysfs interface with very
-> >>>>>>>>> similar
-> >>>>>>>>> names to use kHz instead.
-> >>>>>>>>>
-> >>>>>>>>> Thanks,
-> >>>>>>>>>
-> >>>>>>>>> Russell Haley
-> >>>>>>>> I can rename to either of the below:
-> >>>>>>>> - min/max_freq: might be confused with scaling_min/max_freq.
-> >>>>>>>> - min/max_perf_freq: keeps the CPPC register association clear.
-> >>>>>>>>
-> >>>>>>>> Rafael, Any preferences here?
-> >>>>>>> On x86 the units in CPPC are not kHz and there is no easy reliabl=
-e
-> >>>>>>> way
-> >>>>>>> to convert them to kHz.
-> >>>>>>>
-> >>>>>>> Everything under /sys/devices/system/cpu/cpu0/acpi_cppc/ needs to=
- be
-> >>>>>>> in CPPC units, not kHz (unless, of course, kHz are CPPC units).
-> >>>>>
-> >>>>> In v1 [1], these controls were added under acpi_cppc sysfs.
-> >>>>> After discussion, they were moved under cpufreq, and [2] was merged
-> >>>>> first.
-> >>>>> The decision to use frequency scale instead of raw perf was made
-> >>>>> for consistency with other cpufreq interfaces as per (v3 [3]).
-> >>>>>
-> >>>>> CPPC units in our case are also not in kHz. The kHz conversion uses=
- the
-> >>>>> existing cppc_perf_to_khz()/cppc_khz_to_perf() helpers which are
-> >>>>> already
-> >>>>> used in cppc_cpufreq attributes. So the conversion behavior is
-> >>>>> consistent
-> >>>>> with existing cpufreq interfaces.
-> >>>>>
-> >>>>> [1]
-> >>>>> https://lore.kernel.org/lkml/076c199c-a081-4a7f-956c-f395f4d5e156@n=
-vidia.com/
-> >>>>>
-> >>>>> [2]
-> >>>>> https://lore.kernel.org/all/20250507031941.2812701-1-zhenglifeng1@h=
-uawei.com/
-> >>>>>
-> >>>>> [3]
-> >>>>> https://lore.kernel.org/lkml/80e16de0-63e4-4ead-9577-4ebba9b1a02d@n=
-vidia.com/
-> >>>>>
-> >>>>>
-> >>>>>> That said, the new attributes will show up elsewhere.
-> >>>>>>
-> >>>>>> So why do you need to add these things in the first place?
-> >>>>> Currently there's no sysfs interface to dynamically control the
-> >>>>> MIN_PERF/MAX_PERF bounds when using autonomous mode. This helps
-> >>>>> users tune power and performance at runtime.
-> >>>> So what about scaling_min_freq and scaling_max_freq?
-> >>>>
-> >>>> intel_pstate uses them for an analogous purpose.
-> >>> FWIW same thing for amd_pstate.
-> >>>
-> >> intel_pstate and amd_pstate seem to use setpolicy() to update
-> >> scaling_min/max_freq and program MIN_PERF/MAX_PERF.
-> > That's one possibility.
-> >
-> > intel_pstate has a "cpufreq-compatible" mode (in which case it is
-> > called intel_cpufreq) and still uses HWP (which is the underlying
-> > mechanism for CPPC on Intel platforms).
-> >
-> >> However, as discussed in v5 [1], cppc_cpufreq cannot switch to
-> >> a setpolicy based approach because:
-> >> - We need per-CPU control of auto_sel: With setpolicy, we can't
-> >>     dynamically disable auto_sel for individual CPUs and return to the
-> >>     target() (no target hook available).
-> >>     intel_pstate and amd_pstate seem to set HW autonomous mode for
-> >>     all CPUs, not per-CPU.
-> >> - We need to retain the target() callback - the CPPC spec allows
-> >>     desired_perf to be used even when autonomous selection is enabled.
-> > intel_pstate in the "cpufreq-compatible" mode updates its HWP min and
-> > max limits when .target() (or .fast_switch() or .adjust_perf()) is
-> > called.
-> >
-> > I guess that would not be sufficient in cppc_cpufreq for some reason?
-> >
-> >> [1]
-> >> https://lore.kernel.org/lkml/66f58f43-631b-40a0-8d42-4e90cd24b757@arm.=
-com/
->
-> We can do the same as intel_cpufreq. CPPC spec allows setting
-> MIN_PERF/MAX_PERF even when auto_selection is disabled, so we will
-> have to update them always from policy limits in target().
->
-> However, this would override BIOS-configured MIN_PERF/MAX_PERF values.
-> Since policy->min/max are set from hardware capabilities during init,
-> any governor would overwrite BIOS bounds with policy limits (hardware
-> capability bounds) on their first frequency request - even when user
-> hasn't explicitly changed scaling_min/max_freq.
->
-> Does intel_cpufreq also override BIOS-configured HWP min/max values?
+Replace strncmp() with a hardcoded length of 30 with strcmp().
+The bat_type string is already null-terminated (set two lines above),
+so strncmp() with an arbitrary length is misleading and functionally
+equivalent to strcmp().
 
-Yes, it does.
+Signed-off-by: Artem Lytkin <iprintercanon@gmail.com>
+---
+ drivers/staging/nvec/nvec_power.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Should we preserve BIOS-configured values until user explicitly changes
-> scaling_min/max_freq?
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
+index 2faab9fde..89dd997aa 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -207,7 +207,7 @@ static int nvec_power_bat_notifier(struct notifier_block *nb,
+ 		 * This differs a little from the spec fill in more if you find
+ 		 * some.
+ 		 */
+-		if (!strncmp(power->bat_type, "Li", 30))
++		if (!strcmp(power->bat_type, "Li"))
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_LION;
+ 		else
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_UNKNOWN;
+-- 
+2.43.0
 
-Why would that be useful?
-
-> Is there any mechanism in cpufreq core to detect explicit user changes to=
- scaling_min/max_freq?
-
-Not today, but since scaling_min/max_freq have their own freq QoS
-requests, it should be doable if need be.
-
-In any case, I would very much prefer using the existing
-scaling_min/max_freq interface, even if that would require some
-additional plumbing, to adding new sysfs attributes pretty much for
-the same purpose that would only be used by one driver.
