@@ -1,64 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2184339901B;
-	Thu,  5 Feb 2026 10:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593FA3A7F69
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Feb 2026 13:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770288434; cv=none; b=Tks/dv3Ehdf3joh8fP5h7MuxarvGI5172uQv9lI5qG54lvqEzNgFzY+5Xd8BZK1hfjXQHSWkuuhgVO0kb0108Z2sH0VRpfgHHk8StEfaZaWnSELAYHcLFunhChDg4rNjEfrHBheFR4AOZXWcYW05EaXVw1akKhAtl8yv3JJYEXI=
+	t=1770297016; cv=none; b=hlu/TZB8Cw6e5CfUycygYLFeGVjcdCVnn95mW4cnFfKEdZ1e6fXANZ8g/3wtQAQPDN4B9yyabTaX+rI0kLpVNUPSd2fN4KT41/57kJUuU50FHwvjMlPYQIZpV56UjTkORc2WHnWXs9WNQgvzclzQJU5X9X1yAuQBOXpwgybQGrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770288434; c=relaxed/simple;
-	bh=cyVt6afG2zaiVIN3kLSH5igkx2J4j8ntDnijhQZLwnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W872uSFG4ODrkyIS1HCgE6aHBCd5cAd++yzNvEBLGeQvdol+XNoUYOjlRri0kYKyDhUPj0Cqw8NxLJCEPXuy9gvwwojOHOve8+1VDTKqc9jDDv4H7Y15vYjyfy5Xm7piijqiho4jIfa6ciRwjQTnRSieL/HONvGNeA2eIJOFjqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiR2eQ35; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770297016; c=relaxed/simple;
+	bh=g06hxuxEUhC4yKf7OWaLtDoSkFebbaVKoScO/qtaIEo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h++8UFdLNcMggE5bL6dF/pI2EoTW4SGK+CMWllUOqTgyFMbMhREP5ayh+bbooprffo1bcDLTrKsUaDXsLnsRjjhmnJsuOLuln2xJfOKFmeiaonLRWfogXTRRuJiqnVXXnVQ98StsS27gabsucOtOOdjFRc6kGSfdY5iUhPNL4KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YC2UxFPi; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiR2eQ35"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D1AC4CEF7;
-	Thu,  5 Feb 2026 10:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770288433;
-	bh=cyVt6afG2zaiVIN3kLSH5igkx2J4j8ntDnijhQZLwnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FiR2eQ35AHoP98gASByoCdSr24fHnWNLA4uZ1jVgabQE2O92DdNST4ZI/wWLQZzNO
-	 Z3wsT2yHa8Gj0G0K1RLEaIitfH3MbE3wKkx5TuZv3nebFRGVqaCLfnvsE0Rkrmm/Oi
-	 CJP8fJBM2eznADOM1YwOlwmlrLbaHNYl51cKzoI228j+uX8ah04VJHowv/9IQQqpKe
-	 IglDzm4plZJBNdJF/eUVG6Rp2Eg+SuKA+1T0W51Zp2mo5K9qrTh/mRiLAed/Ln6CAF
-	 V8sXzh2tEpijs7dxGN+kQ5qYAZ8SrpCZXOKhVFkl1Q44JeU58TnFo/D/3L0MqM3pql
-	 bZQQuPhOQP3Bw==
-Date: Thu, 5 Feb 2026 11:47:10 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: tegra: Don't mark devices with pins as IRQ safe
-Message-ID: <aYRzq2n1VU-fTXaO@zenone.zhora.eu>
-References: <20260202-i2c-dpaux-irqsafe-v1-1-5b1847e8bc97@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YC2UxFPi"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4801eb2c0a5so8161885e9.3
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Feb 2026 05:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770297015; x=1770901815; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g06hxuxEUhC4yKf7OWaLtDoSkFebbaVKoScO/qtaIEo=;
+        b=YC2UxFPi4+1WHeCj6ORQX2JVh+2Ew2eyUAiGFj4CSvbdKSZQDbUOhX/4gzCPTR6AQz
+         9qrgOMV7y5RdhlNxKDO3OCT0x+NHw0sky0sOznKFW+PYGoqkFP1pDoOBrRo8nfAr3tOu
+         sIqcFshwIzuIRI7aShgxG7XuIk6ioQ32g8k7zEExY3y4myW2aJn9rXBptYXVAHvAIcvC
+         v+bKnchz4KpcQ1fBDAn/+sXbMuXdjOjuvMAxqDEafbnUA4RYWszGbkZoVVL+ViuvfrXV
+         OiWWJxC/RltE0LbdSmE4+RVeQgwB7vKtDmk1hENCqinNjiY34JFbdP/K+S4eMQNZ6Zmv
+         VD8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770297015; x=1770901815;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g06hxuxEUhC4yKf7OWaLtDoSkFebbaVKoScO/qtaIEo=;
+        b=ltfhzkvszdkSjVqLHKJ4xCBEhduU8ldQvIqzCb5ji0x8uxCcRtIt3dM+08LV/9z9Nx
+         ZZKbg80T824IWkEHRpnWjhNv4dB3YgxZ5dF7HRCuDHiUm72idZAHVWb2bGWm6jW2UnQR
+         bTzyLBO4Yk9Gw/lzAP1nb7LfYrqmOp2pa+XGerGK3oR8m3wFJCkJPW/YlikWfXLxLPUR
+         eirOQXAONbkuzwsVh0hDLLflSdmFTkameTtcjK0Numu+XiR5EbOGzU5v2c0hl6x4KiKl
+         oH6iZwsuY+e4q1E1SmekR6DJG/6yXxW9lBQSTFT8kg+tvjKNwcSTJGwn5WzjPuruAtbr
+         SdnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWo4mUQXd1m4K8u66PWCkwi935UVqLgUNh2BTtlpZMb3gzlbWX9BxtIjIH1h4BEGsHmaYp+7zBf6F2eow==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1c2deCrqf60azjHYj53nvLHxS5AP/W+EhEqACKDF8o0dPrxM+
+	L95Wx2S/dgzZCl9b8FzcAy4wDm8cMqE+IsycYE9GSia6u5wCXxXAHBCA
+X-Gm-Gg: AZuq6aI4EdIBIwHN3EJMOEGbcbH/m4AooEriJEIDrtuDDKFiRRw7KjO1c4zcfxqHtJy
+	zKOSm0Imz5xTr8hcCdF/HllngkVq48W+k7PlxYrukZKVGr6RKbYl3s536Xv69VPZ7TScyP+Zoul
+	3JpsZ2jOGI8LLL/0b2jmn+t6LIwSAzKwVBKm29VhEjiP/jPIneyGDcNpkuNgWHqLu0mt6sEAraN
+	CmH2w/OJ5V+vZiD3g4R0SFVQDgxWJuMaKzJS5ZB0UqJ3AJl2D0Mt0s+NDO5GmFdPKFvbs6AaXPx
+	KAWIfLAoB4rUcfTlJ29LrlbzG7iDsIUYD2AGnmvBYgUHtFKPjJMATS/0hJ2ciyQbL31knEXDRhp
+	6MF+Ns/3VkWiY5T2TKVyv5vl6Hc4UoSZjAWFEtHi6pHrMIRd4ptAfs/W+O0qxsYR37U09Ybpftk
+	HZwMaQVH0pR58OXfQ=
+X-Received: by 2002:a05:600c:3549:b0:475:da1a:5418 with SMTP id 5b1f17b1804b1-4830e9351f5mr99191295e9.1.1770297014494;
+        Thu, 05 Feb 2026 05:10:14 -0800 (PST)
+Received: from [10.245.244.111] ([192.198.151.45])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830ffc9f3asm46238925e9.19.2026.02.05.05.10.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Feb 2026 05:10:13 -0800 (PST)
+Message-ID: <acebbfddad686122c4aee9d1a87b048379dffbab.camel@gmail.com>
+Subject: Re: [PATCH v7 4/7] ACPI: CPPC: add APIs and sysfs interface for
+ min/max_perf
+From: Artem Bityutskiy <dedekind1@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Sumit Gupta <sumitg@nvidia.com>
+Cc: viresh.kumar@linaro.org, pierre.gondois@arm.com,
+ zhenglifeng1@huawei.com, 	ionela.voinescu@arm.com, lenb@kernel.org,
+ robert.moore@intel.com, corbet@lwn.net, 	rdunlap@infradead.org,
+ ray.huang@amd.com, gautham.shenoy@amd.com, 	mario.limonciello@amd.com,
+ perry.yuan@amd.com, zhanjie9@hisilicon.com, 	linux-pm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ nhartman@nvidia.com, 	bbasu@nvidia.com
+Date: Thu, 05 Feb 2026 15:10:09 +0200
+In-Reply-To: <CAJZ5v0gBHrGf4TpjqV+W5YynM+9_xWpepgrOiRegSYS9CvPV1g@mail.gmail.com>
+References: <20260129104817.3752340-1-sumitg@nvidia.com>
+	 <20260129104817.3752340-5-sumitg@nvidia.com>
+	 <CAJZ5v0gBHrGf4TpjqV+W5YynM+9_xWpepgrOiRegSYS9CvPV1g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260202-i2c-dpaux-irqsafe-v1-1-5b1847e8bc97@nvidia.com>
 
-Hi Mikko,
+On Tue, 2026-02-03 at 13:43 +0100, Rafael J. Wysocki wrote:
+> On Thu, Jan 29, 2026 at 11:49=E2=80=AFAM Sumit Gupta <sumitg@nvidia.com> =
+wrote:
+> >=20
+> > Add cppc_get/set_min_perf() and cppc_get/set_max_perf() APIs to read an=
+d
+> > write the MIN_PERF and MAX_PERF registers.
+> >=20
+> > Also add sysfs interfaces (min_perf, max_perf) in cppc_cpufreq driver
+> > to expose these controls to userspace. The sysfs values are in frequenc=
+y
+> > (kHz) for consistency with other cpufreq sysfs files.
+>=20
+> But this is not cpufreq and it is not consistent.
 
-On Mon, Feb 02, 2026 at 01:42:34PM +0900, Mikko Perttunen wrote:
-> I2C devices with associated pinctrl states (DPAUX I2C controllers)
-> will change pinctrl state during runtime PM. This requires taking
-> a mutex, so these devices cannot be marked as IRQ safe.
-> 
-> Discovered through lockdep.
+Just my 2 cents to add:
 
-I removed this sentence...
-
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-
-... and merged the patch in i2c/i2c-host-2.
+CPPC and Intel CPUs don't use kHz for performance scaling. We should
+avoid introducing additional kHz-based interfaces where possible, since
+the performance units <-> kHz translation may become more complex over
+time than today. Future implementations could involve non-linear
+relationships and reduced accuracy. Minimizing kHz interfaces now may
+help reduce future work.
 
 Thanks,
-Andi
+Artem.
