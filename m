@@ -1,68 +1,65 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010066.outbound.protection.outlook.com [52.101.56.66])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011050.outbound.protection.outlook.com [52.101.62.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18482E62A4;
-	Fri,  6 Feb 2026 03:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC83223DE7;
+	Fri,  6 Feb 2026 03:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770349254; cv=fail; b=L+koa6CQGL+faYiRnpTmEb/MlUpW0vrFxu/7po4j5pUo+uLBGJVqS4zU+EddAgJEmiDJR0+4ZVZeeeBfNWR5LPWAAX4rMDH8wJ33BL+SFalASAd1iZcdg44es99ncN9Uxc2w3ZfSPQe9oF+15n426/JPZCg1W3VAdewbS4u+zjs=
+	t=1770350030; cv=fail; b=arFvKzrctHRcAeML6ykXXcH75e/EYUdv9k/SFCAgggctZXWS5iYmdnenXg2NcDAoOVY5bYg8my6yYCIFO/qc1lrQdf9Jd8H7OGgHX7fVJjB+lJsfA+30zLNohZGw6UwUBETreHuCEgwO1WTc623FCSP21xQmxIniivzS7DYLYqs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770349254; c=relaxed/simple;
-	bh=xHLQfc7vDxObIYN3vU4A2S09IC8/+H/THPi4UxTD3AE=;
+	s=arc-20240116; t=1770350030; c=relaxed/simple;
+	bh=1ux99K4kISOmq1Q0HxpHuqnhAXXzSbHxUE/qpafa6Ck=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I7H6/XEunUVPstcwlwTHt7p543Mn8OhJGTb0uuZf6pPEkRMpvfBTvmqA9tCd7FBV7i1l6Mh6+psxRwGV16VAcJUIeEGJfZKImIOyYrrFodHLTVvXSuILwAj+HCimy/TAZzzA9bsATe4dT8QbF0K1Fhqxg+lOvySy0QGwNRYMBsI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fB1os5+z; arc=fail smtp.client-ip=52.101.56.66
+	 Content-Type:MIME-Version; b=WygyqktEub1/72CcrHJVdBSQMhGXV7vFjzovs727zH5sqKMZE34/vd3xhdY4iHqoe39v6WEfCEZxaT1SeBeJBMC+t6Et7H+cSGYIlS5Ar7py01JdH15d+4FHaXi5snzG0gk73X6+xD3Uri+HlP9kil4tiJMGFMsnuZoKhak03os=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JrFLBpRF; arc=fail smtp.client-ip=52.101.62.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fB1os5+z"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JrFLBpRF"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CBmrj3DLrKjBYYHApB+PP3vy/76aEVh5OmxLAk+FwqGHHfLX9lAkcecys0lo/DcfpEn/f684JArJzW/UHxATLVSouKdUUAx7FHONCrjNVAZm3NkQ5WjaJgoV1DgP9olJpB4PSwXwA5QWZaANYXcv7BBQH7PgKxAcxTy5omP4Cf4WJq93rYUv5s4aPS2PA9Md7QBp8TE1GoOmEliLGzlqYg1ffB7zVEkTntyuDIxcVNsNuHt86+MySP22DiUlSdS7Y2CyXYQ9IVUB8dtX9drYYHg9gOvJjzL+UAe52GyfMieMeJAl2S4babaoDef2Wjf+lebOFgMImI6p8iM5aUO8Uw==
+ b=W2/n+X0oGr7HbwvEdKSaCeF8e7VKLrgQRR/euYDhpVfmPlv8ALD6cFYedSPo6qRf8Nmi8IHOUHZ7vzygks4Xi1PopwZN34NzEKGw/Nu+wYBF0OERAKk8+YvEbLHSK1hibxwauPp0bFE6ajEQUSuLwp7vGEtBC2hiGn5uSKXHjM50BMGW8sY/NWfrS0oXDHkxuAyqYKr1Zl6iUp5ZBnU/RtQgQe0ngUmIjpYykQdfNwSWVvYl/UV0X/SwT51U31Vi61fgf5/eWQnNeDbWnnMNO2Q2jzXxhnIVYekUh3DFf3vvQjsgFXrFyfaexcXtVXVLTSl4MpbD5KeAPBB8cWW93w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4az3chT7W7tjL4DsHecKGXBtxHaLn4yxnvausxAl5YQ=;
- b=seLSGte8qCOvm4apg/RRoIfNMSGxD90gibRX26mrFKu5VN6/PS/BPnk9n2ZqCUgStRWMPIBju+3+n+g8iqwqNGpm2L1RDkOH2wbEQXriAOJ3DGHrEb5pwqU1Uc9pJWvR4rStcwfbeR3bi/3wHtWPylxhdTgq8I2FNrPs/zEY3XkR2NL/VgMjgSfu32kT75e4HDEe1N5rdWSKCJ2EcDImIZI1H0X4/1Dur7KN8CPHEbrPFWT//nzQ5vCoKMEWDKQVoHXjmYIgKdFGizrhaIIyl9uJ/IlacBdqg7r7zkRdEDj85JZTxjR9gFPpRqIz1ckr5t6GwR+9MpB8F8ldOL3A+A==
+ bh=hFMedcs0ro/OBdj8LkAGmXvLCwTyXE99oSAAB09gaS0=;
+ b=TTJLPgIreWGUsWnaRA62rs85J90vgP+UxGKiMtCwO5+1m9n/JYACH6VoOC3PISbSBkHacNokwTj2BrF/5/edKMEAHoy//Sge53Sz5OpekMfB3CVyDsrM+u2R793M28Zdb2A+lXn5Iex92esnhuzQFbW/j9TNpxBllRF5hNpUhHR9nghV96uK8gFUHKhA+9aP3FGuYzGvtRQCWt6Qn6ByjttrTeCAD1RXOPY22IVU03XXPmulKGQawJE2/xwoeG6Vvy0p267s7GEdavs9BA3V84U3AbZ77yJkO5BL+WQW8DfAlfwAAzGR6HpsfwUGSGaFPyLeEm5kt+HbOEYbNSxppQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4az3chT7W7tjL4DsHecKGXBtxHaLn4yxnvausxAl5YQ=;
- b=fB1os5+zli8crLSCm1CSeoPOsxlATAznOF+CCVTTdjLRKF1bUBQqep1r286VU25Cd5Hxeu37IdjhoA/pQSsl7wt4OPHLamOTZuEw/KFtKbQT/9UhTAZiEdDcGILpcBhp7SNlorh1vuX9bf5GEFI2Vu4n/3jhSjm08FBr30x/Lxh/U7ir+iy4U1B0hdfeAt6RVIjttQfF3qL5fn51aYE8DwslrtCqn/LoBMej4QW38LSEfPbeIQdlQxnE2s5z5XT4OSd2vtecZR7+YB3Dy55hjEP0aq0KEabIs0bD9jWhZO34TXbzQBVNrxDDE32BFP8oL05Qk5Z+p6LSkNjZFb3jPQ==
+ bh=hFMedcs0ro/OBdj8LkAGmXvLCwTyXE99oSAAB09gaS0=;
+ b=JrFLBpRFMGT6iMLPfKvqiAKCLZBMM0CtlHVg07s0Kn9b1PXR0pbQ3UrJFS3+IPAVeXNLgIGVvxiCqFLFGCqdvBMi08YZatW6XRbEEO+euiQ2PNhxP1HySk9ptiyjLJxKR/SDHCs9xWTwodyJJ6/Fd6RScKSbDJQetCpElLW2GQt3e8B7S5pXNOcr8Kd9JeOjqwrAV5BuUDN2ZotEdMBOZii9Ld718RMgLnO/cNyTn/Um+Dal4T5z1jzRLKm5AySB1D1QvrRXodTz+nwTSj2HMW/iO+ECbvz528IkbWOGe22Prg4vFc7cgAmsTAWLzNe1Vj709MRUgnxuxCtRUsU08g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by SN7PR12MB8771.namprd12.prod.outlook.com (2603:10b6:806:32a::20) with
+ by CY3PR12MB9703.namprd12.prod.outlook.com (2603:10b6:930:102::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.12; Fri, 6 Feb
- 2026 03:40:50 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.15; Fri, 6 Feb
+ 2026 03:53:48 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9587.010; Fri, 6 Feb 2026
- 03:40:49 +0000
+ 03:53:47 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Felix Gu <ustc.gu@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Felix Gu <ustc.gu@gmail.com>
 Subject:
- Re: [PATCH v1 3/5] ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC
- and ACTMON device-tree nodes
-Date: Fri, 06 Feb 2026 12:40:46 +0900
-Message-ID: <6698837.lOV4Wx5bFT@senjougahara>
-In-Reply-To: <20260126191536.78829-4-clamor95@gmail.com>
-References:
- <20260126191536.78829-1-clamor95@gmail.com>
- <20260126191536.78829-4-clamor95@gmail.com>
+ Re: [PATCH] drm/tegra: dc: Fix device node reference leak in
+ tegra_dc_has_output()
+Date: Fri, 06 Feb 2026 12:53:44 +0900
+Message-ID: <3491452.e9J7NaK4W3@senjougahara>
+In-Reply-To: <20260128-dc-v1-1-a88205826301@gmail.com>
+References: <20260128-dc-v1-1-a88205826301@gmail.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0159.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:383::18) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCP286CA0057.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b5::20) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -71,333 +68,151 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SN7PR12MB8771:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f83baf6-f346-466b-228c-08de65318500
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CY3PR12MB9703:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd1156e8-b64c-464c-f48c-08de653354ff
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|10070799003|376014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ajBuZXJzc1hCbXlWMHN0RWltSm1vYWV1dTdNWHNZeXZnQzh3QWkxZVo0eEZG?=
- =?utf-8?B?UnhKMUF3ems3WDRSLzVXNTkrUmRHRmdWdTBaVXpGM1VpVVJYbm5uUVF5dVJz?=
- =?utf-8?B?WWFQZWVXS3JkbkFUYUNSUEdJcmNYdkJ1UDdKeW1vT3pBSDE0aStIRjAvdXVm?=
- =?utf-8?B?bzFVRzRxTmtUMGRoVXlxZ003Zi80UUFyMGYxNmllQWdub2FadWhHWDdJdkQr?=
- =?utf-8?B?V1BFOEVpdnVPZ3NnMTlmVjV4VnVOdUZNWDR2TnM2c2xQeURpNzU2SThkY0Zu?=
- =?utf-8?B?Zkw3aUFjRjUrL1FGQ1BjSDBzOVZ3dm0waUR6cE8yOWs2aGwrUVhML0c0b0lX?=
- =?utf-8?B?SU9VQ3ZDeFVvV1EyRjc5NWdMK0F3aFh6SThPZ0I1NENMTlltSkVUUVE4ak5B?=
- =?utf-8?B?ZzlOaW5OdktJZXZ4VW1Ndm5td3h1VXUvQ2dIbVkySGFjL0tyTitFRVJicVQz?=
- =?utf-8?B?UEQ5dDEvMGxNU1FzUEZNWFNtV0dwVzdxdlJUVEJEQzJFdDYzN1dGbEZSc1pk?=
- =?utf-8?B?d0dVRC8vSGJJWVBCNGtlUkpkelc3QjVjSFgrN0tiRGpoUXI4aTVqUlJDSFor?=
- =?utf-8?B?dmRuY29uK3pkS1Y1ZXFkQWNFQmxHbXM2dTJ3cGZxWUQwVnp2MWpoUmYrTkJv?=
- =?utf-8?B?QmY2TXkrNElpcGYvMEZCRzgrYm56SURrUUJDblNPQkpZSGl4WkEyTVpTTUJv?=
- =?utf-8?B?TWd4QmQ5SkZQUHZveEZuQTJLZXZmUWZzYzBzdFpkNkdGOTFNdWpRWm1XSk55?=
- =?utf-8?B?SStDS29QSGxUZDVkNWNyVUlaak0rYXE2b2RvS0M3SDJPaWtsM3hjZ3JCcWVC?=
- =?utf-8?B?UEM2N0p6ektxK0Z5RHF1OUk2eHc0K3JJciticWVKQTU1bnIxNnMvRGhFWW04?=
- =?utf-8?B?eG9jOTNSR0RKSXlTNzE3N3kzd1FUQzZwOWpna05HTDRSMVFWL0k0cmhGMEVO?=
- =?utf-8?B?d3ZGSVFuMzE0a3lGRVlLK1lKbVo1UDhxWENBTTRZMjZZTU5nWnRwR0JGR0hH?=
- =?utf-8?B?a3ZoUE9YSTJrK3hrQnFnNjBiTVBxQm5IMUkwakprczNYTzFrQ1BZS2NsK295?=
- =?utf-8?B?OWk5M3hnMHZiaEJoSXdmSVN5ZFQ5UFN6VGtjS3NuMUpER0U4ZUl4UGdUZW1n?=
- =?utf-8?B?WVNIbFd4eE9TZVRyS2ttd0JPRVNEUWZoREJmdHY5dTlUWGJMbEtpOE5IL29O?=
- =?utf-8?B?YjRPRVpvbXluakMxSzZqc3A5RSsxU1c0dGRxT2VvMGJocHV6UytMaXhUaEk2?=
- =?utf-8?B?Nks4SGFUdExPWjN2QWRBVml3cVpxaW5OaldiNDFwQ21yTlpUNkpKUy81SUly?=
- =?utf-8?B?MkNDd2cyMyt6d2diSmhpcjhydllyVno2R2l5NUVlVDRyU3VPRU5WNjMxKzBT?=
- =?utf-8?B?UGRFUU9sc1JlUHV3OTU2MG15dnNjQkRKWlAyUkZZS29WendhYXBnN0RvWElX?=
- =?utf-8?B?QUUxL2J4NUJXVkkyeEhMdHNPYW5XNUI3aTJqZlBEbHpGaG9aRmw1L0FJbGdm?=
- =?utf-8?B?bU9TVmxIUjBOaUxGMmRSK3hmd3lwbWxCRkNjdUhwdkpFZytQR1d1akpRa2l1?=
- =?utf-8?B?ZW9pMUY1MEpVUEt3bGdTb000aHA4LzNKN0xYSXdyVlhMR3prOXVBeEVIU213?=
- =?utf-8?B?KzI1T3czMEVvS213TVZzWi8yemFmd2hlWDZqK2dtZzRIK1J2bXVJSVhEaE1l?=
- =?utf-8?B?RWtxMExLcStMMjVrczFsWXpUSEFBdWVmQUQ4bG9DakVBM2liSXlvdjlPVlJq?=
- =?utf-8?B?TzhFUDYyQXVObmlUalNFRXJvS0tDK3NQTStvOTg2VG5mOEFJMlR6RWIvdGpS?=
- =?utf-8?B?UmZYcU9FUllZWUpRTWdwbEJyOEdZTGdPOEsrV09nMTUrc3VJU1VoRVRiTzZI?=
- =?utf-8?B?QUhVZUpydXB6aUV2bXNsZkpVbHJlcWl3ZllybFlkY1BFR0ZoNlNhYWQ1NFJY?=
- =?utf-8?B?WnFmVEFSWnhVK1pQYzVMSzFTc2FLbVNmUndqVVR1Yzd0K0R2MjlrUnJiUVhB?=
- =?utf-8?B?cG1JdXRvUzZxQnJ4VmtML2o3M29ZTFl2TkxDMEJRdDlHQmlWb3R1Y3dsWjBx?=
- =?utf-8?B?SUU1Sk0wQkc1aWNwck9uYVJvVDlUOXVITkNScGY0ZVV2a3JkckV4eXMxRVpt?=
- =?utf-8?Q?Y2co=3D?=
+	=?utf-8?B?UmtNZjVxNEpWRTU2TUFUdkVxbS85V09rMEVyN0s2dDZmZWlHU2xrR0N4TzZE?=
+ =?utf-8?B?ZGdEUjhoRjBHYTJPckkzTnVtN2M5NjdBUThHVzNuWTJTbHdmeitQUjNQd2Iw?=
+ =?utf-8?B?Tk9ydTFCbUJpdytnckxCWjhVUjNMaGpuZCt5UWtSTGNBY3gzSDNBQmVtdndZ?=
+ =?utf-8?B?N3lFUjZJV3FrYmsvWmI3MTVmY0xEV1lETURrVVlGZE83RUpSa25mV25Ka0Qz?=
+ =?utf-8?B?a2xLRTRhdEIxbS8rNktsdG4yb2l3Q0JjUVJqTFBIRHlzR0hSalRUckg5eFlS?=
+ =?utf-8?B?clJITS9ncHVhWGR2R1lHZXJHeTdyVzZobHVkVTMwSHp1VzF0S0Izd0NodkNI?=
+ =?utf-8?B?WU9ZNXd6S3pSNiszZ1IvN2xHM0pXd3l2V3BueXBEaUkwNk9lQUUwYzA5dTht?=
+ =?utf-8?B?eUxTczlYNXJLV25xL3M5cE1qNUkrNlN0Q2pEeE81YVJvK1RVTHBFMzBpT05O?=
+ =?utf-8?B?S3paRXlxTDBjYWpzQzZXS1VOb0hlSmVsajJoSk1jUUY4bW52RjdmdDRlWjN2?=
+ =?utf-8?B?TGxHQTJmRC9pZnNUanJiOVI1VVErOHk3RmJHc0ppeldMMHRzOW5FMWFMRXZE?=
+ =?utf-8?B?Z1dyYktXMERUWVYvV2FMSUcwckN0MkFwTDJFaGtic1phSnh5RUlneU9HcXVF?=
+ =?utf-8?B?RGp3Z2xLZkxqVEtZeUN0UzhCb3diZ2V3T0loZjltQlZsRVZqR0tVUENoWHd4?=
+ =?utf-8?B?UzM3OTdFZEhsazlzQkJJZHpTODRpODB4cEk1bjVSVmZUV2JpMVljQUk3aTFB?=
+ =?utf-8?B?TVdLVXBNV3dVeVFJb21iWG5Ld2hiOERVWVBvR3lsVHZaTnRMZHd4MDRaQ002?=
+ =?utf-8?B?MW1sUGVTWDdPL2kwZHZnRjVuUGxFQ09yL1R0WUYrMy9FaG1CeEdzWlNJRjlq?=
+ =?utf-8?B?Y2U4Tk9BTkk2Y05ZZExxaDNIaFcvMStSTnc2K2dpc1lXOVVrN2pUdVhsbGZl?=
+ =?utf-8?B?Q3Iyd3NZZmZ0WmZYaE9PUnFiZy90THJXQ05qaFFJdkNzZjJ0dzJTcjRDc0FG?=
+ =?utf-8?B?a1Z6OWxtVlhjdWd4QzRCeEtFZFQrZFpTSFJWVXIxN0lwU0tMWFZ3OFJ5U1Fq?=
+ =?utf-8?B?STl2WnYxVHJ5Ty80eFlwSUxiR05ENGZEeDB6WDdlTlRjeHpUZDQ2b3ZtV2JK?=
+ =?utf-8?B?Qml4elN4SHhkZ3dTWTdrZ29lWVZHVkhHSVNPMGV3eGphc3VuRlZncUo5NU5z?=
+ =?utf-8?B?dTN2QUV4cTY3V1VuSDVQNzZVT2dGamlXQ3BicVFITnkxWXJtNnd5bVhTOXNT?=
+ =?utf-8?B?R0RFekxTeVBqSllkbEloUGFMREx6RnVVay9yc2x6R25TTzM1K1MwL0JIVjQ3?=
+ =?utf-8?B?c1d5UDFyYkVNZDNyY0JxT2RuOCsrZnhsS3c4dFdiOFNyZWNNM1RITzBoVVUw?=
+ =?utf-8?B?eWM5Ky9LYmI4SHY1NjR1b2JVNVBpbTNteFpUWTQyYmdSMW9KaHBPSGR1bTVJ?=
+ =?utf-8?B?TWQ5R3BpSmZIY0pGaGRPZEJoenhSQ1A2Z2ZJQmdkQkFjNHRTOU9MMlNyWWVW?=
+ =?utf-8?B?a1JOemk5Y0NMTGlOV1BNa0tCcUNuTDBETzdDeklXeVNhMko1QzJka3UyYWRL?=
+ =?utf-8?B?eFUzcVA4VjdKYm43ZFdIUmNYQmlkV3hBSkZMbGhHV2tzcW4vM1RxRDNaNU9H?=
+ =?utf-8?B?NGpaWGtUUVlUVjc1ZU4zNm01QXV4Z2tMTzFWN2lIb0YvZHkva0pqeFl3Y0dw?=
+ =?utf-8?B?SjJBd3BHS1RjbXJKM2lLNlk2SUR1c3RCdU5HeTI2MUpRUS9kcXBDWGg1Y081?=
+ =?utf-8?B?eDRIa05nbVRsS2J5bE4rd284MlB2bDBqSFBVcGRyK1U3OUEzQmVJdHZDYU5N?=
+ =?utf-8?B?TFVqb2piNzZOQ01BeHE0UXJnMWpXR2M0Y3A3WEZPQnN5Z0pnVFh0eG9VRUUw?=
+ =?utf-8?B?UW9NWStqSVJyVE9Ka1RCQWFwb2NFUWt4VVlsUzcvYVRzZTR4NHN4dXZtK2xS?=
+ =?utf-8?B?ajBFblhUYjlnbmd5SUVkMktUT3h3QkJKTVRIWmxkbjYxdTA3OFZSR2dwckRX?=
+ =?utf-8?B?Z05qWU5KZ0VNeCs4Z1dIUXdiOFNncW9FMVVqNWkxUVdZSDJwbHEvNVFaMnJW?=
+ =?utf-8?B?cWE4UksreTlsRmdBMzNjVTRKN3kyQ21GSjJsT0dkbFhtQS9BRUtOSWNrMDlr?=
+ =?utf-8?Q?bmfw=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c0FlLzQvMEpSYkZvUWJNMmZPVmFCcjdkTnBWdlNRaXpTR0Uybm5tKzh3QmNJ?=
- =?utf-8?B?R01Zc0tyTWpJK1pzS2loalptUVY3bERZUnUvZWZVT2dxQ2JURkpnMWs1QklW?=
- =?utf-8?B?T3lwRVBiUGZFVmNnQ0tBaXlMTHlmOVNzc1V1aWhtdldaYnN0aEsraTNTSEY3?=
- =?utf-8?B?c3JqZG1Td0UxNEVPdkpxb05ja054djV1V2VTQzRXRS90cTZwbXFlVDU4NmE1?=
- =?utf-8?B?R3FQQUhRd3U0ZmVPbWVkZGc3RGVGczd2Rk4rMHRqWURaelNtR2hkdFMrd1hX?=
- =?utf-8?B?Qk9XSzQzZTh4NmFxbmExeFNiQ2lHbE5DN3M4NU5RdUxZaCtLQTgrK050VmJQ?=
- =?utf-8?B?WjBkMWxJS1N3c0YxdTJ1NDZyYmdVbnNPYTJ3ZVBlMlBiTFNobzFOSEFlUUFy?=
- =?utf-8?B?RVZsS2hINW9aSy9rc1RnZnVQaGZsK1BQVXFJRldoMnBvMHliNWF4YmQwQVBB?=
- =?utf-8?B?bEV5ZFYwNGU5S3JPNnEzV3FOdkFZQzIzTWpCQk1JZExZNUI0bk8rd0tHS2JI?=
- =?utf-8?B?UVBxdUNpd3VicXg5Tnowb1lmUmtyamFlZGhXY25uRDk0MnJlalRkQzhjTHBz?=
- =?utf-8?B?Z2Mvbm9JWmpYN1JlV2F5dnpFNWNnRXdkNDNKeXRUbHVWeW5rRnFXdndhR1hV?=
- =?utf-8?B?R3BXSmVWQ0xSallCd08rbmVQMzFENjhYREpKYTloRks4eTN4VEdoOVJ1QnJB?=
- =?utf-8?B?OFZQTUpwNE9CVHFjL3g4anR1NC8wV3dQNHkvVGdoT1F3eHhPbTNrZTA5YVRD?=
- =?utf-8?B?Mi8vaU96Q29ZcUdoUWFqWDRrUnZiR2RWeG5qbDUwSUVNS2xhVXo0aXVEaFow?=
- =?utf-8?B?dHhFdXRGbWRzS1BMQzN3bzhGSXd0ckxyaGcydU10cVRteFgyRDM0TnJXMW5o?=
- =?utf-8?B?eWhDVndiaGlkWjRENHlmQXNOVzVmZTRRU3ZXTEZSK0pvYnRSakRaVCtpdlZj?=
- =?utf-8?B?Ti9kdE5EL3dteHlaMFFqZmczV2JsZE9uazNQMzZESkxlNnVCcngwYS9WRVJi?=
- =?utf-8?B?WXNnWlRGbTFwTE8ySUxjTnpSMFhsTU1wZ1hoOUsxNEtiOEJnQnBkV2wydHFL?=
- =?utf-8?B?djFwR05CZ080c1MxK0xoL2dvZlhJMmw5azNQdjd0dmkvMFdHT3ZLYnQ3SGFq?=
- =?utf-8?B?bkNzTFpNUFNLaENPMlZHZ2tVUyt0Szd0Mm5iL2w3d0xIRlJhc2VsamhHM0E2?=
- =?utf-8?B?YnJJNmlONHN4TUw2ak9vOFBldlJMNFYwMTR0S3hyOCsydzdCZnRtMUdFQkNx?=
- =?utf-8?B?NHRKcU9RYjh2cUdkS2N2alNTUjBiV1habXAzbUVzTlB1UEJYL0JHcGozbWdu?=
- =?utf-8?B?NjEva0N6SDJhOTE2YkpRSUtQbmFCSHZIanpKRHZ6ZW5vNVJaSVJvcXo0YzJk?=
- =?utf-8?B?RTdZTTlwU1B1d1BtS0E2R1NhdmtNSHc0T2NiUUI3ZlRlajhuYS91dkdWSWJt?=
- =?utf-8?B?V09ZWjFlZVcrV3BYdkhPMEQ0NHl1bEhzaVZMTHZwRVhtYncya28xQnlwZ2Zy?=
- =?utf-8?B?cGJaTFpFV29MNk4yWjJWZ1NKVnRkajVzMEc0R2V2eE5rbUdlK0E2SEZla3Fz?=
- =?utf-8?B?M1AzbzhTQTZwY0dRRk82bU1UdzcweFlSS0QzL0FDdThQMDh6RDVGWU5aTHVB?=
- =?utf-8?B?YnE3NWM5T1MyaExYTGxWTmVjKzhCMjhQeEFJUE8vcjF3Q0ZTdndZUk9SdG5K?=
- =?utf-8?B?WDl2V0JsRGJGdlk2LzNYeDljTXpSTVRLNjh1N0psMkFOWlpCNzQwNjVBS1B3?=
- =?utf-8?B?QUxFcTFKaWlnVFIxYlhZYTNMUU03TFowSDlJcnVBMktJSkI0c05DMXZERVAz?=
- =?utf-8?B?MStVaUswR3JlNVFoQkxlSytOeXBNTGRRV3JUKzc2YXNWb2t5VVlKbC9KWDNR?=
- =?utf-8?B?c3BHUXZxLzhKdnlKODRWdXhtTmZWcmd3aHJDQTI2UlRqTVo4VVFEWWxiS1FH?=
- =?utf-8?B?V2g4NnR0RE00Y2RXMGxsQmZqbzVxUk1hUXhuVFZaVjRxRnhKdWE4WDFyOHE0?=
- =?utf-8?B?V1JHWXI2cjBSMklHRTZjUW9IWU5iakVEY2YrNUxXdUprbjNWYlFoUHZYbThm?=
- =?utf-8?B?OFJjNTRCRklQR3NWc2pzV054MDhnSVZUVysxS01lbUtVdjRYTGdVdjBuenlG?=
- =?utf-8?B?aXVuNExNZlVDTHlyN3J4czM5dTdGcjlQd2JreE9PYTVZdXVGbFQ2YzVoMlJJ?=
- =?utf-8?B?ZGttNXl4SUdDRUxNTi92ZXpwZzdxcXNhOUZTc0tYOTlWVVBXT05NSUY3RGkx?=
- =?utf-8?B?Q09LWGZHNE9xUlpNdFBCNzNlcktEeHJsc2IrY0VvcFA4Q0I0NE5qcWN6RllT?=
- =?utf-8?B?a3FhWDBzT05ObTVvMW1SWFBSalJ5NXJ5YjF4cVdZS0RtdWZEZ2o1NkxwcWwr?=
- =?utf-8?Q?l5niIoq42gqHuazr1zsJsrJ+J0R39RVcWuStICJa3exUC?=
-X-MS-Exchange-AntiSpam-MessageData-1: ORmENt3/oqWLGQ==
+	=?utf-8?B?YWEvOEIzc2FCcDFLZ2RLVHkwM2ZTNENrMnRrMnc4N1U1dS9YZ0NJZk5BUXht?=
+ =?utf-8?B?bXlGS1doT21mUGFMMDUwYzFoYzZ4SjZGanBBaGJURFRTOTl4a3V3czNpTnI5?=
+ =?utf-8?B?aUFWMVloKzBtR25QNXJseldQVGgzekQrV05SM2FNOFRJUlp4cHJONm9uZEpO?=
+ =?utf-8?B?L0p0T2RGVWR6VkxoUDhJMDlIeGJuZG9MMjZCaThFWWw3clkvbE03RlpHR0F3?=
+ =?utf-8?B?MTZrSThUdDZmZjdzMkxEN3NwM0hPUmYxbWRiZDJEOGlMUmNRRlkxcWdnek05?=
+ =?utf-8?B?allsZDVMK3g5R0xlZm9zc1RWcHRIWlViTmZIZjB1TU9ZRnduS29VT3FNeFZs?=
+ =?utf-8?B?YWdqeEdlQzU4VGJnQTZLa05sOGQxVGFuTjFsS2NhcFhLUWRyendaRStGOXlM?=
+ =?utf-8?B?ampVcjV3YVNwVVFEWGI2OHN0MnJoWnVCTnl5QldSQThHS0V6SnZjaUpOSFlk?=
+ =?utf-8?B?SWJBVGV6WTcxOTRnaTR4dElreXhxMGxuODgxSjF6d3NHNzZFZUhJRkdrcDBv?=
+ =?utf-8?B?WksxLzZhME1heUlvSHNQVFkrcGdFUmtVcXVsWWlyb3VDa0lqTUVFb2dWYnIr?=
+ =?utf-8?B?QlIrZkhXbjZ6b1J0MXhQTzB4UW1DTHZueVR6VWM1cXFDNHVkeDFXNVBkV1ZU?=
+ =?utf-8?B?eFZBQzR5eUFBUFgvdVpiQ3BJRW5VWXcxUjEyUG5QWnlPaGd0elJLclpmN0dz?=
+ =?utf-8?B?Wk1oQ3czN0dhVkNmb2VjYnMrOFRUQnpGTktOb3hQbWMxa1NhM0lxdXdXNHlk?=
+ =?utf-8?B?MlFQQVdhcjc2QTR2ZWlweUdIVjZQMTFTWDNlTW0wTXovK3VCOU9ESTRuWWRo?=
+ =?utf-8?B?M3JLbHhrWnZCVVMrWmxuQVI4S2ZkZzRVZ3NobU91cXJLbHdXaWZCSUdmVUVZ?=
+ =?utf-8?B?bi9DODJibnVRNVJpQ1FXQXJoSWM4LzY3TDZTSFdnS21KZk1BUFl4R2lzclJT?=
+ =?utf-8?B?b3h1TXF2THBVbTdyY0pMTE5WV3RIVjl2YXdabkFieDdmbUxDc3diOUo5WkRV?=
+ =?utf-8?B?M3c2dW5aaGE4Q1E1K2pidGVQNXlrdkVmRTczajd4d1dRZExjVVZpbjBMTC96?=
+ =?utf-8?B?YUFDdHduSytsa0NFZGxPQldnZXhKOWx1SHJZM21NRXFzYW93aVpJbDBFbUpk?=
+ =?utf-8?B?cndHQ2VSODUwMUoxendhcm1semswc1B3dEJtTCtOSmlQcjVqMzFiczRvU2dr?=
+ =?utf-8?B?Tk5PMitOKzVTOVBLWTlRS0Z2RlJwV2xxUkpTWlRFdGc1N3R5TDU1djQrRm1X?=
+ =?utf-8?B?aFkvQ0d6OGRMc2dCOVVJcDU1VmUrSGxEa1ZRRnFudWROcGxlTGhCelV0R3Yv?=
+ =?utf-8?B?cmhmblNyaGtGR09NZm15bVdFN1o3c0lxMGxIRVM0d3NzMnhxUVpiSHVSOTRN?=
+ =?utf-8?B?SjVQYkRVSm5VbnVFalVHK1krNFZvZUdyVFFNK3Z0eWErZG1IMHVpejdTeHNx?=
+ =?utf-8?B?by9lbUFEekpuNkhDVThTWXVlZ2I5YUxpemdMRlQ1Wms3S3lQcjM0RU9PRHlH?=
+ =?utf-8?B?SUsyak10ZlRzRFRKcUJzdVJBTEw3RkEyTlBla0t0ZlRndDgxOXo0UHdwbnBZ?=
+ =?utf-8?B?d1M0ZlFnMENKM0tDVklnTUcyRkUvelhQb09zbVlqaWhZcEl0WE94Mi8wcGp4?=
+ =?utf-8?B?NkZuWElDZzRydjZHK1lXUGtqMURRbW9JZ0I4SmlHc1g1TWlPSzNRWUQrc1B5?=
+ =?utf-8?B?OHo5dW94MlhBYUZLeGxwTDFBOXV2MFl5TmtFVVJOam1zM3M4aWp0MGI4d0to?=
+ =?utf-8?B?NUxmRHM4bjViZ296QlVKRTNpRUN4S0hwUzF0TmVOc05YeklBZDYyRWV4S0tY?=
+ =?utf-8?B?aDlVOEY2dC83NDNWVDlNL1BRY3dHL0luMzR2bVRITDU3QTBQL0ltSGlaQzlX?=
+ =?utf-8?B?VXBlbzZhNmJ3R05MTnN2WEFCVHdLck9UYWR3NkxMaVY0Vkp2V20xTnR5cnRs?=
+ =?utf-8?B?anluMHZrU0o0M3psL2xEU3BkREdkMkc5S1NEQ2NlQmhDay8rUWxIS29WWjFu?=
+ =?utf-8?B?c3VkRVZHemh4bzExaU02bFV2SWFxenZDK0tkSWU0cFhCMHMveFVYeFkrenF4?=
+ =?utf-8?B?SXpCNjZwZEg5aGF4SU96MDYxb09EY082VU9hN1pTQjlLbGpCL1BtYW5jWW5h?=
+ =?utf-8?B?cjZqTU1aZTJtNjdjUGViUmRrMG00VERmSVBxb09tY2k3SzJaOUcydnRXNFg0?=
+ =?utf-8?B?SysxTm4vb2xwTHVhSzF3YTBBVUhyMWs0b2VrSlFyTXh3VllLcEl6QzNGajYy?=
+ =?utf-8?B?eGRFM21JYTFxbDZpSmVSN0pON1FMajhRTmdFVGp5d0JuNC9VbHRuSi9xemhO?=
+ =?utf-8?B?emJmajFySHY2RWx3SUVoQVZhMGY3TXdINm1XamJXdEFtMFNrYU1nN1ZoWFU1?=
+ =?utf-8?Q?NWJfPXOhZ4Li07jmbXTRIC56kPRD8kfLJUmH/cWz0TWJZ?=
+X-MS-Exchange-AntiSpam-MessageData-1: NaDUr8e1OZWxsw==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f83baf6-f346-466b-228c-08de65318500
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd1156e8-b64c-464c-f48c-08de653354ff
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2026 03:40:49.5053
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2026 03:53:47.8798
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OqiBF7RG+zWCEqaLwrpv0DdtPnxr07A5cwKM9H7vJEB2XYXsYU3r8urJgdtpR7OYxuys65HzB0ugoLLPHnoU+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8771
+X-MS-Exchange-CrossTenant-UserPrincipalName: pMy+y+owZ9Yhi5UYOoXc5LgHd3O7J5TuEEIiqfFxIZTdW4hJCBX7tzll/mxF1NdQ0kZrnnB6fOwvLGQ1wsvjlw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9703
 
-On Tuesday, January 27, 2026 4:15=E2=80=AFAM Svyatoslav Ryhel wrote:
-> Add EMC OPP tables and interconnect paths that will be used for dynamic
-> memory bandwidth scaling based on memory utilization statistics.
+On Wednesday, January 28, 2026 1:43=E2=80=AFAM Felix Gu wrote:
+> The of_for_each_phandle() macro increments the reference count of the
+> device node it iterates over. If the loop exits early, the reference must
+> be released manually.
 >=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> In tegra_dc_has_output(), the function returns true immediately when a
+> match is found, failing to release the current node's reference.
+>=20
+> Fix this by adding a call to of_node_put() before returning from the loop=
+.
+>=20
+> Fixes: c57997bce423 ("drm/tegra: sor: Add Tegra186 support")
+> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
 > ---
->  .../dts/nvidia/tegra114-peripherals-opp.dtsi  | 164 ++++++++++++++++++
->  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   9 +
->  2 files changed, 173 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dts=
-i
+>  drivers/gpu/drm/tegra/dc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi b/arc=
-h/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> new file mode 100644
-> index 000000000000..b40a1c24abab
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> @@ -0,0 +1,164 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/ {
-> +	emc_icc_dvfs_opp_table: opp-table-emc {
-> +		compatible =3D "operating-points-v2";
-> +
-> +		opp-12750000-900 {
-> +			opp-microvolt =3D <900000 900000 1390000>;
-> +			opp-hz =3D /bits/ 64 <12750000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-20400000-900 {
-> +			opp-microvolt =3D <900000 900000 1390000>;
-> +			opp-hz =3D /bits/ 64 <20400000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-40800000-900 {
-> +			opp-microvolt =3D <900000 900000 1390000>;
-> +			opp-hz =3D /bits/ 64 <40800000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-68000000-900 {
-> +			opp-microvolt =3D <900000 900000 1390000>;
-> +			opp-hz =3D /bits/ 64 <68000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-102000000-900 {
-> +			opp-microvolt =3D <900000 900000 1390000>;
-> +			opp-hz =3D /bits/ 64 <102000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-204000000-900 {
-> +			opp-microvolt =3D <900000 900000 1390000>;
-> +			opp-hz =3D /bits/ 64 <204000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-suspend;
-> +		};
-> +
-> +		opp-312000000-1000 {
-> +			opp-microvolt =3D <1000000 1000000 1390000>;
-> +			opp-hz =3D /bits/ 64 <312000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-408000000-1000 {
-> +			opp-microvolt =3D <1000000 1000000 1390000>;
-> +			opp-hz =3D /bits/ 64 <408000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		/*
-> +		 * T40X can work with 1050mV for 528MHz but T40T which is
-> +		 * in the same group as T40X requires 1100mV. If there will
-> +		 * be enough data that T40T can work reliably with 1050mV
-> +		 * for 528MHz then voltage for 528MHz opp can be lowered.
-> +		 * T40S should remain with 1100mV for 528MHz opp.
-> +		 */
-> +		opp-528000000-1100 {
-> +			opp-microvolt =3D <1100000 1100000 1390000>;
-> +			opp-hz =3D /bits/ 64 <528000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-624000000-1100 {
-> +			opp-microvolt =3D <1100000 1100000 1390000>;
-> +			opp-hz =3D /bits/ 64 <624000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-792000000-1100 {
-> +			opp-microvolt =3D <1100000 1100000 1390000>;
-> +			opp-hz =3D /bits/ 64 <792000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +		};
-> +
-> +		opp-900000000-1200 {
-> +			opp-microvolt =3D <1200000 1200000 1390000>;
-> +			opp-hz =3D /bits/ 64 <900000000>;
-> +			opp-supported-hw =3D <0x000E>;
-> +		};
-> +	};
-> +
-> +	emc_bw_dfs_opp_table: opp-table-actmon {
-> +		compatible =3D "operating-points-v2";
-> +
-> +		opp-12750000 {
-> +			opp-hz =3D /bits/ 64 <12750000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <204000>;
-> +		};
-> +
-> +		opp-20400000 {
-> +			opp-hz =3D /bits/ 64 <20400000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <326400>;
-> +		};
-> +
-> +		opp-40800000 {
-> +			opp-hz =3D /bits/ 64 <40800000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <652800>;
-> +		};
-> +
-> +		opp-68000000 {
-> +			opp-hz =3D /bits/ 64 <68000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <1088000>;
-> +		};
-> +
-> +		opp-102000000 {
-> +			opp-hz =3D /bits/ 64 <102000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <1632000>;
-> +		};
-> +
-> +		opp-204000000 {
-> +			opp-hz =3D /bits/ 64 <204000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <3264000>;
-> +			opp-suspend;
-> +		};
-> +
-> +		opp-312000000 {
-> +			opp-hz =3D /bits/ 64 <312000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <4992000>;
-> +		};
-> +
-> +		opp-408000000 {
-> +			opp-hz =3D /bits/ 64 <408000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <6528000>;
-> +		};
-> +
-> +		opp-528000000 {
-> +			opp-hz =3D /bits/ 64 <528000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <8448000>;
-> +		};
-> +
-> +		opp-624000000 {
-> +			opp-hz =3D /bits/ 64 <624000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <9984000>;
-> +		};
-> +
-> +		opp-792000000 {
-> +			opp-hz =3D /bits/ 64 <792000000>;
-> +			opp-supported-hw =3D <0x000F>;
-> +			opp-peak-kBps =3D <12672000>;
-> +		};
-> +
-> +		opp-900000000 {
-> +			opp-hz =3D /bits/ 64 <900000000>;
-> +			opp-supported-hw =3D <0x000E>;
-> +			opp-peak-kBps =3D <14400000>;
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/n=
-vidia/tegra114.dtsi
-> index 77ab17f397f6..9acba15fba25 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> @@ -8,6 +8,8 @@
->  #include <dt-bindings/soc/tegra-pmc.h>
->  #include <dt-bindings/thermal/tegra114-soctherm.h>
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 01e9d5011dd8..9bf6c008a5ea 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -101,8 +101,10 @@ bool tegra_dc_has_output(struct tegra_dc *dc, struct=
+ device *dev)
+>  	int err;
 > =20
-> +#include "tegra114-peripherals-opp.dtsi"
-> +
->  / {
->  	compatible =3D "nvidia,tegra114";
->  	interrupt-parent =3D <&lic>;
-> @@ -323,6 +325,9 @@ actmon: actmon@6000c800 {
->  		clock-names =3D "actmon", "emc";
->  		resets =3D <&tegra_car TEGRA114_CLK_ACTMON>;
->  		reset-names =3D "actmon";
-> +		operating-points-v2 =3D <&emc_bw_dfs_opp_table>;
-> +		interconnects =3D <&mc TEGRA114_MC_MPCORER &emc>;
-> +		interconnect-names =3D "cpu-read";
->  		#cooling-cells =3D <2>;
->  	};
+>  	of_for_each_phandle(&it, err, np, "nvidia,outputs", NULL, 0)
+> -		if (it.node =3D=3D dev->of_node)
+> +		if (it.node =3D=3D dev->of_node) {
+> +			of_node_put(it.node);
+>  			return true;
+> +		}
 > =20
-> @@ -655,6 +660,7 @@ mc: memory-controller@70019000 {
-> =20
->  		#reset-cells =3D <1>;
->  		#iommu-cells =3D <1>;
-> +		#interconnect-cells =3D <1>;
->  	};
-> =20
->  	emc: external-memory-controller@7001b000 {
-> @@ -665,6 +671,9 @@ emc: external-memory-controller@7001b000 {
->  		clock-names =3D "emc";
-> =20
->  		nvidia,memory-controller =3D <&mc>;
-> +		operating-points-v2 =3D <&emc_icc_dvfs_opp_table>;
-> +
-> +		#interconnect-cells =3D <0>;
->  	};
-> =20
->  	hda@70030000 {
+>  	return false;
+>  }
+>=20
+> ---
+> base-commit: 615aad0f61e0c7a898184a394dc895c610100d4f
+> change-id: 20260127-dc-e396ab5384da
+>=20
+> Best regards,
+> --=20
+> Felix Gu <ustc.gu@gmail.com>
+>=20
 >=20
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
 
 
 
