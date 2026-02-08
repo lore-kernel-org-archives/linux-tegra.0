@@ -1,118 +1,104 @@
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A78288515
-	for <linux-tegra@vger.kernel.org>; Sun,  8 Feb 2026 04:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CD31E515;
+	Sun,  8 Feb 2026 11:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770523460; cv=none; b=nBMwGYzdS/ObUShrrozSDeV2iBHp1mG3LXcQzICZ7DutZf0xoMnhkyYxKRCg1Wj8BX5eThAhiydAOOXS/aKc/OkZRJikmzF4w1jnwonELBh/rubrK/o+vakmFW5OGKMwfAHyE5Y7elAJG2H8kN6+8QbhAXH0pw9x4jpgX5Jo+5E=
+	t=1770549492; cv=none; b=mBofgiN7B9ftid6T+mZeW/ipZOn/WTlKMfsBwXi0+eo0PdyakZEPtkp+3DPffc/VfRt+kp2/XW2pDSzb0ZmscKFKH0UdO3vlDcNPFyV2s0s87LcSLWjW+2tNPXvCI5hBHCr3PR98Dj1TmGn8NR9BCGGZEr48gFe2r/lRJa7DEoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770523460; c=relaxed/simple;
-	bh=1nmI592gVRRRNazHbetRGlWzODgcIIgosQMVHzt+Rxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dqMIqGTJP6wthCLGfs3v9HYQMo3f3TFdxPlUsbecvk/KYmkpP8Ij3VELflv+ZlpeH1FkBOfiJRTGhtxgpJVWas/YzRVo6Ao6goB+Uuf2SJ744syDl37Gp28VRkV5ZSAgWpF1bsG4v5dJoxnT5uXHCPaFqMnHAqFGUSQJURX3dG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oCR8ysfT; arc=none smtp.client-ip=74.125.82.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1770549492; c=relaxed/simple;
+	bh=NLj9JY3v7IxWsY6NHuRMWN3dfT18WLoyUjj/VCFKPrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LS1+RqbsiyPtSX2Ah4dNwzVL82q/08MM3E/Ur9mjZkCXdZYiqFZ3bcl4syG3CfaOOamP8H21/lcuntkZBMcRWKlu2zaxZEdOesMtsdTCsz9Mx1QvE4VlGlW4FcIWvMksfPihWexw1vhUsNZuxG02dpgBVi1kNqc0FMf5RSuzR4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwTs6gUq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oCR8ysfT"
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-1249b9f5703so2505482c88.0
-        for <linux-tegra@vger.kernel.org>; Sat, 07 Feb 2026 20:04:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1770523460; x=1771128260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FFjxbTsIX43trF9X6h4ASWW0dwvPNCEYejqKDfbp6FU=;
-        b=oCR8ysfThUl6jfjHJNvGseJMVp+YJnP4S8SaBHpt/WCNr0KVD0V1719Xg3eC1QwT5s
-         JtMK5uiwC5HRUssqD64YaUSMRWUggMcJqVJDhzzIz1uyCBABOc5zoRd+vwMmBlbAfLQs
-         Vv88xYL3EKobLos5Tmr+XD0Qgts1l+a99k3N0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770523460; x=1771128260;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FFjxbTsIX43trF9X6h4ASWW0dwvPNCEYejqKDfbp6FU=;
-        b=qS12F/RC6JBFpxKQ4rqqtGWOeXLDLFwJNCcSIbMYmhaHvN0vnTa9cx+LUDqB6fN/+S
-         rwkOwhxbdUNsoOIEtlmz2oPacL+L5BYKOsh3VOSH11vDbAeQr9gP7PtaRQ4PBY6OsNIL
-         9oJiQJaqXU+tGT1VoKuEniITJ+Bhq2sQmn/y98r+stdymx9pzCBuByEM/Gsa8Vo/hOvv
-         vo3GPjyjtZsTN/2Q4+osqA2mb+gwe+jI8J68qvHtAX0HQ6geVSw4gqwkgsxprd0CLVqF
-         L+6x/+eJJC3Au0AdYkeQDVfVUEfnxO7Dv4UTIac9h7GwWpk2NYNcYKovttQbZXto5oDs
-         nL1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVew9hhQMCwnCcqH5IPQOc93PEtMDYwnzmLUplaeo669Y/O3Bg8RIm2Ndu7LjHP+Bq7JMkL3c6hxa42JA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqu0KvDd6i+mzP/iszasfjhzE5Z6O7L9ulXK7BVP+agCTMbmB+
-	0HJijgy1b1Huy78zH/4/RkgVJp0euFEsyA5VSU8zEhZA5voy/rjciAoKOf1+rQAvsQ==
-X-Gm-Gg: AZuq6aJfzk6S79IN2xO9iXeh1S+Ddc0+bCDBuF3XEXRrRbNdzTqVWF8mByQVWDQ5aoT
-	zhBJ7cXrMbP9Nx1LR3p3X0mza24TgjRQb8KC2HzK/TWSO64+vjSsF3g6IVIahSWtXavaRAxLJ7u
-	i79MsVCfTh9552m9qP3kjrdS+Bhn89YqGpEUzFaIxMLZZaZZITn0GUz4O2/zKA5vU+bcnqbASRx
-	9zjtGD8X7YJtaf5QofOz/Y11zDuaq24WuIq3YOlMUGw2ap8cRj9flBA1zCXDO/zttI27oeiybn7
-	JV7XXgPiund12uaVYUsuOp5cZGlqPC//8yNQgxfE/JotPyB0u7FVkEvPrsLfp4tT5VQitKaKqe2
-	nBikoSOUrnpUmfoBhz//+fUR3OvH4Yr/uhKGMWW4gVnzHiAj9vUq9A1t6rNpIV7B09GE+W0NIEL
-	kDVkHtGS04MLMlelgznTyA5fPtwipaVO8WzDeP2z0/eCqTfcRenpNCTmgxC22Ra9I7D/GBlNnhQ
-	i0sKegXqQ==
-X-Received: by 2002:a05:7022:250e:b0:11a:2f10:fa46 with SMTP id a92af1059eb24-12703e569femr3754818c88.0.1770523459863;
-        Sat, 07 Feb 2026 20:04:19 -0800 (PST)
-Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:6d43:22d7:40eb:81e6])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-127041e61b9sm7085064c88.8.2026.02.07.20.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Feb 2026 20:04:18 -0800 (PST)
-From: Douglas Anderson <dianders@chromium.org>
-To: jassisinghbrar@gmail.com
-Cc: Douglas Anderson <dianders@chromium.org>,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	robh@kernel.org,
-	thierry.reding@gmail.com
-Subject: [PATCH v2 05/15] firmware: tegra: bpmp: Use mbox_ring_doorbell() instead of NULL message
-Date: Sat,  7 Feb 2026 20:01:27 -0800
-Message-ID: <20260207200128.v2.5.If1255977439f4cdbb3193f73f90a784566254f15@changeid>
-X-Mailer: git-send-email 2.53.0.rc2.204.g2597b5adb4-goog
-In-Reply-To: <20260208040240.1971442-1-dianders@chromium.org>
-References: <20260208040240.1971442-1-dianders@chromium.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwTs6gUq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD797C4CEF7;
+	Sun,  8 Feb 2026 11:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770549491;
+	bh=NLj9JY3v7IxWsY6NHuRMWN3dfT18WLoyUjj/VCFKPrA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lwTs6gUqyZ6xYI6NBqd48OvHOuiapcAeHwd1KWiBNIsD83dYoA3PUCYMYgGvnCk/N
+	 OtDzkzdp33/F+P+GVXL8dmNU6GOXTOkyuWVG8xRIYEfTfrJFz3r163fR63bYI6aYNq
+	 F1G3IKfcz748vNOgoMQtSoNIdru+uIowkPCk8g81YvqPvZ4+4mDW0UbOGzll10VGv5
+	 icoScDxGRDj22R4i+9IYqfdeWqvr+MEcLyENe6Yg5Xcz6hR2xNL+36RHtDHj9f5MRl
+	 //0dGXwkKj6i+eHoXdhqhmI9BR+J4H4ol6kxQgZmXd2XMzJJJKtCQYKxu8ucn77THw
+	 xJT9rEnfbiYKw==
+Message-ID: <a3249d0f-17f2-496d-ad53-95ad5da26f5a@kernel.org>
+Date: Sun, 8 Feb 2026 12:18:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] arm64: defconfig: Enable NVIDIA TEGRA410 PMU
+To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
+ suzuki.poulose@arm.com, robin.murphy@arm.com, ilkka@os.amperecomputing.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, mark.rutland@arm.com, treding@nvidia.com,
+ jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
+ sdonthineni@nvidia.com, skelley@nvidia.com, ywan@nvidia.com,
+ mochs@nvidia.com, nirmoyd@nvidia.com
+References: <20260126181155.2776097-1-bwicaksono@nvidia.com>
+ <20260126181155.2776097-9-bwicaksono@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260126181155.2776097-9-bwicaksono@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As per the patch ("mailbox: Deprecate NULL mbox messages; Introduce
-mbox_ring_doorbell()"), we want to switch all users of NULL mailbox
-messages to use mbox_ring_doorbell().
+On 26/01/2026 19:11, Besar Wicaksono wrote:
+> Enable driver for NVIDIA TEGRA410 CMEM Latency and C2C PMU device.
 
-This client only ever sent NULL messages, so the transition is
-straightforward. We can remove the call to mbox_client_txdone(). The
-call didn't do anything for NULL messages and it's now officially
-documented not to be called for doorbells.
+Why? Why do we want it? Which *upstream board* uses it?
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
 
-(no changes since v1)
-
- drivers/firmware/tegra/bpmp-tegra186.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/tegra/bpmp-tegra186.c
-index 64863db7a715..c45ea66aabfb 100644
---- a/drivers/firmware/tegra/bpmp-tegra186.c
-+++ b/drivers/firmware/tegra/bpmp-tegra186.c
-@@ -84,12 +84,10 @@ static int tegra186_bpmp_ring_doorbell(struct tegra_bpmp *bpmp)
- 	struct tegra186_bpmp *priv = bpmp->priv;
- 	int err;
- 
--	err = mbox_send_message(priv->mbox.channel, NULL);
-+	err = mbox_ring_doorbell(priv->mbox.channel);
- 	if (err < 0)
- 		return err;
- 
--	mbox_client_txdone(priv->mbox.channel, 0);
--
- 	return 0;
- }
- 
--- 
-2.53.0.rc2.204.g2597b5adb4-goog
-
+Best regards,
+Krzysztof
