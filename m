@@ -1,319 +1,234 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528CE30F927
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Feb 2026 09:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66CA3019CB;
+	Mon,  9 Feb 2026 12:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770630614; cv=none; b=Ir2Djb/Szg6H7S0AXwhdPC3sj0k4nDgFPjD8e+uuXAVrBlCxL3fkNndM3etC5Wq6zfmHJSX0iuQuZUwnUmmVlpPzCJu2stebSTJhwrk12kBtOb3AlSX3fIvjUU1+dWoa8snEGLX03S4okyZuFTAg1deuDFigBHYObao0dpYUY5M=
+	t=1770640053; cv=none; b=D/+KjX5eA3n1k/M6h2umKUG9IksszrMn2BNLvv7fnQ3EMtwKyeDPNKQ7Dvi5TLHFnmQ2e8CMMAKCcUrxY3ljgzl3FceJ6Y4/aaKqW9vSCJ0mhgSaa+8Bq7cCNtXlEpMnUpPI/3FN72IKpQtdDeNDc1T0DjvX1SlKx8FI0Miu9RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770630614; c=relaxed/simple;
-	bh=4E6x9EaVH4+pNZ5y/P/vyD+SMQEXY457/Yohnd+Mwyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1qbdxuOjoJQywg95hpF2LKY+4P/K0YxIwwutsmI4ZQa/PZbf7HSOw25eXBNnJwT49+dlwVlisa0VwPPVPI90p8qFqAxWs5mQ9LPfF/QrdSaLgSk+KALhwRbPrBuSv0fSU82q5s/x9nKWrsMcfVw4tyHYEKEWfKwnAc/bSym9vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JT8EgiBZ; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1770640053; c=relaxed/simple;
+	bh=WgqiWVoHlPsT7FIc5ByMzq7REt3FLkvnK/cYU1bi2ZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tfWV3HXM46dRujXmF/mMdO/rXRMqAguQ+rdK2jXD2Bqu04XtaQ7sia4uBcg6tN44sXDn0AVn24QpsHW1VGRxkzobWfCw/4EWp1Hkxcwu7R2NIDrG3S2ROeJ46PlZ0Fqev3N8biAlhNQpT1LfIebVjsGkUlYmh0gEAntQHy2f3X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uuh1ROzG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JT8EgiBZ"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47ee07570deso23795615e9.1
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Feb 2026 01:50:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770630613; x=1771235413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AgB5oGGHd4upF7pskvXaLtjuNDEPrMYM5N/AR0FlTwA=;
-        b=JT8EgiBZ85OhNjZAzMiObeydlu1vILr6SwCYwMG5Y7AR6uqo0ShQX9N1zsB8F6/+iq
-         zCm9C6uNihU+nWA9q8oshXowFEmGn9GIQjc3CM7jnG9LMKHxNrC0S1KjCZaUnkOQ5qCF
-         7G/5TvLu2qvjp/k+Iy+NbO2Pm3D3it28XCGcBggXFUmMF69zTJdC21i9ITqJFS0l18QA
-         FjGa58dRU/OrX1IZ7ewPpkCSOegN4s+SxCIk+2s70IdRu2cAIJ3U+odEAeza6Tl3pKvm
-         H/Vrt4FTIWFw/b9vZrKnzUrIx9vR2ncMg2ZCX31tAuR+1fQFKJE5YJnoBSTONgC+eDnG
-         f1rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770630613; x=1771235413;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AgB5oGGHd4upF7pskvXaLtjuNDEPrMYM5N/AR0FlTwA=;
-        b=pX3jmZM2amT0D6RNPMm4PPzGMR8oAlxGnlxmphBYOqVAmXIN5OZibUo01XNDeYkLSL
-         BeIgoxAngjWAbjlACUKPFzz2FZ6IHy+xMKSPJMZLFdSEIWcdnlO1F9dfYIfQCefPF1KQ
-         U5Bg+Zouw0x/UxH9AdEMnPmtCug5EnnWY060Pj/vdMPR3xDa5QxmjpDjrbsF/+ACXQcS
-         GqBrEWiVFJym1YYEl3Fo85nift/xaQhrHMXKM6wRQM2P0WuZIJLvQkaeNXjRCzO46JkC
-         xICJvgzxfYg4D1W3X9XtRHZ4+snj7f5+kf+Bio6xz/Fx9CWoz2icgRCPQMwryAKLHFjX
-         E9uw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/EGw4TDCYn+NoJSSs2Sy11sthIIO5w7LlvQMUKQcqwteBks/ejYla/LpYWpsklfhCNrdC23PY+dZydQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1MAY0muIlLIPCf9a9o8G+PE2fBmlJNVoYv33kqCbtSSP9PhN+
-	VP817EO3IWG52esCQSGg0k47CVrYRFGU/Ex/wbf7sV5KhsCDkLYelMZUcqPTMg9Ppxk=
-X-Gm-Gg: AZuq6aJIJvUFnP2POJAOMhgVLv2ZMXRtC7iMZQEroQtc1E0/eE8wmGDbO27cHVjQ3iG
-	OUDThn2MwECvIEbsnDpQLuD47a97XK4N0qQzYTODCobEynInmOjn57RDCk+PSmSTqXlMs76Hqlq
-	zWbKwV1vCHhtOE8asAlY4TnauTqEoWpQWjT6059mIzQcqULIJTo3J5jFc51HB3ai9g3v7ioiV5u
-	mj7wv2e8Ey77gDT96tTCDf8zqB2ZVDDFiyegmpvKMNCayu9RmtGIQx2UW953eMQnJtwXxdBqpfw
-	kvr4XJq0dpQyNqKQvB5rb3Yao3cOC+08OGYWBzLrYcU4sMSh0i/uyte3vUy8T2kKJzmzsrIFhsI
-	630hd6TKYwJ65LeXL8rnEzgOfNP4/kk9pNhb7vmOviicvDmLx9Y/g+uXKIY2oL3i0fNQj7uQqBA
-	2eTWv0YGN4txDPk9BX
-X-Received: by 2002:a05:600c:34d1:b0:482:ef72:5787 with SMTP id 5b1f17b1804b1-483201da065mr134091865e9.1.1770630612708;
-        Mon, 09 Feb 2026 01:50:12 -0800 (PST)
-Received: from [192.168.1.3] ([185.48.77.170])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48320396ccbsm121940985e9.0.2026.02.09.01.50.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Feb 2026 01:50:12 -0800 (PST)
-Message-ID: <b4fb6943-361b-4c48-a199-8944cef53cfc@linaro.org>
-Date: Mon, 9 Feb 2026 09:50:09 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uuh1ROzG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B735CC16AAE;
+	Mon,  9 Feb 2026 12:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770640053;
+	bh=WgqiWVoHlPsT7FIc5ByMzq7REt3FLkvnK/cYU1bi2ZE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Uuh1ROzGRhjFu/DtTNevjfcQTG7ztxPCh1nYFv6eQnfhlP23WhZM88SNX1u3IbLwR
+	 rs2ftY8dNWGjlIcJMoo+a0yqduWhIfC12Kym8JTyMPLlQBksUwnwOntVxqQCJklanx
+	 s+ftOJ+YxAsZVzQiZaqB9TXU0G4WxgRN25PnwoRo62F38nSotrvuSHUfxeHNZWBOUk
+	 N9hPFk86drUz54TihgqcYUjSUOAgk4pSlembHJzeOiw6/290k5CYFTzLGdYv9+sANR
+	 PFVoJOasZrF64wTJlMPpdonp6AUXVIDkzKMgWSBIM9dVGgafCF1Fe20EYwndHPZ5Vh
+	 P5pcAh8+O693A==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Brahmajit Das <listout@listout.xyz>,
+	Thierry Reding <treding@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>,
+	thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	jonathanh@nvidia.com,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18-5.10] =?UTF-8?q?drm/tegra:=20hdmi:=20sor:=20F?= =?UTF-8?q?ix=20error:=20variable=20=E2=80=98j=E2=80=99=20set=20but=20not?= =?UTF-8?q?=20used?=
+Date: Mon,  9 Feb 2026 07:26:49 -0500
+Message-ID: <20260209122714.1037915-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260209122714.1037915-1-sashal@kernel.org>
+References: <20260209122714.1037915-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf vendor events arm64: Add Tegra410 Olympus PMU events
-To: Besar Wicaksono <bwicaksono@nvidia.com>
-Cc: "john.g.garry@oracle.com" <john.g.garry@oracle.com>,
- "will@kernel.org" <will@kernel.org>,
- "mike.leach@linaro.org" <mike.leach@linaro.org>,
- "leo.yan@linux.dev" <leo.yan@linux.dev>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
- "jolsa@kernel.org" <jolsa@kernel.org>,
- "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "acme@kernel.org" <acme@kernel.org>,
- "namhyung@kernel.org" <namhyung@kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Thomas Makin <tmakin@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>,
- Rich Wiley <rwiley@nvidia.com>, Sean Kelley <skelley@nvidia.com>,
- Yifei Wan <YWan@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Jon Hunter <jonathanh@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
- Ian Rogers <irogers@google.com>
-References: <20260127225909.3296202-1-bwicaksono@nvidia.com>
- <CAP-5=fUxhbR1xs1f9mrkcUXZZNLrVqDG0ebhwW--WtgVRnNxNw@mail.gmail.com>
- <40988c57-ee6f-4693-afe4-2615dc43f395@linaro.org>
- <MW5PR12MB5681E958BDDCEB137E65CE54A09FA@MW5PR12MB5681.namprd12.prod.outlook.com>
- <45c02424-f090-42bc-8165-03b4ef2c0a6c@linaro.org>
- <MW5PR12MB5681FAEA87806E8BACF7B8C8A067A@MW5PR12MB5681.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <MW5PR12MB5681FAEA87806E8BACF7B8C8A067A@MW5PR12MB5681.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.9
 Content-Transfer-Encoding: 8bit
 
+From: Brahmajit Das <listout@listout.xyz>
 
+[ Upstream commit 1beee8d0c263b3e239c8d6616e4f8bb700bed658 ]
 
-On 07/02/2026 12:27 am, Besar Wicaksono wrote:
-> 
-> 
->> -----Original Message-----
->> From: James Clark <james.clark@linaro.org>
->> Sent: Monday, February 2, 2026 3:59 AM
->> To: Besar Wicaksono <bwicaksono@nvidia.com>; Ian Rogers
->> <irogers@google.com>
->> Cc: john.g.garry@oracle.com; will@kernel.org; mike.leach@linaro.org;
->> leo.yan@linux.dev; mark.rutland@arm.com;
->> alexander.shishkin@linux.intel.com; jolsa@kernel.org;
->> adrian.hunter@intel.com; peterz@infradead.org; mingo@redhat.com;
->> acme@kernel.org; namhyung@kernel.org; linux-tegra@vger.kernel.org; linux-
->> arm-kernel@lists.infradead.org; linux-perf-users@vger.kernel.org; linux-
->> kernel@vger.kernel.org; Thomas Makin <tmakin@nvidia.com>; Vikram Sethi
->> <vsethi@nvidia.com>; Rich Wiley <rwiley@nvidia.com>; Sean Kelley
->> <skelley@nvidia.com>; Yifei Wan <YWan@nvidia.com>; Thierry Reding
->> <treding@nvidia.com>; Jon Hunter <jonathanh@nvidia.com>; Matt Ochs
->> <mochs@nvidia.com>
->> Subject: Re: [PATCH] perf vendor events arm64: Add Tegra410 Olympus PMU
->> events
->>
->> External email: Use caution opening links or attachments
->>
->>
->> On 30/01/2026 6:08 pm, Besar Wicaksono wrote:
->>> Thank you James and Ian for the comments.
->>> I will try to address the spelling mistakes on v2.
->>>
->>> Please see my other comments inline.
->>>
->>>> -----Original Message-----
->>>> From: James Clark <james.clark@linaro.org>
->>>> Sent: Wednesday, January 28, 2026 3:37 AM
->>>> To: Ian Rogers <irogers@google.com>; Besar Wicaksono
->>>> <bwicaksono@nvidia.com>
->>>> Cc: john.g.garry@oracle.com; will@kernel.org; mike.leach@linaro.org;
->>>> leo.yan@linux.dev; mark.rutland@arm.com;
->>>> alexander.shishkin@linux.intel.com; jolsa@kernel.org;
->>>> adrian.hunter@intel.com; peterz@infradead.org; mingo@redhat.com;
->>>> acme@kernel.org; namhyung@kernel.org; linux-tegra@vger.kernel.org;
->> linux-
->>>> arm-kernel@lists.infradead.org; linux-perf-users@vger.kernel.org; linux-
->>>> kernel@vger.kernel.org; Thomas Makin <tmakin@nvidia.com>; Vikram
->> Sethi
->>>> <vsethi@nvidia.com>; Rich Wiley <rwiley@nvidia.com>; Sean Kelley
->>>> <skelley@nvidia.com>; Yifei Wan <ywan@nvidia.com>; Thierry Reding
->>>> <treding@nvidia.com>; Jon Hunter <jonathanh@nvidia.com>; Matt Ochs
->>>> <mochs@nvidia.com>
->>>> Subject: Re: [PATCH] perf vendor events arm64: Add Tegra410 Olympus
->> PMU
->>>> events
->>>>
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> On 28/01/2026 8:03 am, Ian Rogers wrote:
->>>>> On Tue, Jan 27, 2026 at 3:00 PM Besar Wicaksono
->>>> <bwicaksono@nvidia.com> wrote:
->>>>>>
->>>>>> Add JSON files for NVIDIA Tegra410 Olympus core PMU events.
->>>>>> Also updated the common-and-microarch.json.
->>>>>>
->>>>>> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
->>>>>> ---
->>>>>>     .../arch/arm64/common-and-microarch.json      |  90 +++
->>>>>>     tools/perf/pmu-events/arch/arm64/mapfile.csv  |   1 +
->>>>>>     .../arch/arm64/nvidia/t410/branch.json        |  45 ++
->>>>>>     .../arch/arm64/nvidia/t410/brbe.json          |   6 +
->>>>>>     .../arch/arm64/nvidia/t410/bus.json           |  48 ++
->>>>>>     .../arch/arm64/nvidia/t410/exception.json     |  62 ++
->>>>>>     .../arch/arm64/nvidia/t410/fp_operation.json  |  78 ++
->>>>>>     .../arch/arm64/nvidia/t410/general.json       |  15 +
->>>>>>     .../arch/arm64/nvidia/t410/l1d_cache.json     | 122 +++
->>>>>>     .../arch/arm64/nvidia/t410/l1i_cache.json     | 114 +++
->>>>>>     .../arch/arm64/nvidia/t410/l2d_cache.json     | 134 ++++
->>>>>>     .../arch/arm64/nvidia/t410/ll_cache.json      | 107 +++
->>>>>>     .../arch/arm64/nvidia/t410/memory.json        |  46 ++
->>>>>>     .../arch/arm64/nvidia/t410/metrics.json       | 722
->>>> ++++++++++++++++++
->>>>>>     .../arch/arm64/nvidia/t410/misc.json          | 646 ++++++++++++++++
->>>>>>     .../arch/arm64/nvidia/t410/retired.json       |  94 +++
->>>>>>     .../arch/arm64/nvidia/t410/spe.json           |  42 +
->>>>>>     .../arm64/nvidia/t410/spec_operation.json     | 230 ++++++
->>>>>>     .../arch/arm64/nvidia/t410/stall.json         | 145 ++++
->>>>>>     .../arch/arm64/nvidia/t410/tlb.json           | 158 ++++
->>>>>>     20 files changed, 2905 insertions(+)
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/branch.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/brbe.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/bus.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/exception.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/fp_operation.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/general.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/l1d_cache.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/l1i_cache.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/l2d_cache.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/ll_cache.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/memory.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/metrics.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/misc.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/retired.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/spe.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/spec_operation.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/stall.json
->>>>>>     create mode 100644 tools/perf/pmu-
->>>> events/arch/arm64/nvidia/t410/tlb.json
->>>>>>
->>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/common-and-
->>>> microarch.json b/tools/perf/pmu-events/arch/arm64/common-and-
->>>> microarch.json
->>>>>> index 468cb085d879..6af15776ff17 100644
->>>>>> --- a/tools/perf/pmu-events/arch/arm64/common-and-microarch.json
->>>>>> +++ b/tools/perf/pmu-events/arch/arm64/common-and-
->> microarch.json
->>>>>> @@ -179,6 +179,11 @@
->>>>>>             "EventName": "BUS_CYCLES",
->>>>>>             "BriefDescription": "Bus cycle"
->>>>>>         },
->>>>>> +    {
->>>>>> +        "EventCode": "0x001E",
->>>>>> +        "EventName": "CHAIN",
->>>>>> +        "BriefDescription": "Chain a pair of event counters."
->>>>>> +    },
->>>>>
->>>>> Cool stuff :-)
->>>>>
->>>>> For wider counters AMD does something similar, but should this be an
->>>>> implementation detail rather than an exposed event? How does it
->>>>> operate as an event?
->>>>>
->>>>
->>>> CHAIN should be excluded from the json, it's used internally by the
->>>> driver when you want 64 bit counters. Userspace can't use it because it
->>>> can't control where counters are placed to make sure they're adjacent.
->>>>
->>>
->>> Sure, will address this in V2.
->>>
->>>>> [snip]
->>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>> b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>> index bb3fa8a33496..7f0eaa702048 100644
->>>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>> @@ -46,3 +46,4 @@
->>>>>>     0x00000000500f0000,v1,ampere/emag,core
->>>>>>     0x00000000c00fac30,v1,ampere/ampereone,core
->>>>>>     0x00000000c00fac40,v1,ampere/ampereonex,core
->>>>>> +0x000000004e0f0100,v1,nvidia/t410,core
->>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/branch.json
->>>> b/tools/perf/pmu-events/arch/arm64/nvidia/t410/branch.json
->>>>>> new file mode 100644
->>>>>> index 000000000000..532bc59dc573
->>>>>> --- /dev/null
->>>>>> +++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/branch.json
->>>>>> @@ -0,0 +1,45 @@
->>>>>> +[
->>>>>> +    {
->>>>>> +        "ArchStdEvent": "BR_MIS_PRED",
->>>>>> +        "PublicDescription": "The Event counts Branches which are
->>>> speculatively executed and mis-predicted."
->>>>>
->>>>> nit: The capitalization on Event and Branches, as well as other words,
->>>>> is a little unusual.
->>>>>
->>>>
->>>> If there's nothing specific to this CPU then the public description
->>>> could be left out entierly. The common strings already say the same
->>>> thing as this:
->>>>
->>>>        {
->>>>            "PublicDescription": "Mispredicted or not predicted branch
->>>>                                  speculatively executed",
->>>>            "EventCode": "0x10",
->>>>            "EventName": "BR_MIS_PRED",
->>>>            "BriefDescription": "Mispredicted or not predicted branch
->>>>                                 speculatively executed"
->>>>        },
->>>>
->>>>
->>>
->>> I will check on this and other events.
-> 
-> James, on a second thought, the description of the events was imported from
-> Olympus TRM. So just to keep my import flow simpler, if there is no major
-> concern, I would prefer to keep the description as is.
-> 
-> Thanks
-> Besar
-> 
+The variable j is set, however never used in or outside the loop, thus
+resulting in dead code.
+Building with GCC 16 results in a build error due to
+-Werror=unused-but-set-variable= enabled by default.
+This patch clean up the dead code and fixes the build error.
 
-Yes I think it's fine, you're already not overwriting BriefDescription 
-so it will use the common ones from common-and-microarch.json by default 
-unless running in verbose mode.
+Example build log:
+drivers/gpu/drm/tegra/sor.c:1867:19: error: variable ‘j’ set but not used [-Werror=unused-but-set-variable=]
+ 1867 |         size_t i, j;
+      |                   ^
+
+Signed-off-by: Brahmajit Das <listout@listout.xyz>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20250901212020.3757519-1-listout@listout.xyz
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+## Analysis of Commit: drm/tegra: hdmi: sor: Fix error: variable 'j' set
+but not used
+
+### 1. Commit Message Analysis
+
+The commit message explicitly states this is a **build fix** for GCC 16,
+which enables `-Werror=unused-but-set-variable=` by default. The commit
+removes dead code (an unused variable `j`) to fix a compilation error.
+
+Key indicators:
+- "Fix error" - indicates a build failure
+- "Building with GCC 16 results in a build error" - explicit mention of
+  build breakage
+- Provides concrete build log showing the error
+
+### 2. Code Change Analysis
+
+The changes are minimal and purely mechanical:
+
+**In `drivers/gpu/drm/tegra/hdmi.c`:**
+- Line 660: Changes `size_t i, j;` to `size_t i;`
+- Line 693: Changes `for (i = 3, j = 0; i < size; i += 7, j += 8)` to
+  `for (i = 3; i < size; i += 7)`
+
+**In `drivers/gpu/drm/tegra/sor.c`:**
+- Line 1866: Changes `size_t i, j;` to `size_t i;`
+- Line 1899: Changes `for (i = 3, j = 0; i < size; i += 7, j += 8)` to
+  `for (i = 3; i < size; i += 7)`
+
+The variable `j` was:
+1. Declared but never used anywhere
+2. Incremented in the loop (`j += 8`) but the value was never read
+3. Pure dead code that has no functional impact
+
+### 3. Classification
+
+This is a **build fix** - one of the explicit exception categories that
+ARE allowed in stable:
+
+> **BUILD FIXES:**
+> - Fixes for compilation errors or warnings, Kconfig dependency fixes,
+include file fixes
+> - These are critical for users who need to build the kernel
+
+### 4. Scope and Risk Assessment
+
+- **Lines changed:** ~4 lines total (2 per file)
+- **Files affected:** 2 files in the same subsystem (Tegra DRM driver)
+- **Risk level:** Extremely low
+- **Complexity:** None - purely removes unused code
+- **Behavioral change:** None - the variable was never used
+
+This is one of the lowest-risk changes possible:
+- No logic changes
+- No control flow changes
+- No memory management changes
+- Simply removing dead code that was never executed meaningfully
+
+### 5. User Impact
+
+**Who is affected:**
+- Anyone trying to build the kernel with GCC 16
+- Tegra (NVIDIA) platform users who need HDMI output
+
+**Severity:**
+- Without this fix, the kernel fails to compile with newer GCC versions
+- This blocks users from building the kernel entirely
+
+### 6. Stability Indicators
+
+- Signed-off by the subsystem maintainer (Thierry Reding from NVIDIA)
+- Link to the mailing list discussion provided
+- The change is trivial and obviously correct
+
+### 7. Dependency Check
+
+- No dependencies on other commits
+- The affected code (Tegra DRM HDMI/SOR drivers) exists in stable trees
+- The fix is self-contained
+
+### Conclusion
+
+This commit meets all stable kernel criteria for a **build fix**:
+
+1. **Obviously correct:** The variable `j` was declared, incremented,
+   but never read - pure dead code
+2. **Fixes a real bug:** Build failure with GCC 16
+3. **Small and contained:** Only 4 lines changed across 2 related files
+4. **No new features:** Removes unused code
+5. **No risk of regression:** Cannot change behavior since the removed
+   code was never used
+
+Build fixes are explicitly allowed in stable trees because they are
+critical for users who need to build the kernel. As GCC 16 becomes more
+widely used (and is now the default compiler in some distributions),
+this fix will become essential for anyone building the kernel.
+
+The fix is trivial, obviously correct, and fixes a real build failure.
+It has zero risk of causing runtime regressions since it only removes
+dead code.
+
+**YES**
+
+ drivers/gpu/drm/tegra/hdmi.c | 4 ++--
+ drivers/gpu/drm/tegra/sor.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 8cd2969e7d4bf..c4820f5e76581 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -658,7 +658,7 @@ static void tegra_hdmi_write_infopack(struct tegra_hdmi *hdmi, const void *data,
+ {
+ 	const u8 *ptr = data;
+ 	unsigned long offset;
+-	size_t i, j;
++	size_t i;
+ 	u32 value;
+ 
+ 	switch (ptr[0]) {
+@@ -691,7 +691,7 @@ static void tegra_hdmi_write_infopack(struct tegra_hdmi *hdmi, const void *data,
+ 	 * - subpack_low: bytes 0 - 3
+ 	 * - subpack_high: bytes 4 - 6 (with byte 7 padded to 0x00)
+ 	 */
+-	for (i = 3, j = 0; i < size; i += 7, j += 8) {
++	for (i = 3; i < size; i += 7) {
+ 		size_t rem = size - i, num = min_t(size_t, rem, 4);
+ 
+ 		value = tegra_hdmi_subpack(&ptr[i], num);
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 21f3dfdcc5c95..bc7dd562cf6b6 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1864,7 +1864,7 @@ static void tegra_sor_hdmi_write_infopack(struct tegra_sor *sor,
+ {
+ 	const u8 *ptr = data;
+ 	unsigned long offset;
+-	size_t i, j;
++	size_t i;
+ 	u32 value;
+ 
+ 	switch (ptr[0]) {
+@@ -1897,7 +1897,7 @@ static void tegra_sor_hdmi_write_infopack(struct tegra_sor *sor,
+ 	 * - subpack_low: bytes 0 - 3
+ 	 * - subpack_high: bytes 4 - 6 (with byte 7 padded to 0x00)
+ 	 */
+-	for (i = 3, j = 0; i < size; i += 7, j += 8) {
++	for (i = 3; i < size; i += 7) {
+ 		size_t rem = size - i, num = min_t(size_t, rem, 4);
+ 
+ 		value = tegra_sor_hdmi_subpack(&ptr[i], num);
+-- 
+2.51.0
 
