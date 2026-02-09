@@ -1,115 +1,151 @@
-Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B0C377571
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Feb 2026 13:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40B37E2F1;
+	Mon,  9 Feb 2026 15:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770642876; cv=none; b=PtQA3/BDkufEmFvaaIGzgwuJs46KNbiofxlUP8yADdFcUmX0h6UdwZq+LJAjF86l3/cJb5VXKgte56r52QcPsIZP6kEL/ynq/gLa/H9N6yKW//qwwso8u/eu7j/jViVKGJTogIzYJAZ0aFygkdyYLTr8mBG2fHCbXswH+p4P+y0=
+	t=1770651620; cv=none; b=t8ipfRNmTOeLhKea6BwvHSDR2wUfN7Mc3TpjjmbhudDSmpgt3gF/pgBnQEjEZAO1BzXbjDpPCm9gpfWxDIoTNJx/CbJJzVXeS87Mo/x6TIHHDZOByRBhYYSmtqFBo6ZmC0LRNz1juww7Eruxht4HE5EsXVLMin6q5eSxFJhbR9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770642876; c=relaxed/simple;
-	bh=BsCyYY706eP9kibwFEw5teWvvr/D7HjWBFdh5Dsrp0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MdjM+CHCeu2O+0v6UOUbkwOeobx1azZQNwyK+iQuMk3oHuqTgkQW1gJ4xoFmcl6o2QsCEfzvOgMzujdHi2DEH8aOehHHL0xhcHFIQm2pZnPTOhzHz+xKcqrxQFzmEWko+Q39ssJ28Lji5DMfEEOBxjrb20yNhe53MnCDTzwuLd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgjH1jNQ; arc=none smtp.client-ip=209.85.208.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770651620; c=relaxed/simple;
+	bh=5DRu3dMpaADpDKLopx8dO5LEkVz+35Fl6LlXv05MFMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xd8sG7S6t7IWV/SNaOy9whrrQaDcq2LnzpPaEXkdJa9d1AcjApbyBrmC6V7KAhWNvLx/V81yWCfkyQXX6kkXR43a9Aq5BloxhNu8Wr2nQm6ujEvww6PHXGRgFnCaBPAeDfe5S401Z3jWCqRg+WJRsCPeGBeNiEihVm6tTeso2mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3giKneR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgjH1jNQ"
-Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-38316d0c26eso25712211fa.2
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Feb 2026 05:14:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770642874; x=1771247674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RoPSheucwNdJ0J9aHupvUSWIaFIaKnYUl6Un356KuXI=;
-        b=JgjH1jNQnPiNbYKS/ksIUt3FkeHXhEfn0JCASBuctD2odZ8izupOXuNyZ8WW8B3ujU
-         ZkH+OGppkxKSVgu0zfd1VLmqVCULFWQc1C3HxyAwFyqdL5/0OgKZ2uJcghH4H7Ar/r6V
-         RQ3WI6TLJLZjgYcBoNQ4OyS+R5mOiqb3FjoQK24Bk6AxWohR6/Fa4mb4XtZr2WSvw1Hj
-         epJg6db2tEeVzavZOcvX1gHrAfI6rimS9vby9KsZmdoPGbkMTAbfrEOXVbc25YycAENx
-         m4TFO9iBjNSHldJmwdVmEerhs5MVWmzFqJPago0d7UQxnJd3ZSouIAAgzUg5D7C1nNV6
-         NMbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770642874; x=1771247674;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RoPSheucwNdJ0J9aHupvUSWIaFIaKnYUl6Un356KuXI=;
-        b=YMGUAVBkY27s4T9RjILhN8rXuSoXNo66MpiaNMsvpo6598I35JsU87f36Lme/YjHtL
-         gqB8dKd5LF9fOzn3rwCqyfIZj68PT4wQ2RJcJfWzUv8nqYhm5jONPEXYQOvUtsydCAmX
-         /ofbMDvcnk6xJ4eqUtNARI4IKp17Gl0s31TO2e6d2RjWCEycRYkJnES85l7rs7lOkXdv
-         HNn4Ee2Cpx1IlVVRxpcuMPyeH1Fxa5FafdAXDIDbo8TZ9dHTcOYHoRQKnR5o4SbZoecY
-         RL1PnQFL9PPFoOp8tIqQZe2OykSOiHh19zoYxtUjGIuco/4ehsNMcltSpq0hB3YyPl5m
-         gScA==
-X-Forwarded-Encrypted: i=1; AJvYcCVl1tIvYVasr/Fsi7rQVXJCPq7DUWGNCAd/cyRlsHwv+IYxgDNdcTnxF50+P3CMVtzSO8OdV0dr821fYw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmPHUxybzlAYRa6zkO9yJlqR0raaEw1UXb8Fa9zUg8KB7THo3L
-	D9nKF3kwC1n0BkTnZwSbqAfAPer395ORnbe/YtKncjlYfNb8sUEnUwGFbWvThZvB
-X-Gm-Gg: AZuq6aLf0A++i/vo3L9a0fdr/GWCWoqaCeDQg0HlpeHHzrSmb3QH5WaGrd0wHPMJM2I
-	c96P75ckMfhCIDkDQOBEjMcWxsiKPPeL+D13A14o6o7IKOBE4M65YVNg2lqp7QRCRKvluaEP884
-	dJ6PS4VPaAI9j2/+AYJDVWLdI9QKuvBmi+H5vD03b0GrEI9v0Oc4Cs9+NkF9gL/ag7pwiTl4j7c
-	Qu3TJa7IDs7qH7/MlTY1OXLluHsfB0VTrIEz1gxO/u98GnJD65pcyFmdlyFoOuFJXYTzPteNCnN
-	PHhLqqLYJxF+OEeBWErHtMbztEsuxr596w+umvMSR5noiC+AUaXDF8SxZSADhoLM31ewsW0v6ms
-	/Ui64tX5l37EsbT8gknuKvZ35pw2jWrojkR6dtSFmIAHgg6YtX5dpd3JlESFRIiUd9R+EGtgH91
-	9ELUegLOHtCYqsfZUJWdUj7z0DQm9YVNKyfjZM9wmUeKpIfdiFSowYc0MSvbOmD2HWmg/2Dd5Sa
-	8tPVznmiIJ0GsA=
-X-Received: by 2002:a05:651c:b22:b0:386:1ce2:1198 with SMTP id 38308e7fff4ca-386b5110ee8mr29967281fa.31.1770642873785;
-        Mon, 09 Feb 2026 05:14:33 -0800 (PST)
-Received: from localhost.localdomain ([176.33.64.73])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-386b63e8483sm27212191fa.34.2026.02.09.05.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 05:14:33 -0800 (PST)
-From: Alper Ak <alperyasinak1@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Alper Ak <alperyasinak1@gmail.com>
-Subject: [PATCH] gpu: host1x: Fix passing zero to ERR_PTR in host1x_iommu_attach()
-Date: Mon,  9 Feb 2026 16:14:26 +0300
-Message-ID: <20260209131426.37611-1-alperyasinak1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3giKneR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3742C116C6;
+	Mon,  9 Feb 2026 15:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770651620;
+	bh=5DRu3dMpaADpDKLopx8dO5LEkVz+35Fl6LlXv05MFMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E3giKneRdTIS8o5HAfKsCgyA3Vk576TJHuj27G++WpF4bVwo8cqDkL6Qmv+VYPGZ8
+	 cuixX8S9UWdGdgfLNEhjWW+EobdUEmwbMpxPsUxHYKe2KuU+agUKPUb/oWYn35b27L
+	 +GtecYO4Men19p1sVRPAWK38hPds7C0lkC1Rq2OvR9enQA/5TK2AbLY7olteRNqLCq
+	 xJz0El8ZBaNm7AuLJLQxUx/LZGECtS+u6RnXBYid20/LgnxlvkWnspo+l0HdqD8tw6
+	 cj29zBhNWE9FTbRHQQ2HoCrzcD3K5DGDHNgsfMuP9tHFWAvFpfgDJ/z1ciUy6p6Lr2
+	 MqqCGfPCz2Nig==
+Date: Mon, 9 Feb 2026 09:40:15 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: jassisinghbrar@gmail.com, Frank.Li@nxp.com, arm-scmi@vger.kernel.org, 
+	cristian.marussi@arm.com, festevam@gmail.com, imx@lists.linux.dev, 
+	jay.buddhabhatti@amd.com, jonathanh@nvidia.com, kernel@pengutronix.de, 
+	konradybcio@kernel.org, krzk@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-tegra@vger.kernel.org, mathieu.poirier@linaro.org, 
+	michal.simek@amd.com, nm@ti.com, rafael@kernel.org, robh@kernel.org, 
+	s.hauer@pengutronix.de, shawn.guo@linaro.org, ssantosh@kernel.org, 
+	sudeep.holla@kernel.org, tglx@kernel.org, thierry.reding@gmail.com
+Subject: Re: [PATCH v2 01/15] mailbox: Deprecate NULL mbox messages;
+ Introduce mbox_ring_doorbell()
+Message-ID: <yotr3aia3gra4jmlykqadqwi45lphhdyx7tt4n5cdwcungfpbd@gns6bb6m3vmz>
+References: <20260208040240.1971442-1-dianders@chromium.org>
+ <20260207200128.v2.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260207200128.v2.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid>
 
-When iommu_attach_group() returns -ENODEV, the code sets err to 0 but
-still falls through to the error path, returning ERR_PTR(0).
+On Sat, Feb 07, 2026 at 08:01:23PM -0800, Douglas Anderson wrote:
+> The way the mailbox core behaves when you pass a NULL `mssg` parameter
+> to mbox_send_message() is a little questionable. Specifically, the
+> mailbox core stores the currently active message directly in its
+> `active_req` field. In at least two places it decides that if this
+> field is `NULL` then there is no active request. That means if `mssg`
+> is ever NULL it will cause the mailbox core to think is no active
+> request. The two places where it does this are:
+> 
+> 1. When a client calls mbox_send_message(), if `active_req` is NULL
+>    then it will call the mailbox controller to send the new message
+>    even if the mailbox controller hasn't yet called mbox_chan_txdone()
+>    on the previous (NULL) message.
+> 2. The mailbox core will never call the client's `tx_done()` callback
+>    with a NULL message because `tx_tick()` returns early whenever the
+>    message is NULL.
+> 
+> Though the above doesn't look like it was a conscious design choice,
+> it does have the benefit of providing a simple way to assert an
+> edge-triggered interrupt to the remote processor on the other side of
+> the mailbox. Specifically:
+> 
+> 1. Like a normal edge-triggered interrupt, if multiple edges arrive
+>    before the interrupt is Acked they are coalesced.
+> 2. Like a normal edge-triggered interrupt, as long as the receiver
+>    (the remote processor in this case) "Ack"s the interrupt _before_
+>    checking for work and the sender (the mailbox client in this case)
+>    posts the interrupt _after_ adding new work then we can always be
+>    certain that new work will be noticed. This assumes that the
+>    mailbox client and remote processor have some out-of-band way to
+>    communicate work and the mailbox is just being used as an
+>    interrupt.
+> 
+> Doing a `git grep -A1 mbox_send_message | grep NULL` shows 14 hits in
+> mainline today, but it's not 100% clear if all of those users are
+> relying on the benefits/quirks of the existing behavior.
+> 
+> Since the current NULL `mssg` behavior is a bit questionable but has
+> some benefits, let's:
+> 
+> 1. Deprecate the NULL behavior and print a warning.
+> 2. Add a new mbox_ring_doorbell() function that is very similar to the
+>    existing NULL `mssg` case but a tad bit cleaner.
+> 
+> The design of the new mbox_ring_doorbell() will be to maximize
+> compatibility with the old NULL `mssg` behavior. Specifically:
+> 
+> * We'll still pass NULL to the mailbox controller to indicate a
+>   doorbell.
+> * Doorbells will not be queued and won't have txdone.
+> * We'll call immediately into the mailbox controller when a doorbell
+>   is posted.
+> 
+> With the above, any mailbox clients that don't mix doorbells and
+> normal messages are intended to see no change in behavior when
+> switching to the new API. Using the new API, which officiall documents
+> that mbox_client_txdone() shouldn't be called for doorbells, does
+> allow us to remove those calls.
+> 
+> There are two differences in behavior between the old sending a NULL
+> message and the new mbox_ring_doorbell():
+> 
+> 1. If the mailbox controller returned an error when trying to send a
+>    NULL message, the old NULL message could have ended up being queued
+>    up in the core's FIFO. Now we will just return the error.
+> 2. If a client rings a doorbell while a non-doorbell message is in
+>    progress, previously NULL messages would have been "queued" in that
+>    case and now doorbells will be immediately posted.
+> 
+> I'm hoping that nobody was relying on either of the two differences.
+> In general holding NULL messages in the mailbox core's queue has odd
+> behavior and is hard to reason about. Hopefully it's reasonable to
+> assume nobody was doing this.
+> 
+> As mentioned above, it should be noted that it's now documented that
+> "txdone" shouldn't be called (by both mailbox drivers and clients) for
+> doorbells. That being said, in most cases it won't hurt since the
+> mailbox core will ignore the bogus "txdone". The only case where it's
+> critical for a mailbox controller not to call "txdone" for a doorbell
+> is when a mailbox channel mixes normal messages and doorbells and
+> cares about the txdone callback. Specifically, when you ring a
+> doorbell and immediately send a normal message, if the controller
+> calls "txdone" for the doorbell it could look as if the normal message
+> finished before it should have. This issue also would have happened
+> with the old NULL `mssg`, though.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Returning ERR_PTR(0) evaluates to NULL and breaks the ERR_PTR/IS_ERR
-contract, causing the error to be silently ignored and potentially
-leading to NULL pointer dereferences by callers.
+I like how this cleans up the logic hacks, but perhaps even more so how
+it takes a step towards cleaning up the mailbox API when it comes to
+expectations between client and provider implementations.
 
-Fix this by returning NULL when err is zero, and ERR_PTR(err) only
-for actual error codes.
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-This issue was reported by the Smatch static analyzer.
-
-Fixes: 06867a362de0 ("gpu: host1x: Set DMA mask based on IOMMU setup")
-Signed-off-by: Alper Ak <alperyasinak1@gmail.com>
----
- drivers/gpu/host1x/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 3f475f0e6545..46a570b861ac 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -450,7 +450,7 @@ static struct iommu_domain *host1x_iommu_attach(struct host1x *host)
- 	iommu_group_put(host->group);
- 	host->group = NULL;
- 
--	return ERR_PTR(err);
-+	return err ? ERR_PTR(err) : NULL;
- }
- 
- static int host1x_iommu_init(struct host1x *host)
--- 
-2.43.0
-
+Regards,
+Bjorn
