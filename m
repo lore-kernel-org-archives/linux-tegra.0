@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7B72DB7A8;
-	Tue, 10 Feb 2026 02:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6956B2E62AC;
+	Tue, 10 Feb 2026 02:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770691581; cv=none; b=Tz2V+qdR7Vu9Jcx1nvmKzTOUjpk7/Ys0SaFn6prf6a1yZ0sYtnV+oxYMe3GenTPjk750ZEwm7Lqjv6qdaPzHg17W6NVl4swJ8oB/XFtDWVMvdSUp5JS1CWlvVrJvq1mrUmqDscksM9981h/syJTHvCOPpY7ny/z5E5biZez+gDE=
+	t=1770691727; cv=none; b=nrXD3+XraHGFQ8OQkUcE2yHiRlBpnoBpn8mFQdqIL6dWbXi1GQm4jcBumNak7yQH1w80x+XEUbq5BdrywgtxMGKtKa4AzinD1AXpSWxKZas28NzkutOblRorL6vOApGEbH9Usr1ObiyNYzpgGqzwBjJxPNB2/2SyV1r3gMnF3zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770691581; c=relaxed/simple;
-	bh=Q9Cy7iKV5bc/z2gLfix9jEL9ma0/1NHBV+8qNqpjm/Y=;
+	s=arc-20240116; t=1770691727; c=relaxed/simple;
+	bh=6NxCKVaA7xc8vNbgeX/09jYUtLOFu2k/grPFrJ0Gyoo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4aLPl0e98eekiWIZuMSQwFu1g0OkIVHRVe08XNQAKbImhejEqA23oKwMpHPSGanFjt0W3GMnREgblMB/ufoxNoweCRJQApeBz3tvSaULLB0c5VqSz5gOLVE4D/5/0FubVmATctlJV4xJITsc0BOXFEhGdXJotspayJ47BsXOnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljsafPJc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=N90k7wHEyT9KN7KRilGv/ND4KCx/z9bqr0sAozJx84q/Js07cor0yi+hHVKVmq1QMTrzLgMFNjPT7Knfl+OHnHh9j6JuifapllKgB5mgU+SIuAemm2N3e5ADoqPzMEk2qoPL5n8MTwJJY/1mnQ+p43n8F23Etw8jPtXCkdyhzYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMkNfiEl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljsafPJc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DEAC16AAE;
-	Tue, 10 Feb 2026 02:46:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMkNfiEl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0FDC116C6;
+	Tue, 10 Feb 2026 02:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770691580;
-	bh=Q9Cy7iKV5bc/z2gLfix9jEL9ma0/1NHBV+8qNqpjm/Y=;
+	s=k20201202; t=1770691727;
+	bh=6NxCKVaA7xc8vNbgeX/09jYUtLOFu2k/grPFrJ0Gyoo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ljsafPJcay9Emv0hudR8AQ2Dxt2p/Jzo1Y49PsSTERvp5j5lsmgZohlKjmYx33SWj
-	 pafSedNjUdVDXvkBFILURfYg6lLnq7W3zTL3q89IaFPDlrPEdgxZsRmUFKUrIJgcsh
-	 uSINiHQQNtVA92TnAtWvsfP8oO7QghKcA5vp+tb1IapYRktr0VVRyYdmg/wG7Ckl++
-	 nimbL+sucgg5l8imeECJ3A8eKGx52JhkXHgGstmrIKbxE2JaZe1QsBtsCoot7TrheV
-	 ySxCLOYJDsugKecP28K/38XfoNfktg2azs6deLHXfgwfLchUoIM8ii2Hakmkaj1olJ
-	 7qIBVZaZsXn3A==
-Date: Mon, 9 Feb 2026 20:46:19 -0600
+	b=mMkNfiElnd0c/wAh6KncBzPBH7BJQ61kpZInwUf1g7X27t4AwqIznNa995E8hqTcV
+	 NYGssJTc2kEBM0zZk0p90W7+WYpcubxQVvqo/ocx7XQ9bLKdzvgGYZFoQ6Mo1HO4Pf
+	 1yh0s6GfE0Z5AOLW7xtnX2sxJtjEO9lWGcvNQD8iovLJ1a0zd4J5+sIs5huUrLId2c
+	 DqmgPiyL6A1yjF7Wd0lO3wxVnUxkC/4MtToJAW9Uk7iM10tnMVau+p/GYP/cJaFdiY
+	 L2h8aGOnrSAGnXTKVlTQKosYHhjiw15NVCsaQ2aHj0evLMrJgelR918MxTNljdzGVJ
+	 RdYBPb4/nL1+A==
+Date: Mon, 9 Feb 2026 20:48:46 -0600
 From: Rob Herring <robh@kernel.org>
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
@@ -38,11 +38,11 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
 	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
 	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] ASoC: dt-bindings: nvidia,tegra-audio: document
- CPCAP CODEC
-Message-ID: <20260210024619.GA2374304-robh@kernel.org>
+Subject: Re: [PATCH v2 5/5] ASoC: dt-bindings: nvidia,tegra-audio-max9808x:
+ document additional board pins
+Message-ID: <20260210024846.GA2385273-robh@kernel.org>
 References: <20260206173423.145954-1-clamor95@gmail.com>
- <20260206173423.145954-2-clamor95@gmail.com>
+ <20260206173423.145954-6-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -51,78 +51,39 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260206173423.145954-2-clamor95@gmail.com>
+In-Reply-To: <20260206173423.145954-6-clamor95@gmail.com>
 
-On Fri, Feb 06, 2026 at 07:34:18PM +0200, Svyatoslav Ryhel wrote:
-> Add dt-binding for CPCAP CODEC.
+On Fri, Feb 06, 2026 at 07:34:22PM +0200, Svyatoslav Ryhel wrote:
+> Document additional board pins that may be used in routing.
 > 
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  .../sound/nvidia,tegra-audio-cpcap.yaml       | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-cpcap.yaml
+>  .../bindings/sound/nvidia,tegra-audio-max9808x.yaml          | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-cpcap.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-cpcap.yaml
-> new file mode 100644
-> index 000000000000..5335fa56fb3c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-cpcap.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-cpcap.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra audio complex with CPCAP CODEC
-> +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> +
-> +allOf:
-> +  - $ref: nvidia,tegra-audio-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - pattern: '^[a-z0-9]+,tegra-audio-cpcap(-[a-z0-9]+)+$'
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
+> index 241d20f3aad0..4957645a8e03 100644
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
+> @@ -35,10 +35,15 @@ properties:
+>      items:
+>        enum:
+>          # Board Connectors
+> +        - Speakers
+>          - Int Spk
+> +        - Headphone
+> +        - Headphones
+>          - Headphone Jack
 
-Expecting a lot of devices and differences? I would assume all known h/w 
-is well known and any differences are known by now. Perhaps even just 
-the fallback is sufficient?
+Aren't all 3 of these the same thing?
 
-> +      - const: nvidia,tegra-audio-cpcap
-> +
-
-> +  - |
-> +    #include <dt-bindings/clock/tegra20-car.h>
-> +    #include <dt-bindings/soc/tegra-pmc.h>
-> +    sound {
-> +        compatible = "motorola,tegra-audio-cpcap-mot",
-
-Why do we need motorola twice?
-
-> +                     "nvidia,tegra-audio-cpcap";
-> +        nvidia,model = "Motorola Atrix 4G (MB860) CPCAP";
-> +
-> +        nvidia,audio-routing =
-> +                "Headphones", "HSR",
-> +                "Headphones", "HSL",
-> +                "Int Spk", "SPKR",
-> +                "Int Spk", "SPKL",
-> +                "Earpiece", "EP",
-> +                "HSMIC", "Mic Jack",
-> +                "MICR", "Internal Mic 1",
-> +                "MICL", "Internal Mic 2";
-> +
-> +        nvidia,i2s-controller = <&tegra_i2s1>;
-> +        nvidia,audio-codec = <&cpcap_audio>;
-> +
-> +        clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
-> +                 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-> +                 <&tegra_car TEGRA20_CLK_CDEV1>;
-> +        clock-names = "pll_a", "pll_a_out0", "mclk";
-> +    };
+>          - Earpiece
+>          - Headset Mic
+> +        - Mic Jack
+> +        - Int Mic
+>          - Internal Mic 1
+>          - Internal Mic 2
+>  
 > -- 
 > 2.51.0
 > 
