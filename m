@@ -1,120 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D7C34CFBB;
-	Tue, 10 Feb 2026 11:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FED329E6D;
+	Tue, 10 Feb 2026 13:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770721473; cv=none; b=pC8N3tWv+N5+DHPGC6XxReCfkZqGoZThaWCtIJMufEYGDLNKODgmvLLRaG0QRSiTWkBOVAp31b+nFoDlDwrjSG899dkWjnK7AKU6KcBI4I6xRuzYn6EToAa6sfZwv6zWFrHLC4wPFQ6hkVU6EJAoNC7ITDxkHNRR65o0Ce5kNfs=
+	t=1770730511; cv=none; b=uE5facQgNXgmL0ut7ycY0MFMVrkiDsjsm7gDOSzbYV7TWqk9qBAgO8rz42dO3/ToeYRBy7uRYtcOEyuRpbCXuVuA/2VN0+BfT5NFLeUmG/km49NIlyV/bwchNGweFoQx5DlOp9mqgfnAhaRYMX9BwdKC9BU6I8eYac0AIZ045BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770721473; c=relaxed/simple;
-	bh=7yZxFkNNQCJkdJ9pJ8Eclg+/98lS5/890gc/MqlDytE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpM8/6Pg6r+Sv0YPGiaV34enGTmpiBHXkoDZoVOrn3qSAZAsGZhRjIivcInMyNTVJkJxQsbMW6TKTNqF9yRgeQgnulAMLVxKAACixVxq46+PSMywfxSgXL8hYmeD9LfZxraI86jIIuY9LWOun4+JHVCsAbRnFn2OapQuvAnwNVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wft85wPu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770730511; c=relaxed/simple;
+	bh=iI8cJtald+cfXv682SCLdFFYI4/mbyQwgbte4z4GTJI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=PAlb0gN24cZ1o7cRmzz3NaNUdU9IebKuY8HGe+hs/HRNQ0gz3wmRnmVttDt5dl/8ebMk+/coEcls/wMobNBqffnrV3kCgupq4MkP+H2nl3S8SbUBLbAxGBLbXiSGBVwJEDESlI2JCbk3pSNuPO86UtbQ3ZvTwWTn9VTY0G1J0uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jo5mszaE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wft85wPu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8200BC19423;
-	Tue, 10 Feb 2026 11:04:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jo5mszaE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15374C116C6;
+	Tue, 10 Feb 2026 13:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770721473;
-	bh=7yZxFkNNQCJkdJ9pJ8Eclg+/98lS5/890gc/MqlDytE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wft85wPujxS+9BjK2WLUDPsGY6vtTTreoK9vPzH9LeH9UgyXeKZFuQ63xNu4VKecU
-	 JPHBfH4t0OuagB0TGt6HZgqJnXcX0/97je7QQK1PtjNdtE4D21Kped2mkXpva0KPYX
-	 SL/6UB/pTKm3unBM71PslUCqZt4qddum7pbDFPnGKxiE20d3zUNBSqcY7jGhc4WQwG
-	 7bgOesbGPXv7RS0/TsDtiAgbTlwaAXnrUmrCeD3X9nxaqwinK/d3A5L1ml4leDi7Uq
-	 7DpeZR1XYO80lqYHfnHwTVfyCxgkcBLvS9lOrsK5ysDNM2FYHE33/cZku1NWXMi7Mf
-	 Ui2wBaYWwSIyQ==
-Date: Tue, 10 Feb 2026 12:04:27 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v2 2/3] PCI: tegra194: Reset BARs when running in PCIe
- endpoint mode
-Message-ID: <aYsQu9lQi4IzfBiP@ryzen>
-References: <20250922140822.519796-5-cassel@kernel.org>
- <20250922140822.519796-7-cassel@kernel.org>
- <2fedf28e-83ea-4e51-b1a1-e45f0e928509@nvidia.com>
- <aYonDJyd_dbV0GBK@ryzen>
- <94458c39-587b-4bb4-a410-e921e5d99f10@nvidia.com>
- <aYsDDOZA18BBeOsd@ryzen>
- <c8e42e96-212f-451d-802b-7166611f6fcd@nvidia.com>
+	s=k20201202; t=1770730511;
+	bh=iI8cJtald+cfXv682SCLdFFYI4/mbyQwgbte4z4GTJI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Jo5mszaEiP2SVKvvb3eHyau3WCTQezfaWYJwWnYSOBM8K4yJ1ivsKWqNHaKWIkl/B
+	 5iW9glYy6jFDX1/+WGusEKWzfuXDloV9LdnnILhaboDqDd5f25Bqnp36tuZMEHhATo
+	 Z7kni7nK78Hhq0ER5gQMTc/w/xl+t5pDtGru8qGWelFLiC/aMeWcm0unGXzs2PcAC1
+	 zfYsjyZ11lRGCQKc0vRY3eYF9rvMB1Esl4kP2nGaywLS6YbxKfRc4CXzqyYjZMAL24
+	 oyrjlhBPcTgOGzNpyNuqH4wbN6P1LNVP19J+P4m/0Aq0pqCHLwbGuA6v/2a14vnvWp
+	 MWH1ryVt1g4EQ==
+Date: Tue, 10 Feb 2026 07:35:10 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c8e42e96-212f-451d-802b-7166611f6fcd@nvidia.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
+ David Airlie <airlied@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Conor Dooley <conor+dt@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20260210094908.14276-2-clamor95@gmail.com>
+References: <20260210094908.14276-1-clamor95@gmail.com>
+ <20260210094908.14276-2-clamor95@gmail.com>
+Message-Id: <177073050919.2585793.5681591467415217402.robh@kernel.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: display: tegra: document Tegra20
+ HDMI port
 
-On Tue, Feb 10, 2026 at 04:09:05PM +0530, Manikanta Maddireddy wrote:
-> > For pci-keystone.c, this is the only driver that is a bit weird, it marks
-> > BAR0 and BAR1 as reserved, but does not disable them in the init() callback.
-> > It seems force set BAR0 as a 32-bit BAR in the init() callback.
-> > 
-> > Thus, for all drivers except for pci-keystone.c, BAR_RESERVED does mean
-> > BAR_DISABLED. Feel free to send a patch that renames BAR_RESERVED to
-> > BAR_DISABLED.
-> > 
-> > If you send such a patch, perhaps you also want to modify the PCI endpoint
-> > core to call reset_bar() for all BARs marked as BAR_RESERVED/BAR_DISABLED,
-> > instead of each EPC driver doing so in the init() callback. I think the main
-> > reason why this is not done already is that thare is no reset_bar() op in
-> > struct pci_epc_ops epc_ops, there is only clear_bar() which clears an BAR
-> > enabled by an EPF driver. (So you would most likely also need to add a
-> > .disable_bar() op in struct pci_epc_ops epc_ops.)
-> > 
-> pci-epc.h defined
+
+On Tue, 10 Feb 2026 11:49:07 +0200, Svyatoslav Ryhel wrote:
+> Tegra HDMI can be modeled using an OF graph. Reflect this in the bindings.
 > 
->  * @BAR_RESERVED: The BAR should not be touched by an EPF driver.
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../bindings/display/tegra/nvidia,tegra20-hdmi.yaml | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
 > 
-> I believe you are interpreting this as unused BAR?
-> 
-> In Tegra PCIe, BAR2 and BAR4 are backed by PCIe HW memory which
-> 
-> shouldn't be touched by EPF, but should be kept enabled.
-> 
-> This support is not available. I suggested to add BAR_DISABLED
-> 
-> for unused and use BAR_RESERVED for bars like above.
 
-I understand what you want. You want to have a BAR_RESERVED and a
-BAR_DISABLED.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Sounds like a nice feature. Feel free to add that.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml:107:5: [warning] wrong indentation: expected 6 but found 4 (indentation)
+./Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml:110:5: [warning] wrong indentation: expected 6 but found 4 (indentation)
 
+dtschema/dtc warnings/errors:
 
-But like I mentioned in my reply, for all existing drivers, except for
-pci-keystone.c, in practice BAR_RESERVED actually means BAR_DISABLED.
-(Since all drivers except for pci-keystone.c call reset_bar() in init(),
-and pci-epf-test will not enable BARs marked as BAR_RESERVED).
+doc reference errors (make refcheckdocs):
 
-So if you add a BAR_DISABLED, make sure that you convert all existing
-uses of BAR_RESERVED (except for pci-keystone.c) to BAR_DISABLED.
+See https://patchwork.kernel.org/project/devicetree/patch/20260210094908.14276-2-clamor95@gmail.com
 
-pci-keystone.c and pcie-tegra194.c can then be the only drivers that
-have BARs marked as BAR_RESERVED (all other drivers would use BAR_DISABLED).
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Please just make sure that you don't regress the amount of currently passing
-pci_endpoint_test test cases that are passing for pcie-tegra194.c.
-(Which would be the case if you revert the patch in $subject without first
-adding your proposed new BAR_DISABLED, such that we can have a distinction
-between BAR_DISABLED and BAR_RESERVED.)
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
 
-Kind regards,
-Niklas
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
