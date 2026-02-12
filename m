@@ -1,208 +1,143 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010034.outbound.protection.outlook.com [52.101.201.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8945EEEAB;
-	Thu, 12 Feb 2026 13:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770903996; cv=fail; b=OdVT04YRel94po45ki6wBJVItWAOno+vOiSo5ikC4e2QGfqBhKrun0FslUIMiPGbkdB69psGwZ7+w4GAPQNMkDu2l33l4ehmRZmxAMScikW/lqnQnkINGaUu44WUn9fBmPvNRGUVhMdOINUeos1od7uu66mVqwgwrZromN2nyqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770903996; c=relaxed/simple;
-	bh=CxpzYclZwqLcqMX1xNfMr50Pz7T4LuXp5wFs2XmYLd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RtPkrWghWR1HoWJ3uRb+lrgWRcMTLrfIXXKGkXhVb2XS7XsdBFcJNMSq5udt1M38qN3owWZWDk1yDpTNFBtrQPMUCL83qUR6wnC79o5tnzLwGkLqWD1dKvzpv4VwIgzc/jhaRRO4Rg64cRmtFGEhUgW5aa+wlVzHhi0hDg01lFQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ChW6nw4a; arc=fail smtp.client-ip=52.101.201.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67E83382F7;
+	Thu, 12 Feb 2026 14:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770907454; cv=none; b=OLD7qWP3ms5ZX+484/zTLj2ei/WUt2vTQm2u0jdup/RyNYsCZ9XUje/W8sR+ZzhJ78qNhTNynxI4LxwZVg4JNo75ipiVA4zVKyB/Uj5b8LhMbUMbQzYVz2z8Oryas4z5tXCJP4fyzsn8961Fwo46aY7wZLyJMFeCqxdr72EyYms=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770907454; c=relaxed/simple;
+	bh=wsRfq4JQHV9EhUjp6BlIKRlXnA1FZ0qmUD3BISX7I1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oPS7Rc4y02H52zzFPG/HaPvnxyV1RIt46OebFcZKQ5rEl8eAGyz7LIoT3Jmt625rws2qEJECix/EhHnARJr1gU1wE/jB71GBcfQvEOGhdXSbQGbbzwE/+XUCWsFc2gj3JDuDPeJj0yKcCrKDf9JanzDLNPEfLuAhfWVCM/PEbN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkxyqDfd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ChW6nw4a"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kZ2pmBnyaTfpYiWp49QfA33RyHKrteEM5ZJ8bpMONCxIuoK8tuFDVn0RdSIYF/c8CenfbSQTzOpK2PX1Pig31Dhn1tBRNGMOOYT4pYyGCaYl8ffvWZOhCAzfdpnzztdqYLwhVFq+00e8K9PpUwkWx7vamh/QlvNHTreYQj5v0gTbzNHo5TNOdJ2SLDvplHL1NqCwAGPl6KgU/KL8lPzlLiVNbC/iqPjo/V9teclPhFwZsTixk1gXz1LMC7FwgI+jfbbCpxxSQsFhoQhequog/xWttOYrG5yB5yL88w9f1AQou7J2SUdqUQOR3vuUT3TCFsIDydb6FgEuq5ha3Lb8kQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EM0Cm80Ir9qmvA/M0YYdzH8JuGYDz0KEi0GFUvUrx4w=;
- b=v/u8/jaf3m3eww93prhitxEMhKk17X4X4277SbK3qAI2+hchbxzY3G16oPjZH1lOZV5PPPeMqPBYBJWtlEglJPSGFbDwjeundqA8U0l1b2aj4oMmdyZbNqPuf+HNrquUcDl97S36pTe1L5cQ2d3i3NU0920pQm0KYP8SBu3/JNpU23y96vKvWL8+QIgSqqVqCy6M3bMNu4hvgHHPjoETFwc0YY0R8ro3X2a+ECiXFC3L414t219tM/+mrrhG7JTjY7vhuCVAHP5myrY0/NlpFcWEFQsGQA0mZnJCAHHstM4XrSICZINvCiKG3oYHCqYtpqFBhWLSSuAl2L3jpzePug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=kernel.org smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EM0Cm80Ir9qmvA/M0YYdzH8JuGYDz0KEi0GFUvUrx4w=;
- b=ChW6nw4ayDOfjBo0QarGtsLEC59A/lX/ub0h95tqRNUhFufkfe2UjLI25tgiFp/p8q4KJYH4cYPKNwQ0ud8OEhYLCYEQmQwjwy16AszvY9BPsYnsBKli23pUFfUNYD09WCayMuWt6LSIuTNEdL1/e6WUYMnEQNRO4JXmgatNr30=
-Received: from PH3PEPF00004099.namprd05.prod.outlook.com (2603:10b6:518:1::45)
- by IA1PR10MB6145.namprd10.prod.outlook.com (2603:10b6:208:3ab::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.15; Thu, 12 Feb
- 2026 13:46:31 +0000
-Received: from SN1PEPF0002BA51.namprd03.prod.outlook.com
- (2a01:111:f403:f90e::3) by PH3PEPF00004099.outlook.office365.com
- (2603:1036:903:49::3) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9587.15 via Frontend Transport; Thu,
- 12 Feb 2026 13:46:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- SN1PEPF0002BA51.mail.protection.outlook.com (10.167.242.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9611.8 via Frontend Transport; Thu, 12 Feb 2026 13:46:30 +0000
-Received: from DFLE204.ent.ti.com (10.64.6.62) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
- 2026 07:46:29 -0600
-Received: from DFLE215.ent.ti.com (10.64.6.73) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
- 2026 07:46:28 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 12 Feb 2026 07:46:28 -0600
-Received: from [10.249.145.65] ([10.249.145.65])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61CDkNDC3154025;
-	Thu, 12 Feb 2026 07:46:24 -0600
-Message-ID: <e9820b38-768c-45fb-a719-7a1db7a7a795@ti.com>
-Date: Thu, 12 Feb 2026 19:16:22 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkxyqDfd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E5AC4CEF7;
+	Thu, 12 Feb 2026 14:44:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770907454;
+	bh=wsRfq4JQHV9EhUjp6BlIKRlXnA1FZ0qmUD3BISX7I1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XkxyqDfdIbc2bvCV2VBTnKQn9x0JFcTOZBtBFX9PB8A/2SpUcIM1nvBYIKLVp7Lmm
+	 lQadF0urGbstpA3g9OASJ+foqHw327u6Sa3rSgYzmtxZDbIqF8POCkoZL6HQ0uzA2n
+	 euVz7mNjkB/EnKj7QbbU4yEvU27No5zuj7siNzFWGIA4qqv9MeuF4DWoOhsyqGj+nQ
+	 YedwoFYYkkwAZIeXxE7U+M5M9UiuoXGQY1TTFXZs0kXeg0mCoNz2Ssbs09aLyqB1I6
+	 cG5j7sYjeMmNkVYyk0RePGcka/JK5TRHwlAEYq3Nqj2STN4KtIFqQSP7/eQ+SwpDmV
+	 N3yMaDkmI1QQQ==
+Date: Thu, 12 Feb 2026 15:44:11 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Maxime Ripard <mripard@redhat.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 04/10] mm/cma: Allow dynamically creating CMA areas
+Message-ID: <aY3j57xvdOY09EwQ@orome>
+References: <20260122161009.3865888-1-thierry.reding@kernel.org>
+ <20260122161009.3865888-5-thierry.reding@kernel.org>
+ <20260123-active-witty-rabbit-0fc5b9@houat>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] PCI: tegra194: Reset BARs when running in PCIe
- endpoint mode
-To: Niklas Cassel <cassel@kernel.org>
-CC: Manikanta Maddireddy <mmaddireddy@nvidia.com>, <kishon@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>, <stable@vger.kernel.org>,
-	Thierry Reding <treding@nvidia.com>, <linux-pci@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Rob
- Herring" <robh@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
-	<kwilczynski@kernel.org>
-References: <20250922140822.519796-5-cassel@kernel.org>
- <20250922140822.519796-7-cassel@kernel.org>
- <2fedf28e-83ea-4e51-b1a1-e45f0e928509@nvidia.com> <aYonDJyd_dbV0GBK@ryzen>
- <94458c39-587b-4bb4-a410-e921e5d99f10@nvidia.com> <aYsDDOZA18BBeOsd@ryzen>
- <aYsKzBjmGEi1z0am@ryzen> <8d85409e-2f07-4e4b-831b-68c17a341a60@ti.com>
- <aY3FhZUhb7RL80Fp@ryzen>
-Content-Language: en-US
-From: Aksh Garg <a-garg7@ti.com>
-In-Reply-To: <aY3FhZUhb7RL80Fp@ryzen>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA51:EE_|IA1PR10MB6145:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7bb6094a-70cd-4884-4c72-08de6a3d206a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U21hRUI2S0NtQ3hWYUZMYStOaWsxRHM4OWQxQnZiQURaQVZyM0xndG1uTHBH?=
- =?utf-8?B?dEFLOEZxSlNaWGMrRmdBNDlTWVJVWGZpSERkbnBRK25laDJxc1FydmVuNlRh?=
- =?utf-8?B?bmtTamppTy91QlF3aVFsTkttamg5em1meFRYb0FycEpyVm9UV0NmVFBvRGhS?=
- =?utf-8?B?ay9GQXB1VFh4OVVIWnR0QTNENFRFOTdNRFlWVkQ1MVExbCt4K0hxZ2FiZHhR?=
- =?utf-8?B?MjlPczRpeWdwREloK0M5K3JlZkk3elViUDRYZ3ErRlpuSTB0ZHVjOVJ4MWV5?=
- =?utf-8?B?SE1OUmZpQ0ZyY2d6RFQrR2JNZ0NsUGN2aktNOEY2WS94ZlZ0WWVrVjZzNUVB?=
- =?utf-8?B?akhFdTRiTUhDYzhsTFdMcTVnY0lxeTVybmNQUnNKRWRjZjRhSkZOUG95cGx2?=
- =?utf-8?B?cTRRYmtZMHdUaG9VeVk4QU95cGlUVTFLWFg4blRxSW1lenYwZHJGZml0aVVu?=
- =?utf-8?B?R3oxUEpWb25RL2tMZnFCZWpYbkdJUUJLM1R1WTlYb1dGL1RIRVIyc2ZlWXlB?=
- =?utf-8?B?QktaTTk0bGN2ams2dzlPenp4c05pWVRGandOZ3pEanFUZHVVTFlNRXNHV1JP?=
- =?utf-8?B?dUFPZFBPU1lueTdXWlFRMUROOWhSZDYxdHBGYkJTa2FDSk9kLzBmM05oMDJz?=
- =?utf-8?B?UGJRMGJGaWszOThSWFdZRGNnbDQzeDhBYVNTWkFkeVhxNkpncW1DRjBCNWZV?=
- =?utf-8?B?TEdkbko2L3A4UGFZTDdmbG1pOTZzT2Yzckx4dC96SWxoYnRJVkEzajFGYmxG?=
- =?utf-8?B?WHE5bFpweXQ0VTlvSERVZHZKWUtvNFVRMUZoaDJCTHYzNkNCa0s3ZCtHUTJI?=
- =?utf-8?B?UFhqWUZ3aGk3VTZTSWtsa0RyMHZCNWhQT0p5TUFHZGhYYUpVcUUvVVFoeEhq?=
- =?utf-8?B?dE9Wci81ZUQ1UTNDL040YUx0THJ3UjMxaGRhUDYrTm1aY3FrbGgxSE82SW9v?=
- =?utf-8?B?QktyU2Y0Ti9HNVlwZERSaWtUNnhlRmhNV2xVUzZPTExRMUM0QTZFZzF5blRv?=
- =?utf-8?B?MXBWTUVTQUp1YUZUWW5TQU9WS1V5eTc4eFJEdmNpQndYWHF1NUx6MGkyZXl1?=
- =?utf-8?B?UFNLckR5Q1RRVUdVNmFkS0t3YjdhSGJ5L1A1ZWpoQnpYOG9UTzJKQTJmUUE2?=
- =?utf-8?B?bjBCeU9jbnFLTHoyemJ1aUlEZlh1Q2UvcUE2SWNCdmJsdEFJemV4S2ZOTXlp?=
- =?utf-8?B?YnAwZG96M1ZUNE5VOWFlWE9uVU5DNC9NcE83Z1JpRy9OcS9QSXJ5bXpxTkp3?=
- =?utf-8?B?bE5Ib3htZG9xa2UvdEYySkd3NCt4T1FpcE9jWFJNVk5XaGJGRW50OVBWSEFJ?=
- =?utf-8?B?MkJPVXVyUzZ5d2xvZzlDVUlhNGVhZGVPTkR6OWNCeDBrT1FneWJucmk3Um9o?=
- =?utf-8?B?NUYxbmxBWFFtTzljWHdNZXc4QUowckJtMnZVb0xEcHg1OUtUMzFQNGE2dUt1?=
- =?utf-8?B?ZzJ6bkNxQ1c3Q0FHbFpFaTdYNklmY1hUcE5MMENsc0h1RnhlaEFaUTE3NXl5?=
- =?utf-8?B?NXFKdU5pK2sxOFdxZjZRZEYxRkxTclM3UVNEWXg0Sm93emF3UWJ4WUQzOTRa?=
- =?utf-8?B?Vkt3ZkpJTU5pS2FWRlJMZXZpTy9yeXBKK3hWaUlueGNBcEdHbTQwcXRCd1g3?=
- =?utf-8?B?eWUwQktyYnBjUmlJZkI3L050WlZxbGkyaFRQWDQ0RFEvQUxEMGMxSnRxSUhh?=
- =?utf-8?B?dG95SkpYK1c0bkFyVHMrZitZd1RVRStubFB1UUx2ZE1OTlJtNGo0VmdnOU9U?=
- =?utf-8?B?YThoUEJhMEVJTFFsclJtK0tja1h6ODF6UVFDaFB1UktWTGtCUldMQjB4TXVv?=
- =?utf-8?B?YUNCVnJaRUphd0pRUWpycS9pU1JhS0VlVUlvOGFOVHlwQ21rQ2tUQ0RTdEZQ?=
- =?utf-8?B?SEVkbnpnTC9Ob1NlWXp0UmtZQUFqdlJIVTd5cXNudGJ3MHUrbjVEVm12OEZX?=
- =?utf-8?B?ZElmaWVWQnpJZU56M2lBc3ZQblZFOE5TQlRFLytmdWZHcXk5VElrRUZvR0Nq?=
- =?utf-8?B?V2E3NXFhNmVzNFVHbE8vWjB5OHJ3cytvZzhWZ0VhNWtFSFA3U25ST1VIUG9w?=
- =?utf-8?B?WFdqdlprcGozTTRWTCtjNFltWElhMDBKdlBsT0xHcENYSHVocDRkOVFDQVhU?=
- =?utf-8?B?RVhYRkt1RHFjV1JsMzgyUm5abDZWdUdsNmI4OTJxSElZb20vYnNaUmtreFVT?=
- =?utf-8?B?QW8zZ3lqU3F4K29DU21JS2VqZW5wc1l1Y1V6WkVaSHJWWklQRTZjdXlNOTBo?=
- =?utf-8?B?MFloODdxdXRZOW1TZWZIRnIweE9nPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	1hS5GH05AQE+hzO8+q4tn7P1m0tPvzjVV3A79OHrJ8BKUZawbzFveB3DXDJcH3/CY0nvdIb4A9zlvrjGd/eTChKHGsbKf2Ukid6RIkCW8309pw+qPZpsCkdfDDMS1Jliun9Sww6xSYYoXVwgfHGZBMxM2dupk5tF8pp8cCz352S3ZrK3hnwrAjqNJpW8Hn9gnnL7AZ33siOmRELSqeNDMNNiKKgXq/bApgS2JXhbc6We6F1ZynbMHalxxI0qOyOFwaMmPkKRNvJyRxuo4RVwd270Gl+GXtgiE7Ceim2bv2W24xo7YXbBJ1BG3jyOD4ectUucmEyHnwbnv59lIuzMgxpGS/zTGK2iGZT7lzcJVEJBYvZB90/kkRQ4TRnEZKl6LHNErQyiA0wwbP/IqK4jpqukEQ1BdsnoaVMQqxehsiK39dGBzc1KeLJOci5JI1NJ
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2026 13:46:30.1795
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bb6094a-70cd-4884-4c72-08de6a3d206a
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA51.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6145
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="glr5iu7kbaysq2rw"
+Content-Disposition: inline
+In-Reply-To: <20260123-active-witty-rabbit-0fc5b9@houat>
 
 
+--glr5iu7kbaysq2rw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 04/10] mm/cma: Allow dynamically creating CMA areas
+MIME-Version: 1.0
 
-On 2/12/2026 5:50 PM, Niklas Cassel wrote:
-> On Thu, Feb 12, 2026 at 05:40:59PM +0530, Aksh Garg wrote:
->> > since you have a @ti.com email, perhaps you can explain how pci-keystone.c
->> > can pass all the pci-epf-test test cases, considering that this is the only
->> > driver that has BARs (BAR0 and BAR1) marked as BAR_RESERVED but do not also
->> > disable the BARs (using dw_pcie_ep_reset_bar()) in the init() callback.
->> > 
->> > Or, perhaps the simple answer is that pci-keystone.c does not pass all
->> > pci-epf-test test cases?
->> 
->> Hi Niklas,
->> 
->> I just joined the organization and have no context on why the
->> pci-keystone.c have BAR0 and BAR1 as reserved, without disabling the
->> bars using dw_pcie_ep_reset_bar() in the .init() callback. Because the
->> AM65 do not use any BARs for any purpose like Tegra194 does (ATU
->> registers or eDMA registers exposed in BAR4 for example), there would
->> be no issue if the BAR0 and BAR1 are overwritten.
->> 
->> This was introduced in the driver the time the EP support was added to
->> the driver by Kishon in commit 23284ad677a9 ("PCI: keystone: Add support
->> for PCIe EP in AM654x Platforms"), where no context is provided in the
->> comments or commit message why the BAR0/1 are marked as reserved in the
->> features. Perhaps Kishon can provide a better insight over this.
-> 
-> It is extra confusing, since the older driver from TI:
-> pci-dra7xx.c does have the dw_pcie_ep_reset_bar() calls in init()
-> (git blame shows added by Kishon), so it is a bit surprising that
-> the newer driver (pci-keystone.c) does not.
-> 
-> (And like I explained, currently all DWC drivers except keystone and
-> pcie-keembay.c do have the dw_pcie_ep_reset_bar() calls in init().)
-> 
+On Fri, Jan 23, 2026 at 02:25:16PM +0100, Maxime Ripard wrote:
+> On Thu, Jan 22, 2026 at 05:10:03PM +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > There is no technical reason why there should be a limited number of CMA
+> > regions, so extract some code into helpers and use them to create extra
+> > functions (cma_create() and cma_free()) that allow creating and freeing,
+> > respectively, CMA regions dynamically at runtime.
+> >=20
+> > The static array of CMA areas cannot be replaced by dynamically created
+> > areas because for many of them, allocation must not fail and some cases
+> > may need to initialize them before the slab allocator is even available.
+> > To account for this, keep these "early" areas in a separate list and
+> > track the dynamic areas in a separate list.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>=20
+> AFAIU, this won't create a new cma heap when registering. This goes
+> against the recent work we did to create one for every cma region.
+>=20
+> I guess, since you have a driver that would explicitly handle that
+> region, we should create some kind of opt-out mechanism, but by default,
+> we should still create such a heap.
 
-Yes, true. I tried to backtrace why this is so for pci-keystone.c, but
-couldn't find anything on this.
+It sounds like there's a bit of a conflict between what you want to
+achieve and what this series attempts to do.
 
-> Kind regards,
-> Niklas
-> 
+The way I see it, the CMA code is more of a helper that gives you a
+specific functionality set. Exposing each CMA area as a heap that
+userspace can allocate from seems like a bad idea to me.
 
+Without knowing anything specific about a CMA area you don't know if it
+makes sense to expose it as a heap. Given that there is very little
+information associated with a CMA area there's only so much guessing
+that you can do. I think it'd be more sensible to make CMA areas opt-in
+to have a heap created for them rather than requiring opt-out. Exposing
+a heap publicly applies only to a (potentially) small subset of all CMA
+areas, albeit at the moment it may seem that that is what it's primarily
+used for.
+
+In fact, for this particular driver nobody must allocate from any of the
+CMA regions associated with the heap driver outside of that heap driver,
+simply because the heap driver maintains meta data about these CMA
+regions for things to work. If we allow access to it from anywhere,
+things are eventually going to explode.
+
+> That being said, it's not clear to me why the heap driver uses CMA in
+> the first place.
+
+We use CMA as a way of reclaiming memory if needed. The heap that we
+create is meant to be resizable, so that when nothing uses the heap, the
+memory can be reused for other purposes. However, when memory is
+allocated from the heap, we need to reclaim that memory for the heap and
+relocate any buffers allocated from the region somewhere else. CMA does
+all of that for us, so it seemed like the logical choice for this.
+
+Thierry
+
+--glr5iu7kbaysq2rw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmmN5zgACgkQ3SOs138+
+s6FSqRAAwWGzG1UjDgVwyR+isYP6DrFMGbojEtczHFxgKElBKoFjjqtdmpN97XRD
+7MIc1C6LGCLoJa++YXy7ZlL24CTzYRohVBnmy/Hygdz2uoaeW7GdR0M31slI/lG4
+TpliCL/GXNi1ZhmE8BjykmsEqgjHG+PH9Vd1/VEgo/5DoaX3uc+8TndO9hqh/Jgh
+gFScFbr/VRKDx8wdWyhOsWN4Nm52uJBCPbhJ8dGv4iabMopEwOlLpcm32aFNWMHv
+El8zIIeGzfw9lfWm2WZvtO8heFn3R0kT5yw4opDc7STvO7k6fC/ZQWbg86FR71/e
+DtrHMcjjg+75TIZemvKQwPrshL7CAdwcaNnT+QxVKE0oqHxjoIonRsUkEaTrFKyE
+6n6eqR8+enCtH3hamWE6rFocZQzL5zXxqILwbzeAR/4CBtXBh3pZL4SH6V0cye9h
+jci5Lfjh2SiLSggSKXsTBgrCLCvz8DuapM8GEtfkRS1YoKrix+uGe0nj+J3uAx+U
+SyvOCMoTb+WWQNOyNBMpS2Wk3KcNDMuadOtuxbZa1BInxUBOktPn/km1vJgiO0au
+5sWtH6xSgLF50qbTEFRVg+Pz31LIT+TZSA6L2gj5EmD1gKZeefPCtkiBgDZdsvwk
+KAejAHsfMS0kibucCHIgTg6cjifaVKfFVtiBh3BX8ZuSmmlqnOM=
+=TTIe
+-----END PGP SIGNATURE-----
+
+--glr5iu7kbaysq2rw--
