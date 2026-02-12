@@ -1,106 +1,232 @@
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012025.outbound.protection.outlook.com [52.101.43.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4231F22301
-	for <linux-tegra@vger.kernel.org>; Thu, 12 Feb 2026 03:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770866543; cv=none; b=ZPrO4zxG+N9M7w9NdiaLPmEGXqQsKeE4YmrlyLEdLDebrncb6xtdoFHfpCWdzi4GJNPgoNLor2Eqx4mlk+0jw5vKjBCkEuk6hpqU9BtvAfIMzatnB4vO0yaZ/riPFTEmn741FxWeMDij1rhJ41Mwo56isgJRYTy1aNr/A+dRBWU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770866543; c=relaxed/simple;
-	bh=uRY58qhwJ0eYbSZ5xQCTmPPEhShMVJg7sN+/KK0QL5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3cvxdEd9rm5WtoTNBdVr9ISLQIphp0FsORuFgtAgxAPFIT3UybQ64ihxugoL1A/I97+5a5Ww92CwEBcLPiBzq1fr2qY1kf8qw3Nd49Otz3ka7vGDLF0gLU9fPNgF2EyTjEIp9BQ+BMSLD0x915G/pa7DM0zfSVN1dyJXkpw89c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kn6h3DVD; arc=none smtp.client-ip=74.125.82.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DFA34AAF9;
+	Thu, 12 Feb 2026 12:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770898276; cv=fail; b=R5GQuGeKtt1JTZcqy0sXTWOEWDuHjyC2+ktTlgU8FzTWrZ3RcWF+ZCSpzCDX/5Px2Nmm1IOxcZ9LGMTMBWCre37Sc+ja5rQpuU4KW8/M/pRP+xy26qV8VnTTtNd4UHfAy3ZDFshfn/3uQxAqZV9JiVciQtSWEJxtGqeDSZWK2ys=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770898276; c=relaxed/simple;
+	bh=uSe7pid2oTEXEWOJh5QJKg9wyQLUinjDq0PT8DY7wVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=taCMvdbkM0OQbxj1V35WNF8DUBSIe7dRXWQnScaM5degrMuydgbyC+u88RnzKEA/03Ogr9zbn4PukFQfP4CNInKBLolCTGoM+eLldec/GSTPtZM3C2fNEbEW+kKrPJ7wRCfKIFM3M81Fr34TDZR2rfyPcEkQgrcqOE9vz9CUO+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P5TzgXl4; arc=fail smtp.client-ip=52.101.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kn6h3DVD"
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-1271195d2a7so7075642c88.0
-        for <linux-tegra@vger.kernel.org>; Wed, 11 Feb 2026 19:22:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770866541; x=1771471341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FkQH6lR076Cv3HChv/fjJLbF2dz8iGJz4V6MPQQwk2g=;
-        b=Kn6h3DVDSfBE4Iz/3bfwKOGARmT1XxkTgfnyUwpAD9IRE5EzO2y1s3FbO7NTJWj/9X
-         NteQQ4niZNkKOqNlQxWaUOTWJ+8WzpSvGvdCXjDjpQy12YS1yMezHv0fsrelxHsyjoCy
-         e3KkyQhSBuVXeYX+SOvhRg8/nOlZbcTtiN2dyQvpAgy3hUTNaAX+RW00ATq325DgYzfU
-         EfXGG4qjCyHMQP51cLDdroN8wpBrAMSDv3G6sGvPnw8lXNbFMJ71YSAt7ISQmuR7CSwc
-         a5cAnqRljr2O1MvXyKGnLZsOjcuydGr4POYpI8AV8LhIMd0WAntJqGxODDrXpa+VWVT0
-         1ViQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770866541; x=1771471341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FkQH6lR076Cv3HChv/fjJLbF2dz8iGJz4V6MPQQwk2g=;
-        b=igFwySERD0knKjJYx9MHjL6yL68/SngvkKhCaXh9t5XHNruoF+Q4Z5CQ3YBtLbV6JA
-         9VMysmgc2yIoIpYLDrVOZkDeU/nazgOru25QozlV/I/kbVBtACkXeDc8UG8yaLx/l3if
-         q68BTlCaYM/rLUSJFFfpTxi9J3vh0T6bOLQXgPSU7Hf45sN/7C/f4cmNTzJllxe2/XFt
-         SOL3AoloDPdJ8GI9EqFmlP1t1402gklojXIN7huiQ2hpLJvermBZ7nEHZoS197DnC3XR
-         QZIcg5PU9JIiLRh5h8H6TxvZUlUP/I6j7A4CLCsW94sCGnOPMpn4/xlVuuycoFQL8DO/
-         5Odg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe4SfZrwNtUEIVv76CDptDMppdgI1eNl6Ig1IM84T4GE3oW2hgC1m8jZwlE/Keod/sQwkRTKHJU2l3pw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhxpTG1aQvmje4tjjHQlaNvPbiB5ttPfND75BtdURq8FLUgxg+
-	ET7jvmnQjOvcc0KnatUDNzvkVdex1ytBGd97QJ+8WQNxe0TuLfYQH9na
-X-Gm-Gg: AZuq6aJfvHDCbUqe4LFE1YeISrkbrbVmzFiw+RRW1gaWbisoHdFn2662sCTU38qBZZU
-	YlaF1bUCIm2+XYamH3+dj3FsY9+iVuv3sPjL2wXLJUHT+N3+pXrx0yVYNhYi7gJumnmeOi0Dhqv
-	WCn6RV+kZ8cttTNeqk8JXp1VSgxRhe7C3If7nz/X6ht2FoYfvNTjQw0w6nbEFoWI3dp51u0NfD+
-	D00+JgSYWrYUZDwSRtlNkz0FRDdzeHP0cS6ZN4KqvNneEUmVmLPAWJ3ulu8Y9AfY6WJ/knC5wk7
-	PbdQZhy+CkiAZjdMcBebXdywWnVgn54ix1J7tbfm+u49J5TbIoisuV8JtJkbNr7hpksxRrJJKo4
-	+IdrJaES4fduopoYe/ah27662NkmwyfkexKWELzKBuJtwdqDuMyTMUE83gemGo1vCCs44tWzKm0
-	nydcRmmAsR7RzvP3//eedP6MeT6KAoGQ/0n6EEV1YowzVMaNRIYu043khGyv7u03A=
-X-Received: by 2002:a05:7022:513:b0:11f:1e59:4c2d with SMTP id a92af1059eb24-1272f73b92cmr628906c88.7.1770866541220;
-        Wed, 11 Feb 2026 19:22:21 -0800 (PST)
-Received: from google.com ([2a00:79e0:2ebe:8:f5e:c935:ddee:63d0])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1272a6fe357sm3507870c88.16.2026.02.11.19.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Feb 2026 19:22:20 -0800 (PST)
-Date: Wed, 11 Feb 2026 19:22:17 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: tegra: paz00: use software nodes to describe GPIOs
- for WiFi rfkill
-Message-ID: <aY1GZQJLKAF0fsz6@google.com>
-References: <ZnzulZBukibZUXKM@google.com>
- <171958889447.2435101.5942373221568313704.b4-ty@nvidia.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P5TzgXl4"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NlvR0/Xw41bFHXNghbG0oBkmhcbV65yJLRTigzzxR7F3Sr2rrzgAEJNke+O++QG9SPvmg4jvg+jwzxmhlcxdAIgfKlk2iCqFNKDBWK5+eTLXleHCImoPVfM1cX8pKnZiAE3Ufs1xOSsmIxbPS+4qOwZziEbUImOXvhLaf6kDH8h4kx56gYowj1Ldu5j3WzDkHwNGCtj6Klw/bpEuu0y0pOqXTUIrnph6PLC0OckobHjDCdpGfeAAh7RmglWs+10v6wKidCTpLSsX+m/A9cq90v6J4IAGR/A0SC1j170FGCdSLPZc/oELgz+2t9NWuq62pZhDT0ZJ9//1BFkXRxVPLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vlqlkO0keKNXxxE+ZaA1aw44MnHLT1iIi258zk5vpvQ=;
+ b=bLULxWIDwvE8yS71lIIKLsg8Vv23LXicZtuwdJfpUWUAsm8MBTMrRzO3P06Bsvr56Tm3TBTh8s39rkczSDhKuPmO1siOsP89m1EF6Ndi9DO7Tle3sBDjH5jyuOVzpZh/D7/+B5iSaUVxi9EdpbJKO/4aBzY12dbSsQhiF/Vms3Tcr5tDMMNdudwXZB1ZnDmNg9mltHYx6WygGil9daxjbviBoBJE2Joyj/jtaJP/XKgcYYRvwADR1hYs13TAP87KHi82ULgJO+1lAgUzIETkI4MiEH03yJDnhkNP4mvC3VCB1DIayxmDMUVUjs+vFNJv01I5VHGcaJRKZMYxQh3tIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=kernel.org smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vlqlkO0keKNXxxE+ZaA1aw44MnHLT1iIi258zk5vpvQ=;
+ b=P5TzgXl4lVfomaK/M9UTrHUWbHRLHR3hcN2t0+Lm1iHQVbHt4EmRr7VPcawe3nv0/M4kEjOJaWeAXmJFEE8mXxC4vTGYDYM9rVJ35w1zPPb5DKpmGggsL7DpeUKkKgn7kZzlGD531W91khPoGeUFE3IoSQiIWoYRQfhLfC8SUcI=
+Received: from BL0PR01CA0033.prod.exchangelabs.com (2603:10b6:208:71::46) by
+ DM3PPFC7DCDCAD9.namprd10.prod.outlook.com (2603:10b6:f:fc00::c4b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.12; Thu, 12 Feb
+ 2026 12:11:10 +0000
+Received: from BN3PEPF0000B070.namprd21.prod.outlook.com
+ (2603:10b6:208:71:cafe::6c) by BL0PR01CA0033.outlook.office365.com
+ (2603:10b6:208:71::46) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.11 via Frontend Transport; Thu,
+ 12 Feb 2026 12:11:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ BN3PEPF0000B070.mail.protection.outlook.com (10.167.243.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.0 via Frontend Transport; Thu, 12 Feb 2026 12:11:09 +0000
+Received: from DFLE208.ent.ti.com (10.64.6.66) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
+ 2026 06:11:04 -0600
+Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
+ 2026 06:11:04 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 12 Feb 2026 06:11:04 -0600
+Received: from [172.24.231.225] (a0507033-hp.dhcp.ti.com [172.24.231.225])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61CCAx5D3467474;
+	Thu, 12 Feb 2026 06:11:00 -0600
+Message-ID: <8d85409e-2f07-4e4b-831b-68c17a341a60@ti.com>
+Date: Thu, 12 Feb 2026 17:40:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171958889447.2435101.5942373221568313704.b4-ty@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] PCI: tegra194: Reset BARs when running in PCIe
+ endpoint mode
+To: Niklas Cassel <cassel@kernel.org>, Manikanta Maddireddy
+	<mmaddireddy@nvidia.com>, <kishon@kernel.org>
+CC: Manivannan Sadhasivam <mani@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>, <stable@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>, <linux-pci@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Rob
+ Herring" <robh@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kwilczynski@kernel.org>
+References: <20250922140822.519796-5-cassel@kernel.org>
+ <20250922140822.519796-7-cassel@kernel.org>
+ <2fedf28e-83ea-4e51-b1a1-e45f0e928509@nvidia.com> <aYonDJyd_dbV0GBK@ryzen>
+ <94458c39-587b-4bb4-a410-e921e5d99f10@nvidia.com> <aYsDDOZA18BBeOsd@ryzen>
+ <aYsKzBjmGEi1z0am@ryzen>
+Content-Language: en-US
+From: Aksh Garg <a-garg7@ti.com>
+In-Reply-To: <aYsKzBjmGEi1z0am@ryzen>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B070:EE_|DM3PPFC7DCDCAD9:EE_
+X-MS-Office365-Filtering-Correlation-Id: 090e1ab9-7f2c-472e-6885-08de6a2fce60
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T1lxaGVhQU5GdFFlTVdhVkZpeSs1NWZIaTBwQlZZRjVRcWlRVW1rUnhheG5k?=
+ =?utf-8?B?bWJHRG9BeEx3MzdlbzdaTC9mWndmRThSUnowb0lSZlJWeStvZm1FK05XVCtp?=
+ =?utf-8?B?UDk1QUdWQ0UzbmwvQlEwQ05jTDdxTEUxZjFVbWcyaytJeXpWUW16MlNURGV4?=
+ =?utf-8?B?RFQxWmw5S2llMkV4VXlDNDByaFh2VGpMMmVZdjBvYW5vZUQySnkzenlmd1ln?=
+ =?utf-8?B?aDdZQkpCN1VER3orU2hvZDRhQnRzaDNtdHRwWmppSms1V21kQnRoVEVTenVr?=
+ =?utf-8?B?SS9rOStHR2lUMkNDR1ZCVldPWGRkZkJWMlBNaDk3aE1VL2ZRTVVNT2JWTU5s?=
+ =?utf-8?B?Q1cxZm55Wkx0YXZjRUdOdTRsQ1N3NXgvbFVyRlpONGg3TVpBTnZxdFVtK1Zr?=
+ =?utf-8?B?eFZqNW5IVHRtWTN6UHM3TG5EenZnZklQQWUreFQvQ3R5RE53bFNadzAxOGR6?=
+ =?utf-8?B?VFhvazJQdVZ2YS85YjRHR3ZRZWorSWFURmdSdSt3ZngvK083VUk1cyt3OWFF?=
+ =?utf-8?B?c25NeTlpMWtxYWFQS280dTdLY1l4NVlnVmhxKzNWclBMK01lRlBSbXBzQzk1?=
+ =?utf-8?B?TjlLWmVDVWFGWDUxdE5sWndldW9NMjFDbGhiVVFDdEdWaE9DVFpLdXYvSlp3?=
+ =?utf-8?B?WVJnT0tkcXhheUZ2Y01XYmJBaFZ5aTNLbTZXM202MTc3eUtvbVd3b1c3c1Fw?=
+ =?utf-8?B?cU5RdnRvT29kVHF2ZTlmMVl5aWpmOWVOaXhOeDdlWXM5Kytic3BINXp3Nnpw?=
+ =?utf-8?B?M1hpYUpzRm5OK3RkWnBWYW10MytQb2xSNUNCemppK29BMDBMZnJITkdaR0pH?=
+ =?utf-8?B?VEx3czhiRitKOWl5MmI1OVNzL0tSTE1iYTYwUnFpaFJQMUNRa0tMRkI3M09V?=
+ =?utf-8?B?TU5ORktXL0NmRWE5SVhqbGJVZXhKdkk1Y3pNQnFSd2xtanBFcTE5VUw2YlFJ?=
+ =?utf-8?B?bFBBdDhPekg5UnRoUVpuTFZLU0ZxUjg1UnQxKzErZ1J2SXd6cmxYZC8yY052?=
+ =?utf-8?B?L2RRYng2RzlpL2hraWFOYWJWazBIeXRzVFUxVVkxMm42NWV6ZjYzWk1Pa0Qy?=
+ =?utf-8?B?R3BrY29IdmVuNHZNdWtjQmpHTTloY1AveDMybG5SN3VWK3R0aFNuSGV2c3Rl?=
+ =?utf-8?B?MlJ3c0N1YkM3cFF1dllCU3pEeFJ6aWpwb29oMU9NWDNnMjY2dVVTaVkvNXZx?=
+ =?utf-8?B?Qkx6cmYzSWRyYWRBaHUxYzZnS0M3RkFKdVZTNitRZnExVXFOdXFYMkdxRWR4?=
+ =?utf-8?B?dWM3VFVmNGRSM3JvcDUyY3g3a0xidG5XRVRLNTlYQkhMMEhzaWFRV1dobTZC?=
+ =?utf-8?B?T1Y1WHFFdHIydjRJTXQ0RkkzT1oyWWxmdDZJa3ArTDI2dy9waXdnVFdOR09S?=
+ =?utf-8?B?TFNkZGQzV2E4S2tqLzFFcDJtc3dpcGNuT2IvcHBNV0ZBZndKdGVMQjhnVFpa?=
+ =?utf-8?B?UHIvUDdZUlE4MmhnbGxrZW9xdHNrdDdmM20wTmN6d3Zic3VWR21wQlJCQzJo?=
+ =?utf-8?B?RjgyR2RjMlczVEZTMEg1d1BtaFJHRzlVbDVpR3FlR2JoQU1ZdXdwL0N1aWJH?=
+ =?utf-8?B?NXJJOURDVktqZmdSY0hWUFJwanl2d21MVngveDVSL0RER2V0cHB1dGdaWU11?=
+ =?utf-8?B?dStGSXg5RXEzWkdVVmkyMTVBdHBLZlFBOWZMeUkwYUZWNFdQVEJRc2pMTHh5?=
+ =?utf-8?B?ZU9NOXVuN3F6bjU3VXJ6SW8wL1RUNjV1YXJma1Z6V3lEN25nVlpPTmJ6SnVt?=
+ =?utf-8?B?NlRTbUt0SVNSTHpsQy8vTGF6dEFFYXhyZGljM2FnajhHZVRjbUdmK0cxSWt5?=
+ =?utf-8?B?Nm5wdGdkVjNTM0hYU2R3M0xPMjRPYWRSWGZvbUZRaDFOYmpSTEdkeTVLYjdY?=
+ =?utf-8?B?alFZVVNUZ251SDRWM090N2I5WXlBUCtOMWpZSnU0c1FCSldaNXBTN2xnNkU3?=
+ =?utf-8?B?dEkzeFRVb1pLTWowUE9oT2hlYmhJR3JZbWtGSmdZbGlWMWpIelh5NkJyYW5F?=
+ =?utf-8?B?MWZFTEdLV25OSGhSY1ljTWFXdUk4Vm9MV3czb0gyOThGUmhYZ0lWYTJ1VkFv?=
+ =?utf-8?B?T0ZSR1JkRThRRmF6MC9jVUhPUGZpTC9UUTM1c3NWQUFzbWpmblNKZ2o0OGM0?=
+ =?utf-8?B?Q1FJVHV3K3piTUtYNXJHTlhmczhqa0twUkxlQlBYbThmOHZaN3BUNDZnUXRB?=
+ =?utf-8?B?UWNkWWR1RWtnWEl5dFFHd1V2Wkpqc1dnN1kzNlV2UDF0eXozYytPWW5mRDJz?=
+ =?utf-8?B?RmZWdlZ6MXd5WmpGdFE3cnVjN3JBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	B6f2B784SvXo4khbbP4hQYWIR1C87SivlTbrsPkEk+KrQfRaeq3kHq9mNGhSnC+0GvJPFHYLWNt4P1jX+Do0C/tHUvtx9Sihx2d12ij+bxI+wpCuT2kyiyRfK/hXi5wKuGhLCtKj2N64MAFJlrVeTtXnl4LwyCBgybWREJDVrTjnFz6vxfbjEgUF9WavtTCTRTRb1SHUUSLSe+rzu6KjDgvq+GE6BWdOChyFt93pffc0IYaUYIu/ZQshl6yhWIZnvMEjY3xDEcDcrBGFoVGhXXfZA4DvoVc/se5uijVktI7L2FOKmzQ7vPtLf0ALLWSjhsJ0LHK5MWB0GcPcF5SrGiXZG95/DoJwm+1RM6kwMECytkKSAEX6wP5ejlAE7IU3xzL2w31XkQ8vTbgwwsR3FbDJmWe+HpMTlvel0wBsX+tXtMckZu3C8MA6F0gqgIdd
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2026 12:11:09.0409
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 090e1ab9-7f2c-472e-6885-08de6a2fce60
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B070.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFC7DCDCAD9
 
-Hi Thierry,
++ Kishon
 
-On Fri, Jun 28, 2024 at 05:35:08PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 10/02/26 16:09, Niklas Cassel wrote:
+>> BAR_RESERVED already means disabled, it just assumes that an EPC driver
+>> disables all BARs by default, which is the case for:
+>> pci-dra7xx.c, pci-imx6.c, pci-layerscape-ep.c, pcie-artpec6.c,
+>> pcie-designware-plat.c, pcie-dw-rockchip.c, pcie-qcom-ep.c, pcie-rcar-gen4.c,
+>> pcie-stm32-ep.c, pcie-uniphier-ep.c.
+>> (All drivers which disables all BARs by default in the init() callback using
+>> dw_pcie_ep_reset_bar(). pci-epf-test will later enable all BARs that are not
+>> marked as BAR_RESERVED.)
+>> 
+>> That leaves: pcie-keembay.c, pci-keystone.c, pcie-tegra194.c (before my patch).
+>> 
+>> For pcie-keembay.c, this is not a problem, because BAR0, BAR2, BAR4 are marked
+>> as only_64bit, so pci-epf-test configure these BARs as 64-bit BARs, and thus
+>> BAR1, BAR3, and BAR5 will get disabled implicitly.
+>> 
+>> For pci-keystone.c, this is the only driver that is a bit weird, it marks
+>> BAR0 and BAR1 as reserved, but does not disable them in the init() callback.
+>> It seems force set BAR0 as a 32-bit BAR in the init() callback.
+>> 
+>> Thus, for all drivers except for pci-keystone.c, BAR_RESERVED does mean
+>> BAR_DISABLED. Feel free to send a patch that renames BAR_RESERVED to
+>> BAR_DISABLED.
+>> 
+>> If you send such a patch, perhaps you also want to modify the PCI endpoint
+>> core to call reset_bar() for all BARs marked as BAR_RESERVED/BAR_DISABLED,
+>> instead of each EPC driver doing so in the init() callback. I think the main
+>> reason why this is not done already is that thare is no reset_bar() op in
+>> struct pci_epc_ops epc_ops, there is only clear_bar() which clears an BAR
+>> enabled by an EPF driver. (So you would most likely also need to add a
+>> .disable_bar() op in struct pci_epc_ops epc_ops.)
+> 
+> Aksh (on To:),
+> 
+> since you have a @ti.com email, perhaps you can explain how pci-keystone.c
+> can pass all the pci-epf-test test cases, considering that this is the only
+> driver that has BARs (BAR0 and BAR1) marked as BAR_RESERVED but do not also
+> disable the BARs (using dw_pcie_ep_reset_bar()) in the init() callback.
+> 
+> Or, perhaps the simple answer is that pci-keystone.c does not pass all
+> pci-epf-test test cases?
 > 
 > 
-> On Wed, 26 Jun 2024 21:46:13 -0700, Dmitry Torokhov wrote:
-> > Complete conversion of the WiFi rfkill device to use device
-> > properties/software nodes by utilizing PROPERTY_ENTRY_GPIO() instead of
-> > a lookup table.
-> > 
-> > 
+> Kind regards,
+> Niklas
+
+Hi Niklas,
+
+I just joined the organization and have no context on why the
+pci-keystone.c have BAR0 and BAR1 as reserved, without disabling the
+bars using dw_pcie_ep_reset_bar() in the .init() callback. Because the
+AM65 do not use any BARs for any purpose like Tegra194 does (ATU
+registers or eDMA registers exposed in BAR4 for example), there would
+be no issue if the BAR0 and BAR1 are overwritten.
+
+This was introduced in the driver the time the EP support was added to
+the driver by Kishon in commit 23284ad677a9 ("PCI: keystone: Add support
+for PCIe EP in AM654x Platforms"), where no context is provided in the
+comments or commit message why the BAR0/1 are marked as reserved in the
+features. Perhaps Kishon can provide a better insight over this.
+
+Regards,
+Aksh Garg
+
 > 
-> Applied, thanks!
-> 
-> [1/1] ARM: tegra: paz00: use software nodes to describe GPIOs for WiFi rfkill
->       commit: 47ac458bb229f8c4864081d173adbcfc55c34880
 
-Do you know by any chance why paz00 does not simply configure rfkill
-switch via device tree? The driver (rfkill-gpio) seem to support device
-tree...
-
-Thanks.
-
--- 
-Dmitry
