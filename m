@@ -1,215 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010027.outbound.protection.outlook.com [52.101.193.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62CB34F275;
-	Fri, 13 Feb 2026 10:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770978290; cv=none; b=SRa1ntFV2qdf7YQriOfL7bxr0OHTDJEUC9P4Bno+0YriC+CAJzOSxRyWu9/q1sgxrWoOiq1JL36dC5/e5veddGngXEyByaqhhuEOhjXffGGwI67U//Ni9ILsijEh4BWJxs2Nq7aexXGPqlMoB4LhEOU+o/VQcOfNOWBEIp1xpZw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770978290; c=relaxed/simple;
-	bh=DX40/Yqtzx/4qH/2xU1UzBbDHriHTuIX98B7+l1j9tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XS4tMx7ddZCFlrux3C4ENcwDxT2GipxekHPZuA9bWCM2vYIZxvd3aNMtSxwjOiTRWJTDKFXbBW83Fj377laSLjkCv0tpeRCljfunOK+19ExDk/qmsGWsJx72hLd3O6kotXoY/rtrwmP3srPKw4/kAh9tFPAP095ng4WhALqmHBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIJdEkZp; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA9A279334;
+	Fri, 13 Feb 2026 19:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771010484; cv=fail; b=PG3YHxe0TL0FUXXMdjCL1YNOZL9ZNgBSnW8WtlkowNPNbUVI2nqv8UaZWnsjjG30VJfNpN42lDtDhU3WijOZiTxHyyz1b/wvulvv7+00XEAr6e9uEswqv8ilFL35ohwblc+dEYzXcfiv4wvxQ+NNcsYVS0zQzjlZoyGE6MSBIh8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771010484; c=relaxed/simple;
+	bh=zS5uAB4s/7HmEYYu2AlGPkuomo94A5TzWWpaiiJQdHY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=iAtSDUDuZIG+E9QbDw+64fXQWMBvQ+h/AE9fllpLHnEdn6T94PwfH/0X3FbL/tnEvChKojWHezlhjfne9+FBze0KU7imsEiLEkUIARL+7vhIbWzBiU49RrSKsGr/drp2LgLddLSCJZuiXMOBya2uUYiOzpg+AVJl7kZ6OVEnfUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nIjyaDFk; arc=fail smtp.client-ip=52.101.193.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIJdEkZp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182D3C116C6;
-	Fri, 13 Feb 2026 10:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770978290;
-	bh=DX40/Yqtzx/4qH/2xU1UzBbDHriHTuIX98B7+l1j9tk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pIJdEkZpFApgvNwM2sjDTzfIUE+lyRyGY0e/iaZOIF/sbx4Ycu/ATAJ+6vWFbZL/S
-	 P1DWl8FfQI4ryf8iGz34t4jT7L91JkZHvxr2eeUoVtm29DQDbwgiVwifOLhFjJB1gd
-	 7oW2fLRUWNdp/nozly0A7gMwZWWf58nRrQZl0RldufwIy6SDb1JL1zgZIP/ez6XZWn
-	 8658JPn6pNV++Mbl9szgUNtrVTCYi7EbAWesdgQ97pRp9HWPfbLWPsLz/bWliq0PMX
-	 xlUoYx9EQ22u1pW4LyGiHTVWlK9Dx8indXAB/us6J6GQeNYvyno2G+FCGgeYBKJbJE
-	 mGAg0PO97QMhA==
-Message-ID: <2891e25d-33d0-42eb-8da0-b57d50651c2b@kernel.org>
-Date: Fri, 13 Feb 2026 11:24:47 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nIjyaDFk"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YU3nKDST08dYsPKqlVek334eorVpD+54euXrQ/D6zaxzfVoF5kfWtBsAKv7lmdW1TncHT3aPFWvDtJ3MHzZSLittUGfB0vmSvY5rf9rkCIHOoEocC02aBPSlqDhF8vzQhQCqT1diUXIBSdk7/x6HDCSpFmXLt9AkfXQdTxbhQi13Ppue38paBsizHea8uptolTedjkiDWlWTrcwxraRJlFEioNH/sN+3Q8/mh8xoelBjeH/J9ZPSGg3AQ2/PHRkF9AB+y8AbEECOuADYYDvMnw0FtkFgTF4h3lIq35UmPNzEtGWwykR14+KTTuXWPf1OnBp8M2goY2SzDul09y2FoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wQbslmJuQEPNLRNKxc8MVIhaLvTuMy//x1DaZTOrSSs=;
+ b=oDR7mC1kWWr0qdq0jC2pdBFD/SlJyDY50doCdDQvCmo/NjefJIh1PoiuH97pja4mJ8oAb7yCaTVqbOkC9mbET2QET6MyP2zATR+pnj0/uZydIGOM2rHtg8xOu8LV7Ck0I5mjeePwzGlJHi6ft6+9B0Q5u8Dby1RJYMPEqHrPdbmyJ0Wkjg88dHkiiNA0JsBOhPSCI5SN0HL2OiLj4eiJvVBxyOJxEGGzeFbVjW/HdjcMzHKgjAwjQjKwkWLknPmXMiJc7TkgRJsK9ZwJ0clebECd9vofIpdFC7zJVfhS7tFLRLr97tUMaD8YsKVQPMh8oBC4Nu68anctKnDqQlK47w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wQbslmJuQEPNLRNKxc8MVIhaLvTuMy//x1DaZTOrSSs=;
+ b=nIjyaDFk8x7E4o3mwStzNmAY6cBOexrA2auNaTyo9m+ZWYRThStU+xPVqCByDwOG3Y5pQf/+DO71Rnckq+F8+vZ/RSoj+RTlTfzFNpjpfzVisKUocDxTm3ygnld2aEYM0P/DNyesKTYjC5adpx7/sGeEVhzGf3BOKFdzHmEvJW+jIS0GpEKPgqVrWUAacx90Fb4yuRNGbAexSBh0oLTBNTCPs3MMM1wliGEnWIucnoRpViVVZMCSzbvMOBrxmrwlE++Dz1abCTODT8lCIZAsSww5RjmFOrl5yG3zek8K8nldDs/YdDWi0LAlvELx6zv0mIor589nRZN9DgiX84+M1Q==
+Received: from SJ0PR03CA0108.namprd03.prod.outlook.com (2603:10b6:a03:333::23)
+ by MN0PR12MB5833.namprd12.prod.outlook.com (2603:10b6:208:378::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.13; Fri, 13 Feb
+ 2026 19:21:13 +0000
+Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
+ (2603:10b6:a03:333:cafe::8) by SJ0PR03CA0108.outlook.office365.com
+ (2603:10b6:a03:333::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.11 via Frontend Transport; Fri,
+ 13 Feb 2026 19:20:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9611.8 via Frontend Transport; Fri, 13 Feb 2026 19:21:12 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 13 Feb
+ 2026 11:20:57 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 13 Feb 2026 11:20:56 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 13 Feb 2026 11:20:56 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@nabladev.com>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.12 00/24] 6.12.72-rc1 review
+In-Reply-To: <20260213134704.728003077@linuxfoundation.org>
+References: <20260213134704.728003077@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: tegra: Deduplicate rate request management code
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20260206-memory-refactor-v1-1-4385d439558a@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260206-memory-refactor-v1-1-4385d439558a@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <bb1d1e82-a4c9-45ee-8972-dbc7b61d38d7@drhqmail201.nvidia.com>
+Date: Fri, 13 Feb 2026 11:20:56 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|MN0PR12MB5833:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e25a6aa-d881-4a71-862d-08de6b350ceb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c1QrdkRSRWJ3Z3Fiei9wUjNXVHk0dGJKckhKcXhQM0pIRjVlTUI1V3VzbW9J?=
+ =?utf-8?B?TmFKUGNrSXFNZnFhUmswYzYvTndUakMxV1JYcDBIY3Q2SUxlM2huSXVCRGtT?=
+ =?utf-8?B?T3FEWWc4LzhtOGdpU3pDdDZzYk1VdmRaYUwwVW00K3MwMlN1WGRMbHlrVzl2?=
+ =?utf-8?B?U09lZDdvNGFhZElTSnNTQW8wUnk3WHZvM09Bb0lUanUzZWdDSXhxMWN3dFlF?=
+ =?utf-8?B?TVJ3cGIxWTJOWm1acWhXVEkvSjhIdTM2QVNPMjNiOWdEQU9oTE5OcU03cGZh?=
+ =?utf-8?B?STJ5dkZGejNTT1ZpVDRtZmZYMS9mNWpHVXVacWU1TFYvQzJ2aXJucE9xWUJp?=
+ =?utf-8?B?VExSWjhvM0w4YXRpMmYrcHYvSWNqRGNVSy8rVzNtbXhsd2Y3NTFrcE4xc0tT?=
+ =?utf-8?B?TmdjNnZyQllFdjNWWWQzRkIxclh4dUQ2eVlneUZMeVRHMi9xWjEzK2RRWG5j?=
+ =?utf-8?B?MUJqR0FGUmw3Vjl4cDQ0ZnNPckRYRWQraE1haDBFWHdMdzFnZ0p1cnI5aytZ?=
+ =?utf-8?B?NUtNNnZBSTdBTjJvN1MvQUtvbWhEaE9UL2hRTjNJYzBvRXBlUG5HSm5qNmls?=
+ =?utf-8?B?YzNwS3UwaCtQWERNRUZ1L2dvQUZoLytFelR6dEZ4QnFlcVhNUllhSGdpNnIr?=
+ =?utf-8?B?MHpmOFBZZU12YjgyWnZ4QTQwdmE0czJsQnFORVBJMy9zLzBRQklOZmI5OGFS?=
+ =?utf-8?B?Y3c0M2h3b080NnoyT2RnN0ZyeW9aVjFUUFo1YitzMVJjZ3RQMSt6SHRPdHBI?=
+ =?utf-8?B?UWRkeU1FdTVodEs2SXNlVStyd3dEQitBRHBVNWV0UUxMcGpGTitCSmVsTlVk?=
+ =?utf-8?B?UGEwZEYyWi9UT3BoeVZHc3h5dVJCT3lBYUc4UGhETzdIandHOVdDUXJnVklZ?=
+ =?utf-8?B?T3FpVHJTS2VZclBwRU1rYzdTdjk0cEdpWG03dVFUR283KzdJczZvZVN3MHRn?=
+ =?utf-8?B?TkhYdWRoV2FpQWRXNkhtQWVHeVZqZmdTb2dDM0hqQmtlSllKWEkybi9BTXp4?=
+ =?utf-8?B?TkhXVHpuR2VJelY4MC9HcElzcEp2ekNSVkRoeEJlYkhOZmVYanZYZjJzS09X?=
+ =?utf-8?B?cFFpQTZrMXY4cmdnMWkyNUErYUxpTEt2b2NvQjhtN3V4M29mWVNFZjNmMnZs?=
+ =?utf-8?B?dURGYmJKOTc2dWFxTFRvT2E3YWl0SWlFMnprRm9DcFIxaEtzVXBGdnFGNE5Y?=
+ =?utf-8?B?QmFXK1BHV01qcFdWbWxqWlFzajdZUXgrb0JvTjZwNkkwbjRsQXdxeVBnb29o?=
+ =?utf-8?B?aWQ3VzY1bXRpcTY4Nk1Vb0E5MWEveFJVckNDTnNVTzg5dmFCU1BxOVNwT2hU?=
+ =?utf-8?B?bVZsMTRjZ20rTGVmUDRFTGwyUXd1bVY0Mkh0WCtxV0xKNkdPMjViNlI2Zzc2?=
+ =?utf-8?B?YU9Vd3d1Vk10QmJvazcxVnJscHRMSmdyc1VTUVdnbnU3Z1FjZUk0eXJibXpz?=
+ =?utf-8?B?YjM2UVMrelZGdDI5bUxQbHpiNDdpUk94RzhTVU5qa2cwdFFSTkdEUTJ3V2hv?=
+ =?utf-8?B?eGZ2KzBtdVBMN2cxYTJxbzRSZkQvQjI1RnBISVBFUXI3SGppWVNLU0ptc3Zk?=
+ =?utf-8?B?NFJFdmNRZHVRbXBPM2hLb280bGs0Z3FPcUZVdHhlNXdjRFBWS3pVeHJHL3JX?=
+ =?utf-8?B?eUhRVm1JcDJ1aVpYNENCWXZobTMxVFNwc2I2UVFTcm1idGxLM0xzYlNjSXNW?=
+ =?utf-8?B?WThBSEJyNTFvUGdCTnR3Z0h1dEdzS050QVVXbU50S0VUbjJ1R1U4UEQ4d1kw?=
+ =?utf-8?B?M3VRbVBLWmxLOExoL0U1LzE3NHVTNFF6b3p4ZnNORVNWdVBxaGJqM0Z3eXBj?=
+ =?utf-8?B?WFVsS0NaeHpBSHE5Q1JNZVB5blNvWjVPT1dkaEJwdEpYZGFZTHJrbktUTGtk?=
+ =?utf-8?B?cnhFYzlOMXdNSnQva0h2dDU4TzBZd3ByYkdBcllscWpXdmlrdzZBbENORDYz?=
+ =?utf-8?B?MDVzNlhRM1hIUUJDMDdYTnFsMURva3N6S2RqOTIydVQwUERWR1ZHZWhtM2g5?=
+ =?utf-8?B?Y1JWK2p0ajRHc2pYSGlTVlc3eWxRa2dJWVBqcWhkM21kVFVLWGlxd1FESVFG?=
+ =?utf-8?B?M1pLajlEUytwM1RBb0JxLy9LL3I5cU9XMTRJbWdVMUxKT0ZncDFseENsL1dE?=
+ =?utf-8?B?bnoxdWVWcEdQK3dJblJROWdvY2JxZDZtRGZnYmhOM2ZxUjJyaUVWL1pneGE3?=
+ =?utf-8?B?TkVFbHlLNlZCYm43V3BvZDl4Z1NPS2p3RW1MOWo2Qk1qVXF6SFFFWHlKN1U3?=
+ =?utf-8?B?cE5NbUVtWlVlM3QxNXloK3IzOXFRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	5du/YZDfQLNFk9ykXQj7XgrvXvdS9TL53+bQUdaGWE5PwOvWWqHZk2SCrnhldUpE3iNk4TNP58v07PpmAX4nz5a5Q7iCHrPJtdkxGaDIIuy94QikFKoKThIVY5PHlV6As8kGEXH7BuCp7Auby/rXpupTNghREJ9Do0xk8Zwi1G802GIA9iQabJyHcd2RqueAGUM+NtxWJr/1PNnWhxGfLhgzR5aCOZAwTULmubBNl1MnnFjDA9YxjXkiuCKqFcLkLl//8JuRA7CKC6sdBgrmCR+rFWoJGhqmh4djnqFCsK+wgWzvNoMu0FmCcKj/MUI93Fdkn0878yZk1WsRiDGFzGPzRjq+yRfO3Jz6G6QOj4pnz6sGQnIwPn8LC4mBS7gKTAj7hebNL7WaSmhJWgGqsH/QH0wnxiC/RxX8eRILsbqDEcmJ/PgRfY48Dkp5Dxia
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 19:21:12.7201
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e25a6aa-d881-4a71-862d-08de6b350ceb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5833
 
-On 06/02/2026 03:54, Mikko Perttunen wrote:
-> As is, the EMC drivers for each 32-bit platform contain almost
-> identical duplicated code for aggregating rate requests. Move this
-> code out to a shared tegra-emc-common file to reduce duplication.
+On Fri, 13 Feb 2026 14:48:19 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.72 release.
+> There are 24 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> This patch is on top of 'memory: tegra: Add Tegra114 EMC driver'
-
-If that patch is not merged, then this should be reversed. First you
-remove duplication then you add smaller new patch. Not vice versa, where
-you add duplicated code just to remove it.
-
-> ---
->  drivers/memory/tegra/Kconfig            |   7 ++
->  drivers/memory/tegra/Makefile           |   1 +
->  drivers/memory/tegra/tegra-emc-common.c |  96 ++++++++++++++++++++++++++++
->  drivers/memory/tegra/tegra-emc-common.h |  38 +++++++++++
->  drivers/memory/tegra/tegra114-emc.c     | 107 ++-----------------------------
->  drivers/memory/tegra/tegra124-emc.c     | 107 ++-----------------------------
->  drivers/memory/tegra/tegra20-emc.c      | 110 ++------------------------------
->  drivers/memory/tegra/tegra30-emc.c      | 107 ++-----------------------------
->  8 files changed, 167 insertions(+), 406 deletions(-)
+> Responses should be made by Sun, 15 Feb 2026 13:46:52 +0000.
+> Anything received after that time might be too late.
 > 
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index 11e7cc357d39..aeda7f104d34 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -17,6 +17,7 @@ config TEGRA20_EMC
->  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
->  	select PM_DEVFREQ
->  	select DDR
-> +	select TEGRA_EMC_COMMON
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
->  	  Tegra20 chips. The EMC controls the external DRAM on the board.
-> @@ -29,6 +30,7 @@ config TEGRA30_EMC
->  	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
->  	select PM_OPP
->  	select DDR
-> +	select TEGRA_EMC_COMMON
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
->  	  Tegra30 chips. The EMC controls the external DRAM on the board.
-> @@ -41,6 +43,7 @@ config TEGRA114_EMC
->  	depends on ARCH_TEGRA_114_SOC || COMPILE_TEST
->  	select TEGRA124_CLK_EMC if ARCH_TEGRA
->  	select PM_OPP
-> +	select TEGRA_EMC_COMMON
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
->  	  Tegra114 chips. The EMC controls the external DRAM on the board.
-> @@ -53,6 +56,7 @@ config TEGRA124_EMC
->  	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
->  	select TEGRA124_CLK_EMC if ARCH_TEGRA
->  	select PM_OPP
-> +	select TEGRA_EMC_COMMON
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
->  	  Tegra124 chips. The EMC controls the external DRAM on the board.
-> @@ -73,4 +77,7 @@ config TEGRA210_EMC
->  	  This driver is required to change memory timings / clock rate for
->  	  external memory.
->  
-> +config TEGRA_EMC_COMMON
-> +	tristate
-> +
->  endif
-> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-> index 6b9156de4b66..28f22c957a34 100644
-> --- a/drivers/memory/tegra/Makefile
-> +++ b/drivers/memory/tegra/Makefile
-> @@ -14,6 +14,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
->  
->  obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
->  
-> +obj-$(CONFIG_TEGRA_EMC_COMMON) += tegra-emc-common.o
->  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
->  obj-$(CONFIG_TEGRA30_EMC)  += tegra30-emc.o
->  obj-$(CONFIG_TEGRA114_EMC) += tegra114-emc.o
-> diff --git a/drivers/memory/tegra/tegra-emc-common.c b/drivers/memory/tegra/tegra-emc-common.c
-> new file mode 100644
-> index 000000000000..9292472a5890
-> --- /dev/null
-> +++ b/drivers/memory/tegra/tegra-emc-common.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.72-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
+All tests passing for Tegra ...
 
-... and that's why we ask for consistent license. Code in tegra30-emc
-has difference license, so I assume here you copied the one matching
-license above. Explain in the commit msg which code you copied or on
-which existing code you based this.
+Test results for stable-v6.12:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    120 tests:	120 pass, 0 fail
 
-> +
-> +#include <linux/device.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pm_opp.h>
-> +
-> +#include "tegra-emc-common.h"
-> +
+Linux version:	6.12.72-rc1-g4b487d46d595
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-All exported functions need kerneldoc.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> +void tegra_emc_rate_requests_init(struct tegra_emc_rate_requests *reqs,
-> +				  struct device *dev)
-> +{
-> +	unsigned int i;
-> +
-> +	mutex_init(&reqs->rate_lock);
-> +	reqs->dev = dev;
-> +
-> +	for (i = 0; i < TEGRA_EMC_RATE_TYPE_MAX; i++) {
-> +		reqs->requested_rate[i].min_rate = 0;
-> +		reqs->requested_rate[i].max_rate = ULONG_MAX;
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_emc_rate_requests_init);
-> +
-
-Best regards,
-Krzysztof
+Jon
