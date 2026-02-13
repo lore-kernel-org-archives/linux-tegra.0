@@ -1,169 +1,215 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91962D97A5
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Feb 2026 08:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770970244; cv=pass; b=qCYKdik+1Jj+6X79ks4fFZXBdj+BA2yleAV8Gvk04FjMqymAF3zMjHpVUfGTz84Res68JUcXYVrsHDfY4xP7han0D/XPE7vsQEAXwp28J3szpmeQscMXUBIMCG02KnSkff47dwdNWaFcB8HEXgcrNYMjvKcZpt8qatYvgjw9yQQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770970244; c=relaxed/simple;
-	bh=GLp4dFZH5Dh0/9zN2TZWcmJzLYuy4JOfbFcHtRYGlyw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gvOS7Kvlmg3uZ3CaeF8zn25gi/tKGhYxLKJ2ZIu9iPyhOOYHHZm/Muk+MofYAJl+ZmrUD2A8K0w0JKJB99Rywnb2luYV7x0HsSoHeUurxiw4j+WD0RmIlFttvUzcsrYYIUDeSpA8aMG1G1jGpPwlrzIalahkLPOq8fjNSAYiaes=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2El5B5X; arc=pass smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62CB34F275;
+	Fri, 13 Feb 2026 10:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770978290; cv=none; b=SRa1ntFV2qdf7YQriOfL7bxr0OHTDJEUC9P4Bno+0YriC+CAJzOSxRyWu9/q1sgxrWoOiq1JL36dC5/e5veddGngXEyByaqhhuEOhjXffGGwI67U//Ni9ILsijEh4BWJxs2Nq7aexXGPqlMoB4LhEOU+o/VQcOfNOWBEIp1xpZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770978290; c=relaxed/simple;
+	bh=DX40/Yqtzx/4qH/2xU1UzBbDHriHTuIX98B7+l1j9tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XS4tMx7ddZCFlrux3C4ENcwDxT2GipxekHPZuA9bWCM2vYIZxvd3aNMtSxwjOiTRWJTDKFXbBW83Fj377laSLjkCv0tpeRCljfunOK+19ExDk/qmsGWsJx72hLd3O6kotXoY/rtrwmP3srPKw4/kAh9tFPAP095ng4WhALqmHBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIJdEkZp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2El5B5X"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4836f4cbe0bso5102575e9.3
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Feb 2026 00:10:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770970240; cv=none;
-        d=google.com; s=arc-20240605;
-        b=KydEx3mKEiRqUGfVOINHIMo6fl08ELyMWXljpQow3U6OraPuqO3UH3mcT0Kj1pGJ/C
-         CiEzRE6pASEIgon09ntxjBds/e/+FqyMRO3kHRC5TDxKApdSF9NTpq7R75YSLZvCuxtl
-         X36tKyAaDoJ7/Y2/l+Wef//jnux0KA5YTXvEiiadNM92X+VGhonWaZVRIkTesGE1NfVe
-         rP1LZhNOzf92WjuVZCblkB/hHEKSD512ZtqKFlSjOKKOXRpulBzXNKMs1jHpdjRq461e
-         wO1QfdO/EOu459tph4CEpUbktSaezfopfR5+8yAvOmOEAKKfjbJbzxJs7JR9IA67f9bj
-         A7CA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=tmSI2jAhYtI7ZLsx4RzoCyPtRR9eH6Xuh33KxtJVVj8=;
-        fh=lM0VO8Zbo1IIA/mUxjJIEluZqPi7IO/QHggCGVh1fYU=;
-        b=OaTisvGWoGBQWYrYp3bOc1RHr4XalnYZpxWCcrLwnW8iUsIjYtYzYl7EXz6ue+3XQ3
-         rh//zLg15JdEHis7RxeE+lbtwQvxTAH+/A8cL9/E6h6Kou2E16+SudJAQt2NtHufepwt
-         vjrmFA5z8eJWyShmOk2ci6a+WSxcCMC49e1SC8D9ZP8ddo5LDxORr925SrafPcQn/Fj4
-         Zh6uM8SQ1BfiosYmO0pKl1ll7U69XzSV3cR/EcnqMAONuYtzgIxfgpMfkIeVYoeg//nk
-         qjRd6XCtiXt9db/so32gH/iilJVtsaAorZwZPVhljzVjeNchIfq08NPjHsFXXupoFvQ5
-         2mZQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770970240; x=1771575040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tmSI2jAhYtI7ZLsx4RzoCyPtRR9eH6Xuh33KxtJVVj8=;
-        b=d2El5B5Xq9SZztPoS76WzCAXfaYqiNP+iFfI1ZGACqTFFYUqfcfa4/4kFvjmXyISk6
-         kgQt4AkaUWGrc8KfuxihBHlpsX5LxWItsTQnqGYFgnVC4Rr8Qr1eVvpiFGJu8fBgQBQ+
-         AetYg4HJ9K+pFHVqYammgKBrVJclC/tMgK7mzFIfcytJKuNN4QbXNffVTX85ok3AcFVq
-         eq9KgSFNntzj2Xkh8j8723gDrAgTf6BABZfmpviq3QZAaKuUNkot+rIJtTnKjNX7+Fsh
-         fZT/bosiZUotTPTQskt5Ma75WFV99gXIHpa9G+CvMnRi/weBXKGmdS3/vgazH9AW+M+W
-         mmLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770970240; x=1771575040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tmSI2jAhYtI7ZLsx4RzoCyPtRR9eH6Xuh33KxtJVVj8=;
-        b=wj5JClN3dmT3646Pz+lCMtsJP4Hn70VGlzRBWv5BubSYk0VAStuT5TClGIGbMnbvRr
-         w9DhjySCw5oDDtMDBIl2Ta9K8sm+3liHCs34db7MSnY6THOsc0PInr1VQs8Hr0gaVC1q
-         dkd1AmIFd976xVQAg2sTUZzCp5MduBywfJAOGkNKQviFf52sWYAemq5e5UEgE8+B2nbZ
-         TiJeW747mRX7G3HPP3QpEn4zPVfqeKhzNVl8DEXwnO29/7IP5TDD+OaDQGTpZJEYb9Vw
-         v7uaj2r/H9kiVGCNM1IKriPy9UsBleAGKq9li8X6yCrl17CoaSkDxFrOvPSwjplYKso3
-         GiEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUITLvutYbqzzFv/3QKx/Yy+P1TgDkS5xIbPkj5dHEhcZHxJGgjlJi3YMZvL97q3/t8j4bc7yUdIg1ejQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx03C05E8H3/dlgd777owawaXzkPSnYWvke5cK6JArF7cO1heVv
-	bT1pfUl2YJYcIhO3WOYGiAmOgB9B7q+jAn79/h7IjhrgR9wMskCMJVc9EZKwYzCsw/m1CIzqmnn
-	x35l0bWpp7XkDomyCYWEMMP20TH0IQeo=
-X-Gm-Gg: AZuq6aIPw3rrlUBXx7fJWEEus3ow8QLndyBR+IkiCxuR09KbDnLPSR/zhknU6iubpHv
-	utaMZxNcDanc4KGQxUBMiTRMP7O7t5orhwKZdcXKS24qTwTrLPF+Jb8B5/8+dtOd9b0aaB4XLBT
-	DQ42l10lHgSxnlQskT3e2zTZr/lKK+YvqZcJ5uo+sE4agbIreEpkDseIwhziLWoW4XtthD0JJYc
-	ficF54nRY4EBT9pQMQQKLUsiScFtbbKeDPLsEiP6R8/COUWh1zUTI84FyXFIX7p8zsyZejN16Ar
-	KTIV4QCf
-X-Received: by 2002:a05:600c:3d87:b0:480:3ad0:93c0 with SMTP id
- 5b1f17b1804b1-48373a5d6d5mr12271545e9.23.1770970240070; Fri, 13 Feb 2026
- 00:10:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIJdEkZp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182D3C116C6;
+	Fri, 13 Feb 2026 10:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770978290;
+	bh=DX40/Yqtzx/4qH/2xU1UzBbDHriHTuIX98B7+l1j9tk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pIJdEkZpFApgvNwM2sjDTzfIUE+lyRyGY0e/iaZOIF/sbx4Ycu/ATAJ+6vWFbZL/S
+	 P1DWl8FfQI4ryf8iGz34t4jT7L91JkZHvxr2eeUoVtm29DQDbwgiVwifOLhFjJB1gd
+	 7oW2fLRUWNdp/nozly0A7gMwZWWf58nRrQZl0RldufwIy6SDb1JL1zgZIP/ez6XZWn
+	 8658JPn6pNV++Mbl9szgUNtrVTCYi7EbAWesdgQ97pRp9HWPfbLWPsLz/bWliq0PMX
+	 xlUoYx9EQ22u1pW4LyGiHTVWlK9Dx8indXAB/us6J6GQeNYvyno2G+FCGgeYBKJbJE
+	 mGAg0PO97QMhA==
+Message-ID: <2891e25d-33d0-42eb-8da0-b57d50651c2b@kernel.org>
+Date: Fri, 13 Feb 2026 11:24:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260126191536.78829-1-clamor95@gmail.com> <20260126191536.78829-6-clamor95@gmail.com>
- <3152548.Lt9SDvczpP@senjougahara>
-In-Reply-To: <3152548.Lt9SDvczpP@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 13 Feb 2026 10:10:28 +0200
-X-Gm-Features: AZwV_QhSOgiPRAPx2Z0byJxn5tRA0sX_heVg44H-sW_-S1oDy8g3MrQUXJy_z98
-Message-ID: <CAPVz0n0z7gGmGNk2Kj08ZAZ5=8-+TZ5nQZdaAYVBb=zd6Cb=eQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] ARM: tegra: configure Tegra114 power domains
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: tegra: Deduplicate rate request management code
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20260206-memory-refactor-v1-1-4385d439558a@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20260206-memory-refactor-v1-1-4385d439558a@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-=D0=BF=D1=82, 13 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 05:44 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Tuesday, January 27, 2026 4:15=E2=80=AFAM Svyatoslav Ryhel wrote:
-> > Add power domains found in Tegra114 and configure operating-points-v2 f=
-or
-> > supported devices accordingly.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../dts/nvidia/tegra114-peripherals-opp.dtsi  | 1275 +++++++++++++++++
-> >  arch/arm/boot/dts/nvidia/tegra114.dtsi        |  126 ++
-> >  2 files changed, 1401 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi b/a=
-rch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > index b40a1c24abab..5e66c1dc8fb7 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > @@ -1,6 +1,76 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >
-...
-> >
->
-> I compared these core rail opps to what the roth (SHIELD Portable, T40T) =
-kernel defines.
->
-> The HW 0x1 (speedo 0) opps match process_id=3D0/speedo_id=3D0 perfectly e=
-xcept for msenc/vde/tsec where the curve ends at 408MHz at 1120mV. The roth=
- kernel also specifies a process_id=3D1/speedo_id=3D0 with almost the same =
-tables as process_id=3D1/speedo_id=3D1. process_id=3D0/speedo_id=3D1 doesn'=
-t exist.
->
-> For HW 0x2 (speedo 1), when compared to process_id=3D1, the opps in the d=
-evice tree are in some cases slightly conservative compared to what the rot=
-h kernel sets.
->
-> So I think all of that should work (except maybe the msenc/vde/tsec curve=
- extensions?), but it might be that there is some further potential on T40T=
-. Hopefully these values are actually just a difference between T40X and T4=
-0T.
->
-> In any case,
->
+On 06/02/2026 03:54, Mikko Perttunen wrote:
+> As is, the EMC drivers for each 32-bit platform contain almost
+> identical duplicated code for aggregating rate requests. Move this
+> code out to a shared tegra-emc-common file to reduce duplication.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> This patch is on top of 'memory: tegra: Add Tegra114 EMC driver'
 
-I might not have used the most recent T40S source. HW 0x1 table in
-that source looks like this
+If that patch is not merged, then this should be reversed. First you
+remove duplication then you add smaller new patch. Not vice versa, where
+you add duplicated code just to remove it.
 
-_clk_name, _speedo_id, _process_id, _freqs
-                                900,    950,   1000,   1050,    1100,
-  1120,    1170,    1200,    1250,    1390
-"msenc",   0,  0, 144000, 182000, 240000, 312000,  384000,  432000,
-480000,  480000,  480000,  480000
-"se",      0,  0, 144000, 182000, 240000, 312000,  384000,  432000,
-480000,  480000,  480000,  480000
-"tsec",    0,  0, 144000, 182000, 240000, 312000,  384000,  432000,
-480000,  480000,  480000,  480000
-"vde",     0,  0, 144000, 182000, 240000, 312000,  384000,  432000,
-480000,  480000,  480000,  480000
+> ---
+>  drivers/memory/tegra/Kconfig            |   7 ++
+>  drivers/memory/tegra/Makefile           |   1 +
+>  drivers/memory/tegra/tegra-emc-common.c |  96 ++++++++++++++++++++++++++++
+>  drivers/memory/tegra/tegra-emc-common.h |  38 +++++++++++
+>  drivers/memory/tegra/tegra114-emc.c     | 107 ++-----------------------------
+>  drivers/memory/tegra/tegra124-emc.c     | 107 ++-----------------------------
+>  drivers/memory/tegra/tegra20-emc.c      | 110 ++------------------------------
+>  drivers/memory/tegra/tegra30-emc.c      | 107 ++-----------------------------
+>  8 files changed, 167 insertions(+), 406 deletions(-)
+> 
+> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+> index 11e7cc357d39..aeda7f104d34 100644
+> --- a/drivers/memory/tegra/Kconfig
+> +++ b/drivers/memory/tegra/Kconfig
+> @@ -17,6 +17,7 @@ config TEGRA20_EMC
+>  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+>  	select PM_DEVFREQ
+>  	select DDR
+> +	select TEGRA_EMC_COMMON
+>  	help
+>  	  This driver is for the External Memory Controller (EMC) found on
+>  	  Tegra20 chips. The EMC controls the external DRAM on the board.
+> @@ -29,6 +30,7 @@ config TEGRA30_EMC
+>  	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
+>  	select PM_OPP
+>  	select DDR
+> +	select TEGRA_EMC_COMMON
+>  	help
+>  	  This driver is for the External Memory Controller (EMC) found on
+>  	  Tegra30 chips. The EMC controls the external DRAM on the board.
+> @@ -41,6 +43,7 @@ config TEGRA114_EMC
+>  	depends on ARCH_TEGRA_114_SOC || COMPILE_TEST
+>  	select TEGRA124_CLK_EMC if ARCH_TEGRA
+>  	select PM_OPP
+> +	select TEGRA_EMC_COMMON
+>  	help
+>  	  This driver is for the External Memory Controller (EMC) found on
+>  	  Tegra114 chips. The EMC controls the external DRAM on the board.
+> @@ -53,6 +56,7 @@ config TEGRA124_EMC
+>  	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
+>  	select TEGRA124_CLK_EMC if ARCH_TEGRA
+>  	select PM_OPP
+> +	select TEGRA_EMC_COMMON
+>  	help
+>  	  This driver is for the External Memory Controller (EMC) found on
+>  	  Tegra124 chips. The EMC controls the external DRAM on the board.
+> @@ -73,4 +77,7 @@ config TEGRA210_EMC
+>  	  This driver is required to change memory timings / clock rate for
+>  	  external memory.
+>  
+> +config TEGRA_EMC_COMMON
+> +	tristate
+> +
+>  endif
+> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
+> index 6b9156de4b66..28f22c957a34 100644
+> --- a/drivers/memory/tegra/Makefile
+> +++ b/drivers/memory/tegra/Makefile
+> @@ -14,6 +14,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
+>  
+>  obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
+>  
+> +obj-$(CONFIG_TEGRA_EMC_COMMON) += tegra-emc-common.o
+>  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
+>  obj-$(CONFIG_TEGRA30_EMC)  += tegra30-emc.o
+>  obj-$(CONFIG_TEGRA114_EMC) += tegra114-emc.o
+> diff --git a/drivers/memory/tegra/tegra-emc-common.c b/drivers/memory/tegra/tegra-emc-common.c
+> new file mode 100644
+> index 000000000000..9292472a5890
+> --- /dev/null
+> +++ b/drivers/memory/tegra/tegra-emc-common.c
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
-I might adjust table for T40X and T40T since my source does not have
-speedo 1 / process 0 (T40T) and has speedo 0 / process 1 (N/A) which
-is odd. While creating these tables I assumed that speedo 0 / process
-1 mapped to T40T and since T40T and T40X are linked, table from T40X
-perspective looks conservative.
 
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
->
->
+... and that's why we ask for consistent license. Code in tegra30-emc
+has difference license, so I assume here you copied the one matching
+license above. Explain in the commit msg which code you copied or on
+which existing code you based this.
+
+> +
+> +#include <linux/device.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_opp.h>
+> +
+> +#include "tegra-emc-common.h"
+> +
+
+All exported functions need kerneldoc.
+
+> +void tegra_emc_rate_requests_init(struct tegra_emc_rate_requests *reqs,
+> +				  struct device *dev)
+> +{
+> +	unsigned int i;
+> +
+> +	mutex_init(&reqs->rate_lock);
+> +	reqs->dev = dev;
+> +
+> +	for (i = 0; i < TEGRA_EMC_RATE_TYPE_MAX; i++) {
+> +		reqs->requested_rate[i].min_rate = 0;
+> +		reqs->requested_rate[i].max_rate = ULONG_MAX;
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_emc_rate_requests_init);
+> +
+
+Best regards,
+Krzysztof
