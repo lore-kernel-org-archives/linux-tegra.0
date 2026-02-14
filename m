@@ -1,219 +1,418 @@
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620477262E
-	for <linux-tegra@vger.kernel.org>; Sat, 14 Feb 2026 00:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B85020E334;
+	Sat, 14 Feb 2026 00:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771029361; cv=none; b=OL45awLlxC/zh5lQ7aoSqduqYeWzU0csrptfF63SGK31RDS5q57OaS/uJQkhELs1N69nsNYvcotNL8s7vIBZqKOVHQVJy+7XQ5b6Y7zTE3t726MFF1cAdrJGeYMx/11In0QVOGZBok9TTnxYQ1pPOhH/8zOfhepTQXAfQFQM4LI=
+	t=1771030714; cv=none; b=ETUqDJ/+OBT0ibwGxugqJizamwFt8ol1neKw0Uyee2fLbn5sQuoqiQYGHtxzJciSQ98+dvf7zSNQ9/qDhJeu+q/Y5VolvEQW6/b4TrXBYcP1NbLkfD7kzPSikI2uAl2TdMjrUG/dY0peU/YiAjHexdQvVBHhToVw2y2L7rMr7xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771029361; c=relaxed/simple;
-	bh=4p7hBFXDdXswu7G3yFQn/WaKSEw2ehr5AYJm0du4iFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rv8tZOgyp4zL22+XAZm6DBDisFNT5yD/bQpW29UKuFzAuCWogReOHmgqmJtgNyZVWTR/tWKXW34ZkhVCcIlXAuVks51GI/svjNQa7ZchKReCK1dCQa+QavIclcLmIXsrn/hpj0HnfrHVg2tri8tCvFYtAfZr8Ro/IGTPoUrLJXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROOPtLdg; arc=none smtp.client-ip=74.125.82.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1771030714; c=relaxed/simple;
+	bh=Fbguudayvr5/a8atI4mdtxwAWSlFxYIraPPOXe1sJ88=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gmuNyDykg3WYlcim5ZPEAJUDOXIiNumCmaazWWtTxVT+B4P8udACMdNt677WU3fUKa8Nd9hHFttcFu7891L+m/zAxoyY5ND4h0r4UdyOQlhWHITnUVmlbYW0zFx/jFuaW/hMSe7fHpw+glX/VqnnKDmdm3P2ondMI36/VK0W2cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfAYDfaD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROOPtLdg"
-Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-124afd03fd1so2436837c88.0
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Feb 2026 16:36:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771029359; x=1771634159; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gcsnYHnaR+mbYSPKQbdhDU9Bq2aFrrJLZtDn7VH/fJc=;
-        b=ROOPtLdgtQJ+IRK+KTkrCp+mNYDeWZTS7OBWUF/3dSW3r7U8mHCyb39pVoJ1m9ToS3
-         natrZ2oICz76E70y8mTjxastciSKosnAT4z21b1ct/gNEVW3gTbtWWgVCVwyz04IW5qX
-         kYX91l/dSjtrb7Mhmuc0LH6T9YqiALiRoBvwUJtgWWvzeh6qXHExzU+PKoxvNLbrqaRa
-         eLIXoepxsfd1kkSD6MNDnyRjmAl1UGMnOfVjK2pqu4Rv3SbqsK8/8bYBuQOWKEMnMxZm
-         A6TmtoAWQUTViY1c2XrynpvT/SFDUgUadlHVR/QmuIVjVjgCoOoAaM+0gQpFn9PxoWcq
-         kp0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771029359; x=1771634159;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gcsnYHnaR+mbYSPKQbdhDU9Bq2aFrrJLZtDn7VH/fJc=;
-        b=Y7HX3de/+7vj4qH1YVbaJA+cIwzGHVDXDkJ/6h+yTsUL3o3AiqFZhyTxsgzFOKKRU+
-         4MGNv8Z0sBp3grHYAnqUX63AV5+rBOPtvf2saETHumBdxHAqfrsG0DzBaNVE32F4wZUn
-         s9WgNTd91OeT71A9txEpZfpIMMax/hN1SlmLItQVzYELpflCoM7rJXcpvc/gGWO9EQfK
-         LYgg+nN8q6ojBMdofvp36QcKrbfXINu42j5VISqmizK0WsjXmVfqZcPpbIZ46zR/MEp8
-         aempWIKItUl5IY2zwX8C/q5t/RtryQC/Wmo4UYeUwfar0RCn2SWHyHvjxUdHrTZApvik
-         vuZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpr13IumZPb8oeXBdJrFsKfg/0vTqcD09xwaQMV+2L4KG7xzPDvTgsi0xBTxfTUkaHqx5ZWzxX6hPZJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy+uJourBdAyVG0Tl+rXm4k2WBVmHytSJRfs7Ys//PcgIigBNl
-	mEG1xQ5OCP37bX8olpg5KYmBGVfQo5G1C8gP/LJgK4zAD0Q9nyqZtD3j
-X-Gm-Gg: AZuq6aL6vIXayGR7K7ZeSL5ZBzG0kZqn3BrHT7Las3N5dX9CqaCms4iSHHDc7igNcqT
-	GRPKrRf0Mje8v0e3loq6qDOTtKCFMzyM78jtvOh7/LNyrC+SQtjn5DIRZ4ifPJbmHd/kKhzU4aq
-	DPbeNJFDc1+aRfwOKnDvnpSPVm2da3RMB4933K1FthyEZwKuBzWHx9sR5N0Lfr7aYiKwxTjwWSd
-	5CkZUHprC5wIU+DQPQOh28jtsrTS6tfYnEGXeHodR8N+yzZVryUdbO1lM66ZZ5k4uG/JVsB6gZA
-	0SSkO6z+GwzPTN0FTcKe+wj5YM07DBj6UBGNt0XgXyMVeGomFtK9N3D2EzDVRtYanULO7KX6XX9
-	ObuRQw0pnl3QnHFZoXuwnk/HzpwNCMP+aAIbCMYjg6Xa9Ndyzm85Dsctz0dM4nU/0ain4ETszrU
-	OJF3qDZeav9SnGc7iJvlo0l/qoSgMMzgvQL83jMwpn7N7g+3flYtxUHGrjaAe4A/R8
-X-Received: by 2002:a05:7022:b81:b0:11b:d6f2:a6d6 with SMTP id a92af1059eb24-12741bc706cmr630038c88.34.1771029359310;
-        Fri, 13 Feb 2026 16:35:59 -0800 (PST)
-Received: from google.com ([2a00:79e0:2ebe:8:b713:5e7b:5963:d2ad])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742c6ce01sm371859c88.7.2026.02.13.16.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Feb 2026 16:35:58 -0800 (PST)
-Date: Fri, 13 Feb 2026 16:35:56 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: tegra: paz00: configure WiFi rfkill switch through
- device tree
-Message-ID: <aY_BpRQmLdqOOW2K@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfAYDfaD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F52C19424;
+	Sat, 14 Feb 2026 00:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771030713;
+	bh=Fbguudayvr5/a8atI4mdtxwAWSlFxYIraPPOXe1sJ88=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FfAYDfaDrtDjmPTkhoEwGQc4K4nBSYKHRRf2EFllZ6YB7EJusBzPu9Cciz9h2oow9
+	 c0k5OXIJWc3wo83R4csKqdQP1v2YEeY5Tk/oG42nRTWK/a3vBFQTXvxHAfqEZwdDjF
+	 Z1rHenOIBJYoQhNXRblwA0xr8vEhvNrXN7OHlIL2tz2zhNYIw8a9u7vMZGnKT554Tv
+	 LObS6laFcKSsDehiRDGIHAzQPYLqlYOBtXc/vxdgaCxk8t6IebjMafzUyAbMaYf3Oc
+	 mLbGnF36oYStG2hHeBoRwIth0mf0IDP00bbbmILFZph4ucOlOpvnYkxvG5Nd8GBo0l
+	 WYPVjBEa3sJ+A==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Prathamesh Shete <pshete@nvidia.com>,
+	Petlozu Pravareshwar <petlozup@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>,
+	thierry.reding@gmail.com,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	rostedt@goodmis.org,
+	ulf.hansson@linaro.org,
+	chleroy@kernel.org,
+	jirislaby@kernel.org,
+	yelangyan@huaqin.corp-partner.google.com,
+	linux-tegra@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.19] soc/tegra: pmc: Fix unsafe generic_handle_irq() call
+Date: Fri, 13 Feb 2026 19:58:09 -0500
+Message-ID: <20260214005825.3665084-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260214005825.3665084-1-sashal@kernel.org>
+References: <20260214005825.3665084-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.19
+Content-Transfer-Encoding: 8bit
 
-As of d64c732dfc9e ("net: rfkill: gpio: add DT support") rfkill-gpio
-device can be instantiated via device tree.
+From: Prathamesh Shete <pshete@nvidia.com>
 
-Add the declaration there and drop board-paz00.c file and relevant
-Makefile fragments.
+[ Upstream commit e6d96073af681780820c94079b978474a8a44413 ]
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Currently, when resuming from system suspend on Tegra platforms,
+the following warning is observed:
+
+WARNING: CPU: 0 PID: 14459 at kernel/irq/irqdesc.c:666
+Call trace:
+ handle_irq_desc+0x20/0x58 (P)
+ tegra186_pmc_wake_syscore_resume+0xe4/0x15c
+ syscore_resume+0x3c/0xb8
+ suspend_devices_and_enter+0x510/0x540
+ pm_suspend+0x16c/0x1d8
+
+The warning occurs because generic_handle_irq() is being called from
+a non-interrupt context which is considered as unsafe.
+
+Fix this warning by deferring generic_handle_irq() call to an IRQ work
+which gets executed in hard IRQ context where generic_handle_irq()
+can be called safely.
+
+When PREEMPT_RT kernels are used, regular IRQ work (initialized with
+init_irq_work) is deferred to run in per-CPU kthreads in preemptible
+context rather than hard IRQ context. Hence, use the IRQ_WORK_INIT_HARD
+variant so that with PREEMPT_RT kernels, the IRQ work is processed in
+hardirq context instead of being deferred to a thread which is required
+for calling generic_handle_irq().
+
+On non-PREEMPT_RT kernels, both init_irq_work() and IRQ_WORK_INIT_HARD()
+execute in IRQ context, so this change has no functional impact for
+standard kernel configurations.
+
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+[treding@nvidia.com: miscellaneous cleanups]
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
-This is not tested on real hardware, compile tested only...
+LLM Generated explanations, may be completely bogus:
 
- arch/arm/boot/dts/nvidia/tegra20-paz00.dts |  8 ++++
- arch/arm/mach-tegra/Makefile               |  2 -
- arch/arm/mach-tegra/board-paz00.c          | 56 ----------------------
- arch/arm/mach-tegra/board.h                |  2 -
- arch/arm/mach-tegra/tegra.c                |  4 --
- 5 files changed, 8 insertions(+), 64 deletions(-)
+## Complete Analysis
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-paz00.dts b/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
-index 1408e1e00759..d1093ad569e6 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
-@@ -706,6 +706,14 @@ vdd_pnl_reg: regulator-3v0 {
- 		enable-active-high;
- 	};
- 
-+	rfkill {
-+		compatible = "rfkill-gpio";
-+		label = "wifi_rfkill";
-+		radio-type = "wlan";
-+		reset-gpios = <&gpio TEGRA_GPIO(D, 1) GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpio TEGRA_GPIO(K, 5) GPIO_ACTIVE_HIGH>;
-+	};
+### 1. COMMIT MESSAGE ANALYSIS
+
+**Subject**: "soc/tegra: pmc: Fix unsafe generic_handle_irq() call"
+
+The commit message is unambiguous - it's fixing a **real, observable
+WARNING** during system resume on Tegra platforms. The warning backtrace
+is included:
+
+```
+WARNING: CPU: 0 PID: 14459 at kernel/irq/irqdesc.c:666
+Call trace:
+ handle_irq_desc+0x20/0x58 (P)
+ tegra186_pmc_wake_syscore_resume+0xe4/0x15c
+ syscore_resume+0x3c/0xb8
+ suspend_devices_and_enter+0x510/0x540
+ pm_suspend+0x16c/0x1d8
+```
+
+The fix has been **Reviewed-by** and **Tested-by** Jon Hunter (NVIDIA
+kernel engineer), and authored by NVIDIA engineers who are experts on
+Tegra PMC.
+
+### 2. CODE CHANGE ANALYSIS - The Bug
+
+**Root cause**: `tegra186_pmc_wake_syscore_resume()` is called by
+`syscore_resume()` during system resume. Looking at `syscore_resume()`
+in `drivers/base/syscore.c:93-110`:
+
+```c
+void syscore_resume(void)
+{
+    WARN_ONCE(!irqs_disabled(), ...);
+    list_for_each_entry(syscore, &syscore_list, node)
+        if (syscore->ops->resume)
+            syscore->ops->resume(syscore->data);
+}
+```
+
+This runs with **interrupts disabled** but **NOT in hard IRQ context**
+(i.e., `in_hardirq()` returns false). However, when
+`generic_handle_irq()` is called, it goes through `handle_irq_desc()`
+(in `kernel/irq/irqdesc.c:658-671`):
+
+```c
+int handle_irq_desc(struct irq_desc *desc)
+{
+    data = irq_desc_get_irq_data(desc);
+    if (WARN_ON_ONCE(!in_hardirq() &&
+irqd_is_handle_enforce_irqctx(data)))
+        return -EPERM;
+    generic_handle_irq_desc(desc);
+    return 0;
+}
+```
+
+The ARM GIC v2 and GIC v3 interrupt controllers **set
+`IRQD_HANDLE_ENFORCE_IRQCTX` on ALL interrupts** they map (confirmed in
+`drivers/irqchip/irq-gic.c:1077` and `drivers/irqchip/irq-
+gic-v3.c:1585`). Since Tegra SoCs use ARM GIC, any IRQ going through the
+Tegra wake domain will have this flag set. Thus, calling
+`generic_handle_irq()` from the syscore resume context (not hard IRQ)
+triggers the `WARN_ON_ONCE`.
+
+**Why it matters**: Beyond the WARN, the function returns `-EPERM`
+without actually handling the interrupt. This means **edge-triggered
+wake IRQs are silently dropped**, potentially causing missed wakeup
+events and device misbehavior after resume.
+
+### 3. THE FIX
+
+The fix:
+1. Adds `struct irq_work wake_work` and `u32 *wake_status` fields to
+   `struct tegra_pmc`
+2. Creates a new `tegra186_pmc_wake_handler()` function (the IRQ work
+   handler) that contains the logic previously in
+   `tegra186_pmc_process_wake_events()`
+3. `tegra186_pmc_wake_syscore_resume()` now saves wake status to
+   `pmc->wake_status[]` and queues the IRQ work via `irq_work_queue()`
+4. The IRQ work handler runs in **hard IRQ context** where
+   `generic_handle_irq()` is safe
+5. Uses `IRQ_WORK_INIT_HARD()` to ensure hard IRQ context even on
+   `PREEMPT_RT` kernels
+6. Adds a check in `tegra186_pmc_wake_syscore_suspend()` for unhandled
+   wake IRQs
+
+This is the **correct** fix pattern - using `irq_work` to defer IRQ
+handling to hard IRQ context is a well-established kernel pattern.
+Multiple other drivers have been fixed similarly (see commits
+`94ec234a16cf3`, `118c3ba24d04f`, `c6a91405ac5cd`, `f285de79569f9`,
+`f460c70125bcb` which all converted to `generic_handle_irq_safe()`).
+
+### 4. DEPENDENCY ANALYSIS
+
+**Critical dependency**: This commit was written against the v6.19 tree
+which has the new `struct syscore` API from commit `a97fbc3ee3e2a`
+(v6.19-rc1 only). In stable trees (v6.6, v6.12), the functions use the
+old `struct syscore_ops` interface:
+- `tegra186_pmc_wake_syscore_resume(void)` (no `void *data` parameter)
+- `tegra186_pmc_wake_syscore_suspend(void)` (no `void *data` parameter)
+- `struct syscore_ops syscore` (not `struct syscore`)
+
+**However**, the core fix logic (adding `irq_work`, deferring
+`generic_handle_irq()`) does NOT depend on the syscore API change. The
+fix can be backported with minor adaptation:
+- The function signatures need to match the old `syscore_ops` callbacks
+  (no `void *data`)
+- `IRQ_WORK_INIT_HARD` and `irq_work_queue` are available in v6.6+
+- The `irq_work` and `wake_status` additions to `struct tegra_pmc` are
+  self-contained
+
+**Affected stable trees**: v6.6.y, v6.12.y (and any other active stable
+tree based on v6.2+, since commit `0474cc8489bda` introduced the buggy
+code in v6.2).
+
+### 5. SCOPE AND RISK
+
+- **Files changed**: 1 file (`drivers/soc/tegra/pmc.c`)
+- **Lines**: ~+60, ~-30 (net ~30 lines added)
+- **Subsystem**: Tegra SoC PMC - a self-contained platform driver
+- **Risk**: LOW - The change only affects Tegra platforms with wake
+  events. The `irq_work` mechanism is well-tested kernel infrastructure.
+  The fix has been reviewed and tested by NVIDIA engineers.
+- **Regression risk**: Very low - non-Tegra systems are unaffected. The
+  new code path is functionally equivalent but executes in the correct
+  context.
+
+### 6. USER IMPACT
+
+- **Who**: All users of NVIDIA Tegra186+ SoCs (Tegra186, Tegra194,
+  Tegra234) using suspend/resume
+- **Severity**: Every system resume triggers a kernel WARNING. Beyond
+  the warning itself, edge-triggered wake IRQs may be silently dropped
+  because `handle_irq_desc()` returns `-EPERM` without processing the
+  interrupt
+- **Real-world**: Tegra platforms are used in NVIDIA Jetson embedded
+  systems, automotive platforms, and gaming devices (Nintendo Switch)
+
+### 7. CONCLUSION
+
+This is a clear bug fix for a real, reproducible issue that fires on
+every resume on affected hardware. The fix uses a well-established
+kernel pattern (irq_work) and is self-contained within a single platform
+driver file. It has been reviewed and tested by the subsystem
+maintainers. The fix will need minor adaptation for stable trees
+(different `syscore_ops` API), but the core logic is fully applicable.
+The bug exists in all stable trees from v6.2 onward.
+
+**YES**
+
+ drivers/soc/tegra/pmc.c | 104 ++++++++++++++++++++++++++++------------
+ 1 file changed, 74 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index f3760a3b3026d..407fa840814c3 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -28,6 +28,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irq.h>
++#include <linux/irq_work.h>
+ #include <linux/kernel.h>
+ #include <linux/of_address.h>
+ #include <linux/of_clk.h>
+@@ -468,6 +469,10 @@ struct tegra_pmc {
+ 	unsigned long *wake_sw_status_map;
+ 	unsigned long *wake_cntrl_level_map;
+ 	struct syscore syscore;
 +
- 	sound {
- 		compatible = "nvidia,tegra-audio-alc5632-paz00",
- 			"nvidia,tegra-audio-alc5632";
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index a2bb55bc0081..9e3abb14fbc1 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -15,5 +15,3 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
++	/* Pending wake IRQ processing */
++	struct irq_work wake_work;
++	u32 *wake_status;
+ };
  
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= pm-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= pm-tegra30.o
--
--obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-paz00.o
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-deleted file mode 100644
-index 3ec810b6f1a7..000000000000
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ /dev/null
-@@ -1,56 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * arch/arm/mach-tegra/board-paz00.c
-- *
-- * Copyright (C) 2011 Marc Dietrich <marvin24@gmx.de>
-- *
-- * Based on board-harmony.c
-- * Copyright (C) 2010 Google, Inc.
-- */
--
--#include <linux/err.h>
--#include <linux/gpio/machine.h>
--#include <linux/gpio/property.h>
--#include <linux/platform_device.h>
--#include <linux/printk.h>
--#include <linux/property.h>
--
--#include "board.h"
--
--static const struct software_node tegra_gpiochip_node = {
--	.name	= "tegra-gpio",
--};
--
--static const struct property_entry wifi_rfkill_prop[] __initconst = {
--	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
--	PROPERTY_ENTRY_STRING("type", "wlan"),
--	PROPERTY_ENTRY_GPIO("reset-gpios",
--			    &tegra_gpiochip_node, 25, GPIO_ACTIVE_HIGH),
--	PROPERTY_ENTRY_GPIO("shutdown-gpios",
--			    &tegra_gpiochip_node, 85, GPIO_ACTIVE_HIGH),
--	{ }
--};
--
--static const struct platform_device_info wifi_rfkill_info __initconst = {
--	.name		= "rfkill_gpio",
--	.id		= PLATFORM_DEVID_NONE,
--	.properties	= wifi_rfkill_prop,
--};
--
--void __init tegra_paz00_wifikill_init(void)
--{
--	struct platform_device *pd;
--	int err;
--
--	err = software_node_register(&tegra_gpiochip_node);
--	if (err) {
--		pr_err("failed to register %s node: %d\n",
--		       tegra_gpiochip_node.name, err);
--		return;
--	}
--
--	pd = platform_device_register_full(&wifi_rfkill_info);
--	err = PTR_ERR_OR_ZERO(pd);
--	if (err)
--		pr_err("failed to register WiFi rfkill device: %d\n", err);
--}
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index 7b3ef0dc9be1..86c3ea0d6b30 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -19,6 +19,4 @@
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
+ static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+@@ -1905,6 +1910,50 @@ static int tegra_pmc_parse_dt(struct tegra_pmc *pmc, struct device_node *np)
+ 	return 0;
+ }
  
--void __init tegra_paz00_wifikill_init(void);
--
- #endif
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 9ef1dfa7b926..f324a7e491d8 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -83,10 +83,6 @@ static void __init tegra_dt_init(void)
- 
- static void __init tegra_dt_init_late(void)
++/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
++static void tegra186_pmc_wake_handler(struct irq_work *work)
++{
++	struct tegra_pmc *pmc = container_of(work, struct tegra_pmc, wake_work);
++	unsigned int i, wake;
++
++	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
++		unsigned long status = pmc->wake_status[i];
++
++		for_each_set_bit(wake, &status, 32) {
++			irq_hw_number_t hwirq = wake + (i * 32);
++			struct irq_desc *desc;
++			unsigned int irq;
++
++			irq = irq_find_mapping(pmc->domain, hwirq);
++			if (!irq) {
++				dev_warn(pmc->dev,
++					 "No IRQ found for WAKE#%lu!\n",
++					 hwirq);
++				continue;
++			}
++
++			dev_dbg(pmc->dev,
++				"Resume caused by WAKE#%lu mapped to IRQ#%u\n",
++				hwirq, irq);
++
++			desc = irq_to_desc(irq);
++			if (!desc) {
++				dev_warn(pmc->dev,
++					 "No descriptor found for IRQ#%u\n",
++					 irq);
++				continue;
++			}
++
++			if (!desc->action || !desc->action->name)
++				continue;
++
++			generic_handle_irq(irq);
++		}
++
++		pmc->wake_status[i] = 0;
++	}
++}
++
+ static int tegra_pmc_init(struct tegra_pmc *pmc)
  {
--	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
--	    of_machine_is_compatible("compal,paz00"))
--		tegra_paz00_wifikill_init();
+ 	if (pmc->soc->max_wake_events > 0) {
+@@ -1923,6 +1972,18 @@ static int tegra_pmc_init(struct tegra_pmc *pmc)
+ 		pmc->wake_cntrl_level_map = bitmap_zalloc(pmc->soc->max_wake_events, GFP_KERNEL);
+ 		if (!pmc->wake_cntrl_level_map)
+ 			return -ENOMEM;
++
++		pmc->wake_status = kcalloc(pmc->soc->max_wake_vectors, sizeof(u32), GFP_KERNEL);
++		if (!pmc->wake_status)
++			return -ENOMEM;
++
++		/*
++		 * Initialize IRQ work for processing wake IRQs. Must use
++		 * HARD_IRQ variant to run in hard IRQ context on PREEMPT_RT
++		 * because we call generic_handle_irq() which requires hard
++		 * IRQ context.
++		 */
++		pmc->wake_work = IRQ_WORK_INIT_HARD(tegra186_pmc_wake_handler);
+ 	}
+ 
+ 	if (pmc->soc->init)
+@@ -3129,47 +3190,30 @@ static void wke_clear_wake_status(struct tegra_pmc *pmc)
+ 	}
+ }
+ 
+-/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
+-static void tegra186_pmc_process_wake_events(struct tegra_pmc *pmc, unsigned int index,
+-					     unsigned long status)
+-{
+-	unsigned int wake;
 -
- 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
- 	    of_machine_is_compatible("nvidia,tegra20"))
- 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+-	dev_dbg(pmc->dev, "Wake[%d:%d]  status=%#lx\n", (index * 32) + 31, index * 32, status);
+-
+-	for_each_set_bit(wake, &status, 32) {
+-		irq_hw_number_t hwirq = wake + 32 * index;
+-		struct irq_desc *desc;
+-		unsigned int irq;
+-
+-		irq = irq_find_mapping(pmc->domain, hwirq);
+-
+-		desc = irq_to_desc(irq);
+-		if (!desc || !desc->action || !desc->action->name) {
+-			dev_dbg(pmc->dev, "Resume caused by WAKE%ld, IRQ %d\n", hwirq, irq);
+-			continue;
+-		}
+-
+-		dev_dbg(pmc->dev, "Resume caused by WAKE%ld, %s\n", hwirq, desc->action->name);
+-		generic_handle_irq(irq);
+-	}
+-}
+-
+ static void tegra186_pmc_wake_syscore_resume(void *data)
+ {
+-	u32 status, mask;
+ 	unsigned int i;
++	u32 mask;
+ 
+ 	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
+ 		mask = readl(pmc->wake + WAKE_AOWAKE_TIER2_ROUTING(i));
+-		status = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+-
+-		tegra186_pmc_process_wake_events(pmc, i, status);
++		pmc->wake_status[i] = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+ 	}
++
++	/* Schedule IRQ work to process wake IRQs (if any) */
++	irq_work_queue(&pmc->wake_work);
+ }
+ 
+ static int tegra186_pmc_wake_syscore_suspend(void *data)
+ {
++	unsigned int i;
++
++	/* Check if there are unhandled wake IRQs */
++	for (i = 0; i < pmc->soc->max_wake_vectors; i++)
++		if (pmc->wake_status[i])
++			dev_warn(pmc->dev,
++				 "Unhandled wake IRQs pending vector[%u]: 0x%x\n",
++				 i, pmc->wake_status[i]);
+ 	wke_read_sw_wake_status(pmc);
+ 
+ 	/* flip the wakeup trigger for dual-edge triggered pads
 -- 
-2.53.0.310.g728cabbaf7-goog
+2.51.0
 
-
--- 
-Dmitry
