@@ -1,185 +1,168 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF30B2309B2
-	for <linux-tegra@vger.kernel.org>; Sun, 15 Feb 2026 07:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02317254B19
+	for <linux-tegra@vger.kernel.org>; Sun, 15 Feb 2026 07:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771139831; cv=pass; b=LClUiTxqU7bv6ys2qGG0EIZAvMXvwba/rRohd2So2UCjzvWO0G5FxzUm2sF/24mBZGFadWt1qTzUBZzhe9BIs02Ah4Th+k3cNUe16rzg6ATJHcJVltVzwf6GYhS6j3ZAXnxgTWVR/PI+irZP+nyxKcRnXe51RY47pqzKSxkK9tQ=
+	t=1771140042; cv=pass; b=e60c2rBjzwNJes9liyI2EEAWnR0Gxa1DLq0wv0f1qhdj2AQbdzQJ/+aXb7NiH5fRlWm8fEsEEe6Yh++HbVvTRXXtauUefT2dWUDog1LecD8rPSwCoYfl08uPJEFpWYTPSmm21v83TrfA5pzs+24DWZcximw/ubiLCwlmoYvGkKg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771139831; c=relaxed/simple;
-	bh=JS0BhaI0M0T4OEwZE5zY7caL8Sh/25K/U2LDuisyfWQ=;
+	s=arc-20240116; t=1771140042; c=relaxed/simple;
+	bh=zH4HBbbxg7c5SpB1wbJ9DMfeN1jn35YMQAtU8Uamq5Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rDFdv1tI0mYQJLbHFJK9vkQnyuZBn2aljXL/+USV6J/KqcPiyimOkJvAUQ2WEK+OQM+ywH7w2HyrKP3qhqFQUoDup8h4R6jSAd0nCtY+RMkyWhFmLuTJPu0UeCPWHXJ3YEDg+KUIUmJ1+oYlImv3pdUQeFilUQh2SbDIC617Uks=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UcHS3NZa; arc=pass smtp.client-ip=209.85.128.41
+	 To:Cc:Content-Type; b=CTJpNaBCuqDtkQqEAAWZeIYbu/dI5oupzUHFeZ3O60prd/+85Z+3X3UqtIaDYRAfqiWdR3IDR9xzcgNK9v846S8JhUfOnOjwOVU8BsUExfepPU/6x55BXBU06LpcqttRnhe1Kyr+tTGWRI+n8q6US9R+5yI8PXoKWpRdBbKl0Bk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jw2zn2dd; arc=pass smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcHS3NZa"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483770e0b25so15783235e9.0
-        for <linux-tegra@vger.kernel.org>; Sat, 14 Feb 2026 23:17:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771139828; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jw2zn2dd"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4376c0bffc1so1610764f8f.0
+        for <linux-tegra@vger.kernel.org>; Sat, 14 Feb 2026 23:20:40 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771140039; cv=none;
         d=google.com; s=arc-20240605;
-        b=QeCcXvi8IGijV5rYY6Jb5h57SPurGBxaMJ2fgCBEJoRNqHCJCZCYCqDMhlzoFmIme+
-         0esGeikkgdkrNDDM3lfKgLoNBaQcsIPcAGx8iAPpz1WQTBNoFLHfDeubJ5zcoEE2wEDW
-         1NNSm2YmPOm841AvBj6M65j2rGiXbjeXI+nCFO3itdfyVz30kkhWRfPfj/3ED84vuiY2
-         5f43BzjXVfPWepVPyRpNtF5yVvVp58tp1z+40l9ZshAKxal9xLyYHas/+JJSpUFXhwot
-         /Zw0uUNHZ9k3eSsOyLaDuvJsElz99eI8P41u4PSCJtTH5uieVg+idFje2p0ki9X/QJYy
-         +bkQ==
+        b=ehHtOB66ug7ljiieBXMJuJxMWWVWwM8VBAYzo+LfuXhcBiyM2EjD2+6vdSlWAT/+bV
+         2uVTXCq0PztPJWxRz+s6D8ijHTin7EEd7yuWRjPbbY4lU7czkEjNtPlywKsteRkhjWsd
+         ZoJTbMbqM9IxfbVDnltL+PY7Sgg41sblMtmvzS+Lj4fk2QFw+QTpAMhFKGqssPQRKhlk
+         I5rfbsb27b4O2XO5hUk0r/bVEWiIbcy8E8QbYciKxO+O60BTznSp580BbB+U30rg4aZ2
+         kS/SJLu7a9f/92rTUrlU0oYFcQJFLDzMcWDVglrzSsEXviwozvTk8SiJFazSCPLbIrCP
+         g/Pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=zeJsvif0Hv7LAaNzH9fCosrikSJya4xCU2x26mkmqJQ=;
-        fh=x+CbN7dVJUye6/n1nXqr/pkVZOL/r1dvrHS80XHZze0=;
-        b=cmwYeEtkIPDU+gfK06uc3zXEXq5MR1dsi+B9UA/joiBPSW0jcrymfuDeKSBVLHOZtl
-         XQ9yLR9uxqLv8H0Jp8LsHl22eikWMy32MpaBqYQ7ALxwDEZEdmdn+n9UkzzZMWXpW9zd
-         CV0xQuETuOoHoB3j/VNLXchGJgRUeGh3Kyl+rbDtjdEJneI5yeFkXRqyzOQLN87UHss/
-         YJBvwoB1+bEIZq9Q4Ay3d5yibYF6OLgB9OT2uBXjVK27ITWEBYyayT133NmUXO+UIQDw
-         vGpcWr6LdaSVtUgDXnXLTbXHpwlQzpkra65dhFXDPzd98Vt8QfyG9FfDyvvVKrKUiS3C
-         /kMQ==;
+        bh=zrl8aWdaaVOiH5RwKkza6kCyl+a95ccxt2cwlIZXNr0=;
+        fh=m8x7/9W4VvpzbESRCufIem40bLyr+SbX69scdRHdQtA=;
+        b=gMko/FiM23UdX15APaNy00m3cJsrG2Rt+KFGTFeFkIYEJDdVDxzeD09yHRqHepyrbo
+         kvU4T1tYBZ1AMOTjwL3IlqDRfK1cFqmKfPlJzjt6i8TJ1DzfrCq89r+gaDPzxe01lJh2
+         aV1uAMwI70ftNAH0nXl4ao5bxsxlNLqzwV7Hr3wbkNxgFLbazlMOyxked/ffx6qkzcb1
+         W7imp6LydPLEXyWg3NsnJmWkyQpYQCU/WY15CE4nLAMfzPRv1/f2Smu2HWqOWsdDL/eZ
+         3QM5NlAzi0hTepqIlovenOsnCaUOeHf3J8a9Yb/hfVp7KlikgKOuveGNCfaz1U//QM8E
+         HVjg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771139828; x=1771744628; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771140039; x=1771744839; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zeJsvif0Hv7LAaNzH9fCosrikSJya4xCU2x26mkmqJQ=;
-        b=UcHS3NZaUFLXn2Pho7FkrZa/l1Sx/cjepb0MyVOzQTAQOPQkPdRlSLYn1/ymY5kOw3
-         7wJivbKJZeSIyb7OzKryecZcklTFl7tSJclqf0aCNZX70WloZJb1hSHdfWKf6YRPpooB
-         +BJf/Ky/5NrEFDCcEc7L75fEoEVMK1MprVSTEBjKbZ7LBXfOxk8v00iE90u8gRc9dDl7
-         vnFhWuyDAYy5mgghkDsnIVn5JJH4AR95wyFeEUmKL7/P4DleOum3EtceTUXalc2cXIvQ
-         TmuxAmNcA7xc9ncX+1pXsZkLDTYSKG56BL9rHDVyp02/xJtGjLqkQNYLJg9zrXdD2jBa
-         Y6Gg==
+        bh=zrl8aWdaaVOiH5RwKkza6kCyl+a95ccxt2cwlIZXNr0=;
+        b=Jw2zn2ddDnQ8gsVEysucpao+XB1JKeSR/7Dsiur2TmnoIzWfQvgp/iZIQAbASrhKK0
+         b7MIQ76Z1327PyR1HwdHgkPWOXU18ewkd6fTFN2llGGpXum90BUFXmnW8WcCcZ+ZeYGY
+         BjZ5zdIF69SooFUtMRbupdTbCMQlFp8kACbBs0PTnZiOzo3bnRqSZpk/loTkfRRsZKXJ
+         E+A+NRDwZRblstZeirrR+wzSyIAyl17xfevfL5Plb9cJkrJCSthOifSazFVsA+EpQ3Di
+         FcF89MCSGatjTb/ONuGCdKAMCbjyDLh2nnEUKY8PD7eS1BvSn+tHULkVA2drbOTAQ/tf
+         Rtdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771139828; x=1771744628;
+        d=1e100.net; s=20230601; t=1771140039; x=1771744839;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=zeJsvif0Hv7LAaNzH9fCosrikSJya4xCU2x26mkmqJQ=;
-        b=GX2CgjvxVRX4oh7lu2fJ1QLRcqNMkEINU2vqPGztYAvkmTDqUGAnuSvqPdf0/NnA15
-         bkrnIATEKOnMbAkm9DK3UGEI491dTSQRQlC+gf8fXgr2uBZv+PKuyKGL8ZK/4VBMLxmx
-         fTR/QORK3jRXAJZaxx1QL/luziY/6EfREFLhGaBjDJ74QhzHU+zJ26p7zn2n9AOS7PsG
-         rwOGKLPwSR6yo3Nkfh5ZdwGpZslWBvfDvzIrL4bsQW2T0QFZKSH2esk1ufKopLomyH6P
-         bS4KFJL3D0gtE5xfFNAEWIfvvHaLpmZt6He6wFaC9GIjFvXzOb7hjAJNVw9kKTMOfsLD
-         OChA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs7BrCOGJTykEa5xReeeFMGQYAQ7RxbxcvErdNOpQTY5m42d3ysJPpD5Z2D+OhjjrzMzhAAR5V0ikeIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnQG7mMNYH20wLzijeG1J6oWunB1vXrttPy2PG3ukPD2UsP6+3
-	25AlG9JwSBAC/ShAbli+Mmkw5pxuUDwR6uNsWRQBg3+NFH5nhH2mVXT5bh6c0VvvuAEgecgB/k1
-	3HE/0Kyb1PiiGCpXxuHAnpfbm4O+tE40=
-X-Gm-Gg: AZuq6aIevq2l82o0E/M+M84dX+WhYv9GUbcstrhJRvjMD7+V5WmWXhhAVcMBrNNJ8uw
-	lyDw6sCzQ7WmmibaPQh7sFRXDFFdr5nZCmecKaXnRRUgvsQjSsbWgaICTRXxz3AL6auMTvfEI+R
-	1n/ksbp2htjFfn9uCVP9tEort71yB6mDZ5kpbd/C+saijXBEfIslsBpIo3XkOXVNzIh+Wf/mq2m
-	aZ15dGHeCAYX4LJveH1fTHm1tGUGDufnL0v0bKXUNEwfh2NBaSp9wmteY2C2QFp/PKi9jW3TEYI
-	+hSnr6UF
-X-Received: by 2002:a05:600c:314b:b0:482:eec4:772 with SMTP id
- 5b1f17b1804b1-483710962c5mr95610675e9.32.1771139827996; Sat, 14 Feb 2026
- 23:17:07 -0800 (PST)
+        bh=zrl8aWdaaVOiH5RwKkza6kCyl+a95ccxt2cwlIZXNr0=;
+        b=Um7ioKaNthm8Oqa7qA+vg7j2ijH6pQJFraeoDxyEdVBLKMgZhZcy1+UvlNQT7qUUKd
+         ZF5JK/35JSKbKVZecEz69ZiymQpoBH4kBeaEhzeGr/Be/YteYWPi3z9KjG18vDJrt4nb
+         LHPCZxrEOVK0bmUjinM9MRmngfCbUsBNRdrn59yeS3E7mCfmR+HTEzxXgvYZMyC5wbJM
+         WqrRB6tLWNow74FNhLyvaTsG4ayER+G3hwBTCMBBsaPxAobw4tt7YICZ/6gxEJNEZlZB
+         3Gm8oDL3HEE/5/UZOunLBC64Q4XGWhov3uRzuls0m5gP3TSpgjeGTEvAz7PR+8gzJv4d
+         pXlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWo1RwKy2mimrnOOa5SMkSmijgQMUjd3t9kfsUwaS3d3N3fYBzXFgFQVXMc7nuY3UfoVKpVwKon+ugPDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSuemb9mIFBsZIpsR6CrAH8pQKcth0uVgixCho8Y4YmXUhMdaV
+	zqroVi1PTb5YUot5ubZ/Naj0MEsUrRevb5PF9CiHr1sedWAuyCRFlEDZSb4YdfiPtFa9nXl3F2v
+	tX1fLDL2mJ6Ey3nomTyyLtlvqq54brz0=
+X-Gm-Gg: AZuq6aI/NmO3e9KVBSg3iyamnpTmgOJ3wCMg2giMJ5GwQc59gZOwMf1sEiUbfuVT2mB
+	z4LpHRon6DLpU6A9QFejBzL55XeWiQJnLmjvQ0f1KabsIDv4Ed0nEZufXq0YrEOIpXOq42PHGqF
+	Y+L4kEmeEyZoAGWyK64NdXmUMYg8+qK7MTaM3r72CxiaPxU1bAZ0EiauPjMSNsjG7MZObMcH5OC
+	XyiM3DPnMnT4LIT894w44A8FDffDTLWq0I9Dq2TFvsv3EHKvE4QMdhCEiJH9v37eDwatch90kaq
+	a5AhE14H
+X-Received: by 2002:a05:6000:1843:b0:435:e3bd:5838 with SMTP id
+ ffacd0b85a97d-437978dd2fcmr12170774f8f.25.1771140039258; Sat, 14 Feb 2026
+ 23:20:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828055104.8073-1-clamor95@gmail.com> <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
- <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org> <amc5e3sffmwqguivwch6b5vtmlgu5dlwxm7bsrn6nd3rllbvxg@koqmavn6uuy5>
-In-Reply-To: <amc5e3sffmwqguivwch6b5vtmlgu5dlwxm7bsrn6nd3rllbvxg@koqmavn6uuy5>
+References: <20251204060627.4727-1-clamor95@gmail.com> <20251204060627.4727-4-clamor95@gmail.com>
+ <10344542.CDJkKcVGEf@senjougahara>
+In-Reply-To: <10344542.CDJkKcVGEf@senjougahara>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sun, 15 Feb 2026 09:16:56 +0200
-X-Gm-Features: AaiRm52Z85WpK7PRCO4DxAthTZnDrmXah2vXpcFwOt0kQol8-3vlcxVKAzvYBBg
-Message-ID: <CAPVz0n23UwST=jy+B+QSg+6A6B7uw1j6hY_p_b6J=ZmRU3zJig@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+Date: Sun, 15 Feb 2026 09:20:27 +0200
+X-Gm-Features: AaiRm51pnGpJ3XDXTbcvtaOsnyvgv9p2WlCbpT_dV5xTzz18pENDfpMLAaczCh0
+Message-ID: <CAPVz0n20hHAf9tFqUNYSO18rvvPbbY5nyVRB-KpiKD2ih=Vfpg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7 RESEND] ARM: tn7: adjust panel node
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Douglas Anderson <dianders@chromium.org>, 
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D1=82, 12 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 13:27 Thie=
-rry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+=D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:15 Mikk=
+o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On Thu, Sep 11, 2025 at 08:56:12PM +0200, Daniel Lezcano wrote:
-> > On 11/09/2025 18:27, Thierry Reding wrote:
-> > > On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
-> > > > SOCTHERM is thermal sensor and thermal throttling controller found =
-in Tegra
-> > > > SoC starting from Tegra114. Existing Tegra124 setup is mostly compa=
-tible
-> > > > with Tegra114 and needs only a few slight adjustmets of fuse calibr=
-ation
-> > > > process.
-> > > >
-> > > > ---
-> > > > Changes in v2:
-> > > > - no changes, resend.
-> > > >
-> > > > Changes in v3:
-> > > > - expanded desciption of "thermal: tegra: soctherm-fuse: parametriz=
-e
-> > > >    configuration further" commit
-> > > > - changes title of "thermal: tegra: soctherm-fuse: parametrize
-> > > >    configuration further" to "thermal: tegra: soctherm-fuse: prepar=
-e
-> > > >    calibration for Tegra114 support"
-> > > > - Tegra11x > Tegra114 and Tegra12x > Tegra124
-> > > > - ft and cp shift bits dropped
-> > > > - clarified tegra114 precision
-> > > > - lower_precision > use_lower_precision
-> > > > - nominal calibration ft and cp hardcoded into SoC specific structu=
-res
-> > > > - added tegra114-soctherm header into dt-bindings
-> > > >
-> > > > Changes in v4:
-> > > > - fixed Tegra124/132/210 cp mask
-> > > > - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
-> > > > - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
-> > > > - adjusted soctherm node and inclusions in tegra114.dtsi
-> > > > - dropped use_lower_presision and nominal_calib_cp options
-> > > >
-> > > > Changes in v5:
-> > > > - fixed CPU and GPU hotspot offset values
-> > > > - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
-> > > >    counterparts are equal
-> > > > ---
-> > > >
-> > > > Svyatoslav Ryhel (6):
-> > > >    soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
-> > > >    dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Managem=
-ent
-> > > >      System
-> > > >    thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
-> > > >      support
-> > > >    dt-bindings: thermal: add Tegra114 soctherm header
-> > > >    thermal: tegra: add Tegra114 specific SOCTHERM driver
-> > > >    ARM: tegra: Add SOCTHERM support on Tegra114
-> > >
-> > > Hi Daniel,
-> > >
-> > > there's a build-time dependency on patch 4 in both patches 5 and 6. D=
-o
-> > > you want to pick up patches 2-5 from this series and I pick up patch =
-1
-> > > and hold off on applying patch 6 until after the merge window? We cou=
-ld
-> > > also do a shared branch, but it may not be worth the extra hassle.
+> On Thursday, December 4, 2025 3:06=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > Adjust panel node in Tegra Note 7 according to the updated schema.
 > >
-> > I can take the patches 2-5. Regarding a shared branch or wait for the n=
-ext
-> > version, I would prefer the latter
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/nvidia/tegra114-tn7.dts | 13 +++++++------
+> >  1 file changed, 7 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boot/=
+dts/nvidia/tegra114-tn7.dts
+> > index bfbdb345575a..75fbafb4a872 100644
+> > --- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
+> > +++ b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
+> > @@ -43,7 +43,9 @@ panel@0 {
+> >                               compatible =3D "lg,ld070wx3-sl01";
+> >                               reg =3D <0>;
+> >
+> > -                             power-supply =3D <&vdd_lcd>;
+> > +                             vdd-supply =3D <&avdd_lcd>;
+> > +                             vcc-supply =3D <&dvdd_lcd>;
+> > +
+> >                               backlight =3D <&backlight>;
+> >                       };
+> >               };
+> > @@ -101,11 +103,10 @@ smps45 {
+> >                                               regulator-boot-on;
+> >                                       };
+> >
+> > -                                     smps6 {
+> > +                                     avdd_lcd: smps6 {
+> >                                               regulator-name =3D "va-lc=
+d-hv";
+> > -                                             regulator-min-microvolt =
+=3D <3000000>;
+> > -                                             regulator-max-microvolt =
+=3D <3000000>;
+> > -                                             regulator-always-on;
+> > +                                             regulator-min-microvolt =
+=3D <3160000>;
+> > +                                             regulator-max-microvolt =
+=3D <3160000>;
+> >                                               regulator-boot-on;
+> >                                       };
+> >
+> > @@ -325,7 +326,7 @@ lcd_bl_en: regulator-lcden {
+> >               regulator-boot-on;
+> >       };
+> >
+> > -     vdd_lcd: regulator-lcd {
+> > +     dvdd_lcd: regulator-lcd {
+> >               compatible =3D "regulator-fixed";
+> >               regulator-name =3D "VD_LCD_1V8";
+> >               regulator-min-microvolt =3D <1800000>;
+> >
 >
-> Alright, let's do it that way. I've picked up patch 1. If you take
-> patches 2-5 now I'll pick up patch 6 once v6.18-rc1 has released.
+> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 >
 
-Thierry,
+Hi Thierry!
 
-Patch 6 "ARM: tegra: Add SOCTHERM support on Tegra114" adding thermal
-sensor nodes to tegra114 tree was not picked, should I resend this
-patch?
-
-> Thanks,
-> Thierry
+This is the only remaining patch from the original series. May you
+please pick it or should I resend it?
