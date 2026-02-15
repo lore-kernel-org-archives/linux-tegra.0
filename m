@@ -1,168 +1,107 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02317254B19
-	for <linux-tegra@vger.kernel.org>; Sun, 15 Feb 2026 07:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771140042; cv=pass; b=e60c2rBjzwNJes9liyI2EEAWnR0Gxa1DLq0wv0f1qhdj2AQbdzQJ/+aXb7NiH5fRlWm8fEsEEe6Yh++HbVvTRXXtauUefT2dWUDog1LecD8rPSwCoYfl08uPJEFpWYTPSmm21v83TrfA5pzs+24DWZcximw/ubiLCwlmoYvGkKg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771140042; c=relaxed/simple;
-	bh=zH4HBbbxg7c5SpB1wbJ9DMfeN1jn35YMQAtU8Uamq5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTJpNaBCuqDtkQqEAAWZeIYbu/dI5oupzUHFeZ3O60prd/+85Z+3X3UqtIaDYRAfqiWdR3IDR9xzcgNK9v846S8JhUfOnOjwOVU8BsUExfepPU/6x55BXBU06LpcqttRnhe1Kyr+tTGWRI+n8q6US9R+5yI8PXoKWpRdBbKl0Bk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jw2zn2dd; arc=pass smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F81F28EA56
+	for <linux-tegra@vger.kernel.org>; Sun, 15 Feb 2026 12:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771158582; cv=none; b=tYml58ZBtF1GJvuQLeO+hrdqLNQyKGBDyDUlNjWZvTMUrcFGPZ747hY56oAl5OCTZhA+xkC99Sz7ASqgH0yDjRuqJzK/aj5XqjQ7gVVkO6rf/M6AuP+BlF7WQAakyTKcJXGsqqc7bs9r8Iu60nuSx7UL7nU/kBQVH7vuKwe6pbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771158582; c=relaxed/simple;
+	bh=H9Eag/J8nZ4Fk38+jWaDcZUlZju5JzX5GpaFoz3CMM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e5vrZnmkiE4YF6Zwh/VoheEXmn/x4jWoj8xT5fHqrS1+qUcBfqN4GgtLzh4bBhcSaQaVdfpiG7IgmjvtoWRbGAGRDBnjoFdd1dYseTLHpbopr3EquBG+yld9Bs0B3yHqfWedu1pmn3mcqhFnS5vcEMlm67gDDbcZxqSf+Kwa+Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgjKHjci; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jw2zn2dd"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4376c0bffc1so1610764f8f.0
-        for <linux-tegra@vger.kernel.org>; Sat, 14 Feb 2026 23:20:40 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771140039; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ehHtOB66ug7ljiieBXMJuJxMWWVWwM8VBAYzo+LfuXhcBiyM2EjD2+6vdSlWAT/+bV
-         2uVTXCq0PztPJWxRz+s6D8ijHTin7EEd7yuWRjPbbY4lU7czkEjNtPlywKsteRkhjWsd
-         ZoJTbMbqM9IxfbVDnltL+PY7Sgg41sblMtmvzS+Lj4fk2QFw+QTpAMhFKGqssPQRKhlk
-         I5rfbsb27b4O2XO5hUk0r/bVEWiIbcy8E8QbYciKxO+O60BTznSp580BbB+U30rg4aZ2
-         kS/SJLu7a9f/92rTUrlU0oYFcQJFLDzMcWDVglrzSsEXviwozvTk8SiJFazSCPLbIrCP
-         g/Pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=zrl8aWdaaVOiH5RwKkza6kCyl+a95ccxt2cwlIZXNr0=;
-        fh=m8x7/9W4VvpzbESRCufIem40bLyr+SbX69scdRHdQtA=;
-        b=gMko/FiM23UdX15APaNy00m3cJsrG2Rt+KFGTFeFkIYEJDdVDxzeD09yHRqHepyrbo
-         kvU4T1tYBZ1AMOTjwL3IlqDRfK1cFqmKfPlJzjt6i8TJ1DzfrCq89r+gaDPzxe01lJh2
-         aV1uAMwI70ftNAH0nXl4ao5bxsxlNLqzwV7Hr3wbkNxgFLbazlMOyxked/ffx6qkzcb1
-         W7imp6LydPLEXyWg3NsnJmWkyQpYQCU/WY15CE4nLAMfzPRv1/f2Smu2HWqOWsdDL/eZ
-         3QM5NlAzi0hTepqIlovenOsnCaUOeHf3J8a9Yb/hfVp7KlikgKOuveGNCfaz1U//QM8E
-         HVjg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgjKHjci"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2ad32708177so30465ad.1
+        for <linux-tegra@vger.kernel.org>; Sun, 15 Feb 2026 04:29:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771140039; x=1771744839; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zrl8aWdaaVOiH5RwKkza6kCyl+a95ccxt2cwlIZXNr0=;
-        b=Jw2zn2ddDnQ8gsVEysucpao+XB1JKeSR/7Dsiur2TmnoIzWfQvgp/iZIQAbASrhKK0
-         b7MIQ76Z1327PyR1HwdHgkPWOXU18ewkd6fTFN2llGGpXum90BUFXmnW8WcCcZ+ZeYGY
-         BjZ5zdIF69SooFUtMRbupdTbCMQlFp8kACbBs0PTnZiOzo3bnRqSZpk/loTkfRRsZKXJ
-         E+A+NRDwZRblstZeirrR+wzSyIAyl17xfevfL5Plb9cJkrJCSthOifSazFVsA+EpQ3Di
-         FcF89MCSGatjTb/ONuGCdKAMCbjyDLh2nnEUKY8PD7eS1BvSn+tHULkVA2drbOTAQ/tf
-         Rtdw==
+        d=gmail.com; s=20230601; t=1771158580; x=1771763380; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GBpQTjMbL7rVa4GkhcvMwmD9kfre3V9nPWW/pKMHQS8=;
+        b=JgjKHjci1XPAWmMtERg9B/6JkLAHJofMYkM/xn//epl1YwCJ0K1py3vw/Uh4VbLqPN
+         E2F9UFUXPIJ7YvRT3+reNog4QwgQx+n0G0Uj8whTvLMFgL953N2085pwMownyrkK+bcf
+         mOD6iLdvGYTJUDt3zHCNWrbGFM7HaEn4SNMhR67eq9R+sZB5oMGdC+3Kwy5tTW2DNEMY
+         36uwU7Ao4PgRekt4sTIlQ5sdHu2pPyHYk+GjDxjFG7BcQaaqsg/j59at4lKe2wC4i8/U
+         6/kUNV57uF8pZ815asl2WHTLIsfQMhN2tmzcQ1jAH5CXYZbI4b1k5KgYz96nFByZmoQt
+         aQwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771140039; x=1771744839;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zrl8aWdaaVOiH5RwKkza6kCyl+a95ccxt2cwlIZXNr0=;
-        b=Um7ioKaNthm8Oqa7qA+vg7j2ijH6pQJFraeoDxyEdVBLKMgZhZcy1+UvlNQT7qUUKd
-         ZF5JK/35JSKbKVZecEz69ZiymQpoBH4kBeaEhzeGr/Be/YteYWPi3z9KjG18vDJrt4nb
-         LHPCZxrEOVK0bmUjinM9MRmngfCbUsBNRdrn59yeS3E7mCfmR+HTEzxXgvYZMyC5wbJM
-         WqrRB6tLWNow74FNhLyvaTsG4ayER+G3hwBTCMBBsaPxAobw4tt7YICZ/6gxEJNEZlZB
-         3Gm8oDL3HEE/5/UZOunLBC64Q4XGWhov3uRzuls0m5gP3TSpgjeGTEvAz7PR+8gzJv4d
-         pXlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWo1RwKy2mimrnOOa5SMkSmijgQMUjd3t9kfsUwaS3d3N3fYBzXFgFQVXMc7nuY3UfoVKpVwKon+ugPDQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSuemb9mIFBsZIpsR6CrAH8pQKcth0uVgixCho8Y4YmXUhMdaV
-	zqroVi1PTb5YUot5ubZ/Naj0MEsUrRevb5PF9CiHr1sedWAuyCRFlEDZSb4YdfiPtFa9nXl3F2v
-	tX1fLDL2mJ6Ey3nomTyyLtlvqq54brz0=
-X-Gm-Gg: AZuq6aI/NmO3e9KVBSg3iyamnpTmgOJ3wCMg2giMJ5GwQc59gZOwMf1sEiUbfuVT2mB
-	z4LpHRon6DLpU6A9QFejBzL55XeWiQJnLmjvQ0f1KabsIDv4Ed0nEZufXq0YrEOIpXOq42PHGqF
-	Y+L4kEmeEyZoAGWyK64NdXmUMYg8+qK7MTaM3r72CxiaPxU1bAZ0EiauPjMSNsjG7MZObMcH5OC
-	XyiM3DPnMnT4LIT894w44A8FDffDTLWq0I9Dq2TFvsv3EHKvE4QMdhCEiJH9v37eDwatch90kaq
-	a5AhE14H
-X-Received: by 2002:a05:6000:1843:b0:435:e3bd:5838 with SMTP id
- ffacd0b85a97d-437978dd2fcmr12170774f8f.25.1771140039258; Sat, 14 Feb 2026
- 23:20:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1771158580; x=1771763380;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBpQTjMbL7rVa4GkhcvMwmD9kfre3V9nPWW/pKMHQS8=;
+        b=ViD6PqqmRaw5+SjzpWNBTgdxqKZpD/74srkiu80ZVeFw3koI8SzW5KlXLOa+dX/+gW
+         osJEqG2Ea7NUBsDVvNVpWMyVJ+WkwY1OagmG1jUisxI6tBrblYbPOBKM7R79ZiAnGS9v
+         Ne6s0B6E4y62EfTXJn7MzSQEo+xR/TrXKWa9U0Dp96S71uomxef9eRJDaWtwsdNBPWla
+         mOdOVnO+BYIM7V8azpJZEWgfOpRRIqqxi4GWxaG09EjxnghNvdd3UOTIBXQEmytmKjyq
+         IjlzWdISjJ3MapMrF+nFi11H8rQ4SnpLp8EI5dRD0ILNn/w+T7AspIOKbPwaanU2Akgh
+         uVnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeRWCwmmn+MIfjCuITDAXIZbWP0Vu7EQv6ZGTn/1Er46ctJQyFNjB0ytie5ppEvt+9izIfUCdsg1Q5cA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIabJgOYunaYDj1oMZrJpIMe66sIkrwp4MZzgajBBTsXfRoCJo
+	CFurhv1kbWTQ+NyjSPluZV+z7riQRYN5EKqkg6bwll4owDSF1z7SZ31AWkFvxA==
+X-Gm-Gg: AZuq6aLs4Eyug3ncOg2SqZkzrYbJ6m460u/oef9p4mOLrfPCFlmh4gU09sHz6lfvD1+
+	PtDjK5f+dzGfqWPvXH5UD+fS0rSBxf0XgyaMHi29SHD1it7HUmBNicBfEUrybLedQgnt9b+mImf
+	pvHWkHo1VT/JrKLNi7aeSvIh+FxEyGaeyzUxUITXA8PdYwfEM5eSCLtq8dYBreaHz8rTyiizLD7
+	9fu8tJhFJ/JS4xH0elBopkdsPj08oJrt9DOcu5QNzzBIBjWxEDTwXKqH7VRnWHKnbC2e3sfl1tn
+	KVx/TDBGBlJXXoqRhhoYRDDWhm3NqpYD6jkvxFGlWT1jK73Ljzi+WAzv19B5CTsfjFUAGsELQRY
+	NBRB2h8tyrgaaW7GQ1LB7/Wab5kkZQo6XMPUylACwcSmBhOKl/XA6RKvgzKbdPKH1qOAHMRj8LJ
+	65JFzIt4gQNCH1RlVpAhVDdnF1lbOk0K90eYBgLq3l5HQBRBgbeQ==
+X-Received: by 2002:a17:902:ccc2:b0:2a7:682b:50af with SMTP id d9443c01a7336-2ab505ca8c6mr89910665ad.40.1771158579679;
+        Sun, 15 Feb 2026 04:29:39 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:8817:dac0:96bb:43ff:fec0:e782])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3567e9da8a2sm12868736a91.5.2026.02.15.04.29.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Feb 2026 04:29:38 -0800 (PST)
+From: Samyak <samyak.bambole07@gmail.com>
+To: marvin24@gmx.de
+Cc: gregkh@linuxfoundation.org,
+	ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Samyak Bambole <samyak.bambole07@gmail.com>
+Subject: [PATCH] staging: nvec: Use kzalloc_obj instead of kzalloc
+Date: Sun, 15 Feb 2026 17:59:13 +0530
+Message-ID: <20260215122913.104064-1-samyak.bambole07@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251204060627.4727-1-clamor95@gmail.com> <20251204060627.4727-4-clamor95@gmail.com>
- <10344542.CDJkKcVGEf@senjougahara>
-In-Reply-To: <10344542.CDJkKcVGEf@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sun, 15 Feb 2026 09:20:27 +0200
-X-Gm-Features: AaiRm51pnGpJ3XDXTbcvtaOsnyvgv9p2WlCbpT_dV5xTzz18pENDfpMLAaczCh0
-Message-ID: <CAPVz0n20hHAf9tFqUNYSO18rvvPbbY5nyVRB-KpiKD2ih=Vfpg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/7 RESEND] ARM: tn7: adjust panel node
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Douglas Anderson <dianders@chromium.org>, 
-	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-=D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:15 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, December 4, 2025 3:06=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Adjust panel node in Tegra Note 7 according to the updated schema.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/nvidia/tegra114-tn7.dts | 13 +++++++------
-> >  1 file changed, 7 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boot/=
-dts/nvidia/tegra114-tn7.dts
-> > index bfbdb345575a..75fbafb4a872 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-> > @@ -43,7 +43,9 @@ panel@0 {
-> >                               compatible =3D "lg,ld070wx3-sl01";
-> >                               reg =3D <0>;
-> >
-> > -                             power-supply =3D <&vdd_lcd>;
-> > +                             vdd-supply =3D <&avdd_lcd>;
-> > +                             vcc-supply =3D <&dvdd_lcd>;
-> > +
-> >                               backlight =3D <&backlight>;
-> >                       };
-> >               };
-> > @@ -101,11 +103,10 @@ smps45 {
-> >                                               regulator-boot-on;
-> >                                       };
-> >
-> > -                                     smps6 {
-> > +                                     avdd_lcd: smps6 {
-> >                                               regulator-name =3D "va-lc=
-d-hv";
-> > -                                             regulator-min-microvolt =
-=3D <3000000>;
-> > -                                             regulator-max-microvolt =
-=3D <3000000>;
-> > -                                             regulator-always-on;
-> > +                                             regulator-min-microvolt =
-=3D <3160000>;
-> > +                                             regulator-max-microvolt =
-=3D <3160000>;
-> >                                               regulator-boot-on;
-> >                                       };
-> >
-> > @@ -325,7 +326,7 @@ lcd_bl_en: regulator-lcden {
-> >               regulator-boot-on;
-> >       };
-> >
-> > -     vdd_lcd: regulator-lcd {
-> > +     dvdd_lcd: regulator-lcd {
-> >               compatible =3D "regulator-fixed";
-> >               regulator-name =3D "VD_LCD_1V8";
-> >               regulator-min-microvolt =3D <1800000>;
-> >
->
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
->
+From: Samyak Bambole <samyak.bambole07@gmail.com>
 
-Hi Thierry!
+Replace kzalloc(sizeof(*ptr), GFP_KERNEL) with kzalloc_obj(*ptr,
+GFP_KERNEL)
 
-This is the only remaining patch from the original series. May you
-please pick it or should I resend it?
+This addresses the following scripts/checkpatch.ph warning:
+  WARNING: Prefer kzalloc_obj over kzalloc with sizeof
+
+Signed-off-by: Samyak Bambole <samyak.bambole07@gmail.com>
+---
+ drivers/staging/nvec/nvec_ps2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
+index 2db57795ea2f..3422a5213803 100644
+--- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -102,7 +102,7 @@ static int nvec_mouse_probe(struct platform_device *pdev)
+ 	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
+ 	struct serio *ser_dev;
+ 
+-	ser_dev = kzalloc(sizeof(*ser_dev), GFP_KERNEL);
++	ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
+ 	if (!ser_dev)
+ 		return -ENOMEM;
+ 
+-- 
+2.53.0
+
