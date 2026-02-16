@@ -1,134 +1,162 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C33D2FDC5E;
-	Mon, 16 Feb 2026 08:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137532F1FC7
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 11:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771229732; cv=none; b=uSJZbGpZBlok2RIS8/TcDeBUUnv3BsUpQZ2ugHACF1Q4Pj8FLHuvygY4UmQe0SgYlTcac6/2velRY1lyP8cNC10G9eHq4elh/I13BmcJ1tWGYFWDo7+0O00HdizEUv4cw4K4QJEZWHx28SZQuJhF1cIGkh0io3hMhdh5kF9untQ=
+	t=1771241399; cv=none; b=GOh2wGOqg3RXMNz/QUA3NIcRr1pul2PeUwaObJedSqejLDF5ct8AyOwYZGeN5KwUSvwDNXvz5YKKIYcXvvelh8v24nkdEpEwGT52OmJMXwoHGgt6KteZHlZjp4yCv3lREIjgVN0ujyEi689hUUfN4+LpuIYingCA+boKoMrz0J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771229732; c=relaxed/simple;
-	bh=eSazOfn+jYYzuDJ5TSTUuQk3Pi9wLI+fGUmXgUnzD3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTLDtFRB1+GGTwFiGX4QI7PvPIuX91hBs+fZVqnOAwmJMqwHFcbw5AzTv2CKQh4sgni/LomqjmHepp9Ud7I+NexDel9wGRbE1zOX+gfCLXvKmUE9nE3vknn8Reymlf9DRBmR6Wd2JoM0uA0Kl8OMZAk5nqFZwlVFkTXP2XzH5RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZwzheFr; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1771241399; c=relaxed/simple;
+	bh=ffAZQU+7fwh3Tgv1vcT59hiUkdhyiDuXDwmVmN2sUKI=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DXE8CLFPrpG/yT6kDAggdtpU7yJmn9WxZvvpsYoK1S/VcDa81mKH/3o+/XCB40v0ACP5yvChcVPaEAp24SimFHQ14ADmuxJAzYAScoUcvE88AufvgNyiuY9B5Tka4CEi57azhcNg4n74YmfhUNKhNcllKY0ShOZevn4mGQuUQDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arQdawj1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZwzheFr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771229730; x=1802765730;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eSazOfn+jYYzuDJ5TSTUuQk3Pi9wLI+fGUmXgUnzD3k=;
-  b=AZwzheFr1gfz1gdy08vF41qqrcV1VOuCIhv4T0tGQ7GaO+jWOeDw5EvH
-   PvEPleSgDdxm2adMOsb60E41D/RabZlpidybuCmEnvzg5Xdv8d08h1goA
-   H+V9PH00olcMSd4WY0H+HvHCHCof77GKtDuxYoHdUp+Q8TgT/dilxtwhJ
-   MRB+lYsdLFjmjhcO5rjV69QwagNXeykCzdbIpdWhVQAruUBMuanHthq6d
-   R6RJKWXzDk4tdGGs2sVFRkoQckdIqueMomnR5LEDEMymF0jpjPES2LprR
-   i882YfG+T2dUXtUnAHEcadmSTbOOtnfjPInFFksSKjGTNGFhOJL7VZs1m
-   A==;
-X-CSE-ConnectionGUID: Dl01AP45QaCRZ1PmUKynqQ==
-X-CSE-MsgGUID: VH57sJOOR4aZvggY19NQWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="72401944"
-X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; 
-   d="scan'208";a="72401944"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2026 00:15:29 -0800
-X-CSE-ConnectionGUID: 3XUX+uXOTTGLxHG/6TqWFQ==
-X-CSE-MsgGUID: aFYS1FmLQvmnzC2HFpdf0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; 
-   d="scan'208";a="218090968"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 Feb 2026 00:15:28 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vrtlN-00000000zU8-0k7b;
-	Mon, 16 Feb 2026 08:15:25 +0000
-Date: Mon, 16 Feb 2026 16:14:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samyak <samyak.bambole07@gmail.com>, marvin24@gmx.de
-Cc: oe-kbuild-all@lists.linux.dev, gregkh@linuxfoundation.org,
-	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Samyak Bambole <samyak.bambole07@gmail.com>
-Subject: Re: [PATCH] staging: nvec: Use kzalloc_obj instead of kzalloc
-Message-ID: <202602161613.Rka1Yb9E-lkp@intel.com>
-References: <20260215122913.104064-1-samyak.bambole07@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arQdawj1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF2BC4AF0B
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 11:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771241398;
+	bh=ffAZQU+7fwh3Tgv1vcT59hiUkdhyiDuXDwmVmN2sUKI=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
+	b=arQdawj1zevZQlyxzyBu6mNVjS4touFotGhb9uWSLMvOKFDY+DbS76BNL5TKl+ev5
+	 xMwFFieyfb3G3tCpZntm73Yq07TA+sDxJ5Ag1gRU1cIp344FULE00ohP9JO9cOHae/
+	 YiKQpkX7gBeoo7SDt95w1wWqmXuxggVvgY4poe+67vf85EaAeYwb+oz541MybQ1Voa
+	 7K8Pm79V7tb6QHIYYIwgCcZU2Ql1gxYN8mwF8XFi8nJ2gB92nz0piQgeC8tUKlBL/F
+	 pL9uZWGdHoQsBrjjBAXjlBfw3lNCeOKBhfkfzS1ZxBFJqz3fAf0jBdQGF3WeB2YyjO
+	 eO/mR2eI8pxUg==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-38704f70ea3so25559211fa.2
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 03:29:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUtiWU38ODVV9FoS9rlR96Phwx9Fp/lERwif14XMyzQatLcAHRTi/q0RB5qY+bJrbLZUWYeYA7r7mL9MA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqaVnx4zTu6SOcdXuFhIRtrbM+z76dYozRmBg903/tW+UDp/OF
+	HBL13o5DrlFh80JC2fm5lPMPAJ9nfYXtakURc2QS/Gynhc9hnb627Bc1Ttb6u9utkVvU78xTL8b
+	TFuTcVtaNuqiX9fbmaW+hTdpoAW/fVtlbAMy9VLEqUQ==
+X-Received: by 2002:a05:651c:19a9:b0:386:7e61:5de1 with SMTP id
+ 38308e7fff4ca-388103f4306mr27361421fa.0.1771241397326; Mon, 16 Feb 2026
+ 03:29:57 -0800 (PST)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 16 Feb 2026 03:29:56 -0800
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 16 Feb 2026 03:29:56 -0800
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260216045842.1206350-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260215122913.104064-1-samyak.bambole07@gmail.com>
+References: <20260216045842.1206350-1-pshete@nvidia.com>
+Date: Mon, 16 Feb 2026 03:29:56 -0800
+X-Gmail-Original-Message-ID: <CAMRc=MdRL=_nRF5g4MukNjgeYGh=Bz3zN7bXEp7RPsLHHyq8xA@mail.gmail.com>
+X-Gm-Features: AaiRm50wNA8SFafoe1T907sBezYG1RY1RVOmUDX7ZwH1gEiMS6J53Evi1J47ZF0
+Message-ID: <CAMRc=MdRL=_nRF5g4MukNjgeYGh=Bz3zN7bXEp7RPsLHHyq8xA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: tegra186: Support multi-socket devices
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: linusw@kernel.org, brgl@kernel.org, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Samyak,
+On Mon, 16 Feb 2026 05:58:42 +0100, Prathamesh Shete <pshete@nvidia.com> said:
+> On Tegra platforms, multiple SoC instances may be present with each
+> defining the same GPIO name. For such devices, this results in
+> duplicate GPIO names.
+>
+> When the device has a valid NUMA node, prepend the NUMA node ID
+> to the GPIO name prefix. The node ID identifies each socket,
+> ensuring GPIO line names remain distinct across multiple sockets.
+>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 9c874f07be75..daf5aaffa28a 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -857,7 +857,8 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+>  	struct device_node *np;
+>  	struct resource *res;
+>  	char **names;
+> -	int err;
+> +	char *instance = "";
+> +	int node, err;
+>
+>  	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+>  	if (!gpio)
+> @@ -937,17 +938,21 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+>  	if (!names)
+>  		return -ENOMEM;
+>
+> +	node = dev_to_node(&pdev->dev);
+> +	if (node >= 0) {
+> +		instance = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%d-", node);
 
-kernel test robot noticed the following build errors:
+I've never noticed it before (and it's not introduced by this patch) but I
+really dislike the child device registering devres nodes with its parent...
 
-[auto build test ERROR on staging/staging-testing]
+> +		if (!instance)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
+>  		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+>  		char *name;
+>
+>  		for (j = 0; j < port->pins; j++) {
+> -			if (gpio->soc->prefix)
+> -				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
+> -						      gpio->soc->prefix, port->name, j);
+> -			else
+> -				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
+> -						      port->name, j);
+> +			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s%sP%s.%02x",
+> +					      instance ?: "", gpio->soc->prefix ?: "",
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samyak/staging-nvec-Use-kzalloc_obj-instead-of-kzalloc/20260215-203130
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20260215122913.104064-1-samyak.bambole07%40gmail.com
-patch subject: [PATCH] staging: nvec: Use kzalloc_obj instead of kzalloc
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20260216/202602161613.Rka1Yb9E-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260216/202602161613.Rka1Yb9E-lkp@intel.com/reproduce)
+instance can't be NULL here, can it? Either print it unconditionally or
+initialize it to NULL.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602161613.Rka1Yb9E-lkp@intel.com/
+> +					      port->name, j);
+>  			if (!name)
+>  				return -ENOMEM;
+>
+> @@ -1373,6 +1378,9 @@ static const struct tegra_gpio_soc tegra256_main_soc = {
+>  	.has_vm_support = true,
+>  };
+>
+> +/* Macro to define GPIO name prefix with separator */
+> +#define TEGRA_GPIO_PREFIX(_x)	_x "-"
+> +
 
-All errors (new ones prefixed by >>):
+This doesn't look like it belongs to this patch, why are you doing it?
 
-   drivers/staging/nvec/nvec_ps2.c: In function 'nvec_mouse_probe':
->> drivers/staging/nvec/nvec_ps2.c:105:19: error: implicit declaration of function 'kzalloc_obj'; did you mean 'kzalloc_node'? [-Wimplicit-function-declaration]
-     105 |         ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
-         |                   ^~~~~~~~~~~
-         |                   kzalloc_node
->> drivers/staging/nvec/nvec_ps2.c:105:17: error: assignment to 'struct serio *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     105 |         ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
-         |                 ^
+Bart
 
-
-vim +105 drivers/staging/nvec/nvec_ps2.c
-
-    99	
-   100	static int nvec_mouse_probe(struct platform_device *pdev)
-   101	{
-   102		struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
-   103		struct serio *ser_dev;
-   104	
- > 105		ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
-   106		if (!ser_dev)
-   107			return -ENOMEM;
-   108	
-   109		ser_dev->id.type = SERIO_8042;
-   110		ser_dev->write = ps2_sendcommand;
-   111		ser_dev->start = ps2_startstreaming;
-   112		ser_dev->stop = ps2_stopstreaming;
-   113	
-   114		strscpy(ser_dev->name, "nvec mouse", sizeof(ser_dev->name));
-   115		strscpy(ser_dev->phys, "nvec", sizeof(ser_dev->phys));
-   116	
-   117		ps2_dev.ser_dev = ser_dev;
-   118		ps2_dev.notifier.notifier_call = nvec_ps2_notifier;
-   119		ps2_dev.nvec = nvec;
-   120		nvec_register_notifier(nvec, &ps2_dev.notifier, 0);
-   121	
-   122		serio_register_port(ser_dev);
-   123	
-   124		return 0;
-   125	}
-   126	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  #define TEGRA410_COMPUTE_GPIO_PORT(_name, _bank, _port, _pins)	\
+>  	TEGRA_GPIO_PORT(TEGRA410_COMPUTE, _name, _bank, _port, _pins)
+>
+> @@ -1388,7 +1396,7 @@ static const struct tegra_gpio_soc tegra410_compute_soc = {
+>  	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
+>  	.ports = tegra410_compute_ports,
+>  	.name = "tegra410-gpio-compute",
+> -	.prefix = "COMPUTE",
+> +	.prefix = TEGRA_GPIO_PREFIX("COMPUTE"),
+>  	.num_irqs_per_bank = 8,
+>  	.instance = 0,
+>  };
+> @@ -1418,7 +1426,7 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
+>  	.num_ports = ARRAY_SIZE(tegra410_system_ports),
+>  	.ports = tegra410_system_ports,
+>  	.name = "tegra410-gpio-system",
+> -	.prefix = "SYSTEM",
+> +	.prefix = TEGRA_GPIO_PREFIX("SYSTEM"),
+>  	.num_irqs_per_bank = 8,
+>  	.instance = 0,
+>  };
+> --
+> 2.43.0
+>
+>
