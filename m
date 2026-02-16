@@ -1,118 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF70B19CC28
-	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 18:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217772E1EFC
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 20:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771267430; cv=none; b=AjLJlhNq4X0fHtUlQpsktZQEktRNVD6xLSv2HnStdBTuRj/vNdymLdxlzJMSbfGTkXrG7AExkW4/ra24omyQwXeEMxtnHRwLycnd5kSryeb23kZ7OBNO+3zo854he4Svkn/PmiU/lbkT+i0gF61b+17fgE3tfE+E5nAM4RYpNRg=
+	t=1771273215; cv=none; b=D017usOHxtn/sDtUlIyDWTEMyvcOTU9ws7xR14hH3w/+om3i8KBkjQKgL11pWMSTEdK0nR8oSIy7wGbR7/3ZloCXALhcS5b2c5/UMx3hhL6FgA9UBSXPCdi+tlPjTD1w1wwEVZAD/pKx2KAbTbGouqk+vJAUrxXccSWqHakwQ9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771267430; c=relaxed/simple;
-	bh=5U/nbIhPWFBwE7xp+uuldB/s3R7u9EG2QpjZA6/dcP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WasssLEO+swDYzPeOkhLkYz+tILuVUJi5JE0XqdouzQkAn5AvNoMfTHelIoDAcXjJbDhRTLsX8e/YaLYrhLeZv4GosLh9DM5wU2PxY1AxKE42mbudbRUIbbOz9DkWdXdEvKITOe6Kv8EplE2de9PvFekxc9z3+2LoEj3rXxOoek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxFhE6YB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771273215; c=relaxed/simple;
+	bh=CeerqnCqr8abcKdY7IWXj0FthuPZeynbfIxJ1HWIyaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ljq2tsn7zAkqPBeFustsjnmfatnP4bakIc88J8NpU05Xet/AvPd2gkNoxzS07eVBjSxPcWvThVUPdhezFLrh/btV+D+ZrXdNgn/E2e7JM6kp4MAdhUX2pXfYTe6RZdqmNyfk2Hi8L/wAEsS3ZasQeGWtPFUGX8Y7vOno1j9JmJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOT1bkM+; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxFhE6YB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910A5C19425
-	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 18:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771267430;
-	bh=5U/nbIhPWFBwE7xp+uuldB/s3R7u9EG2QpjZA6/dcP4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BxFhE6YBUgwB0ShzV5/MkHkcqhSsYArYifQSWNaNekx82e81JuI2guH0o+EKY9v8i
-	 FANhRxspeYOd+TDIyatcjaBaPoPMbaKFxSpKom+JqjYRrQiWKU2dcEkAUljVOarnq0
-	 2hLPKWnNdZ607nnAUixasal4FIe6PEfa4B3+yrAF8u9xtm0uXCPvx2w5FqphIgTkFx
-	 ifpVsokN1zh7X09m9VGtVojofFgXTaY4lhVUhaKuK/tvXem+9UHdPwMZdjbx8fR12S
-	 7sBzfdH3l0z4zgFLWfFgwRnxCKeFPGCMiH7D7nxvmk2IXke9txbxY0ukmRze4HPqb3
-	 vCq0ijIlTQ+VQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59e4993e00aso3005581e87.3
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 10:43:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUf19YT57epHbP08KUcLM7t3z/wSN8nIe5XzC9pRGTC5dy1CILoa3K3EaadEWyZ3qpLNJwgORMHSgR70g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuX7wAYtX79CMDo1WXE2GwAwayMdWq2S2HNB+dIScVvtSEJva6
-	U80ZbyWGCZXimwBabYbxDLQRICg+60wjp0J6GmHf5fUR0IsO8cXLNxaSKqtWB+uIs27ER7Ge4gh
-	cqMIYwooVWWutaGqHTrJEmYcM1fco2P67xFmTIpD2rA==
-X-Received: by 2002:a05:6512:3349:b0:59e:6006:62ca with SMTP id
- 2adb3069b0e04-59f69c661ecmr3670507e87.36.1771267429177; Mon, 16 Feb 2026
- 10:43:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOT1bkM+"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-65a3527c5easo4941158a12.0
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 12:20:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771273212; x=1771878012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dTXLv7Xoz9p0WwN0J530Lp7vqW1k88a7ctjlVvUXiJ4=;
+        b=LOT1bkM+cBCCKR9FEtJrS2VVhq05DIiP+BqmjhHIqAtB1JELNtBywVxEneRKFGkfZL
+         fBHs1HD13bSDQFkmzYAPRZCcBn+MNHnosoh5Ojlz7rgBhuHCfE7b79Pb0NdKatCy8s5D
+         ce90hkdkNR4tqCuAYoPSQ9bQBmkrfW2ruxjHj6PlhooPbvRsfoMfEPxY+Id3Li7A9z/v
+         6hBR8vUnup4lEHK8hCXq/sU/hoWEV2+dD0iIhJG3yjCZbRQ7yWVrSfW58t4tSb4d1Mge
+         ltrPT3tDjTvwB2JCNtxVmJYld7iGMKkNmJZ64WUYnioMdCy5aJi6D07olrjdp/rJxXQh
+         PYkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771273212; x=1771878012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dTXLv7Xoz9p0WwN0J530Lp7vqW1k88a7ctjlVvUXiJ4=;
+        b=bWU8DwOyH/9F9PSyQ33nd2INyUkxWhLfcmLGNMvk0gq2Iholfgzhal/eyfQmPYZ676
+         ou2G73MY+AJ/YG9WelJe60uy6IiHTcv8lmnnYyy+my6xxuIhCi+pLMGd6nh5Q2Z/rkx8
+         v1qCdP0SVcy5A1eGmYvawOEwbxTK7Z34IHLfPCaTEZGnO9NlHE4jPThs/qcpaSs8J5zQ
+         X7UfOKC4uz8BjRFxpuvsbzpCeu99wRWFfESVaFUk9Jhzp3e2dJS+bVOXWnX2Y//Ze62V
+         v7t/UwLkUXJmyzsMFXOouVCf+ti8KKLLIxB26IehiFGlfXQe5KA4Fv97LNvZKHxf3qhJ
+         VFZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoH5NGAKgc3fqXARFJV4dSRBS6dVSUreZrjg+H4fdXBRE9inmgHkB01ZSC9uLc6R3Th6IoQt0deBbQ8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8I8EtLjZaXSOQjp21qEdD3GNQ6jhtI+OHxcgDlR1UMnbfEYRN
+	yBf53sBbrzBXrYb7RBuVbcn51/xFUgNqhCM8k5xzqd/0HFYWUxNWG5YsE9W+UmARS+f/IQ==
+X-Gm-Gg: AZuq6aKSQ8FgfOidM+he64NvQR/k9a6Rc337qQWdjmjY2/E3DdgCv82bJTRr3Sx5oQY
+	4wpTH/2tcQfTAX9ElsC0of/uNbj7EU2Nh95rN9jaSq2SMG6VwM4GOxTHyr3zClabB31n2m39rf7
+	l0f5r0cE/q4VYvBnyRrUpsGPlXuw68IOhWPipuhqzb+rnFr0D2XD7loRP25je/NOBKU2YFcsYmf
+	oyiLlRlx6AI1vIKl8PWtOwYUloNWOKOGTZxRKi8EOaEoPBlFxqvMJzcL3ulzzNGdslIs6obuVa8
+	yJGgWV0RkgxmNfwjMQK5wnGYK6fSs/JHJL/IfTvI4WF0+qC9xu58FMWEk2wZaDKqPf9UGLrSjJD
+	o/txge7cMsUVyfHDTAHHCPbZoAmDJ4sI35AUDMlMqv0I9PxVHtYPzMR5iiF7WR0uGtlgwF1iLl8
+	FfNUjcxJsHyfc/QxyEThkBauKtfPeA3mEPCQNpFyKlN3vHLzpgXJOkhjZhGPKgyV0aI4u5pOltM
+	1j2uFxqotcwIr31DHUlT1ekB2ir8GMU4QJQXILrC491MNpBTzca5+WS1ruLF00SY/cjI4tcuUj8
+	Ag==
+X-Received: by 2002:a17:907:3fa4:b0:b88:64e9:899d with SMTP id a640c23a62f3a-b8fb44863fdmr649791366b.34.1771273212406;
+        Mon, 16 Feb 2026 12:20:12 -0800 (PST)
+Received: from cs-874966990260-default.europe-west4-a.c.i2f7e30109524dc12-tp.internal (170.212.12.34.bc.googleusercontent.com. [34.12.212.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8fc76c7015sm275802766b.66.2026.02.16.12.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 12:20:12 -0800 (PST)
+From: Artem Lytkin <iprintercanon@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Artem Lytkin <iprintercanon@gmail.com>
+Subject: [PATCH] staging: nvec: propagate error codes in tegra_nvec_probe()
+Date: Mon, 16 Feb 2026 20:20:11 +0000
+Message-ID: <20260216202011.1806-1-iprintercanon@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260216045842.1206350-1-pshete@nvidia.com> <CAMRc=MdRL=_nRF5g4MukNjgeYGh=Bz3zN7bXEp7RPsLHHyq8xA@mail.gmail.com>
- <63919a9c-39f3-4cdd-8372-8d63929c49b4@nvidia.com>
-In-Reply-To: <63919a9c-39f3-4cdd-8372-8d63929c49b4@nvidia.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Mon, 16 Feb 2026 19:43:37 +0100
-X-Gmail-Original-Message-ID: <CAMRc=McLD3jkyiyrMfF2DNU=s0cj5U2H2U-1rEXwNzbLR8fqhQ@mail.gmail.com>
-X-Gm-Features: AaiRm53y3Wr5maLUCFpuArPepw1xZuaaIK9vr9zGaHnJVdSflS_jPdaqelf9mbk
-Message-ID: <CAMRc=McLD3jkyiyrMfF2DNU=s0cj5U2H2U-1rEXwNzbLR8fqhQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: tegra186: Support multi-socket devices
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org, thierry.reding@gmail.com, 
-	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 16, 2026 at 6:22=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 16/02/2026 11:29, Bartosz Golaszewski wrote:
-> > On Mon, 16 Feb 2026 05:58:42 +0100, Prathamesh Shete <pshete@nvidia.com=
-> said:
-> >> On Tegra platforms, multiple SoC instances may be present with each
-> >> defining the same GPIO name. For such devices, this results in
-> >> duplicate GPIO names.
-> >>
-> >> When the device has a valid NUMA node, prepend the NUMA node ID
-> >> to the GPIO name prefix. The node ID identifies each socket,
-> >> ensuring GPIO line names remain distinct across multiple sockets.
-> >>
-> >> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> >> ---
-> >>   drivers/gpio/gpio-tegra186.c | 26 +++++++++++++++++---------
-> >>   1 file changed, 17 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186=
-.c
-> >> index 9c874f07be75..daf5aaffa28a 100644
-> >> --- a/drivers/gpio/gpio-tegra186.c
-> >> +++ b/drivers/gpio/gpio-tegra186.c
-> >> @@ -857,7 +857,8 @@ static int tegra186_gpio_probe(struct platform_dev=
-ice *pdev)
-> >>      struct device_node *np;
-> >>      struct resource *res;
-> >>      char **names;
-> >> -    int err;
-> >> +    char *instance =3D "";
-> >> +    int node, err;
-> >>
-> >>      gpio =3D devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-> >>      if (!gpio)
-> >> @@ -937,17 +938,21 @@ static int tegra186_gpio_probe(struct platform_d=
-evice *pdev)
-> >>      if (!names)
-> >>              return -ENOMEM;
-> >>
-> >> +    node =3D dev_to_node(&pdev->dev);
-> >> +    if (node >=3D 0) {
-> >> +            instance =3D devm_kasprintf(gpio->gpio.parent, GFP_KERNEL=
-, "%d-", node);
-> >
-> > I've never noticed it before (and it's not introduced by this patch) bu=
-t I
-> > really dislike the child device registering devres nodes with its paren=
-t...
->
-> While it looks a bit odd, the parent is initialised as ...
->
->   gpio->gpio.parent =3D &pdev->dev
->
+Several error paths in tegra_nvec_probe() return -ENODEV instead of
+propagating the actual error code from the called function. This
+prevents probe deferral from working correctly when a dependency
+(clock, IRQ) is not yet available.
 
-Right. Nevermind my comment then.
+Fix this for platform_get_irq(), devm_clk_get(), and
+devm_request_irq() by propagating their return values. Use
+dev_err_probe() for the latter two to suppress log messages during
+deferred probing.
 
-Bart
+The remaining -ENODEV returns for missing device tree node and
+slave-addr property are left unchanged as those are permanent
+configuration errors unrelated to probe deferral.
+
+Signed-off-by: Artem Lytkin <iprintercanon@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 263774e6a..c4e383de5 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -809,13 +809,12 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 
+ 	nvec->irq = platform_get_irq(pdev, 0);
+ 	if (nvec->irq < 0)
+-		return -ENODEV;
++		return nvec->irq;
+ 
+ 	i2c_clk = devm_clk_get(dev, "div-clk");
+-	if (IS_ERR(i2c_clk)) {
+-		dev_err(dev, "failed to get controller clock\n");
+-		return -ENODEV;
+-	}
++	if (IS_ERR(i2c_clk))
++		return dev_err_probe(dev, PTR_ERR(i2c_clk),
++				     "failed to get controller clock\n");
+ 
+ 	nvec->rst = devm_reset_control_get_exclusive(dev, "i2c");
+ 	if (IS_ERR(nvec->rst)) {
+@@ -847,10 +846,8 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 
+ 	err = devm_request_irq(dev, nvec->irq, nvec_interrupt, IRQF_NO_AUTOEN,
+ 			       "nvec", nvec);
+-	if (err) {
+-		dev_err(dev, "couldn't request irq\n");
+-		return -ENODEV;
+-	}
++	if (err)
++		return dev_err_probe(dev, err, "couldn't request irq\n");
+ 
+ 	tegra_init_i2c_slave(nvec);
+ 
+-- 
+2.43.0
+
