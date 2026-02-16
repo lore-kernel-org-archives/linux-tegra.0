@@ -1,119 +1,118 @@
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5FB2E3397
-	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 18:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF70B19CC28
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 18:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771265495; cv=none; b=f7SHs5V54X6WZQSXptD4zpvBqXxnZE0A5vJR8KQhEyNlEeQLmSs90S7c7/Vbd31BzTizOm/bfHDsTyYhnqLZux2YFa0FHAyFrdA7Qmb7JVepVy30Q1pHrVqWipSfLYtQl3MMEunsUi/OWWvvG38yHhSObHLHb7W9eUFv53rOu9w=
+	t=1771267430; cv=none; b=AjLJlhNq4X0fHtUlQpsktZQEktRNVD6xLSv2HnStdBTuRj/vNdymLdxlzJMSbfGTkXrG7AExkW4/ra24omyQwXeEMxtnHRwLycnd5kSryeb23kZ7OBNO+3zo854he4Svkn/PmiU/lbkT+i0gF61b+17fgE3tfE+E5nAM4RYpNRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771265495; c=relaxed/simple;
-	bh=pQ+drPsuGyEfd8K4gyjmdhI7nQ2Z+6Gl3lG1hRjSv2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JeJh7hxfL4wkBOpYep8aTDS6eGMvTps5Duk/rdF9xNXrJPIWruiEI+d+LWnYTlWwGrS5ag4BEYfb8rCgqndcEcYro0lrGsxrGhdtKhLpuXebNIiidmg5QpbUTN7O16KqcW7hwS4968YmM9hPpEbZtVcHyzQoMAal1uVAmps+LjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g56neX0x; arc=none smtp.client-ip=74.125.82.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1771267430; c=relaxed/simple;
+	bh=5U/nbIhPWFBwE7xp+uuldB/s3R7u9EG2QpjZA6/dcP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WasssLEO+swDYzPeOkhLkYz+tILuVUJi5JE0XqdouzQkAn5AvNoMfTHelIoDAcXjJbDhRTLsX8e/YaLYrhLeZv4GosLh9DM5wU2PxY1AxKE42mbudbRUIbbOz9DkWdXdEvKITOe6Kv8EplE2de9PvFekxc9z3+2LoEj3rXxOoek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxFhE6YB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g56neX0x"
-Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-127380532eeso8719067c88.1
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 10:11:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1771265493; x=1771870293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S5xVuS52Zc4kvewurxT2EGZa1uCwREaSBUWVrZ6Swkk=;
-        b=g56neX0xHVmwJ+0VCG+jsR3XBmSjnzK66MP4cKFFjs8sovggdE/HpX5yVXXEVqSC+q
-         m1kwJhyiiCjGAhmGKWZ7Ie7J6aiFFAKkucDyhGCXyzIoosmGaKvUsTg33r4BJogZdaxw
-         o+Wul7VSdOK+osCl7X7VNe+eBgncj5XeNw0Ss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771265493; x=1771870293;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=S5xVuS52Zc4kvewurxT2EGZa1uCwREaSBUWVrZ6Swkk=;
-        b=QsbYtEp4iwIs78KI2jKBgZd2K7Dr42J7MVvQFk2eYiTItBW7DjS3dXHskWDK3tsH3D
-         utosQkwwfzgXLA7iyYiSou3fuzwjZqK5vBNKX2yS1kalNSA/YGH6+oQ+u9oatGo6PZeS
-         +dpie2qRqtnCGF8rSgGu3hK6kDXehYow5wFJL2oe/QZldciFYi7JGUVSVDCvsYKdrGW4
-         Jei8o2van+Die9oP4Gmm4t13gxZkzzNewXmMd25b0JS7JHJCXOIXQ9X5ea9Jam37Atzd
-         dxdIOHSp+pwt5L62a0NR6ruoaqxJ2Qwy2fgXddqTPD5dhM3H84DYsjy5KW9xEzEzwcy+
-         KPXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXueW9QTuvGkL0IRWu8YXvI3qYiAbS4qehE/qKWitz8bWOaDEdHn4bJ6OqB7BpEkuzV6D7ZK9elezAz/w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr+09KsaChePOP+D169q9sIKlzVAaN3OsCfAjKQCXJZqYpMOA4
-	ntKY6kP3IppFzmKxXy9xhBIpv2N1ssm7OiEc55gQiqj0WMYeW3APfhvmPkG9oZSzLrh2v90UUFN
-	ROWQ=
-X-Gm-Gg: AZuq6aJ8xyKT3dzUnOzGdMltz3IEKLlHcrHzKsUrj3nVqkHysYJoyYpz/alq0sICud3
-	hugsNhbTzB5/+UMD7e/bD5Ue+zWgOXqFKDasvoi0Ih5EBsipGf/+A0S3T4hRlIlWnxnpXPw2JmB
-	/sOlpNWXd8SQV9RIBsVISpy1JNQ5nOXQMWHCjpORidKw0+X1Ij8MoThLYsxh+8pG3Eo0AtLPxDM
-	2YfqywbREWBYg0to7rE7ns4O4cRe9wys45RoQIF9fnT17lU9ioe7YmbP39s/AmugsS3G754Aj0H
-	lg1qW2NzlN6LPNFICcf5VAwpTdu3ldko/zOevnjSs1nfWV+PI0tbfjBXLIic/hWAJxqqr34bUTP
-	HwzLFwy1jTJ1+z31EPaPSNy9W0WFuqOuluq1oa6HyzhzmO2IZztMsYiGPfEW5HsxIXccpubr9yT
-	diJIybgIp2prXU3ueivfduAD0mq8HQjgp/bvP+twJ9T5GofkP+rIriGDgm2VZ4XXoDmdhJw/2/N
-	cJFu4RBCws=
-X-Received: by 2002:a05:7022:6a4:b0:11e:353:57af with SMTP id a92af1059eb24-1273aed430fmr4704181c88.49.1771265493018;
-        Mon, 16 Feb 2026 10:11:33 -0800 (PST)
-Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:2953:dae1:1e39:73b3])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742c64282sm13724326c88.5.2026.02.16.10.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Feb 2026 10:11:31 -0800 (PST)
-From: Douglas Anderson <dianders@chromium.org>
-To: jassisinghbrar@gmail.com
-Cc: Douglas Anderson <dianders@chromium.org>,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	robh@kernel.org,
-	thierry.reding@gmail.com
-Subject: [PATCH v3 05/15] firmware: tegra: bpmp: Use mbox_ring_doorbell() instead of NULL message
-Date: Mon, 16 Feb 2026 10:09:42 -0800
-Message-ID: <20260216100943.v3.5.If1255977439f4cdbb3193f73f90a784566254f15@changeid>
-X-Mailer: git-send-email 2.53.0.273.g2a3d683680-goog
-In-Reply-To: <20260216181002.3475421-1-dianders@chromium.org>
-References: <20260216181002.3475421-1-dianders@chromium.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxFhE6YB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910A5C19425
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 18:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771267430;
+	bh=5U/nbIhPWFBwE7xp+uuldB/s3R7u9EG2QpjZA6/dcP4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BxFhE6YBUgwB0ShzV5/MkHkcqhSsYArYifQSWNaNekx82e81JuI2guH0o+EKY9v8i
+	 FANhRxspeYOd+TDIyatcjaBaPoPMbaKFxSpKom+JqjYRrQiWKU2dcEkAUljVOarnq0
+	 2hLPKWnNdZ607nnAUixasal4FIe6PEfa4B3+yrAF8u9xtm0uXCPvx2w5FqphIgTkFx
+	 ifpVsokN1zh7X09m9VGtVojofFgXTaY4lhVUhaKuK/tvXem+9UHdPwMZdjbx8fR12S
+	 7sBzfdH3l0z4zgFLWfFgwRnxCKeFPGCMiH7D7nxvmk2IXke9txbxY0ukmRze4HPqb3
+	 vCq0ijIlTQ+VQ==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59e4993e00aso3005581e87.3
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 10:43:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUf19YT57epHbP08KUcLM7t3z/wSN8nIe5XzC9pRGTC5dy1CILoa3K3EaadEWyZ3qpLNJwgORMHSgR70g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuX7wAYtX79CMDo1WXE2GwAwayMdWq2S2HNB+dIScVvtSEJva6
+	U80ZbyWGCZXimwBabYbxDLQRICg+60wjp0J6GmHf5fUR0IsO8cXLNxaSKqtWB+uIs27ER7Ge4gh
+	cqMIYwooVWWutaGqHTrJEmYcM1fco2P67xFmTIpD2rA==
+X-Received: by 2002:a05:6512:3349:b0:59e:6006:62ca with SMTP id
+ 2adb3069b0e04-59f69c661ecmr3670507e87.36.1771267429177; Mon, 16 Feb 2026
+ 10:43:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260216045842.1206350-1-pshete@nvidia.com> <CAMRc=MdRL=_nRF5g4MukNjgeYGh=Bz3zN7bXEp7RPsLHHyq8xA@mail.gmail.com>
+ <63919a9c-39f3-4cdd-8372-8d63929c49b4@nvidia.com>
+In-Reply-To: <63919a9c-39f3-4cdd-8372-8d63929c49b4@nvidia.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Mon, 16 Feb 2026 19:43:37 +0100
+X-Gmail-Original-Message-ID: <CAMRc=McLD3jkyiyrMfF2DNU=s0cj5U2H2U-1rEXwNzbLR8fqhQ@mail.gmail.com>
+X-Gm-Features: AaiRm53y3Wr5maLUCFpuArPepw1xZuaaIK9vr9zGaHnJVdSflS_jPdaqelf9mbk
+Message-ID: <CAMRc=McLD3jkyiyrMfF2DNU=s0cj5U2H2U-1rEXwNzbLR8fqhQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: tegra186: Support multi-socket devices
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org, thierry.reding@gmail.com, 
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As per the patch ("mailbox: Deprecate NULL mbox messages; Introduce
-mbox_ring_doorbell()"), we want to switch all users of NULL mailbox
-messages to use mbox_ring_doorbell().
+On Mon, Feb 16, 2026 at 6:22=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+>
+>
+> On 16/02/2026 11:29, Bartosz Golaszewski wrote:
+> > On Mon, 16 Feb 2026 05:58:42 +0100, Prathamesh Shete <pshete@nvidia.com=
+> said:
+> >> On Tegra platforms, multiple SoC instances may be present with each
+> >> defining the same GPIO name. For such devices, this results in
+> >> duplicate GPIO names.
+> >>
+> >> When the device has a valid NUMA node, prepend the NUMA node ID
+> >> to the GPIO name prefix. The node ID identifies each socket,
+> >> ensuring GPIO line names remain distinct across multiple sockets.
+> >>
+> >> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> >> ---
+> >>   drivers/gpio/gpio-tegra186.c | 26 +++++++++++++++++---------
+> >>   1 file changed, 17 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186=
+.c
+> >> index 9c874f07be75..daf5aaffa28a 100644
+> >> --- a/drivers/gpio/gpio-tegra186.c
+> >> +++ b/drivers/gpio/gpio-tegra186.c
+> >> @@ -857,7 +857,8 @@ static int tegra186_gpio_probe(struct platform_dev=
+ice *pdev)
+> >>      struct device_node *np;
+> >>      struct resource *res;
+> >>      char **names;
+> >> -    int err;
+> >> +    char *instance =3D "";
+> >> +    int node, err;
+> >>
+> >>      gpio =3D devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+> >>      if (!gpio)
+> >> @@ -937,17 +938,21 @@ static int tegra186_gpio_probe(struct platform_d=
+evice *pdev)
+> >>      if (!names)
+> >>              return -ENOMEM;
+> >>
+> >> +    node =3D dev_to_node(&pdev->dev);
+> >> +    if (node >=3D 0) {
+> >> +            instance =3D devm_kasprintf(gpio->gpio.parent, GFP_KERNEL=
+, "%d-", node);
+> >
+> > I've never noticed it before (and it's not introduced by this patch) bu=
+t I
+> > really dislike the child device registering devres nodes with its paren=
+t...
+>
+> While it looks a bit odd, the parent is initialised as ...
+>
+>   gpio->gpio.parent =3D &pdev->dev
+>
 
-This client only ever sent NULL messages, so the transition is
-straightforward. We can remove the call to mbox_client_txdone(). The
-call didn't do anything for NULL messages and it's now officially
-documented not to be called for doorbells.
+Right. Nevermind my comment then.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
-(no changes since v1)
-
- drivers/firmware/tegra/bpmp-tegra186.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/tegra/bpmp-tegra186.c
-index 64863db7a715..c45ea66aabfb 100644
---- a/drivers/firmware/tegra/bpmp-tegra186.c
-+++ b/drivers/firmware/tegra/bpmp-tegra186.c
-@@ -84,12 +84,10 @@ static int tegra186_bpmp_ring_doorbell(struct tegra_bpmp *bpmp)
- 	struct tegra186_bpmp *priv = bpmp->priv;
- 	int err;
- 
--	err = mbox_send_message(priv->mbox.channel, NULL);
-+	err = mbox_ring_doorbell(priv->mbox.channel);
- 	if (err < 0)
- 		return err;
- 
--	mbox_client_txdone(priv->mbox.channel, 0);
--
- 	return 0;
- }
- 
--- 
-2.53.0.273.g2a3d683680-goog
-
+Bart
