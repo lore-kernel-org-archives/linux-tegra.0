@@ -1,271 +1,178 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010030.outbound.protection.outlook.com [52.101.56.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21E8248F72;
-	Mon, 16 Feb 2026 17:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771262547; cv=fail; b=e+GVtOLo/TGM7MzyHX+WFs95hgdykJfyhD6zgqWFhHpo2x6k+3YcoXpk3942wKHLJ5UN+XO1LoQ4c/oeHUGjoJDbNbfu0j/Kgi1Ihv8jfhD23EQyT1yPMA3RVzx2ZwuT5D75t+wiA3ATEuRAAwa7FSHrYod2wU5Q77vnylZ5O74=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771262547; c=relaxed/simple;
-	bh=FhGuCH93B+ruA/2v+kcevmNOOjJxbVN3P4YzI+x6Kb8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HSwtbSdLCMRcmovy3i7yE+evM0MgG4g5QHEvHVsOFG12J9MnW5rk7D5D1Yo5JzNK49BQR9RuLiZNjlepXPJYrgX4UG0WophhqLF3ItKwz25CAeC9xgtbdmDi76FRSiKIxSS5X7qpRgTyFiA9vpmK5HmHhCGrZXxTxXg+Vvh2YWA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M7088/u4; arc=fail smtp.client-ip=52.101.56.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0892A2BDC2A
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 18:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771265483; cv=none; b=Xfz7GdBtxBUgdFohcQxgW58GaKelWJXyeOWx0QTq4qDGYXYoKZwPjHtVqXfQ7w4GENlnL9lwjb51Z6NtZBsmZSAia7pp3c8eXHhqAdCOVmi90HVFC6FPfkUeNvkEnJAlcEwpKBxWMXbbS0OAWgXWSNsA8Nav08LL5hX2Y7YtTVU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771265483; c=relaxed/simple;
+	bh=cSCEF3PytEUhtrqx1ZL9yZAsXNXSd/VJdHuArUNHrik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iItUKWd8P+7wN9sCtzGXHpj6RIJ14sKcM9Rvf+pDU5xqPkjHvfUU1UC7kJkaT6187H3eQA520JGfurfCLIEysxfk7myzD+R2SzMltAq2m9yWyugPJ/dUQNPAwliKxX7YMIMWuS9h/AQo0tvu+3ACOVxvTUNwJ2+RXvjlUhfPaZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hb9r7TO9; arc=none smtp.client-ip=74.125.82.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M7088/u4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CCJ0doelMWlsN5c0yYpGWWPusfUGM/qAIpnBi8mTXYDxTNUZOCk1c/HF0hq1tBbtWFtND1M/y+me6T1UDWxptEuxQ/VZpnyoYMHlh04o0xOdnTdSs1h6irfc8YroOjSeCQHqgqSY1SykxJmywPOC87X+0Uw27PlTBpDcJi3uO0yAUr5wtp1so49CfIT6hziw73NvRV50ev/ppMFLviqALNCzFtUEvSA0Yi3L6ixxQ4eZ/pPzvBfvqcL1KI9ExzDH6LX2mpGM2JBswfb7eq7lUhnKs+uleQQGpJzeVTzxKpPUEFuKwfpCYRDIA9gCC2TCDQs4xzsjlGLVsJatNrSbHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hhozdtygDzCyr5nHm8bqbfWc//LuggpXllxqmw9OfYw=;
- b=kC4XJxt9YcGBdCuxKR27uuQ1VCH6LTt0i4nY2zAd1JFH1L7xH03JSGEZRlmMATi8WELpeL7msED2/YokvMBusfdUljnnrRM53J1lU/biRsr7K2jGz5Krn8WBb6RbYvQtAOpOi+eCMsRzYxqoPLPL0gdpsbpssb/nXPOab/rSp+Eh8AVoXCQW95E2i0kNDLe05yJpAIOAUJHt2iUmP7ZjBWB2CIBCYT68nGCJ466LnDG7hEs6jW1z8dYARbeorvG8IeG0J2N1KT5bOvPrYWB2Vp6LA3dVQpSHUFw8IESvuv+JIsbq7LSRlKew5YG0FVPpTpAw3SHXbp94DWtGa2bmWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hhozdtygDzCyr5nHm8bqbfWc//LuggpXllxqmw9OfYw=;
- b=M7088/u4lZuhTx7Wb47fIy9w2GHqSuNQYWUUcAknACcTe82DJVOKJ2momX1auurM5wRGxCumUfhl57KXTXn6HqspfqLVZAyrFyd5HG6iFLqRVtdsT6+u+CSW4P+SOTIu/14BO0N3I5rvinJRqpnt7Lw7ypEaERJm/O9ZY+kic3LPgj8h1hi+VZjJ7lRh5DmjNbtJYx0TgWUGmG/7ZGmBpIXYOt+UUyXqrUE6x5L+4xSD3gsenTudf4fGRd3yFh2IBEb7bO5IwcRJMp1Iv6r4j5DTZoqCkHAg+mohKqm5N4VtFGdzgBcjfkLxiDQjlhrrD2Lr8t4SqXjjPFkHnSU9hw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by PH8PR12MB6819.namprd12.prod.outlook.com (2603:10b6:510:1ca::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.10; Mon, 16 Feb
- 2026 17:22:19 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9611.013; Mon, 16 Feb 2026
- 17:22:19 +0000
-Message-ID: <63919a9c-39f3-4cdd-8372-8d63929c49b4@nvidia.com>
-Date: Mon, 16 Feb 2026 17:22:15 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: tegra186: Support multi-socket devices
-To: Bartosz Golaszewski <brgl@kernel.org>,
- Prathamesh Shete <pshete@nvidia.com>
-Cc: linusw@kernel.org, thierry.reding@gmail.com, linux-gpio@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260216045842.1206350-1-pshete@nvidia.com>
- <CAMRc=MdRL=_nRF5g4MukNjgeYGh=Bz3zN7bXEp7RPsLHHyq8xA@mail.gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <CAMRc=MdRL=_nRF5g4MukNjgeYGh=Bz3zN7bXEp7RPsLHHyq8xA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0058.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:60::22) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hb9r7TO9"
+Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-124afd03fd1so5024748c88.0
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Feb 2026 10:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1771265481; x=1771870281; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qPeoOZLMpDPHLvXRZ2UOWF72e8RnmNaQnfGaf4d8jU=;
+        b=hb9r7TO94koSoC4Z2JHCT70nWqtWkl9i4vVEr/uEjeyLhmmT+tNRlyKSZLmYrvZHhu
+         eDPKCqGVFhc3jrSCQkVj53fKUGEhSYivMP1qcHoBLVFhFAcxDLprPObeURgLzXlZKCNN
+         cBABQhOU9KyeBJuBjHIShwIvLUb/R3zbNlsuQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771265481; x=1771870281;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qPeoOZLMpDPHLvXRZ2UOWF72e8RnmNaQnfGaf4d8jU=;
+        b=W8HKcWAu9hLW3mu/53vAHm4miQp0pa8xYPDa7v4/LBdBm7gWrCX5M3qdd9/vwTbVlY
+         qbg8mbZoejI76Bq7LAXBfHjmWk8lvu7zdR5x/15ZZT9DDhynHztxdQ9ObwRHvfTCpqzm
+         MTh4Y/7bMlvwMQwGIG3H3rYoCt64yMtc0L1kCjplqPxHpyRIXC/zhXpP1c7fsW6Kw6NK
+         FMD/UOxT394dA1TOwii3geelS/GDI7bCXIEUsPVKVRBWLjOr7MWSBbOcDW3OIMeyCmjO
+         gWGSBqdXqMtsVEwk2agsR1lMQecHL2uV0eubsAQwl4t24ayXJ2ECDnNXeEll94XB4BUw
+         /yAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYqoEALAhGLCkm/vTyTicElfBm2xWhQ81LBY78cRAGxqczWCSUKvTYoMGczp62Vc2/MbRYhzwC5C5WEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeUg3JQjrpHC6uMauXCQG/82p5dTT4vu/vC4JbA4FQNoqzzgUo
+	5kepvfx1QmA3e7ZwSOUEHIzoHklQnWEcqnggr2oczZyedSp2NNUEe7D77Cwjkejhog==
+X-Gm-Gg: AZuq6aKtSKfKBI11wLjZw8Scg8stlItq8PFIOCeRM24USlw2Y4whm/mw31bcM9Cl3RN
+	4hSyCUOMaeEDVm8U+xKBgMsTP+2T81Axt0SDTFCt7erKPK6dsYKtg7A7i1fiY2CJsWJAA9sG6Ve
+	MY1EfV2gRHCyf9xV3uaC69LftB8E1654FzO7MlhnPtHAeTy/yBOJtobS73MoMRw7itERIEq9kk/
+	ul1u27AkoYk6a0UP9HFeDm03uq6mDrcEr0h2Ki/YdVnJjVZSqs5lpGbkbz4s6Wlg8M+RtnSkQpF
+	CoKKczZuWE/9l+sVCJJJFEsBAgFfo8tgZndPmpWAxk69LhiiiOMrKRxw+U0F1QJTMgdgbnnZo9f
+	dmtR8B56bAoer5ZNasmePO4wGSreKkVAPgVNz9gUwck7A6lsXd5C6937aDyyzpjRyBv3nO8Gfom
+	3am6zN5xEYJ9BQaDmtYM8/5PcI+Q3yZv+0aHnUPrWj1XBM2C0KQawHzkxZV5CUjafnj/KVyxZRh
+	GvnJixVqYs=
+X-Received: by 2002:a05:7022:aa1:b0:119:e56b:91f6 with SMTP id a92af1059eb24-12741bd1202mr3136852c88.39.1771265481071;
+        Mon, 16 Feb 2026 10:11:21 -0800 (PST)
+Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:2953:dae1:1e39:73b3])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742c64282sm13724326c88.5.2026.02.16.10.11.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 10:11:20 -0800 (PST)
+From: Douglas Anderson <dianders@chromium.org>
+To: jassisinghbrar@gmail.com
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Frank.Li@nxp.com,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	andersson@kernel.org,
+	arm-scmi@vger.kernel.org,
+	cristian.marussi@arm.com,
+	daniel.baluta@nxp.com,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	jay.buddhabhatti@amd.com,
+	jonathanh@nvidia.com,
+	kernel@pengutronix.de,
+	konradybcio@kernel.org,
+	krzk@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	lucaswei@google.com,
+	marco.crivellari@suse.com,
+	mathieu.poirier@linaro.org,
+	michal.simek@amd.com,
+	nm@ti.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	shawn.guo@linaro.org,
+	sudeep.holla@kernel.org,
+	tglx@kernel.org,
+	thierry.reding@gmail.com
+Subject: [PATCH v3 00/15] mailbox: Stop sending NULL mailbox messages
+Date: Mon, 16 Feb 2026 10:09:37 -0800
+Message-ID: <20260216181002.3475421-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.53.0.273.g2a3d683680-goog
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|PH8PR12MB6819:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7f52bb1-678a-406d-5bbb-08de6d7ff04f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|10070799003|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SnFtSkpHY204NjNtelkyT09ZNXRtSW50c05mL2FXcy9Yamw1R3NQdktqZ25Q?=
- =?utf-8?B?ZysxQTBkTlNCbjFMZVdZM1dQWmVBQkZwTDY1WXZ4elIydmZlYkxvU3V2OTJh?=
- =?utf-8?B?eTY2MXFlVWZBT2UvaXprSHE4azRVR3lJK1BwZks0clU1UDJQZ200Uk53WUdt?=
- =?utf-8?B?enJLVm1CcG9zNTlXRGx0K25tQTdzSTBPZTBMbTlnSGJTUVZVMHZBVytWeEw5?=
- =?utf-8?B?QnJkL3JxUlJaeGtHQjc5bkR5T0R1cHB0ZnpuWXdqRXZQQWFRM0NDR01RZTB0?=
- =?utf-8?B?ZFB0ejJaSDNTVG5YUFk1OUpRbnBjMi9JRllvTUN4Vm5GenFSMXZsdFBWSzFo?=
- =?utf-8?B?UXh1WnpZdEhURzR0QWhBQkJxbkJ0dFpMMzI4bmlTcEdWZzgzRkJjY0hpNld1?=
- =?utf-8?B?aE1MaGh6UCt1WkxpaXgxNUYxVklPWUFMcC9Fdm1EeC9VYWx2bVdXcDhZMkRz?=
- =?utf-8?B?M0JUcnlKaUEyK3FmMkgvNHdOb3Eyc0tjS1MrcVpHRkRDZ3g0dGl5cDZBVGhZ?=
- =?utf-8?B?MDhqSDBrblcxU09xaXZTY0xkYnljc2dleXBNdWtmR3ViMjB6aFZEMTk2a2FX?=
- =?utf-8?B?VUd2cXJOTHg3T3F3N0lPZ3F5bEZUNjJqZ2ZIL3NTSld2SW5jdTNRNE12ZmhY?=
- =?utf-8?B?MUI1Y29ONjByd3NyWDRyYTVsazEzM2pXWm5WSWR6TlpnZWIyZk82S3Zxekdo?=
- =?utf-8?B?SHJkUktHdDlQZ0tGbFpjUEVmVndjRlI4RUxia2Y0OEdqVmhKTVlkQjg0ak1G?=
- =?utf-8?B?VjJ4RndGTU1oOWxXNE9PZXlrN05GUzRDWlBKMWtGd05mYTNSQjRDd0pjdmNK?=
- =?utf-8?B?N2JCN29RNm1UODJ6aHpZMW5aak05WE5KczJ3alhaanhkczAyUzVoR0hYeG1q?=
- =?utf-8?B?Tm9BQTZ6RmZkQmlTQ0FObStnalBLK3dSaThVT2lzZmlYNDY2K1RyQ1YvcXRT?=
- =?utf-8?B?b1MvVWRER2VwbkE5cVV5ZWpXVEp6VDg0bUM5ZDlsV21SWmFFekoxOFc0MFZs?=
- =?utf-8?B?UGczbzd2ZUROUlI3RktlVVE4dEdSbDdBUXpBL0Z5Yi9EUE43RDc2ano4RTJ4?=
- =?utf-8?B?NVhWSE53S1FMcml5eVRVdVRsMGt5MTF6V0haam90TkU1SVNHam13aEovVDlT?=
- =?utf-8?B?SURFOWhKZkQrTEk0b0dFV1U1bzNYV2hYSDZIQlV4U00xUFR0UkFFUHpBVS9J?=
- =?utf-8?B?UThkRndEMGM2aUppOUgvOUhSVWYzNm84aGM5dDUxT2FYQ0U2MnBvMUhxcjA3?=
- =?utf-8?B?VjJGTlJrNGFBZ1haRFo2ZGkxM3Y1OHBOcFhkWVB3YTMwcGtzd1l0czhwSkdV?=
- =?utf-8?B?bHMrQktlUWthdU1JZlluQ3BTQ3dON0VCSi91WkVFVWNEV2ZDb2diVy9qSmlj?=
- =?utf-8?B?SHh6S2pmUmlsT2Y3SUdENCtZaG4xb3ViSGI1cWNHbnlzcE9aMVZiWVhMYy9L?=
- =?utf-8?B?aENUbkp4alNOTDVURVI5Ui8ybW1wR0hvMWprM05UTWM5Mmw5N2NBdHU2L0JY?=
- =?utf-8?B?aXNKb1dmc1NDUEZuRlA5dm9nOFFiNHVRajdlYzFIb0lTZlZlV3hGaUxuYWcr?=
- =?utf-8?B?SVRCUXJkb1d0aVRzR3N4WDFkSm5WdlRFV0lNY1p6eFB6TTlyYWxFY3grRDY1?=
- =?utf-8?B?NW5CRmRYV2xmR3hIckJsRUI5akhIcGg5Tkx5eWxTSmpSMXJ0aWpETzF6WnhX?=
- =?utf-8?B?Zm5BOWpmRmhpL0g1Z3NYMTcvOVNiRWNuUVRDTCtSUWF3NW1EQ0s0Tno5SU5l?=
- =?utf-8?B?blFZZG1YemJRQzc4ZEdsQmRlcHZwbG11YzhOcmV3NXViMU1yNE9vZHZYSjJy?=
- =?utf-8?B?VC9vZi9KVm5NZkkyaFY4VVY1OGhXY0U5Nmh5L3NHc2IxK0w3L1Fyd2M0NEVa?=
- =?utf-8?B?UE44UG5VWU9BOVFMRTNWdHdpR0I5UVdLZmZ6YXlRRmg0eEtWNGlFYXdGcnRy?=
- =?utf-8?B?cjJ2NmxnaXRIb21ZVGxkb1NKTGRMWjJsamMxdW14L0hNWGJlRkgzL21iNXB1?=
- =?utf-8?B?R3FmdU1ycDdFOHhHWmM5YTR1d0U2SEVDSEtPL2xkRHRxOU54aCtzS1UvdHdq?=
- =?utf-8?B?ZHJQTXVxWUxDc1g0L29GYjRkQlRxWHF4akhodzNUWnl1cHJFN0NrWW5qQlRa?=
- =?utf-8?Q?RZgY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZS8zcFRMZXNlUG03ay9KNjVFbVE4K3ovRXU3TWI3TXFkYUZLYldzckVoNXV5?=
- =?utf-8?B?dUhBRUs1amNDeEsrRjFxZ2NPN1U0WllFK0I3aUpGNWFTaEJnbnVselhocC8y?=
- =?utf-8?B?VkEzZFY1MFd3Ymp0c21zam03SEhxWkRRREE3K1NRdWZHWG1oKy9xOHdrZ0hM?=
- =?utf-8?B?NWUrandGbEVrMytsblhQUnFYUVJvRDRITjRsLzNUVENRTkRxZmRtRnZpazZV?=
- =?utf-8?B?TlVPY1B2My9JWS9EVWMxcklJdHlHUkdWTFFvLzQrYmpXUkFOMnFHOGtCcFM2?=
- =?utf-8?B?TUdCNHBGTWZBcEhKV1ptU2JpMjFhRVd0QWtEN1JEQlFuT1RIVmlxUWIvUWJp?=
- =?utf-8?B?YWl0TGc3SE9SZ0xPK2NKUVdISzBxdGowZlF5bzBobFVtdy9uOG1NNzNGZFNO?=
- =?utf-8?B?R0MxcHFCTExlbUNISDFHckdJMmsvRU9qdVZQYzB1azNqaEJDRTEwNlpiam5J?=
- =?utf-8?B?YVlMZlRzTjUxTWNpaEt4VituQVNCT1NQdG1MNjZBNG1HRFJZTlhLVmZGc2NO?=
- =?utf-8?B?a0x0YTV3UHo5RUpYNFlJRW80ZVJMVHpXWUxhUG02elRzb09FdC9uVFkrbDVL?=
- =?utf-8?B?WlRLdm1ITjJEdDRpdGpQK3RwVzlvckV2allvUTN0aWRsckU2Q2cvZEFPV05Y?=
- =?utf-8?B?RGRuQWtHK0x1U0pRazlNR3p4N0IwQnZaRlBBN1E0RENwM3FNNWZjWWVxTTJr?=
- =?utf-8?B?UjBjMyt0cmxNWFdEbUFBTEIwVXprQ3poZWgvYm1wemZaS2lLeDhTd2pBYVU0?=
- =?utf-8?B?NW9PUmcyc0RuYXVBTTZNQ1JYSWQ1SExUSTNRaXB1MGV0Y2xmT2tpcnhQMTha?=
- =?utf-8?B?dlR0dUVPd29MZ2RMenZkTGlaTWh2UDNJOEJRbnpUcFNzeEsvVGYzRStLMkhZ?=
- =?utf-8?B?Y0ZmNG1yVXlDbjdINHdtQjZBb0hoTWUyY3ZEclZSR0R2RUl0blBIYjAzRndQ?=
- =?utf-8?B?bTZSc1NBaGNhcXhyNUtLQWNCRnE0Tk5jVHZpTzBzTWZCS002YlBZSU9KVlhI?=
- =?utf-8?B?Z041TGVnWXoxT25ST0o4WUhkdDJkV1VJTEFOZG9hc2h2LzloNFdnMVdFdllO?=
- =?utf-8?B?U0xjMlhoc0VWcmtEQ25tSE0xV2tTejl4SEc2dGxqa0w3cDV1cm1nU3ZwNDN2?=
- =?utf-8?B?dSticmlUOEIwazRCa0JUb3lhMURUNFRVVUNjUytNalZsQTVFNXI5bkUwVkhD?=
- =?utf-8?B?L3JPWWQ0L3hvWERLMko0emgvYkpBMk96ekxNTFdXbGF3c0RQWVE3SS9laUlj?=
- =?utf-8?B?U0l2L2x0U1g3bS85aVJaZjlNcEd1Qk5oY0g3UzJtK3liRzRrbmttUVJOS0Fk?=
- =?utf-8?B?NHBhcFBtNmdpeGo2NllXRTdEVEltMkJBRy84bUZyQU5vd2R3dllNV05XMWpv?=
- =?utf-8?B?Y3c4WWwxZFhyRU44K3NJZXNwbjM0cHZCWHBMNDQ5Q3ZyZVIydzdyZ3g4RHZV?=
- =?utf-8?B?dVdSeEJ6MEtrZ0hxYm40TkVUWFF1c21CTmVNNXcrSGMwYnhNcjBKdjYxeTZo?=
- =?utf-8?B?WXcydDViN0t2R0xYalZUVFAwL0kwa3BuTmRiM2dqcWgrRmdncHdCeDFGSDN5?=
- =?utf-8?B?cFVRcE5lckdWOUJwM2ZiT1VobFBPSjN2NjdkMEpjZnR3SzJ2S2lnVGpjNnIv?=
- =?utf-8?B?TXZKWWxpekdNQ21TUWswSDljYlBWWHFJQ0o2V1hCUUdoRVYzMTkyaytHNmxi?=
- =?utf-8?B?YjE3eC8zVUJzelUxMWt5bkR1T1dNR1FGT2g1dktXRE9iTHNXTFJaQmdzdzBJ?=
- =?utf-8?B?bjZlODVDc000NHc5SDc1czFteTlENDZyZzdPcHhRS3owK21va21naWM5UHlu?=
- =?utf-8?B?cU84Z1NjUmV5NjNNbmo3dVpYSU45cjkxY2pSbkdqdXdiSzNEa0pPYXBXY3Bj?=
- =?utf-8?B?TDB5Q1R0SUVmR1lnbWZqY1UxelFWZkR2ekJCVmZaNjVuOEx4QnVyUHovdmkz?=
- =?utf-8?B?aVJmVXVmajgzM3pLc1NUUnFFNjMyRmpLOWtQbDJVUm5TK29vK0Z5QjUyVFF3?=
- =?utf-8?B?THp1WnoyamNRSnE0WTMrTW1TZm1vbUt4OXdLM3orWDhwNEE0eW96ZlZwK3RH?=
- =?utf-8?B?V0hNNENISFkzZGJuT2M5OXJYMXlpSmtMdnFsWkZaL0x3dG0yOWJvdU1memFr?=
- =?utf-8?B?bUVuZG12b3dyd1h2SDZZWVRRYkE1UmlRZDBWWm1FSXpvZnI4NDFlUjA1YUZJ?=
- =?utf-8?B?ZWIzbG1obW42OGh1YmZJY0tOWmJVVmtRYUNzWjkyNldTa1VpR2JRQ3l2dFdm?=
- =?utf-8?B?SHByaUttRzRpZTdENmFEUXNQMFpkMVF5cW1ReU1PQnNsTVhiUEtjbUJkSXVS?=
- =?utf-8?B?VHEvdkQ5c1RoYXVzb0kvbGhES1VpOGhOaS9DQ1A2Y0dTVEo1VWdHZ1dHQ2V5?=
- =?utf-8?Q?FPyG6OP2gxqyIquVxoyNql0cXywu6MUNXg2bYG2D5yo/Y?=
-X-MS-Exchange-AntiSpam-MessageData-1: PptNtt7JZs9Ezg==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7f52bb1-678a-406d-5bbb-08de6d7ff04f
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2026 17:22:19.5460
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WEYc/CD86w219nsyr8z2q7jrnmnO3P4qDR/2RuqjtAI8G/jXbFRf+8df53+HDS38Su/dgWYoy+88ZyjNPH85/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6819
+Content-Transfer-Encoding: 8bit
 
+As talked about in the first patch in this series, passing NULL as the
+'mssg' argument to mbox_send_message() ends up causing confusion and
+quirky behavior inside the mailbox core. Despite this, there are a
+number of drivers that pass NULL.
 
-On 16/02/2026 11:29, Bartosz Golaszewski wrote:
-> On Mon, 16 Feb 2026 05:58:42 +0100, Prathamesh Shete <pshete@nvidia.com> said:
->> On Tegra platforms, multiple SoC instances may be present with each
->> defining the same GPIO name. For such devices, this results in
->> duplicate GPIO names.
->>
->> When the device has a valid NUMA node, prepend the NUMA node ID
->> to the GPIO name prefix. The node ID identifies each socket,
->> ensuring GPIO line names remain distinct across multiple sockets.
->>
->> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
->> ---
->>   drivers/gpio/gpio-tegra186.c | 26 +++++++++++++++++---------
->>   1 file changed, 17 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
->> index 9c874f07be75..daf5aaffa28a 100644
->> --- a/drivers/gpio/gpio-tegra186.c
->> +++ b/drivers/gpio/gpio-tegra186.c
->> @@ -857,7 +857,8 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
->>   	struct device_node *np;
->>   	struct resource *res;
->>   	char **names;
->> -	int err;
->> +	char *instance = "";
->> +	int node, err;
->>
->>   	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
->>   	if (!gpio)
->> @@ -937,17 +938,21 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
->>   	if (!names)
->>   		return -ENOMEM;
->>
->> +	node = dev_to_node(&pdev->dev);
->> +	if (node >= 0) {
->> +		instance = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%d-", node);
-> 
-> I've never noticed it before (and it's not introduced by this patch) but I
-> really dislike the child device registering devres nodes with its parent...
+It is plausible that some of the drivers passing NULL may have been
+taking advantage of the quirks of the mailbox core. Specifically, they
+may have been taking advantage that calling "tx_done" wasn't truly
+necessary for NULL messages (it was a noop) or that NULL messages were
+passed onto the mailbox controller right away without queuing.
 
-While it looks a bit odd, the parent is initialised as ...
+This series introduces a new API call: mbox_ring_doorbell(). The new
+API call tries to mimic the specific quirks that were helpful in the
+old behavior and it's expected to be a nearly drop-in replacement.
 
-  gpio->gpio.parent = &pdev->dev
+There are some subtle differences between the new call and the old
+behavior, but it's expected that all of these differences are only for
+cases where the old behavior made little sense. The description of the
+first patch details these differences.
 
-> 
->> +		if (!instance)
->> +			return -ENOMEM;
->> +	}
->> +
->>   	for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
->>   		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
->>   		char *name;
->>
->>   		for (j = 0; j < port->pins; j++) {
->> -			if (gpio->soc->prefix)
->> -				gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
->> -						      gpio->soc->prefix, port->name, j);
->> -			else
->> -				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
->> -						      port->name, j);
->> +			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s%sP%s.%02x",
->> +					      instance ?: "", gpio->soc->prefix ?: "",
-> 
-> instance can't be NULL here, can it? Either print it unconditionally or
-> initialize it to NULL.
+The series attempts to convert all in-tree users to stop passing NULL
+for mssg. As per above, there are some slight differences in behavior.
+If any of the patches are causing problems, they can safely be
+reverted while debugging the problems. Eventually, all code should be
+converted over to stop passing NULL mssg.
 
-Probably best to drop 'instance' altogether and just ...
+Changes in v3:
+- Suggest mbox_ring_doorbell in the warning message
+- Updated patch description based on Cristian's response.
 
-  if (node >= 0)
-        name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
-                              "%d-%sP%s.%02x", node,
-                              gpio->soc->prefix ?: "",
-                              port->name, j);
-  else
-        name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
-                              "%sP%s.%02x",
-                              gpio->soc->prefix ?: "",
-                              port->name, j);
+Changes in v2:
+- Instead of just documenting NULL, introduce a new function
 
-> 
->> +					      port->name, j);
->>   			if (!name)
->>   				return -ENOMEM;
->>
->> @@ -1373,6 +1378,9 @@ static const struct tegra_gpio_soc tegra256_main_soc = {
->>   	.has_vm_support = true,
->>   };
->>
->> +/* Macro to define GPIO name prefix with separator */
->> +#define TEGRA_GPIO_PREFIX(_x)	_x "-"
->> +
-> 
-> This doesn't look like it belongs to this patch, why are you doing it
+Douglas Anderson (15):
+  mailbox: Deprecate NULL mbox messages; Introduce mbox_ring_doorbell()
+  ACPI: PCC: Use mbox_ring_doorbell() instead of NULL message
+  firmware: arm_scmi: Use mbox_ring_doorbell() instead of NULL message
+  firmware: imx-dsp: Use mbox_ring_doorbell() instead of NULL message
+  firmware: tegra: bpmp: Use mbox_ring_doorbell() instead of NULL
+    message
+  irqchip/qcom-mpm: Use mbox_ring_doorbell() instead of NULL message
+  remoteproc: xlnx: Use mbox_ring_doorbell() instead of NULL message
+  rpmsg: qcom_glink_rpm: Use mbox_ring_doorbell() instead of NULL
+    message
+  rpmsg: glink: smem: Use mbox_ring_doorbell() instead of NULL message
+  rpmsg: qcom_smd: Use mbox_ring_doorbell() instead of NULL message
+  soc: qcom: aoss: Use mbox_ring_doorbell() instead of NULL message
+  soc: qcom: smp2p: Use mbox_ring_doorbell() instead of NULL message
+  soc: qcom: smsm: Use mbox_ring_doorbell() instead of NULL message
+  soc: ti: wkup_m3_ipc: Use mbox_ring_doorbell() instead of NULL message
+  drivers: firmware: xilinx: Use mbox_ring_doorbell() instead of NULL
+    message
 
-Yes we should split this into two patches; one to simplify the prefix 
-handling and one to handle the socket.
-
-Jon
+ drivers/acpi/acpi_pcc.c                       |  4 +-
+ .../firmware/arm_scmi/transports/mailbox.c    |  8 +-
+ drivers/firmware/imx/imx-dsp.c                |  2 +-
+ drivers/firmware/tegra/bpmp-tegra186.c        |  4 +-
+ drivers/irqchip/irq-qcom-mpm.c                |  2 +-
+ drivers/mailbox/mailbox.c                     | 82 ++++++++++++++++++-
+ drivers/remoteproc/xlnx_r5_remoteproc.c       |  2 +-
+ drivers/rpmsg/qcom_glink_rpm.c                |  3 +-
+ drivers/rpmsg/qcom_glink_smem.c               |  3 +-
+ drivers/rpmsg/qcom_smd.c                      | 13 +--
+ drivers/soc/qcom/qcom_aoss.c                  |  3 +-
+ drivers/soc/qcom/smp2p.c                      |  8 +-
+ drivers/soc/qcom/smsm.c                       |  8 +-
+ drivers/soc/ti/wkup_m3_ipc.c                  | 10 +--
+ drivers/soc/xilinx/zynqmp_power.c             |  2 +-
+ include/linux/mailbox_client.h                |  1 +
+ include/linux/mailbox_controller.h            |  4 +-
+ 17 files changed, 108 insertions(+), 51 deletions(-)
 
 -- 
-nvpublic
+2.53.0.273.g2a3d683680-goog
 
