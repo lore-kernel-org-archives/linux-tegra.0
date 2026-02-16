@@ -1,134 +1,221 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013023.outbound.protection.outlook.com [40.93.196.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C61F2BAD;
-	Mon, 16 Feb 2026 02:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771210280; cv=none; b=m2KXmRIacmVF/B1WYf+lDLuUtIUZazZtg656t4D0azj947xxKNdT2BcRqAwYpV3XTvmfwBbwd3OsXH9cBgfp5aHzUastr5MOKuPU4frTkLJDYQ1yEyFGkeheDlqd49bsIOHJ0THwZNN6mELJymfa110Q8D4PNYTDXWNQ+HxnZ2U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771210280; c=relaxed/simple;
-	bh=zECy0mqaOgeJXWyIw7FNUt2iDqlCCCgkdZjUix16Sco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsPHgCtEZ8B6RtC9HLdVlT7Gxb1bGF37ooW9r6LvQjcW+HYvbyqcuWTARlp6DvfEOZlKnHfKRR4DBKUN7tFXWDNkoV6RnD9x+g3W2tIMqem1O+tXt31Ycj17+EsIFflBvLarqJoZhvYcLtuEC5nGZOMlZp8jcHKridyrtT+Tak0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0RXg2g5; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B97944F;
+	Mon, 16 Feb 2026 04:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771217950; cv=fail; b=tWs4FszkHC2Qdq4JBpFITZiUE+8PfRG3wyPlV9q7zDVo+DXk6oZ0BQMYmDzIgSJ43S1TuNyQY4fQ61flaSEJC6y/UYFEhJcKeXesg/bd6bcDhsLvfpjdztZ7D2uWPb/oUwPKBrVno3di2LiKt57t+dbj0YSOUaatxlydNGbDhaw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771217950; c=relaxed/simple;
+	bh=l4xy+9ZqoW/1KZjKKvbSY6PUxB8zf4FzFmhcPu21P0w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dAlXj775IDTU2mN/3srNRSrCnWP7lq/Hzh/ogLik5Pj9K5hd8srp0HoP2s/a1JWkv83avEfAh2RJ2p1MWSf8imaXinnGN1kac2uSRufSbQJJSeVIxDFp3x6HDQyp0uJT2fbmmn5mWnEJLWo4fKpIrb3ihyTN6iCIrtvOSPAPodE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZVabthOj; arc=fail smtp.client-ip=40.93.196.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0RXg2g5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771210278; x=1802746278;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zECy0mqaOgeJXWyIw7FNUt2iDqlCCCgkdZjUix16Sco=;
-  b=m0RXg2g5/PT3r/5INPAahd97NG/8gLWPNrGi+8vw8jD1f8M9eB8yFc/K
-   0XciyfTNmZvTlPVG+rpVTpqq5p7nIaWnyYkRyIzjFVNP9CDQl/tJiugKP
-   NVTYg85XzUyu0CHRfOaZsRMUtpH8TBN7n30IFG+4cA2ytDckrHb2h2uBn
-   CmSkgY9/s3lHKXpWd1+SAIeWzo9JQJRzvNuCb415zDLsn/n5Txxs7cNA1
-   Q+vHKqIUXt/34sKpOeTZLkhN73gaDj1Ga5nwWkD/HLDQt7iyybiaeKQUh
-   KqvfGbQFL5E9BZGvUkVt3Ux3D1SqXvwh6srLRNKWSIpXpiRN7UBXR4E7m
-   w==;
-X-CSE-ConnectionGUID: N9jqwihBSKWSa6vFzb43vQ==
-X-CSE-MsgGUID: F6hqXylBRLi8LiqK7czJ/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="71492823"
-X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; 
-   d="scan'208";a="71492823"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2026 18:51:18 -0800
-X-CSE-ConnectionGUID: WWng7x6KTdiqC+6q3mL+QA==
-X-CSE-MsgGUID: hon0aVVWTh6gERwcALI6KQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; 
-   d="scan'208";a="218015367"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 15 Feb 2026 18:51:16 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vrohd-00000000zL2-3MTH;
-	Mon, 16 Feb 2026 02:51:13 +0000
-Date: Mon, 16 Feb 2026 10:50:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samyak <samyak.bambole07@gmail.com>, marvin24@gmx.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Samyak Bambole <samyak.bambole07@gmail.com>
-Subject: Re: [PATCH] staging: nvec: Use kzalloc_obj instead of kzalloc
-Message-ID: <202602161056.Elbb21hV-lkp@intel.com>
-References: <20260215122913.104064-1-samyak.bambole07@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZVabthOj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R/0hOH4/ALqMqWaSfuo6/OalSIKYBraskKt7bJePwWOULXqaOJS+hEhRvVEpgzNPeo0zwj9nrqSldq5KkNan0L22hA8B6P42zPK9tTP1VRChLH2tvN7wY0QrOt+U5gEXP52aNaOs5RKaZeEGBV+DTg+xBmfnFohMCTG+lB5aV0Omx4rW0NHlUSexOeIWzoLMifambRd0Jl8/aaaSdjrL7Si9MPT1gsyJLtFVXsIdcYfrNDE2PKU+JEYX32jvk7q/HboAMS8QNf/UpdE5gBJXwEWAoS5aXfqHgxRQePT4pH5KqQXwwCu5L8EsNMoE3c1o79U3PVYrDthQuUGt73UwIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xR2WEXIqaARDJUyDr0sqZIOxbhfnSZndsNj11TE6t1Y=;
+ b=rxQ16GqhfyCx+z75i/UhXjQ4XKVv2gz9JNVX9KOlWcfwSVfjAmthV+w6RporzrOyizmMzHDkwR7H7wzFE65+1XLDhgXSXo7sexntD5g4H0lRbfHwgCF3gsUi7QkJirDVIJJWk7WuMacD47nhaAJzqqWeMDsOhsUn8Ltj5pn0J//c7YInZX/kjGUCtMxLgpVn7HgNSieX//6tQffDeL5Y7iSIj/CSAEwOY6rKA0edK41lqXwItKqxfQs4T2aGo4D4S5jNN88iQR+m/EpfqvlJul4EEQ67GUjaCcFxDV4+zUMyeeDfXFalp2nMroamEilLQB+WzvgJKLpeU5cwawXw0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xR2WEXIqaARDJUyDr0sqZIOxbhfnSZndsNj11TE6t1Y=;
+ b=ZVabthOjMkmt7ORjfl3togBzmok+867vWE0aQQgeGZFmDxlMGJL+CiLVTMTs7dgFO6piz6uJPgrqcayfDRicJU7t2cBsstjm184ToM7GQzMeaEAKJbzJ8QjrYFtYVRTJ2a6hg1wpwCegJRcr6gDC93UHf3+aSa9tYd2BGbM4ePr/EjMfg2NbJE45jbvPx2czHj/0V7f5vZwQUUw0hkk6K22TdBhiMq90uKpS4P1OUGB/GDrskMcmcZxCqgPN+PtaBKCzX9DUHNpbQ8u3LWAJadPvcBgK8/iaMNvOfkbMaUzXI/MtsARWji3jW8sllvZSFUhxms//BBN6DAqae+cz5w==
+Received: from BYAPR06CA0034.namprd06.prod.outlook.com (2603:10b6:a03:d4::47)
+ by BL3PR12MB9052.namprd12.prod.outlook.com (2603:10b6:208:3bb::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.16; Mon, 16 Feb
+ 2026 04:59:04 +0000
+Received: from SJ5PEPF000001E8.namprd05.prod.outlook.com
+ (2603:10b6:a03:d4:cafe::91) by BYAPR06CA0034.outlook.office365.com
+ (2603:10b6:a03:d4::47) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.16 via Frontend Transport; Mon,
+ 16 Feb 2026 04:59:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001E8.mail.protection.outlook.com (10.167.242.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.12 via Frontend Transport; Mon, 16 Feb 2026 04:59:03 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 15 Feb
+ 2026 20:58:49 -0800
+Received: from localhost (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 15 Feb
+ 2026 20:58:49 -0800
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <linux-gpio@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <pshete@nvidia.com>
+Subject: [PATCH] gpio: tegra186: Support multi-socket devices
+Date: Mon, 16 Feb 2026 04:58:42 +0000
+Message-ID: <20260216045842.1206350-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260215122913.104064-1-samyak.bambole07@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E8:EE_|BL3PR12MB9052:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b94cefa-e677-448e-8fda-08de6d181b1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9X4m7fez47zMQaJ+VAY4hG1773ATgtXKTJothoGeeK+4E4UBUZ3p0PGk6We6?=
+ =?us-ascii?Q?/vPd9DgtrsP7Xak9cyOdFxC/NOzi2VMMEOqUePy2RjXALTVQRRTMwR6PfJk1?=
+ =?us-ascii?Q?9dBxLGnxOkzsDkpyorvRKPIId2yUBDlugP2Rp+VMhu4Dbz4E6Y47paAE0QRb?=
+ =?us-ascii?Q?w+oABWHYMEzcqa98gp2GpTnbev0+BkBm0tnZBzHiXBssR6Xdjlq5zKIjVrK2?=
+ =?us-ascii?Q?TWPthVdW3EsJw66LdCRkGOjYKqv3xXIR25pZa4Wt/bmHqox8vGhH+g2WAKlV?=
+ =?us-ascii?Q?PmTNv1Heli/6C1giFq900bUeDDQ+256zizvED84AtRi1X9/3+FTWuX17ugbZ?=
+ =?us-ascii?Q?Cp8yOpyF839YgpEfyF7t2CG5FGNv0R66nc1WbPbhjnoQ/G31SNCoINGLRFxX?=
+ =?us-ascii?Q?NB+PUGKlgze5c7Q7qzIghzOzZ75+t95iikqBVcSLlxw5d6PSxn+PKQSdRjii?=
+ =?us-ascii?Q?YewLE/Kqnp171PvWwIIlOuuolH7xQJ+H5GsGHEadlbKDQ3psJrQSTt678l7Q?=
+ =?us-ascii?Q?1W0Fql1NiKIA/xGVC3eAUDphaB29TF3idMUL1x+6mRvwmyiC0A4+h++XiIgL?=
+ =?us-ascii?Q?y1DaFy9syf1pd9skhC9Xf+aDn0Wos8dDjlYFGcjhN4aLUrGVty3F+TIp/Tkl?=
+ =?us-ascii?Q?6+P56feBaR68cOGGUcalLyR73wxmoVtTuCmkWgcvr8W8rUx662r39Sw2HVg1?=
+ =?us-ascii?Q?FKOI4jnZzKq1oyxybEkDUUIhXIgXMG2+yn4bgprbROjp0rWRpUXXHqYQuJ9G?=
+ =?us-ascii?Q?9ZgZm+pPxmeny5V98v35Rqf3+ycG11hdnsOO0l+c+e1St5304FzkNhga+qkf?=
+ =?us-ascii?Q?AKo62MRgX1mikVNNZ5dBPdXJfDtAlcPMx6w05WLga03s9pgKPDWkyIDaZrSw?=
+ =?us-ascii?Q?AoNL1SE5+i5vneAKwGqJincmJPmbRt2+OaMzPUbggmeBbPKTJosuGj2jLtLs?=
+ =?us-ascii?Q?OAGVSK8UuPyKaMU5L8+4KK4w/PMSBKmYZx3iHwN7mqqhTgqQtxWait5yg3xu?=
+ =?us-ascii?Q?G1pL+82M+okP4wsOyIe27KMpvU7wxMDIW92jt38OpCBSBf+PctZzyLuBVOz9?=
+ =?us-ascii?Q?ld4UyINDmOezP9qH/JROkaZmqyIQiPx7G/OMldwN2Vj+4kSIc/CBc6nPlxgb?=
+ =?us-ascii?Q?DKrA2LjzgoUTJzaPWfZkyk/1kdo2SBrtFECJDHr/y+nJMNBYbiqfw7v06QIW?=
+ =?us-ascii?Q?o9IsKajAJhFrq4ZS/1BfNa5GSH/p+apMKaJ/iYmjCX0sJXW/Mc9HuSBOkfhV?=
+ =?us-ascii?Q?l+eG5lqAg/X/mrG2hGymSH0u95k/XlZOlA4f+PAMALCFEOLeMHMZqtEj9ony?=
+ =?us-ascii?Q?l0dND4JyE5STI9k24yhqqXMx1IO4LFZxnK3g58o3EVyx/TD+XTmj6tKvkc+v?=
+ =?us-ascii?Q?X789dRas9mof7ndTpFyyP2ZuiqqY40p87ZCzQNPRvaLMyPxinMrUsW55IlNA?=
+ =?us-ascii?Q?IBuP39AQUkqyZlP/jvFYRIJKUinvnJ7Rxd71/cPR3L0IJO1YxDBSYku67xdr?=
+ =?us-ascii?Q?UHMdPY9FJcnAGvhSAxl6iuAip0F7aQkny8Li8Cm5JrByESmyaaywUVIfSkmv?=
+ =?us-ascii?Q?b6nQ1x3xsU+Ta3i2fvkrmfE+r3p1RLKNOH23xu2iXty0WL1KO7ai7JQ2YvSS?=
+ =?us-ascii?Q?A+viFYIjluEo+Y82LttgDggzIS85hG5BAIkGdIUORQoE3zijYArHvVN+XJ1o?=
+ =?us-ascii?Q?ib0HWw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	ZtmMFtxRmf6uDn8QAAZoQPX6ut1y58jMT15W012vqBmLVJZw7gbgUkQjFfPqHOIgIpUM5ypRMSlVPOqGsvsOZn9WZUmwElrM0MOgqUx+9bDJmIBWdtbtkM7pOib1nMloscrDKDQ+Pk91ITxzFhDJHgf70CUqDRVqHnUHUl3ptn3mc7WHzvPqIrDuoESfHHLPbUzBOycpj2ZbeycSEAQJ+3BEImhvIWYdn5iUjVDFEspj1bGsp1gRLDNvGay3pzSdoN995oeYG7yCL5mqn0+nZKwFEn47BnvVlrg3j9DZA7rKEDBDqg0zL5VPLuxczHzmmPnGIvMf1VD2pBeAbyxhQXRhnMf/oJ6aeFg7rXSCMjY+7A8Sf3joAeW03JrPuR50D+4C9rnxnbU/mHc7F1NVmt3WknloHsdoXPhJgy7KuyIMmO0Ka+o1hx4HG8YmP8Ht
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2026 04:59:03.3314
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b94cefa-e677-448e-8fda-08de6d181b1c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001E8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB9052
 
-Hi Samyak,
+On Tegra platforms, multiple SoC instances may be present with each
+defining the same GPIO name. For such devices, this results in
+duplicate GPIO names.
 
-kernel test robot noticed the following build errors:
+When the device has a valid NUMA node, prepend the NUMA node ID
+to the GPIO name prefix. The node ID identifies each socket,
+ensuring GPIO line names remain distinct across multiple sockets.
 
-[auto build test ERROR on staging/staging-testing]
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+ drivers/gpio/gpio-tegra186.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samyak/staging-nvec-Use-kzalloc_obj-instead-of-kzalloc/20260215-203130
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20260215122913.104064-1-samyak.bambole07%40gmail.com
-patch subject: [PATCH] staging: nvec: Use kzalloc_obj instead of kzalloc
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20260216/202602161056.Elbb21hV-lkp@intel.com/config)
-compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project afd4df07ab0262482829d4410a6bae9f2809d37b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260216/202602161056.Elbb21hV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602161056.Elbb21hV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/staging/nvec/nvec_ps2.c:105:12: error: call to undeclared function 'kzalloc_obj'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     105 |         ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
-         |                   ^
->> drivers/staging/nvec/nvec_ps2.c:105:10: error: incompatible integer to pointer conversion assigning to 'struct serio *' from 'int' [-Wint-conversion]
-     105 |         ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
-         |                 ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +/kzalloc_obj +105 drivers/staging/nvec/nvec_ps2.c
-
-    99	
-   100	static int nvec_mouse_probe(struct platform_device *pdev)
-   101	{
-   102		struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
-   103		struct serio *ser_dev;
-   104	
- > 105		ser_dev = kzalloc_obj(*ser_dev, GFP_KERNEL);
-   106		if (!ser_dev)
-   107			return -ENOMEM;
-   108	
-   109		ser_dev->id.type = SERIO_8042;
-   110		ser_dev->write = ps2_sendcommand;
-   111		ser_dev->start = ps2_startstreaming;
-   112		ser_dev->stop = ps2_stopstreaming;
-   113	
-   114		strscpy(ser_dev->name, "nvec mouse", sizeof(ser_dev->name));
-   115		strscpy(ser_dev->phys, "nvec", sizeof(ser_dev->phys));
-   116	
-   117		ps2_dev.ser_dev = ser_dev;
-   118		ps2_dev.notifier.notifier_call = nvec_ps2_notifier;
-   119		ps2_dev.nvec = nvec;
-   120		nvec_register_notifier(nvec, &ps2_dev.notifier, 0);
-   121	
-   122		serio_register_port(ser_dev);
-   123	
-   124		return 0;
-   125	}
-   126	
-
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 9c874f07be75..daf5aaffa28a 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -857,7 +857,8 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	struct device_node *np;
+ 	struct resource *res;
+ 	char **names;
+-	int err;
++	char *instance = "";
++	int node, err;
+ 
+ 	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+ 	if (!gpio)
+@@ -937,17 +938,21 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	if (!names)
+ 		return -ENOMEM;
+ 
++	node = dev_to_node(&pdev->dev);
++	if (node >= 0) {
++		instance = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%d-", node);
++		if (!instance)
++			return -ENOMEM;
++	}
++
+ 	for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
+ 		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+ 		char *name;
+ 
+ 		for (j = 0; j < port->pins; j++) {
+-			if (gpio->soc->prefix)
+-				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
+-						      gpio->soc->prefix, port->name, j);
+-			else
+-				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
+-						      port->name, j);
++			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s%sP%s.%02x",
++					      instance ?: "", gpio->soc->prefix ?: "",
++					      port->name, j);
+ 			if (!name)
+ 				return -ENOMEM;
+ 
+@@ -1373,6 +1378,9 @@ static const struct tegra_gpio_soc tegra256_main_soc = {
+ 	.has_vm_support = true,
+ };
+ 
++/* Macro to define GPIO name prefix with separator */
++#define TEGRA_GPIO_PREFIX(_x)	_x "-"
++
+ #define TEGRA410_COMPUTE_GPIO_PORT(_name, _bank, _port, _pins)	\
+ 	TEGRA_GPIO_PORT(TEGRA410_COMPUTE, _name, _bank, _port, _pins)
+ 
+@@ -1388,7 +1396,7 @@ static const struct tegra_gpio_soc tegra410_compute_soc = {
+ 	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
+ 	.ports = tegra410_compute_ports,
+ 	.name = "tegra410-gpio-compute",
+-	.prefix = "COMPUTE",
++	.prefix = TEGRA_GPIO_PREFIX("COMPUTE"),
+ 	.num_irqs_per_bank = 8,
+ 	.instance = 0,
+ };
+@@ -1418,7 +1426,7 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
+ 	.num_ports = ARRAY_SIZE(tegra410_system_ports),
+ 	.ports = tegra410_system_ports,
+ 	.name = "tegra410-gpio-system",
+-	.prefix = "SYSTEM",
++	.prefix = TEGRA_GPIO_PREFIX("SYSTEM"),
+ 	.num_irqs_per_bank = 8,
+ 	.instance = 0,
+ };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
