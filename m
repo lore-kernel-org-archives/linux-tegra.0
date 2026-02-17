@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F5D320A00;
-	Tue, 17 Feb 2026 10:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211D728D8FD;
+	Tue, 17 Feb 2026 10:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771322637; cv=none; b=czfFO+vdXQ09lSnidgX5gkSLqrknlHaOelUTz4eqI/A++9Qaz1iJxwccPHrtQunJ0Ly/0KIb6u0hvi37JeH20LGXWC7PvertpNLPOEVUPzdbtopQFGp1jabC35upU18SQP9HVCM5s21TWN4KIP1MnaMb1Z02vdfQvOg9zSwWdAA=
+	t=1771322680; cv=none; b=jTCuQCdVD0m7MHQGexM8SckJL/LzyyEteZC6RVD057WwP6qOpqh1I1tfBaZrlEnkfrKHYELHYGZ+sFieoJUom0n1oDJl3IID9DEGIc4xEIV5les2Hz7Grw3pd7CWkrcUQrA0/5xW+W/1eVvCFmBZTwHeitNTDjmhwlnKhBoXn6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771322637; c=relaxed/simple;
-	bh=TUwPDbTunD5kmKcSfeNkBt7yJAJr8lZ1ams1gld7aVI=;
+	s=arc-20240116; t=1771322680; c=relaxed/simple;
+	bh=cna8tXzB9QwB/AIrnrY+qpwe4CP0Q5vbocxgHUsoNx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MoVmiotSQEvNlhLpCrwj4bDaiYiFDtVW4w63XT2+zg12BNWQHChjaLHsemVqZWRqOuPmYjjzFOWdHZXBi4ndPlZ/zsyYHedkm9Y1vgLwmQ7ictfK2VMsvxOrvna5DqtG2GqUHzXKEc9GZ3+P3iIAjGxgA8oTayTV5gIo2wZLQjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqSeo6Mi; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNYRjXgJcjPHmm0yU4jZdObaZKVTDk8IdgfqM4tyELZ/DHP8/zQl0YfPn1RmJr5UguYxC4BObhoOc71vjrBJJ+pZaEQNsIbsk11UebV5QxCNEvGwnk/gOIWjjdKir2BR8ihBjWTkZf6AEzbe2/pv7Y1k6Jtf/5dDC8ca+AVVB6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stDCcr1o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqSeo6Mi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3467FC4CEF7;
-	Tue, 17 Feb 2026 10:03:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stDCcr1o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E668C4CEF7;
+	Tue, 17 Feb 2026 10:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771322637;
-	bh=TUwPDbTunD5kmKcSfeNkBt7yJAJr8lZ1ams1gld7aVI=;
+	s=k20201202; t=1771322679;
+	bh=cna8tXzB9QwB/AIrnrY+qpwe4CP0Q5vbocxgHUsoNx0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CqSeo6MiWIQ9gDbvBcz2DnsWVH4DWgD2X2QdAxnpADThg4FaPTcIQajqMMP1LLv4I
-	 LIbNA+rhcnV1z8eH7q/PgBZdpGq2qTsNpVlOTo4+KP5wQ2k3F50Jl8xgcmhGXH+4yl
-	 Yi+zDtLExYkgMLxUi+LjyctDpdwiEgw8Mmmg7j4Fx9AM6zUb8dn9fFfdlATqoG0gCs
-	 aWpGq5qxi1IoRIXXzmIdAHqTMNQJBvDx6ssyb5F5csj8281O/4x7Aja4Ud19+H7pVC
-	 Ksn1ZxdOTNEgSH0Vqg1zx9CQFRuzJlezFEQmRuVE4W24ArulzLeawp+9B9HP2Ish5+
-	 Hw3mYxqwv2QAg==
-Date: Tue, 17 Feb 2026 11:03:55 +0100
+	b=stDCcr1oto++YjKAw7iNf1MjLcSNsrhD27BJ4E980nOAvnvS6owivvqkEhD7yhcyQ
+	 6WybtGx4kkacJ/Ytz+sZdWqxgwe7NUxcT9C79XkzdcDVoETolj25o3yYiS6PS5biEH
+	 heYjOZp0isSctpPyg7oUmvA364+t+JEKxqOJDAiaA3Gqy5C+QecARtoYIJ2fEchy63
+	 j3DrUqd7XIGjDA8+Yext7Cl9ruRwxP7krzxcIgS9NcGeLCd4TJaQVTzow+W0LUah3d
+	 cRuvE2dMOAei0PyO1tIhJmgImRUAfyKY/+/Idqb38TuN5t8hTZjN/bY65W6OeiZhl+
+	 fp78c2XeIyqHw==
+Date: Tue, 17 Feb 2026 11:04:37 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Russell King <linux@armlinux.org.uk>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Linus Walleij <linusw@kernel.org>, 
-	Drew Fustini <fustini@kernel.org>
-Subject: Re: [PATCH 0/3] arm64: tegra: Make ARCH_TEGRA_SOC_FOO defaults for
- Nvidia Tegra
-Message-ID: <aZQ8iBRKLfzrzJcm@orome>
-References: <20260217-soc-tegra-arch-kconfig-v1-0-81bf5674d032@oss.qualcomm.com>
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: linusw@kernel.org, brgl@kernel.org, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] gpio: tegra186: Simplify GPIO line name prefix
+ handling
+Message-ID: <aZQ9Knn41f2KNrYt@orome>
+References: <20260217081431.1208351-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,62 +43,52 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hwhpsufjpg3xf5w7"
+	protocol="application/pgp-signature"; boundary="fepjia62crhmk4ik"
 Content-Disposition: inline
-In-Reply-To: <20260217-soc-tegra-arch-kconfig-v1-0-81bf5674d032@oss.qualcomm.com>
+In-Reply-To: <20260217081431.1208351-1-pshete@nvidia.com>
 
 
---hwhpsufjpg3xf5w7
+--fepjia62crhmk4ik
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/3] arm64: tegra: Make ARCH_TEGRA_SOC_FOO defaults for
- Nvidia Tegra
+Subject: Re: [PATCH v2 1/2] gpio: tegra186: Simplify GPIO line name prefix
+ handling
 MIME-Version: 1.0
 
-On Tue, Feb 17, 2026 at 10:16:35AM +0100, Krzysztof Kozlowski wrote:
-> Renesas was fixed (thanks folks!), so let's fix this one myself.
+On Tue, Feb 17, 2026 at 08:14:30AM +0000, Prathamesh Shete wrote:
+> Introduce TEGRA_GPIO_PREFIX() to define the Tegra SoC GPIO name
+> prefix in one place. Use it for the Tegra410 COMPUTE and SYSTEM
+> controllers so the prefix is "COMPUTE-" and "SYSTEM-" respectively.
 >=20
-> By convention, only one globally selectable ARCH_PLATFORM is expected
-> for given SoC platform, defined in arch/arm64/Kconfig.platforms or
-> arch/arm/mach-*/Kconfig, because we target a single multi-platform
-> kernel image.
-
-Sounds like a bit of a made-up convention to me. I don't have a strong
-objection, though, so feel free to go ahead with this.
-
-> Dependency
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Further (2 and 3) patches depend on the first one, so should be taken
-> via one branch or some cross-branch-merges.
-
-Maybe we should ask Arnd to pick up this series into ARM SoC for 7.0?
-Most ARM SoC stuff should be merged at this point and since this is
-essentially just a bit of cleanup merging this now would avoid any
-potential conflicts for 7.1.
-
-In any case, the series:
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+> Changes in v2:
+>   * Split the v1 patch into two; this one to simplify prefix handling.
+> ---
+>  drivers/gpio/gpio-tegra186.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---hwhpsufjpg3xf5w7
+--fepjia62crhmk4ik
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmmUPQsACgkQ3SOs138+
-s6GC1BAAvfy4h/23klguGd2eGNVTW+67XFmGmNer98k+vYN2BdEoIgUvrGbAmDb1
-fTr9fwy8R/lDL559mbH//HDDJcF5CEDtF94VCJfO9cIAr6nJcHB7Hz6QGCo3FYBr
-4mioICOtDuk/CEDLFzaE2jVX0qZdrKQYWVvLHVydTvQPqYjo2XLV2uCAaAToM1AZ
-s2JEloKbSSGGPNWruArn7FsQFLH5b+WDBTOzwTRTc8xkXcocuwyy+joEt8qS6Xge
-R+MAHRSOYGRISCCgIDMOoxvIs1vhX72UurWWb7C5nzhd50OnxgWDFJT9fy7/zKra
-LdIMvcqslt4mfgcWg4ipkjGIIl7SzwZodEaitHP8XTRK5XG/STVP1hCgwJCJovEN
-jzGEarK4T5XoXqwoEF/al+ErvHGgtDDX83/ur1KuAIpf82vZA5+UiaDPd6FB5+vJ
-FGsdwE7JUmh0yNCHPeGAnA0xnrbDv8s62uUHExrtaftZROdJIClSAbKzQ3oUPzSE
-7sRbJYlvkc2vRW8cURhLS1M/0RbWYtMbjkzxCvaOo14qLyDCzi+Hbd0Z/1YIhvxQ
-DBjV9Ci0OMY4dd+kBSp0/RM4qE22+scXR07KB7kO5G+/GLv9Z0ukXZHkXvam5Ij3
-XOcyo5eGhvPvhcg8X5q9ucffwOhWarA78/QRZhVPtkAyFCHHuAk=
-=wNB3
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmmUPTQACgkQ3SOs138+
+s6FTFA/7BlMrW2r8dgXRxCP4/L96/GvMOPTyAds5gjZzxiIgUFj+3xTvBcLGupRG
+Qa0SGs6yaqWQQMOEkg+bU2RtTx2NycesDXSW+suoDZPWLOuxyBGYxxtnbjD3IKDI
+7JsEkckkjw+rOT24A6llcB52cEPBZV6TVWQgFfMpXsZZINYuJqn4kRFt/Rlo0JFC
+F+U4jTYs/xgldm80tW0VBVD0rZqpPGhl+r3nHbrh6dJMJpJXUwimf3LMCl32R6pY
+2CKXeUEvd5jEyS16CWzC6vsr76eGtayz6Os+LZE9AepZFQZyxewzl/EILh12VrOR
+Sy6bj56iU32OGGrYZULMpB5ODghuG9RwKNDP6YLSLRzaUIwDy4eLtRw9RhBXK/mS
+5TfICTXTIRnauDr37sKIjTR+KrLrFVhj7lL1LJfDEAGuZwWqg0x2KdDRw3GErD/K
+703Pq7SfpiQyiu0pEmGJpw7FJqc4FlcWVaGNW+k85bXdI4+y1Z/CDgkgIS+VA4jN
+NCk7kjms0ZAJi8R28VTgF13Z4i0czo/sI8rvtau3s24db5wzdKvoJ06L2xNjXziu
+Ac1hVqOy3GdYIu3B0XPKHK/U2R3e5N4hnZn/XOrKyknli0sEVg7YK5h8NdjBDSAv
++9Ty7cYd8ADNC6Z8Mt3EACVq79AuOB9YGCC6VXOx4claNKaDY9g=
+=DhWS
 -----END PGP SIGNATURE-----
 
---hwhpsufjpg3xf5w7--
+--fepjia62crhmk4ik--
