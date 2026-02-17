@@ -1,215 +1,224 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC682E88BB
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 08:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771317009; cv=pass; b=nv06KvE/I0cjtcmwKiu8Gg9wnvBcnSYZ5+xJbqh7dEl8Qjf+kcM1yTB1bBj6BKUlMiv2HzXLNRIKfpFaH0hyQmqi1rBaW+F87pSaOLn7WZz9A60q1r/PM3mMM4X90XWcUaMeCbMVobHksm1EHXWQtQKoq7zNkNHBzQfFw8gIutw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771317009; c=relaxed/simple;
-	bh=Q6+0GPJfuK4Fo9d0a8nwiUzprEer81r2OPIwD6CMeWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mHVme01Dp+8RJVMU1LYyVLBMYRy6qw+zVXEZgro5Q78eifFdXQx1l13lo/9hU/rF0wrpCFVRfoXGtwBPhUrgaOBVWD39m3Dydh4izWn6Au05PmEsBGaw+26CL39J7YnDCvP8nbwmilq3X+c1rzBmpcXX9RyW6KvKXUZfk41y7aU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSp/6vyx; arc=pass smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C14275AF0;
+	Tue, 17 Feb 2026 08:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771317119; cv=none; b=dyaegPCLEwJZbqlNPHAcUb321Z06+MI2dGeUw8wxkTlc21QuQz6UIM9aeFYrDL3pAARo+LCIkZn+946QBnOv7g/gRr5ntIvnuMzhkm5NBW4WW7C574A2fSoJMRvoiPLwNGyPnx5OcNj3wzmhyhxcW85bTwDtjSxkE4FWAtkckN0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771317119; c=relaxed/simple;
+	bh=0Z5mg5JN+dMdFk1n4xlWVeR2j3Qg6QpiMWDZOQSCnhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qm0syvR8SqWIZmO5gULVXazJZsUaeC7ymRo4GRetM6bWzybPh4sr9p2VHjWI6uVRsg+8G86BzP6AMxgxQte8dizqIaLq1cjYN48j1UXKFZUdkTLcHmiLvctqqHt4rddbt2MweZnUn9C+6EIHRPIswRCDqmz55n5BSpXLokfTU+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMPkmETH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSp/6vyx"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4362507f0feso2562360f8f.0
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 00:30:07 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771317006; cv=none;
-        d=google.com; s=arc-20240605;
-        b=GReiwfl4UjAkltzG8fv7RwYo0ZKwjciU/HKOOTg9a6SlrH89myOT4c3DAiGfkRz9vp
-         RYGiR2+QEy2SYjL2WNvGi8KPuSLVN2GP29DtONL2N4ZAfgkttv6+6P8cJ+8mZUL1PGeS
-         7yxt7hWbhLv43DjhkB7VbHXQKJMAniNSbQpBudRepC8LOLkrP0PmKDJGQ0T0jc7be4er
-         6YA0tPOVp84fb1qT7NjBbLJiafqX4KQtqW09dxeRa2UZPemWA0O6iAvHzxNqNKtdBzQc
-         LK/l6k8FyDgV2oZ/SIUoLV9qBMoIN2NXNZe6m61qmgcmfW//wRupCbkSMgkBuUaZrnGJ
-         50GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=GBysLy4Kokba6/2m6eyKbMi5kwkRQdw4C8BxtwLdIYA=;
-        fh=mBjNe4imvvxw69QLWscjfe8R62lzkmqRI4SKLlrxBm8=;
-        b=QZqqKOt+ljBW6rVNVRFQwcflVkEer6nwhLY+5yHjwD2nqTkdmVzZwr3D0/rXmluChC
-         dblkT4bE2HriwaoiqMiFWKhaAVaLuhNWNpCtHAOw6vagCcuJ1UOLpmaImgeajk1EelLf
-         vp9WE6DSU1zecTz2knNJQ2NsPg7IcMhikmzsicHHYLVnUxWwsKfdClSwAi8OWe4TFN3a
-         zA39KzIecjWhRMpa70ptQzq+VPD32zYzLjJPBZqYnhIoT8kSq9tDqxoNetLfkYk/n/bb
-         vbtlxeTFQtEcHgWkP67MqvqJxAwnsqklbtsW7gsREamt+YJbU2MMDVt6bHoaFBiQY2qz
-         fKJg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771317006; x=1771921806; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GBysLy4Kokba6/2m6eyKbMi5kwkRQdw4C8BxtwLdIYA=;
-        b=mSp/6vyxKT+T/+QsrSC5LqSCClf9V0YcNQ+2coczmIv0uky7TSHlL5JLX775jzvX8e
-         6DnHGivgOMBhEGtO+aS/YzOmYjzN0wVbQYfCrStNkz9+hdCgdUY21H8s93TukyFeSu56
-         ujKWDSyrxqoNzMYOZKT5j+JdoO4lv1HPaEVZd/rQM+/hVwId8t/vbVvwN9xYfJYN0/fe
-         aFza5QQh4IGp97KSyMOeDWNblV+C/TwLvi5J1Svj4PANgdZ6I82NvXf92CedZdiZxspk
-         dbg/EJCUol1AhqadoOY4HBSYSjTMPYlfeoh0NMBXYQ7qsCzVxVTHUQNRar61QWtBgaya
-         199Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771317006; x=1771921806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GBysLy4Kokba6/2m6eyKbMi5kwkRQdw4C8BxtwLdIYA=;
-        b=noRVJvOjQRf5ENh4Hh5Fng+DTnK3rrwFw2nPv1XGJxD9VxFASTbUsP2E55Fw5BuDOR
-         h19idKB9v9DKSCwYS0IUmxfQkhmPUQU4S7q7OuA/irQyJ7LGQ5Re8qR25Y9xN5yoFQRU
-         kX8XPcIla+9QX3L8ZiBK7pcp0ZpmGBFz7M+8Rj5/BJJDvEI6xzoXOQLPsyHTtXB1QbA0
-         t36l1ir8fETEGonndC+yem/7X0KZqYGRoR2HpaC1tWGRIfm8RH3f/X8hKpixKlmUt4Ma
-         HpSs0/5CdC2IVlTYwnHBRHrXPs4asYsuydnZnDGGi3TkI1a6Kk6gTlfVfJq5cngm6GxV
-         9lWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyz0MnEN7TBo2Sf8CUrDcUSqeCZVMLApRbSrCIJlkAz5Bz0OwnSdnyn7nf4mmAzKasMjONOk0pQN0L8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnzcerOWEscyLa19EiKObovu9S6dDCmpzW3Jeq59aOYrm6w+FW
-	4VEeU8CHOVxESjILYU1SzX1lICoZq03wzpxLwlntYaMXPinROMbPpTxQnFCXvwN6RZDOfEDvUPY
-	EcBrb26OoXUSoBREvi+ptf8PeN6uhQO4=
-X-Gm-Gg: AZuq6aJ7b4f7iLEUQODyRPU/8C+spogvGpmce/x2zIxcPRrzh8YIKqL82qtQkeeXyKm
-	b3OdoCKoERt6sBYDSeusl667rw0Yi+V3x/Ua35x/RPQQ/0uBiVT6vEVV+uH0JGzfEnooPyixG1J
-	fzailatvpUhXNqFd/UTrXt5n06HGV458yotzBDQkX9unuV3LylstWSXPesFUc2oVIx85An5fLfi
-	KUXeXCmLCdZSuz4NzJtHWshbQPCLcs5PQnrsDH1ypkNEXA+mXooKZTAYGzxrVihvLQXSpH/ntlC
-	KyBqMP4I
-X-Received: by 2002:a05:6000:220d:b0:436:d824:620b with SMTP id
- ffacd0b85a97d-43796aefa84mr21760521f8f.39.1771317005654; Tue, 17 Feb 2026
- 00:30:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMPkmETH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A39C4CEF7;
+	Tue, 17 Feb 2026 08:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771317119;
+	bh=0Z5mg5JN+dMdFk1n4xlWVeR2j3Qg6QpiMWDZOQSCnhI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rMPkmETHKckuSpDs2uw5x7ZVWEFK4ADFgBP6iVRFVmB6MzQmCbrPW0EP6S4MUoqI2
+	 CdRil2r71sCx0yNzqFWhZE4TTjuhbKWDQzW8XuSXmksERSZ5NwAc7ebh5lzyoSdCjl
+	 cFRWzWen4xlD+jepibbxwWzMoF8Tn3m4EGFj9DOpWySxb5CFUugIqpnba30174Cnbf
+	 tp6DT4Db5JT4Msdw5klnMTpC+booPE9BYl5c4F8o8iNN96pFR76YmH9PM7vf2Oyvny
+	 6y7Pkcm8+Fc2VqSEINqAEovbfl8ySEBDoiJ0fD0+upkjgyGBnYFgidvcSEphwF3ruk
+	 HIJqylfMkUYFA==
+Message-ID: <af414583-56e2-4754-8200-62215f514c8d@kernel.org>
+Date: Tue, 17 Feb 2026 09:31:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260126190755.78475-1-clamor95@gmail.com> <20260126190755.78475-6-clamor95@gmail.com>
- <6f143fdd-1e2d-428d-9b05-cf1124b179e8@kernel.org> <CAPVz0n0Ep_YAJfm0R_PexKo5WwrTDbJfFKUbLVKtG5q1qLONUg@mail.gmail.com>
- <b19dcc48-33be-4eb7-8b69-d7ddebefe257@kernel.org>
-In-Reply-To: <b19dcc48-33be-4eb7-8b69-d7ddebefe257@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 17 Feb 2026 10:29:54 +0200
-X-Gm-Features: AaiRm52ZSngnxRGeGT0zXtzxjUwe-KozbWW2xmmEMv8DU6eXNJQzlcX3fDL4iPE
-Message-ID: <CAPVz0n3ZS=VidMxX61mKxjCCgvArK-DWo=VUKoaMhbLAt_CE-Q@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] memory: tegra: Add Tegra114 EMC driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/4] memory: tegra: Add MC error logging support for
+ Tegra264
+To: Ketan Patil <ketanp@nvidia.com>, thierry.reding@gmail.com,
+ jonathanh@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20260130173055.151255-1-ketanp@nvidia.com>
+ <20260130173055.151255-5-ketanp@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20260130173055.151255-5-ketanp@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-=D0=B2=D1=82, 17 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 10:18 Krzy=
-sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On 17/02/2026 08:51, Svyatoslav Ryhel wrote:
-> > =D0=B2=D1=82, 17 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 09:21 =
-Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >> On 26/01/2026 20:07, Svyatoslav Ryhel wrote:
-> >>> Introduce driver for the External Memory Controller (EMC) found in
-> >>> Tegra114 SoC. It controls the external DRAM on the board. The purpose=
- of
-> >>> this driver is to program memory timing for external memory on the EM=
-C
-> >>> clock rate change.
-> >>>
-> >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> >>> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> >>> ---
-> >>>  drivers/memory/tegra/Kconfig        |   12 +
-> >>>  drivers/memory/tegra/Makefile       |    1 +
-> >>>  drivers/memory/tegra/tegra114-emc.c | 1463 +++++++++++++++++++++++++=
-++
-> >>
-> >> Please rebase on top of Mikko's patch removing duplicated code.
-> >>
-> >>>  3 files changed, 1476 insertions(+)
-> >>>  create mode 100644 drivers/memory/tegra/tegra114-emc.c
-> >>>
-> >>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kcon=
-fig
-> >>> index fc5a27791826..11e7cc357d39 100644
-> >>> --- a/drivers/memory/tegra/Kconfig
-> >>> +++ b/drivers/memory/tegra/Kconfig
-> >>> @@ -35,6 +35,18 @@ config TEGRA30_EMC
-> >>>         This driver is required to change memory timings / clock rate=
- for
-> >>>         external memory.
-> >>>
-> >>> +config TEGRA114_EMC
-> >>> +     tristate "NVIDIA Tegra114 External Memory Controller driver"
-> >>> +     default y
-> >>> +     depends on ARCH_TEGRA_114_SOC || COMPILE_TEST
-> >>> +     select TEGRA124_CLK_EMC if ARCH_TEGRA
-> >>> +     select PM_OPP
-> >>> +     help
-> >>> +       This driver is for the External Memory Controller (EMC) found=
- on
-> >>> +       Tegra114 chips. The EMC controls the external DRAM on the boa=
-rd.
-> >>> +       This driver is required to change memory timings / clock rate=
- for
-> >>> +       external memory.
-> >>> +
-> >>>  config TEGRA124_EMC
-> >>>       tristate "NVIDIA Tegra124 External Memory Controller driver"
-> >>>       default ARCH_TEGRA_124_SOC
-> >>> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Mak=
-efile
-> >>> index 6334601e6120..6b9156de4b66 100644
-> >>> --- a/drivers/memory/tegra/Makefile
-> >>> +++ b/drivers/memory/tegra/Makefile
-> >>> @@ -16,6 +16,7 @@ obj-$(CONFIG_TEGRA_MC) +=3D tegra-mc.o
-> >>>
-> >>>  obj-$(CONFIG_TEGRA20_EMC)  +=3D tegra20-emc.o
-> >>>  obj-$(CONFIG_TEGRA30_EMC)  +=3D tegra30-emc.o
-> >>> +obj-$(CONFIG_TEGRA114_EMC) +=3D tegra114-emc.o
-> >>>  obj-$(CONFIG_TEGRA124_EMC) +=3D tegra124-emc.o
-> >>>  obj-$(CONFIG_TEGRA210_EMC_TABLE) +=3D tegra210-emc-table.o
-> >>>  obj-$(CONFIG_TEGRA210_EMC) +=3D tegra210-emc.o
-> >>> diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/teg=
-ra/tegra114-emc.c
-> >>> new file mode 100644
-> >>> index 000000000000..789b8e959a68
-> >>> --- /dev/null
-> >>> +++ b/drivers/memory/tegra/tegra114-emc.c
-> >>> @@ -0,0 +1,1463 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0-only
-> >>> +/*
-> >>> + * Tegra114 External Memory Controller driver
-> >>> + *
-> >>> + * Based on downstream driver from NVIDIA and tegra124-emc.c
-> >>> + * Copyright (C) 2011-2014 NVIDIA Corporation
-> >>> + *
-> >>> + * Copyright (C) 2024 Svyatoslav Ryhel <clamor95@gmail.com>
-> >>> + */
-> >>> +
-> >>> +#include <linux/clk-provider.h>
-> >>
-> >> Where is it used?
-> >>
-> >>> +#include <linux/clk.h>
-> >>> +#include <linux/clkdev.h>
-> >>
-> >> Where is it used?
-> >>
-> >>> +#include <linux/clk/tegra.h>
-> >>
-> >> Where is it used?
-> >>
-> >
-> > All 4 by tegra124_clk_set_emc_callbacks
->
-> What? That's not how C works.
->
-> There is no definition of tegra124_clk_set_emc_callbacks here in this
-> patch, so the headers are not used. Point me to any symbols from these
-> headers being used in this patch.
->
+On 30/01/2026 18:30, Ketan Patil wrote:
+> In Tegra264, different components from memory subsystems like Memory
+> Controller Fabric (MCF), HUB, HUB Common (HUBC), Side Band Shim (SBS)
+> and channels have different interrupt lines for receiving memory
+> controller error interrupts.
+> 
+> Add support for logging memory controller errors on Tegra264.
+> - Add MC error handling flow for MCF, HUB, HUBC, SBS and channels.
+> - Each of these components have different interrupt lines for MC error.
+> - Register interrupt handlers for interrupts from these different MC
+> components.
+> - There is no global interrupt status register in Tegra264 unlike older
+> Tegra chips.
+> - There are common interrupt status registers in case of MCF, HUB, HUBC
+> from which figure out the slice number or hub number responsible for
+> generating interrupt and then read interrupt status register to find out
+> type of violation.
+> - Introduce new SoC specific fields in tegra_mc_soc like interrupt mask
+> values for MCF, HUB, HUBC etc., which are SoC specific.
+> 
+> Signed-off-by: Ketan Patil <ketanp@nvidia.com>
+> ---
+>  drivers/memory/tegra/mc.c       |  35 +--
+>  drivers/memory/tegra/mc.h       |  83 ++++++-
+>  drivers/memory/tegra/tegra114.c |  13 +-
+>  drivers/memory/tegra/tegra124.c |  32 ++-
+>  drivers/memory/tegra/tegra186.c |  24 +-
+>  drivers/memory/tegra/tegra194.c |  17 +-
+>  drivers/memory/tegra/tegra20.c  |  23 +-
+>  drivers/memory/tegra/tegra210.c |  16 +-
+>  drivers/memory/tegra/tegra234.c |  17 +-
+>  drivers/memory/tegra/tegra264.c | 428 +++++++++++++++++++++++++++++++-
+>  drivers/memory/tegra/tegra30.c  |  13 +-
+>  include/soc/tegra/mc.h          |  10 +-
+>  12 files changed, 648 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index 49c470f7b1f7..a102a8ea7926 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -597,16 +597,16 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  		}
+>  
+>  		/* mask all interrupts to avoid flooding */
+> -		status = mc_ch_readl(mc, channel, MC_INTSTATUS) & mc->soc->intmask;
+> +		status = mc_ch_readl(mc, channel, MC_INTSTATUS) & mc->soc->intmasks[0].mask;
+>  	} else {
+> -		status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
+> +		status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmasks[0].mask;
+>  	}
+>  
+>  	if (!status)
+>  		return IRQ_NONE;
+>  
+>  	for_each_set_bit(bit, &status, 32) {
+> -		const char *error = tegra_mc_status_names[bit] ?: "unknown";
+> +		const char *error = tegra20_mc_status_names[bit] ?: "unknown";
+>  		const char *client = "unknown", *desc;
+>  		const char *direction, *secure;
+>  		u32 status_reg, addr_reg;
+> @@ -669,9 +669,11 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  					addr = mc_ch_readl(mc, channel, addr_hi_reg);
+>  				else
+>  					addr = mc_readl(mc, addr_hi_reg);
+> -			} else {
+> +			} else if (mc->soc->mc_addr_hi_mask) {
+>  				addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
+> -					MC_ERR_STATUS_ADR_HI_MASK);
+> +					mc->soc->mc_addr_hi_mask);
+> +			} else {
+> +				WARN_ON(1);
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/inc=
-lude/linux/clk/tegra.h?h=3Dv6.19#n199
+You should handle it correctly instead. WARN reboots some systems and
+this does not look like really impossible path, which would justify it.
 
-> Best regards,
-> Krzysztof
+>  			}
+>  			addr <<= 32;
+>  		}
+> @@ -696,11 +698,11 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  			}
+>  		}
+>  
+
+...
+
+> +
+> +#define ERR_GENERALIZED_APERTURE_ID_SHIFT		0
+> +#define ERR_GENERALIZED_APERTURE_ID_MASK		0x1F
+> +#define ERR_GENERALIZED_CARVEOUT_APERTURE_ID_SHIFT	5
+> +#define ERR_GENERALIZED_CARVEOUT_APERTURE_ID_MASK	0x1F
+> +
+>  static inline u32 tegra_mc_scale_percents(u64 val, unsigned int percents)
+>  {
+>  	val = val * percents;
+> @@ -187,15 +255,18 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
+>  
+>  #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+>      defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+> -    defined(CONFIG_ARCH_TEGRA_234_SOC) || \
+> -    defined(CONFIG_ARCH_TEGRA_264_SOC)
+> +    defined(CONFIG_ARCH_TEGRA_234_SOC)
+>  extern const struct tegra_mc_ops tegra186_mc_ops;
+>  #endif
+>  
+>  irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
+>  extern const irq_handler_t tegra30_mc_irq_handlers[];
+> -extern const char * const tegra_mc_status_names[32];
+> -extern const char * const tegra_mc_error_names[8];
+> +extern const char * const tegra20_mc_status_names[32];
+> +extern const char * const tegra20_mc_error_names[8];
+> +int tegra186_mc_probe(struct tegra_mc *mc);
+> +int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev);
+
+This is such a confusing design... Function declared in mc.h header,
+defined in a MODULE but used in a driver which can only be built in,
+because it depends on some ARCH_foo stuf. If I deciphered it correctly
+this fails and needs EXPORT_SYMBOL_GPL, but maybe I deciphered it wrong,
+because code is confusing. Your drivers Makefile should not have
+ARCH_TEGRA_FOO, but dedicated entries so the state of each driver is
+obvious by reading Kconfig of this directory - it is built-in or tristate.
+
+
+> +int tegra186_mc_resume(struct tegra_mc *mc);
+> +void tegra186_mc_remove(struct tegra_mc *mc);
+>  
+
+_mc {
+
+
+Best regards,
+Krzysztof
