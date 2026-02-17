@@ -1,86 +1,86 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB002FF147
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 09:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C003302742
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 09:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771319811; cv=none; b=crDB/IsgbhaoZTrvtJaKKMtacBr4l1tTXTbIYczl3t7/4FVkvEW88iSIpDYQEUaZw5PmAkfml1Bd7UCUlUpG9WSGwAU3QNBFQIe45Xd3JGYoB2elGQoGejb/HCWJ8Ppxs1VgnoI8V8rzDIbB8O3w3YVvYJjVM9ci6/hs7hLlBu4=
+	t=1771319813; cv=none; b=nb8bj95Dg5m4Ugrhuq9cC0WMW6gS5HEG5DcxWrhe39UOw47zf+NegASz3rpM6PhpMgRjfwMgVVKRDpAmSUyrg8xJBveH87KvWZuOhC2/W5NQJcFIGu1RW1CCIwhODm+qfukqRmVKajnE9llLnPEwubxbhtWEFbl8ArclqCfXyVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771319811; c=relaxed/simple;
-	bh=bqDjRxVs8N/Q5ZrspI/TWkpKsVqj7iN896A7uBcshw0=;
+	s=arc-20240116; t=1771319813; c=relaxed/simple;
+	bh=9w4zoJ1NaEJJx7ERKQvdQ6eFS6T244uoqWIM4joR9Qc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jhqW3v4rFmCZGCP5cgHD2xkW7E5sfZWOA1ppymJTGojhQ24+sFjCGjX6CMUgpyOceAsrybgjfK9p3Uv0jGZQMx2ygLvR9EgEgEcfC98prdsPkNP1jLGF68T+d4QUxBylUjXumN6eeKY5aU+6ovTQ6gPSAPnzcMlQ7Vxdar7DLiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jJ8Yn9Un; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Yd+dGkqq; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=FVpQH9mc/h+3KtuM20r00zYzD/uhZN3sdHvTSaFWZe3AWCJ3AZQesd4BaTFYokTAGhIPE0cVRApseLWoL3Tte+lH9rYKbttWX9bzng7CFN0q8BakUyn5pwJhjxioljxa0MHAnOy5GATejsp3X0+1vlcajhJA0ecf98WvRVGUads=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UU29VoMa; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eqEHfKzo; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jJ8Yn9Un";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Yd+dGkqq"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UU29VoMa";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eqEHfKzo"
 Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61GL7iZp125852
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 09:16:49 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61GIGxZh2804570
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 09:16:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	j2IsP8/jgA76HelB7TVtZGVRqfenaH3elI0PUUDx2/w=; b=jJ8Yn9UnzA/JSFxz
-	IPgm5K1oqfcfs98QxCDraC6Jw201HURmzHiPn5FrwmIvd3S221v7HLpOBaDI2rsT
-	Zn2pIng6sKsBr/Rl5CT9wxqXTP3a1szuLoKFzQh9o8iyARXQAzGctR8Kh+SBfGtM
-	fUSyMk+71EryqB/q/wiOU6U0c4rdAEb2DdNK40xmB+niQDvOBgAZPL7g3re6GxWQ
-	3hSHp+brqy4WeNV9K49ycy1xnYLg6RkCLUU+g0MW7RFZiFW6MaFHc8VSD9hztUZi
-	z9o/lz6UvB7hfp5/7zvhiqIAZ+rzpg9mr+Ei9DlkpCWjxNMZ3ZQo1DpI7NLQ3v9k
-	KrYPeg==
+	q8OKb1SZv04ljEymqRWJAeV6X3LU2VaiujY5Lry1CIE=; b=UU29VoMaomYwyLCY
+	jCFZyhZCp0jhFA8GW9nYs/8iUmIOzNKJP886PDZd6pYG9XeMCmBa/rU3mP6qXOC9
+	5RxK7MM2Z48zkvYF6CINt1H1Shn3gUGeaGxNFpw8sqD2Mv+z7aFqI1XX2UOl95j1
+	TEtXHxiMaXOEUFf4VY8DwhjJhVzjlF97Ijr+5eJF5fUMGbArBJRrRfwDkJe+k2RD
+	RQtdM1jd9Eg0uPkzJhDoXxIus0lJ6bZRQwLD36l5QnXL01QpJgEp5kDminDyruJe
+	830nueL4IKupC2bXvzfhUIa97ur2XhjRbjxzUKkyEYFusAUN+N64P6xdADYeCSZ2
+	f7Pohg==
 Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cbyxujus3-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cbyxujus9-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 09:16:49 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cb4a241582so2180010985a.0
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 01:16:49 -0800 (PST)
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 09:16:51 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cb4d191ef1so340105485a.0
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 01:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1771319809; x=1771924609; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1771319811; x=1771924611; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=j2IsP8/jgA76HelB7TVtZGVRqfenaH3elI0PUUDx2/w=;
-        b=Yd+dGkqqwsA+B5iA0BZPWRHeFjl4J/9lCJNNWKSIck+ZUIK/xCca4/nhnWaqy1SY4p
-         PzcoAd83NkDbFY+88ukKHzpBNTjcd5XwVO8jhiqJF2Qb1hCMgP4W/IVkxOovNxezi3ts
-         3rYpLVTJdBRXNVm1NDZYvPmN0FPsX4xxa8gQzie29K/wHTgfvoEHybmBXrIt2SM5kFHD
-         K+8HaQem7zEgDZ4EWOjmqQrhZTmXpkhe4dorLXnkewgqp+c/Kx60fZVnZnvkRc3xzatS
-         pf/FG5NvFjDmMyYuITGyl5pL5htdMcaf5ZFAzdQxXQyzPiDRIBh0MRHT3NZ36mGzdJrT
-         4g9w==
+        bh=q8OKb1SZv04ljEymqRWJAeV6X3LU2VaiujY5Lry1CIE=;
+        b=eqEHfKzoCmioq1T2HOJL4N+/Wg6VRuL1FM0Ur/sGpuymBKY+toJaGO4tXSWmo62tg1
+         IO6URh4puv3U8q/DioUsQdJkgXDW6vAYdK1X7W1m86RmDdCto/XFcZ3o2KiBcMh/zDbE
+         5pRbhiq3g0P+TTMxELSa96Hrz+8kx8SRtUok86azDUeIVIzHZr89DSKU9djF0/efj9dl
+         b/NjFm5BaOCSAelN4V6UH4H4LORA6JsYerFBs2Nl2rhN/IY4oGaVRNUFj/tT9GrpNhvb
+         fVk9Iw4bxXKHfo5XbQjXXV38MawOn7KXSpXDNFLtNKElufyojrc+FkNGUCKkWZ4QhSUT
+         C+tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771319809; x=1771924609;
+        d=1e100.net; s=20230601; t=1771319811; x=1771924611;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=j2IsP8/jgA76HelB7TVtZGVRqfenaH3elI0PUUDx2/w=;
-        b=wirm6fM50cMiESmHhuHtg2f6iDNmNqJYBKHymxZZCWmGqJvXXeMxkIH4Yu9DhM2RUK
-         vAn7Z6Rze3XU6EXAdnyHjbtpPez2wK7sjuys1CVaO0KBU2xgGv7TYkZyL1aEZsEtmQ1L
-         FxwtvlngyulQ5tzwQpJ2LdVEVt9dL5CMpFc4Ia1uh1Ybzd/tDYPZy1P34K2t2RQ49ZlN
-         H3svmzRkg3mXmi/gPA1kMJrUtHJNaMh0c7w2kgJ/uw2sKNXJ9xlXQNkN0FmOGvX4Qrqz
-         RWyVW9w0b0iNWHnDeILJHz9LiXd75LNbmumeQxnAlH0nbRCx8IwUNy0/01sj0B7P59V7
-         DYAA==
-X-Gm-Message-State: AOJu0Yzwj7tNYB5Ft6WlWO8dApaw3r8o2JY7eNFcG7GfVnPXnd836HL7
-	tIb8y3jSyKgIOgE+t7Cfpxgc7oMlFHV3MiY16MHhOLGyehb0VvZXkAymUWEIxxmIQymR74ULYZE
-	9HnQVfwe+/vgo3EjalQ1hWse4G80NL2jjsUTVesGhTzCBRUlrLKwIeeKtZbuj5Zn6ug==
-X-Gm-Gg: AZuq6aKt1uMgPOtTvGl0NB+OBw3tyG9DFbowYregcDgzDzslSHEXYiTIX4ulJo2lOxZ
-	vm1ZaMgSGT8NfGNsKpEEyVE5DusM7ekRF+hcOAcDFvfUf3vAg1DyZsdRjRaLKjW0PkaBfB9jXlz
-	AZYfPy6MjqMXMXQs6cTCQezirovSWXut4Bjd24SMUecDhVqV/qLHpzVKaT6Mc/10rx3qmV6aPl7
-	1wFZ4gaWwGGYiSljaDvtDC7F8Prv/97lzEn1YztLUk5SNPVrjqIStwtKNeENYc0BE6griIFWMNa
-	CirLdxQgqOHdNlX519A3wUdfRyXYzENONH9fESvCJSN18JohZ1TXDjOLGxtSl7iYoPHsf/vfkyd
-	GBuXng+DGJrpSjHWZaXg9/BZs1n3PXyeG0cyQb36fzl4F2A==
-X-Received: by 2002:a05:620a:4495:b0:8cb:66dc:9fd8 with SMTP id af79cd13be357-8cb66dca40emr322126785a.65.1771319808794;
-        Tue, 17 Feb 2026 01:16:48 -0800 (PST)
-X-Received: by 2002:a05:620a:4495:b0:8cb:66dc:9fd8 with SMTP id af79cd13be357-8cb66dca40emr322124485a.65.1771319808333;
-        Tue, 17 Feb 2026 01:16:48 -0800 (PST)
+        bh=q8OKb1SZv04ljEymqRWJAeV6X3LU2VaiujY5Lry1CIE=;
+        b=p4DLRWAGJ6HQRWkzVPrFlLcwu6oMyMeCvnNMyIpzT1X9wmi/V/yttVYHUWMfEfP8hP
+         sQRpt7g+3VA0IQJnbkxPKRNaXxQYkXP+xHpPHAJ2/WKaYfnreZ3oUj82+zlKazQv4+LK
+         5c8kXqboUIGoq8T/QuULRVIpAGUtdIBiLwCIKzPby6dnx2Bx+mTjBWZLMxof6yjdzgZC
+         YJmwo379D2wh908MC/eVqTzEyDQph2mneSpnkYfTv3Q5AJVgnP0g7tnajRkMio00WSNV
+         O3CEO1OPh2Rh+SmpJp5TiCowJg7QsJtbbTo2jnkB6j70oWEMFMRRT/rd6/8IQnummjtr
+         lqvg==
+X-Gm-Message-State: AOJu0Yyc9pCypsBZzzm0op1rWXpYW/H+p/nPHnw/5lRiVVPyoOjx1Hn6
+	JE+l8FDTt0lUMtCjBolaQ3iuNmk78bfcwPFbu7zydEsHX/JrFVbtZmT6WBSBFRMg8EKc64RbRfQ
+	P+HdMT1bRa+/jpx6lbWASZEi8KUuHbZbgoEBfh5g6R2ulCLk4L9NW+mGtqSQhXdwARg==
+X-Gm-Gg: AZuq6aK42a1wvNrtF+PcUJDPsltYXhR2XagUFIcpTc0OkZ15rgaHerHjMdCXXuwdchV
+	2QLyc1eo7d33CruHI3pLJtnwH8yMAXV0IEizdh47/tQi/Lv8VhyOajPUB7Xtqt98X8hAT/5Zyik
+	xfXqo3bxOYiieT7HQOLzJDgx/AFIlgmLZ8ZIGNNVTUxQ242H3ByszG5ZSUS33+SUzlAW0VyP7Qc
+	gG3EnI9+pS5nF8tKUOErefHJCB22HYW7G306KzUBeTudjFvKeSvL4X6f8e4cVjvqnp92ywfjSCD
+	5JHm6xvLgM55yciwmGDbeZr6OpdCHgeHmOjBjLgf+UKu5d1XS0xoppTmDGzcWcsGoWvsR2cU0hz
+	EqiJX+x+D/0eQk+/DbmFzvVrNUFP1ZyCTYkFOKVTWTQdw6g==
+X-Received: by 2002:a05:620a:46a6:b0:8c6:a28d:b1e9 with SMTP id af79cd13be357-8cb424e450fmr1482610385a.84.1771319810646;
+        Tue, 17 Feb 2026 01:16:50 -0800 (PST)
+X-Received: by 2002:a05:620a:46a6:b0:8c6:a28d:b1e9 with SMTP id af79cd13be357-8cb424e450fmr1482608785a.84.1771319810122;
+        Tue, 17 Feb 2026 01:16:50 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48371a23c6csm149659595e9.7.2026.02.17.01.16.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48371a23c6csm149659595e9.7.2026.02.17.01.16.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 01:16:47 -0800 (PST)
+        Tue, 17 Feb 2026 01:16:49 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Tue, 17 Feb 2026 10:16:36 +0100
-Subject: [PATCH 1/3] soc: tegra: Make ARCH_TEGRA_SOC_FOO defaults for
- Nvidia Tegra
+Date: Tue, 17 Feb 2026 10:16:37 +0100
+Subject: [PATCH 2/3] ARM: tegra: defconfig: Drop redundant
+ ARCH_TEGRA_foo_SOC
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -89,7 +89,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260217-soc-tegra-arch-kconfig-v1-1-81bf5674d032@oss.qualcomm.com>
+Message-Id: <20260217-soc-tegra-arch-kconfig-v1-2-81bf5674d032@oss.qualcomm.com>
 References: <20260217-soc-tegra-arch-kconfig-v1-0-81bf5674d032@oss.qualcomm.com>
 In-Reply-To: <20260217-soc-tegra-arch-kconfig-v1-0-81bf5674d032@oss.qualcomm.com>
 To: Thierry Reding <thierry.reding@kernel.org>,
@@ -101,39 +101,39 @@ Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3335;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1478;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=bqDjRxVs8N/Q5ZrspI/TWkpKsVqj7iN896A7uBcshw0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBplDH6QW+MOGCK5XyT7x1kVp4DNOhOLdnK6TVMv
- BpFEjy80U2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaZQx+gAKCRDBN2bmhouD
- 13xYD/wKO+BcroimNHNVHXfTzxMAdsHpdxdSyXcF9pUbPY2oQzXZhCeNZQ95N3PGXXGtGEdA2sU
- VYNwe8bfPQq2H6BWRF3kdjktdRb0+3F2lOXks0lp+OIa110eR1fLVlWbboeEA1g5lGT5ZH/eXw/
- HtxIii4cJOLOlxcbExjmELSHPi/TqG+l0fRTAzhkijw81BiEFaIymfzwkeyoIN9OAgt7tR6abIU
- +2HeIZ/J6jC6ag5oHdbPGNfpd7g3dibnsny+R6+vFzSbtIePyC4MYY3jXlTwfLsHfHS9oQLrmYV
- uGjKmcjCfHXp/zAswYvGiw/zItZcX+e8DJ2v+RO74admlyQFrU6Ep0bx/oKUoJ0ap05uqrzISH/
- 5cL5GngRhrxlL0mmcI16cYOqQfiF7bw0E7WSRecxGpgDFLhi7Q3Nmk4N6fbqExU4+hteG8pty/+
- W9tlaKq40/dF2pw1hvjpKcurIu7Ft2fzRytGuTl3F3nyJbZxuvpMk09SeiqdgGeXXt4axqCjGvV
- saO0/OILpRir1Vi5ja69lepqKYmORg4xsizXP/hTBjOSgEDPnOLnICLGFevcoFruMOiIzJfP1Nc
- qsraCPxElbRgzPyyLNRPrqUreVV9k5VAoveMFXcfA2Y2e16mj7qSwqcNlLnoWp3DqtI9eyuibn1
- I4srIXHmRPhuPuA==
+ bh=9w4zoJ1NaEJJx7ERKQvdQ6eFS6T244uoqWIM4joR9Qc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBplDH7tYIA03JtMS7xsrsGdVsNLg1nYo2XCpkLc
+ d0JJYCUgTeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaZQx+wAKCRDBN2bmhouD
+ 11OmD/9uSk5txbCQIdu2j9VFRQ9YglRVFRHqfHcqweyKTNgKz5N7APH85V4aOrhQphKjM8OGuck
+ VJPXWnXDMcDTwOuixnS9UKWtbbwFl1pjUZvCbzBxu/qm8h+smcmYCuy0es0deajyH7lDG0b0vDU
+ cGV4RXrbYP0x60PhW+07z7WXdsJUdlGLTn5ivLiUaLIL2vSZZUBvmomEL52J+FdM+DszQ6ne7tF
+ GMHzdQc7xtDqLcn+XFRGwxWZ+vCxx3Ay/YwUQezRszjBy5WrhwoFMUO0dG94WIM7gGeWFv+S/dS
+ /Sr32WSUYzuFyJTwhICmmFGUQLyNMJwebEaV8nCBUAYz12TwGwxtbJoIJduTvu0Id0f64o3A8rP
+ 3E/T2y5clLKEPhc+3O/zAOaOGrw7hXMIGzOQf0FwgW/EznEJ1LQW+3RykG9UgLVekuvptUNxDvw
+ deki9ZGoj45SBFDxkSeTz3HMpWXkX1b8UEix3DCw/2RIYO5O36OIjik9qCnFeDw2mf0aQQsbttL
+ D+oFBa80dx7lUiDd6kvbe/xDVMTTQg2YhmmPDKEZP/fcVVpnC8pfVkhgXJwfvU5Tb4BV9j+Eody
+ O2yfKRRvFW4E9WCoD2kcflRTE7c+6H0XNBM7ygsV9Ba32Ditk/Z6AGmtMSIxLzeyee4dF418b2H
+ GJq7GGHoDhgVaxw==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-GUID: VrYnTRAMMks-KRI7B9rBuS6hrjCqnrPK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA3NiBTYWx0ZWRfX3o3VAJJvWHou
- CAvI+hlt02kU1CUMGQ8skDYpVETuXtNSIl2QmDczilg/Wn8iXx2Xo5y3v8zJElD/oEL107e6GWh
- i8F/ts9BQGh7BXBTzyb2u8SdXi9AYq2nTjd4BYd6ufDR+5ghf+6QjfOepmWAvqBDimqmcpbB9d0
- q7pxfrKmsV+AqzNNNk6XACxRJglyY8TomFQAryNWWayC/xjJ+7CZDINDs/gXq7yt6tRR2IoxCR8
- tey/ke5IkTbrB2qhZWUk76t4exKJmDYJa+mPlWrcI8yasuL3NLE6tRbl7ja+mfR2oq1q3zH2dLP
- 67eGI0wsdyIbSQGK7/t9pa6sk4QwdfUi5fAp9t65stOjx9jBm/4isjtQ8IYd+SURhhzjUqr6kOC
- 6w7rVrissEfTuI3vWj7AS4fvD6/1Ov3Ch8ph2NEUx3CU2SnwG48Vxx/Ecc4YRLCc49HzfQao7OI
- rXSgerV2WIN6th4d4CQ==
-X-Authority-Analysis: v=2.4 cv=BpuQAIX5 c=1 sm=1 tr=0 ts=69943201 cx=c_pps
+X-Proofpoint-GUID: bSJ6byIvkD38fHf_rVQH9U2yEenHA6N3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA3NiBTYWx0ZWRfX/LQkVIkOkFEs
+ z+0ivnaYk+itcFVk/eGA5rITnj5BcD4xlwKCCcSz+Fm7Z+mjiCiZliKfbmoUggHWq7331r1LF4g
+ 9iZ18TQyCqZb0DjTzKREnzixNIPn4Kc/1BlEUbfAMet47FXTZnOojuYW/c6BIcN6X54DJWOtkA3
+ MomN4/SHthjRd5VEcbgLa0SZfRNifM3ankIHgGgJkMCZCepayGeF3cbkJE9LXxhePC+Gk1b8ql0
+ zkvAupfT+Kml7cXj9kdUCyFX56XEWLneSfCrcRVcDfIYXwf8faaaCZCnszUrjnsP7g3Q/8jLoZY
+ sTnDiQvGSOpvlhvVZ9WDj0C1cA2mu3F09Dhz/RG1nY2L9ePp86vLexVDk0X1yWdgzs1iWOVdNot
+ 80iIbNiaL8JrWIIqkSsHB7rlA1enuKiOzLbsdiV49vTwTGSbQDOLuJ0tTqBuuFRsVm0y6q7P6PF
+ cnITTSuXXAAYAjuKKaw==
+X-Authority-Analysis: v=2.4 cv=BpuQAIX5 c=1 sm=1 tr=0 ts=69943203 cx=c_pps
  a=qKBjSQ1v91RyAK45QCPf5w==:117 a=6nO30s3o7FuWeffXwhKHTA==:17
  a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
- a=EUspDBNiAAAA:8 a=H7KHO4RPsEdM4UCB5m0A:9 a=isR4AqL0EaFW8Alr:21
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: VrYnTRAMMks-KRI7B9rBuS6hrjCqnrPK
+ a=EUspDBNiAAAA:8 a=4ZDzmxAp3Uojh03Q1XUA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: bSJ6byIvkD38fHf_rVQH9U2yEenHA6N3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-17_01,2026-02-16_04,2025-10-01_01
@@ -143,117 +143,50 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602170076
 
-By convention, only one globally selectable ARCH_PLATFORM is expected
-for given SoC platform, defined in arch/arm64/Kconfig.platforms or
-arch/arm/mach-*/Kconfig, because we target a single multi-platform
-kernel image.
-
-Platforms wanting different granularity, e.g. due to size constraints on
-their devices, should be sure that globally only one ARCH_PLTAFORM is
-selected in defconfig.  Change Tegra per-soc Kconfig entries to default
-to ARCH_TEGRA allowing removal of these per-soc parts from defconfigs.
+All CONFIG_ARCH_TEGRA_2x_SOC-like symbols are now default for
+ARCH_TEGRA, so drop redundant lines from defconfigs.  Tested with
+comparing include/generated/autoconf.h.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 ---
 
-1. All further patches depend on this one.
-2. Year ago after my complains Prabhakar fixed another case - Renesas -
-   so with this patch we get rid of all single-ARCH offenders.
+Depends on the previous pach.
 ---
- drivers/soc/tegra/Kconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 4 ----
+ arch/arm/configs/tegra_defconfig    | 4 ----
+ 2 files changed, 8 deletions(-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index c0fc54c3cd35..a1cadfdb356c 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -6,6 +6,7 @@ if ARM
- 
- config ARCH_TEGRA_2x_SOC
- 	bool "Enable support for Tegra20 family"
-+	default ARCH_TEGRA
- 	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
- 	select ARM_ERRATA_720789
- 	select ARM_ERRATA_754327 if SMP
-@@ -23,6 +24,7 @@ config ARCH_TEGRA_2x_SOC
- 
- config ARCH_TEGRA_3x_SOC
- 	bool "Enable support for Tegra30 family"
-+	default ARCH_TEGRA
- 	select ARM_ERRATA_754322
- 	select ARM_ERRATA_764369 if SMP
- 	select PINCTRL_TEGRA30
-@@ -37,6 +39,7 @@ config ARCH_TEGRA_3x_SOC
- 
- config ARCH_TEGRA_114_SOC
- 	bool "Enable support for Tegra114 family"
-+	default ARCH_TEGRA
- 	select ARM_ERRATA_798181 if SMP
- 	select HAVE_ARM_ARCH_TIMER
- 	select PINCTRL_TEGRA114
-@@ -49,6 +52,7 @@ config ARCH_TEGRA_114_SOC
- 
- config ARCH_TEGRA_124_SOC
- 	bool "Enable support for Tegra124 family"
-+	default ARCH_TEGRA
- 	select HAVE_ARM_ARCH_TIMER
- 	select PINCTRL_TEGRA124
- 	select SOC_TEGRA_FLOWCTRL
-@@ -65,6 +69,7 @@ if ARM64
- 
- config ARCH_TEGRA_132_SOC
- 	bool "NVIDIA Tegra132 SoC"
-+	default ARCH_TEGRA
- 	select PINCTRL_TEGRA124
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
-@@ -76,6 +81,7 @@ config ARCH_TEGRA_132_SOC
- 
- config ARCH_TEGRA_210_SOC
- 	bool "NVIDIA Tegra210 SoC"
-+	default ARCH_TEGRA
- 	select PINCTRL_TEGRA210
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
-@@ -95,6 +101,7 @@ config ARCH_TEGRA_210_SOC
- 
- config ARCH_TEGRA_186_SOC
- 	bool "NVIDIA Tegra186 SoC"
-+	default ARCH_TEGRA
- 	depends on !CPU_BIG_ENDIAN
- 	select PINCTRL_TEGRA186
- 	select MAILBOX
-@@ -109,6 +116,7 @@ config ARCH_TEGRA_186_SOC
- 
- config ARCH_TEGRA_194_SOC
- 	bool "NVIDIA Tegra194 SoC"
-+	default ARCH_TEGRA
- 	depends on !CPU_BIG_ENDIAN
- 	select MAILBOX
- 	select PINCTRL_TEGRA194
-@@ -118,6 +126,7 @@ config ARCH_TEGRA_194_SOC
- 
- config ARCH_TEGRA_234_SOC
- 	bool "NVIDIA Tegra234 SoC"
-+	default ARCH_TEGRA
- 	depends on !CPU_BIG_ENDIAN
- 	select MAILBOX
- 	select PINCTRL_TEGRA234
-@@ -127,11 +136,13 @@ config ARCH_TEGRA_234_SOC
- 
- config ARCH_TEGRA_241_SOC
- 	bool "NVIDIA Tegra241 SoC"
-+	default ARCH_TEGRA
- 	help
- 	  Enable support for the NVIDIA Tegra241 SoC.
- 
- config ARCH_TEGRA_264_SOC
- 	bool "NVIDIA Tegra264 SoC"
-+	default ARCH_TEGRA
- 	depends on !CPU_BIG_ENDIAN
- 	select MAILBOX
- 	select SOC_TEGRA_PMC
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index f75d75cf91c8..0985b8b00689 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1142,10 +1142,6 @@ CONFIG_QCOM_SOCINFO=m
+ CONFIG_QCOM_STATS=m
+ CONFIG_QCOM_WCNSS_CTRL=m
+ CONFIG_ROCKCHIP_IODOMAIN=y
+-CONFIG_ARCH_TEGRA_2x_SOC=y
+-CONFIG_ARCH_TEGRA_3x_SOC=y
+-CONFIG_ARCH_TEGRA_114_SOC=y
+-CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_SOC_TI=y
+ CONFIG_KEYSTONE_NAVIGATOR_QMSS=y
+ CONFIG_KEYSTONE_NAVIGATOR_DMA=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 68aedaf92667..66157e9721ef 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -296,10 +296,6 @@ CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_TEGRA_IOMMU_SMMU=y
+-CONFIG_ARCH_TEGRA_2x_SOC=y
+-CONFIG_ARCH_TEGRA_3x_SOC=y
+-CONFIG_ARCH_TEGRA_114_SOC=y
+-CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_ARM_TEGRA_DEVFREQ=y
+ CONFIG_MEMORY=y
+ CONFIG_IIO=y
 
 -- 
 2.51.0
