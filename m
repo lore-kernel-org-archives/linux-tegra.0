@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C14275AF0;
-	Tue, 17 Feb 2026 08:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170A72D2381;
+	Tue, 17 Feb 2026 08:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771317119; cv=none; b=dyaegPCLEwJZbqlNPHAcUb321Z06+MI2dGeUw8wxkTlc21QuQz6UIM9aeFYrDL3pAARo+LCIkZn+946QBnOv7g/gRr5ntIvnuMzhkm5NBW4WW7C574A2fSoJMRvoiPLwNGyPnx5OcNj3wzmhyhxcW85bTwDtjSxkE4FWAtkckN0=
+	t=1771317215; cv=none; b=NYHyMYDwhDuQ2b5cTYEX3kSOewCfzX8/gGyepnwgmK+50V+W3vKW+1EnCbhh1UDB1R8Gt1UlsLOXXUni4jcNEJlQEt+lEBdIOFggMoq7OnI09unjoLFDWp74VgDvV8n6h4xXzAoq/dIsfvGZYMVSjNhFBRk4qUvqJVakVQcCbf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771317119; c=relaxed/simple;
-	bh=0Z5mg5JN+dMdFk1n4xlWVeR2j3Qg6QpiMWDZOQSCnhI=;
+	s=arc-20240116; t=1771317215; c=relaxed/simple;
+	bh=uGxYvu1aJtpCC6Z+b5bvfYW4jwwivHm79Uo24M8oE4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qm0syvR8SqWIZmO5gULVXazJZsUaeC7ymRo4GRetM6bWzybPh4sr9p2VHjWI6uVRsg+8G86BzP6AMxgxQte8dizqIaLq1cjYN48j1UXKFZUdkTLcHmiLvctqqHt4rddbt2MweZnUn9C+6EIHRPIswRCDqmz55n5BSpXLokfTU+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMPkmETH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kmffZHOaNU8AzVWt7VvmvRr7dNrDkuNgqgwW3bd3hZqwvg+xNktfS39zlBSD3yrpAz6Nw2yHqBt9M7g6IRuZ3zpobXUoEaYqFIE8HLb63tPHsYitCGMk32XOX3EZGilg6ZVvzZwlWDw1Xq7tyG0azJKrBsb0+QTw593XLcr8mVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iE3/x+Nt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMPkmETH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A39C4CEF7;
-	Tue, 17 Feb 2026 08:31:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iE3/x+Nt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4FDC4CEF7;
+	Tue, 17 Feb 2026 08:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771317119;
-	bh=0Z5mg5JN+dMdFk1n4xlWVeR2j3Qg6QpiMWDZOQSCnhI=;
+	s=k20201202; t=1771317214;
+	bh=uGxYvu1aJtpCC6Z+b5bvfYW4jwwivHm79Uo24M8oE4E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rMPkmETHKckuSpDs2uw5x7ZVWEFK4ADFgBP6iVRFVmB6MzQmCbrPW0EP6S4MUoqI2
-	 CdRil2r71sCx0yNzqFWhZE4TTjuhbKWDQzW8XuSXmksERSZ5NwAc7ebh5lzyoSdCjl
-	 cFRWzWen4xlD+jepibbxwWzMoF8Tn3m4EGFj9DOpWySxb5CFUugIqpnba30174Cnbf
-	 tp6DT4Db5JT4Msdw5klnMTpC+booPE9BYl5c4F8o8iNN96pFR76YmH9PM7vf2Oyvny
-	 6y7Pkcm8+Fc2VqSEINqAEovbfl8ySEBDoiJ0fD0+upkjgyGBnYFgidvcSEphwF3ruk
-	 HIJqylfMkUYFA==
-Message-ID: <af414583-56e2-4754-8200-62215f514c8d@kernel.org>
-Date: Tue, 17 Feb 2026 09:31:55 +0100
+	b=iE3/x+NtTosNtdVABHkI6Y5B7djnDSn4ynyO5+QR6NW99ajvrs0R7MO9NIt0fUrn/
+	 IyBuMERx6HaDPfS0/fWABpiG+us8XvGfxv4Qzvm5hx7k0bLx401d/yiBjRHEmx4qFl
+	 ikw+19S8xu8rT0uFhAtXoRznxZyWibibFDP8Qyw2QjOzQcFs2IaQhtwGtCmMgKG0b9
+	 hQZH8c4w1d+JZ+Ik9xrmoRZ4Zeo9OnwW91aOCMjEUxC2b1T2m7jS/RbTj2sN6SOJNT
+	 MJDIE86x55liBR5xaSE1yn9/rcyOo2eL/Fq1nfGmGV0JN31k3RP7wh5zSlStzPpcws
+	 +8u1z9PshQOgA==
+Message-ID: <34767079-77aa-47b5-ac59-6e6c1aafcd41@kernel.org>
+Date: Tue, 17 Feb 2026 09:33:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,13 +35,20 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/4] memory: tegra: Add MC error logging support for
- Tegra264
-To: Ketan Patil <ketanp@nvidia.com>, thierry.reding@gmail.com,
- jonathanh@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20260130173055.151255-1-ketanp@nvidia.com>
- <20260130173055.151255-5-ketanp@nvidia.com>
+Subject: Re: [PATCH v1 5/5] memory: tegra: Add Tegra114 EMC driver
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+ Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20260126190755.78475-1-clamor95@gmail.com>
+ <20260126190755.78475-6-clamor95@gmail.com>
+ <6f143fdd-1e2d-428d-9b05-cf1124b179e8@kernel.org>
+ <CAPVz0n0Ep_YAJfm0R_PexKo5WwrTDbJfFKUbLVKtG5q1qLONUg@mail.gmail.com>
+ <b19dcc48-33be-4eb7-8b69-d7ddebefe257@kernel.org>
+ <CAPVz0n3ZS=VidMxX61mKxjCCgvArK-DWo=VUKoaMhbLAt_CE-Q@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,138 +94,63 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260130173055.151255-5-ketanp@nvidia.com>
+In-Reply-To: <CAPVz0n3ZS=VidMxX61mKxjCCgvArK-DWo=VUKoaMhbLAt_CE-Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/01/2026 18:30, Ketan Patil wrote:
-> In Tegra264, different components from memory subsystems like Memory
-> Controller Fabric (MCF), HUB, HUB Common (HUBC), Side Band Shim (SBS)
-> and channels have different interrupt lines for receiving memory
-> controller error interrupts.
+On 17/02/2026 09:29, Svyatoslav Ryhel wrote:
+>>>>>
+>>>>>  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
+>>>>>  obj-$(CONFIG_TEGRA30_EMC)  += tegra30-emc.o
+>>>>> +obj-$(CONFIG_TEGRA114_EMC) += tegra114-emc.o
+>>>>>  obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
+>>>>>  obj-$(CONFIG_TEGRA210_EMC_TABLE) += tegra210-emc-table.o
+>>>>>  obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
+>>>>> diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/tegra/tegra114-emc.c
+>>>>> new file mode 100644
+>>>>> index 000000000000..789b8e959a68
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/memory/tegra/tegra114-emc.c
+>>>>> @@ -0,0 +1,1463 @@
+>>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>>> +/*
+>>>>> + * Tegra114 External Memory Controller driver
+>>>>> + *
+>>>>> + * Based on downstream driver from NVIDIA and tegra124-emc.c
+>>>>> + * Copyright (C) 2011-2014 NVIDIA Corporation
+>>>>> + *
+>>>>> + * Copyright (C) 2024 Svyatoslav Ryhel <clamor95@gmail.com>
+>>>>> + */
+>>>>> +
+>>>>> +#include <linux/clk-provider.h>
+>>>>
+>>>> Where is it used?
+>>>>
+>>>>> +#include <linux/clk.h>
+>>>>> +#include <linux/clkdev.h>
+>>>>
+>>>> Where is it used?
+>>>>
+>>>>> +#include <linux/clk/tegra.h>
+>>>>
+>>>> Where is it used?
+>>>>
+>>>
+>>> All 4 by tegra124_clk_set_emc_callbacks
+>>
+>> What? That's not how C works.
+>>
+>> There is no definition of tegra124_clk_set_emc_callbacks here in this
+>> patch, so the headers are not used. Point me to any symbols from these
+>> headers being used in this patch.
+>>
 > 
-> Add support for logging memory controller errors on Tegra264.
-> - Add MC error handling flow for MCF, HUB, HUBC, SBS and channels.
-> - Each of these components have different interrupt lines for MC error.
-> - Register interrupt handlers for interrupts from these different MC
-> components.
-> - There is no global interrupt status register in Tegra264 unlike older
-> Tegra chips.
-> - There are common interrupt status registers in case of MCF, HUB, HUBC
-> from which figure out the slice number or hub number responsible for
-> generating interrupt and then read interrupt status register to find out
-> type of violation.
-> - Introduce new SoC specific fields in tegra_mc_soc like interrupt mask
-> values for MCF, HUB, HUBC etc., which are SoC specific.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/clk/tegra.h?h=v6.19#n199
 > 
-> Signed-off-by: Ketan Patil <ketanp@nvidia.com>
-> ---
->  drivers/memory/tegra/mc.c       |  35 +--
->  drivers/memory/tegra/mc.h       |  83 ++++++-
->  drivers/memory/tegra/tegra114.c |  13 +-
->  drivers/memory/tegra/tegra124.c |  32 ++-
->  drivers/memory/tegra/tegra186.c |  24 +-
->  drivers/memory/tegra/tegra194.c |  17 +-
->  drivers/memory/tegra/tegra20.c  |  23 +-
->  drivers/memory/tegra/tegra210.c |  16 +-
->  drivers/memory/tegra/tegra234.c |  17 +-
->  drivers/memory/tegra/tegra264.c | 428 +++++++++++++++++++++++++++++++-
->  drivers/memory/tegra/tegra30.c  |  13 +-
->  include/soc/tegra/mc.h          |  10 +-
->  12 files changed, 648 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index 49c470f7b1f7..a102a8ea7926 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -597,16 +597,16 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->  		}
->  
->  		/* mask all interrupts to avoid flooding */
-> -		status = mc_ch_readl(mc, channel, MC_INTSTATUS) & mc->soc->intmask;
-> +		status = mc_ch_readl(mc, channel, MC_INTSTATUS) & mc->soc->intmasks[0].mask;
->  	} else {
-> -		status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
-> +		status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmasks[0].mask;
->  	}
->  
->  	if (!status)
->  		return IRQ_NONE;
->  
->  	for_each_set_bit(bit, &status, 32) {
-> -		const char *error = tegra_mc_status_names[bit] ?: "unknown";
-> +		const char *error = tegra20_mc_status_names[bit] ?: "unknown";
->  		const char *client = "unknown", *desc;
->  		const char *direction, *secure;
->  		u32 status_reg, addr_reg;
-> @@ -669,9 +669,11 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->  					addr = mc_ch_readl(mc, channel, addr_hi_reg);
->  				else
->  					addr = mc_readl(mc, addr_hi_reg);
-> -			} else {
-> +			} else if (mc->soc->mc_addr_hi_mask) {
->  				addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
-> -					MC_ERR_STATUS_ADR_HI_MASK);
-> +					mc->soc->mc_addr_hi_mask);
-> +			} else {
-> +				WARN_ON(1);
 
-You should handle it correctly instead. WARN reboots some systems and
-this does not look like really impossible path, which would justify it.
-
->  			}
->  			addr <<= 32;
->  		}
-> @@ -696,11 +698,11 @@ irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->  			}
->  		}
->  
-
-...
-
-> +
-> +#define ERR_GENERALIZED_APERTURE_ID_SHIFT		0
-> +#define ERR_GENERALIZED_APERTURE_ID_MASK		0x1F
-> +#define ERR_GENERALIZED_CARVEOUT_APERTURE_ID_SHIFT	5
-> +#define ERR_GENERALIZED_CARVEOUT_APERTURE_ID_MASK	0x1F
-> +
->  static inline u32 tegra_mc_scale_percents(u64 val, unsigned int percents)
->  {
->  	val = val * percents;
-> @@ -187,15 +255,18 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
->  
->  #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
->      defined(CONFIG_ARCH_TEGRA_194_SOC) || \
-> -    defined(CONFIG_ARCH_TEGRA_234_SOC) || \
-> -    defined(CONFIG_ARCH_TEGRA_264_SOC)
-> +    defined(CONFIG_ARCH_TEGRA_234_SOC)
->  extern const struct tegra_mc_ops tegra186_mc_ops;
->  #endif
->  
->  irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
->  extern const irq_handler_t tegra30_mc_irq_handlers[];
-> -extern const char * const tegra_mc_status_names[32];
-> -extern const char * const tegra_mc_error_names[8];
-> +extern const char * const tegra20_mc_status_names[32];
-> +extern const char * const tegra20_mc_error_names[8];
-> +int tegra186_mc_probe(struct tegra_mc *mc);
-> +int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev);
-
-This is such a confusing design... Function declared in mc.h header,
-defined in a MODULE but used in a driver which can only be built in,
-because it depends on some ARCH_foo stuf. If I deciphered it correctly
-this fails and needs EXPORT_SYMBOL_GPL, but maybe I deciphered it wrong,
-because code is confusing. Your drivers Makefile should not have
-ARCH_TEGRA_FOO, but dedicated entries so the state of each driver is
-obvious by reading Kconfig of this directory - it is built-in or tristate.
-
-
-> +int tegra186_mc_resume(struct tegra_mc *mc);
-> +void tegra186_mc_remove(struct tegra_mc *mc);
->  
-
-_mc {
-
+This is different header, I asked for using in this patch (or rather
+this C unit). Plus that header does not even use things I asked above -
+no clkdev, no interconnect, no clk provider.
 
 Best regards,
 Krzysztof
