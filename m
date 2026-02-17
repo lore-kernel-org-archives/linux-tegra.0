@@ -1,167 +1,133 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E5E31AF17
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 11:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D11D3385A6
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 12:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771326396; cv=none; b=INffiQ/vQNyJJDuoRAitHnq6k7kXOBrqJUpweTuXi33rRHjiDRiVnTYKCUvVF6VWAIcW14+SI6lBeSChnYcqIlNQ5SE7FHt7Sq1QQgDA6KRlyn5cGuo18gzUlIjOcgo1xvWHapsfvQN8g7q1eq8VQfcpOQkMf++FKore7lu0A5Y=
+	t=1771330643; cv=none; b=Ex1/IfkPloCueLjHXsOf6GrgIsd8ebrRckjFLK6+j/cC/Uf+/uxPJFzVDFdTGDLfj6g0LDg0AhiIXkKngrYEm8pReDBT8phQi+Bxg4B+PU9IgaIrWPSuZ4ykZMUbf1Z4ALYebQ/VQvyDxQz/AFOEXYWtkYgqC1eQDU28wwjpT60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771326396; c=relaxed/simple;
-	bh=r+EggPD7wOShkp8YPQaACe9GAgiS2RAP+AMG/TERowk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=CmVzvcMPKw7n9Z2BaE0TCET/pb5B9rczIRVR3KcEfJLSkkD+Mnl9iU+bAtr68zbReSpCsJlfiVhSQXCYi7/x5klfV5klGOOzh2774KSRaFV9BcekRcrztWxAYhzY6vrkrr6eh8qGxsQ5Gz/dRPrHSigUcjg/FycaJRfbUDZvayk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQkqd7HO; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1771330643; c=relaxed/simple;
+	bh=Vr3S/NRZ+Gxmt2xKTLbKVQLfF3pD6Rdqfj9+2BcEPe4=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rhhmqROxaBj5cugvIP5trMMmvtrYUFCwO0PJ6nGjklsMY/v8xr+x27Izc92fA34VjWBm2hOHoXqFrTGF3Aen4lpzCZPTELeVSCG/uGHxF3pJlqBXTN2gvEb23uKEqvIWI2r/7cyCGyV7om1Ad1UlZcm46K1XBEfYrOERhIpN2/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fg/PMoq9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQkqd7HO"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-65c01595082so2498540a12.3
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 03:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771326394; x=1771931194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8lEc5xzFe2JfewkM3XcVcd3+y1q4x0K1q5cHfsFpVx4=;
-        b=aQkqd7HOqGV/NIOKu5r79sF31fr+AZgxFjbHojS1gBCp1QmHd0lfLZaZDJxWi7X3qW
-         C0AxtInazxfoE0bvmIGsNWW/bSfJ2+fcqqnXacnYy1vPpopY/Foh0YQjy4JUyTWVhGgx
-         mb/Y9pWDndy02sjYg7QlHeuG9Wubo7MDFE7Z3xYHVx61yw/Qbks7DcR4Tb0szoXFafLP
-         rUG7VgCB3jL343pFneN8LUeG2RAGxT3lbuItGsIq8p9MkyedGhAkqHhPMYzTlBF/93Db
-         D18W+67syJCWoB+BVm9ejVwG6AijMB8SYU9bIkwvuhgX/zAaQenbM6oExuiGRVrp9TXv
-         QSJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771326394; x=1771931194;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8lEc5xzFe2JfewkM3XcVcd3+y1q4x0K1q5cHfsFpVx4=;
-        b=xTGwDM02hUZqR6oga37IoSSF99+lzr8Dpe5Jb4gBmNhbsYrrPDDBRDDshypGdA/V6m
-         0/6epHVfeCfOJAUf4wguf6CJF1rw9qy66PPvVi/IwUvP2T3+nW/ZO4DoPR+5s5PoECWB
-         OMDYy9eKees1fnWIkAgxtJmlE7cwip527UwM1XFfeWDlxgpQt2aQo9+JjImo0ngk2N/m
-         YCecjMsJuT6jfO4lgYcaoOf63zeBs7O4m0y1VoiKACHj1Wmd8UqzC1LXPJbkYW5Zr3nE
-         zrxP1vdB3yL/v8x/RPUbK6Ve2ae5Ovjs8RD/yy/7rTLs9i0BveYiKFpd0qkOXo5r7eR3
-         oyAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVozmnBpmEf8jdAulW8uI9a8VMVzS6mu/hgkyav6anZAIk4XDGIE+kQpuTsWjC+UBbOHvvxq4529Xx2PA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQlKqhRcXysp0R2MAQMmjO7XSWJQoifudIwzG7cSHKz9BM6zYn
-	14QzTFUydeYQg5KDByDyDNO45x/KjSFQNodN86X+iKSHb0OU/XrB67M7
-X-Gm-Gg: AZuq6aJG9XM/OKwjNzZJdUKKxIlfLm4XqelgMqQ4K0YleUCW0MOUSoF4Ipcg8JtXqtc
-	88DjL+rm21IY/VplFOwoV/dPt+p7YSxgDofUkeVEW4gBnReWkgZskQM1YIg9Ej3oePWtkkVeOG6
-	+njQTOZCnOtzqwytidTqPcPWJ6G8fGVeVLR4aEE9kc7HtX4aMa/0Fr/mKBYZv39wsr4X2sIjpX7
-	9BKMiawuX6GLIBIM4rm1qrZjZgVVEDLQxK2X46AgaabXWyrGKkwn1JJOQf/Mv7OgVS/A7dcpAs7
-	6+jRF6DJSfYGjoAIUmxx6UNZHSl4xzqBhlDDPGPC9zh3A39hSA6rBGxvpjaK9ABD8Dxxe6Zwemd
-	URKog+qQwD7M2wL/yOwzaQRtDV53H/fWoNQd9mxtto1wNLh/J9Z7ZsN0ZD6Ex3LRJeAr27VWdot
-	2f/QVvlj+0DvRSn4jzW0fNzFwvb0nEvLY=
-X-Received: by 2002:a05:6402:40cc:b0:65c:972:707f with SMTP id 4fb4d7f45d1cf-65c0972752dmr3331588a12.10.1771326393840;
-        Tue, 17 Feb 2026 03:06:33 -0800 (PST)
-Received: from ehlo.thunderbird.net ([178.137.63.129])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65bad3f137dsm2248870a12.27.2026.02.17.03.06.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Feb 2026 03:06:33 -0800 (PST)
-Date: Tue, 17 Feb 2026 13:06:32 +0200
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-CC: Thierry Reding <thierry.reding@gmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Douglas Anderson <dianders@chromium.org>, Sam Ravnborg <sam@ravnborg.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 3/7 RESEND] ARM: tn7: adjust panel node
-User-Agent: K-9 Mail for Android
-In-Reply-To: <aZRCamxP5JfS8OsO@orome>
-References: <20251204060627.4727-1-clamor95@gmail.com> <20251204060627.4727-4-clamor95@gmail.com> <10344542.CDJkKcVGEf@senjougahara> <CAPVz0n20hHAf9tFqUNYSO18rvvPbbY5nyVRB-KpiKD2ih=Vfpg@mail.gmail.com> <aZRCamxP5JfS8OsO@orome>
-Message-ID: <58C37053-93EF-4EDB-80E3-C066DD6E3964@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fg/PMoq9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0D6C19425
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 12:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771330642;
+	bh=Vr3S/NRZ+Gxmt2xKTLbKVQLfF3pD6Rdqfj9+2BcEPe4=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
+	b=fg/PMoq9kKLwdQ7gaP4k3iwtSwh23cUoCYH88fd1ubxiJ2ZPKqsH6U+xnH8xzm9yQ
+	 1xaRQ+ccI0Qaf4xiMO+Rl8EJcyjxvxXkQkpeTDIvLf73Dl5f27U8dM0M2/kJUtWarO
+	 zhLrLO3h7Iaf7kdvdxtt87u2vZzH9iGj/trjd0erOezsBiKVGmIHwwA2xO6eroZmEe
+	 wwKYYbPmu/t8ygKa179DlkePkBLDRZeVB70PVxv3lvqJfDlOXnVRJ1IQcMZ+BuLq//
+	 k7w2Sj+uPaC4Pz/kOR13vXWJjKReGarYox2NPoyMyui34h02pGVXUZspklav++FX2Z
+	 mGJa0Hr4MYVLg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-59de0b7c28aso4297551e87.1
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Feb 2026 04:17:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUMf39j+6BViFavy0MGLdk8OSb8v8M8HeWZi5M0zx4eXXhre83V5PQpE/eUAyCg6JFRd4AkxVFINYlFQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjVaJcAnOY6DlwiULEWW50T9HWThsobjAGMQP0NAOQyQNWonXM
+	czaxET5wQROjLcYxE2TknMbxgVt/E+2NvoJ5qbWb2l1C/tyaJ2DzXXjYROH+tK/03yuWHK7senV
+	UNHdFhd1zcoR44keUc7J43sLc5+FoAVOEfrLhroUeog==
+X-Received: by 2002:a05:6512:12d0:b0:59e:6111:7304 with SMTP id
+ 2adb3069b0e04-59f69c648f7mr5083995e87.31.1771330641602; Tue, 17 Feb 2026
+ 04:17:21 -0800 (PST)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 17 Feb 2026 04:17:20 -0800
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 17 Feb 2026 04:17:20 -0800
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260217081431.1208351-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20260217081431.1208351-1-pshete@nvidia.com>
+Date: Tue, 17 Feb 2026 04:17:20 -0800
+X-Gmail-Original-Message-ID: <CAMRc=McfztA2kf2S_4R8KYVnVFvAL7x0n3_O9BHh709L8Op9Dg@mail.gmail.com>
+X-Gm-Features: AaiRm52J6lD5e8NE2zdA9lxwXIHqquar7R_7jfasbmJL2Edc9lJ1kEaMUERE_Ns
+Message-ID: <CAMRc=McfztA2kf2S_4R8KYVnVFvAL7x0n3_O9BHh709L8Op9Dg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] gpio: tegra186: Simplify GPIO line name prefix handling
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: linusw@kernel.org, brgl@kernel.org, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-17 =D0=BB=D1=8E=D1=82=D0=BE=D0=B3=D0=BE 2026=E2=80=AF=D1=80=2E 12:28:06 GM=
-T+02:00, Thierry Reding <thierry=2Ereding@kernel=2Eorg> =D0=BF=D0=B8=D1=88=
-=D0=B5:
->On Sun, Feb 15, 2026 at 09:20:27AM +0200, Svyatoslav Ryhel wrote:
->> =D1=87=D1=82, 15 =D1=81=D1=96=D1=87=2E 2026=E2=80=AF=D1=80=2E =D0=BE 09=
-:15 Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5:
->> >
->> > On Thursday, December 4, 2025 3:06=E2=80=AFPM Svyatoslav Ryhel wrote:
->> > > Adjust panel node in Tegra Note 7 according to the updated schema=
-=2E
->> > >
->> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> > > ---
->> > >  arch/arm/boot/dts/nvidia/tegra114-tn7=2Edts | 13 +++++++------
->> > >  1 file changed, 7 insertions(+), 6 deletions(-)
->> > >
->> > > diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7=2Edts b/arch/arm=
-/boot/dts/nvidia/tegra114-tn7=2Edts
->> > > index bfbdb345575a=2E=2E75fbafb4a872 100644
->> > > --- a/arch/arm/boot/dts/nvidia/tegra114-tn7=2Edts
->> > > +++ b/arch/arm/boot/dts/nvidia/tegra114-tn7=2Edts
->> > > @@ -43,7 +43,9 @@ panel@0 {
->> > >                               compatible =3D "lg,ld070wx3-sl01";
->> > >                               reg =3D <0>;
->> > >
->> > > -                             power-supply =3D <&vdd_lcd>;
->> > > +                             vdd-supply =3D <&avdd_lcd>;
->> > > +                             vcc-supply =3D <&dvdd_lcd>;
->> > > +
->> > >                               backlight =3D <&backlight>;
->> > >                       };
->> > >               };
->> > > @@ -101,11 +103,10 @@ smps45 {
->> > >                                               regulator-boot-on;
->> > >                                       };
->> > >
->> > > -                                     smps6 {
->> > > +                                     avdd_lcd: smps6 {
->> > >                                               regulator-name =3D "v=
-a-lcd-hv";
->> > > -                                             regulator-min-microvo=
-lt =3D <3000000>;
->> > > -                                             regulator-max-microvo=
-lt =3D <3000000>;
->> > > -                                             regulator-always-on;
->> > > +                                             regulator-min-microvo=
-lt =3D <3160000>;
->> > > +                                             regulator-max-microvo=
-lt =3D <3160000>;
->> > >                                               regulator-boot-on;
->> > >                                       };
->> > >
->> > > @@ -325,7 +326,7 @@ lcd_bl_en: regulator-lcden {
->> > >               regulator-boot-on;
->> > >       };
->> > >
->> > > -     vdd_lcd: regulator-lcd {
->> > > +     dvdd_lcd: regulator-lcd {
->> > >               compatible =3D "regulator-fixed";
->> > >               regulator-name =3D "VD_LCD_1V8";
->> > >               regulator-min-microvolt =3D <1800000>;
->> > >
->> >
->> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia=2Ecom>
->> >
->>=20
->> Hi Thierry!
->>=20
->> This is the only remaining patch from the original series=2E May you
->> please pick it or should I resend it?
+On Tue, 17 Feb 2026 09:14:30 +0100, Prathamesh Shete <pshete@nvidia.com> said:
+> Introduce TEGRA_GPIO_PREFIX() to define the Tegra SoC GPIO name
+> prefix in one place. Use it for the Tegra410 COMPUTE and SYSTEM
+> controllers so the prefix is "COMPUTE-" and "SYSTEM-" respectively.
 >
->No need to resend=2E I can pick it up, but it won't show up in linux-next
->until after the merge window closes=2E
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+> Changes in v2:
+>   * Split the v1 patch into two; this one to simplify prefix handling.
+> ---
+>  drivers/gpio/gpio-tegra186.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 9c874f07be75..f04cc240b5ec 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -942,12 +942,8 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+>  		char *name;
+>
+>  		for (j = 0; j < port->pins; j++) {
+> -			if (gpio->soc->prefix)
+> -				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
+> -						      gpio->soc->prefix, port->name, j);
+> -			else
+> -				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
+> -						      port->name, j);
+> +			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%sP%s.%02x",
+> +					      gpio->soc->prefix ?: "", port->name, j);
+>  			if (!name)
+>  				return -ENOMEM;
+>
+> @@ -1373,6 +1369,9 @@ static const struct tegra_gpio_soc tegra256_main_soc = {
+>  	.has_vm_support = true,
+>  };
+>
+> +/* Macro to define GPIO name prefix with separator */
+> +#define TEGRA_GPIO_PREFIX(_x)	_x "-"
+> +
+>  #define TEGRA410_COMPUTE_GPIO_PORT(_name, _bank, _port, _pins)	\
+>  	TEGRA_GPIO_PORT(TEGRA410_COMPUTE, _name, _bank, _port, _pins)
+>
+> @@ -1388,7 +1387,7 @@ static const struct tegra_gpio_soc tegra410_compute_soc = {
+>  	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
+>  	.ports = tegra410_compute_ports,
+>  	.name = "tegra410-gpio-compute",
+> -	.prefix = "COMPUTE",
+> +	.prefix = TEGRA_GPIO_PREFIX("COMPUTE"),
+>  	.num_irqs_per_bank = 8,
+>  	.instance = 0,
+>  };
+> @@ -1418,7 +1417,7 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
+>  	.num_ports = ARRAY_SIZE(tegra410_system_ports),
+>  	.ports = tegra410_system_ports,
+>  	.name = "tegra410-gpio-system",
+> -	.prefix = "SYSTEM",
+> +	.prefix = TEGRA_GPIO_PREFIX("SYSTEM"),
+>  	.num_irqs_per_bank = 8,
+>  	.instance = 0,
+>  };
+> --
+> 2.43.0
+>
 >
 
-Fine by me, thank you!
+I'm perfectly fine with patch 2/2 but this one is giving me a hard time. What
+are we really gaining other than some questionable obfuscation? Keeping the
+dash in the format string makes more sense to me and if we ever reuse the
+prefix, we'll need to remember about it trimming it. I would drop this patch
+and keep just 2/2.
 
->Thierry
+Bartosz
