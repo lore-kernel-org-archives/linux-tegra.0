@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B482E040E;
-	Tue, 17 Feb 2026 08:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE133993;
+	Tue, 17 Feb 2026 08:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771316133; cv=none; b=prHfb8AyFk+HKSGDJZ3qRaKeQzhs/mbQ5K7RtrsfPJuFqtrDTmruOqjxaUxMmUHy7zGKTULn+wtBUg3ADF+f6fQJ/hsm99EcLNMyAXxUq7jPZJciGI9lp3QPLQewyELp/VXXn+GCcdQj0bM9Giih6o5CUDU/DD9gaLTQR2cBrN4=
+	t=1771316303; cv=none; b=CNKFWaH9VJy44FCQ7U4DYYIzEm9ETDVfClkshagf/Znfv9+MJd3WeY+Zn5d6D74mjdrvAkjq9ogIfATDISC1qdhbTSwpdxARD9sPUg5OFAd5xgTfLNE8H0WsQFPadviqyu/Aqc5TBYwxRvqAPpbAx7/XPxfYx0pKsXYXDqoXTAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771316133; c=relaxed/simple;
-	bh=7x3wjadrlIsvJEt45KBix5/O6j6TGygD7InByKb2rxU=;
+	s=arc-20240116; t=1771316303; c=relaxed/simple;
+	bh=t8EF5zJ4Ib7/+4xeguOma5i5fWqBUayxEnM7ya6pBBQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VKlrLF3zyMP9Vkwru/ApXc8laTMQz3YjFyjii9xbF4Zlmv/wCIlVVRSgq6rFUmt2k7oqUOfIgAa+hE7n+b/or5ZyWbzL83E09DS0DdXtDohYJaQ62eklFFKMPmVGvh6R/Buzs0oL35APiD4/9WgRBHNsqfXNDe7pF/h02f2yBl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBy9j2mg; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hwojWWOu0lPOT6wasnlp9ijnBx5/yQMd2K8LMcVmxeBLL9jTaC4hY5s+faJyHRBUuGFwtHPz4d7eKs8YicJZ7zOXKWxcYQMtiS0gJvlHbiTXBFbf+EWoeLjjjXdxxG7sVliC5duYOmxKUAI6FdAJH+b4ySWX8CA52Ex7w7OjBt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMb6DctH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBy9j2mg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E6CC4CEF7;
-	Tue, 17 Feb 2026 08:15:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMb6DctH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6128DC4CEF7;
+	Tue, 17 Feb 2026 08:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771316132;
-	bh=7x3wjadrlIsvJEt45KBix5/O6j6TGygD7InByKb2rxU=;
+	s=k20201202; t=1771316302;
+	bh=t8EF5zJ4Ib7/+4xeguOma5i5fWqBUayxEnM7ya6pBBQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RBy9j2mg9olAYJb82mbK2P6Z6j2TpQ1E3XPNDyQ7YMHczOylobGy3GVzTTKYNy2pv
-	 lgX6cty6v2FpLcEcWzYhCxBDrxo/Y3Vk1eOlF+0PV0b5USVz2GJ5HEMPqkhMvOnog1
-	 3fgbiWYWWaUdtt4nS+0bsDuYVBxaveJrXCxeldEwCucdmYPxTMmJb1PeVfc8+wsT4d
-	 vyXCswB+puygtS3D/W8yZiXgxA6xy2LsFMy0rXuaTRugE4pA6bu1a7IqUb5InC7auB
-	 C7v8MXU1wN8wNHMvMPsXFIF5685pCIjRg+2gxfABc/3Gai7XAQq4AabOA+xyhPmSKH
-	 gSzI/dVfWukXg==
-Message-ID: <b7de1799-d113-402d-82ab-06492216ebd8@kernel.org>
-Date: Tue, 17 Feb 2026 09:15:28 +0100
+	b=FMb6DctHZVuywSaP+NkDxnexlYugvAiynmlkT4/PsIJ8qJWY8F1/kZoeqWsrRi+sF
+	 p8uBT+UtOeEnNWeifpZ7shY5GHFsS5gMm53ZQotRec/Eog2MDJeSWlxlJw592MyNxy
+	 GQRAzYfLTPWh1+Scim9N4A+JiEDX/+B2ZTU2j+I5KWoPl7qkOeHEajVIu+H24yeDND
+	 iOQ8iy/+1bDQxkVwpi/Cyxr0GOJg44vYekI1D37IJFhwm7z9Krgtx+VYvEQYAzXPCp
+	 EUZf0vwlOQHrCDfXOMiDdOKFka7Tswv61alfdCiXE4Jm3yMxFngoCnkzJ/w1xyj78N
+	 B0ye3VUOWxHaA==
+Message-ID: <b19dcc48-33be-4eb7-8b69-d7ddebefe257@kernel.org>
+Date: Tue, 17 Feb 2026 09:18:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] dt-bindings: memory: Add Tegra114 memory client
- IDs
+Subject: Re: [PATCH v1 5/5] memory: tegra: Add Tegra114 EMC driver
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Thierry Reding <thierry.reding@gmail.com>,
@@ -45,9 +44,9 @@ Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 References: <20260126190755.78475-1-clamor95@gmail.com>
- <20260126190755.78475-4-clamor95@gmail.com>
- <54043284-141e-421a-a54d-a018c884b324@kernel.org>
- <CAPVz0n3OEN2M=wj7cq_-qrYi5VkMUP4RcUB7=sQxnLaGGivKVQ@mail.gmail.com>
+ <20260126190755.78475-6-clamor95@gmail.com>
+ <6f143fdd-1e2d-428d-9b05-cf1124b179e8@kernel.org>
+ <CAPVz0n0Ep_YAJfm0R_PexKo5WwrTDbJfFKUbLVKtG5q1qLONUg@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,36 +92,103 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAPVz0n3OEN2M=wj7cq_-qrYi5VkMUP4RcUB7=sQxnLaGGivKVQ@mail.gmail.com>
+In-Reply-To: <CAPVz0n0Ep_YAJfm0R_PexKo5WwrTDbJfFKUbLVKtG5q1qLONUg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 17/02/2026 09:02, Svyatoslav Ryhel wrote:
-> вт, 17 лют. 2026 р. о 09:22 Krzysztof Kozlowski <krzk@kernel.org> пише:
+On 17/02/2026 08:51, Svyatoslav Ryhel wrote:
+> вт, 17 лют. 2026 р. о 09:21 Krzysztof Kozlowski <krzk@kernel.org> пише:
 >>
 >> On 26/01/2026 20:07, Svyatoslav Ryhel wrote:
->>> Each memory client has unique hardware ID, add these IDs.
+>>> Introduce driver for the External Memory Controller (EMC) found in
+>>> Tegra114 SoC. It controls the external DRAM on the board. The purpose of
+>>> this driver is to program memory timing for external memory on the EMC
+>>> clock rate change.
 >>>
 >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 >>> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 >>> ---
->>>  include/dt-bindings/memory/tegra114-mc.h | 67 ++++++++++++++++++++++++
+>>>  drivers/memory/tegra/Kconfig        |   12 +
+>>>  drivers/memory/tegra/Makefile       |    1 +
+>>>  drivers/memory/tegra/tegra114-emc.c | 1463 +++++++++++++++++++++++++++
 >>
->> This is never a separate commit. Squash with the binding.
+>> Please rebase on top of Mikko's patch removing duplicated code.
+>>
+>>>  3 files changed, 1476 insertions(+)
+>>>  create mode 100644 drivers/memory/tegra/tegra114-emc.c
+>>>
+>>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+>>> index fc5a27791826..11e7cc357d39 100644
+>>> --- a/drivers/memory/tegra/Kconfig
+>>> +++ b/drivers/memory/tegra/Kconfig
+>>> @@ -35,6 +35,18 @@ config TEGRA30_EMC
+>>>         This driver is required to change memory timings / clock rate for
+>>>         external memory.
+>>>
+>>> +config TEGRA114_EMC
+>>> +     tristate "NVIDIA Tegra114 External Memory Controller driver"
+>>> +     default y
+>>> +     depends on ARCH_TEGRA_114_SOC || COMPILE_TEST
+>>> +     select TEGRA124_CLK_EMC if ARCH_TEGRA
+>>> +     select PM_OPP
+>>> +     help
+>>> +       This driver is for the External Memory Controller (EMC) found on
+>>> +       Tegra114 chips. The EMC controls the external DRAM on the board.
+>>> +       This driver is required to change memory timings / clock rate for
+>>> +       external memory.
+>>> +
+>>>  config TEGRA124_EMC
+>>>       tristate "NVIDIA Tegra124 External Memory Controller driver"
+>>>       default ARCH_TEGRA_124_SOC
+>>> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
+>>> index 6334601e6120..6b9156de4b66 100644
+>>> --- a/drivers/memory/tegra/Makefile
+>>> +++ b/drivers/memory/tegra/Makefile
+>>> @@ -16,6 +16,7 @@ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
+>>>
+>>>  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
+>>>  obj-$(CONFIG_TEGRA30_EMC)  += tegra30-emc.o
+>>> +obj-$(CONFIG_TEGRA114_EMC) += tegra114-emc.o
+>>>  obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
+>>>  obj-$(CONFIG_TEGRA210_EMC_TABLE) += tegra210-emc-table.o
+>>>  obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
+>>> diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/tegra/tegra114-emc.c
+>>> new file mode 100644
+>>> index 000000000000..789b8e959a68
+>>> --- /dev/null
+>>> +++ b/drivers/memory/tegra/tegra114-emc.c
+>>> @@ -0,0 +1,1463 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Tegra114 External Memory Controller driver
+>>> + *
+>>> + * Based on downstream driver from NVIDIA and tegra124-emc.c
+>>> + * Copyright (C) 2011-2014 NVIDIA Corporation
+>>> + *
+>>> + * Copyright (C) 2024 Svyatoslav Ryhel <clamor95@gmail.com>
+>>> + */
+>>> +
+>>> +#include <linux/clk-provider.h>
+>>
+>> Where is it used?
+>>
+>>> +#include <linux/clk.h>
+>>> +#include <linux/clkdev.h>
+>>
+>> Where is it used?
+>>
+>>> +#include <linux/clk/tegra.h>
+>>
+>> Where is it used?
 >>
 > 
-> Always was and now it suddenly is not? Maybe you should consider
+> All 4 by tegra124_clk_set_emc_callbacks
 
-It never was, by the rules. I give this review all the time.
+What? That's not how C works.
 
-> fixing checkpatch since it complains that binding and header must be 2
-> separate commits.
-
-I considered, I guess many considered... but the problem is:
-
-IT DOES NOT SAY THAT. There is no checkpatch warning, at least on recent
-tree.
+There is no definition of tegra124_clk_set_emc_callbacks here in this
+patch, so the headers are not used. Point me to any symbols from these
+headers being used in this patch.
 
 Best regards,
 Krzysztof
