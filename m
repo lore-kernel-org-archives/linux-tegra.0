@@ -1,45 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF681EB5B;
-	Tue, 17 Feb 2026 10:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921292FF148;
+	Tue, 17 Feb 2026 10:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771323218; cv=none; b=jKVGDkze65vhxHtyzb681H57z8nKIeeB4RuVrO3+iey2NSaAjaMQiAUM1pf1w9HUSctaJnyuXeTO0N/+iJZoHJlMpIj5FaXvdaiS+zB/jrWr08lAwcAX19fKBnx60D8jrczvmTA6x6Joa5zc9TKkgsXsp/Q3TWz6AOia2tAh/pk=
+	t=1771324089; cv=none; b=CYnKibfUZt+q7gLiG1BjNnfoplDM2NXOT4DdVY1Lbmc+weeL/g+vQaBnMGZyPy70ZY0Xdc4Uz1pZfNEfmGQWYHDLv3WvWOoH4s7i70v8Ed9+SMJB2JDrWZv5gJTegWzsHM7B0C4KZ8BXyudyzyEy0yEb58zjxSYL/ngYrM/IoQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771323218; c=relaxed/simple;
-	bh=R36PQk8KyDr9x04rIC9BdVGjwABrAY+q1kN3Q0uXFL4=;
+	s=arc-20240116; t=1771324089; c=relaxed/simple;
+	bh=pbYjiOtMX9688Dp1pZW0dqcumt75C2rjIPKHzOWyeV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UA2+ZZ/zK2D3NDmmutFjc4IkxQRBuWnLe5chuC59gcMcNjHJOkQQPWz+6kwYhnfowerIyjPCVmsLSrnPZOtkeX6yHtLx0s/+XNcmHvUNQUdCttaZb478p+ZgjMmVc4a2Pa9sVbIowTgksRGQZHLY3njgEQoNGuEorTtfXemMwOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQAnI2uv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=g4Qzj8Z/+4qI7VLkNVPg0+dc/ehKeUeMrMQwqo2W1QK7n0I2mb3mh5jOi5k/c4YETeO1I/5A1G+iYGb6//GeUBSBoK791SVm6hpGQ53PgDMamqg1GAWO/eyyXkhKR96w2S4/Mn8quDQGHYN7Qjr2CbEfB8b8kfPjSsYn3Ln+Vbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTsBRcNu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQAnI2uv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 698C1C4CEF7;
-	Tue, 17 Feb 2026 10:13:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTsBRcNu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C777DC4CEF7;
+	Tue, 17 Feb 2026 10:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771323217;
-	bh=R36PQk8KyDr9x04rIC9BdVGjwABrAY+q1kN3Q0uXFL4=;
+	s=k20201202; t=1771324089;
+	bh=pbYjiOtMX9688Dp1pZW0dqcumt75C2rjIPKHzOWyeV0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hQAnI2uvRBc/dRyxJCCW1QFY8U59rFXk81Yepf+QcTtAYjzasqX1zRZt70YnPwE5J
-	 SJN9YGww/I+sQQKg6HtA8MmNU4xgqQNzHMeeVzcW976P5jlxxeyH4/KIJtxcKXfefg
-	 7XMctAWnI3aQZlLpPOG1VBcSRHzohNbz867AcbKwlTj6S1h8VvQvBQ7EzPq3xqiHyi
-	 WQ1xAjtb+04IhABAIUQqWjBCYGqrU/GXAAt7utYE2vpODKA7P3GuwUqVKwVoeG0Jqd
-	 Iy5rSIghxw6b/8iN/ymFhJxINtuhHGg9CEp4kwhX7c7w3KaNATJchFNwo4scPgmU9y
-	 XAZdv667zZ26w==
-Date: Tue, 17 Feb 2026 11:13:35 +0100
+	b=PTsBRcNu6LOSqtCjpO0lht8k7K5rMIjhlEELOyVUAapB4a7QFSAILDm7KOfipzdnh
+	 +RZuXTMuUBjhNd4AEEOcLVt+uuiqOhoAPmwHaeYkkWT7IPwoJir0cqVTIvVj2Xmp0o
+	 Xj8WtYzX2QULdgbXZg9IgjXCwr7HxwwozfjFW3TVDeErn10spDcrcuLvosKSATi5Z8
+	 yqb2+hOEaxkcChkxssajTMPdYMD73OshnLTtCT4HcoDaJmxLF2ufsR6kwvw/wuWZ8Y
+	 vHuIKkS8sSN/9NtEEOcgrl+xchsKcdJH6At7/fCQs/Inmi+bOXCXKEV7oQHlg37bch
+	 hXLCYjv5PTXGw==
+Date: Tue, 17 Feb 2026 11:28:06 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>, 
-	Aaron Kling <webgeek1234@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
-Message-ID: <aZQ-cMn-3vI7UH7t@orome>
-References: <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com>
- <CALHNRZ-YQe7_7UGfFNsBe6pdvFjK+1sS0Sye7od6WF+yqAYttQ@mail.gmail.com>
- <5289895.R56niFO833@senjougahara>
- <6462154.GXAFRqVoOG@senjougahara>
+	Neil Armstrong <neil.armstrong@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Douglas Anderson <dianders@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 3/7 RESEND] ARM: tn7: adjust panel node
+Message-ID: <aZRCamxP5JfS8OsO@orome>
+References: <20251204060627.4727-1-clamor95@gmail.com>
+ <20251204060627.4727-4-clamor95@gmail.com>
+ <10344542.CDJkKcVGEf@senjougahara>
+ <CAPVz0n20hHAf9tFqUNYSO18rvvPbbY5nyVRB-KpiKD2ih=Vfpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,221 +49,108 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fetqgeupq2ey7hvw"
+	protocol="application/pgp-signature"; boundary="d45z6imglue7rq6i"
 Content-Disposition: inline
-In-Reply-To: <6462154.GXAFRqVoOG@senjougahara>
+In-Reply-To: <CAPVz0n20hHAf9tFqUNYSO18rvvPbbY5nyVRB-KpiKD2ih=Vfpg@mail.gmail.com>
 
 
---fetqgeupq2ey7hvw
+--d45z6imglue7rq6i
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
+Subject: Re: [PATCH v3 3/7 RESEND] ARM: tn7: adjust panel node
 MIME-Version: 1.0
 
-On Tue, Feb 17, 2026 at 12:53:54PM +0900, Mikko Perttunen wrote:
-> On Thursday, January 22, 2026 7:22=E2=80=AFPM Mikko Perttunen wrote:
-> > On Tuesday, December 9, 2025 1:21=E2=80=AFPM Aaron Kling wrote:
-> > > On Mon, Nov 3, 2025 at 12:05=E2=80=AFPM Aaron Kling <webgeek1234@gmai=
-l.com> wrote:
-> > > >
-> > > > On Mon, Nov 3, 2025 at 5:07=E2=80=AFAM Thierry Reding <thierry.redi=
-ng@gmail.com> wrote:
-> > > > >
-> > > > > On Sat, Nov 01, 2025 at 06:13:26PM -0500, Aaron Kling wrote:
-> > > > > > On Sat, Nov 1, 2025 at 6:01=E2=80=AFPM Aaron Kling via B4 Relay
-> > > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > > > >
-> > > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > >
-> > > > > > > This reverts commit ebea268ea583ba4970df425dfef8c8e21d0a4e12.
-> > > > > > >
-> > > > > > > Mmu is now being enabled for the display controllers.
-> > > > > > >
-> > > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > > ---
-> > > > > > >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
-> > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/=
-arm64/boot/dts/nvidia/tegra194.dtsi
-> > > > > > > index 1399342f23e1c4f73b278adc66dfb948fc30d326..854ed6d46aa1d=
-8eedcdfbae1fdde1374adf40337 100644
-> > > > > > > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > > > > > @@ -1807,7 +1807,7 @@ iommu@10000000 {
-> > > > > > >                         #iommu-cells =3D <1>;
-> > > > > > >
-> > > > > > >                         nvidia,memory-controller =3D <&mc>;
-> > > > > > > -                       status =3D "disabled";
-> > > > > > > +                       status =3D "okay";
-> > > > > > >                 };
-> > > > > > >
-> > > > > > >                 smmu: iommu@12000000 {
-> > > > > > >
-> > > > > > > --
-> > > > > > > 2.51.0
-> > > > > > >
-> > > > > > >
-> > > > > >
-> > > > > > Question for Jon as the author of the commit being reverted. The
-> > > > > > commit message states "we do not have a way to pass frame-buffer
-> > > > > > memory from the bootloader to the kernel". If I understand this
-> > > > > > correctly, this is talking about seamless handoff. What does th=
-is have
-> > > > > > to do with enabling mmu on the display controllers? Seamless do=
-es not
-> > > > > > work on any tegra arch as far as I'm aware, but Tegra194 is the=
- only
-> > > > > > one that doesn't have mmu enabled for the dc's. But enabling mmu
-> > > > > > allows for better and faster memory allocation. My initial atte=
-mpts to
-> > > > > > enable this didn't work because I tried to attach them to the m=
-ain mmu
-> > > > > > unit, see the related freedesktop issue [0]. After noticing in =
-the
-> > > > > > downstream dt that the dc's are on a separate unit, I made it w=
-ork.
-> > > > > > And so far, it seems to work just as well as Tegra186. Then whe=
-n I was
-> > > > > > packaging up the change to submit, I found that this had been
-> > > > > > explicitly disabled. But I'm not seeing why. Am I missing some
-> > > > > > additional factors?
-> > > > >
-> > > > > This isn't seamless handoff to the Tegra DRM driver for display, =
-but
-> > > > > rather to simple-framebuffer. While this does technically work, i=
-t also
-> > > > > causes a spew of SMMU faults during early boot because the firmwa=
-re does
-> > > > > not properly pass the SMMU mapping information to the kernel.
-> > > > >
-> > > > > In a nutshell what happens is that the firmware sets up the displ=
-ay
-> > > > > controller to scan out from a reserved memory region, but it does=
- so
-> > > > > without involving the SMMU, so it uses physical addresses directl=
-y. When
-> > > > > the kernel boots and the SMMU is enabled the continued accesses f=
-rom
-> > > > > display hardware cause SMMU faults (because there is no mapping f=
-or the
-> > > > > framebuffer addresses).
-> > > > >
-> > > > > That said, we did solve these issues and this may not be happening
-> > > > > anymore with the most recent L4T releases, so it may be okay to r=
-evert
-> > > > > this now. We should find out exactly which release includes all t=
-he
-> > > > > needed changes so that it can be referenced in the commit message=
-=2E I
-> > > > > want to avoid people running new kernels with an old L4T release =
-and
-> > > > > then seeing these errors without any reference as to why that mig=
-ht
-> > > > > suddenly happen.
-> > > >
-> > > > For reference, I have rolled back my Android usecase to use the L4T
-> > > > r32.7.6 bootloaders on T194 for a variety of reasons. So I am using
-> > > > cboot as the final bootloader and not edk2 as in L4T r34/r35. I hav=
-e a
-> > > > pending cboot patch to support simple-framebuffer handoff, but have=
-n't
-> > > > fully verified it as tegra-drm is currently unable to takeover from
-> > > > simplefb like openrm does for t234. But all that to say that since I
-> > > > no longer use r35 for t194 I don't have the setup to easily verify
-> > > > which point release works here and what doesn't.
-> > >=20
-> > > Any further thoughts on this patch?
-> > >=20
-> > > Aaron
-> >=20
-> > FWIW,
-> >=20
-> > looks like the edk2 patch to update iommu-addresses --
-> >=20
-> > commit 6071946461389221d2314cbbae0377610b5b1f6a
-> > Author: Jan Bobek <jbobek@nvidia.com>
-> > Date:   Tue Mar 21 00:15:27 2023 +0000
-> >=20
-> >     feat(NvDisplayControllerDxe): update FDT with framebuffer info
-> >    =20
-> >     On ready-to-boot and whenever FDT is installed, update FDT with
-> >     framebuffer mode information, base address and size.
-> >    =20
-> >     Signed-off-by: Jan Bobek <jbobek@nvidia.com>
-> >     Reviewed-by: Ashish Singhal <ashishsingha@nvidia.com>
-> >=20
-> > is in since r36.2
-> >=20
-> > $ git tag --contains 6071946461389221d2314cbbae0377610b5b1f6a | grep "^=
-r"                                                                =20
-> > r36.2
-> > r36.3.0
-> > r36.4.0
-> > r36.4.3
-> > r36.4.4
-> > r36.4.5
-> > r38.2
-> > r38.4
-> >=20
-> > Not so good for T194 since r36 only supports Orin.
-> >=20
-> > I'll look into getting this cherry-picked to r35.
-> >=20
-> > Mikko
-> >=20
-> >=20
+On Sun, Feb 15, 2026 at 09:20:27AM +0200, Svyatoslav Ryhel wrote:
+> =D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:15 Mi=
+kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Thursday, December 4, 2025 3:06=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > Adjust panel node in Tegra Note 7 according to the updated schema.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  arch/arm/boot/dts/nvidia/tegra114-tn7.dts | 13 +++++++------
+> > >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boo=
+t/dts/nvidia/tegra114-tn7.dts
+> > > index bfbdb345575a..75fbafb4a872 100644
+> > > --- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
+> > > +++ b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
+> > > @@ -43,7 +43,9 @@ panel@0 {
+> > >                               compatible =3D "lg,ld070wx3-sl01";
+> > >                               reg =3D <0>;
+> > >
+> > > -                             power-supply =3D <&vdd_lcd>;
+> > > +                             vdd-supply =3D <&avdd_lcd>;
+> > > +                             vcc-supply =3D <&dvdd_lcd>;
+> > > +
+> > >                               backlight =3D <&backlight>;
+> > >                       };
+> > >               };
+> > > @@ -101,11 +103,10 @@ smps45 {
+> > >                                               regulator-boot-on;
+> > >                                       };
+> > >
+> > > -                                     smps6 {
+> > > +                                     avdd_lcd: smps6 {
+> > >                                               regulator-name =3D "va-=
+lcd-hv";
+> > > -                                             regulator-min-microvolt=
+ =3D <3000000>;
+> > > -                                             regulator-max-microvolt=
+ =3D <3000000>;
+> > > -                                             regulator-always-on;
+> > > +                                             regulator-min-microvolt=
+ =3D <3160000>;
+> > > +                                             regulator-max-microvolt=
+ =3D <3160000>;
+> > >                                               regulator-boot-on;
+> > >                                       };
+> > >
+> > > @@ -325,7 +326,7 @@ lcd_bl_en: regulator-lcden {
+> > >               regulator-boot-on;
+> > >       };
+> > >
+> > > -     vdd_lcd: regulator-lcd {
+> > > +     dvdd_lcd: regulator-lcd {
+> > >               compatible =3D "regulator-fixed";
+> > >               regulator-name =3D "VD_LCD_1V8";
+> > >               regulator-min-microvolt =3D <1800000>;
+> > >
+> >
+> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+> >
 >=20
-> I looked into this and it appears a version of this is in r35, but it
-> only supports T234. However, I also found that at one point, L4T
-> bootloader configuration has been modified to place the display
-> controllers into SMMU bypass until otherwise configured by the kernel
-> -- which the kernel does in tegra_mc_probe_device.
+> Hi Thierry!
 >=20
-> I think that means there is still potential for an issue where the
-> display continues to be on between tegra_mc_probe_device and tegradrm
-> reconfiguring it. However, I cannot reproduce that happening -- most
-> likely the display is being turned off before that because of a clock
-> or power domain being turned off.
->=20
-> In any case, this means that we no longer need to pass the
-> framebuffer's information to the kernel. I think it would be good to
-> have some clarity to ensure the issue described above cannot happen,
-> but otherwise we should be able to enable IOMMU.
+> This is the only remaining patch from the original series. May you
+> please pick it or should I resend it?
 
-The problem would happen if you enable some sort of early framebuffer
-support, such as simple-drm or simple-framebuffer. Maybe even efifb. I
-think it'd still be worth getting the iommu-addresses code into r35 if
-for nothing else but to have a bit more of a safety buffer for the
-future.
-
-If we don't and for some reason decide that we want early framebuffer
-support, it might be too late to get UEFI updated for Tegra194. I recall
-that the UEFI code for Tegra194 is different from the one for Tegra234,
-so it is probably not as trivial as a simple cherry-pick, but I'll try
-to do some digging and find the code that does this for Xavier.
+No need to resend. I can pick it up, but it won't show up in linux-next
+until after the merge window closes.
 
 Thierry
 
---fetqgeupq2ey7hvw
+--d45z6imglue7rq6i
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmmUP08ACgkQ3SOs138+
-s6GFIQ//XG1Xz0l+YHGhvpD8IrLPSdzfmENzskMj3hFAcMeGg0ieOVSwcuodCJsw
-ggJ2dOWI+NMp9zPILp/mUCzpo4RpR2GgLkeWwhgvgTTSXDSIV60hWTdTCUG8812r
-zxJu9TbLHwvRFROTp1Y16AJDEWHw3bSritplZQf4bVCrJwUOyG/qQ7BBHnRzogPG
-kVP6EBCVYQXtyBBhPAXuqdXwNpzB0j02116/AmIDJ21lGeNlBgXtla/uvDXVsNq7
-zPP1feX7yvp5uZ2Kr/KxH/mHQq4sPZp9uso5O5ittm2XLkMzf4g0CTKjcZRKUXLn
-xdipU2/FwWyi2tJEN7vYVhS652zeO5CzFEWUhYSsf9Nq2Kmg3HCQa2tfdwwWR+nM
-4cr3F9JGCMtFwzkbfpq9zHYI3X1GbdTNPjNBEEQ28FkPXMhdXgQEiE2P5RSCGBD9
-phzJ8Ra+nrEhaHQxJxEeeXpUIXSZfvNhYElZykjmyTCzFjoPo8ZjaU/EhQxXtdlr
-JqaiEVHxWtIHALBELwT4+m0E+TYkr90mz7QKVMfIgVkuIX1z6cDKdwXIJ04YYXgj
-TWO4BRMB5xXAro9Yt3oAI54tZDuD9hvk8ClMLHi/VDYNSdbQ8eqDvaFRH29QUJ0f
-AYfR3K7nvKripzY0iCXyvrMrdFSuat+mzek/22ZXI4N9FZVg1rI=
-=tagu
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmmUQrMACgkQ3SOs138+
+s6FkCg//basYg9JRZ2mAhvsgQVy1h12KGHaVU3i+8sYZnMkCC+mXKCTQdVOnn1Q9
+4HF9a1U3QMXKWJ/AZuh+fOI4zwzZmWdC4LL5NKE6LI5mN0IlMOsn+MYuxvFiUcUD
+vdUQHxbbMci8G2sgfOWdxbWaKQc7GR2mEdwAOtmKC66+xYXpVLGULNazOxevJ3Yo
+xqsiq/nfX/jbTzD7Ie9EdtL75g2kxuEPu7EQHEwevlype7yU55D3fwDK9VoW5A6n
+HMnwX8hI6ExtDbVyBXNSAMnpnVB1nbdUAPLDeDl1Qmymrd3R6egi7BxrdFoDQ1GP
+AMzLrmRruSnrqGsAZ5RUP6nTjgmQxRMX9FbZJyKUeIDB0yLbrkblsGo7Mme9X5ue
+6sjsz635IYzD1/TJb/KY008TX+I8yjO5oV03PEQn3C0aFOAke6mbyR+JDylpORDx
+OMhO+LzCOnzZiLBtm4hAa69gJiOMHAYMhGu4Ks3Xzynv0gew6bDSJ+03oq95reWt
+pSrHjFNIPOKFa7QumHorUlU0BCyBMQ+cCmRN++CZC9DQWCw2Ri4WXhhTKXklkqBg
+XVZvMsDQ6kzfjdw4qa/w9MXKt9ZEeoazr6GYFlmJCkjTB7kZw4ALu557kvdYh+vH
++9l30YAv0ZN05R8dhTYpSIyQV8YmkJa8mNRzt/xtCmSm+AzVUQY=
+=FWUM
 -----END PGP SIGNATURE-----
 
---fetqgeupq2ey7hvw--
+--d45z6imglue7rq6i--
