@@ -1,153 +1,186 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0170D3783AF;
-	Tue, 17 Feb 2026 19:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30612271450;
+	Tue, 17 Feb 2026 21:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771358038; cv=none; b=lJ8LkjoGg7lvSHuCrkehnscekmW+eOMLl1NVl64j2TxVGYe2KkyBet74RjOqLCCFUNEQ8hDV3D2mkXojVrtTD+ZyAFaSREULAltk7CveFs4NPoIJS63t6bgu5WPHGTU/IIzHRMdk1I0AnBamr9Ec0374fkbs78n/jU4zeTvFjec=
+	t=1771363660; cv=none; b=mQPTpkrlOSZi2zuVGFa8PcDCLUSYtv9aDitTCAPuCqb1CRKlOexhCgrZDK1bFSbLzssSaw7apvwhatIUwnIorZpSDn7qRbBowABC0X+RXUOJINu4es3lH+tEsFDtQluKPOZe+xxYh86rUDQ/O3g+WcjU2snVapZeJ6gSfU0NBFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771358038; c=relaxed/simple;
-	bh=HK7itZqeKApbNDsQcyQecXDptVi5WMxi+gitm8NIKlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HYQvUHgCpkcWn8Pofb75JX/fHZA6UBCE2B1oiMnuSFB5krktI/E6QiWM/1FgAUAbTcQY8Yz+59/NF8agQlmCla7yKi7MTlSys3Ztn9elekpYIUQGYlvnrWt7rlYDK2oR6VeYMi3S2NGyiQ9vTRfqht3Y29S4LRBVIjFV5d3ieOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfhYCAKI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771363660; c=relaxed/simple;
+	bh=qNdMPHb96ahPcc/FeBg2GRFGtCGsjvYyDufUCB6E5Ho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mUlmMdEoq5LZf8EtJS16x30JIQyljvqDeFFX4I/I8OjpeNQJWLHdurtuVo7t5zD/6qe4T8mRRKVW6Ncp61+J5ptMs2hl9AROASv8KBVnhQe5p+w36BbZQh6/VVNi61NQMW0rGr78X7qAU4KrCr4ANgt7soTLOCUKH94ZFvXTbRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZ+UvMiP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfhYCAKI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 151E3C4CEF7;
-	Tue, 17 Feb 2026 19:53:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZ+UvMiP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434F1C19425;
+	Tue, 17 Feb 2026 21:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771358037;
-	bh=HK7itZqeKApbNDsQcyQecXDptVi5WMxi+gitm8NIKlk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FfhYCAKICpAolKgDzMHk6a/6Bir13dMMkGebbN94gxPNWTFva2OLvxMS921es9D6y
-	 tbo1v0nWeqc8vpK/be/OQb82opXA4L0+Uj4/TfJh35Cc8N7rUXXv6Oj3b6TYyjSgsz
-	 tgrYAAkIz0iwnV8+8G5qGEh3gGMAGYu7tfbdDnkpwUKfKSOVPjOCVf7GWF0zC0FxtZ
-	 IP4T1EO6hyMrEPq4cKtxg6Yzxcnzds/kItTDCIGJCkXHkAh+Odf3K4RoexmFJlghwN
-	 wmx9GY/GhNLNKCG78TWY/fYfHeRL+V8XnLMvzaRIQ7Ytk/UZxNmtD2EMaurcPTs2Ay
-	 umtCAWgiGU5jw==
-Message-ID: <e26ac880-c397-46ee-a308-be2de608e3d4@kernel.org>
-Date: Tue, 17 Feb 2026 20:53:53 +0100
+	s=k20201202; t=1771363659;
+	bh=qNdMPHb96ahPcc/FeBg2GRFGtCGsjvYyDufUCB6E5Ho=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HZ+UvMiPz7y6Wfbsg5SRIDmn+CDWDBq3WDUKPIFYPfrmgDfHjQ7tHHZYvBxWMJPsB
+	 c/PD0XktfttvuKxs+WJlENDTRUP8uJUYdvpCSgzgXvAFzPfb1B0rOK7s3NAuWfL7OM
+	 PDp3ZyEtU/CFNB0WzAkeTuWX12cuXeEN250jg2mphb4+0a1UOP9URjezN/AWag41Q0
+	 roA2SWQuJbNqVoB7NWp23sapC1Dm1S393B1Qqcg98UxhXC9rBuSiwP8ArfAEkppYLo
+	 6sj4h5uEjhL1y9XxP5IphJD17zDcGD3gK+k+4gZR6DYzXHK6BRPDR/D2adYfFq7DLA
+	 JcoQPGf6g5NxA==
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>,
+	Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Christian Bruel <christian.bruel@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+	Koichiro Den <den@valinux.co.jp>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 0/9] PCI: endpoint differentiate between disabled and reserved BARs
+Date: Tue, 17 Feb 2026 22:27:06 +0100
+Message-ID: <20260217212707.2450423-11-cassel@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: dma: nvidia,tegra186-gpc-dma: Add
- iommu-map property
-To: Akhil R <akhilrajeev@nvidia.com>, dmaengine@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- vkoul@kernel.org, Frank.Li@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
- p.zabel@pengutronix.de
-References: <20260217173457.18628-1-akhilrajeev@nvidia.com>
- <20260217173457.18628-2-akhilrajeev@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260217173457.18628-2-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4061; i=cassel@kernel.org; h=from:subject; bh=qNdMPHb96ahPcc/FeBg2GRFGtCGsjvYyDufUCB6E5Ho=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDKn3NV+yyX95M1+T1HDqxGLE9Ks+cRk7p+2exh8+ZCxj pjCijkGHaUsDGJcDLJiiiy+P1z2F3e7TzmueMcGZg4rE8gQBi5OAZhI+E5GhguPHi2/Xb/y3DHB AIf6hAuN+VPmNN0usdy7vDq+avG27bYM/5S3MBlKbLy8vGB/jfcrobctfIebJrjrnqw9slP/atc TAw4A
+X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+Content-Transfer-Encoding: 8bit
 
-On 17/02/2026 18:34, Akhil R wrote:
-> Add iommu-map property which helps when each channel requires its own
-> stream ID for the transfer. Use iommu-map to specify separate stream
-> ID for each channel. This enables each channel to be in its own iommu
-> domain and keeps the memory isolated from other devices sharing the
-> same DMA controller.
-> 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml  | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> index 0dabe9bbb219..542e9cb9f641 100644
-> --- a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> @@ -14,6 +14,7 @@ description: |
->  maintainers:
->    - Jon Hunter <jonathanh@nvidia.com>
->    - Rajesh Gumasta <rgumasta@nvidia.com>
-> +  - Akhil R <akhilrajeev@nvidia.com>
+Hello all,
 
-With 4.5 trillion USD capitalization of Nvidia one could assume they can
-spare few resources to test the patch before sending it... instead of
-relying on Rob's and my machines to do that for them.
+This series is written in response to the patch series from
+Manikanta Maddireddy that was posted here:
+https://lore.kernel.org/linux-pci/291dab65-3fa6-4fc8-90a2-4ad608ca015c@nvidia.com/T/#t
 
-Expect grumpy review because you do not care about our time.
+The reasons why I decided to post this a new series was because the series
+above:
 
->  
->  allOf:
->    - $ref: dma-controller.yaml#
-> @@ -51,6 +52,13 @@ properties:
->    iommus:
->      maxItems: 1
->  
-> +  iommu-map:
-> +    description: |
-> +      The mapping of DMA controller channels to IOMMU stream IDs. Each entry in the map specifies the
+1) Adds PCI device and vendor specific code to
+drivers/misc/pci_endpoint_test.c. We've worked hard to make sure that
+device specific quirks/limitations are communicated via the Capabilities
+register, so let's do the same for reserved BARs.
 
-Please read Linux coding style.
+2) My review comment which suggested to convert all uses of BAR_RESERVED
+to BAR_DISABLED (except for pci-keystone.c) was ignored.
 
-> +      relationship between a DMA channel and its corresponding IOMMU stream ID. The format is:
-> +      "<ch_no &smmu stream_id length>". Example: "<1 &smmu 0x801 1>"
+3) Koichiro has posted a series that allows an EPC driver to define exactly
+which hardware backed resources are provided in a BAR_RESERVED BAR. Yet,
+this nice improvement was not incorporated. (While Mankata was part of the
+discussion, he was not CC:d on the patches that actually implemented this.)
 
-Missing constraints.
+4) The selftests should return skip instead of silent success for a
+reserved BAR.
 
-Anyway, do not redefine or explain standard properties. See dtschema.
+5) As Mankata points out, but did not address, BAR_RESERVED is quite
+ambiguous, so it is better to introduce a new BAR_64BIT_UPPER to more
+clearly mark the upper part of a 64-bit BAR as this, rather than reuse
+BAR_RESERVED.
 
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +
->    dma-coherent: true
->  
->    dma-channel-mask:
+6) It is possible to remove all the dw_pcie_ep_reset_bar() calls in the
+DWC based glue drivers and move it to DWC common code.
 
 
-Best regards,
-Krzysztof
+Because of all of the above, I thought it was just easier to post a series
+with all of the above addressed, as it seemed easier to just show what I
+meant rather than to try to explain things with words.
+
+The thing that is missing is to add a patch for pcie-tegra194.c which
+converts the BARs to BAR_RESERVED.
+Please see patch "PCI: dw-rockchip: Describe RK3588 BAR4 DMA ctrl window"
+and do something similar to pcie-tegra194.c.
+
+If we are missing some resources (right now we only have
+PCI_EPC_BAR_RSVD_DMA_CTRL_MMIO), then I think we should simple add that
+(e.g. PCI_EPC_BAR_RSVD_MSIX).
+
+Mankata, it would be nice if you could test this series, and if you could
+provide a pcie-tegra194.c patch that adds the sizes of the eDMA regs +
+MSI-X table in BAR_2 and BAR_4.
+
+
+Kind regards,
+Niklas
+
+
+Koichiro Den (2):
+  PCI: endpoint: Describe reserved subregions within BARs
+  PCI: dw-rockchip: Describe RK3588 BAR4 DMA ctrl window
+
+Niklas Cassel (7):
+  PCI: endpoint: Introduce pci_epc_bar_type BAR_64BIT_UPPER
+  PCI: endpoint: Introduce pci_epc_bar_type BAR_DISABLED
+  PCI: dwc: Replace BAR_RESERVED with BAR_DISABLED in glue drivers
+  PCI: dwc: Disable BARs in common code instead of in each glue driver
+  PCI: endpoint: pci-epf-test: Advertise reserved BARs
+  misc: pci_endpoint_test: Give reserved BARs a distinct error code
+  selftests: pci_endpoint: Skip reserved BARs
+
+ drivers/misc/pci_endpoint_test.c              | 32 ++++++++++++-
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  4 --
+ drivers/pci/controller/dwc/pci-imx6.c         | 22 +++------
+ .../pci/controller/dwc/pci-layerscape-ep.c    |  8 +---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  4 --
+ .../pci/controller/dwc/pcie-designware-ep.c   | 24 ++++++++++
+ .../pci/controller/dwc/pcie-designware-plat.c | 10 -----
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 19 +++++---
+ drivers/pci/controller/dwc/pcie-keembay.c     |  6 +--
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     | 14 +-----
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 16 ++-----
+ drivers/pci/controller/dwc/pcie-stm32-ep.c    | 10 -----
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 20 +++------
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c | 24 +++-------
+ drivers/pci/controller/pcie-rcar-ep.c         |  6 +--
+ drivers/pci/endpoint/functions/pci-epf-test.c | 24 ++++++++++
+ drivers/pci/endpoint/pci-epc-core.c           |  6 ++-
+ include/linux/pci-epc.h                       | 45 +++++++++++++++++--
+ .../pci_endpoint/pci_endpoint_test.c          |  4 ++
+ 19 files changed, 173 insertions(+), 125 deletions(-)
+
+-- 
+2.53.0
+
