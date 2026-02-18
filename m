@@ -1,81 +1,81 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF8432C957
-	for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 08:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480833D503
+	for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 09:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771404966; cv=none; b=H+9mEoIX/PTqph1g24fPWMyQ+f+yF6EYYmMkyI6IrIqGOOsrlXHrw2+2qHdXw+R/j3/cNb3pRd9egAtC+pc2hxLQjUmT6DQkNRLtIzBMQukUHArBdgW2+rXO3S8sAjlkhPPOTH3A6hYkcYNWZnIVycE5OUJdvWeBmplAqgOrohY=
+	t=1771407752; cv=none; b=XFTLcrJvCieiQJNCuGtTjQeXgY0RTCW9msrsw97tidE/1852Wra9yGmsl4glTwl4pNSO7J961+fIys94w0S1dthyUbPf2lPeQzzbyuzsddXUC6ytrTh704RcGwhykKjhHRHIankJVD0iKcfdPtHgJiHfjBkhyUIHLSefG4ndU/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771404966; c=relaxed/simple;
-	bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
+	s=arc-20240116; t=1771407752; c=relaxed/simple;
+	bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmAQJQWnOBhsI0HLrP+M7iv0tcZVYH7Ce08RuMUuGF34sTq4zn34NDnQY6iE+E45tHL07rh0QtRDKhPiVR4Fub6M4aYfRpvtkEi5hHKS01nuXZQ5T5QENe9rFMCPZ1YR+qZzvV5adXxQytERHstlOb+DCkV+yIBrq0oN4Ex5m34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iu88IOTq; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CwUdryx2; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=KVAmLvLOHL754EeDZtRwU08LF5v9EAKExZFCv7g7J/+GCmEq67iXhVN5eHLNX66iQygF18JX3XmXM51C+CBquhJPkzxwdnM4oSFzz0e5QomOZyJ6xMXKp/lUoYOU43YE1U/5cIwKD/4dl8GZOXD44T/Wu+d4ZgDYfyzEdc9XP5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OTqWQ7mG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXMGsFTv; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iu88IOTq";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CwUdryx2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OTqWQ7mG";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXMGsFTv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771404960;
+	s=mimecast20190719; t=1771407749;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
-	b=iu88IOTqwseahfv1cugh1veDlIyrCZaBuiQlj/KnUNKsdN/EcV4rzj+ijjV9k+K6xS0mcd
-	l7N0Irtlvk639xXTcaNkyfsdaVzWopT+awIwhNxcOG7wNwpobw8KQAVV8zhRJqoFAn6658
-	GoyKRZu7UPZB951dm4PPlEBb5mAAeak=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
+	b=OTqWQ7mGmF0rRm3MLncG0qpaj/kNJJjhMuq5u12bTKA+4JaYSC8HO1cMYAfkJIjVceB1uj
+	qIE4q5t/DJEuFy0IvkMY03CqrfZVVLN1LK+o/InGGUGQKF8/SIF3mq01VO/+1FBS6qcmSd
+	G83V74n/8b3h0gCyDfgYCFQrJ2nT8V4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-32-WoJrtA3vOQSKV3f0zIkMCA-1; Wed, 18 Feb 2026 03:55:57 -0500
-X-MC-Unique: WoJrtA3vOQSKV3f0zIkMCA-1
-X-Mimecast-MFC-AGG-ID: WoJrtA3vOQSKV3f0zIkMCA_1771404956
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-43766514653so3164140f8f.0
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 00:55:57 -0800 (PST)
+ us-mta-561-mhYscicbNfyjxJ8KTjPZiw-1; Wed, 18 Feb 2026 04:42:26 -0500
+X-MC-Unique: mhYscicbNfyjxJ8KTjPZiw-1
+X-Mimecast-MFC-AGG-ID: mhYscicbNfyjxJ8KTjPZiw_1771407745
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4837a718f41so17636225e9.2
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 01:42:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771404956; x=1772009756; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1771407745; x=1772012545; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
-        b=CwUdryx2NxMJK45zh1litSV6nuaJO+NimyF2MQ87vJOsJ/kb+YnMkhoz8gx9CNfkIv
-         1lyBaF8AmvPFaqgHelNfudJIti7DstYEFf7yxjhymYKqdkpXO3fb3ovMrwTmrAnzj00J
-         c2jpk8gjNaTdzgGmN44YLiadLkT1IOr7q7s83VAGqqobXohnMlFeZm1KBqhutjWeyFWU
-         kZOrOiJGPcfwDQZ0fkHnKFqeAzY5U/ZV7S0e43kCznRkdnP4gNdsIPc/dhi+ClVjRg05
-         H8rzUh4Gwli7OgiSkdEFw5OB6fk4aslcQ032CtbZeXO+DJX+1HXT/mARqn9DrAGP6EON
-         yhRQ==
+        bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
+        b=eXMGsFTvCKr5A05dlu+2cw4o+7Ny2CHRrGPJFvKPRcaBxJqT90c4+EUymhqSY9ZaLW
+         rKWTuwN0ENv9I/T6GYhsNcgkrh/yS1xgJkEOJWgHvOPV73hjYkk4Uqv1n7kcULR0HgTH
+         V7+4Wfbn4T8ZkyAxoAfwHKtawc9Su36hdqNbta2fzxvMxgpUdOEtvF6SZapCOinhdO+V
+         BK7Ch04QBR7I1qIUwE15v0SVjSRXK2d2R8UGlHnIbN3lfcPHfy5jOi7Vw3OrfzNFJxKh
+         BvxgachSOTAFpM6+asfE7inRL90swszrAcj1lCfxTT4c/s1eDVTG8/xV7JKFhW3J3h58
+         2FmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771404956; x=1772009756;
+        d=1e100.net; s=20230601; t=1771407745; x=1772012545;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
-        b=JfdKqpOoC5CZxp9amt+0RFR/DIG4FQHs1FpN0Tj2RT5iqLtds12dBQxfJfTateCCQJ
-         njDfzttAvenrlctK791ChUns2yZBxXe7aoBF+7WDHi64vv1AxjAETjPeZZX1aBtT0r6W
-         F04IG+YQG1YnH0nSNl438EjZKfgTm7zGlotqtLSQqY4cXbxoX+X8jrxT2X1KKde+v2iq
-         5uRx7uLtg2pLILcPOT/7d1sRfhodJlDPQkY7lqcfWxM7N3hUQlec062hSVWIZJAUUbe6
-         jATZz2n6jyS6Hbbmw+q1XvwxtP0Env1BGajf12f/Myxwbds+J1OBZNf8Jpqs6ycCVm+k
-         7hgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8jyYGcT3t63o54oc6zjt1JBleSemLyEn0FvyAuE3qAYiO5VwnbjdSF1FKjEZkgpO4gXDkKZmsdnJUlA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpfELRtzUKaT64+eW6fr0ltMBXcugF5mifHGsEl1e8rhJ+2635
-	XCEcoxdEydoAnNaIGSoG8XC1gGHsbhL9HYXMOxfriQ04qIuIIxEHSdnjmo8gETBKptDZ1uRvr76
-	13y1+PbItnIMSGNqhOqCA93XXwqAfo+XZbYsnPPV7MaRnEPHp//xD3XteenpRCEJ6
-X-Gm-Gg: AZuq6aKMYc7HhpBCdVXlMk6cGoPlUt9zAL4i60jQRL80FWBMOwCyGv1BHWDRVMeLLtc
-	xZdeLyjNwfENc6Pm9w71r24wS0lRdkDxSrS1m+NJ8LzgDb0CDz1kJv8PhJdQuQvY3HKqRvHHB7k
-	2obJiay++uxIA/JRsFBdHynFSHeGqRa/UsVC3scMeUrW+phc5Qpq59yhJWvbK3HWD4/NAP3wstQ
-	rnu+IWBfGT6ZMgdLvnPkiXpK/RY3C7s/c68i8F5az+BryroPPayOOwZBTtXDXJGgNZxPQSKXy29
-	1u1BF13E96h7XJXoURxpwaoEzJXMesLr8FxWysWac702Q4Xwx8JUeZ/SYoWTSDQ6fQMZKb6aIQ=
+        bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
+        b=rAvwMHsmEzbv01Gkch40ASGNGcwtSdFuBd6eEhF8Wi+7+CxmYyTZM+HdE2TgDkPJ34
+         /bwmv8B9M7RTtGKodpgBGYxUoA0gHqSWG26shXxfJ0hLzTUKPD7ERklycOYnArzEWEpK
+         Lk/Azf+n7LlSaNugR/oxazDJGgGYhL3FAaQUwBesG7/wTrYERKsovhxtiLg1f06QHPe1
+         0UFeIKzgZQ6cuux8EpsTrbO4NPIvzZFOuAUn32iEZ8nfpzvIHRB6Yz7yJopoKZPsG6Xt
+         GBfghxdYr5MsOqR/qCn4BAWdqe1R2NQRMMSbdjhxY02kr7usTo02oa+M9PLKPWb85eHq
+         pA7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/oDUZ2T6Chfa5YnG+rcBl6D5P7gB8fRjtFCrx+i/2jXj8rth4GJ0HLwhQSiIkjyS5v4vv0XRAh+xd2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2yrx0NIWffS/iTYBtGlIV8Y2hwbFjPQJzmx+ZhaVf1f/i2Sgc
+	fe6XxtWL/DpbhgSEeTWXhxqGH3lVr9hljbPV6PLVN2ESre7uIYu8x1pL2WE4jPgEd7hHxq4R0K9
+	4z7GgCj5IF0Tm3h14pftFIIy2oAJ/ltmfY8u8zaIoLeNFEYpE2mNuYg1SzXAdBzWu
+X-Gm-Gg: AZuq6aLSvodRQd1zYmIhUWm68T9zKjhsGf0YmEcGcI4+6u1/dW8/1ND9nT6X+a59/WD
+	PybtREtzy7LZs/I5hWEKsk/bvCrtd0wIA2KB8Bv9xht3FNLvn9LZBuespk+aQzZ5bb/Ov9b+dBe
+	H1gK4wpy/M2sbv128yf1tYU468My50s7oyrc2GNd9Rse9NzhcYbuMRHxOsljFsdx5noQjPtpSBG
+	QjB9u5u78Fmfle6OkFsywZO+mXO8ghjrhNSzah5Wkt6XEL0XZcR3w2CH4uZ09F3e0UXTdLpnE+A
+	E1kRkRnCrxGzoDe2e9c6kR1nqt3cj1qM3BIm7EcQeQPmVqqa2hGwch/o3Q9cSJGROFS2mkwLwQ=
 	=
-X-Received: by 2002:a05:6000:26cf:b0:435:95dc:b8ca with SMTP id ffacd0b85a97d-43958e4c9a0mr1686382f8f.40.1771404955705;
-        Wed, 18 Feb 2026 00:55:55 -0800 (PST)
-X-Received: by 2002:a05:6000:26cf:b0:435:95dc:b8ca with SMTP id ffacd0b85a97d-43958e4c9a0mr1686327f8f.40.1771404955056;
-        Wed, 18 Feb 2026 00:55:55 -0800 (PST)
+X-Received: by 2002:a05:600c:528f:b0:483:702f:4641 with SMTP id 5b1f17b1804b1-48379b8c45fmr250986025e9.3.1771407744657;
+        Wed, 18 Feb 2026 01:42:24 -0800 (PST)
+X-Received: by 2002:a05:600c:528f:b0:483:702f:4641 with SMTP id 5b1f17b1804b1-48379b8c45fmr250985705e9.3.1771407744101;
+        Wed, 18 Feb 2026 01:42:24 -0800 (PST)
 Received: from localhost ([2a01:e0a:b25:f902::ff])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796ac8209sm41853724f8f.30.2026.02.18.00.55.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836ff00332sm354774195e9.2.2026.02.18.01.42.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 00:55:54 -0800 (PST)
-Date: Wed, 18 Feb 2026 09:55:53 +0100
+        Wed, 18 Feb 2026 01:42:23 -0800 (PST)
+Date: Wed, 18 Feb 2026 10:42:22 +0100
 From: Maxime Ripard <mripard@redhat.com>
 To: Thierry Reding <thierry.reding@kernel.org>
 Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -87,12 +87,12 @@ Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
 	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 04/10] mm/cma: Allow dynamically creating CMA areas
-Message-ID: <20260218-lean-faithful-beaver-2efd77@houat>
+Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
+Message-ID: <20260218-voracious-orchid-malamute-febce0@houat>
 References: <20260122161009.3865888-1-thierry.reding@kernel.org>
- <20260122161009.3865888-5-thierry.reding@kernel.org>
- <20260123-active-witty-rabbit-0fc5b9@houat>
- <aY3j57xvdOY09EwQ@orome>
+ <20260122161009.3865888-7-thierry.reding@kernel.org>
+ <20260123-meteoric-butterfly-of-imagination-fd691f@houat>
+ <aY3nov29aBGWw93Y@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -100,114 +100,104 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="sfzhuutowl7gwtka"
+	protocol="application/pgp-signature"; boundary="4auwmrzja7jm6td5"
 Content-Disposition: inline
-In-Reply-To: <aY3j57xvdOY09EwQ@orome>
+In-Reply-To: <aY3nov29aBGWw93Y@orome>
 
 
---sfzhuutowl7gwtka
+--4auwmrzja7jm6td5
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 04/10] mm/cma: Allow dynamically creating CMA areas
+Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
 MIME-Version: 1.0
 
-On Thu, Feb 12, 2026 at 03:44:11PM +0100, Thierry Reding wrote:
-> On Fri, Jan 23, 2026 at 02:25:16PM +0100, Maxime Ripard wrote:
-> > On Thu, Jan 22, 2026 at 05:10:03PM +0100, Thierry Reding wrote:
+On Thu, Feb 12, 2026 at 03:50:09PM +0100, Thierry Reding wrote:
+> On Fri, Jan 23, 2026 at 02:30:14PM +0100, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Thu, Jan 22, 2026 at 05:10:05PM +0100, Thierry Reding wrote:
 > > > From: Thierry Reding <treding@nvidia.com>
 > > >=20
-> > > There is no technical reason why there should be a limited number of =
-CMA
-> > > regions, so extract some code into helpers and use them to create ext=
-ra
-> > > functions (cma_create() and cma_free()) that allow creating and freei=
-ng,
-> > > respectively, CMA regions dynamically at runtime.
+> > > NVIDIA Tegra SoCs commonly define a Video-Protection-Region, which is=
+ a
+> > > region of memory dedicated to content-protected video decode and
+> > > playback. This memory cannot be accessed by the CPU and only certain
+> > > hardware devices have access to it.
 > > >=20
-> > > The static array of CMA areas cannot be replaced by dynamically creat=
-ed
-> > > areas because for many of them, allocation must not fail and some cas=
-es
-> > > may need to initialize them before the slab allocator is even availab=
-le.
-> > > To account for this, keep these "early" areas in a separate list and
-> > > track the dynamic areas in a separate list.
+> > > Expose the VPR as a DMA heap so that applications and drivers can
+> > > allocate buffers from this region for use-cases that require this kind
+> > > of protected memory.
+> > >=20
+> > > VPR has a few very critical peculiarities. First, it must be a single
+> > > contiguous region of memory (there is a single pair of registers that
+> > > set the base address and size of the region), which is configured by
+> > > calling back into the secure monitor. The memory region also needs to
+> > > quite large for some use-cases because it needs to fit multiple video
+> > > frames (8K video should be supported), so VPR sizes of ~2 GiB are
+> > > expected. However, some devices cannot afford to reserve this amount
+> > > of memory for a particular use-case, and therefore the VPR must be
+> > > resizable.
+> > >=20
+> > > Unfortunately, resizing the VPR is slightly tricky because the GPU fo=
+und
+> > > on Tegra SoCs must be in reset during the VPR resize operation. This =
+is
+> > > currently implemented by freezing all userspace processes and calling
+> > > invoking the GPU's freeze() implementation, resizing and the thawing =
+the
+> > > GPU and userspace processes. This is quite heavy-handed, so eventually
+> > > it might be better to implement thawing/freezing in the GPU driver in
+> > > such a way that they block accesses to the GPU so that the VPR resize
+> > > operation can happen without suspending all userspace.
+> > >=20
+> > > In order to balance the memory usage versus the amount of resizing th=
+at
+> > > needs to happen, the VPR is divided into multiple chunks. Each chunk =
+is
+> > > implemented as a CMA area that is completely allocated on first use to
+> > > guarantee the contiguity of the VPR. Once all buffers from a chunk ha=
+ve
+> > > been freed, the CMA area is deallocated and the memory returned to the
+> > > system.
 > > >=20
 > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > >=20
-> > AFAIU, this won't create a new cma heap when registering. This goes
-> > against the recent work we did to create one for every cma region.
-> >=20
-> > I guess, since you have a driver that would explicitly handle that
-> > region, we should create some kind of opt-out mechanism, but by default,
-> > we should still create such a heap.
+> > Aside from the discussion on CMA, it doesn't look like the heap defines
+> > anywhere the attributes of the allocated buffers this heap provides.
 >=20
-> It sounds like there's a bit of a conflict between what you want to
-> achieve and what this series attempts to do.
-
-It's not ongoing really, it's part of 6.19.
-
-> The way I see it, the CMA code is more of a helper that gives you a
-> specific functionality set. Exposing each CMA area as a heap that
-> userspace can allocate from seems like a bad idea to me.
->
-> Without knowing anything specific about a CMA area you don't know if it
-> makes sense to expose it as a heap. Given that there is very little
-> information associated with a CMA area there's only so much guessing
-> that you can do. I think it'd be more sensible to make CMA areas opt-in
-> to have a heap created for them rather than requiring opt-out. Exposing
-> a heap publicly applies only to a (potentially) small subset of all CMA
-> areas, albeit at the moment it may seem that that is what it's primarily
-> used for.
-
-Do you have any specific example in mind except for that driver?
-
-So, the reason why we did that was, mostly, to allow proper cgroup
-memory accounting through dmem. In order to enable it in DRM and v4l2,
-it was agreed upon that we would switch the use of dma_alloc_* to rely
-on the heaps instead, where the memory accounting is greatly simplified.
-
-So we want any reserved memory region a device can allocate from to have
-a heap.
-
-So I do think we need the call to register a heap in rmem_cma_setup.
-
-That being said...
-
-> In fact, for this particular driver nobody must allocate from any of the
-> CMA regions associated with the heap driver outside of that heap driver,
-> simply because the heap driver maintains meta data about these CMA
-> regions for things to work. If we allow access to it from anywhere,
-> things are eventually going to explode.
-
-=2E.. I also agree that having it in dma_contiguous_reserve() might be
-overdoing it, and I assume it would solve the issue with your driver?
-
-> > That being said, it's not clear to me why the heap driver uses CMA in
-> > the first place.
+> Attributes like what? Where would you expect the driver to define this?
+> I don't see anything in struct drm_heap_export_info that sounds like
+> what you expect, nor does the allocation ABI provide any means of
+> reporting attributes.
 >=20
-> We use CMA as a way of reclaiming memory if needed. The heap that we
-> create is meant to be resizable, so that when nothing uses the heap, the
-> memory can be reused for other purposes. However, when memory is
-> allocated from the heap, we need to reclaim that memory for the heap and
-> relocate any buffers allocated from the region somewhere else. CMA does
-> all of that for us, so it seemed like the logical choice for this.
+> There's also not a whole lot to this, other than that the memory
+> allocated by this can't be accessed by anything other than a select set
+> of devices. You can't have any CPU access to these buffers (the hardware
+> will refuse to let the CPU read from this memory) either, which is
+> hinted at by the fact that no mmap() operations are allowed.
+>=20
+> Can you elaborate what you're looking for?
 
-Ack, thanks!
+Are the buffers you're getting when allocating cacheable? uncacheable?
+mappable? physically or virtually contiguous? etc.
+
+See
+https://docs.kernel.org/userspace-api/dma-buf-heaps.html#heaps
+
 Maxime
 
---sfzhuutowl7gwtka
+--4auwmrzja7jm6td5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaZV+lAAKCRAnX84Zoj2+
-dlYJAYC4+jPKHkn42l5qLnxTY3EvbGxcZHDH6RVzs/0th5A4+2dTD8lM8sIBBgPj
-qui+8ooBf0t6WS1apZEC3zF8JlGWCr77XkBnVp5ZaozpXhqmNBMCQy7tm7z3cF/c
-XrmTT30Bzg==
-=yW5/
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaZWJdwAKCRAnX84Zoj2+
+duX+AYCJXsCjOrlEdYQB6RhYNSa4Pv3CLkFQFr1nVSSBelNLtgkkxbQHuCJrRHFs
+/M4ii7YBgMXgh8YAl2SPDy/1KeWGMmlbxnWoeLENw02uUWqVixSx2Xv05JLfe8V/
+j/WNZ8aHOg==
+=vKsS
 -----END PGP SIGNATURE-----
 
---sfzhuutowl7gwtka--
+--4auwmrzja7jm6td5--
 
