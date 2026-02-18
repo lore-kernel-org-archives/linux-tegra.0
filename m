@@ -1,203 +1,211 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013067.outbound.protection.outlook.com [40.93.201.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480833D503
-	for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 09:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771407752; cv=none; b=XFTLcrJvCieiQJNCuGtTjQeXgY0RTCW9msrsw97tidE/1852Wra9yGmsl4glTwl4pNSO7J961+fIys94w0S1dthyUbPf2lPeQzzbyuzsddXUC6ytrTh704RcGwhykKjhHRHIankJVD0iKcfdPtHgJiHfjBkhyUIHLSefG4ndU/E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771407752; c=relaxed/simple;
-	bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVAmLvLOHL754EeDZtRwU08LF5v9EAKExZFCv7g7J/+GCmEq67iXhVN5eHLNX66iQygF18JX3XmXM51C+CBquhJPkzxwdnM4oSFzz0e5QomOZyJ6xMXKp/lUoYOU43YE1U/5cIwKD/4dl8GZOXD44T/Wu+d4ZgDYfyzEdc9XP5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OTqWQ7mG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXMGsFTv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C349433D6E2;
+	Wed, 18 Feb 2026 09:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771408797; cv=fail; b=Oh7tHBQbPO7zcVLbps/Q0ybM57UiAys85tk16Esc2wB9u90I6cy8u9qyYo3ZrkzKMQfKGNvsOmGpVrYnk8iDj3NWA1geZf9YHDR8Q7N+RyR0GFy1ucoz+tMGvkQYIpzjbEVUemlFen9rO8MCcfYXcdIgWsHjuR0RQfBCT8YYtoc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771408797; c=relaxed/simple;
+	bh=7gQ2DC9f045j2F6qH0DRz+RSYFgGLne4blLbN5UR1t8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tQdZzsdM6/sfg7NbQ3Rpi1ABuphVITfqswz9qc6fkNM57a4sVUgpQPiReKyHhbu7fQQLhuo7+siY/dkVB1xQmDDjWDJPbCmXrOEbYiOgffWMKWwobOXm2KTSkhEC3HgVtgfZc/ozcUPDU8/qCRetkSGCQN55uKWmfFuGi+Os/6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d4Ttsg9H; arc=fail smtp.client-ip=40.93.201.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OTqWQ7mG";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXMGsFTv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771407749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
-	b=OTqWQ7mGmF0rRm3MLncG0qpaj/kNJJjhMuq5u12bTKA+4JaYSC8HO1cMYAfkJIjVceB1uj
-	qIE4q5t/DJEuFy0IvkMY03CqrfZVVLN1LK+o/InGGUGQKF8/SIF3mq01VO/+1FBS6qcmSd
-	G83V74n/8b3h0gCyDfgYCFQrJ2nT8V4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-mhYscicbNfyjxJ8KTjPZiw-1; Wed, 18 Feb 2026 04:42:26 -0500
-X-MC-Unique: mhYscicbNfyjxJ8KTjPZiw-1
-X-Mimecast-MFC-AGG-ID: mhYscicbNfyjxJ8KTjPZiw_1771407745
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4837a718f41so17636225e9.2
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 01:42:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771407745; x=1772012545; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
-        b=eXMGsFTvCKr5A05dlu+2cw4o+7Ny2CHRrGPJFvKPRcaBxJqT90c4+EUymhqSY9ZaLW
-         rKWTuwN0ENv9I/T6GYhsNcgkrh/yS1xgJkEOJWgHvOPV73hjYkk4Uqv1n7kcULR0HgTH
-         V7+4Wfbn4T8ZkyAxoAfwHKtawc9Su36hdqNbta2fzxvMxgpUdOEtvF6SZapCOinhdO+V
-         BK7Ch04QBR7I1qIUwE15v0SVjSRXK2d2R8UGlHnIbN3lfcPHfy5jOi7Vw3OrfzNFJxKh
-         BvxgachSOTAFpM6+asfE7inRL90swszrAcj1lCfxTT4c/s1eDVTG8/xV7JKFhW3J3h58
-         2FmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771407745; x=1772012545;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pbLBL9om1fu4jfoAPaZMybNUHZLF4uVBzJp7dWB+x3o=;
-        b=rAvwMHsmEzbv01Gkch40ASGNGcwtSdFuBd6eEhF8Wi+7+CxmYyTZM+HdE2TgDkPJ34
-         /bwmv8B9M7RTtGKodpgBGYxUoA0gHqSWG26shXxfJ0hLzTUKPD7ERklycOYnArzEWEpK
-         Lk/Azf+n7LlSaNugR/oxazDJGgGYhL3FAaQUwBesG7/wTrYERKsovhxtiLg1f06QHPe1
-         0UFeIKzgZQ6cuux8EpsTrbO4NPIvzZFOuAUn32iEZ8nfpzvIHRB6Yz7yJopoKZPsG6Xt
-         GBfghxdYr5MsOqR/qCn4BAWdqe1R2NQRMMSbdjhxY02kr7usTo02oa+M9PLKPWb85eHq
-         pA7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/oDUZ2T6Chfa5YnG+rcBl6D5P7gB8fRjtFCrx+i/2jXj8rth4GJ0HLwhQSiIkjyS5v4vv0XRAh+xd2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2yrx0NIWffS/iTYBtGlIV8Y2hwbFjPQJzmx+ZhaVf1f/i2Sgc
-	fe6XxtWL/DpbhgSEeTWXhxqGH3lVr9hljbPV6PLVN2ESre7uIYu8x1pL2WE4jPgEd7hHxq4R0K9
-	4z7GgCj5IF0Tm3h14pftFIIy2oAJ/ltmfY8u8zaIoLeNFEYpE2mNuYg1SzXAdBzWu
-X-Gm-Gg: AZuq6aLSvodRQd1zYmIhUWm68T9zKjhsGf0YmEcGcI4+6u1/dW8/1ND9nT6X+a59/WD
-	PybtREtzy7LZs/I5hWEKsk/bvCrtd0wIA2KB8Bv9xht3FNLvn9LZBuespk+aQzZ5bb/Ov9b+dBe
-	H1gK4wpy/M2sbv128yf1tYU468My50s7oyrc2GNd9Rse9NzhcYbuMRHxOsljFsdx5noQjPtpSBG
-	QjB9u5u78Fmfle6OkFsywZO+mXO8ghjrhNSzah5Wkt6XEL0XZcR3w2CH4uZ09F3e0UXTdLpnE+A
-	E1kRkRnCrxGzoDe2e9c6kR1nqt3cj1qM3BIm7EcQeQPmVqqa2hGwch/o3Q9cSJGROFS2mkwLwQ=
-	=
-X-Received: by 2002:a05:600c:528f:b0:483:702f:4641 with SMTP id 5b1f17b1804b1-48379b8c45fmr250986025e9.3.1771407744657;
-        Wed, 18 Feb 2026 01:42:24 -0800 (PST)
-X-Received: by 2002:a05:600c:528f:b0:483:702f:4641 with SMTP id 5b1f17b1804b1-48379b8c45fmr250985705e9.3.1771407744101;
-        Wed, 18 Feb 2026 01:42:24 -0800 (PST)
-Received: from localhost ([2a01:e0a:b25:f902::ff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836ff00332sm354774195e9.2.2026.02.18.01.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 01:42:23 -0800 (PST)
-Date: Wed, 18 Feb 2026 10:42:22 +0100
-From: Maxime Ripard <mripard@redhat.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
-Message-ID: <20260218-voracious-orchid-malamute-febce0@houat>
-References: <20260122161009.3865888-1-thierry.reding@kernel.org>
- <20260122161009.3865888-7-thierry.reding@kernel.org>
- <20260123-meteoric-butterfly-of-imagination-fd691f@houat>
- <aY3nov29aBGWw93Y@orome>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d4Ttsg9H"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RAvDYAlueFORV6/kDQF0By1tSSSB76pkSDnm4BdL/6a+jkrG1ge+zAaXdXTjl7j1v7hzDRnyDDkTEj288YgATf7Tqb9kWhBgfSGlxqwiY9soTd4vM3edaZ16AOOSJTOwGXbQKWCvOsJlAPGSxFOeHEgIr05pszO/KvvYXnZEw5UimBSJQVnNdQjH5EZxfYca3v8JP6mwcW0VzM/AsVwazk7/jukzsMSehqGtNNiA1K6d5XdWlqa+S0XNkP2tSAGvREBU24TJiW32j9ZVP9NmUiQLYUGZE5jckHBZBgi8DKja+cxekzhzJx6wmnS/IwxWxM2v0VVFE3wuioYxBztIFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PW5cni17Nbv5po8U9hoWZxhW17kBTE0ZbsYnijfqlP8=;
+ b=jF2FqX7Vjofi9p44ihGAje1E2gSPEZdxg/ogFwCSCCSn94pn6qq01CiA1f2sax1PJpTaPXBgQZSf5pCkvU/JnIGzA4RQl9H72slBWVLhE2kDbjD7QjdTq80MTod6Z8YNLHjW3KxT+Jmk5Nt5mG72VX7U/dlh83s5vEl/ssbx+Tnoykyg8qaUoJ2JuOY1xnQSxK20Hi3o708b0P0+F5YHorAar3FSQHAMepg8P+uN7OlB+h1cYtU1gxe2Llh/38yGDzly5UNV7I1u4uKpQ/FpN/ABiLyznS608U2jpC6JJEE6sgJvx78/5NFBuLQUXciVk14u6+B5BaHSdfi32R6cHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PW5cni17Nbv5po8U9hoWZxhW17kBTE0ZbsYnijfqlP8=;
+ b=d4Ttsg9Hco/nA3jlKQFHSvMpskAT1rmdn5dWFwsfsAc3O6oHKU9tFyqeAjds1lhiErANMoNlVp0knG+jo8/w+UKy4ndQlffLronmOdKyIbBYgpnGbxGjM5MzKkHJG36qW91V57Ity4BEIcnMx9DEHp+wQGjTjLVs3UsH1cwVhg0rA9O7L/DE7w0glzDBykIFxdUDUgXih1kFJXx9vp07kCiAPTa4v0EoUwkiGRTd83VZPtKWomJnNPIprku/iYuDHBTgswJeQVBtNl8hNvmjU9B8vF80nIb9PAXUaZ3yYOWP3FnF6kJdJJ7QYgQ5iNU5Cts1NzAFh+t/uWaP+eDQrA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by CH3PR12MB7593.namprd12.prod.outlook.com (2603:10b6:610:141::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.14; Wed, 18 Feb
+ 2026 09:59:51 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9632.010; Wed, 18 Feb 2026
+ 09:59:50 +0000
+Message-ID: <eb42fefd-758f-4c02-86fe-01d21a08e101@nvidia.com>
+Date: Wed, 18 Feb 2026 09:59:46 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: dma: nvidia,tegra186-gpc-dma: Add
+ iommu-map property
+To: Krzysztof Kozlowski <krzk@kernel.org>, Akhil R <akhilrajeev@nvidia.com>,
+ dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ vkoul@kernel.org, Frank.Li@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, p.zabel@pengutronix.de
+References: <20260217173457.18628-1-akhilrajeev@nvidia.com>
+ <20260217173457.18628-2-akhilrajeev@nvidia.com>
+ <e26ac880-c397-46ee-a308-be2de608e3d4@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <e26ac880-c397-46ee-a308-be2de608e3d4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0099.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:c::15) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="4auwmrzja7jm6td5"
-Content-Disposition: inline
-In-Reply-To: <aY3nov29aBGWw93Y@orome>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|CH3PR12MB7593:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37fcd51a-8f2d-49d6-d87a-08de6ed474ea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UGhtTWRIOFpYUHA0OFVzcXpTUC8wMGo0LzhBOGRzZlVpVlRqTXNHbC8xK2gy?=
+ =?utf-8?B?czFRVDBoN3Btc1BJbms4UllUdm5Ma0JBNUk2dEx2VGxtWTAwNS9WK0tTaUwx?=
+ =?utf-8?B?bjhXcGpRWXJZUndQdm9wb2l5bTJLYU9PQnFxc2x1YW8rdEZoZFZrQ2lFcmxT?=
+ =?utf-8?B?TjhYTU9zMlVGRUxHOTByTzV1Q05QbXdobFh4ZTMrQ0dWbEpUanV1M05FWkRs?=
+ =?utf-8?B?TXpOMWVBQ1JodGdtWkxic0hQWDJBczV0aHFIL2FveWExVjAvMXpHYXZXVUU5?=
+ =?utf-8?B?VzEza0NoNW1TcGVMVG5FR3IwSW1sUFlIVlE3RWZ1aXFaVWltcGhvci8zak93?=
+ =?utf-8?B?dU9MUmFHWjBIUlFRQTcrWjRQeGRMYXNiR2Z2bmVJUFVncjJhZkVReGlKd3Uw?=
+ =?utf-8?B?V3E3VTBmYVZCZkx0OENCUGdRK095MkNGZW5zQ09waUZLUlRBeDA5QzhidDhy?=
+ =?utf-8?B?akJTeUZ6TjR1WGJmZVVDQ21BUFhtOHAzT0VxVmdMejM4SFVtWWJrT1ZhekRK?=
+ =?utf-8?B?R3QwS3ByUVhHL2JQMXpraGk1T2NKaTBYYzVNNXJwaTh1SS9pY2h4NlRvWldt?=
+ =?utf-8?B?ZWNEcTZ3MHNHZDJuMHFQWjNkZlU2dlBGcFQ1QU5aZE9qYVhSeldNN1h3VEky?=
+ =?utf-8?B?N2xZaXVKaTZXbU9icnpsZUhXcDJmdVhlSTRiZHNzSTl0eS9FRjVTcnFUQXhN?=
+ =?utf-8?B?aVUwbkhQdXJFYzd6OENzenhVR3FrWUorU2wrbDg4QWY5SkxvVEdFclBrWlBE?=
+ =?utf-8?B?eUtsNElHMGhaNU0xNDJlejFKaUJUd1VZUEtSbndYSlZxL05yNXVzU251VVYr?=
+ =?utf-8?B?OTlFRTUzVnFSSzFKL2Y2WDZJYmVGNTAzdnpUQmlWNXV2aWIweEJjbVNjZlNW?=
+ =?utf-8?B?K0lKK2c3QW9xZU8zdWUwQXlKb3RwQUFZS0FGQnJ6Z1hvSmRvVmVTQWtuYlZu?=
+ =?utf-8?B?RmFwQ3I5aEpTYmxVTVZtaEZGejdteVZaenBtZ3dCQ2N0bVBYUk1tQ3N0ditK?=
+ =?utf-8?B?VVMrZ1NpRE4rNjNKalFteDQzM2xXR1VlQ0wvejlvb2U2Si91NmdPZ1daZ0lC?=
+ =?utf-8?B?UUZTbHdTUytOcVZLWTBYV2lsT2ZkWjErYisvTGRpUVJsY3RSakdERnNPU1FS?=
+ =?utf-8?B?dDR1T3AySmNmUVVMYkhRNjhsTzhFbVdwSXRFVktZbjFPbi9oL1NNQWNLbzkz?=
+ =?utf-8?B?NEJpbkxwV29TdmE5cm1zMWNPYmtUenNZc29aNWhnMmN2TXdzWko1S0JSZ0Jw?=
+ =?utf-8?B?eTlSdGxPaDk5dlBWSFUzZjQwdmQrNGovbVQzKzVQbWQ5WVlYS0JiQ285U09N?=
+ =?utf-8?B?VHdIRnVTWHBoVFFjRHJja2ppTlhDbWpxRVBoSEZ1NTM3dFAyOExMaW8vSW1y?=
+ =?utf-8?B?cmNrWEFRZWcrUHBCUW84dUdJLzhtWExNdU9zOHlUTElja3lhTVRCN3kyeDVH?=
+ =?utf-8?B?M0c5WUVTaTczK1VURFpCcGxVbW9FMjJOcTJIZXV1VGVYZXozRFBVQ0xrTVVj?=
+ =?utf-8?B?bnEybXB2MXY5ZFQvVnZsb1JBQi9pdWtQSCs2aFFjaEY5UUhJU2wvNXFXclM1?=
+ =?utf-8?B?aHJzTkN5SG1TL0NZQnhWajNDMFF0TEhuV0FKUmd4cklSL203anlGcGViY0hO?=
+ =?utf-8?B?cTFQRk5iK1BNYkVuL1hmQjZMUUd4Q3NhT2Mya0pjZklKU2VXZldna0Q2dTZC?=
+ =?utf-8?B?Q0ZBbVFTSE4zY09zMDZmV2Q5S3lqUDJ0Z1JCcEg0RUE3ZXFpV3JPSzdVUzl4?=
+ =?utf-8?B?YUR6R056VFJsRmlYbTkxNmpWMW5uSm5GK3c2ZjVuNlBKVUt5ZlBmQWY3S0tB?=
+ =?utf-8?B?Zmg4S1hKR3hPbERDVDZpWFVXU1BFa2VNeVpic3ZZcGJQQkRqeVJrN0ZTRCs5?=
+ =?utf-8?B?RlFIZmVnM2Raem9Ta0NyWHNzRVlILzc1ZURIcEF2by9xd25ZYzcvVE1Held6?=
+ =?utf-8?B?SEpvcVgrakk4OUZWbTljVS8yTEFvUEtiUWVLSEN5bkpNT1I4QVRFL3Via0lG?=
+ =?utf-8?B?ZkswSk1ZWWNrUjR5bEV1bWlMaSt3dDdGSVJPWEVLVlg3NlZBQks5Rk5keDI4?=
+ =?utf-8?B?ampkRkwrelRRbWx6dlVWblNvWnVSSGdLbzhXbnpCOTB4NEltVk1XRHRXV1pj?=
+ =?utf-8?Q?J3uY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aVR6RmJYczc1Q0ZISUtsY29INTB2RGF0M1JoR0Zia3FPTmV6cm5pMzI0Nk1i?=
+ =?utf-8?B?WEIrSUJ4WjhmV3VpRXBOVGo3YmV4MlRITjdma3ZhdUhuUkJpeDhTRkV3TEZt?=
+ =?utf-8?B?U1o0MnJPZk8vcTFYYVkzR0plcUpmQml3WVBJU0RxaW5qMTIxVFdQTDVPbEpO?=
+ =?utf-8?B?UWY1c3RXYVJSQWtCSlJHcE5ZeE1seVNYZVBnY3hVTis5cUlkVFRCMzJwek1y?=
+ =?utf-8?B?bmR6d2ZvMHB6djN5cS85Uy9aR213SzZvdGhzd0NqT2tKYnlVZ2dGOEdsMlND?=
+ =?utf-8?B?TkV1UVZLU1BtRkd5N1BOK2dGVEE3cmpidStWTys4RUtPSjdYTDhneVpLb2pG?=
+ =?utf-8?B?VzhGeC9RN3B1TkFmNEpHYmNSbWdjWmdwVS9RSVBhTjBXbXBPUHZ0akNNbjBw?=
+ =?utf-8?B?L0x6QkJBUlVZMi9nZHlrMW1mMjFDSnlha3M0R2s0Uy9qREtKUE5MYVJoK1Aw?=
+ =?utf-8?B?cUd0WUY5dHJoY0F4UzlyTVZGVDg5SjlobVRuM1JBVFI2c2ozYVI1aG56UjNt?=
+ =?utf-8?B?ZTdXK3VMNGZTSFJnSWxsNkVmN2dxS2RHNXA0bnBvYVlTbFlxN29FbmNNOUZm?=
+ =?utf-8?B?d0RRb2NoV3VmalcwSjBnQzJ4SGZDa3dxRXBTU083bXREbjliRUJlcUVCZ0M5?=
+ =?utf-8?B?VEZuaGRRNHlwVm1kaG9tem9iMTlESDJwRlZvY0JlczJnclluYnl4c3IyRkJU?=
+ =?utf-8?B?UEFiUWVFNzcvZXg4bkpsTXFqb0pXSlVqT3ByUm1lUGM2MFd1aklqRjJieWJ4?=
+ =?utf-8?B?VnJwcXo4dE9iUFNqZklzM3E4UTJ1Q281Q1Y3RGMvNGtUbDVvQnd3cStkaXIz?=
+ =?utf-8?B?VTc2YU5sM1BCbzBwSG90TUd4ck1STUFXV2FJOVo1Y0ZQbmtnTWw3RExlbG0r?=
+ =?utf-8?B?bStYbGNkbkxwTnlRZ3pYS3dzb3psNWFlUGNENktHRTZydDN1YmRTcEVkNThX?=
+ =?utf-8?B?NmJjUWJvVHN3NHYvMnpFRXZnbUpqai9IT0tLUU8rdVg4SUdWdHlxYW9EM3p4?=
+ =?utf-8?B?Vk5HSVluZDErWTBVaVVOcmRZR0w1ZmhocTAwNFZrKytURGFUbUxQbnlndTRC?=
+ =?utf-8?B?eUtreVNybUtMQlNodVY1UXdlbFpaeUZreEJYYXU2SUlnaXU1M0kzZWhxK3Nj?=
+ =?utf-8?B?NmF0dFV5V0tublpNL2F5OFlheVBHZlZOZ3g5N29USWJtNkMyVFpLNjdPWFVy?=
+ =?utf-8?B?cWJSWC9vLzE3M09tS3NyOUdxa1RHbXFNamp5NUJPU1BidythZTRYQnNlQ2Mw?=
+ =?utf-8?B?V2prQzZSTWtmeC96dVhDcCtNTnVuTSt5c01EMTJrRWNUSXA2U0x4bW1rTzdr?=
+ =?utf-8?B?c0NoV2lFWkFCMWdoMnF6L3F4a2UweEM0VWUzaVV6Z3JiNkNMZjgzNkFzMnZY?=
+ =?utf-8?B?ZThJSUpOOEEwRkpvVkJFcGNVdG1xMDVaOW9mOHIrZ0swR1FOUTVKc2JpK3Nq?=
+ =?utf-8?B?bk14L0pTTnYvekV6c0dyZXY1Z3RkcDhYNVp1b2s0aW9HOWU4c2RxcmdibWUw?=
+ =?utf-8?B?U0hNeXRSMzFFSjdRZnM1OFp2Q1pmNVFKWWpBelpLSEhFbjZBYTN1R2JPS2Ew?=
+ =?utf-8?B?NjJYdzR4MU5vN3FoSTF1RFExNGVMWnFvNWtGWno3N3UrTkNoam9LQ0RLejQ3?=
+ =?utf-8?B?aHM3a01KZTVxbGJIUHlwTHR1bkptbGxqNWpvQjBRVzdVQ0U1UStpUmtpQWpD?=
+ =?utf-8?B?azJSQXFhbWkyZVVGNVhndGcybDNUTDJ0RjVmYVdpdE0xZEZqbUNuZDlPR2Y0?=
+ =?utf-8?B?bFlIRjV0RVp6UnJ5Ynh0MFhwOGNMNnhaaSthZ1p6WDRwNmtVQVY5WVZEbzBG?=
+ =?utf-8?B?dnBJN0pYMHZNY25hOTZEMUswa0lxVDRReExIRFl2a2Y5TlMwanJib0lCU2p3?=
+ =?utf-8?B?QjA2aGhEQTNJYmNVdXhubis1Y1MwVU9lSnRiWEszdUtrdXZNdnVzY1EvM1ky?=
+ =?utf-8?B?Uk1pNVV6Qmc1SWhEMks0cVJZaFgzM3Z4b0tmc2dzck9HczN5Y2FURDhmWkRi?=
+ =?utf-8?B?a1huY1BTYUIrZVpVTVo2MktiNEkvRmhSRTJvZ0VsZk0zVEVpc2RwT25jU1JT?=
+ =?utf-8?B?SlpoNFpGNUtVbG5HL3VVTldLYXdxYUFQZ2t4OFIxUWhwQWNwZmpTemU4ZVdQ?=
+ =?utf-8?B?OHlaZmZUVm5GYUVaZktaVi9CZTgxamhtTTIveTQvN1RvNThhOEdYYTZNdFFN?=
+ =?utf-8?B?UWZIUEFwNysyMmRNU21PNEFXcVVCMW81alhsNU5FV3FIUGY2UytKRUFlWWNH?=
+ =?utf-8?B?clpMSDlZU2orWDZQL3libjZOSmc5ZjJ6SEZSbEJXOXRvRWhLL1RjNW5LQW15?=
+ =?utf-8?B?OWdna1V2RU42UUYwNG5CNG11bTdoK29kL0FWc1pyakwyWGhVNEpsTDdpejRs?=
+ =?utf-8?Q?VBhNLIpxsnyGjupkSvlICtSVdbSgiZopUz/iVCozluBSX?=
+X-MS-Exchange-AntiSpam-MessageData-1: uBFoQKtZgW9RLQ==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37fcd51a-8f2d-49d6-d87a-08de6ed474ea
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2026 09:59:50.7898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FOX1kq/QEnjWfEe0P45OGRzRxB7sZHu/SdAC/3Jn6OdY/kIaoKPnjYIRhtACFg9IG0wF2PbX6qitqYWmSozDPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7593
 
 
---4auwmrzja7jm6td5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
-MIME-Version: 1.0
+On 17/02/2026 19:53, Krzysztof Kozlowski wrote:
+> On 17/02/2026 18:34, Akhil R wrote:
+>> Add iommu-map property which helps when each channel requires its own
+>> stream ID for the transfer. Use iommu-map to specify separate stream
+>> ID for each channel. This enables each channel to be in its own iommu
+>> domain and keeps the memory isolated from other devices sharing the
+>> same DMA controller.
+>>
+>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+>> ---
+>>   .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml  | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+>> index 0dabe9bbb219..542e9cb9f641 100644
+>> --- a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+>> @@ -14,6 +14,7 @@ description: |
+>>   maintainers:
+>>     - Jon Hunter <jonathanh@nvidia.com>
+>>     - Rajesh Gumasta <rgumasta@nvidia.com>
+>> +  - Akhil R <akhilrajeev@nvidia.com>
+> 
+> With 4.5 trillion USD capitalization of Nvidia one could assume they can
+> spare few resources to test the patch before sending it... instead of
+> relying on Rob's and my machines to do that for them.
+> 
+> Expect grumpy review because you do not care about our time.
 
-On Thu, Feb 12, 2026 at 03:50:09PM +0100, Thierry Reding wrote:
-> On Fri, Jan 23, 2026 at 02:30:14PM +0100, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Thu, Jan 22, 2026 at 05:10:05PM +0100, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >=20
-> > > NVIDIA Tegra SoCs commonly define a Video-Protection-Region, which is=
- a
-> > > region of memory dedicated to content-protected video decode and
-> > > playback. This memory cannot be accessed by the CPU and only certain
-> > > hardware devices have access to it.
-> > >=20
-> > > Expose the VPR as a DMA heap so that applications and drivers can
-> > > allocate buffers from this region for use-cases that require this kind
-> > > of protected memory.
-> > >=20
-> > > VPR has a few very critical peculiarities. First, it must be a single
-> > > contiguous region of memory (there is a single pair of registers that
-> > > set the base address and size of the region), which is configured by
-> > > calling back into the secure monitor. The memory region also needs to
-> > > quite large for some use-cases because it needs to fit multiple video
-> > > frames (8K video should be supported), so VPR sizes of ~2 GiB are
-> > > expected. However, some devices cannot afford to reserve this amount
-> > > of memory for a particular use-case, and therefore the VPR must be
-> > > resizable.
-> > >=20
-> > > Unfortunately, resizing the VPR is slightly tricky because the GPU fo=
-und
-> > > on Tegra SoCs must be in reset during the VPR resize operation. This =
-is
-> > > currently implemented by freezing all userspace processes and calling
-> > > invoking the GPU's freeze() implementation, resizing and the thawing =
-the
-> > > GPU and userspace processes. This is quite heavy-handed, so eventually
-> > > it might be better to implement thawing/freezing in the GPU driver in
-> > > such a way that they block accesses to the GPU so that the VPR resize
-> > > operation can happen without suspending all userspace.
-> > >=20
-> > > In order to balance the memory usage versus the amount of resizing th=
-at
-> > > needs to happen, the VPR is divided into multiple chunks. Each chunk =
-is
-> > > implemented as a CMA area that is completely allocated on first use to
-> > > guarantee the contiguity of the VPR. Once all buffers from a chunk ha=
-ve
-> > > been freed, the CMA area is deallocated and the memory returned to the
-> > > system.
-> > >=20
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Aside from the discussion on CMA, it doesn't look like the heap defines
-> > anywhere the attributes of the allocated buffers this heap provides.
->=20
-> Attributes like what? Where would you expect the driver to define this?
-> I don't see anything in struct drm_heap_export_info that sounds like
-> what you expect, nor does the allocation ABI provide any means of
-> reporting attributes.
->=20
-> There's also not a whole lot to this, other than that the memory
-> allocated by this can't be accessed by anything other than a select set
-> of devices. You can't have any CPU access to these buffers (the hardware
-> will refuse to let the CPU read from this memory) either, which is
-> hinted at by the fact that no mmap() operations are allowed.
->=20
-> Can you elaborate what you're looking for?
 
-Are the buffers you're getting when allocating cacheable? uncacheable?
-mappable? physically or virtually contiguous? etc.
+ACK! We need to do a better job here. I will work with Akhil to improve 
+this.
 
-See
-https://docs.kernel.org/userspace-api/dma-buf-heaps.html#heaps
+Jon
 
-Maxime
-
---4auwmrzja7jm6td5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaZWJdwAKCRAnX84Zoj2+
-duX+AYCJXsCjOrlEdYQB6RhYNSa4Pv3CLkFQFr1nVSSBelNLtgkkxbQHuCJrRHFs
-/M4ii7YBgMXgh8YAl2SPDy/1KeWGMmlbxnWoeLENw02uUWqVixSx2Xv05JLfe8V/
-j/WNZ8aHOg==
-=vKsS
------END PGP SIGNATURE-----
-
---4auwmrzja7jm6td5--
+-- 
+nvpublic
 
