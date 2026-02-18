@@ -1,227 +1,213 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012015.outbound.protection.outlook.com [40.107.209.15])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662BA3191AF;
-	Wed, 18 Feb 2026 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771403458; cv=fail; b=fN0ZYOObn2fh3aJyTvWJJp8hlm4dUgrjtvrDZgCTzBLBzz5QbkuciS7rI3QPKwaSzfiXpGvpjzKuJKM8z2Ca4C24DCsmNc93nDUamj8INdra0+GfvjL0kgeuQ364OWLj372Rw9bJ7IM8mU7HYV6lReZbrBhuCoeL5v57C5CIHtw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771403458; c=relaxed/simple;
-	bh=Z+IsFyRzFWMQr+ra7k05iNzmea9kOvVwEL1cYt6iFIc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aH41mBvf4LpTR/nbRcIAVsXFcZPK04yBbhyomQVvxT9HRUUA0s81+WkGXK7L9IkVKwZx5BGL17f3H6Jd5o6RuyclDasqxH0rHnpSoh93290D37AVmDAGS1THn23rBhbjtFVW+ooHPB3Xqwxsor3Dx4hGeZ6PTaOD/lfB2KHdxrE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JPU0BW4F; arc=fail smtp.client-ip=40.107.209.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF8432C957
+	for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 08:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771404966; cv=none; b=H+9mEoIX/PTqph1g24fPWMyQ+f+yF6EYYmMkyI6IrIqGOOsrlXHrw2+2qHdXw+R/j3/cNb3pRd9egAtC+pc2hxLQjUmT6DQkNRLtIzBMQukUHArBdgW2+rXO3S8sAjlkhPPOTH3A6hYkcYNWZnIVycE5OUJdvWeBmplAqgOrohY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771404966; c=relaxed/simple;
+	bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmAQJQWnOBhsI0HLrP+M7iv0tcZVYH7Ce08RuMUuGF34sTq4zn34NDnQY6iE+E45tHL07rh0QtRDKhPiVR4Fub6M4aYfRpvtkEi5hHKS01nuXZQ5T5QENe9rFMCPZ1YR+qZzvV5adXxQytERHstlOb+DCkV+yIBrq0oN4Ex5m34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iu88IOTq; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CwUdryx2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JPU0BW4F"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eKiJ5UOG3eBbo49X+EWs0qdqnjTUIFpezqanHczxFn4rAEt1pzr+tWNhQxcXLfz7K2OOVTgke6TxkENTyP599P18nE3T8aJipz9tWxdBgf6DRXSn36cXtrm8ah/81ZSNMz4POs1Aef4TeDYXdNjOi0R8qAQ6Gyg61Blf2PPltxzGXXB5TtMNMHoIj7mrL1VNEGdUUCEe2PAXJFjQr/UMVgvOm+JlNIXaxMkmSqVXxJuGdAdp3pDr4QavcO85PyLfbhux7VllwBTtScum10jlamBgcpZlpIPeU4Ct+Xy07D0De/9igP6mjYHOg6uMm0kyJpAjGIXoPOwmBFLZnjvAGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a/ja84wULt9bV7LGJebUntFQlHOHo4HJZ36M76EtP68=;
- b=bSu6iZpwVSQNJv2vMzAUztKWjHhvvWrXOyr40kJ6mFG6pu9AroOd0PU9GW8qKRIl2jedO6fQxzSU+wHro3ta0njVVYjUb6xCPUjN12DJcHVDfvDoowu5+aMKbTkYDyOFWq63v/QIAE3sJQporxJB9QAN8tbzk9chYEzjOiGgQSkh0O8/yv8DZSGE4q2mZWJankmVSp0r03ly7IoeTXMIpjDCjCKUPVPiymnKmSRSiAtC0fAat5L1L+enDbQtWQAUhkgtdciduuQ9AfklHrVW83p2QQuQm0T+ZwiIAWfQf/6j3fLS2tW9gd4btxwr9m/qBURl2XTO45vYS+/bIrS+yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a/ja84wULt9bV7LGJebUntFQlHOHo4HJZ36M76EtP68=;
- b=JPU0BW4FYR3g+UZuIVP8ksOuM49tq2VEczcis0SA+9cuTZfMglzwIsZHkmdJ4PCvIVtzh5ciY4b91Bp0/oURXQ9rA8UEl4HDJAfwcyv5eNNJfktYdkxf/sr0TYmEeRRq4EPqCmCGAcwBk+Md5XbthpDjvnEdQbVyZYJStPLreeHK3URoGAwpbbXG3SRTI44OotNv0ZVgz4IYvpqxAm2LXIckKpe72Fn5mnWRGYxFuX7q1fJOkyZAcjsT7KWf6O/y+QFVQbOcDhUIV3H2mIP7DsVlkJUfb/BVn3zN4OKTrhUg4T4Rat3zYT8de/i8dC9OAqR9VWV+WKAGxFPuN0olNA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by DS2PR12MB9710.namprd12.prod.outlook.com (2603:10b6:8:276::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.13; Wed, 18 Feb
- 2026 08:30:53 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9632.010; Wed, 18 Feb 2026
- 08:30:53 +0000
-Message-ID: <b7ede8c7-acc6-485a-b433-35d780d6ad1c@nvidia.com>
-Date: Wed, 18 Feb 2026 08:30:49 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] i2c: tegra: runtime PM is not IRQ-safe
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko
- <digetx@gmail.com>, Andi Shyti <andi.shyti@kernel.org>,
- Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <E1vsNBv-00000009nfA-27ZK@rmk-PC.armlinux.org.uk>
- <aZSZ54oZS9C1Qf1h@shell.armlinux.org.uk>
- <046c9bca-f6a5-47ce-8147-6e864b364dc3@nvidia.com>
- <15817166.RDIVbhacDa@senjougahara>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <15817166.RDIVbhacDa@senjougahara>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0037.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ac::11) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iu88IOTq";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CwUdryx2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771404960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
+	b=iu88IOTqwseahfv1cugh1veDlIyrCZaBuiQlj/KnUNKsdN/EcV4rzj+ijjV9k+K6xS0mcd
+	l7N0Irtlvk639xXTcaNkyfsdaVzWopT+awIwhNxcOG7wNwpobw8KQAVV8zhRJqoFAn6658
+	GoyKRZu7UPZB951dm4PPlEBb5mAAeak=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-WoJrtA3vOQSKV3f0zIkMCA-1; Wed, 18 Feb 2026 03:55:57 -0500
+X-MC-Unique: WoJrtA3vOQSKV3f0zIkMCA-1
+X-Mimecast-MFC-AGG-ID: WoJrtA3vOQSKV3f0zIkMCA_1771404956
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-43766514653so3164140f8f.0
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Feb 2026 00:55:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1771404956; x=1772009756; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
+        b=CwUdryx2NxMJK45zh1litSV6nuaJO+NimyF2MQ87vJOsJ/kb+YnMkhoz8gx9CNfkIv
+         1lyBaF8AmvPFaqgHelNfudJIti7DstYEFf7yxjhymYKqdkpXO3fb3ovMrwTmrAnzj00J
+         c2jpk8gjNaTdzgGmN44YLiadLkT1IOr7q7s83VAGqqobXohnMlFeZm1KBqhutjWeyFWU
+         kZOrOiJGPcfwDQZ0fkHnKFqeAzY5U/ZV7S0e43kCznRkdnP4gNdsIPc/dhi+ClVjRg05
+         H8rzUh4Gwli7OgiSkdEFw5OB6fk4aslcQ032CtbZeXO+DJX+1HXT/mARqn9DrAGP6EON
+         yhRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771404956; x=1772009756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/9otZd25ocNn9HUDGmNAX0+CEXD0GlGASUVcWCKDTQI=;
+        b=JfdKqpOoC5CZxp9amt+0RFR/DIG4FQHs1FpN0Tj2RT5iqLtds12dBQxfJfTateCCQJ
+         njDfzttAvenrlctK791ChUns2yZBxXe7aoBF+7WDHi64vv1AxjAETjPeZZX1aBtT0r6W
+         F04IG+YQG1YnH0nSNl438EjZKfgTm7zGlotqtLSQqY4cXbxoX+X8jrxT2X1KKde+v2iq
+         5uRx7uLtg2pLILcPOT/7d1sRfhodJlDPQkY7lqcfWxM7N3hUQlec062hSVWIZJAUUbe6
+         jATZz2n6jyS6Hbbmw+q1XvwxtP0Env1BGajf12f/Myxwbds+J1OBZNf8Jpqs6ycCVm+k
+         7hgA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8jyYGcT3t63o54oc6zjt1JBleSemLyEn0FvyAuE3qAYiO5VwnbjdSF1FKjEZkgpO4gXDkKZmsdnJUlA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpfELRtzUKaT64+eW6fr0ltMBXcugF5mifHGsEl1e8rhJ+2635
+	XCEcoxdEydoAnNaIGSoG8XC1gGHsbhL9HYXMOxfriQ04qIuIIxEHSdnjmo8gETBKptDZ1uRvr76
+	13y1+PbItnIMSGNqhOqCA93XXwqAfo+XZbYsnPPV7MaRnEPHp//xD3XteenpRCEJ6
+X-Gm-Gg: AZuq6aKMYc7HhpBCdVXlMk6cGoPlUt9zAL4i60jQRL80FWBMOwCyGv1BHWDRVMeLLtc
+	xZdeLyjNwfENc6Pm9w71r24wS0lRdkDxSrS1m+NJ8LzgDb0CDz1kJv8PhJdQuQvY3HKqRvHHB7k
+	2obJiay++uxIA/JRsFBdHynFSHeGqRa/UsVC3scMeUrW+phc5Qpq59yhJWvbK3HWD4/NAP3wstQ
+	rnu+IWBfGT6ZMgdLvnPkiXpK/RY3C7s/c68i8F5az+BryroPPayOOwZBTtXDXJGgNZxPQSKXy29
+	1u1BF13E96h7XJXoURxpwaoEzJXMesLr8FxWysWac702Q4Xwx8JUeZ/SYoWTSDQ6fQMZKb6aIQ=
+	=
+X-Received: by 2002:a05:6000:26cf:b0:435:95dc:b8ca with SMTP id ffacd0b85a97d-43958e4c9a0mr1686382f8f.40.1771404955705;
+        Wed, 18 Feb 2026 00:55:55 -0800 (PST)
+X-Received: by 2002:a05:6000:26cf:b0:435:95dc:b8ca with SMTP id ffacd0b85a97d-43958e4c9a0mr1686327f8f.40.1771404955056;
+        Wed, 18 Feb 2026 00:55:55 -0800 (PST)
+Received: from localhost ([2a01:e0a:b25:f902::ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796ac8209sm41853724f8f.30.2026.02.18.00.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 00:55:54 -0800 (PST)
+Date: Wed, 18 Feb 2026 09:55:53 +0100
+From: Maxime Ripard <mripard@redhat.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 04/10] mm/cma: Allow dynamically creating CMA areas
+Message-ID: <20260218-lean-faithful-beaver-2efd77@houat>
+References: <20260122161009.3865888-1-thierry.reding@kernel.org>
+ <20260122161009.3865888-5-thierry.reding@kernel.org>
+ <20260123-active-witty-rabbit-0fc5b9@houat>
+ <aY3j57xvdOY09EwQ@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|DS2PR12MB9710:EE_
-X-MS-Office365-Filtering-Correlation-Id: d102ec64-0bfd-4fb6-0fbf-08de6ec807a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QjdtZ0h5T3EvclhNUm1kSm0xVGpZTGNxVDhVakdSdzdiWXVEZjBiSitWaElK?=
- =?utf-8?B?L0w2VUJIWkRxT2lBMXpHZWJZRUE0YTNBalNQYkF1K29NTDY0SHVwSXhjVHpi?=
- =?utf-8?B?VFI5T05XN0orNlhKT0IzeXdpQnhJWXV6SG9VNHZsckFKMEpFaUszdENqUjV1?=
- =?utf-8?B?Z3RvOThlMlZuYkRTV28velhXaGFBWTVVSlZSb0J2M3J5TWJRZ01aTCt5eUVp?=
- =?utf-8?B?VlhTN2xRMFJabjJxTkJlb1RsMjlHeW9CNmswaU1PTEp0SGZqQUk4SllEbU9z?=
- =?utf-8?B?WlFLR1FRZTNUMnFkK2lhc3BBZDZkL3htQ3FjN0hEUXEzeXZNbk9ySEhNOEl2?=
- =?utf-8?B?eFFjVzIrSi9FdnptejczWEtlWEJXd2lrbzYzc083VWdtdUlFeDZNT3dPWlVq?=
- =?utf-8?B?RlVVSktIMWxlNWpDekRJY1VWTWwxelR3RStvbkE5NHlUY0pxbTFQdFNHS3NU?=
- =?utf-8?B?V1RLMnBVTVYweTZQNUFsbU1USXovdWFaYTVMbTlPMjZvNnU5WW1QYVZNR2Nh?=
- =?utf-8?B?YytxRTg2S2piR0RaV1NxdkFSQ0lNL3BRWW9jNVdBTGNBT2E3Q010SHZ3UDYx?=
- =?utf-8?B?QkpLNFRXQ21JWFJLQWgyR1RTS2tpUUo2aEVJVjI3eHIxQnRrNndTaUxxU1Jp?=
- =?utf-8?B?K3c4elcwZWdETnc1N29YNjIwQ3krN3BIcmY4YVFoZEJqWGR6MHc3RGxNNkNZ?=
- =?utf-8?B?bXNhUXl4L1pic1hLTjM3MFZDVGRxTHhOYVg4WTluYWZKRklFWUwzSlVzK2I1?=
- =?utf-8?B?UTVPWHlCZzcyR3o1dFowcUYvYU85YUJTN0dCMlJOWmxEMkxOdG5rdUVsV2Yz?=
- =?utf-8?B?Y2xaVmF0bTU5SEJyREh2cks1VG5WQllzWlRIRFd1QitMYXZQQnRyT0laOTdN?=
- =?utf-8?B?bExiVE1LcWM0ZGFDV0Q0WlJoYzIvK3hCdnNPRmJKUjhPUUlDa2VoUitJam03?=
- =?utf-8?B?UHQxcTF1QjNyMnJmdHVyM09mWm91NzhBSnpGLys5UXJLdjk2NHgvZWpnOElo?=
- =?utf-8?B?cWowT3VmYVZ6ZFVzZWFsTE4xMjMrT2F4dlRua1A3WVdRZkFxVitNVVZRNzNi?=
- =?utf-8?B?akk0N2ZvOHlqSmtjWnVucFhkVXI0bHpWSzUwajV0eFlSMTlBWVlnMHBLZWd4?=
- =?utf-8?B?Zk9zMzJZQmxZbDhRWnVQQkhkS2JUa2tvZ3NiNy9SM3dEOUdQSGtLMTRZam9v?=
- =?utf-8?B?eVdyem9PdEwxZXdNaXlmTVVPRUhZbEdBeHVCZTlKV3BHY2Vpc09JdGs2Skh6?=
- =?utf-8?B?Ynd0RDBMM2t6ajVhbGFTUXN3Y210cmswaVlRT21ETXJtWTUrLzc2UFlqS1Nu?=
- =?utf-8?B?a2lFMFdwQmFlM3VicFYwSHFCbngxN0hycjBXTHNIbTBKUU9mSTYxSGFrcTll?=
- =?utf-8?B?U3hWTzFoWEtrYVI3RGRPMWN6NmNtMFU2QWVzWWpBNkl4TDNEcVhESE03cUV6?=
- =?utf-8?B?R0cxUE9GSmdiZVJKdEsrUmlrbjY3MzBRQzd2RDVvcDJZYk1GelIyNW9kaWVz?=
- =?utf-8?B?YTBwT1MrcEloOHJLaVdoeVpLZEVlTGl5bW9IWmE4ZE13U3VBaC9GT0RwY085?=
- =?utf-8?B?UC8zV1Y1OWZVMW1wWk92aStJekNWS3BPSG5veFlyM0ZjYklFeE1YcnR0R3Nr?=
- =?utf-8?B?LzdVVEdzcncvVXZNQThoMTJYelFGbTZqTllwQWgyeThOdm9XQkpldDd3T3JZ?=
- =?utf-8?B?MlZaZTBOeGlOdi9LZ282OGtYa0RrTFRUMW9UMmp3Wkx4WURxZTFEZXJ2VTBC?=
- =?utf-8?B?NFlxa3NvWE1hdnpXQ1RhdDgybnFkYWFXUTlwejFwZkFnVjhDN0l1SDJHc1B2?=
- =?utf-8?B?M3IrbmVYRkhlakwvKzVYazY0djVmSi9BSW0vRlJuWXJ2bFM4a3NKTEE2UCtP?=
- =?utf-8?B?WlVZdFhkS0ZnL2tITnkyU21CbElkMXEvZU4wSWo5VWNJdlNWdmYxcWxYVVVB?=
- =?utf-8?B?QTB6WGUvLzg4SG9yQnpUSGpST3lFc004ZndqQVhKeXloYzBualFaZW82dDZS?=
- =?utf-8?B?a2tUeGlMd1RONGNsZ3BTVHFjVnNnSUdXc2pQSTZzVEI3cldQM2lYcFVsV1hN?=
- =?utf-8?B?SUdTM3AyUmNsb002MXQ3czhMckJhTlFGWnZrTUIrOW1RM29Mak5sSm5xdWlh?=
- =?utf-8?Q?ekrE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q0IzQmpnYjJQUml0LzE0QWtOb0NUelR5SEhYcWEzRHB2U2dCbWlMUElNUlVW?=
- =?utf-8?B?czk2V1ZOTm9JZmN4Y0V0ejBUME9BWDVJREtCVXJ5S2lZT3hIOXJ3bW5DMHZl?=
- =?utf-8?B?RHExaXI5UUg2THo1bHpDUlkyZTRKVkF2bzJVNmRhWk41RFdQK1VJWEhVQnMz?=
- =?utf-8?B?RjNTNU1lSXZKU3ZOUmJBbDdSWmNyTHlJOEhmWDhpVldldU1MUm82QTVwbEov?=
- =?utf-8?B?ZmFhMUhvNUJQOVpvVkRWb014RTNIbFJUVTYvWUMreHZNUGRJYk51cWV1NFQw?=
- =?utf-8?B?UXFTUU82MHhKbWg5d3VpTTFvY0VzL1pUSjZuQ1J2SXpFYWFzMWVRR044RzNN?=
- =?utf-8?B?YzB4VVhoc29EVklvWEJybjE5Ri85cGgrNDNxTEV5VFJzb0huQW04d09CTVpp?=
- =?utf-8?B?S2NKK1p0ZWdjWEloK0RlcGF1YWJyTC9BajhmK1gzU09ROHlsMzNEODV2S3dv?=
- =?utf-8?B?ODQxaDRjMVN6bnVpZjFMUWp0NVBIRWVCVjNwR3JBM2MyWWNGcjJUQlU5MVNo?=
- =?utf-8?B?RUtSZ1VmWjMzUzJZMjJuZHJaeTFOeTdraVZoQXJJbjFHRXdnQXlJNUlDNmh6?=
- =?utf-8?B?SUhHblRWTFNZN3NJWm5NNnlIZ09LaWJNMFhsM0ovdXBIQVV3SE1YR2JCMW05?=
- =?utf-8?B?cTl4cHNzcERkdzZuTGl0TmZTd3ZWelZuZlNaV1ZUWlRUenRUZzZHSDltVEtN?=
- =?utf-8?B?ajA2a2dEUURhRmlNWDF0THRzVXEwRUg3NzN4a3JJbzE2MC9Mcmg1YTdZb2Ri?=
- =?utf-8?B?aGE4NDhMK2t3aEI1YXl3akJZYkkrSWhwUDh3ZFJXZk0zK09IbWxrQWVjYXFN?=
- =?utf-8?B?RSsxMU90RjA5R3E5ak5KSUMzT0czT0J6THRtbVZCSmhsMXdBK1dPSXhZL1p4?=
- =?utf-8?B?L3BoMndISHhpZXZIMklRckxjSzhVWGczYWM0WWtLMmt5ZEU3eXV1bklTUG1m?=
- =?utf-8?B?TG15ZjJpOWxXM2ZPRkZPR1E2RUxDMU1TMC9PQURnNmdVTm9qYW1tZ2tjc1B3?=
- =?utf-8?B?V1JHL3c1enFNQkVueXpxdUdxR3EwQXdtTXRBTmNxNnBmdVZybDlqRE9yMjJD?=
- =?utf-8?B?R1JVcUVYSm1iSitEd2JoWkFoeW95RFcrL294VVN1ZW9JK3JFZlNrNFBhRWxj?=
- =?utf-8?B?K3JUSTZPNFZ3ZldiaTNSMDRTUFJIb3NBOUF6SG9BT20ySWxYZUNlcFJaa2Mv?=
- =?utf-8?B?WWFnbGJ4VTNFU01PdEN5U0ptdE1jMXp5enIzU3dlMWtSZlVoVnUyam5SQkJj?=
- =?utf-8?B?Y1kyQVNteWhObnJGT3pDQWxYK1licEZqTHVVTUVCbkx1RWhPMWNQVUQ5MXJs?=
- =?utf-8?B?SGQ4SUQ3cGtXekZqRytOTURtMGN5RUhIc3JwNXpweWRwRlF6M2k1UkRqSVF2?=
- =?utf-8?B?WFlCQmJBa0V6Y0ZjOEVhVWRBaEJVN3pMQjgzV1JOOVMwcG9KaTB1TXU3ZmtU?=
- =?utf-8?B?OXpCNmFvSVNCS2hpcG5uNmtvTGZIOUZXOFFIMFo3TjBXZHB2SUVTaGdHcmpv?=
- =?utf-8?B?aFF4bnExUFo2Y0ZqOHZGVEVhQ1Zua0lTN3ZDOGlnYng1YVc2R3lMRGZFSkdw?=
- =?utf-8?B?SStZMDJ2T2s0NkhlOG9hc1ZYY0ozK0JFUWtsMHMycGN3OWtxOVBYMVVka0Jt?=
- =?utf-8?B?V1hybWtnWVFSekFyS1Q5SVJQcUExVW1sZ3UveTBWaHM2N1R1U25FY3FhQWZM?=
- =?utf-8?B?TmxPRC96S25KL3gxbHJYdXdxM0JPSUw5ODFzUHhEZ2s0UGRyNVprS3hTMDU1?=
- =?utf-8?B?SHhidkZxNVowWFJuMkFFeTVYeElvVFZydU05TXNhdlpUYlhPTEJ0bEhLWUZS?=
- =?utf-8?B?eVZTTE1BcEE4K1o2M1JBREFxMkJCUDdqdjc2UUdxajQyU212dWJINkJKVllK?=
- =?utf-8?B?RDM3U2tHb2g1dzkvNmVvTnVXdUdTUXpwYzF2M01jVEtxSktSWjM5cXAwcmpa?=
- =?utf-8?B?OVRROFE2RlpJRVduZ2xNYTdYQjJuN2R2VXprckJsK2xsODhPZW1ZaTdUUVFR?=
- =?utf-8?B?MDJDY0lYc0ovZkRrT3NoMUpCaXo2ZzdLaUtjOUYrVGxRRkM3eTh1eE0yM2cv?=
- =?utf-8?B?S21RcmJ0bVVDTlNSVzJxai84aWpwcjFMS0FWN3ZMa3pGR1ZkNENob2NFZGhr?=
- =?utf-8?B?Z1g0V2JNVk8ybGN1NG4wdzQ3cFJvTkVyRWs3QWxuMVorNzFFL3V4VmVqTkVJ?=
- =?utf-8?B?SEZCMGVOSHM1dXNnU3pqVUZwNVNjVTNWNWppcEJ2VWZ4eVJFSWZkcnVhY0FN?=
- =?utf-8?B?STBKWDc4SWJqZlBreGM0YzhBeXBiQm9kNUtKeG9Na2EzMnJaM2hhM21UYjFV?=
- =?utf-8?B?K1lIVkhQM3N2NFFESEVpUGJXN2lPWVhsSXN0NVp4bWpZbENmL2htVC9JR0dm?=
- =?utf-8?Q?q50PM0amL9yJppShrApU4vwuV0QVrDCMpLy5GTIBs56vk?=
-X-MS-Exchange-AntiSpam-MessageData-1: mXITjkMFYdur9A==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d102ec64-0bfd-4fb6-0fbf-08de6ec807a6
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2026 08:30:53.6214
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hf4iqDHo8tFgab4tkAupzGcb+1NOj2Vi9CF05Z5iap4+tTFOdwNTwsq35YHDwrxJiOd1TG7Ipxq1jBaZaFwZAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9710
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="sfzhuutowl7gwtka"
+Content-Disposition: inline
+In-Reply-To: <aY3j57xvdOY09EwQ@orome>
 
 
-On 18/02/2026 01:35, Mikko Perttunen wrote:
+--sfzhuutowl7gwtka
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 04/10] mm/cma: Allow dynamically creating CMA areas
+MIME-Version: 1.0
 
-...
+On Thu, Feb 12, 2026 at 03:44:11PM +0100, Thierry Reding wrote:
+> On Fri, Jan 23, 2026 at 02:25:16PM +0100, Maxime Ripard wrote:
+> > On Thu, Jan 22, 2026 at 05:10:03PM +0100, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > There is no technical reason why there should be a limited number of =
+CMA
+> > > regions, so extract some code into helpers and use them to create ext=
+ra
+> > > functions (cma_create() and cma_free()) that allow creating and freei=
+ng,
+> > > respectively, CMA regions dynamically at runtime.
+> > >=20
+> > > The static array of CMA areas cannot be replaced by dynamically creat=
+ed
+> > > areas because for many of them, allocation must not fail and some cas=
+es
+> > > may need to initialize them before the slab allocator is even availab=
+le.
+> > > To account for this, keep these "early" areas in a separate list and
+> > > track the dynamic areas in a separate list.
+> > >=20
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >=20
+> > AFAIU, this won't create a new cma heap when registering. This goes
+> > against the recent work we did to create one for every cma region.
+> >=20
+> > I guess, since you have a driver that would explicitly handle that
+> > region, we should create some kind of opt-out mechanism, but by default,
+> > we should still create such a heap.
+>=20
+> It sounds like there's a bit of a conflict between what you want to
+> achieve and what this series attempts to do.
 
->>>> Yes we should always follow that rule. However, in this case, I believe
->>>> that the build time dependency on the PINCTRL subsystem was only exposed
->>>> by adding the 'i2c_dev->dev->pins'. Unless I am misunderstanding ...
->>>
->>> Yes, it looks like it.
->>>
->>> However, I wonder why the dependency has to be complicated.
->>>
->>> ARCH_TEGRA in both arm64 and arm selects PINCTRL, so we can assume that
->>>
->>> PINCTRL will be set for ARCH_TEGRA. So:
->>>    config I2C_TEGRA
->>>    
->>>    	tristate "NVIDIA Tegra internal I2C controller"
->>>    	depends on ARCH_TEGRA || (COMPILE_TEST && (ARC || ARM || ARM64 ||
-> M68K
->>>    	|| RISCV || SUPERH || SPARC))>
->>> +	depends on PINCTRL
->>>
->>> is a shorter way of writing this, and it makes sense - pinctrl isn't
->>> required because we're doing a compile test, it's required because
->>> the driver itself fundamentally requires it with this change whether
->>> or not we're doing a compile test.
->>
->> Yes that's true indeed.
->>
->> Mikko, do you want to take care of this?
-> 
-> My thought was it would be better to keep the PINCTRL dependency grouped with
-> COMPILE_TEST. That makes it clear it's only needed because of it -- clearer to
-> the reader that ARCH_TEGRA implies it. Kind of like not checking for NULL
-> pointers in C code when the contract is that the pointer is not NULL.
+It's not ongoing really, it's part of 6.19.
 
-Russell's point is that regardless of the compile test, the driver has a 
-dependency on pinctrl and so should always be dependent on it. The I2C 
-instances for the DPAUX device on certain devices require this and will 
-not work without it (before your change was added). I guess I should 
-have added this dependency back with commit 718917b9875f ("i2c: tegra: 
-Add pinctrl support").
+> The way I see it, the CMA code is more of a helper that gives you a
+> specific functionality set. Exposing each CMA area as a heap that
+> userspace can allocate from seems like a bad idea to me.
+>
+> Without knowing anything specific about a CMA area you don't know if it
+> makes sense to expose it as a heap. Given that there is very little
+> information associated with a CMA area there's only so much guessing
+> that you can do. I think it'd be more sensible to make CMA areas opt-in
+> to have a heap created for them rather than requiring opt-out. Exposing
+> a heap publicly applies only to a (potentially) small subset of all CMA
+> areas, albeit at the moment it may seem that that is what it's primarily
+> used for.
 
-> I can change it though if you'd like.
+Do you have any specific example in mind except for that driver?
 
-I think we should.
+So, the reason why we did that was, mostly, to allow proper cgroup
+memory accounting through dmem. In order to enable it in DRM and v4l2,
+it was agreed upon that we would switch the use of dma_alloc_* to rely
+on the heaps instead, where the memory accounting is greatly simplified.
 
-Thanks!
-Jon
+So we want any reserved memory region a device can allocate from to have
+a heap.
 
--- 
-nvpublic
+So I do think we need the call to register a heap in rmem_cma_setup.
+
+That being said...
+
+> In fact, for this particular driver nobody must allocate from any of the
+> CMA regions associated with the heap driver outside of that heap driver,
+> simply because the heap driver maintains meta data about these CMA
+> regions for things to work. If we allow access to it from anywhere,
+> things are eventually going to explode.
+
+=2E.. I also agree that having it in dma_contiguous_reserve() might be
+overdoing it, and I assume it would solve the issue with your driver?
+
+> > That being said, it's not clear to me why the heap driver uses CMA in
+> > the first place.
+>=20
+> We use CMA as a way of reclaiming memory if needed. The heap that we
+> create is meant to be resizable, so that when nothing uses the heap, the
+> memory can be reused for other purposes. However, when memory is
+> allocated from the heap, we need to reclaim that memory for the heap and
+> relocate any buffers allocated from the region somewhere else. CMA does
+> all of that for us, so it seemed like the logical choice for this.
+
+Ack, thanks!
+Maxime
+
+--sfzhuutowl7gwtka
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaZV+lAAKCRAnX84Zoj2+
+dlYJAYC4+jPKHkn42l5qLnxTY3EvbGxcZHDH6RVzs/0th5A4+2dTD8lM8sIBBgPj
+qui+8ooBf0t6WS1apZEC3zF8JlGWCr77XkBnVp5ZaozpXhqmNBMCQy7tm7z3cF/c
+XrmTT30Bzg==
+=yW5/
+-----END PGP SIGNATURE-----
+
+--sfzhuutowl7gwtka--
 
