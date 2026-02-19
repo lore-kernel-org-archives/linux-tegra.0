@@ -1,171 +1,169 @@
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C7E334C19
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Feb 2026 08:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C5B6A8D2;
+	Thu, 19 Feb 2026 09:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771489726; cv=none; b=rv4LnW04pDcgUqfAN+AAMdsNOj5DRS4YwgwuaXyFW4z161NGdFzKKtQGoAN+0gSlEReeisb5IStFVg1D9A+rpG5x2H8vwSQPED7NfgljWmciBWnhfe3oHx3IGgzzGr+iS5oCFXnV1aO7EmYrOvDshTv6fNdLQXA8TAroQQLS5fU=
+	t=1771494030; cv=none; b=hOCgVIFzPxFjaM4J14N178zgXB35pjYRT5dtc+heM3R21Lf6FabRV7hO9D5UfBmEtsqvWMi1NDJPQcp+ZOZJhbHSCODltJUPfIwFF+syK1sQKaoPJ6DvcAz9Hwuvih6nsIV8W87YHygU0X/PrGvJowiTBheKZDbynMPl1beXO1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771489726; c=relaxed/simple;
-	bh=CZdvF0NSmvpT3FQaL3yhFOnbzjIg5pEomEvylH7mBNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=cn/u74kAPA2jwy2924eVqpIRlOKo3lXWh0e8n8FL5C3PjHf9ps+b46jr08f4Rcpfr4HdiFVysGNbDArhG+OeF4cmn1r2fObI0lYEe4s0b9CbmkoF1gVSQfKIZWEYTz1wLOw6UcYt91tjsRvs03Ff/MspUAgxJbADAdMBHMcVzGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y03mdI9t; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y03mdI9t"
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-4359a16a400so593649f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Feb 2026 00:28:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1771489723; x=1772094523; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LlA0MoNwLthJ3WbFXT1GsIbvdxg0vIHk87hmvUw3AEo=;
-        b=Y03mdI9tvY00dYQhfNv5kT2SYD0ADW0aJpU0ED70lX79qO6fKJxENWQ3Gi6cHxd2SN
-         WgmmNsIsXrPNDwqTQ1e+00MSBVQe+aet/J0J4ecOXqpjovd+VAR6SaFVmyETM1fNtU5E
-         m98kh4fhisGlK/IKd9WMX9jVlPbnoGCv/JdLu6tA1QfmmDICyW/v2CG4q9i9d0nhefE+
-         4z31/rgtR5cRLtiv158IBwbRYBM3UxjuUUraJ0eryKu4Dw2921NaLjquNDa+umbXStBl
-         QuKSdT78t3nk6bk77J6pqseJdxFAoERgt2mivot2s2/F1DAreEaPA7qqKU5pceQhVMwY
-         55Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771489723; x=1772094523;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LlA0MoNwLthJ3WbFXT1GsIbvdxg0vIHk87hmvUw3AEo=;
-        b=eGFMP8RZAA8kAEiWXmed1cxa3vy0N3qbWosyZ8MJ8sbF01MVQQqSTWbMj/xn8PQQBf
-         bm1OBP2AEIgGvTIFJmivX47yeMPg8obP+waAIMZknVIKsnmCW2WfP7V7qTmcJ/He5chP
-         smAuM/pe21bHd2FkBODQ2RsEvt87G/hJzfuIJqWN1vxnGQoD7GKrNBRWKSbRKuXRdV9a
-         cqg/kcahG9UbA7vfuJNjDfABBjXiOwBFLRHJBfH/VqgQ55lN/a9Bch+05oOi2Hsir0SZ
-         9KQNQ4vqRcWzoT+bO3vpoU8sJVlVwPon5jXlOOCbMPL5YpwgtAxMDKOO1z7PK0M4NBGA
-         FBtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzyelIpi+CJsT5wiwvaVaJA8iSmjdBEAaa798VId+J9PvUgFhBBisZws9KZ2x64KCipfR+f0ZbsnPiFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YylpbZVocJlDvQiMYocXVivPeZ8lSR7x+6nWl54srVdmLEUKtYF
-	DEw0AY1wtCDl57l18hNKk5BxbdS7U/86K5kWX2PHT7+GUASE8Dn48W8/y9VdsDUGueg=
-X-Gm-Gg: AZuq6aIOK39+srZOpV3KoeFrRZm/tQrLfKjKmZhCsKo8Rj/JSh+ZXJvyxOPhOkNCIjO
-	nsK3jsEqclbzVsW4pkrzVbw/Vq44lfXFr4oBbR74xD8bB95HiNGwP/4w6js7NGYORlHWrrS6ea8
-	rpoXMH4/bd3gvnWSGU+AbHe+m6Q61iSch8fwz3nZjNngtsS7I24xRWkDWf5Z21ldK+68Kx1VBKz
-	VghBGw36MqTdD5JddtPLWrA5+wb8cWzFvPVQTFxV8VnHF4/ekGcfiKfqqYQyg351A+xePSy+54y
-	hAjB9CYaanH7IL4uayxv+vXQRlc8OSbEoaVQdOVoPUZFmRJxk2hglQ965K9Bk4I9ZBMqn11Moc2
-	SZeDL+Rvx86B69fHeeK/1jZfpHBwHTwHU40zBbzHJZEpGXPEKEHQbWOg7sDQGP22h8qeu/Ws2Gq
-	GFi8TZfqmGoynQQabmq+n6vBj51Vvp
-X-Received: by 2002:a05:6000:402b:b0:437:678b:83c2 with SMTP id ffacd0b85a97d-43958e5794dmr8711741f8f.54.1771489723133;
-        Thu, 19 Feb 2026 00:28:43 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796a5ac7csm44982348f8f.7.2026.02.19.00.28.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Feb 2026 00:28:42 -0800 (PST)
-Date: Thu, 19 Feb 2026 11:28:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>,
-	dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vkoul@kernel.org, Frank.Li@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, p.zabel@pengutronix.de,
-	Akhil R <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH 6/8] dmaengine: tegra: Use iommu-map for stream ID
-Message-ID: <202602181757.Amx49qCP-lkp@intel.com>
+	s=arc-20240116; t=1771494030; c=relaxed/simple;
+	bh=O9A62UZYVCQd00W6K9cEgotwzC6b7jDjES67GKeH5MI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bD8Krp5lRkiKTKYTgsLjWv4DSXjv21V2hZKy9m3HTSQQpn1ysK5IEqEtp9oPgvbcMLQmTTH27jpt0kYZpCuyR1VN3tVNRaKUVWLUbQsYsxV+sE55UsBdPl0aX03c/ZtVxN1BTZbn7z3++w7Km9qTwcaIi8PNRuhgrrNm06DksKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fGpJV5YvHzJ46Zg;
+	Thu, 19 Feb 2026 17:40:10 +0800 (CST)
+Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
+	by mail.maildlp.com (Postfix) with ESMTPS id E984340569;
+	Thu, 19 Feb 2026 17:40:23 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
+ (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 19 Feb
+ 2026 09:40:23 +0000
+Date: Thu, 19 Feb 2026 09:40:21 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Besar Wicaksono <bwicaksono@nvidia.com>
+CC: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
+	<ilkka@os.amperecomputing.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<mark.rutland@arm.com>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <sdonthineni@nvidia.com>,
+	<skelley@nvidia.com>, <ywan@nvidia.com>, <mochs@nvidia.com>,
+	<nirmoyd@nvidia.com>
+Subject: Re: [PATCH v2 3/8] perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
+Message-ID: <20260219094021.0000465d@huawei.com>
+In-Reply-To: <20260218145809.1622856-4-bwicaksono@nvidia.com>
+References: <20260218145809.1622856-1-bwicaksono@nvidia.com>
+	<20260218145809.1622856-4-bwicaksono@nvidia.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260217173457.18628-7-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml500005.china.huawei.com (7.214.145.207)
 
-Hi Akhil,
+On Wed, 18 Feb 2026 14:58:04 +0000
+Besar Wicaksono <bwicaksono@nvidia.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> Add interface to get ACPI device associated with the
+> PMU. This ACPI device may contain additional properties
+> not covered by the standard properties.
+> 
+> Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+Hi Besar,
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+A drive by review as I was curious.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/dt-bindings-dma-nvidia-tegra186-gpc-dma-Add-iommu-map-property/20260218-014114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-patch link:    https://lore.kernel.org/r/20260217173457.18628-7-akhilrajeev%40nvidia.com
-patch subject: [PATCH 6/8] dmaengine: tegra: Use iommu-map for stream ID
-config: sparc64-randconfig-r072-20260218 (https://download.01.org/0day-ci/archive/20260218/202602181757.Amx49qCP-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 10.5.0
-smatch version: v0.5.0-8994-gd50c5a4c
+A few comments inline.
+> ---
+>  drivers/perf/arm_cspmu/arm_cspmu.c | 22 +++++++++++++++++++++-
+>  drivers/perf/arm_cspmu/arm_cspmu.h | 17 ++++++++++++++++-
+>  2 files changed, 37 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index 34430b68f602..ab2479c048bb 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -16,7 +16,7 @@
+>   * The user should refer to the vendor technical documentation to get details
+>   * about the supported events.
+>   *
+> - * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + * Copyright (c) 2022-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>   *
+>   */
+>  
+> @@ -1132,6 +1132,26 @@ static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
+>  
+>  	return 0;
+>  }
+> +
+> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu)
+> +{
+> +	char hid[16];
+> +	char uid[16];
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202602181757.Amx49qCP-lkp@intel.com/
+Might as well do
+	char hid[16] = { };
+	char uid[16] = { };
 
-smatch warnings:
-drivers/dma/tegra186-gpc-dma.c:1543 tegra_dma_probe() warn: missing error code 'ret'
+and drop the memsets below.
 
-vim +/ret +1543 drivers/dma/tegra186-gpc-dma.c
+> +	const struct acpi_apmt_node *apmt_node;
+> +
+> +	apmt_node = arm_cspmu_apmt_node(cspmu->dev);
+> +	if (!apmt_node || apmt_node->type != ACPI_APMT_NODE_TYPE_ACPI)
+> +		return NULL;
+> +
+> +	memset(hid, 0, sizeof(hid));
+> +	memset(uid, 0, sizeof(uid));
+> +
+> +	memcpy(hid, &apmt_node->inst_primary, sizeof(apmt_node->inst_primary));
+> +	snprintf(uid, sizeof(uid), "%u", apmt_node->inst_secondary);
+> +
+> +	return acpi_dev_get_first_match_dev(hid, uid, -1);
+> +}
+> +EXPORT_SYMBOL_GPL(arm_cspmu_acpi_dev_get);
+>  #else
+>  static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
+>  {
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
+> index cd65a58dbd88..320096673200 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
+> @@ -1,13 +1,14 @@
+>  /* SPDX-License-Identifier: GPL-2.0
+>   *
+>   * ARM CoreSight Architecture PMU driver.
+> - * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + * Copyright (c) 2022-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>   *
+>   */
+>  
+>  #ifndef __ARM_CSPMU_H__
+>  #define __ARM_CSPMU_H__
+>  
+> +#include <linux/acpi.h>
+>  #include <linux/bitfield.h>
+>  #include <linux/cpumask.h>
+>  #include <linux/device.h>
+> @@ -255,4 +256,18 @@ int arm_cspmu_impl_register(const struct arm_cspmu_impl_match *impl_match);
+>  /* Unregister vendor backend. */
+>  void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match);
+>  
+> +#if defined(CONFIG_ACPI)
+This isn't the same gate as used for whether the function is built. I think that's 
+#if defined(CONFIG_ACPI) && defined(CONFIG_ARM64)
 
-ee17028009d49f Akhil R         2022-02-25  1514  	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
-ee17028009d49f Akhil R         2022-02-25  1515  
-ee17028009d49f Akhil R         2022-02-25  1516  	ret = dma_async_device_register(&tdma->dma_dev);
-ee17028009d49f Akhil R         2022-02-25  1517  	if (ret < 0) {
-ee17028009d49f Akhil R         2022-02-25  1518  		dev_err_probe(&pdev->dev, ret,
-ee17028009d49f Akhil R         2022-02-25  1519  			      "GPC DMA driver registration failed\n");
-ee17028009d49f Akhil R         2022-02-25  1520  		return ret;
-ee17028009d49f Akhil R         2022-02-25  1521  	}
-ee17028009d49f Akhil R         2022-02-25  1522  
-43f59d3fa0deca Akhil R         2026-02-17  1523  	list_for_each_entry(chan, &tdma->dma_dev.channels, device_node) {
-43f59d3fa0deca Akhil R         2026-02-17  1524  		struct device *chdev = &chan->dev->device;
-43f59d3fa0deca Akhil R         2026-02-17  1525  
-43f59d3fa0deca Akhil R         2026-02-17  1526  		tdc = to_tegra_dma_chan(chan);
-43f59d3fa0deca Akhil R         2026-02-17  1527  		if (use_iommu_map) {
-43f59d3fa0deca Akhil R         2026-02-17  1528  			chdev->coherent_dma_mask = pdev->dev.coherent_dma_mask;
-43f59d3fa0deca Akhil R         2026-02-17  1529  			chdev->dma_mask = &chdev->coherent_dma_mask;
-43f59d3fa0deca Akhil R         2026-02-17  1530  			chdev->bus = pdev->dev.bus;
-43f59d3fa0deca Akhil R         2026-02-17  1531  
-43f59d3fa0deca Akhil R         2026-02-17  1532  			ret = of_dma_configure_id(chdev, pdev->dev.of_node,
-43f59d3fa0deca Akhil R         2026-02-17  1533  						  true, &tdc->id);
-43f59d3fa0deca Akhil R         2026-02-17  1534  			if (ret) {
-43f59d3fa0deca Akhil R         2026-02-17  1535  				dev_err(chdev, "Failed to configure IOMMU for channel %d: %d\n",
-43f59d3fa0deca Akhil R         2026-02-17  1536  					tdc->id, ret);
-43f59d3fa0deca Akhil R         2026-02-17  1537  				goto err_unregister;
-43f59d3fa0deca Akhil R         2026-02-17  1538  			}
-43f59d3fa0deca Akhil R         2026-02-17  1539  
-43f59d3fa0deca Akhil R         2026-02-17  1540  			if (!tegra_dev_iommu_get_stream_id(chdev, &stream_id)) {
-43f59d3fa0deca Akhil R         2026-02-17  1541  				dev_err(chdev, "Failed to get stream ID for channel %d\n",
-43f59d3fa0deca Akhil R         2026-02-17  1542  					tdc->id);
-43f59d3fa0deca Akhil R         2026-02-17 @1543  				goto err_unregister;
+Whilst it might work to have them different today I think this is a little more
+fragile than would be ideal.
 
-ret = -EINVAL;
+The ARM64 bit seems to be there to allow COMPILE_TEST for
+ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU  and to me that smells like a stub or Kconfig
+dependency missing.
 
-43f59d3fa0deca Akhil R         2026-02-17  1544  			}
-43f59d3fa0deca Akhil R         2026-02-17  1545  
-43f59d3fa0deca Akhil R         2026-02-17  1546  			chan->dev->chan_dma_dev = true;
-43f59d3fa0deca Akhil R         2026-02-17  1547  		}
-43f59d3fa0deca Akhil R         2026-02-17  1548  
-43f59d3fa0deca Akhil R         2026-02-17  1549  		/* program stream-id for this channel */
-43f59d3fa0deca Akhil R         2026-02-17  1550  		tegra_dma_program_sid(tdc, stream_id);
-43f59d3fa0deca Akhil R         2026-02-17  1551  		tdc->stream_id = stream_id;
-43f59d3fa0deca Akhil R         2026-02-17  1552  	}
-43f59d3fa0deca Akhil R         2026-02-17  1553  
-ee17028009d49f Akhil R         2022-02-25  1554  	ret = of_dma_controller_register(pdev->dev.of_node,
-ee17028009d49f Akhil R         2022-02-25  1555  					 tegra_dma_of_xlate, tdma);
-ee17028009d49f Akhil R         2022-02-25  1556  	if (ret < 0) {
-ee17028009d49f Akhil R         2022-02-25  1557  		dev_err_probe(&pdev->dev, ret,
-ee17028009d49f Akhil R         2022-02-25  1558  			      "GPC DMA OF registration failed\n");
-43f59d3fa0deca Akhil R         2026-02-17  1559  		goto err_unregister;
-ee17028009d49f Akhil R         2022-02-25  1560  	}
-ee17028009d49f Akhil R         2022-02-25  1561  
-43f59d3fa0deca Akhil R         2026-02-17  1562  	dev_info(&pdev->dev, "GPC DMA driver registered %lu channels\n",
-3a0c95b61385f5 Akhil R         2022-11-10  1563  		 hweight_long(tdma->chan_mask));
-ee17028009d49f Akhil R         2022-02-25  1564  
-ee17028009d49f Akhil R         2022-02-25  1565  	return 0;
-43f59d3fa0deca Akhil R         2026-02-17  1566  
-43f59d3fa0deca Akhil R         2026-02-17  1567  err_unregister:
-43f59d3fa0deca Akhil R         2026-02-17  1568  	dma_async_device_unregister(&tdma->dma_dev);
-43f59d3fa0deca Akhil R         2026-02-17  1569  	return ret;
-ee17028009d49f Akhil R         2022-02-25  1570  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +/**
+> + * Get ACPI device associated with the PMU.
+> + * The caller is responsible for calling acpi_dev_put() on the returned device.
+> + */
+> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu);
+> +#else
+> +static inline struct acpi_device *
+> +arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+> +
+>  #endif /* __ARM_CSPMU_H__ */
 
