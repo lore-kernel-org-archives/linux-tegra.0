@@ -1,73 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C387B34107C
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Feb 2026 17:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAB03064A0
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Feb 2026 21:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771523200; cv=none; b=hdK9f0Be11ZGBEZtxSNNnOupNXK8Y28sPt/fkLGPgVY8OLe4+cR7F6NnZyDKOP9MhkVWNvRLgn9HDz+zpWsFi5WIyMPNh7G7AZtYm7RlNIEhzgXupczpI0V8CMh/SlUU+IWSRVS1WP4gdZAhjJJF8G32JI85FCLEUIzuNccD6VI=
+	t=1771538139; cv=none; b=WS585n2VQPJv7f+byzWVGLK++c4qG/nRoSTDsR08MSoKhuNDS9aO5Kx73rNHCZWgeQrUAc2nPsJOB8OwH7k6bjcCNUiE0juDf+EEdr7BKpxeD6uof8fXVopLJs1yS/3BUJZfO/GnWQuLT8ywjtzqQsCc5nMxzG+XMzxZYNOSrW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771523200; c=relaxed/simple;
-	bh=bEt+rV/VqBPD8HBT63k2KfFNDvbW36w+6DShtPFW7yg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qy704kMqs+tTFq6CNPhMgM6Unl73aFkR+wRrV05qy1oiHuZQC3OPeBbpAA/rIihW2ODbNWx/JvUYeVNnON89wcAd5LMJopn7mfRfzEdGcv8S/w9uuwFcAreY1g0c2D95xS0lgWCo2sdTLIxbkn3RXrzcx4KpjGlcbQ4aiUf2Hh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaRlwAaA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771538139; c=relaxed/simple;
+	bh=dQQbTiWg+Q+avemVoVRNGYCZwjZfE/A7Ya+FG4663fI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EqjSzuw17k1A7mIWMTFpUiaGoYxBHdlMiKrdS03fDJYS+sJFLSgThFkoKBkra5k4SQELJ+MPVh746EOR4lWoBDhb0MlQRkyfqt7W2AW6DAYjKlI0/WbYTM0aRbh+8mfeWKmcu3Wyedvof6bLrgysLkspNrTz/KSz5vz7Gix9Wtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EBKuNgLv; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaRlwAaA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4F6C4AF0C
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Feb 2026 17:46:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771523200;
-	bh=bEt+rV/VqBPD8HBT63k2KfFNDvbW36w+6DShtPFW7yg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kaRlwAaA0wwb719iLtJ0v/ZmWcE4QbWFcMGrU/WADo82mMM2OLxH6XssCugxJEZXT
-	 SGFX/6cLTXPOgkBXCfwhDHiI/ffpHjgmbW++b3XQvX7pcUYva8e5gpKLdtN52HvazW
-	 v7gEiNN2EeKXsgprvwRbc4ZKnCKGCvGqfBoR7wkSUofQ90I22LQhVk1px6tNBfpuBh
-	 tHIokH0HYHhwvtj3pvLe9o+39MGNGQxGCtRapWyGyTIna7Cd7kmLF/li2dcsUMtrBQ
-	 0MilShOZSJhvni6J+N/KHMcE7zw03w25FCDs6qpHbcpwZrgLfwNQYURp3eigGthHkN
-	 S+qvFxE0A1h9w==
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-79088484065so11284967b3.1
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Feb 2026 09:46:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVZ7LHTFeqjG+OMw9ZZx4fgkIpMIi+itsQH7FDnA2rnxi9O7E8MKB/QqYSEBNZoiQV5vVgMrg3kqniVQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT2iOOG7H/TYbLsV4MmgyZY9CRnxLshzNV30PssoKW1y9U6QQK
-	LUv8dnza1BPEcl5JYRkjJKA7En4HHUMG9dzhEvJDUkiPhCe566/Kd4TPbbM2R2UnSHsp94KaAU0
-	fKtHxgd4NpAVhMiTT9AhHBl1izUYBD10=
-X-Received: by 2002:a05:690c:4c01:b0:795:28b6:e3e3 with SMTP id
- 00721157ae682-797f71e8683mr50043137b3.22.1771523199942; Thu, 19 Feb 2026
- 09:46:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EBKuNgLv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=lZv+df5NO0+5Xc5NCKKFtzaxnLR/jTbxBoMuKEZB77o=; b=EBKuNgLvoe8ZFAiOoz7ANGCQCA
+	8SNKNAn91iWzvXGEUp2tcv52gG/Jg/8lNRN/eXlKfG8KikLpWDqekTNhV843o9LfbWTiywNuEDOlF
+	EVyn5J+tk0gB6y/0hIoXypy8Q2LXO//bHNoDeFDy3/2sSLHxlfR26NlKrub3zu0q1HuuRZTKLmi33
+	X7vTW+s99l2KZJGumxLBX2h3qJosixodJaO9WoQG6Sv9UAYXXI0rdQQrEzlsdsh1EUx6dLH2PcLtg
+	Z1OjEzbOkwFeFcZms/fAJJ9l72A/Y/ooWoK+4XRXUNGaiTF7tys6o0ATJR23CT3HU9q4Kdg+O5WQj
+	W7bOTY3g==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vtBzj-0000000C7DW-3C9h;
+	Thu, 19 Feb 2026 21:55:36 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH RESEND] drm/tegra: dp: fix kernel-doc warnings in dp.h
+Date: Thu, 19 Feb 2026 13:55:35 -0800
+Message-ID: <20260219215535.469520-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260217-soc-tegra-arch-kconfig-v1-0-81bf5674d032@oss.qualcomm.com>
-In-Reply-To: <20260217-soc-tegra-arch-kconfig-v1-0-81bf5674d032@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 19 Feb 2026 18:46:29 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmya-Ti=6QizctfDXgrJN-7X-vvEo81JeJgw67HO=q4+w@mail.gmail.com>
-X-Gm-Features: AaiRm50yzujcUw5_2MMotXUmHWFgY-mI9O6itNPoCdO0GZal3r7WKmHY0BJYOss
-Message-ID: <CAD++jLmya-Ti=6QizctfDXgrJN-7X-vvEo81JeJgw67HO=q4+w@mail.gmail.com>
-Subject: Re: [PATCH 0/3] arm64: tegra: Make ARCH_TEGRA_SOC_FOO defaults for
- Nvidia Tegra
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Russell King <linux@armlinux.org.uk>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Drew Fustini <fustini@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 17, 2026 at 10:16=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> wrote:
+Use correct kernel-doc format and add missing nested struct entries to
+eliminate kernel-doc warnings:
 
-> Krzysztof Kozlowski (3):
->       soc: tegra: Make ARCH_TEGRA_SOC_FOO defaults for Nvidia Tegra
->       ARM: tegra: defconfig: Drop redundant ARCH_TEGRA_foo_SOC
->       arm64: tegra: defconfig: Drop redundant ARCH_TEGRA_foo_SOC
+Warning: drivers/gpu/drm/tegra/dp.h:28 Incorrect use of kernel-doc format:
+ * tps3_supported:
+Warning: drivers/gpu/drm/tegra/dp.h:54 struct member 'tps3_supported'
+ not described in 'drm_dp_link_caps'
+dp.h:73: warning: Function parameter or struct member 'apply_training'
+ not described in 'drm_dp_link_ops'
+dp.h:73: warning: Function parameter or struct member 'configure'
+ not described in 'drm_dp_link_ops'
+dp.h:160: warning: Excess struct member 'cr' description in 'drm_dp_link'
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+---
+ drivers/gpu/drm/tegra/dp.h |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Yours,
-Linus Walleij
+--- linux-next-20260218.orig/drivers/gpu/drm/tegra/dp.h
++++ linux-next-20260218/drivers/gpu/drm/tegra/dp.h
+@@ -26,7 +26,7 @@ struct drm_dp_link_caps {
+ 	bool enhanced_framing;
+ 
+ 	/**
+-	 * tps3_supported:
++	 * @tps3_supported:
+ 	 *
+ 	 * training pattern sequence 3 supported for equalization
+ 	 */
+@@ -62,12 +62,12 @@ void drm_dp_link_caps_copy(struct drm_dp
+  */
+ struct drm_dp_link_ops {
+ 	/**
+-	 * @apply_training:
++	 * @apply_training: apply the link training
+ 	 */
+ 	int (*apply_training)(struct drm_dp_link *link);
+ 
+ 	/**
+-	 * @configure:
++	 * @configure: configure the DP link
+ 	 */
+ 	int (*configure)(struct drm_dp_link *link);
+ };
+@@ -113,6 +113,8 @@ struct drm_dp_link_train {
+  * @max_lanes: maximum number of lanes supported on the link
+  * @caps: capabilities supported on the link (see &drm_dp_link_caps)
+  * @aux_rd_interval: AUX read interval to use for training (in microseconds)
++ * @aux_rd_interval.cr: clock recovery read interval
++ * @aux_rd_interval.ce: channel equalization read interval
+  * @edp: eDP revision (0x11: eDP 1.1, 0x12: eDP 1.2, ...)
+  * @rate: currently configured link rate
+  * @lanes: currently configured number of lanes
+@@ -126,10 +128,6 @@ struct drm_dp_link {
+ 
+ 	struct drm_dp_link_caps caps;
+ 
+-	/**
+-	 * @cr: clock recovery read interval
+-	 * @ce: channel equalization read interval
+-	 */
+ 	struct {
+ 		unsigned int cr;
+ 		unsigned int ce;
